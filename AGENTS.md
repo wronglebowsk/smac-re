@@ -34,6 +34,8 @@ and the operational pitfalls. Load the project skill: `skill_view('smac-cvr-form
 - `evidence.py budget` — know what the docs cost before loading them.
 - Never read a whole `evidence/*.log`. `evidence.py show file:line` prints the cited window;
   `evidence.py digest file` writes a 1–2 k summary (kind counts + samples) you can read instead.
+- Before re-deriving anything, try `python3 scripts/index.py search "<question>"` — it returns
+  `file:line` or an address to start from (a lead, never evidence).
 - `NAMED.md` and `SESSION_NOTES.md` are lookups: grep, or read the newest two sections. Only
   read the rotated archive when the question predates `SESSION_NOTES.md`.
 - At submit, `evidence.py budget` must be green and `evidence.py prune` has no pending victims.
