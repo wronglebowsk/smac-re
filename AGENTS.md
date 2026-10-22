@@ -29,6 +29,16 @@ and the operational pitfalls. Load the project skill: `skill_view('smac-cvr-form
 5. **Submit.** `milestone.py submit`. It refuses a red gate, commits, pushes, and opens the PR
    with the evidence list. Then stop — the session's job is done.
 
+## Reading discipline (262k context)
+
+- `evidence.py budget` — know what the docs cost before loading them.
+- Never read a whole `evidence/*.log`. `evidence.py show file:line` prints the cited window;
+  `evidence.py digest file` writes a 1–2 k summary (kind counts + samples) you can read instead.
+- `NAMED.md` and `SESSION_NOTES.md` are lookups: grep, or read the newest two sections. Only
+  read the rotated archive when the question predates `SESSION_NOTES.md`.
+- At submit, `evidence.py budget` must be green and `evidence.py prune` has no pending victims.
+  Policy and thresholds: `docs/EVIDENCE.md`.
+
 ## Definition of done
 
 A milestone is done when a different agent could continue from the repo alone:

@@ -137,6 +137,10 @@ def cmd_brief(_args):
     print("=" * 40)
     print(f"last checkpoint : {latest_session()}")
     print(f"branch          : {branch()}")
+    ev = run(sys.executable, "scripts/evidence.py", "budget", check=False)
+    for line in ev.stdout.splitlines():
+        if line.startswith(("always loaded", "lookups", "evidence/")):
+            print(f"budget          : {line.strip()}")
     prs = open_prs()
     if prs:
         print("\nACTION: there are open PRs — assess and land them before starting new work.")
