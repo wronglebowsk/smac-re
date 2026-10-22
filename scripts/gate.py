@@ -44,9 +44,9 @@ def run(*args):
     return subprocess.run(args, capture_output=True, text=True)
 
 
-def git(*args):
+def git(*args, check=True):
     p = run("git", *args)
-    if p.returncode != 0:
+    if check and p.returncode != 0:
         raise SystemExit(f"git {' '.join(args)} failed:\n{p.stderr.strip()}")
     return p.stdout
 
@@ -56,8 +56,33 @@ def report(level, name, message):
 
 
 def diff_names(base):
-    out = git("diff", "--name-only", f"{base}...HEAD")
-    return [l for l in out.splitlines() if l.strip()]
+    """Files changed by this branch, including uncommitted/untracked ones."""
+    names = set(l for l in git("diff", "--name-only", f"{base}...HEAD").splitlines() if l.strip())
+    for line in git("status", "--porcelain").splitlines():
+        path = line[3:].strip()
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        if path:
+            names.add(path.strip('"'))
+    return sorted(names)
+
+
+def added_lines(base, files):
+    """Lines this branch adds, plus the whole content of dirty/untracked files."""
+    added = []
+    if files:
+        diff = git("diff", "-U0", f"{base}...HEAD", "--", *files)
+        added += [l[1:] for l in diff.splitlines() if l.startswith("+") and not l.startswith("+++")]
+    dirty = set()
+    for line in git("status", "--porcelain").splitlines():
+        dirty.add(line[3:].strip().strip('"'))
+    for f in files:
+        if f in dirty or not git("ls-files", "--error-unmatch", f, check=False):
+            try:
+                added += open(f, encoding="utf-8", errors="ignore").read().splitlines()
+            except OSError:
+                pass
+    return added
 
 
 def check_blobs():
@@ -130,11 +155,24 @@ def check_checkpoint(base, docs_only):
 
 def check_citations(base):
     changed_md = [f for f in diff_names(base) if f.endswith(".md") and os.path.isfile(f)]
-    # Only lines added by this change are held to the citation rule.
-    bad, total = [], 0
-    diff = git("diff", "-U0", f"{base}...HEAD", "--", *changed_md) if changed_md else ""
-    added = [l[1:] for l in diff.splitlines() if l.startswith("+") and not l.startswith("+++")]
-    for line in added:
+    # Only lines added by this change are held to the citation rule; fenced examples are
+    # illustrations, not claims, so they are skipped.
+    bad, total, in_fence, in_comment = [], 0, False, False
+    for line in added_lines(base, changed_md):
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        # Placeholders live in HTML comments (PR template); they are not claims.
+        if in_comment:
+            if "-->" in line:
+                in_comment = False
+            continue
+        if "<!--" in line:
+            if "-->" not in line:
+                in_comment = True
+            line = line.split("<!--", 1)[0]
         for m in CITE_RE.finditer(line):
             total += 1
             path, start, end = m.group(1), int(m.group(2)), m.group(3)

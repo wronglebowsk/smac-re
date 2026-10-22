@@ -29,7 +29,7 @@ def run(*args, check=True):
 
 
 def git(*args, check=True):
-    return run("git", *args, check=check)
+    return run("git", *args, check=check).stdout
 
 
 def gh_json(*args):
@@ -66,7 +66,7 @@ def next_tasks(limit=6):
 
 
 def gate(base=f"origin/{BASE}"):
-    if not git("rev-parse", "--verify", base, check=False).returncode == 0:
+    if run("git", "rev-parse", "--verify", base, check=False).returncode != 0:
         base = BASE
     p = run(sys.executable, "scripts/gate.py", "--base", base, check=False)
     return p.returncode == 0, (p.stdout + p.stderr).strip()
