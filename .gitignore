@@ -27,3 +27,6 @@ __pycache__/
 
 # --- editor / OS ---
 .DS_Store
+
+# --- transient ---
+.hermes-tmp.*
