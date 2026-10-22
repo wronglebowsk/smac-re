@@ -115,9 +115,15 @@ list. Then the session stops. CI runs the same gate; a human or the next session
 
 ## CI and branch protection
 
-`.github/workflows/gate.yml` runs `scripts/gate.py` on every PR. Branch protection on `main`
-requires the `gate` check and linear history, so nothing lands red. Admins can bypass for a
-human override; the agent should not.
+`.github/workflows/gate.yml` runs `scripts/gate.py` on every PR — a red check is visible on the
+PR and blocks `milestone.py merge`.
+
+GitHub branch protection and rulesets are unavailable on this account: they require GitHub Pro
+for private repos. So enforcement is **client-side**: `milestone.py merge` refuses anything but
+a GREEN verdict, and `submit` refuses to open a PR from a red gate. That holds for the agent
+loop; a human merging in the web UI can still bypass it by intent. Two ways to make it
+server-side if ever needed: upgrade the account to Pro, or make the repo public (it holds
+reverse-engineering notes, so private is the default choice).
 
 ## Failure handling
 
