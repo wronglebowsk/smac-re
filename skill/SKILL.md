@@ -23,6 +23,24 @@ python3 cvr_decode.py --list Apsid.cvr                    # voxel/frame listing
 python3 cvr_decode.py --render programs/Drop.cvr          # -> Drop.render.png in cwd
 ```
 
+## Git workflow (2026-10-22)
+
+Repo `github.com/wronglebowsk/smac-re` (private). One milestone per branch, landed as one PR:
+
+```bash
+python3 scripts/milestone.py brief     # state, open PRs (with CI verdict), queued options
+python3 scripts/milestone.py start M51a
+python3 scripts/gate.py --base origin/main   # must be GREEN
+python3 scripts/milestone.py submit     # commit, push, open PR (refuses red gate)
+python3 scripts/milestone.py merge <n>  # refuses anything but GREEN
+```
+
+A session that finds an open PR lands it instead of starting new work. Branch protection is
+unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
+merge by hand in the web UI without a green `gate` check. After editing this live skill, copy it
+to `~/reverse/smac/skill/` and commit: the gate fails on drift. Protocol detail:
+`~/reverse/smac/AGENTS.md` and `docs/WORKFLOW.md`.
+
 ## Session discipline (this project is context-heavy)
 
 Paul wants SMAC RE broken into **small pieces**: complete ONE milestone, write it to a
