@@ -30,3 +30,6 @@ __pycache__/
 
 # --- transient ---
 .hermes-tmp.*
+
+# --- large generated caches (scripts rebuild on demand) ---
+.text_insns.json
