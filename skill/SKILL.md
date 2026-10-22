@@ -7,6 +7,10 @@ description: "Use for SMAC .cvr Caviar voxel decode/render or SMAC RE."
 
 Sid Meier's Alpha Centauri (1999) `terran.exe` + `programs/*.cvr` live in
 `~/reverse/smac/` (durable). Full writeup: `~/reverse/smac/FINDINGS.md`.
+**Versioned at `github.com/wronglebowsk/smac-re` (private)**; a copy of this skill is tracked
+in-repo under `skill/` — after editing the skill, refresh it there and push. Game binaries,
+`programs/`, `smac.iso`, `glsmac/` and regenerable Ghidra/FLIC output are gitignored: never
+`git add -f` them.
 Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
