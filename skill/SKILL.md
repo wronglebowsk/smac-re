@@ -35,6 +35,14 @@ python3 scripts/milestone.py submit     # commit, push, open PR (refuses red gat
 python3 scripts/milestone.py merge <n>  # refuses anything but GREEN
 ```
 
+**Context discipline (262k tokens ≈ 1.05M chars).** Never read a whole `evidence/*.log`:
+`python3 scripts/evidence.py show <file>:<line>` prints the cited window, `evidence.py digest
+<file>` writes a ~2KB summary to `evidence/digests/`. `evidence.py budget` reports what each doc
+costs in context (target: always-loaded ≤6%). `SESSION_NOTES.md` is rotated by
+`scripts/session_rotate.py --apply` once it passes 110k chars; `evidence.py prune` removes
+uncited screenshots (git keeps history, `.prune_log.jsonl` records them). Policy:
+`~/reverse/smac/docs/EVIDENCE.md`.
+
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
 merge by hand in the web UI without a green `gate` check. After editing this live skill, copy it

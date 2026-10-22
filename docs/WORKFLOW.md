@@ -92,7 +92,9 @@ Next (options): ...
 ```
 
 Also: add/correct `NAMED.md` rows; rewrite `NEXT_PROMPT.md` (footing, kit, 3–6 options);
-refresh `skill/` if the agent skill changed.
+refresh `skill/` if the agent skill changed. Evidence hygiene at checkpoint: cite lines, not
+files; digest any log you had to read end-to-end; run `evidence.py prune` if the budget warns.
+Full policy: `docs/EVIDENCE.md`.
 
 ## Step 5 — submit
 

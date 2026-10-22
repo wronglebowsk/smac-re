@@ -85,6 +85,19 @@ def added_lines(base, files):
     return added
 
 
+def check_budget():
+    """Context + disk budgets live in scripts/evidence.py (single source of truth)."""
+    if not os.path.isfile("scripts/evidence.py"):
+        report("WARN", "context/evidence budget", "evidence.py missing")
+        return
+    p = run(sys.executable, "scripts/evidence.py", "budget")
+    fails = [l for l in p.stdout.splitlines() if l.rstrip().endswith("FAIL") or "[FAIL]" in l]
+    if p.returncode != 0 or fails:
+        report("FAIL", "context/evidence budget", "; ".join(f.strip() for f in fails[:4]) or "over budget")
+    else:
+        report("PASS", "context/evidence budget", "docs and evidence within budget")
+
+
 def check_blobs():
     tracked = git("ls-files").splitlines()
     bad = []
@@ -125,12 +138,20 @@ def check_checkpoint(base, docs_only):
         return
     missing = [f for f in ("SESSION_NOTES.md", "NEXT_PROMPT.md") if f not in changed]
     if missing:
-        # Tooling/documentation changes (no evidence, no milestone driver) are not milestones.
-        looks_like_tooling = not any(
-            f.startswith("evidence/") or re.match(r"scripts/m\d+[a-z]?_drive\.py$", f)
-            for f in changed
-        )
-        if looks_like_tooling:
+        # A milestone adds evidence or a driver; pruning images or editing tooling does not.
+        added_paths = [f for f in git("diff", "--diff-filter=d", "--name-only", f"{base}...HEAD").splitlines() if f.strip()]
+        for line in git("status", "--porcelain").splitlines():
+            if line[:2].strip() in ("A", "M", "??"):
+                added_paths.append(line[3:].strip().strip('"'))
+        def milestone_artifact(p):
+            if re.match(r"scripts/m\d+[a-z]?_drive\.py$", p):
+                return True
+            # New logs/screenshots are milestone evidence; digests and the prune log are not.
+            return (p.startswith("evidence/") and not p.startswith("evidence/digests/")
+                    and not p.endswith(".prune_log.jsonl"))
+
+        milestone_like = any(milestone_artifact(p) for p in added_paths)
+        if not milestone_like:
             report("WARN", "milestone checkpoint",
                    "not a milestone PR (no SESSION_NOTES/NEXT_PROMPT change)")
             return
@@ -251,6 +272,7 @@ def main():
 
     check_blobs()
     check_sizes()
+    check_budget()
     check_checkpoint(base, args.docs_only)
     check_citations(base)
     check_links(base)
