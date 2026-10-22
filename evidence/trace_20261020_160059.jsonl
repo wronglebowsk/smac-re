@@ -1,0 +1,10 @@
+{"turn": 0, "year_before": 2110, "t": "16:00:59", "ocr_year": null, "dialog": "confirm-on-screen", "year_after": 2111, "advanced": true, "dt": 0.1}
+{"turn": 1, "year_before": 2111, "t": "16:01:04", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "dialog": "confirm-after-click", "year_after": 2112, "advanced": true, "dt": 0.1}
+{"turn": 2, "year_before": 2112, "t": "16:01:12", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "dialog": "confirm-after-click", "year_after": 2113, "advanced": true, "dt": 0.1}
+{"turn": 3, "year_before": 2113, "t": "16:01:24", "ocr_year": null, "button": null, "note": "no-turn-button", "year_after": 2113, "advanced": false, "dt": 25.0, "stuck": true}
+{"turn": 4, "year_before": 2113, "t": "16:01:54", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "dialog": "confirm-after-click", "year_after": 2114, "advanced": true, "dt": 0.1}
+{"turn": 5, "year_before": 2114, "t": "16:02:06", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "dialog": "confirm-after-click", "year_after": 2115, "advanced": true, "dt": 0.1}
+{"turn": 6, "year_before": 2115, "t": "16:02:15", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "dialog": "confirm-after-click", "year_after": 2116, "advanced": true, "dt": 0.1}
+{"turn": 7, "year_before": 2116, "t": "16:02:24", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "dialog": "confirm-after-click", "year_after": 2117, "advanced": true, "dt": 0.1}
+{"turn": 8, "year_before": 2117, "t": "16:02:34", "ocr_year": null, "button": null, "note": "no-turn-button", "year_after": 2117, "advanced": false, "dt": 25.0, "stuck": true}
+{"turn": 9, "year_before": 2117, "t": "16:03:07", "ocr_year": null, "button": null, "note": "no-turn-button", "year_after": 2117, "advanced": false, "dt": 25.0, "stuck": true}

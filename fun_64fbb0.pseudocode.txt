@@ -1,0 +1,23 @@
+
+undefined4 FUN_0064fbb0(uint param_1)
+
+{
+  undefined4 *puVar1;
+  undefined4 uVar2;
+  
+  if ((param_1 < DAT_0099e220) &&
+     ((*(byte *)((&DAT_0099e120)[(int)param_1 >> 5] + 4 + (param_1 & 0x1f) * 0x24) & 1) != 0)) {
+    FUN_0065c3f0(param_1);
+    uVar2 = __close_lk(param_1);
+    __unlock_fhandle(param_1);
+  }
+  else {
+    puVar1 = (undefined4 *)FUN_006566f0();
+    *puVar1 = 9;
+    puVar1 = (undefined4 *)FUN_00656700();
+    *puVar1 = 0;
+    uVar2 = 0xffffffff;
+  }
+  return uVar2;
+}
+

@@ -1,0 +1,17 @@
+{"turn": 0, "year_before": 2126, "t": "16:11:58", "handled": ["dialog", "hud", "confirm-after-press"], "dialogs": ["agi"], "year_after": 2127, "advanced": true, "dt": 0.1}
+{"turn": 1, "year_before": 2127, "t": "16:12:12", "handled": ["hud", "confirm-after-press"], "year_after": 2128, "advanced": true, "dt": 0.1}
+{"turn": 2, "year_before": 2128, "t": "16:12:20", "handled": ["hud", "confirm-after-press"], "year_after": 2129, "advanced": true, "dt": 0.1}
+{"turn": 3, "year_before": 2129, "t": "16:12:28", "handled": ["hud", "confirm-after-press"], "year_after": 2130, "advanced": true, "dt": 0.1}
+{"turn": 4, "year_before": 2130, "t": "16:12:40", "handled": ["hud", "confirm-after-press"], "year_after": 2131, "advanced": true, "dt": 0.1}
+{"turn": 5, "year_before": 2131, "t": "16:12:47", "handled": ["hud", "confirm-after-press"], "year_after": 2132, "advanced": true, "dt": 0.1}
+{"turn": 6, "year_before": 2132, "t": "16:12:55", "handled": ["hud", "confirm-after-press"], "year_after": 2133, "advanced": true, "dt": 0.1}
+{"turn": 7, "year_before": 2133, "t": "16:13:04", "handled": ["hud", "confirm-after-press"], "year_after": 2134, "advanced": true, "dt": 0.1}
+{"turn": 8, "year_before": 2134, "t": "16:13:10", "handled": ["hud", "confirm-after-press"], "year_after": 2135, "advanced": true, "dt": 0.1}
+{"turn": 9, "year_before": 2135, "t": "16:13:18", "handled": ["hud", "confirm-after-press"], "year_after": 2136, "advanced": true, "dt": 0.1}
+{"turn": 10, "year_before": 2136, "t": "16:13:25", "handled": ["hud", "confirm-after-press"], "year_after": 2137, "advanced": true, "dt": 0.1}
+{"turn": 11, "year_before": 2137, "t": "16:13:33", "handled": ["hud", "confirm-after-press"], "year_after": 2138, "advanced": true, "dt": 0.1}
+{"turn": 12, "year_before": 2138, "t": "16:13:41", "handled": ["hud", "confirm-after-press"], "year_after": 2139, "advanced": true, "dt": 0.1}
+{"turn": 13, "year_before": 2139, "t": "16:13:49", "handled": ["hud", "confirm-after-press"], "year_after": 2140, "advanced": true, "dt": 0.1}
+{"turn": 14, "year_before": 2140, "t": "16:13:56", "handled": ["hud", "confirm-after-press"], "year_after": 2141, "advanced": true, "dt": 0.1}
+{"turn": 15, "year_before": 2141, "t": "16:14:04", "handled": ["hud", "confirm-after-press"], "year_after": 2141, "advanced": false, "dt": 90.0, "stuck": true}
+{"turn": 16, "year_before": 2141, "t": "16:15:41", "handled": ["hud"], "year_after": 2141, "advanced": false, "dt": 90.0, "stuck": true}

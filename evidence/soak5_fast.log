@@ -1,0 +1,5 @@
+win=10485761 start year=2101
+turn 0: 2101->2101 STUCK (45.2s, unknown,confirm,confirm,confirm,confirm,confirm)
+turn 1: 2101->2101 STUCK (45.3s, confirm,confirm,confirm,confirm,confirm,confirm)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_20261020_170259.jsonl

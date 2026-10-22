@@ -1,0 +1,49 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4d1280
+Breakpoint 2 at 0x4d1da1
+Breakpoint 3 at 0x4ccbe2
+Breakpoint 4 at 0x5f0583
+Breakpoint 5 at 0x483470
+Breakpoint 6 at 0x4d14fb
+Breakpoint 7 at 0x4d194a
+Breakpoint 8 at 0x45abb40
+Breakpoint 9 at 0x45abd90
+Breakpoint 10 at 0x450bea0
+Breakpoint 11 at 0x441b780
+Breakpoint 12 at 0x450fc20
+Breakpoint 13 at 0x45355c0
+Breakpoint 14 at 0x4551a20
+Breakpoint 15 at 0x447f490
+M45 SETTER unit=30
+M45 BORDERRET eax=-1  (setter's border-owner lookup for the tile)
+M45 LIMITRET eax=12  (0x4e9b40 base-limit query)
+M45 PANE #1 id=NEWBASE
+M45 ALLOCRET base=73 unit=30
+M45 CREATERET base=73 unit=30
+M45 PANE #2 id=BASEFOUNDED
+
+Thread 1 "terran.exe" received signal SIGCONT, Continued.
+0xeb2ae68b in ?? ()
+[Inferior 1 (process 914079) detached]

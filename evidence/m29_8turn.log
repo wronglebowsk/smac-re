@@ -1,0 +1,19 @@
+win=10485761 start year=2205
+    [hud] ip if eo Tech i] TURN COMPLETE Elev: 1236m. [| SS re Rolling & Arid (22-1)
+turn 0: 2205->2206 OK (7.4s, hud,confirm-after-press)
+    [hud] ip Teche: Brother Lal iM TURN COMPLETE Es Mill: Sister Minizarn Pop: Chainen “issn Elew. 1236m
+turn 1: 2206->2207 OK (9.2s, hud,confirm-after-press)
+    [hud] ip if ee —= oO TURN COMPLETE = Corrmeence Elew: 12360 [ ee | Laser Squad
+turn 2: 2207->2208 OK (8.3s, hud,confirm-after-press)
+    [hud] is if ee ————— o TURN COMPLETE Elew: 12360 Le] SS re Rolling & Arid (22-1)
+turn 3: 2208->2209 OK (9.1s, hud,confirm-after-press)
+    [hud] ip Teche: Brother Lal iM TURN COMPLETE = Mill: Sister Minizrrn Pop: Brother Lal Elew. 1236m
+turn 4: 2209->2210 OK (12.9s, hud,confirm-after-press)
+    [dialog] t CHIEF PLANETOLOGIST a og, Hercules has receded from perihelion. Native | ' ‘i Vig ts
+    [hud] ip Corrumenres Risstes 1 i | TURN COMPLETE = Corrumenree | rome Ol turn Gross Ioome:
+turn 5: 2210->2211 OK (12.3s, dialog,ai-phase:dialog,hud,confirm-after-press)
+    [hud] ip if es | Facoen oirences g TURN COMPLETE Elev: 1236m | . | [ve |
+turn 6: 2211->2212 OK (8.9s, hud,confirm-after-press)
+    [hud] ip Tectt: Brother Lal iM TURN COMPLETE = Mill: Sister Minigar Pop: Chainmen ‘isan Elew: 236m
+turn 7: 2212->2213 OK (8.9s, hud,confirm-after-press)
+trace: /home/n100/reverse/smac/evidence/trace_20261021_130418.jsonl

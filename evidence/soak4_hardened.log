@@ -1,0 +1,5 @@
+win=10485761 start year=2116
+turn 0: 2116->2117 OK (10.4s, hud,confirm-after-press)
+turn 1: 2117->2118 OK (63.8s, unknown,unknown,unknown,unknown,unknown,unknown)
+turn 2: 2118->2119 OK (10.6s, hud,confirm-after-press)
+trace: /home/n100/reverse/smac/evidence/trace_20261020_165009.jsonl

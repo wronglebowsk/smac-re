@@ -1,0 +1,32 @@
+
+void FUN_00638d5c(int param_1)
+
+{
+  DWORD DVar1;
+  int iVar2;
+  HANDLE local_10;
+  undefined4 local_c;
+  int local_8;
+  
+  local_8 = param_1;
+  local_10 = *(HANDLE *)(param_1 + 0xc);
+  local_c = *(undefined4 *)(param_1 + 0x10);
+  do {
+    DVar1 = WaitForMultipleObjects(2,&local_10,0,0xffffffff);
+    if (DVar1 != 0) {
+LAB_00638dd4:
+      __endthread();
+      return;
+    }
+    EnterCriticalSection((LPCRITICAL_SECTION)(local_8 + 0x24));
+    if (*(int *)(local_8 + 0x18) == 0) {
+      LeaveCriticalSection((LPCRITICAL_SECTION)(local_8 + 0x24));
+      goto LAB_00638dd4;
+    }
+    do {
+      iVar2 = FUN_00638ddd(local_8);
+    } while (iVar2 != 0);
+    LeaveCriticalSection((LPCRITICAL_SECTION)(local_8 + 0x24));
+  } while( true );
+}
+

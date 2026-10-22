@@ -1,0 +1,14 @@
+win=10485761 start year=2101
+turn 0: 2101->2102 OK (11.8s, hud,confirm-after-press)
+turn 1: 2102->2103 OK (12.4s, hud,confirm-after-press)
+turn 2: 2103->2104 OK (8.6s, hud,confirm-after-press)
+turn 3: 2104->2105 OK (8.2s, hud,confirm-after-press)
+turn 4: 2105->2106 OK (7.7s, hud,confirm-after-press)
+turn 5: 2106->2107 OK (37.6s, unknown,base,base,hud,confirm-after-press)
+turn 6: 2107->2108 OK (9.2s, hud,confirm-after-press)
+turn 7: 2108->2109 OK (10.2s, hud,confirm-after-press)
+turn 8: 2109->2110 OK (9.6s, hud,confirm-after-press)
+turn 9: 2110->2111 OK (8.1s, hud,confirm-after-press)
+turn 10: 2111->2111 STUCK (46.1s, unknown,base,base,base,base,unknown)
+turn 11: 2111->2112 OK (39.5s, unknown,movie,movie,movie,movie,movie)
+trace: /home/n100/reverse/smac/evidence/trace_20261020_172518.jsonl

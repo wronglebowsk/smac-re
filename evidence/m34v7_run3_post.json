@@ -1,0 +1,44 @@
+{
+ "t": "20:28:55",
+ "pid": 914079,
+ "year": 2266,
+ "player": 3,
+ "cur_player": 3,
+ "sel": -1,
+ "orders_mode": 0,
+ "pending": 1,
+ "energy": 40,
+ "formers": [
+  {
+   "idx": 44,
+   "x": 45,
+   "y": 7,
+   "flags": 0,
+   "order": 2,
+   "mpused": 0
+  }
+ ],
+ "target": 45,
+ "unit": {
+  "x": 41,
+  "y": 5,
+  "flags": 81924,
+  "type": 193,
+  "owner": 3,
+  "order": 24,
+  "mpused": 6,
+  "raw": "29000500044001000000c10000000300021800002700ffffffffffff0500ffffffffffff010000000603012f0000ffffffffffff"
+ },
+ "tile_addr": "0x92d3e4",
+ "tile": "544e9905353d730500eb000510e40005ebe83e05dbcd1605c1ad1a05f5000002f600000280808004ff000004",
+ "neighbours": {
+  "42,5": "00ff0004ffff00040000ff04ff00ff0400ffff04ffffff042c6c0000ffffffff000000000000000000000000",
+  "40,5": "544e9905353d730500eb000510e40005ebe83e05dbcd1605c1ad1a05f5000002f600000280808004ff000004",
+  "41,6": "00000000000000000000000000000000000000000000000000000000000000009c0800000000000002000000",
+  "41,4": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "42,6": "0600000001000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "40,6": "00000000000000000000000000000000000000000000000000000000000000009c0800000000000002000000",
+  "42,4": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "40,4": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+ }
+}

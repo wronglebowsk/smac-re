@@ -1,0 +1,7 @@
+[locate] {'idx': 71, 'addr': 9842272, 'name': 'Climactic Research', 'pop': 5, 'min40': 0, 'q50': 2, 'd0': 0, 'c0': 7, 'cc': -1, 'f3c': -2, 'fc': 2}
+[poke] +0x3c = 500
+[poke] +0xcc = 1
+[poke] +0xd0 = 200
+[poke] +0x40 = 200
+[gdb] armed (log block-buffered; read after detach)
+{"reason": "rounds", "year0": 2348, "final_year": 2349, "ocr_passes": 43, "rounds": 1}

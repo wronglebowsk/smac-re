@@ -1,0 +1,406 @@
+== FUN_00476580 gate: [widget+0x1ef4c] == &DAT_0091cae4 decides click-to-move
+Disassembly of section .text:
+
+00476640 <.text+0x75640>:
+  476640:	00 8b 45 f0 33 c9    	add    BYTE PTR [ebx-0x36cc0fbb],cl
+  476646:	39 90 4c ef 01 00    	cmp    DWORD PTR [eax+0x1ef4c],edx
+  47664c:	0f 94 c1             	sete   cl
+  47664f:	89 4d d4             	mov    DWORD PTR [ebp-0x2c],ecx
+  476652:	8b 55 f0             	mov    edx,DWORD PTR [ebp-0x10]
+  476655:	8b 82 24 de 01 00    	mov    eax,DWORD PTR [edx+0x1de24]
+  47665b:	89 45 e4             	mov    DWORD PTR [ebp-0x1c],eax
+  47665e:	8b                   	.byte 0x8b
+  47665f:	4d                   	dec    ebp
+
+== the three +17=0x18 store sites
+17376:  40c992:	8a 91 89 32 93 00    	mov    dl,BYTE PTR [ecx+0x933289]
+17512:  40cb82:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+17648:  40cd8b:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+17912:  40d187:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x0
+17928:  40d1b9:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+18100:  40d431:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x2
+18139:  40d4c6:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+20837:  40f6c9:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+32743:  418c07:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+90348:  4478dd:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+150011:  46eebf:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+151198:  46fc30:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+158811:  475bc3:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+159781:  476ac7:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+159837:  476bae:	c6 82 89 32 93 00 18 	mov    BYTE PTR [edx+0x933289],0x18
+159873:  476c39:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+190390:  48f6d8:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+190487:  48f7d8:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+221496:  4aa27c:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+221634:  4aa475:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+247856:  4bd6b9:	0f be b1 89 32 93 00 	movsx  esi,BYTE PTR [ecx+0x933289]
+247877:  4bd704:	0f be 82 89 32 93 00 	movsx  eax,BYTE PTR [edx+0x933289]
+247979:  4bd855:	0f be 82 89 32 93 00 	movsx  eax,BYTE PTR [edx+0x933289]
+248086:  4bd9c1:	0f be 88 89 32 93 00 	movsx  ecx,BYTE PTR [eax+0x933289]
+248104:  4bda00:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+248109:  4bda12:	0f be 88 89 32 93 00 	movsx  ecx,BYTE PTR [eax+0x933289]
+249329:  4be98f:	0f be 88 89 32 93 00 	movsx  ecx,BYTE PTR [eax+0x933289]
+249334:  4be9a5:	0f be 82 89 32 93 00 	movsx  eax,BYTE PTR [edx+0x933289]
+249340:  4be9bd:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+252121:  4c0f45:	0f be 91 89 32 93 00 	movsx  edx,BYTE PTR [ecx+0x933289]
+252126:  4c0f5b:	0f be 88 89 32 93 00 	movsx  ecx,BYTE PTR [eax+0x933289]
+252154:  4c0fbd:	0f be 82 89 32 93 00 	movsx  eax,BYTE PTR [edx+0x933289]
+267513:  4ccf3e:	88 87 89 32 93 00    	mov    BYTE PTR [edi+0x933289],al
+267624:  4cd097:	0f be 81 89 32 93 00 	movsx  eax,BYTE PTR [ecx+0x933289]
+267844:  4cd31f:	c6 82 89 32 93 00 00 	mov    BYTE PTR [edx+0x933289],0x0
+267891:  4cd3a1:	0f be b8 89 32 93 00 	movsx  edi,BYTE PTR [eax+0x933289]
+267894:  4cd3ac:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+268438:  4cda3a:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+269292:  4ce4cd:	8a 90 89 32 93 00    	mov    dl,BYTE PTR [eax+0x933289]
+269342:  4ce566:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+269352:  4ce59a:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+269365:  4ce5d7:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+269386:  4ce625:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+269437:  4ce6e0:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x0
+269513:  4ce7da:	0f be b1 89 32 93 00 	movsx  esi,BYTE PTR [ecx+0x933289]
+269515:  4ce7e3:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+269616:  4ce92b:	0f be 0c 95 89 32 93 	movsx  ecx,BYTE PTR [edx*4+0x933289]
+269628:  4ce94a:	0f be 1c 8d 89 32 93 	movsx  ebx,BYTE PTR [ecx*4+0x933289]
+269637:  4ce965:	88 1c 85 89 32 93 00 	mov    BYTE PTR [eax*4+0x933289],bl
+269696:  4cea18:	0f be 04 8d 89 32 93 	movsx  eax,BYTE PTR [ecx*4+0x933289]
+269706:  4cea30:	0f be 1c 85 89 32 93 	movsx  ebx,BYTE PTR [eax*4+0x933289]
+269715:  4cea4b:	88 1c 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],bl
+269722:  4cea5d:	80 3c 95 89 32 93 00 	cmp    BYTE PTR [edx*4+0x933289],0x1c
+269771:  4ceae0:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x1c
+269844:  4ceba1:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x0
+269853:  4cebbd:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+270518:  4cf408:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+270535:  4cf437:	c6 82 89 32 93 00 18 	mov    BYTE PTR [edx+0x933289],0x18
+270557:  4cf48d:	c6 82 89 32 93 00 00 	mov    BYTE PTR [edx+0x933289],0x0
+272295:  4d08e5:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+272378:  4d09f7:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+272498:  4d0b8d:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+273026:  4d120d:	8a 04 b5 89 32 93 00 	mov    al,BYTE PTR [esi*4+0x933289]
+273059:  4d125a:	f6 04 b5 89 32 93 00 	test   BYTE PTR [esi*4+0x933289],0x40
+273062:  4d1264:	c6 04 b5 89 32 93 00 	mov    BYTE PTR [esi*4+0x933289],0x0
+274190:  4d1fe6:	80 3c 8d 89 32 93 00 	cmp    BYTE PTR [ecx*4+0x933289],0x1
+274194:  4d1ff1:	c6 04 8d 89 32 93 00 	mov    BYTE PTR [ecx*4+0x933289],0x0
+274223:  4d204e:	8a 0c 95 89 32 93 00 	mov    cl,BYTE PTR [edx*4+0x933289]
+275820:  4d3888:	88 99 89 32 93 00    	mov    BYTE PTR [ecx+0x933289],bl
+276591:  4d4177:	8a 91 89 32 93 00    	mov    dl,BYTE PTR [ecx+0x933289]
+276607:  4d41ac:	80 b9 89 32 93 00 02 	cmp    BYTE PTR [ecx+0x933289],0x2
+276639:  4d422d:	8a 0c 8d 89 32 93 00 	mov    cl,BYTE PTR [ecx*4+0x933289]
+276724:  4d4340:	8a 90 89 32 93 00    	mov    dl,BYTE PTR [eax+0x933289]
+278356:  4d5bbf:	88 0c 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],cl
+280422:  4d7a16:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+280466:  4d7ae5:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+281378:  4d87d5:	88 98 89 32 93 00    	mov    BYTE PTR [eax+0x933289],bl
+282235:  4d9269:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+282241:  4d928e:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+282247:  4d92a5:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+282298:  4d935d:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+282410:  4d949a:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+282556:  4d965d:	c6 81 89 32 93 00 03 	mov    BYTE PTR [ecx+0x933289],0x3
+282801:  4d9962:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+283145:  4d9dd1:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+296549:  4e5179:	b8 89 32 93 00       	mov    eax,0x933289
+311931:  4f0f15:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+314328:  4f3068:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+333738:  5020e4:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+334693:  502c15:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+336208:  503f63:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+336463:  5042b9:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+336506:  504345:	8a 83 89 32 93 00    	mov    al,BYTE PTR [ebx+0x933289]
+336510:  504355:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+337225:  504c3c:	80 bf 89 32 93 00 02 	cmp    BYTE PTR [edi+0x933289],0x2
+339170:  506481:	80 b9 89 32 93 00 01 	cmp    BYTE PTR [ecx+0x933289],0x1
+344845:  50a863:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+344872:  50a8c2:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+347224:  50c5aa:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+347260:  50c640:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+347386:  50c807:	8a 91 89 32 93 00    	mov    dl,BYTE PTR [ecx+0x933289]
+347420:  50c88c:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+347450:  50c90e:	8a 91 89 32 93 00    	mov    dl,BYTE PTR [ecx+0x933289]
+350431:  50ef98:	8a 04 95 89 32 93 00 	mov    al,BYTE PTR [edx*4+0x933289]
+350463:  50eff6:	8a 04 95 89 32 93 00 	mov    al,BYTE PTR [edx*4+0x933289]
+350495:  50f07e:	80 3c 85 89 32 93 00 	cmp    BYTE PTR [eax*4+0x933289],0x18
+350549:  50f15e:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+350575:  50f1c9:	8a 90 89 32 93 00    	mov    dl,BYTE PTR [eax+0x933289]
+350593:  50f1f7:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+350667:  50f2fe:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+350850:  50f59c:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+351001:  50f7f6:	80 3c 95 89 32 93 00 	cmp    BYTE PTR [edx*4+0x933289],0x18
+355183:  512daf:	38 91 89 32 93 00    	cmp    BYTE PTR [ecx+0x933289],dl
+355363:  513045:	88 1c 85 89 32 93 00 	mov    BYTE PTR [eax*4+0x933289],bl
+358797:  5162c2:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x19
+370808:  51f7ff:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+370820:  51f826:	88 86 89 32 93 00    	mov    BYTE PTR [esi+0x933289],al
+371060:  51fb43:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+371235:  51fd69:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+371262:  51fdc5:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+382729:  528a8a:	0f be 0c 95 89 32 93 	movsx  ecx,BYTE PTR [edx*4+0x933289]
+382829:  528bcc:	0f be 0c 95 89 32 93 	movsx  ecx,BYTE PTR [edx*4+0x933289]
+383425:  5292db:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+383565:  5294b9:	88 98 89 32 93 00    	mov    BYTE PTR [eax+0x933289],bl
+383667:  529629:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+384108:  529baa:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+384339:  529ea4:	8a 04 85 89 32 93 00 	mov    al,BYTE PTR [eax*4+0x933289]
+384456:  529ff5:	0f be 14 85 89 32 93 	movsx  edx,BYTE PTR [eax*4+0x933289]
+389260:  52de9a:	0f be 0c 95 89 32 93 	movsx  ecx,BYTE PTR [edx*4+0x933289]
+389323:  52df6c:	88 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],al
+431199:  550030:	0f be 86 89 32 93 00 	movsx  eax,BYTE PTR [esi+0x933289]
+439197:  556106:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+440391:  556ffe:	80 be 89 32 93 00 02 	cmp    BYTE PTR [esi+0x933289],0x2
+440605:  5572c6:	80 be 89 32 93 00 02 	cmp    BYTE PTR [esi+0x933289],0x2
+440675:  5573a5:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+440683:  5573bc:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+440716:  55741b:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+441164:  5579f5:	80 ba 89 32 93 00 02 	cmp    BYTE PTR [edx+0x933289],0x2
+443011:  5591af:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+443249:  559500:	c6 87 89 32 93 00 18 	mov    BYTE PTR [edi+0x933289],0x18
+443294:  5595b2:	80 bf 89 32 93 00 02 	cmp    BYTE PTR [edi+0x933289],0x2
+443389:  5596f1:	80 ba 89 32 93 00 02 	cmp    BYTE PTR [edx+0x933289],0x2
+443913:  559db5:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+444041:  559f57:	c6 86 89 32 93 00 18 	mov    BYTE PTR [esi+0x933289],0x18
+444194:  55a140:	c6 86 89 32 93 00 18 	mov    BYTE PTR [esi+0x933289],0x18
+446332:  55b87f:	8a 82 89 32 93 00    	mov    al,BYTE PTR [edx+0x933289]
+447020:  55c05b:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+447057:  55c0ed:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+447102:  55c172:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+447701:  55c8db:	c6 83 89 32 93 00 58 	mov    BYTE PTR [ebx+0x933289],0x58
+447741:  55c93e:	80 be 89 32 93 00 18 	cmp    BYTE PTR [esi+0x933289],0x18
+447892:  55cb19:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+448077:  55cd5a:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+448167:  55ce7f:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+448712:  55d506:	c6 82 89 32 93 00 18 	mov    BYTE PTR [edx+0x933289],0x18
+448731:  55d561:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+448750:  55d5b6:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+448782:  55d629:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+448879:  55d742:	c6 82 89 32 93 00 00 	mov    BYTE PTR [edx+0x933289],0x0
+449506:  55def5:	c6 82 89 32 93 00 18 	mov    BYTE PTR [edx+0x933289],0x18
+449611:  55e072:	c6 87 89 32 93 00 18 	mov    BYTE PTR [edi+0x933289],0x18
+449629:  55e0c7:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+449672:  55e150:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+449880:  55e3fd:	8a 9b 89 32 93 00    	mov    bl,BYTE PTR [ebx+0x933289]
+449896:  55e42e:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+449916:  55e484:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+449930:  55e4a4:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+449940:  55e4d7:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+450398:  55ea7b:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+450468:  55eb76:	c6 87 89 32 93 00 18 	mov    BYTE PTR [edi+0x933289],0x18
+450487:  55ebce:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+451723:  55fa51:	8a 83 89 32 93 00    	mov    al,BYTE PTR [ebx+0x933289]
+451756:  55fac6:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+452095:  55ff5a:	c6 87 89 32 93 00 0d 	mov    BYTE PTR [edi+0x933289],0xd
+452117:  55ff9b:	c6 87 89 32 93 00 0d 	mov    BYTE PTR [edi+0x933289],0xd
+452152:  560002:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+452163:  560021:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+452181:  56005f:	c6 87 89 32 93 00 0e 	mov    BYTE PTR [edi+0x933289],0xe
+452203:  5600b0:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+452344:  560294:	c6 81 89 32 93 00 18 	mov    BYTE PTR [ecx+0x933289],0x18
+452384:  56032e:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+452388:  560348:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+452409:  560386:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+452635:  56063a:	88 88 89 32 93 00    	mov    BYTE PTR [eax+0x933289],cl
+452650:  560679:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+452729:  560776:	c6 87 89 32 93 00 0e 	mov    BYTE PTR [edi+0x933289],0xe
+452758:  5607d1:	c6 87 89 32 93 00 04 	mov    BYTE PTR [edi+0x933289],0x4
+452816:  560887:	c6 87 89 32 93 00 07 	mov    BYTE PTR [edi+0x933289],0x7
+452839:  5608da:	c6 87 89 32 93 00 06 	mov    BYTE PTR [edi+0x933289],0x6
+452878:  560957:	c6 87 89 32 93 00 09 	mov    BYTE PTR [edi+0x933289],0x9
+452906:  5609bf:	c6 87 89 32 93 00 04 	mov    BYTE PTR [edi+0x933289],0x4
+452978:  560abc:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+453008:  560b28:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+453160:  560d2c:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+453237:  560e67:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+453648:  561391:	8a 81 89 32 93 00    	mov    al,BYTE PTR [ecx+0x933289]
+453938:  56170d:	c6 80 89 32 93 00 03 	mov    BYTE PTR [eax+0x933289],0x3
+454526:  561ee9:	8a 83 89 32 93 00    	mov    al,BYTE PTR [ebx+0x933289]
+454576:  561f9b:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+454965:  56244e:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+455044:  562563:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+455337:  5628f4:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+455748:  562e1c:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+455770:  562e6b:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+456257:  563485:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+456378:  5635ff:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+456573:  563845:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+456919:  563c7e:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+457131:  563f2f:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+457373:  564206:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+457456:  56430f:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+458052:  5649f4:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+458081:  564a59:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+458126:  564aec:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+458565:  56506b:	8a 8a 89 32 93 00    	mov    cl,BYTE PTR [edx+0x933289]
+458646:  565176:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+459179:  5657cf:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+459217:  56586a:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+459227:  565894:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+459414:  565afc:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+459639:  565e02:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+460437:  56682d:	8a 91 89 32 93 00    	mov    dl,BYTE PTR [ecx+0x933289]
+460662:  566afb:	c6 82 89 32 93 00 00 	mov    BYTE PTR [edx+0x933289],0x0
+460708:  566b91:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+460720:  566bbb:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+460725:  566bd5:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+461087:  56700c:	c6 81 89 32 93 00 0d 	mov    BYTE PTR [ecx+0x933289],0xd
+461134:  567090:	c6 82 89 32 93 00 14 	mov    BYTE PTR [edx+0x933289],0x14
+461156:  5670ce:	c6 81 89 32 93 00 10 	mov    BYTE PTR [ecx+0x933289],0x10
+461176:  567104:	c6 81 89 32 93 00 11 	mov    BYTE PTR [ecx+0x933289],0x11
+461196:  56713a:	c6 81 89 32 93 00 12 	mov    BYTE PTR [ecx+0x933289],0x12
+461273:  56724d:	c6 80 89 32 93 00 14 	mov    BYTE PTR [eax+0x933289],0x14
+461312:  5672c7:	c6 82 89 32 93 00 09 	mov    BYTE PTR [edx+0x933289],0x9
+461431:  567434:	c6 86 89 32 93 00 0e 	mov    BYTE PTR [esi+0x933289],0xe
+461451:  567471:	c6 86 89 32 93 00 04 	mov    BYTE PTR [esi+0x933289],0x4
+461520:  567557:	c6 86 89 32 93 00 09 	mov    BYTE PTR [esi+0x933289],0x9
+461538:  567591:	c6 86 89 32 93 00 09 	mov    BYTE PTR [esi+0x933289],0x9
+461559:  5675d0:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+461563:  5675dd:	88 96 89 32 93 00    	mov    BYTE PTR [esi+0x933289],dl
+461577:  567616:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+461622:  5676a0:	c6 86 89 32 93 00 0b 	mov    BYTE PTR [esi+0x933289],0xb
+461633:  5676c1:	c6 86 89 32 93 00 0d 	mov    BYTE PTR [esi+0x933289],0xd
+461692:  567785:	c6 86 89 32 93 00 0b 	mov    BYTE PTR [esi+0x933289],0xb
+461727:  5677ed:	c6 86 89 32 93 00 0d 	mov    BYTE PTR [esi+0x933289],0xd
+461730:  5677fc:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+462184:  567d92:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+462217:  567e02:	c6 83 89 32 93 00 0d 	mov    BYTE PTR [ebx+0x933289],0xd
+462371:  567fe6:	8a 83 89 32 93 00    	mov    al,BYTE PTR [ebx+0x933289]
+462379:  568001:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+462410:  56806e:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+462737:  568459:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+463004:  56877c:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+463088:  56887a:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+463104:  5688ac:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+463202:  5689f9:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+463261:  568ab0:	c6 86 89 32 93 00 02 	mov    BYTE PTR [esi+0x933289],0x2
+463276:  568ae5:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+463287:  568b0c:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+463295:  568b24:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+463384:  568c47:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+463422:  568cc9:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+463428:  568ce7:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+463658:  568fdb:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+464135:  5695ef:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+464172:  56967c:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+464389:  569921:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+464409:  569976:	8a 81 89 32 93 00    	mov    al,BYTE PTR [ecx+0x933289]
+464601:  569bed:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+464754:  569dc9:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+465154:  56a26d:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+465249:  56a3a1:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+465323:  56a48f:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+465457:  56a63f:	8a 8a 89 32 93 00    	mov    cl,BYTE PTR [edx+0x933289]
+465718:  56a96a:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+466030:  56ad36:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+466154:  56aeda:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+466162:  56aefa:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+466168:  56af17:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+466228:  56afde:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+466229:  56afe5:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+467226:  56bbb2:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+467331:  56bcf9:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+468123:  56c6cd:	c6 82 89 32 93 00 00 	mov    BYTE PTR [edx+0x933289],0x0
+468134:  56c704:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+468142:  56c727:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+468147:  56c73b:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+468157:  56c764:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+468339:  56c987:	c6 86 89 32 93 00 58 	mov    BYTE PTR [esi+0x933289],0x58
+468345:  56c9a7:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+468356:  56c9d9:	c6 87 89 32 93 00 18 	mov    BYTE PTR [edi+0x933289],0x18
+468425:  56cad9:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+468430:  56caf3:	c6 87 89 32 93 00 18 	mov    BYTE PTR [edi+0x933289],0x18
+468432:  56cafd:	80 be 89 32 93 00 18 	cmp    BYTE PTR [esi+0x933289],0x18
+468436:  56cb10:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+468476:  56cb8b:	88 86 89 32 93 00    	mov    BYTE PTR [esi+0x933289],al
+468482:  56cb9f:	80 be 89 32 93 00 18 	cmp    BYTE PTR [esi+0x933289],0x18
+468491:  56cbc1:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+468494:  56cbd0:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+468655:  56cdad:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+468744:  56cec5:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+468851:  56d006:	0f be 8f 89 32 93 00 	movsx  ecx,BYTE PTR [edi+0x933289]
+469801:  56d9a2:	80 be 89 32 93 00 18 	cmp    BYTE PTR [esi+0x933289],0x18
+469809:  56d9c1:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+469810:  56d9c8:	8a 8e 89 32 93 00    	mov    cl,BYTE PTR [esi+0x933289]
+471526:  56efce:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+482570:  577231:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x1
+499988:  584c0c:	8a 83 89 32 93 00    	mov    al,BYTE PTR [ebx+0x933289]
+500590:  5855a3:	c6 83 89 32 93 00 03 	mov    BYTE PTR [ebx+0x933289],0x3
+500852:  58596c:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+502476:  586edf:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+502525:  586f96:	80 bf 89 32 93 00 01 	cmp    BYTE PTR [edi+0x933289],0x1
+502585:  58706b:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x0
+502591:  587081:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x0
+502706:  587235:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+503215:  587989:	c6 04 8d 89 32 93 00 	mov    BYTE PTR [ecx*4+0x933289],0x0
+503277:  587a4f:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x0
+503335:  587b0a:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x0
+503905:  5882e7:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+503920:  58832b:	80 be 89 32 93 00 18 	cmp    BYTE PTR [esi+0x933289],0x18
+503959:  5883b7:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+504121:  5885df:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+504227:  588733:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+504270:  5887c8:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+504312:  588843:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+504699:  588d52:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+504715:  588d80:	80 ba 89 32 93 00 18 	cmp    BYTE PTR [edx+0x933289],0x18
+505425:  58965b:	80 b9 89 32 93 00 18 	cmp    BYTE PTR [ecx+0x933289],0x18
+505456:  5896c3:	80 b8 89 32 93 00 01 	cmp    BYTE PTR [eax+0x933289],0x1
+505464:  5896df:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+505508:  589788:	80 be 89 32 93 00 18 	cmp    BYTE PTR [esi+0x933289],0x18
+505598:  5898ae:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+505612:  5898d9:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+506093:  589f4f:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+506277:  58a19b:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+506470:  58a423:	c6 83 89 32 93 00 00 	mov    BYTE PTR [ebx+0x933289],0x0
+506491:  58a466:	c6 04 85 89 32 93 00 	mov    BYTE PTR [eax*4+0x933289],0x0
+506574:  58a582:	80 b9 89 32 93 00 01 	cmp    BYTE PTR [ecx+0x933289],0x1
+506579:  58a596:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+506585:  58a5ac:	8a 8f 89 32 93 00    	mov    cl,BYTE PTR [edi+0x933289]
+506649:  58a662:	80 bf 89 32 93 00 18 	cmp    BYTE PTR [edi+0x933289],0x18
+506689:  58a6f9:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+507006:  58ac40:	88 98 89 32 93 00    	mov    BYTE PTR [eax+0x933289],bl
+507079:  58ad4b:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+507087:  58ad80:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+507099:  58adb6:	c6 80 89 32 93 00 18 	mov    BYTE PTR [eax+0x933289],0x18
+509559:  58cb03:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+509752:  58cd54:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+509780:  58cdc0:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+518873:  59458d:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+530146:  59d29b:	c6 80 89 32 93 00 02 	mov    BYTE PTR [eax+0x933289],0x2
+530164:  59d2d9:	c6 04 85 89 32 93 00 	mov    BYTE PTR [eax*4+0x933289],0x2
+530753:  59da05:	c6 04 85 89 32 93 00 	mov    BYTE PTR [eax*4+0x933289],0x2
+530774:  59da42:	c6 04 95 89 32 93 00 	mov    BYTE PTR [edx*4+0x933289],0x2
+538099:  5a3174:	8a 88 89 32 93 00    	mov    cl,BYTE PTR [eax+0x933289]
+538102:  5a317f:	c6 80 89 32 93 00 00 	mov    BYTE PTR [eax+0x933289],0x0
+538230:  5a32e7:	80 b9 89 32 93 00 01 	cmp    BYTE PTR [ecx+0x933289],0x1
+538282:  5a33a0:	c6 81 89 32 93 00 00 	mov    BYTE PTR [ecx+0x933289],0x0
+539783:  5a469e:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+539817:  5a472c:	8a 87 89 32 93 00    	mov    al,BYTE PTR [edi+0x933289]
+539820:  5a4736:	c6 87 89 32 93 00 00 	mov    BYTE PTR [edi+0x933289],0x0
+539969:  5a4941:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+539972:  5a494b:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+540168:  5a4bb6:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+540171:  5a4bc4:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+541904:  5a60b0:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+541937:  5a6131:	80 be 89 32 93 00 02 	cmp    BYTE PTR [esi+0x933289],0x2
+542007:  5a621f:	80 be 89 32 93 00 01 	cmp    BYTE PTR [esi+0x933289],0x1
+542349:  5a6643:	0f be 14 8d 89 32 93 	movsx  edx,BYTE PTR [ecx*4+0x933289]
+548893:  5ab42f:	c6 80 89 32 93 00 01 	mov    BYTE PTR [eax+0x933289],0x1
+549028:  5ab5c1:	88 88 89 32 93 00    	mov    BYTE PTR [eax+0x933289],cl
+551052:  5acbc0:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+551124:  5acc7f:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+551183:  5acd0b:	8a 8a 89 32 93 00    	mov    cl,BYTE PTR [edx+0x933289]
+551289:  5ace11:	8a 86 89 32 93 00    	mov    al,BYTE PTR [esi+0x933289]
+551317:  5ace75:	c6 86 89 32 93 00 00 	mov    BYTE PTR [esi+0x933289],0x0
+
+== live mode pointer read (normal HUD)
+base 0x8f79e0
+mode ptr 0x0 idx ?
+sel 117 b5b8 1 b5c4 1
+
+== click trace (480,250): MAPH only, no store, no gate return
+MAPH p1=0x1e0 p2=0xfa p3=0 sel=117 mode=1 pend=1
+
+== 0x18 destination source in FUN_004d6fb0 = base arrays 0x95da10/0x95da12
+170:          puVar14 = &DAT_0095da10;
+273:                               (DAT_00692184 * (short)(&DAT_0095da12)[(int)piVar4 * 0x98] +
+274:                               ((int)(short)(&DAT_0095da10)[(int)piVar4 * 0x98] >> 1)) * 0x2c) !=
+542:  piVar12 = (int *)(int)(short)(&DAT_0095da10)[(int)param_1 * 0x98];
+603:      if (((&DAT_0095da10)[(int)piVar21 * 0x98] != (&DAT_00933278)[(int)param_1 * 0x1a]) ||
+604:         ((&DAT_0095da12)[(int)piVar21 * 0x98] != (&DAT_0093327a)[(int)param_1 * 0x1a])) {

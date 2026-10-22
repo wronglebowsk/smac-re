@@ -1,0 +1,42 @@
+[snap0] {"year": 2315, "cur": 3, "nmine": 1, "energy": {"1": 160, "2": 81, "3": 15, "4": 627, "5": 65, "6": 78, "7": 177}, "owners": {"6": {"bases": 17, "minerals": 809, "pop": 62}, "1": {"bases": 10, "minerals": 323, "pop": 42}, "2": {"bases": 24, "minerals": 517, "pop": 133}, "4": {"bases": 9, "minerals": 266, "pop": 35}, "5": {"bases": 4, "minerals": 100, "pop": 14}, "7": {"bases": 9, "minerals": 199, "pop": 47}, "3": {"bases": 1, "minerals": 10, "pop": 5}}}
+[round 1] {"year": 2315, "cur": 3, "nmine": 1, "energy": {"1": 160, "2": 81, "3": 15, "4": 627, "5": 65, "6": 78, "7": 177}, "owners": {"6": {"bases": 17, "minerals": 809, "pop": 62}, "1": {"bases": 10, "minerals": 323, "pop": 42}, "2": {"bases": 24, "minerals": 517, "pop": 133}, "4": {"bases": 9, "minerals": 266, "pop": 35}, "5": {"bases": 4, "minerals": 100, "pop": 14}, "7": {"bases": 9, "minerals": 199, "pop": 47}, "3": {"bases": 1, "minerals": 10, "pop": 5}}, "point": "start-of-our-turn", "hud_econ_ocr": ["PEE", "ETS", "Chainnan", "Yang", "Qusrrelsome", "TRUCE"]}
+[round 2] {"year": 2316, "cur": 3, "nmine": 1, "energy": {"1": 175, "2": 71, "3": 15, "4": 642, "5": 73, "6": 75, "7": 195}, "owners": {"6": {"bases": 17, "minerals": 697, "pop": 63}, "1": {"bases": 10, "minerals": 220, "pop": 44}, "2": {"bases": 24, "minerals": 454, "pop": 135}, "4": {"bases": 8, "minerals": 211, "pop": 34}, "5": {"bases": 4, "minerals": 117, "pop": 14}, "7": {"bases": 9, "minerals": 184, "pop": 47}, "3": {"bases": 1, "minerals": 10, "pop": 5}}, "point": "start-of-our-turn", "hud_econ_ocr": ["a", "Sa", "a", "Research!", "Factorie", "hungne", "workers."]}
+[round 3] {"year": 2317, "cur": 3, "nmine": 1, "energy": {"1": 176, "2": 59, "3": 15, "4": 462, "5": 71, "6": 87, "7": 215}, "owners": {"6": {"bases": 18, "minerals": 788, "pop": 65}, "1": {"bases": 10, "minerals": 147, "pop": 44}, "2": {"bases": 25, "minerals": 472, "pop": 138}, "4": {"bases": 8, "minerals": 327, "pop": 34}, "5": {"bases": 3, "minerals": 67, "pop": 11}, "7": {"bases": 9, "minerals": 219, "pop": 49}, "3": {"bases": 1, "minerals": 6, "pop": 4}}, "point": "start-of-our-turn", "hud_econ_ocr": ["by", "building", "new", "bases", "r", "colony", "will", "grow."]}
+[round 4] {"year": 2318, "cur": 3, "nmine": 1, "energy": {"1": 179, "2": 47, "3": 15, "4": 472, "5": 58, "6": 116, "7": 235}, "owners": {"6": {"bases": 17, "minerals": 762, "pop": 61}, "1": {"bases": 10, "minerals": 177, "pop": 44}, "2": {"bases": 26, "minerals": 549, "pop": 141}, "4": {"bases": 8, "minerals": 385, "pop": 34}, "5": {"bases": 3, "minerals": 37, "pop": 11}, "7": {"bases": 9, "minerals": 164, "pop": 49}, "3": {"bases": 1, "minerals": 2, "pop": 4}}, "point": "start-of-our-turn", "hud_econ_ocr": ["a", "at", "Se", "Patral."]}
+[round 5] {"year": 2319, "cur": 3, "nmine": 1, "energy": {"1": 143, "2": 39, "3": 15, "4": 483, "5": 64, "6": 117, "7": 255}, "owners": {"6": {"bases": 17, "minerals": 665, "pop": 61}, "1": {"bases": 10, "minerals": 211, "pop": 44}, "2": {"bases": 26, "minerals": 565, "pop": 142}, "4": {"bases": 8, "minerals": 433, "pop": 33}, "5": {"bases": 3, "minerals": 20, "pop": 11}, "7": {"bases": 9, "minerals": 197, "pop": 49}, "3": {"bases": 1, "minerals": 8, "pop": 4}}, "point": "start-of-our-turn", "hud_econ_ocr": ["ee"]}
+[round 6] {"year": 2320, "cur": 3, "nmine": 1, "energy": {"1": 205, "2": 121, "3": 19, "4": 452, "5": 70, "6": 111, "7": 274}, "owners": {"6": {"bases": 17, "minerals": 733, "pop": 61}, "1": {"bases": 10, "minerals": 239, "pop": 44}, "2": {"bases": 26, "minerals": 543, "pop": 142}, "4": {"bases": 8, "minerals": 324, "pop": 32}, "5": {"bases": 3, "minerals": 36, "pop": 11}, "7": {"bases": 9, "minerals": 232, "pop": 49}, "3": {"bases": 1, "minerals": 4, "pop": 4}}, "point": "start-of-our-turn", "hud_econ_ocr": ["a", "at", "Se", "Patral."]}
+{
+ "reason": "6 rounds",
+ "deltas": {
+  "rounds": 5,
+  "energy3": 0.8,
+  "energy_by_player": {
+   "1": 9.0,
+   "2": 8.0,
+   "3": 0.8,
+   "4": -35.0,
+   "5": 1.0,
+   "6": 6.6,
+   "7": 19.4
+  },
+  "minerals_by_owner": {
+   "1": -16.8,
+   "2": 5.2,
+   "3": -1.2,
+   "4": 11.6,
+   "5": -12.8,
+   "6": -15.2,
+   "7": 6.6
+  },
+  "bases_by_owner_end": {
+   "1": 10,
+   "2": 26,
+   "3": 1,
+   "4": 8,
+   "5": 3,
+   "6": 17,
+   "7": 9
+  }
+ }
+}
+saved: /home/n100/reverse/smac/evidence/m45c_idle.json

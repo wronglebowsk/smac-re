@@ -1,0 +1,4 @@
+{"turn": 0, "year_before": 2101, "t": "17:08:54", "handled": ["hud", "confirm-after-press", "confirm", "confirm", "confirm", "confirm"], "screens": {"hud": 1, "confirm": 4}, "year_after": 2102, "advanced": true, "dt": 29.2}
+{"turn": 1, "year_before": 2102, "t": "17:09:23", "handled": ["hud", "confirm-after-press", "confirm"], "screens": {"hud": 1, "confirm": 1}, "year_after": 2103, "advanced": true, "dt": 18.3}
+{"turn": 2, "year_before": 2103, "t": "17:09:41", "handled": ["hud", "confirm-after-press", "confirm", "confirm", "confirm", "confirm", "confirm", "confirm", "confirm"], "screens": {"hud": 1, "confirm": 7}, "year_after": 2103, "advanced": false, "dt": 46.8, "stuck": true}
+{"turn": 3, "year_before": 2103, "t": "17:10:29", "handled": ["confirm", "confirm", "confirm", "confirm", "confirm", "confirm"], "screens": {"confirm": 6}, "year_after": 2103, "advanced": false, "dt": 50.5, "stuck": true}

@@ -1,0 +1,12 @@
+Could not attach to process.  If your uid matches the uid of the target
+process, check the setting of /proc/sys/kernel/yama/ptrace_scope, or try
+again as the root user.  For more details, see /etc/sysctl.d/10-ptrace.conf
+warning: process 370597 is already traced by process 675966
+ptrace: Inappropriate ioctl for device.
+Breakpoint 1 at 0x476aa9
+Breakpoint 2 at 0x4d728c
+Breakpoint 3 at 0x5ab355
+Breakpoint 4 at 0x5ab4bc
+Breakpoint 5 at 0x5ab573
+scripts/m23_writesites.gdb:45: Error in sourced command file:
+The program is not being run.

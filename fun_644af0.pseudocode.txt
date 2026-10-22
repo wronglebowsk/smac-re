@@ -1,0 +1,15 @@
+
+undefined4 FUN_00644af0(undefined4 param_1,int *param_2)
+
+{
+  int iVar1;
+  
+  iVar1 = (*DAT_0099dc00)(param_1);
+  *param_2 = iVar1;
+  if (iVar1 == 0) {
+    FUN_006457d0(PTR_s_No_room_0069a8fc);
+    return 0xffffffff;
+  }
+  return 0;
+}
+

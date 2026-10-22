@@ -1,0 +1,115 @@
+0x677c60  TOURBUTTONMESSAGE
+0x677c74  TOURMESSAGEINFO
+0x67ae4c  szUserMessage != NULL
+0x67bb04  MessageBoxA
+0x687886  MessageBoxA
+0x68792c  GetMessageA
+0x68793a  PeekMessageA
+0x68795a  PostMessageA
+0x687a70  ICSendMessage
+0x688214  DispatchMessageA
+0x688228  TranslateMessage
+0x68826a  SendMessageA
+0x688288  MessageBeep
+0x6882ae  PostThreadMessageA
+0x68bf94  Sending BUILD BASE message
+0x68ea50  Server sending upkeep message
+0x68eefc  SPECIAL Sending EXEC DONE to
+0x68f154  Client received acknowledgement
+0x68f1a4  Received SYNCH acknowledgement
+0x68f1e8  Received DIPLO acknowledgement
+0x68f224  Sending MOVE VEH message
+0x68f25c  Net.Action Sending ACTION message to server
+0x68f3d0  Received SYNCH VEH
+0x68f3f4  Sending SYNCH_BASE
+0x68f408  Received SYNCH_BASE
+0x68f4d8  Received CHAT
+0x68f4e8  Received PROJECT
+0x68f5fc  (Sending: Lock failed -- REJECT)
+0x68f620  (Sending: Lock failed -- UPKEEP)
+0x68f644  (Sending: Lock Failed)
+0x68f65c  (Sending: Lock OK)
+0x68f6c8  Sending EXEC DONE to
+0x68f6f4  (Sending: Lock failed -- REJECT)
+0x68f730  (Sending: Add failed)
+0x68f748  (Sending: Add OK)
+0x68fc10  Received PAUSE message
+0x68fc30  Received UNPAUSE message
+0x68fc58  Received TIME CONTROL message
+0x68fca4  Received SERVER CHANGE message
+0x68fcd4  Received OPEN CHANNEL request
+0x68fcf4  Received OPEN CHANNEL SUCCESS
+0x68fd14  Received OPEN CHANNEL FAILED
+0x68fd34  Received CLOSE CHANNEL
+0x68fd68  Received TREATY ON
+0x68fdb0  Received TREATY OFF
+0x68fdc4  Received SET TREATY
+0x68fdd8  Received AGENDA ON
+0x68fdec  Received AGENDA OFF
+0x68fe00  Received SET AGENDA
+0x68fe14  Received ENERGY
+0x68fe24  Received LOAN
+0x68fe34  Received TRADE MAPS
+0x68fe48  Received CEDE BASE
+0x68fe5c  Received WITHDRAWAL
+0x68fe90  Received PACT ENDS
+0x68fea4  Received CORNERING
+0x68fed8  Received CONVENE COUNCIL
+0x68fef4  Received COUNCIL VOTE
+0x68ff0c  Received COUNCIL ARRIVE
+0x68ff24  Received COUNCIL RESOLUTION
+0x68ff40  Received OPEN CHAN
+0x68ff60  Received CLOSE CHAN
+0x68ff80  Received OPEN ACKNOWLEDGE
+0x68ff9c  Received OPEN REFUSE
+0x68ffd0  Received OPEN BUSY
+0x68fffc  Received OPEN OFFER
+0x690010  Received KILL OFFER
+0x690024  Received CLEAR OFFER
+0x69003c  Received CHANNEL STATUS
+0x690054  Received MAYBE DEAL
+0x690068  Received NO DEAL
+0x69007c  Received YES DEAL
+0x690090  Received DONE DEAL
+0x6900a4  Received DEMAND WITHDRAWAL
+0x6900c0  Received VENDETTA WARNING
+0x6900ec  Received LANDMARK
+0x690100  Received KILL LANDMARK
+0x690118  Received RENAME LANDMARK
+0x690160  Sending TREATY ON
+0x690174  Sending TREATY OFF
+0x690188  Sending SET TREATY
+0x69019c  Sending AGENDA ON
+0x6901b0  Sending AGENDA OFF
+0x6901c4  Sending SET AGENDA
+0x6901d8  Sending ENERGY
+0x6901e8  Sending LOAN
+0x6901f8  Sending TRADE MAPS
+0x69020c  Sending TECH
+0x69021c  Sending PACT ENDS
+0x690230  Sending WITHDRAWAL
+0x690244  Sending CEDE BASE
+0x690258  Sending DOUBLE CROSS
+0x6912f8  Auto sending DESTROY2 message
+0x691338  Auto sending ARTY message
+0x691368  Auto sending BUILD BASE message
+0x691388  Auto sending DESTROY message
+0x6913a8  Auto sending DESTROY message
+0x6913c8  Auto sending DESTROY message
+0x6913e8  Auto sending DESTROY message
+0x691484  Auto sending DESTROY2 message
+0x699404  Guaranteed message failed
+0x699420  Message from the Net Underworld
+0x699478  Message from the Net Underworld
+0x6994d0  Message from the Net Underworld
+0x699508  Message from the Net Underworld
+0x699560  Message from the Net Underworld
+0x699598  Message from the Net Underworld
+0x6995f0  Message from the Net Underworld
+0x699684  Message from the Net Underworld
+0x6996bc  Message from the Net Underworld
+0x6996f4  Message from the Net Underworld
+0x69974c  Message from the Net Underworld
+0x699784  Message from the Net Underworld
+0x699a9c  DPERR_NOMESSAGES
+0x699cec  NO message_stamp!

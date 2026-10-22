@@ -1,0 +1,42 @@
+>>> h 19:00:23
+sel rec57 x=43 y=11 flags4=67108864 type=193 owner=3 order=0 nlegs=0 leg=0 dx=-1 dy=-1 mpused=0 dir=2 prev=56 next=58
+>>> slash 19:00:25
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> shift+m 19:00:26
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> shift+s 19:00:27
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> shift+k 19:00:28
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> period 19:00:30
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> o 19:00:31
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> n 19:00:32
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> shift+e 19:00:34
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> shift+b 19:00:35
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> q 19:00:36
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> bracketright 19:00:38
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> bracketleft 19:00:39
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> underscore 19:00:40
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> shift+g 19:00:41
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> r 19:00:43
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> m 19:00:44
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> k 19:00:45
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> d 19:00:47
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> f 19:00:48
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288
+>>> slash 19:00:49
+sel rec57 x=42 y=12 flags4=67125252 type=193 owner=3 order=24 nlegs=0 leg=0 dx=42 dy=12 mpused=6 dir=4 prev=-1 next=288

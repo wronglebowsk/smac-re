@@ -1,0 +1,60 @@
+
+undefined4 FUN_00466400(undefined4 param_1,undefined4 param_2,int param_3)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined4 local_10;
+  int local_8;
+  
+  FUN_00403ff0(&DAT_007cdc00);
+  if (param_3 != 0) {
+    FUN_00404010(&DAT_007cdc00,param_3);
+  }
+  FUN_00466590(FUN_004071d0);
+  FUN_00466550(1);
+  local_8 = FUN_0058e760("Video Mode",0,0);
+  iVar1 = FUN_0058e760("DirectDraw",1,0);
+  if (iVar1 != 0) {
+    if (local_8 == 0) {
+      local_8 = GetSystemMetrics(0);
+    }
+    if (local_8 < 0x400) {
+      local_10 = 800;
+      local_14 = 600;
+      local_18 = 8;
+    }
+    else {
+      local_10 = 0x400;
+      local_14 = 0x300;
+      local_18 = 8;
+    }
+  }
+  iVar1 = FUN_004665c0(&DAT_0092d028,&DAT_007cdbd8,"Sid Meier\'s Alpha Centauri",-(iVar1 != 0) & 4,
+                       local_10,local_14,local_18);
+  if (iVar1 == 0) {
+    iVar1 = FUN_00616b89();
+    if (iVar1 == 0) {
+      iVar1 = FUN_00466610();
+      if (iVar1 == 0) {
+        uVar2 = FUN_00407390(10);
+        FUN_004b96d0(uVar2);
+      }
+      FUN_0061729f("arialn.ttf",PTR_s_Arial_00693b8c,0xc,0);
+      FUN_00522850();
+      FUN_00616e72();
+      FUN_006302ac();
+      uVar2 = 1;
+    }
+    else {
+      uVar2 = 0;
+    }
+  }
+  else {
+    uVar2 = 0;
+  }
+  return uVar2;
+}
+

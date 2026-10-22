@@ -1,0 +1,2 @@
+{"turn": 0, "year_before": 2103, "t": "17:11:26", "handled": ["confirm", "confirm", "confirm", "confirm", "confirm", "confirm", "confirm"], "screens": {"confirm": 7}, "year_after": 2103, "advanced": false, "dt": 48.3, "stuck": true}
+{"turn": 1, "year_before": 2103, "t": "17:12:14", "handled": ["confirm", "confirm", "confirm", "confirm", "confirm", "confirm", "confirm"], "screens": {"confirm": 7}, "year_after": 2103, "advanced": false, "dt": 54.2, "stuck": true}

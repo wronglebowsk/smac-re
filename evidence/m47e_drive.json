@@ -1,0 +1,32 @@
+{
+ "tag": "m47e",
+ "t0": "2026-10-22 12:00:51",
+ "year0": 2335,
+ "events": [
+  "drive: Return on dialog pane",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0",
+  "click TURN_BTN cur=0"
+ ],
+ "clicks": 20,
+ "returns": 0,
+ "year_end": 2335,
+ "secs": 300.0
+}

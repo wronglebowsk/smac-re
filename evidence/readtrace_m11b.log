@@ -1,0 +1,28 @@
+[New LWP 248432]
+[New LWP 248431]
+[New LWP 248430]
+[New LWP 248429]
+[New LWP 248428]
+[New LWP 248427]
+[New LWP 248426]
+[New LWP 248424]
+[New LWP 248423]
+[New LWP 248422]
+[New LWP 248421]
+[New LWP 248420]
+[New LWP 248419]
+[New LWP 248418]
+[New LWP 248417]
+[New LWP 248416]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xed35332c in __kernel_vsyscall ()
+Breakpoint 1 at 0x64cc00
+Breakpoint 2 at 0x64c9a0
+READ size=2724 count=1
+READ size=140800 count=1
+[Inferior 1 (process 248412) detached]

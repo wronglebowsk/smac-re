@@ -1,0 +1,51 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb2ae68b in ?? ()
+Breakpoint 1 at 0x529090
+Breakpoint 2 at 0x585720
+Breakpoint 3 at 0x5ab320
+
+Thread 1 "terran.exe" hit Breakpoint 1, 0x00529090 in ?? ()
+SOLOWRAP idx=119 dir=1 mode=0
+
+Thread 1 "terran.exe" hit Breakpoint 2, 0x00585720 in ?? ()
+EXEC idx=119 dir=1 mode=3
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab320 in ?? ()
+SETTILE idx=119 x=-2 y=-2
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab320 in ?? ()
+SETTILE idx=119 x=43 y=11
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab320 in ?? ()
+SETTILE idx=117 x=-3 y=-3
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab320 in ?? ()
+SETTILE idx=119 x=-3 y=-3
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab320 in ?? ()
+SETTILE idx=119 x=43 y=11
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab320 in ?? ()
+SETTILE idx=117 x=43 y=11
+[Inferior 1 (process 914079) detached]

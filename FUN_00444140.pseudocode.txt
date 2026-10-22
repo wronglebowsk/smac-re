@@ -1,0 +1,280 @@
+
+void FUN_00444140(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 uVar4;
+  undefined4 uVar5;
+  char *local_20;
+  char *local_1c;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined4 local_10;
+  undefined4 local_c;
+  int local_8;
+  
+  FUN_004625d0(1);
+  local_18 = DAT_007a9848;
+  local_14 = DAT_007a984c;
+  local_10 = DAT_007a9850;
+  local_c = DAT_007a9854;
+  FUN_00403fa0(&local_18,0xfffffffc,0xfffffffc);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = DAT_007a9838;
+  local_14 = DAT_007a983c;
+  local_10 = DAT_007a9840;
+  local_c = DAT_007a9844;
+  FUN_00403fa0(&local_18,0xfffffffc,0xfffffffc);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  FUN_00408180(&local_18,local_8 + 0xecc,local_8 + 0xedc);
+  FUN_00408180(&local_18,&local_18,local_8 + 0xebc);
+  FUN_00403fa0(&local_18,3,3);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  FUN_00408180(&local_18,local_8 + 0xf6c,local_8 + 0xf7c);
+  FUN_00408180(&local_18,&local_18,local_8 + 0xf8c);
+  FUN_00403fa0(&local_18,3,3);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = *(undefined4 *)(local_8 + 0xf0c);
+  local_14 = *(undefined4 *)(local_8 + 0xf10);
+  local_10 = *(undefined4 *)(local_8 + 0xf14);
+  local_c = *(undefined4 *)(local_8 + 0xf18);
+  FUN_005c9fc5(&local_18,&DAT_00787988);
+  FUN_00403fa0(&local_18,0xfffffffd,0xfffffffd);
+  uVar5 = 0;
+  uVar4 = 0;
+  uVar3 = 0;
+  uVar1 = FUN_0057af80(0xe,1,0,0,0);
+  FUN_005c176e(uVar1,uVar3,uVar4,uVar5);
+  CPane::SetBorders((CPane *)(local_8 + 0x444),0x99,-1,1,1);
+  if (DAT_0099aa98 == 0) {
+    local_1c = "TRADE";
+  }
+  else {
+    local_1c = "";
+  }
+  FUN_004081b0(local_1c,&local_18);
+  local_18 = *(undefined4 *)(local_8 + 0xf1c);
+  local_14 = *(undefined4 *)(local_8 + 0xf20);
+  local_10 = *(undefined4 *)(local_8 + 0xf24);
+  local_c = *(undefined4 *)(local_8 + 0xf28);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = *(undefined4 *)(local_8 + 0xf2c);
+  local_14 = *(undefined4 *)(local_8 + 0xf30);
+  local_10 = *(undefined4 *)(local_8 + 0xf34);
+  local_c = *(undefined4 *)(local_8 + 0xf38);
+  FUN_005c9fc5(&local_18,&DAT_00787988);
+  FUN_00403fa0(&local_18,0xfffffffd,0xfffffffd);
+  if (DAT_0099aa98 == 0) {
+    local_20 = "DIPLOMACY";
+  }
+  else {
+    local_20 = "";
+  }
+  FUN_004081b0(local_20,&local_18);
+  local_18 = *(undefined4 *)(local_8 + 0xf3c);
+  local_14 = *(undefined4 *)(local_8 + 0xf40);
+  local_10 = *(undefined4 *)(local_8 + 0xf44);
+  local_c = *(undefined4 *)(local_8 + 0xf48);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = *(undefined4 *)(local_8 + 0xebc);
+  local_14 = *(undefined4 *)(local_8 + 0xec0);
+  local_10 = *(undefined4 *)(local_8 + 0xec4);
+  local_c = *(undefined4 *)(local_8 + 0xec8);
+  FUN_005c9fc5(&local_18,&DAT_00787988);
+  FUN_00403fa0(&local_18,0xfffffffd,0xfffffffd);
+  FUN_00407520();
+  uVar1 = FUN_0061482f(*(undefined4 *)(DAT_00997b20 + 0x748));
+  FUN_00405220(uVar1);
+  FUN_00407540();
+  FUN_00407540();
+  FUN_00423860();
+  FUN_00409690(0x1e2);
+  FUN_00423900();
+  FUN_00405220(&DAT_00672aa8);
+  iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),1);
+  if (iVar2 == 0) {
+    iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),2);
+    if (iVar2 == 0) {
+      iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),4);
+      if (iVar2 == 0) {
+        iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),0x10)
+        ;
+        if (iVar2 == 0) {
+          FUN_00409690(0x1e1);
+          CPane::SetBorders((CPane *)(local_8 + 0x444),0xfb,-1,1,1);
+        }
+        else {
+          FUN_00409690(0xd6);
+          CPane::SetBorders((CPane *)(local_8 + 0x444),0xf9,-1,1,1);
+        }
+      }
+      else {
+        FUN_00409690(0xd5);
+        CPane::SetBorders((CPane *)(local_8 + 0x444),0xfa,-1,1,1);
+      }
+    }
+    else {
+      FUN_00409690(0xd4);
+      CPane::SetBorders((CPane *)(local_8 + 0x444),0xfa,-1,1,1);
+    }
+  }
+  else {
+    FUN_00409690(0xd3);
+    CPane::SetBorders((CPane *)(local_8 + 0x444),0xfa,-1,1,1);
+  }
+  FUN_00405220(&DAT_00672a9c);
+  FUN_004238b0();
+  FUN_004081b0(&DAT_00997120,&local_18);
+  if (DAT_007cdbbc != 0) {
+    FUN_005c9fc5(local_8 + 0xeac,&DAT_00787898);
+    FUN_005c9fc5(local_8 + 0xe9c,&DAT_00787898);
+  }
+  FUN_00443490();
+  FUN_00443830();
+  FUN_00443470();
+  FUN_00443be0();
+  return;
+}
+
+","limitations":[]},"normalized_result":"
+void FUN_00444140(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 uVar4;
+  undefined4 uVar5;
+  char *local_20;
+  char *local_1c;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined4 local_10;
+  undefined4 local_c;
+  int local_8;
+  
+  FUN_004625d0(1);
+  local_18 = DAT_007a9848;
+  local_14 = DAT_007a984c;
+  local_10 = DAT_007a9850;
+  local_c = DAT_007a9854;
+  FUN_00403fa0(&local_18,0xfffffffc,0xfffffffc);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = DAT_007a9838;
+  local_14 = DAT_007a983c;
+  local_10 = DAT_007a9840;
+  local_c = DAT_007a9844;
+  FUN_00403fa0(&local_18,0xfffffffc,0xfffffffc);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  FUN_00408180(&local_18,local_8 + 0xecc,local_8 + 0xedc);
+  FUN_00408180(&local_18,&local_18,local_8 + 0xebc);
+  FUN_00403fa0(&local_18,3,3);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  FUN_00408180(&local_18,local_8 + 0xf6c,local_8 + 0xf7c);
+  FUN_00408180(&local_18,&local_18,local_8 + 0xf8c);
+  FUN_00403fa0(&local_18,3,3);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = *(undefined4 *)(local_8 + 0xf0c);
+  local_14 = *(undefined4 *)(local_8 + 0xf10);
+  local_10 = *(undefined4 *)(local_8 + 0xf14);
+  local_c = *(undefined4 *)(local_8 + 0xf18);
+  FUN_005c9fc5(&local_18,&DAT_00787988);
+  FUN_00403fa0(&local_18,0xfffffffd,0xfffffffd);
+  uVar5 = 0;
+  uVar4 = 0;
+  uVar3 = 0;
+  uVar1 = FUN_0057af80(0xe,1,0,0,0);
+  FUN_005c176e(uVar1,uVar3,uVar4,uVar5);
+  CPane::SetBorders((CPane *)(local_8 + 0x444),0x99,-1,1,1);
+  if (DAT_0099aa98 == 0) {
+    local_1c = "TRADE";
+  }
+  else {
+    local_1c = "";
+  }
+  FUN_004081b0(local_1c,&local_18);
+  local_18 = *(undefined4 *)(local_8 + 0xf1c);
+  local_14 = *(undefined4 *)(local_8 + 0xf20);
+  local_10 = *(undefined4 *)(local_8 + 0xf24);
+  local_c = *(undefined4 *)(local_8 + 0xf28);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = *(undefined4 *)(local_8 + 0xf2c);
+  local_14 = *(undefined4 *)(local_8 + 0xf30);
+  local_10 = *(undefined4 *)(local_8 + 0xf34);
+  local_c = *(undefined4 *)(local_8 + 0xf38);
+  FUN_005c9fc5(&local_18,&DAT_00787988);
+  FUN_00403fa0(&local_18,0xfffffffd,0xfffffffd);
+  if (DAT_0099aa98 == 0) {
+    local_20 = "DIPLOMACY";
+  }
+  else {
+    local_20 = "";
+  }
+  FUN_004081b0(local_20,&local_18);
+  local_18 = *(undefined4 *)(local_8 + 0xf3c);
+  local_14 = *(undefined4 *)(local_8 + 0xf40);
+  local_10 = *(undefined4 *)(local_8 + 0xf44);
+  local_c = *(undefined4 *)(local_8 + 0xf48);
+  FUN_005c9fc5(&local_18,&DAT_00787910);
+  local_18 = *(undefined4 *)(local_8 + 0xebc);
+  local_14 = *(undefined4 *)(local_8 + 0xec0);
+  local_10 = *(undefined4 *)(local_8 + 0xec4);
+  local_c = *(undefined4 *)(local_8 + 0xec8);
+  FUN_005c9fc5(&local_18,&DAT_00787988);
+  FUN_00403fa0(&local_18,0xfffffffd,0xfffffffd);
+  FUN_00407520();
+  uVar1 = FUN_0061482f(*(undefined4 *)(DAT_00997b20 + 0x748));
+  FUN_00405220(uVar1);
+  FUN_00407540();
+  FUN_00407540();
+  FUN_00423860();
+  FUN_00409690(0x1e2);
+  FUN_00423900();
+  FUN_00405220(&DAT_00672aa8);
+  iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),1);
+  if (iVar2 == 0) {
+    iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),2);
+    if (iVar2 == 0) {
+      iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),4);
+      if (iVar2 == 0) {
+        iVar2 = FUN_00426d60(*(undefined4 *)(local_8 + 0xa24),*(undefined4 *)(local_8 + 0xa28),0x10)
+        ;
+        if (iVar2 == 0) {
+          FUN_00409690(0x1e1);
+          CPane::SetBorders((CPane *)(local_8 + 0x444),0xfb,-1,1,1);
+        }
+        else {
+          FUN_00409690(0xd6);
+          CPane::SetBorders((CPane *)(local_8 + 0x444),0xf9,-1,1,1);
+        }
+      }
+      else {
+        FUN_00409690(0xd5);
+        CPane::SetBorders((CPane *)(local_8 + 0x444),0xfa,-1,1,1);
+      }
+    }
+    else {
+      FUN_00409690(0xd4);
+      CPane::SetBorders((CPane *)(local_8 + 0x444),0xfa,-1,1,1);
+    }
+  }
+  else {
+    FUN_00409690(0xd3);
+    CPane::SetBorders((CPane *)(local_8 + 0x444),0xfa,-1,1,1);
+  }
+  FUN_00405220(&DAT_00672a9c);
+  FUN_004238b0();
+  FUN_004081b0(&DAT_00997120,&local_18);
+  if (DAT_007cdbbc != 0) {
+    FUN_005c9fc5(local_8 + 0xeac,&DAT_00787898);
+    FUN_005c9fc5(local_8 + 0xe9c,&DAT_00787898);
+  }
+  FUN_00443490();
+  FUN_00443830();
+  FUN_00443470();
+  FUN_00443be0();
+  return;
+}
+

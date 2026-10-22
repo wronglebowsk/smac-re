@@ -1,0 +1,6047 @@
+{
+ "RULES": [
+  {
+   "fields": [
+    "3"
+   ],
+   "names": [
+    "Movement rate along roads"
+   ]
+  },
+  {
+   "fields": [
+    "2"
+   ],
+   "names": [
+    "Nutrient intake requirement for citizens"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "2"
+   ],
+   "names": [
+    "Max artillery range (larger will break multiplayer)"
+   ]
+  },
+  {
+   "fields": [
+    "8"
+   ],
+   "names": [
+    "Max airdrop range w/o orbital insertion"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Nutrient cost multiplier"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Minerals cost multiplier"
+   ]
+  },
+  {
+   "fields": [
+    "100"
+   ],
+   "names": [
+    "Technology discovery rate as a percentage of standard"
+   ]
+  },
+  {
+   "fields": [
+    "1"
+   ],
+   "names": [
+    "Limits mineral increase for mine without road in square"
+   ]
+  },
+  {
+   "fields": [
+    "-1"
+   ],
+   "names": [
+    "Nutrient effect in mine square (0 or -1)"
+   ]
+  },
+  {
+   "fields": [
+    "5"
+   ],
+   "names": [
+    "Minimum base size to support specialists"
+   ]
+  },
+  {
+   "fields": [
+    "1"
+   ],
+   "names": [
+    "Drones induced by Genejack factory"
+   ]
+  },
+  {
+   "fields": [
+    "7"
+   ],
+   "names": [
+    "Population limit w/o hab complex"
+   ]
+  },
+  {
+   "fields": [
+    "14"
+   ],
+   "names": [
+    "Population limit w/o hab dome"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Extra percentage cost of prototype LAND unit"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Extra percentage cost of prototype SEA unit"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Extra percentage cost of prototype AIR unit"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Players' starting energy reserves"
+   ]
+  },
+  {
+   "fields": [
+    "25"
+   ],
+   "names": [
+    "Combat % -> intrinsic base defense"
+   ]
+  },
+  {
+   "fields": [
+    "0"
+   ],
+   "names": [
+    "Combat % -> attacking along road"
+   ]
+  },
+  {
+   "fields": [
+    "0"
+   ],
+   "names": [
+    "Combat % -> for attacking from higher elevation"
+   ]
+  },
+  {
+   "fields": [
+    "0"
+   ],
+   "names": [
+    "Combat penalty % -> attacking from lower elevation"
+   ]
+  },
+  {
+   "fields": [
+    "25"
+   ],
+   "names": [
+    "Combat % -> Mobile unit in open ground"
+   ]
+  },
+  {
+   "fields": [
+    "0"
+   ],
+   "names": [
+    "Combat % -> Defend vs. mobile in rough"
+   ]
+  },
+  {
+   "fields": [
+    "25"
+   ],
+   "names": [
+    "Combat % -> Infantry vs. Base"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Combat penalty % -> attack after airdrop"
+   ]
+  },
+  {
+   "fields": [
+    "25"
+   ],
+   "names": [
+    "Combat % -> Fanatic attack bonus"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Combat % -> Land based guns vs. ship artillery bonus"
+   ]
+  },
+  {
+   "fields": [
+    "25"
+   ],
+   "names": [
+    "Combat % -> Artillery bonus per level of altitude"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Combat % -> Trance bonus defending vs. psi"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Combat % -> Empath Song bonus attacking vs. psi"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Combat penalty % -> Air superiority unit vs. ground unit"
+   ]
+  },
+  {
+   "fields": [
+    "100"
+   ],
+   "names": [
+    "Combat % -> Air superiority unit vs. air unit"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Combat penalty % -> Non-combat unit defending vs. combat unit"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Combat % -> Comm Jammer unit defending vs. mobile unit"
+   ]
+  },
+  {
+   "fields": [
+    "100"
+   ],
+   "names": [
+    "Combat % -> Bonus vs. ships caught in port"
+   ]
+  },
+  {
+   "fields": [
+    "100"
+   ],
+   "names": [
+    "Combat % -> AAA bonus vs. air units"
+   ]
+  },
+  {
+   "fields": [
+    "25"
+   ],
+   "names": [
+    "Combat % -> Defend in range of friendly Sensor"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Combat % -> Psi attack bonus/penalty per +PLANET"
+   ]
+  },
+  {
+   "fields": [
+    "50"
+   ],
+   "names": [
+    "Retool percent penalty for production change"
+   ]
+  },
+  {
+   "fields": [
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Retool exemption (first X minerals not affected by penalty)"
+   ]
+  },
+  {
+   "fields": [
+    "20"
+   ],
+   "names": [
+    "Minimum # of turns between councils"
+   ]
+  },
+  {
+   "fields": [
+    "5"
+   ],
+   "names": [
+    "Minerals for harvesting forest"
+   ]
+  },
+  {
+   "fields": [
+    "8"
+   ],
+   "names": [
+    "Territory: max distance from base"
+   ]
+  },
+  {
+   "fields": [
+    "20"
+   ],
+   "names": [
+    "Turns to corner Global Energy Market"
+   ]
+  },
+  {
+   "fields": [
+    "CentPsi"
+   ],
+   "names": [
+    "Technology to improve fungus squares"
+   ]
+  },
+  {
+   "fields": [
+    "CentPsi"
+   ],
+   "names": [
+    "Technology to ease fungus movement"
+   ]
+  },
+  {
+   "fields": [
+    "CentEmp"
+   ],
+   "names": [
+    "Technology to build roads in fungus"
+   ]
+  },
+  {
+   "fields": [
+    "Neural"
+   ],
+   "names": [
+    "Technology to allow 2 special abilities for a unit"
+   ]
+  },
+  {
+   "fields": [
+    "Gene"
+   ],
+   "names": [
+    "Technology to allow 3 nutrients in a square"
+   ]
+  },
+  {
+   "fields": [
+    "EcoEng"
+   ],
+   "names": [
+    "Technology to allow 3 minerals in a square"
+   ]
+  },
+  {
+   "fields": [
+    "EnvEcon"
+   ],
+   "names": [
+    "Technology to allow 3 energy in a square"
+   ]
+  },
+  {
+   "fields": [
+    "Gravity"
+   ],
+   "names": [
+    "Technology to allow orbital insertion w/o Space Elevator"
+   ]
+  },
+  {
+   "fields": [
+    "EcoEng2"
+   ],
+   "names": [
+    "Technology for +1 mining platform bonus"
+   ]
+  },
+  {
+   "fields": [
+    "PlaEcon"
+   ],
+   "names": [
+    "Technology for economic victory"
+   ]
+  }
+ ],
+ "TERRAIN": [
+  {
+   "fields": [
+    "Farm",
+    "None",
+    "Kelp Farm",
+    "None",
+    "4",
+    "Cultivate $STR0",
+    "f",
+    "F"
+   ]
+  },
+  {
+   "fields": [
+    "Soil Enricher",
+    "EcoEng2",
+    "Soil Enricher",
+    "Disable",
+    "8",
+    "Construct $STR0",
+    "f",
+    "F"
+   ]
+  },
+  {
+   "fields": [
+    "Mine",
+    "None",
+    "Mining Platform",
+    "None",
+    "8",
+    "Construct $STR0",
+    "M",
+    "M"
+   ]
+  },
+  {
+   "fields": [
+    "Solar Collector",
+    "None",
+    "Tidal Harness",
+    "None",
+    "4",
+    "Construct $STR0",
+    "S",
+    "S"
+   ]
+  },
+  {
+   "fields": [
+    "Forest",
+    "None",
+    "...",
+    "Disable",
+    "4",
+    "Plant $STR0",
+    "F",
+    "Shift+F"
+   ]
+  },
+  {
+   "fields": [
+    "Road",
+    "None",
+    "Road",
+    "Disable",
+    "1",
+    "Build $STR0",
+    "R",
+    "R"
+   ]
+  },
+  {
+   "fields": [
+    "Mag Tube",
+    "Magnets",
+    "Mag Tube",
+    "Disable",
+    "3",
+    "Build $STR0",
+    "R",
+    "R"
+   ]
+  },
+  {
+   "fields": [
+    "Bunker",
+    "MilAlg",
+    "Bunker",
+    "Disable",
+    "5",
+    "Construct $STR0",
+    "K",
+    "K"
+   ]
+  },
+  {
+   "fields": [
+    "Airbase",
+    "DocAir",
+    "Airbase",
+    "Disable",
+    "10",
+    "Construct $STR0",
+    ".",
+    "."
+   ]
+  },
+  {
+   "fields": [
+    "Sensor Array",
+    "None",
+    "Sensor Array",
+    "Disable",
+    "4",
+    "Construct $STR0",
+    "O",
+    "O"
+   ]
+  },
+  {
+   "fields": [
+    "Fungus",
+    "None",
+    "Sea Fungus",
+    "None",
+    "6",
+    "Remove $STR0",
+    "F",
+    "F"
+   ]
+  },
+  {
+   "fields": [
+    "Fungus",
+    "EcoEng",
+    "Sea Fungus",
+    "EcoEng",
+    "6",
+    "Plant $STR0",
+    "F",
+    "Ctrl+F"
+   ]
+  },
+  {
+   "fields": [
+    "Condenser",
+    "EcoEng",
+    "Condenser",
+    "Disable",
+    "12",
+    "Construct $STR0",
+    "N",
+    "N"
+   ]
+  },
+  {
+   "fields": [
+    "Echelon Mirror",
+    "EcoEng",
+    "Echelon Mirror",
+    "Disable",
+    "12",
+    "Construct $STR0",
+    "E",
+    "Shift+E"
+   ]
+  },
+  {
+   "fields": [
+    "Thermal Borehole",
+    "EcoEng",
+    "Thermal Borehole",
+    "Disable",
+    "24",
+    "Construct $STR0",
+    "B",
+    "Shift+B"
+   ]
+  },
+  {
+   "fields": [
+    "Aquifer",
+    "EcoEng",
+    "Aquifer",
+    "Disable",
+    "18",
+    "Drill to $STR0",
+    "Q",
+    "Q"
+   ]
+  },
+  {
+   "fields": [
+    "Raise Land",
+    "EnvEcon",
+    "Raise Sea Floor",
+    "EnvEcon",
+    "12",
+    "Terraform UP",
+    "]",
+    "]]"
+   ]
+  },
+  {
+   "fields": [
+    "Lower Land",
+    "EnvEcon",
+    "Lower Sea Floor",
+    "EnvEcon",
+    "12",
+    "Terraform DOWN",
+    "[",
+    "[["
+   ]
+  },
+  {
+   "fields": [
+    "Level Terrain",
+    "None",
+    "Level Terrain",
+    "Disable",
+    "8",
+    "Terraform LEVEL",
+    "_",
+    "_"
+   ]
+  },
+  {
+   "fields": [
+    "Monolith",
+    "Disable",
+    "Monolith",
+    "Disable",
+    "8",
+    "Place Monolith",
+    "?",
+    "?",
+    "(this is here for map editor)"
+   ]
+  }
+ ],
+ "RESOURCEINFO": [
+  {
+   "fields": [
+    "Ocean Square",
+    "1",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "Base Square",
+    "2",
+    "1",
+    "1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "Bonus Square",
+    "2",
+    "2",
+    "2",
+    "0",
+    "* Mineral +1 if mine present"
+   ]
+  },
+  {
+   "fields": [
+    "Forest Square",
+    "1",
+    "2",
+    "1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "Recycling Tanks",
+    "1",
+    "1",
+    "1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "Improved Land",
+    "1",
+    "*",
+    "*",
+    "0",
+    "\"*\" columns are ignored entirely"
+   ]
+  },
+  {
+   "fields": [
+    "Improved Sea",
+    "2",
+    "1",
+    "3",
+    "0",
+    "* Mineral +1 with Advanced Ecological Engineering"
+   ]
+  },
+  {
+   "fields": [
+    "Monolith",
+    "2",
+    "2",
+    "2",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "Borehole Square",
+    "0",
+    "6",
+    "6",
+    "0"
+   ]
+  }
+ ],
+ "WORLDBUILDER": [
+  {
+   "fields": [
+    "384"
+   ],
+   "names": [
+    "Land base        (Seeded land size of a standard world)"
+   ]
+  },
+  {
+   "fields": [
+    "256"
+   ]
+  },
+  {
+   "fields": [
+    "12"
+   ],
+   "names": [
+    "Continent base   (Base size of a land mass seed)"
+   ]
+  },
+  {
+   "fields": [
+    "24"
+   ]
+  },
+  {
+   "fields": [
+    "1"
+   ],
+   "names": [
+    "Hills base       (Base # of extra hills)"
+   ]
+  },
+  {
+   "fields": [
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "4"
+   ],
+   "names": [
+    "Plateau base     (Basic plateau size)"
+   ]
+  },
+  {
+   "fields": [
+    "8"
+   ]
+  },
+  {
+   "fields": [
+    "8"
+   ],
+   "names": [
+    "Rivers base      (Basic # of rivers)"
+   ]
+  },
+  {
+   "fields": [
+    "12"
+   ],
+   "names": [
+    "Rivers rain mod. (Additional rivers based on RAIN selection)"
+   ]
+  },
+  {
+   "fields": [
+    "14"
+   ],
+   "names": [
+    "Solar Energy     (Latitude DIVISOR for temperature based on HEAT) Smaller # increases effect of HEAT selection"
+   ]
+  },
+  {
+   "fields": [
+    "14"
+   ],
+   "names": [
+    "Thermal band     (Latitude DIVISOR for thermal banding)  Smaller # widens hot bands"
+   ]
+  },
+  {
+   "fields": [
+    "8"
+   ],
+   "names": [
+    "Thermal deviance (Latitude DIVISOR for thermal deviance) Smaller # increases randomness"
+   ]
+  },
+  {
+   "fields": [
+    "8"
+   ],
+   "names": [
+    "Global Warming   (Latitude DIVISOR for global warming)   Smaller # increases effect of warming"
+   ]
+  },
+  {
+   "fields": [
+    "5"
+   ],
+   "names": [
+    "Sea Level Rises  (Magnitude of sea level changes from ice cap melting/freezing)"
+   ]
+  },
+  {
+   "fields": [
+    "5"
+   ],
+   "names": [
+    "Cloudmass peaks  (Size of cloud mass trapped by peaks)"
+   ]
+  },
+  {
+   "fields": [
+    "3"
+   ],
+   "names": [
+    "Cloudmass hills  (Size of cloud mass trapped by hills)"
+   ]
+  },
+  {
+   "fields": [
+    "1"
+   ],
+   "names": [
+    "Rainfall coeff.  (Multiplier for rainfall belts)"
+   ]
+  },
+  {
+   "fields": [
+    "15"
+   ],
+   "names": [
+    "Deep water       (Encourages fractal to grow deep water)"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Shelf            (Encourages fractal to grow shelf)"
+   ]
+  },
+  {
+   "fields": [
+    "15"
+   ],
+   "names": [
+    "Plains           (Encourages highland plains)"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Beach            (Encourages wider beaches)"
+   ]
+  },
+  {
+   "fields": [
+    "10"
+   ],
+   "names": [
+    "Hills            (Encourages hills x TIDAL selection)"
+   ]
+  },
+  {
+   "fields": [
+    "25"
+   ],
+   "names": [
+    "Peaks            (Encourages peaks)"
+   ]
+  },
+  {
+   "fields": [
+    "1"
+   ],
+   "names": [
+    "Fungus           (Fungus coefficient based on LIFE selection)"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "6",
+    "12",
+    "18",
+    "24"
+   ]
+  },
+  {
+   "fields": [
+    "36"
+   ],
+   "names": [
+    "Islands          (Higher # increases island count)"
+   ]
+  }
+ ],
+ "WORLDSIZE": [
+  {
+   "fields": [
+    "5"
+   ]
+  },
+  {
+   "fields": [
+    "Tiny planet|(early conflict)",
+    "24",
+    "48"
+   ]
+  },
+  {
+   "fields": [
+    "Small planet",
+    "32",
+    "64"
+   ]
+  },
+  {
+   "fields": [
+    "Standard planet",
+    "40",
+    "80"
+   ]
+  },
+  {
+   "fields": [
+    "Large planet",
+    "44",
+    "90"
+   ]
+  },
+  {
+   "fields": [
+    "Huge planet|(late conflict)",
+    "64",
+    "128"
+   ]
+  }
+ ],
+ "TIMECONTROLS": [
+  {
+   "fields": [
+    "None",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "Tight",
+    "15",
+    "2",
+    "2",
+    "4",
+    "15",
+    "10",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "Standard",
+    "20",
+    "3",
+    "3",
+    "8",
+    "20",
+    "10",
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "Moderate",
+    "30",
+    "4",
+    "4",
+    "12",
+    "30",
+    "10",
+    "3"
+   ]
+  },
+  {
+   "fields": [
+    "Loose",
+    "45",
+    "5",
+    "5",
+    "16",
+    "45",
+    "10",
+    "3"
+   ]
+  },
+  {
+   "fields": [
+    "Custom",
+    "20",
+    "3",
+    "3",
+    "8",
+    "20",
+    "10",
+    "2"
+   ]
+  }
+ ],
+ "TECHNOLOGY": [
+  {
+   "fields": [
+    "Biogenetics",
+    "Biogen",
+    "0",
+    "3",
+    "2",
+    "2",
+    "None",
+    "None",
+    "000100000"
+   ]
+  },
+  {
+   "fields": [
+    "Industrial Base",
+    "Indust",
+    "2",
+    "1",
+    "3",
+    "0",
+    "None",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Information Networks",
+    "InfNet",
+    "0",
+    "3",
+    "2",
+    "1",
+    "None",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Applied Physics",
+    "Physic",
+    "4",
+    "2",
+    "1",
+    "0",
+    "None",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Social Psych",
+    "Psych",
+    "0",
+    "1",
+    "3",
+    "2",
+    "None",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Doctrine: Mobility",
+    "Mobile",
+    "2",
+    "0",
+    "0",
+    "3",
+    "None",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Centauri Ecology",
+    "Ecology",
+    "0",
+    "1",
+    "2",
+    "3",
+    "None",
+    "None",
+    "100000000"
+   ]
+  },
+  {
+   "fields": [
+    "Superconductor",
+    "Super",
+    "4",
+    "2",
+    "0",
+    "0",
+    "OptComp",
+    "Indust",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Nonlinear Mathematics",
+    "Chaos",
+    "4",
+    "3",
+    "0",
+    "0",
+    "Physic",
+    "InfNet",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Applied Relativity",
+    "E=Mc2",
+    "1",
+    "3",
+    "2",
+    "0",
+    "Super",
+    "Subat",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Fusion Power",
+    "Fusion",
+    "3",
+    "4",
+    "3",
+    "1",
+    "Algor",
+    "Super",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Silksteel Alloys",
+    "Alloys",
+    "3",
+    "0",
+    "4",
+    "2",
+    "Subat",
+    "IndAuto",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Advanced Subatomic Theory",
+    "Subat",
+    "2",
+    "3",
+    "2",
+    "0",
+    "Chemist",
+    "Poly",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "High Energy Chemistry",
+    "Chemist",
+    "3",
+    "1",
+    "2",
+    "0",
+    "Indust",
+    "Physic",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Frictionless Surfaces",
+    "Surface",
+    "1",
+    "3",
+    "2",
+    "0",
+    "Unified",
+    "IndRob",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Nanometallurgy",
+    "Metal",
+    "1",
+    "1",
+    "0",
+    "3",
+    "ProbMec",
+    "DocInit",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Superstring Theory",
+    "String",
+    "3",
+    "2",
+    "0",
+    "1",
+    "Chaos",
+    "Cyber",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Advanced Military Algorithms",
+    "MilAlg",
+    "3",
+    "0",
+    "1",
+    "2",
+    "DocFlex",
+    "OptComp",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Monopole Magnets",
+    "Magnets",
+    "1",
+    "1",
+    "5",
+    "0",
+    "String",
+    "Alloys",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Matter Compression",
+    "MatComp",
+    "3",
+    "1",
+    "2",
+    "0",
+    "Metal",
+    "NanoMin",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Unified Field Theory",
+    "Unified",
+    "4",
+    "3",
+    "0",
+    "1",
+    "Magnets",
+    "E=Mc2",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Graviton Theory",
+    "Gravity",
+    "3",
+    "1",
+    "0",
+    "3",
+    "QuanMac",
+    "MindMac",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Polymorphic Software",
+    "Poly",
+    "2",
+    "3",
+    "1",
+    "0",
+    "Indust",
+    "InfNet",
+    "000000010"
+   ]
+  },
+  {
+   "fields": [
+    "Applied Gravitonics",
+    "AGrav",
+    "3",
+    "1",
+    "0",
+    "4",
+    "Gravity",
+    "DigSent",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "deleted",
+    "delete",
+    "3",
+    "2",
+    "0",
+    "2",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Quantum Power",
+    "Quantum",
+    "3",
+    "4",
+    "3",
+    "0",
+    "Surface",
+    "PlaEcon",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Singularity Mechanics",
+    "SingMec",
+    "1",
+    "4",
+    "3",
+    "0",
+    "Create",
+    "HAL9000",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Controlled Singularity",
+    "ConSing",
+    "4",
+    "1",
+    "2",
+    "0",
+    "SingMec",
+    "AGrav",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Temporal Mechanics",
+    "TempMec",
+    "0",
+    "1",
+    "3",
+    "2",
+    "Eudaim",
+    "Matter",
+    "001000000"
+   ]
+  },
+  {
+   "fields": [
+    "Probability Mechanics",
+    "ProbMec",
+    "1",
+    "1",
+    "3",
+    "2",
+    "DocSec",
+    "Algor",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Pre-Sentient Algorithms",
+    "Algor",
+    "2",
+    "4",
+    "3",
+    "2",
+    "MilAlg",
+    "Cyber",
+    "000000010"
+   ]
+  },
+  {
+   "fields": [
+    "Super Tensile Solids",
+    "Solids",
+    "1",
+    "0",
+    "5",
+    "2",
+    "MatComp",
+    "Space",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Planetary Networks",
+    "PlaNets",
+    "0",
+    "4",
+    "3",
+    "1",
+    "InfNet",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Digital Sentience",
+    "DigSent",
+    "0",
+    "4",
+    "3",
+    "2",
+    "IndRob",
+    "MindMac",
+    "000000010"
+   ]
+  },
+  {
+   "fields": [
+    "Self-Aware Machines",
+    "HAL9000",
+    "0",
+    "4",
+    "3",
+    "3",
+    "Space",
+    "DigSent",
+    "000000010"
+   ]
+  },
+  {
+   "fields": [
+    "Doctrine: Initiative",
+    "DocInit",
+    "2",
+    "0",
+    "0",
+    "4",
+    "DocFlex",
+    "IndAuto",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Doctrine: Flexibility",
+    "DocFlex",
+    "2",
+    "0",
+    "1",
+    "4",
+    "Mobile",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Intellectual Integrity",
+    "Integ",
+    "0",
+    "1",
+    "3",
+    "4",
+    "EthCalc",
+    "DocLoy",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Synthetic Fossil Fuels",
+    "Fossil",
+    "1",
+    "0",
+    "2",
+    "4",
+    "Chemist",
+    "Gene",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Doctrine: Air Power",
+    "DocAir",
+    "3",
+    "0",
+    "3",
+    "4",
+    "Fossil",
+    "DocFlex",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Photon/Wave Mechanics",
+    "DocSec",
+    "3",
+    "2",
+    "2",
+    "0",
+    "E=Mc2",
+    "Alloys",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Mind/Machine Interface",
+    "MindMac",
+    "4",
+    "0",
+    "2",
+    "2",
+    "DocAir",
+    "Neural",
+    "000000010"
+   ]
+  },
+  {
+   "fields": [
+    "Nanominiaturization",
+    "NanoMin",
+    "1",
+    "0",
+    "4",
+    "3",
+    "Magnets",
+    "SupLube",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Doctrine: Loyalty",
+    "DocLoy",
+    "3",
+    "0",
+    "2",
+    "2",
+    "Mobile",
+    "Psych",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Ethical Calculus",
+    "EthCalc",
+    "0",
+    "1",
+    "3",
+    "3",
+    "Psych",
+    "None",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Industrial Economics",
+    "IndEcon",
+    "0",
+    "0",
+    "5",
+    "2",
+    "Indust",
+    "None",
+    "000000100"
+   ]
+  },
+  {
+   "fields": [
+    "Industrial Automation",
+    "IndAuto",
+    "0",
+    "1",
+    "4",
+    "3",
+    "IndEcon",
+    "PlaNets",
+    "000000100"
+   ]
+  },
+  {
+   "fields": [
+    "Centauri Meditation",
+    "CentMed",
+    "0",
+    "0",
+    "2",
+    "4",
+    "EcoEng",
+    "CentEmp",
+    "001000000"
+   ]
+  },
+  {
+   "fields": [
+    "Secrets of the Human Brain",
+    "Brain",
+    "1",
+    "5",
+    "0",
+    "3",
+    "Psych",
+    "Biogen",
+    "000000001"
+   ]
+  },
+  {
+   "fields": [
+    "Gene Splicing",
+    "Gene",
+    "0",
+    "2",
+    "4",
+    "3",
+    "Biogen",
+    "EthCalc",
+    "000100000"
+   ]
+  },
+  {
+   "fields": [
+    "Bio-Engineering",
+    "BioEng",
+    "0",
+    "2",
+    "3",
+    "2",
+    "Gene",
+    "Neural",
+    "000100000"
+   ]
+  },
+  {
+   "fields": [
+    "Biomachinery",
+    "BioMac",
+    "3",
+    "1",
+    "4",
+    "1",
+    "MindMac",
+    "Viral",
+    "000100000"
+   ]
+  },
+  {
+   "fields": [
+    "Neural Grafting",
+    "Neural",
+    "3",
+    "1",
+    "1",
+    "1",
+    "Brain",
+    "IndAuto",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Cyberethics",
+    "Cyber",
+    "1",
+    "3",
+    "4",
+    "0",
+    "PlaNets",
+    "Integ",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Eudaimonia",
+    "Eudaim",
+    "0",
+    "0",
+    "3",
+    "4",
+    "SentEco",
+    "WillPow",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "The Will to Power",
+    "WillPow",
+    "0",
+    "3",
+    "1",
+    "4",
+    "HomoSup",
+    "CentPsi",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Threshold of Transcendence",
+    "Thresh",
+    "0",
+    "1",
+    "3",
+    "4",
+    "Create",
+    "TempMec",
+    "010000000"
+   ]
+  },
+  {
+   "fields": [
+    "Matter Transmission",
+    "Matter",
+    "1",
+    "0",
+    "3",
+    "2",
+    "NanEdit",
+    "AlphCen",
+    "010000000"
+   ]
+  },
+  {
+   "fields": [
+    "Centauri Empathy",
+    "CentEmp",
+    "0",
+    "1",
+    "0",
+    "6",
+    "Brain",
+    "Ecology",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Environmental Economics",
+    "EnvEcon",
+    "0",
+    "0",
+    "4",
+    "3",
+    "IndEcon",
+    "EcoEng",
+    "000000100"
+   ]
+  },
+  {
+   "fields": [
+    "Ecological Engineering",
+    "EcoEng",
+    "0",
+    "0",
+    "3",
+    "4",
+    "Ecology",
+    "Gene",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Planetary Economics",
+    "PlaEcon",
+    "0",
+    "0",
+    "4",
+    "3",
+    "EnvEcon",
+    "Integ",
+    "000000100"
+   ]
+  },
+  {
+   "fields": [
+    "Adv. Ecological Engineering",
+    "EcoEng2",
+    "0",
+    "0",
+    "4",
+    "2",
+    "Fusion",
+    "EnvEcon",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Centauri Psi",
+    "CentPsi",
+    "0",
+    "1",
+    "1",
+    "6",
+    "CentGen",
+    "EcoEng2",
+    "100000000"
+   ]
+  },
+  {
+   "fields": [
+    "Secrets of Alpha Centauri",
+    "AlphCen",
+    "0",
+    "4",
+    "0",
+    "2",
+    "CentPsi",
+    "SentEco",
+    "001001001"
+   ]
+  },
+  {
+   "fields": [
+    "Secrets of Creation",
+    "Create",
+    "1",
+    "4",
+    "1",
+    "0",
+    "Unified",
+    "WillPow",
+    "000000001"
+   ]
+  },
+  {
+   "fields": [
+    "Advanced Spaceflight",
+    "Space",
+    "2",
+    "4",
+    "2",
+    "3",
+    "Orbital",
+    "SupLube",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Homo Superior",
+    "HomoSup",
+    "3",
+    "2",
+    "1",
+    "4",
+    "BioMac",
+    "DocInit",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Organic Superlubricant",
+    "SupLube",
+    "3",
+    "1",
+    "2",
+    "0",
+    "Fusion",
+    "Fossil",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Quantum Machinery",
+    "QuanMac",
+    "3",
+    "1",
+    "4",
+    "0",
+    "Quantum",
+    "Metal",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "deleted",
+    "deleted",
+    "0",
+    "0",
+    "5",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Matter Editation",
+    "NanEdit",
+    "1",
+    "2",
+    "3",
+    "1",
+    "HAL9000",
+    "Solids",
+    "000100000"
+   ]
+  },
+  {
+   "fields": [
+    "Optical Computers",
+    "OptComp",
+    "2",
+    "4",
+    "1",
+    "0",
+    "Physic",
+    "Poly",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Industrial Nanorobotics",
+    "IndRob",
+    "3",
+    "1",
+    "8",
+    "1",
+    "NanoMin",
+    "IndAuto",
+    "000000100"
+   ]
+  },
+  {
+   "fields": [
+    "Centauri Genetics",
+    "CentGen",
+    "0",
+    "2",
+    "0",
+    "5",
+    "CentMed",
+    "Viral",
+    "010000000"
+   ]
+  },
+  {
+   "fields": [
+    "Sentient Econometrics",
+    "SentEco",
+    "1",
+    "1",
+    "3",
+    "4",
+    "PlaEcon",
+    "DigSent",
+    "000000100"
+   ]
+  },
+  {
+   "fields": [
+    "Retroviral Engineering",
+    "Viral",
+    "4",
+    "2",
+    "0",
+    "2",
+    "BioEng",
+    "MilAlg",
+    "000110000"
+   ]
+  },
+  {
+   "fields": [
+    "Orbital Spaceflight",
+    "Orbital",
+    "0",
+    "4",
+    "3",
+    "3",
+    "DocAir",
+    "Algor",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 0",
+    "User0",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 1",
+    "User1",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 2",
+    "User2",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 3",
+    "User3",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 4",
+    "User4",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 5",
+    "User5",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 6",
+    "User6",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 7",
+    "User7",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 8",
+    "User8",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "User Technology 9",
+    "User9",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Disable",
+    "Disable",
+    "000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Transcendent Thought",
+    "TranT",
+    "0",
+    "2",
+    "0",
+    "0",
+    "Thresh",
+    "ConSing",
+    "000000000"
+   ]
+  }
+ ],
+ "CHASSIS": [
+  {
+   "fields": [
+    "Infantry",
+    "M1",
+    "Squad",
+    "M1",
+    "Sentinels",
+    "M2",
+    "Garrison",
+    "M1",
+    "1",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+    "None",
+    "Shock Troops",
+    "M2",
+    "Elite Guard",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "Speeder",
+    "M1",
+    "Rover",
+    "M1",
+    "Defensive",
+    "M1",
+    "Skirmisher",
+    "M1",
+    "2",
+    "0",
+    "0",
+    "0",
+    "1",
+    "2",
+    "Mobile",
+    "Dragon",
+    "M1",
+    "Enforcer",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "Hovertank",
+    "M1",
+    "Tank",
+    "M1",
+    "Skimmer",
+    "M1",
+    "Evasive",
+    "M1",
+    "3",
+    "0",
+    "0",
+    "0",
+    "1",
+    "3",
+    "NanoMin",
+    "Behemoth",
+    "M1",
+    "Guardian",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "Foil",
+    "M1",
+    "Skimship",
+    "M1",
+    "Hoverboat",
+    "M1",
+    "Coastal",
+    "M1",
+    "4",
+    "1",
+    "0",
+    "0",
+    "2",
+    "4",
+    "DocFlex",
+    "Megafoil",
+    "M1",
+    "Superfoil",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "Cruiser",
+    "M1",
+    "Destroyer",
+    "M1",
+    "Cutter",
+    "M1",
+    "Gunboat",
+    "M1",
+    "6",
+    "1",
+    "0",
+    "0",
+    "4",
+    "6",
+    "DocInit",
+    "Battleship",
+    "M1",
+    "Monitor",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "Needlejet",
+    "M1",
+    "Penetrator",
+    "M1",
+    "Interceptor",
+    "M1",
+    "Tactical",
+    "M1",
+    "8",
+    "2",
+    "2",
+    "0",
+    "1",
+    "8",
+    "DocAir",
+    "Thunderbolt",
+    "M1",
+    "Sovereign",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "'Copter",
+    "M1",
+    "Chopper",
+    "M1",
+    "Rotor",
+    "M1",
+    "Lifter",
+    "M1",
+    "8",
+    "2",
+    "1",
+    "0",
+    "1",
+    "8",
+    "MindMac",
+    "Gunship",
+    "M1",
+    "Warbird",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "Gravship",
+    "M1",
+    "Skybase",
+    "M1",
+    "Antigrav",
+    "M1",
+    "Skyfort",
+    "M1",
+    "8",
+    "2",
+    "0",
+    "0",
+    "1",
+    "8",
+    "Gravity",
+    "Deathsphere",
+    "M1",
+    "Doomwall",
+    "M1"
+   ]
+  },
+  {
+   "fields": [
+    "Missile",
+    "M1",
+    "Missile",
+    "M1",
+    "Missile",
+    "M1",
+    "Missile",
+    "M1",
+    "12",
+    "2",
+    "1",
+    "1",
+    "0",
+    "12",
+    "Orbital",
+    "Missile",
+    "M1",
+    "Missile",
+    "M1"
+   ]
+  }
+ ],
+ "REACTORS": [
+  {
+   "fields": [
+    "Fission Plant",
+    "Fission",
+    "1",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Fusion Reactor",
+    "Fusion",
+    "2",
+    "Fusion"
+   ]
+  },
+  {
+   "fields": [
+    "Quantum Chamber",
+    "Quantum",
+    "3",
+    "Quantum"
+   ]
+  },
+  {
+   "fields": [
+    "Singularity Engine",
+    "Singularity",
+    "4",
+    "SingMec"
+   ]
+  }
+ ],
+ "WEAPONS": [
+  {
+   "fields": [
+    "Hand Weapons",
+    "Gun",
+    "1",
+    "0",
+    "1",
+    "-1",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Laser",
+    "Laser",
+    "2",
+    "0",
+    "2",
+    "-1",
+    "Physic"
+   ]
+  },
+  {
+   "fields": [
+    "Particle Impactor",
+    "Impact",
+    "4",
+    "0",
+    "4",
+    "-1",
+    "Chaos"
+   ]
+  },
+  {
+   "fields": [
+    "Gatling Laser",
+    "Gatling",
+    "5",
+    "1",
+    "5",
+    "-1",
+    "Super"
+   ]
+  },
+  {
+   "fields": [
+    "Missile Launcher",
+    "Missile",
+    "6",
+    "2",
+    "6",
+    "-1",
+    "Fossil"
+   ]
+  },
+  {
+   "fields": [
+    "Chaos Gun",
+    "Chaos",
+    "8",
+    "0",
+    "8",
+    "-1",
+    "String"
+   ]
+  },
+  {
+   "fields": [
+    "Fusion Laser",
+    "Fusion",
+    "10",
+    "1",
+    "10",
+    "-1",
+    "SupLube"
+   ]
+  },
+  {
+   "fields": [
+    "Tachyon Bolt",
+    "Tachyon",
+    "12",
+    "1",
+    "12",
+    "-1",
+    "Unified"
+   ]
+  },
+  {
+   "fields": [
+    "Plasma Shard",
+    "Shard",
+    "13",
+    "2",
+    "13",
+    "-1",
+    "Space"
+   ]
+  },
+  {
+   "fields": [
+    "Quantum Laser",
+    "Quantum",
+    "16",
+    "1",
+    "16",
+    "-1",
+    "QuanMac"
+   ]
+  },
+  {
+   "fields": [
+    "Graviton Gun",
+    "Graviton",
+    "20",
+    "0",
+    "20",
+    "-1",
+    "AGrav"
+   ]
+  },
+  {
+   "fields": [
+    "Singularity Laser",
+    "Singularity",
+    "24",
+    "1",
+    "24",
+    "-1",
+    "ConSing"
+   ]
+  },
+  {
+   "fields": [
+    "Psi Attack",
+    "Psi",
+    "-1",
+    "2",
+    "10",
+    "-1",
+    "CentPsi"
+   ]
+  },
+  {
+   "fields": [
+    "Planet Buster",
+    "Planet Buster",
+    "99",
+    "0",
+    "32",
+    "-1",
+    "Orbital"
+   ]
+  },
+  {
+   "fields": [
+    "Colony Module",
+    "Colony Pod",
+    "0",
+    "8",
+    "10",
+    "-1",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Terraforming Unit",
+    "Formers",
+    "0",
+    "9",
+    "6",
+    "-1",
+    "Ecology"
+   ]
+  },
+  {
+   "fields": [
+    "Troop Transport",
+    "Transport",
+    "0",
+    "7",
+    "4",
+    "-1",
+    "DocFlex"
+   ]
+  },
+  {
+   "fields": [
+    "Supply Transport",
+    "Supply",
+    "0",
+    "10",
+    "8",
+    "-1",
+    "IndAuto"
+   ]
+  },
+  {
+   "fields": [
+    "Probe Team",
+    "Probe Team",
+    "0",
+    "11",
+    "4",
+    "-1",
+    "PlaNets"
+   ]
+  },
+  {
+   "fields": [
+    "Alien Artifact",
+    "Artifact",
+    "0",
+    "12",
+    "36",
+    "-1",
+    "Disable"
+   ]
+  },
+  {
+   "fields": [
+    "Conventional Payload",
+    "Conventional",
+    "12",
+    "0",
+    "12",
+    "-1",
+    "Orbital"
+   ]
+  }
+ ],
+ "DEFENSES": [
+  {
+   "fields": [
+    "No Armor",
+    "Scout",
+    "1",
+    "0",
+    "1",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Synthmetal Armor",
+    "Synthmetal",
+    "2",
+    "0",
+    "2",
+    "Indust"
+   ]
+  },
+  {
+   "fields": [
+    "Plasma Steel Armor",
+    "Plasma",
+    "3",
+    "2",
+    "3",
+    "Chemist"
+   ]
+  },
+  {
+   "fields": [
+    "Silksteel Armor",
+    "Silksteel",
+    "4",
+    "1",
+    "4",
+    "Alloys"
+   ]
+  },
+  {
+   "fields": [
+    "Photon Wall",
+    "Photon",
+    "5",
+    "1",
+    "5",
+    "DocSec"
+   ]
+  },
+  {
+   "fields": [
+    "Probability Sheath",
+    "Probability",
+    "6",
+    "2",
+    "6",
+    "ProbMec"
+   ]
+  },
+  {
+   "fields": [
+    "Neutronium Armor",
+    "Neutronium",
+    "8",
+    "1",
+    "8",
+    "MatComp"
+   ]
+  },
+  {
+   "fields": [
+    "Antimatter Plate",
+    "Antimatter",
+    "10",
+    "2",
+    "10",
+    "NanEdit"
+   ]
+  },
+  {
+   "fields": [
+    "Stasis Generator",
+    "Stasis",
+    "12",
+    "2",
+    "12",
+    "TempMec"
+   ]
+  },
+  {
+   "fields": [
+    "Psi Defense",
+    "Psi",
+    "-1",
+    "2",
+    "6",
+    "Eudaim"
+   ]
+  }
+ ],
+ "ABILITIES": [
+  {
+   "fields": [
+    "Super Former",
+    "1",
+    "EcoEng2",
+    "Super",
+    "00000010111",
+    "Terraform rate doubled"
+   ]
+  },
+  {
+   "fields": [
+    "Deep Radar",
+    "0",
+    "MilAlg",
+    "",
+    "10000111111",
+    "Sees 2 spaces"
+   ]
+  },
+  {
+   "fields": [
+    "Cloaking Device",
+    "1",
+    "Surface",
+    "Cloaked",
+    "00001111001",
+    "Invisible"
+   ]
+  },
+  {
+   "fields": [
+    "Amphibious Pods",
+    "1",
+    "DocInit",
+    "Amphibious",
+    "00000001001",
+    "Attacks from ship"
+   ]
+  },
+  {
+   "fields": [
+    "Drop Pods",
+    "2",
+    "MindMac",
+    "Drop",
+    "00000111001",
+    "Makes air drops"
+   ]
+  },
+  {
+   "fields": [
+    "Air Superiority",
+    "1",
+    "DocAir",
+    "SAM",
+    "00000001111",
+    "Attacks air units"
+   ]
+  },
+  {
+   "fields": [
+    "Deep Pressure Hull",
+    "1",
+    "Metal",
+    "Sub",
+    "00000111010",
+    "Operates underwater"
+   ]
+  },
+  {
+   "fields": [
+    "Carrier Deck",
+    "1",
+    "Metal",
+    "Carrier",
+    "00101101010",
+    "Mobile Airbase"
+   ]
+  },
+  {
+   "fields": [
+    "AAA Tracking",
+    "1",
+    "MilAlg",
+    "AAA",
+    "00010001011",
+    "x2 vs. air attacks"
+   ]
+  },
+  {
+   "fields": [
+    "Comm Jammer",
+    "-1",
+    "Subat",
+    "ECM",
+    "00010111001",
+    "+50% vs. fast units"
+   ]
+  },
+  {
+   "fields": [
+    "Antigrav Struts",
+    "1",
+    "Gravity",
+    "Grav",
+    "00000111001",
+    "+1 movement rate (or +Reactor*2 for Air)"
+   ]
+  },
+  {
+   "fields": [
+    "Empath Song",
+    "2",
+    "CentEmp",
+    "Empath",
+    "00010001111",
+    "+50% attack vs. Psi"
+   ]
+  },
+  {
+   "fields": [
+    "Polymorphic Encryption",
+    "1",
+    "Algor",
+    "Secure",
+    "00000111111",
+    "x2 cost to subvert"
+   ]
+  },
+  {
+   "fields": [
+    "Fungicide Tanks",
+    "1",
+    "Fossil",
+    "Fungicidal",
+    "00000010111",
+    "Clear fungus at double speed"
+   ]
+  },
+  {
+   "fields": [
+    "High Morale",
+    "1",
+    "Integ",
+    "Trained",
+    "00000001111",
+    "Gains morale upgrade"
+   ]
+  },
+  {
+   "fields": [
+    "Heavy Artillery",
+    "-7",
+    "Poly",
+    "Artillery",
+    "00010001001",
+    "Bombards"
+   ]
+  },
+  {
+   "fields": [
+    "Clean Reactor",
+    "2",
+    "BioEng",
+    "Clean",
+    "00000111111",
+    "Requires no support"
+   ]
+  },
+  {
+   "fields": [
+    "Blink Displacer",
+    "1",
+    "Matter",
+    "Blink",
+    "00000001111",
+    "Bypass base defenses"
+   ]
+  },
+  {
+   "fields": [
+    "Hypnotic Trance",
+    "-1",
+    "Brain",
+    "Trance",
+    "00010111111",
+    "+50% defense vs. PSI"
+   ]
+  },
+  {
+   "fields": [
+    "Heavy Transport",
+    "1",
+    "Disable",
+    "Heavy",
+    "00100100111",
+    "+50% transport capacity"
+   ]
+  },
+  {
+   "fields": [
+    "Nerve Gas Pods",
+    "1",
+    "Chemist",
+    "X",
+    "00011001101",
+    "Can +50% offense (Atrocity)"
+   ]
+  },
+  {
+   "fields": [
+    "Repair Bay",
+    "1",
+    "Metal",
+    "Repair",
+    "00100100111",
+    "Repairs ground units on board"
+   ]
+  },
+  {
+   "fields": [
+    "Non-Lethal Methods",
+    "1",
+    "Integ",
+    "Police",
+    "00000001001",
+    "x2 Police powers"
+   ]
+  },
+  {
+   "fields": [
+    "Slow Unit",
+    "0",
+    "Disable",
+    "Slow",
+    "00000111111",
+    "-1 moves"
+   ]
+  }
+ ],
+ "MORALE": [
+  {
+   "fields": [
+    "Very Green",
+    "Hatchling"
+   ]
+  },
+  {
+   "fields": [
+    "Green",
+    "Larval Mass"
+   ]
+  },
+  {
+   "fields": [
+    "Disciplined",
+    "Pre-Boil"
+   ]
+  },
+  {
+   "fields": [
+    "Hardened",
+    "Boil"
+   ]
+  },
+  {
+   "fields": [
+    "Veteran",
+    "Mature Boil"
+   ]
+  },
+  {
+   "fields": [
+    "Commando",
+    "Great Boil"
+   ]
+  },
+  {
+   "fields": [
+    "Elite",
+    "Demon Boil"
+   ]
+  }
+ ],
+ "DEFENSEMODES": [
+  {
+   "fields": [
+    "Projectile",
+    "Proj-",
+    "Proj.",
+    "P"
+   ]
+  },
+  {
+   "fields": [
+    "Energy",
+    "Energy-",
+    "Ener.",
+    "E"
+   ]
+  },
+  {
+   "fields": [
+    "Binary",
+    "Binary-",
+    "Bin.",
+    "B"
+   ]
+  }
+ ],
+ "OFFENSEMODES": [
+  {
+   "fields": [
+    "Projectile",
+    "Proj-",
+    "Proj.",
+    "P"
+   ]
+  },
+  {
+   "fields": [
+    "Energy",
+    "Energy-",
+    "Ener.",
+    "E"
+   ]
+  },
+  {
+   "fields": [
+    "Missile",
+    "Missile-",
+    "Miss.",
+    "M"
+   ]
+  }
+ ],
+ "UNITS": [
+  {
+   "fields": [
+    "14"
+   ]
+  },
+  {
+   "fields": [
+    "Colony Pod",
+    "Infantry",
+    "Colony Pod",
+    "Scout",
+    "8",
+    "0",
+    "0",
+    "None",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Formers",
+    "Infantry",
+    "Formers",
+    "Scout",
+    "9",
+    "0",
+    "0",
+    "Ecology",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Scout Patrol",
+    "Infantry",
+    "Gun",
+    "Scout",
+    "3",
+    "0",
+    "0",
+    "None",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Transport Foil",
+    "Foil",
+    "Transport",
+    "Scout",
+    "7",
+    "0",
+    "0",
+    "DocFlex",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "*Sea Formers",
+    "Foil",
+    "Formers",
+    "Scout",
+    "9",
+    "0",
+    "0",
+    "Disable",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Supply Crawler",
+    "Infantry",
+    "Supply",
+    "Scout",
+    "10",
+    "0",
+    "0",
+    "IndAuto",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Probe Team",
+    "Speeder",
+    "Probe Team",
+    "Scout",
+    "11",
+    "0",
+    "0",
+    "PlaNets",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Alien Artifact",
+    "Infantry",
+    "Artifact",
+    "Scout",
+    "12",
+    "10",
+    "0",
+    "Disable",
+    "2",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Mind Worms",
+    "Infantry",
+    "Psi",
+    "Psi",
+    "1",
+    "5",
+    "0",
+    "CentEmp",
+    "3",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Isle of the Deep",
+    "Foil",
+    "Psi",
+    "Psi",
+    "7",
+    "8",
+    "4",
+    "CentMed",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Locusts of Chiron",
+    "Gravship",
+    "Psi",
+    "Psi",
+    "4",
+    "10",
+    "0",
+    "CentGen",
+    "-1",
+    "000000000000000000100000"
+   ]
+  },
+  {
+   "fields": [
+    "Unity Rover",
+    "Speeder",
+    "Gun",
+    "Scout",
+    "3",
+    "0",
+    "0",
+    "Disable",
+    "-1",
+    "000000000000000000000000"
+   ]
+  },
+  {
+   "fields": [
+    "Unity Scout Chopper",
+    "'Copter",
+    "Gun",
+    "Scout",
+    "4",
+    "0",
+    "0",
+    "Disable",
+    "-1",
+    "000000000000000000100000"
+   ]
+  },
+  {
+   "fields": [
+    "Unity Foil",
+    "Foil",
+    "Transport",
+    "Scout",
+    "7",
+    "0",
+    "0",
+    "Disable",
+    "-1",
+    "100000000000000000000000"
+   ]
+  }
+ ],
+ "FACILITIES": [
+  {
+   "fields": [
+    "Headquarters",
+    "5",
+    "0",
+    "None",
+    "Disable",
+    "Efficiency"
+   ]
+  },
+  {
+   "fields": [
+    "Children's Creche",
+    "5",
+    "1",
+    "EthCalc",
+    "Disable",
+    "Growth/Effic/Morale"
+   ]
+  },
+  {
+   "fields": [
+    "Recycling Tanks",
+    "4",
+    "0",
+    "Biogen",
+    "EcoEng2",
+    "Bonus Resources"
+   ]
+  },
+  {
+   "fields": [
+    "Perimeter Defense",
+    "5",
+    "0",
+    "DocLoy",
+    "Disable",
+    "Defense +100%"
+   ]
+  },
+  {
+   "fields": [
+    "Tachyon Field",
+    "12",
+    "2",
+    "ProbMec",
+    "Disable",
+    "All Defense +100%"
+   ]
+  },
+  {
+   "fields": [
+    "Recreation Commons",
+    "4",
+    "1",
+    "Psych",
+    "SentEco",
+    "Fewer Drones"
+   ]
+  },
+  {
+   "fields": [
+    "Energy Bank",
+    "8",
+    "1",
+    "IndEcon",
+    "QuanMac",
+    "Economy Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Network Node",
+    "8",
+    "1",
+    "InfNet",
+    "HAL9000",
+    "Labs Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Biology Lab",
+    "6",
+    "1",
+    "CentEmp",
+    "Disable",
+    "Research and PSI"
+   ]
+  },
+  {
+   "fields": [
+    "Skunkworks",
+    "6",
+    "1",
+    "Subat",
+    "Disable",
+    "Prototypes Free"
+   ]
+  },
+  {
+   "fields": [
+    "Hologram Theatre",
+    "6",
+    "3",
+    "PlaNets",
+    "Disable",
+    "Psych and Fewer Drones"
+   ]
+  },
+  {
+   "fields": [
+    "Paradise Garden",
+    "12",
+    "4",
+    "SentEco",
+    "Disable",
+    "+2 Talents"
+   ]
+  },
+  {
+   "fields": [
+    "Tree Farm",
+    "12",
+    "3",
+    "EnvEcon",
+    "Disable",
+    "Econ/Psych/Forest"
+   ]
+  },
+  {
+   "fields": [
+    "Hybrid Forest",
+    "24",
+    "4",
+    "PlaEcon",
+    "Disable",
+    "Econ/Psych/Forest"
+   ]
+  },
+  {
+   "fields": [
+    "Fusion Lab",
+    "12",
+    "3",
+    "Fusion",
+    "Disable",
+    "Econ and Labs Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Quantum Lab",
+    "24",
+    "4",
+    "Quantum",
+    "Disable",
+    "Econ and Labs Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Research Hospital",
+    "12",
+    "3",
+    "Gene",
+    "Disable",
+    "Labs and Psych Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Nanohospital",
+    "24",
+    "4",
+    "HomoSup",
+    "Disable",
+    "Labs and Psych Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Robotic Assembly Plant",
+    "20",
+    "4",
+    "IndRob",
+    "Disable",
+    "Minerals Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Nanoreplicator",
+    "32",
+    "6",
+    "NanEdit",
+    "Disable",
+    "Minerals Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Quantum Converter",
+    "20",
+    "5",
+    "QuanMac",
+    "Disable",
+    "Minerals Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Genejack Factory",
+    "10",
+    "2",
+    "Viral",
+    "Disable",
+    "Minerals"
+   ]
+  },
+  {
+   "fields": [
+    "Punishment Sphere",
+    "10",
+    "2",
+    "MilAlg",
+    "Disable",
+    "No Drones/-50% Tech"
+   ]
+  },
+  {
+   "fields": [
+    "Hab Complex",
+    "8",
+    "2",
+    "IndAuto",
+    "Disable",
+    "Increase Population Limit"
+   ]
+  },
+  {
+   "fields": [
+    "Habitation Dome",
+    "16",
+    "4",
+    "Solids",
+    "Disable",
+    "Increase Population Limit"
+   ]
+  },
+  {
+   "fields": [
+    "Pressure Dome",
+    "8",
+    "0",
+    "DocFlex",
+    "Disable",
+    "Submersion/Resources"
+   ]
+  },
+  {
+   "fields": [
+    "Command Center",
+    "4",
+    "1",
+    "Mobile",
+    "Disable",
+    "+2 Morale:Land"
+   ]
+  },
+  {
+   "fields": [
+    "Naval Yard",
+    "8",
+    "2",
+    "DocInit",
+    "Disable",
+    "+2 Morale:Sea",
+    "Sea Def +100%"
+   ]
+  },
+  {
+   "fields": [
+    "Aerospace Complex",
+    "8",
+    "2",
+    "DocAir",
+    "Disable",
+    "+2 Morale:Air",
+    "Air Def +100%"
+   ]
+  },
+  {
+   "fields": [
+    "Bioenhancement Center",
+    "10",
+    "2",
+    "Neural",
+    "Disable",
+    "+2 Morale:ALL"
+   ]
+  },
+  {
+   "fields": [
+    "Centauri Preserve",
+    "10",
+    "2",
+    "CentMed",
+    "Disable",
+    "Ecology Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Temple of Planet",
+    "20",
+    "3",
+    "AlphCen",
+    "Disable",
+    "Ecology Bonus"
+   ]
+  },
+  {
+   "fields": [
+    "Psi Gate",
+    "10",
+    "2",
+    "Matter",
+    "Disable",
+    "Teleport"
+   ]
+  },
+  {
+   "fields": [
+    "Sky Hydroponics Lab",
+    "12",
+    "0",
+    "Orbital",
+    "Disable",
+    "+1 Nutrient ALL BASES"
+   ]
+  },
+  {
+   "fields": [
+    "Nessus Mining Station",
+    "12",
+    "0",
+    "HAL9000",
+    "Disable",
+    "+1 Minerals ALL BASES"
+   ]
+  },
+  {
+   "fields": [
+    "Orbital Power Transmitter",
+    "12",
+    "0",
+    "Space",
+    "Disable",
+    "+1 Energy ALL BASES"
+   ]
+  },
+  {
+   "fields": [
+    "Orbital Defense Pod",
+    "12",
+    "0",
+    "HAL9000",
+    "Disable",
+    "Missile Defense"
+   ]
+  },
+  {
+   "fields": [
+    "Stockpile Energy",
+    "0",
+    "0",
+    "None",
+    "Disable",
+    "Minerals to Energy"
+   ]
+  },
+  {
+   "fields": [
+    "The Human Genome Project",
+    "20",
+    "0",
+    "Biogen",
+    "Disable",
+    "+1 Talent Each Base",
+    "-1",
+    "0",
+    "0",
+    "1",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "The Command Nexus",
+    "20",
+    "0",
+    "DocLoy",
+    "Disable",
+    "Command Center Each Base",
+    "1",
+    "2",
+    "0",
+    "-1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Weather Paradigm",
+    "20",
+    "0",
+    "Ecology",
+    "Disable",
+    "Terraform Rate +50%",
+    "0",
+    "0",
+    "0",
+    "2",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "The Merchant Exchange",
+    "20",
+    "0",
+    "Indust",
+    "Disable",
+    "+1 Energy Each Square Here",
+    "0",
+    "0",
+    "1",
+    "2",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Empath Guild",
+    "20",
+    "0",
+    "CentEmp",
+    "Disable",
+    "Commlink For Every Faction",
+    "-2",
+    "0",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Citizens' Defense Force",
+    "30",
+    "0",
+    "Integ",
+    "Disable",
+    "Perimeter Defense Each Base",
+    "0",
+    "1",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Virtual World",
+    "30",
+    "0",
+    "PlaNets",
+    "Disable",
+    "Network Nodes Help Drones",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Planetary Transit System",
+    "30",
+    "0",
+    "IndAuto",
+    "Disable",
+    "New Bases Begin At Size 3",
+    "0",
+    "0",
+    "0",
+    "1",
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "The Xenoempathy Dome",
+    "30",
+    "0",
+    "CentMed",
+    "Disable",
+    "Fungus Movement Bonus",
+    "0",
+    "-1",
+    "0",
+    "0",
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "The Neural Amplifier",
+    "30",
+    "0",
+    "Neural",
+    "Disable",
+    "Psi Defense +50%",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Maritime Control Center",
+    "30",
+    "0",
+    "DocInit",
+    "Disable",
+    "Naval Movement +2"
+   ],
+   "names": [
+    "Naval Bases",
+    "1",
+    "1",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Planetary Datalinks",
+    "30",
+    "0",
+    "Cyber",
+    "Disable",
+    "Any Tech Known To 3 Others",
+    "0",
+    "0",
+    "1",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Supercollider",
+    "30",
+    "0",
+    "E=Mc2",
+    "Disable",
+    "Labs +100% At This Base",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Ascetic Virtues",
+    "30",
+    "0",
+    "PlaEcon",
+    "Disable",
+    "Pop. Limit Relaxed"
+   ],
+   "names": [
+    "+1 POLICE",
+    "0",
+    "0",
+    "0",
+    "1",
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "The Longevity Vaccine",
+    "30",
+    "0",
+    "BioEng",
+    "Disable",
+    "Fewer Drones or More Profits",
+    "0",
+    "0",
+    "0",
+    "2",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "The Hunter-Seeker Algorithm",
+    "30",
+    "0",
+    "Algor",
+    "Disable",
+    "Immunity to Probe Teams",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Pholus Mutagen",
+    "40",
+    "0",
+    "CentGen",
+    "Disable",
+    "Ecology Bonus"
+   ],
+   "names": [
+    "Lifecycle Bonus",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "The Cyborg Factory",
+    "40",
+    "0",
+    "MindMac",
+    "Disable",
+    "Bioenh. Center Every Base",
+    "1",
+    "1",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Theory of Everything",
+    "40",
+    "0",
+    "Unified",
+    "Disable",
+    "Labs +100% At This Base",
+    "0",
+    "0",
+    "2",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Dream Twister",
+    "40",
+    "0",
+    "WillPow",
+    "Disable",
+    "Psi Attack +50%",
+    "0",
+    "1",
+    "0",
+    "0",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "The Universal Translator",
+    "40",
+    "0",
+    "HomoSup",
+    "Disable",
+    "Two Free Techs",
+    "0",
+    "1",
+    "2",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Network Backbone",
+    "40",
+    "0",
+    "DigSent",
+    "Disable",
+    "+1 Lab Per Commerce/Net Node",
+    "0",
+    "0",
+    "1",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Nano Factory",
+    "40",
+    "0",
+    "IndRob",
+    "Disable",
+    "Repair Units"
+   ],
+   "names": [
+    "Low Upgrade Costs",
+    "2",
+    "1",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Living Refinery",
+    "40",
+    "0",
+    "Space",
+    "Disable",
+    "+2 SUPPORT (social)",
+    "0",
+    "1",
+    "0",
+    "1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Cloning Vats",
+    "50",
+    "0",
+    "BioMac",
+    "Disable",
+    "Population Boom At All Bases",
+    "0",
+    "0",
+    "0",
+    "1",
+    "2"
+   ]
+  },
+  {
+   "fields": [
+    "The Self-Aware Colony",
+    "50",
+    "0",
+    "HAL9000",
+    "Disable",
+    "Maintenance Halved"
+   ],
+   "names": [
+    "Extra Police",
+    "0",
+    "1",
+    "0",
+    "2",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "Clinical Immortality",
+    "50",
+    "0",
+    "NanEdit",
+    "Disable",
+    "Extra Talent Every Base",
+    "0",
+    "0",
+    "1",
+    "1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Space Elevator",
+    "50",
+    "0",
+    "Solids",
+    "Disable",
+    "Energy +100%/Orbital Cost Halved",
+    "0",
+    "0",
+    "2",
+    "2",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Singularity Inductor",
+    "60",
+    "0",
+    "ConSing",
+    "Disable",
+    "Quantum Converter Every Base",
+    "0",
+    "1",
+    "1",
+    "1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Bulk Matter Transmitter",
+    "60",
+    "0",
+    "Matter",
+    "Disable",
+    "+2 Minerals Every Base",
+    "0",
+    "1",
+    "1",
+    "1",
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "The Telepathic Matrix",
+    "60",
+    "0",
+    "Eudaim",
+    "Disable",
+    "No More Drone Riots"
+   ],
+   "names": [
+    "+2 PROBE",
+    "0",
+    "1",
+    "0",
+    "0",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "The Voice of Planet",
+    "60",
+    "0",
+    "Thresh",
+    "Disable",
+    "Begins Ascent To Transcendence",
+    "0",
+    "-2",
+    "2",
+    "2",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "The Ascent to Transcendence",
+    "200",
+    "0",
+    "Thresh",
+    "Disable",
+    "End of Human Era",
+    "0",
+    "0",
+    "2",
+    "2",
+    "2"
+   ]
+  }
+ ],
+ "ORDERS": [
+  {
+   "fields": [
+    "No Orders",
+    "-"
+   ]
+  },
+  {
+   "fields": [
+    "Sentry/Board Transport",
+    "L"
+   ]
+  },
+  {
+   "fields": [
+    "Hold",
+    "H"
+   ]
+  },
+  {
+   "fields": [
+    "Convoy",
+    "O"
+   ]
+  },
+  {
+   "fields": [
+    "Move to",
+    "G"
+   ]
+  },
+  {
+   "fields": [
+    "Move",
+    ">"
+   ]
+  },
+  {
+   "fields": [
+    "Explore",
+    "/"
+   ]
+  },
+  {
+   "fields": [
+    "Road to",
+    "r"
+   ]
+  },
+  {
+   "fields": [
+    "Tube to",
+    "t"
+   ]
+  }
+ ],
+ "COMPASS": [
+  {
+   "fields": [
+    "Northeast"
+   ]
+  },
+  {
+   "fields": [
+    "East"
+   ]
+  },
+  {
+   "fields": [
+    "Southeast"
+   ]
+  },
+  {
+   "fields": [
+    "South"
+   ]
+  },
+  {
+   "fields": [
+    "Southwest"
+   ]
+  },
+  {
+   "fields": [
+    "West"
+   ]
+  },
+  {
+   "fields": [
+    "Northwest"
+   ]
+  },
+  {
+   "fields": [
+    "North"
+   ]
+  }
+ ],
+ "PLANS": [
+  {
+   "fields": [
+    "Assault",
+    "Assault"
+   ]
+  },
+  {
+   "fields": [
+    "Combat",
+    "Combat"
+   ]
+  },
+  {
+   "fields": [
+    "Defense",
+    "Defense"
+   ]
+  },
+  {
+   "fields": [
+    "Explore",
+    "Explore/Defense"
+   ]
+  },
+  {
+   "fields": [
+    "Air Power",
+    "Air Superiority"
+   ]
+  },
+  {
+   "fields": [
+    "Planet Buster",
+    "Planet Buster"
+   ]
+  },
+  {
+   "fields": [
+    "Naval",
+    "Naval Power"
+   ]
+  },
+  {
+   "fields": [
+    "Transport",
+    "Sea Transport"
+   ]
+  },
+  {
+   "fields": [
+    "Colonize",
+    "Expansion/New Bases"
+   ]
+  },
+  {
+   "fields": [
+    "Terraform",
+    "Planting/Terraforming"
+   ]
+  },
+  {
+   "fields": [
+    "Convoy",
+    "Resource Convoy"
+   ]
+  },
+  {
+   "fields": [
+    "Covert Ops",
+    "Covert Operations"
+   ]
+  },
+  {
+   "fields": [
+    "Artifact",
+    "Alien Artifact"
+   ]
+  }
+ ],
+ "TRIAD": [
+  {
+   "fields": [
+    "Land"
+   ]
+  },
+  {
+   "fields": [
+    "Sea"
+   ]
+  },
+  {
+   "fields": [
+    "Air"
+   ]
+  }
+ ],
+ "RESOURCES": [
+  {
+   "fields": [
+    "Nutrient",
+    "Nutrients"
+   ]
+  },
+  {
+   "fields": [
+    "Mineral",
+    "Minerals"
+   ]
+  },
+  {
+   "fields": [
+    "Energy",
+    "Energy"
+   ]
+  },
+  {
+   "fields": [
+    "Psi",
+    "Psi"
+   ]
+  }
+ ],
+ "ENERGY": [
+  {
+   "fields": [
+    "Econ",
+    "Economy"
+   ]
+  },
+  {
+   "fields": [
+    "Psych",
+    "Psych/Soc"
+   ]
+  },
+  {
+   "fields": [
+    "Labs",
+    "Laboratories"
+   ]
+  }
+ ],
+ "CITIZENS": [
+  {
+   "fields": [
+    "Technician",
+    "Technicians",
+    "None",
+    "Fusion",
+    "3",
+    "0",
+    "0",
+    "0000000"
+   ]
+  },
+  {
+   "fields": [
+    "Doctor",
+    "Doctors",
+    "None",
+    "CentMed",
+    "0",
+    "2",
+    "0",
+    "0000000"
+   ]
+  },
+  {
+   "fields": [
+    "Librarian",
+    "Librarians",
+    "PlaNets",
+    "MindMac",
+    "0",
+    "0",
+    "3",
+    "0000000"
+   ]
+  },
+  {
+   "fields": [
+    "Engineer",
+    "Engineers",
+    "Fusion",
+    "Disable",
+    "3",
+    "0",
+    "2",
+    "0000000"
+   ]
+  },
+  {
+   "fields": [
+    "Empath",
+    "Empathi",
+    "CentMed",
+    "AlphCen",
+    "2",
+    "2",
+    "0",
+    "0000000"
+   ]
+  },
+  {
+   "fields": [
+    "Thinker",
+    "Thinkers",
+    "MindMac",
+    "AlphCen",
+    "0",
+    "1",
+    "3",
+    "0000000"
+   ]
+  },
+  {
+   "fields": [
+    "Transcend",
+    "Transcendi",
+    "AlphCen",
+    "Disable",
+    "2",
+    "2",
+    "4",
+    "0000000"
+   ]
+  },
+  {
+   "fields": [
+    "Drone",
+    "Drones"
+   ]
+  },
+  {
+   "fields": [
+    "Worker",
+    "Workers"
+   ]
+  },
+  {
+   "fields": [
+    "Talent",
+    "Talents"
+   ]
+  }
+ ],
+ "SOCIO": [
+  {
+   "fields": [
+    "ECONOMY",
+    "EFFIC",
+    "SUPPORT",
+    "TALENT",
+    "MORALE",
+    "POLICE",
+    "GROWTH",
+    "PLANET",
+    "PROBE",
+    "INDUSTRY",
+    "RESEARCH"
+   ]
+  },
+  {
+   "fields": [
+    "ECONOMY",
+    "EFFIC",
+    "SUPPORT",
+    "TALENT",
+    "MORALE",
+    "POLICE",
+    "GROWTH",
+    "PLANET",
+    "PROBE",
+    "INDUSTRY",
+    "RESEARCH"
+   ]
+  },
+  {
+   "fields": [
+    "Politics",
+    "Economics",
+    "Values",
+    "Future Society"
+   ]
+  },
+  {
+   "fields": [
+    "Frontier",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Police State",
+    "DocLoy",
+    "++POLICE",
+    "++SUPPORT",
+    "--EFFIC"
+   ]
+  },
+  {
+   "fields": [
+    "Democratic",
+    "EthCalc",
+    "++EFFIC",
+    "++GROWTH",
+    "--SUPPORT"
+   ]
+  },
+  {
+   "fields": [
+    "Fundamentalist",
+    "Brain",
+    "+MORALE",
+    "++PROBE",
+    "--RESEARCH"
+   ]
+  },
+  {
+   "fields": [
+    "Simple",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Free Market",
+    "IndEcon",
+    "++ECONOMY",
+    "---PLANET",
+    "-----POLICE"
+   ]
+  },
+  {
+   "fields": [
+    "Planned",
+    "PlaNets",
+    "++GROWTH",
+    "+INDUSTRY",
+    "--EFFIC"
+   ]
+  },
+  {
+   "fields": [
+    "Green",
+    "CentEmp",
+    "++PLANET",
+    "++EFFIC",
+    "--GROWTH"
+   ]
+  },
+  {
+   "fields": [
+    "Survival",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Power",
+    "MilAlg",
+    "++MORALE",
+    "++SUPPORT",
+    "--INDUSTRY"
+   ]
+  },
+  {
+   "fields": [
+    "Knowledge",
+    "Cyber",
+    "++RESEARCH",
+    "+EFFIC",
+    "--PROBE"
+   ]
+  },
+  {
+   "fields": [
+    "Wealth",
+    "IndAuto",
+    "+INDUSTRY",
+    "+ECONOMY",
+    "--MORALE"
+   ]
+  },
+  {
+   "fields": [
+    "None",
+    "None"
+   ]
+  },
+  {
+   "fields": [
+    "Cybernetic",
+    "DigSent",
+    "++EFFIC",
+    "++PLANET",
+    "++RESEARCH",
+    "---POLICE"
+   ]
+  },
+  {
+   "fields": [
+    "Eudaimonic",
+    "Eudaim",
+    "++GROWTH",
+    "++ECONOMY",
+    "++INDUSTRY",
+    "--MORALE"
+   ]
+  },
+  {
+   "fields": [
+    "Thought Control",
+    "WillPow",
+    "++POLICE",
+    "++MORALE",
+    "++PROBE",
+    "---SUPPORT"
+   ]
+  }
+ ],
+ "SOCECONOMY": [
+  {
+   "fields": [
+    "-3",
+    "-2 energy each base"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "-1 energy each base"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "-1 energy at HQ base"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Standard energy rates"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "+1 energy each base"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "+1 energy each square!"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "+1 energy each square"
+   ]
+  },
+  {
+   "fields": [
+    "4",
+    "+1 energy/sq"
+   ]
+  },
+  {
+   "fields": [
+    "5",
+    "+1 energy/sq"
+   ]
+  }
+ ],
+ "SOCEFFIC": [
+  {
+   "fields": [
+    "-4",
+    "ECONOMIC PARALYSIS"
+   ]
+  },
+  {
+   "fields": [
+    "-3",
+    "Murderous inefficiency"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "Appalling inefficiency"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "Gross inefficiency"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "High inefficiency"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "Reasonable efficiency"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "Commendable efficiency"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "Exemplary efficiency!"
+   ]
+  },
+  {
+   "fields": [
+    "4",
+    "PARADIGM ECONOMY!!"
+   ]
+  }
+ ],
+ "SOCSUPPORT": [
+  {
+   "fields": [
+    "-4",
+    "Each unit costs 2 to support"
+   ]
+  },
+  {
+   "fields": [
+    "-3",
+    "Each unit costs 1 to support"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "Support 1 unit free per base"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "Support 1 unit free per base"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Support 2 units free per base"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "Support 3 units free per base"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "Support 4 units free per base!"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "Support 4 units OR up to base size for free!!"
+   ]
+  }
+ ],
+ "SOCTALENT": [
+  {
+   "fields": [
+    "-1",
+    "Extra drones at each base"
+   ]
+  },
+  {
+   "fields": [
+    "0"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "Extra talents at each base!"
+   ]
+  }
+ ],
+ "SOCMORALE": [
+  {
+   "fields": [
+    "-4",
+    "-3 Morale"
+   ]
+  },
+  {
+   "fields": [
+    "-3",
+    "-2 Morale"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "-1 Morale"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "-1 Morale"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Normal Morale"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "+1 Morale"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "+1 Morale (+2 on defense)"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "+2 Morale! (+3 on defense)"
+   ]
+  },
+  {
+   "fields": [
+    "4",
+    "+3 Morale!!"
+   ]
+  }
+ ],
+ "SOCPOLICE": [
+  {
+   "fields": [
+    "-5",
+    "Two extra drones for each military unit away from base"
+   ]
+  },
+  {
+   "fields": [
+    "-4",
+    "Extra drone for each military unit away from base"
+   ]
+  },
+  {
+   "fields": [
+    "-3",
+    "Extra drone if more than one military unit away from base"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "Cannot use military units as police. No nerve stapling."
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "One police unit allowed. No nerve stapling."
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Can use one military unit as police"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "Can use up to 2 military units as police"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "Can use up to 3 military units as police!"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "3 units as police. Police effect doubled!!"
+   ]
+  }
+ ],
+ "SOCGROWTH": [
+  {
+   "fields": [
+    "-3",
+    "ZERO POPULATION GROWTH"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "-20% growth rate"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "-10% growth rate"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Normal growth rate"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "+10% growth rate"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "+20% growth rate"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "+30% growth rate"
+   ]
+  },
+  {
+   "fields": [
+    "4",
+    "+40% growth rate"
+   ]
+  },
+  {
+   "fields": [
+    "5",
+    "+50% growth rate!"
+   ]
+  },
+  {
+   "fields": [
+    "6",
+    "POPULATION BOOM!!"
+   ]
+  }
+ ],
+ "SOCPLANET": [
+  {
+   "fields": [
+    "-3",
+    "Wanton ecological disruption"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "Rampant ecological disruption"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "Increased ecological disruption"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Normal ecological tension"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "Ecological safeguards!"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "Ecological harmony!"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "Ecological wisdom!!"
+   ]
+  }
+ ],
+ "SOCPROBE": [
+  {
+   "fields": [
+    "-2",
+    "-50% cost of enemy probe team actions"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "-25% cost of enemy probe team actions"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Normal security measures"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "+1 probe team morale"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "+2 probe team morale"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "+3 probe team morale"
+   ]
+  }
+ ],
+ "SOCINDUSTRY": [
+  {
+   "fields": [
+    "-3",
+    "Mineral costs increased by 30%"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "Mineral costs increased by 20%"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "Mineral costs increased by 10%"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Normal production rate"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "Mineral costs decreased by 10%"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "Mineral costs decreased by 20%"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "Mineral costs decreased by 30%!"
+   ]
+  },
+  {
+   "fields": [
+    "4",
+    "Mineral costs decreased by 40%!!"
+   ]
+  },
+  {
+   "fields": [
+    "5",
+    "Mineral costs decreased by 50%!!!"
+   ]
+  }
+ ],
+ "SOCRESEARCH": [
+  {
+   "fields": [
+    "-5",
+    "Labs research slowed by 50%"
+   ]
+  },
+  {
+   "fields": [
+    "-4",
+    "Labs research slowed by 40%"
+   ]
+  },
+  {
+   "fields": [
+    "-3",
+    "Labs research slowed by 30%"
+   ]
+  },
+  {
+   "fields": [
+    "-2",
+    "Labs research slowed by 20%"
+   ]
+  },
+  {
+   "fields": [
+    "-1",
+    "Labs research slowed by 10%"
+   ]
+  },
+  {
+   "fields": [
+    "0",
+    "Normal research rate"
+   ]
+  },
+  {
+   "fields": [
+    "1",
+    "Labs research speeded by 10%"
+   ]
+  },
+  {
+   "fields": [
+    "2",
+    "Labs research speeded by 20%"
+   ]
+  },
+  {
+   "fields": [
+    "3",
+    "Labs research speeded by 30%"
+   ]
+  },
+  {
+   "fields": [
+    "4",
+    "Labs research speeded by 40%"
+   ]
+  },
+  {
+   "fields": [
+    "5",
+    "Labs research speeded by 50%"
+   ]
+  }
+ ],
+ "DIFF": [
+  {
+   "fields": [
+    "Citizen"
+   ]
+  },
+  {
+   "fields": [
+    "Specialist"
+   ]
+  },
+  {
+   "fields": [
+    "Talent"
+   ]
+  },
+  {
+   "fields": [
+    "Librarian"
+   ]
+  },
+  {
+   "fields": [
+    "Thinker"
+   ]
+  },
+  {
+   "fields": [
+    "Transcend"
+   ]
+  },
+  {
+   "fields": [
+    "##### IMPORTANT NOTE TO TRANSLATORS"
+   ]
+  },
+  {
+   "fields": [
+    "# For this list of adjectives",
+    "please translate to all genders & plurality:"
+   ]
+  },
+  {
+   "fields": [
+    "Alien"
+   ]
+  },
+  {
+   "fields": [
+    "Gaian"
+   ]
+  },
+  {
+   "fields": [
+    "Hive"
+   ]
+  },
+  {
+   "fields": [
+    "University"
+   ]
+  },
+  {
+   "fields": [
+    "Morganic"
+   ]
+  },
+  {
+   "fields": [
+    "Spartan"
+   ]
+  },
+  {
+   "fields": [
+    "Believing"
+   ]
+  },
+  {
+   "fields": [
+    "Peacekeeper"
+   ]
+  },
+  {
+   "fields": [
+    "##"
+   ]
+  },
+  {
+   "fields": [
+    "##SAMPLE SENTENCES FOR TRANSLATORS"
+   ]
+  },
+  {
+   "fields": [
+    "##"
+   ]
+  },
+  {
+   "fields": [
+    "##Gaia's Stepdaughters",
+    "The Green",
+    "Gaians",
+    "F",
+    "2",
+    "Deirdre",
+    "F",
+    "-1",
+    "0",
+    "0",
+    "0",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "##  TECH",
+    "Ecology",
+    "SOCIAL",
+    "-MORALE",
+    "SOCIAL",
+    "-POLICE",
+    "SOCIAL",
+    "+EFFIC",
+    "PSI",
+    "25",
+    "FUNGNUTRIENT",
+    "1"
+   ]
+  },
+  {
+   "fields": [
+    "##  Environment",
+    "Pro-Ecology",
+    "PLANET"
+   ]
+  },
+  {
+   "fields": [
+    "##  Liberties",
+    "Democratic",
+    "EFFIC"
+   ]
+  },
+  {
+   "fields": [
+    "##  Gaian",
+    "Gaian"
+   ]
+  },
+  {
+   "fields": [
+    "##  Lindly",
+    "Scott",
+    "Lindly's Rest"
+   ]
+  },
+  {
+   "fields": [
+    "##  Lady",
+    "beautiful",
+    "tree-crazy",
+    "green",
+    "eco-daft"
+   ]
+  },
+  {
+   "fields": [
+    "##  Nature Loony"
+   ]
+  },
+  {
+   "fields": [
+    "##  [Together we shall both] preserve Planet's native life [and ...]"
+   ]
+  },
+  {
+   "fields": [
+    "##  [My intent is] to guard",
+    "understand",
+    "and preserve Planet's native life"
+   ]
+  },
+  {
+   "fields": [
+    "##  [She is bent on] stamping out all legitimate human development of this planet"
+   ]
+  },
+  {
+   "fields": [
+    "##  [You seem bent on] stamping out all legitimate human development of this planet"
+   ]
+  },
+  {
+   "fields": [
+    "##  [I shall not stand here while you] cripple any and all efforts toward human progress on this world"
+   ]
+  },
+  {
+   "fields": [
+    "##  [She spends her time] dancing naked through the trees"
+   ]
+  },
+  {
+   "fields": [
+    "##  [You spend your time] dancing naked through the trees"
+   ]
+  },
+  {
+   "fields": [
+    "##  [I have been accused of] spouting tree-crazy prattle"
+   ]
+  },
+  {
+   "fields": [
+    "##  [Your] tree-crazy prattle [does not impress me]"
+   ]
+  },
+  {
+   "fields": [
+    "##  [Think how this could benefit your] environmental initiatives"
+   ]
+  },
+  {
+   "fields": [
+    "##  [I trust your] pagan rituals [are proceeding to your satisfaction]"
+   ]
+  },
+  {
+   "fields": [
+    "##  [It is customary to remit me a small] ecology tax [...]"
+   ]
+  },
+  {
+   "fields": [
+    "##  [...for the services my forces provide in] preserving and cataloguing Planet's native life"
+   ]
+  },
+  {
+   "fields": [
+    "##  [I shall instruct] my Environmental Police [to see that no such...]"
+   ]
+  },
+  {
+   "fields": [
+    "##  [You are in contravention of] the Planetary Ecology Code"
+   ]
+  },
+  {
+   "fields": [
+    "##"
+   ]
+  },
+  {
+   "fields": [
+    "##  END OF SAMPLE SENTENCES FOR TRANSLATORS"
+   ]
+  },
+  {
+   "fields": [
+    "##"
+   ]
+  }
+ ],
+ "BONUSNAMES": [
+  {
+   "fields": [
+    "TECH",
+    "MORALE",
+    "PSI",
+    "FACILITY",
+    "RESEARCH",
+    "DRONE",
+    "TALENT",
+    "ENERGY"
+   ]
+  },
+  {
+   "fields": [
+    "INTEREST",
+    "COMMERCE",
+    "POPULATION",
+    "HURRY",
+    "UNIT",
+    "TECHCOST",
+    "SHARETECH",
+    "TERRAFORM"
+   ]
+  },
+  {
+   "fields": [
+    "SOCIAL",
+    "ROBUST",
+    "IMMUNITY",
+    "IMPUNITY",
+    "PENALTY",
+    "FUNGNUTRIENT",
+    "FUNGMINERALS",
+    "FUNGENERGY"
+   ]
+  },
+  {
+   "fields": [
+    "COMMFREQ",
+    "MINDCONTROL",
+    "FANATIC",
+    "VOTES",
+    "FREEPROTO"
+   ]
+  }
+ ],
+ "FACTIONS": [
+  {
+   "fields": [
+    "GAIANS",
+    "GAIANS"
+   ]
+  },
+  {
+   "fields": [
+    "HIVE",
+    "HIVE"
+   ]
+  },
+  {
+   "fields": [
+    "UNIV",
+    "UNIV"
+   ]
+  },
+  {
+   "fields": [
+    "MORGAN",
+    "MORGAN"
+   ]
+  },
+  {
+   "fields": [
+    "SPARTANS",
+    "SPARTANS"
+   ]
+  },
+  {
+   "fields": [
+    "BELIEVE",
+    "BELIEVE"
+   ]
+  },
+  {
+   "fields": [
+    "PEACE",
+    "PEACE"
+   ]
+  }
+ ],
+ "MANDATE": [
+  {
+   "fields": [
+    "Explore",
+    "EXPLORE"
+   ]
+  },
+  {
+   "fields": [
+    "Discover",
+    "DISCOVER"
+   ]
+  },
+  {
+   "fields": [
+    "Build",
+    "BUILD"
+   ]
+  },
+  {
+   "fields": [
+    "Conquer",
+    "CONQUER"
+   ]
+  }
+ ],
+ "MOOD": [
+  {
+   "fields": [
+    "Magnanimous"
+   ]
+  },
+  {
+   "fields": [
+    "Solicitous"
+   ]
+  },
+  {
+   "fields": [
+    "Cooperative"
+   ]
+  },
+  {
+   "fields": [
+    "Noncommittal"
+   ]
+  },
+  {
+   "fields": [
+    "Ambivalent"
+   ]
+  },
+  {
+   "fields": [
+    "Obstinate"
+   ]
+  },
+  {
+   "fields": [
+    "Quarrelsome"
+   ]
+  },
+  {
+   "fields": [
+    "Belligerent"
+   ]
+  },
+  {
+   "fields": [
+    "Seething"
+   ]
+  }
+ ],
+ "REPUTE": [
+  {
+   "fields": [
+    "Noble"
+   ]
+  },
+  {
+   "fields": [
+    "Faithful"
+   ]
+  },
+  {
+   "fields": [
+    "Scrupulous"
+   ]
+  },
+  {
+   "fields": [
+    "Dependable"
+   ]
+  },
+  {
+   "fields": [
+    "Ruthless"
+   ]
+  },
+  {
+   "fields": [
+    "Treacherous"
+   ]
+  },
+  {
+   "fields": [
+    "Wicked"
+   ]
+  },
+  {
+   "fields": [
+    "Infamous"
+   ]
+  }
+ ],
+ "MIGHT": [
+  {
+   "fields": [
+    "Unsurpassed",
+    "magnificent"
+   ]
+  },
+  {
+   "fields": [
+    "Potent",
+    "mighty"
+   ]
+  },
+  {
+   "fields": [
+    "Formidable",
+    "formidable"
+   ]
+  },
+  {
+   "fields": [
+    "Sufficient",
+    "respectable"
+   ]
+  },
+  {
+   "fields": [
+    "Wanting",
+    "small"
+   ]
+  },
+  {
+   "fields": [
+    "Anemic",
+    "anemic little"
+   ]
+  },
+  {
+   "fields": [
+    "Feeble",
+    "feeble little"
+   ]
+  }
+ ],
+ "PROPOSALS": [
+  {
+   "fields": [
+    "Elect Planetary Governor",
+    "None",
+    "New Governor Appointed"
+   ]
+  },
+  {
+   "fields": [
+    "Unite Behind Me As Supreme Leader",
+    "MindMac",
+    "Diplomatic Victory"
+   ]
+  },
+  {
+   "fields": [
+    "Salvage Unity Fusion Core",
+    "Orbital",
+    "+500 Energy Credits Every Faction"
+   ]
+  },
+  {
+   "fields": [
+    "Global Trade Pact",
+    "PlaEcon",
+    "Commerce Rates Doubled"
+   ]
+  },
+  {
+   "fields": [
+    "Repeal Global Trade Pact",
+    "PlaEcon",
+    "Commerce Rates Halved"
+   ]
+  },
+  {
+   "fields": [
+    "Launch Solar Shade",
+    "Space",
+    "Global Cooling"
+   ]
+  },
+  {
+   "fields": [
+    "Increase Solar Shade",
+    "Space",
+    "Global Cooling"
+   ]
+  },
+  {
+   "fields": [
+    "Melt Polar Caps",
+    "EcoEng2",
+    "Global Warming"
+   ]
+  },
+  {
+   "fields": [
+    "Repeal U.N. Charter",
+    "MilAlg",
+    "Atrocity Prohibitions Lifted"
+   ]
+  },
+  {
+   "fields": [
+    "Reinstate U.N. Charter",
+    "MilAlg",
+    "Atrocity Prohibitions Return"
+   ]
+  },
+  {
+   "fields": [
+    "...",
+    "Disable",
+    "..."
+   ]
+  }
+ ],
+ "NATURAL": [
+  {
+   "fields": [
+    "Garland Crater",
+    "Crater"
+   ]
+  },
+  {
+   "fields": [
+    "Mount Planet",
+    "Volcano"
+   ]
+  },
+  {
+   "fields": [
+    "Monsoon Jungle",
+    "Jungle"
+   ]
+  },
+  {
+   "fields": [
+    "Uranium Flats",
+    "Uranium"
+   ]
+  },
+  {
+   "fields": [
+    "New Sargasso",
+    "Sargasso"
+   ]
+  },
+  {
+   "fields": [
+    "The Ruins",
+    "Ruins"
+   ]
+  },
+  {
+   "fields": [
+    "Great Dunes",
+    "Dunes"
+   ]
+  },
+  {
+   "fields": [
+    "Freshwater Sea",
+    "Fresh"
+   ]
+  },
+  {
+   "fields": [
+    "Sunny Mesa",
+    "Mesa"
+   ]
+  },
+  {
+   "fields": [
+    "Nessus Canyon",
+    "Canyon"
+   ]
+  },
+  {
+   "fields": [
+    "Geothermal Shallows",
+    "Geothermal"
+   ]
+  },
+  {
+   "fields": [
+    "Pholus Ridge",
+    "Ridge"
+   ]
+  },
+  {
+   "fields": [
+    "#"
+   ],
+   "names": [
+    "This line must remain at end of file"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,158 @@
+
+void FUN_00542810(int param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 *puVar4;
+  void *local_10;
+  undefined1 *puStack_c;
+  undefined4 local_8;
+  
+  iVar2 = param_2;
+  local_8 = 0xffffffff;
+  puStack_c = &LAB_0066ca2f;
+  local_10 = ExceptionList;
+  ExceptionList = &local_10;
+  FUN_0064bb40();
+  FUN_00405ef0();
+  local_8 = 0;
+  FUN_005f0583();
+  FUN_006084f6();
+  param_2 = 0;
+  iVar3 = 1;
+  puVar4 = &DAT_00927b2c;
+  do {
+    if (((((((byte)(1 << ((byte)iVar3 & 0x1f)) & DAT_00985b11) != 0) && (iVar3 != param_1)) &&
+         (iVar3 != iVar2)) &&
+        ((((&DAT_0094d448)[(iVar2 * 0x82f + iVar3) * 4] & 0x10) != 0 &&
+         ((*(uint *)(&DAT_0094d448 + (param_1 * 0x82f + iVar3) * 4) & 8) != 0)))) &&
+       ((*(uint *)(&DAT_0094d448 + (param_1 * 0x82f + iVar3) * 4) & 7) != 0)) {
+      iVar1 = FUN_005ea431();
+      if (iVar1 != 0) break;
+      FUN_005ea448();
+      DAT_0099aa1c = *puVar4;
+      DAT_0099aa20 = 0;
+      FUN_00626634();
+      DAT_0099aa1c = *puVar4;
+      DAT_0099aa20 = 0;
+      FUN_00626634();
+      DAT_0099aa20 = puVar4[0xc0];
+      DAT_0099aa1c = puVar4[0xbf];
+      FUN_00626634();
+      DAT_00997120 = 0;
+      FUN_00625b20();
+      param_2 = param_2 + 1;
+      FUN_0060c555();
+    }
+    puVar4 = puVar4 + 0x167;
+    iVar3 = iVar3 + 1;
+  } while ((int)puVar4 < 0x92a270);
+  if (param_2 == 0) {
+    local_8 = 2;
+    FUN_00406720();
+    local_8 = CONCAT31(local_8._1_3_,1);
+    FUN_00406650();
+  }
+  else {
+    iVar3 = FUN_005f1394();
+    if (iVar3 < 0) {
+      local_8 = 4;
+      FUN_00406720();
+      local_8 = CONCAT31(local_8._1_3_,3);
+      FUN_00406650();
+    }
+    else {
+      DAT_0099aa20 = 0;
+      DAT_0099aa1c = (&DAT_00927590)[iVar3 * 0x167];
+      FUN_00626634();
+      DAT_0099aa1c = (&DAT_00927590)[iVar3 * 0x167];
+      DAT_0099aa20 = 0;
+      FUN_00626634();
+      FUN_00626634();
+      DAT_0099aa20 = (&DAT_00927890)[iVar3 * 0x167];
+      DAT_0099aa1c = (&DAT_0092788c)[iVar3 * 0x167];
+      FUN_00626634();
+      if (((*(uint *)(&DAT_0094d448 + (iVar2 * 0x82f + iVar3) * 4) & 0x20) == 0) &&
+         ((*(int *)(&DAT_0094d608 + iVar3 * 0x20bc) == 0 ||
+          (*(int *)(&DAT_0094d608 + iVar2 * 0x20bc) != 0)))) {
+        if (((*(uint *)(&DAT_0094d448 + (iVar2 * 0x82f + iVar3) * 4) & 0x40) == 0) ||
+           (((&DAT_0094d448)[(iVar2 * 0x82f + param_1) * 4] & 0x80) != 0)) {
+          if (DAT_00920434 == 0) {
+            FUN_00551cf0();
+          }
+          else {
+            FUN_0062732a();
+            FUN_00584010();
+          }
+          if (DAT_00920434 == 0) {
+            FUN_00551cf0();
+          }
+          else {
+            FUN_0062732a();
+            FUN_00584010();
+          }
+          iVar2 = FUN_00551e50();
+          if (iVar2 == 0) {
+            FUN_00626a17();
+            if (DAT_00920434 == 0) {
+              FUN_005537d0();
+            }
+            else {
+              FUN_0062732a();
+              FUN_00584010();
+              FUN_00528ed0();
+            }
+            local_8 = 0x15;
+            FUN_00406720();
+            local_8 = CONCAT31(local_8._1_3_,0x14);
+            FUN_00406650();
+            goto LAB_00542e75;
+          }
+          FUN_00626a17();
+          local_8 = 0x10;
+          FUN_00406720();
+          local_8._0_1_ = 0x13;
+          FUN_005f6de9();
+          local_8._0_1_ = 0x12;
+          FUN_00406060();
+          local_8._0_1_ = 0x11;
+          FUN_00406060();
+          local_8 = CONCAT31(local_8._1_3_,0xf);
+        }
+        else {
+          FUN_00626a17();
+          local_8 = 0xb;
+          FUN_00406720();
+          local_8._0_1_ = 0xe;
+          FUN_005f6de9();
+          local_8._0_1_ = 0xd;
+          FUN_00406060();
+          local_8._0_1_ = 0xc;
+          FUN_00406060();
+          local_8 = CONCAT31(local_8._1_3_,10);
+        }
+      }
+      else {
+        FUN_00626a17();
+        local_8 = 6;
+        FUN_00406720();
+        local_8._0_1_ = 9;
+        FUN_005f6de9();
+        local_8._0_1_ = 8;
+        FUN_00406060();
+        local_8._0_1_ = 7;
+        FUN_00406060();
+        local_8 = CONCAT31(local_8._1_3_,5);
+      }
+      FUN_005e3ced();
+    }
+  }
+LAB_00542e75:
+  local_8 = 0xffffffff;
+  FUN_00405f60();
+  ExceptionList = local_10;
+  return;
+}
+

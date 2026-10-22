@@ -1,0 +1,36 @@
+[New LWP 844719]
+[New LWP 844718]
+[New LWP 844717]
+[New LWP 844716]
+[New LWP 844715]
+[New LWP 844714]
+[New LWP 844713]
+[New LWP 844710]
+[New LWP 844709]
+[New LWP 844708]
+[New LWP 844707]
+[New LWP 844706]
+[New LWP 844705]
+[New LWP 844704]
+[New LWP 844703]
+[New LWP 844702]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe832232c in __kernel_vsyscall ()
+[Switching to thread 1 (LWP 844650)]
+#0  0xe832232c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4cdc70
+Breakpoint 2 at 0x5ab355
+BEFORE rec124 x=41 y=11 ord17=0 d20=-1 +28=1
+
+Thread 1 "terran.exe" hit Breakpoint 1, 0x004cdc70 in ?? ()
+/tmp/m25b_call.gdb:16: Error in sourced command file:
+The program being debugged stopped while in a function called from GDB.
+Evaluation of the expression containing the function
+(at 0x0x4cffa0) will be abandoned.
+When the function is done executing, GDB will silently stop.
+[Inferior 1 (process 844650) detached]

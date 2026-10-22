@@ -1,0 +1,374 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x512b40
+Breakpoint 2 at 0x4d1e90
+Breakpoint 3 at 0x4d44d0
+Breakpoint 4 at 0x529090
+Breakpoint 5 at 0x585720
+Breakpoint 6 at 0x5ab320
+Breakpoint 7 at 0x4d561a
+Breakpoint 8 at 0x4d5908
+Breakpoint 9 at 0x4d5bc6
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x26
+SOLOWRAP idx=46 dir=7 mode=0
+EXEC idx=46 dir=7 mode=3
+SETTILE idx=46 x=-2 y=-2
+SETTILE idx=46 x=45 y=9
+EXEC idx=48 dir=6 mode=3
+EXEC idx=47 dir=5 mode=3
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x26
+SOLOWRAP idx=50 dir=7 mode=0
+EXEC idx=50 dir=7 mode=3
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x26
+SOLOWRAP idx=239 dir=7 mode=0
+EXEC idx=239 dir=7 mode=3
+EXEC idx=148 dir=5 mode=3
+EXEC idx=148 dir=5 mode=3
+EXEC idx=148 dir=6 mode=3
+EXEC idx=148 dir=7 mode=3
+EXEC idx=250 dir=5 mode=3
+EXEC idx=240 dir=6 mode=3
+EXEC idx=240 dir=7 mode=3
+EXEC idx=240 dir=6 mode=3
+EXEC idx=231 dir=7 mode=3
+EXEC idx=184 dir=7 mode=3
+EXEC idx=94 dir=7 mode=3
+EXEC idx=274 dir=2 mode=3
+EXEC idx=274 dir=2 mode=3
+EXEC idx=274 dir=2 mode=3
+EXEC idx=143 dir=1 mode=3
+EXEC idx=143 dir=7 mode=3
+EXEC idx=143 dir=0 mode=3
+EXEC idx=141 dir=2 mode=3
+EXEC idx=26 dir=2 mode=3
+EXEC idx=3 dir=0 mode=3
+EXEC idx=3 dir=0 mode=3
+EXEC idx=3 dir=7 mode=3
+EXEC idx=2 dir=2 mode=3
+EXEC idx=2 dir=1 mode=3
+EXEC idx=2 dir=1 mode=3
+EXEC idx=260 dir=5 mode=3
+EXEC idx=260 dir=5 mode=3
+EXEC idx=260 dir=5 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=136 dir=4 mode=3
+EXEC idx=74 dir=7 mode=3
+EXEC idx=43 dir=2 mode=3
+EXEC idx=12 dir=6 mode=3
+EXEC idx=12 dir=5 mode=3
+EXEC idx=12 dir=5 mode=3
+EXEC idx=12 dir=6 mode=3
+EXEC idx=283 dir=1 mode=3
+EXEC idx=33 dir=7 mode=3
+EXEC idx=33 dir=7 mode=3
+EXEC idx=33 dir=7 mode=3
+EXEC idx=258 dir=7 mode=3
+EXEC idx=275 dir=0 mode=3
+EXEC idx=274 dir=2 mode=3
+EXEC idx=232 dir=7 mode=3
+EXEC idx=232 dir=0 mode=3
+EXEC idx=232 dir=1 mode=3
+EXEC idx=205 dir=1 mode=3
+EXEC idx=205 dir=1 mode=3
+EXEC idx=205 dir=1 mode=3
+EXEC idx=201 dir=1 mode=3
+EXEC idx=201 dir=1 mode=3
+EXEC idx=201 dir=1 mode=3
+EXEC idx=172 dir=5 mode=3
+EXEC idx=114 dir=0 mode=3
+EXEC idx=107 dir=3 mode=3
+EXEC idx=84 dir=4 mode=3
+EXEC idx=41 dir=7 mode=3
+EXEC idx=30 dir=7 mode=3
+EXEC idx=117 dir=2 mode=3
+EXEC idx=112 dir=2 mode=3
+EXEC idx=112 dir=2 mode=3
+EXEC idx=112 dir=2 mode=3
+EXEC idx=106 dir=5 mode=3
+EXEC idx=95 dir=2 mode=3
+EXEC idx=90 dir=4 mode=3
+EXEC idx=233 dir=5 mode=3
+EXEC idx=233 dir=5 mode=3
+EXEC idx=233 dir=6 mode=3
+EXEC idx=233 dir=5 mode=3
+EXEC idx=260 dir=3 mode=3
+EXEC idx=260 dir=3 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=260 dir=1 mode=3
+EXEC idx=215 dir=3 mode=3
+EXEC idx=215 dir=3 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=215 dir=1 mode=3
+EXEC idx=192 dir=3 mode=3
+EXEC idx=192 dir=3 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=192 dir=1 mode=3
+EXEC idx=190 dir=6 mode=3
+EXEC idx=145 dir=6 mode=3
+EXEC idx=145 dir=6 mode=3
+EXEC idx=145 dir=5 mode=3
+EXEC idx=137 dir=4 mode=3
+EXEC idx=126 dir=6 mode=3
+EXEC idx=126 dir=6 mode=3
+EXEC idx=126 dir=6 mode=3
+EXEC idx=258 dir=2 mode=3
+EXEC idx=233 dir=1 mode=3
+EXEC idx=184 dir=2 mode=3
+EXEC idx=144 dir=7 mode=3
+EXEC idx=137 dir=0 mode=3
+EXEC idx=80 dir=3 mode=3
+EXEC idx=14 dir=2 mode=3
+EXEC idx=14 dir=3 mode=3
+EXEC idx=14 dir=3 mode=3
+EXEC idx=286 dir=2 mode=3
+EXEC idx=274 dir=3 mode=3
+EXEC idx=265 dir=2 mode=3
+EXEC idx=261 dir=7 mode=3
+EXEC idx=261 dir=5 mode=3
+EXEC idx=261 dir=6 mode=3
+EXEC idx=259 dir=5 mode=3
+EXEC idx=259 dir=6 mode=3
+EXEC idx=259 dir=6 mode=3
+EXEC idx=259 dir=6 mode=3
+EXEC idx=276 dir=2 mode=3
+EXEC idx=276 dir=2 mode=3
+EXEC idx=276 dir=3 mode=3
+EXEC idx=203 dir=5 mode=3
+EXEC idx=200 dir=5 mode=3
+EXEC idx=191 dir=5 mode=3
+EXEC idx=190 dir=5 mode=3
+EXEC idx=190 dir=5 mode=3
+EXEC idx=175 dir=4 mode=3
+EXEC idx=175 dir=4 mode=3
+EXEC idx=158 dir=5 mode=3
+EXEC idx=152 dir=0 mode=3
+EXEC idx=150 dir=0 mode=3
+EXEC idx=148 dir=4 mode=3
+EXEC idx=137 dir=7 mode=3
+EXEC idx=137 dir=0 mode=3
+EXEC idx=129 dir=1 mode=3
+EXEC idx=109 dir=3 mode=3
+EXEC idx=36 dir=1 mode=3
+EXEC idx=285 dir=4 mode=3
+EXEC idx=285 dir=5 mode=3
+EXEC idx=285 dir=5 mode=3
+EXEC idx=285 dir=5 mode=3
+EXEC idx=285 dir=6 mode=3
+EXEC idx=285 dir=6 mode=3
+EXEC idx=275 dir=0 mode=3
+EXEC idx=206 dir=1 mode=3
+EXEC idx=183 dir=1 mode=3
+EXEC idx=176 dir=1 mode=3
+EXEC idx=168 dir=1 mode=3
+EXEC idx=160 dir=1 mode=3
+EXEC idx=159 dir=5 mode=3
+EXEC idx=159 dir=6 mode=3
+EXEC idx=151 dir=5 mode=3
+EXEC idx=151 dir=6 mode=3
+EXEC idx=144 dir=0 mode=3
+EXEC idx=126 dir=1 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=102 dir=4 mode=3
+EXEC idx=98 dir=1 mode=3
+EXEC idx=22 dir=3 mode=3
+EXEC idx=13 dir=0 mode=3
+EXEC idx=199 dir=1 mode=3
+EXEC idx=286 dir=0 mode=3
+EXEC idx=286 dir=1 mode=3
+EXEC idx=286 dir=0 mode=3
+EXEC idx=286 dir=1 mode=3
+EXEC idx=262 dir=6 mode=3
+EXEC idx=261 dir=4 mode=3
+EXEC idx=261 dir=4 mode=3
+EXEC idx=261 dir=3 mode=3
+EXEC idx=252 dir=0 mode=3
+EXEC idx=252 dir=1 mode=3
+EXEC idx=249 dir=6 mode=3
+EXEC idx=249 dir=6 mode=3
+EXEC idx=249 dir=5 mode=3
+EXEC idx=242 dir=4 mode=3
+EXEC idx=242 dir=3 mode=3
+EXEC idx=242 dir=2 mode=3
+EXEC idx=214 dir=5 mode=3
+EXEC idx=214 dir=4 mode=3
+EXEC idx=214 dir=4 mode=3
+EXEC idx=210 dir=5 mode=3
+EXEC idx=210 dir=4 mode=3
+EXEC idx=210 dir=4 mode=3
+EXEC idx=153 dir=1 mode=3
+EXEC idx=153 dir=2 mode=3
+EXEC idx=153 dir=1 mode=3
+EXEC idx=81 dir=1 mode=3
+EXEC idx=196 dir=1 mode=3
+EXEC idx=194 dir=6 mode=3
+EXEC idx=194 dir=6 mode=3
+EXEC idx=184 dir=2 mode=3
+EXEC idx=184 dir=1 mode=3
+EXEC idx=184 dir=0 mode=3
+EXEC idx=160 dir=4 mode=3
+EXEC idx=152 dir=3 mode=3
+EXEC idx=144 dir=3 mode=3
+EXEC idx=144 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=118 dir=7 mode=3
+EXEC idx=238 dir=4 mode=3
+EXEC idx=238 dir=3 mode=3
+EXEC idx=238 dir=2 mode=3
+EXEC idx=215 dir=3 mode=3
+EXEC idx=193 dir=5 mode=3
+EXEC idx=193 dir=6 mode=3
+EXEC idx=193 dir=6 mode=3
+EXEC idx=132 dir=6 mode=3
+EXEC idx=132 dir=6 mode=3
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x26
+SOLOWRAP idx=46 dir=7 mode=0
+EXEC idx=46 dir=7 mode=3
+SETTILE idx=46 x=-2 y=-2
+SETTILE idx=46 x=45 y=7
+EXEC idx=48 dir=7 mode=3
+EXEC idx=48 dir=7 mode=3
+EXEC idx=47 dir=3 mode=3
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0x66 p2=0x46
+TERRAF idx=50 mode=0
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+KEY p1=0 p2=0x20011
+KEY p1=0xd p2=0xd
+KEY p1=0 p2=0x20011
+[Inferior 1 (process 914079) detached]

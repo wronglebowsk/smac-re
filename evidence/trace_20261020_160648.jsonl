@@ -1,0 +1,8 @@
+{"turn": 0, "year_before": 2120, "t": "16:06:48", "handled": ["hud", "confirm-after-press"], "year_after": 2121, "advanced": true, "dt": 0.1}
+{"turn": 1, "year_before": 2121, "t": "16:06:55", "handled": ["hud", "confirm-after-press"], "year_after": 2122, "advanced": true, "dt": 0.1}
+{"turn": 2, "year_before": 2122, "t": "16:07:05", "handled": ["hud", "confirm-after-press"], "year_after": 2123, "advanced": true, "dt": 0.1}
+{"turn": 3, "year_before": 2123, "t": "16:07:16", "handled": ["hud", "confirm-after-press"], "year_after": 2124, "advanced": true, "dt": 0.1}
+{"turn": 4, "year_before": 2124, "t": "16:07:23", "handled": ["hud", "confirm-after-press"], "year_after": 2125, "advanced": true, "dt": 0.1}
+{"turn": 5, "year_before": 2125, "t": "16:07:32", "handled": ["hud", "confirm-after-press"], "year_after": 2126, "advanced": true, "dt": 0.1}
+{"turn": 6, "year_before": 2126, "t": "16:07:38", "handled": ["unknown", "confirm", "base", "unknown", "unknown"], "year_after": 2126, "advanced": false, "dt": 90.0, "stuck": true}
+{"turn": 7, "year_before": 2126, "t": "16:09:47", "handled": ["hud"], "year_after": 2126, "advanced": false, "dt": 90.0, "stuck": true}

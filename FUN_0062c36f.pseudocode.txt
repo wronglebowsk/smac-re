@@ -1,0 +1,159 @@
+
+void FUN_0062c36f(void)
+
+{
+  uint uVar1;
+  int iVar2;
+  int iVar3;
+  byte bVar4;
+  byte *in_ECX;
+  ushort uVar5;
+  int local_48;
+  uint local_44;
+  byte local_40 [4];
+  uint local_3c;
+  int local_38;
+  int local_34;
+  ushort *local_30;
+  int local_2c;
+  uint local_28;
+  ushort *local_24;
+  uint local_20;
+  int local_1c;
+  uint local_18;
+  uint local_14;
+  ushort *local_10;
+  undefined4 local_c;
+  ushort *local_8;
+  
+  local_3c = 0xffffffff;
+  local_48 = -1;
+  local_18 = 0;
+  local_1c = 0;
+  local_8 = (ushort *)FUN_005ca989(*(undefined4 *)(in_ECX + 0x5ac),*(undefined4 *)(in_ECX + 0x5b0));
+  local_24 = (ushort *)FUN_005ca8d2();
+  FUN_0064cc00(&local_14,2,1,*(undefined4 *)(in_ECX + 0x5b8));
+  for (local_2c = 0; local_2c < (int)(local_14 & 0xffff); local_2c = local_2c + 1) {
+    while (FUN_0064cc00(&local_c,2,1,*(undefined4 *)(in_ECX + 0x5b8)), (local_c & 0xc000) == 0xc000)
+    {
+      uVar5 = FUN_0064b870((int)(short)local_c);
+      local_c = CONCAT22(local_c._2_2_,uVar5);
+      local_8 = (ushort *)((int)local_8 + *(int *)(*(int *)(in_ECX + 0x5a8) + 0x4a8) * (uint)uVar5);
+      local_24 = (ushort *)((int)local_24 + *(int *)(in_ECX + 0x4ac) * (uint)uVar5);
+    }
+    if (local_2c == 0) {
+      local_48 = *(int *)(*(int *)(in_ECX + 0x5a8) + 0x4a8);
+      iVar2 = FUN_005ca989(*(undefined4 *)(in_ECX + 0x5ac),*(undefined4 *)(in_ECX + 0x5b0));
+      local_48 = ((int)local_8 - iVar2) / local_48;
+    }
+    if (local_2c == (local_14 & 0xffff) - 1) {
+      iVar2 = *(int *)(*(int *)(in_ECX + 0x5a8) + 0x4a8);
+      iVar3 = FUN_005ca989(*(undefined4 *)(in_ECX + 0x5ac),*(undefined4 *)(in_ECX + 0x5b0));
+      local_1c = ((int)local_8 - iVar3) / iVar2;
+    }
+    if ((local_c & 0x8000) != 0) {
+      uVar5 = (ushort)(byte)local_c + *(short *)(in_ECX + 0x5a4);
+      local_c = CONCAT22(local_c._2_2_,uVar5) & 0xffff00ff;
+      uVar1 = local_c;
+      if ((uVar5 & 0xff) == (ushort)*in_ECX) {
+        *(byte *)((int)local_8 + *(int *)(in_ECX + 0x59c)) =
+             *(byte *)((int)local_24 + *(int *)(in_ECX + 0x59c));
+      }
+      else {
+        local_c._0_1_ = (byte)uVar5;
+        *(byte *)((int)local_8 + *(int *)(in_ECX + 0x59c)) = (byte)local_c;
+      }
+      local_c = uVar1;
+      FUN_0064cc00(&local_c,2,1,*(undefined4 *)(in_ECX + 0x5b8));
+    }
+    local_10 = local_8;
+    local_30 = local_24;
+    for (local_34 = 0; local_34 < (int)(local_c & 0xffff); local_34 = local_34 + 1) {
+      FUN_0064cc00(&local_44,1,1,*(undefined4 *)(in_ECX + 0x5b8));
+      local_10 = (ushort *)((int)local_10 + (local_44 & 0xff));
+      local_30 = (ushort *)((int)local_30 + (local_44 & 0xff));
+      if ((local_34 == 0) && ((uint)((int)local_10 - (int)local_8) < local_3c)) {
+        local_3c = (int)local_10 - (int)local_8;
+      }
+      FUN_0064cc00(&local_28,1,1,*(undefined4 *)(in_ECX + 0x5b8));
+      if ((char)local_28 < '\x01') {
+        uVar1 = local_20;
+        if ((char)local_28 < '\0') {
+          FUN_0064cc00(&local_20,2,1,*(undefined4 *)(in_ECX + 0x5b8));
+          bVar4 = FUN_0064b870((int)(char)local_28);
+          local_28 = CONCAT31(local_28._1_3_,bVar4);
+          uVar5 = (short)((((int)(local_20 & 0xffff) >> 8) + *(int *)(in_ECX + 0x5a4) & 0xffU) << 8)
+                  + (((ushort)local_20 & 0xff) + (short)*(undefined4 *)(in_ECX + 0x5a4) & 0xff);
+          local_20 = CONCAT22(local_20._2_2_,uVar5);
+          uVar1 = local_20;
+          if (((uVar5 & 0xff) == (ushort)*in_ECX) || ((int)(uint)uVar5 >> 8 == (uint)*in_ECX)) {
+            if ((uVar5 & 0xff) == (ushort)*in_ECX) {
+              if ((int)(uint)uVar5 >> 8 == (uint)*in_ECX) {
+                for (local_38 = 0; local_38 < (int)(uint)bVar4; local_38 = local_38 + 1) {
+                  *local_10 = *local_30;
+                  local_10 = local_10 + 1;
+                  local_30 = local_30 + 1;
+                }
+              }
+              else {
+                local_40[0] = (byte)(uVar5 >> 8);
+                for (local_38 = 0; local_38 < (int)(uint)bVar4; local_38 = local_38 + 1) {
+                  *(byte *)local_10 = local_40[0];
+                  *(byte *)((int)local_10 + 1) = *(byte *)((int)local_30 + 1);
+                  local_10 = local_10 + 1;
+                  local_30 = local_30 + 1;
+                }
+              }
+            }
+            else {
+              local_20._0_1_ = (byte)uVar5;
+              local_40[0] = (byte)local_20;
+              for (local_38 = 0; local_38 < (int)(uint)bVar4; local_38 = local_38 + 1) {
+                *(byte *)local_10 = (byte)*local_30;
+                *(byte *)((int)local_10 + 1) = (byte)local_20;
+                local_10 = local_10 + 1;
+                local_30 = local_30 + 1;
+              }
+            }
+          }
+          else {
+            for (local_38 = 0; local_38 < (int)(uint)bVar4; local_38 = local_38 + 1) {
+              *local_10 = uVar5;
+              local_10 = local_10 + 1;
+              local_30 = local_30 + 1;
+            }
+          }
+        }
+      }
+      else {
+        local_28 = CONCAT31(local_28._1_3_,(char)local_28 << 1);
+        for (local_38 = 0; uVar1 = local_20, local_38 < (int)(local_28 & 0xff);
+            local_38 = local_38 + 1) {
+          FUN_0064cc00(local_40,1,1,*(undefined4 *)(in_ECX + 0x5b8));
+          bVar4 = local_40[0] + in_ECX[0x5a4];
+          local_40[0] = bVar4;
+          if (*in_ECX == bVar4) {
+            *(byte *)local_10 = (byte)*local_30;
+          }
+          else {
+            *(byte *)local_10 = bVar4;
+          }
+          local_10 = (ushort *)((int)local_10 + 1);
+          local_30 = (ushort *)((int)local_30 + 1);
+        }
+      }
+      local_20 = uVar1;
+    }
+    if (local_18 < (uint)((int)local_10 - (int)local_8)) {
+      local_18 = (int)local_10 - (int)local_8;
+    }
+    local_8 = (ushort *)((int)local_8 + *(int *)(*(int *)(in_ECX + 0x5a8) + 0x4a8));
+    local_24 = (ushort *)((int)local_24 + *(int *)(in_ECX + 0x4ac));
+  }
+  *(uint *)(in_ECX + 0x58c) = local_3c + *(int *)(in_ECX + 0x5ac);
+  *(int *)(in_ECX + 0x590) = local_48 + *(int *)(in_ECX + 0x5b0);
+  *(uint *)(in_ECX + 0x594) = local_18 + *(int *)(in_ECX + 0x5ac);
+  *(int *)(in_ECX + 0x598) = local_1c + *(int *)(in_ECX + 0x5b0);
+  return;
+}
+

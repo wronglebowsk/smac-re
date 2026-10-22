@@ -1,0 +1,12 @@
+{"turn": 0, "year_before": 2147, "t": "16:25:57", "handled": ["confirm", "dialog", "dialog", "dialog", "hud", "confirm-after-press"], "screens": {"confirm": 1, "dialog": 3, "hud": 1}, "year_after": 2148, "advanced": true, "dt": 40.0}
+{"turn": 1, "year_before": 2148, "t": "16:26:37", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2149, "advanced": true, "dt": 9.6}
+{"turn": 2, "year_before": 2149, "t": "16:26:47", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2150, "advanced": true, "dt": 11.6}
+{"turn": 3, "year_before": 2150, "t": "16:26:59", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2151, "advanced": true, "dt": 10.2}
+{"turn": 4, "year_before": 2151, "t": "16:27:09", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2152, "advanced": true, "dt": 10.1}
+{"turn": 5, "year_before": 2152, "t": "16:27:19", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2153, "advanced": true, "dt": 9.6}
+{"turn": 6, "year_before": 2153, "t": "16:27:29", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2154, "advanced": true, "dt": 13.9}
+{"turn": 7, "year_before": 2154, "t": "16:27:43", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2155, "advanced": true, "dt": 9.2}
+{"turn": 8, "year_before": 2155, "t": "16:27:52", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2156, "advanced": true, "dt": 9.7}
+{"turn": 9, "year_before": 2156, "t": "16:28:02", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2157, "advanced": true, "dt": 18.3}
+{"turn": 10, "year_before": 2157, "t": "16:28:20", "handled": ["hud", "hud", "hud", "hud", "hud"], "screens": {"hud": 5}, "year_after": 2157, "advanced": false, "dt": 60.7, "stuck": true}
+{"turn": 11, "year_before": 2157, "t": "16:29:21", "handled": ["hud", "hud", "hud", "unknown", "unknown", "unknown", "unknown", "dialog"], "screens": {"hud": 3, "unknown": 4, "dialog": 1}, "year_after": 2157, "advanced": false, "dt": 68.1, "stuck": true}

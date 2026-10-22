@@ -1,0 +1,10 @@
+{"turn": 0, "year_before": 2173, "t": "16:39:20", "handled": ["dialog", "dialog", "dialog"], "screens": {"dialog": 3}, "year_after": 2174, "advanced": true, "dt": 24.1}
+{"turn": 1, "year_before": 2174, "t": "16:39:45", "handled": ["dialog", "hud", "confirm-after-press", "dialog", "dialog", "dialog", "unknown"], "screens": {"dialog": 4, "hud": 1, "unknown": 1}, "year_after": 2175, "advanced": true, "dt": 54.0}
+{"turn": 2, "year_before": 2175, "t": "16:40:39", "handled": ["hud", "confirm-after-press", "hud", "confirm-after-press"], "screens": {"hud": 2}, "year_after": 2177, "advanced": true, "dt": 24.1}
+{"turn": 3, "year_before": 2177, "t": "16:41:03", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2178, "advanced": true, "dt": 14.0}
+{"turn": 4, "year_before": 2178, "t": "16:41:17", "handled": ["hud", "confirm-after-press", "dialog"], "screens": {"hud": 1, "dialog": 1}, "year_after": 2179, "advanced": true, "dt": 16.6}
+{"turn": 5, "year_before": 2179, "t": "16:41:34", "handled": ["hud", "confirm-after-press", "dialog"], "screens": {"hud": 1, "dialog": 1}, "year_after": 2180, "advanced": true, "dt": 16.6}
+{"turn": 6, "year_before": 2180, "t": "16:41:50", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2181, "advanced": true, "dt": 9.6}
+{"turn": 7, "year_before": 2181, "t": "16:42:00", "handled": ["unknown", "confirm"], "screens": {"unknown": 1, "confirm": 1}, "year_after": null, "advanced": true, "dt": 14.5}
+{"turn": 8, "year_before": null, "t": "16:42:15", "handled": ["movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie"], "screens": {"movie": 19}, "year_after": null, "advanced": false, "dt": 63.1, "stuck": true}
+{"turn": 9, "year_before": null, "t": "16:43:18", "handled": ["movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie", "movie"], "screens": {"movie": 19}, "year_after": null, "advanced": false, "dt": 63.1, "stuck": true}

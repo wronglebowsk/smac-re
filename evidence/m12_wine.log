@@ -1,0 +1,12 @@
+002c:fixme:winediag:loader_init Wine TkG (staging) 10.20 is a testing version containing experimental patches.
+002c:fixme:winediag:loader_init Please don't report bugs about it on winehq.org and use https://github.com/Frogging-Family/wine-tkg-git/issues instead.
+0024:fixme:winediag:loader_init Wine TkG (staging) 10.20 is a testing version containing experimental patches.
+0024:fixme:winediag:loader_init Please don't report bugs about it on winehq.org and use https://github.com/Frogging-Family/wine-tkg-git/issues instead.
+0070:err:ole:start_rpcss Failed to open RpcSs service
+MESA-EGL: warning: DRI3 error: Could not get DRI3 device
+MESA-EGL: warning: Ensure your X server supports DRI3 to get accelerated rendering
+MESA-EGL: warning: failed to open /dev/dri/renderD128: Permission denied
+MESA-EGL: warning: failed to open /dev/dri/renderD128: Permission denied
+MESA-EGL: warning: failed to open /dev/dri/card0: Permission denied
+0084:fixme:d3d:wined3d_guess_card No card selector available for card vendor 0000 (using GL_RENDERER "llvmpipe (LLVM 21.1.8, 256 bits)").
+0084:fixme:ntdll:NtQuerySystemInformation info_class SYSTEM_PERFORMANCE_INFORMATION

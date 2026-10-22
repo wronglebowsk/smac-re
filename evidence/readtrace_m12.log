@@ -1,0 +1,56 @@
+[New LWP 294049]
+[New LWP 294048]
+[New LWP 294047]
+[New LWP 294046]
+[New LWP 294045]
+[New LWP 294044]
+[New LWP 294043]
+[New LWP 294042]
+[New LWP 294041]
+[New LWP 294040]
+[New LWP 294039]
+[New LWP 294038]
+[New LWP 294037]
+[New LWP 294036]
+[New LWP 294035]
+[New LWP 294034]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee35432c in __kernel_vsyscall ()
+Breakpoint 1 at 0x64cc00
+Breakpoint 2 at 0x64cc00
+S caller=0x59688f size=796 count=1 dest=0x985ab8
+S caller=0x596a38 size=4 count=1 dest=0x91b5b4
+S caller=0x596a96 size=67040 count=1 dest=0x94d430
+S caller=0x596edb size=11488 count=1 dest=0x927590
+S caller=0x596f2a size=32 count=1 dest=0x926a78
+M caller=0x5822ac size=2724 count=1 dest=0x92a378
+M caller=0x5822f7 size=140800 count=1 dest=0x40a6660
+M caller=0x58231d size=128 count=1 dest=0x15e2810
+S caller=0x597032 size=16000 count=1 dest=0x985e5c
+S caller=0x597089 size=4 count=1 dest=0x927538
+S caller=0x5970e9 size=328 count=1 dest=0x930d7c
+S caller=0x597146 size=3584 count=1 dest=0x989ce0
+S caller=0x5971b1 size=26624 count=1 dest=0x98ad88
+S caller=0x597299 size=4096 count=1 dest=0x92bff0
+S caller=0x59731e size=6188 count=1 dest=0x933278
+S caller=0x597524 size=11248 count=1 dest=0x95da10
+S caller=0x5976a3 size=256 count=1 dest=0x991598
+S caller=0x59771b size=152 count=1 dest=0x92bf58
+S caller=0x597786 size=10144 count=1 dest=0x92d4a0
+S caller=0x5977e2 size=4 count=1 dest=0x91b5b8
+S caller=0x597839 size=4 count=1 dest=0x91b5bc
+S caller=0x597897 size=4 count=1 dest=0x91b5f0
+S caller=0x5978f4 size=4 count=1 dest=0x91b670
+S caller=0x597954 size=4 count=1 dest=0x91b700
+S caller=0x5979fd size=4 count=1 dest=0xbe27b4
+S caller=0x597a1e size=4 count=1 dest=0xbe27b0
+
+Thread 7 "audio_client_ma" received signal SIGQUIT, Quit.
+[Switching to LWP 294044]
+0xee14168b in ?? ()
+[Inferior 1 (process 294031) detached]

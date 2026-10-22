@@ -1,0 +1,45 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x51f554
+Hardware watchpoint 2: *(int *)0x962fd0
+Hardware watchpoint 3: *(int *)0x962fe0
+Hardware watchpoint 4: *(int *)0x953884
+ARMED min40=0x962fd0 queue50=0x962fe0 energy=0x953884 yearbp=0x51f554
+ROUND n=1 year=2337 turn=237 cur=7 nbases=75 nrg3=19 led3=0 gross=2 upkeep=2 net=0
+OURBASE idx=72 addr=0x962f90 x=45 y=11 pop=3 min40=2 f44=2 f50=2 mir98=2 f68=0 f90=0 c4=3 d4=3 fc=2 b104=3 b108=2
+UNIT idx=228 type=2 x=45 y=11 order=0 mpused=0 home=72
+UNIT idx=231 type=2 x=45 y=11 order=0 mpused=0 home=72
+UNIT idx=243 type=2 x=45 y=11 order=0 mpused=0 home=72
+UNIT idx=251 type=2 x=45 y=11 order=0 mpused=0 home=72
+UNIT idx=263 type=2 x=45 y=11 order=0 mpused=0 home=72
+UNIT idx=284 type=2 x=45 y=11 order=0 mpused=0 home=72
+UNITS n=6
+WENERGY n=1 eip=0x4f5c92 val=21 eax=0x15 ebx=0x8f0d40 ecx=0x962f90 edx=0x1 esi=0x6234 edi=0x3
+WENERGY n=2 eip=0x4f4958 val=20 eax=0x1 ebx=0x3 ecx=0x14 edx=0x4 esi=0x6 edi=0x6234
+WENERGY n=3 eip=0x4f4958 val=19 eax=0x1 ebx=0x3 ecx=0x13 edx=0x4 esi=0x7 edi=0x6234
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 914091]
+0xeb4c132c in __kernel_vsyscall ()
+[Inferior 1 (process 914079) detached]

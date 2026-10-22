@@ -1,0 +1,37 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf355e68b in ?? ()
+[Switching to thread 1 (LWP 370597)]
+#0  0xf355e68b in ?? ()
+BEFORE unit119 x=41 y=11 flags=0x4000000 ord17=0 d20=-1 d24=-1 v28=0xffffffff
+
+Thread 1 "terran.exe" received signal SIGSEGV, Segmentation fault.
+0x00000030 in ?? ()
+scripts/m25_issue_move.gdb:13: Error in sourced command file:
+The program being debugged was signaled while in a function called from GDB.
+GDB remains in the frame where the signal was received.
+To change this behavior use "set unwind-on-signal on".
+Evaluation of the expression containing the function
+(at 0x0x4cffa0) will be abandoned.
+When the function is done executing, GDB will silently stop.
+[Inferior 1 (process 370597) detached]

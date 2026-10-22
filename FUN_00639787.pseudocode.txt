@@ -1,0 +1,30 @@
+
+bool FUN_00639787(int param_1,uint param_2)
+
+{
+  int in_ECX;
+  bool bVar1;
+  int local_c;
+  
+  if (in_ECX == -0x150) {
+    MessageBoxA((HWND)0x0,s_Help_in_net___00699d00,s_NO_message_stamp__00699cec,0);
+    bVar1 = true;
+  }
+  else {
+    for (local_c = 0; (local_c < 0x10 && (*(int *)(in_ECX + 0x150 + local_c * 0x58) != param_1));
+        local_c = local_c + 1) {
+    }
+    if (local_c == 0x10) {
+      bVar1 = false;
+    }
+    else {
+      bVar1 = *(uint *)(in_ECX + 0x154 + local_c * 0x58) < param_2;
+      if (bVar1) {
+        *(uint *)(in_ECX + 0x154 + local_c * 0x58) = param_2;
+      }
+      bVar1 = !bVar1;
+    }
+  }
+  return bVar1;
+}
+

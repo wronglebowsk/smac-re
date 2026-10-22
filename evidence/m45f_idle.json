@@ -1,0 +1,906 @@
+{
+ "tag": "m45f",
+ "t": "2026-10-22 09:54:45",
+ "events": [
+  "preflight kind=hud pane_end=False our_turn=True",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: answered confirm pane",
+  "year 2321 landed (cur=3)",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: answered confirm pane",
+  "year 2322 landed (cur=3)",
+  "svc: answered confirm pane",
+  "year 2323 landed (cur=3)",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: answered confirm pane",
+  "year 2324 landed (cur=3)",
+  "svc: Return on unknown pane",
+  "svc: Return on dialog pane",
+  "svc: answered confirm pane",
+  "year 2325 landed (cur=3)",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: answered confirm pane",
+  "year 2326 landed (cur=1)",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on unknown pane",
+  "svc: Return on dialog pane",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: answered confirm pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on unknown pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "year 2327 landed (cur=3)",
+  "svc: answered confirm pane",
+  "year 2328 landed (cur=3)",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: answered confirm pane",
+  "svc: Return on dialog pane",
+  "svc: clicked message-bar OK bar (390, 497)",
+  "svc: clicked message-bar OK bar (391, 497)",
+  "year 2329 landed (cur=3)",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen",
+  "svc: Return on dialog pane",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Escape on base screen"
+ ],
+ "pid": 914079,
+ "snap0": {
+  "year": 2320,
+  "cur": 3,
+  "nmine": 1,
+  "energy": {
+   "1": 205,
+   "2": 121,
+   "3": 19,
+   "4": 452,
+   "5": 70,
+   "6": 111,
+   "7": 274
+  },
+  "owners": {
+   "6": {
+    "bases": 17,
+    "minerals": 733,
+    "pop": 61
+   },
+   "1": {
+    "bases": 10,
+    "minerals": 239,
+    "pop": 44
+   },
+   "2": {
+    "bases": 26,
+    "minerals": 543,
+    "pop": 142
+   },
+   "4": {
+    "bases": 8,
+    "minerals": 324,
+    "pop": 32
+   },
+   "5": {
+    "bases": 3,
+    "minerals": 36,
+    "pop": 11
+   },
+   "7": {
+    "bases": 9,
+    "minerals": 232,
+    "pop": 49
+   },
+   "3": {
+    "bases": 1,
+    "minerals": 4,
+    "pop": 4
+   }
+  }
+ },
+ "rounds": [
+  {
+   "year": 2320,
+   "cur": 3,
+   "nmine": 1,
+   "energy": {
+    "1": 205,
+    "2": 121,
+    "3": 19,
+    "4": 452,
+    "5": 70,
+    "6": 111,
+    "7": 274
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 733,
+     "pop": 61
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 239,
+     "pop": 44
+    },
+    "2": {
+     "bases": 26,
+     "minerals": 543,
+     "pop": 142
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 324,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 36,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 232,
+     "pop": 49
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 4,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "ES",
+    "Corrumenree",
+    "|",
+    "rome",
+    "Ol",
+    "turn",
+    "Gross",
+    "loome:",
+    "2iturn",
+    "Total",
+    "Cots:",
+    "-2iturn",
+    "NET",
+    "INCOME:",
+    "O'turn"
+   ]
+  },
+  {
+   "year": 2321,
+   "cur": 3,
+   "nmine": 1,
+   "energy": {
+    "1": 161,
+    "2": 107,
+    "3": 19,
+    "4": 599,
+    "5": 92,
+    "6": 133,
+    "7": 360
+   },
+   "owners": {
+    "6": {
+     "bases": 16,
+     "minerals": 559,
+     "pop": 57
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 200,
+     "pop": 44
+    },
+    "2": {
+     "bases": 27,
+     "minerals": 527,
+     "pop": 144
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 301,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 52,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 239,
+     "pop": 49
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 9,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "hee",
+    "eee",
+    "M"
+   ]
+  },
+  {
+   "year": 2322,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 171,
+    "2": 63,
+    "3": 19,
+    "4": 583,
+    "5": 97,
+    "6": 99,
+    "7": 383
+   },
+   "owners": {
+    "6": {
+     "bases": 16,
+     "minerals": 565,
+     "pop": 58
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 232,
+     "pop": 44
+    },
+    "2": {
+     "bases": 27,
+     "minerals": 607,
+     "pop": 146
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 179,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 68,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 277,
+     "pop": 49
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 4,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "a",
+    "at",
+    "Se",
+    "Patral."
+   ]
+  },
+  {
+   "year": 2323,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 179,
+    "2": 51,
+    "3": 19,
+    "4": 598,
+    "5": 102,
+    "6": 89,
+    "7": 390
+   },
+   "owners": {
+    "6": {
+     "bases": 16,
+     "minerals": 427,
+     "pop": 58
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 264,
+     "pop": 44
+    },
+    "2": {
+     "bases": 28,
+     "minerals": 530,
+     "pop": 148
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 224,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 52,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 219,
+     "pop": 49
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 8,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "SEEMS",
+    "TSE",
+    "EGE",
+    "Provost",
+    "Zakharov",
+    "Integrity:",
+    "Mo",
+    "ble",
+    "eliotn:",
+    "Fee",
+    "bbe"
+   ]
+  },
+  {
+   "year": 2324,
+   "cur": 3,
+   "nmine": 3,
+   "energy": {
+    "1": 172,
+    "2": 50,
+    "3": 19,
+    "4": 608,
+    "5": 107,
+    "6": 71,
+    "7": 391
+   },
+   "owners": {
+    "6": {
+     "bases": 15,
+     "minerals": 477,
+     "pop": 52
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 187,
+     "pop": 44
+    },
+    "2": {
+     "bases": 29,
+     "minerals": 612,
+     "pop": 153
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 269,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 70,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 120,
+     "pop": 49
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 2,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "\u2018iffly,",
+    "and",
+    "so",
+    "was",
+    "thrown",
+    "ped",
+    "itback",
+    "against",
+    "itself"
+   ]
+  },
+  {
+   "year": 2325,
+   "cur": 3,
+   "nmine": 4,
+   "energy": {
+    "1": 173,
+    "2": 24,
+    "3": 19,
+    "4": 622,
+    "5": 112,
+    "6": 106,
+    "7": 391
+   },
+   "owners": {
+    "6": {
+     "bases": 15,
+     "minerals": 468,
+     "pop": 52
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 219,
+     "pop": 44
+    },
+    "2": {
+     "bases": 29,
+     "minerals": 656,
+     "pop": 154
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 313,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 87,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 162,
+     "pop": 49
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 5,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": []
+  },
+  {
+   "year": 2326,
+   "cur": 3,
+   "nmine": 5,
+   "energy": {
+    "1": 187,
+    "2": 69,
+    "3": 19,
+    "4": 636,
+    "5": 113,
+    "6": 127,
+    "7": 405
+   },
+   "owners": {
+    "6": {
+     "bases": 14,
+     "minerals": 444,
+     "pop": 50
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 183,
+     "pop": 44
+    },
+    "2": {
+     "bases": 30,
+     "minerals": 674,
+     "pop": 157
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 301,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 52,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 204,
+     "pop": 49
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 8,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": []
+  },
+  {
+   "year": 2327,
+   "cur": 3,
+   "nmine": 5,
+   "energy": {
+    "1": 204,
+    "2": 51,
+    "3": 19,
+    "4": 654,
+    "5": 109,
+    "6": 112,
+    "7": 496
+   },
+   "owners": {
+    "6": {
+     "bases": 14,
+     "minerals": 510,
+     "pop": 50
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 158,
+     "pop": 44
+    },
+    "2": {
+     "bases": 30,
+     "minerals": 651,
+     "pop": 159
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 286,
+     "pop": 32
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 39,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 165,
+     "pop": 50
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 1,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "a",
+    "at",
+    "Se",
+    "Patral."
+   ]
+  },
+  {
+   "year": 2328,
+   "cur": 3,
+   "nmine": 6,
+   "energy": {
+    "1": 221,
+    "2": 42,
+    "3": 19,
+    "4": 672,
+    "5": 116,
+    "6": 99,
+    "7": 468
+   },
+   "owners": {
+    "6": {
+     "bases": 14,
+     "minerals": 575,
+     "pop": 50
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 187,
+     "pop": 44
+    },
+    "2": {
+     "bases": 30,
+     "minerals": 626,
+     "pop": 160
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 175,
+     "pop": 33
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 57,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 221,
+     "pop": 50
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 3,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "SEEMS",
+    "TSE",
+    "EGE",
+    "Provost",
+    "2th",
+    "Inte",
+    "g",
+    "rity:",
+    "Mio",
+    "ble",
+    "high"
+   ]
+  },
+  {
+   "year": 2329,
+   "cur": 3,
+   "nmine": 6,
+   "energy": {
+    "1": 200,
+    "2": 59,
+    "3": 19,
+    "4": 728,
+    "5": 123,
+    "6": 85,
+    "7": 465
+   },
+   "owners": {
+    "6": {
+     "bases": 12,
+     "minerals": 490,
+     "pop": 43
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 197,
+     "pop": 44
+    },
+    "2": {
+     "bases": 32,
+     "minerals": 682,
+     "pop": 166
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 222,
+     "pop": 33
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 76,
+     "pop": 11
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 271,
+     "pop": 50
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 5,
+     "pop": 4
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "SEEMS",
+    "EE",
+    "Provost",
+    "Zalthaamy",
+    "Inte",
+    "g",
+    "rity:",
+    "Mio",
+    "ble",
+    "bai"
+   ]
+  }
+ ],
+ "svc_hud_clicks": 11,
+ "reason": "budget",
+ "final": {
+  "year": 2329,
+  "cur": 3,
+  "nmine": 6,
+  "energy": {
+   "1": 200,
+   "2": 59,
+   "3": 19,
+   "4": 728,
+   "5": 123,
+   "6": 85,
+   "7": 465
+  },
+  "owners": {
+   "6": {
+    "bases": 12,
+    "minerals": 490,
+    "pop": 43
+   },
+   "1": {
+    "bases": 10,
+    "minerals": 197,
+    "pop": 44
+   },
+   "2": {
+    "bases": 32,
+    "minerals": 682,
+    "pop": 166
+   },
+   "4": {
+    "bases": 8,
+    "minerals": 222,
+    "pop": 33
+   },
+   "5": {
+    "bases": 3,
+    "minerals": 76,
+    "pop": 11
+   },
+   "7": {
+    "bases": 9,
+    "minerals": 271,
+    "pop": 50
+   },
+   "3": {
+    "bases": 1,
+    "minerals": 5,
+    "pop": 4
+   }
+  }
+ },
+ "deltas_per_round": {
+  "rounds": 9,
+  "energy3": 0.0,
+  "energy_by_player": {
+   "1": -0.5555555555555556,
+   "2": -6.888888888888889,
+   "3": 0.0,
+   "4": 30.666666666666668,
+   "5": 5.888888888888889,
+   "6": -2.888888888888889,
+   "7": 21.22222222222222
+  },
+  "minerals_by_owner": {
+   "1": -4.666666666666667,
+   "2": 15.444444444444445,
+   "3": 0.1111111111111111,
+   "4": -11.333333333333334,
+   "5": 4.444444444444445,
+   "6": -27.0,
+   "7": 4.333333333333333
+  },
+  "bases_by_owner_end": {
+   "1": 10,
+   "2": 32,
+   "3": 1,
+   "4": 8,
+   "5": 3,
+   "6": 12,
+   "7": 9
+  }
+ }
+}

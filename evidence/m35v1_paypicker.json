@@ -1,0 +1,320 @@
+{
+ "pid": 914079,
+ "player": 3,
+ "key": "bracketright",
+ "tag": "m35v1",
+ "events": [
+  "preflight clean-hud=True ncolors=151 upper=0",
+  "poke tech bit 59 (EnvEcon) 0x10->0x18",
+  "TERRAF hit after press #1: TERRAF idx=41 mode=0x10",
+  "Escape on TERRACOST pane (no OK row OCR'd)",
+  "picker up but no 'Expend' row OCR'd \u2014 leaving it up",
+  "cleanup: picker unanswerable"
+ ],
+ "panes": [],
+ "screenshots": [
+  "m35v1_terracost_pane.png",
+  "m35v1_paypane.png"
+ ],
+ "unit": {
+  "idx": 41,
+  "x": 45,
+  "y": 7,
+  "order": 0,
+  "mpused": 0
+ },
+ "pre_screen": {
+  "nc": 151,
+  "upper": 0,
+  "clean": true
+ },
+ "pre": {
+  "tech_byte_59": 16,
+  "energy": 40,
+  "tile_array_ptr": "0x40a5cd0",
+  "tile_addr": "0x40a90b8",
+  "tile": "80581304084000ff028010000000400000000000000000000280100000000000000000000000000000000000",
+  "tile_elev": 4,
+  "tile_mask": "0x108002",
+  "sel": 41,
+  "orders_mode": 1,
+  "pending": 1,
+  "req_tech_raise": 59,
+  "req_tech_raise_sea": 59
+ },
+ "poke": {
+  "addr": "0x985c57",
+  "old": 16,
+  "new": 24,
+  "expected": 24
+ },
+ "gdb": {
+  "pid": 1312085,
+  "breakpoints_armed": 25
+ },
+ "presses": 1,
+ "terracost_words": [
+  "=",
+  "PLANETARY",
+  "ECOLOGIST",
+  "i",
+  "CO",
+  ",",
+  "Iwill",
+  "cost",
+  "9",
+  "credits",
+  "to",
+  "raise",
+  "this",
+  "area;",
+  "our",
+  "current",
+  "ae",
+  "se",
+  "reserves",
+  "are",
+  "49",
+  "credits.",
+  "S",
+  "ee",
+  "ee",
+  "Expend",
+  "9-credite",
+  "ip",
+  "ay",
+  "Sad"
+ ],
+ "paypane_seen": true,
+ "paypane_words": [
+  [
+   "eee",
+   189,
+   36
+  ],
+  [
+   "es",
+   285,
+   35
+  ],
+  [
+   "ieee",
+   381,
+   36
+  ],
+  [
+   "imate",
+   477,
+   35
+  ],
+  [
+   "ae",
+   566,
+   36
+  ],
+  [
+   "ap",
+   669,
+   36
+  ],
+  [
+   "Pega",
+   209,
+   74
+  ],
+  [
+   "Sor",
+   257,
+   74
+  ],
+  [
+   "ote",
+   296,
+   73
+  ],
+  [
+   "seme",
+   313,
+   71
+  ],
+  [
+   "EMG",
+   356,
+   74
+  ],
+  [
+   "ene",
+   401,
+   75
+  ],
+  [
+   "ree",
+   439,
+   74
+  ],
+  [
+   "acid",
+   470,
+   74
+  ],
+  [
+   "cae",
+   511,
+   74
+  ],
+  [
+   "Eee",
+   557,
+   75
+  ],
+  [
+   "|",
+   0,
+   397
+  ],
+  [
+   "ri",
+   262,
+   392
+  ],
+  [
+   ":",
+   302,
+   388
+  ],
+  [
+   "M",
+   497,
+   387
+  ],
+  [
+   ")",
+   798,
+   395
+  ],
+  [
+   "i",
+   27,
+   425
+  ],
+  [
+   "ay",
+   70,
+   433
+  ],
+  [
+   "Se)",
+   189,
+   430
+  ],
+  [
+   "\u2014",
+   280,
+   421
+  ],
+  [
+   "[___TURN",
+   604,
+   421
+  ],
+  [
+   "COMPLETE",
+   698,
+   421
+  ],
+  [
+   "|",
+   791,
+   417
+  ],
+  [
+   "4",
+   56,
+   436
+  ],
+  [
+   "Co",
+   279,
+   437
+  ],
+  [
+   "rrumesnree:",
+   312,
+   437
+  ],
+  [
+   "|",
+   327,
+   438
+  ],
+  [
+   "bromenee",
+   344,
+   438
+  ],
+  [
+   "Oi'tu",
+   369,
+   437
+  ],
+  [
+   "rn",
+   390,
+   439
+  ],
+  [
+   "f",
+   56,
+   453
+  ],
+  [
+   "\u2018i",
+   77,
+   449
+  ],
+  [
+   "aa",
+   286,
+   444
+  ],
+  [
+   "meen",
+   335,
+   444
+  ],
+  [
+   "\"",
+   384,
+   438
+  ]
+ ],
+ "post_tracer": "TracerPid:\t0",
+ "post": {
+  "energy": 40,
+  "tech_byte_59": 24,
+  "tile": "80581304084000ff028010000000400000000000000000000280100000000000000000000000000000000000",
+  "tile_elev": 4,
+  "tile_mask": "0x108002",
+  "order": 0,
+  "mpused": 0,
+  "sel": 41,
+  "year": 2270,
+  "cur_player": 3,
+  "pending": 1
+ },
+ "tile_diff": [],
+ "log": [
+  "TERRAF idx=41 mode=0x10",
+  "TECHCHK idx=41 mode=0x10 unlocked=1",
+  "PAYPATH idx=41 mode=0x10",
+  "ORDERCHK idx=41 already_this_order=0",
+  "COST idx=41 cost=9",
+  "TERRACOSTPANE OPEN idx=41",
+  "PANE #1 id=TERRACOSTUP",
+  "PAYPANE OPEN idx=41",
+  "PANE #2 id=TERRAPAY",
+  "PAYDECIDE idx=41",
+  "PAYDECLINED idx=41"
+ ],
+ "log_path": "/home/n100/reverse/smac/evidence/m35v1_gdb.log"
+}

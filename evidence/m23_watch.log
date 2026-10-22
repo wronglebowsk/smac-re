@@ -1,0 +1,28 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(unsigned short*)0x9359e8
+Hardware watchpoint 2: *(unsigned short*)0x9359ea
+Hardware watchpoint 3: *(unsigned char*)0x935a01
+Hardware watchpoint 4: *(unsigned short*)0x935a12
+[Inferior 1 (process 370597) detached]

@@ -1,0 +1,34 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x476580
+Breakpoint 2 at 0x47674d
+Breakpoint 3 at 0x476778
+Breakpoint 4 at 0x4767ab
+Breakpoint 5 at 0x476ac7
+Breakpoint 6 at 0x476bae
+Breakpoint 7 at 0x476c39
+
+Thread 1 "terran.exe" hit Breakpoint 1, 0x00476580 in ?? ()
+MAPH p1=0x1d6 p2=0x12c p3=0 sel=117 mode=1 pend=1 this=0x8f79e0 wmode=0
+[Inferior 1 (process 914079) detached]

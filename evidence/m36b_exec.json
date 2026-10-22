@@ -1,0 +1,60 @@
+{
+ "tag": "m36b",
+ "unit": 41,
+ "t": "2026-10-21 21:53:57",
+ "pid": 914079,
+ "pre": {
+  "year": 2271,
+  "cur": 3,
+  "sel": -1,
+  "energy": 31,
+  "unit": {
+   "x": 45,
+   "y": 7,
+   "order": 20,
+   "mpused": 3
+  },
+  "tile_addr": "0x40a90b8",
+  "tile0": 128,
+  "tile_elev": 4,
+  "tile_mask": 1081346
+ },
+ "pre_body": "igviesionyearturncompleteeconoiturnelewmpsychsepesrerollingmoistlabsgreenindependentalreadymovedidamagediexploreigmissionyeariyenergyfoe",
+ "btn_ocr": "urncomplete",
+ "pre_kind": "hud",
+ "gdb": {
+  "pid": 1338350,
+  "breakpoints_armed": 14,
+  "expect": 14
+ },
+ "pressed": "TURN COMPLETE at (697.0, 416.5)",
+ "last_kind": "title",
+ "exec_seen": false,
+ "drain_seen": false,
+ "disp_seen": false,
+ "setmask_seen": false,
+ "setter_reentry": false,
+ "reason": "done",
+ "post": {
+  "year": 2272,
+  "cur": 3,
+  "sel": -1,
+  "energy": 31,
+  "unit": {
+   "x": 45,
+   "y": 7,
+   "order": 20,
+   "mpused": 3
+  },
+  "tile_addr": "0x40a90b8",
+  "tile0": 128,
+  "tile_elev": 4,
+  "tile_mask": 1081346
+ },
+ "post_kind": "title",
+ "events": [
+  "ADVISOR #1 id=ENDOFTURN1",
+  "PANE #1 id=ENDOFTURN1",
+  "PANE #2 id=REALLYQUIT"
+ ]
+}

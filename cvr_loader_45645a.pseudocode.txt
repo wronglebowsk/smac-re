@@ -1,0 +1,190 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_00455cd0(void)
+
+{
+  int iVar1;
+  CProperty local_24 [8];
+  int local_1c;
+  int local_18;
+  int local_14;
+  void *local_10;
+  undefined1 *puStack_c;
+  undefined4 local_8;
+  
+  local_8 = 0xffffffff;
+  puStack_c = &LAB_00664fe9;
+  local_10 = ExceptionList;
+  ExceptionList = &local_10;
+  FUN_00614aa0();
+  local_8 = 0;
+  FUN_00614daf();
+  FUN_004c9dc0();
+  FUN_00614acb("ssf.cvr");
+  FUN_00614acb("sdp.cvr");
+  FUN_00614acb("sas.cvr");
+  FUN_00614acb("scd.cvr");
+  FUN_00614acb("scj.cvr");
+  FUN_00614acb("sags.cvr");
+  FUN_00614acb("sft.cvr");
+  FUN_00614acb("vhr.cvr");
+  FUN_00614acb("sht.cvr");
+  FUN_00614acb("srb.cvr");
+  FUN_00614acb("asas.cvr");
+  FUN_00614acb("vw00.cvr");
+  FUN_00614acb("viptawal.cvr");
+  FUN_00614acb("viptasgn.cvr");
+  FUN_00614acb("viptapsi.cvr");
+  FUN_00614acb("viptr00.cvr");
+  FUN_00614acb("viptr01.cvr");
+  FUN_00614acb("viptr02.cvr");
+  FUN_00614acb("viptr03.cvr");
+  FUN_00614acb("vipta00.cvr");
+  FUN_00614acb("vipta01.cvr");
+  FUN_00614acb("ptmod.cvr");
+  FUN_00614acb("vpt.cvr");
+  FUN_00614acb("a.cvr");
+  FUN_00614acb("apwall.cvr");
+  FUN_00614acb("apsid.cvr");
+  FUN_00614acb("asgen.cvr");
+  FUN_00614acb("VB.CVR");
+  FUN_00614acb("VBP.CVR");
+  FUN_00614acb("VGMC.CVR");
+  FUN_00614acb("VGMCP.CVR");
+  FUN_00614acb("VLIGHTS.CVR");
+  FUN_00614acb("VA01.cvr");
+  FUN_00614acb("VR00.cvr");
+  FUN_00614acb("VR01.cvr");
+  FUN_00614acb("VR02.cvr");
+  FUN_00614acb("VR03.cvr");
+  FUN_00614acb("VHR.CVR");
+  FUN_00614acb("VRCP00.cvr");
+  FUN_00614acb("VRCP01.cvr");
+  FUN_00614acb("VRCP02.cvr");
+  FUN_00614acb("VRCP03.cvr");
+  FUN_00614acb("VI.CVR");
+  FUN_00614acb("VGMT.CVR");
+  FUN_00614acb("VGMTP.CVR");
+  FUN_00614acb("VW01.CVR");
+  FUN_00614acb("VW02.CVR");
+  FUN_00614acb("VW03.CVR");
+  FUN_00614acb("VW04.CVR");
+  FUN_00614acb("VW05.CVR");
+  FUN_00614acb("VW06.CVR");
+  FUN_00614acb("VW07.CVR");
+  FUN_00614acb("VW08.CVR");
+  FUN_00614acb("VW09.CVR");
+  FUN_00614acb("VW10.CVR");
+  FUN_00614acb("VW11.CVR");
+  FUN_00614acb("VW12.CVR");
+  FUN_00614acb("AVGMTGUN.CVR");
+  if (local_1c == 0) {
+    _DAT_007a65d0 = 0;
+    _DAT_007a65d4 = 0;
+    _DAT_007a65d8 = 0;
+  }
+  else if (*(int *)(local_1c + 0x20) == 2) {
+    FUN_00644530(*(int *)(*(int *)(local_1c + 0x30) + 4) + 0xc,
+                 *(undefined4 *)(*(int *)(local_1c + 0x30) + 4),&DAT_007a65d0);
+  }
+  CProperty::FreeValue(local_24);
+  FUN_00614acb("drop.cvr");
+  FUN_00614acb("droplet.cvr");
+  FUN_00614acb("adroper.cvr");
+  if (local_1c == 0) {
+    _DAT_007947e8 = 0;
+    _DAT_007947ec = 0;
+    _DAT_007947f0 = 0;
+  }
+  else if (*(int *)(local_1c + 0x20) == 2) {
+    FUN_00644530(*(int *)(*(int *)(local_1c + 0x30) + 4) + 0xc,
+                 *(undefined4 *)(*(int *)(local_1c + 0x30) + 4),&DAT_007947e8);
+  }
+  CProperty::FreeValue(local_24);
+  FUN_00614acb("vwntu.cvr");
+  FUN_00614acb("vt.cvr");
+  FUN_00614acb("VCL.cvr");
+  FUN_00614acb("VCLT00.CVR");
+  FUN_00614acb("VSP.cvr");
+  FUN_00614acb("VSPA01.CVR");
+  FUN_00614acb("VSPA02.CVR");
+  FUN_00614acb("vsptf.cvr");
+  FUN_00614acb("vsptb.cvr");
+  FUN_00614acb("vht-vbp.cvr");
+  FUN_00614acb("vhtp.cvr");
+  FUN_00614acb("vhta00.cvr");
+  FUN_00614acb("vhta01.cvr");
+  FUN_00614acb("vhttp.cvr");
+  FUN_00614acb("vhtta00.cvr");
+  FUN_00614acb("vhtta01.cvr");
+  FUN_00614acb("AVHT-GunReposition.cvr");
+  if (local_1c == 0) {
+    _DAT_00792ff8 = 0;
+    _DAT_00792ffc = 0;
+    _DAT_00793000 = 0;
+  }
+  else if (*(int *)(local_1c + 0x20) == 2) {
+    FUN_00644530(*(int *)(*(int *)(local_1c + 0x30) + 4) + 0xc,
+                 *(undefined4 *)(*(int *)(local_1c + 0x30) + 4),&DAT_00792ff8);
+  }
+  FUN_00614acb("AVHT-LightsReposition.cvr");
+  if (local_1c == 0) {
+    _DAT_007838f0 = 0;
+    _DAT_007838f4 = 0;
+    _DAT_007838f8 = 0;
+  }
+  else if (*(int *)(local_1c + 0x20) == 2) {
+    FUN_00644530(*(int *)(*(int *)(local_1c + 0x30) + 4) + 0xc,
+                 *(undefined4 *)(*(int *)(local_1c + 0x30) + 4),&DAT_007838f0);
+  }
+  FUN_00614acb("VFL.cvr");
+  FUN_00614acb("VGS.cvr");
+  FUN_00614acb("VGSP.CVR");
+  FUN_00614acb("VJTP.CVR");
+  FUN_00614acb("VJT00.cvr");
+  FUN_00614acb("VJT01.cvr");
+  FUN_00614acb("VCU.cvr");
+  FUN_00614acb("VCUP.CVR");
+  FUN_00614acb("VCUA00.cvr");
+  FUN_00614acb("VCUA01.cvr");
+  FUN_00614acb("VCUW.CVR");
+  FUN_00614acb("vct.cvr");
+  FUN_00614acb("VCTP.CVR");
+  FUN_00614acb("vct00.cvr");
+  FUN_00614acb("vct01.cvr");
+  FUN_00614acb("VCTB.CVR");
+  FUN_00614acb("VWNTT.CVR");
+  FUN_00614acb("VWNST.CVR");
+  FUN_00614acb("VWNAA.CVR");
+  FUN_00614acb("vpbr00.cvr");
+  FUN_00614acb("vpbr01.cvr");
+  FUN_00614acb("vpbr02.cvr");
+  FUN_00614acb("vpbr03.cvr");
+  FUN_00614acb("VM.CVR");
+  FUN_00614acb("vw13.cvr");
+  FUN_00614acb("nw.CVR");
+  FUN_00614acb("ni.CVR");
+  FUN_00614acb("nlc.cvr");
+  iVar1 = FUN_005ea431("system","VEH_LIGHT_DIR_MAP");
+  if (iVar1 == 0) {
+    FUN_005ea448();
+    iVar1 = _dynamic_atexit_destructor_for___Task_cv__();
+    DAT_0068b9c0 = (float)iVar1;
+    iVar1 = _dynamic_atexit_destructor_for___Task_cv__();
+    DAT_0068b9c4 = (float)iVar1;
+    iVar1 = _dynamic_atexit_destructor_for___Task_cv__();
+    DAT_0068b9c8 = (float)iVar1;
+    FUN_006445c0(&DAT_0068b9c0,&DAT_0068b9c0);
+  }
+  for (local_14 = 0; local_14 < 0x18; local_14 = local_14 + 1) {
+    for (local_18 = 0; local_18 < 0x100; local_18 = local_18 + 1) {
+      (&DAT_007a24a0)[local_18 + local_14 * 0x100] = (char)((local_14 * 0x18) / 0x18);
+    }
+  }
+  local_8 = 0xffffffff;
+  FUN_0044db50();
+  ExceptionList = local_10;
+  return;
+}
+

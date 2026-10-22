@@ -1,0 +1,1146 @@
+[
+ {
+  "string": "Remaining Locked2",
+  "va": "0x68f304",
+  "src": "0x52e35a",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "MPRECEIVEFILE",
+  "va": "0x68f4c8",
+  "src": "0x52c3a7",
+  "guard_types": [
+   4353
+  ]
+ },
+ {
+  "string": "Received CHAT",
+  "va": "0x68f4d8",
+  "src": "0x52ef8c",
+  "guard_types": [
+   19968
+  ]
+ },
+ {
+  "string": "Received PROJECT",
+  "va": "0x68f4e8",
+  "src": "0x52edb3",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "HALTPROJECT",
+  "va": "0x68f4fc",
+  "src": "0x52ef57",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "BEGINPROJECT",
+  "va": "0x68f508",
+  "src": "0x52ef6a",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "CHANGEPROJECT",
+  "va": "0x68f518",
+  "src": "0x52ee6e",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "From Server: LOCK OK",
+  "va": "0x68f528",
+  "src": "0x52c44e",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Server: LOCK FAILED",
+  "va": "0x68f540",
+  "src": "0x52c47c",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Server: LOCK FAILED GLOBAL",
+  "va": "0x68f55c",
+  "src": "0x52c4d4",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Server: LOCK FAILED UPKEEP",
+  "va": "0x68f57c",
+  "src": "0x52c502",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Server: GLOBAL LOCK READY",
+  "va": "0x68f59c",
+  "src": "0x52c55c",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Server: EXEC DONE",
+  "va": "0x68f5bc",
+  "src": "0x52c583",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "Remaining locked",
+  "va": "0x68f5d4",
+  "src": "0x52c5a1",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Client: LOCK",
+  "va": "0x68f5e8",
+  "src": "0x52d1d3",
+  "guard_types": [
+   8720
+  ]
+ },
+ {
+  "string": "(Sending: Lock failed -- REJECT)",
+  "va": "0x68f5fc",
+  "src": "0x52d200",
+  "guard_types": [
+   8720
+  ]
+ },
+ {
+  "string": "(Sending: Lock failed -- UPKEEP)",
+  "va": "0x68f620",
+  "src": "0x52d234",
+  "guard_types": [
+   8720
+  ]
+ },
+ {
+  "string": "(Sending: Lock Failed)",
+  "va": "0x68f644",
+  "src": "0x52d269",
+  "guard_types": [
+   8720
+  ]
+ },
+ {
+  "string": "(Sending: Lock OK)",
+  "va": "0x68f65c",
+  "src": "0x52d29d",
+  "guard_types": [
+   8720
+  ]
+ },
+ {
+  "string": "From Client: LOCK GLOBAL",
+  "va": "0x68f670",
+  "src": "0x52d2c7",
+  "guard_types": [
+   8721
+  ]
+ },
+ {
+  "string": "From Client: Ready to unlock",
+  "va": "0x68f68c",
+  "src": "0x52d370",
+  "guard_types": [
+   239
+  ]
+ },
+ {
+  "string": "From Client: ACKNOWLEDGE",
+  "va": "0x68f6ac",
+  "src": "0x52d395",
+  "guard_types": [
+   239
+  ]
+ },
+ {
+  "string": "Sending EXEC DONE to",
+  "va": "0x68f6c8",
+  "src": "0x52d47a",
+  "guard_types": [
+   24
+  ]
+ },
+ {
+  "string": "From Client: RELOCK",
+  "va": "0x68f6e0",
+  "src": "0x52d4aa",
+  "guard_types": [
+   239
+  ]
+ },
+ {
+  "string": "(Sending: Lock failed -- REJECT)",
+  "va": "0x68f6f4",
+  "src": "0x52d56f",
+  "guard_types": [
+   239
+  ]
+ },
+ {
+  "string": "From Client: ADD LOCK",
+  "va": "0x68f718",
+  "src": "0x52d4f0",
+  "guard_types": [
+   239
+  ]
+ },
+ {
+  "string": "(Sending: Add failed)",
+  "va": "0x68f730",
+  "src": "0x52d51f",
+  "guard_types": [
+   239
+  ]
+ },
+ {
+  "string": "(Sending: Add OK)",
+  "va": "0x68f748",
+  "src": "0x52d544",
+  "guard_types": [
+   239
+  ]
+ },
+ {
+  "string": "From Server: ADD LOCK FAIL",
+  "va": "0x68f75c",
+  "src": "0x52c5b1",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Server: ADD LOCK OK",
+  "va": "0x68f778",
+  "src": "0x52c5d3",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "From Server: NEXT PLAYER TURN",
+  "va": "0x68f794",
+  "src": "0x52dac0",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "SIMULYOU",
+  "va": "0x68f7b4",
+  "src": "0x52dbdf",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "SIMULWHOSE",
+  "va": "0x68f7c0",
+  "src": "0x52dcc7",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "From Client: DONE TURN",
+  "va": "0x68f7cc",
+  "src": "0x52f55a",
+  "guard_types": [
+   33537
+  ]
+ },
+ {
+  "string": "SLOWPOKE",
+  "va": "0x68f7e4",
+  "src": "0x52f747",
+  "guard_types": null
+ },
+ {
+  "string": "From Server: TURN INFO",
+  "va": "0x68f7f0",
+  "src": "0x52c786",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "SLOWPOKE",
+  "va": "0x68f808",
+  "src": "0x52c94d",
+  "guard_types": null
+ },
+ {
+  "string": "From Server: NEXT TURN",
+  "va": "0x68f814",
+  "src": "0x52d7fe",
+  "guard_types": [
+   17153
+  ]
+ },
+ {
+  "string": "(Upkeep acknowledgement for wrong phase!)",
+  "va": "0x68f82c",
+  "src": "0x52d6a1",
+  "guard_types": [
+   12032
+  ]
+ },
+ {
+  "string": "(Upkeep ack for wrong turn!)",
+  "va": "0x68f858",
+  "src": "0x52d6b9",
+  "guard_types": [
+   12032
+  ]
+ },
+ {
+  "string": "From Client: DONE UPKEEP",
+  "va": "0x68f878",
+  "src": "0x52d764",
+  "guard_types": [
+   12032
+  ]
+ },
+ {
+  "string": "From Server: UPKEEP INFO",
+  "va": "0x68f894",
+  "src": "0x52c6b0",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "From Server: NEXT UPKEEP",
+  "va": "0x68f8b0",
+  "src": "0x52d8e5",
+  "guard_types": [
+   17155
+  ]
+ },
+ {
+  "string": "(Upkeep instruction for wrong phase!)",
+  "va": "0x68f8cc",
+  "src": "0x52d902",
+  "guard_types": [
+   17155
+  ]
+ },
+ {
+  "string": "(Upkeep instruction for wrong turn!)",
+  "va": "0x68f8f4",
+  "src": "0x52d919",
+  "guard_types": [
+   17155
+  ]
+ },
+ {
+  "string": "From Server: UPKEEP_BASE",
+  "va": "0x68f91c",
+  "src": "0x52d9a1",
+  "guard_types": [
+   17155
+  ]
+ },
+ {
+  "string": "From Server: MSG_EVENTS",
+  "va": "0x68f938",
+  "src": "0x52d974",
+  "guard_types": [
+   17155
+  ]
+ },
+ {
+  "string": "From Server: MSG_TIME_BONUS",
+  "va": "0x68f950",
+  "src": "0x52d9c4",
+  "guard_types": [
+   17158
+  ]
+ },
+ {
+  "string": "WEBONUSED",
+  "va": "0x68f96c",
+  "src": "0x52da7e",
+  "guard_types": [
+   17158
+  ]
+ },
+ {
+  "string": "WEBONUSED",
+  "va": "0x68f96c",
+  "src": "0x52da93",
+  "guard_types": [
+   17158
+  ]
+ },
+ {
+  "string": "HEBONUSED",
+  "va": "0x68f978",
+  "src": "0x52da85",
+  "guard_types": [
+   17158
+  ]
+ },
+ {
+  "string": "HEBONUSED",
+  "va": "0x68f978",
+  "src": "0x52da93",
+  "guard_types": [
+   17158
+  ]
+ },
+ {
+  "string": "From Client: HELP ME SPOCK",
+  "va": "0x68f984",
+  "src": "0x52d674",
+  "guard_types": [
+   12032
+  ]
+ },
+ {
+  "string": "From Client: WITHDRAW END-OF-TURN",
+  "va": "0x68f9a0",
+  "src": "0x52d57b",
+  "guard_types": [
+   8962
+  ]
+ },
+ {
+  "string": "From Server: WITHDRAW APPROVED",
+  "va": "0x68f9c4",
+  "src": "0x52c6f9",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "From Server: MOVE VEH",
+  "va": "0x68f9e4",
+  "src": "0x52dcdd",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "Acknowledging MOVE VEH",
+  "va": "0x68f9fc",
+  "src": "0x52dd4c",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "From Server: ARTY",
+  "va": "0x68fa14",
+  "src": "0x52dda7",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "Acknowledging ARTY",
+  "va": "0x68fa28",
+  "src": "0x52dddc",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "Acknowledging AIRDROP",
+  "va": "0x68fa3c",
+  "src": "0x52de44",
+  "guard_types": [
+   252
+  ]
+ },
+ {
+  "string": "From Server: ACTION",
+  "va": "0x68fa54",
+  "src": "0x52dea8",
+  "guard_types": [
+   17412
+  ]
+ },
+ {
+  "string": "From Server: SPECIAL TERRAFORM",
+  "va": "0x68fa68",
+  "src": "0x52df3b",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: DESTROY TERRAIN",
+  "va": "0x68fa88",
+  "src": "0x52dfb8",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: DESTROY TERRAIN2",
+  "va": "0x68faa8",
+  "src": "0x52dff0",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: KILL VEH",
+  "va": "0x68fac8",
+  "src": "0x52e036",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: GIVE VEH",
+  "va": "0x68fae0",
+  "src": "0x52e081",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: BUILD BASE",
+  "va": "0x68faf8",
+  "src": "0x52e0b4",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: OBLIT",
+  "va": "0x68fb10",
+  "src": "0x52e0f3",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "Acknowledging OBLIT",
+  "va": "0x68fb24",
+  "src": "0x52e116",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: GATE",
+  "va": "0x68fb38",
+  "src": "0x52e178",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "Acknowledging GATE",
+  "va": "0x68fb4c",
+  "src": "0x52e192",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: UPGRADE UNIT",
+  "va": "0x68fb60",
+  "src": "0x52e1b7",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: RETIRE PROTO",
+  "va": "0x68fb7c",
+  "src": "0x52e1ef",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: SATELLITE ATTACK",
+  "va": "0x68fb98",
+  "src": "0x52e231",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "Acknowledging SATELLITE ATTACK",
+  "va": "0x68fbb8",
+  "src": "0x52e25b",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "From Server: NERVE STAPLE",
+  "va": "0x68fbd8",
+  "src": "0x52e294",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "Acknowledging NERVE STAPLE",
+  "va": "0x68fbf4",
+  "src": "0x52e2b6",
+  "guard_types": [
+   17
+  ]
+ },
+ {
+  "string": "Received PAUSE message",
+  "va": "0x68fc10",
+  "src": "0x52eb2a",
+  "guard_types": [
+   19456
+  ]
+ },
+ {
+  "string": "PAUSED",
+  "va": "0x68fc28",
+  "src": "0x52eb57",
+  "guard_types": [
+   19456
+  ]
+ },
+ {
+  "string": "Received UNPAUSE message",
+  "va": "0x68fc30",
+  "src": "0x52ed30",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "UNPAUSED",
+  "va": "0x68fc4c",
+  "src": "0x52ed73",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "Received TIME CONTROL message",
+  "va": "0x68fc58",
+  "src": "0x52eb89",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "WECHANGEDTIME",
+  "va": "0x68fc78",
+  "src": "0x52ec14",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "HECHANGEDTIME",
+  "va": "0x68fc88",
+  "src": "0x52eca6",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "He Changed:",
+  "va": "0x68fc98",
+  "src": "0x52ecf1",
+  "guard_types": [
+   19712
+  ]
+ },
+ {
+  "string": "Received SERVER CHANGE message",
+  "va": "0x68fca4",
+  "src": "0x52eac6",
+  "guard_types": [
+   19200
+  ]
+ },
+ {
+  "string": "CHANGINGSERVERS",
+  "va": "0x68fcc4",
+  "src": "0x52ead9",
+  "guard_types": [
+   19200
+  ]
+ },
+ {
+  "string": "Received OPEN CHANNEL request",
+  "va": "0x68fcd4",
+  "src": "0x52f334",
+  "guard_types": [
+   33344
+  ]
+ },
+ {
+  "string": "Received OPEN CHANNEL SUCCESS",
+  "va": "0x68fcf4",
+  "src": "0x52c5fc",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "Received OPEN CHANNEL FAILED",
+  "va": "0x68fd14",
+  "src": "0x52c61e",
+  "guard_types": [
+   4672
+  ]
+ },
+ {
+  "string": "Received CLOSE CHANNEL",
+  "va": "0x68fd34",
+  "src": "0x52f43f",
+  "guard_types": [
+   33345
+  ]
+ },
+ {
+  "string": "From Server: DOUBLE CROSS",
+  "va": "0x68fd4c",
+  "src": "0x52e2f9",
+  "guard_types": [
+   17472
+  ]
+ },
+ {
+  "string": "Received TREATY ON",
+  "va": "0x68fd68",
+  "src": "0x52e3d9",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "ENEMIESTEAMUP2",
+  "va": "0x68fd7c",
+  "src": "0x52e4e0",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "ENEMYTREATY",
+  "va": "0x68fd8c",
+  "src": "0x52e4f4",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "ENEMYTRUCE",
+  "va": "0x68fd98",
+  "src": "0x52e530",
+  "guard_types": null
+ },
+ {
+  "string": "ENEMYWAR",
+  "va": "0x68fda4",
+  "src": "0x52e548",
+  "guard_types": null
+ },
+ {
+  "string": "Received TREATY OFF",
+  "va": "0x68fdb0",
+  "src": "0x52e55e",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received SET TREATY",
+  "va": "0x68fdc4",
+  "src": "0x52e58d",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received AGENDA ON",
+  "va": "0x68fdd8",
+  "src": "0x52e5c0",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received AGENDA OFF",
+  "va": "0x68fdec",
+  "src": "0x52e5ef",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received SET AGENDA",
+  "va": "0x68fe00",
+  "src": "0x52e61e",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received ENERGY",
+  "va": "0x68fe14",
+  "src": "0x52e651",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received LOAN",
+  "va": "0x68fe24",
+  "src": "0x52e6c9",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received TRADE MAPS",
+  "va": "0x68fe34",
+  "src": "0x52e727",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received CEDE BASE",
+  "va": "0x68fe48",
+  "src": "0x52e750",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received WITHDRAWAL",
+  "va": "0x68fe5c",
+  "src": "0x52e782",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "From Server: TECH",
+  "va": "0x68fe70",
+  "src": "0x52e7b6",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "STOLETECH",
+  "va": "0x68fe84",
+  "src": "0x52e864",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received PACT ENDS",
+  "va": "0x68fe90",
+  "src": "0x52e878",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received CORNERING",
+  "va": "0x68fea4",
+  "src": "0x52e8ac",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "econwin_sm.pcx",
+  "va": "0x68feb8",
+  "src": "0x52e9a7",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "CORNERWARNING",
+  "va": "0x68fec8",
+  "src": "0x52e9ad",
+  "guard_types": [
+   14
+  ]
+ },
+ {
+  "string": "Received CONVENE COUNCIL",
+  "va": "0x68fed8",
+  "src": "0x52e9cc",
+  "guard_types": [
+   17920
+  ]
+ },
+ {
+  "string": "Received COUNCIL VOTE",
+  "va": "0x68fef4",
+  "src": "0x52ea64",
+  "guard_types": [
+   17923
+  ]
+ },
+ {
+  "string": "Received COUNCIL ARRIVE",
+  "va": "0x68ff0c",
+  "src": "0x52ea3d",
+  "guard_types": [
+   17923
+  ]
+ },
+ {
+  "string": "Received COUNCIL RESOLUTION",
+  "va": "0x68ff24",
+  "src": "0x52ea97",
+  "guard_types": [
+   17923
+  ]
+ },
+ {
+  "string": "Received OPEN CHAN",
+  "va": "0x68ff40",
+  "src": "0x52c9a0",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "COMMDIPLO",
+  "va": "0x68ff54",
+  "src": "0x52cb23",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "Received CLOSE CHAN",
+  "va": "0x68ff60",
+  "src": "0x52ce10",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "DIPLOCLOSE",
+  "va": "0x68ff74",
+  "src": "0x52cec0",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "Received OPEN ACKNOWLEDGE",
+  "va": "0x68ff80",
+  "src": "0x52ccbe",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "Received OPEN REFUSE",
+  "va": "0x68ff9c",
+  "src": "0x52cc10",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "DIPLOREFUSE",
+  "va": "0x68ffb4",
+  "src": "0x52ccac",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "DIPLOREFUSE1",
+  "va": "0x68ffc0",
+  "src": "0x52cc9b",
+  "guard_types": [
+   5377
+  ]
+ },
+ {
+  "string": "Received OPEN BUSY",
+  "va": "0x68ffd0",
+  "src": "0x52cd4d",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "DIPLOBUSY",
+  "va": "0x68ffe4",
+  "src": "0x52cde9",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "DIPLOBUSY1",
+  "va": "0x68fff0",
+  "src": "0x52cdd8",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "Received OPEN OFFER",
+  "va": "0x68fffc",
+  "src": "0x52ced6",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "Received KILL OFFER",
+  "va": "0x690010",
+  "src": "0x52cf10",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "Received CLEAR OFFER",
+  "va": "0x690024",
+  "src": "0x52cf44",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "Received CHANNEL STATUS",
+  "va": "0x69003c",
+  "src": "0x52cf74",
+  "guard_types": [
+   5380
+  ]
+ },
+ {
+  "string": "Received MAYBE DEAL",
+  "va": "0x690054",
+  "src": "0x52cfab",
+  "guard_types": [
+   5386
+  ]
+ },
+ {
+  "string": "Received NO DEAL",
+  "va": "0x690068",
+  "src": "0x52d035",
+  "guard_types": [
+   7680
+  ]
+ },
+ {
+  "string": "Received YES DEAL",
+  "va": "0x69007c",
+  "src": "0x52d06a",
+  "guard_types": [
+   7680
+  ]
+ },
+ {
+  "string": "Received DONE DEAL",
+  "va": "0x690090",
+  "src": "0x52d08e",
+  "guard_types": [
+   7680
+  ]
+ },
+ {
+  "string": "Received DEMAND WITHDRAWAL",
+  "va": "0x6900a4",
+  "src": "0x52d0b2",
+  "guard_types": [
+   7680
+  ]
+ },
+ {
+  "string": "Received VENDETTA WARNING",
+  "va": "0x6900c0",
+  "src": "0x52d0cc",
+  "guard_types": [
+   7680
+  ]
+ },
+ {
+  "string": "VENDETTAWARNING",
+  "va": "0x6900dc",
+  "src": "0x52d184",
+  "guard_types": [
+   7680
+  ]
+ },
+ {
+  "string": "Received LANDMARK",
+  "va": "0x6900ec",
+  "src": "0x52f0f0",
+  "guard_types": [
+   19969
+  ]
+ },
+ {
+  "string": "Received KILL LANDMARK",
+  "va": "0x690100",
+  "src": "0x52f1b2",
+  "guard_types": [
+   20224
+  ]
+ },
+ {
+  "string": "Received RENAME LANDMARK",
+  "va": "0x690118",
+  "src": "0x52f155",
+  "guard_types": [
+   20224
+  ]
+ },
+ {
+  "string": "SCRIPT",
+  "va": "0x693bc4",
+  "src": "0x52c3ac",
+  "guard_types": [
+   4353
+  ]
+ },
+ {
+  "string": "SCRIPT",
+  "va": "0x693bc4",
+  "src": "0x52e9b2",
+  "guard_types": [
+   14
+  ]
+ }
+]

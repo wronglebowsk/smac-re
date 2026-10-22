@@ -1,0 +1,466 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x51f730
+Breakpoint 2 at 0x4d1200
+Breakpoint 3 at 0x4cd2c8
+Breakpoint 4 at 0x4cd32e
+Breakpoint 5 at 0x4cd33b
+Breakpoint 6 at 0x4cd319
+Breakpoint 7 at 0x4cd35e
+Breakpoint 8 at 0x5ad400
+Breakpoint 9 at 0x5ad460
+Breakpoint 10 at 0x5ad0a0
+Breakpoint 11 at 0x582ed0
+REFRESH player=4
+MASKSET x=79 y=13 mask=0x100002 setclr=1
+MASKSET x=79 y=13 mask=0x2 setclr=0
+MASKSET x=1 y=13 mask=0x100002 setclr=1
+MASKSET x=1 y=13 mask=0x2 setclr=0
+MASKSET x=3 y=13 mask=0x100002 setclr=1
+MASKSET x=0 y=14 mask=0x2 setclr=0
+MASKSET x=1 y=15 mask=0x100002 setclr=1
+ORDEREXEC unit=269 order=0x9
+TERRAFEXEC unit=13988 mode=5 accum_old=0
+CHECK unit=13988 mode=5 accum_new=2 threshold=6 iVar16=13988
+NOTYET unit=13988 x=10 y=14
+MASKSET x=79 y=21 mask=0x2 setclr=0
+MASKSET x=0 y=20 mask=0x100002 setclr=1
+MASKSET x=4 y=4 mask=0x2 setclr=0
+MASKSET x=4 y=2 mask=0x100002 setclr=1
+MASKSET x=4 y=2 mask=0x2 setclr=0
+MASKSET x=3 y=1 mask=0x100002 setclr=1
+MASKSET x=72 y=12 mask=0x2 setclr=0
+MASKSET x=70 y=14 mask=0x100002 setclr=1
+ORDEREXEC unit=46 order=0x6
+TERRAFEXEC unit=2392 mode=2 accum_old=12
+CHECK unit=2392 mode=2 accum_new=14 threshold=16 iVar16=2392
+NOTYET unit=2392 x=64 y=6
+ORDEREXEC unit=2 order=0x9
+TERRAFEXEC unit=104 mode=5 accum_old=0
+CHECK unit=104 mode=5 accum_new=2 threshold=6 iVar16=104
+NOTYET unit=104 x=10 y=18
+ORDEREXEC unit=1 order=0x9
+TERRAFEXEC unit=52 mode=5 accum_old=0
+CHECK unit=52 mode=5 accum_new=2 threshold=4 iVar16=52
+NOTYET unit=52 x=9 y=7
+REFRESH player=5
+MASKSET x=73 y=67 mask=0x2 setclr=0
+MASKSET x=75 y=67 mask=0x100002 setclr=1
+MASKSET x=63 y=73 mask=0x2 setclr=0
+MASKSET x=65 y=73 mask=0x100002 setclr=1
+MASKSET x=65 y=73 mask=0x2 setclr=0
+MASKSET x=67 y=73 mask=0x100002 setclr=1
+MASKSET x=67 y=73 mask=0x2 setclr=0
+MASKSET x=68 y=72 mask=0x100002 setclr=1
+MASKSET x=55 y=73 mask=0x2 setclr=0
+MASKSET x=55 y=71 mask=0x100002 setclr=1
+MASKSET x=57 y=71 mask=0x100002 setclr=1
+MASKSET x=57 y=71 mask=0x2 setclr=0
+MASKSET x=60 y=72 mask=0x100002 setclr=1
+MASKSET x=60 y=72 mask=0x2 setclr=0
+MASKSET x=61 y=73 mask=0x100002 setclr=1
+MASKSET x=61 y=73 mask=0x2 setclr=0
+MASKSET x=63 y=73 mask=0x100002 setclr=1
+MASKSET x=72 y=70 mask=0x100002 setclr=1
+MASKSET x=72 y=70 mask=0x2 setclr=0
+MASKSET x=73 y=69 mask=0x100002 setclr=1
+MASKSET x=73 y=69 mask=0x2 setclr=0
+MASKSET x=75 y=69 mask=0x100002 setclr=1
+MASKSET x=75 y=69 mask=0x2 setclr=0
+MASKSET x=76 y=68 mask=0x100002 setclr=1
+ORDEREXEC unit=32 order=0x9
+TERRAFEXEC unit=1664 mode=5 accum_old=10
+CHECK unit=1664 mode=5 accum_new=12 threshold=6 iVar16=1664
+COMPLETE unit=1664 x=67 y=71 mode=5
+MASKSET x=67 y=71 mask=0x0 setclr=0
+MASKSET x=67 y=71 mask=0x4 setclr=1
+MASKSET x=52 y=76 mask=0x2 setclr=0
+MASKSET x=51 y=75 mask=0x100002 setclr=1
+REFRESH player=6
+MASKSET x=25 y=69 mask=0x100002 setclr=1
+MASKSET x=25 y=69 mask=0x2 setclr=0
+MASKSET x=23 y=69 mask=0x100002 setclr=1
+MASKSET x=42 y=66 mask=0x2 setclr=0
+MASKSET x=36 y=68 mask=0x2 setclr=0
+MASKSET x=38 y=68 mask=0x100002 setclr=1
+MASKSET x=17 y=37 mask=0x80000000 setclr=0
+MASKSET x=43 y=67 mask=0x2 setclr=0
+MASKSET x=45 y=67 mask=0x100002 setclr=1
+MASKSET x=45 y=67 mask=0x2 setclr=0
+MASKSET x=35 y=47 mask=0x2 setclr=0
+MASKSET x=35 y=49 mask=0x100002 setclr=1
+MASKSET x=35 y=49 mask=0x2 setclr=0
+MASKSET x=31 y=69 mask=0x2 setclr=0
+MASKSET x=32 y=68 mask=0x100002 setclr=1
+MASKSET x=24 y=48 mask=0x100002 setclr=1
+MASKSET x=24 y=48 mask=0x2 setclr=0
+MASKSET x=24 y=46 mask=0x100002 setclr=1
+MASKSET x=24 y=46 mask=0x2 setclr=0
+MASKSET x=23 y=45 mask=0x100002 setclr=1
+MASKSET x=31 y=67 mask=0x2 setclr=0
+MASKSET x=32 y=66 mask=0x100002 setclr=1
+MASKSET x=16 y=40 mask=0x2 setclr=0
+MASKSET x=48 y=68 mask=0x2 setclr=0
+MASKSET x=49 y=69 mask=0x100002 setclr=1
+MASKSET x=49 y=69 mask=0x2 setclr=0
+MASKSET x=50 y=70 mask=0x100002 setclr=1
+MASKSET x=50 y=70 mask=0x2 setclr=0
+MASKSET x=52 y=70 mask=0x100002 setclr=1
+MASKSET x=45 y=67 mask=0x100002 setclr=1
+MASKSET x=42 y=64 mask=0x2 setclr=0
+MASKSET x=44 y=64 mask=0x100002 setclr=1
+MASKSET x=45 y=65 mask=0x2 setclr=0
+MASKSET x=46 y=66 mask=0x100002 setclr=1
+ORDEREXEC unit=4 order=0xd
+TERRAFEXEC unit=208 mode=9 accum_old=4
+CHECK unit=208 mode=9 accum_new=6 threshold=8 iVar16=208
+NOTYET unit=208 x=35 y=59
+ORDEREXEC unit=3 order=0x9
+TERRAFEXEC unit=156 mode=5 accum_old=2
+CHECK unit=156 mode=5 accum_new=4 threshold=4 iVar16=156
+COMPLETE unit=156 x=34 y=68 mode=5
+MASKSET x=34 y=68 mask=0x0 setclr=0
+MASKSET x=34 y=68 mask=0x4 setclr=1
+REFRESH player=7
+MASKSET x=6 y=64 mask=0x100002 setclr=1
+MASKSET x=6 y=64 mask=0x2 setclr=0
+MASKSET x=5 y=65 mask=0x100002 setclr=1
+MASKSET x=5 y=65 mask=0x2 setclr=0
+MASKSET x=5 y=67 mask=0x100002 setclr=1
+MASKSET x=3 y=53 mask=0x100002 setclr=1
+MASKSET x=3 y=53 mask=0x2 setclr=0
+MASKSET x=3 y=55 mask=0x100002 setclr=1
+MASKSET x=3 y=55 mask=0x2 setclr=0
+MASKSET x=2 y=56 mask=0x100002 setclr=1
+MASKSET x=1 y=57 mask=0x100002 setclr=1
+MASKSET x=1 y=57 mask=0x2 setclr=0
+MASKSET x=1 y=59 mask=0x100002 setclr=1
+MASKSET x=1 y=59 mask=0x2 setclr=0
+MASKSET x=1 y=61 mask=0x100002 setclr=1
+MASKSET x=3 y=65 mask=0x100002 setclr=1
+MASKSET x=3 y=65 mask=0x2000 setclr=0
+MASKSET x=78 y=72 mask=0x100002 setclr=1
+MASKSET x=79 y=71 mask=0x2 setclr=0
+MASKSET x=0 y=70 mask=0x2 setclr=0
+MASKSET x=2 y=70 mask=0x100002 setclr=1
+MASKSET x=2 y=70 mask=0x2 setclr=0
+MASKSET x=0 y=72 mask=0x2 setclr=0
+MASKSET x=1 y=73 mask=0x100002 setclr=1
+MASKSET x=76 y=64 mask=0x100002 setclr=1
+MASKSET x=76 y=64 mask=0x2 setclr=0
+MASKSET x=75 y=63 mask=0x100002 setclr=1
+MASKSET x=76 y=68 mask=0x2 setclr=0
+MASKSET x=79 y=73 mask=0x2 setclr=0
+MASKSET x=0 y=74 mask=0x100002 setclr=1
+MASKSET x=78 y=70 mask=0x2 setclr=0
+MASKSET x=77 y=71 mask=0x100002 setclr=1
+ORDEREXEC unit=302 order=0xd
+TERRAFEXEC unit=15704 mode=9 accum_old=0
+CHECK unit=15704 mode=9 accum_new=2 threshold=8 iVar16=15704
+NOTYET unit=15704 x=9 y=59
+MASKSET x=79 y=61 mask=0x100002 setclr=1
+ORDEREXEC unit=275 order=0xd
+TERRAFEXEC unit=14300 mode=9 accum_old=2
+CHECK unit=14300 mode=9 accum_new=4 threshold=8 iVar16=14300
+NOTYET unit=14300 x=0 y=60
+MASKSET x=74 y=70 mask=0x2 setclr=0
+MASKSET x=73 y=69 mask=0x100002 setclr=1
+ORDEREXEC unit=51 order=0x7
+TERRAFEXEC unit=2652 mode=3 accum_old=4
+CHECK unit=2652 mode=3 accum_new=6 threshold=12 iVar16=2652
+NOTYET unit=2652 x=9 y=67
+ORDEREXEC unit=15 order=0x4
+TERRAFEXEC unit=780 mode=0 accum_old=4
+CHECK unit=780 mode=0 accum_new=6 threshold=8 iVar16=780
+NOTYET unit=780 x=2 y=72
+ORDEREXEC unit=11 order=0x9
+TERRAFEXEC unit=572 mode=5 accum_old=0
+CHECK unit=572 mode=5 accum_new=2 threshold=4 iVar16=572
+NOTYET unit=572 x=1 y=71
+MASKSET x=4 y=54 mask=0x2 setclr=0
+MASKSET x=4 y=56 mask=0x100002 setclr=1
+MASKSET x=77 y=65 mask=0x2 setclr=0
+MASKSET x=79 y=65 mask=0x100002 setclr=1
+MASKSET x=40 y=46 mask=0x400 setclr=0
+REFRESH player=0
+MASKSET x=73 y=61 mask=0x2 setclr=0
+REFRESH player=1
+MASKSET x=16 y=40 mask=0x100002 setclr=1
+MASKSET x=40 y=28 mask=0x2 setclr=0
+MASKSET x=41 y=29 mask=0x100002 setclr=1
+MASKSET x=41 y=29 mask=0x2 setclr=0
+MASKSET x=42 y=30 mask=0x100002 setclr=1
+MASKSET x=42 y=30 mask=0x2 setclr=0
+MASKSET x=43 y=31 mask=0x100002 setclr=1
+MASKSET x=43 y=31 mask=0x2 setclr=0
+MASKSET x=44 y=32 mask=0x100002 setclr=1
+MASKSET x=9 y=23 mask=0x2 setclr=0
+MASKSET x=9 y=21 mask=0x100002 setclr=1
+MASKSET x=32 y=24 mask=0x2 setclr=0
+MASKSET x=33 y=23 mask=0x100002 setclr=1
+MASKSET x=19 y=31 mask=0x2 setclr=0
+MASKSET x=17 y=31 mask=0x100002 setclr=1
+MASKSET x=17 y=31 mask=0x2 setclr=0
+MASKSET x=15 y=31 mask=0x100002 setclr=1
+MASKSET x=25 y=25 mask=0x100002 setclr=1
+MASKSET x=16 y=26 mask=0x2 setclr=0
+MASKSET x=10 y=24 mask=0x2 setclr=0
+MASKSET x=12 y=24 mask=0x100002 setclr=1
+MASKSET x=12 y=24 mask=0x2 setclr=0
+MASKSET x=13 y=23 mask=0x100002 setclr=1
+MASKSET x=13 y=23 mask=0x2 setclr=0
+MASKSET x=14 y=22 mask=0x100002 setclr=1
+MASKSET x=16 y=30 mask=0x2 setclr=0
+MASKSET x=14 y=30 mask=0x100002 setclr=1
+MASKSET x=14 y=30 mask=0x2 setclr=0
+MASKSET x=13 y=31 mask=0x100002 setclr=1
+MASKSET x=13 y=31 mask=0x2 setclr=0
+MASKSET x=13 y=33 mask=0x100002 setclr=1
+MASKSET x=13 y=33 mask=0x2 setclr=0
+MASKSET x=13 y=35 mask=0x100002 setclr=1
+MASKSET x=13 y=35 mask=0x2 setclr=0
+MASKSET x=14 y=36 mask=0x100002 setclr=1
+MASKSET x=14 y=36 mask=0x2 setclr=0
+MASKSET x=26 y=34 mask=0x100002 setclr=1
+MASKSET x=26 y=34 mask=0x2 setclr=0
+MASKSET x=27 y=35 mask=0x100002 setclr=1
+MASKSET x=27 y=35 mask=0x2 setclr=0
+MASKSET x=31 y=33 mask=0x2 setclr=0
+MASKSET x=4 y=20 mask=0x2 setclr=0
+MASKSET x=3 y=21 mask=0x100002 setclr=1
+MASKSET x=3 y=21 mask=0x2 setclr=0
+MASKSET x=1 y=21 mask=0x100002 setclr=1
+MASKSET x=1 y=21 mask=0x2 setclr=0
+MASKSET x=0 y=22 mask=0x100002 setclr=1
+MASKSET x=0 y=22 mask=0x1 setclr=1
+MASKSET x=0 y=22 mask=0x1000 setclr=1
+MASKSET x=1 y=21 mask=0x1000 setclr=1
+MASKSET x=2 y=22 mask=0x1000 setclr=1
+MASKSET x=1 y=23 mask=0x1000 setclr=1
+MASKSET x=0 y=24 mask=0x1000 setclr=1
+MASKSET x=79 y=23 mask=0x1000 setclr=1
+MASKSET x=78 y=22 mask=0x1000 setclr=1
+MASKSET x=79 y=21 mask=0x1000 setclr=1
+MASKSET x=0 y=20 mask=0x1000 setclr=1
+MASKSET x=2 y=20 mask=0x1000 setclr=1
+MASKSET x=2 y=24 mask=0x1000 setclr=1
+MASKSET x=78 y=24 mask=0x1000 setclr=1
+MASKSET x=78 y=20 mask=0x1000 setclr=1
+MASKSET x=1 y=19 mask=0x1000 setclr=1
+MASKSET x=3 y=21 mask=0x1000 setclr=1
+MASKSET x=3 y=23 mask=0x1000 setclr=1
+MASKSET x=1 y=25 mask=0x1000 setclr=1
+MASKSET x=79 y=25 mask=0x1000 setclr=1
+MASKSET x=77 y=23 mask=0x1000 setclr=1
+MASKSET x=77 y=21 mask=0x1000 setclr=1
+MASKSET x=79 y=19 mask=0x1000 setclr=1
+MASKSET x=0 y=22 mask=0x2 setclr=0
+MASKSET x=27 y=35 mask=0x100002 setclr=1
+MASKSET x=27 y=35 mask=0x2 setclr=0
+MASKSET x=28 y=34 mask=0x100002 setclr=1
+MASKSET x=27 y=27 mask=0x100002 setclr=1
+MASKSET x=27 y=27 mask=0x2 setclr=0
+MASKSET x=29 y=27 mask=0x100002 setclr=1
+MASKSET x=29 y=27 mask=0x2 setclr=0
+MASKSET x=31 y=27 mask=0x100002 setclr=1
+MASKSET x=31 y=27 mask=0x2 setclr=0
+MASKSET x=33 y=27 mask=0x100002 setclr=1
+MASKSET x=27 y=27 mask=0x100002 setclr=1
+MASKSET x=27 y=27 mask=0x2 setclr=0
+MASKSET x=29 y=27 mask=0x100002 setclr=1
+MASKSET x=29 y=27 mask=0x2 setclr=0
+MASKSET x=31 y=27 mask=0x100002 setclr=1
+MASKSET x=20 y=26 mask=0x2 setclr=0
+MASKSET x=27 y=27 mask=0x100002 setclr=1
+MASKSET x=27 y=27 mask=0x2 setclr=0
+MASKSET x=29 y=27 mask=0x100002 setclr=1
+MASKSET x=29 y=27 mask=0x2 setclr=0
+MASKSET x=22 y=28 mask=0x100002 setclr=1
+MASKSET x=22 y=28 mask=0x2 setclr=0
+MASKSET x=23 y=29 mask=0x100002 setclr=1
+MASKSET x=22 y=28 mask=0x100002 setclr=1
+MASKSET x=22 y=28 mask=0x2 setclr=0
+MASKSET x=22 y=28 mask=0x100002 setclr=1
+MASKSET x=22 y=28 mask=0x2 setclr=0
+MASKSET x=22 y=28 mask=0x100002 setclr=1
+MASKSET x=22 y=28 mask=0x2 setclr=0
+MASKSET x=22 y=28 mask=0x100002 setclr=1
+MASKSET x=22 y=28 mask=0x2 setclr=0
+MASKSET x=21 y=29 mask=0x2 setclr=0
+MASKSET x=22 y=28 mask=0x100002 setclr=1
+MASKSET x=24 y=30 mask=0x100002 setclr=1
+ORDEREXEC unit=91 order=0x7
+TERRAFEXEC unit=4732 mode=3 accum_old=6
+CHECK unit=4732 mode=3 accum_new=8 threshold=16 iVar16=4732
+NOTYET unit=4732 x=18 y=32
+MASKSET x=23 y=27 mask=0x100002 setclr=1
+MASKSET x=10 y=22 mask=0x2 setclr=0
+ORDEREXEC unit=60 order=0x9
+TERRAFEXEC unit=3120 mode=5 accum_old=2
+CHECK unit=3120 mode=5 accum_new=4 threshold=6 iVar16=3120
+NOTYET unit=3120 x=13 y=27
+MASKSET x=17 y=37 mask=0x100002 setclr=1
+ORDEREXEC unit=45 order=0xd
+TERRAFEXEC unit=2340 mode=9 accum_old=0
+CHECK unit=2340 mode=9 accum_new=2 threshold=8 iVar16=2340
+NOTYET unit=2340 x=17 y=37
+ORDEREXEC unit=19 order=0x4
+TERRAFEXEC unit=988 mode=0 accum_old=4
+CHECK unit=988 mode=0 accum_new=6 threshold=8 iVar16=988
+NOTYET unit=988 x=25 y=35
+MASKSET x=19 y=27 mask=0x100002 setclr=1
+MASKSET x=19 y=27 mask=0x2 setclr=0
+MASKSET x=17 y=25 mask=0x100002 setclr=1
+MASKSET x=17 y=25 mask=0x2 setclr=0
+MASKSET x=16 y=24 mask=0x100002 setclr=1
+MASKSET x=16 y=24 mask=0x2 setclr=0
+MASKSET x=14 y=24 mask=0x100002 setclr=1
+MASKSET x=14 y=24 mask=0x2 setclr=0
+MASKSET x=13 y=23 mask=0x100002 setclr=1
+ORDEREXEC unit=8 order=0xd
+TERRAFEXEC unit=416 mode=9 accum_old=4
+CHECK unit=416 mode=9 accum_new=6 threshold=8 iVar16=416
+NOTYET unit=416 x=25 y=27
+MASKSET x=19 y=27 mask=0x100002 setclr=1
+MASKSET x=19 y=27 mask=0x2 setclr=0
+REFRESH player=2
+MASKSET x=41 y=59 mask=0x2 setclr=0
+MASKSET x=42 y=60 mask=0x100002 setclr=1
+MASKSET x=42 y=60 mask=0x2 setclr=0
+MASKSET x=44 y=60 mask=0x100002 setclr=1
+MASKSET x=60 y=28 mask=0x2 setclr=0
+MASKSET x=61 y=29 mask=0x100002 setclr=1
+MASKSET x=61 y=29 mask=0x2 setclr=0
+MASKSET x=63 y=29 mask=0x100002 setclr=1
+MASKSET x=50 y=42 mask=0x2 setclr=0
+MASKSET x=49 y=41 mask=0x100002 setclr=1
+MASKSET x=49 y=41 mask=0x2 setclr=0
+MASKSET x=45 y=41 mask=0x100002 setclr=1
+MASKSET x=52 y=34 mask=0x2 setclr=0
+MASKSET x=51 y=35 mask=0x100002 setclr=1
+MASKSET x=51 y=35 mask=0x2 setclr=0
+MASKSET x=49 y=35 mask=0x100002 setclr=1
+MASKSET x=49 y=35 mask=0x2 setclr=0
+MASKSET x=47 y=35 mask=0x100002 setclr=1
+MASKSET x=44 y=54 mask=0x100002 setclr=1
+MASKSET x=44 y=54 mask=0x2 setclr=0
+MASKSET x=42 y=52 mask=0x100002 setclr=1
+MASKSET x=43 y=43 mask=0x100002 setclr=1
+MASKSET x=43 y=43 mask=0x2 setclr=0
+MASKSET x=46 y=50 mask=0x2 setclr=0
+MASKSET x=48 y=50 mask=0x100002 setclr=1
+MASKSET x=48 y=50 mask=0x2 setclr=0
+MASKSET x=49 y=51 mask=0x100002 setclr=1
+MASKSET x=49 y=51 mask=0x2 setclr=0
+MASKSET x=51 y=51 mask=0x100002 setclr=1
+MASKSET x=30 y=38 mask=0x2 setclr=0
+MASKSET x=31 y=37 mask=0x100002 setclr=1
+MASKSET x=56 y=64 mask=0x2 setclr=0
+MASKSET x=56 y=64 mask=0x100002 setclr=1
+MASKSET x=56 y=64 mask=0x2 setclr=0
+MASKSET x=55 y=63 mask=0x100002 setclr=1
+MASKSET x=55 y=63 mask=0x2 setclr=0
+MASKSET x=55 y=63 mask=0x100002 setclr=1
+MASKSET x=55 y=63 mask=0x2 setclr=0
+MASKSET x=54 y=62 mask=0x100002 setclr=1
+MASKSET x=54 y=62 mask=0x2 setclr=0
+MASKSET x=54 y=62 mask=0x100002 setclr=1
+MASKSET x=54 y=62 mask=0x2 setclr=0
+MASKSET x=54 y=60 mask=0x100002 setclr=1
+ORDEREXEC unit=297 order=0xe
+TERRAFEXEC unit=15444 mode=10 accum_old=2
+CHECK unit=15444 mode=10 accum_new=4 threshold=6 iVar16=15444
+NOTYET unit=15444 x=44 y=48
+MASKSET x=45 y=43 mask=0x100002 setclr=1
+ORDEREXEC unit=240 order=0xb
+TERRAFEXEC unit=12480 mode=7 accum_old=6
+CHECK unit=12480 mode=7 accum_new=9 threshold=10 iVar16=12480
+NOTYET unit=12480 x=45 y=55
+MASKSET x=52 y=36 mask=0x2 setclr=0
+MASKSET x=53 y=37 mask=0x100002 setclr=1
+MASKSET x=53 y=37 mask=0x2 setclr=0
+ORDEREXEC unit=208 order=0x7
+TERRAFEXEC unit=10816 mode=3 accum_old=9
+CHECK unit=10816 mode=3 accum_new=12 threshold=12 iVar16=10816
+COMPLETE unit=10816 x=59 y=51 mode=3
+MASKSET x=59 y=51 mask=0x81e00050 setclr=0
+MASKSET x=59 y=51 mask=0x40 setclr=1
+ORDEREXEC unit=201 order=0x9
+TERRAFEXEC unit=10452 mode=5 accum_old=0
+CHECK unit=10452 mode=5 accum_new=3 threshold=4 iVar16=10452
+NOTYET unit=10452 x=51 y=39
+MASKSET x=57 y=51 mask=0x100002 setclr=1
+MASKSET x=57 y=51 mask=0x2 setclr=0
+MASKSET x=55 y=51 mask=0x100002 setclr=1
+MASKSET x=55 y=51 mask=0x2 setclr=0
+ORDEREXEC unit=174 order=0x4
+TERRAFEXEC unit=9048 mode=0 accum_old=0
+CHECK unit=9048 mode=0 accum_new=3 threshold=8 iVar16=9048
+NOTYET unit=9048 x=44 y=44
+ORDEREXEC unit=160 order=0x9
+TERRAFEXEC unit=8320 mode=5 accum_old=3
+CHECK unit=8320 mode=5 accum_new=6 threshold=4 iVar16=8320
+COMPLETE unit=8320 x=55 y=57 mode=5
+MASKSET x=55 y=57 mask=0x0 setclr=0
+MASKSET x=55 y=57 mask=0x4 setclr=1
+ORDEREXEC unit=136 order=0x8
+TERRAFEXEC unit=7072 mode=4 accum_old=0
+CHECK unit=7072 mode=4 accum_new=3 threshold=8 iVar16=7072
+NOTYET unit=7072 x=41 y=57
+MASKSET x=61 y=51 mask=0x100002 setclr=1
+MASKSET x=52 y=52 mask=0x100002 setclr=1
+MASKSET x=52 y=52 mask=0x2 setclr=0
+MASKSET x=52 y=50 mask=0x100002 setclr=1
+MASKSET x=52 y=50 mask=0x2 setclr=0
+MASKSET x=53 y=49 mask=0x100002 setclr=1
+ORDEREXEC unit=58 order=0x9
+TERRAFEXEC unit=3016 mode=5 accum_old=0
+CHECK unit=3016 mode=5 accum_new=3 threshold=2 iVar16=3016
+COMPLETE unit=3016 x=57 y=41 mode=5
+ORDEREXEC unit=33 order=0x8
+TERRAFEXEC unit=1716 mode=4 accum_old=6
+CHECK unit=1716 mode=4 accum_new=9 threshold=8 iVar16=1716
+COMPLETE unit=1716 x=44 y=56 mode=4
+ORDEREXEC unit=21 order=0x14
+TERRAFEXEC unit=1092 mode=16 accum_old=3
+CHECK unit=1092 mode=16 accum_new=6 threshold=24 iVar16=1092
+NOTYET unit=1092 x=41 y=49
+ORDEREXEC unit=20 order=0x4
+TERRAFEXEC unit=1040 mode=0 accum_old=3
+CHECK unit=1040 mode=0 accum_new=6 threshold=8 iVar16=1040
+NOTYET unit=1040 x=57 y=47
+ORDEREXEC unit=18 order=0x7
+TERRAFEXEC unit=936 mode=3 accum_old=9
+CHECK unit=936 mode=3 accum_new=12 threshold=16 iVar16=936
+NOTYET unit=936 x=50 y=54
+ORDEREXEC unit=14 order=0x6
+TERRAFEXEC unit=728 mode=2 accum_old=3
+CHECK unit=728 mode=2 accum_new=6 threshold=16 iVar16=728
+NOTYET unit=728 x=41 y=51
+REFRESH player=3
+ORDEREXEC unit=41 order=0x14
+TERRAFEXEC unit=2132 mode=16 accum_old=10
+CHECK unit=2132 mode=16 accum_new=12 threshold=24 iVar16=2132
+NOTYET unit=2132 x=45 y=7
+[Inferior 1 (process 914079) detached]

@@ -1,0 +1,19 @@
+{
+ "tag": "m47g",
+ "t0": "2026-10-22 12:16:24",
+ "year0": 2335,
+ "events": [
+  "drive: Return on dialog pane",
+  "drive: Escape on base screen",
+  "drive: Return on dialog pane",
+  "drive: Escape on base screen",
+  "drive: Return on dialog pane",
+  "drive: Escape on base screen",
+  "click TURN_BTN cur=3",
+  "drive: answered confirm pane"
+ ],
+ "clicks": 1,
+ "returns": 0,
+ "year_end": 2336,
+ "secs": 52.0
+}

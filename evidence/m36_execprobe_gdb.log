@@ -1,0 +1,213 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x529090
+Breakpoint 2 at 0x585720
+Breakpoint 3 at 0x4d1e90
+EXECB #1 arg1=126 arg2=4 arg3=3
+EXECB #2 arg1=126 arg2=3 arg3=3
+EXECB #3 arg1=126 arg2=3 arg3=3
+EXECB #4 arg1=126 arg2=3 arg3=3
+EXECB #5 arg1=259 arg2=0 arg3=3
+EXECB #6 arg1=311 arg2=1 arg3=3
+EXECB #7 arg1=311 arg2=2 arg3=3
+EXECB #8 arg1=286 arg2=5 arg3=3
+EXECB #9 arg1=280 arg2=4 arg3=3
+EXECB #10 arg1=234 arg2=5 arg3=3
+EXECB #11 arg1=234 arg2=6 arg3=3
+EXECB #12 arg1=2 arg2=2 arg3=3
+EXECB #13 arg1=2 arg2=3 arg3=3
+EXECB #14 arg1=156 arg2=1 arg3=3
+EXECB #15 arg1=39 arg2=0 arg3=3
+EXECB #16 arg1=127 arg2=5 arg3=3
+EXECB #17 arg1=127 arg2=5 arg3=3
+EXECB #18 arg1=29 arg2=2 arg3=3
+EXECB #19 arg1=24 arg2=5 arg3=3
+EXECB #20 arg1=24 arg2=7 arg3=3
+EXECB #21 arg1=308 arg2=1 arg3=3
+EXECB #22 arg1=306 arg2=1 arg3=3
+EXECB #23 arg1=298 arg2=6 arg3=3
+EXECB #24 arg1=298 arg2=7 arg3=3
+EXECB #25 arg1=298 arg2=6 arg3=3
+EXECB #26 arg1=298 arg2=7 arg3=3
+EXECB #27 arg1=298 arg2=6 arg3=3
+EXECB #28 arg1=298 arg2=5 arg3=3
+EXECB #29 arg1=266 arg2=1 arg3=3
+EXECB #30 arg1=253 arg2=6 arg3=3
+EXECB #31 arg1=93 arg2=2 arg3=3
+EXECB #32 arg1=36 arg2=7 arg3=3
+EXECB #33 arg1=313 arg2=3 arg3=3
+EXECB #34 arg1=313 arg2=5 arg3=3
+EXECB #35 arg1=313 arg2=5 arg3=3
+EXECB #36 arg1=307 arg2=1 arg3=3
+EXECB #37 arg1=307 arg2=2 arg3=3
+EXECB #38 arg1=307 arg2=2 arg3=3
+EXECB #39 arg1=299 arg2=5 arg3=3
+EXECB #40 arg1=299 arg2=7 arg3=3
+EXECB #41 arg1=275 arg2=6 arg3=3
+EXECB #42 arg1=254 arg2=1 arg3=3
+EXECB #43 arg1=221 arg2=1 arg3=3
+EXECB #44 arg1=220 arg2=0 arg3=3
+EXECB #45 arg1=97 arg2=2 arg3=3
+EXECB #46 arg1=97 arg2=1 arg3=3
+EXECB #47 arg1=97 arg2=3 arg3=3
+EXECB #48 arg1=92 arg2=1 arg3=3
+EXECB #49 arg1=4 arg2=3 arg3=3
+EXECB #50 arg1=4 arg2=1 arg3=3
+EXECB #51 arg1=225 arg2=3 arg3=3
+EXECB #52 arg1=203 arg2=7 arg3=3
+EXECB #53 arg1=173 arg2=5 arg3=3
+EXECB #54 arg1=152 arg2=4 arg3=3
+EXECB #55 arg1=122 arg2=0 arg3=3
+EXECB #56 arg1=118 arg2=5 arg3=3
+EXECB #57 arg1=71 arg2=5 arg3=3
+EXECB #58 arg1=298 arg2=3 arg3=3
+EXECB #59 arg1=298 arg2=2 arg3=3
+EXECB #60 arg1=237 arg2=5 arg3=3
+EXECB #61 arg1=245 arg2=2 arg3=3
+EXECB #62 arg1=245 arg2=2 arg3=3
+EXECB #63 arg1=245 arg2=1 arg3=3
+EXECB #64 arg1=237 arg2=7 arg3=3
+EXECB #65 arg1=311 arg2=7 arg3=3
+EXECB #66 arg1=250 arg2=5 arg3=3
+EXECB #67 arg1=227 arg2=3 arg3=3
+EXECB #68 arg1=227 arg2=1 arg3=3
+EXECB #69 arg1=227 arg2=3 arg3=3
+EXECB #70 arg1=227 arg2=2 arg3=3
+EXECB #71 arg1=206 arg2=3 arg3=3
+EXECB #72 arg1=72 arg2=6 arg3=3
+EXECB #73 arg1=274 arg2=0 arg3=3
+EXECB #74 arg1=274 arg2=0 arg3=3
+EXECB #75 arg1=226 arg2=5 arg3=3
+EXECB #76 arg1=226 arg2=5 arg3=3
+EXECB #77 arg1=226 arg2=5 arg3=3
+EXECB #78 arg1=215 arg2=3 arg3=3
+EXECB #79 arg1=215 arg2=2 arg3=3
+EXECB #80 arg1=215 arg2=2 arg3=3
+EXECB #81 arg1=199 arg2=2 arg3=3
+EXECB #82 arg1=165 arg2=2 arg3=3
+EXECB #83 arg1=163 arg2=2 arg3=3
+EXECB #84 arg1=157 arg2=2 arg3=3
+EXECB #85 arg1=156 arg2=2 arg3=3
+EXECB #86 arg1=145 arg2=6 arg3=3
+EXECB #87 arg1=135 arg2=2 arg3=3
+EXECB #88 arg1=130 arg2=3 arg3=3
+EXECB #89 arg1=130 arg2=2 arg3=3
+EXECB #90 arg1=130 arg2=2 arg3=3
+EXECB #91 arg1=128 arg2=2 arg3=3
+EXECB #92 arg1=119 arg2=2 arg3=3
+EXECB #93 arg1=113 arg2=2 arg3=3
+EXECB #94 arg1=94 arg2=3 arg3=3
+EXECB #95 arg1=31 arg2=2 arg3=3
+EXECB #96 arg1=303 arg2=4 arg3=3
+EXECB #97 arg1=303 arg2=4 arg3=3
+EXECB #98 arg1=285 arg2=2 arg3=3
+EXECB #99 arg1=285 arg2=1 arg3=3
+EXECB #100 arg1=285 arg2=0 arg3=3
+EXECB #101 arg1=254 arg2=5 arg3=3
+EXECB #102 arg1=254 arg2=5 arg3=3
+EXECB #103 arg1=254 arg2=6 arg3=3
+EXECB #104 arg1=254 arg2=6 arg3=3
+EXECB #105 arg1=238 arg2=3 arg3=3
+EXECB #106 arg1=238 arg2=3 arg3=3
+EXECB #107 arg1=238 arg2=3 arg3=3
+EXECB #108 arg1=238 arg2=1 arg3=3
+EXECB #109 arg1=221 arg2=2 arg3=3
+EXECB #110 arg1=214 arg2=1 arg3=3
+EXECB #111 arg1=214 arg2=1 arg3=3
+EXECB #112 arg1=213 arg2=2 arg3=3
+EXECB #113 arg1=181 arg2=2 arg3=3
+EXECB #114 arg1=169 arg2=1 arg3=3
+EXECB #115 arg1=169 arg2=1 arg3=3
+EXECB #116 arg1=168 arg2=2 arg3=3
+EXECB #117 arg1=152 arg2=1 arg3=3
+EXECB #118 arg1=152 arg2=1 arg3=3
+EXECB #119 arg1=146 arg2=0 arg3=3
+EXECB #120 arg1=140 arg2=0 arg3=3
+EXECB #121 arg1=137 arg2=0 arg3=3
+EXECB #122 arg1=136 arg2=0 arg3=3
+EXECB #123 arg1=129 arg2=0 arg3=3
+EXECB #124 arg1=124 arg2=2 arg3=3
+EXECB #125 arg1=110 arg2=0 arg3=3
+EXECB #126 arg1=90 arg2=3 arg3=3
+EXECB #127 arg1=90 arg2=3 arg3=3
+EXECB #128 arg1=90 arg2=3 arg3=3
+EXECB #129 arg1=90 arg2=3 arg3=3
+EXECB #130 arg1=90 arg2=3 arg3=3
+EXECB #131 arg1=90 arg2=3 arg3=3
+EXECB #132 arg1=90 arg2=3 arg3=3
+EXECB #133 arg1=90 arg2=3 arg3=3
+EXECB #134 arg1=90 arg2=3 arg3=3
+EXECB #135 arg1=90 arg2=3 arg3=3
+EXECB #136 arg1=90 arg2=3 arg3=3
+EXECB #137 arg1=90 arg2=3 arg3=3
+EXECB #138 arg1=90 arg2=3 arg3=3
+EXECB #139 arg1=90 arg2=3 arg3=3
+EXECB #140 arg1=90 arg2=3 arg3=3
+EXECB #141 arg1=90 arg2=3 arg3=3
+EXECB #142 arg1=90 arg2=3 arg3=3
+EXECB #143 arg1=87 arg2=0 arg3=3
+EXECB #144 arg1=76 arg2=6 arg3=3
+EXECB #145 arg1=76 arg2=0 arg3=3
+EXECB #146 arg1=10 arg2=0 arg3=3
+EXECB #147 arg1=162 arg2=2 arg3=3
+EXECB #148 arg1=303 arg2=5 arg3=3
+EXECB #149 arg1=303 arg2=5 arg3=3
+EXECB #150 arg1=303 arg2=3 arg3=3
+EXECB #151 arg1=303 arg2=3 arg3=3
+EXECB #152 arg1=221 arg2=1 arg3=3
+EXECB #153 arg1=221 arg2=3 arg3=3
+EXECB #154 arg1=221 arg2=3 arg3=3
+EXECB #155 arg1=287 arg2=5 arg3=3
+EXECB #156 arg1=287 arg2=5 arg3=3
+EXECB #157 arg1=287 arg2=7 arg3=3
+EXECB #158 arg1=188 arg2=5 arg3=3
+EXECB #159 arg1=132 arg2=6 arg3=3
+EXECB #160 arg1=132 arg2=5 arg3=3
+EXECB #161 arg1=132 arg2=6 arg3=3
+EXECB #162 arg1=73 arg2=3 arg3=3
+EXECB #163 arg1=73 arg2=3 arg3=3
+EXECB #164 arg1=73 arg2=3 arg3=3
+EXECB #165 arg1=297 arg2=7 arg3=3
+EXECB #166 arg1=138 arg2=2 arg3=3
+EXECB #167 arg1=307 arg2=2 arg3=3
+EXECB #168 arg1=307 arg2=2 arg3=3
+EXECB #169 arg1=229 arg2=6 arg3=3
+EXECB #170 arg1=177 arg2=5 arg3=3
+EXECB #171 arg1=142 arg2=2 arg3=3
+EXECB #172 arg1=21 arg2=5 arg3=3
+EXECB #173 arg1=20 arg2=1 arg3=3
+EXECB #174 arg1=17 arg2=7 arg3=3
+EXECB #175 arg1=13 arg2=0 arg3=3
+EXECB #176 arg1=13 arg2=0 arg3=3
+EXECB #177 arg1=13 arg2=0 arg3=3
+EXECB #178 arg1=12 arg2=7 arg3=3
+EXECB #179 arg1=12 arg2=7 arg3=3
+EXECB #180 arg1=42 arg2=3 arg3=3
+EXECB #181 arg1=42 arg2=0 arg3=3
+EXECB #182 arg1=42 arg2=2 arg3=3
+EXECB #183 arg1=42 arg2=2 arg3=3
+
+Thread 1 "terran.exe" received signal SIGCONT, Continued.
+0xeb2ae68b in ?? ()
+[Inferior 1 (process 914079) detached]

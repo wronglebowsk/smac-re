@@ -1,0 +1,21 @@
+
+undefined4 FUN_00644b20(undefined4 param_1,int param_2,int param_3)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar2 = 0;
+  if (0 < param_3) {
+    do {
+      iVar1 = (*DAT_0099dc08)(param_1,iVar2 + param_2,param_3 - iVar2);
+      if (iVar1 < 0) {
+        FUN_006457d0(PTR_s_Reading_file_0069a8f8);
+        return 0xffffffff;
+      }
+      iVar2 = iVar2 + iVar1;
+    } while (iVar2 < param_3);
+  }
+  return 0;
+}
+

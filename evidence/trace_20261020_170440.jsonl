@@ -1,0 +1,2 @@
+{"turn": 0, "year_before": 2101, "t": "17:04:40", "handled": ["dialog", "unknown", "dialog", "unknown", "dialog", "unknown", "dialog"], "screens": {"dialog": 4, "unknown": 3}, "year_after": 2101, "advanced": false, "dt": 47.1, "stuck": true}
+{"turn": 1, "year_before": 2101, "t": "17:05:28", "handled": ["unknown", "dialog", "unknown", "dialog", "unknown", "dialog", "unknown", "dialog"], "screens": {"unknown": 4, "dialog": 4}, "year_after": 2101, "advanced": false, "dt": 45.9, "stuck": true}

@@ -1,0 +1,26 @@
+[New LWP 882988]
+[New LWP 882987]
+[New LWP 882986]
+[New LWP 882985]
+[New LWP 882984]
+[New LWP 882983]
+[New LWP 882982]
+[New LWP 882981]
+[New LWP 882980]
+[New LWP 882979]
+[New LWP 882978]
+[New LWP 882977]
+[New LWP 882976]
+[New LWP 882975]
+[New LWP 882974]
+[New LWP 882973]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe89e132c in __kernel_vsyscall ()
+evidence/m26_live.gdb:3: Error in sourced command file:
+Invalid number "0x0x933288".
+[Inferior 1 (process 882970) detached]

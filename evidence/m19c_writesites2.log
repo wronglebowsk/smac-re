@@ -1,0 +1,4463 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x476aa9
+Breakpoint 2 at 0x4d728c
+Breakpoint 3 at 0x5ab355
+Breakpoint 4 at 0x5ab4bc
+Breakpoint 5 at 0x5ab573
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=130 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=128 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=128 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=130 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=154 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=70
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=5 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=5 newx=4
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=72
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=75
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=79
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=150 newx=77
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=54 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=54 newx=67
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=138 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=138 newx=78
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=70
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=147 newx=70
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=70
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=68
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=147 newx=67
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=75 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=75 newx=56
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=55 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=55 newx=61
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=17 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=17 newx=47
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=10 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=10 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=6 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=6 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=92 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=92 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=35
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=33
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=31
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=29
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=27
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=135 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=135 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=108 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=108 newx=21
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=95 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=95 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=82 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=82 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=22
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=63 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=63 newx=21
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=57 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=57 newx=21
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=19
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=20
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=33
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=31
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=18 newx=31
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ceb86 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=29
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=155 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=4
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=141 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=141 newx=2
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=141 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=141 newx=2
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=141 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=141 newx=3
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=2
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=2
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=3
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=90 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=90 newx=10
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=77 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=77 newx=8
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=60 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=60 newx=2
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=5
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=43 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=43 newx=6
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=43 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=43 newx=7
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=36 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=36 newx=73
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=156 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0051cd45 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=73
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0051cd45 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=157 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0051cd79 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=157 newx=73
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0051cd79 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=158 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0051cd79 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=158 newx=73
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0051cd79 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=73
+#0  0x005ab355 in ?? ()
+#1  0x005ab547 in ?? ()
+#2  0x0051cd8e in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=159 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0051d0c8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0051d0c8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=158 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=158 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=157 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=157 newx=75
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=117 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00506bf8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=159 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=71 newx=78
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=70 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=28 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=86 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=86 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=28 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=70 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=159 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=136 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=136 newx=12
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=2 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=2 newx=12
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=2 newx=12
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ceb86 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=2 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=2 newx=13
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=2 newx=13
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ceb86 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=2 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=2 newx=13
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=70 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=28 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=86 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=86 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=28 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=70 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=160 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=160 newx=42
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=143 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=143 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=143 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=143 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=143 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=143 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=130 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=130 newx=51
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=130 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=130 newx=53
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=110 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=110 newx=52
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=105 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=105 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=105 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=105 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=105 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=105 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=67 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=67 newx=49
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=145 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=145 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=145 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=100 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=100 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=100 newx=44
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=100 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=100 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=100 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=100 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=100 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=91 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=91 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=91 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=91 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=91 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=91 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=91 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=91 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=91 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=68 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=51 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=51 newx=42
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=51 newx=42
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=50 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=50 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=50 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=50 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=50 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=50 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=50 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=50 newx=44
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=47 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=47 newx=51
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=41 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=41 newx=42
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=40 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=40 newx=55
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=40 newx=55
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ceb86 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=127 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=127 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=127 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=127 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=127 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=127 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=149 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=149 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=149 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=149 newx=72
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=149 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=149 newx=70
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=149 newx=70
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=54 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=54 newx=66
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=8 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=8 newx=69
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=137 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=137 newx=79
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=65
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=63
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=61
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=146 newx=61
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=60
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=59
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=146 newx=59
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=58
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=17 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=17 newx=49
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=10 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=10 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=6 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=6 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=6 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=6 newx=78
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=161 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=26
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=92 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=92 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=27
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=29
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=31
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=29
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=27
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=134 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=134 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=108 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=108 newx=20
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=95 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=95 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=82 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=82 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=63 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=63 newx=20
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=57 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=57 newx=20
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=138 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=138 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=138 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=138 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=102 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=21
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=35 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=35 newx=35
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=27
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=18 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=18 newx=25
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ceb86 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=98 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=4
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=114 newx=4
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=90 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=90 newx=9
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=77 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=77 newx=6
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=60 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=60 newx=0
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=30 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=30 newx=2
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=22 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=22 newx=9
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=22 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=22 newx=9
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=22 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=22 newx=8
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=0
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=161 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=1
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=162 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=79
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=163 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=163 newx=78
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=164 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=164 newx=79
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=165 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=165 newx=0
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0056fe64 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=165 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00506bf8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=75
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=75
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=154 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=153 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5a02 in ?? ()
+#2  0x005a5da3 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=153 newx=73
+#0  0x005ab355 in ?? ()
+#1  0x005a5a6c in ?? ()
+#2  0x005a5da3 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=153 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x005abe78 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=0
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=1
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=2
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=69 newx=3
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=27 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=84 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=84 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=27 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=26
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=27
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=28
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=161 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0058647f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=29
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0058647f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=134 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=134 newx=12
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=30 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=30 newx=17
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=13
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=14
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=26
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=27 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=84 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=84 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=27 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=68 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=162 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=140 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=139 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=115 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=115 newx=47
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=115 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=115 newx=49
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=115 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=115 newx=51
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=107 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=107 newx=51
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=64 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=64 newx=48
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=142 newx=44
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=142 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=142 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=97 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=97 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=88 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=88 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=88 newx=44
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=88 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=88 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=88 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=88 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=88 newx=45
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=88 newx=45
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=49 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=49 newx=42
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=49 newx=42
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=48 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=48 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=48 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=48 newx=43
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=48 newx=43
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=48 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=48 newx=44
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=38 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=38 newx=55
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=120 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=120 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=120 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=120 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=120 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=123 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=125 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=118 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=120 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=161 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0058647f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=161 newx=4
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0058647f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=72
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=74
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=75
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=145 newx=75
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ce54f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=52 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=52 newx=67
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=11 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=11 newx=1
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=4 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=4 newx=5
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=162 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=163 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=163 newx=47
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=162 newx=77
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=60
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=60
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=85 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=85 newx=50
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=63
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=65
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=56 newx=67
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=16 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=16 newx=48
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=9 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=9 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=5 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=5 newx=79
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=87 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=87 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=33
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=34
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=155 newx=34
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=146 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=145 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=134 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=134 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=129 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=103 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=103 newx=20
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=90 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=90 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=77 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=77 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=62 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=62 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=59 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=59 newx=19
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=53 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=53 newx=19
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=133 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=133 newx=26
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=133 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=133 newx=27
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=97 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=76 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=76 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=76 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=76 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=61 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=61 newx=20
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=163 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x0058647f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=163 newx=19
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x0058647f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=17 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=17 newx=23
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=17 newx=23
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ceb86 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=116 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=116 newx=28
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=93 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=93 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=93 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=93 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=119 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=117 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=117 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=119 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=163 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=163 newx=3
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 5, 0x005ab573 in ?? ()
+W@0x5ab573 idx=164 newx=-4
+#0  0x005ab573 in ?? ()
+#1  0x005ab6e7 in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=164 newx=10
+#0  0x005ab355 in ?? ()
+#1  0x005ab76f in ?? ()
+#2  0x004eff53 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=85 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=85 newx=8
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=85 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=85 newx=6
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=79 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=79 newx=1
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=28 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=28 newx=4
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=164 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=164 newx=12
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=6
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=7
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=8
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=142 newx=10
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=21 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=21 newx=8
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x005ab4bc in ?? ()
+W@0x5ab4bc idx=21 newx=8
+#0  0x005ab4bc in ?? ()
+#1  0x0058995f in ?? ()
+#2  0x004ceb86 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=21 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=21 newx=8
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=21 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=21 newx=9
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=160 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=160 newx=3
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=156 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00506bf8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=151 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=150 newx=76
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=157 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5a02 in ?? ()
+#2  0x005a5da3 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=157 newx=29
+#0  0x005ab355 in ?? ()
+#1  0x005a5a6c in ?? ()
+#2  0x005a5da3 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=157 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x005abe78 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=4
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=5
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=66 newx=7
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=26 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=26 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=26
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=152 newx=25
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=131 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=131 newx=11
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=-2
+#0  0x005ab355 in ?? ()
+#1  0x005a629a in ?? ()
+#2  0x00588e0b in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=1 newx=15
+#0  0x005ab355 in ?? ()
+#1  0x005a593f in ?? ()
+#2  0x005893a8 in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=26 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=81 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=26 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=65 newx=24
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x0056890f in ?? ()
+[Inferior 1 (process 370597) detached]

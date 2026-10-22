@@ -1,0 +1,281 @@
+
+int FUN_00526720(void)
+
+{
+  uint uVar1;
+  HANDLE pvVar2;
+  uint uVar3;
+  undefined1 uVar4;
+  ushort uVar5;
+  int iVar6;
+  char *pcVar7;
+  int iVar8;
+  size_t sVar9;
+  BOOL BVar10;
+  int *piVar11;
+  undefined2 *puVar12;
+  DWORD DVar13;
+  int in_ECX;
+  byte *pbVar14;
+  uint uVar15;
+  undefined4 *puVar16;
+  CHAR local_5c4 [260];
+  undefined2 local_4c0 [9];
+  undefined1 local_4ae [262];
+  CHAR local_3a8 [260];
+  _WIN32_FIND_DATAA local_2a4;
+  char local_164 [260];
+  undefined2 local_60 [4];
+  undefined4 local_58;
+  uint local_40;
+  HANDLE local_3c;
+  int local_30;
+  int local_2c;
+  uint local_28;
+  uint local_24;
+  int local_20;
+  int local_1c;
+  int local_18;
+  HANDLE local_14;
+  void *local_10;
+  undefined1 *puStack_c;
+  undefined4 local_8;
+  
+  local_8 = 0xffffffff;
+  puStack_c = &LAB_0066b268;
+  local_10 = ExceptionList;
+  local_2c = 0;
+  ExceptionList = &local_10;
+  local_1c = in_ECX;
+  FUN_006281c0();
+  local_8 = 0;
+  DAT_0091f744 = 0;
+  DAT_00920474 = 0;
+  iVar6 = FUN_004e2610(DAT_0091e2c8);
+  DAT_00920470 = (undefined1 *)FUN_005be090(0x104);
+  DAT_0091f748 = FUN_005be090(0x11800);
+  GetModuleFileNameA((HMODULE)0x0,local_3a8,0x104);
+  pcVar7 = _strrchr(local_3a8,0x5c);
+  if (pcVar7 != (char *)0x0) {
+    pcVar7[1] = '\0';
+  }
+  if (*(int *)(in_ECX + 0x1b28) == 0) {
+joined_r0x005268a7:
+    while (DAT_00920474 != 1) {
+      iVar8 = FUN_006361ff(&local_18,&local_14);
+      if (iVar8 != 0) {
+        FUN_0052bce0(iVar8,local_14,local_18);
+      }
+    }
+    DAT_00991598 = 0;
+    FUN_0064b9e0(&DAT_00991598,local_3a8);
+    FUN_0064b9e0(&DAT_00991598,DAT_00920470);
+    FUN_005eaf6c(&DAT_00991598);
+  }
+  else {
+    iVar8 = 0;
+    if (0 < DAT_0091e2d0) {
+      pbVar14 = (byte *)(in_ECX + 0x928);
+      do {
+        iVar8 = iVar8 + 1;
+        *pbVar14 = (iVar6 != iVar8) - 1U & 2;
+        pbVar14 = pbVar14 + 0x19c;
+      } while (iVar8 < DAT_0091e2d0);
+    }
+    if (*(int *)(in_ECX + 0x1b28) == 0) goto joined_r0x005268a7;
+    local_164[0] = '\0';
+    FUN_0064b9e0(local_164,&DAT_00991598);
+    pcVar7 = local_164;
+    if (local_164[1] == ':') {
+      sVar9 = _strlen(local_3a8);
+      pcVar7 = local_164 + sVar9;
+    }
+    *DAT_00920470 = 0;
+    FUN_0064b9e0(DAT_00920470,pcVar7);
+    local_4c0[0] = 0xf05;
+    local_4ae[0] = 0;
+    FUN_0064b9e0(local_4ae,DAT_00920470);
+    FUN_0052a260(local_4c0,0x118,0);
+  }
+  GetCurrentDirectoryA(0x104,local_5c4);
+  BVar10 = SetCurrentDirectoryA(&DAT_00991598);
+  if (((BVar10 == 0) && (*(int *)(in_ECX + 0x1b28) == 0)) &&
+     (iVar8 = FUN_0064d4d0(&DAT_00991598), iVar8 == 0)) {
+    SetCurrentDirectoryA(&DAT_00991598);
+  }
+  local_20 = 0;
+  if (*(int *)(in_ECX + 0x1b28) == 0) {
+    while ((DAT_00920474 != 3 && (DAT_0091f744 == 0))) {
+      uVar5 = GetAsyncKeyState(0x1b);
+      if ((uVar5 & 0x8000) != 0) goto LAB_00526da1;
+      FUN_005e9e45();
+      iVar6 = FUN_006361ff(&local_24,&local_18);
+      if (iVar6 != 0) {
+        FUN_0052bce0(iVar6,local_18,local_24);
+      }
+    }
+  }
+  else {
+    local_14 = FindFirstFileA(&DAT_0068ef68,&local_2a4);
+    if (local_14 != (HANDLE)0x0) {
+      iVar8 = 0;
+      do {
+        if (((byte)local_2a4.dwFileAttributes & 0x10) == 0) {
+          *(undefined2 *)(iVar8 + DAT_0091f748) = 0xf06;
+          *(int *)(iVar8 + 4 + DAT_0091f748) = iVar6;
+          *(undefined4 *)(iVar8 + 8 + DAT_0091f748) = 0;
+          *(DWORD *)(iVar8 + 0xc + DAT_0091f748) = local_2a4.nFileSizeLow + 0x800 >> 0xb;
+          *(undefined1 *)(iVar8 + 0x10 + DAT_0091f748) = (undefined1)local_20;
+          uVar4 = FUN_00530540(local_2a4.cFileName);
+          *(undefined1 *)(iVar8 + 0x11 + DAT_0091f748) = uVar4;
+          *(undefined1 *)(iVar8 + 0x12 + DAT_0091f748) = 0;
+          FUN_0064b9e0(iVar8 + 0x12 + DAT_0091f748,local_2a4.cFileName);
+          FUN_0052a260(iVar8 + DAT_0091f748,0x118,0);
+          local_20 = local_20 + 1;
+          iVar8 = iVar8 + 0x118;
+        }
+        BVar10 = FindNextFileA(local_14,&local_2a4);
+      } while (BVar10 != 0);
+    }
+    local_60[0] = 0xf07;
+    local_58 = 2;
+    FUN_0052a260(local_60,0x20,0);
+    FindClose(local_14);
+    while( true ) {
+      FUN_005e9e45();
+      iVar6 = FUN_006361ff(&local_18,&local_14);
+      if (iVar6 != 0) {
+        FUN_0052bce0(iVar6,local_14,local_18);
+      }
+      iVar6 = 0;
+      if (DAT_0091e2d0 < 1) break;
+      pcVar7 = (char *)(in_ECX + 0x928);
+      while (*pcVar7 != '\0') {
+        iVar6 = iVar6 + 1;
+        pcVar7 = pcVar7 + 0x19c;
+        if (DAT_0091e2d0 <= iVar6) goto LAB_00526ac7;
+      }
+    }
+LAB_00526ac7:
+    iVar6 = 0;
+    if (0 < local_20) {
+      piVar11 = (int *)(DAT_0091f748 + 8);
+      iVar8 = local_20;
+      do {
+        if (*piVar11 != 0) {
+          iVar6 = iVar6 + 1;
+        }
+        piVar11 = piVar11 + 0x46;
+        iVar8 = iVar8 + -1;
+      } while (iVar8 != 0);
+    }
+    puVar12 = (undefined2 *)FUN_005be090(0x820);
+    *puVar12 = 0xf0b;
+    local_30 = 0;
+    if (0 < local_20) {
+      local_14 = (HANDLE)0x0;
+      do {
+        pvVar2 = local_14;
+        uVar5 = GetAsyncKeyState(0x1b);
+        if ((uVar5 & 0x8000) != 0) goto LAB_00526da1;
+        local_28 = *(uint *)((int)pvVar2 + DAT_0091f748 + 8);
+        if (local_28 != 0) {
+          FUN_00626634(0,(int)pvVar2 + DAT_0091f748 + 0x12,0xffffffff,0xffffffff);
+          local_18 = iVar6 + -1;
+          FUN_00626581(0,iVar6);
+          DAT_006a9074 = 6;
+          FUN_006267c7(PTR_s_SCRIPT_00693b68,s_MPSENDFILE_0068ef6c,0x214200,0);
+          iVar6 = local_1c;
+          DAT_006a9074 = 0;
+          *(int *)(puVar12 + 4) = local_30;
+          if (local_2c != 0) {
+            FUN_00633360(local_2c);
+          }
+          local_2c = FUN_006332e7(&DAT_0068ef78);
+          iVar8 = 1;
+          puVar16 = (undefined4 *)(iVar6 + 0x920);
+          do {
+            if ((local_28 & 1 << ((byte)iVar8 & 0x1f)) != 0) {
+              FUN_0063338d(local_2c,*puVar16);
+            }
+            iVar8 = iVar8 + 1;
+            puVar16 = puVar16 + 0x67;
+          } while (iVar8 < 8);
+          iVar8 = FUN_00628373((int)local_14 + DAT_0091f748 + 0x12,1);
+          uVar15 = local_40;
+          iVar6 = local_18;
+          if (iVar8 != 0) {
+            DVar13 = GetFileSize(local_3c,(LPDWORD)0x0);
+            local_24 = DVar13 + uVar15;
+            iVar6 = 0;
+            uVar3 = local_24 - uVar15;
+            uVar1 = local_28;
+            while (local_28 = uVar3, 0x7ff < (int)local_28) {
+              FUN_005e9e45();
+              FUN_0064bf70(puVar12 + 0x10,uVar15,0x800);
+              local_28 = local_28 - 0x800;
+              uVar15 = uVar15 + 0x800;
+              *(int *)(puVar12 + 6) = iVar6;
+              iVar6 = iVar6 + 1;
+              FUN_006334bb(puVar12,0x820,local_2c,1);
+              uVar3 = local_28;
+              uVar1 = local_28;
+            }
+            *(int *)(puVar12 + 6) = iVar6;
+            local_28 = uVar1;
+            if (uVar15 < local_24) {
+              iVar6 = local_24 - uVar15;
+              FUN_0064bf70(puVar12 + 0x10,uVar15,iVar6);
+              FUN_006334bb(puVar12,iVar6 + 0x20,local_2c,1);
+            }
+            FUN_006285ef();
+            iVar6 = local_18;
+          }
+        }
+        local_30 = local_30 + 1;
+        local_14 = (HANDLE)((int)local_14 + 0x118);
+      } while (local_30 < local_20);
+    }
+    if (puVar12 != (undefined2 *)0x0) {
+      FUN_0064a7f0(puVar12);
+    }
+    while( true ) {
+      iVar8 = FUN_006361ff(&local_24,&local_18);
+      iVar6 = local_1c;
+      if (iVar8 != 0) {
+        FUN_0052bce0(iVar8,local_18,local_24);
+      }
+      FUN_005e9e45();
+      iVar8 = 0;
+      if (DAT_0091e2d0 < 1) break;
+      pbVar14 = (byte *)(iVar6 + 0x928);
+      while (1 < *pbVar14) {
+        iVar8 = iVar8 + 1;
+        pbVar14 = pbVar14 + 0x19c;
+        if (DAT_0091e2d0 <= iVar8) goto LAB_00526d28;
+      }
+    }
+LAB_00526d28:
+    local_60[0] = 0xf07;
+    local_58 = 3;
+    FUN_0052a260(local_60,0x20,0);
+  }
+LAB_00526dab:
+  FUN_00626839();
+  SetCurrentDirectoryA(local_5c4);
+  if (DAT_00920470 != (undefined1 *)0x0) {
+    FUN_0064a7f0(DAT_00920470);
+  }
+  if (DAT_0091f748 != 0) {
+    FUN_0064a7f0(DAT_0091f748);
+  }
+  iVar6 = DAT_0091f744;
+  local_8 = 0xffffffff;
+  FUN_0062824d();
+  ExceptionList = local_10;
+  return iVar6;
+LAB_00526da1:
+  DAT_0091f744 = 1;
+  goto LAB_00526dab;
+}
+

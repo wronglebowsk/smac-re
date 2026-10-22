@@ -1,0 +1,39 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x51f554
+Breakpoint 2 at 0x4ef6d0
+Breakpoint 3 at 0x4efed5
+Breakpoint 4 at 0x4f0ca1
+Breakpoint 5 at 0x4f1e3f
+Hardware watchpoint 6: *(int *)0x962fd0
+Hardware watchpoint 7: *(int *)0x962fe0
+Hardware watchpoint 8: *(int *)0x963060
+Hardware watchpoint 9: *(int *)0x953884
+ARMED min40=0x962fd0 queue50=0x962fe0 income_d0=0x963060 energy=0x953884 yearbp=0x51f554 spendA=0x4efed5 spendB=0x4f0ca1 qdrain=0x4f1e3f pipe=0x4ef6d0
+ROUND year=2338 turn=238 cur=7 n_bases=75 gross=2 gross_minus_upkeep=-61 nrg3=19 led3=0 nrg1=44 ourmin=200 ourq=2 ourd0=0 ourf4c=0
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 914091]
+0xeb4c132c in __kernel_vsyscall ()
+[Inferior 1 (process 914079) detached]

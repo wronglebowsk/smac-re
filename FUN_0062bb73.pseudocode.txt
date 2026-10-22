@@ -1,0 +1,15 @@
+
+void FUN_0062bb73(void)
+
+{
+  int in_ECX;
+  
+  *(int *)(in_ECX + 0x58c) = *(int *)(in_ECX + 0x5ac);
+  *(int *)(in_ECX + 0x590) = *(int *)(in_ECX + 0x5b0);
+  *(int *)(in_ECX + 0x594) = *(int *)(in_ECX + 0x5ac) + *(int *)(in_ECX + 0x59c);
+  *(int *)(in_ECX + 0x598) = *(int *)(in_ECX + 0x5b0) + *(int *)(in_ECX + 0x5a0);
+  FUN_005c02b5(*(undefined4 *)(in_ECX + 0x5ac),*(undefined4 *)(in_ECX + 0x5b0),
+               *(undefined4 *)(in_ECX + 0x59c),*(undefined4 *)(in_ECX + 0x5a0),0);
+  return;
+}
+

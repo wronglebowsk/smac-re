@@ -1,0 +1,13 @@
+{
+ "tag": "m47c",
+ "t0": "2026-10-22 11:55:29",
+ "year0": 2333,
+ "events": [
+  "click TURN_BTN cur=3",
+  "drive: answered confirm pane"
+ ],
+ "clicks": 1,
+ "returns": 0,
+ "year_end": 2334,
+ "secs": 23.6
+}

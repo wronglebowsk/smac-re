@@ -1,0 +1,125 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x476aa9
+Breakpoint 2 at 0x4d728c
+Breakpoint 3 at 0x5ab355
+Breakpoint 4 at 0x5ab4bc
+Breakpoint 5 at 0x5ab573
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=119 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=117 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=117 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=119 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=119 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=117 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b1c in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=-3
+#0  0x005ab355 in ?? ()
+#1  0x005a5b82 in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=122 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=124 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=117 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+
+Thread 1 "terran.exe" hit Breakpoint 3, 0x005ab355 in ?? ()
+W@0x5ab355 idx=119 newx=41
+#0  0x005ab355 in ?? ()
+#1  0x005a5beb in ?? ()
+#2  0x004c0e0a in ?? ()
+[Inferior 1 (process 370597) detached]

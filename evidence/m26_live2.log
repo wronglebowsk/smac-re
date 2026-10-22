@@ -1,0 +1,59 @@
+[New LWP 882988]
+[New LWP 882987]
+[New LWP 882986]
+[New LWP 882985]
+[New LWP 882984]
+[New LWP 882983]
+[New LWP 882982]
+[New LWP 882981]
+[New LWP 882980]
+[New LWP 882979]
+[New LWP 882978]
+[New LWP 882977]
+[New LWP 882976]
+[New LWP 882975]
+[New LWP 882974]
+[New LWP 882973]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe89e132c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x933288
+Hardware watchpoint 2: *(int *)0x93328c
+Hardware watchpoint 3: *(int *)0x933294
+Breakpoint 4 at 0x476580
+Breakpoint 5 at 0x4d3f70
+Breakpoint 6 at 0x4d6fb0
+Breakpoint 7 at 0x512450
+Breakpoint 8 at 0x512b40
+Breakpoint 9 at 0x529090
+Breakpoint 10 at 0x585720
+Breakpoint 11 at 0x502c40
+Breakpoint 12 at 0x4cffa0
+Breakpoint 13 at 0x4cdc70
+Breakpoint 14 at 0x5ab355
+
+Thread 1 "terran.exe" hit Breakpoint 8, 0x00512b40 in ?? ()
+KEYROUTE a1=0x1b
+
+Thread 1 "terran.exe" hit Breakpoint 8, 0x00512b40 in ?? ()
+KEYROUTE a1=0x68
+
+Thread 1 "terran.exe" hit Breakpoint 8, 0x00512b40 in ?? ()
+KEYROUTE a1=0x67
+
+Thread 1 "terran.exe" hit Breakpoint 8, 0x00512b40 in ?? ()
+KEYROUTE a1=0x64
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x00476580 in ?? ()
+MAPH p1=0x106 p2=0xfb p3=0 sel=0 b5b8=0 b5c4=1 b5e8=1
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x00476580 in ?? ()
+MAPH p1=0x106 p2=0xfb p3=0 sel=0 b5b8=0 b5c4=1 b5e8=2
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x00476580 in ?? ()
+MAPH p1=0x106 p2=0xfb p3=0 sel=0 b5b8=0 b5c4=1 b5e8=3
+[Inferior 1 (process 882970) detached]

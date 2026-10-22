@@ -1,0 +1,116 @@
+{
+ "tag": "m45b",
+ "t": "2026-10-22 09:39:47",
+ "events": [
+  "preflight kind=base pane_end=False our_turn=True"
+ ],
+ "pid": 914079,
+ "snap0": {
+  "year": 2315,
+  "cur": 3,
+  "nmine": 1,
+  "energy": {
+   "1": 160,
+   "2": 81,
+   "3": 15,
+   "4": 627,
+   "5": 65,
+   "6": 78,
+   "7": 177
+  },
+  "owners": {
+   "6": {
+    "bases": 17,
+    "minerals": 809,
+    "pop": 62
+   },
+   "1": {
+    "bases": 10,
+    "minerals": 323,
+    "pop": 42
+   },
+   "2": {
+    "bases": 24,
+    "minerals": 517,
+    "pop": 133
+   },
+   "4": {
+    "bases": 9,
+    "minerals": 266,
+    "pop": 35
+   },
+   "5": {
+    "bases": 4,
+    "minerals": 100,
+    "pop": 14
+   },
+   "7": {
+    "bases": 9,
+    "minerals": 199,
+    "pop": 47
+   },
+   "3": {
+    "bases": 1,
+    "minerals": 10,
+    "pop": 5
+   }
+  }
+ },
+ "rounds": [
+  {
+   "year": 2315,
+   "cur": 3,
+   "nmine": 1,
+   "energy": {
+    "1": 160,
+    "2": 81,
+    "3": 15,
+    "4": 627,
+    "5": 65,
+    "6": 78,
+    "7": 177
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 809,
+     "pop": 62
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 323,
+     "pop": 42
+    },
+    "2": {
+     "bases": 24,
+     "minerals": 517,
+     "pop": 133
+    },
+    "4": {
+     "bases": 9,
+     "minerals": 266,
+     "pop": 35
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 100,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 199,
+     "pop": 47
+    },
+    "3": {
+     "bases": 1,
+     "minerals": 10,
+     "pop": 5
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "paeaeat"
+   ]
+  }
+ ]
+}

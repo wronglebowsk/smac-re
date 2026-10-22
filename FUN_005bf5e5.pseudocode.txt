@@ -1,0 +1,97 @@
+
+undefined4 FUN_005bf5e5(int param_1,int param_2,uint param_3,undefined4 *param_4)
+
+{
+  undefined4 uVar1;
+  HDC pHVar2;
+  HBITMAP pHVar3;
+  int iVar4;
+  HGDIOBJ pvVar5;
+  UINT in_ECX;
+  undefined4 local_74;
+  undefined4 local_70;
+  int local_6c;
+  int local_68;
+  undefined4 local_c;
+  undefined4 *local_8;
+  
+  if (((param_3 & 4) == 0) || (param_4 != (undefined4 *)0x0)) {
+    if ((param_1 < 0) || (param_2 < 0)) {
+      uVar1 = 3;
+    }
+    else if ((param_1 == *(int *)(in_ECX + 0x80)) && (param_2 == -*(int *)(in_ECX + 0x84))) {
+      uVar1 = 0;
+    }
+    else {
+      FUN_005bf262();
+      FUN_005c6859();
+      if ((DAT_0099aeb4 == (int *)0x0) && ((param_3 & 4) == 0)) {
+        pHVar2 = CreateCompatibleDC((HDC)0x0);
+        *(HDC *)(in_ECX + 100) = pHVar2;
+        if (*(int *)(in_ECX + 100) == 0) {
+          return 1;
+        }
+      }
+      *(int *)(in_ECX + 0x80) = param_1;
+      *(int *)(in_ECX + 0x84) = -param_2;
+      if ((DAT_0099aeb4 == (int *)0x0) && ((param_3 & 4) == 0)) {
+        pHVar3 = CreateDIBSection(*(HDC *)(in_ECX + 100),(BITMAPINFO *)(in_ECX + 0x7c),0,
+                                  (void **)(in_ECX + 0x54),(HANDLE)0x0,0);
+        *(HBITMAP *)(in_ECX + 0x78) = pHVar3;
+        if (*(int *)(in_ECX + 0x78) == 0) {
+          MessageBoxA((HWND)s_Unable_to_allocate_draw_buffer__t_006989fc,s_FATAL_ERROR_006989f0,
+                      (LPCSTR)0x30,in_ECX);
+          in_ECX = 4;
+          FUN_00649c80();
+        }
+      }
+      else if ((param_3 & 4) == 0) {
+        _memset(&local_74,0,0x6c);
+        local_74 = 0x6c;
+        local_70 = 7;
+        local_c = 0x40840;
+        local_68 = param_1;
+        local_6c = param_2;
+        iVar4 = (**(code **)(*DAT_0099aeb4 + 0x18))(DAT_0099aeb4,&local_74,&local_8,0);
+        if (iVar4 != 0) {
+          return 0x12;
+        }
+        iVar4 = (**(code **)(*DAT_0099aeb4 + 0x10))(DAT_0099aeb4,0,in_ECX + 0x5c,0);
+        if (iVar4 != 0) {
+          return 0x12;
+        }
+        (**(code **)*local_8)(local_8,&DAT_00679008,in_ECX + 0x58);
+      }
+      else {
+        *(undefined4 *)(in_ECX + 0x58) = *param_4;
+        *(undefined4 *)(in_ECX + 0x5c) = param_4[1];
+      }
+      *(undefined4 *)(in_ECX + 0x30) = 0;
+      *(undefined4 *)(in_ECX + 0x34) = 0;
+      *(int *)(in_ECX + 0x38) = param_1;
+      *(int *)(in_ECX + 0x3c) = param_2;
+      FUN_005c00a8(in_ECX + 0x30);
+      *(int *)(in_ECX + 0x80) = param_1;
+      *(int *)(in_ECX + 0x84) = -param_2;
+      *(int *)(in_ECX + 0x90) = param_1 * param_2;
+      *(undefined4 *)(in_ECX + 0x9c) = 0x100;
+      if (DAT_0099aeb4 == (int *)0x0) {
+        pvVar5 = SelectObject(*(HDC *)(in_ECX + 100),*(HGDIOBJ *)(in_ECX + 0x78));
+        *(HGDIOBJ *)(in_ECX + 0x74) = pvVar5;
+      }
+      *(int *)(in_ECX + 0x4a8) = (param_1 + 3 >> 2) << 2;
+      FUN_005c176e(DAT_00999ec0,0,0,0);
+      FUN_005caa7d();
+      SetBkMode(*(HDC *)(in_ECX + 0x60),1);
+      SetTextAlign(*(HDC *)(in_ECX + 0x60),0x18);
+      FUN_005cab25(1);
+      *(uint *)(in_ECX + 0x1c) = param_3;
+      uVar1 = 0;
+    }
+  }
+  else {
+    uVar1 = 3;
+  }
+  return uVar1;
+}
+

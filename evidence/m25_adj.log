@@ -1,0 +1,41 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x934ab4
+Hardware watchpoint 2: *(int *)0x934ab8
+Hardware watchpoint 3: *(int *)0x934abc
+Breakpoint 4 at 0x476580
+Breakpoint 5 at 0x4cffa0
+Breakpoint 6 at 0x4cdc70
+Breakpoint 7 at 0x5ab355
+Breakpoint 8 at 0x4d3f70
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x00476580 in ?? ()
+MAPH p1=0x1ae p2=0xf8 p3=0 sel=119 b5b8=1 b5c4=1 b5e8=13
+
+Thread 1 "terran.exe" hit Breakpoint 4, 0x00476580 in ?? ()
+MAPH p1=0x14e p2=0xb0 p3=0 sel=119 b5b8=1 b5c4=1 b5e8=13
+
+Thread 1 "terran.exe" hit Breakpoint 8, 0x004d3f70 in ?? ()
+ACT x=41 y=11 flag=0 sel=119
+[Inferior 1 (process 370597) detached]

@@ -1,0 +1,12 @@
+{"turn": 0, "year_before": 2101, "t": "17:25:18", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2102, "advanced": true, "dt": 11.8}
+{"turn": 1, "year_before": 2102, "t": "17:25:30", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2103, "advanced": true, "dt": 12.4}
+{"turn": 2, "year_before": 2103, "t": "17:25:42", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2104, "advanced": true, "dt": 8.6}
+{"turn": 3, "year_before": 2104, "t": "17:25:51", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2105, "advanced": true, "dt": 8.2}
+{"turn": 4, "year_before": 2105, "t": "17:25:59", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2106, "advanced": true, "dt": 7.7}
+{"turn": 5, "year_before": 2106, "t": "17:26:07", "handled": ["unknown", "base", "base", "hud", "confirm-after-press"], "screens": {"unknown": 1, "base": 2, "hud": 1}, "year_after": 2107, "advanced": true, "dt": 37.6}
+{"turn": 6, "year_before": 2107, "t": "17:26:45", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2108, "advanced": true, "dt": 9.2}
+{"turn": 7, "year_before": 2108, "t": "17:26:54", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2109, "advanced": true, "dt": 10.2}
+{"turn": 8, "year_before": 2109, "t": "17:27:04", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2110, "advanced": true, "dt": 9.6}
+{"turn": 9, "year_before": 2110, "t": "17:27:14", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2111, "advanced": true, "dt": 8.1}
+{"turn": 10, "year_before": 2111, "t": "17:27:22", "handled": ["unknown", "base", "base", "base", "base", "unknown", "unknown"], "screens": {"unknown": 3, "base": 4}, "year_after": 2111, "advanced": false, "dt": 46.1, "stuck": true}
+{"turn": 11, "year_before": 2111, "t": "17:28:09", "handled": ["unknown", "movie", "movie", "movie", "movie", "movie", "hud", "confirm-after-press"], "screens": {"unknown": 1, "movie": 5, "hud": 1}, "year_after": 2112, "advanced": true, "dt": 39.5}

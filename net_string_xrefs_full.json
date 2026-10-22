@@ -1,0 +1,659 @@
+{
+ "0x68bf94": {
+  "text": "Sending BUILD BASE message",
+  "refs": [
+   "0x4d1cff"
+  ]
+ },
+ "0x68ea50": {
+  "text": "Server sending upkeep message",
+  "refs": [
+   "0x520fe0"
+  ]
+ },
+ "0x68eefc": {
+  "text": "SPECIAL Sending EXEC DONE to",
+  "refs": [
+   "0x52609d"
+  ]
+ },
+ "0x68f124": {
+  "text": "Client waiting for acknowledgement",
+  "refs": [
+   "0x528c32",
+   "0x52975f",
+   "0x529cdb",
+   "0x52a03f"
+  ]
+ },
+ "0x68f154": {
+  "text": "Client received acknowledgement",
+  "refs": [
+   "0x528d08",
+   "0x529796",
+   "0x529d95",
+   "0x52a117"
+  ]
+ },
+ "0x68f174": {
+  "text": "Awaiting acknowledgement of SYNCH",
+  "refs": [
+   "0x5287da",
+   "0x528dbd",
+   "0x52931d",
+   "0x5294fa",
+   "0x52966c",
+   "0x529bee"
+  ]
+ },
+ "0x68f1a4": {
+  "text": "Received SYNCH acknowledgement",
+  "refs": [
+   "0x5288c6",
+   "0x528eaa",
+   "0x52935b",
+   "0x529538",
+   "0x5296aa",
+   "0x529c2e"
+  ]
+ },
+ "0x68f1e8": {
+  "text": "Received DIPLO acknowledgement",
+  "refs": [
+   "0x528feb"
+  ]
+ },
+ "0x68f224": {
+  "text": "Sending MOVE VEH message",
+  "refs": [
+   "0x529722"
+  ]
+ },
+ "0x68f25c": {
+  "text": "Net.Action Sending ACTION message to server",
+  "refs": [
+   "0x529fff"
+  ]
+ },
+ "0x68f288": {
+  "text": "Net.Action Awaiting EXEC",
+  "refs": [
+   "0x52a01c"
+  ]
+ },
+ "0x68f2a4": {
+  "text": "Net.Action Finished awaiting",
+  "refs": [
+   "0x52a18f"
+  ]
+ },
+ "0x68f2c4": {
+  "text": "Net.Action Go to",
+  "refs": [
+   "0x529fd3"
+  ]
+ },
+ "0x68f2d8": {
+  "text": "Net.Action Road",
+  "refs": [
+   "0x529fb5"
+  ]
+ },
+ "0x68f3d0": {
+  "text": "Received SYNCH VEH",
+  "refs": [
+   "0x52a909"
+  ]
+ },
+ "0x68f3f4": {
+  "text": "Sending SYNCH_BASE",
+  "refs": [
+   "0x52a983"
+  ]
+ },
+ "0x68f408": {
+  "text": "Received SYNCH_BASE",
+  "refs": [
+   "0x52a9aa"
+  ]
+ },
+ "0x68f4d8": {
+  "text": "Received CHAT",
+  "refs": [
+   "0x52ef8c"
+  ]
+ },
+ "0x68f4e8": {
+  "text": "Received PROJECT",
+  "refs": [
+   "0x52edb3"
+  ]
+ },
+ "0x68f6c8": {
+  "text": "Sending EXEC DONE to",
+  "refs": [
+   "0x52d47a"
+  ]
+ },
+ "0x68f82c": {
+  "text": "(Upkeep acknowledgement for wrong phase!)",
+  "refs": [
+   "0x52d6a1"
+  ]
+ },
+ "0x68fc10": {
+  "text": "Received PAUSE message",
+  "refs": [
+   "0x52eb2a"
+  ]
+ },
+ "0x68fc30": {
+  "text": "Received UNPAUSE message",
+  "refs": [
+   "0x52ed30"
+  ]
+ },
+ "0x68fc58": {
+  "text": "Received TIME CONTROL message",
+  "refs": [
+   "0x52eb89"
+  ]
+ },
+ "0x68fca4": {
+  "text": "Received SERVER CHANGE message",
+  "refs": [
+   "0x52eac6"
+  ]
+ },
+ "0x68fcd4": {
+  "text": "Received OPEN CHANNEL request",
+  "refs": [
+   "0x52f334"
+  ]
+ },
+ "0x68fcf4": {
+  "text": "Received OPEN CHANNEL SUCCESS",
+  "refs": [
+   "0x52c5fc"
+  ]
+ },
+ "0x68fd14": {
+  "text": "Received OPEN CHANNEL FAILED",
+  "refs": [
+   "0x52c61e"
+  ]
+ },
+ "0x68fd34": {
+  "text": "Received CLOSE CHANNEL",
+  "refs": [
+   "0x52f43f"
+  ]
+ },
+ "0x68fd68": {
+  "text": "Received TREATY ON",
+  "refs": [
+   "0x52e3d9"
+  ]
+ },
+ "0x68fdb0": {
+  "text": "Received TREATY OFF",
+  "refs": [
+   "0x52e55e"
+  ]
+ },
+ "0x68fdc4": {
+  "text": "Received SET TREATY",
+  "refs": [
+   "0x52e58d"
+  ]
+ },
+ "0x68fdd8": {
+  "text": "Received AGENDA ON",
+  "refs": [
+   "0x52e5c0"
+  ]
+ },
+ "0x68fdec": {
+  "text": "Received AGENDA OFF",
+  "refs": [
+   "0x52e5ef"
+  ]
+ },
+ "0x68fe00": {
+  "text": "Received SET AGENDA",
+  "refs": [
+   "0x52e61e"
+  ]
+ },
+ "0x68fe14": {
+  "text": "Received ENERGY",
+  "refs": [
+   "0x52e651"
+  ]
+ },
+ "0x68fe24": {
+  "text": "Received LOAN",
+  "refs": [
+   "0x52e6c9"
+  ]
+ },
+ "0x68fe34": {
+  "text": "Received TRADE MAPS",
+  "refs": [
+   "0x52e727"
+  ]
+ },
+ "0x68fe48": {
+  "text": "Received CEDE BASE",
+  "refs": [
+   "0x52e750"
+  ]
+ },
+ "0x68fe5c": {
+  "text": "Received WITHDRAWAL",
+  "refs": [
+   "0x52e782"
+  ]
+ },
+ "0x68fe90": {
+  "text": "Received PACT ENDS",
+  "refs": [
+   "0x52e878"
+  ]
+ },
+ "0x68fea4": {
+  "text": "Received CORNERING",
+  "refs": [
+   "0x52e8ac"
+  ]
+ },
+ "0x68fed8": {
+  "text": "Received CONVENE COUNCIL",
+  "refs": [
+   "0x52e9cc"
+  ]
+ },
+ "0x68fef4": {
+  "text": "Received COUNCIL VOTE",
+  "refs": [
+   "0x52ea64"
+  ]
+ },
+ "0x68ff0c": {
+  "text": "Received COUNCIL ARRIVE",
+  "refs": [
+   "0x52ea3d"
+  ]
+ },
+ "0x68ff24": {
+  "text": "Received COUNCIL RESOLUTION",
+  "refs": [
+   "0x52ea97"
+  ]
+ },
+ "0x68ff40": {
+  "text": "Received OPEN CHAN",
+  "refs": [
+   "0x52c9a0"
+  ]
+ },
+ "0x68ff60": {
+  "text": "Received CLOSE CHAN",
+  "refs": [
+   "0x52ce10"
+  ]
+ },
+ "0x68ff80": {
+  "text": "Received OPEN ACKNOWLEDGE",
+  "refs": [
+   "0x52ccbe"
+  ]
+ },
+ "0x68ff9c": {
+  "text": "Received OPEN REFUSE",
+  "refs": [
+   "0x52cc10"
+  ]
+ },
+ "0x68ffd0": {
+  "text": "Received OPEN BUSY",
+  "refs": [
+   "0x52cd4d"
+  ]
+ },
+ "0x68fffc": {
+  "text": "Received OPEN OFFER",
+  "refs": [
+   "0x52ced6"
+  ]
+ },
+ "0x690010": {
+  "text": "Received KILL OFFER",
+  "refs": [
+   "0x52cf10"
+  ]
+ },
+ "0x690024": {
+  "text": "Received CLEAR OFFER",
+  "refs": [
+   "0x52cf44"
+  ]
+ },
+ "0x69003c": {
+  "text": "Received CHANNEL STATUS",
+  "refs": [
+   "0x52cf74"
+  ]
+ },
+ "0x690054": {
+  "text": "Received MAYBE DEAL",
+  "refs": [
+   "0x52cfab"
+  ]
+ },
+ "0x690068": {
+  "text": "Received NO DEAL",
+  "refs": [
+   "0x52d035"
+  ]
+ },
+ "0x69007c": {
+  "text": "Received YES DEAL",
+  "refs": [
+   "0x52d06a"
+  ]
+ },
+ "0x690090": {
+  "text": "Received DONE DEAL",
+  "refs": [
+   "0x52d08e"
+  ]
+ },
+ "0x6900a4": {
+  "text": "Received DEMAND WITHDRAWAL",
+  "refs": [
+   "0x52d0b2"
+  ]
+ },
+ "0x6900c0": {
+  "text": "Received VENDETTA WARNING",
+  "refs": [
+   "0x52d0cc"
+  ]
+ },
+ "0x6900ec": {
+  "text": "Received LANDMARK",
+  "refs": [
+   "0x52f0f0"
+  ]
+ },
+ "0x690100": {
+  "text": "Received KILL LANDMARK",
+  "refs": [
+   "0x52f1b2"
+  ]
+ },
+ "0x690118": {
+  "text": "Received RENAME LANDMARK",
+  "refs": [
+   "0x52f155"
+  ]
+ },
+ "0x690160": {
+  "text": "Sending TREATY ON",
+  "refs": [
+   "0x53065b",
+   "0x533e8c",
+   "0x53419f",
+   "0x5344db",
+   "0x538d87",
+   "0x53d34c",
+   "0x53e307",
+   "0x53fd73",
+   "0x54045e",
+   "0x54125e",
+   "0x541525",
+   "0x542d64",
+   "0x547b6e",
+   "0x547f37",
+   "0x5484fd",
+   "0x5485e7",
+   "0x5489af",
+   "0x548a79",
+   "0x548dfc",
+   "0x548ec7",
+   "0x54f39b"
+  ]
+ },
+ "0x690174": {
+  "text": "Sending TREATY OFF",
+  "refs": [
+   "0x5306cb",
+   "0x5357ca",
+   "0x53bad8",
+   "0x53c8e0",
+   "0x53ebfa",
+   "0x53ef98",
+   "0x53f6cf",
+   "0x5472de",
+   "0x54738d",
+   "0x547402",
+   "0x54799c",
+   "0x547baa",
+   "0x547e5b",
+   "0x547f71",
+   "0x548539",
+   "0x548623",
+   "0x5489e9",
+   "0x548e38"
+  ]
+ },
+ "0x690188": {
+  "text": "Sending SET TREATY",
+  "refs": [
+   "0x53073b",
+   "0x534ccc",
+   "0x53ae8c",
+   "0x53bb11",
+   "0x53dfd1",
+   "0x53e013",
+   "0x53e33d",
+   "0x5411dd",
+   "0x542c23",
+   "0x542c65",
+   "0x54709a",
+   "0x54895e",
+   "0x548d6b"
+  ]
+ },
+ "0x69019c": {
+  "text": "Sending AGENDA ON",
+  "refs": [
+   "0x5307ab",
+   "0x538dc3",
+   "0x540fd6"
+  ]
+ },
+ "0x6901b0": {
+  "text": "Sending AGENDA OFF",
+  "refs": [
+   "0x53081b",
+   "0x547329"
+  ]
+ },
+ "0x6901c4": {
+  "text": "Sending SET AGENDA",
+  "refs": [
+   "0x53088b"
+  ]
+ },
+ "0x6901d8": {
+  "text": "Sending ENERGY",
+  "refs": [
+   "0x5308fb",
+   "0x536c0a",
+   "0x5374f3",
+   "0x537751",
+   "0x537c23",
+   "0x537fcd",
+   "0x53b75c",
+   "0x53c615",
+   "0x53ddd5",
+   "0x53ea71",
+   "0x540cc0",
+   "0x5443ea",
+   "0x546109",
+   "0x547abb"
+  ]
+ },
+ "0x6901e8": {
+  "text": "Sending LOAN",
+  "refs": [
+   "0x5309bb",
+   "0x537f83",
+   "0x54619e"
+  ]
+ },
+ "0x6901f8": {
+  "text": "Sending TRADE MAPS",
+  "refs": [
+   "0x530a28",
+   "0x534034",
+   "0x53cac3",
+   "0x541d4e"
+  ]
+ },
+ "0x69020c": {
+  "text": "Sending TECH",
+  "refs": [
+   "0x530a9b",
+   "0x53182f",
+   "0x531891",
+   "0x536c80",
+   "0x536ccf",
+   "0x536d1e",
+   "0x536d6d",
+   "0x537564",
+   "0x537b6e",
+   "0x537bd2",
+   "0x538e19",
+   "0x538e6f",
+   "0x5398a7",
+   "0x5399c7",
+   "0x539b70",
+   "0x539deb",
+   "0x539e34",
+   "0x53b526",
+   "0x53b580",
+   "0x53c447",
+   "0x53dadc",
+   "0x53db3b",
+   "0x53db95",
+   "0x53dbeb",
+   "0x53f47c",
+   "0x53f5cb",
+   "0x540dc0",
+   "0x540eb5",
+   "0x54426e",
+   "0x547a6d"
+  ]
+ },
+ "0x69021c": {
+  "text": "Sending PACT ENDS",
+  "refs": [
+   "0x530b02",
+   "0x5358d8",
+   "0x53e22a",
+   "0x5413ff"
+  ]
+ },
+ "0x690230": {
+  "text": "Sending WITHDRAWAL",
+  "refs": [
+   "0x530b78",
+   "0x540140",
+   "0x540220",
+   "0x546c60",
+   "0x546ddb",
+   "0x546e22"
+  ]
+ },
+ "0x690244": {
+  "text": "Sending CEDE BASE",
+  "refs": [
+   "0x530be8",
+   "0x53f092",
+   "0x541168",
+   "0x543f38",
+   "0x543f87",
+   "0x5442b1",
+   "0x544444"
+  ]
+ },
+ "0x690258": {
+  "text": "Sending DOUBLE CROSS",
+  "refs": [
+   "0x530c5b",
+   "0x53baa0",
+   "0x53c918",
+   "0x53d24c",
+   "0x53fed2",
+   "0x540a1e",
+   "0x540bcb",
+   "0x546f2b",
+   "0x547a27",
+   "0x547e97",
+   "0x548663",
+   "0x548a28",
+   "0x548e78"
+  ]
+ },
+ "0x6912f8": {
+  "text": "Auto sending DESTROY2 message",
+  "refs": [
+   "0x56371c"
+  ]
+ },
+ "0x691338": {
+  "text": "Auto sending ARTY message",
+  "refs": [
+   "0x563a51"
+  ]
+ },
+ "0x691368": {
+  "text": "Auto sending BUILD BASE message",
+  "refs": [
+   "0x563d5e"
+  ]
+ },
+ "0x691388": {
+  "text": "Auto sending DESTROY message",
+  "refs": [
+   "0x564c75"
+  ]
+ },
+ "0x6913a8": {
+  "text": "Auto sending DESTROY message",
+  "refs": [
+   "0x564cac"
+  ]
+ },
+ "0x6913c8": {
+  "text": "Auto sending DESTROY message",
+  "refs": [
+   "0x564dbb"
+  ]
+ },
+ "0x6913e8": {
+  "text": "Auto sending DESTROY message",
+  "refs": [
+   "0x564f4d"
+  ]
+ },
+ "0x691484": {
+  "text": "Auto sending DESTROY2 message",
+  "refs": [
+   "0x56c901"
+  ]
+ }
+}

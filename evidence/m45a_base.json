@@ -1,0 +1,151 @@
+{
+ "tag": "m45a",
+ "t": "2026-10-22 09:37:46",
+ "target": [
+  45,
+  11
+ ],
+ "events": [
+  "pre: year=2315 cur=3 me=3 sel=-1 orders=0 pend=1 pod=#30 order=2 n_bases=73 energy=15 tile={'addr': '0x40aac38', 'elev': 4, 'owner': 3, 'mask': 1081350, 'byte5': 0}",
+  "preflight: clean enough (kind=unknown, our turn, no bar)",
+  "preflight settled: kind=unknown cur=3 sel=-1 orders=0 pend=1",
+  "poked pod #30 +17 order 2->0 (can-act 0x5acc00 refuses order 1..3)",
+  "poked rival-candidate unit #31 (+40 mpused -> 255)",
+  "poked order-menu-pending 0x91b5c4 -> 0",
+  "selection: sel=30 pod=30 orders_mode=1 pend=1",
+  "re-poked menu-pend -> 0 after selection",
+  "armed 15/15 breakpoints (gdb 1836998)",
+  "pressed 'b' (BUILD BASE) on the selected pod",
+  "post-b: Return on dialog pane",
+  "post-b: Return on dialog pane",
+  "post-create: Return on dialog pane",
+  "cleanup: base created",
+  "post: year=2315 n_bases=74 our_bases=[{'idx': 73, 'x': 45, 'y': 11, 'pop': 5, 'name': 'Climactic Research', 'minerals': 10}]",
+  "post tile (45,11): {'elev': 4, 'owner': 3, 'mask': 1085445, 'mask_bit0_base': True}",
+  "post units: [{'idx': 30, 'x': 43, 'y': 11, 'type': 195, 'cls': 1, 'order': 2, 'mpused': 255}]",
+  "trace: 7 M45 lines"
+ ],
+ "shots": [
+  "m45a_pre.png",
+  "m45a_svc.png",
+  "m45a_svc.png"
+ ],
+ "log_lines": [
+  "M45 SETTER unit=30",
+  "M45 BORDERRET eax=-1  (setter's border-owner lookup for the tile)",
+  "M45 LIMITRET eax=12  (0x4e9b40 base-limit query)",
+  "M45 PANE #1 id=NEWBASE",
+  "M45 ALLOCRET base=73 unit=30",
+  "M45 CREATERET base=73 unit=30",
+  "M45 PANE #2 id=BASEFOUNDED"
+ ],
+ "pid": 914079,
+ "pre": {
+  "year": 2315,
+  "cur": 3,
+  "me": 3,
+  "sel": -1,
+  "orders_mode": 0,
+  "menu_pend": 1,
+  "pod": {
+   "idx": 30,
+   "x": 45,
+   "y": 11,
+   "type": 0,
+   "cls": 8,
+   "order": 2,
+   "work37": 0,
+   "mpused": 0,
+   "name": "Colony Pod"
+  },
+  "tile": {
+   "addr": "0x40aac38",
+   "elev": 4,
+   "owner": 3,
+   "mask": 1081350,
+   "byte5": 0
+  },
+  "econ": {
+   "n_bases": 73,
+   "our_bases": [],
+   "our_minerals": 0,
+   "energy": 15
+  },
+  "units": [
+   {
+    "idx": 30,
+    "x": 45,
+    "y": 11,
+    "type": 0,
+    "cls": 8,
+    "order": 2,
+    "work37": 0,
+    "mpused": 0,
+    "name": "Colony Pod"
+   },
+   {
+    "idx": 31,
+    "x": 43,
+    "y": 11,
+    "type": 195,
+    "cls": 1,
+    "order": 2,
+    "work37": 0,
+    "mpused": 0,
+    "name": "Laser Squad"
+   }
+  ]
+ },
+ "sel_final": {
+  "sel": 30,
+  "pod": 30,
+  "orders_mode": 1,
+  "menu_pend": 1
+ },
+ "gdb": {
+  "pid": 1836998,
+  "armed": 15,
+  "expect": 15
+ },
+ "outcome": "created",
+ "gdb_log": "m45a_gdb.log",
+ "post": {
+  "year": 2315,
+  "cur": 3,
+  "n_bases": 74,
+  "our_bases": [
+   {
+    "idx": 73,
+    "x": 45,
+    "y": 11,
+    "pop": 5,
+    "name": "Climactic Research",
+    "minerals": 10
+   }
+  ],
+  "tile": {
+   "elev": 4,
+   "owner": 3,
+   "mask": 1085445,
+   "mask_bit0_base": true
+  },
+  "units": [
+   {
+    "idx": 30,
+    "x": 43,
+    "y": 11,
+    "type": 195,
+    "cls": 1,
+    "order": 2,
+    "mpused": 255
+   }
+  ],
+  "energy": 15
+ },
+ "delta": {
+  "n_bases": 1,
+  "energy": 0,
+  "units_before": 2,
+  "units_after": 1
+ }
+}

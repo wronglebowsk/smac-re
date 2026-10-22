@@ -1,0 +1,22 @@
+{
+ "t": "19:32:53",
+ "pid": 914079,
+ "key": "r",
+ "mode": 5,
+ "unit": 55,
+ "ux": 45,
+ "uy": 11,
+ "order_before": 0,
+ "order_after": 0,
+ "energy_before": 40,
+ "energy_after": 40,
+ "energy_delta": 0,
+ "tile_addr": "0x92fd7c",
+ "tile_before": "13000000e2fa0f02f3fa0f020a020a0047000000fefa0f020ffb0f020c020c001c00000016fb0f0222fb0f02",
+ "tile_after": "13000000e2fa0f02f3fa0f020a020a0047000000fefa0f020ffb0f020c020c001c00000016fb0f0222fb0f02",
+ "tile_diff": [],
+ "panes": [],
+ "pane_words": [],
+ "flags_after": "0x4000000",
+ "mpused_after": 3
+}

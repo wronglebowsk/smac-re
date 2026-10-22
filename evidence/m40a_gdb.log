@@ -1,0 +1,77 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x40c8d0
+Breakpoint 2 at 0x4d44d0
+Breakpoint 3 at 0x4d4837
+Breakpoint 4 at 0x4d486e
+Breakpoint 5 at 0x4d5496
+Breakpoint 6 at 0x4d54c8
+Breakpoint 7 at 0x4d54e4
+Breakpoint 8 at 0x4d5572
+Breakpoint 9 at 0x4d55b3
+Breakpoint 10 at 0x4d55d5
+Breakpoint 11 at 0x4d55e8
+Breakpoint 12 at 0x4d561a
+Breakpoint 13 at 0x4d5689
+Breakpoint 14 at 0x4d5634
+Breakpoint 15 at 0x4d5839
+Breakpoint 16 at 0x4d58dc
+Breakpoint 17 at 0x4d59c7
+Breakpoint 18 at 0x555030
+Breakpoint 19 at 0x4d58cb
+Breakpoint 20 at 0x4d5b16
+Breakpoint 21 at 0x4d5b71
+Breakpoint 22 at 0x4d5bae
+Breakpoint 23 at 0x4d5bbf
+Breakpoint 24 at 0x4d5bc6
+Breakpoint 25 at 0x4d5add
+Breakpoint 26 at 0x5f0583
+Breakpoint 27 at 0x483470
+Breakpoint 28 at 0x52a720
+Breakpoint 29 at 0x5262e0
+Breakpoint 30 at 0x52bce0
+Breakpoint 31 at 0x529090
+Breakpoint 32 at 0x585720
+Breakpoint 33 at 0x5ab320
+Breakpoint 34 at 0x4d1e90
+Breakpoint 35 at 0x51f730
+Breakpoint 36 at 0x4d1200
+Breakpoint 37 at 0x4cd2c8
+Breakpoint 38 at 0x4cd32e
+Breakpoint 39 at 0x4cd33b
+Breakpoint 40 at 0x4cd319
+Breakpoint 41 at 0x4cd35e
+Breakpoint 42 at 0x5ad400
+Breakpoint 43 at 0x5ad460
+Breakpoint 44 at 0x5ad0a0
+Breakpoint 45 at 0x582ed0
+TERRAF idx=36 mode=0x5
+TECHCHK idx=36 mode=0x6 unlocked=0
+TECHFAIL idx=36
+ADVISOR #1 id=HASROAD
+PANE #1 id=HASROAD
+
+Thread 1 "terran.exe" received signal SIGCONT, Continued.
+0x004d1200 in ?? ()
+[Inferior 1 (process 914079) detached]

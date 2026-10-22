@@ -1,0 +1,214 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(unsigned short*)0x9334b4
+Hardware watchpoint 2: *(unsigned short*)0x9332e0
+Hardware watchpoint 3: *(unsigned short*)0x934730
+Hardware watchpoint 4: *(unsigned short*)0x933654
+
+Thread 1 "terran.exe" hit Hardware watchpoint 3: *(unsigned short*)0x934730
+
+Old value = 53
+New value = 26
+0x0064bfa3 in ?? ()
+
+=== HIT 1 pc=0x64bfa3
+#0  0x0064bfa3 in ?? ()
+#1  0x005abc4b in ?? ()
+#2  0x00502313 in ?? ()
+#3  0x005063b6 in ?? ()
+#4  0x00502cc3 in ?? ()
+#5  0x00587fef in ?? ()
+#6  0x004ce54f in ?? ()
+#7  0x004d124f in ?? ()
+#8  0x0056d027 in ?? ()
+#9  0x0056d2be in ?? ()
+   0x64bf95:	add    %dh,0x14(%ebp)
+   0x64bf98:	shr    $0x2,%ecx
+   0x64bf9b:	and    $0x3,%edx
+   0x64bf9e:	cmp    $0x8,%ecx
+   0x64bfa1:	jb     0x64bfcc
+=> 0x64bfa3:	rep movsl %ds:(%esi),%es:(%edi)
+   0x64bfa5:	jmp    *0x64c0b8(,%edx,4)
+   0x64bfac:	mov    %edi,%eax
+eip            0x64bfa3            0x64bfa3
+ecx            0x205               517
+edx            0x0                 0
+esi            0x934770            9652080
+edi            0x93473c            9652028
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(unsigned short*)0x9334b4
+
+Old value = 73
+New value = 74
+0x0064bfa3 in ?? ()
+
+=== HIT 2 pc=0x64bfa3
+#0  0x0064bfa3 in ?? ()
+#1  0x005abc4b in ?? ()
+#2  0x00502313 in ?? ()
+#3  0x005063b6 in ?? ()
+#4  0x00502cc3 in ?? ()
+#5  0x00587fef in ?? ()
+#6  0x004ce54f in ?? ()
+#7  0x004d124f in ?? ()
+#8  0x0056d027 in ?? ()
+#9  0x0056d2be in ?? ()
+   0x64bf95:	add    %dh,0x14(%ebp)
+   0x64bf98:	shr    $0x2,%ecx
+   0x64bf9b:	and    $0x3,%edx
+   0x64bf9e:	cmp    $0x8,%ecx
+   0x64bfa1:	jb     0x64bfcc
+=> 0x64bfa3:	rep movsl %ds:(%esi),%es:(%edi)
+   0x64bfa5:	jmp    *0x64c0b8(,%edx,4)
+   0x64bfac:	mov    %edi,%eax
+eip            0x64bfa3            0x64bfa3
+ecx            0x697               1687
+edx            0x0                 0
+esi            0x9334f4            9647348
+edi            0x9334c0            9647296
+
+Thread 1 "terran.exe" hit Hardware watchpoint 4: *(unsigned short*)0x933654
+
+Old value = 28
+New value = 37
+0x0064bfa3 in ?? ()
+
+=== HIT 3 pc=0x64bfa3
+#0  0x0064bfa3 in ?? ()
+#1  0x005abc4b in ?? ()
+#2  0x00502313 in ?? ()
+#3  0x005063b6 in ?? ()
+#4  0x00502cc3 in ?? ()
+#5  0x00587fef in ?? ()
+#6  0x004ce54f in ?? ()
+#7  0x004d124f in ?? ()
+#8  0x0056d027 in ?? ()
+#9  0x0056d2be in ?? ()
+   0x64bf95:	add    %dh,0x14(%ebp)
+   0x64bf98:	shr    $0x2,%ecx
+   0x64bf9b:	and    $0x3,%edx
+   0x64bf9e:	cmp    $0x8,%ecx
+   0x64bfa1:	jb     0x64bfcc
+=> 0x64bfa3:	rep movsl %ds:(%esi),%es:(%edi)
+   0x64bfa5:	jmp    *0x64c0b8(,%edx,4)
+   0x64bfac:	mov    %edi,%eax
+eip            0x64bfa3            0x64bfa3
+ecx            0x62f               1583
+edx            0x0                 0
+esi            0x933694            9647764
+edi            0x933660            9647712
+
+Thread 1 "terran.exe" hit Hardware watchpoint 3: *(unsigned short*)0x934730
+
+Old value = 26
+New value = 43
+0x0064bfa3 in ?? ()
+
+=== HIT 4 pc=0x64bfa3
+#0  0x0064bfa3 in ?? ()
+#1  0x005abc4b in ?? ()
+#2  0x00502313 in ?? ()
+#3  0x005063b6 in ?? ()
+#4  0x00502cc3 in ?? ()
+#5  0x00587fef in ?? ()
+#6  0x004ce54f in ?? ()
+#7  0x004d124f in ?? ()
+#8  0x0056d027 in ?? ()
+#9  0x0056d2be in ?? ()
+   0x64bf95:	add    %dh,0x14(%ebp)
+   0x64bf98:	shr    $0x2,%ecx
+   0x64bf9b:	and    $0x3,%edx
+   0x64bf9e:	cmp    $0x8,%ecx
+   0x64bfa1:	jb     0x64bfcc
+=> 0x64bfa3:	rep movsl %ds:(%esi),%es:(%edi)
+   0x64bfa5:	jmp    *0x64c0b8(,%edx,4)
+   0x64bfac:	mov    %edi,%eax
+eip            0x64bfa3            0x64bfa3
+ecx            0x1f7               503
+edx            0x0                 0
+esi            0x934774            9652084
+edi            0x934740            9652032
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(unsigned short*)0x9334b4
+
+Old value = 74
+New value = 6
+0x0064bfa3 in ?? ()
+
+=== HIT 5 pc=0x64bfa3
+#0  0x0064bfa3 in ?? ()
+#1  0x005abc4b in ?? ()
+#2  0x00502313 in ?? ()
+#3  0x005063b6 in ?? ()
+#4  0x00502cc3 in ?? ()
+#5  0x00587fef in ?? ()
+#6  0x004ce54f in ?? ()
+#7  0x004d124f in ?? ()
+#8  0x0056d027 in ?? ()
+#9  0x0056d2be in ?? ()
+   0x64bf95:	add    %dh,0x14(%ebp)
+   0x64bf98:	shr    $0x2,%ecx
+   0x64bf9b:	and    $0x3,%edx
+   0x64bf9e:	cmp    $0x8,%ecx
+   0x64bfa1:	jb     0x64bfcc
+=> 0x64bfa3:	rep movsl %ds:(%esi),%es:(%edi)
+   0x64bfa5:	jmp    *0x64c0b8(,%edx,4)
+   0x64bfac:	mov    %edi,%eax
+eip            0x64bfa3            0x64bfa3
+ecx            0x68c               1676
+edx            0x0                 0
+esi            0x9334ec            9647340
+edi            0x9334b8            9647288
+
+Thread 1 "terran.exe" hit Hardware watchpoint 4: *(unsigned short*)0x933654
+
+Old value = 37
+New value = 5
+0x0064bfa3 in ?? ()
+
+=== HIT 6 pc=0x64bfa3
+#0  0x0064bfa3 in ?? ()
+#1  0x005abc4b in ?? ()
+#2  0x00502313 in ?? ()
+#3  0x005063b6 in ?? ()
+#4  0x00502cc3 in ?? ()
+#5  0x00587fef in ?? ()
+#6  0x004ce54f in ?? ()
+#7  0x004d124f in ?? ()
+#8  0x0056d027 in ?? ()
+#9  0x0056d2be in ?? ()
+   0x64bf95:	add    %dh,0x14(%ebp)
+   0x64bf98:	shr    $0x2,%ecx
+   0x64bf9b:	and    $0x3,%edx
+   0x64bf9e:	cmp    $0x8,%ecx
+   0x64bfa1:	jb     0x64bfcc
+=> 0x64bfa3:	rep movsl %ds:(%esi),%es:(%edi)
+   0x64bfa5:	jmp    *0x64c0b8(,%edx,4)
+   0x64bfac:	mov    %edi,%eax
+eip            0x64bfa3            0x64bfa3
+ecx            0x624               1572
+edx            0x0                 0
+esi            0x93368c            9647756
+edi            0x933658            9647704
+[Inferior 1 (process 370597) detached]

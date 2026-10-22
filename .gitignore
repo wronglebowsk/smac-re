@@ -1,0 +1,29 @@
+# --- copyrighted game data: never commit ---
+smac.iso
+*.iso
+terran.exe
+*.exe
+programs/
+gametest/
+*.sav
+*.cvr
+*.flc
+
+# --- upstream clone (has its own repo) ---
+glsmac/
+
+# --- large generated artifacts (regenerable) ---
+ghidra_out/
+ghidra_proj/
+flc_out/
+png/
+png_flic/
+scratch/
+*.xwd
+
+# --- python ---
+__pycache__/
+*.pyc
+
+# --- editor / OS ---
+.DS_Store

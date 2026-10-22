@@ -1,0 +1,119 @@
+
+undefined4 FUN_00529e70(int param_1,DWORD param_2)
+
+{
+  char cVar1;
+  bool bVar2;
+  undefined4 uVar3;
+  int iVar4;
+  DWORD DVar5;
+  int in_ECX;
+  int iVar6;
+  undefined4 local_c;
+  undefined4 local_8;
+  
+  if (DAT_00920434 == 0) {
+    uVar3 = FUN_004d1200(param_1);
+    return uVar3;
+  }
+  cVar1 = (&DAT_00933289)[param_1 * 0x34];
+  if ((cVar1 < '\x04') || ('\x17' < cVar1)) {
+    if ((cVar1 == '\x18') || (cVar1 == 'X')) {
+      uVar3 = 4;
+      iVar6 = 1;
+    }
+    else {
+      if ((cVar1 != '\x1b') && (cVar1 != '\x1c')) {
+        if (cVar1 != '\0') {
+          FUN_0062732a(s_Falling_out_of_action_loop_0068f240,param_1,(int)cVar1,0);
+        }
+        if (param_2 != 0) {
+          if (DAT_00920434 != 0) {
+            FUN_0062732a(s_Client_releasing_lock_0068f070,DAT_0091b5b4,0,0);
+            FUN_00584010(0x2212,0,0,0,0,0);
+            *(undefined4 *)(in_ECX + 0x1ba8) = 0;
+            *(undefined4 *)(in_ECX + 0x1ba4) = 0;
+            *(undefined4 *)(in_ECX + 0x1bc4) = 0;
+            *(undefined4 *)(in_ECX + 0x1bc0) = 0;
+          }
+          *(undefined4 *)(in_ECX + 0x1b70) = 0;
+          *(undefined4 *)(in_ECX + 0x1bbc) = 0;
+        }
+        return 0;
+      }
+      uVar3 = 4;
+      iVar6 = 2;
+    }
+  }
+  else {
+    iVar6 = 0;
+    if ((cVar1 == '\x14') || (cVar1 == '\x15')) {
+      uVar3 = 0xc;
+    }
+    else {
+      uVar3 = 0;
+    }
+  }
+  *(undefined4 *)(in_ECX + 0x1bbc) = 1;
+  if ((param_2 == 0) && (iVar4 = FUN_00528a60(&param_1,uVar3), iVar4 != 0)) {
+    return 0;
+  }
+  if (iVar6 == 0) {
+    FUN_0062732a(s_Net_Action_Sending_ACTION_messag_0068f25c,param_1,
+                 (int)(char)(&DAT_00933289)[param_1 * 0x34],0);
+    FUN_00583f40(0x2404,param_1,0,0);
+    FUN_0062732a(s_Net_Action_Awaiting_EXEC_0068f288,0,0,0);
+    if (DAT_00920434 != 0) {
+      FUN_0062732a(s_Client_waiting_for_acknowledgeme_0068f124,DAT_0091b5b4,0,0);
+      uVar3 = DAT_0091f6dc;
+      DAT_00920438 = DAT_00920438 + 1;
+      param_2 = timeGetTime();
+      bVar2 = false;
+      if (*(int *)(in_ECX + 0x1ba8) == 1) {
+        do {
+          if (DAT_00991588 != 0) break;
+          if ((!bVar2) && (DVar5 = timeGetTime(), 2000 < DVar5 - param_2)) {
+            bVar2 = true;
+            FUN_00483470(s_AWAITEXEC_0068f148,0,2,0);
+          }
+          FUN_005e9b70();
+          iVar6 = FUN_006361ff(&local_8,&local_c);
+          if (iVar6 != 0) {
+            FUN_0052bce0(iVar6,local_c,local_8);
+          }
+          FUN_00581380();
+          FUN_005199d0();
+        } while (*(int *)(in_ECX + 0x1ba8) == 1);
+        if (bVar2) {
+          FUN_004833d0();
+        }
+      }
+      DAT_00920438 = DAT_00920438 + -1;
+      DAT_0091f6dc = uVar3;
+      FUN_0062732a(s_Client_received_acknowledgement_0068f154,DAT_0091b5b4,0,0);
+      if (DAT_00920434 != 0) {
+        FUN_0062732a(s_Client_releasing_lock_0068f070,DAT_0091b5b4,0,0);
+        FUN_00584010(0x2212,0,0,0,0,0);
+        *(undefined4 *)(in_ECX + 0x1ba8) = 0;
+        *(undefined4 *)(in_ECX + 0x1ba4) = 0;
+        *(undefined4 *)(in_ECX + 0x1bc4) = 0;
+        *(undefined4 *)(in_ECX + 0x1bc0) = 0;
+      }
+      *(undefined4 *)(in_ECX + 0x1b70) = 0;
+      *(undefined4 *)(in_ECX + 0x1bbc) = 0;
+      *(undefined4 *)(in_ECX + 0x1ba8) = 0;
+    }
+    FUN_0062732a(s_Net_Action_Finished_awaiting_0068f2a4,0,0,0);
+  }
+  else if (iVar6 == 1) {
+    FUN_0062732a(s_Net_Action_Go_to_0068f2c4,param_1,0,0);
+    FUN_004ce4a0(param_1);
+  }
+  else if (iVar6 == 2) {
+    FUN_0062732a(s_Net_Action_Road_0068f2d8,0,0,0);
+    FUN_004ce710(param_1);
+  }
+  FUN_0062732a(s_Falling_out_of_Net_Action_0068f2e8,0,0,0);
+  return 1;
+}
+

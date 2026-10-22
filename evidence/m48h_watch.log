@@ -1,0 +1,39 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x962fd0
+Hardware watchpoint 2: *(int *)0x962fe0
+Hardware watchpoint 3: *(int *)0x963060
+Hardware watchpoint 4: *(int *)0x963028
+Breakpoint 5 at 0x4ef7f1
+Breakpoint 6 at 0x4efed5
+Breakpoint 7 at 0x4efee0
+Breakpoint 8 at 0x4f0ca1
+Breakpoint 9 at 0x4f1e3f
+SELFTEST 0x962fd0 0x963060 0x962fe0 0x963028 0x963050 0x963080 0x963070 0x92a370
+STATE year=2340 cur=3 min40=200 d0=-1 q50=2 c0=5 f0=6 e0=0 mask=0xff08
+WP 33 MIN40 eip=0x64bfa3 new=6 d0=-1 q50=2 c0=5 f0=6 e0=0 eax=0x963450 ecx=0xd0 edx=0 esi=0x963110 edi=0x962fe0
+WP 34 QUEUE50 eip=0x64bfa3 new=141 min40=6
+WP 35 MIRROR98 eip=0x64bfa3 new=6 min40=6
+WP 36 INCOME_D0 eip=0x64bfa3 new=4 c0=4 f0=6 e0=0 min40=6
+[Inferior 1 (process 914079) detached]

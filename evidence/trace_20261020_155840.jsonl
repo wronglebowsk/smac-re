@@ -1,0 +1,3 @@
+{"turn": 0, "year_before": 2109, "t": "15:58:40", "ocr_year": null, "dialog": "confirm-on-screen", "year_after": 2110, "advanced": true, "dt": 0.1}
+{"turn": 1, "year_before": 2110, "t": "15:58:44", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "year_after": 2110, "advanced": false, "dt": 25.0, "stuck": true}
+{"turn": 2, "year_before": 2110, "t": "15:59:17", "ocr_year": null, "button": [697.0, 416.5, "COMPLETE"], "year_after": 2110, "advanced": false, "dt": 25.0, "stuck": true}

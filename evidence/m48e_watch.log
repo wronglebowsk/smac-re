@@ -1,0 +1,48 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb4c132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x51f554
+Breakpoint 2 at 0x4ef6d0
+Breakpoint 3 at 0x4efed5
+Breakpoint 4 at 0x4f0ca1
+Breakpoint 5 at 0x4f1e3f
+Hardware watchpoint 6: *(int *)0x962fd0
+Hardware watchpoint 7: *(int *)0x962fe0
+Hardware watchpoint 8: *(int *)0x963060
+Hardware watchpoint 9: *(int *)0x953884
+ARMED min40=0x962fd0 queue50=0x962fe0 income_d0=0x963060 energy=0x953884 yearbp=0x51f554 spendA=0x4efed5 spendB=0x4f0ca1 qdrain=0x4f1e3f pipe=0x4ef6d0
+PIPE n=1 cur_base=0x95dda0 own=4 min40=57 d0=6 q50=263 ours=0
+PIPE n=2 cur_base=0x95e260 own=4 min40=19 d0=4 q50=260 ours=0
+PIPE n=3 cur_base=0x95ef70 own=4 min40=51 d0=10 q50=265 ours=0
+PIPE n=4 cur_base=0x95fdb0 own=4 min40=3 d0=6 q50=-3 ours=0
+PIPE n=5 cur_base=0x95fee0 own=4 min40=50 d0=5 q50=260 ours=0
+PIPE n=6 cur_base=0x9603a0 own=4 min40=44 d0=9 q50=274 ours=0
+PIPE n=7 cur_base=0x961c90 own=4 min40=36 d0=5 q50=262 ours=0
+PIPE n=8 cur_base=0x9623b0 own=4 min40=42 d0=6 q50=278 ours=0
+PIPE n=9 cur_base=0x95ded0 own=5 min40=29 d0=8 q50=6 ours=0
+PIPE n=10 cur_base=0x95e5f0 own=5 min40=15 d0=7 q50=6 ours=0
+PIPE n=11 cur_base=0x960990 own=5 min40=2 d0=4 q50=6 ours=0
+PIPE n=12 cur_base=0x95eab0 own=6 min40=5 d0=6 q50=399 ours=0
+scripts/m48b_watch.gdb:258: Error in sourced command file:
+Cannot access memory at address 0x28
+[Inferior 1 (process 914079) detached]

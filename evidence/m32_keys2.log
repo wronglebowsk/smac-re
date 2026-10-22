@@ -1,0 +1,165 @@
+[New LWP 914097]
+[New LWP 914096]
+[New LWP 914095]
+[New LWP 914094]
+[New LWP 914093]
+[New LWP 914092]
+[New LWP 914091]
+[New LWP 914090]
+[New LWP 914089]
+[New LWP 914088]
+[New LWP 914087]
+[New LWP 914086]
+[New LWP 914085]
+[New LWP 914084]
+[New LWP 914083]
+[New LWP 914082]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb2ae68b in ?? ()
+Breakpoint 1 at 0x512b40
+Breakpoint 2 at 0x512450
+Breakpoint 3 at 0x4d44d0
+Breakpoint 4 at 0x4d3770
+Breakpoint 5 at 0x4d6fb0
+Breakpoint 6 at 0x4d9120
+Breakpoint 7 at 0x4d8b20
+Breakpoint 8 at 0x4d8ca0
+Breakpoint 9 at 0x4d9690
+Breakpoint 10 at 0x4d94d0
+Breakpoint 11 at 0x4d3510
+Breakpoint 12 at 0x4d8c20
+Breakpoint 13 at 0x4d8920
+Breakpoint 14 at 0x4d8a30
+Breakpoint 15 at 0x4d20f0
+Breakpoint 16 at 0x4d3950
+Breakpoint 17 at 0x4d1f20
+Breakpoint 18 at 0x4d1280
+Breakpoint 19 at 0x4d6b90
+Breakpoint 20 at 0x4d1e90
+Breakpoint 21 at 0x4d6100
+Breakpoint 22 at 0x4d9470
+Breakpoint 23 at 0x529090
+Breakpoint 24 at 0x50ba90
+Breakpoint 25 at 0x585720
+Breakpoint 26 at 0x5ab320
+Breakpoint 27 at 0x4d3f70
+Breakpoint 28 at 0x4cffa0
+Breakpoint 29 at 0x511960
+KEY p1=0 p2=0x10010
+DISP p1=0 p2=0 p3=0x10010
+KEY p1=0x4d p2=0x1004d
+DISP p1=0x4d p2=0x6d p3=0x1004d
+TERRAF idx=56 mode=0x2
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0 p2=0x10010
+DISP p1=0 p2=0 p3=0x10010
+KEY p1=0x53 p2=0x10053
+DISP p1=0x53 p2=0x73 p3=0x10053
+TERRAF idx=56 mode=0x3
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0 p2=0x10010
+DISP p1=0 p2=0 p3=0x10010
+KEY p1=0x4b p2=0x1004b
+DISP p1=0x4b p2=0x6b p3=0x1004b
+TERRAF idx=56 mode=0x7
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x2e p2=0xbe
+DISP p1=0x2e p2=0x2e p3=0xbe
+TERRAF idx=56 mode=0x8
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x6f p2=0x4f
+DISP p1=0x6f p2=0x6f p3=0x4f
+TERRAF idx=56 mode=0x9
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x6e p2=0x4e
+DISP p1=0x6e p2=0x6e p3=0x4e
+TERRAF idx=56 mode=0xc
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0 p2=0x10010
+DISP p1=0 p2=0 p3=0x10010
+KEY p1=0x45 p2=0x10045
+DISP p1=0x45 p2=0x65 p3=0x10045
+TERRAF idx=56 mode=0xd
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0 p2=0x10010
+DISP p1=0 p2=0 p3=0x10010
+KEY p1=0x42 p2=0x10042
+DISP p1=0x42 p2=0x62 p3=0x10042
+TERRAF idx=56 mode=0xe
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x71 p2=0x51
+DISP p1=0x71 p2=0x71 p3=0x51
+TERRAF idx=56 mode=0xf
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x5d p2=0xdd
+DISP p1=0x5d p2=0x5d p3=0xdd
+TERRAF idx=56 mode=0x10
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x5b p2=0xdb
+DISP p1=0x5b p2=0x5b p3=0xdb
+TERRAF idx=56 mode=0x11
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0 p2=0x10010
+DISP p1=0 p2=0 p3=0x10010
+KEY p1=0x5f p2=0x100bd
+DISP p1=0x5f p2=0x5f p3=0x100bd
+TERRAF idx=56 mode=0x12
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0 p2=0x10010
+DISP p1=0 p2=0 p3=0x10010
+KEY p1=0x47 p2=0x10047
+DISP p1=0x47 p2=0x67 p3=0x10047
+JOINBASE idx=56
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x72 p2=0x52
+DISP p1=0x72 p2=0x72 p3=0x52
+TERRAF idx=56 mode=0x5
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x6d p2=0x4d
+DISP p1=0x6d p2=0x6d p3=0x4d
+TERRAF idx=56 mode=0x2
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x6b p2=0x4b
+DISP p1=0x6b p2=0x6b p3=0x4b
+TERRAF idx=56 mode=0x7
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x64 p2=0x44
+DISP p1=0x64 p2=0x64 p3=0x44
+BOMBARD idx=56
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x66 p2=0x46
+DISP p1=0x66 p2=0x66 p3=0x46
+TERRAF idx=56 mode=0
+KEY p1=0 p2=0x20011
+DISP p1=0 p2=0 p3=0x20011
+KEY p1=0x2f p2=0xbf
+DISP p1=0x2f p2=0x2f p3=0xbf
+CLEAR idx=56
+EXEC idx=56 dir=7 mode=3
+SETTILE idx=56 x=-2 y=-2
+SETTILE idx=56 x=43 y=9
+SETTILE idx=58 x=-3 y=-3
+SETTILE idx=58 x=43 y=11
+[Inferior 1 (process 914079) detached]

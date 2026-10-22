@@ -1,0 +1,19 @@
+{
+ "RULES": [
+  "Movement rate along roads"
+ ],
+ "WORLDBUILDER": [
+  "Land base        (Seeded land size of a standard world)"
+ ],
+ "FACILITIES": [
+  "Naval Bases",
+  "1",
+  "1",
+  "0",
+  "0",
+  "0"
+ ],
+ "NATURAL": [
+  "This line must remain at end of file"
+ ]
+}

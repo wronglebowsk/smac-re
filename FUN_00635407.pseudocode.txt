@@ -1,0 +1,318 @@
+
+undefined4 FUN_00635407(int param_1,int param_2,int param_3,uint param_4)
+
+{
+  DWORD DVar1;
+  undefined4 uVar2;
+  int in_ECX;
+  int iVar3;
+  undefined1 *local_100;
+  uint auStack_f8 [16];
+  int aiStack_b8 [16];
+  DWORD local_78;
+  int local_74;
+  int local_70;
+  int local_6c;
+  HANDLE local_68;
+  undefined4 local_64;
+  int local_60;
+  uint local_5c;
+  DWORD local_58;
+  DWORD local_54;
+  DWORD local_50 [16];
+  int local_10;
+  undefined4 local_c;
+  int local_8;
+  
+  local_100 = (undefined1 *)0x0;
+  local_68 = *(HANDLE *)(in_ECX + 8);
+  local_64 = *(undefined4 *)(in_ECX + 0xc);
+  if ((param_1 == 0) || (DAT_0099d020 == (int *)0x0)) {
+    MessageBoxA((HWND)0x0,s_Oh_no__NULL_pointer___00699644,s_Net__send_00699638,0);
+    return 0;
+  }
+  if ((param_2 < 1) || (*(int *)(in_ECX + 0x6dc) < param_2)) {
+    MessageBoxA((HWND)0x0,s_Oh_no__data_size_is_weird__00699668,s_Net__send_0069965c,0);
+    return 0;
+  }
+  if (((*(uint *)(in_ECX + 0xd4) & 1) != 0) || ((param_4 & 4) != 0)) {
+    if (param_3 == *(int *)(in_ECX + 0x758)) {
+      FUN_0063af12(param_1,param_2,*(undefined4 *)(in_ECX + 0x758),0,0xffffffff);
+      goto LAB_00636119;
+    }
+    if ((param_3 == 0) &&
+       (FUN_0063b069(param_1,param_2,*(undefined4 *)(in_ECX + 0x758),0,0xffffffff),
+       *(int *)(in_ECX + 0x71c) < 2)) goto LAB_00636119;
+  }
+  local_100 = (undefined1 *)FUN_005be090(param_2 + 0xc);
+  if (local_100 == (undefined1 *)0x0) {
+    return 0;
+  }
+  if ((param_4 & 1) == 0) {
+    *(undefined4 *)(local_100 + 4) = 0;
+  }
+  else {
+    *(int *)(in_ECX + 0xe0) = *(int *)(in_ECX + 0xe0) + 1;
+    *(undefined4 *)(local_100 + 4) = *(undefined4 *)(in_ECX + 0xe0);
+  }
+  if (param_1 != 0) {
+    FUN_0064bf70(local_100 + 8,param_1,param_2);
+  }
+  if (((param_4 & 1) == 0) || ((*(uint *)(in_ECX + 0xd4) & 0x10000000) != 0)) {
+    *local_100 = 1;
+    if (DAT_0099d020 == (int *)0x0) {
+      if (local_100 != (undefined1 *)0x0) {
+        FUN_0064a7f0(local_100);
+      }
+      return 0;
+    }
+    local_10 = (**(code **)(*DAT_0099d020 + 0x68))
+                         (DAT_0099d020,*(undefined4 *)(in_ECX + 0x758),param_3,(param_4 & 1) != 0,
+                          local_100,param_2 + 0xc);
+    if (local_10 != 0) {
+      MessageBoxA((HWND)0x0,s_Oh_no___Send_failed__006996a4,
+                  s_Message_from_the_Net_Underworld_00699684,0);
+      if (local_100 != (undefined1 *)0x0) {
+        FUN_0064a7f0(local_100);
+      }
+      return 0;
+    }
+    local_10 = 0;
+  }
+  else {
+    *local_100 = 4;
+    if (param_3 == 0) {
+      local_70 = 0;
+      local_5c = 0xffffffff;
+      for (local_74 = 0; local_74 < 0x10; local_74 = local_74 + 1) {
+        if (((*(int *)(in_ECX + 0x150 + local_74 * 0x58) == 0) ||
+            (*(int *)(in_ECX + 0x150 + local_74 * 0x58) == *(int *)(in_ECX + 0x758))) ||
+           ((*(byte *)(in_ECX + 0x164 + local_74 * 0x58) & 2) == 0)) {
+          *(undefined4 *)(in_ECX + 0x158 + local_74 * 0x58) = 0;
+          aiStack_b8[local_74] = 0;
+        }
+        else {
+          *(undefined4 *)(in_ECX + 0x158 + local_74 * 0x58) = 1;
+          aiStack_b8[local_74] = 1;
+          auStack_f8[local_74] = *(uint *)(in_ECX + 0x15c + local_74 * 0x58);
+          local_70 = 1;
+          if (*(uint *)(in_ECX + 0x15c + local_74 * 0x58) < local_5c) {
+            local_5c = *(uint *)(in_ECX + 0x15c + local_74 * 0x58);
+          }
+        }
+      }
+      if (local_70 != 0) {
+        do {
+          if (DAT_0099d020 == (int *)0x0) {
+            if (local_100 != (undefined1 *)0x0) {
+              FUN_0064a7f0(local_100);
+            }
+            return 0;
+          }
+          local_50[0] = timeGetTime();
+          for (local_74 = 1; local_74 < 0x10; local_74 = local_74 + 1) {
+            local_50[local_74] = local_50[0];
+          }
+          local_10 = (**(code **)(*DAT_0099d020 + 0x68))
+                               (DAT_0099d020,*(undefined4 *)(in_ECX + 0x758),0,0,local_100,
+                                param_2 + 0xc);
+          if (local_10 != 0) {
+            MessageBoxA((HWND)0x0,s_Oh_no___Send_failed__0069976c,
+                        s_Message_from_the_Net_Underworld_0069974c,0);
+            if (local_100 != (undefined1 *)0x0) {
+              FUN_0064a7f0(local_100);
+            }
+            return 0;
+          }
+          local_78 = timeGetTime();
+          while (DVar1 = timeGetTime(), DVar1 - local_78 < 20000) {
+            ResetEvent(*(HANDLE *)(in_ECX + 0xc));
+            ResetEvent(*(HANDLE *)(in_ECX + 8));
+            local_54 = WaitForMultipleObjects(2,&local_68,0,local_5c);
+            if (local_54 == 1) {
+              FUN_00639492();
+            }
+            local_58 = timeGetTime();
+            local_70 = 0;
+            for (local_74 = 0; local_74 < 0x10; local_74 = local_74 + 1) {
+              if (aiStack_b8[local_74] != 0) {
+                if (*(int *)(in_ECX + 0x150 + local_74 * 0x58) == 0) {
+                  aiStack_b8[local_74] = 0;
+                }
+                else if (*(int *)(in_ECX + 0x158 + local_74 * 0x58) == 0) {
+                  iVar3 = local_74 * 0x58;
+                  DVar1 = timeGetTime();
+                  *(DWORD *)(in_ECX + 0x15c + local_74 * 0x58) =
+                       *(int *)(in_ECX + 0x15c + iVar3) + 0x14 + (DVar1 - local_50[local_74]);
+                  *(uint *)(in_ECX + 0x15c + local_74 * 0x58) =
+                       *(uint *)(in_ECX + 0x15c + local_74 * 0x58) >> 1;
+                  aiStack_b8[local_74] = 0;
+                }
+                else {
+                  if (auStack_f8[local_74] < local_58 - local_50[local_74]) {
+                    auStack_f8[local_74] = auStack_f8[local_74] * 3;
+                    auStack_f8[local_74] = auStack_f8[local_74] >> 1;
+                    if (DAT_0099d020 == (int *)0x0) {
+                      if (local_100 != (undefined1 *)0x0) {
+                        FUN_0064a7f0(local_100);
+                      }
+                      return 0;
+                    }
+                    DVar1 = timeGetTime();
+                    local_50[local_74] = DVar1;
+                    local_10 = (**(code **)(*DAT_0099d020 + 0x68))
+                                         (DAT_0099d020,*(undefined4 *)(in_ECX + 0x758),
+                                          *(undefined4 *)(in_ECX + 0x150 + local_74 * 0x58),0,
+                                          local_100,param_2 + 0xc);
+                    if (local_10 != 0) {
+                      MessageBoxA((HWND)0x0,s_Oh_no___Send_failed__006997a4,
+                                  s_Message_from_the_Net_Underworld_00699784,0);
+                      if (local_100 != (undefined1 *)0x0) {
+                        FUN_0064a7f0(local_100);
+                      }
+                      return 0;
+                    }
+                  }
+                  local_70 = 1;
+                }
+              }
+            }
+            if (local_70 == 0) goto LAB_00636119;
+          }
+          DAT_00997120 = 0;
+          local_60 = 1;
+          for (local_74 = 0; local_74 < 0x10; local_74 = local_74 + 1) {
+            if (*(int *)(in_ECX + 0x158 + local_74 * 0x58) != 0) {
+              uVar2 = FUN_00637928(*(undefined4 *)(in_ECX + 0x150 + local_74 * 0x58));
+              FUN_0064b9e0(&DAT_00997120,uVar2);
+              if (local_60 == 0) {
+                FUN_0064b9e0(&DAT_00997120,&DAT_00689bbc);
+                FUN_0064b9e0(&DAT_00997120,&DAT_00671f1c);
+              }
+              local_60 = 0;
+            }
+          }
+          FUN_0064b9e0(&DAT_00997120,&DAT_006997bc);
+          FUN_00626634(0,&DAT_00997120,0xffffffff,0xffffffff);
+          local_6c = FUN_00626706(s_jackal_006997d4,s_NET_SENDTIMEDOUT_006997c0,0);
+          if (local_6c != 0) {
+            if (local_6c == 1) {
+              FUN_006311ed();
+            }
+            else if (local_6c == 2) {
+              DAT_00991588 = 1;
+            }
+            if (local_100 != (undefined1 *)0x0) {
+              FUN_0064a7f0(local_100);
+            }
+            return 0;
+          }
+          local_6c = 0;
+        } while( true );
+      }
+    }
+    else {
+      local_70 = 0;
+      for (local_74 = 0; local_74 < 0x10; local_74 = local_74 + 1) {
+        if ((*(int *)(in_ECX + 0x150 + local_74 * 0x58) == param_3) &&
+           ((*(byte *)(in_ECX + 0x164 + local_74 * 0x58) & 2) != 0)) {
+          local_8 = local_74;
+          auStack_f8[local_74] = *(uint *)(in_ECX + 0x15c + local_74 * 0x58);
+          *(undefined4 *)(in_ECX + 0x158 + local_74 * 0x58) = 1;
+          local_70 = 1;
+        }
+        else {
+          *(undefined4 *)(in_ECX + 0x158 + local_74 * 0x58) = 0;
+        }
+      }
+      if (local_70 != 0) {
+        do {
+          DVar1 = timeGetTime();
+          local_50[local_8] = DVar1;
+          local_10 = (**(code **)(*DAT_0099d020 + 0x68))
+                               (DAT_0099d020,*(undefined4 *)(in_ECX + 0x758),param_3,0,local_100,
+                                param_2 + 0xc);
+          if (local_10 != 0) {
+            MessageBoxA((HWND)0x0,s_Oh_no___Send_failed__006996dc,
+                        s_Message_from_the_Net_Underworld_006996bc,0);
+            if (local_100 != (undefined1 *)0x0) {
+              FUN_0064a7f0(local_100);
+            }
+            return 0;
+          }
+          local_5c = *(DWORD *)(in_ECX + 0x15c + local_8 * 0x58);
+          local_c = 0;
+          local_78 = timeGetTime();
+          while (DVar1 = timeGetTime(), DVar1 - local_78 < 20000) {
+            ResetEvent(*(HANDLE *)(in_ECX + 0xc));
+            ResetEvent(*(HANDLE *)(in_ECX + 8));
+            local_54 = WaitForMultipleObjects(2,&local_68,0,local_5c);
+            if (local_54 == 1) {
+              FUN_00639492();
+            }
+            if ((*(int *)(in_ECX + 0x158 + local_8 * 0x58) == 0) ||
+               (*(int *)(in_ECX + 0x150 + local_8 * 0x58) == 0)) {
+              iVar3 = local_8 * 0x58;
+              DVar1 = timeGetTime();
+              *(DWORD *)(in_ECX + 0x15c + local_8 * 0x58) =
+                   *(int *)(in_ECX + 0x15c + iVar3) + 0x14 + (DVar1 - local_50[local_8]);
+              *(uint *)(in_ECX + 0x15c + local_8 * 0x58) =
+                   *(uint *)(in_ECX + 0x15c + local_8 * 0x58) >> 1;
+              goto LAB_00636119;
+            }
+            DVar1 = timeGetTime();
+            if (auStack_f8[local_8] < DVar1 - local_50[local_8]) {
+              auStack_f8[local_8] = auStack_f8[local_8] * 3;
+              auStack_f8[local_8] = auStack_f8[local_8] >> 1;
+              if (DAT_0099d020 == (int *)0x0) {
+                if (local_100 != (undefined1 *)0x0) {
+                  FUN_0064a7f0(local_100);
+                }
+                return 0;
+              }
+              DVar1 = timeGetTime();
+              local_50[local_8] = DVar1;
+              local_10 = (**(code **)(*DAT_0099d020 + 0x68))
+                                   (DAT_0099d020,*(undefined4 *)(in_ECX + 0x758),
+                                    *(undefined4 *)(in_ECX + 0x150 + local_8 * 0x58),0,local_100,
+                                    param_2 + 0xc);
+              if (local_10 != 0) {
+                MessageBoxA((HWND)0x0,s_Oh_no___Send_failed__00699714,
+                            s_Message_from_the_Net_Underworld_006996f4,0);
+                if (local_100 != (undefined1 *)0x0) {
+                  FUN_0064a7f0(local_100);
+                }
+                return 0;
+              }
+            }
+          }
+          DAT_00997120 = 0;
+          uVar2 = FUN_00637928(*(undefined4 *)(in_ECX + 0x150 + local_8 * 0x58));
+          FUN_0064b9e0(&DAT_00997120,uVar2);
+          FUN_0064b9e0(&DAT_00997120,&DAT_0069972c);
+          FUN_00626634(0,&DAT_00997120,0xffffffff,0xffffffff);
+          local_6c = FUN_00626706(s_jackal_00699744,s_NET_SENDTIMEDOUT_00699730,0);
+          if (local_6c != 0) {
+            if (local_6c == 1) {
+              FUN_006311ed();
+            }
+            else if (local_6c == 2) {
+              DAT_00991588 = 1;
+            }
+            if (local_100 != (undefined1 *)0x0) {
+              FUN_0064a7f0(local_100);
+            }
+            return 0;
+          }
+          local_6c = 0;
+        } while( true );
+      }
+    }
+  }
+LAB_00636119:
+  if ((local_100 != (undefined1 *)0x0) && (local_100 != (undefined1 *)0x0)) {
+    FUN_0064a7f0(local_100);
+  }
+  return *(undefined4 *)(in_ECX + 0xe0);
+}
+

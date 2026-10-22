@@ -1,0 +1,77 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(unsigned char*)0x933289
+Hardware watchpoint 2: *(unsigned char*)0x933325
+Hardware watchpoint 3: *(unsigned char*)0x933359
+Hardware watchpoint 4: *(unsigned char*)0x9333c1
+
+Thread 1 "terran.exe" hit Hardware watchpoint 2: *(unsigned char*)0x933325
+
+Old value = 0 '\000'
+New value = 2 '\002'
+0x004d388e in ?? ()
+
+===== ORDER-BYTE WRITE =====
+pc = 0x4d388e
+--- backtrace ---
+#0  0x004d388e in ?? ()
+#1  0x00512644 in ?? ()
+#2  0x00516134 in ?? ()
+#3  0x005cf400 in ?? ()
+#4  0x005d64cc in ?? ()
+#5  0x005d15fd in ?? ()
+#6  0x005d0ee6 in ?? ()
+#7  0x7a9fa548 in ?? ()
+#8  0x7aa502bf in ?? ()
+#9  0x7aa55f02 in ?? ()
+#10 0x7aa55cb4 in ?? ()
+#11 0x7aa0eda8 in ?? ()
+#12 0x005ea111 in ?? ()
+#13 0x005ea12c in ?? ()
+--- instructions around pc ---
+   0x4d387a:	or     %al,(%eax)
+   0x4d387c:	mov    0xc(%ebp),%ax
+   0x4d3880:	push   %edx
+   0x4d3881:	mov    %ax,0x933294(%ecx)
+   0x4d3888:	mov    %bl,0x933289(%ecx)
+=> 0x4d388e:	call   0x584350
+   0x4d3893:	add    $0x4,%esp
+   0x4d3896:	mov    $0x91db70,%ecx
+   0x4d389b:	call   0x528d90
+   0x4d38a0:	mov    $0x91db70,%ecx
+   0x4d38a5:	call   0x528a00
+   0x4d38aa:	mov    0x8(%ebp),%ecx
+   0x4d38ad:	push   %ecx
+   0x4d38ae:	mov    $0x6a9480,%ecx
+--- registers ---
+eip            0x4d388e            0x4d388e
+eax            0x0                 0
+ebx            0x2                 2
+ecx            0x9c                156
+edx            0x3                 3
+esi            0x40bbfd8           67878872
+edi            0x32                50
+ebp            0xbef43c            0xbef43c
+esp            0xbef424            0xbef424
+[Inferior 1 (process 370597) detached]

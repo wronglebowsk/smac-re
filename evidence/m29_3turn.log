@@ -1,0 +1,8 @@
+win=10485761 start year=2202
+    [hud] ip if es = g TURN COMPLETE Elev: 1236m | . | [ve | Laser Squad
+turn 0: 2202->2203 OK (8.1s, hud,confirm-after-press)
+    [hud] ip Tectt: Brother Lal iM TURN COMPLETE = Mill: Sister Minigar Pop: Chainmen ‘isan Elew: 236m
+turn 1: 2203->2204 OK (9.3s, hud,confirm-after-press)
+    [hud] ip if ee —= oO TURN COMPLETE = Co rrumeenree | bromine + Elew: 12360 [
+turn 2: 2204->2205 OK (9.6s, hud,confirm-after-press)
+trace: /home/n100/reverse/smac/evidence/trace_20261021_130347.jsonl

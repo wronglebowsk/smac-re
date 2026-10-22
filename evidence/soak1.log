@@ -1,0 +1,19 @@
+win=10485761 start year=2159
+turn 0: 2159->2160 OK (30.7s, dialog,dialog,movie,hud,confirm-after-press)
+turn 1: 2160->2161 OK (7.0s, unknown)
+turn 2: 2161->2162 OK (12.3s, hud,confirm-after-press)
+turn 3: 2162->2163 OK (10.1s, hud,confirm-after-press)
+turn 4: 2163->2164 OK (11.4s, hud,confirm-after-press)
+turn 5: 2164->2165 OK (64.0s, hud,confirm-after-press,hud,hud,hud,dialog)
+turn 6: 2165->2166 OK (10.0s, hud,confirm-after-press)
+turn 7: 2166->2167 OK (15.2s, hud,confirm-after-press)
+turn 8: 2167->2168 OK (14.8s, hud,confirm-after-press)
+turn 9: 2168->2169 OK (9.7s, hud,confirm-after-press)
+turn 10: 2169->2170 OK (11.1s, hud,confirm-after-press)
+turn 11: 2170->2171 OK (9.5s, hud,confirm-after-press)
+turn 12: 2171->2172 OK (16.5s, hud,confirm-after-press)
+turn 13: 2172->2173 OK (57.8s, dialog,unknown,confirm,dialog,dialog,hud)
+turn 14: 2173->2173 STUCK (60.7s, hud,confirm-after-press,confirm,confirm,confirm,confirm)
+turn 15: 2173->2173 STUCK (62.2s, confirm,confirm,confirm,confirm,confirm,confirm)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_20261020_163217.jsonl

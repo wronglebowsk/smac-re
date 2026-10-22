@@ -1,0 +1,3 @@
+{"turn": 0, "year_before": 2185, "t": "23:48:32", "handled": ["base", "base", "base", "base", "base", "hud", "confirm-after-press"], "screens": {"base": 5, "hud": 1}, "year_after": 2186, "advanced": true, "dt": 56.2}
+{"turn": 1, "year_before": 2186, "t": "23:49:28", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2187, "advanced": true, "dt": 10.2}
+{"turn": 2, "year_before": 2187, "t": "23:49:39", "handled": ["hud", "confirm-after-press", "unknown", "unknown", "hud"], "screens": {"hud": 2, "unknown": 2}, "year_after": 2188, "advanced": true, "dt": 26.1}

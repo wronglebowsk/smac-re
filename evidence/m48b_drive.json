@@ -1,0 +1,207 @@
+{
+ "tag": "m48b",
+ "t": "2026-10-22 12:49:23",
+ "events": [
+  "preflight kind=confirm pane_end=False hud=True",
+  "gdb armed=False log=/home/n100/reverse/smac/evidence/m48b_watch.log"
+ ],
+ "pid": 914079,
+ "snap0": {
+  "year": 2337,
+  "turn": 237,
+  "cur": 3,
+  "n_bases": 75,
+  "nmine": 6,
+  "energy": {
+   "1": 231,
+   "2": 81,
+   "3": 19,
+   "4": 919,
+   "5": 163,
+   "6": 113,
+   "7": 501
+  },
+  "our_bases": [
+   {
+    "idx": 72,
+    "name": "Climactic Research",
+    "pop": 3,
+    "minerals": 200,
+    "f44": 2,
+    "queue50": 2,
+    "mirror98": 2,
+    "f68": 0,
+    "c4": 3,
+    "d4": 3,
+    "prod_energy": 0,
+    "prod_fc": 2,
+    "prod_104": 3,
+    "prod_108": 2
+   }
+  ],
+  "units": [
+   {
+    "idx": 225,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 228,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 240,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 248,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 260,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 280,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   }
+  ],
+  "scratch": {
+   "net_7457dc": 0,
+   "gross_745734": 2,
+   "trade_7457d4": 0,
+   "upkeep_744f28": 2,
+   "food_74572c": 360,
+   "needpct_745730": 17
+  }
+ },
+ "tracer_after_gdb": 0,
+ "reason": "gdb did not arm",
+ "final": {
+  "year": 2337,
+  "turn": 237,
+  "cur": 3,
+  "n_bases": 75,
+  "nmine": 6,
+  "energy": {
+   "1": 231,
+   "2": 81,
+   "3": 19,
+   "4": 919,
+   "5": 163,
+   "6": 113,
+   "7": 501
+  },
+  "our_bases": [
+   {
+    "idx": 72,
+    "name": "Climactic Research",
+    "pop": 3,
+    "minerals": 200,
+    "f44": 2,
+    "queue50": 2,
+    "mirror98": 2,
+    "f68": 0,
+    "c4": 3,
+    "d4": 3,
+    "prod_energy": 0,
+    "prod_fc": 2,
+    "prod_104": 3,
+    "prod_108": 2
+   }
+  ],
+  "units": [
+   {
+    "idx": 225,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 228,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 240,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 248,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 260,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   },
+   {
+    "idx": 280,
+    "type": 2,
+    "x": 45,
+    "y": 11,
+    "order": 0,
+    "mpused": 0,
+    "home": 72
+   }
+  ],
+  "scratch": {
+   "net_7457dc": 0,
+   "gross_745734": 2,
+   "trade_7457d4": 0,
+   "upkeep_744f28": 2,
+   "food_74572c": 360,
+   "needpct_745730": 17
+  }
+ }
+}

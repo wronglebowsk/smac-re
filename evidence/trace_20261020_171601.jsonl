@@ -1,0 +1,7 @@
+{"turn": 0, "year_before": 2104, "t": "17:16:01", "handled": ["confirm"], "screens": {"confirm": 1}, "year_after": 2105, "advanced": true, "dt": 5.2}
+{"turn": 1, "year_before": 2105, "t": "17:16:06", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2106, "advanced": true, "dt": 10.9}
+{"turn": 2, "year_before": 2106, "t": "17:16:17", "handled": ["unknown", "base", "hud", "confirm-after-press"], "screens": {"unknown": 1, "base": 1, "hud": 1}, "year_after": 2107, "advanced": true, "dt": 28.2}
+{"turn": 3, "year_before": 2107, "t": "17:16:46", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2108, "advanced": true, "dt": 8.8}
+{"turn": 4, "year_before": 2108, "t": "17:16:55", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2109, "advanced": true, "dt": 7.7}
+{"turn": 5, "year_before": 2109, "t": "17:17:02", "handled": ["unknown", "hud", "hud", "hud", "hud", "hud"], "screens": {"unknown": 1, "hud": 5}, "year_after": 2109, "advanced": false, "dt": 47.8, "stuck": true}
+{"turn": 6, "year_before": 2109, "t": "17:17:51", "handled": ["hud", "hud", "hud", "hud", "hud", "hud"], "screens": {"hud": 6}, "year_after": 2109, "advanced": false, "dt": 48.8, "stuck": true}

@@ -1,0 +1,546 @@
+{
+ "pid": 914079,
+ "player": 3,
+ "key": "bracketright",
+ "tag": "m35v2",
+ "events": [
+  "preflight clean-hud=True ncolors=151 upper=0",
+  "TERRAF hit after press #1: TERRAF idx=41 mode=0x10",
+  "clicked 'expend' row at (265,197)",
+  "clicked row+26 (265,223) as the OK bar",
+  "pay verdict: ['PAYTAKEN idx=41']",
+  "cleanup: done"
+ ],
+ "panes": [],
+ "screenshots": [
+  "m35v2_terracost_pane.png",
+  "m35v2_paypane0.png",
+  "m35v2_after_row.png"
+ ],
+ "unit": {
+  "idx": 41,
+  "x": 45,
+  "y": 7,
+  "order": 0,
+  "mpused": 0
+ },
+ "pre_screen": {
+  "nc": 151,
+  "upper": 0,
+  "clean": true
+ },
+ "pre": {
+  "tech_byte_59": 24,
+  "energy": 40,
+  "tile_array_ptr": "0x40a5cd0",
+  "tile_addr": "0x40a90b8",
+  "tile": "80581304084000ff028010000000400000000000000000000280100000000000000000000000000000000000",
+  "tile_elev": 4,
+  "tile_mask": "0x108002",
+  "sel": 41,
+  "orders_mode": 1,
+  "pending": 1,
+  "req_tech_raise": 59,
+  "req_tech_raise_sea": 59
+ },
+ "gdb": {
+  "pid": 1313365,
+  "breakpoints_armed": 25
+ },
+ "presses": 1,
+ "terracost_words": [
+  "=",
+  "PLANETARY",
+  "ECOLOGIST",
+  "i",
+  "CO",
+  "'",
+  "Iwill",
+  "cost",
+  "9",
+  "credits",
+  "to",
+  "raise",
+  "this",
+  "area;",
+  "our",
+  "current",
+  "ae",
+  "se",
+  "reserves",
+  "are",
+  "49",
+  "credits.",
+  "S",
+  "ee",
+  "ee",
+  "Expend",
+  "9",
+  "credits",
+  "ip",
+  "ay"
+ ],
+ "paypane_seen": true,
+ "paypane_words0": [
+  [
+   "ie",
+   164,
+   103
+  ],
+  [
+   "PLANETARY",
+   351,
+   102
+  ],
+  [
+   "ECOLOGIST",
+   446,
+   102
+  ],
+  [
+   "a",
+   579,
+   95
+  ],
+  [
+   "CP",
+   145,
+   127
+  ],
+  [
+   ",",
+   193,
+   119
+  ],
+  [
+   "K",
+   244,
+   130
+  ],
+  [
+   "will",
+   259,
+   130
+  ],
+  [
+   "cost",
+   285,
+   130
+  ],
+  [
+   "$",
+   304,
+   130
+  ],
+  [
+   "credits",
+   331,
+   130
+  ],
+  [
+   "to",
+   359,
+   130
+  ],
+  [
+   "raise",
+   391,
+   130
+  ],
+  [
+   "this",
+   420,
+   130
+  ],
+  [
+   "area;",
+   449,
+   133
+  ],
+  [
+   "our",
+   478,
+   132
+  ],
+  [
+   "current",
+   512,
+   130
+  ],
+  [
+   "a",
+   58,
+   149
+  ],
+  [
+   "io",
+   146,
+   156
+  ],
+  [
+   "reserves",
+   265,
+   149
+  ],
+  [
+   "are",
+   305,
+   149
+  ],
+  [
+   "40",
+   325,
+   147
+  ],
+  [
+   "credits.",
+   358,
+   147
+  ],
+  [
+   "P",
+   592,
+   144
+  ],
+  [
+   "<=",
+   109,
+   189
+  ],
+  [
+   "|",
+   196,
+   189
+  ],
+  [
+   "expend",
+   265,
+   197
+  ],
+  [
+   "9",
+   292,
+   194
+  ],
+  [
+   "credite",
+   321,
+   195
+  ],
+  [
+   "ip",
+   26,
+   424
+  ],
+  [
+   "<he",
+   188,
+   430
+  ],
+  [
+   "cam",
+   284,
+   425
+  ],
+  [
+   "weed",
+   341,
+   419
+  ],
+  [
+   "oO",
+   520,
+   424
+  ],
+  [
+   "TURN",
+   629,
+   416
+  ],
+  [
+   "COMPLETE",
+   697,
+   416
+  ],
+  [
+   "aly",
+   71,
+   435
+  ],
+  [
+   "Correos",
+   323,
+   437
+  ],
+  [
+   "|",
+   326,
+   438
+  ],
+  [
+   "rocenee",
+   346,
+   437
+  ],
+  [
+   "Orturn",
+   384,
+   438
+  ],
+  [
+   ":",
+   56,
+   453
+  ],
+  [
+   "\u2018i",
+   77,
+   450
+  ],
+  [
+   "Gross",
+   286,
+   449
+  ],
+  [
+   "Inmome:",
+   320,
+   449
+  ]
+ ],
+ "after_row_words": [
+  [
+   "=",
+   121,
+   111
+  ],
+  [
+   "PLANETARY",
+   351,
+   102
+  ],
+  [
+   "ECOLOGIST",
+   446,
+   102
+  ],
+  [
+   "i",
+   590,
+   96
+  ],
+  [
+   "CO",
+   145,
+   127
+  ],
+  [
+   ",",
+   194,
+   119
+  ],
+  [
+   "Iwill",
+   254,
+   130
+  ],
+  [
+   "cost",
+   285,
+   130
+  ],
+  [
+   "9",
+   304,
+   130
+  ],
+  [
+   "credits",
+   331,
+   130
+  ],
+  [
+   "to",
+   359,
+   130
+  ],
+  [
+   "raise",
+   391,
+   130
+  ],
+  [
+   "this",
+   420,
+   130
+  ],
+  [
+   "area;",
+   449,
+   133
+  ],
+  [
+   "our",
+   478,
+   132
+  ],
+  [
+   "current",
+   512,
+   130
+  ],
+  [
+   "ae",
+   58,
+   149
+  ],
+  [
+   "se",
+   146,
+   156
+  ],
+  [
+   "reserves",
+   265,
+   149
+  ],
+  [
+   "are",
+   305,
+   149
+  ],
+  [
+   "49",
+   325,
+   147
+  ],
+  [
+   "credits.",
+   358,
+   147
+  ],
+  [
+   "S",
+   592,
+   144
+  ],
+  [
+   "ee",
+   51,
+   193
+  ],
+  [
+   "ee",
+   120,
+   189
+  ],
+  [
+   "Expend",
+   265,
+   197
+  ],
+  [
+   "9",
+   294,
+   195
+  ],
+  [
+   "credits",
+   321,
+   195
+  ],
+  [
+   "ip",
+   26,
+   425
+  ],
+  [
+   "ay",
+   72,
+   433
+  ],
+  [
+   "Sad",
+   189,
+   430
+  ],
+  [
+   "=",
+   320,
+   425
+  ],
+  [
+   "o",
+   521,
+   428
+  ],
+  [
+   "TURN",
+   629,
+   416
+  ],
+  [
+   "COMPLETE",
+   697,
+   416
+  ],
+  [
+   "==",
+   67,
+   452
+  ],
+  [
+   "Elew:",
+   158,
+   460
+  ],
+  [
+   "1404",
+   185,
+   459
+  ],
+  [
+   "m",
+   201,
+   461
+  ],
+  [
+   "ez",
+   674,
+   447
+  ]
+ ],
+ "post_tracer": "TracerPid:\t0",
+ "post": {
+  "energy": 31,
+  "tech_byte_59": 24,
+  "tile": "80581304084000ff028010000000400000000000000000000280100000000000000000000000000000000000",
+  "tile_elev": 4,
+  "tile_mask": "0x108002",
+  "order": 0,
+  "mpused": 0,
+  "sel": 41,
+  "year": 2270,
+  "cur_player": 3,
+  "pending": 1
+ },
+ "tile_diff": [],
+ "log": [
+  "TERRAF idx=41 mode=0x10",
+  "TECHCHK idx=41 mode=0x10 unlocked=1",
+  "PAYPATH idx=41 mode=0x10",
+  "ORDERCHK idx=41 already_this_order=0",
+  "COST idx=41 cost=9",
+  "TERRACOSTPANE OPEN idx=41",
+  "PANE #1 id=TERRACOSTUP",
+  "PAYPANE OPEN idx=41",
+  "PANE #2 id=TERRAPAY",
+  "PAYDECIDE idx=41",
+  "PAYTAKEN idx=41",
+  "DEBIT idx=41 new_energy=31",
+  "ENQ q=11 idx=3 type=0x2101",
+  "SKIPPAY idx=41 mode=0x10",
+  "PANE #3 id=TERRAFORM"
+ ],
+ "log_path": "/home/n100/reverse/smac/evidence/m35v2_gdb.log"
+}

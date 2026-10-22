@@ -1,0 +1,10 @@
+{"turn": 0, "year_before": 2102, "t": "15:50:30", "strip_colours": [13, 27], "modal": true, "year_after": 2103, "advanced": true, "dt": 0.1}
+{"turn": 1, "year_before": 2103, "t": "15:50:36", "strip_colours": [13, 27], "modal": true, "year_after": 2104, "advanced": true, "dt": 0.1}
+{"turn": 2, "year_before": 2104, "t": "15:50:43", "strip_colours": [13, 27], "modal": true, "year_after": 2105, "advanced": true, "dt": 0.1}
+{"turn": 3, "year_before": 2105, "t": "15:50:49", "strip_colours": [13, 27], "modal": true, "year_after": 2106, "advanced": true, "dt": 0.1}
+{"turn": 4, "year_before": 2106, "t": "15:50:55", "strip_colours": [171, 33], "modal": true, "year_after": 2106, "advanced": false, "dt": 30.0, "retry_advanced": false, "stuck": true}
+{"turn": 5, "year_before": 2106, "t": "15:51:57", "strip_colours": [13, 27], "modal": true, "year_after": 2107, "advanced": true, "dt": 0.1}
+{"turn": 6, "year_before": 2107, "t": "15:52:03", "strip_colours": [13, 27], "modal": true, "year_after": 2108, "advanced": true, "dt": 0.1}
+{"turn": 7, "year_before": 2108, "t": "15:52:09", "strip_colours": [13, 27], "modal": true, "year_after": 2109, "advanced": true, "dt": 0.1}
+{"turn": 8, "year_before": 2109, "t": "15:52:15", "strip_colours": [3, 5], "modal": true, "year_after": 2109, "advanced": false, "dt": 30.0, "retry_advanced": false, "stuck": true}
+{"turn": 9, "year_before": 2109, "t": "15:53:17", "strip_colours": [119, 165], "modal": false, "note": "no-modal-after-click", "year_after": 2109, "advanced": false, "dt": 30.0, "retry_advanced": false, "stuck": true}

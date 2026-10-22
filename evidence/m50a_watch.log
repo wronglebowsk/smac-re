@@ -1,0 +1,258 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee17368b in ?? ()
+Breakpoint 1 at 0x51f554
+Breakpoint 2 at 0x4ef6d0
+Breakpoint 3 at 0x4ef7db
+Breakpoint 4 at 0x4ef7f6
+Breakpoint 5 at 0x4ef88b
+Breakpoint 6 at 0x4ef9b3
+Breakpoint 7 at 0x4efd49
+Breakpoint 8 at 0x4efe41
+Breakpoint 9 at 0x4efed8
+Breakpoint 10 at 0x4eff02
+Breakpoint 11 at 0x4eff29
+Breakpoint 12 at 0x4f0ca1
+Breakpoint 13 at 0x4f0ccb
+Breakpoint 14 at 0x4f0cf2
+Breakpoint 15 at 0x4f1e3f
+Breakpoint 16 at 0x483470
+Hardware watchpoint 17: *(int *)0x962ea0
+Hardware watchpoint 18: *(int *)0x962eb0
+Hardware watchpoint 19: *(int *)0x962f30
+Hardware watchpoint 20: *(int *)0x953884
+Breakpoint 21 at 0x4efae5
+Breakpoint 22 at 0x4f26e0
+Breakpoint 23 at 0x4f2d7d
+Breakpoint 24 at 0x4f5ae1
+SELFTEST addrs: 0x962e60 0x962ea0 0x962eb0 0x962f30 0x953884 0x962d30 0x9630c0
+SELFTEST state: year=2349 turn=249 cur=3 nb=75 min40=200 3c=500 cc=1 q50=2 d0=200 nrg3=19 mask=0xff08 cap=10
+ARMED
+WP 1 D0 eip=0x4e955d new=-1 c0=6 f0=7 e0=0 min40=200
+WP 2 ENERGY eip=0x4f5c92 new=21 eax=0x15 ecx=0x962e60 esi=0x6234 edi=0x3
+WP 3 ENERGY eip=0x4f4958 new=20 eax=0x1 ecx=0x14 esi=0x6 edi=0x6234
+WP 4 ENERGY eip=0x4f4958 new=19 eax=0x1 ecx=0x13 esi=0x7 edi=0x6234
+PIPE n=1 base=0x95dda0 own=4 x=77 y=13 min40=49 3c=47 cc=2 d0=6 q50=-29 ours=0
+SITE 1 IGATE base=0x95dda0 own=4 d0=47 q50=-29 f30=0x3004020 min40=49 ours=0
+SITE 2 IADD base=0x95dda0 own=4 added=6 newmin40=55 ours=0
+SITE 3 QGATE base=0x95dda0 own=4 q50=4 ours=0
+SITE 1 RET26E0 base=0x95dda0 own=4 min40=55 f20=1936025970 edi=4 ours=0
+SITE 1 F26E0 base=0x95dda0 own=4 min40=55 q50=-29 f20=1936025970 f28=0 edi=4 esi=33520 ours=0
+PIPE n=2 base=0x95e260 own=4 x=79 y=17 min40=38 3c=0 cc=0 d0=6 q50=-29 ours=0
+SITE 4 IGATE base=0x95e260 own=4 d0=0 q50=-29 f30=0x700d020 min40=38 ours=0
+SITE 5 IADD base=0x95e260 own=4 added=6 newmin40=44 ours=0
+SITE 6 QGATE base=0x95e260 own=4 q50=4 ours=0
+SITE 2 RET26E0 base=0x95e260 own=4 min40=44 f20=1769235317 edi=4 ours=0
+SITE 2 F26E0 base=0x95e260 own=4 min40=44 q50=-29 f20=1769235317 f28=0 edi=4 esi=33520 ours=0
+PIPE n=3 base=0x95ef70 own=4 x=9 y=15 min40=34 3c=22 cc=1 d0=10 q50=265 ours=0
+SITE 7 IGATE base=0x95ef70 own=4 d0=22 q50=265 f30=0x7004020 min40=34 ours=0
+SITE 8 IADD base=0x95ef70 own=4 added=10 newmin40=44 ours=0
+SITE 9 QGATE base=0x95ef70 own=4 q50=4 ours=0
+SITE 3 RET26E0 base=0x95ef70 own=4 min40=44 f20=30821 edi=4 ours=0
+SITE 3 F26E0 base=0x95ef70 own=4 min40=44 q50=265 f20=30821 f28=0 edi=4 esi=33520 ours=0
+PIPE n=4 base=0x95fdb0 own=4 x=12 y=36 min40=1 3c=39 cc=1 d0=5 q50=-29 ours=0
+SITE 10 IGATE base=0x95fdb0 own=4 d0=39 q50=-29 f30=0xb004028 min40=1 ours=0
+SITE 11 IADD base=0x95fdb0 own=4 added=5 newmin40=6 ours=0
+SITE 12 QGATE base=0x95fdb0 own=4 q50=270 ours=0
+SITE 4 RET26E0 base=0x95fdb0 own=4 min40=6 f20=0 edi=4 ours=0
+SITE 4 F26E0 base=0x95fdb0 own=4 min40=6 q50=-29 f20=0 f28=0 edi=4 esi=33520 ours=0
+PIPE n=5 base=0x95fee0 own=4 x=70 y=12 min40=19 3c=34 cc=4 d0=7 q50=274 ours=0
+SITE 13 IGATE base=0x95fee0 own=4 d0=34 q50=274 f30=0x7001000 min40=19 ours=0
+SITE 14 IADD base=0x95fee0 own=4 added=7 newmin40=26 ours=0
+SITE 15 QGATE base=0x95fee0 own=4 q50=4 ours=0
+SITE 5 RET26E0 base=0x95fee0 own=4 min40=26 f20=2036822645 edi=4 ours=0
+SITE 5 F26E0 base=0x95fee0 own=4 min40=26 q50=274 f20=2036822645 f28=0 edi=4 esi=33520 ours=0
+PIPE n=6 base=0x9603a0 own=4 x=63 y=9 min40=44 3c=43 cc=1 d0=7 q50=-29 ours=0
+SITE 16 IGATE base=0x9603a0 own=4 d0=43 q50=-29 f30=0x3004020 min40=44 ours=0
+SITE 17 IADD base=0x9603a0 own=4 added=7 newmin40=51 ours=0
+SITE 18 QGATE base=0x9603a0 own=4 q50=4 ours=0
+SITE 6 RET26E0 base=0x9603a0 own=4 min40=51 f20=1852788000 edi=4 ours=0
+SITE 6 F26E0 base=0x9603a0 own=4 min40=51 q50=-29 f20=1852788000 f28=121 edi=4 esi=33520 ours=0
+PIPE n=7 base=0x961c90 own=4 x=69 y=5 min40=91 3c=25 cc=0 d0=5 q50=262 ours=0
+SITE 19 IGATE base=0x961c90 own=4 d0=25 q50=262 f30=0x3004020 min40=91 ours=0
+SITE 20 IADD base=0x961c90 own=4 added=5 newmin40=96 ours=0
+SITE 21 QGATE base=0x961c90 own=4 q50=4 ours=0
+SITE 7 RET26E0 base=0x961c90 own=4 min40=96 f20=1633905005 edi=4 ours=0
+SITE 7 F26E0 base=0x961c90 own=4 min40=96 q50=262 f20=1633905005 f28=0 edi=4 esi=33520 ours=0
+PIPE n=8 base=0x9623b0 own=4 x=10 y=8 min40=11 3c=40 cc=1 d0=4 q50=-29 ours=0
+SITE 22 IGATE base=0x9623b0 own=4 d0=40 q50=-29 f30=0x4020 min40=11 ours=0
+SITE 23 IADD base=0x9623b0 own=4 added=4 newmin40=15 ours=0
+SITE 24 QGATE base=0x9623b0 own=4 q50=4 ours=0
+SITE 8 RET26E0 base=0x9623b0 own=4 min40=15 f20=0 edi=4 ours=0
+SITE 8 F26E0 base=0x9623b0 own=4 min40=15 q50=-29 f20=0 f28=0 edi=4 esi=33520 ours=0
+PIPE n=9 base=0x95ded0 own=5 x=76 y=72 min40=18 3c=30 cc=0 d0=8 q50=329 ours=0
+SITE 25 IGATE base=0x95ded0 own=5 d0=30 q50=329 f30=0x3004000 min40=18 ours=0
+SITE 26 IADD base=0x95ded0 own=5 added=8 newmin40=26 ours=0
+SITE 27 QGATE base=0x95ded0 own=5 q50=5 ours=0
+SITE 9 RET26E0 base=0x95ded0 own=5 min40=26 f20=100 edi=5 ours=0
+SITE 9 F26E0 base=0x95ded0 own=5 min40=26 q50=329 f20=100 f28=0 edi=5 esi=41900 ours=0
+PIPE n=10 base=0x95e5f0 own=5 x=70 y=70 min40=28 3c=0 cc=0 d0=7 q50=6 ours=0
+SITE 28 IGATE base=0x95e5f0 own=5 d0=0 q50=6 f30=0xb002020 min40=28 ours=0
+SITE 29 IADD base=0x95e5f0 own=5 added=7 newmin40=35 ours=0
+SITE 30 QGATE base=0x95e5f0 own=5 q50=5 ours=0
+SITE 1 ST1C base=0x95e5f0 own=5 scratch=312 val1c=1248 q50=6 pop=7 class=0 ours=0
+SITE 31 COMPLET base=0x95e5f0 own=5 ebx=6 edi=33 esi=67916524 min40=35 q50=6 pop=7 fc=3 cap=10 d0=7 cc=0 f3c=0 e0=0 f0=0 c0=7 m1c=312 m20=0 m24=0xa3ac m28=5 m2c=0x20 ours=0
+SITE 32 SPENDA base=0x95e5f0 own=5 cost_edi=33 min40_pre=35 m28=5 m30=4 ours=0
+SITE 33 MIRA base=0x95e5f0 own=5 accum_final=7 mir98_pre=28 ours=0
+SITE 10 RET26E0 base=0x95e5f0 own=5 min40=2 f20=7631721 edi=5 ours=0
+SITE 10 F26E0 base=0x95e5f0 own=5 min40=2 q50=6 f20=7631721 f28=0 edi=5 esi=41900 ours=0
+PIPE n=11 base=0x960990 own=5 x=73 y=63 min40=13 3c=0 cc=0 d0=4 q50=6 ours=0
+SITE 34 IGATE base=0x960990 own=5 d0=0 q50=6 f30=0x4000 min40=13 ours=0
+SITE 35 IADD base=0x960990 own=5 added=4 newmin40=17 ours=0
+SITE 36 QGATE base=0x960990 own=5 q50=5 ours=0
+SITE 11 RET26E0 base=0x960990 own=5 min40=17 f20=7365989 edi=5 ours=0
+SITE 11 F26E0 base=0x960990 own=5 min40=17 q50=6 f20=7365989 f28=0 edi=5 esi=41900 ours=0
+PIPE n=12 base=0x95eab0 own=6 x=59 y=71 min40=61 3c=30 cc=1 d0=5 q50=399 ours=0
+SITE 37 IGATE base=0x95eab0 own=6 d0=30 q50=399 f30=0x2006020 min40=61 ours=0
+SITE 38 IADD base=0x95eab0 own=6 added=5 newmin40=66 ours=0
+SITE 39 QGATE base=0x95eab0 own=6 q50=6 ours=0
+SITE 12 RET26E0 base=0x95eab0 own=6 min40=66 f20=1651863396 edi=6 ours=0
+SITE 12 F26E0 base=0x95eab0 own=6 min40=66 q50=399 f20=1651863396 f28=0 edi=6 esi=50280 ours=0
+SITE 1 CONVST base=0x95eab0 own=6 min40_pre=66 new=66 delta=0 ebx=1 q50=399 f20=1651863396 ours=0
+PIPE n=13 base=0x95f1d0 own=6 x=54 y=70 min40=17 3c=48 cc=2 d0=8 q50=399 ours=0
+SITE 40 IGATE base=0x95f1d0 own=6 d0=48 q50=399 f30=0x3004060 min40=17 ours=0
+SITE 41 IADD base=0x95f1d0 own=6 added=8 newmin40=25 ours=0
+SITE 42 QGATE base=0x95f1d0 own=6 q50=6 ours=0
+SITE 13 RET26E0 base=0x95f1d0 own=6 min40=25 f20=0 edi=6 ours=0
+SITE 13 F26E0 base=0x95f1d0 own=6 min40=25 q50=399 f20=0 f28=0 edi=6 esi=50280 ours=0
+SITE 2 CONVST base=0x95f1d0 own=6 min40_pre=25 new=25 delta=0 ebx=1 q50=399 f20=0 ours=0
+PIPE n=14 base=0x95f8f0 own=6 x=47 y=71 min40=15 3c=27 cc=1 d0=3 q50=399 ours=0
+SITE 43 IGATE base=0x95f8f0 own=6 d0=27 q50=399 f30=0x4020 min40=15 ours=0
+SITE 44 IADD base=0x95f8f0 own=6 added=3 newmin40=18 ours=0
+SITE 45 QGATE base=0x95f8f0 own=6 q50=6 ours=0
+SITE 14 RET26E0 base=0x95f8f0 own=6 min40=18 f20=0 edi=6 ours=0
+SITE 14 F26E0 base=0x95f8f0 own=6 min40=18 q50=399 f20=0 f28=0 edi=6 esi=50280 ours=0
+SITE 3 CONVST base=0x95f8f0 own=6 min40_pre=18 new=18 delta=0 ebx=1 q50=399 f20=0 ours=0
+PIPE n=15 base=0x960600 own=6 x=61 y=77 min40=43 3c=12 cc=1 d0=7 q50=399 ours=0
+SITE 46 IGATE base=0x960600 own=6 d0=12 q50=399 f30=0x4020 min40=43 ours=0
+SITE 47 IADD base=0x960600 own=6 added=7 newmin40=50 ours=0
+SITE 48 QGATE base=0x960600 own=6 q50=6 ours=0
+SITE 15 RET26E0 base=0x960600 own=6 min40=50 f20=110 edi=6 ours=0
+SITE 15 F26E0 base=0x960600 own=6 min40=50 q50=399 f20=110 f28=0 edi=6 esi=50280 ours=0
+SITE 4 CONVST base=0x960600 own=6 min40_pre=50 new=50 delta=0 ebx=1 q50=399 f20=110 ours=0
+PIPE n=16 base=0x960860 own=6 x=50 y=66 min40=26 3c=0 cc=0 d0=5 q50=398 ours=0
+SITE 49 IGATE base=0x960860 own=6 d0=0 q50=398 f30=0x4040 min40=26 ours=0
+SITE 50 IADD base=0x960860 own=6 added=5 newmin40=31 ours=0
+SITE 51 QGATE base=0x960860 own=6 q50=6 ours=0
+SITE 16 RET26E0 base=0x960860 own=6 min40=31 f20=28271 edi=6 ours=0
+SITE 16 F26E0 base=0x960860 own=6 min40=31 q50=398 f20=28271 f28=0 edi=6 esi=50280 ours=0
+PIPE n=17 base=0x9616a0 own=6 x=29 y=65 min40=13 3c=9 cc=1 d0=3 q50=396 ours=0
+SITE 52 IGATE base=0x9616a0 own=6 d0=9 q50=396 f30=0x106000 min40=13 ours=0
+SITE 53 IADD base=0x9616a0 own=6 added=3 newmin40=16 ours=0
+SITE 54 QGATE base=0x9616a0 own=6 q50=6 ours=0
+SITE 17 RET26E0 base=0x9616a0 own=6 min40=16 f20=0 edi=6 ours=0
+SITE 17 F26E0 base=0x9616a0 own=6 min40=16 q50=396 f20=0 f28=0 edi=6 esi=50280 ours=0
+SITE 5 CONVST base=0x9616a0 own=6 min40_pre=16 new=16 delta=0 ebx=4 q50=396 f20=0 ours=0
+PIPE n=18 base=0x961ef0 own=6 x=26 y=68 min40=0 3c=19 cc=1 d0=5 q50=398 ours=0
+SITE 55 IGATE base=0x961ef0 own=6 d0=19 q50=398 f30=0x3000 min40=0 ours=0
+SITE 56 IADD base=0x961ef0 own=6 added=5 newmin40=5 ours=0
+SITE 57 QGATE base=0x961ef0 own=6 q50=6 ours=0
+SITE 18 RET26E0 base=0x961ef0 own=6 min40=5 f20=6582087 edi=6 ours=0
+SITE 18 F26E0 base=0x961ef0 own=6 min40=5 q50=398 f20=6582087 f28=0 edi=6 esi=50280 ours=0
+PIPE n=19 base=0x962280 own=6 x=36 y=66 min40=31 3c=14 cc=2 d0=10 q50=389 ours=0
+SITE 58 IGATE base=0x962280 own=6 d0=14 q50=389 f30=0x4008 min40=31 ours=0
+SITE 59 IADD base=0x962280 own=6 added=10 newmin40=41 ours=0
+SITE 60 QGATE base=0x962280 own=6 q50=549 ours=0
+SITE 19 RET26E0 base=0x962280 own=6 min40=41 f20=7565945 edi=6 ours=0
+SITE 19 F26E0 base=0x962280 own=6 min40=41 q50=389 f20=7565945 f28=0 edi=6 esi=50280 ours=0
+SITE 6 CONVST base=0x962280 own=6 min40_pre=41 new=42 delta=1 ebx=4 q50=389 f20=7565945 ours=0
+PIPE n=20 base=0x95e130 own=7 x=8 y=64 min40=11 3c=41 cc=6 d0=8 q50=460 ours=0
+SITE 61 IGATE base=0x95e130 own=7 d0=41 q50=460 f30=0xb000008 min40=11 ours=0
+SITE 62 IADD base=0x95e130 own=7 added=8 newmin40=19 ours=0
+SITE 63 QGATE base=0x95e130 own=7 q50=54 ours=0
+SITE 20 RET26E0 base=0x95e130 own=7 min40=19 f20=1936876916 edi=7 ours=0
+SITE 20 F26E0 base=0x95e130 own=7 min40=19 q50=460 f20=1936876916 f28=0 edi=7 esi=58660 ours=0
+SITE 7 CONVST base=0x95e130 own=7 min40_pre=19 new=31 delta=12 ebx=61 q50=460 f20=1936876916 ours=0
+PIPE n=21 base=0x95e390 own=7 x=2 y=64 min40=22 3c=0 cc=0 d0=6 q50=-4 ours=0
+SITE 64 IGATE base=0x95e390 own=7 d0=0 q50=-4 f30=0xb004020 min40=22 ours=0
+SITE 65 IADD base=0x95e390 own=7 added=6 newmin40=28 ours=0
+SITE 66 QGATE base=0x95e390 own=7 q50=7 ours=0
+SITE 21 RET26E0 base=0x95e390 own=7 min40=28 f20=1818579488 edi=7 ours=0
+SITE 21 F26E0 base=0x95e390 own=7 min40=28 q50=-4 f20=1818579488 f28=0 edi=7 esi=58660 ours=0
+SITE 8 CONVST base=0x95e390 own=7 min40_pre=28 new=31 delta=3 ebx=10 q50=-4 f20=1818579488 ours=0
+PIPE n=22 base=0x95ebe0 own=7 x=4 y=70 min40=15 3c=17 cc=1 d0=5 q50=463 ours=0
+SITE 67 IGATE base=0x95ebe0 own=7 d0=17 q50=463 f30=0x300c024 min40=15 ours=0
+SITE 68 IADD base=0x95ebe0 own=7 added=5 newmin40=20 ours=0
+SITE 69 QGATE base=0x95ebe0 own=7 q50=7 ours=0
+SITE 22 RET26E0 base=0x95ebe0 own=7 min40=20 f20=1732321390 edi=7 ours=0
+SITE 22 F26E0 base=0x95ebe0 own=7 min40=20 q50=463 f20=1732321390 f28=0 edi=7 esi=58660 ours=0
+PIPE n=23 base=0x95ed10 own=7 x=1 y=55 min40=26 3c=0 cc=0 d0=11 q50=6 ours=0
+SITE 70 IGATE base=0x95ed10 own=7 d0=0 q50=6 f30=0x3004020 min40=26 ours=0
+SITE 71 IADD base=0x95ed10 own=7 added=11 newmin40=37 ours=0
+SITE 72 QGATE base=0x95ed10 own=7 q50=7 ours=0
+SITE 2 ST1C base=0x95ed10 own=7 scratch=312 val1c=1248 q50=6 pop=8 class=0 ours=0
+SITE 73 COMPLET base=0x95ed10 own=7 ebx=6 edi=30 esi=67888584 min40=37 q50=6 pop=8 fc=4 cap=10 d0=11 cc=0 f3c=0 e0=0 f0=4 c0=15 m1c=312 m20=0 m24=0xe524 m28=7 m2c=0x80 ours=0
+SITE 74 SPENDA base=0x95ed10 own=7 cost_edi=30 min40_pre=37 m28=7 m30=5 ours=0
+SITE 75 MIRA base=0x95ed10 own=7 accum_final=11 mir98_pre=26 ours=0
+SITE 23 RET26E0 base=0x95ed10 own=7 min40=7 f20=1935753760 edi=7 ours=0
+SITE 23 F26E0 base=0x95ed10 own=7 min40=7 q50=8 f20=1935753760 f28=0 edi=7 esi=58660 ours=0
+SITE 9 CONVST base=0x95ed10 own=7 min40_pre=7 new=9 delta=2 ebx=10 q50=8 f20=1935753760 ours=0
+PIPE n=24 base=0x95f430 own=7 x=3 y=51 min40=56 3c=0 cc=0 d0=2 q50=458 ours=0
+SITE 76 IGATE base=0x95f430 own=7 d0=0 q50=458 f30=0x3004024 min40=56 ours=0
+SITE 77 IADD base=0x95f430 own=7 added=2 newmin40=58 ours=0
+SITE 78 QGATE base=0x95f430 own=7 q50=7 ours=0
+SITE 24 RET26E0 base=0x95f430 own=7 min40=58 f20=544108393 edi=7 ours=0
+SITE 24 F26E0 base=0x95f430 own=7 min40=58 q50=458 f20=544108393 f28=31075 edi=7 esi=58660 ours=0
+PIPE n=25 base=0x960140 own=7 x=10 y=54 min40=31 3c=19 cc=1 d0=8 q50=463 ours=0
+SITE 79 IGATE base=0x960140 own=7 d0=19 q50=463 f30=0x3004020 min40=31 ours=0
+SITE 80 IADD base=0x960140 own=7 added=8 newmin40=39 ours=0
+SITE 81 QGATE base=0x960140 own=7 q50=7 ours=0
+SITE 25 RET26E0 base=0x960140 own=7 min40=39 f20=1818842656 edi=7 ours=0
+SITE 25 F26E0 base=0x960140 own=7 min40=39 q50=463 f20=1818842656 f28=0 edi=7 esi=58660 ours=0
+PIPE n=26 base=0x960bf0 own=7 x=5 y=57 min40=7 3c=0 cc=0 d0=3 q50=460 ours=0
+SITE 82 IGATE base=0x960bf0 own=7 d0=0 q50=460 f30=0x4024 min40=7 ours=0
+SITE 83 IADD base=0x960bf0 own=7 added=3 newmin40=10 ours=0
+SITE 84 QGATE base=0x960bf0 own=7 q50=7 ours=0
+SITE 26 RET26E0 base=0x960bf0 own=7 min40=10 f20=1953841440 edi=7 ours=0
+SITE 26 F26E0 base=0x960bf0 own=7 min40=10 q50=460 f20=1953841440 f28=31092 edi=7 esi=58660 ours=0
+SITE 10 CONVST base=0x960bf0 own=7 min40_pre=10 new=11 delta=1 ebx=10 q50=460 f20=1953841440 ours=0
+PIPE n=27 base=0x960e50 own=7 x=73 y=51 min40=49 3c=17 cc=0 d0=4 q50=453 ours=0
+SITE 85 IGATE base=0x960e50 own=7 d0=17 q50=453 f30=0x4004 min40=49 ours=0
+SITE 86 IADD base=0x960e50 own=7 added=4 newmin40=53 ours=0
+SITE 87 QGATE base=0x960e50 own=7 q50=7 ours=0
+SITE 3 ST1C base=0x960e50 own=7 scratch=23556 val1c=94224 q50=453 pop=5 class=8 ours=0
+SITE 88 COMPLET base=0x960e50 own=7 ebx=453 edi=50 esi=67883128 min40=53 q50=453 pop=5 fc=2 cap=10 d0=4 cc=0 f3c=17 e0=0 f0=5 c0=9 m1c=23556 m20=0 m24=0xe524 m28=7 m2c=0x80 ours=0
+SITE 89 SPENDA base=0x960e50 own=7 cost_edi=50 min40_pre=53 m28=7 m30=2 ours=0
+SITE 90 MIRA base=0x960e50 own=7 accum_final=4 mir98_pre=49 ours=0
+SITE 27 RET26E0 base=0x960e50 own=7 min40=3 f20=1836008224 edi=7 ours=0
+SITE 27 F26E0 base=0x960e50 own=7 min40=3 q50=6 f20=1836008224 f28=25957 edi=7 esi=58660 ours=0
+PIPE n=28 base=0x962ad0 own=7 x=76 y=48 min40=37 3c=7 cc=1 d0=0 q50=464 ours=0
+SITE 91 IGATE base=0x962ad0 own=7 d0=7 q50=464 f30=0x5024 min40=37 ours=0
+SITE 92 IADD base=0x962ad0 own=7 added=0 newmin40=37 ours=0
+SITE 93 QGATE base=0x962ad0 own=7 q50=7 ours=0
+SITE 28 RET26E0 base=0x962ad0 own=7 min40=37 f20=7237481 edi=7 ours=0
+SITE 28 F26E0 base=0x962ad0 own=7 min40=37 q50=464 f20=7237481 f28=0 edi=7 esi=58660 ours=0
+ROUND year=2350 turn=250 cur=7 nb=75 mask=0xff08 cap=10 g38=0 g4c=4 nrg3=19 led3=0
+OURBASE idx=71 addr=0x962e60 x=45 y=11 pop=4 f30=0x805000 3c=500 min40=200 f44=2 f4c=0 q50=2 mir94=-1 mir98=0 c0=6 cc=0 d0=-1 e0=0 f0=7 fc=2 f38=0xdfbe41
+UNIT idx=178 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=180 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=266 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=269 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=274 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=279 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=295 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNITS n=7
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]

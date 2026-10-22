@@ -1,0 +1,18 @@
+
+void FUN_00530640(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
+
+{
+  if (DAT_00920434 == 0) {
+    FUN_00551a20(param_1,param_2,param_3);
+  }
+  else {
+    FUN_0062732a(s_Sending_TREATY_ON_00690160,param_1,param_2,param_3);
+    FUN_00584010(0x2441,0,param_1,param_2,param_3,0);
+    if (param_4 != 0) {
+      FUN_00528ed0(0x441);
+      return;
+    }
+  }
+  return;
+}
+

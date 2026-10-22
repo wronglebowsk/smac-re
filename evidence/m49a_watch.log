@@ -1,0 +1,599 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x51f554
+Breakpoint 2 at 0x4ef6d0
+Breakpoint 3 at 0x4ef7db
+Breakpoint 4 at 0x4ef7f6
+Breakpoint 5 at 0x4ef88b
+Breakpoint 6 at 0x4ef9b3
+Breakpoint 7 at 0x4efd49
+Breakpoint 8 at 0x4efe41
+Breakpoint 9 at 0x4efed8
+Breakpoint 10 at 0x4eff02
+Breakpoint 11 at 0x4eff29
+Breakpoint 12 at 0x4f0ca1
+Breakpoint 13 at 0x4f0ccb
+Breakpoint 14 at 0x4f0cf2
+Breakpoint 15 at 0x4f1e3f
+Breakpoint 16 at 0x483470
+Hardware watchpoint 17: *(int *)0x962ea0
+Hardware watchpoint 18: *(int *)0x962eb0
+Hardware watchpoint 19: *(int *)0x962f30
+Hardware watchpoint 20: *(int *)0x953884
+Breakpoint 21 at 0x4efae5
+SELFTEST addrs: 0x962e60 0x962ea0 0x962eb0 0x962f30 0x953884 0x962d30 0x9630c0
+SELFTEST state: year=2347 turn=247 cur=0 nb=75 min40=200 3c=500 cc=1 q50=2 d0=200 nrg3=19 mask=0xff08 cap=10
+ARMED
+PIPE n=1 base=0x95db40 own=1 x=24 y=34 min40=14 3c=86 cc=4 d0=4 q50=6 ours=0
+SITE 1 IGATE base=0x95db40 own=1 d0=86 q50=6 f30=0x3000020 min40=14 ours=0
+SITE 2 IADD base=0x95db40 own=1 added=4 newmin40=18 ours=0
+SITE 3 QGATE base=0x95db40 own=1 q50=1 ours=0
+PIPE n=2 base=0x95e4c0 own=1 x=30 y=32 min40=22 3c=64 cc=1 d0=1 q50=-29 ours=0
+SITE 4 IGATE base=0x95e4c0 own=1 d0=64 q50=-29 f30=0x300d020 min40=22 ours=0
+SITE 5 IADD base=0x95e4c0 own=1 added=1 newmin40=23 ours=0
+SITE 6 QGATE base=0x95e4c0 own=1 q50=1 ours=0
+PIPE n=3 base=0x95ee40 own=1 x=28 y=26 min40=9 3c=40 cc=1 d0=1 q50=67 ours=0
+SITE 7 IGATE base=0x95ee40 own=1 d0=40 q50=67 f30=0x3006020 min40=9 ours=0
+SITE 8 IADD base=0x95ee40 own=1 added=1 newmin40=10 ours=0
+SITE 9 QGATE base=0x95ee40 own=1 q50=1 ours=0
+PIPE n=4 base=0x95fa20 own=1 x=20 y=30 min40=26 3c=33 cc=3 d0=7 q50=68 ours=0
+SITE 10 IGATE base=0x95fa20 own=1 d0=33 q50=68 f30=0x3008020 min40=26 ours=0
+SITE 11 IADD base=0x95fa20 own=1 added=7 newmin40=33 ours=0
+SITE 12 QGATE base=0x95fa20 own=1 q50=1 ours=0
+PIPE n=5 base=0x960ac0 own=1 x=14 y=26 min40=43 3c=18 cc=0 d0=3 q50=-29 ours=0
+SITE 13 IGATE base=0x960ac0 own=1 d0=18 q50=-29 f30=0x3004020 min40=43 ours=0
+SITE 14 IADD base=0x960ac0 own=1 added=3 newmin40=46 ours=0
+SITE 15 QGATE base=0x960ac0 own=1 q50=1 ours=0
+PIPE n=6 base=0x9610b0 own=1 x=11 y=23 min40=16 3c=0 cc=0 d0=-2 q50=87 ours=0
+SITE 16 IGATE base=0x9610b0 own=1 d0=0 q50=87 f30=0x800c020 min40=16 ours=0
+SITE 17 QGATE base=0x9610b0 own=1 q50=1 ours=0
+PIPE n=7 base=0x9611e0 own=1 x=18 y=34 min40=28 3c=53 cc=4 d0=4 q50=82 ours=0
+SITE 18 IGATE base=0x9611e0 own=1 d0=53 q50=82 f30=0x3088001 min40=28 ours=0
+SITE 19 IADD base=0x9611e0 own=1 added=4 newmin40=32 ours=0
+SITE 20 QGATE base=0x9611e0 own=1 q50=1 ours=0
+PIPE n=8 base=0x961900 own=1 x=32 y=28 min40=24 3c=17 cc=-1 d0=4 q50=74 ours=0
+SITE 21 IGATE base=0x961900 own=1 d0=17 q50=74 f30=0x3004020 min40=24 ours=0
+SITE 22 IADD base=0x961900 own=1 added=4 newmin40=28 ours=0
+SITE 23 QGATE base=0x961900 own=1 q50=1 ours=0
+PIPE n=9 base=0x962610 own=1 x=17 y=5 min40=66 3c=34 cc=2 d0=2 q50=76 ours=0
+SITE 24 IGATE base=0x962610 own=1 d0=34 q50=76 f30=0x300a001 min40=66 ours=0
+SITE 25 IADD base=0x962610 own=1 added=2 newmin40=68 ours=0
+SITE 26 QGATE base=0x962610 own=1 q50=1 ours=0
+PIPE n=10 base=0x962740 own=1 x=24 y=28 min40=63 3c=19 cc=0 d0=4 q50=79 ours=0
+SITE 27 IGATE base=0x962740 own=1 d0=19 q50=79 f30=0xc020 min40=63 ours=0
+SITE 28 IADD base=0x962740 own=1 added=4 newmin40=67 ours=0
+SITE 29 QGATE base=0x962740 own=1 q50=1 ours=0
+PIPE n=11 base=0x95da10 own=2 x=20 y=50 min40=21 3c=15 cc=1 d0=10 q50=-6 ours=0
+SITE 30 IGATE base=0x95da10 own=2 d0=15 q50=-6 f30=0x50a2 min40=21 ours=0
+SITE 31 QGATE base=0x95da10 own=2 q50=2 ours=0
+PIPE n=12 base=0x95dc70 own=2 x=53 y=51 min40=116 3c=11 cc=0 d0=9 q50=158 ours=0
+SITE 32 IGATE base=0x95dc70 own=2 d0=11 q50=158 f30=0x3004000 min40=116 ours=0
+SITE 33 IADD base=0x95dc70 own=2 added=9 newmin40=125 ours=0
+SITE 34 QGATE base=0x95dc70 own=2 q50=2 ours=0
+SITE 1 ST1C base=0x95dc70 own=2 scratch=8216 val1c=32864 q50=158 pop=7 class=0 ours=0
+SITE 35 COMPLET base=0x95dc70 own=2 ebx=158 edi=44 esi=67882688 min40=125 q50=158 pop=7 fc=3 cap=10 d0=9 cc=0 f3c=11 e0=0 f0=8 c0=17 m1c=8216 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 36 SPENDA base=0x95dc70 own=2 cost_edi=44 min40_pre=125 m28=2 m30=4 ours=0
+SITE 37 CLAMP1 base=0x95dc70 own=2 accum=81 d0=9 cap=10 min=4 evbit=0x4 mask=0xff08 ours=0
+SITE 38 MIRA base=0x95dc70 own=2 accum_final=9 mir98_pre=116 ours=0
+PIPE n=13 base=0x95e000 own=2 x=34 y=50 min40=24 3c=2 cc=1 d0=2 q50=155 ours=0
+SITE 39 IGATE base=0x95e000 own=2 d0=2 q50=155 f30=0x3003021 min40=24 ours=0
+SITE 40 IADD base=0x95e000 own=2 added=2 newmin40=26 ours=0
+SITE 41 QGATE base=0x95e000 own=2 q50=2 ours=0
+PIPE n=14 base=0x95e720 own=2 x=33 y=59 min40=29 3c=0 cc=0 d0=5 q50=144 ours=0
+SITE 42 IGATE base=0x95e720 own=2 d0=0 q50=144 f30=0x3006020 min40=29 ours=0
+SITE 43 IADD base=0x95e720 own=2 added=5 newmin40=34 ours=0
+SITE 44 QGATE base=0x95e720 own=2 q50=2 ours=0
+SITE 2 ST1C base=0x95e720 own=2 scratch=7488 val1c=29952 q50=144 pop=2 class=2 ours=0
+SITE 45 COMPLET base=0x95e720 own=2 ebx=144 edi=33 esi=67896328 min40=34 q50=144 pop=2 fc=0 cap=10 d0=5 cc=0 f3c=0 e0=0 f0=0 c0=5 m1c=7488 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 46 SPENDA base=0x95e720 own=2 cost_edi=33 min40_pre=34 m28=2 m30=0 ours=0
+SITE 47 MIRA base=0x95e720 own=2 accum_final=5 mir98_pre=29 ours=0
+PIPE n=15 base=0x95e850 own=2 x=45 y=49 min40=95 3c=6 cc=3 d0=10 q50=-11 ours=0
+SITE 48 IGATE base=0x95e850 own=2 d0=6 q50=-11 f30=0x300a020 min40=95 ours=0
+SITE 49 IADD base=0x95e850 own=2 added=10 newmin40=105 ours=0
+SITE 50 QGATE base=0x95e850 own=2 q50=2 ours=0
+SITE 51 SPENDB base=0x95e850 own=2 cost_edi=66 min40_pre=105 m28=2 m30=11 ours=0
+SITE 52 CLAMP2 base=0x95e850 own=2 accum=39 d0=10 cap=10 min=4 evbit=0x4 mask=0xff08 ours=0
+SITE 53 MIRB base=0x95e850 own=2 accum_final=10 mir98_pre=95 ours=0
+PIPE n=16 base=0x95e980 own=2 x=26 y=48 min40=21 3c=0 cc=0 d0=13 q50=-6 ours=0
+SITE 54 IGATE base=0x95e980 own=2 d0=0 q50=-6 f30=0x3004022 min40=21 ours=0
+SITE 55 QGATE base=0x95e980 own=2 q50=2 ours=0
+PIPE n=17 base=0x95f0a0 own=2 x=37 y=43 min40=16 3c=17 cc=2 d0=2 q50=155 ours=0
+SITE 56 IGATE base=0x95f0a0 own=2 d0=17 q50=155 f30=0x3000020 min40=16 ours=0
+SITE 57 IADD base=0x95f0a0 own=2 added=2 newmin40=18 ours=0
+SITE 58 QGATE base=0x95f0a0 own=2 q50=2 ours=0
+PIPE n=18 base=0x95f300 own=2 x=51 y=57 min40=34 3c=13 cc=0 d0=8 q50=148 ours=0
+SITE 59 IGATE base=0x95f300 own=2 d0=13 q50=148 f30=0x3004021 min40=34 ours=0
+SITE 60 IADD base=0x95f300 own=2 added=8 newmin40=42 ours=0
+SITE 61 QGATE base=0x95f300 own=2 q50=2 ours=0
+PIPE n=19 base=0x95f560 own=2 x=42 y=46 min40=102 3c=34 cc=3 d0=12 q50=147 ours=0
+SITE 62 IGATE base=0x95f560 own=2 d0=34 q50=147 f30=0x3080020 min40=102 ours=0
+SITE 63 IADD base=0x95f560 own=2 added=12 newmin40=114 ours=0
+SITE 64 QGATE base=0x95f560 own=2 q50=2 ours=0
+PIPE n=20 base=0x95f690 own=2 x=22 y=40 min40=1 3c=16 cc=-2 d0=3 q50=0 ours=0
+SITE 65 IGATE base=0x95f690 own=2 d0=16 q50=0 f30=0x2006020 min40=1 ours=0
+SITE 66 IADD base=0x95f690 own=2 added=3 newmin40=4 ours=0
+SITE 67 QGATE base=0x95f690 own=2 q50=2 ours=0
+PIPE n=21 base=0x95f7c0 own=2 x=43 y=41 min40=36 3c=6 cc=3 d0=10 q50=6 ours=0
+SITE 68 IGATE base=0x95f7c0 own=2 d0=6 q50=6 f30=0x300b020 min40=36 ours=0
+SITE 69 IADD base=0x95f7c0 own=2 added=10 newmin40=46 ours=0
+SITE 70 QGATE base=0x95f7c0 own=2 q50=2 ours=0
+SITE 3 ST1C base=0x95f7c0 own=2 scratch=312 val1c=1248 q50=6 pop=13 class=0 ours=0
+SITE 71 COMPLET base=0x95f7c0 own=2 ebx=6 edi=33 esi=67864868 min40=46 q50=6 pop=13 fc=12 cap=10 d0=10 cc=3 f3c=6 e0=0 f0=2 c0=12 m1c=312 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 72 SPENDA base=0x95f7c0 own=2 cost_edi=33 min40_pre=46 m28=2 m30=10 ours=0
+SITE 73 CLAMP1 base=0x95f7c0 own=2 accum=13 d0=10 cap=10 min=4 evbit=0x4 mask=0xff08 ours=0
+SITE 74 MIRA base=0x95f7c0 own=2 accum_final=10 mir98_pre=36 ours=0
+PIPE n=22 base=0x95fb50 own=2 x=47 y=41 min40=68 3c=4 cc=2 d0=13 q50=146 ours=0
+SITE 75 IGATE base=0x95fb50 own=2 d0=4 q50=146 f30=0x3009020 min40=68 ours=0
+SITE 76 IADD base=0x95fb50 own=2 added=13 newmin40=81 ours=0
+SITE 77 QGATE base=0x95fb50 own=2 q50=2 ours=0
+PIPE n=23 base=0x95fc80 own=2 x=34 y=38 min40=38 3c=16 cc=1 d0=5 q50=148 ours=0
+SITE 78 IGATE base=0x95fc80 own=2 d0=16 q50=148 f30=0x8009020 min40=38 ours=0
+SITE 79 IADD base=0x95fc80 own=2 added=5 newmin40=43 ours=0
+SITE 80 QGATE base=0x95fc80 own=2 q50=2 ours=0
+PIPE n=24 base=0x960010 own=2 x=51 y=37 min40=46 3c=43 cc=1 d0=8 q50=-17 ours=0
+SITE 81 IGATE base=0x960010 own=2 d0=43 q50=-17 f30=0x300c022 min40=46 ours=0
+SITE 82 QGATE base=0x960010 own=2 q50=2 ours=0
+PIPE n=25 base=0x960270 own=2 x=55 y=37 min40=37 3c=36 cc=3 d0=7 q50=-24 ours=0
+SITE 83 IGATE base=0x960270 own=2 d0=36 q50=-24 f30=0x3002020 min40=37 ours=0
+SITE 84 IADD base=0x960270 own=2 added=7 newmin40=44 ours=0
+SITE 85 QGATE base=0x960270 own=2 q50=2 ours=0
+PIPE n=26 base=0x9604d0 own=2 x=51 y=43 min40=31 3c=65 cc=5 d0=10 q50=-17 ours=0
+SITE 86 IGATE base=0x9604d0 own=2 d0=65 q50=-17 f30=0x3002020 min40=31 ours=0
+SITE 87 IADD base=0x9604d0 own=2 added=10 newmin40=41 ours=0
+SITE 88 QGATE base=0x9604d0 own=2 q50=2 ours=0
+PIPE n=27 base=0x960730 own=2 x=55 y=41 min40=18 3c=36 cc=2 d0=9 q50=-29 ours=0
+SITE 89 IGATE base=0x960730 own=2 d0=36 q50=-29 f30=0x3001020 min40=18 ours=0
+SITE 90 IADD base=0x960730 own=2 added=9 newmin40=27 ours=0
+SITE 91 QGATE base=0x960730 own=2 q50=2 ours=0
+PIPE n=28 base=0x960d20 own=2 x=47 y=37 min40=40 3c=35 cc=1 d0=9 q50=156 ours=0
+SITE 92 IGATE base=0x960d20 own=2 d0=35 q50=156 f30=0x300c020 min40=40 ours=0
+SITE 93 IADD base=0x960d20 own=2 added=9 newmin40=49 ours=0
+SITE 94 QGATE base=0x960d20 own=2 q50=2 ours=0
+PIPE n=29 base=0x960f80 own=2 x=43 y=53 min40=22 3c=18 cc=0 d0=6 q50=148 ours=0
+SITE 95 IGATE base=0x960f80 own=2 d0=18 q50=148 f30=0xb001021 min40=22 ours=0
+SITE 96 IADD base=0x960f80 own=2 added=6 newmin40=28 ours=0
+SITE 97 QGATE base=0x960f80 own=2 q50=2 ours=0
+PIPE n=30 base=0x961310 own=2 x=56 y=54 min40=24 3c=22 cc=0 d0=7 q50=148 ours=0
+SITE 98 IGATE base=0x961310 own=2 d0=22 q50=148 f30=0x3002020 min40=24 ours=0
+SITE 99 IADD base=0x961310 own=2 added=7 newmin40=31 ours=0
+SITE 100 QGATE base=0x961310 own=2 q50=2 ours=0
+PIPE n=31 base=0x961440 own=2 x=49 y=49 min40=13 3c=21 cc=1 d0=7 q50=148 ours=0
+SITE 101 IGATE base=0x961440 own=2 d0=21 q50=148 f30=0x3004020 min40=13 ours=0
+SITE 102 IADD base=0x961440 own=2 added=7 newmin40=20 ours=0
+SITE 103 QGATE base=0x961440 own=2 q50=2 ours=0
+PIPE n=32 base=0x961570 own=2 x=16 y=40 min40=12 3c=10 cc=2 d0=4 q50=154 ours=0
+SITE 104 IGATE base=0x961570 own=2 d0=10 q50=154 f30=0x3002020 min40=12 ours=0
+SITE 105 IADD base=0x961570 own=2 added=4 newmin40=16 ours=0
+SITE 106 QGATE base=0x961570 own=2 q50=2 ours=0
+PIPE n=33 base=0x9617d0 own=2 x=23 y=61 min40=17 3c=8 cc=1 d0=2 q50=154 ours=0
+SITE 107 IGATE base=0x9617d0 own=2 d0=8 q50=154 f30=0x2000 min40=17 ours=0
+SITE 108 IADD base=0x9617d0 own=2 added=2 newmin40=19 ours=0
+SITE 109 QGATE base=0x9617d0 own=2 q50=2 ours=0
+PIPE n=34 base=0x961a30 own=2 x=47 y=53 min40=32 3c=19 cc=-1 d0=7 q50=148 ours=0
+SITE 110 IGATE base=0x961a30 own=2 d0=19 q50=148 f30=0x3004020 min40=32 ours=0
+SITE 111 IADD base=0x961a30 own=2 added=7 newmin40=39 ours=0
+SITE 112 QGATE base=0x961a30 own=2 q50=2 ours=0
+PIPE n=35 base=0x961b60 own=2 x=53 y=47 min40=14 3c=48 cc=1 d0=6 q50=148 ours=0
+SITE 113 IGATE base=0x961b60 own=2 d0=48 q50=148 f30=0x3004020 min40=14 ours=0
+SITE 114 IADD base=0x961b60 own=2 added=6 newmin40=20 ours=0
+SITE 115 QGATE base=0x961b60 own=2 q50=2 ours=0
+PIPE n=36 base=0x961dc0 own=2 x=57 y=49 min40=15 3c=30 cc=1 d0=4 q50=148 ours=0
+SITE 116 IGATE base=0x961dc0 own=2 d0=30 q50=148 f30=0x3000020 min40=15 ours=0
+SITE 117 IADD base=0x961dc0 own=2 added=4 newmin40=19 ours=0
+SITE 118 QGATE base=0x961dc0 own=2 q50=2 ours=0
+PIPE n=37 base=0x962020 own=2 x=60 y=52 min40=38 3c=1 cc=1 d0=4 q50=148 ours=0
+SITE 119 IGATE base=0x962020 own=2 d0=1 q50=148 f30=0x3004020 min40=38 ours=0
+SITE 120 IADD base=0x962020 own=2 added=4 newmin40=42 ours=0
+SITE 121 QGATE base=0x962020 own=2 q50=2 ours=0
+PIPE n=38 base=0x962150 own=2 x=39 y=55 min40=30 3c=33 cc=2 d0=11 q50=148 ours=0
+SITE 122 IGATE base=0x962150 own=2 d0=33 q50=148 f30=0x3001020 min40=30 ours=0
+SITE 123 IADD base=0x962150 own=2 added=11 newmin40=41 ours=0
+SITE 124 QGATE base=0x962150 own=2 q50=2 ours=0
+PIPE n=39 base=0x9624e0 own=2 x=40 y=50 min40=9 3c=7 cc=0 d0=6 q50=-11 ours=0
+SITE 125 IGATE base=0x9624e0 own=2 d0=7 q50=-11 f30=0x3006022 min40=9 ours=0
+SITE 126 QGATE base=0x9624e0 own=2 q50=2 ours=0
+PIPE n=40 base=0x962870 own=2 x=60 y=66 min40=8 3c=35 cc=1 d0=4 q50=158 ours=0
+SITE 127 IGATE base=0x962870 own=2 d0=35 q50=158 f30=0x308a000 min40=8 ours=0
+SITE 128 IADD base=0x962870 own=2 added=4 newmin40=12 ours=0
+SITE 129 QGATE base=0x962870 own=2 q50=2 ours=0
+PIPE n=41 base=0x9629a0 own=2 x=63 y=29 min40=27 3c=8 cc=1 d0=4 q50=134 ours=0
+SITE 130 IGATE base=0x9629a0 own=2 d0=8 q50=134 f30=0x3089000 min40=27 ours=0
+SITE 131 IADD base=0x9629a0 own=2 added=4 newmin40=31 ours=0
+SITE 132 QGATE base=0x9629a0 own=2 q50=2 ours=0
+PIPE n=42 base=0x962c00 own=2 x=42 y=58 min40=38 3c=5 cc=1 d0=6 q50=148 ours=0
+SITE 133 IGATE base=0x962c00 own=2 d0=5 q50=148 f30=0x3021 min40=38 ours=0
+SITE 134 IADD base=0x962c00 own=2 added=6 newmin40=44 ours=0
+SITE 135 QGATE base=0x962c00 own=2 q50=2 ours=0
+SITE 4 ST1C base=0x962c00 own=2 scratch=7696 val1c=30784 q50=148 pop=5 class=0 ours=0
+SITE 136 COMPLET base=0x962c00 own=2 ebx=148 edi=44 esi=67894788 min40=44 q50=148 pop=5 fc=1 cap=10 d0=6 cc=1 f3c=5 e0=0 f0=0 c0=6 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 137 SPENDA base=0x962c00 own=2 cost_edi=44 min40_pre=44 m28=2 m30=2 ours=0
+SITE 138 MIRA base=0x962c00 own=2 accum_final=6 mir98_pre=38 ours=0
+PIPE n=43 base=0x962d30 own=2 x=34 y=54 min40=28 3c=11 cc=2 d0=6 q50=155 ours=0
+SITE 139 IGATE base=0x962d30 own=2 d0=11 q50=155 f30=0x8001000 min40=28 ours=0
+SITE 140 IADD base=0x962d30 own=2 added=6 newmin40=34 ours=0
+SITE 141 QGATE base=0x962d30 own=2 q50=2 ours=0
+PIPE n=44 base=0x962f90 own=2 x=1 y=77 min40=30 3c=16 cc=2 d0=4 q50=151 ours=0
+SITE 142 IGATE base=0x962f90 own=2 d0=16 q50=151 f30=0x300c000 min40=30 ours=0
+SITE 143 IADD base=0x962f90 own=2 added=4 newmin40=34 ours=0
+SITE 144 QGATE base=0x962f90 own=2 q50=2 ours=0
+PIPE n=45 base=0x9630c0 own=2 x=57 y=21 min40=1 3c=10 cc=4 d0=4 q50=151 ours=0
+SITE 145 IGATE base=0x9630c0 own=2 d0=10 q50=151 f30=0x3008000 min40=1 ours=0
+SITE 146 IADD base=0x9630c0 own=2 added=4 newmin40=5 ours=0
+SITE 147 QGATE base=0x9630c0 own=2 q50=2 ours=0
+PIPE n=46 base=0x9631f0 own=2 x=7 y=77 min40=3 3c=12 cc=4 d0=2 q50=150 ours=0
+SITE 148 IGATE base=0x9631f0 own=2 d0=12 q50=150 f30=0xa000 min40=3 ours=0
+SITE 149 IADD base=0x9631f0 own=2 added=2 newmin40=5 ours=0
+SITE 150 QGATE base=0x9631f0 own=2 q50=2 ours=0
+WP 1 D0 eip=0x4e955d new=0 c0=6 f0=6 e0=0 min40=200
+PIPE n=47 base=0x962e60 own=3 x=45 y=11 min40=200 3c=500 cc=0 d0=0 q50=2 ours=1
+SITE 151 IGATE base=0x962e60 own=3 d0=500 q50=2 f30=0x5000 min40=200 ours=1
+SITE 152 IADD base=0x962e60 own=3 added=0 newmin40=200 ours=1
+SITE 153 QGATE base=0x962e60 own=3 q50=14663233 ours=1
+SITE 5 ST1C base=0x962e60 own=3 scratch=104 val1c=416 q50=2 pop=4 class=0 ours=1
+SITE 154 COMPLET base=0x962e60 own=3 ebx=2 edi=10 esi=8 min40=200 q50=2 pop=4 fc=2 cap=10 d0=0 cc=0 f3c=500 e0=0 f0=6 c0=6 m1c=104 m20=0 m24=0x6234 m28=3 m2c=0x8 ours=1
+SITE 155 SPENDA base=0x962e60 own=3 cost_edi=10 min40_pre=200 m28=3 m30=1 ours=1
+WP 2 MIN40 eip=0x4efee0 new=190 own=3 x=45 y=11 d0=0 q50=2 eax=0x68 ecx=0x962e60 edx=0x6 esi=0xbe edi=0xa
+SITE 156 CLAMP1 base=0x962e60 own=3 accum=190 d0=0 cap=10 min=8 evbit=0x8 mask=0xff08 ours=1
+WP 3 MIN40 eip=0x4eff23 new=0 own=3 x=45 y=11 d0=0 q50=2 eax=0 ecx=0xa edx=0 esi=0x962e60 edi=0xa
+SITE 157 MIRA base=0x962e60 own=3 accum_final=0 mir98_pre=0 ours=1
+WP 4 ENERGY eip=0x4f5c92 new=21 eax=0x15 ecx=0x962e60 esi=0x6234 edi=0x3
+WP 5 ENERGY eip=0x4f4958 new=20 eax=0x1 ecx=0x14 esi=0x6 edi=0x6234
+WP 6 ENERGY eip=0x4f4958 new=19 eax=0x1 ecx=0x13 esi=0x7 edi=0x6234
+PIPE n=48 base=0x95dda0 own=4 x=77 y=13 min40=37 3c=43 cc=2 d0=6 q50=-29 ours=0
+SITE 158 IGATE base=0x95dda0 own=4 d0=43 q50=-29 f30=0x3004020 min40=37 ours=0
+SITE 159 IADD base=0x95dda0 own=4 added=6 newmin40=43 ours=0
+SITE 160 QGATE base=0x95dda0 own=4 q50=4 ours=0
+PIPE n=49 base=0x95e260 own=4 x=79 y=17 min40=26 3c=0 cc=0 d0=6 q50=-29 ours=0
+SITE 161 IGATE base=0x95e260 own=4 d0=0 q50=-29 f30=0x700d020 min40=26 ours=0
+SITE 162 IADD base=0x95e260 own=4 added=6 newmin40=32 ours=0
+SITE 163 QGATE base=0x95e260 own=4 q50=4 ours=0
+PIPE n=50 base=0x95ef70 own=4 x=9 y=15 min40=14 3c=20 cc=1 d0=10 q50=265 ours=0
+SITE 164 IGATE base=0x95ef70 own=4 d0=20 q50=265 f30=0x7004020 min40=14 ours=0
+SITE 165 IADD base=0x95ef70 own=4 added=10 newmin40=24 ours=0
+SITE 166 QGATE base=0x95ef70 own=4 q50=4 ours=0
+PIPE n=51 base=0x95fdb0 own=4 x=12 y=36 min40=51 3c=39 cc=0 d0=3 q50=260 ours=0
+SITE 167 IGATE base=0x95fdb0 own=4 d0=39 q50=260 f30=0xb002020 min40=51 ours=0
+SITE 168 IADD base=0x95fdb0 own=4 added=3 newmin40=54 ours=0
+SITE 169 QGATE base=0x95fdb0 own=4 q50=4 ours=0
+PIPE n=52 base=0x95fee0 own=4 x=70 y=12 min40=5 3c=26 cc=4 d0=7 q50=274 ours=0
+SITE 170 IGATE base=0x95fee0 own=4 d0=26 q50=274 f30=0x7001000 min40=5 ours=0
+SITE 171 IADD base=0x95fee0 own=4 added=7 newmin40=12 ours=0
+SITE 172 QGATE base=0x95fee0 own=4 q50=4 ours=0
+PIPE n=53 base=0x9603a0 own=4 x=63 y=9 min40=30 3c=41 cc=1 d0=7 q50=-29 ours=0
+SITE 173 IGATE base=0x9603a0 own=4 d0=41 q50=-29 f30=0x3004020 min40=30 ours=0
+SITE 174 IADD base=0x9603a0 own=4 added=7 newmin40=37 ours=0
+SITE 175 QGATE base=0x9603a0 own=4 q50=4 ours=0
+PIPE n=54 base=0x961c90 own=4 x=69 y=5 min40=81 3c=25 cc=0 d0=5 q50=262 ours=0
+SITE 176 IGATE base=0x961c90 own=4 d0=25 q50=262 f30=0x3004020 min40=81 ours=0
+SITE 177 IADD base=0x961c90 own=4 added=5 newmin40=86 ours=0
+SITE 178 QGATE base=0x961c90 own=4 q50=4 ours=0
+PIPE n=55 base=0x9623b0 own=4 x=10 y=8 min40=3 3c=38 cc=1 d0=4 q50=-29 ours=0
+SITE 179 IGATE base=0x9623b0 own=4 d0=38 q50=-29 f30=0x4020 min40=3 ours=0
+SITE 180 IADD base=0x9623b0 own=4 added=4 newmin40=7 ours=0
+SITE 181 QGATE base=0x9623b0 own=4 q50=4 ours=0
+PIPE n=56 base=0x95ded0 own=5 x=76 y=72 min40=2 3c=30 cc=0 d0=8 q50=329 ours=0
+SITE 182 IGATE base=0x95ded0 own=5 d0=30 q50=329 f30=0x3004000 min40=2 ours=0
+SITE 183 IADD base=0x95ded0 own=5 added=8 newmin40=10 ours=0
+SITE 184 QGATE base=0x95ded0 own=5 q50=5 ours=0
+PIPE n=57 base=0x95e5f0 own=5 x=70 y=70 min40=12 3c=0 cc=0 d0=7 q50=322 ours=0
+SITE 185 IGATE base=0x95e5f0 own=5 d0=0 q50=322 f30=0xb002020 min40=12 ours=0
+SITE 186 IADD base=0x95e5f0 own=5 added=7 newmin40=19 ours=0
+SITE 187 QGATE base=0x95e5f0 own=5 q50=5 ours=0
+PIPE n=58 base=0x960990 own=5 x=73 y=63 min40=5 3c=0 cc=0 d0=4 q50=6 ours=0
+SITE 188 IGATE base=0x960990 own=5 d0=0 q50=6 f30=0x4000 min40=5 ours=0
+SITE 189 IADD base=0x960990 own=5 added=4 newmin40=9 ours=0
+SITE 190 QGATE base=0x960990 own=5 q50=5 ours=0
+PIPE n=59 base=0x95eab0 own=6 x=59 y=71 min40=51 3c=28 cc=1 d0=5 q50=396 ours=0
+SITE 191 IGATE base=0x95eab0 own=6 d0=28 q50=396 f30=0x2006020 min40=51 ours=0
+SITE 192 IADD base=0x95eab0 own=6 added=5 newmin40=56 ours=0
+SITE 193 QGATE base=0x95eab0 own=6 q50=6 ours=0
+PIPE n=60 base=0x95f1d0 own=6 x=54 y=70 min40=1 3c=44 cc=2 d0=8 q50=398 ours=0
+SITE 194 IGATE base=0x95f1d0 own=6 d0=44 q50=398 f30=0x3004060 min40=1 ours=0
+SITE 195 IADD base=0x95f1d0 own=6 added=8 newmin40=9 ours=0
+SITE 196 QGATE base=0x95f1d0 own=6 q50=6 ours=0
+PIPE n=61 base=0x95f8f0 own=6 x=47 y=71 min40=7 3c=25 cc=1 d0=4 q50=399 ours=0
+SITE 197 IGATE base=0x95f8f0 own=6 d0=25 q50=399 f30=0x4020 min40=7 ours=0
+SITE 198 IADD base=0x95f8f0 own=6 added=4 newmin40=11 ours=0
+SITE 199 QGATE base=0x95f8f0 own=6 q50=6 ours=0
+PIPE n=62 base=0x960600 own=6 x=61 y=77 min40=29 3c=10 cc=1 d0=7 q50=399 ours=0
+SITE 200 IGATE base=0x960600 own=6 d0=10 q50=399 f30=0x4020 min40=29 ours=0
+SITE 201 IADD base=0x960600 own=6 added=7 newmin40=36 ours=0
+SITE 202 QGATE base=0x960600 own=6 q50=6 ours=0
+PIPE n=63 base=0x960860 own=6 x=50 y=66 min40=16 3c=0 cc=0 d0=5 q50=398 ours=0
+SITE 203 IGATE base=0x960860 own=6 d0=0 q50=398 f30=0x4040 min40=16 ours=0
+SITE 204 IADD base=0x960860 own=6 added=5 newmin40=21 ours=0
+SITE 205 QGATE base=0x960860 own=6 q50=6 ours=0
+PIPE n=64 base=0x9616a0 own=6 x=29 y=65 min40=32 3c=8 cc=0 d0=5 q50=396 ours=0
+SITE 206 IGATE base=0x9616a0 own=6 d0=8 q50=396 f30=0x4000 min40=32 ours=0
+SITE 207 IADD base=0x9616a0 own=6 added=5 newmin40=37 ours=0
+SITE 208 QGATE base=0x9616a0 own=6 q50=6 ours=0
+PIPE n=65 base=0x961ef0 own=6 x=26 y=68 min40=60 3c=17 cc=1 d0=5 q50=399 ours=0
+SITE 209 IGATE base=0x961ef0 own=6 d0=17 q50=399 f30=0x3000 min40=60 ours=0
+SITE 210 IADD base=0x961ef0 own=6 added=5 newmin40=65 ours=0
+SITE 211 QGATE base=0x961ef0 own=6 q50=6 ours=0
+PIPE n=66 base=0x962280 own=6 x=36 y=66 min40=11 3c=10 cc=2 d0=10 q50=389 ours=0
+SITE 212 IGATE base=0x962280 own=6 d0=10 q50=389 f30=0x4000 min40=11 ours=0
+SITE 213 IADD base=0x962280 own=6 added=10 newmin40=21 ours=0
+SITE 214 QGATE base=0x962280 own=6 q50=6 ours=0
+PIPE n=67 base=0x95e130 own=7 x=8 y=64 min40=78 3c=65 cc=6 d0=7 q50=460 ours=0
+SITE 215 IGATE base=0x95e130 own=7 d0=65 q50=460 f30=0x3000020 min40=78 ours=0
+SITE 216 IADD base=0x95e130 own=7 added=7 newmin40=85 ours=0
+SITE 217 QGATE base=0x95e130 own=7 q50=7 ours=0
+SITE 6 ST1C base=0x95e130 own=7 scratch=23920 val1c=95680 q50=460 pop=9 class=0 ours=0
+SITE 218 COMPLET base=0x95e130 own=7 ebx=460 edi=80 esi=67904600 min40=85 q50=460 pop=9 fc=7 cap=10 d0=7 cc=6 f3c=65 e0=0 f0=5 c0=12 m1c=23920 m20=0 m24=0xe524 m28=7 m2c=0x80 ours=0
+SITE 219 SPENDA base=0x95e130 own=7 cost_edi=80 min40_pre=85 m28=7 m30=6 ours=0
+SITE 220 MIRA base=0x95e130 own=7 accum_final=7 mir98_pre=78 ours=0
+PIPE n=68 base=0x95e390 own=7 x=2 y=64 min40=8 3c=0 cc=0 d0=7 q50=463 ours=0
+SITE 221 IGATE base=0x95e390 own=7 d0=0 q50=463 f30=0x3004020 min40=8 ours=0
+SITE 222 IADD base=0x95e390 own=7 added=7 newmin40=15 ours=0
+SITE 223 QGATE base=0x95e390 own=7 q50=7 ours=0
+PIPE n=69 base=0x95ebe0 own=7 x=4 y=70 min40=5 3c=15 cc=1 d0=5 q50=463 ours=0
+SITE 224 IGATE base=0x95ebe0 own=7 d0=15 q50=463 f30=0x300c024 min40=5 ours=0
+SITE 225 IADD base=0x95ebe0 own=7 added=5 newmin40=10 ours=0
+SITE 226 QGATE base=0x95ebe0 own=7 q50=7 ours=0
+PIPE n=70 base=0x95ed10 own=7 x=1 y=55 min40=4 3c=0 cc=0 d0=11 q50=6 ours=0
+SITE 227 IGATE base=0x95ed10 own=7 d0=0 q50=6 f30=0x3004020 min40=4 ours=0
+SITE 228 IADD base=0x95ed10 own=7 added=11 newmin40=15 ours=0
+SITE 229 QGATE base=0x95ed10 own=7 q50=7 ours=0
+PIPE n=71 base=0x95f430 own=7 x=3 y=51 min40=52 3c=0 cc=0 d0=2 q50=458 ours=0
+SITE 230 IGATE base=0x95f430 own=7 d0=0 q50=458 f30=0x3004024 min40=52 ours=0
+SITE 231 IADD base=0x95f430 own=7 added=2 newmin40=54 ours=0
+SITE 232 QGATE base=0x95f430 own=7 q50=7 ours=0
+PIPE n=72 base=0x960140 own=7 x=10 y=54 min40=15 3c=17 cc=1 d0=8 q50=463 ours=0
+SITE 233 IGATE base=0x960140 own=7 d0=17 q50=463 f30=0x3004020 min40=15 ours=0
+SITE 234 IADD base=0x960140 own=7 added=8 newmin40=23 ours=0
+SITE 235 QGATE base=0x960140 own=7 q50=7 ours=0
+PIPE n=73 base=0x960bf0 own=7 x=5 y=57 min40=68 3c=0 cc=0 d0=4 q50=458 ours=0
+SITE 236 IGATE base=0x960bf0 own=7 d0=0 q50=458 f30=0x4024 min40=68 ours=0
+SITE 237 IADD base=0x960bf0 own=7 added=4 newmin40=72 ours=0
+SITE 238 QGATE base=0x960bf0 own=7 q50=7 ours=0
+SITE 7 ST1C base=0x960bf0 own=7 scratch=23816 val1c=95264 q50=458 pop=4 class=0 ours=0
+SITE 239 COMPLET base=0x960bf0 own=7 ebx=458 edi=70 esi=67892192 min40=72 q50=458 pop=4 fc=3 cap=10 d0=4 cc=0 f3c=0 e0=0 f0=2 c0=6 m1c=23816 m20=0 m24=0xe524 m28=7 m2c=0x80 ours=0
+SITE 240 SPENDA base=0x960bf0 own=7 cost_edi=70 min40_pre=72 m28=7 m30=1 ours=0
+SITE 241 MIRA base=0x960bf0 own=7 accum_final=4 mir98_pre=68 ours=0
+PIPE n=74 base=0x960e50 own=7 x=73 y=51 min40=37 3c=17 cc=0 d0=4 q50=453 ours=0
+SITE 242 IGATE base=0x960e50 own=7 d0=17 q50=453 f30=0x4004 min40=37 ours=0
+SITE 243 IADD base=0x960e50 own=7 added=4 newmin40=41 ours=0
+SITE 244 QGATE base=0x960e50 own=7 q50=7 ours=0
+PIPE n=75 base=0x962ad0 own=7 x=76 y=48 min40=37 3c=5 cc=1 d0=0 q50=464 ours=0
+SITE 245 IGATE base=0x962ad0 own=7 d0=5 q50=464 f30=0x5024 min40=37 ours=0
+SITE 246 IADD base=0x962ad0 own=7 added=0 newmin40=37 ours=0
+SITE 247 QGATE base=0x962ad0 own=7 q50=7 ours=0
+ROUND year=2348 turn=248 cur=7 nb=75 mask=0xff08 cap=10 g38=0 g4c=4 nrg3=19 led3=0
+OURBASE idx=71 addr=0x962e60 x=45 y=11 pop=5 f30=0x805000 3c=-2 min40=0 f44=2 f4c=0 q50=2 mir94=0 mir98=0 c0=7 cc=-1 d0=0 e0=0 f0=7 fc=2 f38=0xdfbe41
+UNIT idx=185 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=188 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=276 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=284 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=288 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=294 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNIT idx=299 type=2 x=45 y=11 order=0 mpused=0 home=71
+UNITS n=7
+PIPE n=76 base=0x95db40 own=1 x=24 y=34 min40=18 3c=90 cc=3 d0=6 q50=6 ours=0
+SITE 248 IGATE base=0x95db40 own=1 d0=90 q50=6 f30=0x3000020 min40=18 ours=0
+SITE 249 IADD base=0x95db40 own=1 added=6 newmin40=24 ours=0
+SITE 250 QGATE base=0x95db40 own=1 q50=1 ours=0
+PIPE n=77 base=0x95e4c0 own=1 x=30 y=32 min40=23 3c=65 cc=1 d0=3 q50=-29 ours=0
+SITE 251 IGATE base=0x95e4c0 own=1 d0=65 q50=-29 f30=0x300d020 min40=23 ours=0
+SITE 252 IADD base=0x95e4c0 own=1 added=3 newmin40=26 ours=0
+SITE 253 QGATE base=0x95e4c0 own=1 q50=1 ours=0
+PIPE n=78 base=0x95ee40 own=1 x=28 y=26 min40=10 3c=41 cc=1 d0=1 q50=67 ours=0
+SITE 254 IGATE base=0x95ee40 own=1 d0=41 q50=67 f30=0x3006020 min40=10 ours=0
+SITE 255 IADD base=0x95ee40 own=1 added=1 newmin40=11 ours=0
+SITE 256 QGATE base=0x95ee40 own=1 q50=1 ours=0
+PIPE n=79 base=0x95fa20 own=1 x=20 y=30 min40=33 3c=36 cc=3 d0=7 q50=68 ours=0
+SITE 257 IGATE base=0x95fa20 own=1 d0=36 q50=68 f30=0x3008020 min40=33 ours=0
+SITE 258 IADD base=0x95fa20 own=1 added=7 newmin40=40 ours=0
+SITE 259 QGATE base=0x95fa20 own=1 q50=1 ours=0
+PIPE n=80 base=0x960ac0 own=1 x=14 y=26 min40=46 3c=18 cc=0 d0=3 q50=-29 ours=0
+SITE 260 IGATE base=0x960ac0 own=1 d0=18 q50=-29 f30=0x3004020 min40=46 ours=0
+SITE 261 IADD base=0x960ac0 own=1 added=3 newmin40=49 ours=0
+SITE 262 QGATE base=0x960ac0 own=1 q50=1 ours=0
+PIPE n=81 base=0x9610b0 own=1 x=11 y=23 min40=16 3c=0 cc=0 d0=0 q50=87 ours=0
+SITE 263 IGATE base=0x9610b0 own=1 d0=0 q50=87 f30=0xc020 min40=16 ours=0
+SITE 264 IADD base=0x9610b0 own=1 added=0 newmin40=16 ours=0
+SITE 265 QGATE base=0x9610b0 own=1 q50=1 ours=0
+PIPE n=82 base=0x9611e0 own=1 x=18 y=34 min40=32 3c=57 cc=4 d0=4 q50=82 ours=0
+SITE 266 IGATE base=0x9611e0 own=1 d0=57 q50=82 f30=0x3288001 min40=32 ours=0
+SITE 267 IADD base=0x9611e0 own=1 added=4 newmin40=36 ours=0
+SITE 268 QGATE base=0x9611e0 own=1 q50=1 ours=0
+PIPE n=83 base=0x961900 own=1 x=32 y=28 min40=28 3c=16 cc=0 d0=4 q50=72 ours=0
+SITE 269 IGATE base=0x961900 own=1 d0=16 q50=72 f30=0xb00c028 min40=28 ours=0
+SITE 270 IADD base=0x961900 own=1 added=4 newmin40=32 ours=0
+SITE 271 QGATE base=0x961900 own=1 q50=477 ours=0
+PIPE n=84 base=0x962610 own=1 x=17 y=5 min40=68 3c=36 cc=2 d0=2 q50=76 ours=0
+SITE 272 IGATE base=0x962610 own=1 d0=36 q50=76 f30=0x300a001 min40=68 ours=0
+SITE 273 IADD base=0x962610 own=1 added=2 newmin40=70 ours=0
+SITE 274 QGATE base=0x962610 own=1 q50=1 ours=0
+PIPE n=85 base=0x962740 own=1 x=24 y=28 min40=67 3c=19 cc=0 d0=4 q50=79 ours=0
+SITE 275 IGATE base=0x962740 own=1 d0=19 q50=79 f30=0xc020 min40=67 ours=0
+SITE 276 IADD base=0x962740 own=1 added=4 newmin40=71 ours=0
+SITE 277 QGATE base=0x962740 own=1 q50=1 ours=0
+PIPE n=86 base=0x95da10 own=2 x=20 y=50 min40=21 3c=16 cc=1 d0=10 q50=-6 ours=0
+SITE 278 IGATE base=0x95da10 own=2 d0=16 q50=-6 f30=0x50a2 min40=21 ours=0
+SITE 279 QGATE base=0x95da10 own=2 q50=2 ours=0
+PIPE n=87 base=0x95dc70 own=2 x=53 y=51 min40=81 3c=11 cc=0 d0=9 q50=148 ours=0
+SITE 280 IGATE base=0x95dc70 own=2 d0=11 q50=148 f30=0x3004000 min40=81 ours=0
+SITE 281 IADD base=0x95dc70 own=2 added=9 newmin40=90 ours=0
+SITE 282 QGATE base=0x95dc70 own=2 q50=2 ours=0
+SITE 8 ST1C base=0x95dc70 own=2 scratch=7696 val1c=30784 q50=148 pop=7 class=0 ours=0
+SITE 283 COMPLET base=0x95dc70 own=2 ebx=148 edi=44 esi=67882688 min40=90 q50=148 pop=7 fc=3 cap=10 d0=9 cc=0 f3c=11 e0=0 f0=8 c0=17 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 284 SPENDA base=0x95dc70 own=2 cost_edi=44 min40_pre=90 m28=2 m30=4 ours=0
+SITE 285 CLAMP1 base=0x95dc70 own=2 accum=46 d0=9 cap=10 min=4 evbit=0x4 mask=0xff08 ours=0
+SITE 286 MIRA base=0x95dc70 own=2 accum_final=9 mir98_pre=81 ours=0
+PIPE n=88 base=0x95e000 own=2 x=34 y=50 min40=26 3c=3 cc=1 d0=2 q50=155 ours=0
+SITE 287 IGATE base=0x95e000 own=2 d0=3 q50=155 f30=0x3003020 min40=26 ours=0
+SITE 288 IADD base=0x95e000 own=2 added=2 newmin40=28 ours=0
+SITE 289 QGATE base=0x95e000 own=2 q50=2 ours=0
+PIPE n=89 base=0x95e720 own=2 x=33 y=59 min40=1 3c=0 cc=0 d0=5 q50=155 ours=0
+SITE 290 IGATE base=0x95e720 own=2 d0=0 q50=155 f30=0x3004020 min40=1 ours=0
+SITE 291 IADD base=0x95e720 own=2 added=5 newmin40=6 ours=0
+SITE 292 QGATE base=0x95e720 own=2 q50=2 ours=0
+PIPE n=90 base=0x95e850 own=2 x=45 y=49 min40=39 3c=9 cc=3 d0=14 q50=148 ours=0
+SITE 293 IGATE base=0x95e850 own=2 d0=9 q50=148 f30=0x3008020 min40=39 ours=0
+SITE 294 IADD base=0x95e850 own=2 added=14 newmin40=53 ours=0
+SITE 295 QGATE base=0x95e850 own=2 q50=2 ours=0
+SITE 9 ST1C base=0x95e850 own=2 scratch=7696 val1c=30784 q50=148 pop=8 class=0 ours=0
+SITE 296 COMPLET base=0x95e850 own=2 ebx=148 edi=44 esi=67878992 min40=53 q50=148 pop=8 fc=4 cap=10 d0=14 cc=3 f3c=9 e0=0 f0=0 c0=14 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 297 SPENDA base=0x95e850 own=2 cost_edi=44 min40_pre=53 m28=2 m30=5 ours=0
+SITE 298 MIRA base=0x95e850 own=2 accum_final=14 mir98_pre=39 ours=0
+PIPE n=91 base=0x95e980 own=2 x=26 y=48 min40=21 3c=0 cc=0 d0=13 q50=-6 ours=0
+SITE 299 IGATE base=0x95e980 own=2 d0=0 q50=-6 f30=0x3004022 min40=21 ours=0
+SITE 300 QGATE base=0x95e980 own=2 q50=2 ours=0
+PIPE n=92 base=0x95f0a0 own=2 x=37 y=43 min40=18 3c=19 cc=2 d0=2 q50=155 ours=0
+SITE 301 IGATE base=0x95f0a0 own=2 d0=19 q50=155 f30=0x3000020 min40=18 ours=0
+SITE 302 IADD base=0x95f0a0 own=2 added=2 newmin40=20 ours=0
+SITE 303 QGATE base=0x95f0a0 own=2 q50=2 ours=0
+PIPE n=93 base=0x95f300 own=2 x=51 y=57 min40=42 3c=13 cc=0 d0=8 q50=148 ours=0
+SITE 304 IGATE base=0x95f300 own=2 d0=13 q50=148 f30=0x3004020 min40=42 ours=0
+SITE 305 IADD base=0x95f300 own=2 added=8 newmin40=50 ours=0
+SITE 306 QGATE base=0x95f300 own=2 q50=2 ours=0
+SITE 10 ST1C base=0x95f300 own=2 scratch=7696 val1c=30784 q50=148 pop=6 class=0 ours=0
+SITE 307 COMPLET base=0x95f300 own=2 ebx=148 edi=44 esi=67893204 min40=50 q50=148 pop=6 fc=6 cap=10 d0=8 cc=0 f3c=13 e0=0 f0=3 c0=11 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 308 SPENDA base=0x95f300 own=2 cost_edi=44 min40_pre=50 m28=2 m30=3 ours=0
+SITE 309 MIRA base=0x95f300 own=2 accum_final=8 mir98_pre=42 ours=0
+PIPE n=94 base=0x95f560 own=2 x=42 y=46 min40=114 3c=37 cc=3 d0=13 q50=147 ours=0
+SITE 310 IGATE base=0x95f560 own=2 d0=37 q50=147 f30=0x3080020 min40=114 ours=0
+SITE 311 IADD base=0x95f560 own=2 added=13 newmin40=127 ours=0
+SITE 312 QGATE base=0x95f560 own=2 q50=2 ours=0
+PIPE n=95 base=0x95f690 own=2 x=22 y=40 min40=4 3c=14 cc=-2 d0=3 q50=0 ours=0
+SITE 313 IGATE base=0x95f690 own=2 d0=14 q50=0 f30=0x2006020 min40=4 ours=0
+SITE 314 IADD base=0x95f690 own=2 added=3 newmin40=7 ours=0
+SITE 315 QGATE base=0x95f690 own=2 q50=2 ours=0
+PIPE n=96 base=0x95f7c0 own=2 x=43 y=41 min40=13 3c=9 cc=3 d0=11 q50=148 ours=0
+SITE 316 IGATE base=0x95f7c0 own=2 d0=9 q50=148 f30=0x300b020 min40=13 ours=0
+SITE 317 IADD base=0x95f7c0 own=2 added=11 newmin40=24 ours=0
+SITE 318 QGATE base=0x95f7c0 own=2 q50=2 ours=0
+PIPE n=97 base=0x95fb50 own=2 x=47 y=41 min40=81 3c=6 cc=2 d0=13 q50=146 ours=0
+SITE 319 IGATE base=0x95fb50 own=2 d0=6 q50=146 f30=0x3009020 min40=81 ours=0
+SITE 320 IADD base=0x95fb50 own=2 added=13 newmin40=94 ours=0
+SITE 321 QGATE base=0x95fb50 own=2 q50=2 ours=0
+PIPE n=98 base=0x95fc80 own=2 x=34 y=38 min40=43 3c=17 cc=1 d0=5 q50=148 ours=0
+SITE 322 IGATE base=0x95fc80 own=2 d0=17 q50=148 f30=0x8009020 min40=43 ours=0
+SITE 323 IADD base=0x95fc80 own=2 added=5 newmin40=48 ours=0
+SITE 324 QGATE base=0x95fc80 own=2 q50=2 ours=0
+SITE 11 ST1C base=0x95fc80 own=2 scratch=7696 val1c=30784 q50=148 pop=5 class=0 ours=0
+SITE 325 COMPLET base=0x95fc80 own=2 ebx=148 edi=44 esi=67859412 min40=48 q50=148 pop=5 fc=0 cap=10 d0=5 cc=1 f3c=17 e0=0 f0=0 c0=5 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 326 SPENDA base=0x95fc80 own=2 cost_edi=44 min40_pre=48 m28=2 m30=3 ours=0
+SITE 327 MIRA base=0x95fc80 own=2 accum_final=5 mir98_pre=43 ours=0
+PIPE n=99 base=0x960010 own=2 x=51 y=37 min40=46 3c=44 cc=1 d0=8 q50=-29 ours=0
+SITE 328 IGATE base=0x960010 own=2 d0=44 q50=-29 f30=0x300c021 min40=46 ours=0
+SITE 329 IADD base=0x960010 own=2 added=8 newmin40=54 ours=0
+SITE 330 QGATE base=0x960010 own=2 q50=2 ours=0
+PIPE n=100 base=0x960270 own=2 x=55 y=37 min40=44 3c=39 cc=3 d0=8 q50=-24 ours=0
+SITE 331 IGATE base=0x960270 own=2 d0=39 q50=-24 f30=0x3002020 min40=44 ours=0
+SITE 332 IADD base=0x960270 own=2 added=8 newmin40=52 ours=0
+SITE 333 QGATE base=0x960270 own=2 q50=2 ours=0
+PIPE n=101 base=0x9604d0 own=2 x=51 y=43 min40=41 3c=70 cc=5 d0=11 q50=-17 ours=0
+SITE 334 IGATE base=0x9604d0 own=2 d0=70 q50=-17 f30=0x3002020 min40=41 ours=0
+SITE 335 IADD base=0x9604d0 own=2 added=11 newmin40=52 ours=0
+SITE 336 QGATE base=0x9604d0 own=2 q50=2 ours=0
+PIPE n=102 base=0x960730 own=2 x=55 y=41 min40=27 3c=38 cc=2 d0=9 q50=-29 ours=0
+SITE 337 IGATE base=0x960730 own=2 d0=38 q50=-29 f30=0x3001020 min40=27 ours=0
+SITE 338 IADD base=0x960730 own=2 added=9 newmin40=36 ours=0
+SITE 339 QGATE base=0x960730 own=2 q50=2 ours=0
+PIPE n=103 base=0x960d20 own=2 x=47 y=37 min40=49 3c=36 cc=1 d0=9 q50=156 ours=0
+SITE 340 IGATE base=0x960d20 own=2 d0=36 q50=156 f30=0x300c020 min40=49 ours=0
+SITE 341 IADD base=0x960d20 own=2 added=9 newmin40=58 ours=0
+SITE 342 QGATE base=0x960d20 own=2 q50=2 ours=0
+PIPE n=104 base=0x960f80 own=2 x=43 y=53 min40=28 3c=18 cc=-1 d0=4 q50=-6 ours=0
+SITE 343 IGATE base=0x960f80 own=2 d0=18 q50=-6 f30=0x3005022 min40=28 ours=0
+SITE 344 QGATE base=0x960f80 own=2 q50=2 ours=0
+PIPE n=105 base=0x961310 own=2 x=56 y=54 min40=31 3c=22 cc=0 d0=7 q50=148 ours=0
+SITE 345 IGATE base=0x961310 own=2 d0=22 q50=148 f30=0x3002021 min40=31 ours=0
+SITE 346 IADD base=0x961310 own=2 added=7 newmin40=38 ours=0
+SITE 347 QGATE base=0x961310 own=2 q50=2 ours=0
+PIPE n=106 base=0x961440 own=2 x=49 y=49 min40=20 3c=22 cc=1 d0=7 q50=148 ours=0
+SITE 348 IGATE base=0x961440 own=2 d0=22 q50=148 f30=0x3004020 min40=20 ours=0
+SITE 349 IADD base=0x961440 own=2 added=7 newmin40=27 ours=0
+SITE 350 QGATE base=0x961440 own=2 q50=2 ours=0
+PIPE n=107 base=0x961570 own=2 x=16 y=40 min40=16 3c=12 cc=2 d0=4 q50=154 ours=0
+SITE 351 IGATE base=0x961570 own=2 d0=12 q50=154 f30=0x3002020 min40=16 ours=0
+SITE 352 IADD base=0x961570 own=2 added=4 newmin40=20 ours=0
+SITE 353 QGATE base=0x961570 own=2 q50=2 ours=0
+PIPE n=108 base=0x9617d0 own=2 x=23 y=61 min40=19 3c=9 cc=1 d0=2 q50=154 ours=0
+SITE 354 IGATE base=0x9617d0 own=2 d0=9 q50=154 f30=0x2000 min40=19 ours=0
+SITE 355 IADD base=0x9617d0 own=2 added=2 newmin40=21 ours=0
+SITE 356 QGATE base=0x9617d0 own=2 q50=2 ours=0
+PIPE n=109 base=0x961a30 own=2 x=47 y=53 min40=39 3c=18 cc=-1 d0=7 q50=148 ours=0
+SITE 357 IGATE base=0x961a30 own=2 d0=18 q50=148 f30=0x3004020 min40=39 ours=0
+SITE 358 IADD base=0x961a30 own=2 added=7 newmin40=46 ours=0
+SITE 359 QGATE base=0x961a30 own=2 q50=2 ours=0
+SITE 12 ST1C base=0x961a30 own=2 scratch=7696 val1c=30784 q50=148 pop=4 class=0 ours=0
+SITE 360 COMPLET base=0x961a30 own=2 ebx=148 edi=44 esi=67886076 min40=46 q50=148 pop=4 fc=3 cap=10 d0=7 cc=-1 f3c=18 e0=0 f0=2 c0=9 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 361 SPENDA base=0x961a30 own=2 cost_edi=44 min40_pre=46 m28=2 m30=2 ours=0
+SITE 362 MIRA base=0x961a30 own=2 accum_final=7 mir98_pre=39 ours=0
+PIPE n=110 base=0x961b60 own=2 x=53 y=47 min40=20 3c=1 cc=0 d0=5 q50=-11 ours=0
+SITE 363 IGATE base=0x961b60 own=2 d0=1 q50=-11 f30=0x3001022 min40=20 ours=0
+SITE 364 QGATE base=0x961b60 own=2 q50=2 ours=0
+PIPE n=111 base=0x961dc0 own=2 x=57 y=49 min40=19 3c=31 cc=1 d0=4 q50=148 ours=0
+SITE 365 IGATE base=0x961dc0 own=2 d0=31 q50=148 f30=0x3000020 min40=19 ours=0
+SITE 366 IADD base=0x961dc0 own=2 added=4 newmin40=23 ours=0
+SITE 367 QGATE base=0x961dc0 own=2 q50=2 ours=0
+PIPE n=112 base=0x962020 own=2 x=60 y=52 min40=42 3c=2 cc=1 d0=4 q50=148 ours=0
+SITE 368 IGATE base=0x962020 own=2 d0=2 q50=148 f30=0x3004020 min40=42 ours=0
+SITE 369 IADD base=0x962020 own=2 added=4 newmin40=46 ours=0
+SITE 370 QGATE base=0x962020 own=2 q50=2 ours=0
+SITE 13 ST1C base=0x962020 own=2 scratch=7696 val1c=30784 q50=148 pop=3 class=0 ours=0
+SITE 371 COMPLET base=0x962020 own=2 ebx=148 edi=44 esi=67884624 min40=46 q50=148 pop=3 fc=1 cap=10 d0=4 cc=1 f3c=2 e0=0 f0=1 c0=5 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 372 SPENDA base=0x962020 own=2 cost_edi=44 min40_pre=46 m28=2 m30=0 ours=0
+SITE 373 MIRA base=0x962020 own=2 accum_final=4 mir98_pre=42 ours=0
+PIPE n=113 base=0x962150 own=2 x=39 y=55 min40=41 3c=35 cc=2 d0=11 q50=148 ours=0
+SITE 374 IGATE base=0x962150 own=2 d0=35 q50=148 f30=0x3001020 min40=41 ours=0
+SITE 375 IADD base=0x962150 own=2 added=11 newmin40=52 ours=0
+SITE 376 QGATE base=0x962150 own=2 q50=2 ours=0
+SITE 14 ST1C base=0x962150 own=2 scratch=7696 val1c=30784 q50=148 pop=5 class=0 ours=0
+SITE 377 COMPLET base=0x962150 own=2 ebx=148 edi=44 esi=67889420 min40=52 q50=148 pop=5 fc=1 cap=10 d0=11 cc=2 f3c=35 e0=0 f0=0 c0=11 m1c=7696 m20=0 m24=0x4178 m28=2 m2c=0x4 ours=0
+SITE 378 SPENDA base=0x962150 own=2 cost_edi=44 min40_pre=52 m28=2 m30=2 ours=0
+SITE 379 MIRA base=0x962150 own=2 accum_final=11 mir98_pre=41 ours=0
+PIPE n=114 base=0x9624e0 own=2 x=40 y=50 min40=9 3c=7 cc=0 d0=6 q50=148 ours=0
+SITE 380 IGATE base=0x9624e0 own=2 d0=7 q50=148 f30=0x3002020 min40=9 ours=0
+SITE 381 IADD base=0x9624e0 own=2 added=6 newmin40=15 ours=0
+SITE 382 QGATE base=0x9624e0 own=2 q50=2 ours=0
+PIPE n=115 base=0x962870 own=2 x=60 y=66 min40=12 3c=36 cc=1 d0=4 q50=158 ours=0
+SITE 383 IGATE base=0x962870 own=2 d0=36 q50=158 f30=0x308a000 min40=12 ours=0
+SITE 384 IADD base=0x962870 own=2 added=4 newmin40=16 ours=0
+SITE 385 QGATE base=0x962870 own=2 q50=2 ours=0
+PIPE n=116 base=0x9629a0 own=2 x=63 y=29 min40=31 3c=9 cc=1 d0=4 q50=134 ours=0
+SITE 386 IGATE base=0x9629a0 own=2 d0=9 q50=134 f30=0x3089000 min40=31 ours=0
+SITE 387 IADD base=0x9629a0 own=2 added=4 newmin40=35 ours=0
+SITE 388 QGATE base=0x9629a0 own=2 q50=2 ours=0
+PIPE n=117 base=0x962c00 own=2 x=42 y=58 min40=0 3c=6 cc=1 d0=6 q50=148 ours=0
+SITE 389 IGATE base=0x962c00 own=2 d0=6 q50=148 f30=0x3020 min40=0 ours=0
+SITE 390 IADD base=0x962c00 own=2 added=6 newmin40=6 ours=0
+SITE 391 QGATE base=0x962c00 own=2 q50=2 ours=0
+PIPE n=118 base=0x962d30 own=2 x=34 y=54 min40=34 3c=13 cc=1 d0=4 q50=-6 ours=0
+SITE 392 IGATE base=0x962d30 own=2 d0=13 q50=-6 f30=0x3002 min40=34 ours=0
+SITE 393 QGATE base=0x962d30 own=2 q50=2 ours=0
+PIPE n=119 base=0x962f90 own=2 x=1 y=77 min40=34 3c=1 cc=0 d0=4 q50=-6 ours=0
+SITE 394 IGATE base=0x962f90 own=2 d0=1 q50=-6 f30=0x300f002 min40=34 ours=0
+SITE 395 QGATE base=0x962f90 own=2 q50=2 ours=0
+PIPE n=120 base=0x9630c0 own=2 x=57 y=21 min40=5 3c=14 cc=4 d0=4 q50=151 ours=0
+SITE 396 IGATE base=0x9630c0 own=2 d0=14 q50=151 f30=0x3008000 min40=5 ours=0
+SITE 397 IADD base=0x9630c0 own=2 added=4 newmin40=9 ours=0
+SITE 398 QGATE base=0x9630c0 own=2 q50=2 ours=0
+PIPE n=121 base=0x9631f0 own=2 x=7 y=77 min40=5 3c=16 cc=4 d0=2 q50=150 ours=0
+SITE 399 IGATE base=0x9631f0 own=2 d0=16 q50=150 f30=0xa000 min40=5 ours=0
+SITE 400 IADD base=0x9631f0 own=2 added=2 newmin40=7 ours=0
+[Inferior 1 (process 2124624) detached]

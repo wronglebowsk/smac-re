@@ -1,0 +1,4 @@
+  File "<stdin>", line 24
+    P.click((240,368)); time.sleep(1.5); print(step,'social screen OK'd'); continue
+                                                                       ^
+SyntaxError: unterminated string literal (detected at line 24)

@@ -1,0 +1,2 @@
+{"turn": 1, "year_before": 2252, "t": "19:53:57", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2253, "advanced": true, "dt": 15.3}
+{"turn": 2, "year_before": 2253, "t": "19:54:13", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2254, "advanced": true, "dt": 10.7}

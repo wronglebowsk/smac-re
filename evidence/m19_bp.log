@@ -1,0 +1,32 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Breakpoint 1 at 0x5ab320
+SETPOS idx=133 x=-3 y=-3
+#0  0x005ab320 in ?? ()
+#1  0x004c0e0a in ?? ()
+#2  0x004c1288 in ?? ()
+#3  0x004c12f6 in ?? ()
+scripts/m19_bp.gdb:16: Error in sourced command file:
+Undefined command: "silent".  Try "help".
+[Inferior 1 (process 370597) detached]

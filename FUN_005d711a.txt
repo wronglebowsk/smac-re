@@ -1,0 +1,85 @@
+
+/* WARNING: Removing unreachable block (ram,0x005d72a5) */
+
+int FUN_005d711a(undefined4 *param_1,undefined4 *param_2)
+
+{
+  int local_c;
+  int local_8;
+  
+  DAT_00992514 = *param_1;
+  DAT_00992510 = *param_2;
+  local_8 = 0;
+  while( true ) {
+    while( true ) {
+      while( true ) {
+        while (DAT_009939b0 != 0) {
+          if ((*(uint *)(DAT_009939b0 + 0x9c) & 1) != 0) {
+            FUN_005cd4f2(param_1,param_2);
+            DAT_00993988 = 0;
+            local_8 = DAT_009939b0;
+            goto LAB_005d7284;
+          }
+          DAT_009939b0 = 0;
+        }
+        if (DAT_009939b4 == 0) break;
+        if ((*(uint *)(DAT_009939b4 + 0x9c) & 1) != 0) {
+          FUN_005cd7c9(param_1,param_2);
+          DAT_00993988 = 1;
+          local_8 = DAT_009939b4;
+          goto LAB_005d7284;
+        }
+        DAT_009939b4 = 0;
+      }
+      if (DAT_009939a0 == 0) break;
+      if ((*(uint *)(DAT_009939a0 + 0x9c) & 1) != 0) {
+        FUN_005cd4f2(param_1,param_2);
+        DAT_00993988 = 0;
+        local_8 = DAT_009939a0;
+        goto LAB_005d7284;
+      }
+      DAT_009939a0 = 0;
+    }
+    if (DAT_009939a4 == 0) goto LAB_005d7284;
+    if ((*(uint *)(DAT_009939a4 + 0x9c) & 1) != 0) break;
+    DAT_009939a4 = 0;
+  }
+  FUN_005cd7c9(param_1,param_2);
+  DAT_00993988 = 1;
+  local_8 = DAT_009939a4;
+LAB_005d7284:
+  if (local_8 == 0) {
+    if (DAT_009939c4 == 0) {
+      local_c = 0;
+      while ((local_c < DAT_00993a18 &&
+             (local_8 = FUN_005d6a80(*(undefined4 *)(&DAT_00992518 + local_c * 4),param_1,param_2),
+             local_8 == 0))) {
+        local_c = local_c + 1;
+      }
+    }
+    else {
+      FUN_005cd7c9(param_1,param_2);
+      local_8 = FUN_005d6a80(DAT_009939c4,param_1,param_2);
+      if (local_8 == 0) {
+        if (DAT_009939c0 != 0) {
+          *param_1 = DAT_00992514;
+          *param_2 = DAT_00992510;
+          FUN_005cd7c9(param_1,param_2);
+          local_8 = FUN_005d6a80(DAT_009939c0,param_1,param_2);
+        }
+        if (local_8 == 0) {
+          *param_1 = DAT_00992514;
+          *param_2 = DAT_00992510;
+          FUN_005cd4f2(param_1,param_2);
+          DAT_00993988 = 0;
+          local_8 = DAT_009939c4;
+        }
+      }
+    }
+    if ((local_8 != 0) && (DAT_00993988 == 0)) {
+      local_8 = *(int *)(local_8 + 0xa8);
+    }
+  }
+  return local_8;
+}
+

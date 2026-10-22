@@ -1,0 +1,205 @@
+openjdk version "21.0.12.1" 2026-08-18
+OpenJDK Runtime Environment (build 21.0.12.1+1-1-26.04.4-Ubuntu)
+OpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-26.04.4-Ubuntu, mixed mode)
+INFO  Using log config file: jar:file:/home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Framework/Generic/lib/Generic.jar!/generic.log4j.xml (LoggingInitialization)  
+INFO  Using log file: /home/n100/.config/ghidra/ghidra_12.1.4_PUBLIC/application.log (LoggingInitialization)  
+INFO  Loading user preferences: /home/n100/.config/ghidra/ghidra_12.1.4_PUBLIC/preferences (Preferences)  
+INFO  Searching for classes... (ClassSearcher)  
+INFO  Class search complete (1544 ms) (ClassSearcher)  
+INFO  Initializing SSL Context (DefaultSSLContextInitializer)  
+INFO  Initializing Random Number Generator... (SecureRandomFactory)  
+INFO  Random Number Generator initialization complete: NativePRNGNonBlocking (SecureRandomFactory)  
+INFO  Trust manager disabled, cacerts have not been set (DefaultTrustManagerFactory)  
+INFO  Headless startup complete (4306 ms) (AnalyzeHeadless)  
+INFO  Class searcher loaded 59 extension points (20 false positives) (ClassSearcher)  
+INFO  HEADLESS Script Paths:
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BSim/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/MicrosoftCodeAnalyzer/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/8051/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PDB/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SwiftDemangler/ghidra_scripts
+    /home/n100/reverse/smac/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/VersionTracking/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/JVM/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SystemEmulation/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger-rmi-trace/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Atmel/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PyGhidra/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/DATA/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FileFormats/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FunctionID/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Decompiler/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BytePatterns/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/DecompilerDependent/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/WildcardAssembler/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/GnuDemangler/ghidra_scripts
+    /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/PIC/ghidra_scripts (HeadlessAnalyzer)  
+INFO  HEADLESS: execution starts (HeadlessAnalyzer)  
+INFO  Creating project: /home/n100/reverse/smac/ghidra_proj/SMAC (HeadlessAnalyzer)  
+INFO  Creating project: /home/n100/reverse/smac/ghidra_proj/SMAC (DefaultProject)  
+INFO  REPORT: Processing input files:  (HeadlessAnalyzer)  
+INFO       project: /home/n100/reverse/smac/ghidra_proj/SMAC (HeadlessAnalyzer)  
+INFO  IMPORTING: file:///home/n100/reverse/smac/terran.exe (HeadlessAnalyzer)  
+INFO  Using Loader: Portable Executable (PE) (ProgramLoader)  
+INFO  Using Language/Compiler: x86:LE:32:default:windows (ProgramLoader)  
+INFO  Using Library Search Path: [., /bin, /lib, /lib64, /lib/x86_64-linux-gnu, /lib/aarch64-linux-gnu, /usr/bin, /usr/lib, /usr/X11R6/bin, /usr/X11R6/lib, /usr/java/packages/lib, /usr/lib/x86_64-linux-gnu/jni, /usr/lib/x86_64-linux-gnu, /usr/lib/jni] (ProgramLoader)  
+INFO  Additional info:
+Loading file:///home/n100/reverse/smac/terran.exe?MD5=1ecfa606412257b4ee2f975a09b2e4f6...
+------------------------------------------------
+
+Searching 8 paths for library COMDLG32.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library DDRAW.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library DPLAYX.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library DSOUND.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library GDI32.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library KERNEL32.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library MSVFW32.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library SHELL32.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library USER32.DLL...
+Library not found.
+------------------------------------------------
+
+Searching 8 paths for library WINMM.DLL...
+Library not found.
+------------------------------------------------
+
+Linking the External Programs of 'terran.exe' to imported libraries...
+  [SHELL32.DLL] -> not found in project
+  [DDRAW.DLL] -> not found in project
+  [KERNEL32.DLL] -> not found in project
+  [USER32.DLL] -> not found in project
+  [GDI32.DLL] -> not found in project
+  [WINMM.DLL] -> not found in project
+  [MSVFW32.DLL] -> not found in project
+  [DSOUND.DLL] -> not found in project
+  [COMDLG32.DLL] -> not found in project
+  [DPLAYX.DLL] -> not found in project
+------------------------------------------------
+
+ (ProgramLoader)  
+INFO  IMPORTING: Loaded 0 additional files (HeadlessAnalyzer)  
+INFO  ANALYZING all memory and code: file:///home/n100/reverse/smac/terran.exe (HeadlessAnalyzer)  
+WARN  Ignoring leading '_' chars on no-return name '___raise_securityfailure' specified in file: /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/data/PEFunctionsThatDoNotReturn (NoReturnFunctionAnalyzer)  
+WARN  Ignoring leading '_' chars on no-return name '___report_rangecheckfailure' specified in file: /home/n100/tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/data/PEFunctionsThatDoNotReturn (NoReturnFunctionAnalyzer)  
+INFO  Skipping PDB processing: missing PDB information in program metadata (PdbUniversalAnalyzer)  
+INFO  Packed database cache: /var/tmp/n100-ghidra/packed-db-cache (PackedDatabaseCache)  
+WARN  Decompiling 00524340: Unable to read bytes at ram:90909090 (DecompileCallback)  
+INFO  Applied data type archive: windows_vs12_32 (ApplyDataArchiveAnalyzer)  
+INFO  Applied data type archive: windows_vs12_32 (ApplyDataArchiveAnalyzer)  
+INFO  -----------------------------------------------------
+    ASCII Strings                              1.223 secs
+    Apply Data Archives                        0.520 secs
+    Call Convention ID                         0.002 secs
+    Call-Fixup Installer                       0.245 secs
+    Create Address Tables                      0.960 secs
+    Create Address Tables - One Time           1.756 secs
+    Create Function                            3.301 secs
+    Data Reference                             1.944 secs
+    Decompiler Switch Analysis                97.622 secs
+    Demangler Microsoft                        0.633 secs
+    Disassemble                                3.192 secs
+    Disassemble Entry Points                   7.355 secs
+    Embedded Media                             0.046 secs
+    External Entry References                  0.000 secs
+    Function ID                                8.475 secs
+    Function Start Pre Search                  0.055 secs
+    Function Start Search                      0.694 secs
+    Function Start Search After Code           0.288 secs
+    Function Start Search After Data           0.583 secs
+    Function Start Search delayed - One Time   0.001 secs
+    Non-Returning Functions - Discovered       2.369 secs
+    Non-Returning Functions - Known            0.017 secs
+    PDB Universal                              0.004 secs
+    Reference                                  3.215 secs
+    Scalar Operand References                  8.378 secs
+    Shared Return Calls                        2.137 secs
+    Stack                                     30.974 secs
+    Subroutine References                      1.195 secs
+    Subroutine References - One Time           0.048 secs
+    Windows x86 PE Exception Handling         11.390 secs
+    Windows x86 PE RTTI Analyzer               0.000 secs
+    Windows x86 Thread Environment Block (TEB) Analyzer     0.020 secs
+    WindowsResourceReference                   7.185 secs
+    X86 Function Callee Purge                  6.448 secs
+    x86 Constant Reference Analyzer           29.470 secs
+-----------------------------------------------------
+     Total Time   231 secs
+-----------------------------------------------------
+ (AutoAnalysisManager)  
+INFO  REPORT: Analysis succeeded for file: file:///home/n100/reverse/smac/terran.exe (HeadlessAnalyzer)  
+INFO  REPORT: Execute script: ExportAll.java  (HeadlessAnalyzer)  
+INFO  SCRIPT: /home/n100/reverse/smac/ghidra_scripts/ExportAll.java (HeadlessAnalyzer)  
+INFO  ExportAll.java> progress 250 FUN_004071a0 ok=250 mb=0 (GhidraScript)  
+INFO  ExportAll.java> progress 500 FUN_00429b10 ok=500 mb=0 (GhidraScript)  
+INFO  ExportAll.java> progress 750 FUN_004446e0 ok=750 mb=0 (GhidraScript)  
+INFO  ExportAll.java> progress 1000 FUN_0044dcf0 ok=1000 mb=0 (GhidraScript)  
+INFO  ExportAll.java> progress 1250 FUN_0044fdb0 ok=1250 mb=0 (GhidraScript)  
+INFO  ExportAll.java> progress 1500 FUN_00452190 ok=1500 mb=1 (GhidraScript)  
+INFO  ExportAll.java> progress 1750 FUN_00454350 ok=1750 mb=1 (GhidraScript)  
+INFO  ExportAll.java> progress 2000 FUN_0045d7e0 ok=2000 mb=1 (GhidraScript)  
+INFO  ExportAll.java> progress 2250 FUN_0047a4d0 ok=2250 mb=1 (GhidraScript)  
+INFO  ExportAll.java> progress 2500 FUN_00498e20 ok=2500 mb=1 (GhidraScript)  
+INFO  ExportAll.java> progress 2750 FUN_004ba020 ok=2750 mb=2 (GhidraScript)  
+INFO  ExportAll.java> progress 3000 FUN_004cb740 ok=3000 mb=2 (GhidraScript)  
+INFO  ExportAll.java> progress 3250 FUN_005099c0 ok=3250 mb=3 (GhidraScript)  
+WARN  Decompiling 00524340: Unable to read bytes at ram:90909090 (DecompileCallback)  
+INFO  ExportAll.java> progress 3500 FUN_00551a20 ok=3500 mb=4 (GhidraScript)  
+INFO  ExportAll.java> progress 3750 FUN_00584b30 ok=3750 mb=5 (GhidraScript)  
+INFO  ExportAll.java> progress 4000 FUN_005b64c0 ok=4000 mb=6 (GhidraScript)  
+INFO  ExportAll.java> progress 4250 FUN_005cc69e ok=4250 mb=7 (GhidraScript)  
+INFO  ExportAll.java> progress 4500 FUN_005e37ce ok=4500 mb=7 (GhidraScript)  
+INFO  ExportAll.java> progress 4750 SetBorders ok=4750 mb=7 (GhidraScript)  
+INFO  ExportAll.java> progress 5000 FUN_0060d40d ok=5000 mb=8 (GhidraScript)  
+INFO  ExportAll.java> progress 5250 FUN_00625a0f ok=5250 mb=8 (GhidraScript)  
+INFO  ExportAll.java> progress 5500 FUN_0063b95a ok=5500 mb=8 (GhidraScript)  
+INFO  ExportAll.java> progress 5750 _strchr ok=5750 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 6000 __aullrem ok=6000 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 6250 Unwind@00662780 ok=6250 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 6500 Unwind@0066338f ok=6500 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 6750 Unwind@00663fa0 ok=6750 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 7000 Unwind@006652e3 ok=7000 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 7250 Unwind@00666477 ok=7250 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 7500 Unwind@0066725f ok=7500 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 7750 Unwind@00668298 ok=7750 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 8000 Unwind@00668e5f ok=8000 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 8250 Unwind@0066995a ok=8250 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 8500 Unwind@0066a4c2 ok=8500 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 8750 Unwind@0066b160 ok=8750 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 9000 Unwind@0066be2e ok=9000 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 9250 Unwind@0066cb92 ok=9250 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 9500 Unwind@0066d873 ok=9500 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 9750 Unwind@0066e469 ok=9750 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 10000 Unwind@0066f0a5 ok=10000 mb=9 (GhidraScript)  
+INFO  ExportAll.java> progress 10250 Unwind@006701d2 ok=10250 mb=9 (GhidraScript)  
+INFO  ExportAll.java> DONE functions=10284 ok=10284 shards=42 budget_hit=false (GhidraScript)  
+INFO  ANALYZING changes made by post scripts: file:///home/n100/reverse/smac/terran.exe (HeadlessAnalyzer)  
+INFO  REPORT: Post-analysis succeeded for file: file:///home/n100/reverse/smac/terran.exe (HeadlessAnalyzer)  
+INFO  /terran.exe: file created (n100) (LocalFileSystem)  
+INFO  REPORT: Save succeeded for: /terran.exe (SMAC:/terran.exe) (HeadlessAnalyzer)  
+INFO  REPORT: Import succeeded (HeadlessAnalyzer)  

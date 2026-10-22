@@ -1,0 +1,7 @@
+{"turn": 0, "year_before": 2142, "t": "16:18:30", "handled": ["hud", "confirm-after-press"], "year_after": 2142, "advanced": false, "dt": 60.0, "stuck": true}
+{"turn": 1, "year_before": 2142, "t": "16:19:39", "handled": ["dialog", "hud", "confirm-after-press"], "dialogs": [84], "year_after": 2144, "advanced": true, "dt": 0.1}
+{"turn": 2, "year_before": 2144, "t": "16:19:57", "handled": ["hud", "confirm-after-press"], "year_after": 2145, "advanced": true, "dt": 0.1}
+{"turn": 3, "year_before": 2145, "t": "16:20:06", "handled": ["hud", "confirm-after-press"], "year_after": 2146, "advanced": true, "dt": 1.2}
+{"turn": 4, "year_before": 2146, "t": "16:20:16", "handled": ["hud", "confirm-after-press"], "year_after": 2147, "advanced": true, "dt": 0.1}
+{"turn": 5, "year_before": 2147, "t": "16:20:24", "handled": ["hud"], "year_after": 2147, "advanced": false, "dt": 60.0, "stuck": true}
+{"turn": 6, "year_before": 2147, "t": "16:21:35", "handled": ["hud"], "year_after": 2147, "advanced": false, "dt": 60.0, "stuck": true}

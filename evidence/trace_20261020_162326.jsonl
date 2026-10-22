@@ -1,0 +1,2 @@
+{"turn": 0, "year_before": 2147, "t": "16:23:26", "handled": ["hud", "hud", "hud", "hud", "hud"], "year_after": 2147, "advanced": false, "dt": 63.6, "stuck": true}
+{"turn": 1, "year_before": 2147, "t": "16:24:30", "handled": ["hud", "hud", "hud", "hud", "hud", "hud"], "year_after": 2147, "advanced": false, "dt": 60.6, "stuck": true}

@@ -1,0 +1,92 @@
+[New LWP 370615]
+[New LWP 370614]
+[New LWP 370613]
+[New LWP 370612]
+[New LWP 370611]
+[New LWP 370610]
+[New LWP 370609]
+[New LWP 370608]
+[New LWP 370607]
+[New LWP 370606]
+[New LWP 370605]
+[New LWP 370604]
+[New LWP 370603]
+[New LWP 370602]
+[New LWP 370601]
+[New LWP 370600]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf377132c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(unsigned short*)0x93351c
+Hardware watchpoint 2: *(unsigned short*)0x933584
+Hardware watchpoint 3: *(unsigned short*)0x9337f4
+Hardware watchpoint 4: *(unsigned short*)0x934014
+
+Thread 1 "terran.exe" hit Hardware watchpoint 4: *(unsigned short*)0x934014
+
+Old value = 67
+New value = 65535
+0x005ab2f8 in ?? ()
+
+===== WATCHPOINT HIT =====
+pc = 0x5ab2f8
+--- backtrace ---
+#0  0x005ab2f8 in ?? ()
+#1  0x005a6291 in ?? ()
+#2  0x00588e0b in ?? ()
+#3  0x004ce54f in ?? ()
+#4  0x004d124f in ?? ()
+#5  0x0056d027 in ?? ()
+#6  0x0056d2be in ?? ()
+#7  0x00520e1e in ?? ()
+#8  0x00522a1b in ?? ()
+#9  0x0064dd06 in ?? ()
+#10 0x7be9fb8c in ?? ()
+#11 0x7bf2e257 in ?? ()
+#12 0x7bf68bfd in ?? ()
+#13 0x00000000 in ?? ()
+--- instructions around pc ---
+   0x5ab2e6:	xchg   %eax,%ebx
+   0x5ab2e7:	add    %al,0x3d89ffc8(%ebx)
+   0x5ab2ed:	mov    0x66009917,%al
+   0x5ab2f2:	mov    %eax,0x933278(%esi)
+=> 0x5ab2f8:	mov    %ax,0x93327a(%esi)
+   0x5ab2ff:	mov    %ax,0x9332a8(%esi)
+   0x5ab306:	mov    %ax,0x9332aa(%esi)
+   0x5ab30d:	mov    %edi,%eax
+   0x5ab30f:	pop    %edi
+   0x5ab310:	mov    %ecx,0x991798
+--- registers ---
+eip            0x5ab2f8            0x5ab2f8
+eax            0xffffffff          -1
+ebx            0x0                 0
+ecx            0x43                67
+edx            0x7                 7
+esi            0xd9c               3484
+edi            0x43                67
+ebp            0xbea8f0            0xbea8f0
+esp            0xbea8e8            0xbea8e8
+--- hit thread ---
+  Id   Target Id                    Frame 
+* 1    LWP 370597 "terran.exe"      0x005ab2f8 in ?? ()
+  2    LWP 370615 "wine_mmdevapi_n" 0xf355e68b in ?? ()
+  3    LWP 370614 "terran.exe"      0xf377132c in __kernel_vsyscall ()
+  4    LWP 370613 "terran.exe"      0xf355e68b in ?? ()
+  5    LWP 370612 "wine_dsound_mix" 0xf355e68b in ?? ()
+  6    LWP 370611 "audio_client_ti" 0xf355e68b in ?? ()
+  7    LWP 370610 "audio_client_ma" 0xf355e68b in ?? ()
+  8    LWP 370609 "wined3d_cs"      0xf377132c in __kernel_vsyscall ()
+  9    LWP 370608 "terran.:disk$0"  0xf355e68b in ?? ()
+  10   LWP 370607 "terran.exe"      0xf355e68b in ?? ()
+  11   LWP 370606 "terran.exe"      0xf355e68b in ?? ()
+  12   LWP 370605 "terran.exe"      0xf355e68b in ?? ()
+  13   LWP 370604 "terran.exe"      0xf355e68b in ?? ()
+  14   LWP 370603 "llvmpipe-3"      0xf355e68b in ?? ()
+  15   LWP 370602 "llvmpipe-2"      0xf355e68b in ?? ()
+  16   LWP 370601 "llvmpipe-1"      0xf355e68b in ?? ()
+  17   LWP 370600 "llvmpipe-0"      0xf355e68b in ?? ()
+[Inferior 1 (process 370597) detached]

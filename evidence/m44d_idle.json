@@ -1,0 +1,838 @@
+{
+ "tag": "m44d",
+ "t": "2026-10-22 08:53:28",
+ "events": [
+  "preflight kind=hud pane_end=False our_turn=True",
+  "svc: answered confirm pane",
+  "year 2305 landed (cur=0)",
+  "svc: Return on dialog pane",
+  "year 2306 landed (cur=1)",
+  "svc: Return on dialog pane",
+  "svc: clicked message-bar OK bar (390, 497)",
+  "svc: clicked message-bar OK bar (391, 497)",
+  "svc: Return on unknown pane",
+  "year 2307 landed (cur=2)",
+  "svc: Return on dialog pane",
+  "year 2308 landed (cur=0)",
+  "svc: Return on unknown pane",
+  "year 2309 landed (cur=0)",
+  "svc: Return on unknown pane",
+  "year 2310 landed (cur=0)",
+  "svc: Return on unknown pane",
+  "svc: Return on dialog pane",
+  "svc: Return on unknown pane",
+  "svc: Return on unknown pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on unknown pane",
+  "svc: Return on unknown pane",
+  "year 2311 landed (cur=3)",
+  "svc: ENDOFTURN1 -> Return",
+  "year 2312 landed (cur=0)",
+  "svc: ENDOFTURN1 -> Return",
+  "year 2313 landed (cur=3)",
+  "svc: ENDOFTURN1 -> Return",
+  "year 2314 landed (cur=2)",
+  "svc: Return on dialog pane",
+  "svc: Return on dialog pane",
+  "svc: Return on unknown pane",
+  "svc: ENDOFTURN1 -> Return",
+  "year 2315 landed (cur=3)"
+ ],
+ "pid": 914079,
+ "snap0": {
+  "year": 2304,
+  "cur": 3,
+  "nmine": 5,
+  "energy": {
+   "1": 175,
+   "2": 95,
+   "3": 15,
+   "4": 507,
+   "5": 71,
+   "6": 20,
+   "7": 187
+  },
+  "owners": {
+   "6": {
+    "bases": 16,
+    "minerals": 466,
+    "pop": 56
+   },
+   "1": {
+    "bases": 10,
+    "minerals": 298,
+    "pop": 42
+   },
+   "2": {
+    "bases": 25,
+    "minerals": 426,
+    "pop": 123
+   },
+   "4": {
+    "bases": 8,
+    "minerals": 389,
+    "pop": 33
+   },
+   "5": {
+    "bases": 5,
+    "minerals": 121,
+    "pop": 18
+   },
+   "7": {
+    "bases": 9,
+    "minerals": 187,
+    "pop": 47
+   }
+  }
+ },
+ "rounds": [
+  {
+   "year": 2304,
+   "cur": 3,
+   "nmine": 5,
+   "energy": {
+    "1": 175,
+    "2": 95,
+    "3": 15,
+    "4": 507,
+    "5": 71,
+    "6": 20,
+    "7": 187
+   },
+   "owners": {
+    "6": {
+     "bases": 16,
+     "minerals": 466,
+     "pop": 56
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 298,
+     "pop": 42
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 426,
+     "pop": 123
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 389,
+     "pop": 33
+    },
+    "5": {
+     "bases": 5,
+     "minerals": 121,
+     "pop": 18
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 187,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "STE",
+    "S",
+    "eS",
+    "ES",
+    "SS",
+    "ee",
+    "Commerce",
+    "IncomeOiturn",
+    "Gross",
+    "Income:",
+    "Olturn",
+    "Total",
+    "Costs:",
+    "Ofturn",
+    "MET",
+    "INCOME:",
+    "Oturn"
+   ]
+  },
+  {
+   "year": 2305,
+   "cur": 3,
+   "nmine": 4,
+   "energy": {
+    "1": 187,
+    "2": 67,
+    "3": 15,
+    "4": 720,
+    "5": 57,
+    "6": 44,
+    "7": 167
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 539,
+     "pop": 60
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 270,
+     "pop": 43
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 562,
+     "pop": 125
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 231,
+     "pop": 33
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 59,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 207,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "\u2014\u2014\u2014\u2014"
+   ]
+  },
+  {
+   "year": 2306,
+   "cur": 3,
+   "nmine": 4,
+   "energy": {
+    "1": 194,
+    "2": 55,
+    "3": 15,
+    "4": 727,
+    "5": 64,
+    "6": 40,
+    "7": 151
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 619,
+     "pop": 60
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 176,
+     "pop": 42
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 396,
+     "pop": 125
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 249,
+     "pop": 33
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 76,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 245,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "STE",
+    "S",
+    "eS",
+    "ES",
+    "SS",
+    "ee",
+    "Commerce",
+    "IncomeOiturn",
+    "Gross",
+    "Income:",
+    "Olturn",
+    "Total",
+    "Costs:",
+    "Ofturn",
+    "MET",
+    "INCOME:",
+    "Oturn"
+   ]
+  },
+  {
+   "year": 2307,
+   "cur": 3,
+   "nmine": 4,
+   "energy": {
+    "1": 186,
+    "2": 60,
+    "3": 15,
+    "4": 732,
+    "5": 71,
+    "6": 43,
+    "7": 149
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 574,
+     "pop": 60
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 203,
+     "pop": 42
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 485,
+     "pop": 125
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 297,
+     "pop": 33
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 94,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 281,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "STE",
+    "S",
+    "eS",
+    "ES",
+    "SS",
+    "ee",
+    "Commerce",
+    "IncomeOiturn",
+    "Gross",
+    "Income:",
+    "Olturn",
+    "Total",
+    "Costs:",
+    "Ofturn",
+    "MET",
+    "INCOME:",
+    "Oturn"
+   ]
+  },
+  {
+   "year": 2308,
+   "cur": 3,
+   "nmine": 3,
+   "energy": {
+    "1": 154,
+    "2": 66,
+    "3": 15,
+    "4": 735,
+    "5": 78,
+    "6": 43,
+    "7": 147
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 659,
+     "pop": 60
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 235,
+     "pop": 43
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 461,
+     "pop": 125
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 268,
+     "pop": 33
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 112,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 272,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": []
+  },
+  {
+   "year": 2309,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 156,
+    "2": 64,
+    "3": 15,
+    "4": 700,
+    "5": 64,
+    "6": 83,
+    "7": 77
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 747,
+     "pop": 61
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 261,
+     "pop": 43
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 444,
+     "pop": 126
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 292,
+     "pop": 33
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 42,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 210,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": []
+  },
+  {
+   "year": 2310,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 158,
+    "2": 64,
+    "3": 15,
+    "4": 675,
+    "5": 72,
+    "6": 75,
+    "7": 97
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 692,
+     "pop": 61
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 287,
+     "pop": 43
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 491,
+     "pop": 130
+    },
+    "4": {
+     "bases": 8,
+     "minerals": 273,
+     "pop": 34
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 59,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 194,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "PST",
+    "ARE",
+    "EER",
+    "Ch"
+   ]
+  },
+  {
+   "year": 2311,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 153,
+    "2": 66,
+    "3": 15,
+    "4": 660,
+    "5": 73,
+    "6": 117,
+    "7": 115
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 710,
+     "pop": 61
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 315,
+     "pop": 43
+    },
+    "2": {
+     "bases": 25,
+     "minerals": 507,
+     "pop": 132
+    },
+    "4": {
+     "bases": 9,
+     "minerals": 148,
+     "pop": 35
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 38,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 176,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": []
+  },
+  {
+   "year": 2312,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 129,
+    "2": 61,
+    "3": 15,
+    "4": 644,
+    "5": 81,
+    "6": 97,
+    "7": 133
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 729,
+     "pop": 61
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 347,
+     "pop": 44
+    },
+    "2": {
+     "bases": 24,
+     "minerals": 512,
+     "pop": 132
+    },
+    "4": {
+     "bases": 9,
+     "minerals": 204,
+     "pop": 35
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 53,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 207,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "Sp",
+    "Sa",
+    "Te",
+    "eet",
+    "Colonel",
+    "Santiago",
+    "Seething"
+   ]
+  },
+  {
+   "year": 2313,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 113,
+    "2": 59,
+    "3": 15,
+    "4": 645,
+    "5": 69,
+    "6": 89,
+    "7": 149
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 705,
+     "pop": 62
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 378,
+     "pop": 44
+    },
+    "2": {
+     "bases": 24,
+     "minerals": 573,
+     "pop": 132
+    },
+    "4": {
+     "bases": 9,
+     "minerals": 224,
+     "pop": 35
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 68,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 214,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "Sp",
+    "Sa",
+    "Te",
+    "eet",
+    "Colonel",
+    "Santiago",
+    "Seething"
+   ]
+  },
+  {
+   "year": 2314,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 158,
+    "2": 99,
+    "3": 15,
+    "4": 648,
+    "5": 77,
+    "6": 76,
+    "7": 163
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 720,
+     "pop": 62
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 292,
+     "pop": 42
+    },
+    "2": {
+     "bases": 24,
+     "minerals": 604,
+     "pop": 132
+    },
+    "4": {
+     "bases": 9,
+     "minerals": 219,
+     "pop": 35
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 83,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 196,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "PEE",
+    "ETS",
+    "Chainnan",
+    "Yang",
+    "Qusrrelsome",
+    "TRUCE"
+   ]
+  },
+  {
+   "year": 2315,
+   "cur": 3,
+   "nmine": 2,
+   "energy": {
+    "1": 160,
+    "2": 81,
+    "3": 15,
+    "4": 627,
+    "5": 65,
+    "6": 78,
+    "7": 177
+   },
+   "owners": {
+    "6": {
+     "bases": 17,
+     "minerals": 809,
+     "pop": 62
+    },
+    "1": {
+     "bases": 10,
+     "minerals": 323,
+     "pop": 42
+    },
+    "2": {
+     "bases": 24,
+     "minerals": 517,
+     "pop": 133
+    },
+    "4": {
+     "bases": 9,
+     "minerals": 266,
+     "pop": 35
+    },
+    "5": {
+     "bases": 4,
+     "minerals": 100,
+     "pop": 14
+    },
+    "7": {
+     "bases": 9,
+     "minerals": 199,
+     "pop": 47
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "PEE",
+    "ETS",
+    "Chainnan",
+    "Yang",
+    "Qusrrelsome",
+    "TRUCE"
+   ]
+  }
+ ],
+ "svc_hud_clicks": 1,
+ "reason": "12 rounds",
+ "final": {
+  "year": 2315,
+  "cur": 3,
+  "nmine": 2,
+  "energy": {
+   "1": 160,
+   "2": 81,
+   "3": 15,
+   "4": 627,
+   "5": 65,
+   "6": 78,
+   "7": 177
+  },
+  "owners": {
+   "6": {
+    "bases": 17,
+    "minerals": 809,
+    "pop": 62
+   },
+   "1": {
+    "bases": 10,
+    "minerals": 323,
+    "pop": 42
+   },
+   "2": {
+    "bases": 24,
+    "minerals": 517,
+    "pop": 133
+   },
+   "4": {
+    "bases": 9,
+    "minerals": 266,
+    "pop": 35
+   },
+   "5": {
+    "bases": 4,
+    "minerals": 100,
+    "pop": 14
+   },
+   "7": {
+    "bases": 9,
+    "minerals": 199,
+    "pop": 47
+   }
+  }
+ },
+ "deltas_per_round": {
+  "rounds": 11,
+  "energy3": 0.0,
+  "energy_by_player": {
+   "1": -1.3636363636363635,
+   "2": -1.2727272727272727,
+   "3": 0.0,
+   "4": 10.909090909090908,
+   "5": -0.5454545454545454,
+   "6": 5.2727272727272725,
+   "7": -0.9090909090909091
+  },
+  "minerals_by_owner": {
+   "1": 2.272727272727273,
+   "2": 8.272727272727273,
+   "4": -11.181818181818182,
+   "5": -1.9090909090909092,
+   "6": 31.181818181818183,
+   "7": 1.0909090909090908
+  },
+  "bases_by_owner_end": {
+   "1": 10,
+   "2": 24,
+   "4": 9,
+   "5": 4,
+   "6": 17,
+   "7": 9
+  }
+ }
+}

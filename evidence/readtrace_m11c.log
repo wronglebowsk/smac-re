@@ -1,0 +1,53 @@
+[New LWP 248432]
+[New LWP 248431]
+[New LWP 248430]
+[New LWP 248429]
+[New LWP 248428]
+[New LWP 248427]
+[New LWP 248426]
+[New LWP 248424]
+[New LWP 248423]
+[New LWP 248422]
+[New LWP 248421]
+[New LWP 248420]
+[New LWP 248419]
+[New LWP 248418]
+[New LWP 248417]
+[New LWP 248416]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xed35332c in __kernel_vsyscall ()
+Breakpoint 1 at 0x64cc00
+Breakpoint 2 at 0x64c9a0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79a0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79a0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79a0
+R3 caller=0x5822ac size=2724 count=1 file=0x6a79a0
+R3 caller=0x5822f7 size=140800 count=1 file=0x6a79a0
+R3 caller=0x58231d size=128 count=1 file=0x6a79a0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79a0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79a0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79e0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79a0
+R3 caller=0x62ae14 size=128 count=1 file=0x6a79a0
+R3 caller=0x59688f size=796 count=1 file=0x6a79a0
+R3 caller=0x596a96 size=67040 count=1 file=0x6a79a0
+R3 caller=0x596edb size=11488 count=1 file=0x6a79a0
+R3 caller=0x5822ac size=2724 count=1 file=0x6a79a0
+R3 caller=0x5822f7 size=140800 count=1 file=0x6a79a0
+R3 caller=0x58231d size=128 count=1 file=0x6a79a0
+R3 caller=0x597032 size=16000 count=1 file=0x6a79a0
+R3 caller=0x5970e9 size=328 count=1 file=0x6a79a0
+R3 caller=0x597146 size=3584 count=1 file=0x6a79a0
+R3 caller=0x5971b1 size=26624 count=1 file=0x6a79a0
+R3 caller=0x597299 size=4096 count=1 file=0x6a79a0
+R3 caller=0x59731e size=6188 count=1 file=0x6a79a0
+R3 caller=0x597524 size=11248 count=1 file=0x6a79a0
+R3 caller=0x5976a3 size=256 count=1 file=0x6a79a0
+R3 caller=0x59771b size=152 count=1 file=0x6a79a0
+R3 caller=0x597786 size=10144 count=1 file=0x6a79a0
+[Inferior 1 (process 248412) detached]
