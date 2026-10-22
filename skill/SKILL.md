@@ -43,6 +43,11 @@ costs in context (target: always-loaded ≤6%). `SESSION_NOTES.md` is rotated by
 uncited screenshots (git keeps history, `.prune_log.jsonl` records them). Policy:
 `~/reverse/smac/docs/EVIDENCE.md`.
 
+**Semantic search** (`docs/SEARCH.md`): `python3 scripts/index.py search "<question>"`
+returns `file:line` / addresses for notes and named functions; `merge` rebuilds it
+(incremental ~1 s, cold ~35 s) and is fail-soft when the embedding endpoint on
+192.168.1.213:8000 is down. A hit is a lead, never evidence.
+
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
 merge by hand in the web UI without a green `gate` check. After editing this live skill, copy it

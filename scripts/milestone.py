@@ -267,7 +267,27 @@ def cmd_merge(args):
     git("checkout", BASE, "--quiet")
     git("pull", "--ff-only", "--quiet")
     print(f"merged #{pr['number']}; {BASE} is up to date")
+    if not args.no_index:
+        rebuild_index()
     return 0
+
+
+def rebuild_index(timeout=240):
+    """Index is derived data — never let a flaky embedding endpoint block a landed milestone."""
+    if not os.path.isfile(os.path.join("scripts", "index.py")):
+        return
+    print("index: rebuilding (incremental) ...")
+    try:
+        p = subprocess.run([sys.executable, os.path.join("scripts", "index.py"), "build"],
+                           capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        print(f"index: timed out after {timeout}s — previous index kept")
+        return
+    if p.returncode != 0:
+        last = (p.stderr.strip().splitlines() or p.stdout.strip().splitlines() or ["unknown error"])[-1]
+        print(f"index: skipped — {last}")
+        return
+    print("index: " + (p.stdout.strip().splitlines() or ["ok"])[-1])
 
 
 def main():
@@ -286,6 +306,7 @@ def main():
     s = sub.add_parser("merge")
     s.add_argument("pr")
     s.add_argument("--force", action="store_true")
+    s.add_argument("--no-index", action="store_true", help="skip the post-merge index rebuild")
     s.set_defaults(fn=cmd_merge)
     args = ap.parse_args()
     return args.fn(args)

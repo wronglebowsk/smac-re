@@ -33,3 +33,6 @@ __pycache__/
 
 # --- large generated caches (scripts rebuild on demand) ---
 .text_insns.json
+
+# --- semantic index (derived; rebuild with scripts/index.py build) ---
+index/
