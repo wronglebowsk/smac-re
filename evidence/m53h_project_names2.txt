@@ -1,0 +1,8 @@
+proj 29 name=Aerospace Complex              cost=8   effect=+2 Morale:Air
+proj 30 name=Bioenhancement Center          cost=10  effect=+2 Morale:ALL
+proj 39 name=The Human Genome Project       cost=20  effect=+1 Talent Each Base
+proj 40 name=The Command Nexus              cost=20  effect=Command Center Each Base
+proj 45 name=The Virtual World              cost=30  effect=Network Nodes Help Drones
+proj 50 name=The Planetary Datalinks        cost=30  effect=Any Tech Known To 3 Others
+proj 60 name=The Network Backbone           cost=40  effect=+1 Lab Per Commerce/Net Node
+proj 71 name=The Ascent to Transcendence    cost=200 effect=End of Human Era

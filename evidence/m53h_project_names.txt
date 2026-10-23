@@ -1,0 +1,6 @@
+proj  2  name=Children's Creche                  cost=5  effect=Growth/Effic/Morale
+proj 11  name=Hologram Theatre                   cost=6  effect=Psych and Fewer Drones
+proj 13  name=Tree Farm                          cost=12  effect=Econ/Psych/Forest
+proj 26  name=Pressure Dome                      cost=8  effect=Submersion/Resources
+proj 27  name=Command Center                     cost=4  effect=+2 Morale:Land
+proj 38  name=Stockpile Energy                   cost=0  effect=Minerals to Energy

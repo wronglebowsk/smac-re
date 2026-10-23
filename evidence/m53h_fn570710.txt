@@ -1,0 +1,15 @@
+# addr=0x00570710,name=FUN_00570710,size_bytes=92,n_insns=32,n_callers=11,n_callees=1,n_strings=0,ok=1,chars=404,shard=014
+// ==== FUN_00570710 @ 0x570710 size=92
+
+int FUN_00570710(int param_1,int param_2)
+
+{
+  int iVar1;
+
+  if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[param_1 * 0x34] * 0x10] < '\0') {
+    iVar1 = FUN_004fe670((*(int *)(&DAT_0094dc5c + param_2 * 0x20bc) * DAT_0092a2dc) / DAT_0092a2e8,
+                         param_2,1);
+    return iVar1;
+  }
+  return (int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[param_1 * 0x34] * 0x10];
+}

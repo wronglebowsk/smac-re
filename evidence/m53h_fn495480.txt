@@ -1,0 +1,19 @@
+# addr=0x00495480,name=FUN_00495480,size_bytes=43,n_insns=21,n_callers=2,n_callees=1,n_strings=0,ok=1,chars=238,shard=009
+// ==== FUN_00495480 @ 0x495480 size=43
+
+undefined4 FUN_00495480(void)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  int in_ECX;
+
+  if (*(int *)(in_ECX + 8) == 0) {
+    uVar2 = 0;
+  }
+  else {
+    iVar1 = FUN_004027e0();
+    uVar2 = *(undefined4 *)(iVar1 + 8);
+  }
+  return uVar2;
+}

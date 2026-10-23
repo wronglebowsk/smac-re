@@ -1,0 +1,43 @@
+# addr=0x005f9e85,name=FUN_005f9e85,size_bytes=422,n_insns=128,n_callers=90,n_callees=8,n_strings=0,ok=1,chars=1306,shard=019
+// ==== FUN_005f9e85 @ 0x5f9e85 size=422
+
+int FUN_005f9e85(char *param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
+                undefined4 param_6,int param_7,int param_8)
+
+{
+  int iVar1;
+  size_t sVar2;
+  int *in_ECX;
+
+  (**(code **)(*in_ECX + 0x15c))();
+  if (param_7 == 0) {
+    iVar1 = 3;
+  }
+  else {
+    if (param_1 != (char *)0x0) {
+      sVar2 = _strlen(param_1);
+      iVar1 = FUN_005be090(sVar2 + 1);
+      in_ECX[0x29f] = iVar1;
+      if (in_ECX[0x29f] == 0) {
+        return 4;
+      }
+      *(undefined1 *)in_ECX[0x29f] = 0;
+      FUN_0064b9e0(in_ECX[0x29f],param_1);
+    }
+    iVar1 = FUN_005e3ed9(param_3,param_4,param_5,param_6,0,
+                         -(uint)(param_8 != 0) & 0x8000 | 0x1000320,param_7,0,0);
+    if (iVar1 == 0) {
+      in_ECX[0x29e] = param_2;
+      CPane::SetBorders((CPane *)(in_ECX + 0x111),DAT_00698eac,DAT_00698eb8,DAT_00698ec4,
+                        DAT_00698ed0);
+      CPane::SetBorders((CPane *)(in_ECX + 0x111),DAT_00698eb0,DAT_00698ebc,DAT_00698ec8,
+                        DAT_00698ed4);
+      CPane::SetBorders((CPane *)(in_ECX + 0x111),DAT_00698eb4,DAT_00698ec0,DAT_00698ecc,
+                        DAT_00698ed8);
+      FUN_005c176e(DAT_009978a0,DAT_009978a4,DAT_009978a8,0);
+      (**(code **)(*in_ECX + 4))(0);
+      iVar1 = 0;
+    }
+  }
+  return iVar1;
+}

@@ -1,0 +1,9 @@
+chooser control 6a9e9c ; children at +0xb74 + i*0xb4c ; param @+0xa78 ; rect @+0x13c/0x140/0x144
+child 0 base=6aaa10 vptr=67194c param=-2  rect x=569   y=332  x2=669   w=100
+child 1 base=6ab55c vptr=67194c param=7   rect x=260   y=332  x2=360   w=100
+child 2 base=6ac0a8 vptr=67194c param=5   rect x=363   y=332  x2=463   w=100
+child 3 base=6acbf4 vptr=67194c param=4   rect x=466   y=332  x2=566   w=100
+child 4 base=6ad740 vptr=67194c param=-1  rect x=157   y=332  x2=257   w=100
+child 5 base=6ae28c vptr=67194c param=0   rect x=54    y=332  x2=154   w=100
+child 6 base=6aedd8 vptr=67194c param=0   rect x=0     y=0    x2=0     w=0
+child 7 base=6af924 vptr=67194c param=0   rect x=0     y=0    x2=0     w=0
