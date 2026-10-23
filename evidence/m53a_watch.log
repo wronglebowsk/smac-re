@@ -1,0 +1,1134 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee17368b in ?? ()
+Hardware watchpoint 1: *(int *)(0x962d30 + 0x3c)
+Hardware watchpoint 2: *(int *)(0x962d30 + 0x40)
+Breakpoint 3 at 0x520540
+Breakpoint 4 at 0x5206d3
+Breakpoint 5 at 0x5206f9
+Breakpoint 6 at 0x5206fd
+Breakpoint 7 at 0x51f554
+Breakpoint 8 at 0x4f2705
+Breakpoint 9 at 0x4f271e
+Breakpoint 10 at 0x4f2724
+Breakpoint 11 at 0x4f2d7d
+Breakpoint 12 at 0x4ef7f6
+Breakpoint 13 at 0x4f5aa9
+Breakpoint 14 at 0x4ef88b
+Breakpoint 15 at 0x4ef8e2
+Breakpoint 16 at 0x4ef8ed
+Breakpoint 17 at 0x4efa4b
+Breakpoint 18 at 0x4efa52
+Breakpoint 19 at 0x4efed8
+Breakpoint 20 at 0x4efedd
+Breakpoint 21 at 0x4eff20
+Breakpoint 22 at 0x4f0ca6
+Breakpoint 23 at 0x4f0ce9
+Breakpoint 24 at 0x4e9397
+Breakpoint 25 at 0x4e93a4
+Breakpoint 26 at 0x4ee56b
+Breakpoint 27 at 0x4ee709
+Breakpoint 28 at 0x4ee72c
+Breakpoint 29 at 0x4ee82f
+Breakpoint 30 at 0x4ee869
+Breakpoint 31 at 0x4ee8c7
+Breakpoint 32 at 0x4efb31
+Breakpoint 33 at 0x4f022b
+Breakpoint 34 at 0x4ef6d0
+Breakpoint 35 at 0x4efe41
+SELFTEST addr=0x962d30 owner=3 f38=0xdfbe41 f3c=500 st=200 name=Climactic Research
+ARMED
+SWEEP 1 p=4 nb_entry=75
+VISIT 1 p=4 idx=3 owner=4 nb=75 ours=0 f3c=47 st=6 f38=0xdfbe41 name=Morgan Industries
+EDI_ENTRY 1 eip=0x4f5aa9 idx=3 owner_byte=4 cb=0x95dda0 name=Morgan Industries
+GATE 1 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95dda0 idx=3 owner=4 f38=0xdfbe41 f3c=47 st=10 ours=0 name=Morgan Industries
+PASTFLAG 1 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95dda0 owner=4 st=10 ours=0 name=Morgan Industries
+VISIT 2 p=4 idx=7 owner=4 nb=75 ours=0 f3c=0 st=60 f38=0xdfbe41 name=Morgan Construction
+EDI_ENTRY 2 eip=0x4f5aa9 idx=7 owner_byte=4 cb=0x95e260 name=Morgan Construction
+GATE 2 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e260 idx=7 owner=4 f38=0xdfbe41 f3c=0 st=68 ours=0 name=Morgan Construction
+PASTFLAG 2 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e260 owner=4 st=68 ours=0 name=Morgan Construction
+VISIT 3 p=4 idx=18 owner=4 nb=75 ours=0 f3c=36 st=54 f38=0xdfbe41 name=Morgan Solarfex
+EDI_ENTRY 3 eip=0x4f5aa9 idx=18 owner_byte=4 cb=0x95ef70 name=Morgan Solarfex
+GATE 3 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ef70 idx=18 owner=4 f38=0xdfbe41 f3c=36 st=64 ours=0 name=Morgan Solarfex
+PASTFLAG 3 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ef70 owner=4 st=64 ours=0 name=Morgan Solarfex
+VISIT 4 p=4 idx=31 owner=4 nb=75 ours=0 f3c=42 st=25 f38=0xdfbe41 name=Morgan Metallurgy
+EDI_ENTRY 4 eip=0x4f5aa9 idx=31 owner_byte=4 cb=0x95fee0 name=Morgan Metallurgy
+GATE 4 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fee0 idx=31 owner=4 f38=0xdfbe41 f3c=42 st=30 ours=0 name=Morgan Metallurgy
+PASTFLAG 4 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fee0 owner=4 st=30 ours=0 name=Morgan Metallurgy
+VISIT 5 p=4 idx=35 owner=4 nb=75 ours=0 f3c=0 st=35 f38=0xdfbe41 name=Morgan Energy Monopoly
+EDI_ENTRY 5 eip=0x4f5aa9 idx=35 owner_byte=4 cb=0x9603a0 name=Morgan Energy Monopoly
+GATE 5 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9603a0 idx=35 owner=4 f38=0xdfbe41 f3c=-1 st=35 ours=0 name=Morgan Energy Monopoly
+PASTFLAG 5 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9603a0 owner=4 st=35 ours=0 name=Morgan Energy Monopoly
+CONVST 1 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9603a0 idx=35 owner=4 f38=0xdfbe41 f3c=-1 old40=35 new=39 ours=0 name=Morgan Energy Monopoly
+VISIT 6 p=4 idx=55 owner=4 nb=75 ours=0 f3c=25 st=40 f38=0xdfbe41 name=Morgan Biochemical
+EDI_ENTRY 6 eip=0x4f5aa9 idx=55 owner_byte=4 cb=0x961b60 name=Morgan Biochemical
+GATE 6 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961b60 idx=55 owner=4 f38=0xdfbe41 f3c=25 st=44 ours=0 name=Morgan Biochemical
+PASTFLAG 6 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961b60 owner=4 st=44 ours=0 name=Morgan Biochemical
+VISIT 7 p=4 idx=61 owner=4 nb=75 ours=0 f3c=0 st=7 f38=0xdfbe41 name=Morgan Bank
+EDI_ENTRY 7 eip=0x4f5aa9 idx=61 owner_byte=4 cb=0x962280 name=Morgan Bank
+GATE 7 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962280 idx=61 owner=4 f38=0xdfbe41 f3c=0 st=13 ours=0 name=Morgan Bank
+PASTFLAG 7 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962280 owner=4 st=13 ours=0 name=Morgan Bank
+CONVST 2 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x962280 idx=61 owner=4 f38=0xdfbe41 f3c=0 old40=13 new=14 ours=0 name=Morgan Bank
+SWEEPEND p=4 last_idx=74 visits=7 nb_now=75
+SWEEP 2 p=5 nb_entry=75
+VISIT 8 p=5 idx=4 owner=5 nb=75 ours=0 f3c=30 st=1 f38=0xdfbe41 name=Sparta Command
+EDI_ENTRY 8 eip=0x4f5aa9 idx=4 owner_byte=5 cb=0x95ded0 name=Sparta Command
+GATE 8 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ded0 idx=4 owner=5 f38=0xdfbe41 f3c=30 st=8 ours=0 name=Sparta Command
+PASTFLAG 8 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ded0 owner=5 st=8 ours=0 name=Sparta Command
+VISIT 9 p=5 idx=10 owner=5 nb=75 ours=0 f3c=2 st=11 f38=0xdfbe41 name=Fort Survivalist
+EDI_ENTRY 9 eip=0x4f5aa9 idx=10 owner_byte=5 cb=0x95e5f0 name=Fort Survivalist
+GATE 9 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e5f0 idx=10 owner=5 f38=0xdfbe41 f3c=2 st=19 ours=0 name=Fort Survivalist
+PASTFLAG 9 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e5f0 owner=5 st=19 ours=0 name=Fort Survivalist
+VISIT 10 p=5 idx=40 owner=5 nb=75 ours=0 f3c=0 st=3 f38=0xdfbe41 name=Commander's Keep
+EDI_ENTRY 10 eip=0x4f5aa9 idx=40 owner_byte=5 cb=0x960990 name=Commander's Keep
+GATE 10 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960990 idx=40 owner=5 f38=0xdfbe41 f3c=0 st=7 ours=0 name=Commander's Keep
+PASTFLAG 10 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960990 owner=5 st=7 ours=0 name=Commander's Keep
+SWEEPEND p=5 last_idx=74 visits=3 nb_now=75
+SWEEP 3 p=6 nb_entry=75
+VISIT 11 p=6 idx=14 owner=6 nb=75 ours=0 f3c=44 st=61 f38=0xdfbe41 name=Assassin's Redoubt
+EDI_ENTRY 11 eip=0x4f5aa9 idx=14 owner_byte=6 cb=0x95eab0 name=Assassin's Redoubt
+GATE 11 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95eab0 idx=14 owner=6 f38=0xdfbe41 f3c=44 st=66 ours=0 name=Assassin's Redoubt
+PASTFLAG 11 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95eab0 owner=6 st=66 ours=0 name=Assassin's Redoubt
+VISIT 12 p=6 idx=20 owner=6 nb=75 ours=0 f3c=5 st=67 f38=0xdfbe41 name=Training Camp
+EDI_ENTRY 12 eip=0x4f5aa9 idx=20 owner_byte=6 cb=0x95f1d0 name=Training Camp
+GATE 12 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f1d0 idx=20 owner=6 f38=0xdfbe41 f3c=5 st=7 ours=0 name=Training Camp
+PASTFLAG 12 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f1d0 owner=6 st=7 ours=0 name=Training Camp
+CONVST 3 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95f1d0 idx=20 owner=6 f38=0xdfbe41 f3c=5 old40=7 new=7 ours=0 name=Training Camp
+VISIT 13 p=6 idx=26 owner=6 nb=75 ours=0 f3c=31 st=3 f38=0xdfbe41 name=Fort Liberty
+EDI_ENTRY 13 eip=0x4f5aa9 idx=26 owner_byte=6 cb=0x95f8f0 name=Fort Liberty
+GATE 13 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f8f0 idx=26 owner=6 f38=0xdfbe41 f3c=31 st=7 ours=0 name=Fort Liberty
+PASTFLAG 13 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f8f0 owner=6 st=7 ours=0 name=Fort Liberty
+VISIT 14 p=6 idx=37 owner=6 nb=75 ours=0 f3c=26 st=1 f38=0xdfbe41 name=Hawk of Chiron
+EDI_ENTRY 14 eip=0x4f5aa9 idx=37 owner_byte=6 cb=0x960600 name=Hawk of Chiron
+GATE 14 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960600 idx=37 owner=6 f38=0xdfbe41 f3c=26 st=8 ours=0 name=Hawk of Chiron
+PASTFLAG 14 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960600 owner=6 st=8 ours=0 name=Hawk of Chiron
+CONVST 4 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x960600 idx=37 owner=6 f38=0xdfbe41 f3c=26 old40=8 new=8 ours=0 name=Hawk of Chiron
+VISIT 15 p=6 idx=39 owner=6 nb=75 ours=0 f3c=0 st=93 f38=0xdfbe41 name=Militia Station
+EDI_ENTRY 15 eip=0x4f5aa9 idx=39 owner_byte=6 cb=0x960860 name=Militia Station
+GATE 15 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960860 idx=39 owner=6 f38=0xdfbe41 f3c=0 st=97 ours=0 name=Militia Station
+PASTFLAG 15 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960860 owner=6 st=97 ours=0 name=Militia Station
+SWEEPEND p=6 last_idx=74 visits=5 nb_now=75
+SWEEP 4 p=7 nb_entry=75
+VISIT 16 p=7 idx=6 owner=7 nb=75 ours=0 f3c=54 st=51 f38=0xdfbe41 name=U.N. Headquarters
+EDI_ENTRY 16 eip=0x4f5aa9 idx=6 owner_byte=7 cb=0x95e130 name=U.N. Headquarters
+GATE 16 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e130 idx=6 owner=7 f38=0xdfbe41 f3c=54 st=59 ours=0 name=U.N. Headquarters
+PASTFLAG 16 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e130 owner=7 st=59 ours=0 name=U.N. Headquarters
+CONVST 5 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e130 idx=6 owner=7 f38=0xdfbe41 f3c=54 old40=59 new=62 ours=0 name=U.N. Headquarters
+VISIT 17 p=7 idx=8 owner=7 nb=75 ours=0 f3c=0 st=6 f38=0xdfbe41 name=U.N. Disaster Relief
+EDI_ENTRY 17 eip=0x4f5aa9 idx=8 owner_byte=7 cb=0x95e390 name=U.N. Disaster Relief
+GATE 17 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e390 idx=8 owner=7 f38=0xdfbe41 f3c=0 st=15 ours=0 name=U.N. Disaster Relief
+PASTFLAG 17 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e390 owner=7 st=15 ours=0 name=U.N. Disaster Relief
+VISIT 18 p=7 idx=15 owner=7 nb=75 ours=0 f3c=1 st=28 f38=0xdfbe41 name=U.N. Education Agency
+EDI_ENTRY 18 eip=0x4f5aa9 idx=15 owner_byte=7 cb=0x95ebe0 name=U.N. Education Agency
+GATE 18 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ebe0 idx=15 owner=7 f38=0xdfbe41 f3c=1 st=33 ours=0 name=U.N. Education Agency
+PASTFLAG 18 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ebe0 owner=7 st=33 ours=0 name=U.N. Education Agency
+VISIT 19 p=7 idx=16 owner=7 nb=75 ours=0 f3c=0 st=13 f38=0xdfbe41 name=U.N. Humanity Base
+EDI_ENTRY 19 eip=0x4f5aa9 idx=16 owner_byte=7 cb=0x95ed10 name=U.N. Humanity Base
+GATE 19 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ed10 idx=16 owner=7 f38=0xdfbe41 f3c=0 st=24 ours=0 name=U.N. Humanity Base
+PASTFLAG 19 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ed10 owner=7 st=24 ours=0 name=U.N. Humanity Base
+CONVST 6 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95ed10 idx=16 owner=7 f38=0xdfbe41 f3c=0 old40=24 new=27 ours=0 name=U.N. Humanity Base
+VISIT 20 p=7 idx=22 owner=7 nb=75 ours=0 f3c=0 st=30 f38=0xdfbe41 name=U.N. Information Agency
+EDI_ENTRY 20 eip=0x4f5aa9 idx=22 owner_byte=7 cb=0x95f430 name=U.N. Information Agency
+GATE 20 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f430 idx=22 owner=7 f38=0xdfbe41 f3c=0 st=32 ours=0 name=U.N. Information Agency
+PASTFLAG 20 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f430 owner=7 st=32 ours=0 name=U.N. Information Agency
+VISIT 21 p=7 idx=33 owner=7 nb=75 ours=0 f3c=34 st=91 f38=0xdfbe41 name=U.N. Equality Village
+EDI_ENTRY 21 eip=0x4f5aa9 idx=33 owner_byte=7 cb=0x960140 name=U.N. Equality Village
+GATE 21 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960140 idx=33 owner=7 f38=0xdfbe41 f3c=34 st=100 ours=0 name=U.N. Equality Village
+PASTFLAG 21 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960140 owner=7 st=100 ours=0 name=U.N. Equality Village
+VISIT 22 p=7 idx=42 owner=7 nb=75 ours=0 f3c=0 st=22 f38=0xdfbe41 name=U.N. Planning Authority
+EDI_ENTRY 22 eip=0x4f5aa9 idx=42 owner_byte=7 cb=0x960bf0 name=U.N. Planning Authority
+GATE 22 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960bf0 idx=42 owner=7 f38=0xdfbe41 f3c=0 st=25 ours=0 name=U.N. Planning Authority
+PASTFLAG 22 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960bf0 owner=7 st=25 ours=0 name=U.N. Planning Authority
+VISIT 23 p=7 idx=44 owner=7 nb=75 ours=0 f3c=17 st=79 f38=0xdfbe41 name=U.N. Commerce Committee
+EDI_ENTRY 23 eip=0x4f5aa9 idx=44 owner_byte=7 cb=0x960e50 name=U.N. Commerce Committee
+GATE 23 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960e50 idx=44 owner=7 f38=0xdfbe41 f3c=17 st=3 ours=0 name=U.N. Commerce Committee
+PASTFLAG 23 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960e50 owner=7 st=3 ours=0 name=U.N. Commerce Committee
+VISIT 24 p=7 idx=67 owner=7 nb=75 ours=0 f3c=21 st=45 f38=0xdfbe41 name=U.N. Aid Station
+EDI_ENTRY 24 eip=0x4f5aa9 idx=67 owner_byte=7 cb=0x9629a0 name=U.N. Aid Station
+GATE 24 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9629a0 idx=67 owner=7 f38=0xdfbe41 f3c=21 st=46 ours=0 name=U.N. Aid Station
+PASTFLAG 24 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9629a0 owner=7 st=46 ours=0 name=U.N. Aid Station
+SWEEPEND p=7 last_idx=74 visits=9 nb_now=75
+YEAR 1 mid_p=7 mid_idx=74 mid_visits=9 nb=75 cur=7
+SWEEP 5 p=0 nb_entry=75
+SWEEPEND p=0 last_idx=74 visits=0 nb_now=75
+SWEEP 6 p=1 nb_entry=75
+VISIT 25 p=1 idx=1 owner=1 nb=75 ours=0 f3c=54 st=77 f38=0xdfbe41 name=Gaia's Landing
+EDI_ENTRY 25 eip=0x4f5aa9 idx=1 owner_byte=1 cb=0x95db40 name=Gaia's Landing
+GATE 25 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95db40 idx=1 owner=1 f38=0xdfbe41 f3c=54 st=83 ours=0 name=Gaia's Landing
+PASTFLAG 25 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95db40 owner=1 st=83 ours=0 name=Gaia's Landing
+VISIT 26 p=1 idx=9 owner=1 nb=75 ours=0 f3c=74 st=1 f38=0xdfbe41 name=Lily of the Valley
+EDI_ENTRY 26 eip=0x4f5aa9 idx=9 owner_byte=1 cb=0x95e4c0 name=Lily of the Valley
+GATE 26 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e4c0 idx=9 owner=1 f38=0xdfbe41 f3c=74 st=3 ours=0 name=Lily of the Valley
+PASTFLAG 26 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e4c0 owner=1 st=3 ours=0 name=Lily of the Valley
+VISIT 27 p=1 idx=17 owner=1 nb=75 ours=0 f3c=0 st=61 f38=0xdfbe41 name=Song of Planet
+EDI_ENTRY 27 eip=0x4f5aa9 idx=17 owner_byte=1 cb=0x95ee40 name=Song of Planet
+GATE 27 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ee40 idx=17 owner=1 f38=0xdfbe41 f3c=0 st=64 ours=0 name=Song of Planet
+PASTFLAG 27 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ee40 owner=1 st=64 ours=0 name=Song of Planet
+CONVST 7 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95ee40 idx=17 owner=1 f38=0xdfbe41 f3c=0 old40=64 new=65 ours=0 name=Song of Planet
+VISIT 28 p=1 idx=27 owner=1 nb=75 ours=0 f3c=4 st=53 f38=0xdfbe41 name=Greenhouse Gate
+EDI_ENTRY 28 eip=0x4f5aa9 idx=27 owner_byte=1 cb=0x95fa20 name=Greenhouse Gate
+GATE 28 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fa20 idx=27 owner=1 f38=0xdfbe41 f3c=4 st=7 ours=0 name=Greenhouse Gate
+PASTFLAG 28 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fa20 owner=1 st=7 ours=0 name=Greenhouse Gate
+VISIT 29 p=1 idx=41 owner=1 nb=75 ours=0 f3c=18 st=27 f38=0xdfbe41 name=Last Rose of Summer
+EDI_ENTRY 29 eip=0x4f5aa9 idx=41 owner_byte=1 cb=0x960ac0 name=Last Rose of Summer
+GATE 29 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960ac0 idx=41 owner=1 f38=0xdfbe41 f3c=18 st=30 ours=0 name=Last Rose of Summer
+PASTFLAG 29 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960ac0 owner=1 st=30 ours=0 name=Last Rose of Summer
+VISIT 30 p=1 idx=46 owner=1 nb=75 ours=0 f3c=0 st=11 f38=0xdfbe41 name=Memory of Earth
+EDI_ENTRY 30 eip=0x4f5aa9 idx=46 owner_byte=1 cb=0x9610b0 name=Memory of Earth
+GATE 30 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9610b0 idx=46 owner=1 f38=0xdfbe41 f3c=0 st=13 ours=0 name=Memory of Earth
+PASTFLAG 30 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9610b0 owner=1 st=13 ours=0 name=Memory of Earth
+VISIT 31 p=1 idx=47 owner=1 nb=75 ours=0 f3c=20 st=14 f38=0xdfbe41 name=Garden of the Deep
+EDI_ENTRY 31 eip=0x4f5aa9 idx=47 owner_byte=1 cb=0x9611e0 name=Garden of the Deep
+GATE 31 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9611e0 idx=47 owner=1 f38=0xdfbe41 f3c=20 st=23 ours=0 name=Garden of the Deep
+PASTFLAG 31 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9611e0 owner=1 st=23 ours=0 name=Garden of the Deep
+CONVST 8 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9611e0 idx=47 owner=1 f38=0xdfbe41 f3c=20 old40=23 new=29 ours=0 name=Garden of the Deep
+VISIT 32 p=1 idx=52 owner=1 nb=75 ours=0 f3c=27 st=31 f38=0xdfbe41 name=Silverbird Park
+EDI_ENTRY 32 eip=0x4f5aa9 idx=52 owner_byte=1 cb=0x9617d0 name=Silverbird Park
+GATE 32 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9617d0 idx=52 owner=1 f38=0xdfbe41 f3c=27 st=34 ours=0 name=Silverbird Park
+PASTFLAG 32 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9617d0 owner=1 st=34 ours=0 name=Silverbird Park
+CONVST 9 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9617d0 idx=52 owner=1 f38=0xdfbe41 f3c=27 old40=34 new=35 ours=0 name=Silverbird Park
+VISIT 33 p=1 idx=63 owner=1 nb=75 ours=0 f3c=19 st=95 f38=0xdfbe41 name=Deirdre's Fishery
+EDI_ENTRY 33 eip=0x4f5aa9 idx=63 owner_byte=1 cb=0x9624e0 name=Deirdre's Fishery
+GATE 33 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9624e0 idx=63 owner=1 f38=0xdfbe41 f3c=19 st=97 ours=0 name=Deirdre's Fishery
+PASTFLAG 33 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9624e0 owner=1 st=97 ours=0 name=Deirdre's Fishery
+VISIT 34 p=1 idx=64 owner=1 nb=75 ours=0 f3c=19 st=10 f38=0xdfbe41 name=Razorbeak Wood
+EDI_ENTRY 34 eip=0x4f5aa9 idx=64 owner_byte=1 cb=0x962610 name=Razorbeak Wood
+GATE 34 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962610 idx=64 owner=1 f38=0xdfbe41 f3c=19 st=13 ours=0 name=Razorbeak Wood
+PASTFLAG 34 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962610 owner=1 st=13 ours=0 name=Razorbeak Wood
+SWEEPEND p=1 last_idx=74 visits=10 nb_now=75
+SWEEP 7 p=2 nb_entry=75
+VISIT 35 p=2 idx=0 owner=2 nb=75 ours=0 f3c=32 st=30 f38=0xdfbe41 name=The Rapture
+EDI_ENTRY 35 eip=0x4f5aa9 idx=0 owner_byte=2 cb=0x95da10 name=The Rapture
+GATE 35 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95da10 idx=0 owner=2 f38=0xdfbe41 f3c=32 st=30 ours=0 name=The Rapture
+PASTFLAG 35 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95da10 owner=2 st=30 ours=0 name=The Rapture
+CONVST 10 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95da10 idx=0 owner=2 f38=0xdfbe41 f3c=32 old40=30 new=30 ours=0 name=The Rapture
+VISIT 36 p=2 idx=2 owner=2 nb=75 ours=0 f3c=16 st=12 f38=0xdfbe41 name=The Hive
+EDI_ENTRY 36 eip=0x4f5aa9 idx=2 owner_byte=2 cb=0x95dc70 name=The Hive
+GATE 36 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95dc70 idx=2 owner=2 f38=0xdfbe41 f3c=16 st=19 ours=0 name=The Hive
+PASTFLAG 36 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95dc70 owner=2 st=19 ours=0 name=The Hive
+VISIT 37 p=2 idx=5 owner=2 nb=75 ours=0 f3c=22 st=26 f38=0xdfbe41 name=New Jerusalem
+EDI_ENTRY 37 eip=0x4f5aa9 idx=5 owner_byte=2 cb=0x95e000 name=New Jerusalem
+GATE 37 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e000 idx=5 owner=2 f38=0xdfbe41 f3c=22 st=28 ours=0 name=New Jerusalem
+PASTFLAG 37 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e000 owner=2 st=28 ours=0 name=New Jerusalem
+CONVST 11 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e000 idx=5 owner=2 f38=0xdfbe41 f3c=22 old40=28 new=28 ours=0 name=New Jerusalem
+VISIT 38 p=2 idx=11 owner=2 nb=75 ours=0 f3c=0 st=25 f38=0xdfbe41 name=The Holy Fire
+EDI_ENTRY 38 eip=0x4f5aa9 idx=11 owner_byte=2 cb=0x95e720 name=The Holy Fire
+GATE 38 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e720 idx=11 owner=2 f38=0xdfbe41 f3c=0 st=25 ours=0 name=The Holy Fire
+PASTFLAG 38 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e720 owner=2 st=25 ours=0 name=The Holy Fire
+CONVST 12 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e720 idx=11 owner=2 f38=0xdfbe41 f3c=0 old40=25 new=25 ours=0 name=The Holy Fire
+VISIT 39 p=2 idx=12 owner=2 nb=75 ours=0 f3c=7 st=9 f38=0xdfbe41 name=Proletarian Knot
+EDI_ENTRY 39 eip=0x4f5aa9 idx=12 owner_byte=2 cb=0x95e850 name=Proletarian Knot
+GATE 39 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e850 idx=12 owner=2 f38=0xdfbe41 f3c=7 st=20 ours=0 name=Proletarian Knot
+PASTFLAG 39 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e850 owner=2 st=20 ours=0 name=Proletarian Knot
+VISIT 40 p=2 idx=13 owner=2 nb=75 ours=0 f3c=0 st=27 f38=0xdfbe41 name=The Word of God
+EDI_ENTRY 40 eip=0x4f5aa9 idx=13 owner_byte=2 cb=0x95e980 name=The Word of God
+GATE 40 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e980 idx=13 owner=2 f38=0xdfbe41 f3c=0 st=27 ours=0 name=The Word of God
+PASTFLAG 40 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e980 owner=2 st=27 ours=0 name=The Word of God
+CONVST 13 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e980 idx=13 owner=2 f38=0xdfbe41 f3c=0 old40=27 new=27 ours=0 name=The Word of God
+VISIT 41 p=2 idx=19 owner=2 nb=75 ours=0 f3c=1 st=48 f38=0xdfbe41 name=Blessed Saviour
+EDI_ENTRY 41 eip=0x4f5aa9 idx=19 owner_byte=2 cb=0x95f0a0 name=Blessed Saviour
+GATE 41 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f0a0 idx=19 owner=2 f38=0xdfbe41 f3c=1 st=50 ours=0 name=Blessed Saviour
+PASTFLAG 41 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f0a0 owner=2 st=50 ours=0 name=Blessed Saviour
+VISIT 42 p=2 idx=21 owner=2 nb=75 ours=0 f3c=24 st=19 f38=0xdfbe41 name=Unification Cavern
+EDI_ENTRY 42 eip=0x4f5aa9 idx=21 owner_byte=2 cb=0x95f300 name=Unification Cavern
+GATE 42 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f300 idx=21 owner=2 f38=0xdfbe41 f3c=24 st=19 ours=0 name=Unification Cavern
+PASTFLAG 42 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f300 owner=2 st=19 ours=0 name=Unification Cavern
+CONVST 14 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95f300 idx=21 owner=2 f38=0xdfbe41 f3c=24 old40=19 new=19 ours=0 name=Unification Cavern
+VISIT 43 p=2 idx=23 owner=2 nb=75 ours=0 f3c=17 st=289 f38=0xdfbe41 name=The Colony
+EDI_ENTRY 43 eip=0x4f5aa9 idx=23 owner_byte=2 cb=0x95f560 name=The Colony
+GATE 43 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f560 idx=23 owner=2 f38=0xdfbe41 f3c=17 st=302 ours=0 name=The Colony
+PASTFLAG 43 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f560 owner=2 st=302 ours=0 name=The Colony
+VISIT 44 p=2 idx=24 owner=2 nb=75 ours=0 f3c=0 st=16 f38=0xdfbe41 name=The Lord's Grace
+EDI_ENTRY 44 eip=0x4f5aa9 idx=24 owner_byte=2 cb=0x95f690 name=The Lord's Grace
+GATE 44 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f690 idx=24 owner=2 f38=0xdfbe41 f3c=0 st=19 ours=0 name=The Lord's Grace
+PASTFLAG 44 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f690 owner=2 st=19 ours=0 name=The Lord's Grace
+VISIT 45 p=2 idx=25 owner=2 nb=75 ours=0 f3c=57 st=9 f38=0xdfbe41 name=Chairman's Burrow
+EDI_ENTRY 45 eip=0x4f5aa9 idx=25 owner_byte=2 cb=0x95f7c0 name=Chairman's Burrow
+GATE 45 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f7c0 idx=25 owner=2 f38=0xdfbe41 f3c=57 st=18 ours=0 name=Chairman's Burrow
+PASTFLAG 45 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f7c0 owner=2 st=18 ours=0 name=Chairman's Burrow
+VISIT 46 p=2 idx=28 owner=2 nb=75 ours=0 f3c=40 st=2 f38=0xdfbe41 name=Social Artery
+EDI_ENTRY 46 eip=0x4f5aa9 idx=28 owner_byte=2 cb=0x95fb50 name=Social Artery
+GATE 46 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fb50 idx=28 owner=2 f38=0xdfbe41 f3c=40 st=16 ours=0 name=Social Artery
+PASTFLAG 46 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fb50 owner=2 st=16 ours=0 name=Social Artery
+VISIT 47 p=2 idx=29 owner=2 nb=75 ours=0 f3c=33 st=34 f38=0xdfbe41 name=Godwinson's Hope
+EDI_ENTRY 47 eip=0x4f5aa9 idx=29 owner_byte=2 cb=0x95fc80 name=Godwinson's Hope
+GATE 47 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fc80 idx=29 owner=2 f38=0xdfbe41 f3c=33 st=41 ours=0 name=Godwinson's Hope
+PASTFLAG 47 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fc80 owner=2 st=41 ours=0 name=Godwinson's Hope
+VISIT 48 p=2 idx=30 owner=2 nb=75 ours=0 f3c=2 st=0 f38=0xdfbe41 name=Autumn Grove
+EDI_ENTRY 48 eip=0x4f5aa9 idx=30 owner_byte=2 cb=0x95fdb0 name=Autumn Grove
+GATE 48 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fdb0 idx=30 owner=2 f38=0xdfbe41 f3c=2 st=3 ours=0 name=Autumn Grove
+PASTFLAG 48 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fdb0 owner=2 st=3 ours=0 name=Autumn Grove
+VISIT 49 p=2 idx=32 owner=2 nb=75 ours=0 f3c=1 st=40 f38=0xdfbe41 name=People's Endeavor
+EDI_ENTRY 49 eip=0x4f5aa9 idx=32 owner_byte=2 cb=0x960010 name=People's Endeavor
+GATE 49 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960010 idx=32 owner=2 f38=0xdfbe41 f3c=1 st=49 ours=0 name=People's Endeavor
+PASTFLAG 49 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960010 owner=2 st=49 ours=0 name=People's Endeavor
+VISIT 50 p=2 idx=34 owner=2 nb=75 ours=0 f3c=39 st=32 f38=0xdfbe41 name=Unity Lair
+EDI_ENTRY 50 eip=0x4f5aa9 idx=34 owner_byte=2 cb=0x960270 name=Unity Lair
+GATE 50 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960270 idx=34 owner=2 f38=0xdfbe41 f3c=39 st=5 ours=0 name=Unity Lair
+PASTFLAG 50 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960270 owner=2 st=5 ours=0 name=Unity Lair
+VISIT 51 p=2 idx=36 owner=2 nb=75 ours=0 f3c=42 st=33 f38=0xdfbe41 name=The Drone Mound
+EDI_ENTRY 51 eip=0x4f5aa9 idx=36 owner_byte=2 cb=0x9604d0 name=The Drone Mound
+GATE 51 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9604d0 idx=36 owner=2 f38=0xdfbe41 f3c=42 st=1 ours=0 name=The Drone Mound
+PASTFLAG 51 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9604d0 owner=2 st=1 ours=0 name=The Drone Mound
+VISIT 52 p=2 idx=38 owner=2 nb=75 ours=0 f3c=46 st=8 f38=0xdfbe41 name=Social Engineering Den
+EDI_ENTRY 52 eip=0x4f5aa9 idx=38 owner_byte=2 cb=0x960730 name=Social Engineering Den
+GATE 52 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960730 idx=38 owner=2 f38=0xdfbe41 f3c=46 st=16 ours=0 name=Social Engineering Den
+PASTFLAG 52 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960730 owner=2 st=16 ours=0 name=Social Engineering Den
+VISIT 53 p=2 idx=43 owner=2 nb=75 ours=0 f3c=48 st=15 f38=0xdfbe41 name=Labor Network
+EDI_ENTRY 53 eip=0x4f5aa9 idx=43 owner_byte=2 cb=0x960d20 name=Labor Network
+GATE 53 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960d20 idx=43 owner=2 f38=0xdfbe41 f3c=48 st=24 ours=0 name=Labor Network
+PASTFLAG 53 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960d20 owner=2 st=24 ours=0 name=Labor Network
+VISIT 54 p=2 idx=45 owner=2 nb=75 ours=0 f3c=6 st=12 f38=0xdfbe41 name=The Leader's Horde
+EDI_ENTRY 54 eip=0x4f5aa9 idx=45 owner_byte=2 cb=0x960f80 name=The Leader's Horde
+GATE 54 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960f80 idx=45 owner=2 f38=0xdfbe41 f3c=6 st=17 ours=0 name=The Leader's Horde
+PASTFLAG 54 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960f80 owner=2 st=17 ours=0 name=The Leader's Horde
+VISIT 55 p=2 idx=48 owner=2 nb=75 ours=0 f3c=30 st=13 f38=0xdfbe41 name=Fellowship City
+EDI_ENTRY 55 eip=0x4f5aa9 idx=48 owner_byte=2 cb=0x961310 name=Fellowship City
+GATE 55 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961310 idx=48 owner=2 f38=0xdfbe41 f3c=30 st=13 ours=0 name=Fellowship City
+PASTFLAG 55 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961310 owner=2 st=13 ours=0 name=Fellowship City
+VISIT 56 p=2 idx=49 owner=2 nb=75 ours=0 f3c=41 st=12 f38=0xdfbe41 name=Socialism Tunnels
+EDI_ENTRY 56 eip=0x4f5aa9 idx=49 owner_byte=2 cb=0x961440 name=Socialism Tunnels
+GATE 56 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961440 idx=49 owner=2 f38=0xdfbe41 f3c=41 st=12 ours=0 name=Socialism Tunnels
+PASTFLAG 56 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961440 owner=2 st=12 ours=0 name=Socialism Tunnels
+VISIT 57 p=2 idx=50 owner=2 nb=75 ours=0 f3c=2 st=10 f38=0xdfbe41 name=Velvetgrass Point
+EDI_ENTRY 57 eip=0x4f5aa9 idx=50 owner_byte=2 cb=0x961570 name=Velvetgrass Point
+GATE 57 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961570 idx=50 owner=2 f38=0xdfbe41 f3c=2 st=14 ours=0 name=Velvetgrass Point
+PASTFLAG 57 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961570 owner=2 st=14 ours=0 name=Velvetgrass Point
+VISIT 58 p=2 idx=51 owner=2 nb=75 ours=0 f3c=0 st=20 f38=0xdfbe41 name=Time of Salvation
+EDI_ENTRY 58 eip=0x4f5aa9 idx=51 owner_byte=2 cb=0x9616a0 name=Time of Salvation
+GATE 58 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9616a0 idx=51 owner=2 f38=0xdfbe41 f3c=0 st=20 ours=0 name=Time of Salvation
+PASTFLAG 58 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9616a0 owner=2 st=20 ours=0 name=Time of Salvation
+VISIT 59 p=2 idx=53 owner=2 nb=75 ours=0 f3c=7 st=8 f38=0xdfbe41 name=Fecundity Tower
+EDI_ENTRY 59 eip=0x4f5aa9 idx=53 owner_byte=2 cb=0x961900 name=Fecundity Tower
+GATE 59 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961900 idx=53 owner=2 f38=0xdfbe41 f3c=7 st=14 ours=0 name=Fecundity Tower
+PASTFLAG 59 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961900 owner=2 st=14 ours=0 name=Fecundity Tower
+VISIT 60 p=2 idx=54 owner=2 nb=75 ours=0 f3c=9 st=20 f38=0xdfbe41 name=Great Collective
+EDI_ENTRY 60 eip=0x4f5aa9 idx=54 owner_byte=2 cb=0x961a30 name=Great Collective
+GATE 60 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961a30 idx=54 owner=2 f38=0xdfbe41 f3c=9 st=30 ours=0 name=Great Collective
+PASTFLAG 60 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961a30 owner=2 st=30 ours=0 name=Great Collective
+VISIT 61 p=2 idx=56 owner=2 nb=75 ours=0 f3c=12 st=24 f38=0xdfbe41 name=Seat of Proper Thought
+EDI_ENTRY 61 eip=0x4f5aa9 idx=56 owner_byte=2 cb=0x961c90 name=Seat of Proper Thought
+GATE 61 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961c90 idx=56 owner=2 f38=0xdfbe41 f3c=12 st=24 ours=0 name=Seat of Proper Thought
+PASTFLAG 61 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961c90 owner=2 st=24 ours=0 name=Seat of Proper Thought
+CONVST 15 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x961c90 idx=56 owner=2 f38=0xdfbe41 f3c=12 old40=24 new=24 ours=0 name=Seat of Proper Thought
+VISIT 62 p=2 idx=57 owner=2 nb=75 ours=0 f3c=1 st=27 f38=0xdfbe41 name=The Voice of God
+EDI_ENTRY 62 eip=0x4f5aa9 idx=57 owner_byte=2 cb=0x961dc0 name=The Voice of God
+GATE 62 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961dc0 idx=57 owner=2 f38=0xdfbe41 f3c=1 st=30 ours=0 name=The Voice of God
+PASTFLAG 62 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961dc0 owner=2 st=30 ours=0 name=The Voice of God
+VISIT 63 p=2 idx=58 owner=2 nb=75 ours=0 f3c=18 st=23 f38=0xdfbe41 name=Communal Nexus
+EDI_ENTRY 63 eip=0x4f5aa9 idx=58 owner_byte=2 cb=0x961ef0 name=Communal Nexus
+GATE 63 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961ef0 idx=58 owner=2 f38=0xdfbe41 f3c=18 st=27 ours=0 name=Communal Nexus
+PASTFLAG 63 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961ef0 owner=2 st=27 ours=0 name=Communal Nexus
+VISIT 64 p=2 idx=59 owner=2 nb=75 ours=0 f3c=4 st=18 f38=0xdfbe41 name=Manufacturing Warrens
+EDI_ENTRY 64 eip=0x4f5aa9 idx=59 owner_byte=2 cb=0x962020 name=Manufacturing Warrens
+GATE 64 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962020 idx=59 owner=2 f38=0xdfbe41 f3c=4 st=27 ours=0 name=Manufacturing Warrens
+PASTFLAG 64 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962020 owner=2 st=27 ours=0 name=Manufacturing Warrens
+VISIT 65 p=2 idx=60 owner=2 nb=75 ours=0 f3c=2 st=6 f38=0xdfbe41 name=House of Martyrs
+EDI_ENTRY 65 eip=0x4f5aa9 idx=60 owner_byte=2 cb=0x962150 name=House of Martyrs
+GATE 65 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962150 idx=60 owner=2 f38=0xdfbe41 f3c=2 st=6 ours=0 name=House of Martyrs
+PASTFLAG 65 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962150 owner=2 st=6 ours=0 name=House of Martyrs
+VISIT 66 p=2 idx=62 owner=2 nb=75 ours=0 f3c=9 st=32 f38=0xdfbe41 name=Hole of Aspiration
+EDI_ENTRY 66 eip=0x4f5aa9 idx=62 owner_byte=2 cb=0x9623b0 name=Hole of Aspiration
+GATE 66 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9623b0 idx=62 owner=2 f38=0xdfbe41 f3c=9 st=7 ours=0 name=Hole of Aspiration
+PASTFLAG 66 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9623b0 owner=2 st=7 ours=0 name=Hole of Aspiration
+VISIT 67 p=2 idx=65 owner=2 nb=75 ours=0 f3c=13 st=8 f38=0xdfbe41 name=Sea Collective
+EDI_ENTRY 67 eip=0x4f5aa9 idx=65 owner_byte=2 cb=0x962740 name=Sea Collective
+GATE 67 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962740 idx=65 owner=2 f38=0xdfbe41 f3c=13 st=11 ours=0 name=Sea Collective
+PASTFLAG 67 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962740 owner=2 st=11 ours=0 name=Sea Collective
+VISIT 68 p=2 idx=66 owner=2 nb=75 ours=0 f3c=25 st=18 f38=0xdfbe41 name=Deep Community
+EDI_ENTRY 68 eip=0x4f5aa9 idx=66 owner_byte=2 cb=0x962870 name=Deep Community
+GATE 68 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962870 idx=66 owner=2 f38=0xdfbe41 f3c=25 st=22 ours=0 name=Deep Community
+PASTFLAG 68 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962870 owner=2 st=22 ours=0 name=Deep Community
+VISIT 69 p=2 idx=68 owner=2 nb=75 ours=0 f3c=22 st=15 f38=0xdfbe41 name=Society Grid
+EDI_ENTRY 69 eip=0x4f5aa9 idx=68 owner_byte=2 cb=0x962ad0 name=Society Grid
+GATE 69 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962ad0 idx=68 owner=2 f38=0xdfbe41 f3c=22 st=20 ours=0 name=Society Grid
+PASTFLAG 69 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962ad0 owner=2 st=20 ours=0 name=Society Grid
+VISIT 70 p=2 idx=69 owner=2 nb=75 ours=0 f3c=30 st=49 f38=0xdfbe41 name=Laborer's Throng
+EDI_ENTRY 70 eip=0x4f5aa9 idx=69 owner_byte=2 cb=0x962c00 name=Laborer's Throng
+GATE 70 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962c00 idx=69 owner=2 f38=0xdfbe41 f3c=30 st=53 ours=0 name=Laborer's Throng
+PASTFLAG 70 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962c00 owner=2 st=53 ours=0 name=Laborer's Throng
+VISIT 71 p=2 idx=71 owner=2 nb=75 ours=0 f3c=2 st=9 f38=0xdfbe41 name=Sea Hive
+EDI_ENTRY 71 eip=0x4f5aa9 idx=71 owner_byte=2 cb=0x962e60 name=Sea Hive
+GATE 71 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962e60 idx=71 owner=2 f38=0xdfbe41 f3c=2 st=9 ours=0 name=Sea Hive
+PASTFLAG 71 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962e60 owner=2 st=9 ours=0 name=Sea Hive
+VISIT 72 p=2 idx=72 owner=2 nb=75 ours=0 f3c=3 st=23 f38=0xdfbe41 name=Port Yang
+EDI_ENTRY 72 eip=0x4f5aa9 idx=72 owner_byte=2 cb=0x962f90 name=Port Yang
+GATE 72 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962f90 idx=72 owner=2 f38=0xdfbe41 f3c=3 st=28 ours=0 name=Port Yang
+PASTFLAG 72 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962f90 owner=2 st=28 ours=0 name=Port Yang
+VISIT 73 p=2 idx=73 owner=2 nb=75 ours=0 f3c=12 st=35 f38=0xdfbe41 name=Factory Drift
+EDI_ENTRY 73 eip=0x4f5aa9 idx=73 owner_byte=2 cb=0x9630c0 name=Factory Drift
+GATE 73 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9630c0 idx=73 owner=2 f38=0xdfbe41 f3c=12 st=37 ours=0 name=Factory Drift
+PASTFLAG 73 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9630c0 owner=2 st=37 ours=0 name=Factory Drift
+VISIT 74 p=2 idx=74 owner=2 nb=75 ours=0 f3c=0 st=10 f38=0xdfbe41 name=Yang Mine
+EDI_ENTRY 74 eip=0x4f5aa9 idx=74 owner_byte=2 cb=0x9631f0 name=Yang Mine
+GATE 74 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9631f0 idx=74 owner=2 f38=0xdfbe41 f3c=0 st=10 ours=0 name=Yang Mine
+PASTFLAG 74 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9631f0 owner=2 st=10 ours=0 name=Yang Mine
+SWEEPEND p=2 last_idx=74 visits=40 nb_now=75
+SWEEP 8 p=3 nb_entry=75
+VISIT 75 p=3 idx=70 owner=3 nb=75 ours=1 f3c=500 st=200 f38=0xdfbe41 name=Climactic Research
+#0  0x005206d3 in ?? ()
+#1  0x0052091f in ?? ()
+EDI_ENTRY 75 eip=0x4f5aa9 idx=70 owner_byte=3 cb=0x962d30 name=Climactic Research
+QPIPE 1 name=Climactic Research f50=2 f44=2 f4c=0 f68=0 fc0=7 fcc=-3 st=200 f3c=500 d0=0
+W40_IADD 1 eip=0x4ef7f6 ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=200 new=200 d0=0 cb=0x962d30
+EDI_QGATE 76 eip=0x4ef88b q50=2 st=200 name=Climactic Research
+EDI_POSPATH 77 eip=0x4efa4b factor_eax=10 q50_m18=2 name=Climactic Research
+EDI_POSMUL 78 eip=0x4efa52 edi_before=10 ret_5ac950=1 name=Climactic Research
+QCOMPLET 1 name=Climactic Research f50=2 f44=2 f4c=0 f68=0 fc0=7 fcc=-3 st=200 ebx=2 m1c=104 m2c=8 m18=2 m30=4
+EDI_SPENDA 79 eip=0x4efed8 edi=10 st=200 q50=2 m1c=104 m2c=8 retaddr=0x3 name=Climactic Research
+W40_SPENDA 2 eip=0x4efedd ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=200 new=190 edi=10 cb=0x962d30
+
+Thread 1 "terran.exe" hit Hardware watchpoint 2: *(int *)(0x962d30 + 0x40)
+
+Old value = 200
+New value = 190
+0x004efee0 in ?? ()
+WP40 1 eip=0x4efee0 new=190 name_at=Climactic Research curbase=0x962d30 ours_at=1
+W40_CLAMP1 3 eip=0x4eff20 ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=190 new=0 cap=10 ownmask=3 d0=0 cb=0x962d30
+
+Thread 1 "terran.exe" hit Hardware watchpoint 2: *(int *)(0x962d30 + 0x40)
+
+Old value = 190
+New value = 0
+0x004eff23 in ?? ()
+WP40 2 eip=0x4eff23 new=0 name_at=Climactic Research curbase=0x962d30 ours_at=1
+GATE 75 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962d30 idx=70 owner=3 f38=0xdfbe41 f3c=500 st=0 ours=1 name=Climactic Research
+FLAGTEST 1 eip=0x4f271e ebp=0xbefdd4 ecx=0x20 curbase=0x962d30 owner=3 ours=1 name=Climactic Research
+W3C_E410D 1 eip=0x4ee82f ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=500 new=40 pop=7 scale=10 ada8=2 fac17=0 f30b=0 cb=0x962d30
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(int *)(0x962d30 + 0x3c)
+
+Old value = 500
+New value = 40
+0x004ee832 in ?? ()
+WP3C 3 eip=0x4ee832 new=40 name_at=Climactic Research curbase=0x962d30 ours_at=1
+W3C_E410ACCR 2 eip=0x4ee8c7 ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=40 new=37 cc=-3 cb=0x962d30
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(int *)(0x962d30 + 0x3c)
+
+Old value = 40
+New value = 37
+0x004ee8ca in ?? ()
+WP3C 4 eip=0x4ee8ca new=37 name_at=Climactic Research curbase=0x962d30 ours_at=1
+SWEEPEND p=3 last_idx=74 visits=1 nb_now=75
+SWEEP 9 p=4 nb_entry=75
+VISIT 76 p=4 idx=3 owner=4 nb=75 ours=0 f3c=49 st=10 f38=0xdfbe41 name=Morgan Industries
+EDI_ENTRY 80 eip=0x4f5aa9 idx=3 owner_byte=4 cb=0x95dda0 name=Morgan Industries
+GATE 76 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95dda0 idx=3 owner=4 f38=0xdfbe41 f3c=49 st=14 ours=0 name=Morgan Industries
+PASTFLAG 75 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95dda0 owner=4 st=14 ours=0 name=Morgan Industries
+VISIT 77 p=4 idx=7 owner=4 nb=75 ours=0 f3c=0 st=68 f38=0xdfbe41 name=Morgan Construction
+EDI_ENTRY 81 eip=0x4f5aa9 idx=7 owner_byte=4 cb=0x95e260 name=Morgan Construction
+GATE 77 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e260 idx=7 owner=4 f38=0xdfbe41 f3c=0 st=76 ours=0 name=Morgan Construction
+PASTFLAG 76 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e260 owner=4 st=76 ours=0 name=Morgan Construction
+VISIT 78 p=4 idx=18 owner=4 nb=75 ours=0 f3c=37 st=64 f38=0xdfbe41 name=Morgan Solarfex
+EDI_ENTRY 82 eip=0x4f5aa9 idx=18 owner_byte=4 cb=0x95ef70 name=Morgan Solarfex
+GATE 78 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ef70 idx=18 owner=4 f38=0xdfbe41 f3c=37 st=74 ours=0 name=Morgan Solarfex
+PASTFLAG 77 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ef70 owner=4 st=74 ours=0 name=Morgan Solarfex
+VISIT 79 p=4 idx=31 owner=4 nb=75 ours=0 f3c=46 st=30 f38=0xdfbe41 name=Morgan Metallurgy
+EDI_ENTRY 83 eip=0x4f5aa9 idx=31 owner_byte=4 cb=0x95fee0 name=Morgan Metallurgy
+GATE 79 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fee0 idx=31 owner=4 f38=0xdfbe41 f3c=46 st=35 ours=0 name=Morgan Metallurgy
+PASTFLAG 78 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fee0 owner=4 st=35 ours=0 name=Morgan Metallurgy
+VISIT 80 p=4 idx=35 owner=4 nb=75 ours=0 f3c=0 st=39 f38=0xdfbe41 name=Morgan Energy Monopoly
+EDI_ENTRY 84 eip=0x4f5aa9 idx=35 owner_byte=4 cb=0x9603a0 name=Morgan Energy Monopoly
+GATE 80 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9603a0 idx=35 owner=4 f38=0xdfbe41 f3c=0 st=48 ours=0 name=Morgan Energy Monopoly
+PASTFLAG 79 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9603a0 owner=4 st=48 ours=0 name=Morgan Energy Monopoly
+VISIT 81 p=4 idx=55 owner=4 nb=75 ours=0 f3c=25 st=44 f38=0xdfbe41 name=Morgan Biochemical
+EDI_ENTRY 85 eip=0x4f5aa9 idx=55 owner_byte=4 cb=0x961b60 name=Morgan Biochemical
+GATE 81 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961b60 idx=55 owner=4 f38=0xdfbe41 f3c=25 st=48 ours=0 name=Morgan Biochemical
+PASTFLAG 80 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961b60 owner=4 st=48 ours=0 name=Morgan Biochemical
+VISIT 82 p=4 idx=61 owner=4 nb=75 ours=0 f3c=0 st=14 f38=0xdfbe41 name=Morgan Bank
+EDI_ENTRY 86 eip=0x4f5aa9 idx=61 owner_byte=4 cb=0x962280 name=Morgan Bank
+GATE 82 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962280 idx=61 owner=4 f38=0xdfbe41 f3c=0 st=20 ours=0 name=Morgan Bank
+PASTFLAG 81 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962280 owner=4 st=20 ours=0 name=Morgan Bank
+CONVST 16 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x962280 idx=61 owner=4 f38=0xdfbe41 f3c=0 old40=20 new=21 ours=0 name=Morgan Bank
+SWEEPEND p=4 last_idx=74 visits=7 nb_now=75
+SWEEP 10 p=5 nb_entry=75
+VISIT 83 p=5 idx=4 owner=5 nb=75 ours=0 f3c=30 st=8 f38=0xdfbe41 name=Sparta Command
+EDI_ENTRY 87 eip=0x4f5aa9 idx=4 owner_byte=5 cb=0x95ded0 name=Sparta Command
+GATE 83 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ded0 idx=4 owner=5 f38=0xdfbe41 f3c=30 st=15 ours=0 name=Sparta Command
+PASTFLAG 82 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ded0 owner=5 st=15 ours=0 name=Sparta Command
+VISIT 84 p=5 idx=10 owner=5 nb=75 ours=0 f3c=2 st=19 f38=0xdfbe41 name=Fort Survivalist
+EDI_ENTRY 88 eip=0x4f5aa9 idx=10 owner_byte=5 cb=0x95e5f0 name=Fort Survivalist
+GATE 84 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e5f0 idx=10 owner=5 f38=0xdfbe41 f3c=2 st=27 ours=0 name=Fort Survivalist
+PASTFLAG 83 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e5f0 owner=5 st=27 ours=0 name=Fort Survivalist
+VISIT 85 p=5 idx=40 owner=5 nb=75 ours=0 f3c=0 st=7 f38=0xdfbe41 name=Commander's Keep
+EDI_ENTRY 89 eip=0x4f5aa9 idx=40 owner_byte=5 cb=0x960990 name=Commander's Keep
+GATE 85 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960990 idx=40 owner=5 f38=0xdfbe41 f3c=0 st=11 ours=0 name=Commander's Keep
+PASTFLAG 84 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960990 owner=5 st=11 ours=0 name=Commander's Keep
+SWEEPEND p=5 last_idx=74 visits=3 nb_now=75
+SWEEP 11 p=6 nb_entry=75
+VISIT 86 p=6 idx=14 owner=6 nb=75 ours=0 f3c=0 st=66 f38=0xdfbe41 name=Assassin's Redoubt
+EDI_ENTRY 90 eip=0x4f5aa9 idx=14 owner_byte=6 cb=0x95eab0 name=Assassin's Redoubt
+GATE 86 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95eab0 idx=14 owner=6 f38=0xdfbe41 f3c=0 st=3 ours=0 name=Assassin's Redoubt
+PASTFLAG 85 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95eab0 owner=6 st=3 ours=0 name=Assassin's Redoubt
+VISIT 87 p=6 idx=20 owner=6 nb=75 ours=0 f3c=6 st=7 f38=0xdfbe41 name=Training Camp
+EDI_ENTRY 91 eip=0x4f5aa9 idx=20 owner_byte=6 cb=0x95f1d0 name=Training Camp
+GATE 87 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f1d0 idx=20 owner=6 f38=0xdfbe41 f3c=6 st=17 ours=0 name=Training Camp
+PASTFLAG 86 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f1d0 owner=6 st=17 ours=0 name=Training Camp
+CONVST 17 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95f1d0 idx=20 owner=6 f38=0xdfbe41 f3c=6 old40=17 new=17 ours=0 name=Training Camp
+VISIT 88 p=6 idx=26 owner=6 nb=75 ours=0 f3c=31 st=7 f38=0xdfbe41 name=Fort Liberty
+EDI_ENTRY 92 eip=0x4f5aa9 idx=26 owner_byte=6 cb=0x95f8f0 name=Fort Liberty
+GATE 88 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f8f0 idx=26 owner=6 f38=0xdfbe41 f3c=31 st=12 ours=0 name=Fort Liberty
+PASTFLAG 87 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f8f0 owner=6 st=12 ours=0 name=Fort Liberty
+VISIT 89 p=6 idx=37 owner=6 nb=75 ours=0 f3c=27 st=8 f38=0xdfbe41 name=Hawk of Chiron
+EDI_ENTRY 93 eip=0x4f5aa9 idx=37 owner_byte=6 cb=0x960600 name=Hawk of Chiron
+GATE 89 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960600 idx=37 owner=6 f38=0xdfbe41 f3c=27 st=15 ours=0 name=Hawk of Chiron
+PASTFLAG 88 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960600 owner=6 st=15 ours=0 name=Hawk of Chiron
+CONVST 18 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x960600 idx=37 owner=6 f38=0xdfbe41 f3c=27 old40=15 new=15 ours=0 name=Hawk of Chiron
+VISIT 90 p=6 idx=39 owner=6 nb=75 ours=0 f3c=0 st=97 f38=0xdfbe41 name=Militia Station
+EDI_ENTRY 94 eip=0x4f5aa9 idx=39 owner_byte=6 cb=0x960860 name=Militia Station
+GATE 90 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960860 idx=39 owner=6 f38=0xdfbe41 f3c=0 st=101 ours=0 name=Militia Station
+PASTFLAG 89 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960860 owner=6 st=101 ours=0 name=Militia Station
+SWEEPEND p=6 last_idx=74 visits=5 nb_now=75
+SWEEP 12 p=7 nb_entry=75
+VISIT 91 p=7 idx=6 owner=7 nb=75 ours=0 f3c=61 st=62 f38=0xdfbe41 name=U.N. Headquarters
+EDI_ENTRY 95 eip=0x4f5aa9 idx=6 owner_byte=7 cb=0x95e130 name=U.N. Headquarters
+GATE 91 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e130 idx=6 owner=7 f38=0xdfbe41 f3c=61 st=70 ours=0 name=U.N. Headquarters
+PASTFLAG 90 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e130 owner=7 st=70 ours=0 name=U.N. Headquarters
+CONVST 19 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e130 idx=6 owner=7 f38=0xdfbe41 f3c=61 old40=70 new=74 ours=0 name=U.N. Headquarters
+VISIT 92 p=7 idx=8 owner=7 nb=75 ours=0 f3c=0 st=15 f38=0xdfbe41 name=U.N. Disaster Relief
+EDI_ENTRY 96 eip=0x4f5aa9 idx=8 owner_byte=7 cb=0x95e390 name=U.N. Disaster Relief
+GATE 92 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e390 idx=8 owner=7 f38=0xdfbe41 f3c=0 st=24 ours=0 name=U.N. Disaster Relief
+PASTFLAG 91 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e390 owner=7 st=24 ours=0 name=U.N. Disaster Relief
+VISIT 93 p=7 idx=15 owner=7 nb=75 ours=0 f3c=2 st=33 f38=0xdfbe41 name=U.N. Education Agency
+EDI_ENTRY 97 eip=0x4f5aa9 idx=15 owner_byte=7 cb=0x95ebe0 name=U.N. Education Agency
+GATE 93 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ebe0 idx=15 owner=7 f38=0xdfbe41 f3c=2 st=38 ours=0 name=U.N. Education Agency
+PASTFLAG 92 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ebe0 owner=7 st=38 ours=0 name=U.N. Education Agency
+VISIT 94 p=7 idx=16 owner=7 nb=75 ours=0 f3c=0 st=27 f38=0xdfbe41 name=U.N. Humanity Base
+EDI_ENTRY 98 eip=0x4f5aa9 idx=16 owner_byte=7 cb=0x95ed10 name=U.N. Humanity Base
+GATE 94 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ed10 idx=16 owner=7 f38=0xdfbe41 f3c=0 st=38 ours=0 name=U.N. Humanity Base
+PASTFLAG 93 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ed10 owner=7 st=38 ours=0 name=U.N. Humanity Base
+CONVST 20 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95ed10 idx=16 owner=7 f38=0xdfbe41 f3c=0 old40=38 new=41 ours=0 name=U.N. Humanity Base
+VISIT 95 p=7 idx=22 owner=7 nb=75 ours=0 f3c=0 st=32 f38=0xdfbe41 name=U.N. Information Agency
+EDI_ENTRY 99 eip=0x4f5aa9 idx=22 owner_byte=7 cb=0x95f430 name=U.N. Information Agency
+GATE 95 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f430 idx=22 owner=7 f38=0xdfbe41 f3c=0 st=34 ours=0 name=U.N. Information Agency
+PASTFLAG 94 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f430 owner=7 st=34 ours=0 name=U.N. Information Agency
+VISIT 96 p=7 idx=33 owner=7 nb=75 ours=0 f3c=35 st=100 f38=0xdfbe41 name=U.N. Equality Village
+EDI_ENTRY 100 eip=0x4f5aa9 idx=33 owner_byte=7 cb=0x960140 name=U.N. Equality Village
+GATE 96 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960140 idx=33 owner=7 f38=0xdfbe41 f3c=35 st=109 ours=0 name=U.N. Equality Village
+PASTFLAG 95 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960140 owner=7 st=109 ours=0 name=U.N. Equality Village
+VISIT 97 p=7 idx=42 owner=7 nb=75 ours=0 f3c=0 st=25 f38=0xdfbe41 name=U.N. Planning Authority
+EDI_ENTRY 101 eip=0x4f5aa9 idx=42 owner_byte=7 cb=0x960bf0 name=U.N. Planning Authority
+GATE 97 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960bf0 idx=42 owner=7 f38=0xdfbe41 f3c=0 st=28 ours=0 name=U.N. Planning Authority
+PASTFLAG 96 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960bf0 owner=7 st=28 ours=0 name=U.N. Planning Authority
+VISIT 98 p=7 idx=44 owner=7 nb=75 ours=0 f3c=17 st=3 f38=0xdfbe41 name=U.N. Commerce Committee
+EDI_ENTRY 102 eip=0x4f5aa9 idx=44 owner_byte=7 cb=0x960e50 name=U.N. Commerce Committee
+GATE 98 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960e50 idx=44 owner=7 f38=0xdfbe41 f3c=17 st=6 ours=0 name=U.N. Commerce Committee
+PASTFLAG 97 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960e50 owner=7 st=6 ours=0 name=U.N. Commerce Committee
+VISIT 99 p=7 idx=67 owner=7 nb=75 ours=0 f3c=22 st=46 f38=0xdfbe41 name=U.N. Aid Station
+EDI_ENTRY 103 eip=0x4f5aa9 idx=67 owner_byte=7 cb=0x9629a0 name=U.N. Aid Station
+GATE 99 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9629a0 idx=67 owner=7 f38=0xdfbe41 f3c=22 st=47 ours=0 name=U.N. Aid Station
+PASTFLAG 98 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9629a0 owner=7 st=47 ours=0 name=U.N. Aid Station
+SWEEPEND p=7 last_idx=74 visits=9 nb_now=75
+YEAR 2 mid_p=7 mid_idx=74 mid_visits=9 nb=75 cur=7
+SWEEP 13 p=0 nb_entry=75
+SWEEPEND p=0 last_idx=74 visits=0 nb_now=75
+SWEEP 14 p=1 nb_entry=75
+VISIT 100 p=1 idx=1 owner=1 nb=75 ours=0 f3c=57 st=83 f38=0xdfbe41 name=Gaia's Landing
+EDI_ENTRY 104 eip=0x4f5aa9 idx=1 owner_byte=1 cb=0x95db40 name=Gaia's Landing
+GATE 100 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95db40 idx=1 owner=1 f38=0xdfbe41 f3c=57 st=1 ours=0 name=Gaia's Landing
+PASTFLAG 99 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95db40 owner=1 st=1 ours=0 name=Gaia's Landing
+VISIT 101 p=1 idx=9 owner=1 nb=75 ours=0 f3c=74 st=3 f38=0xdfbe41 name=Lily of the Valley
+EDI_ENTRY 105 eip=0x4f5aa9 idx=9 owner_byte=1 cb=0x95e4c0 name=Lily of the Valley
+GATE 101 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e4c0 idx=9 owner=1 f38=0xdfbe41 f3c=74 st=5 ours=0 name=Lily of the Valley
+PASTFLAG 100 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e4c0 owner=1 st=5 ours=0 name=Lily of the Valley
+VISIT 102 p=1 idx=17 owner=1 nb=75 ours=0 f3c=0 st=65 f38=0xdfbe41 name=Song of Planet
+EDI_ENTRY 106 eip=0x4f5aa9 idx=17 owner_byte=1 cb=0x95ee40 name=Song of Planet
+GATE 102 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ee40 idx=17 owner=1 f38=0xdfbe41 f3c=-1 st=2 ours=0 name=Song of Planet
+PASTFLAG 101 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ee40 owner=1 st=2 ours=0 name=Song of Planet
+CONVST 21 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95ee40 idx=17 owner=1 f38=0xdfbe41 f3c=-1 old40=2 new=2 ours=0 name=Song of Planet
+VISIT 103 p=1 idx=27 owner=1 nb=75 ours=0 f3c=6 st=7 f38=0xdfbe41 name=Greenhouse Gate
+EDI_ENTRY 107 eip=0x4f5aa9 idx=27 owner_byte=1 cb=0x95fa20 name=Greenhouse Gate
+GATE 103 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fa20 idx=27 owner=1 f38=0xdfbe41 f3c=6 st=16 ours=0 name=Greenhouse Gate
+PASTFLAG 102 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fa20 owner=1 st=16 ours=0 name=Greenhouse Gate
+VISIT 104 p=1 idx=41 owner=1 nb=75 ours=0 f3c=19 st=30 f38=0xdfbe41 name=Last Rose of Summer
+EDI_ENTRY 108 eip=0x4f5aa9 idx=41 owner_byte=1 cb=0x960ac0 name=Last Rose of Summer
+GATE 104 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960ac0 idx=41 owner=1 f38=0xdfbe41 f3c=19 st=34 ours=0 name=Last Rose of Summer
+PASTFLAG 103 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960ac0 owner=1 st=34 ours=0 name=Last Rose of Summer
+VISIT 105 p=1 idx=46 owner=1 nb=75 ours=0 f3c=0 st=13 f38=0xdfbe41 name=Memory of Earth
+EDI_ENTRY 109 eip=0x4f5aa9 idx=46 owner_byte=1 cb=0x9610b0 name=Memory of Earth
+GATE 105 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9610b0 idx=46 owner=1 f38=0xdfbe41 f3c=0 st=17 ours=0 name=Memory of Earth
+PASTFLAG 104 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9610b0 owner=1 st=17 ours=0 name=Memory of Earth
+VISIT 106 p=1 idx=47 owner=1 nb=75 ours=0 f3c=22 st=29 f38=0xdfbe41 name=Garden of the Deep
+EDI_ENTRY 110 eip=0x4f5aa9 idx=47 owner_byte=1 cb=0x9611e0 name=Garden of the Deep
+GATE 106 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9611e0 idx=47 owner=1 f38=0xdfbe41 f3c=22 st=38 ours=0 name=Garden of the Deep
+PASTFLAG 105 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9611e0 owner=1 st=38 ours=0 name=Garden of the Deep
+CONVST 22 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9611e0 idx=47 owner=1 f38=0xdfbe41 f3c=22 old40=38 new=44 ours=0 name=Garden of the Deep
+VISIT 107 p=1 idx=52 owner=1 nb=75 ours=0 f3c=28 st=35 f38=0xdfbe41 name=Silverbird Park
+EDI_ENTRY 111 eip=0x4f5aa9 idx=52 owner_byte=1 cb=0x9617d0 name=Silverbird Park
+GATE 107 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9617d0 idx=52 owner=1 f38=0xdfbe41 f3c=28 st=38 ours=0 name=Silverbird Park
+PASTFLAG 106 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9617d0 owner=1 st=38 ours=0 name=Silverbird Park
+CONVST 23 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9617d0 idx=52 owner=1 f38=0xdfbe41 f3c=28 old40=38 new=39 ours=0 name=Silverbird Park
+VISIT 108 p=1 idx=63 owner=1 nb=75 ours=0 f3c=21 st=97 f38=0xdfbe41 name=Deirdre's Fishery
+EDI_ENTRY 112 eip=0x4f5aa9 idx=63 owner_byte=1 cb=0x9624e0 name=Deirdre's Fishery
+GATE 108 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9624e0 idx=63 owner=1 f38=0xdfbe41 f3c=21 st=99 ours=0 name=Deirdre's Fishery
+PASTFLAG 107 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9624e0 owner=1 st=99 ours=0 name=Deirdre's Fishery
+VISIT 109 p=1 idx=64 owner=1 nb=75 ours=0 f3c=19 st=13 f38=0xdfbe41 name=Razorbeak Wood
+EDI_ENTRY 113 eip=0x4f5aa9 idx=64 owner_byte=1 cb=0x962610 name=Razorbeak Wood
+GATE 109 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962610 idx=64 owner=1 f38=0xdfbe41 f3c=19 st=16 ours=0 name=Razorbeak Wood
+PASTFLAG 108 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962610 owner=1 st=16 ours=0 name=Razorbeak Wood
+SWEEPEND p=1 last_idx=74 visits=10 nb_now=75
+SWEEP 15 p=2 nb_entry=75
+VISIT 110 p=2 idx=0 owner=2 nb=75 ours=0 f3c=33 st=30 f38=0xdfbe41 name=The Rapture
+EDI_ENTRY 114 eip=0x4f5aa9 idx=0 owner_byte=2 cb=0x95da10 name=The Rapture
+GATE 110 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95da10 idx=0 owner=2 f38=0xdfbe41 f3c=33 st=30 ours=0 name=The Rapture
+PASTFLAG 109 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95da10 owner=2 st=30 ours=0 name=The Rapture
+CONVST 24 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95da10 idx=0 owner=2 f38=0xdfbe41 f3c=33 old40=30 new=32 ours=0 name=The Rapture
+VISIT 111 p=2 idx=2 owner=2 nb=75 ours=0 f3c=16 st=19 f38=0xdfbe41 name=The Hive
+EDI_ENTRY 115 eip=0x4f5aa9 idx=2 owner_byte=2 cb=0x95dc70 name=The Hive
+GATE 111 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95dc70 idx=2 owner=2 f38=0xdfbe41 f3c=16 st=26 ours=0 name=The Hive
+PASTFLAG 110 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95dc70 owner=2 st=26 ours=0 name=The Hive
+CONVST 25 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95dc70 idx=2 owner=2 f38=0xdfbe41 f3c=16 old40=26 new=26 ours=0 name=The Hive
+VISIT 112 p=2 idx=5 owner=2 nb=75 ours=0 f3c=23 st=28 f38=0xdfbe41 name=New Jerusalem
+EDI_ENTRY 116 eip=0x4f5aa9 idx=5 owner_byte=2 cb=0x95e000 name=New Jerusalem
+GATE 112 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e000 idx=5 owner=2 f38=0xdfbe41 f3c=23 st=30 ours=0 name=New Jerusalem
+PASTFLAG 111 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e000 owner=2 st=30 ours=0 name=New Jerusalem
+CONVST 26 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e000 idx=5 owner=2 f38=0xdfbe41 f3c=23 old40=30 new=33 ours=0 name=New Jerusalem
+VISIT 113 p=2 idx=11 owner=2 nb=75 ours=0 f3c=0 st=25 f38=0xdfbe41 name=The Holy Fire
+EDI_ENTRY 117 eip=0x4f5aa9 idx=11 owner_byte=2 cb=0x95e720 name=The Holy Fire
+GATE 113 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e720 idx=11 owner=2 f38=0xdfbe41 f3c=0 st=25 ours=0 name=The Holy Fire
+PASTFLAG 112 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e720 owner=2 st=25 ours=0 name=The Holy Fire
+CONVST 27 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e720 idx=11 owner=2 f38=0xdfbe41 f3c=0 old40=25 new=27 ours=0 name=The Holy Fire
+VISIT 114 p=2 idx=12 owner=2 nb=75 ours=0 f3c=11 st=20 f38=0xdfbe41 name=Proletarian Knot
+EDI_ENTRY 118 eip=0x4f5aa9 idx=12 owner_byte=2 cb=0x95e850 name=Proletarian Knot
+GATE 114 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e850 idx=12 owner=2 f38=0xdfbe41 f3c=11 st=31 ours=0 name=Proletarian Knot
+PASTFLAG 113 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e850 owner=2 st=31 ours=0 name=Proletarian Knot
+VISIT 115 p=2 idx=13 owner=2 nb=75 ours=0 f3c=0 st=27 f38=0xdfbe41 name=The Word of God
+EDI_ENTRY 119 eip=0x4f5aa9 idx=13 owner_byte=2 cb=0x95e980 name=The Word of God
+GATE 115 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e980 idx=13 owner=2 f38=0xdfbe41 f3c=0 st=27 ours=0 name=The Word of God
+PASTFLAG 114 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e980 owner=2 st=27 ours=0 name=The Word of God
+CONVST 28 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e980 idx=13 owner=2 f38=0xdfbe41 f3c=0 old40=27 new=28 ours=0 name=The Word of God
+VISIT 116 p=2 idx=19 owner=2 nb=75 ours=0 f3c=1 st=50 f38=0xdfbe41 name=Blessed Saviour
+EDI_ENTRY 120 eip=0x4f5aa9 idx=19 owner_byte=2 cb=0x95f0a0 name=Blessed Saviour
+GATE 116 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f0a0 idx=19 owner=2 f38=0xdfbe41 f3c=1 st=52 ours=0 name=Blessed Saviour
+PASTFLAG 115 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f0a0 owner=2 st=52 ours=0 name=Blessed Saviour
+CONVST 29 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95f0a0 idx=19 owner=2 f38=0xdfbe41 f3c=1 old40=52 new=52 ours=0 name=Blessed Saviour
+VISIT 117 p=2 idx=21 owner=2 nb=75 ours=0 f3c=24 st=19 f38=0xdfbe41 name=Unification Cavern
+EDI_ENTRY 121 eip=0x4f5aa9 idx=21 owner_byte=2 cb=0x95f300 name=Unification Cavern
+GATE 117 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f300 idx=21 owner=2 f38=0xdfbe41 f3c=24 st=26 ours=0 name=Unification Cavern
+PASTFLAG 116 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f300 owner=2 st=26 ours=0 name=Unification Cavern
+VISIT 118 p=2 idx=23 owner=2 nb=75 ours=0 f3c=20 st=302 f38=0xdfbe41 name=The Colony
+EDI_ENTRY 122 eip=0x4f5aa9 idx=23 owner_byte=2 cb=0x95f560 name=The Colony
+GATE 118 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f560 idx=23 owner=2 f38=0xdfbe41 f3c=20 st=315 ours=0 name=The Colony
+PASTFLAG 117 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f560 owner=2 st=315 ours=0 name=The Colony
+CONVST 30 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95f560 idx=23 owner=2 f38=0xdfbe41 f3c=20 old40=315 new=315 ours=0 name=The Colony
+VISIT 119 p=2 idx=24 owner=2 nb=75 ours=0 f3c=0 st=19 f38=0xdfbe41 name=The Lord's Grace
+EDI_ENTRY 123 eip=0x4f5aa9 idx=24 owner_byte=2 cb=0x95f690 name=The Lord's Grace
+GATE 119 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f690 idx=24 owner=2 f38=0xdfbe41 f3c=0 st=22 ours=0 name=The Lord's Grace
+PASTFLAG 118 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f690 owner=2 st=22 ours=0 name=The Lord's Grace
+VISIT 120 p=2 idx=25 owner=2 nb=75 ours=0 f3c=60 st=18 f38=0xdfbe41 name=Chairman's Burrow
+EDI_ENTRY 124 eip=0x4f5aa9 idx=25 owner_byte=2 cb=0x95f7c0 name=Chairman's Burrow
+GATE 120 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f7c0 idx=25 owner=2 f38=0xdfbe41 f3c=60 st=27 ours=0 name=Chairman's Burrow
+PASTFLAG 119 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f7c0 owner=2 st=27 ours=0 name=Chairman's Burrow
+VISIT 121 p=2 idx=28 owner=2 nb=75 ours=0 f3c=42 st=16 f38=0xdfbe41 name=Social Artery
+EDI_ENTRY 125 eip=0x4f5aa9 idx=28 owner_byte=2 cb=0x95fb50 name=Social Artery
+GATE 121 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fb50 idx=28 owner=2 f38=0xdfbe41 f3c=42 st=30 ours=0 name=Social Artery
+PASTFLAG 120 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fb50 owner=2 st=30 ours=0 name=Social Artery
+VISIT 122 p=2 idx=29 owner=2 nb=75 ours=0 f3c=34 st=41 f38=0xdfbe41 name=Godwinson's Hope
+EDI_ENTRY 126 eip=0x4f5aa9 idx=29 owner_byte=2 cb=0x95fc80 name=Godwinson's Hope
+GATE 122 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fc80 idx=29 owner=2 f38=0xdfbe41 f3c=34 st=41 ours=0 name=Godwinson's Hope
+PASTFLAG 121 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fc80 owner=2 st=41 ours=0 name=Godwinson's Hope
+CONVST 31 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95fc80 idx=29 owner=2 f38=0xdfbe41 f3c=34 old40=41 new=42 ours=0 name=Godwinson's Hope
+VISIT 123 p=2 idx=30 owner=2 nb=75 ours=0 f3c=2 st=3 f38=0xdfbe41 name=Autumn Grove
+EDI_ENTRY 127 eip=0x4f5aa9 idx=30 owner_byte=2 cb=0x95fdb0 name=Autumn Grove
+GATE 123 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fdb0 idx=30 owner=2 f38=0xdfbe41 f3c=2 st=6 ours=0 name=Autumn Grove
+PASTFLAG 122 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fdb0 owner=2 st=6 ours=0 name=Autumn Grove
+CONVST 32 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95fdb0 idx=30 owner=2 f38=0xdfbe41 f3c=2 old40=6 new=6 ours=0 name=Autumn Grove
+VISIT 124 p=2 idx=32 owner=2 nb=75 ours=0 f3c=1 st=49 f38=0xdfbe41 name=People's Endeavor
+EDI_ENTRY 128 eip=0x4f5aa9 idx=32 owner_byte=2 cb=0x960010 name=People's Endeavor
+GATE 124 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960010 idx=32 owner=2 f38=0xdfbe41 f3c=1 st=14 ours=0 name=People's Endeavor
+PASTFLAG 123 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960010 owner=2 st=14 ours=0 name=People's Endeavor
+VISIT 125 p=2 idx=34 owner=2 nb=75 ours=0 f3c=42 st=5 f38=0xdfbe41 name=Unity Lair
+EDI_ENTRY 129 eip=0x4f5aa9 idx=34 owner_byte=2 cb=0x960270 name=Unity Lair
+GATE 125 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960270 idx=34 owner=2 f38=0xdfbe41 f3c=42 st=10 ours=0 name=Unity Lair
+PASTFLAG 124 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960270 owner=2 st=10 ours=0 name=Unity Lair
+VISIT 126 p=2 idx=36 owner=2 nb=75 ours=0 f3c=45 st=1 f38=0xdfbe41 name=The Drone Mound
+EDI_ENTRY 130 eip=0x4f5aa9 idx=36 owner_byte=2 cb=0x9604d0 name=The Drone Mound
+GATE 126 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9604d0 idx=36 owner=2 f38=0xdfbe41 f3c=45 st=13 ours=0 name=The Drone Mound
+PASTFLAG 125 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9604d0 owner=2 st=13 ours=0 name=The Drone Mound
+VISIT 127 p=2 idx=38 owner=2 nb=75 ours=0 f3c=48 st=16 f38=0xdfbe41 name=Social Engineering Den
+EDI_ENTRY 131 eip=0x4f5aa9 idx=38 owner_byte=2 cb=0x960730 name=Social Engineering Den
+GATE 127 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960730 idx=38 owner=2 f38=0xdfbe41 f3c=48 st=24 ours=0 name=Social Engineering Den
+PASTFLAG 126 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960730 owner=2 st=24 ours=0 name=Social Engineering Den
+VISIT 128 p=2 idx=43 owner=2 nb=75 ours=0 f3c=27 st=24 f38=0xdfbe41 name=Labor Network
+EDI_ENTRY 132 eip=0x4f5aa9 idx=43 owner_byte=2 cb=0x960d20 name=Labor Network
+GATE 128 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960d20 idx=43 owner=2 f38=0xdfbe41 f3c=27 st=24 ours=0 name=Labor Network
+PASTFLAG 127 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960d20 owner=2 st=24 ours=0 name=Labor Network
+CONVST 33 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x960d20 idx=43 owner=2 f38=0xdfbe41 f3c=27 old40=24 new=24 ours=0 name=Labor Network
+VISIT 129 p=2 idx=45 owner=2 nb=75 ours=0 f3c=5 st=17 f38=0xdfbe41 name=The Leader's Horde
+EDI_ENTRY 133 eip=0x4f5aa9 idx=45 owner_byte=2 cb=0x960f80 name=The Leader's Horde
+GATE 129 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960f80 idx=45 owner=2 f38=0xdfbe41 f3c=5 st=22 ours=0 name=The Leader's Horde
+PASTFLAG 128 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960f80 owner=2 st=22 ours=0 name=The Leader's Horde
+VISIT 130 p=2 idx=48 owner=2 nb=75 ours=0 f3c=30 st=13 f38=0xdfbe41 name=Fellowship City
+EDI_ENTRY 134 eip=0x4f5aa9 idx=48 owner_byte=2 cb=0x961310 name=Fellowship City
+GATE 130 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961310 idx=48 owner=2 f38=0xdfbe41 f3c=30 st=19 ours=0 name=Fellowship City
+PASTFLAG 129 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961310 owner=2 st=19 ours=0 name=Fellowship City
+VISIT 131 p=2 idx=49 owner=2 nb=75 ours=0 f3c=42 st=12 f38=0xdfbe41 name=Socialism Tunnels
+EDI_ENTRY 135 eip=0x4f5aa9 idx=49 owner_byte=2 cb=0x961440 name=Socialism Tunnels
+GATE 131 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961440 idx=49 owner=2 f38=0xdfbe41 f3c=42 st=19 ours=0 name=Socialism Tunnels
+PASTFLAG 130 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961440 owner=2 st=19 ours=0 name=Socialism Tunnels
+VISIT 132 p=2 idx=50 owner=2 nb=75 ours=0 f3c=2 st=14 f38=0xdfbe41 name=Velvetgrass Point
+EDI_ENTRY 136 eip=0x4f5aa9 idx=50 owner_byte=2 cb=0x961570 name=Velvetgrass Point
+GATE 132 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961570 idx=50 owner=2 f38=0xdfbe41 f3c=2 st=18 ours=0 name=Velvetgrass Point
+PASTFLAG 131 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961570 owner=2 st=18 ours=0 name=Velvetgrass Point
+VISIT 133 p=2 idx=51 owner=2 nb=75 ours=0 f3c=1 st=20 f38=0xdfbe41 name=Time of Salvation
+EDI_ENTRY 137 eip=0x4f5aa9 idx=51 owner_byte=2 cb=0x9616a0 name=Time of Salvation
+GATE 133 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9616a0 idx=51 owner=2 f38=0xdfbe41 f3c=1 st=23 ours=0 name=Time of Salvation
+PASTFLAG 132 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9616a0 owner=2 st=23 ours=0 name=Time of Salvation
+VISIT 134 p=2 idx=53 owner=2 nb=75 ours=0 f3c=6 st=14 f38=0xdfbe41 name=Fecundity Tower
+EDI_ENTRY 138 eip=0x4f5aa9 idx=53 owner_byte=2 cb=0x961900 name=Fecundity Tower
+GATE 134 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961900 idx=53 owner=2 f38=0xdfbe41 f3c=6 st=21 ours=0 name=Fecundity Tower
+PASTFLAG 133 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961900 owner=2 st=21 ours=0 name=Fecundity Tower
+VISIT 135 p=2 idx=54 owner=2 nb=75 ours=0 f3c=11 st=30 f38=0xdfbe41 name=Great Collective
+EDI_ENTRY 139 eip=0x4f5aa9 idx=54 owner_byte=2 cb=0x961a30 name=Great Collective
+GATE 135 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961a30 idx=54 owner=2 f38=0xdfbe41 f3c=11 st=40 ours=0 name=Great Collective
+PASTFLAG 134 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961a30 owner=2 st=40 ours=0 name=Great Collective
+VISIT 136 p=2 idx=56 owner=2 nb=75 ours=0 f3c=14 st=24 f38=0xdfbe41 name=Seat of Proper Thought
+EDI_ENTRY 140 eip=0x4f5aa9 idx=56 owner_byte=2 cb=0x961c90 name=Seat of Proper Thought
+GATE 136 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961c90 idx=56 owner=2 f38=0xdfbe41 f3c=14 st=24 ours=0 name=Seat of Proper Thought
+PASTFLAG 135 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961c90 owner=2 st=24 ours=0 name=Seat of Proper Thought
+VISIT 137 p=2 idx=57 owner=2 nb=75 ours=0 f3c=1 st=30 f38=0xdfbe41 name=The Voice of God
+EDI_ENTRY 141 eip=0x4f5aa9 idx=57 owner_byte=2 cb=0x961dc0 name=The Voice of God
+GATE 137 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961dc0 idx=57 owner=2 f38=0xdfbe41 f3c=1 st=0 ours=0 name=The Voice of God
+PASTFLAG 136 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961dc0 owner=2 st=0 ours=0 name=The Voice of God
+VISIT 138 p=2 idx=58 owner=2 nb=75 ours=0 f3c=19 st=27 f38=0xdfbe41 name=Communal Nexus
+EDI_ENTRY 142 eip=0x4f5aa9 idx=58 owner_byte=2 cb=0x961ef0 name=Communal Nexus
+GATE 138 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961ef0 idx=58 owner=2 f38=0xdfbe41 f3c=19 st=31 ours=0 name=Communal Nexus
+PASTFLAG 137 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961ef0 owner=2 st=31 ours=0 name=Communal Nexus
+VISIT 139 p=2 idx=59 owner=2 nb=75 ours=0 f3c=4 st=27 f38=0xdfbe41 name=Manufacturing Warrens
+EDI_ENTRY 143 eip=0x4f5aa9 idx=59 owner_byte=2 cb=0x962020 name=Manufacturing Warrens
+GATE 139 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962020 idx=59 owner=2 f38=0xdfbe41 f3c=4 st=36 ours=0 name=Manufacturing Warrens
+PASTFLAG 138 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962020 owner=2 st=36 ours=0 name=Manufacturing Warrens
+VISIT 140 p=2 idx=60 owner=2 nb=75 ours=0 f3c=1 st=6 f38=0xdfbe41 name=House of Martyrs
+EDI_ENTRY 144 eip=0x4f5aa9 idx=60 owner_byte=2 cb=0x962150 name=House of Martyrs
+GATE 140 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962150 idx=60 owner=2 f38=0xdfbe41 f3c=1 st=11 ours=0 name=House of Martyrs
+PASTFLAG 139 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962150 owner=2 st=11 ours=0 name=House of Martyrs
+VISIT 141 p=2 idx=62 owner=2 nb=75 ours=0 f3c=9 st=7 f38=0xdfbe41 name=Hole of Aspiration
+EDI_ENTRY 145 eip=0x4f5aa9 idx=62 owner_byte=2 cb=0x9623b0 name=Hole of Aspiration
+GATE 141 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9623b0 idx=62 owner=2 f38=0xdfbe41 f3c=9 st=15 ours=0 name=Hole of Aspiration
+PASTFLAG 140 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9623b0 owner=2 st=15 ours=0 name=Hole of Aspiration
+VISIT 142 p=2 idx=65 owner=2 nb=75 ours=0 f3c=14 st=11 f38=0xdfbe41 name=Sea Collective
+EDI_ENTRY 146 eip=0x4f5aa9 idx=65 owner_byte=2 cb=0x962740 name=Sea Collective
+GATE 142 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962740 idx=65 owner=2 f38=0xdfbe41 f3c=14 st=14 ours=0 name=Sea Collective
+PASTFLAG 141 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962740 owner=2 st=14 ours=0 name=Sea Collective
+VISIT 143 p=2 idx=66 owner=2 nb=75 ours=0 f3c=26 st=22 f38=0xdfbe41 name=Deep Community
+EDI_ENTRY 147 eip=0x4f5aa9 idx=66 owner_byte=2 cb=0x962870 name=Deep Community
+GATE 143 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962870 idx=66 owner=2 f38=0xdfbe41 f3c=26 st=26 ours=0 name=Deep Community
+PASTFLAG 142 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962870 owner=2 st=26 ours=0 name=Deep Community
+VISIT 144 p=2 idx=68 owner=2 nb=75 ours=0 f3c=23 st=20 f38=0xdfbe41 name=Society Grid
+EDI_ENTRY 148 eip=0x4f5aa9 idx=68 owner_byte=2 cb=0x962ad0 name=Society Grid
+GATE 144 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962ad0 idx=68 owner=2 f38=0xdfbe41 f3c=23 st=26 ours=0 name=Society Grid
+PASTFLAG 143 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962ad0 owner=2 st=26 ours=0 name=Society Grid
+VISIT 145 p=2 idx=69 owner=2 nb=75 ours=0 f3c=31 st=53 f38=0xdfbe41 name=Laborer's Throng
+EDI_ENTRY 149 eip=0x4f5aa9 idx=69 owner_byte=2 cb=0x962c00 name=Laborer's Throng
+GATE 145 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962c00 idx=69 owner=2 f38=0xdfbe41 f3c=31 st=2 ours=0 name=Laborer's Throng
+PASTFLAG 144 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962c00 owner=2 st=2 ours=0 name=Laborer's Throng
+VISIT 146 p=2 idx=71 owner=2 nb=75 ours=0 f3c=2 st=9 f38=0xdfbe41 name=Sea Hive
+EDI_ENTRY 150 eip=0x4f5aa9 idx=71 owner_byte=2 cb=0x962e60 name=Sea Hive
+GATE 146 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962e60 idx=71 owner=2 f38=0xdfbe41 f3c=2 st=13 ours=0 name=Sea Hive
+PASTFLAG 145 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962e60 owner=2 st=13 ours=0 name=Sea Hive
+VISIT 147 p=2 idx=72 owner=2 nb=75 ours=0 f3c=4 st=28 f38=0xdfbe41 name=Port Yang
+EDI_ENTRY 151 eip=0x4f5aa9 idx=72 owner_byte=2 cb=0x962f90 name=Port Yang
+GATE 147 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962f90 idx=72 owner=2 f38=0xdfbe41 f3c=4 st=33 ours=0 name=Port Yang
+PASTFLAG 146 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962f90 owner=2 st=33 ours=0 name=Port Yang
+VISIT 148 p=2 idx=73 owner=2 nb=75 ours=0 f3c=15 st=37 f38=0xdfbe41 name=Factory Drift
+EDI_ENTRY 152 eip=0x4f5aa9 idx=73 owner_byte=2 cb=0x9630c0 name=Factory Drift
+GATE 148 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9630c0 idx=73 owner=2 f38=0xdfbe41 f3c=15 st=39 ours=0 name=Factory Drift
+PASTFLAG 147 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9630c0 owner=2 st=39 ours=0 name=Factory Drift
+VISIT 149 p=2 idx=74 owner=2 nb=75 ours=0 f3c=1 st=10 f38=0xdfbe41 name=Yang Mine
+EDI_ENTRY 153 eip=0x4f5aa9 idx=74 owner_byte=2 cb=0x9631f0 name=Yang Mine
+GATE 149 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9631f0 idx=74 owner=2 f38=0xdfbe41 f3c=1 st=10 ours=0 name=Yang Mine
+PASTFLAG 148 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9631f0 owner=2 st=10 ours=0 name=Yang Mine
+CONVST 34 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9631f0 idx=74 owner=2 f38=0xdfbe41 f3c=1 old40=10 new=11 ours=0 name=Yang Mine
+SWEEPEND p=2 last_idx=74 visits=40 nb_now=75
+SWEEP 16 p=3 nb_entry=75
+VISIT 150 p=3 idx=70 owner=3 nb=75 ours=1 f3c=37 st=0 f38=0xdfbe41 name=Climactic Research
+#0  0x005206d3 in ?? ()
+#1  0x0052091f in ?? ()
+EDI_ENTRY 154 eip=0x4f5aa9 idx=70 owner_byte=3 cb=0x962d30 name=Climactic Research
+QPIPE 2 name=Climactic Research f50=2 f44=2 f4c=0 f68=0 fc0=7 fcc=-3 st=0 f3c=37 d0=-1
+EDI_QGATE 155 eip=0x4ef88b q50=2 st=0 name=Climactic Research
+EDI_POSPATH 156 eip=0x4efa4b factor_eax=10 q50_m18=2 name=Climactic Research
+EDI_POSMUL 157 eip=0x4efa52 edi_before=10 ret_5ac950=1 name=Climactic Research
+GATE 150 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962d30 idx=70 owner=3 f38=0xdfbe41 f3c=37 st=0 ours=1 name=Climactic Research
+FLAGTEST 2 eip=0x4f271e ebp=0xbefdd4 ecx=0x20 curbase=0x962d30 owner=3 ours=1 name=Climactic Research
+W3C_E410ACCR 3 eip=0x4ee8c7 ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=37 new=34 cc=-3 cb=0x962d30
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(int *)(0x962d30 + 0x3c)
+
+Old value = 37
+New value = 34
+0x004ee8ca in ?? ()
+WP3C 5 eip=0x4ee8ca new=34 name_at=Climactic Research curbase=0x962d30 ours_at=1
+SWEEPEND p=3 last_idx=74 visits=1 nb_now=75
+SWEEP 17 p=4 nb_entry=75
+VISIT 151 p=4 idx=3 owner=4 nb=75 ours=0 f3c=51 st=14 f38=0xdfbe41 name=Morgan Industries
+EDI_ENTRY 158 eip=0x4f5aa9 idx=3 owner_byte=4 cb=0x95dda0 name=Morgan Industries
+GATE 151 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95dda0 idx=3 owner=4 f38=0xdfbe41 f3c=51 st=18 ours=0 name=Morgan Industries
+PASTFLAG 149 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95dda0 owner=4 st=18 ours=0 name=Morgan Industries
+VISIT 152 p=4 idx=7 owner=4 nb=75 ours=0 f3c=0 st=76 f38=0xdfbe41 name=Morgan Construction
+EDI_ENTRY 159 eip=0x4f5aa9 idx=7 owner_byte=4 cb=0x95e260 name=Morgan Construction
+GATE 152 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e260 idx=7 owner=4 f38=0xdfbe41 f3c=0 st=0 ours=0 name=Morgan Construction
+PASTFLAG 150 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e260 owner=4 st=0 ours=0 name=Morgan Construction
+VISIT 153 p=4 idx=18 owner=4 nb=75 ours=0 f3c=38 st=74 f38=0xdfbe41 name=Morgan Solarfex
+EDI_ENTRY 160 eip=0x4f5aa9 idx=18 owner_byte=4 cb=0x95ef70 name=Morgan Solarfex
+GATE 153 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ef70 idx=18 owner=4 f38=0xdfbe41 f3c=38 st=84 ours=0 name=Morgan Solarfex
+PASTFLAG 151 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ef70 owner=4 st=84 ours=0 name=Morgan Solarfex
+VISIT 154 p=4 idx=31 owner=4 nb=75 ours=0 f3c=26 st=35 f38=0xdfbe41 name=Morgan Metallurgy
+EDI_ENTRY 161 eip=0x4f5aa9 idx=31 owner_byte=4 cb=0x95fee0 name=Morgan Metallurgy
+GATE 154 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fee0 idx=31 owner=4 f38=0xdfbe41 f3c=26 st=40 ours=0 name=Morgan Metallurgy
+PASTFLAG 152 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fee0 owner=4 st=40 ours=0 name=Morgan Metallurgy
+VISIT 155 p=4 idx=35 owner=4 nb=75 ours=0 f3c=0 st=48 f38=0xdfbe41 name=Morgan Energy Monopoly
+EDI_ENTRY 162 eip=0x4f5aa9 idx=35 owner_byte=4 cb=0x9603a0 name=Morgan Energy Monopoly
+GATE 155 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9603a0 idx=35 owner=4 f38=0xdfbe41 f3c=0 st=57 ours=0 name=Morgan Energy Monopoly
+PASTFLAG 153 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9603a0 owner=4 st=57 ours=0 name=Morgan Energy Monopoly
+VISIT 156 p=4 idx=55 owner=4 nb=75 ours=0 f3c=25 st=48 f38=0xdfbe41 name=Morgan Biochemical
+EDI_ENTRY 163 eip=0x4f5aa9 idx=55 owner_byte=4 cb=0x961b60 name=Morgan Biochemical
+GATE 156 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961b60 idx=55 owner=4 f38=0xdfbe41 f3c=25 st=52 ours=0 name=Morgan Biochemical
+PASTFLAG 154 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961b60 owner=4 st=52 ours=0 name=Morgan Biochemical
+VISIT 157 p=4 idx=61 owner=4 nb=75 ours=0 f3c=0 st=21 f38=0xdfbe41 name=Morgan Bank
+EDI_ENTRY 164 eip=0x4f5aa9 idx=61 owner_byte=4 cb=0x962280 name=Morgan Bank
+GATE 157 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962280 idx=61 owner=4 f38=0xdfbe41 f3c=0 st=27 ours=0 name=Morgan Bank
+PASTFLAG 155 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962280 owner=4 st=27 ours=0 name=Morgan Bank
+CONVST 35 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x962280 idx=61 owner=4 f38=0xdfbe41 f3c=0 old40=27 new=28 ours=0 name=Morgan Bank
+SWEEPEND p=4 last_idx=74 visits=7 nb_now=75
+SWEEP 18 p=5 nb_entry=75
+VISIT 158 p=5 idx=4 owner=5 nb=75 ours=0 f3c=30 st=15 f38=0xdfbe41 name=Sparta Command
+EDI_ENTRY 165 eip=0x4f5aa9 idx=4 owner_byte=5 cb=0x95ded0 name=Sparta Command
+GATE 158 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ded0 idx=4 owner=5 f38=0xdfbe41 f3c=30 st=22 ours=0 name=Sparta Command
+PASTFLAG 156 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ded0 owner=5 st=22 ours=0 name=Sparta Command
+VISIT 159 p=5 idx=10 owner=5 nb=75 ours=0 f3c=2 st=27 f38=0xdfbe41 name=Fort Survivalist
+EDI_ENTRY 166 eip=0x4f5aa9 idx=10 owner_byte=5 cb=0x95e5f0 name=Fort Survivalist
+GATE 159 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e5f0 idx=10 owner=5 f38=0xdfbe41 f3c=2 st=35 ours=0 name=Fort Survivalist
+PASTFLAG 157 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e5f0 owner=5 st=35 ours=0 name=Fort Survivalist
+VISIT 160 p=5 idx=40 owner=5 nb=75 ours=0 f3c=0 st=11 f38=0xdfbe41 name=Commander's Keep
+EDI_ENTRY 167 eip=0x4f5aa9 idx=40 owner_byte=5 cb=0x960990 name=Commander's Keep
+GATE 160 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960990 idx=40 owner=5 f38=0xdfbe41 f3c=0 st=15 ours=0 name=Commander's Keep
+PASTFLAG 158 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960990 owner=5 st=15 ours=0 name=Commander's Keep
+SWEEPEND p=5 last_idx=74 visits=3 nb_now=75
+SWEEP 19 p=6 nb_entry=75
+VISIT 161 p=6 idx=14 owner=6 nb=75 ours=0 f3c=0 st=3 f38=0xdfbe41 name=Assassin's Redoubt
+EDI_ENTRY 168 eip=0x4f5aa9 idx=14 owner_byte=6 cb=0x95eab0 name=Assassin's Redoubt
+GATE 161 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95eab0 idx=14 owner=6 f38=0xdfbe41 f3c=0 st=10 ours=0 name=Assassin's Redoubt
+PASTFLAG 159 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95eab0 owner=6 st=10 ours=0 name=Assassin's Redoubt
+VISIT 162 p=6 idx=20 owner=6 nb=75 ours=0 f3c=7 st=17 f38=0xdfbe41 name=Training Camp
+EDI_ENTRY 169 eip=0x4f5aa9 idx=20 owner_byte=6 cb=0x95f1d0 name=Training Camp
+GATE 162 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f1d0 idx=20 owner=6 f38=0xdfbe41 f3c=7 st=27 ours=0 name=Training Camp
+PASTFLAG 160 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f1d0 owner=6 st=27 ours=0 name=Training Camp
+CONVST 36 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95f1d0 idx=20 owner=6 f38=0xdfbe41 f3c=7 old40=27 new=27 ours=0 name=Training Camp
+VISIT 163 p=6 idx=26 owner=6 nb=75 ours=0 f3c=31 st=12 f38=0xdfbe41 name=Fort Liberty
+EDI_ENTRY 170 eip=0x4f5aa9 idx=26 owner_byte=6 cb=0x95f8f0 name=Fort Liberty
+GATE 163 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f8f0 idx=26 owner=6 f38=0xdfbe41 f3c=31 st=17 ours=0 name=Fort Liberty
+PASTFLAG 161 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f8f0 owner=6 st=17 ours=0 name=Fort Liberty
+VISIT 164 p=6 idx=37 owner=6 nb=75 ours=0 f3c=28 st=15 f38=0xdfbe41 name=Hawk of Chiron
+EDI_ENTRY 171 eip=0x4f5aa9 idx=37 owner_byte=6 cb=0x960600 name=Hawk of Chiron
+GATE 164 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960600 idx=37 owner=6 f38=0xdfbe41 f3c=28 st=22 ours=0 name=Hawk of Chiron
+PASTFLAG 162 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960600 owner=6 st=22 ours=0 name=Hawk of Chiron
+CONVST 37 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x960600 idx=37 owner=6 f38=0xdfbe41 f3c=28 old40=22 new=22 ours=0 name=Hawk of Chiron
+VISIT 165 p=6 idx=39 owner=6 nb=75 ours=0 f3c=0 st=101 f38=0xdfbe41 name=Militia Station
+EDI_ENTRY 172 eip=0x4f5aa9 idx=39 owner_byte=6 cb=0x960860 name=Militia Station
+GATE 165 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960860 idx=39 owner=6 f38=0xdfbe41 f3c=0 st=105 ours=0 name=Militia Station
+PASTFLAG 163 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960860 owner=6 st=105 ours=0 name=Militia Station
+SWEEPEND p=6 last_idx=74 visits=5 nb_now=75
+SWEEP 20 p=7 nb_entry=75
+VISIT 166 p=7 idx=6 owner=7 nb=75 ours=0 f3c=68 st=74 f38=0xdfbe41 name=U.N. Headquarters
+EDI_ENTRY 173 eip=0x4f5aa9 idx=6 owner_byte=7 cb=0x95e130 name=U.N. Headquarters
+GATE 166 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e130 idx=6 owner=7 f38=0xdfbe41 f3c=68 st=82 ours=0 name=U.N. Headquarters
+PASTFLAG 164 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e130 owner=7 st=82 ours=0 name=U.N. Headquarters
+VISIT 167 p=7 idx=8 owner=7 nb=75 ours=0 f3c=0 st=24 f38=0xdfbe41 name=U.N. Disaster Relief
+EDI_ENTRY 174 eip=0x4f5aa9 idx=8 owner_byte=7 cb=0x95e390 name=U.N. Disaster Relief
+GATE 167 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e390 idx=8 owner=7 f38=0xdfbe41 f3c=0 st=33 ours=0 name=U.N. Disaster Relief
+PASTFLAG 165 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e390 owner=7 st=33 ours=0 name=U.N. Disaster Relief
+VISIT 168 p=7 idx=15 owner=7 nb=75 ours=0 f3c=3 st=38 f38=0xdfbe41 name=U.N. Education Agency
+EDI_ENTRY 175 eip=0x4f5aa9 idx=15 owner_byte=7 cb=0x95ebe0 name=U.N. Education Agency
+GATE 168 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ebe0 idx=15 owner=7 f38=0xdfbe41 f3c=3 st=43 ours=0 name=U.N. Education Agency
+PASTFLAG 166 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ebe0 owner=7 st=43 ours=0 name=U.N. Education Agency
+VISIT 169 p=7 idx=16 owner=7 nb=75 ours=0 f3c=0 st=41 f38=0xdfbe41 name=U.N. Humanity Base
+EDI_ENTRY 176 eip=0x4f5aa9 idx=16 owner_byte=7 cb=0x95ed10 name=U.N. Humanity Base
+GATE 169 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ed10 idx=16 owner=7 f38=0xdfbe41 f3c=0 st=4 ours=0 name=U.N. Humanity Base
+PASTFLAG 167 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ed10 owner=7 st=4 ours=0 name=U.N. Humanity Base
+CONVST 38 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95ed10 idx=16 owner=7 f38=0xdfbe41 f3c=0 old40=4 new=6 ours=0 name=U.N. Humanity Base
+VISIT 170 p=7 idx=22 owner=7 nb=75 ours=0 f3c=0 st=34 f38=0xdfbe41 name=U.N. Information Agency
+EDI_ENTRY 177 eip=0x4f5aa9 idx=22 owner_byte=7 cb=0x95f430 name=U.N. Information Agency
+GATE 170 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f430 idx=22 owner=7 f38=0xdfbe41 f3c=0 st=36 ours=0 name=U.N. Information Agency
+PASTFLAG 168 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f430 owner=7 st=36 ours=0 name=U.N. Information Agency
+VISIT 171 p=7 idx=33 owner=7 nb=75 ours=0 f3c=36 st=109 f38=0xdfbe41 name=U.N. Equality Village
+EDI_ENTRY 178 eip=0x4f5aa9 idx=33 owner_byte=7 cb=0x960140 name=U.N. Equality Village
+GATE 171 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960140 idx=33 owner=7 f38=0xdfbe41 f3c=36 st=8 ours=0 name=U.N. Equality Village
+PASTFLAG 169 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960140 owner=7 st=8 ours=0 name=U.N. Equality Village
+VISIT 172 p=7 idx=42 owner=7 nb=75 ours=0 f3c=0 st=28 f38=0xdfbe41 name=U.N. Planning Authority
+EDI_ENTRY 179 eip=0x4f5aa9 idx=42 owner_byte=7 cb=0x960bf0 name=U.N. Planning Authority
+GATE 172 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960bf0 idx=42 owner=7 f38=0xdfbe41 f3c=0 st=1 ours=0 name=U.N. Planning Authority
+PASTFLAG 170 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960bf0 owner=7 st=1 ours=0 name=U.N. Planning Authority
+VISIT 173 p=7 idx=44 owner=7 nb=75 ours=0 f3c=17 st=6 f38=0xdfbe41 name=U.N. Commerce Committee
+EDI_ENTRY 180 eip=0x4f5aa9 idx=44 owner_byte=7 cb=0x960e50 name=U.N. Commerce Committee
+GATE 173 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960e50 idx=44 owner=7 f38=0xdfbe41 f3c=17 st=9 ours=0 name=U.N. Commerce Committee
+PASTFLAG 171 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960e50 owner=7 st=9 ours=0 name=U.N. Commerce Committee
+CONVST 39 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x960e50 idx=44 owner=7 f38=0xdfbe41 f3c=17 old40=9 new=10 ours=0 name=U.N. Commerce Committee
+VISIT 174 p=7 idx=67 owner=7 nb=75 ours=0 f3c=23 st=47 f38=0xdfbe41 name=U.N. Aid Station
+EDI_ENTRY 181 eip=0x4f5aa9 idx=67 owner_byte=7 cb=0x9629a0 name=U.N. Aid Station
+GATE 174 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9629a0 idx=67 owner=7 f38=0xdfbe41 f3c=23 st=48 ours=0 name=U.N. Aid Station
+PASTFLAG 172 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9629a0 owner=7 st=48 ours=0 name=U.N. Aid Station
+SWEEPEND p=7 last_idx=74 visits=9 nb_now=75
+YEAR 3 mid_p=7 mid_idx=74 mid_visits=9 nb=75 cur=7
+SWEEP 21 p=0 nb_entry=75
+SWEEPEND p=0 last_idx=74 visits=0 nb_now=75
+SWEEP 22 p=1 nb_entry=75
+VISIT 175 p=1 idx=1 owner=1 nb=75 ours=0 f3c=60 st=1 f38=0xdfbe41 name=Gaia's Landing
+EDI_ENTRY 182 eip=0x4f5aa9 idx=1 owner_byte=1 cb=0x95db40 name=Gaia's Landing
+GATE 175 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95db40 idx=1 owner=1 f38=0xdfbe41 f3c=60 st=8 ours=0 name=Gaia's Landing
+PASTFLAG 173 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95db40 owner=1 st=8 ours=0 name=Gaia's Landing
+VISIT 176 p=1 idx=9 owner=1 nb=75 ours=0 f3c=74 st=5 f38=0xdfbe41 name=Lily of the Valley
+EDI_ENTRY 183 eip=0x4f5aa9 idx=9 owner_byte=1 cb=0x95e4c0 name=Lily of the Valley
+GATE 176 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e4c0 idx=9 owner=1 f38=0xdfbe41 f3c=74 st=7 ours=0 name=Lily of the Valley
+PASTFLAG 174 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e4c0 owner=1 st=7 ours=0 name=Lily of the Valley
+VISIT 177 p=1 idx=17 owner=1 nb=75 ours=0 f3c=0 st=2 f38=0xdfbe41 name=Song of Planet
+EDI_ENTRY 184 eip=0x4f5aa9 idx=17 owner_byte=1 cb=0x95ee40 name=Song of Planet
+GATE 177 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95ee40 idx=17 owner=1 f38=0xdfbe41 f3c=0 st=2 ours=0 name=Song of Planet
+PASTFLAG 175 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95ee40 owner=1 st=2 ours=0 name=Song of Planet
+CONVST 40 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95ee40 idx=17 owner=1 f38=0xdfbe41 f3c=0 old40=2 new=2 ours=0 name=Song of Planet
+VISIT 178 p=1 idx=27 owner=1 nb=75 ours=0 f3c=8 st=16 f38=0xdfbe41 name=Greenhouse Gate
+EDI_ENTRY 185 eip=0x4f5aa9 idx=27 owner_byte=1 cb=0x95fa20 name=Greenhouse Gate
+GATE 178 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fa20 idx=27 owner=1 f38=0xdfbe41 f3c=8 st=24 ours=0 name=Greenhouse Gate
+PASTFLAG 176 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fa20 owner=1 st=24 ours=0 name=Greenhouse Gate
+VISIT 179 p=1 idx=41 owner=1 nb=75 ours=0 f3c=20 st=34 f38=0xdfbe41 name=Last Rose of Summer
+EDI_ENTRY 186 eip=0x4f5aa9 idx=41 owner_byte=1 cb=0x960ac0 name=Last Rose of Summer
+GATE 179 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960ac0 idx=41 owner=1 f38=0xdfbe41 f3c=20 st=39 ours=0 name=Last Rose of Summer
+PASTFLAG 177 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960ac0 owner=1 st=39 ours=0 name=Last Rose of Summer
+CONVST 41 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x960ac0 idx=41 owner=1 f38=0xdfbe41 f3c=20 old40=39 new=45 ours=0 name=Last Rose of Summer
+VISIT 180 p=1 idx=46 owner=1 nb=75 ours=0 f3c=0 st=17 f38=0xdfbe41 name=Memory of Earth
+EDI_ENTRY 187 eip=0x4f5aa9 idx=46 owner_byte=1 cb=0x9610b0 name=Memory of Earth
+GATE 180 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9610b0 idx=46 owner=1 f38=0xdfbe41 f3c=0 st=21 ours=0 name=Memory of Earth
+PASTFLAG 178 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9610b0 owner=1 st=21 ours=0 name=Memory of Earth
+VISIT 181 p=1 idx=47 owner=1 nb=75 ours=0 f3c=24 st=44 f38=0xdfbe41 name=Garden of the Deep
+EDI_ENTRY 188 eip=0x4f5aa9 idx=47 owner_byte=1 cb=0x9611e0 name=Garden of the Deep
+GATE 181 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9611e0 idx=47 owner=1 f38=0xdfbe41 f3c=24 st=53 ours=0 name=Garden of the Deep
+PASTFLAG 179 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9611e0 owner=1 st=53 ours=0 name=Garden of the Deep
+CONVST 42 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9611e0 idx=47 owner=1 f38=0xdfbe41 f3c=24 old40=53 new=54 ours=0 name=Garden of the Deep
+VISIT 182 p=1 idx=52 owner=1 nb=75 ours=0 f3c=29 st=39 f38=0xdfbe41 name=Silverbird Park
+EDI_ENTRY 189 eip=0x4f5aa9 idx=52 owner_byte=1 cb=0x9617d0 name=Silverbird Park
+GATE 182 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9617d0 idx=52 owner=1 f38=0xdfbe41 f3c=29 st=42 ours=0 name=Silverbird Park
+PASTFLAG 180 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9617d0 owner=1 st=42 ours=0 name=Silverbird Park
+CONVST 43 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9617d0 idx=52 owner=1 f38=0xdfbe41 f3c=29 old40=42 new=42 ours=0 name=Silverbird Park
+VISIT 183 p=1 idx=63 owner=1 nb=75 ours=0 f3c=23 st=99 f38=0xdfbe41 name=Deirdre's Fishery
+EDI_ENTRY 190 eip=0x4f5aa9 idx=63 owner_byte=1 cb=0x9624e0 name=Deirdre's Fishery
+GATE 183 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9624e0 idx=63 owner=1 f38=0xdfbe41 f3c=23 st=101 ours=0 name=Deirdre's Fishery
+PASTFLAG 181 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9624e0 owner=1 st=101 ours=0 name=Deirdre's Fishery
+VISIT 184 p=1 idx=64 owner=1 nb=75 ours=0 f3c=19 st=16 f38=0xdfbe41 name=Razorbeak Wood
+EDI_ENTRY 191 eip=0x4f5aa9 idx=64 owner_byte=1 cb=0x962610 name=Razorbeak Wood
+GATE 184 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962610 idx=64 owner=1 f38=0xdfbe41 f3c=19 st=19 ours=0 name=Razorbeak Wood
+PASTFLAG 182 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962610 owner=1 st=19 ours=0 name=Razorbeak Wood
+SWEEPEND p=1 last_idx=74 visits=10 nb_now=75
+SWEEP 23 p=2 nb_entry=75
+VISIT 185 p=2 idx=0 owner=2 nb=75 ours=0 f3c=34 st=32 f38=0xdfbe41 name=The Rapture
+EDI_ENTRY 192 eip=0x4f5aa9 idx=0 owner_byte=2 cb=0x95da10 name=The Rapture
+GATE 185 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95da10 idx=0 owner=2 f38=0xdfbe41 f3c=34 st=32 ours=0 name=The Rapture
+PASTFLAG 183 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95da10 owner=2 st=32 ours=0 name=The Rapture
+CONVST 44 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95da10 idx=0 owner=2 f38=0xdfbe41 f3c=34 old40=32 new=33 ours=0 name=The Rapture
+VISIT 186 p=2 idx=2 owner=2 nb=75 ours=0 f3c=16 st=26 f38=0xdfbe41 name=The Hive
+EDI_ENTRY 193 eip=0x4f5aa9 idx=2 owner_byte=2 cb=0x95dc70 name=The Hive
+GATE 186 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95dc70 idx=2 owner=2 f38=0xdfbe41 f3c=16 st=33 ours=0 name=The Hive
+PASTFLAG 184 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95dc70 owner=2 st=33 ours=0 name=The Hive
+VISIT 187 p=2 idx=5 owner=2 nb=75 ours=0 f3c=24 st=33 f38=0xdfbe41 name=New Jerusalem
+EDI_ENTRY 194 eip=0x4f5aa9 idx=5 owner_byte=2 cb=0x95e000 name=New Jerusalem
+GATE 187 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e000 idx=5 owner=2 f38=0xdfbe41 f3c=24 st=35 ours=0 name=New Jerusalem
+PASTFLAG 185 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e000 owner=2 st=35 ours=0 name=New Jerusalem
+VISIT 188 p=2 idx=11 owner=2 nb=75 ours=0 f3c=0 st=27 f38=0xdfbe41 name=The Holy Fire
+EDI_ENTRY 195 eip=0x4f5aa9 idx=11 owner_byte=2 cb=0x95e720 name=The Holy Fire
+GATE 188 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e720 idx=11 owner=2 f38=0xdfbe41 f3c=0 st=27 ours=0 name=The Holy Fire
+PASTFLAG 186 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e720 owner=2 st=27 ours=0 name=The Holy Fire
+CONVST 45 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e720 idx=11 owner=2 f38=0xdfbe41 f3c=0 old40=27 new=28 ours=0 name=The Holy Fire
+VISIT 189 p=2 idx=12 owner=2 nb=75 ours=0 f3c=15 st=31 f38=0xdfbe41 name=Proletarian Knot
+EDI_ENTRY 196 eip=0x4f5aa9 idx=12 owner_byte=2 cb=0x95e850 name=Proletarian Knot
+GATE 189 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e850 idx=12 owner=2 f38=0xdfbe41 f3c=15 st=42 ours=0 name=Proletarian Knot
+PASTFLAG 187 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e850 owner=2 st=42 ours=0 name=Proletarian Knot
+VISIT 190 p=2 idx=13 owner=2 nb=75 ours=0 f3c=0 st=28 f38=0xdfbe41 name=The Word of God
+EDI_ENTRY 197 eip=0x4f5aa9 idx=13 owner_byte=2 cb=0x95e980 name=The Word of God
+GATE 190 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95e980 idx=13 owner=2 f38=0xdfbe41 f3c=0 st=28 ours=0 name=The Word of God
+PASTFLAG 188 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95e980 owner=2 st=28 ours=0 name=The Word of God
+CONVST 46 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95e980 idx=13 owner=2 f38=0xdfbe41 f3c=0 old40=28 new=28 ours=0 name=The Word of God
+VISIT 191 p=2 idx=19 owner=2 nb=75 ours=0 f3c=1 st=52 f38=0xdfbe41 name=Blessed Saviour
+EDI_ENTRY 198 eip=0x4f5aa9 idx=19 owner_byte=2 cb=0x95f0a0 name=Blessed Saviour
+GATE 191 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f0a0 idx=19 owner=2 f38=0xdfbe41 f3c=1 st=54 ours=0 name=Blessed Saviour
+PASTFLAG 189 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f0a0 owner=2 st=54 ours=0 name=Blessed Saviour
+VISIT 192 p=2 idx=21 owner=2 nb=75 ours=0 f3c=24 st=26 f38=0xdfbe41 name=Unification Cavern
+EDI_ENTRY 199 eip=0x4f5aa9 idx=21 owner_byte=2 cb=0x95f300 name=Unification Cavern
+GATE 192 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f300 idx=21 owner=2 f38=0xdfbe41 f3c=24 st=33 ours=0 name=Unification Cavern
+PASTFLAG 190 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f300 owner=2 st=33 ours=0 name=Unification Cavern
+VISIT 193 p=2 idx=23 owner=2 nb=75 ours=0 f3c=23 st=315 f38=0xdfbe41 name=The Colony
+EDI_ENTRY 200 eip=0x4f5aa9 idx=23 owner_byte=2 cb=0x95f560 name=The Colony
+GATE 193 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f560 idx=23 owner=2 f38=0xdfbe41 f3c=23 st=196 ours=0 name=The Colony
+PASTFLAG 191 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f560 owner=2 st=196 ours=0 name=The Colony
+VISIT 194 p=2 idx=24 owner=2 nb=75 ours=0 f3c=0 st=22 f38=0xdfbe41 name=The Lord's Grace
+EDI_ENTRY 201 eip=0x4f5aa9 idx=24 owner_byte=2 cb=0x95f690 name=The Lord's Grace
+GATE 194 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f690 idx=24 owner=2 f38=0xdfbe41 f3c=0 st=25 ours=0 name=The Lord's Grace
+PASTFLAG 192 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f690 owner=2 st=25 ours=0 name=The Lord's Grace
+VISIT 195 p=2 idx=25 owner=2 nb=75 ours=0 f3c=63 st=27 f38=0xdfbe41 name=Chairman's Burrow
+EDI_ENTRY 202 eip=0x4f5aa9 idx=25 owner_byte=2 cb=0x95f7c0 name=Chairman's Burrow
+GATE 195 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95f7c0 idx=25 owner=2 f38=0xdfbe41 f3c=63 st=36 ours=0 name=Chairman's Burrow
+PASTFLAG 193 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95f7c0 owner=2 st=36 ours=0 name=Chairman's Burrow
+CONVST 47 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95f7c0 idx=25 owner=2 f38=0xdfbe41 f3c=63 old40=36 new=36 ours=0 name=Chairman's Burrow
+VISIT 196 p=2 idx=28 owner=2 nb=75 ours=0 f3c=44 st=30 f38=0xdfbe41 name=Social Artery
+EDI_ENTRY 203 eip=0x4f5aa9 idx=28 owner_byte=2 cb=0x95fb50 name=Social Artery
+GATE 196 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fb50 idx=28 owner=2 f38=0xdfbe41 f3c=44 st=0 ours=0 name=Social Artery
+PASTFLAG 194 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fb50 owner=2 st=0 ours=0 name=Social Artery
+VISIT 197 p=2 idx=29 owner=2 nb=75 ours=0 f3c=35 st=42 f38=0xdfbe41 name=Godwinson's Hope
+EDI_ENTRY 204 eip=0x4f5aa9 idx=29 owner_byte=2 cb=0x95fc80 name=Godwinson's Hope
+GATE 197 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fc80 idx=29 owner=2 f38=0xdfbe41 f3c=35 st=42 ours=0 name=Godwinson's Hope
+PASTFLAG 195 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fc80 owner=2 st=42 ours=0 name=Godwinson's Hope
+CONVST 48 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x95fc80 idx=29 owner=2 f38=0xdfbe41 f3c=35 old40=42 new=43 ours=0 name=Godwinson's Hope
+VISIT 198 p=2 idx=30 owner=2 nb=75 ours=0 f3c=2 st=6 f38=0xdfbe41 name=Autumn Grove
+EDI_ENTRY 205 eip=0x4f5aa9 idx=30 owner_byte=2 cb=0x95fdb0 name=Autumn Grove
+GATE 198 eip=0x4f2705 ebp=0xbefdd4 curbase=0x95fdb0 idx=30 owner=2 f38=0xdfbe41 f3c=2 st=9 ours=0 name=Autumn Grove
+PASTFLAG 196 eip=0x4f2724 ebp=0xbefdd4 curbase=0x95fdb0 owner=2 st=9 ours=0 name=Autumn Grove
+VISIT 199 p=2 idx=32 owner=2 nb=75 ours=0 f3c=1 st=14 f38=0xdfbe41 name=People's Endeavor
+EDI_ENTRY 206 eip=0x4f5aa9 idx=32 owner_byte=2 cb=0x960010 name=People's Endeavor
+GATE 199 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960010 idx=32 owner=2 f38=0xdfbe41 f3c=1 st=22 ours=0 name=People's Endeavor
+PASTFLAG 197 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960010 owner=2 st=22 ours=0 name=People's Endeavor
+VISIT 200 p=2 idx=34 owner=2 nb=75 ours=0 f3c=45 st=10 f38=0xdfbe41 name=Unity Lair
+EDI_ENTRY 207 eip=0x4f5aa9 idx=34 owner_byte=2 cb=0x960270 name=Unity Lair
+GATE 200 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960270 idx=34 owner=2 f38=0xdfbe41 f3c=45 st=15 ours=0 name=Unity Lair
+PASTFLAG 198 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960270 owner=2 st=15 ours=0 name=Unity Lair
+VISIT 201 p=2 idx=36 owner=2 nb=75 ours=0 f3c=48 st=13 f38=0xdfbe41 name=The Drone Mound
+EDI_ENTRY 208 eip=0x4f5aa9 idx=36 owner_byte=2 cb=0x9604d0 name=The Drone Mound
+GATE 201 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9604d0 idx=36 owner=2 f38=0xdfbe41 f3c=48 st=25 ours=0 name=The Drone Mound
+PASTFLAG 199 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9604d0 owner=2 st=25 ours=0 name=The Drone Mound
+VISIT 202 p=2 idx=38 owner=2 nb=75 ours=0 f3c=26 st=24 f38=0xdfbe41 name=Social Engineering Den
+EDI_ENTRY 209 eip=0x4f5aa9 idx=38 owner_byte=2 cb=0x960730 name=Social Engineering Den
+GATE 202 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960730 idx=38 owner=2 f38=0xdfbe41 f3c=26 st=33 ours=0 name=Social Engineering Den
+PASTFLAG 200 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960730 owner=2 st=33 ours=0 name=Social Engineering Den
+VISIT 203 p=2 idx=43 owner=2 nb=75 ours=0 f3c=29 st=24 f38=0xdfbe41 name=Labor Network
+EDI_ENTRY 210 eip=0x4f5aa9 idx=43 owner_byte=2 cb=0x960d20 name=Labor Network
+GATE 203 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960d20 idx=43 owner=2 f38=0xdfbe41 f3c=29 st=33 ours=0 name=Labor Network
+PASTFLAG 201 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960d20 owner=2 st=33 ours=0 name=Labor Network
+VISIT 204 p=2 idx=45 owner=2 nb=75 ours=0 f3c=4 st=22 f38=0xdfbe41 name=The Leader's Horde
+EDI_ENTRY 211 eip=0x4f5aa9 idx=45 owner_byte=2 cb=0x960f80 name=The Leader's Horde
+GATE 204 eip=0x4f2705 ebp=0xbefdd4 curbase=0x960f80 idx=45 owner=2 f38=0xdfbe41 f3c=4 st=27 ours=0 name=The Leader's Horde
+PASTFLAG 202 eip=0x4f2724 ebp=0xbefdd4 curbase=0x960f80 owner=2 st=27 ours=0 name=The Leader's Horde
+VISIT 205 p=2 idx=48 owner=2 nb=75 ours=0 f3c=30 st=19 f38=0xdfbe41 name=Fellowship City
+EDI_ENTRY 212 eip=0x4f5aa9 idx=48 owner_byte=2 cb=0x961310 name=Fellowship City
+GATE 205 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961310 idx=48 owner=2 f38=0xdfbe41 f3c=30 st=25 ours=0 name=Fellowship City
+PASTFLAG 203 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961310 owner=2 st=25 ours=0 name=Fellowship City
+VISIT 206 p=2 idx=49 owner=2 nb=75 ours=0 f3c=0 st=19 f38=0xdfbe41 name=Socialism Tunnels
+EDI_ENTRY 213 eip=0x4f5aa9 idx=49 owner_byte=2 cb=0x961440 name=Socialism Tunnels
+GATE 206 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961440 idx=49 owner=2 f38=0xdfbe41 f3c=0 st=28 ours=0 name=Socialism Tunnels
+PASTFLAG 204 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961440 owner=2 st=28 ours=0 name=Socialism Tunnels
+VISIT 207 p=2 idx=50 owner=2 nb=75 ours=0 f3c=2 st=18 f38=0xdfbe41 name=Velvetgrass Point
+EDI_ENTRY 214 eip=0x4f5aa9 idx=50 owner_byte=2 cb=0x961570 name=Velvetgrass Point
+GATE 207 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961570 idx=50 owner=2 f38=0xdfbe41 f3c=2 st=22 ours=0 name=Velvetgrass Point
+PASTFLAG 205 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961570 owner=2 st=22 ours=0 name=Velvetgrass Point
+VISIT 208 p=2 idx=51 owner=2 nb=75 ours=0 f3c=2 st=23 f38=0xdfbe41 name=Time of Salvation
+EDI_ENTRY 215 eip=0x4f5aa9 idx=51 owner_byte=2 cb=0x9616a0 name=Time of Salvation
+GATE 208 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9616a0 idx=51 owner=2 f38=0xdfbe41 f3c=2 st=23 ours=0 name=Time of Salvation
+PASTFLAG 206 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9616a0 owner=2 st=23 ours=0 name=Time of Salvation
+VISIT 209 p=2 idx=53 owner=2 nb=75 ours=0 f3c=5 st=21 f38=0xdfbe41 name=Fecundity Tower
+EDI_ENTRY 216 eip=0x4f5aa9 idx=53 owner_byte=2 cb=0x961900 name=Fecundity Tower
+GATE 209 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961900 idx=53 owner=2 f38=0xdfbe41 f3c=5 st=28 ours=0 name=Fecundity Tower
+PASTFLAG 207 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961900 owner=2 st=28 ours=0 name=Fecundity Tower
+VISIT 210 p=2 idx=54 owner=2 nb=75 ours=0 f3c=13 st=40 f38=0xdfbe41 name=Great Collective
+EDI_ENTRY 217 eip=0x4f5aa9 idx=54 owner_byte=2 cb=0x961a30 name=Great Collective
+GATE 210 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961a30 idx=54 owner=2 f38=0xdfbe41 f3c=13 st=6 ours=0 name=Great Collective
+PASTFLAG 208 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961a30 owner=2 st=6 ours=0 name=Great Collective
+VISIT 211 p=2 idx=56 owner=2 nb=75 ours=0 f3c=14 st=24 f38=0xdfbe41 name=Seat of Proper Thought
+EDI_ENTRY 218 eip=0x4f5aa9 idx=56 owner_byte=2 cb=0x961c90 name=Seat of Proper Thought
+GATE 211 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961c90 idx=56 owner=2 f38=0xdfbe41 f3c=14 st=28 ours=0 name=Seat of Proper Thought
+PASTFLAG 209 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961c90 owner=2 st=28 ours=0 name=Seat of Proper Thought
+VISIT 212 p=2 idx=57 owner=2 nb=75 ours=0 f3c=1 st=0 f38=0xdfbe41 name=The Voice of God
+EDI_ENTRY 219 eip=0x4f5aa9 idx=57 owner_byte=2 cb=0x961dc0 name=The Voice of God
+GATE 212 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961dc0 idx=57 owner=2 f38=0xdfbe41 f3c=1 st=5 ours=0 name=The Voice of God
+PASTFLAG 210 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961dc0 owner=2 st=5 ours=0 name=The Voice of God
+VISIT 213 p=2 idx=58 owner=2 nb=75 ours=0 f3c=20 st=31 f38=0xdfbe41 name=Communal Nexus
+EDI_ENTRY 220 eip=0x4f5aa9 idx=58 owner_byte=2 cb=0x961ef0 name=Communal Nexus
+GATE 213 eip=0x4f2705 ebp=0xbefdd4 curbase=0x961ef0 idx=58 owner=2 f38=0xdfbe41 f3c=20 st=35 ours=0 name=Communal Nexus
+PASTFLAG 211 eip=0x4f2724 ebp=0xbefdd4 curbase=0x961ef0 owner=2 st=35 ours=0 name=Communal Nexus
+VISIT 214 p=2 idx=59 owner=2 nb=75 ours=0 f3c=4 st=36 f38=0xdfbe41 name=Manufacturing Warrens
+EDI_ENTRY 221 eip=0x4f5aa9 idx=59 owner_byte=2 cb=0x962020 name=Manufacturing Warrens
+GATE 214 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962020 idx=59 owner=2 f38=0xdfbe41 f3c=4 st=1 ours=0 name=Manufacturing Warrens
+PASTFLAG 212 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962020 owner=2 st=1 ours=0 name=Manufacturing Warrens
+VISIT 215 p=2 idx=60 owner=2 nb=75 ours=0 f3c=1 st=11 f38=0xdfbe41 name=House of Martyrs
+EDI_ENTRY 222 eip=0x4f5aa9 idx=60 owner_byte=2 cb=0x962150 name=House of Martyrs
+GATE 215 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962150 idx=60 owner=2 f38=0xdfbe41 f3c=1 st=16 ours=0 name=House of Martyrs
+PASTFLAG 213 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962150 owner=2 st=16 ours=0 name=House of Martyrs
+VISIT 216 p=2 idx=62 owner=2 nb=75 ours=0 f3c=10 st=15 f38=0xdfbe41 name=Hole of Aspiration
+EDI_ENTRY 223 eip=0x4f5aa9 idx=62 owner_byte=2 cb=0x9623b0 name=Hole of Aspiration
+GATE 216 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9623b0 idx=62 owner=2 f38=0xdfbe41 f3c=10 st=15 ours=0 name=Hole of Aspiration
+PASTFLAG 214 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9623b0 owner=2 st=15 ours=0 name=Hole of Aspiration
+VISIT 217 p=2 idx=65 owner=2 nb=75 ours=0 f3c=15 st=14 f38=0xdfbe41 name=Sea Collective
+EDI_ENTRY 224 eip=0x4f5aa9 idx=65 owner_byte=2 cb=0x962740 name=Sea Collective
+GATE 217 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962740 idx=65 owner=2 f38=0xdfbe41 f3c=15 st=18 ours=0 name=Sea Collective
+PASTFLAG 215 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962740 owner=2 st=18 ours=0 name=Sea Collective
+VISIT 218 p=2 idx=66 owner=2 nb=75 ours=0 f3c=27 st=26 f38=0xdfbe41 name=Deep Community
+EDI_ENTRY 225 eip=0x4f5aa9 idx=66 owner_byte=2 cb=0x962870 name=Deep Community
+GATE 218 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962870 idx=66 owner=2 f38=0xdfbe41 f3c=27 st=30 ours=0 name=Deep Community
+PASTFLAG 216 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962870 owner=2 st=30 ours=0 name=Deep Community
+VISIT 219 p=2 idx=68 owner=2 nb=75 ours=0 f3c=24 st=26 f38=0xdfbe41 name=Society Grid
+EDI_ENTRY 226 eip=0x4f5aa9 idx=68 owner_byte=2 cb=0x962ad0 name=Society Grid
+GATE 219 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962ad0 idx=68 owner=2 f38=0xdfbe41 f3c=24 st=32 ours=0 name=Society Grid
+PASTFLAG 217 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962ad0 owner=2 st=32 ours=0 name=Society Grid
+VISIT 220 p=2 idx=69 owner=2 nb=75 ours=0 f3c=32 st=2 f38=0xdfbe41 name=Laborer's Throng
+EDI_ENTRY 227 eip=0x4f5aa9 idx=69 owner_byte=2 cb=0x962c00 name=Laborer's Throng
+GATE 220 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962c00 idx=69 owner=2 f38=0xdfbe41 f3c=32 st=6 ours=0 name=Laborer's Throng
+PASTFLAG 218 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962c00 owner=2 st=6 ours=0 name=Laborer's Throng
+VISIT 221 p=2 idx=71 owner=2 nb=75 ours=0 f3c=2 st=13 f38=0xdfbe41 name=Sea Hive
+EDI_ENTRY 228 eip=0x4f5aa9 idx=71 owner_byte=2 cb=0x962e60 name=Sea Hive
+GATE 221 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962e60 idx=71 owner=2 f38=0xdfbe41 f3c=2 st=17 ours=0 name=Sea Hive
+PASTFLAG 219 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962e60 owner=2 st=17 ours=0 name=Sea Hive
+VISIT 222 p=2 idx=72 owner=2 nb=75 ours=0 f3c=5 st=33 f38=0xdfbe41 name=Port Yang
+EDI_ENTRY 229 eip=0x4f5aa9 idx=72 owner_byte=2 cb=0x962f90 name=Port Yang
+GATE 222 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962f90 idx=72 owner=2 f38=0xdfbe41 f3c=5 st=38 ours=0 name=Port Yang
+PASTFLAG 220 eip=0x4f2724 ebp=0xbefdd4 curbase=0x962f90 owner=2 st=38 ours=0 name=Port Yang
+VISIT 223 p=2 idx=73 owner=2 nb=75 ours=0 f3c=18 st=39 f38=0xdfbe41 name=Factory Drift
+EDI_ENTRY 230 eip=0x4f5aa9 idx=73 owner_byte=2 cb=0x9630c0 name=Factory Drift
+GATE 223 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9630c0 idx=73 owner=2 f38=0xdfbe41 f3c=18 st=41 ours=0 name=Factory Drift
+PASTFLAG 221 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9630c0 owner=2 st=41 ours=0 name=Factory Drift
+VISIT 224 p=2 idx=74 owner=2 nb=75 ours=0 f3c=1 st=11 f38=0xdfbe41 name=Yang Mine
+EDI_ENTRY 231 eip=0x4f5aa9 idx=74 owner_byte=2 cb=0x9631f0 name=Yang Mine
+GATE 224 eip=0x4f2705 ebp=0xbefdd4 curbase=0x9631f0 idx=74 owner=2 f38=0xdfbe41 f3c=1 st=12 ours=0 name=Yang Mine
+PASTFLAG 222 eip=0x4f2724 ebp=0xbefdd4 curbase=0x9631f0 owner=2 st=12 ours=0 name=Yang Mine
+CONVST 49 eip=0x4f2d7d ebp=0xbefdd4 store_to=0x9631f0 idx=74 owner=2 f38=0xdfbe41 f3c=1 old40=12 new=12 ours=0 name=Yang Mine
+SWEEPEND p=2 last_idx=74 visits=40 nb_now=75
+SWEEP 24 p=3 nb_entry=75
+VISIT 225 p=3 idx=70 owner=3 nb=75 ours=1 f3c=34 st=0 f38=0xdfbe41 name=Climactic Research
+#0  0x005206d3 in ?? ()
+#1  0x0052091f in ?? ()
+EDI_ENTRY 232 eip=0x4f5aa9 idx=70 owner_byte=3 cb=0x962d30 name=Climactic Research
+QPIPE 3 name=Climactic Research f50=2 f44=2 f4c=0 f68=0 fc0=7 fcc=-3 st=0 f3c=34 d0=0
+W40_IADD 4 eip=0x4ef7f6 ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=0 new=0 d0=0 cb=0x962d30
+EDI_QGATE 233 eip=0x4ef88b q50=2 st=0 name=Climactic Research
+EDI_POSPATH 234 eip=0x4efa4b factor_eax=10 q50_m18=2 name=Climactic Research
+EDI_POSMUL 235 eip=0x4efa52 edi_before=10 ret_5ac950=1 name=Climactic Research
+GATE 225 eip=0x4f2705 ebp=0xbefdd4 curbase=0x962d30 idx=70 owner=3 f38=0xdfbe41 f3c=34 st=0 ours=1 name=Climactic Research
+FLAGTEST 3 eip=0x4f271e ebp=0xbefdd4 ecx=0x20 curbase=0x962d30 owner=3 ours=1 name=Climactic Research
+W3C_E410ACCR 4 eip=0x4ee8c7 ebp=0xbefdd4 target=0x962d30 name=Climactic Research old=34 new=31 cc=-3 cb=0x962d30
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(int *)(0x962d30 + 0x3c)
+
+Old value = 34
+New value = 31
+0x004ee8ca in ?? ()
+WP3C 6 eip=0x4ee8ca new=31 name_at=Climactic Research curbase=0x962d30 ours_at=1
+SWEEPEND p=3 last_idx=74 visits=1 nb_now=75
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]
