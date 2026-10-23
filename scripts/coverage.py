@@ -23,7 +23,9 @@ FUN_RE = re.compile(r"FUN_([0-9a-fA-F]{8})")
 
 def load(path):
     with open(path) as f:
-        return list(csv.DictReader(f))
+        # The trailing "#provenance ..." line is export metadata stamped by
+        # scripts/ghidra_export.sh, not a function row.
+        return [r for r in csv.DictReader(f) if not (r["addr"] or "").startswith("#")]
 
 
 def known_functions():
