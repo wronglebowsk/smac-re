@@ -35,6 +35,10 @@ python3 scripts/milestone.py submit     # commit, push, open PR (refuses red gat
 python3 scripts/milestone.py merge <n>  # refuses anything but GREEN
 ```
 
+**`submit` commits before it checks the branch.** Run it on `main` and it writes a
+`main: checkpoint` commit into the tree, then refuses. Undo with `git reset --soft HEAD~1`, branch,
+and commit with a real message; always `start <ID>` (or `git checkout -b`) first.
+
 **Context discipline (262k tokens ≈ 1.05M chars).** Never read a whole `evidence/*.log`:
 `python3 scripts/evidence.py show <file>:<line>` prints the cited window, `evidence.py digest
 <file>` writes a ~2KB summary to `evidence/digests/`. `evidence.py budget` reports what each doc

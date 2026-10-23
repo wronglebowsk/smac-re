@@ -38,3 +38,8 @@ __pycache__/
 index/*
 # ...except the LLM labelling cache, which is expensive to regenerate
 !index/summaries.jsonl
+
+# transient tool output and derived sheets (kept out of the repo)
+.rea/
+.procedures_raw.json
+sheets/

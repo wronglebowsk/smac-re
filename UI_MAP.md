@@ -84,7 +84,8 @@ Other data files:
 - 378 `.pcx` UI bitmaps → `png/` (all converted; contact sheets in
   `sheets/`: sheet_techs.png 90 tech icons, sheet_projs.png 33 project
   icons, sheet_facs.png 39 faction/unit icons — clean vector-style icons on
-  the purple UI palette, sheet_main.png all 378).
+  the purple UI palette, sheet_main.png all 378 — the sheet itself lives outside the
+  repo at `~/reverse/smac-local/sheets/sheet_main.png`, since it is a derived game screenshot).
 - Core chrome: `frame.pcx` (window frames), `TEXTURE.PCX`/`texture.pcx`
   (tile textures), `ICONS.PCX` (800×600 master icon atlas), `Cursor.pcx`,
   `Holobook.pcx`, `Jackal.pcx`, `multi.pcx`, `credits2.pcx`, `openinga.pcx`,
