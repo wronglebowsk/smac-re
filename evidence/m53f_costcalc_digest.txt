@@ -1,0 +1,16 @@
+rows=188  formula==live +41: 181  alpha-Cost override rows: 4/4  stale/out-of-range records: 3  UNEXPLAINED mismatches: 0  skipped(bad indices)=5
+  SKIP id568 rea makes discoverie ch111 wp114 ar101 rx32
+  SKIP id636 Ng~ ch44 wp54 ar67 rx0
+  SKIP id641 LL@ ch84 wp84 ar232 rx0
+  SKIP id648 n[$ ch87 wp63 ar17 rx0
+  SKIP id651 txS ch21 wp103 ar191 rx0
+alpha #UNITS rows with explicit Cost != 0 (override store 0x57a037):
+  Alien Artifact         alphaCost= 10 live+41= 10 formula= 10 +42=12 alphaPlan=12 +43=44
+  Mind Worms             alphaCost=  5 live+41=  5 formula= 11 +42=1 alphaPlan=1 +43=1
+  Isle of the Deep       alphaCost=  8 live+41=  8 formula= 11 +42=7 alphaPlan=7 +43=6
+  Locusts of Chiron      alphaCost= 10 live+41= 10 formula= 11 +42=4 alphaPlan=4 +43=9
+shipped #UNITS rows: live +42 == alpha Plan (override store 0x57a02d): 14 / 14
+stale records (index beyond the shipped tables, or reactor 0):
+  id569 cus on a               ch0 wp0 ar0 rx0 (shipped max ch9 wp21 ar10) formula=1 live=0
+  id637 6`@                    ch24 wp41 ar21 rx0 (shipped max ch9 wp21 ar10) formula=25837 live=35
+  id639 1=q                    ch31 wp16 ar36 rx0 (shipped max ch9 wp21 ar10) formula=2678 live=4

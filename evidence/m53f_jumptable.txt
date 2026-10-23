@@ -1,0 +1,15 @@
+# ability-rule jump table 0x595ab4 (index = rule + 7, guard 0x5958ac-0x5958b2)
+raw 0x595ab4-0x595ad0: 03 59 59 00 f8 58 59 00 f3 58 59 00 ea 58 59 00 e4 58 59 00 de 58 59 00 bb 58 59 00
+# dispatch: 0x59589f mov eax,[ebp+0xc] ; 0x5958a2 mov eax,[eax] (rule) ; 0x5958a4 test ; 0x5958a6 jl
+#           0x5958a8 add ebx,eax (rule>=0) ; 0x5958ac add eax,7 ; 0x5958af cmp eax,6 ; 0x5958b2 ja skip
+#           0x5958b4 jmp [eax*4+0x595ab4]   ; surcharge 0x59589a-0x59589e (inc ebx when ebx!=0)
+# register roles: edx = weapon +3 (0x59582f-0x595847), edi = armor +0xa (0x59584d-0x59585b),
+#   [ebp+0x10] = chassis +4 (0x59586c-0x595872, overwrites the armor arg), ebx = surcharge sum,
+#   [ebp+0x14] = ability mask.  Bodies (objdump, see m53f_disasm_fn595820.txt):
+#   rule  -7 -> index 0 -> 0x595903  ccost + armor - 2
+#   rule  -6 -> index 1 -> 0x5958f8  ccost + wcost - 2
+#   rule  -5 -> index 2 -> 0x5958f3  armor + wcost - 2 (falls into 0x595908)
+#   rule  -4 -> index 3 -> 0x5958ea  ccost - 1
+#   rule  -3 -> index 4 -> 0x5958e4  armor - 1  (lea ebx,[ebx+edi-1])
+#   rule  -2 -> index 5 -> 0x5958de  wcost - 1  (lea ebx,[ebx+edx-1])
+#   rule  -1 -> index 6 -> 0x5958bb  idiv wcost/armor; negative -> 0; >2 -> 2
