@@ -51,45 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-43-43.md` (1 sessions). Read it only when a question reaches back before session ## Session 44.
-
-## Session 44 (2026-10-22) — M47: WRITE PROVENANCE — the exact stores that move faction energy; `base+0x7e` retracted as a Ghidra short*-artifact (the addend is `base+0xfc`); ledger writers are action-time; six input-blocking panes that `classify()` calls `hud`
-
-- **Positive control first (H):** `hw watch` on the mission year fired once, `eip=0x51f554
-  val=2335` in `FUN_0051f320` when the round rolled 2334→2335 (`evidence/m47_year_watch.log`).
-  Hardware watchpoints DO work under this Wine build; earlier sessions only ever armed them.
-- **Income (H):** watching our energy `0x953884` through a round caught
-  `eip=0x4f5c92 val=21 ecx=0x962f90(=our base) esi=0x6234 edi=3`; disassembly at the site is
-  `4f5c7f mov 0xfc(%ecx),%edx · 4f5c85 add %edx,%eax · 4f5c8c mov %eax,0x94d650(%esi)`
-  ⇒ **faction energy += `base+0xfc`**, inside `FUN_004f5a70`. Our 19→21→20→19 reproduced
-  exactly (two upkeep debits of 1 for runtime items 6 and 7).
-- **Retraction (H):** `base+0x7e` is never written — zero hits on `base+0x7c..0x7f` over two
-  armed rounds, and it reads 0 always. Ghidra prints `*(int *)(DAT_008f0d60 + 0x7e)` but
-  `DAT_008f0d60` is a **short\***, so `+0x7e` = `0xfc` **bytes**. M46's "transient income field
-  with no visible writer" was decompiler pointer maths, not a missing writer.
-- **Upkeep (H):** `eip=0x4f4958` in `FUN_004f47f0`: `mov 0x94d650(%edi),%ecx · sub %eax,%ecx ·
-  mov %ecx,0x94d650(%edi)` then `faction+0xe0 += cost` at `0x4f4962`; `esi` = runtime item id
-  (6 = Recreation Commons, 7 = Energy Bank); item 8 (Network Node) never fires — disabled list.
-- **Ledger (M, open):** `faction+4` got **zero** writes for us *and* for Morgan across a full
-  idle round ⇒ the ledger is written by player ACTIONS (research/gifts/terraform), not upkeep.
-- **AI round (H, `evidence/m47f_watch.log`, 28 hits):** Morgan p4 2335→2336 — income at
-  `0x4f5c92` per base; upkeep at `0x4f4958` per item (2,6,7,8,0x18,0x1b; cost 1-2); a **direct
-  per-base debit of −7 twice at `eip=0x4f2dc4`** in `FUN_004f26e0` (the production/rush step that
-  reads `energy/10` and `energy/50`); and a final whole-faction write at `0x506d2b` (=905).
-  ⇒ M46's "AI gaps = ledger debits" is NOT supported for idle rounds.
-- **Operational (H, cost the session):** six panes block input while `classify()` says `hud`
-  because the HUD is visible behind them — advisor advisory ("PLANETARY ECOLOGIST / Mindworm
-  boil spotted") → `Return`; advisor story page ("Book of Planet", long body) → click (400,470);
-  council convenes page → `Return`; council ballot → click the **ABSTAIN** word centre; result
-  page ("MEASURE FAILS") → `Return`; faction-info table (Tech:/Mil:/Pop:/Wealth:/Territory:/
-  Overall:) → click (400,580). Rule of thumb: `hud` + TURN COMPLETE visible but the year will not
-  move after a click ⇒ `Return` once, then click the pane's bottom-centre.
-- **Harness:** `scripts/m47_watch{,2,3,4,year}.gdb` + `scripts/m47_drive.py` (end-turn driver with
-  the pane rules). All read-only: TracerPid 0 before pokes, watches armed after, `kill -INT gdb`
-  then `kill -CONT` every time.
-- **Open:** ledger writers (needs a round in which we research/gift/terraform); what `faction+
-  0x1b8` is; the 2320 +4 credit; mineral economy isolation; name of the `0x506d2b` host function
-  (Ghidra lumps it into `FUN_00502cd0`, 18 KB — address is solid, name is not).
+Older sessions: `docs/sessions/sessions-44-44.md` (1 sessions). Read it only when a question reaches back before session ## Session 45-46.
 
 ## Session 45-46 (2026-10-22) — M48d: MINERAL ECONOMY FULLY TRACED (first queue/growth completion in 26 years)
 
@@ -266,3 +228,53 @@ M50c cc source; M50d the 2320 +4 credit; M50e faction NAME mapping; NEW: the ene
 CONVST delta vs pool delta in one round); NEW: what makes our base take the 0x4f2705 flag gate
 (base+0x38 bit 0x1c = ? — likely the "no AI spending/disrupted" flag) and whether clearing it
 routes us through the conversion (minerals income!).
+
+## Session 49 (2026-10-22) — M50b: THE TRUNCATION WAS NEVER REAL — every pass scans all n_bases and visits each base exactly once; the year store fires BETWEEN passes, never inside one; and our base IS visited every round
+
+`scripts/m50b_drive.py` = m50a driver with the mineral-pipeline bps replaced by the sweep instrument:
+`0x520540` entry (prints the player arg from `[esp+4]` and `n_bases`), `0x5206d3` the `call 0x4f5a70`
+site (prints p, idx, owner byte, n_bases, `ours`, storage `+0x40`, minerals `+0x3c`), `0x5206f9` the loop
+back edge, `0x5206fd` the exit, and the existing `0x51f554` year store. Runs: `evidence/m50b_run.out` +
+`evidence/m50b_watch.log` (1 round, 2351→2352, 0 OCR passes, clean detach), `evidence/m50c_run.out` +
+`evidence/m50c_watch.log` (2 rounds, 2352→2354, 110 visits).
+
+**Static (gdb file-target disasm, 0x520540-0x5206fd): the loop bound is live.**
+- `0x5206c2-0x5206d0`: `edi = 0x95da14` (owner byte of base[0], stride 0x130), `eax = [ebp+8]` (player),
+  and `cmp cl, al; jne 0x5206eb` — non-owned bases are skipped, not processed.
+- `0x5206d3`: `push ebx; call 0x4f5a70` — one call per owned base, index passed in.
+- `0x5206df`: if `0x4f5a70` returns nonzero, `dec ebx / sub edi,0x130` cancels the tail's increment,
+  i.e. **the same base is re-processed** rather than skipped.
+- `0x5206eb-0x5206f9`: `mov eax, ds:0x985af4` **every iteration** (n_bases reloaded), `inc ebx`,
+  `cmp ebx, eax; jl 0x5206c7`. No cached count, no early-exit path other than `n_bases <= 0`.
+
+**VERIFIED live (15 passes across 3 rounds): the sweep is complete, always.**
+- Every pass ends at `last_idx = n_bases-1`: 73 with nb=74 (evidence/m50c_watch.log:32, evidence/m50c_watch.log:122, evidence/m50c_watch.log:125), 74 with nb=75
+  (evidence/m50b_watch.log:31, evidence/m50b_watch.log:39). `nb_entry == nb_now` on all 15 passes — n_bases never moves mid-pass.
+- Per-player visit counts sum to exactly `n_bases`: `1+7+3+7+9+0+10+37 = 74` (m50c). Every base is
+  visited exactly once per round, so the "ours last ⇒ ours can skip a round" premise is dead.
+- The old 21/28/28 pattern is a **per-player base count** (p=2 owns 37, p=1 owns 10, p=5 owns 3,
+  p=0 owns none), not an early stop. Nothing was ever truncated.
+- The year store `0x51f554` fires **between passes**: `mid_p=7, mid_idx=73, mid_visits=9` both years
+  (evidence/m50c_watch.log:67, evidence/m50c_watch.log:157) — after the last player's pass completes, before p=0 of the next year. It never
+  interrupts a pass, so it cannot skip a base.
+
+**Our base is visited, and its fields are live.**
+- idx 71 ("Climactic Research") is **player 2's** base: `VISIT p=2 idx=71 owner=2 ours=1 st=7 min40=1`
+  (evidence/m50c_watch.log:117, evidence/m50c_watch.log:126). Player 3 owns exactly one base, idx 70 (`VISIT p=3 idx=70 owner=3 ... st=0 min40=-4`,
+  m50c_watch.log:124) — so M50a's "owner 3, ours unvisited" was a misattribution of the neighbour record.
+- Between the driver's poke (`+0x40 := 200`, `+0x3c := 500` at locate) and the visit, both fields read
+  7 and 1. The per-base work therefore runs on our base and recomputes them; M50a's "poked min40=200
+  survived ⇒ unprocessed" does not reproduce.
+
+**Still open (now M51a):** which eip performs that rewrite. M50a's evidence was that `0x4f26e0`
+early-returns at the `0x4f2705` gate for the record it believed was ours — and the visit-level data
+shows the values changing anyway, so either the gate is a red herring (the writer is upstream in
+`0x4f5a70`) or the M50a record identity was wrong. That is the whole of M51a.
+
+**Harness fixes this session (both were blocking, both cost a full run):**
+- gdb `-x` script must end with `continue`, or gdb runs off the end and detaches the instant the
+  breakpoints are set — a 15-minute run with zero hits looks exactly like "the code never ran".
+- The 3-row COMM OFFICER pane ("I have Colonel X on Channel 9…") ignores row clicks: a click only
+  highlights, and the bar cycle slides onto "Display faction leader profile" → University Intelligence
+  Files, which drained 39 OCR passes over 15 minutes for 0 rounds. `windowfocus`, `key Down`, return
+  closes the channel deterministically (selection opens on row 1). Now in the driver and the skill.

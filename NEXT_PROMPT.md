@@ -1,4 +1,4 @@
-# NEXT_PROMPT — SMAC RE, session 49
+# NEXT_PROMPT — SMAC RE, session 50
 
 Read this file IN FULL first. It is the complete footing: proven facts (do not re-derive),
 the operational kit, and the queued milestone options. Do ONE milestone, checkpoint to
@@ -6,7 +6,7 @@ the operational kit, and the queued milestone options. Do ONE milestone, checkpo
 
 ## First actions
 1. `skill_view('smac-cvr-format')` — harness pitfalls + code atlas.
-2. `tail -60 ~/reverse/smac/SESSION_NOTES.md` — M50a (session 48) is the latest milestone.
+2. `tail -60 ~/reverse/smac/SESSION_NOTES.md` — M50b (session 49) is the latest milestone.
 3. Check live state (see kit below): game should be up (pid via `pgrep -x terran.exe`),
    year ≥ 2350, our turn open (cur=3), no gdb attached.
 
@@ -55,6 +55,22 @@ the operational kit, and the queued milestone options. Do ONE milestone, checkpo
   prints). 0x4eaa10 loops 7× factions writing faction+0xc4 = research pool.
 - Pane id-printer bp 0x483470: advisories only (Script confirms don't route through it).
 
+### M50b (session 49): THE SWEEP NEVER TRUNCATES
+- `0x520540(player)` scans **all** bases: `edi = 0x95da14` (owner byte at base+4); skip when
+  `owner != player`, else `call 0x4f5a70(ebx)`. The tail **reloads eax from `0x985af4` (n_bases)
+  every iteration**, so the bound is live.
+- Measured (1 round + 2 rounds, 110 visits; `evidence/m50b_watch.log`, `evidence/m50c_watch.log`):
+  every pass ends at `last_idx = n_bases-1` (73/74), `nb_entry == nb_now` on all 15 passes, and the
+  per-player visit counts sum to exactly `n_bases` (1+7+3+7+9+0+10+37 = 74). **No truncation exists.**
+- The old "21/28/28" pattern is a **per-player base count** (p=2 owns 37, p=1 owns 10), not an early stop.
+- The year store `0x51f554` fires **between** passes: `mid_p=7`, `mid_idx=73/74` — after the last
+  player's pass completes, before p=0 of the next year. It never interrupts a pass.
+- Our base (idx 71, "Climactic Research") **is visited** every round, as p=2's base (`ours=1` at
+  `0x5206d3`). Between poke and visit `+0x40` went 200→7 and `+0x3c` 500→1 ⇒ per-base work DID run
+  on it. M50a's "poke survived / ours unvisited" does **not** reproduce in this ownership state.
+- OPEN: the owner byte read 3 in M50a, 2 in M50b (capture? record reuse?). Resolve before trusting
+  either round's ownership claim.
+
 ## Static-reading kit
 - **Clean 32-bit disassembly, no attach**: `gdb -batch -nx -q -ex "set architecture i386" -ex
   "set disassembly-flavor intel" -ex "file programs/terran.exe" -ex "x/Ni 0xADDR"` (PE maps as
@@ -102,22 +118,19 @@ the operational kit, and the queued milestone options. Do ONE milestone, checkpo
   automates most of it; verify "Mission Year" in the confirm pane OCR.
 
 ## Milestone options (pick ONE)
-- **M50b — sweep early-stop**: bp the 0x520540 per-base loop body (0x5206c2-0x5206fd) + the
-  0x51f320 year-store caller chain to find what truncates sweeps at 21/28/28 visits (ours last ⇒
-  our base can skip a whole round — matters for production pacing!).
-- **M50c — cc (production rate) source**: watchpoint on base+0xcc for one round; candidates
-  0x4eaa10 / 0x4e92c0 / slider UI.
-- **M50d — the 2320 +4 energy credit** (M46 open item) via ENERGY WP across an AI-heavy round.
-- **M50e — faction NAME mapping** (player idx → faction name) via alpha #FACTIONS + faction
-  record fields.
-- **M51a — the 0x4f2705 flag gate**: our base always early-returns from 0x4f26e0 because
-  `~(base+0x38)` bits 0x1a/0x1c are set (f30=0x805000 has bit 0x1c). Identify the flag (what
-  sets base+0x38 bit 0x1a/0x1c — likely "undersea/facility" or a disrupted marker) and test
-  whether clearing it routes us through the conversion ⇒ mineral income per round (we currently
-  get NONE — d0=−1, storage 0).
-- **M51b — energy side of 0x4f26e0**: pin the energy-pool store in 0x4f2dc4-0x4f2e97 on a
-  non-event AI base; correlate CONVST delta vs pool delta in one round (closes M44's
-  anti-correlation).
+- **M51a — who rewrites our base's minerals: 0x4f5a70 upstream, or the 0x4f2705 gate? (THE PICK)**
+  M50b ground truth: our base is visited every round and `+0x3c`/`+0x40` are rewritten (500→1,
+  200→7) between the poke and the visit — yet M50a saw `0x4f26e0` early-returning at the gate for
+  owner 3. Settle both in one round: (a) bp `0x4f2d7d` (CONVST) **and** the gate at `0x4f2705`,
+  printing `eip` per hit, to see which store actually lands on our base; (b) print the owner byte
+  and `base+0x38` at the visit, and if the gate returns, step one frame up into `0x4f5a70` to find
+  the writer. Deliverable: a named writer address for `+0x40 := 7`, or proof the gate is a red
+  herring for income.
+- **Do not re-run M50b** (done, session 49) and do not re-derive M50a's truncation premise — it is
+  falsified; the sweep is complete every round.
+- Later: M50c (base+0xcc production-rate source: 0x4eaa10 / 0x4e92c0 / slider UI), M50d (the 2320
+  +4 energy credit), M50e (player idx → faction name via #FACTIONS), M51b (energy-pool store on
+  0x4f2dc4-0x4f2e97, closes M44's anti-correlation).
 
 ## Report style
 Findings → SESSION_NOTES.md (dated section) + rewrite NEXT_PROMPT.md; evidence under

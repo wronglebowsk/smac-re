@@ -100,6 +100,15 @@ y  coordinate against the crop offset before trusting the pipeline.
 - **Row-select race: click the OK bar at least ~1.2 s after the row.** Confirm becomes the
   *previous* selection ("No, let me move them"), the same question reappears, and it reads
   exactly like a hang. 1.2 s is the verified floor; 0.35–0.7 s fails.
+- **The 3-row COMM OFFICER pane ignores row clicks — use the keyboard.** "I have Colonel X on
+  Channel 9. Shall I put her through?" has three rows (switch / close / leader profile). A click
+  only highlights a row, and the bar cycle then drifts onto "Display faction leader profile" →
+  University Intelligence Files, an 8-minute drain (39 OCR passes, 0 rounds, verified M50b).
+  Selection opens on row 1, so `windowfocus` → `key Down` → 0.4 s → `key Return` closes the
+  channel deterministically.
+- **A gdb `-x` script must end with `continue`.** Without it gdb runs off the end of the script and
+  detaches the moment the breakpoints are set; the run then looks exactly like "the instrumented code
+  never executed" (M50b: 15 minutes, zero hits).
 - **Never spam Escape on an unrecognized/dark screen.** On the title it opens `Do you really
   want to quit?`, and the next OK is `Yes, that's an order, mister!` — the process exits with
   nothing in the Wine log. Give dark screens ~20 s of grace (movies end themselves), check the
