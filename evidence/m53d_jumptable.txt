@@ -1,0 +1,4 @@
+# M53d chooser-mode jump table at VA 0x419c04 (index = [pane+0xb194]-1, modes 1..7)
+# file offset 0x19c04, 7 dwords:
+00000000: 518c 4100 c98c 4100 d88c 4100 0387 4100  Q.A...A...A...A.
+00000010: a287 4100 0387 4100 ad87 4100            ..A...A...A.

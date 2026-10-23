@@ -1,0 +1,52 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x417ee0
+Breakpoint 2 at 0x418aa2
+Breakpoint 3 at 0x418ac7
+Breakpoint 4 at 0x418751
+Breakpoint 5 at 0x418b57
+Breakpoint 6 at 0x418b24
+Breakpoint 7 at 0x418ad3
+Breakpoint 8 at 0x418b02
+Breakpoint 9 at 0x418762
+Breakpoint 10 at 0x41821a
+Breakpoint 11 at 0x418633
+Breakpoint 12 at 0x417d20
+Breakpoint 13 at 0x417dd8
+Breakpoint 14 at 0x417e04
+Breakpoint 15 at 0x4186d2
+Breakpoint 16 at 0x4186ec
+Breakpoint 17 at 0x418e1d
+Breakpoint 18 at 0x418cc9
+Breakpoint 19 at 0x418cd8
+Breakpoint 20 at 0x419967
+Breakpoint 21 at 0x4ef6d0
+Hardware watchpoint 22: *(int *)(0x962d84)
+Hardware watchpoint 23: *(int *)(0x962d88)
+POST_PICK edi=2
+MODE mode=1 slotfield=1 f4c=0 f50=3 f54=3 f58=0
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]
