@@ -51,117 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-49-49.md` (1 sessions). Read it only when a question reaches back before session ## Session 50.
-
-## Session 50 (2026-10-22) — M51a: FUN_004ee410 IS THE WRITER — our base hits the 0x4f271e flag test and never reaches PASTFLAG, so 0x4f26e0 is not its income source; the +0x3c field is set to 40 and then decremented by cc (−3/round) elsewhere
-
-Instrument: `scripts/m51a_drive.py`, 26 breakpoints — gate `0x4f2705`, flag test `0x4f271e`, PASTFLAG,
-CONVST `0x4f2d7d`, candidate writers probing `+0x3c`/`+0x40`, and VISIT printing the base **name**.
-Runs: `evidence/m51e_*` (1 round, partial: year tick landed after p=7, our pass not captured) and
-`evidence/m51f_*` (2 rounds, 2356→2358, 0 OCR passes, clean detach).
-
-**VERIFIED — our base is visited and named every round.**
-`VISIT 49 p=3 idx=70 owner=3 nb=74 ours=1 f3c=500 st=200 f38=0xdfbe41 name=Climactic Research`
-(evidence/m51f_watch.log:209; again at :504 and :771). The name is printed at each visit, so the array
-slide M50b inferred is now directly observable rather than deduced — the record identity follows the
-name, and the index moved 71 → 70 between sessions.
-
-**VERIFIED — the gate diverts us; M50a's early-return is real.**
-Our base reaches the gate (evidence/m51f_watch.log:228) and the flag test
-`FLAGTEST 1 eip=0x4f271e ecx=0x20` (evidence/m51f_watch.log:229), and **never** reaches PASTFLAG:
-197 gate hits vs 194 past-flag hits across the run, with zero PASTFLAG lines carrying `ours=1`.
-So exactly three bases take the early-return path and ours is one of them.
-
-**VERIFIED — and yet the field changes, from a different function.**
-`+0x3c` is rewritten inside `FUN_004ee410` (0x4ee410, 2076 bytes), not inside the converter:
-- `W3C_E410D 1 eip=0x4ee82f ... old=500 new=40 pop=7` (evidence/m51f_watch.log:230)
-- `W3C_E410ACCR 2 eip=0x4ee8c7 ... old=40 new=37 cc=-3` (evidence/m51f_watch.log:238), then 34 and 31
-  in the following rounds (evidence/m51f_watch.log:771)
-Static confirmation at the store itself: `0x4ee8c7: mov DWORD PTR [edi+0x3c],esi`, with
-`mov ebx,ds:0x8f0d60` (current-base global), `mov eax,[ebx+0xcc]`, `cmp eax,edx; jge 0x4eec23` nearby.
-
-**The M50a/M50b contradiction dissolves.** Both observations were correct about different code:
-the converter really does early-return for our base at the flag test, while `FUN_004ee410` separately
-maintains `+0x3c`. "Poke survived ⇒ unprocessed" (M50a) and "fields are rewritten" (M50b) are not in
-conflict; they were looking at two different writers, and neither invalidates the other.
-
-**OPEN.**
-- What produces 40 at `0x4ee82f`: the disassembly near `0x4ee7fa` starts `mov esi,0x19` (25) and then
-  does arithmetic with the pop byte at `[base+6]`; read it from the function entry 0x4ee410, not from
-  a mid-instruction address (the first attempt at 0x4ee7e0 decoded garbage).
-- The gate line prints `st=0` at the same instant VISIT prints `st=200`; the gate's register is not
-  `+0x40`. Do not read storage from GATE until that register is identified.
-- No `+0x40` writer fired in this run, so M50b's 200→7 is still unexplained. A dedicated watchpoint on
-  `+0x40` with the same name printing is the next measurement.
-
-**Harness lessons (both cost real time).**
-- The 125B agent session died at ~101k tokens: it crossed the 86,016 compression threshold, compaction
-  was refused on cooldown, the model returned empties, and the failure fell through to the configured
-  `openvino` fallback at 192.168.1.125:8000, which has been dead since the 258v box moved to .213.
-- The driver's pane handlers missed the leader-profile pane, whose stylised font OCRs as garbage
-  ("SCO*=CO#D'IPLLMATI¢"), so it fell into the colour row+bar cycle that re-opens the same pane.
-  Escape leaves it; keyboard Down+Return closes the 3-row COMM pane. Both are now in the driver.
-
-## Session 51 (2026-10-23) — M52a: the 40 is HALF THE THRESHOLD — `+0x3c := trunc_div2(FUN_004e40a0(owner,0,idx) × (pop+1))` = (10×8)/2 with pop=7; FUN_004ee410 has ZERO +0x40 references in its 2076 B and the armed +0x40 watchpoint caught only the pipeline stores 0x4efee0 / 0x4eff23
-
-**(a) what makes 40 — VERIFIED three ways (static disasm, live-memory recomputation, live bp print).**
-- `FUN_004ee410` disassembled from its ENTRY 0x4ee410 (evidence/m52a_fn4ee410_disasm.txt; index.csv row
-  `0x004ee410,FUN_004ee410,2076,662`). The store at `0x4ee82f` is `mov DWORD PTR [ecx+0x3c],eax` with
-  `movsx edx,BYTE PTR [ecx+0x6]` (pop) → `inc edx` → `imul eax,edx` → `cdq; sub eax,edx; sar eax,1` = signed
-  truncating ÷2 (evidence/m52a_fn4ee410_disasm.txt:334-341). **The `mov esi,0x19` at 0x4ee7fa is not the source of
-  the 40** — esi (0x18/0x19 from the two `call 0x421fe0` sites) only indexes the message path
-  `lea eax,[esi+esi*2]; shl eax,4; mov ecx,[eax+0x984d38]` at 0x4ee832.
-- eax there is the return of `call 0x4e40a0(owner, 0, DAT_0068cbb0)` (DAT_0068cbb0 = the current-base INDEX, 70 for
-  us). Decomposed (evidence/m52a_fn4e40a0_disasm.txt): event-owner test `(1<<p)&DAT_00985b10` ⇒ esi=10; rescaled by
-  `DAT_0092a290` (10, ×/10) and `DAT_0092ada8` (2 ⇒ neither the ×0.9 nor the ×0.8 branch); then
-  `score = clamp(faction[p].int[17] (@0x94d694+p·0x20bc) + 2·(base+0x30 byte0 & 4) + 2·(arg2 ∧ facility byte), −2, 5)`
-  and `return = (esi·(10−score)+9)/10` (0x4e41f8-0x4e4219). For us fac17=0, f30 byte0=0x00, arg2=0 ⇒ score 0 ⇒
-  **factor = 10**.
-- So `+0x3c := trunc_div2(10 × (pop+1))`. Live `/proc/PID/mem` at year 2358: pop(+6) = **7** ⇒ (10×8)/2 = **40**, the
-  exact value m51f captured (evidence/m51f_watch.log:230 `W3C_E410D ... old=500 new=40 pop=7`).
-- Fresh run m52a printed every input at the store itself:
-  `W3C_E410D 1 eip=0x4ee82f target=0x962d30 name=Climactic Research old=500 new=40 pop=7 scale=10 ada8=2 fac17=0 f30b=0`
-  (evidence/m52a_watch.log:329). 2 rounds, 2358→2360, 0 OCR passes (evidence/m52a_run.out final line).
-- The threshold that gates the store: `0x4ee58f` calls the SAME `0x4e40a0` and `imul ebx,edx` at 0x4ee5aa gives
-  **ebx = factor × (pop+1) = 80**, and `0x4ee71a cmp [edi+0x3c],ebx; jl 0x4ee8ba` routes progress below 80 straight
-  to the accrual tail `0x4ee8c7 ([+0x3c] += [+0xcc])`. **The reset store therefore writes half the threshold**: 40,
-  then −3/round (cc = −3): 40→37→34→31 (evidence/m52a_watch.log:337, :608; evidence/m51f_watch.log:238, :509, :777).
-- Which branch runs is `pop − flag + trait[p][0]` vs `DAT_0092a2ac` (7) / `DAT_0092a2b0` (14), where flag = 2 iff
-  `owner(base[max(DAT_00985b9c,0)]) == owner(ours)`. Live: DAT_00985b9c = −1 → base[0] = "The Rapture" owner 2 ⇒ flag
-  0; 7−0+0 = 7 ≥ 7 ⇒ NOT the zero branch ⇒ `call 0x421fe0(24, idx, 0)` (facility byte at base+0x8c+24 = +0xa4 = 0) ⇒
-  reset store. The sibling branch (`0x4ee869 [+0x3c]:=0` then `0x4ee875 pop++`, then the 0x4e8d60/0x4e78e0/0x4e92c0/
-  0x4e93f0/0x4eaa10 recompute chain) is the pop-growth side.
-
-**(b) who owns +0x40 — VERIFIED.**
-- Static: the full 2076-byte body of `FUN_004ee410` contains **no `+0x40` reference at all**; its only non-stack
-  stores are `[reg+0x3c]` ×6, `[reg+0x6]` (pop) ×3 and `[ecx+0x7]` ×1 (store inventory over
-  evidence/m52a_fn4ee410_disasm.txt). M49a/M50a's "0x4ee410 never touches base+0x40" now holds over the whole
-  function, not just the sampled region.
-- Live: hardware watchpoint on our base's `+0x40` (name-anchored; 2 DR slots in use, +0x40 and +0x3c) — **2 hits in
-  2 rounds, both known pipeline stores**: `WP40 1 eip=0x4efee0 new=190 name_at=Climactic Research ours_at=1`
-  (SPENDA, whose store is `0x4efedd sub esi,edi`) and `WP40 2 eip=0x4eff23 new=0` (the CLAMP store), with the static
-  writer bps agreeing: `W40_IADD ... old=200 new=200 d0=0` (evidence/m52a_watch.log:310),
-  `W40_SPENDA ... old=200 new=190 edi=10` (:311), `W40_CLAMP1 ... old=190 new=0 cap=10 ownmask=3 d0=0` (:319).
-  Nothing outside the known writer set fired. m51f logged the same two hits
-  (evidence/m51f_watch.log:212, :219, :220, :227) — **session 50's "no +0x40 writer fired in this run" was a log
-  misread, not a finding.**
-- The clamp is `storage := max(0, min(base+0xd0, cap 10))`, re-confirmed statically at 0x4efee6-0x4eff20
-  (`ecx=cap; eax=[esi+0xd0]; edx=min; cmp [esi+0x40],edx; jle skip; event-owner test 0x4eff02; store 0x4eff20`).
-  Hence M50b's "200 → 7" (evidence/m50c_watch.log:117 `VISIT ... ours=1 st=7`) is THIS CLAMP1 store with **d0 = 7**
-  in that round (min(7,10) = 7); in today's state d0 = 0, so the clamp pins storage to 0. INFERRED for that round —
-  m50c armed no d0 print.
-
-**Corrections and opens.**
-- `W40_SPENDA ... edi=10` (:311) while the sweep-entry index of that record is 70 (:307 `VISIT 74 ... idx=70`): on
-  this path the SPENDA subtrahend is NOT the base index, and `0x4eaa10` is called 20 bytes earlier at 0x4efec4, so
-  edi is fair game there. M49a's "index quirk" needs its edi provenance re-pinned (**M52b**).
-- IADD fired once in 2 rounds (d0 = 0, a no-op write): the "storage += d0 every round" step is gated upstream
-  (IGATE 0x4ef7db), not unconditional.
-- GATE still prints `st=0` at the instant VISIT prints `st=200` (:327 vs :307) — the GATE register is not +0x40.
-  Unchanged warning: do not read storage from GATE.
-
-Next: **M52b** — edi provenance at 0x4efedb (0x4eaa10 residue vs the 0x4f5aa9 index) and the d0 source at 0x4e955d.
-Footing rewritten in NEXT_PROMPT.md (session 52).
+Older sessions: `docs/sessions/sessions-50-51.md` (2 sessions). Read it only when a question reaches back before session ## Session 52.
 
 ## Session 52 (2026-10-23) — M52b: edi at the SPENDA store is `0x4e40a0(owner,1,−1) × 0x5ac950(queue_type, idx, 0)` = 10 × 1 — M49a's "sweep-entry index" is FALSE at its first link (0x4f5aa9 loads the OWNER BYTE), and 0x4eaa10 preserves edi
 
@@ -299,3 +189,104 @@ stayed 2 all run. (b) `base+0xc0` printed a constant 7 == our pop every round �
 Next: **M53b** (unchanged queue: +41 production weight vs +43 autocalculated cost across all
 `#UNITS` rows), or **M53c** (the dequeue writer: arm 0x507ef0/0x5437d0/0x417ee0 and complete a
 payable round with a 2-item queue). Footing rewritten in NEXT_PROMPT.md (session 54).
+
+## Session 54 (2026-10-23) — M53c: the dequeue IS A CALL, NOT A STORE — FUN_004ef5d0 pops the head; the pipeline calls it at 0x4f037b whenever the base's owner is in the event mask (otherwise it re-picks via 0x4e5ae0); +0x4c is the PENDING-entry count (entries = +0x4c + 1), and with +0x4c == 0 NOTHING consumes the head — a payable head re-completes every round
+
+**Runs:** `scripts/m53c_drive.py --tag m53c --rounds 3 --budget 1100` — 3 rounds 2366→2369, **0 OCR
+passes**, clean detach (`evidence/m53c_watch.log` last line, `evidence/m53c_drive.json`
+`detached:true, ocr_passes:0`); confirmatory `scripts/m53c2_drive.py --tag m53c2 --rounds 2 --budget
+700` — 2 rounds 2369→2371, 0 OCR, clean detach. Both poked (TracerPid 0, pre-arm) `+0x50=2` (Scout
+Patrol), `+0x54=3` (Transport Foil), `+0x4c=1` (a legal TWO-entry queue), `+0x3c=500, +0xcc=1,
++0xd0=200, +0x40=200` (`evidence/m53c_drive.json` poke events). Our base = idx **70** @ 0x962d30
+(`(0x962d30-0x95da10)/0x130 = 70`, `evidence/m53c_drive.json` final.base).
+
+**0. M53a's "no +0x50 writer in the pipeline" was an artifact of a TRUNCATED dump** (VERIFIED).
+`evidence/m53a_fn_disasm.txt` has 2601 lines and its last instruction is 0x4f1d5d — 2,600 insns cover
+only 9,869 of the 12,298-byte function (avg 3.8 B/insn), so 0x4f1d5d-0x4f26da was never disassembled.
+Re-dumped: `evidence/m53c_tail_disasm.txt` (0x4f1d50 → 0x4f299f, past the function end at 0x4f26da).
+It exposes the tail re-pick call 0x4f1e01 (`evidence/m53c_tail_disasm.txt:61`), the tail clear
+`mov DWORD PTR [eax+0x50],0xffffffda` @ **0x4f1e3f** (`:73-80`) and a third re-pick 0x4f21b8 (`:277`).
+Pitfall: size the dump from `index.csv` size ÷ 3.8, or bound it by the NEXT function's address.
+
+**1. THE POP PRIMITIVE = `FUN_004ef5d0(base_idx)`** (0x4ef5d0, 244 B, `evidence/m53c_fn4ef5d0_disasm.txt`,
+Ghidra `shard_012.c:20538`), register-level:
+- `esi = idx·0x130`; gate `eax = [base+0x4c]; test; je 0x4ef684 → return 0` (`:12,:16`) — **nothing
+  pending ⇒ the head is NOT consumed**.
+- if head ≥ 0: `dec BYTE PTR [0x94de84 + owner·0x20bc + head]` (`:20-27`) — the consumed item's
+  per-player item count (the same count `0x4e5560` maintains).
+- **the shift** `0x4ef628-0x4ef639`: `edx = [slot+4]; ++i; [slot] = edx; slot += 4; cmp i, count; jl`
+  → runs `count` iterations, i.e. `slot[i-1] := slot[i]` for i = 1..count, writing **+0x50 first**
+  (`:32,:34,:38`).
+- `base+0x4c -= 1` @ 0x4ef642 (`:41`).
+- validate the NEW head: `0x5a73f0(item, owner, base)` for items ≥ 0 (`:48`) / `0x5a6e70(|q|, owner,
+  base, 0)` for negatives (`:58`); if unavailable → `jne 0x4ef5fa` (`:64`) **pop again** (discards
+  stale/unavailable pending entries until one validates or the count hits 0).
+- new head ≤ −39 → `0x446250(0x24)` (project command recorder, `:73`); then redraw
+  `0x473760(base_x, base_y, 2, 2)` (`:82`) and `return 1` (`:84`).
+Its callers are ONLY three sites inside the pipeline: **0x4ef992, 0x4f037b, 0x4f0f46**
+(`evidence/m53a_fn_disasm.txt:195, :827, :1611`; Ghidra `shard_012.c:21026, 21283, 21493`).
+
+**2. LIVE, run 1 (m53c):** QPIPE st=200 head=2 count=1 (`evidence/m53c_watch.log:144`) → QCOMPLET
+(`:145`) → SPENDA cost_edi=10 (`:146`) → CLAMP1 st=190 (`:147`) → **WP50 `eip=0x4ef62e` Old 2 → New
+3** (`:154`, gdb's own Old/New block at `:151-153`) → **WP4C `eip=0x4ef648` Old 1 → New 0** (`:161`).
+Later visits of the same run: head **3**, count 0, st 0 (`:260`, `:312`) — the promoted slot-1 item is
+what the base now builds, and `+0x44` mirrors it (`f44=3`). ZERO hits at all six re-pick sites and at
+the tail clear 0x4f1e3f (counts in the log: REPICK_* 0, QDRAIN 0).
+
+**3. LIVE, run 2 (m53c2) pinned the call site:** `POP_MID 1 f50=2 f4c=1` at **0x4f037b**
+(`evidence/m53c2_watch.log:38`) fires immediately after CLAMP1 (`:37`) and immediately before the
+shift store (`Old value = 2 / New value = 3 / 0x004ef62e`, `:42-45`); `POP_EARLY` (0x4ef992) and
+`POP_LATE` (0x4f0f46): 0 hits. Year 2370→2371, next visit head 3 / count 0 (`:47`).
+**The fork that chooses pop vs re-pick** (file-target gdb disasm, 0x4f033e-0x4f037b):
+`[base+0x30] |= 0x800000`, `[base+0x30] &= 0x7fffffff`, then `mov bl,[ebp-0x2c]` (= 1<<owner, set at
+0x4ef815) `mov al,[0x985b10]` `test bl,al` → **nonzero (owner IN the event mask) → 0x4f0375 `push
+base_idx; call 0x4ef5d0` (POP); zero → 0x4f0367 `push 0; push base_idx; jmp 0x4f0589` → `FUN_004e5ae0`
+(RE-PICK)**. Our owner 3 ∈ mask 0xff08 ⇒ pop path ✓ (and REPICK_A @ 0x4f0589 = 0 hits in run 1).
+
+**4. +0x4c REINTERPRETED — it is the PENDING-entry count, not a "last used index"** (M53a's label,
+corrected). Total entries = **+0x4c + 1**: head at +0x50, pending at +0x54 … +0x54+4·(count−1); the UI
+caps count at 9 ⇒ 10 entries = the +0x50..+0x73 array ✓. Every drain agrees: `0x4ef5d0` shifts
+`count` slots then decrements; `FUN_004f4060` iterates `[+0x4c]+1` dwords from +0x50
+(`evidence/m53c_fn4f4060_pseudocode.txt:269-278`), and `FUN_005437d0` (`evidence/m53c_setters_pseudocode.txt:176-198`)
+and `FUN_00507ef0` (`:199-217`) both loop `base+0x4c + 1` times over the same window decrementing item
+counts. Consequence, **closes M53a open (a)**: with `+0x4c == 0` nothing consumes the head — 0x4ef5d0
+returns 0 at its gate — so a payable head re-completes EVERY round (M45's units 1→6 off one standing
+queue; M53a's head=2 unchanged over 3 rounds). The standing item a player sees IS the repeat-build
+state; the queue only advances when the player has appended pending entries.
+
+**5. Census of +0x50 writers** (static, `evidence/m53c_setters_pseudocode.txt`; live counts from
+`evidence/m53c_watch.log`):
+- `FUN_004e5560` (`shard_012.c:14625`, excerpt `evidence/m53c_setters_pseudocode.txt:1-44`) = the ONLY
+  setter: head := new, early-return if unchanged, item count old−1 / new+1; its only callers are the
+  3 sites inside `FUN_004e5ae0`.
+- `FUN_004e5ae0(base, param2)` = "re-pick the head" via `FUN_004f6030` (the 30,475-byte AI build
+  planner, `shard_012.c:24338`) — excerpt `:45-129`. Live: 122 SET_REPICK + 122 SET_HEAD hits in 3
+  rounds over 40+ bases (idx 47 ×29, 46 ×9, 74 ×6 …), **0 for idx 70 (ours)**. New heads observed:
+  85/153/149/72/84/164/152 (facility ids ≥ 0x40) and **−29 ×7** — a negative outside the −(39+project)
+  band, unexplained.
+- `FUN_004e46f0` (base-creation autocalc: writes 2, then scans the 52-B type records for the best
+  pick, excerpt `:130-175`) and `FUN_004e47d0` (base init) seed +0x50.
+- Clears/re-picks that did NOT fire for us: `0x507ef0` 1 hit, base 46, not ours
+  (`evidence/m53c_watch.log:247`); `0x5437d0` 0 hits; tail clear 0x4f1e3f 0 hits (needs head == −|q|
+  ∧ +0x4c == 0); pipeline re-pick sites 0x4ef87e / 0x4f0589 / 0x4f08d4 / 0x4f09b6 / 0x4f1e01 /
+  0x4f21b8 all 0 hits (0x4f1e01 needs (f38&1 ∧ f38 sign) ∨ owner ∉ mask; ours f38 = 0x00dfbe41).
+- UI enqueue `FUN_00417ee0` (0 live hits — no base-screen interaction this run) writes ONLY slot 0
+  (`shard_001.c:9452`, excerpt `:218-251`) and adjusts +0x4c (`:9258` dec, `:9429/:9434` set/inc, cap 9).
+
+**6. Ops lessons.** (i) The `ours=` flag printed at the 0x4e5ae0/0x4e5560 entries is USELESS: while
+those run, `*(int*)0x68cbb0` (cur base index) IS their param_1, so it is always 1 — compare against
+the located base INDEX (ours = 70). (ii) Both drivers ran clean with 2 hw watchpoints + 17 soft bps
+(`scripts/m53c_drive.py`, `scripts/m53c2_drive.py`); the +0x50/+0x4c watches replaced +0x3c/+0x40 and
+gave gdb's own Old/New pairs, which is the cheapest possible writer proof.
+
+**7. Opens.** (a) **Who writes the PENDING slots +0x54..+0x73?** No function in the corpus writes
+base+0x54 by symbol (`DAT_0095da64`: 0 hits) or by short-alias (`DAT_008f0d60 + 0x2a`: 0 hits); the
+append must come through a walked pointer. Leads: `FUN_00417ee0`'s pane callers
+(`shard_001.c:2155, 2204, 8535, 12265`) and `FUN_0059ce10` (`shard_015.c:14416, 14770`), which seeds
+`+0x4c = pop·10/2` (= 35 at pop 7 — over the UI cap 9, so either that path is scenario/load setup or
+the cap means something else). (b) the −29 head value. (c) the branches at 0x4ef992 / 0x4f0f46 (never
+fired in either run). (d) base+0xc0 = 7 == pop, still unresolved.
+
+Next: **M53d** (the queue APPEND: who writes the pending slots, via the base-production pane callers of
+`FUN_00417ee0`), or **M53b** (the +41 byte: production weight vs the autocalculated +43 cost). Footing
+rewritten in NEXT_PROMPT.md (session 55).

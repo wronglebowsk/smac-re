@@ -1,0 +1,316 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee17368b in ?? ()
+Hardware watchpoint 1: *(int *)(0x962d30 + 0x50)
+Hardware watchpoint 2: *(int *)(0x962d30 + 0x4c)
+Breakpoint 3 at 0x51f554
+Breakpoint 4 at 0x4ef6d0
+Breakpoint 5 at 0x4efe41
+Breakpoint 6 at 0x4efed8
+Breakpoint 7 at 0x4eff20
+Breakpoint 8 at 0x4ef87e
+Breakpoint 9 at 0x4f0589
+Breakpoint 10 at 0x4f08d4
+Breakpoint 11 at 0x4f09b6
+Breakpoint 12 at 0x4f1e01
+Breakpoint 13 at 0x4f21b8
+Breakpoint 14 at 0x4f1e3f
+Breakpoint 15 at 0x4e5ae0
+Breakpoint 16 at 0x4e5560
+Breakpoint 17 at 0x507ef0
+Breakpoint 18 at 0x5437d0
+Breakpoint 19 at 0x417ee0
+SELFTEST addr=0x962d30 owner=3 f38=0xdfbe41 f3c=500 st=200 f50=2 f54=3 f4c=1 name=Climactic Research
+ARMED
+SET_REPICK 1 base_idx=10 param2=0 ours=1 head=6 f4c=0 cb_idx=10
+SET_HEAD 1 base_idx=10 new=6 ours=1 OLD_head=6 OLD_f4c=0 cb_idx=10
+SET_REPICK 2 base_idx=10 param2=0 ours=0 head=6 f4c=0 cb_idx=40
+SET_HEAD 2 base_idx=10 new=6 ours=1 OLD_head=6 OLD_f4c=0 cb_idx=10
+SET_REPICK 3 base_idx=6 param2=0 ours=1 head=473 f4c=0 cb_idx=6
+SET_HEAD 3 base_idx=6 new=451 ours=1 OLD_head=473 OLD_f4c=0 cb_idx=6
+SET_REPICK 4 base_idx=8 param2=0 ours=0 head=473 f4c=0 cb_idx=6
+SET_HEAD 4 base_idx=8 new=-29 ours=1 OLD_head=473 OLD_f4c=0 cb_idx=8
+SET_REPICK 5 base_idx=15 param2=0 ours=0 head=463 f4c=0 cb_idx=8
+SET_HEAD 5 base_idx=15 new=-29 ours=1 OLD_head=463 OLD_f4c=0 cb_idx=15
+SET_REPICK 6 base_idx=16 param2=0 ours=0 head=8 f4c=0 cb_idx=15
+SET_HEAD 6 base_idx=16 new=448 ours=1 OLD_head=8 OLD_f4c=0 cb_idx=16
+SET_REPICK 7 base_idx=22 param2=0 ours=0 head=463 f4c=0 cb_idx=16
+SET_HEAD 7 base_idx=22 new=-29 ours=1 OLD_head=463 OLD_f4c=0 cb_idx=22
+SET_REPICK 8 base_idx=33 param2=0 ours=0 head=473 f4c=0 cb_idx=22
+SET_HEAD 8 base_idx=33 new=-29 ours=1 OLD_head=473 OLD_f4c=0 cb_idx=33
+SET_REPICK 9 base_idx=42 param2=0 ours=0 head=6 f4c=0 cb_idx=33
+SET_HEAD 9 base_idx=42 new=-29 ours=1 OLD_head=6 OLD_f4c=0 cb_idx=42
+SET_REPICK 10 base_idx=44 param2=0 ours=0 head=470 f4c=0 cb_idx=42
+SET_HEAD 10 base_idx=44 new=470 ours=1 OLD_head=470 OLD_f4c=0 cb_idx=44
+SET_REPICK 11 base_idx=67 param2=0 ours=0 head=463 f4c=0 cb_idx=44
+SET_HEAD 11 base_idx=67 new=463 ours=1 OLD_head=463 OLD_f4c=0 cb_idx=67
+YEAR 1 year=2367 turn=267 cur=7 nb=75
+SET_REPICK 12 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 12 base_idx=47 new=81 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 13 base_idx=1 param2=0 ours=0 head=87 f4c=0 cb_idx=47
+SET_HEAD 13 base_idx=1 new=89 ours=1 OLD_head=87 OLD_f4c=0 cb_idx=1
+SET_REPICK 14 base_idx=9 param2=0 ours=0 head=80 f4c=0 cb_idx=1
+SET_HEAD 14 base_idx=9 new=87 ours=1 OLD_head=80 OLD_f4c=0 cb_idx=9
+SET_REPICK 15 base_idx=17 param2=0 ours=0 head=68 f4c=0 cb_idx=9
+SET_HEAD 15 base_idx=17 new=68 ours=1 OLD_head=68 OLD_f4c=0 cb_idx=17
+SET_REPICK 16 base_idx=27 param2=0 ours=0 head=67 f4c=0 cb_idx=17
+SET_HEAD 16 base_idx=27 new=84 ours=1 OLD_head=67 OLD_f4c=0 cb_idx=27
+SET_REPICK 17 base_idx=46 param2=0 ours=0 head=88 f4c=0 cb_idx=27
+SET_HEAD 17 base_idx=46 new=68 ours=1 OLD_head=88 OLD_f4c=0 cb_idx=46
+SET_REPICK 18 base_idx=47 param2=0 ours=0 head=81 f4c=0 cb_idx=46
+SET_HEAD 18 base_idx=47 new=81 ours=1 OLD_head=81 OLD_f4c=0 cb_idx=47
+SET_REPICK 19 base_idx=52 param2=0 ours=0 head=75 f4c=0 cb_idx=47
+SET_HEAD 19 base_idx=52 new=87 ours=1 OLD_head=75 OLD_f4c=0 cb_idx=52
+SET_REPICK 20 base_idx=63 param2=0 ours=0 head=76 f4c=0 cb_idx=52
+SET_HEAD 20 base_idx=63 new=76 ours=1 OLD_head=76 OLD_f4c=0 cb_idx=63
+SET_REPICK 21 base_idx=64 param2=0 ours=0 head=74 f4c=0 cb_idx=63
+SET_HEAD 21 base_idx=64 new=75 ours=1 OLD_head=74 OLD_f4c=0 cb_idx=64
+SET_REPICK 22 base_idx=52 param2=0 ours=1 head=87 f4c=0 cb_idx=52
+SET_HEAD 22 base_idx=52 new=74 ours=1 OLD_head=87 OLD_f4c=0 cb_idx=52
+SET_REPICK 23 base_idx=46 param2=0 ours=0 head=68 f4c=0 cb_idx=64
+SET_HEAD 23 base_idx=46 new=68 ours=1 OLD_head=68 OLD_f4c=0 cb_idx=46
+SET_REPICK 24 base_idx=5 param2=0 ours=1 head=-6 f4c=0 cb_idx=5
+SET_HEAD 24 base_idx=5 new=149 ours=1 OLD_head=-6 OLD_f4c=0 cb_idx=5
+SET_REPICK 25 base_idx=12 param2=0 ours=1 head=149 f4c=0 cb_idx=12
+SET_HEAD 25 base_idx=12 new=152 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=12
+SET_REPICK 26 base_idx=19 param2=0 ours=1 head=152 f4c=0 cb_idx=19
+SET_HEAD 26 base_idx=19 new=153 ours=1 OLD_head=152 OLD_f4c=0 cb_idx=19
+SET_REPICK 27 base_idx=23 param2=0 ours=1 head=149 f4c=0 cb_idx=23
+SET_HEAD 27 base_idx=23 new=147 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=23
+SET_REPICK 28 base_idx=30 param2=0 ours=1 head=-6 f4c=0 cb_idx=30
+SET_HEAD 28 base_idx=30 new=152 ours=1 OLD_head=-6 OLD_f4c=0 cb_idx=30
+SET_REPICK 29 base_idx=57 param2=0 ours=1 head=-6 f4c=0 cb_idx=57
+SET_HEAD 29 base_idx=57 new=0 ours=1 OLD_head=-6 OLD_f4c=0 cb_idx=57
+SET_REPICK 30 base_idx=66 param2=0 ours=1 head=3 f4c=0 cb_idx=66
+SET_HEAD 30 base_idx=66 new=3 ours=1 OLD_head=3 OLD_f4c=0 cb_idx=66
+SET_REPICK 31 base_idx=69 param2=0 ours=1 head=-6 f4c=0 cb_idx=69
+SET_HEAD 31 base_idx=69 new=149 ours=1 OLD_head=-6 OLD_f4c=0 cb_idx=69
+SET_REPICK 32 base_idx=74 param2=0 ours=1 head=149 f4c=0 cb_idx=74
+SET_HEAD 32 base_idx=74 new=149 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=74
+SET_REPICK 33 base_idx=74 param2=0 ours=1 head=149 f4c=0 cb_idx=74
+SET_HEAD 33 base_idx=74 new=149 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=74
+SET_REPICK 34 base_idx=23 param2=0 ours=0 head=147 f4c=0 cb_idx=74
+SET_HEAD 34 base_idx=23 new=147 ours=1 OLD_head=147 OLD_f4c=0 cb_idx=23
+SET_REPICK 35 base_idx=12 param2=0 ours=0 head=152 f4c=0 cb_idx=23
+SET_HEAD 35 base_idx=12 new=167 ours=1 OLD_head=152 OLD_f4c=0 cb_idx=12
+SET_REPICK 36 base_idx=12 param2=0 ours=1 head=167 f4c=0 cb_idx=12
+SET_HEAD 36 base_idx=12 new=167 ours=1 OLD_head=167 OLD_f4c=0 cb_idx=12
+SET_REPICK 37 base_idx=49 param2=0 ours=0 head=149 f4c=0 cb_idx=12
+SET_HEAD 37 base_idx=49 new=149 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=49
+SET_REPICK 38 base_idx=49 param2=0 ours=1 head=149 f4c=0 cb_idx=49
+SET_HEAD 38 base_idx=49 new=149 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=49
+SET_REPICK 39 base_idx=2 param2=0 ours=0 head=149 f4c=0 cb_idx=49
+SET_HEAD 39 base_idx=2 new=149 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=2
+SET_REPICK 40 base_idx=47 param2=0 ours=0 head=81 f4c=0 cb_idx=2
+SET_HEAD 40 base_idx=47 new=85 ours=1 OLD_head=81 OLD_f4c=0 cb_idx=47
+SET_REPICK 41 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 41 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 42 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 42 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 43 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 43 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 44 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 44 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 45 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 45 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 46 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 46 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 47 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 47 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 48 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 48 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 49 base_idx=46 param2=0 ours=0 head=68 f4c=0 cb_idx=47
+SET_HEAD 49 base_idx=46 new=72 ours=1 OLD_head=68 OLD_f4c=0 cb_idx=46
+QPIPE 1 name=Climactic Research f50=2 f54=3 f58=0 f5c=0 f4c=1 f44=2 f68=0 st=200 f3c=500 fcc=-3 d0=0 f38=0xdfbe41
+QCOMPLET 1 name=Climactic Research f50=2 f54=3 f4c=1 f44=2 st=200 ebx=2 m1c=104 m30=4 m10=5175026
+SPENDA 1 st=200 cost_edi=10 f50=2 f4c=1
+CLAMP1 1 esi=0x962d30 st=190 f50=2 f4c=1
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(int *)(0x962d30 + 0x50)
+
+Old value = 2
+New value = 3
+0x004ef62e in ?? ()
+WP50 1 eip=0x4ef62e new=3 f54=3 f4c=1 f44=2 name_at=Climactic Research cb=0x962d30 ours_at=1
+
+Thread 1 "terran.exe" hit Hardware watchpoint 2: *(int *)(0x962d30 + 0x4c)
+
+Old value = 1
+New value = 0
+0x004ef648 in ?? ()
+WP4C 1 eip=0x4ef648 new=0 f50=3 f54=3 name_at=Climactic Research cb=0x962d30 ours_at=1
+SET_REPICK 50 base_idx=4 param2=0 ours=1 head=6 f4c=0 cb_idx=4
+SET_HEAD 50 base_idx=4 new=6 ours=1 OLD_head=6 OLD_f4c=0 cb_idx=4
+SET_REPICK 51 base_idx=39 param2=0 ours=1 head=398 f4c=0 cb_idx=39
+SET_HEAD 51 base_idx=39 new=398 ours=1 OLD_head=398 OLD_f4c=0 cb_idx=39
+SET_REPICK 52 base_idx=6 param2=0 ours=1 head=451 f4c=0 cb_idx=6
+SET_HEAD 52 base_idx=6 new=6 ours=1 OLD_head=451 OLD_f4c=0 cb_idx=6
+SET_REPICK 53 base_idx=67 param2=0 ours=1 head=463 f4c=0 cb_idx=67
+SET_HEAD 53 base_idx=67 new=463 ours=1 OLD_head=463 OLD_f4c=0 cb_idx=67
+YEAR 2 year=2368 turn=268 cur=7 nb=75
+SET_REPICK 54 base_idx=46 param2=0 ours=1 head=72 f4c=0 cb_idx=46
+SET_HEAD 54 base_idx=46 new=72 ours=1 OLD_head=72 OLD_f4c=0 cb_idx=46
+SET_REPICK 55 base_idx=46 param2=0 ours=0 head=72 f4c=0 cb_idx=64
+SET_HEAD 55 base_idx=46 new=72 ours=1 OLD_head=72 OLD_f4c=0 cb_idx=46
+SET_REPICK 56 base_idx=46 param2=0 ours=1 head=72 f4c=0 cb_idx=46
+SET_HEAD 56 base_idx=46 new=72 ours=1 OLD_head=72 OLD_f4c=0 cb_idx=46
+SET_REPICK 57 base_idx=27 param2=0 ours=0 head=84 f4c=0 cb_idx=46
+SET_HEAD 57 base_idx=27 new=84 ours=1 OLD_head=84 OLD_f4c=0 cb_idx=27
+SET_REPICK 58 base_idx=46 param2=0 ours=0 head=72 f4c=0 cb_idx=27
+SET_HEAD 58 base_idx=46 new=72 ours=1 OLD_head=72 OLD_f4c=0 cb_idx=46
+SET_REPICK 59 base_idx=46 param2=0 ours=1 head=72 f4c=0 cb_idx=46
+SET_HEAD 59 base_idx=46 new=72 ours=1 OLD_head=72 OLD_f4c=0 cb_idx=46
+SET_REPICK 60 base_idx=2 param2=0 ours=1 head=149 f4c=0 cb_idx=2
+SET_HEAD 60 base_idx=2 new=153 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=2
+SET_REPICK 61 base_idx=5 param2=0 ours=1 head=149 f4c=0 cb_idx=5
+SET_HEAD 61 base_idx=5 new=149 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=5
+SET_REPICK 62 base_idx=11 param2=0 ours=1 head=-6 f4c=0 cb_idx=11
+SET_HEAD 62 base_idx=11 new=149 ours=1 OLD_head=-6 OLD_f4c=0 cb_idx=11
+SET_REPICK 63 base_idx=19 param2=0 ours=1 head=153 f4c=0 cb_idx=19
+SET_HEAD 63 base_idx=19 new=-6 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=19
+SET_REPICK 64 base_idx=21 param2=0 ours=1 head=149 f4c=0 cb_idx=21
+SET_HEAD 64 base_idx=21 new=153 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=21
+SET_REPICK 65 base_idx=36 param2=0 ours=1 head=149 f4c=0 cb_idx=36
+SET_HEAD 65 base_idx=36 new=153 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=36
+SET_REPICK 66 base_idx=38 param2=0 ours=1 head=149 f4c=0 cb_idx=38
+SET_HEAD 66 base_idx=38 new=153 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=38
+SET_REPICK 67 base_idx=43 param2=0 ours=1 head=149 f4c=0 cb_idx=43
+SET_HEAD 67 base_idx=43 new=153 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=43
+SET_REPICK 68 base_idx=49 param2=0 ours=1 head=149 f4c=0 cb_idx=49
+SET_HEAD 68 base_idx=49 new=152 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=49
+SET_REPICK 69 base_idx=59 param2=0 ours=1 head=153 f4c=0 cb_idx=59
+SET_HEAD 69 base_idx=59 new=-17 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=59
+SET_REPICK 70 base_idx=68 param2=0 ours=1 head=153 f4c=0 cb_idx=68
+SET_HEAD 70 base_idx=68 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=68
+SET_REPICK 71 base_idx=73 param2=0 ours=1 head=150 f4c=0 cb_idx=73
+SET_HEAD 71 base_idx=73 new=151 ours=1 OLD_head=150 OLD_f4c=0 cb_idx=73
+SET_REPICK 72 base_idx=74 param2=0 ours=1 head=149 f4c=0 cb_idx=74
+SET_HEAD 72 base_idx=74 new=164 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=74
+SET_REPICK 73 base_idx=5 param2=0 ours=0 head=149 f4c=0 cb_idx=74
+SET_HEAD 73 base_idx=5 new=164 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=5
+SET_REPICK 74 base_idx=74 param2=0 ours=0 head=164 f4c=0 cb_idx=5
+SET_HEAD 74 base_idx=74 new=164 ours=1 OLD_head=164 OLD_f4c=0 cb_idx=74
+SET_REPICK 75 base_idx=49 param2=0 ours=0 head=152 f4c=0 cb_idx=74
+SET_HEAD 75 base_idx=49 new=-29 ours=1 OLD_head=152 OLD_f4c=0 cb_idx=49
+SET_REPICK 76 base_idx=38 param2=0 ours=0 head=153 f4c=0 cb_idx=49
+SET_HEAD 76 base_idx=38 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=38
+SET_REPICK 77 base_idx=36 param2=0 ours=0 head=153 f4c=0 cb_idx=38
+SET_HEAD 77 base_idx=36 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=36
+SET_REPICK 78 base_idx=2 param2=0 ours=0 head=153 f4c=0 cb_idx=36
+SET_HEAD 78 base_idx=2 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=2
+SET_REPICK 79 base_idx=68 param2=0 ours=0 head=153 f4c=0 cb_idx=2
+SET_HEAD 79 base_idx=68 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=68
+SET_REPICK 80 base_idx=49 param2=0 ours=0 head=-29 f4c=0 cb_idx=68
+SET_HEAD 80 base_idx=49 new=-29 ours=1 OLD_head=-29 OLD_f4c=0 cb_idx=49
+SET_REPICK 81 base_idx=47 param2=0 ours=0 head=85 f4c=0 cb_idx=49
+SET_HEAD 81 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 82 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 82 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 83 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 83 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 84 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 84 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 85 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 85 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 86 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 86 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 87 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 87 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 88 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 88 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 89 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 89 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 90 base_idx=46 param2=0 ours=0 head=72 f4c=0 cb_idx=47
+SET_HEAD 90 base_idx=46 new=72 ours=1 OLD_head=72 OLD_f4c=0 cb_idx=46
+SET_REPICK 91 base_idx=27 param2=0 ours=0 head=84 f4c=0 cb_idx=46
+SET_HEAD 91 base_idx=27 new=84 ours=1 OLD_head=84 OLD_f4c=0 cb_idx=27
+CLR_507EF0 1 p1=46 p2=0x2 ours=0 head=72 f4c=0
+SET_REPICK 92 base_idx=1 param2=0 ours=0 head=89 f4c=0 cb_idx=27
+SET_HEAD 92 base_idx=1 new=89 ours=1 OLD_head=89 OLD_f4c=0 cb_idx=1
+SET_REPICK 93 base_idx=9 param2=0 ours=0 head=87 f4c=0 cb_idx=1
+SET_HEAD 93 base_idx=9 new=87 ours=1 OLD_head=87 OLD_f4c=0 cb_idx=9
+SET_REPICK 94 base_idx=17 param2=0 ours=0 head=68 f4c=0 cb_idx=9
+SET_HEAD 94 base_idx=17 new=68 ours=1 OLD_head=68 OLD_f4c=0 cb_idx=17
+SET_REPICK 95 base_idx=27 param2=0 ours=0 head=84 f4c=0 cb_idx=17
+SET_HEAD 95 base_idx=27 new=84 ours=1 OLD_head=84 OLD_f4c=0 cb_idx=27
+SET_REPICK 96 base_idx=52 param2=0 ours=0 head=74 f4c=0 cb_idx=27
+SET_HEAD 96 base_idx=52 new=74 ours=1 OLD_head=74 OLD_f4c=0 cb_idx=52
+SET_REPICK 97 base_idx=64 param2=0 ours=0 head=75 f4c=0 cb_idx=52
+SET_HEAD 97 base_idx=64 new=75 ours=1 OLD_head=75 OLD_f4c=0 cb_idx=64
+QPIPE 2 name=Climactic Research f50=3 f54=3 f58=0 f5c=0 f4c=0 f44=3 f68=0 st=0 f3c=37 fcc=-3 d0=-1 f38=0xdfbe41
+SET_REPICK 98 base_idx=40 param2=0 ours=1 head=6 f4c=0 cb_idx=40
+SET_HEAD 98 base_idx=40 new=6 ours=1 OLD_head=6 OLD_f4c=0 cb_idx=40
+SET_REPICK 99 base_idx=6 param2=0 ours=1 head=6 f4c=0 cb_idx=6
+SET_HEAD 99 base_idx=6 new=473 ours=1 OLD_head=6 OLD_f4c=0 cb_idx=6
+SET_REPICK 100 base_idx=6 param2=0 ours=0 head=473 f4c=0 cb_idx=67
+SET_HEAD 100 base_idx=6 new=473 ours=1 OLD_head=473 OLD_f4c=0 cb_idx=6
+YEAR 3 year=2369 turn=269 cur=7 nb=75
+SET_REPICK 101 base_idx=27 param2=0 ours=1 head=84 f4c=0 cb_idx=27
+SET_HEAD 101 base_idx=27 new=84 ours=1 OLD_head=84 OLD_f4c=0 cb_idx=27
+SET_REPICK 102 base_idx=27 param2=0 ours=0 head=84 f4c=0 cb_idx=64
+SET_HEAD 102 base_idx=27 new=84 ours=1 OLD_head=84 OLD_f4c=0 cb_idx=27
+SET_REPICK 103 base_idx=5 param2=0 ours=1 head=164 f4c=0 cb_idx=5
+SET_HEAD 103 base_idx=5 new=152 ours=1 OLD_head=164 OLD_f4c=0 cb_idx=5
+SET_REPICK 104 base_idx=19 param2=0 ours=1 head=-6 f4c=0 cb_idx=19
+SET_HEAD 104 base_idx=19 new=164 ours=1 OLD_head=-6 OLD_f4c=0 cb_idx=19
+SET_REPICK 105 base_idx=41 param2=0 ours=1 head=164 f4c=0 cb_idx=41
+SET_HEAD 105 base_idx=41 new=-6 ours=1 OLD_head=164 OLD_f4c=0 cb_idx=41
+SET_REPICK 106 base_idx=48 param2=0 ours=1 head=153 f4c=0 cb_idx=48
+SET_HEAD 106 base_idx=48 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=48
+SET_REPICK 107 base_idx=51 param2=0 ours=1 head=149 f4c=0 cb_idx=51
+SET_HEAD 107 base_idx=51 new=-6 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=51
+SET_REPICK 108 base_idx=53 param2=0 ours=1 head=153 f4c=0 cb_idx=53
+SET_HEAD 108 base_idx=53 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=53
+SET_REPICK 109 base_idx=58 param2=0 ours=1 head=149 f4c=0 cb_idx=58
+SET_HEAD 109 base_idx=58 new=153 ours=1 OLD_head=149 OLD_f4c=0 cb_idx=58
+SET_REPICK 110 base_idx=59 param2=0 ours=1 head=-17 f4c=0 cb_idx=59
+SET_HEAD 110 base_idx=59 new=153 ours=1 OLD_head=-17 OLD_f4c=0 cb_idx=59
+SET_REPICK 111 base_idx=74 param2=0 ours=1 head=164 f4c=0 cb_idx=74
+SET_HEAD 111 base_idx=74 new=164 ours=1 OLD_head=164 OLD_f4c=0 cb_idx=74
+SET_REPICK 112 base_idx=74 param2=0 ours=1 head=164 f4c=0 cb_idx=74
+SET_HEAD 112 base_idx=74 new=164 ours=1 OLD_head=164 OLD_f4c=0 cb_idx=74
+SET_REPICK 113 base_idx=53 param2=0 ours=0 head=153 f4c=0 cb_idx=74
+SET_HEAD 113 base_idx=53 new=153 ours=1 OLD_head=153 OLD_f4c=0 cb_idx=53
+SET_REPICK 114 base_idx=47 param2=0 ours=0 head=85 f4c=0 cb_idx=53
+SET_HEAD 114 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 115 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 115 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 116 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 116 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 117 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 117 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 118 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 118 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 119 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 119 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 120 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 120 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 121 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 121 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+SET_REPICK 122 base_idx=47 param2=0 ours=1 head=85 f4c=0 cb_idx=47
+SET_HEAD 122 base_idx=47 new=85 ours=1 OLD_head=85 OLD_f4c=0 cb_idx=47
+QPIPE 3 name=Climactic Research f50=3 f54=3 f58=0 f5c=0 f4c=0 f44=3 f68=0 st=0 f3c=34 fcc=-3 d0=0 f38=0xdfbe41
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]
