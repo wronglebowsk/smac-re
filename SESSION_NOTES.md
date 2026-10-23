@@ -51,78 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-45-45.md` (1 sessions). Read it only when a question reaches back before session ## Session 47.
-
-## Session 47 (2026-10-22) — M49a: THE GROWTH-COST QUESTION DISSOLVES — edi at COMPLET is the base's SWEEP-ENTRY INDEX, not a cost; esi=8 is the event-mask bit-test result; M48d's "Scout Patrol cost 10" RETRACTED
-
-`scripts/m49a_drive.py` (copy of m48d_drive.py: COMPLET print extended with pop/fc/cap/d0/cc/3c/
-e0/f0/c0 + stack scratch [ebp−0x1c..−0x2c]; new bp `ST1C` 0x4efae5 with its own `$ns` counter;
-self-pkill fix — see pitfalls). Runs: `evidence/m49a_{watch.gdb,watch.log,run.log}` (1 round,
-2347→2348, 0 OCR), `evidence/m49c_*` (1 round, 2348→2349, 43 OCR passes — COMM-pane chain, below).
-Static: clean 32-bit disasm via `gdb -batch -ex "file programs/terran.exe" -ex "x/Ni ADDR"` (the
-PE loads as a mapped target; NO attach, TracerPid stays 0).
-
-**VERIFIED (disasm chain + 3 live runs): the SPENDA subtract operand `edi` is the base record's
-SWEEP-ENTRY INDEX, not any cost formula.**
-- `0x520540` per-base loop passes the base INDEX as a STACK arg: `push ebx; call 0x4f5a70`
-  (0x5206d2-6d3; ebx = index, dec ebx + sub edi,0x130 on compaction slides 0x5206df-e0).
-- `0x4f5a70(arg0=index)`: `mov ebx,[ebp+0x8]` → `mov edi,edx` at 0x4f5aa9 (edx = owner byte
-  0x4f5a9c) — edi := index just before `call 0x4ef6d0` (0x4f5adc). Ghidra's
-  `FUN_004f5a70(iVar1)` confirms arg-in-stack.
-- Pipeline `0x4ef6d0`: the pop-growth path (QGATE 0x4ef88b → 0x4efadc store [ebp−0x1c] →
-  class≠8 `jne 0x4efe41` / pop≤1 `jne` / `0x4efb0f` event test → ... → `cmp eax,2;
-  jge 0x4efe41` 0x4efdb4) contains **NO edi write** (only 0x4ef8e2/0x4efa4b on the negative-queue
-  branch). So COMPLET sees edi = the index.
-- SPENDA 0x4efed8: `esi = storage − edi; storage := esi` ⇒ **storage −= entry-index** at every
-  completion. Live: ours 200→190 three times (m48d2/m49a/m49c; edi=10 = our index-at-entry; the
-  CURRENT idx drifts 71→69→60 as the array slides — the invariant is edi == index-at-sweep-entry).
-- AI lines fit the same model: edi == their index-at-visit-entry (e.g. 44 recurs across years
-  while current idx drifts 25→29→54/60).
-- **esi at COMPLET entry is path residue, not a budget**: on the pop-growth path esi = result of
-  `0x48ee00` (message/pane formatter, scratch 0x997120) preceded by `0x4e40a0(owner,1,−1)` =
-  `(1<<owner)&mask` = **8 for us** — the very value the CLAMP1 gate uses (m2c=0x8 = same bit).
-  Facility-path COMPLET lines carry pointer-looking esi (type-record scratch `ebx*60+0x98ad88`)
-  because the callee chain 0x4e8d60→…→0x4eaa10 (runs only when ebx≥0x40) clobbers edi/esi.
-- **pop at COMPLET is ALWAYS the pre-completion value** (growth lands after; attrition re-drops):
-  m49c located pop=5 pre-poke, OURBASE showed pop 4 at 2349 (NOSUPPORT disband), COMPLET printed
-  pop=4. ⇒ pop can never disambiguate a formula; the M49a test design was void, and all three
-  candidates (2×pop, cap−fc, (d0+fc)×4) were coincidences on pop=4/fc=2/cap=10/d0∈{0,−1}.
-
-**Corrected mineral model (supersedes M48d's cost story)**: per round `storage += d0` unclamped;
-at every completion `storage −= entry_index` (0x4efee0), then event-owner clamp
-`storage := max(0, min(d0, cap))` (0x4eff20/23). Pop-growth units are effectively FREE (the "cost"
-is the index quirk); the 26-year backlog is explained by storage clamped to 0 ⇒ the index-subtract
-always takes the shortfall branch (4efee4) — not by unaffordable unit costs. Whether real per-unit
-mineral costs exist anywhere in the pipeline is OPEN (M48d's PROGDIV/QDRAIN never fire in solo;
-`0x4f26e0` runs right after 0x4ef6d0 in 0x4f5a70 and is the next candidate).
-
-**NOSUPPORT disband live again**: pop 5→4 across 2348 (m49c OURBASE line 178), d0=−1 at the visit
-— disband fires while d0<0 (M48d rule holds).
-
-**Pitfalls found (this session):**
-- `pkill -INT -f "[m]49a_drive"` matches the DRIVER'S OWN cmdline → the driver SIGINTs itself at
-  startup (KeyboardInterrupt inside subprocess.run). The bracket trick only protects pkill's own
-  shell, not a python driver whose argv contains the tag. m49a_drive.py now kills stale copies via
-  pgrep + os.kill skipping os.getpid().
-- COMM OFFICER pane has a 3-row variant ("Yes, switch to main viewscreen." / "No, close the
-  channel." / "Display faction leader profile."). The colour row-click (bar_y−25) can land the
-  selection on "Display faction leader profile" → UNIVERSITY INTELLIGENCE FILES table whose
-  CLOSE/DATALINKS bars sit at y≈345-360 — outside find_ok_bar (430-520) and hit by the
-  rightmost_blue_run row-click+bar cycle; chain took ~8 min / 43 OCR passes to drain (DATALINKS →
-  diplomacy pane OK bar ≈y 345 → back). Driver did self-recover; faster fix = click the specific
-  row by OCR y, or click bar_y−25 twice before the bar.
-- objdump CAN disassemble this PE after all: `-b binary -m i386:x86-64 -D --adjust-vma=0x400000
-  --start-address/--stop-address` (file offset = VA − 0x400000 identity) — but 64-bit decoding
-  MISALIGINS on SEH blocks (the COMPLET region decoded as garbage/movabs). Clean 32-bit recipe:
-  `gdb -batch -nx -ex "set architecture i386" -ex "set disassembly-flavor intel" -ex "file
-  programs/terran.exe" -ex "x/Ni 0xADDR"` — gdb maps the PE image; read-only, no attach.
-
-Next (M49/M50 options): real unit/facility mineral cost — instrument 0x4f26e0 (runs after the
-pipeline in 0x4f5a70) + watch storage across a facility completion on a high-index base; pipeline
-early-stop mechanism (sweep caller ordering + year-store interrupt); production-rate cc source
-(0x4eaa10 / 0x4e92c0 candidates — note 0x4eaa10 loops 7× over faction stride 0x20bc writing
-faction+0xc4 = research pool); the 2320 +4 credit; faction NAME mapping; ledger writers on a
-spending round.
+Older sessions: `docs/sessions/sessions-47-47.md` (1 sessions). Read it only when a question reaches back before session ## Session 48.
 
 ## Session 48 (2026-10-22) — M50a: 0x4f26e0 IS NOT A COST STEP — it is the per-base mineral↔energy conversion/income step and a THIRD storage writer (0x4f2d7d); deltas live-observed 0…+12 (storage GAINS); our base early-returns via the base+0x38 flag gate; sweep truncated again at 28 visits (ours unvisited)
 
@@ -273,3 +202,64 @@ conflict; they were looking at two different writers, and neither invalidates th
 - The driver's pane handlers missed the leader-profile pane, whose stylised font OCRs as garbage
   ("SCO*=CO#D'IPLLMATI¢"), so it fell into the colour row+bar cycle that re-opens the same pane.
   Escape leaves it; keyboard Down+Return closes the 3-row COMM pane. Both are now in the driver.
+
+## Session 51 (2026-10-23) — M52a: the 40 is HALF THE THRESHOLD — `+0x3c := trunc_div2(FUN_004e40a0(owner,0,idx) × (pop+1))` = (10×8)/2 with pop=7; FUN_004ee410 has ZERO +0x40 references in its 2076 B and the armed +0x40 watchpoint caught only the pipeline stores 0x4efee0 / 0x4eff23
+
+**(a) what makes 40 — VERIFIED three ways (static disasm, live-memory recomputation, live bp print).**
+- `FUN_004ee410` disassembled from its ENTRY 0x4ee410 (evidence/m52a_fn4ee410_disasm.txt; index.csv row
+  `0x004ee410,FUN_004ee410,2076,662`). The store at `0x4ee82f` is `mov DWORD PTR [ecx+0x3c],eax` with
+  `movsx edx,BYTE PTR [ecx+0x6]` (pop) → `inc edx` → `imul eax,edx` → `cdq; sub eax,edx; sar eax,1` = signed
+  truncating ÷2 (evidence/m52a_fn4ee410_disasm.txt:334-341). **The `mov esi,0x19` at 0x4ee7fa is not the source of
+  the 40** — esi (0x18/0x19 from the two `call 0x421fe0` sites) only indexes the message path
+  `lea eax,[esi+esi*2]; shl eax,4; mov ecx,[eax+0x984d38]` at 0x4ee832.
+- eax there is the return of `call 0x4e40a0(owner, 0, DAT_0068cbb0)` (DAT_0068cbb0 = the current-base INDEX, 70 for
+  us). Decomposed (evidence/m52a_fn4e40a0_disasm.txt): event-owner test `(1<<p)&DAT_00985b10` ⇒ esi=10; rescaled by
+  `DAT_0092a290` (10, ×/10) and `DAT_0092ada8` (2 ⇒ neither the ×0.9 nor the ×0.8 branch); then
+  `score = clamp(faction[p].int[17] (@0x94d694+p·0x20bc) + 2·(base+0x30 byte0 & 4) + 2·(arg2 ∧ facility byte), −2, 5)`
+  and `return = (esi·(10−score)+9)/10` (0x4e41f8-0x4e4219). For us fac17=0, f30 byte0=0x00, arg2=0 ⇒ score 0 ⇒
+  **factor = 10**.
+- So `+0x3c := trunc_div2(10 × (pop+1))`. Live `/proc/PID/mem` at year 2358: pop(+6) = **7** ⇒ (10×8)/2 = **40**, the
+  exact value m51f captured (evidence/m51f_watch.log:230 `W3C_E410D ... old=500 new=40 pop=7`).
+- Fresh run m52a printed every input at the store itself:
+  `W3C_E410D 1 eip=0x4ee82f target=0x962d30 name=Climactic Research old=500 new=40 pop=7 scale=10 ada8=2 fac17=0 f30b=0`
+  (evidence/m52a_watch.log:329). 2 rounds, 2358→2360, 0 OCR passes (evidence/m52a_run.out final line).
+- The threshold that gates the store: `0x4ee58f` calls the SAME `0x4e40a0` and `imul ebx,edx` at 0x4ee5aa gives
+  **ebx = factor × (pop+1) = 80**, and `0x4ee71a cmp [edi+0x3c],ebx; jl 0x4ee8ba` routes progress below 80 straight
+  to the accrual tail `0x4ee8c7 ([+0x3c] += [+0xcc])`. **The reset store therefore writes half the threshold**: 40,
+  then −3/round (cc = −3): 40→37→34→31 (evidence/m52a_watch.log:337, :608; evidence/m51f_watch.log:238, :509, :777).
+- Which branch runs is `pop − flag + trait[p][0]` vs `DAT_0092a2ac` (7) / `DAT_0092a2b0` (14), where flag = 2 iff
+  `owner(base[max(DAT_00985b9c,0)]) == owner(ours)`. Live: DAT_00985b9c = −1 → base[0] = "The Rapture" owner 2 ⇒ flag
+  0; 7−0+0 = 7 ≥ 7 ⇒ NOT the zero branch ⇒ `call 0x421fe0(24, idx, 0)` (facility byte at base+0x8c+24 = +0xa4 = 0) ⇒
+  reset store. The sibling branch (`0x4ee869 [+0x3c]:=0` then `0x4ee875 pop++`, then the 0x4e8d60/0x4e78e0/0x4e92c0/
+  0x4e93f0/0x4eaa10 recompute chain) is the pop-growth side.
+
+**(b) who owns +0x40 — VERIFIED.**
+- Static: the full 2076-byte body of `FUN_004ee410` contains **no `+0x40` reference at all**; its only non-stack
+  stores are `[reg+0x3c]` ×6, `[reg+0x6]` (pop) ×3 and `[ecx+0x7]` ×1 (store inventory over
+  evidence/m52a_fn4ee410_disasm.txt). M49a/M50a's "0x4ee410 never touches base+0x40" now holds over the whole
+  function, not just the sampled region.
+- Live: hardware watchpoint on our base's `+0x40` (name-anchored; 2 DR slots in use, +0x40 and +0x3c) — **2 hits in
+  2 rounds, both known pipeline stores**: `WP40 1 eip=0x4efee0 new=190 name_at=Climactic Research ours_at=1`
+  (SPENDA, whose store is `0x4efedd sub esi,edi`) and `WP40 2 eip=0x4eff23 new=0` (the CLAMP store), with the static
+  writer bps agreeing: `W40_IADD ... old=200 new=200 d0=0` (evidence/m52a_watch.log:310),
+  `W40_SPENDA ... old=200 new=190 edi=10` (:311), `W40_CLAMP1 ... old=190 new=0 cap=10 ownmask=3 d0=0` (:319).
+  Nothing outside the known writer set fired. m51f logged the same two hits
+  (evidence/m51f_watch.log:212, :219, :220, :227) — **session 50's "no +0x40 writer fired in this run" was a log
+  misread, not a finding.**
+- The clamp is `storage := max(0, min(base+0xd0, cap 10))`, re-confirmed statically at 0x4efee6-0x4eff20
+  (`ecx=cap; eax=[esi+0xd0]; edx=min; cmp [esi+0x40],edx; jle skip; event-owner test 0x4eff02; store 0x4eff20`).
+  Hence M50b's "200 → 7" (evidence/m50c_watch.log:117 `VISIT ... ours=1 st=7`) is THIS CLAMP1 store with **d0 = 7**
+  in that round (min(7,10) = 7); in today's state d0 = 0, so the clamp pins storage to 0. INFERRED for that round —
+  m50c armed no d0 print.
+
+**Corrections and opens.**
+- `W40_SPENDA ... edi=10` (:311) while the sweep-entry index of that record is 70 (:307 `VISIT 74 ... idx=70`): on
+  this path the SPENDA subtrahend is NOT the base index, and `0x4eaa10` is called 20 bytes earlier at 0x4efec4, so
+  edi is fair game there. M49a's "index quirk" needs its edi provenance re-pinned (**M52b**).
+- IADD fired once in 2 rounds (d0 = 0, a no-op write): the "storage += d0 every round" step is gated upstream
+  (IGATE 0x4ef7db), not unconditional.
+- GATE still prints `st=0` at the instant VISIT prints `st=200` (:327 vs :307) — the GATE register is not +0x40.
+  Unchanged warning: do not read storage from GATE.
+
+Next: **M52b** — edi provenance at 0x4efedb (0x4eaa10 residue vs the 0x4f5aa9 index) and the d0 source at 0x4e955d.
+Footing rewritten in NEXT_PROMPT.md (session 52).
