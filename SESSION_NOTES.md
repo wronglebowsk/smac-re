@@ -51,61 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-44-44.md` (1 sessions). Read it only when a question reaches back before session ## Session 45-46.
-
-## Session 45-46 (2026-10-22) — M48d: MINERAL ECONOMY FULLY TRACED (first queue/growth completion in 26 years)
-
-`scripts/m48d_drive.py` (driver-generated gdb: 16 int3 sites + 4 hw WPs, literal baked addrs,
-SELFTEST block, colour-only fast loop + OCR fallback map) + generated `evidence/m48d2_watch.gdb`,
-logs `evidence/m48d2_{watch.log,drive.json,run.log}`. 3 rounds 2345-2347 armed, clean detach,
-0 OCR passes, zero stalls. Load: relaunch + `Alpha Centauri Autosave 1.SAV` (year 2344) after the
-CONFIRM-DISBAND deadlock (below).
-
-**Storage model VERIFIED (corrects M48's "pin" theory)**: between completions `base+0x40 += d0`
-per round, UNCLAMPED (Morgan 0x95ef70 111→121 = +d0 10, no clamp hit). AT EVERY PRODUCTION
-COMPLETION (unit OR facility), after the spend, storage := **max(0, min(d0, cap))** — the stockpile
-is destroyed down to one round's income. Three independent confirmations: ours 200→190(SPENDA)→0
-(WP3 store at 0x4eff23, d0=0); Morgan 131→5(shortfall)→10 (MIRA, d0=18 cap=10); m48e 200→0 (d0=-1).
-- Sites (all fired on our base, first time ever): IGATE 0x4ef7db (d0 load) → IADD 0x4ef7f6
-  (store storage+d0) → QGATE 0x4ef88b (+0x50 carries transient scratch 0xE00001 mid-visit) →
-  COMPLET 0x4efe41 (ebx=2 item, edi=10 COST of Scout Patrol, esi=8 budget) → SPENDA 0x4efed8
-  (store 0x4efee0 = −cost) → [gate 4efee4: post-spend storage ≥ edi? else shortfall branch] →
-  CLAMP1 0x4eff02 (event test (1<<owner)&mask; ours 0x8 ✓ mask 0xff08) → MIRA 0x4eff29
-  (store 0x4eff23 := min(d0,cap)).
-- PROGDIV 0x4efd49 and QDRAIN 0x4f1e3f: ZERO hits all rounds — not on the solo pipeline path.
-- **Pop-growth production**: pop 4→5 next round + new unit idx 297 (type 2, home 71) + COMPLET
-  ebx=2/edi=10 + spend 10 ⇒ growth units cost minerals from base storage; 26 years of storage 0
-  ⇒ pop grew but units never spawned ⇒ the "builds Scout Patrol" backlog messages. First unit
-  ever produced by our base under observation.
-- **NOSUPPORT disband condition**: d0 < 0 ⇒ disband one unit per round (2341-2344: units 5→3);
-  d0 = 0 ⇒ stable (2345-2347 ✓). Upkeep ≈ 2/unit vs facility income 6-7.
-- d0 (base+0xd0) recomputed at 0x4e955d (inside 0x4e93f0) EVERY round before the pipeline visit —
-  pokes to d0 are dead on arrival (confirmed 3×). +0x3c and +0xcc survive until the visit but cc
-  is re-derived too (came back 0, then −1 with d0=0; cc tracks d0).
-- Energy WPs (live M47 model): +2 credit 0x4f5c92 (=base+0xfc) then −1 −1 facility upkeep
-  0x4f4958 → 19→21→20→19, net 0 ✓.
-- Pipeline sweep: full sweep = 75 visits, ours LAST (n=75); sweeps can end early (21/28 visits)
-  when the year store interrupts — visit-order/early-stop mechanism OPEN.
-- Pane bp 0x483470: ZERO hits (OPERATIONS DIRECTOR confirm doesn't route through it; advisories do).
-
-**UI lessons (cost a lost game-state; recovery = relaunch+autosave):**
-- CONFIRM DISBAND (Script #DISBAND, rows "Never mind."/"Confirmed." + OK) opened from the base
-  panel's FORCES SUPPORTED context menu (glyph click (688,462) → menu box y 464-534, Disband row
-  y≈529, x 612-700) can cascade BEHIND base-panel widgets: its rows/OK land on chrome hitboxes,
-  keys are dead (M32 modal sink) → unreachable modal. Row clicks never moved the highlight.
-  Recovery: relaunch + load autosave (saves live in `programs/saves/auto/`, year = u16 @0x54;
-  M27 typed-path recipe; `scripts/m48d_boot.py`). Autosaves had captured 2344 — zero progress lost.
-- Panes QUEUE: each Disband-menu click queues a CONFIRM DISBAND; each OK click cancels one.
-  Identical-looking panes cycling = queue draining, not a frozen pane.
-- TOUR hint popup (auto-opens on first view of a screen): Continue (325,585). Social Engineering
-  full screen (OK (240,368) commits, CANCEL doesn't close). Comm "put her through?" pane:
-  "No, close the channel." row ≈ y 310.
-- Colour-only driver (rightmost_blue_run 150-430 row-click bar_y−25 then bar; find_ok_bar 430-520;
-  hud_up gate for TURN_BTN) ran 3 rounds unattended 0 OCR 0 stalls ✓.
-
-Next (M49 options): growth-cost/esi=8 formula (disambiguate 2×pop vs cap−fc vs (d0+fc)×4 — pop 5
-round); pipeline early-stop mechanism; production-rate cc source function; the 2320 +4 credit;
-faction NAME mapping; ledger writers on a spending round.
+Older sessions: `docs/sessions/sessions-45-45.md` (1 sessions). Read it only when a question reaches back before session ## Session 47.
 
 ## Session 47 (2026-10-22) — M49a: THE GROWTH-COST QUESTION DISSOLVES — edi at COMPLET is the base's SWEEP-ENTRY INDEX, not a cost; esi=8 is the event-mask bit-test result; M48d's "Scout Patrol cost 10" RETRACTED
 
@@ -278,3 +224,52 @@ shows the values changing anyway, so either the gate is a red herring (the write
   highlights, and the bar cycle slides onto "Display faction leader profile" → University Intelligence
   Files, which drained 39 OCR passes over 15 minutes for 0 rounds. `windowfocus`, `key Down`, return
   closes the channel deterministically (selection opens on row 1). Now in the driver and the skill.
+
+## Session 50 (2026-10-22) — M51a: FUN_004ee410 IS THE WRITER — our base hits the 0x4f271e flag test and never reaches PASTFLAG, so 0x4f26e0 is not its income source; the +0x3c field is set to 40 and then decremented by cc (−3/round) elsewhere
+
+Instrument: `scripts/m51a_drive.py`, 26 breakpoints — gate `0x4f2705`, flag test `0x4f271e`, PASTFLAG,
+CONVST `0x4f2d7d`, candidate writers probing `+0x3c`/`+0x40`, and VISIT printing the base **name**.
+Runs: `evidence/m51e_*` (1 round, partial: year tick landed after p=7, our pass not captured) and
+`evidence/m51f_*` (2 rounds, 2356→2358, 0 OCR passes, clean detach).
+
+**VERIFIED — our base is visited and named every round.**
+`VISIT 49 p=3 idx=70 owner=3 nb=74 ours=1 f3c=500 st=200 f38=0xdfbe41 name=Climactic Research`
+(evidence/m51f_watch.log:209; again at :504 and :771). The name is printed at each visit, so the array
+slide M50b inferred is now directly observable rather than deduced — the record identity follows the
+name, and the index moved 71 → 70 between sessions.
+
+**VERIFIED — the gate diverts us; M50a's early-return is real.**
+Our base reaches the gate (evidence/m51f_watch.log:228) and the flag test
+`FLAGTEST 1 eip=0x4f271e ecx=0x20` (evidence/m51f_watch.log:229), and **never** reaches PASTFLAG:
+197 gate hits vs 194 past-flag hits across the run, with zero PASTFLAG lines carrying `ours=1`.
+So exactly three bases take the early-return path and ours is one of them.
+
+**VERIFIED — and yet the field changes, from a different function.**
+`+0x3c` is rewritten inside `FUN_004ee410` (0x4ee410, 2076 bytes), not inside the converter:
+- `W3C_E410D 1 eip=0x4ee82f ... old=500 new=40 pop=7` (evidence/m51f_watch.log:230)
+- `W3C_E410ACCR 2 eip=0x4ee8c7 ... old=40 new=37 cc=-3` (evidence/m51f_watch.log:238), then 34 and 31
+  in the following rounds (evidence/m51f_watch.log:771)
+Static confirmation at the store itself: `0x4ee8c7: mov DWORD PTR [edi+0x3c],esi`, with
+`mov ebx,ds:0x8f0d60` (current-base global), `mov eax,[ebx+0xcc]`, `cmp eax,edx; jge 0x4eec23` nearby.
+
+**The M50a/M50b contradiction dissolves.** Both observations were correct about different code:
+the converter really does early-return for our base at the flag test, while `FUN_004ee410` separately
+maintains `+0x3c`. "Poke survived ⇒ unprocessed" (M50a) and "fields are rewritten" (M50b) are not in
+conflict; they were looking at two different writers, and neither invalidates the other.
+
+**OPEN.**
+- What produces 40 at `0x4ee82f`: the disassembly near `0x4ee7fa` starts `mov esi,0x19` (25) and then
+  does arithmetic with the pop byte at `[base+6]`; read it from the function entry 0x4ee410, not from
+  a mid-instruction address (the first attempt at 0x4ee7e0 decoded garbage).
+- The gate line prints `st=0` at the same instant VISIT prints `st=200`; the gate's register is not
+  `+0x40`. Do not read storage from GATE until that register is identified.
+- No `+0x40` writer fired in this run, so M50b's 200→7 is still unexplained. A dedicated watchpoint on
+  `+0x40` with the same name printing is the next measurement.
+
+**Harness lessons (both cost real time).**
+- The 125B agent session died at ~101k tokens: it crossed the 86,016 compression threshold, compaction
+  was refused on cooldown, the model returned empties, and the failure fell through to the configured
+  `openvino` fallback at 192.168.1.125:8000, which has been dead since the 258v box moved to .213.
+- The driver's pane handlers missed the leader-profile pane, whose stylised font OCRs as garbage
+  ("SCO*=CO#D'IPLLMATI¢"), so it fell into the colour row+bar cycle that re-opens the same pane.
+  Escape leaves it; keyboard Down+Return closes the 3-row COMM pane. Both are now in the driver.
