@@ -1,0 +1,63 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x417ee0
+Breakpoint 2 at 0x41860a
+Breakpoint 3 at 0x418aa2
+Breakpoint 4 at 0x418ac7
+Breakpoint 5 at 0x418751
+Breakpoint 6 at 0x418b57
+Breakpoint 7 at 0x418b24
+Breakpoint 8 at 0x418ad3
+Breakpoint 9 at 0x418b02
+Breakpoint 10 at 0x418762
+Breakpoint 11 at 0x41821a
+Breakpoint 12 at 0x418633
+Breakpoint 13 at 0x417d20
+Breakpoint 14 at 0x417dd8
+Breakpoint 15 at 0x417e04
+Breakpoint 16 at 0x4186d2
+Breakpoint 17 at 0x4186ec
+Breakpoint 18 at 0x418e1d
+Breakpoint 19 at 0x418cc9
+Breakpoint 20 at 0x418cd8
+Breakpoint 21 at 0x419967
+Breakpoint 22 at 0x4ef6d0
+Hardware watchpoint 23: *(int *)(0x962d84)
+Hardware watchpoint 24: *(int *)(0x962d88)
+ENQ#1 pane=0x1 param1=1 param2=1 f40=0 f44=3 f4c=0 f50=3 f54=3 f58=0 f5c=0
+SNAP#1 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#2 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#3 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#4 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#5 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#6 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#7 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#8 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#9 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+SNAP#10 snap_f50=3 snap_f54=3 snap_f58=0 cur_f54=3 f4c=0
+PRESHOW slot=1 mode=0 f4c=0 f54=3
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]
