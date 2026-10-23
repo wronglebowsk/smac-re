@@ -230,6 +230,7 @@ def cmd_submit(args):
     br = branch()
     if br == BASE:
         raise SystemExit("on main — start a milestone branch first (milestone.py start <ID>)")
+    rotate_sessions()
     ok, out = gate()
     if not ok:
         print(out)
@@ -272,6 +273,22 @@ def cmd_merge(args):
     if not args.no_index:
         rebuild_index()
     return 0
+
+
+def rotate_sessions(target=60_000):
+    """Archive old sessions before the gate runs: a checkpoint that pushes SESSION_NOTES.md
+    over budget should rotate, not fail. Fail-soft — never block a submit on housekeeping."""
+    script = os.path.join("scripts", "session_rotate.py")
+    if not os.path.isfile(script):
+        return
+    p = subprocess.run([sys.executable, script, "--apply", "--target", str(target)],
+                       capture_output=True, text=True)
+    if p.returncode != 0:
+        print("sessions: rotation skipped — " + (p.stderr.strip().splitlines() or ["unknown"])[-1])
+        return
+    line = [l for l in p.stdout.splitlines() if "SESSION_NOTES.md:" in l]
+    if line:
+        print("sessions: " + line[0].strip())
 
 
 def rebuild_index(timeout=240):
