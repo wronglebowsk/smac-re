@@ -52,9 +52,9 @@ operational kit, and the queued milestone options. Do ONE milestone, checkpoint 
   remove (`+0x54 2→0`, `+0x4c 1→0`), 618→−9999→restore, 160→mode 1 (re-opens,
   `evidence/m53d8_watch.log:47-48`), 707 and Return → nothing. **Digit keys 1-9 are preview-only**
   (`FUN_00512b40` → `FUN_00417ee0(digit, 0)` → mode 0, pick dropped, `evidence/m53d3_watch.log:42-44`).
-- **Writers of `+0x54..+0x74`:** 0x417e04 (VERIFIED), 0x417dd8 (INFERRED — mode 5 never fired live),
-  0x417dad (static), 0x418636 (VERIFIED), 0x418751 (state-change verified), + the pop shift
-  0x4ef628-0x4ef639. `+0x4c` writers: 0x417df6, 0x417e1d, 0x418766, 0x418641-0x418649, 0x4ef642.
+- **Writers of `+0x54..+0x74`:** 0x417e04 (VERIFIED), 0x417dd8 (INFERRED — mode 5 never fired), 0x417dad
+  (static), 0x418636 (VERIFIED), 0x418751 (state-change verified) + the pop shift 0x4ef628-0x4ef639.
+  `+0x4c`: 0x417df6, 0x417e1d, 0x418766, 0x418641-0x418649, 0x4ef642.
 - **UI geometry** (800×600): QUEUE rows 1-8 at x≈185, y = 437 + 14·(row−1); CHANGE ≈(185,552), HURRY
   ≈(185,571); chooser overlay x 60-740 y 8-330, 5×3 grid (cols ≈128/255/383/510/638, icon rows
   y≈60/160/260), bar row y≈343.
@@ -75,18 +75,18 @@ operational kit, and the queued milestone options. Do ONE milestone, checkpoint 
 - With `+0x4c == 0` NOTHING consumes the head ⇒ a payable head re-completes EVERY round (the standing
   item IS the repeat-build state). `FUN_004e5560` (`shard_012.c:14625`) is the only +0x50 setter, reached
   only from `FUN_004e5ae0` (30 KB AI planner, `shard_012.c:24338`): 122 re-picks on 40+ other bases, 0 on
-  ours; new heads are facility ids plus **−29 ×7** (outside the −(39+idx) band, unexplained).
-  `FUN_004e46f0` / `FUN_004e47d0` seed +0x50 at base creation.
+  ours; new heads are facility ids plus **−29 ×7** (outside the −(39+idx) band). `FUN_004e46f0` /
+  `FUN_004e47d0` seed +0x50 at base creation.
 
 ### M53a / M52b / M52a (sessions 51-53)
 - `+0x44` = active-item mirror (`0x4f5a70` copies `+0x50 → +0x44` after the pipeline and snapshots
   `[base+0x98] := storage`, `shard_012.c:24184-85`). Queue encoding
   (`evidence/m53a_qgate_disasm.txt:5-55`): `−38` = empty, `≥ 0` = item id (unit `< 0x40`, facility
-  `≥ 0x40`), `< 0` = secret project `|q| = 39 + idx` (registry `0x985b3c`, 33 dwords, written by
-  0x4f0d83). **Completion is PAYMENT-DRIVEN, no progress counter**: COMPLET 0x4efe41 fires the instant
+  `≥ 0x40`), `< 0` = secret project `|q| = 39 + idx` (registry `0x985b3c`, 33 dwords, 0x4f0d83).
+  **Completion is PAYMENT-DRIVEN, no progress counter**: COMPLET 0x4efe41 fires the instant
   `storage ≥ factor × 0x5ac950(id, idx, 0)`; PROGDIV 0x4efd49 formats an ETA. Dispatch: unit → SPENDA;
-  facility → set bit 2 of word `[0x98adb8 + 52·id]`; cls-8 Colony Pod ∧ pop==1 → ABANDONBASE `0x48ee00`.
-  IADD gate: `storage += d0` iff `d0 ≥ 0 ∧ queue ≠ −38 ∧ (f30 & 2) == 0`.
+  facility → set bit 2 of word `[0x98adb8 + 52·id]`; cls-8 Colony Pod ∧ pop==1 → ABANDONBASE. IADD gate:
+  `storage += d0` iff `d0 ≥ 0 ∧ queue ≠ −38 ∧ (f30 & 2) == 0`.
 - SPENDA `edi` = `0x4e40a0(owner,1,−1) × 0x5ac950(id, idx, 0)` = 10 for our queued Scout Patrol
   (`m52b_watch.log:386-400`); `0x5ac950` returns the type-record **+41 byte** (`0x98ad88 + type·52`,
   clamped [1,999] only for class 8); `0x4e40a0` arg2==1 → government multiplier (×1 for us). Scout
@@ -102,11 +102,10 @@ operational kit, and the queued milestone options. Do ONE milestone, checkpoint 
   snapshot), c0 (== pop, unresolved), cc@0xcc (−3 for us), d0@0xd0, fc@0xfc, f38 = 0x00dfbe41.
 - Type record `0x98ad88 + type·52`: name +0[34], **+0x29 (41)**, +0x2a (42) class, **+0x2b (43)**, +0x30
   word facility built-flag, ability +32, domain +36. Live: 0 Colony Pod (cls 8, 3/40), 1 Formers (cls 9,
-  2/41), 2 Scout Patrol (cls 3, **1/10**), 3 Transport Foil (cls 7, 3/39). Upkeep table
-  `0x984d44/0x984d48 + item·48`; per-player item counts are BYTES at `0x94de84 + player·0x20bc + item`;
-  secret-project registry `0x985b3c + 4·(0..32)`.
-- Income globals: gross 0x745734, upkeep 0x744f28, net 0x7457dc, trade 0x7457d4, food 0x74572c. Year
-  0x985b00, turn 0x985afc, cur 0x985dcc, nb 0x985af4, mask 0x985b10 (0xff08), solo 0x920434, cap
+  2/41), 2 Scout Patrol (cls 3, **1/10**), 3 Transport Foil (cls 7, 3/39). Upkeep
+  `0x984d44/0x984d48 + item·48`; per-player item counts are BYTES at `0x94de84 + player·0x20bc + item`.
+- Income globals: gross 0x745734, upkeep 0x744f28, net 0x7457dc, trade 0x7457d4, food 0x74572c. Globals:
+  year 0x985b00, turn 0x985afc, cur 0x985dcc, nb 0x985af4, mask 0x985b10 (0xff08), solo 0x920434, cap
   0x92a370 (10), curbase ptr 0x8f0d60, **cur base INDEX 0x68cbb0**, base array 0x95da10 stride 0x130,
   unit array 0x933278 stride 52, faction records stride 0x20bc.
 - Pane object fields **+0x3ff5c = selected queue slot**, **+0xb194 = chooser mode**; `FUN_00416080(this)`
@@ -128,10 +127,10 @@ operational kit, and the queued milestone options. Do ONE milestone, checkpoint 
   `i < *(0x985af4)`, pull fields, recompute, then arm gdb.
 
 ## Operational kit
-- pid via `pgrep -x terran.exe`; window via `scripts/smac_play.py find_window()` (now 10485761, 800×600,
-  `xdotool getwindowgeometry` confirms). Launch-if-down command is verbatim in the skill. Preflight: no
-  gdb, TracerPid 0, `ptrace_scope` 0 (resets on reboot). Read-only state: `scripts/smac_state.py --json`.
-  Our base = idx **70** @ 0x962d30 (idx = (addr − 0x95da10)/0x130).
+- pid via `pgrep -x terran.exe`; window via `scripts/smac_play.py find_window()` (now 10485761, 800×600).
+  Launch-if-down command is verbatim in the skill. Preflight: no gdb, TracerPid 0, `ptrace_scope` 0
+  (resets on reboot). Read-only state: `scripts/smac_state.py --json`. Our base = idx **70** @ 0x962d30
+  (idx = (addr − 0x95da10)/0x130).
 - **Armed UI-driving (M53d recipe)**: `python3 scripts/m53d_drive.py --tag mXX --mode arm --hold 1200`
   launched with **`background=true`** (Hermes kills children of a finished foreground call; `--hold` is
   the polling parent that keeps gdb alive), then drive with `scripts/smac_play.py`
@@ -156,8 +155,8 @@ operational kit, and the queued milestone options. Do ONE milestone, checkpoint 
   settle with `ffmpeg -vf crop=W:H:X:Y` + OCR on the crop; short* aliasing doubles offsets;
   `*(int*)0x68cbb0` equals the arg of 0x4e5ae0/0x4e5560 while they run (compare to idx 70).
 - COMM OFFICER 3-row panes + UNIVERSITY INTELLIGENCE FILES detour: handlers already in the driver.
-  Autosaves `programs/saves/auto/Alpha Centauri Autosave N.SAV`, mission year u16 @ file 0x54;
-  `scripts/m48d_boot.py` automates LOAD GAME (BackSpace clear must be LOOPED).
+  Autosaves `programs/saves/auto/…Autosave N.SAV`, mission year u16 @ file 0x54; `scripts/m48d_boot.py`
+  automates LOAD GAME (BackSpace clear must be LOOPED).
 
 ## Milestone options (pick ONE)
 - **M53b — what the type-record `+41` byte IS (THE PICK).** `0x5ac950` hands SPENDA the `+41` byte and
