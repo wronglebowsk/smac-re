@@ -1,0 +1,171 @@
+
+/home/n100/reverse/smac/programs/terran.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00496900 <.text+0x95900>:
+  496900:	06                   	push   es
+  496901:	07                   	pop    es
+  496902:	08 08                	or     BYTE PTR [eax],cl
+  496904:	08 08                	or     BYTE PTR [eax],cl
+  496906:	08 08                	or     BYTE PTR [eax],cl
+  496908:	08 08                	or     BYTE PTR [eax],cl
+  49690a:	08 08                	or     BYTE PTR [eax],cl
+  49690c:	08 08                	or     BYTE PTR [eax],cl
+  49690e:	08 08                	or     BYTE PTR [eax],cl
+  496910:	08 08                	or     BYTE PTR [eax],cl
+  496912:	08 08                	or     BYTE PTR [eax],cl
+  496914:	08 08                	or     BYTE PTR [eax],cl
+  496916:	08 08                	or     BYTE PTR [eax],cl
+  496918:	08 08                	or     BYTE PTR [eax],cl
+  49691a:	08 08                	or     BYTE PTR [eax],cl
+  49691c:	08 08                	or     BYTE PTR [eax],cl
+  49691e:	08 08                	or     BYTE PTR [eax],cl
+  496920:	08 08                	or     BYTE PTR [eax],cl
+  496922:	08 08                	or     BYTE PTR [eax],cl
+  496924:	08 08                	or     BYTE PTR [eax],cl
+  496926:	08 08                	or     BYTE PTR [eax],cl
+  496928:	08 08                	or     BYTE PTR [eax],cl
+  49692a:	08 08                	or     BYTE PTR [eax],cl
+  49692c:	08 08                	or     BYTE PTR [eax],cl
+  49692e:	08 08                	or     BYTE PTR [eax],cl
+  496930:	08 08                	or     BYTE PTR [eax],cl
+  496932:	08 08                	or     BYTE PTR [eax],cl
+  496934:	08 08                	or     BYTE PTR [eax],cl
+  496936:	08 08                	or     BYTE PTR [eax],cl
+  496938:	08 08                	or     BYTE PTR [eax],cl
+  49693a:	08 07                	or     BYTE PTR [edi],al
+  49693c:	08 04 08             	or     BYTE PTR [eax+ecx*1],al
+  49693f:	06                   	push   es
+  496940:	08 05 cc cc cc cc    	or     BYTE PTR ds:0xcccccccc,al
+  496946:	cc                   	int3
+  496947:	cc                   	int3
+  496948:	cc                   	int3
+  496949:	cc                   	int3
+  49694a:	cc                   	int3
+  49694b:	cc                   	int3
+  49694c:	cc                   	int3
+  49694d:	cc                   	int3
+  49694e:	cc                   	int3
+  49694f:	cc                   	int3
+  496950:	55                   	push   ebp
+  496951:	8b ec                	mov    ebp,esp
+  496953:	83 ec 48             	sub    esp,0x48
+  496956:	53                   	push   ebx
+  496957:	56                   	push   esi
+  496958:	57                   	push   edi
+  496959:	89 4d fc             	mov    DWORD PTR [ebp-0x4],ecx
+  49695c:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
+  49695f:	89 45 f8             	mov    DWORD PTR [ebp-0x8],eax
+  496962:	8b 4d f8             	mov    ecx,DWORD PTR [ebp-0x8]
+  496965:	83 c1 02             	add    ecx,0x2
+  496968:	89 4d f8             	mov    DWORD PTR [ebp-0x8],ecx
+  49696b:	83 7d f8 09          	cmp    DWORD PTR [ebp-0x8],0x9
+  49696f:	0f 87 e9 00 00 00    	ja     0x496a5e
+  496975:	8b 55 f8             	mov    edx,DWORD PTR [ebp-0x8]
+  496978:	ff 24 95 9a 6a 49 00 	jmp    DWORD PTR [edx*4+0x496a9a]
+  49697f:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+  496982:	83 b8 74 a7 00 00 ff 	cmp    DWORD PTR [eax+0xa774],0xffffffff
+  496989:	75 05                	jne    0x496990
+  49698b:	e9 01 01 00 00       	jmp    0x496a91
+  496990:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  496993:	c7 81 78 a7 00 00 01 	mov    DWORD PTR [ecx+0xa778],0x1
+  49699a:	00 00 00 
+  49699d:	e9 be 00 00 00       	jmp    0x496a60
+  4969a2:	8b 55 fc             	mov    edx,DWORD PTR [ebp-0x4]
+  4969a5:	c7 82 78 a7 00 00 02 	mov    DWORD PTR [edx+0xa778],0x2
+  4969ac:	00 00 00 
+  4969af:	e9 ac 00 00 00       	jmp    0x496a60
+  4969b4:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+  4969b7:	c7 80 78 a7 00 00 03 	mov    DWORD PTR [eax+0xa778],0x3
+  4969be:	00 00 00 
+  4969c1:	e9 9a 00 00 00       	jmp    0x496a60
+  4969c6:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  4969c9:	83 b9 74 a7 00 00 ff 	cmp    DWORD PTR [ecx+0xa774],0xffffffff
+  4969d0:	75 05                	jne    0x4969d7
+  4969d2:	e9 ba 00 00 00       	jmp    0x496a91
+  4969d7:	8b 55 fc             	mov    edx,DWORD PTR [ebp-0x4]
+  4969da:	c7 82 78 a7 00 00 07 	mov    DWORD PTR [edx+0xa778],0x7
+  4969e1:	00 00 00 
+  4969e4:	eb 7a                	jmp    0x496a60
+  4969e6:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+  4969e9:	c7 80 78 a7 00 00 04 	mov    DWORD PTR [eax+0xa778],0x4
+  4969f0:	00 00 00 
+  4969f3:	eb 6b                	jmp    0x496a60
+  4969f5:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  4969f8:	83 b9 74 a7 00 00 ff 	cmp    DWORD PTR [ecx+0xa774],0xffffffff
+  4969ff:	75 05                	jne    0x496a06
+  496a01:	e9 8b 00 00 00       	jmp    0x496a91
+  496a06:	8b 55 fc             	mov    edx,DWORD PTR [ebp-0x4]
+  496a09:	c7 82 78 a7 00 00 05 	mov    DWORD PTR [edx+0xa778],0x5
+  496a10:	00 00 00 
+  496a13:	eb 4b                	jmp    0x496a60
+  496a15:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+  496a18:	c7 80 78 a7 00 00 06 	mov    DWORD PTR [eax+0xa778],0x6
+  496a1f:	00 00 00 
+  496a22:	eb 3c                	jmp    0x496a60
+  496a24:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  496a27:	c7 81 78 a7 00 00 00 	mov    DWORD PTR [ecx+0xa778],0x0
+  496a2e:	00 00 00 
+  496a31:	eb 2d                	jmp    0x496a60
+  496a33:	8b 55 fc             	mov    edx,DWORD PTR [ebp-0x4]
+  496a36:	c7 82 78 a7 00 00 00 	mov    DWORD PTR [edx+0xa778],0x0
+  496a3d:	00 00 00 
+  496a40:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+  496a43:	c7 80 74 a7 00 00 ff 	mov    DWORD PTR [eax+0xa774],0xffffffff
+  496a4a:	ff ff ff 
+  496a4d:	eb 11                	jmp    0x496a60
+  496a4f:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  496a52:	c7 81 78 a7 00 00 07 	mov    DWORD PTR [ecx+0xa778],0x7
+  496a59:	00 00 00 
+  496a5c:	eb 02                	jmp    0x496a60
+  496a5e:	eb 31                	jmp    0x496a91
+  496a60:	8b 55 fc             	mov    edx,DWORD PTR [ebp-0x4]
+  496a63:	8b 02                	mov    eax,DWORD PTR [edx]
+  496a65:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  496a68:	ff 90 e0 00 00 00    	call   DWORD PTR [eax+0xe0]
+  496a6e:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  496a71:	83 b9 68 0b 00 00 00 	cmp    DWORD PTR [ecx+0xb68],0x0
+  496a78:	74 17                	je     0x496a91
+  496a7a:	83 7d 08 ff          	cmp    DWORD PTR [ebp+0x8],0xffffffff
+  496a7e:	74 06                	je     0x496a86
+  496a80:	83 7d 08 fe          	cmp    DWORD PTR [ebp+0x8],0xfffffffe
+  496a84:	75 0b                	jne    0x496a91
+  496a86:	8b 55 fc             	mov    edx,DWORD PTR [ebp-0x4]
+  496a89:	8b 02                	mov    eax,DWORD PTR [edx]
+  496a8b:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  496a8e:	ff 50 08             	call   DWORD PTR [eax+0x8]
+  496a91:	5f                   	pop    edi
+  496a92:	5e                   	pop    esi
+  496a93:	5b                   	pop    ebx
+  496a94:	8b e5                	mov    esp,ebp
+  496a96:	5d                   	pop    ebp
+  496a97:	c2 04 00             	ret    0x4
+  496a9a:	33 6a 49             	xor    ebp,DWORD PTR [edx+0x49]
+  496a9d:	00 24 6a             	add    BYTE PTR [edx+ebp*2],ah
+  496aa0:	49                   	dec    ecx
+  496aa1:	00 7f 69             	add    BYTE PTR [edi+0x69],bh
+  496aa4:	49                   	dec    ecx
+  496aa5:	00 a2 69 49 00 c6    	add    BYTE PTR [edx-0x39ffb697],ah
+  496aab:	69 49 00 b4 69 49 00 	imul   ecx,DWORD PTR [ecx+0x0],0x4969b4
+  496ab2:	e6 69                	out    0x69,al
+  496ab4:	49                   	dec    ecx
+  496ab5:	00 f5                	add    ch,dh
+  496ab7:	69 49 00 15 6a 49 00 	imul   ecx,DWORD PTR [ecx+0x0],0x496a15
+  496abe:	4f                   	dec    edi
+  496abf:	6a 49                	push   0x49
+  496ac1:	00 cc                	add    ah,cl
+  496ac3:	cc                   	int3
+  496ac4:	cc                   	int3
+  496ac5:	cc                   	int3
+  496ac6:	cc                   	int3
+  496ac7:	cc                   	int3
+  496ac8:	cc                   	int3
+  496ac9:	cc                   	int3
+  496aca:	cc                   	int3
+  496acb:	cc                   	int3
+  496acc:	cc                   	int3
+  496acd:	cc                   	int3
+  496ace:	cc                   	int3
+  496acf:	cc                   	int3

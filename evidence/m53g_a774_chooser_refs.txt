@@ -1,0 +1,3 @@
+300:   0x496f6f:	cmp    DWORD PTR [edx+0xa774],eax
+801:   0x497683:	cmp    DWORD PTR [ecx+0xa774],0xffffffff
+825:   0x497707:	mov    ecx,DWORD PTR [eax+0xa774]
