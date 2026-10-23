@@ -50,7 +50,7 @@ uncited screenshots (git keeps history, `.prune_log.jsonl` records them). Policy
 **Budget gotcha that passes locally and goes RED in CI (M53d).** `evidence.py budget` FAILs
 `NEXT_PROMPT.md` above **16,000** chars (warn 12,000; SKILL.md 70k, SESSION_NOTES 150k, NAMED 250k),
 and the CI gate runs `scripts/test_loop.py`, whose case 4 appends **7 chars** to `NEXT_PROMPT.md` — a
-prompt at 15,99x is GREEN locally, RED in CI. Keep `NEXT_PROMPT.md` at ≤ ~15,850 and run
+prompt at 15,99x is GREEN locally, RED in CI. Keep `NEXT_PROMPT.md` at ≤ ~15,500 (working target; 16,000 is the FAIL) and run
 `python3 scripts/test_loop.py` on the anchored branch (never detached HEAD) before `submit`.
 `submit` also prunes `SESSION_NOTES.md` and adds a `<MILE>: checkpoint` commit; `merge <pr>` rebuilds
 the semantic index.
@@ -59,6 +59,9 @@ the semantic index.
 finally expires** — hours after `--mode stop` already detached gdb, one notification per armed tag.
 Harmless (a CONT on a running inferior is a no-op): after a session that armed several tags, expect a
 run of them and do not re-verify the game for each.
+
+When a doc is over budget, **delete whole bullets/blocks** (cut from the offending line to the next
+`- ` or `## `) — rewording saves ~0 bytes — and re-measure with `wc -c`, not character count.
 
 **Semantic search** (`docs/SEARCH.md`): `python3 scripts/index.py search "<question>"`
 returns `file:line` / addresses for notes and named functions; `merge` rebuilds it
@@ -131,13 +134,40 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
 - **Clean 32-bit disassembly without attaching (M49a recipe)**: `gdb -batch -nx -q -ex "set
   architecture i386" -ex "set disassembly-flavor intel" -ex "file programs/terran.exe" -ex "x/Ni
   0xADDR"` — gdb maps the PE image (file offset = VA − 0x400000), read-only, TracerPid stays 0.
-  objdump also works (`-b binary -m i386:x86-64 -D --adjust-vma=0x400000 --start-address=...`) but
-    64-bit decoding MISALIGINS on SEH blocks (garbage/movabs in SEH-heavy regions like the 0x4efxxx
-    pipeline) — use the gdb recipe for register-level truth; Ghidra lumps edi/esi away.
+  **Whole-image store census: `objdump -d -M intel --section=.text programs/terran.exe`** — printed
+  addresses are VAs (file offset = VA − 0x400000), ~40 MB and regenerable: grep it, extract the windows
+  you cite into small `evidence/` files, delete the dump, never commit it. A `-b binary -m i386:x86-64`
+  slice MISALIGNS on SEH blocks (garbage/movabs in SEH-heavy regions like the 0x4efxxx pipeline) — for
+  one function use the gdb recipe; Ghidra lumps edi/esi away.
     **Coverage-check every dump**: instructions average 3.8 B here, so `x/2600i` silently stopped 2.4 KB
     short of a 12,298-byte function and M53a drew a WRONG conclusion ("no +0x50 writer in the pipeline")
     from the truncated window — compute the count from `index.csv` size ÷ 3.8 and confirm the last address
     printed equals the next function's start.
+### Store census, table reads and model rewrites — what misleads
+
+- **Grep store SHAPES on the linear disassembly, not offsets**: literal `&DAT_… =`, indexed stores,
+  `rep movs`, AND **negative pointer arithmetic off a register base**. A loader that walks a pointer
+  initialised to `record + 50` writes its tail fields as `*(char *)(p + -4)` / `(int)p + -9`; Ghidra
+  renders them exactly that way, so neither a `DAT_` grep nor a disp32 byte-scan surfaces them. Scan for
+  disp8 stores whose base register is a table/record pointer.
+- A single-writer claim needs the census printed both ways: total references **and** the store count
+  (`grep <hex-addr> <dump> | grep -c ',al'`), not "the corpus shows one writer".
+- **Jump tables: dump the raw dwords before "correcting" Ghidra's case labels.**
+  `struct.unpack_from('<I', img, va - 0x400000)` across the table, entry count checked against the guard
+  (`add idx,7` / `cmp idx,6` / `ja`), each target mapped to its body first. A hand-decoded table that
+  silently drops one entry yields a mapping that is shifted, self-consistent and wrong — it looks exactly
+  like "the case labels are off by one", and only the raw dump (or live data) falsifies it.
+- **Keep a superseded model reachable behind a flag** (`--legacy`) when rewriting one that already matched
+  live memory: every new mismatch must be attributable to exactly one change; if the rewrite breaks rows
+  the old model matched, the rewrite is wrong until raw bytes prove otherwise.
+- **Fit the unknown intermediate instead of guessing variants**: per mismatch row compute everything but
+  the one unknown internal value, then enumerate it and read off which reproduces live. Variant fitting
+  belongs in a subagent, never the main thread.
+- **Before counting a live-memory mismatch, check the row is a real record**: histogram the discriminator
+  fields across the whole table — rows whose indices run past the shipped data or whose fields hold
+  impossible values are stale/unallocated records, not model failures. Counting them as mismatches sends
+  you hunting a writer that does not exist.
+- Commands + patterns: `references/static-store-census.md`.
 - Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
 - What the install ships (rules text, map format, graphics containers) and what to parse vs
   what to RE: `references/data-formats.md`.
@@ -409,12 +439,21 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   param_1 and only PREVIEW — nothing is written**; a real queue edit needs the QUEUE-row path.
   **Chooser bars (label-verified, M53e)**: HELP 153-233, OK 252-311, REPLACE 364-421, INSERT 472-523,
   DELETE 556-636, CANCEL 659-705 at y 336-352 (labels drawn inside the bars, fill RGB 103,91,181 —
-  pixel (160,343) is the instant chooser-open test; 2x OCR cannot read the labels). Bar→mode stores
-  inside `FUN_00496ad0`: INSERT→5 (0x496a09), DELETE→4 (0x4969e9), HELP→1 (0x496993),
-  entry/OK/CANCEL→0; the 1/7/5 stores are gated by `cmp [sub+0xa774],-1`. **OK = mode 0: writes
+  pixel (160,343) is the instant chooser-open test; 2x OCR cannot read the labels). **M53g corrected
+  the handler**: the bar switch is `FUN_00496950` = **vtable+0xa8** of the chooser class (live vptr
+  0x672298), jump table 0x496a9a indexes `param+2`; cases 0=HELP(gate)→1, 2=(gate)→7, 5=INSERT(gate)→5,
+  **7→7 UNGATED**, −1=OK→0, −2=CANCEL→0+guard−1; gate = `cmp [this+0xa774],-1; je 0x496a91`, and
+  **0x496a91 is the shared epilogue return — mode-storing paths reach it too (BAR_IGNORED there is NOT
+  a refusal)**; **one handler run per click** (press; release dispatches nothing). `[sub+0xa774]`
+  (pane+0xb190) IS the selection: a cell index in a 5-col grid (rows y~60/160/260 = cells 0-14, bar
+  row = phantom cells 15-19, col3 = x 381-421); paint `FUN_004954e0` clears it to −1 (0x495541) then
+  sets it to the enum index of the selected slot's item (0x495b00); icon/cell click → setter 0x4962ec
+  (vtable+0x48). **Clickable rects ≠ drawn bars**: REPLACE = param 7 fires at (345/365,343) — its
+  drawn body 381-421 is dead phantom-cell territory (setter path, handler never called); INSERT 5
+  fires at 425/440/497. **OK = mode 0: writes
   nothing and does NOT restore the snapshot** (a committed edit survives OK); **CANCEL =
   `[sub+0xa774] = -1`** → returns −9999 → rewrites +0x50..+0x74 from the stack snapshot and exits
-  without consulting the mode; **HELP** opens the unit-design pane (bars y 356, CANCEL x≈614) whose
+  without consulting the mode (makes armed REPLACE probes non-destructive); **HELP** opens the unit-design pane (bars y 356, CANCEL x≈614) whose
   CANCEL re-opens the chooser. QUEUE rows 1..8 = pending slots +0x54..+0x70 (row text y =
   439+12·(row−1)); the 9th pending slot +0x74 has no row; the head +0x50 is the LEFT panel.
 - **Type-record `+41` is the COST FACTOR (M53b), not a weight and not turns.** `0x98ad88 + type·52 + 0x29`,
@@ -424,8 +463,15 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   printed in `FUN_00577280`, debited at `0x4efee0`), so `+41 = 1` costs 10 minerals; `+42` = the alpha
   Plan, `+43` = auto-calculated AI role (`weapon mode + 0x20` for noncombat packages). Proof pattern:
   `scripts/m53b_costcalc.py` + `scripts/m53b_types.py` re-implement the formula and diff it against live
-  memory (180/188 exact, the rest explained). **Alpha comment headers name the columns** of sections whose
+  memory — every populated row accounted for, none left as "explained elsewhere". **Alpha comment headers name the columns** of sections whose
   rows are bare data (#CHASSIS/#WEAPONS/#DEFENSES/#UNITS) — read them before guessing a table's fields.
+- **The alpha `#UNITS` loader (`FUN_00579f40`) overrides the type builder AFTER it runs**: Plan→`+42`,
+  Cost→`+41` (0 = Autocalculate), Carry→`+40`, Icon→`+46` — all as disp8 stores off a `record + 50`
+  register, row-capped at 0x40 so designed units are never overridden; the save loader restores
+  `+41`/`+42` verbatim, so a loaded scenario can carry bytes the formula never produced. The ability
+  table `0x98aaf4` (stride 28) is the 24 `#ABILITIES` rows: `int[0]` = the cost rule (rule switch = jump
+  table indexed `rule + 7`, in Ghidra's case order), `int[2]` (**+8**, not +16) = the flag word whose bit
+  0x400 adds a +1 surcharge on land chassis — the classic off-by-one field-offset trap.
 - **COMM OFFICER 3-row variant** ("Yes..."/"No, close the channel."/"Display faction leader
   profile."): the colour row-click (bar_y−25) can select profile → UNIVERSITY INTELLIGENCE FILES
   table with CLOSE/DATALINKS bars at y≈345-360, OUTSIDE the 430-520 OK-bar band; the
@@ -577,7 +623,8 @@ unit key-able; owner check is `unit+14 == 0x91b5b4`, MP is `0x5ac650(unit) − u
 **NEWBASE name pane accepts the generated default with a plain Return** (no typing/click). (4) after
 founding the game opens the **BASE screen** (classify kind `base`; RENAMEd/OK row y≈365, outside the
 430-520 OK-bar band) — `service_pane` needs a `kind=="base"` → Escape branch (patched; without it a
-run spins forever). (5) **`objdump` cannot read this PE** ("invalid bfd target") — pin call sites
+run spins forever). (5) **`objdump` needs the section-targeted form** (`-d -M intel --section=.text`; other invocation shapes
+error "invalid bfd target") — otherwise pin call sites
 with a raw E8 rel32 scan, `.text` file offset = VA − 0x400000 (identity mapping; the header's
 ImageBase field is a bogus 0x270000). Also: **mask1(+8) bit 0x1000 = "inside a base's claimed
 border"** (12-31 pairs per base, hex radius ≈3, pop-independent, 74/74 bases, ocean included) while

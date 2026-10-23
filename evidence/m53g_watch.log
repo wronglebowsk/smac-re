@@ -1,0 +1,185 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee17368b in ?? ()
+Breakpoint 1 at 0x417ee0
+Breakpoint 2 at 0x41860a
+Breakpoint 3 at 0x496a91
+Breakpoint 4 at 0x496a43
+Breakpoint 5 at 0x418aa2
+Breakpoint 6 at 0x418ac7
+Breakpoint 7 at 0x418751
+Breakpoint 8 at 0x418b57
+Breakpoint 9 at 0x418b24
+Breakpoint 10 at 0x418ad3
+Breakpoint 11 at 0x418b02
+Breakpoint 12 at 0x418762
+Breakpoint 13 at 0x41821a
+Breakpoint 14 at 0x418633
+Breakpoint 15 at 0x417d20
+Breakpoint 16 at 0x417dd8
+Breakpoint 17 at 0x417e04
+Breakpoint 18 at 0x4186d2
+Breakpoint 19 at 0x4186ec
+Breakpoint 20 at 0x418e1d
+Breakpoint 21 at 0x418cc9
+Breakpoint 22 at 0x418cd8
+Breakpoint 23 at 0x419967
+Breakpoint 24 at 0x4ef6d0
+Breakpoint 25 at 0x496950
+Breakpoint 26 at 0x496982
+Breakpoint 27 at 0x4969c9
+Breakpoint 28 at 0x4969f8
+Hardware watchpoint 29: *(int *)(0x6a9480 + 0xb194)
+Hardware watchpoint 30: *(int *)(0x6a9480 + 0xb190)
+Hardware watchpoint 31: *(int *)(0x962d84)
+Hardware watchpoint 32: *(int *)(0x962d88)
+ENQ#1 param1=1 param2=1 f40=0 f44=3 f4c=2 f50=3 f54=2 f58=2 f5c=3
+SNAP#1 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#2 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#3 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#4 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#5 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#6 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#7 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#8 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#9 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#10 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+PRESHOW pane=0x6a9480 slot=1 mode=0 f4c=2 f54=2
+SELWP#1 pc=0x49554b new=-1
+SELWP#2 pc=0x495b06 new=5
+SELWP#3 pc=0x4962f2 new=6
+SELWP#4 pc=0x4962f2 new=17
+BARH#1 param=-2 ecx=6a9e9c guard=17
+BAR_CANCEL
+SELWP#5 pc=0x496a4d new=-1
+BAR_IGNORED mode=0
+RESTORE off=0x50 snap=3
+RESTORE off=0x54 snap=2
+RESTORE off=0x58 snap=2
+RESTORE off=0x5c snap=3
+RESTORE off=0x60 snap=0
+RESTORE off=0x64 snap=0
+RESTORE off=0x68 snap=0
+RESTORE off=0x6c snap=0
+RESTORE off=0x70 snap=0
+RESTORE off=0x74 snap=0
+POST_PICK edi=-9999
+BRANCH_EXIT edi=-9999
+ENQ#2 param1=1 param2=1 f40=0 f44=3 f4c=2 f50=3 f54=2 f58=2 f5c=3
+SNAP#11 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#12 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#13 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#14 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#15 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#16 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#17 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#18 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#19 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+SNAP#20 snap_f50=3 snap_f54=2 snap_f58=2 cur_f54=2 f4c=2
+PRESHOW pane=0x6a9480 slot=1 mode=0 f4c=2 f54=2
+SELWP#6 pc=0x495b06 new=5
+SELWP#7 pc=0x4962f2 new=6
+SELWP#8 pc=0x4962f2 new=17
+SELWP#9 pc=0x4962f2 new=12
+BARH#1 param=7 ecx=6a9e9c guard=12
+MODEWP#1 pc=0x496a5c val_after=7 slot=1
+BAR_IGNORED mode=7
+POST_PICK edi=-26
+MODE pane=0x6a9480 mode=7 slotfield=1 f4c=2 f50=3 f54=2 f58=2
+D20#1 item=-26 slot=1 f4c=2 f50=3 f54=2 f58=2
+D20_STORE dst_off=0x54 old=2 new=-26 item=-26
+W54#1 pc=0x417e08 val_after=-26
+PRESHOW pane=0x6a9480 slot=1 mode=7 f4c=2 f54=-26
+BARH#1 param=5 ecx=6a9e9c guard=12
+GATE5 guard=12
+MODEWP#2 pc=0x496a13 val_after=5 slot=1
+BAR_IGNORED mode=5
+POST_PICK edi=-26
+MODE pane=0x6a9480 mode=5 slotfield=1 f4c=2 f50=3 f54=-26 f58=2
+D20#2 item=-26 slot=1 f4c=2 f50=3 f54=-26 f58=2
+W54#2 pc=0x417db1 val_after=2
+W58#1 pc=0x417db1 val_after=3
+D20_SHIFT dst_off=0x74 old=0 new=0
+D20_SHIFT dst_off=0x70 old=0 new=0
+D20_SHIFT dst_off=0x6c old=0 new=0
+D20_SHIFT dst_off=0x68 old=0 new=0
+D20_SHIFT dst_off=0x64 old=0 new=0
+D20_SHIFT dst_off=0x60 old=0 new=0
+D20_SHIFT dst_off=0x5c old=0 new=3
+D20_SHIFT dst_off=0x58 old=3 new=2
+W58#2 pc=0x417ddb val_after=2
+D20_STORE dst_off=0x54 old=2 new=-26 item=-26
+W54#3 pc=0x417e08 val_after=-26
+PRESHOW pane=0x6a9480 slot=3 mode=5 f4c=2 f54=-26
+BARH#1 param=7 ecx=6a9e9c guard=12
+MODEWP#3 pc=0x496a5c val_after=7 slot=3
+BAR_IGNORED mode=7
+POST_PICK edi=-26
+MODE pane=0x6a9480 mode=7 slotfield=3 f4c=2 f50=3 f54=-26 f58=2
+D20#3 item=-26 slot=3 f4c=2 f50=3 f54=-26 f58=2
+W54#4 pc=0x417db1 val_after=2
+W58#3 pc=0x417db1 val_after=3
+D20_STORE dst_off=0x58 old=3 new=-26 item=-26
+W58#4 pc=0x417e08 val_after=-26
+PRESHOW pane=0x6a9480 slot=2 mode=7 f4c=2 f54=2
+BARH#1 param=5 ecx=6a9e9c guard=12
+GATE5 guard=12
+MODEWP#4 pc=0x496a13 val_after=5 slot=2
+BAR_IGNORED mode=5
+POST_PICK edi=-26
+MODE pane=0x6a9480 mode=5 slotfield=2 f4c=2 f50=3 f54=2 f58=-26
+D20#4 item=-26 slot=2 f4c=2 f50=3 f54=2 f58=-26
+W58#5 pc=0x417db1 val_after=0
+D20_SHIFT dst_off=0x74 old=0 new=0
+D20_SHIFT dst_off=0x70 old=0 new=0
+D20_SHIFT dst_off=0x6c old=0 new=0
+D20_SHIFT dst_off=0x68 old=0 new=0
+D20_SHIFT dst_off=0x64 old=0 new=0
+D20_SHIFT dst_off=0x60 old=0 new=0
+D20_SHIFT dst_off=0x5c old=0 new=0
+D20_STORE dst_off=0x58 old=0 new=-26 item=-26
+W58#6 pc=0x417e08 val_after=-26
+PRESHOW pane=0x6a9480 slot=3 mode=5 f4c=2 f54=2
+SELWP#10 pc=0x4962f2 new=17
+BARH#1 param=-2 ecx=6a9e9c guard=17
+MODEWP#5 pc=0x496a40 val_after=0 slot=3
+BAR_CANCEL
+SELWP#11 pc=0x496a4d new=-1
+BAR_IGNORED mode=0
+RESTORE off=0x50 snap=3
+RESTORE off=0x54 snap=2
+RESTORE off=0x58 snap=2
+W58#7 pc=0x418639 val_after=2
+RESTORE off=0x5c snap=3
+RESTORE off=0x60 snap=0
+RESTORE off=0x64 snap=0
+RESTORE off=0x68 snap=0
+RESTORE off=0x6c snap=0
+RESTORE off=0x70 snap=0
+RESTORE off=0x74 snap=0
+POST_PICK edi=-9999
+BRANCH_EXIT edi=-9999
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]

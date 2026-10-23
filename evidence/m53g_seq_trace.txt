@@ -1,0 +1,16 @@
+pre: guard=5 mode=0 slot=0 f4c=2 f50=3 f54=2 f58=2
+row1: guard=5 mode=0 slot=1 f4c=2 f50=3 f54=2 f58=2
+Traceback (most recent call last):
+  File "<stdin>", line 19, in <module>
+  File "<stdin>", line 15, in chooser_open
+  File "/home/n100/.hermes/installs/fb68e0e738c27c87/environments/a5c0c831a0604a159563f1b4ccd36c37/venv/lib/python3.14/site-packages/PIL/Image.py", line 3639, in open
+    fp = builtins.open(filename, "rb")
+FileNotFoundError: [Errno 2] No such file or directory: 'evidence/m53g_px.png'
+pre: guard=5 mode=0 slot=0 base=(70, 9841968, (0, 3, 0, 2, 3, 2, 2, 3, 0, 0, 0, 0, 0))
+after_change: bar_px=(103, 91, 181) open=True
+icon_colonypod: guard=6 mode=0 slot=0 base=(70, 9841968, (0, 3, 0, 2, 3, 2, 2, 3, 0, 0, 0, 0, 0))
+px_icon: bar_px=(103, 91, 181) open=True
+repl: guard=17 mode=0 slot=0 base=(70, 9841968, (0, 3, 0, 2, 3, 2, 2, 3, 0, 0, 0, 0, 0))
+px_repl: bar_px=(103, 91, 181) open=True
+cancel: guard=-1 mode=0 slot=0 base=(70, 9841968, (0, 3, 0, 2, 3, 2, 2, 3, 0, 0, 0, 0, 0))
+px_cancel: bar_px=(0, 0, 0) open=False
