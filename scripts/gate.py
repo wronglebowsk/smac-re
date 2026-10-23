@@ -164,7 +164,16 @@ def check_checkpoint(base, docs_only):
         old = ""
     new_sections = len(session_sections(head)) - len(session_sections(old))
     if new_sections < 1:
-        report("FAIL", "milestone checkpoint", "SESSION_NOTES.md has no new '## Session' section")
+        # Rotation moves old sections into docs/sessions/ and shrinks the hot file. That is
+        # housekeeping, not a milestone, and must not read as "forgot to write the notes".
+        rotated = (len(head) < len(old)
+                   and any(l.split()[-1].startswith("docs/sessions/")
+                           for l in git("diff", "--name-status", f"{base}...HEAD").splitlines()
+                           if l.startswith("A")))
+        if rotated:
+            report("PASS", "milestone checkpoint", "sessions rotated into docs/sessions/")
+        else:
+            report("FAIL", "milestone checkpoint", "SESSION_NOTES.md has no new '## Session' section")
     else:
         report("PASS", "milestone checkpoint", f"{new_sections} new session section(s)")
 

@@ -38,17 +38,29 @@ def label(section):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--keep", type=int, default=8)
+    # Rotate by SIZE, not by section count: sessions vary from 2 k to 12 k chars, so "keep N"
+    # either bloats the hot file or throws away context that still fits.
+    ap.add_argument("--target", type=int, default=60_000, help="hot-file char budget")
+    ap.add_argument("--min-keep", type=int, default=3)
+    ap.add_argument("--max-keep", type=int, default=25)
     ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
 
     text = open(NOTES, encoding="utf-8").read()
     preamble, sections = split(text)
-    if len(sections) <= args.keep:
-        print(f"{len(sections)} sessions, keeping {args.keep} — nothing to rotate")
+    total = len(preamble) + sum(len(s) for s in sections)
+    if total <= args.target:
+        print(f"{len(sections)} sessions, {total:,} chars <= {args.target:,} — nothing to rotate")
         return 0
 
-    old, keep = sections[:-args.keep], sections[-args.keep:]
+    n_keep = len(sections)
+    while n_keep > args.min_keep and n_keep > 0:
+        kept = len(preamble) + sum(len(s) for s in sections[-n_keep:])
+        if kept <= args.target or n_keep <= args.min_keep:
+            break
+        n_keep -= 1
+    n_keep = min(n_keep, args.max_keep)
+    old, keep = sections[:len(sections) - n_keep], sections[len(sections) - n_keep:]
     first = re.search(r"Session (\d+)", label(old[0]))
     last = re.search(r"Session (\d+)", label(old[-1]))
     span = f"{first.group(1) if first else 'x'}-{last.group(1) if last else 'y'}"
