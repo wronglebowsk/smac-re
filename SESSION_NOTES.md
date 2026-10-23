@@ -51,58 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-47-47.md` (1 sessions). Read it only when a question reaches back before session ## Session 48.
-
-## Session 48 (2026-10-22) — M50a: 0x4f26e0 IS NOT A COST STEP — it is the per-base mineral↔energy conversion/income step and a THIRD storage writer (0x4f2d7d); deltas live-observed 0…+12 (storage GAINS); our base early-returns via the base+0x38 flag gate; sweep truncated again at 28 visits (ours unvisited)
-
-`scripts/m50a_drive.py` (copy of m49a_drive.py + 3 bps: F26E0 entry 0x4f26e0, **CONVST 0x4f2d7d**
-(the store), RET26E0 0x4f5ae1; own counters $nb26/$ncv/$nre). Run `evidence/m50a_*` (1 round,
-2349→2350, 0 OCR, clean detach; sweep PIPE n=1..28, all own≠3 — the YEAR store 0x51f554 fired
-mid-sweep, our base never processed; poked min40=200 survived, OURBASE log line 246).
-Static: clean 32-bit disasm of 0x4f26e0 (gdb file-target recipe) + Ghidra pseudocode.
-
-**VERIFIED (disasm + live ×1 round, 28 F26E0 hits / 10 CONVST hits): `0x4f26e0` is a mineral
-INCOME/CONVERSION step, not a production cost.**
-- Early-return gates (0x4f2705-0x4f2729): (a) event-owner ∧ `~(base+0x38)` bits 0x1a/0x1c set
-  ⇒ return — **our base takes this path** (f30=0x805000 has bit 0x1c ⇒ 0x4f26e0 never executed
-  for us: 0 ours=1 hits, log lines 59-246); (b) `base+0x40 == 0` ⇒ return.
-- Reads `base+0x50` (queue) → `|q|×240 + 0x984d44 + 0x44` = the ITEM table (stride 0xF0 — the
-  same 0x984d48 rows M46 named; int1 = required-tech id, e.g. 44/43) used as a DIVISOR-ish
-  multiplier; amount ebx = f(event mask, energy pool `0x94d650+p·0x82f·4`, queue value, item
-  int1, government/trait term `0x927a84+p·0x3c`+0x50 (value 100 doubles), global 0x985bb8=−1,
-  `0x985aec`); clamped `0 ≤ ebx ≤ min(energy-derived, energy_pool − storage)`.
-- **Third storage writer: 0x4f2d7d `base+0x40 := storage + ((E/esi)·45)/trait`** (the
-  (E/esi)·45 = ×5·×9·<<2 formula at 0x4f2d68-71; esi = 0x4e40a0 event result, live edi=4/esi
-  values on entry prints). Then event-owner branch (0x4f2d85): event owners SKIP the energy-side
-  adjustment (0x4f2dc4-0x4f2e97); non-event owners also add `−(0x985aec·ebx)/((8−gov[+0x50])·2)`
-  to the energy pool.
-- **Live CONVST deltas (log lines 131-192): storage CHANGES by 0…+12 — GAINS, not debits**:
-  own=6 deltas 0,0,0,0,+1,+4 (lines 131-178); own=7 deltas +12,+3,+2,+1 (lines 185-192).
-  own=4: CONVST never fired (branch not taken; own=4 bases show min40 unchanged entry→exit,
-  lines 59-90). ⇒ M44's "unspent base minerals → energy ≈1:1" anti-correlation is NOT this
-  function's storage path (player 4 takes a different branch; its +10.9 energy/round comes from
-  elsewhere). The conversion amount scales with the FACTION ENERGY POOL (AI pools 192-1080 vs
-  ours 19) — energy-rich factions pump more minerals into base storage per round.
-- **Production mineral cost STILL OPEN**: the per-base chain 0x4f26e0 → 0x4ee410 touches
-  storage only at 0x4f2d7d (credit); 0x4ee410 has no base+0x40 access (grep-verified); the only
-  debits remain the M49a index-quirk at 0x4efee0. ⇒ production appears effectively free of
-  mineral costs in solo; the queued-item "cost" read at 0x4f2750 is the item table's tech-id
-  slot, not a price.
-
-**Sweep early-stop (M50b data point)**: this round PIPE n=1..28 (all own≠3) then the YEAR store
-interrupted — third independent observation of truncation (21/28/28). Consistent with
-0x520540's per-base loop aborting mid-array when the round/year advance lands inside the sweep;
-exact mechanism still OPEN.
-
-**Pitfall**: none new operational (clean round, 0 OCR). Note the CONVST bp prints pre-store
-values ($eax = the NEW value about to be stored; delta = new − current).
-
-Next (options): M50b sweep early-stop (bp 0x520540 loop body + 0x51f320 caller ordering);
-M50c cc source; M50d the 2320 +4 credit; M50e faction NAME mapping; NEW: the energy-side of
-0x4f26e0 on a non-event AI base (pin the energy pool store in 0x4f2dc4-0x4f2e97, correlate
-CONVST delta vs pool delta in one round); NEW: what makes our base take the 0x4f2705 flag gate
-(base+0x38 bit 0x1c = ? — likely the "no AI spending/disrupted" flag) and whether clearing it
-routes us through the conversion (minerals income!).
+Older sessions: `docs/sessions/sessions-48-48.md` (1 sessions). Read it only when a question reaches back before session ## Session 49.
 
 ## Session 49 (2026-10-22) — M50b: THE TRUNCATION WAS NEVER REAL — every pass scans all n_bases and visits each base exactly once; the year store fires BETWEEN passes, never inside one; and our base IS visited every round
 
@@ -263,3 +212,60 @@ conflict; they were looking at two different writers, and neither invalidates th
 
 Next: **M52b** — edi provenance at 0x4efedb (0x4eaa10 residue vs the 0x4f5aa9 index) and the d0 source at 0x4e955d.
 Footing rewritten in NEXT_PROMPT.md (session 52).
+
+## Session 52 (2026-10-23) — M52b: edi at the SPENDA store is `0x4e40a0(owner,1,−1) × 0x5ac950(queue_type, idx, 0)` = 10 × 1 — M49a's "sweep-entry index" is FALSE at its first link (0x4f5aa9 loads the OWNER BYTE), and 0x4eaa10 preserves edi
+
+**The provenance chain, measured end to end in one run** (3 rounds, 2360→2363, 0 OCR passes,
+`evidence/m52b_run.out`; seven new EDI_* breakpoints added to `scripts/m51a_drive.py`):
+1. `EDI_ENTRY 74 eip=0x4f5aa9 idx=70 owner_byte=3 name=Climactic Research` (`m52b_watch.log:386`) — edi is
+   assigned at `0x4f5aa9 mov edi,edx`, and edx comes from `0x4f5a9c mov dl,BYTE PTR [ecx+0x4]` after
+   `xor edx,edx` (`m52b_fn4f5a70_4eaa10_disasm.txt:17,19`) ⇒ **edi := the base's OWNER BYTE, not the sweep
+   index**. Fired 222× (3 rounds × 74 bases) and the printed byte matches every base's owner (Morgan bases 4,
+   Sparta 5, Assassin's 6, U.N. 7 — `:62, :94, :109, :139`), so this is a general property of `0x4f5a70`,
+   not a one-off. M49a's chain broke here.
+2. `EDI_QGATE q50=2 st=200` (`:388`) — `0x4ef88b mov ecx,[eax+0x50]` = 2 ≥ 0 ⇒ the `jge 0x4efa2c` branch.
+   The negative-queue branch (which would set `edi = 0x4e40a0(...)` at `0x4ef8e2` and imul the item table at
+   `0x4ef8ed`) never ran for us: **0 EDI_NEGPATH / EDI_NEGMUL hits**.
+3. `EDI_POSPATH factor_eax=10` (`:389`) — `0x4efa3c call 0x4e40a0(owner=3, 1, −1)` returned **10** and
+   `0x4efa4b mov edi,eax` overwrites the owner byte. Statically confirmed: with arg2 == 1 the function jumps
+   to the government switch at `0x4e421f` (`m52a_fn4e40a0_disasm.txt:137`), index =
+   `faction[p].int[20]@0x94d6a0+p·0x20bc + 7` = 0+7 = 7, and the jump table (`x/12wx 0x4e4318`) sends 7 to
+   `0x4e430f = mov eax,esi` — the **×1 case** (cases 0-4 are `(esi·13+9)/10` = ×1.3, case 5 another
+   multiplier; the table implements per-government economy scaling).
+4. `EDI_POSMUL edi_before=10 ret_5ac950=1` (`:390`) — `0x4efa4d call 0x5ac950(2, 70, 0)` returned **1** and
+   `0x4efa52 imul edi,eax` leaves edi = 10. `FUN_005ac950` (`m52b_fn5ac950_disasm.txt:6,12,13,25,26,119,123`):
+   `esi = arg1` is a **unit type id** (it indexes the type table at `0x98ad88 + type·52`), it loads
+   `bl = byte[type+0x29]` (+41) for every type and only clamps it to [1, 999] when the class byte
+   (+0x2a) == 8 and arg2 ≥ 0, then for `type < 0x40` jumps to the tail `mov eax,ebx` — so the return is the
+   **+41 byte**. Live type table: Colony Pod +41=3, Formers +41=2, **Scout Patrol +41=1** (class 3),
+   Transport Foil +41=3; the neighbouring +0x2b (+43) byte holds 10 for Scout Patrol (40/41/39 for the others).
+5. `EDI_SPENDA edi=10 st=200 q50=2 m1c=104 m2c=8` (`:391`) → `0x4efedb sub esi,edi` →
+   `W40_SPENDA old=200 new=190 edi=10` (`:392`) → `W40_CLAMP1 old=190 new=0 cap=10 d0=0` (`:400`).
+
+**Verdict on the two competing claims.**
+- M49a's "edi = the base's SWEEP-ENTRY INDEX" is **falsified twice**: the index is 70 (not 10) and the
+  assignment at 0x4f5aa9 loads the owner byte (3). The value that survives to the store is the queue-path
+  product.
+- M48d's original reading — "Scout Patrol cost 10" — is **restored in substance**: the subtrahend is the
+  queued item's production cost, computed as `economic factor (10 = our government's ×1 case) × a per-type
+  byte`. INFERRED label on the byte's meaning: +41 is a per-type production weight, NOT the mineral cost
+  itself (the +43 byte is the one that reads 10 for Scout Patrol, and alpha `#UNITS` documents its own Cost
+  field as "0 = Autocalculate", i.e. the engine computes it).
+- The milestone's hypothesis that `0x4eaa10` (called 20 bytes earlier at 0x4efec4) leaves the residue is
+  **statically refuted**: it pushes edi at `0x4eaa41` and pops it at `0x4eb672`
+  (`m52b_fn4f5a70_4eaa10_disasm.txt:396, 1357`) — callee-saved, restored on the normal path.
+
+**Side results.**
+- `base+0x50` is the **queued production item id**, not anonymous scratch: 2 = unit type 2 = "Scout Patrol"
+  (name read from the type record at `0x98ad88+2·52`). QGATE decodes it as: `0xffffffda` = empty; ≥ 0 = the
+  id; < 0 = `|q|` with `[ebp-0x1c] = |q| − 39` and flags set by the 34/39 thresholds (`0x4ef8a1-0x4ef8c9`).
+  `0x5ac950` treats `type ≥ 0x40` as the facility case (checks `byte[type·52+0x30] & 4`, a per-64 group flag
+  at `0x927a98`, and `0x94d438`) — consistent with M46's "runtime item = alpha #FACILITIES idx + 1".
+- Government economy multipliers live in the `0x4e40a0` switch at `0x4e4318` (12 entries, indexed by
+  `faction[p].int[20] + 7`): ours (int[20] = 0) is the ×1 case; case 0-4 = ×1.3, case 5 = another ratio.
+- IADD fired 2× in 3 rounds (both d0 = 0, no-op writes); SPENDA/CLAMP1 once, on the round a completion ran.
+  The clamp story from M52a is unchanged.
+
+Next: **M53a** — the `base+0x50` queue record end to end (id encoding, where the build progress counter
+lives, what fires COMPLET 0x4efe41) and whether the charge `factor × type+41` is the whole cost story.
+Footing rewritten in NEXT_PROMPT.md (session 53).
