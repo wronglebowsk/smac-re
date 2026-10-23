@@ -19,3 +19,16 @@ jobs:
           python-version: "3.11"
       - name: Mechanical gate
         run: python3 scripts/gate.py --base "origin/${{ github.base_ref }}"
+      - name: Gate self-test
+        run: |
+          # The gate's own four-case test: a change that weakens gate.py must redden CI
+          # even when the weakened gate itself still waves this PR through.
+          # actions/checkout leaves a detached HEAD on pull_request events, and
+          # test_loop anchors its throwaway worktrees on the checked-out branch name:
+          # with BASE=HEAD, case 3 diffs HEAD against itself and can never go red.
+          # Pin a stable ref first. (Verified locally: detached HEAD fails case 3,
+          # an anchored branch passes all four.)
+          git checkout -b ci-gate-anchor
+          # test_loop parks its throwaway worktrees under ~/.hermes/cache/scratch.
+          mkdir -p ~/.hermes/cache/scratch
+          python3 scripts/test_loop.py

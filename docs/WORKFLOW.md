@@ -129,8 +129,9 @@ list. Then the session stops. CI runs the same gate; a human or the next session
 
 ## CI and branch protection
 
-`.github/workflows/gate.yml` runs `scripts/gate.py` on every PR — a red check is visible on the
-PR and blocks `milestone.py merge`.
+`.github/workflows/gate.yml` runs `scripts/gate.py` on every PR, then `scripts/test_loop.py` —
+the gate's own four-case test, so a change that weakens the gate cannot slip through on the
+gate's own verdict alone. A red check is visible on the PR and blocks `milestone.py merge`.
 
 GitHub branch protection and rulesets are unavailable on this account: they require GitHub Pro
 for private repos. So enforcement is **client-side**: `milestone.py merge` refuses anything but

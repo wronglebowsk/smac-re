@@ -27,7 +27,9 @@ def index_rows():
         return []
     with open(p) as f:
         head = f.readline().strip().split(",")
-        return [dict(zip(head, line.rstrip("\n").split(","))) for line in f if line.strip()]
+        # "#provenance ..." lines are export metadata stamped by scripts/ghidra_export.sh.
+        return [dict(zip(head, line.rstrip("\n").split(","))) for line in f
+                if line.strip() and not line.startswith("#")]
 
 
 def resolve(tok):
