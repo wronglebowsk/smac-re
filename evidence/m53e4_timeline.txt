@@ -1,0 +1,19 @@
+[17:06:07] step 1: BAR REPLACE x=397 selected item=5 slot=0 mode_before=0
+[17:06:09] step 1:  -> after BAR REPLACE: mode_field=0 slot=0 sel=17 chooser_open=True
+[17:06:09] state idx=70 f40=0 f44=3 f48=0 f4c=0 q=['0x3', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']
+[17:06:13] step 2: BAR INSERT x=497 selected item=5 slot=0 mode_before=0
+[17:06:15] step 2:  -> after BAR INSERT: mode_field=5 slot=0 sel=5 chooser_open=True
+[17:06:15] state idx=70 f40=0 f44=3 f48=0 f4c=1 q=['0x3', '0x2', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']
+[17:06:19] step 3: BAR DELETE x=602 selected item=5 slot=0 mode_before=0
+[17:06:21] step 3:  -> after BAR DELETE: mode_field=4 slot=0 sel=5 chooser_open=True
+[17:06:21] state idx=70 f40=0 f44=3 f48=0 f4c=0 q=['0x3', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']
+[17:06:26] step 4: BAR OK x=285 selected item=5 slot=0 mode_before=0
+[17:06:28] step 4:  -> after BAR OK: mode_field=0 slot=0 sel=5 chooser_open=False
+[17:06:28] state idx=70 f40=0 f44=3 f48=0 f4c=0 q=['0x3', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']
+[17:06:31] step 5: BAR CANCEL x=692 selected item=5 slot=0 mode_before=0
+[17:06:33] step 5:  -> after BAR CANCEL: mode_field=0 slot=0 sel=-1 chooser_open=False
+[17:06:33] state idx=70 f40=0 f44=3 f48=0 f4c=0 q=['0x3', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']
+[17:06:36] step 6: BAR HELP x=160 selected item=5 slot=0 mode_before=0
+[17:06:37] step 6:  -> after BAR HELP: mode_field=1 slot=0 sel=5 chooser_open=False
+[17:06:37] state idx=70 f40=0 f44=3 f48=0 f4c=0 q=['0x3', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']
+[17:06:37] final idx=70 f40=0 f44=3 f48=0 f4c=0 q=['0x3', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']

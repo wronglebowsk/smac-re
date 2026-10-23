@@ -389,15 +389,34 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   the session (reads as a truncated log, not as an error). Give every watchpoint a printing `continue`
   block. And gdb's own messages are unbuffered while breakpoint `printf` output is block-buffered: the
   two streams interleave in the log, so attribute events by CONTENT (counters, an `off=0x50..0x74` run),
-  never by line order, and read the log only after the driver's `--mode stop` (SIGINT drops the tail).
+  never by line order, and read the log only after the driver's `--mode stop` (SIGINT drops the tail). Worse, a SHORT run can lose
+  the whole buffered tail silently and read as "no breakpoint ever fired" (m53e1: the clicks clearly
+  worked, the log had zero events) — **spawn gdb through `stdbuf -o0`** (fixed in
+  `scripts/m53e_drive.py`). Separately: a command-list expression that uses a convenience variable
+  which isn't a number aborts the sourced script and DETACHES silently ("Argument to arithmetic
+  operation not a number or boolean", `m53e5_watch.log:50`) — bake the base pointer as a literal
+  (`set $b = 0x962d30`) instead of reading `*(int *)0x8f0d60` per hit.
 - **Vision-tool pixel numbers ARE true window coordinates; tesseract TSV numbers are internally
   rescaled** — never halve TSV values to get click coordinates. Settle any disagreement with
   `ffmpeg -vf crop=W:H:X:Y` + OCR on the crop before driving clicks (M53d wasted three runs on this).
 - **Base production UI plumbing (M53d)**: pane-object fields `+0x3ff5c` = selected queue slot and
-  `+0xb194` = chooser mode; `FUN_00416080(this)` = pane redraw; `FUN_00496ad0(pane+0xa1c, base, owner,
+  `+0xb194` = chooser mode **but nothing stores through `pane+0xb194`** — the pane (static BSS
+  0x6a9480) exposes the chooser sub-object at `+0xa1c` (0x6a9e9c) and the mode is stored as
+  `[sub+0xa778]` = 0x6b4614 = pane+0xb194 (a byte scan of .text for disp32 `94b10000` finds exactly
+  one instruction: the read at 0x4186ec); `FUN_00416080(this)` = pane redraw; `FUN_00496ad0(pane+0xa1c, base, owner,
   scratch)` = the modal item chooser (returns an item id or −9999); `FUN_00417ee0(slot, …)` = the
   dispatcher; `FUN_00417d20(item, insert_flag)` = the queue-slot writer. **Digit keys 1-9 pass a nonzero
   param_1 and only PREVIEW — nothing is written**; a real queue edit needs the QUEUE-row path.
+  **Chooser bars (label-verified, M53e)**: HELP 153-233, OK 252-311, REPLACE 364-421, INSERT 472-523,
+  DELETE 556-636, CANCEL 659-705 at y 336-352 (labels drawn inside the bars, fill RGB 103,91,181 —
+  pixel (160,343) is the instant chooser-open test; 2x OCR cannot read the labels). Bar→mode stores
+  inside `FUN_00496ad0`: INSERT→5 (0x496a09), DELETE→4 (0x4969e9), HELP→1 (0x496993),
+  entry/OK/CANCEL→0; the 1/7/5 stores are gated by `cmp [sub+0xa774],-1`. **OK = mode 0: writes
+  nothing and does NOT restore the snapshot** (a committed edit survives OK); **CANCEL =
+  `[sub+0xa774] = -1`** → returns −9999 → rewrites +0x50..+0x74 from the stack snapshot and exits
+  without consulting the mode; **HELP** opens the unit-design pane (bars y 356, CANCEL x≈614) whose
+  CANCEL re-opens the chooser. QUEUE rows 1..8 = pending slots +0x54..+0x70 (row text y =
+  439+12·(row−1)); the 9th pending slot +0x74 has no row; the head +0x50 is the LEFT panel.
 - **Type-record `+41` is the COST FACTOR (M53b), not a weight and not turns.** `0x98ad88 + type·52 + 0x29`,
   one writer: `FUN_00595b10` (`ghidra_out/shard_015.c:9358`) = `FUN_00595820(chassis, weapon, armor,
   ability, reactor)` summing the alpha tables' cost fields (chassis `0x92ae80`/0x90 +4, weapons
