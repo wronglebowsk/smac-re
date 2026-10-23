@@ -203,7 +203,7 @@ break *0x4eff20 if $esi == @@ADDR@@
 commands
   silent
   set $n40 = $n40 + 1
-  printf "W40_CLAMP1 %d eip=%#x ebp=%#x target=%#x name=%s old=%d new=%d cap=%d ownmask=%d cb=%#x\n", $n40, $eip, $ebp, $esi, (char *)($esi + 19), *(int *)($esi + 0x40), $eax, *(int *)0x92a370, *(unsigned char *)($esi + 4), *(int *)0x8f0d60
+  printf "W40_CLAMP1 %d eip=%#x ebp=%#x target=%#x name=%s old=%d new=%d cap=%d ownmask=%d d0=%d cb=%#x\n", $n40, $eip, $ebp, $esi, (char *)($esi + 19), *(int *)($esi + 0x40), $eax, *(int *)0x92a370, *(unsigned char *)($esi + 4), *(int *)($esi + 0xd0), *(int *)0x8f0d60
   continue
 end
 break *0x4f0ca6 if $edx == @@ADDR@@
@@ -263,7 +263,7 @@ break *0x4ee82f if $ecx == @@ADDR@@
 commands
   silent
   set $n3c = $n3c + 1
-  printf "W3C_E410D %d eip=%#x ebp=%#x target=%#x name=%s old=%d new=%d pop=%d cb=%#x\n", $n3c, $eip, $ebp, $ecx, (char *)($ecx + 19), *(int *)($ecx + 0x3c), $eax, *(unsigned char *)($ecx + 6), *(int *)0x8f0d60
+  printf "W3C_E410D %d eip=%#x ebp=%#x target=%#x name=%s old=%d new=%d pop=%d scale=%d ada8=%d fac17=%d f30b=%d cb=%#x\n", $n3c, $eip, $ebp, $ecx, (char *)($ecx + 19), *(int *)($ecx + 0x3c), $eax, *(unsigned char *)($ecx + 6), *(int *)0x92a290, *(int *)0x92ada8, *(int *)(0x94d694 + 0x20bc * (unsigned int)(*(unsigned char *)($ecx + 4))), *(unsigned char *)($ecx + 0x30), *(int *)0x8f0d60
   continue
 end
 break *0x4ee869 if $edi == @@ADDR@@
