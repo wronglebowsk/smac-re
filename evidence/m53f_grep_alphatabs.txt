@@ -1,0 +1,346 @@
+ghidra_out/shard_001.c:4657:       ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4 * 0x34] * 0x10] < '\0')) {
+ghidra_out/shard_001.c:14484:       (((char)(&DAT_0092b950)
+ghidra_out/shard_001.c:14648:            FUN_004237c0((&DAT_0092fd10)
+ghidra_out/shard_002.c:1451:      uVar1 = FUN_0061482f((&DAT_0092fd10)[local_c * 4]);
+ghidra_out/shard_002.c:2338:    if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_1c * 0x34] * 0x10] < '\0') {
+ghidra_out/shard_002.c:2342:      FUN_004237f0((int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_1c * 0x34] * 0x10]);
+ghidra_out/shard_002.c:2356:      if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_1c * 0x34] * 0x10] < '\0') {
+ghidra_out/shard_002.c:2360:        FUN_004237f0((int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_1c * 0x34] * 0x10]
+ghidra_out/shard_002.c:2393:  FUN_004237f0((&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[local_1c * 0x34] * 0x90]);
+ghidra_out/shard_002.c:2627:  FUN_004237f0((&DAT_0092ae80)[local_18 * 0x90]);
+ghidra_out/shard_002.c:2890:  if ((char)(&DAT_0092b950)[local_18 * 0x10] < '\0') {
+ghidra_out/shard_002.c:2901:  FUN_00626581(0,(int)(char)(&DAT_0092b950)[local_18 * 0x10]);
+ghidra_out/shard_002.c:2909:  if ((int)(char)(&DAT_0092b950)[local_18 * 0x10] == (uint)(byte)(&DAT_0092b953)[local_18 * 0x10]) {
+ghidra_out/shard_002.c:3019:  FUN_004237c0((&DAT_0092fd10)[local_18 * 4]);
+ghidra_out/shard_002.c:4482:          FUN_004237f0((&DAT_0092ae80)[local_14 * 0x90]);
+ghidra_out/shard_002.c:4650:          if ((&DAT_0092b950)[local_24 * 0x10] == -1) {
+ghidra_out/shard_002.c:4655:              uVar3 = (&DAT_0092b950)[local_24 * 0x10];
+ghidra_out/shard_002.c:4778:      FUN_004237c0((&DAT_0092fd10)[local_14 * 4]);
+ghidra_out/shard_002.c:5739:  FUN_004237f0((&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90]);
+ghidra_out/shard_002.c:5809:  if ((&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10] == '\0') {
+ghidra_out/shard_002.c:5877:    if ((char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10] < '\0') {
+ghidra_out/shard_002.c:5880:    else if ((char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10] < 'c') {
+ghidra_out/shard_002.c:5881:      FUN_004237f0((int)(char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10]);
+ghidra_out/shard_002.c:5982:    FUN_004237c0((&DAT_0092fd10)[*(int *)(local_8 + 0x14204) * 4]);
+ghidra_out/shard_002.c:6434:  if (((('\x01' < (char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10]) &&
+ghidra_out/shard_002.c:6436:      ((&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90] == '\x01')) &&
+ghidra_out/shard_002.c:6448:  if ((('\0' < (char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10]) &&
+ghidra_out/shard_002.c:6450:     ((1 < (byte)(&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90] &&
+ghidra_out/shard_002.c:6492:  if ((((1 < (byte)(&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90]) &&
+ghidra_out/shard_002.c:6536:            if (('\0' < (char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10]) &&
+ghidra_out/shard_002.c:6537:               ((char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10] <=
+ghidra_out/shard_002.c:6538:                (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_1c * 0x34] * 0x10])) {
+ghidra_out/shard_002.c:6548:               ((byte)(&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90] <=
+ghidra_out/shard_002.c:6549:                (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[local_1c * 0x34] * 0x90])) {
+ghidra_out/shard_002.c:6588:      if (((1 < (byte)(&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90]) &&
+ghidra_out/shard_002.c:6633:    if ((char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10] < '\0') {
+ghidra_out/shard_002.c:6636:    else if ((char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10] < 'c') {
+ghidra_out/shard_002.c:6637:      FUN_004237f0((int)(char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10]);
+ghidra_out/shard_002.c:7162:          if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[extraout_ECX[0x507e] * 0x34] * 0x10] ==
+ghidra_out/shard_002.c:7167:          else if ((char)(&DAT_0092b950)
+ghidra_out/shard_002.c:7169:                   (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[(int)puVar2 * 0x34] * 0x10]) {
+ghidra_out/shard_002.c:7175:                && (((&DAT_0092b950)
+ghidra_out/shard_002.c:7177:                    ((char)(&DAT_0092b950)
+ghidra_out/shard_002.c:7179:                     (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[(int)puVar2 * 0x34] * 0x10]))
+ghidra_out/shard_002.c:7693:    if (('b' < (char)(&DAT_0092b950)[extraout_ECX[0x5080] * 0x10]) || (extraout_ECX[0x5080] == 0x14)
+ghidra_out/shard_002.c:7845:  cVar1 = (&DAT_0092b950)[extraout_ECX[0x5080] * 0x10];
+ghidra_out/shard_002.c:7876:  if ('b' < (char)(&DAT_0092b950)[extraout_ECX[0x5080] * 0x10]) {
+ghidra_out/shard_002.c:7882:    if ((cVar1 < '\x02') && ('\x01' < (char)(&DAT_0092b950)[extraout_ECX[0x5080] * 0x10])) {
+ghidra_out/shard_002.c:7903:        (int)(char)(&DAT_0092b950)[extraout_ECX[0x5080] * 0x10]) {
+ghidra_out/shard_002.c:8011:     ((char)(&DAT_0092b950)[extraout_ECX[0x5080] * 0x10] < '\x02')) {
+ghidra_out/shard_002.c:8190:                             (uint)(byte)(&DAT_0092ae80)[extraout_ECX[0x507f] * 0x90]);
+ghidra_out/shard_002.c:8201:                             (uint)(byte)(&DAT_0092ae80)[extraout_ECX[0x507f] * 0x90]);
+ghidra_out/shard_002.c:8222:                FUN_004237f0((byte)(&DAT_0092ae80)[extraout_ECX[0x507f] * 0x90] - 1);
+ghidra_out/shard_002.c:9151:        (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_3c * 0x34] * 0x10])))) {
+ghidra_out/shard_002.c:9477:      ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[param_1 * 0x34] * 0x10] < '\0')))) {
+ghidra_out/shard_002.c:9520:           (bVar1 <= (byte)(&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90])) {
+ghidra_out/shard_002.c:9521:          bVar1 = (&DAT_0092ae80)[*(int *)(local_8 + 0x141fc) * 0x90];
+ghidra_out/shard_002.c:9533:        if (((iVar5 != 0) && ((char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10] < 'c')) &&
+ghidra_out/shard_002.c:9534:           (cVar2 <= (char)(&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10])) {
+ghidra_out/shard_002.c:9535:          cVar2 = (&DAT_0092b950)[*(int *)(local_8 + 0x14200) * 0x10];
+ghidra_out/shard_003.c:1745:    else if (((&DAT_0092b950)
+ghidra_out/shard_003.c:1748:            ((int)(uint)(byte)(&DAT_0092ae80)
+ghidra_out/shard_003.c:1751:             (int)(char)(&DAT_0092b950)
+ghidra_out/shard_003.c:1754:      if ((&DAT_0092b950)
+ghidra_out/shard_003.c:4059:        FUN_004237f0((&DAT_0092ae80)[local_8 * 0x90]);
+ghidra_out/shard_003.c:4094:        if ((char)(&DAT_0092b950)[local_c * 0x10] < '\0') {
+ghidra_out/shard_003.c:4098:          FUN_004237f0((int)(char)(&DAT_0092b950)[local_c * 0x10]);
+ghidra_out/shard_003.c:4131:        uVar1 = FUN_0061482f((&DAT_0092fd10)[local_10 * 4]);
+ghidra_out/shard_003.c:4134:        _DAT_00753cac = (&DAT_0092fd10)[local_10 * 4];
+ghidra_out/shard_008.c:5230:       ((&DAT_0092b950)
+ghidra_out/shard_008.c:5276:      if ((((&DAT_0092b950)
+ghidra_out/shard_008.c:5294:    if ((&DAT_0092b950)
+ghidra_out/shard_008.c:8252:      if (((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[param_5 * 0x34] * 0x10] == '\0') &&
+ghidra_out/shard_008.c:10988:           ((&DAT_0092b950)
+ghidra_out/shard_009.c:8945:      pcVar5 = &DAT_0092b950;
+ghidra_out/shard_009.c:9555:              puVar8 = &DAT_0092b950;
+ghidra_out/shard_009.c:9575:              puVar12 = &DAT_0092fd10;
+ghidra_out/shard_009.c:14233:        if ((1 < (byte)(&DAT_0092ae80)[local_24 * 0x90]) &&
+ghidra_out/shard_009.c:14413:    if (('\x01' < (char)(&DAT_0092b950)[local_1c * 0x10]) &&
+ghidra_out/shard_010.c:805:                 ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_44 * 0x34] * 0x10] != '\0')) ||
+ghidra_out/shard_010.c:807:                 ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_44 * 0x34] * 0x10] == '\0'))))
+ghidra_out/shard_010.c:855:                ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_3c * 0x34] * 0x10] != '\0')) ||
+ghidra_out/shard_010.c:857:                 ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_3c * 0x34] * 0x10] == '\0')) ||
+ghidra_out/shard_010.c:897:                 ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_40 * 0x34] * 0x10] != '\0')) ||
+ghidra_out/shard_010.c:899:                 ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_40 * 0x34] * 0x10] == '\0'))))
+ghidra_out/shard_010.c:2070:          FUN_004237f0((&DAT_0092ae80)[local_c0 * 0x90]);
+ghidra_out/shard_010.c:2106:          if ((char)(&DAT_0092b950)[local_c4 * 0x10] < '\0') {
+ghidra_out/shard_010.c:2110:            FUN_004237f0((int)(char)(&DAT_0092b950)[local_c4 * 0x10]);
+ghidra_out/shard_010.c:2138:            FUN_004237c0((&DAT_0092fd10)[local_c8 * 4]);
+ghidra_out/shard_010.c:2143:            uVar2 = FUN_0061482f((&DAT_0092fd10)[local_c8 * 4]);
+ghidra_out/shard_010.c:2147:          _DAT_00753cac = (&DAT_0092fd10)[local_c8 * 4];
+ghidra_out/shard_010.c:4358:           ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_58 * 0x34] * 0x10] != '\0'))
+ghidra_out/shard_010.c:4361:      else if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_58 * 0x34] * 0x10] == '\0')
+ghidra_out/shard_010.c:4401:             ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_5c * 0x34] * 0x10] != '\0'))
+ghidra_out/shard_010.c:4404:        else if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_5c * 0x34] * 0x10] == '\0')
+ghidra_out/shard_010.c:6241:               ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_34 * 0x34] * 0x10] != '\0')) ||
+ghidra_out/shard_010.c:6243:               ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_34 * 0x34] * 0x10] == '\0')))) ||
+ghidra_out/shard_010.c:6262:               ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_3c * 0x34] * 0x10] != '\0')) ||
+ghidra_out/shard_010.c:6264:                ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_3c * 0x34] * 0x10] == '\0')) ||
+ghidra_out/shard_010.c:6295:               ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_38 * 0x34] * 0x10] != '\0')) ||
+ghidra_out/shard_010.c:6297:                ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_38 * 0x34] * 0x10] == '\0')) ||
+ghidra_out/shard_010.c:7979:             ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_24 * 0x34] * 0x10] != '\0')) {
+ghidra_out/shard_010.c:7990:                ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_24 * 0x34] * 0x10] == '\0'))
+ghidra_out/shard_011.c:2726:     ((char)(&DAT_0092b950)
+ghidra_out/shard_011.c:8880:      local_10 = (int)(char)(&DAT_0092b950)[param_3 * 0x10];
+ghidra_out/shard_012.c:1941:  if (((&DAT_0092b950)
+ghidra_out/shard_012.c:1953:    if ((&DAT_0092b950)
+ghidra_out/shard_012.c:2116:    if ((&DAT_0092b950)
+ghidra_out/shard_012.c:3384:       (-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_012.c:3406:          cVar1 = (&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar6] * 0x10];
+ghidra_out/shard_012.c:3410:          else if (cVar1 <= (char)(&DAT_0092b950)[(uint)bVar8 * 0x10]) {
+ghidra_out/shard_012.c:3416:                ((cVar1 == '\0' || (cVar1 < (char)(&DAT_0092b950)[(uint)bVar8 * 0x10])))))) {
+ghidra_out/shard_012.c:4114:          (-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_012.c:5631:      if (((&DAT_0092b950)
+ghidra_out/shard_012.c:6836:  if ((&DAT_0092b950)
+ghidra_out/shard_012.c:7095:    if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar3] * 0x10] == '\0') {
+ghidra_out/shard_012.c:16845:          if ((((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10] != '\0') &&
+ghidra_out/shard_012.c:16846:              (('\0' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10] ||
+ghidra_out/shard_012.c:16870:                  (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10])) ||
+ghidra_out/shard_012.c:16918:            if ((&DAT_0092b950)
+ghidra_out/shard_012.c:20268:  iVar4 = param_2 + ((uint)(byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar4] * 0x90] -
+ghidra_out/shard_012.c:20269:                     (uint)(byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[param_3] * 0x90] &
+ghidra_out/shard_012.c:20270:                    ((int)((uint)(byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar4] * 0x90] -
+ghidra_out/shard_012.c:20271:                          (uint)(byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[param_3] * 0x90])
+ghidra_out/shard_012.c:20478:        if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar3] * 0x10] == '\0') {
+ghidra_out/shard_012.c:20481:        else if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar3] * 0x10] <=
+ghidra_out/shard_012.c:20482:                 (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10]) {
+ghidra_out/shard_012.c:20487:             (((byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar3] * 0x90] <=
+ghidra_out/shard_012.c:20488:               (byte)(&DAT_0092ae80)[iVar1] && ((&DAT_0098adac)[iVar3] == (&DAT_0098adac)[iVar2]))))
+ghidra_out/shard_012.c:20913:              if (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10])
+ghidra_out/shard_012.c:21083:                 ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[(int)pcVar17] * 0x10] < '\0')) {
+ghidra_out/shard_012.c:21141:               ((char)(&DAT_0092b950)[(uint)*(byte *)((int)psVar22 + 0x98adad) * 0x10] < '\0')) {
+ghidra_out/shard_012.c:21146:                 ((&DAT_0092b950)[(uint)*(byte *)((int)psVar22 + 0x98adad) * 0x10] != '\0')) {
+ghidra_out/shard_012.c:27206:        if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_34] * 0x10] != '\0') {
+ghidra_out/shard_012.c:27232:          if (((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_34] * 0x10] < '\0') &&
+ghidra_out/shard_012.c:27320:                                  (byte)(&DAT_0092ae80)
+ghidra_out/shard_012.c:27341:            ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_34] * 0x10] != '\0')) &&
+ghidra_out/shard_012.c:29028:     ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[(int)pbVar10 * 0x34] * 0x10] == '\0')) {
+ghidra_out/shard_012.c:29482:       (((char)(&DAT_0092b950)
+ghidra_out/shard_012.c:29494:        (((-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_012.c:29501:          ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar3] * 0x10] < '\0')))) {
+ghidra_out/shard_012.c:29820:       ((char)(&DAT_0092b950)
+ghidra_out/shard_012.c:29885:              ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10] < '\0')) ||
+ghidra_out/shard_012.c:29888:           (-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_012.c:30212:             (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[sVar4 * 0x34] * 0x10])))) &&
+ghidra_out/shard_012.c:30214:          ((&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[sVar4 * 0x34] * 0x90] == '\x01')))) {
+ghidra_out/shard_012.c:30389:    if (((((&DAT_0092b950)
+ghidra_out/shard_012.c:30426:        )) && ((1 < (byte)(&DAT_0092ae80)
+ghidra_out/shard_012.c:30602:                    ('\0' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar6] * 0x10])) &&
+ghidra_out/shard_012.c:30604:             (('\0' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar12] * 0x10] &&
+ghidra_out/shard_012.c:30654:                 (int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar6] * 0x10];
+ghidra_out/shard_012.c:31479:         ((char)(&DAT_0092b950)
+ghidra_out/shard_012.c:31605:          if ('\0' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10]) {
+ghidra_out/shard_012.c:31606:            iVar3 = (int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10];
+ghidra_out/shard_012.c:31923:  local_49 = (&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10];
+ghidra_out/shard_012.c:31985:      (-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_012.c:32177:      ((((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[local_98 * 0x34] * 0x10] < '\0' ||
+ghidra_out/shard_012.c:32668:        (&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar6] * 0x10] != '\0')) &&
+ghidra_out/shard_012.c:32895:                       ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar18] * 0x10] < '\0'))))
+ghidra_out/shard_012.c:33571:              if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar18] * 0x10] < '\0') {
+ghidra_out/shard_012.c:33727:                ((&DAT_0092b950)
+ghidra_out/shard_013.c:1620:         ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar9] * 0x10] != '\0')) {
+ghidra_out/shard_013.c:1623:      else if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar9] * 0x10] == '\0') {
+ghidra_out/shard_013.c:1631:      if ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar9] * 0x10] == '\0') {
+ghidra_out/shard_013.c:2089:         ((&DAT_0092ae80)
+ghidra_out/shard_013.c:2093:        ((&DAT_0092b950)
+ghidra_out/shard_013.c:2109:        ((&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar4] * 0x90] == '\x01')) &&
+ghidra_out/shard_013.c:2110:       (('\x01' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10] &&
+ghidra_out/shard_013.c:2182:             (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10] ||
+ghidra_out/shard_013.c:2184:            (&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10] != '\x01')))) {
+ghidra_out/shard_013.c:2193:        ((&DAT_0092b950)
+ghidra_out/shard_013.c:4389:       ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10] != '\0')) {
+ghidra_out/shard_013.c:4392:    else if (((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10] == '\0') ||
+ghidra_out/shard_013.c:4527:           ((&DAT_0092b950)
+ghidra_out/shard_013.c:6969:             ((&DAT_0092b950)
+ghidra_out/shard_013.c:11065:          if (((char)(&DAT_0092b950)
+ghidra_out/shard_013.c:11097:            if (((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar15] * 0x10] < '\0') &&
+ghidra_out/shard_013.c:11169:              if (((char)(&DAT_0092b950)
+ghidra_out/shard_013.c:18311:            } while ((int)puVar10 < 0x92fd10);
+ghidra_out/shard_013.c:21472:      iVar8 = (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar10] * 0x10] * 3 +
+ghidra_out/shard_013.c:21475:              (uint)(byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar10] * 0x90];
+ghidra_out/shard_013.c:21489:            if ((byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar10] * 0x90] <
+ghidra_out/shard_013.c:21490:                (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar9] * 0x90]) {
+ghidra_out/shard_013.c:21497:            if ((((byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar10] * 0x90] <=
+ghidra_out/shard_013.c:21498:                  (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar9] * 0x90]) &&
+ghidra_out/shard_014.c:2255:  pcVar8 = &DAT_0092b950;
+ghidra_out/shard_014.c:2299:  pbVar9 = &DAT_0092ae80;
+ghidra_out/shard_014.c:4056:                                            (uint)(byte)(&DAT_0092ae80)
+ghidra_out/shard_014.c:5211:       ((&DAT_0092b950)
+ghidra_out/shard_014.c:5419:                    ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[sVar5 * 0x34] * 0x10] < '\0')
+ghidra_out/shard_014.c:6751:           ('b' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[*piVar6 * 0x34] * 0x10])) {
+ghidra_out/shard_014.c:6766:           ('b' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[*psVar7 * 0x34] * 0x10])) {
+ghidra_out/shard_014.c:7810:        (((&DAT_0092b950)
+ghidra_out/shard_014.c:8139:           (('\x02' < (char)(&DAT_0092b950)
+ghidra_out/shard_014.c:8228:          ((&DAT_0092b950)
+ghidra_out/shard_014.c:9421:                     ((&DAT_0092b950)
+ghidra_out/shard_014.c:9596:          ((&DAT_0092b950)
+ghidra_out/shard_014.c:9873:       ((((&DAT_0092b950)
+ghidra_out/shard_014.c:9938:              if ((((&DAT_0092b950)
+ghidra_out/shard_014.c:10093:                        if ((&DAT_0092b950)
+ghidra_out/shard_014.c:10283:                            if ((&DAT_0092b950)
+ghidra_out/shard_014.c:10312:                                ((&DAT_0092b950)
+ghidra_out/shard_014.c:10428:                                          else if (((&DAT_0092b950)
+ghidra_out/shard_014.c:10742:        ((&DAT_0092b950)
+ghidra_out/shard_014.c:10825:          if (((&DAT_0092b950)
+ghidra_out/shard_014.c:10925:                      )) || (-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_014.c:13434:                if ((byte)(&DAT_0092ae80)
+ghidra_out/shard_014.c:13449:                   ((-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_014.c:13461:                     ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[sVar2 * 0x34] * 0x10] < '\0'
+ghidra_out/shard_014.c:13638:                 (((&DAT_0092b950)
+ghidra_out/shard_014.c:14186:       ((&DAT_0092b950)
+ghidra_out/shard_014.c:14251:  if ((&DAT_0092b950)
+ghidra_out/shard_014.c:14289:          ((&DAT_0092b950)
+ghidra_out/shard_014.c:15546:       (iVar3 = FUN_00572410(param_2,99,0), (int)(char)(&DAT_0092b950)[iVar1 * 0x10] <= iVar3 + 2))
+ghidra_out/shard_014.c:15714:  if ((char)(&DAT_0092b950)[param_1 * 0x10] < '\0') {
+ghidra_out/shard_014.c:15719:  return (int)(char)(&DAT_0092b950)[param_1 * 0x10];
+ghidra_out/shard_014.c:15730:  if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[param_1 * 0x34] * 0x10] < '\0') {
+ghidra_out/shard_014.c:15735:  return (int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[param_1 * 0x34] * 0x10];
+ghidra_out/shard_014.c:15881:  if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10] < '\0') {
+ghidra_out/shard_014.c:15884:  else if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10] < 'c') {
+ghidra_out/shard_014.c:15940:  if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10] < '\0') {
+ghidra_out/shard_014.c:15944:  else if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10] < 'c') {
+ghidra_out/shard_014.c:16013:      ((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10] == '\x01')) &&
+ghidra_out/shard_014.c:16022:       (((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10] < '\0' ||
+ghidra_out/shard_014.c:16024:         (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10])))) {
+ghidra_out/shard_014.c:16034:  if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10] < '\0') {
+ghidra_out/shard_014.c:16053:       (((&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar5] * 0x90] == '\x01' ||
+ghidra_out/shard_014.c:16277:            if ((((iVar11 != iVar9) || ((&DAT_0092ae80)[param_4 * 0x90] != '\x01')) ||
+ghidra_out/shard_014.c:16278:                ((char)(&DAT_0092b950)[param_5 * 0x10] < (char)(&DAT_0092fd18)[param_6 * 0x10])) ||
+ghidra_out/shard_014.c:16296:    cVar1 = (&DAT_0092b950)[iVar11];
+ghidra_out/shard_014.c:16329:     (1 < (byte)(&DAT_0092ae80)[param_4 * 0x90])) {
+ghidra_out/shard_014.c:16334:      if ((char)(&DAT_0092b950)[iVar11] < '\x02') {
+ghidra_out/shard_014.c:16360:    local_14 = (uint)(1 < (byte)(&DAT_0092ae80)[local_c]);
+ghidra_out/shard_014.c:16363:    if ((((int)(char)(&DAT_0092b950)[iVar11] <= (int)(uint)(byte)(&DAT_0092ae80)[param_4 * 0x90]) &&
+ghidra_out/shard_014.c:16365:         (int)(uint)(byte)(&DAT_0092ae80)[param_4 * 0x90])) &&
+ghidra_out/shard_014.c:16366:       ((-1 < (char)(&DAT_0092b950)[iVar11] && ((&DAT_0092ae81)[param_4 * 0x90] == '\0'))))
+ghidra_out/shard_014.c:16398:  cVar1 = (&DAT_0092b950)[iVar11];
+ghidra_out/shard_014.c:16511:          local_14 = local_14 ^ (byte)(&DAT_0092b950)[iVar11] & 1;
+ghidra_out/shard_014.c:16526:        if ((((param_7 & 8) == 0) || ((&DAT_0092ae80)[local_c] != '\x01')) ||
+ghidra_out/shard_014.c:16527:           ((char)(&DAT_0092b950)[iVar11] <= (char)(&DAT_0092fd18)[local_1c])) {
+ghidra_out/shard_014.c:17015:                if (('\0' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar23] * 0x10]) &&
+ghidra_out/shard_014.c:17016:                   ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar23] * 0x10] <=
+ghidra_out/shard_014.c:17017:                    (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar17] * 0x10])) {
+ghidra_out/shard_014.c:17028:                   ((byte)(&DAT_0092ae80)[iVar17] <= (byte)(&DAT_0092ae80)[iVar12])) {
+ghidra_out/shard_014.c:17083:                  if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar12] * 0x10] < '\x01') {
+ghidra_out/shard_014.c:17091:                               (('\x01' < (char)(&DAT_0092b950)
+ghidra_out/shard_014.c:17093:                                 '\x01' < (char)(&DAT_0092b950)
+ghidra_out/shard_014.c:17107:                               ((byte)(&DAT_0092ae80)[iVar17] <= (byte)(&DAT_0092ae80)[iVar14])) {
+ghidra_out/shard_014.c:17371:                  else if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar12] * 0x10] <=
+ghidra_out/shard_014.c:17372:                           (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar23] * 0x10])
+ghidra_out/shard_014.c:17406:                 (-1 < (char)(&DAT_0092b950)[(uint)*pbVar18 * 0x10])) {
+ghidra_out/shard_014.c:17415:                if ((char)(&DAT_0092b950)[(uint)*pbVar18 * 0x10] < '\x01') {
+ghidra_out/shard_014.c:17423:                          if ((byte)(&DAT_0092ae80)[(uint)pbVar18[-1] * 0x90] <=
+ghidra_out/shard_014.c:17424:                              (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar23] * 0x90]) {
+ghidra_out/shard_014.c:17463:                else if ((char)(&DAT_0092b950)[(uint)*pbVar18 * 0x10] <=
+ghidra_out/shard_014.c:17464:                         (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar23] * 0x10])
+ghidra_out/shard_014.c:17497:              if ((char)(&DAT_0092b950)[(uint)(byte)pcVar19[-5] * 0x10] < '\x01') {
+ghidra_out/shard_014.c:17504:                      if ((byte)(&DAT_0092ae80)[(uint)(byte)pcVar19[-6] * 0x90] <=
+ghidra_out/shard_014.c:17505:                          (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar23] * 0x90]) {
+ghidra_out/shard_014.c:17545:              else if ((char)(&DAT_0092b950)[(uint)(byte)pcVar19[-5] * 0x10] <=
+ghidra_out/shard_014.c:17546:                       (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar23] * 0x10])
+ghidra_out/shard_014.c:17607:  if (((((&DAT_0092ae80)[param_2 * 0x90] == '\x01') &&
+ghidra_out/shard_014.c:17609:      ((&DAT_0092b950)[param_3 * 0x10] == '\x01')) && (DAT_0092091c == 0)) {
+ghidra_out/shard_014.c:17612:  if ((char)(&DAT_0092b950)[param_3 * 0x10] < '\0') {
+ghidra_out/shard_014.c:17617:    local_28 = (int)(char)(&DAT_0092b950)[param_3 * 0x10];
+ghidra_out/shard_014.c:17692:              if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar6] * 0x10] < '\0') {
+ghidra_out/shard_014.c:17697:                uVar7 = (uint)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar6] * 0x10];
+ghidra_out/shard_014.c:17997:  local_2c = &DAT_0092b950;
+ghidra_out/shard_014.c:18005:        (((int)local_18 < 0 || ((char)(&DAT_0092b950)[local_18 * 0x10] <= cVar1)))))) {
+ghidra_out/shard_014.c:18021:          if (*local_2c <= (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10]) break;
+ghidra_out/shard_014.c:18083:          iVar7 = (int)(char)(&DAT_0092b950)[(int)local_34 * 0x10];
+ghidra_out/shard_014.c:18099:            iVar7 = (int)(char)(&DAT_0092b950)[local_18 * 0x10];
+ghidra_out/shard_014.c:18332:    iVar11 = (int)(char)(&DAT_0092b950)[iVar12 * 0x10];
+ghidra_out/shard_014.c:18365:    iVar11 = (int)(char)(&DAT_0092b950)[iVar12 * 0x10];
+ghidra_out/shard_014.c:18416:          ((int)(char)(&DAT_0092b950)[iVar21 * 0x10] / 2 < *(int *)(&DAT_0094dc68 + iVar10))) ||
+ghidra_out/shard_014.c:18502:    if (((('\x01' < (char)(&DAT_0092b950)[iVar21 * 0x10]) && ('\x01' < *pcVar19)) ||
+ghidra_out/shard_014.c:18503:        ('\x02' < (char)(&DAT_0092b950)[iVar21 * 0x10])) || (DAT_0092091c != 0)) {
+ghidra_out/shard_014.c:18560:      if ((((&DAT_0092ae80)[local_10 * 0x90] == '\x01') &&
+ghidra_out/shard_014.c:18644:    if ((int)(char)(&DAT_0092b950)[iVar9 * 0x10] < (char)(&DAT_0092fd18)[local_1c * 0x10] * 3) {
+ghidra_out/shard_014.c:18691:      if ((char)(&DAT_0092b950)[iVar6 * 0x10] + -1 <= iVar21) break;
+ghidra_out/shard_014.c:18693:      local_30 = (int)(char)(&DAT_0092b950)[iVar6 * 0x10] / 2;
+ghidra_out/shard_014.c:18806:    if (((char)(&DAT_0092b950)[iVar6 * 0x10] < '\x02') && (DAT_0092091c == 0)) {
+ghidra_out/shard_014.c:19007:        uVar20 = FUN_00572410(param_1,(char)(&DAT_0092b950)[local_14 * 0x10] + iVar9,0);
+ghidra_out/shard_014.c:19068:    if ('\0' < (char)(&DAT_0092b950)[local_14 * 0x10]) {
+ghidra_out/shard_014.c:19434:    pcVar19 = &DAT_0092b950;
+ghidra_out/shard_014.c:19986:    if ((&DAT_0092b950)[param_3] == '\0') {
+ghidra_out/shard_014.c:20007:        (((-1 < (char)(&DAT_0092b950)[param_3] && (-1 < (char)(&DAT_0092fd18)[param_4 * 0x10])) ||
+ghidra_out/shard_014.c:20013:      if ((byte)(&DAT_0092ae80)[param_2] < 2) {
+ghidra_out/shard_014.c:26882:    if ((&DAT_0092b950)[iVar3] == '\0') {
+ghidra_out/shard_014.c:26890:      if ((char)(&DAT_0092b950)[iVar3] < '\0') {
+ghidra_out/shard_014.c:26895:        __itoa((int)(char)(&DAT_0092b950)[iVar3],local_54,10);
+ghidra_out/shard_014.c:26923:  uVar1 = FUN_0061482f((&DAT_0092fd10)[param_2 * 4]);
+ghidra_out/shard_014.c:26970:  __itoa((uint)(byte)(&DAT_0092ae80)[param_2 * 0x90],local_54,10);
+ghidra_out/shard_014.c:29201:            (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10])))) {
+ghidra_out/shard_015.c:888:                 ((&DAT_0092b950)
+ghidra_out/shard_015.c:948:            if ((&DAT_0092b950)
+ghidra_out/shard_015.c:1657:         ((char)(&DAT_0092b950)
+ghidra_out/shard_015.c:1922:      if ((&DAT_0092b950)
+ghidra_out/shard_015.c:2020:              (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[sVar1 * 0x34] * 0x10])))) &&
+ghidra_out/shard_015.c:2833:  if ((&DAT_0092b950)
+ghidra_out/shard_015.c:3078:       (((&DAT_0092b950)
+ghidra_out/shard_015.c:4577:  if (((&DAT_0092b950)
+ghidra_out/shard_015.c:7049:                      (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar13] * 0x10])))) {
+ghidra_out/shard_015.c:7805:    local_34 = (char *)(uint)(byte)(&DAT_0092ae80)
+ghidra_out/shard_015.c:9223:  if (((&DAT_0092ae85)[param_1] != '\0') && ('b' < (char)(&DAT_0092b950)[iVar6])) {
+ghidra_out/shard_015.c:9325:            if (('\0' < (char)(&DAT_0092b950)[param_3 * 0x10]) &&
+ghidra_out/shard_015.c:9326:               ((char)(&DAT_0092b950)[param_3 * 0x10] <=
+ghidra_out/shard_015.c:9327:                (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar9] * 0x10])) {
+ghidra_out/shard_015.c:9337:               ((byte)(&DAT_0092ae80)[param_2 * 0x90] <= (byte)(&DAT_0092ae80)[iVar9])) {
+ghidra_out/shard_015.c:9390:             (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10]) &&
+ghidra_out/shard_015.c:9394:        if ((1 < (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar7] * 0x90]) &&
+ghidra_out/shard_015.c:9396:            (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10])) {
+ghidra_out/shard_015.c:9403:        if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10] <
+ghidra_out/shard_015.c:9408:            (int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10]) {
+ghidra_out/shard_015.c:9411:        if (1 < (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar7] * 0x90]) {
+ghidra_out/shard_015.c:9414:        if (2 < (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar7] * 0x90]) {
+ghidra_out/shard_015.c:9417:        if (((&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10] == '\x01') &&
+ghidra_out/shard_015.c:9420:          if (1 < (byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar7] * 0x90]) {
+ghidra_out/shard_015.c:9434:  else if ((char)(&DAT_0092b950)[iVar9] < 'c') {
+ghidra_out/shard_015.c:9505:      bVar3 = (&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar7] * 0x90];
+ghidra_out/shard_015.c:9560:        if (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10]) {
+ghidra_out/shard_015.c:12851:      cVar1 = (&DAT_0092b950)[(uint)*pbVar3 * 0x10];
+ghidra_out/shard_015.c:12907:            iVar4 = (int)(char)(&DAT_0092b950)[(uint)pbVar3[-4] * 0x10];
+ghidra_out/shard_015.c:16533:    if (((iVar22 != 0) && ((&DAT_0092b950)[(uint)param_1[1] * 0x10] != '\0')) &&
+ghidra_out/shard_015.c:16544:      iVar22 = (uint)(byte)(&DAT_0092ae80)[(uint)*param_1 * 0x90] + (iVar14 + iVar22 * 2) * 2;
+ghidra_out/shard_015.c:16550:      bVar11 = (&DAT_0092ae80)[(uint)*param_1 * 0x90];
+ghidra_out/shard_015.c:16553:      if (((int)local_20 < iVar14) && (1 < (byte)(&DAT_0092ae80)[(uint)*param_1 * 0x90])) {
+ghidra_out/shard_015.c:19924:            local_8 = local_8 + (char)(&DAT_0092b950)
+ghidra_out/shard_015.c:20038:             ((&DAT_0092b950)
+ghidra_out/shard_015.c:21145:                  (-1 < (char)(&DAT_0092b950)[(uint)*(byte *)((int)psVar6 + -0xd) * 0x10])))) {
+ghidra_out/shard_015.c:21626:    iVar10 = (int)(char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar4] * 0x10];
+ghidra_out/shard_015.c:21640:    bVar9 = (&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar4] * 0x90];
+ghidra_out/shard_015.c:22283:        cVar1 = (&DAT_0092b950)[(uint)*pbVar4 * 0x10];
+ghidra_out/shard_015.c:22285:          if (cVar1 == (&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10]) {
+ghidra_out/shard_015.c:22290:                if ((byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar5] * 0x90] <=
+ghidra_out/shard_015.c:22291:                    (byte)(&DAT_0092ae80)[(uint)pbVar4[-1] * 0x90]) {
+ghidra_out/shard_015.c:22303:        else if ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar5] * 0x10] <= cVar1)
+ghidra_out/shard_015.c:23206:     (-1 < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar7] * 0x10])) {
+ghidra_out/shard_015.c:23312:  if ('\0' < (char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar1] * 0x10]) {
+ghidra_out/shard_015.c:23381:     ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar2] * 0x10] < '\0')) {
+ghidra_out/shard_015.c:23453:     (((char)(&DAT_0092b950)[iVar2] < '\0' ||
+ghidra_out/shard_015.c:23466:  cVar1 = (&DAT_0092b950)[iVar2];
+ghidra_out/shard_015.c:23497:       ((char)(&DAT_0092b950)
+ghidra_out/shard_015.c:23530:  uVar3 = (uint)(byte)(&DAT_0092ae80)[(uint)(byte)(&DAT_0098adac)[iVar4] * 0x90];
+ghidra_out/shard_015.c:23594:      (-1 < (char)(&DAT_0092b950)
+ghidra_out/shard_015.c:23665:     ((char)(&DAT_0092b950)[(uint)(byte)(&DAT_0098adad)[iVar1] * 0x10] < '\0')) {

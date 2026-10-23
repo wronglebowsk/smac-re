@@ -1,0 +1,177 @@
+595820:	55                   	push   ebp
+595821:	8b ec                	mov    ebp,esp
+595823:	83 ec 14             	sub    esp,0x14
+595826:	8b 4d 0c             	mov    ecx,DWORD PTR [ebp+0xc]
+595829:	53                   	push   ebx
+59582a:	c1 e1 04             	shl    ecx,0x4
+59582d:	56                   	push   esi
+59582e:	57                   	push   edi
+59582f:	8a 81 53 b9 92 00    	mov    al,BYTE PTR [ecx+0x92b953]
+595835:	33 db                	xor    ebx,ebx
+595837:	25 ff 00 00 00       	and    eax,0xff
+59583c:	89 4d fc             	mov    DWORD PTR [ebp-0x4],ecx
+59583f:	89 45 ec             	mov    DWORD PTR [ebp-0x14],eax
+595842:	8b d0                	mov    edx,eax
+595844:	8b 45 10             	mov    eax,DWORD PTR [ebp+0x10]
+595847:	89 55 f8             	mov    DWORD PTR [ebp-0x8],edx
+59584a:	c1 e0 04             	shl    eax,0x4
+59584d:	8a 80 1a fd 92 00    	mov    al,BYTE PTR [eax+0x92fd1a]
+595853:	88 45 f4             	mov    BYTE PTR [ebp-0xc],al
+595856:	8b f8                	mov    edi,eax
+595858:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
+59585b:	81 e7 ff 00 00 00    	and    edi,0xff
+595861:	8d 34 c0             	lea    esi,[eax+eax*8]
+595864:	33 c0                	xor    eax,eax
+595866:	c1 e6 04             	shl    esi,0x4
+595869:	89 75 f0             	mov    DWORD PTR [ebp-0x10],esi
+59586c:	8a 86 84 ae 92 00    	mov    al,BYTE PTR [esi+0x92ae84]
+595872:	89 45 10             	mov    DWORD PTR [ebp+0x10],eax
+595875:	8b 45 14             	mov    eax,DWORD PTR [ebp+0x14]
+595878:	85 c0                	test   eax,eax
+59587a:	0f 84 aa 00 00 00    	je     0x59592a
+595880:	33 c9                	xor    ecx,ecx
+595882:	c7 45 0c f4 aa 98 00 	mov    DWORD PTR [ebp+0xc],0x98aaf4
+595889:	89 4d 08             	mov    DWORD PTR [ebp+0x8],ecx
+59588c:	b8 01 00 00 00       	mov    eax,0x1
+595891:	d3 e0                	shl    eax,cl
+595893:	8b 4d 14             	mov    ecx,DWORD PTR [ebp+0x14]
+595896:	85 c1                	test   ecx,eax
+595898:	74 72                	je     0x59590c
+59589a:	85 db                	test   ebx,ebx
+59589c:	74 01                	je     0x59589f
+59589e:	43                   	inc    ebx
+59589f:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]
+5958a2:	8b 00                	mov    eax,DWORD PTR [eax]
+5958a4:	85 c0                	test   eax,eax
+5958a6:	7c 04                	jl     0x5958ac
+5958a8:	03 d8                	add    ebx,eax
+5958aa:	eb 60                	jmp    0x59590c
+5958ac:	83 c0 07             	add    eax,0x7
+5958af:	83 f8 06             	cmp    eax,0x6
+5958b2:	77 58                	ja     0x59590c
+5958b4:	ff 24 85 b4 5a 59 00 	jmp    DWORD PTR [eax*4+0x595ab4]
+5958bb:	8b c2                	mov    eax,edx
+5958bd:	99                   	cdq
+5958be:	f7 ff                	idiv   edi
+5958c0:	85 c0                	test   eax,eax
+5958c2:	7c 11                	jl     0x5958d5
+5958c4:	83 f8 02             	cmp    eax,0x2
+5958c7:	7e 0e                	jle    0x5958d7
+5958c9:	8b 55 f8             	mov    edx,DWORD PTR [ebp-0x8]
+5958cc:	b8 02 00 00 00       	mov    eax,0x2
+5958d1:	03 d8                	add    ebx,eax
+5958d3:	eb 37                	jmp    0x59590c
+5958d5:	33 c0                	xor    eax,eax
+5958d7:	8b 55 f8             	mov    edx,DWORD PTR [ebp-0x8]
+5958da:	03 d8                	add    ebx,eax
+5958dc:	eb 2e                	jmp    0x59590c
+5958de:	8d 5c 13 ff          	lea    ebx,[ebx+edx*1-0x1]
+5958e2:	eb 28                	jmp    0x59590c
+5958e4:	8d 5c 3b ff          	lea    ebx,[ebx+edi*1-0x1]
+5958e8:	eb 22                	jmp    0x59590c
+5958ea:	8b 4d 10             	mov    ecx,DWORD PTR [ebp+0x10]
+5958ed:	8d 5c 0b ff          	lea    ebx,[ebx+ecx*1-0x1]
+5958f1:	eb 19                	jmp    0x59590c
+5958f3:	8d 04 17             	lea    eax,[edi+edx*1]
+5958f6:	eb 10                	jmp    0x595908
+5958f8:	8b 4d 10             	mov    ecx,DWORD PTR [ebp+0x10]
+5958fb:	03 ca                	add    ecx,edx
+5958fd:	8d 5c 0b fe          	lea    ebx,[ebx+ecx*1-0x2]
+595901:	eb 09                	jmp    0x59590c
+595903:	8b 45 10             	mov    eax,DWORD PTR [ebp+0x10]
+595906:	03 c7                	add    eax,edi
+595908:	8d 5c 03 fe          	lea    ebx,[ebx+eax*1-0x2]
+59590c:	8b 45 0c             	mov    eax,DWORD PTR [ebp+0xc]
+59590f:	8b 4d 08             	mov    ecx,DWORD PTR [ebp+0x8]
+595912:	83 c0 1c             	add    eax,0x1c
+595915:	41                   	inc    ecx
+595916:	3d 94 ad 98 00       	cmp    eax,0x98ad94
+59591b:	89 4d 08             	mov    DWORD PTR [ebp+0x8],ecx
+59591e:	89 45 0c             	mov    DWORD PTR [ebp+0xc],eax
+595921:	0f 8c 65 ff ff ff    	jl     0x59588c
+595927:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+59592a:	8a 86 81 ae 92 00    	mov    al,BYTE PTR [esi+0x92ae81]
+595930:	3c 01                	cmp    al,0x1
+595932:	88 45 0f             	mov    BYTE PTR [ebp+0xf],al
+595935:	75 16                	jne    0x59594d
+595937:	8b c7                	mov    eax,edi
+595939:	8b 4d 18             	mov    ecx,DWORD PTR [ebp+0x18]
+59593c:	99                   	cdq
+59593d:	2b c2                	sub    eax,edx
+59593f:	d1 f8                	sar    eax,1
+595941:	8b f8                	mov    edi,eax
+595943:	8b 45 10             	mov    eax,DWORD PTR [ebp+0x10]
+595946:	03 c1                	add    eax,ecx
+595948:	89 45 10             	mov    DWORD PTR [ebp+0x10],eax
+59594b:	eb 59                	jmp    0x5959a6
+59594d:	3c 02                	cmp    al,0x2
+59594f:	75 2a                	jne    0x59597b
+595951:	8b 55 18             	mov    edx,DWORD PTR [ebp+0x18]
+595954:	8b 45 10             	mov    eax,DWORD PTR [ebp+0x10]
+595957:	83 ff 01             	cmp    edi,0x1
+59595a:	8d 14 50             	lea    edx,[eax+edx*2]
+59595d:	89 55 10             	mov    DWORD PTR [ebp+0x10],edx
+595960:	7e 47                	jle    0x5959a9
+595962:	03 ff                	add    edi,edi
+595964:	8b c2                	mov    eax,edx
+595966:	2b c7                	sub    eax,edi
+595968:	83 f8 02             	cmp    eax,0x2
+59596b:	7d 09                	jge    0x595976
+59596d:	c7 45 10 02 00 00 00 	mov    DWORD PTR [ebp+0x10],0x2
+595974:	eb 33                	jmp    0x5959a9
+595976:	89 45 10             	mov    DWORD PTR [ebp+0x10],eax
+595979:	eb 2e                	jmp    0x5959a9
+59597b:	33 c9                	xor    ecx,ecx
+59597d:	b8 fc aa 98 00       	mov    eax,0x98aafc
+595982:	8b 75 14             	mov    esi,DWORD PTR [ebp+0x14]
+595985:	ba 01 00 00 00       	mov    edx,0x1
+59598a:	d3 e2                	shl    edx,cl
+59598c:	85 d6                	test   esi,edx
+59598e:	74 08                	je     0x595998
+595990:	8b 10                	mov    edx,DWORD PTR [eax]
+595992:	f6 c6 04             	test   dh,0x4
+595995:	74 01                	je     0x595998
+595997:	43                   	inc    ebx
+595998:	83 c0 1c             	add    eax,0x1c
+59599b:	41                   	inc    ecx
+59599c:	3d 9c ad 98 00       	cmp    eax,0x98ad9c
+5959a1:	7c df                	jl     0x595982
+5959a3:	8b 75 f0             	mov    esi,DWORD PTR [ebp-0x10]
+5959a6:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+5959a9:	8a 86 85 ae 92 00    	mov    al,BYTE PTR [esi+0x92ae85]
+5959af:	84 c0                	test   al,al
+5959b1:	74 13                	je     0x5959c6
+5959b3:	80 b9 50 b9 92 00 63 	cmp    BYTE PTR [ecx+0x92b950],0x63
+5959ba:	7c 0a                	jl     0x5959c6
+5959bc:	8b 45 ec             	mov    eax,DWORD PTR [ebp-0x14]
+5959bf:	5f                   	pop    edi
+5959c0:	5e                   	pop    esi
+5959c1:	5b                   	pop    ebx
+5959c2:	8b e5                	mov    esp,ebp
+5959c4:	5d                   	pop    ebp
+5959c5:	c3                   	ret
+5959c6:	8b c7                	mov    eax,edi
+5959c8:	8b 4d f8             	mov    ecx,DWORD PTR [ebp-0x8]
+5959cb:	99                   	cdq
+5959cc:	2b c2                	sub    eax,edx
+5959ce:	d1 f8                	sar    eax,1
+5959d0:	40                   	inc    eax
+5959d1:	3b c1                	cmp    eax,ecx
+5959d3:	7e 03                	jle    0x5959d8
+5959d5:	89 45 f8             	mov    DWORD PTR [ebp-0x8],eax
+5959d8:	8b 4d 18             	mov    ecx,DWORD PTR [ebp+0x18]
+5959db:	8b 45 10             	mov    eax,DWORD PTR [ebp+0x10]
+5959de:	be 02 00 00 00       	mov    esi,0x2
+5959e3:	d3 e6                	shl    esi,cl
+5959e5:	8d 0c 38             	lea    ecx,[eax+edi*1]
+5959e8:	0f af 4d f8          	imul   ecx,DWORD PTR [ebp-0x8]
+5959ec:	8b c6                	mov    eax,esi
+5959ee:	99                   	cdq
+5959ef:	2b c2                	sub    eax,edx
+5959f1:	d1 f8                	sar    eax,1
+5959f3:	03 c1                	add    eax,ecx
+5959f5:	99                   	cdq
+5959f6:	f7 fe                	idiv   esi
+5959f8:	8b 75 10             	mov    esi,DWORD PTR [ebp+0x10]
+5959fb:	83 fe 01             	cmp    esi,0x1
+5959fe:	8b c8                	mov    ecx,eax
