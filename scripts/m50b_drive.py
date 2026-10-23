@@ -115,10 +115,25 @@ def main():
     tag, t0 = a.tag, time.time()
     rec = {"tag": tag, "t": time.strftime("%F %T"), "events": [], "rounds": []}
 
-    # kill stale same-tag drivers but never ourselves (bracket pattern matches our own cmdline)
-    for pid_s in subprocess.run(["pgrep", "-f", f"[{tag[0]}]{tag[1:]}_drive"],
+    # Kill stale same-tag drivers, but only real python drivers. A bare pgrep on the script name
+    # also matches any parent whose argv merely mentions it -- an agent prompt quoting the filename
+    # got its own Hermes SIGINTed this way (M51a, exit 130, gdb left attached) -- so each candidate's
+    # /proc/PID/cmdline is checked for a python interpreter running THIS script before signalling.
+    def _is_driver(pid_s, tag):
+        try:
+            with open(f"/proc/{pid_s}/cmdline", "rb") as fh:
+                parts = fh.read().split(b"\0")
+        except OSError:
+            return False
+        exe = os.path.basename(parts[0].decode(errors="ignore"))
+        if not exe.startswith("python"):
+            return False
+        want = f"{tag}_drive.py"
+        return any(p.decode(errors="ignore").endswith(want) for p in parts[1:] if p)
+
+    for pid_s in subprocess.run(["pgrep", "-f", f"{tag}_drive\\.py"],
                                 capture_output=True, text=True).stdout.split():
-        if int(pid_s) != os.getpid():
+        if int(pid_s) != os.getpid() and _is_driver(pid_s, tag):
             try:
                 os.kill(int(pid_s), signal.SIGINT)
             except ProcessLookupError:

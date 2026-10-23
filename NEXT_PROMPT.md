@@ -1,4 +1,4 @@
-# NEXT_PROMPT — SMAC RE, session 50
+# NEXT_PROMPT — SMAC RE, session 51
 
 Read this file IN FULL first. It is the complete footing: proven facts (do not re-derive),
 the operational kit, and the queued milestone options. Do ONE milestone, checkpoint to
@@ -6,7 +6,7 @@ the operational kit, and the queued milestone options. Do ONE milestone, checkpo
 
 ## First actions
 1. `skill_view('smac-cvr-format')` — harness pitfalls + code atlas.
-2. `tail -60 ~/reverse/smac/SESSION_NOTES.md` — M50b (session 49) is the latest milestone.
+2. `tail -60 ~/reverse/smac/SESSION_NOTES.md` — M51a (session 50) is the latest milestone.
 3. Check live state (see kit below): game should be up (pid via `pgrep -x terran.exe`),
    year ≥ 2350, our turn open (cur=3), no gdb attached.
 
@@ -71,6 +71,17 @@ the operational kit, and the queued milestone options. Do ONE milestone, checkpo
 - OPEN: the owner byte read 3 in M50a, 2 in M50b (capture? record reuse?). Resolve before trusting
   either round's ownership claim.
 
+### M51a (session 50): the writer has a name — FUN_004ee410
+- `FUN_004ee410` (0x4ee410, 2076 bytes) owns our base's `+0x3c`: `0x4ee82f` sets it to **40** and
+  `0x4ee8c7` (`mov [edi+0x3c],esi`) drops it by `cc` each round — observed 500 → 40 → 37 → 34 → 31.
+- The converter gate is NOT our path: our base hits `0x4f2705` and the flag test `0x4f271e`
+  (`ecx=0x20`) and never reaches PASTFLAG (197 gates vs 194 past-flag, zero PASTFLAG with `ours=1`).
+  M50a was right about the early return; M50b was right that the field still changes. Different code.
+- Record identity: VISIT prints the base NAME every time (idx moved 71 → 70 between sessions). Never
+  key a conclusion on a bare index; the array slides.
+- Still unknown: what makes 40 at `0x4ee82f` (disassemble from the function entry 0x4ee410, not from
+  a mid-instruction address), and who writes `+0x40` (200 → 7 seen in M50b; no writer fired here).
+
 ## Static-reading kit
 - **Clean 32-bit disassembly, no attach**: `gdb -batch -nx -q -ex "set architecture i386" -ex
   "set disassembly-flavor intel" -ex "file programs/terran.exe" -ex "x/Ni 0xADDR"` (PE maps as
@@ -118,14 +129,16 @@ the operational kit, and the queued milestone options. Do ONE milestone, checkpo
   automates most of it; verify "Mission Year" in the confirm pane OCR.
 
 ## Milestone options (pick ONE)
-- **M51a — who rewrites our base's minerals: 0x4f5a70 upstream, or the 0x4f2705 gate? (THE PICK)**
-  M50b ground truth: our base is visited every round and `+0x3c`/`+0x40` are rewritten (500→1,
-  200→7) between the poke and the visit — yet M50a saw `0x4f26e0` early-returning at the gate for
-  owner 3. Settle both in one round: (a) bp `0x4f2d7d` (CONVST) **and** the gate at `0x4f2705`,
-  printing `eip` per hit, to see which store actually lands on our base; (b) print the owner byte
-  and `base+0x38` at the visit, and if the gate returns, step one frame up into `0x4f5a70` to find
-  the writer. Deliverable: a named writer address for `+0x40 := 7`, or proof the gate is a red
-  herring for income.
+- **M52a — what makes 40, and who owns +0x40? (THE PICK)**
+  Two concrete measurements in one round: (a) disassemble `FUN_004ee410` **from 0x4ee410** and name
+  the expression behind `esi` at `0x4ee82f` (the `mov esi,0x19` / `[base+6]` pop arithmetic is the
+  thread to pull); (b) put ONE hardware watchpoint on our base's `+0x40` and print eip + name on every
+  hit, to find the 200 → 7 writer that M50b saw but M51a missed. Budget the four DR registers: one
+  watchpoint on +0x40, keep `0x4ee8c7`/`0x4ee82f` as software breakpoints.
+- **Superseded:** M51a is done (session 50). Do not re-derive the gate early-return — it is measured.
+- **Retired premise, do not resurrect:** "the gate and the field rewrite must be the same code path,
+  so one of them is wrong." They are different code (`FUN_004ee410` vs `FUN_004f26e0`) and both are
+  correct; the contradiction was an artifact of assuming a single writer.
 - **Do not re-run M50b** (done, session 49) and do not re-derive M50a's truncation premise — it is
   falsified; the sweep is complete every round.
 - Later: M50c (base+0xcc production-rate source: 0x4eaa10 / 0x4e92c0 / slider UI), M50d (the 2320

@@ -375,3 +375,13 @@ Read code with `scripts/fn.py <addr> [--max N]`; metadata with `scripts/fn.py <a
 | **mission-year store** | `0x51f554` in `FUN_0051f320` — the turn-advance routine; used as the watchpoint **positive control** (2334→2335) | **H** |
 | **`base+0x7e` correction** | never written in two armed rounds (`0x96300c` watch, 0 hits); reads 0 always. Ghidra's `*(int *)(DAT_008f0d60 + 0x7e)` is typed **short \***, so the byte offset is `0x7e·2 = 0xfc`. **There is no transient income field** — the addend is `base+0xfc`, and M46's "no visible writer" was a decompiler artifact | **H** |
 | **spending ledger `faction+4`** | 0 writes for us and 0 for Morgan across a full idle round ⇒ its writers are **action-time** (research / gifts / terraform), not upkeep. Still **open** | **M** |
+
+## M51a block (session 50, 2026-10-22) — the `+0x3c` writer named: `FUN_004ee410`; the converter gate is a different code path
+
+| what | evidence | conf |
+| --- | --- | --- |
+| **`base+0x3c` set to 40** | `0x4ee82f` inside `FUN_004ee410` (0x4ee410, 2076 B); live `old=500 new=40 pop=7` on "Climactic Research" (evidence/m51f_watch.log:230) | **H** |
+| **`base+0x3c` stepped by `cc`** | `0x4ee8c7` = `mov DWORD PTR [edi+0x3c],esi`, Δ = −3 per round matching `base+0xcc`; 40→37→34→31 over three rounds (evidence/m51f_watch.log:238) | **H** |
+| **our base diverts at the flag test** | hits `0x4f2705` then `0x4f271e` with `ecx=0x20` and never reaches PASTFLAG; 197 gate hits vs 194 past-flag hits, zero PASTFLAG with `ours=1` (evidence/m51f_watch.log:229) | **H** |
+| **record identity is the NAME, not the index** | VISIT prints the name each pass; "Climactic Research" moved idx 71 → 70 between sessions (evidence/m51f_watch.log:209) | **H** |
+| **who writes `base+0x40`** | not observed in M51a (no `W40_*` hit); M50b's 200→7 remains unexplained | **open** |
