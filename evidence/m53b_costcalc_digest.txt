@@ -1,0 +1,26 @@
+rows=188 predicted==live +41: 180  mismatched: 8  skipped(bad indices)=5
+  SKIP id568 rea makes discoverie ch111 wp114 ar101 rx32
+  SKIP id636 Ng~ ch44 wp54 ar67 rx0
+  SKIP id641 LL@ ch84 wp84 ar232 rx0
+  SKIP id648 n[$ ch87 wp63 ar17 rx0
+  SKIP id651 txS ch21 wp103 ar191 rx0
+mismatches that ARE alpha rows with an explicit Cost: 3
+  alpha-explicit id8 Mind Worms             pred=11 live=5 alphaCost=5
+  alpha-explicit id9 Isle of the Deep       pred=11 live=8 alphaCost=8
+  alpha-explicit id10 Locusts of Chiron      pred=11 live=10 alphaCost=10
+mismatch rows (all):
+  delta(pred-live) histogram: {-1: 2, 1: 2, 3: 1, 6: 1, 2929: 1, 24879: 1}
+  mismatches with ability == 0: 3
+  id  8 Mind Worms               ch0 wp 12 ar 9 ab0x0 rx1 pred= 11 live=  5 alphaCost=5
+  id  9 Isle of the Deep         ch3 wp 12 ar 9 ab0x0 rx1 pred= 11 live=  8 alphaCost=8
+  id 10 Locusts of Chiron        ch7 wp 12 ar 9 ab0x20 rx1 pred= 11 live= 10 alphaCost=10
+  id128 Scout Rover              ch1 wp  0 ar 0 ab0x2 rx2 pred=  3 live=  4 alphaCost=-
+  id390 Scout Speeder            ch1 wp  0 ar 0 ab0x2 rx1 pred=  2 live=  3 alphaCost=-
+  id569 cus on a                 ch0 wp  0 ar 0 ab0x0 rx0 pred=  1 live=  0 alphaCost=-
+  id637 6`@                      ch24 wp 41 ar21 ab0x1a2f1b rx0 pred=24914 live= 35 alphaCost=-
+  id639 1=q                      ch31 wp 16 ar36 ab0x2d1521 rx0 pred=2933 live=  4 alphaCost=-
+alpha #UNITS rows with explicit Cost != 0:
+  Alien Artifact         alphaCost= 10 live+41= 10 pred= 10 +42=12 +43=44
+  Mind Worms             alphaCost=  5 live+41=  5 pred= 11 +42=1 +43=1
+  Isle of the Deep       alphaCost=  8 live+41=  8 pred= 11 +42=7 +43=6
+  Locusts of Chiron      alphaCost= 10 live+41= 10 pred= 11 +42=4 +43=9

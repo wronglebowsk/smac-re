@@ -47,6 +47,19 @@ costs in context (target: always-loaded ≤6%). `SESSION_NOTES.md` is rotated by
 uncited screenshots (git keeps history, `.prune_log.jsonl` records them). Policy:
 `~/reverse/smac/docs/EVIDENCE.md`.
 
+**Budget gotcha that passes locally and goes RED in CI (M53d).** `evidence.py budget` FAILs
+`NEXT_PROMPT.md` above **16,000** chars (warn 12,000; SKILL.md 70k, SESSION_NOTES 150k, NAMED 250k),
+and the CI gate runs `scripts/test_loop.py`, whose case 4 appends **7 chars** to `NEXT_PROMPT.md` — a
+prompt at 15,99x is GREEN locally, RED in CI. Keep `NEXT_PROMPT.md` at ≤ ~15,850 and run
+`python3 scripts/test_loop.py` on the anchored branch (never detached HEAD) before `submit`.
+`submit` also prunes `SESSION_NOTES.md` and adds a `<MILE>: checkpoint` commit; `merge <pr>` rebuilds
+the semantic index.
+
+**Drivers started with `--hold N` fire a late "gdb exited" background notification when the hold loop
+finally expires** — hours after `--mode stop` already detached gdb, one notification per armed tag.
+Harmless (a CONT on a running inferior is a no-op): after a session that armed several tags, expect a
+run of them and do not re-verify the game for each.
+
 **Semantic search** (`docs/SEARCH.md`): `python3 scripts/index.py search "<question>"`
 returns `file:line` / addresses for notes and named functions; `merge` rebuilds it
 (incremental ~1 s, cold ~35 s) and is fail-soft when the embedding endpoint on
@@ -385,6 +398,15 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   scratch)` = the modal item chooser (returns an item id or −9999); `FUN_00417ee0(slot, …)` = the
   dispatcher; `FUN_00417d20(item, insert_flag)` = the queue-slot writer. **Digit keys 1-9 pass a nonzero
   param_1 and only PREVIEW — nothing is written**; a real queue edit needs the QUEUE-row path.
+- **Type-record `+41` is the COST FACTOR (M53b), not a weight and not turns.** `0x98ad88 + type·52 + 0x29`,
+  one writer: `FUN_00595b10` (`ghidra_out/shard_015.c:9358`) = `FUN_00595820(chassis, weapon, armor,
+  ability, reactor)` summing the alpha tables' cost fields (chassis `0x92ae80`/0x90 +4, weapons
+  `0x92b950`/16 +3, armor `0x92fd10`/16 +0xa). Every price is `FUN_004e40a0(owner,1,-1) * +41` (10 = 100 %;
+  printed in `FUN_00577280`, debited at `0x4efee0`), so `+41 = 1` costs 10 minerals; `+42` = the alpha
+  Plan, `+43` = auto-calculated AI role (`weapon mode + 0x20` for noncombat packages). Proof pattern:
+  `scripts/m53b_costcalc.py` + `scripts/m53b_types.py` re-implement the formula and diff it against live
+  memory (180/188 exact, the rest explained). **Alpha comment headers name the columns** of sections whose
+  rows are bare data (#CHASSIS/#WEAPONS/#DEFENSES/#UNITS) — read them before guessing a table's fields.
 - **COMM OFFICER 3-row variant** ("Yes..."/"No, close the channel."/"Display faction leader
   profile."): the colour row-click (bar_y−25) can select profile → UNIVERSITY INTELLIGENCE FILES
   table with CLOSE/DATALINKS bars at y≈345-360, OUTSIDE the 430-520 OK-bar band; the
