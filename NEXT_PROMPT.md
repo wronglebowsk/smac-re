@@ -178,7 +178,7 @@ the operational kit, and the queued milestone options. Do ONE milestone, checkpo
   (0 hits); M50c (base+0xcc = −3 source), M50d (the 2320 +4 credit), M50e (player idx → faction name),
   M51b (energy-pool store 0x4f2dc4-0x4f2e97), base+0xc0 (== pop).
 - **Retired premises, do not resurrect:** "edi = the sweep-entry index"; "0x4e40a0 is just the
-  `(1<<p)&mask` event test"; "no +0x40 writer fired in m51f"; "PROGDIV accumulates build progress" (it
+  `(1<<p)&mask` event test"; "PROGDIV accumulates build progress" (it
   formats an ETA string); "base+0x50 is a single dword" (10-slot array); **"+0x4c is the last used
   index"** (pending-entry count; entries = +0x4c+1); **"the pipeline has no +0x50 writer"** (it pops
   through a CALL to 0x4ef5d0 at 0x4f037b); **"M53a's whole-function dump is complete"** (ends 0x4f1d5d).
