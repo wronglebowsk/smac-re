@@ -1,0 +1,17 @@
+# addr=0x00401940,name=FUN_00401940,size_bytes=41,n_insns=21,n_callers=3,n_callees=0,n_strings=0,ok=1,chars=214,shard=000
+// ==== FUN_00401940 @ 0x401940 size=41
+
+undefined4 FUN_00401940(void)
+
+{
+  undefined4 uVar1;
+  int in_ECX;
+
+  if (*(int *)(in_ECX + 8) == 0) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = *(undefined4 *)(*(int *)(in_ECX + 0xc) + 4);
+  }
+  return uVar1;
+}

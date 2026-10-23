@@ -51,76 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-55-55.md` (1 sessions). Read it only when a question reaches back before session ## Session 56.
-
-## Session 56 (2026-10-24) — M53b: THE TYPE-RECORD `+41` BYTE IS A COST FACTOR — one writer (`shard_015.c:9358` = `FUN_00595820(chassis, weapon, armor, ability, reactor)`), the price the game prints and debits is `FUN_004e40a0(owner,1,−1) × +41` with that multiplier = 10 = 100 % ⇒ **1 unit of `+41` = 10 minerals**; `+43` is the auto-calculated AI role byte (Scout Patrol `+41 = 1` vs `+43 = 10`)
-
-- **Verdict: cost, not weight, not turns.** `+41` (`0x98ad88 + type·52 + 0x29` = `0x98adb1`) has exactly
-  ONE writer in the whole corpus — `shard_015.c:9358`, `(&DAT_0098adb1)[type·0x34] = uVar5` inside
-  `FUN_00595b10 @ 0x595b10` (header `shard_015.c:9273`) — where `uVar5 = FUN_00595820(chassis, weapon,
-  armor, ability, reactor)` (`shard_015.c:9124`-`:9258`, return at `:9257`). Grep covered BOTH Ghidra
-  store renderings (`(&DAT_…)[…] =` and `*(… + 0x98adb1) =`); every other `98adb1` hit is a read. Turns
-  come from elsewhere: `FUN_005ac8c0` (`shard_015.c:23672`) returns a per-triad rate global
-  (`DAT_0092a2d0/d4/d8`) and never touches `+41`.
-- **The calculator's inputs are the alpha rules tables, live-verified.** Chassis `0x92ae80` stride 0x90
-  = `+0` speed, `+1` triad, `+2` range, `+3` cargo, `+4` cost ("normally equal to speed" — Infantry
-  1/1, Speeder 2/2, Foil 4/4, Cruiser 6/6, Missile 12/12), `+5` missile flag (only the Missile chassis
-  has it), `+6` preq tech; weapon `0x92b950` stride 16 = `+0` attack(s8), `+2` mode, `+3` cost (Gun
-  1/0/1, Colony-Pod package 0/8/10, Formers 0/9/6, Transport 0/7/4, Artifact 0/12/36); armor `0x92fd10`
-  stride 16 = `+8` rating, `+9` mode, `+0xa` cost (Scout 1/0/1, Psi 255/2/6). Alpha field names:
-  `programs/alpha.txt:344-345`, `:383`, `:419`, and `#UNITS` = `; Name, Chassis, Weapon, Armor, Plan,
-  Cost, Carry, Preq, Icon, Abil` (`:532`) with `; Cost = Cost in minerals (0 = Autocalculate)` (`:554`).
-  `FUN_00595820`'s missile short-circuit (`:9224`) is why a missile chassis costs only its warhead.
-- **Re-implementation check (the proof).** `scripts/m53b_costcalc.py` re-implements the formula
-  (variant 3: the land-triad `0x400`-flag loop does NOT feed the surcharge counter) and reproduces
-  **180 of 188** populated rows' live `+41` exactly (`evidence/m53b_costcalc_digest.txt`). The only
-  mismatches with `ability == 0` are precisely the 3 shipped `#UNITS` rows that carry an explicit
-  non-zero Cost — Mind Worms 5, Isle of the Deep 8, Locusts of Chiron 10 (formula says 11) — so
-  **the alpha Cost overrides the auto-calculation**; the 4th explicit row (Alien Artifact 10) agrees
-  with the formula anyway. Remaining: 2 rows off by 1 on ability bit 1 (Scout Rover, Scout Speeder)
-  and 3 junk records. Hand-checks that match live exactly: Scout Patrol 1, Colony Pod 3, Formers 2,
-  Transport Foil 3, Sea Formers 4, Probe Team 3, Unity Rover 2.
-- **Everything the game charges or prints is `multiplier × +41`.** Affordability
-  `if (base+0x40 < iVar3·iVar4)` at `shard_012.c:20722`; the SPENDA debit `base+0x40 −= iVar3·iVar4`
-  at `shard_012.c:20866`; the base pane computes `cost = mult × +41` and compares it to storage for
-  the progress bar (`shard_001.c:4705-4708`); the UI string is literally
-  `__itoa(iVar7 × (byte)(&DAT_0098adb1)[type])` (`shard_014.c:19723-19725`, `FUN_00577280`).
-  `iVar3 = FUN_004e40a0(owner, 1, −1)` (`shard_012.c:13798`) = event-mask owner ⇒ 10, rescaled by
-  difficulty `DAT_0092a290/0x92a294` and `DAT_0092ada8`, then `switch(faction+0x1c government)`.
-  **Live: 0x92a290 = 10, 0x92a294 = 10, 0x92ada8 = 2, mask `& 0xff` = 0x08 (player 3 only), government
-  field 0 ⇒ the multiplier is exactly 10 = 100 %**, so the alpha cost unit is 10 minerals. M52b's
-  measured debit (10 minerals for Scout Patrol with `+41 = 1`, `evidence/m52b_watch.log:391-392`)
-  matches, and so does independent SMAC strategy text ("a Scout Patrol costs you 10 minerals").
-  Facility upkeep proves the loader does NOT pre-scale alpha values into tables (`0x984d48 + item·0x30`
-  int0 == alpha `Maint` verbatim for items 1-11), so the ×10 is the percent-of-10 convention.
-- **What `+43` is (the ≠ row the milestone asked for).** `+43` (`0x98adb3`) is the auto-calculated AI
-  role byte from the same builder's ladder (`shard_015.c:9366`-`:9441`): noncombat packages get
-  `weapon mode + 0x20` (`:9431`) → 39/40/41/42/43/44 = the live values for Transport Foil / Colony Pod
-  / Formers / Supply Crawler / Probe Team / Alien Artifact; combat chassis get 1…10 — the ladder
-  reproduces Mind Worms 1, Isle of the Deep 6 (sea branch), Locusts and Unity Scout Chopper 9 (air ∧
-  `ability & 0x20`), Scout Patrol and Unity Rover 10 (the `attack == 1 && armor == 1` rule at `:9419`).
-  `+42` is the Plan/class byte: it equals the alpha `#UNITS` Plan column for **14/14** shipped rows,
-  which the ladder alone explains for only 10 of them (Scout Patrol 0→3, Mind Worms 0→1, Isle 6→7,
-  Sea Formers 6→9 need the explicit Plan), so the loader overrides `+42` — INFERRED, no corpus store
-  visible in either Ghidra rendering. **Named ≠ rows:** Scout Patrol `+41 = 1` (= the 10 minerals
-  actually debited) vs `+43 = 10`; Colony Pod 3 vs 40; Transport Foil 3 vs 39. `+41 == +43` in only
-  21 of 193 populated rows (`evidence/m53b_types.tsv`).
-- **M52b's "PER-TYPE PRODUCTION WEIGHT" label is corrected** in `NAMED.md`: `0x5ac950` is the type
-  COST accessor (returns `+41` verbatim for `type < 0x40`, clamps [1,999] only for class 8 with a base
-  index, `shard_015.c:23707`); the ×10 belongs to `0x4e40a0`. The AI planner reads the same byte as
-  `(cost + 2) << 8` (`shard_012.c:25696`) — cost reused AS a value, not a second weight (INFERRED).
-- **Method notes.** This milestone needed no live driving: `/proc/<pid>/mem` preads (TracerPid 0,
-  ptrace_scope 0, no gdb) + the Ghidra corpus + `programs/alpha.txt` were enough. Two grep shapes
-  carried it: the store-shape grep (which found the single `+41` writer) and reading the alpha
-  COMMENT headers, which name the columns of tables whose rows are bare data — `#UNITS` is unlabelled
-  but `#FACILITIES`' sibling comment block and the chassis/weapon/armor headers give every field name.
-- **Open threads.** Where the loader writes the explicit alpha Cost into `+41` and the Plan into `+42`
-  (neither renders as a `DAT_` store); `+41` off-by-1 for ability bit 1; `0x5ac950`'s `type ≥ 0x40`
-  bump (`FUN_00595ad0(type) × rate / 100`, zeroed when the base already owns it); secret-project costs
-  come from a different table (`(&DAT_00984d44)[idx·0xc]`, `FUN_004f26e0`) under the same multiplier
-  convention; M53e (mode-5 insert-shift), the −29 head value, `FUN_0059ce10`'s `+0x4c = pop·10/2`.
-- **Next:** `NEXT_PROMPT.md` rewritten for session 57; **THE PICK = M53e** (finish the enqueue UI:
-  make mode 5 fire, label-verify the six chooser bars, reconcile 8 visible rows vs cap 9).
+Older sessions: `docs/sessions/sessions-56-56.md` (1 sessions). Read it only when a question reaches back before session ## Session 57.
 
 ## Session 57 (2026-10-23) — M53e: **MODE 5 IS THE INSERT BAR AND IT FIRES LIVE** (insert-shift 0x417dd8 caught, `+0x4c 0→1`); the dispatch field "pane+0xb194" is really the **chooser sub-object's +0xa778** — the image's only mode stores are `[sub+0xa778]` inside `FUN_00496ad0` (0x496993→1, 9a5→2, 9b7→3, 9da→7, 9e9→4, **9f3/0x496a09→5**, 9a18→6, 9a27+9a36→0, 9a52→7)
 
@@ -210,3 +141,58 @@ Older sessions: `docs/sessions/sessions-55-55.md` (1 sessions). Read it only whe
 - **Next:** `NEXT_PROMPT.md` rewritten for session 60; **THE PICK = M53h** (chooser enumeration +
   button-table: what fills cells 0-19, the −26/secret-project encoding, and the Script.txt/button-table
   record that places REPLACE's rect left of its bar).
+
+## Session 60 (2026-10-23) — M53h: **THE CHOOSER ENUMERATION HAS A NAMED PRODUCER — `FUN_00596000` + a lockstep Plan-major sort — AND THE SIX BAR BUTTONS ARE AN EMBEDDED CONTROL TABLE AT `chooser+0xb74 + i·0xb4c`** (params −2/7/5/4/−1/0, rects at control+0x13c/0x140/0x144); a queued secret project = **−(index in the 0x984d38 table)**, so guard 12 → −26 = project 26 *Pressure Dome* — write-up `evidence/m53h_findings.md`
+
+- **Producer + order (VERIFIED).** `FUN_00596000(faction)` (shard_015.c:9459-9518, called by the paint at
+  0x495583 with `sub+0xa76c` = 3) rebuilds the 128-entry candidate array `DAT_009267e4` (count
+  `DAT_009267e0`): `id = (slot & 0x3f) + (slot < 0x40 ? 0 : faction<<6)` ⇒ slots 0-63 shared/alpha ids,
+  64-127 **the querying faction's own designed units** (faction 3 ⇒ 192-255). It then sorts the ids in
+  lockstep with a local key array via `FUN_005a29a0(0x80, &DAT_009267e4, local_208)` (shard_015.c:9514) =
+  a bubble sort that swaps only on strict `<` ⇒ stable. Key (shard_015.c:9493-9497):
+  `((ch_tbl[+1] + Plan·0x10)·0x40000) + (0x20 − FUN_00570710(id,f))·0x200 + (8 − ch_tbl[+0])·0x40 +
+  (8 − FUN_00570770(armor,f))`, `ch_tbl = 0x92ae80` stride 0x90; unavailable ⇒ 999999999 (alpha) /
+  0x34fb5e38 (designed) ⇒ always last ⇒ **Plan-major**. Live array's first 14 ids 195,196,192,194,193,2,
+  197,198,3,0,200,1,199,6 have Plan 0,0,1,2,3,3,6,7,7,8,8,9,9,11 (monotone) and the tie-breaks come out
+  of the formula (`evidence/m53h_enum_ids.txt`).
+- **Paint = filter + append, and the result is a LIST.** `FUN_004954e0` clears counter `+0xa818`
+  (0x495534) and guard `+0xa774` (0x495541), runs the 128 slots through `FUN_005a73f0(id, faction,
+  baseidx)` (0x4956f4), then loops **secret projects 1..0x47** filtered by `FUN_005a6e70`
+  (pseudo:146-210). Every accepted item is appended to the itemlist widget at **chooser-sub +0xa780** =
+  **0x6b461c** (`add ecx,0xa780` 0x495aab → `call 0x42ee20(list, item, flags, 0)`): units get
+  `flags |= 0x20`, projects `|= 0x10`. Node 16 B: +4 item, +8 detail ptr, +0x10 next, **circular**;
+  detail+8 = flags. Guard := counter when the item equals the queue value being edited
+  (`id == local_34` / `-local_34 == local_28`).
+- **Return encoding = the −26 answer (VERIFIED code + live).** `FUN_00496ad0` tail (shard_009.c:
+  15013-15041): guard −1 ⇒ −9999; else `FUN_004026b0(guard)` selects the node and
+  `(detail+8 & 0x20) == 0 ⇒ return −item`, else `+item`. So a queued secret project is
+  **−(index in the 0x984d38 project table, stride 0xc dwords)** — M53a's `|q| = 39 + idx` is superseded.
+  Live list dump (`evidence/m53h_list_dump.txt`, count 15 = capacity 5×3): idx 0-8 = 195,196,192,194,193,
+  2,0,1,6 (bit 0x20 set), idx 9-14 = projects 2,11,13,26,27,38 ascending (bit 0x10, 0x20 clear); the five
+  chassis-3 array units (197,198,3,200,199) are absent — `FUN_005a73f0`'s naval gate
+  (`ch_tbl[+1] == 1 && FUN_004e4620(base.x, base.y) == 0`) dropped them. **idx 12 = project 26 = Pressure
+  Dome** ⇒ −26 = exactly M53g's `POST_PICK edi` at guard 12. The table is the real project list: 71 =
+  "The Ascent to Transcendence" (cost 200), 39 Human Genome, 29 Aerospace Complex (`evidence/
+  m53h_project_names{,2}.txt`) — so M53c's −29 head value is probably Aerospace Complex (INFERRED).
+- **The button table (VERIFIED live + code).** Six embedded button controls (class vptr 0x67194c) at
+  `0x6a9e9c + 0xb74 + i·0xb4c` (i 6,7 idle): param at **+0xa78**, rect at **+0x13c/0x140/0x144**
+  (mirrored +0x15c/0x160/0x164). Live: i0 −2 CANCEL 569→669 · i1 7 REPLACE 260→360 · i2 5 INSERT 363→463
+  · i3 4 DELETE 466→566 · i4 −1 OK 157→257 · i5 0 HELP 54→154, all y 332 h 0x14
+  (`evidence/m53h_button_live.txt`). Built each open by `FUN_00496ad0` (shard_009.c:14909-14993):
+  btnW `sub+0xb70` = 100, count `sub+0xb6c` = 6 when `sub+0xb68 != 0` else 4/5 (`sub+0xb68` = the queue
+  slot opened on; 0 = the head ⇒ no DELETE/INSERT/REPLACE), y = rows·cellh + 8 = 332, first x =
+  `((W − 0x20) − 103·count)/2 + (count−1)·103` with W = `sub+0xa824` = 758 ⇒ 569, pitch 103 (⇒ 3 px
+  gaps), creation right→left −2,4,5,7,−1,0 via `FUN_005f9e85(caption, param, x, y, w, h, owner, 0)`
+  (the factory that stores the param at +0xa78, shard_019.c:2065); release dispatch `FUN_005fab08`
+  (shard_019.c:2500-2540) forwards that param to owner-vtable+0xa8. Labels are NOT in Script.txt:
+  `*(DAT_00997b20+0x198/0x728/0x72c/0x194/0x19c)` + `FUN_00409690(0x3fa)` for REPLACE, all `CharUpperA`.
+- **Click map reconciled (INFERRED):** one origin offset **+36 px** fits every click M53g recorded
+  (REPLACE claims 365 but not 397 ⇒ ≤37; DELETE claims 602 ⇒ ≥36): HELP 90-190 · OK 193-293 · REPLACE
+  296-396 · INSERT 399-499 · DELETE 502-602 · CANCEL 605-705. The 3 px gaps between rects are where the
+  grid hit-test steals the click = M53g's "phantom cell 17"; M53e's "dead zone 381-421" was extrapolated
+  from a single 397 click.
+- Safety: static + one read-only `/proc/pid/mem` pass (pid 2124624, year 2371, cur 3, nb 75 unchanged);
+  no gdb, no clicks, no signals. Pitfall: the itemlist header is +8 head / +0xc cursor / **+0x10 count**
+  — reading count as `+0xc` gives a cursor value and a 79-million-iteration walk (2 timeouts).
+- **Next:** `NEXT_PROMPT.md` rewritten for session 61; **THE PICK = M53i** (the secret-project table
+  0x984d38/0x984d44 + `FUN_005a6e70`'s gate and return + the −29 head value).

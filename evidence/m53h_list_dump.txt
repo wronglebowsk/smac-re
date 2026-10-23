@@ -1,0 +1,23 @@
+list hdr @6b461c vptr=67333c head=4c06730 cursor=4c02910 count=15
+idx  0 item=195  flags=000000a1 bit0x20=1 
+idx  1 item=196  flags=000000a1 bit0x20=1 
+idx  2 item=192  flags=000000a1 bit0x20=1 
+idx  3 item=194  flags=000000a1 bit0x20=1 
+idx  4 item=193  flags=00000020 bit0x20=1 
+idx  5 item=2    flags=00000020 bit0x20=1 
+idx  6 item=0    flags=00000020 bit0x20=1 
+idx  7 item=1    flags=00000022 bit0x20=1 
+idx  8 item=6    flags=00000021 bit0x20=1 
+idx  9 item=2    flags=00000012 bit0x20=0 ÝÝÝÝÝÝÝÝÝÝÝÝQ
+idx 10 item=11   flags=00000012 bit0x20=0 ÝÝÝÝÝÝÝÝÝÝÝÝQ
+idx 11 item=13   flags=00000012 bit0x20=0 ÝÝÝÝÝÝÝÝÝÝÝÝQ
+idx 12 item=26   flags=00000012 bit0x20=0 ÝÝÝÝÝÝÝÝÝÝÝÝQ
+idx 13 item=27   flags=00000013 bit0x20=0 ÝÝÝÝÝÝÝÝÝÝÝÝQ
+idx 14 item=38   flags=00000012 bit0x20=0 ÝÝÝÝÝÝÝÝÝÝÝÝQ
+== project table rows for the non-0x20 items (0x984d38 stride 0xc dwords) ==
+proj  2 f0=02100034 name=Growth/Effic/Morale          cost=5
+proj 11 f0=02100144 name=Psych and Fewer Drones       cost=6
+proj 13 f0=02100187 name=Econ/Psych/Forest            cost=12
+proj 26 f0=0210034d name=Submersion/Resources         cost=8
+proj 27 f0=02100370 name=+2 Morale:Land               cost=4
+proj 38 f0=021004e4 name=Minerals to Energy           cost=0

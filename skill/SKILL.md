@@ -488,6 +488,29 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   a completely dead UI (every click inert, main thread `R` with climbing `utime`) — recoverable only by
   relaunch + reload. If a breakpoint fires *inside* an injected call, gdb abandons the expression,
   detaches, and the inferior returns to gdb's dummy frame.
+- **Production chooser internals (M53h).** Candidate array `DAT_009267e4` (128 dwords, count `0x9267e0`) is
+  built by `FUN_00596000(faction)` — ids = shared 0-63 then `faction<<6` designed units — and ordered by
+  `FUN_005a29a0` (lockstep bubble sort, swaps only on strict `<` ⇒ stable) on
+  `((ch_tbl[+1] + Plan*0x10)*0x40000) + (0x20 - weapon_power)*0x200 + (8 - chassis_class)*0x40 + (8 - 2*armor)`,
+  `ch_tbl = 0x92ae80`/0x90 (`+0` class, `+1` naval flag), Plan = record+42, unavailable ⇒ key 999999999 ⇒
+  last: **the order is Plan-major, never icon order**. Per-base filter `FUN_005a73f0(id, faction, base)`
+  (record+0x30 bit 0, faction mask +0x2c, naval gate `FUN_004e4620(x,y)==0` when the chassis table says
+  naval, prereq word +50 for alpha ids), then secret projects 1..0x47 via `FUN_005a6e70`.
+- **Chooser return sign = record kind.** `FUN_00496ad0` returns `+item` when the selected node's detail
+  flags (detail+8) have bit 0x20, else **`-item` where item is the index into the secret-project table
+  `0x984d38`** (stride 48: +0 name, +4 effect ptr, +12 cost factor) — a queued project is a negative
+  index, not an offset into a record.
+- **Chooser bars are embedded controls, not Script.txt buttons.** Six children at
+  `chooser_sub + 0xb74 + i*0xb4c` (sub = pane+0xb18c), param at control+0xa78, rect at
+  +0x13c/+0x140/+0x144; (re)built per open by `FUN_00496ad0` right-to-left with params -2 CANCEL,
+  7 REPLACE, 5 INSERT, 4 DELETE, -1 OK, 0; `x = ((W-0x20) - 103*count)/2 + (count-1)*103` (W =
+  `sub+0xa824`, pitch 103, width `sub+0xb70` = 100, count = `sub+0xb6c`, y = `rows*cellh+8`). Release
+  `FUN_005fab08` forwards control+0xa78 to **owner vtable+0xa8** — that param is the mode selector, and
+  the factory `FUN_005f9e85(caption, param, x, y, w, h, owner, 0)` is where any dialog's bar params get
+  set (caption `*(DAT_00997b20+off)`, `CharUpperA` — so bar text never appears in Script.txt).
+- **Live list walks take count from header+0x10** (+8 head, +0xc cursor): using the cursor as the loop
+  bound iterates ~79M times and looks like a hang. The chooser's item list is `sub+0xa780` = 0x6b461c and
+  **survives the close**, so a cancelled chooser can still be read to see what was enumerated.
 
 ## Still open (leads)
 

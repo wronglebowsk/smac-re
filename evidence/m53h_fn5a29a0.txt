@@ -1,0 +1,36 @@
+# addr=0x005a29a0,name=FUN_005a29a0,size_bytes=101,n_insns=47,n_callers=2,n_callees=1,n_strings=0,ok=1,chars=654,shard=015
+// ==== FUN_005a29a0 @ 0x5a29a0 size=101
+
+void FUN_005a29a0(int param_1,int param_2,int *param_3)
+
+{
+  int *piVar1;
+  bool bVar2;
+  int *piVar3;
+  int iVar4;
+  int local_8;
+
+  do {
+    bVar2 = false;
+    local_8 = 0;
+    iVar4 = param_2;
+    piVar1 = param_3;
+    do {
+      piVar3 = piVar1 + 1;
+      if (param_1 + -1 <= local_8) {
+        if (!bVar2) {
+          return;
+        }
+        break;
+      }
+      if (*piVar3 < *piVar1) {
+        FUN_006288a6(piVar1,piVar3);
+        FUN_006288a6(iVar4,(param_2 - (int)param_3) + (int)piVar3);
+        bVar2 = true;
+      }
+      local_8 = local_8 + 1;
+      iVar4 = iVar4 + 4;
+      piVar1 = piVar3;
+    } while (!bVar2);
+  } while( true );
+}
