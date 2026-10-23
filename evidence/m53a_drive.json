@@ -1,0 +1,180 @@
+{
+ "tag": "m53a",
+ "t": "2026-10-23 01:14:44",
+ "events": [
+  "poked +0x3c -> 500",
+  "poked +0xcc -> 1",
+  "poked +0xd0 -> 200",
+  "poked +0x40 -> 200",
+  "gdb launched",
+  "clicked TURN_BTN",
+  "colour: row(bar_y-25)+bar at (398,223)",
+  "year 2363->2364 cur=0 min40=200 q50=2",
+  "clicked TURN_BTN",
+  "colour: row(bar_y-25)+bar at (398,223)",
+  "year 2364->2365 cur=3 min40=0 q50=2",
+  "colour: row(bar_y-25)+bar at (480,309)",
+  "clicked TURN_BTN",
+  "colour: row(bar_y-25)+bar at (398,223)",
+  "year 2365->2366 cur=0 min40=0 q50=2"
+ ],
+ "rounds": [
+  {
+   "dt": 19.6,
+   "year": 2364,
+   "turn": 264,
+   "cur": 0,
+   "nb": 75,
+   "nrg3": 28,
+   "base": {
+    "idx": 70,
+    "addr": 9841968,
+    "owner": 3,
+    "name": "Climactic Research",
+    "pop": 7,
+    "min40": 200,
+    "q50": 2,
+    "d0": 200,
+    "c0": 7,
+    "cc": 1,
+    "f3c": 500,
+    "fc": 3,
+    "f38": 14663233,
+    "anchor": "name",
+    "n_name_matches": 1,
+    "n_owner3_matches": 1,
+    "owner3_matches": [
+     [
+      70,
+      "Climactic Research"
+     ]
+    ]
+   }
+  },
+  {
+   "dt": 38.8,
+   "year": 2365,
+   "turn": 265,
+   "cur": 3,
+   "nb": 75,
+   "nrg3": 29,
+   "base": {
+    "idx": 70,
+    "addr": 9841968,
+    "owner": 3,
+    "name": "Climactic Research",
+    "pop": 7,
+    "min40": 0,
+    "q50": 2,
+    "d0": -1,
+    "c0": 7,
+    "cc": -3,
+    "f3c": 34,
+    "fc": 3,
+    "f38": 14663233,
+    "anchor": "name",
+    "n_name_matches": 1,
+    "n_owner3_matches": 1,
+    "owner3_matches": [
+     [
+      70,
+      "Climactic Research"
+     ]
+    ]
+   }
+  },
+  {
+   "dt": 60.7,
+   "year": 2366,
+   "turn": 266,
+   "cur": 0,
+   "nb": 75,
+   "nrg3": 30,
+   "base": {
+    "idx": 70,
+    "addr": 9841968,
+    "owner": 3,
+    "name": "Climactic Research",
+    "pop": 7,
+    "min40": 0,
+    "q50": 2,
+    "d0": 0,
+    "c0": 7,
+    "cc": -3,
+    "f3c": 34,
+    "fc": 3,
+    "f38": 14663233,
+    "anchor": "name",
+    "n_name_matches": 1,
+    "n_owner3_matches": 1,
+    "owner3_matches": [
+     [
+      70,
+      "Climactic Research"
+     ]
+    ]
+   }
+  }
+ ],
+ "pid": 2124624,
+ "locate": {
+  "idx": 70,
+  "addr": 9841968,
+  "owner": 3,
+  "name": "Climactic Research",
+  "pop": 7,
+  "min40": 0,
+  "q50": 2,
+  "d0": 0,
+  "c0": 7,
+  "cc": -3,
+  "f3c": 31,
+  "fc": 3,
+  "f38": 14663233,
+  "anchor": "name",
+  "n_name_matches": 1,
+  "n_owner3_matches": 1,
+  "owner3_matches": [
+   [
+    70,
+    "Climactic Research"
+   ]
+  ]
+ },
+ "gdb_pid": 2691114,
+ "reason": "rounds",
+ "final": {
+  "year": 2366,
+  "turn": 266,
+  "cur": 3,
+  "nb": 75,
+  "nrg3": 31,
+  "base": {
+   "idx": 70,
+   "addr": 9841968,
+   "owner": 3,
+   "name": "Climactic Research",
+   "pop": 7,
+   "min40": 0,
+   "q50": 2,
+   "d0": 0,
+   "c0": 7,
+   "cc": -3,
+   "f3c": 31,
+   "fc": 3,
+   "f38": 14663233,
+   "anchor": "name",
+   "n_name_matches": 1,
+   "n_owner3_matches": 1,
+   "owner3_matches": [
+    [
+     70,
+     "Climactic Research"
+    ]
+   ]
+  }
+ },
+ "ocr_passes": 0,
+ "svc_clicks": 4,
+ "detached": true
+}

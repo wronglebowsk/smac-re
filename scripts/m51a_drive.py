@@ -62,6 +62,8 @@ set $nwp = 0
 set $n40 = 0
 set $n3c = 0
 set $nedi = 0
+set $nq = 0
+set $nc = 0
 
 # ---- hardware watchpoints on OUR located record FIRST (the exhaustive net; literal addrs, armed
 # after the pokes per M33). gdb prints Old/New itself; $eip sits just PAST the store. name_at is
@@ -348,6 +350,25 @@ commands
   silent
   set $n3c = $n3c + 1
   printf "W3C_PODCLAMP %d eip=%#x ebp=%#x target=%#x name=%s old=%d cb=%#x\n", $n3c, $eip, $ebp, $eax, (char *)($eax + 19), *(int *)($eax + 0x3c), *(int *)0x8f0d60
+  continue
+end
+
+# ---- M53a: the base+0x50 queue record, OURS only. PIPE entry 0x4ef6d0 and COMPLET 0x4efe41.
+# Identity = NAME test through the current-base global (the array SLIDES; a literal addr is not
+# stable across rounds). "Climactic Research" = dword@+0x13 0x6d696c43 + dword@+0x17 0x69746361.
+# Prints the six queue-block fields the milestone asks for; QCOMPLET adds the ebp scratch locals.
+break *0x4ef6d0 if *(int *)(*(int *)0x8f0d60 + 0x13) == 0x6d696c43 && *(int *)(*(int *)0x8f0d60 + 0x17) == 0x69746361
+commands
+  silent
+  set $nq = $nq + 1
+  printf "QPIPE %d name=%s f50=%d f44=%d f4c=%d f68=%d fc0=%d fcc=%d st=%d f3c=%d d0=%d\n", $nq, (char *)(*(int *)0x8f0d60 + 19), *(int *)(*(int *)0x8f0d60 + 0x50), *(int *)(*(int *)0x8f0d60 + 0x44), *(int *)(*(int *)0x8f0d60 + 0x4c), *(int *)(*(int *)0x8f0d60 + 0x68), *(int *)(*(int *)0x8f0d60 + 0xc0), *(int *)(*(int *)0x8f0d60 + 0xcc), *(int *)(*(int *)0x8f0d60 + 0x40), *(int *)(*(int *)0x8f0d60 + 0x3c), *(int *)(*(int *)0x8f0d60 + 0xd0)
+  continue
+end
+break *0x4efe41 if *(int *)(*(int *)0x8f0d60 + 0x13) == 0x6d696c43 && *(int *)(*(int *)0x8f0d60 + 0x17) == 0x69746361
+commands
+  silent
+  set $nc = $nc + 1
+  printf "QCOMPLET %d name=%s f50=%d f44=%d f4c=%d f68=%d fc0=%d fcc=%d st=%d ebx=%d m1c=%d m2c=%d m18=%d m30=%d\n", $nc, (char *)(*(int *)0x8f0d60 + 19), *(int *)(*(int *)0x8f0d60 + 0x50), *(int *)(*(int *)0x8f0d60 + 0x44), *(int *)(*(int *)0x8f0d60 + 0x4c), *(int *)(*(int *)0x8f0d60 + 0x68), *(int *)(*(int *)0x8f0d60 + 0xc0), *(int *)(*(int *)0x8f0d60 + 0xcc), *(int *)(*(int *)0x8f0d60 + 0x40), $ebx, *(int *)($ebp - 0x1c), *(int *)($ebp - 0x2c), *(int *)($ebp - 0x18), *(int *)($ebp - 0x30)
   continue
 end
 
