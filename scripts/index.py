@@ -33,6 +33,7 @@ INDEX = os.path.join(ROOT, "index")
 CHUNKS = os.path.join(INDEX, "chunks.jsonl")
 VECTORS = os.path.join(INDEX, "vectors.f32")
 META = os.path.join(INDEX, "meta.json")
+SUMMARIES = os.path.join(INDEX, "summaries.jsonl")
 DEFAULT_ENDPOINT = os.environ.get("EMBEDDING_URL", "http://192.168.1.213:8000/v1/embeddings")
 MODEL = "embeddinggemma-2"
 DIM = 768
@@ -59,17 +60,16 @@ def named_rows():
     return rows
 
 
-def fn_chunks(include_all=False):
-    """One chunk per decompiled function, built from the shard markers.
+def iter_functions(include_all=False):
+    """Yield informative functions (or all of them) with their decompiled body.
 
     A function with no name, no strings, no data references and fewer than six callees is
     boilerplate: its text is `FUN_004b8e30 ... calls FUN_004b8e30`, which embeds to noise and
-    dilutes every query. Those are skipped unless --all is given.
+    dilutes every query. Those are skipped unless include_all is set.
     """
     named = named_rows()
-    out = []
-    for path in sorted(os.path.join(ROOT, "ghidra_out", f)
-                       for f in os.listdir(os.path.join(ROOT, "ghidra_out"))
+    shard_dir = os.path.join(ROOT, "ghidra_out")
+    for path in sorted(os.path.join(shard_dir, f) for f in os.listdir(shard_dir)
                        if f.startswith("shard_") and f.endswith(".c")):
         text = open(path, encoding="utf-8", errors="replace").read()
         parts = re.split(r"(?m)^// ==== (\S+) @ (0x[0-9a-f]+) size=(\d+)", text)
@@ -80,20 +80,55 @@ def fn_chunks(include_all=False):
             callees = sorted(set(re.findall(r"\b(FUN_[0-9a-f]{6,})\s*\(", body)))[:10]
             if not include_all and not (addr.lower() in named or strings or datas or len(callees) >= 6):
                 continue
-            sig = body.strip().splitlines()[0][:120] if body.strip() else ""
-            bits = [f"Function {name} at {addr}, {size} bytes.", sig]
-            if addr.lower() in named:
-                nm, ev = named[addr.lower()]
-                bits.append(f"Known as {nm}. {ev[:350]}")
-            if strings:
-                bits.append("References strings: " + ", ".join(strings) + ".")
-            if datas:
-                bits.append("Touches data: " + ", ".join(datas) + ".")
-            if callees:
-                bits.append("Calls: " + ", ".join(callees) + ".")
-            out.append({"id": f"fn:{addr}", "kind": "function", "addr": addr,
-                        "path": os.path.relpath(path, ROOT),
-                        "text": " ".join(b for b in bits if b)[:MAX_CHARS]})
+            yield {"name": name, "addr": addr, "size": int(size), "body": body,
+                   "strings": strings, "datas": datas, "callees": callees,
+                   "named": named.get(addr.lower()), "path": os.path.relpath(path, ROOT)}
+
+
+def load_summaries():
+    """addr -> {hash, summary} from the LLM labelling pass (scripts/summarize.py)."""
+    out = {}
+    if os.path.isfile(SUMMARIES):
+        for line in open(SUMMARIES, encoding="utf-8"):
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            out[row["addr"]] = row
+    return out
+
+
+def body_hash(body):
+    return hashlib.sha1(body.strip().encode("utf-8")).hexdigest()[:12]
+
+
+def fn_chunks(include_all=False):
+    """One chunk per function. A validated LLM one-liner, when present, replaces the
+    mechanical signature — that sentence is what makes semantic search work here."""
+    summaries = {} if os.environ.get("INDEX_NO_SUMMARIES") else load_summaries()
+    out = []
+    for f in iter_functions(include_all):
+        s = summaries.get(f["addr"])
+        has_summary = bool(s and s.get("hash") == body_hash(f["body"]))
+        bits = [f"Function {f['name']} at {f['addr']}, {f['size']} bytes."]
+        # A NAMED row is human-written and identifier-rich: it leads, because mean pooling
+        # dilutes exact names when a prose summary sits in front of them (measured).
+        if f["named"]:
+            bits.append(f"Known as {f['named'][0]}. {f['named'][1][:300]}")
+        if has_summary and not f["named"]:
+            bits.append("Does: " + s["summary"])
+        else:
+            sig = f["body"].strip().splitlines()[0][:120] if f["body"].strip() else ""
+            if sig:
+                bits.append(sig)
+        if f["strings"]:
+            bits.append("References strings: " + ", ".join(f["strings"]) + ".")
+        if f["datas"]:
+            bits.append("Touches data: " + ", ".join(f["datas"]) + ".")
+        if f["callees"]:
+            bits.append("Calls: " + ", ".join(f["callees"]) + ".")
+        out.append({"id": f"fn:{f['addr']}", "kind": "function", "addr": f["addr"],
+                    "path": f["path"], "text": " ".join(b for b in bits if b)[:MAX_CHARS]})
     return out
 
 
