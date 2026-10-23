@@ -86,7 +86,9 @@ def main():
             body = f.read().replace("cite_probe.log:99", "cite_probe.log:1")
         with open(os.path.join(wt, "SESSION_NOTES.md"), "w", encoding="utf-8") as f:
             f.write(body)
-        git(wt, "commit", "-qam", "fix citation")
+        # Identity flags are mandatory: a clean CI runner has no user.name/email,
+        # and `git commit` exits 128 there (caught by CI on PR #8).
+        git(wt, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qam", "fix citation")
         rc, out = gate(wt)
         check("valid milestone is GREEN", rc == 0 and "GATE GREEN" in out, out.strip().splitlines()[-1])
     finally:
