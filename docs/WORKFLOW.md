@@ -47,6 +47,36 @@ Then read `NEXT_PROMPT.md` in full and `skill_view('smac-cvr-format')`. `NEXT_PR
 footing: proven facts, verified globals, operational kit, pitfalls. Never re-derive it; if it
 contradicts the code, the code wins and the doc gets fixed in the PR.
 
+## Driving a milestone with the local 125B
+
+The local model can carry a milestone, but only with a short prompt and a hard context budget. Use
+the launcher rather than typing a prompt:
+
+```bash
+scripts/agent_session.sh m52a                 # planned pick from NEXT_PROMPT.md
+scripts/agent_session.sh m52a notes.md        # extra instructions appended
+tail -f evidence/agent_m52a.log               # watch it
+```
+
+It refuses a dirty tree, branches `milestone/<tag>` from main, and runs
+`hermes chat --yolo --model qwen125b`. The generated prompt points at `NEXT_PROMPT.md` and the last
+session section instead of pasting them, and it states the rules below — the ones that have each
+cost a full run.
+
+**Context budget.** Compression triggers at 86k tokens; when the cooldown refuses compaction the
+model starts returning empty replies and the turn dies. A 53k-char skill read plus one full
+disassembly dump is enough to get there. Grep, `sed -n 'A,Bp'`, and write large outputs to
+`evidence/` instead of printing them.
+
+**Never signal by name.** `pkill -f <script>` matches the agent's own process, because the prompt
+sitting in its argv quotes the script name — the agent SIGINTs itself (exit 130, gdb left attached).
+Stop a driver only with `python3 scripts/m51a_drive.py --stop <tag>`, which reads the pidfile and
+verifies the target is a python driver first.
+
+**Recovering a dead session.** The CLI prints a session id on exit:
+`hermes --resume <session-id> -q "the run finished; analyze evidence/m52a_watch.log"`. The gdb run
+outlives the agent, so check `evidence/<tag>_run.out` before assuming the experiment was lost.
+
 ## Step 2 — assess an open PR
 
 `milestone.py brief` lists open PRs with a verdict derived from CI. The verdict is necessary,
