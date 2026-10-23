@@ -1,0 +1,96 @@
+The target architecture is set to "i386".
+   0x4ef5d0:	push   ebp
+   0x4ef5d1:	mov    ebp,esp
+   0x4ef5d3:	push   ebx
+   0x4ef5d4:	mov    ebx,DWORD PTR [ebp+0x8]
+   0x4ef5d7:	push   esi
+   0x4ef5d8:	xor    ecx,ecx
+   0x4ef5da:	lea    eax,[ebx+ebx*8]
+   0x4ef5dd:	push   edi
+   0x4ef5de:	lea    esi,[ebx+eax*2]
+   0x4ef5e1:	shl    esi,0x4
+   0x4ef5e4:	mov    eax,DWORD PTR [esi+0x95da5c]
+   0x4ef5ea:	mov    cl,BYTE PTR [esi+0x95da14]
+   0x4ef5f0:	test   eax,eax
+   0x4ef5f2:	mov    edi,ecx
+   0x4ef5f4:	je     0x4ef684
+   0x4ef5fa:	mov    ecx,DWORD PTR [esi+0x95da60]
+   0x4ef600:	test   ecx,ecx
+   0x4ef602:	jl     0x4ef61c
+   0x4ef604:	mov    edx,edi
+   0x4ef606:	shl    edx,0x6
+   0x4ef609:	add    edx,edi
+   0x4ef60b:	lea    edx,[edi+edx*2]
+   0x4ef60e:	shl    edx,0x4
+   0x4ef611:	sub    edx,edi
+   0x4ef613:	lea    ecx,[ecx+edx*4+0x94de84]
+   0x4ef61a:	dec    BYTE PTR [ecx]
+   0x4ef61c:	xor    ecx,ecx
+   0x4ef61e:	test   eax,eax
+   0x4ef620:	jle    0x4ef63b
+   0x4ef622:	lea    eax,[esi+0x95da60]
+   0x4ef628:	mov    edx,DWORD PTR [eax+0x4]
+   0x4ef62b:	inc    ecx
+   0x4ef62c:	mov    DWORD PTR [eax],edx
+   0x4ef62e:	mov    edx,DWORD PTR [esi+0x95da5c]
+   0x4ef634:	add    eax,0x4
+   0x4ef637:	cmp    ecx,edx
+   0x4ef639:	jl     0x4ef628
+   0x4ef63b:	mov    edx,DWORD PTR [esi+0x95da5c]
+   0x4ef641:	dec    edx
+   0x4ef642:	mov    DWORD PTR [esi+0x95da5c],edx
+   0x4ef648:	mov    eax,DWORD PTR [esi+0x95da60]
+   0x4ef64e:	test   eax,eax
+   0x4ef650:	jl     0x4ef663
+   0x4ef652:	push   ebx
+   0x4ef653:	push   edi
+   0x4ef654:	push   eax
+   0x4ef655:	call   0x5a73f0
+   0x4ef65a:	add    esp,0xc
+   0x4ef65d:	test   eax,eax
+   0x4ef65f:	jne    0x4ef68b
+   0x4ef661:	jmp    0x4ef676
+   0x4ef663:	push   0x0
+   0x4ef665:	push   ebx
+   0x4ef666:	neg    eax
+   0x4ef668:	push   edi
+   0x4ef669:	push   eax
+   0x4ef66a:	call   0x5a6e70
+   0x4ef66f:	add    esp,0x10
+   0x4ef672:	test   eax,eax
+   0x4ef674:	jne    0x4ef68b
+   0x4ef676:	mov    eax,DWORD PTR [esi+0x95da5c]
+   0x4ef67c:	test   eax,eax
+   0x4ef67e:	jne    0x4ef5fa
+   0x4ef684:	pop    edi
+   0x4ef685:	pop    esi
+   0x4ef686:	xor    eax,eax
+   0x4ef688:	pop    ebx
+   0x4ef689:	pop    ebp
+   0x4ef68a:	ret
+   0x4ef68b:	cmp    DWORD PTR [esi+0x95da60],0xffffffd9
+   0x4ef692:	jg     0x4ef69e
+   0x4ef694:	push   0x24
+   0x4ef696:	call   0x446250
+   0x4ef69b:	add    esp,0x4
+   0x4ef69e:	movsx  eax,WORD PTR [esi+0x95da12]
+   0x4ef6a5:	movsx  ecx,WORD PTR [esi+0x95da10]
+   0x4ef6ac:	push   0x2
+   0x4ef6ae:	push   0x2
+   0x4ef6b0:	push   eax
+   0x4ef6b1:	push   ecx
+   0x4ef6b2:	call   0x473760
+   0x4ef6b7:	add    esp,0x10
+   0x4ef6ba:	mov    eax,0x1
+   0x4ef6bf:	pop    edi
+   0x4ef6c0:	pop    esi
+   0x4ef6c1:	pop    ebx
+   0x4ef6c2:	pop    ebp
+   0x4ef6c3:	ret
+   0x4ef6c4:	nop
+   0x4ef6c5:	nop
+   0x4ef6c6:	nop
+   0x4ef6c7:	nop
+   0x4ef6c8:	nop
+   0x4ef6c9:	nop
+   0x4ef6ca:	nop

@@ -1,0 +1,51 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)(0x962d30 + 0x50)
+Breakpoint 2 at 0x51f554
+Breakpoint 3 at 0x4ef6d0
+Breakpoint 4 at 0x4efe41
+Breakpoint 5 at 0x4eff20
+Breakpoint 6 at 0x4ef992
+Breakpoint 7 at 0x4f037b
+Breakpoint 8 at 0x4f0f46
+SELFTEST addr=0x962d30 f50=2 f54=3 f4c=1 st=200 name=Climactic Research
+ARMED
+YEAR 1 year=2370 cur=7 nb=75
+QPIPE 1 name=Climactic Research f50=2 f54=3 f4c=1 f44=3 st=200 fcc=-3 d0=0
+QCOMPLET 1 f50=2 f4c=1 st=200 ebx=2
+CLAMP1 1 st=190 f50=2 f4c=1
+POP_MID 1 f50=2 f4c=1
+
+Thread 1 "terran.exe" hit Hardware watchpoint 1: *(int *)(0x962d30 + 0x50)
+
+Old value = 2
+New value = 3
+0x004ef62e in ?? ()
+WP50 1 eip=0x4ef62e new=3 f54=3 f4c=1 f44=3 name_at=Climactic Research ours_at=1
+YEAR 2 year=2371 cur=7 nb=75
+QPIPE 2 name=Climactic Research f50=3 f54=3 f4c=0 f44=3 st=0 fcc=-3 d0=-1
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]

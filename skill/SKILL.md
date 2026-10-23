@@ -119,8 +119,12 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   architecture i386" -ex "set disassembly-flavor intel" -ex "file programs/terran.exe" -ex "x/Ni
   0xADDR"` — gdb maps the PE image (file offset = VA − 0x400000), read-only, TracerPid stays 0.
   objdump also works (`-b binary -m i386:x86-64 -D --adjust-vma=0x400000 --start-address=...`) but
-  64-bit decoding MISALIGINS on SEH blocks (garbage/movabs in SEH-heavy regions like the
-  0x4efxxx pipeline) — use the gdb recipe for register-level truth; Ghidra lumps edi/esi away.
+    64-bit decoding MISALIGINS on SEH blocks (garbage/movabs in SEH-heavy regions like the 0x4efxxx
+    pipeline) — use the gdb recipe for register-level truth; Ghidra lumps edi/esi away.
+    **Coverage-check every dump**: instructions average 3.8 B here, so `x/2600i` silently stopped 2.4 KB
+    short of a 12,298-byte function and M53a drew a WRONG conclusion ("no +0x50 writer in the pipeline")
+    from the truncated window — compute the count from `index.csv` size ÷ 3.8 and confirm the last address
+    printed equals the next function's start.
 - Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
 - What the install ships (rules text, map format, graphics containers) and what to parse vs
   what to RE: `references/data-formats.md`.
