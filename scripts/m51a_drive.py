@@ -61,6 +61,7 @@ set $nconv = 0
 set $nwp = 0
 set $n40 = 0
 set $n3c = 0
+set $nedi = 0
 
 # ---- hardware watchpoints on OUR located record FIRST (the exhaustive net; literal addrs, armed
 # after the pokes per M33). gdb prints Old/New itself; $eip sits just PAST the store. name_at is
@@ -190,6 +191,60 @@ commands
   silent
   set $n40 = $n40 + 1
   printf "W40_IADD %d eip=%#x ebp=%#x target=%#x name=%s old=%d new=%d d0=%d cb=%#x\n", $n40, $eip, $ebp, $eax, (char *)($eax + 19), *(int *)($eax + 0x40), $edx, *(int *)($eax + 0xd0), *(int *)0x8f0d60
+  continue
+end
+# ---- M52b: edi PROVENANCE chain. edi is the SPENDA subtrahend (0x4efedb `sub esi,edi`), and M49a's
+# "edi = sweep-entry index" is statically FALSE: 0x4f5aa9 `mov edi,edx` takes edx from
+# `mov dl,BYTE PTR [ecx+0x4]` at 0x4f5a9c = the OWNER BYTE. These bps trace every candidate writer of
+# edi on the per-base path so one run pins where the observed 10 comes from. Conditioned on the
+# current-base global (0x8f0d60) because edi/eax are already clobbered at several of these sites.
+break *0x4f5aa9
+commands
+  silent
+  set $nedi = $nedi + 1
+  printf "EDI_ENTRY %d eip=%#x idx=%d owner_byte=%d cb=%#x name=%s\n", $nedi, $eip, *(int *)0x68cbb0, $edx, *(int *)0x8f0d60, (char *)(*(int *)0x8f0d60 + 19)
+  continue
+end
+break *0x4ef88b if *(int *)0x8f0d60 == @@ADDR@@
+commands
+  silent
+  set $nedi = $nedi + 1
+  printf "EDI_QGATE %d eip=%#x q50=%d st=%d name=%s\n", $nedi, $eip, *(int *)($eax + 0x50), *(int *)($eax + 0x40), (char *)($eax + 19)
+  continue
+end
+break *0x4ef8e2 if *(int *)0x8f0d60 == @@ADDR@@
+commands
+  silent
+  set $nedi = $nedi + 1
+  printf "EDI_NEGPATH %d eip=%#x factor_eax=%d qabs=%d name=%s\n", $nedi, $eip, $eax, *(int *)($ebp - 0x30), (char *)(*(int *)0x8f0d60 + 19)
+  continue
+end
+break *0x4ef8ed if *(int *)0x8f0d60 == @@ADDR@@
+commands
+  silent
+  set $nedi = $nedi + 1
+  printf "EDI_NEGMUL %d eip=%#x edi_before=%d edx=%d tbl=%d name=%s\n", $nedi, $eip, $edi, $edx, *(int *)($edx + 0x984d44), (char *)(*(int *)0x8f0d60 + 19)
+  continue
+end
+break *0x4efa4b if *(int *)0x8f0d60 == @@ADDR@@
+commands
+  silent
+  set $nedi = $nedi + 1
+  printf "EDI_POSPATH %d eip=%#x factor_eax=%d q50_m18=%d name=%s\n", $nedi, $eip, $eax, *(int *)($ebp - 0x18), (char *)(*(int *)0x8f0d60 + 19)
+  continue
+end
+break *0x4efa52 if *(int *)0x8f0d60 == @@ADDR@@
+commands
+  silent
+  set $nedi = $nedi + 1
+  printf "EDI_POSMUL %d eip=%#x edi_before=%d ret_5ac950=%d name=%s\n", $nedi, $eip, $edi, $eax, (char *)(*(int *)0x8f0d60 + 19)
+  continue
+end
+break *0x4efed8 if *(int *)0x8f0d60 == @@ADDR@@
+commands
+  silent
+  set $nedi = $nedi + 1
+  printf "EDI_SPENDA %d eip=%#x edi=%d st=%d q50=%d m1c=%d m2c=%d retaddr=%#x name=%s\n", $nedi, $eip, $edi, *(int *)($ecx + 0x40), *(int *)($ecx + 0x50), *(int *)($ebp - 0x1c), *(int *)($ebp - 0x2c), *(void **)$esp, (char *)($ecx + 19)
   continue
 end
 break *0x4efedd if $ecx == @@ADDR@@
