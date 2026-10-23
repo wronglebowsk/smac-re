@@ -4,6 +4,18 @@ The repo is the memory. A session may end at any moment; anything not committed 
 anything committed must be true. This document is the detailed protocol behind the short
 instructions in `AGENTS.md`.
 
+## First thing in a fresh clone
+
+```bash
+sh scripts/install_hooks.sh      # blocks direct pushes to main
+python3 scripts/index.py build   # search index (needs 192.168.1.213:8000)
+python3 scripts/test_loop.py     # proves the gate still fires
+```
+
+git does not version `.git/hooks`, so a new clone is unprotected until the first line runs.
+GitHub branch protection needs a paid plan for private repos, which makes this hook the only
+thing standing between a stray `git push` and an unverified `main`.
+
 ## Model
 
 One **milestone** = one question answered (or explicitly narrowed) with evidence, documented in

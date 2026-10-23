@@ -225,6 +225,11 @@ def build_body(mid):
 
 
 def cmd_submit(args):
+    # Check the branch FIRST: committing before this guard leaves a stray
+    # "<id>: checkpoint" commit on main (happened once, 2026-10-22).
+    br = branch()
+    if br == BASE:
+        raise SystemExit("on main — start a milestone branch first (milestone.py start <ID>)")
     ok, out = gate()
     if not ok:
         print(out)
@@ -233,9 +238,6 @@ def cmd_submit(args):
         mid = milestone_id()
         git("add", "-A")
         git("commit", "-m", args.message or f"{mid}: checkpoint")
-    br = branch()
-    if br == BASE:
-        raise SystemExit("on main — start a milestone branch first (milestone.py start <ID>)")
     git("push", "-u", "origin", br, "--quiet")
     mid = milestone_id()
     existing = gh_json("pr", "list", "--head", br, "--state", "open", "--json", "number,url")
