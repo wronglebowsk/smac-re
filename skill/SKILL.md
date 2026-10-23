@@ -371,6 +371,20 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
 - **A python driver whose argv contains its run tag matches the bracketed `pkill -f [t]ag_...`
   pattern and SIGINTs ITSELF** at startup (the bracket only protects pkill's own cmdline).
   Kill stale copies with pgrep + os.kill skipping os.getpid() (fixed in `scripts/m49a_drive.py`).
+- **A gdb watchpoint with no `commands … continue end` block ENDS a `-batch` run**: on the first hit the
+  script has nothing left, gdb falls to its prompt and DETACHES — silently un-instrumenting the rest of
+  the session (reads as a truncated log, not as an error). Give every watchpoint a printing `continue`
+  block. And gdb's own messages are unbuffered while breakpoint `printf` output is block-buffered: the
+  two streams interleave in the log, so attribute events by CONTENT (counters, an `off=0x50..0x74` run),
+  never by line order, and read the log only after the driver's `--mode stop` (SIGINT drops the tail).
+- **Vision-tool pixel numbers ARE true window coordinates; tesseract TSV numbers are internally
+  rescaled** — never halve TSV values to get click coordinates. Settle any disagreement with
+  `ffmpeg -vf crop=W:H:X:Y` + OCR on the crop before driving clicks (M53d wasted three runs on this).
+- **Base production UI plumbing (M53d)**: pane-object fields `+0x3ff5c` = selected queue slot and
+  `+0xb194` = chooser mode; `FUN_00416080(this)` = pane redraw; `FUN_00496ad0(pane+0xa1c, base, owner,
+  scratch)` = the modal item chooser (returns an item id or −9999); `FUN_00417ee0(slot, …)` = the
+  dispatcher; `FUN_00417d20(item, insert_flag)` = the queue-slot writer. **Digit keys 1-9 pass a nonzero
+  param_1 and only PREVIEW — nothing is written**; a real queue edit needs the QUEUE-row path.
 - **COMM OFFICER 3-row variant** ("Yes..."/"No, close the channel."/"Display faction leader
   profile."): the colour row-click (bar_y−25) can select profile → UNIVERSITY INTELLIGENCE FILES
   table with CLOSE/DATALINKS bars at y≈345-360, OUTSIDE the 430-520 OK-bar band; the

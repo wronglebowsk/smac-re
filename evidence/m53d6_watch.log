@@ -1,0 +1,60 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x417ee0
+Breakpoint 2 at 0x418aa2
+Breakpoint 3 at 0x418ac7
+Breakpoint 4 at 0x418751
+Breakpoint 5 at 0x418b57
+Breakpoint 6 at 0x418b24
+Breakpoint 7 at 0x418ad3
+Breakpoint 8 at 0x418b02
+Breakpoint 9 at 0x418762
+Breakpoint 10 at 0x417d20
+Breakpoint 11 at 0x417dd8
+Breakpoint 12 at 0x417e04
+Breakpoint 13 at 0x4186d2
+Breakpoint 14 at 0x4186ec
+Breakpoint 15 at 0x418e1d
+Breakpoint 16 at 0x418cc9
+Breakpoint 17 at 0x418cd8
+Breakpoint 18 at 0x419967
+Breakpoint 19 at 0x4ef6d0
+Hardware watchpoint 20: *(int *)(0x962d84)
+Hardware watchpoint 21: *(int *)(0x962d88)
+POST_PICK edi=2
+MODE mode=7 slotfield=1 f4c=0 f50=3 f54=3 f58=0
+D20#1 item=2 slot=1 f4c=0 f50=3 f54=3 f58=0
+D20_STORE dst_off=0x54 old=3 new=2 item=2
+W54#1 pc=0x417e08 val_after=2
+W54#2 pc=0x418639 val_after=3
+POST_PICK edi=-9999
+BRANCH_EXIT edi=-9999
+ENQ#1 param1=1 param2=1 f40=0 f44=3 f4c=0 f50=3 f54=3 f58=0 f5c=0
+POST_PICK edi=2
+MODE mode=4 slotfield=1 f4c=0 f50=3 f54=3 f58=0
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 2124636]
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]
