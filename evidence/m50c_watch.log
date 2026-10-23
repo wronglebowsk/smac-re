@@ -1,0 +1,175 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee17368b in ?? ()
+Breakpoint 1 at 0x520540
+Breakpoint 2 at 0x5206d3
+Breakpoint 3 at 0x5206f9
+Breakpoint 4 at 0x5206fd
+Breakpoint 5 at 0x51f554
+ARMED
+SWEEP 1 p=3 nb_entry=74
+VISIT p=3 idx=70 owner=3 nb=74 ours=0 st=200 min40=500
+SWEEPEND p=3 last_idx=73 visits=1 nb_now=74
+SWEEP 2 p=4 nb_entry=74
+VISIT p=4 idx=3 owner=4 nb=74 ours=0 st=67 min40=53
+VISIT p=4 idx=7 owner=4 nb=74 ours=0 st=56 min40=0
+VISIT p=4 idx=18 owner=4 nb=74 ours=0 st=63 min40=25
+VISIT p=4 idx=31 owner=4 nb=74 ours=0 st=40 min40=46
+VISIT p=4 idx=35 owner=4 nb=74 ours=0 st=66 min40=46
+VISIT p=4 idx=55 owner=4 nb=74 ours=0 st=106 min40=25
+VISIT p=4 idx=61 owner=4 nb=74 ours=0 st=22 min40=43
+SWEEPEND p=4 last_idx=73 visits=7 nb_now=74
+SWEEP 3 p=5 nb_entry=74
+VISIT p=5 idx=4 owner=5 nb=74 ours=0 st=42 min40=30
+VISIT p=5 idx=10 owner=5 nb=74 ours=0 st=19 min40=1
+VISIT p=5 idx=40 owner=5 nb=74 ours=0 st=25 min40=0
+SWEEPEND p=5 last_idx=73 visits=3 nb_now=74
+SWEEP 4 p=6 nb_entry=74
+VISIT p=6 idx=14 owner=6 nb=74 ours=0 st=6 min40=33
+VISIT p=6 idx=20 owner=6 nb=74 ours=0 st=41 min40=54
+VISIT p=6 idx=26 owner=6 nb=74 ours=0 st=24 min40=30
+VISIT p=6 idx=37 owner=6 nb=74 ours=0 st=64 min40=15
+VISIT p=6 idx=39 owner=6 nb=74 ours=0 st=41 min40=0
+VISIT p=6 idx=57 owner=6 nb=74 ours=0 st=15 min40=22
+VISIT p=6 idx=60 owner=6 nb=74 ours=0 st=51 min40=18
+SWEEPEND p=6 last_idx=73 visits=7 nb_now=74
+SWEEP 5 p=7 nb_entry=74
+VISIT p=7 idx=6 owner=7 nb=74 ours=0 st=26 min40=59
+VISIT p=7 idx=8 owner=7 nb=74 ours=0 st=49 min40=0
+VISIT p=7 idx=15 owner=7 nb=74 ours=0 st=30 min40=20
+VISIT p=7 idx=16 owner=7 nb=74 ours=0 st=39 min40=0
+VISIT p=7 idx=22 owner=7 nb=74 ours=0 st=62 min40=0
+VISIT p=7 idx=33 owner=7 nb=74 ours=0 st=5 min40=22
+VISIT p=7 idx=42 owner=7 nb=74 ours=0 st=19 min40=0
+VISIT p=7 idx=44 owner=7 nb=74 ours=0 st=10 min40=17
+VISIT p=7 idx=67 owner=7 nb=74 ours=0 st=37 min40=10
+SWEEPEND p=7 last_idx=73 visits=9 nb_now=74
+YEAR 1 mid_p=7 mid_idx=73 mid_visits=9 nb=74 cur=7
+SWEEP 6 p=0 nb_entry=74
+SWEEPEND p=0 last_idx=73 visits=0 nb_now=74
+SWEEP 7 p=1 nb_entry=74
+VISIT p=1 idx=1 owner=1 nb=74 ours=0 st=17 min40=60
+VISIT p=1 idx=9 owner=1 nb=74 ours=0 st=41 min40=78
+VISIT p=1 idx=17 owner=1 nb=74 ours=0 st=19 min40=0
+VISIT p=1 idx=27 owner=1 nb=74 ours=0 st=5 min40=51
+VISIT p=1 idx=41 owner=1 nb=74 ours=0 st=60 min40=18
+VISIT p=1 idx=46 owner=1 nb=74 ours=0 st=20 min40=0
+VISIT p=1 idx=47 owner=1 nb=74 ours=0 st=16 min40=74
+VISIT p=1 idx=52 owner=1 nb=74 ours=0 st=7 min40=16
+VISIT p=1 idx=63 owner=1 nb=74 ours=0 st=78 min40=46
+VISIT p=1 idx=64 owner=1 nb=74 ours=0 st=87 min40=19
+SWEEPEND p=1 last_idx=73 visits=10 nb_now=74
+SWEEP 8 p=2 nb_entry=74
+VISIT p=2 idx=0 owner=2 nb=74 ours=0 st=23 min40=21
+VISIT p=2 idx=2 owner=2 nb=74 ours=0 st=37 min40=11
+VISIT p=2 idx=5 owner=2 nb=74 ours=0 st=3 min40=9
+VISIT p=2 idx=11 owner=2 nb=74 ours=0 st=21 min40=0
+VISIT p=2 idx=12 owner=2 nb=74 ours=0 st=17 min40=27
+VISIT p=2 idx=13 owner=2 nb=74 ours=0 st=23 min40=0
+VISIT p=2 idx=19 owner=2 nb=74 ours=0 st=26 min40=1
+VISIT p=2 idx=21 owner=2 nb=74 ours=0 st=4 min40=13
+VISIT p=2 idx=23 owner=2 nb=74 ours=0 st=146 min40=52
+VISIT p=2 idx=24 owner=2 nb=74 ours=0 st=19 min40=4
+VISIT p=2 idx=25 owner=2 nb=74 ours=0 st=25 min40=24
+VISIT p=2 idx=28 owner=2 nb=74 ours=0 st=146 min40=15
+VISIT p=2 idx=29 owner=2 nb=74 ours=0 st=32 min40=22
+VISIT p=2 idx=30 owner=2 nb=74 ours=0 st=3 min40=2
+VISIT p=2 idx=32 owner=2 nb=74 ours=0 st=18 min40=47
+VISIT p=2 idx=34 owner=2 nb=74 ours=0 st=51 min40=30
+VISIT p=2 idx=36 owner=2 nb=74 ours=0 st=99 min40=9
+VISIT p=2 idx=38 owner=2 nb=74 ours=0 st=44 min40=48
+VISIT p=2 idx=43 owner=2 nb=74 ours=0 st=32 min40=41
+VISIT p=2 idx=45 owner=2 nb=74 ours=0 st=9 min40=15
+VISIT p=2 idx=48 owner=2 nb=74 ours=0 st=16 min40=24
+VISIT p=2 idx=49 owner=2 nb=74 ours=0 st=14 min40=28
+VISIT p=2 idx=50 owner=2 nb=74 ours=0 st=3 min40=22
+VISIT p=2 idx=51 owner=2 nb=74 ours=0 st=29 min40=14
+VISIT p=2 idx=53 owner=2 nb=74 ours=0 st=26 min40=13
+VISIT p=2 idx=54 owner=2 nb=74 ours=0 st=37 min40=1
+VISIT p=2 idx=56 owner=2 nb=74 ours=0 st=31 min40=1
+VISIT p=2 idx=58 owner=2 nb=74 ours=0 st=15 min40=7
+VISIT p=2 idx=59 owner=2 nb=74 ours=0 st=18 min40=45
+VISIT p=2 idx=62 owner=2 nb=74 ours=0 st=43 min40=7
+VISIT p=2 idx=65 owner=2 nb=74 ours=0 st=32 min40=2
+VISIT p=2 idx=66 owner=2 nb=74 ours=0 st=7 min40=14
+VISIT p=2 idx=68 owner=2 nb=74 ours=0 st=30 min40=11
+VISIT p=2 idx=69 owner=2 nb=74 ours=0 st=9 min40=19
+VISIT p=2 idx=71 owner=2 nb=74 ours=1 st=7 min40=1
+VISIT p=2 idx=72 owner=2 nb=74 ours=0 st=21 min40=9
+VISIT p=2 idx=73 owner=2 nb=74 ours=0 st=13 min40=10
+SWEEPEND p=2 last_idx=73 visits=37 nb_now=74
+SWEEP 9 p=3 nb_entry=74
+VISIT p=3 idx=70 owner=3 nb=74 ours=0 st=0 min40=-4
+SWEEPEND p=3 last_idx=73 visits=1 nb_now=74
+SWEEP 10 p=4 nb_entry=74
+VISIT p=4 idx=3 owner=4 nb=74 ours=0 st=73 min40=55
+VISIT p=4 idx=7 owner=4 nb=74 ours=0 st=62 min40=0
+VISIT p=4 idx=18 owner=4 nb=74 ours=0 st=72 min40=26
+VISIT p=4 idx=31 owner=4 nb=74 ours=0 st=47 min40=26
+VISIT p=4 idx=35 owner=4 nb=74 ours=0 st=74 min40=47
+VISIT p=4 idx=55 owner=4 nb=74 ours=0 st=111 min40=25
+VISIT p=4 idx=61 owner=4 nb=74 ours=0 st=26 min40=44
+SWEEPEND p=4 last_idx=73 visits=7 nb_now=74
+SWEEP 11 p=5 nb_entry=74
+VISIT p=5 idx=4 owner=5 nb=74 ours=0 st=6 min40=30
+VISIT p=5 idx=10 owner=5 nb=74 ours=0 st=28 min40=2
+VISIT p=5 idx=40 owner=5 nb=74 ours=0 st=29 min40=0
+SWEEPEND p=5 last_idx=73 visits=3 nb_now=74
+SWEEP 12 p=6 nb_entry=74
+VISIT p=6 idx=14 owner=6 nb=74 ours=0 st=11 min40=34
+VISIT p=6 idx=20 owner=6 nb=74 ours=0 st=49 min40=56
+VISIT p=6 idx=26 owner=6 nb=74 ours=0 st=27 min40=31
+VISIT p=6 idx=37 owner=6 nb=74 ours=0 st=1 min40=16
+VISIT p=6 idx=39 owner=6 nb=74 ours=0 st=46 min40=0
+VISIT p=6 idx=60 owner=6 nb=74 ours=0 st=29 min40=20
+SWEEPEND p=6 last_idx=73 visits=6 nb_now=74
+SWEEP 13 p=7 nb_entry=74
+VISIT p=7 idx=6 owner=7 nb=74 ours=0 st=33 min40=65
+VISIT p=7 idx=8 owner=7 nb=74 ours=0 st=57 min40=0
+VISIT p=7 idx=15 owner=7 nb=74 ours=0 st=35 min40=21
+VISIT p=7 idx=16 owner=7 nb=74 ours=0 st=2 min40=0
+VISIT p=7 idx=22 owner=7 nb=74 ours=0 st=14 min40=0
+VISIT p=7 idx=33 owner=7 nb=74 ours=0 st=12 min40=23
+VISIT p=7 idx=42 owner=7 nb=74 ours=0 st=22 min40=0
+VISIT p=7 idx=44 owner=7 nb=74 ours=0 st=15 min40=17
+VISIT p=7 idx=67 owner=7 nb=74 ours=0 st=37 min40=11
+SWEEPEND p=7 last_idx=73 visits=9 nb_now=74
+YEAR 2 mid_p=7 mid_idx=73 mid_visits=9 nb=74 cur=7
+SWEEP 14 p=0 nb_entry=74
+SWEEPEND p=0 last_idx=73 visits=0 nb_now=74
+SWEEP 15 p=1 nb_entry=74
+VISIT p=1 idx=1 owner=1 nb=74 ours=0 st=24 min40=64
+VISIT p=1 idx=9 owner=1 nb=74 ours=0 st=45 min40=83
+VISIT p=1 idx=17 owner=1 nb=74 ours=0 st=23 min40=0
+VISIT p=1 idx=27 owner=1 nb=74 ours=0 st=11 min40=54
+VISIT p=1 idx=41 owner=1 nb=74 ours=0 st=64 min40=18
+VISIT p=1 idx=46 owner=1 nb=74 ours=0 st=22 min40=0
+VISIT p=1 idx=47 owner=1 nb=74 ours=0 st=22 min40=78
+VISIT p=1 idx=52 owner=1 nb=74 ours=0 st=9 min40=17
+VISIT p=1 idx=63 owner=1 nb=74 ours=0 st=80 min40=48
+VISIT p=1 idx=64 owner=1 nb=74 ours=0 st=3 min40=19
+SWEEPEND p=1 last_idx=73 visits=10 nb_now=74
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]

@@ -1,0 +1,124 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x520540
+Breakpoint 2 at 0x5206d3
+Breakpoint 3 at 0x5206f9
+Breakpoint 4 at 0x5206fd
+Breakpoint 5 at 0x51f554
+ARMED
+SWEEPEND p=-1 last_idx=74 visits=0 nb_now=75
+SWEEP 1 p=4 nb_entry=75
+VISIT p=4 idx=3 owner=4 nb=75 ours=0
+VISIT p=4 idx=7 owner=4 nb=75 ours=0
+VISIT p=4 idx=18 owner=4 nb=75 ours=0
+VISIT p=4 idx=31 owner=4 nb=75 ours=0
+VISIT p=4 idx=35 owner=4 nb=75 ours=0
+VISIT p=4 idx=56 owner=4 nb=75 ours=0
+VISIT p=4 idx=62 owner=4 nb=75 ours=0
+SWEEPEND p=4 last_idx=74 visits=7 nb_now=75
+SWEEP 2 p=5 nb_entry=75
+VISIT p=5 idx=4 owner=5 nb=75 ours=0
+VISIT p=5 idx=10 owner=5 nb=75 ours=0
+VISIT p=5 idx=40 owner=5 nb=75 ours=0
+SWEEPEND p=5 last_idx=74 visits=3 nb_now=75
+SWEEP 3 p=6 nb_entry=75
+VISIT p=6 idx=14 owner=6 nb=75 ours=0
+VISIT p=6 idx=20 owner=6 nb=75 ours=0
+VISIT p=6 idx=26 owner=6 nb=75 ours=0
+VISIT p=6 idx=37 owner=6 nb=75 ours=0
+VISIT p=6 idx=39 owner=6 nb=75 ours=0
+VISIT p=6 idx=51 owner=6 nb=75 ours=0
+VISIT p=6 idx=58 owner=6 nb=75 ours=0
+VISIT p=6 idx=61 owner=6 nb=75 ours=0
+SWEEPEND p=6 last_idx=74 visits=8 nb_now=75
+SWEEP 4 p=7 nb_entry=75
+VISIT p=7 idx=6 owner=7 nb=75 ours=0
+VISIT p=7 idx=8 owner=7 nb=75 ours=0
+VISIT p=7 idx=15 owner=7 nb=75 ours=0
+VISIT p=7 idx=16 owner=7 nb=75 ours=0
+VISIT p=7 idx=22 owner=7 nb=75 ours=0
+VISIT p=7 idx=33 owner=7 nb=75 ours=0
+VISIT p=7 idx=42 owner=7 nb=75 ours=0
+VISIT p=7 idx=44 owner=7 nb=75 ours=0
+VISIT p=7 idx=68 owner=7 nb=75 ours=0
+SWEEPEND p=7 last_idx=74 visits=9 nb_now=75
+YEAR 1 mid_p=7 mid_idx=74 mid_visits=9 nb=75 cur=7
+SWEEP 5 p=0 nb_entry=75
+SWEEPEND p=0 last_idx=74 visits=0 nb_now=75
+SWEEP 6 p=1 nb_entry=75
+VISIT p=1 idx=1 owner=1 nb=75 ours=0
+VISIT p=1 idx=9 owner=1 nb=75 ours=0
+VISIT p=1 idx=17 owner=1 nb=75 ours=0
+VISIT p=1 idx=27 owner=1 nb=75 ours=0
+VISIT p=1 idx=41 owner=1 nb=75 ours=0
+VISIT p=1 idx=46 owner=1 nb=75 ours=0
+VISIT p=1 idx=47 owner=1 nb=75 ours=0
+VISIT p=1 idx=53 owner=1 nb=75 ours=0
+VISIT p=1 idx=64 owner=1 nb=75 ours=0
+VISIT p=1 idx=65 owner=1 nb=75 ours=0
+SWEEPEND p=1 last_idx=74 visits=10 nb_now=75
+SWEEP 7 p=2 nb_entry=75
+VISIT p=2 idx=0 owner=2 nb=75 ours=0
+VISIT p=2 idx=2 owner=2 nb=75 ours=0
+VISIT p=2 idx=5 owner=2 nb=75 ours=0
+VISIT p=2 idx=11 owner=2 nb=75 ours=0
+VISIT p=2 idx=12 owner=2 nb=75 ours=0
+VISIT p=2 idx=13 owner=2 nb=75 ours=0
+VISIT p=2 idx=19 owner=2 nb=75 ours=0
+VISIT p=2 idx=21 owner=2 nb=75 ours=0
+VISIT p=2 idx=23 owner=2 nb=75 ours=0
+VISIT p=2 idx=24 owner=2 nb=75 ours=0
+VISIT p=2 idx=25 owner=2 nb=75 ours=0
+VISIT p=2 idx=28 owner=2 nb=75 ours=0
+VISIT p=2 idx=29 owner=2 nb=75 ours=0
+VISIT p=2 idx=30 owner=2 nb=75 ours=0
+VISIT p=2 idx=32 owner=2 nb=75 ours=0
+VISIT p=2 idx=34 owner=2 nb=75 ours=0
+VISIT p=2 idx=36 owner=2 nb=75 ours=0
+VISIT p=2 idx=38 owner=2 nb=75 ours=0
+VISIT p=2 idx=43 owner=2 nb=75 ours=0
+VISIT p=2 idx=45 owner=2 nb=75 ours=0
+VISIT p=2 idx=48 owner=2 nb=75 ours=0
+VISIT p=2 idx=49 owner=2 nb=75 ours=0
+VISIT p=2 idx=50 owner=2 nb=75 ours=0
+VISIT p=2 idx=52 owner=2 nb=75 ours=0
+VISIT p=2 idx=54 owner=2 nb=75 ours=0
+VISIT p=2 idx=55 owner=2 nb=75 ours=0
+VISIT p=2 idx=57 owner=2 nb=75 ours=0
+VISIT p=2 idx=59 owner=2 nb=75 ours=0
+VISIT p=2 idx=60 owner=2 nb=75 ours=0
+VISIT p=2 idx=63 owner=2 nb=75 ours=0
+VISIT p=2 idx=66 owner=2 nb=75 ours=0
+VISIT p=2 idx=67 owner=2 nb=75 ours=0
+VISIT p=2 idx=69 owner=2 nb=75 ours=0
+VISIT p=2 idx=70 owner=2 nb=75 ours=0
+VISIT p=2 idx=72 owner=2 nb=75 ours=0
+VISIT p=2 idx=73 owner=2 nb=75 ours=0
+VISIT p=2 idx=74 owner=2 nb=75 ours=0
+SWEEPEND p=2 last_idx=74 visits=37 nb_now=75
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 2124636]
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]

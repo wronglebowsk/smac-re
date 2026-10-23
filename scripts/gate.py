@@ -162,7 +162,10 @@ def check_checkpoint(base, docs_only):
         old = git("show", f"{base}:SESSION_NOTES.md")
     except SystemExit:
         old = ""
-    new_sections = len(session_sections(head)) - len(session_sections(old))
+    # Compare header identities, not counts: a PR that rotates away two old sessions while
+    # adding its own milestone nets to "no change" under a subtraction, and the milestone
+    # then reads as a forgotten checkpoint (hit on the first rotation-in-a-milestone PR).
+    new_sections = len(set(session_sections(head)) - set(session_sections(old)))
     if new_sections < 1:
         # Rotation moves old sections into docs/sessions/ and shrinks the hot file. That is
         # housekeeping, not a milestone, and must not read as "forgot to write the notes".
