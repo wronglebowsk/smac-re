@@ -47,6 +47,14 @@ uncited screenshots (git keeps history, `.prune_log.jsonl` records them). Policy
 returns `file:line` / addresses for notes and named functions; `merge` rebuilds it
 (incremental ~1 s, cold ~35 s) and is fail-soft when the embedding endpoint on
 192.168.1.213:8000 is down. A hit is a lead, never evidence.
+Only **2,786 of 10,284** functions are indexed — those carrying a `NAMED.md` row, string refs,
+data refs or ≥6 callees. Boilerplate bodies (`FUN_x calls FUN_x`) embed to near-identical vectors
+and are excluded; `--all` adds them back and makes results worse. **Naming a function in
+`NAMED.md` is what makes it findable** — the build folds the row into the chunk. Scores run
+0.65–0.81 for anything, so read the rank, not the absolute number. Build/index design rules:
+> skill `semantic-search-index`. Unnamed functions are labelled once by the local 125B
+> (`scripts/summarize.py`, cache `index/summaries.jsonl`, ~1.7 h for 2,786, resumable); rerun
+> only when bodies change.
 
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never

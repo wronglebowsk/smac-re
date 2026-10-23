@@ -35,4 +35,6 @@ __pycache__/
 .text_insns.json
 
 # --- semantic index (derived; rebuild with scripts/index.py build) ---
-index/
+index/*
+# ...except the LLM labelling cache, which is expensive to regenerate
+!index/summaries.jsonl

@@ -37,14 +37,36 @@ longer is silently cut, so the index never pretends to see the end of a long sec
 references and fewer than six callees produces text like `FUN_004b8e30 calls FUN_004b8e30` —
 it embeds to noise and dilutes real queries. That leaves 2,786 of 10,284 functions, plus notes.
 
+## LLM summaries (`scripts/summarize.py`)
+
+The mechanical text for an unnamed function carries no meaning, so it is labelled once by the
+local 125B (`192.168.1.12:8080`) and the sentence is folded into the chunk:
+
+```bash
+python3 scripts/summarize.py --dry-run     # work remaining
+python3 scripts/summarize.py               # resumable; ~1.7 h for 2,786 functions
+```
+
+`index/summaries.jsonl` is committed (it is expensive to regenerate) and keyed by a hash of the
+decompiled body, so a rerun only labels functions that changed. `enable_thinking: false` is
+mandatory — this model otherwise spends the whole 120-token budget reasoning and returns an
+empty string.
+
+**Ordering matters.** A NAMED row is identifier-rich and beats prose: appending a summary in
+front of it cost 3 of 8 rank-1 hits (mean pooling dilutes exact names). So NAMED leads, the
+summary is only used when a function is unnamed, and callees are always included.
+
 ## Measured quality (2026-10-22)
 
 - Notes: *"why does our base never convert minerals into energy"* → the M50a section at rank 1 (0.737).
 - Named functions: *"draw a rectangle with saved graphics state"* → `0x5dd09c` at rank 1 (0.809);
   *"open a file and sniff the magic bytes"* → `0x598340` at rank 1 (0.789).
-- Anonymous functions: weak, as expected — the text contains no semantics to match. **Naming a
-  function in `NAMED.md` immediately improves its retrieval**, because the build folds the
-  description into the chunk.
+- Anonymous functions: **fixed by the summary pass** — *"load a map or scenario file"* → `0x598250`
+  at rank 1 (0.782), a map loader we had not identified; *"advance the game year counter"* →
+  `0x4e0350` at rank 1; *"load a PCX image for an icon"* → `0x610308` at rank 1 (was rank 7).
+- 10-query benchmark with hand-picked targets: **hit@1 5/10, hit@10 8/10**. Both top-10 misses
+  turned out to be *bad labels*: the rank-1 answer was a better fit than the function I had
+  nominated. Score these against a judged top-3, not exact address match.
 
 The model's "unrelated" baseline is high (~0.65–0.70 cosine), so treat the absolute score as a
 ranking signal only; compare hits against each other, not against 1.0.
