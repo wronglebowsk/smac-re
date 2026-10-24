@@ -1,0 +1,16 @@
+win=10485761 start year=2385
+    [hud] ne) ~abega Sire icaie aes aRE S ah MEE r Se inl porte Fis, re 2
+turn 0: 2385->2386 OK (58.2s, hud,confirm-after-press)
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+/home/n100/reverse/smac/scripts/smac_play.py:374: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+RUN-EXIT 143

@@ -24,6 +24,9 @@ DEFAULT = [
     ("m15_stuck_screen.png",    "dialog",      "OPERATIONS DIRECTOR WITH ARTWORK — was `hud`"),
     ("m15_mainmenu.png",        "unknown",     "main menu: unchanged, still unknown (not clickable)"),
     ("m15_autolist.png",        "unknown",     "LOAD file browser: unchanged"),
+    ("m54a/live_hud.png",       "hud",         "M54a: HUD whose message pane prints 'nutrients' (355,438) — was `base`, so TURN COMPLETE was never clicked"),
+    ("m45a_post.png",           "base",        "real base screen: MENU/tabs, no TURN COMPLETE row — must STAY base (Escape, never click)"),
+    ("m25_t7.png",              "hud",         "plain HUD, TURN COMPLETE at (697,416)"),
 ]
 
 

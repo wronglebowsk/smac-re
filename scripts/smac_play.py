@@ -361,18 +361,22 @@ def answer_loaded_game(words):
 
 
 def light_bar_rows(png, y0=200, min_run=55):
-    """Raw-pixel scan for the game's light periwinkle push-bars (run > min_run px)."""
-    raw = sh(f"ffmpeg -loglevel error -i {png} -f rawvideo -pix_fmt rgb24 -").stdout
+    """Raw-pixel scan for the game's light periwinkle push-bars (run > min_run px).
+
+    PIL, not `ffmpeg -f rawvideo -`: piping raw RGB through smac_play.sh() (text=True)
+    blows up with a UnicodeDecodeError on the first non-UTF-8 byte, and a per-pixel
+    PIL row read costs ~0.3 s for the whole 400x800 band, which is cheap next to OCR.
+    """
+    im = Image.open(png).convert("RGB")
     out = []
     for y in range(y0, H):
-        row = raw[y * W * 3:(y + 1) * W * 3]
+        light = [b > 120 and r > 90 and g > 90 and abs(r - g) < 40 and b - r > 25
+                 for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
         start = None
-        for x in range(W):
-            r, g, b = row[x * 3:x * 3 + 3]
-            light = b > 120 and r > 90 and g > 90 and abs(r - g) < 40 and b - r > 25
-            if light and start is None:
+        for x, on in enumerate(light):
+            if on and start is None:
                 start = x
-            elif not light and start is not None:
+            elif not on and start is not None:
                 if x - start > min_run:
                     out.append((y, start, x, (start + x) // 2))
                 start = None
@@ -418,23 +422,38 @@ def is_hive_pane(words):
 
 
 def handle_pane(words, png, rec, kind):
-    """Click/keys for the two modals that have no OCR-readable control. True = acted."""
+    """Click/keys for the modals that have no OCR-readable control. True = acted.
+
+    Two triggers, and only two (M54a, learned the hard way on evidence/m54a/stuck_pane.png):
+      * a 3-bar VOTE ROW (>=3 bars, same line, >100 px apart) is unambiguous geometry — the
+        Council PROPOSAL vote, click YEA = leftmost (310,495 measured, wine-operations).
+      * a single bar is clicked only when the pane's CAPTION names a Council/HIVE pane
+        (PROTOCOL DIRECTOR's OK bar at (393,495), the bribe pane's bars).
+    Everything else — including the "OUR CITIZENS ARE STARVING" alert, whose bar at
+    (310,221) is its "Zoom to base control" button and which clicking did NOT clear
+    (trace_m54a40: two identical `bar@310,221` hits, turn STUCK 277.8 s) — falls through to
+    the generic dialog path, which is `Return` = the pane's default button.
+    """
     if is_hive_pane(words):
         key("Escape"); time.sleep(0.6)          # verified 2026-10-24: Escape closes the
         key("Return"); time.sleep(0.8)          # HIVE bribe pane, Return advances
         rec["handled"].append("hive-bribe:Escape+Return")
         return True
-    if kind != "base" and is_council_pane(words):   # a base screen has progress bars that
-        bs = pane_bars(png)                          # pass the colour test — never click them
-        if bs:
-            row = is_vote_row(bs)
-            target = row[0] if row else sorted(bs, key=lambda b: b[1])[-1]
-            click((target[0], target[1]))
-            rec["handled"].append(("vote-yea" if row else "bar") +
-                                  f"@{int(target[0])},{int(target[1])}")
-            time.sleep(1.6)
-            return True
-    return False
+    if kind == "base":                          # a base screen has progress bars that
+        return False                            # pass the colour test — never click them
+    bs = pane_bars(png)
+    if not bs:
+        return False
+    row = is_vote_row(bs)
+    if row is None and not is_council_pane(words):
+        return False                            # not ours: let the caller press Return
+    target = row[0] if row else sorted(bs, key=lambda b: b[1])[-1]
+    click((target[0], target[1]))
+    rec["handled"].append(("vote-yea" if row else "bar") +
+                          f"@{int(target[0])},{int(target[1])}" +
+                          ("/council" if is_council_pane(words) else ""))
+    time.sleep(1.6)
+    return True
 
 
 def state():
