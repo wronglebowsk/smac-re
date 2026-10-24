@@ -378,45 +378,65 @@ def answer_loaded_game(words):
 # an OK bar and gets the proven bottom-most click.
 
 
-def light_bar_rows(png, y0=200, min_run=55):
-    """Raw-pixel scan for the game's light periwinkle push-bars (run > min_run px).
+def bar_colour_mask(png, y0=200):
+    """Per-scanline mask of the game's light periwinkle push-bar fill.
 
-    PIL, not `ffmpeg -f rawvideo -`: piping raw RGB through smac_play.sh() (text=True)
-    blows up with a UnicodeDecodeError on the first non-UTF-8 byte, and a per-pixel
-    PIL row read costs ~0.3 s for the whole 400x800 band, which is cheap next to OCR.
+    PIL, not `ffmpeg -f rawvideo -` piped through sh(): raw RGB blows up a text=True
+    subprocess on the first non-UTF-8 byte. The colour predicate is the one proven live in
+    session 75 (evidence/m53s_barclick.py): b>120, r,g>90, |r-g|<40, b-r>25. It excludes
+    the red NAY / green YEA / amber ELIMINATED tally bars the Council draws under the
+    delegate portraits, so only the clickable bars pass.
     """
     im = Image.open(png).convert("RGB")
-    out = []
-    for y in range(y0, H):
-        light = [b > 120 and r > 90 and g > 90 and abs(r - g) < 40 and b - r > 25
-                 for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
-        start = None
-        for x, on in enumerate(light):
-            if on and start is None:
-                start = x
-            elif not on and start is not None:
-                if x - start > min_run:
-                    out.append((y, start, x, (start + x) // 2))
-                start = None
-    return out
+    return [[b > 120 and r > 90 and g > 90 and abs(r - g) < 40 and b - r > 25
+             for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+            for y in range(y0, H)]
 
 
-def group_bars(found):
-    """Collapse consecutive scanlines of the same bar into (cx, cy, height)."""
-    groups = []
-    for y, x0, x1, cx in found:
-        for g in groups:
-            if 0 <= y - g[3] <= 2 and abs(g[4] - x0) <= 6 and abs(g[5] - x1) <= 6:
-                g[3] = y
-                break
+def pane_bars(png, y0=200, min_band_h=12, min_w=40, duty=0.3):
+    """Push-bars in the frame as (cx, cy, height), found by COLOUR GEOMETRY.
+
+    Band-then-column, never a run. The game draws these bars DITHERED (measured on the
+    PROPOSAL vote, evidence/m54a/stuck2.png: fill (103,91,181) on every OTHER scanline over
+    y 489-507 with (28,80,99) between), so no vertical run longer than 1 px exists, and the
+    label drawn INSIDE each bar breaks the horizontal runs too. So: take the rows that are
+    bar-filled over >100 px, group them into bands across 1-row dither gaps (that frame's
+    band is y 489-507, 19 px), then count fill per column INSIDE the band — 10 in a clean
+    column, 5-7 through a label glyph, 0-2 in the ~3 px dark gap between two bars. 30% duty
+    separates YEA/NAY/ABSTAIN into exactly three bars (centres 311/400/489 = the
+    YEA(310,495) NAY(398,495) ABSTAIN(485,495) row wine-operations measured by hand in
+    session 75); 40% cuts a labelled bar in half, 15% merges the row into one bar and the
+    driver clicks NAY. Scanning only y>=200 keeps the delegate portraits (y 40-170) out.
+    """
+    rows = bar_colour_mask(png, y0)
+    if not rows:
+        return []
+    # 1) rows that are bar-filled somewhere wide enough to be a bar row
+    hot = [y for y, r in enumerate(rows) if sum(r) > 100]
+    bands = []
+    for y in hot:
+        if bands and y - bands[-1][1] <= 2:          # dither => every other row is empty
+            bands[-1][1] = y
         else:
-            groups.append([cx, (x0 + x1) // 2, y, y, x0, x1])
-    return [(g[0], (g[2] + g[3]) // 2, g[3] - g[2] + 1) for g in groups]
-
-
-def pane_bars(png):
-    """Tall (>=12 px) push-bars in the frame — bars are ~18 px tall."""
-    return [b for b in group_bars(light_bar_rows(png)) if b[2] >= 12]
+            bands.append([y, y])
+    bars = []
+    for b0, b1 in bands:
+        h = b1 - b0 + 1
+        if h < min_band_h:
+            continue
+        need = max(4, int(h * duty))
+        cold = [sum(col) for col in zip(*rows[b0:b1 + 1])]
+        x = 0
+        while x < W:
+            if cold[x] < need:
+                x += 1
+                continue
+            x0 = x
+            while x < W and cold[x] >= need:         # strict contiguity: the ~3 px dark gap
+                x += 1                               # between two bars is a separator
+            if x - x0 >= min_w:
+                bars.append(((x0 + x) // 2, y0 + (b0 + b1) // 2, h))
+    return bars
 
 
 def is_vote_row(bars):
@@ -463,13 +483,17 @@ def handle_pane(words, png, rec, kind):
     if not bs:
         return False
     row = is_vote_row(bs)
-    if row is None and not is_council_pane(words):
-        return False                            # not ours: let the caller press Return
-    target = row[0] if row else sorted(bs, key=lambda b: b[1])[-1]
+    council = is_council_pane(words)
+    # A 3-bar row only counts as a VOTE when it sits in the y>=460 band: the Council puts
+    # YEA/NAY/ABSTAIN at y~498, while the advisory panes' bar rows ("Don't Show As Popup" +
+    # OK, the highlighted option row) measure y 219-310 on the same fixtures.
+    vote = bool(row) and row[0][1] >= 460
+    if not (council or vote):
+        return False                            # not our pane: let the caller press Return
+    target = row[0] if vote else sorted(bs, key=lambda b: b[1])[-1]
     click((target[0], target[1]))
-    rec["handled"].append(("vote-yea" if row else "bar") +
-                          f"@{int(target[0])},{int(target[1])}" +
-                          ("/council" if is_council_pane(words) else ""))
+    rec["handled"].append(("vote-yea" if vote else "bar") +
+                          f"@{int(target[0])},{int(target[1])}" + ("/council" if council else ""))
     time.sleep(1.6)
     return True
 
