@@ -541,6 +541,19 @@ def handle_pane(words, png, rec, kind):
     bs = pane_bars(png)
     if not bs:
         return False
+    # A full-screen `movie` frame that carries a bottom bar is not a cinematic that ends on
+    # its own: it is the battle REPLAY ("Replay: 2415" + a Close bar at (400,587),
+    # evidence/m54a/movie_stuck.png), and it loops until something clicks Close. With
+    # --no-escape the driver was forbidding itself from doing anything, so turn 0 burned
+    # 243 s of `movie` frames (trace_m54a40i).
+    if not is_council_pane(words):
+        close = [b for b in bs if b[1] >= 560]
+        if close:
+            b = max(close, key=lambda c: c[2])
+            click((b[0], b[1]))
+            rec["handled"].append(f"close-bar@{int(b[0])},{int(b[1])}")
+            time.sleep(1.2)
+            return True
     row = is_vote_row(bs)
     council = is_council_pane(words)
     # A 3-bar row only counts as a VOTE when it sits in the y>=460 band: the Council puts
@@ -660,7 +673,7 @@ def service_turn(idx, tr, timeout, verbose=False):
         # M54a: the Council vote row and the HIVE bribe pane come up in BOTH phases (the
         # Council convenes while cur_player is an AI), and neither has a control OCR can
         # see, so they get a handler ahead of the generic dialog/Escape paths.
-        if kind in ("dialog", "unknown") and handle_pane(words, png, rec, kind):
+        if kind in ("dialog", "unknown", "movie") and handle_pane(words, png, rec, kind):
             time.sleep(0.4)
             continue
         # Whose turn is it *right now*?  During the AI phase the HUD is still drawn and
