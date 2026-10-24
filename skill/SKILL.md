@@ -16,7 +16,7 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 **This file is ~70 KB and the repo copy budget FAILs at 70,000 chars — grep it, do not load it whole,
 and when you add a pitfall, delete a superseded session block in the same edit.** `grep -n '^## \|^- \*\*' SKILL.md`, then
 `sed -n 'A,Bp'` the one or two sections you need (the pitfalls block + the code area for the current
-milestone). Loading it whole costs ~14k tokens a session and buries the pitfall you came for.
+milestone).
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
 RE. Five spines (boot, solo turn, unit orders/combat, research/tech, save/load) drive Phases 1–2.
@@ -109,8 +109,9 @@ and are excluded; `--all` adds them back and makes results worse. **Naming a fun
 
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
-merge by hand in the web UI without a green `gate` check. After editing this live skill, copy it
-to `~/reverse/smac/skill/` and commit: the gate fails on drift. Protocol detail:
+merge by hand in the web UI without a green `gate` check. After editing this live skill, copy the whole
+dir — `SKILL.md` **and** `references/` — to `~/reverse/smac/skill/` and commit: the gate compares only
+`SKILL.md`, so an edited reference drifts silently. Protocol detail:
 `~/reverse/smac/AGENTS.md` and `docs/WORKFLOW.md`.
 
 ## Session discipline (this project is context-heavy)
@@ -159,7 +160,8 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
 
 - If `scripts/fn.py` prints 0 bytes for an address `index.csv` lists as ok, don't retry arg
   variants — read the body from the cached objdump window (`zgrep -n '  ADDR:'
-  evidence/*_text.txt.gz` + sed window) instead.
+  evidence/*_text.txt.gz` for the line, then `gunzip -c … | sed -n 'A,Bp'` — plain `sed -n` on a `.gz`
+  matches nothing and prints an empty window) instead.
 - **Filter compiler helpers before ranking anything by in-degree.** CRT stubs
   (`__security_check_cookie`, `_ftol2`, …) have 300–2000 callers and a few hundred bytes and
   top every raw caller ranking; `coverage.py` excludes `callers≥300 & size<400` and lists them
@@ -278,7 +280,9 @@ inherited state unverified in the successor's spec.
   → `DAT_008f0d30` at 0x4e78e9, first call of `FUN_004e78e0`) describes only the LAST record the game
   processed, so every other row's snapshot-read input is stale and its deltas are contamination, not rule
   gaps. Discriminate by self-consistency: model's computed output mask == the stored mask it read as input
-  (SMAC `mask_in == processed`); that filter cut 26 apparent residual rows to 2 real ones. Corollary: a
+  (SMAC `mask_in == processed`): report how many rows pass it, and which dump refresh produced the run,
+  never a raw exact-match count — that count tracks snapshot coherence, not model quality (19/76 and
+  40/76 on consecutive rounds of the same build). Corollary: a
   "scenario constant" label is only earned by a `.text` store census AND a two-snapshot read.
 - **Build the mismatch census with a script that opens the report file directly** (`open(path)` inside
   python, not a regex over a line-numbered tool view), and validate the FIELD SET against a real sample
@@ -532,15 +536,12 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   Exception: the quit prompt also pops MID-DRIVE after `--turns` runs (session 65) while the game is
   otherwise healthy — Escape back to "Oops, no, wait!", never click OK.
   Dark/unrecognized frames get ~20 s of grace before a single Escape — cinematics end themselves.
-- **A stalled round can be a LIVELOCK, not a modal (M53p).** Signature: `turn_flags` (`DAT_00985ae8`)
-  bit 1 stuck set (0x10002) while `cur_player == player`, main thread `R` at ~60% CPU,
-  screenshots md5-identical, drivers returning STUCK with no pane on screen. Cause: the two unit-chain
-  walks — `FUN_005ab130` (loop 0x5ab223-37, reads `unit+50`) and `FUN_005a6330` (loop 0x5a6945-55,
-  reads `unit+48`; array 0x933278 stride 52) — **exit only on a NEGATIVE link**, so a self-link
-  (`unit[i]+48 == i`) is an endless loop; the links are INDEX values and the array compacts when a unit
-  dies, so compaction can create one. Diagnose: one gdb attach for `$pc`/`bt`, then census both chains
-  for cycles via `/proc/pid/mem`; fix: poke the link to 0xFFFF and read back. Recipe:
-  `evidence/m53p_livelock_findings.md`.
+- **A stalled round can be a LIVELOCK, not a modal.** Signature: `turn_flags` (`DAT_00985ae8`) bit 1 stuck
+  set (0x10002) while `cur_player == player`, main thread `R` at ~60% CPU, screenshots md5-identical,
+  drivers STUCK with no pane. Cause: a self/stale link in the `+48`/`+50` unit chains — both chain walks
+  exit only on a NEGATIVE link, and the links are INDEX values, so array compaction manufactures them.
+  Diagnosis (sample TWICE: clearing one chain reveals the second loop) and the 0xFFFF poke fix:
+  `references/wine-headless-harness.md`, unit-array pitfalls.
 - **`scripts/smac_play.py` has no `--mode stop`, and `--no-escape N` means "never press Escape during
   the first N seconds".** Set N above the run's `--timeout`: the driver classifies the mid-drive
   `Do you really want to quit?` dialog as a title screen (its banner IS the game title) and its own
@@ -670,9 +671,9 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   `scripts/m53p_recon_a.py`. CAUTION (M53p): the model's entry scan mask comes from `DAT_008f0d30`, which
   `FUN_004e63b0` (FIRST call of `FUN_004e78e0`, 0x4e78e9) rebuilds every entry from the 21-dword table
   `0x8f0ccc..0x8f0d1c` (`DAT_008f0d30 = {bit i : table[i] != 0}`, 0x4e6925-0x4e694f), so a live read is
-  valid ONLY for the base in `DAT_0068cbb0` (last processed). Filter the census to self-consistent rows
-  (`mask_in == processed`): 19/76 such rows, 17 exact, residuals idx 61 c4 -2 and idx 70 c4 -1
-  (`evidence/m53p_mask_findings.md`). The model reads `evidence/m53o_mem/*.bin` (written by
+  valid ONLY for the base in `DAT_0068cbb0` (last processed).  Filter the census to self-consistent rows
+  (`mask_in == processed`): on a driven round 46/76 pass and 40/76 are exact; the residual is a c4-only
+  (ENERGY) class on fac 1/3/4 bases (`evidence/m53p_mask_findings.md`). The model reads `evidence/m53o_mem/*.bin` (written by
   `scripts/m53o_mem.py`), NOT live memory — refresh before every run and name the refresh: the same
   script gave 50/76 on the year-2381 dump and 18/76 on the year-2382 dump. Middle-pass score
   corrections 0x4e818a-0x4e81b6 are
