@@ -190,12 +190,15 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   middle-pass machine rules — stack frame map, the two-pair candidate dispatch, the three swap-commit guards,
   budget and nibble bookkeeping, and which gating globals are scenario constants that cannot vary per visit —
   are in **`references/production-rebuild.md`**. Live-fit models: `scripts/m53o_recon.py` 36/76,
-  `scripts/m53p_recon_a.py`. CAUTION (M53p): the model's entry scan mask comes from `DAT_008f0d30`, which
-  `FUN_004e63b0` (FIRST call of `FUN_004e78e0`, 0x4e78e9) rebuilds every entry from the 21-dword table
-  `0x8f0ccc..0x8f0d1c` (`DAT_008f0d30 = {bit i : table[i] != 0}`, 0x4e6925-0x4e694f), so a live read is
-  valid ONLY for the base in `DAT_0068cbb0` (last processed).  Filter the census to self-consistent rows
-  (`mask_in == processed`): on a driven round 46/76 pass and 40/76 are exact; the residual is a c4-only
-  (ENERGY) class on fac 1/3/4 bases (`evidence/m53p_mask_findings.md`). The model reads `evidence/m53o_mem/*.bin` (written by
+  `scripts/m53p_recon_a.py` (entry mask = `build_table(idx)`, M53q; `--stale-mask` = the superseded
+  global path). CAUTION (M53q): `FUN_004e63b0` (FIRST call of `FUN_004e78e0`, 0x4e78e9) rebuilds the
+  21-dword table `0x8f0ccc..0x8f0d1c` AND `DAT_008f0d30 = {bit i : table[i] != 0}` (0x4e6925-0x4e694f)
+  FOR THE CURRENT BASE before the entry filter at 0x4e796a runs — a live read is valid ONLY for the
+  base in `DAT_0068cbb0` (last processed) — but in practice the filter is a NO-OP: `pool(base+0x78) &
+  fresh_mask == {bit 0}` on 76/76 rows, so each base's stored pool already excludes its blocked steps.
+  Filter the census to self-consistent rows (`mask_in == processed`): 2026-10-24 dump 65/76 pass,
+  54/76 exact; residuals are 11 c4-only rows (facs {1,3,4,7}) plus 11 fac-2 scan-ORDER rows
+  (`evidence/m53q_findings.md`; supersedes the 46/7 framing in `m53p_mask_findings.md`). The model reads `evidence/m53o_mem/*.bin` (written by
   `scripts/m53o_mem.py`), NOT live memory — refresh before every run and name the refresh: the same
   script gave 50/76 on the year-2381 dump and 18/76 on the year-2382 dump. Middle-pass score
   corrections 0x4e818a-0x4e81b6 are
