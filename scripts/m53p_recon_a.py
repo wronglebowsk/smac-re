@@ -3,7 +3,8 @@
 
     python3 scripts/m53o_recon.py            # the 7 pinned candidate bases
     python3 scripts/m53o_recon.py 70 4 10    # specific idxs
-    python3 scripts/m53o_recon.py --legacy   # pre-fix model (scan-mask input = raw post-state)
+    python3 scripts/m53o_recon.py --stale-mask  # superseded model (entry mask = the dump's
+                                               # global DAT_008f0d30; M53q computes it per base)
     python3 scripts/m53o_recon.py -v 70      # per-scan / per-term detail
 
 Read-only: consumes evidence/m53o_mem/*.bin written by scripts/m53o_mem.py.
@@ -545,8 +546,169 @@ def wrap_x(x):
     return x
 
 
+# ---------------------------------------------------------------- FUN_004e63b0
+# The per-visit scan-pool builder.  Reads *(0x8f0d60) (no args passed at the call
+# site 0x4e78e9); writes the 21-dword table 0x8f0ccc..0x8f0d1c and then, still
+# inside itself (ret 0x4e6959), DAT_008f0d30 = {bit i : table[i] != 0} (0x4e6925-
+# 0x4e694f).  Every predicate below is transcribed from evidence/m53j_text.txt.gz
+# lines 298136-298619 (asm VAs in comments); see evidence/m53q_findings.md.
+UNIT_BASE = 0x933278          # unit array, stride 52 (live count DAT_00985af0)
+
+
+def unit(i):
+    d = blob_at("units", UNIT_BASE + 52 * i, 52)
+    return {"x": struct.unpack_from("<h", d, 0)[0], "y": struct.unpack_from("<h", d, 2)[0],
+            "typ": d[4], "fac": struct.unpack_from("<b", d, 14)[0], "order": d[17],
+            "w18": struct.unpack_from("<H", d, 24)[0], "b25": d[25],
+            "l48": struct.unpack_from("<h", d, 48)[0], "l50": struct.unpack_from("<h", d, 50)[0]}
+
+
+def unit_head(u):
+    """Walk +50 prev-links to the stack head (asm 0x5ab223-37 / 0x5a5cad-bf, exit
+    only on a NEGATIVE link; a self-link would spin -- guard with a step limit)."""
+    seen = 0
+    while seen < 4096:
+        nxt = unit(u)["l50"]
+        if nxt < 0:
+            return u
+        u, seen = nxt, seen + 1
+    return u
+
+
+def unit_at(x, y):
+    """FUN_005ab130(x,y) -> FUN_005a5c00(u): the stack head of tile (x,y), or -1.
+    Linear-scan path (asm 0x5ab17b-1a7: first record with +0==x and +2==y, then the
+    +50 walk to the head; 0x5a5c00 re-derives the same head).  The tile-head path
+    (tile mask dword +8 bit 1 -> read the record's list head) is equivalent while
+    the occupancy bit is consistent; not modelled -- INFERRED-equivalent."""
+    n = G["nunit"]
+    for i in range(n):
+        r = unit(i)
+        if r["x"] == x and r["y"] == y:
+            return unit_head(i)
+    return -1
+
+
+def hexdist(x0, y0, x1, y1):
+    """asm 0x4e6733-0x4e6759: mx - (((manhattan>>1) - mn + 1) >> 1) over the WRAPPED
+    deltas (wrap correction 0x4e6701-23 / 0x4e6834-56; DAT_00692184 = 40 half-width)."""
+    dx = x0 - x1
+    if (G["wrap"] & 1) == 0:
+        ad = abs(dx)
+        if ad > G["mapw_mult"]:
+            dx = G["map_w"] - ad
+    ax, ay = abs(dx), abs(y0 - y1)
+    mx, mn = (ax, ay) if ax > ay else (ay, ax)
+    return s32(mx - s32((s32((ax + ay) >> 1) - mn + 1) >> 1))
+
+
+def relation(fac, other):
+    """Stance byte DAT_0094d448 + fac*0x20bc + 4*other (0x4e6628 / 0x4e6675 test &3)."""
+    return u8("facrec", 0x94D448 + fac * 0x20BC + 4 * other)
+
+
+def _foreign_unit_flag(r, fac):
+    """0x4e65d3-0x4e6635: a stack member of another faction that is NOT in the
+    transport state (w18 & 0x440 == 0x440) AND whose +25 faction bit for US is
+    CLEAR (0x4e660c `test [u+25],1<<fac / je skip` -- je fires when the bit IS set),
+    combined with stance(fac, unit_fac) & 3 == 0 -> the |= 8 test."""
+    vf = r["fac"]
+    if vf < 0 or vf == fac:                            # 0x4e65e7-eb (unowned/ours: skip)
+        return False
+    if (r["w18"] & 0x440) == 0x440:                    # 0x4e65f1-0x4e6603: transport state
+        return False                                   #   -> the +25 test is SKIPPED
+    if (r["b25"] >> fac) & 1:                          # 0x4e660c: je -> skip when SET
+        return False
+    return relation(fac, vf) & 3 == 0                  # 0x4e6628
+
+
+def build_table(idx, verbose=False):
+    """FUN_004e63b0 for base idx -> (table[25], mask21).  table[21..24] are written
+    by the dead 0x4e63e8 site (past the window the mask loop scans); mask21 models
+    DAT_008f0d30.  Loop A = per-step reason codes; loop B/C = the 0x10 overlap OR."""
+    R = row(idx)
+    fac = R["fac"]
+    bx, by = R["x"], R["y"]
+    W, H, FLAT = G["map_w"], G["map_h"], (G["wrap"] & 1) != 0
+    out = [0] * 25
+    exempt = (frec(0x94D430, fac) & 0x200) != 0      # 0x4e64e8 test ah,0x2 on 0x94d430[fac]
+    for s in range(21):
+        tx = bx + XOFF[s]
+        if not FLAT:                                  # 0x4e6407-23: fold x when wrap bit CLEAR
+            if tx < 0:
+                tx += W
+            elif tx >= W:
+                tx -= W
+        ty = by + YOFF[s]
+        if ty < 0 or ty >= H or tx < 0 or tx >= W:    # 0x4e6430-40
+            out[s] = 2
+            continue
+        t = terr(tile_idx(tx, ty))
+        m8 = t["u9"]                                  # record dword at +8 (terr's "u9")
+        lvl = t["b"][2] & 0xF                         # 0x4e6554-5d: 0 <= b2&0xf < 8
+        if not (exempt or (t["b"][4] >> fac) & 1):    # 0x4e650f test BYTE[tile+4],1<<fac
+            out[s] = 2
+            continue
+        out[s] = 0                                    # 0x4e6533
+        if (m8 & 1) and 0 <= lvl < 8:
+            out[s] = 4                                # 0x4e6563
+        u = unit_at(tx, ty)                           # 0x4e656f-7f (5ab130 -> 5a5c00)
+        if u >= 0:
+            if unit(u)["order"] == 3:                 # 0x4e6590 5a6330(u,9,3,-1,-1) case 9
+                out[s] |= 8                           # 0x4e659f
+            v = u                                     # 0x4e65ac-: +48 walk to the chain end
+            for _ in range(4096):
+                nxt = unit(v)["l48"]
+                if nxt < 0:
+                    break
+                v = nxt
+            w = v                                     # 0x4e663c: esi CARRIES OVER -- the +50
+            for _ in range(4096):                     # walk starts at the +48 terminus and
+                r = unit(w)                           # covers every member of the stack
+                if _foreign_unit_flag(r, fac):
+                    out[s] |= 8                       # 0x4e6635
+                if r["l50"] < 0:
+                    break
+                w = r["l50"]
+            o = t["b7"]                               # 0x4e6651 FUN_004e3b50(fac,x,y,0,0)
+            if o >= 0 and o != fac and relation(fac, o) & 3 == 0:   # 0x4e6659-75
+                if u < 0 or unit(u)["fac"] == fac:    # 0x4e667f-94
+                    out[s] |= 0x20                    # 0x4e6699
+    for s in range(21, 25):                           # 0x4e63e8 (dead for 0..20)
+        out[s] = 1
+    # ---- loop B/C: another base's processed step overlapping our spiral -> |= 0x10
+    nb = G["nbases"]
+    for n in range(nb):
+        if n == idx:                                  # 0x4e66db cmp DAT_0068cbb0
+            continue
+        b = row(n)
+        if hexdist(bx, by, b["x"], b["y"]) > 5:       # 0x4e6759 cmp ecx,5
+            continue
+        bmask = b["d78"]
+        for s in range(21):                           # 0x4e6778-0x4e68fe
+            if s and not ((bmask >> s) & 1):          # 0x4e6783 test [b+0x78],1<<s
+                continue
+            tx = wrap_x(b["x"] + XOFF[s])
+            ty = b["y"] + YOFF[s]
+            if ty < 0 or ty >= H or tx < 0 or tx >= W:    # 0x4e67c7-0x4e67e6
+                continue
+            if b["fac"] != fac:                       # 0x4e67f7
+                if (terr(tile_idx(tx, ty))["cat"] & 0xE0) < 0x60:   # 0x4e681b-20 ocean pass
+                    continue
+            if hexdist(bx, by, tx, ty) > 2:           # 0x4e688f cmp ecx,2
+                continue
+            for k in range(21):                       # 0x4e68a5-0x4e68ea step match
+                if wrap_x(bx + XOFF[k]) == tx and by + YOFF[k] == ty:
+                    out[k] |= 0x10                    # 0x4e68d6-de
+    mask = 0
+    for k in range(21):                               # 0x4e6925-0x4e694f
+        if out[k] != 0:
+            mask |= 1 << k
+    return out, mask & 0xFFFFFFFF
+
+
 # ---------------------------------------------------------------- FUN_004e78e0
-def rebuild(idx, legacy=False, verbose=False):
+def rebuild(idx, stale_mask=False, verbose=False):
     R = row(idx)
     fac, pop, bx, by = R["fac"], R["pop"], R["x"], R["y"]
     G["cc8_delta"] = 0
@@ -556,9 +718,14 @@ def rebuild(idx, legacy=False, verbose=False):
     inmask = (u8("g985", 0x985b10) >> fac) & 1
     flag = 0 if (inmask and not ((d38 & 0x40) and (d38 & 0x80000000))) else 1
     budget = pop + 1
-    # asm:42-45 (0x4e796a-0x4e7972): base+0x78 &= (~DAT_008f0d30 | 1)  [NOT ~(pop|1)]
-    mask_in = R["d78"] if legacy else (R["d78"] & ((~G["d30"] | 1) & 0xFFFFFFFF))
-    mask_in &= 0xFFFFFFFF
+    # asm:42-45 (0x4e796a-0x4e7972): base+0x78 &= (~DAT_008f0d30 | 1).  M53q: the
+    # filter runs AFTER call 0x4e63b0 (0x4e78e9 < 0x4e796a), and 4e63b0 rebuilds
+    # 0x8f0d30 FOR THIS BASE before returning -- so the mask is build_table(idx),
+    # not the stale global left by whoever was processed last.  --stale-mask keeps
+    # the superseded semantics (the global DAT_008f0d30 from the dump).
+    tbl, fresh_mask = build_table(idx)
+    mask_in = (R["d78"] if stale_mask else
+               (R["d78"] & ((~fresh_mask | 1) & 0xFFFFFFFF))) & 0xFFFFFFFF
     c84 = [R["d84"], R["d88"]]
     c7c, c80 = R["d7c"], R["d80"]
 
@@ -741,6 +908,7 @@ def rebuild(idx, legacy=False, verbose=False):
 
     out = {"idx": idx, "fac": fac, "pop": pop, "flag": flag, "budget0": pop + 1,
            "budget_end": budget, "mask_in": mask_in, "processed": processed,
+           "mask_fresh": fresh_mask, "table": tbl, "mask_stale": G["d30"],
            "c7c_in": R["d7c"], "c7c_end": c7c, "c80_end": c80, "nib_out": c84,
            "seed": seed_terms, "trace": trace, "vec": vec, "obs": R["vec"],
            "filled": filled, "cc8_delta": G["cc8_delta"]}
@@ -832,13 +1000,14 @@ def final_score(aa, bb, cc, l50, budget, vec, pop, l18, l24, l28, l38, l3c, idx)
     return s32(t1 + t2 + t3)
 
 
-def show(idx, legacy=False, verbose=False):
-    o = rebuild(idx, legacy, verbose)
+def show(idx, stale_mask=False, verbose=False):
+    o = rebuild(idx, stale_mask, verbose)
     obs = list(o["obs"])
     obs[0] -= G["c6c"] if idx == 70 else 0
-    print("idx %d fac %d pop %d flag %d budget %d->%d mask_in %s processed %s"
+    print("idx %d fac %d pop %d flag %d budget %d->%d mask_in %s processed %s mask %s%s"
           % (idx, o["fac"], o["pop"], o["flag"], o["budget0"], o["budget_end"],
-             hex(o["mask_in"]), hex(o["processed"])))
+             hex(o["mask_in"]), hex(o["processed"]), hex(o["mask_fresh"]),
+             " (live d30 %s)" % hex(o["mask_stale"]) if idx == G["base_idx"] else ""))
     names = ["bc", "c0", "c4", "c8"]
     for f in range(4):
         terms = [(t[0], t[1][0], t[1][1], t[2][f] * t[3]) for t in o["trace"]]
@@ -854,14 +1023,15 @@ def show(idx, legacy=False, verbose=False):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("idx", nargs="*", type=int)
-    ap.add_argument("--legacy", action="store_true")
+    ap.add_argument("--stale-mask", action="store_true", dest="stale_mask",
+                    help="superseded M53p semantics: entry mask from the dump's global DAT_008f0d30")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args()
     init()
     idxs = a.idx or [70, 0, 3, 4, 6, 10, 23]
     full = []
     for i in idxs:
-        o, obs = show(i, a.legacy, a.verbose)
+        o, obs = show(i, a.stale_mask, a.verbose)
         if all(o["vec"][f] == obs[f] for f in range(4)):
             full.append(i)
     print("full-match:", full, "facs:", sorted({row(i)["fac"] for i in full}))
