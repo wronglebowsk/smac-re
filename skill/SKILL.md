@@ -13,7 +13,8 @@ in-repo under `skill/` — after editing the skill, refresh it there and push. G
 `git add -f` them.
 Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 
-**This file is ~55 KB — grep it, do not load it whole.** `grep -n '^## \|^- \*\*' SKILL.md`, then
+**This file is ~70 KB and the repo copy budget FAILs at 70,000 chars — grep it, do not load it whole,
+and when you add a pitfall, delete a superseded session block in the same edit.** `grep -n '^## \|^- \*\*' SKILL.md`, then
 `sed -n 'A,Bp'` the one or two sections you need (the pitfalls block + the code area for the current
 milestone). Loading it whole costs ~14k tokens a session and buries the pitfall you came for.
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
@@ -63,18 +64,15 @@ the semantic index.
 a function or pins an address must add `NAMED.md` rows in the same commit, otherwise the gate prints
 `[WARN] address registry: NAMED.md untouched` and the verdict is not 0-warning (submit/merge want zero).
 `NAMED.md` is append-only and too big to rewrite — write the rows to a scratch file and
-`cat scratch.md >> NAMED.md` (`write_file` refuses without a full read; `patch` needs a unique anchor);
+`cat scratch.md >> NAMED.md` (`write_file` refuses to overwrite a file it has not fully read in the current task — for a whole-file
+rewrite write the new text to a scratch path and `mv` it over the target, or do the rewrite in one python
+pass; `patch` needs a unique anchor);
 rows are `| addr | proposed name | conf | evidence-with-file:line |` and the row is what makes the
 function searchable in the semantic index. (2) *Evidence citations*: every `evidence/<file>` cited in the
 findings doc must exist on disk, or the citation check drops it. (3) **Poll CI by SHA**: after a follow-up
 push (skill sync, `NAMED.md` rows) `gh pr checks <n>` can still report the earlier run — use
 `gh pr view <n> --json headRefOid,statusCheckRollup` and merge only when SUCCESS is on the current head
 commit.
-
-**Drivers started with `--hold N` fire a late "gdb exited" background notification when the hold loop
-finally expires** — hours after `--mode stop` already detached gdb, one notification per armed tag.
-Harmless (a CONT on a running inferior is a no-op): after a session that armed several tags, expect a
-run of them and do not re-verify the game for each.
 
 When a doc is over budget, **delete whole bullets/blocks** (cut from the offending line to the next
 `- ` or `## `) — rewording saves ~0 bytes — and re-measure with `wc -c`, not character count. These docs
@@ -157,7 +155,11 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   0xADDR"` — gdb maps the PE image (file offset = VA − 0x400000), read-only, TracerPid stays 0.
   **Whole-image store census: `objdump -d -M intel --section=.text programs/terran.exe`** — printed
   addresses are VAs (file offset = VA − 0x400000), ~40 MB and regenerable: grep it, extract the windows
-  you cite into small `evidence/` files, delete the dump, never commit it. A `-b binary -m i386:x86-64`
+  you cite into small `evidence/` files, never commit it. `evidence/` carries a hard **disk** budget that
+  the gate enforces through `evidence.py budget` (warn 20 MB, FAIL 30 MB), and one 40 MB dump blows past
+  it: delete it once the census is written up, or `gzip -9` it in place (~40 MB → ~6 MB, still searchable
+  with `zgrep`) when a later milestone will re-census the same address range — and record the rebuild
+  command in `NEXT_PROMPT.md` so the next session knows the file is regenerable, not data. A `-b binary -m i386:x86-64`
   slice MISALIGNS on SEH blocks (garbage/movabs in SEH-heavy regions like the 0x4efxxx pipeline) — for
   one function use the gdb recipe; Ghidra lumps edi/esi away.
     **Coverage-check every dump**: instructions average 3.8 B here, so `x/2600i` silently stopped 2.4 KB
@@ -206,7 +208,9 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   the old model matched, the rewrite is wrong until raw bytes prove otherwise.
 - **Fit the unknown intermediate instead of guessing variants**: per mismatch row compute everything but
   the one unknown internal value, then enumerate it and read off which reproduces live. Variant fitting
-  belongs in a subagent, never the main thread.
+  belongs in a subagent, never the main thread — and make every child **write its own notes file under
+  `evidence/`**: a child's final summary is a self-report, so confirm that file exists and spot-check two
+  or three of its addresses against the disassembly before citing anything from it.
 - **Before counting a live-memory mismatch, check the row is a real record**: histogram the discriminator
   fields across the whole table — rows whose indices run past the shipped data or whose fields hold
   impossible values are stale/unallocated records, not model failures. Counting them as mismatches sends
@@ -752,8 +756,9 @@ Next (M48): mineral economy (queue a build, watch `base+0x40`); ledger writers o
 **M48d (session 45-46, `scripts/m48d_drive.py`, evidence `m48d2_*`): MINERAL ECONOMY TRACED** —
 storage `base+0x40` grows `+= d0` per round UNCLAMPED between completions (AI stockpiles 111→121);
 at EVERY production completion (unit or facility, `0x4efe41→SPENDA 0x4efed8 store 0x4efee0`) storage
-is then pinned to `max(0, min(d0, cap))` (store `0x4eff23`, gate CLAMP1 `0x4eff02` =
-`(1<<owner)&mask` event test) — the stockpile is destroyed to one round's income at completion.
+is then clamped (store `0x4eff23`, gate CLAMP1 `0x4eff02` = `(1<<owner)&mask` event test); **M53j
+supersedes the arithmetic of this bullet — the completion path debits `base+0x40 −= price` (price =
+cost factor × `0x4e40a0`) and then clamps, so read the M53j bullet for the pay order**.
 Scout Patrol cost 10; pop-growth units go through the SAME completion path and need storage ≥ cost
 (26 years of storage 0 ⇒ pop grew, unit never spawned); NOSUPPORT disband fires while `d0<0`,
 one unit/round, stable at d0=0; `d0=base+0xd0` recomputed every round at `0x4e955d` (pokes die);
@@ -761,20 +766,6 @@ one unit/round, stable at d0=0; `d0=base+0xd0` recomputed every round at `0x4e95
 solo; sweep = 75 visits ours LAST, can end early on the year store (open: truncations observed at
 21/28/28 visits — the last-visited base, ours, can skip a whole round). Pane printer
 `0x483470` = advisories only (Script confirms don't route through it).
-
-**M49a (session 47) CORRECTS M48d's cost story**: at every completion SPENDA `storage −= edi`
-where edi = the base's SWEEP-ENTRY INDEX (0x520540 `push ebx` stack arg → 0x4f5a70 `edi:=index`
-0x4f5aa9 → the pipeline never writes edi on the pop-growth path), NOT a unit cost — "Scout
-Patrol cost 10" retracted (10 = our base index); esi at COMPLET is path residue (pop-growth:
-(1<<owner)&mask via 0x4e40a0/0x48ee00; facility: type-record scratch); pop at COMPLET is always
-the pre-completion value. **M50a (session 48) closes the mineral-cost question**: `0x4f26e0` is
-the mineral↔energy CONVERSION/INCOME step, not a cost, and holds the THIRD storage writer —
-store `0x4f2d7d storage += ((energy_pool/esi)·45)/trait` (CREDIT, live deltas +0…+12; scales
-with faction energy pool `0x94d650+p·0x20bc`). It early-returns for our base via gate 0x4f2705
-(event-owner ∧ `~(base+0x38)` bits 0x1a/0x1c; f30=0x805000 bit 0x1c) ⇒ we get no conversion
-income. Production is effectively free of mineral costs in solo: only debit is the index quirk
-0x4efee0, and 0x4ee410 never touches base+0x40. Current footing: `~/reverse/smac/NEXT_PROMPT.md`
-(session 49).
 
 As of M24 the whole order path is **named**
 (`~/reverse/smac/turn_driver.md` §M19–M24 + 13 new `NAMED.md` rows): the tile setter `FUN_004d44d0(unit,mode)` (with `FUN_005ab320(unit,x,y)` as unit
