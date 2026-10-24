@@ -489,6 +489,35 @@ def answer_help_page(png):
     return None
 
 
+def answer_council_dialog(png):
+    """The Council's own panes: option rows + an OK bar (M54a).
+
+    Measured on evidence/m54a/live_now3.png ("GAIANS - OBSTINATE / Have you any further
+    business?"): six dithered option rows at y 70-175 (the first, "I believe we are finished
+    here. Zakharov out.", is the one that ENDS the Council round) and one OK bar across the
+    pane bottom at y~347 — the "OK" label splits it into two column groups (266,347) and
+    (534,347), so the click has to land on the merged row's centre (400,347). `Return` does
+    nothing on this pane: 240 s of it and the turn stayed STUCK (trace_m54a40g turn 5).
+    The PROTOCOL DIRECTOR pane has no option rows, only its OK bar in the 430-520 band.
+    """
+    rows = pane_bars(png, y0=55)
+    opts = [b for b in rows if 55 <= b[1] <= 200]
+    okb = [b for b in rows if 300 <= b[1] <= 420] or [b for b in rows if 430 <= b[1] <= 520]
+    if opts and okb:
+        click((opts[0][0], opts[0][1]))          # select the top option ("finished here")
+        time.sleep(1.0)
+    if okb:
+        x0 = min(b[0] for b in okb)
+        x1 = max(b[0] for b in okb)
+        cy = sum(b[1] for b in okb) // len(okb)
+        click(((x0 + x1) // 2, cy))
+        return ((x0 + x1) // 2, cy)
+    if opts:
+        click((opts[0][0], opts[0][1]))
+        return (opts[0][0], opts[0][1])
+    return None
+
+
 def handle_pane(words, png, rec, kind):
     """Click/keys for the modals that have no OCR-readable control. True = acted.
 
@@ -518,14 +547,20 @@ def handle_pane(words, png, rec, kind):
     # YEA/NAY/ABSTAIN at y~498, while the advisory panes' bar rows ("Don't Show As Popup" +
     # OK, the highlighted option row) measure y 219-310 on the same fixtures.
     vote = bool(row) and 460 <= row[0][1] <= 520      # the Council vote row is at y~498;
-    if not (council or vote):
-        return False                            # not our pane: let the caller press Return
-    target = row[0] if vote else sorted(bs, key=lambda b: b[1])[-1]
-    click((target[0], target[1]))
-    rec["handled"].append(("vote-yea" if vote else "bar") +
-                          f"@{int(target[0])},{int(target[1])}" + ("/council" if council else ""))
-    time.sleep(1.6)
-    return True
+    if vote:
+        target = row[0]
+        click((target[0], target[1]))
+        rec["handled"].append(f"vote-yea@{int(target[0])},{int(target[1])}" +
+                              ("/council" if council else ""))
+        time.sleep(1.6)
+        return True
+    if council:
+        xy = answer_council_dialog(png)         # option row + merged OK bar, or just the OK
+        if xy:
+            rec["handled"].append(f"council-ok@{int(xy[0])},{int(xy[1])}")
+            time.sleep(1.6)
+            return True
+    return False
 
 
 def state():
