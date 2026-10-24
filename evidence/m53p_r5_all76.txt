@@ -1,0 +1,381 @@
+idx 0 fac 2 pop 4 flag 1 budget 5->1 mask_in 0x20441 processed 0x20441
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@20:+2 scan6@18:+1 scan10@22:+2 scan17@19:+3
+  c0 model=8    obs=8    delta=0    seed=0  sum=8 scan0@20:+1 scan6@18:+5 scan10@22:+1 scan17@19:+1
+  c4 model=5    obs=5    delta=0    seed=0  sum=5 scan0@20:+1 scan10@22:+2 scan17@19:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 1 fac 1 pop 7 flag 1 budget 8->0 mask_in 0x20a2d processed 0xa222d
+  bc model=17   obs=20   delta=-3   seed=0  sum=17 scan0@24:+3 scan2@26:+2 scan3@25:+3 scan5@23:+4 scan9@26:+1 scan11@22:+3 scan17@23:+3 mp-gain@25:+1 mp-swap-out@22:-3
+  c0 model=13   obs=9    delta=4    seed=0  sum=13 scan0@24:+2 scan2@26:+1 scan3@25:+1 scan5@23:+1 scan9@26:+2 mp-gain@25:+2 mp-swap-in@21:+4
+  c4 model=7    obs=8    delta=-1   seed=0  sum=7 scan0@24:+3 scan2@26:+1 scan3@25:+1 scan9@26:+1 mp-gain@25:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 2 fac 2 pop 7 flag 1 budget 8->2 mask_in 0x84805 processed 0x84807
+  bc model=14   obs=15   delta=-1   seed=0  sum=14 scan0@53:+3 scan2@55:+3 scan11@51:+1 scan14@56:+2 scan19@50:+2 mp-gain@54:+3
+  c0 model=15   obs=15   delta=0    seed=0  sum=15 scan0@53:+2 scan11@51:+5 scan14@56:+2 scan19@50:+5 mp-gain@54:+1
+  c4 model=7    obs=6    delta=1    seed=0  sum=7 scan0@53:+3 scan2@55:+2 mp-gain@54:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 3 fac 4 pop 4 flag 1 budget 5->0 mask_in 0x880c1 processed 0x880c1
+  bc model=10   obs=10   delta=0    seed=0  sum=10 scan0@77:+3 scan6@75:+1 scan7@76:+2 scan15@0:+2 scan19@74:+2
+  c0 model=8    obs=8    delta=0    seed=0  sum=8 scan0@77:+2 scan6@75:+2 scan7@76:+1 scan15@0:+2 scan19@74:+1
+  c4 model=12   obs=15   delta=-3   seed=0  sum=12 scan0@77:+4 scan6@75:+2 scan7@76:+1 scan15@0:+2 scan19@74:+3
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 4 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x2041 processed 0x2041
+  bc model=6    obs=6    delta=0    seed=0  sum=6 scan0@34:+2 scan6@32:+1 scan13@35:+3
+  c0 model=4    obs=4    delta=0    seed=0  sum=4 scan0@34:+1 scan6@32:+2 scan13@35:+1
+  c4 model=5    obs=5    delta=0    seed=0  sum=5 scan0@34:+1 scan6@32:+3 scan13@35:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 5 fac 7 pop 9 flag 1 budget 10->0 mask_in 0xf2851 processed 0xf2c51
+  bc model=25   obs=24   delta=1    seed=0  sum=25 scan0@8:+3 scan4@8:+3 scan6@6:+1 scan11@6:+2 scan13@9:+2 scan16@9:+3 scan17@7:+3 scan18@5:+4 scan19@5:+2 mp-gain@10:+2
+  c0 model=12   obs=11   delta=1    seed=0  sum=12 scan0@8:+2 scan4@8:+1 scan6@6:+2 scan11@6:+1 scan13@9:+1 scan16@9:+1 scan17@7:+1 scan18@5:+1 scan19@5:+1 mp-gain@10:+1
+  c4 model=16   obs=18   delta=-2   seed=0  sum=16 scan0@8:+3 scan4@8:+2 scan6@6:+1 scan11@6:+2 scan13@9:+2 scan16@9:+2 scan17@7:+1 scan18@5:+2 scan19@5:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 6 fac 4 pop 5 flag 1 budget 6->0 mask_in 0xb1081 processed 0xb1081
+  bc model=10   obs=10   delta=0    seed=0  sum=10 scan0@79:+3 scan7@78:+1 scan12@77:+1 scan16@0:+1 scan17@78:+3 scan19@76:+1
+  c0 model=9    obs=9    delta=0    seed=0  sum=9 scan0@79:+2 scan7@78:+1 scan12@77:+2 scan16@0:+2 scan19@76:+2
+  c4 model=6    obs=6    delta=0    seed=0  sum=6 scan0@79:+3 scan7@78:+1 scan12@77:+1 scan16@0:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 7 fac 7 pop 7 flag 1 budget 8->0 mask_in 0x12100f processed 0x12900f
+  bc model=16   obs=14   delta=2    seed=0  sum=16 scan0@2:+2 scan1@3:+1 scan2@4:+1 scan3@3:+1 scan12@0:+2 scan17@1:+1 scan20@1:+4 mp-gain@5:+4
+  c0 model=12   obs=12   delta=0    seed=0  sum=12 scan0@2:+1 scan1@3:+2 scan2@4:+2 scan3@3:+2 scan12@0:+1 scan17@1:+2 scan20@1:+1 mp-gain@5:+1
+  c4 model=10   obs=10   delta=0    seed=0  sum=10 scan0@2:+1 scan1@3:+1 scan2@4:+1 scan3@3:+1 scan17@1:+2 scan20@1:+2 mp-gain@5:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 8 fac 1 pop 7 flag 1 budget 8->0 mask_in 0x42495 processed 0x42497
+  bc model=16   obs=14   delta=2    seed=0  sum=16 scan0@30:+3 scan2@32:+2 scan4@30:+2 scan7@29:+2 scan10@32:+2 scan18@27:+2 mp-gain@31:+3
+  c0 model=7    obs=9    delta=-2   seed=0  sum=7 scan0@30:+2 scan13@31:+4 scan18@27:+1
+  c4 model=6    obs=9    delta=-3   seed=0  sum=6 scan0@30:+2 scan2@32:+1 scan4@30:+1 scan7@29:+1 scan10@32:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 9 fac 6 pop 5 flag 1 budget 6->2 mask_in 0xa5 processed 0xa5
+  bc model=10   obs=10   delta=0    seed=0  sum=10 scan0@70:+2 scan2@72:+2 scan5@69:+2 scan7@69:+4
+  c0 model=3    obs=3    delta=0    seed=0  sum=3 scan0@70:+1 scan2@72:+1 scan5@69:+1
+  c4 model=7    obs=7    delta=0    seed=0  sum=7 scan0@70:+2 scan2@72:+2 scan5@69:+2 scan7@69:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 10 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x81 processed 0x100081
+  bc model=7    obs=4    delta=3    seed=0  sum=7 scan0@33:+2 scan7@32:+1 mp-gain@32:+4
+  c0 model=4    obs=5    delta=-1   seed=0  sum=4 scan0@33:+1 scan7@32:+2 mp-gain@32:+1
+  c4 model=2    obs=3    delta=-1   seed=0  sum=2 scan0@33:+1 scan7@32:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 11 fac 2 pop 10 flag 1 budget 11->2 mask_in 0x110bd processed 0x150bd
+  bc model=21   obs=21   delta=0    seed=0  sum=21 scan0@45:+3 scan2@47:+4 scan3@46:+3 scan4@45:+1 scan5@44:+3 scan7@44:+3 scan16@46:+3 mp-gain@48:+1
+  c0 model=14   obs=14   delta=0    seed=0  sum=14 scan0@45:+2 scan2@47:+1 scan4@45:+2 scan5@44:+1 scan12@43:+4 mp-gain@48:+4
+  c4 model=14   obs=13   delta=1    seed=0  sum=14 scan0@45:+3 scan2@47:+1 scan3@46:+1 scan4@45:+1 scan5@44:+2 scan7@44:+3 scan16@46:+2 mp-gain@48:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 12 fac 2 pop 4 flag 1 budget 5->0 mask_in 0x49401 processed 0x49401
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@26:+2 scan10@28:+1 scan12@24:+1 scan15@29:+2 scan18@23:+2
+  c0 model=13   obs=13   delta=0    seed=0  sum=13 scan0@26:+1 scan10@28:+5 scan12@24:+5 scan15@29:+1 scan18@23:+1
+  c4 model=4    obs=4    delta=0    seed=0  sum=4 scan0@26:+1 scan15@29:+1 scan18@23:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 13 fac 6 pop 4 flag 1 budget 5->0 mask_in 0x87 processed 0x8f
+  bc model=7    obs=8    delta=-1   seed=0  sum=7 scan0@59:+2 scan1@60:+1 scan2@61:+2 scan7@58:+1 mp-gain@60:+1
+  c0 model=8    obs=7    delta=1    seed=0  sum=8 scan0@59:+1 scan1@60:+2 scan2@61:+1 scan7@58:+2 mp-gain@60:+2
+  c4 model=12   obs=12   delta=0    seed=0  sum=12 scan0@59:+2 scan1@60:+2 scan2@61:+2 scan7@58:+4 mp-gain@60:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 14 fac 7 pop 5 flag 1 budget 6->0 mask_in 0x37 processed 0x437
+  bc model=12   obs=11   delta=1    seed=0  sum=12 scan0@4:+2 scan1@5:+1 scan2@6:+3 scan4@4:+1 scan5@3:+2 mp-gain@6:+3
+  c0 model=6    obs=7    delta=-1   seed=0  sum=6 scan0@4:+1 scan1@5:+2 scan4@4:+2 scan5@3:+1
+  c4 model=5    obs=5    delta=0    seed=0  sum=5 scan0@4:+1 scan1@5:+1 scan4@4:+1 scan5@3:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 15 fac 7 pop 8 flag 1 budget 9->0 mask_in 0xc0e7 processed 0xc2e7
+  bc model=17   obs=16   delta=1    seed=0  sum=17 scan0@1:+3 scan1@2:+1 scan2@3:+2 scan5@0:+4 scan6@79:+1 scan7@0:+1 scan14@4:+1 scan15@4:+2 mp-gain@3:+2
+  c0 model=14   obs=15   delta=-1   seed=0  sum=14 scan0@1:+2 scan1@2:+2 scan2@3:+1 scan5@0:+1 scan6@79:+2 scan7@0:+2 scan14@4:+2 scan15@4:+1 mp-gain@3:+1
+  c4 model=12   obs=12   delta=0    seed=0  sum=12 scan0@1:+2 scan1@2:+1 scan2@3:+2 scan5@0:+1 scan6@79:+1 scan7@0:+1 scan14@4:+1 scan15@4:+2 mp-gain@3:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 16 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x19 processed 0x19
+  bc model=4    obs=4    delta=0    seed=0  sum=4 scan0@28:+2 scan3@29:+1 scan4@28:+1
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@28:+1 scan3@29:+2 scan4@28:+2
+  c4 model=5    obs=5    delta=0    seed=0  sum=5 scan0@28:+1 scan3@29:+2 scan4@28:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 17 fac 2 pop 6 flag 1 budget 7->0 mask_in 0x10a40b processed 0x10a40b
+  bc model=12   obs=12   delta=0    seed=0  sum=12 scan0@9:+2 scan3@10:+2 scan10@11:+1 scan13@10:+2 scan15@12:+2 scan20@8:+3
+  c0 model=12   obs=12   delta=0    seed=0  sum=12 scan0@9:+1 scan1@10:+4 scan3@10:+1 scan10@11:+2 scan13@10:+1 scan15@12:+2 scan20@8:+1
+  c4 model=11   obs=11   delta=0    seed=0  sum=11 scan0@9:+1 scan3@10:+1 scan10@11:+1 scan13@10:+3 scan15@12:+3 scan20@8:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 18 fac 2 pop 3 flag 1 budget 4->1 mask_in 0x40001 processed 0x140001
+  bc model=6    obs=7    delta=-1   seed=0  sum=6 scan0@37:+2 scan18@34:+1 mp-gain@36:+3
+  c0 model=7    obs=6    delta=1    seed=0  sum=7 scan0@37:+1 scan18@34:+4 mp-gain@36:+2
+  c4 model=2    obs=3    delta=-1   seed=0  sum=2 scan0@37:+1 scan18@34:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 19 fac 6 pop 6 flag 1 budget 7->0 mask_in 0x6022b processed 0x6022b
+  bc model=13   obs=13   delta=0    seed=0  sum=13 scan0@54:+2 scan1@55:+3 scan3@55:+1 scan5@53:+2 scan9@56:+1 scan17@53:+2 scan18@51:+2
+  c0 model=10   obs=10   delta=0    seed=0  sum=10 scan0@54:+1 scan1@55:+2 scan3@55:+2 scan5@53:+1 scan9@56:+2 scan17@53:+1 scan18@51:+1
+  c4 model=9    obs=9    delta=0    seed=0  sum=9 scan0@54:+1 scan1@55:+2 scan3@55:+2 scan5@53:+1 scan9@56:+2 scan17@53:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 20 fac 2 pop 6 flag 1 budget 7->1 mask_in 0x108d processed 0x308d
+  bc model=13   obs=12   delta=1    seed=0  sum=13 scan0@51:+3 scan2@53:+2 scan3@52:+2 scan7@50:+2 scan12@49:+3 mp-gain@52:+1
+  c0 model=7    obs=11   delta=-4   seed=0  sum=7 scan0@51:+2 scan3@52:+1 scan7@50:+2 mp-gain@52:+2
+  c4 model=11   obs=14   delta=-3   seed=0  sum=11 scan0@51:+2 scan2@53:+3 scan3@52:+1 scan12@49:+1 mp-gain@52:+4
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 21 fac 7 pop 4 flag 1 budget 5->0 mask_in 0x800b1 processed 0x800b1
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@3:+2 scan4@3:+2 scan5@2:+1 scan7@2:+2 scan19@0:+1
+  c0 model=7    obs=7    delta=0    seed=0  sum=7 scan0@3:+1 scan4@3:+1 scan5@2:+2 scan7@2:+1 scan19@0:+2
+  c4 model=7    obs=7    delta=0    seed=0  sum=7 scan0@3:+2 scan4@3:+1 scan5@2:+1 scan19@0:+3
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 22 fac 2 pop 12 flag 1 budget 13->2 mask_in 0x508f7 processed 0x50af7
+  bc model=24   obs=24   delta=0    seed=0  sum=24 scan0@42:+4 scan1@43:+4 scan2@44:+2 scan4@42:+2 scan5@41:+2 scan7@41:+3 scan11@40:+1 scan16@43:+1 scan18@39:+1 mp-gain@44:+4
+  c0 model=20   obs=19   delta=1    seed=0  sum=20 scan0@42:+2 scan1@43:+1 scan2@44:+2 scan4@42:+1 scan5@41:+2 scan6@40:+4 scan7@41:+1 scan11@40:+2 scan16@43:+2 scan18@39:+2 mp-gain@44:+1
+  c4 model=10   obs=10   delta=0    seed=0  sum=10 scan0@42:+2 scan1@43:+1 scan2@44:+1 scan4@42:+1 scan7@41:+1 scan11@40:+1 scan16@43:+1 scan18@39:+1 mp-gain@44:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 23 fac 2 pop 3 flag 1 budget 4->1 mask_in 0x14001 processed 0x14001
+  bc model=7    obs=7    delta=0    seed=0  sum=7 scan0@22:+2 scan14@25:+3 scan16@23:+2
+  c0 model=4    obs=4    delta=0    seed=0  sum=4 scan0@22:+1 scan14@25:+2 scan16@23:+1
+  c4 model=5    obs=5    delta=0    seed=0  sum=5 scan0@22:+1 scan14@25:+2 scan16@23:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 24 fac 2 pop 14 flag 1 budget 15->4 mask_in 0x1160f processed 0x1f60f
+  bc model=34   obs=29   delta=5    seed=0  sum=34 scan0@43:+4 scan1@44:+2 scan2@45:+4 scan3@44:+4 scan9@45:+2 scan10@45:+4 scan12@41:+1 scan16@44:+4 mp-gain@44:+3 mp-gain@46:+2 mp-gain@46:+4
+  c0 model=16   obs=12   delta=4    seed=0  sum=16 scan0@43:+2 scan1@44:+2 scan2@45:+1 scan9@45:+2 scan10@45:+1 scan12@41:+2 scan16@44:+1 mp-gain@44:+2 mp-gain@46:+2 mp-gain@46:+1
+  c4 model=10   obs=9    delta=1    seed=0  sum=10 scan0@43:+2 scan1@44:+1 scan2@45:+1 scan3@44:+1 scan9@45:+1 scan10@45:+1 scan16@44:+1 mp-gain@46:+1 mp-gain@46:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 25 fac 6 pop 3 flag 1 budget 4->0 mask_in 0x8405 processed 0x8405
+  bc model=6    obs=6    delta=0    seed=0  sum=6 scan0@47:+2 scan2@49:+2 scan10@49:+1 scan15@50:+1
+  c0 model=6    obs=6    delta=0    seed=0  sum=6 scan0@47:+1 scan2@49:+1 scan10@49:+2 scan15@50:+2
+  c4 model=7    obs=7    delta=0    seed=0  sum=7 scan0@47:+1 scan2@49:+2 scan10@49:+2 scan15@50:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 26 fac 2 pop 6 flag 1 budget 7->2 mask_in 0x804b processed 0x804b
+  bc model=11   obs=11   delta=0    seed=0  sum=11 scan0@20:+2 scan1@21:+1 scan3@21:+3 scan6@18:+3 scan15@23:+2
+  c0 model=6    obs=6    delta=0    seed=0  sum=6 scan0@20:+1 scan1@21:+2 scan3@21:+2 scan15@23:+1
+  c4 model=10   obs=10   delta=0    seed=0  sum=10 scan0@20:+1 scan1@21:+1 scan3@21:+1 scan6@18:+3 scan15@23:+4
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 27 fac 2 pop 12 flag 1 budget 13->3 mask_in 0x324b5 processed 0x1324b5
+  bc model=23   obs=25   delta=-2   seed=0  sum=23 scan0@47:+4 scan2@49:+2 scan4@47:+4 scan5@46:+2 scan7@46:+4 scan10@49:+2 scan13@48:+2 scan16@48:+2 scan17@46:+1
+  c0 model=20   obs=16   delta=4    seed=0  sum=20 scan0@47:+2 scan2@49:+2 scan4@47:+1 scan5@46:+2 scan7@46:+1 scan10@49:+2 scan13@48:+2 scan16@48:+2 mp-gain@46:+6
+  c4 model=6    obs=1    delta=5    seed=0  sum=6 scan0@47:+1 mp-gain@46:+5
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 28 fac 2 pop 4 flag 1 budget 5->1 mask_in 0x8403 processed 0x8403
+  bc model=11   obs=11   delta=0    seed=0  sum=11 scan0@34:+2 scan1@35:+5 scan10@36:+3 scan15@37:+1 mp-swap-out@35:-5 mp-swap-in@36:+1 mp-undo@36:-1 mp-back@35:+5
+  c0 model=7    obs=7    delta=0    seed=0  sum=7 scan0@34:+1 scan10@36:+2 scan15@37:+4 mp-swap-in@36:+2 mp-undo@36:-2
+  c4 model=2    obs=2    delta=0    seed=0  sum=2 scan0@34:+2 mp-swap-in@36:+1 mp-undo@36:-1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 29 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x203 processed 0x203
+  bc model=5    obs=5    delta=0    seed=0  sum=5 scan0@12:+2 scan1@13:+2 scan9@14:+1
+  c0 model=4    obs=4    delta=0    seed=0  sum=4 scan0@12:+1 scan1@13:+1 scan9@14:+2
+  c4 model=6    obs=6    delta=0    seed=0  sum=6 scan0@12:+2 scan1@13:+3 scan9@14:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 30 fac 4 pop 4 flag 1 budget 5->0 mask_in 0xab processed 0xab
+  bc model=12   obs=12   delta=0    seed=0  sum=12 scan0@70:+3 scan1@71:+4 scan3@71:+1 scan5@69:+1 scan7@69:+3
+  c0 model=8    obs=8    delta=0    seed=0  sum=8 scan0@70:+2 scan1@71:+1 scan3@71:+2 scan5@69:+2 scan7@69:+1
+  c4 model=6    obs=8    delta=-2   seed=0  sum=6 scan0@70:+3 scan3@71:+1 scan5@69:+1 scan7@69:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 31 fac 2 pop 10 flag 1 budget 11->2 mask_in 0x148f5 processed 0x148f5
+  bc model=20   obs=21   delta=-1   seed=0  sum=20 scan0@51:+4 scan2@53:+2 scan4@51:+3 scan5@50:+2 scan6@49:+1 scan7@50:+1 scan11@49:+4 scan14@54:+1 scan16@52:+2
+  c0 model=13   obs=13   delta=0    seed=0  sum=13 scan0@51:+2 scan2@53:+2 scan4@51:+2 scan5@50:+2 scan11@49:+1 scan14@54:+2 scan16@52:+2
+  c4 model=9    obs=9    delta=0    seed=0  sum=9 scan0@51:+2 scan2@53:+1 scan5@50:+3 scan11@49:+1 scan14@54:+1 scan16@52:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 32 fac 7 pop 8 flag 1 budget 9->0 mask_in 0x38897 processed 0x38897
+  bc model=17   obs=17   delta=0    seed=0  sum=17 scan0@10:+2 scan1@11:+2 scan2@12:+1 scan4@10:+2 scan7@9:+2 scan11@8:+3 scan15@13:+1 scan16@11:+2 scan17@9:+2
+  c0 model=11   obs=11   delta=0    seed=0  sum=11 scan0@10:+1 scan1@11:+1 scan2@12:+2 scan4@10:+1 scan7@9:+1 scan11@8:+1 scan15@13:+2 scan16@11:+1 scan17@9:+1
+  c4 model=9    obs=9    delta=0    seed=0  sum=9 scan0@10:+1 scan1@11:+1 scan2@12:+1 scan4@10:+2 scan7@9:+1 scan15@13:+1 scan16@11:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 33 fac 2 pop 7 flag 1 budget 8->2 mask_in 0xe0411 processed 0xe0411
+  bc model=17   obs=17   delta=0    seed=0  sum=17 scan0@55:+3 scan4@55:+1 scan10@57:+4 scan17@54:+4 scan18@52:+4 scan19@52:+1
+  c0 model=9    obs=9    delta=0    seed=0  sum=9 scan0@55:+2 scan4@55:+1 scan10@57:+1 scan17@54:+1 scan19@52:+4
+  c4 model=9    obs=9    delta=0    seed=0  sum=9 scan0@55:+2 scan4@55:+2 scan10@57:+1 scan17@54:+2 scan18@52:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 34 fac 4 pop 5 flag 1 budget 6->0 mask_in 0x420b processed 0x10420b
+  bc model=10   obs=10   delta=0    seed=0  sum=10 scan0@63:+3 scan1@64:+1 scan3@64:+2 scan9@65:+2 scan14@66:+1 mp-gain@62:+1
+  c0 model=11   obs=11   delta=0    seed=0  sum=11 scan0@63:+2 scan1@64:+2 scan3@64:+1 scan9@65:+2 scan14@66:+2 mp-gain@62:+2
+  c4 model=9    obs=11   delta=-2   seed=0  sum=9 scan0@63:+3 scan1@64:+1 scan3@64:+1 scan9@65:+2 scan14@66:+1 mp-gain@62:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 35 fac 2 pop 14 flag 1 budget 15->3 mask_in 0x184aa3 processed 0x1c7ae1
+  bc model=31   obs=29   delta=2    seed=0  sum=31 scan0@51:+4 scan1@52:+4 scan5@50:+4 scan7@50:+4 scan9@53:+3 scan11@49:+1 scan14@54:+4 scan19@48:+1 scan20@50:+2 mp-gain@49:+2 mp-gain@49:+2 mp-gain@52:+2 mp-swap-out@52:-4 mp-swap-in@48:+2
+  c0 model=18   obs=12   delta=6    seed=0  sum=18 scan0@51:+2 scan5@50:+1 scan7@50:+1 scan9@53:+2 scan11@49:+1 scan19@48:+1 scan20@50:+2 mp-gain@49:+2 mp-gain@49:+2 mp-gain@52:+2 mp-swap-in@48:+2
+  c4 model=12   obs=10   delta=2    seed=0  sum=12 scan0@51:+2 scan1@52:+1 scan5@50:+1 scan7@50:+1 scan11@49:+1 scan14@54:+1 scan19@48:+1 scan20@50:+1 mp-gain@49:+1 mp-gain@49:+1 mp-gain@52:+1 mp-swap-out@52:-1 mp-swap-in@48:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 36 fac 6 pop 4 flag 1 budget 5->0 mask_in 0x183001 processed 0x183001
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@61:+2 scan12@59:+1 scan13@62:+1 scan19@58:+3 scan20@60:+1
+  c0 model=9    obs=9    delta=0    seed=0  sum=9 scan0@61:+1 scan12@59:+2 scan13@62:+2 scan19@58:+2 scan20@60:+2
+  c4 model=6    obs=6    delta=0    seed=0  sum=6 scan0@61:+1 scan12@59:+1 scan13@62:+1 scan19@58:+2 scan20@60:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 37 fac 2 pop 7 flag 1 budget 8->0 mask_in 0x10501f processed 0x10508f
+  bc model=20   obs=16   delta=4    seed=0  sum=20 scan0@55:+4 scan1@56:+3 scan2@57:+1 scan3@56:+2 scan12@53:+2 scan14@58:+1 scan20@54:+3 mp-swap-in@54:+4
+  c0 model=13   obs=16   delta=-3   seed=0  sum=13 scan0@55:+2 scan1@56:+2 scan2@57:+2 scan3@56:+1 scan4@55:+4 scan12@53:+2 scan14@58:+2 scan20@54:+1 mp-swap-out@55:-4 mp-swap-in@54:+1
+  c4 model=8    obs=6    delta=2    seed=0  sum=8 scan0@55:+2 scan2@57:+1 scan3@56:+1 scan12@53:+1 scan14@58:+1 mp-swap-in@54:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 38 fac 6 pop 2 flag 1 budget 3->0 mask_in 0x20011 processed 0x20011
+  bc model=4    obs=4    delta=0    seed=0  sum=4 scan0@50:+2 scan4@50:+1 scan17@49:+1
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@50:+1 scan4@50:+2 scan17@49:+2
+  c4 model=3    obs=3    delta=0    seed=0  sum=3 scan0@50:+1 scan4@50:+1 scan17@49:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 39 fac 5 pop 2 flag 1 budget 3->0 mask_in 0x51 processed 0x51
+  bc model=4    obs=4    delta=0    seed=0  sum=4 scan0@73:+2 scan4@73:+1 scan6@71:+1
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@73:+1 scan4@73:+2 scan6@71:+2
+  c4 model=3    obs=3    delta=0    seed=0  sum=3 scan0@73:+1 scan4@73:+1 scan6@71:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 40 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x80201 processed 0xa01
+  bc model=6    obs=5    delta=1    seed=0  sum=6 scan0@14:+2 scan9@16:+3 mp-swap-in@12:+1
+  c0 model=5    obs=9    delta=-4   seed=0  sum=5 scan0@14:+1 scan9@16:+2 scan19@11:+6 mp-swap-out@11:-6 mp-swap-in@12:+2
+  c4 model=4    obs=8    delta=-4   seed=0  sum=4 scan0@14:+1 scan9@16:+1 scan19@11:+6 mp-swap-out@11:-6 mp-swap-in@12:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 41 fac 7 pop 4 flag 1 budget 5->0 mask_in 0x88805 processed 0x88805
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@5:+2 scan2@7:+2 scan11@3:+1 scan15@8:+1 scan19@2:+2
+  c0 model=6    obs=6    delta=0    seed=0  sum=6 scan0@5:+1 scan2@7:+1 scan11@3:+2 scan15@8:+2
+  c4 model=8    obs=8    delta=0    seed=0  sum=8 scan0@5:+2 scan2@7:+1 scan11@3:+1 scan15@8:+2 scan19@2:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 42 fac 2 pop 7 flag 1 budget 8->1 mask_in 0x500e3 processed 0x504e1
+  bc model=19   obs=16   delta=3    seed=0  sum=19 scan0@47:+4 scan1@48:+1 scan6@45:+4 scan7@46:+1 scan16@48:+3 scan18@44:+3 mp-swap-out@48:-1 mp-swap-in@49:+4
+  c0 model=13   obs=12   delta=1    seed=0  sum=13 scan0@47:+2 scan5@46:+6 scan16@48:+2 scan18@44:+2 mp-swap-in@49:+1
+  c4 model=10   obs=9    delta=1    seed=0  sum=10 scan0@47:+2 scan5@46:+6 scan6@45:+1 mp-swap-in@49:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 43 fac 7 pop 5 flag 1 budget 6->0 mask_in 0x1003d processed 0x1003d
+  bc model=10   obs=10   delta=0    seed=0  sum=10 scan0@73:+2 scan2@75:+1 scan3@74:+2 scan4@73:+3 scan5@72:+1 scan16@74:+1
+  c0 model=9    obs=9    delta=0    seed=0  sum=9 scan0@73:+1 scan2@75:+2 scan3@74:+1 scan4@73:+1 scan5@72:+2 scan16@74:+2
+  c4 model=9    obs=9    delta=0    seed=0  sum=9 scan0@73:+2 scan2@75:+1 scan3@74:+1 scan4@73:+1 scan5@72:+1 scan16@74:+3
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 44 fac 2 pop 3 flag 1 budget 4->0 mask_in 0x1d processed 0x1b
+  bc model=11   obs=8    delta=3    seed=0  sum=11 scan0@43:+3 scan2@45:+1 scan3@44:+2 scan4@43:+2 mp-swap-out@45:-1 mp-swap-in@44:+4
+  c0 model=7    obs=8    delta=-1   seed=0  sum=7 scan0@43:+2 scan2@45:+2 scan3@44:+2 scan4@43:+2 mp-swap-out@45:-2 mp-swap-in@44:+1
+  c4 model=2    obs=3    delta=-1   seed=0  sum=2 scan0@43:+2 scan2@45:+1 mp-swap-out@45:-1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 45 fac 2 pop 1 flag 1 budget 2->0 mask_in 0x81 processed 0x81
+  bc model=3    obs=3    delta=0    seed=0  sum=3 scan0@11:+2 scan7@10:+1
+  c0 model=3    obs=3    delta=0    seed=0  sum=3 scan0@11:+1 scan7@10:+2
+  c4 model=4    obs=4    delta=0    seed=0  sum=4 scan0@11:+1 scan7@10:+3
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 46 fac 1 pop 7 flag 1 budget 8->1 mask_in 0x9489 processed 0x2b481
+  bc model=16   obs=20   delta=-4   seed=0  sum=16 scan0@18:+3 scan3@19:+3 scan7@17:+3 scan10@20:+3 scan12@16:+3 scan15@21:+2 mp-gain@19:+1 mp-swap-out@19:-3 mp-swap-in@17:+1
+  c0 model=7    obs=3    delta=4    seed=0  sum=7 scan0@18:+2 scan15@21:+1 mp-gain@19:+2 mp-swap-in@17:+2
+  c4 model=13   obs=22   delta=-9   seed=0  sum=13 scan0@18:+2 scan3@19:+3 scan7@17:+3 scan10@20:+3 scan12@16:+3 mp-gain@19:+1 mp-swap-out@19:-3 mp-swap-in@17:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 47 fac 2 pop 6 flag 1 budget 7->1 mask_in 0x88a5 processed 0x88a5
+  bc model=13   obs=13   delta=0    seed=0  sum=13 scan0@56:+3 scan2@58:+4 scan5@55:+1 scan7@55:+2 scan11@54:+1 scan15@59:+2 mp-swap-out@58:-4 mp-swap-in@54:+1 mp-undo@54:-1 mp-back@58:+4
+  c0 model=9    obs=9    delta=0    seed=0  sum=9 scan0@56:+2 scan5@55:+2 scan7@55:+1 scan11@54:+2 scan15@59:+2 mp-swap-in@54:+2 mp-undo@54:-2
+  c4 model=7    obs=7    delta=0    seed=0  sum=7 scan0@56:+2 scan5@55:+1 scan7@55:+2 scan11@54:+2 mp-swap-in@54:+1 mp-undo@54:-1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 48 fac 2 pop 7 flag 1 budget 8->1 mask_in 0x90c91 processed 0x90c91
+  bc model=15   obs=15   delta=0    seed=0  sum=15 scan0@49:+3 scan4@49:+2 scan7@48:+1 scan10@51:+1 scan11@47:+3 scan16@50:+1 scan19@46:+4 mp-swap-out@46:-4 mp-swap-in@50:+2 mp-undo@50:-2 mp-back@46:+4
+  c0 model=13   obs=13   delta=0    seed=0  sum=13 scan0@49:+2 scan4@49:+2 scan7@48:+4 scan10@51:+2 scan11@47:+1 scan16@50:+2 mp-swap-in@50:+5 mp-undo@50:-5
+  c4 model=8    obs=8    delta=0    seed=0  sum=8 scan0@49:+2 scan7@48:+1 scan10@51:+1 scan11@47:+1 scan16@50:+1 scan19@46:+2 mp-swap-out@46:-2 mp-back@46:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 49 fac 2 pop 3 flag 1 budget 4->0 mask_in 0x4403 processed 0x4403
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@16:+2 scan1@17:+1 scan10@18:+3 scan14@19:+2 mp-swap-out@19:-2 mp-swap-in@18:+1 mp-undo@18:-1 mp-back@19:+2
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@16:+1 scan1@17:+2 scan10@18:+1 scan14@19:+1 mp-swap-out@19:-1 mp-swap-in@18:+2 mp-undo@18:-2 mp-back@19:+1
+  c4 model=3    obs=3    delta=0    seed=0  sum=3 scan0@16:+1 scan1@17:+1 scan10@18:+1 mp-swap-in@18:+1 mp-undo@18:-1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 50 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x51 processed 0x51
+  bc model=5    obs=5    delta=0    seed=0  sum=5 scan0@23:+2 scan4@23:+2 scan6@21:+1
+  c0 model=4    obs=4    delta=0    seed=0  sum=4 scan0@23:+1 scan4@23:+1 scan6@21:+2
+  c4 model=4    obs=4    delta=0    seed=0  sum=4 scan0@23:+1 scan4@23:+2 scan6@21:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 51 fac 1 pop 4 flag 1 budget 5->0 mask_in 0x20283 processed 0x20283
+  bc model=9    obs=9    delta=0    seed=0  sum=9 scan0@32:+2 scan1@33:+2 scan7@31:+1 scan9@34:+1 scan17@31:+3
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@32:+1 scan7@31:+2 scan9@34:+2
+  c4 model=7    obs=10   delta=-3   seed=0  sum=7 scan0@32:+2 scan1@33:+1 scan7@31:+2 scan9@34:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 52 fac 2 pop 3 flag 1 budget 4->0 mask_in 0x8000b processed 0x80203
+  bc model=10   obs=8    delta=2    seed=0  sum=10 scan0@47:+3 scan1@48:+1 scan19@44:+4 mp-swap-in@49:+2
+  c0 model=7    obs=11   delta=-4   seed=0  sum=7 scan0@47:+2 scan1@48:+2 scan3@48:+6 scan19@44:+1 mp-swap-out@48:-6 mp-swap-in@49:+2
+  c4 model=3    obs=9    delta=-6   seed=0  sum=3 scan0@47:+2 scan1@48:+1 scan3@48:+6 mp-swap-out@48:-6
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 53 fac 2 pop 6 flag 1 budget 7->0 mask_in 0x1482d processed 0x1482d
+  bc model=14   obs=14   delta=0    seed=0  sum=14 scan0@53:+3 scan2@55:+2 scan3@54:+2 scan5@52:+1 scan11@51:+2 scan14@56:+1 scan16@54:+3
+  c0 model=12   obs=12   delta=0    seed=0  sum=12 scan0@53:+2 scan2@55:+1 scan3@54:+2 scan5@52:+2 scan11@51:+2 scan14@56:+2 scan16@54:+1
+  c4 model=7    obs=7    delta=0    seed=0  sum=7 scan0@53:+3 scan3@54:+1 scan5@52:+1 scan16@54:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 54 fac 4 pop 2 flag 1 budget 3->0 mask_in 0x41 processed 0x40041
+  bc model=4    obs=4    delta=0    seed=0  sum=4 scan0@69:+2 scan6@67:+1 mp-gain@66:+1
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@69:+1 scan6@67:+2 mp-gain@66:+2
+  c4 model=4    obs=4    delta=0    seed=0  sum=4 scan0@69:+2 scan6@67:+1 mp-gain@66:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 55 fac 2 pop 3 flag 1 budget 4->0 mask_in 0x20281 processed 0xa0081
+  bc model=9    obs=8    delta=1    seed=0  sum=9 scan0@57:+3 scan7@56:+3 scan9@59:+1 scan17@56:+1 mp-swap-out@59:-1 mp-swap-in@54:+2
+  c0 model=7    obs=7    delta=0    seed=0  sum=7 scan0@57:+2 scan7@56:+1 scan9@59:+2 scan17@56:+2 mp-swap-out@59:-2 mp-swap-in@54:+2
+  c4 model=5    obs=4    delta=1    seed=0  sum=5 scan0@57:+2 scan7@56:+1 scan17@56:+1 mp-swap-in@54:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 56 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x8003 processed 0x8003
+  bc model=5    obs=5    delta=0    seed=0  sum=5 scan0@26:+2 scan1@27:+1 scan15@29:+2 mp-swap-out@29:-2 mp-swap-in@28:+1 mp-undo@28:-1 mp-back@29:+2
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@26:+2 scan1@27:+2 scan15@29:+1 mp-swap-out@29:-1 mp-swap-in@28:+2 mp-undo@28:-2 mp-back@29:+1
+  c4 model=2    obs=2    delta=0    seed=0  sum=2 scan0@26:+1 scan1@27:+1 mp-swap-in@28:+1 mp-undo@28:-1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 57 fac 2 pop 3 flag 1 budget 4->1 mask_in 0x31 processed 0x31
+  bc model=7    obs=7    delta=0    seed=0  sum=7 scan0@60:+3 scan4@60:+3 scan5@59:+1
+  c0 model=5    obs=5    delta=0    seed=0  sum=5 scan0@60:+2 scan4@60:+1 scan5@59:+2
+  c4 model=4    obs=4    delta=0    seed=0  sum=4 scan0@60:+2 scan4@60:+1 scan5@59:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 58 fac 2 pop 6 flag 1 budget 7->0 mask_in 0x8c407 processed 0x8c40b
+  bc model=15   obs=16   delta=-1   seed=0  sum=15 scan0@39:+3 scan1@40:+2 scan2@41:+4 scan10@41:+1 scan14@42:+1 scan15@42:+4 scan19@36:+1 mp-swap-out@41:-4 mp-swap-in@40:+3
+  c0 model=12   obs=11   delta=1    seed=0  sum=12 scan0@39:+2 scan1@40:+2 scan10@41:+2 scan14@42:+2 scan15@42:+1 scan19@36:+2 mp-swap-in@40:+1
+  c4 model=6    obs=5    delta=1    seed=0  sum=6 scan0@39:+2 scan10@41:+1 scan14@42:+1 scan19@36:+1 mp-swap-in@40:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 59 fac 2 pop 3 flag 1 budget 4->2 mask_in 0x81 processed 0x81
+  bc model=5    obs=5    delta=0    seed=0  sum=5 scan0@36:+2 scan7@35:+3
+  c0 model=3    obs=3    delta=0    seed=0  sum=3 scan0@36:+1 scan7@35:+2
+  c4 model=2    obs=2    delta=0    seed=0  sum=2 scan0@36:+1 scan7@35:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 60 fac 4 pop 4 flag 1 budget 5->0 mask_in 0x2001b processed 0x2001b
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@10:+3 scan1@11:+1 scan3@11:+1 scan4@10:+1 scan17@9:+2
+  c0 model=9    obs=9    delta=0    seed=0  sum=9 scan0@10:+2 scan1@11:+2 scan3@11:+2 scan4@10:+2 scan17@9:+1
+  c4 model=8    obs=10   delta=-2   seed=0  sum=8 scan0@10:+3 scan1@11:+1 scan3@11:+1 scan4@10:+1 scan17@9:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 61 fac 2 pop 6 flag 1 budget 7->1 mask_in 0x48489 processed 0x4a089
+  bc model=14   obs=13   delta=1    seed=0  sum=14 scan0@40:+3 scan3@41:+2 scan7@39:+3 scan10@42:+1 scan15@43:+3 scan18@37:+1 mp-swap-out@42:-1 mp-swap-in@41:+2
+  c0 model=10   obs=10   delta=0    seed=0  sum=10 scan0@40:+2 scan3@41:+2 scan7@39:+1 scan10@42:+2 scan15@43:+1 scan18@37:+2 mp-swap-out@42:-2 mp-swap-in@41:+2
+  c4 model=7    obs=8    delta=-1   seed=0  sum=7 scan0@40:+2 scan7@39:+1 scan10@42:+1 scan15@43:+3 scan18@37:+1 mp-swap-out@42:-1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 62 fac 1 pop 5 flag 1 budget 6->0 mask_in 0x6419 processed 0x6419
+  bc model=12   obs=12   delta=0    seed=0  sum=12 scan0@17:+3 scan3@18:+2 scan4@17:+2 scan10@19:+1 scan13@18:+2 scan14@20:+2
+  c0 model=3    obs=3    delta=0    seed=0  sum=3 scan0@17:+2 scan10@19:+1
+  c4 model=6    obs=7    delta=-1   seed=0  sum=6 scan0@17:+2 scan3@18:+1 scan4@17:+1 scan13@18:+1 scan14@20:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 63 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x43 processed 0x43
+  bc model=6    obs=6    delta=0    seed=0  sum=6 scan0@24:+2 scan1@25:+1 scan6@22:+3 mp-swap-out@22:-3 mp-swap-in@26:+1 mp-undo@26:-1 mp-back@22:+3
+  c0 model=4    obs=4    delta=0    seed=0  sum=4 scan0@24:+1 scan1@25:+2 scan6@22:+1 mp-swap-out@22:-1 mp-swap-in@26:+2 mp-undo@26:-2 mp-back@22:+1
+  c4 model=3    obs=3    delta=0    seed=0  sum=3 scan0@24:+1 scan1@25:+1 scan6@22:+1 mp-swap-out@22:-1 mp-swap-in@26:+1 mp-undo@26:-1 mp-back@22:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 64 fac 2 pop 6 flag 1 budget 7->1 mask_in 0x80c7 processed 0x80d5
+  bc model=14   obs=15   delta=-1   seed=0  sum=14 scan0@60:+3 scan1@61:+2 scan2@62:+2 scan6@58:+2 scan7@59:+2 scan15@63:+4 mp-swap-out@61:-2 mp-swap-in@60:+1
+  c0 model=8    obs=7    delta=1    seed=0  sum=8 scan0@60:+2 scan1@61:+1 scan2@62:+1 scan6@58:+1 scan7@59:+1 scan15@63:+1 mp-swap-out@61:-1 mp-swap-in@60:+2
+  c4 model=4    obs=2    delta=2    seed=0  sum=4 scan0@60:+2 mp-swap-in@60:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 65 fac 2 pop 4 flag 1 budget 5->1 mask_in 0x21021 processed 0x21021
+  bc model=10   obs=10   delta=0    seed=0  sum=10 scan0@63:+3 scan5@62:+3 scan12@61:+2 scan17@62:+2 mp-swap-out@62:-3 mp-swap-in@66:+1 mp-undo@66:-1 mp-back@62:+3
+  c0 model=4    obs=4    delta=0    seed=0  sum=4 scan0@63:+2 scan12@61:+1 scan17@62:+1 mp-swap-in@66:+1 mp-undo@66:-1
+  c4 model=5    obs=5    delta=0    seed=0  sum=5 scan0@63:+2 scan5@62:+3 mp-swap-out@62:-3 mp-back@62:+3
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 66 fac 7 pop 3 flag 1 budget 4->0 mask_in 0x80b processed 0x80b
+  bc model=7    obs=7    delta=0    seed=0  sum=7 scan0@76:+2 scan1@77:+3 scan3@77:+2
+  c0 model=9    obs=9    delta=0    seed=0  sum=9 scan0@76:+1 scan3@77:+1 scan11@74:+7
+  c4 model=4    obs=4    delta=0    seed=0  sum=4 scan0@76:+2 scan1@77:+1 scan3@77:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 67 fac 2 pop 4 flag 1 budget 5->0 mask_in 0x21203 processed 0x21203
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@42:+2 scan1@43:+1 scan9@44:+1 scan12@40:+3 scan17@41:+1 mp-swap-out@41:-1 mp-swap-in@43:+2 mp-undo@43:-2 mp-back@41:+1
+  c0 model=7    obs=7    delta=0    seed=0  sum=7 scan0@42:+1 scan1@43:+2 scan9@44:+2 scan12@40:+1 scan17@41:+1 mp-swap-out@41:-1 mp-swap-in@43:+2 mp-undo@43:-2 mp-back@41:+1
+  c4 model=4    obs=4    delta=0    seed=0  sum=4 scan0@42:+1 scan1@43:+1 scan9@44:+1 scan12@40:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 68 fac 2 pop 3 flag 1 budget 4->0 mask_in 0x861 processed 0x861
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@34:+2 scan5@33:+1 scan6@32:+1 scan11@32:+4
+  c0 model=6    obs=6    delta=0    seed=0  sum=6 scan0@34:+1 scan5@33:+2 scan6@32:+2 scan11@32:+1
+  c4 model=3    obs=3    delta=0    seed=0  sum=3 scan0@34:+1 scan5@33:+1 scan6@32:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 69 fac 3 pop 7 flag 0 budget 8->0 mask_in 0x818ad processed 0x818ad
+  bc model=11   obs=11   delta=0    seed=0  sum=11 scan0@45:+3 scan2@47:+1 scan3@46:+1 scan5@44:+1 scan7@44:+1 scan11@43:+1 scan12@43:+2 scan19@42:+1
+  c0 model=6    obs=6    delta=0    seed=0  sum=6 scan0@45:+2 scan5@44:+1 scan7@44:+1 scan12@43:+1 scan19@42:+1
+  c4 model=3    obs=4    delta=-1   seed=0  sum=3 scan0@45:+3
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 70 fac 2 pop 2 flag 1 budget 3->0 mask_in 0x13 processed 0x23
+  bc model=7    obs=6    delta=1    seed=0  sum=7 scan0@1:+3 scan1@2:+3 mp-swap-in@0:+1
+  c0 model=4    obs=3    delta=1    seed=0  sum=4 scan0@1:+2 scan4@1:+1 mp-swap-out@1:-1 mp-swap-in@0:+2
+  c4 model=6    obs=5    delta=1    seed=0  sum=6 scan0@1:+2 scan1@2:+3 mp-swap-in@0:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 71 fac 2 pop 3 flag 1 budget 4->0 mask_in 0x108003 processed 0x108003
+  bc model=8    obs=8    delta=0    seed=0  sum=8 scan0@57:+3 scan1@58:+1 scan15@60:+1 scan20@56:+3
+  c0 model=6    obs=6    delta=0    seed=0  sum=6 scan0@57:+2 scan1@58:+1 scan15@60:+1 scan20@56:+2
+  c4 model=5    obs=5    delta=0    seed=0  sum=5 scan0@57:+3 scan15@60:+1 scan20@56:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 72 fac 2 pop 4 flag 1 budget 5->1 mask_in 0x71 processed 0x1061
+  bc model=12   obs=9    delta=3    seed=0  sum=12 scan0@7:+3 scan5@6:+3 scan6@5:+3 mp-swap-in@5:+3
+  c0 model=2    obs=3    delta=-1   seed=0  sum=2 scan0@7:+2 scan4@7:+1 mp-swap-out@7:-1
+  c4 model=2    obs=2    delta=0    seed=0  sum=2 scan0@7:+2
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 73 fac 2 pop 1 flag 1 budget 2->0 mask_in 0x21 processed 0x21
+  bc model=3    obs=3    delta=0    seed=0  sum=3 scan0@29:+2 scan5@28:+1
+  c0 model=3    obs=3    delta=0    seed=0  sum=3 scan0@29:+1 scan5@28:+2
+  c4 model=2    obs=2    delta=0    seed=0  sum=2 scan0@29:+1 scan5@28:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 74 fac 2 pop 1 flag 1 budget 2->1 mask_in 0x1 processed 0x1
+  bc model=2    obs=2    delta=0    seed=0  sum=2 scan0@31:+2
+  c0 model=1    obs=1    delta=0    seed=0  sum=1 scan0@31:+1
+  c4 model=1    obs=1    delta=0    seed=0  sum=1 scan0@31:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+idx 75 fac 2 pop 1 flag 1 budget 2->1 mask_in 0x1 processed 0x1
+  bc model=2    obs=2    delta=0    seed=0  sum=2 scan0@31:+2
+  c0 model=1    obs=1    delta=0    seed=0  sum=1 scan0@31:+1
+  c4 model=1    obs=1    delta=0    seed=0  sum=1 scan0@31:+1
+  c8 model=0    obs=0    delta=0    seed=0  sum=0 
+full-match: [0, 4, 6, 9, 12, 16, 17, 19, 21, 23, 25, 26, 28, 29, 32, 33, 36, 38, 39, 41, 43, 45, 47, 48, 49, 50, 53, 54, 56, 57, 59, 63, 65, 66, 67, 68, 71, 73, 74, 75] facs: [2, 4, 5, 6, 7]

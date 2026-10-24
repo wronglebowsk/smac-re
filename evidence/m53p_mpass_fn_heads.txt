@@ -1,0 +1,28 @@
+===== 0x4e63b0 =====
+# addr=0x004e63b0,name=FUN_004e63b0,size_bytes=1450,n_insns=470,n_callers=1,n_callees=7,n_strings=0,ok=1,chars=7505,shard=012
+// ==== FUN_004e63b0 @ 0x4e63b0 size=1450
+
+===== 0x4e6960 =====
+# addr=0x004e6960,name=FUN_004e6960,size_bytes=984,n_insns=339,n_callers=10,n_callees=3,n_strings=0,ok=1,chars=5223,shard=012
+// ==== FUN_004e6960 @ 0x4e6960 size=984
+
+===== 0x4e6d40 =====
+# addr=0x004e6d40,name=FUN_004e6d40,size_bytes=814,n_insns=272,n_callers=8,n_callees=3,n_strings=0,ok=1,chars=3706,shard=012
+// ==== FUN_004e6d40 @ 0x4e6d40 size=814
+
+===== 0x4e7070 =====
+# addr=0x004e7070,name=FUN_004e7070,size_bytes=1389,n_insns=465,n_callers=9,n_callees=3,n_strings=0,ok=1,chars=6660,shard=012
+// ==== FUN_004e7070 @ 0x4e7070 size=1389
+
+===== 0x4e75f0 =====
+# addr=0x004e75f0,name=FUN_004e75f0,size_bytes=116,n_insns=49,n_callers=15,n_callees=3,n_strings=0,ok=1,chars=498,shard=012
+// ==== FUN_004e75f0 @ 0x4e75f0 size=116
+
+===== 0x4e3c80 =====
+# addr=0x004e3c80,name=FUN_004e3c80,size_bytes=112,n_insns=44,n_callers=12,n_callees=1,n_strings=0,ok=1,chars=604,shard=012
+// ==== FUN_004e3c80 @ 0x4e3c80 size=112
+
+===== 0x5a6cd0 =====
+# addr=0x005a6cd0,name=FUN_005a6cd0,size_bytes=105,n_insns=46,n_callers=379,n_callees=0,n_strings=0,ok=1,chars=457,shard=015
+// ==== FUN_005a6cd0 @ 0x5a6cd0 size=105
+

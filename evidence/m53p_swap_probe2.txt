@@ -1,0 +1,39 @@
+1 fac 1 pop 7 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+2 fac 2 pop 7 flag 1 c7c_in 2 c80 0 bend 1 MP
+    MP iter l5c=1 budget=1 c80=0 c7c=2 vec=[17, 16, 8, 0] gmax=5465 gidx=13 lval=-3712 lidx=2 maxf0=4 processed=0x84915
+3 fac 4 pop 4 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+6 fac 7 pop 9 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+9 fac 1 pop 7 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+15 fac 7 pop 5 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+18 fac 4 pop 7 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+19 fac 2 pop 3 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[9, 7, 5, 0] gmax=9984 gidx=20 lval=5708 lidx=6 maxf0=4 processed=0x40141
+23 fac 2 pop 12 flag 1 c7c_in 2 c80 0 bend 1 MP
+    MP iter l5c=1 budget=1 c80=0 c7c=2 vec=[27, 19, 12, 0] gmax=10400 gidx=9 lval=-15936 lidx=6 maxf0=4 processed=0x709f7
+31 fac 4 pop 4 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+35 fac 4 pop 5 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+38 fac 2 pop 7 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[16, 16, 6, 0] gmax=10316 gidx=7 lval=-7052 lidx=4 maxf0=4 processed=0x10501f
+41 fac 2 pop 2 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[5, 9, 8, 0] gmax=4416 gidx=11 lval=1776 lidx=19 maxf0=3 processed=0x80201
+43 fac 2 pop 7 flag 1 c7c_in 2 c80 0 bend 1 MP
+    MP iter l5c=1 budget=1 c80=0 c7c=2 vec=[16, 12, 9, 0] gmax=11050 gidx=10 lval=-10240 lidx=1 maxf0=4 processed=0x500e3
+45 fac 2 pop 3 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[8, 8, 3, 0] gmax=11648 gidx=1 lval=9130 lidx=2 maxf0=4 processed=0x1d
+47 fac 1 pop 7 flag 1 c7c_in 1 c80 0 bend 1 JUMPTAIL
+52 fac 1 pop 4 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+53 fac 2 pop 3 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[8, 11, 9, 0] gmax=7352 gidx=8 lval=604 lidx=3 maxf0=4 processed=0x8000b
+58 fac 2 pop 3 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[8, 6, 7, 0] gmax=11008 gidx=17 lval=7698 lidx=7 maxf0=4 processed=0x800a1
+59 fac 2 pop 6 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[13, 11, 7, 0] gmax=8630 gidx=3 lval=-7827 lidx=20 maxf0=4 processed=0x18c403
+60 fac 2 pop 3 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[10, 6, 3, 0] gmax=7594 gidx=1 lval=4480 lidx=11 maxf0=3 processed=0x40881
+61 fac 4 pop 4 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+62 fac 2 pop 6 flag 1 c7c_in 2 c80 0 bend 1 MP
+    MP iter l5c=1 budget=1 c80=0 c7c=2 vec=[13, 10, 8, 0] gmax=11008 gidx=13 lval=9120 lidx=10 maxf0=3 processed=0x48489
+63 fac 1 pop 4 flag 1 c7c_in 0 c80 0 bend 0 JUMPTAIL
+65 fac 2 pop 5 flag 1 c7c_in 1 c80 0 bend 0 MP
+    MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[15, 7, 2, 0] gmax=12885 gidx=4 lval=6442 lidx=1 maxf0=4 processed=0x80c7
+70 fac 3 pop 7 flag 0 c7c_in 0 c80 0 bend 0 JUMPTAIL

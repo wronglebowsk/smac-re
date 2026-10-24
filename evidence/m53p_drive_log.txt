@@ -1,0 +1,20 @@
+win=10485761 start year=2382
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+turn 0: 2382->2382 STUCK (189.9s, hud,ai-phase:hud,hud,ai-phase:hud,hud,ai-phase:hud)
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+    [hud] real ee re ee |e oe a Pre ee egy, Ho a ey eae cine aa
+turn 1: 2382->2382 STUCK (209.5s, hud,ai-phase:hud,hud,ai-phase:hud,hud,ai-phase:hud)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_20261024_095215.jsonl
