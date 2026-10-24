@@ -460,6 +460,20 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   Exception: the quit prompt also pops MID-DRIVE after `--turns` runs (session 65) while the game is
   otherwise healthy — Escape back to "Oops, no, wait!", never click OK.
   Dark/unrecognized frames get ~20 s of grace before a single Escape — cinematics end themselves.
+- **A PROPOSAL vote pane stalls the AI turn phase (M53n):** `YEA: 2  NAY: 3` is the vote TALLY, not a
+  key hint (keys 2/3 do nothing; `smac_play.py --turns 1` returns STUCK while it is up). Click the bottom
+  bars (true window coords) YEA (310,495) / NAY (398,495) / ABSTAIN (485,495), then the single OK bar
+  (393,495). Find the bars by cropping the ROOT capture (`xwd -root -silent` + ffmpeg
+  `crop=420:180:230:370,scale=iw*3:ih*3` + vision) — `xwd -id <win>` reads blank to tesseract. Focus
+  (`xdotool windowfocus`), click, wait ≥2 s, re-capture to confirm the pane advanced.
+- **Instrumentation lessons (M53n, `scripts/m53n_drive.py`):** a breakpoint at a function ENTRY hands you
+  the caller free (`*(int *)$esp`); mid-body hits print 8 stack words in the same printf, post-matched
+  against the call sites' return addresses (a fixed 5-byte `call` run makes the set derivable from
+  disasm) — caller census with zero breakpoints inside the callee. And an accumulator that nets +1
+  despite N accumulation-fires is being REBUILT, not added to: watch the field across the whole block,
+  not just the accumulate site (4e78e0 zeroes +0xbc/+0xc0 at 0x4e79a5 and re-adds a per-item vector
+  0x4e7be3-0x4e7c28 before 4e92c0/4e93f0 add the crawler terms); watchpoint `new=` sequences (0 then a
+  ramp) are the tell.
 - **OCR targets must be ≥4 characters and region-constrained.** `yes` matches `Moyes:` (the unit
   panel's `Moves:`) and `ok` matches `Prokhor`, so a naive matcher clicks the map forever and the
   dialog looks undismissable. Same for dialog phrases: squash the joined OCR text to `a-z` and require
@@ -633,15 +647,7 @@ k=5 threshold 2 ⇒ **1 turn**; check `table[k].+18` tech gates via `scripts/m35
 economy-rate idle run, player↔faction-ID mapping (base+4 faction IDs {1,2,4,5,6,7} vs players
 {0..7}), `Space` on a stored terraform (`0x4d1e90` routes to the MOVE chain — probably
 move-only, untested). Depth:
-`references/terraforming-order-path.md`. **M39 (live, 2026-10-21): Road = second mode proven**
-(`scripts/m39_issue.py`; gdb = m38_issue.gdb + m37_exec41.gdb concatenated, 45 bps): `r` →
-`TERRAF mode=0x5 → TECHCHK 1 → cost block FULLY skipped (PAYPATH/COST/picker/SKIPPAY silent)
-→ STORE 0x09 → BCAST`, no DEBIT; exec 1 `CHECK 2/4 → NOTYET`, exec 2 `CHECK 4/4 → COMPLETE
-x=45 y=7 mode=5` — mask 0x108002→**0x108006** (road bit), elev untouched (mode 5 = mask swap
-only), year 2295. Live thresholds confirm M37's adjustments (road 4 vs 2 by elevation; solar
-8 vs 16; mine 8; RemoveFungus 12); **AI terraformers +3/turn vs our +2 (open)**. Keys:
-**`Tab` = cycle, `l` = SENTRY**; cycle skips MP-exhausted units (poke `+40=0`); menu-pend
-`0x91b5c4` poke 0; mid-turn start ⇒ act on `cur==me` (classify lies on black maps). Next
+`references/terraforming-order-path.md` (the M39 Road-mode proof, thresholds and keys duplicate the footing paragraph above). Next
 (M40 DONE, live 2026-10-22): MagTube remap + first TECHFAIL — `r` on a roaded tile: TERRAF 0x5
 → remap rewrites the mode arg inside `0x4d44d0` (TECHCHK sees 0x6; gated on cap table `0x6938e8`
 idx `mode*8+tile-seafloor`, MagTube land 18/sea −2 ⇒ land-only) → gate 0 → TECHFAIL `0x4d486e` →
