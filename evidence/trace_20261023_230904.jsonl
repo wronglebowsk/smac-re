@@ -1,0 +1,4 @@
+{"turn": 0, "year_before": 2376, "t": "23:09:04", "handled": ["dialog", "ai-phase:dialog", "hud", "confirm-after-press"], "screens": {"dialog": 1, "hud": 1}, "year_after": 2377, "advanced": true, "dt": 13.4}
+{"turn": 1, "year_before": 2377, "t": "23:09:17", "handled": ["hud", "confirm"], "screens": {"hud": 1, "confirm": 1}, "year_after": 2378, "advanced": true, "dt": 21.4}
+{"turn": 2, "year_before": 2378, "t": "23:09:39", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2379, "advanced": true, "dt": 17.0}
+{"turn": 3, "year_before": 2379, "t": "23:09:56", "handled": ["hud", "confirm-after-press"], "screens": {"hud": 1}, "year_after": 2380, "advanced": true, "dt": 12.8}

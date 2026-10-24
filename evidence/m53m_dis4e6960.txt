@@ -1,0 +1,41 @@
+4e6960:	55                   	push   ebp
+  4e6961:	8b ec                	mov    ebp,esp
+  4e6963:	51                   	push   ecx
+  4e6964:	a1 84 21 69 00       	mov    eax,ds:0x692184
+  4e6969:	53                   	push   ebx
+  4e696a:	8b 5d 14             	mov    ebx,DWORD PTR [ebp+0x14]
+  4e696d:	56                   	push   esi
+  4e696e:	8b 75 10             	mov    esi,DWORD PTR [ebp+0x10]
+  4e6971:	0f af c3             	imul   eax,ebx
+  4e6974:	57                   	push   edi
+  4e6975:	8b fe                	mov    edi,esi
+  4e6977:	d1 ff                	sar    edi,1
+  4e6979:	03 c7                	add    eax,edi
+  4e697b:	6a 00                	push   0x0
+  4e697d:	53                   	push   ebx
+  4e697e:	56                   	push   esi
+  4e697f:	8d 0c 80             	lea    ecx,[eax+eax*4]
+  4e6982:	8d 14 48             	lea    edx,[eax+ecx*2]
+  4e6985:	a1 14 ae 92 00       	mov    eax,ds:0x92ae14
+  4e698a:	8b 4c 90 08          	mov    ecx,DWORD PTR [eax+edx*4+0x8]
+  4e698e:	8d 04 90             	lea    eax,[eax+edx*4]
+  4e6991:	33 d2                	xor    edx,edx
+  4e6993:	89 4d 10             	mov    DWORD PTR [ebp+0x10],ecx
+  4e6996:	8a 10                	mov    dl,BYTE PTR [eax]
+  4e6998:	33 c0                	xor    eax,eax
+  4e699a:	83 e2 e0             	and    edx,0xffffffe0
+  4e699d:	83 fa 60             	cmp    edx,0x60
+  4e69a0:	0f 9c c0             	setl   al
+  4e69a3:	89 45 fc             	mov    DWORD PTR [ebp-0x4],eax
+  4e69a6:	e8 f5 c7 09 00       	call   0x5831a0
+  4e69ab:	8b f0                	mov    esi,eax
+  4e69ad:	a1 84 21 69 00       	mov    eax,ds:0x692184
+  4e69b2:	83 c4 0c             	add    esp,0xc
+  4e69b5:	4e                   	dec    esi
+  4e69b6:	f7 de                	neg    esi
+  4e69b8:	1b f6                	sbb    esi,esi
+  4e69ba:	0f af c3             	imul   eax,ebx
+  4e69bd:	03 c7                	add    eax,edi
+  4e69bf:	46                   	inc    esi
+  4e69c0:	8d 0c 80             	lea    ecx,[eax+eax*4]
+  4e69c3:	8d 14 48             	lea    edx,[eax+ecx*2]

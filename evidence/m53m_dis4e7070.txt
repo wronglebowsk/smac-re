@@ -1,0 +1,41 @@
+4e7070:	55                   	push   ebp
+  4e7071:	8b ec                	mov    ebp,esp
+  4e7073:	83 ec 18             	sub    esp,0x18
+  4e7076:	a1 84 21 69 00       	mov    eax,ds:0x692184
+  4e707b:	56                   	push   esi
+  4e707c:	0f af 45 14          	imul   eax,DWORD PTR [ebp+0x14]
+  4e7080:	8b 75 10             	mov    esi,DWORD PTR [ebp+0x10]
+  4e7083:	57                   	push   edi
+  4e7084:	d1 fe                	sar    esi,1
+  4e7086:	03 c6                	add    eax,esi
+  4e7088:	c7 45 fc 00 00 00 00 	mov    DWORD PTR [ebp-0x4],0x0
+  4e708f:	8d 0c 80             	lea    ecx,[eax+eax*4]
+  4e7092:	8d 14 48             	lea    edx,[eax+ecx*2]
+  4e7095:	a1 14 ae 92 00       	mov    eax,ds:0x92ae14
+  4e709a:	8b 4c 90 08          	mov    ecx,DWORD PTR [eax+edx*4+0x8]
+  4e709e:	8b 7c 90 0c          	mov    edi,DWORD PTR [eax+edx*4+0xc]
+  4e70a2:	8d 04 90             	lea    eax,[eax+edx*4]
+  4e70a5:	33 d2                	xor    edx,edx
+  4e70a7:	89 4d f8             	mov    DWORD PTR [ebp-0x8],ecx
+  4e70aa:	33 c9                	xor    ecx,ecx
+  4e70ac:	8a 10                	mov    dl,BYTE PTR [eax]
+  4e70ae:	83 e2 e0             	and    edx,0xffffffe0
+  4e70b1:	c1 ff 18             	sar    edi,0x18
+  4e70b4:	83 fa 60             	cmp    edx,0x60
+  4e70b7:	0f 9c c1             	setl   cl
+  4e70ba:	89 4d f4             	mov    DWORD PTR [ebp-0xc],ecx
+  4e70bd:	8a 48 08             	mov    cl,BYTE PTR [eax+0x8]
+  4e70c0:	f6 c1 01             	test   cl,0x1
+  4e70c3:	74 0b                	je     0x4e70d0
+  4e70c5:	8a 40 02             	mov    al,BYTE PTR [eax+0x2]
+  4e70c8:	83 e0 0f             	and    eax,0xf
+  4e70cb:	83 f8 08             	cmp    eax,0x8
+  4e70ce:	7c 03                	jl     0x4e70d3
+  4e70d0:	83 c8 ff             	or     eax,0xffffffff
+  4e70d3:	8b 55 14             	mov    edx,DWORD PTR [ebp+0x14]
+  4e70d6:	53                   	push   ebx
+  4e70d7:	33 db                	xor    ebx,ebx
+  4e70d9:	6a 00                	push   0x0
+  4e70db:	85 c0                	test   eax,eax
+  4e70dd:	8b 45 10             	mov    eax,DWORD PTR [ebp+0x10]
+  4e70e0:	52                   	push   edx

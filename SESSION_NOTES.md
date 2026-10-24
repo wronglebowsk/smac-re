@@ -51,17 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-60-60.md` (1 sessions). Read it only when a question reaches back before session ## Session 61.
-
-## Session 61 (2026-10-23) — M53i: **THE SECRET-PROJECT TABLE IS THE ALPHA `#FACILITIES` SECTION VERBATIM AT 0x984d38 (LIVE IDX = ALPHA ROW + 1); `FUN_005a6e70` GATES ON RECORD+0x14 TECH + THE 0x985aa0 CLAIM TABLE; THE NEGATIVE-QUEUE COST ACCESSOR IS `record[−q].+0x0c × 0x4e40a0`** — write-up `evidence/m53i_findings.md`
-
-- **Table identity + layout (VERIFIED).** 72×48 B @ 0x984d38 = alpha `#FACILITIES` (`alpha.txt:590-665`) loaded verbatim; **live index = alpha row + 1** (row 0 null placeholder d0=0; row 1 'Headquarters'; row 26 'Pressure Dome' = alpha:616; row 71 'The Ascent to Transcendence' = alpha:661). Record: +0 name str ptr, +4 effect str ptr (arena ~0x2100000, `FUN_0061482f` resolves), +8 always 0 (72/72), **+0xc cost factor** (= alpha col 2; price = `FUN_004e40a0(faction,1,−1)` × it, multiplier 10 = masked faction, `m53i_fn4e40a0.txt:14-19`), +0x10 = alpha col 3, **+0x14 prereq tech (−1 = None)**, +0x18 = −2 constant in all 71 real rows (alpha "Disable" col), +0x1c..+0x2c = 5 trailing alpha cols permuted (+0x1c=c7, +0x20=c10, +0x24=c9, +0x28=c11, +0x2c=c8 — verified rows 39+71; semantics open). **0x984d44 = DAT_00984d38 + 0xc = dword 3 of the same record, not a second table.** Corpus has ZERO stores to the table (all 70 refs loads; Ghidra hides 7 as `&DAT_00984d4c` — a 984d38-only grep misses them); writer pointer-based (open). Dump `evidence/m53i_project_table.tsv`.
-- **`FUN_005a6e70(idx, faction, baseidx, n_scan)` predicate (VERIFIED, `evidence/m53i_fn5a6e70.txt`).** Boolean: idx 0 false; idx 10 needs `DAT_00985aec ≥ 2`; idx > 0x26 blocked by `DAT_00985ac4 & 0x80000000` and **available iff claim table `DAT_00985aa0[idx] == −1`**; idx 71 needs `DAT_00985bb8 ≠ −1` + `ac4 & 0x800`; tech gate = record+0x14 → tech table 0x92fdd4 (stride 0xb dw, ≤ 0x57) + ownership `DAT_00985c1c[tech] & (1<<(faction&0x1f))`; baseidx < 0 ⇒ true; idx < 0x23 ⇒ base+0x8c facility bitmap lacks bit idx AND queue scan (param_4 = length; paint passes chooser+0xb68, NOT pending count) lacks −idx; per-idx terrain/facility cases via 0x46f8e0 / 0x421fe0 / 0x4e4620(base.x, base.y, 0) + globals 0x985b50/b54/ba8, 0x927a98[faction·0x59c] bit 0x200, 0x59a9f0(idx 32); default ≤ 0x26 true. `FUN_00507410` = 39-B bit splitter `>>3`/`1<<(x&7)` (203 callers).
-- **Negative-q cost accessor (DONE-WHEN, VERIFIED address+line).** Production processor `FUN_004ef6d0` (size 12298; holds COMPLET 0x4efe41 = `cmp ebx,0x40; jl 0x4efed1`): completion test `iVar4 * (&DAT_00984d44)[(int)local_34*0xc] <= base+0xcc + base+0x3c` (`m53i_fn4ef6d0.txt:768-769`, local_34 = −q :596); pane head cost shard_001.c:9814 `[*(DAT_008f0d60+0x50) * -0xc]`; announcements dispatcher 0x41890a-0x418919 + 0x56e3f7-0x56e412 (`evidence/m53i_disasm.txt`). **Paint does NOT index cost by 5a6e70's return** — pseudo:149 boolean gate, :159 `iVar2 = local_28` reassigns before the 0x984d44 read at :161 (register-reuse misread retired).
-- **Claim table `DAT_00985aa0[1..71]` (gate use VERIFIED; semantics INFERRED).** = base index where project last completed, −1 = nobody. Live 29/71 = −1; aa0[26]=0, aa0[29]=0, aa0[38]=3 (base 0 = faction 2, base 3 = faction 4, live owners via 0x95da10+b·0x130+4), aa0[71]=−1 (Ascent unclaimed, year 2371 ✓). Pane counter `*piVar7 == DAT_0068cbb0` shard_001.c:5440; owner lookup shard_012.c:14698. Writer not pinned → M53j.
-- **Carry-over + −29 + 38-display.** Head-slot open ⇒ displayed remaining = price − base minerals iff `FUN_004e4350(−idx,base) == 4e4350(head,base)` (item class code; HQ bit + DAT_0092a368 mode + q < −0x26 split) or perception `0x94d438[faction·0x82f] < 2`, else price − minerals/2 (paint:162-171). **−29 head = Aerospace Complex** (live string 0x21003b9, cost 8, tech 39 — VERIFIED; answers M53c's open Q). Project 38 Stockpile Energy (cost 0, tech −1) shows `clamp(base+0xd0,0,9999)`; generic rows `(price−credited+rate−1)/rate` turns, rate = base+0xd0 = production toward head (paint:173-192; units same divisor :116-124).
-- Safety: static + read-only `/proc/pid/mem` preads only (pid 2124624, year 2371, cur 3, nb 75 unchanged); no gdb, no clicks, no signals, no pokes. Pitfalls: evidence-file line cites are the citation unit for pseudocode claims; grep `984d` PREFIX (Ghidra splits one table into DAT_00984d38/44/4c/... by field offset).
-- **Next:** `NEXT_PROMPT.md` rewritten for session 62; **THE PICK = M53j** (completion bookkeeping: the 0x985aa0 writer + COMPLET side-effects in `FUN_004ef6d0`).
+Older sessions: `docs/sessions/sessions-61-61.md` (1 sessions). Read it only when a question reaches back before session ## Session 62.
 
 ## Session 62 (2026-10-23) — M53j: **THE CLAIM ARRAY IS 33 DWORDS AT 0x985b3c INDEXED BY (project_idx − 0x27) — projects 39..71 ONLY — AND ITS COMPLETION WRITER IS 0x4f0d83 INSIDE THE PRODUCTION PROCESSOR: pay (base+0x40 −= price) → flags → claim → announce → THE POP** — write-up `evidence/m53j_findings.md` (+ `evidence/m53j_complet.md` for the ordered side-effect list)
 
@@ -193,3 +183,45 @@ Older sessions: `docs/sessions/sessions-60-60.md` (1 sessions). Read it only whe
 - **Next:** `NEXT_PROMPT.md` rewritten for session 65; **THE PICK = M53m** (what makes c6c/c70 nonzero —
   the 4e8d60 unit filter (mining orders? tile yield table?); DAT_00985aec era writer; +0xc4/+0xc8 field
   meanings; the 3-base extra-income anomaly; who first sets c0 at founding via 4e47d0→4e93f0).
+
+## Session 65 (2026-10-23) — M53m: **c6c/c70 ARE FED ONLY BY SUPPLY CRAWLERS (plan 10 = type 5) EXECUTING CONVOY ORDERS (3) — three-branch filter pinned to machine addresses and proven live (c6c[0] 0→1 via 0x4e8f35, c70 0→1 via 0x4e8e82, ×10 each over 4 rounds, 2 sweeps/base/round); ERA WRITER = 0x4ddcf1 COLD CHOOSER PATH (sole direct store)** — write-up `evidence/m53m_findings.md`
+- **Filter (VERIFIED machine + live).** 4e8d60 accumulates economy slots only for units with
+  unit+14==base owner ∧ plan(type+42)==10 == alpha PLANS[10] "Convoy/Resource Convoy" ∧
+  order(unit+17)==3 == alpha ORDERS[3] "Convoy" (glyph O). ONLY plan-10 type: 5 = Supply
+  Crawler (cost 3, alpha #UNITS row 6; 1/151 live rows). Branch A: bidx(unit+46 u16)==cur
+  base ∧ tile (ti = y·40 + x>>1, unit x@0 y@2) has (terr[8]&1)==0 || level>7 → add
+  FUN_004e6960/4e6d40/4e7070 result (slot = unit+38; calls 0x4e8efa/0x4e8f0b/0x4e8f1c) at
+  **0x4e8f35** `add [ecx*4+0x8f0c6c],eax`. Branch B: bidx≠cur ∧ ≥0 ∧ unit on base tile →
+  **0x4e8e82** `inc [eax*4+0x8f0c6c]` +1, then short-circuit `jmp 0x4e9274`. Good tile ∧
+  bidx==cur → **0x4e9009** `inc [cat*4+0x8f0c34]` (upkeep). Slots: c6c[0]→bc, c70→c0,
+  c34[0]→ec, c38→f0. Yield fns: tile = y·40+x>>1, terrain +8/+0xc/+0&0xe0, call 0x5831a0
+  (shape VERIFIED; resource identity INFERRED).
+- **Why zero (VERIFIED census).** 339 units: no order 3, no plan 10 → structural zero —
+  explains M53l 75/75 idempotency.
+- **Live delta (VERIFIED).** Poked 2 of our units into fake crawlers (u300→field tile
+  (45,10) yield-OK cat 0 bidx 70; u279→porch (45,11) cat 1 bidx 73); 4 hw watchpoints (x86
+  DR budget 4 — base rows via 10 Hz `/proc` poller `scripts/m53m_poll.py`); drove
+  2376→2380: c6c[0] 19 fires (10× new=1 eip 0x4e8f3c + 9× zeroing 0x4e8d79), c70 19 fires
+  (10× new=1 eip 0x4e8e89 + 9× zeroing), c34/38 0 fires (base 73 'Factory Drift' is
+  FACTION 2 — fac gate 0x4e8e21 skips; names not unique). **Convoy order persists** 4
+  rounds; movement executor ignores route-less convoy but the sweep consumes records as
+  INPUTS (refines skill poke-pitfall). base70 row = **0x962d30** (= 0x95da10+70·0x130, NOT
+  0x962d50): bc 11→12, c0 7→8, cc −3→−2, d0 0→3, minerals 0→15, progress 22→12; cc=bc−ec
+  and d0=c0−f0−e0 hold live; income + progress applied 4×. **bc/c0 net +1 despite 10 fires
+  each: `bc += c6c[0]` UNCONDITIONAL (0x4e9331-44) — lands only when 4e92c0/4e93f0 run
+  adjacent to the same base's sweep; inter-base zeroing eats the rest (multiplicity =
+  M53n).** base73 c0 +1 via stale c70 (INFERRED, open).
+- **Era writer closed (VERIFIED).** Sole direct store to 0x985aec: **0x4ddcf1** (cold `jge`
+  0x4ddb5a past the ret 0x4ddcf0, inside FUN_004ddaa0 chooser/setup dialog, callers
+  0x51518b/0x517e1e; eax = 0x5f1394(this,0,0) return ≥ 0; also writes same dword to
+  0x94d438+f·0x20bc ×8). M53l "zero direct stores" = grep-render miss (`a3` prints
+  `mov ds:0x985aec,eax`). Loaded-scenario era = pointer-based save load INFERRED.
+- Safety/method: pokes idle + readback-verified; driver 4/8 turns then "Do you really want
+  to quit?" popped → cleared via Escape onto "Oops, no, wait!" (never clicked); unit array
+  compacted mid-run (poked records moved slots u300→u252, u279→u273; restored at new
+  homes; slots 279/300 recycled by game); nb 75→76 (new base, game progression); re-census
+  0 crawler-shaped units remain; game idle on our turn, year 2380, TracerPid 0.
+- **Next:** `NEXT_PROMPT.md` rewritten for session 66; **THE PICK = M53n** (round call
+  schedule: per-round order/multiplicity of the 4e8d60/4e92c0/4e93f0 callers — which see
+  c6c/c70 hot vs stale; why base73 c0 took stale +1; close the 3-base extra-income anomaly,
+  +0xc4/+0xc8 meanings, founding c0 via 4e47d0; unit+38 semantics).

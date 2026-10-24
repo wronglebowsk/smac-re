@@ -1,0 +1,68 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x8f0c6c
+Hardware watchpoint 2: *(int *)0x8f0c70
+Hardware watchpoint 3: *(int *)0x8f0c34
+Hardware watchpoint 4: *(int *)0x8f0c38
+SELFTEST 0x8f0c6c 0x8f0c70 0x8f0c34 0x8f0c38 0x962e0c 0x962e10 0x962d90 0x962e1c
+STATE year=2376 cur=7 nb=75 g6c=0 g70=0 g34=0 g38=0 bc=0 c0=0 m40=0 cc=14
+WP 1 8f0c70 new=1 eip=0x4e8e89
+WP 2 8f0c6c new=1 eip=0x4e8f3c
+WP 3 8f0c6c new=0 eip=0x4e8d79
+WP 4 8f0c70 new=0 eip=0x4e8d80
+WP 5 8f0c70 new=1 eip=0x4e8e89
+WP 6 8f0c6c new=1 eip=0x4e8f3c
+WP 7 8f0c6c new=0 eip=0x4e8d79
+WP 8 8f0c70 new=0 eip=0x4e8d80
+WP 9 8f0c70 new=1 eip=0x4e8e89
+WP 10 8f0c6c new=1 eip=0x4e8f3c
+WP 11 8f0c6c new=0 eip=0x4e8d79
+WP 12 8f0c70 new=0 eip=0x4e8d80
+WP 13 8f0c70 new=1 eip=0x4e8e89
+WP 14 8f0c6c new=1 eip=0x4e8f3c
+WP 15 8f0c6c new=0 eip=0x4e8d79
+WP 16 8f0c70 new=0 eip=0x4e8d80
+WP 17 8f0c70 new=1 eip=0x4e8e89
+WP 18 8f0c6c new=1 eip=0x4e8f3c
+WP 19 8f0c6c new=0 eip=0x4e8d79
+WP 20 8f0c70 new=0 eip=0x4e8d80
+WP 21 8f0c70 new=1 eip=0x4e8e89
+WP 22 8f0c6c new=1 eip=0x4e8f3c
+WP 23 8f0c6c new=0 eip=0x4e8d79
+WP 24 8f0c70 new=0 eip=0x4e8d80
+WP 25 8f0c70 new=1 eip=0x4e8e89
+WP 26 8f0c6c new=1 eip=0x4e8f3c
+WP 27 8f0c6c new=0 eip=0x4e8d79
+WP 28 8f0c70 new=0 eip=0x4e8d80
+WP 29 8f0c70 new=1 eip=0x4e8e89
+WP 30 8f0c6c new=1 eip=0x4e8f3c
+WP 31 8f0c6c new=0 eip=0x4e8d79
+WP 32 8f0c70 new=0 eip=0x4e8d80
+WP 33 8f0c70 new=1 eip=0x4e8e89
+WP 34 8f0c6c new=1 eip=0x4e8f3c
+WP 35 8f0c6c new=0 eip=0x4e8d79
+WP 36 8f0c70 new=0 eip=0x4e8d80
+WP 37 8f0c70 new=1 eip=0x4e8e89
+WP 38 8f0c6c new=1 eip=0x4e8f3c
+[Inferior 1 (process 2124624) detached]
