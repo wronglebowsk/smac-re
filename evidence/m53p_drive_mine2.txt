@@ -1,0 +1,2 @@
+win=10485761 start year=2382
+driver stopped: game is at the title/quit screen — refusing to click menus

@@ -1,0 +1,1 @@
+{"turn": 0, "year_before": 2382, "t": "10:15:06", "handled": ["unknown", "hud", "confirm-after-press", "dialog", "ai-phase:dialog"], "screens": {"unknown": 1, "hud": 1, "dialog": 1}, "year_after": 2383, "advanced": true, "dt": 57.9}
