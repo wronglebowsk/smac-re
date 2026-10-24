@@ -1,0 +1,29 @@
+# year=2375 cur=3 nb=75 era=2 mask=0xff08 pid=2124624
+# year=2376 cur=7 nb=75 era=2 mask=0xff08 pid=2124624
+NOTE snap col order after f98: bc c0 c4 c8 d0 cc f0 (labels in header are stale)
+Morgan Industries fac1028 pop4: {'min': 4, 'prog': 1}  | pre d0=4 c0=9 f0=5 cc=1 bc=9
+Sparta Command fac1285 pop3: {'min': -25}  | pre d0=8 c0=8 f0=0 cc=0 bc=6
+U.N. Headquarters fac1799 pop9: {'min': 10, 'prog': 7}  | pre d0=7 c0=12 f0=5 cc=7 bc=25
+Morgan Construction fac1028 pop5: {'min': 7}  | pre d0=7 c0=8 f0=1 cc=0 bc=10
+U.N. Disaster Relief fac1799 pop7: {'d0': 1, 'f0': -1, 'min': 8, 'f94': 1}  | pre d0=7 c0=12 f0=5 cc=0 bc=14
+Fort Survivalist fac1285 pop7: {'min': 8}  | pre d0=8 c0=8 f0=0 cc=0 bc=14
+Assassin's Redoubt fac1542 pop4: {'min': 7}  | pre d0=7 c0=7 f0=0 cc=0 bc=8
+U.N. Education Agency fac1799 pop5: {'min': 6, 'prog': 1}  | pre d0=4 c0=7 f0=3 cc=1 bc=11
+U.N. Humanity Base fac1799 pop8: {'c4': -1, 'min': 13}  | pre d0=11 c0=15 f0=4 cc=0 bc=16
+Morgan Solarfex fac1028 pop6: {'min': 12, 'prog': 5}  | pre d0=12 c0=18 f0=6 cc=5 bc=17
+Training Camp fac1542 pop6: {'min': 10, 'prog': 1}  | pre d0=10 c0=10 f0=0 cc=1 bc=13
+U.N. Information Agency fac1799 pop4: {'min': 2}  | pre d0=2 c0=7 f0=5 cc=0 bc=8
+Fort Liberty fac1542 pop3: {'min': 6}  | pre d0=6 c0=6 f0=0 cc=0 bc=6
+Morgan Metallurgy fac1028 pop4: {'min': 6, 'prog': 2}  | pre d0=5 c0=9 f0=4 cc=2 bc=10
+U.N. Equality Village fac1799 pop8: {'min': 9, 'prog': 1}  | pre d0=9 c0=11 f0=2 cc=1 bc=17
+Morgan Energy Monopoly fac1028 pop5: {'min': 9}  | pre d0=8 c0=11 f0=3 cc=0 bc=10
+Hawk of Chiron fac1542 pop3: {'d0': 1, 'f0': -1, 'min': 6, 'prog': 1, 'f94': 1}  | pre d0=5 c0=7 f0=2 cc=1 bc=7
+Militia Station fac1542 pop2: {'min': 5}  | pre d0=5 c0=5 f0=0 cc=0 bc=4
+Commander's Keep fac1285 pop2: {'min': 4}  | pre d0=4 c0=5 f0=1 cc=0 bc=4
+U.N. Planning Authority fac1799 pop4: {'min': 4}  | pre d0=4 c0=6 f0=2 cc=0 bc=8
+U.N. Commerce Committee fac1799 pop5: {'min': 3}  | pre d0=3 c0=9 f0=6 cc=0 bc=10
+Morgan Biochemical fac1028 pop2: {'c4': -2, 'min': 4}  | pre d0=4 c0=5 f0=1 cc=0 bc=4
+Morgan Bank fac1028 pop4: {'min': 8}  | pre d0=8 c0=9 f0=1 cc=0 bc=8
+U.N. Aid Station fac1799 pop3: {'min': 6, 'prog': 1}  | pre d0=6 c0=9 f0=3 cc=1 bc=7
+changed 24 of 75
+stable c0: 75/75, stable bc: 75/75, stable cc: 75/75

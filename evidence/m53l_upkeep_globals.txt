@@ -1,0 +1,9 @@
+  4e8d80:	89 0d 34 0c 8f 00    	mov    DWORD PTR ds:0x8f0c34,ecx
+  4e8d8b:	89 0d 38 0c 8f 00    	mov    DWORD PTR ds:0x8f0c38,ecx
+  4e8dbc:	89 35 4c 0c 8f 00    	mov    DWORD PTR ds:0x8f0c4c,esi
+  4e90e0:	89 0d 4c 0c 8f 00    	mov    DWORD PTR ds:0x8f0c4c,ecx
+  4e932a:	83 05 48 0c 8f 00 02 	add    DWORD PTR ds:0x8f0c48,0x2
+  4f3110:	89 15 4c 0c 8f 00    	mov    DWORD PTR ds:0x8f0c4c,edx
+  4f316d:	89 0d 4c 0c 8f 00    	mov    DWORD PTR ds:0x8f0c4c,ecx
+  4f31a2:	89 0d 4c 0c 8f 00    	mov    DWORD PTR ds:0x8f0c4c,ecx
+  5784f2:	a3 7c a2 92 00       	mov    ds:0x92a27c,eax

@@ -51,62 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-59-59.md` (1 sessions). Read it only when a question reaches back before session ## Session 60.
-
-## Session 60 (2026-10-23) — M53h: **THE CHOOSER ENUMERATION HAS A NAMED PRODUCER — `FUN_00596000` + a lockstep Plan-major sort — AND THE SIX BAR BUTTONS ARE AN EMBEDDED CONTROL TABLE AT `chooser+0xb74 + i·0xb4c`** (params −2/7/5/4/−1/0, rects at control+0x13c/0x140/0x144); a queued secret project = **−(index in the 0x984d38 table)**, so guard 12 → −26 = project 26 *Pressure Dome* — write-up `evidence/m53h_findings.md`
-
-- **Producer + order (VERIFIED).** `FUN_00596000(faction)` (shard_015.c:9459-9518, called by the paint at
-  0x495583 with `sub+0xa76c` = 3) rebuilds the 128-entry candidate array `DAT_009267e4` (count
-  `DAT_009267e0`): `id = (slot & 0x3f) + (slot < 0x40 ? 0 : faction<<6)` ⇒ slots 0-63 shared/alpha ids,
-  64-127 **the querying faction's own designed units** (faction 3 ⇒ 192-255). It then sorts the ids in
-  lockstep with a local key array via `FUN_005a29a0(0x80, &DAT_009267e4, local_208)` (shard_015.c:9514) =
-  a bubble sort that swaps only on strict `<` ⇒ stable. Key (shard_015.c:9493-9497):
-  `((ch_tbl[+1] + Plan·0x10)·0x40000) + (0x20 − FUN_00570710(id,f))·0x200 + (8 − ch_tbl[+0])·0x40 +
-  (8 − FUN_00570770(armor,f))`, `ch_tbl = 0x92ae80` stride 0x90; unavailable ⇒ 999999999 (alpha) /
-  0x34fb5e38 (designed) ⇒ always last ⇒ **Plan-major**. Live array's first 14 ids 195,196,192,194,193,2,
-  197,198,3,0,200,1,199,6 have Plan 0,0,1,2,3,3,6,7,7,8,8,9,9,11 (monotone) and the tie-breaks come out
-  of the formula (`evidence/m53h_enum_ids.txt`).
-- **Paint = filter + append, and the result is a LIST.** `FUN_004954e0` clears counter `+0xa818`
-  (0x495534) and guard `+0xa774` (0x495541), runs the 128 slots through `FUN_005a73f0(id, faction,
-  baseidx)` (0x4956f4), then loops **secret projects 1..0x47** filtered by `FUN_005a6e70`
-  (pseudo:146-210). Every accepted item is appended to the itemlist widget at **chooser-sub +0xa780** =
-  **0x6b461c** (`add ecx,0xa780` 0x495aab → `call 0x42ee20(list, item, flags, 0)`): units get
-  `flags |= 0x20`, projects `|= 0x10`. Node 16 B: +4 item, +8 detail ptr, +0x10 next, **circular**;
-  detail+8 = flags. Guard := counter when the item equals the queue value being edited
-  (`id == local_34` / `-local_34 == local_28`).
-- **Return encoding = the −26 answer (VERIFIED code + live).** `FUN_00496ad0` tail (shard_009.c:
-  15013-15041): guard −1 ⇒ −9999; else `FUN_004026b0(guard)` selects the node and
-  `(detail+8 & 0x20) == 0 ⇒ return −item`, else `+item`. So a queued secret project is
-  **−(index in the 0x984d38 project table, stride 0xc dwords)** — M53a's `|q| = 39 + idx` is superseded.
-  Live list dump (`evidence/m53h_list_dump.txt`, count 15 = capacity 5×3): idx 0-8 = 195,196,192,194,193,
-  2,0,1,6 (bit 0x20 set), idx 9-14 = projects 2,11,13,26,27,38 ascending (bit 0x10, 0x20 clear); the five
-  chassis-3 array units (197,198,3,200,199) are absent — `FUN_005a73f0`'s naval gate
-  (`ch_tbl[+1] == 1 && FUN_004e4620(base.x, base.y) == 0`) dropped them. **idx 12 = project 26 = Pressure
-  Dome** ⇒ −26 = exactly M53g's `POST_PICK edi` at guard 12. The table is the real project list: 71 =
-  "The Ascent to Transcendence" (cost 200), 39 Human Genome, 29 Aerospace Complex (`evidence/
-  m53h_project_names{,2}.txt`) — so M53c's −29 head value is probably Aerospace Complex (INFERRED).
-- **The button table (VERIFIED live + code).** Six embedded button controls (class vptr 0x67194c) at
-  `0x6a9e9c + 0xb74 + i·0xb4c` (i 6,7 idle): param at **+0xa78**, rect at **+0x13c/0x140/0x144**
-  (mirrored +0x15c/0x160/0x164). Live: i0 −2 CANCEL 569→669 · i1 7 REPLACE 260→360 · i2 5 INSERT 363→463
-  · i3 4 DELETE 466→566 · i4 −1 OK 157→257 · i5 0 HELP 54→154, all y 332 h 0x14
-  (`evidence/m53h_button_live.txt`). Built each open by `FUN_00496ad0` (shard_009.c:14909-14993):
-  btnW `sub+0xb70` = 100, count `sub+0xb6c` = 6 when `sub+0xb68 != 0` else 4/5 (`sub+0xb68` = the queue
-  slot opened on; 0 = the head ⇒ no DELETE/INSERT/REPLACE), y = rows·cellh + 8 = 332, first x =
-  `((W − 0x20) − 103·count)/2 + (count−1)·103` with W = `sub+0xa824` = 758 ⇒ 569, pitch 103 (⇒ 3 px
-  gaps), creation right→left −2,4,5,7,−1,0 via `FUN_005f9e85(caption, param, x, y, w, h, owner, 0)`
-  (the factory that stores the param at +0xa78, shard_019.c:2065); release dispatch `FUN_005fab08`
-  (shard_019.c:2500-2540) forwards that param to owner-vtable+0xa8. Labels are NOT in Script.txt:
-  `*(DAT_00997b20+0x198/0x728/0x72c/0x194/0x19c)` + `FUN_00409690(0x3fa)` for REPLACE, all `CharUpperA`.
-- **Click map reconciled (INFERRED):** one origin offset **+36 px** fits every click M53g recorded
-  (REPLACE claims 365 but not 397 ⇒ ≤37; DELETE claims 602 ⇒ ≥36): HELP 90-190 · OK 193-293 · REPLACE
-  296-396 · INSERT 399-499 · DELETE 502-602 · CANCEL 605-705. The 3 px gaps between rects are where the
-  grid hit-test steals the click = M53g's "phantom cell 17"; M53e's "dead zone 381-421" was extrapolated
-  from a single 397 click.
-- Safety: static + one read-only `/proc/pid/mem` pass (pid 2124624, year 2371, cur 3, nb 75 unchanged);
-  no gdb, no clicks, no signals. Pitfall: the itemlist header is +8 head / +0xc cursor / **+0x10 count**
-  — reading count as `+0xc` gives a cursor value and a 79-million-iteration walk (2 timeouts).
-- **Next:** `NEXT_PROMPT.md` rewritten for session 61; **THE PICK = M53i** (the secret-project table
-  0x984d38/0x984d44 + `FUN_005a6e70`'s gate and return + the −29 head value).
+Older sessions: `docs/sessions/sessions-60-60.md` (1 sessions). Read it only when a question reaches back before session ## Session 61.
 
 ## Session 61 (2026-10-23) — M53i: **THE SECRET-PROJECT TABLE IS THE ALPHA `#FACILITIES` SECTION VERBATIM AT 0x984d38 (LIVE IDX = ALPHA ROW + 1); `FUN_005a6e70` GATES ON RECORD+0x14 TECH + THE 0x985aa0 CLAIM TABLE; THE NEGATIVE-QUEUE COST ACCESSOR IS `record[−q].+0x0c × 0x4e40a0`** — write-up `evidence/m53i_findings.md`
 
@@ -204,3 +149,47 @@ Older sessions: `docs/sessions/sessions-59-59.md` (1 sessions). Read it only whe
   `evidence/m53k_{pre,post1,post2,post3}_turn.tsv`; logs `m53k_watch{,2}.log`.
 - **Next:** **THE PICK = M53l** (production inputs: writers of +0xc0/+0xcc and what feeds
   4e78e0's +0x48 accumulator; mask 0x985b10 + era table DAT_0068cbb8 semantics).
+
+## Session 64 (2026-10-23) — M53l: **+0xc0 HAS EXACTLY 3 WRITERS, ALL INSIDE `FUN_004e93f0` (doubling gate + `+= DAT_008f0c70` + ×(2+bonus)/2 scale); +0xcc IS WRITTEN ONLY AT 0x4e937b IN `FUN_004e92c0` AS `cc = bc − (pop×0x92a27c + 0x8f0c34)`; THE GLOBE-FEEDER IS `FUN_004e8d60` (per-base unit/tile sweep recomputing c6c/c70/c34/c38/c4c); bc/c0/cc ARE PERSISTENT (per-turn recompute is idempotent, 75/75 stable live); MASK = player-byte + alien-byte faction set (4 writers pinned); ERA TABLE 0x68cbb8 = DIRECT dwords {13,12,11,10,8,7}** — write-up `evidence/m53l_findings.md`
+- **cc writer (VERIFIED machine+live):** 0x4e937b in FUN_004e92c0 (eax = ds:0x8f0d60 raw byte offsets):
+  bc += DAT_008f0c6c (0x4e9344); ec = pop(base+6) × DAT_0092a27c(=2, rules-loader store 0x5784f2) +
+  DAT_008f0c34 (0x4e9362); cc = bc − ec. Side fx: 0x8f0c48 := faction+0x2880, +2 if HQ bit (0x4e92f5-
+  4e932a); progress clamp cc<0∧prog==0 → −1 (fn4e92c0.txt:22-27); faction total `&DAT_0094dc2c[f·0x20bc]`
+  += max(cc,0) cap 99 iff DAT_008f0d64==1. 12 callers = per-base pipeline (4ef6d0 ×2, 4ee410 ×2, 4f5a70
+  ×3, 4f41f0 ×2, 4f34b0, 4f2ea0-adjacent). Live: Colony 28 − 22 = 6 ✓ (22 = pop 11 × 2).
+- **c0 writer (VERIFIED machine):** only 0x4e943f (×2, gated DAT_00985ba8≥0 ∧ same-faction ∧ head ∈
+  [−37,−34]), 0x4e9459 (+= DAT_008f0c70), 0x4e9525 (×(esi+2)>>1; esi = count of 421fe0(19/20/21/22,
+  cur_idx,0) true + DAT_00985bac/bb0 same-faction flags → mult 1.0-3.5). Live ba8/bac/bb0 = −1 → no
+  bonuses. d0 = c0 − (c38+c4c) − e0 stands (M53k).
+- **Feeder (VERIFIED pseudocode):** FUN_004e8d60 zeroes c2c/34/38/4c/6c/70/74/78/d38 block, builds
+  local_34[9] from pop, loops units (< DAT_00985af0 = 339): type record 0x98ad88+type·0x34, tile =
+  (x×40+y)>>1 → terrain 0x92ae14+tile·0x2c; accumulates c6c[·] += yield, c4c += 1 unit upkeep, faction
+  counters 0x94dc24/0094d684. = worker-yield + unit-upkeep sweep; exact per-type yield constants OPEN.
+- **+0x48:** += |ebx|>>1 per facility-bitmap hit in FUN_004e78e0 21-iter loop 0x4e8b6f-0x4e8d48 (popcount
+  0x507440, mult 0x692184, gates 0x92a378/37c=80); normalized in 4e93f0 to (x+50)/100 display
+  (m53k_fn4e93f0.txt:52-134). Walked table identity OPEN.
+- **Mask 0x985b10 (VERIFIED writers):** two bytes (b10 = facs 0-7, b11 = 8-15). 5a0fa0 0x5a1091 b11 :=
+  0xff (global reset); 597ee0 0x59814f/15c presence loop; 59ec90 0x5a07a4/7d3; 4df630 0x4df82e/9a3 b10
+  := 1<<player or 0 (gated 6266e6), alt b11&0xfe; 4e0720 0x4e08ca/8d0 elimination clears bit from both
+  then walks bases. Semantics INFERRED: standard-rules set = player + aliens; AIs OUT → era prices,
+  clamp B + race-scan protection apply to in-mask only. 4e40a0 tests LOW BYTE ONLY (0x4e40b5 and 0xff).
+- **Era table (VERIFIED live):** 0x68cbb8 = direct dwords {13,12,11,10,8,7} (eras 0-5, ASCII follows —
+  NOT pointers); sole ref 0x4e40fe. 4e40a0 out-mask: price = table[era] − (531090(0x985b30,0) != 0) −
+  ebx(!solo ∧ bit(0x985b30) in b10); neg/sbb/neg = nonzero-boolean idiom. Live era 0x985aec = 2 → 11;
+  difficulty 0x92a290/94 = 10/10 (×1), 0x92ada8 = 2. DAT_00985aec has ZERO direct stores whole-.text →
+  writer pointer-based/data-init OPEN. M53k "UN price 0" re-flagged: consistent with race-scan unpaid
+  path rather than literal 0.
+- **LIVE delta (turn 2375→2376, m53l_pre/post.tsv + m53l_delta.txt):** bc/c0/cc stable 75/75 (idempotent
+  when c70 = c6c = 0); 24 bases changed: 21 min delta == d0 exactly, 2 (UN DR, Hawk) == POST-recompute
+  d0 (income reads d0 after 4e93f0 same pass; their f0 −1 via sweep upkeep, d0 +1, f94 mirror ✓); 3 bases
+  +1..+3 extra unexplained; Sparta −25 queue pay; prog += cc 9/9 ✓ (0x4ee8c7). era/mask unchanged.
+- **Owner (VERIFIED):** byte@4 = faction (4e92c0/4e93f0 machine + idx 70 ours=3, idx 8 UN=7); census
+  {1:6,2:44,3:1,4:7,5:3,6:5,7:9}; byte@5 usually == byte@5 (idx 0 differs 2/6, OPEN). "Colony fac 3"
+  SUPERSEDED: idx 23 byte@4 = 2 (names not unique). NAMED.md 4f5a70 row already lists this exact
+  per-base pipeline — this milestone pinned the semantics of 4 of its stages.
+- Safety: read-only preads + one driven turn (`smac_play.py --turns 1`, 2375→2376, cur 3→7); no pokes,
+  no gdb, no signals. Pitfall: my first snap unpack skipped gaps 0xc4/0xc8 — unpack CONTIGUOUS ranges
+  and label from the true offsets, never from a field-name wish list.
+- **Next:** `NEXT_PROMPT.md` rewritten for session 65; **THE PICK = M53m** (what makes c6c/c70 nonzero —
+  the 4e8d60 unit filter (mining orders? tile yield table?); DAT_00985aec era writer; +0xc4/+0xc8 field
+  meanings; the 3-base extra-income anomaly; who first sets c0 at founding via 4e47d0→4e93f0).
