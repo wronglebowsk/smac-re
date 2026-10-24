@@ -51,41 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-57-58.md` (2 sessions). Read it only when a question reaches back before session ## Session 59.
-
-## Session 59 (2026-10-24) — M53g: **`[chooser_sub+0xa774]` IS THE SELECTION CELL INDEX — AND REPLACE FIRES LIVE AT (365,343) VIA BAR PARAM 7 (UNGATED)**; the drawn REPLACE bar body (x 381-421) is phantom grid cell 17, whose clicks take the setter path and never reach the bar handler
-- **Guard semantics (VERIFIED live, `m53g_watch.log:68-74,101-107`):** chooser open → paint clears
-  guard to −1 (pc 0x495541) then sets it to the enumeration index of the item in the selected queue
-  slot (0x495b00; slot 1 held Scout Patrol → guard 5); icon click → setter 0x4962ec := cell index
-  (Colony Pod → 6); bar-row click → phantom cell (x 397 → 17); CANCEL → −1 (0x496a43). Cell index =
-  position in a 5-col grid (rows y~60/160/260 = cells 0-14; bar row overlaps cells 15-19; col3 = 17).
-- **Complete writer set (VERIFIED, whole-`.text` census, 43 refs / 13 stores, `evidence/m53g_a774_all_refs.txt`):**
-  paint clear 0x495541 + match stores 0x495b00/0x495e6f (`FUN_004954e0`); setter 0x4962ec
-  (`FUN_004962a0` = **vtable+0x48** of the chooser class, vptr 0x672298 live); mutator `FUN_004963b0`
-  (vtable+0x60, 8 stores, sort/swap with +0xa818, never fired live); CANCEL clear 0x496a43
-  (`FUN_00496950`). No other writer exists.
-- **Bar handler `FUN_00496950` = vtable+0xa8** (only pointer: 0x672340 = vptr+0xa8). Jump table
-  0x496a9a indexes `param+2`; cases 0=HELP(gate)1 2=gate,mode7 5=INSERT(gate) 7=mode7 **ungated**
-  −1=OK 0, −2=CANCEL 0+guard−1; gate = `cmp [this+0xa774],-1; je 0x496a91`. **0x496a91 is the shared
-  epilogue return** — mode-storing paths reach it too (corrects M53e's BAR_IGNORED-as-refusal reading);
-  **one handler run per click** (corrects "runs twice").
-- **REPLACE live:** click (365,343) → BARH param=7 guard=12 → MODEWP pc=0x496a5c mode=7 → POST_PICK
-  edi=−26 → dispatcher mode-7 handler → **D20_STORE +0x54 2→−26** (W54 pc=0x417e08, `log:104-112`);
-  repeat at (345,343) hit +0x58. CANCEL → RESTORE ×10 → queue exactly restored (f4c=2 f54=2 f58=2).
-  Session 56's lone mode-7 hit = same rect (INFERRED).
-- **Rect map (param ← click, VERIFIED):** HELP 0←160 · OK −1←285 · **REPLACE 7←345/365 (NOT 397)** ·
-  INSERT 5←425/440/497 · DELETE 4←602 · CANCEL −2←692. Dead zone x~381-421 = phantom cell 17 →
-  setter(17), handler never called — M53e's five REPLACE clicks at 397 all died there. Params 1/2/3/6
-  mouse-unreachable from this widget (case-2 gate never exercised by mouse; guard is irrelevant to
-  REPLACE). M53e's guard-reads-5/17 mystery = cell indices, not a selection mismatch.
-- **Harness:** `scripts/m53g_drive.py` (BARH/GATE0/2/5 probes + SELWP on pane+0xb190; 4 hw watchpoints
-  total; stop via `--mode stop --tag m53g`). CANCEL-restore makes armed REPLACE probes non-destructive.
-- **Open:** exact param-7/5 button rects + why REPLACE's rect sits left of its drawn bar; enumeration
-  contents (guard 12 → item −26 vs M53a `|q|=39+idx`); vtable+0x60 mutator path; vtable+8 `FUN_00494c40`
-  (runs after OK/CANCEL when slot≠0); producers of modes 2/3/6.
-- **Next:** `NEXT_PROMPT.md` rewritten for session 60; **THE PICK = M53h** (chooser enumeration +
-  button-table: what fills cells 0-19, the −26/secret-project encoding, and the Script.txt/button-table
-  record that places REPLACE's rect left of its bar).
+Older sessions: `docs/sessions/sessions-59-59.md` (1 sessions). Read it only when a question reaches back before session ## Session 60.
 
 ## Session 60 (2026-10-23) — M53h: **THE CHOOSER ENUMERATION HAS A NAMED PRODUCER — `FUN_00596000` + a lockstep Plan-major sort — AND THE SIX BAR BUTTONS ARE AN EMBEDDED CONTROL TABLE AT `chooser+0xb74 + i·0xb4c`** (params −2/7/5/4/−1/0, rects at control+0x13c/0x140/0x144); a queued secret project = **−(index in the 0x984d38 table)**, so guard 12 → −26 = project 26 *Pressure Dome* — write-up `evidence/m53h_findings.md`
 
@@ -210,3 +176,31 @@ Older sessions: `docs/sessions/sessions-57-58.md` (2 sessions). Read it only whe
   74/75 bases have pending 0 with a NON-empty head.
 - **Next:** `NEXT_PROMPT.md` rewritten for session 63; **THE PICK = M53k** (the accumulation side: who
   writes base+0xd0 / base+0x40 / base+0x30 bits 23+31 each turn, and what the 0x4f0b4f arm really means).
+
+## Session 63 (2026-10-26) — M53k: **base+0xd0 HAS EXACTLY ONE WRITER — `FUN_004e93f0` (d0 = c0 − f0 − e0, called per base from inside the turn processor 0x4ef6d0) — THE ONLY PER-TURN base+0x40 WRITER IS INSIDE `FUN_004ef6d0` (income add 0x4ef7f6 / unit spend / project spend 0x4f0ca6 / drain 0x4f1e3f) — AND THE ARM IS: STOCK minerals ≥ FULL price gates completion (no accumulation); the race scan runs ONLY for OUT-of-mask bases and defers them while a funded in-mask rival races the same head; clamp B resets in-mask payers to max(0,min(10,d0))** — write-up `evidence/m53k_findings.md`
+- **+0xd0 (net income):** machine stores 0x4e9557/0x4e957f in FUN_004e93f0 (`eax=ds:0x8f0d60`;
+  d0 = [eax+0xc0] − [eax+0xf0], [eax+0xe0] zeroed first; mirror +0x94; f0 = DAT_008f0c38+
+  DAT_008f0c4c; c0 += DAT_008f0c70; +0x48 normalized `>>3`). Called from 0x4ef6d0's base loop
+  (shard_012.c:20861/22171) + 4ee410/4f5a70/founder. +0x48 = raw accumulator (+= at 4e78e0+
+  0x1455; 58 live stores to Colony+0x48 in one turn). Live: Colony d0 13 = 13−0−0; U.N. 9 =
+  12−3−0; d0 changed 17/75 in 1 turn.
+- **+0x40 (minerals):** income add 0x4ef7f6 (`minerals += d0`, gated d0≥0 ∧ head≠−38 ∧
+  +0x30&2) — LIVE WP21 `eip=0x4ef7f9 new=301` Colony 288→301; the only +0x40 hit that turn.
+  Clamp B 0x4f0cc3-0x4f0ce9: post-pay minerals > min(10,d0) AND in-mask → := max(0,min(10,d0))
+  — explains M48's pinned-zero ours (d0 = −1). Event writers: 4cce50 trio, 4e47d0 founder,
+  585720/58fa40/507ef0/... (census `m53k_ptr_stores.txt`).
+- **Arm rule (machine-verified):** gate 0x4f0a3d `cmp minerals, edi; jl return`; price =
+  4e40a0 × table cost factor; **FUN_004e40a0 = 10 for in-mask factions but (era table − adjs)
+  for out-mask — CAN BE 0**; race scan (0x4f0af0, gated 0x4f0ac6 to out-mask currents) keeps
+  in-mask same-head bases and returns unpaid if any has d0+minerals ≥ price. Progress +0x3c
+  (+= [base+0xcc] at 0x4ee8c7 in FUN_004ee410, LIVE WP22 50→56) is DISPLAY only (announce
+  0x4efd49). Mask 0x985b10 = 0xff08 = {3, 8..15}: ours in; factions 0,1,2,4,5,6,7 out.
+- **Case study (VERIFIED):** U.N. Disaster Relief (fac 7, out-mask) completed Aerospace
+  Complex turn 2373→2374: bitmap bit29 flipped, minerals 16→25 = +income only, ZERO pay
+  (price 0), clamp skipped — resolves M53j's "debits full price" tension.
+- **Method:** read-only `/proc/pid/mem` TSV snapshots (`scripts/m53k_snap.py`) across turns
+  2371→2375 + two gdb watchpoint runs on The Colony (idx 23 = 0x95f560 — the 0x95f568 in the
+  first run was +8 wrong: 23×0x130 = 0x1b50) + cached disasm. Snapshots:
+  `evidence/m53k_{pre,post1,post2,post3}_turn.tsv`; logs `m53k_watch{,2}.log`.
+- **Next:** **THE PICK = M53l** (production inputs: writers of +0xc0/+0xcc and what feeds
+  4e78e0's +0x48 accumulator; mask 0x985b10 + era table DAT_0068cbb8 semantics).

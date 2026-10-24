@@ -1,0 +1,91 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee17368b in ?? ()
+Hardware watchpoint 1: *(int *)0x95f630
+Hardware watchpoint 2: *(int *)0x95f5a0
+Hardware watchpoint 3: *(int *)0x95f59c
+Hardware watchpoint 4: *(int *)0x95f5a8
+SELFTEST 0x95f630 0x95f5a0 0x95f59c 0x95f5a8
+STATE year=2374 cur=3 nb=75 col_name_at_23=The Colony c3c=50 m40=288 c48=0 d0=13
+WP 1 C48 eip=0x4e8d35 new=6 m40=288 d0=13 eax=0x95f560 ebx=0x6 ecx=0x6 edx=0x1b50
+WP 2 C48 eip=0x4e8d35 new=10 m40=288 d0=13 eax=0x95f560 ebx=0x4 ecx=0xa edx=0x1b50
+WP 3 C48 eip=0x4e8d35 new=12 m40=288 d0=13 eax=0x95f560 ebx=0x2 ecx=0xc edx=0x1b50
+WP 4 C48 eip=0x4e8d35 new=18 m40=288 d0=13 eax=0x95f560 ebx=0x6 ecx=0x12 edx=0x1b50
+WP 5 C48 eip=0x4e8d35 new=24 m40=288 d0=13 eax=0x95f560 ebx=0x6 ecx=0x18 edx=0x1b50
+WP 6 C48 eip=0x4e8d35 new=26 m40=288 d0=13 eax=0x95f560 ebx=0x2 ecx=0x1a edx=0x1b50
+WP 7 C48 eip=0x4e8d35 new=32 m40=288 d0=13 eax=0x95f560 ebx=0x6 ecx=0x20 edx=0x1b50
+WP 8 C48 eip=0x4e8d35 new=38 m40=288 d0=13 eax=0x95f560 ebx=0x6 ecx=0x26 edx=0x1b50
+WP 9 C48 eip=0x4e8d35 new=41 m40=288 d0=13 eax=0x95f560 ebx=0x3 ecx=0x29 edx=0x1b50
+WP 10 C48 eip=0x4e8d35 new=43 m40=288 d0=13 eax=0x95f560 ebx=0x2 ecx=0x2b edx=0x1b50
+WP 11 C48 eip=0x4e8d35 new=44 m40=288 d0=13 eax=0x95f560 ebx=0x1 ecx=0x2c edx=0x1b50
+WP 12 C48 eip=0x4e8d35 new=46 m40=288 d0=13 eax=0x95f560 ebx=0x2 ecx=0x2e edx=0x1b50
+WP 13 C48 eip=0x4e8d35 new=48 m40=288 d0=13 eax=0x95f560 ebx=0x2 ecx=0x30 edx=0x1b50
+WP 14 C48 eip=0x4e8d35 new=51 m40=288 d0=13 eax=0x95f560 ebx=0x3 ecx=0x33 edx=0x1b50
+WP 15 C48 eip=0x4e8d35 new=57 m40=288 d0=13 eax=0x95f560 ebx=0x6 ecx=0x39 edx=0x1b50
+WP 16 C48 eip=0x4e8d35 new=58 m40=288 d0=13 eax=0x95f560 ebx=0x1 ecx=0x3a edx=0x1b50
+WP 17 C48 eip=0x4e95a4 new=7 m40=288 d0=13 eax=0x95f560 ebx=0xd ecx=0 edx=0xd
+WP 18 C48 eip=0x4e95db new=0 m40=288 d0=13 eax=0 ebx=0x10 ecx=0x95f560 edx=0x7
+WP 19 C48 eip=0x4e9736 new=-3 m40=288 d0=13 eax=0xfffffffd ebx=0xfffffffd ecx=0x95f560 edx=0
+WP 20 C48 eip=0x4e9772 new=0 m40=288 d0=13 eax=0xfffffffd ebx=0x4 ecx=0x2 edx=0
+WP 21 M40 eip=0x4ef7f9 new=301 d0=13 c3c=50 eax=0x95f560 ebx=0x2 ecx=0xd edx=0x12d esi=0x4178 edi=0x2
+WP 22 C3C eip=0x4ee8ca new=56 m40=301 d0=13 cc=8 eax=0xffffffff ebx=0x48 ecx=0x40 edx=0
+WP 23 C48 eip=0x4e8d35 new=6 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x6 edx=0x1b50
+WP 24 C48 eip=0x4e8d35 new=10 m40=301 d0=13 eax=0x95f560 ebx=0x4 ecx=0xa edx=0x1b50
+WP 25 C48 eip=0x4e8d35 new=12 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0xc edx=0x1b50
+WP 26 C48 eip=0x4e8d35 new=18 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x12 edx=0x1b50
+WP 27 C48 eip=0x4e8d35 new=24 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x18 edx=0x1b50
+WP 28 C48 eip=0x4e8d35 new=26 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x1a edx=0x1b50
+WP 29 C48 eip=0x4e8d35 new=32 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x20 edx=0x1b50
+WP 30 C48 eip=0x4e8d35 new=38 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x26 edx=0x1b50
+WP 31 C48 eip=0x4e8d35 new=41 m40=301 d0=13 eax=0x95f560 ebx=0x3 ecx=0x29 edx=0x1b50
+WP 32 C48 eip=0x4e8d35 new=43 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x2b edx=0x1b50
+WP 33 C48 eip=0x4e8d35 new=44 m40=301 d0=13 eax=0x95f560 ebx=0x1 ecx=0x2c edx=0x1b50
+WP 34 C48 eip=0x4e8d35 new=46 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x2e edx=0x1b50
+WP 35 C48 eip=0x4e8d35 new=48 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x30 edx=0x1b50
+WP 36 C48 eip=0x4e8d35 new=51 m40=301 d0=13 eax=0x95f560 ebx=0x3 ecx=0x33 edx=0x1b50
+WP 37 C48 eip=0x4e8d35 new=57 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x39 edx=0x1b50
+WP 38 C48 eip=0x4e8d35 new=58 m40=301 d0=13 eax=0x95f560 ebx=0x1 ecx=0x3a edx=0x1b50
+WP 39 C48 eip=0x4e95a4 new=7 m40=301 d0=13 eax=0x95f560 ebx=0xd ecx=0 edx=0xd
+WP 40 C48 eip=0x4e95db new=0 m40=301 d0=13 eax=0 ebx=0x10 ecx=0x95f560 edx=0x7
+WP 41 C48 eip=0x4e9736 new=-3 m40=301 d0=13 eax=0xfffffffd ebx=0xfffffffd ecx=0x95f560 edx=0
+WP 42 C48 eip=0x4e9772 new=0 m40=301 d0=13 eax=0xfffffffd ebx=0x4 ecx=0x2 edx=0
+WP 43 C48 eip=0x4e8d35 new=6 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x6 edx=0x1b50
+WP 44 C48 eip=0x4e8d35 new=10 m40=301 d0=13 eax=0x95f560 ebx=0x4 ecx=0xa edx=0x1b50
+WP 45 C48 eip=0x4e8d35 new=12 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0xc edx=0x1b50
+WP 46 C48 eip=0x4e8d35 new=18 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x12 edx=0x1b50
+WP 47 C48 eip=0x4e8d35 new=24 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x18 edx=0x1b50
+WP 48 C48 eip=0x4e8d35 new=26 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x1a edx=0x1b50
+WP 49 C48 eip=0x4e8d35 new=32 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x20 edx=0x1b50
+WP 50 C48 eip=0x4e8d35 new=38 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x26 edx=0x1b50
+WP 51 C48 eip=0x4e8d35 new=41 m40=301 d0=13 eax=0x95f560 ebx=0x3 ecx=0x29 edx=0x1b50
+WP 52 C48 eip=0x4e8d35 new=43 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x2b edx=0x1b50
+WP 53 C48 eip=0x4e8d35 new=44 m40=301 d0=13 eax=0x95f560 ebx=0x1 ecx=0x2c edx=0x1b50
+WP 54 C48 eip=0x4e8d35 new=46 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x2e edx=0x1b50
+WP 55 C48 eip=0x4e8d35 new=48 m40=301 d0=13 eax=0x95f560 ebx=0x2 ecx=0x30 edx=0x1b50
+WP 56 C48 eip=0x4e8d35 new=51 m40=301 d0=13 eax=0x95f560 ebx=0x3 ecx=0x33 edx=0x1b50
+WP 57 C48 eip=0x4e8d35 new=57 m40=301 d0=13 eax=0x95f560 ebx=0x6 ecx=0x39 edx=0x1b50
+WP 58 C48 eip=0x4e8d35 new=58 m40=301 d0=13 eax=0x95f560 ebx=0x1 ecx=0x3a edx=0x1b50
+WP 59 C48 eip=0x4e95a4 new=7 m40=301 d0=13 eax=0x95f560 ebx=0xd ecx=0 edx=0xd
+WP 60 C48 eip=0x4e95db new=0 m40=301 d0=13 eax=0 ebx=0x10 ecx=0x95f560 edx=0x7
+CAP
+[Inferior 1 (process 2124624) detached]
