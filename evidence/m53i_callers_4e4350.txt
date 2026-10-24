@@ -1,0 +1,14 @@
+ghidra_out/shard_001.c:9285:            iVar2 = FUN_004e4350();
+ghidra_out/shard_001.c:9286:            iVar3 = FUN_004e4350();
+ghidra_out/shard_001.c:9294:              iVar2 = FUN_004e4350();
+ghidra_out/shard_001.c:9295:              iVar3 = FUN_004e4350();
+ghidra_out/shard_009.c:14267:              iVar2 = FUN_004e4350(local_30,DAT_0068cbb0);
+ghidra_out/shard_009.c:14268:              iVar3 = FUN_004e4350(local_38,DAT_0068cbb0);
+ghidra_out/shard_009.c:14334:            iVar2 = FUN_004e4350(-local_28,DAT_0068cbb0);
+ghidra_out/shard_009.c:14335:            iVar3 = FUN_004e4350(local_38,DAT_0068cbb0);
+ghidra_out/shard_012.c:13896:// ==== FUN_004e4350 @ 0x4e4350 size=255
+ghidra_out/shard_012.c:13898:int FUN_004e4350(int param_1,uint param_2)
+ghidra_out/shard_012.c:13956:      iVar1 = FUN_004e4350(*(undefined4 *)(&DAT_0095da54 + param_1 * 0x130),param_1);
+ghidra_out/shard_012.c:13957:      iVar2 = FUN_004e4350((&DAT_0095da60)[param_1 * 0x4c],param_1);
+ghidra_out/shard_012.c:14667:    iVar5 = FUN_004e4350(*(undefined4 *)(&DAT_0095da54 + local_8),param_1);
+ghidra_out/shard_012.c:14668:    iVar6 = FUN_004e4350(*(undefined4 *)((int)&DAT_0095da60 + local_8),param_1);

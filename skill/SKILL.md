@@ -55,13 +55,30 @@ prompt at 15,99x is GREEN locally, RED in CI. Keep `NEXT_PROMPT.md` at ≤ ~15,5
 `submit` also prunes `SESSION_NOTES.md` and adds a `<MILE>: checkpoint` commit; `merge <pr>` rebuilds
 the semantic index.
 
+**The gate has two more checks that silently cost a run.** (1) *Address registry*: a milestone that names
+a function or pins an address must add `NAMED.md` rows in the same commit, otherwise the gate prints
+`[WARN] address registry: NAMED.md untouched` and the verdict is not 0-warning (submit/merge want zero).
+`NAMED.md` is append-only and too big to rewrite — write the rows to a scratch file and
+`cat scratch.md >> NAMED.md` (`write_file` refuses without a full read; `patch` needs a unique anchor);
+rows are `| addr | proposed name | conf | evidence-with-file:line |` and the row is what makes the
+function searchable in the semantic index. (2) *Evidence citations*: every `evidence/<file>` cited in the
+findings doc must exist on disk, or the citation check drops it. (3) **Poll CI by SHA**: after a follow-up
+push (skill sync, `NAMED.md` rows) `gh pr checks <n>` can still report the earlier run — use
+`gh pr view <n> --json headRefOid,statusCheckRollup` and merge only when SUCCESS is on the current head
+commit.
+
 **Drivers started with `--hold N` fire a late "gdb exited" background notification when the hold loop
 finally expires** — hours after `--mode stop` already detached gdb, one notification per armed tag.
 Harmless (a CONT on a running inferior is a no-op): after a session that armed several tags, expect a
 run of them and do not re-verify the game for each.
 
 When a doc is over budget, **delete whole bullets/blocks** (cut from the offending line to the next
-`- ` or `## `) — rewording saves ~0 bytes — and re-measure with `wc -c`, not character count.
+`- ` or `## `) — rewording saves ~0 bytes — and re-measure with `wc -c`, not character count. These docs
+**wrap mid-clause**, so an `old_string` copied from a rendered view misses the line break and the edit
+fails: do the trim in ONE python pass that either splices whole line ranges (process ranges in
+DESCENDING order so earlier line numbers stay valid) or regex-matches with `\s*\n\s*` wherever a wrap can
+sit, and assert each pattern matched exactly once (`subn(..., count=1)`, check `n == 1`) rather than
+assuming it did.
 
 **Semantic search** (`docs/SEARCH.md`): `python3 scripts/index.py search "<question>"`
 returns `file:line` / addresses for notes and named functions; `merge` rebuilds it
@@ -511,6 +528,13 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
 - **Live list walks take count from header+0x10** (+8 head, +0xc cursor): using the cursor as the loop
   bound iterates ~79M times and looks like a hang. The chooser's item list is `sub+0xa780` = 0x6b461c and
   **survives the close**, so a cancelled chooser can still be read to see what was enumerated.
+- **Secret-project table (M53i).** `0x984d38` IS the alpha `#FACILITIES` section verbatim (72×48 B;
+  **live index = alpha row + 1**, row 0 null placeholder): +0 name / +4 effect string ptrs into a
+  ~0x2100000 arena, +0xc cost factor, +0x14 prereq tech (−1 = None), +0x18 = −2 constant. A queue
+  value < 0 is **−project index**; its price = `(&DAT_00984d44)[(−q)·0xc] × 0x4e40a0` — `0x5ac950`
+  does NOT handle negative ids. `0x984d44` is dword 3 of the SAME record, not a second table.
+  **Grep the DAT prefix (`984d`), never just the base**: Ghidra splits one table into
+  `DAT_00984d38/44/4c/...` renderings by field offset, so a base-only grep silently misses refs.
 
 ## Still open (leads)
 
