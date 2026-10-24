@@ -12,6 +12,10 @@ in-repo under `skill/` — after editing the skill, refresh it there and push. G
 `programs/`, `smac.iso`, `glsmac/` and regenerable Ghidra/FLIC output are gitignored: never
 `git add -f` them.
 Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
+
+**This file is ~55 KB — grep it, do not load it whole.** `grep -n '^## \|^- \*\*' SKILL.md`, then
+`sed -n 'A,Bp'` the one or two sections you need (the pitfalls block + the code area for the current
+milestone). Loading it whole costs ~14k tokens a session and buries the pitfall you came for.
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
 RE. Five spines (boot, solo turn, unit orders/combat, research/tech, save/load) drive Phases 1–2.
@@ -167,6 +171,29 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   initialised to `record + 50` writes its tail fields as `*(char *)(p + -4)` / `(int)p + -9`; Ghidra
   renders them exactly that way, so neither a `DAT_` grep nor a disp32 byte-scan surfaces them. Scan for
   disp8 stores whose base register is a table/record pointer.
+- **Never cite a field offset out of pseudocode without checking the pointer's element type.** Ghidra
+  types many globals as `short *` (here: the current-base pointer `DAT_008f0d60` and every copy of it),
+  and pointer arithmetic scales by element size — `p + 0x20` is byte **+0x40**, `p[0x1c]` is +0x38,
+  `idx * 0x98` is the 0x130 stride. The machine-code twin is a loop cursor that starts INSIDE the record
+  (`mov esi,0x95da14` = base + 4, `add esi,0x130`), so every `[esi+disp]` is shifted from the record
+  start. Recompute each offset from the pointer's init instruction (`mov reg,imm` / `lea`) and the index
+  math (`neg`, `sub 0x27`, `lea e,[i+i*2]; shl e,4`) before writing it down: a "mystery field" whose
+  offset is exactly 2× — or +4 from — a field you already have is this artifact, not a new field. Every
+  offset derived from that pointer inherits the error, so re-audit the whole cluster, not just the one in
+  question, and restate the finding in real byte offsets.
+- **`[eax*4+0x985b3c]` and `*(int *)(&DAT_00985aa0 + idx*4)` can be the SAME array.** The compiler folds
+  `base + (idx − k)·stride` into a different displacement, so one table acquires several `DAT_` names and
+  a base-only grep finds only some of its accesses. Census the whole address **window** and classify by
+  operand shape, then pin base and extent from the code that walks it: a loop bound expressed as an
+  address (`while ((int)p < 0x985bc0)` = end), a loop that **branches on the pointer address instead of
+  the value** (that branch is proof the flat range spans two different things), and live contents — slots
+  that hold a known unrelated global (year, `n_bases`, faction mask) are not table entries.
+  Recipe: `references/static-store-census.md` §8.
+- **Strip the MSVC C++ frame noise before reading a big body.** `[ebp-0x4]` is the exception-state byte;
+  a block that stores vtable-constant addresses (0x67xxxx in this exe) into stack locals and calls
+  `0x406720` / `0x406060` / `0x5f6de9` is a scope-exit/destructor block, not game logic. Real branches
+  jump OVER these blocks, so an address-ordered read puts the logic in the wrong order; skip them, but
+  log where each one jumps, because many bodies funnel every early return to one shared cleanup label.
 - A single-writer claim needs the census printed both ways: total references **and** the store count
   (`grep <hex-addr> <dump> | grep -c ',al'`), not "the corpus shows one writer".
 - **Jump tables: dump the raw dwords before "correcting" Ghidra's case labels.**
@@ -535,6 +562,12 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   does NOT handle negative ids. `0x984d44` is dword 3 of the SAME record, not a second table.
   **Grep the DAT prefix (`984d`), never just the base**: Ghidra splits one table into
   `DAT_00984d38/44/4c/...` renderings by field offset, so a base-only grep silently misses refs.
+  **Claim array (M53j):** the per-project claim table is **33 dwords at `0x985b3c`, index =
+  project_idx − 0x27** — only projects ≥ 0x27 have a slot (`< 0x23` ones are tracked in the base
+  facility bitmap at base+0x8c instead); value = the base INDEX that completed it, −1 = unclaimed, and
+  it is written with the pane-loop's current-base global, not a per-loop index. The flat rendering
+  `*(int *)(&DAT_00985aa0 + idx*4)` is the compiler folding that subtraction, and `0x985aa0..0x985b38`
+  are unrelated globals (year, `n_bases`, mask) — not early claim slots.
 
 ## Still open (leads)
 
