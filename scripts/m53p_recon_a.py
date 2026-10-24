@@ -1019,6 +1019,125 @@ def recover_pop(idx, stale_mask=False, verbose=False):
     return o
 
 
+# ------------------------------------------------ FUN_004eaa10 allied-energy fold (M53t)
+FACR = 0x94d734          # faction record array, stride 0x20bc (asm 0x4eab18-0x4eab29)
+STANCE = 0x94d448        # dword matrix [fac][other]; low byte bit2 = allied, bit1 = full share
+NBMAX = 76
+
+
+def fac_u32(f, off):
+    return u32("facrec", FACR + f * 0x20bc + off)
+
+
+def fac_s32(f, off):
+    return s32v("facrec", FACR + f * 0x20bc + off)
+
+
+def stance(f, other):
+    """[0x94d448 + f*0x20bc + other*4] — f's stance toward other (asm 0x4eab1d-0x4eab36)."""
+    return u32("facrec", STANCE + f * 0x20bc + other * 4)
+
+
+def base_energy(i):
+    """base+0xb4.  4e78e0's exit shift copies +0xc4 down to +0xb4 (asm 0x4e8b39-0x4e8b54),
+    so by the time 4eaa10 runs this holds the energy the fold reads for both ends."""
+    return s32v("bases", BLOB_BASE["bases"] + i * 0x130 + 0xb4)
+
+
+def energy_rank(idx):
+    """0-based rank of base idx among its owner's bases, 0 = highest.
+    key = energy<<9 + idx, compared against energy<<9 + DAT_0068cbb0 (the LIVE cur-base
+    index, asm 0x4eaac0-0x4eaad4) — hence the tie-break is the global, not this base's idx."""
+    fac, me = row(idx)["fac"], base_energy(idx)
+    key = (me << 9) + idx          # DAT_0068cbb0 == THIS base's index inside 4f5a70 (0x4f5a7c)
+    return sum(1 for b in range(min(G["nbases"], NBMAX))
+               if row(b)["fac"] == fac and (base_energy(b) << 9) + b > key)
+
+
+def kth_energy_base(fac, k):
+    """FUN_004ea940: the k-th HIGHEST-ENERGY base of fac — no distance is ever computed.
+    key = energy<<9 | idx, bubble-sorted descending (asm 0x4ea95e-0x4eaa00);
+    returns -1 when k >= count, else the base index (low 9 bits of the key)."""
+    keys = sorted(((base_energy(b) << 9) + b for b in range(min(G["nbases"], NBMAX))
+                   if row(b)["fac"] == fac), reverse=True)
+    return -1 if k >= len(keys) else (keys[k] & 0x1FF)
+
+
+def alliance_fold(idx, verbose=False):
+    """The share FUN_004eaa10 adds to base+0xc4 AFTER 4e78e0 (0x4eac57-0x4eac62), summed over
+    every OTHER faction allied with the owner in either direction.  Machine-pinned in
+    evidence/m53t_fold.md; per-ally term:
+        n  = ceil((energy[ally_base[k]] + energy[me]) / 8)   (+= itself if 0x985bd4 < 0x985bd0)
+        s  = ((faction[owner].+0 + 1) * n + D/2) / D          D = [0x92a274] + 1
+        s /= 2 unless stance[owner][other] bit 1
+        s += 1 if [0x985bc0] == owner
+        s  = 0 if [0x94d4f0 + owner*0x20bc] or [0x94d4f0 + other*0x20bc]
+    The value is gated AFTER being published to DAT_008f0d40[other-1] (0x4eac27), so the
+    published copy keeps the ungated share."""
+    fac = row(idx)["fac"]
+    D = u32("g92a", 0x92a274) + 1
+    rnd = D >> 1
+    me = base_energy(idx)
+    k = energy_rank(idx)
+    total, detail = 0, []
+    for other in range(1, 8):
+        if other == fac:
+            continue
+        if not (stance(fac, other) & 2 or stance(other, fac) & 2):
+            continue
+        if fac_u32(other, 0xd54) == 0:
+            continue
+        ab = kth_energy_base(other, k)
+        if ab < 0:
+            continue
+        n = ashr(base_energy(ab) + me + 7, 3)
+        if u32("g985", 0x985bd0) > u32("g985", 0x985bd4):
+            n *= 2
+        s = sdiv((fac_s32(fac, 0) + 1) * n + rnd, D)
+        if not (stance(fac, other) & 1):
+            s = ashr(s, 1)
+        if u32("g985", 0x985bc0) == fac:
+            s += 1
+        if fac_u32(fac, -0x244) or fac_u32(other, -0x244):
+            s = 0
+        detail.append((other, ab, n, s))
+        total += s
+    if verbose:
+        print("  fold: rank %d D %d rnd %d  %s  = %+d" % (k, D, rnd, detail, total))
+    return total, detail
+
+
+def compare(idx, recover=True, fold=True, verbose=False):
+    """(ok, ok_before_fold, vec_after, obs, fold_total, detail) for one base."""
+    o = recover_pop(idx, False, verbose) if recover else rebuild(idx, False, verbose)
+    obs = list(o["obs"])
+    if idx == 70:
+        obs[0] -= G["c6c"]
+    vec = list(o["vec"])
+    f, det = alliance_fold(idx, verbose) if fold else (0, [])
+    vec[2] += f
+    ok_before = all(o["vec"][j] == obs[j] for j in range(4))
+    return (all(vec[j] == obs[j] for j in range(4)), ok_before, vec, obs, f, det, o)
+
+
+def census(recover=True, fold=True, verbose=False):
+    n = len(_rows["r"])
+    selfc = exact = folded = 0
+    bad = []
+    for i in range(n):
+        ok, ok_before, vec, obs, f, det, o = compare(i, recover, fold)
+        selfc += (o["processed"] == o["mask_in"] and o["budget_end"] == o["c7c_in"])
+        exact += ok_before
+        folded += ok
+        if not ok:
+            bad.append((i, [vec[j] - obs[j] for j in range(4)], f, det))
+    print("census: rows %d  self-consistent %d  exact-before %d  exact-after-fold %d"
+          % (n, selfc, exact, folded))
+    for i, d, f, det in bad:
+        print("  residual idx %-3d delta %s  fold %+d %s" % (i, d, f, det))
+    return folded
+
+
 def show(idx, stale_mask=False, verbose=False, recover=True):
     o = recover_pop(idx, stale_mask, verbose) if recover else rebuild(idx, stale_mask, verbose)
     obs = list(o["obs"])
@@ -1037,6 +1156,9 @@ def show(idx, stale_mask=False, verbose=False, recover=True):
         print("  %s model=%-4d obs=%-4d delta=%-3d  seed=%s  sum=%s %s"
               % (names[f], tot, tgt, tot - tgt, o["seed"][f][1], s,
                  " ".join("%s@%s:%+d" % (t[0], t[1], t[3]) for t in terms if t[3])))
+    f, det = alliance_fold(idx, verbose)
+    print("  4eaa10 fold %+d %s  => c4 model+fold %d  obs %d"
+          % (f, det, o["vec"][2] + f, obs[2]))
     return o, obs
 
 
@@ -1047,9 +1169,22 @@ def main():
                     help="superseded M53p semantics: entry mask from the dump's global DAT_008f0d30")
     ap.add_argument("--no-pop-recover", action="store_true", dest="no_pop_recover",
                     help="report the plain pop=dump replay only (no pop-drift probe)")
+    ap.add_argument("--mem-dir", dest="mem_dir",
+                    help="snapshot dir (default evidence/m53o_mem; session-75 PRE-DRIVE dump is "
+                         "evidence/m53s_dump1)")
+    ap.add_argument("--census", action="store_true",
+                    help="all rows: self-consistency + exactness before/after the 4eaa10 fold")
+    ap.add_argument("--no-fold", action="store_true", dest="no_fold",
+                    help="census without FUN_004eaa10's allied-energy share")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args()
+    if a.mem_dir:
+        global MDIR
+        MDIR = os.path.abspath(a.mem_dir)
     init()
+    if a.census:
+        census(recover=not a.no_pop_recover, fold=not a.no_fold, verbose=a.verbose)
+        return
     idxs = a.idx or [70, 0, 3, 4, 6, 10, 23]
     full = []
     for i in idxs:

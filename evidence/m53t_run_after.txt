@@ -1,0 +1,3 @@
+census: rows 76  self-consistent 76  exact-before 65  exact-after-fold 74
+  residual idx 6   delta [0, 0, 2, 0]  fold +2 [(1, 62, 2, 2)]
+  residual idx 51  delta [0, 0, -1, 0]  fold +2 [(4, 34, 2, 1), (7, 15, 3, 1)]

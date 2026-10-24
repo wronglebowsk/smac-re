@@ -1,0 +1,24 @@
+idx 1 fac 1 pop 7 flag 1 budget 8->0 mask_in 0x20b2d processed 0x20b2d mask 0x144001
+  4eaa10 fold +1 [(4, 30, 2, 1), (7, 43, 2, 0)]  => c4 model+fold 8  obs 8
+idx 3 fac 4 pop 4 flag 1 budget 5->0 mask_in 0x880c1 processed 0x880c1 mask 0x30011
+  4eaa10 fold +3 [(1, 46, 4, 3)]  => c4 model+fold 15  obs 15
+idx 5 fac 7 pop 9 flag 1 budget 10->0 mask_in 0xf2951 processed 0xf2951 mask 0x1
+  4eaa10 fold +2 [(1, 46, 5, 1), (3, 69, 3, 1)]  => c4 model+fold 18  obs 18
+idx 6 fac 4 pop 5 flag 1 budget 6->0 mask_in 0xb1081 processed 0xb1081 mask 0x2001
+  4eaa10 fold +2 [(1, 62, 2, 2)]  => c4 model+fold 8  obs 6
+idx 8 fac 1 pop 7 flag 1 budget 8->0 mask_in 0x42595 processed 0x42595 mask 0x3
+  4eaa10 fold +2 [(4, 60, 2, 1), (7, 7, 3, 1)]  => c4 model+fold 9  obs 9
+idx 30 fac 4 pop 4 flag 1 budget 5->0 mask_in 0xab processed 0xab mask 0x1
+  4eaa10 fold +2 [(1, 1, 2, 2)]  => c4 model+fold 8  obs 8
+idx 34 fac 4 pop 5 flag 1 budget 6->0 mask_in 0x430b processed 0x430b mask 0x1
+  4eaa10 fold +2 [(1, 51, 2, 2)]  => c4 model+fold 11  obs 11
+idx 46 fac 1 pop 7 flag 1 budget 8->1 mask_in 0x9589 processed 0x9589 mask 0x1
+  4eaa10 fold +5 [(4, 3, 4, 3), (7, 5, 5, 2)]  => c4 model+fold 22  obs 22
+idx 51 fac 1 pop 4 flag 1 budget 5->0 mask_in 0x20283 processed 0x20283 mask 0x80821
+  4eaa10 fold +2 [(4, 34, 2, 1), (7, 15, 3, 1)]  => c4 model+fold 9  obs 10
+idx 60 fac 4 pop 4 flag 1 budget 5->0 mask_in 0x2001b processed 0x2001b mask 0x1
+  4eaa10 fold +2 [(1, 8, 2, 2)]  => c4 model+fold 10  obs 10
+idx 62 fac 1 pop 5 flag 1 budget 6->0 mask_in 0x6419 processed 0x6419 mask 0x1
+  4eaa10 fold +1 [(4, 6, 2, 1), (7, 32, 2, 0)]  => c4 model+fold 7  obs 7
+idx 69 fac 3 pop 7 flag 0 budget 8->0 mask_in 0x818ad processed 0x818ad mask 0x1 (live d30 0x101)
+  4eaa10 fold +1 [(7, 5, 3, 1)]  => c4 model+fold 4  obs 4

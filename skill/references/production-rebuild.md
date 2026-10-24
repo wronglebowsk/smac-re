@@ -138,3 +138,27 @@ also a step of ANOTHER base whose `+0x78` bit is set (0x4e68de RMW `or al,0x10`)
 `FUN_004e3b50`-class foreign presence (0x4e6699). The `=1` store at 0x4e63e8 is guarded by
 `cmp ecx,0x54 / jl`, i.e. it only fires at index >= 21 and writes past the table — dead for the mask.
 Decode + audit: `evidence/m53q_8f0ccc_writers.md`, `evidence/m53q_verify.md`.
+
+## After the rebuild: the allied-energy share (`FUN_004eaa10`) — M53t
+
+`FUN_004f5a70` runs `4e8d60 -> 4e78e0 -> 4e92c0 -> 4e93f0 -> 4eaa10` per base, so the rebuild's
+`+0xc4` is NOT the final value: `4eaa10` adds one share per OTHER faction allied in either
+direction (`stance[owner][other]` bit 2, or the transpose at `0x94f504 + owner*4` advanced by
+`0x20bc`; `faction[other].+0xd54 != 0`; `FUN_004ea940(other, k) >= 0`):
+
+```
+n = (base[ally].+0xb4 + base[me].+0xb4 + 7) >> 3      # doubled if [0x985bd0] > [0x985bd4]
+D = [0x92a274] + 1
+s = ((faction[owner].+0 + 1) * n + D/2) / D            # C truncating
+s >>= 1 unless stance[owner][other] bit 1
+s += 1 if [0x985bc0] == owner
+s  = 0 if [0x94d4f0 + fac*0x20bc] for owner or other
+base+0xc4 += s                                          # 0x4eac57-0x4eac62
+```
+
+`FUN_004ea940(fac, k)` returns the k-th **highest-ENERGY** base of `fac` (`key = E<<9 | idx`, sort
+descending, `-1` if `k >= count`) — there is no distance in it, despite the old "k-th nearest"
+label. `k` = number of the owner's bases ranking above `(E_me<<9 | [0x68cbb0])`, and `0x68cbb0`
+holds the base's OWN index during its visit (`0x4f5a7c`) — read it per row, not from the dump's
+global. Implementation + acceptance: `~/reverse/smac/scripts/m53p_recon_a.py` (`alliance_fold`,
+`--census`), `evidence/m53t_fold.md` (74/76 exact; idx 6 and 51 open, two-pass `[0x985afc] > 1`).
