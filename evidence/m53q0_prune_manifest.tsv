@@ -1,0 +1,85 @@
+bytes	relpath	status
+5674514	m53j_text.txt.gz	kept:core
+813406	m53k_ptr_stores.txt	kept:notes
+420767	m45e_hud.png	kept:notes
+401667	m15_loaded_words.png	kept:notes
+390831	m25_t3.png	kept:notes
+384011	m25_t2.png	kept:notes
+369325	m46d_confirm.png	kept:notes
+308361	m46d_yesok.png	kept:notes
+305469	m46e_econ.json	kept:core
+276531	m37_recovered.png	kept:notes
+250872	m53j_refs_claim.txt	kept:evidence:m53j_complet.md
+243954	m36_screen0.png	kept:notes
+241833	m36_after_no.png	kept:notes
+231526	m35v2_paypane0.png	kept:notes
+231273	m37c2_exec41.json	kept:core
+207336	m37_screen0.png	kept:notes
+198559	m46c_probe.png	kept:notes
+194187	m45a_post.png	kept:notes
+191756	m53j_refs_985aa.txt	kept:notes
+178184	m27_after_move.png	kept:notes
+163006	m24b_screen.png	kept:notes
+162942	m15_stuck_screen.png	kept:notes
+161237	m25_t7.png	kept:notes
+161159	m24_start.png	kept:notes
+159645	m48e_drive.json	kept:core
+159610	m48c_drive.json	kept:core
+159566	m48a_drive.json	kept:core
+159546	m48f_drive.json	kept:core
+156047	m46a_econ.json	kept:core
+154424	m38run2_exec41.json	kept:core
+152726	m46b_econ.json	kept:core
+152655	m46d_econ.json	kept:core
+152610	m46c_econ.json	kept:core
+145930	m15_title_now.png	kept:notes
+132345	m38run2_gdb.log	kept:notes
+118606	m19c_writesites2.log	kept:notes
+114135	m35_state.png	kept:notes
+100679	m53a_watch.log	kept:notes
+100077	m52b_watch.log	kept:notes
+817877	readtrace_m11.log	dropped(git history keeps it)
+429980	px_stuck_t0.png	dropped(git history keeps it)
+426599	px_stuck_t1.png	dropped(git history keeps it)
+337226	m53k_fn55f650.txt	dropped(git history keeps it)
+327438	m53d_screen_pre2x.png	dropped(git history keeps it)
+327438	m53d_after_zoom2x.png	dropped(git history keeps it)
+325133	m53d_ab2x.png	dropped(git history keeps it)
+281680	m53d_cleared.png	dropped(git history keeps it)
+279208	m53d_screen_pre.png	dropped(git history keeps it)
+279208	m53d_after_zoom.png	dropped(git history keeps it)
+277001	m53d_after_breakthrough.png	dropped(git history keeps it)
+275477	px_title_t4.png	dropped(git history keeps it)
+274940	px_title_t0.png	dropped(git history keeps it)
+274599	m50b_screen.png	dropped(git history keeps it)
+238371	m53d_s5_2x.png	dropped(git history keeps it)
+238371	m53d_s1_research_ok_2x.png	dropped(git history keeps it)
+200240	m53d_v_OK.png	dropped(git history keeps it)
+200240	m53d_v_DELETE.png	dropped(git history keeps it)
+200240	m53d_u1_state.png	dropped(git history keeps it)
+200240	m53d_t2_after_ret.png	dropped(git history keeps it)
+200240	m53d_s8_after_ok.png	dropped(git history keeps it)
+200240	m53d_s6_before_digit.png	dropped(git history keeps it)
+200240	m53d_s5_ok.png	dropped(git history keeps it)
+200240	m53d_s1_research_ok.png	dropped(git history keeps it)
+199157	m37c2_gdb.log	dropped(git history keeps it)
+177962	m53d_s3_2x.png	dropped(git history keeps it)
+177562	m53d_after_zoom2_2x.png	dropped(git history keeps it)
+177178	m53d_s2_digit2_2x.png	dropped(git history keeps it)
+170955	m53o_fn4ef6d0_asm.txt	dropped(git history keeps it)
+149635	m53d_after_zoom2.png	dropped(git history keeps it)
+148490	m53d_v_REPLACE.png	dropped(git history keeps it)
+148393	m53d_v_INSERT.png	dropped(git history keeps it)
+148393	m53d_u4_after_insert.png	dropped(git history keeps it)
+148264	m53d_u3_item_sel.png	dropped(git history keeps it)
+147718	m53d_t2_chooser.png	dropped(git history keeps it)
+147718	m53d_t1_after_dbl.png	dropped(git history keeps it)
+147718	m53d_s4_sel.png	dropped(git history keeps it)
+147718	m53d_s3_click_scoutpatrol.png	dropped(git history keeps it)
+147506	m53d_v_CANCEL.png	dropped(git history keeps it)
+147506	m53d_u2_row1_click.png	dropped(git history keeps it)
+146971	m53d_t1_chooser.png	dropped(git history keeps it)
+146971	m53d_s7_digit2_again.png	dropped(git history keeps it)
+146971	m53d_s2_digit2.png	dropped(git history keeps it)
+140800	m53o_mem/terrain.bin	dropped(git history keeps it)
+108396	m52b_fn4ef6d0_disasm.txt	dropped(git history keeps it)

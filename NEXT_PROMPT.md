@@ -119,18 +119,18 @@ three swap-commit guards, the nibble bookkeeping) live in the skill at
   --turns --timeout --no-escape --verbose --order --unit --turns-after --tag --no-verify --key-only) —
   bound a backgrounded driver with `timeout <run>` from the shell or let it finish; never
   `pkill -f`/`pgrep|kill` by name.
-- **Stalled round? Check the livelock signature first:** `turn_flags` (0x985ae8) bit 1 stuck set + main
-  thread `R` at ~60% CPU + static screen ⇒ a unit-chain self-link (`unit+48`/`unit+50` walks exit only
-  on a NEGATIVE link). Census recipe + the poke fix: `evidence/m53p_livelock_findings.md`. Pokes via
-  `/proc/pid/mem` while no tracer, always read back.
+- **Stalled round? Run `python3 scripts/m53q_livelock.py`** — prints `turn_flags` + a `+48`/`+50`
+  chain census (terminators / self-links / out-of-range / cycles), exits 2 on a cycle; `--fix` pokes
+  the offending link to 0xFFFF and re-censuses. Signature: turn_flags bit 1 set + main thread hot +
+  static screen ⇒ self-linked unit chain (`evidence/m53p_livelock_findings.md`).
 - **PROPOSAL vote pane** (stalls the AI phase): bars in TRUE window coords YEA (310,495) / NAY (398,
   495) / ABSTAIN (485,495), then one OK bar (393,495); the `YEA: 2 NAY: 3` line is the TALLY. Capture
   `xwd -display :99 -root -silent` + ffmpeg 2x upscale + tesseract; click after `xdotool windowfocus`.
 - **Snapshots:** `python3 scripts/m53l_snap.py > evidence/x.tsv` (read-only walk of all bases; header
   `# year cur nb era mask pid`; after f98 cols bc c0 c4 c8 d0 cc f0) and `python3 scripts/m53o_mem.py`
   (refreshes the dump the model reads). **Model:** `python3 scripts/m53p_recon_a.py $(seq 0 75)` —
-  parse with `evidence/m53p_swap_parse.py` (`parse()` has no mask_in; extend the header regex with
-  groups 7/8 for `mask_in`/`processed`) or `evidence/m53p_fresh_parse.py`.
+  parse with `evidence/m53p_swap_parse.py` (`--sc` = the self-consistent rows + residuals; every row
+  carries `mask_in`/`processed`/`sc`) or `evidence/m53p_fresh_parse.py`.
 - **Watchpoints: x86 DR budget = 4 hw slots** (8-byte windows need 8-alignment = 2 DRs each); pair with
   the 10 Hz `/proc/mem` poller `scripts/m53m_poll.py`. Bake addresses as LITERALS, print `commands …
   continue end` per site, `stdbuf -o0`, `gdb -batch -nx -q -p PID -x scripts/x.gdb` backgrounded +

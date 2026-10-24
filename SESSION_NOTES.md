@@ -51,49 +51,7 @@
 
 - **Session 27 (M27, 2026-10-21):** footing re-read (skill + MILESTONES + session 26 entry); `terran.exe` was alive but at the CD-ROM nag (pid 909721, year 0) — killed and relaunched (pid 914079), then loaded **Autosave 2 = 2198** by hand after learning the LOAD dialog's name box must be *backspaced* clear and given a **Windows** path (`Z:\home\n100\…\Alpha Centauri Autosave 2.SAV`, box (400,252), Return, confirm OK (290,391)); the title screen still classifies `unknown` so `m26_load.py` times out and its repeated Returns bounce back to the menu. **M27 = the player MOVE gesture.** Retracted the M23–M26 claim that arrows only move a cursor: with a unit selected ∧ `b5b8 != 0`, **an arrow key moves that unit one tile, synchronously** — one `Right` took rec117 (41,11)→(43,11); static path `FUN_00512b40` `case 0x21..0x28 → dir 0..7` → `FUN_004e1f90`/`FUN_005255e0` pre-gates → `FUN_005acc00(unit)` can-act gate (fail ⇒ advisor `s_UNITMOVED`) → `FUN_00529090(unit,dir,0)`; Shift+arrow instead queues `+17=0x19, +20=dir, +22/+30=unit tile`. Live proof with **no injection**: `scripts/m27_solowrap.gdb` (bps 0x529090/0x585720/0x5ab320) + `scripts/m27_run.sh` (captures gdb PID — `pkill -f <script>` in the same command kills your own shell) → `evidence/m27_solowrap2.log` has three of the game's own `SOLOWRAP idx=117/118/120 dir=1 mode=0` → `EXEC … mode=3` → `SETTILE (45,11)/(45,11)/(43,11)`; records: 117/118 41→45, 120 41→43, **3 MP/tile, 6 MP/turn** (two steps per fresh unit). Turn 2198→2199 stalls in the AI phase on two modals — PSI-COMBAT **DATALINKS** (`Return`) and **OPERATIONS DIRECTOR** (one `Escape`) — after which `cur_player=3`, `tf=0x100000`. Docs: `turn_driver.md` §M27, `NAMED.md` +3 rows, `MILESTONES.md` C2, `NEXT_PROMPT.md` header. Evidence: `m27_after_move.png`, `m27_solowrap{,2}.log`, `m27_{a…x}.png`. Game left alive: **pid 914079, year 2199, our turn, TracerPid 0**; survivors now split 117/118 (45,11) · 119/120 (43,11) · 121–123 (41,11), all `order=0`.
 
-Older sessions: `docs/sessions/sessions-64-64.md` (1 sessions). Read it only when a question reaches back before session ## Session 65.
-
-## Session 65 (2026-10-23) — M53m: **c6c/c70 ARE FED ONLY BY SUPPLY CRAWLERS (plan 10 = type 5) EXECUTING CONVOY ORDERS (3) — three-branch filter pinned to machine addresses and proven live (c6c[0] 0→1 via 0x4e8f35, c70 0→1 via 0x4e8e82, ×10 each over 4 rounds, 2 sweeps/base/round); ERA WRITER = 0x4ddcf1 COLD CHOOSER PATH (sole direct store)** — write-up `evidence/m53m_findings.md`
-- **Filter (VERIFIED machine + live).** 4e8d60 accumulates economy slots only for units with
-  unit+14==base owner ∧ plan(type+42)==10 == alpha PLANS[10] "Convoy/Resource Convoy" ∧
-  order(unit+17)==3 == alpha ORDERS[3] "Convoy" (glyph O). ONLY plan-10 type: 5 = Supply
-  Crawler (cost 3, alpha #UNITS row 6; 1/151 live rows). Branch A: bidx(unit+46 u16)==cur
-  base ∧ tile (ti = y·40 + x>>1, unit x@0 y@2) has (terr[8]&1)==0 || level>7 → add
-  FUN_004e6960/4e6d40/4e7070 result (slot = unit+38; calls 0x4e8efa/0x4e8f0b/0x4e8f1c) at
-  **0x4e8f35** `add [ecx*4+0x8f0c6c],eax`. Branch B: bidx≠cur ∧ ≥0 ∧ unit on base tile →
-  **0x4e8e82** `inc [eax*4+0x8f0c6c]` +1, then short-circuit `jmp 0x4e9274`. Good tile ∧
-  bidx==cur → **0x4e9009** `inc [cat*4+0x8f0c34]` (upkeep). Slots: c6c[0]→bc, c70→c0,
-  c34[0]→ec, c38→f0. Yield fns: tile = y·40+x>>1, terrain +8/+0xc/+0&0xe0, call 0x5831a0
-  (shape VERIFIED; resource identity INFERRED).
-- **Why zero (VERIFIED census).** 339 units: no order 3, no plan 10 → structural zero —
-  explains M53l 75/75 idempotency.
-- **Live delta (VERIFIED).** Poked 2 of our units into fake crawlers (u300→field tile
-  (45,10) yield-OK cat 0 bidx 70; u279→porch (45,11) cat 1 bidx 73); 4 hw watchpoints (x86
-  DR budget 4 — base rows via 10 Hz `/proc` poller `scripts/m53m_poll.py`); drove
-  2376→2380: c6c[0] 19 fires (10× new=1 eip 0x4e8f3c + 9× zeroing 0x4e8d79), c70 19 fires
-  (10× new=1 eip 0x4e8e89 + 9× zeroing), c34/38 0 fires (base 73 'Factory Drift' is
-  FACTION 2 — fac gate 0x4e8e21 skips; names not unique). **Convoy order persists** 4
-  rounds; movement executor ignores route-less convoy but the sweep consumes records as
-  INPUTS (refines skill poke-pitfall). base70 row = **0x962d30** (= 0x95da10+70·0x130, NOT
-  0x962d50): bc 11→12, c0 7→8, cc −3→−2, d0 0→3, minerals 0→15, progress 22→12; cc=bc−ec
-  and d0=c0−f0−e0 hold live; income + progress applied 4×. **bc/c0 net +1 despite 10 fires
-  each: `bc += c6c[0]` UNCONDITIONAL (0x4e9331-44) — lands only when 4e92c0/4e93f0 run
-  adjacent to the same base's sweep; inter-base zeroing eats the rest (multiplicity =
-  M53n).** base73 c0 +1 via stale c70 (INFERRED, open).
-- **Era writer closed (VERIFIED).** Sole direct store to 0x985aec: **0x4ddcf1** (cold `jge`
-  0x4ddb5a past the ret 0x4ddcf0, inside FUN_004ddaa0 chooser/setup dialog, callers
-  0x51518b/0x517e1e; eax = 0x5f1394(this,0,0) return ≥ 0; also writes same dword to
-  0x94d438+f·0x20bc ×8). M53l "zero direct stores" = grep-render miss (`a3` prints
-  `mov ds:0x985aec,eax`). Loaded-scenario era = pointer-based save load INFERRED.
-- Safety/method: pokes idle + readback-verified; driver 4/8 turns then "Do you really want
-  to quit?" popped → cleared via Escape onto "Oops, no, wait!" (never clicked); unit array
-  compacted mid-run (poked records moved slots u300→u252, u279→u273; restored at new
-  homes; slots 279/300 recycled by game); nb 75→76 (new base, game progression); re-census
-  0 crawler-shaped units remain; game idle on our turn, year 2380, TracerPid 0.
-- **Next:** `NEXT_PROMPT.md` rewritten for session 66; **THE PICK = M53n** (round call
-  schedule: per-round order/multiplicity of the 4e8d60/4e92c0/4e93f0 callers — which see
-  c6c/c70 hot vs stale; why base73 c0 took stale +1; close the 3-base extra-income anomaly,
-  +0xc4/+0xc8 meanings, founding c0 via 4e47d0; unit+38 semantics).
+Older sessions: `docs/sessions/sessions-65-65.md` (1 sessions). Read it only when a question reaches back before session ## Session 66.
 
 ## Session 66 (2026-10-24) — M53n: **THE ROUND SCHEDULE IS PINNED — `FUN_004f5a70(base_idx)` runs exactly once per base per round (76/76 live), grouped by owner faction in faction-turn order with OUR faction LAST; the economy block executes 2x per visit unconditionally (pass1 d64=0, pass2 d64=1) plus event/UI extras (247 block executions per round, every 4e92c0 entry reaching the ungated bc-add); `DAT_0068cbb4` is a freshness marker that makes `4ef6d0`'s two nested recomputes structurally unreachable (0 hits); AND bc/c0 are REBUILT inside the block by `FUN_004e78e0` (seed store 0x4e79a5, add-loop 0x4e7be3-0x4e7c28) before 4e92c0/4e93f0 add the crawler values — which resolves M53m's "+1 bc per 10 sweep-fires"** — write-up `evidence/m53n_findings.md`
 - **Census method (VERIFIED live, one full round 2380→2381).** `scripts/m53n_drive.py` (arm/stop,
@@ -211,3 +169,32 @@ Older sessions: `docs/sessions/sessions-64-64.md` (1 sessions). Read it only whe
 - **Corrections to standing facts (all re-verified against the disassembly).** `4ef6d0` **runs once per visit** (zero-arg call at 0x4f5adc inside `4f5a70`); only its two `0x68cbb4`-guarded block sites never fired, so M53n's "4ef6d0 fired 0x" was about block executions. `FUN_004e3470` "19 hits" = **base-SWITCH count, not call count** (`4f6030` calls it every call; same-value repeats are invisible to value-change watchpoints). M53k's "+0x40 drain @0x4f1e3f" is WRONG: 0x4f1e3f = `mov [eax+0x50],0xffffffda` (queue head clear); 0x4ef7f6 is the only per-turn +0x40 adder for out-of-mask bases.
 - Safety/method: read-only preads + static only; no gdb, no pokes, no driving, no signals; game idle on our turn year 2381, TracerPid 0. Iteration ran in two children (113 + 53 calls); main thread independently re-verified idx 0/4/10 exact on re-run, asm lines 59/249/433/998/1108/1186/1273/1343/1411/261, stores 4e937b/4e9557, calls 4f5adc/4f6070/4f6077, 0x4f1e3f store shape, live 0x8f0d30 = 1, live 0x926bd8 table == alpha.
 - **Next:** `NEXT_PROMPT.md` rewritten for session 68; **THE PICK = M53p** (drive the model to 76/76: the `4e7070` +1 branch behind the 12 c4-only rows, the fac-2 c0 class, and visit-time entry state; then the +0xc4 divisor feedback and the d0 trace).
+
+## Session 69 (2026-10-24) — M53Q0: **harness/reliability milestone, no RE claim changed: the session-68 livelock failure mode is now ONE COMMAND to detect and repair (`scripts/m53q_livelock.py`), the census parser emits the self-consistency flag so 40/76 is script-derived instead of hand-computed, and `evidence/` went 29.61 → 19.38 MB (it was 0.39 MB from the gate's hard 30 MB fail)** — `evidence/m53q0_prune_manifest.tsv`
+- **`scripts/m53q_livelock.py` (new, VERIFIED live).** Read-only census of both unit chains (`+48` walked
+  by `FUN_005a6330` 0x5a6945-55, `+50` by `FUN_005ab130` 0x5ab223-37; array 0x933278 stride 52, count
+  0x985af0): prints year/cur/turn_flags/units then per chain terminators / self-links / out-of-range /
+  cycles (a cycle = the walk's only exit is a NEGATIVE link), exit 2 on a cycle; `--fix` writes 0xFFFF to
+  the link that closes each cycle and re-censuses, refusing when `TracerPid != 0`. On today's healthy
+  game: year 2383, cur 3, 333 units, `turn_flags` 0x10000 (bit 1 clear), **202 terminators per chain, 0
+  self-links, 0 cycles → CLEAN**. One command now reproduces the session-68 signature (previously a gdb
+  attach + ad-hoc chain walk).
+- **Parser now carries the filter (VERIFIED).** `evidence/m53p_swap_parse.py` exposes
+  `mask_in`/`processed`/`sc` (the regex groups existed but were dropped) and `--sc` prints the
+  self-consistent rows + residuals. Re-derived from the two existing censuses: **r5 (y2383) = 76 rows,
+  40 exact, 46 sc, 39 sc-exact, 7 residuals** (idx 3 f1 b5>0 c4 -3; 30 f1 b5>0 c4 -2; 31 f1 b11>2 bc -1;
+  51 f1 b5>0 c4 -3; 60 f1 b5>0 c4 -2; 62 f1 b6>0 c4 -1; 69 f0 b8>0 c4 -1) and **r4 (y2382) = 19 exact,
+  19 sc, 17 sc-exact, 2 residuals** (61 f1 b5>0 c4 -2; 70 f0 b8>0 c4 -1) — identical to the session-68
+  hand counts, so those numbers are reproducible on demand. New lead for M53q: **6 of the 7 r5 residuals
+  are flag 1 with the budget fully spent (B>0→0); our base 69 is the only flag-0 residual** (OPEN).
+- **Evidence budget (VERIFIED).** 776 files / 29.61 MB → **732 files / 19.38 MB**: 45 unreferenced
+  artifacts >100 KB (screenshots, OCR captures, one raw trace log, one decompile dump) removed with
+  `git rm` (git history keeps every byte); every kept/dropped file + size is in
+  `evidence/m53q0_prune_manifest.tsv`. The 30 MB hard fail now has 10.6 MB headroom and the 20 MB warn
+  is cleared. `evidence/m53j_text.txt.gz` (5.7 MB) is the one permanent large artifact and is why the
+  gate still reports 1 warning.
+- **Skill left untouched on purpose:** `skill/SKILL.md` is 69,742 B against a 70,000 B hard fail (258 B
+  headroom) — any future skill edit must DELETE a block first; the two new tools are documented in
+  `NEXT_PROMPT.md` + `scripts/` instead.
+- **Next:** `NEXT_PROMPT.md` rewritten (15,071 B); **THE PICK is unchanged — M53q**, recompute each
+  base's scan pool from the `FUN_004e63b0` table writers so `mask_in` stops coming from one stale global.
