@@ -105,3 +105,15 @@ record's NEW home.
 - 0x4040400/0x4050000 cvr chunk handlers exist in exe but in no shipped file.
 - Caviar voxel rasterizer exe-verification (27-dir table, normal decoder,
   shade-table light levels) still wiki/corpus-level.
+
+### Parked (background probes, NOT a queue) — M53 production-vector leftovers
+Closed as a model in M53t (`~/reverse/smac/evidence/m53t_fold.md`, 74/76 exact on the pre-drive
+dump). Reopen only if a milestone needs the bit-exact vector; each item is a probe, not a milestone:
+- idx 6 (+2 over) and idx 51 (1 short): the two-pass `FUN_004f5a70` path (`[0x985afc] > 1` →
+  `4e8d60/4e78e0/4e92c0/4e93f0/4eaa10` run twice with `[0x8f0d64]=1`). Probe: hw watchpoint at
+  `0x4eac57` logging (idx, other, k, s) + a pass counter at `0x4f5b2c`, over one driven turn.
+- consumers of `DAT_008f0d40` (written UNGATED at 0x4eac27) and of the mirror share `0x8f0c94`.
+- `unit+24/25` + `unit+38` semantics; `base+0x84` nibble meaning; `DAT_008f0cc8` consumer; who sets
+  `+0xe0`; byte@5 meaning; `turn_flags` bit 16; the bit-8 live-table disagreement at tile (45,9);
+  `c80_end != stored d80` on idx 24/35; why pop-drift is fac-2-only; who writes the seed dwords
+  (`faction+0x2e20`); the 417ee0 UI row-loop behind the 13x; M50c-e, M51b.

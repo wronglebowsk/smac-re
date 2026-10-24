@@ -139,3 +139,34 @@
   k-th-nearest rule + the stance/`0x94d4f0`/`[fac-0x244]` zero-gates) and re-run the census —
   the 11 residuals should collapse to exact. Then: why idx 6 joined and idx 51 changed by 1;
   `DAT_008f0d40[other]` consumers; the still-open M53r items.
+
+## Session 76 (2026-10-24) — M53t: **THE FOLD IS IMPLEMENTED AND 10 OF THE 11 RESIDUALS CLOSE EXACTLY (74/76)** — `evidence/m53t_fold.md`, `scripts/m53p_recon_a.py` (`alliance_fold`, `census`, `--mem-dir`)
+- **What the share actually is (VERIFIED, full decode 0x4eab02-0x4eac8a):** per allied OTHER
+  faction, `n = (E[ally k-th] + E[me] + 7) >> 3` on `base+0xb4`, `s = ((faction[owner].+0 + 1)*n
+  + D/2) / D` with `D = [0x92a274]+1`, halved unless `stance[owner][other]` bit 1, `+1` when
+  `[0x985bc0] == owner`, then zeroed if `[0x94d4f0 + fac*0x20bc]` is set for owner or other.
+  Gate A is the stance bit 2 **in both directions** (the second read is the transpose at
+  `0x94f504 + owner*4`, advanced `+0x20bc`). Published to `DAT_008f0d40[other-1]` *before* the
+  zero-gate, so the published copy keeps the ungated value.
+- **`FUN_004ea940` is not "k-th nearest" — it is k-th by ENERGY** (key `E<<9 | idx`, bubble sort
+  desc, `-1` when `k >= count`); no distance is computed in it. Rank `k` = number of the owner's
+  bases above `(E_me<<9 | [0x68cbb0])`, and `0x68cbb0` is set to the base's OWN index at
+  `0x4f5a7c` — using the dump's global (the last base visited, 69) mis-ranks ties and was the one
+  real bug in the first implementation (idx 1 came out +1 too high).
+- **Acceptance (pre-drive dump `evidence/m53s_dump1`, pid 2124624):** before 76 sc / 65 exact /
+  11 c4-only; after **76 sc / 74 exact**, residuals `{6: +2, 51: -1}` —
+  `evidence/m53t_run_before.txt:1-12`, `evidence/m53t_run_after.txt:1-3`, per-row ally detail
+  `evidence/m53t_probe.txt:1-24`. Closed: idx 1, 3, 5, 8, 30, 34, 46, 60, 62, 69.
+- **The two stragglers are NOT formula errors (INFERRED):** idx 6 and idx 30 have identical
+  (fac, energy, rank) yet +0 vs +2 observed (`probe:7-8` vs `:11-12`), and idx 51 wants one more
+  than the formula gives. Prime suspect: `FUN_004f5a70` runs the whole
+  `4e8d60/4e78e0/4e92c0/4e93f0/4eaa10` sequence **twice** — second pass gated on `[0x985afc] > 1`
+  (284 here) with `[0x8f0d64] = 1` (`0x4f5b14-0x4f5b2c`), and `4eaa10` reads d64 at `0x4eac95`.
+  `+0xb4` is byte-identical across the two dumps while `+0xc4` moves, so pass 2 sees a different
+  record. Do NOT close this by fitting constants.
+- **Kit:** `--census` (all 76 rows, exactness before/after the fold), `--no-fold`, `--mem-dir`
+  (the post-drive `evidence/m53o_mem` has only 31 self-consistent rows — never use it for the
+  exactness claim), and `show()` now prints the fold line.
+- **Next:** the M53 thread is CLOSED as a model; the two rows above are a background probe
+  (watchpoint at 0x4eac57 + a pass counter at 0x4f5b2c over one driven turn), not a queue. Next
+  session is the harness/G1 switch — see `NEXT_PROMPT.md`.

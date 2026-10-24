@@ -137,3 +137,28 @@ Scan/budget/middle-pass rules: skill `references/production-rebuild.md`.
   **4eaa10's share inputs: 0x92a274 (divisor - 1), 0x985bd0/0x985bd4 (whose order doubles `n`),
   faction-record fields 0x94d4f0 (zero-gate), +0xd54 (presence gate), 0x94d734 (share numerator),
   record-0x244 (second zero-gate)**.
+
+## Retired premises (do not resurrect)
+
+- **Retired premises, do not resurrect:** "bc/c0/cc are persistent accumulators written only by
+  4e92c0/4e93f0"; "4ef6d0 never runs"/"re-runs the block twice"; "the round walks all bases in index
+  order" (grouped by owner, ours LAST); "bc/c0 gain per sweep fire"; "the Colony is fac 3" (owner 2,
+  idx 23); "4e40a0 tests the whole mask dword" (LOW byte only); "pseudocode offsets are byte
+  offsets" (short* x2, int* x4 — `DAT_008f0d60[3]` = pop byte@6); "claim table 0x985aa0[72]" (33 @
+  0x985b3c); "PROPOSAL pane `YEA: 2 NAY: 3` is a key hint"; "4e3470's 19 hits = calls"; "0x4f1e3f
+  drains base+0x40"; "base+0x78 entry mask = ~(pop|1)"; "DAT_008f0d30 = 1 is a scenario constant";
+  "the freshness marker 0x68cbb4 is -1 while idle"; "the entry filter clears pool bits via the
+  stale global d30" (pool∩fresh = {bit 0} on 76/76); "the +50 walk re-anchors to the stack head";
+  "the |=8 gate fires when the +25 faction bit is SET"; "FUN_005a5c00 is identity" (only when
+  0x920434 != 0); "the middle-pass corrections subtract pop+k2 then halve"; "the model reads live
+  memory"; "0x91c628 = 0 is constant"; the session-68 "Class S / Class J" framing; **"the 11 fac-2
+  non-sc rows are a scan-ORDER problem"** (M53r: pop-drift budget rows); **"skip flag = tile
+  out-of-mask"** (faction-mask test, M53r); **"swap guard: best-add index > 0 exits uncommitted"**
+  (it COMMITS only then); **"4e78e0 exit clears bit 8 of +0x30"** (bit 17); **"pop byte@6 is the pop
+  the visit used"** (dump value is post-visit — 22 rows drift +1); the session-73 census 65 sc / 54
+  exact (session-74 dump: 76 sc / 65 exact); **"the 11 c4-only residuals mean a missing yield
+  branch, a drifted 4e7070 input, or `0x8f0c4c` divisors"** (M53s: the model matches the game's own
+  visit-time snapshot 76/76 — the delta is downstream of the rebuild); **"0xc4/0xc8 have NO
+  downstream writers"** (c4 has two, both in FUN_004eaa10: 0x4eaa30 and 0x4eac62); **"stored
+  base+0xc4 == the rebuild's output"** (it is snapshot + alliance share); **"the driver can always
+  end a turn with `--turns 1`"** (see Operational kit).
