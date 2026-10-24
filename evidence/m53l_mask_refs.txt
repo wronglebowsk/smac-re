@@ -1,0 +1,544 @@
+  40bc92:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  416ff3:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  41b256:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  41f110:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  41f161:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  41f205:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  41f256:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  42605e:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4260e9:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  426228:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  42623b:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4262ca:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4262dd:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4264f7:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  426563:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  42675a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4269a5:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4269b8:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4269e1:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  426dde:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  426ea2:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  427254:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  427267:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  428285:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  428297:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  428bc4:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  428be5:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  428cb7:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4299e0:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  442d60:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4432f9:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  445618:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  46ee13:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4702e2:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  481287:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4812fe:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4815e6:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  48162a:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  481b37:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  482137:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  489c71:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  48bac9:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  48caf9:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  48f161:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  48f4f7:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  496fe0:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  49730b:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4a5c59:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4ccb8b:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  4ccbf8:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4cd01a:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4cd61f:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4cd698:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  4ce653:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4cf075:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4cf274:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4cf3fe:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4cf47e:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4cfdeb:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4d0d56:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4d219a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4d2207:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4d25a1:	84 1d 10 5b 98 00    	test   BYTE PTR ds:0x985b10,bl
+  4d25d2:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  4d2705:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4d2892:	84 1d 10 5b 98 00    	test   BYTE PTR ds:0x985b10,bl
+  4df82e:	88 0d 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,cl
+  4df942:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4df9a3:	88 15 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,dl
+  4df9ab:	88 1d 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,bl
+  4e08ad:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4e08ca:	88 15 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,dl
+  4e3c27:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  4e40a4:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  4e4470:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4e55f1:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4e5b00:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4e5cd7:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4e5e1e:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4e5ec3:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4e790e:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4e7ed2:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  4e9736:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4e97b3:	84 1d 10 5b 98 00    	test   BYTE PTR ds:0x985b10,bl
+  4e9b46:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4e9bfc:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  4ebcc4:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  4ebe1a:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4ebf04:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  4ec7fe:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4ecd3b:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4ed56f:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4eda1e:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4edbd2:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4edc41:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4edda8:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4ededc:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4ee172:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4eed3d:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4eef07:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4eef1c:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4ef28d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4ef553:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4ef7fe:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  4efb12:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4eff02:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4f001e:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f035e:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f05af:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f07c5:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f0958:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f0ac9:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f0af0:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  4f0ccb:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4f1186:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f1a44:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f1dee:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4f1e11:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4f20e1:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f26ff:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4f2a60:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4f2bd5:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f2d80:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f2dc7:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f3089:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f31b3:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f3279:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4f368d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f3855:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f3a20:	8b 3d 10 5b 98 00    	mov    edi,DWORD PTR ds:0x985b10
+  4f41b0:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4f4395:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4f5293:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  4f56df:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4f611b:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f6409:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f648b:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f6535:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f66fc:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f6941:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4f6985:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f793e:	8b 3d 10 5b 98 00    	mov    edi,DWORD PTR ds:0x985b10
+  4f7ce6:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4f7f7d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f8223:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f847d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f863b:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f8edb:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4f913e:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4f918f:	8b 35 10 5b 98 00    	mov    esi,DWORD PTR ds:0x985b10
+  4f96b8:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f96ee:	f6 05 10 5b 98 00 40 	test   BYTE PTR ds:0x985b10,0x40
+  4f98ef:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f9b23:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f9c6e:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  4f9d13:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4f9d9a:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  4f9e83:	8b 35 10 5b 98 00    	mov    esi,DWORD PTR ds:0x985b10
+  4fa10d:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fa133:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fa17c:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fa51f:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fa546:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fa8da:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fb02c:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fb282:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fb355:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fba1f:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  4fbf15:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4fc0f8:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fc45f:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fc49b:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4fc84d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fc947:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  4fc988:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fca71:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  4fcbd6:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fd0b3:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fd20f:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fd463:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fd4a3:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fd505:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fd584:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  4fd6b0:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  4fdbca:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  50257d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5026e0:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  503249:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  503350:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5033f0:	8b 35 10 5b 98 00    	mov    esi,DWORD PTR ds:0x985b10
+  5036d5:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  503ae0:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  503b41:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  503b82:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  503d5e:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  504a13:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  50690f:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  50699b:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  506a85:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  506cc0:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  50739a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5075f8:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  50783b:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  507a5f:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  507bca:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  507c0c:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  507c85:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  507d5e:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  507e5c:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  507fcd:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  508654:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5087f8:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  508e10:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  5090ac:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  50fd3c:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  50febd:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  510afd:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  510b27:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  512054:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  512bf6:	c6 05 10 5b 98 00 10 	mov    BYTE PTR ds:0x985b10,0x10
+  512c0e:	88 1d 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,bl
+  5155b0:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  5159a0:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  516f73:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  519a87:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  519b73:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  519bba:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  519e1f:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  519f7c:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  51a0d9:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  51ae31:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  51db63:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  51e053:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  51e0a7:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  51e827:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  51fd61:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  51fea7:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  520700:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  52097a:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  520bcb:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  520c30:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  520c6d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  520d18:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  520ee0:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  520f30:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  520fa1:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  520fff:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  52101e:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  521568:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  521717:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  521eb7:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  521fa8:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  52204f:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  522592:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  522edf:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  523001:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  523067:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5230bd:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  524209:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  524260:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  5242e5:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  5242fb:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  5243fc:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  52453a:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  524850:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  52486c:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  52487d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  524941:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  524aaf:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  524c8a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  524d4a:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  524d93:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  524ecd:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  524ee6:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  524fde:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  52558a:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  525663:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  525683:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5256cd:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  52570d:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  525750:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  52580f:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  525ee3:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  525eed:	88 0d 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,cl
+  525f4f:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  526057:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  526089:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  527203:	68 10 5b 98 00       	push   0x985b10
+  527755:	68 10 5b 98 00       	push   0x985b10
+  5298d6:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  52ad76:	81 c6 10 5b 98 00    	add    esi,0x985b10
+  52c7e0:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  52c804:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  52c83f:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  52d3c1:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  52d3dd:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  52d414:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  52d460:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  52f5a0:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  52f5eb:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  52f60b:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  52f646:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  531006:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5310a2:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  5312d0:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  531339:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  531392:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  533160:	84 1d 10 5b 98 00    	test   BYTE PTR ds:0x985b10,bl
+  533281:	84 1d 10 5b 98 00    	test   BYTE PTR ds:0x985b10,bl
+  53563f:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  53580f:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  53d036:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  544b65:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  548b42:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  548f8f:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  54927f:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  54986f:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  54f246:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5501dd:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  551f0c:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  55200a:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  5525d4:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  553380:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55445b:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  55492c:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  554b6d:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  554e30:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  555252:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55545a:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  555913:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55606a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  556bdd:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  556f3a:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  557286:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55738d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  557637:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  557ced:	8b 3d 10 5b 98 00    	mov    edi,DWORD PTR ds:0x985b10
+  558277:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5585f8:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5586bd:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  558ae7:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  558b4d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5591cd:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  559e49:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  55ab02:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55ab57:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55af44:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  55b435:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  55b4cc:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55c6d3:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  55cf2a:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  55d2b2:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  55ec39:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  55ee25:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  55f9f9:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  55fa7a:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  55fd9a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  55fe50:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  56064f:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  560da8:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  56102e:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  561159:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  561234:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5624f7:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  56443a:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5645bb:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5648df:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  56494d:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  564a50:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  564e22:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  565213:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  56529a:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  565380:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5667c1:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  56715c:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5672af:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  567492:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5675f2:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  567c1d:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  567dad:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5693cb:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  569439:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  569e6c:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  569e8e:	8a 1d 10 5b 98 00    	mov    bl,BYTE PTR ds:0x985b10
+  56a1d0:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  56cb64:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  56dad0:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  56f136:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  56f573:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  56f6c9:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  571450:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5716d1:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  572603:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5729f1:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  573d09:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  573d5d:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  573ee1:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5743fa:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5749e0:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  574a0b:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  574bc9:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  574c24:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  574ccf:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  574de5:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  574e5e:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  574f21:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  575062:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5750f7:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  57515c:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5751a3:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  575357:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  575992:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  575ac5:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  575b31:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  575b77:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  575bf1:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  575d73:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  575e18:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  576002:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5763f2:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  57644b:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  57693b:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5769ab:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  576c88:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  576cee:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  57d219:	a2 10 5b 98 00       	mov    ds:0x985b10,al
+  57f051:	88 1d 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,bl
+  57f071:	88 1d 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,bl
+  57f2da:	88 15 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,dl
+  57f2f8:	88 15 10 5b 98 00    	mov    BYTE PTR ds:0x985b10,dl
+  5815e8:	8b 1d 10 5b 98 00    	mov    ebx,DWORD PTR ds:0x985b10
+  584b77:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  585960:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  585bc4:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  585c19:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  585c88:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  585d13:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  585ebc:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58654d:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  5867eb:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5869ce:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  587e33:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5882af:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  588305:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58853a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  589645:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5899c0:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  589afc:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  589c1c:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  589ef0:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  58a490:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  58a535:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58ac2f:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  58b11e:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58baae:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58bcd9:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  58c562:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  58c93a:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  58cd4a:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58cdb9:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58f774:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  58fbb1:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  58fcf4:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  58fdad:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  58ffbc:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  590392:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  590549:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5907bd:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  590876:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  590bcb:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  590cee:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  591002:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5911a4:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  591298:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5913c0:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  591453:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  591723:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  59190a:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  591d13:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  591dbd:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  591f9f:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5921aa:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  5923a5:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  592a32:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  592d9b:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  592e77:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  592f30:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  592fe8:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  593085:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  593509:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  593537:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  59373a:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  593779:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5937ab:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  594d23:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  594d9a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  594f9f:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  596f54:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  596f91:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  59acd7:	8b 15 10 5b 98 00    	mov    edx,DWORD PTR ds:0x985b10
+  59ad77:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  59ae09:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  59e71a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  59eec3:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  59f6f8:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  59f858:	8b 1d 10 5b 98 00    	mov    ebx,DWORD PTR ds:0x985b10
+  5a0323:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a0762:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a122a:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a1263:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a135b:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  5a13da:	a1 10 5b 98 00       	mov    eax,ds:0x985b10
+  5a14ad:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  5a151b:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  5a1919:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a1a20:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5a1b2e:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  5a2692:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  5a28ab:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5a4605:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a48a4:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5a6080:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5a7a5e:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a7cf0:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5a7f57:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5a800c:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5a855b:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  5a930e:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5a9541:	84 15 10 5b 98 00    	test   BYTE PTR ds:0x985b10,dl
+  5a9573:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a95e0:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a964f:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a9ca6:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5a9d03:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5a9eb8:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5a9ffe:	8a 15 10 5b 98 00    	mov    dl,BYTE PTR ds:0x985b10
+  5aa176:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5aa1fc:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5aa8a1:	84 05 10 5b 98 00    	test   BYTE PTR ds:0x985b10,al
+  5aa9d7:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5aaad9:	8a 0d 10 5b 98 00    	mov    cl,BYTE PTR ds:0x985b10
+  5aac2d:	8b 0d 10 5b 98 00    	mov    ecx,DWORD PTR ds:0x985b10
+  5aae03:	a0 10 5b 98 00       	mov    al,ds:0x985b10
+  5afdbe:	a0 10 5b 98 00       	mov    al,ds:0x985b10

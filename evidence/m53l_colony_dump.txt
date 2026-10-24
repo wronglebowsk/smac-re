@@ -1,0 +1,8 @@
+Colony (idx 23 @ 0x95f560, pid 2124624, year 2375, cur 3) raw dword dump, read-only pread:
++0x00 3014698 (2a002e00: x=42,y=46) | +0x04 721410 (02020b00: fac=2, b5=2, pop=11) | +0x08 4587520 | +0x0c 260
++0x30 185081888 | +0x3c 56 | +0x40 301 | +0x48 0 | +0x94 13 | +0x98 301
++0xbc 28 | +0xc0 13 | +0xc4 11 | +0xc8 0 | +0xcc 6 | +0xd0 13 | +0xd4 8 | +0xe0 0 | +0xe4 3 | +0xec 22 | +0xf0 0
+owner@4 low-byte census 75 bases: {1:6, 2:44, 3:1, 4:7, 5:3, 6:5, 7:9}; byte@5 census {1:10,2:31,3:1,4:8,5:3,6:13,7:9}
+idx 8 U.N. Disaster Relief bytes+4 = 07 07 07 00 (fac 7, pop 7); idx 70 Climactic Research = 03 03 07 00 (ours, fac 3)
+idx 0 The Rapture = 02 06 04 06 (byte@4=2, byte@5=6) — names not unique across factions
+formula live: cc 6 = bc 28 − ec 22; ec = pop 11 × 0x92a27c(2) + 0x8f0c34(0); d0 13 = c0 13 − f0 0
