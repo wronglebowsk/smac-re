@@ -42,7 +42,9 @@ python3 scripts/milestone.py merge <n>  # refuses anything but GREEN
 
 **`submit` commits before it checks the branch.** Run it on `main` and it writes a
 `main: checkpoint` commit into the tree, then refuses. Undo with `git reset --soft HEAD~1`, branch,
-and commit with a real message; always `start <ID>` (or `git checkout -b`) first.
+and commit with a real message; always `start <ID>` (or `git checkout -b`) first — but `start` refuses a
+dirty tree and an existing branch, so a crashed session's milestone (its branch + untracked `evidence/`)
+is resumed by checking it out and finishing that work, never by re-running `start`.
 
 **Context discipline (262k tokens ≈ 1.05M chars).** Never read a whole `evidence/*.log`:
 `python3 scripts/evidence.py show <file>:<line>` prints the cited window, `evidence.py digest
@@ -71,7 +73,9 @@ rewrite write the new text to a scratch path and `mv` it over the target, or do 
 pass; `patch` needs a unique anchor);
 rows are `| addr | proposed name | conf | evidence-with-file:line |` and the row is what makes the
 function searchable in the semantic index. (2) *Evidence citations*: every `evidence/<file>` cited in the
-findings doc must exist on disk, or the citation check drops it. (3) **Poll CI by SHA**: after a follow-up
+findings doc must exist on disk, or the citation check drops it (the regex covers only
+`.log/.txt/.gdb/.json/.png/.csv`, so an `evidence/x.md:NN` cite is never checked and only your own care
+keeps it pointing at the right line). (3) **Poll CI by SHA**: after a follow-up
 push (skill sync, `NAMED.md` rows) `gh pr checks <n>` can still report the earlier run — use
 `gh pr view <n> --json headRefOid,statusCheckRollup` and merge only when SUCCESS is on the current head
 commit.
@@ -221,7 +225,19 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   the one unknown internal value, then enumerate it and read off which reproduces live. Variant fitting
   belongs in a subagent, never the main thread — and make every child **write its own notes file under
   `evidence/`**: a child's final summary is a self-report, so confirm that file exists and spot-check two
-  or three of its addresses against the disassembly before citing anything from it.
+  or three of its addresses against the disassembly before citing anything from it. For a whole-function
+reconstruction, hand the child a pinned structure map (line-cites into the extracted asm window), literal
+live addresses, read-only safety rules, and expected values with known downstream adds already subtracted
+— the child iterates formulas, it does not rediscover structure. Two children sharing one live game need
+an explicit state contract each: only ONE may attach gdb or drive turns, and a child diffing
+`/proc/<pid>/mem` must be told no-gdb / no-pokes / no-turn-driver, because a sibling's driven turn mutates
+the memory it is diffing and turns its matches into noise.
+- **To model a function's output from live post-state, reconcile field lifecycles first.** Grep the
+field's disp inside the function's OWN asm: a field mutated at ENTRY and rewritten at EXIT is
+cross-visit state — the input your model must feed is the observed post-state with the entry mutation
+applied (e.g. a scan-skip mask cleared `&= (~pop|1)` at entry), and strip any later-stage add that runs
+after the target function before comparing (driver-log breakpoint order says which stage is later).
+Systematic mismatch: try the raw post-state variant before widening the model.
 - **Label snapshot columns from true byte offsets, not from a field wish list.** In a `/proc/<pid>/mem` dump script unpack CONTIGUOUS ranges: skipping unknown gap fields silently shifts every later column, and the mislabeled deltas then appear to contradict proven formulas and send you re-deriving settled facts. Before interpreting any cross-snapshot diff, verify one known record against direct per-offset reads.
 - **Before counting a live-memory mismatch, check the row is a real record**: histogram the discriminator
   fields across the whole table — rows whose indices run past the shipped data or whose fields hold
@@ -473,7 +489,9 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   despite N accumulation-fires is being REBUILT, not added to: watch the field across the whole block,
   not just the accumulate site (4e78e0 zeroes +0xbc/+0xc0 at 0x4e79a5 and re-adds a per-item vector
   0x4e7be3-0x4e7c28 before 4e92c0/4e93f0 add the crawler terms); watchpoint `new=` sequences (0 then a
-  ramp) are the tell.
+  ramp) are the tell. And a value-change watchpoint UNDERCOUNTS calls: a callee that rewrites the same
+  value is invisible, so hits are state SWITCHES, not call counts (M53o: `4e3470` 19 hits vs 55 calls,
+  every one from `4f6030`).
 - **OCR targets must be ≥4 characters and region-constrained.** `yes` matches `Moyes:` (the unit
   panel's `Moves:`) and `ok` matches `Prokhor`, so a naive matcher clicks the map forever and the
   dialog looks undismissable. Same for dialog phrases: squash the joined OCR text to `a-z` and require
@@ -572,6 +590,11 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   a completely dead UI (every click inert, main thread `R` with climbing `utime`) — recoverable only by
   relaunch + reload. If a breakpoint fires *inside* an injected call, gdb abandons the expression,
   detaches, and the inferior returns to gdb's dummy frame.
+- **Production vector (M53o):** `base+0xbc/0xc0/0xc4/0xc8` = NUTRIENT/MINERAL/ENERGY/PSI, REBUILT on
+  every block execution by `FUN_004e78e0` (seed from faction+0x2e20, live 0; exactly 7 add sites
+  0x4e7c15, 0x4e7ea3, 0x4e85bd, 0x4e8739, 0x4e883b, 0x4e8951, 0x4e8a32; per-tile values = alpha
+  `#RESOURCEINFO` verbatim @0x926bd8; its tail loop 0x4e8b6f-0x4e8d48 writes only +0x48); read-only
+  model `scripts/m53o_recon.py` reproduces 36/76 bases.
 - **Production chooser internals (M53h).** Candidate array `DAT_009267e4` (128 dwords, count `0x9267e0`) is
   built by `FUN_00596000(faction)` — ids = shared 0-63 then `faction<<6` designed units — and ordered by
   `FUN_005a29a0` (lockstep bubble sort, swaps only on strict `<` ⇒ stable) on
@@ -614,17 +637,13 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
 Current footing (M39, 2026-10-21): **second terraform mode proven — Road (`r`) issues with
 the whole cost block skipped (no picker, no debit; no-pay modes jump `0x4d5496..0x4d5634`)
 and completed in 2 executions at elev 6: tile (45,7) mask 0x108002→**0x108006** (road bit
-0x4), year 2295 (`scripts/m39_issue.py`, 45-bp concatenated gdb).** Live threshold ladder
-(ours + AI) confirms M37's formulas: road 4 at elev-6 vs 2 low-elev; solar 8 vs 16; mine 8;
-RemoveFungus 12. **AI terraformers +3/execution vs our +2 — open.** **Key model corrected:
+0x4), year 2295 (`scripts/m39_issue.py`, 45-bp concatenated gdb).** **Key model corrected:
 `Tab` = cycle (empty cycle ⇒ ENDOFTURN1), `l` = SENTRY order key** (oops-proof); cycle skips
 MP-exhausted units (poke `+40=0` first); menu-pending `0x91b5c4` sticks — poke 0; mid-turn
 start (cur==me, panel up, black map ⇒ classify lies) ⇒ go straight to selection. M38 core
 (still true): issue cost `0x4cc7b0` = `(|elev−3|+2)²` (9@elev4, 16@elev5, 25@elev6 > our 15
 energy; economy-gated); M37 core: execute chain + multi-turn accumulator. Tile (45,7) elev 6
-with road; `0x2101` queue still no solo consumer. Open: MagTube remap/TECHFAIL test (`r` on
-roaded tile), economy-rate idle run, player↔faction-ID mapping (may explain AI +3),
-Space-on-terraform. `~/reverse/smac/` is durable; `NEXT_PROMPT.md` rewritten for session 40. Execution chain + terraform engine + tile/tech-gate facts: `references/terraforming-order-path.md`.
+with road; `0x2101` queue still no solo consumer. `~/reverse/smac/` is durable. Execution chain + terraform engine + tile/tech-gate facts: `references/terraforming-order-path.md`.
 Selection rules hold: HOLDed (order 2) units are not cycle candidates; empty cycle
 **auto-ends the turn**; a map click selects a unit **and** sets orders mode `0x91b5b8=1`;
 `Tab` re-opens CUSTOMIZE mid-game. UI: **ENDOFTURN1** pane → **Return** (never Escape); Escape
@@ -642,11 +661,7 @@ on other own order-0 units → `Escape` → pump auto-selects the Former), `]`, 
 `COST 16 → DEBIT 31→15 → STORE 0x14 → BCAST` live; elev-5 footprint = **49 tiles 7×7** (81 =
 elev-6's 9×9), diplomacy branch armed **silent** (no foreign tiles); completion `m38run2` →
 `SETELEV new=6` year 2293, re-erosion lifted 8 neighbours 4→5; energy 15, income ≈ upkeep ≈
-+0/turn ⇒ next terraform (25) economy-gated. Next (M39): cheap-mode completion sweep (road
-k=5 threshold 2 ⇒ **1 turn**; check `table[k].+18` tech gates via `scripts/m35_gate.py`),
-economy-rate idle run, player↔faction-ID mapping (base+4 faction IDs {1,2,4,5,6,7} vs players
-{0..7}), `Space` on a stored terraform (`0x4d1e90` routes to the MOVE chain — probably
-move-only, untested). Depth:
++0/turn ⇒ next terraform (25) economy-gated. Depth:
 `references/terraforming-order-path.md` (the M39 Road-mode proof, thresholds and keys duplicate the footing paragraph above). Next
 (M40 DONE, live 2026-10-22): MagTube remap + first TECHFAIL — `r` on a roaded tile: TERRAF 0x5
 → remap rewrites the mode arg inside `0x4d44d0` (TECHCHK sees 0x6; gated on cap table `0x6938e8`
@@ -665,11 +680,7 @@ AFTERLATCH/STORE) → **STORE 0x0a — the STORE writes the REWRITTEN mode** →
 elev bump is +2 FLAT, not ×2** (road 2→4 fits the same rule). AI side-obs: base 2×`+8` holds
 (condenser 24, raise 24, bunker 10, sensor 8, RemoveFungus 12); AI accum +3 on 7 formers, **+2 on
 one (idx 51) — not universal**. MASKSET print cap (300) hit for real in m41b (299 prints, our swap
-silent — mem readback authoritative). Both runners ran unmodified on the new mode. Left running:
-pid 914079, year 2298, our turn (cur=3, ENDOFTURN1 pane likely up — Return), Former idx 36 @
-(45,7) order 0 work37 0 mpused 3, tile 0x10800e elev 6, energy 15, **tech 18 left unlocked for
-player 3** (byte 0x08; undo = clear bit 3), tech 60 byte 0x16 (players 1/2/4 only — Condenser
-still gated for us). M42–M44 (same session, 2026-10-22): generic NOTUNTILTECH proven live (`n` →
+silent — mem readback authoritative). Both runners ran unmodified on the new mode. M42–M44 (same session, 2026-10-22): generic NOTUNTILTECH proven live (`n` →
 TECHFAIL → ADVISOR/PANE NOTUNTILTECH; $TECH0 + $TERRAFORMTYPE6 slots closed; tech record +0 =
 display-name POINTER, +4 = short token; op-name table `0x94d2f8` = 14 × (land, sea, key-char STRING)
 stride 12 — k=8 is **Airbase**, k=9 Sensor Array). M43: base `+4`/`+5` IS the owner player index
@@ -763,21 +774,6 @@ one unit/round, stable at d0=0; `d0=base+0xd0` recomputed every round at `0x4e95
 solo; sweep = 75 visits ours LAST, can end early on the year store (open: truncations observed at
 21/28/28 visits — the last-visited base, ours, can skip a whole round). Pane printer
 `0x483470` = advisories only (Script confirms don't route through it).
-
-As of M24 the whole order path is **named**
-(`~/reverse/smac/turn_driver.md` §M19–M24 + 13 new `NAMED.md` rows): the tile setter `FUN_004d44d0(unit,mode)` (with `FUN_005ab320(unit,x,y)` as unit
-reposition only, not a tile writer),
-the stack mover `FUN_005a58e0`, the re-stacker `FUN_005a5a80`, the 8-direction step
-`FUN_00502c40(unit,dir,parity)` (parity-split delta tables at `0x6784a0/0x6784c4/0x67850c/0x678990`),
-the executor `FUN_00502cd0(unit,?,destx,desty)` and dispatcher `FUN_0052bce0` case `0x4402`; plus
-**issue-move `FUN_004cffa0(unit,destx,desty)`** → solo (`DAT_00920434 == 0`) `FUN_004cdc70(unit,0,x,y)`,
-netplay `FUN_00528930(&unit,4,x,y,0)` + packet `0x2413`; the map click handler
-**`FUN_00476580(pixel_x,pixel_y,flag)`** dispatches order code `case 10` → issue-move and its direct
-branch writes order `+17 = 0x18` with destination `+20`(x)/`+28`(y) — NOT `+24` — then
-`FUN_00584350` (0x2101); the
-**selected unit is `DAT_0091b5bc`** (singleton base `0x8f79e0`, cross-checked `+0x23bd4 = 0x91b5b4` =
-own player), cursor/destination tiles live in `0x91b5f0`/`0x91b670` (index `0x91b5e8`), and keys go to
-`FUN_00512450` (selected unit) or `FUN_00511960` (cursor tile).
 
 **Correction (M28): a plain map click never issues a move.** `FUN_00476580` writes `+17 = 0x18` only when
 the map pane's mode is 9 (`[0x8f79e0+0x1ef4c] == &DAT_0091cae4`), which is 0 on the HUD; live clicks

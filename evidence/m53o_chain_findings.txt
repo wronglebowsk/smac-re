@@ -1,0 +1,88 @@
+# M53o child B — 4eb6b0 UI-recompute chain, d0/cc ordering vs income add, M53l verdict
+Method: whole-.text objdump (m53j_text.txt.gz) + ghidra index.csv + re-parse of m53n_watch.log (247 BCADD
+stack sigs) + m53l pre/post tsv. [V]=verified machine+live, [I]=inferred. Asm kept: m53o_fn{4e5ae0,4e5e10,
+4ef6d0,4f34b0,5aaa20}_asm.txt.
+
+## Q1 chain + all call sites + repetition
+[V] 4eb6b0 (4eb6b0..4eb6ef) = 64-byte wrapper, no loop. 4eb6b3 eax=param; 4eb6b8 eax=DAT_0068cbb0 (cur
+idx); param!=0 -> 4eb6c7 stamp DAT_0068cbb4=cur, run block 4eb6cc/d1/d6/db/e0=[4e8d60,4e78e0,4e92c0,
+4e93f0,4eaa10] on base DAT_008f0d60; param==0 -> only if marker!=cur (4eb6bf/4eb6c5). 66 direct sites in
+33 fns (UI families 40b232..41dd9b; 4ac6d0 8x paired w/4e3470; 4f6077; 509362; 51c08e; 520217; 543c36;
+594082(owner FUN_0058fa40); 59b09d; 59de4e; 5a1a3a; 5aab22(5aaa20); 4459be; 49a554/49a61d; 4a1ab8;
+4aca04..4ad03c; full list scratch callsites.json).
+[V] 4f6030 (4f6030..4fd860) called ONLY by 4e5ae0 — 7 sites: 4e5b9c,4e5bc8,4e5c0d,4e5c5c,4e5ca5,4e5ccb,
+4e5daf. Entry 4f6030..4f6077 straight-line: esi=|param| normalized (4f6041-4f6063); 4f6070 push esi; call
+4e3470 -> DAT_0068cbb0=esi, DAT_008f0d60=&base[esi] (4e3476/4e348a, stride 304 @0x95da10); 4f6075 push 1;
+4f6077 call 4eb6b0(1) -> FORCED block on ARG base. Every 4f6030 call = 1 forced block exec.
+[V] 4e3470 = 21-byte setter (57 sites, 33 fns: UI families + 4f6070 + 5aab1b + 41b7c3 + 4184ed +
+4ac9fa..4ad032 ...).
+[V] 4e5ae0 (4e5ae0..4e5e10), 19 sites in 12 fns: 4ef6d0 x6 = 4ef87e,4f0589,4f08d4,4f09b6,4f1e01,4f21b8;
+4f4060@4f41c0 (4f41b0 gate: owner NOT in mask 0x985b10); 4f34b0@4f36ab (4f367f base+0x30 bit1 + 4f369b
+out-of-mask); 4e5e10@4e5edd; UI 416ef0@416f25, 416f60@41704a, 417ee0@418e26, 41a8f0@41add7, 502cd0@
+504a1e/5069ab, 556690@556c09/559e65, 507ef0@508669, 59ce10@59e0dc. All turn-path sites push param_2=0 ->
+4e5ae0 takes 4e5cbb = exactly ONE 4f6030 call. Its probe loop (4e5b7c..4e5c8d, <=8x2+3 = max 19 4f6030
+calls) needs param_2!=0 AND owner in mask (live mask 0x08=ours) AND base+0x38 bit31 — unreachable from
+turn sites (ours' 4f0589 pushes edi==0).
+[V] Visit skeleton (4f5a70 machine): 4f5a7c DAT_0068cbb0=idx; 4f5a93 DAT_008f0d60=&base; 4f5ab7 marker=idx;
+pass1 block 4f5ac3-ad7; CALL 4ef6d0 AT 4f5adc, ZERO ARGS (works on DAT globals); 4f26e0@4f5ae1; 4f5aee
+mirror +0x98=+0x40; 4ee410@4f5aff (early ret if eax!=0); pass2 re-stamp 4f5b32 + block 4f5b37-b4b; tail:
+4f4060@4f5be9, 4f41f0@4f5bee, 4f33f0@4f5c0e, 4f34b0@4f5c2e, guarded pass3 4f5c50-c64, 4f4a50@4f5c69,
+4f47f0@4f5ccf, 4ebef0@4f5cd6, 4e3cf0@4f5e00, 41f310@4f5eb4 (window dispatch), 41b780@4f5ef5. 4ef6d0's
+guarded block sites 4efeb0/4f2207 see marker==idx -> 0 firings: census "4ef6d0 0x" = those sites only;
+4ef6d0 itself runs once per visit (income add 4ef7f6).
+[V] Live log re-parse: of 247 BCADD, 54 have w5=4eb6db,w7=4f607c (block in 4eb6b0 called from 4f6030); 1
+w7=594087 (direct, visit 40, FUN_0058fa40); 152 pass1/2/3 (4f5ad2/4f5b46/4f5c5f); 38 4f41f0 (4f44bc/
+4f4572); 1 4ee410 (4ee898); zero 4efec4/4f2216. Visit idx=75 (fac2): 13 = 2 on 75 (n=858 in 4ef6d0 via
+4ef87e; n=867 after 4f41f0-B via 4f34b0@4f36ab) + 9 on 47 + 2 on 18; BASEPTR hits n=870/898 eip=0x4e348a
+with ret 0x4f6075 on stack = 4e3470 from 4f6030 switching DAT_008f0d60 to 47 then 18. The 9 are
+consecutive, identical stack sig (w4=0xbeda60,w6=0xbef8f8) = one loop, same frame, cross-base.
+[V] "4e3470 19x vs 4eb6b0 55x": DAT_008f0d60 watch = value-CHANGE watch; 4f6030 calls 4e3470 EVERY call;
+same-base repeats rewrite same pointer -> 1 hit per switch. 19 = switches (4f5a99x75 + 4f5c41x1 +
+4e348ax19), not calls.
+[V] Repeat-capable loops: (a) twin loop: 4f21b8 inside 4f20cc..4f21d7 (jl 4f21d7->4f20cc, stride 0x130,
+all bases): fires 4e5ae0(twin,0) per base sharing current group-queue head (4f2108 head==[ebp-0x14],
+4f2159 head<=-39, 4f214b same owner); post-loop restore+guard 4f21e0/4f21f7/4f2201/4f2207. (b) 4e5e10
+loop 4e5e52..4e5eff (all bases of faction param_2; terrain gates 4e5e7f/4e5ea5; in-mask gate 4e5ed1)
+called from 5aaa20@5aaaf4 (also 507e7e,5090c0,558b10); 5aaa20 called from 4ef6d0 at 4f1d6c/4f1d72 (before
+twin loop); 5aaa20 also 4e3470@5aab1b + 4eb6b0(0)@5aab22. (c) 4e5ae0 probe loop (ours only, param_2!=0).
+(d) tail UI chain: 4f5ef5 41b780 -> 4c5d60 -> 512b40 -> 417ee0 (base production window: dispatch 4184d7
+reads window base [ebx+0x3ff3c], 4e3470@4184ed + 4eb6b0(0)@4184f4 per dispatch pass, queue-row loops
+4184a3..4184d5 / 418e6e..418e95, 4e5ae0(DAT_0068cbb0,0) arm 418e26) -> 4f6030 -> forced 4eb6b0(1).
+Siblings: 416ef0/416f60/41a8f0 (4e5ae0@416f25/41704a/41add7 + direct 4eb6b0), 4ac6d0 8 pairs.
+[V] Census ruling: (a),(b) did NOT fire this round: any firing happens inside 4ef6d0 between pass1/pass2
+and leaves marker!=idx at 4f21f7 -> 4f2207 block (w5=4f2216) would appear; census has 0, and only ONE
+execution occurs between pass1 and pass2 (n=858, on 75). All cross-base execs are after 4f41f0-B/4f34b0,
+i.e. in the 4f5a70 tail. => [I] the 9x/2x/13x multiplicity comes from tail chain (d): 41f310/41b780 ->
+4c5d60 -> 512b40 -> 417ee0 (and/or 416ef0/416f60/41a8f0) whose per-window/per-row iteration re-enters
+4e5ae0 -> 4f6030 -> 4e3470+4eb6b0(1) on the window's base. Exact 9x/2x iteration identity OPEN (queue-row
+refresh loops 4184a3/418e6e are the candidates).
+
+## Q2 d0/cc recompute vs income add — pinned ordering
+[V] Block step3 4e92c0 stores base+0xcc at 0x4e937b (`mov [eax+0xcc],ecx`); whole-.text has only 2 stores
+to [reg+0xcc] (4e937b + non-base 5ba9e2). Step4 4e93f0 stores +0xd0 at 0x4e9557 (sole writer, M53k). =>
+every 4eb6b0 block exec recomputes BOTH d0 and cc (plus bc/c0/c4/c8 rebuild).
+[V] Order in one visit of X: 4f5ad2 (pass1 4e93f0->4e9557 #1; 4f5acd 4e92c0->4e937b #1) < 4f5adc->4ef6d0
+-> 4ef7f6 income add (`add edx,[eax+0xd0]; mov [eax+0x40],edx`; gates 4ef7e1 d0>=0, 4ef7e5 head!=-38,
+4ef7eb 0x30 bit1 clear) < 4ef87e (4e5ae0(cur,0)) -> 4f6077/4f607c -> 4e937b/4e9557 #2 AFTER the add, same
+base < 4f5b41/4f5b46 pass2 #3 < tail UI execs #4.. (possibly other bases). => YES: the block recomputes
+d0 AND cc after the income add, and pass1's write is what the add reads; post-turn d0/cc need not equal
+the values read at 4ef7f6.
+
+## Q3 verdict: partially explains
+[V] Data (m53l pre/post): UN HQ idx6 d0 7->7, minerals 27->37 (+10=7+3); UN Education idx15 d0 4->4,
+21->27 (+6=4+2); Morgan Metallurgy idx31 d0 5->5, 2->8 (+6=5+1); c0/c4/cc/bc unchanged on all three.
+[V] Alternative +0x40 writers checked/excluded: 4efedd/4eff20 unit spend (-), 4f0ca1-6 project spend (-),
+4f0cc3-e9 clamp B (in-mask=ours only; sets minerals<=10 while UN HQ has 37), 4e47d0 founder init, 4f5aee
+writes +0x98. Correction: 4f1e3f (M53k "drain") is machine `c7 40 50 da ff ff ff` = store [eax+0x50]=
+0xffffffda (head clear), NOT +0x40. 4ef7f6 is the only per-turn +0x40 adder for AI bases.
+[V] => extra minerals == d0 read at 4ef7f6 exceeded both snapshots: pass1 (4e8d60 sweep + 4e78e0 rebuild +
+4e93f0 with fresh c6c/c70/c38/c4c) transiently RAISED d0 before the add; a later same-visit exec (pass2 /
+4ef87e / tail 4f6077) ran 4e93f0 again and RESTORED it after the add. Same mechanism's persistent variant
+is exactly M53l's UN DR (7->8, +8) and Hawk (5->6, +6).
+[I] For the 3 flagged bases the transient raise is consistent but unobserved (pre/post snapshots only, no
+mid-visit d0 trace; pass1-vs-pass2 input change unproven) => "partially explains".
+
+## Open
+- Exact UI loop identity for 9x/2x (417ee0 dispatch/row loops vs 512b40 per-window re-entry).
+- Whether twin loop (a) / 4e5e10 (b) fire in group-queue rounds (0 this round).
+- Mid-visit 3-point d0 trace to close Q3.
