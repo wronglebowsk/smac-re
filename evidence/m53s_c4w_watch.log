@@ -1,0 +1,88 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x961174
+Hardware watchpoint 2: *(int *)0x95de64
+C4W b3 n=1 pc=0x4e79a8 new=0 esp=0xbefd70
+C4W b3 n=2 pc=0x4e7ea7 new=4 esp=0xbefd70
+C4W b3 n=3 pc=0x4e85c1 new=6 esp=0xbefd70
+C4W b3 n=4 pc=0x4e85c1 new=9 esp=0xbefd70
+C4W b3 n=5 pc=0x4e85c1 new=11 esp=0xbefd70
+C4W b3 n=6 pc=0x4e85c1 new=12 esp=0xbefd70
+C4W b3 n=7 pc=0x4eac68 new=15 esp=0xbefda8
+C4W b3 n=8 pc=0x4e79a8 new=0 esp=0xbefd70
+C4W b3 n=9 pc=0x4e7ea7 new=4 esp=0xbefd70
+C4W b3 n=10 pc=0x4e85c1 new=6 esp=0xbefd70
+C4W b3 n=11 pc=0x4e85c1 new=9 esp=0xbefd70
+C4W b3 n=12 pc=0x4e85c1 new=11 esp=0xbefd70
+C4W b3 n=13 pc=0x4e85c1 new=12 esp=0xbefd70
+C4W b3 n=14 pc=0x4eac68 new=15 esp=0xbefda8
+C4W b46 n=15 pc=0x4e79a8 new=0 esp=0xbefd70
+C4W b46 n=16 pc=0x4e7ea7 new=2 esp=0xbefd70
+C4W b46 n=17 pc=0x4e85c1 new=5 esp=0xbefd70
+C4W b46 n=18 pc=0x4e85c1 new=8 esp=0xbefd70
+C4W b46 n=19 pc=0x4e85c1 new=11 esp=0xbefd70
+C4W b46 n=20 pc=0x4e85c1 new=14 esp=0xbefd70
+C4W b46 n=21 pc=0x4e85c1 new=17 esp=0xbefd70
+C4W b46 n=22 pc=0x4eac68 new=20 esp=0xbefda8
+C4W b46 n=23 pc=0x4eac68 new=22 esp=0xbefda8
+C4W b46 n=24 pc=0x4e79a8 new=0 esp=0xbefd70
+C4W b46 n=25 pc=0x4e7ea7 new=2 esp=0xbefd70
+C4W b46 n=26 pc=0x4e85c1 new=5 esp=0xbefd70
+C4W b46 n=27 pc=0x4e85c1 new=8 esp=0xbefd70
+C4W b46 n=28 pc=0x4e85c1 new=11 esp=0xbefd70
+C4W b46 n=29 pc=0x4e85c1 new=14 esp=0xbefd70
+C4W b46 n=30 pc=0x4e85c1 new=17 esp=0xbefd70
+C4W b46 n=31 pc=0x4eac68 new=20 esp=0xbefda8
+C4W b46 n=32 pc=0x4eac68 new=22 esp=0xbefda8
+C4W b46 n=33 pc=0x4e79a8 new=0 esp=0xbefd48
+C4W b46 n=34 pc=0x4e7ea7 new=2 esp=0xbefd48
+C4W b46 n=35 pc=0x4e85c1 new=5 esp=0xbefd48
+C4W b46 n=36 pc=0x4e85c1 new=8 esp=0xbefd48
+C4W b46 n=37 pc=0x4e85c1 new=11 esp=0xbefd48
+C4W b46 n=38 pc=0x4e85c1 new=14 esp=0xbefd48
+C4W b46 n=39 pc=0x4e85c1 new=17 esp=0xbefd48
+C4W b46 n=40 pc=0x4eac68 new=20 esp=0xbefd80
+C4W b46 n=41 pc=0x4eac68 new=22 esp=0xbefd80
+C4W b46 n=42 pc=0x4e79a8 new=0 esp=0xbed9f4
+C4W b46 n=43 pc=0x4e7c19 new=2 esp=0xbed9f4
+C4W b46 n=44 pc=0x4e7c19 new=5 esp=0xbed9f4
+C4W b46 n=45 pc=0x4e7c19 new=8 esp=0xbed9f4
+C4W b46 n=46 pc=0x4e7c19 new=11 esp=0xbed9f4
+C4W b46 n=47 pc=0x4e7c19 new=14 esp=0xbed9f4
+C4W b46 n=48 pc=0x4e7c19 new=17 esp=0xbed9f4
+C4W b46 n=49 pc=0x4eac68 new=20 esp=0xbeda2c
+C4W b46 n=50 pc=0x4eac68 new=22 esp=0xbeda2c
+C4W b46 n=51 pc=0x4e79a8 new=0 esp=0xbed9f4
+C4W b46 n=52 pc=0x4e7c19 new=2 esp=0xbed9f4
+C4W b46 n=53 pc=0x4e7c19 new=5 esp=0xbed9f4
+C4W b46 n=54 pc=0x4e7c19 new=8 esp=0xbed9f4
+C4W b46 n=55 pc=0x4e7c19 new=11 esp=0xbed9f4
+C4W b46 n=56 pc=0x4e7c19 new=14 esp=0xbed9f4
+C4W b46 n=57 pc=0x4e7c19 new=17 esp=0xbed9f4
+C4W b46 n=58 pc=0x4eac68 new=20 esp=0xbeda2c
+C4W b46 n=59 pc=0x4eac68 new=22 esp=0xbeda2c
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]
