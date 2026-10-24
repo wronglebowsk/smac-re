@@ -30,7 +30,7 @@ then the "Later" list.
 - **`FUN_004e63b0` is the FIRST call inside `FUN_004e78e0`** (`0x4e78e9`, asm line 7 of
   `evidence/m53o_fn4e78e0_asm.txt`). It writes the 21-entry table `0x8f0ccc..0x8f0d1c` with flag values
   0/1/2/4/8 (`mov [ecx+0x8f0ccc],1` 0x4e63e8; `=2` 0x4e6442/0x4e6518; `=0` 0x4e6533; `=4` 0x4e6563;
-  `or [eax+0x8f0ccc],8` 0x4e659f/0x4e6635) and then **0x4e6925-0x4e694f builds
+  `or [eax+0x8f0ccc],8` 0x4e659f/0x4e6635) and — still inside `FUN_004e63b0`, which `ret`s at 0x4e6959 — 0x4e6925-0x4e694f builds
   `DAT_008f0d30 = {bit i : table[i] != 0}`** (loop `cmp [eax],0 / je / mov esi,1 / shl esi,cl /
   or edx,esi / add eax,4 / inc ecx / cmp eax,0x8f0d20 / jl`; live check table {0:0xc, 8:0x8} → derived
   0x101 == live). The entry filter `base+0x78 &= (~DAT_008f0d30|1)` (0x4e796a-72) clears exactly those
@@ -138,15 +138,15 @@ three swap-commit guards, the nibble bookkeeping) live in the skill at
   drive + snapshot in ONE job (`scripts/m53n_drive.py` = proven template). **Watchpoints fire on VALUE
   CHANGE, not on stores** — a same-value rewrite is INVISIBLE.
 ## Milestone options (pick ONE)
-- **M53q — make the model RECOMPUTE the per-base scan pool (THE PICK).** Decode what sets each entry of
-  the 21-entry table `0x8f0ccc` to 1 / 2 / 4 / 8 inside `FUN_004e63b0` (store sites 0x4e63e8, 0x4e6442,
-  0x4e6518, 0x4e6533, 0x4e6563, 0x4e659f, 0x4e6635; the function is ~1450 lines per
-  `ghidra_out/index.csv`, adjacent `FUN_004e60c0`/`FUN_004e6240`), including how `DAT_008f0c4c` (live 7)
-  is produced, then implement the recompute in `scripts/m53p_recon_a.py` so each base's `mask_in` comes
-  from decoded inputs instead of one stale global. **Done when** the self-consistent row count is
-  materially above 46/76 (target: all 76) AND the residual set is re-measured on a fresh dump — ideally
-  the 7 residuals (idx 3/30/60 fac4, 51/62 fac1, 69 fac3 c4-only; idx 31 fac2 bc -1) collapse to a
-  named machine rule.
+- **M53q — make the model RECOMPUTE the per-base scan pool (THE PICK; the decode is DONE).**
+  `evidence/m53q_8f0ccc_writers.md` + `evidence/m53q_verify.md` map the 9 store sites and the value
+  vocabulary: 2 = off-map / not visible, 0 = scannable, 4 = terrain test, |=8 = unit order, |=0x10 =
+  another base's step, |=0x20 = foreign presence; the `=1` site is dead (it fires only at index >= 21).
+  Implement `build_table(base, fac)` in `scripts/m53p_recon_a.py` (keep the stale-global path behind
+  `--stale-mask`) — **done when** all 76 rows are self-consistent on a fresh dump AND the residual set
+  is re-measured, ideally with the 7 residuals (idx 3/30/60 fac4, 51/62 fac1, 69 fac3 c4-only; idx 31
+  fac2 bc -1) collapsing to a named rule. The bit SEMANTICS are INFERRED until a computed mask matches a
+  live one.
 - **Later:** the c4-only rows once the pool is decoded; `unit+48`/`unit+50` chain semantics and whether
   the array compaction leaves stale links by design (a real game bug worth naming); what sets
   `turn_flags` bit 16 (0x10000 persists on our idle turn); unit+38 slot semantics + consumers of
