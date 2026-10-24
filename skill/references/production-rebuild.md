@@ -27,17 +27,30 @@ so the seed contributes nothing.
 
 - Entry: `base+0x30 &= 0xffff7fff`; `base+0x80 = 0`; `base+0x78 &= (~DAT_008f0d30|1)` (0x4e7968-72, live
   `DAT_008f0d30 = 1`, so bit 0 always survives — NOT `~(pop|1)`).
-- Skip flag `[ebp-0x30]` = 1 iff tile out-of-mask OR (bit6 AND bit31 of `base+0x38`).
-- **`DAT_008f0c68` IS the loop budget** (prologue store 0x4e7904, decremented per scan A:255 and per add
-  commit 0x4e85d8, published to `base+0x7c` at exit A:1414). It starts at `pop+1` and is spent on every scan
-  INCLUDING out-of-bounds ones.
+- Skip flag `[ebp-0x30]` = 1 iff **NOT((1<<fac) & byte0(`0x985b10`)) OR (byte0(`base+0x38`)&0x40 AND
+  `base+0x38` bit31)** (M53r, 0x4e790a-0x4e7933 — the old "tile out-of-mask" reading was wrong). Live
+  mask 0xff08 ⇒ flag = 1 for every faction except 3. Gates the pre-scan nibble repair, the scan-0
+  special's eviction part (0x4e7c74) and the facility tail loop (0x4e8308).
+- **`DAT_008f0c68` IS the loop budget** — exactly 4 stores in all `.text`, all inside 4e78e0 (Ghidra
+  shard_012.c:16023/16108/16229/16626 = machine 0x4e7904 init, 0x4e7c36 scan-dec, 0x4e7ecd
+  scan-0-dec, 0x4e85d8 add-dec). It starts at **pop+1 AT VISIT TIME** (Ghidra's
+  `(char)DAT_008f0d60[3]+1` = short*-scaled byte@6) and is spent on every scan INCLUDING
+  out-of-bounds ones. **M53r:** the dump's pop byte@6 is post-visit; a base that lost a pop point
+  after its rebuild visit replays with one budget unit too few, falls into the middle pass the
+  game skipped, and fires phantom swaps. Signature: stored `base+0x7c` == replay budget_end + 1.
+  `m53p_recon_a.py::recover_pop` probes pop+1 (accepts only if stored mask AND stored carry are
+  reproduced); 22/76 rows (all fac 2) drift-recover to exact.
 - Scan skip gate A:165: if budget < popcount(`base+0x78`) jump straight to the main pass (accumulator stays 0).
 - Scan loop s = 0..20 over spiral XOFF@0x67850c / YOFF@0x678990 (mask bits 32..79 alias 0..15); an s already
   in `base+0x78` is skipped WITHOUT spending budget (A:176).
 - `if (DAT_008f0c68 == base+0x80 + base+0x7c) goto LAB_004e8a47` (A:139) skips the scan-0 special AND the
-  whole middle pass.
-- Exit: `base+0x78` = accumulator (0x4e8b19), `base+0x7c` = `DAT_008f0c68` (A:1414), `base+0x30` clears
-  **bit 8 only** (A:1418 — an earlier note's `&= ~0xfe00` was imprecise), history shift `+0xac <- +0xbc`.
+  whole middle pass. The scan-0 special's tile scan additionally self-skips WITHOUT spending budget when
+  acc bit 0 is already set (`test BYTE [ebp-0x8],1 / jne 0x4e7ed2`, A:368) — after a normal scan that
+  scanned step 0 this is the common path; its eviction part is gated by skip-flag ∧ `base+0x7c != 0` ∧
+  `c80+c7c > 0` (0x4e7c74-0x4e7c99) and evicts invalid nibbles, decrementing `base+0x80` per eviction.
+- Exit: `base+0x78` = accumulator (0x4e8b19), `base+0x7c` = `DAT_008f0c68` RAW (A:1414 0x4e8b28),
+  `base+0x30` clears **bit 17 only** (`and ch,0xfe` A:1417 — clears 0x20000; earlier "~0xfe00"/"bit 8"
+  notes were both wrong), history shift `+0xac <- +0xbc`.
 
 ## Middle pass: enumeration, pair dispatch, acceptance
 
@@ -62,9 +75,12 @@ so the seed contributes nothing.
   (writes facility entry `-idx-1` into the `base+0x84` nibble slot `base+0x80`, `base+0x80++` at 0x4e84c3,
   NO budget decrement); index == 0 -> exit; index >= 1 -> add commit (mask OR `1<<idx` 0x4e84f3, budget--
   0x4e85d8).
-- **Swap commit guards (0x4e8616-0x4e8631), each exits uncommitted:** best-add index > 0; **best-add score
-  strictly greater than best-swap score** (0x4e8624 `cmp` / 0x4e8626 `jle`); best-swap index > 0. Then swap
-  out / swap in; the undo fires only if `base+0xbc` is still short (0x4e8856-0x4e886a).
+- **Swap commit guards (0x4e8616-0x4e8631), each exits uncommitted** (M53r re-read): commit requires
+  best-add index **> 0** (0x4e8616 `jle` exits when ≤ 0 — an earlier note had this polarity flipped),
+  best-add score strictly greater than best-swap score (0x4e8624 `cmp` / 0x4e8626 `jle`), best-swap
+  index > 0 (0x4e862f `jle`). Commit (0x4e8637-0x4e8665): `acc = (acc & ~(1<<best_swap)) |
+  (1<<best_add)` — swap-OUT is the best-swap idx, swap-IN is the best-ADD idx; yields out then in; the
+  undo fires only if `base+0xbc < (pop+1)*K` (0x4e8856-0x4e886a, `jge` skips undo).
 - Continuation (0x4e85ef-0x4e8611): loop again iff budget > `base+0x80 + base+0x7c` **OR** `base+0xbc >
   (pop+1)*DAT_0092a27c` (K, live 2). The swap branch always breaks out.
 - Facility tail loop (A:797-892): fixed 8 entries of 28 B at `0x926ca8` (bounded by the end ADDRESS
