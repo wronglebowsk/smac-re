@@ -107,3 +107,18 @@ bit-pattern test (`(uc & 0x80000002) == 2 && (uc >> 0x18) < 9`, or bit 3, or bit
 {0,-2,0,0,1,0,0,0} this can only fire for faction 4 on a bit-2 base; the cap-2 spill to `DAT_008f0cc8`; and
 the `LAB_004e7586` modifiers (`+1` if `base+0x34 & 0x2000`, `-1` if `& 0x4000` and value != 0, `-1` if
 `DAT_00985db8`, x3 if `DAT_00985dc4 & (0x91c628 ? 2 : 1)`).
+
+
+## The per-visit scan-pool table (`0x8f0ccc`, 21 dwords) — M53Q2
+`FUN_004e63b0` (zero args; base taken from `*(0x8f0d60)`) fills the table for ONE base per call, one dword
+per spiral step, then — still inside the same function, `ret` at 0x4e6959 — builds
+`DAT_008f0d30 = {bit i : table[i] != 0}` (0x4e6925-0x4e694f, bound `cmp eax,0x8f0d20`). The rebuild's
+entry filter is `base+0x78 &= (~DAT_008f0d30 | 1)` (0x4e796a-72) and the exit stores the scanned mask
+(0x4e8b19), so the table means "spiral step i is blocked this visit".
+Values (all `[reg+0x8f0ccc]`, reg = 4*step, 9 store sites): **2** = out-of-bounds/off-map (0x4e6442) or
+not visible to the faction (0x4e6518); **0** = scannable (0x4e6533); **4** = terrain test (0x4e6563);
+**|=8** = a unit on the tile carries the relevant order (0x4e659f, 0x4e6635); **|=0x10** = the tile is
+also a step of ANOTHER base whose `+0x78` bit is set (0x4e68de RMW `or al,0x10`); **|=0x20** =
+`FUN_004e3b50`-class foreign presence (0x4e6699). The `=1` store at 0x4e63e8 is guarded by
+`cmp ecx,0x54 / jl`, i.e. it only fires at index >= 21 and writes past the table — dead for the mask.
+Decode + audit: `evidence/m53q_8f0ccc_writers.md`, `evidence/m53q_verify.md`.
