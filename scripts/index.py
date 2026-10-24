@@ -38,6 +38,7 @@ DEFAULT_ENDPOINT = os.environ.get("EMBEDDING_URL", "http://192.168.1.213:8000/v1
 MODEL = "embeddinggemma-2"
 DIM = 768
 MAX_CHARS = 1500          # ~380 tokens, comfortably inside the model's 512-token window
+NOTE_PRIOR = 0.02         # additive cosine prior for kind=note (M53Q3)
 BATCH = 32                # smaller batches keep padding down; the server 500s if parallel
 
 
@@ -132,25 +133,66 @@ def fn_chunks(include_all=False):
     return out
 
 
-def note_chunks():
-    """One chunk per session section, hot file first, then the rotated archives."""
-    files = [os.path.join(ROOT, "SESSION_NOTES.md")]
+def _pack(lines, size=1400):
+    """Greedy paragraph packing: never truncate, emit as many <=size windows as needed."""
+    out, cur, n = [], [], 0
+    for ln in lines:
+        if cur and n + len(ln) + 1 > size:
+            out.append("\n".join(cur)); cur, n = [], 0
+        cur.append(ln); n += len(ln) + 1
+    if cur:
+        out.append("\n".join(cur))
+    return out or [""]
+
+
+def _sections(path):
+    """Yield (first_line_no, title, body_lines) per '## ' section (whole file if none)."""
+    lines = open(path, encoding="utf-8", errors="ignore").read().splitlines()
+    starts = [i for i, l in enumerate(lines) if l.startswith("## ")]
+    if not starts:
+        yield 1, os.path.basename(path), lines
+        return
+    for n, s in enumerate(starts):
+        e = starts[n + 1] if n + 1 < len(starts) else len(lines)
+        yield s + 1, lines[s].lstrip("# ").strip(), lines[s + 1:e]   # body without the heading
+
+
+def _note_sources():
+    """Everything a future session should be able to FIND, hottest first."""
+    out = [os.path.join(ROOT, "SESSION_NOTES.md"), os.path.join(ROOT, "NAMED.md")]
+    out += [os.path.join(ROOT, "evidence", f) for f in sorted(os.listdir(os.path.join(ROOT, "evidence")))
+            if f.endswith(".md")]
+    out += [os.path.join(ROOT, "skill", "references", f)
+            for f in sorted(os.listdir(os.path.join(ROOT, "skill", "references"))) if f.endswith(".md")]
     archive = os.path.join(ROOT, "docs", "sessions")
     if os.path.isdir(archive):
-        files += [os.path.join(archive, f) for f in sorted(os.listdir(archive)) if f.endswith(".md")]
+        out += [os.path.join(archive, f) for f in sorted(os.listdir(archive)) if f.endswith(".md")]
+    return [x for x in out if os.path.isfile(x)]
+
+
+def note_chunks():
+    """One chunk per <=1400-char window of every finding/reference section.
+
+    M53Q3: the index used to hold only SESSION_NOTES + rotated session archives, truncated to
+    MAX_CHARS -- so the machine-cited evidence notes (the only place a milestone's truth lives) were
+    invisible to search AND long sections lost their tail citations. Now every evidence/*.md,
+    skill/references/*.md and NAMED.md row is chunked, and nothing is truncated.
+    """
     out = []
-    for path in files:
-        if not os.path.isfile(path):
-            continue
-        lines = open(path, encoding="utf-8").read().splitlines()
-        starts = [i for i, l in enumerate(lines) if l.startswith("## Session")]
-        for n, s in enumerate(starts):
-            e = starts[n + 1] if n + 1 < len(starts) else len(lines)
-            body = "\n".join(lines[s:e]).strip()
-            head = lines[s].removeprefix("## ").strip()
-            out.append({"id": "note:%s:%d" % (os.path.basename(path), s + 1),
-                        "kind": "note", "path": os.path.relpath(path, ROOT),
-                        "line": s + 1, "text": (head + ". " + body[len(lines[s]):]).strip()[:MAX_CHARS]})
+    for path in _note_sources():
+        rel = os.path.relpath(path, ROOT)
+        for line_no, title, body in _sections(path):
+            for k, win in enumerate(_pack(body)):
+                text = (title + ". " + win).strip()
+                out.append({"id": "note:%s:%d:%d" % (rel, line_no, k), "kind": "note",
+                            "path": rel, "line": line_no, "text": text[:MAX_CHARS]})
+    # NAMED rows are address-indexed: keep each row whole (they are identifier-rich and lead on lookup)
+    named = os.path.join(ROOT, "NAMED.md")
+    if os.path.isfile(named):
+        for n, line in enumerate(open(named, encoding="utf-8", errors="ignore"), 1):
+            if line.startswith("| `0x") and len(line) > 40:
+                out.append({"id": "named:%d" % n, "kind": "note", "path": "NAMED.md",
+                            "line": n, "text": line.strip()[:MAX_CHARS]})
     return out
 
 
@@ -249,18 +291,18 @@ def cmd_build(args):
 
 
 def source_fingerprint():
-    """Cheap staleness check: newest mtime + size of the source corpora."""
+    """Cheap staleness check: newest mtime + size of EVERY source corpus (functions AND notes)."""
     latest = 0
     total = 0
-    for path in [os.path.join(ROOT, "SESSION_NOTES.md")] + \
-                [os.path.join(ROOT, "ghidra_out", f) for f in os.listdir(os.path.join(ROOT, "ghidra_out"))
-                 if f.startswith("shard_") and f.endswith(".c")]:
+    paths = _note_sources() + [os.path.join(ROOT, "ghidra_out", f)
+                               for f in os.listdir(os.path.join(ROOT, "ghidra_out"))
+                               if f.startswith("shard_") and f.endswith(".c")]
+    for path in paths:
         if os.path.isfile(path):
             st = os.stat(path)
             latest = max(latest, st.st_mtime)
             total += st.st_size
     return {"newest_mtime": int(latest), "bytes": total}
-
 
 def cmd_status(_args):
     if not os.path.isfile(META):
@@ -296,6 +338,8 @@ def cmd_search(args):
         s = 0.0
         for j in range(DIM):
             s += raw[off + j] * q[j]
+        if row["kind"] == "note":
+            s += NOTE_PRIOR      # M53Q3: curated notes outrank decompiled bodies on ties
         scored.append((s, row))
     scored.sort(key=lambda t: -t[0])
     top = scored[:args.k]
