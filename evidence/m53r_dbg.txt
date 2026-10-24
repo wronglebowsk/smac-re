@@ -1,0 +1,110 @@
+  cand 1 pair=add val=11648 raw=(4,1,0) l50=0
+  cand 2 pair=swap val=9130 raw=(1,2,1) l50=0
+  cand 3 pair=swap val=11008 raw=(2,2,0) l50=0
+  cand 4 pair=swap val=11008 raw=(2,2,0) l50=0
+  cand 5 pair=add val=9130 raw=(1,2,1) l50=0
+  cand 6 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 7 pair=add val=9130 raw=(1,2,1) l50=0
+  cand 8 skip-gate
+  cand 9 pair=add val=9130 raw=(1,2,1) l50=0
+  cand 10 pair=add val=9130 raw=(1,2,1) l50=0
+  cand 11 pair=add val=4096 raw=(4,0,0) l50=0
+  cand 12 pair=add val=11008 raw=(2,2,0) l50=0
+  cand 13 pair=add val=9941 raw=(3,1,2) l50=0
+  cand 14 pair=add val=3413 raw=(3,0,2) l50=0
+  cand 15 pair=add val=7722 raw=(2,1,1) l50=0
+  cand 16 pair=add val=9130 raw=(1,2,1) l50=0
+  cand 17 pair=add val=11648 raw=(4,1,0) l50=0
+  cand 18 pair=add val=11008 raw=(2,2,0) l50=0
+  cand 19 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 20 pair=add val=1728 raw=(0,1,0) l50=0
+  MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[8, 8, 3, 0] gmax=11648 gidx=1 lval=9130 lidx=2 maxf0=4 processed=0x1d
+### idx 44 fac 2 pop 3 pool 0x1d model_processed 0x1b | budget 4->0 c7c_in 1 c80_end 0 fresh 0x77ba3 obs [8, 8, 3, 0, 2] vec [11, 7, 2, 0]
+  cand 1 pair=swap val=1689 raw=(3,0,3) l50=0
+  cand 2 pair=add val=1689 raw=(3,0,3) l50=0
+  cand 3 pair=add val=1689 raw=(3,0,3) l50=0
+  cand 4 pair=swap val=1152 raw=(0,1,0) l50=0
+  cand 5 pair=add val=5683 raw=(1,2,1) l50=0
+  cand 6 pair=add val=512 raw=(1,0,0) l50=0
+  cand 7 pair=add val=5683 raw=(1,2,1) l50=0
+  cand 8 skip-gate
+  cand 9 pair=add val=5683 raw=(1,2,1) l50=0
+  cand 10 pair=add val=512 raw=(1,0,0) l50=0
+  cand 11 pair=add val=512 raw=(1,0,0) l50=0
+  cand 12 pair=add val=512 raw=(1,0,0) l50=0
+  cand 13 pair=add val=1152 raw=(0,1,0) l50=0
+  cand 14 pair=add val=512 raw=(1,0,0) l50=0
+  cand 15 pair=add val=512 raw=(1,0,0) l50=0
+  cand 16 skip-oob
+  cand 17 skip-oob
+  cand 18 pair=add val=5683 raw=(1,2,1) l50=0
+  cand 19 pair=add val=5683 raw=(1,2,1) l50=0
+  cand 20 pair=add val=5683 raw=(1,2,1) l50=0
+  MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[6, 3, 5, 0] gmax=5683 gidx=5 lval=1152 lidx=4 maxf0=3 processed=0x13
+### idx 70 fac 2 pop 2 pool 0x13 model_processed 0x23 | budget 3->0 c7c_in 1 c80_end 0 fresh 0x30001 obs [6, 3, 5, 0, 2] vec [7, 4, 6, 0]
+  cand 1 pair=swap val=6656 raw=(2,2,0) l50=0
+  cand 2 pair=swap val=2048 raw=(4,0,0) l50=0
+  cand 3 pair=add val=5632 raw=(3,1,1) l50=0
+  cand 4 pair=add val=512 raw=(1,0,0) l50=0
+  cand 5 pair=add val=512 raw=(1,0,0) l50=0
+  cand 6 pair=add val=512 raw=(1,0,0) l50=0
+  cand 7 pair=add val=512 raw=(1,0,0) l50=0
+  cand 8 skip-gate
+  cand 9 pair=add val=512 raw=(1,0,0) l50=0
+  cand 10 pair=swap val=5888 raw=(1,2,1) l50=0
+  cand 11 pair=add val=512 raw=(1,0,0) l50=0
+  cand 12 pair=add val=512 raw=(1,0,0) l50=0
+  cand 13 pair=add val=512 raw=(1,0,0) l50=0
+  cand 14 pair=swap val=5888 raw=(1,2,1) l50=0
+  cand 15 pair=swap val=6400 raw=(4,1,0) l50=0
+  cand 16 pair=add val=512 raw=(1,0,0) l50=0
+  cand 17 pair=add val=512 raw=(1,0,0) l50=0
+  cand 18 pair=add val=512 raw=(1,0,0) l50=0
+  cand 19 pair=swap val=5888 raw=(1,2,1) l50=0
+  cand 20 pair=add val=1024 raw=(1,0,2) l50=0
+  MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[16, 11, 5, 0] gmax=5632 gidx=3 lval=2048 lidx=2 maxf0=4 processed=0x8c407
+### idx 58 fac 2 pop 6 pool 0x8c407 model_processed 0x8c40b | budget 7->0 c7c_in 1 c80_end 0 fresh 0x9 obs [16, 11, 5, 0, 4] vec [15, 12, 6, 0]
+  cand 1 pair=add val=2304 raw=(0,4,0) l50=0
+  cand 2 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 3 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 4 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 5 pair=add val=2320 raw=(0,4,1) l50=0
+  cand 6 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 7 pair=add val=576 raw=(0,1,0) l50=0
+  cand 8 skip-gate
+  cand 9 pair=swap val=8480 raw=(3,2,1) l50=0
+  cand 10 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 11 pair=add val=4416 raw=(1,2,2) l50=0
+  cand 12 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 13 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 14 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 15 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 16 pair=add val=4384 raw=(1,2,1) l50=0
+  cand 17 pair=add val=4416 raw=(1,2,2) l50=0
+  cand 18 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 19 pair=swap val=3552 raw=(0,6,6) l50=0
+  cand 20 pair=add val=4384 raw=(1,2,1) l50=0
+  MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[5, 9, 8, 0] gmax=4416 gidx=11 lval=3552 lidx=19 maxf0=3 processed=0x80201
+### idx 40 fac 2 pop 2 pool 0x80201 model_processed 0xa01 | budget 3->0 c7c_in 1 c80_end 0 fresh 0x1 obs [5, 9, 8, 0, 1] vec [6, 5, 4, 0]
+  cand 1 pair=swap val=9369 raw=(3,2,0) l50=0
+  cand 2 pair=swap val=5529 raw=(1,2,1) l50=0
+  cand 3 pair=swap val=5964 raw=(2,1,1) l50=0
+  cand 4 pair=swap val=3225 raw=(0,4,0) l50=0
+  cand 5 pair=add val=4352 raw=(4,0,1) l50=0
+  cand 6 pair=add val=9369 raw=(3,2,0) l50=0
+  cand 7 pair=add val=10316 raw=(4,1,2) l50=0
+  cand 8 skip-gate
+  cand 9 pair=add val=10060 raw=(4,1,1) l50=0
+  cand 10 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 11 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 12 pair=swap val=7577 raw=(2,2,1) l50=0
+  cand 13 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 14 pair=swap val=5529 raw=(1,2,1) l50=0
+  cand 15 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 16 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 17 pair=add val=1024 raw=(1,0,0) l50=0
+  cand 18 pair=add val=4352 raw=(4,0,1) l50=0
+  cand 19 pair=add val=7577 raw=(2,2,1) l50=0
+  cand 20 pair=swap val=7756 raw=(3,1,0) l50=0
+  MP iter l5c=1 budget=0 c80=0 c7c=1 vec=[16, 16, 6, 0] gmax=10316 gidx=7 lval=3225 lidx=4 maxf0=4 processed=0x10501f
+### idx 37 fac 2 pop 7 pool 0x10501f model_processed 0x10508f | budget 8->0 c7c_in 1 c80_end 0 fresh 0xc03e1 obs [16, 16, 6, 0, 2] vec [20, 13, 8, 0]

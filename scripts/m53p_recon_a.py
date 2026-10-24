@@ -708,9 +708,9 @@ def build_table(idx, verbose=False):
 
 
 # ---------------------------------------------------------------- FUN_004e78e0
-def rebuild(idx, stale_mask=False, verbose=False):
+def rebuild(idx, stale_mask=False, verbose=False, pop_visit=None):
     R = row(idx)
-    fac, pop, bx, by = R["fac"], R["pop"], R["x"], R["y"]
+    fac, pop, bx, by = R["fac"], (R["pop"] if pop_visit is None else pop_visit), R["x"], R["y"]
     G["cc8_delta"] = 0
     fb = fac_bits(idx)
     trace = []
@@ -910,6 +910,7 @@ def rebuild(idx, stale_mask=False, verbose=False):
            "budget_end": budget, "mask_in": mask_in, "processed": processed,
            "mask_fresh": fresh_mask, "table": tbl, "mask_stale": G["d30"],
            "c7c_in": R["d7c"], "c7c_end": c7c, "c80_end": c80, "nib_out": c84,
+           "pop_drift": 0 if pop_visit is None else 1, "pop_dump": R["pop"],
            "seed": seed_terms, "trace": trace, "vec": vec, "obs": R["vec"],
            "filled": filled, "cc8_delta": G["cc8_delta"]}
     if verbose:
@@ -1000,14 +1001,33 @@ def final_score(aa, bb, cc, l50, budget, vec, pop, l18, l24, l28, l38, l3c, idx)
     return s32(t1 + t2 + t3)
 
 
-def show(idx, stale_mask=False, verbose=False):
+def recover_pop(idx, stale_mask=False, verbose=False):
+    """M53r: budget0 = pop+1 AT VISIT TIME (asm 0x4e7904) and base+0x7c published at exit
+    == DAT_008f0c68 (asm 0x4e8b28).  The dump's pop byte@6 is the pop AFTER the visit; a
+    base that lost a point (attrition/combat) after its rebuild visit makes the plain
+    replay fall into the middle pass the game skipped (game: scan ends with
+    budget == c80+c7c -> je 0x4e8a47 skips scan-0 special AND middle pass).  Retry with
+    pop_visit = dump+1; accept only when that reproduces the stored mask AND the stored
+    carry -- the extra budget unit is then independently confirmed by two outputs."""
     o = rebuild(idx, stale_mask, verbose)
+    if (o["processed"] == o["mask_in"] and o["budget_end"] == o["c7c_in"]
+            and list(o["vec"]) == list(o["obs"])):
+        return o
+    o1 = rebuild(idx, stale_mask, verbose, pop_visit=row(idx)["pop"] + 1)
+    if o1["processed"] == o1["mask_in"] and o1["budget_end"] == o1["c7c_in"]:
+        return o1
+    return o
+
+
+def show(idx, stale_mask=False, verbose=False, recover=True):
+    o = recover_pop(idx, stale_mask, verbose) if recover else rebuild(idx, stale_mask, verbose)
     obs = list(o["obs"])
     obs[0] -= G["c6c"] if idx == 70 else 0
-    print("idx %d fac %d pop %d flag %d budget %d->%d mask_in %s processed %s mask %s%s"
+    print("idx %d fac %d pop %d flag %d budget %d->%d mask_in %s processed %s mask %s%s%s"
           % (idx, o["fac"], o["pop"], o["flag"], o["budget0"], o["budget_end"],
              hex(o["mask_in"]), hex(o["processed"]), hex(o["mask_fresh"]),
-             " (live d30 %s)" % hex(o["mask_stale"]) if idx == G["base_idx"] else ""))
+             " (live d30 %s)" % hex(o["mask_stale"]) if idx == G["base_idx"] else "",
+             " pop-drift=+1(pop %d->%d)" % (o["pop_dump"], o["pop"]) if o["pop_drift"] else ""))
     names = ["bc", "c0", "c4", "c8"]
     for f in range(4):
         terms = [(t[0], t[1][0], t[1][1], t[2][f] * t[3]) for t in o["trace"]]
@@ -1025,13 +1045,15 @@ def main():
     ap.add_argument("idx", nargs="*", type=int)
     ap.add_argument("--stale-mask", action="store_true", dest="stale_mask",
                     help="superseded M53p semantics: entry mask from the dump's global DAT_008f0d30")
+    ap.add_argument("--no-pop-recover", action="store_true", dest="no_pop_recover",
+                    help="report the plain pop=dump replay only (no pop-drift probe)")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args()
     init()
     idxs = a.idx or [70, 0, 3, 4, 6, 10, 23]
     full = []
     for i in idxs:
-        o, obs = show(i, a.stale_mask, a.verbose)
+        o, obs = show(i, a.stale_mask, a.verbose, recover=not a.no_pop_recover)
         if all(o["vec"][f] == obs[f] for f in range(4)):
             full.append(i)
     print("full-match:", full, "facs:", sorted({row(i)["fac"] for i in full}))

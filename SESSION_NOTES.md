@@ -55,3 +55,39 @@
 - Kit: `scripts/m53o_mem.py` units blob 0x200->0x4600 + `nunit` key; `--legacy` renamed `--stale-mask`;
   probes `evidence/m53q_probe.py` (live read of everything 4e63b0 reads), `m53q_maskcmp.py`, `m53q_nonsc.py`.
 - **Next:** M53r — the fac-2 scan-order/selection rule (11 rows) and the c4-only residuals (11 rows).
+
+## Session 74 (2026-10-24) — M53r: **THE 11 FAC-2 ROWS ARE POP-DRIFT BUDGET ROWS, NOT SCAN-ORDER ROWS — the model now runs 76/76 self-consistent, 65 exact (was 65/54); `DAT_008f0c68` = pop+1 AT VISIT TIME and 22 rows drift-recover to exact** — `scripts/m53p_recon_a.py::recover_pop`, `evidence/m53r_findings.md`
+- **Scan-order theory dead (VERIFIED).** The whole middle-pass selection was re-derived from the asm
+  window and the model already matched every gate: candidate loop j=1..20 (cursor 0→0x50 step 4,
+  A:789-796), pair dispatch strict `<`/`>` (A:772-787), swap-branch guards commit-require
+  best-add idx > 0 / best-add score > best-swap score / best-swap idx > 0 (A:1018-1026 — the old
+  reference listed "best-add index > 0" as an EXIT condition: polarity flipped, fixed), undo gate
+  `bc < (pop+1)*K` (A:1192-1197), facility gate/score, continuation, exit stores
+  `0x78 = acc` / `0x7c = budget` RAW (0x4e8b19/0x4e8b28). dbg traces (`evidence/m53r_dbg.txt`)
+  showed the model firing swaps (e.g. idx 44: out 2 in 1, guards all pass) that the game never
+  committed — stored mask == pool AND stored vec == scan-only vec on all 11 rows.
+- **The tell (VERIFIED).** `DAT_008f0c68` has exactly 4 stores in `.text`, all in 4e78e0 (Ghidra
+  shard_012.c:16023/16108/16229/16626 = machine 0x4e7904/0x4e7c36/0x4e7ecd/0x4e85d8); sole
+  initializer = `movsx BYTE[base+6]+1` = pop+1 at visit time (Ghidra `[3]` = short*-scaled byte@6).
+  Exit publishes `base+0x7c` = budget RAW, so the stored carry re-measures the game's budget. On
+  all 11 rows stored c7c == model budget_end **+ 1** (`evidence/m53r_sig.py`, all 76 rows).
+  Skip flag re-decoded too: `1 iff NOT((1<<fac)&byte0(0x985b10)) ∨ (byte0(+0x38)&0x40 ∧ bit31)` —
+  live 0xff08 ⇒ flag=1 for all facs but 3 (the "tile out-of-mask" note was wrong); scan-0 special's
+  tile scan self-skips without budget spend when acc bit 0 is already set (A:368).
+- **Mechanism.** With budget0 = pop_dump+1 the scan ends with budget == c80+c7c → `je 0x4e8a47`
+  (0x4e7c5e) skips the scan-0 special AND the middle pass — the phantom-swap territory is never
+  entered. Replaying with pop_visit = dump+1 reproduces ALL THREE stored outputs simultaneously
+  (mask, carry, vector) on **22/76 rows — all fac 2**: the 11 non-sc rows (37,40,42,44,52,55,58,61,
+  64,70,72) plus 11 that were mask-OK but carry-wrong (28,31,47,48,49,56,63,65,67,68,71). INFERRED:
+  those bases LOST a pop point after their rebuild visit (cause open; idx 0/23 fac-2 did not drift).
+- **Acceptance (fresh dump 2026-10-24, pid 2124624, `evidence/m53r_run1.txt`):** rows 76,
+  **self-consistent 76, exact 65, residual 11 c4-only UNCHANGED** (1,3,5,8,30,34,46,51,60,62,69),
+  cells bc 0 c0 0 c4 11 c8 0. `recover_pop` accepts pop+1 only when stored mask AND stored carry
+  reproduce; `--no-pop-recover` shows the plain view; header prints `pop-drift=+1(pop a->b)`.
+- Kit: `evidence/m53r_sig.py` (per-row saved-carry vs replay-budget signature); skill
+  `references/production-rebuild.md` corrected (guards polarity, skip-flag formula, scan-0 acc-bit-0
+  gate, budget-at-visit-time + drift signature, exit clears bit 17 of +0x30 not bit 8).
+- Open: the 11 c4-only residuals (no budget drift there — saved c7c == budget_end; suspect
+  visit-time state drift in 4e7070's unit/ownership inputs or `0x8f0c4c`); why drift is fac-2-only;
+  `c80_end != stored d80` on idx 24/35 (internal field, unpublished); bit-8 live-table disagreement
+  at (45,9); unit+24/25 + 38 semantics.
