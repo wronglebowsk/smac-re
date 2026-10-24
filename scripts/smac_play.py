@@ -122,6 +122,19 @@ def in_msgpane(pt):
     return MSGPANE[0] <= x <= MSGPANE[2] and MSGPANE[1] <= y <= MSGPANE[3]
 
 
+def is_quit_prompt(words):
+    """The "Do you really want to quit?" dialog.
+
+    Its banner IS the game title, so the naive `title` test fires on it — which is the
+    right REFUSE-to-click answer but the wrong action: Escape on this dialog selects
+    "Oops, no, wait!" (safe), while its OK bar exits the game and the process vanishes
+    silently. OCR mangles the question ("for" -> "fo"), so match `reallywant` + `quit`
+    or the answer row's own words, not the exact sentence.
+    """
+    ts = re.sub(r"[^a-z]", "", " ".join(w for w, *_ in words).lower())
+    return ("reallywant" in ts and "quit" in ts) or ("oops" in ts and "wait" in ts)
+
+
 def is_cdrom_dialog(words):
     """"CD-ROM was not detected" boot nag. Its caption carries the game TITLE, so the
     `title` test fires on it and the driver quits instead of dismissing it (M14: the
@@ -253,6 +266,11 @@ def classify(words, ncolors=None, png=None):
         return "cdrom"
     if is_loaded_game(words):
         return "loaded-game"
+    # The quit dialog wears the game title as its banner, so `title` fires on it and the
+    # run stops (M54a: trace_m54a40c turn 13 — an `unknown` frame's last-resort Escape
+    # opened it). Test it first: this one has a SAFE answer, the title screen does not.
+    if is_quit_prompt(words):
+        return "quit-prompt"
     # Title/menu screens: NEVER click these. Escape on the title selects "Exit" and the
     # quit dialog's OK ends the session (both happened; 120 turns of play lost).
     if "sidmeiersalphacentauri" in ts or "reallywanttoquit" in ts:
@@ -575,6 +593,12 @@ def service_turn(idx, tr, timeout, verbose=False):
             elif time.time() - last_esc > 2.5:
                 key("Return"); last_esc = time.time()   # default button = OK
             time.sleep(0.3)
+            continue
+        if kind == "quit-prompt":
+            # Escape = "Oops, no, wait!". NEVER click OK here: that exits the game and
+            # the process vanishes silently (the trap that killed the 120-turn run).
+            key("Escape"); time.sleep(1.2)
+            rec["handled"].append("quit-prompt:Escape=oops")
             continue
         if kind == "title":
             sh(f"cp {png} {EVID}/px_title_t{idx}.png")

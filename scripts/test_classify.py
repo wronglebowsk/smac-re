@@ -37,7 +37,15 @@ CASES = [
     ("evidence/m15_boot.png", "cdrom", "boot nag wears the game title in its caption"),
     ("evidence/m15_loaded_words.png", "loaded-game",
      "LOAD confirm drawn over the title art (the screen session 20b lost the game on)"),
-    ("evidence/m37_screen0.png", "title", "title screen: never click, never Escape"),
+    ("evidence/m37_screen0.png", "quit-prompt",
+     "NOT the title screen: this session-37 frame is the quit dialog over the HUD (OCR "
+     "says 'do you really want to quit?' + 'oops no wait!'). The old classifier called it "
+     "`title` because its banner IS the game title, and a run stopped on it"),
+    ("evidence/m15_title_now.png", "quit-prompt", "the same trap, frame from session 15"),
+    ("evidence/m54a/quit_prompt.png", "quit-prompt",
+     "the quit dialog at 2398; Escape selects 'Oops, no, wait!' and the round goes on "
+     "(trace_m54a40c turn 13 died before this class existed)"),
+    ("evidence/m37_recovered.png", "hud", "the HUD after a quit dialog was answered away"),
 ]
 
 

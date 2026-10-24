@@ -1,0 +1,11 @@
+win=10485761 start year=2398
+    [quit-prompt] gee SID MEIER'S ALPHA CENTAURI ic see <i : Do you really want fo quit? oe
+turn 0: 2398->2398 STUCK (175.7s, quit-prompt,quit-prompt:Escape=oops)
+    [unknown] ha} ae ee ae Do Sian 4 nee agen pice er cae eine eee <n Sp
+/home/n100/reverse/smac/scripts/smac_play.py:392: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [hud] hes rn ae ea a ee, ae is a SE ot Sioa mim ag ge a!
+turn 1: 2398->2398 STUCK (355.1s, unknown,hud,confirm-after-press)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_m54a40d_20261024_180627.jsonl
+RUN-EXIT 0
