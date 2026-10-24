@@ -46,6 +46,10 @@ CASES = [
      "the quit dialog at 2398; Escape selects 'Oops, no, wait!' and the round goes on "
      "(trace_m54a40c turn 13 died before this class existed)"),
     ("evidence/m37_recovered.png", "hud", "the HUD after a quit dialog was answered away"),
+    ("evidence/m54a/live_now2.png", "help",
+     "the HELP browser (FACTION PROFILES): profile text contains base words, and Escape is "
+     "ignored by it — only its EXIT bar closes it (a stray vote-row click opened it and the "
+     "round stalled twice)"),
 ]
 
 

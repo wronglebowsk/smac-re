@@ -122,6 +122,18 @@ def in_msgpane(pt):
     return MSGPANE[0] <= x <= MSGPANE[2] and MSGPANE[1] <= y <= MSGPANE[3]
 
 
+def is_help_page(words):
+    """The HELP browser (FACTION PROFILES / CONCEPTS / ADVANCED ... pages).
+
+    Opened by accident when a stray click lands in the help menu columns at the bottom of
+    the HUD (M54a: a `vote-yea@44,567` click opened it and the round stalled twice —
+    Escape does NOT close this screen, only its EXIT bar does).
+    """
+    t = text_of(words)
+    return ("concepts" in t and "categories" in t) or "faction profiles" in t \
+        or "chassis types" in t or ("advances" in t and "abilities" in t)
+
+
 def is_quit_prompt(words):
     """The "Do you really want to quit?" dialog.
 
@@ -285,6 +297,9 @@ def classify(words, ncolors=None, png=None):
     # Base words count only OUTSIDE that bottom strip, and only while the HUD button row
     # is absent: a real base screen (evidence/m54a/base_screen.png, from m45a_post.png)
     # has no TURN COMPLETE row at all, so its MENU/tab words still classify `base`.
+    if is_help_page(words):
+        return "help"           # full-screen help browser: its profile text contains base
+                                # words, so this must run before the base test
     hits = base_word_positions(words)
     if hits and not (hud_btn and all(in_msgpane(p) for p in hits)):
         return "base"
@@ -459,6 +474,21 @@ def is_hive_pane(words):
     return text_has(words, "hive")
 
 
+def answer_help_page(png):
+    """Close the HELP browser: click EXIT, the right-hand bar of the BACK/EXIT pair.
+
+    Measured on evidence/m54a/live_now2.png: BACK (275,344), EXIT (525,344). Escape is
+    ignored by this screen (three Escapes, still there, round stalled twice).
+    """
+    bs = [b for b in pane_bars(png) if 320 <= b[1] <= 380]
+    if len(bs) >= 2:
+        xy = max(bs, key=lambda b: b[0])
+        click((xy[0], xy[1]))
+        return (xy[0], xy[1])
+    key("Escape")
+    return None
+
+
 def handle_pane(words, png, rec, kind):
     """Click/keys for the modals that have no OCR-readable control. True = acted.
 
@@ -487,7 +517,7 @@ def handle_pane(words, png, rec, kind):
     # A 3-bar row only counts as a VOTE when it sits in the y>=460 band: the Council puts
     # YEA/NAY/ABSTAIN at y~498, while the advisory panes' bar rows ("Don't Show As Popup" +
     # OK, the highlighted option row) measure y 219-310 on the same fixtures.
-    vote = bool(row) and row[0][1] >= 460
+    vote = bool(row) and 460 <= row[0][1] <= 520      # the Council vote row is at y~498;
     if not (council or vote):
         return False                            # not our pane: let the caller press Return
     target = row[0] if vote else sorted(bs, key=lambda b: b[1])[-1]
@@ -633,6 +663,10 @@ def service_turn(idx, tr, timeout, verbose=False):
             time.sleep(1.5)
         elif kind == "cdrom":
             key("Return"); time.sleep(1.0)
+        elif kind == "help":
+            xy = answer_help_page(png)
+            rec["handled"].append(f"help-exit@{int(xy[0])},{int(xy[1])}" if xy else "help:Escape")
+            time.sleep(1.2)
         elif kind == "confirm":
             answer_confirm(words)
         elif kind == "dialog":

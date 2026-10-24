@@ -1,0 +1,27 @@
+win=10485761 start year=2400
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+/home/n100/reverse/smac/scripts/smac_play.py:392: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [unknown] on oe. Ae. 8 we We “Se (ta a — = SS -—— . fay ,
+    [unknown] Econ:50% (+ Liturn) fe | f | Perhaps this Scout Patrol unit should "stay home" to
+    [hud] ve) ee ee tn ap cae ecm porte pie aa Sige af ee ae ae Sates
+turn 0: 2400->2401 OK (40.8s, unknown,vote-yea@311,498/council,unknown,bar@400,498/council,unknown,vote-yea@44,567)
+    [dialog] eer ae PES Se eee tee at ee es oe sae Tol) oot ANE OR Ss
+    [unknown] a Peeper LS ery ee jae Aa) eh a es ae oo Spat g Aran agate
+    [hud] ye ee ote co eee PE Ae, be Sees eae met iets! Ty oe ae a
+    [dialog] eee COMMUNICATIONS OFFICER a oe rn ES | Se __ [have Brother Lal of the Peacekeepers
+    [dialog] , PEACEKEEPERS - MAGNANIMOUS ' E = - ; "So we meet again, Provost Zakharov. |
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+turn 1: 2401->2401 STUCK (152.2s, dialog,hive-bribe:Escape+Return,unknown,hud,confirm-after-press,dialog)
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+    [base] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+turn 2: 2401->2401 STUCK (165.9s, base,ai-phase:base,base,ai-phase:base,base,ai-phase:base)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_m54a40f_20261024_183047.jsonl
+RUN-EXIT 0
