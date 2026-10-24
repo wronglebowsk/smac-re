@@ -67,6 +67,27 @@ the shell, silently deleting those fragments — grep the written region after a
 `execute_code` cell is hard-killed on its own timeout and does NOT stop a turn driver it spawned: `ps -p
 <pid>` for the orphan and stop it with `scripts/smac_play.py --mode stop`.
 
+`<pid>` for the orphan and kill that exact pid — this checkout's `smac_play.py` has **no `--mode stop`**
+flag (an earlier note here claimed otherwise), and never `pkill -f`/`pgrep|kill` by name: your own argv
+matches.
+
+### Evidence budget and delegated decodes (both bite every milestone)
+
+`python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB and **FAILs the gate at 30 MB**, and a
+few trace logs and screenshots can eat the whole margin. Before closing a milestone: drop only files
+>100 KB whose basename appears in no `.md`/`.txt`/`.py` of the repo, with `git rm` (never plain `rm` —
+being in history is what makes deletion safe), and record every kept/dropped file plus size in
+`evidence/<id>_prune_manifest.tsv`. Keep `evidence/m53j_text.txt.gz` (~5.7 MB): it is the disassembly
+cache the whole method runs on.
+
+Delegating a static decode works well (a child can map a 1450-line function in minutes), but a child's
+claims are testimony, not evidence. Re-read from the cached disassembly: (1) every store site it cites,
+with its immediate; (2) the address arithmetic that lets the value reach the field — a store guarded to
+an index past the array is dead code, so check the guard before believing a value exists; (3) the
+function boundary (`zgrep` the `ret`) before accepting any "written in the caller, not the callee"
+attribution, which is where decodes drift. Write the audit to its own short note
+(`evidence/<id>_verify.md`) and label instruction-stream facts VERIFIED and branch semantics INFERRED.
+
 ## Code atlas — read `references/code-atlas.md` before opening Ghidra
 The address/field atlas (base-record offsets, terrain record formula, faction + unit records, the global
 map, pointer-type scale traps, VA→function recipe) lives in `references/code-atlas.md`. Open it when you

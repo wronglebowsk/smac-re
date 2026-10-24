@@ -93,3 +93,18 @@ are authoritative. Nothing runs as a service — search loads the file and does 
   and rebuilds rather than mixing vectors from two models.
 - **Concurrency.** The 258v server 500s on parallel requests (`Infer Request is busy`), so the
   builder is deliberately single-threaded. Do not parallelise it until that bug is fixed.
+
+## What is in the index (M53Q3)
+
+`scripts/index.py build` now chunks **two corpora**:
+- `kind=function` — decompiled Ghidra functions, text = address + size + NAMED row (if any) + summary.
+- `kind=note` — every `## ` section of `SESSION_NOTES.md`, `docs/sessions/*.md`, **every
+  `evidence/*.md`**, **every `skill/references/*.md`**, plus **one chunk per `NAMED.md` row**.
+Long sections are packed into <=1400-char windows, never truncated. Notes carry a +0.02 cosine prior
+(`NOTE_PRIOR`), because curated prose is what a milestone question actually wants.
+`status` hashes all of those files (not just SESSION_NOTES + Ghidra shards), so an edited finding makes
+the index STALE immediately.
+
+Acceptance test (the two queries that used to fail): `search "unit chain link +48 +50 livelock"` returns
+`NAMED.md:484/485` (the two chain walkers) in the top two; `search "energy-only residual in the middle
+pass c4"` returns `evidence/m53p_j_findings.md` first.

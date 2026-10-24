@@ -98,6 +98,7 @@ three swap-commit guards, the nibble bookkeeping) live in the skill at
   0x4e74e9), 0x985bc0 = 2 (one store 0x425fc3), 0x985db8/0x985dc4 = 0, 0x92a27c = 2 (K), 0x92a2a4 = 5,
   0x92a2cc = 59, **0x91c628 is NOT constant (0 → 1 observed)**.
 ## Static-reading kit
+- **Look-up before grep:** `python3 scripts/index.py search "<question>"` — indexes `evidence/*.md`, `skill/references/*.md` and `NAMED.md` (M53Q3); returns file:line leads, cite the file, not the hit.
 - **Cached whole-`.text` disassembly `evidence/m53j_text.txt.gz`** (790702 lines, objdump intel).
   Locate a VA: `zgrep -n '  4e78e9:' evidence/m53j_text.txt.gz`; windows: `gunzip -c … | sed -n 'A,Bp'`
   (plain `sed` on the .gz returns nothing). **VA = file offset + 0x400000.** VA→function:
