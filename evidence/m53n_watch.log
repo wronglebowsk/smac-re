@@ -1,0 +1,980 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4f5a70
+Breakpoint 2 at 0x4e8d60
+Breakpoint 3 at 0x4e92c0
+Hardware assisted breakpoint 4 at 0x4e9331
+Hardware watchpoint 5: *(int *)0x962dec
+Hardware watchpoint 6: *(int *)0x962df0
+Hardware watchpoint 7: *(int *)0x8f0d60
+VISIT n=1 idx=3 d64=0 c6c0=1 c70=1 ret=0x5206d8
+BASEPTR n=2 new=0x95dda0 idx=3 eip=0x4f5a99 d64=0 c6c0=1 c70=1 w0=0x95dda4 w1=0x82f0 w2=0x3 w3=0x82f0 w4=0x10 w5=0xbefe10
+SWEEPIN n=3 cur=3 d64=0 c6c0pre=1 c70pre=1 ret=0x4f5ac8
+RATEIN n=4 cur=3 d64=0 c6c0=0 bc=10 ret=0x4f5ad2
+BCADD n=5 cur=3 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x82f0 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95dda4 w7=0x82f0
+SWEEPIN n=6 cur=3 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=7 cur=3 d64=1 c6c0=0 bc=10 ret=0x4f5b46
+BCADD n=8 cur=3 d64=1 c6c0=0 bc_old=12 w0=0x4 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95dda4 w7=0x82f0
+VISIT n=9 idx=7 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=10 new=0x95e260 idx=7 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e264 w1=0x82f0 w2=0x7 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=11 cur=7 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=12 cur=7 d64=0 c6c0=0 bc=10 ret=0x4f5ad2
+BCADD n=13 cur=7 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x82f0 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e264 w7=0x82f0
+SWEEPIN n=14 cur=7 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=15 cur=7 d64=1 c6c0=0 bc=10 ret=0x4f5b46
+BCADD n=16 cur=7 d64=1 c6c0=0 bc_old=12 w0=0x4 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e264 w7=0x82f0
+VISIT n=17 idx=18 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=18 new=0x95ef70 idx=18 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95ef74 w1=0x82f0 w2=0x12 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=19 cur=18 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=20 cur=18 d64=0 c6c0=0 bc=13 ret=0x4f5ad2
+BCADD n=21 cur=18 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x82f0 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95ef74 w7=0x82f0
+SWEEPIN n=22 cur=18 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=23 cur=18 d64=0 c6c0=0 bc=13 ret=0x4eb6db
+BCADD n=24 cur=18 d64=0 c6c0=0 bc_old=12 w0=0x12 w1=0x12 w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=25 cur=18 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=26 cur=18 d64=1 c6c0=0 bc=13 ret=0x4f5b46
+BCADD n=27 cur=18 d64=1 c6c0=0 bc_old=12 w0=0x4 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95ef74 w7=0x82f0
+VISIT n=28 idx=31 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=29 new=0x95fee0 idx=31 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95fee4 w1=0x82f0 w2=0x1f w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=30 cur=31 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=31 cur=31 d64=0 c6c0=0 bc=12 ret=0x4f5ad2
+BCADD n=32 cur=31 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x82f0 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95fee4 w7=0x82f0
+SWEEPIN n=33 cur=31 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=34 cur=31 d64=1 c6c0=0 bc=12 ret=0x4f5b46
+BCADD n=35 cur=31 d64=1 c6c0=0 bc_old=12 w0=0x4 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95fee4 w7=0x82f0
+VISIT n=36 idx=35 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=37 new=0x9603a0 idx=35 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9603a4 w1=0x82f0 w2=0x23 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=38 cur=35 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=39 cur=35 d64=0 c6c0=0 bc=10 ret=0x4f5ad2
+BCADD n=40 cur=35 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x82f0 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9603a4 w7=0x82f0
+SWEEPIN n=41 cur=35 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=42 cur=35 d64=1 c6c0=0 bc=10 ret=0x4f5b46
+BCADD n=43 cur=35 d64=1 c6c0=0 bc_old=12 w0=0x4 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9603a4 w7=0x82f0
+SWEEPIN n=44 cur=35 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=45 cur=35 d64=2 c6c0=0 bc=10 ret=0x4eb6db
+BCADD n=46 cur=35 d64=2 c6c0=0 bc_old=12 w0=0x23 w1=0x23 w2=0x4 w3=0 w4=0xbedec0 w5=0x4eb6db w6=0xbefd58 w7=0x4f607c
+VISIT n=47 idx=55 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=48 new=0x961b60 idx=55 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961b64 w1=0x82f0 w2=0x37 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=49 cur=55 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=50 cur=55 d64=0 c6c0=0 bc=4 ret=0x4f5ad2
+BCADD n=51 cur=55 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x82f0 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961b64 w7=0x82f0
+SWEEPIN n=52 cur=55 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=53 cur=55 d64=1 c6c0=0 bc=4 ret=0x4f5b46
+BCADD n=54 cur=55 d64=1 c6c0=0 bc_old=12 w0=0x4 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961b64 w7=0x82f0
+VISIT n=55 idx=61 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=56 new=0x962280 idx=61 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962284 w1=0x82f0 w2=0x3d w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=57 cur=61 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=58 cur=61 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=59 cur=61 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x82f0 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962284 w7=0x82f0
+SWEEPIN n=60 cur=61 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=61 cur=61 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=62 cur=61 d64=1 c6c0=0 bc_old=12 w0=0x4 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962284 w7=0x82f0
+SWEEPIN n=63 cur=61 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=64 cur=61 d64=0 c6c0=0 bc=8 ret=0x4eb6db
+BCADD n=65 cur=61 d64=0 c6c0=0 bc_old=12 w0=0x3d w1=0x3d w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+BASEPTR n=66 new=0x95ef70 idx=18 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbefb40 w1=0x4f6075 w2=0x12 w3=0x12 w4=0x10 w5=0x1560
+SWEEPIN n=67 cur=18 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=68 cur=18 d64=0 c6c0=0 bc=13 ret=0x4eb6db
+BCADD n=69 cur=18 d64=0 c6c0=0 bc_old=12 w0=0x12 w1=0x12 w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+BASEPTR n=70 new=0x95e260 idx=7 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbefb40 w1=0x4f6075 w2=0x7 w3=0x7 w4=0x10 w5=0x850
+SWEEPIN n=71 cur=7 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=72 cur=7 d64=0 c6c0=0 bc=10 ret=0x4eb6db
+BCADD n=73 cur=7 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0x7 w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+SWEEPIN n=74 cur=7 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=75 cur=7 d64=0 c6c0=0 bc=10 ret=0x4eb6db
+BCADD n=76 cur=7 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0x7 w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+BASEPTR n=77 new=0x962280 idx=61 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbefb40 w1=0x4f6075 w2=0x3d w3=0x3d w4=0x10 w5=0x4870
+SWEEPIN n=78 cur=61 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=79 cur=61 d64=0 c6c0=0 bc=8 ret=0x4eb6db
+BCADD n=80 cur=61 d64=0 c6c0=0 bc_old=12 w0=0x3d w1=0x3d w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+BASEPTR n=81 new=0x95ef70 idx=18 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbefb40 w1=0x4f6075 w2=0x12 w3=0x12 w4=0x10 w5=0x1560
+SWEEPIN n=82 cur=18 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=83 cur=18 d64=0 c6c0=0 bc=13 ret=0x4eb6db
+BCADD n=84 cur=18 d64=0 c6c0=0 bc_old=12 w0=0x12 w1=0x12 w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+VISIT n=85 idx=4 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=86 new=0x95ded0 idx=4 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95ded4 w1=0xa3ac w2=0x4 w3=0xa3ac w4=0x20 w5=0xbefe10
+SWEEPIN n=87 cur=4 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=88 cur=4 d64=0 c6c0=0 bc=6 ret=0x4f5ad2
+BCADD n=89 cur=4 d64=0 c6c0=0 bc_old=12 w0=0x5 w1=0xa3ac w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95ded4 w7=0xa3ac
+SWEEPIN n=90 cur=4 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=91 cur=4 d64=1 c6c0=0 bc=6 ret=0x4f5b46
+BCADD n=92 cur=4 d64=1 c6c0=0 bc_old=12 w0=0x5 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95ded4 w7=0xa3ac
+VISIT n=93 idx=40 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=94 new=0x960990 idx=40 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960994 w1=0xa3ac w2=0x28 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=95 cur=40 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=96 cur=40 d64=0 c6c0=0 bc=4 ret=0x4f5ad2
+BCADD n=97 cur=40 d64=0 c6c0=0 bc_old=12 w0=0x5 w1=0xa3ac w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960994 w7=0xa3ac
+SWEEPIN n=98 cur=40 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=99 cur=40 d64=1 c6c0=0 bc=4 ret=0x4f5b46
+BCADD n=100 cur=40 d64=1 c6c0=0 bc_old=12 w0=0x5 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960994 w7=0xa3ac
+BASEPTR n=101 new=0x95ded0 idx=4 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbefb40 w1=0x4f6075 w2=0x4 w3=0x4 w4=0x20 w5=0x4c0
+SWEEPIN n=102 cur=4 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=103 cur=4 d64=0 c6c0=0 bc=6 ret=0x4eb6db
+BCADD n=104 cur=4 d64=0 c6c0=0 bc_old=12 w0=0x4 w1=0x4 w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+BASEPTR n=105 new=0x95e5f0 idx=10 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbea930 w1=0x594080 w2=0xa w3=0x3b w4=0 w5=0x31
+SWEEPIN n=106 cur=10 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=107 cur=10 d64=0 c6c0=0 bc=9 ret=0x4eb6db
+BCADD n=108 cur=10 d64=0 c6c0=0 bc_old=12 w0=0xa w1=0x6 w2=0x4 w3=0 w4=0xbe5248 w5=0x4eb6db w6=0xbea930 w7=0x594087
+VISIT n=109 idx=10 d64=0 c6c0=0 c70=0 ret=0x5206d8
+SWEEPIN n=110 cur=10 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=111 cur=10 d64=0 c6c0=0 bc=10 ret=0x4f5ad2
+BCADD n=112 cur=10 d64=0 c6c0=0 bc_old=12 w0=0x6 w1=0xc468 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e5f4 w7=0xc468
+SWEEPIN n=113 cur=10 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=114 cur=10 d64=1 c6c0=0 bc=10 ret=0x4f5b46
+BCADD n=115 cur=10 d64=1 c6c0=0 bc_old=12 w0=0x6 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e5f4 w7=0xc468
+SWEEPIN n=116 cur=10 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=117 cur=10 d64=2 c6c0=0 bc=10 ret=0x4eb6db
+BCADD n=118 cur=10 d64=2 c6c0=0 bc_old=12 w0=0xa w1=0xa w2=0x4 w3=0 w4=0xbedf04 w5=0x4eb6db w6=0xbefd9c w7=0x4f607c
+VISIT n=119 idx=14 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=120 new=0x95eab0 idx=14 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95eab4 w1=0xc468 w2=0xe w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=121 cur=14 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=122 cur=14 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=123 cur=14 d64=0 c6c0=0 bc_old=12 w0=0x6 w1=0xc468 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95eab4 w7=0xc468
+SWEEPIN n=124 cur=14 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=125 cur=14 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=126 cur=14 d64=1 c6c0=0 bc_old=12 w0=0x6 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95eab4 w7=0xc468
+VISIT n=127 idx=20 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=128 new=0x95f1d0 idx=20 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f1d4 w1=0xc468 w2=0x14 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=129 cur=20 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=130 cur=20 d64=0 c6c0=0 bc=13 ret=0x4f5ad2
+BCADD n=131 cur=20 d64=0 c6c0=0 bc_old=12 w0=0x6 w1=0xc468 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f1d4 w7=0xc468
+SWEEPIN n=132 cur=20 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=133 cur=20 d64=1 c6c0=0 bc=13 ret=0x4f5b46
+BCADD n=134 cur=20 d64=1 c6c0=0 bc_old=12 w0=0x6 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f1d4 w7=0xc468
+VISIT n=135 idx=26 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=136 new=0x95f8f0 idx=26 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f8f4 w1=0xc468 w2=0x1a w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=137 cur=26 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=138 cur=26 d64=0 c6c0=0 bc=6 ret=0x4f5ad2
+BCADD n=139 cur=26 d64=0 c6c0=0 bc_old=12 w0=0x6 w1=0xc468 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f8f4 w7=0xc468
+SWEEPIN n=140 cur=26 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=141 cur=26 d64=1 c6c0=0 bc=6 ret=0x4f5b46
+BCADD n=142 cur=26 d64=1 c6c0=0 bc_old=12 w0=0x6 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f8f4 w7=0xc468
+VISIT n=143 idx=37 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=144 new=0x960600 idx=37 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960604 w1=0xc468 w2=0x25 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=145 cur=37 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=146 cur=37 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=147 cur=37 d64=0 c6c0=0 bc_old=12 w0=0x6 w1=0xc468 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960604 w7=0xc468
+SWEEPIN n=148 cur=37 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=149 cur=37 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=150 cur=37 d64=1 c6c0=0 bc_old=12 w0=0x6 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960604 w7=0xc468
+VISIT n=151 idx=39 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=152 new=0x960860 idx=39 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960864 w1=0xc468 w2=0x27 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=153 cur=39 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=154 cur=39 d64=0 c6c0=0 bc=4 ret=0x4f5ad2
+BCADD n=155 cur=39 d64=0 c6c0=0 bc_old=12 w0=0x6 w1=0xc468 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960864 w7=0xc468
+SWEEPIN n=156 cur=39 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=157 cur=39 d64=1 c6c0=0 bc=4 ret=0x4f5b46
+BCADD n=158 cur=39 d64=1 c6c0=0 bc_old=12 w0=0x6 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960864 w7=0xc468
+BASEPTR n=159 new=0x95e5f0 idx=10 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbefb40 w1=0x4f6075 w2=0xa w3=0xa w4=0x40 w5=0xbe0
+SWEEPIN n=160 cur=10 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=161 cur=10 d64=0 c6c0=0 bc=10 ret=0x4eb6db
+BCADD n=162 cur=10 d64=0 c6c0=0 bc_old=12 w0=0xa w1=0xa w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+SWEEPIN n=163 cur=10 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=164 cur=10 d64=0 c6c0=0 bc=10 ret=0x4eb6db
+BCADD n=165 cur=10 d64=0 c6c0=0 bc_old=12 w0=0xa w1=0xa w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+VISIT n=166 idx=6 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=167 new=0x95e130 idx=6 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e134 w1=0xe524 w2=0x6 w3=0xe524 w4=0x80 w5=0xbefe10
+SWEEPIN n=168 cur=6 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=169 cur=6 d64=0 c6c0=0 bc=25 ret=0x4f5ad2
+BCADD n=170 cur=6 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e134 w7=0xe524
+SWEEPIN n=171 cur=6 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=172 cur=6 d64=1 c6c0=0 bc=25 ret=0x4f5b46
+BCADD n=173 cur=6 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e134 w7=0xe524
+VISIT n=174 idx=8 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=175 new=0x95e390 idx=8 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e394 w1=0xe524 w2=0x8 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=176 cur=8 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=177 cur=8 d64=0 c6c0=0 bc=14 ret=0x4f5ad2
+BCADD n=178 cur=8 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e394 w7=0xe524
+SWEEPIN n=179 cur=8 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=180 cur=8 d64=1 c6c0=0 bc=14 ret=0x4f5b46
+BCADD n=181 cur=8 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e394 w7=0xe524
+BASEPTR n=182 new=0x95e130 idx=6 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x6 w3=0x6 w4=0x80 w5=0x720
+SWEEPIN n=183 cur=6 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=184 cur=6 d64=2 c6c0=0 bc=25 ret=0x4eb6db
+BCADD n=185 cur=6 d64=2 c6c0=0 bc_old=12 w0=0x6 w1=0x6 w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=186 new=0x95e390 idx=8 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x8 w3=0x8 w4=0x80 w5=0x980
+SWEEPIN n=187 cur=8 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=188 cur=8 d64=2 c6c0=0 bc=14 ret=0x4eb6db
+BCADD n=189 cur=8 d64=2 c6c0=0 bc_old=12 w0=0x8 w1=0x8 w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=190 new=0x95ebe0 idx=15 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0xf w3=0xf w4=0x80 w5=0x11d0
+SWEEPIN n=191 cur=15 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=192 cur=15 d64=2 c6c0=0 bc=11 ret=0x4eb6db
+BCADD n=193 cur=15 d64=2 c6c0=0 bc_old=12 w0=0xf w1=0xf w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=194 new=0x95ed10 idx=16 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x10 w3=0x10 w4=0x80 w5=0x1300
+SWEEPIN n=195 cur=16 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=196 cur=16 d64=2 c6c0=0 bc=16 ret=0x4eb6db
+BCADD n=197 cur=16 d64=2 c6c0=0 bc_old=12 w0=0x10 w1=0x10 w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=198 new=0x95f430 idx=22 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x16 w3=0x16 w4=0x80 w5=0x1a20
+SWEEPIN n=199 cur=22 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=200 cur=22 d64=2 c6c0=0 bc=8 ret=0x4eb6db
+BCADD n=201 cur=22 d64=2 c6c0=0 bc_old=12 w0=0x16 w1=0x16 w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=202 new=0x960140 idx=33 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x21 w3=0x21 w4=0x80 w5=0x2730
+SWEEPIN n=203 cur=33 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=204 cur=33 d64=2 c6c0=0 bc=17 ret=0x4eb6db
+BCADD n=205 cur=33 d64=2 c6c0=0 bc_old=12 w0=0x21 w1=0x21 w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=206 new=0x960bf0 idx=42 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x2a w3=0x2a w4=0x80 w5=0x31e0
+SWEEPIN n=207 cur=42 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=208 cur=42 d64=2 c6c0=0 bc=8 ret=0x4eb6db
+BCADD n=209 cur=42 d64=2 c6c0=0 bc_old=12 w0=0x2a w1=0x2a w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=210 new=0x960e50 idx=44 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x2c w3=0x2c w4=0x80 w5=0x3440
+SWEEPIN n=211 cur=44 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=212 cur=44 d64=2 c6c0=0 bc=10 ret=0x4eb6db
+BCADD n=213 cur=44 d64=2 c6c0=0 bc_old=12 w0=0x2c w1=0x2c w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=214 new=0x9629a0 idx=67 eip=0x4e3490 d64=2 c6c0=0 c70=0 w0=0xbefd18 w1=0x4f6075 w2=0x43 w3=0x43 w4=0x80 w5=0x4f90
+SWEEPIN n=215 cur=67 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=216 cur=67 d64=2 c6c0=0 bc=7 ret=0x4eb6db
+BCADD n=217 cur=67 d64=2 c6c0=0 bc_old=12 w0=0x43 w1=0x43 w2=0x4 w3=0 w4=0xbede80 w5=0x4eb6db w6=0xbefd18 w7=0x4f607c
+BASEPTR n=218 new=0x95e390 idx=8 eip=0x4f5c41 d64=2 c6c0=0 c70=0 w0=0x95e394 w1=0xe524 w2=0x8 w3=0x95e390 w4=0x1 w5=0xbefe10
+SWEEPIN n=219 cur=8 d64=2 c6c0pre=0 c70pre=0 ret=0x4f5c55
+RATEIN n=220 cur=8 d64=2 c6c0=0 bc=14 ret=0x4f5c5f
+BCADD n=221 cur=8 d64=2 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5c5f w6=0x95e394 w7=0xe524
+VISIT n=222 idx=15 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=223 new=0x95ebe0 idx=15 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95ebe4 w1=0xe524 w2=0xf w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=224 cur=15 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=225 cur=15 d64=0 c6c0=0 bc=11 ret=0x4f5ad2
+BCADD n=226 cur=15 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95ebe4 w7=0xe524
+SWEEPIN n=227 cur=15 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=228 cur=15 d64=1 c6c0=0 bc=11 ret=0x4f5b46
+BCADD n=229 cur=15 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95ebe4 w7=0xe524
+VISIT n=230 idx=16 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=231 new=0x95ed10 idx=16 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95ed14 w1=0xe524 w2=0x10 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=232 cur=16 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=233 cur=16 d64=0 c6c0=0 bc=16 ret=0x4f5ad2
+BCADD n=234 cur=16 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95ed14 w7=0xe524
+SWEEPIN n=235 cur=16 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=236 cur=16 d64=1 c6c0=0 bc=16 ret=0x4f5b46
+BCADD n=237 cur=16 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95ed14 w7=0xe524
+VISIT n=238 idx=22 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=239 new=0x95f430 idx=22 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f434 w1=0xe524 w2=0x16 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=240 cur=22 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=241 cur=22 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=242 cur=22 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f434 w7=0xe524
+SWEEPIN n=243 cur=22 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=244 cur=22 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=245 cur=22 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f434 w7=0xe524
+VISIT n=246 idx=33 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=247 new=0x960140 idx=33 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960144 w1=0xe524 w2=0x21 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=248 cur=33 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=249 cur=33 d64=0 c6c0=0 bc=17 ret=0x4f5ad2
+BCADD n=250 cur=33 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960144 w7=0xe524
+SWEEPIN n=251 cur=33 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=252 cur=33 d64=1 c6c0=0 bc=17 ret=0x4f5b46
+BCADD n=253 cur=33 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960144 w7=0xe524
+VISIT n=254 idx=42 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=255 new=0x960bf0 idx=42 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960bf4 w1=0xe524 w2=0x2a w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=256 cur=42 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=257 cur=42 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=258 cur=42 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960bf4 w7=0xe524
+SWEEPIN n=259 cur=42 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=260 cur=42 d64=0 c6c0=0 bc=8 ret=0x4eb6db
+BCADD n=261 cur=42 d64=0 c6c0=0 bc_old=12 w0=0x2a w1=0x2a w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=262 cur=42 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=263 cur=42 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=264 cur=42 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960bf4 w7=0xe524
+VISIT n=265 idx=44 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=266 new=0x960e50 idx=44 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960e54 w1=0xe524 w2=0x2c w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=267 cur=44 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=268 cur=44 d64=0 c6c0=0 bc=10 ret=0x4f5ad2
+BCADD n=269 cur=44 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960e54 w7=0xe524
+SWEEPIN n=270 cur=44 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=271 cur=44 d64=1 c6c0=0 bc=10 ret=0x4f5b46
+BCADD n=272 cur=44 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960e54 w7=0xe524
+VISIT n=273 idx=67 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=274 new=0x9629a0 idx=67 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9629a4 w1=0xe524 w2=0x43 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=275 cur=67 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=276 cur=67 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=277 cur=67 d64=0 c6c0=0 bc_old=12 w0=0x7 w1=0xe524 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9629a4 w7=0xe524
+SWEEPIN n=278 cur=67 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=279 cur=67 d64=0 c6c0=0 bc=7 ret=0x4eb6db
+BCADD n=280 cur=67 d64=0 c6c0=0 bc_old=12 w0=0x43 w1=0x43 w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=281 cur=67 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=282 cur=67 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=283 cur=67 d64=1 c6c0=0 bc_old=12 w0=0x7 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9629a4 w7=0xe524
+VISIT n=284 idx=1 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=285 new=0x95db40 idx=1 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95db44 w1=0x20bc w2=0x1 w3=0x20bc w4=0x2 w5=0xbefe10
+SWEEPIN n=286 cur=1 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=287 cur=1 d64=0 c6c0=0 bc=19 ret=0x4f5ad2
+BCADD n=288 cur=1 d64=0 c6c0=0 bc_old=12 w0=0x1 w1=0x20bc w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95db44 w7=0x20bc
+SWEEPIN n=289 cur=1 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=290 cur=1 d64=1 c6c0=0 bc=19 ret=0x4f5b46
+BCADD n=291 cur=1 d64=1 c6c0=0 bc_old=12 w0=0x1 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95db44 w7=0x20bc
+VISIT n=292 idx=9 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=293 new=0x95e4c0 idx=9 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e4c4 w1=0x20bc w2=0x9 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=294 cur=9 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=295 cur=9 d64=0 c6c0=0 bc=14 ret=0x4f5ad2
+BCADD n=296 cur=9 d64=0 c6c0=0 bc_old=12 w0=0x1 w1=0x20bc w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e4c4 w7=0x20bc
+SWEEPIN n=297 cur=9 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=298 cur=9 d64=1 c6c0=0 bc=14 ret=0x4f5b46
+BCADD n=299 cur=9 d64=1 c6c0=0 bc_old=12 w0=0x1 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e4c4 w7=0x20bc
+VISIT n=300 idx=47 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=301 new=0x9611e0 idx=47 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9611e4 w1=0x20bc w2=0x2f w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=302 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=303 cur=47 d64=0 c6c0=0 bc=20 ret=0x4f5ad2
+BCADD n=304 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x1 w1=0x20bc w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9611e4 w7=0x20bc
+SWEEPIN n=305 cur=47 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=306 cur=47 d64=1 c6c0=0 bc=20 ret=0x4f5b46
+BCADD n=307 cur=47 d64=1 c6c0=0 bc_old=12 w0=0x1 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9611e4 w7=0x20bc
+SWEEPIN n=308 cur=47 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=309 cur=47 d64=2 c6c0=0 bc=20 ret=0x4f4572
+BCADD n=310 cur=47 d64=2 c6c0=0 bc_old=12 w0=0x1 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x1 w7=0x20bc
+VISIT n=311 idx=52 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=312 new=0x9617d0 idx=52 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9617d4 w1=0x20bc w2=0x34 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=313 cur=52 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=314 cur=52 d64=0 c6c0=0 bc=9 ret=0x4f5ad2
+BCADD n=315 cur=52 d64=0 c6c0=0 bc_old=12 w0=0x1 w1=0x20bc w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9617d4 w7=0x20bc
+SWEEPIN n=316 cur=52 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=317 cur=52 d64=0 c6c0=0 bc=9 ret=0x4eb6db
+BCADD n=318 cur=52 d64=0 c6c0=0 bc_old=12 w0=0x34 w1=0x34 w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=319 cur=52 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=320 cur=52 d64=0 c6c0=0 bc=9 ret=0x4eb6db
+BCADD n=321 cur=52 d64=0 c6c0=0 bc_old=12 w0=0x34 w1=0x34 w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=322 cur=52 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=323 cur=52 d64=1 c6c0=0 bc=9 ret=0x4f5b46
+BCADD n=324 cur=52 d64=1 c6c0=0 bc_old=12 w0=0x1 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9617d4 w7=0x20bc
+VISIT n=325 idx=63 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=326 new=0x9624e0 idx=63 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9624e4 w1=0x20bc w2=0x3f w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=327 cur=63 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=328 cur=63 d64=0 c6c0=0 bc=10 ret=0x4f5ad2
+BCADD n=329 cur=63 d64=0 c6c0=0 bc_old=12 w0=0x1 w1=0x20bc w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9624e4 w7=0x20bc
+SWEEPIN n=330 cur=63 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=331 cur=63 d64=1 c6c0=0 bc=10 ret=0x4f5b46
+BCADD n=332 cur=63 d64=1 c6c0=0 bc_old=12 w0=0x1 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9624e4 w7=0x20bc
+BASEPTR n=333 new=0x9617d0 idx=52 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbefb40 w1=0x4f6075 w2=0x34 w3=0x34 w4=0x2 w5=0x3dc0
+SWEEPIN n=334 cur=52 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=335 cur=52 d64=0 c6c0=0 bc=9 ret=0x4eb6db
+BCADD n=336 cur=52 d64=0 c6c0=0 bc_old=12 w0=0x34 w1=0x34 w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+SWEEPIN n=337 cur=52 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=338 cur=52 d64=0 c6c0=0 bc=9 ret=0x4eb6db
+BCADD n=339 cur=52 d64=0 c6c0=0 bc_old=12 w0=0x34 w1=0x34 w2=0x4 w3=0 w4=0xbedca8 w5=0x4eb6db w6=0xbefb40 w7=0x4f607c
+VISIT n=340 idx=0 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=341 new=0x95da10 idx=0 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95da14 w1=0x4178 w2=0 w3=0x4178 w4=0x4 w5=0xbefe10
+SWEEPIN n=342 cur=0 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=343 cur=0 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=344 cur=0 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95da14 w7=0x4178
+SWEEPIN n=345 cur=0 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=346 cur=0 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=347 cur=0 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95da14 w7=0x4178
+VISIT n=348 idx=2 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=349 new=0x95dc70 idx=2 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95dc74 w1=0x4178 w2=0x2 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=350 cur=2 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=351 cur=2 d64=0 c6c0=0 bc=15 ret=0x4f5ad2
+BCADD n=352 cur=2 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95dc74 w7=0x4178
+SWEEPIN n=353 cur=2 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=354 cur=2 d64=1 c6c0=0 bc=15 ret=0x4f5b46
+BCADD n=355 cur=2 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95dc74 w7=0x4178
+SWEEPIN n=356 cur=2 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=357 cur=2 d64=2 c6c0=0 bc=17 ret=0x4f4572
+BCADD n=358 cur=2 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=359 idx=5 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=360 new=0x95e000 idx=5 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e004 w1=0x4178 w2=0x5 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=361 cur=5 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=362 cur=5 d64=0 c6c0=0 bc=6 ret=0x4f5ad2
+BCADD n=363 cur=5 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e004 w7=0x4178
+SWEEPIN n=364 cur=5 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=365 cur=5 d64=1 c6c0=0 bc=6 ret=0x4f5b46
+BCADD n=366 cur=5 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e004 w7=0x4178
+SWEEPIN n=367 cur=5 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=368 cur=5 d64=2 c6c0=0 bc=6 ret=0x4eb6db
+BCADD n=369 cur=5 d64=2 c6c0=0 bc_old=12 w0=0x5 w1=0x5 w2=0x4 w3=0 w4=0xbedec0 w5=0x4eb6db w6=0xbefd58 w7=0x4f607c
+SWEEPIN n=370 cur=5 d64=2 c6c0pre=0 c70pre=0 ret=0x4f44b2
+RATEIN n=371 cur=5 d64=2 c6c0=0 bc=5 ret=0x4f44bc
+BCADD n=372 cur=5 d64=2 c6c0=0 bc_old=12 w0=0x1 w1=0xfffffff0 w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f44bc w6=0x2 w7=0x4178
+VISIT n=373 idx=11 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=374 new=0x95e720 idx=11 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e724 w1=0x4178 w2=0xb w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=375 cur=11 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=376 cur=11 d64=0 c6c0=0 bc=4 ret=0x4f5ad2
+BCADD n=377 cur=11 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e724 w7=0x4178
+SWEEPIN n=378 cur=11 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=379 cur=11 d64=1 c6c0=0 bc=4 ret=0x4f5b46
+BCADD n=380 cur=11 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e724 w7=0x4178
+SWEEPIN n=381 cur=11 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=382 cur=11 d64=2 c6c0=0 bc=4 ret=0x4eb6db
+BCADD n=383 cur=11 d64=2 c6c0=0 bc_old=12 w0=0xb w1=0xb w2=0x4 w3=0 w4=0xbedf04 w5=0x4eb6db w6=0xbefd9c w7=0x4f607c
+VISIT n=384 idx=12 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=385 new=0x95e850 idx=12 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e854 w1=0x4178 w2=0xc w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=386 cur=12 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=387 cur=12 d64=0 c6c0=0 bc=21 ret=0x4f5ad2
+BCADD n=388 cur=12 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e854 w7=0x4178
+SWEEPIN n=389 cur=12 d64=0 c6c0pre=0 c70pre=0 ret=0x4ee88e
+RATEIN n=390 cur=12 d64=0 c6c0=0 bc=21 ret=0x4ee898
+BCADD n=391 cur=12 d64=0 c6c0=0 bc_old=12 w0=0x95e850 w1=0 w2=0x4 w3=0 w4=0xbefdd4 w5=0x4ee898 w6=0x2 w7=0x4178
+SWEEPIN n=392 cur=12 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=393 cur=12 d64=1 c6c0=0 bc=21 ret=0x4f5b46
+BCADD n=394 cur=12 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e854 w7=0x4178
+SWEEPIN n=395 cur=12 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=396 cur=12 d64=2 c6c0=0 bc=21 ret=0x4eb6db
+BCADD n=397 cur=12 d64=2 c6c0=0 bc_old=12 w0=0xc w1=0xc w2=0x4 w3=0 w4=0xbedec0 w5=0x4eb6db w6=0xbefd58 w7=0x4f607c
+SWEEPIN n=398 cur=12 d64=2 c6c0pre=0 c70pre=0 ret=0x4f44b2
+RATEIN n=399 cur=12 d64=2 c6c0=0 bc=21 ret=0x4f44bc
+BCADD n=400 cur=12 d64=2 c6c0=0 bc_old=12 w0=0x10 w1=0xffffff0f w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f44bc w6=0x2 w7=0x4178
+VISIT n=401 idx=13 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=402 new=0x95e980 idx=13 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95e984 w1=0x4178 w2=0xd w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=403 cur=13 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=404 cur=13 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=405 cur=13 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95e984 w7=0x4178
+SWEEPIN n=406 cur=13 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=407 cur=13 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=408 cur=13 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95e984 w7=0x4178
+VISIT n=409 idx=17 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=410 new=0x95ee40 idx=17 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95ee44 w1=0x4178 w2=0x11 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=411 cur=17 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=412 cur=17 d64=0 c6c0=0 bc=3 ret=0x4f5ad2
+BCADD n=413 cur=17 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95ee44 w7=0x4178
+SWEEPIN n=414 cur=17 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=415 cur=17 d64=1 c6c0=0 bc=3 ret=0x4f5b46
+BCADD n=416 cur=17 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95ee44 w7=0x4178
+VISIT n=417 idx=19 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=418 new=0x95f0a0 idx=19 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f0a4 w1=0x4178 w2=0x13 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=419 cur=19 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=420 cur=19 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=421 cur=19 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f0a4 w7=0x4178
+SWEEPIN n=422 cur=19 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=423 cur=19 d64=0 c6c0=0 bc=7 ret=0x4eb6db
+BCADD n=424 cur=19 d64=0 c6c0=0 bc_old=12 w0=0x13 w1=0x13 w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=425 cur=19 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=426 cur=19 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=427 cur=19 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f0a4 w7=0x4178
+SWEEPIN n=428 cur=19 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=429 cur=19 d64=2 c6c0=0 bc=9 ret=0x4f4572
+BCADD n=430 cur=19 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=431 idx=21 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=432 new=0x95f300 idx=21 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f304 w1=0x4178 w2=0x15 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=433 cur=21 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=434 cur=21 d64=0 c6c0=0 bc=12 ret=0x4f5ad2
+BCADD n=435 cur=21 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f304 w7=0x4178
+SWEEPIN n=436 cur=21 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=437 cur=21 d64=0 c6c0=0 bc=11 ret=0x4eb6db
+BCADD n=438 cur=21 d64=0 c6c0=0 bc_old=12 w0=0x15 w1=0x15 w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=439 cur=21 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=440 cur=21 d64=1 c6c0=0 bc=11 ret=0x4f5b46
+BCADD n=441 cur=21 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f304 w7=0x4178
+SWEEPIN n=442 cur=21 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=443 cur=21 d64=2 c6c0=0 bc=13 ret=0x4f4572
+BCADD n=444 cur=21 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=445 idx=23 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=446 new=0x95f560 idx=23 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f564 w1=0x4178 w2=0x17 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=447 cur=23 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=448 cur=23 d64=0 c6c0=0 bc=27 ret=0x4f5ad2
+BCADD n=449 cur=23 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f564 w7=0x4178
+SWEEPIN n=450 cur=23 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=451 cur=23 d64=1 c6c0=0 bc=27 ret=0x4f5b46
+BCADD n=452 cur=23 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f564 w7=0x4178
+SWEEPIN n=453 cur=23 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=454 cur=23 d64=2 c6c0=0 bc=27 ret=0x4eb6db
+BCADD n=455 cur=23 d64=2 c6c0=0 bc_old=12 w0=0x17 w1=0x17 w2=0x4 w3=0 w4=0xbedf04 w5=0x4eb6db w6=0xbefd9c w7=0x4f607c
+SWEEPIN n=456 cur=23 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=457 cur=23 d64=2 c6c0=0 bc=27 ret=0x4f4572
+BCADD n=458 cur=23 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=459 idx=24 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=460 new=0x95f690 idx=24 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f694 w1=0x4178 w2=0x18 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=461 cur=24 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=462 cur=24 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=463 cur=24 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f694 w7=0x4178
+SWEEPIN n=464 cur=24 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=465 cur=24 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=466 cur=24 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f694 w7=0x4178
+SWEEPIN n=467 cur=24 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=468 cur=24 d64=2 c6c0=0 bc=8 ret=0x4f4572
+BCADD n=469 cur=24 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=470 idx=25 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=471 new=0x95f7c0 idx=25 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95f7c4 w1=0x4178 w2=0x19 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=472 cur=25 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=473 cur=25 d64=0 c6c0=0 bc=29 ret=0x4f5ad2
+BCADD n=474 cur=25 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95f7c4 w7=0x4178
+SWEEPIN n=475 cur=25 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=476 cur=25 d64=1 c6c0=0 bc=29 ret=0x4f5b46
+BCADD n=477 cur=25 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95f7c4 w7=0x4178
+SWEEPIN n=478 cur=25 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=479 cur=25 d64=2 c6c0=0 bc=29 ret=0x4f4572
+BCADD n=480 cur=25 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=481 idx=27 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=482 new=0x95fa20 idx=27 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95fa24 w1=0x4178 w2=0x1b w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=483 cur=27 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=484 cur=27 d64=0 c6c0=0 bc=11 ret=0x4f5ad2
+BCADD n=485 cur=27 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95fa24 w7=0x4178
+SWEEPIN n=486 cur=27 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=487 cur=27 d64=1 c6c0=0 bc=11 ret=0x4f5b46
+BCADD n=488 cur=27 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95fa24 w7=0x4178
+VISIT n=489 idx=28 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=490 new=0x95fb50 idx=28 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95fb54 w1=0x4178 w2=0x1c w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=491 cur=28 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=492 cur=28 d64=0 c6c0=0 bc=24 ret=0x4f5ad2
+BCADD n=493 cur=28 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95fb54 w7=0x4178
+SWEEPIN n=494 cur=28 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=495 cur=28 d64=1 c6c0=0 bc=24 ret=0x4f5b46
+BCADD n=496 cur=28 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95fb54 w7=0x4178
+SWEEPIN n=497 cur=28 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=498 cur=28 d64=2 c6c0=0 bc=24 ret=0x4eb6db
+BCADD n=499 cur=28 d64=2 c6c0=0 bc_old=12 w0=0x1c w1=0x1c w2=0x4 w3=0 w4=0xbedf04 w5=0x4eb6db w6=0xbefd9c w7=0x4f607c
+SWEEPIN n=500 cur=28 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=501 cur=28 d64=2 c6c0=0 bc=25 ret=0x4f4572
+BCADD n=502 cur=28 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=503 idx=29 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=504 new=0x95fc80 idx=29 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95fc84 w1=0x4178 w2=0x1d w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=505 cur=29 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=506 cur=29 d64=0 c6c0=0 bc=11 ret=0x4f5ad2
+BCADD n=507 cur=29 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95fc84 w7=0x4178
+SWEEPIN n=508 cur=29 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=509 cur=29 d64=1 c6c0=0 bc=11 ret=0x4f5b46
+BCADD n=510 cur=29 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95fc84 w7=0x4178
+VISIT n=511 idx=30 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=512 new=0x95fdb0 idx=30 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x95fdb4 w1=0x4178 w2=0x1e w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=513 cur=30 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=514 cur=30 d64=0 c6c0=0 bc=4 ret=0x4f5ad2
+BCADD n=515 cur=30 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x95fdb4 w7=0x4178
+SWEEPIN n=516 cur=30 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=517 cur=30 d64=1 c6c0=0 bc=4 ret=0x4f5b46
+BCADD n=518 cur=30 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x95fdb4 w7=0x4178
+VISIT n=519 idx=32 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=520 new=0x960010 idx=32 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960014 w1=0x4178 w2=0x20 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=521 cur=32 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=522 cur=32 d64=0 c6c0=0 bc=20 ret=0x4f5ad2
+BCADD n=523 cur=32 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960014 w7=0x4178
+SWEEPIN n=524 cur=32 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=525 cur=32 d64=1 c6c0=0 bc=20 ret=0x4f5b46
+BCADD n=526 cur=32 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960014 w7=0x4178
+SWEEPIN n=527 cur=32 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=528 cur=32 d64=2 c6c0=0 bc=21 ret=0x4f4572
+BCADD n=529 cur=32 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=530 idx=34 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=531 new=0x960270 idx=34 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960274 w1=0x4178 w2=0x22 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=532 cur=34 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=533 cur=34 d64=0 c6c0=0 bc=17 ret=0x4f5ad2
+BCADD n=534 cur=34 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960274 w7=0x4178
+SWEEPIN n=535 cur=34 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=536 cur=34 d64=1 c6c0=0 bc=17 ret=0x4f5b46
+BCADD n=537 cur=34 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960274 w7=0x4178
+SWEEPIN n=538 cur=34 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=539 cur=34 d64=2 c6c0=0 bc=17 ret=0x4f4572
+BCADD n=540 cur=34 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=541 idx=36 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=542 new=0x9604d0 idx=36 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9604d4 w1=0x4178 w2=0x24 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=543 cur=36 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=544 cur=36 d64=0 c6c0=0 bc=29 ret=0x4f5ad2
+BCADD n=545 cur=36 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9604d4 w7=0x4178
+SWEEPIN n=546 cur=36 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=547 cur=36 d64=1 c6c0=0 bc=29 ret=0x4f5b46
+BCADD n=548 cur=36 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9604d4 w7=0x4178
+SWEEPIN n=549 cur=36 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=550 cur=36 d64=2 c6c0=0 bc=29 ret=0x4f4572
+BCADD n=551 cur=36 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=552 idx=38 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=553 new=0x960730 idx=38 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960734 w1=0x4178 w2=0x26 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=554 cur=38 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=555 cur=38 d64=0 c6c0=0 bc=16 ret=0x4f5ad2
+BCADD n=556 cur=38 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960734 w7=0x4178
+SWEEPIN n=557 cur=38 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=558 cur=38 d64=1 c6c0=0 bc=16 ret=0x4f5b46
+BCADD n=559 cur=38 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960734 w7=0x4178
+SWEEPIN n=560 cur=38 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=561 cur=38 d64=2 c6c0=0 bc=16 ret=0x4f4572
+BCADD n=562 cur=38 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=563 idx=41 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=564 new=0x960ac0 idx=41 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960ac4 w1=0x4178 w2=0x29 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=565 cur=41 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=566 cur=41 d64=0 c6c0=0 bc=5 ret=0x4f5ad2
+BCADD n=567 cur=41 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960ac4 w7=0x4178
+SWEEPIN n=568 cur=41 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=569 cur=41 d64=1 c6c0=0 bc=5 ret=0x4f5b46
+BCADD n=570 cur=41 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960ac4 w7=0x4178
+SWEEPIN n=571 cur=41 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=572 cur=41 d64=2 c6c0=0 bc=5 ret=0x4f4572
+BCADD n=573 cur=41 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=574 idx=43 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=575 new=0x960d20 idx=43 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960d24 w1=0x4178 w2=0x2b w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=576 cur=43 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=577 cur=43 d64=0 c6c0=0 bc=15 ret=0x4f5ad2
+BCADD n=578 cur=43 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960d24 w7=0x4178
+SWEEPIN n=579 cur=43 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=580 cur=43 d64=1 c6c0=0 bc=15 ret=0x4f5b46
+BCADD n=581 cur=43 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960d24 w7=0x4178
+SWEEPIN n=582 cur=43 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=583 cur=43 d64=2 c6c0=0 bc=16 ret=0x4f4572
+BCADD n=584 cur=43 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=585 idx=45 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=586 new=0x960f80 idx=45 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x960f84 w1=0x4178 w2=0x2d w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=587 cur=45 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=588 cur=45 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=589 cur=45 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x960f84 w7=0x4178
+SWEEPIN n=590 cur=45 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=591 cur=45 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=592 cur=45 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x960f84 w7=0x4178
+SWEEPIN n=593 cur=45 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=594 cur=45 d64=2 c6c0=0 bc=8 ret=0x4f4572
+BCADD n=595 cur=45 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=596 idx=46 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=597 new=0x9610b0 idx=46 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9610b4 w1=0x4178 w2=0x2e w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=598 cur=46 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=599 cur=46 d64=0 c6c0=0 bc=3 ret=0x4f5ad2
+BCADD n=600 cur=46 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9610b4 w7=0x4178
+SWEEPIN n=601 cur=46 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=602 cur=46 d64=1 c6c0=0 bc=3 ret=0x4f5b46
+BCADD n=603 cur=46 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9610b4 w7=0x4178
+VISIT n=604 idx=48 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=605 new=0x961310 idx=48 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961314 w1=0x4178 w2=0x30 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=606 cur=48 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=607 cur=48 d64=0 c6c0=0 bc=12 ret=0x4f5ad2
+BCADD n=608 cur=48 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961314 w7=0x4178
+SWEEPIN n=609 cur=48 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=610 cur=48 d64=1 c6c0=0 bc=12 ret=0x4f5b46
+BCADD n=611 cur=48 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961314 w7=0x4178
+SWEEPIN n=612 cur=48 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=613 cur=48 d64=2 c6c0=0 bc=13 ret=0x4f4572
+BCADD n=614 cur=48 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=615 idx=49 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=616 new=0x961440 idx=49 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961444 w1=0x4178 w2=0x31 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=617 cur=49 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=618 cur=49 d64=0 c6c0=0 bc=14 ret=0x4f5ad2
+BCADD n=619 cur=49 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961444 w7=0x4178
+SWEEPIN n=620 cur=49 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=621 cur=49 d64=1 c6c0=0 bc=14 ret=0x4f5b46
+BCADD n=622 cur=49 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961444 w7=0x4178
+SWEEPIN n=623 cur=49 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=624 cur=49 d64=2 c6c0=0 bc=15 ret=0x4f4572
+BCADD n=625 cur=49 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=626 idx=50 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=627 new=0x961570 idx=50 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961574 w1=0x4178 w2=0x32 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=628 cur=50 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=629 cur=50 d64=0 c6c0=0 bc=6 ret=0x4f5ad2
+BCADD n=630 cur=50 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961574 w7=0x4178
+SWEEPIN n=631 cur=50 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=632 cur=50 d64=1 c6c0=0 bc=6 ret=0x4f5b46
+BCADD n=633 cur=50 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961574 w7=0x4178
+SWEEPIN n=634 cur=50 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=635 cur=50 d64=2 c6c0=0 bc=8 ret=0x4f4572
+BCADD n=636 cur=50 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=637 idx=51 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=638 new=0x9616a0 idx=51 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9616a4 w1=0x4178 w2=0x33 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=639 cur=51 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=640 cur=51 d64=0 c6c0=0 bc=4 ret=0x4f5ad2
+BCADD n=641 cur=51 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9616a4 w7=0x4178
+SWEEPIN n=642 cur=51 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=643 cur=51 d64=1 c6c0=0 bc=4 ret=0x4f5b46
+BCADD n=644 cur=51 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9616a4 w7=0x4178
+SWEEPIN n=645 cur=51 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=646 cur=51 d64=2 c6c0=0 bc=4 ret=0x4eb6db
+BCADD n=647 cur=51 d64=2 c6c0=0 bc_old=12 w0=0x33 w1=0x33 w2=0x4 w3=0 w4=0xbedf04 w5=0x4eb6db w6=0xbefd9c w7=0x4f607c
+SWEEPIN n=648 cur=51 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=649 cur=51 d64=2 c6c0=0 bc=5 ret=0x4f4572
+BCADD n=650 cur=51 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=651 idx=53 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=652 new=0x961900 idx=53 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961904 w1=0x4178 w2=0x35 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=653 cur=53 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=654 cur=53 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=655 cur=53 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961904 w7=0x4178
+SWEEPIN n=656 cur=53 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=657 cur=53 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=658 cur=53 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961904 w7=0x4178
+SWEEPIN n=659 cur=53 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=660 cur=53 d64=2 c6c0=0 bc=8 ret=0x4f4572
+BCADD n=661 cur=53 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=662 idx=54 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=663 new=0x961a30 idx=54 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961a34 w1=0x4178 w2=0x36 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=664 cur=54 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=665 cur=54 d64=0 c6c0=0 bc=14 ret=0x4f5ad2
+BCADD n=666 cur=54 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961a34 w7=0x4178
+SWEEPIN n=667 cur=54 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=668 cur=54 d64=1 c6c0=0 bc=14 ret=0x4f5b46
+BCADD n=669 cur=54 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961a34 w7=0x4178
+SWEEPIN n=670 cur=54 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=671 cur=54 d64=2 c6c0=0 bc=14 ret=0x4eb6db
+BCADD n=672 cur=54 d64=2 c6c0=0 bc_old=12 w0=0x36 w1=0x36 w2=0x4 w3=0 w4=0xbedec0 w5=0x4eb6db w6=0xbefd58 w7=0x4f607c
+SWEEPIN n=673 cur=54 d64=2 c6c0pre=0 c70pre=0 ret=0x4f44b2
+RATEIN n=674 cur=54 d64=2 c6c0=0 bc=12 ret=0x4f44bc
+BCADD n=675 cur=54 d64=2 c6c0=0 bc_old=12 w0=0x1 w1=0xfffffff0 w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f44bc w6=0x2 w7=0x4178
+VISIT n=676 idx=56 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=677 new=0x961c90 idx=56 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961c94 w1=0x4178 w2=0x38 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=678 cur=56 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=679 cur=56 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=680 cur=56 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961c94 w7=0x4178
+SWEEPIN n=681 cur=56 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=682 cur=56 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=683 cur=56 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961c94 w7=0x4178
+SWEEPIN n=684 cur=56 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=685 cur=56 d64=2 c6c0=0 bc=7 ret=0x4eb6db
+BCADD n=686 cur=56 d64=2 c6c0=0 bc_old=12 w0=0x38 w1=0x38 w2=0x4 w3=0 w4=0xbedf04 w5=0x4eb6db w6=0xbefd9c w7=0x4f607c
+SWEEPIN n=687 cur=56 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=688 cur=56 d64=2 c6c0=0 bc=9 ret=0x4f4572
+BCADD n=689 cur=56 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=690 idx=57 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=691 new=0x961dc0 idx=57 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961dc4 w1=0x4178 w2=0x39 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=692 cur=57 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=693 cur=57 d64=0 c6c0=0 bc=4 ret=0x4f5ad2
+BCADD n=694 cur=57 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961dc4 w7=0x4178
+SWEEPIN n=695 cur=57 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=696 cur=57 d64=1 c6c0=0 bc=4 ret=0x4f5b46
+BCADD n=697 cur=57 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961dc4 w7=0x4178
+SWEEPIN n=698 cur=57 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=699 cur=57 d64=2 c6c0=0 bc=5 ret=0x4f4572
+BCADD n=700 cur=57 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=701 idx=58 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=702 new=0x961ef0 idx=58 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x961ef4 w1=0x4178 w2=0x3a w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=703 cur=58 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=704 cur=58 d64=0 c6c0=0 bc=6 ret=0x4f5ad2
+BCADD n=705 cur=58 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x961ef4 w7=0x4178
+SWEEPIN n=706 cur=58 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=707 cur=58 d64=1 c6c0=0 bc=6 ret=0x4f5b46
+BCADD n=708 cur=58 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x961ef4 w7=0x4178
+SWEEPIN n=709 cur=58 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=710 cur=58 d64=2 c6c0=0 bc=8 ret=0x4f4572
+BCADD n=711 cur=58 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=712 idx=59 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=713 new=0x962020 idx=59 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962024 w1=0x4178 w2=0x3b w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=714 cur=59 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=715 cur=59 d64=0 c6c0=0 bc=12 ret=0x4f5ad2
+BCADD n=716 cur=59 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962024 w7=0x4178
+SWEEPIN n=717 cur=59 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=718 cur=59 d64=1 c6c0=0 bc=12 ret=0x4f5b46
+BCADD n=719 cur=59 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962024 w7=0x4178
+SWEEPIN n=720 cur=59 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=721 cur=59 d64=2 c6c0=0 bc=12 ret=0x4eb6db
+BCADD n=722 cur=59 d64=2 c6c0=0 bc_old=12 w0=0x3b w1=0x3b w2=0x4 w3=0 w4=0xbedf04 w5=0x4eb6db w6=0xbefd9c w7=0x4f607c
+SWEEPIN n=723 cur=59 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=724 cur=59 d64=2 c6c0=0 bc=13 ret=0x4f4572
+BCADD n=725 cur=59 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=726 idx=60 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=727 new=0x962150 idx=60 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962154 w1=0x4178 w2=0x3c w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=728 cur=60 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=729 cur=60 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=730 cur=60 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962154 w7=0x4178
+SWEEPIN n=731 cur=60 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=732 cur=60 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=733 cur=60 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962154 w7=0x4178
+SWEEPIN n=734 cur=60 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=735 cur=60 d64=2 c6c0=0 bc=10 ret=0x4f4572
+BCADD n=736 cur=60 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=737 idx=62 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=738 new=0x9623b0 idx=62 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9623b4 w1=0x4178 w2=0x3e w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=739 cur=62 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=740 cur=62 d64=0 c6c0=0 bc=12 ret=0x4f5ad2
+BCADD n=741 cur=62 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9623b4 w7=0x4178
+SWEEPIN n=742 cur=62 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=743 cur=62 d64=1 c6c0=0 bc=12 ret=0x4f5b46
+BCADD n=744 cur=62 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9623b4 w7=0x4178
+SWEEPIN n=745 cur=62 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=746 cur=62 d64=2 c6c0=0 bc=13 ret=0x4f4572
+BCADD n=747 cur=62 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=748 idx=64 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=749 new=0x962610 idx=64 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962614 w1=0x4178 w2=0x40 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=750 cur=64 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=751 cur=64 d64=0 c6c0=0 bc=5 ret=0x4f5ad2
+BCADD n=752 cur=64 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962614 w7=0x4178
+SWEEPIN n=753 cur=64 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=754 cur=64 d64=1 c6c0=0 bc=5 ret=0x4f5b46
+BCADD n=755 cur=64 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962614 w7=0x4178
+SWEEPIN n=756 cur=64 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=757 cur=64 d64=2 c6c0=0 bc=6 ret=0x4f4572
+BCADD n=758 cur=64 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=759 idx=65 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=760 new=0x962740 idx=65 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962744 w1=0x4178 w2=0x41 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=761 cur=65 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=762 cur=65 d64=0 c6c0=0 bc=13 ret=0x4f5ad2
+BCADD n=763 cur=65 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962744 w7=0x4178
+SWEEPIN n=764 cur=65 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=765 cur=65 d64=1 c6c0=0 bc=13 ret=0x4f5b46
+BCADD n=766 cur=65 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962744 w7=0x4178
+SWEEPIN n=767 cur=65 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=768 cur=65 d64=2 c6c0=0 bc=15 ret=0x4f4572
+BCADD n=769 cur=65 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=770 idx=66 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=771 new=0x962870 idx=66 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962874 w1=0x4178 w2=0x42 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=772 cur=66 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=773 cur=66 d64=0 c6c0=0 bc=8 ret=0x4f5ad2
+BCADD n=774 cur=66 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962874 w7=0x4178
+SWEEPIN n=775 cur=66 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=776 cur=66 d64=1 c6c0=0 bc=8 ret=0x4f5b46
+BCADD n=777 cur=66 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962874 w7=0x4178
+SWEEPIN n=778 cur=66 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=779 cur=66 d64=2 c6c0=0 bc=10 ret=0x4f4572
+BCADD n=780 cur=66 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=781 idx=68 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=782 new=0x962ad0 idx=68 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962ad4 w1=0x4178 w2=0x44 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=783 cur=68 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=784 cur=68 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=785 cur=68 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962ad4 w7=0x4178
+SWEEPIN n=786 cur=68 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=787 cur=68 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=788 cur=68 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962ad4 w7=0x4178
+SWEEPIN n=789 cur=68 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=790 cur=68 d64=2 c6c0=0 bc=11 ret=0x4f4572
+BCADD n=791 cur=68 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=792 idx=69 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=793 new=0x962c00 idx=69 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962c04 w1=0x4178 w2=0x45 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=794 cur=69 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=795 cur=69 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=796 cur=69 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962c04 w7=0x4178
+SWEEPIN n=797 cur=69 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=798 cur=69 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=799 cur=69 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962c04 w7=0x4178
+SWEEPIN n=800 cur=69 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=801 cur=69 d64=2 c6c0=0 bc=8 ret=0x4f4572
+BCADD n=802 cur=69 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=803 idx=71 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=804 new=0x962e60 idx=71 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962e64 w1=0x4178 w2=0x47 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=805 cur=71 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=806 cur=71 d64=0 c6c0=0 bc=5 ret=0x4f5ad2
+BCADD n=807 cur=71 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962e64 w7=0x4178
+SWEEPIN n=808 cur=71 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=809 cur=71 d64=1 c6c0=0 bc=5 ret=0x4f5b46
+BCADD n=810 cur=71 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962e64 w7=0x4178
+VISIT n=811 idx=72 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=812 new=0x962f90 idx=72 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962f94 w1=0x4178 w2=0x48 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=813 cur=72 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=814 cur=72 d64=0 c6c0=0 bc=7 ret=0x4f5ad2
+BCADD n=815 cur=72 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962f94 w7=0x4178
+SWEEPIN n=816 cur=72 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=817 cur=72 d64=1 c6c0=0 bc=7 ret=0x4f5b46
+BCADD n=818 cur=72 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962f94 w7=0x4178
+SWEEPIN n=819 cur=72 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=820 cur=72 d64=2 c6c0=0 bc=8 ret=0x4f4572
+BCADD n=821 cur=72 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=822 idx=73 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=823 new=0x9630c0 idx=73 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9630c4 w1=0x4178 w2=0x49 w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=824 cur=73 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=825 cur=73 d64=0 c6c0=0 bc=9 ret=0x4f5ad2
+BCADD n=826 cur=73 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9630c4 w7=0x4178
+SWEEPIN n=827 cur=73 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=828 cur=73 d64=1 c6c0=0 bc=9 ret=0x4f5b46
+BCADD n=829 cur=73 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9630c4 w7=0x4178
+SWEEPIN n=830 cur=73 d64=2 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=831 cur=73 d64=2 c6c0=0 bc=9 ret=0x4eb6db
+BCADD n=832 cur=73 d64=2 c6c0=0 bc_old=12 w0=0x49 w1=0x49 w2=0x4 w3=0 w4=0xbedec0 w5=0x4eb6db w6=0xbefd58 w7=0x4f607c
+SWEEPIN n=833 cur=73 d64=2 c6c0pre=0 c70pre=0 ret=0x4f44b2
+RATEIN n=834 cur=73 d64=2 c6c0=0 bc=9 ret=0x4f44bc
+BCADD n=835 cur=73 d64=2 c6c0=0 bc_old=12 w0=0x10 w1=0xffffff0f w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f44bc w6=0x2 w7=0x4178
+VISIT n=836 idx=74 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=837 new=0x9631f0 idx=74 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x9631f4 w1=0x4178 w2=0x4a w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=838 cur=74 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=839 cur=74 d64=0 c6c0=0 bc=2 ret=0x4f5ad2
+BCADD n=840 cur=74 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x9631f4 w7=0x4178
+SWEEPIN n=841 cur=74 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=842 cur=74 d64=0 c6c0=0 bc=2 ret=0x4eb6db
+BCADD n=843 cur=74 d64=0 c6c0=0 bc_old=12 w0=0x4a w1=0x4a w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=844 cur=74 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=845 cur=74 d64=0 c6c0=0 bc=2 ret=0x4eb6db
+BCADD n=846 cur=74 d64=0 c6c0=0 bc_old=12 w0=0x4a w1=0x4a w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=847 cur=74 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=848 cur=74 d64=1 c6c0=0 bc=2 ret=0x4f5b46
+BCADD n=849 cur=74 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x9631f4 w7=0x4178
+SWEEPIN n=850 cur=74 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=851 cur=74 d64=2 c6c0=0 bc=3 ret=0x4f4572
+BCADD n=852 cur=74 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+VISIT n=853 idx=75 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=854 new=0x963320 idx=75 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x963324 w1=0x4178 w2=0x4b w3=0 w4=0xbefdf4 w5=0xbefe10
+SWEEPIN n=855 cur=75 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+RATEIN n=856 cur=75 d64=0 c6c0=0 bc=2 ret=0x4f5ad2
+BCADD n=857 cur=75 d64=0 c6c0=0 bc_old=12 w0=0x2 w1=0x4178 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x963324 w7=0x4178
+SWEEPIN n=858 cur=75 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=859 cur=75 d64=0 c6c0=0 bc=2 ret=0x4eb6db
+BCADD n=860 cur=75 d64=0 c6c0=0 bc_old=12 w0=0x4b w1=0x4b w2=0x4 w3=0 w4=0xbe8ab8 w5=0x4eb6db w6=0xbea950 w7=0x4f607c
+SWEEPIN n=861 cur=75 d64=1 c6c0pre=0 c70pre=0 ret=0x4f5b3c
+RATEIN n=862 cur=75 d64=1 c6c0=0 bc=2 ret=0x4f5b46
+BCADD n=863 cur=75 d64=1 c6c0=0 bc_old=12 w0=0x2 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x963324 w7=0x4178
+SWEEPIN n=864 cur=75 d64=2 c6c0pre=0 c70pre=0 ret=0x4f4568
+RATEIN n=865 cur=75 d64=2 c6c0=0 bc=3 ret=0x4f4572
+BCADD n=866 cur=75 d64=2 c6c0=0 bc_old=12 w0=0x2 w1=0xffffffff w2=0x4 w3=0 w4=0xbefdd4 w5=0x4f4572 w6=0x2 w7=0x4178
+SWEEPIN n=867 cur=75 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=868 cur=75 d64=0 c6c0=0 bc=2 ret=0x4eb6db
+BCADD n=869 cur=75 d64=0 c6c0=0 bc_old=12 w0=0x4b w1=0x4b w2=0x4 w3=0 w4=0xbedc84 w5=0x4eb6db w6=0xbefb1c w7=0x4f607c
+BASEPTR n=870 new=0x9611e0 idx=47 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbef8f8 w1=0x4f6075 w2=0x2f w3=0x2f w4=0x2 w5=0x37d0
+SWEEPIN n=871 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=872 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=873 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=874 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=875 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=876 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=877 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=878 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=879 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=880 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=881 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=882 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=883 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=884 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=885 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=886 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=887 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=888 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=889 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=890 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=891 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=892 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=893 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=894 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+SWEEPIN n=895 cur=47 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=896 cur=47 d64=0 c6c0=0 bc=20 ret=0x4eb6db
+BCADD n=897 cur=47 d64=0 c6c0=0 bc_old=12 w0=0x2f w1=0x2f w2=0x4 w3=0 w4=0xbeda60 w5=0x4eb6db w6=0xbef8f8 w7=0x4f607c
+BASEPTR n=898 new=0x95ef70 idx=18 eip=0x4e3490 d64=0 c6c0=0 c70=0 w0=0xbea780 w1=0x4f6075 w2=0x12 w3=0x12 w4=0x10 w5=0x1560
+SWEEPIN n=899 cur=18 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=900 cur=18 d64=0 c6c0=0 bc=13 ret=0x4eb6db
+BCADD n=901 cur=18 d64=0 c6c0=0 bc_old=12 w0=0x12 w1=0x12 w2=0x4 w3=0 w4=0xbe88e8 w5=0x4eb6db w6=0xbea780 w7=0x4f607c
+SWEEPIN n=902 cur=18 d64=0 c6c0pre=0 c70pre=0 ret=0x4eb6d1
+RATEIN n=903 cur=18 d64=0 c6c0=0 bc=13 ret=0x4eb6db
+BCADD n=904 cur=18 d64=0 c6c0=0 bc_old=12 w0=0x12 w1=0x12 w2=0x4 w3=0 w4=0xbe88e8 w5=0x4eb6db w6=0xbea780 w7=0x4f607c
+VISIT n=905 idx=70 d64=0 c6c0=0 c70=0 ret=0x5206d8
+BASEPTR n=906 new=0x962d30 idx=70 eip=0x4f5a99 d64=0 c6c0=0 c70=0 w0=0x962d34 w1=0x6234 w2=0x46 w3=0x6234 w4=0x8 w5=0xbefe10
+SWEEPIN n=907 cur=70 d64=0 c6c0pre=0 c70pre=0 ret=0x4f5ac8
+BCCHG n=908 new=0 eip=0x4e79a8 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0xbefdd4 w4=0x4e8eff w5=0x3 w6=0xffffffff w7=0x1000
+C0CHG n=909 new=0 eip=0x4e79a8 cur=70 d64=0 c70=0 c6c0=1 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x20
+BCCHG n=910 new=3 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=911 new=2 eip=0x4e7c19 cur=70 d64=0 c70=0 c6c0=1 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x3
+BCCHG n=912 new=4 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+BCCHG n=913 new=5 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+BCCHG n=914 new=6 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=915 new=3 eip=0x4e7c19 cur=70 d64=0 c70=0 c6c0=1 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+BCCHG n=916 new=7 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=917 new=4 eip=0x4e7c19 cur=70 d64=0 c70=0 c6c0=1 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+BCCHG n=918 new=8 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=919 new=5 eip=0x4e7c19 cur=70 d64=0 c70=0 c6c0=1 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+BCCHG n=920 new=10 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=921 new=6 eip=0x4e7c19 cur=70 d64=0 c70=0 c6c0=1 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x2
+BCCHG n=922 new=11 eip=0x4e7c19 cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=923 new=7 eip=0x4e7c19 cur=70 d64=0 c70=0 c6c0=1 w0=0x3 w1=0x6234 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+RATEIN n=924 cur=70 d64=0 c6c0=1 bc=11 ret=0x4f5ad2
+BCADD n=925 cur=70 d64=0 c6c0=1 bc_old=11 w0=0x3 w1=0x6234 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962d34 w7=0x6234
+BCCHG n=926 new=12 eip=0x4e934a cur=70 d64=0 c6c0=1 c70=0 w0=0x3 w1=0x6234 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5ad2 w6=0x962d34 w7=0x6234
+SWEEPIN n=927 cur=70 d64=1 c6c0pre=1 c70pre=0 ret=0x4f5b3c
+BCCHG n=928 new=0 eip=0x4e79a8 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0xbefdd4 w4=0x4e8eff w5=0x3 w6=0xffffffff w7=0x1000
+C0CHG n=929 new=0 eip=0x4e79a8 cur=70 d64=1 c70=0 c6c0=1 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x20
+BCCHG n=930 new=3 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=931 new=2 eip=0x4e7c19 cur=70 d64=1 c70=0 c6c0=1 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x3
+BCCHG n=932 new=4 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+BCCHG n=933 new=5 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+BCCHG n=934 new=6 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=935 new=3 eip=0x4e7c19 cur=70 d64=1 c70=0 c6c0=1 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+BCCHG n=936 new=7 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=937 new=4 eip=0x4e7c19 cur=70 d64=1 c70=0 c6c0=1 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+BCCHG n=938 new=8 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=939 new=5 eip=0x4e7c19 cur=70 d64=1 c70=0 c6c0=1 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+BCCHG n=940 new=10 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=941 new=6 eip=0x4e7c19 cur=70 d64=1 c70=0 c6c0=1 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x2
+BCCHG n=942 new=11 eip=0x4e7c19 cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0
+C0CHG n=943 new=7 eip=0x4e7c19 cur=70 d64=1 c70=0 c6c0=1 w0=0x3 w1=0x1 w2=0x46 w3=0 w4=0x4e8eff w5=0x3 w6=0x3 w7=0x1
+RATEIN n=944 cur=70 d64=1 c6c0=1 bc=11 ret=0x4f5b46
+BCADD n=945 cur=70 d64=1 c6c0=1 bc_old=11 w0=0x3 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962d34 w7=0x6234
+BCCHG n=946 new=12 eip=0x4e934a cur=70 d64=1 c6c0=1 c70=0 w0=0x3 w1=0x1 w2=0x4 w3=0 w4=0xbefdf0 w5=0x4f5b46 w6=0x962d34 w7=0x6234
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]

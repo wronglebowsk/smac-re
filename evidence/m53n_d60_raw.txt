@@ -1,0 +1,939 @@
+14451:  40a0f9:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+14505:  40a18e:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+14541:  40a1f2:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+14592:  40a278:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+14630:  40a2e9:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+14692:  40a39f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+14772:  40a4a4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+15014:  40a792:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+15017:  40a7a0:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+15233:  40a9ff:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+15428:  40ad6c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+15499:  40ae3f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+15607:  40b00a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+15626:  40b04f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+15633:  40b064:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+15702:  40b184:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+15809:  40b2f8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16025:  40b647:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+16052:  40b699:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16110:  40b748:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+16123:  40b774:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+16275:  40b9ed:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+16322:  40ba91:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+16330:  40baa8:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+16337:  40babd:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+16351:  40baf2:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+16359:  40bb11:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+16382:  40bb57:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+16387:  40bb70:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+16417:  40bbc9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16423:  40bbdd:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+16425:  40bbe6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16438:  40bc10:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+16454:  40bc48:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+16459:  40bc60:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+16599:  40be3a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16625:  40be88:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+16650:  40bed6:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+16714:  40bf97:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16808:  40c0ca:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+16873:  40c1c8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16883:  40c1e7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+16897:  40c20f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+17117:  40c5a4:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+17123:  40c5b6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+17143:  40c604:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+17153:  40c621:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+17159:  40c634:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+17173:  40c661:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+17763:  40cf58:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+18363:  40d7a6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+18497:  40d915:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+18646:  40dada:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+18730:  40dbe6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+18830:  40dd21:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+19031:  40dff6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+19093:  40e0b5:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+19231:  40e259:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+21148:  40fb18:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+21197:  40fb9d:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+21214:  40fbd4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+21413:  40fe75:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+21525:  40ffed:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+21538:  41001a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+21876:  4103ab:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+21902:  41041d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+22153:  410732:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+22171:  41076f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+22220:  41080e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+22331:  410943:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+22416:  410a65:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+22463:  410aeb:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+22698:  410d6d:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+22721:  410dbd:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+23218:  41146c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+23312:  411585:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+23336:  4115da:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+23399:  4116a2:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+23631:  411992:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+24061:  411ee2:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+24192:  4120a5:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+24637:  41266f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+24647:  41268a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+24887:  4128ec:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+24896:  412908:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+24941:  41298b:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+25092:  412b81:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+25227:  412d5b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+25284:  412dfe:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+25607:  41325c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+26449:  413df3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+26681:  4140ca:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+27382:  41493c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+27891:  414f3e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+28023:  4150e6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+28121:  41522f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+29079:  415e23:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+29104:  415e68:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+29120:  415e98:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+29239:  415ff3:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+29593:  416451:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+29624:  4164c1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+29973:  4168f7:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+30081:  416a64:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+30092:  416a87:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+30245:  416c48:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30256:  416c6f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+30269:  416ca4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30307:  416d31:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+30458:  416ef0:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30470:  416f16:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30475:  416f2a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30480:  416f3b:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+30483:  416f46:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30508:  416f8d:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+30517:  416fac:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30519:  416fb4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+30529:  416fd8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30531:  416fe4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30540:  417007:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30544:  417018:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30554:  41703b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30559:  41704f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30564:  417060:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+30567:  41706b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30581:  4170a8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+30868:  41740f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+31636:  417c4e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+31742:  417d44:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+31766:  417d86:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+31773:  417d9e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+31779:  417db3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+31794:  417de6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+31801:  417df9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+31804:  417e08:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+31812:  417e20:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+31831:  417e53:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+31852:  417e99:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+31859:  417eae:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32054:  41820a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32065:  418232:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32075:  418252:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32190:  418489:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32299:  4185f0:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32319:  41862d:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+32325:  418641:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32379:  41870e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32398:  418754:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32405:  418769:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32443:  4187e1:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32451:  4187fb:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32457:  418814:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32476:  418859:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32511:  4188e3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32551:  418957:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32575:  4189a9:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+32611:  418a33:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32640:  418aa9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32644:  418ab8:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32650:  418acd:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32664:  418afd:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32670:  418b0e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32676:  418b24:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32688:  418b4e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+32691:  418b5a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32696:  418b6c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32705:  418b86:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32726:  418bcb:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32782:  418c92:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+32807:  418cda:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32849:  418d7d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+32908:  418e59:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+33040:  4190b7:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+33190:  41936d:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+33316:  4194d9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+33324:  4194f0:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+33336:  419523:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+33573:  419992:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+33815:  419d89:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+33831:  419db6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+33845:  419de0:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+33880:  419e3f:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+33937:  419f18:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+33986:  419fb5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34180:  41a2e4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+34307:  41a505:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+34344:  41a582:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+34347:  41a590:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+34349:  41a599:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34591:  41a9ac:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+34770:  41abd4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34777:  41abee:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34781:  41ac03:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34785:  41ac18:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34791:  41ac2f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34795:  41ac41:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34799:  41ac53:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34803:  41ac68:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34809:  41ac7f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34816:  41ac97:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34823:  41acaf:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34830:  41acc7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34837:  41acdf:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34842:  41acf5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34847:  41ad0b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34852:  41ad21:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34856:  41ad31:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34860:  41ad45:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34865:  41ad59:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34870:  41ad71:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34873:  41ad7d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34894:  41adc4:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+34899:  41addc:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34906:  41adf1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+34908:  41adfa:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34913:  41ae12:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+34956:  41ae88:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+35070:  41afd8:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+35213:  41b18d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+35230:  41b1cc:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+35237:  41b1e0:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+35254:  41b212:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+35259:  41b226:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+35285:  41b276:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+35308:  41b2ba:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+35324:  41b2f4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+35784:  41b824:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+35796:  41b858:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+35819:  41b8a9:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+35838:  41b8eb:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+35876:  41b95a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+35881:  41b971:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+35932:  41ba0c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+35974:  41ba8a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+35987:  41bab5:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+36005:  41baf0:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+36012:  41bb05:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+36034:  41bb51:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+36066:  41bbbe:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+36077:  41bbe5:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+36098:  41bc27:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+36653:  41c228:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+36796:  41c39a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+36827:  41c3f2:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+36926:  41c50f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+36984:  41c5e8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+37220:  41c96e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+37330:  41cb09:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+37372:  41cbac:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+37571:  41cf53:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+37626:  41d028:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+37670:  41d0d0:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+37776:  41d2c1:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+37819:  41d36a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+37979:  41d5e6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38111:  41d80e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38117:  41d81f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38154:  41d8a4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38166:  41d8d3:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38195:  41d922:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38203:  41d93e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38258:  41da08:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38292:  41daa3:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38299:  41dab9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38302:  41dac7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38309:  41dae1:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38348:  41db9a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38382:  41dc10:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38395:  41dc3c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38401:  41dc4f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38404:  41dc5b:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38406:  41dc64:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38408:  41dc6c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38410:  41dc75:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38454:  41dd15:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38465:  41dd40:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+38474:  41dd5a:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+38484:  41dd79:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38490:  41dd90:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38768:  41e225:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38855:  41e33a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38886:  41e398:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38902:  41e3c9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+38918:  41e3fc:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+38934:  41e430:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+38950:  41e465:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+39064:  41e5da:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+39079:  41e608:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+39094:  41e637:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+39129:  41e69b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+39834:  41eeeb:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+40024:  41f0e4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+40043:  41f11b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+40065:  41f16a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+40114:  41f20f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+40136:  41f260:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+88748:  4463c5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+189992:  48f141:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+190039:  48f203:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+190105:  48f307:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+190108:  48f311:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+190169:  48f407:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+190222:  48f4e2:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+190230:  48f4ff:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+190238:  48f516:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+190241:  48f522:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+190274:  48f5af:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+190277:  48f5bd:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+196926:  49507e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197367:  495561:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+197370:  49556d:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197549:  4957f3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+197568:  49582b:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197576:  495845:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197618:  4958e5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+197622:  4958f6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197627:  49590a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197631:  49591e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+197635:  49592e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197655:  49597a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197659:  49598d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197685:  4959e4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197689:  4959f7:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197789:  495b51:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197839:  495bfa:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197872:  495c6b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+197877:  495c7b:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197889:  495c9e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+197918:  495d0b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+197937:  495d54:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+197941:  495d67:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+199402:  497003:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+199407:  497015:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+199621:  497310:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+199630:  49732a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+199635:  49733d:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203010:  49a07b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203015:  49a08d:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203020:  49a09f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+203023:  49a0ae:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203026:  49a0bb:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+203033:  49a0d7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203040:  49a0f2:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203048:  49a114:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+203051:  49a123:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203053:  49a12b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+203056:  49a13a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203064:  49a158:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203067:  49a166:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203070:  49a171:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203073:  49a17f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203076:  49a18a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203079:  49a198:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203082:  49a1a3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203085:  49a1b1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203339:  49a516:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+203343:  49a524:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203392:  49a5cb:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+203406:  49a5f4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203409:  49a5fe:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+203411:  49a607:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+203414:  49a612:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+204301:  49b2e6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+204304:  49b2f4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+204312:  49b30f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+204315:  49b31a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+204526:  49b597:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+204529:  49b5a3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+204532:  49b5ae:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+211665:  4a1ac5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+211666:  4a1aca:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+211693:  4a1b23:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+211696:  4a1b31:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+211700:  4a1b40:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+211706:  4a1b51:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+211832:  4a1d25:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+211837:  4a1d36:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212047:  4a2008:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212057:  4a202b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+212075:  4a206d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+212087:  4a209e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+212091:  4a20ac:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+212097:  4a20c1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212103:  4a20db:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212143:  4a2162:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+212169:  4a21bc:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+212210:  4a224f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+212230:  4a2297:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212276:  4a2342:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212280:  4a2354:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212281:  4a235a:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+212297:  4a239c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+212303:  4a23b7:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+212306:  4a23c9:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+212308:  4a23d3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+212311:  4a23e4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+212367:  4a24b1:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+212422:  4a2584:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+212425:  4a258f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+212598:  4a2781:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+221099:  4a9cb7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+221102:  4a9cc5:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+221104:  4a9cce:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+221107:  4a9cdc:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+221118:  4a9d07:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+221121:  4a9d15:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+221124:  4a9d20:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+221127:  4a9d2e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+221130:  4a9d39:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+221133:  4a9d47:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+221136:  4a9d52:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+221139:  4a9d60:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+221208:  4a9e5d:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+221215:  4a9e7a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+221218:  4a9e85:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+224424:  4aca0c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+224432:  4aca26:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+224483:  4acaea:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+224491:  4acb05:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+224540:  4acbbf:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+224548:  4acbda:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+224597:  4acc97:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+224605:  4accb1:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+224654:  4acd6d:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+224662:  4acd88:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+224711:  4ace45:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+224719:  4ace5e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+224768:  4acf1a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+224771:  4acf24:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+224865:  4ad06f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+254723:  4c30d5:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+255292:  4c37e5:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+293892:  4e348a:	89 15 60 0d 8f 00    	mov    DWORD PTR ds:0x8f0d60,edx
+294661:  4e3c84:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+294675:  4e3cab:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+296261:  4e4dd6:	89 0d 60 0d 8f 00    	mov    DWORD PTR ds:0x8f0d60,ecx
+297542:  4e5dc3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+297640:  4e5ecc:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+298139:  4e63b6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+298189:  4e6456:	83 3d 64 0d 8f 00 01 	cmp    DWORD PTR ds:0x8f0d64,0x1
+298407:  4e66ed:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+299589:  4e749b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+299784:  4e7683:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+299837:  4e7712:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+299872:  4e7769:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+299905:  4e77b3:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+299958:  4e7842:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+299993:  4e7899:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+300034:  4e78ee:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+300062:  4e794c:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300065:  4e795e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+300082:  4e7995:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300119:  4e7a07:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+300126:  4e7a19:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300134:  4e7a31:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300148:  4e7a6c:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300156:  4e7a85:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300175:  4e7ac8:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300184:  4e7ae4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+300192:  4e7b04:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300252:  4e7bd3:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300267:  4e7bfe:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+300277:  4e7c1c:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300297:  4e7c68:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300314:  4e7ca9:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300341:  4e7d0c:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300367:  4e7d61:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300372:  4e7d7a:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300384:  4e7daa:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300436:  4e7e61:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300451:  4e7e8c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+300461:  4e7eaa:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300609:  4e8095:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300621:  4e80b5:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300640:  4e80eb:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300864:  4e83a2:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300910:  4e8431:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300942:  4e849e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+300947:  4e84b6:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+300951:  4e84c9:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301001:  4e857b:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301016:  4e85a6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+301026:  4e85c4:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301111:  4e86f7:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301126:  4e8722:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+301136:  4e8740:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301189:  4e87f9:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301204:  4e8824:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+301214:  4e8842:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301276:  4e890f:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301291:  4e893a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+301301:  4e8958:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301346:  4e89f0:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301361:  4e8a1b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+301371:  4e8a39:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301389:  4e8a7b:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301426:  4e8ae9:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+301430:  4e8aff:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+301438:  4e8b1c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+301441:  4e8b2b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+301446:  4e8b3e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+301452:  4e8b56:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+301456:  4e8b63:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+301600:  4e8d25:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+301605:  4e8d35:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+301631:  4e8d66:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+301679:  4e8e14:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+301901:  4e90e6:	83 3d 64 0d 8f 00 01 	cmp    DWORD PTR ds:0x8f0d64,0x1
+301922:  4e912e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+302074:  4e92c6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302109:  4e9331:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302114:  4e934a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302120:  4e9368:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302125:  4e9381:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302137:  4e93ab:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302138:  4e93b0:	83 3d 64 0d 8f 00 01 	cmp    DWORD PTR ds:0x8f0d64,0x1
+302165:  4e93f6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302192:  4e9445:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302262:  4e950f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302272:  4e9536:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302275:  4e9544:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302280:  4e955d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302283:  4e956c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302288:  4e9585:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302291:  4e9596:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302298:  4e95ab:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302413:  4e9704:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302439:  4e974e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+302444:  4e975e:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+302449:  4e9772:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+302458:  4e9793:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+302465:  4e97ad:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+302516:  4e9856:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+302549:  4e9896:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302578:  4e98fa:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302642:  4e99c2:	83 3d 64 0d 8f 00 01 	cmp    DWORD PTR ds:0x8f0d64,0x1
+302860:  4e9be6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302916:  4e9c87:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+302948:  4e9ce5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+302967:  4e9d15:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+303075:  4e9e42:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+303157:  4e9f35:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303160:  4e9f3f:	83 3d 64 0d 8f 00 01 	cmp    DWORD PTR ds:0x8f0d64,0x1
+303171:  4e9f6b:	83 3d 64 0d 8f 00 01 	cmp    DWORD PTR ds:0x8f0d64,0x1
+303200:  4e9fcc:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303203:  4e9fdb:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303211:  4e9ff6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+303226:  4ea023:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+303239:  4ea04b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303252:  4ea073:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303267:  4ea0ab:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303284:  4ea0e2:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303308:  4ea131:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303322:  4ea173:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303335:  4ea19b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303348:  4ea1c3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303363:  4ea1fa:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303380:  4ea230:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303404:  4ea27e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303415:  4ea2b8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303420:  4ea2ce:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303433:  4ea2f6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303446:  4ea31e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303461:  4ea356:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303478:  4ea38d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303502:  4ea3dc:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303532:  4ea44d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303540:  4ea46a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303550:  4ea489:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303576:  4ea4e7:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303588:  4ea518:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303596:  4ea535:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303635:  4ea5be:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303648:  4ea5e6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303661:  4ea60e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303676:  4ea645:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303693:  4ea67b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303717:  4ea6c9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303747:  4ea73b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303751:  4ea74f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303755:  4ea75f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303761:  4ea773:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+303763:  4ea77f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+303776:  4ea7a6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303789:  4ea7ce:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303804:  4ea806:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303821:  4ea83d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303845:  4ea88c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+303995:  4eaa16:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304004:  4eaa36:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304008:  4eaa48:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304015:  4eaa64:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304018:  4eaa73:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304035:  4eaab4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304089:  4eab70:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304169:  4eac4c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304189:  4eac90:	a1 64 0d 8f 00       	mov    eax,ds:0x8f0d64
+304190:  4eac95:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304216:  4eacef:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304219:  4eacfe:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304226:  4ead1f:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+304264:  4ead8f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304289:  4eaddb:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304292:  4eade9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304299:  4eae06:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304323:  4eae4f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304327:  4eae60:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304405:  4eaf41:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304415:  4eaf64:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304422:  4eaf89:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304431:  4eafa7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304465:  4eb017:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304709:  4eb2ef:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304718:  4eb310:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304730:  4eb33e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304738:  4eb360:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304742:  4eb373:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304754:  4eb3a2:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304765:  4eb3d0:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+304773:  4eb3eb:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+304806:  4eb456:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+304820:  4eb48a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+304893:  4eb570:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+304913:  4eb5b3:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+304935:  4eb5fe:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+304954:  4eb63e:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+304966:  4eb66c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305028:  4eb6f6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305080:  4eb7ae:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+305099:  4eb7ec:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305152:  4eb8a1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+305197:  4eb948:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+305287:  4eba78:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305297:  4eba97:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305313:  4ebacc:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+305354:  4ebb40:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305360:  4ebb52:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+305406:  4ebbd9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+305455:  4ebc72:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305472:  4ebcbc:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+305491:  4ebd00:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+305529:  4ebd71:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+305614:  4ebe53:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+305703:  4ebefb:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+305801:  4ec035:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+305805:  4ec043:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+305838:  4ec09b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+305846:  4ec0ba:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+305859:  4ec0f5:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+305939:  4ec209:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+306087:  4ec3ef:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+306103:  4ec421:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+306225:  4ec5ae:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+306230:  4ec5c1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+306254:  4ec622:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+306348:  4ec73e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+306403:  4ec7e8:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+306438:  4ec861:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+306662:  4ecb60:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+306797:  4ecd28:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+306809:  4ecd5c:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+306846:  4ecdd3:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+306932:  4eced1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+307040:  4ed010:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+307200:  4ed239:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+307433:  4ed4fa:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+307625:  4ed73f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+307656:  4ed79e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+307811:  4ed98e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+307998:  4edbf2:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+308050:  4edc98:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+308152:  4eddf4:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+308272:  4edf75:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+308279:  4edf8d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+308283:  4edfa0:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+308698:  4ee416:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+308776:  4ee517:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+308783:  4ee52c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+308824:  4ee595:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+308896:  4ee681:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+308913:  4ee6b5:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+308930:  4ee6f7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+308942:  4ee714:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+309001:  4ee7c3:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+309019:  4ee7ff:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+309027:  4ee818:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+309051:  4ee863:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+309053:  4ee870:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+309071:  4ee8b4:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+309077:  4ee8ca:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+309097:  4ee91b:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+309205:  4eea83:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+309307:  4eeba7:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310280:  4ef700:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+310288:  4ef720:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+310342:  4ef7f9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+310384:  4ef883:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+310417:  4ef8f4:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+310427:  4ef916:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+310468:  4ef9a2:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+310511:  4efa55:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310660:  4efcf8:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310668:  4efd12:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310680:  4efd3e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310696:  4efd6f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310710:  4efd9e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310773:  4efea2:	89 0d 60 0d 8f 00    	mov    DWORD PTR ds:0x8f0d60,ecx
+310781:  4efec9:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310787:  4efee0:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+310811:  4eff23:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+310817:  4eff3b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+310857:  4effe1:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310868:  4f000e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+310872:  4f0023:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+311039:  4f0216:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311046:  4f0232:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311057:  4f025a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311062:  4f0269:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311117:  4f034d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311140:  4f039d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+311209:  4f0488:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+311220:  4f04ae:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+311279:  4f056e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311543:  4f0961:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+311595:  4f0a37:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+311669:  4f0b57:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+311744:  4f0ca9:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+311768:  4f0cec:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+311771:  4f0cfb:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311775:  4f0d0c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311907:  4f0ec7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311911:  4f0ed5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+311937:  4f0f2b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+312000:  4f1000:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+312116:  4f11cf:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+312127:  4f11f4:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+312160:  4f127c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+312171:  4f12a1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+312192:  4f12e8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+312216:  4f1332:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+312301:  4f147d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+312337:  4f14e6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+312994:  4f1dcf:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+313011:  4f1e06:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+313030:  4f1e46:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+313255:  4f21f9:	89 0d 60 0d 8f 00    	mov    DWORD PTR ds:0x8f0d60,ecx
+313557:  4f26e6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+313610:  4f2778:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+313637:  4f27d4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+313648:  4f2805:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+313791:  4f29c7:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+313813:  4f2a14:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+313828:  4f2a53:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314010:  4f2c82:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+314072:  4f2d30:	8b 3d 60 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d60
+314141:  4f2e08:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+314151:  4f2e25:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314200:  4f2ead:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+314302:  4f300c:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+314378:  4f311e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+314415:  4f31ad:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+314500:  4f32f6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314574:  4f33db:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314588:  4f33f6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314665:  4f34c6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314771:  4f35e6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+314788:  4f360e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314795:  4f3623:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314822:  4f3676:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+314885:  4f373b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314896:  4f3765:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+314977:  4f386c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315111:  4f39ec:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315147:  4f3a72:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315161:  4f3a9a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+315168:  4f3ab7:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+315170:  4f3ac0:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+315190:  4f3af8:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+315193:  4f3b06:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+315259:  4f3bda:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+315263:  4f3bec:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315581:  4f3ff6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+315629:  4f4060:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+315652:  4f40a5:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+315663:  4f40c4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+315675:  4f40f2:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+315701:  4f4148:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315729:  4f419e:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315740:  4f41c5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315768:  4f41f6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315830:  4f42b6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315846:  4f42ea:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315875:  4f4346:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315888:  4f4371:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315938:  4f4426:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+315961:  4f446a:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+315973:  4f4496:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+315982:  4f44c6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+316029:  4f457c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+316132:  4f46dc:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+316155:  4f4720:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+316167:  4f474c:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+316239:  4f47f6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+316372:  4f498a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+316401:  4f49e3:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+316444:  4f4a56:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+316489:  4f4adc:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+316507:  4f4b24:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+316741:  4f4e18:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+317035:  4f51c5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+317085:  4f526c:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+317420:  4f567e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+317748:  4f5a93:	89 0d 60 0d 8f 00    	mov    DWORD PTR ds:0x8f0d60,ecx
+317765:  4f5ae6:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+317768:  4f5af4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+317787:  4f5b2c:	89 35 64 0d 8f 00    	mov    DWORD PTR ds:0x8f0d64,esi
+317794:  4f5b50:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+317836:  4f5bdd:	c7 05 64 0d 8f 00 02 	mov    DWORD PTR ds:0x8f0d64,0x2
+317841:  4f5bf3:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+317864:  4f5c3c:	a3 60 0d 8f 00       	mov    ds:0x8f0d60,eax
+317875:  4f5c6e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+317904:  4f5cdb:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+317930:  4f5d43:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+317940:  4f5d60:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+317948:  4f5d78:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+317970:  4f5dc4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+317991:  4f5e05:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+318023:  4f5e71:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318027:  4f5e82:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318031:  4f5e90:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318040:  4f5eb9:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318065:  4f5f09:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318067:  4f5f11:	c7 05 64 0d 8f 00 00 	mov    DWORD PTR ds:0x8f0d64,0x0
+318074:  4f5f27:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318084:  4f5f42:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318090:  4f5f54:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318096:  4f5f65:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318105:  4f5f87:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318255:  4f612f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318663:  4f66ce:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+318746:  4f67ef:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+318764:  4f682a:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+318846:  4f694f:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+319050:  4f6c2d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+319081:  4f6c91:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+319568:  4f730c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+319856:  4f76e6:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+319902:  4f7768:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+319953:  4f780a:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+320047:  4f7902:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+320074:  4f7959:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+320078:  4f7969:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+320178:  4f7ab4:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+320187:  4f7ade:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+320191:  4f7af3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+320274:  4f7bf4:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+320375:  4f7d3b:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+320592:  4f8000:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+320790:  4f8271:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+320969:  4f84ae:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+321276:  4f8843:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+321450:  4f8a67:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+321584:  4f8c00:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+321749:  4f8db1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+321995:  4f9084:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+322076:  4f9198:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+322171:  4f92ea:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+322207:  4f9362:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+322334:  4f94d6:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+322364:  4f9541:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+322436:  4f960c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+322490:  4f96a1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+322576:  4f979e:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+322728:  4f9973:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+322827:  4f9a86:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+323442:  4fa232:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+323613:  4fa471:	8b 35 60 0d 8f 00    	mov    esi,DWORD PTR ds:0x8f0d60
+323954:  4fa84c:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+323997:  4fa8e3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+324106:  4faa44:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+324314:  4faca8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+324325:  4facc5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+324839:  4fb293:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+324920:  4fb388:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+324930:  4fb3ac:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+324957:  4fb410:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+325063:  4fb57c:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+325200:  4fb753:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+325253:  4fb7ef:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+325291:  4fb875:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+325353:  4fb933:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+325397:  4fb9c1:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+325446:  4fba4b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+325503:  4fbafb:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+325532:  4fbb61:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+325549:  4fbb92:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+325567:  4fbbc5:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+325647:  4fbcca:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+325683:  4fbd3b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+325723:  4fbdc3:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+325929:  4fc01d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+326227:  4fc3b7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+326260:  4fc427:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+326278:  4fc467:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+326298:  4fc4a4:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+326532:  4fc749:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+326616:  4fc856:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+326729:  4fc991:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+326803:  4fca82:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+326813:  4fcab1:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+326831:  4fcaf5:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+326836:  4fcb0f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+326950:  4fcc9f:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+327318:  4fd0c3:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+327360:  4fd140:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+327395:  4fd1ac:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+327434:  4fd218:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+327450:  4fd24e:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+327541:  4fd361:	8b 1d 60 0d 8f 00    	mov    ebx,DWORD PTR ds:0x8f0d60
+327629:  4fd46c:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+327677:  4fd510:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+327718:  4fd58f:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+327794:  4fd68d:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+327809:  4fd6ba:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+349703:  50e68b:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+354189:  51213b:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354193:  512148:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354200:  512165:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354204:  512176:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354212:  512196:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354219:  5121b8:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354226:  5121d7:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354233:  5121f5:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+354246:  512227:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+355571:  513369:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+355581:  51338d:	8b 0d 60 0d 8f 00    	mov    ecx,DWORD PTR ds:0x8f0d60
+371460:  520024:	8b 15 60 0d 8f 00    	mov    edx,DWORD PTR ds:0x8f0d60
+371604:  52021c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
+518486:  59409c:	a1 60 0d 8f 00       	mov    eax,ds:0x8f0d60
