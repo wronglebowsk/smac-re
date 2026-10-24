@@ -1,0 +1,3093 @@
+4042dd ADDR  FUN_004042c0           mov eax,ds:0x985ab8
+404353 ADDR  FUN_004042c0           mov eax,ds:0x985ab8
+40456d ADDR  FUN_00404550           mov eax,ds:0x985ab8
+40468d ADDR  FUN_00404550           mov edx,DWORD PTR ds:0x985ab8
+407468 ADDR  FUN_004073b0           mov ecx,DWORD PTR ds:0x985ac0
+40b29d ADDR  FUN_0040a990           mov eax,ds:0x985ae8
+40b639 ADDR  FUN_0040a990           mov eax,ds:0x985ae8
+40ba05 LOAD  FUN_0040b960           test BYTE PTR ds:0x985ae8,0x80
+40bc92 LOAD  FUN_0040b960           test BYTE PTR ds:0x985b10,al
+40c0df LOAD  FUN_0040c010           test BYTE PTR ds:0x985ae8,0x80
+40c95d LOAD  FUN_0040c8d0           test DWORD PTR ds:0x985abc,0x40000
+40ce18 LOAD  FUN_0040c8d0           test BYTE PTR ds:0x985ae8,0x40
+40d063 ADDR  FUN_0040c8d0           mov eax,ds:0x985ae8
+40d7c5 LOAD  FUN_0040d7a0           test BYTE PTR ds:0x985ae8,0x80
+40d923 LOAD  FUN_0040d7a0           test BYTE PTR ds:0x985ae8,0x80
+40da4d ADDR  FUN_0040d7a0           mov eax,ds:0x985af4
+40daef LOAD  FUN_0040d7a0           test BYTE PTR ds:0x985ae8,0x80
+40dafe ADDR  FUN_0040d7a0           mov ecx,DWORD PTR ds:0x985af4
+40dc5e ADDR  FUN_0040d7a0           mov eax,ds:0x985af4
+40dcd4 ADDR  FUN_0040d7a0           mov eax,ds:0x985af4
+40e0a6 ADDR  FUN_0040ddd0           mov ecx,DWORD PTR ds:0x985af0
+40e229 ADDR  FUN_0040ddd0           mov ecx,DWORD PTR ds:0x985af0
+40e692 ADDR  FUN_0040ddd0           mov ecx,DWORD PTR ds:0x985af0
+40ece4 LOAD  FUN_0040e720           test BYTE PTR ds:0x985ae8,0x80
+40ed49 LOAD  FUN_0040e720           test BYTE PTR ds:0x985ae8,0x80
+40f66f LOAD  FUN_0040e720           test BYTE PTR ds:0x985ae8,0x80
+41032e LOAD  FUN_0040f830           mov eax,DWORD PTR [esi*4+0x985aa0]
+41140e ADDR  FUN_00411180           mov esi,0x985b3c
+41141f LOAD  FUN_00411180           cmp esi,0x985b3c
+41142d LOAD  FUN_00411180           cmp esi,0x985b28
+41149f LOAD  FUN_00411180           cmp esi,0x985bc0
+4115a9 LOAD  FUN_00411180           mov eax,DWORD PTR [esi*4+0x985aa0]
+411b47 ADDR  FUN_00411840           mov eax,ds:0x985ae8
+416ff3 LOAD  FUN_00416f60           test BYTE PTR ds:0x985b10,dl
+417422 LOAD  FUN_004170e0           test BYTE PTR ds:0x985ae8,0x80
+417c62 LOAD  FUN_004175b0           test BYTE PTR ds:0x985ae8,0x80
+417ff5 LOAD  FUN_00417ee0           test BYTE PTR ds:0x985ae8,0x80
+4186de ADDR  FUN_00417ee0           mov eax,ds:0x985ae8
+4193de LOAD  FUN_00417ee0           cmp DWORD PTR ds:0x985af4,ecx
+419432 ADDR  FUN_00417ee0           mov eax,ds:0x985af4
+419542 ADDR  FUN_00417ee0           mov eax,ds:0x985acc
+41954d ADDR  FUN_00417ee0           mov ds:0x985acc,eax
+419d07 LOAD  FUN_00419c30           test BYTE PTR ds:0x985ae8,0x80
+419e4f ADDR  FUN_00419c30           mov eax,ds:0x985bb8
+41a2d5 ADDR  FUN_00419c30           mov ecx,DWORD PTR ds:0x985ae8
+41a996 LOAD  FUN_0041a8f0           test BYTE PTR ds:0x985ae8,0x80
+41ae9f LOAD  FUN_0041ae70           test BYTE PTR ds:0x985ae8,0x80
+41aec9 ADDR  FUN_0041ae70           mov ecx,DWORD PTR ds:0x985af4
+41af81 ADDR  FUN_0041ae70           mov eax,ds:0x985af4
+41afef LOAD  FUN_0041afc0           test BYTE PTR ds:0x985ae8,0x80
+41b019 ADDR  FUN_0041afc0           mov ecx,DWORD PTR ds:0x985af4
+41b0d1 ADDR  FUN_0041afc0           mov eax,ds:0x985af4
+41b1a0 LOAD  FUN_0041b110           test BYTE PTR ds:0x985ae8,0x80
+41b256 ADDR  FUN_0041b110           mov bl,BYTE PTR ds:0x985b10
+41bb78 ADDR  FUN_0041b780           mov eax,ds:0x985af4
+41bbc4 ADDR  FUN_0041b780           mov eax,ds:0x985af4
+41c38d LOAD  FUN_0041c2f0           test BYTE PTR ds:0x985ae8,0x80
+41c90d ADDR  FUN_0041c8b0           mov edi,0x985b3c
+41c9f2 LOAD  FUN_0041c8b0           cmp esi,0x985acc
+41cb04 ADDR  FUN_0041c8b0           mov eax,ds:0x985af4
+41cba7 ADDR  FUN_0041c8b0           mov eax,ds:0x985af4
+41cd7d STORE FUN_0041c8b0           mov DWORD PTR [esi*4+0x985b3c],eax
+41d02e ADDR  FUN_0041cf20           mov eax,ds:0x985af4
+41d0d6 ADDR  FUN_0041cf20           mov eax,ds:0x985af4
+41d2d9 ADDR  FUN_0041cf20           mov esi,DWORD PTR ds:0x985af4
+41d32c ADDR  FUN_0041cf20           mov ebx,DWORD PTR ds:0x985af4
+41e34f LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e3ad LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e3dc LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e410 LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e445 LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e478 LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e5ed LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e61c LOAD  FUN_0041e160           test BYTE PTR ds:0x985ae8,0x80
+41e765 LOAD  FUN_0041e730           test BYTE PTR ds:0x985ae8,0x40
+41e7ab ADDR  FUN_0041e730           mov eax,ds:0x985ab8
+41e7f4 LOAD  FUN_0041e730           test DWORD PTR ds:0x985ab8,esi
+41f110 LOAD  FUN_0041f0e0           test BYTE PTR ds:0x985b10,al
+41f161 ADDR  FUN_0041f0e0           mov al,ds:0x985b10
+41f205 ADDR  FUN_0041f0e0           mov cl,BYTE PTR ds:0x985b10
+41f256 ADDR  FUN_0041f0e0           mov cl,BYTE PTR ds:0x985b10
+422fbe ADDR  FUN_00422730           mov eax,ds:0x985ae8
+425d14 LOAD  FUN_00425be0           cmp eax,DWORD PTR ds:0x985bc0
+425db9 LOAD  FUN_00425be0           add edx,DWORD PTR ds:0x985afc
+425df1 ADDR  FUN_00425be0           mov ecx,DWORD PTR ds:0x985bc0
+425e0d ADDR  FUN_00425be0           mov edx,DWORD PTR ds:0x985bc0
+425ed8 ADDR  FUN_00425be0           mov edx,DWORD PTR ds:0x985afc
+425fc3 ADDR  FUN_00425be0           mov DWORD PTR ds:0x985bc0,ecx
+42605e ADDR  FUN_00426010           mov dl,BYTE PTR ds:0x985b10
+4260cf ADDR  FUN_00426010           mov dl,BYTE PTR ds:0x985b11
+4260e9 ADDR  FUN_00426010           mov cl,BYTE PTR ds:0x985b10
+426228 ADDR  FUN_004261a0           mov cl,BYTE PTR ds:0x985b10
+42623b ADDR  FUN_004261a0           mov cl,BYTE PTR ds:0x985b10
+4262ca ADDR  FUN_004261a0           mov cl,BYTE PTR ds:0x985b10
+4262dd ADDR  FUN_004261a0           mov cl,BYTE PTR ds:0x985b10
+426399 ADDR  FUN_004261a0           mov cl,BYTE PTR ds:0x985b11
+42646d ADDR  FUN_004261a0           mov eax,ds:0x985ae8
+4264f7 ADDR  FUN_004261a0           mov al,ds:0x985b10
+426563 ADDR  FUN_004261a0           mov dl,BYTE PTR ds:0x985b10
+42675a ADDR  FUN_004266c0           mov cl,BYTE PTR ds:0x985b10
+426778 ADDR  FUN_004266c0           mov cl,BYTE PTR ds:0x985b11
+4268cb ADDR  FUN_004266c0           mov dl,BYTE PTR ds:0x985b11
+4269a5 ADDR  FUN_004266c0           mov dl,BYTE PTR ds:0x985b10
+4269b8 ADDR  FUN_004266c0           mov dl,BYTE PTR ds:0x985b10
+4269e1 ADDR  FUN_004266c0           mov al,ds:0x985b10
+426a86 ADDR  FUN_004266c0           mov cl,BYTE PTR ds:0x985b11
+426bfd ADDR  FUN_004266c0           mov dl,BYTE PTR ds:0x985b11
+426dde ADDR  FUN_00426dc0           mov al,ds:0x985b10
+426df6 ADDR  FUN_00426dc0           mov eax,ds:0x985ae8
+426e02 ADDR  FUN_00426dc0           mov ecx,DWORD PTR ds:0x985ae8
+426ea2 ADDR  FUN_00426dc0           mov dl,BYTE PTR ds:0x985b10
+426f51 LOAD  FUN_00426f40           cmp DWORD PTR ds:0x985bc0,0x0
+426f5e LOAD  FUN_00426f40           cmp DWORD PTR ds:0x985bc0,0x0
+426f6f ADDR  FUN_00426f40           mov edx,DWORD PTR ds:0x985bc0
+426f89 ADDR  FUN_00426f40           mov eax,ds:0x985bc0
+427053 ADDR  FUN_00426f40           mov eax,ds:0x985bc0
+427083 ADDR  FUN_00426f40           mov edx,DWORD PTR ds:0x985bc0
+427254 ADDR  FUN_00426f40           mov cl,BYTE PTR ds:0x985b10
+427267 ADDR  FUN_00426f40           mov cl,BYTE PTR ds:0x985b10
+42744e ADDR  FUN_00426f40           mov al,ds:0x985b11
+427e5e ADDR  FUN_00427b50           mov eax,ds:0x985bc0
+428285 ADDR  FUN_00428240           mov al,ds:0x985b10
+428297 ADDR  FUN_00428240           mov al,ds:0x985b10
+428bb6 ADDR  FUN_004282d0           mov ecx,DWORD PTR ds:0x985bc0
+428bc4 ADDR  FUN_004282d0           mov dl,BYTE PTR ds:0x985b10
+428be5 ADDR  FUN_004282d0           mov dl,BYTE PTR ds:0x985b10
+428cb7 ADDR  FUN_004282d0           mov dl,BYTE PTR ds:0x985b10
+428d2e ADDR  FUN_004282d0           mov al,ds:0x985b11
+428f8b ADDR  FUN_004282d0           mov eax,ds:0x985bc0
+429254 ADDR  FUN_004282d0           mov al,ds:0x985b11
+429291 ADDR  FUN_004282d0           mov cl,BYTE PTR ds:0x985b11
+42930c ADDR  FUN_004282d0           mov dl,BYTE PTR ds:0x985b11
+429485 ADDR  FUN_004282d0           mov edx,DWORD PTR ds:0x985afc
+4294c6 ADDR  FUN_004282d0           mov eax,ds:0x985afc
+429959 ADDR  FUN_00429950           mov eax,ds:0x985bc0
+4299b8 ADDR  FUN_00429950           mov ecx,DWORD PTR ds:0x985afc
+4299c7 ADDR  FUN_00429950           mov eax,ds:0x985afc
+4299e0 ADDR  FUN_00429950           mov dl,BYTE PTR ds:0x985b10
+429a5b ADDR  FUN_00429950           mov edx,DWORD PTR ds:0x985ae8
+429a67 ADDR  FUN_00429950           mov DWORD PTR ds:0x985ae8,edx
+429a85 ADDR  FUN_00429950           mov edx,DWORD PTR ds:0x985bc0
+429f55 ADDR  FUN_00429df0           mov eax,ds:0x985ab8
+42c36f ADDR  FUN_0042c310           mov ecx,DWORD PTR ds:0x985ae8
+42c4f7 ADDR  FUN_0042c490           mov edx,DWORD PTR ds:0x985ae8
+42c687 ADDR  FUN_0042c620           mov edx,DWORD PTR ds:0x985ae8
+42c811 ADDR  FUN_0042c7b0           mov edx,DWORD PTR ds:0x985ae8
+42c991 ADDR  FUN_0042c930           mov edx,DWORD PTR ds:0x985ae8
+42cb11 ADDR  FUN_0042cab0           mov edx,DWORD PTR ds:0x985ae8
+42cc8e ADDR  FUN_0042cc30           mov ecx,DWORD PTR ds:0x985ae8
+42ce6f ADDR  FUN_0042cdb0           mov edx,DWORD PTR ds:0x985ae8
+42cffd ADDR  FUN_0042cf90           mov edx,DWORD PTR ds:0x985ae8
+42d18a ADDR  FUN_0042d120           mov edx,DWORD PTR ds:0x985ae8
+42d32a ADDR  FUN_0042d2c0           mov edx,DWORD PTR ds:0x985ae8
+42d50b ADDR  FUN_0042d460           mov edx,DWORD PTR ds:0x985ae8
+42d686 ADDR  FUN_0042d640           mov edx,DWORD PTR ds:0x985ae8
+42d7ee ADDR  FUN_0042d7b0           mov edx,DWORD PTR ds:0x985ae8
+42d9b4 ADDR  FUN_0042d960           mov ecx,DWORD PTR ds:0x985ae8
+42da47 ADDR  FUN_0042d960           mov ecx,DWORD PTR ds:0x985ae8
+43968e ADDR  FUN_004394e0           mov eax,ds:0x985ae8
+439710 ADDR  FUN_004394e0           mov ecx,DWORD PTR ds:0x985ae8
+43a9a4 ADDR  FUN_0043a990           mov eax,ds:0x985ab8
+43d8e0 ADDR  FUN_0043d870           mov ecx,DWORD PTR ds:0x985ae8
+43e3f9 ADDR  FUN_0043dd30           mov edx,DWORD PTR ds:0x985ae8
+43e406 ADDR  FUN_0043dd30           mov eax,ds:0x985ae8
+440db1 LOAD  FUN_00440cd0           cmp edx,DWORD PTR ds:0x985af4
+440df2 LOAD  FUN_00440cd0           cmp ecx,DWORD PTR ds:0x985af4
+4427cd ADDR  FUN_00442320           mov al,ds:0x985b11
+442be9 ADDR  FUN_00442320           mov dl,BYTE PTR ds:0x985b11
+442d60 ADDR  FUN_00442320           mov cl,BYTE PTR ds:0x985b10
+4432f9 ADDR  FUN_004430e0           mov dl,BYTE PTR ds:0x985b10
+445618 ADDR  FUN_00444940           mov dl,BYTE PTR ds:0x985b10
+44562c ADDR  FUN_00444940           mov eax,ds:0x985b0c
+445633 ADDR  FUN_00444940           mov ds:0x985b0c,eax
+445978 LOAD  FUN_00445900           cmp eax,DWORD PTR ds:0x985af4
+446259 ADDR  FUN_00446250           mov eax,ds:0x985ab8
+446369 ADDR  FUN_00446360           mov eax,ds:0x985ab8
+446772 ADDR  FUN_00446490           mov eax,ds:0x985ab8
+44744c ADDR  FUN_00447440           mov eax,ds:0x985ab8
+447629 ADDR  FUN_00447620           mov eax,ds:0x985ab8
+4478c4 ADDR  FUN_004478b0           mov eax,ds:0x985ab8
+44aeb6 ADDR  FUN_0044aeb0           mov al,ds:0x985ae8
+44afdd ADDR  FUN_0044aeb0           mov ecx,DWORD PTR ds:0x985afc
+44b15e ADDR  FUN_0044aeb0           mov eax,ds:0x985ac4
+44b16b ADDR  FUN_0044aeb0           mov ecx,DWORD PTR ds:0x985ae8
+45aca0 ADDR  FUN_0045a920           mov ecx,DWORD PTR ds:0x985ae8
+45acb0 ADDR  FUN_0045a920           mov edx,DWORD PTR ds:0x985ac4
+45bad3 ADDR  FUN_0045a920           mov cl,BYTE PTR ds:0x985b11
+45bc29 ADDR  FUN_0045a920           mov cl,BYTE PTR ds:0x985b11
+45bd7f ADDR  FUN_0045a920           mov cl,BYTE PTR ds:0x985b11
+45bed5 ADDR  FUN_0045a920           mov cl,BYTE PTR ds:0x985b11
+45c02f ADDR  FUN_0045a920           mov cl,BYTE PTR ds:0x985b11
+45c197 LOAD  FUN_0045a920           cmp DWORD PTR ds:0x985b34,0x0
+45c1ea ADDR  FUN_0045a920           mov ecx,DWORD PTR ds:0x985b30
+45c218 ADDR  FUN_0045a920           mov ecx,DWORD PTR ds:0x985b30
+45c70f ADDR  FUN_0045a920           mov eax,ds:0x985afc
+45c7b5 LOAD  FUN_0045a920           cmp edx,DWORD PTR ds:0x985afc
+45c88a LOAD  FUN_0045a920           mov ecx,DWORD PTR [eax*4+0x985b14]
+45d27f LOAD  FUN_0045d120           mov ecx,DWORD PTR [eax*4+0x985b14]
+45db24 ADDR  FUN_0045d8f0           mov ecx,DWORD PTR ds:0x985ae8
+45dd2c LOAD  FUN_0045dd10           cmp DWORD PTR ds:0x985afc,0x0
+45dd66 LOAD  FUN_0045dd10           cmp DWORD PTR ds:0x985afc,0x32
+45dd76 LOAD  FUN_0045dd10           cmp DWORD PTR ds:0x985afc,0x64
+45ddb8 LOAD  FUN_0045dd10           cmp DWORD PTR ds:0x985afc,0x32
+45de37 LOAD  FUN_0045dd10           cmp DWORD PTR ds:0x985afc,0x14
+45de40 ADDR  FUN_0045dd10           mov edx,DWORD PTR ds:0x985ae8
+45de58 ADDR  FUN_0045dd10           mov eax,ds:0x985ae8
+45de66 ADDR  FUN_0045dd10           mov ecx,DWORD PTR ds:0x985ae8
+462897 ADDR  FUN_004627f0           mov ecx,DWORD PTR ds:0x985ae8
+462937 ADDR  FUN_004627f0           mov ecx,DWORD PTR ds:0x985ae8
+4631d9 ADDR  FUN_00463090           mov ecx,DWORD PTR ds:0x985ae8
+4631e9 ADDR  FUN_00463090           mov edx,DWORD PTR ds:0x985ae8
+463e4e ADDR  FUN_00463dd0           mov eax,ds:0x985ab8
+4640a9 ADDR  FUN_00463dd0           mov eax,ds:0x985ab8
+4642ea ADDR  FUN_00463dd0           mov eax,ds:0x985ab8
+4645db ADDR  FUN_00464570           mov eax,ds:0x985ab8
+4645f7 ADDR  FUN_00464570           mov ecx,DWORD PTR ds:0x985ab8
+464a8c ADDR  FUN_00464570           mov edx,DWORD PTR ds:0x985ab8
+464f0d ADDR  FUN_00464bb0           mov edx,DWORD PTR ds:0x985abc
+465253 ADDR  FUN_00464bb0           mov edx,DWORD PTR ds:0x985ab8
+46581e ADDR  FUN_004654e0           mov ecx,DWORD PTR ds:0x985abc
+465a18 ADDR  FUN_004654e0           mov edx,DWORD PTR ds:0x985ab8
+4679a4 ADDR  FUN_00466640           mov ecx,DWORD PTR ds:0x985ac4
+467a0c ADDR  FUN_00467a00           mov eax,ds:0x985abc
+467a61 ADDR  FUN_00467a00           mov ecx,DWORD PTR ds:0x985ae8
+467aa5 ADDR  FUN_00467a00           mov edx,DWORD PTR ds:0x985abc
+467c72 ADDR  FUN_00467a00           mov eax,ds:0x985ae8
+467cbf ADDR  FUN_00467a00           mov ecx,DWORD PTR ds:0x985ae8
+467d1f ADDR  FUN_00467a00           mov edx,DWORD PTR ds:0x985ac4
+467d2f ADDR  FUN_00467a00           mov eax,ds:0x985ae8
+467d55 ADDR  FUN_00467a00           mov ecx,DWORD PTR ds:0x985ae8
+467d62 ADDR  FUN_00467a00           mov edx,DWORD PTR ds:0x985ae8
+467d9e ADDR  FUN_00467a00           mov ecx,DWORD PTR ds:0x985ac4
+467e05 ADDR  FUN_00467a00           mov ecx,DWORD PTR ds:0x985ac4
+467e12 ADDR  FUN_00467a00           mov edx,DWORD PTR ds:0x985ae8
+467e22 ADDR  FUN_00467a00           mov eax,ds:0x985ae8
+468c35 ADDR  FUN_00467a00           mov eax,ds:0x985ae8
+468c7c ADDR  FUN_00467a00           mov ecx,DWORD PTR ds:0x985ae8
+468ca9 ADDR  FUN_00467a00           mov ecx,DWORD PTR ds:0x985abc
+469f34 ADDR  FUN_004699d0           mov ecx,DWORD PTR ds:0x985abc
+46a91b ADDR  FUN_0046a610           mov eax,ds:0x985ac4
+46a929 ADDR  FUN_0046a610           mov ecx,DWORD PTR ds:0x985ae8
+46a99f ADDR  FUN_0046a610           mov eax,ds:0x985ae8
+46a9b3 ADDR  FUN_0046a610           mov ecx,DWORD PTR ds:0x985abc
+46b19e ADDR  FUN_0046a610           mov ecx,DWORD PTR ds:0x985ac4
+46b78c ADDR  FUN_0046a610           mov eax,ds:0x985ae8
+46c782 ADDR  FUN_0046a610           mov eax,ds:0x985ab8
+46c7cf ADDR  FUN_0046a610           mov eax,ds:0x985abc
+46c86f ADDR  FUN_0046a610           mov eax,ds:0x985abc
+46ce93 ADDR  FUN_0046a610           mov eax,ds:0x985ae8
+46d54b ADDR  FUN_0046a610           mov edx,DWORD PTR ds:0x985ab8
+46ec4f ADDR  FUN_0046ebd0           mov ecx,DWORD PTR ds:0x985ae8
+46edab ADDR  FUN_0046ebd0           mov edx,DWORD PTR ds:0x985ae8
+46ee13 ADDR  FUN_0046ebd0           mov dl,BYTE PTR ds:0x985b10
+46eef1 ADDR  FUN_0046ebd0           mov eax,ds:0x985abc
+46f007 ADDR  FUN_0046ebd0           mov ecx,DWORD PTR ds:0x985ae8
+46f1c2 ADDR  FUN_0046f180           mov ecx,DWORD PTR ds:0x985ae8
+46f82a ADDR  FUN_0046f4b0           mov ecx,DWORD PTR ds:0x985ae8
+46f83a ADDR  FUN_0046f4b0           mov edx,DWORD PTR ds:0x985ac4
+46f93c LOAD  FUN_0046f930           mov eax,DWORD PTR [eax*4+0x985b3c]
+46fa4f LOAD  FUN_0046fa10           cmp eax,DWORD PTR ds:0x985af4
+46fbda LOAD  FUN_0046fa10           cmp eax,DWORD PTR ds:0x985af0
+470071 ADDR  FUN_00470010           mov edx,DWORD PTR ds:0x985abc
+4700ef LOAD  FUN_00470010           cmp eax,DWORD PTR ds:0x985af4
+4700fb ADDR  FUN_00470010           mov ecx,DWORD PTR ds:0x985ae8
+4702bc ADDR  FUN_00470010           mov ecx,DWORD PTR ds:0x985ae8
+4702d0 ADDR  FUN_00470010           mov edx,DWORD PTR ds:0x985ae8
+4702e2 ADDR  FUN_00470010           mov al,ds:0x985b10
+4703ce ADDR  FUN_00470010           mov eax,ds:0x985ae8
+4703e0 ADDR  FUN_00470010           mov ecx,DWORD PTR ds:0x985ae8
+470570 ADDR  FUN_00470010           mov edx,DWORD PTR ds:0x985abc
+47060b ADDR  FUN_00470010           mov ecx,DWORD PTR ds:0x985ac4
+470854 ADDR  FUN_00470010           mov ecx,DWORD PTR ds:0x985ac4
+470903 ADDR  FUN_00470010           mov edx,DWORD PTR ds:0x985ac4
+470a5b ADDR  FUN_00470010           mov eax,ds:0x985ae8
+470be7 ADDR  FUN_00470b90           mov ecx,DWORD PTR ds:0x985ae8
+470db3 ADDR  FUN_00470b90           mov ecx,DWORD PTR ds:0x985ae8
+471f71 ADDR  FUN_00471e70           mov eax,ds:0x985ae8
+4725ac ADDR  FUN_004725a0           mov eax,ds:0x985ae8
+472658 ADDR  FUN_004725a0           mov ecx,DWORD PTR ds:0x985ae8
+47334c ADDR  FUN_00472810           mov ecx,DWORD PTR ds:0x985ae8
+4733bd ADDR  FUN_00472810           mov edx,DWORD PTR ds:0x985ae8
+47342d ADDR  FUN_00472810           mov eax,ds:0x985ae8
+4734be ADDR  FUN_00472810           mov eax,ds:0x985ae8
+47356a ADDR  FUN_00472810           mov eax,ds:0x985ae8
+473849 ADDR  FUN_00473840           mov eax,ds:0x985abc
+474a77 ADDR  FUN_004748b0           mov eax,ds:0x985ae8
+474e63 ADDR  FUN_004748b0           mov eax,ds:0x985ae8
+474f91 ADDR  FUN_004748b0           mov eax,ds:0x985ae8
+475052 ADDR  FUN_004748b0           mov ecx,DWORD PTR ds:0x985ae8
+475227 ADDR  FUN_004748b0           mov ecx,DWORD PTR ds:0x985abc
+4752cd ADDR  FUN_004748b0           mov edx,DWORD PTR ds:0x985abc
+47563b ADDR  FUN_004748b0           mov eax,ds:0x985abc
+475831 ADDR  FUN_004748b0           mov ecx,DWORD PTR ds:0x985ae8
+475cb6 ADDR  FUN_004748b0           mov ecx,DWORD PTR ds:0x985ae8
+475cbf ADDR  FUN_004748b0           mov DWORD PTR ds:0x985ae8,ecx
+475dc9 ADDR  FUN_004748b0           mov ecx,DWORD PTR ds:0x985ae8
+475e2e ADDR  FUN_004748b0           mov edx,DWORD PTR ds:0x985ae8
+475e37 ADDR  FUN_004748b0           mov DWORD PTR ds:0x985ae8,edx
+476677 ADDR  FUN_00476580           mov eax,ds:0x985ae8
+476dc9 ADDR  FUN_00476580           mov edx,DWORD PTR ds:0x985ae8
+476e91 ADDR  FUN_00476580           mov ecx,DWORD PTR ds:0x985abc
+476f38 ADDR  FUN_00476580           mov edx,DWORD PTR ds:0x985abc
+47708a ADDR  FUN_00476580           mov ecx,DWORD PTR ds:0x985ae8
+47709e ADDR  FUN_00476580           mov edx,DWORD PTR ds:0x985ae8
+47745a ADDR  FUN_004773a0           mov ecx,DWORD PTR ds:0x985ae8
+47761e ADDR  FUN_004774f0           mov ecx,DWORD PTR ds:0x985ae8
+477798 ADDR  FUN_004774f0           mov eax,ds:0x985ae8
+47f3a8 LOAD  FUN_0047f390           test DWORD PTR ds:0x985abc,0x1000000
+47f3b8 ADDR  FUN_0047f390           mov al,ds:0x985ae8
+47f494 ADDR  FUN_0047f490           mov eax,ds:0x985afc
+47f594 ADDR  FUN_0047f590           mov eax,ds:0x985afc
+47f684 ADDR  FUN_0047f680           mov eax,ds:0x985afc
+47f7b4 ADDR  FUN_0047f7b0           mov eax,ds:0x985afc
+47f8a4 ADDR  FUN_0047f8a0           mov eax,ds:0x985afc
+47f9a4 ADDR  FUN_0047f9a0           mov eax,ds:0x985afc
+47fa94 ADDR  FUN_0047fa90           mov eax,ds:0x985afc
+47fb94 ADDR  FUN_0047fb90           mov eax,ds:0x985afc
+47fc94 ADDR  FUN_0047fc90           mov eax,ds:0x985afc
+47fd84 ADDR  FUN_0047fd80           mov eax,ds:0x985afc
+47fe74 ADDR  FUN_0047fe70           mov eax,ds:0x985afc
+47ff64 ADDR  FUN_0047ff60           mov eax,ds:0x985afc
+480054 ADDR  FUN_00480050           mov eax,ds:0x985afc
+480143 ADDR  FUN_00480140           mov eax,ds:0x985afc
+4801c3 ADDR  FUN_004801c0           mov eax,ds:0x985afc
+480244 ADDR  FUN_00480240           mov eax,ds:0x985afc
+480b49 ADDR  FUN_00480b00           mov cl,BYTE PTR ds:0x985b11
+480f57 ADDR  FUN_00480ce0           mov edx,DWORD PTR ds:0x985ae8
+480fb7 ADDR  FUN_00480ce0           mov al,ds:0x985b11
+481287 ADDR  FUN_004811d0           mov al,ds:0x985b10
+4812fe ADDR  FUN_004811d0           mov cl,BYTE PTR ds:0x985b10
+48152d ADDR  FUN_004811d0           mov ecx,DWORD PTR ds:0x985ae8
+4815e6 ADDR  FUN_004811d0           mov dl,BYTE PTR ds:0x985b10
+48162a ADDR  FUN_004811d0           mov dl,BYTE PTR ds:0x985b10
+48165a ADDR  FUN_004811d0           mov ecx,DWORD PTR ds:0x985ae8
+481b37 ADDR  FUN_00481820           mov cl,BYTE PTR ds:0x985b10
+481bd5 LOAD  FUN_00481820           cmp DWORD PTR ds:0x985b08,0x0
+481c0a ADDR  FUN_00481820           mov edx,DWORD PTR ds:0x985ae8
+481c13 ADDR  FUN_00481820           mov DWORD PTR ds:0x985ae8,edx
+481c44 ADDR  FUN_00481820           mov eax,ds:0x985ae8
+481d03 LOAD  FUN_00481820           cmp DWORD PTR ds:0x985b08,0x0
+482112 ADDR  FUN_00481e90           mov cl,BYTE PTR ds:0x985b11
+482137 ADDR  FUN_00481e90           mov cl,BYTE PTR ds:0x985b10
+482168 ADDR  FUN_00481e90           mov eax,ds:0x985ae8
+482580 ADDR  FUN_004824e0           mov edx,DWORD PTR ds:0x985ab8
+482681 ADDR  FUN_004824e0           mov eax,ds:0x985ab8
+48272f ADDR  FUN_004824e0           mov eax,ds:0x985ab8
+4827e2 ADDR  FUN_00482780           mov ecx,DWORD PTR ds:0x985ab8
+4829a5 ADDR  FUN_00482780           mov eax,ds:0x985ab8
+482b16 ADDR  FUN_00482780           mov eax,ds:0x985ab8
+48501e ADDR  FUN_00484da0           mov eax,ds:0x985ac4
+485028 ADDR  FUN_00484da0           mov cl,BYTE PTR ds:0x985aec
+489c57 ADDR  FUN_004894c0           mov eax,ds:0x985abc
+489c71 LOAD  FUN_004894c0           test BYTE PTR ds:0x985b10,al
+489d0a ADDR  FUN_004894c0           mov eax,ds:0x985abc
+48aa4d LOAD  FUN_0048a170           cmp edi,0x985ab8
+48ae27 LOAD  FUN_0048a170           cmp edi,0x985ab8
+48ba10 ADDR  FUN_0048b9a0           mov eax,ds:0x985ac4
+48ba64 LOAD  FUN_0048b9a0           cmp DWORD PTR ds:0x985afc,0xb
+48ba75 LOAD  FUN_0048b9a0           test BYTE PTR ds:0x985ab8,0x20
+48bab8 LOAD  FUN_0048b9a0           cmp DWORD PTR ds:0x985afc,esi
+48bac9 LOAD  FUN_0048b9a0           test BYTE PTR ds:0x985b10,al
+48bbff LOAD  FUN_0048b9a0           test BYTE PTR ds:0x985ab8,0x20
+48c426 ADDR  FUN_0048b9a0           mov edi,0x985b3c
+48c45f LOAD  FUN_0048b9a0           cmp edi,0x985b3c
+48c482 LOAD  FUN_0048b9a0           cmp edi,0x985b3c
+48c504 LOAD  FUN_0048b9a0           cmp edi,0x985bc0
+48caf9 LOAD  FUN_0048b9a0           test BYTE PTR ds:0x985b10,al
+48df9f LOAD  FUN_0048def0           cmp edx,DWORD PTR ds:0x985af4
+48dfab ADDR  FUN_0048def0           mov eax,ds:0x985ae8
+48e277 LOAD  FUN_0048def0           cmp edx,DWORD PTR ds:0x985af4
+48e283 ADDR  FUN_0048def0           mov eax,ds:0x985ae8
+48f161 ADDR  FUN_0048f100           mov al,ds:0x985b10
+48f1a0 ADDR  FUN_0048f100           mov eax,ds:0x985ae8
+48f1ac ADDR  FUN_0048f100           mov ecx,DWORD PTR ds:0x985ae8
+48f261 ADDR  FUN_0048f100           mov eax,ds:0x985ac0
+48f2a0 ADDR  FUN_0048f100           mov ecx,DWORD PTR ds:0x985ae8
+48f2f3 ADDR  FUN_0048f100           mov ecx,DWORD PTR ds:0x985abc
+48f4f7 ADDR  FUN_0048f100           mov cl,BYTE PTR ds:0x985b10
+48f552 ADDR  FUN_0048f100           mov eax,ds:0x985ac0
+48f559 ADDR  FUN_0048f100           mov ds:0x985ac0,eax
+48f55e ADDR  FUN_0048f100           mov ecx,DWORD PTR ds:0x985ac0
+49205f ADDR  FUN_00492030           mov eax,ds:0x985ab8
+49206a ADDR  FUN_00492030           mov ecx,DWORD PTR ds:0x985abc
+492076 ADDR  FUN_00492030           mov edx,DWORD PTR ds:0x985ab8
+492082 ADDR  FUN_00492030           mov eax,ds:0x985abc
+49208d ADDR  FUN_00492030           mov ecx,DWORD PTR ds:0x985ab8
+492099 ADDR  FUN_00492030           mov edx,DWORD PTR ds:0x985abc
+4920a5 ADDR  FUN_00492030           mov eax,ds:0x985ab8
+4920b0 ADDR  FUN_00492030           mov ecx,DWORD PTR ds:0x985abc
+4920bc ADDR  FUN_00492030           mov edx,DWORD PTR ds:0x985ac0
+4920c8 ADDR  FUN_00492030           mov eax,ds:0x985ab8
+4920d3 ADDR  FUN_00492030           mov ecx,DWORD PTR ds:0x985abc
+494117 ADDR  FUN_00493ff0           mov esi,DWORD PTR ds:0x985ab8
+494129 ADDR  FUN_00493ff0           mov DWORD PTR ds:0x985ab8,esi
+494182 ADDR  FUN_00493ff0           mov ecx,DWORD PTR ds:0x985ab8
+494188 ADDR  FUN_00493ff0           mov eax,ds:0x985abc
+494193 ADDR  FUN_00493ff0           mov DWORD PTR ds:0x985ab8,ecx
+494199 ADDR  FUN_00493ff0           mov ds:0x985abc,eax
+495734 ADDR  FUN_004954e0           mov ecx,DWORD PTR ds:0x985ae8
+496fe0 ADDR  FUN_00496ad0           mov dl,BYTE PTR ds:0x985b10
+496ff6 ADDR  FUN_00496ad0           mov ecx,DWORD PTR ds:0x985ae8
+49730b ADDR  FUN_00496ad0           mov al,ds:0x985b10
+497353 ADDR  FUN_00496ad0           mov ecx,DWORD PTR ds:0x985ae8
+499f2b ADDR  FUN_00499e70           mov ecx,DWORD PTR ds:0x985ae8
+499f3b ADDR  FUN_00499e70           mov edx,DWORD PTR ds:0x985ac4
+499fb6 ADDR  FUN_00499e70           mov eax,ds:0x985ac4
+49a851 LOAD  FUN_00499e70           mov edx,DWORD PTR [ecx*4+0x985b3c]
+49b1bd ADDR  FUN_0049af50           mov ecx,DWORD PTR ds:0x985ae8
+49b5d3 ADDR  FUN_0049b400           mov ecx,DWORD PTR ds:0x985ae8
+49b5e0 ADDR  FUN_0049b400           mov edx,DWORD PTR ds:0x985ae8
+49c427 ADDR  FUN_0049c070           mov edx,DWORD PTR ds:0x985ae8
+49c437 ADDR  FUN_0049c070           mov eax,ds:0x985ac4
+49c719 ADDR  FUN_0049c070           mov edx,DWORD PTR ds:0x985ae8
+49c729 ADDR  FUN_0049c070           mov eax,ds:0x985ac4
+49cc79 ADDR  FUN_0049c070           mov ecx,DWORD PTR ds:0x985afc
+4a0c04 LOAD  FUN_0049fee0           cmp edx,DWORD PTR ds:0x985af4
+4a0da4 ADDR  FUN_0049fee0           mov ecx,DWORD PTR ds:0x985af4
+4a104c LOAD  FUN_0049fee0           cmp ecx,DWORD PTR ds:0x985af4
+4a1711 LOAD  FUN_004a13c0           cmp edx,DWORD PTR ds:0x985af4
+4a1bc2 ADDR  FUN_004a13c0           mov edx,DWORD PTR ds:0x985ac4
+4a294b LOAD  FUN_004a27a0           cmp DWORD PTR [edx*4+0x985b3c],0xffffffff
+4a2977 LOAD  FUN_004a27a0           cmp edx,DWORD PTR ds:0x985af4
+4a2a76 LOAD  FUN_004a27a0           cmp DWORD PTR [eax*4+0x985b3c],0xffffffff
+4a2a8e LOAD  FUN_004a27a0           cmp DWORD PTR [ecx*4+0x985b3c],0xffffffff
+4a2acc LOAD  FUN_004a27a0           cmp edx,DWORD PTR ds:0x985af4
+4a2aff LOAD  FUN_004a27a0           cmp eax,DWORD PTR ds:0x985af4
+4a2b30 LOAD  FUN_004a27a0           cmp ecx,DWORD PTR ds:0x985af4
+4a2b45 LOAD  FUN_004a27a0           cmp edx,DWORD PTR ds:0x985af4
+4a2db6 LOAD  FUN_004a27a0           mov edx,DWORD PTR [ecx*4+0x985b3c]
+4a304c LOAD  FUN_004a27a0           cmp eax,DWORD PTR ds:0x985af4
+4a52a6 ADDR  FUN_004a5060           mov eax,ds:0x985ac4
+4a53cd ADDR  FUN_004a5060           mov edx,DWORD PTR ds:0x985ae8
+4a53ec ADDR  FUN_004a5060           mov eax,ds:0x985ae8
+4a5409 ADDR  FUN_004a5060           mov ecx,DWORD PTR ds:0x985ae8
+4a5665 ADDR  FUN_004a5060           mov ecx,DWORD PTR ds:0x985ac4
+4a5679 ADDR  FUN_004a5060           mov edx,DWORD PTR ds:0x985ae8
+4a588b ADDR  FUN_004a5060           mov eax,ds:0x985ae8
+4a589b ADDR  FUN_004a5060           mov ecx,DWORD PTR ds:0x985ae8
+4a59ed ADDR  FUN_004a5060           mov edx,DWORD PTR ds:0x985ae8
+4a5a01 ADDR  FUN_004a5060           mov eax,ds:0x985ae8
+4a5a13 ADDR  FUN_004a5060           mov ecx,DWORD PTR ds:0x985ae8
+4a5a49 ADDR  FUN_004a5060           mov edx,DWORD PTR ds:0x985ac4
+4a5b0e ADDR  FUN_004a5060           mov edx,DWORD PTR ds:0x985ac4
+4a5bfe ADDR  FUN_004a5060           mov al,ds:0x985b11
+4a5c39 ADDR  FUN_004a5060           mov eax,ds:0x985ac4
+4a5c59 ADDR  FUN_004a5060           mov dl,BYTE PTR ds:0x985b10
+4a5c6f ADDR  FUN_004a5060           mov ecx,DWORD PTR ds:0x985ac4
+4a5d3d ADDR  FUN_004a5060           mov eax,ds:0x985ac4
+4a5d6d ADDR  FUN_004a5060           mov eax,ds:0x985ac4
+4a5e05 ADDR  FUN_004a5060           mov edx,DWORD PTR ds:0x985ae8
+4a6074 ADDR  FUN_004a5eb0           mov eax,ds:0x985ae8
+4a6786 LOAD  FUN_004a5eb0           cmp edx,DWORD PTR ds:0x985af4
+4a68e2 ADDR  FUN_004a5eb0           mov eax,ds:0x985ae8
+4a68f0 ADDR  FUN_004a5eb0           mov ecx,DWORD PTR ds:0x985ac4
+4a6a7d ADDR  FUN_004a5eb0           mov dl,BYTE PTR ds:0x985b11
+4a7434 ADDR  FUN_004a72c0           mov edx,DWORD PTR ds:0x985ae8
+4a7444 ADDR  FUN_004a72c0           mov eax,ds:0x985ac4
+4a7deb ADDR  FUN_004a7d40           mov eax,ds:0x985ae8
+4a7df9 ADDR  FUN_004a7d40           mov ecx,DWORD PTR ds:0x985ac4
+4a9256 ADDR  FUN_004a7d40           mov eax,ds:0x985ae8
+4a9c56 LOAD  FUN_004a99e0           cmp eax,DWORD PTR ds:0x985af4
+4a9dba LOAD  FUN_004a99e0           cmp edx,DWORD PTR ds:0x985af4
+4a9ed6 LOAD  FUN_004a99e0           cmp ecx,DWORD PTR ds:0x985af4
+4aa229 LOAD  FUN_004a99e0           cmp edx,DWORD PTR ds:0x985af0
+4aa422 LOAD  FUN_004a99e0           cmp edx,DWORD PTR ds:0x985af0
+4aac0c LOAD  FUN_004aa7b0           cmp edx,DWORD PTR ds:0x985af4
+4abe60 LOAD  FUN_004abb90           cmp eax,DWORD PTR ds:0x985af4
+4ac9d0 LOAD  FUN_004ac6d0           cmp ecx,DWORD PTR ds:0x985af4
+4acaae LOAD  FUN_004ac6d0           cmp eax,DWORD PTR ds:0x985af4
+4acb83 LOAD  FUN_004ac6d0           cmp edx,DWORD PTR ds:0x985af4
+4acc5b LOAD  FUN_004ac6d0           cmp ecx,DWORD PTR ds:0x985af4
+4acd31 LOAD  FUN_004ac6d0           cmp eax,DWORD PTR ds:0x985af4
+4ace09 LOAD  FUN_004ac6d0           cmp edx,DWORD PTR ds:0x985af4
+4aceda LOAD  FUN_004ac6d0           cmp ecx,DWORD PTR ds:0x985af4
+4ad004 LOAD  FUN_004ac6d0           cmp edx,DWORD PTR ds:0x985af4
+4ad0ba LOAD  FUN_004ac6d0           mov eax,DWORD PTR [edx*4+0x985b3c]
+4afab8 ADDR  FUN_004afaa0           mov edx,DWORD PTR ds:0x985ae8
+4b027d LOAD  FUN_004afaa0           cmp eax,DWORD PTR ds:0x985af4
+4b0fcb ADDR  FUN_004b0a80           mov edx,DWORD PTR ds:0x985ab8
+4b25af ADDR  FUN_004b2570           mov eax,ds:0x985ae8
+4b25bb ADDR  FUN_004b2570           mov ecx,DWORD PTR ds:0x985ae8
+4bdbfc LOAD  FUN_004bdb60           cmp DWORD PTR ds:0x985afc,0x0
+4bdee3 ADDR  FUN_004bdce0           mov edx,DWORD PTR ds:0x985ae8
+4bdef0 ADDR  FUN_004bdce0           mov eax,ds:0x985ae8
+4be1ae ADDR  FUN_004bdce0           mov edx,DWORD PTR ds:0x985ae8
+4be224 ADDR  FUN_004bdce0           mov edx,DWORD PTR ds:0x985ae8
+4be857 ADDR  FUN_004bdce0           mov eax,ds:0x985ae8
+4be919 ADDR  FUN_004bdce0           mov ecx,DWORD PTR ds:0x985ae8
+4bebd4 ADDR  FUN_004bdce0           mov ecx,DWORD PTR ds:0x985ae8
+4bebe1 ADDR  FUN_004bdce0           mov edx,DWORD PTR ds:0x985ae8
+4bef47 ADDR  FUN_004bdce0           mov edx,DWORD PTR ds:0x985ae8
+4bf34f LOAD  FUN_004bf1e0           cmp DWORD PTR ds:0x985afc,0x0
+4bf3a4 LOAD  FUN_004bf1e0           cmp DWORD PTR ds:0x985afc,0x0
+4bf421 ADDR  FUN_004bf1e0           mov eax,ds:0x985ae8
+4bf59b ADDR  FUN_004bf1e0           mov eax,ds:0x985ae8
+4bf736 ADDR  FUN_004bf1e0           mov eax,ds:0x985ae8
+4bf83e ADDR  FUN_004bf1e0           mov ecx,DWORD PTR ds:0x985ae8
+4bf88a ADDR  FUN_004bf1e0           mov eax,ds:0x985ae8
+4c0820 ADDR  FUN_004bf1e0           mov eax,ds:0x985ae8
+4c082c ADDR  FUN_004bf1e0           mov ecx,DWORD PTR ds:0x985ae8
+4c08a0 ADDR  FUN_004bf1e0           mov edx,DWORD PTR ds:0x985ae8
+4c08ad ADDR  FUN_004bf1e0           mov eax,ds:0x985ae8
+4c0a1f LOAD  FUN_004bf1e0           cmp DWORD PTR ds:0x985afc,0x0
+4c0a8a ADDR  FUN_004bf1e0           mov eax,ds:0x985ae8
+4c0f81 ADDR  FUN_004bf1e0           mov ecx,DWORD PTR ds:0x985ae8
+4c1059 ADDR  FUN_004bf1e0           mov ecx,DWORD PTR ds:0x985ae8
+4c1066 ADDR  FUN_004bf1e0           mov edx,DWORD PTR ds:0x985ae8
+4c15c7 ADDR  FUN_004c14d0           mov ecx,DWORD PTR ds:0x985ae8
+4c18d4 ADDR  FUN_004c16c0           mov edx,DWORD PTR ds:0x985ae8
+4c198c ADDR  FUN_004c16c0           mov eax,ds:0x985ae8
+4c1b87 ADDR  FUN_004c16c0           mov eax,ds:0x985ae8
+4c2bf6 ADDR  FUN_004c2be0           mov eax,ds:0x985ab8
+4c2c06 ADDR  FUN_004c2be0           mov ecx,DWORD PTR ds:0x985ad4
+4c2c17 ADDR  FUN_004c2be0           mov edx,DWORD PTR ds:0x985ad4
+4c2c20 ADDR  FUN_004c2be0           mov DWORD PTR ds:0x985ad4,edx
+4c2c56 ADDR  FUN_004c2c40           mov eax,ds:0x985ab8
+4c2c66 ADDR  FUN_004c2c40           mov ecx,DWORD PTR ds:0x985ad8
+4c2c77 ADDR  FUN_004c2c40           mov edx,DWORD PTR ds:0x985ad8
+4c2c80 ADDR  FUN_004c2c40           mov DWORD PTR ds:0x985ad8,edx
+4c307f LOAD  FUN_004c3050           cmp ecx,DWORD PTR ds:0x985af4
+4c378f LOAD  FUN_004c3760           cmp ecx,DWORD PTR ds:0x985af4
+4c47f4 ADDR  FUN_004c40e0           mov ecx,DWORD PTR ds:0x985ae8
+4c58b2 LOAD  FUN_004c40e0           cmp DWORD PTR ds:0x985afc,0x1
+4c5a46 ADDR  FUN_004c5990           mov edx,DWORD PTR ds:0x985ae4
+4c5a52 ADDR  FUN_004c5990           mov DWORD PTR ds:0x985ae4,edx
+4cb9bf ADDR  FUN_004cb860           mov eax,ds:0x985ae8
+4cca90 ADDR  FUN_004cca50           mov edx,DWORD PTR ds:0x985afc
+4ccb19 LOAD  FUN_004cca50           test BYTE PTR ds:0x985ae8,0x80
+4ccb8b ADDR  FUN_004cca50           mov ecx,DWORD PTR ds:0x985b10
+4ccbf8 LOAD  FUN_004cca50           test BYTE PTR ds:0x985b10,al
+4ccc57 ADDR  FUN_004cca50           mov edx,DWORD PTR ds:0x985afc
+4cccc7 LOAD  FUN_004cca50           test BYTE PTR ds:0x985ae8,0x80
+4ccde6 ADDR  FUN_004ccda0           mov ecx,DWORD PTR ds:0x985b44
+4cce19 ADDR  FUN_004ccda0           mov ecx,DWORD PTR ds:0x985b5c
+4ccebb ADDR  FUN_004cce50           mov edx,DWORD PTR ds:0x985af0
+4cd01a LOAD  FUN_004cce50           test BYTE PTR ds:0x985b10,al
+4cd025 LOAD  FUN_004cce50           cmp DWORD PTR ds:0x985aec,0x3
+4cd0ea ADDR  FUN_004cce50           mov eax,ds:0x985b44
+4cd124 ADDR  FUN_004cce50           mov eax,ds:0x985b5c
+4cd1db ADDR  FUN_004cce50           mov eax,ds:0x985b44
+4cd20c ADDR  FUN_004cce50           mov eax,ds:0x985b5c
+4cd61f ADDR  FUN_004cce50           mov dl,BYTE PTR ds:0x985b10
+4cd698 ADDR  FUN_004cce50           mov eax,ds:0x985b10
+4cd814 ADDR  FUN_004cce50           mov ecx,DWORD PTR ds:0x985af0
+4cd86e LOAD  FUN_004cce50           test BYTE PTR ds:0x985ab8,0x20
+4cd895 LOAD  FUN_004cce50           mov ecx,DWORD PTR [edx*4+0x985adc]
+4cd8a8 STORE FUN_004cce50           mov DWORD PTR [edx*4+0x985adc],ecx
+4cd9bd ADDR  FUN_004cce50           mov ds:0x985adc,eax
+4cd9d8 STORE FUN_004cce50           mov DWORD PTR [edx*4+0x985adc],eax
+4ce653 LOAD  FUN_004ce4a0           test BYTE PTR ds:0x985b10,dl
+4ced92 ADDR  FUN_004cec00           mov eax,ds:0x985af4
+4cef07 ADDR  FUN_004cec00           mov ecx,DWORD PTR ds:0x985af4
+4cef4b ADDR  FUN_004cec00           mov eax,ds:0x985af0
+4cf075 ADDR  FUN_004cec00           mov cl,BYTE PTR ds:0x985b10
+4cf15d ADDR  FUN_004cec00           mov ecx,DWORD PTR ds:0x985af0
+4cf274 ADDR  FUN_004cec00           mov cl,BYTE PTR ds:0x985b10
+4cf3fe ADDR  FUN_004cec00           mov al,ds:0x985b10
+4cf47e ADDR  FUN_004cec00           mov cl,BYTE PTR ds:0x985b10
+4cf958 LOAD  FUN_004cf4c0           test BYTE PTR ds:0x985ae8,0x80
+4cfa89 ADDR  FUN_004cf4c0           mov eax,ds:0x985ab8
+4cfdeb ADDR  FUN_004cf4c0           mov al,ds:0x985b10
+4cfe11 ADDR  FUN_004cf4c0           mov DWORD PTR ds:0x985b04,edx
+4cfe30 ADDR  FUN_004cf4c0           mov ecx,DWORD PTR ds:0x985b04
+4cff0b LOAD  FUN_004cf4c0           test BYTE PTR ds:0x985ae8,0x80
+4d0d56 LOAD  FUN_004d0970           test BYTE PTR ds:0x985b10,al
+4d19f2 ADDR  FUN_004d1280           mov eax,ds:0x985ab8
+4d1a41 LOAD  FUN_004d1280           test DWORD PTR ds:0x985ab8,esi
+4d1a8e LOAD  FUN_004d1280           test DWORD PTR ds:0x985ab8,esi
+4d1ab1 LOAD  FUN_004d1280           test DWORD PTR ds:0x985ab8,esi
+4d1d62 ADDR  FUN_004d1280           mov eax,ds:0x985ab8
+4d1dbc ADDR  FUN_004d1280           mov eax,ds:0x985ae8
+4d1dc3 ADDR  FUN_004d1280           mov ds:0x985ae8,eax
+4d1de3 ADDR  FUN_004d1280           mov edx,DWORD PTR ds:0x985b00
+4d219a ADDR  FUN_004d20f0           mov cl,BYTE PTR ds:0x985b10
+4d2207 ADDR  FUN_004d20f0           mov al,ds:0x985b10
+4d25a1 LOAD  FUN_004d20f0           test BYTE PTR ds:0x985b10,bl
+4d25d2 ADDR  FUN_004d20f0           mov eax,ds:0x985b10
+4d2705 ADDR  FUN_004d20f0           mov al,ds:0x985b10
+4d2892 LOAD  FUN_004d20f0           test BYTE PTR ds:0x985b10,bl
+4d2917 ADDR  FUN_004d20f0           mov eax,ds:0x985b34
+4d292b ADDR  FUN_004d20f0           mov ecx,DWORD PTR ds:0x985aec
+4d296d ADDR  FUN_004d20f0           mov eax,ds:0x985b38
+4d3c0b LOAD  FUN_004d3bf0           test BYTE PTR ds:0x985ae8,0x40
+4d3c79 LOAD  FUN_004d3bf0           test BYTE PTR ds:0x985ae8,0x80
+4d3ecb LOAD  FUN_004d3ea0           test BYTE PTR ds:0x985ae8,0x40
+4d41b9 ADDR  FUN_004d3f70           mov edx,DWORD PTR ds:0x985abc
+4d4281 LOAD  FUN_004d3f70           or DWORD PTR ds:0x985abc,esi
+4d43f7 LOAD  FUN_004d3f70           test BYTE PTR ds:0x985ae8,0x2
+4d51a3 LOAD  FUN_004d44d0           test DWORD PTR ds:0x985ac4,0x800000
+4d6e04 ADDR  FUN_004d6e00           mov eax,ds:0x985af4
+4d6e5e ADDR  FUN_004d6e00           mov eax,ds:0x985af4
+4d6e9a LOAD  FUN_004d6e80           cmp esi,DWORD PTR ds:0x985af4
+4d6ee5 LOAD  FUN_004d6e80           cmp esi,DWORD PTR ds:0x985af4
+4d7d13 ADDR  FUN_004d6fb0           mov eax,ds:0x985af4
+4d7d92 ADDR  FUN_004d6fb0           mov eax,ds:0x985af4
+4d7da9 ADDR  FUN_004d6fb0           mov ecx,DWORD PTR ds:0x985af4
+4d7e03 ADDR  FUN_004d6fb0           mov edx,DWORD PTR ds:0x985af4
+4d7e5e ADDR  FUN_004d6fb0           mov eax,ds:0x985af4
+4d7e73 ADDR  FUN_004d6fb0           mov eax,ds:0x985af4
+4d81ab LOAD  FUN_004d6fb0           test BYTE PTR ds:0x985ae8,0x80
+4d8278 LOAD  FUN_004d6fb0           cmp DWORD PTR ds:0x985b8c,ebx
+4d852b ADDR  FUN_004d6fb0           mov ecx,DWORD PTR ds:0x985af4
+4d982a ADDR  FUN_004d97c0           mov edi,DWORD PTR ds:0x985af0
+4d99be ADDR  FUN_004d97c0           mov ecx,DWORD PTR ds:0x985af0
+4d9a05 ADDR  FUN_004d97c0           mov eax,ds:0x985af0
+4d9a7c ADDR  FUN_004d97c0           mov ecx,DWORD PTR ds:0x985af0
+4d9b70 ADDR  FUN_004d9ae0           mov eax,ds:0x985af0
+4d9d88 ADDR  FUN_004d9ae0           mov ecx,DWORD PTR ds:0x985af0
+4d9e08 ADDR  FUN_004d9ae0           mov ecx,DWORD PTR ds:0x985af0
+4d9e68 ADDR  FUN_004d9e60           mov eax,ds:0x985ae8
+4d9eaf ADDR  FUN_004d9e60           mov eax,ds:0x985ae8
+4d9eb9 ADDR  FUN_004d9e60           mov ds:0x985ae8,eax
+4d9ebe ADDR  FUN_004d9e60           mov eax,ds:0x985ac4
+4d9ecd ADDR  FUN_004d9e60           mov al,ds:0x985ae8
+4d9eee ADDR  FUN_004d9e60           mov eax,ds:0x985ae8
+4d9f06 ADDR  FUN_004d9e60           mov eax,ds:0x985ae8
+4d9f0f ADDR  FUN_004d9e60           mov ds:0x985ae8,eax
+4d9f5b ADDR  FUN_004d9e60           mov al,ds:0x985ae8
+4dbf93 ADDR  FUN_004dbf40           mov ecx,DWORD PTR ds:0x985af4
+4dbfd5 ADDR  FUN_004dbf40           mov ecx,DWORD PTR ds:0x985af0
+4dc07e ADDR  FUN_004dc020           mov eax,ds:0x985af0
+4dc0c1 ADDR  FUN_004dc020           mov ecx,DWORD PTR ds:0x985af4
+4dc5f6 ADDR  FUN_004dc5f0           mov ecx,DWORD PTR ds:0x985ac4
+4dc5fc ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ae8
+4dc610 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ae8,edx
+4dc729 ADDR  FUN_004dc5f0           mov ebx,DWORD PTR ds:0x985ac4
+4dc72f ADDR  FUN_004dc5f0           mov ecx,DWORD PTR ds:0x985ae8
+4dc746 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,ebx
+4dc74e ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ae8,ecx
+4dc75b ADDR  FUN_004dc5f0           mov ecx,DWORD PTR ds:0x985ac4
+4dc761 ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ae8
+4dc770 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,ecx
+4dc78f ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc798 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc7a2 LOAD  FUN_004dc5f0           or DWORD PTR ds:0x985ac4,0x2
+4dc7ad LOAD  FUN_004dc5f0           or DWORD PTR ds:0x985ac4,0x8
+4dc7b8 LOAD  FUN_004dc5f0           or DWORD PTR ds:0x985ac4,0x4
+4dc7c3 ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc7cc ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc7d6 LOAD  FUN_004dc5f0           or DWORD PTR ds:0x985ac4,0x1
+4dc7e1 LOAD  FUN_004dc5f0           or DWORD PTR ds:0x985ac4,0x10
+4dc7ec LOAD  FUN_004dc5f0           or DWORD PTR ds:0x985ac4,0x20
+4dc7f8 ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc801 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc80c ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc815 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc820 LOAD  FUN_004dc5f0           or DWORD PTR ds:0x985ac4,0x40
+4dc82c ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc835 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc840 ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc849 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc854 ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc85d ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc868 ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc871 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc87c ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc885 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ac4,edx
+4dc898 ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ae8,ecx
+4dc8ab ADDR  FUN_004dc5f0           mov DWORD PTR ds:0x985ae8,ecx
+4dc8b1 ADDR  FUN_004dc5f0           mov edx,DWORD PTR ds:0x985ac4
+4dc909 ADDR  FUN_004dc8d0           mov ecx,DWORD PTR ds:0x985ac4
+4dca42 ADDR  FUN_004dc8d0           mov eax,ds:0x985ac4
+4dca55 ADDR  FUN_004dc8d0           mov ds:0x985ac4,eax
+4dca69 LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x200000
+4dca77 LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x400000
+4dca85 LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x800000
+4dca93 LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x4000000
+4dcaa1 LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x2000000
+4dcaaf LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x80000000
+4dcabd LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x40000
+4dcacb LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x20000
+4dcada LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x10000
+4dcb01 LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x1000000
+4dcb10 LOAD  FUN_004dc8d0           or DWORD PTR ds:0x985ac4,0x100000
+4dcc49 ADDR  FUN_004dcc10           mov edx,DWORD PTR ds:0x985ac4
+4dcc70 ADDR  FUN_004dcc10           mov ecx,DWORD PTR ds:0x985ae8
+4dcd84 ADDR  FUN_004dcc10           mov eax,ds:0x985ac4
+4dcd89 ADDR  FUN_004dcc10           mov edx,DWORD PTR ds:0x985ae8
+4dcd9a ADDR  FUN_004dcc10           mov ds:0x985ac4,eax
+4dcda6 ADDR  FUN_004dcc10           mov DWORD PTR ds:0x985ae8,edx
+4dcdae LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ac4,0x8000000
+4dcdbc LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ac4,0x10000000
+4dcdca LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ae8,0x40000
+4dcdd8 LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ac4,0x40000000
+4dcde6 LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ac4,edi
+4dcdf0 LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ae8,0x2000000
+4dcdfe LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ae8,0x4000000
+4dce0c ADDR  FUN_004dcc10           mov ecx,DWORD PTR ds:0x985ae8
+4dce15 ADDR  FUN_004dcc10           mov DWORD PTR ds:0x985ae8,ecx
+4dce20 LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ae8,0x80000000
+4dce2f LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ae8,edi
+4dce3a LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ae8,0x40000000
+4dce49 LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ac4,esi
+4dce54 LOAD  FUN_004dcc10           or DWORD PTR ds:0x985ae8,esi
+4dce5a LOAD  FUN_004dcc10           test DWORD PTR ds:0x985ae8,0x4000000
+4dd590 ADDR  FUN_004dd560           mov al,ds:0x985ae8
+4ddb3e ADDR  FUN_004ddaa0           mov eax,ds:0x985aec
+4ddcf1 ADDR  FUN_004ddaa0           mov ds:0x985aec,eax
+4de787 ADDR  FUN_004dde00           mov eax,ds:0x985af4
+4de7b1 ADDR  FUN_004dde00           mov eax,ds:0x985af4
+4df3f5 ADDR  FUN_004df030           mov dl,BYTE PTR ds:0x985b11
+4df406 ADDR  FUN_004df030           mov al,ds:0x985b11
+4df411 ADDR  FUN_004df030           mov ds:0x985b11,al
+4df69d LOAD  FUN_004df630           test BYTE PTR ds:0x985b11,al
+4df825 ADDR  FUN_004df630           mov cl,BYTE PTR ds:0x985b11
+4df82e ADDR  FUN_004df630           mov BYTE PTR ds:0x985b10,cl
+4df834 ADDR  FUN_004df630           mov edx,DWORD PTR ds:0x985ae8
+4df845 ADDR  FUN_004df630           mov DWORD PTR ds:0x985ae8,edx
+4df8fa ADDR  FUN_004df630           mov edx,DWORD PTR ds:0x985ae8
+4df903 ADDR  FUN_004df630           mov DWORD PTR ds:0x985ae8,edx
+4df90e ADDR  FUN_004df630           mov al,ds:0x985ae8
+4df942 LOAD  FUN_004df630           test BYTE PTR ds:0x985b10,al
+4df9a3 ADDR  FUN_004df630           mov BYTE PTR ds:0x985b10,dl
+4df9ab ADDR  FUN_004df630           mov BYTE PTR ds:0x985b10,bl
+4e0355 ADDR  FUN_004e0350           mov eax,ds:0x985afc
+4e0387 ADDR  FUN_004e0350           mov ds:0x985afc,eax
+4e038e ADDR  FUN_004e0350           mov DWORD PTR ds:0x985afc,0x1
+4e08ad ADDR  FUN_004e0720           mov dl,BYTE PTR ds:0x985b10
+4e08b9 ADDR  FUN_004e0720           mov cl,BYTE PTR ds:0x985b11
+4e08c5 ADDR  FUN_004e0720           mov eax,ds:0x985af4
+4e08ca ADDR  FUN_004e0720           mov BYTE PTR ds:0x985b10,dl
+4e08d0 ADDR  FUN_004e0720           mov BYTE PTR ds:0x985b11,cl
+4e0b49 ADDR  FUN_004e0b40           mov edx,DWORD PTR ds:0x985ae8
+4e0b54 ADDR  FUN_004e0b40           mov ds:0x985af0,eax
+4e0b59 ADDR  FUN_004e0b40           mov ds:0x985af4,eax
+4e0b6d ADDR  FUN_004e0b40           mov DWORD PTR ds:0x985ae8,edx
+4e10d8 ADDR  FUN_004e10c0           mov DWORD PTR ds:0x985af0,edi
+4e10de ADDR  FUN_004e10c0           mov DWORD PTR ds:0x985af4,edi
+4e110f ADDR  FUN_004e10c0           mov eax,ds:0x985ae8
+4e111e ADDR  FUN_004e10c0           mov ds:0x985ae8,eax
+4e113d ADDR  FUN_004e10c0           mov eax,ds:0x985ae8
+4e114c ADDR  FUN_004e10c0           mov ds:0x985ae8,eax
+4e1164 ADDR  FUN_004e10c0           mov edx,DWORD PTR ds:0x985ae8
+4e116f ADDR  FUN_004e10c0           mov DWORD PTR ds:0x985ae8,edx
+4e117d ADDR  FUN_004e10c0           mov al,ds:0x985ae8
+4e11b6 ADDR  FUN_004e11b0           mov esi,DWORD PTR ds:0x985ae8
+4e11cc ADDR  FUN_004e11b0           mov DWORD PTR ds:0x985af0,0x0
+4e11d8 ADDR  FUN_004e11b0           mov DWORD PTR ds:0x985af4,0x0
+4e11f6 ADDR  FUN_004e11b0           mov DWORD PTR ds:0x985ae8,esi
+4e1217 ADDR  FUN_004e11b0           mov eax,ds:0x985ae8
+4e1226 ADDR  FUN_004e11b0           mov ds:0x985ae8,eax
+4e1235 ADDR  FUN_004e11b0           mov eax,ds:0x985ae8
+4e123c ADDR  FUN_004e11b0           mov ds:0x985ae8,eax
+4e1241 ADDR  FUN_004e11b0           mov al,ds:0x985ae8
+4e1385 ADDR  FUN_004e1380           mov ecx,DWORD PTR ds:0x985ae8
+4e1390 ADDR  FUN_004e1380           mov ds:0x985af0,eax
+4e1395 ADDR  FUN_004e1380           mov ds:0x985af4,eax
+4e13a9 ADDR  FUN_004e1380           mov DWORD PTR ds:0x985ae8,ecx
+4e13f6 ADDR  FUN_004e13f0           mov esi,DWORD PTR ds:0x985ae8
+4e140d ADDR  FUN_004e13f0           mov DWORD PTR ds:0x985ae8,esi
+4e1417 ADDR  FUN_004e13f0           mov ds:0x985af0,eax
+4e141c ADDR  FUN_004e13f0           mov ds:0x985af4,eax
+4e1f90 LOAD  FUN_004e1f90           test BYTE PTR ds:0x985ae8,0x40
+4e1fab LOAD  FUN_004e1f90           test DWORD PTR ds:0x985ae8,0x8000000
+4e1fc3 ADDR  FUN_004e1fc0           mov ecx,DWORD PTR ds:0x985ae8
+4e1fec ADDR  FUN_004e1fc0           mov ds:0x985ae8,eax
+4e2002 ADDR  FUN_004e1fc0           mov edx,DWORD PTR ds:0x985ae8
+4e201d ADDR  FUN_004e1fc0           mov DWORD PTR ds:0x985ae8,edx
+4e2056 ADDR  FUN_004e2050           mov al,ds:0x985ac4
+4e2083 ADDR  FUN_004e2050           mov eax,ds:0x985af4
+4e20ce ADDR  FUN_004e2050           mov eax,ds:0x985af4
+4e2119 ADDR  FUN_004e2050           mov edx,DWORD PTR ds:0x985afc
+4e2131 ADDR  FUN_004e2050           mov ecx,DWORD PTR ds:0x985afc
+4e21e8 ADDR  FUN_004e2050           mov eax,ds:0x985afc
+4e3549 ADDR  FUN_004e34f0           mov edx,DWORD PTR ds:0x985af4
+4e3592 ADDR  FUN_004e34f0           mov eax,ds:0x985ae8
+4e3626 ADDR  FUN_004e3620           mov ecx,DWORD PTR ds:0x985af4
+4e36d0 ADDR  FUN_004e3620           mov ecx,DWORD PTR ds:0x985af4
+4e3706 ADDR  FUN_004e3700           mov ecx,DWORD PTR ds:0x985af4
+4e37bc ADDR  FUN_004e3700           mov ecx,DWORD PTR ds:0x985af4
+4e3807 ADDR  FUN_004e37f0           mov ecx,DWORD PTR ds:0x985af4
+4e3960 ADDR  FUN_004e37f0           mov ecx,DWORD PTR ds:0x985af4
+4e3a32 ADDR  FUN_004e3990           mov eax,ds:0x985af4
+4e3b1a ADDR  FUN_004e3990           mov ecx,DWORD PTR ds:0x985af4
+4e3b98 LOAD  FUN_004e3b50           test BYTE PTR ds:0x985ae8,0x80
+4e3c27 ADDR  FUN_004e3c00           mov edx,DWORD PTR ds:0x985b10
+4e40a4 ADDR  FUN_004e40a0           mov eax,ds:0x985b10
+4e40cf ADDR  FUN_004e40a0           mov ecx,DWORD PTR ds:0x985b30
+4e40f3 ADDR  FUN_004e40a0           mov ecx,DWORD PTR ds:0x985aec
+4e4470 ADDR  FUN_004e4450           mov al,ds:0x985b10
+4e47d6 LOAD  FUN_004e47d0           cmp DWORD PTR ds:0x985af4,0x200
+4e4838 ADDR  FUN_004e47d0           mov eax,ds:0x985af4
+4e484a ADDR  FUN_004e47d0           mov ds:0x985af4,eax
+4e48a5 ADDR  FUN_004e47d0           mov eax,ds:0x985b58
+4e4991 ADDR  FUN_004e47d0           mov eax,ds:0x985afc
+4e4b38 ADDR  FUN_004e47d0           mov eax,ds:0x985aec
+4e4b93 ADDR  FUN_004e47d0           mov edi,DWORD PTR ds:0x985afc
+4e4be3 ADDR  FUN_004e47d0           mov edi,DWORD PTR ds:0x985afc
+4e4c0d ADDR  FUN_004e47d0           mov edi,DWORD PTR ds:0x985afc
+4e4e8a ADDR  FUN_004e4e10           mov ecx,DWORD PTR ds:0x985afc
+4e4f8f ADDR  FUN_004e4e10           mov eax,ds:0x985af0
+4e4fb0 LOAD  FUN_004e4e10           cmp eax,DWORD PTR ds:0x985af0
+4e4fda ADDR  FUN_004e4e10           mov eax,ds:0x985af4
+4e5094 ADDR  FUN_004e4e10           mov ecx,DWORD PTR ds:0x985af4
+4e5115 ADDR  FUN_004e4e10           mov ebx,DWORD PTR ds:0x985af4
+4e514c ADDR  FUN_004e4e10           mov ebx,DWORD PTR ds:0x985af4
+4e515d ADDR  FUN_004e4e10           mov DWORD PTR ds:0x985af4,ebx
+4e516f ADDR  FUN_004e4e10           mov ecx,DWORD PTR ds:0x985af0
+4e51f8 ADDR  FUN_004e4e10           mov eax,0x985b3c
+4e5213 LOAD  FUN_004e4e10           cmp eax,0x985bc0
+4e531a ADDR  FUN_004e4e10           mov eax,ds:0x985af0
+4e53a1 ADDR  FUN_004e4e10           mov ecx,DWORD PTR ds:0x985af0
+4e53b2 ADDR  FUN_004e4e10           mov eax,ds:0x985af0
+4e546b ADDR  FUN_004e4e10           mov ecx,DWORD PTR ds:0x985af0
+4e5522 ADDR  FUN_004e4e10           mov eax,ds:0x985af4
+4e5533 ADDR  FUN_004e4e10           mov eax,ds:0x985af4
+4e55f1 LOAD  FUN_004e5560           test BYTE PTR ds:0x985b10,al
+4e56c2 ADDR  FUN_004e5560           mov edx,0x985b3c
+4e56f2 ADDR  FUN_004e5560           mov edx,0x985b3c
+4e570d LOAD  FUN_004e5560           mov eax,DWORD PTR [eax*4+0x985aa0]
+4e574a ADDR  FUN_004e5560           mov al,ds:0x985ae8
+4e5794 ADDR  FUN_004e5560           mov edx,DWORD PTR ds:0x985af4
+4e57de ADDR  FUN_004e5560           mov edx,DWORD PTR ds:0x985af4
+4e5821 ADDR  FUN_004e5560           mov ecx,0x985b3c
+4e5aba ADDR  FUN_004e5560           mov eax,ds:0x985acc
+4e5ac5 ADDR  FUN_004e5560           mov ds:0x985acc,eax
+4e5b00 ADDR  FUN_004e5ae0           mov al,ds:0x985b10
+4e5cd7 ADDR  FUN_004e5ae0           mov al,ds:0x985b10
+4e5d1e LOAD  FUN_004e5ae0           test BYTE PTR ds:0x985ae8,0x1
+4e5e1e ADDR  FUN_004e5e10           mov cl,BYTE PTR ds:0x985b10
+4e5e30 ADDR  FUN_004e5e10           mov eax,ds:0x985af4
+4e5ec3 ADDR  FUN_004e5e10           mov al,ds:0x985b10
+4e5ef1 ADDR  FUN_004e5e10           mov eax,ds:0x985af4
+4e5faa ADDR  FUN_004e5f10           mov eax,ds:0x985b64
+4e6008 ADDR  FUN_004e5f10           mov eax,ds:0x985b40
+4e6067 ADDR  FUN_004e5f10           mov eax,ds:0x985b80
+4e60c4 ADDR  FUN_004e60c0           mov eax,ds:0x985b5c
+4e60f7 ADDR  FUN_004e60c0           mov eax,ds:0x985b7c
+4e611d ADDR  FUN_004e60c0           mov eax,ds:0x985bb8
+4e6204 ADDR  FUN_004e60c0           mov eax,ds:0x985b80
+4e6243 ADDR  FUN_004e6240           mov eax,ds:0x985b5c
+4e6276 ADDR  FUN_004e6240           mov eax,ds:0x985b7c
+4e629c ADDR  FUN_004e6240           mov eax,ds:0x985bb8
+4e630e ADDR  FUN_004e6240           mov eax,ds:0x985b80
+4e634f ADDR  FUN_004e6240           mov ecx,DWORD PTR ds:0x985b88
+4e6376 ADDR  FUN_004e6240           mov ecx,DWORD PTR ds:0x985b60
+4e66b8 ADDR  FUN_004e63b0           mov eax,ds:0x985af4
+4e690a ADDR  FUN_004e63b0           mov ecx,DWORD PTR ds:0x985af4
+4e72a5 ADDR  FUN_004e7070           mov eax,ds:0x985bc0
+4e74e9 LOAD  FUN_004e7070           cmp DWORD PTR ds:0x985b48,ebx
+4e790e ADDR  FUN_004e78e0           mov cl,BYTE PTR ds:0x985b10
+4e79e0 ADDR  FUN_004e78e0           mov eax,ds:0x985ba8
+4e7ed2 ADDR  FUN_004e78e0           mov ecx,DWORD PTR ds:0x985b10
+4e833b LOAD  FUN_004e78e0           cmp DWORD PTR ds:0x985afc,0x64
+4e8dfc ADDR  FUN_004e8d60           mov eax,ds:0x985af0
+4e9277 ADDR  FUN_004e8d60           mov ecx,DWORD PTR ds:0x985af0
+4e9405 ADDR  FUN_004e93f0           mov eax,ds:0x985ba8
+4e9476 ADDR  FUN_004e93f0           mov eax,ds:0x985bac
+4e94e9 ADDR  FUN_004e93f0           mov eax,ds:0x985bb0
+4e9623 ADDR  FUN_004e93f0           mov eax,ds:0x985bac
+4e96d6 ADDR  FUN_004e93f0           mov eax,ds:0x985b7c
+4e9736 ADDR  FUN_004e93f0           mov al,ds:0x985b10
+4e9778 LOAD  FUN_004e93f0           cmp DWORD PTR ds:0x985bb8,0xffffffff
+4e9781 ADDR  FUN_004e93f0           mov eax,ds:0x985ac4
+4e9799 LOAD  FUN_004e93f0           test DWORD PTR ds:0x985ae8,0x100000
+4e97b3 LOAD  FUN_004e93f0           test BYTE PTR ds:0x985b10,bl
+4e97e0 ADDR  FUN_004e93f0           mov edx,DWORD PTR ds:0x985aec
+4e98aa ADDR  FUN_004e9880           mov eax,ds:0x985af4
+4e998c ADDR  FUN_004e9880           mov ecx,DWORD PTR ds:0x985af4
+4e9b46 ADDR  FUN_004e9b40           mov dl,BYTE PTR ds:0x985b10
+4e9bfc ADDR  FUN_004e9be0           mov ecx,DWORD PTR ds:0x985b10
+4e9ddd ADDR  FUN_004e9be0           mov eax,ds:0x985b54
+4e9e1b ADDR  FUN_004e9be0           mov eax,ds:0x985b58
+4e9e9b ADDR  FUN_004e9be0           mov eax,ds:0x985b3c
+4e9ecc ADDR  FUN_004e9be0           mov eax,ds:0x985ba4
+4ea40d ADDR  FUN_004e9be0           mov eax,ds:0x985ba0
+4ea703 ADDR  FUN_004e9be0           mov eax,ds:0x985b74
+4ea950 ADDR  FUN_004ea940           mov edi,DWORD PTR ds:0x985af4
+4eaa94 ADDR  FUN_004eaa10           mov edi,DWORD PTR ds:0x985af4
+4eac11 ADDR  FUN_004eaa10           mov eax,ds:0x985bc0
+4eb125 ADDR  FUN_004eaa10           mov eax,ds:0x985b54
+4eb331 ADDR  FUN_004eaa10           mov eax,ds:0x985b6c
+4eb357 ADDR  FUN_004eaa10           mov eax,ds:0x985b84
+4eb394 ADDR  FUN_004eaa10           mov edx,DWORD PTR ds:0x985ba8
+4eb3bb ADDR  FUN_004eaa10           mov eax,ds:0x985b74
+4eb40c ADDR  FUN_004eaa10           mov eax,ds:0x985b90
+4eb41d ADDR  FUN_004eaa10           mov eax,ds:0x985af4
+4eb461 ADDR  FUN_004eaa10           mov eax,ds:0x985af4
+4eb74a ADDR  FUN_004eb6f0           mov eax,ds:0x985af4
+4eb88d ADDR  FUN_004eb6f0           mov eax,ds:0x985af4
+4eb926 ADDR  FUN_004eb6f0           mov eax,ds:0x985af4
+4ebc55 ADDR  FUN_004eb6f0           mov ecx,DWORD PTR ds:0x985af4
+4ebcc4 ADDR  FUN_004eb6f0           mov bl,BYTE PTR ds:0x985b10
+4ebcd8 LOAD  FUN_004eb6f0           test BYTE PTR ds:0x985abc,0x20
+4ebe1a ADDR  FUN_004eb6f0           mov al,ds:0x985b10
+4ebe25 LOAD  FUN_004eb6f0           test BYTE PTR ds:0x985abc,0x20
+4ebf04 ADDR  FUN_004ebef0           mov bl,BYTE PTR ds:0x985b10
+4ec29f ADDR  FUN_004ebef0           mov eax,ds:0x985af4
+4ec354 ADDR  FUN_004ebef0           mov ecx,DWORD PTR ds:0x985af4
+4ec7fe ADDR  FUN_004ebef0           mov al,ds:0x985b10
+4ecd3b ADDR  FUN_004ebef0           mov cl,BYTE PTR ds:0x985b10
+4ecd45 LOAD  FUN_004ebef0           test BYTE PTR ds:0x985abc,0x20
+4ed56f ADDR  FUN_004ebef0           mov dl,BYTE PTR ds:0x985b10
+4ed579 LOAD  FUN_004ebef0           test DWORD PTR ds:0x985abc,0x400000
+4eda1e ADDR  FUN_004ebef0           mov cl,BYTE PTR ds:0x985b10
+4eda28 LOAD  FUN_004ebef0           test DWORD PTR ds:0x985abc,0x400000
+4edbd2 ADDR  FUN_004ebef0           mov cl,BYTE PTR ds:0x985b10
+4edbdc LOAD  FUN_004ebef0           test DWORD PTR ds:0x985abc,0x400000
+4edc41 ADDR  FUN_004ebef0           mov al,ds:0x985b10
+4edc57 LOAD  FUN_004ebef0           test DWORD PTR ds:0x985ab8,0x20000
+4edd83 LOAD  FUN_004ebef0           cmp DWORD PTR ds:0x985afc,0xc8
+4edda8 ADDR  FUN_004ebef0           mov cl,BYTE PTR ds:0x985b10
+4eddba LOAD  FUN_004ebef0           test DWORD PTR ds:0x985ab8,0x2000000
+4edeac LOAD  FUN_004ebef0           cmp DWORD PTR ds:0x985afc,0xc8
+4ededc ADDR  FUN_004ebef0           mov cl,BYTE PTR ds:0x985b10
+4edef2 LOAD  FUN_004ebef0           test DWORD PTR ds:0x985ab8,0x2000000
+4edfd4 LOAD  FUN_004ebef0           cmp DWORD PTR ds:0x985afc,ebx
+4ee066 ADDR  FUN_004ebef0           mov eax,ds:0x985af4
+4ee110 ADDR  FUN_004ebef0           mov esi,DWORD PTR ds:0x985af4
+4ee172 ADDR  FUN_004ebef0           mov cl,BYTE PTR ds:0x985b10
+4ee187 LOAD  FUN_004ebef0           test DWORD PTR ds:0x985ab8,0x20000
+4ee1f0 ADDR  FUN_004ee1e0           mov eax,ds:0x985b70
+4ee304 ADDR  FUN_004ee2f0           mov eax,ds:0x985b70
+4ee440 ADDR  FUN_004ee410           mov cl,BYTE PTR ds:0x985ae8
+4ee461 ADDR  FUN_004ee410           mov eax,ds:0x985af0
+4ee5a0 ADDR  FUN_004ee410           mov eax,ds:0x985b9c
+4ee5fb ADDR  FUN_004ee410           mov eax,ds:0x985b70
+4ee73e ADDR  FUN_004ee410           mov eax,ds:0x985b70
+4eec7b ADDR  FUN_004eec30           mov ecx,DWORD PTR ds:0x985af0
+4eeccf ADDR  FUN_004eec30           mov eax,ds:0x985af4
+4eed3d ADDR  FUN_004eec30           mov cl,BYTE PTR ds:0x985b10
+4eee63 ADDR  FUN_004eed70           mov ecx,DWORD PTR ds:0x985b94
+4eeea6 ADDR  FUN_004eeea0           mov al,ds:0x985ae8
+4eef07 LOAD  FUN_004eeea0           test BYTE PTR ds:0x985b10,al
+4eef1c LOAD  FUN_004eeea0           test BYTE PTR ds:0x985b10,al
+4eef2b ADDR  FUN_004eeea0           mov eax,ds:0x985b34
+4eef4b ADDR  FUN_004eeea0           mov ecx,DWORD PTR ds:0x985aec
+4eef7b ADDR  FUN_004eeea0           mov eax,ds:0x985b38
+4ef28d ADDR  FUN_004eeea0           mov al,ds:0x985b10
+4ef2f4 LOAD  FUN_004eeea0           test BYTE PTR ds:0x985ac0,0x4
+4ef553 ADDR  FUN_004ef540           mov cl,BYTE PTR ds:0x985b10
+4ef563 LOAD  FUN_004ef540           test DWORD PTR ds:0x985abc,0x100000
+4ef7fe ADDR  FUN_004ef6d0           mov edx,DWORD PTR ds:0x985b10
+4ef928 LOAD  FUN_004ef6d0           cmp DWORD PTR [eax*4+0x985b3c],0xffffffff
+4efb12 ADDR  FUN_004ef6d0           mov al,ds:0x985b10
+4efb1f ADDR  FUN_004ef6d0           mov eax,ds:0x985aec
+4efc38 ADDR  FUN_004ef6d0           mov al,ds:0x985ae8
+4eff02 LOAD  FUN_004ef6d0           test BYTE PTR ds:0x985b10,dl
+4f001e ADDR  FUN_004ef6d0           mov al,ds:0x985b10
+4f006b LOAD  FUN_004ef6d0           test BYTE PTR ds:0x985acc,0x10
+4f00bb ADDR  FUN_004ef6d0           mov eax,ds:0x985b5c
+4f00f0 ADDR  FUN_004ef6d0           mov eax,ds:0x985b7c
+4f035e ADDR  FUN_004ef6d0           mov al,ds:0x985b10
+4f0397 ADDR  FUN_004ef6d0           mov edx,DWORD PTR ds:0x985ac0
+4f05af ADDR  FUN_004ef6d0           mov al,ds:0x985b10
+4f05d4 LOAD  FUN_004ef6d0           test DWORD PTR ds:0x985abc,0x100000
+4f07c5 ADDR  FUN_004ef6d0           mov cl,BYTE PTR ds:0x985b10
+4f0819 LOAD  FUN_004ef6d0           mov eax,DWORD PTR [eax*4+0x985b3c]
+4f0958 ADDR  FUN_004ef6d0           mov al,ds:0x985b10
+4f0ac9 ADDR  FUN_004ef6d0           mov cl,BYTE PTR ds:0x985b10
+4f0ad7 ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f0af0 ADDR  FUN_004ef6d0           mov bl,BYTE PTR ds:0x985b10
+4f0b60 ADDR  FUN_004ef6d0           mov ecx,DWORD PTR ds:0x985af4
+4f0ccb LOAD  FUN_004ef6d0           test BYTE PTR ds:0x985b10,dl
+4f0d25 ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f0d63 ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f0d83 STORE FUN_004ef6d0           mov DWORD PTR [eax*4+0x985b3c],edx
+4f0e04 ADDR  FUN_004ef6d0           mov esi,DWORD PTR ds:0x985af4
+4f0e53 LOAD  FUN_004ef6d0           test BYTE PTR ds:0x985ae8,0x1
+4f0fe6 LOAD  FUN_004ef6d0           test BYTE PTR ds:0x985ae8,0x1
+4f0ff3 LOAD  FUN_004ef6d0           test BYTE PTR ds:0x985ac0,0x1
+4f1037 LOAD  FUN_004ef6d0           test BYTE PTR ds:0x985ac0,0x1
+4f116e ADDR  FUN_004ef6d0           mov eax,ds:0x985abc
+4f1186 ADDR  FUN_004ef6d0           mov al,ds:0x985b10
+4f122f ADDR  FUN_004ef6d0           mov eax,ds:0x985abc
+4f12fb ADDR  FUN_004ef6d0           mov eax,ds:0x985ac0
+4f141a ADDR  FUN_004ef6d0           mov al,ds:0x985ae8
+4f148d ADDR  FUN_004ef6d0           mov al,ds:0x985ae8
+4f1510 ADDR  FUN_004ef6d0           mov al,ds:0x985acc
+4f1589 ADDR  FUN_004ef6d0           mov eax,ds:0x985ab8
+4f15b1 LOAD  FUN_004ef6d0           test DWORD PTR ds:0x985ab8,edi
+4f15fa ADDR  FUN_004ef6d0           mov dl,BYTE PTR ds:0x985b11
+4f1620 ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f185f ADDR  FUN_004ef6d0           mov edx,DWORD PTR ds:0x985af4
+4f1a04 ADDR  FUN_004ef6d0           mov eax,ds:0x985ac4
+4f1a44 ADDR  FUN_004ef6d0           mov al,ds:0x985b10
+4f1ad3 ADDR  FUN_004ef6d0           mov ecx,DWORD PTR ds:0x985afc
+4f1aea ADDR  FUN_004ef6d0           mov edx,DWORD PTR ds:0x985afc
+4f1b1c ADDR  FUN_004ef6d0           mov eax,ds:0x985ae8
+4f1b37 ADDR  FUN_004ef6d0           mov ds:0x985ae8,eax
+4f1d81 ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f1dbf ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f1dee ADDR  FUN_004ef6d0           mov dl,BYTE PTR ds:0x985b10
+4f1e11 ADDR  FUN_004ef6d0           mov dl,BYTE PTR ds:0x985b10
+4f20a9 ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f20e1 ADDR  FUN_004ef6d0           mov cl,BYTE PTR ds:0x985b10
+4f2125 ADDR  FUN_004ef6d0           mov edx,DWORD PTR ds:0x985af4
+4f2175 ADDR  FUN_004ef6d0           mov esi,DWORD PTR ds:0x985af4
+4f21c3 ADDR  FUN_004ef6d0           mov eax,ds:0x985af4
+4f26ff LOAD  FUN_004f26e0           test BYTE PTR ds:0x985b10,al
+4f28e8 ADDR  FUN_004f26e0           mov ecx,DWORD PTR ds:0x985afc
+4f2a60 ADDR  FUN_004f26e0           mov dl,BYTE PTR ds:0x985b10
+4f2bd5 ADDR  FUN_004f26e0           mov cl,BYTE PTR ds:0x985b10
+4f2cb1 ADDR  FUN_004f26e0           mov eax,ds:0x985bb8
+4f2d4d ADDR  FUN_004f26e0           mov eax,ds:0x985bb8
+4f2d80 ADDR  FUN_004f26e0           mov al,ds:0x985b10
+4f2d8d ADDR  FUN_004f26e0           mov eax,ds:0x985b34
+4f2db0 ADDR  FUN_004f26e0           mov eax,ds:0x985aec
+4f2dc7 ADDR  FUN_004f26e0           mov al,ds:0x985b10
+4f2de0 LOAD  FUN_004f26e0           cmp DWORD PTR [esi*4+0x985aa0],0xffffffff
+4f2dfb LOAD  FUN_004f26e0           test BYTE PTR ds:0x985ae8,0x1
+4f2ed5 ADDR  FUN_004f2ea0           mov eax,ds:0x985af0
+4f301d ADDR  FUN_004f2ea0           mov eax,ds:0x985af0
+4f3089 ADDR  FUN_004f2ea0           mov cl,BYTE PTR ds:0x985b10
+4f31b3 ADDR  FUN_004f2ea0           mov al,ds:0x985b10
+4f3238 ADDR  FUN_004f2ea0           mov eax,ds:0x985af0
+4f3279 LOAD  FUN_004f2ea0           test BYTE PTR ds:0x985b10,dl
+4f33b9 ADDR  FUN_004f2ea0           mov ecx,DWORD PTR ds:0x985af0
+4f3411 ADDR  FUN_004f33f0           mov eax,ds:0x985af0
+4f34b6 LOAD  FUN_004f34b0           test DWORD PTR ds:0x985ac4,0x4000000
+4f353d ADDR  FUN_004f34b0           mov eax,ds:0x985afc
+4f368d ADDR  FUN_004f34b0           mov al,ds:0x985b10
+4f3855 ADDR  FUN_004f34b0           mov al,ds:0x985b10
+4f38f0 ADDR  FUN_004f34b0           mov ecx,DWORD PTR ds:0x985af4
+4f39f7 ADDR  FUN_004f34b0           mov edx,DWORD PTR ds:0x985af4
+4f3a20 ADDR  FUN_004f34b0           mov edi,DWORD PTR ds:0x985b10
+4f3a91 ADDR  FUN_004f34b0           mov ecx,DWORD PTR ds:0x985afc
+4f3b38 ADDR  FUN_004f34b0           mov eax,ds:0x985af4
+4f3bba ADDR  FUN_004f34b0           mov eax,ds:0x985af4
+4f3ca2 ADDR  FUN_004f34b0           mov eax,ds:0x985af0
+4f3e0d ADDR  FUN_004f34b0           mov eax,ds:0x985af0
+4f3e26 LOAD  FUN_004f34b0           cmp esi,DWORD PTR ds:0x985af0
+4f401d ADDR  FUN_004f34b0           mov al,ds:0x985ae8
+4f4108 ADDR  FUN_004f4060           mov eax,ds:0x985bb4
+4f41b0 LOAD  FUN_004f4060           test BYTE PTR ds:0x985b10,dl
+4f424a ADDR  FUN_004f41f0           mov ecx,DWORD PTR ds:0x985b70
+4f42ef ADDR  FUN_004f41f0           mov ecx,DWORD PTR ds:0x985b9c
+4f4385 ADDR  FUN_004f41f0           mov esi,DWORD PTR ds:0x985bb4
+4f4395 LOAD  FUN_004f41f0           test BYTE PTR ds:0x985b10,dl
+4f44e4 ADDR  FUN_004f41f0           mov esi,DWORD PTR ds:0x985bb4
+4f4592 ADDR  FUN_004f41f0           mov esi,DWORD PTR ds:0x985bb4
+4f4670 ADDR  FUN_004f41f0           mov eax,ds:0x985b54
+4f48d4 ADDR  FUN_004f47f0           mov ecx,DWORD PTR ds:0x985ba0
+4f4ac3 ADDR  FUN_004f4a50           mov ebx,DWORD PTR ds:0x985ae8
+4f4af0 LOAD  FUN_004f4a50           test DWORD PTR ds:0x985ac4,0x200000
+4f4c01 ADDR  FUN_004f4a50           mov eax,ds:0x985af4
+4f4c80 ADDR  FUN_004f4a50           mov ecx,DWORD PTR ds:0x985af4
+4f50b2 LOAD  FUN_004f4a50           test BYTE PTR ds:0x985ae8,0x80
+4f5293 LOAD  FUN_004f4a50           test BYTE PTR ds:0x985b10,al
+4f52b1 ADDR  FUN_004f4a50           mov eax,ds:0x985aec
+4f5308 LOAD  FUN_004f4a50           cmp DWORD PTR ds:0x985bb8,0xffffffff
+4f53f5 ADDR  FUN_004f4a50           mov eax,ds:0x985af4
+4f54a3 ADDR  FUN_004f4a50           mov esi,DWORD PTR ds:0x985af4
+4f56df ADDR  FUN_004f4a50           mov dl,BYTE PTR ds:0x985b10
+4f56e9 LOAD  FUN_004f4a50           cmp DWORD PTR ds:0x985aec,0x4
+4f582f LOAD  FUN_004f4a50           test DWORD PTR ds:0x985ae8,0x20000
+4f59cd ADDR  FUN_004f4a50           mov edx,DWORD PTR ds:0x985ae8
+4f59dd ADDR  FUN_004f4a50           mov DWORD PTR ds:0x985ae8,edx
+4f5b14 ADDR  FUN_004f5a70           mov eax,ds:0x985afc
+4f5bcf ADDR  FUN_004f5a70           mov eax,ds:0x985afc
+4f5c13 LOAD  FUN_004f5a70           cmp DWORD PTR ds:0x985afc,0x5
+4f5c25 LOAD  FUN_004f5a70           test BYTE PTR ds:0x985ab8,0x20
+4f5cc6 LOAD  FUN_004f5a70           cmp DWORD PTR ds:0x985afc,0x1
+4f5d05 LOAD  FUN_004f5a70           test BYTE PTR ds:0x985ae8,0x1
+4f5ec8 ADDR  FUN_004f5a70           mov cl,BYTE PTR ds:0x985ae8
+4f5f76 ADDR  FUN_004f5a70           mov edx,DWORD PTR ds:0x985afc
+4f611b ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f6409 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f648b ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f64a0 ADDR  FUN_004f6030           mov eax,ds:0x985af4
+4f64ca ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985af4
+4f6535 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f653f LOAD  FUN_004f6030           test BYTE PTR ds:0x985ac4,0x40
+4f65c9 ADDR  FUN_004f6030           mov eax,ds:0x985ae8
+4f66fc ADDR  FUN_004f6030           mov al,ds:0x985b10
+4f67b6 LOAD  FUN_004f6030           mov eax,DWORD PTR [esi*4+0x985b3c]
+4f6866 ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985af4
+4f6941 LOAD  FUN_004f6030           test BYTE PTR ds:0x985b10,dl
+4f6985 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f71c9 ADDR  FUN_004f6030           mov eax,ds:0x985af0
+4f72fa ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985af4
+4f7320 ADDR  FUN_004f6030           mov eax,ds:0x985af0
+4f7534 ADDR  FUN_004f6030           mov eax,ds:0x985af0
+4f75e6 ADDR  FUN_004f6030           mov eax,ds:0x985b64
+4f793e ADDR  FUN_004f6030           mov edi,DWORD PTR ds:0x985b10
+4f7ce6 LOAD  FUN_004f6030           test BYTE PTR ds:0x985b10,dl
+4f7f7d ADDR  FUN_004f6030           mov al,ds:0x985b10
+4f8223 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f847d ADDR  FUN_004f6030           mov al,ds:0x985b10
+4f84c8 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985aec,0x3
+4f8501 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985aec,0x3
+4f85cc ADDR  FUN_004f6030           mov eax,ds:0x985afc
+4f863b ADDR  FUN_004f6030           mov al,ds:0x985b10
+4f871f ADDR  FUN_004f6030           mov eax,ds:0x985afc
+4f88cd ADDR  FUN_004f6030           mov eax,ds:0x985afc
+4f899b ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985afc
+4f8edb ADDR  FUN_004f6030           mov al,ds:0x985b10
+4f9043 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985afc,0x64
+4f913e ADDR  FUN_004f6030           mov dl,BYTE PTR ds:0x985b10
+4f918f ADDR  FUN_004f6030           mov esi,DWORD PTR ds:0x985b10
+4f92a9 ADDR  FUN_004f6030           mov eax,ds:0x985afc
+4f9339 ADDR  FUN_004f6030           mov edx,DWORD PTR ds:0x985af4
+4f9378 ADDR  FUN_004f6030           mov edx,DWORD PTR ds:0x985aec
+4f93b4 ADDR  FUN_004f6030           mov eax,ds:0x985aec
+4f9408 LOAD  FUN_004f6030           test DWORD PTR ds:0x985ac4,0x20000000
+4f9440 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985afc,0x64
+4f96b8 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f96ce LOAD  FUN_004f6030           imul ecx,DWORD PTR ds:0x985afc
+4f96ee LOAD  FUN_004f6030           test BYTE PTR ds:0x985b10,0x40
+4f989b ADDR  FUN_004f6030           mov eax,ds:0x985afc
+4f98ef ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f9b23 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f9b5a LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985aec,ebx
+4f9be1 ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985b78
+4f9c6e ADDR  FUN_004f6030           mov edx,DWORD PTR ds:0x985b10
+4f9d13 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4f9d60 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985aec,0x1
+4f9d7e ADDR  FUN_004f6030           mov ebx,DWORD PTR ds:0x985b30
+4f9d9a ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985b10
+4f9e52 LOAD  FUN_004f6030           test BYTE PTR ds:0x985ac4,0x40
+4f9e83 ADDR  FUN_004f6030           mov esi,DWORD PTR ds:0x985b10
+4fa10d ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fa133 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fa17c ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fa193 ADDR  FUN_004f6030           mov ebx,DWORD PTR ds:0x985af0
+4fa51f ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fa532 ADDR  FUN_004f6030           mov eax,ds:0x985afc
+4fa546 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fa8da ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fb02c ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fb282 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fb355 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fb695 ADDR  FUN_004f6030           mov eax,ds:0x985b9c
+4fba1f LOAD  FUN_004f6030           test BYTE PTR ds:0x985b10,dl
+4fbf15 ADDR  FUN_004f6030           mov dl,BYTE PTR ds:0x985b10
+4fc0f8 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fc1d7 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985afc,0x64
+4fc45f ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fc49b ADDR  FUN_004f6030           mov dl,BYTE PTR ds:0x985b10
+4fc792 ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985b34
+4fc84d ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fc947 ADDR  FUN_004f6030           mov dl,BYTE PTR ds:0x985b10
+4fc988 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fca71 ADDR  FUN_004f6030           mov eax,ds:0x985b10
+4fcbd6 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fcbe3 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985aec,0x3
+4fccaa ADDR  FUN_004f6030           mov edx,DWORD PTR ds:0x985afc
+4fcf24 LOAD  FUN_004f6030           cmp DWORD PTR ds:0x985bc0,ecx
+4fcf99 ADDR  FUN_004f6030           mov eax,ds:0x985ac4
+4fd0b3 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fd191 ADDR  FUN_004f6030           mov ecx,DWORD PTR ds:0x985afc
+4fd20f ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fd274 ADDR  FUN_004f6030           mov eax,ds:0x985af4
+4fd2d6 ADDR  FUN_004f6030           mov eax,ds:0x985af4
+4fd3dc LOAD  FUN_004f6030           cmp DWORD PTR [ecx*4+0x985b3c],0xffffffff
+4fd463 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fd4a3 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fd505 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fd584 ADDR  FUN_004f6030           mov al,ds:0x985b10
+4fd6b0 ADDR  FUN_004f6030           mov cl,BYTE PTR ds:0x985b10
+4fd8ca ADDR  FUN_004fd8b0           mov eax,ds:0x985ba8
+4fd92f ADDR  FUN_004fd910           mov eax,ds:0x985ba8
+4fd976 ADDR  FUN_004fd910           mov eax,ds:0x985af0
+4fda5d ADDR  FUN_004fd910           mov edx,DWORD PTR ds:0x985af0
+4fdbca LOAD  FUN_004fdaf0           test BYTE PTR ds:0x985b10,al
+4fe372 ADDR  FUN_004fe310           mov esi,DWORD PTR ds:0x985b7c
+4fe5b3 ADDR  FUN_004fe5b0           mov eax,ds:0x985afc
+4fe6b3 ADDR  FUN_004fe670           mov eax,ds:0x985b88
+4fe6e6 ADDR  FUN_004fe670           mov eax,ds:0x985b60
+4fe8da ADDR  FUN_004fe720           mov eax,ds:0x985b88
+4feb2c ADDR  FUN_004fe930           mov eax,ds:0x985b60
+4fed56 ADDR  FUN_004febe0           mov eax,ds:0x985b88
+4fee4f ADDR  FUN_004febe0           mov eax,ds:0x985b60
+4fef8d ADDR  FUN_004febe0           mov eax,ds:0x985b7c
+4ff15c ADDR  FUN_004febe0           mov eax,ds:0x985ba8
+4fff72 ADDR  FUN_004febe0           mov eax,ds:0x985b50
+501d08 LOAD  FUN_005010d0           test BYTE PTR ds:0x985ab8,0x8
+501f19 LOAD  FUN_005010d0           test BYTE PTR ds:0x985ab8,0x8
+5021a5 LOAD  FUN_00501fc0           test DWORD PTR ds:0x985ab8,0x40000
+50257d ADDR  FUN_005024a0           mov al,ds:0x985b10
+5026b4 ADDR  FUN_00502680           mov ecx,DWORD PTR ds:0x985af0
+5026e0 ADDR  FUN_00502680           mov bl,BYTE PTR ds:0x985b10
+502817 ADDR  FUN_00502680           mov eax,ds:0x985af0
+502846 ADDR  FUN_00502840           mov eax,ds:0x985af0
+5029e4 ADDR  FUN_00502840           mov eax,ds:0x985af0
+503249 LOAD  FUN_00502cd0           test BYTE PTR ds:0x985b10,dl
+503350 ADDR  FUN_00502cd0           mov cl,BYTE PTR ds:0x985b10
+5033f0 ADDR  FUN_00502cd0           mov esi,DWORD PTR ds:0x985b10
+50348d LOAD  FUN_00502cd0           test BYTE PTR ds:0x985ac4,0x40
+5036d5 ADDR  FUN_00502cd0           mov dl,BYTE PTR ds:0x985b10
+5037dc ADDR  FUN_00502cd0           mov edx,DWORD PTR ds:0x985afc
+50386d LOAD  FUN_00502cd0           test BYTE PTR ds:0x985ae8,0x80
+503ae0 ADDR  FUN_00502cd0           mov eax,ds:0x985b10
+503b41 ADDR  FUN_00502cd0           mov eax,ds:0x985b10
+503b82 ADDR  FUN_00502cd0           mov al,ds:0x985b10
+503bb9 ADDR  FUN_00502cd0           mov al,ds:0x985ae8
+503c5d LOAD  FUN_00502cd0           cmp DWORD PTR ds:0x985afc,0x32
+503cc5 LOAD  FUN_00502cd0           cmp DWORD PTR ds:0x985afc,0xf
+503d5e ADDR  FUN_00502cd0           mov cl,BYTE PTR ds:0x985b10
+503f81 ADDR  FUN_00502cd0           mov eax,ds:0x985abc
+50436d ADDR  FUN_00502cd0           mov dl,BYTE PTR ds:0x985ae8
+504405 ADDR  FUN_00502cd0           mov eax,ds:0x985ab8
+50485f LOAD  FUN_00502cd0           test BYTE PTR ds:0x985abc,0x10
+5048a1 ADDR  FUN_00502cd0           mov eax,ds:0x985abc
+5048a8 ADDR  FUN_00502cd0           mov ds:0x985abc,eax
+5048c4 LOAD  FUN_00502cd0           test BYTE PTR ds:0x985ab8,0x8
+504a13 LOAD  FUN_00502cd0           test BYTE PTR ds:0x985b10,dl
+505238 ADDR  FUN_00502cd0           mov ecx,DWORD PTR ds:0x985b7c
+506860 ADDR  FUN_00502cd0           mov eax,ds:0x985b50
+50690f ADDR  FUN_00502cd0           mov al,ds:0x985b10
+50699b ADDR  FUN_00502cd0           mov cl,BYTE PTR ds:0x985b10
+506a85 ADDR  FUN_00502cd0           mov al,ds:0x985b10
+506cc0 ADDR  FUN_00502cd0           mov cl,BYTE PTR ds:0x985b10
+507157 LOAD  FUN_00502cd0           test BYTE PTR ds:0x985abc,0x10
+507191 ADDR  FUN_00502cd0           mov eax,ds:0x985abc
+507198 ADDR  FUN_00502cd0           mov ds:0x985abc,eax
+5072e0 ADDR  FUN_00502cd0           mov edi,DWORD PTR ds:0x985b04
+50739a ADDR  FUN_00502cd0           mov cl,BYTE PTR ds:0x985b10
+5074a7 ADDR  FUN_00507460           mov cl,BYTE PTR ds:0x985b11
+5075f8 ADDR  FUN_00507460           mov edx,DWORD PTR ds:0x985b10
+507630 ADDR  FUN_00507460           mov edx,DWORD PTR ds:0x985afc
+50783b ADDR  FUN_005076d0           mov cl,BYTE PTR ds:0x985b10
+507a5f ADDR  FUN_005076d0           mov al,ds:0x985b10
+507bca ADDR  FUN_005076d0           mov cl,BYTE PTR ds:0x985b10
+507c0c ADDR  FUN_005076d0           mov cl,BYTE PTR ds:0x985b10
+507c85 ADDR  FUN_005076d0           mov eax,ds:0x985b10
+507cb7 ADDR  FUN_005076d0           mov eax,ds:0x985afc
+507d5e LOAD  FUN_00507d30           test BYTE PTR ds:0x985b10,al
+507e5c ADDR  FUN_00507d30           mov al,ds:0x985b10
+507fcd ADDR  FUN_00507ef0           mov eax,ds:0x985b10
+50808f LOAD  FUN_00507ef0           cmp DWORD PTR [eax*4+0x985aa0],0xffffffff
+50809d ADDR  FUN_00507ef0           mov eax,ds:0x985af4
+5080c9 ADDR  FUN_00507ef0           mov edx,DWORD PTR ds:0x985af4
+50813f ADDR  FUN_00507ef0           mov eax,ds:0x985af4
+508281 ADDR  FUN_00507ef0           mov esi,0x985b3c
+5082e6 LOAD  FUN_00507ef0           cmp esi,0x985bc0
+50838d ADDR  FUN_00507ef0           mov ecx,DWORD PTR ds:0x985af4
+508402 ADDR  FUN_00507ef0           mov ecx,DWORD PTR ds:0x985af4
+5084e7 ADDR  FUN_00507ef0           mov ecx,DWORD PTR ds:0x985af4
+508539 ADDR  FUN_00507ef0           mov ecx,DWORD PTR ds:0x985af4
+508654 ADDR  FUN_00507ef0           mov al,ds:0x985b10
+5086a9 ADDR  FUN_00507ef0           mov eax,ds:0x985afc
+5087f8 ADDR  FUN_00507ef0           mov dl,BYTE PTR ds:0x985b10
+508899 ADDR  FUN_00507ef0           mov edx,DWORD PTR ds:0x985afc
+50891f ADDR  FUN_00507ef0           mov eax,ds:0x985af4
+5089a4 ADDR  FUN_00507ef0           mov eax,ds:0x985af4
+508b4d ADDR  FUN_00507ef0           mov edx,DWORD PTR ds:0x985af0
+508b6e LOAD  FUN_00507ef0           cmp esi,DWORD PTR ds:0x985af0
+508e10 ADDR  FUN_00507ef0           mov eax,ds:0x985b10
+508ff2 ADDR  FUN_00507ef0           mov eax,ds:0x985ac4
+509016 LOAD  FUN_00507ef0           cmp DWORD PTR ds:0x985b8c,eax
+5090ac ADDR  FUN_00507ef0           mov cl,BYTE PTR ds:0x985b10
+50910a LOAD  FUN_00507ef0           test DWORD PTR ds:0x985ab8,eax
+509168 ADDR  FUN_00507ef0           mov eax,ds:0x985af4
+5091e0 ADDR  FUN_00507ef0           mov eax,ds:0x985af4
+509383 ADDR  FUN_00507ef0           mov eax,ds:0x985ae8
+50938c ADDR  FUN_00507ef0           mov ds:0x985ae8,eax
+5099dd ADDR  FUN_005099c0           mov eax,ds:0x985af4
+509b8a ADDR  FUN_005099c0           mov edx,DWORD PTR ds:0x985af4
+509ea9 LOAD  FUN_00509e20           test BYTE PTR ds:0x985ae8,0x2
+50a0bc ADDR  FUN_0050a040           mov cl,BYTE PTR ds:0x985ae8
+50a199 ADDR  FUN_0050a040           mov eax,ds:0x985ab8
+50ac5a ADDR  FUN_0050ac50           mov ecx,DWORD PTR ds:0x985af0
+50bfc6 ADDR  FUN_0050bfb0           mov ecx,DWORD PTR ds:0x985ae8
+50c365 ADDR  FUN_0050c2e0           mov edx,DWORD PTR ds:0x985af0
+50c3b0 ADDR  FUN_0050c2e0           mov edx,DWORD PTR ds:0x985af0
+50c4a3 ADDR  FUN_0050c2e0           mov edx,DWORD PTR ds:0x985af0
+50c625 LOAD  FUN_0050c550           test DWORD PTR ds:0x985ab8,0x80000
+50cd96 ADDR  FUN_0050cd90           mov al,ds:0x985ab8
+50cdc5 ADDR  FUN_0050cd90           mov ecx,DWORD PTR ds:0x985afc
+50ce9e ADDR  FUN_0050cd90           mov ecx,DWORD PTR ds:0x985afc
+50cf9e ADDR  FUN_0050cd90           mov ecx,DWORD PTR ds:0x985afc
+50cfaf ADDR  FUN_0050cd90           mov ecx,DWORD PTR ds:0x985afc
+50d04a ADDR  FUN_0050cd90           mov edx,DWORD PTR ds:0x985afc
+50d208 LOAD  FUN_0050d140           cmp DWORD PTR ds:0x985afc,0x19
+50d2d4 LOAD  FUN_0050d140           cmp DWORD PTR ds:0x985afc,0x28
+50d470 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x1000000
+50dc37 LOAD  FUN_0050d140           test BYTE PTR ds:0x985ad4,0x20
+50dc60 ADDR  FUN_0050d140           mov eax,ds:0x985ad4
+50dc69 ADDR  FUN_0050d140           mov ds:0x985ad4,eax
+50dc73 ADDR  FUN_0050d140           mov eax,ds:0x985ad4
+50dc7a ADDR  FUN_0050d140           mov ds:0x985ad4,eax
+50dcb3 LOAD  FUN_0050d140           test BYTE PTR ds:0x985ad4,0x40
+50dcdc ADDR  FUN_0050d140           mov eax,ds:0x985ad4
+50dce5 ADDR  FUN_0050d140           mov ds:0x985ad4,eax
+50dcef ADDR  FUN_0050d140           mov eax,ds:0x985ad4
+50dcf6 ADDR  FUN_0050d140           mov ds:0x985ad4,eax
+50dd94 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x800000
+50de98 LOAD  FUN_0050d140           cmp DWORD PTR ds:0x985afc,0x14
+50dea5 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x4000000
+50dee9 ADDR  FUN_0050d140           mov eax,ds:0x985af4
+50e040 ADDR  FUN_0050d140           mov eax,ds:0x985afc
+50e059 ADDR  FUN_0050d140           mov ecx,DWORD PTR ds:0x985af4
+50e411 ADDR  FUN_0050d140           mov eax,ds:0x985ae8
+50e448 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x10000
+50e67f LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x200000
+50e700 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x100000
+50e735 ADDR  FUN_0050d140           mov eax,ds:0x985ae8
+50e741 ADDR  FUN_0050d140           mov ds:0x985ae8,eax
+50e790 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x40000
+50e7bd LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x20000
+50e7ea LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x400000
+50e83b LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x2000000
+50e87e LOAD  FUN_0050d140           test DWORD PTR ds:0x985ae4,0x80000
+50e8c3 ADDR  FUN_0050d140           mov eax,ds:0x985ae8
+50e8cd ADDR  FUN_0050d140           mov ds:0x985ae8,eax
+50e8dd ADDR  FUN_0050d140           mov eax,ds:0x985ad4
+50e9f1 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ad4,0x8000000
+50ea9c LOAD  FUN_0050d140           test DWORD PTR ds:0x985ad4,0x10000000
+50ec91 LOAD  FUN_0050d140           test DWORD PTR ds:0x985ad4,0x20000000
+50ef75 ADDR  FUN_0050ef60           mov al,ds:0x985ab8
+50f053 ADDR  FUN_0050ef60           mov eax,ds:0x985ae8
+50f3a6 ADDR  FUN_0050f390           mov ebx,DWORD PTR ds:0x985af0
+50f3d5 LOAD  FUN_0050f390           cmp ebx,DWORD PTR ds:0x985af0
+50f3e5 ADDR  FUN_0050f390           mov eax,ds:0x985ae8
+50f447 ADDR  FUN_0050f420           mov ecx,DWORD PTR ds:0x985ae8
+50f45b ADDR  FUN_0050f420           mov DWORD PTR ds:0x985ae8,ecx
+50f467 ADDR  FUN_0050f420           mov ecx,DWORD PTR ds:0x985af0
+50f63b ADDR  FUN_0050f420           mov eax,ds:0x985ae8
+50f651 LOAD  FUN_0050f420           test BYTE PTR ds:0x985ac4,0x2
+50f716 ADDR  FUN_0050f420           mov eax,ds:0x985ae8
+50f720 ADDR  FUN_0050f420           mov ds:0x985ae8,eax
+50f743 ADDR  FUN_0050f420           mov edx,DWORD PTR ds:0x985af0
+50f86f ADDR  FUN_0050f420           mov edx,DWORD PTR ds:0x985af0
+50f8a9 ADDR  FUN_0050f420           mov edx,DWORD PTR ds:0x985af0
+50f8ce ADDR  FUN_0050f420           mov edx,DWORD PTR ds:0x985ae8
+50f8dc ADDR  FUN_0050f420           mov DWORD PTR ds:0x985ae8,edx
+50f8f9 ADDR  FUN_0050f420           mov eax,ds:0x985ae8
+50f900 ADDR  FUN_0050f420           mov ds:0x985ae8,eax
+50f91b ADDR  FUN_0050f420           mov eax,ds:0x985ab8
+50f933 LOAD  FUN_0050f420           test BYTE PTR ds:0x985ae8,0x4
+50f94c ADDR  FUN_0050f420           mov eax,ds:0x985afc
+50fa29 ADDR  FUN_0050f420           mov ecx,DWORD PTR ds:0x985ae8
+50fa32 ADDR  FUN_0050f420           mov DWORD PTR ds:0x985ae8,ecx
+50fa49 ADDR  FUN_0050f420           mov DWORD PTR ds:0x985ae8,edx
+50fa94 ADDR  FUN_0050f420           mov ebx,DWORD PTR ds:0x985af0
+50fac6 LOAD  FUN_0050f420           cmp ebx,DWORD PTR ds:0x985af0
+50fad6 ADDR  FUN_0050f420           mov eax,ds:0x985ae8
+50fb13 LOAD  FUN_0050f420           test BYTE PTR ds:0x985ae8,0x4
+50fb44 ADDR  FUN_0050f420           mov eax,ds:0x985ae8
+50fd3c ADDR  FUN_0050fc50           mov eax,ds:0x985b10
+50fd70 ADDR  FUN_0050fc50           mov eax,ds:0x985ac4
+50fea0 ADDR  FUN_0050fea0           mov eax,ds:0x985ac4
+50febd ADDR  FUN_0050fea0           mov cl,BYTE PTR ds:0x985b10
+50fedf ADDR  FUN_0050fea0           mov eax,ds:0x985ac4
+510000 ADDR  FUN_0050fea0           mov eax,ds:0x985ac4
+510016 ADDR  FUN_0050fea0           mov al,ds:0x985ae8
+510096 ADDR  FUN_0050fea0           mov eax,ds:0x985ac4
+510492 LOAD  FUN_005103b0           test BYTE PTR ds:0x985ae8,0x80
+5105b6 LOAD  FUN_005103b0           test BYTE PTR ds:0x985ae8,0x80
+5108e0 ADDR  FUN_00510730           mov eax,ds:0x985abc
+5108fc ADDR  FUN_00510730           mov ds:0x985abc,eax
+510920 ADDR  FUN_00510730           mov eax,ds:0x985abc
+510936 ADDR  FUN_00510730           mov ds:0x985abc,eax
+510955 ADDR  FUN_00510730           mov eax,ds:0x985abc
+510970 ADDR  FUN_00510730           mov eax,ds:0x985ab8
+510984 ADDR  FUN_00510730           mov ds:0x985ab8,eax
+5109a3 ADDR  FUN_00510730           mov eax,ds:0x985ab8
+5109c0 ADDR  FUN_00510730           mov eax,ds:0x985ab8
+5109d4 ADDR  FUN_00510730           mov ds:0x985ab8,eax
+5109f3 ADDR  FUN_00510730           mov eax,ds:0x985ab8
+510afd ADDR  FUN_00510a40           mov eax,ds:0x985b10
+510b27 LOAD  FUN_00510a40           test BYTE PTR ds:0x985b10,al
+510c92 ADDR  FUN_00510bd0           mov ecx,DWORD PTR ds:0x985b08
+5112cd LOAD  FUN_00511240           cmp esi,0x985ab8
+511572 ADDR  FUN_00511530           mov al,ds:0x985ae8
+511788 LOAD  FUN_00511720           test BYTE PTR ds:0x985ae8,0x80
+51186c ADDR  FUN_00511840           mov eax,ds:0x985af4
+511920 ADDR  FUN_00511840           mov ecx,DWORD PTR ds:0x985af4
+5119ad LOAD  FUN_00511960           test BYTE PTR ds:0x985ae8,0x80
+511bd0 ADDR  FUN_00511960           mov eax,ds:0x985abc
+511be0 ADDR  FUN_00511960           mov ds:0x985abc,eax
+511c10 ADDR  FUN_00511960           mov eax,ds:0x985abc
+511c20 ADDR  FUN_00511960           mov ds:0x985abc,eax
+511cf9 ADDR  FUN_00511c90           mov bl,BYTE PTR ds:0x985ae8
+511e4e ADDR  FUN_00511c90           mov eax,ds:0x985afc
+511ea1 ADDR  FUN_00511c90           mov eax,ds:0x985ae8
+511ea8 ADDR  FUN_00511c90           mov ds:0x985ae8,eax
+511eeb ADDR  FUN_00511ed0           mov edx,DWORD PTR ds:0x985ac4
+512054 LOAD  FUN_00512020           test BYTE PTR ds:0x985b10,al
+51207e ADDR  FUN_00512020           mov esi,DWORD PTR ds:0x985af4
+5120f4 ADDR  FUN_00512020           mov eax,ds:0x985af4
+512264 ADDR  FUN_00512020           mov eax,ds:0x985af4
+5122ee ADDR  FUN_005122e0           mov edx,DWORD PTR ds:0x985b08
+512381 ADDR  FUN_005122e0           mov eax,ds:0x985ae8
+512bf6 ADDR  FUN_00512b40           mov BYTE PTR ds:0x985b10,0x10
+512c0e ADDR  FUN_00512b40           mov BYTE PTR ds:0x985b10,bl
+512d65 LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x80
+51333a LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x40
+513356 LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x40
+51337a LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x40
+513576 LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x10
+51369f ADDR  FUN_00512b40           mov eax,ds:0x985ac4
+513846 LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x60
+51387f ADDR  FUN_00512b40           mov edx,DWORD PTR ds:0x985ae8
+513894 ADDR  FUN_00512b40           mov DWORD PTR ds:0x985ae8,edx
+5138ac ADDR  FUN_00512b40           mov ds:0x985ae8,eax
+5138fb LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x40
+51392f ADDR  FUN_00512b40           mov edx,DWORD PTR ds:0x985ae8
+51393d ADDR  FUN_00512b40           mov DWORD PTR ds:0x985ae8,edx
+5139ac ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+5139d0 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+513a0e ADDR  FUN_00512b40           mov ecx,DWORD PTR ds:0x985acc
+513a22 ADDR  FUN_00512b40           mov DWORD PTR ds:0x985acc,ecx
+513a32 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+513ab6 ADDR  FUN_00512b40           mov eax,ds:0x985af4
+513bc7 ADDR  FUN_00512b40           mov eax,ds:0x985af4
+514321 ADDR  FUN_00512b40           mov eax,ds:0x985af0
+514469 ADDR  FUN_00512b40           mov eax,ds:0x985af0
+514644 ADDR  FUN_00512b40           mov eax,ds:0x985af4
+514a8f ADDR  FUN_00512b40           mov ecx,DWORD PTR ds:0x985af4
+514ac9 ADDR  FUN_00512b40           mov eax,ds:0x985af0
+514dee ADDR  FUN_00512b40           mov eax,ds:0x985af0
+514e61 LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x40
+515210 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+515258 LOAD  FUN_00512b40           or DWORD PTR ds:0x985ae8,0xe0
+515362 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+515384 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+5153a9 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+515423 LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x80
+51542c ADDR  FUN_00512b40           mov eax,ds:0x985b4c
+5155b0 ADDR  FUN_00512b40           mov ecx,DWORD PTR ds:0x985b10
+5155e6 ADDR  FUN_00512b40           mov eax,ds:0x985ac4
+5157a3 ADDR  FUN_00512b40           mov ecx,DWORD PTR ds:0x985abc
+5157bf ADDR  FUN_00512b40           mov ds:0x985abc,eax
+515826 ADDR  FUN_00512b40           mov ecx,DWORD PTR ds:0x985abc
+51582e ADDR  FUN_00512b40           mov DWORD PTR ds:0x985abc,ecx
+5158bb LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x2
+51593b LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x80
+51594b LOAD  FUN_00512b40           test BYTE PTR ds:0x985ae8,0x80
+5159a0 ADDR  FUN_00512b40           mov ecx,DWORD PTR ds:0x985b10
+5159d6 ADDR  FUN_00512b40           mov eax,ds:0x985ac4
+515bb7 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+515bd7 ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+515c2d ADDR  FUN_00512b40           mov eax,ds:0x985abc
+515c49 ADDR  FUN_00512b40           mov ds:0x985abc,eax
+515c67 ADDR  FUN_00512b40           mov eax,ds:0x985ab8
+515c7b ADDR  FUN_00512b40           mov ds:0x985ab8,eax
+515c94 ADDR  FUN_00512b40           mov edx,DWORD PTR ds:0x985ab8
+515d65 ADDR  FUN_00512b40           mov eax,ds:0x985ab8
+515d79 ADDR  FUN_00512b40           mov ds:0x985ab8,eax
+515d92 ADDR  FUN_00512b40           mov eax,ds:0x985ab8
+515dce ADDR  FUN_00512b40           mov eax,ds:0x985abc
+515de4 ADDR  FUN_00512b40           mov ds:0x985abc,eax
+515dfd ADDR  FUN_00512b40           mov edx,DWORD PTR ds:0x985abc
+515e2f ADDR  FUN_00512b40           mov eax,ds:0x985ae8
+515eaf ADDR  FUN_00512b40           mov eax,ds:0x985ac4
+516aea ADDR  FUN_00516ad0           mov eax,ds:0x985ae8
+516b38 LOAD  FUN_00516ad0           or DWORD PTR ds:0x985ae8,0xe0
+516db5 ADDR  FUN_00516b80           mov ecx,DWORD PTR ds:0x985abc
+516dc1 ADDR  FUN_00516b80           mov DWORD PTR ds:0x985abc,ecx
+516dec ADDR  FUN_00516b80           mov ecx,DWORD PTR ds:0x985abc
+516df8 ADDR  FUN_00516b80           mov DWORD PTR ds:0x985abc,ecx
+516e8b ADDR  FUN_00516b80           mov eax,ds:0x985ae8
+516f05 ADDR  FUN_00516b80           mov eax,ds:0x985ac4
+516f73 ADDR  FUN_00516b80           mov ecx,DWORD PTR ds:0x985b10
+516fa9 ADDR  FUN_00516b80           mov eax,ds:0x985ac4
+51704b LOAD  FUN_00516b80           test DWORD PTR ds:0x985ac4,ecx
+517110 ADDR  FUN_00516b80           mov ecx,DWORD PTR ds:0x985ae8
+517150 ADDR  FUN_00516b80           mov DWORD PTR ds:0x985ae8,ecx
+51717a LOAD  FUN_00516b80           test DWORD PTR ds:0x985ac4,ecx
+517342 ADDR  FUN_00516b80           mov eax,ds:0x985abc
+517358 ADDR  FUN_00516b80           mov ds:0x985abc,eax
+517371 ADDR  FUN_00516b80           mov ecx,DWORD PTR ds:0x985abc
+517391 ADDR  FUN_00516b80           mov eax,ds:0x985ab8
+5173a5 ADDR  FUN_00516b80           mov ds:0x985ab8,eax
+5173be ADDR  FUN_00516b80           mov edx,DWORD PTR ds:0x985ab8
+5173de ADDR  FUN_00516b80           mov eax,ds:0x985ab8
+5173ee ADDR  FUN_00516b80           mov ds:0x985ab8,eax
+517407 ADDR  FUN_00516b80           mov eax,ds:0x985ab8
+51744f ADDR  FUN_00516b80           mov eax,ds:0x985abc
+51746b ADDR  FUN_00516b80           mov ds:0x985abc,eax
+517f48 ADDR  FUN_00516b80           mov eax,ds:0x985ae8
+517f92 ADDR  FUN_00516b80           mov ebx,DWORD PTR ds:0x985ae8
+517f9b ADDR  FUN_00516b80           mov DWORD PTR ds:0x985ae8,ebx
+518fd4 ADDR  FUN_00518f80           mov ecx,DWORD PTR ds:0x985afc
+518fec ADDR  FUN_00518f80           mov edx,DWORD PTR ds:0x985afc
+519004 ADDR  FUN_00518f80           mov eax,ds:0x985afc
+51901b ADDR  FUN_00518f80           mov ecx,DWORD PTR ds:0x985afc
+519033 ADDR  FUN_00518f80           mov edx,DWORD PTR ds:0x985afc
+519a87 LOAD  FUN_00519a20           test BYTE PTR ds:0x985b10,dl
+519b73 ADDR  FUN_00519b00           mov dl,BYTE PTR ds:0x985b10
+519bba ADDR  FUN_00519b00           mov dl,BYTE PTR ds:0x985b10
+519c05 ADDR  FUN_00519b00           mov edx,DWORD PTR ds:0x985af4
+519c40 LOAD  FUN_00519b00           test DWORD PTR ds:0x985ae8,0x100000
+519c4c ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985afc
+519c6c ADDR  FUN_00519b00           mov edi,DWORD PTR ds:0x985ae8
+519c84 ADDR  FUN_00519b00           mov DWORD PTR ds:0x985ae8,edi
+519c99 ADDR  FUN_00519b00           mov eax,ds:0x985afc
+519cc4 ADDR  FUN_00519b00           mov edi,DWORD PTR ds:0x985ae8
+519cdc ADDR  FUN_00519b00           mov DWORD PTR ds:0x985ae8,edi
+519cf1 ADDR  FUN_00519b00           mov eax,ds:0x985afc
+519cf6 ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985ac4
+519d05 ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985aec
+519d3d ADDR  FUN_00519b00           mov eax,ds:0x985af4
+519d54 ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985af4
+519e17 LOAD  FUN_00519b00           cmp DWORD PTR ds:0x985b30,ebx
+519e1f ADDR  FUN_00519b00           mov al,ds:0x985b10
+519edc ADDR  FUN_00519b00           mov edx,DWORD PTR ds:0x985afc
+519f74 LOAD  FUN_00519b00           cmp DWORD PTR ds:0x985b30,ebx
+519f7c ADDR  FUN_00519b00           mov al,ds:0x985b10
+51a039 ADDR  FUN_00519b00           mov edx,DWORD PTR ds:0x985afc
+51a0d1 LOAD  FUN_00519b00           cmp DWORD PTR ds:0x985b30,ebx
+51a0d9 ADDR  FUN_00519b00           mov al,ds:0x985b10
+51a196 ADDR  FUN_00519b00           mov edx,DWORD PTR ds:0x985afc
+51a28e ADDR  FUN_00519b00           mov esi,DWORD PTR ds:0x985b3c
+51a294 ADDR  FUN_00519b00           mov eax,ds:0x985b74
+51a2e5 ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985ba4
+51a320 ADDR  FUN_00519b00           mov ebx,DWORD PTR ds:0x985afc
+51a3aa ADDR  FUN_00519b00           mov eax,ds:0x985af4
+51a48b ADDR  FUN_00519b00           mov eax,ds:0x985b3c
+51a4b8 ADDR  FUN_00519b00           mov eax,ds:0x985b74
+51a4e5 ADDR  FUN_00519b00           mov eax,ds:0x985ba4
+51a571 ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985af4
+51a946 LOAD  FUN_00519b00           cmp DWORD PTR ds:0x985afc,0x4b
+51ad3f ADDR  FUN_00519b00           mov eax,ds:0x985afc
+51ae31 ADDR  FUN_00519b00           mov al,ds:0x985b10
+51aea0 ADDR  FUN_00519b00           mov esi,DWORD PTR ds:0x985afc
+51b148 LOAD  FUN_00519b00           cmp DWORD PTR ds:0x985afc,0x4b
+51b177 LOAD  FUN_00519b00           test BYTE PTR ds:0x985ae8,0x10
+51b3aa ADDR  FUN_00519b00           mov edx,DWORD PTR ds:0x985af0
+51b3f1 ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985af0
+51b5cf LOAD  FUN_00519b00           cmp DWORD PTR ds:0x985afc,0x4b
+51b5fe LOAD  FUN_00519b00           test BYTE PTR ds:0x985ae8,0x10
+51b811 ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985af0
+51b93b ADDR  FUN_00519b00           mov edx,DWORD PTR ds:0x985afc
+51bc3f ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985afc
+51bfa6 ADDR  FUN_00519b00           mov eax,ds:0x985afc
+51c116 ADDR  FUN_00519b00           mov edx,DWORD PTR ds:0x985afc
+51c196 ADDR  FUN_00519b00           mov esi,DWORD PTR ds:0x985afc
+51c44f ADDR  FUN_00519b00           mov ecx,DWORD PTR ds:0x985afc
+51c75f ADDR  FUN_0051c750           mov eax,ds:0x985afc
+51cb5b ADDR  FUN_0051c750           mov ecx,DWORD PTR ds:0x985afc
+51cb8a ADDR  FUN_0051c750           mov ecx,DWORD PTR ds:0x985afc
+51cb90 LOAD  FUN_0051c750           test DWORD PTR ds:0x985ac4,0x200000
+51cba6 ADDR  FUN_0051c750           mov ebx,DWORD PTR ds:0x985aec
+51cbc7 LOAD  FUN_0051c750           cmp DWORD PTR ds:0x985bb8,0xffffffff
+51cbd4 LOAD  FUN_0051c750           cmp DWORD PTR ds:0x985af0,0x700
+51ccf2 ADDR  FUN_0051c750           mov eax,ds:0x985ae8
+51cd10 LOAD  FUN_0051c750           imul eax,DWORD PTR ds:0x985afc
+51cd1c ADDR  FUN_0051c750           mov edx,DWORD PTR ds:0x985aec
+51d17e ADDR  FUN_0051c750           mov ecx,DWORD PTR ds:0x985ae8
+51d4c5 LOAD  FUN_0051d3f0           test DWORD PTR ds:0x985acc,eax
+51d50b LOAD  FUN_0051d3f0           test BYTE PTR ds:0x985ae8,0x10
+51d55d LOAD  FUN_0051d3f0           test DWORD PTR ds:0x985ac4,0x200000
+51d5c8 ADDR  FUN_0051d3f0           mov ecx,DWORD PTR ds:0x985acc
+51d5d0 ADDR  FUN_0051d3f0           mov eax,ds:0x985ab8
+51d5da ADDR  FUN_0051d3f0           mov DWORD PTR ds:0x985acc,ecx
+51d642 ADDR  FUN_0051d3f0           mov esi,DWORD PTR ds:0x985afc
+51d830 ADDR  FUN_0051d3f0           mov eax,ds:0x985af4
+51d8af ADDR  FUN_0051d3f0           mov eax,ds:0x985af4
+51d919 ADDR  FUN_0051d3f0           mov eax,ds:0x985af4
+51da30 LOAD  FUN_0051d3f0           cmp DWORD PTR ds:0x985afc,0x4b
+51db48 ADDR  FUN_0051db40           mov esi,DWORD PTR ds:0x985b08
+51db63 ADDR  FUN_0051db40           mov eax,ds:0x985b10
+51db98 ADDR  FUN_0051db40           mov eax,ds:0x985afc
+51dbd8 ADDR  FUN_0051db40           mov ecx,DWORD PTR ds:0x985af0
+51dc7a ADDR  FUN_0051db40           mov eax,ds:0x985afc
+51dc9f ADDR  FUN_0051db40           mov DWORD PTR ds:0x985b0c,edx
+51de0b ADDR  FUN_0051dcb0           mov eax,ds:0x985af4
+51dedb ADDR  FUN_0051dcb0           mov edx,DWORD PTR ds:0x985af4
+51e053 LOAD  FUN_0051dcb0           test BYTE PTR ds:0x985b10,al
+51e05f LOAD  FUN_0051dcb0           cmp DWORD PTR ds:0x985aec,0x3
+51e0a7 LOAD  FUN_0051dcb0           test BYTE PTR ds:0x985b10,al
+51e0af LOAD  FUN_0051dcb0           cmp DWORD PTR ds:0x985aec,0x3
+51e709 ADDR  FUN_0051e700           mov ecx,DWORD PTR ds:0x985ae8
+51e73b ADDR  FUN_0051e700           mov eax,ds:0x985b00
+51e758 ADDR  FUN_0051e700           mov DWORD PTR ds:0x985ae8,ecx
+51e766 ADDR  FUN_0051e700           mov ebx,DWORD PTR ds:0x985ac4
+51e788 LOAD  FUN_0051e700           test BYTE PTR ds:0x985b11,al
+51e7a1 LOAD  FUN_0051e700           cmp ecx,DWORD PTR ds:0x985afc
+51e809 ADDR  FUN_0051e700           mov edi,DWORD PTR ds:0x985ae8
+51e817 ADDR  FUN_0051e700           mov DWORD PTR ds:0x985ae8,edi
+51e827 LOAD  FUN_0051e700           test BYTE PTR ds:0x985b10,al
+51e85e ADDR  FUN_0051e700           mov ecx,DWORD PTR ds:0x985ae8
+51e874 ADDR  FUN_0051e700           mov DWORD PTR ds:0x985ae8,ecx
+51e886 ADDR  FUN_0051e700           mov ebx,DWORD PTR ds:0x985ac4
+51e8af ADDR  FUN_0051e700           mov ecx,DWORD PTR ds:0x985ae8
+51e8d5 ADDR  FUN_0051e700           mov edx,DWORD PTR ds:0x985b00
+51e937 ADDR  FUN_0051e700           mov ebx,DWORD PTR ds:0x985ac4
+51e94e ADDR  FUN_0051e700           mov edx,DWORD PTR ds:0x985b00
+51e9c3 ADDR  FUN_0051e700           mov ecx,DWORD PTR ds:0x985ae8
+51ea63 LOAD  FUN_0051e700           test DWORD PTR ds:0x985ab8,0x10000000
+51eac6 ADDR  FUN_0051e700           mov ecx,DWORD PTR ds:0x985b00
+51eaf3 ADDR  FUN_0051e700           mov eax,ds:0x985ae8
+51eb3e ADDR  FUN_0051e700           mov eax,ds:0x985ae8
+51eb4c LOAD  FUN_0051e700           test BYTE PTR ds:0x985b11,dl
+51eb73 ADDR  FUN_0051e700           mov edx,DWORD PTR ds:0x985ac4
+51f084 LOAD  FUN_0051e700           test DWORD PTR ds:0x985ab8,0x40000
+51f0ff ADDR  FUN_0051e700           mov al,ds:0x985ae8
+51f126 ADDR  FUN_0051e700           mov edx,DWORD PTR ds:0x985ae8
+51f136 ADDR  FUN_0051e700           mov DWORD PTR ds:0x985ae8,edx
+51f535 ADDR  FUN_0051f320           mov eax,ds:0x985afc
+51f53c ADDR  FUN_0051f320           mov ds:0x985afc,eax
+51f54f ADDR  FUN_0051f320           mov ds:0x985b00,eax
+51f615 ADDR  FUN_0051f320           mov eax,ds:0x985afc
+51f711 ADDR  FUN_0051f320           mov ecx,DWORD PTR ds:0x985afc
+51f74b ADDR  FUN_0051f730           mov eax,ds:0x985af0
+51f7c3 ADDR  FUN_0051f730           mov eax,ds:0x985afc
+51fac9 LOAD  FUN_0051f730           mov eax,DWORD PTR [edi*4+0x985b3c]
+51fbed ADDR  FUN_0051f730           mov edx,DWORD PTR ds:0x985b94
+51fce7 ADDR  FUN_0051f730           mov eax,ds:0x985b5c
+51fd61 LOAD  FUN_0051f730           test BYTE PTR ds:0x985b10,dl
+51fdcf ADDR  FUN_0051f730           mov ecx,DWORD PTR ds:0x985af0
+51fde4 ADDR  FUN_0051f730           mov eax,ds:0x985af0
+51fe6b ADDR  FUN_0051f730           mov ecx,DWORD PTR ds:0x985af0
+51fea7 LOAD  FUN_0051fe90           test BYTE PTR ds:0x985b10,al
+51ff7a ADDR  FUN_0051fe90           mov eax,ds:0x985afc
+520004 ADDR  FUN_0051fe90           mov eax,ds:0x985af4
+5200ac ADDR  FUN_0051fe90           mov eax,ds:0x985bb4
+520120 ADDR  FUN_0051fe90           mov edx,DWORD PTR ds:0x985afc
+52023a ADDR  FUN_0051fe90           mov eax,ds:0x985af4
+52026a ADDR  FUN_0051fe90           mov eax,ds:0x985af4
+5202ce ADDR  FUN_0051fe90           mov eax,ds:0x985af4
+520344 ADDR  FUN_0051fe90           mov edx,DWORD PTR ds:0x985af4
+520699 ADDR  FUN_00520540           mov eax,ds:0x985af4
+5206eb ADDR  FUN_00520540           mov eax,ds:0x985af4
+520700 ADDR  FUN_00520540           mov al,ds:0x985b10
+520714 ADDR  FUN_00520540           mov eax,ds:0x985aec
+5207e1 ADDR  FUN_00520540           mov edi,DWORD PTR ds:0x985af4
+520847 ADDR  FUN_00520540           mov ecx,DWORD PTR ds:0x985afc
+52089c ADDR  FUN_00520540           mov al,ds:0x985ae8
+520927 ADDR  FUN_005208f0           mov al,ds:0x985ae8
+52097a LOAD  FUN_005208f0           test BYTE PTR ds:0x985b10,al
+5209c7 LOAD  FUN_005208f0           test BYTE PTR ds:0x985ac4,0x4
+5209d9 ADDR  FUN_005208f0           mov ecx,DWORD PTR ds:0x985afc
+520ad4 ADDR  FUN_005208f0           mov ecx,DWORD PTR ds:0x985af4
+520b65 ADDR  FUN_005208f0           mov eax,ds:0x985ae8
+520b8f LOAD  FUN_005208f0           test BYTE PTR ds:0x985ae8,0x1
+520b98 ADDR  FUN_005208f0           mov edx,DWORD PTR ds:0x985ae8
+520ba7 ADDR  FUN_005208f0           mov DWORD PTR ds:0x985ae8,edx
+520bcb ADDR  FUN_005208f0           mov cl,BYTE PTR ds:0x985b10
+520be6 LOAD  FUN_005208f0           test BYTE PTR ds:0x985ab8,0x2
+520c14 ADDR  FUN_00520c10           mov eax,ds:0x985afc
+520c30 ADDR  FUN_00520c10           mov dl,BYTE PTR ds:0x985b10
+520c6d ADDR  FUN_00520c10           mov al,ds:0x985b10
+520cd9 LOAD  FUN_00520c10           test BYTE PTR ds:0x985b11,bl
+520d18 ADDR  FUN_00520c10           mov eax,ds:0x985b10
+520da2 ADDR  FUN_00520c10           mov edi,DWORD PTR ds:0x985af4
+520ea6 ADDR  FUN_00520e70           mov edx,DWORD PTR ds:0x985afc
+520ebc ADDR  FUN_00520e70           mov eax,ds:0x985afc
+520ee0 ADDR  FUN_00520e70           mov eax,ds:0x985b10
+520f30 ADDR  FUN_00520e70           mov ecx,DWORD PTR ds:0x985b10
+520fa1 ADDR  FUN_00520e70           mov eax,ds:0x985b10
+520fea ADDR  FUN_00520e70           mov edx,DWORD PTR ds:0x985afc
+520fff ADDR  FUN_00520e70           mov eax,ds:0x985b10
+52101e ADDR  FUN_00520e70           mov eax,ds:0x985b10
+521095 ADDR  FUN_00521070           mov eax,ds:0x985af4
+5210ef ADDR  FUN_00521070           mov eax,ds:0x985af4
+5210ff ADDR  FUN_00521070           mov eax,ds:0x985af0
+521110 ADDR  FUN_00521070           mov eax,ds:0x985af0
+521141 ADDR  FUN_00521070           mov edx,DWORD PTR ds:0x985afc
+521157 ADDR  FUN_00521070           mov dl,BYTE PTR ds:0x985b11
+5211c0 ADDR  FUN_00521070           mov eax,ds:0x985af4
+521211 ADDR  FUN_00521070           mov eax,ds:0x985af4
+5212c6 LOAD  FUN_00521070           test BYTE PTR ds:0x985b11,al
+5213d9 ADDR  FUN_00521070           mov eax,ds:0x985ac4
+521463 LOAD  FUN_00521070           test DWORD PTR ds:0x985abc,0x100000
+521560 LOAD  FUN_00521070           test BYTE PTR ds:0x985b11,al
+521568 LOAD  FUN_00521070           test BYTE PTR ds:0x985b10,al
+5215e9 ADDR  FUN_00521070           mov al,ds:0x985ab8
+52165a ADDR  FUN_00521070           mov ecx,DWORD PTR ds:0x985afc
+52170b LOAD  FUN_00521070           test BYTE PTR ds:0x985b11,al
+521717 LOAD  FUN_00521070           test BYTE PTR ds:0x985b10,al
+521bc4 ADDR  FUN_00521bc0           mov eax,ds:0x985af0
+521eb7 LOAD  FUN_00521bc0           test BYTE PTR ds:0x985b10,al
+521ebf LOAD  FUN_00521bc0           test BYTE PTR ds:0x985b11,al
+521ee6 ADDR  FUN_00521ee0           mov eax,ds:0x985ae8
+521f18 ADDR  FUN_00521ee0           mov edx,DWORD PTR ds:0x985ae8
+521f29 ADDR  FUN_00521ee0           mov DWORD PTR ds:0x985ae8,edx
+521fa8 ADDR  FUN_00521ee0           mov eax,ds:0x985b10
+521ff1 LOAD  FUN_00521ee0           test BYTE PTR ds:0x985ae8,0x2
+52203d LOAD  FUN_00521ee0           test BYTE PTR ds:0x985ae8,0x2
+52204f ADDR  FUN_00521ee0           mov eax,ds:0x985b10
+522079 LOAD  FUN_00521ee0           test BYTE PTR ds:0x985ae8,0x2
+5220f4 ADDR  FUN_00521ee0           mov al,ds:0x985ae8
+522174 ADDR  FUN_00521ee0           mov al,ds:0x985ab8
+5221e4 ADDR  FUN_00521ee0           mov ecx,DWORD PTR ds:0x985afc
+522391 ADDR  FUN_00522240           mov eax,ds:0x985b0c
+522396 ADDR  FUN_00522240           mov ecx,DWORD PTR ds:0x985ae8
+5223b7 ADDR  FUN_00522240           mov DWORD PTR ds:0x985ae8,ecx
+5223c3 LOAD  FUN_00522240           cmp DWORD PTR ds:0x985afc,esi
+5223d7 ADDR  FUN_00522240           mov edx,DWORD PTR ds:0x985af4
+522426 ADDR  FUN_00522240           mov edx,DWORD PTR ds:0x985af0
+522592 LOAD  FUN_00522240           test BYTE PTR ds:0x985b10,al
+52259a LOAD  FUN_00522240           test BYTE PTR ds:0x985b11,al
+5225c0 ADDR  FUN_00522240           mov edx,DWORD PTR ds:0x985ae8
+5225d3 ADDR  FUN_00522240           mov eax,ds:0x985b0c
+5225e5 ADDR  FUN_00522240           mov eax,ds:0x985ae8
+5225f5 ADDR  FUN_00522240           mov ds:0x985ae8,eax
+52269d ADDR  FUN_00522240           mov eax,ds:0x985ae8
+5226a5 ADDR  FUN_00522240           mov ds:0x985ae8,eax
+5226ac ADDR  FUN_00522240           mov eax,ds:0x985ae8
+5226b3 ADDR  FUN_00522240           mov ds:0x985ae8,eax
+5226f4 ADDR  FUN_00522240           mov eax,ds:0x985ae8
+52283a ADDR  FUN_00522240           mov ds:0x985af0,eax
+52283f ADDR  FUN_00522240           mov ds:0x985af4,eax
+5228cc ADDR  FUN_00522850           mov ds:0x985ab8,eax
+522971 ADDR  FUN_00522850           mov DWORD PTR ds:0x985ac4,ecx
+522a43 ADDR  FUN_00522a40           mov edx,DWORD PTR ds:0x985af4
+522a71 ADDR  FUN_00522a40           mov eax,ds:0x985b4c
+522a9f ADDR  FUN_00522a40           mov eax,ds:0x985ba4
+522b39 LOAD  FUN_00522b10           test BYTE PTR ds:0x985b11,al
+522b9f LOAD  FUN_00522b70           test BYTE PTR ds:0x985b11,al
+522bce ADDR  FUN_00522b70           mov cl,BYTE PTR ds:0x985b11
+522c51 ADDR  FUN_00522b70           mov eax,ds:0x985bc0
+522d28 LOAD  FUN_00522b70           cmp DWORD PTR ds:0x985bc0,esi
+522edf ADDR  FUN_00522b70           mov eax,ds:0x985b10
+522efa ADDR  FUN_00522b70           mov eax,ds:0x985b34
+522f2d ADDR  FUN_00522b70           mov eax,0x985b30
+522f57 LOAD  FUN_00522b70           cmp eax,0x985b14
+522f6d ADDR  FUN_00522b70           mov edx,DWORD PTR ds:0x985bc0
+523001 ADDR  FUN_00522b70           mov eax,ds:0x985b10
+523038 LOAD  FUN_00522b70           test BYTE PTR ds:0x985ac4,0x40
+523067 ADDR  FUN_00522b70           mov cl,BYTE PTR ds:0x985b10
+5230bd ADDR  FUN_00522b70           mov eax,ds:0x985b10
+523132 ADDR  FUN_00522b70           mov al,ds:0x985b11
+523168 LOAD  FUN_00522b70           test BYTE PTR ds:0x985b11,al
+523201 ADDR  FUN_00522b70           mov ecx,DWORD PTR ds:0x985ac4
+523219 ADDR  FUN_00522b70           mov edi,DWORD PTR ds:0x985afc
+523315 LOAD  FUN_00522b70           cmp DWORD PTR ds:0x985afc,0xc8
+523635 ADDR  FUN_00522b70           mov eax,ds:0x985af4
+523759 ADDR  FUN_00522b70           mov ecx,DWORD PTR ds:0x985af4
+523afd ADDR  FUN_00523a20           mov eax,ds:0x985afc
+523b2a LOAD  FUN_00523b20           mov edx,DWORD PTR [eax*4+0x985bc4]
+523b32 STORE FUN_00523b20           mov DWORD PTR [eax*4+0x985bc4],edx
+523b39 ADDR  FUN_00523b20           mov ecx,DWORD PTR ds:0x985afc
+523cb7 ADDR  FUN_00523b20           mov esi,DWORD PTR ds:0x985ae8
+523cd1 ADDR  FUN_00523b20           mov DWORD PTR ds:0x985ae8,esi
+523d13 ADDR  FUN_00523b20           mov cl,BYTE PTR ds:0x985b11
+523d21 LOAD  FUN_00523b20           test BYTE PTR ds:0x985ac4,0x2
+523e42 ADDR  FUN_00523b20           mov al,ds:0x985b11
+523ecf ADDR  FUN_00523b20           mov eax,ds:0x985ae8
+523ed8 ADDR  FUN_00523b20           mov ds:0x985ae8,eax
+523f1b LOAD  FUN_00523b20           test BYTE PTR ds:0x985b11,al
+523f90 ADDR  FUN_00523b20           mov ecx,DWORD PTR ds:0x985ac4
+52406d ADDR  FUN_00523b20           mov ecx,DWORD PTR ds:0x985ae8
+52407b ADDR  FUN_00523b20           mov DWORD PTR ds:0x985ae8,ecx
+52415e ADDR  FUN_00523b20           mov edx,DWORD PTR ds:0x985ae8
+52416c ADDR  FUN_00523b20           mov DWORD PTR ds:0x985ae8,edx
+5241c9 ADDR  FUN_005241c0           mov bl,BYTE PTR ds:0x985ae8
+524209 LOAD  FUN_005241c0           test BYTE PTR ds:0x985b10,al
+524233 ADDR  FUN_005241c0           mov ecx,DWORD PTR ds:0x985b4c
+524260 ADDR  FUN_005241c0           mov edx,DWORD PTR ds:0x985b10
+524274 ADDR  FUN_005241c0           mov bl,BYTE PTR ds:0x985ae8
+5242e5 ADDR  FUN_005241c0           mov edx,DWORD PTR ds:0x985b10
+5242fb ADDR  FUN_005241c0           mov edx,DWORD PTR ds:0x985b10
+5243fc ADDR  FUN_00524340           mov al,ds:0x985b10
+52453a ADDR  FUN_00524340           mov eax,ds:0x985b10
+524558 LOAD  FUN_00524340           cmp DWORD PTR ds:0x985bc0,edi
+524564 ADDR  FUN_00524340           mov ecx,DWORD PTR ds:0x985afc
+5245f3 LOAD  FUN_00524340           test BYTE PTR ds:0x985ae8,0x1
+5247bd ADDR  FUN_00524340           mov eax,ds:0x985ae8
+5247e5 LOAD  FUN_00524340           test BYTE PTR ds:0x985ac4,0x8
+524824 ADDR  FUN_00524340           mov cl,BYTE PTR ds:0x985b11
+524845 ADDR  FUN_00524340           mov ecx,DWORD PTR ds:0x985bc0
+524850 ADDR  FUN_00524340           mov dl,BYTE PTR ds:0x985b10
+52486c ADDR  FUN_00524340           mov dl,BYTE PTR ds:0x985b10
+52487d ADDR  FUN_00524340           mov al,ds:0x985b10
+524933 ADDR  FUN_00524340           mov esi,DWORD PTR ds:0x985bc0
+524941 ADDR  FUN_00524340           mov al,ds:0x985b10
+52495c LOAD  FUN_00524340           mov eax,DWORD PTR [edi*4+0x985bc4]
+524970 LOAD  FUN_00524340           test BYTE PTR ds:0x985ae8,0x1
+52497d ADDR  FUN_00524340           mov eax,ds:0x985bc8
+5249a6 ADDR  FUN_00524340           mov al,ds:0x985b11
+524aaf ADDR  FUN_00524340           mov al,ds:0x985b10
+524b08 ADDR  FUN_00524340           mov al,ds:0x985b11
+524bde LOAD  FUN_00524340           cmp edi,DWORD PTR ds:0x985bc0
+524c01 ADDR  FUN_00524340           mov al,ds:0x985b11
+524c8a ADDR  FUN_00524340           mov cl,BYTE PTR ds:0x985b10
+524d27 ADDR  FUN_00524340           mov ecx,DWORD PTR ds:0x985afc
+524d39 ADDR  FUN_00524340           mov eax,ds:0x985ae8
+524d4a ADDR  FUN_00524340           mov al,ds:0x985b10
+524d57 ADDR  FUN_00524340           mov eax,ds:0x985bc0
+524d93 ADDR  FUN_00524340           mov dl,BYTE PTR ds:0x985b10
+524eba ADDR  FUN_00524340           mov ecx,DWORD PTR ds:0x985ae8
+524ecd ADDR  FUN_00524340           mov dl,BYTE PTR ds:0x985b10
+524ee6 ADDR  FUN_00524340           mov cl,BYTE PTR ds:0x985b10
+524fde ADDR  FUN_00524340           mov cl,BYTE PTR ds:0x985b10
+525582 ADDR  FUN_00525560           mov dl,BYTE PTR ds:0x985b11
+52558a ADDR  FUN_00525560           mov dl,BYTE PTR ds:0x985b10
+525663 ADDR  FUN_00525660           mov cl,BYTE PTR ds:0x985b10
+525683 ADDR  FUN_00525680           mov al,ds:0x985b10
+5256cd ADDR  FUN_005256c0           mov cl,BYTE PTR ds:0x985b10
+52570d ADDR  FUN_005256c0           mov dl,BYTE PTR ds:0x985b10
+525750 ADDR  FUN_00525730           mov bl,BYTE PTR ds:0x985b10
+52580f ADDR  FUN_005257e0           mov cl,BYTE PTR ds:0x985b10
+525ee3 ADDR  FUN_00525e10           mov cl,BYTE PTR ds:0x985b10
+525eed ADDR  FUN_00525e10           mov BYTE PTR ds:0x985b10,cl
+525f3c ADDR  FUN_00525e10           mov dl,BYTE PTR ds:0x985b11
+525f4f LOAD  FUN_00525e10           test BYTE PTR ds:0x985b10,al
+526046 ADDR  FUN_00525e10           mov dl,BYTE PTR ds:0x985b11
+526057 LOAD  FUN_00525e10           test BYTE PTR ds:0x985b10,al
+526089 ADDR  FUN_00525e10           mov cl,BYTE PTR ds:0x985b10
+526227 ADDR  FUN_00525e10           mov eax,ds:0x985afc
+5265bc ADDR  FUN_005262e0           mov eax,ds:0x985afc
+5271dd LOAD  FUN_005271d0           push 0x985ac4
+5271f0 LOAD  FUN_005271d0           push 0x985af0
+527203 LOAD  FUN_005271d0           push 0x985b10
+527219 LOAD  FUN_005271d0           push 0x985b3c
+527462 ADDR  FUN_005271d0           mov eax,ds:0x985af0
+527521 ADDR  FUN_005271d0           mov eax,ds:0x985af0
+527559 ADDR  FUN_005271d0           mov eax,ds:0x985af4
+527602 ADDR  FUN_005271d0           mov eax,ds:0x985af4
+52772f LOAD  FUN_005271d0           push 0x985ac4
+527742 LOAD  FUN_005271d0           push 0x985af0
+527755 LOAD  FUN_005271d0           push 0x985b10
+52776d LOAD  FUN_005271d0           push 0x985b3c
+527ac0 ADDR  FUN_005271d0           mov ecx,DWORD PTR ds:0x985af0
+527b51 ADDR  FUN_005271d0           mov ecx,DWORD PTR ds:0x985af0
+527b7f ADDR  FUN_005271d0           mov eax,ds:0x985af4
+527c2a ADDR  FUN_005271d0           mov eax,ds:0x985af4
+5298d6 LOAD  FUN_00529090           test BYTE PTR ds:0x985b10,al
+52a3f2 ADDR  FUN_0052a3b0           mov edi,DWORD PTR ds:0x985af0
+52a4c9 ADDR  FUN_0052a490           mov edi,DWORD PTR ds:0x985af4
+52a94f ADDR  FUN_0052a720           mov esi,DWORD PTR ds:0x985af0
+52a9c1 ADDR  FUN_0052a720           mov esi,DWORD PTR ds:0x985af4
+52aa34 ADDR  FUN_0052a720           mov esi,DWORD PTR ds:0x985afc
+52ad6b LOAD  FUN_0052a720           add esi,0x985ab8
+52ad76 LOAD  FUN_0052a720           add esi,0x985b10
+52b094 ADDR  FUN_0052a720           mov esi,0x985af0
+52b09e ADDR  FUN_0052a720           mov esi,0x985af4
+52b7a4 LOAD  FUN_0052a720           cmp eax,0x985ab8
+52c703 ADDR  FUN_0052bce0           mov al,ds:0x985ae8
+52c73b ADDR  FUN_0052bce0           mov edi,DWORD PTR ds:0x985afc
+52c751 ADDR  FUN_0052bce0           mov eax,ds:0x985ae8
+52c764 ADDR  FUN_0052bce0           mov ds:0x985ae8,eax
+52c7b0 ADDR  FUN_0052bce0           mov eax,ds:0x985afc
+52c7e0 ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985b10
+52c804 ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985b10
+52c829 ADDR  FUN_0052bce0           mov dl,BYTE PTR ds:0x985b11
+52c83f LOAD  FUN_0052bce0           test BYTE PTR ds:0x985b10,al
+52cb72 ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985ae8
+52d3c1 ADDR  FUN_0052bce0           mov cl,BYTE PTR ds:0x985b10
+52d3dd ADDR  FUN_0052bce0           mov cl,BYTE PTR ds:0x985b10
+52d414 ADDR  FUN_0052bce0           mov dl,BYTE PTR ds:0x985b10
+52d460 ADDR  FUN_0052bce0           mov cl,BYTE PTR ds:0x985b10
+52d5ab ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985afc
+52d606 ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985afc
+52d6ab ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985afc
+52d715 ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985afc
+52d7f5 ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985afc
+52d824 ADDR  FUN_0052bce0           mov eax,ds:0x985ae8
+52d836 ADDR  FUN_0052bce0           mov ds:0x985ae8,eax
+52d90c ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985afc
+52da03 ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985b08
+52da15 ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985b0c
+52da3c ADDR  FUN_0052bce0           mov DWORD PTR ds:0x985b0c,edx
+52da5e ADDR  FUN_0052bce0           mov eax,ds:0x985b08
+52e42e LOAD  FUN_0052bce0           test BYTE PTR ds:0x985ae8,0x80
+52eb93 ADDR  FUN_0052bce0           mov eax,ds:0x985b0c
+52eba9 ADDR  FUN_0052bce0           mov DWORD PTR ds:0x985b08,edx
+52ebb4 ADDR  FUN_0052bce0           mov eax,ds:0x985b0c
+52ebe4 ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985b08
+52ec1e ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985b08
+52ec35 ADDR  FUN_0052bce0           mov eax,ds:0x985b08
+52ec4b ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985b08
+52ec62 ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985b08
+52ec79 ADDR  FUN_0052bce0           mov eax,ds:0x985b08
+52ec8f ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985b08
+52ecbc ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985b08
+52ef1e LOAD  FUN_0052bce0           mov eax,DWORD PTR [edx*4+0x985b3c]
+52f50d ADDR  FUN_0052bce0           mov edx,DWORD PTR ds:0x985afc
+52f58d ADDR  FUN_0052bce0           mov dl,BYTE PTR ds:0x985b11
+52f5a0 LOAD  FUN_0052bce0           test BYTE PTR ds:0x985b10,al
+52f5eb ADDR  FUN_0052bce0           mov eax,ds:0x985b10
+52f60b ADDR  FUN_0052bce0           mov ecx,DWORD PTR ds:0x985b10
+52f630 ADDR  FUN_0052bce0           mov dl,BYTE PTR ds:0x985b11
+52f646 LOAD  FUN_0052bce0           test BYTE PTR ds:0x985b10,al
+530dc5 ADDR  FUN_00530d50           mov eax,ds:0x985ae8
+531006 ADDR  FUN_00531000           mov dl,BYTE PTR ds:0x985b10
+531017 LOAD  FUN_00531000           cmp DWORD PTR ds:0x985b30,ecx
+53101f ADDR  FUN_00531000           mov edx,DWORD PTR ds:0x985afc
+531066 LOAD  FUN_00531000           test BYTE PTR ds:0x985ac4,0x40
+5310a2 LOAD  FUN_00531090           test BYTE PTR ds:0x985b10,al
+5310aa LOAD  FUN_00531090           cmp DWORD PTR ds:0x985b30,edi
+5310b2 ADDR  FUN_00531090           mov ebx,DWORD PTR ds:0x985afc
+5310f6 ADDR  FUN_00531090           mov al,ds:0x985ac4
+531159 ADDR  FUN_00531090           mov al,ds:0x985ac4
+53119e ADDR  FUN_00531090           mov edx,DWORD PTR ds:0x985b2c
+5311b1 ADDR  FUN_00531090           mov ecx,DWORD PTR ds:0x985b30
+5311d6 LOAD  FUN_005311d0           test BYTE PTR ds:0x985ac4,0x8
+531240 ADDR  FUN_005311d0           mov eax,ds:0x985ac4
+5312d0 ADDR  FUN_005312d0           mov edx,DWORD PTR ds:0x985b10
+5312d7 ADDR  FUN_005312d0           mov esi,DWORD PTR ds:0x985afc
+531322 LOAD  FUN_005312d0           cmp DWORD PTR ds:0x985bb8,0xffffffff
+531339 LOAD  FUN_005312d0           test BYTE PTR ds:0x985b10,al
+531392 LOAD  FUN_00531380           test BYTE PTR ds:0x985b10,al
+53139e LOAD  FUN_00531380           test BYTE PTR ds:0x985ae8,0x1
+5313ab ADDR  FUN_00531380           mov eax,ds:0x985aec
+5313dc ADDR  FUN_00531380           mov edx,DWORD PTR ds:0x985ac4
+5313e2 ADDR  FUN_00531380           mov esi,DWORD PTR ds:0x985afc
+53142c ADDR  FUN_00531380           mov ecx,DWORD PTR ds:0x985af4
+531c66 ADDR  FUN_00531bf0           mov eax,ds:0x985af4
+531ce9 ADDR  FUN_00531bf0           mov eax,ds:0x985af4
+531d9e ADDR  FUN_00531bf0           mov ecx,DWORD PTR ds:0x985af4
+531db9 ADDR  FUN_00531bf0           mov ecx,DWORD PTR ds:0x985af4
+531ec2 ADDR  FUN_00531df0           mov ecx,DWORD PTR ds:0x985ac4
+531ecd LOAD  FUN_00531df0           cmp DWORD PTR ds:0x985afc,0xc8
+531ef1 ADDR  FUN_00531df0           mov eax,ds:0x985b30
+531fff ADDR  FUN_00531df0           mov edi,DWORD PTR ds:0x985afc
+5320ac ADDR  FUN_00531df0           mov cl,BYTE PTR ds:0x985b11
+53225c ADDR  FUN_00531df0           mov ecx,DWORD PTR ds:0x985af4
+532576 ADDR  FUN_00531df0           mov ecx,DWORD PTR ds:0x985af4
+53296d LOAD  FUN_00531df0           test BYTE PTR ds:0x985ac4,0x40
+532985 ADDR  FUN_00531df0           mov ecx,DWORD PTR ds:0x985afc
+5329e0 ADDR  FUN_00531df0           mov edi,DWORD PTR ds:0x985aec
+532b34 ADDR  FUN_00531df0           mov eax,ds:0x985ac4
+532bb6 ADDR  FUN_00531df0           mov dl,BYTE PTR ds:0x985b11
+532d58 ADDR  FUN_00531df0           mov eax,ds:0x985ac4
+533060 ADDR  FUN_00531df0           mov al,ds:0x985b11
+533160 LOAD  FUN_00531df0           test BYTE PTR ds:0x985b10,bl
+533281 LOAD  FUN_00531df0           test BYTE PTR ds:0x985b10,bl
+533387 ADDR  FUN_00531df0           mov eax,ds:0x985ac4
+53368d LOAD  FUN_00531df0           test DWORD PTR ds:0x985ac4,0x1000
+533736 ADDR  FUN_00533730           mov ecx,DWORD PTR ds:0x985af0
+5337b3 ADDR  FUN_00533730           mov eax,ds:0x985af4
+533931 ADDR  FUN_00533730           mov eax,ds:0x985af4
+5339bb ADDR  FUN_00533730           mov ecx,DWORD PTR ds:0x985af0
+533a73 LOAD  FUN_005339e0           test BYTE PTR ds:0x985ae8,0x80
+533ecc ADDR  FUN_00533e70           mov eax,ds:0x985afc
+5340ad ADDR  FUN_00533e70           mov eax,ds:0x985aec
+5341ee ADDR  FUN_00534180           mov eax,ds:0x985afc
+5343e7 ADDR  FUN_00534180           mov eax,ds:0x985aec
+534509 ADDR  FUN_005344c0           mov edx,DWORD PTR ds:0x985afc
+53563f LOAD  FUN_00535610           test BYTE PTR ds:0x985b10,al
+53580f ADDR  FUN_00535700           mov al,ds:0x985b10
+535946 ADDR  FUN_00535940           mov eax,ds:0x985ac4
+535a13 ADDR  FUN_00535940           mov ecx,DWORD PTR ds:0x985af4
+535a20 STORE FUN_00535940           mov DWORD PTR [ebp-0x4],0x985b3c
+535a66 ADDR  FUN_00535940           mov ecx,DWORD PTR ds:0x985af4
+535a7e LOAD  FUN_00535940           cmp eax,DWORD PTR ds:0x985b38
+535a92 LOAD  FUN_00535940           cmp eax,DWORD PTR ds:0x985b34
+535ab7 LOAD  FUN_00535940           cmp edx,0x985acc
+53634d LOAD  FUN_00535c60           cmp edi,DWORD PTR ds:0x985bc0
+5363a8 ADDR  FUN_00535c60           mov eax,ds:0x985afc
+5363ef ADDR  FUN_00535c60           mov edx,DWORD PTR ds:0x985afc
+536424 ADDR  FUN_00535c60           mov edx,DWORD PTR ds:0x985afc
+536459 ADDR  FUN_00535c60           mov edx,DWORD PTR ds:0x985afc
+53720f ADDR  FUN_00537180           mov ecx,DWORD PTR ds:0x985afc
+5376ad ADDR  FUN_005375e0           mov eax,ds:0x985afc
+5378c6 ADDR  FUN_005375e0           mov edx,DWORD PTR ds:0x985afc
+53822f LOAD  FUN_00538040           test BYTE PTR ds:0x985ac4,0x40
+538296 ADDR  FUN_00538040           mov eax,ds:0x985b38
+538390 ADDR  FUN_00538040           mov edx,DWORD PTR ds:0x985af4
+53843d ADDR  FUN_00538040           mov eax,ds:0x985ac4
+538523 LOAD  FUN_00538040           test BYTE PTR ds:0x985ac4,0x40
+53852c LOAD  FUN_00538040           cmp ebx,DWORD PTR ds:0x985b34
+5385c6 ADDR  FUN_00538040           mov eax,ds:0x985af4
+538647 LOAD  FUN_00538040           cmp ebx,DWORD PTR ds:0x985b34
+538660 ADDR  FUN_00538040           mov ecx,DWORD PTR ds:0x985b38
+538715 ADDR  FUN_00538040           mov ecx,DWORD PTR ds:0x985ac4
+538729 LOAD  FUN_00538040           cmp ebx,DWORD PTR ds:0x985b34
+53873a ADDR  FUN_00538040           mov edx,DWORD PTR ds:0x985b2c
+538747 ADDR  FUN_00538040           mov edx,DWORD PTR ds:0x985b30
+5387dd ADDR  FUN_00538040           mov eax,ds:0x985ac4
+53880b ADDR  FUN_00538040           mov ecx,DWORD PTR ds:0x985b38
+538d03 LOAD  FUN_00538040           cmp ebx,DWORD PTR ds:0x985b34
+53a924 ADDR  FUN_0053a820           mov eax,ds:0x985af4
+53a969 ADDR  FUN_0053a820           mov eax,ds:0x985af4
+53aa03 ADDR  FUN_0053a9c0           mov esi,DWORD PTR ds:0x985b34
+53aa11 ADDR  FUN_0053a9c0           mov eax,ds:0x985b38
+53aa6a ADDR  FUN_0053a9c0           mov eax,ds:0x985b30
+53aa89 ADDR  FUN_0053a9c0           mov ecx,DWORD PTR ds:0x985ac4
+53ab17 ADDR  FUN_0053a9c0           mov ecx,DWORD PTR ds:0x985afc
+53acc6 LOAD  FUN_0053a9c0           cmp DWORD PTR ds:0x985afc,0x32
+53ad82 ADDR  FUN_0053a9c0           mov eax,ds:0x985ac4
+53b281 LOAD  FUN_0053a9c0           cmp edi,DWORD PTR ds:0x985b34
+53b291 ADDR  FUN_0053a9c0           mov eax,ds:0x985b38
+53b325 ADDR  FUN_0053a9c0           mov eax,ds:0x985afc
+53b9ce ADDR  FUN_0053a9c0           mov eax,ds:0x985b30
+53c180 ADDR  FUN_0053bb90           mov edx,DWORD PTR ds:0x985afc
+53c81c LOAD  FUN_0053bb90           cmp DWORD PTR ds:0x985b30,ebx
+53cdb2 LOAD  FUN_0053cb20           imul DWORD PTR ds:0x985afc
+53ce32 ADDR  FUN_0053cb20           mov eax,ds:0x985b30
+53ce3b ADDR  FUN_0053cb20           mov ecx,DWORD PTR ds:0x985b2c
+53ce83 ADDR  FUN_0053cb20           mov ecx,DWORD PTR ds:0x985b2c
+53ce93 ADDR  FUN_0053cb20           mov eax,ds:0x985b30
+53cf29 LOAD  FUN_0053cb20           cmp DWORD PTR ds:0x985afc,0x32
+53d036 ADDR  FUN_0053cb20           mov al,ds:0x985b10
+53d6cd ADDR  FUN_0053cb20           mov edx,DWORD PTR ds:0x985afc
+53d6fc ADDR  FUN_0053cb20           mov edx,DWORD PTR ds:0x985afc
+53d72d ADDR  FUN_0053cb20           mov edx,DWORD PTR ds:0x985afc
+53d760 ADDR  FUN_0053cb20           mov edx,DWORD PTR ds:0x985afc
+53e9f9 ADDR  FUN_0053e7d0           mov edx,DWORD PTR ds:0x985afc
+53ea47 ADDR  FUN_0053e7d0           mov eax,ds:0x985afc
+53eec5 ADDR  FUN_0053e7d0           mov edx,DWORD PTR ds:0x985afc
+53f874 ADDR  FUN_0053f840           mov eax,ds:0x985af0
+53f9c5 ADDR  FUN_0053f840           mov ecx,DWORD PTR ds:0x985af0
+53f9f6 ADDR  FUN_0053f9f0           mov ecx,DWORD PTR ds:0x985af0
+53fc89 ADDR  FUN_0053f9f0           mov ecx,DWORD PTR ds:0x985af0
+53fdad ADDR  FUN_0053fce0           mov edx,DWORD PTR ds:0x985afc
+53fff0 ADDR  FUN_0053fce0           mov ecx,DWORD PTR ds:0x985afc
+540436 ADDR  FUN_00540390           mov eax,ds:0x985afc
+5406af ADDR  FUN_00540390           mov eax,ds:0x985afc
+541560 ADDR  FUN_00540390           mov edx,DWORD PTR ds:0x985afc
+5416d6 ADDR  FUN_005416d0           mov ecx,DWORD PTR ds:0x985af4
+54195e ADDR  FUN_005416d0           mov ecx,DWORD PTR ds:0x985af4
+5419f1 ADDR  FUN_005419a0           mov eax,ds:0x985af4
+541b05 ADDR  FUN_005419a0           mov edx,DWORD PTR ds:0x985af4
+541f83 ADDR  FUN_00541bb0           mov eax,ds:0x985af4
+5420a3 ADDR  FUN_00541bb0           mov eax,ds:0x985af4
+5423a0 ADDR  FUN_00541bb0           mov eax,ds:0x985af0
+54289c ADDR  FUN_00542810           mov al,ds:0x985b11
+5438a2 ADDR  FUN_005437d0           mov edx,DWORD PTR ds:0x985af0
+543bcb ADDR  FUN_005437d0           mov edx,DWORD PTR ds:0x985af0
+543be5 LOAD  FUN_005437d0           cmp esi,DWORD PTR ds:0x985af0
+54407a LOAD  FUN_00543c50           cmp DWORD PTR ds:0x985b30,edi
+544185 ADDR  FUN_00543c50           mov eax,ds:0x985afc
+54457e ADDR  FUN_00544530           mov eax,ds:0x985af4
+544601 ADDR  FUN_00544530           mov ecx,DWORD PTR ds:0x985af4
+54461f ADDR  FUN_00544530           mov al,ds:0x985b11
+544661 ADDR  FUN_00544530           mov eax,ds:0x985b4c
+5448c1 ADDR  FUN_00544530           mov eax,ds:0x985ac4
+544b37 ADDR  FUN_00544530           mov dl,BYTE PTR ds:0x985b11
+544b65 LOAD  FUN_00544530           test BYTE PTR ds:0x985b10,al
+544e3e ADDR  FUN_00544530           mov al,ds:0x985b11
+544f5f ADDR  FUN_00544530           mov eax,ds:0x985b4c
+5450bb ADDR  FUN_00544530           mov eax,ds:0x985af4
+54519e ADDR  FUN_00544530           mov eax,ds:0x985af4
+545583 ADDR  FUN_00544530           mov eax,ds:0x985ac4
+5456f8 ADDR  FUN_00544530           mov eax,ds:0x985af4
+5457b5 ADDR  FUN_00544530           mov eax,ds:0x985af4
+54625b ADDR  FUN_00545c50           mov ecx,DWORD PTR ds:0x985ae8
+54627f LOAD  FUN_00545c50           test BYTE PTR ds:0x985ac4,0x8
+54629f LOAD  FUN_00545c50           mov eax,DWORD PTR [edi*4+0x985bc4]
+5462bc LOAD  FUN_00545c50           mov eax,DWORD PTR [edi*4+0x985bc4]
+5462de LOAD  FUN_00545c50           mov eax,DWORD PTR [edi*4+0x985bc4]
+5462f5 LOAD  FUN_00545c50           mov ecx,DWORD PTR [edi*4+0x985bc4]
+54630b LOAD  FUN_00545c50           mov edx,DWORD PTR [edi*4+0x985bc4]
+546321 LOAD  FUN_00545c50           mov eax,DWORD PTR [edi*4+0x985bc4]
+546484 ADDR  FUN_00545c50           mov al,ds:0x985b11
+5472ab ADDR  FUN_00546800           mov eax,ds:0x985afc
+548b42 LOAD  FUN_00546800           test BYTE PTR ds:0x985b10,al
+548f8f LOAD  FUN_00546800           test BYTE PTR ds:0x985b10,al
+54927f LOAD  FUN_00546800           test BYTE PTR ds:0x985b10,dl
+5492ab LOAD  FUN_00546800           test DWORD PTR ds:0x985ac4,0x2000000
+5492b7 ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985afc
+549394 ADDR  FUN_00546800           mov eax,ds:0x985afc
+5495f4 LOAD  FUN_00546800           imul DWORD PTR ds:0x985afc
+54965e LOAD  FUN_00546800           imul DWORD PTR ds:0x985afc
+5496d0 LOAD  FUN_00546800           cmp DWORD PTR ds:0x985afc,0x19
+5496d9 LOAD  FUN_00546800           test DWORD PTR ds:0x985ac4,0x2000000
+54986f LOAD  FUN_00546800           test BYTE PTR ds:0x985b10,al
+549a3a ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985afc
+549a6c ADDR  FUN_00546800           mov al,ds:0x985b11
+549b39 ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985afc
+549c6e ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985af4
+549caf ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985af4
+549d89 LOAD  FUN_00546800           test DWORD PTR ds:0x985ac4,0x2000000
+549e36 ADDR  FUN_00546800           mov eax,ds:0x985ac4
+549ee1 ADDR  FUN_00546800           mov eax,ds:0x985ac4
+54a51b LOAD  FUN_00546800           test BYTE PTR ds:0x985ac4,0x40
+54a7ca ADDR  FUN_00546800           mov al,ds:0x985ac4
+54a7fb ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985afc
+54a866 LOAD  FUN_00546800           test DWORD PTR ds:0x985ac4,0x2000000
+54a9ac LOAD  FUN_00546800           cmp DWORD PTR ds:0x985b30,edi
+54ad94 ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985afc
+54b010 ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985afc
+54baaa ADDR  FUN_00546800           mov eax,ds:0x985ac4
+54babf LOAD  FUN_00546800           cmp DWORD PTR ds:0x985afc,0xc8
+54bc59 ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985afc
+54bc85 ADDR  FUN_00546800           mov eax,ds:0x985afc
+54bd49 ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985afc
+54be7c ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985afc
+54bf9c ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985afc
+54c0cf ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985afc
+54c358 ADDR  FUN_00546800           mov al,ds:0x985b11
+54c493 ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985ac4
+54c4db ADDR  FUN_00546800           mov eax,ds:0x985ac4
+54c7ed ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985af4
+54c82e ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985af4
+54cba8 LOAD  FUN_00546800           test DWORD PTR ds:0x985ac4,0x2000000
+54cf91 ADDR  FUN_00546800           mov eax,ds:0x985ac4
+54d04d LOAD  FUN_00546800           test BYTE PTR ds:0x985ac4,0x2
+54d067 ADDR  FUN_00546800           mov al,ds:0x985b11
+54d0c9 ADDR  FUN_00546800           mov eax,ds:0x985ac4
+54d0f2 ADDR  FUN_00546800           mov edx,DWORD PTR ds:0x985ae8
+54d10a ADDR  FUN_00546800           mov DWORD PTR ds:0x985ae8,edx
+54d11c ADDR  FUN_00546800           mov eax,ds:0x985afc
+54d27c ADDR  FUN_00546800           mov ecx,DWORD PTR ds:0x985afc
+54e102 ADDR  FUN_00546800           mov al,ds:0x985b11
+54e704 ADDR  FUN_00546800           mov eax,ds:0x985ac4
+54e75d LOAD  FUN_00546800           test DWORD PTR ds:0x985ac4,0x6000000
+54ea66 ADDR  FUN_00546800           mov al,ds:0x985b11
+54eadb ADDR  FUN_00546800           mov eax,ds:0x985ae8
+54effb ADDR  FUN_0054ef60           mov al,ds:0x985b11
+54f067 ADDR  FUN_0054ef60           mov eax,ds:0x985ae8
+54f1f0 LOAD  FUN_0054f1d0           test BYTE PTR ds:0x985b11,al
+54f246 ADDR  FUN_0054f1d0           mov cl,BYTE PTR ds:0x985b10
+5501dd ADDR  FUN_0054f790           mov dl,BYTE PTR ds:0x985b10
+5501fc ADDR  FUN_0054f790           mov ecx,DWORD PTR ds:0x985ae8
+55021a ADDR  FUN_0054f790           mov ecx,DWORD PTR ds:0x985ae8
+5502ad ADDR  FUN_0054f790           mov eax,ds:0x985ae8
+55141d ADDR  FUN_005510f0           mov eax,ds:0x985b50
+55163f LOAD  FUN_005510f0           test BYTE PTR ds:0x985ae8,0x80
+551e09 ADDR  FUN_00551de0           mov eax,ds:0x985b4c
+551e2e LOAD  FUN_00551de0           cmp ecx,DWORD PTR ds:0x985bc0
+551f0c LOAD  FUN_00551e50           test BYTE PTR ds:0x985b10,al
+551fbc LOAD  FUN_00551e50           cmp DWORD PTR ds:0x985afc,0x64
+551fc5 LOAD  FUN_00551e50           test BYTE PTR ds:0x985ac4,0x40
+55200a LOAD  FUN_00551e50           test BYTE PTR ds:0x985b10,dl
+5520da LOAD  FUN_00551e50           cmp DWORD PTR ds:0x985b30,ebx
+552164 ADDR  FUN_00551e50           mov eax,ds:0x985af4
+552210 ADDR  FUN_00551e50           mov eax,ds:0x985af4
+5524c4 LOAD  FUN_00551e50           test BYTE PTR ds:0x985ac4,0x40
+5525d4 ADDR  FUN_005525d0           mov eax,ds:0x985b10
+55262e ADDR  FUN_005525d0           mov ecx,DWORD PTR ds:0x985afc
+552b55 ADDR  FUN_00552970           mov ecx,DWORD PTR ds:0x985bc0
+552b90 ADDR  FUN_00552970           mov ecx,DWORD PTR ds:0x985bc0
+552b9a LOAD  FUN_00552970           test BYTE PTR ds:0x985ae8,0x80
+552c6e ADDR  FUN_00552970           mov eax,ds:0x985aec
+552d1e ADDR  FUN_00552970           mov eax,ds:0x985aec
+552f9d ADDR  FUN_00552f10           mov ecx,DWORD PTR ds:0x985b4c
+552fc9 LOAD  FUN_00552f10           cmp eax,DWORD PTR ds:0x985bc0
+552fff LOAD  FUN_00552f10           test BYTE PTR ds:0x985ae8,0x80
+553380 ADDR  FUN_00553350           mov al,ds:0x985b10
+553451 ADDR  FUN_00553350           mov ecx,DWORD PTR ds:0x985afc
+5534dc ADDR  FUN_005534c0           mov eax,ds:0x985ac4
+553722 ADDR  FUN_005534c0           mov ecx,DWORD PTR ds:0x985b30
+55373b ADDR  FUN_005534c0           mov eax,ds:0x985b34
+55377a ADDR  FUN_005534c0           mov eax,ds:0x985b34
+55387f LOAD  FUN_005537d0           test BYTE PTR ds:0x985ac4,0x40
+553891 ADDR  FUN_005537d0           mov eax,ds:0x985aec
+553b60 ADDR  FUN_005537d0           mov ecx,DWORD PTR ds:0x985bc0
+553b9b ADDR  FUN_005537d0           mov ecx,DWORD PTR ds:0x985bc0
+553ba5 LOAD  FUN_005537d0           test BYTE PTR ds:0x985ae8,0x80
+553e2f ADDR  FUN_005537d0           mov ecx,DWORD PTR ds:0x985bc0
+553e6b ADDR  FUN_005537d0           mov eax,ds:0x985bc0
+553e74 LOAD  FUN_005537d0           test BYTE PTR ds:0x985ae8,0x80
+553f1f ADDR  FUN_005537d0           mov ecx,DWORD PTR ds:0x985b30
+5541a9 ADDR  FUN_005537d0           mov edx,DWORD PTR ds:0x985b4c
+5541d1 ADDR  FUN_005537d0           mov edx,DWORD PTR ds:0x985b4c
+5541da LOAD  FUN_005537d0           cmp eax,DWORD PTR ds:0x985bc0
+55436c ADDR  FUN_00554350           mov eax,ds:0x985afc
+55445b ADDR  FUN_00554350           mov eax,ds:0x985b10
+55447f ADDR  FUN_00554350           mov eax,ds:0x985afc
+55461b ADDR  FUN_005544f0           mov eax,ds:0x985af0
+5547f6 ADDR  FUN_005544f0           mov edi,DWORD PTR ds:0x985af0
+55492c ADDR  FUN_00554850           mov eax,ds:0x985b10
+5549db LOAD  FUN_00554850           test BYTE PTR ds:0x985ac4,0x40
+5549e9 ADDR  FUN_00554850           mov eax,ds:0x985aec
+554b6d ADDR  FUN_00554850           mov eax,ds:0x985b10
+554e30 ADDR  FUN_00554d10           mov dl,BYTE PTR ds:0x985b10
+554e45 LOAD  FUN_00554d10           test BYTE PTR ds:0x985b11,al
+554eab ADDR  FUN_00554d10           mov eax,ds:0x985afc
+555252 ADDR  FUN_005551e0           mov al,ds:0x985b10
+555284 LOAD  FUN_005551e0           test BYTE PTR ds:0x985b11,al
+5552d9 LOAD  FUN_005551e0           test BYTE PTR ds:0x985afc,0x1
+5553c2 ADDR  FUN_005551e0           mov ecx,DWORD PTR ds:0x985afc
+555413 ADDR  FUN_005551e0           mov edx,DWORD PTR ds:0x985afc
+55545a ADDR  FUN_005551e0           mov eax,ds:0x985b10
+5554a6 ADDR  FUN_005551e0           mov dl,BYTE PTR ds:0x985b11
+55554c ADDR  FUN_005551e0           mov ecx,DWORD PTR ds:0x985afc
+55556c ADDR  FUN_005551e0           mov ecx,DWORD PTR ds:0x985afc
+5555a5 ADDR  FUN_005551e0           mov ecx,DWORD PTR ds:0x985afc
+555611 ADDR  FUN_005551e0           mov eax,ds:0x985afc
+5556d4 LOAD  FUN_005551e0           test BYTE PTR ds:0x985ac4,0x40
+555715 ADDR  FUN_005551e0           mov edx,DWORD PTR ds:0x985afc
+555858 ADDR  FUN_005551e0           mov eax,ds:0x985ae8
+555862 ADDR  FUN_005551e0           mov eax,ds:0x985b4c
+555887 ADDR  FUN_005551e0           mov eax,ds:0x985b4c
+555913 ADDR  FUN_005551e0           mov al,ds:0x985b10
+55595b ADDR  FUN_005551e0           mov edx,DWORD PTR ds:0x985afc
+555a91 ADDR  FUN_005551e0           mov edx,DWORD PTR ds:0x985afc
+555b2e ADDR  FUN_005551e0           mov ecx,DWORD PTR ds:0x985afc
+555bc1 ADDR  FUN_005551e0           mov ecx,DWORD PTR ds:0x985afc
+555cc6 ADDR  FUN_005551e0           mov eax,ds:0x985ac4
+555ce4 LOAD  FUN_005551e0           cmp DWORD PTR ds:0x985afc,0xc8
+555d04 LOAD  FUN_005551e0           test BYTE PTR ds:0x985ac4,0x40
+555da0 ADDR  FUN_005551e0           mov dl,BYTE PTR ds:0x985afc
+555e52 LOAD  FUN_005551e0           cmp DWORD PTR ds:0x985afc,0x64
+555ef7 ADDR  FUN_005551e0           mov edx,DWORD PTR ds:0x985ac4
+555f20 LOAD  FUN_005551e0           cmp DWORD PTR ds:0x985afc,0xc8
+55606a ADDR  FUN_005551e0           mov cl,BYTE PTR ds:0x985b10
+55619f ADDR  FUN_00556150           mov eax,0x985b3c
+5561ac LOAD  FUN_00556150           cmp eax,0x985bc0
+5566ae ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985afc
+556759 ADDR  FUN_00556690           mov eax,ds:0x985af4
+556925 ADDR  FUN_00556690           mov edx,DWORD PTR ds:0x985afc
+556b98 ADDR  FUN_00556690           mov edx,DWORD PTR ds:0x985afc
+556bb9 ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985af4
+556bdd LOAD  FUN_00556690           test BYTE PTR ds:0x985b10,al
+556be8 LOAD  FUN_00556690           cmp DWORD PTR ds:0x985af4,esi
+556c11 ADDR  FUN_00556690           mov eax,ds:0x985af4
+556c3c ADDR  FUN_00556690           mov eax,ds:0x985af0
+556c7b LOAD  FUN_00556690           cmp eax,DWORD PTR ds:0x985af0
+556f3a ADDR  FUN_00556690           mov al,ds:0x985b10
+556f77 ADDR  FUN_00556690           mov eax,ds:0x985afc
+557286 ADDR  FUN_00556690           mov al,ds:0x985b10
+557293 ADDR  FUN_00556690           mov eax,ds:0x985afc
+55738d ADDR  FUN_00556690           mov al,ds:0x985b10
+557637 ADDR  FUN_00556690           mov al,ds:0x985b10
+557644 ADDR  FUN_00556690           mov eax,ds:0x985af4
+55775c ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985af4
+557b95 ADDR  FUN_00556690           mov eax,ds:0x985af0
+557bfc ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985af0
+557c31 ADDR  FUN_00556690           mov eax,ds:0x985af0
+557ced ADDR  FUN_00556690           mov edi,DWORD PTR ds:0x985b10
+557f49 ADDR  FUN_00556690           mov eax,ds:0x985af0
+55812d ADDR  FUN_00556690           mov eax,ds:0x985afc
+558277 ADDR  FUN_00556690           mov al,ds:0x985b10
+55829d ADDR  FUN_00556690           mov eax,ds:0x985af4
+5582f4 ADDR  FUN_00556690           mov eax,ds:0x985af4
+5583b8 ADDR  FUN_00556690           mov edx,DWORD PTR ds:0x985b30
+5583cd ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985ae8
+55840d LOAD  FUN_00556690           cmp DWORD PTR ds:0x985afc,0x4b
+55858a ADDR  FUN_00556690           mov eax,ds:0x985af0
+5585f8 ADDR  FUN_00556690           mov al,ds:0x985b10
+5586bd ADDR  FUN_00556690           mov bl,BYTE PTR ds:0x985b10
+5586d3 LOAD  FUN_00556690           test DWORD PTR ds:0x985ab8,0x20000
+558ae7 ADDR  FUN_00556690           mov cl,BYTE PTR ds:0x985b10
+558b4d ADDR  FUN_00556690           mov al,ds:0x985b10
+558be2 ADDR  FUN_00556690           mov eax,ds:0x985af4
+558dcf ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985af4
+558e33 ADDR  FUN_00556690           mov eax,ds:0x985af0
+559035 ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985af0
+55904a ADDR  FUN_00556690           mov eax,ds:0x985afc
+559071 ADDR  FUN_00556690           mov eax,ds:0x985af0
+5590a9 ADDR  FUN_00556690           mov eax,ds:0x985af0
+5590bf LOAD  FUN_00556690           cmp eax,DWORD PTR ds:0x985af0
+5591cd ADDR  FUN_00556690           mov al,ds:0x985b10
+559b74 ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985af0
+559c83 ADDR  FUN_00556690           mov ecx,DWORD PTR ds:0x985af0
+559e49 ADDR  FUN_00556690           mov dl,BYTE PTR ds:0x985b10
+55a2bc ADDR  FUN_0055a1a0           mov edx,DWORD PTR ds:0x985afc
+55a3d5 ADDR  FUN_0055a3a0           mov eax,ds:0x985af4
+55a496 ADDR  FUN_0055a3a0           mov ecx,DWORD PTR ds:0x985af4
+55ab02 ADDR  FUN_0055a940           mov al,ds:0x985b10
+55ab57 ADDR  FUN_0055a940           mov al,ds:0x985b10
+55ab67 LOAD  FUN_0055a940           test BYTE PTR ds:0x985abc,0x8
+55af44 LOAD  FUN_0055a940           test BYTE PTR ds:0x985b10,al
+55af4c LOAD  FUN_0055a940           test BYTE PTR ds:0x985abc,0x8
+55b3ed LOAD  FUN_0055a940           cmp DWORD PTR ds:0x985afc,0x32
+55b435 ADDR  FUN_0055a940           mov dl,BYTE PTR ds:0x985b10
+55b4a2 LOAD  FUN_0055a940           test DWORD PTR ds:0x985ab8,0x1000000
+55b4cc ADDR  FUN_0055a940           mov al,ds:0x985b10
+55bbf3 ADDR  FUN_0055bbb0           mov eax,ds:0x985af4
+55bd58 ADDR  FUN_0055bbb0           mov ecx,DWORD PTR ds:0x985af4
+55c31a ADDR  FUN_0055bd90           mov eax,ds:0x985afc
+55c35f LOAD  FUN_0055bd90           cmp DWORD PTR ds:0x985afc,0x32
+55c5f9 ADDR  FUN_0055bd90           mov eax,ds:0x985aec
+55c6d3 LOAD  FUN_0055bd90           test BYTE PTR ds:0x985b10,al
+55c779 LOAD  FUN_0055bd90           test BYTE PTR ds:0x985ac4,0x40
+55cdb4 ADDR  FUN_0055c920           mov eax,ds:0x985af4
+55ce54 ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af4
+55cf2a LOAD  FUN_0055c920           test BYTE PTR ds:0x985b10,al
+55cfab ADDR  FUN_0055c920           mov eax,ds:0x985af0
+55d2b2 LOAD  FUN_0055c920           test BYTE PTR ds:0x985b10,dl
+55d59e ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af0
+55d76b ADDR  FUN_0055c920           mov eax,ds:0x985af4
+55d82a ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af4
+55d8f1 ADDR  FUN_0055c920           mov eax,ds:0x985af0
+55de8d ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af0
+55dfc6 ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af4
+55e0af ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af4
+55e564 ADDR  FUN_0055c920           mov eax,ds:0x985af4
+55e9ce ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af4
+55eabe ADDR  FUN_0055c920           mov eax,ds:0x985af4
+55ebb3 ADDR  FUN_0055c920           mov ecx,DWORD PTR ds:0x985af4
+55ec39 ADDR  FUN_0055ec10           mov cl,BYTE PTR ds:0x985b10
+55ec4a ADDR  FUN_0055ec10           mov eax,ds:0x985af4
+55ec99 ADDR  FUN_0055ec10           mov eax,ds:0x985af0
+55ecef ADDR  FUN_0055ec10           mov edx,DWORD PTR ds:0x985af4
+55ed71 ADDR  FUN_0055ec10           mov esi,DWORD PTR ds:0x985af4
+55ede6 ADDR  FUN_0055ec10           mov edx,DWORD PTR ds:0x985ac4
+55ee25 LOAD  FUN_0055ec10           test BYTE PTR ds:0x985b10,al
+55ee91 ADDR  FUN_0055ec10           mov cl,BYTE PTR ds:0x985ac4
+55f149 ADDR  FUN_0055ec10           mov ecx,DWORD PTR ds:0x985afc
+55f279 ADDR  FUN_0055ec10           mov ecx,DWORD PTR ds:0x985af4
+55f9f9 LOAD  FUN_0055f650           test BYTE PTR ds:0x985b10,al
+55fa7a ADDR  FUN_0055f650           mov al,ds:0x985b10
+55fd9a ADDR  FUN_0055f650           mov cl,BYTE PTR ds:0x985b10
+55fe50 LOAD  FUN_0055f650           test BYTE PTR ds:0x985b10,al
+55ff30 LOAD  FUN_0055f650           test BYTE PTR ds:0x985abc,0x8
+5600bd ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+5602f0 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+5603be ADDR  FUN_0055f650           mov eax,ds:0x985af4
+560607 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+56064f ADDR  FUN_0055f650           mov cl,BYTE PTR ds:0x985b10
+560da8 ADDR  FUN_0055f650           mov cl,BYTE PTR ds:0x985b10
+56100f LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985b8c,esi
+56102e ADDR  FUN_0055f650           mov al,ds:0x985b10
+5610ac ADDR  FUN_0055f650           mov eax,ds:0x985af4
+56113a ADDR  FUN_0055f650           mov eax,ds:0x985b8c
+561159 ADDR  FUN_0055f650           mov cl,BYTE PTR ds:0x985b10
+5611da ADDR  FUN_0055f650           mov eax,ds:0x985af4
+561234 ADDR  FUN_0055f650           mov al,ds:0x985b10
+561241 ADDR  FUN_0055f650           mov eax,ds:0x985af4
+5612e3 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+5615d0 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+56164c ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af0
+562186 ADDR  FUN_0055f650           mov eax,ds:0x985af4
+562433 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+5624f7 ADDR  FUN_0055f650           mov al,ds:0x985b10
+56261e ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+5626eb ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+56285f ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+562c5b ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+563126 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+5632b2 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+563d9e ADDR  FUN_0055f650           mov eax,ds:0x985af0
+563de1 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+564323 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985afc
+564400 ADDR  FUN_0055f650           mov edx,DWORD PTR ds:0x985afc
+56442e LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985aec,0x3
+56443a ADDR  FUN_0055f650           mov al,ds:0x985b10
+5645af LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985aec,0x3
+5645bb ADDR  FUN_0055f650           mov al,ds:0x985b10
+5648cf LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985aec,0x3
+5648df ADDR  FUN_0055f650           mov al,ds:0x985b10
+564941 LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985aec,0x3
+56494d ADDR  FUN_0055f650           mov al,ds:0x985b10
+564a44 LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985aec,0x3
+564a50 ADDR  FUN_0055f650           mov al,ds:0x985b10
+564e22 ADDR  FUN_0055f650           mov al,ds:0x985b10
+5650d3 LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985afc,0x64
+565157 ADDR  FUN_0055f650           mov eax,ds:0x985afc
+565207 LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985aec,0x3
+565213 ADDR  FUN_0055f650           mov al,ds:0x985b10
+56529a LOAD  FUN_0055f650           test BYTE PTR ds:0x985b10,al
+565380 ADDR  FUN_0055f650           mov dl,BYTE PTR ds:0x985b10
+565b2d ADDR  FUN_0055f650           mov eax,ds:0x985af4
+565c22 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+565c90 ADDR  FUN_0055f650           mov eax,ds:0x985af4
+565d58 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+5667c1 ADDR  FUN_0055f650           mov dl,BYTE PTR ds:0x985b10
+566a46 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+566aa8 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af0
+566be2 ADDR  FUN_0055f650           mov eax,ds:0x985af4
+566dc7 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+566e29 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af0
+566e72 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+566e9d ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af0
+566ece ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af0
+56715c ADDR  FUN_0055f650           mov al,ds:0x985b10
+5672af ADDR  FUN_0055f650           mov al,ds:0x985b10
+5672b8 LOAD  FUN_0055f650           test DWORD PTR ds:0x985abc,0x400000
+567492 ADDR  FUN_0055f650           mov al,ds:0x985b10
+56749b LOAD  FUN_0055f650           test DWORD PTR ds:0x985abc,0x400000
+5675f2 ADDR  FUN_0055f650           mov cl,BYTE PTR ds:0x985b10
+5675fc LOAD  FUN_0055f650           test BYTE PTR ds:0x985abc,0x20
+567979 ADDR  FUN_0055f650           mov eax,ds:0x985af4
+567acb ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+567b00 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985afc
+567c1d ADDR  FUN_0055f650           mov cl,BYTE PTR ds:0x985b10
+567cf7 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af0
+567d56 ADDR  FUN_0055f650           mov edx,DWORD PTR ds:0x985af0
+567dad ADDR  FUN_0055f650           mov cl,BYTE PTR ds:0x985b10
+567dba LOAD  FUN_0055f650           test BYTE PTR ds:0x985abc,0x20
+567e4b ADDR  FUN_0055f650           mov eax,ds:0x985af0
+567eaa ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af0
+567f97 ADDR  FUN_0055f650           mov ebx,DWORD PTR ds:0x985afc
+568395 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+56843f LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985afc,0x64
+568744 ADDR  FUN_0055f650           mov edx,DWORD PTR ds:0x985af0
+568824 ADDR  FUN_0055f650           mov eax,ds:0x985af0
+568d22 LOAD  FUN_0055f650           cmp DWORD PTR ds:0x985afc,0x32
+568d2f ADDR  FUN_0055f650           mov eax,ds:0x985af4
+568dd8 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+568e58 ADDR  FUN_0055f650           mov eax,ds:0x985af4
+569153 ADDR  FUN_0055f650           mov edx,DWORD PTR ds:0x985afc
+569202 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+5693cb ADDR  FUN_0055f650           mov al,ds:0x985b10
+5693f4 ADDR  FUN_0055f650           mov edx,DWORD PTR ds:0x985afc
+569439 ADDR  FUN_0055f650           mov dl,BYTE PTR ds:0x985b10
+569458 ADDR  FUN_0055f650           mov eax,ds:0x985afc
+56956e ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985afc
+5695de ADDR  FUN_0055f650           mov eax,ds:0x985ae8
+569c05 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+569dae ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+569e2f ADDR  FUN_0055f650           mov edx,DWORD PTR ds:0x985afc
+569e6c ADDR  FUN_0055f650           mov bl,BYTE PTR ds:0x985b10
+569e8e ADDR  FUN_0055f650           mov bl,BYTE PTR ds:0x985b10
+569ebc ADDR  FUN_0055f650           mov eax,ds:0x985afc
+569fdd ADDR  FUN_0055f650           mov eax,ds:0x985ae8
+56a0b8 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985afc
+56a1d0 ADDR  FUN_0055f650           mov dl,BYTE PTR ds:0x985b10
+56a24f ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+56a386 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985af4
+56a4cf ADDR  FUN_0055f650           mov eax,ds:0x985af0
+56a62b ADDR  FUN_0055f650           mov eax,ds:0x985af0
+56a663 ADDR  FUN_0055f650           mov ecx,DWORD PTR ds:0x985afc
+56a732 ADDR  FUN_0055f650           mov edi,DWORD PTR ds:0x985af0
+56a9a3 ADDR  FUN_0055f650           mov edx,DWORD PTR ds:0x985afc
+56c0e1 ADDR  FUN_0055f650           mov esi,DWORD PTR ds:0x985af0
+56c0fd LOAD  FUN_0055f650           cmp esi,DWORD PTR ds:0x985af0
+56cb64 ADDR  FUN_0055f650           mov al,ds:0x985b10
+56d0ce ADDR  FUN_0056d0c0           mov eax,ds:0x985af0
+56d0eb LOAD  FUN_0056d0c0           cmp ebx,DWORD PTR ds:0x985af0
+56d2b2 ADDR  FUN_0056d0c0           mov edi,DWORD PTR ds:0x985af0
+56d2c9 LOAD  FUN_0056d0c0           cmp edi,DWORD PTR ds:0x985af0
+56d364 ADDR  FUN_0056d350           mov eax,ds:0x985ae8
+56d495 ADDR  FUN_0056d480           mov eax,ds:0x985ae8
+56da70 ADDR  FUN_0056d960           mov eax,ds:0x985abc
+56dad0 LOAD  FUN_0056d960           test BYTE PTR ds:0x985b10,al
+56dae5 ADDR  FUN_0056d960           mov eax,ds:0x985abc
+56db33 ADDR  FUN_0056d960           mov eax,ds:0x985abc
+56db3b ADDR  FUN_0056d960           mov ds:0x985abc,eax
+56dba4 ADDR  FUN_0056d960           mov eax,ds:0x985abc
+56dd51 LOAD  FUN_0056d960           cmp DWORD PTR ds:0x985afc,0x64
+56de9c ADDR  FUN_0056d960           mov eax,ds:0x985abc
+56ded2 ADDR  FUN_0056d960           mov eax,ds:0x985ae8
+56dedb ADDR  FUN_0056d960           mov ds:0x985ae8,eax
+56def2 ADDR  FUN_0056d960           mov eax,ds:0x985abc
+56e009 ADDR  FUN_0056df40           mov eax,ds:0x985afc
+56e012 LOAD  FUN_0056df40           test DWORD PTR ds:0x985ac4,0x4000000
+56e156 LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985afc,0x28
+56e1f8 ADDR  FUN_0056df40           mov edx,DWORD PTR ds:0x985ac4
+56e236 ADDR  FUN_0056df40           mov edx,DWORD PTR ds:0x985ac4
+56e29c LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985afc,0x32
+56e2bd LOAD  FUN_0056df40           test DWORD PTR ds:0x985ae8,0x100000
+56e309 LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985aec,0x1
+56e316 ADDR  FUN_0056df40           mov eax,ds:0x985afc
+56e329 LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985aec,0x2
+56e343 LOAD  FUN_0056df40           test DWORD PTR ds:0x985ae8,0x100000
+56e455 ADDR  FUN_0056df40           mov edx,DWORD PTR ds:0x985ac4
+56e46a ADDR  FUN_0056df40           mov ebx,DWORD PTR ds:0x985af4
+56e4b2 ADDR  FUN_0056df40           mov edx,DWORD PTR ds:0x985ac4
+56e4c5 LOAD  FUN_0056df40           test DWORD PTR ds:0x985ae8,0x40000
+56e51b LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985aec,0x1
+56e78e ADDR  FUN_0056df40           mov edx,DWORD PTR ds:0x985ac4
+56e839 ADDR  FUN_0056df40           mov edi,DWORD PTR ds:0x985afc
+56eb45 LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985aec,0x1
+56f12a LOAD  FUN_0056df40           test DWORD PTR ds:0x985ae8,0x40000
+56f136 ADDR  FUN_0056df40           mov dl,BYTE PTR ds:0x985b10
+56f27e ADDR  FUN_0056df40           mov eax,ds:0x985b38
+56f441 LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985afc,0x32
+56f573 ADDR  FUN_0056df40           mov edx,DWORD PTR ds:0x985b10
+56f692 LOAD  FUN_0056df40           test DWORD PTR ds:0x985ac4,0x4000000
+56f6c9 ADDR  FUN_0056df40           mov cl,BYTE PTR ds:0x985b10
+56fc4a LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985aec,0x1
+56fc89 ADDR  FUN_0056df40           mov ecx,DWORD PTR ds:0x985ae8
+56fd0b ADDR  FUN_0056df40           mov eax,ds:0x985b38
+56fd2b ADDR  FUN_0056df40           mov ecx,DWORD PTR ds:0x985ae8
+56fd5c ADDR  FUN_0056df40           mov edx,DWORD PTR ds:0x985afc
+56feab ADDR  FUN_0056df40           mov ecx,DWORD PTR ds:0x985ae8
+56fece LOAD  FUN_0056df40           cmp DWORD PTR ds:0x985afc,0xf
+5703f4 ADDR  FUN_005703a0           mov eax,ds:0x985b8c
+571450 ADDR  FUN_00571440           mov cl,BYTE PTR ds:0x985b10
+5716d1 ADDR  FUN_005714c0           mov al,ds:0x985b10
+5725bd ADDR  FUN_00572520           mov eax,ds:0x985af0
+5725dd LOAD  FUN_00572520           cmp ebx,DWORD PTR ds:0x985af0
+572603 ADDR  FUN_00572520           mov al,ds:0x985b10
+572765 ADDR  FUN_00572520           mov eax,ds:0x985af4
+5729f1 ADDR  FUN_00572800           mov al,ds:0x985b10
+572fb1 LOAD  FUN_00572800           test DWORD PTR ds:0x985abc,0x100000
+57350a ADDR  FUN_00572800           mov eax,ds:0x985af4
+573546 ADDR  FUN_00572800           mov eax,ds:0x985af4
+573562 ADDR  FUN_00572800           mov eax,ds:0x985af4
+573843 ADDR  FUN_00572800           mov ecx,DWORD PTR ds:0x985af4
+573d09 LOAD  FUN_00573a90           test BYTE PTR ds:0x985b10,al
+573d5d ADDR  FUN_00573a90           mov cl,BYTE PTR ds:0x985b10
+573ee1 ADDR  FUN_00573a90           mov al,ds:0x985b10
+57410e LOAD  FUN_00573a90           cmp DWORD PTR ds:0x985aec,0x1
+574203 ADDR  FUN_00573a90           mov eax,ds:0x985af4
+5743fa ADDR  FUN_00574370           mov cl,BYTE PTR ds:0x985b10
+57442d ADDR  FUN_00574370           mov eax,ds:0x985ac4
+5749e0 ADDR  FUN_00574370           mov al,ds:0x985b10
+574a0b ADDR  FUN_00574370           mov cl,BYTE PTR ds:0x985b10
+574a41 LOAD  FUN_00574370           test BYTE PTR ds:0x985ac4,0x40
+574a78 ADDR  FUN_00574370           mov eax,ds:0x985b88
+574aab ADDR  FUN_00574370           mov eax,ds:0x985b60
+574bc9 LOAD  FUN_00574370           test BYTE PTR ds:0x985b10,al
+574c24 LOAD  FUN_00574370           test BYTE PTR ds:0x985b10,al
+574ccf ADDR  FUN_00574370           mov al,ds:0x985b10
+574de5 ADDR  FUN_00574370           mov al,ds:0x985b10
+574e5e ADDR  FUN_00574370           mov al,ds:0x985b10
+574f21 ADDR  FUN_00574370           mov cl,BYTE PTR ds:0x985b10
+575062 ADDR  FUN_00574370           mov al,ds:0x985b10
+5750f7 ADDR  FUN_00574370           mov al,ds:0x985b10
+57515c ADDR  FUN_00574370           mov cl,BYTE PTR ds:0x985b10
+5751a3 ADDR  FUN_00574370           mov cl,BYTE PTR ds:0x985b10
+575357 ADDR  FUN_00574370           mov al,ds:0x985b10
+575992 LOAD  FUN_00574370           test BYTE PTR ds:0x985b10,al
+575ac5 ADDR  FUN_00574370           mov cl,BYTE PTR ds:0x985b10
+575b31 ADDR  FUN_00574370           mov al,ds:0x985b10
+575b77 ADDR  FUN_00574370           mov al,ds:0x985b10
+575bf1 ADDR  FUN_00574370           mov cl,BYTE PTR ds:0x985b10
+575d73 ADDR  FUN_00574370           mov al,ds:0x985b10
+575e18 ADDR  FUN_00574370           mov al,ds:0x985b10
+576002 ADDR  FUN_00574370           mov al,ds:0x985b10
+5763f2 ADDR  FUN_00574370           mov al,ds:0x985b10
+57644b LOAD  FUN_00574370           test BYTE PTR ds:0x985b10,dl
+57693b ADDR  FUN_00574370           mov al,ds:0x985b10
+5769ab ADDR  FUN_00574370           mov al,ds:0x985b10
+576c88 LOAD  FUN_00574370           test BYTE PTR ds:0x985b10,al
+576cee ADDR  FUN_00574370           mov al,ds:0x985b10
+57a893 LOAD  FUN_0057a070           cmp esi,0x985ac4
+57bc42 ADDR  FUN_0057bb90           mov eax,ds:0x985afc
+57bc5d ADDR  FUN_0057bb90           mov esi,0x985b3c
+57bc9b LOAD  FUN_0057bb90           cmp esi,0x985bc0
+57c5af ADDR  FUN_0057c550           mov ds:0x985aec,eax
+57c5b4 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,ecx
+57c5d7 LOAD  FUN_0057c550           test DWORD PTR ds:0x985ac4,0x1000000
+57c7b5 ADDR  FUN_0057c550           mov ds:0x985aec,eax
+57c822 LOAD  FUN_0057c550           test DWORD PTR ds:0x985ac4,0x1000000
+57c91b LOAD  FUN_0057c550           and DWORD PTR ds:0x985ac4,0xffff0000
+57c92a LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,eax
+57c956 ADDR  FUN_0057c550           mov ecx,DWORD PTR ds:0x985ac4
+57c95c ADDR  FUN_0057c550           mov eax,ds:0x985aec
+57c98a ADDR  FUN_0057c550           mov esi,DWORD PTR ds:0x985ae8
+57c9a3 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,ecx
+57c9ab ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ae8,esi
+57c9b6 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,ecx
+57c9bc ADDR  FUN_0057c550           mov dl,BYTE PTR ds:0x985ac4
+57cacc ADDR  FUN_0057c550           mov esi,DWORD PTR ds:0x985ac4
+57cad2 ADDR  FUN_0057c550           mov ecx,DWORD PTR ds:0x985ae8
+57cae9 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,esi
+57caf1 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ae8,ecx
+57cafe ADDR  FUN_0057c550           mov ecx,DWORD PTR ds:0x985ac4
+57cb06 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,ecx
+57cb12 ADDR  FUN_0057c550           mov ecx,DWORD PTR ds:0x985ae8
+57cb32 ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cb3b ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cb45 LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,0x2
+57cb50 LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,0x8
+57cb5b LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,0x4
+57cb66 ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cb6f ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cb79 LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,0x1
+57cb84 LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,0x10
+57cb8f LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,0x20
+57cb9b ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cba4 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cbaf ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cbb8 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cbc3 LOAD  FUN_0057c550           or DWORD PTR ds:0x985ac4,0x40
+57cbcf ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cbd8 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cbe3 ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cbec ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cbf7 ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cc00 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cc0b ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cc14 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cc1f ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cc28 ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ac4,edx
+57cc3b ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ae8,ecx
+57cc4e ADDR  FUN_0057c550           mov DWORD PTR ds:0x985ae8,ecx
+57cc54 ADDR  FUN_0057c550           mov edx,DWORD PTR ds:0x985ac4
+57cc76 LOAD  FUN_0057c550           test DWORD PTR ds:0x985ac4,0x100000
+57ccc5 LOAD  FUN_0057c550           test BYTE PTR ds:0x985b11,al
+57ce55 ADDR  FUN_0057c550           mov ecx,DWORD PTR ds:0x985abc
+57cf3b ADDR  FUN_0057c550           mov eax,ds:0x985abc
+57d135 ADDR  FUN_0057c550           mov eax,ds:0x985abc
+57d219 ADDR  FUN_0057c550           mov ds:0x985b10,al
+57d255 LOAD  FUN_0057c550           test DWORD PTR ds:0x985ac4,0x100000
+57d27b ADDR  FUN_0057c550           mov ds:0x985b08,eax
+57f006 ADDR  FUN_0057ecf0           mov ds:0x985aec,eax
+57f00d ADDR  FUN_0057ecf0           mov DWORD PTR ds:0x985ac4,ecx
+57f013 ADDR  FUN_0057ecf0           mov ecx,DWORD PTR ds:0x985ae8
+57f02c ADDR  FUN_0057ecf0           mov DWORD PTR ds:0x985ae8,ecx
+57f051 ADDR  FUN_0057ecf0           mov BYTE PTR ds:0x985b10,bl
+57f071 ADDR  FUN_0057ecf0           mov BYTE PTR ds:0x985b10,bl
+57f224 ADDR  FUN_0057ecf0           mov ecx,DWORD PTR ds:0x985ae8
+57f23e ADDR  FUN_0057ecf0           mov DWORD PTR ds:0x985ae8,ecx
+57f25e ADDR  FUN_0057ecf0           mov DWORD PTR ds:0x985b08,ecx
+57f27e ADDR  FUN_0057ecf0           mov edx,DWORD PTR ds:0x985ae8
+57f28c ADDR  FUN_0057ecf0           mov DWORD PTR ds:0x985ae8,edx
+57f2b5 ADDR  FUN_0057ecf0           mov eax,ds:0x985ae8
+57f2bc ADDR  FUN_0057ecf0           mov ds:0x985ae8,eax
+57f2da ADDR  FUN_0057ecf0           mov BYTE PTR ds:0x985b10,dl
+57f2f8 ADDR  FUN_0057ecf0           mov BYTE PTR ds:0x985b10,dl
+57f51b ADDR  FUN_0057ecf0           mov ecx,DWORD PTR ds:0x985ac4
+57f799 ADDR  FUN_0057f740           mov eax,ds:0x985ab8
+57fb54 ADDR  FUN_0057f740           mov eax,ds:0x985ae8
+57fb61 ADDR  FUN_0057f740           mov ds:0x985ae8,eax
+57fca1 ADDR  FUN_0057f740           mov edx,DWORD PTR ds:0x985ac4
+57fd57 ADDR  FUN_0057f740           mov eax,ds:0x985ae8
+57fd70 ADDR  FUN_0057f740           mov ds:0x985ae8,eax
+57fd7b ADDR  FUN_0057f740           mov eax,ds:0x985ab8
+580170 ADDR  FUN_005800a0           mov eax,ds:0x985afc
+5815e8 ADDR  FUN_005815d0           mov ebx,DWORD PTR ds:0x985b10
+5823c6 ADDR  FUN_005823c0           mov eax,ds:0x985afc
+582486 ADDR  FUN_005823c0           mov eax,ds:0x985afc
+5831f7 ADDR  FUN_005831a0           mov eax,ds:0x985ac4
+5832ea LOAD  FUN_005832b0           test DWORD PTR ds:0x985ac4,0x2000
+583509 ADDR  FUN_005833c0           mov eax,ds:0x985ae8
+5846ce ADDR  FUN_00584640           mov eax,ds:0x985b5c
+58476e ADDR  FUN_00584640           mov eax,ds:0x985b5c
+584b77 ADDR  FUN_00584b30           mov al,ds:0x985b10
+585781 ADDR  FUN_00585720           mov edx,DWORD PTR ds:0x985af0
+585960 ADDR  FUN_00585720           mov al,ds:0x985b10
+585b87 ADDR  FUN_00585720           mov eax,ds:0x985b8c
+585bc4 ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+585be5 ADDR  FUN_00585720           mov ecx,DWORD PTR ds:0x985b8c
+585c19 ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+585c88 ADDR  FUN_00585720           mov al,ds:0x985b10
+585d13 ADDR  FUN_00585720           mov al,ds:0x985b10
+585ebc ADDR  FUN_00585720           mov al,ds:0x985b10
+585fa3 ADDR  FUN_00585720           mov eax,ds:0x985af0
+5862ba LOAD  FUN_00585720           test DWORD PTR ds:0x985ac4,0x200000
+58654d LOAD  FUN_00585720           test BYTE PTR ds:0x985b10,al
+5867eb ADDR  FUN_00585720           mov al,ds:0x985b10
+5869ce ADDR  FUN_00585720           mov al,ds:0x985b10
+586a22 ADDR  FUN_00585720           mov DWORD PTR ds:0x985b04,esi
+586bbe ADDR  FUN_00585720           mov ecx,DWORD PTR ds:0x985afc
+5876d9 LOAD  FUN_00585720           test BYTE PTR ds:0x985ab8,0x20
+587d9d ADDR  FUN_00585720           mov ecx,DWORD PTR ds:0x985af4
+587dcd ADDR  FUN_00585720           mov ecx,DWORD PTR ds:0x985af4
+587e33 ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+58800a ADDR  FUN_00585720           mov edx,DWORD PTR ds:0x985b04
+5882af ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+588305 ADDR  FUN_00585720           mov al,ds:0x985b10
+58853a ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+58861d LOAD  FUN_00585720           test BYTE PTR ds:0x985abc,0x80
+588a6c ADDR  FUN_00585720           mov al,ds:0x985ae8
+588a83 LOAD  FUN_00585720           test BYTE PTR ds:0x985ae8,0x80
+588c91 ADDR  FUN_00585720           mov eax,ds:0x985ab8
+588d64 ADDR  FUN_00585720           mov al,ds:0x985abc
+588dd7 LOAD  FUN_00585720           test DWORD PTR ds:0x985ab8,0x80000
+5892da ADDR  FUN_00585720           mov eax,ds:0x985afc
+5893ec ADDR  FUN_00585720           mov DWORD PTR ds:0x985b04,edx
+589403 ADDR  FUN_00585720           mov edx,DWORD PTR ds:0x985b04
+589645 ADDR  FUN_00585720           mov al,ds:0x985b10
+5896fd LOAD  FUN_00585720           test DWORD PTR ds:0x985ab8,0x80000000
+5899c0 ADDR  FUN_00585720           mov al,ds:0x985b10
+5899cc LOAD  FUN_00585720           test BYTE PTR ds:0x985ae8,0x80
+589afc ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+589c1c ADDR  FUN_00585720           mov al,ds:0x985b10
+589c32 LOAD  FUN_00585720           test DWORD PTR ds:0x985ab8,0x10000
+589ef0 ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+589f06 LOAD  FUN_00585720           test DWORD PTR ds:0x985ab8,0x10000
+58a490 ADDR  FUN_00585720           mov cl,BYTE PTR ds:0x985b10
+58a535 ADDR  FUN_00585720           mov al,ds:0x985b10
+58a748 ADDR  FUN_00585720           mov ecx,DWORD PTR ds:0x985af0
+58ac2f ADDR  FUN_00585720           mov ecx,DWORD PTR ds:0x985b10
+58b11e ADDR  FUN_0058aff0           mov al,ds:0x985b10
+58baae ADDR  FUN_0058b1b0           mov al,ds:0x985b10
+58bcd9 ADDR  FUN_0058b1b0           mov edx,DWORD PTR ds:0x985b10
+58c562 ADDR  FUN_0058b1b0           mov edx,DWORD PTR ds:0x985b10
+58c93a LOAD  FUN_0058c890           test BYTE PTR ds:0x985b10,al
+58ca18 ADDR  FUN_0058c890           mov ecx,DWORD PTR ds:0x985b5c
+58cd4a ADDR  FUN_0058c890           mov al,ds:0x985b10
+58cdb9 ADDR  FUN_0058c890           mov al,ds:0x985b10
+58d71f ADDR  FUN_0058d390           mov eax,ds:0x985ae8
+58d737 ADDR  FUN_0058d390           mov ds:0x985ae8,eax
+58f3e1 ADDR  FUN_0058f3d0           mov ds:0x985ab8,eax
+58f3e6 ADDR  FUN_0058f3d0           mov DWORD PTR ds:0x985abc,ecx
+58f3ec ADDR  FUN_0058f3d0           mov DWORD PTR ds:0x985ac0,edx
+58f404 ADDR  FUN_0058f400           mov eax,ds:0x985af4
+58f44e ADDR  FUN_0058f400           mov eax,ds:0x985af4
+58f523 ADDR  FUN_0058f4f0           mov eax,ds:0x985af4
+58f55a ADDR  FUN_0058f4f0           mov eax,ds:0x985af4
+58f774 ADDR  FUN_0058f4f0           mov eax,ds:0x985b10
+58f8b4 ADDR  FUN_0058f8b0           mov eax,ds:0x985af4
+58f90d ADDR  FUN_0058f8b0           mov eax,ds:0x985af4
+58fbb1 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+58fcae ADDR  FUN_0058fa40           mov eax,ds:0x985b78
+58fcf4 LOAD  FUN_0058fa40           test BYTE PTR ds:0x985b10,al
+58fdad LOAD  FUN_0058fa40           test BYTE PTR ds:0x985b10,al
+58ffbc ADDR  FUN_0058fa40           mov al,ds:0x985b10
+590392 ADDR  FUN_0058fa40           mov cl,BYTE PTR ds:0x985b10
+590549 ADDR  FUN_0058fa40           mov cl,BYTE PTR ds:0x985b10
+5907bd ADDR  FUN_0058fa40           mov al,ds:0x985b10
+5907ca ADDR  FUN_0058fa40           mov ecx,DWORD PTR ds:0x985afc
+590876 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+590bcb ADDR  FUN_0058fa40           mov al,ds:0x985b10
+590cee ADDR  FUN_0058fa40           mov al,ds:0x985b10
+591002 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+591019 ADDR  FUN_0058fa40           mov ecx,DWORD PTR ds:0x985afc
+5911a4 ADDR  FUN_0058fa40           mov cl,BYTE PTR ds:0x985b10
+591298 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+5913c0 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+591453 ADDR  FUN_0058fa40           mov cl,BYTE PTR ds:0x985b10
+591723 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+59190a ADDR  FUN_0058fa40           mov al,ds:0x985b10
+591d13 LOAD  FUN_0058fa40           test BYTE PTR ds:0x985b10,al
+591dbd ADDR  FUN_0058fa40           mov al,ds:0x985b10
+591f9f ADDR  FUN_0058fa40           mov al,ds:0x985b10
+5920b7 ADDR  FUN_0058fa40           mov eax,ds:0x985af4
+5920f2 ADDR  FUN_0058fa40           mov eax,ds:0x985af4
+5921aa ADDR  FUN_0058fa40           mov eax,ds:0x985b10
+5923a5 ADDR  FUN_0058fa40           mov edx,DWORD PTR ds:0x985b10
+5925d0 ADDR  FUN_0058fa40           mov eax,ds:0x985ae8
+592a32 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+592d9b ADDR  FUN_0058fa40           mov al,ds:0x985b10
+592e77 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+592f30 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+592fe8 ADDR  FUN_0058fa40           mov eax,ds:0x985b10
+593085 LOAD  FUN_0058fa40           test BYTE PTR ds:0x985b10,al
+593509 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+593537 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+59373a ADDR  FUN_0058fa40           mov eax,ds:0x985b10
+593779 ADDR  FUN_0058fa40           mov al,ds:0x985b10
+5937ab ADDR  FUN_0058fa40           mov cl,BYTE PTR ds:0x985b10
+5937b8 ADDR  FUN_0058fa40           mov eax,ds:0x985b34
+5943e9 LOAD  FUN_0058fa40           test BYTE PTR ds:0x985ae8,0x80
+5946e1 ADDR  FUN_0058fa40           mov eax,ds:0x985af4
+59475c ADDR  FUN_0058fa40           mov eax,ds:0x985af4
+594774 ADDR  FUN_0058fa40           mov eax,ds:0x985af4
+5947cb LOAD  FUN_0058fa40           test BYTE PTR ds:0x985ae8,0x80
+5947d8 LOAD  FUN_0058fa40           test BYTE PTR ds:0x985ae8,0x80
+594aa8 ADDR  FUN_0058fa40           mov eax,ds:0x985af0
+594acb LOAD  FUN_0058fa40           cmp eax,DWORD PTR ds:0x985af0
+594d23 LOAD  FUN_0058fa40           test BYTE PTR ds:0x985b10,dl
+594d9a ADDR  FUN_0058fa40           mov cl,BYTE PTR ds:0x985b10
+594f73 ADDR  FUN_0058fa40           mov ecx,DWORD PTR ds:0x985afc
+594f9f ADDR  FUN_0058fa40           mov cl,BYTE PTR ds:0x985b10
+59524c ADDR  FUN_0058fa40           mov ecx,DWORD PTR ds:0x985afc
+59532a ADDR  FUN_0058fa40           mov eax,ds:0x985afc
+59687c LOAD  FUN_00596850           push 0x985ab8
+5968a7 ADDR  FUN_00596850           mov eax,ds:0x985ae8
+5968cb LOAD  FUN_00596850           push 0x985ab8
+596f4b LOAD  FUN_00596850           test BYTE PTR ds:0x985ae8,0x1
+596f54 ADDR  FUN_00596850           mov eax,ds:0x985b10
+596f79 ADDR  FUN_00596850           mov bl,BYTE PTR ds:0x985b11
+596f91 LOAD  FUN_00596850           test BYTE PTR ds:0x985b10,al
+5972bd ADDR  FUN_00596850           mov edx,DWORD PTR ds:0x985af0
+597349 ADDR  FUN_00596850           mov eax,ds:0x985af0
+5973a3 ADDR  FUN_00596850           mov edx,DWORD PTR ds:0x985af0
+59749e ADDR  FUN_00596850           mov edx,DWORD PTR ds:0x985af0
+5974b1 ADDR  FUN_00596850           mov edx,DWORD PTR ds:0x985af0
+5974ce ADDR  FUN_00596850           mov eax,ds:0x985af4
+597537 ADDR  FUN_00596850           mov eax,ds:0x985af4
+59753c ADDR  FUN_00596850           mov edx,DWORD PTR ds:0x985af0
+597583 ADDR  FUN_00596850           mov eax,ds:0x985af4
+5975e6 LOAD  FUN_00596850           test BYTE PTR ds:0x985ae8,0x10
+597cef ADDR  FUN_00597ce0           mov ecx,DWORD PTR ds:0x985ac4
+597d25 ADDR  FUN_00597ce0           mov edi,DWORD PTR ds:0x985ae8
+597d45 ADDR  FUN_00597ce0           mov DWORD PTR ds:0x985ae8,edi
+597fdf ADDR  FUN_00597ee0           mov eax,ds:0x985ac4
+5980da ADDR  FUN_00597ee0           mov edx,DWORD PTR ds:0x985af4
+5980f5 ADDR  FUN_00597ee0           mov esi,DWORD PTR ds:0x985af4
+598106 ADDR  FUN_00597ee0           mov esi,DWORD PTR ds:0x985af0
+598140 ADDR  FUN_00597ee0           mov al,ds:0x985b11
+59814f ADDR  FUN_00597ee0           mov ds:0x985b11,al
+59815c LOAD  FUN_00597ee0           or BYTE PTR ds:0x985b11,al
+59816c ADDR  FUN_00597ee0           mov eax,ds:0x985ac4
+5981dc ADDR  FUN_00597ee0           mov edx,DWORD PTR ds:0x985ae8
+5981f4 ADDR  FUN_00597ee0           mov DWORD PTR ds:0x985ae8,edx
+598470 ADDR  FUN_00598340           mov DWORD PTR ds:0x985af4,ebx
+598476 ADDR  FUN_00598340           mov DWORD PTR ds:0x985af0,ebx
+598587 ADDR  FUN_005984e0           mov ecx,DWORD PTR ds:0x985afc
+598c09 ADDR  FUN_005985e0           mov eax,ds:0x985ae8
+598c13 ADDR  FUN_005985e0           mov ds:0x985ae8,eax
+598cab ADDR  FUN_005985e0           mov eax,ds:0x985ac4
+599338 ADDR  FUN_00599020           mov eax,ds:0x985ae8
+599344 ADDR  FUN_00599020           mov ds:0x985ae8,eax
+5993de ADDR  FUN_00599020           mov eax,ds:0x985ae8
+5993fb ADDR  FUN_00599020           mov ecx,DWORD PTR ds:0x985aec
+59a0c0 ADDR  FUN_0059a0c0           mov eax,ds:0x985ac4
+59a0ca LOAD  FUN_0059a0c0           test BYTE PTR ds:0x985ae8,0x40
+59a128 ADDR  FUN_0059a0c0           mov eax,ds:0x985afc
+59a2b9 LOAD  FUN_0059a2b0           test BYTE PTR ds:0x985ab8,0x2
+59a3b8 LOAD  FUN_0059a380           test BYTE PTR ds:0x985ac4,0x40
+59a3e4 ADDR  FUN_0059a3e0           mov eax,ds:0x985ac4
+59a423 ADDR  FUN_0059a3e0           mov eax,0x985b3c
+59a42f LOAD  FUN_0059a3e0           cmp eax,0x985bc0
+59a436 LOAD  FUN_0059a3e0           test DWORD PTR ds:0x985ae8,0x4000000
+59a4a3 LOAD  FUN_0059a490           test BYTE PTR ds:0x985b11,al
+59a4d6 ADDR  FUN_0059a490           mov eax,ds:0x985af0
+59a505 ADDR  FUN_0059a490           mov ecx,DWORD PTR ds:0x985ac4
+59a532 LOAD  FUN_0059a490           test DWORD PTR ds:0x985ac4,0x20000000
+59a556 LOAD  FUN_0059a490           test DWORD PTR ds:0x985ac4,0x40000000
+59a562 ADDR  FUN_0059a490           mov eax,0x985b3c
+59a56e LOAD  FUN_0059a490           cmp eax,0x985bc0
+59a575 LOAD  FUN_0059a490           test DWORD PTR ds:0x985ae8,0x4000000
+59a5fc ADDR  FUN_0059a490           mov eax,ds:0x985ac4
+59a68c ADDR  FUN_0059a490           mov eax,ds:0x985ac4
+59a69f ADDR  FUN_0059a490           mov edx,DWORD PTR ds:0x985af0
+59a6ba ADDR  FUN_0059a490           mov ecx,DWORD PTR ds:0x985af4
+59a6d2 ADDR  FUN_0059a490           mov esi,DWORD PTR ds:0x985ae8
+59a6e7 LOAD  FUN_0059a490           test DWORD PTR ds:0x985ac4,edx
+59a705 LOAD  FUN_0059a490           test DWORD PTR ds:0x985ae8,0x40000000
+59a734 ADDR  FUN_0059a490           mov eax,ds:0x985ae8
+59a753 ADDR  FUN_0059a490           mov eax,ds:0x985af4
+59a7a4 ADDR  FUN_0059a490           mov eax,ds:0x985af4
+59a7b4 LOAD  FUN_0059a490           test DWORD PTR ds:0x985ae8,0x2000000
+59a82f ADDR  FUN_0059a490           mov eax,ds:0x985ae8
+59a87d LOAD  FUN_0059a490           test DWORD PTR ds:0x985ac4,0x40000000
+59a889 ADDR  FUN_0059a490           mov ecx,0x985b3c
+59a8af LOAD  FUN_0059a490           cmp ecx,0x985bc0
+59a8be ADDR  FUN_0059a490           mov eax,ds:0x985ac4
+59a92f ADDR  FUN_0059a910           mov eax,ds:0x985ac4
+59a969 ADDR  FUN_0059a910           mov edx,DWORD PTR ds:0x985ac4
+59a9a3 ADDR  FUN_0059a9a0           mov eax,ds:0x985bb8
+59a9af ADDR  FUN_0059a9a0           mov esi,DWORD PTR ds:0x985af4
+59a9f0 ADDR  FUN_0059a9f0           mov ecx,DWORD PTR ds:0x985bb8
+59aa7f ADDR  FUN_0059aa00           mov bl,BYTE PTR ds:0x985b11
+59ab2a ADDR  FUN_0059aa00           mov ecx,0x985b3c
+59ab57 LOAD  FUN_0059aa00           cmp ecx,0x985bc0
+59abfe ADDR  FUN_0059aa00           mov eax,ds:0x985afc
+59ac9d ADDR  FUN_0059aa00           mov edi,0x985b14
+59acae ADDR  FUN_0059aa00           mov dl,BYTE PTR ds:0x985b11
+59acc1 STORE FUN_0059aa00           mov DWORD PTR [eax*4+0x985b14],ecx
+59acd7 ADDR  FUN_0059aa00           mov edx,DWORD PTR ds:0x985b10
+59acdf ADDR  FUN_0059aa00           mov DWORD PTR ds:0x985b34,edi
+59ace5 ADDR  FUN_0059aa00           mov DWORD PTR ds:0x985b38,edi
+59acf6 ADDR  FUN_0059aa00           mov eax,0x985b30
+59ad0c LOAD  FUN_0059aa00           cmp eax,0x985b14
+59ad15 LOAD  FUN_0059aa00           mov ecx,DWORD PTR [esi*4+0x985b14]
+59ad1c ADDR  FUN_0059aa00           mov DWORD PTR ds:0x985b34,ecx
+59ad24 ADDR  FUN_0059aa00           mov eax,0x985b14
+59ad3a LOAD  FUN_0059aa00           cmp eax,0x985b34
+59ad43 LOAD  FUN_0059aa00           mov edx,DWORD PTR [esi*4+0x985b14]
+59ad4a ADDR  FUN_0059aa00           mov DWORD PTR ds:0x985b38,edx
+59ad50 ADDR  FUN_0059aa00           mov eax,ds:0x985b30
+59ad5d ADDR  FUN_0059aa00           mov edx,DWORD PTR ds:0x985b30
+59ad77 ADDR  FUN_0059aa00           mov eax,ds:0x985b10
+59ad9b LOAD  FUN_0059aa00           test BYTE PTR ds:0x985ac4,0x40
+59adb5 ADDR  FUN_0059aa00           mov eax,ds:0x985ae8
+59adce ADDR  FUN_0059aa00           mov ds:0x985ae8,eax
+59ae09 ADDR  FUN_0059aa00           mov cl,BYTE PTR ds:0x985b10
+59ae3f LOAD  FUN_0059aa00           test BYTE PTR ds:0x985ac4,0x40
+59af2b ADDR  FUN_0059aa00           mov ds:0x985ae8,eax
+59af46 ADDR  FUN_0059af40           mov al,ds:0x985ae8
+59afc9 LOAD  FUN_0059af40           cmp DWORD PTR ds:0x985af4,edx
+59b03c ADDR  FUN_0059af40           mov eax,ds:0x985ac4
+59b078 ADDR  FUN_0059af40           mov eax,ds:0x985ac4
+59b0f0 ADDR  FUN_0059af40           mov ecx,DWORD PTR ds:0x985af4
+59b154 ADDR  FUN_0059af40           mov edx,DWORD PTR ds:0x985ac4
+59b170 ADDR  FUN_0059af40           mov edi,0x985b3c
+59b1a2 LOAD  FUN_0059af40           cmp edi,0x985bc0
+59b1c0 ADDR  FUN_0059af40           mov edi,DWORD PTR ds:0x985bbc
+59b1ce ADDR  FUN_0059af40           mov ecx,DWORD PTR ds:0x985afc
+59b2b3 ADDR  FUN_0059af40           mov edi,DWORD PTR ds:0x985afc
+59b2d0 ADDR  FUN_0059af40           mov cl,BYTE PTR ds:0x985ac4
+59b2df ADDR  FUN_0059af40           mov ecx,DWORD PTR ds:0x985ae8
+59b2ee LOAD  FUN_0059af40           test BYTE PTR ds:0x985ac4,al
+59b303 ADDR  FUN_0059af40           mov eax,ds:0x985af4
+59b3d8 ADDR  FUN_0059af40           mov ecx,DWORD PTR ds:0x985afc
+59b402 ADDR  FUN_0059af40           mov ecx,DWORD PTR ds:0x985afc
+59b458 LOAD  FUN_0059af40           test DWORD PTR ds:0x985ac4,edx
+59b465 LOAD  FUN_0059af40           sub eax,DWORD PTR ds:0x985afc
+59b494 LOAD  FUN_0059af40           test DWORD PTR ds:0x985ac4,edx
+59b4a1 LOAD  FUN_0059af40           sub eax,DWORD PTR ds:0x985afc
+59b4d2 LOAD  FUN_0059af40           test BYTE PTR ds:0x985b11,al
+59b4fa LOAD  FUN_0059af40           test DWORD PTR ds:0x985ae8,0x80000
+59b55e ADDR  FUN_0059af40           mov ecx,DWORD PTR ds:0x985ac4
+59b583 ADDR  FUN_0059af40           mov eax,ds:0x985ac4
+59b5cb LOAD  FUN_0059af40           test BYTE PTR ds:0x985ae8,0x10
+59b5ea LOAD  FUN_0059af40           test DWORD PTR ds:0x985ae8,0x80000
+59b652 ADDR  FUN_0059af40           mov ecx,DWORD PTR ds:0x985ac4
+59b665 LOAD  FUN_0059af40           test BYTE PTR ds:0x985ae8,0x20
+59b842 ADDR  FUN_0059b830           mov DWORD PTR ds:0x985af4,edx
+59b8b4 ADDR  FUN_0059b830           mov eax,ds:0x985af4
+59b8c3 ADDR  FUN_0059b830           mov ds:0x985af4,eax
+59bcb9 ADDR  FUN_0059bcb0           mov ecx,DWORD PTR ds:0x985afc
+59bf4b ADDR  FUN_0059bec0           mov edx,DWORD PTR ds:0x985ae8
+59bf5d ADDR  FUN_0059bec0           mov DWORD PTR ds:0x985ae8,edx
+59c177 ADDR  FUN_0059c150           mov edx,DWORD PTR ds:0x985afc
+59c18a ADDR  FUN_0059c150           mov ax,ds:0x985afc
+59c46f ADDR  FUN_0059c3f0           mov eax,ds:0x985ab8
+59c4fa ADDR  FUN_0059c3f0           mov ecx,DWORD PTR ds:0x985af4
+59c534 ADDR  FUN_0059c3f0           mov esi,DWORD PTR ds:0x985af0
+59ca6c ADDR  FUN_0059c3f0           mov eax,ds:0x985ab8
+59ce9c LOAD  FUN_0059ce10           test BYTE PTR ds:0x985b11,al
+59d577 LOAD  FUN_0059ce10           cmp DWORD PTR [eax*4+0x985b3c],esi
+59d595 STORE FUN_0059ce10           mov DWORD PTR [eax*4+0x985b3c],ecx
+59d5b7 ADDR  FUN_0059ce10           mov ecx,DWORD PTR ds:0x985af4
+59d863 ADDR  FUN_0059ce10           mov esi,DWORD PTR ds:0x985af4
+59dbb6 ADDR  FUN_0059ce10           mov ecx,DWORD PTR ds:0x985af4
+59dbe8 ADDR  FUN_0059ce10           mov ecx,DWORD PTR ds:0x985af4
+59dd48 ADDR  FUN_0059ce10           mov eax,ds:0x985af4
+59df15 ADDR  FUN_0059ce10           mov eax,ds:0x985af4
+59e0bc ADDR  FUN_0059ce10           mov edx,DWORD PTR ds:0x985af4
+59e0ea ADDR  FUN_0059ce10           mov ecx,DWORD PTR ds:0x985af4
+59e107 ADDR  FUN_0059ce10           mov eax,ds:0x985af0
+59e284 ADDR  FUN_0059ce10           mov edx,DWORD PTR ds:0x985af0
+59e2b1 ADDR  FUN_0059ce10           mov DWORD PTR ds:0x985afc,edx
+59e700 ADDR  FUN_0059e2c0           mov edi,DWORD PTR ds:0x985aec
+59e71a ADDR  FUN_0059e2c0           mov cl,BYTE PTR ds:0x985b10
+59e743 ADDR  FUN_0059e2c0           mov edi,DWORD PTR ds:0x985aec
+59e8c6 ADDR  FUN_0059e8c0           mov eax,ds:0x985af0
+59eadb ADDR  FUN_0059e8c0           mov ecx,DWORD PTR ds:0x985af0
+59eb51 ADDR  FUN_0059e8c0           mov ecx,DWORD PTR ds:0x985af0
+59ec99 ADDR  FUN_0059ec90           mov eax,ds:0x985af4
+59ecdd ADDR  FUN_0059ec90           mov eax,ds:0x985af0
+59ecf6 LOAD  FUN_0059ec90           cmp esi,DWORD PTR ds:0x985af0
+59ed41 ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+59ed5a ADDR  FUN_0059ec90           mov eax,ds:0x985aec
+59eec3 ADDR  FUN_0059ec90           mov al,ds:0x985b10
+59eeca ADDR  FUN_0059ec90           mov eax,ds:0x985aec
+59eedc ADDR  FUN_0059ec90           mov eax,ds:0x985ae8
+59ef92 LOAD  FUN_0059ec90           test BYTE PTR ds:0x985ac4,0x40
+59f0b1 ADDR  FUN_0059ec90           mov ecx,DWORD PTR ds:0x985afc
+59f0da ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+59f0e7 ADDR  FUN_0059ec90           mov al,ds:0x985ac4
+59f102 ADDR  FUN_0059ec90           mov eax,ds:0x985aec
+59f1a0 ADDR  FUN_0059ec90           mov ecx,DWORD PTR ds:0x985afc
+59f2ef LOAD  FUN_0059ec90           test BYTE PTR ds:0x985b11,al
+59f304 ADDR  FUN_0059ec90           mov al,ds:0x985b11
+59f316 ADDR  FUN_0059ec90           mov ds:0x985b11,al
+59f5ed ADDR  FUN_0059ec90           mov ebx,DWORD PTR ds:0x985afc
+59f5fb ADDR  FUN_0059ec90           mov eax,ds:0x985af0
+59f6cc ADDR  FUN_0059ec90           mov ecx,DWORD PTR ds:0x985af0
+59f6e1 ADDR  FUN_0059ec90           mov ebx,DWORD PTR ds:0x985afc
+59f6f8 ADDR  FUN_0059ec90           mov al,ds:0x985b10
+59f858 ADDR  FUN_0059ec90           mov ebx,DWORD PTR ds:0x985b10
+59f86b ADDR  FUN_0059ec90           mov edx,DWORD PTR ds:0x985aec
+59f88e ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+59f8d2 ADDR  FUN_0059ec90           mov ecx,DWORD PTR ds:0x985aec
+59f996 ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+59f99f LOAD  FUN_0059ec90           test BYTE PTR ds:0x985ac4,0x10
+59f9d4 ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+59fa7e ADDR  FUN_0059ec90           mov ecx,DWORD PTR ds:0x985afc
+59fb84 ADDR  FUN_0059ec90           mov eax,ds:0x985af0
+59fc1f ADDR  FUN_0059ec90           mov ecx,DWORD PTR ds:0x985af0
+59fd81 ADDR  FUN_0059ec90           mov ecx,DWORD PTR ds:0x985afc
+59fd8b LOAD  FUN_0059ec90           test BYTE PTR ds:0x985ac4,0x1
+59fdc0 ADDR  FUN_0059ec90           mov eax,ds:0x985aec
+59feab ADDR  FUN_0059ec90           mov eax,ds:0x985ac4
+59feb5 LOAD  FUN_0059ec90           cmp DWORD PTR ds:0x985aec,0x4
+59feed ADDR  FUN_0059ec90           mov eax,ds:0x985ac4
+59fef7 LOAD  FUN_0059ec90           cmp DWORD PTR ds:0x985aec,0x4
+5a006e ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+5a018d ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+5a01cb ADDR  FUN_0059ec90           mov al,ds:0x985ac4
+5a029c ADDR  FUN_0059ec90           mov eax,ds:0x985aec
+5a0323 ADDR  FUN_0059ec90           mov cl,BYTE PTR ds:0x985b10
+5a0421 ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+5a04ef ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+5a0654 ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+5a067a ADDR  FUN_0059ec90           mov eax,ds:0x985afc
+5a069d LOAD  FUN_0059ec90           cmp DWORD PTR ds:0x985afc,0x3c
+5a06bc LOAD  FUN_0059ec90           cmp DWORD PTR ds:0x985afc,0x50
+5a06db LOAD  FUN_0059ec90           cmp DWORD PTR ds:0x985afc,0x64
+5a0762 ADDR  FUN_0059ec90           mov cl,BYTE PTR ds:0x985b10
+5a077b ADDR  FUN_0059ec90           mov eax,ds:0x985ae8
+5a0786 ADDR  FUN_0059ec90           mov cl,BYTE PTR ds:0x985b11
+5a078d ADDR  FUN_0059ec90           mov ds:0x985ae8,eax
+5a07a4 ADDR  FUN_0059ec90           mov BYTE PTR ds:0x985b11,cl
+5a07b1 ADDR  FUN_0059ec90           mov bl,BYTE PTR ds:0x985b11
+5a07cc ADDR  FUN_0059ec90           mov eax,ds:0x985b30
+5a07d3 ADDR  FUN_0059ec90           mov BYTE PTR ds:0x985b11,bl
+5a07db ADDR  FUN_0059ec90           mov eax,ds:0x985b2c
+5a07e4 ADDR  FUN_0059ec90           mov dl,BYTE PTR ds:0x985b11
+5a083a ADDR  FUN_0059ec90           mov eax,ds:0x985ac4
+5a09f0 ADDR  FUN_0059ec90           mov eax,ds:0x985ae8
+5a09ff ADDR  FUN_0059ec90           mov ds:0x985ae8,eax
+5a0a8a LOAD  FUN_0059ec90           or DWORD PTR ds:0x985ae8,0x2001
+5a0abc ADDR  FUN_005a0aa0           mov esi,DWORD PTR ds:0x985af4
+5a0ae0 ADDR  FUN_005a0aa0           mov eax,ds:0x985af0
+5a0af9 LOAD  FUN_005a0aa0           cmp ebx,DWORD PTR ds:0x985af0
+5a0b4c LOAD  FUN_005a0aa0           test BYTE PTR ds:0x985ae8,0x9
+5a0d5e LOAD  FUN_005a0aa0           test DWORD PTR ds:0x985ab8,0x10000000
+5a0f60 ADDR  FUN_005a0f60           mov ecx,DWORD PTR ds:0x985aec
+5a0fce ADDR  FUN_005a0fa0           mov eax,ds:0x985aec
+5a1010 ADDR  FUN_005a0fa0           mov ebx,DWORD PTR ds:0x985aec
+5a1061 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985ae8,esi
+5a1067 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985acc,esi
+5a106d ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985ad4,esi
+5a1073 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985ad8,esi
+5a1079 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985adc,esi
+5a107f ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985ae0,esi
+5a1085 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985ae4,esi
+5a108b ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985afc,esi
+5a1091 ADDR  FUN_005a0fa0           mov BYTE PTR ds:0x985b11,0xff
+5a1098 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985af4,esi
+5a109e ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985af0,esi
+5a10a4 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985af8,esi
+5a10aa ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985b0c,esi
+5a10b0 ADDR  FUN_005a0fa0           mov DWORD PTR ds:0x985bc0,0xffffffff
+5a1100 ADDR  FUN_005a0fa0           mov eax,ds:0x985ae8
+5a1107 ADDR  FUN_005a0fa0           mov ds:0x985ae8,eax
+5a1123 ADDR  FUN_005a0fa0           mov edi,0x985b3c
+5a1150 LOAD  FUN_005a0fa0           test DWORD PTR ds:0x985ae8,0x1000000
+5a122a ADDR  FUN_005a0fa0           mov cl,BYTE PTR ds:0x985b10
+5a1263 ADDR  FUN_005a0fa0           mov cl,BYTE PTR ds:0x985b10
+5a135b ADDR  FUN_005a0fa0           mov eax,ds:0x985b10
+5a13da ADDR  FUN_005a0fa0           mov eax,ds:0x985b10
+5a1439 LOAD  FUN_005a0fa0           test BYTE PTR ds:0x985ac4,0x40
+5a1446 LOAD  FUN_005a0fa0           test DWORD PTR ds:0x985ae8,0x800000
+5a1492 ADDR  FUN_005a0fa0           mov eax,ds:0x985ac4
+5a14ad LOAD  FUN_005a0fa0           test BYTE PTR ds:0x985b10,dl
+5a150a ADDR  FUN_005a0fa0           mov dl,BYTE PTR ds:0x985b11
+5a151b LOAD  FUN_005a0fa0           test BYTE PTR ds:0x985b10,al
+5a1537 ADDR  FUN_005a0fa0           mov eax,ds:0x985ac4
+5a1570 LOAD  FUN_005a0fa0           test BYTE PTR ds:0x985ac4,0x80
+5a15b5 ADDR  FUN_005a15a0           mov ecx,DWORD PTR ds:0x985b9c
+5a15bb ADDR  FUN_005a15a0           mov esi,DWORD PTR ds:0x985b90
+5a16db ADDR  FUN_005a15a0           mov ecx,DWORD PTR ds:0x985b9c
+5a16e1 ADDR  FUN_005a15a0           mov esi,DWORD PTR ds:0x985b90
+5a171d ADDR  FUN_005a15a0           mov eax,ds:0x985b70
+5a1753 ADDR  FUN_005a15a0           mov eax,ds:0x985b98
+5a1919 ADDR  FUN_005a18b0           mov cl,BYTE PTR ds:0x985b10
+5a19b9 ADDR  FUN_005a1950           mov eax,ds:0x985af4
+5a1a20 ADDR  FUN_005a1950           mov al,ds:0x985b10
+5a1a42 ADDR  FUN_005a1950           mov eax,ds:0x985af4
+5a1b2e LOAD  FUN_005a1ad0           test BYTE PTR ds:0x985b10,al
+5a1b89 ADDR  FUN_005a1ad0           mov eax,ds:0x985af4
+5a1bc0 ADDR  FUN_005a1ad0           mov eax,ds:0x985af4
+5a1d21 ADDR  FUN_005a1ad0           mov eax,ds:0x985ae8
+5a1d46 ADDR  FUN_005a1ad0           mov eax,ds:0x985b34
+5a236f ADDR  FUN_005a1ad0           mov edx,DWORD PTR ds:0x985b38
+5a23b8 ADDR  FUN_005a1ad0           mov esi,DWORD PTR ds:0x985b34
+5a2692 LOAD  FUN_005a1ad0           test BYTE PTR ds:0x985b10,dl
+5a28ab ADDR  FUN_005a1ad0           mov dl,BYTE PTR ds:0x985b10
+5a2933 ADDR  FUN_005a2930           mov al,ds:0x985ae8
+5a2a7c LOAD  FUN_005a2a10           test BYTE PTR ds:0x985ae8,0x80
+5a2b84 LOAD  FUN_005a2ae0           test BYTE PTR ds:0x985ae8,0x80
+5a2c91 LOAD  FUN_005a2be0           test BYTE PTR ds:0x985ae8,0x80
+5a2e2c LOAD  FUN_005a2dc0           test BYTE PTR ds:0x985ae8,0x80
+5a2f2e LOAD  FUN_005a2dc0           test BYTE PTR ds:0x985ae8,0x80
+5a3034 LOAD  FUN_005a2dc0           test BYTE PTR ds:0x985ae8,0x80
+5a31b9 ADDR  FUN_005a3190           mov ecx,DWORD PTR ds:0x985ab8
+5a31cc ADDR  FUN_005a3190           mov ecx,DWORD PTR ds:0x985ab8
+5a31db ADDR  FUN_005a3190           mov ecx,DWORD PTR ds:0x985ab8
+5a361b LOAD  FUN_005a3470           test BYTE PTR ds:0x985abc,0x1
+5a3634 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a3b50 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a3de9 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a41ee LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a42a9 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a4605 ADDR  FUN_005a3470           mov cl,BYTE PTR ds:0x985b10
+5a47ed LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a48a4 ADDR  FUN_005a3470           mov al,ds:0x985b10
+5a4d09 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a4ed2 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a4fb7 ADDR  FUN_005a3470           mov bl,BYTE PTR ds:0x985ae8
+5a50b7 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a5149 LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a53dd LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a565d LOAD  FUN_005a3470           test BYTE PTR ds:0x985ae8,0x80
+5a584e ADDR  FUN_005a3470           mov eax,ds:0x985afc
+5a5c59 ADDR  FUN_005a5c00           mov eax,ds:0x985af0
+5a5c92 ADDR  FUN_005a5c00           mov eax,ds:0x985af0
+5a6080 ADDR  FUN_005a5cd0           mov al,ds:0x985b10
+5a6deb ADDR  FUN_005a6de0           mov eax,ds:0x985b64
+5a6e18 ADDR  FUN_005a6de0           mov eax,ds:0x985b50
+5a6e24 ADDR  FUN_005a6de0           mov eax,ds:0x985b40
+5a6e30 ADDR  FUN_005a6de0           mov eax,ds:0x985b80
+5a6e3c ADDR  FUN_005a6de0           mov eax,ds:0x985bac
+5a6e86 LOAD  FUN_005a6e70           cmp DWORD PTR ds:0x985aec,0x1
+5a6e96 ADDR  FUN_005a6e70           mov eax,ds:0x985ac4
+5a6eb0 LOAD  FUN_005a6e70           cmp DWORD PTR ds:0x985bb8,0xffffffff
+5a6f43 LOAD  FUN_005a6e70           mov ecx,DWORD PTR [ebx*4+0x985aa0]
+5a7141 ADDR  FUN_005a6e70           mov eax,ds:0x985b50
+5a71da ADDR  FUN_005a6e70           mov eax,ds:0x985b54
+5a736c ADDR  FUN_005a6e70           mov eax,ds:0x985ba8
+5a7494 LOAD  FUN_005a73f0           test DWORD PTR ds:0x985ac4,0x400000
+5a7548 LOAD  FUN_005a7520           test DWORD PTR ds:0x985ac4,0x800000
+5a7566 ADDR  FUN_005a7520           mov edx,DWORD PTR ds:0x985b44
+5a7a5e ADDR  FUN_005a7970           mov cl,BYTE PTR ds:0x985b10
+5a7b0f ADDR  FUN_005a7970           mov eax,ds:0x985af4
+5a7b3c ADDR  FUN_005a7970           mov eax,ds:0x985af4
+5a7cf0 ADDR  FUN_005a7970           mov dl,BYTE PTR ds:0x985b10
+5a7df2 ADDR  FUN_005a7970           mov eax,ds:0x985afc
+5a7f57 ADDR  FUN_005a7970           mov dl,BYTE PTR ds:0x985b10
+5a800c ADDR  FUN_005a7970           mov al,ds:0x985b10
+5a8015 ADDR  FUN_005a7970           mov eax,ds:0x985ab8
+5a809e LOAD  FUN_005a7970           test BYTE PTR ds:0x985ae8,0x80
+5a83fb ADDR  FUN_005a7970           mov eax,ds:0x985ab8
+5a855b LOAD  FUN_005a7970           test BYTE PTR ds:0x985b10,al
+5a86bc ADDR  FUN_005a7970           mov esi,DWORD PTR ds:0x985af4
+5a86fe ADDR  FUN_005a7970           mov eax,ds:0x985afc
+5a87a2 LOAD  FUN_005a7970           cmp DWORD PTR ds:0x985bb8,0xffffffff
+5a8824 ADDR  FUN_005a7970           mov eax,ds:0x985b68
+5a89ac ADDR  FUN_005a7970           mov dl,BYTE PTR ds:0x985b11
+5a89ee ADDR  FUN_005a7970           mov eax,ds:0x985afc
+5a90ec ADDR  FUN_005a90a0           mov eax,ds:0x985ac4
+5a930e ADDR  FUN_005a90a0           mov al,ds:0x985b10
+5a9541 LOAD  FUN_005a90a0           test BYTE PTR ds:0x985b10,dl
+5a9573 ADDR  FUN_005a90a0           mov cl,BYTE PTR ds:0x985b10
+5a95e0 ADDR  FUN_005a90a0           mov cl,BYTE PTR ds:0x985b10
+5a964f ADDR  FUN_005a90a0           mov cl,BYTE PTR ds:0x985b10
+5a98c7 ADDR  FUN_005a90a0           mov eax,ds:0x985ac4
+5a9a17 ADDR  FUN_005a90a0           mov eax,ds:0x985ac4
+5a9c68 LOAD  FUN_005a90a0           cmp DWORD PTR ds:0x985afc,0xfa
+5a9ca6 ADDR  FUN_005a90a0           mov dl,BYTE PTR ds:0x985b10
+5a9d03 ADDR  FUN_005a90a0           mov cl,BYTE PTR ds:0x985b10
+5a9eb8 ADDR  FUN_005a90a0           mov dl,BYTE PTR ds:0x985b10
+5a9ffe ADDR  FUN_005a90a0           mov dl,BYTE PTR ds:0x985b10
+5aa15c ADDR  FUN_005aa030           mov eax,ds:0x985ac4
+5aa176 ADDR  FUN_005aa030           mov cl,BYTE PTR ds:0x985b10
+5aa1fc ADDR  FUN_005aa030           mov cl,BYTE PTR ds:0x985b10
+5aa8a1 LOAD  FUN_005aa880           test BYTE PTR ds:0x985b10,al
+5aa9d7 ADDR  FUN_005aa880           mov al,ds:0x985b10
+5aaad9 ADDR  FUN_005aaa20           mov cl,BYTE PTR ds:0x985b10
+5aaaf9 ADDR  FUN_005aaa20           mov eax,ds:0x985afc
+5aab0c LOAD  FUN_005aaa20           cmp eax,DWORD PTR ds:0x985af4
+5aac1b ADDR  FUN_005aab70           mov edi,DWORD PTR ds:0x985aec
+5aac2d ADDR  FUN_005aab70           mov ecx,DWORD PTR ds:0x985b10
+5aac94 ADDR  FUN_005aab70           mov edi,DWORD PTR ds:0x985ac4
+5aac9a ADDR  FUN_005aab70           mov eax,ds:0x985afc
+5aae03 ADDR  FUN_005aadf0           mov al,ds:0x985b10
+5ab17b ADDR  FUN_005ab130           mov esi,DWORD PTR ds:0x985af0
+5ab1d5 ADDR  FUN_005ab130           mov eax,ds:0x985ae8
+5ab656 ADDR  FUN_005ab650           mov eax,ds:0x985af0
+5ab683 ADDR  FUN_005ab650           mov ds:0x985af0,eax
+5ab704 LOAD  FUN_005ab650           test DWORD PTR ds:0x985ae8,0x40000
+5abc17 ADDR  FUN_005abb40           mov ecx,DWORD PTR ds:0x985af0
+5abc4b ADDR  FUN_005abb40           mov ecx,DWORD PTR ds:0x985af0
+5abc5d ADDR  FUN_005abb40           mov DWORD PTR ds:0x985af0,ecx
+5abd18 ADDR  FUN_005abb40           mov eax,ds:0x985b04
+5abd26 ADDR  FUN_005abb40           mov ds:0x985b04,eax
+5abd44 LOAD  FUN_005abb40           cmp eax,0x985b04
+5abf45 ADDR  FUN_005abf30           mov ecx,DWORD PTR ds:0x985af0
+5abffe ADDR  FUN_005abf30           mov eax,ds:0x985af0
+5ac12a ADDR  FUN_005ac0a0           mov eax,ds:0x985bb4
+5ac69e ADDR  FUN_005ac650           mov eax,ds:0x985b64
+5ad7ef ADDR  FUN_005ad4c0           mov al,ds:0x985ae8
+5ad836 ADDR  FUN_005ad4c0           mov al,ds:0x985ae8
+5aefb2 ADDR  FUN_005aef40           mov al,ds:0x985ae8
+5af08a ADDR  FUN_005aef40           mov al,ds:0x985ae8
+5afd8a ADDR  FUN_005af440           mov eax,ds:0x985afc
+5afdbe ADDR  FUN_005af440           mov al,ds:0x985b10
+5b0454 ADDR  FUN_005aff90           mov eax,ds:0x985afc
+5b2a1f ADDR  FUN_005b2970           mov al,ds:0x985ae8
+5b2afb LOAD  FUN_005b2970           test BYTE PTR ds:0x985ae8,0x80
+5b2c16 ADDR  FUN_005b2c10           mov ecx,DWORD PTR ds:0x985afc
