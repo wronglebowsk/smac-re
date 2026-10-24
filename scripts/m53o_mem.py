@@ -24,7 +24,7 @@ BLOBS = [
     ("g8f0", 0x8f0c00, 0x200),
     ("offs", 0x678400, 0x700),
     ("tech", 0x92fd00, 0x1400),
-    ("units", 0x933200, 0x200),
+    ("units", 0x933200, 0x4600),  # M53q: full unit array 0x933278 + 333*52 (was 0x200)
 ]
 KEYS = {
     "cur_base_ptr": 0x8f0d60, "budget": 0x8f0c68, "c6c": 0x8f0c6c, "c70": 0x8f0c70,
@@ -33,7 +33,7 @@ KEYS = {
     "map_w": 0x92a378, "map_h": 0x92a37c, "wind": 0x92a380, "wrap": 0x92a394,
     "k27c": 0x92a27c, "k29c": 0x92a29c, "k2a0": 0x92a2a0, "k2a4": 0x92a2a4,
     "t_cap0": 0x92a2c4, "t_cap1": 0x92a2c8, "t_cap2": 0x92a2cc, "t_imps": 0x92a31c,
-    "g91c628": 0x91c628, "k85ac4": 0x985ac4, "nbases": 0x985af4, "k85afc": 0x985afc,
+    "g91c628": 0x91c628, "k85ac4": 0x985ac4,    "nbases": 0x985af4, "nunit": 0x985af0, "k85afc": 0x985afc,
     "mask": 0x985b10, "k85b48": 0x985b48, "spec_base": 0x985ba8, "k85bc0": 0x985bc0,
     "k85db8": 0x985db8, "k85dc4": 0x985dc4, "listcount": 0x926ca8,
 }
