@@ -1,0 +1,169 @@
+<!-- Moved verbatim from SKILL.md (M53Q1, 2026-10-24) to keep the always-loaded file small. -->
+
+## Code atlas — read this before opening Ghidra
+
+Every function is already decompiled on disk: `ghidra_out/index.csv` (one row per
+function: addr, name, size, insns, callers, callees, string refs) plus 42
+`ghidra_out/shard_NNN.c` files, 250 functions each, bodies delimited by
+`// ==== NAME @ 0xADDR size=N`. Use it instead of an import+decompile session.
+
+```bash
+cd ~/reverse/smac
+python3 scripts/fn.py 0x51e700            # decompiled C for one function
+python3 scripts/fn.py --grep 'turn'       # find functions by name
+python3 scripts/fn.py 0x51e700 --max 60   # top of a big function
+python3 scripts/coverage.py               # index.csv -> COVERAGE.md (hubs, monsters, read-next)
+python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.json + ALPHA_RULES.md
+```
+
+- If `scripts/fn.py` prints 0 bytes for an address `index.csv` lists as ok, don't retry arg
+  variants — read the body from the cached objdump window (`zgrep -n '  ADDR:'
+  evidence/*_text.txt.gz` for the line, then `gunzip -c … | sed -n 'A,Bp'` — plain `sed -n` on a `.gz`
+  matches nothing and prints an empty window) instead.
+- **Filter compiler helpers before ranking anything by in-degree.** CRT stubs
+  (`__security_check_cookie`, `_ftol2`, …) have 300–2000 callers and a few hundred bytes and
+  top every raw caller ranking; `coverage.py` excludes `callers≥300 & size<400` and lists them
+  separately. Ghidra's function count also runs ~2× the real body count because of `Unwind@…`
+  pseudo-functions (most are <16 B).
+- **Naming a function from the corpus:** read the shape first (params, globals touched, which
+  fields it writes — `this+0x18`/`+0x1c` as sizes usually means layout/drawing), then follow
+  ONE callee to classify the primitive (a callee that saves/restores a graphics global around a
+  rect call makes the caller a drawing routine). Ported string literals are the fast path when
+  they exist (`grep -oE '"[^"]{4,40}"'` on the body); many hub functions have none, so field
+  offsets are the evidence. Record each name with the offsets that justify it in `NAMED.md` so a
+  later session can falsify it in one command.
+- **Clean 32-bit disassembly without attaching (M49a recipe)**: `gdb -batch -nx -q -ex "set
+  architecture i386" -ex "set disassembly-flavor intel" -ex "file programs/terran.exe" -ex "x/Ni
+  0xADDR"` — gdb maps the PE image (file offset = VA − 0x400000), read-only, TracerPid stays 0.
+  **Whole-image store census: `objdump -d -M intel --section=.text programs/terran.exe`** — printed
+  addresses are VAs (file offset = VA − 0x400000), ~40 MB and regenerable: grep it, extract the windows
+  you cite into small `evidence/` files, never commit it. `evidence/` carries a hard **disk** budget that
+  the gate enforces through `evidence.py budget` (warn 20 MB, FAIL 30 MB), and one 40 MB dump blows past
+  it: delete it once the census is written up, or `gzip -9` it in place (~40 MB → ~5.7 MB, still searchable
+  with `zgrep`, but still over the gate's 5 MB per-file WARN — that check scans ALL tracked files, not only
+  the changed ones; recompress from the decompressed stream, since `gzip` on a `.gz` double-compresses, and
+  `xz -9` lands ~3.3 MB if the dump must stay tracked) when a later milestone will re-census the same range
+  command in `NEXT_PROMPT.md` so the next session knows the file is regenerable, not data. A `-b binary -m i386:x86-64`
+  slice MISALIGNS on SEH blocks (garbage/movabs in SEH-heavy regions like the 0x4efxxx pipeline) — for
+  one function use the gdb recipe; Ghidra lumps edi/esi away.
+    **Coverage-check every dump**: instructions average 3.8 B here, so `x/2600i` silently stopped 2.4 KB
+    short of a 12,298-byte function and M53a drew a WRONG conclusion ("no +0x50 writer in the pipeline")
+    from the truncated window — compute the count from `index.csv` size ÷ 3.8 and confirm the last address
+    printed equals the next function's start.
+### Store census, table reads and model rewrites — what misleads
+
+- **Grep store SHAPES on the linear disassembly, not offsets**: literal `&DAT_… =`, indexed stores,
+  `rep movs`, AND **negative pointer arithmetic off a register base**. For a `ds:`-global store census use the mnemonic-comma test but **exclude `cmp`/`test`** — they carry the same comma shape as stores and flood the hit list (the dest-bracket test likewise must exclude `cmp`/`test`/`lea`). A loader that walks a pointer
+  initialised to `record + 50` writes its tail fields as `*(char *)(p + -4)` / `(int)p + -9`; Ghidra
+  renders them exactly that way, so neither a `DAT_` grep nor a disp32 byte-scan surfaces them. Scan for
+  disp8 stores whose base register is a table/record pointer.
+- **Never cite a field offset out of pseudocode without checking the pointer's element type.** Ghidra
+  types many globals as `short *` (here: the current-base pointer `DAT_008f0d60` and every copy of it),
+  and pointer arithmetic scales by element size — `p + 0x20` is byte **+0x40**, `p[0x1c]` is +0x38,
+  `idx * 0x98` is the 0x130 stride. The machine-code twin is a loop cursor that starts INSIDE the record
+  (`mov esi,0x95da14` = base + 4, `add esi,0x130`), so every `[esi+disp]` is shifted from the record
+  start. Recompute each offset from the pointer's init instruction (`mov reg,imm` / `lea`) and the index
+  math (`neg`, `sub 0x27`, `lea e,[i+i*2]; shl e,4`) before writing it down: a "mystery field" whose
+  offset is exactly 2× — or +4 from — a field you already have is this artifact, not a new field. Every
+  offset derived from that pointer inherits the error, so re-audit the whole cluster, not just the one in
+  question, and restate the finding in real byte offsets. The same address can also serve as a VALUE: `DAT_x + off` in pseudocode bases on the pointer STORED at `DAT_x`, while `&DAT_x + off` bases on the address itself — machine `mov reg,ds:ADDR` followed by `[reg+off]` proves value-based (here the tile array hangs off the pointer STORED at 0x92ae14; the faction-record block is a different address, **0x94ae14 + fac*0x20bc**, pinned by two DAT identities: `&DAT_0094d694` = record +0x2880 and `0x94dc2c` production total = +0x2e18, seed dwords `0x94dc34` = +0x2e20 — a footing note that puts faction records at 0x92ae14 is a typo). The same DAT family renders BOTH ways depending on the emitted cast: `(&DAT_0094e488)[fac*0x82f]` is x4-scaled while `&DAT_0094d67c + fac*0x20bc` is a plain byte add — pin every record base with two independent identities before writing a pread script.
+- **`[eax*4+0x985b3c]` and `*(int *)(&DAT_00985aa0 + idx*4)` can be the SAME array.** The compiler folds
+  `base + (idx − k)·stride` into a different displacement, so one table acquires several `DAT_` names and
+  a base-only grep finds only some of its accesses. Census the whole address **window** and classify by
+  operand shape, then pin base and extent from the code that walks it: a loop bound expressed as an
+  address (`while ((int)p < 0x985bc0)` = end), a loop that **branches on the pointer address instead of
+  the value** (that branch is proof the flat range spans two different things), and live contents — slots
+  that hold a known unrelated global (year, `n_bases`, faction mask) are not table entries.
+  Recipe: `references/static-store-census.md` §8.
+- **Strip the MSVC C++ frame noise before reading a big body.** `[ebp-0x4]` is the exception-state byte;
+  a block that stores vtable-constant addresses (0x67xxxx in this exe) into stack locals and calls
+  `0x406720` / `0x406060` / `0x5f6de9` is a scope-exit/destructor block, not game logic. Real branches
+  jump OVER these blocks, so an address-ordered read puts the logic in the wrong order; skip them, but
+  log where each one jumps, because many bodies funnel every early return to one shared cleanup label.
+- A single-writer claim needs the census printed both ways: total references **and** the store count
+  (`grep <hex-addr> <dump> | grep -c ',al'`), not "the corpus shows one writer".
+- **Census a DAT's stores in EVERY objdump print form.** Accumulator-form stores print
+  `mov ds:ADDR,eax` — no `DWORD PTR`, and operand filters like `',al'` miss them; a single-render
+  grep can miss the only true writer and produce a false "zero direct stores". Conversely, **zero** stores
+  across the whole `.text` census means the DAT is scenario/save-loaded: it cannot vary between visits,
+  so stop modelling it as visit-time state and stop arming watchpoints on it. Instructions printed
+  after a `ret` may be cold branch targets (a jcc/jmp earlier in the same body jumps past the ret
+  into them, inside the same Ghidra function) — grep backward jump refs before calling such a
+  store dead.
+- **Jump tables: dump the raw dwords before "correcting" Ghidra's case labels.**
+  `struct.unpack_from('<I', img, va - 0x400000)` across the table, entry count checked against the guard
+  (`add idx,7` / `cmp idx,6` / `ja`), each target mapped to its body first. A hand-decoded table that
+  silently drops one entry yields a mapping that is shifted, self-consistent and wrong — it looks exactly
+  like "the case labels are off by one", and only the raw dump (or live data) falsifies it.
+- **Re-read the instructions a "dead code" claim rests on — yours or a child's.** `test`/`cmp` set FLAGS
+  only, so a `test eax,ecx` followed by `mov [ebp-0x54],eax` stores eax UNCHANGED (the operand, e.g. `1<<j`),
+  NOT the comparison result; reading the store as the result manufactures a false "this block never
+  executes", and the implementer you hand it to codes out a path the game uses. Verify a dead-block verdict
+  against the specific instructions in the disassembly, and **steer the running child with the correction**
+  rather than waiting for it to finish and re-dispatching.
+- **Keep a superseded model reachable behind a flag** (`--legacy`) when rewriting one that already matched
+  live memory: every new mismatch must be attributable to exactly one change; if the rewrite breaks rows
+  the old model matched, the rewrite is wrong until raw bytes prove otherwise.
+- **Fit the unknown intermediate instead of guessing variants**: per mismatch row compute everything but
+  the one unknown internal value, then enumerate it and read off which reproduces live. Variant fitting
+  belongs in a subagent, never the main thread — and make every child **write its own notes file under
+  `evidence/`**: a child's final summary is a self-report, so confirm that file exists and spot-check two
+  or three of its addresses against the disassembly before citing anything from it. For a whole-function
+reconstruction, hand the child a pinned structure map (line-cites into the extracted asm window), literal
+live addresses, read-only safety rules, and expected values with known downstream adds already subtracted
+— the child iterates formulas, it does not rediscover structure. Two children sharing one live game need
+an explicit state contract each: only ONE may attach gdb or drive turns, and a child diffing
+`/proc/<pid>/mem` must be told no-gdb / no-pokes / no-turn-driver, because a sibling's driven turn mutates
+the memory it is diffing and turns its matches into noise — and the PARENT must not drive a turn or poke
+either while read-only children run: schedule any driven before/after re-run for after they return. Give
+every implementer child an explicit tool-call cap and output discipline in its spec (no cat over ~150 lines;
+long output redirected to `evidence/` then grepped; **append to its notes file after each experiment** so
+partial work survives a context truncation) — a child that overruns leaves a patched script and raw run
+files but NO notes, so `ls evidence/<tag>_*` and `diff` its script before re-dispatching, and label that
+inherited state unverified in the successor's spec.
+- **Attribute a model residual to ONE stage before editing any stage.** When the model prints
+  per-step contribution tokens per output field, test — for every mismatch row and every field, in a
+  script — whether the delta equals the sum of that row's own tokens for one stage. Rows whose delta
+  equals their own stage tokens are explained by that stage firing when the game's did not; mismatch
+  rows carrying NO tokens from any stage are that stage failing to fire. One such test retires every
+  downstream hypothesis (missing branch, wrong multiplier, wrong faction rule) at once, and a
+  faction-correlated residual is usually stage geometry (those factions' tiles cluster), not a faction
+  bonus. Re-run the test after every model change.
+- **Re-run a live-fit model on a driven next round before trusting its residual set.** Snapshot, drive one
+  round, snapshot, re-run: unchanged per-field mismatch counts and an unchanged exact-row set while many
+  underlying values moved ⇒ the residuals are structural (a missing rule); a residual set that moves ⇒ the
+  model was fitting state, not rules.
+- **Check whether the code you model RECOMPUTES an input global at its own entry.** A global stamped by the
+  first call of the function under study (SMAC: `FUN_004e63b0` rebuilding the scan-pool table `0x8f0ccc`
+  → `DAT_008f0d30` at 0x4e78e9, first call of `FUN_004e78e0`) describes only the LAST record the game
+  processed, so every other row's snapshot-read input is stale and its deltas are contamination, not rule
+  gaps. Discriminate by self-consistency: model's computed output mask == the stored mask it read as input
+  (SMAC `mask_in == processed`): report how many rows pass it, and which dump refresh produced the run,
+  never a raw exact-match count — that count tracks snapshot coherence, not model quality (19/76 and
+  40/76 on consecutive rounds of the same build). Corollary: a
+  "scenario constant" label is only earned by a `.text` store census AND a two-snapshot read.
+- **Build the mismatch census with a script that opens the report file directly** (`open(path)` inside
+  python, not a regex over a line-numbered tool view), and validate the FIELD SET against a real sample
+  line before trusting any count: a field regex like `c[0-9]` silently drops `bc` and any field outside
+  its class, and a silently dropped field flips a conclusion ("that field matches everywhere"). Print
+  per-field mismatch counts and the exact-row count from the same parse so they cross-check, and let the
+  script emit the findings table — never hand-transcribe it.
+- **To model a function's output from live post-state, reconcile field lifecycles first.** Grep the
+field's disp inside the function's OWN asm: a field mutated at ENTRY and rewritten at EXIT is
+cross-visit state — the input your model must feed is the observed post-state with the entry mutation
+applied (e.g. the base scan-skip mask `&= (~DAT_008f0d30|1)` at entry — read the mask's source from its
+`mov reg,ds:ADDR` init, never from a counter computed two instructions earlier; a wrong mask source
+shifts every row of the model), and strip any later-stage add that runs
+after the target function before comparing (driver-log breakpoint order says which stage is later).
+Systematic mismatch: try the raw post-state variant before widening the model.
+- **Label snapshot columns from true byte offsets, not from a field wish list.** In a `/proc/<pid>/mem` dump script unpack CONTIGUOUS ranges: skipping unknown gap fields silently shifts every later column, and the mislabeled deltas then appear to contradict proven formulas and send you re-deriving settled facts. Before interpreting any cross-snapshot diff, verify one known record against direct per-offset reads.
+- **Before counting a live-memory mismatch, check the row is a real record**: histogram the discriminator
+  fields across the whole table — rows whose indices run past the shipped data or whose fields hold
+  impossible values are stale/unallocated records, not model failures. Counting them as mismatches sends
+  you hunting a writer that does not exist. Same for a pipeline accumulator that never changes:
+  histogram the gating fields of the input records first — a filter no record satisfies makes the
+  accumulator structurally zero (silent sweeps and watchpoints), not a hidden writer.
+- Commands + patterns: `references/static-store-census.md`.
+- Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
+- What the install ships (rules text, map format, graphics containers) and what to parse vs
+  what to RE: `references/data-formats.md`.
