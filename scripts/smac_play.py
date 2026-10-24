@@ -22,7 +22,7 @@ Usage: python3 smac_play.py --turns 20 [--verbose] [--timeout 120]
 Evidence: evidence/trace_<ts>.jsonl, evidence/px_*.png on anomalies only.
 Prereq:  sudo sysctl -w kernel.yama.ptrace_scope=0   (Yama resets to 1 every boot)
 """
-import argparse, difflib, json, os, re, shutil, subprocess, sys, time
+import argparse, difflib, json, os, random, re, shutil, subprocess, sys, time
 from PIL import Image
 
 DISPLAY = ":99"
@@ -91,6 +91,35 @@ BTN = (520, 375, 280, 90)      # TURN COMPLETE button: (x, y, w, h) — NOT edge
 # "Centauri Monopoly" pyramid, evidence/m15_stuck_screen.png -> 148 colours in the
 # old box, 6 here, while the plain HUD gives 90 there).
 TEXTCOL = (350, 90, 630, 320)
+# The HUD's OWN news/message pane: the strip below the TURN COMPLETE row (that row's
+# centre is y~419). News lines there use base-screen vocabulary — on
+# evidence/m54a/live_hud.png 'nutrients' is at (355,438), the sentence body runs
+# 439-460 and the pane's "Don't Show Again" control sits at y 567 (M54a).
+MSGPANE = (0, 425, 800, 600)
+
+
+def base_word_positions(words):
+    """Every BASE_WORDS occurrence, with its coordinates.
+
+    Presence anywhere in the frame cannot mean `base` (M54a): the HUD message pane
+    prints news lines, and a line like "...low and is not on = producing enough
+    nutrients to meet its..." puts 'nutrients' on screen during a perfectly ordinary
+    HUD frame. Session 75: every frame of that position classified `base`, the
+    clearing Escape was forbidden (--no-escape > --timeout), and two runs stalled with
+    zero year hits.
+    """
+    out = []
+    for t, cx, cy, _w, _h in words:
+        low = t.lower().strip(".,:;|_*—")
+        if any(b in low for b in BASE_WORDS):
+            out.append((int(cx), int(cy)))
+    return out
+
+
+def in_msgpane(pt):
+    """True if a word centre falls in the HUD message-pane strip (MSGPANE)."""
+    x, y = pt
+    return MSGPANE[0] <= x <= MSGPANE[2] and MSGPANE[1] <= y <= MSGPANE[3]
 
 
 def is_cdrom_dialog(words):
@@ -214,6 +243,10 @@ def classify(words, ncolors=None, png=None):
         return "confirm"
     t = text_of(words)
     ts = re.sub(r"[^a-z]", "", t)
+    # The HUD's identity is its TURN COMPLETE row at y~419. Compute it up front: the
+    # base test below has to know whether the HUD is even on screen (M54a).
+    btn = find(words, ["complete"])
+    hud_btn = bool(btn) and 380 < btn[1] < 450
     # Boot nag and LOAD confirm both wear the game title in their caption/ backdrop;
     # test them BEFORE `title` or the driver quits instead of answering them (M14).
     if is_cdrom_dialog(words):
@@ -227,7 +260,15 @@ def classify(words, ncolors=None, png=None):
     # breakthrough/news panels are full screens: Escape closes them (verified)
     if "breakthrough" in t or "researchers" in t:
         return "unknown"
-    if any(w in t for w in BASE_WORDS):
+    # M54a: this test used to be `any(w in t for w in BASE_WORDS)`, which the HUD's own
+    # message pane defeats — its news lines say "nutrients"/"low"/"producing", so every
+    # frame of a plain HUD position read `base`, the driver Escaped (or, with
+    # --no-escape > --timeout, did nothing) and TURN COMPLETE was never clicked.
+    # Base words count only OUTSIDE that bottom strip, and only while the HUD button row
+    # is absent: a real base screen (evidence/m54a/base_screen.png, from m45a_post.png)
+    # has no TURN COMPLETE row at all, so its MENU/tab words still classify `base`.
+    hits = base_word_positions(words)
+    if hits and not (hud_btn and all(in_msgpane(p) for p in hits)):
         return "base"
     # A dialog's text block is centred in the upper half and dominates the OCR output.
     # This test must run BEFORE the HUD test: speech/news dialogs are drawn over a
@@ -241,8 +282,7 @@ def classify(words, ncolors=None, png=None):
     # while the pane blocks the turn — the M14 156 s "STUCK" turn.
     if upper >= 10 and png is not None and region_colors(png, TEXTCOL) < 45:
         return "dialog"
-    btn = find(words, ["complete"])
-    if btn and 380 < btn[1] < 450:
+    if hud_btn:
         return "hud"
     # The HUD is identified by its TURN COMPLETE button at y~416, nothing else: the
     # tech-breakthrough screen also contains the words "Mission Year" in its panels.
@@ -303,6 +343,98 @@ def answer_loaded_game(words):
     x, y = (c[0] - 108, c[1] + 194) if c else (290, 391)
     click((x, y))
     return (x, y)
+
+
+# ---------------------------------------------------------------------------
+# M54a — the panes that blocked session 75's round (recipe: evidence/m53s_findings.md
+# "Driving"; bar finder: evidence/m53s_barclick.py, which is what actually closed it).
+#
+#   * "Do you really want to end the turn now?"  -> answer_confirm (already in the driver)
+#   * the Council PROPOSAL vote: three bars at y~498, x = 311 / 400 / 489. Their dark
+#     labels are invisible to tesseract on this build (verified 2026-10-24: `tesseract
+#     tsv` returns zero hits for yea/nay/abstain/ok), so the row is found by COLOUR
+#     GEOMETRY, never by OCR.
+#   * the HIVE bribe pane: Escape closes it, Return advances the round.
+#
+# A vote row is >=3 bars of the same height on one line >100 px apart; anything else is
+# an OK bar and gets the proven bottom-most click.
+
+
+def light_bar_rows(png, y0=200, min_run=55):
+    """Raw-pixel scan for the game's light periwinkle push-bars (run > min_run px)."""
+    raw = sh(f"ffmpeg -loglevel error -i {png} -f rawvideo -pix_fmt rgb24 -").stdout
+    out = []
+    for y in range(y0, H):
+        row = raw[y * W * 3:(y + 1) * W * 3]
+        start = None
+        for x in range(W):
+            r, g, b = row[x * 3:x * 3 + 3]
+            light = b > 120 and r > 90 and g > 90 and abs(r - g) < 40 and b - r > 25
+            if light and start is None:
+                start = x
+            elif not light and start is not None:
+                if x - start > min_run:
+                    out.append((y, start, x, (start + x) // 2))
+                start = None
+    return out
+
+
+def group_bars(found):
+    """Collapse consecutive scanlines of the same bar into (cx, cy, height)."""
+    groups = []
+    for y, x0, x1, cx in found:
+        for g in groups:
+            if 0 <= y - g[3] <= 2 and abs(g[4] - x0) <= 6 and abs(g[5] - x1) <= 6:
+                g[3] = y
+                break
+        else:
+            groups.append([cx, (x0 + x1) // 2, y, y, x0, x1])
+    return [(g[0], (g[2] + g[3]) // 2, g[3] - g[2] + 1) for g in groups]
+
+
+def pane_bars(png):
+    """Tall (>=12 px) push-bars in the frame — bars are ~18 px tall."""
+    return [b for b in group_bars(light_bar_rows(png)) if b[2] >= 12]
+
+
+def is_vote_row(bars):
+    """>=3 bars on one row >100 px apart: that is a vote, not an OK bar."""
+    for b in bars:
+        row = [c for c in bars if abs(c[1] - b[1]) <= 6]
+        if len(row) >= 3 and max(c[0] for c in row) - min(c[0] for c in row) > 100:
+            return sorted(row, key=lambda c: c[0])
+    return None
+
+
+def is_council_pane(words):
+    """The Council convenes as PROTOCOL DIRECTOR -> PROPOSAL vote; the HIVE bribe pane is
+    its own thing. Captions DO OCR (only the bar labels don't), so the pane is named by
+    its caption."""
+    return text_has(words, "council", "proposal", "protocol", "hive", "senate", "delegate")
+
+
+def is_hive_pane(words):
+    return text_has(words, "hive")
+
+
+def handle_pane(words, png, rec, kind):
+    """Click/keys for the two modals that have no OCR-readable control. True = acted."""
+    if is_hive_pane(words):
+        key("Escape"); time.sleep(0.6)          # verified 2026-10-24: Escape closes the
+        key("Return"); time.sleep(0.8)          # HIVE bribe pane, Return advances
+        rec["handled"].append("hive-bribe:Escape+Return")
+        return True
+    if kind != "base" and is_council_pane(words):   # a base screen has progress bars that
+        bs = pane_bars(png)                          # pass the colour test — never click them
+        if bs:
+            row = is_vote_row(bs)
+            target = row[0] if row else sorted(bs, key=lambda b: b[1])[-1]
+            click((target[0], target[1]))
+            rec["handled"].append(("vote-yea" if row else "bar") +
+                                  f"@{int(target[0])},{int(target[1])}")
+            time.sleep(1.6)
+            return True
+    return False
 
 
 def state():
@@ -381,6 +513,7 @@ def service_turn(idx, tr, timeout, verbose=False):
     Every one of those blocks the turn, so a one-shot click-then-wait always times out.
     """
     y0 = year()
+    st0 = state()
     rec = {"turn": idx, "year_before": y0, "t": time.strftime("%H:%M:%S"), "handled": []}
     t0 = time.time()
     last_press = 0.0
@@ -398,6 +531,12 @@ def service_turn(idx, tr, timeout, verbose=False):
             print(f"    [{kind}] {' '.join(w for w, *_ in words[:16])}", flush=True)
         rec.setdefault("screens", {}).setdefault(kind, 0)
         rec["screens"][kind] += 1
+        # M54a: the Council vote row and the HIVE bribe pane come up in BOTH phases (the
+        # Council convenes while cur_player is an AI), and neither has a control OCR can
+        # see, so they get a handler ahead of the generic dialog/Escape paths.
+        if kind in ("dialog", "unknown") and handle_pane(words, png, rec, kind):
+            time.sleep(0.4)
+            continue
         # Whose turn is it *right now*?  During the AI phase the HUD is still drawn and
         # TURN COMPLETE is still on screen, so an OCR-only driver clicks it into a
         # half-finished AI turn and then sits in a modal for the whole timeout (M27:
@@ -463,6 +602,13 @@ def service_turn(idx, tr, timeout, verbose=False):
                 break
             time.sleep(0.15)
     ok = year() != y0
+    st1 = state()
+    rec["state_before"] = {k: st0.get(k) for k in ("year", "turn_no", "player", "cur_player",
+                                                   "turn_flags", "mode_flags", "n_bases")}
+    rec["state_after"] = {k: st1.get(k) for k in ("year", "turn_no", "player", "cur_player",
+                                                  "turn_flags", "mode_flags", "n_bases")}
+    rec["delta"] = {k: [st0.get(k), st1.get(k)] for k, v in rec["state_after"].items()
+                    if st0.get(k) != v}
     rec["year_after"] = year(); rec["advanced"] = ok; rec["dt"] = round(time.time() - t0, 1)
     if not ok:
         sh(f"cp {freeze('stuck')} {EVID}/px_stuck_t{idx}.png")
@@ -735,6 +881,7 @@ def main():
                     help="skip the selection poke (poke BEFORE arming the tracer; pokes are ignored under ptrace)")
     a = ap.parse_args()
     ESC_ALLOW = time.time() + a.no_escape
+    run_seed = random.randrange(1 << 31)   # recorded in the trace header (M54a)
     os.makedirs(EVID, exist_ok=True)
     for tool in ("xdotool", "xwd", "ffmpeg", "tesseract"):
         if not shutil.which(tool):
@@ -758,9 +905,16 @@ def main():
                     service_turn(i, tr, a.timeout, a.verbose)
             print("post-order turn trace:", path)
         sys.exit(0)
-    path = os.path.join(EVID, f"trace_{time.strftime('%Y%m%d_%H%M%S')}.jsonl")
+    path = os.path.join(EVID, f"trace_{a.tag}_{time.strftime('%Y%m%d_%H%M%S')}.jsonl")
     stuck = 0
+    # M54a acceptance wants a trace per run carrying seed + action log + per-turn state
+    # deltas. `seed` is the RUN seed: scripts/smac_state.py exposes no game RNG seed, so
+    # the position is pinned instead by the start state on the same line.
+    hdr = {"type": "start", "seed": run_seed, "tag": a.tag, "turns": a.turns,
+           "timeout": a.timeout, "no_escape": a.no_escape, "argv": sys.argv[1:],
+           "state": s}
     with open(path, "w") as tr:
+        tr.write(json.dumps(hdr) + "\n")
         for i in range(a.turns):
             if service_turn(i, tr, a.timeout, a.verbose):
                 stuck = 0
