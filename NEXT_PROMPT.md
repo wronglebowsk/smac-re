@@ -7,8 +7,9 @@ Ledger: M48d, M50a-b, M51a, M52a-b, M53a-M53p (**M53p done, session 68**); open:
 then the "Later" list.
 
 ## First actions
-1. `grep -n '^## \|^- \*\*' ~/.hermes/skills/smac-cvr-format/SKILL.md` then `sed -n 'A,Bp'` the 1-2
-   bullets/sections you need (pitfalls + the code area). **Do NOT `skill_view` the whole file** (75 KB).
+1. Skill `smac-cvr-format`: `SKILL.md` is now ~19 KB (fine to load whole) and the depth is split into
+   `references/` — open ONLY what the milestone needs: `production-rebuild.md` (vector machine rules),
+   `code-atlas.md` (fields/structs), `wine-operations.md` (driving/dialogs). Grep the section first.
 2. `tail -95 ~/reverse/smac/SESSION_NOTES.md` — Session 68 (M53p) is the latest milestone.
 3. `git status`; `git branch` (a half-finished session left untracked `evidence/m53p_*` files on
    `milestone/m53p` — they are committed now; never commit to main); then
