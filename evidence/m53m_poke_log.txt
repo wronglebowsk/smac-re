@@ -1,0 +1,41 @@
+u279 @0x936b24 2d000b0010000000000002000000030000000000ffffffffffffffffffffffffffffffff01000000000200000000460008012c01
+   {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+u300 @0x936f68 2d000b0010000000000002000000030000000000ffffffffffffffffffffffffffffffff0100000000020000000046001701ffff
+   {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+cand u124 {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+cand u126 {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+cand u218 {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+cand u224 {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+cand u237 {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+cand u247 {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+cand u264 {'x': 45, 'y': 11, 'typ': 2, 'fac': 3, 'order': 0, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 65535, 'py28': 65535}
+POKED u300 match=True fields={'x': 45, 'y': 10, 'typ': 5, 'fac': 3, 'order': 3, 'hp12': 0, 'b38': 0, 'abase': 70, 'px20': 45, 'py28': 10}
+  bytes: 2d000a00100000000000050000000300000300002d00ffffffffffff0a00ffffffffffff0100000000020000000046001701ffff
+POKED u279 match=True fields={'x': 45, 'y': 11, 'typ': 5, 'fac': 3, 'order': 3, 'hp12': 0, 'b38': 1, 'abase': 73, 'px20': 65535, 'py28': 65535}
+  bytes: 2d000b0010000000000005000000030000030000ffffffffffffffffffffffffffffffff01000100000200000000490008012c01
+
+== STEP 3 interpretation ==
+u279 orig @0x936b24 2d000b0010000000000002000000030000000000ffffffffffffffffffffffffffffffff01000000000200000000460008012c01
+u300 orig @0x936f68 2d000b0010000000000002000000030000000000ffffffffffffffffffffffffffffffff0100000000020000000046001701ffff
+fac@14==3 verified for both. byte@12: ==0 for BOTH, and a scan of all 600 unit slots (all
+factions) shows u16@12==0 everywhere -> offset 12 carries no hp value in this game state;
+the spec's hp>0 precheck is degenerate (fallback list 124,126,218,224,237,247,264 identical:
+also fac3/typ2/parked 45,11/ab=70/u12=0). 279+300 are genuine members of the fac-3 unit
+linked list (bytes 48/50 = prev/next chain 124<->126<->218<->224<->237<->247<->264<->279<->300).
+Decision: proceed with 279/300 as spec'd.
+
+== STEP 4 tile scan ==
+Box x41-49 y7-15 (excl 45,11): 74/80 tiles YIELD-OK ((rec[8]&1)==0 or (rec[2]&0xf)>7).
+Chosen (min |dx|+|dy|, first in scan order among dist=1 ties): x=45 y=10 ti=422 rec[8]=0 rec[2]&0xf=0.
+Other dist=1 ties: (46,11) r8=32 r2lo=6; (45,12) r8=0 r2lo=0. Base tile (45,11) ti=462.
+
+== STEP 9 restore record ==
+Game compacted the unit array during the rounds: all 9 fac-3 parked units moved to
+new slots (113,115,194,199,211,221,237,252,273); the two poked crawlers now live at
+u252 (porch: typ5 ord3 b38=1 ab73 @45,11) and u273 (field: typ5 ord3 b38=0 ab70 @45,10).
+Old slots 279/300 were recycled to LIVE faction-2 units (u279: fac2 typ167 @31,35 in
+fac2 chain 210<->279; u300: fac2 typ153 @36,54 in chain 300<->287) - writing the stale
+originals there would have destroyed those units and corrupted the fac-2 chain.
+Restore performed instead: orig(u279)[0:48] -> u252, orig(u300)[0:48] -> u273, current
+prev/next (bytes 48-51) kept. Readback byte-for-byte OK; both now typ2 ord0 b38=0 ab70
+parked @45,11, fac3. Slots 279/300 left as the game's own data.

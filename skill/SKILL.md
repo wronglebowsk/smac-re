@@ -62,7 +62,9 @@ the semantic index.
 
 **The gate has two more checks that silently cost a run.** (1) *Address registry*: a milestone that names
 a function or pins an address must add `NAMED.md` rows in the same commit, otherwise the gate prints
-`[WARN] address registry: NAMED.md untouched` and the verdict is not 0-warning (submit/merge want zero).
+`[WARN] address registry: NAMED.md untouched` — the verdict stays GREEN and merge still proceeds, so a
+WARN is easy to shrug off; the milestone protocol wants 0 warnings, so treat every WARN as an artifact
+missing from the same commit.
 `NAMED.md` is append-only and too big to rewrite — write the rows to a scratch file and
 `cat scratch.md >> NAMED.md` (`write_file` refuses to overwrite a file it has not fully read in the current task — for a whole-file
 rewrite write the new text to a scratch path and `mv` it over the target, or do the rewrite in one python
@@ -138,6 +140,9 @@ python3 scripts/coverage.py               # index.csv -> COVERAGE.md (hubs, mons
 python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.json + ALPHA_RULES.md
 ```
 
+- If `scripts/fn.py` prints 0 bytes for an address `index.csv` lists as ok, don't retry arg
+  variants — read the body from the cached objdump window (`zgrep -n '  ADDR:'
+  evidence/*_text.txt.gz` + sed window) instead.
 - **Filter compiler helpers before ranking anything by in-degree.** CRT stubs
   (`__security_check_cookie`, `_ftol2`, …) have 300–2000 callers and a few hundred bytes and
   top every raw caller ranking; `coverage.py` excludes `callers≥300 & size<400` and lists them
@@ -169,7 +174,7 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
 ### Store census, table reads and model rewrites — what misleads
 
 - **Grep store SHAPES on the linear disassembly, not offsets**: literal `&DAT_… =`, indexed stores,
-  `rep movs`, AND **negative pointer arithmetic off a register base**. A loader that walks a pointer
+  `rep movs`, AND **negative pointer arithmetic off a register base**. For a `ds:`-global store census use the mnemonic-comma test but **exclude `cmp`/`test`** — they carry the same comma shape as stores and flood the hit list (the dest-bracket test likewise must exclude `cmp`/`test`/`lea`). A loader that walks a pointer
   initialised to `record + 50` writes its tail fields as `*(char *)(p + -4)` / `(int)p + -9`; Ghidra
   renders them exactly that way, so neither a `DAT_` grep nor a disp32 byte-scan surfaces them. Scan for
   disp8 stores whose base register is a table/record pointer.
@@ -182,7 +187,7 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   math (`neg`, `sub 0x27`, `lea e,[i+i*2]; shl e,4`) before writing it down: a "mystery field" whose
   offset is exactly 2× — or +4 from — a field you already have is this artifact, not a new field. Every
   offset derived from that pointer inherits the error, so re-audit the whole cluster, not just the one in
-  question, and restate the finding in real byte offsets.
+  question, and restate the finding in real byte offsets. The same address can also serve as a VALUE: `DAT_x + off` in pseudocode bases on the pointer STORED at `DAT_x`, while `&DAT_x + off` bases on the address itself — machine `mov reg,ds:ADDR` followed by `[reg+off]` proves value-based (here the tile array hangs off the pointer at 0x92ae14, which is also the address of the faction-record block).
 - **`[eax*4+0x985b3c]` and `*(int *)(&DAT_00985aa0 + idx*4)` can be the SAME array.** The compiler folds
   `base + (idx − k)·stride` into a different displacement, so one table acquires several `DAT_` names and
   a base-only grep finds only some of its accesses. Census the whole address **window** and classify by
@@ -198,6 +203,12 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   log where each one jumps, because many bodies funnel every early return to one shared cleanup label.
 - A single-writer claim needs the census printed both ways: total references **and** the store count
   (`grep <hex-addr> <dump> | grep -c ',al'`), not "the corpus shows one writer".
+- **Census a DAT's stores in EVERY objdump print form.** Accumulator-form stores print
+  `mov ds:ADDR,eax` — no `DWORD PTR`, and operand filters like `',al'` miss them; a single-render
+  grep can miss the only true writer and produce a false "zero direct stores". Instructions printed
+  after a `ret` may be cold branch targets (a jcc/jmp earlier in the same body jumps past the ret
+  into them, inside the same Ghidra function) — grep backward jump refs before calling such a
+  store dead.
 - **Jump tables: dump the raw dwords before "correcting" Ghidra's case labels.**
   `struct.unpack_from('<I', img, va - 0x400000)` across the table, entry count checked against the guard
   (`add idx,7` / `cmp idx,6` / `ja`), each target mapped to its body first. A hand-decoded table that
@@ -211,10 +222,13 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   belongs in a subagent, never the main thread — and make every child **write its own notes file under
   `evidence/`**: a child's final summary is a self-report, so confirm that file exists and spot-check two
   or three of its addresses against the disassembly before citing anything from it.
+- **Label snapshot columns from true byte offsets, not from a field wish list.** In a `/proc/<pid>/mem` dump script unpack CONTIGUOUS ranges: skipping unknown gap fields silently shifts every later column, and the mislabeled deltas then appear to contradict proven formulas and send you re-deriving settled facts. Before interpreting any cross-snapshot diff, verify one known record against direct per-offset reads.
 - **Before counting a live-memory mismatch, check the row is a real record**: histogram the discriminator
   fields across the whole table — rows whose indices run past the shipped data or whose fields hold
   impossible values are stale/unallocated records, not model failures. Counting them as mismatches sends
-  you hunting a writer that does not exist.
+  you hunting a writer that does not exist. Same for a pipeline accumulator that never changes:
+  histogram the gating fields of the input records first — a filter no record satisfies makes the
+  accumulator structurally zero (silent sweeps and watchpoints), not a hidden writer.
 - Commands + patterns: `references/static-store-census.md`.
 - Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
 - What the install ships (rules text, map format, graphics containers) and what to parse vs
@@ -411,7 +425,9 @@ Script.txt dialog geometry and the DirectPlay hypothesis are in **`references/wi
   `~/reverse/smac/scripts/smac_state.py` (live memory: mission year `DAT_00985b00`, mode flags
   `DAT_00985dc8`) and `scripts/smac_play.py` (turn servicer); depth in
   `references/wine-headless-harness.md`. Fallback coords (800×600 window at 0,0): TURN COMPLETE (650,410),
-  base-naming OK (400,171).
+  base-naming OK (400,171). After a `smac_play.py --turns` run returns, `cur_player` may still sit on an
+  AI faction (a driver "turn" is counted as a year tick) — re-read `smac_state.py` and keep driving until
+  control is back with the player before assuming our-turn state.
 - **`xdotool` keys are dropped unless the window has focus** — call `xdotool windowfocus <win>` first (Xvfb
   has no WM to grant it). Without focus `Return`/`Escape` silently do nothing and every dialog looks
   undismissable, which reads exactly like a game hang.
@@ -441,6 +457,8 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
 - **Stop at a title/menu screen; never click it.** `Escape` there opens `Do you really want to quit?`
   and the next OK exits the game (process vanishes, nothing in the Wine log). Classify
   `SID MEIER'S ALPHA CENTAURI` / `really want to quit?` as a fatal state: save a screenshot and stop.
+  Exception: the quit prompt also pops MID-DRIVE after `--turns` runs (session 65) while the game is
+  otherwise healthy — Escape back to "Oops, no, wait!", never click OK.
   Dark/unrecognized frames get ~20 s of grace before a single Escape — cinematics end themselves.
 - **OCR targets must be ≥4 characters and region-constrained.** `yes` matches `Moyes:` (the unit
   panel's `Moves:`) and `ok` matches `Prokhor`, so a naive matcher clicks the map forever and the
@@ -465,7 +483,9 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
 - **A gdb watchpoint with no `commands … continue end` block ENDS a `-batch` run**: on the first hit the
   script has nothing left, gdb falls to its prompt and DETACHES — silently un-instrumenting the rest of
   the session (reads as a truncated log, not as an error). Give every watchpoint a printing `continue`
-  block. And gdb's own messages are unbuffered while breakpoint `printf` output is block-buffered: the
+  block. **x86 gives 4 hardware watchpoints total** (8-byte windows need 8-alignment and cost 2 DRs
+  each; 4-byte windows cost 1): watch at most 4 globals and cover the remaining addresses with a
+  10 Hz `/proc/pid/mem` poller (`scripts/m53m_poll.py` pattern). And gdb's own messages are unbuffered while breakpoint `printf` output is block-buffered: the
   two streams interleave in the log, so attribute events by CONTENT (counters, an `off=0x50..0x74` run),
   never by line order, and read the log only after the driver's `--mode stop` (SIGINT drops the tail). Worse, a SHORT run can lose
   the whole buffered tail silently and read as "no breakpoint ever fired" (m53e1: the clicks clearly
@@ -512,7 +532,9 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   Plan, `+43` = auto-calculated AI role (`weapon mode + 0x20` for noncombat packages). Proof pattern:
   `scripts/m53b_costcalc.py` + `scripts/m53b_types.py` re-implement the formula and diff it against live
   memory — every populated row accounted for, none left as "explained elsewhere". **Alpha comment headers name the columns** of sections whose
-  rows are bare data (#CHASSIS/#WEAPONS/#DEFENSES/#UNITS) — read them before guessing a table's fields.
+  rows are bare data (#CHASSIS/#WEAPONS/#DEFENSES/#UNITS) — read them before guessing a table's fields; enum gates decode the same way — index the alpha enum
+sections by value (PLANS 10 = "Supply Convoy", ORDERS 3 = "Convoy", only 9 entries: live order
+bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep code means.
 - **The alpha `#UNITS` loader (`FUN_00579f40`) overrides the type builder AFTER it runs**: Plan→`+42`,
   Cost→`+41` (0 = Autocalculate), Carry→`+40`, Icon→`+46` — all as disp8 stores off a `record + 50`
   register, row-capped at 0x40 so designed units are never overridden; the save loader restores
@@ -588,32 +610,7 @@ start (cur==me, panel up, black map ⇒ classify lies) ⇒ go straight to select
 energy; economy-gated); M37 core: execute chain + multi-turn accumulator. Tile (45,7) elev 6
 with road; `0x2101` queue still no solo consumer. Open: MagTube remap/TECHFAIL test (`r` on
 roaded tile), economy-rate idle run, player↔faction-ID mapping (may explain AI +3),
-Space-on-terraform. `~/reverse/smac/` is durable; `NEXT_PROMPT.md` rewritten for session 40. Execution chain: pump `0x50ef60` (solo turn driver) → gate `0x5acc00(unit)`
-(actionable ⇔ `0x5ac650(unit,0) > mpused`) → `0x529e70(unit,0)` (solo ⇒ direct call; netplay ⇒
-packet `0x2404`) → `0x4d1200(unit)` solo order dispatcher (4..0x17 → `0x4cce50(unit, order−4, 1)`;
-0x18/0x19/0x1a → move chain `0x4ce4a0`; 0x1b/0x1c → `0x4ce710`) → terraform engine: `0x5acdb0`
-**consume-all** (`mpused := 0x5ac650(unit,0)` — M36's "mpused 3 persists" is re-charged each
-turn; `0x51f730(player)` REFRESH zeroes `+40`/`+42` **per player per round in solo** — live —
-and decrements the `+16` reserve pool), then `unit+37 += Σ chain work` (2 per Former; 4 if
-ability bit0 `0x98ada8[type*52]&1`; chain `+48/+50` same-k members fold into the head) until
-`accum ≥ threshold = 2 × terrain_table[order−4].+8` — runtime table **`0x6938f0 + k*32`**:
-`+0` mask bits SET / `+4` bits CLEARED / `+8` == alpha `#TERRAIN` field 5 (raise/lower 12, mine
-8, sensor 4, mag 3, road 1) / `+18` required tech (59 = EnvEcon ✓); raise ⇒ 24 ⇒ **12 turns at
-+2/turn**; NOTYET (`0x4cd33b`) keeps the order; swamp-cancel `0x4cd319`; COMPLETE (`0x4cd35e`):
-order+chain cleared, owner `0x582fc0`, mask swap (`+4` clear/`+0` set — road COMPLETE ⇒
-`MASKSET mask=0x4` live), `0x5ad400` RAISE / `0x5ad460` LOWER → `0x5ad0a0` SETELEV, then
-`0x5b09b0` re-erosion (SETELEV storm) + `0x4738f0(1)` redraw. **Live: the stored raise completed
-year 2281 — tile (45,7) elev 4→5 after 12 turns (2270→2281), energy 31 untouched**
-(`evidence/m37c2_*`; the 9 went at issue — issue cost `0x4cc7b0` ≠ work cost 12). M36's "mpused
-persists" and "executor filters the ordered unit" retracted; the 0x2101 queue = netplay
-replication, no solo consumer (reconfirmed). M36 facts that HOLD: tutor-pane latch
-`0x4c2be0(0x800)`/`DAT_00985ad4` + blocking `0x48ef40` at `0x4d58c6`; footprint ladder
-`0x678e08[height+1]` (5×5 at elev 4, x wraps, off-map skip; `0x4e3b50` border-owner; `0x555030`
-pact instant-refuse / treaty-confirm; refusal ⇒ refund `0x4d58dc`/`0x4d59c7`); tech gate
-`0x5a7520` = bit test on byte `0x985c1c + tech_id` (table `0x6938e8 + (mode*8+domain)*4`);
-tile array base = **pointer at `0x92ae14`**, tile = `*(int*)0x92ae14 + (40*y + x>>1)*0x2c`,
-height `+0>>5`, mask `+8`, **2 tiles/record**; `0x5a7520` is the unlock TEST not a picker;
-`0x5ab320` = unit reposition; unit class = LOW BYTE of `0x98adb2[type*52]`.
+Space-on-terraform. `~/reverse/smac/` is durable; `NEXT_PROMPT.md` rewritten for session 40. Execution chain + terraform engine + tile/tech-gate facts: `references/terraforming-order-path.md`.
 Selection rules hold: HOLDed (order 2) units are not cycle candidates; empty cycle
 **auto-ends the turn**; a map click selects a unit **and** sets orders mode `0x91b5b8=1`;
 `Tab` re-opens CUSTOMIZE mid-game. UI: **ENDOFTURN1** pane → **Return** (never Escape); Escape
@@ -682,14 +679,13 @@ survivors = Colony Pod (type 0) @ (45,11) + Laser Squad (type 195) @ (43,11). Fo
 corrections: (1) **Council/PROPOSAL panes block the pump and their bottom-centre blue OK bar is
 unreadable to tesseract** — find it BY COLOUR (band x 240-560, y 430-520, lowest contiguous blue bar
 ≥8 rows; calibrated rows 488-507 × 268-532, rgb (103,91,181)); the HUD chrome's 1-px blue line at
-y 526 exists in EVERY frame, so cap the band at 520. (2) **runtime tile record == the map file's two
-22-B cells (2n,y)++(2n+1,y)** byte-exact, and every accessor (`0x582ed0`, `0x5831a0`, elev readers)
-is **parity-blind** (`40*y + x>>1`, +0 elev / +8 mask) ⇒ the tile pair shares elevation + the +8 mask;
-a second mask-shaped dword at **+0x18** is open. (3) tile **mask bit 0x2 = a unit standing on the
+y 526 exists in EVERY frame, so cap the band at 520. (2) runtime tile record == the map file's two 22-B cells byte-exact; accessors (`0x582ed0`,
+`0x5831a0`) are parity-blind on `*(int*)0x92ae14 + (40*y + x>>1)*0x2c` (+0 elev, +8 mask shared by
+the pair); a second mask-shaped dword at +0x18 is open. (3) tile **mask bit 0x2 = a unit standing on the
 record** (3193/3200, 0 false negatives); full vocabulary from table × op names (farm 0x8000, enricher
 0x80000, mine 0x10, solar 0x40, forest 0x200000, road 0x4, magtube 0x8, bunker 0x800, airbase 0x40000,
 sensor 0x80000000, fungus 0x20, condenser 0x400000, echelon 0x8000000). (4) **unit type-record base
-is 0x98ad88** (name +0[34], ability +32 = 0x98ada8, domain +36 = 0x98adac, class +42 = 0x98adb2) — the
+is 0x98ad88** (name +0[34], ability +32 = 0x98ada8, domain +36 = 0x98adac, plan +42 = 0x98adb2 (the alpha Plan byte — see the M53b type-record bullet; "class" was a misnomer) — the
 standing ABSOLUTE addresses are right, but treating 0x98ada8 as the record base pairs each class byte
 with the NEXT record's name; type 0 Colony Pod (cls 8), 1 Formers (cls 9), 193 Scout Rover, 195 Laser
 Squad; ≥196 runtime types vs 15 alpha `#UNITS` rows. Also **autosaves rotate over all 8 slots**
@@ -707,10 +703,8 @@ unit key-able; owner check is `unit+14 == 0x91b5b4`, MP is `0x5ac650(unit) − u
 **NEWBASE name pane accepts the generated default with a plain Return** (no typing/click). (4) after
 founding the game opens the **BASE screen** (classify kind `base`; RENAMEd/OK row y≈365, outside the
 430-520 OK-bar band) — `service_pane` needs a `kind=="base"` → Escape branch (patched; without it a
-run spins forever). (5) **`objdump` needs the section-targeted form** (`-d -M intel --section=.text`; other invocation shapes
-error "invalid bfd target") — otherwise pin call sites
-with a raw E8 rel32 scan, `.text` file offset = VA − 0x400000 (identity mapping; the header's
-ImageBase field is a bogus 0x270000). Also: **mask1(+8) bit 0x1000 = "inside a base's claimed
+run spins forever). (5) `objdump` needs `--section=.text` (M49a recipe); file offset = VA − 0x400000 despite the bogus
+0x270000 ImageBase header field — pin call sites with a raw E8 rel32 scan. Also: **mask1(+8) bit 0x1000 = "inside a base's claimed
 border"** (12-31 pairs per base, hex radius ≈3, pop-independent, 74/74 bases, ocean included) while
 the tile owner NIBBLE is a different layer — `0x4e3b50` returned −1 for our nibble-3 tile, i.e. the
 ~45 inherited orphan nibble-3 tiles are NOT borders; mask bit 0x1 = base-on-pair (74/74, it is what
@@ -749,16 +743,13 @@ idle round for us and for Morgan) — still open. Two hard-won operational rules
 input while `classify()` still says `hud` — advisor advisory ("Mindworm boil spotted") → Return,
 story page / "Book of Planet" → click (400,470), council convenes page → Return, ballot → click the
 ABSTAIN word, "MEASURE FAILS" → Return, faction-info table (Tech:/Population:/… ) → click (400,580);
-(2) gdb's stdout to a file is block-buffered — never conclude "no writes" from an empty log while gdb
-is attached; `kill -INT` first, and remember a watchpoint's `$eip` sits just PAST the store.
+(2) a watchpoint's `$eip` sits just PAST the store (log buffering: see the watchpoint bullet above).
 Next (M48): mineral economy (queue a build, watch `base+0x40`); ledger writers on a spending round;
 `faction+0x1b8` + research points; player↔faction NAME mapping; the 2320 +4 credit.
 **M48d (session 45-46, `scripts/m48d_drive.py`, evidence `m48d2_*`): MINERAL ECONOMY TRACED** —
 storage `base+0x40` grows `+= d0` per round UNCLAMPED between completions (AI stockpiles 111→121);
-at EVERY production completion (unit or facility, `0x4efe41→SPENDA 0x4efed8 store 0x4efee0`) storage
-is then clamped (store `0x4eff23`, gate CLAMP1 `0x4eff02` = `(1<<owner)&mask` event test); **M53j
-supersedes the arithmetic of this bullet — the completion path debits `base+0x40 −= price` (price =
-cost factor × `0x4e40a0`) and then clamps, so read the M53j bullet for the pay order**.
+at EVERY production completion storage is then clamped; **M53j/M53k supersede the arithmetic —
+completion debits `base+0x40 −= price` (cost factor × `0x4e40a0`) then clamps.**
 Scout Patrol cost 10; pop-growth units go through the SAME completion path and need storage ≥ cost
 (26 years of storage 0 ⇒ pop grew, unit never spawned); NOSUPPORT disband fires while `d0<0`,
 one unit/round, stable at d0=0; `d0=base+0xd0` recomputed every round at `0x4e955d` (pokes die);
@@ -789,14 +780,14 @@ fire `MAPH` and nothing else. Mode 9 is chosen in `FUN_0050a770` as Ctrl held �
 the pointer never registers as inside a pane even though clicks arrive. That hit-test is the next
 cheap test. Clicking a stacked tile still only raises SELECT UNIT TO ACTIVATE.
 
-**As of M25 (session 25): writing the order fields is not the
-trigger** — poking `+17 = 0x18, +20 = dest_x, +28 = dest_y` into a unit through `/proc/<pid>/mem`
-(writable, no tracer) survived a full turn and a compaction slide, yet the unit never moved; a gdb
-`call` to `FUN_004cffa0` reached `FUN_004cdc70` (wrote `unit+4 |= 0x40`) twice and still produced no
-move. `maps/planet.MP` field offsets are unresolved
-(`references/data-formats.md`); hub functions `0x5f6de9` (writes ~60 fields of a >8 KB object,
-then calls a vtable method at `this+0x15f8`) and `0x483470` (SEH frame + 21 KB stack buffer +
-UI callees) are still unnamed.
+- **Poking a unit's order fields does not issue the order.** `+17 = 0x18, +20 = dest_x, +28 = dest_y`
+poked via `/proc/<pid>/mem` (writable, no tracer) survives a full turn with the unit unmoved: the
+executor consumes orders through its own dispatch path, so order fields are outputs, not inputs (a gdb
+`call` into the issuer behaves the same — see the last-resort rule above). M53m refinement: order fields
+ARE inputs to the ECONOMY sweep — a poked order 3 (Convoy) on a plan-10 type persisted 4 rounds and
+drove production accumulation while the movement executor ignored the route-less convoy. Unit slots
+SHUFFLE (array compaction) mid-run: locate records by content (faction byte@14), restore pokes at the
+record's NEW home.
 
 - **Turn cycle: solved as a harness problem (~100 turns unattended; `references/wine-headless-harness.md`).**
   It was never a game hang — every observed stall was a blocking UI element (units-not-moved confirm,
