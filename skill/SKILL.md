@@ -60,14 +60,45 @@ grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dum
 `~/reverse/smac/` instead of re-dumping; page Ghidra facets in small slices; reuse saved
 screenshots and take a new one only after a real state change.
 
+### Close before you hand off (the handoff is what overflows)
+
+A one-milestone turn routinely runs 130-150 tool calls and 250 k+ prompt tokens against a 262,144-token
+window, so the last ~15 k tokens are the entire margin. Order the ending, every time:
+
+1. gate GREEN
+2. `SESSION_NOTES.md` entry (patch, never a full rewrite)
+3. **checkpoint commit** (`git commit -am '<ID>: checkpoint'` — this repo already uses those)
+4. `NEXT_PROMPT.md` rewrite, then `wc -c NEXT_PROMPT.md`
+5. submit/PR, then stop
+
+Never leave the commit until after the handoff docs. The prompt rewrite is the single largest generation
+of a turn and its tool-call arguments re-enter the prompt, so an overflow there strands everything on a
+dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the whole milestone uncommitted.
+
+- The `NEXT_PROMPT.md` 15,500-byte cap is a hard budget, not advice (the gate fails at 16,000 chars,
+  `scripts/evidence.py`): over it, move footing into `FOOTING.md` at the repo root (or a `references/`
+  file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
+  context before any work starts, which is how sessions ratchet toward the wall.
+- For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
+  forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
+  moment the window is tightest.
+- Fire `delegate_task` before the milestone, not mid-way: a child's completion report is injected into the
+  live turn at an arbitrary point and can exceed 10 KB.
+
+If a turn does die, the signature is the 400 `prompt (...) leaves no room to answer`, compression
+reporting `summary_truncated_failure` (aux summary `finish_reason=length`, retries paused ~15 min), then
+`Cannot compress further` and `end_reason: session_reset` with the transcript not persisted. Recover from
+disk only — `git log --oneline main..HEAD` (empty means nothing was committed), `git status --short` —
+and checkpoint that tree BEFORE `milestone.py start <next>`, or the next milestone's commit sweeps it in.
+Aux compression runs on the main reasoning model (`auxiliary.compression.provider: auto`); its thinking
+consumes the summary's output budget, which is why the summary truncates instead of compressing.
+
 **Append to evidence/notes docs with the `patch` tool, not a shell heredoc.** The command blocklist scans
 HEREDOC BODY TEXT as well as the command (a sentence containing `init 0` trips the `init 0|6` shutdown rule
 and the whole append is refused), and backticks inside a `python3 -c "…"` payload are command-substituted by
 the shell, silently deleting those fragments — grep the written region after any shell-embedded write. An
 `execute_code` cell is hard-killed on its own timeout and does NOT stop a turn driver it spawned: `ps -p
-<pid>` for the orphan and stop it with `scripts/smac_play.py --mode stop`.
-
-`<pid>` for the orphan and kill that exact pid — this checkout's `smac_play.py` has **no `--mode stop`**
+<pid>` for the orphan and kill that exact pid — this checkout's `smac_play.py` has **no `--mode stop`**
 flag (an earlier note here claimed otherwise), and never `pkill -f`/`pgrep|kill` by name: your own argv
 matches.
 

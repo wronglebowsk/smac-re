@@ -1,0 +1,239 @@
+[New LWP 2124645]
+[New LWP 2124644]
+[New LWP 2124643]
+[New LWP 2124642]
+[New LWP 2124641]
+[New LWP 2124640]
+[New LWP 2124636]
+[New LWP 2124635]
+[New LWP 2124634]
+[New LWP 2124633]
+[New LWP 2124632]
+[New LWP 2124631]
+[New LWP 2124630]
+[New LWP 2124629]
+[New LWP 2124628]
+[New LWP 2124627]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee38632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4eaa2e
+C74ADD n=1 idx=3 c4pre=12 add=0 c74=0 curidx=3 ret=0x82f0
+C74ADD n=2 idx=3 c4pre=12 add=0 c74=0 curidx=3 ret=0x1
+C74ADD n=3 idx=6 c4pre=6 add=0 c74=0 curidx=6 ret=0x82f0
+C74ADD n=4 idx=6 c4pre=6 add=0 c74=0 curidx=6 ret=0x1
+C74ADD n=5 idx=30 c4pre=6 add=0 c74=0 curidx=30 ret=0x82f0
+C74ADD n=6 idx=30 c4pre=6 add=0 c74=0 curidx=30 ret=0x1e
+C74ADD n=7 idx=30 c4pre=6 add=0 c74=0 curidx=30 ret=0x1
+C74ADD n=8 idx=34 c4pre=9 add=0 c74=0 curidx=34 ret=0x82f0
+C74ADD n=9 idx=34 c4pre=9 add=0 c74=0 curidx=34 ret=0x1
+C74ADD n=10 idx=54 c4pre=4 add=0 c74=0 curidx=54 ret=0x82f0
+C74ADD n=11 idx=54 c4pre=4 add=0 c74=0 curidx=54 ret=0x1
+C74ADD n=12 idx=60 c4pre=8 add=0 c74=0 curidx=60 ret=0x82f0
+C74ADD n=13 idx=60 c4pre=8 add=0 c74=0 curidx=60 ret=0x1
+C74ADD n=14 idx=17 c4pre=9 add=0 c74=0 curidx=17 ret=0x11
+C74ADD n=15 idx=39 c4pre=3 add=0 c74=0 curidx=39 ret=0xa3ac
+C74ADD n=16 idx=39 c4pre=3 add=0 c74=0 curidx=39 ret=0x27
+C74ADD n=17 idx=39 c4pre=3 add=0 c74=0 curidx=39 ret=0x27
+C74ADD n=18 idx=39 c4pre=3 add=0 c74=0 curidx=39 ret=0x1
+C74ADD n=19 idx=39 c4pre=3 add=0 c74=0 curidx=39 ret=0x27
+C74ADD n=20 idx=9 c4pre=7 add=0 c74=0 curidx=9 ret=0xc468
+C74ADD n=21 idx=9 c4pre=7 add=0 c74=0 curidx=9 ret=0x1
+C74ADD n=22 idx=9 c4pre=8 add=0 c74=0 curidx=9 ret=0xffffffff
+C74ADD n=23 idx=13 c4pre=12 add=0 c74=0 curidx=13 ret=0xc468
+C74ADD n=24 idx=13 c4pre=12 add=0 c74=0 curidx=13 ret=0x1
+C74ADD n=25 idx=19 c4pre=9 add=0 c74=0 curidx=19 ret=0xc468
+C74ADD n=26 idx=19 c4pre=9 add=0 c74=0 curidx=19 ret=0x13
+C74ADD n=27 idx=19 c4pre=9 add=0 c74=0 curidx=19 ret=0x1
+C74ADD n=28 idx=25 c4pre=7 add=0 c74=0 curidx=25 ret=0xc468
+C74ADD n=29 idx=25 c4pre=7 add=0 c74=0 curidx=25 ret=0x1
+C74ADD n=30 idx=36 c4pre=6 add=0 c74=0 curidx=36 ret=0xc468
+C74ADD n=31 idx=36 c4pre=6 add=0 c74=0 curidx=36 ret=0x24
+C74ADD n=32 idx=36 c4pre=6 add=0 c74=0 curidx=36 ret=0x1
+C74ADD n=33 idx=38 c4pre=3 add=0 c74=0 curidx=38 ret=0xc468
+C74ADD n=34 idx=38 c4pre=3 add=0 c74=0 curidx=38 ret=0x1
+C74ADD n=35 idx=36 c4pre=6 add=0 c74=0 curidx=36 ret=0x24
+C74ADD n=36 idx=36 c4pre=6 add=0 c74=0 curidx=36 ret=0x24
+C74ADD n=37 idx=5 c4pre=16 add=0 c74=0 curidx=5 ret=0xe524
+C74ADD n=38 idx=5 c4pre=16 add=0 c74=0 curidx=5 ret=0x1
+C74ADD n=39 idx=7 c4pre=10 add=0 c74=0 curidx=7 ret=0xe524
+C74ADD n=40 idx=7 c4pre=10 add=0 c74=0 curidx=7 ret=0x1
+C74ADD n=41 idx=14 c4pre=5 add=0 c74=0 curidx=14 ret=0xe524
+C74ADD n=42 idx=14 c4pre=5 add=0 c74=0 curidx=14 ret=0x1
+C74ADD n=43 idx=15 c4pre=12 add=0 c74=0 curidx=15 ret=0xe524
+C74ADD n=44 idx=15 c4pre=12 add=0 c74=0 curidx=15 ret=0x1
+C74ADD n=45 idx=21 c4pre=7 add=0 c74=0 curidx=21 ret=0xe524
+C74ADD n=46 idx=21 c4pre=7 add=0 c74=0 curidx=21 ret=0x1
+C74ADD n=47 idx=32 c4pre=9 add=0 c74=0 curidx=32 ret=0xe524
+C74ADD n=48 idx=32 c4pre=9 add=0 c74=0 curidx=32 ret=0x1
+C74ADD n=49 idx=41 c4pre=8 add=0 c74=0 curidx=41 ret=0xe524
+C74ADD n=50 idx=41 c4pre=8 add=0 c74=0 curidx=41 ret=0x1
+C74ADD n=51 idx=43 c4pre=9 add=0 c74=0 curidx=43 ret=0xe524
+C74ADD n=52 idx=43 c4pre=9 add=0 c74=0 curidx=43 ret=0x1
+C74ADD n=53 idx=66 c4pre=4 add=0 c74=0 curidx=66 ret=0xe524
+C74ADD n=54 idx=66 c4pre=4 add=0 c74=0 curidx=66 ret=0x1
+C74ADD n=55 idx=5 c4pre=16 add=0 c74=0 curidx=5 ret=0x5
+C74ADD n=56 idx=1 c4pre=7 add=0 c74=0 curidx=1 ret=0x20bc
+C74ADD n=57 idx=1 c4pre=7 add=0 c74=0 curidx=1 ret=0x1
+C74ADD n=58 idx=1 c4pre=7 add=0 c74=0 curidx=1 ret=0x1
+C74ADD n=59 idx=8 c4pre=7 add=0 c74=0 curidx=8 ret=0x20bc
+C74ADD n=60 idx=8 c4pre=7 add=0 c74=0 curidx=8 ret=0x1
+C74ADD n=61 idx=46 c4pre=17 add=0 c74=0 curidx=46 ret=0x20bc
+C74ADD n=62 idx=46 c4pre=17 add=0 c74=0 curidx=46 ret=0x1
+C74ADD n=63 idx=46 c4pre=17 add=0 c74=0 curidx=46 ret=0xffffffff
+C74ADD n=64 idx=51 c4pre=7 add=0 c74=0 curidx=51 ret=0x20bc
+C74ADD n=65 idx=51 c4pre=7 add=0 c74=0 curidx=51 ret=0x1
+C74ADD n=66 idx=62 c4pre=6 add=0 c74=0 curidx=62 ret=0x20bc
+C74ADD n=67 idx=62 c4pre=6 add=0 c74=0 curidx=62 ret=0x1
+C74ADD n=68 idx=1 c4pre=7 add=0 c74=0 curidx=1 ret=0x1
+C74ADD n=69 idx=1 c4pre=7 add=0 c74=0 curidx=1 ret=0x1
+C74ADD n=70 idx=0 c4pre=5 add=0 c74=0 curidx=0 ret=0x4178
+C74ADD n=71 idx=0 c4pre=5 add=0 c74=0 curidx=0 ret=0x1
+C74ADD n=72 idx=2 c4pre=6 add=0 c74=0 curidx=2 ret=0x4178
+C74ADD n=73 idx=2 c4pre=6 add=0 c74=0 curidx=2 ret=0x2
+C74ADD n=74 idx=2 c4pre=6 add=0 c74=0 curidx=2 ret=0x1
+C74ADD n=75 idx=2 c4pre=10 add=0 c74=0 curidx=2 ret=0xffffffff
+C74ADD n=76 idx=4 c4pre=5 add=0 c74=0 curidx=4 ret=0x4178
+C74ADD n=77 idx=4 c4pre=5 add=0 c74=0 curidx=4 ret=0x1
+C74ADD n=78 idx=10 c4pre=3 add=0 c74=0 curidx=10 ret=0x4178
+C74ADD n=79 idx=10 c4pre=3 add=0 c74=0 curidx=10 ret=0x1
+C74ADD n=80 idx=11 c4pre=13 add=0 c74=0 curidx=11 ret=0x4178
+C74ADD n=81 idx=11 c4pre=13 add=0 c74=0 curidx=11 ret=0x1
+C74ADD n=82 idx=11 c4pre=14 add=0 c74=0 curidx=11 ret=0xffffffff
+C74ADD n=83 idx=12 c4pre=4 add=0 c74=0 curidx=12 ret=0x4178
+C74ADD n=84 idx=12 c4pre=4 add=0 c74=0 curidx=12 ret=0x1
+C74ADD n=85 idx=16 c4pre=5 add=0 c74=0 curidx=16 ret=0x4178
+C74ADD n=86 idx=16 c4pre=5 add=0 c74=0 curidx=16 ret=0x1
+C74ADD n=87 idx=17 c4pre=9 add=0 c74=0 curidx=17 ret=0x4178
+C74ADD n=88 idx=17 c4pre=9 add=0 c74=0 curidx=17 ret=0x11
+C74ADD n=89 idx=17 c4pre=9 add=0 c74=0 curidx=17 ret=0x1
+C74ADD n=90 idx=17 c4pre=9 add=0 c74=0 curidx=17 ret=0x11
+C74ADD n=91 idx=18 c4pre=3 add=0 c74=0 curidx=18 ret=0x4178
+C74ADD n=92 idx=18 c4pre=3 add=0 c74=0 curidx=18 ret=0x1
+C74ADD n=93 idx=18 c4pre=5 add=0 c74=0 curidx=18 ret=0xffffffff
+C74ADD n=94 idx=20 c4pre=14 add=0 c74=0 curidx=20 ret=0x4178
+C74ADD n=95 idx=20 c4pre=14 add=0 c74=0 curidx=20 ret=0x1
+C74ADD n=96 idx=22 c4pre=10 add=0 c74=0 curidx=22 ret=0x4178
+C74ADD n=97 idx=22 c4pre=10 add=0 c74=0 curidx=22 ret=0x1
+C74ADD n=98 idx=22 c4pre=12 add=0 c74=0 curidx=22 ret=0xffffffff
+C74ADD n=99 idx=23 c4pre=5 add=0 c74=0 curidx=23 ret=0x4178
+C74ADD n=100 idx=23 c4pre=5 add=0 c74=0 curidx=23 ret=0x1
+C74ADD n=101 idx=23 c4pre=7 add=0 c74=0 curidx=23 ret=0xffffffff
+C74ADD n=102 idx=24 c4pre=9 add=0 c74=0 curidx=24 ret=0x4178
+C74ADD n=103 idx=24 c4pre=9 add=0 c74=0 curidx=24 ret=0x1
+C74ADD n=104 idx=24 c4pre=9 add=0 c74=0 curidx=24 ret=0xffffffff
+C74ADD n=105 idx=26 c4pre=10 add=0 c74=0 curidx=26 ret=0x4178
+C74ADD n=106 idx=26 c4pre=10 add=0 c74=0 curidx=26 ret=0x1
+C74ADD n=107 idx=27 c4pre=10 add=0 c74=0 curidx=27 ret=0x4178
+C74ADD n=108 idx=27 c4pre=10 add=0 c74=0 curidx=27 ret=0x1
+C74ADD n=109 idx=27 c4pre=10 add=0 c74=0 curidx=27 ret=0xffffffff
+C74ADD n=110 idx=28 c4pre=2 add=0 c74=0 curidx=28 ret=0x4178
+C74ADD n=111 idx=28 c4pre=2 add=0 c74=0 curidx=28 ret=0x1
+C74ADD n=112 idx=28 c4pre=2 add=0 c74=0 curidx=28 ret=0xffffffff
+C74ADD n=113 idx=29 c4pre=6 add=0 c74=0 curidx=29 ret=0x4178
+C74ADD n=114 idx=29 c4pre=6 add=0 c74=0 curidx=29 ret=0x1
+C74ADD n=115 idx=29 c4pre=6 add=0 c74=0 curidx=29 ret=0x1d
+C74ADD n=116 idx=29 c4pre=5 add=0 c74=0 curidx=29 ret=0xfffffff0
+C74ADD n=117 idx=31 c4pre=9 add=0 c74=0 curidx=31 ret=0x4178
+C74ADD n=118 idx=31 c4pre=9 add=0 c74=0 curidx=31 ret=0x1
+C74ADD n=119 idx=31 c4pre=9 add=0 c74=0 curidx=31 ret=0xffffffff
+C74ADD n=120 idx=33 c4pre=9 add=0 c74=0 curidx=33 ret=0x4178
+C74ADD n=121 idx=33 c4pre=9 add=0 c74=0 curidx=33 ret=0x1
+C74ADD n=122 idx=33 c4pre=9 add=0 c74=0 curidx=33 ret=0xffffffff
+C74ADD n=123 idx=35 c4pre=10 add=0 c74=0 curidx=35 ret=0x4178
+C74ADD n=124 idx=35 c4pre=10 add=0 c74=0 curidx=35 ret=0x1
+C74ADD n=125 idx=35 c4pre=10 add=0 c74=0 curidx=35 ret=0xffffffff
+C74ADD n=126 idx=37 c4pre=6 add=0 c74=0 curidx=37 ret=0x4178
+C74ADD n=127 idx=37 c4pre=6 add=0 c74=0 curidx=37 ret=0x1
+C74ADD n=128 idx=37 c4pre=6 add=0 c74=0 curidx=37 ret=0xffffffff
+C74ADD n=129 idx=40 c4pre=2 add=0 c74=0 curidx=40 ret=0x4178
+C74ADD n=130 idx=40 c4pre=2 add=0 c74=0 curidx=40 ret=0x1
+C74ADD n=131 idx=40 c4pre=8 add=0 c74=0 curidx=40 ret=0xffffffff
+C74ADD n=132 idx=42 c4pre=9 add=0 c74=0 curidx=42 ret=0x4178
+C74ADD n=133 idx=42 c4pre=9 add=0 c74=0 curidx=42 ret=0x1
+C74ADD n=134 idx=42 c4pre=9 add=0 c74=0 curidx=42 ret=0xffffffff
+C74ADD n=135 idx=44 c4pre=2 add=0 c74=0 curidx=44 ret=0x4178
+C74ADD n=136 idx=44 c4pre=2 add=0 c74=0 curidx=44 ret=0x1
+C74ADD n=137 idx=44 c4pre=3 add=0 c74=0 curidx=44 ret=0xffffffff
+C74ADD n=138 idx=45 c4pre=4 add=0 c74=0 curidx=45 ret=0x4178
+C74ADD n=139 idx=45 c4pre=4 add=0 c74=0 curidx=45 ret=0x1
+C74ADD n=140 idx=47 c4pre=6 add=0 c74=0 curidx=47 ret=0x4178
+C74ADD n=141 idx=47 c4pre=6 add=0 c74=0 curidx=47 ret=0x1
+C74ADD n=142 idx=47 c4pre=7 add=0 c74=0 curidx=47 ret=0xffffffff
+C74ADD n=143 idx=48 c4pre=7 add=0 c74=0 curidx=48 ret=0x4178
+C74ADD n=144 idx=48 c4pre=7 add=0 c74=0 curidx=48 ret=0x1
+C74ADD n=145 idx=48 c4pre=8 add=0 c74=0 curidx=48 ret=0xffffffff
+C74ADD n=146 idx=49 c4pre=3 add=0 c74=0 curidx=49 ret=0x4178
+C74ADD n=147 idx=49 c4pre=3 add=0 c74=0 curidx=49 ret=0x1
+C74ADD n=148 idx=49 c4pre=3 add=0 c74=0 curidx=49 ret=0xffffffff
+C74ADD n=149 idx=50 c4pre=4 add=0 c74=0 curidx=50 ret=0x4178
+C74ADD n=150 idx=50 c4pre=4 add=0 c74=0 curidx=50 ret=0x1
+C74ADD n=151 idx=52 c4pre=8 add=0 c74=0 curidx=52 ret=0x4178
+C74ADD n=152 idx=52 c4pre=8 add=0 c74=0 curidx=52 ret=0x1
+C74ADD n=153 idx=52 c4pre=9 add=0 c74=0 curidx=52 ret=0xffffffff
+C74ADD n=154 idx=53 c4pre=7 add=0 c74=0 curidx=53 ret=0x4178
+C74ADD n=155 idx=53 c4pre=7 add=0 c74=0 curidx=53 ret=0x1
+C74ADD n=156 idx=53 c4pre=7 add=0 c74=0 curidx=53 ret=0x35
+C74ADD n=157 idx=53 c4pre=7 add=0 c74=0 curidx=53 ret=0xfffffff0
+C74ADD n=158 idx=55 c4pre=4 add=0 c74=0 curidx=55 ret=0x4178
+C74ADD n=159 idx=55 c4pre=4 add=0 c74=0 curidx=55 ret=0x1
+C74ADD n=160 idx=55 c4pre=4 add=0 c74=0 curidx=55 ret=0xffffffff
+C74ADD n=161 idx=56 c4pre=1 add=0 c74=0 curidx=56 ret=0x4178
+C74ADD n=162 idx=56 c4pre=1 add=0 c74=0 curidx=56 ret=0x1
+C74ADD n=163 idx=56 c4pre=2 add=0 c74=0 curidx=56 ret=0xffffffff
+C74ADD n=164 idx=57 c4pre=4 add=0 c74=0 curidx=57 ret=0x4178
+C74ADD n=165 idx=57 c4pre=4 add=0 c74=0 curidx=57 ret=0x39
+C74ADD n=166 idx=57 c4pre=4 add=0 c74=0 curidx=57 ret=0x1
+C74ADD n=167 idx=57 c4pre=5 add=0 c74=0 curidx=57 ret=0xffffffff
+C74ADD n=168 idx=58 c4pre=4 add=0 c74=0 curidx=58 ret=0x4178
+C74ADD n=169 idx=58 c4pre=4 add=0 c74=0 curidx=58 ret=0x1
+C74ADD n=170 idx=58 c4pre=5 add=0 c74=0 curidx=58 ret=0xffffffff
+C74ADD n=171 idx=59 c4pre=2 add=0 c74=0 curidx=59 ret=0x4178
+C74ADD n=172 idx=59 c4pre=2 add=0 c74=0 curidx=59 ret=0x1
+C74ADD n=173 idx=59 c4pre=2 add=0 c74=0 curidx=59 ret=0x3b
+C74ADD n=174 idx=59 c4pre=3 add=0 c74=0 curidx=59 ret=0xffffffff
+C74ADD n=175 idx=61 c4pre=7 add=0 c74=0 curidx=61 ret=0x4178
+C74ADD n=176 idx=61 c4pre=7 add=0 c74=0 curidx=61 ret=0x1
+C74ADD n=177 idx=61 c4pre=8 add=0 c74=0 curidx=61 ret=0xffffffff
+C74ADD n=178 idx=63 c4pre=2 add=0 c74=0 curidx=63 ret=0x4178
+C74ADD n=179 idx=63 c4pre=2 add=0 c74=0 curidx=63 ret=0x1
+C74ADD n=180 idx=63 c4pre=3 add=0 c74=0 curidx=63 ret=0xffffffff
+C74ADD n=181 idx=64 c4pre=7 add=0 c74=0 curidx=64 ret=0x4178
+C74ADD n=182 idx=64 c4pre=7 add=0 c74=0 curidx=64 ret=0x1
+C74ADD n=183 idx=64 c4pre=2 add=0 c74=0 curidx=64 ret=0xffffffff
+C74ADD n=184 idx=65 c4pre=5 add=0 c74=0 curidx=65 ret=0x4178
+C74ADD n=185 idx=65 c4pre=5 add=0 c74=0 curidx=65 ret=0x1
+C74ADD n=186 idx=65 c4pre=5 add=0 c74=0 curidx=65 ret=0xffffffff
+C74ADD n=187 idx=67 c4pre=4 add=0 c74=0 curidx=67 ret=0x4178
+C74ADD n=188 idx=67 c4pre=4 add=0 c74=0 curidx=67 ret=0x1
+C74ADD n=189 idx=67 c4pre=4 add=0 c74=0 curidx=67 ret=0xffffffff
+C74ADD n=190 idx=68 c4pre=2 add=0 c74=0 curidx=68 ret=0x4178
+C74ADD n=191 idx=68 c4pre=2 add=0 c74=0 curidx=68 ret=0x1
+C74ADD n=192 idx=68 c4pre=3 add=0 c74=0 curidx=68 ret=0xffffffff
+C74ADD n=193 idx=70 c4pre=5 add=0 c74=0 curidx=70 ret=0x4178
+C74ADD n=194 idx=70 c4pre=5 add=0 c74=0 curidx=70 ret=0x1
+C74ADD n=195 idx=70 c4pre=5 add=0 c74=0 curidx=70 ret=0xffffffff
+C74ADD n=196 idx=71 c4pre=5 add=0 c74=0 curidx=71 ret=0x4178
+C74ADD n=197 idx=71 c4pre=5 add=0 c74=0 curidx=71 ret=0x1
+C74ADD n=198 idx=71 c4pre=5 add=0 c74=0 curidx=71 ret=0xffffffff
+C74ADD n=199 idx=72 c4pre=2 add=0 c74=0 curidx=72 ret=0x4178
+C74ADD n=200 idx=72 c4pre=2 add=0 c74=0 curidx=72 ret=0x1
+C74ADD n=201 idx=72 c4pre=2 add=0 c74=0 curidx=72 ret=0xffffffff
+C74ADD n=202 idx=73 c4pre=2 add=0 c74=0 curidx=73 ret=0x4178
+C74ADD n=203 idx=73 c4pre=2 add=0 c74=0 curidx=73 ret=0x1
+C74ADD n=204 idx=74 c4pre=1 add=0 c74=0 curidx=74 ret=0x4178
+C74ADD n=205 idx=74 c4pre=1 add=0 c74=0 curidx=74 ret=0x4a
+C74ADD n=206 idx=74 c4pre=1 add=0 c74=0 curidx=74 ret=0x1
+C74ADD n=207 idx=74 c4pre=1 add=0 c74=0 curidx=74 ret=0xffffffff
+C74ADD n=208 idx=17 c4pre=9 add=0 c74=0 curidx=17 ret=0x11
+C74ADD n=209 idx=74 c4pre=1 add=0 c74=0 curidx=74 ret=0x4a
+C74ADD n=210 idx=2 c4pre=6 add=0 c74=0 curidx=2 ret=0x2
+C74ADD n=211 idx=57 c4pre=4 add=0 c74=0 curidx=57 ret=0x39
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee38632c in __kernel_vsyscall ()
+[Inferior 1 (process 2124624) detached]
