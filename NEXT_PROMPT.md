@@ -1,174 +1,171 @@
-# NEXT_PROMPT — SMAC RE, session 67
+# NEXT_PROMPT — SMAC RE, session 68
 
 Read this file IN FULL first. It is the complete footing: proven facts (do not re-derive), the operational
 kit, and the queued options. Do ONE milestone, checkpoint to `SESSION_NOTES.md` (+ rewrite this file), STOP.
 
-Ledger: M48d, M50a-b, M51a, M52a-b, M53a-M53n (**M53n done, session 66**); open: **M53o (THE PICK)**,
+Ledger: M48d, M50a-b, M51a, M52a-b, M53a-M53o (**M53o done, session 67**); open: **M53p (THE PICK)**,
 then the "Later" list.
 
 ## First actions
 1. `grep -n '^## \|^- \*\*' ~/.hermes/skills/smac-cvr-format/SKILL.md` then `sed -n 'A,Bp'` on the 1-2
    bullets/sections you need (pitfalls + the code area). **Do NOT `skill_view` the whole file** (55 KB,
    ~90 % irrelevant per milestone).
-2. `tail -95 ~/reverse/smac/SESSION_NOTES.md` — Session 66 (M53n) is the latest milestone.
+2. `tail -95 ~/reverse/smac/SESSION_NOTES.md` — Session 67 (M53o) is the latest milestone.
 3. `git status`; then `python3 scripts/milestone.py start <ID>` (never commit to main).
-4. Live state: game up (`pgrep -x terran.exe` → 2124624), year 2381, cur_player 3, nb 76, era 2, mask
+4. Live state: game up (`pgrep -x terran.exe` -> 2124624), year 2381, cur_player 3, nb 76, era 2, mask
    0xff08, TracerPid 0, pid stable across sessions — **re-verify `scripts/smac_state.py --json` before
    any our-turn assumption.** Our base = idx 70 'Climactic Research' row **0x962d30** (= 0x95da10 +
-   70·0x130) — the ONLY base with owner byte@4 == 3. The Colony = idx 23, owner 2 (names NOT unique
-   across factions — re-locate by owner byte + name). Unit slots SHUFFLE (array compaction, sessions
-   65/66): re-locate units by faction byte@14, never stale indices. Post-66 census: NO crawler-shaped
-   unit remains.
+   70*0x130) — the ONLY base with owner byte@4 == 3. The Colony = idx 23, owner 2 (names NOT unique
+   across factions — relocate by owner byte + name). Unit slots SHUFFLE (array compaction): relocate
+   units by faction byte@14, never stale indices. Post-66 census: NO crawler-shaped unit remains, so
+   `c6c/c70` read 0 and bc/c0 are pure rebuilds; base70's live bc 12 = rebuild 11 + 1 stale crawler add.
 
-## Footing — the turn economy pipeline (M48d → M53n, VERIFIED unless marked)
+## Footing — the turn-economy pipeline (M48d -> M53o, VERIFIED unless marked)
 
-### M53n (session 66): the round call schedule — `evidence/m53n_findings.md` (all cites there)
-- **`FUN_004f5a70(base_idx)` = once per base per round, ONE call site in `.text`** (`0x5206d3`,
-  `FUN_00520540` turn machinery); 76/76 live VISIT hits = nb; visit order grouped by owner byte@4 into
-  faction groups, ascending base index within a group (fac 4,5,6,7,1,2,3 this round), **our faction (3,
-  idx 70) LAST, immediately before year++** (`evidence/m53n_schedule.tsv`, log:935).
-- **The 5-call economy block** `[4e8d60, 4e78e0, 4e92c0, 4e93f0, 4eaa10]` is replicated verbatim at 12
-  sites in 7 functions (3x 4f5a70 @4f5ac3/4f5b37/4f5c50, 2x 4ee410 @4ee6cf/4ee889, 2x 4ef6d0
-  @4efeb0/4f2207, 2x 4f41f0 @4f44ad/4f4563, 1x each 4e47d0 @4e4de2, 4eb6b0 @4eb6cc, 4f34b0 @4f3f85).
-  Live per round: pass1 76 + pass2 76 (both unconditional, every base) + 4f41f0-B 34 + 4f41f0-A 4 +
-  4eb6b0 (UI recompute via 4ef6d0→4e5ae0→4f6030→4eb6b0) 55 + 4ee410-B 1 + pass3 1 = **247 block
-  executions**; SWEEPIN == RATEIN == BCADD == 247 → **the bc-add 0x4e9331-0x4e934a is ungated**;
-  4ef6d0 / 4f34b0 / 4e47d0 fired 0x. 11 distinct per-visit signatures (26 visits = pass1+pass2 only …
-  one visit carried 13 extra 4eb6b0 recomputes).
-- **`DAT_0068cbb4` = freshness marker (VERIFIED):** 4f5a70 stamps it = idx at entry (`fn4f5a70.txt`:21)
-  and again before pass2 (:41); its pass3 AND both 4ef6d0 blocks are guarded `if (DAT_0068cbb4 != idx)`
-  → 4ef6d0's nested recomputes are structurally unreachable inside a visit (0 hits live); pass3 fired
-  exactly 1x (the visit whose nested UI chain moved the marker). 4f41f0/4ee410 stamp + run
-  unconditionally but are gated by their own production/queue conditions (`fn4f41f0`:73-85, `fn4ee410`:82).
-- **bc/c0 are REBUILT inside the block (VERIFIED live + machine):** `FUN_004e78e0` (block step 2) seeds
-  `base+0xbc..0xc8` from `[eax*4+0x94dc34]` (store `0x4e79a5`; esi walks 0xbc..0xc8 per `mov esi,0xbc`
-  /`cmp esi,0xc8`; eax = local(ebp-4) + 2095·ebx → ×4 = +0x20bc·ebx = faction-record stride; live bc→0)
-  then adds per-item contributions in loop `0x4e7be3-0x4e7c28` (edi = 0xbc step 4 to 0xcc; args
-  `(ebx, ?, 0, DAT_0068cbb0, byte[base+4])` → `FUN_004e75f0`; eax → `base[edi]` (store 0x4e7c15) +
-  running total `[ebp-0x48]`; outer repeat counter `DAT_008f0c68` set 0x4e7904, dec 0x4e85d8; live bc
-  0→11 in 8 stores) — **only then** does 4e92c0 add `DAT_008f0c6c` once (live 11→12 at 0x4e934a) and
-  4e93f0 add `DAT_008f0c70` to c0. ⇒ a crawler adds +1 to the FINAL rebuilt value per VISIT, not per
-  block execution (= M53m's "+1 bc per 10 sweep-fires"); "stable 75/75" = idempotent rebuild.
-  Post-66 base70: bc 12 c0 7 c4 4 c8 0 d0 1 cc −2 minerals 16.
+### M53o (session 67): the production vector IS the terrain-yield sum — `evidence/m53o_recon_findings.md`
+(all cites there; model `scripts/m53o_recon.py`; chain/income-extra note
+`evidence/m53o_chain_findings.txt` — 4eb6b0 re-runs rewrite d0/cc AFTER the income add 0x4ef7f6)
+- **`base+0xbc` = NUTRIENT, `+0xc0` = MINERAL, `+0xc4` = ENERGY, `+0xc8` = PSI (seed-only).**
+  `FUN_004e75f0(field,fac,bidx,x,y)`: field0->`4e6960`, field1->`4e6d40`, field2->`4e7070`, field3->0
+  and clears `DAT_008f0cc8` => 0xc8 has NO tile term (76/76 live). Naming chain: alpha `#RESOURCES`
+  (programs/alpha.txt:710) Nutrient/Mineral/Energy/Psi == the `#RESOURCEINFO` column order (:132) ==
+  the dispatcher's field order. Per-tile category table = **alpha `#RESOURCEINFO` verbatim, live
+  @0x926bd8** (9x4): Ocean 1,0,0 / Base 2,1,1 / Bonus 2,2,2 / Forest 1,2,1 / Recycling 1,1,1 /
+  ImpLand 1,0,0 / ImpSea 2,1,3 / Monolith 2,2,2 / Borehole 0,6,6.
+- **The vector has exactly 7 add sites**, all `mov [edi+ecx*1-0x4],edx` (edi walks 0xbc step 4) = lines
+  249/433/998/1108/1186/1273/1343 of `evidence/m53o_fn4e78e0_asm.txt` (1602 lines; the older
+  `m53o_findings.md` cites in that region drift ~10 low): scan loop, scan-0 special, swap -loss, swap
+  +gain, undo -gain, undo +loss, non-swap +gain. `grep 'add    DWORD PTR'` = 0 hits => every
+  accumulator is a MOV of a computed sum. Seed store 0x4e79a5 from `0x94dc34+(fac*0x82f+field)*4` =
+  **live 0 for all 8 factions**. Downstream adds to strip: bc += `DAT_008f0c6c` @0x4e9344; c0 +=
+  `DAT_008f0c70` @0x4e9459 (+ x2 / x(esi+2)/2 gates, inactive); **0xc4/0xc8 have NO downstream writers**.
+- **Control flow**: entry `base+0x30 &= 0xffff7fff`, `base+0x80 = 0`, **`base+0x78 &= (~DAT_008f0d30|1)`**
+  (0x4e7968-72, live 0x8f0d30 = 1 — NOT `~(pop|1)`); skip flag `[ebp-0x30]` = 1 iff out-of-mask OR
+  (bit6 **and** bit31 of base+0x38) => only our fac 3 takes flag 0; scan loop s 0..20 (cap `cmp eax,0x15`
+  asm:261) over the spiral XOFF@0x67850c / YOFF@0x678990 (80 offsets; mask bits alias 32..79 -> 0..15),
+  budget = pop+1 spent per scan INCLUDING out-of-bounds; `if (budget == base+0x80 + base+0x7c) goto
+  LAB_004e8a47` skips scan-0 special AND the whole middle pass; middle pass = swap mode iff
+  `budget <= c80+c7c` (one attempt then unconditional break) else add-best-gain, else AI-table nibble
+  write to `base+0x84[c80]`; continue while `(c80+c7c < budget) || ((pop+1)*2 < base+0xbc)`; exit
+  `base+0x78 = processed` (0x4e8b19), `base+0x7c = DAT_008f0c68` (0x4e8b28), `base+0x30 &= ~0xfe00`,
+  history shift 0xac<-0xbc.
+- **Model state**: exact per field over all 76 live bases bc 56/76, c0 48/76, c4 46/76, c8 76/76;
+  **36/76 full matches, factions {2,4,5,6,7}**; pinned idx 0 (fac2) / 4 (fac5) / 10 (fac6) exact, idx 70
+  bc/c0/c8 exact with c4 3 vs 4. Residual classes: (a) **c4-only negative, 12 rows (-1..-5, facs 1,3,4,7,
+  never 2/5/6)** = a +1 branch inside `4e7070` [INFERRED]; (b) idx 3/23 = stale ENTRY state (the model is
+  pure in entry state; idx 23 needs visit-time pop 13, live 12); (c) 28 c0 mismatches concentrated in
+  fac 2 (+2..+5 model-high), unattributed.
 
-### M53m (session 65): crawler sweep — pointer `evidence/m53m_findings.md`
-- c6c/c70/c34 sole feeders = Supply Crawler (plan(type+42)==10, ONLY plan-10 type = 5) ∧ order(unit+17)
-  ==3 ∧ unit+14==base owner; accumulate 0x4e8f35 (c6c), 0x4e8e82 (branch B +1), upkeep 0x4e9009; every
-  sweep zeroes c6c (0x4e8d74) / c34 (0x4e8d80). **Slots: c6c[0]→bc, c70→c0, c34[0]→ec, c38→f0; c6c
-  slot = unit+38** (slots 2/3 0x8f0c74/78 consumers OPEN). Unit layout: x@0 y@2 type@10 hp@12 fac@14
-  order@17 dest@20/28 bidx@46 slot@38.
-
-### M53l (session 64): production inputs — `evidence/m53l_findings.md`
-- **+0xcc (rate) sole writer 0x4e937b in `FUN_004e92c0`:** `bc += DAT_008f0c6c` (0x4e9344); `ec =
-  pop(base+6) × DAT_0092a27c(=2, store 0x5784f2) + DAT_008f0c34`; `cc = bc − ec`; HQ bump 0x8f0c48 :=
-  faction+0x2880, +2 if HQ bit (0x4e92f5-4e932a); progress clamp (cc<0 ∧ prog==0 → −1; cc≥0 ∧ prog<0 →
-  0); faction total `&DAT_0094dc2c[f·0x20bc] += max(cc,0)` cap 99 iff DAT_008f0d64 == 1. Live Colony
-  28 − 22 = 6 ✓ (22 = pop 11 × 2).
-- **+0xc0 exactly 3 stores, all `FUN_004e93f0`:** 0x4e943f `×= 2` gated (0x985ba8 ≥ 0 ∧ same faction ∧
-  head ∈ [−37,−34]); 0x4e9459 `+= DAT_008f0c70`; 0x4e9525 `×= (esi+2)/2` (esi = 421fe0(19/20/21/22,
-  cur_idx, 0) count + 0x985bac/0x985bb0 same-faction flags, all −1 live → mult 1.0).
-- **Mask 0x985b10 = TWO BYTES** (b10 = facs 0-7, b11 = 8-15; 4e40a0 tests LOW byte only 0x4e40b5);
-  writers + in-mask/out-mask semantics: `evidence/m53l_findings.md`.
-
-### M53k (63) / M53j (62) — pointers: `evidence/m53k_findings.md`, `evidence/m53j_findings.md`
-(d0 sole writer 4e93f0 0x4e9557; per-turn +0x40 writers all in 4ef6d0 — income add 0x4ef7f6, unit spend
-0x4efedd, project spend 0x4f0ca1-6, drain 0x4f1e3f; clamp B 0x4f0cc3-e9; ARM gate 0x4f0a3d; claims 33 @
-0x985b3c idx = project−0x27; completion 0x4f0d83; THE POP = FUN_004ef5d0; +0x3c display-only 0x4ee8c7).
+### M53n (66) / M53m (65) / M53l (64) / M53k-j (63/62) — pointers
+- **M53n `evidence/m53n_findings.md`**: `FUN_004f5a70(base_idx)` once per base per round (76/76 live),
+  ONE `.text` call site (`0x5206d3` in `FUN_00520540`); visits grouped by owner byte@4 into faction-turn
+  order, ours (fac 3, idx 70) LAST before year++; 247 block executions/round = pass1 76 + pass2 76 +
+  4f41f0-B 34 + -A 4 + 4eb6b0 55 + 4ee410-B 1 + pass3 1; the bc-add 0x4e9331-0x4e934a is UNGATED;
+  `DAT_0068cbb4` freshness marker guards 4f5a70's pass3 and 4ef6d0's two block sites (0 hits).
+  **Session-67 corrections: `4ef6d0` itself RUNS once per visit (zero-arg call `0x4f5adc`) — only its
+  guarded block sites are dead; and `4e3470`'s 19 watch hits = base SWITCHES, not calls.**
 
 ### Standing (do not re-derive)
 - **Base record (REAL byte offsets, array 0x95da10 stride 0x130):** x u16@0, y u16@2, **owner byte@4 =
-  faction**, byte@5 usually == byte@4 (idx 0 differs 2/6, OPEN), pop byte@6, +0x30 flags (bits 23/31
-  completion path, bit 1 gates income add), +0x3c progress, +0x40 minerals, +0x44 active mirror, +0x4c
-  pending (cap 9), queue @0x50..0x74, +0x8c..0x90 40-bit facility bitmap (`DAT_0095da9c`), +0x94 d0
-  mirror, +0x98 minerals mirror (equal 75/75), **+0xbc/+0xc0/+0xc4/+0xc8 = the production vector that
-  4e78e0 REBUILDS on every block execution (c4/c8 contents OPEN)**, +0xcc rate, +0xd0 net income,
-  +0xe0 (zeroed per turn), +0xec upkeep (pop×2 + c34), +0xf0 upkeep sum, +0xfc; f38 = 0x00dfbe41.
+  faction**, byte@5 usually == @4 (idx 0 differs, OPEN), pop byte@6, +0x30 flags (bits 23/31 completion
+  path, bit 1 gates the income add, bit 2 tracks a c4 branch OPEN, 0x8000 set by 4e78e0, `&= ~0xfe00` at
+  its exit), +0x34 (0x2000/0x4000 tested by 4e7070), +0x38 = 0x00dfbe41 on every base sampled (bit6 +
+  bit31 feed the 4e78e0 skip flag), +0x3c progress, +0x40 minerals, +0x44 active mirror, +0x4c pending
+  (cap 9), queue @0x50..0x74 (head clear value 0xffffffda), **+0x78 scan/processed mask**, **+0x7c budget
+  carry**, +0x80 counter (0 at entry), **+0x84 16-nibble AI-table array — WRITTEN by 4e78e0 (0x4e7d5a,
+  0x4e7d73, 0x4e8497, 0x4e84af, 0x4e8af8)**, +0x8c..0x90 40-bit facility bitmap (`DAT_0095da9c`; bit 0x1d
+  gates the seed halve, bits via `FUN_00507410`), +0x94 d0 mirror, +0x98 minerals mirror (equal 75/75),
+  **+0xbc nutrient / +0xc0 mineral / +0xc4 energy / +0xc8 psi = the vector 4e78e0 REBUILDS every block
+  execution (c8 seed-only)**, +0xcc rate, +0xd0 net income, +0xe0 (zeroed per turn), +0xec upkeep
+  (pop*2 + c34), +0xf0 upkeep sum, +0xac history, +0x48 display accumulator. f38 = 0x00dfbe41.
   4ef6d0 loop ptr 0x95da14 = base+4.
-- **4f5a70 body order (pseudocode `evidence/m53n_fn4f5a70.txt`):** 0x68cbb0 = 0x68cbb4 = idx,
-  0x8f0c64 = 0, d60 = base, base+0x30 &= 0xdffffdff → block → 4ef6d0 → 4f26e0 → +0x4c/+0x22 copies →
-  4ee410 (return 1 if nonzero) → if 0x985afc>1 4f2ea0 → **0x8f0c64 = 1** → block → 0x94dc20 += →
-  0x8f0c64 = 2 → if 0x985afc>1 {4f4060, 4f41f0, 4f33f0, (0x985afc>5 ∨ solo ∨ !(0x985ab8&0x20)) 4f34b0}
-  → if 0x68cbb4 != idx {block} → 4f4a50, 4f47f0, 4ebef0(0), founding-anim branch → 0x68cbb4 = −1 →
-  0x8f0c64 = 0 → base+7/+4 counters decrement. (NOTE: 0x8f0c64, not d64-as-d60; it gates the faction
-  total accumulate.)
 - **Globals:** year 0x985b00, cur 0x985dcc, nb 0x985af4, unit count 0x985af0, mask 0x985b10 (0xff08),
-  era 0x985aec (2; sole direct store 0x4ddcf1 chooser path), 0x985b30 (2), era table 0x68cbb8
-  {13,12,11,10,8,7}, solo 0x920434, cap 0x92a370 (10), **cur base ptr 0x8f0d60 (live store sites:
-  4f5a99 pass1, 4f5c41 pass3, 4e3490 UI-path, 4e4dd6, 4efea2/4f21f9)**, **cur base INDEX 0x68cbb0,
-  freshness marker 0x68cbb4 (−1 while idle)**, 0x985afc (>1 gates UI passes, >5 gates 4f34b0),
-  economy block 0x8f0c2c/34/38/48/4c/64/**68**/6c/70/74/
-  78/d38 (6c/70/34/38 = sweep slots per M53m, 68 = 4e78e0 item counter), base array 0x95da10/0x130,
-  unit array 0x933278/52, type records 0x98ad88/52 (+41 cost factor, +42 plan), faction records
-  0x92ae14+f·0x20bc (+0x2880 = `&DAT_0094d694`, +0x2e18 = 0x94dc2c production total; terrain line
-  `DAT_0092ae14 + tile·0x2c` = VALUE not address — verify),  scratch 0x94d684/dc20/dc24/**dc34** (4e78e0 seed table), map width 0x692184 = 40, 0x92a378/37c = 80,
-  claims 0x985b3c[33], scenario flags 0x985ac4 (bit31 blocks projects > 38), special base idxs
-  0x985ba8/bac/bb0 (−1).
+  era 0x985aec (2), era table 0x68cbb8 {13,12,11,10,8,7} (direct dwords), solo 0x920434, cap 0x92a370
+  (10), cur base ptr 0x8f0d60, cur base INDEX 0x68cbb0, freshness marker 0x68cbb4 (-1 while idle),
+  **0x8f0d30 = 1 (entry-mask source for base+0x78; writers 0x4e6929/0x4e694f)**, economy block
+  0x8f0c2c/34/38/48/4c/64/**68**/6c/70/74/78/d38/cc8 (68 = rebuild budget, 6c/70/34/38 = sweep slots,
+  cc8 = psi overflow), base array 0x95da10/0x130, unit array 0x933278/52, type records 0x98ad88/52
+  (+41 cost factor, +42 plan), faction records 0x92ae14+f*0x20bc (+0x2880 = `&DAT_0094d694`, +0x2e18 =
+  0x94dc2c production total, **+0x2e20 = the 4 seed dwords**, 0x94d698 improved-temper, 0x94d744/748/74c
+  improved addends, 0x94d67c nutrient support), **terrain array base = the VALUE at 0x92ae14 (live
+  0x40a6ba8); record = base + (40*y + (x>>1))*0x2c; category = rec[0]&0xe0 (ocean iff < 0x60); +8 = u9,
+  +0xc = uc**, category yield table 0x926bd8 (= alpha #RESOURCEINFO), spiral XOFF 0x67850c / YOFF
+  0x678990, tech table 0x92fdd4 stride 0xb + availability bitmap 0x985c1c[fac], tail list 0x926cb4
+  (28-byte entries to 0x926d78, count dword @0x926ca8 = -1 = "scan all"), scratch 0x94d684/dc20/dc24/
+  **dc34**, map width 0x692184 = 40, 0x92a378/37c = 80, 0x92a394 = 0 (NO wrap), claims 0x985b3c[33],
+  scenario flags 0x985ac4 (bit31 blocks projects > 38), special base idxs 0x985ba8/bac/bb0 (-1),
+  0x985b48 = 4 and 0x985bc0 = 2 (4e7070 +1 tests), 0x92a2cc = 59 (tech id), 0x92a27c = 2, 0x92a2a4 = 5,
+  0x91c628 = 0.
 ## Static-reading kit
-- **Cached whole-`.text` disassembly: `evidence/m53j_text.txt.gz`** (790702 lines, objdump -d -M intel
-  of `programs/terran.exe`). Locate VA: `zgrep -n '  4ef7f6:' evidence/m53j_text.txt.gz`; windows via
-  `zgrep -A0 -e '  4e7c1' -e '  4e7c2'` — sed range anchors must be REAL instruction boundaries.
-  **VA→fn by bisecting `ghidra_out/index.csv` — COMMA-separated** (col 0 addr `0x004ddaa0`, col 1 name).
-  **VA = file offset + 0x400000.**
+- **Cached whole-`.text` disassembly: `evidence/m53j_text.txt.gz`** (790702 lines, objdump -d -M intel of
+  `programs/terran.exe`). Locate a VA: `zgrep -n '  4ef7f6:' evidence/m53j_text.txt.gz`; sed ranges must
+  anchor on REAL instruction boundaries. **VA->fn by bisecting `ghidra_out/index.csv` — COMMA-separated**
+  (col 0 addr `0x004ddaa0`, col 1 name). **VA = file offset + 0x400000.**
 - **POINTER-TYPE SCALES IN PSEUDOCODE — the trap:** Ghidra typed `DAT_008f0d60` copies `short *` in
   4ef6d0 renderings, so offsets there are HALF the byte offset (`psVar22 + 0x28` == machine +0x50;
-  `* 0x98` == 0x130 stride); `int *` DATs scale ×4; 4ef6d0's loop pointer = base+4. But 4e92c0/4e93f0
-  renderings are UNSCALED. NEVER trust a pseudocode field offset: pin against machine disp or live pread.
-- Pseudocode `scripts/fn.py 0xADDR > evidence/<id>_fn.txt` (cite evidence-file line numbers); corpus
-  `grep -rn <pat> ghidra_out/shard_*.c`; enclosing fn via `grep -n '^// ==== ' ghidra_out/shard_N.c`.
-- **Alpha comment headers name the columns** (`alpha.txt` `:348 #CHASSIS`, `:387 #WEAPONS`, `:422
-  #DEFENSES`, `:471 #ABILITIES`, `:560 #UNITS`, `:590 #FACILITIES`); `scripts/parse_alpha.py` →
-  `data/alpha.json` (list index = live project idx − 1; UNITS: type idx = json row − 1).
+  `* 0x98` == 0x130 stride); `int *` DATs scale x4. 4e92c0/4e93f0 renderings are UNSCALED. NEVER trust a
+  pseudocode field offset: pin against machine disp or live pread. Same trap for `DAT_0092ae14`: the
+  RENDERED base is the stored POINTER value, not the DAT address.
+- Pseudocode `scripts/fn.py 0xADDR > evidence/<id>_fn.txt` (cite your own evidence-file line numbers);
+  corpus `grep -rn <pat> ghidra_out/shard_*.c`; enclosing fn via `grep -n '^// ==== ' ghidra_out/shard_N.c`.
+- **Alpha comment headers name the columns** (`alpha.txt` `:96 #TERRAIN`, `:132 #RESOURCEINFO`, `:238
+  #TECHNOLOGY`, `:348 #CHASSIS`, `:387 #WEAPONS`, `:422 #DEFENSES`, `:471 #ABILITIES`, `:560 #UNITS`,
+  `:590 #FACILITIES`, `:687 #PLANS`, `:710 #RESOURCES`); `scripts/parse_alpha.py` -> `data/alpha.json`
+  (list index = live project idx - 1; UNITS: type idx = json row - 1).
 ## Operational kit
-- pid via `pgrep -x terran.exe`; window via `scripts/smac_play.py find_window()` (10485761, 800×600).
+- pid via `pgrep -x terran.exe`; window via `scripts/smac_play.py find_window()` (10485761, 800x600).
   Preflight: no gdb, TracerPid 0, `ptrace_scope` 0.
 - **Turn driver:** `python3 scripts/smac_play.py --turns N [--timeout S]` (background OK). Stop a driver
   ONLY with `scripts/smac_play.py --mode stop` — never signal by name. After a run cur may sit on an AI
   faction — drive until cur_player == 3. **"Do you really want to quit?" pops mid-drive: Escape onto
-  "Oops, no, wait!", NEVER click.** **PROPOSAL vote pane (session 66, stalls the AI phase and makes the
-  driver return STUCK): the pane's bottom bars in true window coords are YEA (310,495) / NAY (398,495)
-  / ABSTAIN (485,495); after voting it collapses to one OK bar (393,495). The `YEA: 2  NAY: 3` line is
-  the vote TALLY, not a key hint — keys 2/3 do nothing; capture with `xwd -root -silent` + ffmpeg
-  2× upscale + tesseract (window-id capture OCRs blank), click with `xdotool windowfocus` first.**
+  "Oops, no, wait!", NEVER click.** **PROPOSAL vote pane (stalls the AI phase, driver returns STUCK):
+  bars in true window coords YEA (310,495) / NAY (398,495) / ABSTAIN (485,495), then one OK bar
+  (393,495); the `YEA: 2  NAY: 3` line is the TALLY, not a key hint; capture with `xwd -root -silent` +
+  ffmpeg 2x upscale + tesseract (window-id capture OCRs blank), click after `xdotool windowfocus`.**
 - **Economy snapshot:** `python3 scripts/m53l_snap.py > evidence/x.tsv` — read-only `/proc/pid/mem` walk
   of all bases (header `# year cur nb era mask pid`; after f98 cols are bc c0 c4 c8 d0 cc f0); diff two
-  snapshots by NAME. **Watchpoints: x86 DR budget = 4 hw slots** (8-byte windows need 8-alignment = 2
-  DRs each); pair with the 10 Hz /proc-mem poller `scripts/m53m_poll.py` for base rows. Bake addresses
-  as LITERALS, print `commands … continue end` per site, `stdbuf -o0`, `gdb -batch -nx -q -p PID -x
-  scripts/x.gdb` backgrounded + drive + snapshot in ONE job (`scripts/m53n_drive.py` = proven template:
-  entry-int3 caller census + mid-body stack-word return-address matching + cap/detach self-stop).
-  **Watchpoints fire on VALUE CHANGE, not stores.** Pokes via /proc/pid/mem while idle (no tracer) +
-  readback; unit slots shuffle — restore at the record's NEW home if the array compacted.
+  snapshots by NAME. **Model:** `python3 scripts/m53o_recon.py [idx ...]` (`--legacy`, `-v`) — read-only,
+  per-term per-field breakdown + MODEL/OBS/DELTA.
+- **Watchpoints: x86 DR budget = 4 hw slots** (8-byte windows need 8-alignment = 2 DRs each); pair with
+  the 10 Hz /proc-mem poller `scripts/m53m_poll.py`. Bake addresses as LITERALS, print `commands …
+  continue end` per site, `stdbuf -o0`, `gdb -batch -nx -q -p PID -x scripts/x.gdb` backgrounded + drive
+  + snapshot in ONE job (`scripts/m53n_drive.py` = proven template: entry-int3 caller census + mid-body
+  stack-word return-address matching + cap/detach self-stop). **Watchpoints fire on VALUE CHANGE, not on
+  stores — a same-value rewrite is INVISIBLE (that is how 4e3470's 19 "hits" undercounted its calls).**
+  Pokes via /proc/pid/mem while idle (no tracer) + readback; unit slots shuffle — restore at the
+  record's NEW home if the array compacted.
 ## Milestone options (pick ONE)
-- **M53o — what the rebuilt production vector IS (THE PICK).** `FUN_004e78e0` seeds `base+0xbc..0xc8`
-  from `[eax*4+0x94dc34]` (eax = local(ebp-4) + 2095·ebx → ×4 = +0x20bc·ebx) then adds
-  `FUN_004e75f0(ebx, ?, 0, 0x68cbb0, byte[base+4])` per item into those 4 fields (loop 0x4e7be3-0x4e7c28,
-  outer counter `DAT_008f0c68` set 0x4e7904 / dec 0x4e85d8). Pin: (a) what `ebx` indexes in the seed
-  loop (faction? facility? — resolve by live pread of 0x94dc34 + 0x20bc·ebx vs base rows), (b) what an
-  "item" is for 4e75f0 (read it: `scripts/fn.py 0x4e75f0`; its 4 pushed args), (c) the item count source
-  0x8f0c68, (d) +0xc4/+0xc8 contents vs the alpha `#FACILITIES`/`#UNITS` columns, (e) why `4eb6b0` fires
-  up to 13x on one visit (the 4ef6d0→4e5ae0→4f6030→4eb6b0 chain) and whether the M53l 3-base
-  income-extra anomaly is that chain re-writing d0 after the income add. **Done when** bc/c0/c4/c8 are
-  each explained as a named sum with machine addresses + a live per-base reconciliation (rebuild value
-  == observed value for ≥3 bases of different factions).
-- **Later:** unit+38 slot semantics + consumers of 0x8f0c74/78; `FUN_004e3470` (19 cur-base-pointer
-  stores) trigger; 0x984d38 table writer/loader + the 0x2100000 string arena; tech table 0x92fdd4 layout;
-  +0x30 bit 1 writer; who sets +0xe0 between recomputes; byte@5 meaning; who first sets c0 at founding
-  (4e47d0 never fired in a normal round); M50c-e, M51b.
-- **Retired premises, do not resurrect:** full chooser-era list lives in SESSION_NOTES sessions 55-66;
+- **M53p — take the rebuild model to 76/76 (THE PICK).** Three residual classes from
+  `evidence/m53o_recon_findings.md` §5: (a) **c4-only negative, 12 rows (-1..-5, facs 1,3,4,7, never
+  2/5/6)** — a +1 branch inside `FUN_004e7070`; read its uc bit tests (0x4e711a-58, incl. `(uc>>24)<9`
+  via `sar edi,0x18` @0x4e70b1), the `DAT_00985b48 == bidx` test (live 4), `1 < facrec[0x94d67c] +
+  (base+0x30&4 ? 1:0)` @0x4e7215, the cap-2 spill to `DAT_008f0cc8`, and the LAB_004e7586 modifiers
+  (+1 if +0x34&0x2000, -1 if &0x4000, -1 if DAT_00985db8, x3 if DAT_00985dc4 & (0x91c628?2:1)); base 70
+  needs exactly +1 on its forced 8-tile set. (b) the **fac-2 c0 class** (28 rows, model high +2..+5) —
+  first check whether the c0 multipliers (0x4e943f x2, 0x4e9525 x(esi+2)/2) are LIVE for some bases.
+  (c) **visit-time ENTRY state** (pop, base+0x30 bit2, base+0x34, facility bitmap, input mask): the model
+  is pure in entry state, so post-visit mutations surface as residuals (idx 3/23). **Done when** 76/76,
+  or every remaining class has a named machine-addressed rule, plus a model re-run on a fresh round
+  snapshot (`scripts/m53l_snap.py` before/after a driven turn).
+- **Later:** unit+38 slot semantics + consumers of 0x8f0c74/78; who writes the seed dwords
+  (faction+0x2e20); `base+0x84` nibble-array semantics and the flag==1 else-branch nibble blocks (0/76
+  rows exercise that path); `DAT_008f0cc8` consumer; who sets +0xe0 between recomputes; byte@5 meaning;
+  who first sets c0 at founding (4e47d0 never fired in a normal round); the mid-visit 3-point d0 trace
+  (pre / at 0x4ef7f6 / post) to upgrade the income-extra verdict; the 417ee0 UI row-loop identity behind
+  the 13x; M50c-e, M51b.
+- **Retired premises, do not resurrect:** full chooser-era list lives in SESSION_NOTES sessions 55-67;
   the live set: **"bc/c0/cc are persistent accumulators whose only writers are 4e92c0/4e93f0"** (4e78e0
-  SEEDS and ADDS the whole +0xbc..0xc8 vector first — rebuild, idempotent when inputs are unchanged);
-  **"the round pipeline walks all bases in index order once per round"** (grouped by owner faction in
-  faction-turn order, ours LAST before year++); **"4ef6d0 re-runs the block twice per base"** (its sites
-  are `0x68cbb4 != idx`-guarded: 0 hits); **"chain adjacency decides whether c6c lands"** (adjacency is
-  guaranteed inside the block; 247/247 adds reached); **"bc/c0 gain per sweep fire"** (see first item);
-  **"the Colony is fac 3"** (owner byte@4 = 2 at idx 23); **"era table = pointer array"** (direct dwords
-  {13,12,11,10,8,7} @ 0x68cbb8); **"4e40a0 tests the whole mask dword"** (LOW byte only); **"UN price 0
-  = literal price"** (race-scan unpaid path INFERRED); **"byte@4 is type/cluster"** (it IS faction);
-  **"snap column labels are trustworthy"**; "5a6e70's return is a cost index" (boolean); "aa0 =
-  completion count" (base index); "claim table is 0x985aa0[72]" (33 @ 0x985b3c, idx−0x27); "the pay pool
-  is base+0xcc + 0x3c" (real: +0xd0 + +0x40); "pseudocode offsets are byte offsets" (short* ×2, int* ×4,
-  loop ptr base+4); "projects accumulate to completion" (gate is STOCK ≥ full price; +0x3c display);
-  "clamp B applies to every payer" (mask-gated); "base70 row @ 0x962d50" (it is 0x962d30); "era DAT_00985aec has zero
-  direct stores" (0x4ddcf1 — an `a3` grep miss); "c34 upkeep reachable from branch B" (0x4e8e89 `jmp
-  0x4e9274`); "order pokes are inert for the economy sweep" (the sweep consumes them as inputs);
-  **"the PROPOSAL pane's `YEA: 2 NAY: 3` is a key hint"** (it is the tally; click the bars).
+  REBUILDS the whole +0xbc..0xc8 vector first — idempotent when inputs are unchanged); **"4ef6d0 never
+  runs"** / **"4ef6d0 re-runs the block twice per base"** (it runs once per visit at 0x4f5adc; only its
+  two `0x68cbb4`-guarded block sites are dead); **"the round pipeline walks all bases in index order"**
+  (grouped by owner faction in faction-turn order, ours LAST); **"bc/c0 gain per sweep fire"**; **"the
+  Colony is fac 3"** (owner 2 at idx 23); **"4e40a0 tests the whole mask
+  dword"** (LOW byte only); **"pseudocode offsets are byte
+  offsets"** (short* x2, int* x4, loop ptr base+4; `DAT_0092ae14` renders the stored pointer); **"claim
+  table is 0x985aa0[72]"** (33 @ 0x985b3c, idx-0x27); **"the PROPOSAL pane's
+  `YEA: 2 NAY: 3` is a key hint"** (it is the tally); **NEW: "4e3470's 19 watch hits = calls"** (they are
+  base SWITCHES); **"0x4f1e3f drains base+0x40"** (it clears the queue head [eax+0x50]); **"base+0x78
+  entry mask = ~(pop|1)"** (it is `~(DAT_008f0d30|1)`, live 1); **"the tail loop 0x4e8b6f-0x4e8d48 feeds
+  the production vector"** (it writes only base+0x48); **"c4/c8 have downstream writers"** (none);
+  **"the m53o_findings asm line cites past 0x4e7c00 are exact"** (drift ~10 low — use 249/433/998/1108/
+  1186/1273/1343).
