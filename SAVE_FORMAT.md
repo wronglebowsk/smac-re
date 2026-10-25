@@ -157,8 +157,12 @@ matches the faction the name belongs to. `DAT_00985af4`, which `smac_state.py` s
 count of 37 is not).
 
 **52-byte records at `0x933278`, 119 of them — UNITS.** No ASCII in any record (so they reference
-types by index, not name). `+0`/`+2` are x/y in the same 0..79 range, `+14` is the owning faction,
-`+10` is a flag word. Four unit records sit at (20, 50) — exactly the coordinates of `University
+types by index, not name). `+0`/`+2` are x/y in the same 0..79 range, `+14` is the owning faction, and **`+10` is the
+unit TYPE (u16)** — this line said "flag word" until M54f (session 83) settled it from the
+binary: the class table is indexed with `*(short *)((int)&DAT_00933282 + rec_off) * 0x34`, i.e.
+a SHORT at `UNIT_ARR + 0x0A + 52*i` (`shard_012.c:2150`, same shape at 2117/2148,
+`shard_001.c:4153`), and a record read on the unit panel says "Scout Patrol" with `+10 = 2`.
+`+4` is the flag dword (bit 0x04000000 cleared = has not moved, etc.). Four unit records sit at (20, 50) — exactly the coordinates of `University
 Base` — which is the cross-check that ties the two tables together: garrison units share their base's
 tile.
 

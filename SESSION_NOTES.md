@@ -521,22 +521,28 @@ browsers), and the round-aware turn budget.
   inside one unattended run. Secondary: 26 `unknown` pane hits in `trace_m54e40` still to pin,
   and the raise-footprint refusal that makes every terraform key a dud on this map.
 
-## Session 82b (2026-10-25) — M54e post-close audit: **THE RUN THAT PASSED ALSO LOST THE POSITION (bases_ours 0, our 8 records stacked at (47,47), flags stuck 0x100002), "OCCUPANCY" WAS THE WRONG CAUSE FOR M54d, AND THE TYPE BYTE IS +4 NOT +10** — `plugins` none; corrected `SESSION_NOTES.md` 82, `ORDERS.md §7`, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
+## Session 82b (2026-10-25) — M54e post-close audit: **THE RUN THAT PASSED ALSO LOST THE POSITION (bases_ours 0, our 8 records stacked at (47,47), flags stuck 0x100002), "OCCUPANCY" WAS THE WRONG CAUSE FOR M54d, AND THE TYPE BYTE IS +4 NOT +10 (that third claim was itself WRONG and is retracted in M54f — see item 1)** — `plugins` none; corrected `SESSION_NOTES.md` 82, `ORDERS.md §7`, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
 
 Audit done after #44 merged, by re-reading the box and re-running the checker on every
 milestone trace. Three claims that were wrong or unsupported, in order of how much they matter:
 
-1. **The type byte is at `+4`, not `+10`.** `FOOTING.md` 108 and `SAVE_FORMAT.md` 159-163 both
-   say the 52-byte record carries the type at `+4` and that `+10` is a FLAG WORD;
-   `m54d_census.py`, `smac_play.unit_rec` and the order loop all read type at `+10`. Measured on
-   the live 119-record array: decoding with `+4` gives 117/119 plausible records (tiles 0-79,
-   owners 0-7) and the eight faction-3 records the SCREEN confirms are Colony Pods read
-   `+4 = 0` (Colony Pod); decoding with `+10` gives 44/119 and impossible types (192, 322).
-   So every "class 9" in the M54c/M54d/M54e census lines rests on the wrong byte, and the pokes
-   that "made a Former" (`+10` 2 -> 1) probably never changed a unit's type. **The movement
-   evidence does not depend on it** (`+17`, `+20..+35`, `+40`, `x,y` are unchanged by this).
-   Settle it first next session: poke `+4` on a record whose unit panel is legible, read the
-   panel back.
+1. **RETRACTED in M54f (session 83): this finding was WRONG — the type IS `+10`.** I compared
+   the two candidate offsets on the DEFEATED state (records in limbo after our faction lost
+   everything) and let a doc line outvote working code: there `+4` scored 117/119 "plausible"
+   only because `+4` is a flags byte that reads 0 on 79 of 119 records, and the Colony-Pod
+   cross-check was worthless for the same reason. Measured properly on a healthy load, three
+   independent reads agree on `+10`: (i) the panel, `SEL_G 0` -> "Scout Patrol (1-1-1)" at
+   (28,42), and record 0 — the record on that tile — has `+10 = 2`; (ii) `data/alpha.json` type
+   2 = Scout Patrol and class row 2 = cls 3 = Scout Patrol; (iii) the binary, which is what
+   settles it: `shard_012.c:2150` `iVar8 = *(short *)((int)&DAT_00933282 + local_10) * 0x34;`
+   then `(&DAT_0098adaf)[iVar8]` — the class table indexed by a SHORT at `UNIT_ARR + 0x0A + 52*i`
+   (same shape at `shard_012.c:2117`, `:2148`, `shard_001.c:4153`, `:4312`, `:9466`).
+   So every "class 9" line in M54c/M54d/M54e stands, and the `+10` type pokes really did change
+   the type. What the detour did teach: **the unit panel is NOT a usable oracle on demand** — a
+   `SEL_G` write does not redraw it (three different selections, byte-identical OCR text), so it
+   is only trustworthy at load or after a real in-game selection. And `+10` values of 128/256/320
+   on other factions' records are EMPTY STALE SLOTS, which is why `smac_state.counts()` now
+   requires `type < 24` before counting a record as a unit.
 2. **"The game will not path into a tile its own owner occupies" is not true.** The run's own
    trace refutes it: at turn 9, records 5 and 8 both walked ONTO (6,12) while records 0 and 2
    were already standing there (both turn-0 walkers read `still_at_start False`, and both

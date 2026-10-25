@@ -105,7 +105,9 @@ Scan/budget/middle-pass rules: skill `references/production-rebuild.md`.
   +0xd0 net income, +0xe0 (per-turn zeroed), +0xe4/+0xe8 (4eaa10: `e4 = FUN_004e9880(c4 - f4)`),
   +0xec/+0xf0 upkeep, +0xf4 = `DAT_008f0c3c` (written by 4eaa10), +0xfc..0x104 bucket fields
   (4eaa10's walking store 0x4eafa1), +0x48 display acc (zeroed at exit).
-- **Unit record (array 0x933278 stride 52, count `0x985af0`):** x u16@0, y u16@2, type byte@4,
+- **Unit record (array 0x933278 stride 52, count `0x985af0`):** x u16@0, y u16@2, flags dword@4,
+  **type u16@10** (M54f: `shard_012.c:2150` indexes the class table with the SHORT at `+0x0A`;
+  the `+4` byte is a flags byte, and the "type byte@4" this line carried was wrong),
   **faction byte@14**, order byte@17, +24/+25 (u16 `w18`, byte `b25`: 0x440 transport-state test +
   the per-faction bit at 0x4e660c — semantics OPEN), +38 sweep slot, +46 u16 base index, **+48 u16
   chain link** (walked by `FUN_005a6330`) and **+50 u16 chain link** (walked by `FUN_005ab130`) —
