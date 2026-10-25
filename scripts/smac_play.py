@@ -165,6 +165,22 @@ def is_communication(words, png=None):
     return any(330 <= b[1] <= 365 for b in pane_bars(png, y0=330))
 
 
+def modal_caption(words):
+    """Is something drawn OVER the HUD? Long words in the caption band (y 90-118).
+
+    A clean HUD has nothing there: its message pane sits at y 240-330 and the map's base
+    labels at y~230 (measured on the frames the classifier tests save; the only tokens 2x OCR
+    puts in 90-118 on a clean HUD are 2-3 character noise like 'it'/'rll'). Two words of 4+
+    characters, or one of 6+, means a modal is wearing the HUD chrome — which is exactly how
+    the OPERATIONS DIRECTOR "Investigate pod beacon?" pane sat in front of the loop for the
+    whole of turn 0 while the driver clicked TURN COMPLETE BEHIND it every 6 s
+    (`evidence/trace_m54h3_*.jsonl`: the frame flickers between `hud` and `unknown` because
+    OCR reads the chrome and misses the dialog test's word count).
+    """
+    band = [t for t, _cx, cy, *_ in words if 90 <= cy <= 118]
+    return any(len(t) >= 6 for t in band) or sum(1 for t in band if len(t) >= 4) >= 2
+
+
 def is_dest_chooser(words):
     """The `g` ("Move to") chooser (M54d).
 
@@ -618,17 +634,178 @@ def answer_communication(png):
     return None
 
 
-def answer_dest_chooser(png, verbose=False):
-    """Answer the `g` chooser: click ITS OK bar (M54d).
+def bar_bands(png, y0=118):
+    """Bar bands in the upper panel area as dicts (y centre, merged span, groups, buttons).
 
-    Measured on `evidence/m54d/m54d_move_afterg.png`: the bar row is at y~162 and the "OK"
-    label splits its fill into two column groups centred (474,162) and (521,162), so the
-    target is the MERGED row centre, exactly as for the communication's OK bar
-    (answer_communication) — clicking one segment lands on the label, not the bar.
-    `Return` is this pane's default button and also works (measured: it accepted the
-    highlighted base and wrote leg0 into the record), but a click is explicit and cannot
-    hit CANCEL by accident.
+    `bar_colour_mask` returns rows OFFSET by y0 and `pane_bars` never reports a bar's
+    WIDTH, so the chooser's own geometry has to be re-derived here. Measured on
+    `evidence/m54h/chooser_g60b.png` (the two-base chooser): the destination rows are
+    FULL-WIDTH periwinkle bars (fill 159..638) on the bands y 125-139 and 144-158 (a 19 px
+    pitch), and the buttons are five 96-px bars on the band y 172-190 at centres
+    209/305/401/497/593 (Sort: Name / Sort: Size / Sort: Dist / OK / CANCEL). A row band's
+    label-split groups merge into a ~480 px span; the button band's do not (91 px at duty
+    0.3, five groups at duty 0.2), which is how the two are told apart.
     """
+    rows = bar_colour_mask(png, y0)
+    hot = [y for y, r in enumerate(rows) if sum(r) > 100]
+    bands = []
+    for y in hot:
+        if bands and y - bands[-1][1] <= 2:
+            bands[-1][1] = y
+        else:
+            bands.append([y, y])
+    out = []
+    for b0, b1 in bands:
+        h = b1 - b0 + 1
+        if h < 8:
+            continue
+        cold = [sum(col) for col in zip(*rows[b0:b1 + 1])]
+        need = max(4, int(h * 0.3))
+        groups, x = [], 0
+        while x < W:
+            if cold[x] < need:
+                x += 1
+                continue
+            x0 = x
+            while x < W and cold[x] >= need:
+                x += 1
+            groups.append((x0, x - 1))
+        if not groups:
+            continue
+        need2 = max(3, int(h * 0.2))          # low duty: separates five buttons from a row
+        buttons, x = [], 0
+        while x < W:
+            if cold[x] < need2:
+                x += 1
+                continue
+            x0 = x
+            while x < W and cold[x] >= need2:
+                x += 1
+            if x - x0 >= 12:
+                buttons.append(((x0 + x) // 2, x - x0))
+        # A BUTTON band is five bars of one width on one pitch (measured: 92 px wide,
+        # 96 px apart); a destination row's fill breaks into label-shaped groups of
+        # wildly different widths (25/43/331/17/49 on the frame above). The merged span
+        # cannot tell them apart — five buttons span 163..638, exactly like a row.
+        ws = [w for _c, w in buttons]
+        cs = [c for c, _w in buttons]
+        button_band = False
+        if len(ws) >= 4:
+            wmed = sorted(ws)[len(ws) // 2]
+            pitches = [cs[i + 1] - cs[i] for i in range(len(cs) - 1)]
+            pmed = sorted(pitches)[len(pitches) // 2]
+            button_band = (all(abs(w - wmed) <= max(8, 0.15 * wmed) for w in ws)
+                           and all(abs(p - pmed) <= max(8, 0.15 * pmed) for p in pitches)
+                           and wmed < 120)
+        out.append(dict(y=y0 + (b0 + b1) // 2, span=(groups[0][0], groups[-1][1]),
+                        width=groups[-1][1] - groups[0][0], groups=groups,
+                        buttons=buttons, button_band=button_band))
+    return out
+
+
+def chooser_rows(png, words=None):
+    """The `g` chooser's destination rows (the wide bar bands, buttons excluded)."""
+    words = ocr_fast(png) if words is None else words
+    rows = []
+    for b in bar_bands(png):
+        if b["button_band"] or b["width"] < 300:
+            continue
+        texts = sorted((round(x), t) for t, x, y, *_ in words
+                       if abs(y - b["y"]) <= 8 and x < 700)
+        rows.append(dict(y=b["y"], cx=(b["span"][0] + b["span"][1]) // 2,
+                         span=list(b["span"]), n_groups=len(b["groups"]),
+                         text=" ".join(t for _x, t in texts)))
+    return rows
+
+
+def chooser_buttons(png):
+    """The `g` chooser's button band as (y, [centres]): five 96-px bars.
+
+    Measured on `evidence/m54h/chooser_g60b.png`: Sort: Name / Sort: Size / Sort: Dist /
+    OK / CANCEL at centres 209/305/401/497/593 (y 181 with two rows, y 162 with one). OK is
+    the FOURTH centre and CANCEL the LAST — verified by effect, not by label: OK landed
+    0x18 (`evidence/m54h/probe_chooser_walk1.json`), CANCEL wrote nothing and closed the
+    pane (`evidence/m54h/probe_chooser_cancel67.json`).
+    """
+    for b in reversed(bar_bands(png)):
+        cs = [c for c, _w in b["buttons"]]
+        if len(cs) >= 4:
+            return b["y"], cs
+    return None, []
+
+
+def own_bases_named(f, me):
+    """Our bases as (idx, x, y, name) — the chooser's row list is one per own base (M54h)."""
+    import struct
+    n = max(0, min(struct.unpack("<I", rd(f, BASE_COUNT_G, 4))[0], 64))
+    blob = rd(f, BASE_ARR, n * BASE_SZ)
+    out = []
+    for i in range(n):
+        rec = blob[i * BASE_SZ:(i + 1) * BASE_SZ]
+        if rec[4] != me:
+            continue
+        name = rec[19:52].split(b"\0")[0].decode("latin-1").strip()
+        out.append(dict(idx=i, x=struct.unpack("<h", rec[0:2])[0],
+                        y=struct.unpack("<h", rec[2:4])[0], name=name))
+    return out
+
+
+def answer_dest_chooser(png, verbose=False, words=None, f=None, avoid=None,
+                        me=None, out=None):
+    """Answer the `g` chooser: pick a destination ROW, then click ITS OK bar (M54d + M54h).
+
+    M54d measured the OK bar and answered whatever row the pane had already HIGHLIGHTED.
+    That row is the nearest base — for a unit garrisoned on its own base, its OWN tile —
+    so the queued MOVE was a no-op and the walk proved nothing.
+
+    M54h measured the pane itself (`evidence/m54h/chooser_g60b.png` +
+    `evidence/m54h/probe_chooser_walk1.json`, unit rec60 on Korolev Center (29,42)):
+      * it lists EVERY base we own: two rows, y 132 and y 151, alphabetical by name under
+        the default Sort: Name ("Korolev Center", then "University Base");
+      * clicking a row only HIGHLIGHTS it: `+17` and the legs were unchanged 0.9 s after
+        the click (stage `row_click`), so the row click is a selection, not an order;
+      * the OK click is what lands the order: `+17` went 0 -> 0x18 87 ms after the click
+        and the record carried legs [28,42] (stage `ok_click`), and the pump stepped the
+        unit (29,42) -> (28,43) with `+40` = 3 spent;
+      * CANCEL (the LAST of the five buttons) closes the pane and writes nothing
+        (`evidence/m54h/probe_chooser_cancel67.json`: 60 samples of `+17`, all 0).
+    So when `avoid` (the tile the unit is standing on) is given and a DIFFERENT own base
+    exists, click that base's row first. The row<->base mapping is by name order; nothing
+    downstream trusts it — the destination is read back out of the record's own leg array.
+    """
+    pick = None
+    if f is not None and avoid is not None:
+        rows = chooser_rows(png, words)
+        bases = own_bases_named(f, me)
+        target = next((b for b in bases if (b["x"], b["y"]) != tuple(avoid)), None)
+        row_ix = None
+        if target is not None:
+            # Prefer the row whose OWN text names the base we mean: the pane's sort is
+            # Sort: Name by default, but the alphabetical mapping is an ASSUMPTION (both
+            # frames seen so far put the alphabetically-first base first AND nearest-first
+            # would have done the same), and the row text is what the pane actually shows.
+            word = re.sub(r"[^a-z]", "", target["name"].lower())[:9]
+            for i, r in enumerate(rows):
+                if len(word) >= 5 and word in re.sub(r"[^a-z]", "", r["text"].lower()):
+                    row_ix = i
+                    break
+            if row_ix is None and len(rows) == len(bases):
+                order = sorted(bases, key=lambda b: b["name"].lower())
+                row_ix = next((i for i, b in enumerate(order)
+                               if (b["x"], b["y"]) != tuple(avoid)), None)
+        if row_ix is not None and 0 <= row_ix < len(rows):
+            click((rows[row_ix]["cx"], rows[row_ix]["y"]))
+            time.sleep(0.8)
+            pick = dict(row_index=row_ix, row_y=rows[row_ix]["y"],
+                        row_text=rows[row_ix]["text"], base=[target["x"], target["y"]],
+                        base_name=target["name"])
+            if verbose:
+                print(f"    chooser: clicked row {row_ix} y{rows[row_ix]['y']} "
+                      f"({target['name']} at {target['x']},{target['y']}; unit stands on "
+                      f"{avoid[0]},{avoid[1]})", flush=True)
+        elif len(rows) >= 2 and verbose:
+            print(f"    chooser: {len(rows)} rows vs {len(bases)} own bases and no text "
+                  f"match — answering the highlighted row", flush=True)
     bs = [b for b in pane_bars(png, y0=150) if 150 <= b[1] <= 190]
     if bs:
         left = min(b[0] - b[2] / 2.0 for b in bs)
@@ -637,9 +814,14 @@ def answer_dest_chooser(png, verbose=False):
         click(xy)
         if verbose:
             print(f"    dest-chooser OK at {xy} (bars {bs})", flush=True)
+        if out is not None:
+            out["chooser_pick"] = pick
         return xy
     key("Return"); time.sleep(0.8)
+    if out is not None:
+        out["chooser_pick"] = pick
     return None
+
 
 
 def answer_council_dialog(png):
@@ -841,10 +1023,12 @@ def own_base_tiles(f, me):
     of the duplicated nibble at +4 — SAVE_FORMAT.md 150-160; count at 0x985AF4, which that
     document corrects from "n_factions" to a base count).
 
-    A unit standing on one of these is exactly what `g` refuses to queue a MOVE for
-    (M54c, `evidence/m54c_probe.txt`), so the loop must not fire the key at it: three
-    such refusals would retire `g` for the whole run (ORDER_KEY_TRIES) and the run would
-    end having never tried to walk anything.
+    M54c read this set as "tiles `g` refuses" and skipped the MOVE key on all of them.
+    M54h measured otherwise (`evidence/m54h/chooser_g60b.png`,
+    `evidence/m54h/probe_chooser_walk1.json`): a unit garrisoned on our base DOES get a
+    chooser, and it lists every base we own — the refusal is only that the pane cannot
+    meaningfully name the tile the unit is standing on. The set is therefore used to ask
+    "is there another own base to walk to?", not "is this unit un-orderable?".
     """
     import struct
     n = max(0, min(struct.unpack("<I", rd(f, BASE_COUNT_G, 4))[0], 64))
@@ -904,27 +1088,109 @@ def verify_moves(orders, snap, verbose=False):
                     and r["y"] == dy]
             still = [r for r in rows if r["type"] == o["utype"]
                      and (r["x"], r["y"]) == (o["ux"], o["uy"])]
+            # M54h: "a record of this type is on the destination tile" is worth nothing
+            # when identical units were parked there before the order (five of ours sit on
+            # University Base in this position). The arrival is the DELTA against the
+            # baseline the order itself recorded: same-type count at the destination goes
+            # UP, same-type count at the origin goes DOWN. Traces from before M54h have no
+            # baseline, so they keep the old (weaker) reading.
+            c0 = o.get("order_counts") or {}
+            d_after = len(hits)
+            s_after = len(still)
+            d_before, s_before = c0.get("dest"), c0.get("src")
+            count_proof = (d_before is None or s_before is None
+                           or (d_after > d_before and s_after < s_before))
             # `+40` is spent at the pump and re-zeroed at the next phase start, so the
             # movement evidence comes from the in-phase sample; the tile evidence is re-
             # taken here, after EXEC.
-            mp_after = o.get("walk_mp") or (hits[0]["mp"] if hits else 0)
+            mp_after = (o.get("walk_mp") or o.get("mpused_after")
+                        or (hits[0]["mp"] if hits else 0))
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
                      frm=[o["ux"], o["uy"]], dest=[dx, dy],
-                     landed=bool(hits) and mp_after > 0,
+                     landed=bool(hits) and count_proof and mp_after > 0,
                      on_dest_after_exec=bool(hits), walked_inphase=bool(o.get("walk_landed")),
                      mp_after=mp_after, walk_ms=o.get("walk_ms"),
+                     dest_count=[d_before, d_after], src_count=[s_before, s_after],
                      still_at_start=bool(still))
             out.append(m)
             if verbose:
                 print(f"    MOVE rec{o['unit']} type {o['utype']} ({o['ux']},{o['uy']}) -> "
                       f"ordered ({dx},{dy}): {'ARRIVED' if hits else 'did not arrive'} "
-                      f"(mp_after {m['mp_after']})", flush=True)
+                      f"(dest count {d_before}->{d_after}, origin {s_before}->{s_after}, "
+                      f"mp_after {m['mp_after']})", flush=True)
         return out
     finally:
         try:
             f.close()
         except Exception:
             pass
+
+
+PENDING_WALKS = []         # 0x18 orders whose walk outlived the turn that ordered them
+PENDING_MAX_TURNS = 8      # stop re-checking a walk after this many later turns
+
+
+def verify_pending_walks(cur_turn, verbose=False):
+    """M54h: finish the accounting for walks ordered on an EARLIER turn.
+
+    A queued MOVE can cost more movement than one turn gives it. Measured M54h
+    (`evidence/m54h/probe_chooser_walk1.json`): `g` on rec60 at (29,42) named University
+    Base (28,42), the pump stepped it to (28,43) with `+40` = 3 spent, and the last leg
+    stayed in the record for a later turn to spend. `verify_moves` only looks at the
+    orders issued inside its own turn, so a walk that takes two turns would be reported
+    as never landing — and "the loop reached a destination" is exactly what M54h is about.
+
+    Same evidence, same rules as `verify_moves` (the count delta against the order's own
+    baseline, plus in-phase `+40`), re-read on every later turn. A walk is reported ONCE,
+    on the turn it lands, and then leaves the pending list.
+    """
+    if not PENDING_WALKS:
+        return []
+    try:
+        _pid, f = mem()
+    except Exception:
+        return []
+    out, keep = [], []
+    try:
+        me = state().get("player")
+        rows = our_rows(f, me)
+        for o in PENDING_WALKS:
+            dx, dy = o["dest"]
+            hits = [r for r in rows if r["type"] == o["utype"]
+                    and (r["x"], r["y"]) == (dx, dy)]
+            still = [r for r in rows if r["type"] == o["utype"]
+                     and (r["x"], r["y"]) == (o["ux"], o["uy"])]
+            c0 = o.get("order_counts") or {}
+            d_before, s_before = c0.get("dest"), c0.get("src")
+            mp_after = (o.get("walk_mp") or o.get("mpused_after")
+                        or (hits[0]["mp"] if hits else 0))
+            count_proof = (d_before is None or s_before is None
+                           or (len(hits) > d_before and len(still) < s_before))
+            m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
+                     frm=[o["ux"], o["uy"]], dest=[dx, dy],
+                     landed=bool(hits) and count_proof and mp_after > 0,
+                     on_dest_after_exec=bool(hits), carried=True,
+                     ordered_turn=o.get("ordered_turn"),
+                     mp_after=mp_after, walk_ms=o.get("walk_ms"),
+                     dest_count=[d_before, len(hits)], src_count=[s_before, len(still)],
+                     still_at_start=bool(still))
+            out.append(m)
+            turns_since = cur_turn - (o.get("ordered_turn") or cur_turn)
+            if not m["landed"] and turns_since < PENDING_MAX_TURNS:
+                keep.append(o)
+            if verbose:
+                print(f"    CARRY t{o.get('ordered_turn')} rec{o['unit']} "
+                      f"({o['ux']},{o['uy']}) -> ({dx},{dy}): "
+                      f"{'ARRIVED' if m['landed'] else 'not yet'} "
+                      f"(dest count {d_before}->{len(hits)}, origin "
+                      f"{s_before}->{len(still)}, mp {mp_after})", flush=True)
+        PENDING_WALKS[:] = keep
+    finally:
+        try:
+            f.close()
+        except Exception:
+            pass
+    return out
 
 
 def service_turn(idx, tr, timeout, verbose=False):
@@ -1082,6 +1348,16 @@ def service_turn(idx, tr, timeout, verbose=False):
         elif kind == "dialog":
             key("Return"); time.sleep(0.5)      # default button = OK
         elif kind == "hud":
+            # M54h: a modal wearing the HUD chrome (see `modal_caption`) has to be ANSWERED,
+            # not walked past: the OPERATIONS DIRECTOR "Investigate pod beacon?" pane ate a
+            # whole turn of TURN COMPLETE clicks landing BEHIND it. Return is a dialog's
+            # default button (it cleared this very pane today in scratch/m54h_clear.py), and at
+            # a genuinely clean HUD Return IS TURN COMPLETE, so a false positive still ends the
+            # turn rather than idling it.
+            if modal_caption(words):
+                rec["handled"].append("hud-with-caption")
+                key("Return"); time.sleep(0.9)
+                continue
             # S3 / M54c: order our own units BEFORE ending the turn. This branch is only
             # reachable in OUR phase (the cur_player/turn_flags gate above `continue`s on
             # an AI round), which is exactly the window where a hotkey is an order rather
@@ -1120,6 +1396,35 @@ def service_turn(idx, tr, timeout, verbose=False):
                 key("Escape"); last_esc = time.time()
             time.sleep(0.4)
         else:                                    # movie / unknown
+            # M54h: a CLEAN HUD whose TURN COMPLETE row failed to OCR classifies `unknown`.
+            # Measured live at (28,42) with the base label drawn on the map: 2x OCR finds
+            # MENU (61,369) and COMMLINK but neither "TURN" nor "COMPLETE" (region_colors
+            # 167), so the `hud` branch — the only thing that clicks the button — never
+            # runs, and with --no-escape the loop idles out the whole turn budget while the
+            # year sits unmoved in OUR phase (trace_m54h_20261025_093424 turn 2).
+            # Fallback, not a reclassification: in OUR phase, with the HUD chrome present,
+            # NO bar band in the modal band (a chooser/dialog/pane always draws bars at
+            # y 145-200) and the year unmoved for HUD_BLIND_S, click TURN COMPLETE at its
+            # measured coordinates. If a modal really is up the click lands behind it and
+            # the year simply stays where it is.
+            if (kind == "unknown" and now - last_press > HUD_BLIND_S
+                    and now - t0 > HUD_BLIND_S):
+                st_now = state()
+                if (st_now.get("cur_player") == st_now.get("player")
+                        and not (st_now.get("turn_flags") or 0) & 2
+                        and find(words, ["menu"]) and find(words, ["commlink"])
+                        and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200]):
+                    click(TURN_BTN)
+                    rec["handled"].append("turn-complete-blind")
+                    last_press = now
+                    if verbose:
+                        print("    HUD blind: OCR found no TURN COMPLETE row — clicked the "
+                              "button at its measured place", flush=True)
+                    for _ in range(4):
+                        time.sleep(0.15)
+                        if year() != y0:
+                            break
+                    continue
             # Never spam Escape on unrecognized/dark screens: on the title menu Escape
             # can land on "Exit" and end the session (process vanished at year 2181).
             # movies end on their own; only escape a genuinely stuck screen.
@@ -1134,11 +1439,24 @@ def service_turn(idx, tr, timeout, verbose=False):
                 break
             time.sleep(0.15)
     ok = year() != y0
-    if ok and snap_units:
+    if ok:
         # M54d: the year flipping IS the execution. The walk is proven here, by comparing
         # the records against the ordered leg — not by a screenshot.
-        rec["moves"] = verify_moves(rec.get("orders", []), snap_units, verbose)
+        rec["moves"] = verify_moves(rec.get("orders", []), snap_units, verbose) \
+            if snap_units else []
+        # M54h: a queued MOVE can cost more movement than one turn gives it, so a walk
+        # ordered on an earlier turn is re-read every later turn and reported on the turn
+        # it actually lands.
+        carried = verify_pending_walks(idx, verbose)
+        rec["moves"] = carried + rec["moves"]
         rec["moves_verified"] = sum(1 for m in rec["moves"] if m["landed"])
+        for o in rec.get("orders", []):
+            if (o.get("verified") and o.get("order_after") == 0x18 and o.get("dest")
+                    and tuple(o["dest"]) != (o.get("ux"), o.get("uy"))
+                    and not any(m.get("landed") and m.get("unit") == o["unit"]
+                                for m in rec["moves"])):
+                o["ordered_turn"] = idx
+                PENDING_WALKS.append(o)
     st1 = state()
     rec["state_before"] = {k: st0.get(k) for k in ("year", "turn_no", "player", "cur_player",
                                                    "turn_flags", "mode_flags", "n_bases",
@@ -1232,6 +1550,9 @@ ORDER_MOVE = ("g", {0x18}, "move-to-base")
 ORDER_SIMPLE_NO_MOVE = (("l", {1}, "sentry"), ("h", {2}, "hold"))
 WALK_POLL = 3.0            # M54e: seconds to watch the record after a queued MOVE is
                            # answered — the pump runs the order THEN, not at EXEC
+HUD_BLIND_S = 25.0         # M54h: how long a clean-but-unreadable HUD (class `unknown`,
+                           # our phase, chrome present, no modal bars) waits before the
+                           # driver clicks TURN COMPLETE at its measured coordinates
 ORDER_TERRAFORM_WANT = set(range(4, 0x18))     # #TERRAIN index + 4 (mode rewrites allowed)
 ORDER_BYTE_NAMES = {1: "sentry", 2: "hold", 3: "convoy", 0x18: "move-to-base",
                     0x19: "move-dir", 0x1b: "road-to-base", 0x1c: "tube-to-base"}
@@ -1421,7 +1742,8 @@ def order_byte_watcher(idx, stop, out, dur=1.5):
     return th
 
 
-def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="terraform"):
+def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="terraform",
+                         avoid=None):
     """One hotkey on one selected unit. Returns the record with its memory delta.
 
     `want` is the set of `+17` bytes this key may legitimately produce (ORDERS.md §4).
@@ -1441,6 +1763,7 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     sh(f'xdotool key --clearmodifiers "{kname}"')
     panes, quiet, t0 = [], 0, time.time()
     queued = {"order": None, "legs": None}   # M54e: +17/legs sampled AS the pane is answered
+    picks = []                                # M54h: which chooser row we clicked, and why
     while time.time() - t0 < ORDER_MODAL_TIMEOUT:
         ob = rd(f, UNIT_ARR + idx * 52 + 17, 1)[0]        # cheap oracle: the byte FIRST
         if ob != before["order"] and ob in want:
@@ -1475,7 +1798,11 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
             import threading
             stop, seen_bytes = threading.Event(), []
             th = order_byte_watcher(idx, stop, seen_bytes)
-            answer_dest_chooser(png, verbose)
+            pick = {}
+            answer_dest_chooser(png, verbose, words=w, f=f, me=me,
+                                avoid=(before["x"], before["y"]), out=pick)
+            if pick.get("chooser_pick"):
+                picks.append(pick["chooser_pick"])
             time.sleep(0.35)
             stop.set()
             th.join(timeout=2.0)
@@ -1540,6 +1867,20 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     # (6,13)<->(7,12) forever, and the walk landed the moment the base tile was emptied.
     # So watch the record here, right now: landed = it sits on the leg with `+40` spent.
     walk = dict(landed=False, mp=0, ms=None)
+    counts0 = {}
+    if dest is not None:
+        # M54h: the tile evidence has to be a DIFF, not a coincidence. Seven identical
+        # Scout Patrols stand on University Base, so "a record of this type sits on the
+        # destination" is true before the walk even starts. Count the same-type records at
+        # the destination and at the origin NOW (the order-time baseline) and let
+        # `verify_moves` require the destination count to rise and the origin count to
+        # fall. Read before the poll: the pump may already be stepping the unit.
+        rows0 = our_rows(f, me)
+        counts0 = dict(
+            dest=sum(1 for r in rows0 if r["type"] == cand["type"]
+                     and (r["x"], r["y"]) == (dest[0], dest[1])),
+            src=sum(1 for r in rows0 if r["type"] == cand["type"]
+                    and (r["x"], r["y"]) == (cand["x"], cand["y"])))
     if dest is not None:
         t1 = time.time()
         while time.time() - t1 < WALK_POLL:
@@ -1557,6 +1898,8 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
                 order_name=ORDER_BYTE_NAMES.get(seen,
                                                 "terraform" if seen in ORDER_TERRAFORM_WANT else None),
                 dest=dest, walk_landed=walk["landed"], walk_mp=walk["mp"], walk_ms=walk["ms"],
+                chooser_pick=(picks[-1] if picks else None),
+                order_counts=counts0,
                 mpused_after=after["mpused"],
                 energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
                 tile_addr=hex(ta),
@@ -1750,11 +2093,16 @@ def order_step_in_loop(rec, verbose=False):
             # energy and rewrites modes); everyone gets the always-valid keyboard orders.
             # M54d: the MOVE key first, for every candidate that can use it. A Former that
             # gets `f` first lands a terraform byte, `landed` stops the plan, and no walk is
-            # ever tried — which is how M54c ordered 31 units and moved none. And `g` is
-            # skipped for a unit standing on one of our bases: that is the case the game
-            # refuses (M54c), and three refusals would retire the key for the whole run.
-            off_base = (cand["x"], cand["y"]) not in own_tiles
-            plan = (([ORDER_MOVE] if off_base else [])
+            # ever tried — which is how M54c ordered 31 units and moved none.
+            # M54h RETRACTS the M54c rule "skip `g` for a unit standing on our base": the
+            # chooser lists EVERY base we own (`evidence/m54h/chooser_g60b.png` — two rows
+            # for two bases) and OK on a row that is not the unit's own tile lands 0x18 with
+            # that base in the legs (`evidence/m54h/probe_chooser_walk1.json`). What `g`
+            # cannot do is name the tile under the unit's feet, so `g` is skipped only when
+            # our ONLY base is the one it stands on.
+            tile = (cand["x"], cand["y"])
+            can_walk = any(t != tile for t in own_tiles)
+            plan = (([ORDER_MOVE] if can_walk else [])
                     + ([(k, ORDER_TERRAFORM_WANT, "terraform") for k in ORDER_TRY_KEYS]
                        if cand["cls"] == 9 else [])
                     + list(ORDER_SIMPLE_NO_MOVE))
@@ -1765,7 +2113,8 @@ def order_step_in_loop(rec, verbose=False):
                 if ORDER_KEY_REJECTS.get(kname, 0) >= ORDER_KEY_TRIES:
                     continue                    # retired for the rest of this run
                 attempts += 1
-                o = issue_order_for_unit(f, me, cand, kname, verbose, want=want, label=label)
+                o = issue_order_for_unit(f, me, cand, kname, verbose, want=want, label=label,
+                                         avoid=(cand["x"], cand["y"]))
                 out.append(o)
                 if o["verified"]:
                     verified += 1

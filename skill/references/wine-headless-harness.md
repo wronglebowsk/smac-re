@@ -55,10 +55,37 @@ If it raises EACCES, gdb is broken too — fix the sysctl rather than hunting th
 | base screen | `GOVERNOR` / `NUTRIENTS` / `CONQUER` / `DISCOVER` **at a position outside the HUD's own message strip (y ≥ 425)**, or with **no TURN COMPLETE row on screen at all** (M54a) | `Escape` |
 | Secret Project movie, dark/few-words frame | <15 OCR words | wait — movies end on their own; one `Escape` only after ~20 s with no change |
 
-Classifier order matters: confirm → cdrom → loaded-game → **quit-prompt** → title → breakthrough →
-base → HUD → dialog → movie. The dialog test needs the flat-panel check because map labels also produce words
+Classifier order matters (current `classify()`): confirm → cdrom → loaded-game → **quit-prompt** → title →
+breakthrough → help → comm → **dest-chooser** → **name-pane** → base → dialog → artwork-close → HUD →
+movie → unknown. The dialog test needs the flat-panel check because map labels also produce words
 in the upper band; colour counting alone fails on unexplored (black) map, text mass alone fails on
 labelled map.
+
+**A pane drawn OVER a still-visible HUD classifies as the screen underneath it.** TURN COMPLETE stays
+drawn behind the `g` chooser, the NEWBASE name pane and most Script.txt dialogs, so anything tested after
+the HUD test can never fire on them: both of those panes read `hud` — key sinks — until they got their own
+**caption-band** tests (words squashed to letters inside a y/x band, e.g. `is_name_pane` requires `name`
+AND `newbase` in y 90..128, x 150..650). Give a new pane a positional/caption-band test placed BEFORE the
+base and HUD tests, never a frame-wide vocabulary test appended after them. The mirror-image trap is the
+HUD impersonating a pane (message-pane news carrying base words) — both directions need positions, not words.
+
+### Adding a screen class — four edits, in this order
+
+1. A predicate helper beside the others (`is_dest_chooser`, `is_name_pane`, …): caption band +
+   squashed-letter phrase, not whole-frame vocabulary.
+2. A `classify()` branch **before** the base/HUD tests (see the rule above).
+3. Save the frame to `evidence/<milestone>/<pane>.png`, then add a `CASES` row to
+   `scripts/test_classify.py` **and** a `DEFAULT` row to `scripts/check_classes.py` — the expected
+   totals are derived from the lists (`PASS N/N`, `frames: N failures: 0`), so both files must be
+   edited or the new class ships untested. Run both, then delete the `_3x.png` siblings
+   `check_classes.py` leaves next to every frame it OCRs.
+4. Wire the driver's pane handlers to the class's answer, and re-check the answer against the same
+   saved frame before launching anything.
+
+Check `python3 scripts/evidence.py budget` BEFORE adding frames (gate FAILs at 30 MB). A live frame that
+reads `unknown` while a pane is visibly up means the class is missing or too narrow: widen the test — do
+not service `unknown` with keys, and never service it in a probe (a probe that answers `unknown` fires
+keys at whatever is really there).
 
 **The HUD's own message pane can impersonate another screen** (M54a, 2026-10-24). The news strip
 below the TURN COMPLETE row prints sentences that carry base-screen vocabulary — `nutrients` at
@@ -91,7 +118,16 @@ mission year changes**: confirm → Yes row + OK bar, dialog → `Return`, base/
 one Escape, HUD still unflipped after ~6 s → press again. Poll memory every ~0.15 s instead of
 sleeping a fixed interval; a fat `sleep(2)` per loop iteration is most of a turn's wall time.
 One-shot "click, wait, screenshot" always times out on the first interruption and gets
-misdiagnosed as a game hang. With this loop a turn costs 8–12 s on a 4-core N100, two OCR
+misdiagnosed as a game hang.
+
+**Service a modal by its EFFECT, not by screenshots.** Poll the field the action changes — order byte
+`+17`, the base array, the unit's x/y — at ~100 ms, and OCR only when memory has not answered: the game's
+reaction is milliseconds (a founding's base record exists 0.1 s after the name pane is accepted; a chooser
+OK is consumed by the order pump within tens of ms) while an OCR pass is seconds, so a screenshot-paced
+pane loop keeps pressing keys at what it believes is a clean HUD — and `Return` at a HUD is TURN COMPLETE,
+which means the probe silently advances the game it is measuring. When a probe's result depends on which
+pane opened, add a no-key stage first (poke selection alone, read the class) so the pane is attributed to
+the key and not to the selection. With this loop a turn costs 8–12 s on a 4-core N100, two OCR
 passes included.
 
 ## Pitfalls that cost real time

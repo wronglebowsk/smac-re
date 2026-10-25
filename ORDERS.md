@@ -296,3 +296,68 @@ executing. Measured on this build with `scripts/m54e_probe.py` (pid 484088, base
 * The tile math these gates use is `*(u32*)0x92ae14 + (DAT_00692184*y + x>>1)*0x2c`: **0x92ae14
   is a POINTER and the row pitch is live** — 32 on this 64x64 world (the hard-coded 40 in old
   scripts was an 80-wide map). Indexing the slot itself returns all-zero "tiles".
+
+## 9. The `g` chooser's ROWS, and what a walk's evidence has to be (M54h, session 85, 2026-10-25)
+
+**Geometry** (`evidence/m54h/chooser_g60b.png` — a unit garrisoned on Korolev Center (29,42)
+while we own two bases; `scripts/m54h_probe.py` produced it):
+
+* Caption `SELECT DESTINATION` at y 102. The destination rows are **full-width periwinkle
+  bars** (fill 159..638) on the bands y 125-139 and 144-158 — a 19 px pitch. OCR reads the
+  HIGHLIGHTED row's text reliably and the other row's text only sometimes (the same frame
+  read "University Base" in one capture and nothing in another), so text alone cannot drive
+  the pick.
+* The button band is **five 92-px bars on one pitch** — Sort: Name / Sort: Size / Sort: Dist /
+  OK / CANCEL at centres 209/305/401/497/593 — and it **moves down with the row count** (y 162
+  with one row, y 181 with two), so any hard-coded OK y is wrong for a two-row pane.
+  `bar_bands()` / `chooser_rows()` / `chooser_buttons()` in `smac_play.py` tell the two apart:
+  a row band's groups merge into a ~480 px span, a button band is >= 4 groups of one width on
+  an even pitch. The merged span alone cannot do it — five buttons span 163..638, exactly like
+  a row.
+* **Clicking a row only HIGHLIGHTS it**: 0.9 s after the click `+17` and the legs were
+  unchanged (`evidence/m54h/probe_chooser_walk1.json`, stage `row_click`).
+* **OK (the 4th button) is what lands the order**: `+17` went 0 -> 0x18 87 ms after the click,
+  the record carried legs `[28,42]`, and the pump stepped the unit (29,42) -> (28,43) with
+  `+40` = 3 spent (stage `ok_click`).
+* **CANCEL (the 5th) closes the pane and writes nothing**: 60 samples of `+17`, all 0, and the
+  pane was gone (`evidence/m54h/probe_chooser_cancel67.json`).
+* **The pane lists BOTH own bases even when the unit stands on one of them.** M54c's rule
+  "`g` refuses a unit on our base" is RETRACTED (the M54c evidence was a one-base position:
+  the only row it could list was the unit's own tile). What the pane cannot do is name the
+  tile under the unit's feet and mean anything.
+* The `Distance:` column reads 0 for both rows — it is the CURSOR's distance (M54d), not the
+  unit's, and carries nothing usable for choosing.
+
+**What a walk's evidence has to be:**
+
+* **Index is not identity**: the record array reshuffled between turns twice in one session
+  (the unit ordered at (29,42) was index 67 at order time and index 52 a turn later). Match on
+  (type, tile) or on counts, never on an index carried across a turn.
+* "A record of this type sits on the destination tile" is **worthless when identical units were
+  already parked there** — five Scout Patrols sit on University Base. `verify_moves` now
+  requires the DELTA against the baseline the order itself recorded (`order_counts`): the
+  same-type count at the destination goes UP and at the origin goes DOWN.
+* **A queued MOVE can outlive the turn that ordered it** (3 MP spent on the first step, the
+  last leg left in the record for a later turn), so `PENDING_WALKS` /
+  `verify_pending_walks()` re-read the same evidence on later turns and report an arrival once,
+  on the turn it lands.
+
+**UNRESOLVED (measured, not explained):**
+
+* The legs' last point is **not always the ordered base**. In the loop, two `g` orders whose
+  row click was recorded against the University Base row put legs `(14,56)` — House of Martyrs,
+  a BELIEVER base — and `(17,55)` (not a base at all; the base count fell 19 -> 18 during the
+  same run) into the records (`evidence/trace_m54h_20261025_093424.jsonl` turns 0-1), while the
+  identical click in a probe put `(28,42)` = University Base in the same field. Either the
+  pane's list is not one-row-per-own-base in every state, or the leg array holds something
+  other than the destination. The row<->base mapping (default Sort: Name) is an **assumption**:
+  both frames seen so far are equally consistent with nearest-first.
+* `l` (SENTRY) pressed on a unit carrying a pending 0x18 landed nothing (`+17` stayed 24,
+  `panes ['unknown']`) — cause unresolved: an `unknown`-classifying HUD frame swallowed the key,
+  or the game refuses the key on an ordered unit. Not isolated (two variables changed).
+* **A clean HUD whose TURN COMPLETE row fails to OCR classifies `unknown`** (MENU read at
+  (61,369), COMMLINK read, `region_colors 167`, `complete` absent) and with `--no-escape` the
+  loop idled a whole turn budget at it while the year sat unmoved in OUR phase. Fallback added:
+  in our phase, chrome present, no bar band at y 145-200, `HUD_BLIND_S` elapsed -> click the
+  button at its measured coordinates. Proven on one turn (2160 -> 2161,
+  `evidence/trace_m54h2_20261025_094339.jsonl`); not yet exercised across a multi-turn run.

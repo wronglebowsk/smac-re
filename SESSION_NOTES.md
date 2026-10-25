@@ -1,72 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-72-72.md` (1 sessions). Read it only when a question reaches back before session ## Session 73.
-
-## Session 73 (2026-10-24) — M53q: **`build_table()` IS IMPLEMENTED — the per-visit scan pool is recomputed per base, and the entry filter turns out to be a NO-OP (pool∩fresh = {bit 0} on 76/76 rows); the M53p 'stale-global contamination' framing is superseded** — `scripts/m53p_recon_a.py::build_table`, `evidence/m53q_findings.md`
-- **Implementation (VERIFIED vs the live cur base).** `build_table(idx) -> (table[25], mask21)` transcribes
-  `FUN_004e63b0` (asm 298136-298619): loop A per-step reason codes (2 off-map/unseen, 0 scannable, 4 terrain
-  test `tile[8]&1 ∧ 0<=tile[2]&0xf<8`, |=8 unit order-3 / foreign-stack test, |=0x20 foreign territory), loop
-  B/C the |=0x10 other-base overlap (hex-dist<=5 bases, their `+0x78` bits, tile hex-dist<=2), mask =
-  {bit i: table[i]!=0}. On the live base 69 the computed table matches the live `0x8f0ccc` on **20/21 slots**;
-  the mask rule is VERIFIED (computed-from-live == live 0x101; `DAT_008f0d30` has exactly 2 stores in .text,
-  both inside 4e63b0). **The single disagreement is bit 8** (step 8, tile (45,9), foreign-stack test): live 8,
-  computed 0 — the transit stack (units 106..147, order 0, `w18=0xffff`, `b25=0xff`) satisfies the |=8 test
-  only in a pre-move state (INFERRED). Reported per protocol before touching residual theory.
-- **Predicate fixes found by hand-tracing the live stack (VERIFIED):** the +50 walk at 0x4e663c starts from
-  the **+48 terminus** (esi carries over; asm 298346-52), not the head; the |=8 gate polarity is foreign ∧
-  ¬transport(0x440) ∧ **+25-bit-CLEAR** (x86 `test/je` fires when the bit IS set — 0x4e6612); `FUN_005a5c00`
-  is identity only when `0x920434 != 0` (live 0 — full body runs); `FUN_005ab130` returns the tile list head
-  iff record `+8` bit 1 else the linear-scan +50-head. Hex dist = `mx - ((manhattan>>1 - mn +1)>>1)` wrapped.
-- **The no-op discovery (VERIFIED, 76/76).** `pool(d78) & fresh_mask == {bit 0}` for every base ⇒
-  `d78 & (~fresh|1) == d78` everywhere; the fresh mask differs from the stale global 0x101 on 76/76 rows yet
-  the censuses of `--stale-mask` and the fresh path are byte-identical. Tie-break: stored processed for idx
-  1/69 KEEPS bit 8 ⇒ the game's filter allowed step 8 ⇒ the filter mask is the per-base fresh mask (code
-  order: 4e63b0 at 0x4e78e9 runs before the filter at 0x4e796a), and the stale global never filtered anything.
-- **Re-measured census (fresh dump `evidence/m53q_dump4.txt`, pid 2124624, cur base 69):** 76 rows, **65
-  self-consistent, 54 exact, 11 residual** (was 46/7 when session 68 wrote NEXT_PROMPT); cells bc 11 c0 9 c4
-  21 c8 0. Residuals all c4-only: idx 1,3,5,8,30,34,46,51,60,62,69 (facs {1,3,4,7}, was {1,3,4}); **session
-  68's idx-31 'fac2 bc -1' residual collapsed to EXACT**. The 11 non-sc rows are ALL fac 2 (37,40,42,44,52,
-  55,58,61,64,70,72) and are same-cardinality step-SET mismatches (idx 44: model drops step 4, game kept it
-  and dropped step 2) — a scan-ORDER question, not a mask question.
-- Kit: `scripts/m53o_mem.py` units blob 0x200->0x4600 + `nunit` key; `--legacy` renamed `--stale-mask`;
-  probes `evidence/m53q_probe.py` (live read of everything 4e63b0 reads), `m53q_maskcmp.py`, `m53q_nonsc.py`.
-- **Next:** M53r — the fac-2 scan-order/selection rule (11 rows) and the c4-only residuals (11 rows).
-
-## Session 74 (2026-10-24) — M53r: **THE 11 FAC-2 ROWS ARE POP-DRIFT BUDGET ROWS, NOT SCAN-ORDER ROWS — the model now runs 76/76 self-consistent, 65 exact (was 65/54); `DAT_008f0c68` = pop+1 AT VISIT TIME and 22 rows drift-recover to exact** — `scripts/m53p_recon_a.py::recover_pop`, `evidence/m53r_findings.md`
-- **Scan-order theory dead (VERIFIED).** The whole middle-pass selection was re-derived from the asm
-  window and the model already matched every gate: candidate loop j=1..20 (cursor 0→0x50 step 4,
-  A:789-796), pair dispatch strict `<`/`>` (A:772-787), swap-branch guards commit-require
-  best-add idx > 0 / best-add score > best-swap score / best-swap idx > 0 (A:1018-1026 — the old
-  reference listed "best-add index > 0" as an EXIT condition: polarity flipped, fixed), undo gate
-  `bc < (pop+1)*K` (A:1192-1197), facility gate/score, continuation, exit stores
-  `0x78 = acc` / `0x7c = budget` RAW (0x4e8b19/0x4e8b28). dbg traces (`evidence/m53r_dbg.txt`)
-  showed the model firing swaps (e.g. idx 44: out 2 in 1, guards all pass) that the game never
-  committed — stored mask == pool AND stored vec == scan-only vec on all 11 rows.
-- **The tell (VERIFIED).** `DAT_008f0c68` has exactly 4 stores in `.text`, all in 4e78e0 (Ghidra
-  shard_012.c:16023/16108/16229/16626 = machine 0x4e7904/0x4e7c36/0x4e7ecd/0x4e85d8); sole
-  initializer = `movsx BYTE[base+6]+1` = pop+1 at visit time (Ghidra `[3]` = short*-scaled byte@6).
-  Exit publishes `base+0x7c` = budget RAW, so the stored carry re-measures the game's budget. On
-  all 11 rows stored c7c == model budget_end **+ 1** (`evidence/m53r_sig.py`, all 76 rows).
-  Skip flag re-decoded too: `1 iff NOT((1<<fac)&byte0(0x985b10)) ∨ (byte0(+0x38)&0x40 ∧ bit31)` —
-  live 0xff08 ⇒ flag=1 for all facs but 3 (the "tile out-of-mask" note was wrong); scan-0 special's
-  tile scan self-skips without budget spend when acc bit 0 is already set (A:368).
-- **Mechanism.** With budget0 = pop_dump+1 the scan ends with budget == c80+c7c → `je 0x4e8a47`
-  (0x4e7c5e) skips the scan-0 special AND the middle pass — the phantom-swap territory is never
-  entered. Replaying with pop_visit = dump+1 reproduces ALL THREE stored outputs simultaneously
-  (mask, carry, vector) on **22/76 rows — all fac 2**: the 11 non-sc rows (37,40,42,44,52,55,58,61,
-  64,70,72) plus 11 that were mask-OK but carry-wrong (28,31,47,48,49,56,63,65,67,68,71). INFERRED:
-  those bases LOST a pop point after their rebuild visit (cause open; idx 0/23 fac-2 did not drift).
-- **Acceptance (fresh dump 2026-10-24, pid 2124624, `evidence/m53r_run1.txt`):** rows 76,
-  **self-consistent 76, exact 65, residual 11 c4-only UNCHANGED** (1,3,5,8,30,34,46,51,60,62,69),
-  cells bc 0 c0 0 c4 11 c8 0. `recover_pop` accepts pop+1 only when stored mask AND stored carry
-  reproduce; `--no-pop-recover` shows the plain view; header prints `pop-drift=+1(pop a->b)`.
-- Kit: `evidence/m53r_sig.py` (per-row saved-carry vs replay-budget signature); skill
-  `references/production-rebuild.md` corrected (guards polarity, skip-flag formula, scan-0 acc-bit-0
-  gate, budget-at-visit-time + drift signature, exit clears bit 17 of +0x30 not bit 8).
-- Open: the 11 c4-only residuals (no budget drift there — saved c7c == budget_end; suspect
-  visit-time state drift in 4e7070's unit/ownership inputs or `0x8f0c4c`); why drift is fac-2-only;
-  `c80_end != stored d80` on idx 24/35 (internal field, unpublished); bit-8 live-table disagreement
-  at (45,9); unit+24/25 + 38 semantics.
+Older sessions: `docs/sessions/sessions-73-74.md` (2 sessions). Read it only when a question reaches back before session ## Session 75.
 
 ## Session 75 (2026-10-24) — M53s: **THE 11 c4 RESIDUALS ARE NOT A SCAN PROBLEM AT ALL — the rebuild model matches the game's own visit-time snapshot on 76/76, and the delta is an ALLIANCE ENERGY SHARE that FUN_004eaa10 folds into base+0xc4 at 0x4eac57-0x4eac62 after 4e78e0's history shift** — `evidence/m53s_findings.md`, `scripts/m53s_c4watch.py`, `scripts/m53s_c74_watch.py`, `evidence/m53s_probe.py`
 - **The leverage nobody had used (VERIFIED):** `4e78e0`'s exit shifts a history window
@@ -655,3 +589,70 @@ type is untested. (e) 4 `unknown` panes in this run's trace (turns 1, 3, 4) stil
 second own-base tile to walk to (the `g` chooser now has two destinations: University Base and
 Korolev Center), land a queued MOVE between them with `--min-moves`, then found a third base
 off the garrison with no position poke at all.
+
+## Session 85 (2026-10-25) — M54h: **THE CHOOSER CAN NAME THE OTHER OWN BASE (probe, memory-verified); THE LOOP'S WALK DID NOT LAND — M54h STAYS OPEN** — changed `scripts/smac_play.py` (chooser geometry: `bar_bands`/`chooser_rows`/`chooser_buttons`; `answer_dest_chooser` clicks a ROW; `order_counts` count-delta walk proof; `PENDING_WALKS`/`verify_pending_walks`; `HUD_BLIND_S` fallback; `modal_caption` guard; the M54c "skip `g` on our base" rule retracted), new `scripts/m54h_probe.py`, `scratch/m54h_clear.py`, `ORDERS.md` §9, `test_classify.py` + `check_classes.py` (17 frames), this file, `NEXT_PROMPT.md`
+
+**Box first.** State read clean and matched the footing (year 2156, pid 914329, `bases_ours 2`,
+`units_ours 7`); the census put five Scout Patrols on University Base (28,42) with `order 1` and
+two fresh ones (`order 0 mp 0`) on Korolev Center (29,42). Two things the footing got wrong:
+the box was parked on a **BREAKTHROUGH panel** (class `unknown`) with an OPERATIONS DIRECTOR
+dialog behind it (Escape closed both; `turn_flags` bit 0x2 cleared when they went away — it is
+not only a "driver ran" latch), and a clean HUD over our own base classifies `unknown` because
+2x OCR cannot read the TURN COMPLETE row.
+
+**The chooser, measured (`scripts/m54h_probe.py`, `evidence/m54h/probe_chooser_walk1.json`).**
+`g` on a unit GARRISONED on its own base opens the chooser and it lists **both** own bases —
+rows are full-width bars at y 132 and y 151 (19 px pitch), the five-button row (Sort: Name /
+Sort: Size / Sort: Dist / OK / CANCEL at 209/305/401/497/593) sits at y 181 with two rows and
+y 162 with one, so M54d's hard-coded OK row was a coin flip on a two-row pane. Clicking a row
+changes NOTHING in memory (`+17` and legs unchanged 0.9 s after the click); OK landed `+17`
+0 -> **0x18 87 ms after the click** with legs `[28,42]` (University Base) and the pump stepped
+the unit **(29,42) -> (28,43) with `+40` = 3 spent**; CANCEL (5th button) closed the pane with
+60 samples of `+17`, all 0. **M54c's "the game refuses `g` on our own base" is retracted** (its
+evidence was a one-base position). The `Distance:` column is 0 for both rows — the cursor's,
+not the unit's (M54d), so it cannot drive the pick.
+
+**ACCEPTANCE: NOT MET.** `python3 scripts/m54a_check_run.py
+evidence/trace_m54h4_20261025_095308.jsonl --timeout 240 --min-our-bases 2 --min-moves 1` ->
+`advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 28.9 s), `orders 1 VERIFIED of 1`
+(`{"g->byte24": 1}`, energy 3), `ours bases_ours 2` floor 2, **`FAIL only 0 VERIFIED walks,
+milestone wants 1`** — `moves 0 LANDED of 3 ordered walks`. Nothing was weakened; the run that
+would have to PASS does not.
+
+**Why it did not land (measured, cause not settled).** In the loop, three `g` orders whose row
+click the trace records against the University Base row (turn 1 of `trace_m54h...093424`, turn 3
+of `trace_m54h4`) put legs naming **(14,56) = House of Martyrs (a BELIEVER base)**,
+**(17,55)** and **(12,14) = Gaia's Landing** into the record — never (28,42) — while the
+identical click in the probe put (28,42) in the same field. The leading explanation is index
+identity: `units_ours` went 9 -> 10 during the run (University Base builds Scout Patrols) and
+the record array reshuffled between turns twice (the unit ordered at (29,42) was index 67 at
+order time and index 52 a turn later), so the legs read 0.35 s after the OK may belong to a
+different record than the one that was ordered. After the run, records DO carry legs (28,42)
+and (29,42) and one unit sits at (29,43) one step from Korolev Center — walking happens;
+nobody arrived at a destination the trace can attribute to the loop.
+
+**Two driver bugs found and fixed (verified).** (a) A clean HUD whose TURN COMPLETE row fails
+to OCR classifies `unknown` (MENU at (61,369) + COMMLINK read, `region_colors 167`): with
+`--no-escape` the loop idled a WHOLE turn budget (trace_m54h...093424 turn 2 burned 521 s with
+the year unmoved in our phase) — fallback added (our phase + chrome + no bar band at y 145-200
++ 25 s -> click the button at its measured coordinates), proven: `evidence/trace_m54h2_...
+094339.jsonl` turn 0 `2160 -> 2161 OK (36.7s)` after `turn-complete-blind`. (b) An OPERATIONS
+DIRECTOR "Investigate pod beacon?" pane wearing HUD chrome classified `hud` and ate turn 0 of
+trace_m54h3 (the driver clicked TURN COMPLETE behind it every 6 s) — `modal_caption` guard
+added; the next run cleared it in one press (`hud-with-caption: 1` in the m54h4 action log) and
+all 6 turns advanced. Classifier gates: `test_classify.py` -> `PASS 17/17` (was 16/16; the new
+frame is the two-row chooser, `evidence/m54h/chooser_g60b.png`), `check_classes.py` ->
+`frames: 17 failures: 0`, `_3x.png` siblings deleted.
+
+**Open.** (1) What the leg array actually holds, and whether the loop can be made to read the
+destination of THE record it ordered (read all our records before/after and diff, rather than
+trusting one index). (2) Whether the chooser's row order is Sort: Name or nearest-first — both
+frames seen so far are consistent with either; the driver's pick is text-matched first.
+(3) `l` (SENTRY) on a unit carrying a pending 0x18 landed nothing (cause confounded with an
+`unknown` HUD frame; decoys were parked by poking `+17 = 1` instead, read back). (4) The
+position is now 10 units / 2 bases at 2167 with `turn_flags 2` and two live 0x18 orders in it.
+
+**Next (M54i):** make the walk's destination attributable to the order — snapshot every one of
+our records before the keypress and diff after (never trust one index), land ONE loop-ordered
+walk on the base its own legs name with `--min-moves 1`, and only then re-attack the
+walk-then-found sequence.
