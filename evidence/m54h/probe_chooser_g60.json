@@ -1,0 +1,115 @@
+{
+ "cmd": "chooser",
+ "frame": "evidence/m54h/chooser_g60.png",
+ "pid": 914329,
+ "stages": [
+  {
+   "bases": [
+    {
+     "idx": 0,
+     "name": "University Base",
+     "x": 28,
+     "y": 42
+    },
+    {
+     "idx": 18,
+     "name": "Korolev Center",
+     "x": 29,
+     "y": 42
+    }
+   ],
+   "cursor": {
+    "index": 4,
+    "x": 28,
+    "y": 42
+   },
+   "orders_mode": 1,
+   "rec": {
+    "flags": 0,
+    "frozen": 0,
+    "legs_x": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "legs_y": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "mp": 0,
+    "order": 0,
+    "owner": 3,
+    "type": 2,
+    "x": 29,
+    "y": 42
+   },
+   "sel": 60,
+   "stage": "before",
+   "state": {
+    "cur_player": 3,
+    "player": 3,
+    "turn_flags": 2,
+    "year": 2156
+   }
+  },
+  {
+   "kind": "unknown",
+   "rec": {
+    "flags": 0,
+    "frozen": 0,
+    "legs_x": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "legs_y": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "mp": 0,
+    "order": 0,
+    "owner": 3,
+    "type": 2,
+    "x": 29,
+    "y": 42
+   },
+   "sel": 60,
+   "stage": "select_only"
+  },
+  {
+   "kind": "unknown",
+   "ocr": [],
+   "rec": {
+    "flags": 0,
+    "frozen": 0,
+    "legs_x": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "legs_y": [
+     -1,
+     -1,
+     -1,
+     -1
+    ],
+    "mp": 0,
+    "order": 0,
+    "owner": 3,
+    "type": 2,
+    "x": 29,
+    "y": 42
+   },
+   "rows": [],
+   "stage": "after_g"
+  }
+ ],
+ "unit": 60
+}

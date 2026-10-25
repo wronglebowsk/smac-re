@@ -1,0 +1,59 @@
+{
+ "cmd": "legs",
+ "pid": 914329,
+ "stages": [
+  {
+   "bases": [
+    {
+     "idx": 0,
+     "name": "University Base",
+     "x": 28,
+     "y": 42
+    },
+    {
+     "idx": 18,
+     "name": "Korolev Center",
+     "x": 29,
+     "y": 42
+    }
+   ],
+   "cursor": {
+    "index": 6,
+    "x": 28,
+    "y": 42
+   },
+   "orders_mode": 1,
+   "rec": {
+    "flags": 67174404,
+    "frozen": 0,
+    "legs_x": [
+     28,
+     -1,
+     -1,
+     -1
+    ],
+    "legs_y": [
+     42,
+     -1,
+     -1,
+     -1
+    ],
+    "mp": 3,
+    "order": 24,
+    "owner": 3,
+    "type": 2,
+    "x": 28,
+    "y": 43
+   },
+   "sel": 67,
+   "stage": "before",
+   "state": {
+    "cur_player": 3,
+    "player": 3,
+    "turn_flags": 0,
+    "year": 2156
+   }
+  }
+ ],
+ "unit": 60
+}
