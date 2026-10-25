@@ -903,6 +903,8 @@ ORDER_BUDGET = 35.0        # wall-clock cap on one turn's order step, seconds
 ORDER_MAX_ATTEMPTS = 8     # hard cap on keypresses per turn (bounds the cost of dead ends)
 ORDER_MODAL_TIMEOUT = 22.0  # cap on servicing the panes one keypress raised, seconds
 ORDER_REJECTS = {}         # type -> how many times every tried key was refused (live, per run)
+ORDER_KEY_REJECTS = {}     # key -> attempts that produced no +17 delta (live, per run)
+ORDER_KEY_TRIES = 3        # retire a key for the rest of the run after this many duds
 
 # Non-terraform keyboard orders, verified by the SAME `+17` delta. Measured live on this
 # build against a selected Scout Patrol (`evidence/m54c_probe.txt`): `l` took `+17` 0->1
@@ -1170,6 +1172,8 @@ def order_step_in_loop(rec, verbose=False):
                 if (landed or attempts >= ORDER_MAX_ATTEMPTS
                         or time.time() - t0 > ORDER_BUDGET):
                     break
+                if ORDER_KEY_REJECTS.get(kname, 0) >= ORDER_KEY_TRIES:
+                    continue                    # retired for the rest of this run
                 attempts += 1
                 o = issue_order_for_unit(f, me, cand, kname, verbose, want=want, label=label)
                 out.append(o)
@@ -1182,6 +1186,8 @@ def order_step_in_loop(rec, verbose=False):
                               f"{label} byte {o['order_before']}->{o['order_after']} "
                               f"({o['order_name']}) energy {o['energy_delta']} "
                               f"({o['dt']}s)", flush=True)
+                else:
+                    ORDER_KEY_REJECTS[kname] = ORDER_KEY_REJECTS.get(kname, 0) + 1
             if not landed:
                 ORDER_REJECTS[cand["type"]] = ORDER_REJECTS.get(cand["type"], 0) + 1
         rec["orders"] = out
