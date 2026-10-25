@@ -1691,13 +1691,29 @@ def service_turn(idx, tr, timeout, verbose=False):
             # y 145-200) and the year unmoved for HUD_BLIND_S, click TURN COMPLETE at its
             # measured coordinates. If a modal really is up the click lands behind it and
             # the year simply stays where it is.
+            # M54j: the OUR-PHASE gate below is memory-verified; the order step runs on
+            # the FIRST frame that passes it, NOT gated by HUD_BLIND_S — with everything
+            # HELD the game draws "No units need new orders. Press ENTER", TURN COMPLETE
+            # stops OCR-ing, the frame classifies `unknown`, and the game's own ENTER
+            # advances the turn in seconds (run2: 4 of 6 turns, order step never ran).
+            hud_chrome = (find(words, ["menu"]) and find(words, ["commlink"])
+                          and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200])
+            if kind == "unknown" and hud_chrome:
+                st_now = state()
+                if (st_now.get("cur_player") == st_now.get("player")
+                        and not (st_now.get("turn_flags") or 0) & 2
+                        and not ordered and ORDER_CAP > 0):
+                    ordered = True
+                    nver = order_step_in_loop(rec, verbose)
+                    rec["handled"].append(f"blind-orders:{nver}")
+                    snap_units = snap_our_units()
+                    continue
             if (kind == "unknown" and now - last_press > HUD_BLIND_S
                     and now - t0 > HUD_BLIND_S):
                 st_now = state()
                 if (st_now.get("cur_player") == st_now.get("player")
                         and not (st_now.get("turn_flags") or 0) & 2
-                        and find(words, ["menu"]) and find(words, ["commlink"])
-                        and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200]):
+                        and hud_chrome):
                     click(TURN_BTN)
                     rec["handled"].append("turn-complete-blind")
                     last_press = now
