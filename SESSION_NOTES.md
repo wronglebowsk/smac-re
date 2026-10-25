@@ -656,3 +656,60 @@ position is now 10 units / 2 bases at 2167 with `turn_flags 2` and two live 0x18
 our records before the keypress and diff after (never trust one index), land ONE loop-ordered
 walk on the base its own legs name with `--min-moves 1`, and only then re-attack the
 walk-then-found sequence.
+
+## Session 86 (2026-10-25) — M54i (open): **ATTRIBUTION WORKS IN THE LOOP (memory-verified); A WALK STILL HAS NOT LANDED — three failure modes measured, two fixed; M54i STAYS OPEN** — changed `scripts/smac_play.py` (`diff_order_records` + `legs_of` + `own_base_tiles` in the walk checks; bracket-read diff for the default-button path; start-vacated rival rule; `counts0` baseline moved to the pre-press snapshot; `seen_recs` crash fix; OK clicked at the FOURTH measured button centre, not the merged band midpoint), `scripts/m54a_check_run.py` (`--min-own-base-arrivals`), new `scripts/test_walk_diff.py` (13 cases), `scratch/m54i_unpark.py`, `scratch/m54i_park.py`, `scratch/m54i_hold.py`, `ORDERS.md` §10, this file, `NEXT_PROMPT.md`
+
+**What the milestone asked and got.** Every order now names WHICH record the keypress changed:
+the watcher's samples carry the whole 52-byte record, and `diff_order_records` claims a
+destination only when the watched slot went 0 -> byte with legs that CHANGED and no rival
+wears the signature; otherwise `dest` stays None and the trace says so. Live proof:
+`evidence/trace_m54i_run4_*.jsonl` turns 0-2 — `g` verified, `walk_diff {attributed: True,
+confounded: False}`, dest read from the changed legs of the record the press changed.
+`scripts/test_walk_diff.py` -> `PASS 13/13 attribution cases` (bracket shape, own-moved-record
+is not its own rival, look-alike-wearing-the-slot IS one — session 85's exact failure).
+
+**ACCEPTANCE: NOT MET.** `python3 scripts/m54a_check_run.py
+evidence/trace_m54i_run5_20261025_112259.jsonl --timeout 240 --min-our-bases 2 --min-moves 1
+--min-own-base-arrivals 1` -> `advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 33.2 s),
+`orders 2 VERIFIED of 3` (`{"g->byte24": 1, "l->byte1": 1}`), `ours bases_ours 2` floor 2,
+**`moves 0 LANDED of 0 ordered walks`**, `FAIL only 0 VERIFIED walks` / `only 0 walks LANDED
+ON OUR OWN BASE`. Nothing weakened; a documented negative merges.
+
+**Three failure modes, all measured.** (1) **`+17 = 1` is SENTRY, not parked** — the byte table
+always said so; sessions 84-85's "parked decoys" patrol on their own every round (run3's five
+"parked" records migrated (28,42) -> (28,43) and their leg arrays rewrote turn after turn),
+which is what made every count-delta proof fire blind. The inert byte is 2 (HOLD,
+`scratch/m54i_hold.py`). (2) **the count baseline was read AFTER the in-phase pump** — the OK
+hands the unit to the pump in the same tick (ORDERS §7), so the post-OK baseline saw the origin
+already vacated (`order_counts {dest 4, src 0}`, run4 turn 0) and "origin count falls" could
+never fire; fixed to the pre-press snapshot. (3) **the clean-shape runs still miss the ORDER
+itself**: run5 turn 0 `g` on a unit garrisoned at Korolev Center opened the **BASE SCREEN**
+(panes `[unknown, unknown, base, base]`, byte never moved) — after a fresh load the map cursor
+is nowhere the driver thinks it is; turn 3's chooser OK landed `+17 = 24` with **legs still
+empty** (`claim None, rivals 0` — honestly unattributed) — a MOVE queued with no route, cause
+unresolved. The loop's fallback then turned the lone candidate into a SENTRY (`l` verified,
+attributed — the bracket diff working exactly as designed).
+
+**The war is a variable.** From 2167 to 2187 (runs 3-4) other factions founded 7 bases, TOOK
+University Base (`bases_ours 2 -> 1`) and killed 5 of our 10 units while the checker floor was
+still reading 2 at run start. Recovered by reloading `m54b_clean.SAV` (2150) and letting the
+loop re-found Korolev Center (`m54g_prep` + 2 turns, `evidence/trace_m54i_found_*.jsonl`,
+`bases_ours 2` at 2152, `n_bases 19` — the quiet window).
+
+**Also.** run2 died mid-turn-1: the WIP unpacked 3-tuples from the 2-tuple `seen_bytes`
+(fixed to `seen_recs`); run1 had `orders 0` on 6/6 turns because every record we owned was a
+sentry or mid-walk. The chooser's OK is now clicked at the fourth measured button centre
+(`chooser_buttons`), not the merged bar-band midpoint (which is the `Sort: Dist` button on a
+two-row pane). Classifier gates untouched (no new classes): `test_classify.py` 17/17,
+`check_classes.py` 17/0 as in session 85.
+
+**Open.** (1) A loop-ordered walk landing on our own base — STILL zero across sessions 84-86;
+the remaining blockers are cursor placement after load (g -> base screen) and the legs-empty
+chooser OK. (2) Whether the chooser's row click lands the selection before OK (memory shows
+nothing either way — session 85; the legs-empty OK suggests it sometimes doesn't). (3) The box
+after run5: 2158, 2 bases, 7 units, one live legs-less 0x18, sentries loose.
+
+**Next (M54i'):** from the quiet 2158 position — census, hold everything, unpark ONE unit onto
+a tile where it sits ALONE; fix cursor placement first (read the map cursor's memory cell or
+verify the chooser opens before spending the key); if a chooser OK lands 0x18 with empty legs,
+re-open and answer again; then the acceptance command above on a 6-turn run.

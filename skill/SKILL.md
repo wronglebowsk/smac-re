@@ -91,8 +91,9 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: confirm
   the file is untouched (`git diff --stat HEAD -- NEXT_PROMPT.md` empty), then `rm` it and write the new
   content, or patch in place.
-- Fire `delegate_task` before the milestone, not mid-way: a child's completion report is injected into the
-  live turn at an arbitrary point and can exceed 10 KB.
+Delegated decodes belong to PARENT/static sessions: fire `delegate_task` before the milestone, never
+mid-way — a child's completion report is injected into the live turn at an arbitrary point and can
+exceed 10 KB. A milestone session that drives the live box runs no children at all.
 
 If a turn does die, the signature is the 400 `prompt (...) leaves no room to answer`, compression
 reporting `summary_truncated_failure` (aux summary `finish_reason=length`, retries paused ~15 min), then
@@ -132,6 +133,48 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
 - **Change one variable per prep poke.** Emptying a destination tile and moving the walker off a
   half-tile offset in one poke produced a confident, wrong root cause (that tile's occupancy)
   which the run's own trace later refuted. Split the poke, or label the cause unattributed.
+- **Record index is not identity, and the unit array GROWS mid-run** — a base building a unit
+  shifts every index after it, so an index carried across a turn (or read a fraction of a second
+  after the order lands) can name a different unit's record. Snapshot ALL our records (type, x, y,
+  `+17`, legs) before the keypress and diff after; take the field from the record that actually
+  changed, and report how many changed — two changed means the result is confounded.
+- **Attributing a field to one keypress: the through-the-click watcher on the subject's own slot
+  is the only proof.** A read taken after the click proves the field changed somewhere, not on
+  which record — pair the byte and the field from the SAME sample. Use the post-click snapshot of
+  the whole array only to look for RIVALS (the pump may already have consumed the byte, and a
+  mid-run unit build shifts every index after it). A destination counts as this order's only when
+  `+17` went 0 -> the byte on the watched slot, the leg arrays CHANGED against that record's own
+  pre-press value (stale legs survive the pump and name somebody else's trip), and no rival — a
+  same-type/same-tile look-alike freshly ordered, a record carrying the watched signature under a
+  shifted index, or a subject that left its tile while its old index wears the signature — exists.
+  Any of those: report the walk UNATTRIBUTED / CONFOUNDED with the rival records quoted; a guessed
+  destination poisons the next session's footing.
+- **A position claim needs a DELTA, not a match.** "A record of this type sits on the destination
+  tile" is true before the walk starts when look-alike units are parked there. Require the count
+  of that type to rise at the destination and fall at the origin against a baseline captured at
+  order time, and re-read an unfinished walk on later turns (an ordered move can cost more
+  movement than one turn gives it). When the confound is your own decoys, park them FIRST: poke
+  `+17` to a standing order (SENTRY) and read it back, so exactly one subject can move.
+- **Click a pane button at its measured centre, never at the merged midpoint of the bars in a
+  y-range.** A chooser that grows rows drags its button band down and its row bars merge into the
+  same y-window; the midpoint of that span is a Sort button, and clicking it re-sorts the pane
+  instead of answering it while the loop waits for the order to land. Derive the button band
+  (equal-width groups on an even pitch), index it (OK fourth, CANCEL last), and fall back to the
+  midpoint only when no button band was measured.
+- **Make a test fixture of the 52-byte record match the FORMAT, not just the fields you assert
+  on** — pre-fill the leg arrays with the `-1` terminators. A zero-filled fixture decodes as extra
+  real legs `(0,0)`, which silently inverts legs-changed comparisons and makes a correct rule look
+  broken (or a broken rule look correct).
+- **Grep every consumer call site before changing a helper's sample/return shape** — probe scripts
+  and hand-rolled fixtures keep the old shape, and tuple-index bugs surface only in the shard you
+  did not re-run (a `(raw, ms, byte)` watcher whose readers still index `s[1]` silently never
+  matches). In a comprehension, a variable used in the key or filter must be introduced by an
+  earlier `for` clause.
+- **Write the attribution/verification rule's CASE LIST before coding it against a unit test**:
+  one line per case — before-state, after-state, expected verdict (claimed / confounded /
+  unattributed). Semantics designed by repeatedly failing a test rewrite function and test
+  together for dozens of tool calls; the checkpoint commit fires at the first green test, not at
+  the end of that churn.
 - A `turn_flags` bit that survives a year flip means the box is wedged mid-round, not that the
   click failed — hand that over explicitly and start the next session from a known-good save.
 
@@ -149,7 +192,10 @@ Measured 2026-10-25: 29.3 MB in 858 files (58 images = 13.9 MB of it) against th
 whole tree was days old. So the margin is real, not theoretical: a 40-turn trace is ~55 KB, but one
 screenshot is 400 KB and `check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs
 (delete those immediately). Run `budget` BEFORE adding new frames, and expect to prune in bulk once
-the footage ages out.
+the footage ages out. When `prune --dry-run` proposes nothing (it only drops uncited images older than
+7 days, and a young tree offers no victims), free the room instead by gzipping a large *text* file that
+no markdown cites — `grep -rn <basename> --include=*.md .` first, because a cited path must stay
+readable at its recorded path; an uncompressed disassembly dump is worth ~8x its gzipped size.
 
 Delegating a static decode works well (a child can map a 1450-line function in minutes), but a child's
 claims are testimony, not evidence. Re-read from the cached disassembly: (1) every store site it cites,
@@ -371,7 +417,10 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   services the pane, and verifies `unit+17` moved into the byte set that key may produce — an
   order counts only as that memory delta, never as a screenshot. `--no-escape N` = "press no Escape during
   the first N seconds" — set N above `--timeout`. Bound a backgrounded driver with shell `timeout`.
-  Never signal by name (`pkill -f`/`pgrep|kill` matches your own argv).
+  Launch a long run through the agent's tracked background mode (`exec python3 scripts/smac_play.py
+  … > /tmp/<tag>.log 2>&1`), never `nohup … &` in a foreground call: the wrapper is refused there, and
+  a shell that backgrounds and exits hides the driver's own pid — find it with `pgrep -f smac_play.py`
+  and `kill <pid>`. Never signal by name (`pkill -f`/`pgrep|kill` matches your own argv).
 - **A PROPOSAL vote pane stalls the AI phase.** `YEA: 2  NAY: 3` is the TALLY, not a key hint. Bars in
   TRUE window coords: YEA (310,495) / NAY (398,495) / ABSTAIN (485,495), single OK (393,495); click only
   after `xdotool windowfocus <win>`; OK >= 1.2 s after selecting. Capture with `xwd -display :99 -root
@@ -379,6 +428,14 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
 - **A stalled round may be a LIVELOCK, not a modal:** run `python3 scripts/m53q_livelock.py` (census of
   the `unit+48`/`unit+50` chains; `--fix` repairs). Signature: `turn_flags` bit 1 set + a hot main thread
   + byte-identical screenshots.
+- **A turn that never advances can also be a CLASSIFIER miss, with no modal visible.** OCR here is
+  unreliable in both directions: a clean HUD reads `unknown` when the TURN COMPLETE row fails to
+  render legibly (the chrome — MENU/COMMLINK — still reads, so check for it), and an advisor dialog
+  reads `hud` when too few of its words land in the dialog band (its caption is the tell: a word of
+  6+ characters, or two of 4+, at y 90-118 means something is drawn OVER the HUD). Both idle the
+  loop silently: with `--no-escape` the first burns the whole turn budget doing nothing, and in the
+  second every TURN COMPLETE click lands BEHIND the modal. Diagnose by reading the state, not the
+  class: our phase + `turn_flags` clear + year unmoved = nothing is answering the modal.
 - **Watchpoints:** x86 gives 4 hardware slots (an 8-byte window needs 8-alignment = 2 slots); pair with
   the 10 Hz poller `scripts/m53m_poll.py`; they fire on VALUE CHANGE, so a same-value rewrite is
   invisible. Bake addresses as literals, `stdbuf -o0`, drive + snapshot in ONE backgrounded job
