@@ -223,3 +223,20 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
   and "unable to find file" repeated. The browser OPENS IN THE SAVES DIR: dismiss the error
   (Return), clear the NAME field, type just the FILENAME (`m54b_clean.SAV`), OK — the file is in
   the visible list. Then the difficulty confirm at (290,391).
+
+**M54k (session 89, live reads at 2150-2174).** Four things the order path must respect:
+* **Impassable tiles are marked in the tile record**: the flag byte sits at record **+3 for EVEN
+  x** and **+7 for ODD x** (the record packs two columns); bit **0x40 set = impassable**.
+  Validated against 98 live unit tiles. A unit poked onto an impassable tile VANISHES from the
+  array within seconds — `scratch/m54k_watch.py` (0.5 s memory diff watcher) is how it was
+  caught, at (28,34).
+* **`g` queues the alphabetically-first own base regardless of (x+y) parity**: for a unit at
+  (22,42) the game wrote leg (29,42), a route parity makes impossible, and it oscillated all 6
+  turns. Start walkers on the destination base's parity, or read the chooser rows (the chooser
+  frame does not always classify `dest-chooser`).
+* **The pump REWRITES the leg array while it walks**: the leg sampled at press time read (61,10)
+  while the record that ARRIVED wore [(29,42)] — the ordered destination. `walker_on_dest`
+  accepts either signature; a third leg, or none, is still not the walker.
+* **A COMMUNICATION arriving mid-order-step is a key sink**: the order byte went 0 -> 88 -> 2
+  (HOLD) and the turn record spanned two year flips. And with everything HELD the game advances
+  whole rounds with NO input (~8 s/round), so a turn record can show a +2 delta on its own.
