@@ -224,7 +224,7 @@ def main():
     # ------- M54i2: the step table preserves (x+y) parity — the oscillation cause ----
     # The 21 (dx,dy) pairs below are the LIVE read of 0x67850c/0x678990 at 2159
     # (pid 1110005, 2026-10-25); the adjacency loop bound 0x54/4 = 21 is
-    # ghidra_out/shard_013.c:21870.
+    # ghidra_out/shard_013.c:21868.
     TABLE = [(0, 0), (1, -1), (2, 0), (1, 1), (0, 2), (-1, 1), (-2, 0), (-1, -1),
              (0, -2), (2, -2), (2, 2), (-2, 2), (-2, -2), (1, -3), (3, -1), (3, 1),
              (1, 3), (-1, 3), (-3, 1), (-3, -1), (-1, -3)]

@@ -1083,7 +1083,7 @@ def own_base_tiles(f, me):
 # M54i2 (2026-10-25, live read at 2159 from pid 1110005): the game's step table is 21
 # int32 pairs — `dx` at 0x67850c, `dy` at 0x678990; the adjacency loop runs
 # `do { ... } while ((int)local_2c < 0x54)` in 4-byte steps (ghidra_out/shard_013.c:
-# 21829-21870), i.e. 21 entries. EVERY entry preserves (x+y) parity — the short steps
+# 21829-21868), i.e. 21 entries. EVERY entry preserves (x+y) parity — the short steps
 # (±2,0),(±1,±1),(0,±2) and the long steps (±2,±2),(±3,±1),(±1,±3) all do. A queued
 # MOVE walks along these steps, so a unit can NEVER reach a base tile of the other
 # parity: measured, the run2 walker ordered to University Base (28,42) (sum 70, even)

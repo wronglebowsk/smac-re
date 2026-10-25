@@ -170,3 +170,28 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
   at its measured coordinates when it is our phase, the chrome is present and no bar band exists
   at y 145-200; and answer any `hud` frame that has a caption-band line (one word >= 6 chars, or
   >= 2 words >= 4 chars at y 90-118) with Return before anything else.
+
+## The step table and (x+y) parity (M54i2, session 87, 2026-10-25, PASS)
+
+* `dx` at `0x67850c`, `dy` at `0x678990`, **21 int32 pairs** (`while ((int)local_2c < 0x54)`,
+  shard_013.c:21868). Live read: `(1,-1) (2,0) (1,1) (0,2) (-1,1) (-2,0) (-1,-1) (0,-2)
+  (±2,±2) (3,±1) (1,±3) (-3,±1) (-1,-3)` + `(0,0)`. **Every step preserves (x+y) parity** — a
+  queued MOVE can only arrive at tiles of its START tile's parity. Walkers stood at (29,42)/
+  (28,43) (sum 71) ordered to University Base (28,42) (sum 70) oscillate forever; sessions
+  84-87's "walks don't land" were geometry, not cursors, occupancy, or pump timing. Order `g`
+  only when a same-parity own base (other than the unit's tile) exists; prefer candidates on a
+  table-neighbour tile — they land on the pump's next visit.
+* A **chooser-queued** 0x18 executes on the game's own TURN COMPLETE cycle (poked bytes never
+  do): one actionable record at (28,43) with leg (28,42) came back at (29,42), order still 24,
+  `+40` = 3 spent, while HELD records sat put at `+40` = 0. `+40` = mp SPENT this round,
+  re-zeroed at the next phase start for units that did not move.
+* The cursor is GAME-OWNED: three cursor variables, no poke sticks (window fields
+  `*(u32*)0x7cdecc+0x1dd9c/+0x1dda0`; `DAT_0091b5f0/670`; `DAT_0091b5e8` is an append-counter).
+  `g` is an order only via the dispatcher pokes (SEL_G + `0x91b5b8`); else it falls to the
+  cursor-tile handler (base tile -> base screen, else nothing). A poke-MOVED unit stops being
+  found at its new tile by the game's own occupancy. `sp.focus()` is a silent NO-OP while
+  `sp.WIN` is None — scratch scripts must `sp.WIN = sp.find_window()` first.
+* `mp_after` for a landing must be read as the MAX mp over same-type records on the destination
+  tile, never `hits[0]` (index order): garrison/HELD units and base-PRODUCED units sit at mp 0
+  there, so a nonzero max is the arrival's own spent movement. The leg array is a waypoint —
+  the chooser's named base is the ordered destination.
