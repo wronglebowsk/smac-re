@@ -165,6 +165,22 @@ def is_communication(words, png=None):
     return any(330 <= b[1] <= 365 for b in pane_bars(png, y0=330))
 
 
+def modal_caption(words):
+    """Is something drawn OVER the HUD? Long words in the caption band (y 90-118).
+
+    A clean HUD has nothing there: its message pane sits at y 240-330 and the map's base
+    labels at y~230 (measured on the frames the classifier tests save; the only tokens 2x OCR
+    puts in 90-118 on a clean HUD are 2-3 character noise like 'it'/'rll'). Two words of 4+
+    characters, or one of 6+, means a modal is wearing the HUD chrome — which is exactly how
+    the OPERATIONS DIRECTOR "Investigate pod beacon?" pane sat in front of the loop for the
+    whole of turn 0 while the driver clicked TURN COMPLETE BEHIND it every 6 s
+    (`evidence/trace_m54h3_*.jsonl`: the frame flickers between `hud` and `unknown` because
+    OCR reads the chrome and misses the dialog test's word count).
+    """
+    band = [t for t, _cx, cy, *_ in words if 90 <= cy <= 118]
+    return any(len(t) >= 6 for t in band) or sum(1 for t in band if len(t) >= 4) >= 2
+
+
 def is_dest_chooser(words):
     """The `g` ("Move to") chooser (M54d).
 
@@ -1332,6 +1348,16 @@ def service_turn(idx, tr, timeout, verbose=False):
         elif kind == "dialog":
             key("Return"); time.sleep(0.5)      # default button = OK
         elif kind == "hud":
+            # M54h: a modal wearing the HUD chrome (see `modal_caption`) has to be ANSWERED,
+            # not walked past: the OPERATIONS DIRECTOR "Investigate pod beacon?" pane ate a
+            # whole turn of TURN COMPLETE clicks landing BEHIND it. Return is a dialog's
+            # default button (it cleared this very pane today in scratch/m54h_clear.py), and at
+            # a genuinely clean HUD Return IS TURN COMPLETE, so a false positive still ends the
+            # turn rather than idling it.
+            if modal_caption(words):
+                rec["handled"].append("hud-with-caption")
+                key("Return"); time.sleep(0.9)
+                continue
             # S3 / M54c: order our own units BEFORE ending the turn. This branch is only
             # reachable in OUR phase (the cur_player/turn_flags gate above `continue`s on
             # an AI round), which is exactly the window where a hotkey is an order rather
