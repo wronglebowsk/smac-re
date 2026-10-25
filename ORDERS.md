@@ -400,3 +400,49 @@ record the press changed — attribution WORKS in the loop.
 TOOK University Base (bases_ours 2 -> 1) and killed 5 of our 10 units — while the checker's
 `--min-our-bases 2` floor was still reading 2 at the run's start. A 6-turn acceptance run
 needs a position that quiet to start with.
+
+## 11. Who owns the map cursor, and why a `g` falls through (M54i2, session 87, 2026-10-25)
+
+Measured live at 2158 (pid 1053556) with `scratch/m54i2_cursor.py` / `m54i2_scan.py` /
+`m54i2_om.py`; every claim below is a `/proc/<pid>/mem` read-back, not a screenshot.
+
+* **There are (at least) three cursor variables and the pokes do NOT stick on any of them.**
+  - `*(u32*)0x7cdecc + 0x1dd9c / +0x1dda0` — the map WINDOW's cursor fields (the tile the
+    info panel reads: poking them changed the panel's `(29,41)` readout). A poke here was
+    read back correct on a second handle, yet the game rewrote it to its own value within
+    ~3 s (`cursor end` lines in the probe); `FUN_005a071e` (shard_015.c:16585) writes them
+    when one of our units MOVES.
+  - `DAT_0091b5f0 / DAT_0091b670` at byte offset `DAT_0091b5e8` — the array the tile
+    handlers read (`FUN_00511960`, shard_013.c:4017). Poking the cell the index selects
+    (both the `index*4` int reading of m54e_probe and the `+index` u16 reading of
+    shard_012.c:6463) was likewise re-synced by the game within 1.5 s.
+  - `DAT_0091b5e8` / `+0x91b5ec` are counters that climb on their own (20 -> 21 -> 22
+    across two `Right` presses in the differential scan); the array cells are a history
+    the game appends to, not a slot the driver can park.
+  **Conclusion: the cursor is GAME-OWNED. Do not try to position it by poke.** It moves on
+  the game's own events (a unit arriving — `FUN_005a071e` — the AI/chooser cycling). The
+  only durable cursor placement is the game's own: order a unit somewhere and the cursor
+  follows the arrival.
+* **What decides whether `g` is an ORDER at all is §1 rule 3, not the cursor.** With
+  orders mode off (`0x91b5b8 == 0`) or the game's selection unset (`SEL < 0`), the key
+  falls to `FUN_00511960` (the cursor-tile handler): cursor on a base tile -> the BASE
+  SCREEN / "will automatically forward" dialog; cursor elsewhere -> nothing. That is
+  session 86 run5 turn 0's "cursor placement" failure re-attributed: the dispatcher never
+  saw the key. The driver's recipe (poke `SEL_G`, poke `0x91b5b8` like line 2224 does for
+  founding, THEN press) is the working path; the poke sticks because the keypress follows
+  within the same frame the game takes to re-sync.
+* **`sp.focus()` is a silent NO-OP while `sp.WIN` is None.** Scratch scripts must do
+  `sp.WIN = sp.find_window()` first or every `sp.key()` lands on whatever X thinks is
+  focused (this ate the first hour of session 87: "keys don't land" was a focus bug, and
+  the arrow presses that DID land were the game's own cycling, not mine).
+* **Poke-moved units are invisible to the cursor-tile finder.** A record poked to a new
+  x,y stops being found at its new tile (`g` at a cursor on the tile found nothing for a
+  poked unit; the untouched garrison units still open their base screen). Content-identity
+  survives a poke; the game's tile occupancy does not. Prep pokes are fine for FOUNDING
+  (the loop orders the poked record via the dispatcher); they are NOT fine for making a
+  unit "stand" somewhere the game must then find it.
+* **Driver policy for the two fall-through shapes** (`move_order_needs_retry`, tested by
+  `scripts/test_walk_diff.py` cases 14-18): a MOVE whose OK landed the byte with NO route
+  (`verified` and `dest is None`), or whose pane list contains `base` (the key fell to the
+  cursor handler), is RE-RAISED, at most `MOVE_ORDER_RETRIES = 2` times, every attempt
+  recorded in the trace's `attempts` list. Non-MOVE keys never retry.
