@@ -271,6 +271,45 @@
 - **State of the box:** the game is a FRESH TALENT/STANDARD game at ~2150 (n_bases 18), live and
   responsive, still up on win 10485761. Session 77's 2416 campaign exists only on those hung saves.
 - **Next:** **M54b.** The 40-turn assertion is green on a fresh game; what is left is a resumed
-  campaign (load at the title, then check `turn_flags & 2` and treat a spinning main thread as a
-  bad slot rather than a stall), pane-scoped clicks (session 77's run ended in the HELP then LOAD
-  browsers), and the round-aware turn budget.
+campaign (load at the title, then check `turn_flags & 2` and treat a spinning main thread as a
+bad slot rather than a stall), pane-scoped clicks (session 77's run ended in the HELP then LOAD
+browsers), and the round-aware turn budget.
+
+## Session 79 (2026-10-24) — M54b: **THE 40-TURN RUN PASSES FROM A LOADED SAVE — CLEAN-POINT SAVES RESUME LIVE; THE HUNG AUTOSAVES ARE A MID-END-TURN-SAVE ARTIFACT**
+- **THE ACCEPTANCE IS MET.** One invocation, nobody at the keyboard, starting from a DEAD process:
+  `python3 scripts/smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54b40b --load
+  Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV --verbose`, checked with
+  `python3 scripts/m54a_check_run.py evidence/trace_m54b40b_20261024_212833.jsonl --timeout 240` →
+  `turns 40 records, header asked for 40`, **`advanced 40/40`, year deltas `{1: 40}`**,
+  **`stuck 0 (turns [])`, max dt 51.5 s**, `PASS`, exit 0. The DRIVER answered the whole load:
+  log shows `no window -> relaunching the game`, cdrom Return, title -> LOAD GAME row (610,344) ->
+  blind browser (name box 406,527, OK bar 330,552) -> LOAD confirm OK (290,391) -> `HUD reached
+  live=True`. Panes serviced inside the run: hive-bribe 5, dialog 17, confirm-after-press 36,
+  base 6, close-bar 2, ai-phase 18 — no pane starved it, no bar clicked outside its pane.
+  Session 78's wins stay green after every change: `test_classify.py` PASS 10/10,
+  `check_classes.py` frames: 10 failures: 0.
+- **THE CLEAN-SAVE TEST ANSWERS THE HUNG-RESUME QUESTION.** A save taken at a CLEAN point (live
+  HUD, `turn_flags 0`, idle) reloads live: MENU (61,369) -> GAME (30,186) -> Save Game (200,331);
+  the SAVE browser is TALLER than the LOAD browser (NAME 406,304, OK 330,327, CANCEL 482,327 — the
+  LOAD browser's bars sit at y 552); typed the full `Z:\` path, the file landed (242,539 B, mission
+  year 2150 @ +0x54), `m54a_load.py --relaunch` reached the HUD animating=True with
+  `turn_flags 0` and a responsive MENU click. So session 78's eight hung autosaves are specific to
+  saves taken WITH `turn_flags` bit1 set (mid-end-turn), not a save-format wall. The 2416 campaign
+  exists only in such mid-round autosaves — resuming PAUL'S campaign still needs either a clean
+  campaign save or the bit1-resume fix; parked in `references/open-leads.md`.
+- **THE WEDGE GUARD EARNED ITS KEEP — AFTER ONE FALSE POSITIVE.** The first run reached 28/40,
+  then `turn 28: WEDGE — screen byte-static 42s, MENU click changed nothing` — but the game was
+  ALIVE (year 2178, `turn_flags 0`, one Escape closed the screen instantly): a OWN-PHASE BASE
+  SCREEN, legitimately byte-static, sat under the `--no-escape 3000` gate that starved the
+  base-Escape path (`evidence/px_wedge_t28.png`, `evidence/trace_m54b40_20261024_211436.jsonl`).
+  Two fixes: the probe fires only on `hud` frames (the hung-resume signature), and `base` closes
+  with Escape EVEN UNDER `--no-escape` (the class is unambiguous — quit-prompt/title classify
+  first, the base test is positional since M54a). The round-aware budget slides the deadline with
+  every changing capture, capped at 3x timeout; a static screen does not extend it.
+- **State of the box:** pid 373089 alive at 2190 (n_bases 26) after the winning run;
+  `programs/saves/m54b_clean.SAV` (2150, gitignored like all of `programs/`) is the reproducible
+  start point for `--load`.
+- **Next:** ROADMAP Phase 2 — **S3 (unit orders/combat)**: the unattended loop has never MOVED a
+  unit; `give_order` exists but only runs via `--order`. Or close the mid-round-autosave question
+  (why a save with bit1 set spins after load) to unlock Paul's 2416 campaign. Read ROADMAP.md
+  before picking.

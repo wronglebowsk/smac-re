@@ -44,6 +44,7 @@ If it raises EACCES, gdb is broken too — fix the sysctl rather than hunting th
 
 | class | detected by | action |
 |---|---|---|
+| **quit prompt** ("Do you really want to quit?") | `reallywant`+`quit` **or** `oops`+`wait` in the squashed text — its banner IS the game title, so the naive `title` test fires on it (M54a) | **`Escape`** = "Oops, no, wait!". Clicking its OK exits the game; a 40-turn run died at turn 13 because the class did not exist and the driver correctly refused to click |
 | **title / menu** | letter-squashed text contains `sidmeiersalphacentauri` or `reallywanttoquit` | **stop the run, click nothing** — see the escape pitfall below |
 | HUD | OCR word `COMPLETE` with y in 380..450 | click it |
 | units-not-moved confirm | the question itself: squashed text contains `endtheturn` plus `moved`/`reallywant` | click the `Yes, …` row, then the OK bar ~26 px below |
@@ -54,8 +55,8 @@ If it raises EACCES, gdb is broken too — fix the sysctl rather than hunting th
 | base screen | `GOVERNOR` / `NUTRIENTS` / `CONQUER` / `DISCOVER` **at a position outside the HUD's own message strip (y ≥ 425)**, or with **no TURN COMPLETE row on screen at all** (M54a) | `Escape` |
 | Secret Project movie, dark/few-words frame | <15 OCR words | wait — movies end on their own; one `Escape` only after ~20 s with no change |
 
-Classifier order matters: confirm → cdrom → loaded-game → title → breakthrough → base → HUD →
-dialog → movie. The dialog test needs the flat-panel check because map labels also produce words
+Classifier order matters: confirm → cdrom → loaded-game → **quit-prompt** → title → breakthrough →
+base → HUD → dialog → movie. The dialog test needs the flat-panel check because map labels also produce words
 in the upper band; colour counting alone fails on unexplored (black) map, text mass alone fails on
 labelled map.
 
