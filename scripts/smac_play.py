@@ -811,6 +811,16 @@ def answer_dest_chooser(png, verbose=False, words=None, f=None, avoid=None,
         left = min(b[0] - b[2] / 2.0 for b in bs)
         right = max(b[0] + b[2] / 2.0 for b in bs)
         xy = (int((left + right) / 2), int(sum(b[1] for b in bs) / len(bs)))
+        # M54i: the merged midpoint is NOT the OK button. With two destination rows the
+        # bar band at y 150-190 contains a ROW bar as well as the five buttons, and the
+        # midpoint of that span (~x 398) is the `Sort: Dist` button — clicking it
+        # re-sorts the pane instead of answering it. `chooser_buttons()` measures the
+        # button band and OK is its FOURTH centre (verified by effect: OK landed 0x18,
+        # CANCEL — the fifth — wrote nothing; evidence/m54h/probe_chooser_walk1.json /
+        # probe_chooser_cancel67.json).
+        by, cs = chooser_buttons(png)
+        if len(cs) >= 4:
+            xy = (int(cs[3]), int(by))
         click(xy)
         if verbose:
             print(f"    dest-chooser OK at {xy} (bars {bs})", flush=True)
@@ -1000,8 +1010,23 @@ def frame_hash(png):
     return md5(open(png, "rb").read()).hexdigest()
 
 
-def our_rows(f, me, n=119):
-    """Every live record we own, decoded for the walk check: idx/x/y/type/order/mp-used."""
+def legs_of(raw):
+    """The queued-MOVE route in a 52-byte record as [(x, y), ...].
+
+    ORDERS.md §4: legs at `+20..+27` (x) / `+28..+35` (y), -1-terminated. The arrays
+    SURVIVE the pump (`order 0`, legs still (29,42) on parked records — measured by
+    `m54d_census.py` on the live position), so stale legs sit on records that were
+    ordered on an earlier turn; a destination is only attributable to THIS order when
+    the legs of THIS record changed (M54i).
+    """
+    import struct
+    lx = [struct.unpack("<h", raw[20 + k * 2:22 + k * 2])[0] for k in range(4)]
+    ly = [struct.unpack("<h", raw[28 + k * 2:30 + k * 2])[0] for k in range(4)]
+    return [(a, b) for a, b in zip(lx, ly) if a >= 0 and b >= 0]
+
+
+def our_rows(f, me, n=119, with_raw=False):
+    """Every live record we own, decoded for the walk check: idx/x/y/type/order/mp/legs."""
     import struct
     arr = rd(f, UNIT_ARR, n * 52)
     out = []
@@ -1009,9 +1034,13 @@ def our_rows(f, me, n=119):
         d = arr[i * 52:(i + 1) * 52]
         if d[14] != me or d[14] == 0xFF:
             continue
-        out.append(dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
-                        y=struct.unpack("<h", d[2:4])[0],
-                        type=struct.unpack("<H", d[10:12])[0], order=d[17], mp=d[40]))
+        r = dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
+                 y=struct.unpack("<h", d[2:4])[0],
+                 type=struct.unpack("<H", d[10:12])[0], order=d[17], mp=d[40],
+                 legs=legs_of(d))
+        if with_raw:
+            r["raw"] = d
+        out.append(r)
     return out
 
 
@@ -1081,6 +1110,9 @@ def verify_moves(orders, snap, verbose=False):
         return []
     try:
         rows = our_rows(f, state().get("player"))
+        # M54i: the milestone's question is "did the loop's unit reach a base WE OWN",
+        # so the destination tile is checked against the base array in the same read.
+        own_tiles = own_base_tiles(f, state().get("player"))
         out = []
         for o in want:
             dx, dy = o["dest"]
@@ -1111,6 +1143,7 @@ def verify_moves(orders, snap, verbose=False):
                      on_dest_after_exec=bool(hits), walked_inphase=bool(o.get("walk_landed")),
                      mp_after=mp_after, walk_ms=o.get("walk_ms"),
                      dest_count=[d_before, d_after], src_count=[s_before, s_after],
+                     dest_is_own_base=bool((dx, dy) in own_tiles),
                      still_at_start=bool(still))
             out.append(m)
             if verbose:
@@ -1128,6 +1161,117 @@ def verify_moves(orders, snap, verbose=False):
 
 PENDING_WALKS = []         # 0x18 orders whose walk outlived the turn that ordered them
 PENDING_MAX_TURNS = 8      # stop re-checking a walk after this many later turns
+
+
+def diff_order_records(before, cand_idx, want, byte_samples, pre_legs,
+                       after=None, pre_order=0):
+    """M54i: WHICH record did the keypress order? Snapshot-and-diff, never one index.
+
+    The proof of a FRESH order is the through-the-click watcher's own samples on the
+    CANDIDATE's record slot: a 0 -> wanted-byte transition seen there is the order
+    landing on the unit we raised the key against. `after` is only read for RIVALS —
+    by the time it is taken the pump may already have run the order (`order_after 0`)
+    or a unit built mid-run may have shifted every index after it, and session 85
+    proved what a re-used index costs: legs naming bases nobody ordered.
+
+    A rival is another record on the candidate's own tile (same type, same order
+    before the press — indistinguishable from it; three identical Scout Patrols stack
+    on University Base) that carries the wanted byte with legs its record did not hold
+    before the press: a fresh order we did NOT watch land. A record that already
+    carried the byte (a live 0x18 walker) or whose legs did not CHANGE (the leg arrays
+    survive the pump — a parked decoy, a walk ordered on an earlier turn) is not fresh.
+
+    Returns (claim, rivals, attributed, confounded). `attributed` is True for ONE
+    unambiguous claim with no rival; `confounded` names the two-orders-at-once case the
+    milestone asks to be reported, not smoothed over. When `attributed` is False the
+    destination stays UNATTRIBUTED — an honest negative beats a guessed destination.
+    """
+    import struct
+    cand = next((b for b in before if b["idx"] == cand_idx), None)
+    if cand is None:
+        return None, [], False, False
+    want_bytes = set(want)
+    # samples are (raw52, ms, byte) triples from `order_byte_watcher`
+    zero_i = next((i for i, s in enumerate(byte_samples) if s[2] == 0), None)
+    land_i = next((i for i, s in enumerate(byte_samples) if s[2] in want_bytes), None)
+    # fresh = the watcher saw our slot sitting at NO ORDER and then at the byte.
+    fresh_order = (zero_i is not None and land_i is not None and zero_i < land_i)
+    final = byte_samples[-1][0] if (byte_samples and land_i is not None) else None
+    post_legs = legs_of(final) if final is not None else []
+    # where our record sits AFTER the click (the pump may have stepped it one tile);
+    # rivals are scanned against THIS tile, since it is our record that must not be
+    # confusable with a look-alike that took an order we did not watch land
+    post_tile = (struct.unpack("<h", final[0:2])[0], struct.unpack("<h", final[2:4])[0]) \
+        if final is not None else (cand["x"], cand["y"])
+    claim = None
+    if fresh_order and post_legs != [tuple(p) for p in pre_legs]:
+        claim = dict(idx_before=cand["idx"], idx_after=cand["idx"],
+                     type=cand["type"], frm=[cand["x"], cand["y"]],
+                     to=[struct.unpack("<h", final[0:2])[0],
+                         struct.unpack("<h", final[2:4])[0]],
+                     order=[pre_order, byte_samples[land_i][2]],
+                     legs_before=[list(p) for p in pre_legs],
+                     legs_after=[list(p) for p in post_legs],
+                     raw_after=final, mp=final[40],
+                     landed_at_ms=byte_samples[land_i][1],
+                     cand=True)
+    rivals = []
+    if after is not None and fresh_order:
+        pre_by_idx = {b["idx"]: b for b in before}
+        # The watched slot is only excluded from the rival scan while the after-snapshot
+        # still shows OUR candidate on it: same tile, and either the order we watched
+        # land (with the legs our setter wrote — the byte + route pair is our signature,
+        # the pump consumes the byte but the legs survive) or the order it started with.
+        # A unit built mid-run shifts every index after it — then the row wearing our
+        # index is a look-alike and its fresh order IS the ambiguity (that is how session
+        # 85 got legs naming bases nobody ordered).
+        # Did the array shift under us? The watcher's own last sample says where our
+        # record is now: if it is still on its start tile, the watched slot IS our
+        # record whatever the (re-usable) indices say. If it left its tile AND no
+        # after-row still wears our (index, start-tile, pre-press order) triple, a unit
+        # was built or died below us, every index after that point moved, and a
+        # look-alike wearing our index carries the same signature — the ambiguity that
+        # gave session 85 legs naming bases nobody ordered.
+        watched_stayed = final is not None and (post_tile == (cand["x"], cand["y"]))
+        stayed = any(a["idx"] == cand_idx
+                     and (a["type"], a["x"], a["y"], a["order"])
+                     == (cand["type"], cand["x"], cand["y"], cand["order"])
+                     for a in after)
+        for a in after:
+            b = pre_by_idx.get(a["idx"])
+            if a["idx"] == cand_idx and (watched_stayed or stayed):
+                continue
+            # (a) a look-alike on our tile whose order is FRESH against its own
+            #     pre-press value, or (b) an INDISTINGUISHABLE TWIN of our record
+            #     anywhere in the array — same type, same tile, the byte we watched
+            #     land and the route our setter wrote. A mid-run index shift makes (b)
+            #     real: the twin and our record carry the same signature and only the
+            #     (unreliable) index tells them apart.
+            fresh_rival = (b is not None
+                           and (a["type"], a["x"], a["y"]) == (cand["type"],
+                                                               post_tile[0], post_tile[1])
+                           and a["order"] in want_bytes
+                           and a["order"] != b["order"] and a["legs"] != b["legs"])
+            twin = (a["idx"] != cand_idx
+                    and (a["type"], a["x"], a["y"], a["order"], [tuple(p) for p in a["legs"]])
+                    == (cand["type"], post_tile[0], post_tile[1],
+                        byte_samples[land_i][2], tuple(post_legs)))
+            if not (fresh_rival or twin):
+                continue
+            rivals.append(dict(idx_before=(b["idx"] if b else a["idx"]),
+                               idx_after=a["idx"],
+                               type=a["type"],
+                               frm=[b["x"], b["y"]] if b else [a["x"], a["y"]],
+                               to=[a["x"], a["y"]],
+                               order=([b["order"], a["order"]] if b
+                                      else [cand["order"], a["order"]]),
+                               legs_before=[list(p) for p in (b["legs"] if b else [])],
+                               legs_after=[list(p) for p in a["legs"]],
+                               mp=a["mp"], twin=twin, cand=False))
+    confounded = bool(rivals)
+    attributed = claim is not None and not confounded
+    return claim, rivals, attributed, confounded
+
 
 
 def verify_pending_walks(cur_turn, verbose=False):
@@ -1154,6 +1298,7 @@ def verify_pending_walks(cur_turn, verbose=False):
     try:
         me = state().get("player")
         rows = our_rows(f, me)
+        own_tiles = own_base_tiles(f, me)      # M54i: same base-array check as verify_moves
         for o in PENDING_WALKS:
             dx, dy = o["dest"]
             hits = [r for r in rows if r["type"] == o["utype"]
@@ -1173,6 +1318,7 @@ def verify_pending_walks(cur_turn, verbose=False):
                      ordered_turn=o.get("ordered_turn"),
                      mp_after=mp_after, walk_ms=o.get("walk_ms"),
                      dest_count=[d_before, len(hits)], src_count=[s_before, len(still)],
+                     dest_is_own_base=bool((dx, dy) in own_tiles),
                      still_at_start=bool(still))
             out.append(m)
             turns_since = cur_turn - (o.get("ordered_turn") or cur_turn)
@@ -1706,7 +1852,7 @@ def answer_terraform_pane(words, verbose=False):
 # Enricher or 0xa by tile bits) that happen BEFORE validation, so the landed byte can
 # legitimately differ from the pressed key's mode. `expected_byte` is recorded anyway.
 
-def order_byte_watcher(idx, stop, out, dur=1.5):
+def order_byte_watcher(idx, stop, out, dur=1.5, recs=None):
     """M54e: sample unit `+17` at ~5 ms resolution from a second /proc/pid/mem handle.
 
     The `g` chooser's OK click lands the byte and the game's own order pump eats it a tick
@@ -1714,6 +1860,10 @@ def order_byte_watcher(idx, stop, out, dur=1.5):
     either side of it (session 81 read 0 and called the order unverified; the 2026-10-25
     smoke run read 0 on a walk that had already landed). A burst that spans the click
     catches the byte itself, which is the delta the milestone asks for.
+
+    M54i: pass `recs` to collect the WHOLE 52-byte record with each sample (the legs
+    belong to the same read as the byte — an attribution must not mix a byte from one
+    sample with legs from another).
     """
     import threading
 
@@ -1726,8 +1876,13 @@ def order_byte_watcher(idx, stop, out, dur=1.5):
         try:
             while not stop.is_set() and time.time() - t0 < dur:
                 try:
-                    out.append((round((time.time() - t0) * 1000),
-                                rd(g, UNIT_ARR + idx * 52 + 17, 1)[0]))
+                    if recs is not None:
+                        raw = rd(g, UNIT_ARR + idx * 52, 52)
+                        recs.append((raw, round((time.time() - t0) * 1000), raw[17]))
+                        out.append((round((time.time() - t0) * 1000), raw[17]))
+                    else:
+                        out.append((round((time.time() - t0) * 1000),
+                                    rd(g, UNIT_ARR + idx * 52 + 17, 1)[0]))
                 except Exception:
                     break
                 time.sleep(0.005)
@@ -1756,6 +1911,13 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     mode = ORDER_KEYS.get(kname)
     idx = cand["idx"]
     before = unit_rec(f, idx)
+    # M54i: the record's legs BEFORE the keypress — stale legs from an earlier turn are
+    # not evidence of THIS order; only a leg array that CHANGED is.
+    before_legs = legs_of(before["raw"])
+    # M54i: snapshot EVERY record we own before the keypress; after the OK the ordered
+    # record is found by DIFF (`diff_order_records`), never by trusting `idx` — session
+    # 85's loop read legs naming bases nobody ordered, off the one index it carried.
+    snap_before = our_rows(f, me)
     e0 = energy(f, me)
     ta, tb = tile_recs(f, cand["x"], cand["y"])
     focus()
@@ -1796,8 +1958,8 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
             # game's own order pump, which eats the byte a tick later. The gap is tens of
             # milliseconds, so sample THROUGH the click instead of after it.
             import threading
-            stop, seen_bytes = threading.Event(), []
-            th = order_byte_watcher(idx, stop, seen_bytes)
+            stop, seen_bytes, seen_recs = threading.Event(), [], []
+            th = order_byte_watcher(idx, stop, seen_bytes, recs=seen_recs)
             pick = {}
             answer_dest_chooser(png, verbose, words=w, f=f, me=me,
                                 avoid=(before["x"], before["y"]), out=pick)
@@ -1806,14 +1968,37 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
             time.sleep(0.35)
             stop.set()
             th.join(timeout=2.0)
-            hit = [b for _ms, b in seen_bytes if b in want and b != before["order"]]
+            hit = [b for _raw, _ms, b in seen_recs if b in want and b != before["order"]]
+            snap_after = our_rows(f, me)
+            # M54i: the watcher samples THE CANDIDATE's record slot, so the 0 -> byte
+            # transition seen there is the proof the keypress landed on the unit we
+            # raised the key against — and the legs read from the SAME samples are that
+            # record's route. `snap_after` is only consulted for RIVALS (records on the
+            # same tile that got a fresh order we did not watch land): by the time it is
+            # taken the pump may have consumed the byte, and a unit built mid-run may
+            # have shifted every index after it.
+            claim, rivals, attributed, confounded = diff_order_records(
+                snap_before, idx, want, seen_recs, before_legs,
+                after=snap_after, pre_order=before["order"])
             if hit:
                 queued["order"] = hit[0]
-                queued["legs"] = rd(f, UNIT_ARR + idx * 52, 52)
-                queued["samples"] = seen_bytes[:60]
+                # M54i: the legs come from the DIFF-qualified record, not from `idx`.
+                # `claim` is the candidate's record when the watcher caught the byte on
+                # it and nothing else could have been the unit we ordered; that is what
+                # makes the destination attributable to THIS keypress.
+                queued["legs"] = ((claim["raw_after"] if claim else seen_recs[-1][0])
+                                  if seen_recs else rd(f, UNIT_ARR + idx * 52, 52))
+                queued["samples"] = [(ms, b) for _r, ms, b in seen_bytes[:60]]
+                queued["diff"] = dict(claim=claim, rivals=rivals,
+                                      attributed=attributed, confounded=confounded,
+                                      n_changed=1 if attributed else 0,
+                                      n_samples=len(seen_bytes))
                 if verbose:
                     print(f"    +17 burst through the chooser OK: {seen_bytes[:12]}",
                           flush=True)
+                    print(f"    record diff: attributed={attributed} confounded={confounded} "
+                          f"claim={ {k: v for k, v in (claim or {}).items() if k != 'raw_after'} } "
+                          f"rivals={rivals}", flush=True)
                 break
             time.sleep(0.4)
             quiet = 0
@@ -1851,9 +2036,26 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     # guess; `service_turn` compares it against x,y after the year flips.
     dest = None
     src = queued["legs"] if queued["legs"] is not None else after["raw"]
-    # The leg arrays survive the pump (measured: order 0, legs still 6/12 after the
-    # arrival), so read them on a MOVE attempt even when the byte was already consumed.
-    if kname == ORDER_MOVE[0] or 0x18 in (seen, after["order"]):
+    diff_info = queued.get("diff")
+    # M54i: the legs are only THIS order's destination when they sit on the ONE record
+    # the keypress changed (`diff_order_records`). A leg array that was already there
+    # (a parked decoy, a walker ordered on an earlier turn) names somebody else's
+    # trip; session 85 read (14,56)/(17,55) that way. Rival records = two of our
+    # indistinguishable units changed at once = confounded = no attribution either.
+    attrib = diff_info is None or bool(diff_info["attributed"])
+    if diff_info is not None and attrib:
+        # the legs travel with the record the diff qualified, wherever it sits
+        src = diff_info["claim"]["raw_after"] or src
+    walk_diff = (None if diff_info is None else dict(
+        attributed=bool(diff_info["attributed"]),
+        confounded=bool(diff_info["confounded"]),
+        claim=({k: v for k, v in diff_info["claim"].items() if k != "raw_after"}
+               if diff_info["claim"] else None),
+        rivals=[{k: v for k, v in c.items() if k != "raw_after"}
+                for c in diff_info["rivals"]],
+        n_samples=diff_info["n_samples"],
+        before_legs=[list(p) for p in before_legs]))
+    if (kname == ORDER_MOVE[0] or 0x18 in (seen, after["order"])) and attrib:
         lx = [struct.unpack("<h", src[20 + k * 2:22 + k * 2])[0] for k in range(4)]
         ly = [struct.unpack("<h", src[28 + k * 2:30 + k * 2])[0] for k in range(4)]
         pts = [(a, b) for a, b in zip(lx, ly) if a >= 0 and b >= 0]
@@ -1899,6 +2101,7 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
                                                 "terraform" if seen in ORDER_TERRAFORM_WANT else None),
                 dest=dest, walk_landed=walk["landed"], walk_mp=walk["mp"], walk_ms=walk["ms"],
                 chooser_pick=(picks[-1] if picks else None),
+                walk_diff=walk_diff,
                 order_counts=counts0,
                 mpused_after=after["mpused"],
                 energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
