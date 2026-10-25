@@ -304,7 +304,11 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   so a classifier can mistake it for the title screen — this is also why the driver's own Escape press
   pops it mid-drive.
 - **`scripts/smac_play.py` has no `--mode stop`.** Args: `--turns --timeout --no-escape --verbose
-  --order --unit --turns-after --tag --no-verify --key-only`. `--no-escape N` = "press no Escape during
+  --order --unit --turns-after --tag --no-verify --key-only` plus the M54c in-loop order flags
+  `--orders-per-turn N` (default 2), `--order-budget S` (default 35), `--no-orders`. Ordering is
+  ON inside the unattended loop now: each player turn pokes the selection slot, fires one hotkey,
+  services the pane, and verifies `unit+17` moved into the byte set that key may produce — an
+  order counts only as that memory delta, never as a screenshot. `--no-escape N` = "press no Escape during
   the first N seconds" — set N above `--timeout`. Bound a backgrounded driver with shell `timeout`.
   Never signal by name (`pkill -f`/`pgrep|kill` matches your own argv).
 - **A PROPOSAL vote pane stalls the AI phase.** `YEA: 2  NAY: 3` is the TALLY, not a key hint. Bars in
