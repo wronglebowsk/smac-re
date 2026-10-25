@@ -361,3 +361,42 @@ while we own two bases; `scripts/m54h_probe.py` produced it):
   in our phase, chrome present, no bar band at y 145-200, `HUD_BLIND_S` elapsed -> click the
   button at its measured coordinates. Proven on one turn (2160 -> 2161,
   `evidence/trace_m54h2_20261025_094339.jsonl`); not yet exercised across a multi-turn run.
+
+## 10. Attribution, the SENTRY byte, and the count baseline (M54i, session 86, 2026-10-25)
+
+**`+17 = 1` is SENTRY, not "no order" — a sentry PATROLS ON ITS OWN every round.**
+Sessions 84-85 "parked" decoys by poking `+17 = 1` and called them parked because the
+DRIVER skips order bytes != 0; the game was giving them orders the whole time. Measured in
+`evidence/trace_m54i_run3_*.jsonl`'s rounds: the five "parked" records migrated from
+(28,42) to (28,43) and their leg arrays were rewritten turn after turn
+((17,26) -> (17,24) -> (13,17)...) — patrol paths. `scratch/m54i_park.py` parks with 1 and
+is therefore a SENTRY-ify, not a park. The inert byte is **2 (HOLD)**: the pump leaves it,
+`find_actionable` skips it, a held unit sits put (`scratch/m54i_hold.py`, read back on a
+second handle).
+
+**The count baseline must be the PRE-PRESS snapshot** (`snap_before`), not a read after the
+chooser's OK: the pump runs as the OK is answered (section 7), so a post-OK read sees the
+origin ALREADY vacated — `evidence/trace_m54i_run4_*.jsonl` turn 0 carries
+`order_counts {dest 4, src 0}` — and "origin count falls" (`still < s_before`) can then
+never fire no matter how cleanly the walk lands. Fixed in `issue_order_for_unit`.
+
+**Which record a keypress ordered is answered by DIFF, never by an index**
+(`diff_order_records`, `scripts/test_walk_diff.py` 13 cases): the proof of a FRESH order is
+a 0 -> byte transition with CHANGED legs on the watched record slot (watcher samples, or —
+when the chooser was answered by its default button, e.g. Return on an `unknown`-classifying
+pane — the two reads bracketing the press). A rival makes it confounded:
+* stale legs (the arrays survive the pump) claim nothing;
+* a row at ANOTHER index wearing the byte + route we watched is a TWIN -> confounded;
+* a signature row on our OWN slot is our record only if the start tile is VACATED of our
+  pre-press record — if our unit is still parked on its start tile, the slot's signature
+  belongs to a look-alike (session 85's "legs naming bases nobody ordered" is exactly this);
+* when confounded, `dest` stays None — the trace says so instead of guessing.
+
+Live (run4 turns 0-2, `evidence/trace_m54i_run4_*.jsonl`): `g` verified with
+`walk_diff.attributed True, confounded False`, dest read from the changed legs of the
+record the press changed — attribution WORKS in the loop.
+
+**The war is a variable too:** from 2167 to 2187 (runs 3-4) other factions founded 7 bases,
+TOOK University Base (bases_ours 2 -> 1) and killed 5 of our 10 units — while the checker's
+`--min-our-bases 2` floor was still reading 2 at the run's start. A 6-turn acceptance run
+needs a position that quiet to start with.

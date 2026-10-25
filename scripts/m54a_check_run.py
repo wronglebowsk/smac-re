@@ -38,6 +38,12 @@ def main():
                     help="S3/M54d: assert at least this many VERIFIED WALKS — an order "
                          "whose unit, after the year flipped, sits on the destination its "
                          "own leg array named with movement spent at +40")
+    ap.add_argument("--min-own-base-arrivals", type=int, default=0,
+                    dest="min_own_base_arrivals",
+                    help="M54i: assert at least this many LANDED walks end on a tile "
+                         "holding one of OUR bases and NOT on the tile the unit started "
+                         "from (the destination is the leg array of the record the "
+                         "keypress changed — see diff_order_records)")
     a = ap.parse_args()
 
     path = a.trace if os.path.isabs(a.trace) else os.path.join(ROOT, a.trace)
@@ -62,6 +68,8 @@ def main():
     orders = [o for o in attempts if o.get("verified")]
     mv_attempts = [m for t in turns for m in t.get("moves", [])]
     moves = [m for m in mv_attempts if m.get("landed")]
+    own_arrivals = [m for m in moves if m.get("dest_is_own_base")
+                    and list(m.get("frm")) != list(m.get("dest"))]
     oturns = sorted({t["turn"] for t in turns if t.get("orders_verified")})
     msec = round(sum(t.get("move_seconds", 0) for t in turns), 1)
     deltas = {}
@@ -108,6 +116,10 @@ def main():
         detail = "; ".join("t%s->%s mp+%s" % (m["frm"], m["dest"], m["mp_after"])
                            for m in moves[:6])
         print(f"           {detail}   ({msec}s of move checks)")
+    if a.min_own_base_arrivals or own_arrivals:
+        print(f"           {len(own_arrivals)} landed on a tile holding ONE OF OUR BASES "
+              f"and not the unit's start tile"
+              + (f" (floor {a.min_own_base_arrivals})" if a.min_own_base_arrivals else ""))
     print(f"end        {json.dumps(turns[-1].get('state_after'), sort_keys=True)}")
     end_state = turns[-1].get("state_after") or {}
     ours, our_units = end_state.get("bases_ours"), end_state.get("units_ours")
@@ -128,6 +140,9 @@ def main():
         fails.append(f"only {len(orders)} VERIFIED orders, milestone wants {a.min_orders}")
     if len(moves) < a.min_moves:
         fails.append(f"only {len(moves)} VERIFIED walks, milestone wants {a.min_moves}")
+    if len(own_arrivals) < a.min_own_base_arrivals:
+        fails.append(f"only {len(own_arrivals)} walks LANDED ON OUR OWN BASE (not the "
+                     f"start tile), milestone wants {a.min_own_base_arrivals}")
     if a.min_our_bases and (not isinstance(ours, int) or ours < a.min_our_bases):
         fails.append(f"our faction holds {ours} bases at the end, floor is {a.min_our_bases}")
     if fails:
@@ -137,6 +152,7 @@ def main():
           f"{2 * a.timeout:.0f}s, per-turn state deltas present"
           + (f", {len(orders)} verified orders" if a.min_orders else "")
           + (f", {len(moves)} verified walks" if a.min_moves else "")
+          + (f", {len(own_arrivals)} onto our own base" if a.min_own_base_arrivals else "")
           + (f", we still hold {ours} bases" if a.min_our_bases else ""))
     return 0
 
