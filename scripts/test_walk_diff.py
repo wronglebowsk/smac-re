@@ -336,11 +336,47 @@ def main():
     check("neither the sampled route nor the ordered dest — False",
           sp.walker_on_dest(stranger, 2, DEST, [[61, 10]]) is False)
 
+    # ------- M54k2: queued_rescan — run1's slot went stale mid-burst --------------
+    OWN = {(28, 42), (29, 42)}
+    armed = [row(0, x=34, y=37, order=0), row(1, x=29, y=42, order=2)]
+
+    print("case 34: run1's shape read off memory — ONE record newly wearing 0x18, "
+          "legs naming our base -> queued")
+    walked = [row(0, x=32, y=39, order=24, legs=[(29, 42)], mp=3),
+              row(1, x=29, y=42, order=2)]
+    q = sp.queued_rescan(walked, armed, W, 0, OWN)
+    check("rescan finds the walker (unique, fresh, base leg)",
+          q is not None and q["idx"] == 0 and q["order"] == 0x18)
+
+    print("case 35: TWO records newly wearing 0x18 -> confounded, the rescan says nothing")
+    two = [row(0, x=32, y=39, order=24, legs=[(29, 42)], mp=3),
+           row(1, x=26, y=41, order=24, legs=[(28, 42)], mp=3)]
+    check("two fresh wearers -> None",
+          sp.queued_rescan(two, armed, W, 0, OWN) is None)
+
+    print("case 36: a record that ALREADY wore 0x18 in the pre-press snapshot is not "
+          "a fresh order (a walker ordered on an earlier turn)")
+    prior = [row(0, x=34, y=37, order=0),
+             row(1, x=40, y=40, order=24, legs=[(29, 42)], mp=3)]
+    now36 = [row(0, x=34, y=37, order=2),
+             row(1, x=40, y=40, order=24, legs=[(29, 42)], mp=3)]
+    check("prior 0x18 wearer in the snapshot -> None",
+          sp.queued_rescan(now36, prior, W, 0, OWN) is None)
+
+    print("case 37: the base-tile leg guard — queue-time legs name the destination, "
+          "a mid-walk rewrite names a waypoint ((61,9) in run1) and is not evidence")
+    wayp = [row(0, x=30, y=39, order=24, legs=[(61, 9)], mp=3),
+            row(1, x=29, y=42, order=2)]
+    bare = [row(0, x=34, y=37, order=24), row(1, x=29, y=42, order=2)]
+    check("waypoint leg -> None; legs-less queue -> None",
+          sp.queued_rescan(wayp, armed, W, 0, OWN) is None
+          and sp.queued_rescan(bare, armed, W, 0, OWN) is None)
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 33/33 attribution cases")
+    print("PASS 37/37 attribution cases")
     return 0
 
 

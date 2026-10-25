@@ -2164,6 +2164,34 @@ def resolve_move_dest(pick, pts):
     return list(pts[-1]) if pts else None
 
 
+def queued_rescan(rows_now, snap_before, want, pre_order, own_tiles):
+    """M54k2: a queued MOVE read off MEMORY, not off the candidate's slot.
+
+    Measured, session 90 run1 turn 1 (evidence/trace_m54k2_run1_*.jsonl, watcher
+    log): `g` raised the chooser, the chooser OCR'd as `unknown` (session 89 item
+    2), the blind Return answered it, and the pump walked the unit INSIDE our
+    phase — tf2 rounds flipped the year ~4.6 s apart, each flip compacting the
+    array — so the modal loop's next byte read came off the candidate's SLOT,
+    which by then held a DIFFERENT record (byte 2). The walk ran in memory the
+    whole way (byte 24 the whole route, (34,37)->(32,39)->(30,39)->(30,41)->
+    (29,42), consumed on arrival) while the oracle reported the order unlanded.
+    The queue is still readable after the slot goes stale: exactly ONE of our
+    records wears a wanted byte that NONE of them wore in the pre-press
+    snapshot, and its leg array names one of OUR bases — queue-time legs are the
+    ordered destination (M54i run4); a mid-walk rewrite names a waypoint
+    (session 89's (61,10), run1's (61,9)) and a waypoint is not evidence.
+    Unique + fresh + a base-tile leg = queued; anything else says nothing.
+    """
+    now_q = [r for r in rows_now if r["order"] in want and r["order"] != pre_order]
+    was_q = [r for r in snap_before if r["order"] in want]
+    if len(now_q) != 1 or was_q:
+        return None
+    r = now_q[0]
+    if not r["legs"] or tuple(r["legs"][-1]) not in {tuple(t) for t in own_tiles}:
+        return None
+    return r
+
+
 def move_order_needs_retry(order, attempts):
     """M54i2: when is a `g` worth RE-RAISING? (session 86's two live failure modes)
 
@@ -2235,6 +2263,7 @@ def _issue_order_once(f, me, cand, kname, verbose=False, want=None, label="terra
     # record is found by DIFF (`diff_order_records`), never by trusting `idx` — session
     # 85's loop read legs naming bases nobody ordered, off the one index it carried.
     snap_before = our_rows(f, me)
+    own_tiles_pre = own_base_tiles(f, me)   # M54k2: the rescan's destination guard
     e0 = energy(f, me)
     ta, tb = tile_recs(f, cand["x"], cand["y"])
     focus()
@@ -2338,6 +2367,33 @@ def _issue_order_once(f, me, cand, kname, verbose=False, want=None, label="terra
             continue
         key("Return")                                      # default button = OK
         time.sleep(0.7)
+        # M54k2 (measured, run1 turn 1): the pane answered here may be the chooser
+        # that classified `unknown`, and the pump may already have compacted the
+        # array — the slot oracle above then reads a DIFFERENT record and the order
+        # reads unverified while the walk runs in memory. Re-read WHO wears the
+        # wanted byte instead of who sits at `idx` (see `queued_rescan`).
+        if want and before["order"] not in want:
+            try:
+                q = queued_rescan(our_rows(f, me, with_raw=True), snap_before,
+                                  want, before["order"], own_tiles_pre)
+            except Exception:
+                q = None
+            if q is not None:
+                queued["order"] = q["order"]
+                queued["legs"] = q.get("raw")
+                queued["samples"] = []
+                queued["diff"] = dict(
+                    claim=dict(idx_before=q["idx"], idx_after=q["idx"],
+                               type=q["type"], frm=[before["x"], before["y"]],
+                               to=[q["x"], q["y"]],
+                               order=[before["order"], q["order"]],
+                               legs_before=[list(p) for p in before_legs],
+                               legs_after=[list(p) for p in q["legs"]],
+                               mp=q["mp"], landed_at_ms=None, cand=True,
+                               raw_after=q.get("raw")),
+                    rivals=[], attributed=True, confounded=False,
+                    n_changed=1, n_samples=0)
+                break
     after = unit_rec(f, idx)
     e1 = energy(f, me)
     ta2, tafter = tile_recs(f, cand["x"], cand["y"])
