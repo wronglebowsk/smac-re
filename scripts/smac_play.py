@@ -1165,9 +1165,20 @@ def walker_on_dest(rows, utype, dest, ordered_legs):
     """
     if not ordered_legs:
         return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest) for r in rows)
+    # M54k (measured, run5, watcher timeline 2187->2192): the walker ARRIVED at Korolev
+    # Center (29,42) — (20,41)->(22,41)->(23,42)->(25,42)->(27,42)->(29,42) — and the
+    # record sitting there wore legs [(29,42)], the ORDERED destination, while the leg
+    # sampled in the press burst had read (61,10): the pump REWRITES the leg array as it
+    # walks, so the sampled route is one candidate signature, not the only one — the
+    # ordered destination is the other, and it is the value the game leaves behind
+    # (run1's claim legs_after WAS the dest; run5's had drifted). Accept either; a
+    # record on the destination wearing some THIRD leg, or no leg at all (a garrison),
+    # is still not the walker.
     route = [tuple(l) for l in ordered_legs]
-    return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest)
-               and [tuple(l) for l in r["legs"]] == route for r in rows)
+    dest = tuple(dest)
+    want = [route, [dest]]
+    return any(r["type"] == utype and (r["x"], r["y"]) == dest
+               and [tuple(l) for l in r["legs"]] in want for r in rows)
 
 
 def held_walk_records(f, me, n=119):
