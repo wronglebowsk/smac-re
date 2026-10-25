@@ -777,7 +777,13 @@ def answer_dest_chooser(png, verbose=False, words=None, f=None, avoid=None,
     if f is not None and avoid is not None:
         rows = chooser_rows(png, words)
         bases = own_bases_named(f, me)
-        target = next((b for b in bases if (b["x"], b["y"]) != tuple(avoid)), None)
+        others = [b for b in bases if (b["x"], b["y"]) != tuple(avoid)]
+        # M54i2: (x+y) parity is invariant under the step table (see `delta_table`),
+        # so only a base of the WALKER TILE's parity is ever reachable. Prefer it;
+        # an opposite-parity row queues a move that oscillates forever (run2's walker
+        # at (29,42)/(28,43) vs University Base (28,42)).
+        target = next((b for b in others if walk_parity_ok(avoid, (b["x"], b["y"]))),
+                      None) or next(iter(others), None)
         row_ix = None
         if target is not None:
             # Prefer the row whose OWN text names the base we mean: the pane's sort is
@@ -792,7 +798,11 @@ def answer_dest_chooser(png, verbose=False, words=None, f=None, avoid=None,
             if row_ix is None and len(rows) == len(bases):
                 order = sorted(bases, key=lambda b: b["name"].lower())
                 row_ix = next((i for i, b in enumerate(order)
-                               if (b["x"], b["y"]) != tuple(avoid)), None)
+                               if (b["x"], b["y"]) != tuple(avoid)
+                               and walk_parity_ok(avoid, (b["x"], b["y"]))), None)
+                if row_ix is None:
+                    row_ix = next((i for i, b in enumerate(order)
+                                   if (b["x"], b["y"]) != tuple(avoid)), None)
         if row_ix is not None and 0 <= row_ix < len(rows):
             click((rows[row_ix]["cx"], rows[row_ix]["y"]))
             time.sleep(0.8)
@@ -1068,6 +1078,41 @@ def own_base_tiles(f, me):
         if r[4] == me:
             out.add((struct.unpack("<H", r[0:2])[0], struct.unpack("<H", r[2:4])[0]))
     return out
+
+
+# M54i2 (2026-10-25, live read at 2159 from pid 1110005): the game's step table is 21
+# int32 pairs — `dx` at 0x67850c, `dy` at 0x678990; the adjacency loop runs
+# `do { ... } while ((int)local_2c < 0x54)` in 4-byte steps (ghidra_out/shard_013.c:
+# 21829-21870), i.e. 21 entries. EVERY entry preserves (x+y) parity — the short steps
+# (±2,0),(±1,±1),(0,±2) and the long steps (±2,±2),(±3,±1),(±1,±3) all do. A queued
+# MOVE walks along these steps, so a unit can NEVER reach a base tile of the other
+# parity: measured, the run2 walker ordered to University Base (28,42) (sum 70, even)
+# oscillated (28,43)<->(29,42) (sum 71, odd) across TURN COMPLETEs (scratch/m54i2_pump
+# .py: (28,43) -> (29,42) in one cycle, order still 24) and never entered the base.
+# ORDERS.md §7 listed only (±2,0),(±1,±1) for this table; the live read is 21 pairs.
+DELTA_TABLE_G = 0x67850c
+DELTA_DY_G = 0x678990
+DELTA_N = 21
+
+
+def delta_table(f):
+    """The live step table as 21 (dx, dy) pairs (see the block comment above)."""
+    import struct
+    dx = struct.unpack(f"<{DELTA_N}i", rd(f, DELTA_TABLE_G, DELTA_N * 4))
+    dy = struct.unpack(f"<{DELTA_N}i", rd(f, DELTA_DY_G, DELTA_N * 4))
+    return list(zip(dx, dy))
+
+
+def table_neighbors(x, y, table):
+    """Tiles a step from (x,y) can land on, per a given delta table."""
+    return {(x + dx, y + dy) for dx, dy in table if (dx, dy) != (0, 0)}
+
+
+def walk_parity_ok(unit_xy, base_xy):
+    """(x+y) parity is invariant under the step table: the only bases a walk from
+    `unit_xy` can ever ARRIVE at share its parity. Necessary, not sufficient (terrain
+    and route still apply)."""
+    return (unit_xy[0] + unit_xy[1]) % 2 == (base_xy[0] + base_xy[1]) % 2
 
 
 def snap_our_units():
@@ -2399,10 +2444,23 @@ def order_step_in_loop(rec, verbose=False):
                     rec["order_seconds"] = round(time.time() - t0, 1)
                     return 1
                 break
+        # M54i2: a candidate standing on a step-table NEIGHBOR of one of our bases
+        # (same parity, one legal step away) lands the moment the pump visits it;
+        # try those first. Units of the wrong parity for every own base cannot
+        # arrive at all — the `can_walk` gate below retires `g` for them.
+        try:
+            table = delta_table(f)
+        except Exception:
+            table = []
+        nb = set()
+        for (bx, by) in own_tiles:
+            nb |= table_neighbors(bx, by, table)
         # class-9 (Former) candidates first, then whatever has refused us least this run,
         # then record index — so a position with no Former costs a few keypresses on turn
         # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
-        cands.sort(key=lambda c: (c["cls"] != 9, ORDER_REJECTS.get(c["type"], 0), c["idx"]))
+        cands.sort(key=lambda c: (c["cls"] != 9,
+                                  (c["x"], c["y"]) not in nb,
+                                  ORDER_REJECTS.get(c["type"], 0), c["idx"]))
         cands = cands[:ORDER_CAP * 4]
         verified = attempts = 0
         for cand in cands:
@@ -2422,7 +2480,10 @@ def order_step_in_loop(rec, verbose=False):
             # cannot do is name the tile under the unit's feet, so `g` is skipped only when
             # our ONLY base is the one it stands on.
             tile = (cand["x"], cand["y"])
-            can_walk = any(t != tile for t in own_tiles)
+            # M54i2: only a base of the candidate tile's OWN (x+y) parity is ever
+            # reachable (step-table invariant, see `delta_table`); `g` toward the
+            # other one queues a move that oscillates and never lands.
+            can_walk = any(t != tile and walk_parity_ok(tile, t) for t in own_tiles)
             plan = (([ORDER_MOVE] if can_walk else [])
                     + ([(k, ORDER_TERRAFORM_WANT, "terraform") for k in ORDER_TRY_KEYS]
                        if cand["cls"] == 9 else [])
