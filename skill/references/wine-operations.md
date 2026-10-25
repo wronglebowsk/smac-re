@@ -286,6 +286,15 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
 - **Arrows are not orders.** `Up`/`Right` at a selected unit left `+17` 0 (they drive the
   map cursor; `Right` even opened the base pane) and `shift+Up` raised a pane. Only
   Shift+arrow per ORDERS.md §4 `0x19` has ever been logged as a keyboard move order.
+- **A faction COMMUNICATION is its own screen class (`comm`)** (session 80, turn 35 of
+`evidence/trace_m54c40b_20261024_222039.jsonl`): banner "BELIEVERS - SEETHING", a QUOTED demand,
+its own OK bar at y 347 (`evidence/m54c/comm_pane.png`). The HUD console row (DATALINKS 333,560 /
+PROFILE 467,560 / HQINFO 619,560) is still drawn under it and is NOT a close bar — clicking it
+opens the profiles browser, whose EXIT lands back on the same communication, and M54b's
+bottom-bar rule did exactly that 38 times: 735 s with the year stuck. Answer it at the MIDPOINT
+of the y-347 bar row (its dithered ends read (266,347)/(534,347); the label between them is not
+fill). The Council's panes wear the same "X - MOOD" banner but print their text UNQUOTED — that
+is what separates the two classes.
 - **Escape at a clean HUD raises "Do you really want to quit?"** and every key after that
   goes into the dialog (a probe burned 12 keypresses that way). Escape answers it
   ("Oops, no, wait!"); `Return` on it is "Yes, that's an order, mister!" and the process
