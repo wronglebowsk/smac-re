@@ -195,3 +195,31 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
   tile, never `hits[0]` (index order): garrison/HELD units and base-PRODUCED units sit at mp 0
   there, so a nonzero max is the arrival's own spent movement. The leg array is a waypoint —
   the chooser's named base is the ordered destination.
+
+## Multi-leg walks, the auto-sentry, and who may answer the turn (M54j, session 88, 2026-10-25)
+
+* **The game AUTO-SENTRIES an order-0 unit that waits across the round boundary** (`+17` 0 -> 1,
+  then it patrols on its own): a setup that leaves the chosen walker actionable BEFORE the run is
+  gone by our phase (`scratch/m54j_setup.py` + run1). Byte 2 (HOLD) survives the round; an
+  order-0 unit poked DURING the AI round is still byte 0 and unmoved when our phase opens
+  (`scratch/m54j_probe2.py`). So: pre-arm the walker mid-AI-round (driver `PRE_ARM` hook) or
+  re-activate a held walker in-phase (`pick_reactivation`), never leave 0s waiting between rounds.
+* **An all-HELD human phase auto-advances unseen**: with nothing actionable the game draws
+  "Year NNNN: No units need new orders. Press ENTER" and ends the turn in seconds — TURN COMPLETE
+  stops OCR-ing, the frame classifies `unknown`, and 4-6 of 6 turns can burn with the order step
+  never running. The order step must fire on the FIRST memory-verified our-phase frame (blind-HUD
+  gate), not after the 25 s blind-click delay.
+* **A queued 0x18 walks MULTI-LEG on its own**: run4 watched one record (49,33) -> (47,33) ->
+  (43,35), order still 24, legs still [(28,42)] — ~2 tiles/round, terrain-willing. The order byte
+  stays 24 until arrival; the unit is NOT actionable mid-walk and needs no new orders.
+* **Arrival = THE WALKER on the destination, identified by its ROUTE** (the record wearing the
+  ordered leg array), plus mp spent, plus the origin tile empty of that type. A same-type
+  headcount is worthless when the destination is our base — six identical garrisons made
+  `verify_moves` print ARRIVED for a unit 2 tiles into a 21-tile walk. For carried (multi-turn)
+  walks the pre-press count baseline is stale by design: do not require the dest count to rise
+  against the press.
+* **LOAD browser path typing can mangle** (`m54a_load.py --relaunch`, wine 10.20-staging): the
+  LOADING ERROR echoed `\h`->`Eh`, `\n`->`in` — backslashes dropped, following chars swapped —
+  and "unable to find file" repeated. The browser OPENS IN THE SAVES DIR: dismiss the error
+  (Return), clear the NAME field, type just the FILENAME (`m54b_clean.SAV`), OK — the file is in
+  the visible list. Then the difficulty confirm at (290,391).
