@@ -114,10 +114,12 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
 * **Arrows queue no order** on this build (`+17` unchanged for Left/Right/Up/Down plain and
   Shift, five records, with and without the `0x10000` moved-bit cleared). §"0x19 = Shift+arrow"
   is a static note, not a reachable keyboard path here.
-* **The type byte is `+4`, and `+10` is a FLAG WORD** (`FOOTING.md` 108,
-  `SAVE_FORMAT.md` 159-163). The census/probe/loop read type at `+10` and label units by
-  `unit_class()`, so every "class 9" label in the M54c-M54e notes is suspect: on the live array
-  `+4` decodes 117/119 records plausibly (and the eight records the SCREEN shows as Colony Pods
-  read `+4 = 0`) while `+10` yields impossible types 192/322. Movement evidence is unaffected
-  (`+17`, `+20..+35`, `+40`, `x,y`). Settle it with a `+4` poke and a legible unit panel before
-  trusting any class-based claim.
+* **The type is the u16 at `+10`; `+4` is a flags dword.** Settled from the binary in M54f:
+  `shard_012.c:2150` does `iVar8 = *(short *)((int)&DAT_00933282 + rec_off) * 0x34;` and then
+  reads the class byte from `0x98ADAF[iVar8]` — `DAT_00933282` is `UNIT_ARR + 0x0A`, and the
+  element is a SHORT. Cross-checks: a selected record reads "Scout Patrol" on the panel with
+  `+10 = 2`, and alpha type 2 / class row 2 both say Scout Patrol. `+10` values of 128/256/320
+  belong to EMPTY STALE SLOTS (`type < 24` before counting a record as a unit).
+* **The unit panel is not an oracle on demand**: writing `SEL_G` does not redraw it (three
+  different selections read byte-identically), and a mouse nudge does not either. Trust the
+  panel only at load or after a real in-game selection.

@@ -102,6 +102,28 @@ the shell, silently deleting those fragments — grep the written region after a
 flag (an earlier note here claimed otherwise), and never `pkill -f`/`pgrep|kill` by name: your own argv
 matches.
 
+### Verify the OUTCOME, not the mechanism
+
+An acceptance script that counts the loop's own work (year deltas, verified order bytes, landed
+walks, STUCK) will happily pass a run that lost the game: a 40-turn run printed `PASS` with
+`40/40`, `{1: 40}`, `stuck 0` and 5 landed walks while the faction owned **zero** bases at the end
+and its 8 surviving records sat stacked on one limbo tile with `turn_flags` stuck at `0x100002`.
+The defeat was invisible because the trace snapshot carried only the map-wide base count, never
+"how many bases do WE own".
+
+- After every unattended run, re-read the position with the census and assert the outcome out
+  loud: bases of our faction, where our records stand, `turn_flags == 0`. Put the outcome fields
+  (`bases_ours`, `units_ours`) into the snapshot the driver writes, and give the checker a floor
+  flag defaulting to 0 so old traces still parse.
+- **Never write a handoff sentence about where the game ended up from the plan.** "The garrison is
+  back on University Base" was inferred from the pre-run census plus the walk destinations, never
+  read back, and was false. Read it, then quote the numbers.
+- **Change one variable per prep poke.** Emptying a destination tile and moving the walker off a
+  half-tile offset in one poke produced a confident, wrong root cause (that tile's occupancy)
+  which the run's own trace later refuted. Split the poke, or label the cause unattributed.
+- A `turn_flags` bit that survives a year flip means the box is wedged mid-round, not that the
+  click failed — hand that over explicitly and start the next session from a known-good save.
+
 ### Evidence budget and delegated decodes (both bite every milestone)
 
 `python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB and **FAILs the gate at 30 MB**, and a
@@ -131,6 +153,14 @@ The address/field atlas (base-record offsets, terrain record formula, faction + 
 map, pointer-type scale traps, VA→function recipe) lives in `references/code-atlas.md`. Open it when you
 need a field offset — do not re-derive one from pseudocode: Ghidra types some DATs `short*`/`int*`, so a
 pseudocode offset can be HALF or 4x the real byte offset.
+**Unit-record offset drift:** the type is the byte at `+4` and `+10` is a FLAG WORD — that is what
+`SAVE_FORMAT.md` (159-163) and `FOOTING.md` (108) say, and a live decode agrees (`+4` reads
+117/119 records plausibly and the records the screen shows as Colony Pods read `+4 = 0`; `+10`
+produces impossible types 192/322). `m54d_census.py`, `smac_play.unit_rec` and the in-loop order
+step still read `+10`, so treat every "class N" label they print as suspect until it is settled
+with a `+4` poke whose unit panel is legible. The movement/order fields (`+0/+2`, `+17`,
+`+20..+35`, `+40`) are unaffected — they were validated by pokes the game obeyed.
+
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && $1<=A {n=$2;p=$1} END{print
 p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.

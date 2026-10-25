@@ -974,10 +974,12 @@ def service_turn(idx, tr, timeout, verbose=False):
                 rec["wedge"] = True
                 rec["state_before"] = {k: st0.get(k) for k in
                                        ("year", "turn_no", "player", "cur_player",
-                                        "turn_flags", "mode_flags", "n_bases")}
+                                        "turn_flags", "mode_flags", "n_bases",
+                                        "bases_ours", "units_ours")}
                 rec["state_after"] = {k: stn.get(k) for k in
                                       ("year", "turn_no", "player", "cur_player",
-                                       "turn_flags", "mode_flags", "n_bases")}
+                                       "turn_flags", "mode_flags", "n_bases",
+                                        "bases_ours", "units_ours")}
                 rec["delta"] = {}
                 rec["dt"] = round(time.time() - t0, 1)
                 tr.write(json.dumps(rec) + "\n"); tr.flush()
@@ -1121,9 +1123,11 @@ def service_turn(idx, tr, timeout, verbose=False):
         rec["moves_verified"] = sum(1 for m in rec["moves"] if m["landed"])
     st1 = state()
     rec["state_before"] = {k: st0.get(k) for k in ("year", "turn_no", "player", "cur_player",
-                                                   "turn_flags", "mode_flags", "n_bases")}
+                                                   "turn_flags", "mode_flags", "n_bases",
+                                        "bases_ours", "units_ours")}
     rec["state_after"] = {k: st1.get(k) for k in ("year", "turn_no", "player", "cur_player",
-                                                  "turn_flags", "mode_flags", "n_bases")}
+                                                  "turn_flags", "mode_flags", "n_bases",
+                                        "bases_ours", "units_ours")}
     rec["delta"] = {k: [st0.get(k), st1.get(k)] for k, v in rec["state_after"].items()
                     if st0.get(k) != v}
     rec["year_after"] = year(); rec["advanced"] = ok; rec["dt"] = round(time.time() - t0, 1)

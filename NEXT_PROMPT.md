@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (written at the end of session 82, 2026-10-25)
+# NEXT_PROMPT.md — footing for the next session (written at the end of session 83, 2026-10-25)
 
 ## THE LEDGER — read this first: the whole state of the project
 
@@ -21,63 +21,47 @@ Closed (PRs merged to `main`):
   `orders 31 VERIFIED of 75`, **`moves 5 LANDED of 5 ordered walks, turns [0, 9, 12]`**,
   `PASS`. Mechanism in `ORDERS.md §7`: the pump runs `0x18` **as the chooser's OK is answered**,
   the byte window is tens of ms, and the walker must START on a real neighbour. **That run also
-  lost the position (`bases_ours 0`) — read the audit at the end of Session 82.**
+  lost the position (`bases_ours 0`) — read the audit at the end of Session 82.
+- **M54F — the type byte is settled and the checker can see a defeat** (session 83): the unit
+  TYPE is the **u16 at `+10`** (binary: `shard_012.c:2150` indexes the class table with the
+  short at record `+0x0A`), so session 82b's "+4" finding is retracted and every class-9 line
+  stands; `smac_state.py` now prints `bases_ours`/`units_ours`, every turn snapshot carries
+  them, and `m54a_check_run.py --min-our-bases N` fails a run that loses the position (the M54e
+  trace now FAILs that floor). The box was reloaded from `m54b_clean.SAV` after session 82 left
+  a defeated faction.**
 - Open in ROADMAP.md: **S1** (production rebuild) and **S2** (win conditions, transit).
   **M52** (Paul's 2416 campaign save) on hold: a save with mid-round bit1 set spins after load.
 
-## THE PICK — M54f: give the loop a destination it did not have to manufacture
+## THE PICK — M54g: found a second base, so the loop has a destination it did not manufacture
 
-Do exactly ONE milestone, then stop. Do not re-verify closed work (M54a #39, M54b #40,
-M54c #41, M54d #43, M54e — see the ledger and Session 82). Do not open FOOTING.md, do not
-re-run the M53 census.
+Do exactly ONE milestone, then stop. Do not re-verify closed work (M54a #39, M54b #40, M54c #41,
+M54d #43, M54e #44, M54f — the ledger). Do not open FOOTING.md wholesale: the 52-byte layout is
+settled (type u16@+10, flags dword@+4, owner@+14, order@+17, legs@+20..+35, mp@+40).
 
-What M54e proved, and what it left open:
-1. **`g` can only name OUR OWN base tile, and the walk only lands when that tile is empty.**
-   The loop walks a unit back onto its own base after `scripts/m54e_prep.py` pokes the garrison
-   off it — it has no destination it can reach on its own terms.
-2. **The Former's settle / found-a-base order is unkeyed.** `NAMED.md` 120-146 lists the
-   `param_3` menu chain; the unit panel's buttons are readable in the bottom-right panel. Read
-   both before guessing a hotkey.
-3. **Terraform keys are duds on this map**: `trace_m54e40` mixed `{"l->1": 24, "g->24": 5,
-   "h->2": 2}` of 75 attempts, 385 s of ordering — the base tile is level 5 with a max of 4, so
-   a nominal raise is refused (see the "Open" list in `terraforming-order-path.md`).
+Why: `g` only ever names OUR OWN base tile, so every walk M54e proved landed back on the tile a
+poke had emptied. A second base gives a Former a reachable, unoccupied destination the loop can
+aim at without manufacturing anything.
+1. **The Former's settle / found-a-base order is unkeyed.** `NAMED.md` 120-146 lists the `param_3`
+   menu chain; the unit panel's buttons sit in the bottom-right panel. Read both, then poke ONE
+   key at a time and read `+17` (a settle byte will not be `0x18`). Do not guess a hotkey twice.
+2. **Walk the Former to a tile it can ENTER**: `(bx-2, by)` or `(bx±1, by±1)`, never `(bx+1, by)`
+   (half-tile offset, not a neighbour). A walk needs `+17`/`+40`/legs cleared and the walker
+   standing on a real neighbour. **Occupancy is NOT a blocker** — that trap is retracted in
+   Session 83; units stack on a destination tile.
+3. **Prove it in the BASE ARRAY, not on the screen**: `0x95DA10` stride 304, x `+0`, y `+2`,
+   faction = LOW byte `+4`, count `0x985AF4`. `smac_state.py` prints `bases_ours` directly.
 
-Pick ONE, in this order of preference, and prove it in memory:
-- **(a) FOUND A SECOND BASE.** Key the settle order, walk a Former to a tile it can ENTER
-  (`(bx-2, by)` or `(bx±1, by±1)`), issue it, and verify a NEW record in the base array
-  (`0x95DA10` x 304, x `+0`, y `+2`, faction = LOW byte at `+4`, count `0x985AF4`) with
-  `m54d_census.py` printing `bases_ours=2` inside ONE unattended run.
-- **(b) The CURSOR destination.** The chooser's OK wrote leg `(9,11)` once while the listed
-  base was `(6,12)` (`evidence/m54d/synth_after_ok.png`), so the destination may track the map
-  cursor. Settle first what the HUD's bottom-left `(x,y)` panel follows (cursor or selected unit
-  — session 81 could not tell), then drive the cursor with arrows while the chooser is up and
-  order a walk to an empty non-base tile. Arrows queue nothing by themselves (M54e).
-- **(c) Make a terraform LAND.** Prove a verified terraform byte changes the TILE record, not
-  just `+17`. Oracle: the tile array (`DAT_0092ae14 + (mapw/2*y + x>>1)*0x2c`, even x `+0`, odd
-  `+3`), never the screen.
-
-Fix these in the same pass — known and cheap:
-* **Settle the type byte FIRST: it is `+4`, not `+10`** (`FOOTING.md` 108, `SAVE_FORMAT.md`
-  159-163). The census and the loop read `+10`; on the live array `+4` decodes 117/119 records
-  plausibly while `+10` yields types 192/322. Poke `+4` on a record with a legible unit panel,
-  read the panel back, then fix `unit_rec`/`m54d_census.py` if confirmed.
-* **The checker cannot see a defeat** (M54e's run ended with `bases_ours 0` and still PASSed):
-  put `bases_ours`/`units_ours` in the snapshot `smac_play` writes and add `--min-our-bases`
-  (default 0).
-* **26 `unknown` pane hits** in `trace_m54e40`: capture the frames, pin any new class in BOTH
-  test files first.
-* **44 dud keypresses cost ~385 s of a 40-turn run** — retire known-dead keys by type up
-  front instead of rediscovering them three times per turn.
-
-Acceptance shape (same discipline — one invocation, no human, checked by a script):
-* a census line before and after: `bases_ours 1 -> 2` (for (c): the tile's level byte changed);
-* inside ONE unattended run: the order byte verified by the `+17` delta in the loop, then the
-  consequence read in memory after the pump ran it (for a MOVE: `x,y == last leg`, `+40` spent
-  — `moves LANDED`);
-* `python3 scripts/m54a_check_run.py <trace> --timeout 240 --min-orders N --min-moves M`
-  prints `PASS` with `advanced N/N`, year deltas `{1: N}` and `stuck 0`;
+Acceptance (one invocation, no human, checked by a script):
+* `smac_state.py --json` -> `bases_ours 1` before and `2` after, inside ONE unattended run;
+* the settle order verified by the `+17` delta in the loop, then the base array read back;
+* `python3 scripts/m54a_check_run.py <trace> --timeout 240 --min-our-bases 2` prints `PASS`
+  with `advanced N/N`, `year deltas {1: N}`, `stuck 0` — **use the floor**: a run that loses the
+  position must not pass;
 * any new pane goes into `scripts/test_classify.py` AND `scripts/check_classes.py` with saved
   frames BEFORE the driver uses it.
+
+**If the settle order cannot be keyed in this session, do not manufacture a base.** Report the
+negative result (which keys were tried, what `+17` did), merge the notes, and leave M54g open.
 
 ## FIRST (nothing else)
 
@@ -86,12 +70,12 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
    file (~60 KB).
 3. `git status`; `git branch --show-current` (must be a branch, never `main`);
    `python3 scripts/milestone.py start <ID>` FIRST — it creates the branch off `origin/main`.
-4. `python3 scripts/smac_state.py --json` — session 82 left the game RUNNING at 2201, pid
-   484088, `cur_player 3`, `turn_flags 0x100002`, **`bases_ours 0`**: our 8 surviving records sit
-   stacked on (47,47) on SENTRY and the base array holds no base of ours. That run lost the
-   position — do NOT build on it. Reload `programs/saves/m54b_clean.SAV` via
-   `m54a_load.relaunch()`, or start fresh with `scripts/m54a_newgame.py`; then `m54e_prep.py`
-   re-arms a walk.
+4. `python3 scripts/smac_state.py --json` — session 83 left the game LIVE at **2155**, pid
+   645846, `bases_ours 1`, `units_ours 6` (all six on University Base (28,42)), `turn_flags 2`.
+   Bit `0x2` latches after any driver run and does NOT clear on a TURN COMPLETE click; a reload
+   clears it (load reads 0 at 2150). It is not a wedge — turns still flip. If the state reads
+   impossibly: `SMAC_SAVE='Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV'
+   python3 scripts/m54a_load.py --relaunch` (38 s to a live HUD, measured).
 
 ## WHERE THE KNOWLEDGE LIVES
 
@@ -129,9 +113,11 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
   `issue_order_for_unit` polls the record for `WALK_POLL` (3 s) after a queued MOVE is answered
   — the pump runs it THEN, not at EXEC.
 - Check: `python3 scripts/m54a_check_run.py <trace> --timeout 240 [--min-orders N]
-  [--min-moves M]` — the ONLY thing that can print `PASS`.
+  [--min-moves M] [--min-our-bases N]` — the ONLY thing that can print `PASS`. `--min-our-bases`
+  reads the new `bases_ours`/`units_ours` fields and fails CLOSED (a trace without them fails).
 - State: `python3 scripts/smac_state.py --json` (or `--watch`). Reads `/proc/<pid>/mem`; never
-  pokes, never clicks.
+  pokes, never clicks. Now also prints `bases_ours` and `units_ours` (unit records counted only
+  when `type < 24` and x/y in range — 128/256/320 "types" are empty stale slots).
 - Classifier tests: `python3 scripts/test_classify.py` (must end `PASS 15/15 screen
   classifications`) and `python3 scripts/check_classes.py` (must end `frames: 15 failures: 0`).
   Both run on SAVED frames — no game needed. **`check_classes.py` OCRs each frame at 3x and
@@ -153,10 +139,12 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
   `order_after 0` on walks that had already landed). Sample THROUGH the click
   (`order_byte_watcher`). `order_final 0` after EXEC proves nothing either: a hand-parked `0x18`
   survived three TURN COMPLETEs, because the year flip is not the pump. Full detail: `§7`.
-- **A destination our own owner occupies is unreachable** — pathing refuses it and the unit
-  oscillates between two neighbours. `g` only ever names a BASE tile, so a walk needs our own
-  base tile FREE. And **`(base.x+1, base.y)` is not a neighbour** (two columns per tile record,
-  even-x delta `(±2,0)`): use `(bx-2, by)` or `(bx±1, by±1)`.
+- **A walk needs the walker to START on a real neighbour of the named base tile.** M54d's
+  walker stood at `(bx+1, by)` — a half-tile offset the even-x delta tables (`0x67850c` dx /
+  `0x678990` dy) do not list — and oscillated between two neighbours; every walker at `(bx-2, by)`
+  landed first tick. **Occupancy is NOT a blocker**: at turn 9 of `trace_m54e40` records 5 and 8
+  walked onto `(6,12)` while records 0 and 2 stood there. (An earlier version of this bullet
+  claimed pathing refused an occupied tile — session 83 retracted it.)
 - **Panes that classify as something else are key sinks.** The `g` chooser once read `hud` (10
   keys, 0 bytes); the scene panel read `movie` (two runs frozen — Escape is gated). Widen the
   test whenever a live frame reads `unknown`.
@@ -199,9 +187,9 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
 
 ## CLOSING ORDER (exactly)
 
-1. Patch a `## Session 83` entry into `SESSION_NOTES.md` (acceptance numbers + the command that
+1. Patch a `## Session 84` entry into `SESSION_NOTES.md` (acceptance numbers + the command that
    produced them + Next).
-2. Rewrite `NEXT_PROMPT.md` for session 84, then `wc -c NEXT_PROMPT.md` (must be ≤ 15,500).
+2. Rewrite `NEXT_PROMPT.md` for session 85, then `wc -c NEXT_PROMPT.md` (must be ≤ 15,500).
 3. `git add -A && git commit -m '<ID>: checkpoint'`
 4. `python3 scripts/gate.py --base main` (must be GREEN)
 5. `python3 scripts/milestone.py submit --title "..."` -> note the PR number ->

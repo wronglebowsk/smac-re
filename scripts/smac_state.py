@@ -46,6 +46,40 @@ def read_u32(pid, addr):
         return struct.unpack("<I", m.read(4))[0]
 
 
+BASE_ARR, BASE_STRIDE = 0x95DA10, 304      # x +0, y +2, faction = LOW byte at +4
+UNIT_ARR, UNIT_STRIDE = 0x933278, 52       # x/y +0/+2, TYPE u16 at +10, owner +14
+MAX_UNIT_TYPES = 24                        # data/alpha.json rows; a record whose type is out
+                                           # of range is an EMPTY STALE SLOT, not a unit
+
+
+def counts(pid, player):
+    """How many bases and units the PLAYER owns (M54f).
+
+    The run checker could not see a defeat: trace_m54e40 ended with bases_ours 0 and every
+    existing line still printed PASS, because the trace carried only n_bases (all factions).
+    """
+    out = {"bases_ours": 0, "units_ours": 0}
+    if not isinstance(player, int):
+        return out
+    n = read_u32(pid, 0x985AF4)
+    with open(f"/proc/{pid}/mem", "rb", 0) as m:
+        for i in range(min(n, 512)):
+            m.seek(BASE_ARR + i * BASE_STRIDE)
+            rec = m.read(6)
+            if len(rec) == 6 and rec[4] == player:
+                out["bases_ours"] += 1
+        for i in range(119):
+            m.seek(UNIT_ARR + i * UNIT_STRIDE)
+            rec = m.read(18)
+            if len(rec) < 18:
+                break
+            x, y = struct.unpack("<hh", rec[0:4])
+            t = struct.unpack("<H", rec[10:12])[0]
+            if rec[14] == player and 0 <= x < 80 and 0 <= y < 80 and t < MAX_UNIT_TYPES:
+                out["units_ours"] += 1
+    return out
+
+
 def snapshot(pid):
     out = {}
     for name, addr in GLOBALS.items():
@@ -54,6 +88,11 @@ def snapshot(pid):
         except Exception as e:
             out[name] = f"ERR:{type(e).__name__}"
     out["pid"] = pid
+    try:
+        out.update(counts(pid, out.get("player")))
+    except Exception as e:
+        out["bases_ours"] = f"ERR:{type(e).__name__}"
+        out["units_ours"] = f"ERR:{type(e).__name__}"
     return out
 
 
