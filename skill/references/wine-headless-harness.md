@@ -51,13 +51,24 @@ If it raises EACCES, gdb is broken too — fix the sysctl rather than hunting th
 | LOAD confirm (after LOAD GAME) | squashed text has `difficultylevel` (exclude `pick`/`choose` = the new-game wizard) | click OK at caption-row centre − 108, caption y + 194 (measured (287,390); (290,391) verified live) |
 | advisory dialog (OPERATIONS DIRECTOR, PSYCH CHAPLAIN, NETFLASH, diplomacy, speech quotes) | ≥10 OCR words with x 180..620, y 55..180 **and** a flat panel behind them (`getcolors` of that box < ~45) **or** the same flatness inside the pane's text column `(350,90,630,320)` | `Return` (default button) |
 | tech breakthrough ("OUR RESEARCHERS HAVE MADE…") | text `breakthrough`/`researchers` | `Escape` |
-| base screen | `GOVERNOR` / `NUTRIENTS` / `CONQUER` / `DISCOVER` | `Escape` |
+| base screen | `GOVERNOR` / `NUTRIENTS` / `CONQUER` / `DISCOVER` **at a position outside the HUD's own message strip (y ≥ 425)**, or with **no TURN COMPLETE row on screen at all** (M54a) | `Escape` |
 | Secret Project movie, dark/few-words frame | <15 OCR words | wait — movies end on their own; one `Escape` only after ~20 s with no change |
 
 Classifier order matters: confirm → cdrom → loaded-game → title → breakthrough → base → HUD →
 dialog → movie. The dialog test needs the flat-panel check because map labels also produce words
 in the upper band; colour counting alone fails on unexplored (black) map, text mass alone fails on
 labelled map.
+
+**The HUD's own message pane can impersonate another screen** (M54a, 2026-10-24). The news strip
+below the TURN COMPLETE row prints sentences that carry base-screen vocabulary — `nutrients` at
+(355,438) on `evidence/m54a/live_hud.png` — so the old frame-wide `any(w in t for w in BASE_WORDS)`
+test read that plain HUD frame as `base`: TURN COMPLETE was never clicked and, with
+`--no-escape > --timeout`, the clearing Escape was forbidden, giving two STUCK runs with zero year
+hits. The test is positional now (`base_word_positions` + `in_msgpane`, `MSGPANE = (0,425,800,600)`):
+base words count only outside that strip, or while the HUD button row is absent — a real base screen
+has no TURN COMPLETE row at all (`evidence/m45a_post.png`: base words at y 16–45 and (279,273),
+`btn=None`). Pin both sides without a game: `python3 scripts/test_classify.py` (6 fixtures, exit
+code) and the `m54a/live_hud.png` / `m45a_post.png` / `m25_t7.png` rows of `scripts/check_classes.py`.
 
 **A pane can contain ARTWORK, which breaks the flat-panel test** (M14): an OPERATIONS DIRECTOR
 quote panel with the Morgan "Centauri Monopoly" pyramid measured 148 colours in the old sample

@@ -1,0 +1,65 @@
+win=10485761 start year=2386
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+/home/n100/reverse/smac/scripts/smac_play.py:374: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [dialog] me mee ee PSYCH CHAPLAIN os Te —— ~~ ___| Drone Riots at Climactic Research! em
+    [base] (EXPLORE || DISCOVER | GOVERNOR [| BUILD || CONQUER | ; | NUTRIENTS git. pifBites, BASE
+    [hud] ie ee ee a eee es Ce Te, 2 Sg eimeetleaen ip t _Ourcitzensarestaningat = AY
+turn 0: 2386->2387 OK (72.0s, dialog,ai-phase:dialog,dialog,ai-phase:dialog,base,ai-phase:base)
+    [dialog] “ate tee ee ol nine e aed ene ee hee mee. es Res ee ae See
+    [base] [EXPLORE | DISCOVER | | GOVERNOR | | _BUILD|_CONQUER || ; | NUTRIENTS BE Be, BASE
+    [unknown] el Bee ee ee it tie oe So es Fis, re 2 FR . os ——
+    [hud] eb en ile ce le Fo See ag, Ho a ey eae cine aa 1 =
+turn 1: 2387->2388 OK (67.7s, dialog,ai-phase:dialog,base,ai-phase:base,unknown,hud)
+    [dialog] “ate tee ee ol nine e aed ene ee hee mee. es Res ee ae See
+    [base] [EXPLORE | DISCOVER | | GOVERNOR | | _BUILD|_CONQUER || ; | ||__ NUTRIENTS in: +
+    [unknown] Ue ~abega Sire icaie aes aRE S ah MEE r Se inl ee area Research! Factories
+    [hud] “oe ey we Ste sew ao ates Me igen ee ant, : Ba Mes ohn 2S
+turn 2: 2388->2389 OK (102.0s, dialog,ai-phase:dialog,base,ai-phase:base,unknown,hud)
+    [hud] Pa ee oS ni . : i ) i] I TURN COMPLETE ] k c aMeroeIne
+turn 3: 2389->2390 OK (11.8s, hud,confirm-after-press)
+    [dialog] a COMMUNICATIONS OFFICER a ee ‘i a oe | a= —— = [have Lady Deirdre of
+    [dialog] GAIANS - OBSTINATE a= = a "Ah, Provost Zakharov the brilliant. tis ever a pleasure to
+    [dialog] GAIANS - OBSTINATE : . a= =~ a "Lam under attack by the forces of the
+    [dialog] GAIANS - OBSTINATE : . a= =~ a "An emergency hag arisen at one of my
+    [unknown] GAIANS - OBSTINATE : ; a= _—— a "Lind your unwillingness to cooperate disturbing, Provost Zakharov."
+    [dialog] GAIANS - OBSTINATE ! eo "Have you any further business?" : ene "| believe we are
+    [hud] ote ( OPERATIONS DIRECTOR he. ~ na ™ “‘€ ‘s cE ("The minerals output of Climactic
+    [base] [EXPLORE | DISCOVER | | GOVERNOR | | _BUILD|_CONQUER || ; | ||_ NUTRIENTS we th.
+turn 4: 2390->2390 STUCK (164.4s, dialog,ai-phase:dialog,dialog,ai-phase:dialog,dialog,hive-bribe:Escape+Return)
+    [hud] a e. ee, | eet Sabet Fis, re 2 FR ' <= —— eo ip i
+turn 5: 2390->2391 OK (31.0s, hud,confirm-after-press)
+    [unknown] On gee ae et 8 a | Ecom: 50% (+ Liturn) fe | = Flaté Arid
+    [hud] Aas SE Ss eee ge Be ; 1am a a ee en aye fc ieee ce
+turn 6: 2391->2392 OK (20.0s, unknown,hud,confirm-after-press)
+    [hud] ip Le Tad i) [___ TURN COMPLETE | = Flat® Arid - — f Perhaps this
+    [dialog] = The Peacekeepers announce the seizure of oe Pe = Commander's Keep. ee <a a asi
+    [dialog] — Ea a gs “— | The Peacekeepers have eradicated the é Ede g 2 |
+turn 7: 2392->2393 OK (40.8s, hud,confirm-after-press,dialog,ai-phase:dialog,dialog,ai-phase:dialog)
+    [hud] ip t Tad i) [___TURNCOMPLETE | Perhaps this Scout Patrol unit should "stay home" to defend
+turn 8: 2393->2394 OK (19.7s, hud,confirm-after-press)
+    [unknown] Pt > ae “pg __TurwcompceTe Corrumence | romnee ‘Lturn fe | Gross ine = Flat &
+    [hud] Ses oe ee eee See eee ee See a x, 22 .0r =a 1 = 7
+turn 9: 2394->2395 OK (47.6s, unknown,hud,confirm-after-press)
+    [hud] Pa ee. oS ni rare ee : se cit Se eae Sey ip t Tad [=
+turn 10: 2395->2396 OK (41.6s, hud,confirm-after-press)
+    [hud] ip t Tad i) [___ TURN COMPLETE | = Flat & Arid - — f |
+    [dialog] ee COMMUNICATIONS OFFICER ae ES | || == [have CEO Morgan of the Morganites on Channel
+    [dialog] MORGANITES - AMBIVALENT ! 2 = "Ah, Provost Zakharov the brilliant. tis ever a pleasure fo
+    [dialog] MORGANITES - AMBIVALENT ! | = "1 am under affack by the forces of the cruel
+    [dialog] MORGANITES - AMBIVALENT ! eo "Have you any further business?" : ene "| believe we are
+turn 11: 2396->2397 OK (148.2s, hud,confirm-after-press,dialog,ai-phase:dialog,dialog,ai-phase:dialog)
+    [dialog] MF en gee ox ee eee y Aes ater 4 ee ee eee bees see He
+    [hud] ieee Se oe foe ypc eer Set ea he) rn ae ea a ee, SO eee
+    [dialog] OO es COMMUNICATIONS OFFICER a : rn ES | Se _ have Brother Lal of the
+    [dialog] , PEACEKEEPERS - MAGNANIMOUS ' E = - ; "So we meet again, Provost Zakharov. |
+    [dialog] F PEACEKEEPERS - MAGNANIMOUS ' E = - ; "My mortal enemy, Chairman Yang of the
+    [unknown] ; PEACEKEEFERS - MAGNANIMOUS 1 = -__ |"Pact Brother, | am now uploading my most recent
+    [dialog] ; PEACEKEEFERS - MAGNANIMOUS 1 = -__|"Chairman Yang of the Hive and his mindless minions have
+turn 12: 2397->2398 OK (102.9s, dialog,hive-bribe:Escape+Return,hud,confirm-after-press,dialog,ai-phase:dialog)
+    [unknown] ie ee ee a eee es Ce Te, Fis, re 2 FR ' <= —— eo
+    [unknown] 7 pee cee a ha} eh a es ae ae ee oe LE ee ee tg
+    [unknown] BRM Mahe ea, oa ey oe sees ay, ee ee ee a ee ee eee ee
+    [title] gee SID MEIER'S ALPHA CENTAURI ic see <i : Do you really want fo quit? oe
+driver stopped: game is at the title/quit screen — refusing to click menus
+RUN-EXIT 1

@@ -1,0 +1,359 @@
+[
+ {
+  "png": "m15_boot.png",
+  "n": 30,
+  "basewords": {},
+  "complete": [
+   474,
+   313
+  ],
+  "nc": 1,
+  "nt": 7,
+  "classify_before": "cdrom",
+  "text": "sid meier s alpha centauri the alpha centauri cd rom was not detected some game features will not function without the cd in the drive unless you have performed a complete install"
+ },
+ {
+  "png": "m15_loaded_words.png",
+  "n": 38,
+  "basewords": {},
+  "complete": null,
+  "nc": 148,
+  "nt": 116,
+  "classify_before": "loaded-game",
+  "text": "ee difficulty level talent amy 2 provost zakharov of the university ms be 1h ay 4 ae bagi ab hd an ret no los design a q mey"
+ },
+ {
+  "png": "m15_stuck_screen.png",
+  "n": 183,
+  "basewords": {},
+  "complete": [
+   676,
+   416
+  ],
+  "nc": 148,
+  "nt": 6,
+  "classify_before": "dialog",
+  "text": "operations director i f hurnan behavior is economic behavior the i ss cs iparticulars may vary but competition for limited be q i a resources remaing a constant need as well ae it ne ss greed have followed us to the stars and the 4 a t z rewards of wealth still await those wise enough 4 pr eee i a a fo recognize this deep thrumming of our common wee ae geo nwabudike morgan ny a aie i the gentauri "
+ },
+ {
+  "png": "m15_title_now.png",
+  "n": 124,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 111,
+  "nt": 10,
+  "classify_before": "title",
+  "text": "r i sid meier s alpha centauri bad ial do you really want to quit? he re b yon thats an order mister! fe eg aed love bf commlink is 7 ar cl turn complete aegis d cornumenmes trams ch turn gross lmmome 2iturn elew 1610m 4 total casts ofturn scaut patral flat maist oe seeingome itur i 1 1 1 i inispendent a moves l 20 50 se s no orders ba e a ay bay ig i iy i ig i mission year 21s5 p 5 0 1 1 1 1 1 1 "
+ },
+ {
+  "png": "m24_a.png",
+  "n": 103,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 59,
+  "nt": 41,
+  "classify_before": "dialog",
+  "text": "select unit to activate l ii k green golony pod f fa green colony pod hl ba gi laser squad 3 reen laser squa i pa gi laser squad 3 reen laser squa a green synthmetal garrison wal f green scout rover i be menu e i r commlink s t green synthmetal garrison ip wi p urn complete on aed tp green formers e elew 52 ee cancel 0 1 1 ir ho orders gut eee ond o 1 1 22 1 22 1 12 1 f energy 40 meas!"
+ },
+ {
+  "png": "m24_rc.png",
+  "n": 103,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 59,
+  "nt": 41,
+  "classify_before": "dialog",
+  "text": "select unit to activate l ii k green golony pod f fa green colony pod hl ba gi laser squad 3 reen laser squa i pa gi laser squad 3 reen laser squa a green synthmetal garrison wal f green scout rover i be menu e i r commlink s t green synthmetal garrison ip wi p urn complete on aed tp green formers e elew 52 ee cancel 0 1 1 ir ho orders gut eee ond o 1 1 22 1 22 1 12 1 f energy 40 meas!"
+ },
+ {
+  "png": "m24_start.png",
+  "n": 35,
+  "basewords": {},
+  "complete": null,
+  "nc": 84,
+  "nt": 120,
+  "classify_before": "unknown",
+  "text": "fe elev 520m calany pad flat arid independent rh no order 41 11 xt 5 o 1 1 o 1 1 2 2 1 2 2 1 1 2 1 iz energy 40 a mees!"
+ },
+ {
+  "png": "m24b_screen.png",
+  "n": 54,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 47,
+  "nt": 120,
+  "classify_before": "hud",
+  "text": "ip ay a caine tumiioree o turn complete elev 520m calany pod flat arid j 1 1 no orders 42 4 cee ve ete ben b ts b te ie a mission year 2198 ay o11 0 1 1 22 1 22 1 12 1 energy 40 e y et"
+ },
+ {
+  "png": "m25_boot.png",
+  "n": 30,
+  "basewords": {},
+  "complete": [
+   474,
+   313
+  ],
+  "nc": 1,
+  "nt": 7,
+  "classify_before": "cdrom",
+  "text": "sid meier s alpha centauri the alpha centauri cd rom was not detected some game features will not function without the cd in the drive unless you have performed a complete install"
+ },
+ {
+  "png": "m25_t2.png",
+  "n": 16,
+  "basewords": {},
+  "complete": null,
+  "nc": 148,
+  "nt": 121,
+  "classify_before": "unknown",
+  "text": "load path xa ne p mim a ie fy sid me ee"
+ },
+ {
+  "png": "m25_t3.png",
+  "n": 87,
+  "basewords": {},
+  "complete": null,
+  "nc": 148,
+  "nt": 121,
+  "classify_before": "unknown",
+  "text": "ie alpha centauri autosave 1 5av myon we 7 alpha centauri autasave 10 5av 7 4 me a alpha centauri autosave 2 54 y r oh alpha centauri autosave 20 sa javan es alpha centauri autosave 3 5av an y sy aloha centauri autosave 4 sav vt a i iy aloha centauri autosave 5 sav i ih ow mini my hg ? ae hh 4a vt a boe"
+ },
+ {
+  "png": "m25_t7.png",
+  "n": 69,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 71,
+  "nt": 127,
+  "classify_before": "hud",
+  "text": "ip e mesion year 210d turn complete an 3 il econ 50 f because of ite proximity to fertile land and other resources this would be an excellent location to build a base to build a base here press the b key or select construct base from the orders f menu don t show again pa sisson tear zie 12 1 energy 40 cc?"
+ },
+ {
+  "png": "m27_after_move.png",
+  "n": 52,
+  "basewords": {},
+  "complete": null,
+  "nc": 131,
+  "nt": 151,
+  "classify_before": "unknown",
+  "text": "this fast scout rover 1 1 2 unit gets to move twice each turn unlegs it enters a rocky or fungue square note that ite move value the third number is tvo mobile unite receive combat bonuses when attacking in open terrain and can often disengage from a efronger but slower enemy"
+ },
+ {
+  "png": "m35_state.png",
+  "n": 27,
+  "basewords": {},
+  "complete": null,
+  "nc": 4,
+  "nt": 105,
+  "classify_before": "unknown",
+  "text": "s econ 50 0itumn ee peyech 06 i unesplored labs 50 16 44 ce ete mission year 2269 sy"
+ },
+ {
+  "png": "m35v2_paypane0.png",
+  "n": 72,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 91,
+  "nt": 100,
+  "classify_before": "hud",
+  "text": "ie planetary ecologist a cp k will cost credits to raise this area our current a io reserves are 40 credits p expend 9 credite ip he cam weed oo turn complete aly correos rocenee orturn i gross inmome o turn ez elev 1404m total costs o turn farmers palling arid net income oiturn 0 1 1 arr no orders 45 7 bat mission year 2270 ye"
+ },
+ {
+  "png": "m36_after_no.png",
+  "n": 62,
+  "basewords": {},
+  "complete": null,
+  "nc": 131,
+  "nt": 144,
+  "classify_before": "unknown",
+  "text": "si 1 be et ee a i er are rg mia eaten ie al e o a econ 50 o0lturn elew 816m paych 0 sse sa flat moist labs l124 o green independent already moved 33 11 x damaged 20 i explore ig mission year 2272 i y le energy 31 aa"
+ },
+ {
+  "png": "m36_screen0.png",
+  "n": 179,
+  "basewords": {},
+  "complete": null,
+  "nc": 154,
+  "nt": 156,
+  "classify_before": "unknown",
+  "text": "oie apres ecre events which cause mountains to be raised or torn down ti 2 earthquakes the actions of former units efc can also cause climactic changes mountains 2000m above sea level and higher 28 significantly affect cloud formation and rainfall by trapping the a moisture being carried by the prevailing wind basically this es means that areas downwind in this game east or right of a fe ee mounta"
+ },
+ {
+  "png": "m37_recovered.png",
+  "n": 54,
+  "basewords": {},
+  "complete": [
+   676,
+   416
+  ],
+  "nc": 164,
+  "nt": 85,
+  "classify_before": "hud",
+  "text": "bret 2 peis naires seated 7 turn complete elew 30 m my scout rover flat moist l124 rr green n independent already moved 34 14 damaged 20 i explore ig boo mission year 2275 112 energy 31 ?"
+ },
+ {
+  "png": "m37_screen0.png",
+  "n": 108,
+  "basewords": {},
+  "complete": null,
+  "nc": 136,
+  "nt": 10,
+  "classify_before": "title",
+  "text": "sid meier s alpha centauri ee pe a ial do you really want to quit? f bie ee ae 4 wy me oe pe oops no wait! 7 a b yos that s an order mistert fy menu wa commlink ip aed mil chrainmam arg 7 a pop chainmen ize elev 80m weskh ceo morgan scout raver flat moist tent sister minizzrn 1 12 overalt chaim ifm green a 1 independent already mowe n 34 14 ta damaged 20 explore mission year 2275 sy"
+ },
+ {
+  "png": "m45a_post.png",
+  "n": 181,
+  "basewords": {
+   "governor": [
+    [
+     399,
+     16
+    ]
+   ],
+   "nutrients": [
+    [
+     129,
+     45
+    ],
+    [
+     279,
+     273
+    ]
+   ],
+   "conquer": [
+    [
+     626,
+     17
+    ]
+   ],
+   "discover": [
+    [
+     236,
+     17
+    ]
+   ]
+  },
+  "complete": null,
+  "nc": 183,
+  "nt": 186,
+  "classify_before": "base",
+  "text": "explore discover governor build conquer nutrients be be base facilities somme os ae ae a eee ee et s ese22222 e a ees a f aa ips r network mode is ee hunger bee ic ome eee commerce qgguee i ee ees ay none lig en resource support psych ss ae nutrients cog 0 10 sheerereerouionounnn0un000000000000000 c04 li ae minerals cot coo wnsulesumensumnnsnmnieeil 007 bs 2s aio i fs e energy 003 coo lunnnolllnnn"
+ },
+ {
+  "png": "m45e_hud.png",
+  "n": 61,
+  "basewords": {},
+  "complete": [
+   649,
+   420
+  ],
+  "nc": 188,
+  "nt": 199,
+  "classify_before": "hud",
+  "text": "ee tt cee src hp a es sea ee ee pies ake! a egies al 1 a i 4 a py ees ip le ced teacceome ttstst sc ci turncomplete eeu atral farm road rr green climactic research s z moves 1 e 45 11 i ne eden sss me mission year 2320 y my"
+ },
+ {
+  "png": "m46c_probe.png",
+  "n": 188,
+  "basewords": {
+   "governor": [
+    [
+     399,
+     16
+    ]
+   ],
+   "nutrients": [
+    [
+     129,
+     45
+    ],
+    [
+     279,
+     273
+    ]
+   ],
+   "conquer": [
+    [
+     677,
+     17
+    ]
+   ],
+   "discover": [
+    [
+     237,
+     17
+    ]
+   ]
+  },
+  "complete": null,
+  "nc": 184,
+  "nt": 185,
+  "classify_before": "base",
+  "text": "explore discover governor build conquer nutrients me i base facilities p stowth stagnant so kas ge be soe commerce eae ep s i ec ses i iy ay a a j x ce none 7 of aoe tl resource support psych y ee te nutrients cg 08 ererereriiinininoninoninonninnnine 000 ly i minerals cog coa ere onininininnnninnnnnnim 002 ce 2s aio i fs eee energy 003 coo lunnnolllnnnnnnlolilonnnnonoliloninny 003 2 eco damage 0 i"
+ },
+ {
+  "png": "m46d_confirm.png",
+  "n": 163,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 188,
+  "nt": 196,
+  "classify_before": "confirm",
+  "text": "pie aes seine sk sipe ee see pe eee a ee ere! gle aig rte er a some of our units have not yet moved this turn do fal ee pt erent you really want to end the turn now? ls ie sie ee all cancel 2d settee pie ne gr yes end the turn menu oy i commlink ip tect ceo morgan i turn complete fill ch ainmeem feo i i pop chainneasm ifeog elew 1272m weath cec morgan flat arid h tenvitogy sister miner sg pp rete "
+ },
+ {
+  "png": "m46d_yesok.png",
+  "n": 112,
+  "basewords": {},
+  "complete": [
+   697,
+   416
+  ],
+  "nc": 122,
+  "nt": 91,
+  "classify_before": "confirm",
+  "text": "es pte eee gen he ee ee seen some of our units have not yet moved this turn do se aes ane le 2 eee ae you really want to end the turn now? assem ig te een renee yes ond the turn ar ip i i turn complete fill ch ainmeem feo pop chainmerm fn elew 272m vwestth ceo morgan flat arid tenitomy sister ming a wa farm road overall ch ainmeam ism oo g climactic research moves 1 45 11 no orders i i i i a a mis"
+ },
+ {
+  "png": "live_hud.png",
+  "n": 109,
+  "basewords": {
+   "nutrients": [
+    [
+     355,
+     438
+    ]
+   ]
+  },
+  "complete": [
+   698,
+   420
+  ],
+  "nc": 197,
+  "nt": 208,
+  "classify_before": "base",
+  "text": "ho eset pcs ae ee ae ue ee ee se ae ee eee ese eee a l i tl i eer fis re 2 fr os eo ip t clirmactic researchis running 4 oo turn complete low on nutrients and is not fe 5 producing enoughta meetits t f perhaps this scout patrol unit should stay home to defend ly es a a climactic research from potential danger prese the h key to tell a om itto hold here 0 don t show again e esston yes 2388"
+ }
+]

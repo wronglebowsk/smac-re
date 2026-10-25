@@ -1,0 +1,12 @@
+win=10485761 start year=2386
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+/home/n100/reverse/smac/scripts/smac_play.py:374: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+turn 0: 2386->2386 STUCK (277.8s, dialog,bar@310,221,dialog,bar@310,221)
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+    [dialog] =. bee” =, ee eee ee a i — ae ee Me ie ee aa pe
+turn 1: 2386->2386 STUCK (158.2s, dialog,bar@310,221,dialog,bar@310,221)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_m54a40_20261024_173521.jsonl
+RUN-EXIT 0

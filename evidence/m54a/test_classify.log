@@ -1,0 +1,16 @@
+ok   evidence/m54a/live_hud.png         got=hud          want=hud          n=109 base_hits=[(355, 438)]
+       M54a bug frame: HUD + message-pane news containing 'nutrients' (355,438), TURN COMPLETE at (628,419)
+ok   evidence/m45a_post.png             got=base         want=base         n=181 base_hits=[(236, 17), (399, 16), (626, 17), (129, 45), (279, 273)]
+       real base screen (session 42, NAMED.md:329): top menu EXPLORE/DISCOVER/GOVERNOR/BUILD/CONQUER + tabs, no TURN COMPLETE row at all
+ok   evidence/m25_t7.png                got=hud          want=hud          n= 69 base_hits=[]
+       plain HUD, TURN COMPLETE at (697,416), no base words
+ok   evidence/m15_boot.png              got=cdrom        want=cdrom        n= 30 base_hits=[]
+       boot nag wears the game title in its caption
+ok   evidence/m15_loaded_words.png      got=loaded-game  want=loaded-game  n= 38 base_hits=[]
+       LOAD confirm drawn over the title art (the screen session 20b lost the game on)
+FAIL evidence/m37_screen0.png           got=quit-prompt  want=title        n=108 base_hits=[]
+       title screen: never click, never Escape
+ok   evidence/m54a/quit_prompt.png      got=quit-prompt  want=quit-prompt  n=118 base_hits=[]
+       the quit dialog wears the game title as its banner; Escape here is the safe answer (trace_m54a40c turn 13 died because this class did not exist yet)
+FAIL [('evidence/m37_screen0.png', 'title', 'quit-prompt')]
+TEST-EXIT 1

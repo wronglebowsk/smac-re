@@ -170,3 +170,107 @@
 - **Next:** the M53 thread is CLOSED as a model; the two rows above are a background probe
   (watchpoint at 0x4eac57 + a pass counter at 0x4f5b2c over one driven turn), not a queue. Next
   session is the harness/G1 switch — see `NEXT_PROMPT.md`.
+
+## Session 77 (2026-10-24) — M54a: **THE HUD NO LONGER TRICKS THE CLASSIFIER, THE DRIVER ANSWERS THE PANES — THE 40-TURN RUN IS STILL OPEN (→ M54b)**
+- **The bug, fixed and pinned.** `classify()` returned `base` for ANY frame whose OCR text held a
+  BASE_WORD, and the HUD's own message pane prints news lines that do: `nutrients` at (355,438)
+  with TURN COMPLETE at (628,419) on `evidence/m54a/live_hud.png` (the session-75 stall position,
+  captured first this session). The test is positional now — `base_word_positions` +
+  `in_msgpane`, `MSGPANE = (0,425,800,600)`: base words count only outside that strip, or while
+  the HUD button row is absent (a real base screen has no TURN COMPLETE row: `m45a_post.png`,
+  words at y 16-45 + (279,273), `btn=None`). Acceptance numbers, no game needed:
+  `python3 scripts/test_classify.py` → **PASS 10/10 screen classifications**; the same frames
+  through the older suite `python3 scripts/check_classes.py` → **frames: 10 failures: 0**.
+  `scripts/m54a_ocrscan.py` re-OCRs every evidence PNG into `evidence/m54a/ocrscan.json:1`
+  (base-word coords, button centre, flatness, the OLD classify label) — that is where the
+  "was `base` / was `title`" claims come from.
+- **Three screen classes the driver had wrong.** (1) `quit-prompt`: the "Do you really want to
+  quit?" dialog wears the game title as its banner, so `title` fired on it and a 40-turn run
+  STOPPED at turn 13 refusing to answer it (`evidence/m54a/quit_prompt.png`; m37_screen0.png and
+  m15_title_now.png are the same dialog, not title screens). Escape = "Oops, no, wait!" is the
+  safe answer; OK exits. (2) `help`: the HELP browser (FACTION PROFILES/CONCEPTS) contains base
+  words, ignores Escape entirely, and closes only on its EXIT bar (BACK (275,344), EXIT (525,344)
+  on `evidence/m54a/live_now2.png`). (3) the battle **Replay** screen ("Replay: 2415" + a Close bar
+  at (400,587), `evidence/m54a/movie_stuck.png`) OCRs to 5 words → `movie` → the driver waited;
+  now a `movie`/`unknown` frame with a bar at y ≥ 560 gets clicked.
+- **Bar geometry: a horizontal RUN does not work on this build.** The push-bars are DITHERED —
+  fill (103,91,181) on every OTHER scanline, (28,80,99) between (measured band y 489-507 on the
+  PROPOSAL vote, `evidence/m54a/stuck2.png`) — and their labels are drawn INSIDE them, so
+  session 75's `run > 55 px` test finds ZERO bars exactly where the vote is. `pane_bars` is now
+  band + column density: rows bar-filled over 100 px, grouped across 1-row dither gaps, then
+  per-column fill inside the band; 30% duty splits YEA/NAY/ABSTAIN at centres 311/400/489 = the
+  YEA(310,495) NAY(398,495) ABSTAIN(485,495) row hand-measured in session 75. 40% duty cuts a
+  labelled bar in half; 15% merges the row and you click NAY.
+- **The driver now answers the round's modals itself** (`handle_pane`, ahead of the generic
+  dialog/Escape paths in `service_turn`, both phases): Council PROPOSAL vote → click YEA
+  (`vote-yea@311,498/council`, 6 hits live); Council "Have you any further business?" → top option
+  row then the MERGED OK bar (the label splits it into (266,347)+(534,347); click the centre
+  (400,347)) — 4 hits, the turn advanced right after; HIVE bribe → Escape then Return (11 hits);
+  quit dialog → Escape (2); help browser → EXIT (1); replay → Close (89). Live totals across the
+  9 runs: **45 turn-records, 29 turns advanced with the year +1 on each, 16 stalls**, position
+  2385 → 2416, n_bases 75 → 79. `Return` is still the right answer for advisory panes — the
+  PSYCH CHAPLAIN "Our citizens are starving" alert has a highlighted `Zoom to Base Control` row
+  that `pane_bars` reports at (310,221) and clicking it does NOT clear it
+  (`evidence/m54a/stuck_pane.png`; turn 0 STUCK 277.8 s on two identical clicks).
+- **THE 40-TURN ACCEPTANCE IS NOT MET — that is M54b.** Best single invocation: 12 turn-records /
+  12 advanced / 1 stall, max dt 164 s (`evidence/trace_m54a40c_20261024_174316.jsonl:14`); the
+  longest run after the pane fixes: 12 records / 10 advanced (`evidence/m54a/run40h.log:1`).
+  Runs die on 2 consecutive stalls, and the stalls were: OCR starvation when another job shared
+  the box (one turn burned 355 s on ~1 OCR pass per iteration), the help browser, the replay, and
+  finally the game falling back to the TITLE screen mid-round (the driver clicked into the LOAD
+  file browser and clicked its OK bar 20×). No STUCK ever exceeded 2× the per-turn timeout.
+- **State of the box:** pid 2124624 is alive but at the title menu (I clicked CANCEL on the LOAD
+  browser — `evidence/m54a/after_cancel.png` reads `start game / scenario / load game / …`). The
+  position is NOT lost: the game autosaves into `programs/saves/auto/` (newest 19:05) and
+  `programs/Alpha Centauri Autosave 1.SAV` (19:08). Next session: load the autosave (the
+  `scripts/m48d_boot.py` load path) before driving anything.
+- **Next:** **M54b** — the 40-turn unattended assertion: a boot/load wizard step for the driver,
+  a per-turn budget that survives a long Council/replay round (the 2-stall abort is too eager),
+  and never clicking a bar outside the pane we own.
+
+## Session 78 (2026-10-24) — M54a: **THE 40-TURN RUN PASSES — ON A FRESH GAME; EVERY SAVE SESSION 77 LEFT RESUMES HUNG**
+- **THE ACCEPTANCE IS MET.** One invocation, nobody at the keyboard:
+  `python3 scripts/smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54a40p --verbose`
+  checked with `python3 scripts/m54a_check_run.py evidence/trace_m54a40p_20261024_204555.jsonl
+  --timeout 240` → `turns 40 records, header asked for 40`, **`advanced 40/40`, year deltas
+  `{1: 40}`** (the year moves +1 on every turn), **`stuck 0 (turns [])`, max dt 109.0 s, none over
+  2×240 s**, per-turn state deltas present, `PASS …`, exit 0. Position 2110 → 2150, n_bases 13 → 18.
+  Session 77's best single invocation was 12 turns; the gap was endurance, and the endurance blocker
+  was a screen the driver refused to close (next bullet), not the classifier.
+- **One driver fix made it possible: Secret Project movies do not have a detectable Close bar.**
+  The Oracle clip (`evidence/m54a/movie_oracle.png`) draws a **red** Close bar at (690,577);
+  `pane_bars` looks for the purple push-bar fill (103,91,181), reports no bars, `handle_pane`
+  returned False, and the run sat 150 s on `movie` frames at 2109. `Return` closes the clip —
+  verified live (the frame changed over the whole 800x600 on Return and the driver resumed) — so
+  `handle_pane` now presses Return on a bar-less `movie` frame; the battle REPLAY keeps its own
+  bottom-bar path (it has a purple bar `pane_bars` sees). Classification is untouched:
+  `python3 scripts/test_classify.py` → **PASS 10/10 screen classifications**;
+  `python3 scripts/check_classes.py` → **frames: 10 failures: 0**.
+- **THE CAMPAIGN POSITION IS UNRESUMABLE — that is M54b's real blocker.** Every save session 77
+  left (all eight `programs/saves/auto/` autosaves, years 2390-2415, and
+  `programs/Alpha Centauri Autosave 1.SAV`, 2416) loads and then HANGS: `turn_flags` bit1 (0x2)
+  set, the main thread `R` at ~90 % CPU with the llvmpipe workers idle and every other thread in
+  `futex_do_wait`, the screen pixel-identical for 9+ min, and **no input reaches the game** — MENU
+  clicks, Return, Escape, `xdotool click --window` and `key --window` all produce zero pixel
+  change. `sema_done`/`sema_mp` read 0, so it is not the MP semaphore; the load itself does finish
+  (n_bases settles 79 → 75 after loading the 2390 slot) and then the turn loop spins. The 40-turn
+  proof therefore had to run on a NEW game: `scripts/m54a_newgame.py` walks START (580,111) →
+  MAKE RANDOM MAP → SMALL planet → TALENT → STANDARD rules → intro text (Return) → faction → HUD
+  at 2100. Fresh games are FAST (~10-30 s per turn at 2110-2150) and threw no pane the driver
+  could not answer (`pane hits {}`; actions were hud 61, unknown 25, ai-phase 31,
+  confirm-after-press 40, close-bar 5, dialog 2, base 1).
+- **LOAD browser geometry, measured live** (`evidence/m54a/load_browser.png`): NAME field
+  (406,527), OK bar (330,552), CANCEL bar (482,552). The browser opens at the last-used directory
+  with the last filename pre-filled even in a fresh process (registry), and **Return in the name
+  box only SELECTS the file — the load needs the OK bar clicked**. OCR reads neither the LOAD
+  banner nor the bars (dithered, label inside), so `scripts/m54a_load.py` walks the browser blind;
+  `m48d_boot.py`'s `"load game" in body and "name" in body` test never fires on this build, which
+  is why session 77's boot sat 240 s at the title. Title rows: START (580,111), SCENARIO (610,269),
+  LOAD (579,344). `find()` matches ONE OCR token, so phrase probes (`['turn complete']`,
+  `['make random']`) return None even when the words are on screen.
+- **State of the box:** the game is a FRESH TALENT/STANDARD game at ~2150 (n_bases 18), live and
+  responsive, still up on win 10485761. Session 77's 2416 campaign exists only on those hung saves.
+- **Next:** **M54b.** The 40-turn assertion is green on a fresh game; what is left is a resumed
+  campaign (load at the title, then check `turn_flags & 2` and treat a spinning main thread as a
+  bad slot rather than a stall), pane-scoped clicks (session 77's run ended in the HELP then LOAD
+  browsers), and the round-aware turn budget.

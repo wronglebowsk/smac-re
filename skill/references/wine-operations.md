@@ -75,6 +75,18 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   (393,495). Find the bars by cropping the ROOT capture (`xwd -root -silent` + ffmpeg
   `crop=420:180:230:370,scale=iw*3:ih*3` + vision) — `xwd -id <win>` reads blank to tesseract. Focus
   (`xdotool windowfocus`), click, wait ≥2 s, re-capture to confirm the pane advanced.
+- **M54a: the driver answers those panes itself now** (`smac_play.handle_pane`, wired into
+  `service_turn` ahead of the generic dialog/Escape paths, in BOTH phases): a 3-bar **vote row**
+  (≥3 bars on one line >100 px apart, `is_vote_row`) → click the LEFT bar = YEA; a lone bar → click
+  it only when the caption names a Council/HIVE pane (`council`/`proposal`/`protocol`/`hive`/
+  `senate`/`delegate`); the HIVE bribe pane → `Escape` then `Return`. Bars come from
+  `pane_bars` (periwinkle run >55 px, ≥12 px tall, PIL row scan ~0.06 s — `ffmpeg -f rawvideo`
+  through `sh()` blows up on a UnicodeDecodeError). **Do not click a bar merely because it is
+  there**: the PSYCH CHAPLAIN "Our citizens are starving at Climactic Research" alert has a
+  highlighted `Zoom to Base Control` row that `pane_bars` reports at (310,221), and clicking it did
+  NOT clear the pane — turn 0 went STUCK 277.8 s on two identical `bar@310,221` hits
+  (`evidence/m54a/stuck_pane.png`, trace `trace_m54a40_…jsonl`). Advisory panes go back to
+  `Return` = the pane's default button.
 - **Instrumentation lessons (M53n, `scripts/m53n_drive.py`):** a breakpoint at a function ENTRY hands you
   the caller free (`*(int *)$esp`); mid-body hits print 8 stack words in the same printf, post-matched
   against the call sites' return addresses (a fixed 5-byte `call` run makes the set derivable from

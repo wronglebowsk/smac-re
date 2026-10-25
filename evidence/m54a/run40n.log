@@ -1,0 +1,134 @@
+win=10485761 start year=2101
+    [hud] The a Or eam ie Men oO te ie ae We eh ee , |Your colony
+turn 0: 2101->2102 OK (19.3s, hud,confirm-after-press)
+    [hud] ae |. st eS ee Rese ee B10 Re ee Beret gst nck age ee Selene
+turn 1: 2102->2103 OK (8.9s, hud,confirm-after-press)
+    [hud] eo See i wine wp] ||_TURNCOMPLETE _ | ip & ~<a }||| £3 University Base builds
+turn 2: 2103->2104 OK (17.2s, hud,confirm-after-press)
+    [hud] ee Wines TURN COMPLETE & | Mision Year 2 iM Elev: 878m | | Scout Patrol
+turn 3: 2104->2105 OK (9.5s, hud,confirm-after-press)
+    [hud] a en bg ee Dae ae ee . Selene remem |__MENU |] « ae -_ :
+turn 4: 2105->2106 OK (9.7s, hud,confirm-after-press)
+    [unknown] ABOUT RESEARCH | : t Energy powers your research labs and helps your researchers F )
+/home/n100/reverse/smac/scripts/smac_play.py:407: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [base] ' CONFIRM RESEARCH PRIORITIES a | /In which areas shall our scientists focus their research? Focus
+    [hud] = sahil st eS ee : oe a ares. “f) ogee ea eaten es Selene remem
+turn 5: 2106->2107 OK (23.3s, unknown,ai-phase:unknown,base,ai-phase:base,hud,confirm-after-press)
+    [hud] Selene remem |__MENU__] a — =e - < |_ COMMLINK ip & ~<a |) 3 University
+turn 6: 2107->2108 OK (9.2s, hud,confirm-after-press)
+    [unknown] F i PLANETARY ECOLOGIST Fal | Mindworm boil spotted near University Base! is na P| a
+    [hud] aS <a i fe ee ee 7 en Se ee a |__MENU _} _— = ;
+turn 7: 2108->2109 OK (12.5s, unknown,ai-phase:unknown,hud,confirm-after-press)
+    [unknown] OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI H 4 ii Centauri Ecology BASE FACILITIES TECHNOLOGIES ' |
+    [dialog] t OPERATIONS DIRECTOR a | ||\We have obtained technologies which will allow us to design better
+    [base] t CONFIRM RESEARCH PRIORITIES a | /In which areas shall our scientists focus their research? Focus
+    [unknown] My. 2109: University scientists discover Centauri Ecology--their first research breakthrough since Planetfall. (The Morganites made mankind's
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+turn 8: 2109->2109 STUCK (241.3s, unknown,close-bar@400,575,dialog,ai-phase:dialog,base,ai-phase:base)
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [hud] ae ae Big i ae ee tae fe Re Re a 2a Gis i i f
+turn 9: 2109->2110 OK (236.7s, movie,movie,movie,movie,movie,movie)
+    [hud] ee NS / ip i ee Aesion Year 2109 TURN COMPLETE = Econ: 50% (+Liturn) Some
+    [unknown] ee NS / | | | | Econ: Some unite (usually alien creatures such ae Mind
+    [hud] pe dee et Se Selene remem |__MENU |] « a ae - < (_COMMLINK = =
+    [dialog] f SECURITY CHIEF a | ; Our Scout Patrol unit has performed admirably, ai =| and
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==

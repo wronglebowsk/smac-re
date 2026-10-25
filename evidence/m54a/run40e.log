@@ -1,0 +1,35 @@
+win=10485761 start year=2399
+    [hud] rare ee : se cit Se eae Sey ip t Tad i) [___TURNCOMPLETE | = Flat
+turn 0: 2399->2400 OK (11.2s, hud,confirm-after-press)
+    [dialog] ia So age i S$ | Chairman Yang convenes the Planetary Council! ||| t2 tee Ves
+/home/n100/reverse/smac/scripts/smac_play.py:392: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+turn 1: 2400->2400 STUCK (163.3s, dialog,ai-phase:dialog,unknown,ai-phase:unknown,unknown,ai-phase:unknown)
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+    [unknown] ls © XS Se “S= S&S LC = \ .| aa = / Sate SS OE
+turn 2: 2400->2400 STUCK (161.6s, unknown,ai-phase:unknown,unknown,ai-phase:unknown,unknown,ai-phase:unknown)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_m54a40e_20261024_181952.jsonl
+RUN-EXIT 0

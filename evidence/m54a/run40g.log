@@ -1,0 +1,56 @@
+win=10485761 start year=2401
+    [help] FACTION PROFILES PEACEKEEPING FORCES | 8) e2a2 posauahlers = = LEADER: Commissioner Pravin Lal 8 siorgarcinaStiss
+/home/n100/reverse/smac/scripts/smac_play.py:407: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [dialog] i PEACEKEEPERS - MAGNANIMOUS } = =—S "So we meet again, Provost Zakharov. | trust your
+    [dialog] ; PEACEKEEFERS - MAGNANIMOUS 1 = ___ |"My mortal enemy, Chairman Yang of the Hive, has
+    [unknown] i OPERATIONS DIRECTOR } Our Pact of Brotherhood with the Peacekeepers has ended. All Peacekeeper unite
+turn 0: 2401->2402 OK (75.7s, help,help-exit@525,344,dialog,ai-phase:dialog,dialog,hive-bribe:Escape+Return)
+    [dialog] es PROTOCOL DIRECTOR nee = So age SSS | _ Lady Deirdre convenes the Planetary Council!
+    [unknown] = Gae. me eSegw \e ° = Se @> & F\ No ga a Rea 2
+    [unknown] | le ——,. —— ee Zs = yee =, = =, a os cS ire |
+    [hud] ie hnalee er atta nie saws! Te coe aie nea ee es —_ Fn Rs: ee
+turn 1: 2402->2403 OK (53.6s, dialog,bar@524,262/council,unknown,vote-yea@311,498/council,unknown,bar@400,498/council)
+    [unknown] pe.) oe ee ee eee ee a SR aa ee Rei eee eae | a ea
+    [hud] he) rn ae ea a ee, SO eee Sere I ran ee oe , ae ee
+turn 2: 2403->2404 OK (47.0s, unknown,hud,confirm-after-press)
+    [hud] as PREM a a ea ee ee ee ae en Be as, nt oat etal tae
+turn 3: 2404->2405 OK (66.0s, hud,confirm-after-press)
+    [hud] a Peeper LS ery ee jae he) rn ae ea a ee, ee Rei eee eae
+    [confirm] Be, OPERATIONS DIRECTOR Pe ee piece ens Some of our units have not yet moved this
+turn 4: 2405->2406 OK (43.4s, hud,confirm)
+    [dialog] COMMUNICATIONS OFFICER : | a= = a Thave Lady Deirdre of the Gaiane on Channel 9.
+    [dialog] i GAIANS - OBSTINATE i a= | "Go we meet again, Provost Zakharov. | trust your
+    [dialog] i GAIANS - OBSTINATE i a= >| "Pam under attack by the forces of the cruel
+    [dialog] GAIANS - OBSTINATE : a= =~ a "An emergency hag arisen at one of my bases,
+    [dialog] i GAIANS - OBSTINATE q a= | "Provost Zakharov, | must confess | am a bit
+    [unknown] i GAIANS - OBSTINATE q a= ; = "Hind your unwillingness to cooperate disturbing, Provost Zakharov.”
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+turn 5: 2406->2406 STUCK (240.6s, dialog,ai-phase:dialog,dialog,ai-phase:dialog,dialog,hive-bribe:Escape+Return)
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+    [dialog] GAIANS - OBSTINATE : "Have you any further business?" Pe"! believe we are finished here. Zakharov
+turn 6: 2406->2406 STUCK (264.5s, dialog,bar@619,560/council,dialog,bar@619,560/council,dialog,bar@619,560/council)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_m54a40g_20261024_184409.jsonl
+RUN-EXIT 0
