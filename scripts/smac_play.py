@@ -1271,6 +1271,10 @@ def verify_moves(orders, snap, verbose=False):
 
 
 PENDING_WALKS = []         # 0x18 orders whose walk outlived the turn that ordered them
+PRE_ARM_DONE = [False]     # M54j: one mid-AI-round arming poke per run (see the hook
+                           # in service_turn's ai-phase branch; probe2 measured that an
+                           # actionable unit at phase open makes the game WAIT for input,
+                           # while an all-HELD phase auto-advances unseen)
 PENDING_MAX_TURNS = 8      # stop re-checking a walk after this many later turns
 
 
@@ -1581,6 +1585,34 @@ def service_turn(idx, tr, timeout, verbose=False):
         ai_phase = (own is not None and cur is not None and cur != own) or bool(tf & 2)
         if ai_phase and kind in ("dialog", "base", "unknown", "hud"):
             rec["handled"].append(f"ai-phase:{kind}")
+            # M54j: arm our walker DURING the AI round. probe2 (scratch/m54j_probe2.py,
+            # read back on a live handle): a record poked +17 2 -> 0 mid-round is still
+            # byte 0 and unmoved when our phase opens, and the phase then WAITS (flags 0
+            # for ~8 s of sampling); a phase where every record is HELD draws "No units
+            # need new orders. Press ENTER" and auto-advances before the driver's first
+            # OCR (run2/run3: 0 orders on 6/6 turns). One arming per run; the order step
+            # finds the armed record via find_actionable on the first hud frame.
+            if not PRE_ARM_DONE[0] and ORDER_CAP > 0:
+                PRE_ARM_DONE[0] = True
+                try:
+                    _pid2, f2 = mem()
+                    try:
+                        me2 = state().get("player")
+                        react = pick_reactivation(held_walk_records(f2, me2),
+                                                  own_base_tiles(f2, me2),
+                                                  delta_table(f2))
+                        if react:
+                            wr(f2, UNIT_ARR + react[0]["idx"] * 52 + 17, b"\x00")
+                            f2.flush()
+                            rec["handled"].append(f"pre-arm:rec{react[0]['idx']}")
+                            if verbose:
+                                print(f"    PRE-ARM rec{react[0]['idx']} "
+                                      f"({react[0]['x']},{react[0]['y']}) +17 2->0 in the "
+                                      f"AI round (man {react[0]['man']})", flush=True)
+                    finally:
+                        f2.close()
+                except Exception:
+                    pass
             if is_datalinks(words):
                 key("Return"); time.sleep(0.5)          # full-screen text page
             elif is_ops_director(words) or kind == "base":
