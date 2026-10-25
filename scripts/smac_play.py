@@ -165,6 +165,27 @@ def is_communication(words, png=None):
     return any(330 <= b[1] <= 365 for b in pane_bars(png, y0=330))
 
 
+def is_dest_chooser(words):
+    """The `g` ("Move to") chooser (M54d).
+
+    Measured on `evidence/m54d/m54d_move_afterg.png` and `evidence/m54d/chooser_offbase.png`:
+    caption `SELECT DESTINATION` at y~102, one base row at y~132 with `Distance: N`, and its
+    OWN OK/CANCEL bar row at y~162. OCR reads the caption and the base row but NEVER the bar
+    labels, and the panel is flat (12 colours in the dialog box) — yet `upper` counts only 5
+    words, so the `dialog` test misses it and it classifies `hud` while it swallows every
+    keypress (10 keys, zero order bytes, `evidence/m54d/probe_unit0.json`).
+    """
+    cap = body = False
+    for t, cx, cy, *_ in words:
+        low = t.lower().strip(".,:;|_*—")
+        if cy < 135:
+            if low.startswith("destin"):
+                cap = True
+            elif low.startswith("selec"):
+                body = True
+    return cap and body
+
+
 def is_quit_prompt(words):
     """The "Do you really want to quit?" dialog.
 
@@ -289,6 +310,30 @@ def region_colors(png, box=(180, 60, 620, 200)):
     return len(im.getcolors(maxcolors=300000) or [])
 
 
+def close_bar(png):
+    """The bottom-right red CLOSE bar of a full-screen scene/artwork panel (M54d), or None.
+
+    Measured on `evidence/m54d/peek_stuck.png` (the scene the driver burned two runs on):
+    the bar fills y 579-599 from x 596 to the right edge, and its colours are (94,10,9) and
+    (73,9,8) — the (73,9,8) patches are the "CLOSE" glyphs. The terrain it sits on is
+    (85,52,30)-ish, so the GREEN channel, not brightness, is what separates bar from ground:
+    r>70 & g<30 & b<30. OCR is useless here — it read 7 tokens off this whole frame — so
+    this is a colour test on the bottom-right strip, and the click target is the fill's own
+    centre, not a corner.
+    """
+    im = Image.open(png).convert("RGB")
+    w, h = im.size
+    strip = im.crop((w // 2, h - 25, w, h))
+    px = strip.load()
+    pts = [(x, y) for y in range(strip.height) for x in range(strip.width)
+           if px[x, y][0] > 70 and px[x, y][1] < 30 and px[x, y][2] < 30]
+    if len(pts) < 300:
+        return None
+    xs = [p[0] for p in pts]
+    ys = [p[1] for p in pts]
+    return (w // 2 + (min(xs) + max(xs)) // 2, (h - 25) + (min(ys) + max(ys)) // 2)
+
+
 def classify(words, ncolors=None, png=None):
     """Dialog test: SMAC captions sit at y~102 with a body block at y~130-160.
 
@@ -335,6 +380,9 @@ def classify(words, ncolors=None, png=None):
         return "comm"           # faction communication: click ITS OK bar (y~347), never a
                                 # console bar — session 80's turn 35 clicked (333,560) 38
                                 # times and the year never moved
+    if is_dest_chooser(words):
+        return "dest-chooser"   # M54d: the `g` chooser — its own OK bar at y~162, NOT the
+                                # console row and NOT a hud: it swallows every keypress
     hits = base_word_positions(words)
     if hits and not (hud_btn and all(in_msgpane(p) for p in hits)):
         return "base"
@@ -350,6 +398,12 @@ def classify(words, ncolors=None, png=None):
     # while the pane blocks the turn — the M14 156 s "STUCK" turn.
     if upper >= 10 and png is not None and region_colors(png, TEXTCOL) < 45:
         return "dialog"
+    # M54d: a full-screen scene/artwork panel (the Secret-Project / Prophet movies) carries
+    # its OWN red CLOSE bar bottom-right. It OCRs to ~7 tokens, so it used to fall through
+    # to `movie`, where the driver only ever presses Escape — and Escape is gated by
+    # --no-escape, so two runs sat on it with the year frozen (trace_m54d40b turn 0).
+    if png is not None and close_bar(png):
+        return "artwork-close"
     if hud_btn:
         return "hud"
     # The HUD is identified by its TURN COMPLETE button at y~416, nothing else: the
@@ -546,6 +600,30 @@ def answer_communication(png):
     return None
 
 
+def answer_dest_chooser(png, verbose=False):
+    """Answer the `g` chooser: click ITS OK bar (M54d).
+
+    Measured on `evidence/m54d/m54d_move_afterg.png`: the bar row is at y~162 and the "OK"
+    label splits its fill into two column groups centred (474,162) and (521,162), so the
+    target is the MERGED row centre, exactly as for the communication's OK bar
+    (answer_communication) — clicking one segment lands on the label, not the bar.
+    `Return` is this pane's default button and also works (measured: it accepted the
+    highlighted base and wrote leg0 into the record), but a click is explicit and cannot
+    hit CANCEL by accident.
+    """
+    bs = [b for b in pane_bars(png, y0=150) if 150 <= b[1] <= 190]
+    if bs:
+        left = min(b[0] - b[2] / 2.0 for b in bs)
+        right = max(b[0] + b[2] / 2.0 for b in bs)
+        xy = (int((left + right) / 2), int(sum(b[1] for b in bs) / len(bs)))
+        click(xy)
+        if verbose:
+            print(f"    dest-chooser OK at {xy} (bars {bs})", flush=True)
+        return xy
+    key("Return"); time.sleep(0.8)
+    return None
+
+
 def answer_council_dialog(png):
     """The Council's own panes: option rows + an OK bar (M54a).
 
@@ -722,6 +800,105 @@ def frame_hash(png):
     return md5(open(png, "rb").read()).hexdigest()
 
 
+def our_rows(f, me, n=119):
+    """Every live record we own, decoded for the walk check: idx/x/y/type/order/mp-used."""
+    import struct
+    arr = rd(f, UNIT_ARR, n * 52)
+    out = []
+    for i in range(n):
+        d = arr[i * 52:(i + 1) * 52]
+        if d[14] != me or d[14] == 0xFF:
+            continue
+        out.append(dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
+                        y=struct.unpack("<h", d[2:4])[0],
+                        type=struct.unpack("<H", d[10:12])[0], order=d[17], mp=d[40]))
+    return out
+
+
+BASE_ARR, BASE_SZ, BASE_COUNT_G = 0x95DA10, 304, 0x985AF4
+
+
+def own_base_tiles(f, me):
+    """Tiles holding one of OUR bases (304-byte records: x@0, y@2, faction = the LOW byte
+    of the duplicated nibble at +4 — SAVE_FORMAT.md 150-160; count at 0x985AF4, which that
+    document corrects from "n_factions" to a base count).
+
+    A unit standing on one of these is exactly what `g` refuses to queue a MOVE for
+    (M54c, `evidence/m54c_probe.txt`), so the loop must not fire the key at it: three
+    such refusals would retire `g` for the whole run (ORDER_KEY_TRIES) and the run would
+    end having never tried to walk anything.
+    """
+    import struct
+    n = max(0, min(struct.unpack("<I", rd(f, BASE_COUNT_G, 4))[0], 64))
+    b = rd(f, BASE_ARR, n * BASE_SZ)
+    out = set()
+    for i in range(n):
+        r = b[i * BASE_SZ:(i + 1) * BASE_SZ]
+        if r[4] == me:
+            out.add((struct.unpack("<H", r[0:2])[0], struct.unpack("<H", r[2:4])[0]))
+    return out
+
+
+def snap_our_units():
+    """The pre-EXEC snapshot `verify_moves` later diffs against live memory."""
+    try:
+        _pid, f = mem()
+    except Exception:
+        return None
+    try:
+        return our_rows(f, state().get("player"))
+    except Exception:
+        return None
+    finally:
+        try:
+            f.close()
+        except Exception:
+            pass
+
+
+def verify_moves(orders, snap, verbose=False):
+    """M54d: did an ordered walk actually HAPPEN? Memory, never the screen.
+
+    A queued MOVE is only an intention; the year flip is the execution. So snapshot our
+    records before TURN COMPLETE, re-read them once the year has moved, and require that
+    the record now sits ON the destination its own leg array named (`+20/+28`, ORDERS.md
+    §4 0x18) AND has spent movement at `+40`. Identity is (type, tile, movement): the
+    record INDEX is not a persistent id — the array compacts when a unit dies — which is
+    the same caveat ORDERS.md §6 records for the order step.
+    """
+    want = [o for o in orders if o.get("verified") and o.get("order_after") == 0x18
+            and o.get("dest") and tuple(o["dest"]) != (o.get("ux"), o.get("uy"))]
+    if not want:
+        return []
+    try:
+        _pid, f = mem()
+    except Exception:
+        return []
+    try:
+        rows = our_rows(f, state().get("player"))
+        out = []
+        for o in want:
+            dx, dy = o["dest"]
+            hits = [r for r in rows if r["type"] == o["utype"] and r["x"] == dx
+                    and r["y"] == dy and r["mp"] > 0]
+            still = [r for r in rows if r["type"] == o["utype"]
+                     and (r["x"], r["y"]) == (o["ux"], o["uy"])]
+            m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
+                     frm=[o["ux"], o["uy"]], dest=[dx, dy], landed=bool(hits),
+                     mp_after=(hits[0]["mp"] if hits else None), still_at_start=bool(still))
+            out.append(m)
+            if verbose:
+                print(f"    MOVE rec{o['unit']} type {o['utype']} ({o['ux']},{o['uy']}) -> "
+                      f"ordered ({dx},{dy}): {'ARRIVED' if hits else 'did not arrive'} "
+                      f"(mp_after {m['mp_after']})", flush=True)
+        return out
+    finally:
+        try:
+            f.close()
+        except Exception:
+            pass
+
+
 def service_turn(idx, tr, timeout, verbose=False):
     """Press TURN COMPLETE, then keep servicing whatever the game throws up until the
     mission year in memory actually changes.
@@ -746,6 +923,7 @@ def service_turn(idx, tr, timeout, verbose=False):
     last_press = 0.0
     last_esc = 0.0
     ordered = False             # S3/M54c: the order step runs at most once per turn
+    snap_units = None           # M54d: our records as of just before TURN COMPLETE
     prev_hash = None
     last_change = t0
     last_probe = 0.0
@@ -852,6 +1030,23 @@ def service_turn(idx, tr, timeout, verbose=False):
             xy = answer_help_page(png)
             rec["handled"].append(f"help-exit@{int(xy[0])},{int(xy[1])}" if xy else "help:Escape")
             time.sleep(1.2)
+        elif kind == "dest-chooser":
+            # M54d: the `g` chooser is a key sink with an OK bar of its own (y~162).
+            # Escape does not answer it, and at a clean HUD behind it Escape raises the
+            # quit prompt — click its merged OK row.
+            xy = answer_dest_chooser(png, verbose)
+            rec["handled"].append(f"dest-chooser-ok@{int(xy[0])},{int(xy[1])}" if xy
+                                  else "dest-chooser:Return")
+            time.sleep(1.0)
+        elif kind == "artwork-close":
+            # M54d: the scene panel is closed by its own red bar, not by a key: the movie
+            # branch only presses Escape and Escape is gated, which froze two runs.
+            xy = close_bar(png)
+            if xy:
+                click(xy)
+            rec["handled"].append(f"artwork-close@{int(xy[0])},{int(xy[1])}" if xy
+                                  else "artwork-close:no-bar")
+            time.sleep(1.2)
         elif kind == "confirm":
             answer_confirm(words)
         elif kind == "dialog":
@@ -865,6 +1060,9 @@ def service_turn(idx, tr, timeout, verbose=False):
                 ordered = True
                 nver = order_step_in_loop(rec, verbose)
                 rec["handled"].append(f"orders:{nver}")
+                # M54d: freeze our records NOW — TURN COMPLETE is the execution, and a
+                # walk is only proven by what the records say after the year flips.
+                snap_units = snap_our_units()
                 continue
             if time.time() - last_press > 6:
                 btn = find(words, ["complete"])
@@ -906,6 +1104,11 @@ def service_turn(idx, tr, timeout, verbose=False):
                 break
             time.sleep(0.15)
     ok = year() != y0
+    if ok and snap_units:
+        # M54d: the year flipping IS the execution. The walk is proven here, by comparing
+        # the records against the ordered leg — not by a screenshot.
+        rec["moves"] = verify_moves(rec.get("orders", []), snap_units, verbose)
+        rec["moves_verified"] = sum(1 for m in rec["moves"] if m["landed"])
     st1 = state()
     rec["state_before"] = {k: st0.get(k) for k in ("year", "turn_no", "player", "cur_player",
                                                    "turn_flags", "mode_flags", "n_bases")}
@@ -977,6 +1180,11 @@ ORDER_KEY_TRIES = 3        # retire a key for the rest of the run after this man
 # `h` (HOLD, 2). Escape is never one of them: on a plain HUD Escape raises the quit
 # prompt, and Return on that prompt is "Yes, that's an order, mister!" = the game exits.
 ORDER_SIMPLE = (("g", {0x18}, "move-to-base"), ("l", {1}, "sentry"), ("h", {2}, "hold"))
+# M54d: `g` is the one key that makes a unit WALK (byte 0x18, route in the leg arrays), so
+# the in-loop plan tries it before anything else — see order_step_in_loop. Split out so the
+# plan can put it first without firing it twice.
+ORDER_MOVE = ("g", {0x18}, "move-to-base")
+ORDER_SIMPLE_NO_MOVE = (("l", {1}, "sentry"), ("h", {2}, "hold"))
 ORDER_TERRAFORM_WANT = set(range(4, 0x18))     # #TERRAIN index + 4 (mode rewrites allowed)
 ORDER_BYTE_NAMES = {1: "sentry", 2: "hold", 3: "convoy", 0x18: "move-to-base",
                     0x19: "move-dir", 0x1b: "road-to-base", 0x1c: "tube-to-base"}
@@ -1160,6 +1368,17 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
             panes.append("quit-prompt")
             key("Escape"); time.sleep(1.0)
             continue
+        if k == "dest-chooser":
+            # M54d: `g` raises its own SELECT DESTINATION chooser. It used to classify
+            # `hud`, so this loop read two "quiet" HUD frames and gave up with the order
+            # unlanded while the pane was still eating keys — 10 keys, 0 order bytes,
+            # evidence/m54d/probe_unit0.json. Answer ITS OK bar, never Escape (Escape at a
+            # clean HUD behind it raises the quit prompt).
+            panes.append("dest-chooser")
+            answer_dest_chooser(png, verbose)
+            time.sleep(1.0)
+            quiet = 0
+            continue
         if k in ("dialog", "confirm", "unknown") and is_terraform_pane(w):
             panes.append("terraform:" + k)
             if answer_terraform_pane(w, verbose) is None:
@@ -1182,12 +1401,24 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     e1 = energy(f, me)
     ta2, tafter = tile_recs(f, cand["x"], cand["y"])
     byte_delta = after["order"] != before["order"] and after["order"] in want
+    # M54d: a queued MOVE carries its route in the record itself — the leg arrays at
+    # `+20..+27` (x) and `+28..+35` (y), -1-terminated (ORDERS.md §4 0x18). The LAST leg
+    # is the ordered destination, so the walk has a memory-checkable target instead of a
+    # guess; `service_turn` compares it against x,y after the year flips.
+    dest = None
+    if after["order"] == 0x18:
+        d52 = rd(f, UNIT_ARR + idx * 52, 52)
+        lx = [struct.unpack("<h", d52[20 + k * 2:22 + k * 2])[0] for k in range(4)]
+        ly = [struct.unpack("<h", d52[28 + k * 2:30 + k * 2])[0] for k in range(4)]
+        pts = [(a, b) for a, b in zip(lx, ly) if a >= 0 and b >= 0]
+        dest = list(pts[-1]) if pts else None
     return dict(unit=idx, key=kname, label=label, mode=mode,
                 want=sorted(want)[:1] + ([mode + 4] if mode is not None else []),
                 ux=cand["x"], uy=cand["y"], utype=cand["type"], ucls=cand.get("cls"),
                 order_before=before["order"], order_after=after["order"],
                 order_name=ORDER_BYTE_NAMES.get(after["order"],
                                                 "terraform" if after["order"] in ORDER_TERRAFORM_WANT else None),
+                dest=dest,
                 mpused_after=after["mpused"],
                 energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
                 tile_addr=hex(ta),
@@ -1222,6 +1453,7 @@ def order_step_in_loop(rec, verbose=False):
         if me is None:
             return 0
         cands = find_actionable(f, me)
+        own_tiles = own_base_tiles(f, me)      # M54d: `g` is wasted on a unit on its base
         # class-9 (Former) candidates first, then whatever has refused us least this run,
         # then record index — so a position with no Former costs a few keypresses on turn
         # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
@@ -1235,8 +1467,16 @@ def order_step_in_loop(rec, verbose=False):
             landed = False
             # A Former gets the terraform family first (that is the one that spends
             # energy and rewrites modes); everyone gets the always-valid keyboard orders.
-            plan = ([(k, ORDER_TERRAFORM_WANT, "terraform") for k in ORDER_TRY_KEYS]
-                    if cand["cls"] == 9 else []) + list(ORDER_SIMPLE)
+            # M54d: the MOVE key first, for every candidate that can use it. A Former that
+            # gets `f` first lands a terraform byte, `landed` stops the plan, and no walk is
+            # ever tried — which is how M54c ordered 31 units and moved none. And `g` is
+            # skipped for a unit standing on one of our bases: that is the case the game
+            # refuses (M54c), and three refusals would retire the key for the whole run.
+            off_base = (cand["x"], cand["y"]) not in own_tiles
+            plan = (([ORDER_MOVE] if off_base else [])
+                    + ([(k, ORDER_TERRAFORM_WANT, "terraform") for k in ORDER_TRY_KEYS]
+                       if cand["cls"] == 9 else [])
+                    + list(ORDER_SIMPLE_NO_MOVE))
             for kname, want, label in plan:
                 if (landed or attempts >= ORDER_MAX_ATTEMPTS
                         or time.time() - t0 > ORDER_BUDGET):
