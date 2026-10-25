@@ -271,3 +271,31 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   (evidence/px_wedge_t28.png, session 79's false positive). The base screen's close is Escape and
   the class is unambiguous (quit-prompt/title classify first, base test positional since M54a), so
   Escape on `base` must NOT be gated by `--no-escape`; keep the gate only for movie/unknown.
+
+## Ordering units from the driver (M54c, session 80)
+
+- **A verified order is a `+17` delta, never a screenshot.** Poke `0x91b5bc` (selection),
+  fire ONE hotkey, service the pane the setter raises, then read `unit+17` back: landed =
+  it moved into the byte set that key may produce (ORDERS.md §4). A dropped keypress, a
+  rejected order and a swallowed event all look identical from outside (ORDERS.md §2).
+- **Keys that work on ANY selected unit** (measured on a selected Scout Patrol, no pane, no
+  energy): `l` → `+17 = 1` (SENTRY), `h` → 2 (HOLD). `g` (queued MOVE to own base, `0x18`)
+  did NOT land at a unit standing on its base — it opened the BASE pane instead. Terraform
+  keys only land on class 9 (`#UNITS` class byte); on anything else they print
+  `NEEDTERRAFORMERS` and change nothing — that is the negative control, not a bug.
+- **Arrows are not orders.** `Up`/`Right` at a selected unit left `+17` 0 (they drive the
+  map cursor; `Right` even opened the base pane) and `shift+Up` raised a pane. Only
+  Shift+arrow per ORDERS.md §4 `0x19` has ever been logged as a keyboard move order.
+- **Escape at a clean HUD raises "Do you really want to quit?"** and every key after that
+  goes into the dialog (a probe burned 12 keypresses that way). Escape answers it
+  ("Oops, no, wait!"); `Return` on it is "Yes, that's an order, mister!" and the process
+  is gone. Never Escape a plain HUD looking for a menu — click MENU (61,369).
+- **The base screen swallows the next keypress.** Close it with Escape before ordering, or
+  the following order key is eaten (session 80's smoke trace shows `l` failing behind a
+  `base` pane and landing the moment the pane was Escaped).
+- **Candidate picker is the game's OWN select gate** (owner == current player, `+9` not
+  frozen, `+40` movement unspent), NOT a class filter: the `m54b_clean.SAV` position at
+  2153 owns six class-3 `Scout Patrol` records and no class-9 record at all, so a class
+  filter silently orders nothing. Class is used to ORDER candidates (Formers first), not to
+  exclude them. Retire a key after 3 delta-less attempts; a turn's step is capped by
+  `--order-budget` and `ORDER_MAX_ATTEMPTS` so ordering cannot eat the turn.
