@@ -761,22 +761,35 @@ def answer_dest_chooser(png, verbose=False, words=None, f=None, avoid=None,
     if f is not None and avoid is not None:
         rows = chooser_rows(png, words)
         bases = own_bases_named(f, me)
-        if len(rows) >= 2 and len(bases) == len(rows):
-            ordered = sorted(bases, key=lambda b: b["name"].lower())
-            for i, b in enumerate(ordered):
-                if (b["x"], b["y"]) != tuple(avoid):
-                    click((rows[i]["cx"], rows[i]["y"]))
-                    time.sleep(0.8)
-                    pick = dict(row_index=i, row_y=rows[i]["y"], row_text=rows[i]["text"],
-                                base=[b["x"], b["y"]], base_name=b["name"])
-                    if verbose:
-                        print(f"    chooser: clicked row {i} y{rows[i]['y']} "
-                              f"({b['name']} at {b['x']},{b['y']}; unit stands on "
-                              f"{avoid[0]},{avoid[1]})", flush=True)
+        target = next((b for b in bases if (b["x"], b["y"]) != tuple(avoid)), None)
+        row_ix = None
+        if target is not None:
+            # Prefer the row whose OWN text names the base we mean: the pane's sort is
+            # Sort: Name by default, but the alphabetical mapping is an ASSUMPTION (both
+            # frames seen so far put the alphabetically-first base first AND nearest-first
+            # would have done the same), and the row text is what the pane actually shows.
+            word = re.sub(r"[^a-z]", "", target["name"].lower())[:9]
+            for i, r in enumerate(rows):
+                if len(word) >= 5 and word in re.sub(r"[^a-z]", "", r["text"].lower()):
+                    row_ix = i
                     break
+            if row_ix is None and len(rows) == len(bases):
+                order = sorted(bases, key=lambda b: b["name"].lower())
+                row_ix = next((i for i, b in enumerate(order)
+                               if (b["x"], b["y"]) != tuple(avoid)), None)
+        if row_ix is not None and 0 <= row_ix < len(rows):
+            click((rows[row_ix]["cx"], rows[row_ix]["y"]))
+            time.sleep(0.8)
+            pick = dict(row_index=row_ix, row_y=rows[row_ix]["y"],
+                        row_text=rows[row_ix]["text"], base=[target["x"], target["y"]],
+                        base_name=target["name"])
+            if verbose:
+                print(f"    chooser: clicked row {row_ix} y{rows[row_ix]['y']} "
+                      f"({target['name']} at {target['x']},{target['y']}; unit stands on "
+                      f"{avoid[0]},{avoid[1]})", flush=True)
         elif len(rows) >= 2 and verbose:
-            print(f"    chooser: {len(rows)} rows vs {len(bases)} own bases — "
-                  f"no row click, answering the highlighted row", flush=True)
+            print(f"    chooser: {len(rows)} rows vs {len(bases)} own bases and no text "
+                  f"match — answering the highlighted row", flush=True)
     bs = [b for b in pane_bars(png, y0=150) if 150 <= b[1] <= 190]
     if bs:
         left = min(b[0] - b[2] / 2.0 for b in bs)
@@ -1357,6 +1370,35 @@ def service_turn(idx, tr, timeout, verbose=False):
                 key("Escape"); last_esc = time.time()
             time.sleep(0.4)
         else:                                    # movie / unknown
+            # M54h: a CLEAN HUD whose TURN COMPLETE row failed to OCR classifies `unknown`.
+            # Measured live at (28,42) with the base label drawn on the map: 2x OCR finds
+            # MENU (61,369) and COMMLINK but neither "TURN" nor "COMPLETE" (region_colors
+            # 167), so the `hud` branch — the only thing that clicks the button — never
+            # runs, and with --no-escape the loop idles out the whole turn budget while the
+            # year sits unmoved in OUR phase (trace_m54h_20261025_093424 turn 2).
+            # Fallback, not a reclassification: in OUR phase, with the HUD chrome present,
+            # NO bar band in the modal band (a chooser/dialog/pane always draws bars at
+            # y 145-200) and the year unmoved for HUD_BLIND_S, click TURN COMPLETE at its
+            # measured coordinates. If a modal really is up the click lands behind it and
+            # the year simply stays where it is.
+            if (kind == "unknown" and now - last_press > HUD_BLIND_S
+                    and now - t0 > HUD_BLIND_S):
+                st_now = state()
+                if (st_now.get("cur_player") == st_now.get("player")
+                        and not (st_now.get("turn_flags") or 0) & 2
+                        and find(words, ["menu"]) and find(words, ["commlink"])
+                        and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200]):
+                    click(TURN_BTN)
+                    rec["handled"].append("turn-complete-blind")
+                    last_press = now
+                    if verbose:
+                        print("    HUD blind: OCR found no TURN COMPLETE row — clicked the "
+                              "button at its measured place", flush=True)
+                    for _ in range(4):
+                        time.sleep(0.15)
+                        if year() != y0:
+                            break
+                    continue
             # Never spam Escape on unrecognized/dark screens: on the title menu Escape
             # can land on "Exit" and end the session (process vanished at year 2181).
             # movies end on their own; only escape a genuinely stuck screen.
@@ -1482,6 +1524,9 @@ ORDER_MOVE = ("g", {0x18}, "move-to-base")
 ORDER_SIMPLE_NO_MOVE = (("l", {1}, "sentry"), ("h", {2}, "hold"))
 WALK_POLL = 3.0            # M54e: seconds to watch the record after a queued MOVE is
                            # answered — the pump runs the order THEN, not at EXEC
+HUD_BLIND_S = 25.0         # M54h: how long a clean-but-unreadable HUD (class `unknown`,
+                           # our phase, chrome present, no modal bars) waits before the
+                           # driver clicks TURN COMPLETE at its measured coordinates
 ORDER_TERRAFORM_WANT = set(range(4, 0x18))     # #TERRAIN index + 4 (mode rewrites allowed)
 ORDER_BYTE_NAMES = {1: "sentry", 2: "hold", 3: "convoy", 0x18: "move-to-base",
                     0x19: "move-dir", 0x1b: "road-to-base", 0x1c: "tube-to-base"}
