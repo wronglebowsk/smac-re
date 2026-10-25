@@ -146,11 +146,44 @@ def main():
     check("claim survives without the rival scan", att and claim and not rivals,
           f"{claim} {rivals}")
 
+    # The BRACKET shape: the chooser answered by its default button (Return on an
+    # `unknown` frame) means the watcher never ran — the two reads bracketing the
+    # press are the samples. Same rules, and the moved-record case is the one that
+    # must NOT false-confound: our own record on its new tile wears the signature we
+    # watched (byte + route + end tile); only a row at ANOTHER index may rival it.
+    print("case 11: bracket samples (watcher never ran), unit still on tile -> claimed")
+    smp = samples((0, 0, []), (700, 0x18, [(29, 42)]))
+    after = [row(0, x=28, y=42, order=0x18, legs=[(29, 42)]), row(1, x=29, y=42)]
+    claim, rivals, att, conf = sp.diff_order_records(ours, 0, W, smp, [], after=after)
+    check("bracket 0 -> byte with new legs attributes",
+          att and claim and claim["legs_after"] == [[29, 42]] and not rivals,
+          f"{claim} {rivals}")
+
+    print("case 12: bracket samples, unit STEPPED off its tile -> still claimed")
+    before = [row(0, x=28, y=42), row(1, x=29, y=42)]
+    braw_before = raw(x=28, y=42, order=0)
+    braw_after = raw(x=28, y=43, order=0x18, legs=[(28, 42)], mp=3)
+    smp = [(braw_before, -1.0, 0), (braw_after, 1.0, 0x18)]
+    after = [row(0, x=28, y=43, order=0x18, legs=[(28, 42)], mp=3),
+             row(1, x=29, y=42)]
+    claim, rivals, att, conf = sp.diff_order_records(before, 0, W, smp, [], after=after)
+    check("our own moved record is not a rival of itself",
+          att and claim and not rivals and not conf, f"{claim} {rivals}")
+
+    print("case 13: bracket samples, unit stepped AND a twin wears the signature")
+    before = [row(0, x=28, y=42), row(1, x=28, y=42)]
+    after = [row(0, x=28, y=43, order=0x18, legs=[(28, 42)], mp=3),
+             row(1, x=28, y=43, order=0x18, legs=[(28, 42)], mp=3)]
+    claim, rivals, att, conf = sp.diff_order_records(before, 0, W, smp, [], after=after)
+    check("indistinguishable twin -> confounded, nothing attributed",
+          claim is not None and conf and not att and len(rivals) == 1,
+          f"{claim} {rivals}")
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 10/10 attribution cases")
+    print("PASS 13/13 attribution cases")
     return 0
 
 

@@ -1237,6 +1237,16 @@ def diff_order_records(before, cand_idx, want, byte_samples, pre_legs,
                      and (a["type"], a["x"], a["y"], a["order"])
                      == (cand["type"], cand["x"], cand["y"], cand["order"])
                      for a in after)
+        # Is OUR pre-press record still sitting on its start tile (any index — indices
+        # lie)? If yes and the watched slot wears the signature elsewhere, the slot is a
+        # LOOK-ALIKE that took an order we did not watch land — session 85 read legs
+        # naming bases nobody ordered off exactly this shape. If no (the start tile is
+        # vacated of our record), the signature row on the slot IS our record, read
+        # after it stepped.
+        start_vacated = not any(
+            (a["type"], a["x"], a["y"], a["order"])
+            == (cand["type"], cand["x"], cand["y"], cand["order"])
+            for a in after)
         for a in after:
             b = pre_by_idx.get(a["idx"])
             if a["idx"] == cand_idx and (watched_stayed or stayed):
@@ -1247,17 +1257,24 @@ def diff_order_records(before, cand_idx, want, byte_samples, pre_legs,
             #     land and the route our setter wrote. A mid-run index shift makes (b)
             #     real: the twin and our record carry the same signature and only the
             #     (unreliable) index tells them apart.
-            fresh_rival = (b is not None
-                           and (a["type"], a["x"], a["y"]) == (cand["type"],
-                                                               post_tile[0], post_tile[1])
-                           and a["order"] in want_bytes
-                           and a["order"] != b["order"] and a["legs"] != b["legs"])
-            twin = (a["idx"] != cand_idx
-                    and (a["type"], a["x"], a["y"], a["order"], [tuple(p) for p in a["legs"]])
-                    == (cand["type"], post_tile[0], post_tile[1],
-                        byte_samples[land_i][2], tuple(post_legs)))
-            if not (fresh_rival or twin):
-                continue
+            own_sig = ((a["type"], a["x"], a["y"], a["order"], tuple(a["legs"]))
+                       == (cand["type"], post_tile[0], post_tile[1],
+                           byte_samples[land_i][2], tuple(post_legs)))
+            if own_sig and a["idx"] != cand_idx:
+                twin = True                       # a row at ANOTHER index wearing our
+            elif own_sig:                         # watched byte + route = ambiguity
+                if start_vacated:
+                    continue                      # our record, read after it stepped
+                twin = False                      # our unit is STILL parked on its start
+            else:                                 # tile; the slot's signature is a look-
+                twin = False                      # alike's order we never watched land
+                fresh_rival = (b is not None
+                               and (a["type"], a["x"], a["y"]) == (cand["type"],
+                                                                   post_tile[0], post_tile[1])
+                               and a["order"] in want_bytes
+                               and a["order"] != b["order"] and a["legs"] != b["legs"])
+                if not fresh_rival:
+                    continue
             rivals.append(dict(idx_before=(b["idx"] if b else a["idx"]),
                                idx_after=a["idx"],
                                type=a["type"],
@@ -2030,6 +2047,30 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     # delta: the one taken as the pane was answered, or the one taken now.
     seen = queued["order"] if queued["order"] is not None else after["order"]
     byte_delta = seen != before["order"] and seen in want
+    if queued.get("diff") is None and byte_delta:
+        # M54i: the chooser was answered by its DEFAULT button (Return on a pane that
+        # classified `unknown` — run m54i_run2 turn 0) or the byte landed between two
+        # reads, so the through-the-click watcher never ran. The same attribution rule
+        # applies to the two reads that BRACKET the press: the pre-press snapshot and
+        # the post-press read of the slot we keyed. A 0 -> byte transition across those
+        # two reads with legs that CHANGED attributes the destination to THIS keypress;
+        # a rival or a signature twin still says confounded, and stale legs (unchanged)
+        # still claim nothing.
+        try:
+            snap_after = our_rows(f, me)
+        except Exception:
+            snap_after = None
+        bracket = [(before["raw"], -1.0, before["order"]),
+                   (after["raw"], 1.0, after["order"])]
+        claim, rivals, attributed, confounded = diff_order_records(
+            snap_before, idx, want, bracket, before_legs,
+            after=snap_after, pre_order=before["order"])
+        queued["diff"] = dict(claim=claim, rivals=rivals,
+                              attributed=attributed, confounded=confounded,
+                              n_changed=1 if attributed else 0,
+                              n_samples=2)
+        if attributed and claim:
+            queued["legs"] = claim["raw_after"]
     # M54d: a queued MOVE carries its route in the record itself — the leg arrays at
     # `+20..+27` (x) and `+28..+35` (y), -1-terminated (ORDERS.md §4 0x18). The LAST leg
     # is the ordered destination, so the walk has a memory-checkable target instead of a
