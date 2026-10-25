@@ -1,0 +1,112 @@
+win=10485761 start year=2109
+    [artwork-close] | a | z. =V.9 MD ee aa Sere |
+    [hud] ef a aie aa: SS Or a are ew a iS x ~<e- Mission ‘Year 2109
+turn 0: 2109->2112 OK (44.2s, artwork-close,artwork-close@699,589,hud,orders:0)
+    [hud] TURN COMPLETE ip R ~<e- EY University Base builds ScoutPatrol | QJ Scaut Patrol Rolling-#eAtid (1-1-1)
+    ORDER rec21 (6,12) type 2 cls 3 'l' -> sentry byte 0->1 (sentry) energy 0 (0.0s)
+turn 1: 2112->2113 OK (2.8s, hud,orders:1)
+    [unknown] a ee OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI BASE FACILITIES TECHNOLOGIES Hologram Theatre Industrial Automation The
+/home/n100/reverse/smac/scripts/smac_play.py:496: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [dialog] ‘i OPERATIONS DIRECTOR a 4) He | ||\We have obtained technologies which will allow us to
+    [base] oe ea sits ii, ‘if PSYCH CHAPLAIN a a) he | || Discovery of Planetary Networks
+    [unknown] jie ik ee Selene remem | a, Year 2114: No units need ders. Press ENTER .
+turn 2: 2113->2114 OK (32.5s, unknown,close-bar@400,575,dialog,ai-phase:dialog,base,ai-phase:base)
+    [unknown] eee ee sor IASI se =i —a= ‘Sd Mls Year 2114: No units need new orders.
+turn 3: 2114->2115 OK (3.6s, unknown,ai-phase:unknown)
+    [unknown] > peepee EG ee oe eee eee oR ean ei Pa mney 2 . Selene remem
+turn 4: 2115->2116 OK (7.7s, unknown,ai-phase:unknown)
+    [hud] —a= ‘Sd Mls Year 2116: No units need new orders. Press ENTER tor n-whiuirn. “_COMMLINK ae
+    [hud] SS i] TURN COMPLETE ba Econ: 50% (+ Uiturn) canal | Elew: 62mm Paych: 0% Flat
+    [unknown] as a =r Econ: 50% (+ Lturn) Elew: 62m Flat & Moist Lt | 7. |/
+turn 5: 2116->2117 OK (13.3s, hud,ai-phase:hud,hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [unknown] Selene remem | a, Year 2117: No units need ders. Press ENTER . | . ear2
+turn 6: 2117->2118 OK (5.2s, unknown,ai-phase:unknown)
+    [unknown] OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI a ii Doctrine: Mobility , : BASE FACILITIES TECHNOLOGIES '
+    [dialog] Risk. 8 fe ‘i OPERATIONS DIRECTOR a 4) He | ||\We have obtained technologies which will
+    [hud] Gace f Unhersiy Beee e | MENU SS Mls Year 2118: No units need new orders.
+    [unknown] qi SS fh Unhversiyeace “Pe ) MENU ‘52 Mipgign Year 2118: No units need new orders.
+turn 7: 2118->2119 OK (15.8s, unknown,close-bar@400,575,dialog,ai-phase:dialog,hud,ai-phase:hud)
+    [unknown] Selene remem | Ya M Year 2119: No unlts need ders. Press ENTER . | .
+turn 8: 2119->2120 OK (3.5s, unknown,ai-phase:unknown)
+    [unknown] rl 7. ra e ra ra r ra = r ee f ~y | MENU |%
+    [hud] pe a = TURN COMPLETE | ip t ~<e- }||| £3 University Base builds Scout Patral.
+    ORDER rec32 (6,12) type 2 cls 3 'l' -> sentry byte 0->1 (sentry) energy 0 (0.0s)
+turn 9: 2120->2121 OK (10.7s, unknown,close-bar@95,567,hud,orders:1)
+    [hud] = = | TURN COMPLETE = = Mind Worms Hive Scout Patrol es er | Psi:
+    [unknown] Ge ee Oe a gosh beye Pee rte pee ae ee lings oy Selene remem |
+turn 10: 2121->2122 OK (7.9s, hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [unknown] acto a ie (es = ae Uversivi ase | MENU SS Mls Year 2122: No units
+turn 11: 2122->2123 OK (2.7s, unknown,ai-phase:unknown)
+    [unknown] ee ue ciate a o . gis 2 “iy = ay eins ee i, it eee
+turn 12: 2123->2124 OK (3.9s, unknown,ai-phase:unknown)
+    [unknown] i 2 UVES BOSE ee | MENU | 4 = Mls Year 2124: No units need
+turn 13: 2124->2125 OK (2.8s, unknown,ai-phase:unknown)
+    [hud] (Oe es ge er een lei a ae er La eterna : » Misslon Year 2125:
+    [unknown] Pt <= [---= = Econ: 50% (+Liturn) Elew: ¥32m Peych: Scaut Patrol SHEE ERIE: {1-1-1} Green
+turn 14: 2125->2126 OK (10.2s, hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [unknown] iB ee ———— PPL Patral _@— Hatchling (+): 25% Paz = | I A ‘: =
+    [unknown] [I SECRETS OF THE HUMAN BRAIN a | | Spartan researchers have discovered the Secrets of
+    [hud] ai a al ni So at bh Fi, paren eee Crna ar gg eee Saete peter
+turn 15: 2126->2127 OK (11.3s, unknown,ai-phase:unknown,unknown,ai-phase:unknown,hud,ai-phase:hud)
+    [unknown] (oe ee oe Fares Een an hee a ea mls ee hal oe ae Selene remem
+turn 16: 2127->2128 OK (3.7s, unknown,ai-phase:unknown)
+    [unknown] OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI | Social Psych BASE FACILITIES TECHNOLOGIES Recreafion Commons Doctrine: Loyalty
+    [unknown] Seay Universiedese ae | MENU a Mls Year 2128: No units need new orders. Press ENTER
+turn 17: 2128->2129 OK (9.1s, unknown,close-bar@400,575,unknown,ai-phase:unknown)
+    [unknown] ~~ "A Ctra) aS , vane” EE Ss eterna : =a Misslon Year 2129: No units
+turn 18: 2129->2130 OK (3.8s, unknown,ai-phase:unknown)
+    [unknown] : sap. Misslon Year 2130: Wo units need new orders. Press ENTER for next turn. :
+turn 19: 2130->2131 OK (2.3s, unknown,ai-phase:unknown)
+    [unknown] eterna : =a Misslon Year 2131: No units need new orders. Press ENTER tor next turn.
+turn 20: 2131->2132 OK (3.2s, unknown,ai-phase:unknown)
+    [unknown] , sap. Mission Year 2132: No units need new orders. Press ENTER for next turn. [EE
+turn 21: 2132->2133 OK (4.2s, unknown,ai-phase:unknown)
+    [unknown] Selene remem | Ya M Year 2134: No unlts need ders. Press ENTER . | .
+turn 22: 2133->2134 OK (3.7s, unknown,ai-phase:unknown)
+    [unknown] =a Misslon Year 2134: No units heed new orders. Press ENTER tor next turn. EET? =
+turn 23: 2134->2135 OK (2.9s, unknown,ai-phase:unknown)
+    [unknown] eo Rr ened aoe ae a oe eterna : . sslon Yea : Wo 's heed
+    [dialog] ‘i NETFLASH! a | —. = CEO Morgan of the Morganites has authorized a a -
+turn 24: 2135->2136 OK (9.9s, unknown,ai-phase:unknown,dialog,ai-phase:dialog)
+    [unknown] ene aa ee ee Shige = i eleeenenenneee ennai - ag ~ MENU |S Mb Year
+turn 25: 2136->2137 OK (3.8s, unknown,ai-phase:unknown)
+    [unknown] MES Se SG aie mania a (Oe es ge er een lei a ae er La
+turn 26: 2137->2138 OK (5.1s, unknown,ai-phase:unknown)
+    [unknown] Ge 2 oe ee WNersiiibe se =. . Selene remem | Ya M Year 2138: No
+turn 27: 2138->2139 OK (3.3s, unknown,ai-phase:unknown)
+    [unknown] a ee an ee ctf ee ee i, ie" a (oe ee oe Fares Een an
+turn 28: 2139->2140 OK (3.8s, unknown,ai-phase:unknown)
+    [unknown] : sap. Misslon Year 2140: Wo units need new orders. Press ENTER for next turn. :
+turn 29: 2140->2141 OK (4.1s, unknown,ai-phase:unknown)
+    [unknown] lei a ae er La eterna |“ Year 2141: No units need new orders. Press ENTER
+turn 30: 2141->2142 OK (2.7s, unknown,ai-phase:unknown)
+    [unknown] i . =a Misslon Year 2142: No units heed new orders. Press ENTER tor next turn.
+turn 31: 2142->2143 OK (2.9s, unknown,ai-phase:unknown)
+    [unknown] lei a ae er La eterna : » Misslon Year 21493: No units need new orders.
+    [dialog] 4 SECURITY CHIEF ty ee, | PoAcekeepers! Brother Lal and his staff have by = =
+    [dialog] Pi SECURITY CHIEF ty = | POCO Keepers! Brother Lal and his staff have a =
+turn 32: 2143->2144 OK (10.9s, unknown,ai-phase:unknown,dialog,ai-phase:dialog,dialog,ai-phase:dialog)
+    [unknown] me ee OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI Secrets of the Human Brain BASE FACILITIES TECHNOLOGIES
+    [unknown] My. 2144: University researchers discover "Secrets of the Human Brain." (The Spartans uncovered these Secrets firstin
+    [artwork-close] 5, Seraictpalad de cM et EL? nga ee or aan eer Beg oa hg ca aetna
+    [unknown] (i Neri ase | MENU SS Mls Year 2144: No units need new orders. Press ENTER
+turn 33: 2144->2145 OK (24.1s, unknown,close-bar@400,575,unknown,ai-phase:unknown,artwork-close,artwork-close@699,589)
+    [hud] (oe ee oe Fares Een an hee a ea mls ee hal oe ae Selene remem
+    [unknown] eterna - ag be? MENU 1% > Mls Year 2145: No units need new orders. Press
+turn 34: 2145->2146 OK (7.3s, hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [hud] (es = ae Uversivi ase | MENU SS Mls Year 2146: No units need new orders.
+    [unknown] (es 2 ae Nero ivi ASE —a= SM Year 2146: No units need new orders. Press
+turn 35: 2146->2147 OK (5.4s, hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [hud] a ee an ee ctf ee ee i, ie" a We oe ee Fares Een an
+    [hud] (oe ee oe Fares Een an hee a ea mls ee hal oe ae Selene remem
+    [unknown] Pt <> | ---~ = Econ: 50% (+Liturn) Elew: ¥32m Paych: 0% Scout Patrol Rolling &
+turn 36: 2147->2148 OK (10.5s, hud,ai-phase:hud,hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [unknown] | MENU | Mls Year 2148: No units need new orders. Press ENTER for n-turn. *
+turn 37: 2148->2149 OK (2.6s, unknown,ai-phase:unknown)
+    [hud] Saeco eee hgane® scan , =u Mission Year 2149: No units need new orders. Press ENTER
+    [unknown] - ———- — B S= = (})) Mill: Colonel Semtieg i i Scout Patrol SHEE ERIE:
+turn 38: 2149->2150 OK (8.1s, hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [unknown] | MENU | 4 > Mp Year 2150: No units need new orders. Press ENTER for
+turn 39: 2150->2151 OK (2.7s, unknown,ai-phase:unknown)
+trace: /home/n100/reverse/smac/evidence/trace_m54d40c_20261024_234229.jsonl

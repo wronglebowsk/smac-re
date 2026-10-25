@@ -308,3 +308,21 @@ is what separates the two classes.
   filter silently orders nothing. Class is used to ORDER candidates (Formers first), not to
   exclude them. Retire a key after 3 delta-less attempts; a turn's step is capped by
   `--order-budget` and `ORDER_MAX_ATTEMPTS` so ordering cannot eat the turn.
+
+## M54d — the two panes that ate whole runs, and the walk order (session 81, 2026-10-24)
+
+- **`g` ("Move to") raises its own SELECT DESTINATION chooser** (caption y~102, a base row
+  with `Distance: N` at y~132, an OK/CANCEL bar row at y~162). OCR reads the caption and the
+  row but never the bar labels, and only ~5 words land in the dialog band, so it classifies
+  `hud` while swallowing every keypress. Class `dest-chooser`; answer = click the MERGED OK
+  row centre (497,162) — the two fill segments centred (474,162)/(521,162) are one bar split
+  by the "OK" label. `Return` is its default button and also works.
+- **A queued MOVE writes its route into the unit record**: legs x at `+20..+27`, y at
+  `+28..+35`, -1-terminated; the last leg is the ordered destination. `g` is refused for a
+  unit standing on one of OUR bases (base records: 0x95DA10 x 304, faction = low byte at +4),
+  so do not fire it there — three refusals retire the key for the run.
+- **Full-screen scene/artwork panels carry a red CLOSE bar bottom-right** (fill (94,10,9) /
+  (73,9,8), y 579-599, x 596-799 on the 800x600 desktop). OCR reads ~7 tokens off the whole
+  frame, so it falls through to `movie`, whose only answer is Escape — and Escape is gated by
+  `--no-escape`, so the year sits frozen. Class `artwork-close`; click the bar's own centre.
+  The bar's red is separated from the terrain's red by the GREEN channel (g<30 vs ~50).
