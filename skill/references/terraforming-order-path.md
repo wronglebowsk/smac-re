@@ -100,10 +100,12 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
   across the click (a single read is a coin flip).
 * **Legs survive execution** (`order 0`, legs still name the destination), so the route is the
   post-hoc evidence: verify the record sits ON the tile its own last leg names.
-* **Pathing refuses a tile its own owner occupies.** With 4 of ours on the base, the walker
-  oscillated between two neighbours across three EXECs; empty the base tile and the same order
-  lands in one tick. A walk therefore needs: our base tile free, the walker standing on a real
-  neighbour, `+17`/`+40`/legs cleared, `mp` 0.
+* **The walker must stand on a real neighbour of the named base tile.** Standing at
+  `(bx+1, by)` — a half-tile offset, not in the delta tables — the walker oscillated between
+  two neighbours across three EXECs; the same order from `(bx-2, by)` landed on the first tick.
+  Occupancy is NOT the blocker (a trace shows two units walking onto a tile where two others
+  already stood); an earlier version of this note blamed it and was wrong. A walk needs: a real
+  neighbour start tile, `+17`/`+40`/legs cleared, `mp` 0, and our own base tile as the target.
 * **`(base.x+1, base.y)` is NOT a neighbour** — two columns live in one tile record
   (`(mapw/2*y + x>>1)*0x2c`, even x `+0`, odd `+3`) and `FUN_00502c40`'s even-x delta tables
   (`0x67850c` dx / `0x678990` dy) step `(±2,0)` and `(±1,±1)`. Proven live both ways: `Left`
@@ -112,6 +114,10 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
 * **Arrows queue no order** on this build (`+17` unchanged for Left/Right/Up/Down plain and
   Shift, five records, with and without the `0x10000` moved-bit cleared). §"0x19 = Shift+arrow"
   is a static note, not a reachable keyboard path here.
-* **Making a Former without the game**: `+10` type 2 → 1 gives class 9 (`+11` is *not* the
-  class — read `unit_class()`), same 52-byte record, walks and terraforms. `scripts/m54e_prep.py`
-  does exactly that so a walk can be demonstrated on a save with no Former.
+* **The type byte is `+4`, and `+10` is a FLAG WORD** (`FOOTING.md` 108,
+  `SAVE_FORMAT.md` 159-163). The census/probe/loop read type at `+10` and label units by
+  `unit_class()`, so every "class 9" label in the M54c-M54e notes is suspect: on the live array
+  `+4` decodes 117/119 records plausibly (and the eight records the SCREEN shows as Colony Pods
+  read `+4 = 0`) while `+10` yields impossible types 192/322. Movement evidence is unaffected
+  (`+17`, `+20..+35`, `+40`, `x,y`). Settle it with a `+4` poke and a legible unit panel before
+  trusting any class-based claim.

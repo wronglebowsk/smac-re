@@ -13,17 +13,15 @@ Closed (PRs merged to `main`):
 - **M54D — the loop queues a MOVE and checks it in memory** (session 81, merged #43, closed by
   M54e's run): `g` lands `0x18`, the record carries the leg-array route, the `dest-chooser` and
   `artwork-close` panes are pinned.
-- **M54E — THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN** (session 82, PR #44, numbers in
-  Session 82 of `SESSION_NOTES.md`): `scripts/m54e_prep.py` empties
-  our base tile, pokes the garrison onto the REAL neighbour (4,12) and makes one record class 9;
+- **M54E — THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN** (session 82, PR #44):
+  `m54e_prep.py` empties our base tile and stands the garrison on the real neighbour (4,12);
   then at a turn boundary `smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54e40
-  --verbose` -> `evidence/trace_m54e40_20261025_010855.jsonl` -> `m54a_check_run.py <that trace>
+  --verbose` -> `evidence/trace_m54e40_20261025_010855.jsonl` -> `m54a_check_run.py <trace>
   --timeout 240 --min-orders 31 --min-moves 5` -> `advanced 40/40`, `{1: 40}`, `stuck 0`,
-  `orders 31 VERIFIED of 75` (`g->24` x5, `l->1` x24, `h->2` x2), **`moves 5 LANDED of 5
-  ordered walks, on turns [0, 9, 12]`**, `PASS`. Why it had never landed (`ORDERS.md §7`): the
-  pump runs `0x18` **as the chooser's OK is answered**, not at EXEC; the byte window is tens of
-  ms; **the game will not path into a tile its own owner occupies**; `(base.x+1, base.y)` is
-  **not a neighbour**.
+  `orders 31 VERIFIED of 75`, **`moves 5 LANDED of 5 ordered walks, turns [0, 9, 12]`**,
+  `PASS`. Mechanism in `ORDERS.md §7`: the pump runs `0x18` **as the chooser's OK is answered**,
+  the byte window is tens of ms, and the walker must START on a real neighbour. **That run also
+  lost the position (`bases_ours 0`) — read the audit at the end of Session 82.**
 - Open in ROADMAP.md: **S1** (production rebuild) and **S2** (win conditions, transit).
   **M52** (Paul's 2416 campaign save) on hold: a save with mid-round bit1 set spins after load.
 
@@ -40,10 +38,9 @@ What M54e proved, and what it left open:
 2. **The Former's settle / found-a-base order is unkeyed.** `NAMED.md` 120-146 lists the
    `param_3` menu chain; the unit panel's buttons are readable in the bottom-right panel. Read
    both before guessing a hotkey.
-3. **Terraform keys are duds on this map** — `trace_m54e40` mixed `{"l->1": 24, "g->24": 5,
-   "h->2": 2}` out of 75 attempts and spent 385 s ordering: the base tile is level 5 with a max
-   of 4, so a nominal raise is refused (the raise-footprint question is the "Open" list in the
-   skill's `references/terraforming-order-path.md`).
+3. **Terraform keys are duds on this map**: `trace_m54e40` mixed `{"l->1": 24, "g->24": 5,
+   "h->2": 2}` of 75 attempts, 385 s of ordering — the base tile is level 5 with a max of 4, so
+   a nominal raise is refused (see the "Open" list in `terraforming-order-path.md`).
 
 Pick ONE, in this order of preference, and prove it in memory:
 - **(a) FOUND A SECOND BASE.** Key the settle order, walk a Former to a tile it can ENTER
@@ -60,8 +57,15 @@ Pick ONE, in this order of preference, and prove it in memory:
   `+3`), never the screen.
 
 Fix these in the same pass — known and cheap:
-* **26 `unknown` pane hits** in `trace_m54e40` (`actions {"hud": 48, "ai-phase": 46,
-  "unknown": 26}`): capture the frames, pin any new class in BOTH test files first.
+* **Settle the type byte FIRST: it is `+4`, not `+10`** (`FOOTING.md` 108, `SAVE_FORMAT.md`
+  159-163). The census and the loop read `+10`; on the live array `+4` decodes 117/119 records
+  plausibly while `+10` yields types 192/322. Poke `+4` on a record with a legible unit panel,
+  read the panel back, then fix `unit_rec`/`m54d_census.py` if confirmed.
+* **The checker cannot see a defeat** (M54e's run ended with `bases_ours 0` and still PASSed):
+  put `bases_ours`/`units_ours` in the snapshot `smac_play` writes and add `--min-our-bases`
+  (default 0).
+* **26 `unknown` pane hits** in `trace_m54e40`: capture the frames, pin any new class in BOTH
+  test files first.
 * **44 dud keypresses cost ~385 s of a 40-turn run** — retire known-dead keys by type up
   front instead of rediscovering them three times per turn.
 
@@ -82,12 +86,12 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
    file (~60 KB).
 3. `git status`; `git branch --show-current` (must be a branch, never `main`);
    `python3 scripts/milestone.py start <ID>` FIRST — it creates the branch off `origin/main`.
-4. `python3 scripts/smac_state.py --json` — session 82 ended with the game RUNNING at year
-   2200, pid 484088, `cur_player 3`, 30 bases, our two class-9 records and three scouts
-   garrisoned on University Base (6,12). `scripts/m54d_census.py` prints what is really there;
-   `scripts/m54e_prep.py` re-arms a walk (empties our base tile, stands the garrison on the real
-   neighbour (4,12), makes one record class 9). A fresh game is `scripts/m54a_newgame.py` (after
-   `m54a_load.relaunch()`).
+4. `python3 scripts/smac_state.py --json` — session 82 left the game RUNNING at 2201, pid
+   484088, `cur_player 3`, `turn_flags 0x100002`, **`bases_ours 0`**: our 8 surviving records sit
+   stacked on (47,47) on SENTRY and the base array holds no base of ours. That run lost the
+   position — do NOT build on it. Reload `programs/saves/m54b_clean.SAV` via
+   `m54a_load.relaunch()`, or start fresh with `scripts/m54a_newgame.py`; then `m54e_prep.py`
+   re-arms a walk.
 
 ## WHERE THE KNOWLEDGE LIVES
 
@@ -98,8 +102,8 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
   destination; `0x19` = directional), §5 consequences, §6 the in-loop contract, **§7 when the
   queued MOVE actually runs** (the chooser's OK is the trigger, the ~tens-of-ms byte window,
   the occupied-destination refusal, why `(bx+1, by)` is not a neighbour, arrows queue nothing).
-- The live skill's `references/terraforming-order-path.md` — same walking findings in
-  operational form (what to poke, what to sample, what the pump does).
+- The live skill's `references/terraforming-order-path.md` — the walking findings in
+  operational form.
 - `SAVE_FORMAT.md` 150-182 — the 52-byte unit record (`+0/+2` x/y, `+4` flags, `+9` frozen,
   `+10` type, `+14` owner, `+17` order, `+40` movement) and the 304-byte base record (`x@0`,
   `y@2`, faction = the LOW byte at `+4`), base count at `0x985AF4`.
@@ -112,13 +116,11 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
 
 ## OPERATIONAL KIT
 
-- Census / position: `python3 scripts/m54d_census.py [--json f]` (class mix, `CLASS9` lines,
-  `on_own_base`, legs, `bases_ours`), `python3 scripts/m54e_prep.py` (empty our base tile, poke
-  the garrison onto the REAL neighbour `bx-2`, make one record a class-9 Former),
-  `python3 scripts/m54d_prep.py` (the older one-unit poke), `python3 scripts/m54d_probe.py
-  --unit N` (one key at a time, reads `+17`/legs/`x,y`/`+40` + the screen class after each),
-  `python3 scripts/m54e_probe.py peek|ours|prep|key|exec|chooser N` (the M54e tool: `chooser N`
-  answers the `g` chooser and samples the record at 100 ms across the OK click).
+- Census / position: `m54d_census.py [--json f]` (class mix, `CLASS9` lines, `on_own_base`,
+  legs, `bases_ours`), `m54e_prep.py` (empty our base tile, garrison onto the real neighbour
+  `bx-2`), `m54d_prep.py` (older one-unit poke), `m54d_probe.py --unit N` (one key at a time,
+  `+17`/legs/`x,y`/`+40` + the screen class), `m54e_probe.py chooser N` (answers the `g` chooser
+  and samples the record at 100 ms across the OK click).
 - Driver: `python3 scripts/smac_play.py --turns N --timeout 240 --no-escape 3000 --tag <t>
   [--load <Z:\\path>] [--verbose]`. Orders ON by default (`--orders-per-turn 2`,
   `--order-budget 35`, `--no-orders` off). Each turn record carries `orders` (with `dest`) and
@@ -155,10 +157,9 @@ Acceptance shape (same discipline — one invocation, no human, checked by a scr
   oscillates between two neighbours. `g` only ever names a BASE tile, so a walk needs our own
   base tile FREE. And **`(base.x+1, base.y)` is not a neighbour** (two columns per tile record,
   even-x delta `(±2,0)`): use `(bx-2, by)` or `(bx±1, by±1)`.
-- **Panes that classify as something else are key sinks.** The `g` chooser read `hud` (10 keys,
-  0 bytes); the scene panel read `movie` (two runs frozen because Escape is gated by
-  `--no-escape`); a live chooser frame in `trace_m54d40c` read `unknown` even though the saved
-  frames read `dest-chooser` — widen the test when you catch that frame.
+- **Panes that classify as something else are key sinks.** The `g` chooser once read `hud` (10
+  keys, 0 bytes); the scene panel read `movie` (two runs frozen — Escape is gated). Widen the
+  test whenever a live frame reads `unknown`.
 - **Escape at a clean HUD raises "Do you really want to quit?"**, and Return there is "Yes,
   that's an order, mister!" — the process is gone.
 - **Arrows drive the MAP CURSOR, they do not order a unit** — re-measured in M54e on five
