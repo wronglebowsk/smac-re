@@ -28,6 +28,7 @@ DEFAULT = [
     ("m45a_post.png",           "base",        "real base screen: MENU/tabs, no TURN COMPLETE row — must STAY base (Escape, never click)"),
     ("m25_t7.png",              "hud",         "plain HUD, TURN COMPLETE at (697,416)"),
     ("m54a/quit_prompt.png",    "quit-prompt", "M54a: \"Do you really want to quit?\" over the HUD — was `title`, which stopped a 40-turn run"),
+    ("m54c/comm_pane.png",      "comm",        "M54c: faction COMMUNICATION ('X - MOOD' banner + quoted demand) — click ITS OK bar (y 347); the y-560 console row under it is NOT a close bar"),
 ]
 
 

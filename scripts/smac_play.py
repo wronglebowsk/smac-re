@@ -137,6 +137,34 @@ def is_help_page(words):
         or "chassis types" in t or ("advances" in t and "abilities" in t)
 
 
+def is_communication(words, png=None):
+    """A faction COMMUNICATION pane: "<FACTION> - <MOOD>" banner, a QUOTED demand in the
+    upper pane, portrait at left, one wide OK bar across the pane at y~347.
+
+    Measured on `evidence/m54c/comm_pane.png` (session 80, the frame that stuck turn 35 of
+    trace_m54c40b for 735 s): banner "BELIEVERS - SEETHING" at y 16, the quoted line
+    "You are a contemptuous parasite, Zakharov, ..." at y 45, and pane_bars seeing the OK
+    bar's dithered ends at (266,347) and (534,347).
+
+    The quote is the discriminator: the Council's own panes wear the same banner style
+    ("GAIANS - OBSTINATE", answer_council_dialog) but print their text UNQUOTED, and the
+    HELP browser's banner has no dash. The bar-row test keeps a mis-read quote from
+    turning some other pane into a clickable comm.
+    """
+    banner = quoted = False
+    for t, cx, cy, w, h in words:
+        low = t.lower().strip(".,:;|_* ")
+        if cy <= 40 and low in ("-", "--", "—", "–", "-seething", "-obstinate"):
+            banner = True
+        if 20 <= cy <= 140 and any(q in t for q in ('"', "“", "”", "„", "“")):
+            quoted = True
+    if not (banner and quoted):
+        return False
+    if png is None:
+        return True
+    return any(330 <= b[1] <= 365 for b in pane_bars(png, y0=330))
+
+
 def is_quit_prompt(words):
     """The "Do you really want to quit?" dialog.
 
@@ -303,6 +331,10 @@ def classify(words, ncolors=None, png=None):
     if is_help_page(words):
         return "help"           # full-screen help browser: its profile text contains base
                                 # words, so this must run before the base test
+    if is_communication(words, png):
+        return "comm"           # faction communication: click ITS OK bar (y~347), never a
+                                # console bar — session 80's turn 35 clicked (333,560) 38
+                                # times and the year never moved
     hits = base_word_positions(words)
     if hits and not (hud_btn and all(in_msgpane(p) for p in hits)):
         return "base"
@@ -489,6 +521,28 @@ def answer_help_page(png):
         click((xy[0], xy[1]))
         return (xy[0], xy[1])
     key("Escape")
+    return None
+
+
+def answer_communication(png):
+    """Answer a faction COMMUNICATION: click the MIDPOINT of its own OK bar row (y~347).
+
+    Measured on `evidence/m54c/comm_pane.png`: the bar's dithered purple ends are
+    (266,347) and (534,347) and the "OK" label between them is not fill, so the row's
+    centre — not any one segment — is the click target. The HUD console row (DATALINKS
+    333,560 / PROFILE 467,560 / HQINFO 619,560) is still drawn under this pane and is NOT
+    a close bar: M54b's bottom-bar rule clicked (333,560) on 38 consecutive frames of
+    turn 35, each click opening DATALINKS/PROFILES and each EXIT click landing back on the
+    same communication (735 s, year 2185 never moved).
+    """
+    bs = [b for b in pane_bars(png, y0=330) if 330 <= b[1] <= 365]
+    if bs:
+        left = min(b[0] - b[2] / 2.0 for b in bs)
+        right = max(b[0] + b[2] / 2.0 for b in bs)
+        xy = (int((left + right) / 2), int(sum(b[1] for b in bs) / len(bs)))
+        click(xy)
+        return xy
+    key("Return")
     return None
 
 
@@ -745,6 +799,14 @@ def service_turn(idx, tr, timeout, verbose=False):
                 sys.exit(5)
             key("Escape")                # close the menu the probe opened (in-game)
             time.sleep(1.2)
+        # M54c: a faction COMMUNICATION has its own OK bar (y~347) and the console row at
+        # y 560 is still drawn under it, so it must be answered before handle_pane's
+        # bottom-bar rule mistakes DATALINKS for a close bar (session 80, turn 35).
+        if kind == "comm":
+            xy = answer_communication(png)
+            rec["handled"].append(f"comm-ok@{int(xy[0])},{int(xy[1])}" if xy else "comm:Return")
+            time.sleep(1.2)
+            continue
         # M54a: the Council vote row and the HIVE bribe pane come up in BOTH phases (the
         # Council convenes while cur_player is an AI), and neither has a control OCR can
         # see, so they get a handler ahead of the generic dialog/Escape paths.
