@@ -897,10 +897,25 @@ ORDER_KEYS = {
 }
 
 # S3 / M54c — the same orders, INSIDE the unattended loop (see order_step_in_loop).
-ORDER_TRY_KEYS = ("f", "M", "S", "F", "r", "o", "n", "E")   # preference order, ORDERS.md §2
+ORDER_TRY_KEYS = ("f", "M", "S", "F", "r", "o", "n", "E", "K", "B", "q", "m", "s")   # preference order, ORDERS.md §2
 ORDER_CAP = 2              # VERIFIED orders to issue per player turn (0 = loop never orders)
 ORDER_BUDGET = 35.0        # wall-clock cap on one turn's order step, seconds
+ORDER_MAX_ATTEMPTS = 8     # hard cap on keypresses per turn (bounds the cost of dead ends)
 ORDER_MODAL_TIMEOUT = 22.0  # cap on servicing the panes one keypress raised, seconds
+ORDER_REJECTS = {}         # type -> how many times every tried key was refused (live, per run)
+
+# Non-terraform keyboard orders, verified by the SAME `+17` delta. Measured live on this
+# build against a selected Scout Patrol (`evidence/m54c_probe.txt`): `l` took `+17` 0->1
+# on records 0 AND 3 with no pane and no energy change; plain `Up`/`Right` did NOT order
+# the unit (arrows drive the map cursor — `Right` even opened the base pane) and
+# `shift+Up` raised a pane. So the keys that are safe to fire blind at a selected unit
+# are `g` (queued MOVE to own base, ORDERS.md §4 byte 0x18), `l` (SENTRY, 1) and
+# `h` (HOLD, 2). Escape is never one of them: on a plain HUD Escape raises the quit
+# prompt, and Return on that prompt is "Yes, that's an order, mister!" = the game exits.
+ORDER_SIMPLE = (("g", {0x18}, "move-to-base"), ("l", {1}, "sentry"), ("h", {2}, "hold"))
+ORDER_TERRAFORM_WANT = set(range(4, 0x18))     # #TERRAIN index + 4 (mode rewrites allowed)
+ORDER_BYTE_NAMES = {1: "sentry", 2: "hold", 3: "convoy", 0x18: "move-to-base",
+                    0x19: "move-dir", 0x1b: "road-to-base", 0x1c: "tube-to-base"}
 
 
 def mem():
@@ -950,6 +965,36 @@ def find_former(f, me):
             out.append(dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
                             y=struct.unpack("<h", d[2:4])[0],
                             flags=struct.unpack("<I", d[4:8])[0], order=d[17], mpused=d[40]))
+    return out
+
+
+def find_actionable(f, me, n=119):
+    """Unmoved, actionable units owned by us — the game's OWN select gate (NAMED.md
+    `0x40c8d0` / `0x5acc00`: owner == current player, not frozen at `+9`, movement not
+    spent at `+40`) — but WITHOUT the class-9 pre-filter find_former applies.
+
+    Why no class filter (M54c, live): in the `m54b_clean.SAV` position at 2153 every one
+    of our six records decodes to type 2 (`Scout Patrol`, class 3) and NO class-9 record
+    exists for us at all, and `f` on records 0 and 20 changed neither `+17` nor faction
+    energy (`evidence/m54c_probe.txt`). A hard class filter therefore ordered nothing.
+    The memory delta is the oracle; this is only a candidate PICKER, and a
+    faction-variant type (`type >= 64`, NAMED.md `0x98adb2`) whose class byte does not
+    read 9 must stay reachable. `cls` is carried so class-9 units get tried first.
+    """
+    import struct
+    out = []
+    arr = rd(f, UNIT_ARR, n * 52)
+    for i in range(n):
+        d = arr[i * 52:(i + 1) * 52]
+        if d[14] != me or d[14] == 0xFF:
+            continue
+        if bool(d[9]) or d[17] != 0 or d[40] != 0:      # frozen / already ordered / moved
+            continue
+        typ = struct.unpack("<H", d[10:12])[0]
+        out.append(dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
+                        y=struct.unpack("<h", d[2:4])[0], type=typ, cls=unit_class(f, typ),
+                        order=d[17], mpused=d[40],
+                        flags=struct.unpack("<I", d[4:8])[0]))
     return out
 
 
@@ -1012,10 +1057,17 @@ def answer_terraform_pane(words, verbose=False):
 # Enricher or 0xa by tile bits) that happen BEFORE validation, so the landed byte can
 # legitimately differ from the pressed key's mode. `expected_byte` is recorded anyway.
 
-def issue_order_for_unit(f, me, cand, kname, verbose=False):
-    """One hotkey on one selected unit. Returns the record with its memory delta."""
+def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="terraform"):
+    """One hotkey on one selected unit. Returns the record with its memory delta.
+
+    `want` is the set of `+17` bytes this key may legitimately produce (ORDERS.md §4).
+    Verification is `+17` MOVING INTO `want` — never a screenshot, never "we pressed the
+    key": ORDERS.md §2 says a dropped keypress and a rejected order look identical from
+    outside, and a pane that swallows the event looks like both.
+    """
     struct = __import__("struct")
-    mode = ORDER_KEYS[kname]
+    want = ORDER_TERRAFORM_WANT if want is None else want
+    mode = ORDER_KEYS.get(kname)
     idx = cand["idx"]
     before = unit_rec(f, idx)
     e0 = energy(f, me)
@@ -1026,7 +1078,7 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False):
     panes, quiet, t0 = [], 0, time.time()
     while time.time() - t0 < ORDER_MODAL_TIMEOUT:
         ob = rd(f, UNIT_ARR + idx * 52 + 17, 1)[0]        # cheap oracle: the byte FIRST
-        if ob != before["order"] and 4 <= ob <= 0x17:
+        if ob != before["order"] and ob in want:
             break
         png = freeze("om")
         w = ocr_fast(png)
@@ -1036,6 +1088,13 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False):
             if quiet >= 2:
                 break
             time.sleep(0.5)
+            continue
+        if k == "quit-prompt":
+            # Escape = "Oops, no, wait!". Return here is "Yes, that's an order, mister!"
+            # and the process is gone (the trap that killed the 120-turn run), and a
+            # stray Escape at a plain HUD is what RAISES this pane.
+            panes.append("quit-prompt")
+            key("Escape"); time.sleep(1.0)
             continue
         if k in ("dialog", "confirm", "unknown") and is_terraform_pane(w):
             panes.append("terraform:" + k)
@@ -1051,10 +1110,14 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False):
     after = unit_rec(f, idx)
     e1 = energy(f, me)
     ta2, tafter = tile_recs(f, cand["x"], cand["y"])
-    byte_delta = after["order"] != before["order"] and 4 <= after["order"] <= 0x17
-    return dict(unit=idx, key=kname, mode=mode, expected_byte=mode + 4,
-                ux=cand["x"], uy=cand["y"], utype=cand["type"],
+    byte_delta = after["order"] != before["order"] and after["order"] in want
+    return dict(unit=idx, key=kname, label=label, mode=mode,
+                want=sorted(want)[:1] + ([mode + 4] if mode is not None else []),
+                ux=cand["x"], uy=cand["y"], utype=cand["type"], ucls=cand.get("cls"),
                 order_before=before["order"], order_after=after["order"],
+                order_name=ORDER_BYTE_NAMES.get(after["order"],
+                                                "terraform" if after["order"] in ORDER_TERRAFORM_WANT else None),
+                mpused_after=after["mpused"],
                 energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
                 tile_addr=hex(ta),
                 tile_diff=[f"+{i:02x}:{a:02x}->{b:02x}"
@@ -1063,7 +1126,8 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False):
 
 
 def order_step_in_loop(rec, verbose=False):
-    """Issue up to ORDER_CAP VERIFIED terraform orders, then return how many landed.
+    """Issue up to ORDER_CAP VERIFIED orders (terraform for Formers, MOVE/SENTRY/HOLD for
+    every other unit), then return how many landed.
 
     Called only from service_turn's `hud` branch, which the cur_player/turn_flags gate
     has already established is OUR phase (pressing order keys into a modal or an AI
@@ -1086,24 +1150,40 @@ def order_step_in_loop(rec, verbose=False):
         me = state().get("player")
         if me is None:
             return 0
-        cands = [c for c in find_former(f, me)
-                 if c["order"] == 0 and c["mpused"] == 0][:ORDER_CAP * 3]
-        verified = 0
+        cands = find_actionable(f, me)
+        # class-9 (Former) candidates first, then whatever has refused us least this run,
+        # then record index — so a position with no Former costs a few keypresses on turn
+        # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
+        cands.sort(key=lambda c: (c["cls"] != 9, ORDER_REJECTS.get(c["type"], 0), c["idx"]))
+        cands = cands[:ORDER_CAP * 4]
+        verified = attempts = 0
         for cand in cands:
-            if verified >= ORDER_CAP or time.time() - t0 > ORDER_BUDGET:
+            if (verified >= ORDER_CAP or attempts >= ORDER_MAX_ATTEMPTS
+                    or time.time() - t0 > ORDER_BUDGET):
                 break
-            for kname in ORDER_TRY_KEYS:
-                if time.time() - t0 > ORDER_BUDGET:
+            landed = False
+            # A Former gets the terraform family first (that is the one that spends
+            # energy and rewrites modes); everyone gets the always-valid keyboard orders.
+            plan = ([(k, ORDER_TERRAFORM_WANT, "terraform") for k in ORDER_TRY_KEYS]
+                    if cand["cls"] == 9 else []) + list(ORDER_SIMPLE)
+            for kname, want, label in plan:
+                if (landed or attempts >= ORDER_MAX_ATTEMPTS
+                        or time.time() - t0 > ORDER_BUDGET):
                     break
-                o = issue_order_for_unit(f, me, cand, kname, verbose)
+                attempts += 1
+                o = issue_order_for_unit(f, me, cand, kname, verbose, want=want, label=label)
                 out.append(o)
                 if o["verified"]:
                     verified += 1
+                    landed = True
                     if verbose:
                         print(f"    ORDER rec{cand['idx']} ({cand['x']},{cand['y']}) "
-                              f"'{kname}': byte {o['order_before']}->{o['order_after']} "
-                              f"energy {o['energy_delta']} ({o['dt']}s)", flush=True)
-                    break
+                              f"type {cand['type']} cls {cand['cls']} '{kname}' -> "
+                              f"{label} byte {o['order_before']}->{o['order_after']} "
+                              f"({o['order_name']}) energy {o['energy_delta']} "
+                              f"({o['dt']}s)", flush=True)
+            if not landed:
+                ORDER_REJECTS[cand["type"]] = ORDER_REJECTS.get(cand["type"], 0) + 1
         rec["orders"] = out
         rec["orders_verified"] = verified
         rec["order_seconds"] = round(time.time() - t0, 1)
