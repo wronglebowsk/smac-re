@@ -540,6 +540,17 @@ def handle_pane(words, png, rec, kind):
         return False                            # pass the colour test — never click them
     bs = pane_bars(png)
     if not bs:
+        if kind == "movie":
+            # Secret Project / discovery movies (the "Oracle" clip:
+            # evidence/m54a/movie_oracle.png) draw a RED Close bar at (690,577) that
+            # `pane_bars` — which looks for the purple push-bar fill (103,91,181) —
+            # never sees, and the clip does not end on its own. Session 78's run sat
+            # 150 s on `movie` frames at 2109 until one Return dismissed it. The battle
+            # REPLAY keeps its own path above (it has a detectable bottom bar).
+            key("Return")
+            rec["handled"].append("movie:Return")
+            time.sleep(1.0)
+            return True
         return False
     # A full-screen `movie` frame that carries a bottom bar is not a cinematic that ends on
     # its own: it is the battle REPLAY ("Replay: 2415" + a Close bar at (400,587),
