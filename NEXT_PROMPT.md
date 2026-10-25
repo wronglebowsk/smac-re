@@ -13,8 +13,8 @@ Closed (PRs merged to `main`):
 - **M54D — the loop queues a MOVE and checks it in memory** (session 81, merged #43, closed by
   M54e's run): `g` lands `0x18`, the record carries the leg-array route, the `dest-chooser` and
   `artwork-close` panes are pinned.
-- **M54E — THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN** (session 82; PR number in
-  `git log`, full numbers in Session 82 of `SESSION_NOTES.md`): `scripts/m54e_prep.py` empties
+- **M54E — THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN** (session 82, PR #44, numbers in
+  Session 82 of `SESSION_NOTES.md`): `scripts/m54e_prep.py` empties
   our base tile, pokes the garrison onto the REAL neighbour (4,12) and makes one record class 9;
   then at a turn boundary `smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54e40
   --verbose` -> `evidence/trace_m54e40_20261025_010855.jsonl` -> `m54a_check_run.py <that trace>
