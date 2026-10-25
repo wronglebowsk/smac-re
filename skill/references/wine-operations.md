@@ -77,16 +77,21 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   (`xdotool windowfocus`), click, wait ≥2 s, re-capture to confirm the pane advanced.
 - **M54a: the driver answers those panes itself now** (`smac_play.handle_pane`, wired into
   `service_turn` ahead of the generic dialog/Escape paths, in BOTH phases): a 3-bar **vote row**
-  (≥3 bars on one line >100 px apart, `is_vote_row`) → click the LEFT bar = YEA; a lone bar → click
-  it only when the caption names a Council/HIVE pane (`council`/`proposal`/`protocol`/`hive`/
-  `senate`/`delegate`); the HIVE bribe pane → `Escape` then `Return`. Bars come from
-  `pane_bars` (periwinkle run >55 px, ≥12 px tall, PIL row scan ~0.06 s — `ffmpeg -f rawvideo`
-  through `sh()` blows up on a UnicodeDecodeError). **Do not click a bar merely because it is
-  there**: the PSYCH CHAPLAIN "Our citizens are starving at Climactic Research" alert has a
-  highlighted `Zoom to Base Control` row that `pane_bars` reports at (310,221), and clicking it did
-  NOT clear the pane — turn 0 went STUCK 277.8 s on two identical `bar@310,221` hits
-  (`evidence/m54a/stuck_pane.png`, trace `trace_m54a40_…jsonl`). Advisory panes go back to
-  `Return` = the pane's default button.
+  (≥3 bars on one line >100 px apart, `is_vote_row`, and only in the **y ≥ 460 band** — advisory
+  panes' bar rows measure y 219-310) → click the LEFT bar = YEA; a lone bar → click it only when
+  the caption names a Council/HIVE pane (`council`/`proposal`/`protocol`/`hive`/`senate`/
+  `delegate`); the HIVE bribe pane → `Escape` then `Return`. Bars come from `pane_bars`, which is
+  **band + column density, never a run**: the push-bars are DITHERED (fill `(103,91,181)` on every
+  OTHER scanline, `(28,80,99)` between — measured on `evidence/m54a/stuck2.png`, band y 489-507)
+  and their labels are drawn INSIDE them, so session 75's `>55 px` horizontal-run test finds ZERO
+  bars on the PROPOSAL vote. 30% duty over the band splits YEA/NAY/ABSTAIN at centres
+  311/400/489; 40% cuts a labelled bar in half; 15% merges the row and you click NAY. PIL row
+  scan ~0.06 s; piping `ffmpeg -f rawvideo` through `sh()` (text=True) dies on a UnicodeDecodeError.
+  **Do not click a bar merely because it is there**: the PSYCH CHAPLAIN "Our citizens are starving
+  at Climactic Research" alert has a highlighted `Zoom to Base Control` row that `pane_bars`
+  reports at (310,221), and clicking it did NOT clear the pane — turn 0 went STUCK 277.8 s on two
+  identical `bar@310,221` hits (`evidence/m54a/stuck_pane.png`, trace `trace_m54a40_…jsonl`).
+  Advisory panes go back to `Return` = the pane's default button.
 - **Instrumentation lessons (M53n, `scripts/m53n_drive.py`):** a breakpoint at a function ENTRY hands you
   the caller free (`*(int *)$esp`); mid-body hits print 8 stack words in the same printf, post-matched
   against the call sites' return addresses (a fixed 5-byte `call` run makes the set derivable from
@@ -252,3 +257,17 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   it is written with the pane-loop's current-base global, not a per-loop index. The flat rendering
   `*(int *)(&DAT_00985aa0 + idx*4)` is the compiler folding that subtraction, and `0x985aa0..0x985b38`
   are unrelated globals (year, `n_bases`, mask) — not early claim slots.
+- **M54b in-game menu + save geometry (measured 2026-10-24, /tmp/m54b_menu.png, m54b_submenu.png,
+  m54b_savebrowser.png):** the console MENU button is at **(61,369)** (OCR token `MENU`; clicking it
+  opens the left dropdown GAME/HQ/NETWORK/MAP/ACTION/TERRAFORM/SCENARIO/EDIT MAP/HELP). GAME row
+  (30,186) -> submenu: **Save Game... (200,331)**, Load Game... (200,353), Quit (Ctrl+Q) (170,428).
+  The SAVE browser is TALLER than the LOAD browser: NAME field (406,304), OK (330,327), CANCEL
+  (482,327) — the LOAD browser's bars are at y 552, so a y>=560 "close bar" test never fires on
+  either browser. Return in the name box only SELECTS; click OK. Saves land in the LAST-USED
+  directory (the browser opens inside `auto`); type the full `Z:\...` path to choose the folder.
+- **M54b wedge-vs-modal rule:** a byte-static screen is ONLY a wedge signature when the frame
+  classifies `hud` (the hung-resume look: static HUD, MENU click dead). Modals are legitimately
+  static — the base screen sat byte-static 42 s at 2178 with input perfectly live
+  (evidence/px_wedge_t28.png, session 79's false positive). The base screen's close is Escape and
+  the class is unambiguous (quit-prompt/title classify first, base test positional since M54a), so
+  Escape on `base` must NOT be gated by `--no-escape`; keep the gate only for movie/unknown.

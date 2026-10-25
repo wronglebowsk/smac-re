@@ -55,6 +55,9 @@ def type_path():
     time.sleep(4)
 
 
+MENU_BTN = (61, 369)   # the in-game console MENU button (measured 2026-10-24, m54b_menu.png)
+
+
 def animating(gap=5):
     """Two frames `gap` s apart: a live HUD map always changes; a wedge does not."""
     from PIL import Image, ImageChops
@@ -62,6 +65,23 @@ def animating(gap=5):
     time.sleep(gap)
     b = P.freeze("m54a_anim_b")
     return ImageChops.difference(Image.open(a), Image.open(b)).getbbox() is not None
+
+
+def menu_click_changes():
+    """M54b wedge guard: a MENU click that changes nothing means input is dead —
+    the session-78 hung-resume signature (static screen, main thread spinning).
+    If the click DOES open the menu, press Escape again to close it (in-game, so
+    Escape cannot land on the title's Exit)."""
+    from PIL import Image, ImageChops
+    a = P.freeze("m54a_wedge_a")
+    P.click(MENU_BTN)
+    time.sleep(2.2)
+    b = P.freeze("m54a_wedge_b")
+    changed = ImageChops.difference(Image.open(a), Image.open(b)).getbbox() is not None
+    if changed:
+        P.key("Escape")
+        time.sleep(1.2)
+    return changed
 
 
 def main():
@@ -86,7 +106,9 @@ def main():
             last = kind
         if kind == "hud":
             live = animating()
-            print(f"HUD reached animating={live}", flush=True)
+            if not live:
+                live = menu_click_changes()   # static map but live input -> not a wedge
+            print(f"HUD reached live={live} (animating or MENU-click responsive)", flush=True)
             return 0 if live else 4
         if "really" in body and "quit" in body:
             print("  quit prompt -> Escape (Oops, no, wait!)", flush=True)

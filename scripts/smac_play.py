@@ -23,6 +23,7 @@ Evidence: evidence/trace_<ts>.jsonl, evidence/px_*.png on anomalies only.
 Prereq:  sudo sysctl -w kernel.yama.ptrace_scope=0   (Yama resets to 1 every boot)
 """
 import argparse, difflib, json, os, random, re, shutil, subprocess, sys, time
+from hashlib import md5
 from PIL import Image
 
 DISPLAY = ":99"
@@ -30,6 +31,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EVID = os.path.join(ROOT, "evidence")
 W, H, SCALE = 800, 600, 2
 TURN_BTN = (650, 410)          # fallback if OCR can't find the button
+MENU_BTN = (61, 369)           # in-game console MENU button (m54b_menu.png, 2026-10-24);
+                               # the wedge probe clicks it: dead input = bad save slot
 CONFIRM_SENTENCE = ("some of our units have not yet moved this turn do you really want to end "
                     "the turn now")
 CONFIRM_PHRASES = ("end the turn", "moved this turn", "really want")
@@ -557,7 +560,12 @@ def handle_pane(words, png, rec, kind):
     # evidence/m54a/movie_stuck.png), and it loops until something clicks Close. With
     # --no-escape the driver was forbidding itself from doing anything, so turn 0 burned
     # 243 s of `movie` frames (trace_m54a40i).
-    if not is_council_pane(words):
+    # M54b pane-scoping: a bottom bar at y >= 560 is the battle REPLAY's Close bar
+    # (evidence/m54a/movie_stuck.png) — and Replay/Close bars are what a bar-less-frame
+    # class shows. A `dialog` kind frame is NOT clicked here: its own bars are advisory
+    # rows (y 219-310) answered by Return, and session 77 ended by clicking a bar that
+    # belonged to no pane we owned (HELP, then the LOAD browser at y 552).
+    if kind in ("movie", "unknown") and not is_council_pane(words):
         close = [b for b in bs if b[1] >= 560]
         if close:
             b = max(close, key=lambda c: c[2])
@@ -654,6 +662,12 @@ def do_turn(idx, tr, timeout, verbose=False):
     return ok
 
 
+def frame_hash(png):
+    """Deterministic fingerprint of a capture: a wedged game re-renders the identical
+    frame, so its PNG bytes repeat; a live game (animating map, pane churn) never does."""
+    return md5(open(png, "rb").read()).hexdigest()
+
+
 def service_turn(idx, tr, timeout, verbose=False):
     """Press TURN COMPLETE, then keep servicing whatever the game throws up until the
     mission year in memory actually changes.
@@ -661,19 +675,38 @@ def service_turn(idx, tr, timeout, verbose=False):
     Turns are not a single click: during one turn the game raises the units-not-moved
     confirm, NETFLASH news, tech breakthroughs, Secret Project movies and base screens.
     Every one of those blocks the turn, so a one-shot click-then-wait always times out.
+
+    M54b round-aware budget: a Council round (vote panes + movies + replays) can outlast
+    one turn's timeout while the game is ALIVE and answering. The deadline slides forward
+    (capped at 3x timeout) as long as consecutive captures differ; a byte-static screen
+    does NOT extend it, and after 45 s without a year flip a static screen gets an input
+    probe (MENU click): no change = dead input = WEDGED save slot -> report and stop
+    (exit 5), never burn the run's budget on it.
     """
     y0 = year()
     st0 = state()
     rec = {"turn": idx, "year_before": y0, "t": time.strftime("%H:%M:%S"), "handled": []}
     t0 = time.time()
+    deadline = t0 + timeout
+    round_cap = t0 + 3 * timeout
     last_press = 0.0
     last_esc = 0.0
-    while time.time() - t0 < timeout:
+    prev_hash = None
+    last_change = t0
+    last_probe = 0.0
+    while time.time() < deadline:
         if not sh("xdotool search --name \"Sid Meier\"").stdout.strip():
             sys.exit("game window gone — driver stopped (avoid pretending the run continued)")
         if year() != y0:
             break
         png = freeze("px")
+        now = time.time()
+        h = frame_hash(png)
+        if prev_hash is not None and h != prev_hash:
+            last_change = now
+            if deadline < round_cap:
+                deadline = min(round_cap, now + timeout)
+        prev_hash = h
         words = ocr_fast(png)
         kind = classify(words, region_colors(png), png)
         rec["handled"].append(kind)
@@ -681,6 +714,36 @@ def service_turn(idx, tr, timeout, verbose=False):
             print(f"    [{kind}] {' '.join(w for w, *_ in words[:16])}", flush=True)
         rec.setdefault("screens", {}).setdefault(kind, 0)
         rec["screens"][kind] += 1
+        # Wedge guard (M54b) — `hud` frames ONLY: the hung-resume signature is a static
+        # HUD with dead input (session 78); modals like the base screen are legitimately
+        # byte-static and must not trigger it (session 79 lost turn 28 to exactly that
+        # false positive — evidence/px_wedge_t28.png).
+        if (kind == "hud" and now - t0 > 45 and now - last_change > 15
+                and now - last_probe > 20):
+            last_probe = now
+            a = freeze("px_wa")
+            click(MENU_BTN)              # diagnostic click: opens the menu iff input lives
+            time.sleep(2.2)
+            b = freeze("px_wb")
+            if frame_hash(b) == frame_hash(a):
+                sh(f"cp {b} {EVID}/px_wedge_t{idx}.png")
+                stn = state()
+                rec["wedge"] = True
+                rec["state_before"] = {k: st0.get(k) for k in
+                                       ("year", "turn_no", "player", "cur_player",
+                                        "turn_flags", "mode_flags", "n_bases")}
+                rec["state_after"] = {k: stn.get(k) for k in
+                                      ("year", "turn_no", "player", "cur_player",
+                                       "turn_flags", "mode_flags", "n_bases")}
+                rec["delta"] = {}
+                rec["dt"] = round(time.time() - t0, 1)
+                tr.write(json.dumps(rec) + "\n"); tr.flush()
+                print(f"turn {idx}: WEDGE — HUD byte-static {round(now - last_change)}s, "
+                      f"MENU click changed nothing — reporting a bad slot, not a stall",
+                      flush=True)
+                sys.exit(5)
+            key("Escape")                # close the menu the probe opened (in-game)
+            time.sleep(1.2)
         # M54a: the Council vote row and the HIVE bribe pane come up in BOTH phases (the
         # Council convenes while cur_player is an AI), and neither has a control OCR can
         # see, so they get a handler ahead of the generic dialog/Escape paths.
@@ -747,7 +810,16 @@ def service_turn(idx, tr, timeout, verbose=False):
                     if is_confirm(w2):
                         rec["handled"].append("confirm-after-press")
                         answer_confirm(w2)
-        else:                                    # base screen / movie / unknown
+        elif kind == "base":
+            # M54b: Escape is the base screen's documented close, and the class is
+            # unambiguous (classify tests quit-prompt and title FIRST, and since M54a
+            # the base test is positional), so it may fire even inside the --no-escape
+            # gate. Session 79 lost turn 28 because the gate starved this path: the
+            # base screen sat byte-static for 42 s with the turn unflippable.
+            if time.time() - last_esc > 6:
+                key("Escape"); last_esc = time.time()
+            time.sleep(0.4)
+        else:                                    # movie / unknown
             # Never spam Escape on unrecognized/dark screens: on the title menu Escape
             # can land on "Exit" and end the session (process vanished at year 2181).
             # movies end on their own; only escape a genuinely stuck screen.
@@ -1035,6 +1107,11 @@ def main():
     ap.add_argument("--unit", type=int, default=None, help="unit index to order (default: first Former)")
     ap.add_argument("--turns-after", type=int, default=0, help="turns to advance after the order")
     ap.add_argument("--tag", default="m33")
+    ap.add_argument("--load", default=None, metavar="PATH",
+                    help="M54b: start by LOADING this save (Z:\\ path as the game sees "
+                         "it). Relaunches the game if no window; walks title -> LOAD "
+                         "browser -> confirm -> ops-director itself; a resume with dead "
+                         "input is reported as a WEDGE (exit 5), not stalled.")
     ap.add_argument("--no-verify", action="store_true",
                     help="skip in-loop/post memory reads (use when a tracer holds the process)")
     ap.add_argument("--key-only", action="store_true",
@@ -1046,9 +1123,35 @@ def main():
     for tool in ("xdotool", "xwd", "ffmpeg", "tesseract"):
         if not shutil.which(tool):
             sys.exit(f"missing {tool}")
-    WIN = find_window()
-    if not WIN:
-        sys.exit("game window not found")
+    if a.load:
+        # M54b: the DRIVER answers the load — relaunch if no window, then walk
+        # title -> LOAD GAME row -> blind browser (name box + OK bar) -> LOAD
+        # confirm -> ops-director -> HUD (scripts/m54a_load.py). A HUD that is
+        # static AND ignores the MENU click is a WEDGED slot: report and stop.
+        import m54a_load
+        m54a_load.SAVE = a.load
+        if not find_window():
+            print("no window -> relaunching the game (m54a_load.relaunch)", flush=True)
+            if not m54a_load.relaunch():
+                sys.exit("no window after relaunch")
+        WIN = find_window()
+        if not state().get("year"):
+            argv_save = sys.argv
+            sys.argv = [sys.argv[0]]          # keep m54a_load from killing our session
+            try:
+                rc = m54a_load.main()
+            finally:
+                sys.argv = argv_save
+            if rc == 4:
+                sys.exit("WEDGE: this save resumes hung (static HUD, dead MENU input) "
+                         "— bad slot, reported not stalled")
+            if rc != 0:
+                sys.exit(f"load step failed (rc={rc}) — refusing to drive blind")
+            WIN = find_window()
+    else:
+        WIN = find_window()
+        if not WIN:
+            sys.exit("game window not found")
     s = state()
     if not s.get("year"):
         sys.exit(f"cannot read game state: {s}")
@@ -1072,7 +1175,7 @@ def main():
     # the position is pinned instead by the start state on the same line.
     hdr = {"type": "start", "seed": run_seed, "tag": a.tag, "turns": a.turns,
            "timeout": a.timeout, "no_escape": a.no_escape, "argv": sys.argv[1:],
-           "state": s}
+           "load": a.load, "state": s}
     with open(path, "w") as tr:
         tr.write(json.dumps(hdr) + "\n")
         for i in range(a.turns):
