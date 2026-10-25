@@ -29,6 +29,8 @@ DEFAULT = [
     ("m25_t7.png",              "hud",         "plain HUD, TURN COMPLETE at (697,416)"),
     ("m54a/quit_prompt.png",    "quit-prompt", "M54a: \"Do you really want to quit?\" over the HUD — was `title`, which stopped a 40-turn run"),
     ("m54c/comm_pane.png",      "comm",        "M54c: faction COMMUNICATION ('X - MOOD' banner + quoted demand) — click ITS OK bar (y 347); the y-560 console row under it is NOT a close bar"),
+    ("m54d/m54d_move_afterg.png", "dest-chooser", "M54d: the `g` chooser (SELECT DESTINATION + a base row + its own OK/CANCEL row at y 162) — was `hud`, so it swallowed 10 keypresses with zero order bytes"),
+    ("m54d/synth_chooser.png",  "dest-chooser", "M54d: the same chooser over a unit off its base; the listed Distance is the CURSOR's, not the unit's"),
 ]
 
 

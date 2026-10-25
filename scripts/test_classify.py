@@ -55,6 +55,16 @@ CASES = [
      "its own OK bar at y 347. It used to classify `unknown`, so the bottom-bar rule "
      "clicked the console DATALINKS bar (333,560) 38 times in a row and turn 35 of "
      "trace_m54c40b burned 735 s with the year stuck at 2185"),
+    ("evidence/m54d/m54d_move_afterg.png", "dest-chooser",
+     "M54d: the `g` (\"Move to\") chooser — SELECT DESTINATION caption at y 102, a base row "
+     "with 'Distance: 0' at y 132, its OWN OK/CANCEL bar row at y 162. It used to classify "
+     "`hud` (only 5 words land in the dialog band, so the dialog test misses it) while it "
+     "swallowed every keypress: 10 keys fired at a selected unit, zero order bytes, "
+     "evidence/m54d/probe_unit0.json"),
+    ("evidence/m54d/synth_chooser.png", "dest-chooser",
+     "M54d: the same chooser over a unit standing OFF its base — same caption, same bar row, "
+     "and the row it lists is still 'University Base Distance: 0' because the pane reports "
+     "the CURSOR's distance, not the unit's"),
 ]
 
 

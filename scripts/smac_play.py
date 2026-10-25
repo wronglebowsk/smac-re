@@ -165,6 +165,27 @@ def is_communication(words, png=None):
     return any(330 <= b[1] <= 365 for b in pane_bars(png, y0=330))
 
 
+def is_dest_chooser(words):
+    """The `g` ("Move to") chooser (M54d).
+
+    Measured on `evidence/m54d/m54d_move_afterg.png` and `evidence/m54d/chooser_offbase.png`:
+    caption `SELECT DESTINATION` at y~102, one base row at y~132 with `Distance: N`, and its
+    OWN OK/CANCEL bar row at y~162. OCR reads the caption and the base row but NEVER the bar
+    labels, and the panel is flat (12 colours in the dialog box) — yet `upper` counts only 5
+    words, so the `dialog` test misses it and it classifies `hud` while it swallows every
+    keypress (10 keys, zero order bytes, `evidence/m54d/probe_unit0.json`).
+    """
+    cap = body = False
+    for t, cx, cy, *_ in words:
+        low = t.lower().strip(".,:;|_*—")
+        if cy < 135:
+            if low.startswith("destin"):
+                cap = True
+            elif low.startswith("selec"):
+                body = True
+    return cap and body
+
+
 def is_quit_prompt(words):
     """The "Do you really want to quit?" dialog.
 
@@ -335,6 +356,9 @@ def classify(words, ncolors=None, png=None):
         return "comm"           # faction communication: click ITS OK bar (y~347), never a
                                 # console bar — session 80's turn 35 clicked (333,560) 38
                                 # times and the year never moved
+    if is_dest_chooser(words):
+        return "dest-chooser"   # M54d: the `g` chooser — its own OK bar at y~162, NOT the
+                                # console row and NOT a hud: it swallows every keypress
     hits = base_word_positions(words)
     if hits and not (hud_btn and all(in_msgpane(p) for p in hits)):
         return "base"
@@ -543,6 +567,30 @@ def answer_communication(png):
         click(xy)
         return xy
     key("Return")
+    return None
+
+
+def answer_dest_chooser(png, verbose=False):
+    """Answer the `g` chooser: click ITS OK bar (M54d).
+
+    Measured on `evidence/m54d/m54d_move_afterg.png`: the bar row is at y~162 and the "OK"
+    label splits its fill into two column groups centred (474,162) and (521,162), so the
+    target is the MERGED row centre, exactly as for the communication's OK bar
+    (answer_communication) — clicking one segment lands on the label, not the bar.
+    `Return` is this pane's default button and also works (measured: it accepted the
+    highlighted base and wrote leg0 into the record), but a click is explicit and cannot
+    hit CANCEL by accident.
+    """
+    bs = [b for b in pane_bars(png, y0=150) if 150 <= b[1] <= 190]
+    if bs:
+        left = min(b[0] - b[2] / 2.0 for b in bs)
+        right = max(b[0] + b[2] / 2.0 for b in bs)
+        xy = (int((left + right) / 2), int(sum(b[1] for b in bs) / len(bs)))
+        click(xy)
+        if verbose:
+            print(f"    dest-chooser OK at {xy} (bars {bs})", flush=True)
+        return xy
+    key("Return"); time.sleep(0.8)
     return None
 
 
