@@ -278,10 +278,10 @@ def main():
           sp.pick_reactivation([row(3, x=28, y=42, order=2)], OWN, TABLE) == [])
 
     print("case 27: wrong-parity units cannot reach ANY own base — not eligible")
-    check("(31,42) and (28,41) (odd) and a Korolev garrison are dropped; (49,33) "
-          "(82, even) IS eligible at man 21",
-          sp.pick_reactivation([row(0, x=31, y=42, order=2),     # 73 odd
-                                row(5, x=28, y=41, order=2),     # 69 odd
+    check("(30,41) and (27,42) (odd, Korolev's own tile excepted) are dropped; "
+          "(49,33) (82, even) IS eligible at man 21",
+          sp.pick_reactivation([row(0, x=30, y=41, order=2),     # 71 odd
+                                row(5, x=27, y=42, order=2),     # 69 odd
                                 row(9, x=29, y=42, order=2)],    # 71 odd, own tile
                                OWN, TABLE) == []
           and [r["idx"] for r in
