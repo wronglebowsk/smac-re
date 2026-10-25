@@ -655,3 +655,70 @@ type is untested. (e) 4 `unknown` panes in this run's trace (turns 1, 3, 4) stil
 second own-base tile to walk to (the `g` chooser now has two destinations: University Base and
 Korolev Center), land a queued MOVE between them with `--min-moves`, then found a third base
 off the garrison with no position poke at all.
+
+## Session 85 (2026-10-25) — M54h: **THE CHOOSER CAN NAME THE OTHER OWN BASE (probe, memory-verified); THE LOOP'S WALK DID NOT LAND — M54h STAYS OPEN** — changed `scripts/smac_play.py` (chooser geometry: `bar_bands`/`chooser_rows`/`chooser_buttons`; `answer_dest_chooser` clicks a ROW; `order_counts` count-delta walk proof; `PENDING_WALKS`/`verify_pending_walks`; `HUD_BLIND_S` fallback; `modal_caption` guard; the M54c "skip `g` on our base" rule retracted), new `scripts/m54h_probe.py`, `scratch/m54h_clear.py`, `ORDERS.md` §9, `test_classify.py` + `check_classes.py` (17 frames), this file, `NEXT_PROMPT.md`
+
+**Box first.** State read clean and matched the footing (year 2156, pid 914329, `bases_ours 2`,
+`units_ours 7`); the census put five Scout Patrols on University Base (28,42) with `order 1` and
+two fresh ones (`order 0 mp 0`) on Korolev Center (29,42). Two things the footing got wrong:
+the box was parked on a **BREAKTHROUGH panel** (class `unknown`) with an OPERATIONS DIRECTOR
+dialog behind it (Escape closed both; `turn_flags` bit 0x2 cleared when they went away — it is
+not only a "driver ran" latch), and a clean HUD over our own base classifies `unknown` because
+2x OCR cannot read the TURN COMPLETE row.
+
+**The chooser, measured (`scripts/m54h_probe.py`, `evidence/m54h/probe_chooser_walk1.json`).**
+`g` on a unit GARRISONED on its own base opens the chooser and it lists **both** own bases —
+rows are full-width bars at y 132 and y 151 (19 px pitch), the five-button row (Sort: Name /
+Sort: Size / Sort: Dist / OK / CANCEL at 209/305/401/497/593) sits at y 181 with two rows and
+y 162 with one, so M54d's hard-coded OK row was a coin flip on a two-row pane. Clicking a row
+changes NOTHING in memory (`+17` and legs unchanged 0.9 s after the click); OK landed `+17`
+0 -> **0x18 87 ms after the click** with legs `[28,42]` (University Base) and the pump stepped
+the unit **(29,42) -> (28,43) with `+40` = 3 spent**; CANCEL (5th button) closed the pane with
+60 samples of `+17`, all 0. **M54c's "the game refuses `g` on our own base" is retracted** (its
+evidence was a one-base position). The `Distance:` column is 0 for both rows — the cursor's,
+not the unit's (M54d), so it cannot drive the pick.
+
+**ACCEPTANCE: NOT MET.** `python3 scripts/m54a_check_run.py
+evidence/trace_m54h4_20261025_095308.jsonl --timeout 240 --min-our-bases 2 --min-moves 1` ->
+`advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 28.9 s), `orders 1 VERIFIED of 1`
+(`{"g->byte24": 1}`, energy 3), `ours bases_ours 2` floor 2, **`FAIL only 0 VERIFIED walks,
+milestone wants 1`** — `moves 0 LANDED of 3 ordered walks`. Nothing was weakened; the run that
+would have to PASS does not.
+
+**Why it did not land (measured, cause not settled).** In the loop, three `g` orders whose row
+click the trace records against the University Base row (turn 1 of `trace_m54h...093424`, turn 3
+of `trace_m54h4`) put legs naming **(14,56) = House of Martyrs (a BELIEVER base)**,
+**(17,55)** and **(12,14) = Gaia's Landing** into the record — never (28,42) — while the
+identical click in the probe put (28,42) in the same field. The leading explanation is index
+identity: `units_ours` went 9 -> 10 during the run (University Base builds Scout Patrols) and
+the record array reshuffled between turns twice (the unit ordered at (29,42) was index 67 at
+order time and index 52 a turn later), so the legs read 0.35 s after the OK may belong to a
+different record than the one that was ordered. After the run, records DO carry legs (28,42)
+and (29,42) and one unit sits at (29,43) one step from Korolev Center — walking happens;
+nobody arrived at a destination the trace can attribute to the loop.
+
+**Two driver bugs found and fixed (verified).** (a) A clean HUD whose TURN COMPLETE row fails
+to OCR classifies `unknown` (MENU at (61,369) + COMMLINK read, `region_colors 167`): with
+`--no-escape` the loop idled a WHOLE turn budget (trace_m54h...093424 turn 2 burned 521 s with
+the year unmoved in our phase) — fallback added (our phase + chrome + no bar band at y 145-200
++ 25 s -> click the button at its measured coordinates), proven: `evidence/trace_m54h2_...
+094339.jsonl` turn 0 `2160 -> 2161 OK (36.7s)` after `turn-complete-blind`. (b) An OPERATIONS
+DIRECTOR "Investigate pod beacon?" pane wearing HUD chrome classified `hud` and ate turn 0 of
+trace_m54h3 (the driver clicked TURN COMPLETE behind it every 6 s) — `modal_caption` guard
+added; the next run cleared it in one press (`hud-with-caption: 1` in the m54h4 action log) and
+all 6 turns advanced. Classifier gates: `test_classify.py` -> `PASS 17/17` (was 16/16; the new
+frame is the two-row chooser, `evidence/m54h/chooser_g60b.png`), `check_classes.py` ->
+`frames: 17 failures: 0`, `_3x.png` siblings deleted.
+
+**Open.** (1) What the leg array actually holds, and whether the loop can be made to read the
+destination of THE record it ordered (read all our records before/after and diff, rather than
+trusting one index). (2) Whether the chooser's row order is Sort: Name or nearest-first — both
+frames seen so far are consistent with either; the driver's pick is text-matched first.
+(3) `l` (SENTRY) on a unit carrying a pending 0x18 landed nothing (cause confounded with an
+`unknown` HUD frame; decoys were parked by poking `+17 = 1` instead, read back). (4) The
+position is now 10 units / 2 bases at 2167 with `turn_flags 2` and two live 0x18 orders in it.
+
+**Next (M54i):** make the walk's destination attributable to the order — snapshot every one of
+our records before the keypress and diff after (never trust one index), land ONE loop-ordered
+walk on the base its own legs name with `--min-moves 1`, and only then re-attack the
+walk-then-found sequence.

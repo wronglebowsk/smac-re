@@ -86,6 +86,11 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
   moment the window is tightest.
+- The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
+  shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
+  footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: confirm
+  the file is untouched (`git diff --stat HEAD -- NEXT_PROMPT.md` empty), then `rm` it and write the new
+  content, or patch in place.
 - Fire `delegate_task` before the milestone, not mid-way: a child's completion report is injected into the
   live turn at an arbitrary point and can exceed 10 KB.
 

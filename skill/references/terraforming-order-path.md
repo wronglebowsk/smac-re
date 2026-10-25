@@ -143,7 +143,30 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
   `*(u32*)0x92ae14 + (DAT_00692184*y + x>>1)*0x2c`. On this 64x64 world DAT_00692184 is 32 —
   the old hard-coded 40 was an 80-wide map. Indexing 0x92ae14 itself reads pointer slots and
   returns all-zero "tiles" under a base that visibly exists.
-* **OCR is ~15 s a poll here and a clean HUD sometimes classifies `unknown`.** Service panes
-  memory-first: poll the oracle (base array, `+17`) at 100 ms and OCR only when memory has
-  not answered — an OCR-paced pane loop spams keys at the HUD, and Return at a HUD is
-  TURN COMPLETE.
+
+## The `g` chooser's ROWS and what a walk's evidence has to be (session 85, 2026-10-25)
+
+* `g` on a unit GARRISONED on our own base opens the chooser and it lists **every base we own**
+  (two rows for two bases): rows are full-width periwinkle bars (fill 159..638) on bands
+  y 125-139 and 144-158, a 19 px pitch; the five-button row Sort: Name / Sort: Size / Sort: Dist
+  / OK / CANCEL sits at centres 209/305/401/497/593 and **moves down with the row count** (y 162
+  with one row, y 181 with two). `bar_bands`/`chooser_rows`/`chooser_buttons` in `smac_play.py`
+  tell them apart by uniform width + even pitch, never by merged span (five buttons span
+  163..638 exactly like a row).
+* Clicking a row only HIGHLIGHTS it (no `+17`, no legs). OK lands the order (byte 0x18 ~90 ms
+  after the click) and hands the unit to the pump; CANCEL (last button) closes the pane and
+  writes nothing. The `Distance:` column is the CURSOR's, not the unit's — it read 0 for both
+  rows, so it cannot drive a pick. Whether the list is Sort: Name or nearest-first is UNMEASURED.
+* **Record index is not identity and the array GROWS mid-run** (a base building a unit shifts
+  every later index; `units_ours 9 -> 10` inside one 6-turn run). Snapshot all our records before
+  the keypress and diff; never carry an index across a turn.
+* "A record of this type sits on the destination tile" proves nothing when identical units were
+  parked there — require the DELTA (same-type count UP at the destination, DOWN at the origin)
+  against the baseline the order itself recorded, and re-read an unfinished walk on later turns.
+* **Two wedges, both silent**: (1) a clean HUD whose TURN COMPLETE row fails to OCR classifies
+  `unknown` (MENU/COMMLINK read, `region_colors` ~167) and with `--no-escape` the loop idles a
+  whole turn budget; (2) an advisor dialog wearing the HUD chrome (OPERATIONS DIRECTOR)
+  classifies `hud` and swallows TURN COMPLETE clicks landing BEHIND it. Fixes: click the button
+  at its measured coordinates when it is our phase, the chrome is present and no bar band exists
+  at y 145-200; and answer any `hud` frame that has a caption-band line (one word >= 6 chars, or
+  >= 2 words >= 4 chars at y 90-118) with Return before anything else.
