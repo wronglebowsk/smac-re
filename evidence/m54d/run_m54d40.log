@@ -1,0 +1,51 @@
+win=10485761 start year=2103
+    [hud] ip * ~<e- |) iss ion Year 2102 i] TURN COMPLETE | Econ: 50% (+Liturn) ||
+    ORDER rec12 (6,12) type 2 cls 3 'l' -> sentry byte 0->1 (sentry) energy 0 (0.0s)
+turn 0: 2103->2104 OK (2.3s, hud,orders:1)
+    [unknown] lei a ae er La eterna " — =. MENU | Mls Year 2104: No units
+/home/n100/reverse/smac/scripts/smac_play.py:466: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+turn 1: 2104->2105 OK (4.7s, unknown,ai-phase:unknown)
+    [hud] Selene remem | Ya M Year 2105: No unlts need ders. Press ENTER . | .
+    [unknown] Selene remem |__MENU | a - : < (_COMMLINK BR Se esc qq — YW) econ:
+turn 2: 2105->2106 OK (6.8s, hud,ai-phase:hud,unknown,ai-phase:unknown)
+    [unknown] ABOUT RESEARCH 1 : Energy powers your research labs and helps your researchers F ) |
+    [base] ‘i CONFIRM RESEARCH PRIORITIES a | ]/In which areas shall our scientists focus their research? Focus
+    [unknown] Selene remem | Ya M Year 2106: No unlts need ders. Press ENTER . | .
+turn 3: 2106->2107 OK (16.1s, unknown,ai-phase:unknown,base,ai-phase:base,unknown,ai-phase:unknown)
+    [hud] Selene remem if suis wp] ||_TURNCOMPLETE _ | ip & ~<e- }||| £3 University Base builds
+    ORDER rec13 (6,12) type 2 cls 3 'l' -> sentry byte 0->1 (sentry) energy 0 (0.0s)
+turn 4: 2107->2108 OK (2.6s, hud,orders:1)
+    [unknown] vane” ere Ss eterna _ ~ “Secall = MENU Se Mis Year 2108: No units need
+turn 5: 2108->2109 OK (4.0s, unknown,ai-phase:unknown)
+    [unknown] OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI H a ii Centauri Ecology BASE FACILITIES TECHNOLOGIES "| The
+    [dialog] ‘i OPERATIONS DIRECTOR a | ||\We have obtained technologies which will allow us to design better
+    [base] ‘i CONFIRM RESEARCH PRIORITIES a | ]/In which areas shall our scientists focus their research? Focus
+    [unknown] My. 2109: University scientists discover Centauri Ecology--their first research breakthrough since Planetfall. (The Gaians made mankind's
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |

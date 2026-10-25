@@ -1,0 +1,4 @@
+win=10485761 start year=2109
+    [movie] | a | z. =V.9 MD ee aa Sere |
+/home/n100/reverse/smac/scripts/smac_play.py:466: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]

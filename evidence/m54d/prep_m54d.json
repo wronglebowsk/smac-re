@@ -1,0 +1,1 @@
+{"state": {"year": 2109, "year_start": 2100, "year_limit": 2600, "turn_no": 0, "player": 3, "player_mask": 65288, "cur_player": 3, "mode_flags": 0, "turn_flags": 2, "sema_done": 0, "sema_mp": 0, "n_bases": 11, "pid": 484088}, "unit": 8, "after": {"x": 7, "y": 12, "flags": 0, "type": 1, "owner": 3, "order": 0, "mpused": 0, "raw": 
