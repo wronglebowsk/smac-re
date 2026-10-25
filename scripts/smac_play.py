@@ -2115,14 +2115,18 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
         # M54h: the tile evidence has to be a DIFF, not a coincidence. Seven identical
         # Scout Patrols stand on University Base, so "a record of this type sits on the
         # destination" is true before the walk even starts. Count the same-type records at
-        # the destination and at the origin NOW (the order-time baseline) and let
-        # `verify_moves` require the destination count to rise and the origin count to
-        # fall. Read before the poll: the pump may already be stepping the unit.
-        rows0 = our_rows(f, me)
+        # the destination and at the origin and let `verify_moves` require the
+        # destination count to rise and the origin count to fall.
+        # M54i correction (measured run m54i_run4 turn 0): the baseline MUST be the
+        # PRE-PRESS snapshot `snap_before`, not a fresh read after the OK — the pump
+        # runs as the chooser's OK is answered (M54e), so a post-OK read sees the origin
+        # ALREADY vacated (src 0) and "origin count falls" (still < 0) can then never
+        # fire, no matter how cleanly the walk lands. The pre-press count includes the
+        # unit itself (src >= 1) and the destination before the walker joins it.
         counts0 = dict(
-            dest=sum(1 for r in rows0 if r["type"] == cand["type"]
+            dest=sum(1 for r in snap_before if r["type"] == cand["type"]
                      and (r["x"], r["y"]) == (dest[0], dest[1])),
-            src=sum(1 for r in rows0 if r["type"] == cand["type"]
+            src=sum(1 for r in snap_before if r["type"] == cand["type"]
                     and (r["x"], r["y"]) == (cand["x"], cand["y"])))
     if dest is not None:
         t1 = time.time()
