@@ -14,7 +14,7 @@ Closed (PRs merged to `main`):
   zero-actionable position (`pre-arm:recN` in the trace), the `g` order landed
   (`g->byte24`, `attributed True, confounded False`), the walker walked 6-7 positions read from
   memory and **arrived on our own base in run5** — but no run printed PASS: run6's checker line
-  was `advanced 6/6 / {1: 6} / stuck 0 / bases_ours 2 / moves 0 LANDED of 5 ordered walks`
+  was `advanced 6/6 / {1: 6} / stuck 0 / moves 0 LANDED of 5 ordered walks`
   (the walker stood ONE legal step from Korolev Center when the 6 turns ran out), run5's arrival
   was unscoreable (press-time leg drift + University captured at 2193). PR number in `git log`.
 - Open in ROADMAP.md: **S1** (production rebuild) and **S2** (win conditions, transit).
