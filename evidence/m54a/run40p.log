@@ -1,0 +1,134 @@
+win=10485761 start year=2110
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MENS I 2 —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from if i The Book of Planet 4 — Da Ls —— —=
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from if i The Book of Planet 4 — Da Ls —— —=
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MENS I 2 —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [hud] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% “ —— ==
+    [unknown] INTERLUDE 5 E from i i The Book of Planet ' MEN ™% z —— ==
+/home/n100/reverse/smac/scripts/smac_play.py:407: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for r, g, b in im.crop((0, y, W, y + 1)).getdata()]
+    [unknown] Walking alone through the corridors of University Base, you skim the. htt ne Tigi security-reports on
+    [hud] Rees rad |e eee Selene remem ip bi ~<a Hh [\assion Year: o TURN COMPLETE Elev:
+turn 0: 2110->2111 OK (109.0s, hud,ai-phase:hud,hud,ai-phase:hud,hud,ai-phase:hud)
+    [hud] eee yt a Giese - Be Linen Base eae ee Selene remem |__MENU__] a — =a
+turn 1: 2111->2112 OK (8.6s, hud,confirm-after-press)
+    [unknown] OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI | Social Psych BASE FACILITIES TECHNOLOGIES Recreafion Commons Doctrine: Loyalty
+    [hud] So Gee Tele coutPatrol) eterna MENU jar . ~ 4 (_COMMLINK Cao fal | etsssi TURN
+turn 2: 2112->2113 OK (15.2s, unknown,close-bar@400,575,hud,confirm-after-press)
+    [hud] Kea ey PN So Gee eterna MENU __}oow . ~ 4 (_COMMLINK ip i GE My,|ff)|
+turn 3: 2113->2114 OK (12.5s, hud,confirm-after-press)
+    [hud] ee ee. | ae Porie hee ia Or) eee ee ae eterna MENU Ls ” _
+turn 4: 2114->2115 OK (10.4s, hud,confirm-after-press)
+    [unknown] me ee OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI Secrets of the Human Brain BASE FACILITIES TECHNOLOGIES
+    [unknown] My. 2115: University researchers discover "Secrets of the Hurnan Brain!" — ‘ — . - —
+    [unknown] 5, Seraictpalad de cM et EL? nga ee or aan eer Beg oa hg ca aetna
+    [unknown] ‘i SECRETS OF THE HUMAN BRAIN a | ||| Your researchers have discovered the Secrets of
+    [unknown] OUR RESEARCHERS HAVE MADE A BREAKTHROUGH! | 4 ii Applied Physics ; ; BASE FACILITIES TECHNOLOGIES
+    [hud] So Gee Tele coutPatrol) eterna MENU jar . ~ 4 (_COMMLINK See, AA ties TURN COMPLETE
+turn 5: 2115->2116 OK (27.1s, unknown,close-bar@400,575,unknown,ai-phase:unknown,unknown,ai-phase:unknown)
+    [unknown] eee ee. eterna 9 7 2 ba MENU | ee . ” r{ COMMLINK ip ik
+    [unknown] eee ee. eterna 9 7 2 ba MENU | ee . ” r{ COMMLINK ip ik
+    [hud] en YW - Be Linen Bae sae Selene remem |__MENU__} Wa « — =a : 4
+turn 6: 2116->2117 OK (19.4s, unknown,unknown,hud,confirm-after-press)
+    [hud] Ss Age a ee a i Saal eterna 2 i a a) MENU Ls 7 _
+turn 7: 2117->2118 OK (9.2s, hud,confirm-after-press)
+    [hud] Jae OE a eterna MENU __jo\@ . : 4 (_GOMMLINK ip i ae J) sion vear
+turn 8: 2118->2119 OK (16.8s, hud,confirm-after-press)
+    [hud] eterna MENU a -: - r{ COMMLINK ip k LEB | Mission Year 2118 i] :
+turn 9: 2119->2120 OK (15.3s, hud,confirm-after-press)
+    [hud] a esa tn ee a ae : 4 (_COMMLINK {fe — — TURN COMPLETE | ae
+turn 10: 2120->2121 OK (14.7s, hud,confirm-after-press)
+    [hud] eo EEE : SNe ~ ~ MENU | . ~ “| COMMLINK io SS — 0
+turn 11: 2121->2122 OK (9.5s, hud,confirm-after-press)
+    [unknown] Sn ee OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI 3 Nonlinear Mathematics BASE FACILITIES TECHNOLOGIES Superstring Theory
+    [dialog] ' OPERATIONS DIRECTOR a | |]|We have obtained technologies which will allow us fo design better
+    [unknown] es S22 ae MME eterna 2 7 a y. MENU a _: ™ r{ COMMLINK ip
+    [hud] So Gee cee a cout Patel) age eterna MENU eae : - 4 (_GOMMLINK ip i
+turn 12: 2122->2123 OK (28.9s, unknown,close-bar@400,575,dialog,ai-phase:dialog,unknown,hud)
+    [hud] Seay et gaa Seta itty sec ee “Rae an Sgt nee —-* - BE aeroty base
+turn 13: 2123->2124 OK (9.3s, hud,confirm-after-press)
+    [unknown] | Ge eterna 9 7 2 ba MENU | ee . - r{ COMMLINK ip ik
+    [hud] ae See iD M (Ga See Soo. Lite a ae Selene remem |__MENU__} Wa « —
+turn 14: 2124->2125 OK (14.9s, unknown,hud,confirm-after-press)
+    [hud] BES | + daphiersiy Base Gs ae —_—_— 3 = a = MENU] : = 4
+turn 15: 2125->2126 OK (15.7s, hud,confirm-after-press)
+    [unknown] ee ae cule UY ay Se : es isc ete rutPaioiaee Selene remem ae SOF sutina
+    [hud] ee, ee YB Wee Se Selene remem io i ~B- TURN COMPLETE | Elev: 872m |
+turn 16: 2126->2127 OK (13.9s, unknown,ai-phase:unknown,hud,confirm-after-press)
+    [hud] Se, eee 1 re ee rye eee a “Saree ao CUUtP aol ve eterna MENU jon
+turn 17: 2127->2128 OK (10.0s, hud,confirm-after-press)
+    [hud] ee Se ae ee Tie Se ee a eleeennenennnee nme MENU a _s - r{ COMMLINK
+turn 18: 2128->2129 OK (16.2s, hud,confirm-after-press)
+    [hud] ee Se ae ~ eo Soe aE f ses re hee mise Tele coutPatraly eterna MENU
+turn 19: 2129->2130 OK (9.6s, hud,confirm-after-press)
+    [hud] eee tee cmt TEM pets: oe rere “Si PE es hadaiversiyy Base a A Se eeatoc
+turn 20: 2130->2131 OK (8.5s, hud,confirm-after-press)
+    [hud] eee at te oa rye eee a “See Uut Patel ne a eleeennenennnee nme MENU __}
+turn 21: 2131->2132 OK (8.0s, hud,confirm-after-press)
+    [hud] Se ee eM 1g yy Se eterna MENU a _» - r{ COMMLINK ip i ey
+turn 22: 2132->2133 OK (8.7s, hud,confirm-after-press)
+    [hud] elena nema MENU Ls “ . - r{ COMMLINK ip ik Eee, Tectt: Chainmam iM TURN
+turn 23: 2133->2134 OK (20.2s, hud,confirm-after-press)
+    [unknown] a yes i. Be ty are “Se me COUP ANS eee e a) commit ip ik
+    [unknown] se ae ete a jis Ct See. ye et eee ee a eterna 2 7 a
+    [hud] eterna MENU | . ‘ r{ COMMLINK EE, AW sae: TURN COMPLETE Elew: 878m | Seaut
+turn 24: 2134->2135 OK (21.5s, unknown,unknown,hud,confirm-after-press)
+    [hud] ager Spaces ee 2 aC, gD ie ee Ge he a —) ees c,h —$___ mi
+turn 25: 2135->2136 OK (12.1s, hud,confirm-after-press)
+    [unknown] ce eee en ‘1 £3 era ae a Re gn ee a sy See ee ue
+    [hud] eee ee. oe is iis Sees oy eterna " 7 a ba MENU | . ‘
+turn 26: 2136->2137 OK (13.2s, unknown,ai-phase:unknown,hud,confirm-after-press)
+    [hud] “Ue re AS COUP ato age eterna MENU hea . ~ 4 (_COMMLINK Lat | TURN
+turn 27: 2137->2138 OK (8.1s, hud,confirm-after-press)
+    [unknown] se ae ete a jis Ct See. Ss Age a ee as “eae OCUU Al Cliscvemue
+    [hud] ee, eed |" We ey Se esatecout Patrol): os elena nema MENU __} : - 4
+turn 28: 2138->2139 OK (14.2s, unknown,hud,confirm-after-press)
+    [hud] as Si Oe ae elena nema ~ ) ‘wal a = MENU a _» - r{
+turn 29: 2139->2140 OK (12.0s, hud,confirm-after-press)
+    [unknown] OUR RESEARCHERS HAVE MADE A BREAKTHROUGHI | Industrial Base BASE FACILITIES TECHNOLOGIES The Merchant Exchange Superconductor
+    [dialog] i OPERATIONS DIRECTOR a | ||\We have obtained technologies which will allow us to design better
+    [base] ay le Oe ‘i CONFIRM RESEARCH PRIORITIES a | ||/|In which areas shall our scientists focus
+    [unknown] es wis ee... ae MME eee ecu Path age eterna 2 7 a y. MENU a
+    [hud] eterna MENU a -: - r{ COMMLINK ip i ey, Mesion Year 2140 i] ! TURN
+turn 30: 2140->2141 OK (36.6s, unknown,close-bar@400,575,dialog,ai-phase:dialog,base,ai-phase:base)
+    [hud] ay |e Saas. So Gee eterna ~ ) ‘wal a = MENU | . ‘ r{
+turn 31: 2141->2142 OK (7.5s, hud,confirm-after-press)
+    [hud] rye eee a Se esatecout Patrol): os eterna MENU a -: - r{ COMMLINK ip oe,
+turn 32: 2142->2143 OK (11.4s, hud,confirm-after-press)
+    [unknown] = mii Se. “ee a ey INN PO er eae =) CONLIN Elew: 8rem 4 m3
+    [unknown] Qe le Oe... eae eee ee Tele coutPatraly eterna MENU _} , ~ 4 (_COMMLINK wireaae.,
+    [hud] ae eescaiScout Patrol. a elenennennnee enema MENU __} , - 4 (_COMMLINK ip eRe, |) |
+turn 33: 2143->2144 OK (21.2s, unknown,unknown,hud,confirm-after-press)
+    [unknown] a Se Se ee eM su Wry eee es Tele coutPatraly eterna MENU Ls ” =
+    [hud] a aoe eee esa “ees ia Te SSS ee a elenennennnee enema MENU | - ‘
+turn 34: 2144->2145 OK (16.6s, unknown,hud,confirm-after-press)
+    [unknown] Re ee et a Witt sti gc patients: i eleeenenenneee ennai MENU Ls 7 . -
+    [hud] ie i Ss Age a ee a Tele coutPatraly eterna MENU Ls ” . - r{
+turn 35: 2145->2146 OK (13.6s, unknown,hud,confirm-after-press)
+    [hud] ae oe foe RS SS oat Ts Es eterna MENU | . ‘ r{ COMMLINK ip
+turn 36: 2146->2147 OK (16.0s, hud,confirm-after-press)
+    [unknown] Sa i Se a NAT Me ee Aer a, ea! DR Se ee ae bt eae
+    [hud] a aoe ae Soe oe}! ee eterna MENU Ls 7 . - r{ COMMLINK ip etree,
+turn 37: 2147->2148 OK (15.5s, unknown,hud,confirm-after-press)
+    [hud] “Sle eee eh Cio ee eye See ae eterna MENU __}oow . ~ 4 (_COMMLINK ip
+turn 38: 2148->2149 OK (13.5s, hud,confirm-after-press)
+    [hud] Se ge bee coe Nat py eee eg So Gee eterna ~ ) ‘wal a =
+turn 39: 2149->2150 OK (10.6s, hud,confirm-after-press)
+trace: /home/n100/reverse/smac/evidence/trace_m54a40p_20261024_204555.jsonl
+RUN-EXIT 0
