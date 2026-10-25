@@ -2005,7 +2005,7 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
                 # makes the destination attributable to THIS keypress.
                 queued["legs"] = ((claim["raw_after"] if claim else seen_recs[-1][0])
                                   if seen_recs else rd(f, UNIT_ARR + idx * 52, 52))
-                queued["samples"] = [(ms, b) for _r, ms, b in seen_bytes[:60]]
+                queued["samples"] = [(ms, b) for _r, ms, b in seen_recs[:60]]
                 queued["diff"] = dict(claim=claim, rivals=rivals,
                                       attributed=attributed, confounded=confounded,
                                       n_changed=1 if attributed else 0,
