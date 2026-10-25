@@ -857,12 +857,15 @@ def snap_our_units():
 
 
 def verify_moves(orders, snap, verbose=False):
-    """M54d: did an ordered walk actually HAPPEN? Memory, never the screen.
+    """M54d/e: did an ordered walk actually HAPPEN? Memory, never the screen.
 
-    A queued MOVE is only an intention; the year flip is the execution. So snapshot our
-    records before TURN COMPLETE, re-read them once the year has moved, and require that
-    the record now sits ON the destination its own leg array named (`+20/+28`, ORDERS.md
-    §4 0x18) AND has spent movement at `+40`. Identity is (type, tile, movement): the
+    A queued MOVE is only an intention, and (measured in M54e, three TURN COMPLETEs with a
+    parked 0x18 that never moved) the year flip is NOT what runs it: the game's own order
+    pump runs it when its cycle visits the unit, i.e. as the `g` chooser is answered. So
+    the walk is watched twice — `issue_order_for_unit` catches it at the pump (that is
+    where `+40` gets spent, before the phase-start refresh zeroes it again, see M37), and
+    this function re-reads the records after the year flips and requires the record to
+    STILL sit on the destination its own leg array named. Identity is (type, tile): the
     record INDEX is not a persistent id — the array compacts when a unit dies — which is
     the same caveat ORDERS.md §6 records for the order step.
     """
@@ -880,12 +883,19 @@ def verify_moves(orders, snap, verbose=False):
         for o in want:
             dx, dy = o["dest"]
             hits = [r for r in rows if r["type"] == o["utype"] and r["x"] == dx
-                    and r["y"] == dy and r["mp"] > 0]
+                    and r["y"] == dy]
             still = [r for r in rows if r["type"] == o["utype"]
                      and (r["x"], r["y"]) == (o["ux"], o["uy"])]
+            # `+40` is spent at the pump and re-zeroed at the next phase start, so the
+            # movement evidence comes from the in-phase sample; the tile evidence is re-
+            # taken here, after EXEC.
+            mp_after = o.get("walk_mp") or (hits[0]["mp"] if hits else 0)
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
-                     frm=[o["ux"], o["uy"]], dest=[dx, dy], landed=bool(hits),
-                     mp_after=(hits[0]["mp"] if hits else None), still_at_start=bool(still))
+                     frm=[o["ux"], o["uy"]], dest=[dx, dy],
+                     landed=bool(hits) and mp_after > 0,
+                     on_dest_after_exec=bool(hits), walked_inphase=bool(o.get("walk_landed")),
+                     mp_after=mp_after, walk_ms=o.get("walk_ms"),
+                     still_at_start=bool(still))
             out.append(m)
             if verbose:
                 print(f"    MOVE rec{o['unit']} type {o['utype']} ({o['ux']},{o['uy']}) -> "
@@ -1185,6 +1195,8 @@ ORDER_SIMPLE = (("g", {0x18}, "move-to-base"), ("l", {1}, "sentry"), ("h", {2}, 
 # plan can put it first without firing it twice.
 ORDER_MOVE = ("g", {0x18}, "move-to-base")
 ORDER_SIMPLE_NO_MOVE = (("l", {1}, "sentry"), ("h", {2}, "hold"))
+WALK_POLL = 3.0            # M54e: seconds to watch the record after a queued MOVE is
+                           # answered — the pump runs the order THEN, not at EXEC
 ORDER_TERRAFORM_WANT = set(range(4, 0x18))     # #TERRAIN index + 4 (mode rewrites allowed)
 ORDER_BYTE_NAMES = {1: "sentry", 2: "hold", 3: "convoy", 0x18: "move-to-base",
                     0x19: "move-dir", 0x1b: "road-to-base", 0x1c: "tube-to-base"}
@@ -1348,6 +1360,7 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     wr(f, SEL_G, struct.pack("<i", idx))
     sh(f'xdotool key --clearmodifiers "{kname}"')
     panes, quiet, t0 = [], 0, time.time()
+    queued = {"order": None, "legs": None}   # M54e: +17/legs sampled AS the pane is answered
     while time.time() - t0 < ORDER_MODAL_TIMEOUT:
         ob = rd(f, UNIT_ARR + idx * 52 + 17, 1)[0]        # cheap oracle: the byte FIRST
         if ob != before["order"] and ob in want:
@@ -1376,7 +1389,18 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
             # clean HUD behind it raises the quit prompt).
             panes.append("dest-chooser")
             answer_dest_chooser(png, verbose)
-            time.sleep(1.0)
+            # M54e: the OK click both WRITES the order (the setter only lands after its
+            # pane is answered — session 81's `order_after 0`) and hands the unit to the
+            # game's own order pump, which runs it a tick later. Sampled live at 100 ms
+            # resolution (`scripts/m54e_probe.py chooser 2`): +0 ms `order 24 xy (4,12)
+            # mp 0 legs 6,12`; +100 ms `order 0 xy (6,12) mp 3`. So read the byte and the
+            # legs NOW, before the walk consumes them, and take the attempt as landed.
+            ob = rd(f, UNIT_ARR + idx * 52 + 17, 1)[0]
+            if ob != before["order"] and ob in want:
+                queued["order"] = ob
+                queued["legs"] = rd(f, UNIT_ARR + idx * 52, 52)
+                break
+            time.sleep(0.4)
             quiet = 0
             continue
         if k in ("dialog", "confirm", "unknown") and is_terraform_pane(w):
@@ -1400,25 +1424,49 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     after = unit_rec(f, idx)
     e1 = energy(f, me)
     ta2, tafter = tile_recs(f, cand["x"], cand["y"])
-    byte_delta = after["order"] != before["order"] and after["order"] in want
+    # M54e: the chooser's OK lands the byte and hands the unit to the pump in the same
+    # game tick, so `after` may already show the CONSUMED byte (session 81 read
+    # `order_after 0` on a walk that had already happened). Either sample proves the
+    # delta: the one taken as the pane was answered, or the one taken now.
+    seen = queued["order"] if queued["order"] is not None else after["order"]
+    byte_delta = seen != before["order"] and seen in want
     # M54d: a queued MOVE carries its route in the record itself — the leg arrays at
     # `+20..+27` (x) and `+28..+35` (y), -1-terminated (ORDERS.md §4 0x18). The LAST leg
     # is the ordered destination, so the walk has a memory-checkable target instead of a
     # guess; `service_turn` compares it against x,y after the year flips.
     dest = None
-    if after["order"] == 0x18:
-        d52 = rd(f, UNIT_ARR + idx * 52, 52)
-        lx = [struct.unpack("<h", d52[20 + k * 2:22 + k * 2])[0] for k in range(4)]
-        ly = [struct.unpack("<h", d52[28 + k * 2:30 + k * 2])[0] for k in range(4)]
+    src = queued["legs"] if queued["legs"] is not None else after["raw"]
+    if 0x18 in (seen, after["order"]):
+        lx = [struct.unpack("<h", src[20 + k * 2:22 + k * 2])[0] for k in range(4)]
+        ly = [struct.unpack("<h", src[28 + k * 2:30 + k * 2])[0] for k in range(4)]
         pts = [(a, b) for a, b in zip(lx, ly) if a >= 0 and b >= 0]
         dest = list(pts[-1]) if pts else None
+    # M54e: DOES THE WALK LAND, and when? Measured on this build: a parked 0x18 sat
+    # through three TURN COMPLETEs without moving (years 2153, 2154, 2155), while the same
+    # order executed 100 ms after a chooser OK — the pump (`FUN_0050ef60` -> `FUN_00529e70`
+    # -> `FUN_004d1200` -> `FUN_004ce4a0`) runs the order when the game's own cycle visits
+    # the unit, and the year flip is not such a visit. The pump also will not path INTO a
+    # tile our own units stand on: with four of ours on (6,12) the walker oscillated
+    # (6,13)<->(7,12) forever, and the walk landed the moment the base tile was emptied.
+    # So watch the record here, right now: landed = it sits on the leg with `+40` spent.
+    walk = dict(landed=False, mp=0, ms=None)
+    if dest is not None:
+        t1 = time.time()
+        while time.time() - t1 < WALK_POLL:
+            now = unit_rec(f, idx)
+            if [now["x"], now["y"]] == dest and now["mpused"] > 0:
+                walk = dict(landed=True, mp=now["mpused"],
+                            ms=round((time.time() - t1) * 1000))
+                break
+            time.sleep(0.1)
+        after = unit_rec(f, idx)
     return dict(unit=idx, key=kname, label=label, mode=mode,
                 want=sorted(want)[:1] + ([mode + 4] if mode is not None else []),
                 ux=cand["x"], uy=cand["y"], utype=cand["type"], ucls=cand.get("cls"),
-                order_before=before["order"], order_after=after["order"],
-                order_name=ORDER_BYTE_NAMES.get(after["order"],
-                                                "terraform" if after["order"] in ORDER_TERRAFORM_WANT else None),
-                dest=dest,
+                order_before=before["order"], order_after=seen, order_final=after["order"],
+                order_name=ORDER_BYTE_NAMES.get(seen,
+                                                "terraform" if seen in ORDER_TERRAFORM_WANT else None),
+                dest=dest, walk_landed=walk["landed"], walk_mp=walk["mp"], walk_ms=walk["ms"],
                 mpused_after=after["mpused"],
                 energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
                 tile_addr=hex(ta),

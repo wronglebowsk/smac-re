@@ -70,6 +70,12 @@ CASES = [
      "the bottom-right (fill (94,10,9)/(73,9,8), y 579-599, x 596-799). OCR reads 7 tokens "
      "off the whole frame, so it fell through to `movie`, whose only answer is Escape — and "
      "Escape is gated by --no-escape, so the year sat frozen for two runs"),
+    ("evidence/m54e/chooser_live.png", "dest-chooser",
+     "M54e: the `g` chooser exactly as the LIVE loop sees it — the HUD news pane and the "
+     "Mission Year row are still drawn under it, and the unit standing off its base is in "
+     "the frame. Session 81's run classified its live chooser frame `unknown` "
+     "(trace_m54d40c turn 0) even though the saved frames read `dest-chooser`, so this is "
+     "the frame the driver's answer path is pinned against"),
 ]
 
 
