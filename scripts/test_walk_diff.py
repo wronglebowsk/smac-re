@@ -277,16 +277,20 @@ def main():
     check("own-base tiles are dropped from the pool",
           sp.pick_reactivation([row(3, x=28, y=42, order=2)], OWN, TABLE) == [])
 
-    print("case 27: wrong-parity units cannot reach ANY own base — not eligible")
-    check("(30,41) and (27,42) (odd, Korolev's own tile excepted) are dropped; "
-          "(49,33) (82, even) IS eligible at man 21",
-          sp.pick_reactivation([row(0, x=30, y=41, order=2),     # 71 odd
-                                row(5, x=27, y=42, order=2),     # 69 odd
-                                row(9, x=29, y=42, order=2)],    # 71 odd, own tile
+    print("case 27: our bases are OPPOSITE parity (70 even / 71 odd), so every "
+          "tile matches exactly one base — the dropped records are own-base "
+          "garrisons, whatever their parity")
+    check("(29,42) and (28,42) garrisons dropped; a Korolev-parity odd tile and a "
+          "University-parity even tile far out are BOTH eligible — (49,33) at man 21",
+          sp.pick_reactivation([row(9, x=29, y=42, order=2),     # own tile (odd)
+                                row(3, x=28, y=42, order=2)],    # own tile (even)
                                OWN, TABLE) == []
           and [r["idx"] for r in
                sp.pick_reactivation([row(0, x=49, y=33, order=2)], OWN, TABLE)] == [0]
-          and sp.pick_reactivation([row(0, x=49, y=33, order=2)], OWN, TABLE)[0]["man"] == 21)
+          and sp.pick_reactivation([row(0, x=49, y=33, order=2)], OWN, TABLE)[0]["man"] == 21
+          and [r["idx"] for r in
+               sp.pick_reactivation([row(7, x=31, y=41, order=2)], OWN, TABLE)] == [7]
+          and sp.pick_reactivation([row(7, x=31, y=41, order=2)], OWN, TABLE)[0]["man"] == 3)
 
     print("case 28: a one-stepper sorts AFTER a real multi-leg route")
     sel = sp.pick_reactivation([row(41, x=26, y=42, order=2),   # on a step of (28,42)
