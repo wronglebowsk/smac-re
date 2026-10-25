@@ -2631,7 +2631,19 @@ def order_step_in_loop(rec, verbose=False):
         # class-9 (Former) candidates first, then whatever has refused us least this run,
         # then record index — so a position with no Former costs a few keypresses on turn
         # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
+        # M54k (measured, run3): a fresh production garrisoned on our own base CANNOT
+        # walk (the other own base is the opposite parity — §13), yet it shares the
+        # turn's single order with the off-base walker the hook just armed and won the
+        # record-index tiebreak five turns running — `l` five times, `g` zero, and the
+        # armed walker waited a round and came back a SENTRY. A candidate that can
+        # actually reach an own base goes first; the can-walk test is the same one the
+        # plan below uses.
+        def _can_walk(c):
+            tile = (c["x"], c["y"])
+            return any(t != tile and walk_parity_ok(tile, t) for t in own_tiles)
+
         cands.sort(key=lambda c: (c["cls"] != 9,
+                                  not _can_walk(c),
                                   (c["x"], c["y"]) not in nb,
                                   ORDER_REJECTS.get(c["type"], 0), c["idx"]))
         # M54j: byte 2 (HOLD) is the only order that survives the round boundary — the
