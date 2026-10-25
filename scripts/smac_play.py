@@ -707,7 +707,19 @@ def service_turn(idx, tr, timeout, verbose=False):
             if deadline < round_cap:
                 deadline = min(round_cap, now + timeout)
         prev_hash = h
-        if now - t0 > 45 and now - last_change > 15 and now - last_probe > 20:
+        words = ocr_fast(png)
+        kind = classify(words, region_colors(png), png)
+        rec["handled"].append(kind)
+        if verbose:
+            print(f"    [{kind}] {' '.join(w for w, *_ in words[:16])}", flush=True)
+        rec.setdefault("screens", {}).setdefault(kind, 0)
+        rec["screens"][kind] += 1
+        # Wedge guard (M54b) — `hud` frames ONLY: the hung-resume signature is a static
+        # HUD with dead input (session 78); modals like the base screen are legitimately
+        # byte-static and must not trigger it (session 79 lost turn 28 to exactly that
+        # false positive — evidence/px_wedge_t28.png).
+        if (kind == "hud" and now - t0 > 45 and now - last_change > 15
+                and now - last_probe > 20):
             last_probe = now
             a = freeze("px_wa")
             click(MENU_BTN)              # diagnostic click: opens the menu iff input lives
@@ -726,19 +738,12 @@ def service_turn(idx, tr, timeout, verbose=False):
                 rec["delta"] = {}
                 rec["dt"] = round(time.time() - t0, 1)
                 tr.write(json.dumps(rec) + "\n"); tr.flush()
-                print(f"turn {idx}: WEDGE — screen byte-static {round(now - last_change)}s, "
+                print(f"turn {idx}: WEDGE — HUD byte-static {round(now - last_change)}s, "
                       f"MENU click changed nothing — reporting a bad slot, not a stall",
                       flush=True)
                 sys.exit(5)
             key("Escape")                # close the menu the probe opened (in-game)
             time.sleep(1.2)
-        words = ocr_fast(png)
-        kind = classify(words, region_colors(png), png)
-        rec["handled"].append(kind)
-        if verbose:
-            print(f"    [{kind}] {' '.join(w for w, *_ in words[:16])}", flush=True)
-        rec.setdefault("screens", {}).setdefault(kind, 0)
-        rec["screens"][kind] += 1
         # M54a: the Council vote row and the HIVE bribe pane come up in BOTH phases (the
         # Council convenes while cur_player is an AI), and neither has a control OCR can
         # see, so they get a handler ahead of the generic dialog/Escape paths.
@@ -805,7 +810,16 @@ def service_turn(idx, tr, timeout, verbose=False):
                     if is_confirm(w2):
                         rec["handled"].append("confirm-after-press")
                         answer_confirm(w2)
-        else:                                    # base screen / movie / unknown
+        elif kind == "base":
+            # M54b: Escape is the base screen's documented close, and the class is
+            # unambiguous (classify tests quit-prompt and title FIRST, and since M54a
+            # the base test is positional), so it may fire even inside the --no-escape
+            # gate. Session 79 lost turn 28 because the gate starved this path: the
+            # base screen sat byte-static for 42 s with the turn unflippable.
+            if time.time() - last_esc > 6:
+                key("Escape"); last_esc = time.time()
+            time.sleep(0.4)
+        else:                                    # movie / unknown
             # Never spam Escape on unrecognized/dark screens: on the title menu Escape
             # can land on "Exit" and end the session (process vanished at year 2181).
             # movies end on their own; only escape a genuinely stuck screen.
