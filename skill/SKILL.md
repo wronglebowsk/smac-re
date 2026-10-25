@@ -80,7 +80,9 @@ of a turn and its tool-call arguments re-enter the prompt, so an overflow there 
 dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the whole milestone uncommitted.
 
 - The `NEXT_PROMPT.md` 15,500-byte cap is a hard budget, not advice (the gate fails at 16,000 chars,
-  `scripts/evidence.py`): over it, move footing into `FOOTING.md` at the repo root (or a `references/`
+  `scripts/evidence.py`): draft the rewrite to land near **15.2 k on the first write** — trimming a
+  finished 15.6 k file costs three follow-up patch calls for 60 characters, more than the overage. Well
+  over it, move footing into `FOOTING.md` at the repo root (or a `references/`
   file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
   context before any work starts, which is how sessions ratchet toward the wall.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
@@ -127,6 +129,11 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   `state_before`/`state_after`, and `m54a_check_run.py --min-our-bases N` fails a run that loses
   the position. **Use the floor on every run that is supposed to keep what it has**; it fails
   closed, so a trace predating the fields FAILs instead of passing vacuously.
+- **A record that vanishes after a position poke was probably parked on an impassable tile, not killed.**
+  Read the tile's flag byte (record `+3` for even x, `+7` for odd x; bit `0x40` = impassable) before
+  writing "died in the war" — the game deletes records standing on impassable tiles within seconds, and
+  the deletion looks exactly like a combat loss in the census. Use the multiset-diff poller
+  (`references/wine-operations.md`) to catch the disappearance tick.
 - **Never write a handoff sentence about where the game ended up from the plan.** "The garrison is
   back on University Base" was inferred from the pre-run census plus the walk destinations, never
   read back, and was false. Read it, then quote the numbers.

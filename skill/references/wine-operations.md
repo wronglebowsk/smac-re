@@ -321,6 +321,15 @@ is what separates the two classes.
   `+28..+35`, -1-terminated; the last leg is the ordered destination. `g` is refused for a
   unit standing on one of OUR bases (base records: 0x95DA10 x 304, faction = low byte at +4),
   so do not fire it there — three refusals retire the key for the run.
+- **Watch live memory WITHOUT gdb with a multiset-diff poller** (`scratch/m54k_watch.py` pattern): open
+  one `/proc/<pid>/mem` handle, sample the whole unit array every ~0.5 s, and print ONLY the samples
+  where the multiset of `(x, y, +17, +40)` over our records changed, tagged with year / `cur_player` /
+  `turn_flags`. A unit that walks, gets re-ordered, or vanishes shows up as one `-[…] +[…]` line with a
+  timestamp — that is how a mid-round arming, a pump step, and a disappearance each get read back
+  instead of inferred from the driver's keypresses, and it costs no breakpoints and no tracer (pokes are
+  ghosts under gdb). When a record VANISHES after a position poke, read that tile's flag byte before
+  writing "killed in the war": the game deletes records standing on impassable tiles within seconds
+  (`references/terraforming-order-path.md`, M54k).
 - **Full-screen scene/artwork panels carry a red CLOSE bar bottom-right** (fill (94,10,9) /
   (73,9,8), y 579-599, x 596-799 on the 800x600 desktop). OCR reads ~7 tokens off the whole
   frame, so it falls through to `movie`, whose only answer is Escape — and Escape is gated by

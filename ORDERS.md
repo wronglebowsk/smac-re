@@ -509,3 +509,33 @@ pump leaves it), so:
   for every own base" only happens when a base is gone. The records `pick_reactivation`
   actually drops are own-base garrisons (case 27). Do not hand-compute these sums under
   pressure; three fixtures were wrong before the arithmetic was checked mechanically.
+
+## 14. THE IN-PHASE PUMP BURST + READING A QUEUED MOVE OFF MEMORY (M54k2, session 90)
+
+* **A queued MOVE can execute INSIDE our phase.** run1 (trace_m54k2_run1, turn 1):
+  the chooser OK handed the unit to the pump, `turn_flags & 2` stayed set on OUR side
+  (`cur_player 3`), and the game ran the whole 4-step route as back-to-back tf2 rounds
+  (~4.6 s/flip, 2182->2187) *inside one driver turn record* — the year deltas went
+  {1:5, 5:1}. The driver treats tf&2 as an AI round (the turn loop never clicks during
+  it), so the burst is invisible to the turn boundary; only the order step's own window
+  made turn 1 swallow it.
+* **The candidate slot goes stale DURING the burst.** Each flip compacts the array, so
+  the modal loop's byte oracle (`UNIT_ARR + idx*52 + 17`) can read a DIFFERENT record
+  (run1: byte 2) while the walker wears 0x18 the whole route. `queued_rescan`
+  (`scripts/smac_play.py`) reads the queue off content instead: exactly ONE of our
+  records wears a wanted byte that NONE wore in the pre-press snapshot, AND its leg
+  array names one of OUR bases (queue-time legs are the ordered destination; a
+  mid-walk rewrite names a waypoint — (61,9)/(61,10 — waypoint garbage is NOT
+  evidence). Unique + fresh + base leg = verified queue, attributed, not confounded;
+  anything else says nothing. Tests: `scripts/test_walk_diff.py` cases 34-37. run3's
+  `g` landed through exactly this path (pane classified `dialog`, `n_samples 0`).
+* **After the turn's order budget is spent, the game AUTO-ADVANCES at ~8 s/round**
+  when nothing is left actionable — and the turn loop's next iteration costs a
+  freeze+OCR (2-15 s), so TWO rounds can flip between its year checks (run2 turn 5:
+  {1:5, 2:1} -> checker `FAIL year did not move +1 on turns [5]`). Both order-step
+  exits now poll `year() != y0` at 0.2 s (capped 20 s) before continuing: the flip is
+  cheap to watch from memory, and the turn closes on it. run3: {1: 6}.
+* **`turn_flags` gained a persistent 0x100000 bit around 2196** (1048578 = 0x100002
+  at run1's end, still set at run3's end at 2204). The driver's `tf & 2` AI test and
+  the blind gates' `& 2` mask are unaffected (run3 passed with it set); nobody has
+  found what sets it. Do not treat it as nonsense state.
