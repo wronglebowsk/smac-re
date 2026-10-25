@@ -111,6 +111,13 @@ being in history is what makes deletion safe), and record every kept/dropped fil
 `evidence/<id>_prune_manifest.tsv`. Keep `evidence/m53j_text.txt.gz` (~5.7 MB): it is the disassembly
 cache the whole method runs on.
 
+Measured 2026-10-25: 29.3 MB in 858 files (58 images = 13.9 MB of it) against the 30 MB FAIL — and
+`prune --dry-run` proposes NOTHING, because the rule only drops *images older than 7 days* and the
+whole tree was days old. So the margin is real, not theoretical: a 40-turn trace is ~55 KB, but one
+screenshot is 400 KB and `check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs
+(delete those immediately). Run `budget` BEFORE adding new frames, and expect to prune in bulk once
+the footage ages out.
+
 Delegating a static decode works well (a child can map a 1450-line function in minutes), but a child's
 claims are testimony, not evidence. Re-read from the cached disassembly: (1) every store site it cites,
 with its immediate; (2) the address arithmetic that lets the value reach the field — a store guarded to

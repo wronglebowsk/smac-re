@@ -226,8 +226,9 @@ after. `--orders-per-turn` (default 2) and `--no-orders` bound the ambition.
 ## 7. When the queued MOVE actually runs (M54e, session 82, 2026-10-25)
 
 `g` lands `0x18` and the record carries the route; what M54d could not show is the walk
-executing. Measured on this build (`scripts/m54e_probe.py`, pid 484088, save
-`/tmp/snap_parked_18`, base = University (6,12)):
+executing. Measured on this build with `scripts/m54e_probe.py` (pid 484088, base = University
+(6,12)); every number below is a `/proc/<pid>/mem` read, reproducible with
+`python3 scripts/m54e_probe.py chooser <idx>`:
 
 * **The `SELECT DESTINATION` chooser's OK is the trigger, not EXEC.** Sampling `+17` and
   the whole record live at 100 ms resolution across the OK click: `+0 ms order 24 xy

@@ -444,7 +444,7 @@ browsers), and the round-aware turn budget.
   that live frame and widen `is_dest_chooser`; and `verify_moves` should read the byte again
   after the pane is answered, since the setter writes it late.
 
-## Session 82 (2026-10-25) — M54e: **THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN — 5 WALKS EXECUTED IN A 40/40 RUN, THE BYTE CAUGHT AT THE CHOOSER, THE RECORD LEFT ON THE TILE ITS OWN LEG NAMED** — `scripts/m54e_prep.py`, `scripts/m54e_probe.py`, `scripts/smac_play.py` (`order_byte_watcher`, in-phase walk poll), `evidence/m54e/census_pre_run.txt`, `ORDERS.md §7`
+## Session 82 (2026-10-25) — M54e: **THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN — 5 WALKS EXECUTED IN A 40/40 RUN, THE BYTE CAUGHT AT THE CHOOSER, THE RECORD LEFT ON THE TILE ITS OWN LEG NAMED** — `scripts/m54e_prep.py`, `scripts/m54e_probe.py`, `scripts/smac_play.py` (`order_byte_watcher`, in-phase walk poll), `evidence/m54e/census_pre_run.txt`, `ORDERS.md §7` (PR #44, merged)
 
 - **THE PUMP IS THE CHOOSER'S OK, NOT EXEC (measured).** `scripts/m54e_probe.py chooser 2`
   sampled `+17` and the whole 52-byte record at 100 ms across the OK click: `+0 ms order 24
