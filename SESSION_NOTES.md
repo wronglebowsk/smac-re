@@ -1,83 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-81-81.md` (1 sessions). Read it only when a question reaches back before session ## Session 82.
-
-## Session 82 (2026-10-25) — M54e: **THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN — 5 WALKS EXECUTED IN A 40/40 RUN, THE BYTE CAUGHT AT THE CHOOSER, THE RECORD LEFT ON THE TILE ITS OWN LEG NAMED** — `scripts/m54e_prep.py`, `scripts/m54e_probe.py`, `scripts/smac_play.py` (`order_byte_watcher`, in-phase walk poll), `evidence/m54e/census_pre_run.txt`, `ORDERS.md §7` (PR #44, merged)
-
-- **THE PUMP IS THE CHOOSER'S OK, NOT EXEC (measured).** `scripts/m54e_probe.py chooser 2`
-  sampled `+17` and the whole 52-byte record at 100 ms across the OK click: `+0 ms order 24
-  xy (4,12) mp 0 legs 6,12` -> `+100 ms order 0 xy (6,12) mp 3`. The click handler stores the
-  byte and the game's own order pump (`FUN_004ce4a0` -> `FUN_00529e70` -> `FUN_004d1200`) eats
-  it on the next tick. The year flip is NOT the pump: three TURN COMPLETEs with a hand-parked
-  `0x18` re-aimed at an empty adjacent tile (6,13) moved nothing. So `order_final 0` after EXEC
-  proves nothing — the byte has to be caught at the pane.
-- **THE BYTE WINDOW IS TENS OF MILLISECONDS; ONE READ IS A COIN FLIP.** The first fix (one read
-  after the pane answer) still missed it in a 2-turn smoke run: the trace said `order_after 0`
-  while turn 1's attempts read `ux 6 uy 12` — the walk had already landed.
-  `smac_play.order_byte_watcher` now samples `+17` at ~5 ms from a second `/proc/pid/mem` handle
-  *through* the click, so the delta the acceptance asks for is the byte itself. The leg arrays
-  survive execution (`order 0`, legs still `6/12` after the arrival), so the loop reads the
-  route even when the byte was already consumed by the pump.
-- **THE GAME WILL NOT PATH INTO A TILE ITS OWN OWNER OCCUPIES — that is M54d's blocker.** With
-  four of ours standing on University Base (6,12) the walker oscillated (6,13)<->(7,12) across
-  three EXECs and never arrived; the same order landed within one tick the moment the base tile
-  was emptied. `g` can only ever name a BASE tile (§1/§4: the 0x18 branch copies
-  `base[piVar21].x/y` into `+20/+28`), so an ordered walk needs our own base tile FREE.
-- **`(base.x+1, base.y)` IS NOT A NEIGHBOUR — M54d's prep stood its Former on a non-neighbour.**
-  The map packs two columns per tile record (`DAT_0092ae14 + (mapw/2*y + x>>1)*0x2c`, even x at
-  `+0`, odd at `+3`) and `FUN_00502c40`'s even-x delta tables (`0x67850c` dx, `0x678990` dy)
-  step `(±2,0)` and `(±1,±1)`. Live in both directions: one `Left` moved a Scout Patrol
-  (6,12)->(4,12); one `g` walked the made Formers record (4,12)->(6,12).
-- **THE FOOTING'S ROUTE (a) IS DEAD — ARROWS QUEUE NOTHING.** `Left`/`Right`/`Up`/`Down` (plain
-  and Shift) left `+17` at 0 on five records, with and without the `0x10000` "has moved" bit
-  cleared; `space` neither queues nor pumps. Route (c) — clear the base tile — is what works and
-  needs no game change: `scripts/m54e_prep.py` pokes every unit of ours off the base tile onto
-  the real neighbour (bx-2, by) and converts one of them (`+10` type 2->1 = class 9, order,
-  `+40` and the legs cleared). Everything the run then claims is the game's own: the keypress,
-  the chooser, the byte, the route and the walk.
-- **THE LIVE CHOOSER FRAME IS PINNED.** `evidence/m54e/chooser_live.png` — the chooser with the
-  HUD news pane and the Mission Year row still drawn under it, the frame session 81 classified
-  `unknown` — went into `scripts/test_classify.py` AND `scripts/check_classes.py` before the
-  driver used it: `PASS 15/15 screen classifications`, `frames: 15 failures: 0`.
-- **ACCEPTANCE NUMBERS (MET).** `python3 scripts/m54e_prep.py` -> `POKE base (6,12) -> empty;
-  garrison [0, 2, 5] -> (4,12)` / `POKE rec0: type -> 1 (cls 9) at (4,12), order 0, mp 0, legs
-  cleared`. `python3 scripts/m54d_census.py` -> `CENSUS pid=484088 year=2160 turn_no=0
-  player=3 cur_player=3 units_ours=5 class9=2 bases_total=21 bases_ours=1 class_mix={"3": 3,
-  "9": 2}` plus two `CLASS9` lines (rec 0, rec 2, both `( 4,12) order 0 mp 0 ...
-  on_own_base=False`) — `evidence/m54e/census_pre_run.txt`. Started at a turn boundary
-  (`cur_player 3`, `turn_flags 0`):
-  `python3 scripts/smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54e40
-  --verbose` -> `evidence/trace_m54e40_20261025_010855.jsonl`, then
-  `python3 scripts/m54a_check_run.py evidence/trace_m54e40_20261025_010855.jsonl --timeout 240
-  --min-orders 31 --min-moves 5` -> `advanced 40/40`, `year deltas {1: 40}`, `stuck 0` (max dt
-  85.1 s), `orders 31 VERIFIED of 75 attempted`, mix `{"g->byte24": 5, "l->byte1": 24,
-  "h->byte2": 2}`, **`moves 5 LANDED of 5 ordered walks (record on the tile its own leg named,
-  +40 movement spent), on turns [0, 9, 12]`**, `PASS`. Every landed walk reads `(4,12) ->
-  (6,12) mp+3` with `on_dest_after_exec True` and `walked_inphase True`.
-- **State of the box (AUDITED after the merge — the original sentence here was WRONG).** The
-  driver exited normally, but the run did not leave us holding University Base: at 2201
-  `bases_ours 0` — the base array holds 30 bases and faction 3 owns none (factions {5:14, 1:6,
-  6:5, 7:3, 2:1, 4:1}) — and our 8 surviving records are all stacked on one tile, (47,47),
-  order 1 (SENTRY). The screen at that moment shows a `Colony Pod (0-1-1)` at (47,47), which is
-  the cross-check that this is a real read and not stale memory: the unit the game has centred
-  IS one of those records. `turn_flags` sits at `0x100002` and survives a year flip (one TURN
-  COMPLETE moved 2200 -> 2201, flags unchanged). So the box holds a defeated faction stuck
-  "mid-round", not the tidy garrison this bullet first claimed ("our two class-9 records and
-  three scouts back on University (6,12)" was inferred from the pre-run census plus the walk
-  destinations — never read back — and it is false). **The M54e walk evidence is unaffected:**
-  it is index-addressed `+17`/`+20..+35`/`+40`/`x,y` on records 0, 2, 5, 8, 11 at turns 0, 9,
-  12, all before the base was lost.
-- **`evidence/` is 29.3 MB** (`budget 20/30 [warn]`): the `_3x.png` OCR siblings
-  `check_classes.py` writes next to every frame it OCRs were deleted — that litter alone pushed
-  the tree over the gate (precedent for the prune: the same deletion list in
-  `evidence/.git/PR_BODY.md`).
-- **Next (M54f):** the walk only ever lands ON our own base tile, and only because a poke emptied
-  it. Give the loop a destination it does not have to manufacture: key the Former's
-  settle/found-a-base order — the unkeyed `param_3` menu chain (NAMED.md 120-146) and the unit
-  panel's buttons — walk a Former to a tile, found, and verify a NEW base record in the base
-  array (`0x95DA10` x 304, faction = low byte at `+4`) with the census printing `bases_ours=2`
-  inside one unattended run. Secondary: 26 `unknown` pane hits in `trace_m54e40` still to pin,
-  and the raise-footprint refusal that makes every terraform key a dud on this map.
+Older sessions: `docs/sessions/sessions-82-82.md` (1 sessions). Read it only when a question reaches back before session ## Session 82b.
 
 ## Session 82b (2026-10-25) — M54e post-close audit: **THE RUN THAT PASSED ALSO LOST THE POSITION (bases_ours 0, our 8 records stacked at (47,47), flags stuck 0x100002), "OCCUPANCY" WAS THE WRONG CAUSE FOR M54d, AND THE TYPE BYTE IS +4 NOT +10 (that third claim was itself WRONG and is retracted in M54f — see item 1)** — `plugins` none; corrected `SESSION_NOTES.md` 82, `ORDERS.md §7`, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
 
@@ -419,3 +342,26 @@ re-open and answer again; then the acceptance command above on a 6-turn run.
 **Open.** (1) The 0x100000 turn_flags bit is unexplained. (2) A pump burst can still outrun the turn boundary if one loop iteration exceeds the ~8 s round (the rescan shortens the order step, the poll closes the turn on the flip — but OCR garbage at 15 s/iteration remains a risk; run1's shape was never FORCED after the fixes). (3) `queued_rescan` attributes only through uniqueness — two of ours queued in one window says nothing (conservative by design). (4) The quiet window is nearly gone: expect to reload `m54b_clean.SAV` + re-found before the next walking experiment.
 
 **Next:** the walking arc (M54i2 -> M54j -> M54k -> M54k2) is CLOSED — a hook-armed, loop-ordered, multi-turn walk onto our own base, PASS with the checker's own instrumentation. The footing's open spines are S1 (production rebuild) and S2; ROADMAP line 86 defines S2 as the **solo turn advance** — TURN COMPLETE -> upkeep -> production -> research -> AI -> events -> next player — and this session's burst/auto-advance/0x100000 findings are heartbeat facts. Pick: an S2 milestone that INVENTORIES the round boundary from memory (what is produced on our base tiles, what upkeep moves — energy deltas are already in the trace, where research progress lives, which turn_flags bits flip when), acceptance = a script printing PASS on one real read. Re-read the ROADMAP S2 row before committing.
+
+## Session 91 (2026-10-25) — M55: **THE SOLO ROUND BOUNDARY IS READ END TO END FROM MEMORY AND EVERY DIFF IS ACCOUNTED — `scripts/m55_boundary.py` prints PASS on a real invocation (2217->2218, 10/10 floors); a hand-typed fixture FAILs (5 floors) and the no-poke dry probe FAILs (no flip in 4 s)** — changed `scripts/m55_boundary.py` (NEW: reads one boundary from /proc/<pid>/mem, samples cur_player/year/round/stage/turn_flags at 2 ms, accounts every unit/base/faction diff), `scratch/m55_fixture_bad.json` (hand-typed negative), `NEXT_PROMPT.md`, this file, skill `references/wine-operations.md`
+
+**Acceptance — the exact commands and what they printed:**
+- `python3 scripts/m55_boundary.py` -> exit 0, `PASS boundary 2217->2218: player walk observed (cur_player [0, 2, 3, 5, 6, 7]), upkeep income read for 7 factions, research advanced, production: no net-new order-0 arrivals this round`, all 10 floors `ok`, trace `evidence/trace_m55_boundary_20261025_194440.jsonl`. An earlier identical PASS: 2215->2216, `evidence/trace_m55_boundary_20261025_194200.jsonl`.
+- `python3 scripts/m55_boundary.py --fixture scratch/m55_fixture_bad.json` -> exit 1, `FAIL boundary accounting`, 5 BAD (walk only 4,5; our unit moved (10,10)->(11,10); production arrived order 2; ledger {4: 7}; research flat for every faction).
+- `python3 scripts/m55_boundary.py --no-poke --no-enter --timeout 4` -> exit 1, `FAIL no round boundary (year never moved) within 4.0s` (the gate is not vacuous).
+
+**What the boundary actually is (all read from memory, this session):**
+1. **Solo heartbeat = the player WALK in `FUN_00520c10`.** `cur_player` walks every active player and ends at ours: observed sequences `[3,3,4,5,6,6,7,0,2,2,3]`, `[7,3,4,5,6,7,2,3]`, `[3,3,5,6,7,0,2,3]` — the walk ROTATES (starts after our id, not at 0). The MP 7-stage counter `DAT_0091c630` stayed 0 in every sample (15-40 samples/run) — never floor on stage in solo.
+2. **The boundary needs no key when every unit is HELD: the engine auto-ends our turn.** Rounds ran 2206->2208 with zero input; at 2210+ rounds closed 1-2 s after our turn opened. BUT at 2204 the same hold-all state stalled 90 s (`stage 0`, all semaphores 0) — the auto-end gate (`DAT_0091f69c & 1`, "No units need orders Press ENTER") is CONDITIONAL and the trigger condition is still unidentified. **Confounded/unknown — do not claim "idle never advances" (session 90) nor "idle always advances" (this session).**
+3. **Modal event dialogs FREEZE the walk.** "The Hive has eradicated the Gaians" held `cur_player = 2` for 90 s with every semaphore zero; the event chain then opened the PLANET display, which swallowed one Enter. Fix in the script: Return every 2 s while `cur_player != ours` (and while mid-walk) — safe, because Return is only consumed as turn-end when the human loop is running. `Escape` on the tactical map raises "Do you really want to quit?" — never press Escape (the footing already bans its OK; now ban the key).
+4. **The boundary REWRITES bytes inside records that did not move.** Our 11 held records changed at u16 +28 (legs_y[0]), +48, +50 — each **decrements by 1 per round** while dying units are compacted out (a 2205 boundary with ~20 enemy deaths moved all three; a quiet boundary moved only +28). Identity for accounting is therefore **(x, y, type, owner, order)**, not 52-byte equality.
+5. **Per-turn order resets and cargo.** AI units' transient orders (9, 14, 24, 27, 88) reset to 0 **in place**; order 24 = cargo/unload materialisation (two Settlers appeared at (12,50) with order 24, mp 3). Produced units arrive **order 0 on a base tile of their own faction**. Attribution across a boundary is confounded by moves + resets + cargo, so the floor is scoped to OUR side; enemy-side arrivals are labelled `production / cargo-or-order-reset / order-reset-in-place / move / unattributed`.
+6. **ZERO production was measured in every round of this session** (~7 boundaries): no net-new order-0 arrival on any base of any faction. Session 90's claim that "production drops `+17 = 0` units on base tiles at every round boundary" did NOT reproduce. Faction sliders read `+0x104 = 0, +0x108 = 5..6` for all 8; base record `+0x3c` ticked 23->25 on Korolev (+2/round, a shield-style accumulator), `+0x34`/`+0x38` static. **This contradiction is M56.**
+7. **Research is measured and it completes.** Three live completions: p2 rpoints 161->0 rtech 12->46; p6 -119 rtech 22->72; p2 190 pts rtech 46->44. Our points advanced +6, +12, +12, +3, +2 in most rounds — EXCEPT one boundary where ours stayed 8->8 with `labcnt 229->229` and `rtech 13->13`; ours had completed tech 36 at an earlier boundary (108->8). Our `labcnt` reads 229 while other factions read 5-137 and p0 reads -1 — **the `LAB_ARR` parallel array is suspicious after player 1 (Gaians) died** (faction slot 1 left the active mask 0xFF -> 0xFD); verify its indexing before trusting per-faction lab counts.
+8. **Our side took real losses.** Garrison at University Base attrited 11 -> 10 -> 6 -> 5 units at (28,42) with no arrival of the same class (deaths, cause unattributed); then **University Base (28,42) was CAPTURED by faction 6** at the 2214->2215 boundary — the base record survived with `faction 6` (28 bases before and after). C6's floor is therefore "no base of ours VANISHES; a capture is reported", not "we never lose a base".
+9. **`turn_flags` 0x100000 is set by Enter and cleared at the boundary** (observed `0x100002 -> 0x2` at +0.073 s, the only flip seen). With auto-end closing the turn, no flip appears at all (`0x2 -> 0x2`) — a flip is expected only when a key ends the turn.
+10. Energy deltas were read for 7-8 factions every round (e.g. `{0:0, 2:-11, 3:0, 4:3, 5:3, 6:-24, 7:-23}`), the spending ledger `faction+4` was zero for every player after upkeep in all runs, and energy never went negative (code clamp holds).
+
+**Open:** the production contradiction (#6) and why the whole map builds nothing; our flat-research round and the `LAB_ARR` shift (#7); death-cause attribution (#8); the auto-end gate condition (#2); enemy-side production attribution (confounded, #5). **The game is nearly lost: 1 base (Korolev Center 29,42), 5 units, year 2218, pid 1329211** — a future run may need the reload recipe before it can measure anything.
+
+**Next:** M56 — resolve the production contradiction: prove from memory whether ANY base builds (base queue/cost fields + faction sliders + the +0x3c accumulator) across 2-3 boundaries, with a floor that FAILs on a hand-typed production trace.

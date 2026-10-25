@@ -36,7 +36,9 @@ python3 cvr_decode.py --render programs/Drop.cvr          # -> Drop.render.png i
 Never commit to `main`. Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
 (must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
-`NEXT_PROMPT.md` (<=15,500 bytes). After editing the LIVE skill, run `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`
+`NEXT_PROMPT.md` (<=15,500 bytes). `scratch/` is gitignored: scratch probes and one-off tools are
+NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
+tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, run `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`
 — the gate compares only `SKILL.md`, so an edited reference, template or script drifts silently
 otherwise. Editing this skill therefore leaves the repo copy stale until the next sync; do that
 sync in the same session, before the closing commit.
@@ -142,7 +144,11 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   which the run's own trace later refuted. Split the poke, or label the cause unattributed.
 - **Record index is not identity, and the unit array GROWS mid-run** — a base building a unit
   shifts every index after it, so an index carried across a turn (or read a fraction of a second
-  after the order lands) can name a different unit's record. Snapshot ALL our records (type, x, y,
+  after the order lands) can name a different unit's record. It also COMPACTS mid-turn: a queued
+  MOVE can execute inside our phase (`turn_flags & 2` set while `cur_player` is ours, the year
+  flipping every ~4.6 s), and every flip re-shuffles the slots — so even a byte read taken seconds
+  after the keypress can name a different record. During any burst, re-read WHO wears the byte
+  (scan all records for the transition against the pre-press snapshot), not who sits at the slot. Snapshot ALL our records (type, x, y,
   `+17`, legs) before the keypress and diff after; take the field from the record that actually
   changed, and report how many changed — two changed means the result is confounded.
 - **Attributing a field to one keypress: the through-the-click watcher on the subject's own slot
@@ -191,7 +197,11 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
 few trace logs and screenshots can eat the whole margin. Before closing a milestone: drop only files
 >100 KB whose basename appears in no `.md`/`.txt`/`.py` of the repo, with `git rm` (never plain `rm` —
 being in history is what makes deletion safe), and record every kept/dropped file plus size in
-`evidence/<id>_prune_manifest.tsv`. Keep `evidence/m53j_text.txt.gz` (~5.7 MB): it is the disassembly
+`evidence/<id>_prune_manifest.tsv`. Test unreferenced-ness in ONE shell loop —
+`find evidence -size +150k -printf '%s %p\n' | while read sz p; do git grep -qF "$(basename "$p")"
+-- '*.md' '*.py' || echo "$sz $p"; done` — one tool call per candidate eats dozens. The MB figure
+recorded in `NEXT_PROMPT.md` goes stale during the session that writes it; measure with `budget`
+at close, never from the footing. Keep `evidence/m53j_text.txt.gz` (~5.7 MB): it is the disassembly
 cache the whole method runs on.
 
 Measured 2026-10-25: 29.3 MB in 858 files (58 images = 13.9 MB of it) against the 30 MB FAIL — and
@@ -437,7 +447,11 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   + byte-identical screenshots.
 - **A turn that never advances can also be a CLASSIFIER miss, with no modal visible.** OCR here is
   unreliable in both directions: a clean HUD reads `unknown` when the TURN COMPLETE row fails to
-  render legibly (the chrome — MENU/COMMLINK — still reads, so check for it), and an advisor dialog
+  render legibly — and with the production line drawn in the message box even the chrome
+  (MENU/COMMLINK) goes illegible, so the clean-HUD oracle is MEMORY, not the chrome read:
+  `cur_player == player`, `turn_flags & 2` clear, and no bar drawn at y 145-200. Peek one frame
+  before running any Escape-on-`unknown` clearing loop — at a garbled-but-clean HUD it raises the
+  quit prompt), and an advisor dialog
   reads `hud` when too few of its words land in the dialog band (its caption is the tell: a word of
   6+ characters, or two of 4+, at y 90-118 means something is drawn OVER the HUD). Both idle the
   loop silently: with `--no-escape` the first burns the whole turn budget doing nothing, and in the
