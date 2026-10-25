@@ -1151,6 +1151,25 @@ def pick_reactivation(held, own_tiles, table):
     return out
 
 
+def walker_on_dest(rows, utype, dest, ordered_legs):
+    """Is THE WALKER (not merely a same-type unit) on the destination tile?
+
+    M54j run4 (measured): University Base holds six identical Scout Patrols, so
+    `bool(hits)` — "a record of our type sits on the destination" — was TRUE while the
+    ordered unit had moved only (49,33) -> (47,33). The walker's identity is the ROUTE:
+    the only record wearing the ordered leg array is the one the chooser answered
+    (ORDERS.md §4: the pump consumes `+17` but the legs survive; run4 watched the same
+    record carry legs [(28,42)] through (47,33) and (43,35)). An order whose legs are
+    EMPTY (the session-86 legs-less chooser OK shape) keeps the old type+tile reading —
+    there is no route to match.
+    """
+    if not ordered_legs:
+        return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest) for r in rows)
+    route = [tuple(l) for l in ordered_legs]
+    return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest)
+               and [tuple(l) for l in r["legs"]] == route for r in rows)
+
+
 def held_walk_records(f, me, n=119):
     """Our +17 = 2 (HOLD) records, decoded like `find_actionable` (not frozen,
     movement unspent). The re-activation pool for `order_step_in_loop`."""
@@ -1231,8 +1250,21 @@ def verify_moves(orders, snap, verbose=False):
             d_after = len(hits)
             s_after = len(still)
             d_before, s_before = c0.get("dest"), c0.get("src")
-            count_proof = (d_before is None or s_before is None
+            # M54j: the fallback is RETIRED. "no baseline -> believe the tiles" is what
+            # let run4 print ARRIVED for a unit that had moved 2 of 21 tiles: the dest
+            # count never rose (six garrisons were already there) yet count_proof passed
+            # on a missing baseline. A new-format order without counts is a bug, not a
+            # pass; only pre-M54h traces (no counts field at all) keep the tile reading.
+            has_base = "order_counts" in o and c0.get("dest") is not None \
+                and c0.get("src") is not None
+            count_proof = (not has_base
                            or (d_after > d_before and s_after < s_before))
+            # M54j: AND the walker itself must be ON the destination — identified by the
+            # route it carries, not by a same-type headcount (see `walker_on_dest`).
+            # M54j: the route the ORDER wrote (the walker's identity among identical
+            # garrisons — see `walker_on_dest`); it lives in the attribution claim.
+            route = ((o.get("walk_diff") or {}).get("claim") or {}).get("legs_after") or []
+            on_dest = walker_on_dest(rows, o["utype"], (dx, dy), route)
             # `+40` is spent at the pump and re-zeroed at the next phase start, so the
             # movement evidence comes from the in-phase sample; the tile evidence is re-
             # taken here, after EXEC.
@@ -1250,7 +1282,7 @@ def verify_moves(orders, snap, verbose=False):
                         or max([h["mp"] for h in hits], default=0))
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
                      frm=[o["ux"], o["uy"]], dest=[dx, dy],
-                     landed=bool(hits) and count_proof and mp_after > 0,
+                     landed=on_dest and count_proof and mp_after > 0,
                      on_dest_after_exec=bool(hits), walked_inphase=bool(o.get("walk_landed")),
                      mp_after=mp_after, walk_ms=o.get("walk_ms"),
                      dest_count=[d_before, d_after], src_count=[s_before, s_after],
@@ -1451,11 +1483,18 @@ def verify_pending_walks(cur_turn, verbose=False):
             # itself (mp_after > 0, plus the count delta) is unchanged.
             mp_after = (o.get("walk_mp") or o.get("mpused_after")
                         or max([h["mp"] for h in hits], default=0))
-            count_proof = (d_before is None or s_before is None
-                           or (len(hits) > d_before and len(still) < s_before))
+            # M54j: same rules as verify_moves — the WALKER (the record wearing the
+            # ordered route) must be on the dest tile; six identical garrisons are not
+            # an arrival. For a CARRIED (multi-turn) walk the pre-press count baseline is
+            # stale by design — the origin was vacated rounds ago — so the arrival rule
+            # is: identity on the destination + movement spent + the origin tile empty
+            # of that type. (A same-turn landing in `verify_moves` still needs the
+            # count delta against the press — session 87's run4 had both.)
+            route = ((o.get("walk_diff") or {}).get("claim") or {}).get("legs_after") or []
+            on_dest = walker_on_dest(rows, o["utype"], (dx, dy), route)
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
                      frm=[o["ux"], o["uy"]], dest=[dx, dy],
-                     landed=bool(hits) and count_proof and mp_after > 0,
+                     landed=on_dest and mp_after > 0 and not still,
                      on_dest_after_exec=bool(hits), carried=True,
                      ordered_turn=o.get("ordered_turn"),
                      mp_after=mp_after, walk_ms=o.get("walk_ms"),

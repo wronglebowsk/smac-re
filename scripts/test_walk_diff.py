@@ -300,11 +300,35 @@ def main():
           [r["idx"] for r in sel] == [37, 41]
           and sel[0]["on_step"] is False and sel[1]["on_step"] is True)
 
+    # ------- M54j: the walker, not a headcount — run4's false ARRIVED --------------
+    # run4 turn 2 (evidence/trace_m54j_run4_*.jsonl): the order moved (49,33) -> (47,33)
+    # — 2 of 21 tiles — and `verify_moves` printed ARRIVED because University Base
+    # already holds six type-2 records and the count fallback passed on the delta.
+    DEST = (28, 42)
+    ROUTE = [[28, 42]]
+
+    print("case 29: six garrisons on the destination are NOT the arrival")
+    six = [row(i, x=28, y=42, order=2) for i in range(6)]      # no route worn
+    check("walker_on_dest is False while the walker is 2 tiles out",
+          sp.walker_on_dest(six, 2, DEST, ROUTE) is False)
+
+    print("case 30: the record WEARING the ordered route, on the tile, IS the arrival")
+    arrived = six + [row(70, x=28, y=42, order=0, legs=[(28, 42)], mp=3)]
+    midwalk = six + [row(70, x=43, y=35, order=24, legs=[(28, 42)], mp=3)]
+    check("arrival True, mid-walk (route worn, wrong tile) False",
+          sp.walker_on_dest(arrived, 2, DEST, ROUTE) is True
+          and sp.walker_on_dest(midwalk, 2, DEST, ROUTE) is False)
+
+    print("case 31: a legs-less order (session 86 shape) keeps the type+tile reading")
+    check("empty route falls back to type+tile",
+          sp.walker_on_dest(six, 2, DEST, []) is True
+          and sp.walker_on_dest(six, 2, (20, 42), []) is False)
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 28/28 attribution cases")
+    print("PASS 31/31 attribution cases")
     return 0
 
 
