@@ -196,9 +196,15 @@ def account(before, after, timeline, checks):
     added_k = list((ka - kb).elements())
     removed_k = list((kb - ka).elements())
     held_bad = []
-    for u in before["units"]:
-        if u["owner"] == me and u["order"] == 2 and ka[keyf(u)] < kb[keyf(u)]:
-            held_bad.append((u["x"], u["y"], u["type"]))
+    our_deaths = []
+    added_ours_by_class = Counter((t[2], t[3]) for t in added_k if t[3] == me)
+    for t in removed_k:
+        if t[3] != me:
+            continue
+        if added_ours_by_class.get((t[2], t[3]), 0) > 0:
+            held_bad.append((t, "vanished while a same-class ours arrived elsewhere — move/order-change"))
+        else:
+            our_deaths.append(dict(x=t[0], y=t[1], type=t[2], order=t[4]))
     # byte-rewrite inventory (report, not floor): pair ours by key, diff full bytes
     gb_by_key, ga_by_key = {}, {}
     for u in before["units"]:
@@ -213,9 +219,11 @@ def account(before, after, timeline, checks):
             for i in range(52):
                 if h1[i] != h2[i]:
                     rewrite_offsets[i] += 1
-    ck("every HELD record of ours persists at the same (x,y,type,owner,order) — "
-       "nothing of ours moved or died", not held_bad,
-       f"broken keys: {held_bad}; ours {sum(1 for u in before['units'] if u['owner']==me)}"
+    ck("no record of ours MOVED or changed state across the boundary: every vanished "
+       "ours with no same-class arrival is a death (reported; cause attribution is the "
+       "next milestone), and no same-class ours arrived elsewhere", not held_bad,
+       f"moved: {held_bad}; deaths: {our_deaths}; ours "
+       f"{sum(1 for u in before['units'] if u['owner']==me)}"
        f"->{sum(1 for u in after['units'] if u['owner']==me)}; our records rewritten at "
        f"byte offsets {dict(sorted(rewrite_offsets.items()))} (u16s decrementing by 1 = "
        f"index refs adjusted by compaction)")
@@ -227,28 +235,39 @@ def account(before, after, timeline, checks):
     for t in removed_k:
         class_net[(t[3], t[2])] -= 1
     bad_add, prod, cargo = [], [], []
+    attrib = []
+    removed_tiles = {}
+    for t in removed_k:
+        removed_tiles.setdefault((t[3], t[2]), []).append((t[0], t[1]))
     for k, n in sorted(class_net.items()):
         if n <= 0:
             continue
         cls_added = [t for t in added_k if (t[3], t[2]) == k]
-        # production arrivals are order 0 (measured: ours arrive order 0; SAVE_FORMAT
-        # +17=0). Net-new records arriving with a NONZERO order are cargo
-        # materialising from a transport (unload state, e.g. order 24) — reported,
-        # not floored; they are not production.
-        z = [t for t in cls_added if t[4] == 0]
-        nz = [t for t in cls_added if t[4] != 0]
-        for t in z:
+        cls_removed = removed_tiles.get(k, [])
+        for t in cls_added:
             b = tiles.get((t[0], t[1]))
-            if b is None or b["faction"] != t[3]:
-                bad_add.append((t, "order-0 arrival not on a base of its faction"))
-            else:
+            on_own_base = b is not None and b["faction"] == t[3]
+            if t[4] == 0 and on_own_base:
+                label = "production"
                 prod.append(dict(x=t[0], y=t[1], owner=t[3], type=t[2], order=t[4], base=b["name"]))
-        for t in nz:
-            cargo.append(dict(x=t[0], y=t[1], owner=t[3], type=t[2], order=t[4]))
-    ck("every net-NEW record arriving with order 0 sits on a base tile of its own "
-       "faction (production is the only thing that adds order-0 records; moves and "
-       "deaths net out per class; nonzero-order arrivals are transport cargo, reported "
-       "separately)", not bad_add,
+            elif t[4] != 0:
+                label = "cargo-or-order-reset"
+                cargo.append(dict(x=t[0], y=t[1], owner=t[3], type=t[2], order=t[4]))
+            elif any(max(abs(t[0]-rx), abs(t[1]-ry)) == 0 for rx, ry in cls_removed):
+                label = "order-reset-in-place"
+            elif any(max(abs(t[0]-rx), abs(t[1]-ry)) <= 6 for rx, ry in cls_removed):
+                label = "move"
+            else:
+                label = "unattributed"
+            attrib.append(dict(x=t[0], y=t[1], owner=t[3], type=t[2], order=t[4], arrival=label))
+            # FLOOR scope: OUR net-new records must be order 0 on our base tiles.
+            # Enemy-side attribution is confounded by moves, per-turn order resets
+            # and transport cargo — reported, not floored (change-one-variable rule).
+            if t[3] == me and not (t[4] == 0 and on_own_base):
+                bad_add.append((t, "our net-new record not order 0 on our base tile"))
+    ck("every net-NEW record of OURS arrives as order 0 on one of our base tiles "
+       "(production is the only thing that adds records for us; enemy-side arrivals "
+       "are attributed in the report, not floored)", not bad_add,
        f"net-new classes {dict((k, v) for k, v in class_net.items() if v > 0)}; "
        f"unexplained: {bad_add}")
     losses = [dict(x=t[0], y=t[1], type=t[2], owner=t[3], order=t[4]) for t in removed_k]
@@ -280,13 +299,25 @@ def account(before, after, timeline, checks):
     else:
         ck("our faction record readable", False, "our player not in active mask")
 
-    # C6: our bases survived the measured boundary
+    # C6: our bases may change hands (AI conquest is real) but must not VANISH.
     own_b = {(b["x"], b["y"]): b for b in before["bases"] if b["faction"] == me}
     own_a = {(b["x"], b["y"]) for b in after["bases"] if b["faction"] == me}
-    lost = [own_b[t]["name"] for t in own_b if t not in own_a]
-    ck("no base of ours was lost during the measured boundary", not lost,
-       f"lost: {lost} (ours after: {sorted(own_a)})")
-    return prod, losses, cargo, added_k, removed_k
+    after_all = base_lookup(after["bases"])
+    lost, captured = [], []
+    for t, b in sorted(own_b.items()):
+        if t in own_a:
+            continue
+        nb = after_all.get(t)
+        if nb is None:
+            lost.append(b["name"])
+        else:
+            captured.append(dict(tile=list(t), name=b["name"], new_faction=nb["faction"]))
+    ck("no base of ours VANISHED across the boundary: every tile that was ours is "
+       "still a base (ours, or captured by another faction — reported, conquest is "
+       "real AI behaviour); a base tile disappearing from the array entirely fails",
+       not lost, f"vanished: {lost}; captured (reported): {captured}; "
+       f"ours after: {sorted(own_a)}")
+    return prod, losses, cargo, attrib, added_k, removed_k
 
 
 def main():
@@ -295,7 +326,9 @@ def main():
     ap.add_argument("--fixture", default=None, help="JSON {before, after, timeline} to account")
     ap.add_argument("--poll", type=float, default=0.002)
     ap.add_argument("--timeout", type=float, default=300.0)
-    ap.add_argument("--settle", type=float, default=1.5)
+    ap.add_argument("--settle", type=float, default=0.3,
+                    help="flush delay after cur_player returns to ours before the "
+                         "after-snapshot (auto-end can close the new turn in ~1-2s)")
     ap.add_argument("--no-poke", action="store_true")
     ap.add_argument("--no-enter", action="store_true")
     a = ap.parse_args()
@@ -363,10 +396,12 @@ def main():
             last = timeline[-1]
             if any(row[k] != last[k] for k in row):
                 timeline.append(dict(t=round(time.time() - t0, 3), **row))
-            if not pressed or (flip_t is None and time.time() - last_press > 2.0):
+            if not a.no_enter and (not pressed or (time.time() - last_press > 2.0 and
+                               (flip_t is None or row["cur_player"] != row["our_player"]))):
                 # press Enter from INSIDE the sampler loop so the player walk is
-                # sampled, not raced; re-press every 2s until the flip because a
-                # modal UI (planet display from an event) swallows one press.
+                # sampled, not raced; re-press every 2s while no flip is seen OR
+                # while mid-walk (a modal event dialog freezes the walk; Return
+                # dismisses it and is NOT consumed as turn-end during AI turns).
                 subprocess.run(["xdotool", "key", "--clearmodifiers", "Return"], check=True)
                 log(dict(event="press_enter", t=round(time.time() - t0, 3), win=win))
                 pressed = True
@@ -392,7 +427,7 @@ def main():
         log(dict(event="after", t=time.time(), snap=after))
 
     checks = []
-    prod, losses, cargo, added_k, removed_k = account(before, after, timeline, checks)
+    prod, losses, cargo, attrib, added_k, removed_k = account(before, after, timeline, checks)
     gb, ga = before["globals"], after["globals"]
     me = gb["our_player"]
 
@@ -417,7 +452,8 @@ def main():
     log(dict(event="report", energy_delta=energy_d, rpoints_delta=rpoints_d,
              rtech_changed=rtech_d, turn_flags_before=hex(gb["turn_flags"]),
              turn_flags_after=hex(ga["turn_flags"]), turn_flags_flips=tf_flips,
-             production=prod, cargo_arrivals=cargo, losses=losses,
+             production=prod, cargo_arrivals=cargo, net_new_attribution=attrib,
+             losses=losses,
              sliders_104_108_before_after=sliders,
              labcnt=labcnt_d,
              flags_lo=(hex(gb["flags_lo"]), hex(ga["flags_lo"])),
@@ -433,6 +469,7 @@ def main():
     print(f"  report: rpoints deltas {rpoints_d} rtech changed {rtech_d}")
     print(f"  report: production {prod if prod else 'no net-new order-0 arrivals this round'}")
     print(f"  report: cargo arrivals (net-new, nonzero order) {cargo}")
+    print(f"  report: net-new attribution {attrib}")
     print(f"  report: losses {losses}")
     print(f"  report: turn_flags {hex(gb['turn_flags'])} -> {hex(ga['turn_flags'])} flips {tf_flips}")
     print(f"  trace: {trace_path}")
