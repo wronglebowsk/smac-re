@@ -49,6 +49,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--unit", type=int, required=True)
     ap.add_argument("--poke-type", type=int, default=None)
+    ap.add_argument("--poke-x", type=int, default=None)
+    ap.add_argument("--poke-y", type=int, default=None)
+    ap.add_argument("--orders-mode", type=int, default=None)
     ap.add_argument("--clear-order", action="store_true")
     ap.add_argument("--key", default="b")
     ap.add_argument("--json", default=None)
@@ -75,6 +78,19 @@ def main():
         back = struct.unpack("<H", P.rd(f, P.UNIT_ARR + args.unit * 52 + 10, 2))[0]
         out["stages"].append(dict(stage="poke10", readback=back))
         print(f"S0c poked +10 -> {args.poke_type}, read back {back}", flush=True)
+
+    if args.orders_mode is not None:
+        P.wr(f, P.ORDERS_MODE_G, struct.pack("<i", args.orders_mode))
+        back = struct.unpack("<i", P.rd(f, P.ORDERS_MODE_G, 4))[0]
+        out["stages"].append(dict(stage="orders_mode", readback=back))
+        print(f"S0e poked orders mode -> {args.orders_mode}, read back {back}", flush=True)
+
+    if args.poke_x is not None:
+        P.wr(f, P.UNIT_ARR + args.unit * 52, struct.pack("<hh", args.poke_x, args.poke_y))
+        r0b = R()
+        out["stages"].append(dict(stage="pokexy", x=r0b["x"], y=r0b["y"]))
+        print(f"S0d poked x,y -> ({args.poke_x},{args.poke_y}), read back "
+              f"({r0b['x']},{r0b['y']})", flush=True)
 
     # stage 1: selection only
     P.focus()

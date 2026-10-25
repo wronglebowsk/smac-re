@@ -76,6 +76,13 @@ CASES = [
      "the frame. Session 81's run classified its live chooser frame `unknown` "
      "(trace_m54d40c turn 0) even though the saved frames read `dest-chooser`, so this is "
      "the frame the driver's answer path is pinned against"),
+    ("evidence/m54g/newbase_pane.png", "name-pane",
+     "M54g: NEWBASE — the colonist founding's name-entry pane (`b` on a class-8 unit on a "
+     "legal tile): caption 'ENTER A NAME FOR YOUR NEW BASE.' at y 102, the generated name "
+     "'Korolev Center' in the field at y 135, and the HUD's TURN COMPLETE row STILL drawn "
+     "underneath, which made classify() answer `hud` while the modal ate the keypress. "
+     "Return accepts the name; the base record exists 0.1 s later "
+     "(evidence/m54g/probe_found1.json)"),
 ]
 
 

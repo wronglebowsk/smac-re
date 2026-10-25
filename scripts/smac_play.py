@@ -186,6 +186,20 @@ def is_dest_chooser(words):
     return cap and body
 
 
+def is_name_pane(words):
+    """NEWBASE — the colonist founding's name-entry pane (M54g, session 84).
+
+    `b` on a class-8 unit standing on a legal tile raises "ENTER A NAME FOR YOUR NEW
+    BASE." (caption y 102) with the game's generated name already in the field (y 135),
+    and the HUD's TURN COMPLETE row is STILL drawn under it — so classify() fell through
+    to `hud` and the loop read two quiet frames while the modal ate every keypress.
+    Return accepts the generated name (measured: the base record exists 0.1 s later).
+    """
+    band = [t for t, cx, cy, _w, _h in words if 90 <= cy <= 128 and 150 <= cx <= 650]
+    ts = re.sub(r"[^a-z]", "", "".join(band).lower())
+    return "name" in ts and "newbase" in ts
+
+
 def is_quit_prompt(words):
     """The "Do you really want to quit?" dialog.
 
@@ -382,7 +396,11 @@ def classify(words, ncolors=None, png=None):
                                 # times and the year never moved
     if is_dest_chooser(words):
         return "dest-chooser"   # M54d: the `g` chooser — its own OK bar at y~162, NOT the
-                                # console row and NOT a hud: it swallows every keypress
+        # console row and NOT a hud: it swallows every keypress
+    if is_name_pane(words):
+        return "name-pane"      # M54g: NEWBASE name entry ("ENTER A NAME FOR YOUR NEW
+        # BASE." at y 102 over a still-drawn HUD): Return accepts the generated name and
+        # the base record exists 0.1 s later. Untested it read `hud` and ate the order.
     hits = base_word_positions(words)
     if hits and not (hud_btn and all(in_msgpane(p) for p in hits)):
         return "base"
@@ -1165,6 +1183,7 @@ ORDERS_MODE_G = 0x91B5B8
 ENERGY_G = 0x94D650
 ENERGY_STRIDE = 0x82F
 TILE_G = 0x92AE14
+TILE_PITCH_G = 0x692184           # DAT_00692184 row pitch, READ LIVE (32 on this 64x64 map)
 TILE_ROW = 40                     # DAT_00692184, read live = 40
 TILE_SZ = 0x2C
 
@@ -1183,6 +1202,18 @@ ORDER_MAX_ATTEMPTS = 8     # hard cap on keypresses per turn (bounds the cost of
 ORDER_MODAL_TIMEOUT = 22.0  # cap on servicing the panes one keypress raised, seconds
 ORDER_REJECTS = {}         # type -> how many times every tried key was refused (live, per run)
 ORDER_KEY_REJECTS = {}     # key -> attempts that produced no +17 delta (live, per run)
+
+# M54g — the colonist FOUNDING, issued in the loop and verified in the BASE ARRAY.
+# `b` (case 0x62, shard_013.c:4384) dispatches to FUN_004d1280 unless the unit's type is
+# class 9 (-> the borehole mode); FUN_004d1280 gates on class 8 (NEEDCOLONISTS) and then
+# on the tile. It writes NO order byte: its proof is a new base record (0x95DA10, count
+# 0x985AF4), and it consumes the founding unit (record 11 compacted away 0.1 s after the
+# name pane was answered, evidence/m54g/probe_found1.json).
+FOUND_KEY = "b"
+FOUND_CLASS = 8            # the class gate at shard_012.c:2852
+FOUND_TRIES = [3]          # keypress cap for foundings per run (mutable: decremented live)
+FOUND_MODAL_TIMEOUT = 45.0  # wall-clock cap on answering NEWBASE + the aftermath
+FOUND_DONE = [False]       # one founding per run is enough to prove the destination
 ORDER_KEY_TRIES = 3        # retire a key for the rest of the run after this many duds
 
 # Non-terraform keyboard orders, verified by the SAME `+17` delta. Measured live on this
@@ -1292,9 +1323,18 @@ def energy(f, player):
 
 
 def tile_recs(f, x, y):
-    """The 0x2c tile record for (x,y): base + (40*y + x>>1)*0x2c (asm-verified at
-    0x4d5b25: imul stride, *11 dwords). Neighbours N/S are +/-(40*0x2c); E/W +/-0x2c."""
-    a = TILE_G + (TILE_ROW * y + (x >> 1)) * TILE_SZ
+    """The 0x2c tile record for (x,y).
+
+    M54g correction (live, this box): 0x92ae14 holds a POINTER to the tile array
+    (`mov esi,[ds:92ae14]`, M35) and the row pitch is DAT_00692184, which is 32 here
+    (a 64x64 map) — the hard-coded 40 was an 80-wide world. Indexing the slot itself
+    reads pointer data, not tiles (all-zero "tiles" at (28,42) while the base is there).
+    Record = *(0x92ae14) + (pitch*y + x>>1)*0x2c.
+    """
+    import struct
+    base = struct.unpack("<I", rd(f, TILE_G, 4))[0]
+    pitch = struct.unpack("<I", rd(f, TILE_PITCH_G, 4))[0]
+    a = base + (pitch * y + (x >> 1)) * TILE_SZ
     return a, rd(f, a, TILE_SZ)
 
 
@@ -1525,6 +1565,131 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
                 panes=panes, verified=bool(byte_delta), dt=round(time.time() - t0, 1))
 
 
+def founding_gate(f, x, y, typ):
+    """Why can't a unit of this TYPE found a base at (x,y)? Mirrors FUN_004d1280's tile
+    gates (shard_012.c:2838+) read live: NOTINTRIAD ((b0 & 0xe0) < 0x60 XOR the domain's
+    DAT_0092ae81[dom*0x90] byte == 1), FUNGUSDANGUS (mask1 & 0x20 and elevation > 3),
+    NOTONMONOLITH (mask1 & 0x2000), NOTONROCKY ((b5 & 0xc0) > 0x40 and elevation > 4),
+    BASETOONEAR (any of the 8 delta-table neighbours has mask1 bit 0x1 with an owner
+    nibble < 8 — the base tile's OWN bit 1 does not block a founding on that tile).
+    Empty list = the tile passes. (Live signature: `b` on a class-8 unit at (26,43), a
+    tile this reports legal, raised NEWBASE; at (26,42), which it reports NOTONROCKY,
+    nothing happened — evidence/m54g/probe_offbase.json / probe_found1.json.)
+    """
+    import struct
+    reasons = []
+    d0 = rd(f, 0x98ADAC + typ * 52, 1)[0]                       # type domain byte
+    dom1 = rd(f, 0x92AE81 + d0 * 0x90, 1)[0] == 1
+    _a, d = tile_recs(f, x, y)
+    hi, b5 = d[0] & 0xE0, d[5]
+    m1 = struct.unpack("<I", d[8:12])[0]
+    if (hi < 0x60) != dom1:
+        reasons.append("NOTINTRIAD")
+    if (m1 & 0x20) and hi > 0x3F:
+        reasons.append("FUNGUSDANGUS")
+    if m1 & 0x2000:
+        reasons.append("NOTONMONOLITH")
+    if (b5 & 0xC0) > 0x40 and hi > 0x5F:
+        reasons.append("NOTONROCKY")
+    w = struct.unpack("<I", rd(f, 0x92A378, 4))[0]
+    h = struct.unpack("<I", rd(f, 0x92A37C, 4))[0]
+    even_wrap = (struct.unpack("<I", rd(f, 0x92A394, 4))[0] & 1) == 0
+    for k in range(0, 32, 4):
+        nx = struct.unpack("<i", rd(f, 0x6784A0 + k, 4))[0] + x
+        ny = struct.unpack("<i", rd(f, 0x6784C4 + k, 4))[0] + y
+        if even_wrap:
+            if nx < 0:
+                nx = w + nx
+            elif nx >= w:
+                nx -= w
+        if -1 < ny < h and -1 < nx < w:
+            _na, nd = tile_recs(f, nx, ny)
+            if (struct.unpack("<I", nd[8:12])[0] & 1) and (nd[2] & 0xF) < 8:
+                reasons.append(f"BASETOONEAR via ({nx},{ny})")
+                break
+    return reasons
+
+
+def issue_found_for_unit(f, me, cand, verbose=False):
+    """Press `b` (BUILD BASE) at one selected unit and PROVE the founding in memory.
+
+    The proof is NOT the order byte — the founding writes none. It is the base array:
+    our tile count goes up and one of our bases sits on the tile the unit stood on
+    (`own_base_tiles`). Memory-first: poll the array at 100 ms and only OCR when the
+    array has not answered, because the NEWBASE pane is modal and every second it is up
+    is a second the turn cannot end.
+    """
+    import struct
+    idx = cand["idx"]
+    e0 = energy(f, me)
+    tiles0 = own_base_tiles(f, me)
+    reasons = founding_gate(f, cand["x"], cand["y"], cand["type"])
+    om0 = struct.unpack("<i", rd(f, ORDERS_MODE_G, 4))[0]
+    om_poked = False
+    if om0 == 0:
+        # With orders mode off `b` is a MAP-level key: it opens the base screen of the
+        # base near the cursor and the order dispatcher never sees it (measured twice,
+        # evidence/m54g/probe_c_control.json vs probe_omode.json).
+        wr(f, ORDERS_MODE_G, struct.pack("<i", 1))
+        om_poked = struct.unpack("<i", rd(f, ORDERS_MODE_G, 4))[0] == 1
+    focus()
+    wr(f, SEL_G, struct.pack("<i", idx))
+    t0 = time.time()
+    sh(f'xdotool key --clearmodifiers "{FOUND_KEY}"')
+    panes, answered, founded_at = [], [], None
+    while time.time() - t0 < FOUND_MODAL_TIMEOUT:
+        tiles = own_base_tiles(f, me)
+        new = tiles - tiles0
+        if new:
+            founded_at = sorted(new)[0]
+            break
+        png = freeze("fd")
+        w = ocr_fast(png)
+        k = classify(w, region_colors(png), png)
+        if k == "name-pane":
+            panes.append("name-pane")
+            key("Return"); time.sleep(0.4)          # accepts the GENERATED name (M45)
+            answered.append("name-pane:Return")
+            continue
+        if k == "base":                             # a dud `b` opened the base screen
+            panes.append("base")
+            key("Escape"); time.sleep(0.9)
+            break
+        if k == "quit-prompt":
+            panes.append("quit-prompt")
+            key("Escape"); time.sleep(0.9)          # "Oops, no, wait!"
+            break
+        if k in ("dialog", "confirm"):
+            panes.append(k)
+            key("Return"); time.sleep(0.7)
+            continue
+        if k == "hud":
+            if len(panes) >= 2:
+                break
+            time.sleep(1.0)
+            continue
+        panes.append(k)
+        if len(panes) > 4:
+            break
+        time.sleep(1.0)
+    tiles1 = own_base_tiles(f, me)
+    after = unit_rec(f, idx)
+    e1 = energy(f, me)
+    verified = bool(founded_at) and founded_at in tiles1
+    out = dict(unit=idx, key=FOUND_KEY, label="found-base", mode=None, ux=cand["x"],
+               uy=cand["y"], utype=cand["type"], ucls=cand.get("cls"), gate_reasons=reasons,
+               orders_mode_poked=om_poked, panes=panes, answered=answered,
+               bases_before=len(tiles0), bases_after=len(tiles1), base_at=list(founded_at or []),
+               energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
+               unit_after=dict(x=after["x"], y=after["y"], type=after["type"]),
+               verified=bool(verified), dt=round(time.time() - t0, 1))
+    if verbose:
+        print(f"    FOUND rec{idx} ({cand['x']},{cand['y']}) type {cand['type']} "
+              f"gates {reasons or 'legal'} -> bases {len(tiles0)}->{len(tiles1)} at "
+              f"{founded_at} panes {panes} ({out['dt']}s)", flush=True)
+    return out
+
+
 def order_step_in_loop(rec, verbose=False):
     """Issue up to ORDER_CAP VERIFIED orders (terraform for Formers, MOVE/SENTRY/HOLD for
     every other unit), then return how many landed.
@@ -1552,6 +1717,24 @@ def order_step_in_loop(rec, verbose=False):
             return 0
         cands = find_actionable(f, me)
         own_tiles = own_base_tiles(f, me)      # M54d: `g` is wasted on a unit on its base
+        # M54g: a colonist (class 8) standing on a founding-legal tile goes FIRST. `b`
+        # spends the unit and the record list compacts, so the index it occupied can be a
+        # different unit a second later — nothing else may share the turn. The proof is
+        # the base array, not `+17` (the founding writes no order byte).
+        if not FOUND_DONE[0] and FOUND_TRIES[0] > 0:
+            for fc in [c for c in cands if c["cls"] == FOUND_CLASS
+                       and (c["x"], c["y"]) not in own_tiles]:
+                FOUND_TRIES[0] -= 1
+                o = issue_found_for_unit(f, me, fc, verbose)
+                out.append(o)
+                if o["verified"]:
+                    FOUND_DONE[0] = True
+                    rec["founds"] = [o]
+                    rec["orders"] = out
+                    rec["orders_verified"] = 1
+                    rec["order_seconds"] = round(time.time() - t0, 1)
+                    return 1
+                break
         # class-9 (Former) candidates first, then whatever has refused us least this run,
         # then record index — so a position with no Former costs a few keypresses on turn
         # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
