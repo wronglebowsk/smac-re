@@ -1180,8 +1180,18 @@ def verify_moves(orders, snap, verbose=False):
             # `+40` is spent at the pump and re-zeroed at the next phase start, so the
             # movement evidence comes from the in-phase sample; the tile evidence is re-
             # taken here, after EXEC.
+            # M54i2: read the ARRIVAL's mp, not an arbitrary hit's. A unit that walked
+            # this round shows +40 spent at our next phase start (scratch/m54i2_pump.py:
+            # the moved record read mp 3 while every held unit read 0); garrison/HOLD
+            # units and base-produced units on the destination tile sit at 0 (run3
+            # census at 2165: three HELD garrisons and a fresh produced unit all mp 0).
+            # `hits[0]` is index-order — in run3 turn 0 it was a held garrison, so the
+            # arrival's own spent mp was invisible and a memory-verified landing scored
+            # `landed false`. max() asks exactly what the floor asks — "some same-type
+            # record ON THE DESTINATION TILE spent movement this round" — and the floor
+            # itself (mp_after > 0, plus the count delta) is unchanged.
             mp_after = (o.get("walk_mp") or o.get("mpused_after")
-                        or (hits[0]["mp"] if hits else 0))
+                        or max([h["mp"] for h in hits], default=0))
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
                      frm=[o["ux"], o["uy"]], dest=[dx, dy],
                      landed=bool(hits) and count_proof and mp_after > 0,
@@ -1369,8 +1379,18 @@ def verify_pending_walks(cur_turn, verbose=False):
                      and (r["x"], r["y"]) == (o["ux"], o["uy"])]
             c0 = o.get("order_counts") or {}
             d_before, s_before = c0.get("dest"), c0.get("src")
+            # M54i2: read the ARRIVAL's mp, not an arbitrary hit's. A unit that walked
+            # this round shows +40 spent at our next phase start (scratch/m54i2_pump.py:
+            # the moved record read mp 3 while every held unit read 0); garrison/HOLD
+            # units and base-produced units on the destination tile sit at 0 (run3
+            # census at 2165: three HELD garrisons and a fresh produced unit all mp 0).
+            # `hits[0]` is index-order — in run3 turn 0 it was a held garrison, so the
+            # arrival's own spent mp was invisible and a memory-verified landing scored
+            # `landed false`. max() asks exactly what the floor asks — "some same-type
+            # record ON THE DESTINATION TILE spent movement this round" — and the floor
+            # itself (mp_after > 0, plus the count delta) is unchanged.
             mp_after = (o.get("walk_mp") or o.get("mpused_after")
-                        or (hits[0]["mp"] if hits else 0))
+                        or max([h["mp"] for h in hits], default=0))
             count_proof = (d_before is None or s_before is None
                            or (len(hits) > d_before and len(still) < s_before))
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
