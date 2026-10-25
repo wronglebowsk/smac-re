@@ -1115,6 +1115,81 @@ def walk_parity_ok(unit_xy, base_xy):
     return (unit_xy[0] + unit_xy[1]) % 2 == (base_xy[0] + base_xy[1]) % 2
 
 
+def pick_reactivation(held, own_tiles, table):
+    """Which HELD records may be re-activated (poked +17 2 -> 0) into the order step.
+
+    M54j (measured, run1): the game AUTO-SENTRIES an order-0 unit across the round
+    boundary — a setup that leaves a unit waiting at +17 = 0 finds it wearing byte 1
+    (SENTRY) and PATROLLING ON ITS OWN (ORDERS.md §10) by the time our phase opens.
+    Byte 2 (HOLD) is the only state that survives the round; the unit therefore has
+    to be re-activated IN-PHASE, in the same window as the keypress.
+
+    Eligible: not standing on one of OUR bases (there `g` raises the BASE SCREEN
+    instead of the chooser — session 86 run5 t0), and at least one own base of the
+    unit's own (x+y) parity exists that is NOT the tile under its feet (the only
+    reachable walk target). Returns the eligible records, nearest own same-parity base
+    first (`man` is the Chebyshev distance to that base) — a multi-leg route is the
+    point, but a unit 30 tiles out is a worse bet than one 6 out.
+    """
+    table = table_neighbors(0, 0, table)  # the pure step shapes
+    out = []
+    for r in held:
+        tile = (r["x"], r["y"])
+        if tile in own_tiles:
+            continue
+        cands = [t for t in own_tiles
+                 if t != tile and walk_parity_ok(tile, t)]
+        if not cands:
+            continue
+        man = min(max(abs(tile[0] - t[0]), abs(tile[1] - t[1])) for t in cands)
+        # a unit that already stands on a legal step of a same-parity own base is a
+        # ONE-step arrival, not a multi-leg route — keep it eligible, sort it last
+        out.append(dict(r, reactivated=True, man=man,
+                        on_step=any((tile[0] + dx, tile[1] + dy) in own_tiles
+                                    for dx, dy in table)))
+    out.sort(key=lambda r: (r["on_step"], r["man"], r["idx"]))
+    return out
+
+
+def walker_on_dest(rows, utype, dest, ordered_legs):
+    """Is THE WALKER (not merely a same-type unit) on the destination tile?
+
+    M54j run4 (measured): University Base holds six identical Scout Patrols, so
+    `bool(hits)` — "a record of our type sits on the destination" — was TRUE while the
+    ordered unit had moved only (49,33) -> (47,33). The walker's identity is the ROUTE:
+    the only record wearing the ordered leg array is the one the chooser answered
+    (ORDERS.md §4: the pump consumes `+17` but the legs survive; run4 watched the same
+    record carry legs [(28,42)] through (47,33) and (43,35)). An order whose legs are
+    EMPTY (the session-86 legs-less chooser OK shape) keeps the old type+tile reading —
+    there is no route to match.
+    """
+    if not ordered_legs:
+        return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest) for r in rows)
+    route = [tuple(l) for l in ordered_legs]
+    return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest)
+               and [tuple(l) for l in r["legs"]] == route for r in rows)
+
+
+def held_walk_records(f, me, n=119):
+    """Our +17 = 2 (HOLD) records, decoded like `find_actionable` (not frozen,
+    movement unspent). The re-activation pool for `order_step_in_loop`."""
+    import struct
+    out = []
+    arr = rd(f, UNIT_ARR, n * 52)
+    for i in range(n):
+        d = arr[i * 52:(i + 1) * 52]
+        if d[14] != me or d[14] == 0xFF:
+            continue
+        if bool(d[9]) or d[17] != 2 or d[40] != 0:
+            continue
+        typ = struct.unpack("<H", d[10:12])[0]
+        out.append(dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
+                        y=struct.unpack("<h", d[2:4])[0], type=typ,
+                        cls=unit_class(f, typ), order=d[17], mp=d[40],
+                        legs=legs_of(d)))
+    return out
+
+
 def snap_our_units():
     """The pre-EXEC snapshot `verify_moves` later diffs against live memory."""
     try:
@@ -1175,8 +1250,21 @@ def verify_moves(orders, snap, verbose=False):
             d_after = len(hits)
             s_after = len(still)
             d_before, s_before = c0.get("dest"), c0.get("src")
-            count_proof = (d_before is None or s_before is None
+            # M54j: the fallback is RETIRED. "no baseline -> believe the tiles" is what
+            # let run4 print ARRIVED for a unit that had moved 2 of 21 tiles: the dest
+            # count never rose (six garrisons were already there) yet count_proof passed
+            # on a missing baseline. A new-format order without counts is a bug, not a
+            # pass; only pre-M54h traces (no counts field at all) keep the tile reading.
+            has_base = "order_counts" in o and c0.get("dest") is not None \
+                and c0.get("src") is not None
+            count_proof = (not has_base
                            or (d_after > d_before and s_after < s_before))
+            # M54j: AND the walker itself must be ON the destination — identified by the
+            # route it carries, not by a same-type headcount (see `walker_on_dest`).
+            # M54j: the route the ORDER wrote (the walker's identity among identical
+            # garrisons — see `walker_on_dest`); it lives in the attribution claim.
+            route = ((o.get("walk_diff") or {}).get("claim") or {}).get("legs_after") or []
+            on_dest = walker_on_dest(rows, o["utype"], (dx, dy), route)
             # `+40` is spent at the pump and re-zeroed at the next phase start, so the
             # movement evidence comes from the in-phase sample; the tile evidence is re-
             # taken here, after EXEC.
@@ -1194,7 +1282,7 @@ def verify_moves(orders, snap, verbose=False):
                         or max([h["mp"] for h in hits], default=0))
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
                      frm=[o["ux"], o["uy"]], dest=[dx, dy],
-                     landed=bool(hits) and count_proof and mp_after > 0,
+                     landed=on_dest and count_proof and mp_after > 0,
                      on_dest_after_exec=bool(hits), walked_inphase=bool(o.get("walk_landed")),
                      mp_after=mp_after, walk_ms=o.get("walk_ms"),
                      dest_count=[d_before, d_after], src_count=[s_before, s_after],
@@ -1215,6 +1303,10 @@ def verify_moves(orders, snap, verbose=False):
 
 
 PENDING_WALKS = []         # 0x18 orders whose walk outlived the turn that ordered them
+PRE_ARM_DONE = [False]     # M54j: one mid-AI-round arming poke per run (see the hook
+                           # in service_turn's ai-phase branch; probe2 measured that an
+                           # actionable unit at phase open makes the game WAIT for input,
+                           # while an all-HELD phase auto-advances unseen)
 PENDING_MAX_TURNS = 8      # stop re-checking a walk after this many later turns
 
 
@@ -1391,11 +1483,18 @@ def verify_pending_walks(cur_turn, verbose=False):
             # itself (mp_after > 0, plus the count delta) is unchanged.
             mp_after = (o.get("walk_mp") or o.get("mpused_after")
                         or max([h["mp"] for h in hits], default=0))
-            count_proof = (d_before is None or s_before is None
-                           or (len(hits) > d_before and len(still) < s_before))
+            # M54j: same rules as verify_moves — the WALKER (the record wearing the
+            # ordered route) must be on the dest tile; six identical garrisons are not
+            # an arrival. For a CARRIED (multi-turn) walk the pre-press count baseline is
+            # stale by design — the origin was vacated rounds ago — so the arrival rule
+            # is: identity on the destination + movement spent + the origin tile empty
+            # of that type. (A same-turn landing in `verify_moves` still needs the
+            # count delta against the press — session 87's run4 had both.)
+            route = ((o.get("walk_diff") or {}).get("claim") or {}).get("legs_after") or []
+            on_dest = walker_on_dest(rows, o["utype"], (dx, dy), route)
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
                      frm=[o["ux"], o["uy"]], dest=[dx, dy],
-                     landed=bool(hits) and count_proof and mp_after > 0,
+                     landed=on_dest and mp_after > 0 and not still,
                      on_dest_after_exec=bool(hits), carried=True,
                      ordered_turn=o.get("ordered_turn"),
                      mp_after=mp_after, walk_ms=o.get("walk_ms"),
@@ -1525,6 +1624,34 @@ def service_turn(idx, tr, timeout, verbose=False):
         ai_phase = (own is not None and cur is not None and cur != own) or bool(tf & 2)
         if ai_phase and kind in ("dialog", "base", "unknown", "hud"):
             rec["handled"].append(f"ai-phase:{kind}")
+            # M54j: arm our walker DURING the AI round. probe2 (scratch/m54j_probe2.py,
+            # read back on a live handle): a record poked +17 2 -> 0 mid-round is still
+            # byte 0 and unmoved when our phase opens, and the phase then WAITS (flags 0
+            # for ~8 s of sampling); a phase where every record is HELD draws "No units
+            # need new orders. Press ENTER" and auto-advances before the driver's first
+            # OCR (run2/run3: 0 orders on 6/6 turns). One arming per run; the order step
+            # finds the armed record via find_actionable on the first hud frame.
+            if not PRE_ARM_DONE[0] and ORDER_CAP > 0:
+                PRE_ARM_DONE[0] = True
+                try:
+                    _pid2, f2 = mem()
+                    try:
+                        me2 = state().get("player")
+                        react = pick_reactivation(held_walk_records(f2, me2),
+                                                  own_base_tiles(f2, me2),
+                                                  delta_table(f2))
+                        if react:
+                            wr(f2, UNIT_ARR + react[0]["idx"] * 52 + 17, b"\x00")
+                            f2.flush()
+                            rec["handled"].append(f"pre-arm:rec{react[0]['idx']}")
+                            if verbose:
+                                print(f"    PRE-ARM rec{react[0]['idx']} "
+                                      f"({react[0]['x']},{react[0]['y']}) +17 2->0 in the "
+                                      f"AI round (man {react[0]['man']})", flush=True)
+                    finally:
+                        f2.close()
+                except Exception:
+                    pass
             if is_datalinks(words):
                 key("Return"); time.sleep(0.5)          # full-screen text page
             elif is_ops_director(words) or kind == "base":
@@ -1635,13 +1762,29 @@ def service_turn(idx, tr, timeout, verbose=False):
             # y 145-200) and the year unmoved for HUD_BLIND_S, click TURN COMPLETE at its
             # measured coordinates. If a modal really is up the click lands behind it and
             # the year simply stays where it is.
+            # M54j: the OUR-PHASE gate below is memory-verified; the order step runs on
+            # the FIRST frame that passes it, NOT gated by HUD_BLIND_S — with everything
+            # HELD the game draws "No units need new orders. Press ENTER", TURN COMPLETE
+            # stops OCR-ing, the frame classifies `unknown`, and the game's own ENTER
+            # advances the turn in seconds (run2: 4 of 6 turns, order step never ran).
+            hud_chrome = (find(words, ["menu"]) and find(words, ["commlink"])
+                          and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200])
+            if kind == "unknown" and hud_chrome:
+                st_now = state()
+                if (st_now.get("cur_player") == st_now.get("player")
+                        and not (st_now.get("turn_flags") or 0) & 2
+                        and not ordered and ORDER_CAP > 0):
+                    ordered = True
+                    nver = order_step_in_loop(rec, verbose)
+                    rec["handled"].append(f"blind-orders:{nver}")
+                    snap_units = snap_our_units()
+                    continue
             if (kind == "unknown" and now - last_press > HUD_BLIND_S
                     and now - t0 > HUD_BLIND_S):
                 st_now = state()
                 if (st_now.get("cur_player") == st_now.get("player")
                         and not (st_now.get("turn_flags") or 0) & 2
-                        and find(words, ["menu"]) and find(words, ["commlink"])
-                        and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200]):
+                        and hud_chrome):
                     click(TURN_BTN)
                     rec["handled"].append("turn-complete-blind")
                     last_press = now
@@ -2481,6 +2624,23 @@ def order_step_in_loop(rec, verbose=False):
         cands.sort(key=lambda c: (c["cls"] != 9,
                                   (c["x"], c["y"]) not in nb,
                                   ORDER_REJECTS.get(c["type"], 0), c["idx"]))
+        # M54j: byte 2 (HOLD) is the only order that survives the round boundary — the
+        # game auto-sentries an order-0 unit across it (run1: the lone actionable at
+        # (20,42) wore byte 1 and had PATROLLED AWAY by our phase; scratch/m54j_probe).
+        # When nothing is actionable, re-activate the best HELD walker IN-PHASE (poke
+        # +17 2 -> 0 in this same window, next to the keypress) and order it.
+        if not cands:
+            try:
+                react = pick_reactivation(held_walk_records(f, me), own_tiles, table)
+            except Exception:
+                react = []
+            for r in react[:ORDER_CAP]:
+                wr(f, UNIT_ARR + r["idx"] * 52 + 17, b"\x00")
+                cands.append(r)
+            if cands and verbose:
+                print(f"    REACTIVATED {len(cands)} held walker(s): "
+                      f"{[(r['idx'], r['x'], r['y'], r['man']) for r in cands]}",
+                      flush=True)
         cands = cands[:ORDER_CAP * 4]
         verified = attempts = 0
         for cand in cands:

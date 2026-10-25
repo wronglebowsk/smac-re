@@ -256,11 +256,79 @@ def main():
           step in TABLE and not sp.walk_parity_ok((28, 43), (28, 42))
           and not sp.walk_parity_ok((29, 42), (28, 42)))
 
+    # ------- M54j: re-activation of HELD walkers (the auto-sentry finding) ---------
+    # run1 (evidence/trace_m54j_run1_20261025_155011.jsonl): the setup left EXACTLY
+    # one actionable record at (20,42) (order 0, read back on a second handle); by
+    # our phase it wore byte 1 (SENTRY) and had patrolled away — the game auto-sentries
+    # an order-0 unit across the round boundary. Only byte 2 (HOLD) survives it, so
+    # the order step re-activates a held walker IN-PHASE. These cases pin the picker.
+    OWN = {(28, 42), (29, 42)}
+
+    print("case 25: the (20,42) held walker IS eligible — even parity matches "
+          "University (28,42), man 8")
+    h20 = row(37, x=20, y=42, order=2)
+    sel = sp.pick_reactivation([h20], OWN, TABLE)
+    check("eligible, nearest same-parity own base named, not a one-stepper",
+          len(sel) == 1 and sel[0]["idx"] == 37 and sel[0]["man"] == 8
+          and sel[0]["on_step"] is False and sel[0]["reactivated"] is True)
+
+    print("case 26: a held unit STANDING ON our base is not eligible (`g` there "
+          "raises the BASE SCREEN — session 86 run5 t0)")
+    check("own-base tiles are dropped from the pool",
+          sp.pick_reactivation([row(3, x=28, y=42, order=2)], OWN, TABLE) == [])
+
+    print("case 27: our bases are OPPOSITE parity (70 even / 71 odd), so every "
+          "tile matches exactly one base — the dropped records are own-base "
+          "garrisons, whatever their parity")
+    check("(29,42) and (28,42) garrisons dropped; a Korolev-parity odd tile and a "
+          "University-parity even tile far out are BOTH eligible — (49,33) at man 21",
+          sp.pick_reactivation([row(9, x=29, y=42, order=2),     # own tile (odd)
+                                row(3, x=28, y=42, order=2)],    # own tile (even)
+                               OWN, TABLE) == []
+          and [r["idx"] for r in
+               sp.pick_reactivation([row(0, x=49, y=33, order=2)], OWN, TABLE)] == [0]
+          and sp.pick_reactivation([row(0, x=49, y=33, order=2)], OWN, TABLE)[0]["man"] == 21
+          and [r["idx"] for r in
+               sp.pick_reactivation([row(7, x=31, y=41, order=2)], OWN, TABLE)] == [7]
+          and sp.pick_reactivation([row(7, x=31, y=41, order=2)], OWN, TABLE)[0]["man"] == 3)
+
+    print("case 28: a one-stepper sorts AFTER a real multi-leg route")
+    sel = sp.pick_reactivation([row(41, x=26, y=42, order=2),   # on a step of (28,42)
+                                row(37, x=20, y=42, order=2)],  # 8 out
+                               OWN, TABLE)
+    check("the 8-out walker leads the 2-out one-step arrival",
+          [r["idx"] for r in sel] == [37, 41]
+          and sel[0]["on_step"] is False and sel[1]["on_step"] is True)
+
+    # ------- M54j: the walker, not a headcount — run4's false ARRIVED --------------
+    # run4 turn 2 (evidence/trace_m54j_run4_*.jsonl): the order moved (49,33) -> (47,33)
+    # — 2 of 21 tiles — and `verify_moves` printed ARRIVED because University Base
+    # already holds six type-2 records and the count fallback passed on the delta.
+    DEST = (28, 42)
+    ROUTE = [[28, 42]]
+
+    print("case 29: six garrisons on the destination are NOT the arrival")
+    six = [row(i, x=28, y=42, order=2) for i in range(6)]      # no route worn
+    check("walker_on_dest is False while the walker is 2 tiles out",
+          sp.walker_on_dest(six, 2, DEST, ROUTE) is False)
+
+    print("case 30: the record WEARING the ordered route, on the tile, IS the arrival")
+    arrived = six + [row(70, x=28, y=42, order=0, legs=[(28, 42)], mp=3)]
+    midwalk = six + [row(70, x=43, y=35, order=24, legs=[(28, 42)], mp=3)]
+    check("arrival True, mid-walk (route worn, wrong tile) False",
+          sp.walker_on_dest(arrived, 2, DEST, ROUTE) is True
+          and sp.walker_on_dest(midwalk, 2, DEST, ROUTE) is False)
+
+    print("case 31: a legs-less order (session 86 shape) keeps the type+tile reading")
+    check("empty route falls back to type+tile",
+          sp.walker_on_dest(six, 2, DEST, []) is True
+          and sp.walker_on_dest(six, 2, (20, 42), []) is False)
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 24/24 attribution cases")
+    print("PASS 31/31 attribution cases")
     return 0
 
 

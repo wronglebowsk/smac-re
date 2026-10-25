@@ -68,8 +68,15 @@ def main():
     orders = [o for o in attempts if o.get("verified")]
     mv_attempts = [m for t in turns for m in t.get("moves", [])]
     moves = [m for m in mv_attempts if m.get("landed")]
-    own_arrivals = [m for m in moves if m.get("dest_is_own_base")
-                    and list(m.get("frm")) != list(m.get("dest"))]
+    # M54j: an OWN-BASE ARRIVAL is a MULTI-TURN one — the walk must have been ORDERED
+    # on an earlier turn than the turn its landing is reported (`ordered_turn` is set
+    # when a queued 0x18 is carried into `verify_pending_walks`). A one-step landing
+    # inside the order turn is a landing, not a route; it still counts for --min-moves.
+    own_arrivals = [m for t in turns for m in t.get("moves", []) if m.get("landed")
+                    and m.get("dest_is_own_base")
+                    and list(m.get("frm")) != list(m.get("dest"))
+                    and m.get("ordered_turn") is not None
+                    and m["ordered_turn"] < t["turn"]]
     oturns = sorted({t["turn"] for t in turns if t.get("orders_verified")})
     msec = round(sum(t.get("move_seconds", 0) for t in turns), 1)
     deltas = {}
