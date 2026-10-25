@@ -83,3 +83,35 @@ re-reading; the game does not rewrite the bit. Clear it the same way when done. 
   `height+1`), which would make "level 6" tiles and "level 4" tiles reject for different
   reasons.
 * Tile records carry **two tiles** (`x>>1`); all observed reads use the first half only.
+
+## Walking: the queued MOVE (`0x18`) and when it runs (M54d/e, session 82)
+
+`g` = `FUN_004d6fb0(sel, 0x18, 0)`: destination is always one of OUR base tiles (the branch
+copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`-terminated,
+`+17` = 0x18) after a `SELECT DESTINATION` chooser pane. What the docs never said:
+
+* **The chooser's OK click is the trigger.** The click handler stores the byte; the game's own
+  order pump (`FUN_004ce4a0` → `FUN_00529e70` → `FUN_004d1200`) consumes it on the next tick.
+  Sampled live at 100 ms: `+0 ms order 24 xy(4,12) mp 0 legs 6,12` → `+100 ms order 0 xy(6,12)
+  mp 3`. The **year flip is not the pump** — a hand-parked `0x18` survived three TURN COMPLETEs
+  without moving. So `order_final 0` after EXEC proves nothing; watch `+17` *through* the OK.
+* **The window is tens of ms.** A read after the click lands either side of the consumption;
+  `smac_play.order_byte_watcher` samples `+17` at ~5 ms from a second `/proc/pid/mem` handle
+  across the click (a single read is a coin flip).
+* **Legs survive execution** (`order 0`, legs still name the destination), so the route is the
+  post-hoc evidence: verify the record sits ON the tile its own last leg names.
+* **Pathing refuses a tile its own owner occupies.** With 4 of ours on the base, the walker
+  oscillated between two neighbours across three EXECs; empty the base tile and the same order
+  lands in one tick. A walk therefore needs: our base tile free, the walker standing on a real
+  neighbour, `+17`/`+40`/legs cleared, `mp` 0.
+* **`(base.x+1, base.y)` is NOT a neighbour** — two columns live in one tile record
+  (`(mapw/2*y + x>>1)*0x2c`, even x `+0`, odd `+3`) and `FUN_00502c40`'s even-x delta tables
+  (`0x67850c` dx / `0x678990` dy) step `(±2,0)` and `(±1,±1)`. Proven live both ways: `Left`
+  moved a Scout (6,12)→(4,12); one `g` walked a Formers record (4,12)→(6,12). Standing a unit
+  at `base+1` looks adjacent and is not.
+* **Arrows queue no order** on this build (`+17` unchanged for Left/Right/Up/Down plain and
+  Shift, five records, with and without the `0x10000` moved-bit cleared). §"0x19 = Shift+arrow"
+  is a static note, not a reachable keyboard path here.
+* **Making a Former without the game**: `+10` type 2 → 1 gives class 9 (`+11` is *not* the
+  class — read `unit_class()`), same 52-byte record, walks and terraforms. `scripts/m54e_prep.py`
+  does exactly that so a walk can be demonstrated on a save with no Former.

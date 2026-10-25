@@ -1,0 +1,15 @@
+M54e pre-run census — the position the 40-turn run `trace_m54e40_20261025_010855.jsonl` started from.
+
+    python3 scripts/m54e_prep.py && python3 scripts/m54d_census.py
+
+POKE base (6,12) -> empty; garrison [0, 2, 5] -> (4,12)
+POKE rec0: type -> 1 (cls 9) at (4,12), order 0, mp 0, legs cleared
+CENSUS pid=484088 year=2160 turn_no=0 player=3 cur_player=3 units_ours=5 class9=2
+       bases_total=21 bases_ours=1 class_mix={"3": 3, "9": 2}
+  CLASS9 rec  0 type  1 cls  9 ( 4,12) order  0 mp 0 frozen 0 flags 0x4010000 on_own_base=False legs=[-1,-1,-1,-1] legs_y=[-1,-1,-1,-1]
+  CLASS9 rec  2 type  1 cls  9 ( 4,12) order  0 mp 0 frozen 0 flags 0x10000   on_own_base=False legs=[ 6,-1,-1,-1] legs_y=[12,-1,-1,-1]
+
+The acceptance line is the CLASS9 pair: two class-9 (Formers) records we own, standing off
+our own base tile, both with movement unspent and no order queued — the position a `g` walk
+can actually land in (base tile empty, walker on a real neighbour). The run then did the rest
+without a poke: `g`, the SELECT DESTINATION chooser, the `+17` delta, the leg array, the walk.

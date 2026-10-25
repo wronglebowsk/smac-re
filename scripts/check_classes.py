@@ -32,6 +32,7 @@ DEFAULT = [
     ("m54d/m54d_move_afterg.png", "dest-chooser", "M54d: the `g` chooser (SELECT DESTINATION + a base row + its own OK/CANCEL row at y 162) — was `hud`, so it swallowed 10 keypresses with zero order bytes"),
     ("m54d/synth_chooser.png",  "dest-chooser", "M54d: the same chooser over a unit off its base; the listed Distance is the CURSOR's, not the unit's"),
     ("m54d/peek_stuck.png",     "artwork-close", "M54d: full-screen scene panel with its own red CLOSE bar (y 579-599, x 596-799) — was `movie`, whose only answer is the gated Escape; two runs froze on it"),
+    ("m54e/chooser_live.png",   "dest-chooser", "M54e: the chooser as the LIVE loop caught it (unit off its base, HUD news pane under it) — session 81's run classified its live chooser frame `unknown`, so the driver must answer this pane and not fall through to Return"),
 ]
 
 
