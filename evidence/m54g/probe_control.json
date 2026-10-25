@@ -1,0 +1,178 @@
+{
+ "pid": 645846,
+ "unit": 3,
+ "key": "b",
+ "poke_type": null,
+ "events": [
+  {
+   "t": 18.3,
+   "order": 1,
+   "bases_ours": 1,
+   "kind": "base",
+   "text": "betore discover governior bud conquer qutrients an base facilities seeeeeeee a ee eh headquaner fs seeeeeeee pai se fs p"
+  },
+  {
+   "note": "base screen: Escape"
+  },
+  {
+   "t": 73.2,
+   "order": 1,
+   "bases_ours": 1,
+   "kind": "base",
+   "text": "explore discover governor build conquer 4 nutrients oe base facilities ereeeeeses e aa headquarters q seeeeeeee es a etw"
+  },
+  {
+   "note": "base screen: Escape"
+  }
+ ],
+ "before": {
+  "x": 28,
+  "y": 42,
+  "flags": 0,
+  "type": 2,
+  "owner": 3,
+  "order": 1,
+  "mpused": 0,
+  "raw": "1c002a0000000000000002000000030000010000ffffffffffffffff0000ffffffffffff01000001000200000000000000000700"
+ },
+ "bases_before": 1,
+ "after": {
+  "x": 28,
+  "y": 42,
+  "flags": 0,
+  "type": 2,
+  "owner": 3,
+  "order": 1,
+  "mpused": 0,
+  "raw": "1c002a0000000000000002000000030000010000ffffffffffffffff0000ffffffffffff01000001000200000000000000000700"
+ },
+ "bases_after": 1,
+ "base_list_after": [
+  {
+   "idx": 0,
+   "x": 28,
+   "y": 42,
+   "faction": 3,
+   "name": ""
+  },
+  {
+   "idx": 1,
+   "x": 12,
+   "y": 14,
+   "faction": 2,
+   "name": ""
+  },
+  {
+   "idx": 2,
+   "x": 2,
+   "y": 18,
+   "faction": 2,
+   "name": ""
+  },
+  {
+   "idx": 3,
+   "x": 7,
+   "y": 27,
+   "faction": 4,
+   "name": ""
+  },
+  {
+   "idx": 4,
+   "x": 4,
+   "y": 4,
+   "faction": 5,
+   "name": ""
+  },
+  {
+   "idx": 5,
+   "x": 10,
+   "y": 56,
+   "faction": 6,
+   "name": ""
+  },
+  {
+   "idx": 6,
+   "x": 61,
+   "y": 11,
+   "faction": 2,
+   "name": ""
+  },
+  {
+   "idx": 7,
+   "x": 12,
+   "y": 28,
+   "faction": 4,
+   "name": ""
+  },
+  {
+   "idx": 8,
+   "x": 57,
+   "y": 13,
+   "faction": 7,
+   "name": ""
+  },
+  {
+   "idx": 9,
+   "x": 14,
+   "y": 56,
+   "faction": 6,
+   "name": ""
+  },
+  {
+   "idx": 10,
+   "x": 5,
+   "y": 11,
+   "faction": 2,
+   "name": ""
+  },
+  {
+   "idx": 11,
+   "x": 15,
+   "y": 11,
+   "faction": 2,
+   "name": ""
+  },
+  {
+   "idx": 12,
+   "x": 12,
+   "y": 6,
+   "faction": 5,
+   "name": ""
+  },
+  {
+   "idx": 13,
+   "x": 7,
+   "y": 17,
+   "faction": 4,
+   "name": ""
+  },
+  {
+   "idx": 14,
+   "x": 20,
+   "y": 10,
+   "faction": 1,
+   "name": ""
+  },
+  {
+   "idx": 15,
+   "x": 1,
+   "y": 61,
+   "faction": 6,
+   "name": ""
+  },
+  {
+   "idx": 16,
+   "x": 16,
+   "y": 4,
+   "faction": 5,
+   "name": ""
+  },
+  {
+   "idx": 17,
+   "x": 23,
+   "y": 53,
+   "faction": 6,
+   "name": ""
+  }
+ ]
+}

@@ -1,30 +1,6 @@
 
 
-## Session 72 (2026-10-24) — M53Q3: **THE SEMANTIC INDEX NOW CONTAINS OUR FINDINGS — `note_chunks()` used to hold only SESSION_NOTES + rotated archives (42 chunks vs 2,790 decompiled functions) and truncated every section at 1500 chars, so `index.py search` could not find a single evidence note; it now chunks every `evidence/*.md`, `skill/references/*.md` and `NAMED.md` row (2,832 -> 3,465 chunks) with a +0.02 note prior, and the two queries that used to fail now return the right hits at rank 1-2** — `scripts/index.py`, `docs/SEARCH.md`
-- **Diagnosis (VERIFIED).** `index/meta.json` had 2,790 functions / 42 notes; `note_chunks()` read only
-  `SESSION_NOTES.md` + `docs/sessions/*.md` and did `text[:MAX_CHARS]`, so long session sections lost
-  their tail citations and no `evidence/*.md` was indexed at all. `source_fingerprint()` hashed only
-  SESSION_NOTES + Ghidra shards, so editing a finding never marked the index stale. Measured failure:
-  `search "unit chain link field +48 +50 livelock"` returned 8 unrelated functions (FUN_005ab130 and
-  FUN_005a6330 absent); `search "energy-only residual in the middle pass c4"` ranked our own note 7th at
-  0.722 vs 0.734 for noise (0.012 spread over 2,832 candidates). Only consumer: `scripts/index.py`
-  (grep over `~`), so the 258v GPU was idle ~all day.
-- **Fix (VERIFIED by rebuild + acceptance test).** `_note_sources()` = SESSION_NOTES + NAMED + every
-  `evidence/*.md` + every `skill/references/*.md` + `docs/sessions/*.md`; `_pack()` splits sections into
-  <=1400-char windows (no truncation); one chunk per NAMED row (`named:<line>`); `source_fingerprint()`
-  covers all of them; `NOTE_PRIOR = 0.02` added to note cosine scores. Rebuild: **3,465 chunks
-  (2,790 functions, 675 notes), 409-693 chunks embedded in 16-24 s**; full rebuild stays cheap because
-  the digest cache only re-embeds changed chunks.
-- **Acceptance test (the point of the milestone).** `search "unit chain link +48 +50 livelock"` ->
-  `NAMED.md:485` (`0x5a6330`, walks `+48`) rank 1, `NAMED.md:484` (`0x5ab130`, walks `+50`) rank 2.
-  `search "energy-only residual in the middle pass c4"` -> `evidence/m53p_j_findings.md:75` rank 1,
-  `evidence/m53p_partial_findings.md:32` rank 2, `evidence/m53p_swap_findings.md:58` rank 6. Before the
-  fix: zero on-point hits in either.
-- Caveat: `skill/references/wine-operations.md` (moved verbatim from the old SKILL.md) also contains the
-  7-vector-add-site digest, so it competes with `production-rebuild.md` for production questions — worth
-  splitting when that file is next touched.
-- **Next:** `NEXT_PROMPT.md` — M53q unchanged (implement `build_table`); `index.py search` is now the
-  first look-up step before grepping.
+Older sessions: `docs/sessions/sessions-72-72.md` (1 sessions). Read it only when a question reaches back before session ## Session 73.
 
 ## Session 73 (2026-10-24) — M53q: **`build_table()` IS IMPLEMENTED — the per-visit scan pool is recomputed per base, and the entry filter turns out to be a NO-OP (pool∩fresh = {bit 0} on 76/76 rows); the M53p 'stale-global contamination' framing is superseded** — `scripts/m53p_recon_a.py::build_table`, `evidence/m53q_findings.md`
 - **Implementation (VERIFIED vs the live cur base).** `build_table(idx) -> (table[25], mask21)` transcribes
@@ -608,3 +584,74 @@ wedge — turns still flip — but do not read bit `0x2` as "the run is stuck".
 **Next (M54g):** found a second base — key the Former settle order (NAMED.md 120-146 +
 the unit panel buttons), walk a Former to a tile it can enter, and prove `bases_ours 1 -> 2` in
 one unattended run with `--min-our-bases 2`.
+
+## Session 84 (2026-10-25) — M54g: **THE FOUNDING IS KEYED (`b`, ORDERS MODE ON): THE LOOP FOUNDED "KOROLEV CENTER" AND THE CHECKER PASSED THE `bases_ours 2` FLOOR** — changed `scripts/smac_play.py` (name-pane class, `tile_recs` deref + live pitch, `founding_gate`, `issue_found_for_unit`, the in-loop hook), `scripts/m54a_check_run.py` (a founding is labelled, not byte-keyed), `scripts/test_classify.py` + `scripts/check_classes.py` (16 frames), new `scripts/m54g_probe.py`, `scripts/m54g_prep.py`, this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
+
+**Box first.** State read clean and matched the footing (year 2155, pid 645846,
+`bases_ours 1`, `units_ours 6`). Two things the footing got wrong, both measured:
+
+1. **The tile array was being read at the wrong address by the driver.** `0x92ae14` holds a
+   POINTER (M35 said so) and the row pitch is `DAT_00692184`, which is **32** here — the map
+   is **64x64**, not 80x80; `smac_play.tile_recs` indexed the slot itself with a hard-coded
+   40 and returned all-zero "tiles" under a base that is visibly there. Fixed: deref + read
+   the pitch live.
+2. **We own six Scout Patrols (type 2, class 3) and no Former**, so the footing's "Former
+   settle" premise had no subject. There is **no `SETTLE` string anywhere in the exports** and
+   no settle row in `#TERRAIN`; base founding is the **`b`** handler `FUN_004d1280`, gated on
+   **class 8** (`NEEDCOLONISTS`, `shard_012.c:2852`). The prep therefore pokes `+10` 2 -> 0
+   (Colony Pod/Conestoga = class 8) on one record, as `m54e_prep` already poked `+10` -> 1
+   for its Former.
+
+**How the key was found (one variable per step, memory-first).** OCR is ~15 s a poll on this
+box and a clean HUD sometimes classifies `unknown`, so the first OCR-paced probe loop spammed
+Return at the HUD (Return at a HUD is TURN COMPLETE — the year moved 2155->2156) and its
+"control" was confounded. Staged probe (`scripts/m54g_probe.py`):
+* selection alone (`SEL_G` poke, no key) leaves the HUD (`scratch` run: kind `hud`) — the pane
+  in the early controls was opened by the KEY, not the selection;
+* `b` with **orders mode OFF** (`0x91b5b8 == 0`) opened the **BASE screen** of the base near
+  the cursor — `b` is a MAP-level key in that state (`evidence/m54g/probe_c_control.json`);
+* `b` with orders mode ON on a class-3 unit: dispatcher reached, nothing founded
+  (`probe_omode.json`); class-8 unit on a rocky tile (26,42): nothing (`probe_offbase.json` —
+  `founding_gate` predicts NOTONROCKY from `b5 = 0x83`); class-8 unit on a tile the gate model
+  calls LEGAL (26,43): **NEWBASE up** — OCR "enter a name for your new base … korolev center"
+  (`evidence/m54g/probe_found1.json`), and **Return founded it: a faction-3 base record appeared
+  at (26,43) 0.1 s later, `bases_ours 1 -> 2`, and the founding unit's record compacted away**
+  (index 11 then read x4,y4,type320). The gate model (`founding_gate()`, a line-by-line mirror
+  of `FUN_004d1280`: NOTINTRIAD / FUNGUSDANGUS / NOTONMONOLITH / NOTONROCKY / BASETOONEAR over
+  the 8 delta-table neighbours) predicted every live refusal and the one live acceptance.
+* **NEWBASE classifies `hud`** (caption y 102, generated name at y 135, TURN COMPLETE still
+  drawn under it) — the classic key sink. New class `name-pane` (caption-band test), pinned
+  with a saved frame BEFORE the driver used it.
+
+**ACCEPTANCE NUMBERS (MET).** Reloaded clean save (`m54a_load.py --relaunch`, HUD live 27 s),
+`smac_state.py --json` -> year 2150, `turn_flags 0`, `bases_ours 1`, `units_ours 6`;
+`m54g_prep.py` -> rec0 `+10 = 0` (class 8), `x,y = (29,42)` (nearest tile `founding_gate`
+calls LEGAL), `+17 = 0`, all read back (`evidence/m54g/prep.json`). Then ONE unattended run:
+`python3 scripts/smac_play.py --turns 6 --timeout 240 --no-escape 3000 --tag m54g --verbose`
+-> `evidence/trace_m54g_20261025_084554.jsonl`, whose turn 0 carries
+`FOUND rec0 (29,42) type 0 gates legal -> bases 1->2 at (29, 42) panes ['name-pane'] (5.6s)`.
+`python3 scripts/m54a_check_run.py evidence/trace_m54g_20261025_084554.jsonl --timeout 240
+--min-our-bases 2` -> `advanced 6/6`, `year deltas {1: 6}`, `stuck 0` (max dt 43.6 s),
+`orders 11 VERIFIED of 11` with `order mix {"b->founded": 1, "l->byte1": 10}`,
+`ours bases_ours 2 units_ours 7 floor 2`, **`PASS ... we still hold 2 bases`**.
+Read back independently after the run: `smac_state.py --json` -> `n_bases 19 bases_ours 2`;
+the census lists **idx 18 (29,42) faction 3 "Korolev Center"** beside University Base (28,42).
+Classifier gates: `test_classify.py` -> `PASS 16/16`, `check_classes.py` -> `frames: 16
+failures: 0` (the `_3x.png` siblings deleted right after).
+
+**Open.** (a) The footing's premise is retracted: the founding is not a "Former settle" and it
+writes **no order byte** — its oracle is the base array, so the acceptance line "verified by
+the `+17` delta" was replaced by "verified by a new faction-3 base record at the unit's tile".
+(b) The unit was POKE-positioned onto the founding tile (a garrisoned unit cannot be ordered
+off its own base on this build: `g` refuses it, Shift+arrow queued nothing on a type-0 unit at
+(28,42)) — so the M54g walk-then-found sequence is still unproven, and the second base sits on
+the tile that visually belongs to University Base's footprint (the game's own BASETOONEAR scan
+accepts it because the delta tables are parity-shifted). (c) Founding cost 0 energy here
+(`energy_delta 0`) — the cost model for founding is unpinned. (d) The type poke makes the
+DISPATCHER treat the record as a Conestoga; whether the pump's movement would follow the poked
+type is untested. (e) 4 `unknown` panes in this run's trace (turns 1, 3, 4) still unpinned.
+
+**Next (M54h):** found a base the loop REACHED, not one it was poked onto — give the loop a
+second own-base tile to walk to (the `g` chooser now has two destinations: University Base and
+Korolev Center), land a queued MOVE between them with `--min-moves`, then found a third base
+off the garrison with no position poke at all.

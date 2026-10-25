@@ -1,0 +1,67 @@
+{
+ "pid": 914329,
+ "state_before": {
+  "year": 2150,
+  "year_start": 2100,
+  "year_limit": 2600,
+  "turn_no": 0,
+  "player": 3,
+  "player_mask": 65288,
+  "cur_player": 3,
+  "mode_flags": 0,
+  "turn_flags": 0,
+  "sema_done": 0,
+  "sema_mp": 0,
+  "n_bases": 18,
+  "pid": 914329,
+  "bases_ours": 1,
+  "units_ours": 6
+ },
+ "pokes": [
+  {
+   "unit": 0,
+   "off": 10,
+   "want": 0,
+   "readback": 0,
+   "label": "type -> Colony Pod (class 8)"
+  },
+  {
+   "unit": 0,
+   "off": 0,
+   "want": 29,
+   "readback": 29,
+   "label": "x -> founding tile"
+  },
+  {
+   "unit": 0,
+   "off": 2,
+   "want": 42,
+   "readback": 42,
+   "label": "y -> founding tile"
+  },
+  {
+   "unit": 0,
+   "off": 17,
+   "want": 0,
+   "readback": 0,
+   "label": "order byte cleared"
+  }
+ ],
+ "unit_after": {
+  "x": 29,
+  "y": 42,
+  "type": 0,
+  "order": 0,
+  "mpused": 0,
+  "flags": 67108864
+ },
+ "gate_after": [],
+ "cls_after": 8,
+ "own_tiles_after": [
+  [
+   28,
+   42
+  ]
+ ],
+ "energy": 69
+}

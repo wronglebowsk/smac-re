@@ -1,0 +1,167 @@
+{
+ "pid": 645846,
+ "unit": 7,
+ "key": "b",
+ "poke_type": null,
+ "stages": [
+  {
+   "stage": 0,
+   "rec": {
+    "x": 28,
+    "y": 42,
+    "flags": 0,
+    "type": 2,
+    "owner": 3,
+    "order": 1,
+    "mpused": 0,
+    "raw": "1c002a0000000000000002000000030000010000ffffffffffffffff0000ffffffffffff04000001000200000000000003000b00"
+   },
+   "bases_ours": 1,
+   "sel": 3
+  },
+  {
+   "stage": 1,
+   "sel": 7,
+   "kind": "unknown",
+   "text": "ct ee a ae joie ete eprint ae ea mo mill c baie ize pop chaimmen ifn elev 10m vwestth ceo morgan flat rainy temitorgy sister mingarn overall c o ig 39 9 a missi"
+  },
+  {
+   "stage": 2,
+   "changed": null,
+   "bases_ours": 1,
+   "order": 0,
+   "sel": 7,
+   "kind": "base",
+   "text": "explore discover governor build conquer 4 nutrients oe base facilities ereeeeeses e aa headquarters q seeeeeeee es a etwork node a e flm growth stagnant sa een "
+  },
+  {
+   "stage": "esc",
+   "kind": "unknown",
+   "text": "elew lor izo 30 mission year 2156 sy energy 81 7"
+  },
+  {
+   "stage": 9,
+   "rec": {
+    "x": 28,
+    "y": 42,
+    "flags": 0,
+    "type": 2,
+    "owner": 3,
+    "order": 0,
+    "mpused": 0,
+    "raw": "1c002a0000000000000002000000030000000000ffffffffffffffff0000ffffffffffff04000001000200000000000003000b00"
+   },
+   "bases_ours": 1,
+   "base_list": [
+    {
+     "idx": 0,
+     "x": 28,
+     "y": 42,
+     "faction": 3
+    },
+    {
+     "idx": 1,
+     "x": 12,
+     "y": 14,
+     "faction": 2
+    },
+    {
+     "idx": 2,
+     "x": 2,
+     "y": 18,
+     "faction": 2
+    },
+    {
+     "idx": 3,
+     "x": 7,
+     "y": 27,
+     "faction": 4
+    },
+    {
+     "idx": 4,
+     "x": 4,
+     "y": 4,
+     "faction": 5
+    },
+    {
+     "idx": 5,
+     "x": 10,
+     "y": 56,
+     "faction": 6
+    },
+    {
+     "idx": 6,
+     "x": 61,
+     "y": 11,
+     "faction": 2
+    },
+    {
+     "idx": 7,
+     "x": 12,
+     "y": 28,
+     "faction": 4
+    },
+    {
+     "idx": 8,
+     "x": 57,
+     "y": 13,
+     "faction": 7
+    },
+    {
+     "idx": 9,
+     "x": 14,
+     "y": 56,
+     "faction": 6
+    },
+    {
+     "idx": 10,
+     "x": 5,
+     "y": 11,
+     "faction": 2
+    },
+    {
+     "idx": 11,
+     "x": 15,
+     "y": 11,
+     "faction": 2
+    },
+    {
+     "idx": 12,
+     "x": 12,
+     "y": 6,
+     "faction": 5
+    },
+    {
+     "idx": 13,
+     "x": 7,
+     "y": 17,
+     "faction": 4
+    },
+    {
+     "idx": 14,
+     "x": 20,
+     "y": 10,
+     "faction": 1
+    },
+    {
+     "idx": 15,
+     "x": 1,
+     "y": 61,
+     "faction": 6
+    },
+    {
+     "idx": 16,
+     "x": 16,
+     "y": 4,
+     "faction": 5
+    },
+    {
+     "idx": 17,
+     "x": 23,
+     "y": 53,
+     "faction": 6
+    }
+   ]
+  }
+ ]
+}

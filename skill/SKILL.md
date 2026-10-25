@@ -36,8 +36,10 @@ python3 cvr_decode.py --render programs/Drop.cvr          # -> Drop.render.png i
 Never commit to `main`. Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
 (must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
-`NEXT_PROMPT.md` (<=15,500 bytes). After editing the LIVE skill, copy `SKILL.md` **and** `references/`
-into `skill/` — the gate compares only `SKILL.md`, so an edited reference drifts silently.
+`NEXT_PROMPT.md` (<=15,500 bytes). After editing the LIVE skill, run `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`
+— the gate compares only `SKILL.md`, so an edited reference, template or script drifts silently
+otherwise. Editing this skill therefore leaves the repo copy stale until the next sync; do that
+sync in the same session, before the closing commit.
 
 ## Session discipline (this project is context-heavy)
 
@@ -55,7 +57,9 @@ Write it as a self-contained block, not a chat summary: first actions (skill_vie
 files to read), current footing (what is proven, do not re-derive), in-flight work with the
 exact verify/rerun command, ONE-milestone options, the operational kit (launch command,
 preflight, coordinates/OCR rules), and the report style. It must work for an agent that has
-none of this conversation. Keep every tool result small:
+none of this conversation. A reusable, milestone-agnostic version of that block lives in
+`templates/session-kickoff.md` — copy it and substitute the milestone id and session number.
+Keep every tool result small:
 grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dumps in
 `~/reverse/smac/` instead of re-dumping; page Ghidra facets in small slices; reuse saved
 screenshots and take a new one only after a real state change.
@@ -111,10 +115,12 @@ and its 8 surviving records sat stacked on one limbo tile with `turn_flags` stuc
 The defeat was invisible because the trace snapshot carried only the map-wide base count, never
 "how many bases do WE own".
 
-- After every unattended run, re-read the position with the census and assert the outcome out
-  loud: bases of our faction, where our records stand, `turn_flags == 0`. Put the outcome fields
-  (`bases_ours`, `units_ours`) into the snapshot the driver writes, and give the checker a floor
-  flag defaulting to 0 so old traces still parse.
+- After every unattended run, re-read the position and assert the outcome out loud: bases of our
+  faction, where our records stand, `turn_flags`. The plumbing exists — `scripts/smac_state.py
+  --json` prints `bases_ours`/`units_ours`, `smac_play.py` carries both in every per-turn
+  `state_before`/`state_after`, and `m54a_check_run.py --min-our-bases N` fails a run that loses
+  the position. **Use the floor on every run that is supposed to keep what it has**; it fails
+  closed, so a trace predating the fields FAILs instead of passing vacuously.
 - **Never write a handoff sentence about where the game ended up from the plan.** "The garrison is
   back on University Base" was inferred from the pre-run census plus the walk destinations, never
   read back, and was false. Read it, then quote the numbers.
@@ -153,13 +159,26 @@ The address/field atlas (base-record offsets, terrain record formula, faction + 
 map, pointer-type scale traps, VA→function recipe) lives in `references/code-atlas.md`. Open it when you
 need a field offset — do not re-derive one from pseudocode: Ghidra types some DATs `short*`/`int*`, so a
 pseudocode offset can be HALF or 4x the real byte offset.
-**Unit-record offset drift:** the type is the byte at `+4` and `+10` is a FLAG WORD — that is what
-`SAVE_FORMAT.md` (159-163) and `FOOTING.md` (108) say, and a live decode agrees (`+4` reads
-117/119 records plausibly and the records the screen shows as Colony Pods read `+4 = 0`; `+10`
-produces impossible types 192/322). `m54d_census.py`, `smac_play.unit_rec` and the in-loop order
-step still read `+10`, so treat every "class N" label they print as suspect until it is settled
-with a `+4` poke whose unit panel is legible. The movement/order fields (`+0/+2`, `+17`,
-`+20..+35`, `+40`) are unaffected — they were validated by pokes the game obeyed.
+**Unit-record type field — SETTLED: the u16 at `+10`. `+4` is the flags dword.** An earlier
+version of this paragraph claimed type@`+4` and `+10`=flags; that was wrong, and `FOOTING.md`
+("type byte@4") and `SAVE_FORMAT.md` ("`+10` is a flag word") have been corrected to match.
+Proof is the accessor, not a screen correlation: the class table is indexed with
+`*(short *)((int)&DAT_00933282 + rec_off) * 0x34` (`shard_012.c:2150`; same shape at `:2117`,
+`:2148`, `shard_001.c:4153`, `:4312`, `:9466`) and `DAT_00933282` is `UNIT_ARR + 0x0A`. The
+screen agrees — a selected record reads "Scout Patrol" on the panel with `+10 = 2`. `+10`
+values of 128/256/320 mark EMPTY STALE SLOTS: filter `type < 24` (and x/y in range) before
+counting a record as a unit. Movement/order fields (`+0/+2`, `+17`, `+20..+35`, `+40`) were
+never in doubt — pokes the game obeyed validated them.
+
+Two rules that generalise from how this one went wrong:
+- **Settle a field's identity from the binary accessor, not from which candidate looks plausible
+  on a dump.** Grep the table base (`grep -n '98adb2\|933282' ghidra_out/*.c`), then read the
+  cast: `*(short *)((int)&DAT_x + off)` gives the WIDTH and the OFFSET at once, and the code that
+  consumes it names the semantics. A correlation over live records only ranks candidates.
+- **Never compare candidate offsets on a state you already know is degraded.** The "`+4` wins
+  117/119" measurement was taken on records sitting in limbo after the faction lost its bases,
+  where the flags byte reads 0 on most records. Re-run layout questions on a freshly loaded,
+  healthy save, and do not let a format doc outvote code that demonstrably works.
 
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && $1<=A {n=$2;p=$1} END{print

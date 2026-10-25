@@ -1,0 +1,171 @@
+{
+ "pid": 645846,
+ "unit": 11,
+ "key": "b",
+ "poke_type": null,
+ "stages": [
+  {
+   "stage": 0,
+   "rec": {
+    "x": 26,
+    "y": 42,
+    "flags": 67108880,
+    "type": 0,
+    "owner": 3,
+    "order": 0,
+    "mpused": 0,
+    "raw": "1a002a0010000004000000000000030000000000ffffffffffffffff0000ffffffffffff010000010002000000000000ffffffff"
+   },
+   "bases_ours": 1,
+   "sel": 11
+  },
+  {
+   "stage": "orders_mode",
+   "readback": 1
+  },
+  {
+   "stage": "pokexy",
+   "x": 26,
+   "y": 43
+  },
+  {
+   "stage": 1,
+   "sel": 11,
+   "kind": "hud",
+   "text": "ae so ue ip ag mission year 2358 o turn complete by w econ 50 2 tum i elev 1502m w psych 0 4 colony pod rocky arid i labs 50 20 tums 0 1 2 university base q 1 m"
+  },
+  {
+   "stage": 2,
+   "changed": null,
+   "bases_ours": 1,
+   "order": 0,
+   "sel": 11,
+   "kind": "hud",
+   "text": "i enter a name for your new base a eeu da korolev center ge sp wi eee es ft i turncomplete ca s a 22 elew 16502m colony pod rockyeteaud eee oe b moves 1 no orde"
+  },
+  {
+   "stage": 9,
+   "rec": {
+    "x": 26,
+    "y": 43,
+    "flags": 67108880,
+    "type": 0,
+    "owner": 3,
+    "order": 0,
+    "mpused": 0,
+    "raw": "1a002b0010000004000000000000030000000000ffffffffffffffff0000ffffffffffff010000010002000000000000ffffffff"
+   },
+   "bases_ours": 1,
+   "base_list": [
+    {
+     "idx": 0,
+     "x": 28,
+     "y": 42,
+     "faction": 3
+    },
+    {
+     "idx": 1,
+     "x": 12,
+     "y": 14,
+     "faction": 2
+    },
+    {
+     "idx": 2,
+     "x": 2,
+     "y": 18,
+     "faction": 2
+    },
+    {
+     "idx": 3,
+     "x": 7,
+     "y": 27,
+     "faction": 4
+    },
+    {
+     "idx": 4,
+     "x": 4,
+     "y": 4,
+     "faction": 5
+    },
+    {
+     "idx": 5,
+     "x": 10,
+     "y": 56,
+     "faction": 6
+    },
+    {
+     "idx": 6,
+     "x": 61,
+     "y": 11,
+     "faction": 2
+    },
+    {
+     "idx": 7,
+     "x": 12,
+     "y": 28,
+     "faction": 4
+    },
+    {
+     "idx": 8,
+     "x": 57,
+     "y": 13,
+     "faction": 7
+    },
+    {
+     "idx": 9,
+     "x": 14,
+     "y": 56,
+     "faction": 6
+    },
+    {
+     "idx": 10,
+     "x": 5,
+     "y": 11,
+     "faction": 2
+    },
+    {
+     "idx": 11,
+     "x": 15,
+     "y": 11,
+     "faction": 2
+    },
+    {
+     "idx": 12,
+     "x": 12,
+     "y": 6,
+     "faction": 5
+    },
+    {
+     "idx": 13,
+     "x": 7,
+     "y": 17,
+     "faction": 4
+    },
+    {
+     "idx": 14,
+     "x": 20,
+     "y": 10,
+     "faction": 1
+    },
+    {
+     "idx": 15,
+     "x": 1,
+     "y": 61,
+     "faction": 6
+    },
+    {
+     "idx": 16,
+     "x": 16,
+     "y": 4,
+     "faction": 5
+    },
+    {
+     "idx": 17,
+     "x": 23,
+     "y": 53,
+     "faction": 6
+    }
+   ]
+  }
+ ]
+}

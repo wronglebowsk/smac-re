@@ -93,7 +93,11 @@ def main():
     if orders:
         keys = {}
         for o in orders:
-            keys[f"{o['key']}->byte{o['order_after']}"] = keys.get(f"{o['key']}->byte{o['order_after']}", 0) + 1
+            # M54g: the colonist founding writes NO order byte — its proof is the base
+            # array — so label that entry by what it did instead of by a byte.
+            lbl = "founded" if o.get("label") == "found-base" else f"byte{o.get('order_after')}"
+            k = f"{o['key']}->{lbl}"
+            keys[k] = keys.get(k, 0) + 1
         print(f"order mix  {json.dumps(keys, sort_keys=True)}  "
               f"energy spent {sum(o.get('energy_delta', 0) for o in orders)}")
     print(f"moves      {len(moves)} LANDED of {len(mv_attempts)} ordered walks "
