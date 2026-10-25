@@ -222,3 +222,39 @@ OCR), a dud costs one OCR + pane service. A turn's step is capped by `--order-bu
 three times is retired for the rest of the run, and a unit type that refuses every key is
 deprioritised, so a Formerless position costs a few keypresses on turn one and nothing
 after. `--orders-per-turn` (default 2) and `--no-orders` bound the ambition.
+
+## 7. When the queued MOVE actually runs (M54e, session 82, 2026-10-25)
+
+`g` lands `0x18` and the record carries the route; what M54d could not show is the walk
+executing. Measured on this build (`scripts/m54e_probe.py`, pid 484088, save
+`/tmp/snap_parked_18`, base = University (6,12)):
+
+* **The `SELECT DESTINATION` chooser's OK is the trigger, not EXEC.** Sampling `+17` and
+  the whole record live at 100 ms resolution across the OK click: `+0 ms order 24 xy
+  (4,12) mp 0 legs 6,12`; `+100 ms order 0 xy (6,12) mp 3`. The byte is written by the
+  click handler and consumed by the game's own order pump (`FUN_004ce4a0` → `FUN_00529e70`
+  → `FUN_004d1200`, `ghidra_out/shard_012.c:1364`, `shard_013.c:17276`) on the next tick.
+  Three TURN COMPLETEs with a hand-parked `0x18` aimed at an empty tile moved nothing, so
+  the year flip is not the pump and an `order_final 0` after EXEC proves nothing.
+* **The byte window is tens of milliseconds wide.** One read after the click lands on
+  either side of it — session 81 recorded `order_after 0` on a walk that had already
+  happened. `order_byte_watcher` samples `+17` at ~5 ms from a second `/proc/pid/mem`
+  handle *through* the click, so the delta the milestone asks for is the byte itself.
+* **The leg arrays survive the pump** (`order 0`, legs still `6/12` after the arrival), so
+  the route is still readable after the walk — that is how the loop names the tile to
+  verify against, and why it parses legs even when the byte was already consumed.
+* **The game will not path into a tile its own owner occupies.** With four of ours standing
+  on University Base the walker oscillated (6,13)<->(7,12) across three EXECs and never
+  arrived; the same order landed the moment the base tile was emptied. `g` can only name a
+  BASE tile (§1, §4: the 0x18 branch copies `base[piVar21].x/y` into `+20/+28`), so an
+  ordered walk needs our own base tile FREE. `scripts/m54e_prep.py` sets exactly that.
+* **`(base.x+1, base.y)` is not a neighbour.** The map packs two columns per tile record
+  (`DAT_0092ae14 + (mapw/2*y + x>>1)*0x2c`, even x at `+0`, odd at `+3`) and
+  `FUN_00502c40`'s even-x delta tables (`0x67850c` dx, `0x678990` dy) step `(±2,0)` and
+  `(±1,±1)`. Live in both directions: a Scout Patrol took (6,12)→(4,12) on one `Left` and
+  the made Formers record walked (4,12)→(6,12) on one `g`. M54d's prep stood its unit at the
+  non-neighbour, which is most of why its walk line was unmet.
+* **Arrows queue nothing on this build.** `Left`/`Right`/`Up`/`Down` (plain and Shift) left
+  `+17` at 0 on five different records, with and without the `0x10000` "has moved" bit
+  cleared — so §4's `0x19` (Shift+arrow, M27) is not reachable from this save's keyboard
+  path, and the cursor path (§1 rule 2) is not an order.

@@ -1341,6 +1341,42 @@ def answer_terraform_pane(words, verbose=False):
 # Enricher or 0xa by tile bits) that happen BEFORE validation, so the landed byte can
 # legitimately differ from the pressed key's mode. `expected_byte` is recorded anyway.
 
+def order_byte_watcher(idx, stop, out, dur=1.5):
+    """M54e: sample unit `+17` at ~5 ms resolution from a second /proc/pid/mem handle.
+
+    The `g` chooser's OK click lands the byte and the game's own order pump eats it a tick
+    later; the gap is tens of milliseconds, and a single read after the click lands on
+    either side of it (session 81 read 0 and called the order unverified; the 2026-10-25
+    smoke run read 0 on a walk that had already landed). A burst that spans the click
+    catches the byte itself, which is the delta the milestone asks for.
+    """
+    import threading
+
+    def loop():
+        try:
+            _pid, g = mem()
+        except Exception:
+            return
+        t0 = time.time()
+        try:
+            while not stop.is_set() and time.time() - t0 < dur:
+                try:
+                    out.append((round((time.time() - t0) * 1000),
+                                rd(g, UNIT_ARR + idx * 52 + 17, 1)[0]))
+                except Exception:
+                    break
+                time.sleep(0.005)
+        finally:
+            try:
+                g.close()
+            except Exception:
+                pass
+
+    th = threading.Thread(target=loop, daemon=True)
+    th.start()
+    return th
+
+
 def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="terraform"):
     """One hotkey on one selected unit. Returns the record with its memory delta.
 
@@ -1388,17 +1424,25 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
             # evidence/m54d/probe_unit0.json. Answer ITS OK bar, never Escape (Escape at a
             # clean HUD behind it raises the quit prompt).
             panes.append("dest-chooser")
-            answer_dest_chooser(png, verbose)
             # M54e: the OK click both WRITES the order (the setter only lands after its
             # pane is answered — session 81's `order_after 0`) and hands the unit to the
-            # game's own order pump, which runs it a tick later. Sampled live at 100 ms
-            # resolution (`scripts/m54e_probe.py chooser 2`): +0 ms `order 24 xy (4,12)
-            # mp 0 legs 6,12`; +100 ms `order 0 xy (6,12) mp 3`. So read the byte and the
-            # legs NOW, before the walk consumes them, and take the attempt as landed.
-            ob = rd(f, UNIT_ARR + idx * 52 + 17, 1)[0]
-            if ob != before["order"] and ob in want:
-                queued["order"] = ob
+            # game's own order pump, which eats the byte a tick later. The gap is tens of
+            # milliseconds, so sample THROUGH the click instead of after it.
+            import threading
+            stop, seen_bytes = threading.Event(), []
+            th = order_byte_watcher(idx, stop, seen_bytes)
+            answer_dest_chooser(png, verbose)
+            time.sleep(0.35)
+            stop.set()
+            th.join(timeout=2.0)
+            hit = [b for _ms, b in seen_bytes if b in want and b != before["order"]]
+            if hit:
+                queued["order"] = hit[0]
                 queued["legs"] = rd(f, UNIT_ARR + idx * 52, 52)
+                queued["samples"] = seen_bytes[:60]
+                if verbose:
+                    print(f"    +17 burst through the chooser OK: {seen_bytes[:12]}",
+                          flush=True)
                 break
             time.sleep(0.4)
             quiet = 0
@@ -1436,7 +1480,9 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
     # guess; `service_turn` compares it against x,y after the year flips.
     dest = None
     src = queued["legs"] if queued["legs"] is not None else after["raw"]
-    if 0x18 in (seen, after["order"]):
+    # The leg arrays survive the pump (measured: order 0, legs still 6/12 after the
+    # arrival), so read them on a MOVE attempt even when the byte was already consumed.
+    if kname == ORDER_MOVE[0] or 0x18 in (seen, after["order"]):
         lx = [struct.unpack("<h", src[20 + k * 2:22 + k * 2])[0] for k in range(4)]
         ly = [struct.unpack("<h", src[28 + k * 2:30 + k * 2])[0] for k in range(4)]
         pts = [(a, b) for a, b in zip(lx, ly) if a >= 0 and b >= 0]
