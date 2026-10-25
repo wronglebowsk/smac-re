@@ -400,3 +400,85 @@ record the press changed — attribution WORKS in the loop.
 TOOK University Base (bases_ours 2 -> 1) and killed 5 of our 10 units — while the checker's
 `--min-our-bases 2` floor was still reading 2 at the run's start. A 6-turn acceptance run
 needs a position that quiet to start with.
+
+## 11. Who owns the map cursor, and why a `g` falls through (M54i2, session 87, 2026-10-25)
+
+Measured live at 2158 (pid 1053556) with `scratch/m54i2_cursor.py` / `m54i2_scan.py` /
+`m54i2_om.py`; every claim below is a `/proc/<pid>/mem` read-back, not a screenshot.
+
+* **There are (at least) three cursor variables and the pokes do NOT stick on any of them.**
+  - `*(u32*)0x7cdecc + 0x1dd9c / +0x1dda0` — the map WINDOW's cursor fields (the tile the
+    info panel reads: poking them changed the panel's `(29,41)` readout). A poke here was
+    read back correct on a second handle, yet the game rewrote it to its own value within
+    ~3 s (`cursor end` lines in the probe); `FUN_005a071e` (shard_015.c:16585) writes them
+    when one of our units MOVES.
+  - `DAT_0091b5f0 / DAT_0091b670` at byte offset `DAT_0091b5e8` — the array the tile
+    handlers read (`FUN_00511960`, shard_013.c:4017). Poking the cell the index selects
+    (both the `index*4` int reading of m54e_probe and the `+index` u16 reading of
+    shard_012.c:6463) was likewise re-synced by the game within 1.5 s.
+  - `DAT_0091b5e8` / `+0x91b5ec` are counters that climb on their own (20 -> 21 -> 22
+    across two `Right` presses in the differential scan); the array cells are a history
+    the game appends to, not a slot the driver can park.
+  **Conclusion: the cursor is GAME-OWNED. Do not try to position it by poke.** It moves on
+  the game's own events (a unit arriving — `FUN_005a071e` — the AI/chooser cycling). The
+  only durable cursor placement is the game's own: order a unit somewhere and the cursor
+  follows the arrival.
+* **What decides whether `g` is an ORDER at all is §1 rule 3, not the cursor.** With
+  orders mode off (`0x91b5b8 == 0`) or the game's selection unset (`SEL < 0`), the key
+  falls to `FUN_00511960` (the cursor-tile handler): cursor on a base tile -> the BASE
+  SCREEN / "will automatically forward" dialog; cursor elsewhere -> nothing. That is
+  session 86 run5 turn 0's "cursor placement" failure re-attributed: the dispatcher never
+  saw the key. The driver's recipe (poke `SEL_G`, poke `0x91b5b8` like line 2224 does for
+  founding, THEN press) is the working path; the poke sticks because the keypress follows
+  within the same frame the game takes to re-sync.
+* **`sp.focus()` is a silent NO-OP while `sp.WIN` is None.** Scratch scripts must do
+  `sp.WIN = sp.find_window()` first or every `sp.key()` lands on whatever X thinks is
+  focused (this ate the first hour of session 87: "keys don't land" was a focus bug, and
+  the arrow presses that DID land were the game's own cycling, not mine).
+* **Poke-moved units are invisible to the cursor-tile finder.** A record poked to a new
+  x,y stops being found at its new tile (`g` at a cursor on the tile found nothing for a
+  poked unit; the untouched garrison units still open their base screen). Content-identity
+  survives a poke; the game's tile occupancy does not. Prep pokes are fine for FOUNDING
+  (the loop orders the poked record via the dispatcher); they are NOT fine for making a
+  unit "stand" somewhere the game must then find it.
+* **Driver policy for the two fall-through shapes** (`move_order_needs_retry`, tested by
+  `scripts/test_walk_diff.py` cases 14-18): a MOVE whose OK landed the byte with NO route
+  (`verified` and `dest is None`), or whose pane list contains `base` (the key fell to the
+  cursor handler), is RE-RAISED, at most `MOVE_ORDER_RETRIES = 2` times, every attempt
+  recorded in the trace's `attempts` list. Non-MOVE keys never retry.
+
+## 12. The step table preserves (x+y) parity — why every walk before M54i2 failed (session 87, 2026-10-25)
+
+* **The table.** `dx` at `0x67850c`, `dy` at `0x678990`, 21 int32 pairs; the adjacency
+  loop runs `do { ... } while ((int)local_2c < 0x54)` in 4-byte steps
+  (`ghidra_out/shard_013.c:21829-21868`). Live read at 2159 (pid 1110005):
+  `(0,0) (1,-1) (2,0) (1,1) (0,2) (-1,1) (-2,0) (-1,-1) (0,-2) (2,-2) (2,2) (-2,2)
+  (-2,-2) (1,-3) (3,-1) (3,1) (1,3) (-1,3) (-3,1) (-3,-1) (-1,-3)`. §7's "(±2,0) and
+  (±1,±1)" is the short subset; the long steps exist too. **Every pair preserves
+  (x+y) parity**, so a queued MOVE can only ever arrive at tiles of its start tile's
+  parity. University Base (28,42) sums 70 (even): every walker sessions 84-87 stood
+  at (29,42) or (28,43) (71, odd) could not reach it — the "oscillation" was
+  geometry, not the cursor, not occupancy, not pump timing. The real neighbours of
+  (28,42) include (29,41), (27,41), (27,43), (29,43), (26,42), (30,42), (28,40), (28,44).
+* **A chooser-queued order executes on the game's own TURN COMPLETE cycle.**
+  `scratch/m54i2_pump.py` (2158, one actionable record, everything else HELD, read
+  back on second handles): the record at (28,43) with order 24 and leg (28,42) was at
+  (29,42) with order 24 and `+40` = 3 spent at the next phase start; every HELD record
+  sat put with `+40` = 0. §7's "three TURN COMPLETEs moved nothing" holds for a
+  HAND-POKED byte only — the pump runs orders the chooser's OK registered, and the OK
+  is only the pump's nearest visit. `+40` = mp SPENT this round, re-zeroed at the next
+  phase start for units that did not move again.
+* **The driver's contract (session 87, proven by run3/run4):** only order `g` when a
+  same-parity own base other than the unit's tile exists (`walk_parity_ok` gate in
+  `can_walk` and in `answer_dest_chooser`'s target pick); prefer candidates standing
+  on a `table_neighbors` tile of such a base — they land on the pump's next visit.
+  `verify_moves`/`verify_pending_walks` read `mp_after` as the MAX mp over same-type
+  records on the destination tile: garrison/HELD units and base-produced units sit at
+  0 there (run3 census), so a nonzero max is the arrival's own spent movement.
+* **The proof runs.** run3 (2159→2164): rec at (29,41) ordered to University Base —
+  attributed True, legs [(28,42)], census 2165: that record on (28,42), order 0,
+  moved bit set — landed in memory while the checker scored it false (the old
+  `hits[0]["mp"]` read a held garrison). run4 (2165→2171): rec at (28,43) ordered to
+  Korolev Center (29,42) — `m54a_check_run.py ... --min-our-bases 2 --min-moves 1
+  --min-own-base-arrivals 1` -> `PASS`, `moves 1 LANDED of 1 ordered walks`,
+  `t[28,43]->[29,42] mp+3`, dest_count [2,3], src_count [1,0].

@@ -179,11 +179,88 @@ def main():
           claim is not None and conf and not att and len(rivals) == 1,
           f"{claim} {rivals}")
 
+    # ---------------- M54i2: the RETRY shape (`move_order_needs_retry`) -------------
+    # Session 86's two live failure modes are DRIVER policy, not attribution rules: a
+    # chooser OK that lands the byte with no route, and a `g` that fell through to the
+    # cursor-tile handler (base screen). Both say "press again" — up to the cap.
+    print("case 14: verified MOVE WITH legs -> no retry")
+    o = dict(key="g", verified=True, dest=[29, 42], panes=["dest-chooser"])
+    check("a routed move is done", sp.move_order_needs_retry(o, 0) is False)
+
+    print("case 15: byte landed, LEGS EMPTY (run5 t3) -> retry once")
+    o = dict(key="g", verified=True, dest=None, panes=["dest-chooser"],
+             walk_diff=dict(attributed=False, confounded=False, claim=None, rivals=[]))
+    check("legs-less OK re-raises", sp.move_order_needs_retry(o, 0) is True
+          and sp.move_order_needs_retry(o, 1) is True
+          and sp.move_order_needs_retry(o, 2) is False,
+          "cap is MOVE_ORDER_RETRIES")
+
+    print("case 16: `g` fell to the cursor handler (base screen) -> retry")
+    o = dict(key="g", verified=False, dest=None, panes=["base", "unknown", "base", "base"])
+    check("a dud base screen re-raises", sp.move_order_needs_retry(o, 0) is True
+          and sp.move_order_needs_retry(o, 2) is False)
+
+    print("case 17: a non-MOVE key never retries")
+    o = dict(key="l", verified=True, dest=None, panes=["base"])
+    check("sentry/hold/terraform land without a chooser",
+          sp.move_order_needs_retry(o, 0) is False)
+
+    print("case 18: unverified `g` with NO base screen does not retry")
+    o = dict(key="g", verified=False, dest=None, panes=["unknown", "hud"])
+    check("a dropped key is the turn's problem, not a re-press",
+          sp.move_order_needs_retry(o, 0) is False)
+
+    # ---------------- M54i2: the DESTINATION is the chooser's, not a leg -------------
+    print("case 19: chooser named University Base, legs hold the FIRST STEP (11,17)")
+    check("dest = the named base, not the waypoint",
+          sp.resolve_move_dest({"base": [28, 42], "base_name": "University Base"},
+                               [(11, 17)]) == [28, 42])
+
+    print("case 20: no chooser row (queued without a pane) -> last leg is the fallback")
+    check("legs still answer when the chooser never ran",
+          sp.resolve_move_dest(None, [(29, 42)]) == [29, 42]
+          and sp.resolve_move_dest({}, []) is None)
+
+    # ------- M54i2: the step table preserves (x+y) parity — the oscillation cause ----
+    # The 21 (dx,dy) pairs below are the LIVE read of 0x67850c/0x678990 at 2159
+    # (pid 1110005, 2026-10-25); the adjacency loop bound 0x54/4 = 21 is
+    # ghidra_out/shard_013.c:21868.
+    TABLE = [(0, 0), (1, -1), (2, 0), (1, 1), (0, 2), (-1, 1), (-2, 0), (-1, -1),
+             (0, -2), (2, -2), (2, 2), (-2, 2), (-2, -2), (1, -3), (3, -1), (3, 1),
+             (1, 3), (-1, 3), (-3, 1), (-3, -1), (-1, -3)]
+
+    print("case 21: every step in the measured table preserves (x+y) parity")
+    check("no step changes parity, so a walk never changes class",
+          all((dx + dy) % 2 == 0 for dx, dy in TABLE) and len(TABLE) == 21)
+
+    print("case 22: (29,42) and (28,43) are NOT table-neighbours of (28,42)")
+    nb = sp.table_neighbors(28, 42, TABLE)
+    check("the run2/m54e oscillation tiles are not neighbours of the base",
+          (29, 42) not in nb and (28, 43) not in nb
+          and (29, 41) in nb and (27, 43) in nb and (26, 42) in nb)
+
+    print("case 23: walk_parity_ok — University (28,42) reachable from (29,41), "
+          "Korolev (29,42) not")
+    check("the gate keeps the reachable base and drops the impossible one",
+          sp.walk_parity_ok((29, 41), (28, 42)) is True
+          and sp.walk_parity_ok((29, 41), (29, 42)) is False
+          and sp.walk_parity_ok((29, 42), (28, 42)) is False)
+
+    print("case 24: the oscillation the pump experiment measured is the parity rule")
+    # scratch/m54i2_pump.py: the order-24 record walked (28,43) -> (29,42) in one
+    # TURN COMPLETE cycle — a legal step ((+1,-1) in TABLE) — and both tiles are
+    # the wrong parity for its destination (28,42); under the invariant it can
+    # NEVER arrive, which is every M54h/M54i/M54i2 "walk did not land" so far.
+    step = (29 - 28, 42 - 43)
+    check("the measured step is in the table and the destination is unreachable",
+          step in TABLE and not sp.walk_parity_ok((28, 43), (28, 42))
+          and not sp.walk_parity_ok((29, 42), (28, 42)))
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 13/13 attribution cases")
+    print("PASS 24/24 attribution cases")
     return 0
 
 

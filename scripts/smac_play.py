@@ -777,7 +777,13 @@ def answer_dest_chooser(png, verbose=False, words=None, f=None, avoid=None,
     if f is not None and avoid is not None:
         rows = chooser_rows(png, words)
         bases = own_bases_named(f, me)
-        target = next((b for b in bases if (b["x"], b["y"]) != tuple(avoid)), None)
+        others = [b for b in bases if (b["x"], b["y"]) != tuple(avoid)]
+        # M54i2: (x+y) parity is invariant under the step table (see `delta_table`),
+        # so only a base of the WALKER TILE's parity is ever reachable. Prefer it;
+        # an opposite-parity row queues a move that oscillates forever (run2's walker
+        # at (29,42)/(28,43) vs University Base (28,42)).
+        target = next((b for b in others if walk_parity_ok(avoid, (b["x"], b["y"]))),
+                      None) or next(iter(others), None)
         row_ix = None
         if target is not None:
             # Prefer the row whose OWN text names the base we mean: the pane's sort is
@@ -792,7 +798,11 @@ def answer_dest_chooser(png, verbose=False, words=None, f=None, avoid=None,
             if row_ix is None and len(rows) == len(bases):
                 order = sorted(bases, key=lambda b: b["name"].lower())
                 row_ix = next((i for i, b in enumerate(order)
-                               if (b["x"], b["y"]) != tuple(avoid)), None)
+                               if (b["x"], b["y"]) != tuple(avoid)
+                               and walk_parity_ok(avoid, (b["x"], b["y"]))), None)
+                if row_ix is None:
+                    row_ix = next((i for i, b in enumerate(order)
+                                   if (b["x"], b["y"]) != tuple(avoid)), None)
         if row_ix is not None and 0 <= row_ix < len(rows):
             click((rows[row_ix]["cx"], rows[row_ix]["y"]))
             time.sleep(0.8)
@@ -1070,6 +1080,41 @@ def own_base_tiles(f, me):
     return out
 
 
+# M54i2 (2026-10-25, live read at 2159 from pid 1110005): the game's step table is 21
+# int32 pairs — `dx` at 0x67850c, `dy` at 0x678990; the adjacency loop runs
+# `do { ... } while ((int)local_2c < 0x54)` in 4-byte steps (ghidra_out/shard_013.c:
+# 21829-21868), i.e. 21 entries. EVERY entry preserves (x+y) parity — the short steps
+# (±2,0),(±1,±1),(0,±2) and the long steps (±2,±2),(±3,±1),(±1,±3) all do. A queued
+# MOVE walks along these steps, so a unit can NEVER reach a base tile of the other
+# parity: measured, the run2 walker ordered to University Base (28,42) (sum 70, even)
+# oscillated (28,43)<->(29,42) (sum 71, odd) across TURN COMPLETEs (scratch/m54i2_pump
+# .py: (28,43) -> (29,42) in one cycle, order still 24) and never entered the base.
+# ORDERS.md §7 listed only (±2,0),(±1,±1) for this table; the live read is 21 pairs.
+DELTA_TABLE_G = 0x67850c
+DELTA_DY_G = 0x678990
+DELTA_N = 21
+
+
+def delta_table(f):
+    """The live step table as 21 (dx, dy) pairs (see the block comment above)."""
+    import struct
+    dx = struct.unpack(f"<{DELTA_N}i", rd(f, DELTA_TABLE_G, DELTA_N * 4))
+    dy = struct.unpack(f"<{DELTA_N}i", rd(f, DELTA_DY_G, DELTA_N * 4))
+    return list(zip(dx, dy))
+
+
+def table_neighbors(x, y, table):
+    """Tiles a step from (x,y) can land on, per a given delta table."""
+    return {(x + dx, y + dy) for dx, dy in table if (dx, dy) != (0, 0)}
+
+
+def walk_parity_ok(unit_xy, base_xy):
+    """(x+y) parity is invariant under the step table: the only bases a walk from
+    `unit_xy` can ever ARRIVE at share its parity. Necessary, not sufficient (terrain
+    and route still apply)."""
+    return (unit_xy[0] + unit_xy[1]) % 2 == (base_xy[0] + base_xy[1]) % 2
+
+
 def snap_our_units():
     """The pre-EXEC snapshot `verify_moves` later diffs against live memory."""
     try:
@@ -1135,8 +1180,18 @@ def verify_moves(orders, snap, verbose=False):
             # `+40` is spent at the pump and re-zeroed at the next phase start, so the
             # movement evidence comes from the in-phase sample; the tile evidence is re-
             # taken here, after EXEC.
+            # M54i2: read the ARRIVAL's mp, not an arbitrary hit's. A unit that walked
+            # this round shows +40 spent at our next phase start (scratch/m54i2_pump.py:
+            # the moved record read mp 3 while every held unit read 0); garrison/HOLD
+            # units and base-produced units on the destination tile sit at 0 (run3
+            # census at 2165: three HELD garrisons and a fresh produced unit all mp 0).
+            # `hits[0]` is index-order — in run3 turn 0 it was a held garrison, so the
+            # arrival's own spent mp was invisible and a memory-verified landing scored
+            # `landed false`. max() asks exactly what the floor asks — "some same-type
+            # record ON THE DESTINATION TILE spent movement this round" — and the floor
+            # itself (mp_after > 0, plus the count delta) is unchanged.
             mp_after = (o.get("walk_mp") or o.get("mpused_after")
-                        or (hits[0]["mp"] if hits else 0))
+                        or max([h["mp"] for h in hits], default=0))
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
                      frm=[o["ux"], o["uy"]], dest=[dx, dy],
                      landed=bool(hits) and count_proof and mp_after > 0,
@@ -1324,8 +1379,18 @@ def verify_pending_walks(cur_turn, verbose=False):
                      and (r["x"], r["y"]) == (o["ux"], o["uy"])]
             c0 = o.get("order_counts") or {}
             d_before, s_before = c0.get("dest"), c0.get("src")
+            # M54i2: read the ARRIVAL's mp, not an arbitrary hit's. A unit that walked
+            # this round shows +40 spent at our next phase start (scratch/m54i2_pump.py:
+            # the moved record read mp 3 while every held unit read 0); garrison/HOLD
+            # units and base-produced units on the destination tile sit at 0 (run3
+            # census at 2165: three HELD garrisons and a fresh produced unit all mp 0).
+            # `hits[0]` is index-order — in run3 turn 0 it was a held garrison, so the
+            # arrival's own spent mp was invisible and a memory-verified landing scored
+            # `landed false`. max() asks exactly what the floor asks — "some same-type
+            # record ON THE DESTINATION TILE spent movement this round" — and the floor
+            # itself (mp_after > 0, plus the count delta) is unchanged.
             mp_after = (o.get("walk_mp") or o.get("mpused_after")
-                        or (hits[0]["mp"] if hits else 0))
+                        or max([h["mp"] for h in hits], default=0))
             count_proof = (d_before is None or s_before is None
                            or (len(hits) > d_before and len(still) < s_before))
             m = dict(order=o["key"], unit=o["unit"], utype=o["utype"],
@@ -1914,8 +1979,79 @@ def order_byte_watcher(idx, stop, out, dur=1.5, recs=None):
     return th
 
 
+ORDER_MOVE_KEY = ORDER_MOVE[0]          # "g"
+MOVE_ORDER_RETRIES = 2                  # attempts AFTER the first
+
+
+def resolve_move_dest(pick, pts):
+    """M54i2: where a queued MOVE is BOUND for — the chooser's named base, not a leg.
+
+    Measured live 2026-10-25 (run m54i2_run1 turn 3, read back after the walk started):
+    the OK we answered named `University Base (28,42)` and the record's leg array holds
+    `(11,17)` — the FIRST STEP of the route, not the end. `+20..+27`/`+28..+35` carry one
+    step the pump is about to take (session 82's oscillating walker re-read the pair every
+    round; `FUN_005a071e` rewrites them on each arrival), so the last leg is a waypoint,
+    not a destination. The chooser's own pick is the ordered destination; the legs stay
+    the fallback for a move that was queued without a chooser row.
+    """
+    base = (pick or {}).get("base")
+    if base is not None:
+        return [base[0], base[1]]
+    return list(pts[-1]) if pts else None
+
+
+def move_order_needs_retry(order, attempts):
+    """M54i2: when is a `g` worth RE-RAISING? (session 86's two live failure modes)
+
+    (a) the chooser's OK landed `+17 = 0x18` with LEGS STILL EMPTY (run5 t3: `claim None,
+        rivals 0` — a MOVE queued with no route; a second OK after a row click may write
+        the route); or the diff refused to attribute (confounded / unclaimed) — the
+        destination is not knowable from this attempt;
+    (b) the keypress FELL THROUGH to the cursor-tile handler (ORDERS.md §1 rule 3: with
+        orders mode off, or with the game's own selection unset, `g` opens the BASE
+        SCREEN of the base near the map cursor and the dispatcher never sees it —
+        session 86 run5 turn 0) — the pane list says so (`base`).
+
+    Only a MOVE order retries: `l`/`h`/terraform keys land without a chooser, and a
+    failed founding must not be pressed twice. `attempts` counts PRIOR attempts.
+    """
+    if order.get("key") != ORDER_MOVE_KEY or attempts >= MOVE_ORDER_RETRIES:
+        return False
+    dud_pane = "base" in (order.get("panes") or [])
+    landed_no_route = bool(order.get("verified")) and not order.get("dest")
+    return dud_pane or landed_no_route
+
+
 def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="terraform",
                          avoid=None):
+    """M54i2: one hotkey on one selected unit, RE-RAISED when a MOVE says it fell through.
+
+    `_issue_order_once` is the measurement; this wrapper applies `move_order_needs_retry`
+    (at most `MOVE_ORDER_RETRIES` re-raises, MOVE keys only) and records every attempt in
+    `attempts` so the trace shows the retries rather than smoothing them over.
+    """
+    out = _issue_order_once(f, me, cand, kname, verbose=verbose, want=want,
+                            label=label, avoid=avoid)
+    attempts = [dict({k: v for k, v in out.items() if k != "attempts"},
+                     attempt=0)]
+    n = 0
+    while move_order_needs_retry(out, n):
+        n += 1
+        if verbose:
+            print(f"    re-raising `{kname}` (attempt {n}): "
+                  f"panes={out.get('panes')} dest={out.get('dest')}", flush=True)
+        nxt = _issue_order_once(f, me, cand, kname, verbose=verbose, want=want,
+                                label=label, avoid=avoid)
+        attempts.append(dict({k: v for k, v in nxt.items() if k != "attempts"},
+                             attempt=n))
+        out = nxt
+    out = dict(out)
+    out["attempts"] = attempts
+    return out
+
+
+def _issue_order_once(f, me, cand, kname, verbose=False, want=None, label="terraform",
+                      avoid=None):
     """One hotkey on one selected unit. Returns the record with its memory delta.
 
     `want` is the set of `+17` bytes this key may legitimately produce (ORDERS.md §4).
@@ -2100,7 +2236,9 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
         lx = [struct.unpack("<h", src[20 + k * 2:22 + k * 2])[0] for k in range(4)]
         ly = [struct.unpack("<h", src[28 + k * 2:30 + k * 2])[0] for k in range(4)]
         pts = [(a, b) for a, b in zip(lx, ly) if a >= 0 and b >= 0]
-        dest = list(pts[-1]) if pts else None
+        # M54i2: the leg array is the NEXT STEP, not the destination (see
+        # `resolve_move_dest`); the chooser's named base is the ordered destination.
+        dest = resolve_move_dest(picks[-1] if picks else None, pts)
     # M54e: DOES THE WALK LAND, and when? Measured on this build: a parked 0x18 sat
     # through three TURN COMPLETEs without moving (years 2153, 2154, 2155), while the same
     # order executed 100 ms after a chooser OK — the pump (`FUN_0050ef60` -> `FUN_00529e70`
@@ -2326,10 +2464,23 @@ def order_step_in_loop(rec, verbose=False):
                     rec["order_seconds"] = round(time.time() - t0, 1)
                     return 1
                 break
+        # M54i2: a candidate standing on a step-table NEIGHBOR of one of our bases
+        # (same parity, one legal step away) lands the moment the pump visits it;
+        # try those first. Units of the wrong parity for every own base cannot
+        # arrive at all — the `can_walk` gate below retires `g` for them.
+        try:
+            table = delta_table(f)
+        except Exception:
+            table = []
+        nb = set()
+        for (bx, by) in own_tiles:
+            nb |= table_neighbors(bx, by, table)
         # class-9 (Former) candidates first, then whatever has refused us least this run,
         # then record index — so a position with no Former costs a few keypresses on turn
         # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
-        cands.sort(key=lambda c: (c["cls"] != 9, ORDER_REJECTS.get(c["type"], 0), c["idx"]))
+        cands.sort(key=lambda c: (c["cls"] != 9,
+                                  (c["x"], c["y"]) not in nb,
+                                  ORDER_REJECTS.get(c["type"], 0), c["idx"]))
         cands = cands[:ORDER_CAP * 4]
         verified = attempts = 0
         for cand in cands:
@@ -2349,7 +2500,10 @@ def order_step_in_loop(rec, verbose=False):
             # cannot do is name the tile under the unit's feet, so `g` is skipped only when
             # our ONLY base is the one it stands on.
             tile = (cand["x"], cand["y"])
-            can_walk = any(t != tile for t in own_tiles)
+            # M54i2: only a base of the candidate tile's OWN (x+y) parity is ever
+            # reachable (step-table invariant, see `delta_table`); `g` toward the
+            # other one queues a move that oscillates and never lands.
+            can_walk = any(t != tile and walk_parity_ok(tile, t) for t in own_tiles)
             plan = (([ORDER_MOVE] if can_walk else [])
                     + ([(k, ORDER_TERRAFORM_WANT, "terraform") for k in ORDER_TRY_KEYS]
                        if cand["cls"] == 9 else [])

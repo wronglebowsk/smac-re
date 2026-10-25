@@ -1,6 +1,6 @@
 {
  "cmd": "peek",
- "pid": 914329,
+ "pid": 1053556,
  "stages": [
   {
    "bases": [
@@ -18,42 +18,42 @@
     }
    ],
    "cursor": {
-    "index": 4,
-    "x": 28,
-    "y": 42
+    "index": 18,
+    "x": 29,
+    "y": 43
    },
-   "orders_mode": 1,
+   "orders_mode": 0,
    "rec": {
-    "flags": 0,
+    "flags": 65536,
     "frozen": 0,
     "legs_x": [
-     -1,
+     29,
      -1,
      -1,
      -1
     ],
     "legs_y": [
-     -1,
+     36,
      -1,
      -1,
      -1
     ],
     "mp": 0,
-    "order": 0,
+    "order": 2,
     "owner": 3,
     "type": 2,
     "x": 29,
-    "y": 42
+    "y": 41
    },
-   "sel": 60,
+   "sel": -1,
    "stage": "before",
    "state": {
     "cur_player": 3,
     "player": 3,
     "turn_flags": 2,
-    "year": 2156
+    "year": 2158
    }
   }
  ],
- "unit": 60
+ "unit": 1
 }
