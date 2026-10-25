@@ -1914,8 +1914,62 @@ def order_byte_watcher(idx, stop, out, dur=1.5, recs=None):
     return th
 
 
+ORDER_MOVE_KEY = ORDER_MOVE[0]          # "g"
+MOVE_ORDER_RETRIES = 2                  # attempts AFTER the first
+
+
+def move_order_needs_retry(order, attempts):
+    """M54i2: when is a `g` worth RE-RAISING? (session 86's two live failure modes)
+
+    (a) the chooser's OK landed `+17 = 0x18` with LEGS STILL EMPTY (run5 t3: `claim None,
+        rivals 0` — a MOVE queued with no route; a second OK after a row click may write
+        the route); or the diff refused to attribute (confounded / unclaimed) — the
+        destination is not knowable from this attempt;
+    (b) the keypress FELL THROUGH to the cursor-tile handler (ORDERS.md §1 rule 3: with
+        orders mode off, or with the game's own selection unset, `g` opens the BASE
+        SCREEN of the base near the map cursor and the dispatcher never sees it —
+        session 86 run5 turn 0) — the pane list says so (`base`).
+
+    Only a MOVE order retries: `l`/`h`/terraform keys land without a chooser, and a
+    failed founding must not be pressed twice. `attempts` counts PRIOR attempts.
+    """
+    if order.get("key") != ORDER_MOVE_KEY or attempts >= MOVE_ORDER_RETRIES:
+        return False
+    dud_pane = "base" in (order.get("panes") or [])
+    landed_no_route = bool(order.get("verified")) and not order.get("dest")
+    return dud_pane or landed_no_route
+
+
 def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="terraform",
                          avoid=None):
+    """M54i2: one hotkey on one selected unit, RE-RAISED when a MOVE says it fell through.
+
+    `_issue_order_once` is the measurement; this wrapper applies `move_order_needs_retry`
+    (at most `MOVE_ORDER_RETRIES` re-raises, MOVE keys only) and records every attempt in
+    `attempts` so the trace shows the retries rather than smoothing them over.
+    """
+    out = _issue_order_once(f, me, cand, kname, verbose=verbose, want=want,
+                            label=label, avoid=avoid)
+    attempts = [dict({k: v for k, v in out.items() if k != "attempts"},
+                     attempt=0)]
+    n = 0
+    while move_order_needs_retry(out, n):
+        n += 1
+        if verbose:
+            print(f"    re-raising `{kname}` (attempt {n}): "
+                  f"panes={out.get('panes')} dest={out.get('dest')}", flush=True)
+        nxt = _issue_order_once(f, me, cand, kname, verbose=verbose, want=want,
+                                label=label, avoid=avoid)
+        attempts.append(dict({k: v for k, v in nxt.items() if k != "attempts"},
+                             attempt=n))
+        out = nxt
+    out = dict(out)
+    out["attempts"] = attempts
+    return out
+
+
+def _issue_order_once(f, me, cand, kname, verbose=False, want=None, label="terraform",
+                      avoid=None):
     """One hotkey on one selected unit. Returns the record with its memory delta.
 
     `want` is the set of `+17` bytes this key may legitimately produce (ORDERS.md §4).

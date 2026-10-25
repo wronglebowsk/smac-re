@@ -179,11 +179,42 @@ def main():
           claim is not None and conf and not att and len(rivals) == 1,
           f"{claim} {rivals}")
 
+    # ---------------- M54i2: the RETRY shape (`move_order_needs_retry`) -------------
+    # Session 86's two live failure modes are DRIVER policy, not attribution rules: a
+    # chooser OK that lands the byte with no route, and a `g` that fell through to the
+    # cursor-tile handler (base screen). Both say "press again" — up to the cap.
+    print("case 14: verified MOVE WITH legs -> no retry")
+    o = dict(key="g", verified=True, dest=[29, 42], panes=["dest-chooser"])
+    check("a routed move is done", sp.move_order_needs_retry(o, 0) is False)
+
+    print("case 15: byte landed, LEGS EMPTY (run5 t3) -> retry once")
+    o = dict(key="g", verified=True, dest=None, panes=["dest-chooser"],
+             walk_diff=dict(attributed=False, confounded=False, claim=None, rivals=[]))
+    check("legs-less OK re-raises", sp.move_order_needs_retry(o, 0) is True
+          and sp.move_order_needs_retry(o, 1) is True
+          and sp.move_order_needs_retry(o, 2) is False,
+          "cap is MOVE_ORDER_RETRIES")
+
+    print("case 16: `g` fell to the cursor handler (base screen) -> retry")
+    o = dict(key="g", verified=False, dest=None, panes=["base", "unknown", "base", "base"])
+    check("a dud base screen re-raises", sp.move_order_needs_retry(o, 0) is True
+          and sp.move_order_needs_retry(o, 2) is False)
+
+    print("case 17: a non-MOVE key never retries")
+    o = dict(key="l", verified=True, dest=None, panes=["base"])
+    check("sentry/hold/terraform land without a chooser",
+          sp.move_order_needs_retry(o, 0) is False)
+
+    print("case 18: unverified `g` with NO base screen does not retry")
+    o = dict(key="g", verified=False, dest=None, panes=["unknown", "hud"])
+    check("a dropped key is the turn's problem, not a re-press",
+          sp.move_order_needs_retry(o, 0) is False)
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 13/13 attribution cases")
+    print("PASS 18/18 attribution cases")
     return 0
 
 
