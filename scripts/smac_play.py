@@ -1115,6 +1115,62 @@ def walk_parity_ok(unit_xy, base_xy):
     return (unit_xy[0] + unit_xy[1]) % 2 == (base_xy[0] + base_xy[1]) % 2
 
 
+def pick_reactivation(held, own_tiles, table):
+    """Which HELD records may be re-activated (poked +17 2 -> 0) into the order step.
+
+    M54j (measured, run1): the game AUTO-SENTRIES an order-0 unit across the round
+    boundary — a setup that leaves a unit waiting at +17 = 0 finds it wearing byte 1
+    (SENTRY) and PATROLLING ON ITS OWN (ORDERS.md §10) by the time our phase opens.
+    Byte 2 (HOLD) is the only state that survives the round; the unit therefore has
+    to be re-activated IN-PHASE, in the same window as the keypress.
+
+    Eligible: not standing on one of OUR bases (there `g` raises the BASE SCREEN
+    instead of the chooser — session 86 run5 t0), and at least one own base of the
+    unit's own (x+y) parity exists that is NOT the tile under its feet (the only
+    reachable walk target). Returns the eligible records, nearest own same-parity base
+    first (`man` is the Chebyshev distance to that base) — a multi-leg route is the
+    point, but a unit 30 tiles out is a worse bet than one 6 out.
+    """
+    table = table_neighbors(0, 0, table)  # the pure step shapes
+    out = []
+    for r in held:
+        tile = (r["x"], r["y"])
+        if tile in own_tiles:
+            continue
+        cands = [t for t in own_tiles
+                 if t != tile and walk_parity_ok(tile, t)]
+        if not cands:
+            continue
+        man = min(max(abs(tile[0] - t[0]), abs(tile[1] - t[1])) for t in cands)
+        # a unit that already stands on a legal step of a same-parity own base is a
+        # ONE-step arrival, not a multi-leg route — keep it eligible, sort it last
+        out.append(dict(r, reactivated=True, man=man,
+                        on_step=any((tile[0] + dx, tile[1] + dy) in own_tiles
+                                    for dx, dy in table)))
+    out.sort(key=lambda r: (r["on_step"], r["man"], r["idx"]))
+    return out
+
+
+def held_walk_records(f, me, n=119):
+    """Our +17 = 2 (HOLD) records, decoded like `find_actionable` (not frozen,
+    movement unspent). The re-activation pool for `order_step_in_loop`."""
+    import struct
+    out = []
+    arr = rd(f, UNIT_ARR, n * 52)
+    for i in range(n):
+        d = arr[i * 52:(i + 1) * 52]
+        if d[14] != me or d[14] == 0xFF:
+            continue
+        if bool(d[9]) or d[17] != 2 or d[40] != 0:
+            continue
+        typ = struct.unpack("<H", d[10:12])[0]
+        out.append(dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
+                        y=struct.unpack("<h", d[2:4])[0], type=typ,
+                        cls=unit_class(f, typ), order=d[17], mp=d[40],
+                        legs=legs_of(d)))
+    return out
+
+
 def snap_our_units():
     """The pre-EXEC snapshot `verify_moves` later diffs against live memory."""
     try:
@@ -2481,6 +2537,23 @@ def order_step_in_loop(rec, verbose=False):
         cands.sort(key=lambda c: (c["cls"] != 9,
                                   (c["x"], c["y"]) not in nb,
                                   ORDER_REJECTS.get(c["type"], 0), c["idx"]))
+        # M54j: byte 2 (HOLD) is the only order that survives the round boundary — the
+        # game auto-sentries an order-0 unit across it (run1: the lone actionable at
+        # (20,42) wore byte 1 and had PATROLLED AWAY by our phase; scratch/m54j_probe).
+        # When nothing is actionable, re-activate the best HELD walker IN-PHASE (poke
+        # +17 2 -> 0 in this same window, next to the keypress) and order it.
+        if not cands:
+            try:
+                react = pick_reactivation(held_walk_records(f, me), own_tiles, table)
+            except Exception:
+                react = []
+            for r in react[:ORDER_CAP]:
+                wr(f, UNIT_ARR + r["idx"] * 52 + 17, b"\x00")
+                cands.append(r)
+            if cands and verbose:
+                print(f"    REACTIVATED {len(cands)} held walker(s): "
+                      f"{[(r['idx'], r['x'], r['y'], r['man']) for r in cands]}",
+                      flush=True)
         cands = cands[:ORDER_CAP * 4]
         verified = attempts = 0
         for cand in cands:

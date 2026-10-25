@@ -256,11 +256,46 @@ def main():
           step in TABLE and not sp.walk_parity_ok((28, 43), (28, 42))
           and not sp.walk_parity_ok((29, 42), (28, 42)))
 
+    # ------- M54j: re-activation of HELD walkers (the auto-sentry finding) ---------
+    # run1 (evidence/trace_m54j_run1_20261025_155011.jsonl): the setup left EXACTLY
+    # one actionable record at (20,42) (order 0, read back on a second handle); by
+    # our phase it wore byte 1 (SENTRY) and had patrolled away — the game auto-sentries
+    # an order-0 unit across the round boundary. Only byte 2 (HOLD) survives it, so
+    # the order step re-activates a held walker IN-PHASE. These cases pin the picker.
+    OWN = {(28, 42), (29, 42)}
+
+    print("case 25: the (20,42) held walker IS eligible — even parity matches "
+          "University (28,42), man 8")
+    h20 = row(37, x=20, y=42, order=2)
+    sel = sp.pick_reactivation([h20], OWN, TABLE)
+    check("eligible, nearest same-parity own base named, not a one-stepper",
+          len(sel) == 1 and sel[0]["idx"] == 37 and sel[0]["man"] == 8
+          and sel[0]["on_step"] is False and sel[0]["reactivated"] is True)
+
+    print("case 26: a held unit STANDING ON our base is not eligible (`g` there "
+          "raises the BASE SCREEN — session 86 run5 t0)")
+    check("own-base tiles are dropped from the pool",
+          sp.pick_reactivation([row(3, x=28, y=42, order=2)], OWN, TABLE) == [])
+
+    print("case 27: wrong-parity units cannot reach ANY own base — not eligible")
+    check("(49,33) and a Korolev garrison are dropped: no same-parity own base "
+          "off their tile",
+          sp.pick_reactivation([row(0, x=49, y=33, order=2),
+                                row(9, x=29, y=42, order=2)], OWN, TABLE) == [])
+
+    print("case 28: a one-stepper sorts AFTER a real multi-leg route")
+    sel = sp.pick_reactivation([row(41, x=26, y=42, order=2),   # on a step of (28,42)
+                                row(37, x=20, y=42, order=2)],  # 8 out
+                               OWN, TABLE)
+    check("the 8-out walker leads the 2-out one-step arrival",
+          [r["idx"] for r in sel] == [37, 41]
+          and sel[0]["on_step"] is False and sel[1]["on_step"] is True)
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 24/24 attribution cases")
+    print("PASS 28/28 attribution cases")
     return 0
 
 
