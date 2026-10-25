@@ -67,17 +67,28 @@ def main():
     if unit is None:
         print("no actionable unit"); return 1
 
+    # The unit is POKE-positioned (see the docstring), so the target only has to pass the
+    # game's own founding gates — it does NOT have to be a delta-table neighbour, because
+    # no pathfinding runs (the neighbour rule is a WALK constraint, M54e). Scan outward
+    # from the base and take the nearest legal tile.
     legal = []
-    for (nx, ny) in nbrs:
-        reasons = P.founding_gate(f, nx, ny, 0)   # judged as the type we will poke to
-        if not reasons and (nx, ny) not in tiles:
-            legal.append((nx, ny))
+    for d in range(1, 5):
+        for dy in range(-d, d + 1):
+            for dx in range(-d, d + 1):
+                if max(abs(dx), abs(dy)) != d:
+                    continue
+                nx, ny = bx + dx, by + dy
+                if not (0 <= nx < w and 0 <= ny < h) or (nx, ny) in tiles:
+                    continue
+                if not P.founding_gate(f, nx, ny, 0):      # judged as the type we poke to
+                    legal.append((nx, ny))
+        if legal:
+            break
     if not legal:
-        print("NO legal founding neighbour — report and stop"); return 1
-    # prefer the even-x neighbour (bx-2,by) that m54e_prep used, then by distance
-    pref = [t for t in legal if t == (bx - 2, by)] or [legal[0]]
-    tx, ty = pref[0]
-    print(f"founding-legal neighbours: {legal}; target ({tx},{ty})", flush=True)
+        print("NO legal founding tile within 4 of our base — report and stop"); return 1
+    tx, ty = legal[0]
+    print(f"legal founding tiles at distance {max(abs(tx-bx),abs(ty-by))}: {legal[:8]}; "
+          f"target ({tx},{ty})", flush=True)
 
     poke(unit, 10, 0, 2, "type -> Colony Pod (class 8)")
     poke(unit, 0, tx, 2, "x -> founding tile")

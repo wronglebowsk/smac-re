@@ -263,3 +263,36 @@ executing. Measured on this build with `scripts/m54e_probe.py` (pid 484088, base
   `+17` at 0 on five different records, with and without the `0x10000` "has moved" bit
   cleared — so §4's `0x19` (Shift+arrow, M27) is not reachable from this save's keyboard
   path, and the cursor path (§1 rule 2) is not an order.
+
+## 8. The colonist FOUNDING (`b`), keyed at last — M54g, session 84, 2026-10-25
+
+* **`b` reaches the order dispatcher only with orders mode on** (`0x91b5b8 != 0`). With it
+  off, the same keypress at the same unit on the same tile opens the BASE screen of the base
+  near the map cursor and the dispatcher never sees it
+  (`evidence/m54g/probe_c_control.json` vs `evidence/m54g/probe_omode.json` — one variable,
+  two different panes).
+* The dispatcher (`shard_013.c:4384`, `case 0x62`) sends class-9 units to terraform mode 0xe
+  and everything else to `FUN_004d1280`, which gates class == 8 (`NEEDCOLONISTS`), then
+  domain/elevation (NOTINTRIAD), fungus (FUNGUSDANGUS), monolith, rock (NOTONROCKY:
+  `(tile[5] & 0xc0) > 0x40` with elevation > 4), can-act, then BASETOONEAR — a scan of the 8
+  delta-table neighbours (`0x6784a0` dx / `0x6784c4` dy, parity-shifted, NOT the Moore
+  neighbourhood) for tile mask1 bit 0x1 with an owner nibble < 8. **The tile the unit stands
+  ON may itself carry bit 1 and still be a legal site.** `founding_gate()` in
+  `scripts/smac_play.py` mirrors all of it live; it predicted every refusal seen and the one
+  acceptance.
+* On a legal tile the handler raises **#NEWBASE** — "ENTER A NAME FOR YOUR NEW BASE." at y 102,
+  the generated name already in the field at y 135, and the HUD's TURN COMPLETE row still drawn
+  underneath, so the frame reads `hud` unless the caption band is tested: that is the
+  `name-pane` class (frame `evidence/m54g/newbase_pane.png`). **Return accepts the generated
+  name; the base record exists 0.1 s later** (`evidence/m54g/probe_found1.json`).
+* **The founding writes NO order byte and CONSUMES the unit** — the record list compacts (the
+  founding record read x4,y4,type320 immediately after). Its oracle is the BASE ARRAY
+  (`0x95DA10`, stride 304, name at +19..51, count `0x985AF4`), not `+17`. The loop issues it in
+  `issue_found_for_unit()` and verifies a same-faction base record at the tile the unit stood
+  on; `m54a_check_run.py` labels such an order `b->founded` because there is no byte to print.
+* Live: `b` at (26,42) (rocky, `tile[5] = 0x83`) did nothing; at (26,43) NEWBASE appeared; in
+  the loop at (29,42) the run founded **"Korolev Center"** — `bases_ours 1 -> 2`, energy delta
+  0 (`evidence/trace_m54g_20261025_084554.jsonl` turn 0).
+* The tile math these gates use is `*(u32*)0x92ae14 + (DAT_00692184*y + x>>1)*0x2c`: **0x92ae14
+  is a POINTER and the row pitch is live** — 32 on this 64x64 world (the hard-coded 40 in old
+  scripts was an 80-wide map). Indexing the slot itself returns all-zero "tiles".

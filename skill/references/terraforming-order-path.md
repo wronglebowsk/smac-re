@@ -123,3 +123,27 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
 * **The unit panel is not an oracle on demand**: writing `SEL_G` does not redraw it (three
   different selections read byte-identically), and a mouse nudge does not either. Trust the
   panel only at load or after a real in-game selection.
+* **Founding a base IS keyed: `b`, and only with orders mode on** (M54g, session 84).
+  With `0x91b5b8 == 0` the key never reaches the order dispatcher — it opens the BASE screen
+  of the base near the cursor (measured: same unit, same tile, one variable). The dispatcher
+  (`shard_013.c:4384` case 0x62) sends class-9 units to the borehole mode and everything
+  else to `FUN_004d1280`, which gates class 8 (`NEEDCOLONISTS`) then the tile. On a legal
+  tile it raises NEWBASE — caption "ENTER A NAME FOR YOUR NEW BASE." at y 102 with the
+  generated name already in the field and the HUD's TURN COMPLETE row still drawn under it,
+  so classify() says `hud` unless the caption is tested (`name-pane` class, frame
+  `evidence/m54g/newbase_pane.png`). **Return accepts the generated name; the base record
+  exists 0.1 s later.** The founding writes NO order byte and CONSUMES the unit — the record
+  list compacts, so a record index is not an id.
+* **Founding tile gates** (`founding_gate()` in `scripts/smac_play.py` mirrors them live):
+  NOTINTRIAD, FUNGUSDANGUS (fungus + elev>3), NOTONMONOLITH, NOTONROCKY ((b5&0xc0)>0x40 and
+  elev>4), BASETOONEAR. BASETOONEAR reads ONLY the 8 delta-table neighbours (mask1 bit 0x1,
+  owner nibble < 8): the tile a unit stands ON may keep bit 1 and still be a legal founding
+  site, and the delta tables are parity-shifted, so "adjacent" is not the Moore 8-neighbourhood.
+* **The tile array is behind a POINTER and the row pitch is LIVE**:
+  `*(u32*)0x92ae14 + (DAT_00692184*y + x>>1)*0x2c`. On this 64x64 world DAT_00692184 is 32 —
+  the old hard-coded 40 was an 80-wide map. Indexing 0x92ae14 itself reads pointer slots and
+  returns all-zero "tiles" under a base that visibly exists.
+* **OCR is ~15 s a poll here and a clean HUD sometimes classifies `unknown`.** Service panes
+  memory-first: poll the oracle (base array, `+17`) at 100 ms and OCR only when memory has
+  not answered — an OCR-paced pane loop spams keys at the HUD, and Return at a HUD is
+  TURN COMPLETE.
