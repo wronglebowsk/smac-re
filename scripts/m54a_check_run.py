@@ -31,6 +31,9 @@ def main():
     ap.add_argument("--min-orders", type=int, default=0, dest="min_orders",
                     help="S3/M54c: assert at least this many VERIFIED orders (records "
                          "carrying the memory-confirmed byte delta) in the run")
+    ap.add_argument("--min-our-bases", type=int, default=0, dest="min_our_bases",
+                    help="floor on OUR bases at the end of the run (M54f: a run that loses "
+                         "the position must not print PASS)")
     ap.add_argument("--min-moves", type=int, default=0, dest="min_moves",
                     help="S3/M54d: assert at least this many VERIFIED WALKS — an order "
                          "whose unit, after the year flipped, sits on the destination its "
@@ -102,6 +105,11 @@ def main():
                            for m in moves[:6])
         print(f"           {detail}   ({msec}s of move checks)")
     print(f"end        {json.dumps(turns[-1].get('state_after'), sort_keys=True)}")
+    end_state = turns[-1].get("state_after") or {}
+    ours, our_units = end_state.get("bases_ours"), end_state.get("units_ours")
+    print(f"ours       bases_ours {ours}  units_ours {our_units}"
+          + (f"   floor {a.min_our_bases}" if a.min_our_bases
+             else "   (no floor: --min-our-bases catches a defeat)"))
 
     fails = []
     if len(adv) < want:
@@ -116,13 +124,16 @@ def main():
         fails.append(f"only {len(orders)} VERIFIED orders, milestone wants {a.min_orders}")
     if len(moves) < a.min_moves:
         fails.append(f"only {len(moves)} VERIFIED walks, milestone wants {a.min_moves}")
+    if a.min_our_bases and (not isinstance(ours, int) or ours < a.min_our_bases):
+        fails.append(f"our faction holds {ours} bases at the end, floor is {a.min_our_bases}")
     if fails:
         print("FAIL " + "; ".join(fails))
         return 1
     print(f"PASS {len(adv)} turns advanced, year +1 each, no STUCK over "
           f"{2 * a.timeout:.0f}s, per-turn state deltas present"
           + (f", {len(orders)} verified orders" if a.min_orders else "")
-          + (f", {len(moves)} verified walks" if a.min_moves else ""))
+          + (f", {len(moves)} verified walks" if a.min_moves else "")
+          + (f", we still hold {ours} bases" if a.min_our_bases else ""))
     return 0
 
 
