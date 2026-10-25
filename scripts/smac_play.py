@@ -1918,6 +1918,23 @@ ORDER_MOVE_KEY = ORDER_MOVE[0]          # "g"
 MOVE_ORDER_RETRIES = 2                  # attempts AFTER the first
 
 
+def resolve_move_dest(pick, pts):
+    """M54i2: where a queued MOVE is BOUND for — the chooser's named base, not a leg.
+
+    Measured live 2026-10-25 (run m54i2_run1 turn 3, read back after the walk started):
+    the OK we answered named `University Base (28,42)` and the record's leg array holds
+    `(11,17)` — the FIRST STEP of the route, not the end. `+20..+27`/`+28..+35` carry one
+    step the pump is about to take (session 82's oscillating walker re-read the pair every
+    round; `FUN_005a071e` rewrites them on each arrival), so the last leg is a waypoint,
+    not a destination. The chooser's own pick is the ordered destination; the legs stay
+    the fallback for a move that was queued without a chooser row.
+    """
+    base = (pick or {}).get("base")
+    if base is not None:
+        return [base[0], base[1]]
+    return list(pts[-1]) if pts else None
+
+
 def move_order_needs_retry(order, attempts):
     """M54i2: when is a `g` worth RE-RAISING? (session 86's two live failure modes)
 
@@ -2154,7 +2171,9 @@ def _issue_order_once(f, me, cand, kname, verbose=False, want=None, label="terra
         lx = [struct.unpack("<h", src[20 + k * 2:22 + k * 2])[0] for k in range(4)]
         ly = [struct.unpack("<h", src[28 + k * 2:30 + k * 2])[0] for k in range(4)]
         pts = [(a, b) for a, b in zip(lx, ly) if a >= 0 and b >= 0]
-        dest = list(pts[-1]) if pts else None
+        # M54i2: the leg array is the NEXT STEP, not the destination (see
+        # `resolve_move_dest`); the chooser's named base is the ordered destination.
+        dest = resolve_move_dest(picks[-1] if picks else None, pts)
     # M54e: DOES THE WALK LAND, and when? Measured on this build: a parked 0x18 sat
     # through three TURN COMPLETEs without moving (years 2153, 2154, 2155), while the same
     # order executed 100 ms after a chooser OK — the pump (`FUN_0050ef60` -> `FUN_00529e70`

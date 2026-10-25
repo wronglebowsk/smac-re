@@ -210,11 +210,22 @@ def main():
     check("a dropped key is the turn's problem, not a re-press",
           sp.move_order_needs_retry(o, 0) is False)
 
+    # ---------------- M54i2: the DESTINATION is the chooser's, not a leg -------------
+    print("case 19: chooser named University Base, legs hold the FIRST STEP (11,17)")
+    check("dest = the named base, not the waypoint",
+          sp.resolve_move_dest({"base": [28, 42], "base_name": "University Base"},
+                               [(11, 17)]) == [28, 42])
+
+    print("case 20: no chooser row (queued without a pane) -> last leg is the fallback")
+    check("legs still answer when the chooser never ran",
+          sp.resolve_move_dest(None, [(29, 42)]) == [29, 42]
+          and sp.resolve_move_dest({}, []) is None)
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 18/18 attribution cases")
+    print("PASS 20/20 attribution cases")
     return 0
 
 
