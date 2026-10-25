@@ -1767,9 +1767,19 @@ def service_turn(idx, tr, timeout, verbose=False):
             # HELD the game draws "No units need new orders. Press ENTER", TURN COMPLETE
             # stops OCR-ing, the frame classifies `unknown`, and the game's own ENTER
             # advances the turn in seconds (run2: 4 of 6 turns, order step never ran).
+            no_modal_bars = not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200]
             hud_chrome = (find(words, ["menu"]) and find(words, ["commlink"])
-                          and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200])
-            if kind == "unknown" and hud_chrome:
+                          and no_modal_bars)
+            # M54k (measured, run2 turn 1, evidence/px_m54k_banner_probe.png at 2173): the
+            # map HUD with the production line drawn in the message box ("Korolev Center
+            # builds ScoutPatrol.") OCRs as GARBAGE — no MENU, no COMMLINK — so hud_chrome
+            # was false while memory said OUR phase (cur_player 3, turn_flags 0) and the
+            # whole 240 s turn budget burned with NO input ever sent (the turn would have
+            # been recorded STUCK). OCR lies about legibility (§ traps); memory + "nothing
+            # drawn in the modal band" is the clean-HUD oracle, so the our-phase blind
+            # gates use THAT, not the OCR chrome read. A click behind a real modal is
+            # harmless (the year stays where it is).
+            if kind == "unknown" and no_modal_bars:
                 st_now = state()
                 if (st_now.get("cur_player") == st_now.get("player")
                         and not (st_now.get("turn_flags") or 0) & 2
@@ -1784,7 +1794,7 @@ def service_turn(idx, tr, timeout, verbose=False):
                 st_now = state()
                 if (st_now.get("cur_player") == st_now.get("player")
                         and not (st_now.get("turn_flags") or 0) & 2
-                        and hud_chrome):
+                        and no_modal_bars):
                     click(TURN_BTN)
                     rec["handled"].append("turn-complete-blind")
                     last_press = now
