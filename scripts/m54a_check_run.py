@@ -9,7 +9,10 @@ What it asserts (the milestone's second acceptance line):
   * the run wrote a header line carrying the seed + start state, and every turn record
     carries its action log (`handled`) and its before/after state delta.
 
-Exit 0 = all of that holds. The file is read, never re-derived: this needs no game.
+M54c added `--min-orders` (orders whose `+17` delta the memory confirmed) and M54d added
+`--min-moves` (orders whose unit then WALKED: after the year flips the record sits on the
+tile its own leg array named, with `+40` movement spent). Both read what the trace says —
+the trace is written from memory, so this still needs no game.
 """
 import argparse
 import json
@@ -28,6 +31,10 @@ def main():
     ap.add_argument("--min-orders", type=int, default=0, dest="min_orders",
                     help="S3/M54c: assert at least this many VERIFIED orders (records "
                          "carrying the memory-confirmed byte delta) in the run")
+    ap.add_argument("--min-moves", type=int, default=0, dest="min_moves",
+                    help="S3/M54d: assert at least this many VERIFIED WALKS — an order "
+                         "whose unit, after the year flipped, sits on the destination its "
+                         "own leg array named with movement spent at +40")
     a = ap.parse_args()
 
     path = a.trace if os.path.isabs(a.trace) else os.path.join(ROOT, a.trace)
@@ -50,8 +57,10 @@ def main():
     stuck = [t for t in turns if t.get("stuck")]
     attempts = [o for t in turns for o in t.get("orders", [])]
     orders = [o for o in attempts if o.get("verified")]
+    mv_attempts = [m for t in turns for m in t.get("moves", [])]
+    moves = [m for m in mv_attempts if m.get("landed")]
     oturns = sorted({t["turn"] for t in turns if t.get("orders_verified")})
-    osecs = round(sum(t.get("order_seconds", 0) for t in turns), 1)
+    msec = round(sum(t.get("move_seconds", 0) for t in turns), 1)
     deltas = {}
     for t in turns:
         d = (t.get("year_after") or 0) - (t.get("year_before") or 0)
@@ -66,7 +75,8 @@ def main():
         for k in t.get("handled", []):
             base = k.split("@")[0].split(":")[0]
             hist[base] = hist.get(base, 0) + 1
-    panes = {k: v for k, v in hist.items() if k in ("vote-yea", "bar", "hive-bribe")}
+    panes = {k: v for k, v in hist.items() if k in ("vote-yea", "bar", "hive-bribe",
+                                                    "dest-chooser-ok")}
     maxdt = max((t.get("dt", 0) for t in turns), default=0)
 
     print(f"advanced   {len(adv)}/{len(turns)}   year deltas {deltas}")
@@ -74,6 +84,7 @@ def main():
           f"max dt {maxdt}s  over 2x{a.timeout}s: {over}")
     print(f"pane hits  {panes or '{}'}")
     print(f"actions    {json.dumps(hist, sort_keys=True)}")
+    osecs = round(sum(t.get("order_seconds", 0) for t in turns), 1)
     print(f"orders     {len(orders)} VERIFIED of {len(attempts)} attempted, on turns "
           f"{oturns}, {osecs}s spent ordering")
     if orders:
@@ -82,6 +93,14 @@ def main():
             keys[f"{o['key']}->byte{o['order_after']}"] = keys.get(f"{o['key']}->byte{o['order_after']}", 0) + 1
         print(f"order mix  {json.dumps(keys, sort_keys=True)}  "
               f"energy spent {sum(o.get('energy_delta', 0) for o in orders)}")
+    print(f"moves      {len(moves)} LANDED of {len(mv_attempts)} ordered walks "
+          f"(record on the tile its own leg named, +40 movement spent)"
+          + (f", on turns {sorted({t['turn'] for t in turns if t.get('moves_verified')})}"
+             if moves else ""))
+    if moves:
+        detail = "; ".join("t%s->%s mp+%s" % (m["frm"], m["dest"], m["mp_after"])
+                           for m in moves[:6])
+        print(f"           {detail}   ({msec}s of move checks)")
     print(f"end        {json.dumps(turns[-1].get('state_after'), sort_keys=True)}")
 
     fails = []
@@ -95,12 +114,15 @@ def main():
         fails.append(f"records without action log / state delta: {missing[:8]}")
     if len(orders) < a.min_orders:
         fails.append(f"only {len(orders)} VERIFIED orders, milestone wants {a.min_orders}")
+    if len(moves) < a.min_moves:
+        fails.append(f"only {len(moves)} VERIFIED walks, milestone wants {a.min_moves}")
     if fails:
         print("FAIL " + "; ".join(fails))
         return 1
     print(f"PASS {len(adv)} turns advanced, year +1 each, no STUCK over "
           f"{2 * a.timeout:.0f}s, per-turn state deltas present"
-          + (f", {len(orders)} verified orders" if a.min_orders else ""))
+          + (f", {len(orders)} verified orders" if a.min_orders else "")
+          + (f", {len(moves)} verified walks" if a.min_moves else ""))
     return 0
 
 
