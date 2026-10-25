@@ -310,6 +310,30 @@ def region_colors(png, box=(180, 60, 620, 200)):
     return len(im.getcolors(maxcolors=300000) or [])
 
 
+def close_bar(png):
+    """The bottom-right red CLOSE bar of a full-screen scene/artwork panel (M54d), or None.
+
+    Measured on `evidence/m54d/peek_stuck.png` (the scene the driver burned two runs on):
+    the bar fills y 579-599 from x 596 to the right edge, and its colours are (94,10,9) and
+    (73,9,8) — the (73,9,8) patches are the "CLOSE" glyphs. The terrain it sits on is
+    (85,52,30)-ish, so the GREEN channel, not brightness, is what separates bar from ground:
+    r>70 & g<30 & b<30. OCR is useless here — it read 7 tokens off this whole frame — so
+    this is a colour test on the bottom-right strip, and the click target is the fill's own
+    centre, not a corner.
+    """
+    im = Image.open(png).convert("RGB")
+    w, h = im.size
+    strip = im.crop((w // 2, h - 25, w, h))
+    px = strip.load()
+    pts = [(x, y) for y in range(strip.height) for x in range(strip.width)
+           if px[x, y][0] > 70 and px[x, y][1] < 30 and px[x, y][2] < 30]
+    if len(pts) < 300:
+        return None
+    xs = [p[0] for p in pts]
+    ys = [p[1] for p in pts]
+    return (w // 2 + (min(xs) + max(xs)) // 2, (h - 25) + (min(ys) + max(ys)) // 2)
+
+
 def classify(words, ncolors=None, png=None):
     """Dialog test: SMAC captions sit at y~102 with a body block at y~130-160.
 
@@ -374,6 +398,12 @@ def classify(words, ncolors=None, png=None):
     # while the pane blocks the turn — the M14 156 s "STUCK" turn.
     if upper >= 10 and png is not None and region_colors(png, TEXTCOL) < 45:
         return "dialog"
+    # M54d: a full-screen scene/artwork panel (the Secret-Project / Prophet movies) carries
+    # its OWN red CLOSE bar bottom-right. It OCRs to ~7 tokens, so it used to fall through
+    # to `movie`, where the driver only ever presses Escape — and Escape is gated by
+    # --no-escape, so two runs sat on it with the year frozen (trace_m54d40b turn 0).
+    if png is not None and close_bar(png):
+        return "artwork-close"
     if hud_btn:
         return "hud"
     # The HUD is identified by its TURN COMPLETE button at y~416, nothing else: the
@@ -1008,6 +1038,15 @@ def service_turn(idx, tr, timeout, verbose=False):
             rec["handled"].append(f"dest-chooser-ok@{int(xy[0])},{int(xy[1])}" if xy
                                   else "dest-chooser:Return")
             time.sleep(1.0)
+        elif kind == "artwork-close":
+            # M54d: the scene panel is closed by its own red bar, not by a key: the movie
+            # branch only presses Escape and Escape is gated, which froze two runs.
+            xy = close_bar(png)
+            if xy:
+                click(xy)
+            rec["handled"].append(f"artwork-close@{int(xy[0])},{int(xy[1])}" if xy
+                                  else "artwork-close:no-bar")
+            time.sleep(1.2)
         elif kind == "confirm":
             answer_confirm(words)
         elif kind == "dialog":

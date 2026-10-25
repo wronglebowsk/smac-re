@@ -49,3 +49,34 @@ turn 5: 2108->2109 OK (4.0s, unknown,ai-phase:unknown)
     [movie] | a | z. =V.9 MD ee aa Sere |
     [movie] | a | z. =V.9 MD ee aa Sere |
     [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+turn 6: 2109->2109 STUCK (262.1s, unknown,close-bar@400,575,dialog,ai-phase:dialog,base,ai-phase:base)
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+    [movie] | a | z. =V.9 MD ee aa Sere |
+turn 7: 2109->2109 STUCK (241.5s, movie,movie,movie,movie,movie,movie)
+two consecutive stalls — stopping
+trace: /home/n100/reverse/smac/evidence/trace_m54d40_20261024_232920.jsonl

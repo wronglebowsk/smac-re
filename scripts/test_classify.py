@@ -65,6 +65,11 @@ CASES = [
      "M54d: the same chooser over a unit standing OFF its base — same caption, same bar row, "
      "and the row it lists is still 'University Base Distance: 0' because the pane reports "
      "the CURSOR's distance, not the unit's"),
+    ("evidence/m54d/peek_stuck.png", "artwork-close",
+     "M54d: a full-screen scene panel (Secret-Project artwork) with its own red CLOSE bar at "
+     "the bottom-right (fill (94,10,9)/(73,9,8), y 579-599, x 596-799). OCR reads 7 tokens "
+     "off the whole frame, so it fell through to `movie`, whose only answer is Escape — and "
+     "Escape is gated by --no-escape, so the year sat frozen for two runs"),
 ]
 
 
