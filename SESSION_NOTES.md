@@ -496,9 +496,20 @@ browsers), and the round-aware turn budget.
   "h->byte2": 2}`, **`moves 5 LANDED of 5 ordered walks (record on the tile its own leg named,
   +40 movement spent), on turns [0, 9, 12]`**, `PASS`. Every landed walk reads `(4,12) ->
   (6,12) mp+3` with `on_dest_after_exec True` and `walked_inphase True`.
-- **State of the box:** the game is alive at year 2200, pid 484088, `cur_player 3`, 30 bases on
-  the map, our two class-9 records and three scouts back on University (6,12); the driver
-  exited normally. `evidence/` is 29.3 MB (`budget 20/30 [warn]`): the `_3x.png` OCR siblings
+- **State of the box (AUDITED after the merge — the original sentence here was WRONG).** The
+  driver exited normally, but the run did not leave us holding University Base: at 2201
+  `bases_ours 0` — the base array holds 30 bases and faction 3 owns none (factions {5:14, 1:6,
+  6:5, 7:3, 2:1, 4:1}) — and our 8 surviving records are all stacked on one tile, (47,47),
+  order 1 (SENTRY). The screen at that moment shows a `Colony Pod (0-1-1)` at (47,47), which is
+  the cross-check that this is a real read and not stale memory: the unit the game has centred
+  IS one of those records. `turn_flags` sits at `0x100002` and survives a year flip (one TURN
+  COMPLETE moved 2200 -> 2201, flags unchanged). So the box holds a defeated faction stuck
+  "mid-round", not the tidy garrison this bullet first claimed ("our two class-9 records and
+  three scouts back on University (6,12)" was inferred from the pre-run census plus the walk
+  destinations — never read back — and it is false). **The M54e walk evidence is unaffected:**
+  it is index-addressed `+17`/`+20..+35`/`+40`/`x,y` on records 0, 2, 5, 8, 11 at turns 0, 9,
+  12, all before the base was lost.
+- **`evidence/` is 29.3 MB** (`budget 20/30 [warn]`): the `_3x.png` OCR siblings
   `check_classes.py` writes next to every frame it OCRs were deleted — that litter alone pushed
   the tree over the gate (precedent for the prune: the same deletion list in
   `evidence/.git/PR_BODY.md`).
@@ -509,3 +520,34 @@ browsers), and the round-aware turn budget.
   array (`0x95DA10` x 304, faction = low byte at `+4`) with the census printing `bases_ours=2`
   inside one unattended run. Secondary: 26 `unknown` pane hits in `trace_m54e40` still to pin,
   and the raise-footprint refusal that makes every terraform key a dud on this map.
+
+## Session 82b (2026-10-25) — M54e post-close audit: **THE RUN THAT PASSED ALSO LOST THE POSITION (bases_ours 0, our 8 records stacked at (47,47), flags stuck 0x100002), "OCCUPANCY" WAS THE WRONG CAUSE FOR M54d, AND THE TYPE BYTE IS +4 NOT +10** — `plugins` none; corrected `SESSION_NOTES.md` 82, `ORDERS.md §7`, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
+
+Audit done after #44 merged, by re-reading the box and re-running the checker on every
+milestone trace. Three claims that were wrong or unsupported, in order of how much they matter:
+
+1. **The type byte is at `+4`, not `+10`.** `FOOTING.md` 108 and `SAVE_FORMAT.md` 159-163 both
+   say the 52-byte record carries the type at `+4` and that `+10` is a FLAG WORD;
+   `m54d_census.py`, `smac_play.unit_rec` and the order loop all read type at `+10`. Measured on
+   the live 119-record array: decoding with `+4` gives 117/119 plausible records (tiles 0-79,
+   owners 0-7) and the eight faction-3 records the SCREEN confirms are Colony Pods read
+   `+4 = 0` (Colony Pod); decoding with `+10` gives 44/119 and impossible types (192, 322).
+   So every "class 9" in the M54c/M54d/M54e census lines rests on the wrong byte, and the pokes
+   that "made a Former" (`+10` 2 -> 1) probably never changed a unit's type. **The movement
+   evidence does not depend on it** (`+17`, `+20..+35`, `+40`, `x,y` are unchanged by this).
+   Settle it first next session: poke `+4` on a record whose unit panel is legible, read the
+   panel back.
+2. **"The game will not path into a tile its own owner occupies" is not true.** The run's own
+   trace refutes it: at turn 9, records 5 and 8 both walked ONTO (6,12) while records 0 and 2
+   were already standing there (both turn-0 walkers read `still_at_start False`, and both
+   turn-9 walks landed). The M54d failure most likely had another cause: its walker stood at
+   (7,12), a half-tile offset that the even-x delta tables (`0x67850c` dx / `0x678990` dy) do
+   not list as a neighbour, while every M54e walker stood on a real neighbour (4,12).
+   `m54e_prep.py` changed two variables at once (emptied the base tile AND moved the walker
+   from (7,12) to (4,12)) and the write-up blamed the occupancy one.
+3. **The checker cannot see a defeat.** `m54a_check_run.py` asserts year deltas, STUCK and
+   order/move counts; the trace's start/end snapshot carries `n_bases` for all factions but not
+   how many bases WE own, so a run in which our faction loses every base still prints `PASS`.
+   The M54e run did exactly that. The fix is small: put `bases_ours` (and `units_ours`) in the
+   snapshot `smac_play` writes, and add a `--min-our-bases` floor (default 0 so old traces keep
+   working) to the checker.

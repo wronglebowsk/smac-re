@@ -244,11 +244,15 @@ executing. Measured on this build with `scripts/m54e_probe.py` (pid 484088, base
 * **The leg arrays survive the pump** (`order 0`, legs still `6/12` after the arrival), so
   the route is still readable after the walk — that is how the loop names the tile to
   verify against, and why it parses legs even when the byte was already consumed.
-* **The game will not path into a tile its own owner occupies.** With four of ours standing
-  on University Base the walker oscillated (6,13)<->(7,12) across three EXECs and never
-  arrived; the same order landed the moment the base tile was emptied. `g` can only name a
-  BASE tile (§1, §4: the 0x18 branch copies `base[piVar21].x/y` into `+20/+28`), so an
-  ordered walk needs our own base tile FREE. `scripts/m54e_prep.py` sets exactly that.
+* **`g` can only name a BASE tile** (§1, §4: the 0x18 branch copies `base[piVar21].x/y` into
+  `+20/+28`), and the walker has to stand on a tile the delta tables call a neighbour of it.
+  M54d's walker stood at (7,12) — a HALF-tile offset from (6,12), absent from the even-x tables
+  `0x67850c`/`0x678990` — and oscillated (6,13)<->(7,12) across three EXECs; every M54e walker
+  stood at (4,12) and landed on the first tick. **Occupancy is NOT the blocker** — an earlier
+  version of this bullet said it was, which the run's own trace refutes: at turn 9 records 5
+  and 8 walked onto (6,12) while records 0 and 2 stood there, so units do stack on a
+  destination tile. `m54e_prep.py` changed both variables at once (empty tile, walker moved to
+  a real neighbour) and the note blamed the wrong one.
 * **`(base.x+1, base.y)` is not a neighbour.** The map packs two columns per tile record
   (`DAT_0092ae14 + (mapw/2*y + x>>1)*0x2c`, even x at `+0`, odd at `+3`) and
   `FUN_00502c40`'s even-x delta tables (`0x67850c` dx, `0x678990` dy) step `(±2,0)` and
