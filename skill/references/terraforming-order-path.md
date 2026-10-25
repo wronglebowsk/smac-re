@@ -240,3 +240,23 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
 * **A COMMUNICATION arriving mid-order-step is a key sink**: the order byte went 0 -> 88 -> 2
   (HOLD) and the turn record spanned two year flips. And with everything HELD the game advances
   whole rounds with NO input (~8 s/round), so a turn record can show a +2 delta on its own.
+
+**M54k2 (session 90, PASS run at 2198-2204).** The hook shape prints PASS: hook-armed HELD
+walker, loop-ordered `g`, multi-turn walk onto our own base (ordered turn 1, landed turn 5),
+year deltas {1:6}. Three path facts added:
+* **The pump can run the WHOLE route inside our phase**: after the chooser OK, `turn_flags & 2`
+  stays set with `cur_player` OURS and the game flips the year every ~4.6 s executing steps —
+  inside one driver turn record. The candidate's SLOT goes stale during the burst (each flip
+  compacts the array), so `UNIT_ARR + idx*52` reads a different record. Read the queue off
+  CONTENT instead (`queued_rescan`): exactly one of our records newly wearing the wanted byte,
+  none wearing it pre-press, its last leg naming one of OUR bases. Queue-time legs name the
+  DESTINATION; mid-walk rewrites name waypoint garbage like (61,9)/(61,10) — a waypoint is not
+  evidence.
+* **After the turn's order is spent and nothing is actionable, the game auto-advances ~8 s/round
+  and can flip TWO rounds inside one slow OCR iteration** (a +2 turn record). Poll `year()` at
+  0.2 s after the order step and close the turn on the flip; the flip is cheap from memory.
+* **`turn_flags` carries a persistent 0x100000 bit from ~2196 onward** (1048578); the `tf & 2`
+  masks are unaffected. Unexplained — not nonsense.
+Screen the walker target with `scratch/m54k2_scan.py <root_x> <root_y> <maxBFS> <minEnemyDist>`
+(live step-table BFS + tile flag byte + occupancy + enemy distance) — the quiet window around
+the bases closes FAST (best enemy distance fell 13 -> 9 in seven game-years).

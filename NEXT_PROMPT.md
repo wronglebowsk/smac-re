@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (written at the end of session 89, 2026-10-25)
+# NEXT_PROMPT.md — footing for the next session (written at the end of session 90, 2026-10-25)
 
 ## THE LEDGER — read this first: the whole state of the project
 
@@ -7,139 +7,123 @@ Closed (PRs merged to `main`):
   the ordered WALK lands (sessions 77-82, PRs #39-#44).
 - **M54F** type byte settled + checker sees defeat (#47). **M54G** founding keyed + loop FOUNDED
   (#48). **M54h** chooser geometry (#49). **M54i** attribution by record DIFF (#50).
-- **M54i2 — a loop-ordered walk landed on our own base; PASS** (session 87: the step table
-  preserves (x+y) parity — every earlier walker stood on the wrong parity).
-- **M54j — A MULTI-LEG WALK LANDED ON OUR OWN BASE ACROSS TURN COMPLETEs; PASS** (session 88).
-- **M54k — the PRE_ARM hook path, DOCUMENTED NEGATIVE** (session 89): the hook armed a
-  zero-actionable position (`pre-arm:recN` in the trace), the `g` order landed
-  (`g->byte24`, `attributed True, confounded False`), the walker walked 6-7 positions read from
-  memory and **arrived on our own base in run5** — but no run printed PASS: run6's checker line
-  was `advanced 6/6 / {1: 6} / stuck 0 / moves 0 LANDED of 5 ordered walks`
-  (the walker stood ONE legal step from Korolev Center when the 6 turns ran out), run5's arrival
-  was unscoreable (press-time leg drift + University captured at 2193). PR number in `git log`.
-- Open in ROADMAP.md: **S1** (production rebuild) and **S2** (win conditions, transit).
-  **M52** (Paul's 2416 campaign save) on hold.
+- **M54i2** a loop-ordered walk landed on our own base (#51-ish; sessions 87). **M54j** a
+  MULTI-LEG walk landed across TURN COMPLETEs (#88). **M54k** the PRE_ARM hook path,
+  DOCUMENTED NEGATIVE (#89).
+- **M54k2 — THE HOOK-SHAPE RUN PRINTED PASS** (session 90): setup read back `actionable: []`,
+  `pre-arm:rec12` armed the walker at (35,36), the loop's `g` verified 0->24 (rescan path),
+  the watcher read the walk (35,36)->(34,37)->(33,38)->(32,39)->(30,39)->(30,41)->**(29,42)**
+  byte 24 the whole way, ordered turn 1 LANDED turn 5, `bases_ours 2` at 2204, year deltas
+  {1:6}. PR number in `git log`. **The walking arc (M54i2 -> M54k2) is CLOSED.**
+- Open in ROADMAP.md: **S1** (production rebuild) and **S2** (ROADMAP line 86: the SOLO TURN
+  ADVANCE heartbeat — TURN COMPLETE -> upkeep -> production -> research -> AI -> events -> next
+  player; the footing used to call S2 "win conditions, transit" — the ROADMAP row is the
+  authority, read it before committing). **M52** (Paul's 2416 campaign save) on hold.
 
-## WHAT SESSION 89 ESTABLISHED — do not re-learn these the hard way
+## WHAT SESSION 90 ESTABLISHED — do not re-learn these the hard way
 
-1. **The map's per-tile impassable flag.** In the 2-column tile record
-   (`*(u32*)0x92ae14 + (DAT_00692184*y + x>>1)*0x2c`) the flag byte is at record **+3 for EVEN
-   x** and **+7 for ODD x**; bit **0x40 set = impassable**. Validated against 98 live unit
-   tiles (one exception: a faction-6 unit at (45,39)). A poke that parks a unit on an
-   impassable tile makes it VANISH within seconds — runs 3-4 lost the walker at (28,34)
-   (flag 0x41) that way, and the watcher caught it (`-(28, 34, 2, 0) +[]`). The y=42 corridor is
-   passable from x=20 eastward; (18,42)/(19,42) are water. `scratch/m54k_watch.py` is the tool
-   that reads this kind of disappearance.
-2. **`g` queues the alphabetically-first own base regardless of parity.** The game wrote leg
-   (29,42) — Korolev Center, parity 71 ODD — for a unit at (22,42) (parity 64, even =
-   University's parity): an impossible route by §12, and it oscillated all 6 turns. The chooser
-   never classified `dest-chooser` that turn (`panes ['unknown']`, `chooser_pick None`), so the
-   driver's parity-gated row pick never ran and accepted the leg the game wrote. **Start the
-   walker on the parity of Korolev Center (odd) and the base the game auto-targets is legal.**
-3. **The pump REWRITES the leg array while it walks.** run5: the leg sampled in the press burst
-   read (61,10); the record that ARRIVED at Korolev wore [(29,42)] — the ordered destination.
-   `walker_on_dest` now accepts either signature (tests 32-33); a third leg, or no leg (a
-   garrison), is still not the walker.
-4. **A COMMUNICATION that lands inside the order step is a key sink** (ORDERS §5): run8 pressed
-   `g` with comm panes up and the order byte went 0 -> **88** -> 2 (HOLD) — unverified, and the
-   turn record spanned TWO year flips. `order_step_in_loop` does not re-check the screen
-   between its own keypresses (open item).
-5. **A produced garrison used to steal the turn's single order on the record-index tiebreak**
-   (run3: `l` five turns, `g` zero, the armed walker auto-sentried waiting). Fixed: the
-   candidate sort puts a unit that CAN reach an own base first (`_can_walk`). Note production:
-   every round boundary drops new `+17 = 0` units on our base tiles, so "setup left zero
-   actionable" is only true at the instant the setup read back.
-6. **With everything HELD the game advances rounds with NO input** (~8 s/round; the year moved
-   2164->2166 between two of my probes). That is why a turn record occasionally spans two
-   flips (`{1: 4, 2: 2}`) and why the blind gates must not depend on OCR chrome: the map HUD
-   with the production line in the message box OCRs as garbage — no MENU, no COMMLINK
-   (`evidence/px_m54k_banner_probe.png`) — and the our-phase blind gates now read memory +
-   "nothing drawn in the modal band" instead.
-7. **Reload recipe re-verified (worked first try):** `SMAC_SAVE='m54b_clean.SAV' python3
-   scripts/m54a_load.py --relaunch` — the browser opens IN the saves dir, so a bare filename
-   has no backslashes to mangle -> HUD live at 2150, 1 base, 6 units; then
-   `python3 scripts/m54g_prep.py` + one `smac_play.py --turns 2` loop turn ->
-   `FOUND rec0 (29,42) ... bases 1->2`, `bases_ours 2` at 2151.
-8. Session 88's facts still hold: the step table's 21 entries all preserve (x+y) parity; the
-   two bases are OPPOSITE parity (University 70 even, Korolev 71 odd); the game AUTO-SENTRIES an
-   order-0 unit across a round boundary (byte 2 HOLD is inert and survives); the cursor is
-   game-owned; `sp.focus()` is a no-op until `sp.WIN` is set; indices lie across a turn —
-   content is identity.
+1. **The pump can execute a queued MOVE entirely INSIDE our phase**: after the chooser OK,
+   `turn_flags & 2` stays set with `cur_player` OURS and the year flips every ~4.6 s while the
+   unit steps (run1: the whole 4-step route inside ONE turn record, deltas {1:5, 5:1}). Each
+   flip COMPACTS THE ARRAY, so `UNIT_ARR + idx*52 + 17` (the slot oracle) reads a DIFFERENT
+   record mid-burst. `queued_rescan` (`scripts/smac_play.py`, ORDERS §14) reads the queue off
+   CONTENT: exactly ONE of our records newly wearing a wanted byte, NONE wearing it in the
+   pre-press snapshot, last leg naming OUR base. Queue-time legs name the DESTINATION;
+   mid-walk rewrites name waypoint garbage ((61,9), (61,10)) — a waypoint is not evidence.
+   Wired into `_issue_order_once` after the blind Return; tests 34-37.
+2. **After the turn's order is spent and nothing is actionable the game AUTO-ADVANCES ~8
+   s/round — and can flip TWO rounds inside one slow OCR iteration** (run2 turn 5: {1:5, 2:1},
+   checker `FAIL year did not move +1 on turns [5]`). Both order-step exits now poll
+   `year() != y0` at 0.2 s (20 s cap) before continuing; the turn closes on the flip. run3:
+   {1:6}. Cheap memory polls beat OCR iterations — the general heartbeat lesson.
+3. **`turn_flags` gained a persistent 0x100000 bit around 2196** (1048578 = 0x100002 at 2204).
+   The driver's `tf & 2` gates are unaffected (run3 passed with it set). Nobody knows what sets
+   it; an S2 inventory should find out. Do not treat it as nonsense state.
+4. **Screen every walker target with `scratch/m54k2_scan.py <rootx> <rooty> <maxBFS>
+   <minEnemyDist>`** — live step-table BFS + the tile flag byte (+3 even x / +7 odd x, bit 0x40
+   impassable) + occupancy + Chebyshev enemy distance + parity. The quiet window around the
+   bases closes FAST: best enemy distance near Korolev fell 13 (2191) -> 9 (2198). Targets used:
+   (34,37) run1, (36,39) run2, (35,36) run3 (a tile session 89's run6 walker crossed).
+5. **The acceptance command, unchanged, is the ONLY thing that prints PASS**:
+   `python3 scripts/m54a_check_run.py <trace> --timeout 240 --min-our-bases 2 --min-moves 1
+   --min-own-base-arrivals 1` — an own-base arrival must be MULTI-TURN (`ordered_turn < landing
+   turn`), year deltas must be {1: N}. Never weaken a floor; strengthening gates is allowed.
+6. Session 89's facts still hold: impassable-flag geometry, `g` auto-targets the
+   alphabetically-first own base (odd-parity starts only), comm-in-order-window is a key sink
+   (byte 88), produced garrisons steal the order tiebreak, the reload recipe
+   (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` — BARE filename —
+   then `m54g_prep.py` + a founding turn) works first try.
 
-## THE PICK — M54k': the hook-shape run that PRINTS PASS
+## THE PICK — M55: S2 begins — INVENTORY THE ROUND BOUNDARY FROM MEMORY
 
 Do exactly ONE milestone, then stop. Do not re-verify closed work.
 
-Acceptance (the ONLY thing that prints PASS; floors fail CLOSED):
-`python3 scripts/m54a_check_run.py <trace> --timeout 240 --min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1`
-on ONE unattended 6-turn run: `advanced 6/6`, year deltas `{1: 6}`, `stuck 0`, a `g->byte24`
-line in the order mix, `bases_ours >= 2` at the END, and a `landed` carried move onto our own
-base with `ordered_turn < landing turn` — AND the trace's `actions` contains `pre-arm:recN`
-(setup read back `actionable: []`). Never weaken a floor. If it cannot pass, say so and merge
-the documented negative with per-turn position read-backs (the watcher log).
+S2 (ROADMAP line 86) is the game's heartbeat. Session 90 measured its outer shell (auto-advance
+cadence, the pump burst, the 0x100000 bit, production dropping `+17 = 0` units on base tiles at
+every round boundary). The milestone: **read one round boundary END TO END from memory** —
+before/after samples around one flip while everything is HELD — and account for what moved:
+newly produced records (which bases, which type), the upkeep deltas (energy is already sampled
+per order: `energy_before/after` in the trace — find the research/production analogue in
+memory), which `turn_flags` bits flip (including the 0x100000 one — does it survive a reload?
+does founding set it?), and where research progress lives (ghidra hunt: the research spend
+setter; correlate with a live read). Acceptance: a NEW script (e.g. `scripts/m55_boundary.py`)
+printing `PASS` on ONE real invocation, with honest floors (it must FAIL on a hand-typed
+fixture — prove that too in the trace/notes). A documented negative may merge (sessions 86, 89)
+if the reads are complete and the conclusion is memory-verified.
 
-**Shape (all four blockers removed):** an ODD-parity start tile (the game auto-targets Korolev
-Center), **2-3 BFS steps** from it under the step table so it ARRIVES inside 6 turns yet still
-multi-turn (`ordered_turn < landing turn`), passable per the flag byte, enemies 12+ tiles out.
-From the 2152-2160 quiet window (22,41)/(21,41)/(20,41) qualified (man 7-9, BFS 3); re-census
-first — the box is at **~2174, `bases_ours 2`** and the war is eating units.
-`scratch/m54k_setup.py <from-tile> <target-tile>` pokes everything HELD, moves one unit to the
-target, and reads back `actionable: []` + exactly one eligible held walker (it keys the walker
-by TILE — record indices reshuffle mid-prep). Run the flag/parity/enemy scan (the snippet is
-in SESSION_NOTES 89 / `scratch/m54k_watch.py` header) BEFORE picking the tile. Launch:
-`smac_play.py --turns 6 --timeout 240 --no-escape 3000 --orders-per-turn 1 --verbose --tag
-m54k_runN`; start `python3 scratch/m54k_watch.py 220 <x> <y>` alongside it (background=true) —
-the watcher is what proves a walk, not the trace's prints. Reroll (a fresh setup + run) if a
-comm lands in the order window (byte 88), if a turn record shows a +2 delta, or if the chooser
-is never seen and the leg names a wrong-parity base.
+Shape: the box is at **~2204, `bases_ours 2`, units_ours 11, n_bases 28, enemies within 9 tiles
+of Korolev** — the war may take a base before you start: census FIRST; if a base is gone, reload
+(item 6 recipe) and re-found before measuring. With everything HELD the game advances itself —
+`scratch/m54k_watch.py` + a before/after `our_rows` + `smac_state` diff around a flip is the
+instrument; add the energy/research pointers as you find them. Keep the driver OUT of it unless
+you need a founding; the boundary needs no input.
 
 ## FIRST (nothing else)
 
 1. Read `NEXT_PROMPT.md` in full — it is this file; it IS the footing.
-2. `tail -90 SESSION_NOTES.md` — sessions 88 and 89 are the recent work. Never read the whole
-   file (~75 KB).
+2. `tail -80 SESSION_NOTES.md` — sessions 89 and 90 are the recent work. Never read the whole
+   file (~80 KB).
 3. `git status`; `git branch --show-current` (must be a branch, never `main`);
-   `python3 scripts/milestone.py start M54k2` FIRST — it creates the branch off `origin/main`.
-4. `python3 scripts/smac_state.py --json` — session 89 left the game LIVE near **2174**, pid
-   1329211, `bases_ours 2`. If it reads impossibly, or a base is gone: reload per item 7 above.
-5. `python3 scripts/m54d_census.py` — where our records and both bases are RIGHT NOW;
-   `python3 scratch/m54h_clear.py` if any pane is up (Escape on `unknown`, Return on dialogs;
-   never Escape twice at a clean HUD).
+   `python3 scripts/milestone.py start M55` FIRST — it creates the branch off `origin/main`.
+4. `python3 scripts/smac_state.py --json` — session 90 left the game LIVE near **2204**, pid
+   1329211, `bases_ours 2`, `turn_flags 1048578`. If it reads impossibly, or a base is gone:
+   reload per item 6 above (bare filename!).
+5. `python3 scripts/m54d_census.py` — where our records and both bases are RIGHT NOW.
 
 ## WHERE THE KNOWLEDGE LIVES
 
-- `ROADMAP.md` — S1..S7 with the exact acceptance for each. Read the row before committing.
-- `ORDERS.md` — §1 key routing, §4 the byte table (`0x18` queued MOVE, legs `+20..+27` x /
-  `+28..+35` y — a WAYPOINT the pump rewrites; the chooser's pick is the destination), §5 modal
-  = key sink, §6 the in-loop contract, §7 WHEN the queued MOVE runs, §8 THE FOUNDING, §9 the
-  chooser's rows, §10 SENTRY/HOLD + the diff/attribution rules, §11 WHO OWNS THE CURSOR, §12 THE
-  STEP TABLE AND PARITY, **§13 THE AUTO-SENTRY + the in-phase reactivation contract + the
-  opposite-parity-bases fact**. Session 89's four blockers are in SESSION_NOTES (an ORDERS §14
-  is welcome).
+- `ROADMAP.md` — S1..S7 with the exact acceptance for each; line 86 is S2. Read the row.
+- `ORDERS.md` §1 key routing, §4 the byte table (0x18 queued MOVE, legs +20..+27 x / +28..+35 y
+  — a WAYPOINT the pump rewrites; QUEUE-TIME legs name the destination), §5 modal = key sink,
+  §6 the in-loop contract, §7 WHEN the queued MOVE runs, §8 THE FOUNDING, §9 the chooser's rows,
+  §10 SENTRY/HOLD + attribution rules, §11 WHO OWNS THE CURSOR, §12 THE STEP TABLE AND PARITY,
+  §13 THE AUTO-SENTRY + reactivation contract + opposite-parity bases, **§14 THE IN-PHASE PUMP
+  BURST + queued_rescan + the year-poll + the 0x100000 bit**.
 - `SAVE_FORMAT.md` 150-182 — the 52-byte unit record (type u16@+10, owner@+14, order@+17,
   legs@+20..+35, mp-used@+40, flag dword@+4) and the 304-byte base record (x@0, y@2, faction
   LOW byte at +4).
 - `data/alpha.json` — `UNITS` row 0 is a count, so **memory type = alpha index - 1**; class 8 =
   colonist (founding), class 3 = Scout Patrol.
 - The live skill `~/.hermes/skills/smac-cvr-format/` (repo copy `skill/`): SKILL.md,
-  `references/wine-operations.md`, `references/terraforming-order-path.md` (now incl. M54k).
+  `references/wine-operations.md`, `references/terraforming-order-path.md` (now incl. M54k2).
 
 ## OPERATIONAL KIT
 
-- Census / position: `m54d_census.py`; `scratch/m54k_setup.py [fx fy tx ty]` (all-held prep +
-  read-back); `scratch/m54k_watch.py [secs x y]` (memory watcher, prints only changed
-  (x,y,order,mp) multisets); `scratch/m54j_setup2.py` / `m54j_setup3.py` (the older shapes);
-  `scratch/m54h_clear.py [N]`; `m54g_prep.py`; `m54a_load.py --relaunch` (SMAC_SAVE env = the
-  BARE filename, item 7).
-- Driver: `python3 scripts/smac_play.py --turns N --timeout 240 --no-escape 3000 --orders-per-turn 1 --verbose --tag <t>`.
-  Turn records carry `orders` (with `dest`, `chooser_pick`, `walk_diff {attributed, confounded,
-  claim, rivals, before_legs}`, `order_counts`, `attempts[].panes`) and `moves` (with `landed`,
-  `carried`, `ordered_turn`, `dest_is_own_base`, `dest_count`/`src_count`, `mp_after`). A 6-turn
-  run is ~1.5-4 min: background it, poll `grep -c '"turn"'` on the trace.
-- Check: `python3 scripts/m54a_check_run.py <trace> --timeout 240 [--min-orders N] [--min-moves M]
-  [--min-our-bases N] [--min-own-base-arrivals K]` — the ONLY thing that can print `PASS`; an
-  own-base arrival MUST be multi-turn (`ordered_turn < landing turn`).
-- Tests: `python3 scripts/test_walk_diff.py` -> `PASS 33/33 attribution cases`. Classifier
+- Census / prep: `m54d_census.py`; `scratch/m54k2_scan.py` (target screening); `scratch/
+  m54k_setup.py [fx fy tx ty]` (all-held prep + read-back); `scratch/m54k_watch.py [secs x y]`
+  (0.5 s memory diff watcher); `scratch/m54h_clear.py [N]` (careful: garbled HUD OCR classifies
+  `unknown` and the loop Escapes anyway — it raised the quit prompt in session 90; peek with
+  `sp.WIN = sp.find_window()` + freeze/classify instead); `m54g_prep.py`; `m54a_load.py
+  --relaunch` (SMAC_SAVE env = the BARE filename).
+- Driver: `python3 scripts/smac_play.py --turns N --timeout 240 --no-escape 3000
+  --orders-per-turn 1 --verbose --tag <t>`. Turn records carry `orders` (with `dest`,
+  `chooser_pick`, `walk_diff {attributed, confounded, claim, rivals, n_samples, before_legs}` —
+  **n_samples 0 = the rescan verified it**, `order_counts`, `attempts[].panes`) and `moves`
+  (with `landed`, `carried`, `ordered_turn`, `dest_is_own_base`, `dest_count`/`src_count`,
+  `mp_after`). A 6-turn run is ~1.5-3 min: background it, poll `grep -c '"turn"'` on the trace.
+- Check: `python3 scripts/m54a_check_run.py <trace> --timeout 240 [--min-orders N] [--min-moves
+  M] [--min-our-bases N] [--min-own-base-arrivals K]` — the ONLY thing that prints `PASS`.
+- Tests: `python3 scripts/test_walk_diff.py` -> `PASS 37/37 attribution cases`. Classifier
   gates: `scripts/test_classify.py` -> `PASS 17/17`; `scripts/check_classes.py` -> `frames: 17
   failures: 0`; **delete `evidence/**/_3x.png` right after**. `evidence/` is ~29.4/30 MB —
   check `python3 scripts/evidence.py budget` BEFORE adding frames; the sanctioned big artifact
@@ -150,27 +134,30 @@ is never seen and the leg names a wrong-parity base.
 
 ## TRAPS THAT COST A SESSION HOURS (all measured)
 
-- **Check the flag byte before parking a unit anywhere** (item 1): impassable tiles swallow
+- **The slot oracle goes stale during a pump burst** (item 1): read WHO wears the byte, not who
+  sits at `idx`. Waypoint garbage in legs ((61,9)/(61,10)) is not a destination.
+- **An all-HELD position auto-advances ~8 s/round and can double-flip inside one slow OCR
+  iteration** (item 2): poll `year()` from memory at 0.2 s when you need a boundary.
+- **Check the flag byte before parking a unit anywhere** (§89 item 1): impassable tiles swallow
   units whole. Check parity sums mechanically (opposite-parity bases: every tile matches one).
-- **`g` targets Korolev Center first** (item 2): odd-parity starts only, or read the chooser.
-- **A comm/pane mid-order eats the keys** (item 4) and a +2 year delta means the turn record
-  spanned two rounds — reroll, do not reinterpret.
-- **Auto-sentry + auto-advance** (§88 item 1, §89 item 6): order-0 units do NOT wait between
-  rounds, and an all-HELD position advances itself at ~8 s/round.
-- **A same-type headcount is not an arrival** (§88 item 3): our bases are crowded with
-  identical units; identity is the leg worn.
-- **Indices lie across a turn** (the array reshuffles AND GROWS — bases produce `+17 = 0` units
-  onto their own tile). Content is identity; snapshot and diff.
-- **OCR is ~1-15 s a poll and LIES about legibility** (item 6); poll the oracle (memory) at
-  100 ms. The production-banner HUD frame classifies `unknown` — the blind gate handles it.
-- **The pump eats the byte tens of ms after the OK** — sample THROUGH the click. Sentries
-  (byte 1) move on their own every round and rewrite their legs; HOLD (2) is inert. `b` (and
-  every order letter) is a MAP-level key while orders mode is off.
+- **`g` targets Korolev Center first** (§89 item 2): odd-parity starts only, or read the chooser.
+- **A comm/pane mid-order eats the keys** (byte 88) and a +2 year delta means the turn record
+  spanned two rounds — reroll, do not reinterpret. Reroll triggers: comm in the order window, a
+  +2 delta, or the chooser never seen with a wrong-parity leg.
+- **A same-type headcount is not an arrival**; **indices lie across a turn** (the array
+  reshuffles AND GROWS — bases produce `+17 = 0` units); content is identity; snapshot and diff.
+- **OCR is ~1-15 s a poll and LIES about legibility**: the production-banner HUD and the `g`
+  chooser both classify `unknown`/`dialog`. Memory + "nothing drawn in the modal band" is the
+  clean-HUD oracle. `scratch/m54h_clear.py` Escapes on `unknown` — it can RAISE the quit prompt
+  at a clean-but-garbled HUD (session 90); Escape closes the prompt (never click its OK).
+- **The pump eats the byte tens of ms after the OK** — sample THROUGH the click. Sentries (byte
+  1) move on their own every round; HOLD (2) is inert. `b` (and every order letter) is a
+  MAP-level key while orders mode is off. `sp.focus()` is a no-op until `sp.WIN` is set.
 - **Escape at a clean HUD raises "Do you really want to quit?"**; never click its OK. Escape on
-  the title screen exits. Arrows drive the MAP CURSOR; blind map clicks SCROLL. `--load` needs
-  a Windows path. `sp.focus()` needs `sp.WIN = sp.find_window()` first.
+  the title screen exits. Arrows drive the MAP CURSOR; blind map clicks SCROLL. `--load` needs a
+  Windows path.
 
-## THE 10 RULES — condensed from sessions 75-89
+## THE 10 RULES — condensed from sessions 75-90
 
 1. One milestone per session, then stop. Do not re-verify closed milestones.
 2. Commit early (a commit on the branch is the only thing that survives an overflow).
@@ -185,13 +172,13 @@ is never seen and the leg names a wrong-parity base.
 9. `gate.py` needs BOTH `SESSION_NOTES.md` and `NEXT_PROMPT.md` updated and every `path:NNN`
    citation you add must resolve. `gate.py` refuses `main`; submit/merge refuse a dirty tree.
 10. Report in the established style: what changed, the acceptance numbers WITH the command that
-   produced them, what is open, next pick.
+    produced them, what is open, next pick.
 
 ## CLOSING ORDER (exactly)
 
-1. Patch a `## Session 90` entry into `SESSION_NOTES.md` (acceptance numbers + the command that
+1. Patch a `## Session 91` entry into `SESSION_NOTES.md` (acceptance numbers + the command that
    produced them + Next).
-2. Rewrite `NEXT_PROMPT.md` for session 91, then `wc -c NEXT_PROMPT.md` (must be <= 15,500).
+2. Rewrite `NEXT_PROMPT.md` for session 92, then `wc -c NEXT_PROMPT.md` (must be <= 15,500).
 3. `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`
 4. `git add -A && git commit -m '<ID>: checkpoint'`
 5. `python3 scripts/gate.py --base main` (must be GREEN)
