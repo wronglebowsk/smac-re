@@ -1735,6 +1735,14 @@ def service_turn(idx, tr, timeout, verbose=False):
                 # M54d: freeze our records NOW — TURN COMPLETE is the execution, and a
                 # walk is only proven by what the records say after the year flips.
                 snap_units = snap_our_units()
+                # M54k2 (run2 turn 5, {1:5, 2:1}): once the turn's order budget is
+                # spent and nothing is left actionable, the game AUTO-ADVANCES at
+                # ~8 s/round; the next loop iteration costs a freeze+OCR (2-15 s), so
+                # TWO rounds can flip between its year checks and the turn records a
+                # +2. The flip is cheap to watch from memory — wait for it here.
+                tp = time.time()
+                while time.time() - tp < 20 and year() == y0:
+                    time.sleep(0.2)
                 continue
             if time.time() - last_press > 6:
                 btn = find(words, ["complete"])
@@ -1799,6 +1807,9 @@ def service_turn(idx, tr, timeout, verbose=False):
                     nver = order_step_in_loop(rec, verbose)
                     rec["handled"].append(f"blind-orders:{nver}")
                     snap_units = snap_our_units()
+                    tp = time.time()
+                    while time.time() - tp < 20 and year() == y0:
+                        time.sleep(0.2)
                     continue
             if (kind == "unknown" and now - last_press > HUD_BLIND_S
                     and now - t0 > HUD_BLIND_S):
