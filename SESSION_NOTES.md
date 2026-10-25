@@ -1,109 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-78-78.md` (1 sessions). Read it only when a question reaches back before session ## Session 79.
-
-## Session 79 (2026-10-24) — M54b: **THE 40-TURN RUN PASSES FROM A LOADED SAVE — CLEAN-POINT SAVES RESUME LIVE; THE HUNG AUTOSAVES ARE A MID-END-TURN-SAVE ARTIFACT**
-- **THE ACCEPTANCE IS MET.** One invocation, nobody at the keyboard, starting from a DEAD process:
-  `python3 scripts/smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54b40b --load
-  Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV --verbose`, checked with
-  `python3 scripts/m54a_check_run.py evidence/trace_m54b40b_20261024_212833.jsonl --timeout 240` →
-  `turns 40 records, header asked for 40`, **`advanced 40/40`, year deltas `{1: 40}`**,
-  **`stuck 0 (turns [])`, max dt 51.5 s**, `PASS`, exit 0. The DRIVER answered the whole load:
-  log shows `no window -> relaunching the game`, cdrom Return, title -> LOAD GAME row (610,344) ->
-  blind browser (name box 406,527, OK bar 330,552) -> LOAD confirm OK (290,391) -> `HUD reached
-  live=True`. Panes serviced inside the run: hive-bribe 5, dialog 17, confirm-after-press 36,
-  base 6, close-bar 2, ai-phase 18 — no pane starved it, no bar clicked outside its pane.
-  Session 78's wins stay green after every change: `test_classify.py` PASS 10/10,
-  `check_classes.py` frames: 10 failures: 0.
-- **THE CLEAN-SAVE TEST ANSWERS THE HUNG-RESUME QUESTION.** A save taken at a CLEAN point (live
-  HUD, `turn_flags 0`, idle) reloads live: MENU (61,369) -> GAME (30,186) -> Save Game (200,331);
-  the SAVE browser is TALLER than the LOAD browser (NAME 406,304, OK 330,327, CANCEL 482,327 — the
-  LOAD browser's bars sit at y 552); typed the full `Z:\` path, the file landed (242,539 B, mission
-  year 2150 @ +0x54), `m54a_load.py --relaunch` reached the HUD animating=True with
-  `turn_flags 0` and a responsive MENU click. So session 78's eight hung autosaves are specific to
-  saves taken WITH `turn_flags` bit1 set (mid-end-turn), not a save-format wall. The 2416 campaign
-  exists only in such mid-round autosaves — resuming PAUL'S campaign still needs either a clean
-  campaign save or the bit1-resume fix; parked in `references/open-leads.md`.
-- **THE WEDGE GUARD EARNED ITS KEEP — AFTER ONE FALSE POSITIVE.** The first run reached 28/40,
-  then `turn 28: WEDGE — screen byte-static 42s, MENU click changed nothing` — but the game was
-  ALIVE (year 2178, `turn_flags 0`, one Escape closed the screen instantly): a OWN-PHASE BASE
-  SCREEN, legitimately byte-static, sat under the `--no-escape 3000` gate that starved the
-  base-Escape path (`evidence/px_wedge_t28.png`, `evidence/trace_m54b40_20261024_211436.jsonl`).
-  Two fixes: the probe fires only on `hud` frames (the hung-resume signature), and `base` closes
-  with Escape EVEN UNDER `--no-escape` (the class is unambiguous — quit-prompt/title classify
-  first, the base test is positional since M54a). The round-aware budget slides the deadline with
-  every changing capture, capped at 3x timeout; a static screen does not extend it.
-- **State of the box:** pid 373089 alive at 2190 (n_bases 26) after the winning run;
-  `programs/saves/m54b_clean.SAV` (2150, gitignored like all of `programs/`) is the reproducible
-  start point for `--load`.
-- **Next:** ROADMAP Phase 2 — **S3 (unit orders/combat)**: the unattended loop has never MOVED a
-  unit; `give_order` exists but only runs via `--order`. Or close the mid-round-autosave question
-  (why a save with bit1 set spins after load) to unlock Paul's 2416 campaign. Read ROADMAP.md
-  before picking.
-
-## Session 80 (2026-10-24) — M54c: **THE UNATTENDED LOOP NOW ORDERS UNITS — 31 MEMORY-VERIFIED ORDERS INSIDE A 40/40 RUN FROM THE SAVE**
-- **THE ACCEPTANCE IS MET.** One invocation, nobody at the keyboard, from a dead process:
-  `python3 scripts/smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54c40c --load
-  Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV --verbose`, checked with
-  `python3 scripts/m54a_check_run.py evidence/trace_m54c40c_20261024_224606.jsonl --timeout 240
-  --min-orders 5` → `turns 40 records, header asked for 40`, **`advanced 40/40`, year deltas
-  `{1: 40}`**, **`stuck 0 (turns [])`, max dt 61.8 s**, **`orders 31 VERIFIED of 36 attempted`**
-  on turns 0-3, 9-11, 14-16, 27-30, 37-39, `48.9 s spent ordering`, `PASS`, exit 0. Shape taken:
-  the S3 harness-assertion half (orders + verification inside the loop); the combat half of the
-  ROADMAP S3 row is still open — see Next.
-- **THE ORDER CONTRACT.** `order_step_in_loop()` runs once per player turn inside
-  `service_turn`'s `hud` branch (the `cur_player`/`turn_flags & 2` gate has already proved it is
-  OUR phase, the only window where a hotkey is an order and not a key sink): poke `0x91b5bc`,
-  fire ONE real hotkey, service the pane the setter raises, then read `unit+17` back — an order
-  counts only as a `+17` delta into the byte set that key may produce (ORDERS.md §4). A landing
-  order verifies in ~0.0 s (the byte is read before any OCR); a dud costs one OCR + pane service.
-  `--orders-per-turn` (2), `--order-budget` (35 s/turn), `ORDER_MAX_ATTEMPTS` (8 keys/turn), a
-  key retired after 3 delta-less attempts and a type deprioritised after refusing every key keep
-  the step from ever eating a turn. `--no-orders` restores the old behaviour.
-- **WHAT THE POSITION ACTUALLY ALLOWS (measured, `evidence/m54c_probe.txt`).** The
-  `m54b_clean.SAV` lineage owns SIX records that all decode `type 2` = `Scout Patrol` (class 3) —
-  the HUD's own unit panel reads `Scout Patrol` — and no class-9 record at all, so
-  `find_former()`'s class-9 filter ordered nothing and the first smoke run reported `orders:0`
-  while silently trying zero candidates. The picker is now `find_actionable()`: the game's OWN
-  select gate (owner, `+9` not frozen, `+40` movement unspent) with `cls` used to ORDER
-  candidates, never to exclude them. Live key facts: `f` on records 0 and 20 changed neither
-  `+17` nor energy (the `NEEDTERRAFORMERS` negative control); `l` took `+17` 0→1 on records 0 AND
-  3 with no pane and no energy; `Up`/`Right` left `+17` 0 (arrows drive the MAP CURSOR — `Right`
-  opened the base pane) and `shift+Up` raised a pane. So the loop's non-terraform plan is `g`
-  (`0x18`), `l` (1), `h` (2), and every one of this run's 31 verified orders is `l` → byte 1.
-  **No terraform order has ever landed in a Formerless position, and none will.**
-- **THREE PANES THE DRIVER HAD TO LEARN.** (1) The BASE screen swallows the next keypress: the
-  first smoke trace shows `l` failing behind a `base` pane and landing the moment the pane was
-  Escaped, so the order step now closes `base` with Escape instead of leaning on Return. (2)
-  **Escape at a clean HUD raises "Do you really want to quit?"** — the probe poisoned its own
-  first run that way (12 keypresses went into the dialog and every frame read `quit-prompt`);
-  inside the order step the prompt is answered with Escape, never Return, because Return there is
-  "Yes, that's an order, mister!" and the process is gone. (3) A faction **COMMUNICATION**
-  ("BELIEVERS - SEETHING" + a quoted demand + its own OK bar at y 347,
-  `evidence/m54c/comm_pane.png`) classified `unknown`, so M54b's bottom-bar rule clicked the
-  CONSOLE `DATALINKS` bar (333,560) 38 times in a row, each click opening the profiles browser
-  and each EXIT click (525,344) landing back on the same communication: turn 35 of
-  `evidence/trace_m54c40b_20261024_222039.jsonl` burned **735.2 s with the year stuck at 2185**.
-  New class `comm` + `answer_communication()` (click the MIDPOINT of the y-347 bar row — its
-  dithered ends read (266,347)/(534,347) and the label between them is not fill) fixed it: the
-  winning run met 6 communications and answered all 6 (`comm-ok` x6, `stuck 0`).
-- **SESSION 79'S WINS STAY GREEN, PLUS THE NEW ROWS.** `python3 scripts/test_classify.py` →
-  **PASS 11/11 screen classifications**; `python3 scripts/check_classes.py` → **frames: 11
-  failures: 0**. The new `comm` class is pinned in BOTH files against the saved frame before it
-  went into the driver, and the 10 older rows still classify their own frames.
-- **State of the box:** the winning run left the game at 2190 (n_bases 22, `cur_player 7`,
-  `turn_flags 0x100002`); the driver process and the game were stopped cleanly at the end of the
-  session, so the box is idle and `--load` relaunches from `m54b_clean.SAV`.
-- **Next:** **S3's other half — orders that MOVE and FIGHT.** Every verified order this run could
-  buy is `SENTRY` (byte 1, sticky: after six turns the game itself prints "No units need new
-  orders"), because the reproducible position has no Former and `g` refuses to queue a MOVE for a
-  unit standing on its base. The cheapest route to a real walk is a position that HAS class-9
-  units: either the fresh-game start (2100, `scripts/m54a_newgame.py`) or a save we make after
-  production turns up a Former, then verify `0x18`/`0x19` orders, execution (`EXEC`), and combat
-  resolution (the ROADMAP S3 row: order → execution → combat → death/occupation). Secondary: the
-  `comm` class should also be tried against the Council's "X - MOOD" panes, which share its
-  banner style but print unquoted text — the discriminator is deliberate, but it has only one
-  fixture behind it.
+Older sessions: `docs/sessions/sessions-79-80.md` (2 sessions). Read it only when a question reaches back before session ## Session 81.
 
 ## Session 81 (2026-10-24) — M54d: **THE LOOP CAN NOW QUEUE A WALK AND CHECK IT IN MEMORY; NO WALK HAS EXECUTED YET — THE ONLY DESTINATION `g` OFFERS IS OUR OWN, OCCUPIED BASE TILE** — `scripts/m54d_census.py`, `scripts/m54d_prep.py`, `scripts/m54d_probe.py`, `evidence/m54d/`
 
@@ -560,3 +457,17 @@ re-open and answer again; then the acceptance command above on a 6-turn run.
 **Open.** (1) `PRE_ARM` (mid-round arming) is measured at the probe level but was not exercised in a PASS run (run5/run6 used the actionable-from-setup path; the hook found nothing to arm). (2) The auto-sentry trigger is behavioral, not found in the binary — idle order-0 units convert, exact window unknown. (3) run4's walker (the (49,33) veteran) died in the war before arrival; a LONG terrain-varied route arriving via `carried` is proven only at 8 tiles. (4) The box at 2164: 2 bases, 8 units, quiet window open (~10-15 yr), two sentries loose, one `l` order landed on the arrived walker. (5) `mp_after` max-over-hits still cannot NAME which hit spent the mp (the identity rule now covers the tile; a wandering same-type sentry with spent mp ON the dest tile could still satisfy mp_after).
 
 **Next (M54k):** from the 2164 quiet window — the footing's S2 thread (win conditions / transit) OR close the PRE_ARM loop: a PASS run where the ONLY armed unit comes from `pick_reactivation`/`PRE_ARM` (everything HELD at run start, the hook arms mid-round — the exact shape run2/run3 had, now with the fix). Acceptance: the same checker command on ONE 6-turn run with `--min-own-base-arrivals 1` AND a `pre-arm:recN` line in the trace's actions. If the quiet window closes first (base lost), reload `m54b_clean.SAV` + re-found (the filename-typed browser recipe above).
+
+## Session 89 (2026-10-25) — M54k: **THE HOOK PATH IS PROVEN END TO END AND NO RUN PRINTED PASS — the documented negative merges: the hook armed, the `g` order landed attributed, the walker walked six positions read from memory, and every acceptance floor held except `min-moves`/`min-own-base-arrivals`** — changed `scripts/smac_play.py` (the blind our-phase gates read memory + the modal band, not the OCR chrome read; the candidate sort prefers a unit that CAN walk; `walker_on_dest` accepts the ordered-dest leg as a route signature), `scripts/test_walk_diff.py` (31 -> 33 cases), new `scratch/m54k_setup.py` (all-held prep; the read-back keys the walker by TILE, not record index) and `scratch/m54k_watch.py` (0.5 s memory watcher printing only changed (x,y,order,mp) multisets), this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
+
+**ACCEPTANCE: NOT MET (documented negative merges, as session 86).** `python3 scripts/m54a_check_run.py evidence/trace_m54k_run6_20261025_17130*.jsonl --timeout 240 --min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1` -> `advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 22.2 s), `actions {"pre-arm": 1, "orders": 2, ...}`, order mix `{"g->byte24": 1, "l->byte1": 1}`, `bases_ours 2` at end (2159), **`moves 0 LANDED of 5 ordered walks`** -> `FAIL only 0 VERIFIED walks, milestone wants 1; only 0 walks LANDED ON OUR OWN BASE (not the start tile), milestone wants 1`. Nothing weakened: the walker needed ONE more turn than the 6-turn budget — `scratch/m54k_watch.py` read (36,33)->(36,35)->(35,36)->(34,37)->(33,38)->(32,39)->(30,39) across 2153-2159, byte 24 the whole way, legs [(29,42)] — one legal step (−1,+3) from Korolev Center when the run ended. The setup read back on a second handle `actionable: []` + `eligible held: [(66, 36, 33, 9, False)]`, so the HOOK armed it (`PRE-ARM rec66 (36,33) +17 2->0 in the AI round`), not the setup.
+
+**THE HOOK ARMED AND A WALK LANDED ON OUR OWN BASE — just not inside a scored run.** run5 (`evidence/trace_m54k_run5_20261025_170317.jsonl`, 2186-2193): `pre-arm:rec13`, `g` verified 0->24 naming Korolev Center, and the watcher read the ARRIVAL — (20,41)->(22,41)->(23,42)->(25,42)->(27,42)->**(29,42)** at 2192, ordered turn 1, arrived five turns later. The checker could not score it: the leg SAMPLED in the press burst had drifted to (61,10) while the record that arrived wore [(29,42)] — the pump REWRITES the leg array as it walks — and University Base was captured at 2193 (`bases_ours 1`). Fixed: `walker_on_dest` accepts either signature (tests 32-33 pin it; a third leg, or no leg, is still not the walker).
+
+**Four measured blockers, all read back.** (1) **The map's per-tile impassable flag**: in the 2-column tile record the flag byte is at record +3 for EVEN x and +7 for ODD x, and bit 0x40 set = impassable (validated against 98 live unit tiles; one exception, a faction-6 unit at (45,39)). Runs 3-4 poked the walker onto (28,34) (flag 0x41) and it VANISHED within seconds (`watch4` first change line `-[(28, 34, 2, 0)] +[]`); the y=42 corridor is passable from x=20 east (x 18-19 are water — why (20,42) worked). (2) **`g` queues the alphabetically-first own base regardless of parity**: run7's unit at (22,42) (parity 64, even = University) got leg (29,42) — Korolev Center, parity 71 ODD — an impossible route by §12, and it oscillated all 6 turns; the chooser never classified `dest-chooser` (attempt `panes ['unknown']`, `chooser_pick None`) so the driver's parity-gated row pick never ran and accepted the leg the game wrote. An ODD-parity start matches the base the game auto-targets (run5/run6: legal routes, real walking). (3) **A COMMUNICATION landing inside the order step is a key sink**: run8 turn 1 pressed `g` with comm panes up (`panes ['unknown','unknown','dialog','comm','comm']`) — the order byte went 0 -> **88** -> 2 (HOLD), the order was unverified, and that turn record spanned TWO year flips (`{1: 4, 2: 2}`). (4) **A produced garrison steals the turn's single order on the record-index tiebreak**: run3 pressed `l` five turns and `g` zero while the hook-armed walker waited (and got auto-sentried); fixed — the sort now puts a candidate that CAN reach an own base first (`_can_walk`), which is what made run6/run7 order the walker on turn 1.
+
+**Also measured.** The session-88 blind gates still starved a turn: the map HUD with the production line in the message box ("Korolev Center builds ScoutPatrol.") OCRs as GARBAGE — no MENU, no COMMLINK (`evidence/px_m54k_banner_probe.png`, 2173) — so `hud_chrome` was false while memory said OUR phase (`cur_player 3, turn_flags 0`) and 240 s passed with NO key sent; the our-phase blind gates now read memory + "nothing drawn in the modal band". With everything HELD the game advances rounds with no input at all (~8 s/round; 2164 -> 2166 by itself between two of my probes) — that is what makes a turn record occasionally span two years. Reload recipe re-verified: `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` (bare filename, nothing to mangle) -> HUD live at 2150, 1 base; `m54g_prep.py` + one loop turn -> `FOUND rec0 (29,42) ... bases 1->2`, `bases_ours 2` at 2151. Tests: `python3 scripts/test_walk_diff.py` -> `PASS 33/33 attribution cases`; classifier gates untouched: `test_classify.py` 17/17, `check_classes.py` 17/0 (`_3x.png` deleted).
+
+**Open.** (1) A PASS run of the hook shape — never produced. (2) `order_step_in_loop` presses keys without re-checking the screen between them: a comm/pane arriving mid-step turns the order into garbage bytes (run8's `88`). (3) Year cadence: with everything HELD the game runs ~8 s rounds and a turn record can span two flips (run5 t1, run8 t1/t4). (4) `walker_on_dest`'s ordered-dest signature could be worn by a wandering same-type unit that also spent mp. (5) The box after run9: ~2174, `bases_ours 2`, one HELD unit at (30,39) wearing legs [(29,42)], the run8 walker gone from (22,41) after the byte-88 mess.
+
+**Next (M54k'):** one more hook-shape run with the four blockers removed — an ODD-parity start tile (the game auto-targets Korolev Center), 2-3 BFS steps from it (so it ARRIVES inside the 6 turns), enemies 12+ tiles out (census + the flag byte first), reroll if a comm lands in the order window or a turn record shows a +2 delta. Acceptance unchanged: `python3 scripts/m54a_check_run.py <trace> --timeout 240 --min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1` on ONE unattended 6-turn run, `pre-arm:recN` in the trace's actions, setup read-back printing `actionable: []`.

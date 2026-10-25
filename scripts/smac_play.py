@@ -1165,9 +1165,20 @@ def walker_on_dest(rows, utype, dest, ordered_legs):
     """
     if not ordered_legs:
         return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest) for r in rows)
+    # M54k (measured, run5, watcher timeline 2187->2192): the walker ARRIVED at Korolev
+    # Center (29,42) — (20,41)->(22,41)->(23,42)->(25,42)->(27,42)->(29,42) — and the
+    # record sitting there wore legs [(29,42)], the ORDERED destination, while the leg
+    # sampled in the press burst had read (61,10): the pump REWRITES the leg array as it
+    # walks, so the sampled route is one candidate signature, not the only one — the
+    # ordered destination is the other, and it is the value the game leaves behind
+    # (run1's claim legs_after WAS the dest; run5's had drifted). Accept either; a
+    # record on the destination wearing some THIRD leg, or no leg at all (a garrison),
+    # is still not the walker.
     route = [tuple(l) for l in ordered_legs]
-    return any(r["type"] == utype and (r["x"], r["y"]) == tuple(dest)
-               and [tuple(l) for l in r["legs"]] == route for r in rows)
+    dest = tuple(dest)
+    want = [route, [dest]]
+    return any(r["type"] == utype and (r["x"], r["y"]) == dest
+               and [tuple(l) for l in r["legs"]] in want for r in rows)
 
 
 def held_walk_records(f, me, n=119):
@@ -1767,9 +1778,19 @@ def service_turn(idx, tr, timeout, verbose=False):
             # HELD the game draws "No units need new orders. Press ENTER", TURN COMPLETE
             # stops OCR-ing, the frame classifies `unknown`, and the game's own ENTER
             # advances the turn in seconds (run2: 4 of 6 turns, order step never ran).
+            no_modal_bars = not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200]
             hud_chrome = (find(words, ["menu"]) and find(words, ["commlink"])
-                          and not [b for b in pane_bars(png, y0=145) if 145 <= b[1] <= 200])
-            if kind == "unknown" and hud_chrome:
+                          and no_modal_bars)
+            # M54k (measured, run2 turn 1, evidence/px_m54k_banner_probe.png at 2173): the
+            # map HUD with the production line drawn in the message box ("Korolev Center
+            # builds ScoutPatrol.") OCRs as GARBAGE — no MENU, no COMMLINK — so hud_chrome
+            # was false while memory said OUR phase (cur_player 3, turn_flags 0) and the
+            # whole 240 s turn budget burned with NO input ever sent (the turn would have
+            # been recorded STUCK). OCR lies about legibility (§ traps); memory + "nothing
+            # drawn in the modal band" is the clean-HUD oracle, so the our-phase blind
+            # gates use THAT, not the OCR chrome read. A click behind a real modal is
+            # harmless (the year stays where it is).
+            if kind == "unknown" and no_modal_bars:
                 st_now = state()
                 if (st_now.get("cur_player") == st_now.get("player")
                         and not (st_now.get("turn_flags") or 0) & 2
@@ -1784,7 +1805,7 @@ def service_turn(idx, tr, timeout, verbose=False):
                 st_now = state()
                 if (st_now.get("cur_player") == st_now.get("player")
                         and not (st_now.get("turn_flags") or 0) & 2
-                        and hud_chrome):
+                        and no_modal_bars):
                     click(TURN_BTN)
                     rec["handled"].append("turn-complete-blind")
                     last_press = now
@@ -2621,7 +2642,19 @@ def order_step_in_loop(rec, verbose=False):
         # class-9 (Former) candidates first, then whatever has refused us least this run,
         # then record index — so a position with no Former costs a few keypresses on turn
         # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
+        # M54k (measured, run3): a fresh production garrisoned on our own base CANNOT
+        # walk (the other own base is the opposite parity — §13), yet it shares the
+        # turn's single order with the off-base walker the hook just armed and won the
+        # record-index tiebreak five turns running — `l` five times, `g` zero, and the
+        # armed walker waited a round and came back a SENTRY. A candidate that can
+        # actually reach an own base goes first; the can-walk test is the same one the
+        # plan below uses.
+        def _can_walk(c):
+            tile = (c["x"], c["y"])
+            return any(t != tile and walk_parity_ok(tile, t) for t in own_tiles)
+
         cands.sort(key=lambda c: (c["cls"] != 9,
+                                  not _can_walk(c),
                                   (c["x"], c["y"]) not in nb,
                                   ORDER_REJECTS.get(c["type"], 0), c["idx"]))
         # M54j: byte 2 (HOLD) is the only order that survives the round boundary — the

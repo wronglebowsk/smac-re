@@ -324,11 +324,23 @@ def main():
           sp.walker_on_dest(six, 2, DEST, []) is True
           and sp.walker_on_dest(six, 2, (20, 42), []) is False)
 
+    print("case 32: the leg the pump LEAVES at arrival (the ordered dest) is a route "
+          "signature even when the leg sampled at press time drifted — run5: the press "
+          "burst read (61,10), the record that arrived at Korolev wore (29,42)")
+    drift = six + [row(71, x=28, y=42, order=0, legs=[(28, 42)], mp=3)]
+    check("arrival detected through the ordered-dest signature",
+          sp.walker_on_dest(drift, 2, DEST, [[61, 10]]) is True)
+
+    print("case 33: a record on the destination wearing some THIRD leg is not the walker")
+    stranger = six + [row(72, x=28, y=42, order=24, legs=[(12, 6)], mp=3)]
+    check("neither the sampled route nor the ordered dest — False",
+          sp.walker_on_dest(stranger, 2, DEST, [[61, 10]]) is False)
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 31/31 attribution cases")
+    print("PASS 33/33 attribution cases")
     return 0
 
 
