@@ -11,7 +11,7 @@ Closed (PRs merged to `main`):
   preserves (x+y) parity — every earlier walker stood on the wrong parity).
 - **M54j — A MULTI-LEG WALK LANDED ON OUR OWN BASE ACROSS TURN COMPLETEs; PASS** (session 88).
 - **M54k — the PRE_ARM hook path, DOCUMENTED NEGATIVE** (session 89): the hook armed a
-  zero-actionable position (`pre-arm:recN` in the trace), the `g` order landed attributed
+  zero-actionable position (`pre-arm:recN` in the trace), the `g` order landed
   (`g->byte24`, `attributed True, confounded False`), the walker walked 6-7 positions read from
   memory and **arrived on our own base in run5** — but no run printed PASS: run6's checker line
   was `advanced 6/6 / {1: 6} / stuck 0 / bases_ours 2 / moves 0 LANDED of 5 ordered walks`
