@@ -405,8 +405,9 @@ browsers), and the round-aware turn budget.
 - **THE SCENE PANEL FROZE TWO RUNS AS `movie`.** A full-screen Secret-Project artwork panel
   has a red CLOSE bar bottom-right (fill (94,10,9)/(73,9,8), y 579-599, x 596-799); OCR reads
   ~7 tokens off the whole frame, so it fell through to `movie`, whose only answer is Escape —
-  and Escape is gated by `--no-escape 3000`, so turns 0 of `trace_m54d40` and `trace_m54d40b`
-  sat with the year frozen. New class `artwork-close` + `close_bar(png)` (colour test on the
+  and Escape is gated by `--no-escape 3000`, so turns 0 of the first two runs of this milestone
+  (tags `m54d40`, `m54d40b`; their traces pruned at the end of the session for the evidence
+  budget, the third run's is kept) sat with the year frozen. New class `artwork-close` + `close_bar(png)` (colour test on the
   bottom-right strip; the bar's red is told from the terrain's red by the GREEN channel,
   g<30 vs ~50); fixture `evidence/m54d/peek_stuck.png`, pinned in both test files.
 - **THE WALK MACHINERY, AND WHERE IT STOPS.** `order_step_in_loop` now fires `g` FIRST (a
