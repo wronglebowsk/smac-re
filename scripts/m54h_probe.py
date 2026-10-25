@@ -81,103 +81,25 @@ def look():
     return sp.classify(w, sp.region_colors(png), png), w, png
 
 
-def bands_of(png, y0=118):
-    """Bar bands (row bands) in the chooser area as (y_center, groups, merged_span).
-
-    `bar_colour_mask` returns rows OFFSET by y0 and `pane_bars` never tells us a bar's
-    width, so re-derive the bands here: the chooser draws its destination rows as
-    FULL-WIDTH periwinkle bars (measured on `evidence/m54h/chooser_g60b.png`: rows at
-    y 125-139 and 144-158, fill 159..638) and its buttons as five 96-px-wide bars on one
-    band (Sort: Name / Sort: Size / Sort: Dist / OK / CANCEL at centres 209/305/401/497/
-    593, y 172-190). A row band's groups merge into a ~480 px span; the button band's do
-    not (91 px at duty 0.3, five groups at duty 0.2).
-    """
-    rows = sp.bar_colour_mask(png, y0)
-    hot = [y for y, r in enumerate(rows) if sum(r) > 100]
-    out = []
-    bands = []
-    for y in hot:
-        if bands and y - bands[-1][1] <= 2:
-            bands[-1][1] = y
-        else:
-            bands.append([y, y])
-    for b0, b1 in bands:
-        h = b1 - b0 + 1
-        if h < 8:
-            continue
-        need = max(4, int(h * 0.3))
-        cold = [sum(col) for col in zip(*rows[b0:b1 + 1])]
-        groups, x = [], 0
-        while x < sp.W:
-            if cold[x] < need:
-                x += 1
-                continue
-            x0 = x
-            while x < sp.W and cold[x] >= need:
-                x += 1
-            groups.append((x0, x - 1))
-        if not groups:
-            continue
-        # low-duty pass: separates the five buttons from the label-split row fill
-        need2 = max(3, int(h * 0.2))
-        groups2, x = [], 0
-        while x < sp.W:
-            if cold[x] < need2:
-                x += 1
-                continue
-            x0 = x
-            while x < sp.W and cold[x] >= need2:
-                x += 1
-            if x - x0 >= 12:
-                groups2.append(((x0 + x) // 2, x - x0))
-        out.append(dict(y=y0 + (b0 + b1) // 2, y0=y0 + b0, y1=y0 + b1,
-                        span=(groups[0][0], groups[-1][1]),
-                        width=groups[-1][1] - groups[0][0],
-                        groups=groups, buttons=groups2))
-    return out
-
-
 def rows_of(png, words):
-    """The chooser's destination rows: the wide bar bands, with the OCR text on each."""
-    rows = []
-    for b in bands_of(png):
-        if b["width"] < 300:
-            continue                     # the button band is never a row
-        texts = sorted((round(x), t) for t, x, y, *_ in words
-                       if abs(y - b["y"]) <= 8 and x < 700)
-        rows.append(dict(y=b["y"], cx=(b["span"][0] + b["span"][1]) // 2,
-                         span=list(b["span"]), n_bar_groups=len(b["groups"]),
-                         text=" ".join(t for _x, t in texts)))
-    return rows
+    """The chooser's destination rows — the driver's own geometry (smac_play.chooser_rows)."""
+    return sp.chooser_rows(png, words)
 
 
 def chooser_buttons(png):
-    """The chooser's button band: five evenly-spaced bars. Returns (cy, centres).
-
-    Measured on `evidence/m54h/chooser_g60b.png`: OK is the FOURTH centre (497) and
-    CANCEL the LAST (593); the three before them are Sort: Name / Size / Dist. Verified
-    by effect, not by label: CANCEL closes the pane and writes no `+17`, OK lands 0x18.
-    """
-    for b in reversed(bands_of(png)):
-        cs = [c for c, _w in b["buttons"]]
-        if len(cs) >= 4:
-            return b["y"], cs
-    return None, []
+    """The chooser's five-button band: OK is the 4th centre, CANCEL the last (measured
+    on `evidence/m54h/chooser_g60b.png`: 209/305/401/497/593 at y 181)."""
+    return sp.chooser_buttons(png) if hasattr(sp, "chooser_buttons") else (None, [])
 
 
 def ok_bar(png):
     cy, cs = chooser_buttons(png)
-    if not cs:
-        return None
-    return int(cs[-2]), int(cy)           # OK = 4th of the 5 buttons
+    return None if not cs else (int(cs[-2]), int(cy))
 
 
 def cancel_bar(png):
     cy, cs = chooser_buttons(png)
-    if not cs:
-        return None
-    return int(cs[-1]), int(cy)
-
+    return None if not cs else (int(cs[-1]), int(cy))
 
 
 def main():

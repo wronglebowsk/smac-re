@@ -34,6 +34,7 @@ DEFAULT = [
     ("m54d/peek_stuck.png",     "artwork-close", "M54d: full-screen scene panel with its own red CLOSE bar (y 579-599, x 596-799) — was `movie`, whose only answer is the gated Escape; two runs froze on it"),
     ("m54e/chooser_live.png",   "dest-chooser", "M54e: the chooser as the LIVE loop caught it (unit off its base, HUD news pane under it) — session 81's run classified its live chooser frame `unknown`, so the driver must answer this pane and not fall through to Return"),
     ("m54g/newbase_pane.png",   "name-pane", "M54g: NEWBASE name entry (`b` on a class-8 unit on a legal tile) — caption at y 102 over a still-drawn HUD, so it read `hud` and ate the founding; answer is Return (the base record exists 0.1 s later)"),
+    ("m54h/chooser_g60b.png",   "dest-chooser", "M54h: the `g` chooser with TWO destination rows (Korolev Center y 132, University Base y 151) and its five-button row at y 181 — the two-row layout the loop now clicks a ROW in"),
 ]
 
 

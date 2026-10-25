@@ -83,6 +83,13 @@ CASES = [
      "underneath, which made classify() answer `hud` while the modal ate the keypress. "
      "Return accepts the name; the base record exists 0.1 s later "
      "(evidence/m54g/probe_found1.json)"),
+    ("evidence/m54h/chooser_g60b.png", "dest-chooser",
+     "M54h: the `g` chooser with TWO destinations — the unit is garrisoned on Korolev "
+     "Center (29,42) and the pane lists Korolev Center at y 132 AND University Base at "
+     "y 151, with its five-button row pushed down to y 181 (Sort: Name / Sort: Size / "
+     "Sort: Dist / OK / CANCEL at 209/305/401/497/593). The one-row tests do not cover the "
+     "two-row layout, and the driver now clicks a ROW before it clicks OK, so the pane "
+     "must still classify `dest-chooser` when its OK bar has moved"),
 ]
 
 
