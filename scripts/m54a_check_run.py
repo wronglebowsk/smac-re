@@ -25,6 +25,9 @@ def main():
     ap.add_argument("--timeout", type=float, default=150.0)
     ap.add_argument("--expect", type=int, default=0,
                     help="assert at least this many advanced turns (0 = header's turns)")
+    ap.add_argument("--min-orders", type=int, default=0, dest="min_orders",
+                    help="S3/M54c: assert at least this many VERIFIED orders (records "
+                         "carrying the memory-confirmed byte delta) in the run")
     a = ap.parse_args()
 
     path = a.trace if os.path.isabs(a.trace) else os.path.join(ROOT, a.trace)
@@ -45,6 +48,10 @@ def main():
 
     adv = [t for t in turns if t.get("advanced")]
     stuck = [t for t in turns if t.get("stuck")]
+    attempts = [o for t in turns for o in t.get("orders", [])]
+    orders = [o for o in attempts if o.get("verified")]
+    oturns = sorted({t["turn"] for t in turns if t.get("orders_verified")})
+    osecs = round(sum(t.get("order_seconds", 0) for t in turns), 1)
     deltas = {}
     for t in turns:
         d = (t.get("year_after") or 0) - (t.get("year_before") or 0)
@@ -67,6 +74,14 @@ def main():
           f"max dt {maxdt}s  over 2x{a.timeout}s: {over}")
     print(f"pane hits  {panes or '{}'}")
     print(f"actions    {json.dumps(hist, sort_keys=True)}")
+    print(f"orders     {len(orders)} VERIFIED of {len(attempts)} attempted, on turns "
+          f"{oturns}, {osecs}s spent ordering")
+    if orders:
+        keys = {}
+        for o in orders:
+            keys[f"{o['key']}->byte{o['order_after']}"] = keys.get(f"{o['key']}->byte{o['order_after']}", 0) + 1
+        print(f"order mix  {json.dumps(keys, sort_keys=True)}  "
+              f"energy spent {sum(o.get('energy_delta', 0) for o in orders)}")
     print(f"end        {json.dumps(turns[-1].get('state_after'), sort_keys=True)}")
 
     fails = []
@@ -78,11 +93,14 @@ def main():
         fails.append(f"STUCK longer than 2x timeout on turns {over}")
     if missing:
         fails.append(f"records without action log / state delta: {missing[:8]}")
+    if len(orders) < a.min_orders:
+        fails.append(f"only {len(orders)} VERIFIED orders, milestone wants {a.min_orders}")
     if fails:
         print("FAIL " + "; ".join(fails))
         return 1
     print(f"PASS {len(adv)} turns advanced, year +1 each, no STUCK over "
-          f"{2 * a.timeout:.0f}s, per-turn state deltas present")
+          f"{2 * a.timeout:.0f}s, per-turn state deltas present"
+          + (f", {len(orders)} verified orders" if a.min_orders else ""))
     return 0
 
 

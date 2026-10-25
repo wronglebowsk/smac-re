@@ -691,6 +691,7 @@ def service_turn(idx, tr, timeout, verbose=False):
     round_cap = t0 + 3 * timeout
     last_press = 0.0
     last_esc = 0.0
+    ordered = False             # S3/M54c: the order step runs at most once per turn
     prev_hash = None
     last_change = t0
     last_probe = 0.0
@@ -794,6 +795,15 @@ def service_turn(idx, tr, timeout, verbose=False):
         elif kind == "dialog":
             key("Return"); time.sleep(0.5)      # default button = OK
         elif kind == "hud":
+            # S3 / M54c: order our own units BEFORE ending the turn. This branch is only
+            # reachable in OUR phase (the cur_player/turn_flags gate above `continue`s on
+            # an AI round), which is exactly the window where a hotkey is an order rather
+            # than a key sink. `ordered` makes it once-per-turn even if it fails.
+            if not ordered and ORDER_CAP > 0:
+                ordered = True
+                nver = order_step_in_loop(rec, verbose)
+                rec["handled"].append(f"orders:{nver}")
+                continue
             if time.time() - last_press > 6:
                 btn = find(words, ["complete"])
                 click((btn[0], btn[1]) if btn else TURN_BTN)
@@ -885,6 +895,12 @@ ORDER_KEYS = {
     "period": 8, "o": 9, "n": 0xc, "E": 0xd, "B": 0xe, "q": 0xf,
     "bracketright": 0x10, "bracketleft": 0x11, "underscore": 0x12,
 }
+
+# S3 / M54c — the same orders, INSIDE the unattended loop (see order_step_in_loop).
+ORDER_TRY_KEYS = ("f", "M", "S", "F", "r", "o", "n", "E")   # preference order, ORDERS.md §2
+ORDER_CAP = 2              # VERIFIED orders to issue per player turn (0 = loop never orders)
+ORDER_BUDGET = 35.0        # wall-clock cap on one turn's order step, seconds
+ORDER_MODAL_TIMEOUT = 22.0  # cap on servicing the panes one keypress raised, seconds
 
 
 def mem():
@@ -978,6 +994,125 @@ def answer_terraform_pane(words, verbose=False):
     if verbose:
         print("    Return (default button)", flush=True)
     return "return"
+
+
+# ---------------------------------------------------------------------------
+# S3 / M54c — orders INSIDE the unattended loop.
+#
+# give_order() is the lab harness: it works, but only when someone runs `--order`, so
+# the spine-S2 driver never MOVED a unit. This is the fold-in: in our own phase, while
+# the screen is the HUD, pick a waiting Former out of memory, poke the selection slot,
+# press a REAL terraform hotkey, service the payment panes the setter raises
+# synchronously, and PROVE the order by the memory diff it caused — order byte 0 ->
+# 4..0x17 plus the energy debit. The byte is the only honest oracle: ORDERS.md §2 says
+# a dropped keypress and a rejected order look identical from the outside.
+#
+# The check is a RANGE, not `== mode + 4`, because of the documented mode rewrites
+# (ORDERS.md §2: mode 5 Road -> 6 Mag Tube on a road tile, mode 0 Farm -> 1 Soil
+# Enricher or 0xa by tile bits) that happen BEFORE validation, so the landed byte can
+# legitimately differ from the pressed key's mode. `expected_byte` is recorded anyway.
+
+def issue_order_for_unit(f, me, cand, kname, verbose=False):
+    """One hotkey on one selected unit. Returns the record with its memory delta."""
+    struct = __import__("struct")
+    mode = ORDER_KEYS[kname]
+    idx = cand["idx"]
+    before = unit_rec(f, idx)
+    e0 = energy(f, me)
+    ta, tb = tile_recs(f, cand["x"], cand["y"])
+    focus()
+    wr(f, SEL_G, struct.pack("<i", idx))
+    sh(f'xdotool key --clearmodifiers "{kname}"')
+    panes, quiet, t0 = [], 0, time.time()
+    while time.time() - t0 < ORDER_MODAL_TIMEOUT:
+        ob = rd(f, UNIT_ARR + idx * 52 + 17, 1)[0]        # cheap oracle: the byte FIRST
+        if ob != before["order"] and 4 <= ob <= 0x17:
+            break
+        png = freeze("om")
+        w = ocr_fast(png)
+        k = classify(w, region_colors(png), png)
+        if k == "hud":
+            quiet += 1
+            if quiet >= 2:
+                break
+            time.sleep(0.5)
+            continue
+        if k in ("dialog", "confirm", "unknown") and is_terraform_pane(w):
+            panes.append("terraform:" + k)
+            if answer_terraform_pane(w, verbose) is None:
+                break
+            quiet = 0
+            continue
+        panes.append(k)                                    # advisor pane / stray modal
+        if len(panes) > 4:
+            break
+        key("Return")                                      # default button = OK
+        time.sleep(0.7)
+    after = unit_rec(f, idx)
+    e1 = energy(f, me)
+    ta2, tafter = tile_recs(f, cand["x"], cand["y"])
+    byte_delta = after["order"] != before["order"] and 4 <= after["order"] <= 0x17
+    return dict(unit=idx, key=kname, mode=mode, expected_byte=mode + 4,
+                ux=cand["x"], uy=cand["y"], utype=cand["type"],
+                order_before=before["order"], order_after=after["order"],
+                energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
+                tile_addr=hex(ta),
+                tile_diff=[f"+{i:02x}:{a:02x}->{b:02x}"
+                           for i, (a, b) in enumerate(zip(tb, tafter)) if a != b],
+                panes=panes, verified=bool(byte_delta), dt=round(time.time() - t0, 1))
+
+
+def order_step_in_loop(rec, verbose=False):
+    """Issue up to ORDER_CAP VERIFIED terraform orders, then return how many landed.
+
+    Called only from service_turn's `hud` branch, which the cur_player/turn_flags gate
+    has already established is OUR phase (pressing order keys into a modal or an AI
+    round is a key sink — M32). Each waiting Former gets a few keys in preference
+    order; the whole step is capped by ORDER_BUDGET so ordering can never eat a turn.
+    Every attempt is recorded in rec["orders"]; only the ones with the byte delta are
+    `verified`. Caveat recorded in ORDERS.md: unit identity here is the RECORD INDEX,
+    which is stable inside our own phase but is NOT a persistent id (the list compacts
+    when a unit dies).
+    """
+    if ORDER_CAP <= 0:
+        return 0
+    t0 = time.time()
+    try:
+        _pid, f = mem()
+    except Exception:
+        return 0
+    out = []
+    try:
+        me = state().get("player")
+        if me is None:
+            return 0
+        cands = [c for c in find_former(f, me)
+                 if c["order"] == 0 and c["mpused"] == 0][:ORDER_CAP * 3]
+        verified = 0
+        for cand in cands:
+            if verified >= ORDER_CAP or time.time() - t0 > ORDER_BUDGET:
+                break
+            for kname in ORDER_TRY_KEYS:
+                if time.time() - t0 > ORDER_BUDGET:
+                    break
+                o = issue_order_for_unit(f, me, cand, kname, verbose)
+                out.append(o)
+                if o["verified"]:
+                    verified += 1
+                    if verbose:
+                        print(f"    ORDER rec{cand['idx']} ({cand['x']},{cand['y']}) "
+                              f"'{kname}': byte {o['order_before']}->{o['order_after']} "
+                              f"energy {o['energy_delta']} ({o['dt']}s)", flush=True)
+                    break
+        rec["orders"] = out
+        rec["orders_verified"] = verified
+        rec["order_seconds"] = round(time.time() - t0, 1)
+        return verified
+    finally:
+        try:
+            f.close()
+        except Exception:
+            pass
 
 
 def give_order(kname, unit_idx=None, modal_timeout=60.0, verbose=False, tag="m33",
@@ -1095,7 +1230,7 @@ def give_order(kname, unit_idx=None, modal_timeout=60.0, verbose=False, tag="m33
 
 
 def main():
-    global WIN, ESC_ALLOW
+    global WIN, ESC_ALLOW, ORDER_CAP, ORDER_BUDGET
     ap = argparse.ArgumentParser()
     ap.add_argument("--turns", type=int, default=5)
     ap.add_argument("--timeout", type=float, default=120)
@@ -1112,12 +1247,21 @@ def main():
                          "it). Relaunches the game if no window; walks title -> LOAD "
                          "browser -> confirm -> ops-director itself; a resume with dead "
                          "input is reported as a WEDGE (exit 5), not stalled.")
+    ap.add_argument("--orders-per-turn", type=int, default=2, dest="orders_per_turn",
+                    help="S3/M54c: VERIFIED terraform orders to issue each player turn "
+                         "in the unattended loop (default 2)")
+    ap.add_argument("--no-orders", action="store_true",
+                    help="S3/M54c: the loop only ends turns; it never issues an order")
+    ap.add_argument("--order-budget", type=float, default=35.0, dest="order_budget",
+                    help="max seconds one turn's order step may take (default 35)")
     ap.add_argument("--no-verify", action="store_true",
                     help="skip in-loop/post memory reads (use when a tracer holds the process)")
     ap.add_argument("--key-only", action="store_true",
                     help="skip the selection poke (poke BEFORE arming the tracer; pokes are ignored under ptrace)")
     a = ap.parse_args()
     ESC_ALLOW = time.time() + a.no_escape
+    ORDER_CAP = 0 if a.no_orders else a.orders_per_turn
+    ORDER_BUDGET = a.order_budget
     run_seed = random.randrange(1 << 31)   # recorded in the trace header (M54a)
     os.makedirs(EVID, exist_ok=True)
     for tool in ("xdotool", "xwd", "ffmpeg", "tesseract"):
@@ -1175,7 +1319,8 @@ def main():
     # the position is pinned instead by the start state on the same line.
     hdr = {"type": "start", "seed": run_seed, "tag": a.tag, "turns": a.turns,
            "timeout": a.timeout, "no_escape": a.no_escape, "argv": sys.argv[1:],
-           "load": a.load, "state": s}
+           "load": a.load, "orders_per_turn": ORDER_CAP, "order_budget": ORDER_BUDGET,
+           "state": s}
     with open(path, "w") as tr:
         tr.write(json.dumps(hdr) + "\n")
         for i in range(a.turns):
