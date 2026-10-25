@@ -482,3 +482,30 @@ Measured live at 2158 (pid 1053556) with `scratch/m54i2_cursor.py` / `m54i2_scan
   Korolev Center (29,42) — `m54a_check_run.py ... --min-our-bases 2 --min-moves 1
   --min-own-base-arrivals 1` -> `PASS`, `moves 1 LANDED of 1 ordered walks`,
   `t[28,43]->[29,42] mp+3`, dest_count [2,3], src_count [1,0].
+
+## 13. The game AUTO-SENTRIES an order-0 unit across the round boundary (M54j, session 88, 2026-10-25)
+
+**A unit left waiting at `+17 = 0` between rounds comes back a SENTRY (`+17 = 1`) and
+patrols on its own** — the setup that leaves the loop's chosen walker actionable before
+the run does not survive to the loop's ordering window. Measured (run1,
+`evidence/trace_m54j_run1_20261025_155011.jsonl`): `scratch/m54j_setup.py` read back on
+a second handle exactly ONE actionable record, rec 37 at (20,42), order 0, legs cleared;
+turn 1's order step found its candidate wearing byte 1 (`g`/`l`/`h` all pressed on a
+byte that was already 1), and by the census after the run no record stood at (20,42) —
+the sentry had patrolled away. `scratch/m54j_probe.py` reproduced the same drift with a
+single poked record. Byte 2 (HOLD) is the only order that survives the round (§10: the
+pump leaves it), so:
+
+* **The driver's contract (M54j):** when `find_actionable` returns nothing, the order
+  step re-activates a HELD walker **in-phase** — `held_walk_records` (our `+17 = 2`,
+  not frozen, mp 0) filtered by `pick_reactivation`: off our own base tiles (there `g`
+  raises the BASE SCREEN, §11), with a same-parity own base that is not the tile under
+  its feet (§12), sorted so a unit already standing on a legal step of such a base
+  (a one-step arrival) goes LAST — the point of the exercise is a multi-leg route. The
+  re-activation poke (`+17` 2 -> 0) happens in the same window as the keypress, before
+  any round boundary can eat it. Tests: `scripts/test_walk_diff.py` cases 25-28.
+* **Our two bases are OPPOSITE parity** (University 28+42 = 70 even, Korolev 29+42 = 71
+  odd), so with both alive EVERY tile matches exactly one base's parity — "wrong parity
+  for every own base" only happens when a base is gone. The records `pick_reactivation`
+  actually drops are own-base garrisons (case 27). Do not hand-compute these sums under
+  pressure; three fixtures were wrong before the arithmetic was checked mechanically.
