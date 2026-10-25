@@ -50,6 +50,11 @@ CASES = [
      "the HELP browser (FACTION PROFILES): profile text contains base words, and Escape is "
      "ignored by it — only its EXIT bar closes it (a stray vote-row click opened it and the "
      "round stalled twice)"),
+    ("evidence/m54c/comm_pane.png", "comm",
+     "M54c: a faction COMMUNICATION — 'BELIEVERS - SEETHING' banner + a QUOTED demand + "
+     "its own OK bar at y 347. It used to classify `unknown`, so the bottom-bar rule "
+     "clicked the console DATALINKS bar (333,560) 38 times in a row and turn 35 of "
+     "trace_m54c40b burned 735 s with the year stuck at 2185"),
 ]
 
 

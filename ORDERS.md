@@ -180,3 +180,45 @@ codes (0x20044–0x30055). Solo (`DAT_00920434 == 0`) skips the head gate entire
   clean. rec56 explored to (43,9) `flags 0x4014004` mp=3; rec57 sits on the alien artifact
   (42,12) with a completed `0x18`; rec58 (43,11) clean, selected. The artifact modal was
   dismissed with one `Escape` (M29 rule).
+
+## 6. Orders INSIDE the unattended loop (M54c, session 80)
+
+`scripts/smac_play.py --turns N` now ORDERS units itself instead of only ending turns.
+`order_step_in_loop()` runs once per player turn, inside `service_turn`'s `hud` branch —
+which the `cur_player` / `turn_flags & 2` gate has already established is OUR phase, the
+only window where a hotkey is an order and not a key sink (§1 rule 3, §5 "modal = key
+sink"). Per candidate unit it pokes the selection slot (`0x91b5bc`), fires ONE real
+hotkey, services whatever pane the setter raises, and verifies by the record delta:
+**`+17` moving into the byte set that key may produce (§4)**. A screenshot is never the
+oracle — §2 says a dropped keypress and a rejected order are indistinguishable from
+outside.
+
+What the live probe found on this build (`evidence/m54c_probe.txt`, position
+`programs/saves/m54b_clean.SAV` lineage, year 2153, our turn, `orders_mode 1`):
+
+* the six units our faction owns there all decode `type 2` = `Scout Patrol` (class 3) —
+  the HUD's own unit panel reads `Scout Patrol`, and NO class-9 record exists for us, so
+  `find_former()`'s class-9 filter had nothing to order and the loop silently ordered
+  zero. The picker is now `find_actionable()`: the game's own select gate (owner, `+9`
+  not frozen, `+40` movement unspent) with `cls` carried for ordering candidates, not for
+  filtering them.
+* `f` on records 0 and 20 changed neither `+17` nor faction energy — the `NEEDTERRAFORMERS`
+  negative control, exactly as §2 predicts for a non-Former.
+* `l` took `+17` 0→1 (SENTRY, `FUN_005ab420`) on records 0 AND 3, no pane, no energy:
+  a verified order that works on ANY selected unit. So the loop's non-terraform plan is
+  `g` (queued MOVE to own base, `0x18`), `l` (1), `h` (2).
+* arrows are NOT orders: `Up` and `Right` left `+17` 0 (they drive the map cursor —
+  `Right` opened the base pane) and `shift+Up` raised a pane. §1 rule 2 is the cursor
+  path; only `§4 0x19` (Shift+arrow, M27) was ever logged as a keyboard move order.
+* **Escape at a clean HUD raises "Do you really want to quit?"** — that is how the probe
+  poisoned its own first run (every keypress then went into the quit dialog, and every
+  capture classified `quit-prompt`). Inside the order step the quit prompt is answered
+  with Escape ("Oops, no, wait!"); `Return` there is "Yes, that's an order, mister!" and
+  the process is gone.
+
+Cost control (measured): a landing order verifies in ~0.0 s (the byte is read before any
+OCR), a dud costs one OCR + pane service. A turn's step is capped by `--order-budget`
+(default 35 s) and `ORDER_MAX_ATTEMPTS` (8 keypresses); a key that produces no delta
+three times is retired for the rest of the run, and a unit type that refuses every key is
+deprioritised, so a Formerless position costs a few keypresses on turn one and nothing
+after. `--orders-per-turn` (default 2) and `--no-orders` bound the ambition.

@@ -1,121 +1,173 @@
-# NEXT_PROMPT — SMAC RE, session 80
+# NEXT_PROMPT.md — footing for the next session (written at the end of session 80, 2026-10-24)
 
-Read IN FULL: this file. Do ONE milestone, checkpoint to `SESSION_NOTES.md` (+ rewrite this), STOP.
-Open `FOOTING.md` or `skill/references/production-rebuild.md` only if the milestone touches the
-production-vector model.
+## THE LEDGER — read this first, it is the whole state of the project
 
-Ledger: M48d, M50a-b, M51a, M52a-b, M53a-M53t (**vector model CLOSED at 74/76 exact — do not
-reopen**), M54a (CLOSED, sessions 77+78), **M54b (CLOSED, session 79: ONE `--turns 40` invocation
-relaunched the game, LOADED `programs/saves/m54b_clean.SAV` (2150) with zero human input, and
-advanced 40 turns with the year +1 on each and zero stalls — `evidence/trace_m54b40b_20261024_212833.jsonl`,
-checked by `scripts/m54a_check_run.py` → `advanced 40/40`, `{1: 40}`, `stuck 0`, max dt 51.5 s,
-PASS/exit 0)**. Also settled in session 79: **a save written at a CLEAN point resumes LIVE**
-(animating HUD, `turn_flags 0`, responsive MENU), so session 78's eight hung autosaves are
-artifacts of saving while `turn_flags` bit1 is set — mid-end-turn saves, not a format wall.
-Open: **S3 (THE PICK) — unit orders + combat in the unattended loop.** Spine S2 ("harness plays
-40 turns unattended") is GREEN on a loaded save; Phase 2 starts at S3.
+Closed (PRs merged to `main`):
+- **M54A — the driver survives a full game unattended** (session 77, PR #39). One invocation
+  reached 2416 unattended, the year advanced 1 per record, zero stalls.
+- **M54B — 40 turns from a saved position, unattended** (session 79, PR #40).
+  `python3 scripts/smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54b40 --load
+  Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV --verbose` → `advanced 40/40`, year
+  deltas `{1: 40}`, `stuck 0`, max dt 34.4 s, `PASS`, exit 0. Session 79's own run stalled twice
+  on the HELP browser and was NOT accepted; the fix (a `help` class + its EXIT bar) is what made
+  the accepted run possible.
+- **M54C — the unattended loop ORDERS units** (session 80, this PR). Same command, tag
+  `m54c40c`, checked with `python3 scripts/m54a_check_run.py
+  evidence/trace_m54c40c_20261024_224606.jsonl --timeout 240 --min-orders 5` → `advanced 40/40`,
+  year deltas `{1: 40}`, `stuck 0` (max dt 61.8 s), **`orders 31 VERIFIED of 36 attempted`**,
+  `48.9 s spent ordering`, `PASS`. `evidence/trace_m54c40c_20261024_224606.jsonl`.
 
-## ⚠ FIRST: the position on the box
+Open:
+- **S3's other half — orders that MOVE and FIGHT.** Every verified order M54c could buy in the
+  reproducible position is `SENTRY` (byte 1): the position has no class-9 (Former) unit, and `g`
+  refuses to queue a MOVE for a unit standing on its own base. Nothing has ever verified an
+  `0x18`/`0x19` walk, an `EXEC` execution, or a combat resolution from the driver.
+- **S1** (production rebuild: bases, items, units, tech, `0x420440`) and **S2** (win conditions,
+  transit, `0x4202d0`) are open in ROADMAP.md and need the census model — bigger than a session.
+- **M52** (Paul's 2416 campaign save) is on hold: a save with mid-round bit1 set spins forever
+  after load. Session 79's clean-solve is `scripts/m54b_clean_save.py`.
 
-`python3 scripts/smac_state.py --json` reads a live, responsive game — last seen **year 2190,
-n_bases 26, player 3, cur_player 7 (AI mid-round), turn_flags 0x100002**, pid 373089 (800x600 at
-root 0,0, `xwd -display :99`). It is the FRESH TALENT/STANDARD lineage session 78 started; the
-reproducible start point is `programs/saves/m54b_clean.SAV` (2150, 18 bases), which the driver
-loads itself via `--load`. Paul's 2416 campaign exists ONLY in mid-end-turn autosaves that resume
-hung — a parked lead (see Rules), not a milestone unless you pick the alternative below.
+## THE PICK — M54d: a position with class-9 units, and a MOVE that actually walks
 
-## First actions
+Do exactly ONE milestone, then stop. Do not re-verify closed work.
 
-1. `tail -60 ~/reverse/smac/SESSION_NOTES.md` — Session 79 is the latest milestone.
-2. `git status`; `git branch` (never commit to main); `python3 scripts/milestone.py start <ID>`
-   (it refuses a dirty worktree — commit or stash first).
-3. Skill `smac-cvr-format`: `SKILL.md` whole. Open ONLY `references/wine-headless-harness.md`
-   (the screen-class table) and `references/wine-operations.md` (panes, coordinates — now incl.
-   the M54b menu/save geometry). Skip `production-rebuild.md` unless the pick touches combat math.
-4. `ROADMAP.md` — the S3 exit gate and the Phase 2 gates. **Decide the milestone shape in your
-   first 20 tool calls**, and say in the notes which shape you took.
-5. `pgrep -x terran.exe` + `/proc/<pid>/status` `TracerPid: 0`.
+The loop can order; it cannot yet prove a unit MOVED, because the position it can reproduce has
+nothing to move. Two candidate positions, pick after you look at them:
+1. **The fresh game** (year 2100, `scripts/m54a_newgame.py` starts it): every faction begins with
+   Formers, so terraform and MOVE orders are available immediately. Cost: the first turns are
+   slow (production panes, no bases) and the driver's HUD path differs.
+2. **A save we make ourselves** after some production turns produce a Former (load
+   `m54b_clean.SAV`, run N turns with orders, then save the live memory back with
+   `scripts/smac_unitpos.py`'s write path or the M54b save tooling). Cost: you must first make the
+   game PRODUCE a unit, which is S1 territory.
 
-## THE MILESTONE (pick ONE)
+Acceptance shape (same discipline as M54b/M54c — one invocation, no human, checked by a script):
+- a saved position that contains at least one class-9 unit owned by us (print the census line);
+- inside one unattended run: order a unit `0x18`/`0x19` (or a terraform byte), verify `unit+17`
+  inside the loop, then after `EXEC` verify `unit+0/+2` (x,y) changed to the ordered destination
+  and `unit+40` (movement) was spent;
+- `advanced N/N`, `stuck 0`, and the check script prints `PASS`;
+- pin the new pane(s) you had to learn in `scripts/test_classify.py` and `scripts/check_classes.py`
+  with saved frames BEFORE they go into the driver.
 
-- **S3 — orders + combat in the unattended loop (THE PICK).** The 40-turn driver never MOVES a
-  unit: `give_order()` (verified M32-M33 — poke the selection global, issue a REAL hotkey, service
-  the payment modal, verify the `unit+17` write) runs only via `--order`. Body: fold a per-turn
-  order step into `service_turn`'s own-phase window — pick a waiting unit from
-  `scripts/smac_unitpos.py` snapshots, issue a keyboard order, and VERIFY the write by memory diff
-  (never claim an order without the +17/position delta; the record list compacts, identity is not
-  record index). Acceptance: ONE `--turns 40` invocation (fresh or `--load`) where the trace shows
-  a handful of VERIFIED orders (records carrying the memory-confirmed delta) and the year still
-  advances every turn with `stuck 0` per `scripts/m54a_check_run.py` — or whatever sharper exit
-  gate `ROADMAP.md` gives S3; do not weaken it. Session 79's wins stay green after every change:
-  `python3 scripts/test_classify.py` → **PASS 10/10** and `python3 scripts/check_classes.py` →
-  **frames: 10 failures: 0**. Any new screen class gets a saved-screenshot row in BOTH files
-  before it goes in the driver.
-- Alternative (smaller): close the mid-end-turn autosave question — instrument why a save with
-  bit1 set spins after load (`scripts/m53q_livelock.py` census first; the `unit+48/50` chain lead),
-  then either make one 2390-2416 slot resume live or write the verdict into
-  `references/open-leads.md`.
-- After S3: S4 tech — toward G1.
+## FIRST (nothing else)
 
-## Operational kit
+1. Read `NEXT_PROMPT.md` in full — it is this file; it IS the footing.
+2. `tail -80 SESSION_NOTES.md` — the last three entries (77, 78, 79, 80) are the recent work.
+   Never read the whole file (~49 KB).
+3. `git status`; `git branch --show-current` (must be a branch, never `main`);
+   `python3 scripts/milestone.py start <ID>` FIRST — it creates the branch off `origin/main`.
+4. `python3 scripts/smac_state.py --json` — **no game is running** (session 80 ended with the box
+   idle). Any `--turns` run relaunches; `--load Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV`
+   gives the reproducible 2150 position (6 Scout Patrols, no Formers, 18 bases).
 
-- `scripts/smac_play.py --turns N --timeout S --no-escape S --tag <id> [--verbose] [--load 'Z:\path.SAV']`.
-  `--load` = relaunch if no window, then walk title -> LOAD GAME row -> blind browser -> LOAD
-  confirm -> ops-director itself (via `scripts/m54a_load.py`); a resume that is HUD-static AND
-  MENU-dead exits 5 as **WEDGE (bad slot), not stalled**. `--no-escape N` suppresses Escape for
-  the first N s — EXCEPT quit-prompt and base, which Escape unconditionally (M54b). Bound a
-  backgrounded run with a shell `timeout` (40 turns ≈ 10-20 min at 2150-2190), then poll
-  `scripts/smac_state.py --json` — it reads `/proc/<pid>/mem`, so a passing turn needs no
-  screenshot. This checkout has NO `--mode stop`. Never signal by name: `ps -p <pid>` or
-  `pgrep -x terran.exe`, kill that exact pid.
-- Capture: `xwd -display :99 -root -silent` (`DISPLAY=:0` is blank) + `ffmpeg -vf crop=800:600:0:0`.
-  Root pixels ARE window coords (the game window is 800x600 at 0,0). `tesseract tsv`/`--psm 6`
-  return little on raw frames — use `smac_play.ocr_fast()` (~1-8 s/frame, much worse under load);
-  `smac_play.ocr()` writes its 3x sibling NEXT TO the input file. **White-on-dark menus OCR as
-  garbage — read them with vision on the capture** (session 79 did).
-- **`find()` matches ONE OCR token.** Phrase probes (`['turn complete']`) return None even when
-  the words are on screen; probe `('turn','make','ok')`.
-- Geometry (all measured live): console MENU (61,369) -> dropdown GAME (30,186) -> submenu
-  Save Game (200,331), Load Game (200,353), Quit Ctrl+Q (170,428). SAVE browser NAME (406,304),
-  OK (330,327), CANCEL (482,327); LOAD browser NAME (406,527), OK (330,552), CANCEL (482,552) —
-  Return in a name box only SELECTS, click OK; saves land in the browser's last-used dir unless
-  you type the full `Z:\` path. Title rows START (580,111), SCENARIO (610,269), LOAD (579,344);
-  TURN COMPLETE region (520,375,280,90); LOAD-confirm OK (290,391); ops-director row (400,307)
-  then OK (400,362).
-- Bars: **band + column density, never a run** (`pane_bars`) — the purple fill (103,91,181) is
-  dithered every other scanline and the label sits inside the bar. A 3-bar row is a VOTE only in
-  y 460-520 (Council YEA/NAY/ABSTAIN at 311/400/489, y 498); advisory panes' bar rows are y
-  219-310 and take `Return`; a bottom bar at y ≥ 560 on a `movie`/`unknown` frame is a
-  Replay/Close bar — `dialog` frames are NOT bar-clicked (M54b pane-scoping). A `movie` frame
-  with NO detectable bar is a Secret Project clip: it takes `Return`.
-- Classes the driver must never confuse (pinned in `scripts/test_classify.py`): the quit dialog
-  is `quit-prompt` (Escape = "Oops, no, wait!"), NOT `title`; the HELP browser is `help` (only
-  its EXIT bar (525,344) closes it); the HUD's message pane may print `nutrients` — that is still
-  `hud` (positional test, MSGPANE (0,425,800,600)); **`base` closes with Escape even under
-  `--no-escape`** — it is legitimately byte-static, never a wedge.
-- Wedge vs stall: HUD byte-static 15 s+ with a dead MENU click = WEDGE (the driver exits 5 and
-  says so). Static modals are normal. A stalled round? `python3 scripts/m53q_livelock.py`.
-- Traps: NEVER press Escape on the title screen (it selects "Exit"); the quit dialog's OK exits
-  the game; `pkill -f`/kill-by-name matches your own argv (bracket form `terran.ex[e]` only);
-  never run a second OCR/ffmpeg job while a driven run is live; img crop args are (x, y, w, h).
+## WHERE THE KNOWLEDGE LIVES
 
-## Rules
+- `ROADMAP.md` — S1..S7 with the exact acceptance for each. Read the row before committing.
+- `ORDERS.md` — the order contract: §2 the `+17` verification oracle (a dropped keypress and a
+  rejected order look identical from outside), §4 the byte table, §5 the harness, **§6 the
+  in-loop contract added by session 80**.
+- `SAVE_FORMAT.md` 155-182 — the 52-byte unit record (`+0/+2` x/y, `+4` flags, `+9` frozen, `+10`
+  type, `+14` owner, `+17` order, `+40` mp-used). `NAMED.md` 120-146 — the select gate
+  (`0x40c8d0`, `0x5acc00`: owner == current player, not frozen, mp unspent) the picker mirrors.
+- `data/alpha.json` — `UNITS` names/classes; the class table is `0x98ADB2` (type*52, class byte at
+  +0; class 9 = Former, class 3 = Scout Patrol). `scripts/check_classes.py` prints a census.
+- The live skill `~/.hermes/skills/smac-cvr-format/` (repo copy `skill/`): SKILL.md +
+  `references/wine-operations.md` (launch, load, the order step, the panes) +
+  `references/production-rebuild.md` (M53 census model — only for S1).
 
-- ONE milestone, then stop. Ending the turn is the deliverable.
-- Order the ending exactly: `SESSION_NOTES.md` entry (patch, never a rewrite) + `NEXT_PROMPT.md`
-  rewrite (then `wc -c` — **<=15,500 bytes**) → **checkpoint commit** → `python3 scripts/gate.py
-  --base main` GREEN (its checkpoint check needs BOTH docs updated) → `milestone.py submit
-  --title …` → `gh pr checks <n>` → `milestone.py merge <n>`. Commit EARLY: as soon as the
-  milestone's test passes (and no later than ~60 tool calls). A commit on the branch is the only
-  thing that survives a context overflow.
-- After editing the LIVE skill, copy `SKILL.md` **and** `references/` into `skill/` or the sync
-  check fails (`cp ~/.hermes/skills/smac-cvr-format/SKILL.md skill/ && cp ~/.hermes/skills/smac-cvr-format/references/*.md skill/references/`).
-- Keep tool results small: `scripts/evidence.py show <file>:<line>`, `tail` not whole files,
-  `scripts/index.py search "<question>"` before any grep across the corpus.
-- Gate citations: any `evidence/<file>:<line>` in changed Markdown must resolve, so only cite
-  line numbers you have verified; plain paths (no `:line`) are always safe.
+## OPERATIONAL KIT
 
-## Report style
+- Driver: `python3 scripts/smac_play.py --turns N --timeout 240 --no-escape 3000 --tag <t>
+  [--load <Z:\\path>] [--verbose]`. Orders are ON by default: `--orders-per-turn 2`,
+  `--order-budget 35`, `--no-orders` to turn them off. Trace →
+  `evidence/trace_<tag>_<ts>.jsonl`; the header carries `orders_per_turn`/`order_budget`, each
+  turn record carries `orders` (rec/x/y/type/class/key/byte_before/after/energy/seconds) and
+  `order_seconds`.
+- Check: `python3 scripts/m54a_check_run.py <trace> --timeout 240 [--min-orders N]` — the ONLY
+  thing that can print `PASS`. It reports `advanced`, `stuck`, `pane hits`, `actions`,
+  `orders ... VERIFIED of ... attempted`, `order mix`, `energy spent`.
+- State: `python3 scripts/smac_state.py --json` (or `--watch`). Reads `/proc/<pid>/mem`; never
+  pokes, never clicks.
+- Classifier tests: `python3 scripts/test_classify.py` (must end `PASS 11/11 screen
+  classifications`) and `python3 scripts/check_classes.py` (must end `frames: 11 failures: 0`).
+  Both take `(words, region_colors(png), png)` and run on SAVED frames — no game needed.
+- Evidence: `python3 scripts/evidence.py` — `frames`, `latest`, `shots`, `show <png>`,
+  `trace <jsonl>`. A 40-turn trace is ~100 KB: parse it with a short python snippet, never cat.
+- Wine: prefix `./programs/prefix`, `wine 10.0` at `./programs/wine-extract/wine-master-10.0`,
+  `DISPLAY=:99`, Xvfb `:99` 800x600x16. `pgrep`/`pkill -x terran.exe` (NEVER `-f` — it matches
+  this session's own shell and kills it).
 
-One screen: what changed, the acceptance numbers with the exact command that produced them, what is
-still open, and the next pick. Cite `evidence/<file>:<line>`.
+## TRAPS THAT COST A SESSION HOURS (all measured, all in SESSION_NOTES)
+
+- **The oracle is memory, not the screen.** A keypress that lands and one that is swallowed look
+  identical in OCR. Verify `unit+17` (and after execution, `unit+0/+2`).
+- **Escape at a clean HUD raises "Do you really want to quit?"**, and Return there is "Yes, that's
+  an order, mister!" — the process is gone. Session 80's probe poisoned its own first run this way.
+- **The BASE screen swallows the next keypress** (it is a key sink, like a modal): close it with
+  Escape before firing an order key.
+- **Arrows drive the MAP CURSOR, they do not order a unit.** `Right` opened the base pane;
+  `shift+Up` raised a pane. Only the documented Shift+arrow combos in ORDERS.md §4 queue a move.
+- **A faction COMMUNICATION is its own class (`comm`)**: banner `X - MOOD`, a QUOTED demand, its
+  own OK bar at y 347. The console row at y 560 (DATALINKS 333 / PROFILE 467 / HQINFO 619) is
+  still drawn under it and is NOT a close bar — clicking it 38 times burned 735 s of turn 35 in
+  `evidence/trace_m54c40b_20261024_222039.jsonl`.
+- **The help browser ignores Escape**; click its EXIT bar (rightmost of the BACK/EXIT row).
+- **The game's own dialogs are modal for the game too**: while one is up, keypresses go into its
+  bar list, not the map. Service panes before firing keys, and never fire an order key while a
+  pane you opened is still up.
+- **`--load` needs a Windows path** (`Z:\...`), never a `file://` URI — Wine resolves URIs against
+  the prefix and the load fails silently.
+- **A 40-turn run is 15-25 minutes**: start it backgrounded with a generous `timeout`, then poll
+  the state reader or the log's `^turn N:` lines. Do not hold a foreground call open on it.
+
+## THE 10 RULES — condensed from sessions 75-80 (see the entries for the incidents)
+
+1. One milestone per session, then stop. Do not re-verify closed milestones.
+2. Commit early (a commit on the branch is the only thing that survives an overflow), then
+   checkpoint-commit every few hundred lines.
+3. Patch docs; never read-then-write a doc over 10 KB.
+4. Keep tool results small: grep/sed windows, `evidence.py show`, tail. Never cat a log.
+5. New screen classes go into `test_classify.py` AND `check_classes.py` with saved frames BEFORE
+   they go into the driver.
+6. Acceptance is a script printing `PASS` on one real invocation. Never weaken a gate to make a
+   run pass; if a run stalls, find the pane and pin it.
+7. Verify state by reading memory (`smac_state.py`, `/proc/pid/mem`), never by trusting a
+   screenshot, and never by assuming a keypress landed.
+8. Before `git add -A`, sync `skill/` from the live skill
+   (`~/.hermes/skills/smac-cvr-format/` → repo `skill/`) and commit it in the same commit as the
+   docs. `gate.py` does not check the sync; a stale `skill/` is a silent failure.
+9. `gate.py`'s checkpoint check needs BOTH `SESSION_NOTES.md` and `NEXT_PROMPT.md` updated, and
+   every `path:NNN` citation you add must resolve. `gate.py` refuses `main`; submit/merge refuse a
+   dirty tree — commit FIRST, then gate, then submit.
+10. Report in the established style: what changed, the acceptance numbers WITH the command that
+    produced them, what is open, next pick.
+
+## CLOSING ORDER (exactly)
+
+1. Patch a `## Session 81` entry into `SESSION_NOTES.md` (acceptance numbers + the command that
+   produced them + Next).
+2. Rewrite `NEXT_PROMPT.md` for session 82, then `wc -c NEXT_PROMPT.md` (must be ≤ 15,500).
+3. `git add -A && git commit -m '<ID>: checkpoint'`
+4. `python3 scripts/gate.py --base main` (must be GREEN)
+5. `python3 scripts/milestone.py submit --title "..."` → note the PR number →
+   `gh pr checks <n>` → `python3 scripts/milestone.py merge <n>`
+Then STOP and report.
+
+## IF YOU HIT "request exceeds the context window"
+
+In your very next tool call run `git add -A && git commit -m '<ID>: checkpoint'`, then reply with
+what is done and what is not. Do not try to compress and do not rewrite docs to recover — that is
+what killed sessions 78 and 79.
+
+## Never
+
+- commit to `main`; `Escape` on the title screen (it exits); `pkill -f`/`pgrep|kill` by name
+  (matches this shell); click OK on "Do you really want to quit?"; `--mode stop` (does not exist);
+  `file://` with `--load`; a `clear`-prefixed command (gate refuses it); a `MEDIA:` line in your
+  report unless you actually attached a file.
+
+## Report style (what a finished session looks like)
+
+One screen: what changed, the acceptance numbers with the command that produced them, what is
+open, next pick. No narration of the journey.

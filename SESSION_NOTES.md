@@ -313,3 +313,67 @@ browsers), and the round-aware turn budget.
   unit; `give_order` exists but only runs via `--order`. Or close the mid-round-autosave question
   (why a save with bit1 set spins after load) to unlock Paul's 2416 campaign. Read ROADMAP.md
   before picking.
+
+## Session 80 (2026-10-24) — M54c: **THE UNATTENDED LOOP NOW ORDERS UNITS — 31 MEMORY-VERIFIED ORDERS INSIDE A 40/40 RUN FROM THE SAVE**
+- **THE ACCEPTANCE IS MET.** One invocation, nobody at the keyboard, from a dead process:
+  `python3 scripts/smac_play.py --turns 40 --timeout 240 --no-escape 3000 --tag m54c40c --load
+  Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV --verbose`, checked with
+  `python3 scripts/m54a_check_run.py evidence/trace_m54c40c_20261024_224606.jsonl --timeout 240
+  --min-orders 5` → `turns 40 records, header asked for 40`, **`advanced 40/40`, year deltas
+  `{1: 40}`**, **`stuck 0 (turns [])`, max dt 61.8 s**, **`orders 31 VERIFIED of 36 attempted`**
+  on turns 0-3, 9-11, 14-16, 27-30, 37-39, `48.9 s spent ordering`, `PASS`, exit 0. Shape taken:
+  the S3 harness-assertion half (orders + verification inside the loop); the combat half of the
+  ROADMAP S3 row is still open — see Next.
+- **THE ORDER CONTRACT.** `order_step_in_loop()` runs once per player turn inside
+  `service_turn`'s `hud` branch (the `cur_player`/`turn_flags & 2` gate has already proved it is
+  OUR phase, the only window where a hotkey is an order and not a key sink): poke `0x91b5bc`,
+  fire ONE real hotkey, service the pane the setter raises, then read `unit+17` back — an order
+  counts only as a `+17` delta into the byte set that key may produce (ORDERS.md §4). A landing
+  order verifies in ~0.0 s (the byte is read before any OCR); a dud costs one OCR + pane service.
+  `--orders-per-turn` (2), `--order-budget` (35 s/turn), `ORDER_MAX_ATTEMPTS` (8 keys/turn), a
+  key retired after 3 delta-less attempts and a type deprioritised after refusing every key keep
+  the step from ever eating a turn. `--no-orders` restores the old behaviour.
+- **WHAT THE POSITION ACTUALLY ALLOWS (measured, `evidence/m54c_probe.txt`).** The
+  `m54b_clean.SAV` lineage owns SIX records that all decode `type 2` = `Scout Patrol` (class 3) —
+  the HUD's own unit panel reads `Scout Patrol` — and no class-9 record at all, so
+  `find_former()`'s class-9 filter ordered nothing and the first smoke run reported `orders:0`
+  while silently trying zero candidates. The picker is now `find_actionable()`: the game's OWN
+  select gate (owner, `+9` not frozen, `+40` movement unspent) with `cls` used to ORDER
+  candidates, never to exclude them. Live key facts: `f` on records 0 and 20 changed neither
+  `+17` nor energy (the `NEEDTERRAFORMERS` negative control); `l` took `+17` 0→1 on records 0 AND
+  3 with no pane and no energy; `Up`/`Right` left `+17` 0 (arrows drive the MAP CURSOR — `Right`
+  opened the base pane) and `shift+Up` raised a pane. So the loop's non-terraform plan is `g`
+  (`0x18`), `l` (1), `h` (2), and every one of this run's 31 verified orders is `l` → byte 1.
+  **No terraform order has ever landed in a Formerless position, and none will.**
+- **THREE PANES THE DRIVER HAD TO LEARN.** (1) The BASE screen swallows the next keypress: the
+  first smoke trace shows `l` failing behind a `base` pane and landing the moment the pane was
+  Escaped, so the order step now closes `base` with Escape instead of leaning on Return. (2)
+  **Escape at a clean HUD raises "Do you really want to quit?"** — the probe poisoned its own
+  first run that way (12 keypresses went into the dialog and every frame read `quit-prompt`);
+  inside the order step the prompt is answered with Escape, never Return, because Return there is
+  "Yes, that's an order, mister!" and the process is gone. (3) A faction **COMMUNICATION**
+  ("BELIEVERS - SEETHING" + a quoted demand + its own OK bar at y 347,
+  `evidence/m54c/comm_pane.png`) classified `unknown`, so M54b's bottom-bar rule clicked the
+  CONSOLE `DATALINKS` bar (333,560) 38 times in a row, each click opening the profiles browser
+  and each EXIT click (525,344) landing back on the same communication: turn 35 of
+  `evidence/trace_m54c40b_20261024_222039.jsonl` burned **735.2 s with the year stuck at 2185**.
+  New class `comm` + `answer_communication()` (click the MIDPOINT of the y-347 bar row — its
+  dithered ends read (266,347)/(534,347) and the label between them is not fill) fixed it: the
+  winning run met 6 communications and answered all 6 (`comm-ok` x6, `stuck 0`).
+- **SESSION 79'S WINS STAY GREEN, PLUS THE NEW ROWS.** `python3 scripts/test_classify.py` →
+  **PASS 11/11 screen classifications**; `python3 scripts/check_classes.py` → **frames: 11
+  failures: 0**. The new `comm` class is pinned in BOTH files against the saved frame before it
+  went into the driver, and the 10 older rows still classify their own frames.
+- **State of the box:** the winning run left the game at 2190 (n_bases 22, `cur_player 7`,
+  `turn_flags 0x100002`); the driver process and the game were stopped cleanly at the end of the
+  session, so the box is idle and `--load` relaunches from `m54b_clean.SAV`.
+- **Next:** **S3's other half — orders that MOVE and FIGHT.** Every verified order this run could
+  buy is `SENTRY` (byte 1, sticky: after six turns the game itself prints "No units need new
+  orders"), because the reproducible position has no Former and `g` refuses to queue a MOVE for a
+  unit standing on its base. The cheapest route to a real walk is a position that HAS class-9
+  units: either the fresh-game start (2100, `scripts/m54a_newgame.py`) or a save we make after
+  production turns up a Former, then verify `0x18`/`0x19` orders, execution (`EXEC`), and combat
+  resolution (the ROADMAP S3 row: order → execution → combat → death/occupation). Secondary: the
+  `comm` class should also be tried against the Council's "X - MOOD" panes, which share its
+  banner style but print unquoted text — the discriminator is deliberate, but it has only one
+  fixture behind it.

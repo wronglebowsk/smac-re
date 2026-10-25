@@ -137,6 +137,34 @@ def is_help_page(words):
         or "chassis types" in t or ("advances" in t and "abilities" in t)
 
 
+def is_communication(words, png=None):
+    """A faction COMMUNICATION pane: "<FACTION> - <MOOD>" banner, a QUOTED demand in the
+    upper pane, portrait at left, one wide OK bar across the pane at y~347.
+
+    Measured on `evidence/m54c/comm_pane.png` (session 80, the frame that stuck turn 35 of
+    trace_m54c40b for 735 s): banner "BELIEVERS - SEETHING" at y 16, the quoted line
+    "You are a contemptuous parasite, Zakharov, ..." at y 45, and pane_bars seeing the OK
+    bar's dithered ends at (266,347) and (534,347).
+
+    The quote is the discriminator: the Council's own panes wear the same banner style
+    ("GAIANS - OBSTINATE", answer_council_dialog) but print their text UNQUOTED, and the
+    HELP browser's banner has no dash. The bar-row test keeps a mis-read quote from
+    turning some other pane into a clickable comm.
+    """
+    banner = quoted = False
+    for t, cx, cy, w, h in words:
+        low = t.lower().strip(".,:;|_* ")
+        if cy <= 40 and low in ("-", "--", "—", "–", "-seething", "-obstinate"):
+            banner = True
+        if 20 <= cy <= 140 and any(q in t for q in ('"', "“", "”", "„", "“")):
+            quoted = True
+    if not (banner and quoted):
+        return False
+    if png is None:
+        return True
+    return any(330 <= b[1] <= 365 for b in pane_bars(png, y0=330))
+
+
 def is_quit_prompt(words):
     """The "Do you really want to quit?" dialog.
 
@@ -303,6 +331,10 @@ def classify(words, ncolors=None, png=None):
     if is_help_page(words):
         return "help"           # full-screen help browser: its profile text contains base
                                 # words, so this must run before the base test
+    if is_communication(words, png):
+        return "comm"           # faction communication: click ITS OK bar (y~347), never a
+                                # console bar — session 80's turn 35 clicked (333,560) 38
+                                # times and the year never moved
     hits = base_word_positions(words)
     if hits and not (hud_btn and all(in_msgpane(p) for p in hits)):
         return "base"
@@ -489,6 +521,28 @@ def answer_help_page(png):
         click((xy[0], xy[1]))
         return (xy[0], xy[1])
     key("Escape")
+    return None
+
+
+def answer_communication(png):
+    """Answer a faction COMMUNICATION: click the MIDPOINT of its own OK bar row (y~347).
+
+    Measured on `evidence/m54c/comm_pane.png`: the bar's dithered purple ends are
+    (266,347) and (534,347) and the "OK" label between them is not fill, so the row's
+    centre — not any one segment — is the click target. The HUD console row (DATALINKS
+    333,560 / PROFILE 467,560 / HQINFO 619,560) is still drawn under this pane and is NOT
+    a close bar: M54b's bottom-bar rule clicked (333,560) on 38 consecutive frames of
+    turn 35, each click opening DATALINKS/PROFILES and each EXIT click landing back on the
+    same communication (735 s, year 2185 never moved).
+    """
+    bs = [b for b in pane_bars(png, y0=330) if 330 <= b[1] <= 365]
+    if bs:
+        left = min(b[0] - b[2] / 2.0 for b in bs)
+        right = max(b[0] + b[2] / 2.0 for b in bs)
+        xy = (int((left + right) / 2), int(sum(b[1] for b in bs) / len(bs)))
+        click(xy)
+        return xy
+    key("Return")
     return None
 
 
@@ -691,6 +745,7 @@ def service_turn(idx, tr, timeout, verbose=False):
     round_cap = t0 + 3 * timeout
     last_press = 0.0
     last_esc = 0.0
+    ordered = False             # S3/M54c: the order step runs at most once per turn
     prev_hash = None
     last_change = t0
     last_probe = 0.0
@@ -744,6 +799,14 @@ def service_turn(idx, tr, timeout, verbose=False):
                 sys.exit(5)
             key("Escape")                # close the menu the probe opened (in-game)
             time.sleep(1.2)
+        # M54c: a faction COMMUNICATION has its own OK bar (y~347) and the console row at
+        # y 560 is still drawn under it, so it must be answered before handle_pane's
+        # bottom-bar rule mistakes DATALINKS for a close bar (session 80, turn 35).
+        if kind == "comm":
+            xy = answer_communication(png)
+            rec["handled"].append(f"comm-ok@{int(xy[0])},{int(xy[1])}" if xy else "comm:Return")
+            time.sleep(1.2)
+            continue
         # M54a: the Council vote row and the HIVE bribe pane come up in BOTH phases (the
         # Council convenes while cur_player is an AI), and neither has a control OCR can
         # see, so they get a handler ahead of the generic dialog/Escape paths.
@@ -794,6 +857,15 @@ def service_turn(idx, tr, timeout, verbose=False):
         elif kind == "dialog":
             key("Return"); time.sleep(0.5)      # default button = OK
         elif kind == "hud":
+            # S3 / M54c: order our own units BEFORE ending the turn. This branch is only
+            # reachable in OUR phase (the cur_player/turn_flags gate above `continue`s on
+            # an AI round), which is exactly the window where a hotkey is an order rather
+            # than a key sink. `ordered` makes it once-per-turn even if it fails.
+            if not ordered and ORDER_CAP > 0:
+                ordered = True
+                nver = order_step_in_loop(rec, verbose)
+                rec["handled"].append(f"orders:{nver}")
+                continue
             if time.time() - last_press > 6:
                 btn = find(words, ["complete"])
                 click((btn[0], btn[1]) if btn else TURN_BTN)
@@ -886,6 +958,29 @@ ORDER_KEYS = {
     "bracketright": 0x10, "bracketleft": 0x11, "underscore": 0x12,
 }
 
+# S3 / M54c — the same orders, INSIDE the unattended loop (see order_step_in_loop).
+ORDER_TRY_KEYS = ("f", "M", "S", "F", "r", "o", "n", "E", "K", "B", "q", "m", "s")   # preference order, ORDERS.md §2
+ORDER_CAP = 2              # VERIFIED orders to issue per player turn (0 = loop never orders)
+ORDER_BUDGET = 35.0        # wall-clock cap on one turn's order step, seconds
+ORDER_MAX_ATTEMPTS = 8     # hard cap on keypresses per turn (bounds the cost of dead ends)
+ORDER_MODAL_TIMEOUT = 22.0  # cap on servicing the panes one keypress raised, seconds
+ORDER_REJECTS = {}         # type -> how many times every tried key was refused (live, per run)
+ORDER_KEY_REJECTS = {}     # key -> attempts that produced no +17 delta (live, per run)
+ORDER_KEY_TRIES = 3        # retire a key for the rest of the run after this many duds
+
+# Non-terraform keyboard orders, verified by the SAME `+17` delta. Measured live on this
+# build against a selected Scout Patrol (`evidence/m54c_probe.txt`): `l` took `+17` 0->1
+# on records 0 AND 3 with no pane and no energy change; plain `Up`/`Right` did NOT order
+# the unit (arrows drive the map cursor — `Right` even opened the base pane) and
+# `shift+Up` raised a pane. So the keys that are safe to fire blind at a selected unit
+# are `g` (queued MOVE to own base, ORDERS.md §4 byte 0x18), `l` (SENTRY, 1) and
+# `h` (HOLD, 2). Escape is never one of them: on a plain HUD Escape raises the quit
+# prompt, and Return on that prompt is "Yes, that's an order, mister!" = the game exits.
+ORDER_SIMPLE = (("g", {0x18}, "move-to-base"), ("l", {1}, "sentry"), ("h", {2}, "hold"))
+ORDER_TERRAFORM_WANT = set(range(4, 0x18))     # #TERRAIN index + 4 (mode rewrites allowed)
+ORDER_BYTE_NAMES = {1: "sentry", 2: "hold", 3: "convoy", 0x18: "move-to-base",
+                    0x19: "move-dir", 0x1b: "road-to-base", 0x1c: "tube-to-base"}
+
 
 def mem():
     pid = int(sh("pgrep -x terran.exe").stdout.split()[0])
@@ -937,6 +1032,36 @@ def find_former(f, me):
     return out
 
 
+def find_actionable(f, me, n=119):
+    """Unmoved, actionable units owned by us — the game's OWN select gate (NAMED.md
+    `0x40c8d0` / `0x5acc00`: owner == current player, not frozen at `+9`, movement not
+    spent at `+40`) — but WITHOUT the class-9 pre-filter find_former applies.
+
+    Why no class filter (M54c, live): in the `m54b_clean.SAV` position at 2153 every one
+    of our six records decodes to type 2 (`Scout Patrol`, class 3) and NO class-9 record
+    exists for us at all, and `f` on records 0 and 20 changed neither `+17` nor faction
+    energy (`evidence/m54c_probe.txt`). A hard class filter therefore ordered nothing.
+    The memory delta is the oracle; this is only a candidate PICKER, and a
+    faction-variant type (`type >= 64`, NAMED.md `0x98adb2`) whose class byte does not
+    read 9 must stay reachable. `cls` is carried so class-9 units get tried first.
+    """
+    import struct
+    out = []
+    arr = rd(f, UNIT_ARR, n * 52)
+    for i in range(n):
+        d = arr[i * 52:(i + 1) * 52]
+        if d[14] != me or d[14] == 0xFF:
+            continue
+        if bool(d[9]) or d[17] != 0 or d[40] != 0:      # frozen / already ordered / moved
+            continue
+        typ = struct.unpack("<H", d[10:12])[0]
+        out.append(dict(idx=i, x=struct.unpack("<h", d[0:2])[0],
+                        y=struct.unpack("<h", d[2:4])[0], type=typ, cls=unit_class(f, typ),
+                        order=d[17], mpused=d[40],
+                        flags=struct.unpack("<I", d[4:8])[0]))
+    return out
+
+
 def energy(f, player):
     import struct
     return struct.unpack("<i", rd(f, ENERGY_G + player * ENERGY_STRIDE * 4, 4))[0]
@@ -978,6 +1103,171 @@ def answer_terraform_pane(words, verbose=False):
     if verbose:
         print("    Return (default button)", flush=True)
     return "return"
+
+
+# ---------------------------------------------------------------------------
+# S3 / M54c — orders INSIDE the unattended loop.
+#
+# give_order() is the lab harness: it works, but only when someone runs `--order`, so
+# the spine-S2 driver never MOVED a unit. This is the fold-in: in our own phase, while
+# the screen is the HUD, pick a waiting Former out of memory, poke the selection slot,
+# press a REAL terraform hotkey, service the payment panes the setter raises
+# synchronously, and PROVE the order by the memory diff it caused — order byte 0 ->
+# 4..0x17 plus the energy debit. The byte is the only honest oracle: ORDERS.md §2 says
+# a dropped keypress and a rejected order look identical from the outside.
+#
+# The check is a RANGE, not `== mode + 4`, because of the documented mode rewrites
+# (ORDERS.md §2: mode 5 Road -> 6 Mag Tube on a road tile, mode 0 Farm -> 1 Soil
+# Enricher or 0xa by tile bits) that happen BEFORE validation, so the landed byte can
+# legitimately differ from the pressed key's mode. `expected_byte` is recorded anyway.
+
+def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="terraform"):
+    """One hotkey on one selected unit. Returns the record with its memory delta.
+
+    `want` is the set of `+17` bytes this key may legitimately produce (ORDERS.md §4).
+    Verification is `+17` MOVING INTO `want` — never a screenshot, never "we pressed the
+    key": ORDERS.md §2 says a dropped keypress and a rejected order look identical from
+    outside, and a pane that swallows the event looks like both.
+    """
+    struct = __import__("struct")
+    want = ORDER_TERRAFORM_WANT if want is None else want
+    mode = ORDER_KEYS.get(kname)
+    idx = cand["idx"]
+    before = unit_rec(f, idx)
+    e0 = energy(f, me)
+    ta, tb = tile_recs(f, cand["x"], cand["y"])
+    focus()
+    wr(f, SEL_G, struct.pack("<i", idx))
+    sh(f'xdotool key --clearmodifiers "{kname}"')
+    panes, quiet, t0 = [], 0, time.time()
+    while time.time() - t0 < ORDER_MODAL_TIMEOUT:
+        ob = rd(f, UNIT_ARR + idx * 52 + 17, 1)[0]        # cheap oracle: the byte FIRST
+        if ob != before["order"] and ob in want:
+            break
+        png = freeze("om")
+        w = ocr_fast(png)
+        k = classify(w, region_colors(png), png)
+        if k == "hud":
+            quiet += 1
+            if quiet >= 2:
+                break
+            time.sleep(0.5)
+            continue
+        if k == "quit-prompt":
+            # Escape = "Oops, no, wait!". Return here is "Yes, that's an order, mister!"
+            # and the process is gone (the trap that killed the 120-turn run), and a
+            # stray Escape at a plain HUD is what RAISES this pane.
+            panes.append("quit-prompt")
+            key("Escape"); time.sleep(1.0)
+            continue
+        if k in ("dialog", "confirm", "unknown") and is_terraform_pane(w):
+            panes.append("terraform:" + k)
+            if answer_terraform_pane(w, verbose) is None:
+                break
+            quiet = 0
+            continue
+        panes.append(k)                                    # advisor pane / stray modal
+        if len(panes) > 4:
+            break
+        if k == "base":
+            # The base screen is what a dud `g` (or `Right`) opens, and it is a KEY SINK:
+            # the smoke run's `l` on rec7 was swallowed by exactly this pane
+            # (evidence/trace_m54c_smoke2_*.jsonl turn 0, panes [base, unknown, base]).
+            # Escape is its documented close (M54b); Return does nothing to it.
+            key("Escape"); time.sleep(0.9)
+            continue
+        key("Return")                                      # default button = OK
+        time.sleep(0.7)
+    after = unit_rec(f, idx)
+    e1 = energy(f, me)
+    ta2, tafter = tile_recs(f, cand["x"], cand["y"])
+    byte_delta = after["order"] != before["order"] and after["order"] in want
+    return dict(unit=idx, key=kname, label=label, mode=mode,
+                want=sorted(want)[:1] + ([mode + 4] if mode is not None else []),
+                ux=cand["x"], uy=cand["y"], utype=cand["type"], ucls=cand.get("cls"),
+                order_before=before["order"], order_after=after["order"],
+                order_name=ORDER_BYTE_NAMES.get(after["order"],
+                                                "terraform" if after["order"] in ORDER_TERRAFORM_WANT else None),
+                mpused_after=after["mpused"],
+                energy_before=e0, energy_after=e1, energy_delta=e1 - e0,
+                tile_addr=hex(ta),
+                tile_diff=[f"+{i:02x}:{a:02x}->{b:02x}"
+                           for i, (a, b) in enumerate(zip(tb, tafter)) if a != b],
+                panes=panes, verified=bool(byte_delta), dt=round(time.time() - t0, 1))
+
+
+def order_step_in_loop(rec, verbose=False):
+    """Issue up to ORDER_CAP VERIFIED orders (terraform for Formers, MOVE/SENTRY/HOLD for
+    every other unit), then return how many landed.
+
+    Called only from service_turn's `hud` branch, which the cur_player/turn_flags gate
+    has already established is OUR phase (pressing order keys into a modal or an AI
+    round is a key sink — M32). Each waiting Former gets a few keys in preference
+    order; the whole step is capped by ORDER_BUDGET so ordering can never eat a turn.
+    Every attempt is recorded in rec["orders"]; only the ones with the byte delta are
+    `verified`. Caveat recorded in ORDERS.md: unit identity here is the RECORD INDEX,
+    which is stable inside our own phase but is NOT a persistent id (the list compacts
+    when a unit dies).
+    """
+    if ORDER_CAP <= 0:
+        return 0
+    t0 = time.time()
+    try:
+        _pid, f = mem()
+    except Exception:
+        return 0
+    out = []
+    try:
+        me = state().get("player")
+        if me is None:
+            return 0
+        cands = find_actionable(f, me)
+        # class-9 (Former) candidates first, then whatever has refused us least this run,
+        # then record index — so a position with no Former costs a few keypresses on turn
+        # one and nearly nothing afterwards (ORDER_REJECTS accumulates per type).
+        cands.sort(key=lambda c: (c["cls"] != 9, ORDER_REJECTS.get(c["type"], 0), c["idx"]))
+        cands = cands[:ORDER_CAP * 4]
+        verified = attempts = 0
+        for cand in cands:
+            if (verified >= ORDER_CAP or attempts >= ORDER_MAX_ATTEMPTS
+                    or time.time() - t0 > ORDER_BUDGET):
+                break
+            landed = False
+            # A Former gets the terraform family first (that is the one that spends
+            # energy and rewrites modes); everyone gets the always-valid keyboard orders.
+            plan = ([(k, ORDER_TERRAFORM_WANT, "terraform") for k in ORDER_TRY_KEYS]
+                    if cand["cls"] == 9 else []) + list(ORDER_SIMPLE)
+            for kname, want, label in plan:
+                if (landed or attempts >= ORDER_MAX_ATTEMPTS
+                        or time.time() - t0 > ORDER_BUDGET):
+                    break
+                if ORDER_KEY_REJECTS.get(kname, 0) >= ORDER_KEY_TRIES:
+                    continue                    # retired for the rest of this run
+                attempts += 1
+                o = issue_order_for_unit(f, me, cand, kname, verbose, want=want, label=label)
+                out.append(o)
+                if o["verified"]:
+                    verified += 1
+                    landed = True
+                    if verbose:
+                        print(f"    ORDER rec{cand['idx']} ({cand['x']},{cand['y']}) "
+                              f"type {cand['type']} cls {cand['cls']} '{kname}' -> "
+                              f"{label} byte {o['order_before']}->{o['order_after']} "
+                              f"({o['order_name']}) energy {o['energy_delta']} "
+                              f"({o['dt']}s)", flush=True)
+                else:
+                    ORDER_KEY_REJECTS[kname] = ORDER_KEY_REJECTS.get(kname, 0) + 1
+            if not landed:
+                ORDER_REJECTS[cand["type"]] = ORDER_REJECTS.get(cand["type"], 0) + 1
+        rec["orders"] = out
+        rec["orders_verified"] = verified
+        rec["order_seconds"] = round(time.time() - t0, 1)
+        return verified
+    finally:
+        try:
+            f.close()
+        except Exception:
+            pass
 
 
 def give_order(kname, unit_idx=None, modal_timeout=60.0, verbose=False, tag="m33",
@@ -1095,7 +1385,7 @@ def give_order(kname, unit_idx=None, modal_timeout=60.0, verbose=False, tag="m33
 
 
 def main():
-    global WIN, ESC_ALLOW
+    global WIN, ESC_ALLOW, ORDER_CAP, ORDER_BUDGET
     ap = argparse.ArgumentParser()
     ap.add_argument("--turns", type=int, default=5)
     ap.add_argument("--timeout", type=float, default=120)
@@ -1112,12 +1402,21 @@ def main():
                          "it). Relaunches the game if no window; walks title -> LOAD "
                          "browser -> confirm -> ops-director itself; a resume with dead "
                          "input is reported as a WEDGE (exit 5), not stalled.")
+    ap.add_argument("--orders-per-turn", type=int, default=2, dest="orders_per_turn",
+                    help="S3/M54c: VERIFIED terraform orders to issue each player turn "
+                         "in the unattended loop (default 2)")
+    ap.add_argument("--no-orders", action="store_true",
+                    help="S3/M54c: the loop only ends turns; it never issues an order")
+    ap.add_argument("--order-budget", type=float, default=35.0, dest="order_budget",
+                    help="max seconds one turn's order step may take (default 35)")
     ap.add_argument("--no-verify", action="store_true",
                     help="skip in-loop/post memory reads (use when a tracer holds the process)")
     ap.add_argument("--key-only", action="store_true",
                     help="skip the selection poke (poke BEFORE arming the tracer; pokes are ignored under ptrace)")
     a = ap.parse_args()
     ESC_ALLOW = time.time() + a.no_escape
+    ORDER_CAP = 0 if a.no_orders else a.orders_per_turn
+    ORDER_BUDGET = a.order_budget
     run_seed = random.randrange(1 << 31)   # recorded in the trace header (M54a)
     os.makedirs(EVID, exist_ok=True)
     for tool in ("xdotool", "xwd", "ffmpeg", "tesseract"):
@@ -1175,7 +1474,8 @@ def main():
     # the position is pinned instead by the start state on the same line.
     hdr = {"type": "start", "seed": run_seed, "tag": a.tag, "turns": a.turns,
            "timeout": a.timeout, "no_escape": a.no_escape, "argv": sys.argv[1:],
-           "load": a.load, "state": s}
+           "load": a.load, "orders_per_turn": ORDER_CAP, "order_budget": ORDER_BUDGET,
+           "state": s}
     with open(path, "w") as tr:
         tr.write(json.dumps(hdr) + "\n")
         for i in range(a.turns):

@@ -1,0 +1,12 @@
+pre-flight class: hud | orders_mode 1 | sel 3
+rec0 key 'Up': +17 0->0 mp+40 0->0 xy28,42 
+rec0 key 'shift+Up': +17 0->0 mp+40 0->0 xy28,42 pane=unknown 
+rec0 key 'Right': +17 0->0 mp+40 0->0 xy28,42 pane=base 
+rec0 key 'l': +17 0->1 mp+40 0->0 xy28,42 
+   LANDED l -> byte 1
+rec3 key 'Up': +17 0->0 mp+40 0->0 xy28,42 
+rec3 key 'shift+Up': +17 0->0 mp+40 0->0 xy28,42 pane=unknown 
+rec3 key 'Right': +17 0->0 mp+40 0->0 xy28,42 pane=base 
+rec3 key 'l': +17 0->1 mp+40 0->0 xy28,42 
+   LANDED l -> byte 1
+post class: unknown | year 2153
