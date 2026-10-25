@@ -13,8 +13,8 @@ Closed (PRs merged to `main`):
 - **M54G — the founding is keyed and the loop FOUNDED a base** (session 84, PR #48): `b`,
   class 8 + legal tile, Return founds, unit consumed, oracle = the base array (`ORDERS.md` §8;
   session 86 re-did it live from a reloaded save).
-- **M54h — chooser geometry + walk-evidence rules** (session 85, PR #49 — merged as notes; the
-  walk floor was NOT met there either). See the retractions below.
+- **M54h — chooser geometry + walk-evidence rules** (session 85, PR #49, merged as notes; the
+  walk floor was NOT met there either).
 - **Session 86 (M54i, OPEN).** Attribution WORKS in the loop (§10 wins below); a loop-ordered
   walk has STILL not landed on our own base — three failure modes measured, two fixed. Session
   86 merges the fixes + a documented negative.
@@ -156,9 +156,8 @@ saved frames first.
   7). Poll the oracle at 100 ms; OCR only when memory has not answered.
 - **Indices lie across a turn** (the array reshuffles AND GROWS — bases build units). Content is
   identity; snapshot and diff (`snap_before`).
-- **Attaching mid-round makes turn 0 advance the year by 3** and the checker fails `{1: N}`.
-  Attach in OUR phase (`cur_player == 3` right after a year flip) or burn one turn first. The
-  box is often parked on a BREAKTHROUGH panel / advisor dialog — run `scratch/m54h_clear.py`.
+- **Attaching mid-round makes turn 0 advance the year by 3** (checker fails `{1: N}`): attach
+  in OUR phase or burn a turn first; the box is often parked on a dialog — `m54h_clear.py`.
 - **The pump eats the byte tens of ms after the OK** — sample THROUGH the click
   (`order_byte_watcher` with `recs=`); one read after the click is a coin flip.
 - Sentries (byte 1) move on their own every round and rewrite their legs; HOLD (2) is inert.
