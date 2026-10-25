@@ -1107,6 +1107,13 @@ def issue_order_for_unit(f, me, cand, kname, verbose=False, want=None, label="te
         panes.append(k)                                    # advisor pane / stray modal
         if len(panes) > 4:
             break
+        if k == "base":
+            # The base screen is what a dud `g` (or `Right`) opens, and it is a KEY SINK:
+            # the smoke run's `l` on rec7 was swallowed by exactly this pane
+            # (evidence/trace_m54c_smoke2_*.jsonl turn 0, panes [base, unknown, base]).
+            # Escape is its documented close (M54b); Return does nothing to it.
+            key("Escape"); time.sleep(0.9)
+            continue
         key("Return")                                      # default button = OK
         time.sleep(0.7)
     after = unit_rec(f, idx)
