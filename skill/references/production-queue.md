@@ -7,12 +7,25 @@ boundary verifier is `scripts/m56_build.py`, its rule tests `scripts/test_m56_pr
 ## The gate (settled by a controlled poke, not by reading)
 
 A queue head completes at the boundary iff:
-- `pending` (`base+0x4c`) > 0, AND
-- head (`base+0x50`) is an item id (`0xffffffda`/−38 = empty slot; ≥ 0 = unit type; < 0 =
+- head (`base+0x50`) is a unit type id (0..0x3f; `0xffffffda`/−38 = empty slot; < 0 =
   facility/project, `|q|` encodes the project), AND
-- **mineral storage `base+0x40` >= price**, price = `0x4e40a0(owner,1,−1) × type_cost` — the
-  type cost is the byte at `+41` of the type record `0x98ad88 + type*0x34`; the economic factor
-  is 10 for in-mask owners (`0x985b10`), so `+41 = 1` means 10 minerals.
+- **mineral storage `base+0x40` (+ this round's income, the add is inside the same visit)
+  >= price**, price = `0x4e40a0(owner,1,−1) × type_cost` — the type cost is the byte at
+  `+41` of the type record `0x98ad88 + type*52`; the economic factor is 10 only when the
+  difficulty scalar `0x92ada8 >= 2`, else 9 (or 8) — see the M58 block in repo NAMED.md.
+
+**M59: `pending` (`base+0x4c`) is NOT a term of the gate.** The gate `0x4efa5e`
+`cmp [ecx+0x40], edi; jge 0x4efadc` prices whatever sits in the head slot; the pay store
+`0x4efedd` dominates the create-unit call `0x5ab650 @ 0x4eff4e` (removing the pay block makes
+the create unreachable from both the entry and the gate — `scratch/m59/dom.py`), and nothing
+between them reads `+0x4c`. Pending gates only the POP `0x4ef5d0`, which returns at `0x4ef5f4`
+when pending == 0; so with pending 0 the head is never consumed and the base **re-buys the same
+type every round it can pay**. Measured one-variable, one control (`scripts/m59_head.py`):
+Korolev Center pending 0 head 2, minerals poked 0→9, University Base untouched at 0 → one turn
+later Korolev minerals 0, income 0→−1 (the new unit's upkeep), pending still 0, base tile
+5→6 units of (type 2, ours); control base unchanged. Acceptance run
+`evidence/trace_m56_build_20261026_145157.jsonl` PASSes 10 boundaries with pending-0 arrivals
+predicted and observed.
 
 **The progress accumulator `+0x3c` and the rate `+0xcc` do NOT gate production.** The
 `cost <= [base+0xcc]+[base+0x3c]` comparison inside `0x4ef6d0` is the out-mask race scan / display
@@ -21,12 +34,17 @@ rate 1, progress 32 produced on the very next boundary after storage was poked a
 an accumulation model predicts no. When docs and code disagree on which field gates, run the
 one-variable poke (arm queue + storage, change nothing else) and let the arrival decide.
 
-After the gate passes: pay `0x4f0ca6` (`storage −= price`) → **clamp B `0x4f0cc3-0x4f0ce9`**
-re-caps storage to `max(0, min(10, net_income))` for in-mask owners — so a completed build on a
-zero-income base reads as storage collapsing to 0, NOT as a giant cost; floor bookkeeping as
-"storage decreased by at least the price", never as an exact delta. Then the POP `0x4ef5d0`
-(pending −1, queue `+0x50..` left-shifts, faction queue counter `0x94dc84[head]` −1) and the unit
-record is created on the base tile via `FUN_005ab650` (shard_012.c:20890, right after the debit).
+After the gate passes: pay `0x4efedd` (`storage −= price`) → the clamp at `0x4eff02-0x4eff23`
+re-caps storage for in-mask owners when it exceeds `max(0x92a370, income)` → the create-unit call
+`0x5ab650(type, ?, x, y) @ 0x4eff4e`, guarded at `0x4eff32` by `[base+0x10] == 0` (that field
+doubles as scratch for the chooser `0x4f6030`, which writes `0x8f0d74..0x8f0d90` = record
+`+0x14..+0x30`). The POP `0x4ef5d0` (pending −1, slots left-shift, per-faction queued-count byte
+`[0x94de84 + owner*0x20bc + type*4]` −1 — the disasm at `0x4ef613` reads `0x94de84`, older notes
+here said `0x94dc84: REPORTED CONFLICT, the instruction bytes win until a poke says otherwise)
+runs LATER in the same visit (`0x4f037b` / `0x4f0f46`) and only ADVANCES the queue; a boundary
+snapshot can land on either side of it, and the create itself can land in the gap between one
+window's after-snapshot and the next window's before-snapshot (measured: pay 8→1 with pending
+still 1, unit 6→7 across the snapshot gap).
 
 ## Where production runs in the round (there is no "production phase")
 

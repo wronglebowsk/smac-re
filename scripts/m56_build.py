@@ -3,13 +3,18 @@
 boundary from the queue fields, then verify the prediction after the flip.
 
 Fields (NAMED.md M53i-k, cross-checked against ghidra_out/shard_012.c here):
-  base+0x4c pending, +0x50..+0x74 queue item ids (0xffffffda = empty slot),
+  +0x4c pending, +0x50..+0x74 queue item ids (0xffffffda = empty slot),
   +0x40 MINERAL STORAGE, +0x3c progress accumulator (display-only per M53k),
   +0xcc build rate, +0xd0 net income, +0x8c.. facility bitmap.
-  Completion (0x4ef6d0 pay path): minerals >= price, price = 0x4e40a0(owner,1,-1)
-  x type_cost(0x98ad88+type*0x34 byte +41); pay debits minerals (0x4f0ca6),
-  the POP (0x4ef5d0) decrements pending, left-shifts the queue, and the unit is
-  created on the base tile (FUN_005ab650).
+  Completion (0x4ef6d0 pay path): minerals >= price of whatever unit TYPE sits in
+  the HEAD SLOT +0x50, price = 0x4e40a0(owner,1,-1) x type_cost(0x98ad88+type*52
+  byte +41); the pay store 0x4efedd DOMINATES the create-unit call 0x5ab650
+  @ 0x4eff4e (scratch/m59/dom.py) and nothing between them reads pending.
+  M59: PENDING IS NOT A GATE — 0x4c only gates the POP (FUN_004ef5d0 returns at
+  0x4ef5f4 when pending == 0), which left-shifts the slots; with pending 0 the
+  head is never consumed, so the base re-buys the same type whenever it can pay
+  (scripts/m59_head.py measured exactly that: minerals 9 -> 0 + a unit on the
+  tile, pending 0 before and after, control base untouched).
 
 Floors (never weakened): every prediction verified, every observed arrival
 predicted, bookkeeping exact, >=1 POSITIVE prediction verified (non-vacuous).
