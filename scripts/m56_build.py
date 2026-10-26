@@ -259,7 +259,13 @@ def main():
                     help="seconds without a flip before a popup is clicked OK")
     a = ap.parse_args()
 
-    trace_path = a.trace or f"evidence/trace_m56_build_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
+    # Fixture replays are reproductions, not evidence: they used to land in evidence/ and be
+    # counted by the budget gate and the citation audit (M62 emptied two of them out by hand).
+    if a.fixture and not a.trace:
+        _fxdir = os.environ.get("TMPDIR", "/tmp")
+        trace_path = os.path.join(_fxdir, f"fixture_trace_{time.strftime('%Y%m%d_%H%M%S')}.jsonl")
+    else:
+        trace_path = a.trace or f"evidence/trace_m56_build_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
     trace = []
     log = trace.append
 

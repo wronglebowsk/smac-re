@@ -1,5 +1,0 @@
-ghidra_out/shard_009.c:8136:  in_ECX[0x29e] = in_ECX[0x2ae] + 0x17;
-ghidra_out/shard_012.c:8284:  in_ECX[0x29e] = 0;
-ghidra_out/shard_019.c:689:  in_ECX[0x29e] = DAT_00997890;
-ghidra_out/shard_019.c:1921:  in_ECX[0x29e] = 0;
-ghidra_out/shard_019.c:2065:      in_ECX[0x29e] = param_2;

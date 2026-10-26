@@ -1,7 +1,0 @@
-[locate] {'idx': 70, 'addr': 9841968, 'owner': 3, 'name': 'Climactic Research', 'pop': 7, 'min40': 0, 'q50': 2, 'd0': -1, 'c0': 7, 'cc': -3, 'f3c': 34, 'fc': 3, 'f38': 14663233, 'anchor': 'name', 'n_name_matches': 1, 'n_owner3_matches': 1, 'owner3_matches': [(70, 'Climactic Research')]}
-[poke] +0x3c = 500
-[poke] +0xcc = 1
-[poke] +0xd0 = 200
-[poke] +0x40 = 200
-[gdb] armed (log block-buffered; read after detach)
-{"reason": "rounds", "year0": 2360, "final_year": 2363, "ocr_passes": 0, "rounds": 3}

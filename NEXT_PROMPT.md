@@ -11,89 +11,83 @@ BUILD UI (0 memory writes), paid by income at 2/round`, **56 checks / 0 bad**, t
 `evidence/trace_m56_build_20261026_162511.jsonl`); the M61 PR is the one this session submitted from
 `milestone/m61` — read `git log --oneline -3` / `gh pr list` for its number before quoting it.
 
-## WHAT SESSION 100 SETTLED (do not re-learn)
+Session 101 shipped **M62 (instruments, not research)**: `accept_ready.py`, `session_brief.py`,
+`evidence.py audit`, fixture traces out of `evidence/`, tagged conflicts, and a 22.8 MB evidence
+budget (was 27.7). **No prediction-harness PASS was produced this session** — the one live run
+FAILED (`1/2 positive predictions verified`) and the reason is now half-explained, see "THE PICK".
 
-**THE ROUND ORDER, read out of one ordered gdb stream** (`scripts/m60_guard.py --stage watch
---boundaries 2 --timeout 400 --tag m61a`; `evidence/m61a_seq.jsonl`, `evidence/m61a_watch.gdblog`;
-`events {YEARW 2, PLAYERW 16, VISIT 52, PAY 8, CREATE 8, GUARDWRITE 0}`, `guard_writes 0`,
-`guard_values_at_visits ["0"]`):
+## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
-```
-== YEAR FLIP to 2183 (round 83) while cur_player=7
-   cur_player -> 0 -> 1 -> 2 -> 3
-y2183 r83 cp3 VISIT  University Base   min=6 pend=0 head=2 guard=0
-y2183 r83 cp3 VISIT  Korolev Center    min=9 pend=0 head=2 guard=0
-y2183 r83 cp3 PAY    Korolev Center    9->0 (edi=9)      ; edi = the price (m58_price: 9)
-y2183 r83 cp3 CREATE Korolev Center    min=0
-   cur_player -> 4 -> 5 -> 6 -> 7
-== YEAR FLIP to 2184 ...
-```
+1. `python3 scripts/session_brief.py` — ≤4 KB of machine truth: verdict, both bases, the tagged
+   CONFLICTs, the next pick, the first commands. `--write` regenerates `BRIEF.md`. Exit 0 = READY.
+2. `python3 scripts/accept_ready.py` — the readiness oracle. Exit 0 = one of our bases can carry
+   the UI-queued acceptance; exit 1 = BLOCKED with the single cheapest fix. It checks, in order:
+   **screen class (a modal swallows every click AND every turn-end key)**, a running gdb, evidence
+   headroom (29 MB), then per base `pending > 0`, `minerals < price`, `credit > 0` (the income add
+   is gated `d0 > 0`, so `credit <= 0` can NEVER accrue). It also flags a TIGHT horizon when the
+   gate is more than `boundaries-2` rounds away. 13 unit cases: `scripts/test_accept_ready.py`.
+3. `python3 scripts/evidence.py audit [--delete]` — cites are taken from the docs AND from
+   `scripts/*.py`, so classifier frames are safe. Note the fix: `load_cites()` never matched
+   `.jsonl`, so before M62 no trace could ever count as cited (it now lists 10 files / 0.1 MB).
+4. `python3 scripts/m56_build.py --fixture X` writes its trace to `$TMPDIR`, not `evidence/`.
 
-The year store is **`0x51f54f`** (`a3 00 5b 98`, right after the round store `0x51f53c`); NAMED.md's
-"year store `0x51f554`" is the `call 0x478530` AFTER the store — reported, bytes win. Our bases are
-visited **while `cur_player == 3`, in array order** (University idx 0 then Korolev idx 18), four
-player switches after the year flip, in the round whose year has just flipped.
+## WHAT SESSIONS 100-101 SETTLED (detail lives in the skill: references/production-queue.md)
 
-**THE PAY AND THE CREATE ARE ONE VISIT INVOCATION.** `grep -n '0x4efedd\|0x4eff32\|0x4eff4e'
-scratch/m574/text.txt` returns only the three instruction addresses plus the `jne 0x4eff5c` — nothing
-jumps into that block — and the live log prints PAY then CREATE adjacent. So **an arrival is never a
-round late; a SNAPSHOT can be early.** The M59 "unit 6->7 across the snapshot gap" is the harness's
-after-snapshot landing at `cur_player 3` before player 3's upkeep reached the base, nothing more.
+- **The round order** (measured, `evidence/m61a_seq.jsonl`): the year store `0x51f54f` fires while
+  `cur_player` is 7 -> `cur_player` 0,1,2,3 -> our bases' visits in ARRAY order -> PAY `0x4efedd`
+  (edi = the price) -> CREATE `0x4eff4e` -> `cur_player` 4..7. The pay and the create are ONE visit
+  invocation (nothing in `.text` jumps into that block). **An arrival is never a round late; a
+  snapshot can be early.**
+- `ds:0x8f0d60` names the base being visited; `m56_build.py` logs it per window and refuses the F1
+  deferral when it already named the predicted base (`scratch/m61/mkfix.py` proves both directions).
+- `base+0x10` is NOT a field: the name starts at byte +19, so the dword straddles +16..+18 and
+  `name[0]` (24/24 bases).
+- Traps that cost real time: a modal voids every click; a produced unit zeroes `+0xd0` and the
+  income add is gated `d0 > 0`, so credit 0 can never accrue again; the base array compacts
+  mid-run, so locate bases BY NAME.
+- Conflicts are tagged `CONFLICT:` in NAMED.md and printed by the brief.
 
-**F1 IS ATTRIBUTED, NOT TOLERATED.** `ds:0x8f0d60` names the record the round processor is visiting
-(`0x4f5a70` stores it per base before the pipeline that reaches `0x4ef6d0`), so it says which base
-has been reached. `m56_build.py` has `cur_base()`, logs it as `cur_base` in every `round_after`
-event, carries it in `rounds[r]["cur_base_after"]`, and **refuses** the deferral when the
-after-snapshot already named the predicted base. Proof cases (`scratch/m61/mkfix.py` builds both from
-the real PASS trace; they differ in that ONE field): `--fixture scratch/m61/fixture_defer_ok.json`
--> exit 0 PASS; `--fixture scratch/m61/fixture_beat_visit.json` -> exit 1 `BAD ... NOT deferred: at
-the after-snapshot ds:0x8f0d60 already named this base`. Fixture timelines now replay the guard
-samples too, so the guard floor cannot be vacuously true on a replay.
+## THE PICK — M63: WHAT WRITES 384/386 INTO `base+0x50`, AND WHAT THE POP DOES TO THE SLOTS
 
-**`base+0x10` IS THE NAME, NOT A FLAG.** The name starts at record byte **+19**; a dword read at
-`+0x10` is bytes +16,+17,+18 (three small unnamed bytes) plus the name's FIRST CHARACTER in the top
-byte. `python3 scratch/m61/census10.py`: `topbyte==name[0]: 24 / 24` — Korolev `0x4b000000` = 'K',
-University `0x55000000` = 'U', both with +16..+18 zero. Bytes +16..+18 are unnamed (observation, not
-claim: +17 == 1 on all 8 faction-6 bases, +18 nonzero on several faction-2/7 bases); who writes them
-is unmeasured. The old `[base+0x10] == 0` guard note was wrong twice: Ghidra `short *` offsets, then
-this straddle. Check a record's BYTE layout before believing any dword-level claim about it.
+One milestone, then stop. Do not tune `predict()` to observations. **Reload the clean save before
+anything else** (`m54a_load --relaunch` -> `m54g_prep` -> `smac_play --turns 1`): the box drifted —
+`bases_ours` went 2 -> 1 and `units_ours` 9 -> 5 by year 2174 r74, so it can no longer host the
+acceptance.
 
-**HARNESS LESSONS THAT COST REAL TIME.** (1) A dialog on screen swallows every UI click —
-`m57_ui_enqueue` failed twice on University Base (`INSERT never landed`, chooser guard updating,
-pending stuck 0) with an Operations Director "minerals output ... not sufficient to support Scout
-Patrol ... disbanded" dialog (`classify()` == `dialog`) over the BUILD pane: Return clears it, one
-Escape closes the pane, re-check `classify() == hud` BEFORE an enqueue. (2) Producing a unit zeroes
-that base's mineral credit (`+0xd0` 1 -> 0 or -1) and the income add is gated `d0 > 0`, so storage
-cannot accrue again — after two productions BOTH our bases sat at minerals 0 / credit 0 and no
-positive prediction was possible; the fix is the reload, not a poke.
+Session 101's one live run FAILED (`1/2 positive predictions verified`,
+`evidence/trace_m56_build_20261026_165917.jsonl`) and left a sharp observation:
 
-**CONFLICTS still on the record.** queued-count byte `0x94dc84` (skill) vs `0x94de84` (the pop
-instruction at `0x4ef613`); a writer for `0x8f0d70` outside `.text` is not excluded (the watchpoint
-covers runtime); the NAMED.md "completion path" branch `0x4f0b78 -> 0x4f0ca1 pay -> 0x4f0f46 pop ->
-0x4f26d9 ret` is still unread — the UI-queued pay is `0x4efedd` (measured `before=9 edi=9 after=0`).
+- r3: University `pending 1 -> 0` with the slot array `[2,2,0,0]` unchanged before and after — the
+  pop decrements pending and does NOT visibly shift the slots (M61 saw the same at Korolev).
+- r4: TWO bases' head slots read **384** and **386** in the same window while Korolev read `2`; the
+  garbage head reached the bookkeeping comparison and produced "queue held — head 2->384".
+- r2: University paid (minerals 6 -> 0) and no unit of that tuple appeared on the tile; the same
+  run lost University Base. **CONFOUNDED** — base death and the queue anomaly are in the same
+  windows; do not write "the base died because ...", and do not assume a dead record explains 384
+  (two bases carried it at once).
+- Measured over every trace: 38/303 of our rows and 2804 rows overall hold a slot outside `0..23`.
+  Never assume a slot is a type id; a global "slots are types" floor would fail on the AI bases.
 
-## THE PICK — M62: WHAT THE POP ACTUALLY DOES TO THE QUEUE SLOTS
-
-One milestone, then stop. Do not tune `predict()` to observations.
-
-1. The observation to settle: pending went **1 -> 0** while Korolev's slot array stayed
-   `[2, 2, 2, 2]` (`evidence/trace_m56_build_20261026_160325.jsonl`, r0 and r1 `prod` rows) — the
-   documented "left-shift the slots + pending--" is UNVERIFIED for the slot array. Cite the pop
-   bytes: `FUN_004ef5d0`, `0x4ef5f4 je 0x4ef684` (pending == 0), the shift and the pending store
-   (`0x4ef613`, `0x4ef641`), and the per-faction queued-count byte.
-2. Measure it: extend `scripts/m60_guard.py --stage watch` (it already stamps visit/pay/create/guard/
-   year/cur_player) with a breakpoint on the pop entry and a hardware watchpoint on the queue dwords
-   of ONE named base (`base+0x4c` and `+0x50..+0x74`), run 2-3 boundaries with a queued base, and
-   print before/after per store. ONE variable per run; the other base is the control.
-3. State what the queue representation really is (head slot vs pending vs the slot array) and re-check
-   M59's "the head slot is the truth" against the stores — if a slot does shift, say when the head is
-   refilled; if it does not, say what the pop's shift operand actually is.
-4. Acceptance: `python3 scripts/m56_build.py --ui-queued <Korolev idx> --boundaries 10 --timeout 400
-   --no-poke-hold` prints **PASS** on ONE real invocation. If it cannot, record the negative and merge
-   nothing.
-5. `python3 scripts/test_m56_predict.py` (17/17), `--fixture scratch/m56_fixture_bad.json` (exit 1),
-   `--fixture scratch/m61/fixture_defer_ok.json` (exit 0) and `--fixture
-   scratch/m61/fixture_beat_visit.json` (exit 1) stay green; add cases for anything new.
+1. Settle the pop's operand from the bytes: `FUN_004ef5d0`, `0x4ef5f4 je 0x4ef684` (pending == 0),
+   the shift and the pending store (`0x4ef613`, `0x4ef641`), the per-faction queued-count byte.
+2. Extend `scripts/m60_guard.py --stage watch` with a breakpoint on the pop entry and a hardware
+   watchpoint on ONE named base's `+0x50..+0x74` (`+0x4c` too), 2-3 boundaries, ONE variable per
+   run, the other base the control. Print before/after per store.
+3. Say what a dead/stale base record looks like (`n_bases` compaction, coords, owner byte) and
+   whether a freed record's `+0x50` holds anything meaningful.
+4. Whatever the answer, `accept_ready.py` must keep its contract: READY means *a positive
+   prediction is possible*, not *the run will pass* — the support-disband path (Operations Director
+   "minerals output ... not sufficient to support ... has been disbanded") can still eat a created
+   unit, and that is not yet modelled.
+5. Old sub-item, still open from M61/M62: cite the pop bytes and state the queue representation
+   (head slot vs pending vs slot array), then re-check M59's "the head slot is the truth".
+6. Acceptance: `python3 scripts/accept_ready.py` must print READY (exit 0) on the reloaded box and
+   BLOCKED (exit 1) with the right fix on a dead one, and `python3 scripts/m56_build.py
+   --ui-queued <idx> --boundaries 10 --timeout 400 --no-poke-hold` must print **PASS on ONE real
+   invocation**. If it cannot, record the negative and merge nothing.
+7. Keep green: `scripts/test_accept_ready.py` (13/13), `scripts/test_m56_predict.py` (17/17),
+   `--fixture scratch/m56_fixture_bad.json` (exit 1), `--fixture scratch/m61/fixture_defer_ok.json`
+   (exit 0), `--fixture scratch/m61/fixture_beat_visit.json` (exit 1); add cases for anything new.
 
 ## LIVE FACTS / KIT
 

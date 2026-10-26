@@ -516,3 +516,30 @@ Read code with `scripts/fn.py <addr> [--max N]`; metadata with `scripts/fn.py <a
 | **`0x4f6030` = production CHOOSER (what a base builds next)** | 30,475 B, 4727 pseudocode lines (`shard_012.c:24338-29064`), one `return pbVar10`. Keeps the MINIMUM score against `local_124[0]` seeded `0xf423f` (999999), tie-broken by a secondary key; score = cost × ~25 halve/double heuristics incl. the affordability reshape through `0x4e4450` × `0x5ac950` × `0x4e40a0` (0x4fb271-0x4fb2c9). Candidate REJECTED unless `[base+0x38]` carries the bits its category needs — switch on `record[+0x32]`: 0->0x200, 1->0x1000, 2/3->0x1000 (0x400000 if `[base+0x38] & 0x1000` clear or `record[+0x2c] != 0`), 4->0x2000, 5->0x800, 6->0x400, 7/10->0x800000, 8->0x20000, 9->0x8000, 0xb->0x100000, +0x80000 for types >= 0x40 whose `record[+0x38] & 4` is clear; gate runs only for owners in `0x985b10`. Fallback 0x4fd6a0-0x4fd6e5 scans the 512 type records at `0x98ad80` stride `0x34` (end `0x9915b2`) for `0x5a73f0`-buildable, category 1/2/3, `record[+0x38] & 4`, lowest `record[+0x31]`. Live: Korolev `[base+0x38] = 0x00dfbe41` carries 0x1000, so Scout Patrol (cat 3) passes | **H (pseudocode + disasm + live plan dword)** | `shard_012.c:27401-27470`, `29027-29054`, `scripts/m60_guard.py --stage read` |
 | **`DAT_008f0d60` is a `short *` to the base record being visited — DOUBLE every offset Ghidra prints through it** | written as `&DAT_0095da10 + idx*0x98` (shorts = `idx*0x130` bytes) in `0x4e3470`, `0x4e47d0`, twice in `0x4ef6d0`, twice in `0x4f5a70`; 929 references in `.text`, all loads of the value except the pointer stores. So pseudocode `+0x1c` = byte **+0x38** (proved: `4fb293 mov ecx,ds:0x8f0d60` / `4fb299 test DWORD PTR [ecx+0x38],0x80000000`), `+0x20` = `+0x40` storage, `DAT_008f0d60[0]/[1]` = the x/y words at `+0x0/+0x2`. This mis-typing is what produced the retracted `[base+0x10]` guard note | **H (disasm + Ghidra type)** | `scratch/m574/text.txt` at 0x4fb293, session 99 notes |
 | **a boundary read can be EARLY: production lands while the player walk comes home, not at the flip** | after `smac_play --turns 1` printed 2189->2190, Korolev held the poked 9 minerals with `+0x3c` unmoved and `cur_player 7`, and a 100 s poll changed nothing; the pay + create landed later in the same round (minerals 0, our units 10 -> 11, `cur_player 3`). `m56_build` closes each window on `cur_player` coming home, so its windows are valid; the store tracer only looked causal because it waits | **H (live, polled)** | `evidence/m60c.gdblog`, `evidence/m60d.gdblog`, session 99 notes |
+
+## M62 block (session 101, 2026-10-26) — OPEN CONFLICTS, tagged so a session can find them
+
+These lines start with `CONFLICT:` on purpose: `scripts/session_brief.py` prints every one of
+them, so an unresolved disagreement is visible at the start of a session instead of buried in
+prose. Delete a line only when a measurement settles it, and move the answer into the table.
+
+CONFLICT: year store — the M59/M60 notes and the skill say `0x51f554`; the instruction bytes are
+`0x51f54f` (`a3 00 5b 98`, immediately after the round store `0x51f53c`), and `0x51f554` is the
+`call 0x478530` AFTER the store. Bytes win: `evidence/m61a_watch.gdblog`.
+CONFLICT: per-faction queued-count byte — `0x94dc84` (skill text) vs `0x94de84` (operand at the
+pop, `0x4ef613`). Neither has been read live yet; do not quote either as fact.
+CONFLICT: pay site — `0x4f0ca6` (the NAMED "completion path", branch still unread) vs `0x4efedd`
+(measured live: `before 9 edi 9 after 0`, immediately before the create at `0x4eff4e`). For the
+UI-queued shape `0x4efedd` is the pay; the other branch is unexamined, not refuted.
+
+### MEASURED (M62): a queue slot is NOT reliably a type id
+
+Every trace in `evidence/` re-read: **38 of 303** of our-base rows and **2804** rows overall carry
+a slot value outside `0..23` (`-41`, `-3`, `-8`, `65`, `132`, `384`, `386`, ...). So no reader may
+assume `[base+0x50+4k]` is a type id, and no check may demand it globally — a hard floor there
+would fail on the AI bases in every run. The observed case that matters:
+`evidence/trace_m56_build_20261026_165917.jsonl` r3 shows University `pending 1 -> 0` with the
+slot array unchanged (`[2,2,0,0]` before and after), and r4 shows two bases' head slots reading
+`384`/`386` while Korolev reads `2` — a garbage head still reached the bookkeeping comparison and
+was reported as a "queue held" failure. Open: what writes 384/386 into `+0x50`, and whether the pop
+shifts at all (M61's observation repeats here: pending decrements, slots do not move).

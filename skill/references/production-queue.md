@@ -423,3 +423,32 @@ on the guard `0x8f0d70`, the year `0x985b00` and `cur_player 0x985dcc`, every co
   AND `minerals + credit >= price` in the same window, i.e. credit >= 1 — after two productions
   both our bases sat at minerals 0 / credit 0 and only a reload (`m54a_load --relaunch` ->
   `m54g_prep` -> one turn -> enqueue) restored that shape.
+
+## M62 (session 101): open a session with the instruments, not with prose
+
+Run these before touching the game; they exist because M61/M62's losses were *state* failures,
+not knowledge failures.
+
+- `python3 scripts/session_brief.py` — <= 4 KB of machine truth: verdict, our bases, the tagged
+  `CONFLICT:` lines from NAMED.md, next pick, first commands. Exit 0 = READY, 1 = blocked.
+- `python3 scripts/accept_ready.py` — the readiness oracle. **`READY` means a positive prediction
+  is possible, NOT that the run will pass** (a support-disband can eat the created unit). Order:
+  screen class -> running gdb -> evidence headroom -> per base `pending > 0`, `minerals < price`,
+  `credit > 0`. It prints ONE fix, not a list.
+- `python3 scripts/evidence.py audit [--delete]` — cites come from the docs AND `scripts/*.py`
+  (classifier frames are safe). **`load_cites()` used to omit `.jsonl`** (and putting `json`
+  before `jsonl` hides a naive fix), so no trace could ever be cited and the audit called 12.7 MB
+  of live evidence garbage. Verify a citation checker against a file you KNOW is referenced.
+
+Rules that came out of it:
+
+- A modal on screen voids every click and every turn-end key. `classify()` before any UI enqueue;
+  Return clears a dialog's default row, Escape closes a pane. Two enqueues clicked into an
+  Operations Director popup before anyone noticed.
+- Fixture replays are reproductions, not evidence: `m56_build.py --fixture` now writes its trace to
+  `$TMPDIR`, so `evidence/` only holds runs meant to be cited.
+- **A queue slot is NOT reliably a type id**: 38/303 of our-base rows and 2804 rows across all
+  traces hold a value outside `0..23` (`-41`, `-3`, `384`, `386`, ...). Never add a global "slots
+  are types" floor (it fails on AI bases every run) and never let a garbage head reach a prediction.
+- When a base dies mid-run, its record fields and the queue anomaly land in the SAME windows:
+  write "confounded", keep both hypotheses, do not narrate a cause.
