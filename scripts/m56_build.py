@@ -41,6 +41,12 @@ def rd32(m, a): return struct.unpack("<i", M.rd(m, a, 4))[0]
 # nonzero value DOES suppress the create (poke 1 -> paid, no unit; poke 0 ->
 # paid, unit arrives), so a PASS run records its value in every sampled row.
 GUARD_ADDR = 0x8f0d70
+CUR_BASE_G = 0x8f0d60   # the current-base POINTER (929 .text references).  0x4f5a70
+                        # stores it per base BEFORE the pipeline that ends in the
+                        # production visit 0x4ef6d0, so while it names record B, B is
+                        # the base the round processor is visiting — measured in
+                        # scripts/m60_guard.py --stage watch (evidence/m61a_seq.jsonl
+                        # prints VISIT/PAY/CREATE for exactly the base it names).
 GUARD_SAMPLES = []
 
 def prod_fields(m, i):
@@ -55,6 +61,22 @@ def prod_fields(m, i):
 def all_prod(m):
     n = max(0, min(rd32(m, 0x985AF4), 64))
     return [prod_fields(m, i) for i in range(n)]
+
+def cur_base(m):
+    """Resolve ds:0x8f0d60 to the base record it names, if it names one.
+
+    M61: the round processor stores the record pointer there per base, before the
+    pipeline that reaches the production visit 0x4ef6d0, so the pointer says which
+    base the round processor has visited LAST.  That is what turns an F1 arrival
+    "deferral" from a tolerance into an attributed measurement: either the
+    after-snapshot beat this base's visit (the pointer names another base), or it
+    already named THIS base and the visit had run."""
+    p = rd32(m, CUR_BASE_G)
+    n = max(0, min(rd32(m, 0x985AF4), 64))
+    if BASE_ARR <= p < BASE_ARR + n * BASE_SZ and (p - BASE_ARR) % BASE_SZ == 0:
+        i = (p - BASE_ARR) // BASE_SZ
+        return dict(ptr=p, i=i, name=prod_fields(m, i)["name"])
+    return dict(ptr=p, i=None, name=None)
 
 def type_cost(m, t):
     return M.rd(m, TYPE_ARR + t * TYPE_STRIDE + 41, 1)[0]
@@ -247,6 +269,13 @@ def main():
         natural_empty = fx.get("natural_queues_empty", False)
         log(dict(event="fixture", path=a.fixture))
         rounds = fx["rounds"]
+        # A fixture timeline carries the guard samples too (the live sampler stamps
+        # row["guard"] on every row it records), so the same floor applies to a
+        # replayed run — a fixture with no zero-guard samples cannot pass it.
+        for _rd in rounds:
+            for _row in _rd.get("timeline") or []:
+                if "guard" in _row:
+                    GUARD_SAMPLES.append(_row["guard"])
         armed = fx.get("armed")
         ui = fx.get("ui_queue")
         writes = fx.get("writes", 0)
@@ -403,10 +432,14 @@ def main():
                 break
             after = M.snapshot(m)
             bases_after = all_prod(m)
-            log(dict(event="round_after", r=rnum, snap=after, prod=bases_after))
+            cur_after = cur_base(m)     # M61: which base the round processor had
+                                        # visited when this snapshot was taken
+            log(dict(event="round_after", r=rnum, snap=after, prod=bases_after,
+                     cur_base=cur_after))
             rounds.append(dict(r=rnum, before=before, after=after,
                                prod_before=bases_before, prod_after=bases_after,
-                               predictions=preds, timeline=timeline))
+                               predictions=preds, timeline=timeline,
+                               cur_base_after=cur_after))
 
     checks = []
     def chk(name, ok, detail): checks.append(dict(check=name, ok=bool(ok), detail=detail))
@@ -430,34 +463,63 @@ def main():
         pos_pred += len(pred_unit)
         pred_keys = {(p["x"], p["y"], p["unit_type"], p["fac"]): p for p in pred_unit}
         # F1: every predicted unit arrival observed (net +n on the base tile).
-        # M59 MEASUREMENT (this file's own r2, evidence/trace_m56_build_20261026_144801
-        # .jsonl): Korolev Center paid in r2's window (minerals 8 -> 1 read back, the
-        # identity check passes) and pending was STILL 1 at the r2 after-snapshot and at
-        # the r3 before-snapshot (it reached 0 only in r3's window), while our unit total
-        # went 6 at r2-after -> 7 at r3-before with r3's own window adding nothing.  The
-        # create therefore lands in the GAP between our after-snapshot and the next
-        # window's before-snapshot — the same two-phase timing M58 already encodes for
-        # the pop store.  So an arrival is verified if it shows in THIS window's diff or
-        # is already present at the NEXT window's before-snapshot: the tuple, the tile and
-        # the mineral identity are still required exactly, within one round of the pay.
+        # M59 saw an arrival that was NOT in its pay window's after-snapshot and only
+        # present at the next window's before-snapshot (this file's own r2,
+        # evidence/trace_m56_build_20261026_144801.jsonl: Korolev paid in r2 — minerals
+        # 8 -> 1, identity check passes — pending still 1 at the r2 after- AND the r3
+        # before-snapshot, our unit total 6 at r2-after -> 7 at r3-before).  M61
+        # MEASURED why: the create is not late, the SNAPSHOT is early — see the block
+        # below.  An arrival is therefore still accepted if it shows in THIS window's
+        # diff or is present at the NEXT window's before-snapshot, but only when the
+        # round processor had not reached this base at the after-snapshot; the tuple,
+        # the tile and the mineral identity are required exactly, within one round.
         for k, p in pred_keys.items():
             got = next((o for o in obs if (o["t"]) == k), None)
             ok = got is not None and got["n"] >= 1
-            deferred = False
+            deferred = beat_visit = False
+            cb = rd_.get("cur_base_after") or {}
             if not ok and rk + 1 < len(rounds):
                 nxt = arrivals_on_bases(rd_["before"]["units"],
                                         rounds[rk + 1]["before"]["units"], tile2base)
                 got2 = next((o for o in nxt if o["t"] == k), None)
                 if got2 is not None and got2["n"] >= 1:
-                    ok, deferred = True, True
+                    # M61 MEASUREMENT (scripts/m60_guard.py --stage watch --boundaries 2,
+                    # evidence/m61a_seq.jsonl + evidence/m61a_watch.gdblog).  The ordered
+                    # stream inside one round, stamped by conditioned breakpoints on the
+                    # visit 0x4ef6d0, the pay store 0x4efedd and the create call 0x4eff4e
+                    # plus hardware watchpoints on the year 0x985b00 and cur_player
+                    # 0x985dcc:  year store 0x51f54f fires while cur_player is STILL 7
+                    # -> cur_player 0 -> 1 -> 2 -> 3 -> VISIT University Base -> VISIT
+                    # Korolev Center (minerals 9, guard 0) -> PAY 0x4efedd 9->0 with
+                    # edi = the price 9 -> CREATE 0x4eff4e -> cur_player 4 -> 5 -> 6 -> 7
+                    # -> next year store.  The pay and the create are one and the same
+                    # visit invocation (nothing in .text jumps to 0x4efedd, 0x4eff32 or
+                    # 0x4eff4e, and the log prints them adjacent with nothing between),
+                    # in the round whose year has just flipped, four player switches
+                    # after that flip, while cur_player == 3.  So an arrival is never a
+                    # round late: the only way it can be missing from this window's
+                    # after-snapshot is that the snapshot was taken at cur_player 3
+                    # BEFORE player 3's upkeep reached this base.  ds:0x8f0d60 names the
+                    # base the round processor reached last, so if the after-snapshot
+                    # already named THIS base the visit had run and the arrival really
+                    # was absent — a model gap, not a race, and not accepted.
+                    if cb.get("name") == p["name"]:
+                        beat_visit = True
+                    else:
+                        ok, deferred = True, True
             pos_ok += 1 if ok else 0
             chk(f"r{rd_['r']} prediction base {p['base']} ({p['x']},{p['y']}) type {p['unit_type']}",
                 ok, f"predicted (pending {p['pending']}, minerals {p['minerals']} >= price {p['price']}); "
                     f"observed net {got['n'] if got else 0} of that tuple on the base tile"
-                    + ("; DEFERRED: the create landed after this window's after-snapshot "
-                       "and is present at the next window's before-snapshot (measured r2, "
-                       "trace_m56_build_20261026_144801: pay 8->1 with pending still 1, unit "
-                       "6->7 across the snapshot gap)" if deferred else ""))
+                    + ("; ATTRIBUTED, not tolerated: the create lands in the SAME visit "
+                       "as the pay (measured PAY->CREATE adjacent at cur_player 3, "
+                       "evidence/m61a_seq.jsonl), so this window's after-snapshot beat "
+                       "the visit — at that snapshot ds:0x8f0d60 named "
+                       f"{cb.get('name') or 'no base record'}"
+                       if deferred else "")
+                    + ("; NOT deferred: at the after-snapshot ds:0x8f0d60 already named "
+                       "this base, so its visit had run and the predicted arrival really "
+                       "was absent" if beat_visit else ""))
         # F2: every observed net arrival on a base tile was a prediction (or cargo)
         for o in obs:
             k = o["t"]
@@ -502,7 +564,8 @@ def main():
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: minerals identity "
                     f"storage + income - price == storage after",
                     pa["minerals"] == pb["minerals"] + credit - p["price"],
-                    f"{pb['minerals']} + credit {credit} - price {p['price']} != "
+                    f"computed {pb['minerals']} + credit {credit} - price {p['price']} = "
+                    f"{pb['minerals'] + credit - p['price']}, observed storage after "
                     f"{pa['minerals']}; the add 0x4ef7f6 and the pay 0x4efedd are the "
                     f"only +0x40 stores a visit reaches (evidence/trace_m574c.jsonl)")
                 if pb["pending"] <= 0:

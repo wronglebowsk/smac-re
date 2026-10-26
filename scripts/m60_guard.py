@@ -156,8 +156,8 @@ def main():
             "(char*)(*(int*)0x8f0d60+19), *(int*)(*(int*)0x8f0d60+0x40), $edi, $esi\n"
             "continue\nend\n"
             f"break *{CREATE:#x}\ncommands\nsilent\n"
-            f'printf "CREATE year=%d round=%d cp=%d guard=%d base=%s min=%d\\n", '
-            f"*(int*){YEAR_G:#x}, *(int*)0x985afc, *(int*){CURP_G:#x}, $eax, "
+            f'printf "CREATE year=%d round=%d cp=%d guard=%d owner=%d base=%s min=%d\\n", '
+            f"*(int*){YEAR_G:#x}, *(int*)0x985afc, *(int*){CURP_G:#x}, *(int*){GUARD:#x}, $eax, "
             "(char*)(*(int*)0x8f0d60+19), *(int*)(*(int*)0x8f0d60+0x40)\n"
             "continue\nend\ncontinue\n")
         log = open(lpath, "w")          # stdout straight to a file: nothing to drain
