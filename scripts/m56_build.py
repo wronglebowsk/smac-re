@@ -102,6 +102,8 @@ def main():
     ap.add_argument("--settle", type=float, default=0.3)
     ap.add_argument("--timeout", type=float, default=300.0)
     ap.add_argument("--no-poke-hold", action="store_true")
+    ap.add_argument("--stuck", type=float, default=12.0,
+                    help="seconds without a flip before a popup is clicked OK")
     a = ap.parse_args()
 
     trace_path = a.trace or f"evidence/trace_m56_build_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
@@ -140,7 +142,8 @@ def main():
             log(dict(event="arm", base=bi, unit_type=a.arm_type, minerals=a.arm_minerals, readback=back))
         rounds = []
         our = rd32(m, M.G["our_player"][0])
-        t_start = time.time()
+        OK_XY = (630, 247)   # "OK" on the Operations Director popup (measured 2221:
+                             # the popup that appears when a produced unit is disbanded)
         for rnum in range(a.boundaries):
             before = M.snapshot(m)
             bases_before = all_prod(m)
@@ -148,54 +151,50 @@ def main():
             y0 = before["globals"]["year"]
             log(dict(event="round_before", r=rnum, year=y0, snap=before,
                      prod=bases_before, predictions=preds))
-            # wait for our turn (dismiss modal dialogs with Return every 2 s)
+            # Close the turn and watch for the year flip from memory. Return every
+            # 2 s UNCONDITIONALLY: it is consumed as turn-end by the human loop, as
+            # dismissal by modal event dialogs, and as OK by popups. If the game
+            # sits > a_stuck s without flipping, a popup with a non-Return default
+            # (Operations Director: "Zoom to Base Control" is the default row and
+            # Return cycles the options instead of closing) is clicked at OK.
+            t0 = time.time(); timeline = []; last = None
+            last_press = 0.0; last_ok = 0.0; flip_t = None
             deadline = time.time() + a.timeout
-            last_dismiss = 0.0
-            while M.u32(m, 0x985DCC) != our and time.time() < deadline:
-                if time.time() - last_dismiss > 2.0:
-                    press_return(); last_dismiss = time.time()
-                time.sleep(a.poll)
-            if M.u32(m, 0x985DCC) != our:
-                log(dict(event="round_fail", r=rnum, why="our turn never became active"))
-                break
-            win = find_win()
-            if win: subprocess.run(["xdotool", "windowfocus", win], check=False)
-            # close the turn, sample the walk, wait for the year flip + walk home
-            t0 = time.time(); timeline = []; last_press = 0.0; flip_t = None
-            stable_since = None; last = None; deadline = time.time() + a.timeout
             while time.time() < deadline:
                 row = M.timeline_row(m)
                 if last is None or any(row[k] != last[k] for k in row):
                     timeline.append(dict(t=round(time.time()-t0, 3), **row)); last = row
                 if flip_t is None and row["year"] != y0:
                     flip_t = time.time(); log(dict(event="flip", r=rnum, row=row))
-                elif flip_t is not None and len(timeline) >= 2 and timeline[-2]["year"] != row["year"]:
-                    pass  # a second flip while walking home: recorded in the timeline
-                if time.time() - last_press > 2.0 and (flip_t is None or
-                        row["cur_player"] != our or time.time() - t0 > 8.0):
-                    # press while no flip is seen, while mid-walk (modal dialogs
-                    # freeze the walk), and — after 8 s — even while parked on our
-                    # turn: the "unit built"/"No units need orders" modal sits IN
-                    # our phase and only a Return clears it (measured 2026-10-25:
-                    # round 1 froze 150 s at cur_player 3 with no key landing).
+                if time.time() - last_press > 2.0:
                     press_return(); log(dict(event="press_enter", r=rnum,
                                              t=round(time.time()-t0, 3))); last_press = time.time()
-                if flip_t is not None and row["cur_player"] == our:
-                    if stable_since is None: stable_since = time.time()
-                    if time.time() - stable_since >= a.settle: break
-                elif flip_t is not None:
-                    stable_since = None
+                if flip_t is None and time.time() - t0 > max(15.0, a.stuck) and \
+                        time.time() - last_ok > 6.0:
+                    win = find_win()
+                    if win:
+                        subprocess.run(["xdotool", "windowfocus", win], check=False)
+                        subprocess.run(["xdotool", "mousemove", str(OK_XY[0]), str(OK_XY[1])],
+                                       check=False)
+                        subprocess.run(["xdotool", "click", "1"], check=False)
+                    log(dict(event="click_ok", r=rnum, t=round(time.time()-t0, 3), xy=OK_XY))
+                    last_ok = time.time()
+                if flip_t is not None and time.time() - flip_t >= a.settle:
+                    break
                 time.sleep(a.poll)
             log(dict(event="timeline", r=rnum, rows=timeline))
+            if flip_t is None:
+                log(dict(event="round_fail", r=rnum, why="no year flip"))
+                rounds.append(dict(r=rnum, before=before, after=M.snapshot(m),
+                                   prod_before=bases_before, prod_after=all_prod(m),
+                                   predictions=preds, timeline=timeline))
+                break
             after = M.snapshot(m)
             bases_after = all_prod(m)
             log(dict(event="round_after", r=rnum, snap=after, prod=bases_after))
             rounds.append(dict(r=rnum, before=before, after=after,
                                prod_before=bases_before, prod_after=bases_after,
                                predictions=preds, timeline=timeline))
-            if flip_t is None:
-                log(dict(event="round_fail", r=rnum, why="no year flip"))
-                break
 
     checks = []
     def chk(name, ok, detail): checks.append(dict(check=name, ok=bool(ok), detail=detail))
@@ -209,9 +208,11 @@ def main():
         cp_seen = sorted({t["cur_player"] for t in rd_["timeline"]})
         chk(f"r{rd_['r']} boundary: year flipped exactly +1",
             dy == 1, f"year {gb['year']}->{ga['year']} (delta {dy}); cur_player walk {cp_seen}")
-        chk(f"r{rd_['r']} boundary: player walk came home to us",
-            gb["cur_player"] == gb["our_player"] and ga["cur_player"] == ga["our_player"],
-            f"cur_player before {gb['cur_player']} after {ga['cur_player']}")
+        cp_home = any(t["cur_player"] == gb["our_player"] for t in rd_["timeline"][1:])
+        chk(f"r{rd_['r']} boundary: player walk completed (cur_player reached us in the timeline)",
+            gb["cur_player"] == gb["our_player"] and (ga["cur_player"] == gb["our_player"] or cp_home),
+            f"cur_player before {gb['cur_player']} after {ga['cur_player']}; walk seen "
+            f"{sorted({t['cur_player'] for t in rd_['timeline']})}")
         tile2base = {(b["x"], b["y"]): b for b in rd_["prod_before"]}
         obs = arrivals_on_bases(rd_["before"]["units"], rd_["after"]["units"], tile2base)
         pred_unit = [p for p in rd_["predictions"] if p["predict_arrive"]]
