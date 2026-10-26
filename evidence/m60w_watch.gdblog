@@ -1,0 +1,83 @@
+[New LWP 2268874]
+[New LWP 2268873]
+[New LWP 2268872]
+[New LWP 2268871]
+[New LWP 2268870]
+[New LWP 2268869]
+[New LWP 2268868]
+[New LWP 2268867]
+[New LWP 2268866]
+[New LWP 2268865]
+[New LWP 2268864]
+[New LWP 2268863]
+[New LWP 2268862]
+[New LWP 2268861]
+[New LWP 2268860]
+[New LWP 2268859]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xec2f932c in __kernel_vsyscall ()
+Hardware watchpoint 1: *0x8f0d70
+Breakpoint 2 at 0x4ef6d0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+VISIT guard=0
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 2268868]
+0xec2f932c in __kernel_vsyscall ()
+[Inferior 1 (process 2268855) detached]
