@@ -62,7 +62,9 @@ def load_cites():
                 text = open(os.path.join(dirpath, fn), encoding="utf-8", errors="ignore").read()
             except OSError:
                 continue
-            for m in re.finditer(r"[A-Za-z0-9_.*-]+\.(?:png|log|gdb|txt|json|csv)", text):
+            # .jsonl is the format every trace uses — it was missing here, so NO trace could
+            # ever be "cited" and the audit reported 12.7 MB of live evidence as garbage (M62).
+            for m in re.finditer(r"[A-Za-z0-9_.*-]+\.(?:png|log|gdb|txt|jsonl|json|csv)", text):
                 pats.add(m.group(0).replace("*", ".*"))
     return [re.compile(f"^(?:.*/)?{p}$") for p in pats]
 
@@ -238,6 +240,47 @@ def cmd_prune(args):
     return 0
 
 
+def cmd_audit(args):
+    """Which evidence files does NO document cite? (M62)
+
+    The budget gate FAILs at 30 MB and a session adds ~0.7 MB, so the honest lever is
+    "delete what nothing cites" — never "raise the gate". Citation is decided by the same
+    load_cites() that the gate uses, so the audit cannot disagree with the gate.
+    """
+    pats = load_cites()
+    # A file can also be live because CODE names it (classifier frames, fixture traces,
+    # expected artefacts). Deleting those breaks a test, so they count as used.
+    code = ""
+    for d, _, fs in os.walk(os.path.join(ROOT, "scripts")):
+        for f in fs:
+            if f.endswith(".py"):
+                code += open(os.path.join(d, f), encoding="utf-8", errors="ignore").read()
+    rows = []
+    for dirpath, _, files in os.walk(EVID):
+        for fn in files:
+            p = os.path.join(dirpath, fn)
+            if p == PRUNE_LOG or "digests" in p:
+                continue
+            if is_cited(fn, pats) or fn in code:
+                continue
+            rows.append((os.path.getsize(p), p))
+    rows.sort(reverse=True)
+    total = sum(s for s, _ in rows)
+    print(f"uncited evidence: {len(rows)} file(s), {human(total)} "
+          f"(of {sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(EVID) for f in fs) / 1e6:.1f} MB)")
+    for s, p in rows[:15]:
+        print(f"  {human(s):>8}  {rel(p)}")
+    if len(rows) > 15:
+        print(f"  ... {len(rows) - 15} more")
+    if not args.delete:
+        print("\nrerun with --delete to remove them (git keeps the history)")
+        return 0
+    for _, p in rows:
+        os.remove(p)
+    print(f"\ndeleted {len(rows)} uncited file(s), reclaimed {human(total)}")
+    return 0
+
+
 def cmd_log(_args):
     if not os.path.isfile(PRUNE_LOG):
         print("nothing pruned yet")
@@ -263,6 +306,8 @@ def main():
     s.add_argument("--apply", dest="dry_run", action="store_false")
     s.add_argument("--keep-days", type=int, default=7)
     s.set_defaults(fn=cmd_prune, dry_run=True)
+    s = sub.add_parser("audit"); s.add_argument("--delete", action="store_true")
+    s.set_defaults(fn=cmd_audit)
     sub.add_parser("log").set_defaults(fn=cmd_log)
     args = ap.parse_args()
     return args.fn(args)
