@@ -297,8 +297,10 @@ fill). The Council's panes wear the same "X - MOOD" banner but print their text 
 is what separates the two classes.
 - **Escape at a clean HUD raises "Do you really want to quit?"** and every key after that
   goes into the dialog (a probe burned 12 keypresses that way). Escape answers it
-  ("Oops, no, wait!"); `Return` on it is "Yes, that's an order, mister!" and the process
-  is gone. Never Escape a plain HUD looking for a menu — click MENU (61,369).
+  ("Oops, no, wait!"); `Return` on it activates the HIGHLIGHTED row — with "Yes" highlighted that is
+  "Yes, that's an order, mister!" and the process is gone, while with "Oops, no, wait!" highlighted
+  (which Escape from a planet/event display leaves it) `Return` safely selects Oops. Read which row is
+  highlighted from the frame before pressing `Return`. Never Escape a plain HUD looking for a menu — click MENU (61,369).
 - **The base screen swallows the next keypress.** Close it with Escape before ordering, or
   the following order key is eaten (session 80's smoke trace shows `l` failing behind a
   `base` pane and landing the moment the pane was Escaped).
