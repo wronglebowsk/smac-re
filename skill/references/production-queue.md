@@ -84,6 +84,24 @@ a disband two rounds later.
 - The out-mask price model (era table `0x68cbb8` factor, can be 0) is unmodeled — do not predict
   out-mask owners.
 
+## Who fills the queue head (why a human queue sits empty)
+
+The chooser `0x4f6030` (sole caller `0x4e5ae0`) both forces the economy recompute and returns a
+chosen item id: with no candidate passing the filters it returns the sentinel **99999 = nothing**
+when the base is human-owned (faction absent from the AI mask `0x985b10`) AND the base's auto-mode
+flag `base+0x1c & 0x1000` is clear; for an AI-owned base, or with that flag set, a fallback scan
+over the type table picks a real item instead. `0x4e5ae0` hands the result to `0x4e5560`, which
+returns immediately on 99999; otherwise it sets the queue head slot (`base+0x50` view,
+`DAT_0095da60`), ±1s the faction item counts (`DAT_0094de84`), and recomputes the cost field — and
+it is called from INSIDE the queue processor when the queue is empty or blocked. Consequence: a
+human base only ever gets a queue item through the BUILD UI path (`0x417ee0` dispatch) or with
+auto-mode on; "the game queued nothing for us" is the designed behavior, not a bug.
+
+**A freshly founded base can have real minerals and income** (`+0x40` storage > 0, `+0xd0` income
+per round): after a reload + re-found, read both fields before deciding a storage poke is needed —
+if income is positive, the storage gate reaches the cheapest unit's price on its own within a few
+rounds and the arrival is a natural (non-poked) verification.
+
 ## Testing a predictor without the live box (mock /proc/mem)
 
 `scripts/test_m56_predict.py` serves the reader functions offline from a sparse
@@ -99,3 +117,25 @@ a disband two rounds later.
 - Make the fixture FAIL a floor on purpose: take a real PASS trace, mutate the after-snapshot
   (delete the predicted arrival), and require exit 1 naming the failed floor. A gate that never
   fails on a hand-typed trace is vacuous.
+
+## M57 (session 93) — the queue can be filled by the GAME's BUILD UI
+
+Verified end to end with a memory read-back after every click; the run that verified it made **0
+memory writes** and the queued unit completed at a boundary where storage (8) was **below** price
+(10) — paid by income, not by an armed poke.
+
+1. Open the base display: poke the map cursor to the base tile (window `*(0x7cdecc)+0x1dd9c/+0x1dda0`
+   and the handler cell `0x91b5f0/0x91b670` at index `0x91b5e8`), `SEL_G 0x91b5bc` = -1, orders mode
+   `0x91b5b8` = 0, then `b`. With orders mode ON, `b` raises the OBLITERATE prompt instead (its
+   "No, let them live" is the default; Return spares the base).
+2. Right arrow **(523,433)** switches the QUEUE widget's base; queue row 1 **(185,437)** opens the
+   chooser (open test: pixel (160,343) == (103,91,181)); the grid is 5 columns, cell k at
+   x = 128 + 127*(k%5), y = 60 + 100*(k//5); the display order is the candidate array
+   `DAT_009267e4` / count `0x9267e0`; the selection field `[pane+0xa1c+0xa774]` holds the CELL INDEX.
+3. **INSERT (497,343)** writes head `+0x50`, pending `+0x4c`, slot `+0x54`; **OK (285,343)** commits
+   (mode 0, no restore); CANCEL restores from the stack snapshot. Re-read pending ~1 s later.
+4. `base+0xd0` is NOT the per-round mineral credit (measured deltas 0/+4/0/-5/+2 while it read 2),
+   so a per-round arrival prediction built on it over-predicts. Watch `base+0x40` at 2 ms to get the
+   real credit sequence.
+5. Escape on the map raises the quit prompt; once dismissed the game stops taking KEYS (clicks still
+   work). Reload is the only recovery.

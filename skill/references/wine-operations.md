@@ -271,6 +271,27 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   (evidence/px_wedge_t28.png, session 79's false positive). The base screen's close is Escape and
   the class is unambiguous (quit-prompt/title classify first, base test positional since M54a), so
   Escape on `base` must NOT be gated by `--no-escape`; keep the gate only for movie/unknown.
+- **Opening the base screen for a CHOSEN base (measured recipe):** with **orders mode OFF**
+  (`0x91b5b8 == 0`) and **SEL unset** (`0x91b5bc = -1`), poke BOTH cursor homes to the base tile —
+  the map-window fields `*(u32*)0x7cdecc + 0x1dd9c/+0x1dda0` AND the tile-handler arrays
+  `0x91b5f0`/`0x91b670` at the current index `0x91b5e8` — then press `b` immediately: the cursor-tile
+  handler (`FUN_00511960`, case `0x62`) opens that base's screen. Verify by OCR of the base-name
+  banner, not by the keypress. Arrows do NOT position the cursor freely: they cycle units and the
+  cursor array cell follows the cycled unit. With orders mode ON and SEL unset the same `b` raised
+  the Operations Director **"obliterate <base>?"** confirm for the cursor base — orders mode ON +
+  SEL unset is a key-sink state for base keys, not a path to the base screen.
+- **The base screen hosts the production QUEUE widget** in the bottom-left HUD strip, and the
+  widget follows whichever base the name banner shows: click the **right arrow beside the banner**
+  (~window (523,433) at 800x600; the arrow glyphs flank the name inside the banner box) to switch
+  the displayed base — verify the switch by OCR of the banner name — then click a QUEUE row to raise
+  the chooser (bars/rows geometry in the M53d plumbing section; item icon ScoutPatrol (128,160),
+  INSERT 497, OK 285 at y 343). This is the non-poked path to fill a human queue.
+- **A popup bar click can silently NOT register** — the pane stays open with the selection unchanged
+  (Operations Director OK, hint Close/Don't-Show-Again all ate clicks while MENU/arrow clicks
+  registered). After ANY popup bar click, read back (re-OCR the pane, or re-read the field the click
+  should move); two failed clicks on the same bar: switch to keyboard (`Return` = the highlighted
+  default row, `Escape` = close the pane) and verify with the same read-back. The obliterate confirm
+  defaults to "No, let them live" — Return is safe there, but read which row is highlighted first.
 
 ## Ordering units from the driver (M54c, session 80)
 

@@ -17,8 +17,8 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 70,000-char FAIL).** Depth lives in `references/`; open the ONE file you need:
 `code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
 `solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
-`production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate,
-completion chain, the produced-unit freeze, mock-mem predictor tests), `static-store-census.md`,
+`production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate, completion chain, who fills the queue head, the
+produced-unit freeze, mock-mem predictor tests), `static-store-census.md`,
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `git-workflow.md`, `wine-runnability.md`, `data-formats.md`, `ghidra-batch-export.md`,
 `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
