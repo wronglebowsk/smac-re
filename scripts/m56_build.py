@@ -129,26 +129,56 @@ def price_of(m, owner, head):
     return out
 
 def predict(m, bases, income_first=False):
-    """income_first: the queue processor runs INSIDE the base visit after the
-    income add (M56 chain: 0x4ef7f6 income, then 0x4f5a70 -> 0x4ef6d0), so the
-    storage the gate compares may already include this round's income. The M56
-    acceptance armed storage ABOVE price so the two models were indistinguishable;
-    the UI-queued run is the first one where they differ, so it is the test."""
+    """M59 RESTATEMENT — the HEAD SLOT is the queue truth, PENDING is not.
+
+    Static (scratch/m59/queue_census.py + scratch/m59/dom.py, both over
+    scratch/m574/text.txt): inside the per-base visit FUN_004ef6d0 the completion
+    gate 0x4efa5e `cmp DWORD PTR [ecx+0x40], edi; jge 0x4efadc` compares mineral
+    storage against `edi = 0x4e40a0(owner,1,-1) * 0x5ac950([eax+0x50], base, 0)` —
+    the price of whatever unit TYPE sits in the head slot.  Nothing between that
+    gate and the create-unit call 0x5ab650 @ 0x4eff4e reads [base+0x4c]: the pay
+    store 0x4efedd and the create are DOMINATED by the gate-taken block (removing
+    the pay block makes 0x4eff4e unreachable from the entry and from the gate), and
+    the pop FUN_004ef5d0 — the only thing pending gates (0x4ef5f4 `je 0x4ef684` when
+    pending == 0) — is called LATER (0x4f037b / 0x4f0f46) and only ADVANCES the
+    queue (left-shift + pending-- + the per-faction queued-count byte).
+
+    Measured (scripts/m59_head.py, 2026-10-26, one variable, internal control):
+    Korolev Center idx 17 pending 0 head 2 minerals poked 0 -> 9 (read back), all
+    our units held, University Base idx 0 untouched at minerals 0; one turn later
+    Korolev minerals 0 (debited exactly the derived price 9), income 0 -> -1 (the
+    new unit's upkeep), pending STILL 0, head still 2, and the base tile went
+    5 -> 6 units of (type 2, owner 3).  Control University Base: minerals 0,
+    6 -> 6 units.  A base with an EMPTY queue still buys the head slot's type.
+
+    Scope: only OUR bases are predicted.  The visit refreshes any base whose owner
+    is not in the human mask (or whose +0x38 sign bit is clear) through
+    FUN_004e5ae0 -> FUN_004f6030 -> FUN_004e5560 at 0x4ef87e, which is BEFORE the
+    gate, so another faction's head at our before-snapshot is not the head its own
+    visit will price; their production also happens mid-round inside their own turn
+    (M55 #5, confounded).  Enemy arrivals are still REPORTED by check F2.
+
+    income_first: the queue processor runs INSIDE the base visit after the income
+    add (0x4ef7f6), so the storage the gate compares may already include this
+    round's income (+0xd0)."""
+    our = M.u32(m, M.G["our_player"][0])
     out = []
     for b in bases:
-        if b["pending"] <= 0:
+        if b["fac"] != our:
             continue
         head = b["queue"][0]
-        pr = price_of(m, b["fac"], head & 0xff if 0 <= head < 0x40 else 0)
         unit = 0 <= head < 0x40
+        if not unit:
+            continue      # a facility/project head builds no UNIT; nothing to predict
+        pr = price_of(m, b["fac"], head & 0xff)
         gate = b["minerals"] + (b["income"] if income_first else 0)
-        arrive = unit and pr["in_mask"] and gate >= pr["price"]
+        arrive = pr["in_mask"] and gate >= pr["price"]
         out.append(dict(base=b["i"], name=b["name"], x=b["x"], y=b["y"], fac=b["fac"],
-                        head=head, unit_type=head if unit else None, pending=b["pending"],
+                        head=head, unit_type=head, pending=b["pending"],
                         minerals=b["minerals"], gate_minerals=gate, income=b["income"],
                         price=pr["price"], factor=pr["factor"],
                         cost=pr["cost"], in_mask=pr["in_mask"], predict_arrive=arrive,
-                        queue=b["queue"]))
+                        pop_expected=bool(arrive and b["pending"] > 0), queue=b["queue"]))
     return out
 
 def keyf(u): return (u["x"], u["y"], u["type"], u["owner"])
@@ -422,7 +452,8 @@ def main():
         # The pre-M58 check ignored the credit the model itself predicts
         # (income_first) and only ever passed because the armed run had income 0.
         for pb in rd_["prod_before"]:
-            if pb["pending"] <= 0: continue
+            if pb["fac"] != gb["our_player"]:
+                continue      # M59 scope: their head is re-picked by their own visit
             pa = next(b for b in rd_["prod_after"] if b["i"] == pb["i"])
             p = next((pp for pp in rd_["predictions"] if pp["base"] == pb["i"]), None)
             credit = pb["income"] if pb["income"] > 0 else 0
@@ -433,27 +464,41 @@ def main():
                     f"{pb['minerals']} + credit {credit} - price {p['price']} != "
                     f"{pa['minerals']}; the add 0x4ef7f6 and the pay 0x4efedd are the "
                     f"only +0x40 stores a visit reaches (evidence/trace_m574c.jsonl)")
-                nb = (next(b for b in rounds[rk + 1]["prod_after"] if b["i"] == pb["i"])
-                      if rk + 1 < len(rounds) else None)
-                chk(f"r{rk} bookkeeping base {pb['i']}: pending decremented by exactly "
-                    f"1 in the pay window or the window after it",
-                    pa["pending"] == pb["pending"] - 1 or
-                    (nb is not None and nb["pending"] == pb["pending"] - 1),
-                    f"pending {pb['pending']} -> {pa['pending']}"
-                    + (f" -> {nb['pending']}" if nb is not None else " (last window)")
-                    + "; the pop store 0x4ef641 (FUN_004ef5d0) runs strictly AFTER the "
-                    "pay store — evidence/m58pop.gdblog reads pending 1 AT 0x4efedd and 0 "
-                    "at the next visit — so a boundary snapshot can land on either side "
-                    "(same window: this run's Korolev r2; next window: the 2177-box run "
-                    "r6, evidence/trace_m574c-era trace)")
+                if pb["pending"] <= 0:
+                    # M59: pending 0 does NOT stop the buy (scripts/m59_head.py measured
+                    # minerals 9 -> 0 + a unit on the tile with pending 0 before and after).
+                    # pending only gates the POP (0x4ef5f4 `je 0x4ef684`), so with pending 0
+                    # the pop cannot fire: pending must stay 0 and the slots unchanged.
+                    chk(f"r{rk} bookkeeping base {pb['i']}: pending 0 paid -> the pop "
+                        f"cannot fire, pending and slots unchanged",
+                        pa["pending"] == 0 and pa["queue"] == pb["queue"],
+                        f"pending {pb['pending']}->{pa['pending']}, head "
+                        f"{pb['queue'][0]}->{pa['queue'][0]} with minerals "
+                        f"{pb['minerals']}>=price {p['price']}; the pop 0x4ef5d0 returns "
+                        "at 0x4ef5f4 when pending == 0 (scratch/m574/text.txt)")
+                else:
+                    nb = (next(b for b in rounds[rk + 1]["prod_after"] if b["i"] == pb["i"])
+                          if rk + 1 < len(rounds) else None)
+                    chk(f"r{rk} bookkeeping base {pb['i']}: pending decremented by exactly "
+                        f"1 in the pay window or the window after it",
+                        pa["pending"] == pb["pending"] - 1 or
+                        (nb is not None and nb["pending"] == pb["pending"] - 1),
+                        f"pending {pb['pending']} -> {pa['pending']}"
+                        + (f" -> {nb['pending']}" if nb is not None else " (last window)")
+                        + "; the pop store 0x4ef641 (FUN_004ef5d0) runs strictly AFTER the "
+                        "pay store — evidence/m58pop.gdblog reads pending 1 AT 0x4efedd and 0 "
+                        "at the next visit — so a boundary snapshot can land on either side "
+                        "(same window: this run's Korolev r2; next window: the 2177-box run "
+                        "r6, evidence/trace_m574c-era trace)")
             else:
                 # The pop is applied strictly after the pay store, so the window AFTER a
                 # verified pay legitimately shows pending - 1 with no new arrival
                 # (measured: evidence/m58pop.gdblog, and the 2151-box run r8 pay / r9 pop
-                # in evidence/trace_m56_build_20261026_142139.jsonl).
-                deferred_pop = rk > 0 and any(
+                # in evidence/trace_m56_build_20261026_142139.jsonl).  A pending-0 base has
+                # no pop to defer (M59), so the exception only applies when pending > 0.
+                deferred_pop = (pb["pending"] > 0 and rk > 0 and any(
                     pp["base"] == pb["i"] and pp["predict_arrive"]
-                    for pp in rounds[rk - 1]["predictions"])
+                    for pp in rounds[rk - 1]["predictions"]))
                 exp_pending = pb["pending"] - (1 if deferred_pop else 0)
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: NOT predicted to arrive -> "
                     f"queue held" + (" (deferred pop excepted)" if deferred_pop else ""),
