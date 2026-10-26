@@ -1,245 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-82-83.md` (2 sessions). Read it only when a question reaches back before session ## Session 84.
-
-## Session 84 (2026-10-25) — M54g: **THE FOUNDING IS KEYED (`b`, ORDERS MODE ON): THE LOOP FOUNDED "KOROLEV CENTER" AND THE CHECKER PASSED THE `bases_ours 2` FLOOR** — changed `scripts/smac_play.py` (name-pane class, `tile_recs` deref + live pitch, `founding_gate`, `issue_found_for_unit`, the in-loop hook), `scripts/m54a_check_run.py` (a founding is labelled, not byte-keyed), `scripts/test_classify.py` + `scripts/check_classes.py` (16 frames), new `scripts/m54g_probe.py`, `scripts/m54g_prep.py`, this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
-
-**Box first.** State read clean and matched the footing (year 2155, pid 645846,
-`bases_ours 1`, `units_ours 6`). Two things the footing got wrong, both measured:
-
-1. **The tile array was being read at the wrong address by the driver.** `0x92ae14` holds a
-   POINTER (M35 said so) and the row pitch is `DAT_00692184`, which is **32** here — the map
-   is **64x64**, not 80x80; `smac_play.tile_recs` indexed the slot itself with a hard-coded
-   40 and returned all-zero "tiles" under a base that is visibly there. Fixed: deref + read
-   the pitch live.
-2. **We own six Scout Patrols (type 2, class 3) and no Former**, so the footing's "Former
-   settle" premise had no subject. There is **no `SETTLE` string anywhere in the exports** and
-   no settle row in `#TERRAIN`; base founding is the **`b`** handler `FUN_004d1280`, gated on
-   **class 8** (`NEEDCOLONISTS`, `shard_012.c:2852`). The prep therefore pokes `+10` 2 -> 0
-   (Colony Pod/Conestoga = class 8) on one record, as `m54e_prep` already poked `+10` -> 1
-   for its Former.
-
-**How the key was found (one variable per step, memory-first).** OCR is ~15 s a poll on this
-box and a clean HUD sometimes classifies `unknown`, so the first OCR-paced probe loop spammed
-Return at the HUD (Return at a HUD is TURN COMPLETE — the year moved 2155->2156) and its
-"control" was confounded. Staged probe (`scripts/m54g_probe.py`):
-* selection alone (`SEL_G` poke, no key) leaves the HUD (`scratch` run: kind `hud`) — the pane
-  in the early controls was opened by the KEY, not the selection;
-* `b` with **orders mode OFF** (`0x91b5b8 == 0`) opened the **BASE screen** of the base near
-  the cursor — `b` is a MAP-level key in that state (`evidence/m54g/probe_c_control.json`);
-* `b` with orders mode ON on a class-3 unit: dispatcher reached, nothing founded
-  (`probe_omode.json`); class-8 unit on a rocky tile (26,42): nothing (`probe_offbase.json` —
-  `founding_gate` predicts NOTONROCKY from `b5 = 0x83`); class-8 unit on a tile the gate model
-  calls LEGAL (26,43): **NEWBASE up** — OCR "enter a name for your new base … korolev center"
-  (`evidence/m54g/probe_found1.json`), and **Return founded it: a faction-3 base record appeared
-  at (26,43) 0.1 s later, `bases_ours 1 -> 2`, and the founding unit's record compacted away**
-  (index 11 then read x4,y4,type320). The gate model (`founding_gate()`, a line-by-line mirror
-  of `FUN_004d1280`: NOTINTRIAD / FUNGUSDANGUS / NOTONMONOLITH / NOTONROCKY / BASETOONEAR over
-  the 8 delta-table neighbours) predicted every live refusal and the one live acceptance.
-* **NEWBASE classifies `hud`** (caption y 102, generated name at y 135, TURN COMPLETE still
-  drawn under it) — the classic key sink. New class `name-pane` (caption-band test), pinned
-  with a saved frame BEFORE the driver used it.
-
-**ACCEPTANCE NUMBERS (MET).** Reloaded clean save (`m54a_load.py --relaunch`, HUD live 27 s),
-`smac_state.py --json` -> year 2150, `turn_flags 0`, `bases_ours 1`, `units_ours 6`;
-`m54g_prep.py` -> rec0 `+10 = 0` (class 8), `x,y = (29,42)` (nearest tile `founding_gate`
-calls LEGAL), `+17 = 0`, all read back (`evidence/m54g/prep.json`). Then ONE unattended run:
-`python3 scripts/smac_play.py --turns 6 --timeout 240 --no-escape 3000 --tag m54g --verbose`
--> `evidence/trace_m54g_20261025_084554.jsonl`, whose turn 0 carries
-`FOUND rec0 (29,42) type 0 gates legal -> bases 1->2 at (29, 42) panes ['name-pane'] (5.6s)`.
-`python3 scripts/m54a_check_run.py evidence/trace_m54g_20261025_084554.jsonl --timeout 240
---min-our-bases 2` -> `advanced 6/6`, `year deltas {1: 6}`, `stuck 0` (max dt 43.6 s),
-`orders 11 VERIFIED of 11` with `order mix {"b->founded": 1, "l->byte1": 10}`,
-`ours bases_ours 2 units_ours 7 floor 2`, **`PASS ... we still hold 2 bases`**.
-Read back independently after the run: `smac_state.py --json` -> `n_bases 19 bases_ours 2`;
-the census lists **idx 18 (29,42) faction 3 "Korolev Center"** beside University Base (28,42).
-Classifier gates: `test_classify.py` -> `PASS 16/16`, `check_classes.py` -> `frames: 16
-failures: 0` (the `_3x.png` siblings deleted right after).
-
-**Open.** (a) The footing's premise is retracted: the founding is not a "Former settle" and it
-writes **no order byte** — its oracle is the base array, so the acceptance line "verified by
-the `+17` delta" was replaced by "verified by a new faction-3 base record at the unit's tile".
-(b) The unit was POKE-positioned onto the founding tile (a garrisoned unit cannot be ordered
-off its own base on this build: `g` refuses it, Shift+arrow queued nothing on a type-0 unit at
-(28,42)) — so the M54g walk-then-found sequence is still unproven, and the second base sits on
-the tile that visually belongs to University Base's footprint (the game's own BASETOONEAR scan
-accepts it because the delta tables are parity-shifted). (c) Founding cost 0 energy here
-(`energy_delta 0`) — the cost model for founding is unpinned. (d) The type poke makes the
-DISPATCHER treat the record as a Conestoga; whether the pump's movement would follow the poked
-type is untested. (e) 4 `unknown` panes in this run's trace (turns 1, 3, 4) still unpinned.
-
-**Next (M54h):** found a base the loop REACHED, not one it was poked onto — give the loop a
-second own-base tile to walk to (the `g` chooser now has two destinations: University Base and
-Korolev Center), land a queued MOVE between them with `--min-moves`, then found a third base
-off the garrison with no position poke at all.
-
-## Session 85 (2026-10-25) — M54h: **THE CHOOSER CAN NAME THE OTHER OWN BASE (probe, memory-verified); THE LOOP'S WALK DID NOT LAND — M54h STAYS OPEN** — changed `scripts/smac_play.py` (chooser geometry: `bar_bands`/`chooser_rows`/`chooser_buttons`; `answer_dest_chooser` clicks a ROW; `order_counts` count-delta walk proof; `PENDING_WALKS`/`verify_pending_walks`; `HUD_BLIND_S` fallback; `modal_caption` guard; the M54c "skip `g` on our base" rule retracted), new `scripts/m54h_probe.py`, `scratch/m54h_clear.py`, `ORDERS.md` §9, `test_classify.py` + `check_classes.py` (17 frames), this file, `NEXT_PROMPT.md`
-
-**Box first.** State read clean and matched the footing (year 2156, pid 914329, `bases_ours 2`,
-`units_ours 7`); the census put five Scout Patrols on University Base (28,42) with `order 1` and
-two fresh ones (`order 0 mp 0`) on Korolev Center (29,42). Two things the footing got wrong:
-the box was parked on a **BREAKTHROUGH panel** (class `unknown`) with an OPERATIONS DIRECTOR
-dialog behind it (Escape closed both; `turn_flags` bit 0x2 cleared when they went away — it is
-not only a "driver ran" latch), and a clean HUD over our own base classifies `unknown` because
-2x OCR cannot read the TURN COMPLETE row.
-
-**The chooser, measured (`scripts/m54h_probe.py`, `evidence/m54h/probe_chooser_walk1.json`).**
-`g` on a unit GARRISONED on its own base opens the chooser and it lists **both** own bases —
-rows are full-width bars at y 132 and y 151 (19 px pitch), the five-button row (Sort: Name /
-Sort: Size / Sort: Dist / OK / CANCEL at 209/305/401/497/593) sits at y 181 with two rows and
-y 162 with one, so M54d's hard-coded OK row was a coin flip on a two-row pane. Clicking a row
-changes NOTHING in memory (`+17` and legs unchanged 0.9 s after the click); OK landed `+17`
-0 -> **0x18 87 ms after the click** with legs `[28,42]` (University Base) and the pump stepped
-the unit **(29,42) -> (28,43) with `+40` = 3 spent**; CANCEL (5th button) closed the pane with
-60 samples of `+17`, all 0. **M54c's "the game refuses `g` on our own base" is retracted** (its
-evidence was a one-base position). The `Distance:` column is 0 for both rows — the cursor's,
-not the unit's (M54d), so it cannot drive the pick.
-
-**ACCEPTANCE: NOT MET.** `python3 scripts/m54a_check_run.py
-evidence/trace_m54h4_20261025_095308.jsonl --timeout 240 --min-our-bases 2 --min-moves 1` ->
-`advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 28.9 s), `orders 1 VERIFIED of 1`
-(`{"g->byte24": 1}`, energy 3), `ours bases_ours 2` floor 2, **`FAIL only 0 VERIFIED walks,
-milestone wants 1`** — `moves 0 LANDED of 3 ordered walks`. Nothing was weakened; the run that
-would have to PASS does not.
-
-**Why it did not land (measured, cause not settled).** In the loop, three `g` orders whose row
-click the trace records against the University Base row (turn 1 of `trace_m54h...093424`, turn 3
-of `trace_m54h4`) put legs naming **(14,56) = House of Martyrs (a BELIEVER base)**,
-**(17,55)** and **(12,14) = Gaia's Landing** into the record — never (28,42) — while the
-identical click in the probe put (28,42) in the same field. The leading explanation is index
-identity: `units_ours` went 9 -> 10 during the run (University Base builds Scout Patrols) and
-the record array reshuffled between turns twice (the unit ordered at (29,42) was index 67 at
-order time and index 52 a turn later), so the legs read 0.35 s after the OK may belong to a
-different record than the one that was ordered. After the run, records DO carry legs (28,42)
-and (29,42) and one unit sits at (29,43) one step from Korolev Center — walking happens;
-nobody arrived at a destination the trace can attribute to the loop.
-
-**Two driver bugs found and fixed (verified).** (a) A clean HUD whose TURN COMPLETE row fails
-to OCR classifies `unknown` (MENU at (61,369) + COMMLINK read, `region_colors 167`): with
-`--no-escape` the loop idled a WHOLE turn budget (trace_m54h...093424 turn 2 burned 521 s with
-the year unmoved in our phase) — fallback added (our phase + chrome + no bar band at y 145-200
-+ 25 s -> click the button at its measured coordinates), proven: `evidence/trace_m54h2_...
-094339.jsonl` turn 0 `2160 -> 2161 OK (36.7s)` after `turn-complete-blind`. (b) An OPERATIONS
-DIRECTOR "Investigate pod beacon?" pane wearing HUD chrome classified `hud` and ate turn 0 of
-trace_m54h3 (the driver clicked TURN COMPLETE behind it every 6 s) — `modal_caption` guard
-added; the next run cleared it in one press (`hud-with-caption: 1` in the m54h4 action log) and
-all 6 turns advanced. Classifier gates: `test_classify.py` -> `PASS 17/17` (was 16/16; the new
-frame is the two-row chooser, `evidence/m54h/chooser_g60b.png`), `check_classes.py` ->
-`frames: 17 failures: 0`, `_3x.png` siblings deleted.
-
-**Open.** (1) What the leg array actually holds, and whether the loop can be made to read the
-destination of THE record it ordered (read all our records before/after and diff, rather than
-trusting one index). (2) Whether the chooser's row order is Sort: Name or nearest-first — both
-frames seen so far are consistent with either; the driver's pick is text-matched first.
-(3) `l` (SENTRY) on a unit carrying a pending 0x18 landed nothing (cause confounded with an
-`unknown` HUD frame; decoys were parked by poking `+17 = 1` instead, read back). (4) The
-position is now 10 units / 2 bases at 2167 with `turn_flags 2` and two live 0x18 orders in it.
-
-**Next (M54i):** make the walk's destination attributable to the order — snapshot every one of
-our records before the keypress and diff after (never trust one index), land ONE loop-ordered
-walk on the base its own legs name with `--min-moves 1`, and only then re-attack the
-walk-then-found sequence.
-
-## Session 86 (2026-10-25) — M54i (open): **ATTRIBUTION WORKS IN THE LOOP (memory-verified); A WALK STILL HAS NOT LANDED — three failure modes measured, two fixed; M54i STAYS OPEN** — changed `scripts/smac_play.py` (`diff_order_records` + `legs_of` + `own_base_tiles` in the walk checks; bracket-read diff for the default-button path; start-vacated rival rule; `counts0` baseline moved to the pre-press snapshot; `seen_recs` crash fix; OK clicked at the FOURTH measured button centre, not the merged band midpoint), `scripts/m54a_check_run.py` (`--min-own-base-arrivals`), new `scripts/test_walk_diff.py` (13 cases), `scratch/m54i_unpark.py`, `scratch/m54i_park.py`, `scratch/m54i_hold.py`, `ORDERS.md` §10, this file, `NEXT_PROMPT.md`
-
-**What the milestone asked and got.** Every order now names WHICH record the keypress changed:
-the watcher's samples carry the whole 52-byte record, and `diff_order_records` claims a
-destination only when the watched slot went 0 -> byte with legs that CHANGED and no rival
-wears the signature; otherwise `dest` stays None and the trace says so. Live proof:
-`evidence/trace_m54i_run4_*.jsonl` turns 0-2 — `g` verified, `walk_diff {attributed: True,
-confounded: False}`, dest read from the changed legs of the record the press changed.
-`scripts/test_walk_diff.py` -> `PASS 13/13 attribution cases` (bracket shape, own-moved-record
-is not its own rival, look-alike-wearing-the-slot IS one — session 85's exact failure).
-
-**ACCEPTANCE: NOT MET.** `python3 scripts/m54a_check_run.py
-evidence/trace_m54i_run5_20261025_112259.jsonl --timeout 240 --min-our-bases 2 --min-moves 1
---min-own-base-arrivals 1` -> `advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 33.2 s),
-`orders 2 VERIFIED of 3` (`{"g->byte24": 1, "l->byte1": 1}`), `ours bases_ours 2` floor 2,
-**`moves 0 LANDED of 0 ordered walks`**, `FAIL only 0 VERIFIED walks` / `only 0 walks LANDED
-ON OUR OWN BASE`. Nothing weakened; a documented negative merges.
-
-**Three failure modes, all measured.** (1) **`+17 = 1` is SENTRY, not parked** — the byte table
-always said so; sessions 84-85's "parked decoys" patrol on their own every round (run3's five
-"parked" records migrated (28,42) -> (28,43) and their leg arrays rewrote turn after turn),
-which is what made every count-delta proof fire blind. The inert byte is 2 (HOLD,
-`scratch/m54i_hold.py`). (2) **the count baseline was read AFTER the in-phase pump** — the OK
-hands the unit to the pump in the same tick (ORDERS §7), so the post-OK baseline saw the origin
-already vacated (`order_counts {dest 4, src 0}`, run4 turn 0) and "origin count falls" could
-never fire; fixed to the pre-press snapshot. (3) **the clean-shape runs still miss the ORDER
-itself**: run5 turn 0 `g` on a unit garrisoned at Korolev Center opened the **BASE SCREEN**
-(panes `[unknown, unknown, base, base]`, byte never moved) — after a fresh load the map cursor
-is nowhere the driver thinks it is; turn 3's chooser OK landed `+17 = 24` with **legs still
-empty** (`claim None, rivals 0` — honestly unattributed) — a MOVE queued with no route, cause
-unresolved. The loop's fallback then turned the lone candidate into a SENTRY (`l` verified,
-attributed — the bracket diff working exactly as designed).
-
-**The war is a variable.** From 2167 to 2187 (runs 3-4) other factions founded 7 bases, TOOK
-University Base (`bases_ours 2 -> 1`) and killed 5 of our 10 units while the checker floor was
-still reading 2 at run start. Recovered by reloading `m54b_clean.SAV` (2150) and letting the
-loop re-found Korolev Center (`m54g_prep` + 2 turns, `evidence/trace_m54i_found_*.jsonl`,
-`bases_ours 2` at 2152, `n_bases 19` — the quiet window).
-
-**Also.** run2 died mid-turn-1: the WIP unpacked 3-tuples from the 2-tuple `seen_bytes`
-(fixed to `seen_recs`); run1 had `orders 0` on 6/6 turns because every record we owned was a
-sentry or mid-walk. The chooser's OK is now clicked at the fourth measured button centre
-(`chooser_buttons`), not the merged bar-band midpoint (which is the `Sort: Dist` button on a
-two-row pane). Classifier gates untouched (no new classes): `test_classify.py` 17/17,
-`check_classes.py` 17/0 as in session 85.
-
-**Open.** (1) A loop-ordered walk landing on our own base — STILL zero across sessions 84-86;
-the remaining blockers are cursor placement after load (g -> base screen) and the legs-empty
-chooser OK. (2) Whether the chooser's row click lands the selection before OK (memory shows
-nothing either way — session 85; the legs-empty OK suggests it sometimes doesn't). (3) The box
-after run5: 2158, 2 bases, 7 units, one live legs-less 0x18, sentries loose.
-
-**Next (M54i'):** from the quiet 2158 position — census, hold everything, unpark ONE unit onto
-a tile where it sits ALONE; fix cursor placement first (read the map cursor's memory cell or
-verify the chooser opens before spending the key); if a chooser OK lands 0x18 with empty legs,
-re-open and answer again; then the acceptance command above on a 6-turn run.
-
-## Session 87 (2026-10-25) — M54i2: **A LOOP-ORDERED WALK LANDED ON OUR OWN BASE AND THE ACCEPTANCE PASSED — the cause of every earlier non-landing is the step table: all 21 steps preserve (x+y) parity, and every walker so far stood on the WRONG PARITY for its destination** — changed `scripts/smac_play.py` (`move_order_needs_retry` + `MOVE_ORDER_RETRIES`; `resolve_move_dest`; `delta_table`/`table_neighbors`/`walk_parity_ok` + the parity gate in `answer_dest_chooser`'s target pick and in `can_walk`; neighbor-first candidate sort; `mp_after` = max mp over dest-tile hits in `verify_moves` and `verify_pending_walks`), `scripts/test_walk_diff.py` (18 -> 24 cases), `ORDERS.md` §11-§12, new `scratch/m54i2_pump.py`/`m54i2_setup.py`/`m54i2_setup4.py` (+ the §11 probe scripts), this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
-
-**First half (its own overflow; the commits are 391cd9a..d39b481).** THE CURSOR IS GAME-OWNED: three cursor variables, no poke sticks on any (`*(u32*)0x7cdecc + 0x1dd9c/+0x1dda0` — the info-panel window fields, re-synced within ~3 s; `DAT_0091b5f0/670` at `+0x91b5e8` — re-synced in 1.5 s; `DAT_0091b5e8/+0x91b5ec` climb on their own — the cells are a history, not a slot). Session 86 run5 t0's "cursor placement" failure RE-ATTRIBUTED: `g` is an ORDER only via the dispatcher pokes (SEL_G + `0x91b5b8`); otherwise it falls to the cursor-tile handler (`FUN_00511960`): base tile -> BASE SCREEN, else nothing. `sp.focus()` is a SILENT NO-OP while `sp.WIN` is None — scratch scripts must `sp.WIN = sp.find_window()` first (ate an hour: "keys don't land"). A poke-MOVED unit stops being found at its new tile by the game's occupancy. `resolve_move_dest`: the leg array is a WAYPOINT, the chooser's named base is the ordered destination (run1 t3: OK named (28,42), legs held (11,17)).
-
-**The pump experiment (`scratch/m54i2_pump.py`, 2158, one actionable record, everything else HELD, read on second handles):** a CHOOSER-QUEUED 0x18 executes on the game's own TURN COMPLETE cycle — the record at (28,43) with leg (28,42) came back at (29,42), order still 24, `+40` = 3 spent, while every HELD record sat put at `+40` = 0. §7's "three TURN COMPLETEs moved nothing" holds for HAND-POKED bytes only. `+40` = mp SPENT this round, re-zeroed at the next phase start for units that did not move.
-
-**THE STEP TABLE.** `dx` 0x67850c / `dy` 0x678990, 21 int32 pairs (`while ((int)local_2c < 0x54)`, ghidra_out/shard_013.c:21868; live read at 2159): every pair preserves (x+y) parity. University Base (28,42) sums 70, even — every walker sessions 84-87 stood at (29,42) or (28,43) (71, odd): UNREACHABLE, forever. The oscillations were geometry. Real neighbours of (28,42): (29,41),(27,41),(27,43),(29,43),(26,42),(30,42),(28,40),(28,44)... Driver: `g` only when a same-parity own base other than the unit's tile exists; neighbor-first candidates. Tests first: `python3 scripts/test_walk_diff.py` -> `PASS 24/24 attribution cases` (cases 21-24 are the table, the oscillation tiles, the gate, and the measured (28,43)->(29,42) step).
-
-**run3 (`evidence/trace_m54i2_run3_20261025_131730.jsonl`, 2159->2164).** Loop ordered the record at (29,41) to University Base: `g` verified, `walk_diff {attributed: True, confounded: False}`, legs [(28,42)], chooser row "University Base Distance: 1". THE WALK LANDED IN MEMORY — census 2165: that record at (28,42), order 0 (consumed), moved bit set — but the checker scored `landed false`: `mp_after` read `hits[0]["mp"]`, a held garrison (mp 0), while the arrival's spent mp sat in a LATER hit; dest_count [3,5] (arrival + a unit PRODUCED on the base tile that turn), src [1,0]. Fixed `mp_after` to the max over dest-tile same-type hits (the floor is unchanged — garrisons and produced units sit at mp 0 there, measured; the count delta still must fire).
-
-**ACCEPTANCE MET.** `python3 scripts/m54a_check_run.py evidence/trace_m54i2_run4_20261025_132218.jsonl --timeout 240 --min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1` -> `PASS 6 turns advanced, year +1 each, no STUCK over 480s, per-turn state deltas present, 1 verified walks, 1 onto our own base, we still hold 2 bases` — `advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 26.2 s), order mix `{"g->byte24": 1, "l->byte1": 1}`, `moves 1 LANDED of 1 ordered walks`, `t[28,43]->[29,42] mp+3`, `1 landed on a tile holding ONE OF OUR BASES and not the unit's start tile (floor 1)`, `bases_ours 2` at end (2171). Setup (`scratch/m54i2_setup4.py`): cancelled the impossible University order on the record at (28,43), HELD everything else — exactly one actionable, a table-neighbour of Korolev Center (29,42), same parity (71, odd). Memory verification: watched slot 0->24 with legs [(28,42)] -> [(29,42)] (chooser named Korolev Center), rivals []; census 2171: the moved-bit record sits at (29,42). Classifier gates untouched (no new classes): `test_classify.py` 17/17, `check_classes.py` 17/0.
-
-**Open.** (1) A MULTI-LEG route has never landed — both landings so far are one step; the pump's continuation across TURN COMPLETEs is only proven for one step at a time. (2) The route from (20,42) to University Base is unproven terrain. (3) `mp_after` max-over-hits cannot NAME which hit is the walker — a wandering same-type sentry with spent mp on the dest tile would satisfy it (the count delta must still fire). (4) The box at 2171: 10 units, 2 bases, n_bases 21, run3's sentries loose; the quiet window closed once around 2167-2187 for runs 3-4 (University was taken then). (5) SENTRY (`l`) on a unit with a pending 0x18 still unproven (session 86 item).
-
-**Next (M54j):** the MULTI-LEG walk — from the 2171 position: census, `scratch/m54i2_setup4.py`-style prep that leaves the record at (20,42) actionable (parity 62, even — same as University Base) and HELD everywhere else; the loop orders it to University Base; the pump must walk it (22,42)->(24,42)->(26,42)->(28,42) across TURN COMPLETEs until it ARRIVES. Acceptance: the same checker command on ONE 6-turn run (`--min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1`), and in the trace the landed move's ORDER turn is earlier than the turn its `carried` pending walk reports `landed` — a multi-turn arrival on our own base. If terrain blocks the route, report the negative with per-turn position read-backs; reload `m54b_clean.SAV` + re-found if the war took a base first.
-
-## Session 88 (2026-10-25) — M54j: **A MULTI-LEG WALK LANDED ON OUR OWN BASE ACROSS TURN COMPLETEs AND THE ACCEPTANCE PASSED — and the three things that hid it: the game AUTO-SENTRIES order-0 units across the round boundary, an all-HELD human phase AUTO-ADVANCES unseen, and six garrisons on the destination tile made a 2-tile step print ARRIVED** — changed `scripts/smac_play.py` (`pick_reactivation`/`held_walk_records`/`walker_on_dest`; the `PRE_ARM` mid-AI-round hook; the blind-HUD order step; `landed` = walker-on-dest by ROUTE + origin-vacated + mp spent in `verify_pending_walks`, + identity + mandatory count baseline in `verify_moves`), `scripts/m54a_check_run.py` (an own-base arrival must be MULTI-TURN: `ordered_turn < landing turn`), `scripts/test_walk_diff.py` (24 -> 31 cases), `ORDERS.md` §13, this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
-
-**ACCEPTANCE MET.** `python3 scripts/m54a_check_run.py evidence/trace_m54j_run6_20261025_161917.jsonl --timeout 240 --min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1` -> `PASS 6 turns advanced, year +1 each, no STUCK over 480s, per-turn state deltas present, 1 verified walks, 1 onto our own base, we still hold 2 bases` — `advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 16.2 s), order mix `{"g->byte24": 1, "l->byte1": 2}`, `moves 1 LANDED of 3 ordered walks`, `t[20,42]->[28,42] mp+3` **ordered turn 0, carried turn 1 (`not yet`), LANDED turn 2** (`evidence/trace_m54j_run6_20261025_161917.jsonl:4` — `carried True, ordered_turn 0, dest_is_own_base True`), `bases_ours 2` at end (2164). Memory chain: setup poked rec1 (28,42)->(20,42) actionable + HELD the rest (read back: the ONLY actionable); the press moved it (20,42)->(22,42) with legs [(28,42)] (attributed True, rivals []); census 2164: the unit sits at (28,42) University Base wearing byte 1. Nothing weakened; the checker was STRENGTHENED this session (multi-turn filter + walker identity + retired count fallback).
-
-**The three blockers, all measured.** (1) **AUTO-SENTRY:** an order-0 unit that waits across the round boundary comes back byte 1 (SENTRY) and patrols away — run1's sole actionable at (20,42) was gone by our phase (`scratch/m54j_setup.py` read-back vs run1 turn 1: `g`/`l`/`h` all pressed on a byte already 1); byte 2 (HOLD) survives, and an order-0 poked DURING the AI round is still 0 and unmoved at phase open (`scratch/m54j_probe2.py`: poked mid-round, byte 0 across two flips). Driver: `PRE_ARM` hook pokes the best held walker to 0 in the AI round; `pick_reactivation` re-activates in-phase when nothing is actionable. (2) **AUTO-ADVANCE:** with nothing actionable the game draws "Year NNNN: No units need new orders. Press ENTER" and ends our phase in seconds — TURN COMPLETE stops OCR-ing, frames classify `unknown`, and run2/run3 burned 4-6 of 6 turns with the order step NEVER running (it lived only in the `hud` branch). The order step now fires on the FIRST memory-verified our-phase frame (`blind-orders` action). (3) **FALSE ARRIVAL:** run4 `evidence/trace_m54j_run4_20261025_160625.jsonl` — the order moved (49,33)->(47,33), 2 of 21 tiles, and `verify_moves` printed ARRIVED: University Base holds six identical Scout Patrols, `bool(hits)` was true before the walk and the count fallback passed on the delta. `walker_on_dest` identifies the WALKER by the ROUTE it wears (the ordered leg array survives the pump — run4 watched the same record carry [(28,42)] through (47,33) and (43,35)); carried-walk arrival = identity + origin-vacated + mp spent (the pre-press count baseline is stale by design for multi-turn walks; same-turn landings keep the count delta).
-
-**The pump's appetite is a variable, not a constant.** run5 (4 tiles, clear corridor): the WHOLE walk ran inside the order turn's cycle — landed same-turn, and the new multi-turn filter honestly refused it (`FAIL only 0 walks LANDED ON OUR OWN BASE` — the milestone wants a multi-TURN arrival). run6 (8 tiles west along y=42): (20,42)->(22,42) on the press round, ARRIVED on the destination at turn 2. run4 (16,18 tiles diagonal): ~2 tiles/round over 4+ rounds. Which round the game finishes a route in is terrain-dependent; the walk itself is hands-off after the order — the unit stays byte 24, is NOT actionable mid-walk, and needs no new orders.
-
-**Also.** The two bases are OPPOSITE parity (70/71), so every tile matches exactly one base — "wrong parity for every own base" only happens when a base is gone; `pick_reactivation` drops own-base garrisons (cases 25-28; three fixtures failed first on MY parity arithmetic — verify sums mechanically). The war ate University Base between 2177-2198 while run2/run3 sat passive (units_ours 11->5, n_bases 27); recovered by reloading `m54b_clean.SAV` (2150 — the blind `--relaunch` path-typing MANGLES on wine 10.20-staging: `\h`->`Eh`, "unable to find file"; the LOAD browser opens IN the saves dir — dismiss the error, type just the FILENAME, OK, then (290,391)) + `m54g_prep` + a 2-turn founding (Korolev Center re-verified in the base array at 2152). Tests: `python3 scripts/test_walk_diff.py` -> `PASS 31/31 attribution cases`; classifier gates untouched: `test_classify.py` 17/17, `check_classes.py` 17/0.
-
-**Open.** (1) `PRE_ARM` (mid-round arming) is measured at the probe level but was not exercised in a PASS run (run5/run6 used the actionable-from-setup path; the hook found nothing to arm). (2) The auto-sentry trigger is behavioral, not found in the binary — idle order-0 units convert, exact window unknown. (3) run4's walker (the (49,33) veteran) died in the war before arrival; a LONG terrain-varied route arriving via `carried` is proven only at 8 tiles. (4) The box at 2164: 2 bases, 8 units, quiet window open (~10-15 yr), two sentries loose, one `l` order landed on the arrived walker. (5) `mp_after` max-over-hits still cannot NAME which hit spent the mp (the identity rule now covers the tile; a wandering same-type sentry with spent mp ON the dest tile could still satisfy mp_after).
-
-**Next (M54k):** from the 2164 quiet window — the footing's S2 thread (win conditions / transit) OR close the PRE_ARM loop: a PASS run where the ONLY armed unit comes from `pick_reactivation`/`PRE_ARM` (everything HELD at run start, the hook arms mid-round — the exact shape run2/run3 had, now with the fix). Acceptance: the same checker command on ONE 6-turn run with `--min-own-base-arrivals 1` AND a `pre-arm:recN` line in the trace's actions. If the quiet window closes first (base lost), reload `m54b_clean.SAV` + re-found (the filename-typed browser recipe above).
-
-## Session 89 (2026-10-25) — M54k: **THE HOOK PATH IS PROVEN END TO END AND NO RUN PRINTED PASS — the documented negative merges: the hook armed, the `g` order landed attributed, the walker walked six positions read from memory, and every acceptance floor held except `min-moves`/`min-own-base-arrivals`** — changed `scripts/smac_play.py` (the blind our-phase gates read memory + the modal band, not the OCR chrome read; the candidate sort prefers a unit that CAN walk; `walker_on_dest` accepts the ordered-dest leg as a route signature), `scripts/test_walk_diff.py` (31 -> 33 cases), new `scratch/m54k_setup.py` (all-held prep; the read-back keys the walker by TILE, not record index) and `scratch/m54k_watch.py` (0.5 s memory watcher printing only changed (x,y,order,mp) multisets), this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
-
-**ACCEPTANCE: NOT MET (documented negative merges, as session 86).** `python3 scripts/m54a_check_run.py evidence/trace_m54k_run6_20261025_17130*.jsonl --timeout 240 --min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1` -> `advanced 6/6`, year deltas `{1: 6}`, `stuck 0` (max dt 22.2 s), `actions {"pre-arm": 1, "orders": 2, ...}`, order mix `{"g->byte24": 1, "l->byte1": 1}`, `bases_ours 2` at end (2159), **`moves 0 LANDED of 5 ordered walks`** -> `FAIL only 0 VERIFIED walks, milestone wants 1; only 0 walks LANDED ON OUR OWN BASE (not the start tile), milestone wants 1`. Nothing weakened: the walker needed ONE more turn than the 6-turn budget — `scratch/m54k_watch.py` read (36,33)->(36,35)->(35,36)->(34,37)->(33,38)->(32,39)->(30,39) across 2153-2159, byte 24 the whole way, legs [(29,42)] — one legal step (−1,+3) from Korolev Center when the run ended. The setup read back on a second handle `actionable: []` + `eligible held: [(66, 36, 33, 9, False)]`, so the HOOK armed it (`PRE-ARM rec66 (36,33) +17 2->0 in the AI round`), not the setup.
-
-**THE HOOK ARMED AND A WALK LANDED ON OUR OWN BASE — just not inside a scored run.** run5 (`evidence/trace_m54k_run5_20261025_170317.jsonl`, 2186-2193): `pre-arm:rec13`, `g` verified 0->24 naming Korolev Center, and the watcher read the ARRIVAL — (20,41)->(22,41)->(23,42)->(25,42)->(27,42)->**(29,42)** at 2192, ordered turn 1, arrived five turns later. The checker could not score it: the leg SAMPLED in the press burst had drifted to (61,10) while the record that arrived wore [(29,42)] — the pump REWRITES the leg array as it walks — and University Base was captured at 2193 (`bases_ours 1`). Fixed: `walker_on_dest` accepts either signature (tests 32-33 pin it; a third leg, or no leg, is still not the walker).
-
-**Four measured blockers, all read back.** (1) **The map's per-tile impassable flag**: in the 2-column tile record the flag byte is at record +3 for EVEN x and +7 for ODD x, and bit 0x40 set = impassable (validated against 98 live unit tiles; one exception, a faction-6 unit at (45,39)). Runs 3-4 poked the walker onto (28,34) (flag 0x41) and it VANISHED within seconds (`watch4` first change line `-[(28, 34, 2, 0)] +[]`); the y=42 corridor is passable from x=20 east (x 18-19 are water — why (20,42) worked). (2) **`g` queues the alphabetically-first own base regardless of parity**: run7's unit at (22,42) (parity 64, even = University) got leg (29,42) — Korolev Center, parity 71 ODD — an impossible route by §12, and it oscillated all 6 turns; the chooser never classified `dest-chooser` (attempt `panes ['unknown']`, `chooser_pick None`) so the driver's parity-gated row pick never ran and accepted the leg the game wrote. An ODD-parity start matches the base the game auto-targets (run5/run6: legal routes, real walking). (3) **A COMMUNICATION landing inside the order step is a key sink**: run8 turn 1 pressed `g` with comm panes up (`panes ['unknown','unknown','dialog','comm','comm']`) — the order byte went 0 -> **88** -> 2 (HOLD), the order was unverified, and that turn record spanned TWO year flips (`{1: 4, 2: 2}`). (4) **A produced garrison steals the turn's single order on the record-index tiebreak**: run3 pressed `l` five turns and `g` zero while the hook-armed walker waited (and got auto-sentried); fixed — the sort now puts a candidate that CAN reach an own base first (`_can_walk`), which is what made run6/run7 order the walker on turn 1.
-
-**Also measured.** The session-88 blind gates still starved a turn: the map HUD with the production line in the message box ("Korolev Center builds ScoutPatrol.") OCRs as GARBAGE — no MENU, no COMMLINK (`evidence/px_m54k_banner_probe.png`, 2173) — so `hud_chrome` was false while memory said OUR phase (`cur_player 3, turn_flags 0`) and 240 s passed with NO key sent; the our-phase blind gates now read memory + "nothing drawn in the modal band". With everything HELD the game advances rounds with no input at all (~8 s/round; 2164 -> 2166 by itself between two of my probes) — that is what makes a turn record occasionally span two years. Reload recipe re-verified: `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` (bare filename, nothing to mangle) -> HUD live at 2150, 1 base; `m54g_prep.py` + one loop turn -> `FOUND rec0 (29,42) ... bases 1->2`, `bases_ours 2` at 2151. Tests: `python3 scripts/test_walk_diff.py` -> `PASS 33/33 attribution cases`; classifier gates untouched: `test_classify.py` 17/17, `check_classes.py` 17/0 (`_3x.png` deleted).
-
-**Open.** (1) A PASS run of the hook shape — never produced. (2) `order_step_in_loop` presses keys without re-checking the screen between them: a comm/pane arriving mid-step turns the order into garbage bytes (run8's `88`). (3) Year cadence: with everything HELD the game runs ~8 s rounds and a turn record can span two flips (run5 t1, run8 t1/t4). (4) `walker_on_dest`'s ordered-dest signature could be worn by a wandering same-type unit that also spent mp. (5) The box after run9: ~2174, `bases_ours 2`, one HELD unit at (30,39) wearing legs [(29,42)], the run8 walker gone from (22,41) after the byte-88 mess.
-
-**Next (M54k'):** one more hook-shape run with the four blockers removed — an ODD-parity start tile (the game auto-targets Korolev Center), 2-3 BFS steps from it (so it ARRIVES inside the 6 turns), enemies 12+ tiles out (census + the flag byte first), reroll if a comm lands in the order window or a turn record shows a +2 delta. Acceptance unchanged: `python3 scripts/m54a_check_run.py <trace> --timeout 240 --min-our-bases 2 --min-moves 1 --min-own-base-arrivals 1` on ONE unattended 6-turn run, `pre-arm:recN` in the trace's actions, setup read-back printing `actionable: []`.
+Older sessions: `docs/sessions/sessions-84-89.md` (6 sessions). Read it only when a question reaches back before session ## Session 90.
 
 ## Session 90 (2026-10-25) — M54k2: **THE HOOK-SHAPE RUN PRINTED PASS — and the two fixes it took: `queued_rescan` (the pump ran the WHOLE route inside our phase while the slot oracle read a stale record) and a year-poll after the order step (the auto-advance race recorded a +2 turn)** — changed `scripts/smac_play.py` (`queued_rescan` + wired into `_issue_order_once`'s pane loop after the blind Return; both order-step exits poll `year() != y0` at 0.2 s / 20 s cap before continuing), `scripts/test_walk_diff.py` (33 -> 37 cases), `ORDERS.md` §14, this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`; new scratch (untracked): `m54k2_scan.py` (BFS-from-base tile scan: flag byte, parity, occupancy, enemy distance)
 
@@ -291,3 +52,320 @@ re-open and answer again; then the acceptance command above on a 6-turn run.
 **Next (M57):** give the loop an ECONOMY: either (a) reload `m54b_clean.SAV` + re-found and get a real (non-poked) positive prediction — a base whose queue the game itself filled (AI chooser at `0x4f6030` fills enemy queues; ours needs the BUILD UI `0x417ee0` or a facility that yields minerals `+0xd0 > 0` so storage >= price naturally), or (b) prove the facility side: queue a facility (negative head) at an armed base and floor the `+0x8c` bitmap delta + the `0x417ee0` queue-edit dispatch from memory. Acceptance: `scripts/m56_build.py` (extended) prints PASS on ONE real invocation with a positive arrival **not** armed by a minerals poke. Re-read `NAMED.md` M56 block + `0x417ee0` (queue edit) before shaping.
 
 **Close addendum (follow-up session, 2026-10-25).** M56 was CLOSED in a follow-up session (the session-92 context died before the close sequence). Fresh deterministic re-verification: `test_m56_predict.py` -> `PASS 8/8 production-prediction cases`; `m56_build.py --fixture scratch/m56_fixture_bad.json` -> **exit 1** `FAIL production prediction accounting`; `test_classify.py` 17/17, `check_classes.py` 17/0, `test_walk_diff.py` 37/37. Fresh LIVE acceptance in that session: `python3 scripts/m56_build.py --arm 17 --boundaries 3 --timeout 120` -> `PASS production prediction: 1 verified unit arrivals over 3 boundaries, every prediction and every observed arrival accounted, queue bookkeeping exact` — 3/3 boundaries flipped +1 (2229->2230->2231->2232, walk [0,2,3,5,6,7] home to us each), 1/1 POSITIVE prediction verified (base 17 Korolev Center 29,42 type 2: pending 1->0, minerals 100->0 clamp B, queue left-shifted), trace `evidence/trace_m56_build_20261025_203513.jsonl`; the session-92 acceptance trace `..._201353.jsonl` was also re-parsed: 15/15 checks ok, `positive_verified 1`. Box at close: **year 2232, 1 base (Korolev Center 29,42), units_ours 2, n_bases 29, pid 1329211** — M57 should expect the reload recipe.
+
+## Session 93 (2026-10-25) — M57: **THE GAME'S OWN BUILD UI WROTE THE QUEUE (proven, 0 memory writes) AND THE QUEUED UNIT WAS PAID FOR BY INCOME — BUT THE EXACT-ROUND PREDICTION FAILED 1/2, SO NOTHING MERGES** — changed `scripts/m56_build.py` (`--ui-queued N` mode: no poke of any kind, `writes` counter, queue-provenance floor, "storage below price at run start" precondition/floor, `predict(..., income_first=)`), `scripts/test_m56_predict.py` (8 -> 11 cases), this file, `NEXT_PROMPT.md`
+
+**ACCEPTANCE: NOT MET.** `python3 scripts/m56_build.py --ui-queued 18 --boundaries 5 --timeout 120` -> exit 1, `FAIL production prediction accounting`; trace `evidence/trace_m56_build_20261025_212402.jsonl`. Floors that PASSED: 5/5 boundaries flipped +1 (2152->2157, walk [0,2,3,5,6,7]), `queue provenance: GAME-filled, zero memory writes by this script` (pending 2 head 2 base 18 Korolev Center, `memory writes: 0`), `completion NOT armed: storage below price at run start` (minerals 4 < price 10), and 1 of 2 positive predictions verified. Floors that FAILED: `r2 prediction ... observed net 0` and `at least 1 POSITIVE prediction verified — 1/2`. Nothing was weakened to hide it.
+
+**What was PROVEN (read back from memory, not inferred).** (1) **The queue can be filled by the GAME, not by us**: with the cursor poked to (29,42), `SEL=-1`, orders mode OFF, `b` opens the base display; the right arrow at (523,433) switches the QUEUE widget to Korolev; clicking queue row 1 at (185,437) opens the item chooser (bar pixel (160,343) = (103,91,181)); the candidate array `DAT_009267e4`/count `0x9267e0` maps 5-col grid order -> cell, Scout Patrol (id 2) at cell 3 -> (509,60), `[sub+0xa774]` reads 3; `INSERT` at (497,343) -> **pending 0->1, head +0x50 = 2, slot +0x54 = 2**; `OK` at (285,343) = mode 0 commits and does not restore. A second INSERT took pending to 2. (2) **The completion was paid from income**: at 2155->2156 the queued Scout Patrol arrived with **pre-boundary storage 8 < price 10**, pending 2->1, queue left-shifted. (3) `base+0xd0` reads 2 but the ACTUAL storage deltas across those five boundaries were **0, +4, 0, -5, +2** — `+0xd0` is NOT the per-round mineral credit, which is why `income_first` over-predicted r2 (8+2 >= 10, no arrival) and only r3 landed. That is the open question, and it is a base-field finding, not a threshold to relax.
+
+**Traps that cost this session (all measured).** (a) **Escape on the map raises the quit prompt, and once that prompt is dismissed the game stops accepting KEYS entirely** — `h`/Return left `cur_player 3`, `turn_flags 0`, order bytes unchanged for 150 s while mouse clicks on the HUD still worked (MENU opened); the map area rendered black. A 172 s run burned on this. Reload is the only recovery. (b) **`orders_mode` (`0x91b5b8`) silently at 0 disables every order key** — `h` falls through to the cursor-tile handler and nothing happens; the `h`-escalation therefore depends on orders mode being ON. (c) **Clicks on popup bars do not register** (obliterate OK, hint Close/"Don't Show Again"), but Return on the default row and Escape do; the obliterate prompt's NO is the default and Return spares the base (verified twice: both bases still ours). (d) **`/tmp` hit its quota and `P.freeze()` failed silently**, returning a path to a file that did not exist (`classify` then said `movie`) — check `df /tmp` before trusting a frame. (e) A first `INSERT` read `pending 0` immediately after the click and had in fact landed; re-read after ~1 s.
+
+**Next (M57-2):** find the true mineral credit. Watch `base+0x40` at 2 ms across one boundary with an EMPTY queue on an income base (`scripts/m55_boundary.py` sampler + `scratch/m56_dump.py`), record the credit sequence, and locate the writer that adds to `+0x40` (candidates: `0x4ef7f6` in the base visit, `FUN_004e9557` recompute). Then re-run `--ui-queued 18 --boundaries 5` unchanged: the acceptance floors stay exactly as they are, including 1/1 positive predictions.
+
+## Session 94 (2026-10-25) — M57-2: **THE CREDIT IS NOT A PER-ROUND CONSTANT AND THE UNCHANGED GATE RE-RUN PRINTED FAIL — so NOTHING MERGES; the measured answer: storage moves through SEVERAL stores inside one base visit (income add, a second unnamed movement, the pay, the pop) and the net per-round delta is event-dependent** — changed `scripts/m57_credit.py` (NEW: gdb breakpoints at the store sites conditioned on the base pointer + a fast sampler + m56_build's Return/h/OK escalation), `scripts/m57_ui_enqueue.py` (NEW: scripted BUILD-UI enqueue, read-back after every click, queue-widget cycling + INSERT retry + cell located by CONTENT), `scripts/m57_uiwatch.py` (NEW: gdb on the enqueue dispatch printing `*(0x8f0d60)` at every hit), `evidence/m57c_q.log` + `trace_m57c_q3.jsonl` (the boundary store sequence), `evidence/trace_m56_build_20261025_215056.jsonl` (the FAIL acceptance run), this file, `NEXT_PROMPT.md`, skill `references/production-queue.md`
+
+**ACCEPTANCE: NOT MET.** `python3 scripts/m56_build.py --ui-queued 17 --boundaries 8 --timeout 240` -> exit 1, `FAIL production prediction accounting`; trace `evidence/trace_m56_build_20261025_215056.jsonl`. The queue was GAME-written (UI enqueue read back `pending 0->1, head 2, slot4 0->2`, `memory writes: 0`) and the run start satisfied the precondition (`minerals 4 < price 10`). Floors: 8/8 boundaries flipped +1 (2168->2176, walks home in 6 of 8); provenance + storage-below-price floors `ok`; but **`BAD at least 1 POSITIVE prediction verified — 0/0`** (the model never predicted the completion: it read income 1/round; the visit completed at minerals 7), `BAD r4 bookkeeping base 17: NOT predicted to arrive -> queue held — pending 1->0` and `BAD r4 unexplained ORDER-0 arrival on OUR base 17` (the produced Scout Patrol), plus `BAD r6/r7 player walk came home after the flip` (the after-snapshot at `--settle 0.3` caught cur_player MID-WALK — a sampling artifact). Nothing was weakened. Rule/fixture/classifier gates stay green: `python3 scripts/test_m56_predict.py` -> `PASS 11/11 production-prediction cases`; `python3 scripts/m56_build.py --fixture scratch/m56_fixture_bad.json` -> exit 1 `FAIL production prediction accounting`; `test_classify.py` 17/17, `check_classes.py` 17/0 (no new classes, no new frames).
+
+**THE CREDIT, measured (all read from memory, `evidence/trace_m57c_q3.jsonl` + `evidence/m57c_q.log`).** Korolev Center (29,42), queued by the game's UI at minerals 4 < price 10. Korolev storage round start -> after: `4->5, 5->5, 5->6, 6->7, 7->0` with the income field reading 1,1,1,1,1 then 0 after the produced unit's upkeep landed. The completion fired in the round whose round-start income read 1, i.e. when minerals+income = 8 < 10 — the visit's NET delta is not the round-start `+0xd0`. The 2 ms boundary sequence: `store 7->9, store 9->0, pending 1->0` (income add, then a SECOND movement, then the pay, then the pop, all inside one base visit at the flip). `+0xd0` itself walked 1 -> 3 -> 0 -> 1 -> 2 -> 3 -> 4 across the run as produced units arrived and were DISBANDED (the support popup: "the minerals output of Korolev Center is not sufficient to support Scout Patrol") — upkeep tracks the garrison, so the credit is recomputed EVERY visit and is event-dependent. Confirmed against the disasm + m52a: the income add is gated `d0 > 0 && head != -38 && !(flag30 & 2)` (0x4ef7db-0x4ef7f9) and **DOES fire with pending 0 while the head slot is stale** (the pop left-shifts but leaves stale ids in the tail — measured: adds landed with pending 0, storage 0->1->2); the pay at 0x4efed8 deducts `$edi` (9 observed at storage 9); clamp B at 0x4eff20 stores only when storage > min(cap `0x92a370`=10, d0) — and m52a's live line (`SPENDA ... old=200 new=190 edi=10` at price 10) supersedes NAMED's "edi = the sweep-entry index" row: **edi is the price**.
+
+**gdb findings (the harness works; several of ITS prints did not mean what I assumed).** (a) The conditional breakpoints (`break *0x4ef7db if $eax == <base addr>`) DID filter to the Korolev visit — the printed `+0x40` (via the baked base pointer) matched the sampler transition for transition — but the REGISTER side-values printed garbage relative to the fields (`$ecx` as d0 read 4/5/6/18 where the field read 1-3; the clamp pair read cap=11 d0=104) and the GATE at `0x4f0a3d` never fired for Korolev in any run (it sits on the `*0x8f0d60`-current-base branch reached only via the 0x4ef985 AND-test, not on the per-base path). **Treat pc-tagged register prints as UNVERIFIED; only the sampler + field read-backs are evidence.** (b) The hardware watchpoint on `+0x40` is unusable for cadence work: the field is READ constantly, the inferior crawled (1 round in 45 s, year never moved) — use breakpoints at the write sites. (c) `m57_uiwatch` proved the enqueue dispatch `0x417ee0` fires with `curbase = 0x95ef70` = Korolev's record (param1=1 param2=1) on the INSERT click, but the static store addresses m53g_drive lists (`0x418b57/0x418ad3/0x418ac7/0x418b24`) did NOT hit on that write — the enqueue store addresses need re-derivation.
+
+**UI findings (all read back).** (a) The QUEUE widget's base is INDEPENDENT of the display's base (both orders observed: `b` opened on Korolev with the widget on University, and the reverse); the right arrow (523,433) moves the field `0x6a9480+0x3ff3c` and INSERT lands on whichever base the widget holds — recipe: cycle the arrow until `+0x3ff3c` == the target index, then row 1 (185,437), cell, INSERT (497,343), OK (285,343), reading pending after every click. (b) The chooser grid position is ERA-DEPENDENT: Scout Patrol (id 2) is cell **4** now (`DAT_009267e4` = [192,195,194,193,2,...], count 67) where session 93 measured cell 3 — locate the cell by CONTENT. (c) The base array compacts: Korolev's index walked 17 -> 18 -> 17 within this session (n_bases 29 -> 19 -> 23 -> 25); locate bases by NAME/(x,y), never by remembered index. (d) The box at close: **2176, Korolev minerals 0, income 0, pending 0 with stale head 2, 10 units all HELD, 2 bases, pid 1538414** — Korolev's income is now ZERO (the garrison's upkeep eats the yield), so nothing more accrues there without an economy change or a reload.
+
+**Open.** (1) Name the SECOND store: enumerate every write to `+0x40` inside one visit (the 7->9->0 middle movement is unnamed; candidates: a second income site, the upkeep/spend path, the recompute through another field) with breakpoints at ALL disasm write sites, not a hw watchpoint. (2) Whether `+0xd0` at round start can be predicted from garrison + facility bitmap (the disband/upkeep chain). (3) The r6/r7 walk-home FAIL is a settle artifact — `--settle` must exceed the walk (~1-2 s) or the floor must read the timeline's final cur_player. (4) The enqueue store addresses inside `0x417ee0`. (5) Whether a documented negative merges — per the rule ("merge ONLY on a PASS") the branch holds UNMERGED; no PR was opened.
+
+**Next (M57-3):** give the loop an income-STABLE base: reload `m54b_clean.SAV` + re-found (`m54g_prep.py`, 2 founding turns) exactly as session 93 did (that box had Korolev income 2 and produced the r3 completion), UI-enqueue ONE Scout Patrol at minerals < 10, then `python3 scripts/m56_build.py --ui-queued <index> --boundaries <enough for the accrual, ~6-10 at ~20 s/round> --timeout 240 --settle 2.5` (settle only moves WHEN the after-snapshot is taken, so the walk-home floor sees the walk finished — the floor semantics are unchanged). Acceptance unchanged: every floor as it stands + >= 1 verified positive prediction. If income is stable the model predicts the exact round; if the visit's second store still breaks it, the documented negative stands and the next step is Open (1), the full store enumeration.
+
+**Addendum (same session, after the close): why the session was slow, and two fixes.** The time went to *stale remembered facts*, not to hard problems: (a) a retyped `cur_player` address (`0x91c634` instead of `0x985dcc`) burned a 45 s smoke run and an OCR classification detour; (b) the UI recipe's arrow/cell/index facts had drifted (queue-widget base vs display base; Scout Patrol cell 3 -> 4; base index 17 -> 18 -> 17), so two enqueues silently landed on University Base; (c) a hardware watchpoint on a constantly-READ field made the inferior crawl (1 round/45 s) — breakpoints at the write sites are the tool; (d) the sampler ran unthrottled and wrote 1.4 GB of traces (gate RED until downsampled); (e) the 8-boundary acceptance was launched without first doing the credit arithmetic. Fixes added and tested: **`scripts/smac_preflight.py`** (read-only, exit 1 on any FAIL: the one authoritative address table, game alive, TracerPid=0, no gdb, our bases located BY NAME with index/coords/pending/head/minerals/income, unit decode, /tmp room, evidence budget; `SMAC_PID` override is the negative test — `SMAC_PID=999999` -> exit 1) and a **credit-arithmetic line in `m56_build.py --ui-queued`** printed BEFORE the run (`needs 4 more minerals at 1/round -> ~4 round(s) to the gate`, recorded as a trace event; a diagnostic, no floor touched). Verified live: preflight PASS on the real box; `python3 scripts/m56_build.py --ui-queued 0 --boundaries 1 --timeout 60` -> `credit arithmetic: needs 4 more minerals at 1/round -> ~4 round(s) to the gate`. Also observed by the preflight: the two failed enqueues left **University Base pending 2 (minerals 6, income 1)** — a GAME-written queue sitting there, which is a candidate for M57-3 as well.
+
+## Session 95 (2026-10-25) — M57-3: the gate ran on a GAME-filled queue and got 1/2 — the model premise is falsified, nothing merges
+
+**What changed.** `scripts/smac_preflight.py` (NEW, read-only orientation: authoritative address
+table, game alive, TracerPid/gdb, our bases BY NAME with index/coords/pending/head/minerals/income,
+unit decode, /tmp + evidence budget; `SMAC_PID` override is the negative test). `m56_build.py`:
+credit arithmetic printed BEFORE a --ui-queued run; the boundary watch now breaks when the walk is
+HOME (was a fixed settle, which either missed the walk or swallowed the next flip); and it answers
+the "SOME OF OUR UNITS HAVE NOT YET MOVED" confirm via `smac_play.answer_confirm` (that dialog takes
+NO Return — a 240 s run sat on it, year frozen). `m57_ui_enqueue.py` restores orders mode (0 makes
+every order key a no-op and the turn never ends). Sampler throttled to 2 ms + the 1.4 GB of traces
+downsampled to ~10 KB (the gate's 30 MB budget). Skill synced.
+
+**The acceptance, unchanged.** `python3 scripts/m56_build.py --ui-queued 18 --boundaries 8 --timeout
+240` on a fresh `m54b_clean.SAV` box (2154), Korolev Center [18] (29,42), queue filled by the GAME's
+BUILD UI (pending 1, head 2, minerals 2, income 2, **0 memory writes**): **FAIL, exit 1**. Floors that
+passed: 8/8 boundaries flipped +1 with the walk home, provenance GAME-filled/0 writes, storage below
+price at start, per-round bookkeeping on r0-r2 (2->4->6->8, pend 1). Floors that failed:
+- `1/2 positive predictions verified`. r3 predicted arrival (8 + income 2 = 10 >= price 10) and
+  storage stayed **8 -> 8, pend 1**: the visit added NOTHING while the round-start income field read
+  2. r4, with the identical round-start numbers, arrived: **8 -> 3, pend 0**.
+- `r4 minerals debited by >= price` — net -5 from 8 (or -7 from the post-add 10), not -10.
+- `r7 unexplained ORDER-0 arrival on OUR base 18` — storage **5 -> 0 with pending 0** and a new unit,
+  i.e. a pay with an empty pending count (the queue slots never left-shifted: `[2,2,0]` all run).
+So ONE queued Scout Patrol produced TWICE (r4 and r7) and the second production was paid at 5 < 10.
+
+**Measured support (`m57_credit.py --base Korolev --boundaries 3 --tag m57k`).** 3 flips (2162->2165,
+rounds 8.2/10.1/12.1 s — instant when everything is held), only 2 ADD hits and no GATE/PAY/CLMP for
+the base; the register side-values are the known trap (the "d0" printed 18 = the base INDEX) but the
+storage deltas agree with the sampler: an add of +1 while the field read 1, +2 while it read 2. **The
+add uses the d0 current at the visit, which moves inside the round** — that is why an exact-round
+prediction from the round-start snapshot is impossible, and why the same numbers produced no-arrival
+then arrival one round later. The pay amount is also not the price at 0x4efed8 (5 paid, 8 paid) and a
+produced unit's support is debited from the same field.
+
+**Conclusion: NOTHING MERGES.** The M57 gate asserts a model the engine contradicts (one add per
+round at the round-start income, one pay of exactly the price, pending as the queue truth). The
+observed positive (1/2) is real but not enough, and no floor was weakened. Branch `milestone/m57`
+holds: preflight, the arithmetic line, the confirm answer, the walk-home break, orders-mode restore,
+2 ms sampler, and `scripts/m57_ui_enqueue.py` (UI queue fill with read-backs).
+
+**Next pick (M57-4, the honest one): enumerate EVERY write to `base+0x40` inside one visit** —
+breakpoints at all disasm write sites (0x4ef7f6 add, 0x4eff20 clamp B, 0x4efee3/0x4efeec pay,
+0x4f0cc3 clamp-after-pay) over 3 boundaries on Korolev, with the queue filled by the UI, and record
+(value_before, value_after, site, pending, head, d0) for each store. Only then can the gate's debit
+floor and the second production be explained. Do NOT tune predict() to the observations.
+
+## Session 96 (2026-10-26) — M57-4: **THE STORE ENUMERATION PASSES — every write to `base+0x40` in a 3-boundary window is attributed to a NAMED census site — and the engine's price is 9, not 10, which is why the M56 gate still FAILS with every floor intact**
+
+**What changed.** `scripts/m57_stores.py` (NEW — 23 conditioned breakpoints + the visit marker +
+a 2 ms sampler + the replay acceptance), `scripts/m57_ui_enqueue.py` (now closes the base display
+it leaves open and verifies the class), scratch `scratch/m574/census.py` (the whole-image store
+census + call-graph filter that GENERATED the site table), skill `references/production-queue.md`
+and `references/wine-operations.md`, `NEXT_PROMPT.md`, this file.
+
+**ACCEPTANCE MET (M57-4's own gate).** `python3 scripts/m57_stores.py --boundaries 3 --timeout 200
+--tag m574c` -> `PASS store-sequence enumeration: 4 stores over 3 boundaries, every store
+attributed to a named census site, every sampler value reproduced by the replay, per-boundary sums
+equal the observed net changes` — Korolev Center idx 17 (0x95ee40), queue filled by the GAME's
+BUILD UI (pending 1, the harness itself wrote nothing), 3 visits, 3 boundaries 2163->2166, sampler
+value sequence [7, 0, 1, 2], per-boundary sums 0/-7/+1/+1 == the observed nets, zero unattributed
+deltas. Trace `evidence/trace_m574c.jsonl`, gdb log `evidence/m574c.gdblog`.
+
+**The enumeration (read back at the sites, each breakpoint conditioned on the store's OWN base
+register == our record).** A visit is `FUN_004f5a70(index)`: it computes
+`lea ecx,[index*304+0x95da10]`, stores it to the current-base global `DAT_0x8f0d60` at **0x4f5a99**
+(the per-visit marker), and calls 0x4e8d60, 0x4e78e0, 0x4e92c0, 0x4e93f0, 0x4eaa10, **0x4ef6d0**
+(the production visit) and **0x4f26e0**. Whole-image census: **65 stores to `[reg+0x40]` in
+`.text`, 23 reachable** from the visit driver / the queue edit / the AI chooser; the
+`lea reg,[reg2+0x40]` pointer-arithmetic shape has no store through it in those sets. In the
+measured windows only two sites ever fire:
+- **`0x4ef7f6` ADD** — the delta EQUALS the `+0xd0` field as it reads AT THE VISIT (+2 with d0 2;
+  +1 with d0 1 twice; d0 itself moves with the garrison), gated `d0>=0 && head!=-38 &&
+  !([base+0x30]&2)` at 0x4ef7db-0x4ef7f9.
+- **`0x4efedd` PAY** — 9 -> 0 with pending 1 -> 0 in the same visit. The completion gate is
+  `cmp [curbase+0x40], edi ; jge` at **0x4efa5e**, where `edi` is built at 0x4efa4b-0x4efa52:
+  `edi = eax` from `call 0x4e40a0` (item cost for the faction) then `imul edi, eax` from
+  `call 0x5ac950` (a factor). **edi measured 9 twice** (10->1 in `m574b`, 9->0 in `m574c`) — the
+  deduction is 9, NOT the 10 the M56 model assumes.
+- the clamp sites `0x4eff20`/`0x4f0ce9` (store `max(0, min([0x92a370], d0))` only when storage >
+  that limit) NEVER fired; `0x4f2d7d` (the distribution store in `FUN_004f26e0`) never fired for
+  our base. Session 94's unnamed "second movement inside one visit" (7->9 then 9->0) is now NAMED:
+  the add at 0x4ef7f6 and the pay at 0x4efedd.
+
+**The M56 gate, re-run unchanged per the footing.** `python3 scripts/m56_build.py --ui-queued 17
+--boundaries 10 --timeout 300` on the UI-filled queue (pending 1 head 2, `memory writes: 0`, start
+minerals 2 < price 10) -> **`FAIL production prediction accounting`**: `BAD at least 1 POSITIVE
+prediction verified (non-vacuous) — 0/0` and `BAD r7 bookkeeping base 17: NOT predicted to arrive
+-> queue held — pending 1->0 ... (minerals 0 vs price 10)` — the arrival came at minerals 8
+(8 + income 1 = 9 >= the measured 9). 10/10 boundaries flipped; the provenance and
+storage-below-price floors passed. Nothing was weakened.
+
+**Traps found (all measured, all recorded in the skill).** (a) **`si` inside a breakpoint commands
+list ends `gdb -batch`** — the first hit printed the step location then `[Inferior 1 ... detached]`
+and the watch died after one store; the store's own source operand IS the after value for a plain
+`mov [reg+0x40],src`. (b) **the base array reorders mid-watch**: Korolev walked index 18 -> 17
+(0x95ef70 -> 0x95ee40) during a run, after which the baked address held ANOTHER faction's record
+(storage 19, head -27) — the sampler now checks the NAME at the address every sample and ends the
+watch at the move (the closing anchor is the last good sample, never a post-detach read-back: the
+game keeps playing after the last flip). (c) **the enqueue recipe leaves the base display open and a
+modal pane swallows every turn-end key** — a 90 s watch sat parked on `cur_player 3` through
+Return/h/OK; Escape closes the pane (safe there, unlike the bare map). (d) `set print frame-quiet`
+is not a command in this gdb and aborts the whole command file. (e) `os.pread` on `/proc/<pid>/mem`
+EIOs here; seek+read works. (f) all our units must be HOLD (poke `+17`=2, read back) or the auto-end
+never fires and a boundary watch burns its whole budget parked on our turn.
+
+**Open.** (1) **The price**: name `0x4e40a0` (the cost) and `0x5ac950` (the factor) and reproduce
+edi = 9 for a queued Scout Patrol — the M56 model's price constant is what is wrong, not its
+floors. (2) Session 95's pay-with-pending-0 (its r7) was NOT reproduced in any measured window;
+every pay seen had pending 1 at the store and popped in the same visit. (3) Whether a pay can fire
+in a visit whose income add did not run (the `d0 > 0` guard). (4) The clamp sites' live behaviour
+is still unmeasured. (5) **M57 stays UNMERGED** per the footing (the M56 gate is the merge
+condition); `milestone/m57` holds everything, still unpushed (a pre-receive hook refused it earlier).
+
+**Next pick (M58): the price.** Disassemble `0x4e40a0` and `0x5ac950`, reproduce `edi` for the
+queued Scout Patrol from static tables, and re-run `m56_build.py --ui-queued` with the price
+DERIVED rather than assumed. The floors do not move.
+
+## Session 97 (2026-10-26) — M58: **THE PRICE IS NAMED — `0x4e40a0(owner,1,-1)` × type record `+41`, and the multiplier is live STATE, not 10: `[0x92ada8] == 1` makes it 9.** The M56 gate's price-10 was one game's difficulty. The acceptance never printed PASS, so **nothing was merged**.
+
+**The call site (scratch/m574/text.txt, `objdump -d -M intel --section=.text`).**
+`0x4efa2c mov ebx,[eax+0x50]` (eax = `DAT_0x8f0d60` = the base record, so ebx = the queue head),
+`0x4efa31 mov cl,[eax+4]` (the base's owner byte — `base_dump.py`'s `fac`), `push -1; push 1; push
+ecx; call 0x4e40a0` → `edi`; then `mov edx,ds:0x68cbb0` (the base index the visit is running),
+`push 0; push edx; push ebx; call 0x5ac950` → `eax`, `0x4efa52 imul edi,eax`, `0x4efa5e cmp
+[curbase+0x40],edi ; jge`. Ghidra agrees: `FUN_005ac950((int)*(short*)((int)&DAT_00933282 + …),
+0xffffffff, …)` in `ghidra_out/shard_014.c:7994` proves its arg1 is a unit TYPE id.
+
+**`0x4e40a0(owner, 1, -1)` is the per-owner cost factor in TENTHS** (`evidence/m53i_fn4e40a0.txt`,
+`ghidra_out/shard_012.c:13825-13880`): mask `[0x985b10] & 0xff` tested bit-by-bit → 10 (`0x4e40c0`),
+else the era table `[0x68cbb8 + era*4]` = {13,12,11,10,8,7} (sessions-64); rescale by `[0x92a294]`
+(param_2 == 1 picks the +4 variant, `0x4e4119`); then `[0x92ada8]`: 1 → ×9/10, 0 → ×8/10, else
+unchanged (`0x4e413b-0x4e4175`); then `switch` on the dword `[0x94d6a0 + owner*0x20bc]`
+(sessions-56 calls it the faction government field; 0 = identity).
+
+**`0x5ac950(type, DAT_0x68cbb0, 0)` is the type's cost**: the byte at `0x98ad88 + type*52 + 41`
+(the M53b/M53f cost byte), clamped to ≥1 (and ≤999) ONLY when the plan byte `+42 == 8` and
+param_2 > -1; type 2 has plan 3 → no clamp, and `type < 0x40` returns it straight out of the
+`0x5ac993` branch (`ghidra_out/shard_015.c:23696-23745`).
+
+**Live, read back:** mask `& 0xff` = 0x08 (owner 3 in), `[0x92a294]` = 10, `[0x92ada8]` = 1,
+government field 0 → factor 9; type 2 `Scout Patrol` `+41` = 1 → **price 9**.
+`python3 scripts/m58_price.py --owner 3 --type 2` -> `DERIVED price = factor_tenths 9 *
+type_cost 1 = 9 … tracer-measured edi … MATCH`. **This is why sessions-56/64 saw 10**: they
+measured `[0x92ada8] = 2` (no rescale) and M52b debited 10 — a different game's difficulty, not a
+law. The scenario LOAD screen names the same scalar: this session's `m54a_load.py --relaunch`
+printed `difficulty level: talent` on the loaded-game pane.
+
+**Code.** `scripts/m56_build.py`: `price_of()` now goes through a new `cost_multiplier(owner)`
+that re-implements `0x4e40a0` line-for-line and reads mask / era / `[0x92a294]` / `[0x92ada8]` /
+the government field from the SAME snapshot the gate runs on — no constant chosen to fit an
+observation. `scripts/test_m56_predict.py`: `MockMem` now serves those inputs (defaults = the
+session-56 state, so every pre-M58 case keeps its numbers) and two cases were added —
+`python3 scripts/test_m56_predict.py` -> **`PASS 13/13 production-prediction cases`** (case 12
+ada8 1 → price 9; case 13 ada8 0 → 8 vs ada8 2 → 10 on an identical base, one variable).
+`python3 scripts/m56_build.py --fixture scratch/m56_fixture_bad.json` -> exit **1** (unchanged).
+
+**The bookkeeping was rebuilt on two measurements.** (a) `evidence/m58pop.gdblog` (Korolev Center
+0x95ee40, queue UI-filled, minerals poked to 9 and read back): `VISIT#1 storage=9 pend=1 |
+0x4ef7f6 add +0 (d0 0) | 0x4efedd pay 9->0 with pend STILL 1 | VISIT#2 storage=0 pend=0` — the pop
+store `0x4ef641` (in `FUN_004ef5d0`, whose unit-path calls are `0x4f037b`/`0x4f0f46`) runs
+STRICTLY AFTER the pay store, so a boundary after-snapshot can land on either side of it. Session
+96's "pending 1 -> 0 in the same visit" is therefore not a rule: the 2177-box run read 1->1 then 0,
+the 2151-box run read 1->0 in the pay window. (b) the mineral identity
+`storage_after == storage_before + credit - price` is EXACT — measured 8+1-9 = 0 (2177 box),
+8+2-9 = 1 (2151 box r2), 8+1-9 = 0 (evidence/trace_m56_build_20261026_142139.jsonl r8). The old
+`storage_before - storage_after >= price` ignored the credit the model itself predicts
+(`income_first`) and only ever passed because the armed run had income 0.
+
+**ACCEPTANCE — three real invocations, none printed PASS (so nothing merged).**
+1. `python3 scripts/m56_build.py --ui-queued 17 --boundaries 10 --timeout 300` (2177 box, queue
+   GAME-filled, `memory writes: 0`) -> `FAIL production prediction accounting`: positive
+   **1/1 verified**, **10/10** boundaries flipped, provenance + storage-below-price (2 < 9) ok;
+   BAD `pending decremented` (1->1 in the pay window) and `minerals debited by >= price`
+   (8->0, delta 8 vs the then-price 10). Those two BADs are what forced the rewrite above.
+2. After the reload (`SMAC_SAVE='m54b_clean.SAV' m54a_load.py --relaunch` → HUD 2150 →
+   `m54g_prep.py` → one `smac_play.py --turns 1` turn founds Korolev Center at (29,42) in 2151 →
+   `m57_ui_enqueue.py --base-index 18`): `--ui-queued 18 --boundaries 12 --timeout 420` ->
+   `FAIL`: positive **1/1** (r2, 8 + 2 - 9 = 1 exact), **12/12** boundaries, provenance ok; BAD the
+   brand-new "no pop in the pay window" (r2 popped in-window) and `r11 unexplained ORDER-0 arrival
+   on OUR base 17` — minerals 7 -> 0 (7 + 2 = 9 = the derived price) with a unit appearing while
+   **pending read 0**.
+3. `--ui-queued 17 --boundaries 10 --timeout 400` (`evidence/trace_m56_build_20261026_142139.jsonl`)
+   -> `FAIL`: positive **1/1** (r8: 8 + 1 - 9 = 0 exact, unit +1 on (29,42)), **10/10** boundaries,
+   provenance ok, 0 < 9 ok; BAD r0 walk-home race (`cur_player 6` at the after-snapshot), r9
+   queue-held firing on the deferred pop (fixed after the run, NOT re-run), and r9 an unexplained
+   +1 type-2 unit on University Base (28,42) with minerals 0 and pending 0.
+
+**THE NEW FINDING — M59's target: pending is NOT the queue truth.** Korolev paid the derived price
+twice more at **pending 0** (run 2: r6 minerals 7->0 with no unit appearing — confounded with a
+disband — and r11 minerals 7->0 with a unit appearing), and a second Scout Patrol appeared on
+University Base at minerals 0, pending 0 (run 3 r9). A base whose head SLOT holds a unit type keeps
+buying it whenever `storage + income >= price`; M57-4's "pending is the only queue truth" is wrong.
+
+**Trap.** `m57_ui_enqueue.py` on a just-founded base can read an EMPTY chooser
+(`FAIL: item 2 not in candidate array []`); a second attempt works. Do not conclude the item is
+unresearchable from the first attempt.
+
+**Open.** (1) the acceptance has never printed PASS with the derived price — the blockers are the
+queue-truth gap above and the r0 walk-home race, not the price; (2) the deferred-pop fix in the
+`else` branch is written but not exercised by a real run; (3) `milestone/m58` (local, unpushed)
+carries M57 merged in plus all of M58; (4) the r6-style "paid, no unit" windows are unexplained.
+
+**Next pick (M59): the queue truth.** Instrument `FUN_004ef5d0`'s affordability call
+`0x5a73f0(head, owner, base_index)` and the slot array (`+0x50..+0x74`) against `pending`
+(`+0x4c`), and answer what actually gates the next production; only then can the gate's
+arrival/queue floors be stated so that a 10-boundary UI-queued run passes.
+
+## Session 98 (2026-10-26) — M59: **THE QUEUE TRUTH IS THE HEAD SLOT, NOT PENDING.** `pending` gates only the POP; the pay block dominates the create, and a base with an EMPTY queue still buys the head's type every round it can pay. The acceptance printed **PASS** on one real invocation.
+
+**Static, from the instruction bytes (scratch/m59/queue_census.py + scratch/m59/dom.py over
+scratch/m574/text.txt).** In the per-base visit `FUN_004ef6d0`: income add `0x4ef7f6` → price gate
+`0x4efa2c-0x4efa61` (`ebx = [base+0x50]` = the HEAD SLOT, `edi = 0x4e40a0(owner,1,-1) ×
+0x5ac950(ebx, base, 0)`, `cmp [ecx+0x40], edi; jge 0x4efadc`) → pay `0x4efedd` → clamp
+`0x4eff02-0x4eff23` → **create-unit call `0x5ab650(type, ?, x, y)` @ `0x4eff4e`**, guarded at
+`0x4eff32` by `[base+0x10] == 0`. A dominance test (block-level CFG, pay block removed) prints
+`entry->create: True / with the PAY block removed: False` and the same for gate→create: the pay
+DOMINATES the create. Nothing between them reads `+0x4c`. The pop `FUN_004ef5d0` returns at
+`0x4ef5f4` (`je 0x4ef684`) when pending == 0 and is called LATER in the same visit
+(`0x4f037b`, `0x4f0f46`; the third site `0x4ef992` is NOT reachable from the pay) — it only
+left-shifts the slots and decrements pending + the per-faction queued-count byte
+`[0x94de84 + owner*0x20bc + type*4]` (`0x4ef613`, `dec BYTE PTR [ecx]`).
+
+**NAMED.** `0x5a73f0(type, owner, base)` = "can this faction field this unit type here": needs
+the type-record flag `[+0x30] & 1`, the owner NOT in the exclusion dword `[+0x2c]`, and the
+required facility/project `[+0x32]` either −1 or researched-and-owned; types ≥ 0x40 are
+faction-specific (`(type>>6) == owner`); the shared tail also rejects plan `[+42] == 8` when
+`0x985ac4 & 0x400000`, and rejects when the class byte `[+0x24]` indexes `[0x92ae81] == 1` and
+`0x4e4620(base_x, base_y, 0) == 0`. `0x5a6e70(-id, owner, base, 0)` is the same question for a
+facility/project queue item (queue stores those NEGATIVE). `FUN_004e47d0` (called from
+`0x4ccbdd`/`0x59d894`/`0x5a01f8`) initialises a base: zeroes `+0x30`, `+0x34`, `+0x3c`, `+0x40`,
+`+0x4c`, sets `+0x38` from `[faction+0x94d600]`, then calls `FUN_004e46f0(base)` which picks the
+cheapest-scored buildable unit type into the HEAD SLOT ONLY (`[+0x50]`, `0x4e471b`/`0x4e47bb`,
+pending untouched — this is why a founding leaves head 2 with pending 0). `FUN_004e5560(base,
+new_head)` writes the head and adjusts the per-faction queued-count byte (`dec` old at
+`0x4e55b5`, `inc` new at `0x4e55dd`). `FUN_004e5ae0(base, 0)` — called SIX times from the visit,
+first at `0x4ef87e` BEFORE the gate — refreshes the head through the chooser `0x4f6030` for any
+owner not in the human mask, or when `+0x38`'s sign bit is clear, or (always, at this call site)
+when param_2 == 0. Pending is written at only four absolute sites: `0x4e4982` (init), `0x4ef642`
+(pop), `0x50890d`, `0x543b26` (clear).
+
+**Measured in memory, one variable, internal control (`scripts/m59_head.py`, box at 2174, no
+tracer, all our units held first):** `POKE 'Korolev Center' idx 17 +0x40: 0 -> 9 (read back 9)
+OK`; one turn later Korolev minerals `9 -> 0` (exactly the derived price 9), income `0 -> -1`
+(the new unit's upkeep), **pending 0 -> 0**, head 2 -> 2, and the base tile went 5 -> 6 units of
+(type 2, owner 3); control University Base idx 0 (minerals 0, gate not passed) stayed 0 minerals
+and 6 -> 6 units. A base with an EMPTY queue buys the head slot's type.
+
+**Rule restated** (`predict()` in `scripts/m56_build.py`): arrival iff the base is OURS
+(`0x91b5b4`; another faction's head is re-picked by its own visit at `0x4ef87e` before its gate,
+so it is not predictable — enemy arrivals are still REPORTED by F2) AND the head is a unit type
+(0..0x3f) AND the owner is in the mask AND `storage (+ income) >= price`. Pending is not a term;
+`pop_expected` replaces it as the pop predictor. Bookkeeping now covers pending-0 bases (a paid
+pending-0 base must leave pending 0 and the slots unchanged — the pop cannot fire) and PAIRS BY
+NAME, not index (mid-run the array compacted Korolev 18 -> 17 again). F1 verifies an arrival in
+the pay window OR by the next window's before-snapshot, because the create was measured landing
+in the snapshot gap (run `..._144801` r2: pay 8 -> 1 with pending still 1 at both snapshots, our
+unit total 6 at r2-after -> 7 at r3-before, r3's own window adding nothing).
+
+**ACCEPTANCE — PASS on one real invocation.**
+`python3 scripts/m56_build.py --ui-queued 17 --boundaries 10 --timeout 400 --no-poke-hold`
+(queue filled by the GAME's BUILD UI via `scripts/m57_ui_enqueue.py --base-index 17 --cell-item 2
+--inserts 1`, units held by `m59_head.py --stage read --hold` first, minerals 8 < price 9 at
+start) -> `PASS production prediction: 1 verified unit arrivals over 10 boundaries, every
+prediction and every observed arrival accounted, queue bookkeeping exact — queue filled by the
+GAME's BUILD UI (0 memory writes), paid by income at 1/round`; 50 `ok` checks, 0 BAD;
+`r0 prediction base 17 (29,42) type 2 — predicted (pending 1, minerals 8 >= price 9); observed
+net 1`; `boundaries observed >= 2 — 10 of 10 rounds flipped`; `POSITIVE prediction verified —
+1/1`; `memory writes: 0`. Trace `evidence/trace_m56_build_20261026_145157.jsonl`. Rule cases
+`python3 scripts/test_m56_predict.py` -> `PASS 17/17` (cases 5/6 restated for the new scoping,
+14-17 added for the pending-is-not-the-gate rule); bad fixture
+`python3 scripts/m56_build.py --fixture scratch/m56_fixture_bad.json` -> exit 1 (BAD minerals
+identity 100 + 0 - 10).
+
+**Two runs did NOT pass before it, and no floor was weakened:** `..._144801` (10/10 boundaries,
+2 positive predictions, 1 verified — the r2 deferral above, which is what forced the F1 window
+change) and `..._145103` (1/1 positive verified, 10/10 boundaries, single BAD = the known r2
+walk-home race `cur_player before 3 after 6`, which the footing says to re-run rather than
+edit).
+
+**Open.** (1) the create guard `[base+0x10] == 0` at `0x4eff32` is unread — what writes it, and
+whether it is the reason a paid window can show no unit; (2) `FUN_004f6030` (the chooser, called
+with a budget argument from `0x4e5ae0`) is unnamed — it decides what an AI base builds next and
+therefore what its head slot will be; (3) the deferral window is a snapshot-timing fact, not yet
+a timed model (the create's exact place in the round sequence is still inferred); (4) the older
+skill note `0x94dc84` vs the disasm `0x94de84` for the queued-count byte is REPORTED, unresolved;
+(5) enemy-base production is reported, never predicted.
+
+**Next pick (M60): name `0x4f6030` and the `[base+0x10]` create guard.** With those two, the
+arrival rule can be stated for other factions too (their head is whatever `0x4f6030` picks) and
+the "paid, no unit" windows get a mechanism instead of a deferral.

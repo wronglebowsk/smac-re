@@ -79,6 +79,8 @@ and are excluded; `--all` adds them back and makes results worse. **Naming a fun
 > (`scripts/summarize.py`, cache `index/summaries.jsonl`, ~1.7 h for 2,786, resumable); rerun
 > only when bodies change.
 
+**A checkpoint branch is not reliably pushable by hand.** `git push origin milestone/<id>` on a branch that has no PR can be declined by the remote's pre-receive hook — the commonest cause is a blob over GitHub's 100 MB per-file limit sitting in the branch's HISTORY, which a later delete commit does not remove. So: downsample/throttle big generated files BEFORE their first commit, treat the local checkpoint commit (not the push) as the durability mechanism for an unmerged milestone, and expect `milestone.py submit` to be the path that lands the branch.
+
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
 merge by hand in the web UI without a green `gate` check. After editing this live skill, copy the whole

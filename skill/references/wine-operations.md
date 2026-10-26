@@ -136,6 +136,8 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   which isn't a number aborts the sourced script and DETACHES silently ("Argument to arithmetic
   operation not a number or boolean", `m53e5_watch.log:50`) — bake the base pointer as a literal
   (`set $b = 0x962d30`) instead of reading `*(int *)0x8f0d60` per hit.
+- **A hardware watchpoint on a field the game READS constantly is useless for cadence work.** The debug register traps READS as well as writes, so watching a HUD-displayed field (`base+0x40` mineral storage) crawled the inferior to ~1 round in 45 s — the mission year never moved and the log stayed empty. Instrument the WRITE sites instead (`break *0x4ef7db if $eax == <base addr>`, one breakpoint per store site taken from the disassembly), bake the record address as a literal in BOTH the condition and the printf, and let a sleeping `/proc/pid/mem` sampler supply the timeline; the per-site conditional breakpoint is what filters one record's visit out of a loop that runs over every base.
+- **Registers printed from a breakpoint command list are testimony, not evidence.** A run can filter the right record's visit correctly — its baked-base field reads matching the sampler transition for transition — and still print `$ecx`-as-income / `$edi`-as-price values that contradict those fields. Corroborate every register print against a field read-back, quote the read-back, and label the register value unverified.
 - **Vision-tool pixel numbers ARE true window coordinates; tesseract TSV numbers are internally
   rescaled** — never halve TSV values to get click coordinates. Settle any disagreement with
   `ffmpeg -vf crop=W:H:X:Y` + OCR on the crop before driving clicks (M53d wasted three runs on this).
@@ -271,6 +273,27 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   (evidence/px_wedge_t28.png, session 79's false positive). The base screen's close is Escape and
   the class is unambiguous (quit-prompt/title classify first, base test positional since M54a), so
   Escape on `base` must NOT be gated by `--no-escape`; keep the gate only for movie/unknown.
+- **Opening the base screen for a CHOSEN base (measured recipe):** with **orders mode OFF**
+  (`0x91b5b8 == 0`) and **SEL unset** (`0x91b5bc = -1`), poke BOTH cursor homes to the base tile —
+  the map-window fields `*(u32*)0x7cdecc + 0x1dd9c/+0x1dda0` AND the tile-handler arrays
+  `0x91b5f0`/`0x91b670` at the current index `0x91b5e8` — then press `b` immediately: the cursor-tile
+  handler (`FUN_00511960`, case `0x62`) opens that base's screen. Verify by OCR of the base-name
+  banner, not by the keypress. Arrows do NOT position the cursor freely: they cycle units and the
+  cursor array cell follows the cycled unit. With orders mode ON and SEL unset the same `b` raised
+  the Operations Director **"obliterate <base>?"** confirm for the cursor base — orders mode ON +
+  SEL unset is a key-sink state for base keys, not a path to the base screen.
+- **The base screen hosts the production QUEUE widget** in the bottom-left HUD strip, and the
+  widget follows whichever base the name banner shows: click the **right arrow beside the banner**
+  (~window (523,433) at 800x600; the arrow glyphs flank the name inside the banner box) to switch
+  the displayed base — verify the switch by OCR of the banner name — then click a QUEUE row to raise
+  the chooser (bars/rows geometry in the M53d plumbing section; item icon ScoutPatrol (128,160),
+  INSERT 497, OK 285 at y 343). This is the non-poked path to fill a human queue.
+- **A popup bar click can silently NOT register** — the pane stays open with the selection unchanged
+  (Operations Director OK, hint Close/Don't-Show-Again all ate clicks while MENU/arrow clicks
+  registered). After ANY popup bar click, read back (re-OCR the pane, or re-read the field the click
+  should move); two failed clicks on the same bar: switch to keyboard (`Return` = the highlighted
+  default row, `Escape` = close the pane) and verify with the same read-back. The obliterate confirm
+  defaults to "No, let them live" — Return is safe there, but read which row is highlighted first.
 
 ## Ordering units from the driver (M54c, session 80)
 
@@ -337,3 +360,27 @@ is what separates the two classes.
   frame, so it falls through to `movie`, whose only answer is Escape — and Escape is gated by
   `--no-escape`, so the year sits frozen. Class `artwork-close`; click the bar's own centre.
   The bar's red is separated from the terrain's red by the GREEN channel (g<30 vs ~50).
+
+## Tracer and address pitfalls a store watch walks into
+
+- **`si` inside a breakpoint commands list ENDS `gdb -batch`.** The first hit printed the step
+  location and then `[Inferior 1 (process ...) detached]` — the whole watch died after one store.
+  For a plain `mov [reg+0x40],src` the value being stored IS the after value: print the store's
+  own source operand and let the memory sampler prove it, instead of stepping.
+- **The base array reorders/compacts DURING a watch.** Korolev Center walked index 18 -> 17
+  (0x95ef70 -> 0x95ee40) mid-run; from that instant the baked address held ANOTHER faction's
+  record (its storage read 19 where ours read 5, head -27 where ours read 2) and the conditioned
+  breakpoints would credit that base's stores to ours. Read the NAME at the baked address every
+  sample and end the watch at the move (`m57_stores.py` does; the closing anchor is then the last
+  good sample, never a post-detach read-back — the game keeps playing after the last flip).
+- **A base display left open by a UI recipe swallows every turn-end key.** After the enqueue
+  recipe the screen class stayed `base` and a 90 s watch sat parked on `cur_player 3` through
+  Return, `h` and an OK click. Escape closes the pane (safe there — it is Escape on the bare map
+  that raises the quit prompt). `m57_ui_enqueue.py` now closes the pane and verifies the class.
+- A gdb pipe must be DRAINED (non-blocking `os.read` on the fd, stamped with wall time) or 64 KB of
+  hit lines stalls the inferior at the next printf; and `set print frame-quiet` is not a command in
+  this gdb (it aborts the whole command file with "Undefined set print command").
+- **Arm a boundary watch only after HOLDing every record** (`+17` = 2 poked with TracerPid 0, then read
+  back): with any actionable unit the auto-end gate never fires, so the loop sits parked on
+  `cur_player == ours` through Return, `h` and OK clicks and burns the whole timeout without a single
+  year flip. Held units flip a round in 1-2 s, which is what makes a multi-boundary watch cheap.

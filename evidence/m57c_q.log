@@ -1,0 +1,62 @@
+[New LWP 1538435]
+[New LWP 1538434]
+[New LWP 1538433]
+[New LWP 1538432]
+[New LWP 1538431]
+[New LWP 1538430]
+[New LWP 1538429]
+[New LWP 1538425]
+[New LWP 1538424]
+[New LWP 1538423]
+[New LWP 1538422]
+[New LWP 1538421]
+[New LWP 1538420]
+[New LWP 1538419]
+[New LWP 1538418]
+[New LWP 1538417]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf679832c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4ef7f1
+Breakpoint 2 at 0x4f0a3d
+Breakpoint 3 at 0x4efed8
+Breakpoint 4 at 0x4efeec
+ADD#1 before=7 d0=2 head=2 pend=1
+GATE#1 storage=7 price=72 pend=1
+ADD#2 before=7 d0=2 head=2 pend=1
+GATE#2 storage=7 price=72 pend=1
+ADD#3 before=7 d0=2 head=2 pend=1
+GATE#3 storage=7 price=36 pend=1
+ADD#4 before=7 d0=2 head=2 pend=1
+ADD#5 before=7 d0=2 head=2 pend=1
+ADD#6 before=7 d0=2 head=2 pend=1
+ADD#7 before=7 d0=2 head=2 pend=1
+ADD#8 before=7 d0=2 head=2 pend=1
+ADD#9 before=7 d0=2 head=2 pend=1
+GATE#4 storage=7 price=36 pend=1
+ADD#10 before=7 d0=2 head=2 pend=1
+ADD#11 before=7 d0=2 head=2 pend=1
+GATE#5 storage=7 price=36 pend=1
+ADD#12 before=7 d0=2 head=2 pend=1
+GATE#6 storage=7 price=36 pend=1
+ADD#13 before=7 d0=2 head=2 pend=1
+GATE#7 storage=7 price=36 pend=1
+ADD#14 before=7 d0=2 head=2 pend=1
+ADD#15 before=7 d0=2 head=2 pend=1
+ADD#16 before=7 d0=2 head=2 pend=1
+GATE#8 storage=7 price=180 pend=1
+ADD#17 before=7 d0=2 head=2 pend=1
+ADD#18 before=7 d0=2 head=2 pend=1
+ADD#19 before=7 d0=2 head=2 pend=1
+ADD#20 before=7 d0=2 head=2 pend=1
+ADD#21 before=7 d0=2 head=2 pend=1
+PAY#1 before=9 edi=9
+CLMP#11 storage=0 cap=11 d0=104
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf679832c in __kernel_vsyscall ()
+[Inferior 1 (process 1538414) detached]

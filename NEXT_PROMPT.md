@@ -1,221 +1,157 @@
-# NEXT_PROMPT.md — footing for the next session (written at the M56 close, 2026-10-25)
+# NEXT_PROMPT.md — footing for the next session (session 98 close, 2026-10-26)
 
-## THE LEDGER — read this first: the whole state of the project
+## THE LEDGER
 
-Closed (PRs merged to `main`):
-- **M54A–M54E** (#39-#44): driver survives a full game / 40 saved turns / ORDERS / queues a MOVE
-  / the ordered WALK lands. **M54F-M54i** (#47-#50): type byte settled, founding keyed, chooser
-  geometry, attribution by record DIFF.
-- **M54i2 / M54j / M54k** (#51-#53) + **M54k2** (#54): own-base walks, MULTI-LEG walks across
-  TURN COMPLETEs, the PRE_ARM hook, the hook-shape PASS. **The walking arc is CLOSED.**
-- **M55 — the solo round boundary read end to end and accounted** (#55, session 91).
-  `scripts/m55_boundary.py` prints PASS on a real invocation, FAILs on a hand-typed fixture.
-- **M56 — WHY NOTHING GETS BUILT: the gate is MINERAL STORAGE, natural queues are EMPTY on every
-  base, session 91's "zero production" was a false negative** (session 92 + close addendum in
-  `SESSION_NOTES.md`; `m56_build.py` PASS, `test_m56_predict.py` 8/8, fixture exit 1; mechanics in
-  `NAMED.md:489` "M56 block").
-- Open spines (`ROADMAP.md:86` is S2, the solo turn advance): **S1** (production rebuild), **S2**
-  (heartbeat — M55 opened the boundary, M56 settled its production step, M57 continues),
-  S3/S4/S5 untouched as spines.
+Merged: **M54A–M54E** (#39-#44), **M54F–M54i** (#47-#50), **M54i2/M54j/M54k** (#51-#53),
+**M54k2** (#54), **M55** (#55), **M56** (#56). Session 98 **PASSED M59**
+(`python3 scripts/m56_build.py --ui-queued 17 --boundaries 10 --timeout 400 --no-poke-hold`
+-> `PASS production prediction: 1 verified unit arrivals over 10 boundaries ... 0 memory writes`,
+50 ok checks / 0 BAD, trace `evidence/trace_m56_build_20261026_145157.jsonl`), so **M57 + M58 +
+M59 merge together** on `milestone/m59` (that branch carries M57's 13 commits and all of M58,
+which session 97 left unmerged because its acceptance never printed PASS — M57's acceptance
+command is the same `--ui-queued` mode, and it has now printed PASS). The submit is ONE PR
+covering all three; say so in the report.
 
-## WHAT SESSIONS 91-92 ESTABLISHED — do not re-learn these the hard way
+## WHAT SESSION 98 SETTLED (do not re-learn)
 
-1. **The solo heartbeat is the player WALK in `FUN_00520c10`**, not the MP stage machine; it
-   ROTATES (starts after our id): `[0,2,3,5,6,7]` at 2229-2232. `DAT_0091c630` (stage) stayed 0 in
-   every solo sample — never floor on stage in solo.
-2. **PRODUCTION, settled by controlled poke (M56)** — this SUPERSEDES session 91 items 2/6:
-   - Queue processor `0x4ef6d0` (pipeline stage 6 of `0x4f5a70`, `ghidra_out/shard_012.c:24182`)
-     completes a queue head iff **mineral storage `base+0x40` >= price**, price =
-     `0x4e40a0(owner,1,-1) x type_cost(+41)` = 10 x cost in-mask. Pay -> **clamp B
-     `max(0,min(10,d0))`** (`0x4f0cc3-0x4f0ce9` re-caps storage after the debit) -> POP `0x4ef5d0`
-     (pending `+0x4c` −1, queue `+0x50..` left-shift, `faction[head]−1` at `0x94dc84`) ->
-     `FUN_005ab650` creates the unit ON the base tile, order 0.
-   - Per-round chain: `0x5208f0(p)` -> `0x520540(p)` -> per-owner base loop
-     (`ghidra_out/shard_013.c:11568`) -> `0x4f5a70(base)` -> `0x4ef6d0` — **every base every round
-     in solo; there is no separate production phase**. The `faction+0x104 & 2` gate at `0x521070`
-     guards only the AI upkeep step `0x574370` — session 91's "sliders +0x104 = 0 -> nothing can
-     build" read the wrong step.
-   - **`+0x3c` progress / `+0xcc` rate do NOT gate**: the armed base had income 0, rate 1, progress
-     32 and produced on the very next boundary. M53i's `cost <= +0xcc + +0x3c` completion test is
-     the OUT-mask race scan / display path (`0x4ee8c7` "display only"), not the queue.
-   - **Why nothing builds naturally**: pending 0 + head −38 (`0xffffffda` = empty) on ALL bases,
-     net income `+0xd0` = 0 everywhere — the gate can never fire. Session 90 was RIGHT (produced
-     units arrive order 0 on base tiles); session 91 counted only OUR-side -> false negative.
-     Enemy bases produce every boundary (queues refill inside their AI turn — enemy predictions
-     are REPORTED only).
-3. **A produced unit FREEZES the auto-end.** Auto-advance ("No units need orders Press ENTER",
-   `FUN_00520c10(2)` gated on `DAT_0091f69c & 1`) only fires when NOTHING is actionable; a fresh
-   order-0 garrison is actionable, the cursor parks on it, Return for 150 s does nothing. ONE `h`
-   on the cursor unit closes the turn at once (`tf 0->2`, walk resumes) — `m56_build.py` escalates
-   Return -> `h` every 4 s past 8 s. Best candidate explanation for session 91's 2204 90 s stall.
-4. **Modal event dialogs FREEZE the walk** (eradication/tech/lost-unit popups; Return every 2 s
-   dismisses; the chain can open the PLANET display, which eats Enter). **The Operations Director
-   popup does NOT close on Return** — default row "Zoom to Base Control", Return CYCLES options;
-   click OK at window coords ~(630,247). **Never press Escape on the tactical map** — quit prompt
-   (its OK banned; "Oops, no, wait!" is the default, Return takes it).
-5. **The support cliff**: produced units DIE at upkeep when their base has no mineral income
-   (popup "...not sufficient to support...has been disbanded"; our units 7->3 at 2221-2222). Do
-   not read a disband as "never produced": the arrival is verified at the boundary, death later.
-6. **Record bytes are rewritten in place at the boundary**: u16 +28 (legs_y[0]), +48, +50 each
-   decrement by 1 per round while dead units compact out. Identity for accounting is
-   **(x, y, type, owner, order)** — never 52-byte equality, never the record index.
-7. **Order semantics at the boundary**: transient AI orders (9, 14, 24, 27, 88) reset to 0 IN
-   PLACE; order 24 = cargo/unload materialisation; produced units arrive **order 0 on a base tile
-   of their own faction**. Floor only OUR side; label enemy-side attribution confounded.
-8. **Research completes live** (M55 captures). Our `labcnt` reads 229 while others read 5-137 and
-   p0 reads −1 — **`LAB_ARR` indexing is unverified after player 1 (Gaians) died** (active_mask
-   0xFF -> 0xFD, now 253). Read the array around the record before trusting lab counts.
-9. **We are LOSING**: University Base captured at 2214->2215; box at M56 close: **year 2232, 1
-   base (Korolev Center 29,42), units_ours 2, n_bases 29, pid 1329211**. Reload recipe:
-   `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` (BARE filename) -> HUD at
-   2150; `m54g_prep.py` + a founding turn re-creates Korolev Center. Expect to reload BEFORE
-   measuring.
-10. **`turn_flags` 0x100000 is set by Enter and cleared at the boundary**; with auto-end no flip
-    appears. Energy deltas readable for 7-8 factions every round; spending ledger `faction+4` zero
-    after upkeep; energy never negative.
+**PENDING IS NOT THE QUEUE TRUTH — the HEAD SLOT is.** In the per-base visit `FUN_004ef6d0`
+(12 KB, called from `FUN_004f5a70@0x4f5adc`): income add `0x4ef7f6` → price gate
+`0x4efa2c-0x4efa61` (`ebx = [base+0x50]` = HEAD SLOT; `edi = 0x4e40a0(owner,1,-1) ×
+0x5ac950(ebx, base, 0)`; `cmp [ecx+0x40], edi; jge 0x4efadc`) → pay `0x4efedd` (`esi = [ecx+0x40];
+esi -= edi; [ecx+0x40] = esi`) → clamp `0x4eff02-0x4eff23` → **create-unit `0x5ab650(type, ?, x, y)`
+@ `0x4eff4e`**, guarded at `0x4eff32` by `[base+0x10] == 0`. Block-level CFG (`scratch/m59/dom.py`):
+with the pay block removed, `0x4eff4e` is unreachable from the entry AND from the gate — **the pay
+DOMINATES the create**, and nothing between them reads `+0x4c`. The pop `FUN_004ef5d0` returns at
+`0x4ef5f4` when pending == 0, is called later (`0x4f037b`, `0x4f0f46`; `0x4ef992` is NOT reachable
+from the pay) and only left-shifts `+0x50..` and decrements pending (`0x4ef642`) plus the
+per-faction queued-count byte `[0x94de84 + owner*0x20bc + type*4]` (`0x4ef613 dec BYTE PTR [ecx]`).
 
-## THE PICK — M57: GIVE THE LOOP AN ECONOMY (S2, production)
+**Measured one-variable with an internal control** (`scripts/m59_head.py`): Korolev Center pending
+0 head 2, minerals poked `0 -> 9` (read back), all our units held, University Base untouched at 0
+→ one turn later Korolev minerals `9 -> 0` (= the derived price 9), income `0 -> -1` (the new
+unit's upkeep), **pending 0 -> 0**, head 2 -> 2, tile 5 → 6 units of (type 2, ours); control base
+unchanged. **A base with an EMPTY queue re-buys the head's type every round it can pay.**
 
-Do exactly ONE milestone, then stop. Do not re-verify closed work.
+**NAMED.** `0x5a73f0(type, owner, base)` = buildable-here: needs type-record `[+0x30] & 1`, owner
+NOT in the exclusion dword `[+0x2c]`, required facility/project `[+0x32]` == -1 or
+researched-and-owned; `type >= 0x40` is faction-specific (`(type>>6) == owner`); also rejects
+plan `[+42] == 8` when `0x985ac4 & 0x400000` and rejects when class byte `[+0x24]` indexes
+`[0x92ae81] == 1` while `0x4e4620(x, y, 0) == 0`. `0x5a6e70(-id, owner, base, 0)` = the same for
+a facility/project item (the queue keeps those NEGATIVE). `FUN_004e47d0` (from `0x4ccbdd`,
+`0x59d894`, `0x5a01f8`) initialises a base: zeroes `+0x30 +0x34 +0x3c +0x40 +0x4c`, sets `+0x38`
+from `[faction+0x94d600]`, then `FUN_004e46f0(base)` scores every buildable type
+(`[+38]<<4` → table `0x92fd18`, ×32, ×4/×3/×2 by `[+43]`, `+ ([+40]*0x90 → [0x92ae81])`, `>>2`,
+minus the `+41` cost) and writes the winner to the HEAD SLOT ONLY. `FUN_004e5560(base, new_head)`
+writes the head + adjusts the queued-count byte (`dec` old `0x4e55b5`, `inc` new `0x4e55dd`).
+`FUN_004e5ae0(base, 0)` — called SIX times from the visit, first at **`0x4ef87e`, BEFORE the gate**
+— refreshes the head via chooser `0x4f6030` for owners outside `0x985b10`, or when `+0x38` sign is
+clear, or whenever param_2 == 0 (which is the case at `0x4ef87e`: `push 0; push base`). Pending is
+written at only four absolute sites: `0x4e4982`, `0x4ef642`, `0x50890d`, `0x543b26`.
 
-M56 proved the gate but only with a MINERALS POKE arming the queue (pending 0->1, head −38->2,
-minerals 0->100). The loop cannot yet get anything built the way the GAME does it. M57 must close
-one of these two shapes, from memory:
+**The rule** (`predict()`): OUR bases only (`0x91b5b4`; other owners' heads are re-picked by their
+own visit at `0x4ef87e` before their gate — enemy arrivals stay REPORTED, never floored) ∧ head is
+a unit type (0..0x3f) ∧ owner in `0x985b10` ∧ `storage (+ income) >= price`, price =
+`0x4e40a0(owner,1,-1) × type_record[+41]` (M58: `[0x92ada8] == 1` → factor 9 in this box; the LOAD
+pane says `difficulty level: talent`). `pop_expected = arrive and pending > 0`.
 
-(a) **A real (non-poked) positive prediction**: reload `m54b_clean.SAV` + re-found; get one
-arrival predicted + verified where the QUEUE was filled by the GAME, not our poke. The AI chooser
-`0x4f6030` fills enemy queues; ours needs the BUILD UI (`0x417ee0` queue-edit dispatch) or a
-mineral-yielding facility (`+0xd0` > 0) so storage >= price fires naturally.
-(b) **The facility side**: queue a facility (negative queue head) at an armed base and floor the
-`+0x8c` facility-bitmap delta + the `0x417ee0` dispatch from memory.
+**Two timing facts the harness now encodes (both MEASURED, neither a loosened threshold).**
+(a) Bookkeeping pairs bases BY NAME — the array compacted Korolev 18 → 17 mid-run again.
+(b) A paid window can show no unit: `..._144801` r2 paid `8 -> 1` with pending still 1 at BOTH
+snapshots, our unit total went 6 (r2-after) → 7 (r3-before) with r3's own window adding nothing —
+the create landed in the snapshot GAP. F1 therefore verifies an arrival in the pay window OR by the
+next window's before-snapshot (same tuple, same tile, mineral identity still exact).
 
-Acceptance: `scripts/m56_build.py` (extended) prints PASS on ONE real invocation with a positive
-completion **not armed by a minerals poke**; a hand-typed fixture must still FAIL. A DOCUMENTED
-NEGATIVE merges only with base-field evidence (which field says why the game never queued anything).
+**CONFLICTS on the record (not silently picked).** The skill's `production-queue.md` said the
+queued-count byte lives at `0x94dc84`; the pop instruction reads `0x94de84` (`0x4ef613`). The old
+m56 docstring called the pay `0x4f0ca6`; the gate's pay store is `0x4efedd` (there IS another
+`+0x40` store at `0x4eff20` in the same function). Both are reported in the skill and in
+SESSION_NOTES; neither is resolved by a poke.
 
-Do:
-1. Read `NAMED.md:489` (M56 block) + `ghidra_out/shard_012.c` around `0x417ee0` (queue edit) and
-   `0x4f6030` (AI queue fill). Name what fills a queue and what the BUILD UI writes.
-2. Decide shape (a) or (b) from what the code says; state reload + re-found FIRST if the box is
-   below ~5 units (it is: 2).
-3. Extend `scripts/m56_build.py` (or a sibling) for the chosen shape; add rule cases to
-   `scripts/test_m56_predict.py`; the fixture in `scratch/` must FAIL the extended verifier.
-4. Do not weaken floors to make a run pass. Strengthening is allowed.
+## THE PICK — M60: THE CHOOSER AND THE CREATE GUARD
 
-## FIRST (nothing else)
+One milestone, then stop. Do not tune `predict()` to observations.
 
-1. Read `NEXT_PROMPT.md` in full — it is this file; it IS the footing.
-2. `tail -80 SESSION_NOTES.md` — Session 92 + its close addendum are the recent work. Never read
-   the whole file.
-3. `git status`; `git branch --show-current` (never `main`); `python3 scripts/milestone.py start M57`
-   FIRST — it creates the branch off `origin/main`.
-4. `python3 scripts/smac_state.py --json` + `scripts/m54d_census.py` — box at M56 close: 1 base,
-   2 units, year 2232. If a base is gone or the state reads impossibly, reload (item 9 recipe).
-5. Only then touch Ghidra exports / the production script.
+1. NAME `FUN_004f6030(base, 0, 0, &budget)` — the chooser `FUN_004e5ae0` calls before the gate
+   (its scratch is record `+0x14..+0x30` = `0x8f0d74..0x8f0d90`, seeded to 0 / 999999 by
+   `0x4e5ae0`; the `+0x38` bits `0x1000000/0x2000000/0x4000000/0x8000000` select which pick it is
+   on). Cite disasm lines; re-read every store before believing a decode.
+2. Explain what writes `[base+0x10]` (the create guard at `0x4eff32`) and prove BY POKE whether a
+   nonzero value is what makes a paid window produce no unit. One variable, control base untouched,
+   read back.
+3. Only then decide whether another faction's next production is predictable at all; if it is,
+   extend the rule and add rule cases; if it is not, say so and leave the scope as is.
+4. Acceptance: `python3 scripts/m56_build.py --ui-queued <Korolev idx> --boundaries 10 --timeout
+   400 --no-poke-hold` prints **PASS** on ONE real invocation. If it cannot, record the negative
+   and merge nothing.
+5. `python3 scripts/test_m56_predict.py` (17/17 today) and the bad fixture (exit 1) stay green;
+   add cases for anything new.
 
-## WHERE THE KNOWLEDGE LIVES
+## LIVE FACTS / KIT
 
-- `ROADMAP.md:86` — the S2 row (turn advance, solo). Read the row before committing to shape.
-- `SAVE_FORMAT.md:141` — the 304-byte base record (x@0, y@2, faction LOW byte @+4, name@19..51);
-  `SAVE_FORMAT.md:159` — the 52-byte unit record (type u16@+10, owner@+14, order@+17, legs
-  @+20..+35, mp@+40, flag dword@+4). Queue/accumulator fields settled in `NAMED.md:489`.
-- `ORDERS.md:543` §15 — production at the boundary: the gate, the two freezes, the acceptance cmds.
-- `scripts/m56_build.py` — **the instrument to extend**: natural-state snapshot, `--arm N` poke +
-  read-back, per-base predictor (pending/head/minerals/price), arrival + bookkeeping verifier,
-  Return->`h` escalation, Operations Director OK click, `--fixture` mode.
-- `scripts/test_m56_predict.py` — mock-/proc/mem rule cases (8 today): extend alongside the rule.
-- `scripts/m55_boundary.py` — the boundary sampler/accountant (`G`, `FFIELDS`, `snapshot()`,
-  `poke_hold()`, `account()`, the 2 s Return dismisser) — reuse for any new boundary script.
-- `ghidra_out/shard_012.c` — queue pipeline `0x4f5a70`/`0x4ef6d0`/`0x4f0a3d`, pop `0x4ef5d0`,
-  unit creation `FUN_005ab650` (:20890 area), stage-6 call (:24182 area); `shard_013.c` — solo
-  round machine `FUN_00520c10`, upkeep `FUN_005208f0`, per-owner base loop (:11568 area).
-- The live skill `~/.hermes/skills/smac-cvr-format/` (repo copy `skill/`): SKILL.md,
-  `references/production-queue.md` (NEW, M56), `references/wine-operations.md`,
-  `references/terraforming-order-path.md`, `references/production-rebuild.md` (S1 notes).
+- **Box at session-98 close:** terran.exe alive, year **2182**, n_bases 22, ours 2 — University
+  Base (28,42) idx 0 min 4 income 0 pend 0 head 2; Korolev Center (29,42) idx 17 min 0 income 0
+  pend 0 head 2; 10 ours units, 0 actionable (all held). **Preflight first:**
+  `python3 scripts/smac_preflight.py` (read-only, exit 1 on FAIL).
+- **Reload when the bases stop accruing** (they do — upkeep eats the yield):
+  `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` (BARE filename; prints
+  `difficulty level: talent`) → `python3 scripts/m54g_prep.py` → `python3 scripts/smac_play.py
+  --turns 1 --timeout 200 --no-escape 3000 --orders-per-turn 1 --verbose --tag t` (founds Korolev
+  at (29,42), prints "Korolev Center founded") → locate Korolev **BY NAME**
+  (`python3 scripts/m59_head.py --stage read`) → `python3 scripts/m57_ui_enqueue.py --base-index
+  <fresh idx> --cell-item 2 --inserts 1` → `python3 scripts/m59_head.py --stage read --hold` → the
+  acceptance run WITH `--no-poke-hold` (any write, including the run's own `poke_hold`, fails the
+  provenance floor).
+- `python3 scripts/m59_head.py [--stage read|poke --base NAME --minerals N] [--hold]` — the M59
+  instrument: minerals/income/pending/head/`rec10`/derived price/per-tile unit multiset for both
+  our bases; `--hold` pokes every one of ours to order 2 and reads back.
+- `python3 scripts/m58_price.py [--owner 3] [--type 2]` — the price chain from live memory.
+- `python3 scripts/m57_stores.py --base "Korolev Center" --boundaries 3 --timeout 220 --tag t` —
+  the `+0x40` store tracer (arm only when no gdb runs; `python3 scripts/m57_credit.py --stop`
+  detaches a leftover). Pokes LIE under a tracer: poke and read back before attaching.
+- `scratch/m574/text.txt` (whole `.text` objdump), `scratch/m59/queue_census.py` (every store to
+  the base array `0x95da10+i*0x130` and to the faction array `0x94de84`, grouped by record offset,
+  plus the pop call sites) and `scratch/m59/cfg.py` + `scratch/m59/dom.py` (block-level CFG and
+  the "must-reach-through" test for `FUN_004ef6d0`) are on disk, gitignored. Regenerate the dump:
+  `objdump -d -M intel --section=.text programs/terran.exe > scratch/m574/text.txt`.
+- Rule cases today: `test_m56_predict.py` 17/17; `m56_build.py --fixture
+  scratch/m56_fixture_bad.json` exit 1; `test_walk_diff.py` 37/37; `test_classify.py` 17/17;
+  `check_classes.py` 17/0 (delete the untracked `*_3x.png` siblings right after).
+- **Evidence 28.9 MB, the gate FAILs at 30.** `python3 scripts/evidence.py budget` before adding
+  anything; delete `trace_m56_build_*` files that `--fixture` runs leave and any `*_3x.png`.
 
-## OPERATIONAL KIT
+## TRAPS
 
-- Production: `python3 scripts/m56_build.py [--arm N] [--boundaries N] [--timeout 120]
-  [--fixture FILE]` — snapshots queues, arms one base (poke + read-back), predicts, presses
-  Return/`h` to close turns, verifies arrivals + bookkeeping per boundary; exit 0 only when every
-  floor is `ok`. Trace JSONL to `evidence/`.
-- Boundary: `python3 scripts/m55_boundary.py [--timeout 300] [--poll 0.002] [--settle 0.3]
-  [--no-poke] [--no-enter] [--fixture FILE] [--trace PATH]`.
-- State / census: `scripts/smac_state.py --json`, `scripts/m54d_census.py`,
-  `scratch/m54k_watch.py [secs x y]` (0.5 s memory diff watcher), `scratch/m56_dump.py` (queues).
-- Driver (reload+refound): `scripts/smac_play.py --turns N --timeout 240 --no-escape 3000
-  --orders-per-turn 1 --verbose --tag <t>`; check: `scripts/m54a_check_run.py <trace> --timeout
-  240 --min-own-base-arrivals 1`.
-- Tests: `test_m56_predict.py` 8/8, `test_walk_diff.py` 37/37, `test_classify.py` 17/17,
-  `check_classes.py` failures: 0; delete `evidence/**/_3x.png` after classifier runs. Check
-  `evidence.py budget` BEFORE adding frames/traces (gate FAILs at 30 MB; a trace is ~50 KB).
-- Wine: prefix `./programs/prefix` == `~/.wine-smac32`, `DISPLAY=:99`, Xvfb :99 800x600x16, window
-  "Sid Meier" (xdotool). `pgrep -x terran.exe` (NEVER `-f`).
-
-## TRAPS THAT COST A SESSION HOURS (all measured)
-
-- **A modal dialog is invisible to memory reads** — `cur_player` stops moving, every semaphore 0.
-  Suspect one whenever the walk stalls > 30 s. The Operations Director popup needs the OK CLICK
-  (~(630,247)), not Return. A produced unit needs ONE `h`, not Return.
-- **Never press Escape on the map** — quit prompt (its OK is banned).
-- **Record indices lie across a boundary** (compaction rewrites +28/+48/+50, reshuffles slots);
-  content is identity. A same-type headcount is not an arrival.
-- **A disband is not a non-production** — verify the arrival AT the boundary; upkeep kills the
-  unit later if the base has no income (support cliff).
-- **One variable at a time.** A unit that vanished while an identical one appeared elsewhere is a
-  MOVE (or production+death pair) — write "confounded", never "because".
-- **`LAB_ARR` may not be indexed by player id** after a faction died. Read around the record.
-- **With everything HELD the game auto-advances ~8 s/round** — a turn record can span two year
-  flips; keep the "exactly two distinct years" floor + the 0.2 s year poll.
-- OCR is 1-15 s a poll and LIES; memory + "nothing drawn in the modal band" is the clean-HUD
-  oracle (the production banner garbles OCR, session 89).
-- Reload recipe: BARE filename (`m54b_clean.SAV`); LOAD browser opens IN the saves dir; dismiss
-  the error, type the filename, OK, click (290,391).
-
-## THE 10 RULES — condensed from sessions 75-92
-
-1. One milestone per session, then stop. Do not re-verify closed milestones.
-2. Commit early (a commit on the branch is the only thing that survives an overflow).
-3. Patch docs; never read-then-write a doc over 10 KB.
-4. Keep tool results small: grep/sed windows, `evidence.py show`, tail. Never cat a log.
-5. New screen classes go into `test_classify.py` AND `check_classes.py` with saved frames BEFORE
-   they go into the driver.
-6. Acceptance is a script printing `PASS` on one real invocation; prove it FAILs on a hand-typed
-   fixture. Never weaken a gate; strengthening is allowed. Documented negatives may merge.
-7. Verify state by reading memory, never by trusting a screenshot or a keypress you sent.
-8. Before `git add -A`, sync `skill/` from the live skill and commit it in the same commit.
-9. `gate.py` needs BOTH `SESSION_NOTES.md` and `NEXT_PROMPT.md` updated and every
-   `evidence/<file>:<line>` citation you add must resolve. It refuses `main`; submit/merge refuse
-   a dirty tree.
-10. Report in the established style: what changed, the acceptance numbers WITH the command that
-    produced them, what is open, next pick.
+- `m57_ui_enqueue.py` on a just-founded base can read an EMPTY chooser (`FAIL: item 2 not in
+  candidate array []`); a second attempt works. Do not conclude the item is unresearchable.
+- The after-snapshot can catch the player walk mid-round (`cur_player 6` at the snapshot) — that
+  burned run `..._145103` at r2. It is a harness race: RE-RUN, do not edit the floor.
+- The base array compacts mid-run (18 → 17 twice now): locate bases BY NAME every step; the
+  bookkeeping pairs by name, and the `--ui-queued` index is only the START index.
+- A base display left open swallows every turn-end key (Escape closes a PANE safely; Escape on the
+  bare map raises the quit prompt — never click OK on it). The units-not-moved confirm takes NO
+  Return (`m56_build` clicks YES then the OK bar 26 px below). Orders mode `0x91b5b8 == 0` makes
+  every order key a no-op; `m57_ui_enqueue` restores it after the enqueue.
+- gdb: no `si` inside a breakpoint command list; `set print frame-quiet` is not a command in this
+  gdb; stdout must be DRAINED. For a plain `mov [reg+disp],src` the source operand IS the after
+  value. `os.pread` on `/proc/<pid>/mem` EIOs here — `seek`+`read`. Popup BARS ignore clicks
+  (Return works on the default row); MENU click (75,369); TURN COMPLETE (650,410).
+- One variable at a time; if two things moved together write "confounded". Documents lose to
+  instruction bytes only after a poke — until then REPORT the conflict (this session reported two:
+  `0x94dc84` vs `0x94de84`, pay `0x4f0ca6` vs `0x4efedd`).
+- Never: commit to main; `pkill -f` / `pgrep|kill` by name; Escape on the title screen; OK on the
+  quit prompt; `--mode stop`; `file://` with `--load`; a clear-prefixed command; backticks in a
+  commit message; `skill_manage delete`.
 
 ## CLOSING ORDER (exactly)
 
-1. Patch a `## Session <N>` entry into `SESSION_NOTES.md` (acceptance numbers + the command that
-   produced them + Next).
-2. Rewrite `NEXT_PROMPT.md` for the next session, then `wc -c NEXT_PROMPT.md` (must be <= 15,500).
-3. `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`
-4. `git add -A && git commit -m 'M57: checkpoint'`
-5. `python3 scripts/gate.py --base main` (must be GREEN)
-6. `python3 scripts/milestone.py submit --title "..."` -> note the PR number ->
-   `gh pr checks <n>` -> `python3 scripts/milestone.py merge <n>`
-Then STOP and report.
+1. `## Session <N>` in `SESSION_NOTES.md` (what changed, numbers WITH the command, open, next pick).
+2. Rewrite this file; `wc -c NEXT_PROMPT.md` <= 15,500.
+3. `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/` (the gate checks the sync).
+4. `git add -A && git commit -m '<ID>: checkpoint'`.
+5. `python3 scripts/gate.py --base main` — GREEN.
+6. Submit/merge ONLY on a real PASS: `python3 scripts/milestone.py submit --title "..."` →
+   `gh pr checks <n>` → `python3 scripts/milestone.py merge <n>`. Otherwise say so and merge nothing.
 
-## IF YOU HIT "request exceeds the context window"
+## Report
 
-In your very next tool call run `git add -A && git commit -m 'M57: checkpoint'`, then reply with
-what is done and what is not. Do not compress and do not rewrite docs to recover.
-
-## Never
-
-commit to `main`; `Escape` on the title screen OR on the tactical map; `pkill -f`/`pgrep|kill` by
-name (matches this shell); click OK on "Do you really want to quit?"; `--mode stop`; `file://` with
-`--load`; a `clear`-prefixed command; backticks in a commit message; a `MEDIA:` line unless you
-attached a file; `skill_manage delete`; `nohup`/`&` in a tracked terminal call (use
-background=true); hand-computed parity sums; parking a unit on an unchecked tile.
-
-## Report style (what a finished session looks like)
-
-One screen: what changed, the acceptance numbers WITH the command that produced them, what is
-open, next pick. No narration.
+One screen: what changed, the acceptance numbers WITH the command, what is open, the next pick.
