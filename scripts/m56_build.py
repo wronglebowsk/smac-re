@@ -251,7 +251,14 @@ def main():
                         subprocess.run(["xdotool", "click", "1"], check=False)
                     log(dict(event="click_ok", r=rnum, t=round(time.time()-t0, 3), xy=OK_XY))
                     last_ok = time.time()
-                if flip_t is not None and time.time() - flip_t >= a.settle:
+                # M57-3: break as soon as the WALK IS HOME after the flip, not after a fixed
+                # settle. With everything held the engine auto-ends and the next round can
+                # flip 1-2 s after this one (measured r4/r5: year delta 2), so a fixed sleep
+                # either misses the walk (settle too short) or swallows the next flip (too
+                # long). The floor is unchanged — the after-snapshot must show cur_player ==
+                # ours; this just takes it at the right instant.
+                if flip_t is not None and (row["cur_player"] == our
+                                           or time.time() - flip_t >= max(a.settle, 4.0)):
                     break
                 time.sleep(a.poll)
             log(dict(event="timeline", r=rnum, rows=timeline))
