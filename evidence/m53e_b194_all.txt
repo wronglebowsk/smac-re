@@ -1,6 +1,0 @@
-ghidra_out/shard_012.c:12269:        FUN_005b1940();
-ghidra_out/shard_015.c:3692:LAB_0058b194:
-ghidra_out/shard_015.c:3700:             (((&DAT_0093329f)[iVar4] & bVar6) != 0)) goto LAB_0058b194;
-ghidra_out/shard_015.c:27272:// ==== FUN_005b1940 @ 0x5b1940 size=593
-ghidra_out/shard_015.c:27276:uint FUN_005b1940(uint param_1,uint param_2)
-ghidra_out/shard_015.c:28118:  FUN_005b1940(0xffffffff,0xffffffff);

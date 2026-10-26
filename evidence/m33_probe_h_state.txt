@@ -1,2 +1,0 @@
->>> h 19:36:23
-sel rec58 x=43 y=11 flags4=67108864 type=195 owner=3 order=0 nlegs=0 leg=0 dx=-1 dy=-1 mpused=0 dir=1 prev=-1 next=-1

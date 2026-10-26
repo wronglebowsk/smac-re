@@ -1,1 +1,0 @@
-{"turn": 1, "year_before": 2269, "t": "21:14:22", "handled": ["dialog", "ai-phase:dialog", "hud", "ai-phase:hud", "unknown", "ai-phase:unknown"], "screens": {"dialog": 1, "hud": 1, "unknown": 1}, "year_after": 2270, "advanced": true, "dt": 7.1}

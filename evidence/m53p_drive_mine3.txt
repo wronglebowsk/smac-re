@@ -1,2 +1,0 @@
-win=10485761 start year=2382
-turn 0: 2382->2383 OK (57.9s, unknown,hud,confirm-after-press,dialog,ai-phase:dialog)

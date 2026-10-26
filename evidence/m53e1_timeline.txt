@@ -1,7 +1,0 @@
-[16:55:32] step 1: row-1 click did NOT open the chooser
-[16:55:44] step 2: row-1 click did NOT open the chooser
-[16:55:55] step 3: row-1 click did NOT open the chooser
-[16:56:03] step 4: row-1 click did NOT open the chooser
-[16:56:16] step 5: row-1 click did NOT open the chooser
-[16:56:30] step 6: row-1 click did NOT open the chooser
-[16:56:30] final idx=70 f40=0 f44=3 f48=0 f4c=0 q=['0x3', '0x3', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']

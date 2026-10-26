@@ -1,2 +1,0 @@
-win=10485761 start year=2382
-turn 0: 2382->2382 STUCK (211.8s, base,ai-phase:base,base,ai-phase:base,base,ai-phase:base)
