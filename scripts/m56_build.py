@@ -83,6 +83,10 @@ def arrivals_on_bases(before_u, after_u, tile2base):
 def press_return():
     subprocess.run(["xdotool", "key", "--clearmodifiers", "Return"], check=False)
 
+
+def press_key(k):
+    subprocess.run(["xdotool", "key", "--clearmodifiers", k], check=False)
+
 def find_win():
     try:
         return subprocess.check_output(["xdotool", "search", "--name", "Sid Meier"],
@@ -158,7 +162,7 @@ def main():
             # (Operations Director: "Zoom to Base Control" is the default row and
             # Return cycles the options instead of closing) is clicked at OK.
             t0 = time.time(); timeline = []; last = None
-            last_press = 0.0; last_ok = 0.0; flip_t = None
+            last_press = 0.0; last_ok = 0.0; last_h = 0.0; flip_t = None
             deadline = time.time() + a.timeout
             while time.time() < deadline:
                 row = M.timeline_row(m)
@@ -169,6 +173,14 @@ def main():
                 if time.time() - last_press > 2.0:
                     press_return(); log(dict(event="press_enter", r=rnum,
                                              t=round(time.time()-t0, 3))); last_press = time.time()
+                if flip_t is None and time.time() - t0 > 8.0 and \
+                        row["cur_player"] == our and time.time() - last_h > 4.0:
+                    # A produced unit arrives order 0 (actionable) and the auto-end
+                    # gate will NOT fire while an actionable unit exists; the cursor
+                    # parks on it. 'h' gives the CURSOR unit HOLD (measured 2222:
+                    # one 'h' -> turn_flags 0->2, cur_player 3->6) and closes the turn.
+                    press_key("h"); log(dict(event="press_hold", r=rnum,
+                                             t=round(time.time()-t0, 3))); last_h = time.time()
                 if flip_t is None and time.time() - t0 > max(15.0, a.stuck) and \
                         time.time() - last_ok > 6.0:
                     win = find_win()
@@ -208,11 +220,10 @@ def main():
         cp_seen = sorted({t["cur_player"] for t in rd_["timeline"]})
         chk(f"r{rd_['r']} boundary: year flipped exactly +1",
             dy == 1, f"year {gb['year']}->{ga['year']} (delta {dy}); cur_player walk {cp_seen}")
-        cp_home = any(t["cur_player"] == gb["our_player"] for t in rd_["timeline"][1:])
-        chk(f"r{rd_['r']} boundary: player walk completed (cur_player reached us in the timeline)",
-            gb["cur_player"] == gb["our_player"] and (ga["cur_player"] == gb["our_player"] or cp_home),
+        chk(f"r{rd_['r']} boundary: player walk came home to us after the flip",
+            ga["cur_player"] == gb["our_player"],
             f"cur_player before {gb['cur_player']} after {ga['cur_player']}; walk seen "
-            f"{sorted({t['cur_player'] for t in rd_['timeline']})}")
+            f"{sorted({t['cur_player'] for t in rd_['timeline']})} (a round may start mid-walk)")
         tile2base = {(b["x"], b["y"]): b for b in rd_["prod_before"]}
         obs = arrivals_on_bases(rd_["before"]["units"], rd_["after"]["units"], tile2base)
         pred_unit = [p for p in rd_["predictions"] if p["predict_arrive"]]
@@ -235,9 +246,12 @@ def main():
             cand = [u for u in rd_["after"]["units"] if keyf(u) == k]
             orders = sorted({u["order"] for u in cand})
             zero_order = 0 in orders
-            chk(f"r{rd_['r']} unexplained arrival {k} on base {o['base']['i']}",
-                not zero_order, f"net +{o['n']} with orders {orders}; no prediction armed that base "
-                                f"(order 0 = produced, nonzero = cargo/sentry-reset)")
+            ours = (o["base"]["fac"] == gb["our_player"])
+            chk(f"r{rd_['r']} unexplained ORDER-0 arrival on OUR base {o['base']['i']}",
+                (not ours) or (not zero_order),
+                f"net +{o['n']} with orders {orders} on base {o['base']['i']} "
+                f"(fac {o['base']['fac']}, ours={ours}); enemy-side arrivals are REPORTED "
+                f"(their queues refill inside their own AI turn - confounded, M55 #5)")
         # F3: queue bookkeeping on bases that were pending before the flip
         for pb in rd_["prod_before"]:
             if pb["pending"] <= 0: continue
