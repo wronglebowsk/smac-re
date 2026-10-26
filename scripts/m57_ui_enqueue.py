@@ -140,7 +140,25 @@ def main():
     # Restore it — this is setup state for a later run, NOT a queue/economy write.
     sp.wr(f, ORDERS_MODE, struct.pack("<i", 1))
     print("orders mode restored:", i32(f, ORDERS_MODE), " sel:", i32(f, SEL_G), flush=True)
+    # The base display this recipe opened is STILL OPEN, and a modal pane swallows every
+    # turn-end key: a 90 s watch sat parked on cur_player 3 with Return/h/OK doing nothing
+    # until the pane was closed (measured 2026-10-26, class `base` with the Operations
+    # Director advice line on screen). Close it and verify by class — Escape is safe HERE
+    # (the pane eats it); it is Escape on the bare map that raises the quit prompt.
+    for i in range(3):
+        png = sp.freeze("m574eq")
+        w = sp.ocr_fast(png)
+        kind = sp.classify(w, sp.region_colors(png), png)
+        if kind != "base":
+            print(f"pane closed after {i} Escape(s): class {kind}", flush=True)
+            break
+        sp.key("Escape")
+        time.sleep(1.6)
+    else:
+        print("WARN: the base pane is still open after 3 Escapes — the turn will not end",
+              flush=True)
     return 0
+
 
 
 if __name__ == "__main__":

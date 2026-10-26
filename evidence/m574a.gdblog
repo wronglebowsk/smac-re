@@ -1,0 +1,56 @@
+[New LWP 2190334]
+[New LWP 2190333]
+[New LWP 2190332]
+[New LWP 2190331]
+[New LWP 2190330]
+[New LWP 2190329]
+[New LWP 2190328]
+[New LWP 2190325]
+[New LWP 2190324]
+[New LWP 2190323]
+[New LWP 2190322]
+[New LWP 2190321]
+[New LWP 2190320]
+[New LWP 2190319]
+[New LWP 2190318]
+[New LWP 2190317]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf398832c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4f5a99
+Breakpoint 2 at 0x4ef7f6
+Breakpoint 3 at 0x4efedd
+Breakpoint 4 at 0x4eff20
+Breakpoint 5 at 0x4f0ca6
+Breakpoint 6 at 0x4f0ce9
+Breakpoint 7 at 0x4f2d7d
+Breakpoint 8 at 0x418aae
+Breakpoint 9 at 0x418b21
+Breakpoint 10 at 0x41a596
+Breakpoint 11 at 0x41dac4
+Breakpoint 12 at 0x4b9df5
+Breakpoint 13 at 0x4b9e30
+Breakpoint 14 at 0x4badb0
+Breakpoint 15 at 0x5b5ba9
+Breakpoint 16 at 0x5fc695
+Breakpoint 17 at 0x5fcbce
+Breakpoint 18 at 0x5fe34e
+Breakpoint 19 at 0x5fe4f7
+Breakpoint 20 at 0x6150a5
+Breakpoint 21 at 0x615625
+Breakpoint 22 at 0x615693
+Breakpoint 23 at 0x62edc8
+Breakpoint 24 at 0x62ef98
+VISIT#1 storage=6 pend=1 head=2 d0=2 f30=0x80001000 f3c=6 fcc=2
+STORE#1 pc=0x4ef7f6 site=visit.income-add before=6 src=8 pend=1 head=2 d0=2 f30=0x80001000 f3c=6 fcc=2
+VISIT#2 storage=8 pend=1 head=2 d0=2 f30=0x80001000 f3c=8 fcc=2
+STORE#2 pc=0x4ef7f6 site=visit.income-add before=8 src=10 pend=1 head=2 d0=2 f30=0x80001000 f3c=8 fcc=2
+STORE#3 pc=0x4efedd site=visit.pay(sub edi) before=10 src=1 pend=1 head=2 d0=2 f30=0x80001000 f3c=8 fcc=2
+VISIT#3 storage=1 pend=0 head=2 d0=2 f30=0x801000 f3c=10 fcc=2
+STORE#4 pc=0x4ef7f6 site=visit.income-add before=1 src=3 pend=0 head=2 d0=2 f30=0x1000 f3c=10 fcc=2
+VISIT#4 storage=3 pend=0 head=2 d0=2 f30=0x1000 f3c=12 fcc=2
+STORE#5 pc=0x4ef7f6 site=visit.income-add before=3 src=5 pend=0 head=2 d0=2 f30=0x1000 f3c=12 fcc=2

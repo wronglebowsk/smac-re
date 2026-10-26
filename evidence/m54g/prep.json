@@ -1,7 +1,7 @@
 {
- "pid": 1584972,
+ "pid": 2190309,
  "state_before": {
-  "year": 2153,
+  "year": 2150,
   "year_start": 2100,
   "year_limit": 2600,
   "turn_no": 0,
@@ -13,34 +13,34 @@
   "sema_done": 0,
   "sema_mp": 0,
   "n_bases": 18,
-  "pid": 1584972,
+  "pid": 2190309,
   "bases_ours": 1,
   "units_ours": 6
  },
  "pokes": [
   {
-   "unit": 7,
+   "unit": 0,
    "off": 10,
    "want": 0,
    "readback": 0,
    "label": "type -> Colony Pod (class 8)"
   },
   {
-   "unit": 7,
+   "unit": 0,
    "off": 0,
    "want": 29,
    "readback": 29,
    "label": "x -> founding tile"
   },
   {
-   "unit": 7,
+   "unit": 0,
    "off": 2,
    "want": 42,
    "readback": 42,
    "label": "y -> founding tile"
   },
   {
-   "unit": 7,
+   "unit": 0,
    "off": 17,
    "want": 0,
    "readback": 0,
@@ -63,5 +63,5 @@
    42
   ]
  ],
- "energy": 75
+ "energy": 69
 }
