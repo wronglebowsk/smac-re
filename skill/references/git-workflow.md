@@ -81,6 +81,18 @@ and are excluded; `--all` adds them back and makes results worse. **Naming a fun
 
 **A checkpoint branch is not reliably pushable by hand.** `git push origin milestone/<id>` on a branch that has no PR can be declined by the remote's pre-receive hook — the commonest cause is a blob over GitHub's 100 MB per-file limit sitting in the branch's HISTORY, which a later delete commit does not remove. So: downsample/throttle big generated files BEFORE their first commit, treat the local checkpoint commit (not the push) as the durability mechanism for an unmerged milestone, and expect `milestone.py submit` to be the path that lands the branch.
 
+**When a push IS declined for oversized blobs, strip them from the branch's own history rather than
+re-committing.** First list what is actually being pushed — the local gate's tracked-size check inspects
+the tree and PASSes while the push fails, so this scan is the only thing that sees history blobs:
+`git rev-list --objects --no-merges origin/main..HEAD | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | awk '$1=="blob" && $3>20000000 {printf "%.1f MB %s\n", $3/1048576, $4}' | sort -rn`.
+Then `FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --force --index-filter 'git rm -q --cached --ignore-unmatch <path> [<path> …]' -- origin/main..HEAD`
+(only the branch's own commits are rewritten, so the new SHAs are safe while unpushed). Two traps:
+(1) an `--index-filter` removes EVERY version of a path, including a small stub of the same path that
+HEAD still needs — filter-branch then drops it from the worktree too, so restore it
+(`git show refs/original/refs/heads/<branch>:<path> > <path>`) and commit it; a small blob re-added in a
+later commit does not resurrect the giant one. (2) Re-run the blob scan and confirm it is empty before
+re-submitting, otherwise the same hook rejects the push again.
+
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
 merge by hand in the web UI without a green `gate` check. After editing this live skill, copy the whole

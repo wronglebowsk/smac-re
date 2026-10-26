@@ -36,15 +36,62 @@ one-variable poke (arm queue + storage, change nothing else) and let the arrival
 
 After the gate passes: pay `0x4efedd` (`storage −= price`) → the clamp at `0x4eff02-0x4eff23`
 re-caps storage for in-mask owners when it exceeds `max(0x92a370, income)` → the create-unit call
-`0x5ab650(type, ?, x, y) @ 0x4eff4e`, guarded at `0x4eff32` by `[base+0x10] == 0` (that field
-doubles as scratch for the chooser `0x4f6030`, which writes `0x8f0d74..0x8f0d90` = record
-`+0x14..+0x30`). The POP `0x4ef5d0` (pending −1, slots left-shift, per-faction queued-count byte
+`0x5ab650(type, ?, x, y) @ 0x4eff4e`, guarded at `0x4eff32` by the PROCESS-GLOBAL dword at
+`0x8f0d70` (`a1 70 0d 8f 00` = `mov eax,ds:0x8f0d70`; `test eax,eax; jne 0x4eff5c` skips the create).
+M60 fixed the old claim here (`[base+0x10] == 0`): base record `+0x10` holds 0x4b000000 / 0x55000000
+on our two bases (not a flag), `grep -c 0x8f0d70` over the whole `.text` dump is 1 — this read — and
+an hw watchpoint on it stayed silent over 2 boundaries with 53 base visits, value 0 at every visit
+(`scripts/m60_guard.py --stage watch`, evidence/m60w_watch.gdblog). Proven by poke, one variable, the
+other base as control: guard 1 -> the base still PAYS (storage 9 -> 0) and NO unit arrives (our unit
+count 10 -> 10, guard reads back 1 after the turn); guard 0 -> the base pays and the unit ARRIVES
+(10 -> 11). The chooser `0x4f6030` uses the neighbours `0x8f0d74..0x8f0d90` as its best-pick scratch.
+The POP `0x4ef5d0` (pending −1, slots left-shift, per-faction queued-count byte
 `[0x94de84 + owner*0x20bc + type*4]` −1 — the disasm at `0x4ef613` reads `0x94de84`, older notes
 here said `0x94dc84: REPORTED CONFLICT, the instruction bytes win until a poke says otherwise)
 runs LATER in the same visit (`0x4f037b` / `0x4f0f46`) and only ADVANCES the queue; a boundary
 snapshot can land on either side of it, and the create itself can land in the gap between one
 window's after-snapshot and the next window's before-snapshot (measured: pay 8→1 with pending
 still 1, unit 6→7 across the snapshot gap).
+
+## Ghidra's `DAT_008f0d60` is a `short *` — double every offset it prints
+
+`0x8f0d60` holds a POINTER to the base record being processed (`DAT_008f0d60 = &DAT_0095da10 +
+idx*0x98` shorts = `idx*0x130` bytes; written at `0x4e3470`, `0x4e47d0`, twice in `0x4ef6d0`, twice
+in `0x4f5a70`). Ghidra types it `short *`, so pseudocode `*(uint *)(DAT_008f0d60 + 0x1c)` is BYTE
+offset **+0x38** — verified against the bytes (`0x4fb293 mov ecx,ds:0x8f0d60` then `0x4fb299 test
+DWORD PTR [ecx+0x38],0x80000000`). So in that pseudocode: `+0x1c` = the plan-flag dword `+0x38`,
+`+0x20` = mineral storage `+0x40`, `DAT_008f0d60[0]/[1]` = the x/y words at `+0x0/+0x2`. Double every
+offset printed through this variable before believing it, and check the disasm once per new site.
+
+## `0x4f6030` = the production CHOOSER (what a base builds next)
+
+Called by `0x4e5ae0` (and by the BUILD UI) for the base in `*(0x8f0d60)`; returns the chosen item id
+and can write the winning score through `param_4`. It scores candidates and keeps the MINIMUM
+(compare against `local_124[0]`, seeded `0xf423f` = 999999; tie broken by a secondary key), score =
+`base_cost * multiplier`, the multiplier halved/doubled by ~25 conditions (terrain table `0x92b950`,
+the flat category table `0x98adb2` indexed `item*0x34`, the affordability reshape through
+`0x4e4450` × `0x5ac950` × `0x4e40a0` at `0x4fb271-0x4fb2c9`). Before scoring, a candidate is REJECTED
+unless the base's plan dword `[base+0x38]` contains the bits its category requires — the switch at
+`0x4fb4xx` on `record[+0x32]`: cat 0 -> 0x200, 1 -> 0x1000, 2 and 3 -> 0x1000 (but 0x400000 when
+`[base+0x38] & 0x1000` is clear or `record[+0x2c] != 0`), 4 -> 0x2000, 5 -> 0x800, 6 -> 0x400,
+7 and 10 -> 0x800000, 8 -> 0x20000, 9 -> 0x8000, 0xb -> 0x100000, plus 0x80000 more for
+faction-specific types (>= 0x40) whose `record[+0x38] & 4` is clear. That gate runs only when the
+owner is IN the human mask `0x985b10` (for our Korolev Center, `[base+0x38] = 0x00dfbe41` carries
+0x1000, so Scout Patrol, category 3, passes). Fallback when the main pick is invalid
+(`0x4fd6a0-0x4fd6e5`): scan all 512 type records (`0x98ad80`, stride `0x34`, end `0x9915b2`), keep
+those `0x5a73f0`-buildable with category 1/2/3 and `record[+0x38] & 4`, take the lowest `record[+0x31]`.
+Consequence: an enemy base's next head is the argmin of that heuristic over ITS plan mask and ITS
+budget, so enemy production stays REPORTED, not predicted.
+
+## When our base's visit lands in the round (a read can be early, not the create slow)
+
+The year flip is NOT the end of the round's processing. Measured 2026-10-26: after
+`smac_play --turns 1` printed `2189->2190`, Korolev Center held storage 9 with `+0x3c` unmoved and
+`cur_player 7`, and NOTHING changed for 100 s; the pay and the create landed later, while the player
+walk came home (storage 9 -> 0, our units 10 -> 11, `cur_player 3`). Judge a base's production only
+after `cur_player` is ours again — `m56_build` closes every window on exactly that condition, which
+is why its windows see the pay while a hand-read taken the instant the flip prints does not. What M59
+called the snapshot GAP is this: the read was early, not the create slow.
 
 ## Where production runs in the round (there is no "production phase")
 
@@ -88,6 +135,23 @@ disbanded."). Production that survives needs `+0xd0 > 0` at the base. Census our
 across the boundaries when testing production at our own base — a PASS arrival can be followed by
 a disband two rounds later.
 
+## Running the acceptance (`m56_build.py --ui-queued <index> … --no-poke-hold`)
+
+- Its provenance floor is `writes == 0`, and the harness counts its own `poke_hold` as a write: HOLD
+every one of our records BEFORE the run (`scripts/m59_head.py --stage read --hold`, read-back verified)
+and pass `--no-poke-hold`. Holding inside the run fails the floor the run exists to prove.
+- The `--ui-queued <index>` argument is only the START index. Pair each base across snapshots **BY
+NAME** — the 304-byte base array compacts mid-run, so an index carried across a boundary names another
+faction's record and the bookkeeping silently checks the wrong base.
+- The queue precondition is the GAME's UI (`scripts/m57_ui_enqueue.py`), and the storage precondition is
+`minerals < price` at start — never arm minerals for this mode, or the completion is indistinguishable
+from an armed one.
+- When a floor fails ONLY because the effect lands after the after-snapshot (pay visible, pending
+unchanged, the new record already present at the next window's before-snapshot), widen the OBSERVATION
+window using snapshots the run already recorded — this window's before → next window's before — rather
+than adding sleeps: a fixed settle either misses the player walk or swallows the next year flip. Keep
+the mineral identity exact in the pay window and label the arrival as deferred.
+
 ## Accounting rules for production verification
 
 - **Count arrivals as a multiset delta on (x, y, type, owner)** — never record index (compaction
@@ -98,7 +162,11 @@ a disband two rounds later.
   boundary inventory that counts only our-side arrivals records a false "zero production".
   Enemy-side queues refill inside the enemy's own AI turn, so a queue read taken during OUR turn
   does not predict their arrivals — floor predictions on in-mask/our bases, report enemy-side
-  arrivals as observations.
+  arrivals as observations. The mechanism is concrete: the visit refreshes the head slot through
+  `0x4e5ae0 -> 0x4f6030 -> 0x4e5560` at `0x4ef87e`, BEFORE the price gate (`push 0; push base`, so
+  param_2 == 0 and the auto-pick branch is taken), so for any owner outside the human mask the head at
+  our snapshot is not the head its own visit will price. Scope the predictor to bases the visit cannot
+  rewrite, and say out loud in the code why the others are excluded.
 - The out-mask price model (era table `0x68cbb8` factor, can be 0) is unmodeled — do not predict
   out-mask owners.
 

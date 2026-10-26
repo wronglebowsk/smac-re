@@ -33,6 +33,16 @@ EMPTY_S = -38          # the same dword read as signed: the empty-queue marker
 
 def rd32(m, a): return struct.unpack("<i", M.rd(m, a, 4))[0]
 
+# M60: the create-unit call 0x5ab650 @ 0x4eff4e is gated at 0x4eff32 by
+# `mov eax, ds:0x8f0d70; test eax,eax; jne 0x4eff5c` — a PROCESS GLOBAL (not a
+# base field; the old note's "[base+0x10]" is wrong: base+0x10 holds 0x4b000000
+# on Korolev Center).  Nothing in .text writes it (1 reference in the whole
+# section dump) and an hw watchpoint stayed silent over 2 boundaries, but a
+# nonzero value DOES suppress the create (poke 1 -> paid, no unit; poke 0 ->
+# paid, unit arrives), so a PASS run records its value in every sampled row.
+GUARD_ADDR = 0x8f0d70
+GUARD_SAMPLES = []
+
 def prod_fields(m, i):
     b = M.rd(m, BASE_ARR + i * BASE_SZ, BASE_SZ)
     g = lambda off: struct.unpack("<i", b[off:off+4])[0]
@@ -332,6 +342,8 @@ def main():
             deadline = time.time() + a.timeout
             while time.time() < deadline:
                 row = M.timeline_row(m)
+                row["guard"] = rd32(m, GUARD_ADDR)
+                GUARD_SAMPLES.append(row["guard"])
                 if last is None or any(row[k] != last[k] for k in row):
                     timeline.append(dict(t=round(time.time()-t0, 3), **row)); last = row
                 if flip_t is None and row["year"] != y0:
@@ -539,6 +551,9 @@ def main():
     chk("boundaries observed >= 2", n_flip >= 2, f"{n_flip} of {len(rounds)} rounds flipped")
     chk("at least 1 POSITIVE prediction verified (non-vacuous)",
         pos_pred >= 1 and pos_ok == pos_pred, f"{pos_ok}/{pos_pred} positive predictions verified")
+    chk("create guard ds:0x8f0d70 read 0 in every sampled row (no create was suppressed)",
+        set(GUARD_SAMPLES) == {0},
+        f"{len(GUARD_SAMPLES)} sampled rows, values {sorted(set(GUARD_SAMPLES))}")
     if ui is not None:
         chk("queue provenance: GAME-filled, zero memory writes by this script",
             writes == 0 and ui.get("provenance") == "ui" and ui.get("pending", 0) > 0,

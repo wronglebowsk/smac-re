@@ -158,7 +158,9 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   changed, and report how many changed — two changed means the result is confounded. **Across a round
   boundary even the BYTES are not identity**: upkeep/compaction decrements the u16 index references at
   `+28/+48/+50` inside records that did nothing, so diff record sets on (x, y, type, owner, order) and
-  report byte rewrites as a feature (`references/solo-round-boundary.md`).
+  report byte rewrites as a feature (`references/solo-round-boundary.md`).** The 304-byte BASE array
+    reorders and compacts too — pair a base across snapshots by NAME (or `(x,y)`), never by remembered
+    index, and treat a `--ui-queued <index>`-style argument as a start index only.
 - **Attributing a field to one keypress: the through-the-click watcher on the subject's own slot
   is the only proof.** A read taken after the click proves the field changed somewhere, not on
   which record — pair the byte and the field from the SAME sample. Use the post-click snapshot of
