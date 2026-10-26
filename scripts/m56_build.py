@@ -222,7 +222,7 @@ def main():
             # (Operations Director: "Zoom to Base Control" is the default row and
             # Return cycles the options instead of closing) is clicked at OK.
             t0 = time.time(); timeline = []; last = None
-            last_press = 0.0; last_ok = 0.0; last_h = 0.0; flip_t = None
+            last_press = 0.0; last_ok = 0.0; last_h = 0.0; flip_t = None; last_ocr = 0.0
             deadline = time.time() + a.timeout
             while time.time() < deadline:
                 row = M.timeline_row(m)
@@ -233,6 +233,21 @@ def main():
                 if time.time() - last_press > 2.0:
                     press_return(); log(dict(event="press_enter", r=rnum,
                                              t=round(time.time()-t0, 3))); last_press = time.time()
+                if flip_t is None and time.time() - t0 > 5.0 and \
+                        row["cur_player"] == our and time.time() - last_ocr > 3.0:
+                    # "SOME OF OUR UNITS HAVE NOT YET MOVED ... do you really want to end
+                    # the turn now?" blocks the turn FOREVER and does not take Return: it
+                    # needs its YES row clicked, then the OK bar 26 px below
+                    # (smac_play.answer_confirm, verified live). Without this the 240 s
+                    # escalation sat on that dialog and the year never moved (measured).
+                    import smac_play as sp
+                    png = sp.freeze("m56c")
+                    w = sp.ocr_fast(png)
+                    if sp.is_confirm(w):
+                        sp.answer_confirm(w)
+                        log(dict(event="answer_confirm", r=rnum, t=round(time.time()-t0, 3)))
+                        print(f"  [r{rnum}] answered the units-not-moved confirm", flush=True)
+                    last_ocr = time.time()
                 if flip_t is None and time.time() - t0 > 8.0 and \
                         row["cur_player"] == our and time.time() - last_h > 4.0:
                     # A produced unit arrives order 0 (actionable) and the auto-end
