@@ -1,0 +1,19 @@
+{"t": "PLAYERW", "pc": 5377269, "cp": 4, "year": 2151, "round": 51}
+{"t": "VISIT", "addr": 9824640, "owner": 4, "pend": 0, "head": 0, "cp": 5, "year": 2151, "pc": 5377269, "round": 51, "name": "Morgan Industries addr=0x95dda0"}
+{"t": "VISIT", "addr": 9825552, "owner": 5, "pend": 0, "head": 0, "cp": 6, "year": 2151, "before": 22, "edi": 20, "after": 2, "guard": 0, "min": 2, "pc": 5377269, "round": 51, "name": "Sparta Command addr=0x95ded0"}
+{"t": "VISIT", "addr": 9825856, "owner": 6, "pend": 0, "head": -3, "cp": 7, "year": 2151, "pc": 5377269, "round": 51, "name": "New Jerusalem addr=0x95e000"}
+{"t": "VISIT", "addr": 9823120, "owner": 7, "pend": 0, "head": -6, "cp": 7, "year": 2152, "round": 52, "name": "U.N. Court of Justice addr=0x95e390"}
+{"t": "PLAYERW", "pc": 5377269, "cp": 0, "year": 2152, "round": 52}
+{"t": "PLAYERW", "pc": 5377269, "cp": 1, "year": 2152, "round": 52}
+{"t": "VISIT", "addr": 9824944, "owner": 1, "pend": 0, "head": -4, "cp": 2, "year": 2152, "pc": 5377269, "round": 52, "name": "Fallow Time addr=0x95e720"}
+{"t": "VISIT", "addr": 9823728, "owner": 2, "pend": 0, "head": 131, "cp": 3, "year": 2152, "before": 19, "edi": 18, "after": 1, "guard": 0, "min": 1, "pc": 5377269, "round": 52, "name": "Gaia's Landing addr=0x95db40"}
+{"t": "VISIT", "addr": 9781434, "owner": 3, "pend": 1, "head": 2, "cp": 4, "year": 2152, "before": 11, "edi": 9, "after": 2, "guard": 0, "min": 2, "idx": 18, "s0": 2, "s1": 2, "s2": 0, "visit_addr": 9826160, "byte": 2, "sibling_dc": 9780922, "sibling": 7, "slot": 20, "dest": 9826240, "val": 2, "old": 2, "newpend": 0, "s3": 0, "item": 2, "result": 1, "pc": 5377269, "round": 52, "name": "University Base addr=0x95da10"}
+{"t": "VISIT", "addr": 9824640, "owner": 4, "pend": 0, "head": 0, "cp": 5, "year": 2152, "pc": 5377269, "round": 52, "name": "Morgan Industries addr=0x95dda0"}
+{"t": "VISIT", "addr": 9825552, "owner": 5, "pend": 0, "head": 0, "cp": 6, "year": 2152, "pc": 5377269, "round": 52, "name": "Sparta Command addr=0x95ded0"}
+{"t": "VISIT", "addr": 9825856, "owner": 6, "pend": 0, "head": -3, "cp": 7, "year": 2152, "before": 11, "edi": 9, "after": 2, "guard": 0, "min": 2, "pc": 5377269, "round": 52, "name": "New Jerusalem addr=0x95e000"}
+{"t": "VISIT", "addr": 9823120, "owner": 7, "pend": 0, "head": -6, "cp": 7, "year": 2153, "round": 53, "name": "U.N. Court of Justice addr=0x95e390"}
+{"t": "PLAYERW", "pc": 5377269, "cp": 0, "year": 2153, "round": 53}
+{"t": "PLAYERW", "pc": 5377269, "cp": 1, "year": 2153, "round": 53}
+{"t": "VISIT", "addr": 9824944, "owner": 1, "pend": 0, "head": -4, "cp": 2, "year": 2153, "before": 24, "edi": 18, "after": 6, "guard": 0, "min": 6, "pc": 5377269, "round": 53, "name": "Fallow Time addr=0x95e720"}
+{"t": "VISIT", "addr": 9823728, "owner": 2, "pend": 0, "head": 131, "cp": 3, "year": 2153, "before": 19, "edi": 18, "after": 1, "guard": 0, "min": 1, "pc": 5377269, "round": 53, "name": "Gaia's Landing addr=0x95db40"}
+{"t": "VISIT", "addr": 9826160, "owner": 3, "pend": 0, "head": 2, "cp": 3, "year": 2153, "name": "University Base addr=0x95da10"}

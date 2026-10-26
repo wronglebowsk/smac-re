@@ -526,8 +526,6 @@ prose. Delete a line only when a measurement settles it, and move the answer int
 CONFLICT: year store — the M59/M60 notes and the skill say `0x51f554`; the instruction bytes are
 `0x51f54f` (`a3 00 5b 98`, immediately after the round store `0x51f53c`), and `0x51f554` is the
 `call 0x478530` AFTER the store. Bytes win: `evidence/m61a_watch.gdblog`.
-CONFLICT: per-faction queued-count byte — `0x94dc84` (skill text) vs `0x94de84` (operand at the
-pop, `0x4ef613`). Neither has been read live yet; do not quote either as fact.
 CONFLICT: pay site — `0x4f0ca6` (the NAMED "completion path", branch still unread) vs `0x4efedd`
 (measured live: `before 9 edi 9 after 0`, immediately before the create at `0x4eff4e`). For the
 UI-queued shape `0x4efedd` is the pay; the other branch is unexamined, not refuted.
@@ -543,3 +541,75 @@ slot array unchanged (`[2,2,0,0]` before and after), and r4 shows two bases' hea
 `384`/`386` while Korolev reads `2` — a garbage head still reached the bookkeeping comparison and
 was reported as a "queue held" failure. Open: what writes 384/386 into `+0x50`, and whether the pop
 shifts at all (M61's observation repeats here: pending decrements, slots do not move).
+
+## M63 block (session 103, 2026-10-26) — THE POP, MEASURED INSTRUCTION BY INSTRUCTION
+
+Instrument (`scripts/m63_pop.py`, new): breakpoints at `0x4ef5d0` entry, `0x4ef61a`/`0x4ef61c`
+around the `dec BYTE PTR [ecx]`, `0x4ef62c` the shift store, `0x4ef642` the pending store,
+`0x4ef655`/`0x4ef66a` the two validator calls, `0x4ef65d` the validator's return, plus the
+M60/M61 pay `0x4efedd` and create `0x4eff4e`, plus a hardware watchpoint on the target base's
+`+0x50`. Run: `python3 scripts/m63_pop.py --base "Korolev Center" --boundaries 2 --tag m63pop`
+→ `evidence/m63pop.gdblog` (raw) and `evidence/m63pop_seq.jsonl` (ordered). Setup for that run,
+both BEFORE attaching because pokes lie under a tracer: `m57_ui_enqueue.py --base-index 18
+--cell-item 2 --inserts 1` (`pending=1 head=2 slots=[2, 2, 0, 0] minerals=2`) and
+`m59_head.py --stage poke --base "Korolev Center" --minerals 9` (read back 9).
+
+- **The pop DOES shift the slots, and the shift is invisible when the head value is duplicated.**
+  Live, Korolev Center (record `0x95ef70`): `POPSHIFT slot=20 dest=0x95efc0 val=2 old=2
+  name=Korolev Center pend=1` — a store into `+0x50` of the value that was at `+0x54` — immediately
+  followed by `POPCNT name=Korolev Center newpend=0 s0=2 s1=2 s2=0 s3=0`: pending 1 -> 0 and the
+  array still reads `[2,2,0,0]`. Bytes agree: `4ef622 lea eax,[esi+0x95da60]`, `4ef628 mov
+  edx,[eax+4]`, `4ef62c mov [eax],edx`, `4ef639 jl 0x4ef628` iterated `pending` times. So the
+  M61/M62 "pending decrements, slots do not move" is a **duplicate-value artifact**, not a missing
+  shift, and the `[2,2,...]` shape is exactly the case where a left-shift is unobservable.
+- **The per-faction queued-count byte is `0x94de84 + 8380*owner + head`** — settled by
+  measurement, which deletes the M62 CONFLICT line. The address the game itself put in `$ecx` at
+  `0x4ef613` was `0x9540ba` for owner 3 / head 2 = `0x94de84 + 8380*3 + 2` (row stride `0x20bc`,
+  what Ghidra prints as `(&DAT_0094de84)[faction*0x20bc + item]`), and that byte read **3 at
+  `0x4ef61a` (before the `dec`) and 2 at `0x4ef61c` (after)**. The sibling table `0x94dc84` (512
+  bytes lower, same `0x20bc` stride) read **6 before the run and 7 after** — it went UP while a
+  unit was produced, so `0x94dc84` is a different counter (built/alive-class), not the queued
+  count. `0x94de84` is the queued count the pop decrements.
+- **The pop's argument is `DAT_0068cbb0`, a global base index, and it is not necessarily the base
+  being visited.** Inside Korolev Center's visit the log reads `POPIN idx=8 addr=0x95e390
+  name=U.N. Court of Justice owner=7 pend=0 s0=-6 ... visit_addr=0x95ef70` — `ds:0x8f0d60` was
+  Korolev while the pop's own record was a faction-7 base with a negative head. All three call
+  sites (`0x4ef992`, `0x4f037b`, `0x4f0f46`) `push ds:0x68cbb0`. A reader that assumes "the pop
+  ran on the visited base" is wrong at the `0x4ef992` site.
+- **Order inside the visit (round 2152, Korolev):** `PAY name=Korolev Center before=11 edi=9
+  after=2` -> `CREATE name=Korolev Center guard=0 owner=3 min=2` -> `POPDEC` -> `POPSHIFT` ->
+  `POPCNT newpend=0` -> `POPVAL item=2 owner=3 idx=18` -> `POPRES result=1`. M59/M61's "the pop is
+  applied strictly after the pay store" holds live.
+- **`0x5a73f0` / `0x5a6e70` are validators, not builders.** `0x5a73f0(type, owner, idx)`
+  (`0x5a73f0..0x5a7411`) indexes the 512 type records at `0x98ad80` stride `0x34`, tests
+  `record+0x38` bit 0 and `record+0x34` bit `owner`, and returns 0 when the item is fine; the
+  negative branch's `0x5a6e70(-item, owner, idx, 0)` tests the availability globals `0x985aec`,
+  `0x985ac4`, `0x985bb8`. The build is still the visit's own pay `0x4efedd` + `call 0x5ab650` at
+  `0x4eff4e`. Live, the validator returned **1** for (type 2, owner 3, Korolev), so the pop took
+  its error path `0x4ef68b` (which compares the new head with `0xffffffd9`) and returned 1 —
+  a nonzero pop result is a VALIDATION failure, not a failed build.
+- **What a stale record looks like, and where 384/386 come from.** The founding path
+  (`0x4e48f6..0x4e4982`) writes `+0x30`, `+0x34`, `+0x38` (from `[edi+0x94d600]`), `+0x40 = 0`,
+  `+0x3c = -1` and `+0x4c (pending) = 0`, and **never touches `+0x50..+0x74`** — so a founded
+  base's queue slots are whatever the reused record held, and `pending == 0` says nothing about
+  them. A base that changes hands keeps its record: in
+  `evidence/trace_m56_build_20261026_165917.jsonl` the r4 window shows index 0 with the SAME name
+  `"University Base"` and the SAME coords (28,42) but `faction 3 -> 6` and slots `[2,2,0,0] ->
+  [384,2,0,0]`, with `n_bases` 21 before and after (no compaction). So M62's `queue held — head
+  2->384` was an **identity crossing** (the reader kept index 0 across an ownership change), not a
+  queue anomaly: 384 is the new owner's slot content, and the `128/130/132/134/324/325/384/386`
+  family seen on AI bases is their own queue content, not a corrupted type id of ours.
+- **The representation, restated (bytes + live).** `[base+0x50]` is the item the visit prices and
+  builds (M59's pay gate is `[base+0x40] >= price(head)`, and nothing between the gate and the
+  create reads `+0x4c`); `[base+0x4c] pending` is how many pop steps remain behind that head. With
+  `pending == 0` the pop returns at `0x4ef5f4` without shifting, so the head never advances and the
+  base re-builds the SAME head every round it can afford — which is what the M61 run measured at
+  Korolev with pending 0. M59's "the head slot is the truth, not pending" is confirmed, with the
+  mechanism: pending gates how long the queue keeps advancing, the head is what gets built.
+- **Open (not settled here).** (a) Which slot the BUILD UI's INSERT writes: both enqueues this
+  session ended `pending=1` with every slot holding 2 (`[2,2,0,0]` then `[2,2,2,0]`), so with all
+  values equal the written index is NOT identifiable — a discriminating enqueue needs two different
+  type ids. (b) Why `DAT_0068cbb0` was 8 during Korolev's visit (who writes it, and when it is
+  stale). (c) What makes `0x5a73f0(2, 3, Korolev)` return 1 (its `edi < 0x40` branch reads
+  `record+0x3a` and a per-faction table). (d) The pop's `dec` applies to whatever the head slot
+  holds, including a stale value — so the `0x94de84` counts can drift from the real queue.

@@ -1,0 +1,60 @@
+[New LWP 2413119]
+[New LWP 2413118]
+[New LWP 2413117]
+[New LWP 2413116]
+[New LWP 2413115]
+[New LWP 2413114]
+[New LWP 2413113]
+[New LWP 2413112]
+[New LWP 2413111]
+[New LWP 2413110]
+[New LWP 2413109]
+[New LWP 2413108]
+[New LWP 2413107]
+[New LWP 2413106]
+[New LWP 2413105]
+[New LWP 2413104]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb70432c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int*)0x95efc0
+Hardware watchpoint 2: *(int*)0x985b00
+Hardware watchpoint 3: *(int*)0x985dcc
+Breakpoint 4 at 0x4ef6d0
+Breakpoint 5 at 0x4ef5d0
+Breakpoint 6 at 0x4ef61a
+Breakpoint 7 at 0x4ef61c
+Breakpoint 8 at 0x4ef62c
+Breakpoint 9 at 0x4ef642
+Breakpoint 10 at 0x4ef655
+Breakpoint 11 at 0x4ef66a
+Breakpoint 12 at 0x4ef65d
+Breakpoint 13 at 0x4efedd
+Breakpoint 14 at 0x4eff4e
+PLAYERW pc=0x520cf5 cp=4 year=2151 round=51
+VISIT name=Morgan Industries addr=0x95dda0 owner=4 pend=0 head=-7 cp=4 year=2151\nVISIT name=Morgan Energy Monopoly addr=0x95e260 owner=4 pend=0 head=-24 cp=4 year=2151\nVISIT name=Morgan Processing addr=0x95e980 owner=4 pend=0 head=0 cp=4 year=2151\nPLAYERW pc=0x520cf5 cp=5 year=2151 round=51
+VISIT name=Sparta Command addr=0x95ded0 owner=5 pend=0 head=322 cp=5 year=2151\nPAY name=Sparta Command before=31 edi=30 after=1 cp=5 year=2151\nCREATE name=Sparta Command guard=0 owner=5 min=1 cp=5\nVISIT name=Fort Survivalist addr=0x95e850 owner=5 pend=0 head=323 cp=5 year=2151\nPAY name=Fort Survivalist before=22 edi=20 after=2 cp=5 year=2151\nCREATE name=Fort Survivalist guard=0 owner=5 min=2 cp=5\nVISIT name=Assassin's Redoubt addr=0x95ed10 owner=5 pend=0 head=0 cp=5 year=2151\nPLAYERW pc=0x520cf5 cp=6 year=2151 round=51
+VISIT name=New Jerusalem addr=0x95e000 owner=6 pend=0 head=0 cp=6 year=2151\nVISIT name=House of Martyrs addr=0x95e4c0 owner=6 pend=0 head=2 cp=6 year=2151\nVISIT name=Throne of God addr=0x95ebe0 owner=6 pend=0 head=-6 cp=6 year=2151\nVISIT name=Valley of the Faithful addr=0x95ee40 owner=6 pend=0 head=-3 cp=6 year=2151\nPLAYERW pc=0x520cf5 cp=7 year=2151 round=51
+VISIT name=U.N. Court of Justice addr=0x95e390 owner=7 pend=0 head=-6 cp=7 year=2151\nYEARW year=2152 round=52 cp=7
+PLAYERW pc=0x520cf5 cp=0 year=2152 round=52
+PLAYERW pc=0x520cf5 cp=1 year=2152 round=52
+VISIT name=Fallow Time addr=0x95e720 owner=1 pend=0 head=64 cp=1 year=2152\nVISIT name=Virgin Soil addr=0x95eab0 owner=1 pend=0 head=-4 cp=1 year=2152\nPLAYERW pc=0x520cf5 cp=2 year=2152 round=52
+VISIT name=Gaia's Landing addr=0x95db40 owner=2 pend=0 head=130 cp=2 year=2152\nVISIT name=The Hive addr=0x95dc70 owner=2 pend=0 head=-6 cp=2 year=2152\nVISIT name=U.N. Headquarters addr=0x95e130 owner=2 pend=0 head=128 cp=2 year=2152\nPAY name=U.N. Headquarters before=19 edi=18 after=1 cp=2 year=2152\nCREATE name=U.N. Headquarters guard=0 owner=2 min=1 cp=2\nVISIT name=People's Endeavor addr=0x95e5f0 owner=2 pend=0 head=131 cp=2 year=2152\nPLAYERW pc=0x520cf5 cp=3 year=2152 round=52
+VISIT name=University Base addr=0x95da10 owner=3 pend=0 head=2 cp=3 year=2152\nVISIT name=Korolev Center addr=0x95ef70 owner=3 pend=1 head=2 cp=3 year=2152\nPAY name=Korolev Center before=11 edi=9 after=2 cp=3 year=2152\nCREATE name=Korolev Center guard=0 owner=3 min=2 cp=3\nPOPIN idx=8 addr=0x95e390 name=U.N. Court of Justice owner=7 pend=0 s0=-6 s1=0 s2=0 cp=3 year=2152 visit_addr=0x95ef70\nPOPDEC addr=0x9540ba byte=3 name=Korolev Center owner=3 head=2\nPOPAFT addr=0x9540ba byte=2 sibling_dc=0x953eba sibling=7\nPOPSHIFT slot=20 dest=0x95efc0 val=2 old=2 name=Korolev Center pend=1\nPOPCNT name=Korolev Center newpend=0 s0=2 s1=2 s2=0 s3=0\nPOPVAL item=2 owner=3 idx=18 name=Korolev Center\nPOPRES result=1 name=Korolev Center head=2\nPLAYERW pc=0x520cf5 cp=4 year=2152 round=52
+VISIT name=Morgan Industries addr=0x95dda0 owner=4 pend=0 head=-7 cp=4 year=2152\nVISIT name=Morgan Energy Monopoly addr=0x95e260 owner=4 pend=0 head=-24 cp=4 year=2152\nVISIT name=Morgan Processing addr=0x95e980 owner=4 pend=0 head=0 cp=4 year=2152\nPLAYERW pc=0x520cf5 cp=5 year=2152 round=52
+VISIT name=Sparta Command addr=0x95ded0 owner=5 pend=0 head=324 cp=5 year=2152\nVISIT name=Fort Survivalist addr=0x95e850 owner=5 pend=0 head=325 cp=5 year=2152\nVISIT name=Assassin's Redoubt addr=0x95ed10 owner=5 pend=0 head=0 cp=5 year=2152\nPLAYERW pc=0x520cf5 cp=6 year=2152 round=52
+VISIT name=New Jerusalem addr=0x95e000 owner=6 pend=0 head=0 cp=6 year=2152\nVISIT name=House of Martyrs addr=0x95e4c0 owner=6 pend=0 head=2 cp=6 year=2152\nPAY name=House of Martyrs before=11 edi=9 after=2 cp=6 year=2152\nCREATE name=House of Martyrs guard=0 owner=6 min=2 cp=6\nVISIT name=Throne of God addr=0x95ebe0 owner=6 pend=0 head=-6 cp=6 year=2152\nVISIT name=Valley of the Faithful addr=0x95ee40 owner=6 pend=0 head=-3 cp=6 year=2152\nPLAYERW pc=0x520cf5 cp=7 year=2152 round=52
+VISIT name=U.N. Court of Justice addr=0x95e390 owner=7 pend=0 head=-6 cp=7 year=2152\nYEARW year=2153 round=53 cp=7
+PLAYERW pc=0x520cf5 cp=0 year=2153 round=53
+PLAYERW pc=0x520cf5 cp=1 year=2153 round=53
+VISIT name=Fallow Time addr=0x95e720 owner=1 pend=0 head=64 cp=1 year=2153\nPAY name=Fallow Time before=24 edi=18 after=6 cp=1 year=2153\nCREATE name=Fallow Time guard=0 owner=1 min=6 cp=1\nVISIT name=Virgin Soil addr=0x95eab0 owner=1 pend=0 head=-4 cp=1 year=2153\nPLAYERW pc=0x520cf5 cp=2 year=2153 round=53
+VISIT name=Gaia's Landing addr=0x95db40 owner=2 pend=0 head=130 cp=2 year=2153\nVISIT name=The Hive addr=0x95dc70 owner=2 pend=0 head=-6 cp=2 year=2153\nVISIT name=U.N. Headquarters addr=0x95e130 owner=2 pend=0 head=130 cp=2 year=2153\nVISIT name=People's Endeavor addr=0x95e5f0 owner=2 pend=0 head=131 cp=2 year=2153\nPAY name=People's Endeavor before=19 edi=18 after=1 cp=2 year=2153\nCREATE name=People's Endeavor guard=0 owner=2 min=1 cp=2\nPLAYERW pc=0x520cf5 cp=3 year=2153 round=53
+VISIT name=University Base addr=0x95da10 owner=3 pend=0 head=2 cp=3 year=2153\nVISIT name=Korolev Center addr=0x95ef70 owner=3 pend=0 head=2 cp=3 year=2153\n
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 2413113]
+0xeb70432c in __kernel_vsyscall ()
+[Inferior 1 (process 2413101) detached]
