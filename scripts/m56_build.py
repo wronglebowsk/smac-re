@@ -454,8 +454,11 @@ def main():
         for pb in rd_["prod_before"]:
             if pb["fac"] != gb["our_player"]:
                 continue      # M59 scope: their head is re-picked by their own visit
-            pa = next(b for b in rd_["prod_after"] if b["i"] == pb["i"])
-            p = next((pp for pp in rd_["predictions"] if pp["base"] == pb["i"]), None)
+            # PAIR BY NAME, not index: the base array compacts mid-run (session 97
+            # watched Korolev Center walk index 18 -> 17), so a baked index can name
+            # another faction's record in the after-snapshot.
+            pa = next(b for b in rd_["prod_after"] if b["name"] == pb["name"])
+            p = next((pp for pp in rd_["predictions"] if pp["name"] == pb["name"]), None)
             credit = pb["income"] if pb["income"] > 0 else 0
             if p and p["predict_arrive"]:
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: minerals identity "
@@ -477,7 +480,8 @@ def main():
                         f"{pb['minerals']}>=price {p['price']}; the pop 0x4ef5d0 returns "
                         "at 0x4ef5f4 when pending == 0 (scratch/m574/text.txt)")
                 else:
-                    nb = (next(b for b in rounds[rk + 1]["prod_after"] if b["i"] == pb["i"])
+                    nb = (next(b for b in rounds[rk + 1]["prod_after"]
+                               if b["name"] == pb["name"])
                           if rk + 1 < len(rounds) else None)
                     chk(f"r{rk} bookkeeping base {pb['i']}: pending decremented by exactly "
                         f"1 in the pay window or the window after it",
@@ -497,7 +501,7 @@ def main():
                 # in evidence/trace_m56_build_20261026_142139.jsonl).  A pending-0 base has
                 # no pop to defer (M59), so the exception only applies when pending > 0.
                 deferred_pop = (pb["pending"] > 0 and rk > 0 and any(
-                    pp["base"] == pb["i"] and pp["predict_arrive"]
+                    pp["name"] == pb["name"] and pp["predict_arrive"]
                     for pp in rounds[rk - 1]["predictions"]))
                 exp_pending = pb["pending"] - (1 if deferred_pop else 0)
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: NOT predicted to arrive -> "
