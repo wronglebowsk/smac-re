@@ -136,6 +136,8 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   which isn't a number aborts the sourced script and DETACHES silently ("Argument to arithmetic
   operation not a number or boolean", `m53e5_watch.log:50`) — bake the base pointer as a literal
   (`set $b = 0x962d30`) instead of reading `*(int *)0x8f0d60` per hit.
+- **A hardware watchpoint on a field the game READS constantly is useless for cadence work.** The debug register traps READS as well as writes, so watching a HUD-displayed field (`base+0x40` mineral storage) crawled the inferior to ~1 round in 45 s — the mission year never moved and the log stayed empty. Instrument the WRITE sites instead (`break *0x4ef7db if $eax == <base addr>`, one breakpoint per store site taken from the disassembly), bake the record address as a literal in BOTH the condition and the printf, and let a sleeping `/proc/pid/mem` sampler supply the timeline; the per-site conditional breakpoint is what filters one record's visit out of a loop that runs over every base.
+- **Registers printed from a breakpoint command list are testimony, not evidence.** A run can filter the right record's visit correctly — its baked-base field reads matching the sampler transition for transition — and still print `$ecx`-as-income / `$edi`-as-price values that contradict those fields. Corroborate every register print against a field read-back, quote the read-back, and label the register value unverified.
 - **Vision-tool pixel numbers ARE true window coordinates; tesseract TSV numbers are internally
   rescaled** — never halve TSV values to get click coordinates. Settle any disagreement with
   `ffmpeg -vf crop=W:H:X:Y` + OCR on the crop before driving clicks (M53d wasted three runs on this).

@@ -317,3 +317,49 @@ re-open and answer again; then the acceptance command above on a 6-turn run.
 **Next (M57-3):** give the loop an income-STABLE base: reload `m54b_clean.SAV` + re-found (`m54g_prep.py`, 2 founding turns) exactly as session 93 did (that box had Korolev income 2 and produced the r3 completion), UI-enqueue ONE Scout Patrol at minerals < 10, then `python3 scripts/m56_build.py --ui-queued <index> --boundaries <enough for the accrual, ~6-10 at ~20 s/round> --timeout 240 --settle 2.5` (settle only moves WHEN the after-snapshot is taken, so the walk-home floor sees the walk finished — the floor semantics are unchanged). Acceptance unchanged: every floor as it stands + >= 1 verified positive prediction. If income is stable the model predicts the exact round; if the visit's second store still breaks it, the documented negative stands and the next step is Open (1), the full store enumeration.
 
 **Addendum (same session, after the close): why the session was slow, and two fixes.** The time went to *stale remembered facts*, not to hard problems: (a) a retyped `cur_player` address (`0x91c634` instead of `0x985dcc`) burned a 45 s smoke run and an OCR classification detour; (b) the UI recipe's arrow/cell/index facts had drifted (queue-widget base vs display base; Scout Patrol cell 3 -> 4; base index 17 -> 18 -> 17), so two enqueues silently landed on University Base; (c) a hardware watchpoint on a constantly-READ field made the inferior crawl (1 round/45 s) — breakpoints at the write sites are the tool; (d) the sampler ran unthrottled and wrote 1.4 GB of traces (gate RED until downsampled); (e) the 8-boundary acceptance was launched without first doing the credit arithmetic. Fixes added and tested: **`scripts/smac_preflight.py`** (read-only, exit 1 on any FAIL: the one authoritative address table, game alive, TracerPid=0, no gdb, our bases located BY NAME with index/coords/pending/head/minerals/income, unit decode, /tmp room, evidence budget; `SMAC_PID` override is the negative test — `SMAC_PID=999999` -> exit 1) and a **credit-arithmetic line in `m56_build.py --ui-queued`** printed BEFORE the run (`needs 4 more minerals at 1/round -> ~4 round(s) to the gate`, recorded as a trace event; a diagnostic, no floor touched). Verified live: preflight PASS on the real box; `python3 scripts/m56_build.py --ui-queued 0 --boundaries 1 --timeout 60` -> `credit arithmetic: needs 4 more minerals at 1/round -> ~4 round(s) to the gate`. Also observed by the preflight: the two failed enqueues left **University Base pending 2 (minerals 6, income 1)** — a GAME-written queue sitting there, which is a candidate for M57-3 as well.
+
+## Session 95 (2026-10-25) — M57-3: the gate ran on a GAME-filled queue and got 1/2 — the model premise is falsified, nothing merges
+
+**What changed.** `scripts/smac_preflight.py` (NEW, read-only orientation: authoritative address
+table, game alive, TracerPid/gdb, our bases BY NAME with index/coords/pending/head/minerals/income,
+unit decode, /tmp + evidence budget; `SMAC_PID` override is the negative test). `m56_build.py`:
+credit arithmetic printed BEFORE a --ui-queued run; the boundary watch now breaks when the walk is
+HOME (was a fixed settle, which either missed the walk or swallowed the next flip); and it answers
+the "SOME OF OUR UNITS HAVE NOT YET MOVED" confirm via `smac_play.answer_confirm` (that dialog takes
+NO Return — a 240 s run sat on it, year frozen). `m57_ui_enqueue.py` restores orders mode (0 makes
+every order key a no-op and the turn never ends). Sampler throttled to 2 ms + the 1.4 GB of traces
+downsampled to ~10 KB (the gate's 30 MB budget). Skill synced.
+
+**The acceptance, unchanged.** `python3 scripts/m56_build.py --ui-queued 18 --boundaries 8 --timeout
+240` on a fresh `m54b_clean.SAV` box (2154), Korolev Center [18] (29,42), queue filled by the GAME's
+BUILD UI (pending 1, head 2, minerals 2, income 2, **0 memory writes**): **FAIL, exit 1**. Floors that
+passed: 8/8 boundaries flipped +1 with the walk home, provenance GAME-filled/0 writes, storage below
+price at start, per-round bookkeeping on r0-r2 (2->4->6->8, pend 1). Floors that failed:
+- `1/2 positive predictions verified`. r3 predicted arrival (8 + income 2 = 10 >= price 10) and
+  storage stayed **8 -> 8, pend 1**: the visit added NOTHING while the round-start income field read
+  2. r4, with the identical round-start numbers, arrived: **8 -> 3, pend 0**.
+- `r4 minerals debited by >= price` — net -5 from 8 (or -7 from the post-add 10), not -10.
+- `r7 unexplained ORDER-0 arrival on OUR base 18` — storage **5 -> 0 with pending 0** and a new unit,
+  i.e. a pay with an empty pending count (the queue slots never left-shifted: `[2,2,0]` all run).
+So ONE queued Scout Patrol produced TWICE (r4 and r7) and the second production was paid at 5 < 10.
+
+**Measured support (`m57_credit.py --base Korolev --boundaries 3 --tag m57k`).** 3 flips (2162->2165,
+rounds 8.2/10.1/12.1 s — instant when everything is held), only 2 ADD hits and no GATE/PAY/CLMP for
+the base; the register side-values are the known trap (the "d0" printed 18 = the base INDEX) but the
+storage deltas agree with the sampler: an add of +1 while the field read 1, +2 while it read 2. **The
+add uses the d0 current at the visit, which moves inside the round** — that is why an exact-round
+prediction from the round-start snapshot is impossible, and why the same numbers produced no-arrival
+then arrival one round later. The pay amount is also not the price at 0x4efed8 (5 paid, 8 paid) and a
+produced unit's support is debited from the same field.
+
+**Conclusion: NOTHING MERGES.** The M57 gate asserts a model the engine contradicts (one add per
+round at the round-start income, one pay of exactly the price, pending as the queue truth). The
+observed positive (1/2) is real but not enough, and no floor was weakened. Branch `milestone/m57`
+holds: preflight, the arithmetic line, the confirm answer, the walk-home break, orders-mode restore,
+2 ms sampler, and `scripts/m57_ui_enqueue.py` (UI queue fill with read-backs).
+
+**Next pick (M57-4, the honest one): enumerate EVERY write to `base+0x40` inside one visit** —
+breakpoints at all disasm write sites (0x4ef7f6 add, 0x4eff20 clamp B, 0x4efee3/0x4efeec pay,
+0x4f0cc3 clamp-after-pay) over 3 boundaries on Korolev, with the queue filled by the UI, and record
+(value_before, value_after, site, pending, head, d0) for each store. Only then can the gate's debit
+floor and the second production be explained. Do NOT tune predict() to the observations.

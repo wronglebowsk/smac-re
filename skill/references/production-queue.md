@@ -178,3 +178,25 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
   completion landed at minerals 7 + a fresh recompute), r4 bookkeeping BAD, r6/r7 walk-home BAD (the
   after-snapshot at `--settle 0.3` caught cur_player mid-walk — use `--settle 2.5`; a sampling fix,
   not a floor change). Nothing weakened; nothing merged.
+
+## M57-3/M57-4 (session 95) — the per-round model is falsified; enumerate the stores
+
+- **A round-start snapshot cannot predict the arrival round.** Same base, same fields (minerals 8,
+  income 2, pending 1, price 10): round 3 predicted arrival and storage stayed 8 -> 8 (the visit's
+  add was skipped); round 4 predicted the same and arrived (8 -> 3, pending 0). The add uses the d0
+  CURRENT AT THE VISIT (measured +1 while the field read 1, +2 while it read 2), and that number moves
+  inside the round. Recorded: `evidence/trace_m56_build_20261025_222122.jsonl`.
+- The pay at 0x4efed8 is NOT the price: 8 -> 3 (net -5) and, with pending 0, 5 -> 0. One game-queued
+  Scout Patrol produced TWICE (r4 and r7) while the slot array never left-shifted ([2,2,0] all run) —
+  so `pending` is not the queue truth; the slot array is.
+- **The units-not-moved confirm takes NO Return.** Click the YES row then the OK bar 26 px below
+  (`smac_play.answer_confirm`); a run sat 240 s with the year frozen on that dialog. Diagnose with one
+  frame + classify -> `confirm`.
+- **orders mode 0x91b5b8 must be restored to 1 after any base-display recipe**; at 0 every order key
+  is a no-op and a turn with an actionable unit never ends.
+- The boundary watch must break when the walk is HOME, not after a fixed settle: with everything held
+  the next round flips 1-2 s later, so a fixed sleep either misses the walk (floor fails) or swallows
+  the next flip (year delta 2).
+- `scripts/smac_preflight.py` is the orientation tool: one read-only command, exit 1 on FAIL, prints
+  our bases BY NAME with index/coords/pending/head/minerals/income, the address table, tracer state,
+  /tmp and the evidence budget.
