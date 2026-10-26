@@ -543,7 +543,7 @@ against it. Acceptance stays `m56_build.py --ui-queued <idx> --boundaries 10 --t
 
 ## Session 101 (2026-10-26) — M62: **INSTRUMENTS, NOT RESEARCH. The box's dead shapes are now decided in one read, the brief is generated, and the evidence audit found that no trace could ever count as cited. NO prediction PASS this session — the one live run FAILED and the reason is now half-explained.**
 
-**THE READINESS ORACLE (`scripts/accept_ready.py`, 13/13 unit cases).** Read-only; exit 0 = one of
+**THE READINESS ORACLE (`scripts/accept_ready.py`, 15/15 unit cases).** Read-only; exit 0 = one of
 our bases can carry the UI-queued acceptance, exit 1 = BLOCKED with the single cheapest fix, in
 this order: screen class (a modal swallows every click AND every turn-end key) -> running gdb ->
 evidence headroom (29 MB) -> per base `pending > 0`, `minerals < price`, `credit > 0` (the income
@@ -554,7 +554,7 @@ support Scout Patrol…" modal was up and had just swallowed two enqueues) -> `B
 on University Base (idx 0)` -> after `m57_ui_enqueue.py --base-index 0 --cell-item 2 --inserts 1`
 (`after INSERT 1 (try 1): pending=1 head=2 minerals=1 d0=1`) -> **`READY … RUN: scripts/m56_build.py
 --ui-queued 0 --boundaries 10 …`, exit 0**. Rule cases: `python3 scripts/test_accept_ready.py` ->
-**`PASS 13/13 readiness cases`**.
+**`PASS 15/15 readiness cases`**.
 
 **THE LIVE RUN FAILED — recorded, not hidden.** `python3 scripts/m56_build.py --ui-queued 0
 --boundaries 10 --timeout 400 --no-poke-hold` -> **FAIL**, `positive predictions 1/2 verified;
