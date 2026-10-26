@@ -2,7 +2,9 @@
 
 Rebuilds `base+0xbc` nutrient / `+0xc0` mineral / `+0xc4` energy / `+0xc8` psi IN PLACE on the base record
 (`esi` = `DAT_008f0d60`, records at `0x95da10`, stride `0x130`). Cites `A:NNN` = line NNN of the function's
-extracted objdump-intel window (regenerate: `zcat evidence/m53j_text.txt.gz | awk '/^  4e78e0:/{f=1} /^  4e8d60:/{f=0} f'`);
+extracted objdump-intel window (gz is git-kept but worktree-prunable: recover with `git show
+733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz`, then `zcat evidence/m53j_text.txt.gz
+| awk '/^  4e78e0:/{f=1} /^  4e8d60:/{f=0} f'`);
 source is `objdump -d -M intel --section=.text programs/terran.exe`, VA = file offset + 0x400000.
 **This file is the production VECTOR (yields) machine. The queue COMPLETION side — what a queued item
 needs to actually spawn a unit at the round boundary (`base+0x40` storage >= price, the POP `0x4ef5d0`,

@@ -206,8 +206,9 @@ being in history is what makes deletion safe), and record every kept/dropped fil
 `find evidence -size +150k -printf '%s %p\n' | while read sz p; do git grep -qF "$(basename "$p")"
 -- '*.md' '*.py' || echo "$sz $p"; done` — one tool call per candidate eats dozens. The MB figure
 recorded in `NEXT_PROMPT.md` goes stale during the session that writes it; measure with `budget`
-at close, never from the footing. Keep `evidence/m53j_text.txt.gz` (~5.7 MB): it is the disassembly
-cache the whole method runs on.
+at close, never from the footing. `evidence/m53j_text.txt.gz` (~5.7 MB, the disassembly cache the
+method runs on) is PRUNED from the worktree when the gate nears 30 MB; it is git-kept — recover with
+`git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
 
 Measured 2026-10-25: 29.3 MB in 858 files (58 images = 13.9 MB of it) against the 30 MB FAIL — and
 `prune --dry-run` proposes NOTHING, because the rule only drops *images older than 7 days* and the
