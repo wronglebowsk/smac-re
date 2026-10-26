@@ -30,7 +30,8 @@ def rd32(m, a): return struct.unpack("<i", M.rd(m, a, 4))[0]
 def prod_fields(m, i):
     b = M.rd(m, BASE_ARR + i * BASE_SZ, BASE_SZ)
     g = lambda off: struct.unpack("<i", b[off:off+4])[0]
-    return dict(i=i, x=g(0), y=g(2), fac=b[4], name=b[19:51].split(b"\0")[0].decode("latin-1","replace"),
+    h = lambda off: struct.unpack("<h", b[off:off+2])[0]
+    return dict(i=i, x=h(0), y=h(2), fac=b[4], name=b[19:51].split(b"\0")[0].decode("latin-1","replace"),
                 pending=g(0x4c), queue=[g(0x50 + 4*k) for k in range(10)],
                 minerals=g(0x40), progress=g(0x3c), rate=g(0xcc), income=g(0xd0),
                 fac_bits=struct.unpack("<4I", b[0x8c:0x9c]), flags30=g(0x30))
@@ -110,12 +111,19 @@ def main():
     if a.fixture:
         fx = json.load(open(a.fixture))
         pid = -1; m = None
+        natural_empty = fx.get("natural_queues_empty", False)
         log(dict(event="fixture", path=a.fixture))
         rounds = fx["rounds"]
         armed = fx.get("armed")
     else:
         pid = M.find_pid()
         m = open(f"/proc/{pid}/mem", "rb+", 0)
+        natural = all_prod(m)
+        natural_empty = all(b["pending"] <= 0 for b in natural)
+        log(dict(event="natural_state", year=natural and M.u32(m, 0x985B00),
+                 pending_bases=[b["i"] for b in natural if b["pending"] > 0],
+                 all_queues_empty=natural_empty,
+                 heads={b["i"]: b["queue"][0] for b in natural if b["queue"][0] != -38}))
         if not a.no_poke_hold:
             M.poke_hold(m, trace)
         armed = None
@@ -125,7 +133,7 @@ def main():
             m.seek(a0 + 0x4c); m.write(struct.pack("<i", 1))
             m.seek(a0 + 0x50); m.write(struct.pack("<i", a.arm_type))
             for k in range(1, 10):
-                m.seek(a0 + 0x50 + 4*k); m.write(struct.pack("<i", EMPTY))
+                m.seek(a0 + 0x50 + 4*k); m.write(struct.pack("<I", EMPTY))
             m.seek(a0 + 0x40); m.write(struct.pack("<i", a.arm_minerals))
             back = prod_fields(m, bi)
             armed = dict(base=bi, type=a.arm_type, minerals=a.arm_minerals, readback=back)
@@ -164,7 +172,12 @@ def main():
                 elif flip_t is not None and len(timeline) >= 2 and timeline[-2]["year"] != row["year"]:
                     pass  # a second flip while walking home: recorded in the timeline
                 if time.time() - last_press > 2.0 and (flip_t is None or
-                        row["cur_player"] != our):
+                        row["cur_player"] != our or time.time() - t0 > 8.0):
+                    # press while no flip is seen, while mid-walk (modal dialogs
+                    # freeze the walk), and — after 8 s — even while parked on our
+                    # turn: the "unit built"/"No units need orders" modal sits IN
+                    # our phase and only a Return clears it (measured 2026-10-25:
+                    # round 1 froze 150 s at cur_player 3 with no key landing).
                     press_return(); log(dict(event="press_enter", r=rnum,
                                              t=round(time.time()-t0, 3))); last_press = time.time()
                 if flip_t is not None and row["cur_player"] == our:
@@ -233,13 +246,14 @@ def main():
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: pending decremented",
                     pa["pending"] == pb["pending"] - 1,
                     f"pending {pb['pending']}->{pa['pending']}")
-                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: minerals debited by price",
-                    pa["minerals"] == pb["minerals"] - p["price"],
-                    f"minerals {pb['minerals']}->{pa['minerals']}, price {p['price']}")
+                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: minerals debited by >= price",
+                    pb["minerals"] - pa["minerals"] >= p["price"],
+                    f"minerals {pb['minerals']}->{pa['minerals']} (delta {pa['minerals']-pb['minerals']}), "
+                    f"price {p['price']} (clamp B at 0x4f0cc3-0x4f0ce9 re-caps storage after the pay)")
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: queue left-shifted",
                     pa["queue"] == pb["queue"][1:] + [pb["queue"][-1]] or
                     pa["queue"][:max(pb["pending"]-1,0)] == pb["queue"][1:pb["pending"]] or
-                    (pa["pending"] == 0 and pa["queue"][0] in (EMPTY, pb["queue"][1])),
+                    (pa["pending"] == 0 and pa["queue"][0] in (-38, pb["queue"][1])),
                     f"queue {pb['queue'][:3]}->{pa['queue'][:3]}")
             else:
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: NOT predicted to arrive -> queue held",
@@ -250,7 +264,7 @@ def main():
     chk("at least 1 POSITIVE prediction verified (non-vacuous)",
         pos_pred >= 1 and pos_ok == pos_pred, f"{pos_ok}/{pos_pred} positive predictions verified")
 
-    empty_all = all(b["pending"] <= 0 for b in rounds[0]["prod_before"]) if rounds else False
+    empty_all = natural_empty if not a.fixture else fx.get("natural_queues_empty", False)
     log(dict(event="verdict", checks=checks, ok=all(c["ok"] for c in checks),
              armed=armed, natural_queues_empty_at_start=empty_all,
              positive_predictions=pos_pred, positive_verified=pos_ok))
