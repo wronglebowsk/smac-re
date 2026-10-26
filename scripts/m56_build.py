@@ -57,7 +57,12 @@ def price_of(m, owner, head):
     return dict(in_mask=in_mask, cost=cost, factor=factor,
                 price=(10 * cost) if in_mask else (0 if factor in (0, None) else factor * cost))
 
-def predict(m, bases):
+def predict(m, bases, income_first=False):
+    """income_first: the queue processor runs INSIDE the base visit after the
+    income add (M56 chain: 0x4ef7f6 income, then 0x4f5a70 -> 0x4ef6d0), so the
+    storage the gate compares may already include this round's income. The M56
+    acceptance armed storage ABOVE price so the two models were indistinguishable;
+    the UI-queued run is the first one where they differ, so it is the test."""
     out = []
     for b in bases:
         if b["pending"] <= 0:
@@ -65,10 +70,12 @@ def predict(m, bases):
         head = b["queue"][0]
         pr = price_of(m, b["fac"], head & 0xff if 0 <= head < 0x40 else 0)
         unit = 0 <= head < 0x40
-        arrive = unit and pr["in_mask"] and b["minerals"] >= pr["price"]
+        gate = b["minerals"] + (b["income"] if income_first else 0)
+        arrive = unit and pr["in_mask"] and gate >= pr["price"]
         out.append(dict(base=b["i"], name=b["name"], x=b["x"], y=b["y"], fac=b["fac"],
                         head=head, unit_type=head if unit else None, pending=b["pending"],
-                        minerals=b["minerals"], price=pr["price"], factor=pr["factor"],
+                        minerals=b["minerals"], gate_minerals=gate, income=b["income"],
+                        price=pr["price"], factor=pr["factor"],
                         cost=pr["cost"], in_mask=pr["in_mask"], predict_arrive=arrive,
                         queue=b["queue"]))
     return out
@@ -103,6 +110,9 @@ def main():
     ap.add_argument("--arm", default=None, help="base index to arm (controlled poke)")
     ap.add_argument("--arm-type", type=int, default=2)
     ap.add_argument("--arm-minerals", type=int, default=100)
+    ap.add_argument("--ui-queued", type=int, default=None,
+                    help="M57: base index whose queue the GAME filled through the BUILD UI "
+                         "(no memory write at all; the run must prove 0 writes)")
     ap.add_argument("--poll", type=float, default=0.002)
     ap.add_argument("--settle", type=float, default=0.3)
     ap.add_argument("--timeout", type=float, default=300.0)
@@ -122,6 +132,8 @@ def main():
         log(dict(event="fixture", path=a.fixture))
         rounds = fx["rounds"]
         armed = fx.get("armed")
+        ui = fx.get("ui_queue")
+        writes = fx.get("writes", 0)
     else:
         pid = M.find_pid()
         m = open(f"/proc/{pid}/mem", "rb+", 0)
@@ -131,20 +143,67 @@ def main():
                  pending_bases=[b["i"] for b in natural if b["pending"] > 0],
                  all_queues_empty=natural_empty,
                  heads={b["i"]: b["queue"][0] for b in natural if b["queue"][0] != -38}))
-        if not a.no_poke_hold:
-            M.poke_hold(m, trace)
+        writes = 0
+        ui = None
         armed = None
-        if a.arm is not None:
-            bi = int(a.arm)
-            a0 = BASE_ARR + bi * BASE_SZ
-            m.seek(a0 + 0x4c); m.write(struct.pack("<i", 1))
-            m.seek(a0 + 0x50); m.write(struct.pack("<i", a.arm_type))
-            for k in range(1, 10):
-                m.seek(a0 + 0x50 + 4*k); m.write(struct.pack("<I", EMPTY))
-            m.seek(a0 + 0x40); m.write(struct.pack("<i", a.arm_minerals))
-            back = prod_fields(m, bi)
-            armed = dict(base=bi, type=a.arm_type, minerals=a.arm_minerals, readback=back)
-            log(dict(event="arm", base=bi, unit_type=a.arm_type, minerals=a.arm_minerals, readback=back))
+        if a.ui_queued is not None:
+            # M57: the queue was written by the GAME's own BUILD UI dispatch
+            # (0x417ee0 -> head store 0x418b57 -> pending store 0x418ad3), so this
+            # run makes NO memory write of any kind. The precondition is the
+            # milestone's point: at run start the base cannot yet pay (minerals <
+            # price), so a later completion cannot have been armed by us.
+            bi = int(a.ui_queued)
+            b0 = prod_fields(m, bi)
+            pr = price_of(m, b0["fac"], b0["queue"][0] if 0 <= b0["queue"][0] < 0x40 else 0)
+            ui = dict(base=bi, name=b0["name"], x=b0["x"], y=b0["y"], head=b0["queue"][0],
+                      pending=b0["pending"], minerals=b0["minerals"], income=b0["income"],
+                      price=pr["price"], cost=pr["cost"], in_mask=pr["in_mask"],
+                      provenance="ui", writes=0)
+            log(dict(event="ui_queue", **ui))
+            bad = []
+            if b0["pending"] <= 0:
+                bad.append(f"pending {b0['pending']} (queue is EMPTY - nothing for the game to build)")
+            if not (0 <= b0["queue"][0] < 0x40):
+                bad.append(f"head {b0['queue'][0]} is not a unit type")
+            if b0["minerals"] >= pr["price"]:
+                bad.append(f"minerals {b0['minerals']} >= price {pr['price']} at run start "
+                           f"(the completion would be indistinguishable from an armed one)")
+            if bad:
+                log(dict(event="ui_precondition_fail", reasons=bad))
+                print("FAIL ui-queued preconditions: " + "; ".join(bad))
+                M._dump(trace_path, trace)
+                sys.exit(1)
+            # M57-2 lesson: the credit is the base visit's RECOMPUTED +0xd0 (the income
+            # add is gated d0>0), so an exact-round prediction only holds while that
+            # number is stable and non-zero. Say the arithmetic BEFORE running N rounds
+            # (a diagnostic, not a floor): rounds_needed is what the model would need.
+            deficit = pr["price"] - b0["minerals"]
+            if b0["income"] > 0:
+                need = -(-deficit // b0["income"])
+                diag = (f"needs {deficit} more minerals at {b0['income']}/round -> "
+                        f"~{need} round(s) to the gate")
+            else:
+                diag = (f"income {b0['income']}: the add is gated d0>0, so storage cannot "
+                        f"accrue while it stays 0 — no prediction can land")
+            print(f"credit arithmetic: {diag}")
+            log(dict(event="credit_arithmetic", deficit=deficit, income=b0["income"],
+                     rounds_estimate=(None if b0["income"] <= 0 else need), detail=diag))
+        else:
+            if not a.no_poke_hold:
+                M.poke_hold(m, trace); writes += 1
+            armed = None
+            if a.arm is not None:
+                bi = int(a.arm)
+                a0 = BASE_ARR + bi * BASE_SZ
+                m.seek(a0 + 0x4c); m.write(struct.pack("<i", 1))
+                m.seek(a0 + 0x50); m.write(struct.pack("<i", a.arm_type))
+                for k in range(1, 10):
+                    m.seek(a0 + 0x50 + 4*k); m.write(struct.pack("<I", EMPTY))
+                m.seek(a0 + 0x40); m.write(struct.pack("<i", a.arm_minerals))
+                writes += 1
+                back = prod_fields(m, bi)
+                armed = dict(base=bi, type=a.arm_type, minerals=a.arm_minerals, readback=back)
+                log(dict(event="arm", base=bi, unit_type=a.arm_type, minerals=a.arm_minerals, readback=back))
         rounds = []
         our = rd32(m, M.G["our_player"][0])
         OK_XY = (630, 247)   # "OK" on the Operations Director popup (measured 2221:
@@ -152,7 +211,7 @@ def main():
         for rnum in range(a.boundaries):
             before = M.snapshot(m)
             bases_before = all_prod(m)
-            preds = predict(m, bases_before)
+            preds = predict(m, bases_before, income_first=bool(ui))
             y0 = before["globals"]["year"]
             log(dict(event="round_before", r=rnum, year=y0, snap=before,
                      prod=bases_before, predictions=preds))
@@ -163,7 +222,7 @@ def main():
             # (Operations Director: "Zoom to Base Control" is the default row and
             # Return cycles the options instead of closing) is clicked at OK.
             t0 = time.time(); timeline = []; last = None
-            last_press = 0.0; last_ok = 0.0; last_h = 0.0; flip_t = None
+            last_press = 0.0; last_ok = 0.0; last_h = 0.0; flip_t = None; last_ocr = 0.0
             deadline = time.time() + a.timeout
             while time.time() < deadline:
                 row = M.timeline_row(m)
@@ -174,6 +233,21 @@ def main():
                 if time.time() - last_press > 2.0:
                     press_return(); log(dict(event="press_enter", r=rnum,
                                              t=round(time.time()-t0, 3))); last_press = time.time()
+                if flip_t is None and time.time() - t0 > 5.0 and \
+                        row["cur_player"] == our and time.time() - last_ocr > 3.0:
+                    # "SOME OF OUR UNITS HAVE NOT YET MOVED ... do you really want to end
+                    # the turn now?" blocks the turn FOREVER and does not take Return: it
+                    # needs its YES row clicked, then the OK bar 26 px below
+                    # (smac_play.answer_confirm, verified live). Without this the 240 s
+                    # escalation sat on that dialog and the year never moved (measured).
+                    import smac_play as sp
+                    png = sp.freeze("m56c")
+                    w = sp.ocr_fast(png)
+                    if sp.is_confirm(w):
+                        sp.answer_confirm(w)
+                        log(dict(event="answer_confirm", r=rnum, t=round(time.time()-t0, 3)))
+                        print(f"  [r{rnum}] answered the units-not-moved confirm", flush=True)
+                    last_ocr = time.time()
                 if flip_t is None and time.time() - t0 > 8.0 and \
                         row["cur_player"] == our and time.time() - last_h > 4.0:
                     # A produced unit arrives order 0 (actionable) and the auto-end
@@ -192,7 +266,14 @@ def main():
                         subprocess.run(["xdotool", "click", "1"], check=False)
                     log(dict(event="click_ok", r=rnum, t=round(time.time()-t0, 3), xy=OK_XY))
                     last_ok = time.time()
-                if flip_t is not None and time.time() - flip_t >= a.settle:
+                # M57-3: break as soon as the WALK IS HOME after the flip, not after a fixed
+                # settle. With everything held the engine auto-ends and the next round can
+                # flip 1-2 s after this one (measured r4/r5: year delta 2), so a fixed sleep
+                # either misses the walk (settle too short) or swallows the next flip (too
+                # long). The floor is unchanged — the after-snapshot must show cur_player ==
+                # ours; this just takes it at the right instant.
+                if flip_t is not None and (row["cur_player"] == our
+                                           or time.time() - flip_t >= max(a.settle, 4.0)):
                     break
                 time.sleep(a.poll)
             log(dict(event="timeline", r=rnum, rows=timeline))
@@ -279,6 +360,15 @@ def main():
     chk("boundaries observed >= 2", n_flip >= 2, f"{n_flip} of {len(rounds)} rounds flipped")
     chk("at least 1 POSITIVE prediction verified (non-vacuous)",
         pos_pred >= 1 and pos_ok == pos_pred, f"{pos_ok}/{pos_pred} positive predictions verified")
+    if ui is not None:
+        chk("queue provenance: GAME-filled, zero memory writes by this script",
+            writes == 0 and ui.get("provenance") == "ui" and ui.get("pending", 0) > 0,
+            f"provenance {ui.get('provenance')} pending {ui.get('pending')} head {ui.get('head')} "
+            f"on base {ui.get('base')} ({ui.get('name')}); memory writes: {writes}")
+        chk("completion NOT armed: storage below price at run start",
+            ui.get("minerals", 10**9) < ui.get("price", 0),
+            f"minerals {ui.get('minerals')} < price {ui.get('price')} "
+            f"(income {ui.get('income')}/round pays the rest)")
 
     empty_all = natural_empty if not a.fixture else fx.get("natural_queues_empty", False)
     log(dict(event="verdict", checks=checks, ok=all(c["ok"] for c in checks),
@@ -295,9 +385,11 @@ def main():
     print(f"  positive predictions {pos_ok}/{pos_pred} verified; boundaries {n_flip}/{len(rounds)}")
     print(f"  trace: {trace_path}")
     if all(c["ok"] for c in checks):
+        prov = (f" — queue filled by the GAME's BUILD UI (0 memory writes), "
+                f"paid by income at {ui.get('income')}/round") if ui is not None else ""
         print(f"PASS production prediction: {pos_ok} verified unit arrivals over {n_flip} "
               f"boundaries, every prediction and every observed arrival accounted, "
-              f"queue bookkeeping exact")
+              f"queue bookkeeping exact{prov}")
         sys.exit(0)
     print("FAIL production prediction accounting")
     sys.exit(1)

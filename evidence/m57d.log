@@ -1,0 +1,36 @@
+[New LWP 1538435]
+[New LWP 1538434]
+[New LWP 1538433]
+[New LWP 1538432]
+[New LWP 1538431]
+[New LWP 1538430]
+[New LWP 1538429]
+[New LWP 1538425]
+[New LWP 1538424]
+[New LWP 1538423]
+[New LWP 1538422]
+[New LWP 1538421]
+[New LWP 1538420]
+[New LWP 1538419]
+[New LWP 1538418]
+[New LWP 1538417]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf658568b in ?? ()
+Breakpoint 1 at 0x417ee0
+Breakpoint 2 at 0x418b57
+Breakpoint 3 at 0x418ad3
+Breakpoint 4 at 0x418762
+Breakpoint 5 at 0x418ac7
+Breakpoint 6 at 0x418b24
+Breakpoint 7 at 0x4ef7db
+ENQ#1 param1=1 param2=1 curbase=0x95ef70
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 1538429]
+0xf679832c in __kernel_vsyscall ()
+[Inferior 1 (process 1538414) detached]
