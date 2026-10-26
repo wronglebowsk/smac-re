@@ -31,66 +31,21 @@ FAILED (`1/2 positive predictions verified`) and the reason is now half-explaine
    `.jsonl`, so before M62 no trace could ever count as cited (it now lists 10 files / 0.1 MB).
 4. `python3 scripts/m56_build.py --fixture X` writes its trace to `$TMPDIR`, not `evidence/`.
 
-## WHAT SESSION 100 SETTLED (do not re-learn)
+## WHAT SESSIONS 100-101 SETTLED (detail lives in the skill: references/production-queue.md)
 
-**THE ROUND ORDER, read out of one ordered gdb stream** (`scripts/m60_guard.py --stage watch
---boundaries 2 --timeout 400 --tag m61a`; `evidence/m61a_seq.jsonl`, `evidence/m61a_watch.gdblog`;
-`events {YEARW 2, PLAYERW 16, VISIT 52, PAY 8, CREATE 8, GUARDWRITE 0}`, `guard_writes 0`,
-`guard_values_at_visits ["0"]`):
-
-```
-== YEAR FLIP to 2183 (round 83) while cur_player=7
-   cur_player -> 0 -> 1 -> 2 -> 3
-y2183 r83 cp3 VISIT  University Base   min=6 pend=0 head=2 guard=0
-y2183 r83 cp3 VISIT  Korolev Center    min=9 pend=0 head=2 guard=0
-y2183 r83 cp3 PAY    Korolev Center    9->0 (edi=9)      ; edi = the price (m58_price: 9)
-y2183 r83 cp3 CREATE Korolev Center    min=0
-   cur_player -> 4 -> 5 -> 6 -> 7
-== YEAR FLIP to 2184 ...
-```
-
-The year store is **`0x51f54f`** (`a3 00 5b 98`, right after the round store `0x51f53c`); NAMED.md's
-"year store `0x51f554`" is the `call 0x478530` AFTER the store — reported, bytes win. Our bases are
-visited **while `cur_player == 3`, in array order** (University idx 0 then Korolev idx 18), four
-player switches after the year flip, in the round whose year has just flipped.
-
-**THE PAY AND THE CREATE ARE ONE VISIT INVOCATION.** `grep -n '0x4efedd\|0x4eff32\|0x4eff4e'
-scratch/m574/text.txt` returns only the three instruction addresses plus the `jne 0x4eff5c` — nothing
-jumps into that block — and the live log prints PAY then CREATE adjacent. So **an arrival is never a
-round late; a SNAPSHOT can be early.** The M59 "unit 6->7 across the snapshot gap" is the harness's
-after-snapshot landing at `cur_player 3` before player 3's upkeep reached the base, nothing more.
-
-**F1 IS ATTRIBUTED, NOT TOLERATED.** `ds:0x8f0d60` names the record the round processor is visiting
-(`0x4f5a70` stores it per base before the pipeline that reaches `0x4ef6d0`), so it says which base
-has been reached. `m56_build.py` has `cur_base()`, logs it as `cur_base` in every `round_after`
-event, carries it in `rounds[r]["cur_base_after"]`, and **refuses** the deferral when the
-after-snapshot already named the predicted base. Proof cases (`scratch/m61/mkfix.py` builds both from
-the real PASS trace; they differ in that ONE field): `--fixture scratch/m61/fixture_defer_ok.json`
--> exit 0 PASS; `--fixture scratch/m61/fixture_beat_visit.json` -> exit 1 `BAD ... NOT deferred: at
-the after-snapshot ds:0x8f0d60 already named this base`. Fixture timelines now replay the guard
-samples too, so the guard floor cannot be vacuously true on a replay.
-
-**`base+0x10` IS THE NAME, NOT A FLAG.** The name starts at record byte **+19**; a dword read at
-`+0x10` is bytes +16,+17,+18 (three small unnamed bytes) plus the name's FIRST CHARACTER in the top
-byte. `python3 scratch/m61/census10.py`: `topbyte==name[0]: 24 / 24` — Korolev `0x4b000000` = 'K',
-University `0x55000000` = 'U', both with +16..+18 zero. Bytes +16..+18 are unnamed (observation, not
-claim: +17 == 1 on all 8 faction-6 bases, +18 nonzero on several faction-2/7 bases); who writes them
-is unmeasured. The old `[base+0x10] == 0` guard note was wrong twice: Ghidra `short *` offsets, then
-this straddle. Check a record's BYTE layout before believing any dword-level claim about it.
-
-**HARNESS LESSONS THAT COST REAL TIME.** (1) A dialog on screen swallows every UI click —
-`m57_ui_enqueue` failed twice on University Base (`INSERT never landed`, chooser guard updating,
-pending stuck 0) with an Operations Director "minerals output ... not sufficient to support Scout
-Patrol ... disbanded" dialog (`classify()` == `dialog`) over the BUILD pane: Return clears it, one
-Escape closes the pane, re-check `classify() == hud` BEFORE an enqueue. (2) Producing a unit zeroes
-that base's mineral credit (`+0xd0` 1 -> 0 or -1) and the income add is gated `d0 > 0`, so storage
-cannot accrue again — after two productions BOTH our bases sat at minerals 0 / credit 0 and no
-positive prediction was possible; the fix is the reload, not a poke.
-
-**CONFLICTS still on the record.** queued-count byte `0x94dc84` (skill) vs `0x94de84` (the pop
-instruction at `0x4ef613`); a writer for `0x8f0d70` outside `.text` is not excluded (the watchpoint
-covers runtime); the NAMED.md "completion path" branch `0x4f0b78 -> 0x4f0ca1 pay -> 0x4f0f46 pop ->
-0x4f26d9 ret` is still unread — the UI-queued pay is `0x4efedd` (measured `before=9 edi=9 after=0`).
+- **The round order** (measured, `evidence/m61a_seq.jsonl`): the year store `0x51f54f` fires while
+  `cur_player` is 7 -> `cur_player` 0,1,2,3 -> our bases' visits in ARRAY order -> PAY `0x4efedd`
+  (edi = the price) -> CREATE `0x4eff4e` -> `cur_player` 4..7. The pay and the create are ONE visit
+  invocation (nothing in `.text` jumps into that block). **An arrival is never a round late; a
+  snapshot can be early.**
+- `ds:0x8f0d60` names the base being visited; `m56_build.py` logs it per window and refuses the F1
+  deferral when it already named the predicted base (`scratch/m61/mkfix.py` proves both directions).
+- `base+0x10` is NOT a field: the name starts at byte +19, so the dword straddles +16..+18 and
+  `name[0]` (24/24 bases).
+- Traps that cost real time: a modal voids every click; a produced unit zeroes `+0xd0` and the
+  income add is gated `d0 > 0`, so credit 0 can never accrue again; the base array compacts
+  mid-run, so locate bases BY NAME.
+- Conflicts are tagged `CONFLICT:` in NAMED.md and printed by the brief.
 
 ## THE PICK — M63: WHAT WRITES 384/386 INTO `base+0x50`, AND WHAT THE POP DOES TO THE SLOTS
 
