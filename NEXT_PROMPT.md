@@ -25,7 +25,7 @@ FAILED (`1/2 positive predictions verified`) and the reason is now half-explaine
    **screen class (a modal swallows every click AND every turn-end key)**, a running gdb, evidence
    headroom (29 MB), then per base `pending > 0`, `minerals < price`, `credit > 0` (the income add
    is gated `d0 > 0`, so `credit <= 0` can NEVER accrue). It also flags a TIGHT horizon when the
-   gate is more than `boundaries-2` rounds away. 13 unit cases: `scripts/test_accept_ready.py`.
+   gate is more than `boundaries-2` rounds away. 15 unit cases: `scripts/test_accept_ready.py`.
 3. `python3 scripts/evidence.py audit [--delete]` — cites are taken from the docs AND from
    `scripts/*.py`, so classifier frames are safe. Note the fix: `load_cites()` never matched
    `.jsonl`, so before M62 no trace could ever count as cited (it now lists 10 files / 0.1 MB).
@@ -85,7 +85,7 @@ Session 101's one live run FAILED (`1/2 positive predictions verified`,
    BLOCKED (exit 1) with the right fix on a dead one, and `python3 scripts/m56_build.py
    --ui-queued <idx> --boundaries 10 --timeout 400 --no-poke-hold` must print **PASS on ONE real
    invocation**. If it cannot, record the negative and merge nothing.
-7. Keep green: `scripts/test_accept_ready.py` (13/13), `scripts/test_m56_predict.py` (17/17),
+7. Keep green: `scripts/test_accept_ready.py` (15/15), `scripts/test_m56_predict.py` (17/17),
    `--fixture scratch/m56_fixture_bad.json` (exit 1), `--fixture scratch/m61/fixture_defer_ok.json`
    (exit 0), `--fixture scratch/m61/fixture_beat_visit.json` (exit 1); add cases for anything new.
 
