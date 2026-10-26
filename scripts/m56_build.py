@@ -24,6 +24,7 @@ BASE_ARR, BASE_SZ = M.BASE_ARR, M.BASE_SZ
 TYPE_ARR, TYPE_STRIDE = 0x98AD88, 0x34
 ERA_TABLE = 0x68CBB8
 EMPTY = 0xffffffda
+EMPTY_S = -38          # the same dword read as signed: the empty-queue marker
 
 def rd32(m, a): return struct.unpack("<i", M.rd(m, a, 4))[0]
 
