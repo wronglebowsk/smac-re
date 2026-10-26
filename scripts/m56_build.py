@@ -44,18 +44,89 @@ def all_prod(m):
 def type_cost(m, t):
     return M.rd(m, TYPE_ARR + t * TYPE_STRIDE + 41, 1)[0]
 
-def price_of(m, owner, head):
-    """price = 0x4e40a0(owner,1,-1) * type_cost. In-mask owner -> 100% factor 10
-    (NAMED M53l: DAT_0092a290=10, DAT_0092ada8=2 -> x1). Out-mask: era-table
-    price (0..13) reported, prediction NOT floored for out-mask owners."""
-    mask = M.u32(m, 0x985B10)
-    in_mask = bool((mask >> owner) & 1)
-    cost = type_cost(m, head)
+def trunc_div(a, b):
+    """C signed division truncated toward zero — what the imul-magic + sar at
+    0x4e4128-0x4e4139 / 0x4e4148-0x4e4159 / 0x4e4205-0x4e4217 actually does."""
+    q = abs(a) // abs(b)
+    return q if (a >= 0) == (b >= 0) else -q
+
+
+def cost_multiplier(m, owner):
+    """FUN_004e40a0(owner, 1, -1), the value the pay gate's `edi` is built from,
+    re-implemented line-for-line from the disasm (scratch/m574/text.txt call site
+    0x4efa2c-0x4efa52; body evidence/m53i_fn4e40a0.txt = ghidra_out/shard_012.c
+    :13825-13880).  M58: NOTHING here is a constant chosen to fit an observation —
+    every input is read from the same memory snapshot the gate is being run on:
+
+      0x4e40a4/0x4e40b5  mask = [0x985b10] & 0xff, tested bit-by-bit LOW BYTE ONLY
+                         (sessions-64-64.md: "4e40a0 tests LOW BYTE ONLY")
+      in-mask  -> 10 (0x4e40c0)          out-mask -> era table [0x68cbb8 + era*4]
+                         ({13,12,11,10,8,7}, sessions-64-64.md, read live here; the
+                          0x4e40fc-0x4e410b subtractions are NOT modelled — reported)
+      0x4e4110-0x4e4139 rescale by [0x92a294] (param_2 == 1 picks the +4 variant)
+      0x4e413b-0x4e4175 rescale by [0x92ada8]: 1 -> *9/10, 0 -> *8/10, else unchanged
+      0x4e421f-0x4e430f switch on the dword at 0x94d6a0 + owner*0x20bc (sessions-56
+                         calls it the faction government field; 0 = identity)
+
+    Live in the current box (scripts/m58_price.py): mask&0xff = 0x08 (owner 3 in),
+    [0x92a294] = 10, [0x92ada8] = 1, gov field 0 -> factor_tenths 9, and the tracer
+    read edi = 9 at 0x4efa52 twice (evidence/trace_m574b/c.jsonl).  The 10 the M56
+    model used was the session-56 game's state ([0x92ada8] = 2), not a law."""
+    mask = M.u32(m, 0x985B10) & 0xff
+    in_mask = bool(mask & (1 << (owner & 0x1F)))
     era = rd32(m, 0x985AEC)
-    era_mult = struct.unpack("<i", M.rd(m, ERA_TABLE + era * 4, 4))[0] if 0 <= era < 6 else None
-    factor = 10 if in_mask else era_mult
-    return dict(in_mask=in_mask, cost=cost, factor=factor,
-                price=(10 * cost) if in_mask else (0 if factor in (0, None) else factor * cost))
+    era_mult = (struct.unpack("<i", M.rd(m, ERA_TABLE + era * 4, 4))[0]
+                if 0 <= era < 6 else None)
+    if in_mask:
+        v, why = 10, "in-mask -> 10 (0x4e40c0)"
+    else:
+        v = 0 if era_mult is None else era_mult
+        why = (f"out-mask -> era table[{era}] = {era_mult} (0x4e40fe; the "
+               f"FUN_00531090/government subtractions at 0x4e40fc-0x4e410b are "
+               f"not modelled)")
+    scale = rd32(m, 0x92A294)
+    if scale != 10:
+        v = trunc_div(scale * v, 10)
+    ada8 = rd32(m, 0x92ADA8)
+    if ada8 == 1:
+        v = trunc_div(v * 9, 10)
+    elif ada8 == 0:
+        v = trunc_div(v * 8, 10)
+    gov = rd32(m, 0x94D6A0 + owner * 0x20BC)
+    if gov == 0:
+        pass
+    elif gov == 1:
+        v = trunc_div(v * 9 + 9, 10)
+    elif gov == 2:
+        v = trunc_div(v * 4 + 4, 5)
+    elif gov == 3:
+        v = trunc_div(v * 7 + 9, 10)
+    elif gov == 4:
+        v = trunc_div(v * 3 + 4, 5)
+    elif -7 <= gov <= -3:
+        v = trunc_div(v * 13 + 9, 10)
+    elif gov == -2:
+        v = trunc_div(v * 6 + 4, 5)
+    elif gov == -1:
+        v = trunc_div(v * 11 + 9, 10)
+    else:
+        v = trunc_div(v + 1, 2)
+    return dict(in_mask=in_mask, factor=v, mask=mask, era=era, era_mult=era_mult,
+                scale_a294=scale, ada8=ada8, gov_field=gov, why=why)
+
+
+def price_of(m, owner, head):
+    """price = 0x4e40a0(owner,1,-1) x type_cost(+41) — the multiplier is DERIVED
+    from the live mask / era / difficulty / government inputs (cost_multiplier),
+    which is exactly the shape docs/sessions/sessions-56-56.md already described
+    as "multiplier x +41".  Out-mask owners: the era-table price is reported and
+    the prediction is still NOT floored for them (unchanged since M57)."""
+    cm = cost_multiplier(m, owner)
+    cost = type_cost(m, head)
+    out = dict(cm)
+    out["cost"] = cost
+    out["price"] = cm["factor"] * cost
+    return out
 
 def predict(m, bases, income_first=False):
     """income_first: the queue processor runs INSIDE the base visit after the
@@ -294,7 +365,7 @@ def main():
     def chk(name, ok, detail): checks.append(dict(check=name, ok=bool(ok), detail=detail))
 
     n_flip = 0; pos_pred = 0; pos_ok = 0
-    for rd_ in rounds:
+    for rk, rd_ in enumerate(rounds):
         gb, ga = rd_["before"]["globals"], rd_["after"]["globals"]
         dy = ga["year"] - gb["year"]
         flipped = dy >= 1
@@ -334,24 +405,53 @@ def main():
                 f"net +{o['n']} with orders {orders} on base {o['base']['i']} "
                 f"(fac {o['base']['fac']}, ours={ours}); enemy-side arrivals are REPORTED "
                 f"(their queues refill inside their own AI turn - confounded, M55 #5)")
-        # F3: queue bookkeeping on bases that were pending before the flip
+        # F3: queue bookkeeping on bases that were pending before the flip.
+        # M58 MEASUREMENT (evidence/m58pop.gdblog, two visits of Korolev Center
+        # 0x95ee40): VISIT#1 storage=9 pend=1 | 0x4ef7f6 add +0 (d0 0) | 0x4efedd pay
+        # 9->0 with pend STILL 1 | VISIT#2 storage=0 pend=0.  The pay does NOT pop:
+        # pending lands in the NEXT visit — the pop store 0x4ef641 lives in
+        # FUN_004ef5d0, whose unit-path calls out of FUN_004ef6d0 are at 0x4f037b /
+        # 0x4f0f46, after this visit's pay.  Session 96 recorded "pending 1 -> 0 in
+        # the same visit" (references/production-queue.md); these reads contradict
+        # that and the two checks below encode the measured order instead.
+        # The mineral identity must also carry the visit's income credit: the store
+        # census (scripts/m57_stores.py, evidence/trace_m574c.jsonl) shows the only
+        # +0x40 stores a visit reaches are the add at 0x4ef7f6 (== +0xd0 as read at
+        # the visit, gated d0 >= 0 at 0x4ef7db) and the pay at 0x4efedd (== price),
+        # so storage_after == storage_before + credit - price is EXACT, not a >=.
+        # The pre-M58 check ignored the credit the model itself predicts
+        # (income_first) and only ever passed because the armed run had income 0.
         for pb in rd_["prod_before"]:
             if pb["pending"] <= 0: continue
             pa = next(b for b in rd_["prod_after"] if b["i"] == pb["i"])
             p = next((pp for pp in rd_["predictions"] if pp["base"] == pb["i"]), None)
+            credit = pb["income"] if pb["income"] > 0 else 0
             if p and p["predict_arrive"]:
-                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: pending decremented",
-                    pa["pending"] == pb["pending"] - 1,
-                    f"pending {pb['pending']}->{pa['pending']}")
-                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: minerals debited by >= price",
-                    pb["minerals"] - pa["minerals"] >= p["price"],
-                    f"minerals {pb['minerals']}->{pa['minerals']} (delta {pa['minerals']-pb['minerals']}), "
-                    f"price {p['price']} (clamp B at 0x4f0cc3-0x4f0ce9 re-caps storage after the pay)")
-                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: queue left-shifted",
-                    pa["queue"] == pb["queue"][1:] + [pb["queue"][-1]] or
-                    pa["queue"][:max(pb["pending"]-1,0)] == pb["queue"][1:pb["pending"]] or
-                    (pa["pending"] == 0 and pa["queue"][0] in (-38, pb["queue"][1])),
-                    f"queue {pb['queue'][:3]}->{pa['queue'][:3]}")
+                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: minerals identity "
+                    f"storage + income - price == storage after",
+                    pa["minerals"] == pb["minerals"] + credit - p["price"],
+                    f"{pb['minerals']} + credit {credit} - price {p['price']} != "
+                    f"{pa['minerals']}; the add 0x4ef7f6 and the pay 0x4efedd are the "
+                    f"only +0x40 stores a visit reaches (evidence/trace_m574c.jsonl)")
+                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: the pay window does not "
+                    f"pop (pending and slots unchanged)",
+                    pa["pending"] == pb["pending"] and pa["queue"] == pb["queue"],
+                    f"pending {pb['pending']}->{pa['pending']} queue "
+                    f"{pb['queue'][:3]}->{pa['queue'][:3]}; the pop is the next visit's "
+                    f"(0x4ef641 in FUN_004ef5d0, called from 0x4f037b/0x4f0f46)")
+                if rk + 1 >= len(rounds):
+                    chk(f"r{rd_['r']} bookkeeping base {pb['i']}: arrival on the LAST "
+                        f"boundary — the pop window is outside the run", False,
+                        "the pending -- is measured one visit after the pay "
+                        "(evidence/m58pop.gdblog); request more boundaries")
+                else:
+                    nb = next(b for b in rounds[rk + 1]["prod_after"] if b["i"] == pb["i"])
+                    chk(f"r{rd_['r']} bookkeeping base {pb['i']}: pending decremented "
+                        f"in the window after the pay",
+                        nb["pending"] == pb["pending"] - 1,
+                        f"pending {pb['pending']} in the pay window -> {nb['pending']} "
+                        f"next window; slots stay stale after a completion (M57-4), so "
+                        f"pending is the only queue truth")
             else:
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: NOT predicted to arrive -> queue held",
                     pa["pending"] == pb["pending"] and pa["queue"] == pb["queue"],

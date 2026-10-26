@@ -6,7 +6,12 @@ The rule (settled by the 2026-10-25 controlled poke, base 17 Korolev Center):
       pending (base+0x4c) > 0
       AND queue head (base+0x50) is a unit type (0..0x3f)
       AND the owner is in the event mask (0x985b10)
-      AND mineral storage (base+0x40) >= price, price = 10 * type_cost(+41)
+      AND mineral storage (base+0x40) >= price, price = cost_multiplier(owner) * type_cost(+41)
+  M58: cost_multiplier is FUN_004e40a0(owner,1,-1) RE-IMPLEMENTED and read live
+  (mask 0x985b10 low byte, era table 0x68cbb8, difficulty scalars 0x92a294 / 0x92ada8,
+  the government switch at 0x94d6a0+owner*0x20bc).  It is 10 only when [0x92ada8] >= 2;
+  with [0x92ada8] == 1 — the current box — it is 9, which is the edi the tracer read at
+  0x4efa52 twice.  The old "price = 10 * +41" was one game's difficulty state, not a rule.
   M57 refines the last term: the queue processor runs inside the base visit AFTER the
   income add, so the storage it compares includes this round's income (+0xd0) —
   `predict(..., income_first=True)` is the UI-queued shape; the M56 armed run
@@ -39,7 +44,8 @@ def check(name, cond, detail=""):
 class MockMem:
     """Serves exactly the addresses m56_build reads, from a tiny sparse map."""
 
-    def __init__(self, bases, costs, mask=0x0000fd08, era=2):
+    def __init__(self, bases, costs, mask=0x0000fd08, era=2, a294=10, ada8=2,
+                 era_table=(13, 12, 11, 10, 8, 7)):
         blob = {}
         self.blob = blob
         def put(a, fmt, v):
@@ -47,6 +53,15 @@ class MockMem:
         put(0x985AF4, "<I", len(bases))
         put(0x985B10, "<I", mask)
         put(0x985AEC, "<i", era)
+        # M58: the price multiplier's inputs, served like the live image does.
+        # Defaults are the session-56 game's state (docs/sessions/sessions-56-56.md:
+        # 0x92a290/0x92a294 = 10/10, 0x92ada8 = 2, government field 0 -> x10 = 100%),
+        # so every pre-M58 case keeps the numbers it had.  The era table is the
+        # {13,12,11,10,8,7} of sessions-64-64.md.
+        put(0x92A294, "<i", a294)
+        put(0x92ADA8, "<i", ada8)
+        for e, v in enumerate(era_table):
+            put(B.ERA_TABLE + e * 4, "<i", v)
         for t, c in costs.items():
             blob[B.TYPE_ARR + t * B.TYPE_STRIDE + 41] = bytes([c])
         for i, b in enumerate(bases):
@@ -161,11 +176,32 @@ def main():
     check("minerals 100, income 0 -> ARRIVE under both models",
           p0[0]["predict_arrive"] and p1[0]["predict_arrive"], (p0, p1))
 
+    print("case 12: M58 — [0x92ada8] == 1 rescales the multiplier 10 -> 9 (the live box)")
+    mm = MockMem([base(0, pending=1, queue=[2] + [B.EMPTY_S] * 9, minerals=8, income=1)],
+                 {2: 1}, ada8=1)
+    p = B.predict(mm, B.all_prod(mm), income_first=True)
+    check("ada8 1 -> factor 9, price 9, and 8 + income 1 ARRIVES (what the price-10 "
+          "model printed as 'queue held — minerals 8 vs price 10')",
+          len(p) == 1 and p[0]["factor"] == 9 and p[0]["price"] == 9
+          and p[0]["predict_arrive"], p)
+
+    print("case 13: ONE variable moved — ada8 0 vs 2 on an identical base")
+    mm0 = MockMem([base(0, pending=1, queue=[2] + [B.EMPTY_S] * 9, minerals=7, income=1)],
+                  {2: 1}, ada8=0)
+    mm2 = MockMem([base(0, pending=1, queue=[2] + [B.EMPTY_S] * 9, minerals=7, income=1)],
+                  {2: 1}, ada8=2)
+    p0 = B.predict(mm0, B.all_prod(mm0), income_first=True)
+    p2 = B.predict(mm2, B.all_prod(mm2), income_first=True)
+    check("same minerals 7 + income 1: ada8 0 -> price 8 -> ARRIVE; ada8 2 -> price 10 "
+          "-> not predicted",
+          p0[0]["price"] == 8 and p0[0]["predict_arrive"]
+          and p2[0]["price"] == 10 and not p2[0]["predict_arrive"], (p0, p2))
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 11/11 production-prediction cases")
+    print("PASS 13/13 production-prediction cases")
     return 0
 
 
