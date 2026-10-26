@@ -92,6 +92,11 @@ harness; do NOT use a hw watchpoint — see traps).
 
 ## OPERATIONAL KIT
 
+- **PREFLIGHT — run this FIRST, every session:** `python3 scripts/smac_preflight.py` (read-only;
+  exit 1 on any FAIL). It checks the one authoritative address table, proves terran.exe is alive
+  with TracerPid=0 and no leftover gdb, lists OUR bases BY NAME with index/coords/pending/head/
+  minerals/income, decodes our unit records, and checks /tmp room + the evidence budget. `SMAC_PID`
+  overrides the pgrep. If it FAILs, do not build on the state.
 - Production gate: `python3 scripts/m56_build.py [--arm N | --ui-queued N] [--boundaries N]
   [--timeout S] [--settle S] [--fixture FILE]`. `--ui-queued` makes NO memory write and floors
   provenance + "storage below price at run start".

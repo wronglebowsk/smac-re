@@ -173,6 +173,21 @@ def main():
                 print("FAIL ui-queued preconditions: " + "; ".join(bad))
                 M._dump(trace_path, trace)
                 sys.exit(1)
+            # M57-2 lesson: the credit is the base visit's RECOMPUTED +0xd0 (the income
+            # add is gated d0>0), so an exact-round prediction only holds while that
+            # number is stable and non-zero. Say the arithmetic BEFORE running N rounds
+            # (a diagnostic, not a floor): rounds_needed is what the model would need.
+            deficit = pr["price"] - b0["minerals"]
+            if b0["income"] > 0:
+                need = -(-deficit // b0["income"])
+                diag = (f"needs {deficit} more minerals at {b0['income']}/round -> "
+                        f"~{need} round(s) to the gate")
+            else:
+                diag = (f"income {b0['income']}: the add is gated d0>0, so storage cannot "
+                        f"accrue while it stays 0 — no prediction can land")
+            print(f"credit arithmetic: {diag}")
+            log(dict(event="credit_arithmetic", deficit=deficit, income=b0["income"],
+                     rounds_estimate=(None if b0["income"] <= 0 else need), detail=diag))
         else:
             if not a.no_poke_hold:
                 M.poke_hold(m, trace); writes += 1
