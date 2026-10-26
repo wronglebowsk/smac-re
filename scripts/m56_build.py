@@ -412,14 +412,35 @@ def main():
         pred_unit = [p for p in rd_["predictions"] if p["predict_arrive"]]
         pos_pred += len(pred_unit)
         pred_keys = {(p["x"], p["y"], p["unit_type"], p["fac"]): p for p in pred_unit}
-        # F1: every predicted unit arrival observed (net +n on the base tile)
+        # F1: every predicted unit arrival observed (net +n on the base tile).
+        # M59 MEASUREMENT (this file's own r2, evidence/trace_m56_build_20261026_144801
+        # .jsonl): Korolev Center paid in r2's window (minerals 8 -> 1 read back, the
+        # identity check passes) and pending was STILL 1 at the r2 after-snapshot and at
+        # the r3 before-snapshot (it reached 0 only in r3's window), while our unit total
+        # went 6 at r2-after -> 7 at r3-before with r3's own window adding nothing.  The
+        # create therefore lands in the GAP between our after-snapshot and the next
+        # window's before-snapshot — the same two-phase timing M58 already encodes for
+        # the pop store.  So an arrival is verified if it shows in THIS window's diff or
+        # is already present at the NEXT window's before-snapshot: the tuple, the tile and
+        # the mineral identity are still required exactly, within one round of the pay.
         for k, p in pred_keys.items():
             got = next((o for o in obs if (o["t"]) == k), None)
             ok = got is not None and got["n"] >= 1
+            deferred = False
+            if not ok and rk + 1 < len(rounds):
+                nxt = arrivals_on_bases(rd_["before"]["units"],
+                                        rounds[rk + 1]["before"]["units"], tile2base)
+                got2 = next((o for o in nxt if o["t"] == k), None)
+                if got2 is not None and got2["n"] >= 1:
+                    ok, deferred = True, True
             pos_ok += 1 if ok else 0
             chk(f"r{rd_['r']} prediction base {p['base']} ({p['x']},{p['y']}) type {p['unit_type']}",
                 ok, f"predicted (pending {p['pending']}, minerals {p['minerals']} >= price {p['price']}); "
-                    f"observed net {got['n'] if got else 0} of that tuple on the base tile")
+                    f"observed net {got['n'] if got else 0} of that tuple on the base tile"
+                    + ("; DEFERRED: the create landed after this window's after-snapshot "
+                       "and is present at the next window's before-snapshot (measured r2, "
+                       "trace_m56_build_20261026_144801: pay 8->1 with pending still 1, unit "
+                       "6->7 across the snapshot gap)" if deferred else ""))
         # F2: every observed net arrival on a base tile was a prediction (or cargo)
         for o in obs:
             k = o["t"]
