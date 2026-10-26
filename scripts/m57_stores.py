@@ -238,12 +238,29 @@ def main():
     flips = []
     samples = []
     tail_at = None
+    moved = False
+    name_bytes = nm.encode("latin-1", "replace")
     stall_since = time.time()
     try:
         while time.time() - t0 < a.timeout:
             drain()
             now = time.time() - t0
             wall = time.time()
+            # The base array COMPACTS/REORDERS mid-run: measured 2026-10-26 Korolev Center
+            # walked index 18 -> 17 (0x95ef70 -> 0x95ee40) during a watch, after which the
+            # baked address holds ANOTHER faction's record (its storage read 19 where ours
+            # read 5) and the conditioned breakpoints would attribute that base's stores to
+            # ours. Check the name at the baked address every sample; on a mismatch the
+            # watch ends at that instant and the closing anchor is the last good sample.
+            nm_here = rd(addr + 19, 40).split(b"\0")[0]
+            if nm_here != name_bytes:
+                moved = True
+                trace["events"].append(dict(event="base_moved", wall=round(wall, 3),
+                                            name_at_baked_addr=nm_here.decode("latin-1", "replace")))
+                print(f"  the base array MOVED: {addr:#x} now holds {nm_here!r} — ending the "
+                      f"watch at the move (the baked address is no longer {nm!r})", flush=True)
+                drain()
+                break
             b = rd(addr, BASE_SZ)
             g_ = lambda o: struct.unpack("<i", b[o:o + 4])[0]
             y = u32(YEAR)
@@ -394,6 +411,12 @@ def main():
     fails = []
     print(f"\nrecorded: {len(visits)} visits of {nm}, {len(stores)} stores to +0x40, "
           f"{len(flips)} boundaries, {len(samples)} sampler rows", flush=True)
+    if moved:
+        print("note: the base array MOVED during this watch; the accounting below covers "
+              "every sample and store up to the move and nothing after it", flush=True)
+    print(f"post-detach read-back (located BY NAME, so it may name a different index): "
+          f"{trace['post']}", flush=True)
+
     print("each store's `after` is its own source operand (all 23 sites are plain "
           "`mov [reg+0x40],src`); the replay-vs-memory checks below are what prove it",
           flush=True)

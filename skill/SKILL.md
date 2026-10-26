@@ -94,9 +94,10 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   moment the window is tightest.
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
-  footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: confirm
-  the file is untouched (`git diff --stat HEAD -- NEXT_PROMPT.md` empty), then `rm` it and write the new
-  content, or patch in place.
+  footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
+  the new text to a scratch path and `mv` it over (atomic, no re-read), or confirm the file is
+  untouched (`git diff --stat HEAD -- NEXT_PROMPT.md` empty), then `rm` it and write, or patch in
+  place.
 Delegated decodes belong to PARENT/static sessions: fire `delegate_task` before the milestone, never
 mid-way — a child's completion report is injected into the live turn at an arbitrary point and can
 exceed 10 KB. A milestone session that drives the live box runs no children at all.
@@ -428,8 +429,11 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   units/console_x/moon1-3/S{s}L{l}C{c}/arialn.ttf). Useful reference.
 
 ## Running under Wine — top pitfalls (depth: `references/wine-operations.md`)
-- **Preflight:** `pgrep -x terran.exe`; `/proc/<pid>/status` `TracerPid: 0`; `ptrace_scope` 0. Window is
-  10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank).
+- **Preflight is one command, and it comes FIRST:** `python3 scripts/smac_preflight.py` (read-only,
+  exit 1 on any FAIL) checks the authoritative address table, `terran.exe` alive with `TracerPid: 0`
+  and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
+  the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
+  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank).
 - **"Do you really want to quit?" is the killer dialog.** Escape returns to "Oops, no, wait!"; never
   click OK (the next OK exits the game and the process vanishes silently). Its banner IS the game title,
   so a classifier can mistake it for the title screen — this is also why the driver's own Escape press
@@ -456,9 +460,18 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
 - **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** A
   produced unit arrives order 0, the cursor parks on it, and Return every 2 s for 150 s changes nothing
   (`cur_player` ours, `turn_flags` 0, year unmoved). ONE `h` on the cursor unit (→ HOLD) closes the turn
-  at once. And a popup whose default row is not OK does not close on Return — Return CYCLES its options
-  (Operations Director defaults to "Zoom to Base Control"); click its OK instead. Cadence, coords, and
-  the queue/gate rules: `references/production-queue.md`.
+  at once, and that `h` needs orders mode `0x91b5b8` = 1 — at 0 every order key is a silent no-op
+  (the base-display recipe turns it off, so restore it), which looks exactly like a wedged turn.
+  And a popup whose default row is not OK does not close on Return — Return CYCLES its options
+  (Operations Director defaults to "Zoom to Base Control"); click its OK instead. The end-turn
+  confirm ("SOME OF OUR UNITS HAVE NOT YET MOVED … do you really want to end the turn now?") takes
+  NO Return at all: click its YES row and then the OK bar ~26 px below, 1.2 s apart
+  (`smac_play.answer_confirm`); a driver that only presses Return sits on it with the year frozen
+  until its whole budget is gone. When the year stops moving, take ONE frame and `classify` it
+  (it returns `confirm`) before pressing anything else. Cadence, coords, and the queue/gate rules:
+  `references/production-queue.md` — including why an arrival round predicted from ROUND-START fields
+  is not exact (the visit recomputes `+0xd0`, so the same snapshot produced no arrival and then an
+  arrival one round later), and the store-sequence accounting that replaces it.
 - **A stalled round can be a LIVELOCK, not a modal:** run `python3 scripts/m53q_livelock.py` (census of
   the `unit+48`/`unit+50` chains; `--fix` repairs). Signature: `turn_flags` bit 1 set + a hot main thread
   + byte-identical screenshots.
@@ -476,7 +489,12 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   class: our phase + `turn_flags` clear + year unmoved = nothing is answering the modal.
 - **Watchpoints:** x86 gives 4 hardware slots (an 8-byte window needs 8-alignment = 2 slots); pair with
   the 10 Hz poller `scripts/m53m_poll.py`; they fire on VALUE CHANGE, so a same-value rewrite is
-  invisible. Bake addresses as literals, `stdbuf -o0`, drive + snapshot in ONE backgrounded job
+  invisible. **Never watch a field the display reads constantly** (`base+0x40` mineral storage): the
+  inferior crawls (a round per ~45 s, year apparently frozen) — break on the STORE sites instead and
+  condition each on the base pointer (`if $eax == 0x95ef70`). At a store site the register side-values
+  are not evidence (`$ecx` printed a base INDEX where d0 was expected): read the fields from the baked
+  base address, and single-step (`si`) to capture that field BEFORE and AFTER the write. Bake addresses
+  as literals, `stdbuf -o0`, drive + snapshot in ONE backgrounded job
   (`scripts/m53n_drive.py` is the template).
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).

@@ -1,102 +1,143 @@
-# NEXT_PROMPT.md — footing for the next session (session 95 close, 2026-10-25)
+# NEXT_PROMPT.md — footing for the next session (session 96 close, 2026-10-26)
 
 ## THE LEDGER
 
 Merged: **M54A–M54E** (#39-#44), **M54F–M54i** (#47-#50), **M54i2/M54j/M54k** (#51-#53), **M54k2**
-(#54), **M55** (#55), **M56** (#56, the production gate = mineral storage; `test_m56_predict.py`
-11/11). **M57 is OPEN and UNMERGED on `milestone/m57` (local only — a pre-receive hook refused the
-push).**
+(#54), **M55** (#55), **M56** (#56, the production gate = mineral storage). **M57 is UNMERGED on
+`milestone/m57` (local only — a pre-receive hook refused the push).**
 
-Session 93: the GAME's own BUILD UI fills the queue (0 memory writes). Session 94: the credit is not
-a per-round constant. **Session 95: the gate ran on a real game-filled queue and got 1/2 — the model
-premise is FALSIFIED. Nothing merges.**
+Session 96 ran **M57-4 and it PASSED its own acceptance**: `scripts/m57_stores.py` put a breakpoint
+at every one of the 23 stores to `[reg+0x40]` that a base visit can reach, and over 3 consecutive
+boundaries every store was attributed to a named site, every memory-observed value was reproduced by
+replaying the stores from the run-start value, and every per-boundary sum equalled the observed net
+change (zero unattributed deltas). The M56 gate was then re-run **unchanged** and still FAILs, so
+per the footing **M57 stays unmerged** — the merge condition is the M56 production-prediction gate,
+and what blocks it is now a NAMED thing (the price constant), not a missing mechanism.
 
-## WHAT SESSION 95 MEASURED (do not re-learn)
+## WHAT SESSION 96 MEASURED (do not re-learn)
 
-`python3 scripts/m56_build.py --ui-queued 18 --boundaries 8 --timeout 240` on a fresh box (2154),
-Korolev Center [18] (29,42), queue filled by the game (pending 1, head 2, minerals 2, income 2, zero
-writes): **FAIL, exit 1**.
-- **r3 predicted arrival (8 + 2 = 10 >= price 10) and storage stayed 8 -> 8, pend 1** — the visit
-  added nothing while the round-start income field read 2. **r4, identical round-start numbers,
-  arrived: 8 -> 3, pend 0.** Same inputs, different outcomes one round apart.
-- r4 debit was **-5** (-7 from the post-add 10), not the price 10.
-- **r7: storage 5 -> 0 with pending 0** and a new unit — a pay with an empty pending count. The queue
-  slots never left-shifted (`[2,2,0]` for the whole run). ONE queued item produced TWICE.
-- `m57_credit.py --base Korolev --boundaries 3 --tag m57k`: 2 ADD hits, no GATE/PAY/CLMP; an add of
-  +1 while the field read 1 and +2 while it read 2 — **the add uses the d0 current at the visit,
-  which moves inside the round.** Register side-values at the sites remain garbage (the "d0" printed
-  18 = the base INDEX); only the storage fragments and the sampler are evidence.
-Therefore an exact-round prediction from the round-start snapshot is impossible, and the gate's
-"debited by >= price" + "bookkeeping exact" floors cannot be met by the present model. **No floor was
-weakened.**
+**The visit.** One base's visit is `FUN_004f5a70(base_index)` (single caller `FUN_00520540`): it
+computes `lea ecx,[index*304 + 0x95da10]`, stores it to the current-base global `DAT_0x8f0d60` at
+**0x4f5a99** (that instruction is the per-visit marker — `$ecx` IS the record address), and calls
+0x4e8d60, 0x4e78e0, 0x4e92c0, 0x4e93f0, 0x4eaa10, **0x4ef6d0** (the production/mineral visit) and
+**0x4f26e0**.
 
-## THE PICK — M57-4: ENUMERATE EVERY WRITE TO `base+0x40` IN ONE VISIT
+**The census.** `objdump -d -M intel --section=.text` -> 65 stores to `[reg+0x40]` in the image;
+mapped through `ghidra_out/index.csv` and filtered by call-graph reachability (depth 4) from
+`FUN_004f5a70` / `FUN_00417ee0` / `FUN_004f6030` -> **23 sites** (`python3 scripts/m57_stores.py
+--sites` prints the table with each site's base register and its source operand). The
+`lea reg,[reg2+0x40]` pointer-arithmetic shape was censused too: no store runs through such a
+register in those sets, so the list is complete for a visit.
 
-One milestone, then stop. Do NOT tune `predict()` to the observations.
+**What actually fires in a visit (read back at the sites, Korolev Center):**
+- `0x4ef7f6` **ADD**: `edx = [base+0x40] + [base+0xd0]`; the delta EQUALS the `+0xd0` field as it
+  reads **at the visit** (+2 with d0 2, +1 with d0 1 twice — d0 moves when the garrison changes),
+  gated `d0 >= 0 && head != -38 && !([base+0x30] & 2)` (0x4ef7db-0x4ef7f9).
+- the completion gate is **`cmp [curbase+0x40], edi ; jge` at 0x4efa5e**, where `edi` is built at
+  0x4efa4b-0x4efa52: `edi = eax` from `call 0x4e40a0` (item cost for the faction) then
+  `imul edi, eax` from `call 0x5ac950` (a factor). **edi measured 9 twice** (10->1 and 9->0) for a
+  queued Scout Patrol — **not the 10 the M56 model deducts**.
+- `0x4efedd` **PAY**: `esi = [ecx+0x40] - edi` (ecx = `DAT_0x8f0d60`), with pending 1 -> 0 in the
+  same visit. Session 94's unnamed "second movement inside one visit" (7->9 then 9->0) is now NAMED:
+  the add at 0x4ef7f6 and the pay at 0x4efedd.
+- the clamp sites `0x4eff20` / `0x4f0ce9` (store `max(0, min([0x92a370], d0))` only when storage >
+  that limit) and `0x4f2d7d` (the distribution store in `FUN_004f26e0`) **never fired** for our base.
 
-1. Reload a clean box and get an income base with a game-filled queue:
-   `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` (BARE filename, HUD at 2150)
-   -> `python3 scripts/m54g_prep.py` -> `python3 scripts/smac_play.py --turns 1 --timeout 200
-   --no-escape 3000 --orders-per-turn 1 --verbose --tag <t>` -> `FOUND rec<N> (29,42) ... bases 1->2`
-   (the founder is whatever record prep selected — do not assume rec0). Preflight; then
-   `python3 scripts/m57_ui_enqueue.py --base-index <Korolev idx> --cell-item 2 --inserts 1`.
-2. **Instrument every write site, not four:** `0x4ef7f6` (add), `0x4eff20` (clamp B), `0x4efed8`
-   (pay), `0x4f0cc3` (clamp after pay), plus the two candidate store instructions the disasm shows
-   inside `FUN_004ef6d0` and `FUN_00417ee0`'s queue tail. For each hit single-step once (`si`) and
-   print, from the BAKED base address (never a register): `pending, head, d0, +0x3c, +0xcc, +0x30,
-   value_at_(base+0x40)` BEFORE and AFTER, plus `$pc`. Condition every breakpoint on the base
-   pointer.
-3. Run 3-4 boundaries and read the store sequence per visit. Required output: for one visit, an
-   ordered list `(site, before, after, pending, head, d0)`; then say plainly which store produced the
-   r7 pay with pending 0 and whether the add's amount equals the d0 field or a recomputed value.
-4. Acceptance for M57-4 (`scripts/m57_stores.py`): prints a table and PASSes only when every store to
-   `+0x40` in 3 consecutive boundaries is attributed to a named site and the sum of the deltas equals
-   the observed net change for each base, with zero unattributed deltas. That is the honest gate; it
-   does not touch `m56_build.py`.
-5. Only AFTER the sequence is proven, revisit the M56 gate: if the proven semantics still cannot make
-   `m56_build.py --ui-queued` pass with every floor intact, record the negative and leave M57
-   unmerged.
+**Acceptance (the PASS).** `python3 scripts/m57_stores.py --boundaries 3 --timeout 200 --tag m574c`
+-> `PASS store-sequence enumeration: 4 stores over 3 boundaries, every store attributed to a named
+census site, every sampler value reproduced by the replay, per-boundary sums equal the observed net
+changes` — Korolev Center idx 17 (0x95ee40), queue filled by the GAME's BUILD UI (pending 1, harness
+wrote nothing), 3 visits, boundaries 2163->2166, sampler values [7, 0, 1, 2], sums 0/-7/+1/+1 ==
+observed nets; `evidence/trace_m574c.jsonl`, `evidence/m574c.gdblog`.
+
+**The M56 gate, re-run unchanged.** `python3 scripts/m56_build.py --ui-queued 17 --boundaries 10
+--timeout 300` (UI-filled queue, `memory writes: 0`, start minerals 2 < price 10) ->
+**`FAIL production prediction accounting`**: `BAD at least 1 POSITIVE prediction verified — 0/0`,
+`BAD r7 bookkeeping base 17: NOT predicted to arrive -> queue held — pending 1->0 ... (minerals 0
+vs price 10)` — the arrival came at minerals 8 (8 + income 1 = 9 >= the measured price 9). 10/10
+boundaries flipped, provenance + storage-below-price floors ok. **Nothing was weakened.**
+
+## THE PICK — M58: NAME THE PRICE (why `edi` is 9)
+
+One milestone, then stop. Do NOT tune `predict()` to observations; DERIVE the price.
+
+1. Read the two calls that build `edi` (disasm windows, not whole functions): `0x4e40a0` — already
+   exported at `evidence/m52a_fn4e40a0_disasm.txt` — and `0x5ac950` — exported at
+   `evidence/m52b_fn5ac950_disasm.txt`. Find what each returns for (item id 2 = Scout Patrol, our
+   faction 3, `DAT_0x68cbb0` = the base index, and the `-1`, `1`, `faction` pushed at
+   0x4efa34-0x4efa38).
+2. Reproduce **9** statically (alpha.txt / the tables those two functions read) and say what the
+   factor multiplies (era? difficulty? quantity?). Cite the disasm lines you read, per the skill's
+   audit rule: re-read every store site and the guard before believing a decode.
+3. Make `m56_build.py` take the price from that derivation (a named constant WITH a cite, not a
+   tweak), leave every floor and threshold EXACTLY where it is, and re-run
+   `python3 scripts/m56_build.py --ui-queued <Korolev idx> --boundaries 10 --timeout 300`.
+4. Acceptance: `m56_build.py` prints PASS with every floor intact (>= 1 POSITIVE prediction
+   verified) on ONE real invocation. If it does, merge the branch that carries it. If it cannot,
+   record the negative and merge nothing.
+5. `python3 scripts/test_m56_predict.py` and the bad-fixture negative must stay green.
 
 ## LIVE FACTS / KIT
 
-- **PREFLIGHT FIRST:** `python3 scripts/smac_preflight.py` (read-only; exit 1 on FAIL). Prints our
-  bases BY NAME with index/coords/pending/head/minerals/income, unit decode, /tmp, evidence budget.
-  `SMAC_PID=<pid>` overrides pgrep.
-- Gate: `python3 scripts/m56_build.py [--arm N|--ui-queued N] [--boundaries N] [--timeout S]
-  [--settle S] [--fixture FILE]`; prints the credit arithmetic before a --ui-queued run; answers the
-  units-not-moved confirm itself; breaks the watch when the walk is home.
+- **Preflight FIRST:** `python3 scripts/smac_preflight.py` (read-only, exit 1 on FAIL) — prints our
+  bases BY NAME with index/coords/pending/head/minerals/income, tracer state, /tmp, evidence budget.
+  `SMAC_PID=<pid>` overrides pgrep (it is also the negative test).
+- **Box at session-96 close:** year 2177, n_bases 23, ours 2 — University Base (28,42) min 0 income
+  0 and **Korolev Center (29,42) idx 17 min 2 income 1**, pending 0 head 2 (stale), 11 units ours,
+  0 actionable. Korolev's income is thin because the garrison's upkeep eats the yield: expect to
+  reload for a clean economy — `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`
+  (BARE filename, HUD at 2150) -> `python3 scripts/m54g_prep.py` -> one `python3 scripts/smac_play.py
+  --turns 1 --timeout 200 --no-escape 3000 --orders-per-turn 1 --verbose --tag <t>` founds Korolev
+  -> preflight. Locate the base BY NAME afterwards; indices drift.
+- **Store harness:** `python3 scripts/m57_stores.py [--base "Korolev Center"] [--boundaries 3]
+  [--timeout 200] [--tag t] [--tail 3] [--stall 90] [--sites]`. It arms 23 conditioned breakpoints +
+  the visit marker, samples at 2 ms, drives the turn itself (Return / OCR for the units-not-moved
+  confirm / `h` / OK click), and prints the store table, the per-boundary accounting and PASS/FAIL.
+  `--sites` prints the census table. `python3 scripts/m57_credit.py --stop` detaches a leftover gdb
+  (the store harness refuses to arm while any gdb is running).
+- **Fill the queue with the GAME, not memory:** `python3 scripts/m57_ui_enqueue.py --base-index <idx>
+  --cell-item 2 --inserts 1` (picks the chooser cell BY CONTENT, reads pending after every click,
+  restores orders mode, and NOW closes the base display it opened, verifying the class).
+- **Before any boundary watch, HOLD everything:** poke `+17 = 2` on every one of our records
+  (`UNIT_ARR 0x933278`, stride 52, owner byte +14, type u16 at +10 < 24) and read it back — with any
+  actionable unit the auto-end never fires and a 90 s watch sits parked on `cur_player 3`.
 - Rule cases: `test_m56_predict.py` -> PASS 11/11; `m56_build.py --fixture
   scratch/m56_fixture_bad.json` -> exit 1; `test_walk_diff.py` 37/37; `test_classify.py` 17/17;
-  `check_classes.py` 17/0 (delete UNTRACKED `evidence/**/_3x.png` after).
-- UI queue: `scripts/m57_ui_enqueue.py --base-index N --cell-item 2 --inserts 1` (cycles the queue
-  widget's base, picks the chooser cell BY CONTENT, reads pending after every click, restores orders
-  mode). Chooser grid: `x=128+127*(k%5), y=60+100*(k//5)`; guard `[0x6a9e9c+0xa774]` = cell index;
-  candidates at `0x9267e4`, count `0x9267e0` (Scout Patrol id 2 was cell 3 at 2152-2154).
-- Credit harness: `scripts/m57_credit.py --base <NAME> [--boundaries N] [--timeout S] [--tag T]
-  [--wp]` (name, NOT an index). `--stop` detaches a leftover gdb.
-- Reload: `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> 2150; `m54g_prep.py`
-  (pokes the founder's tile to (29,42) and clears its order); one `smac_play.py --turns 1` founds
-  Korolev. Base indices drift: locate by NAME/(x,y) every step.
-- `python3 scripts/evidence.py budget` BEFORE adding frames (~26 MB used, FAIL at 30 MB).
+  `check_classes.py` 17/0 (delete the UNTRACKED `*_3x.png` siblings right after).
+- Census regeneration (scratch is gitignored): `objdump -d -M intel --section=.text
+  programs/terran.exe > scratch/m574/text.txt` then `python3 scratch/m574/census.py` — it prints the
+  union site list, the owner of each store and the `lea +0x40` audit. If `scratch/m574/` is gone,
+  start from the table baked into `scripts/m57_stores.py` and re-derive only if it disagrees.
+- `python3 scripts/evidence.py budget` BEFORE adding frames — 26.4 MB now, the gate FAILs at 30. The
+  14 `*_3x.png` upscales were `git rm`'d this session (`evidence/m574_prune_manifest.tsv`).
 
 ## TRAPS
 
-- **The units-not-moved confirm takes NO Return** ("SOME OF OUR UNITS HAVE NOT YET MOVED ... do you
-  really want to end the turn now?"): click the YES row (400, find_yes_row) then the OK bar 26 px
-  below, 1.2 s apart = `smac_play.answer_confirm`. A run sat 240 s on it with the year frozen.
-  Diagnose any "year never moves" with one frame + `classify` (it returns `confirm`).
-- **orders mode (`0x91b5b8`) at 0 makes every order key a no-op**; the turn then never ends. The UI
-  enqueue sets it to 0 to open the base display — it now restores 1; if you script the display
-  yourself, restore it.
-- Pokes lie under a tracer; poke before attaching, verify after `kill -CONT`.
-- A hardware watchpoint on `+0x40` crawls the game (the field is read constantly). Breakpoints only.
-- gdb register side-values at the production sites are unreliable (`$ecx` printed an index as d0);
-  read fields from the base pointer instead, and single-step to get before/after.
-- Popup BARS ignore clicks; Return works on the default row; MENU click (75,369) works.
-- TURN COMPLETE is at (650,410); the confirm dialog's YES row comes from OCR, never a fixed y.
-- Escape on the map raises the quit prompt and after it the game takes no keys — reload only.
-- Never `pkill -f`/`pgrep|kill` by name; never click OK on the quit prompt; no `--mode stop`; no
-  `file://` with `--load`; no backticks in a commit message; `skill_manage delete` is banned.
+- **`si` inside a breakpoint commands list ENDS `gdb -batch`**: the first hit printed the step
+  location then `[Inferior 1 ... detached]` and the watch died after one store. For a plain
+  `mov [reg+0x40],src` the store's own source operand IS the after value — print it and let the
+  memory sampler prove it. `set print frame-quiet` is not a command in this gdb and aborts the whole
+  command file.
+- **The base array reorders/compacts DURING a watch**: Korolev walked index 18 -> 17 (0x95ef70 ->
+  0x95ee40) mid-run; after that the baked address held ANOTHER faction's record (storage 19, head
+  -27) and conditioned breakpoints would credit that base's stores to ours. `m57_stores.py` verifies
+  the NAME at the address every sample and ends the watch at the move. Locate bases BY NAME every
+  step; never carry an index across a run.
+- **A base display left open swallows every turn-end key** (class `base`, parked `cur_player 3`
+  through Return/h/OK for 90 s). Escape closes a PANE safely; Escape on the bare map raises the quit
+  prompt and after it the game takes no keys — reload only. Never click OK on the quit prompt.
+- **The units-not-moved confirm takes NO Return**: click the YES row then the OK bar 26 px below
+  (`smac_play.answer_confirm`); a driver that only presses Return sits on it with the year frozen.
+- **orders mode `0x91b5b8` at 0 makes every order key a no-op** and the turn never ends.
+- A hardware watchpoint on `+0x40` crawls the game (the field is read constantly) — breakpoints at
+  the write sites only. Register side-values away from the store itself are not evidence; read the
+  fields from the baked base address, and keep verifying that address still holds YOUR base.
+- `os.pread` on `/proc/<pid>/mem` EIOs here — use `seek`+`read`. Pokes lie under a tracer.
+- gdb's stdout must be DRAINED (non-blocking `os.read`, wall-stamp each line) or 64 KB of hit lines
+  stalls the inferior at the next printf.
+- Popup BARS ignore clicks; Return works on the default row; MENU click (75,369) works; TURN COMPLETE
+  is at (650,410). Never `pkill -f`/`pgrep|kill` by name; no `--mode stop`; no `file://` with
+  `--load`; no backticks in a commit message; `skill_manage delete` is banned.
 - One variable at a time: if a position AND a tile changed, write "confounded".
 
 ## CLOSING ORDER (exactly)

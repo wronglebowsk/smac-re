@@ -151,9 +151,11 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
 - `base+0xd0` is recomputed EVERY visit (`FUN_004e93f0`) and moves with the garrison: measured walk
   1->3->0->1->2->3->4 while produced units arrived and were support-disbanded. A per-round arrival
   prediction is exact only while `+0xd0` is stable.
-- The pay at 0x4efed8 deducts `$edi` = the PRICE (m52a live: `SPENDA old=200 new=190 edi=10` at
-  price 10 — supersedes the old "edi = sweep-entry index" note). Clamp B (0x4eff20) stores only when
-  storage > min(`*0x92a370` = 10, d0).
+- The pay at 0x4efed8 takes a value that is NOT reliably the price: 10 was deducted at price 10 in an
+  armed run (`SPENDA old=200 new=190 edi=10`), but live game-queued builds paid 9 (storage 7 -> 9 ->
+  0), 5 (5 -> 0) and netted -5 from 8 at price 10. Treat `$edi` there as MEASURED-ONLY, and do not
+  floor an acceptance on "storage delta >= price" until a store sequence names the amount. Clamp B
+  (0x4eff20) stores only when storage > min(`*0x92a370` = 10, d0).
 - The gate at 0x4f0a3d (`cmp [edx+0x40], edi`) is on the `*0x8f0d60`-current-base branch (reached via
   the 0x4ef985 AND-test), NOT the per-base path — it does not fire for a base whose queue the UI
   filled. The per-base completion runs through the loop-end pay block.
@@ -179,6 +181,25 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
   after-snapshot at `--settle 0.3` caught cur_player mid-walk — use `--settle 2.5`; a sampling fix,
   not a floor change). Nothing weakened; nothing merged.
 
+## Enumerating every write to `base+0x40` (the only way to settle the credit)
+
+Boundary sampling ranks hypotheses; it cannot attribute a delta to an instruction. To settle the
+credit, log the stores themselves:
+
+1. Break at EVERY candidate write site, each conditioned on the base pointer: `0x4ef7f6` (income add),
+   `0x4eff20` (clamp B), `0x4efed8` (pay), `0x4f0cc3` (clamp after pay), plus any store inside
+   `FUN_004ef6d0` / the queue tail of `FUN_00417ee0`. A site you did not instrument is a delta you
+   cannot explain.
+2. Per hit, read the fields from the BAKED base address (pending `+0x4c`, head `+0x50`, d0 `+0xd0`,
+   progress `+0x3c`, rate `+0xcc`, flags `+0x30`, storage `+0x40`) BEFORE the instruction, `si` once,
+   and read them AFTER. Never report a register as a field value.
+3. Order the hits by time into one sequence per visit and close the arithmetic: sum of the deltas must
+   equal the observed net change for that visit. Any leftover is an unattributed store — go find it
+   rather than fitting the model to the difference.
+4. Gate on "every delta in N consecutive boundaries attributed to a named site, zero unattributed":
+   that gate can pass, whereas "predict the arrival round from the round-start snapshot" cannot while
+   the visit recomputes `+0xd0`.
+
 ## M57-3/M57-4 (session 95) — the per-round model is falsified; enumerate the stores
 
 - **A round-start snapshot cannot predict the arrival round.** Same base, same fields (minerals 8,
@@ -200,3 +221,44 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
 - `scripts/smac_preflight.py` is the orientation tool: one read-only command, exit 1 on FAIL, prints
   our bases BY NAME with index/coords/pending/head/minerals/income, the address table, tracer state,
   /tmp and the evidence budget.
+
+## M57-4 (session 96) — every store to `base+0x40` in one visit, NAMED (PASS)
+
+The visit is `FUN_004f5a70(base_index)` (one caller, `FUN_00520540`): it computes
+`lea ecx,[index*304 + 0x95da10]` and stores it to the current-base global `DAT_0x8f0d60` at
+**0x4f5a99** — that instruction is the per-visit marker, since `$ecx` IS the record address —
+then calls 0x4e8d60, 0x4e78e0, 0x4e92c0, 0x4e93f0, 0x4eaa10, **0x4ef6d0** (the production
+visit) and **0x4f26e0**. A whole-image store census (`objdump -d -M intel --section=.text`,
+every `... DWORD PTR [reg+0x40]` store mapped to its function through `ghidra_out/index.csv`,
+kept only if the function is call-graph reachable from 0x4f5a70 / 0x417ee0 / 0x4f6030, depth 4)
+yields **23 sites**; the `lea reg,[reg2+0x40]` pointer-arithmetic shape has no store through
+such a register in those sets, so the list is complete for a visit. Harness:
+`scripts/m57_stores.py --base "Korolev Center" --boundaries 3` — 23 breakpoints each conditioned
+on the store's OWN base register == our record, plus the visit marker and a 2 ms sampler.
+Acceptance is the replay: every store's `before` must equal the replayed current value, every
+sampler-observed value must be reproduced by the replay, per-boundary sums must equal the observed
+net changes, and the run must record >= 1 store with >= 1 non-zero net boundary. PASS 2026-10-26:
+4 stores / 3 visits / 3 boundaries, zero unattributed deltas.
+
+What one visit actually does to `+0x40` (all read back at Korolev Center):
+- **ADD `0x4ef7f6`**: `edx = [base+0x40] + [base+0xd0]`; the delta EQUALS the `d0` field as it
+  reads AT THE VISIT (measured +2 with d0 2, and +1 with d0 1 twice — d0 moves when the garrison
+  changes), gated `d0 >= 0 && head != -38 && !([base+0x30] & 2)` (0x4ef7db-0x4ef7f9).
+- **the completion gate is `cmp [curbase+0x40], edi ; jge` at 0x4efa5e**, with `edi` built at
+  0x4efa4b-0x4efa52: `edi = eax` from `call 0x4e40a0` (item cost for the faction) then
+  `imul edi, eax` from `call 0x5ac950` (a factor). Measured `edi = 9` for a queued Scout Patrol,
+  in two separate runs — **not the 10 the M56 model deducts**.
+- **PAY `0x4efedd`**: `esi = [ecx+0x40] - edi` (ecx = `DAT_0x8f0d60`). Measured 9 -> 0 and
+  10 -> 1: the deduction is the computed 9. So the arrival round is the one where
+  `storage + d0 >= 9`, which is exactly how the price-10 model fails live (arrival measured at
+  minerals 8 while the gate printed "queue held — minerals 8 vs price 10").
+- **CLAMP `0x4eff20` / `0x4f0ce9`** store `max(0, min(cap `[0x92a370]`, d0))` and only when
+  `storage >` that limit; they never fired in any measured window (storage after the pay is 0-1).
+- **`0x4f2d7d`** in `FUN_004f26e0` (the driver's post-visit call) is a division-based distribution
+  store — instrumented, never hit for our base in the measured windows.
+- the pop leaves stale ids in the slot tail: slots read `[2,2,2,2,2,0]` after four completions,
+  so `pending` is the only queue truth and a stale head still passes the add's `head != -38` guard.
+- **the M56 gate still fails with every floor intact** (`m56_build.py --ui-queued 17
+  --boundaries 10 --timeout 300` -> `FAIL production prediction accounting`, 0/0 positive
+  predictions, arrival at 8+1 >= 9 vs price 10). The next RE target is the price itself:
+  `0x4e40a0` (cost) x `0x5ac950` (factor).

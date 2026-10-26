@@ -1,0 +1,16 @@
+# m574 prune manifest: dropped regenerable OCR 3x upscales (ffmpeg scale=3x of a frame that is itself tracked); git keeps history, every one is reproducible from its original
+size_bytes	path	reason
+9618	evidence/m15_boot_3x.png	regenerable 3x upscale of the tracked original
+221489	evidence/m15_loaded_words_3x.png	regenerable 3x upscale of the tracked original
+104220	evidence/m15_stuck_screen_3x.png	regenerable 3x upscale of the tracked original
+108514	evidence/m25_t7_3x.png	regenerable 3x upscale of the tracked original
+125849	evidence/m45a_post_3x.png	regenerable 3x upscale of the tracked original
+259515	evidence/m54a/live_hud_3x.png	regenerable 3x upscale of the tracked original
+168624	evidence/m54a/quit_prompt_3x.png	regenerable 3x upscale of the tracked original
+118473	evidence/m54c/comm_pane_3x.png	regenerable 3x upscale of the tracked original
+67983	evidence/m54d/m54d_move_afterg_3x.png	regenerable 3x upscale of the tracked original
+269676	evidence/m54d/peek_stuck_3x.png	regenerable 3x upscale of the tracked original
+71493	evidence/m54d/synth_chooser_3x.png	regenerable 3x upscale of the tracked original
+90127	evidence/m54e/chooser_live_3x.png	regenerable 3x upscale of the tracked original
+93116	evidence/m54g/newbase_pane_3x.png	regenerable 3x upscale of the tracked original
+70191	evidence/m54h/chooser_g60b_3x.png	regenerable 3x upscale of the tracked original

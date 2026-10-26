@@ -360,3 +360,23 @@ is what separates the two classes.
   frame, so it falls through to `movie`, whose only answer is Escape — and Escape is gated by
   `--no-escape`, so the year sits frozen. Class `artwork-close`; click the bar's own centre.
   The bar's red is separated from the terrain's red by the GREEN channel (g<30 vs ~50).
+
+## Tracer and address pitfalls a store watch walks into (session 96, all measured)
+
+- **`si` inside a breakpoint commands list ENDS `gdb -batch`.** The first hit printed the step
+  location and then `[Inferior 1 (process ...) detached]` — the whole watch died after one store.
+  For a plain `mov [reg+0x40],src` the value being stored IS the after value: print the store's
+  own source operand and let the memory sampler prove it, instead of stepping.
+- **The base array reorders/compacts DURING a watch.** Korolev Center walked index 18 -> 17
+  (0x95ef70 -> 0x95ee40) mid-run; from that instant the baked address held ANOTHER faction's
+  record (its storage read 19 where ours read 5, head -27 where ours read 2) and the conditioned
+  breakpoints would credit that base's stores to ours. Read the NAME at the baked address every
+  sample and end the watch at the move (`m57_stores.py` does; the closing anchor is then the last
+  good sample, never a post-detach read-back — the game keeps playing after the last flip).
+- **A base display left open by a UI recipe swallows every turn-end key.** After the enqueue
+  recipe the screen class stayed `base` and a 90 s watch sat parked on `cur_player 3` through
+  Return, `h` and an OK click. Escape closes the pane (safe there — it is Escape on the bare map
+  that raises the quit prompt). `m57_ui_enqueue.py` now closes the pane and verifies the class.
+- A gdb pipe must be DRAINED (non-blocking `os.read` on the fd, stamped with wall time) or 64 KB of
+  hit lines stalls the inferior at the next printf; and `set print frame-quiet` is not a command in
+  this gdb (it aborts the whole command file with "Undefined set print command").
