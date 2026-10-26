@@ -361,7 +361,7 @@ is what separates the two classes.
   `--no-escape`, so the year sits frozen. Class `artwork-close`; click the bar's own centre.
   The bar's red is separated from the terrain's red by the GREEN channel (g<30 vs ~50).
 
-## Tracer and address pitfalls a store watch walks into (session 96, all measured)
+## Tracer and address pitfalls a store watch walks into
 
 - **`si` inside a breakpoint commands list ENDS `gdb -batch`.** The first hit printed the step
   location and then `[Inferior 1 (process ...) detached]` — the whole watch died after one store.
@@ -380,3 +380,7 @@ is what separates the two classes.
 - A gdb pipe must be DRAINED (non-blocking `os.read` on the fd, stamped with wall time) or 64 KB of
   hit lines stalls the inferior at the next printf; and `set print frame-quiet` is not a command in
   this gdb (it aborts the whole command file with "Undefined set print command").
+- **Arm a boundary watch only after HOLDing every record** (`+17` = 2 poked with TracerPid 0, then read
+  back): with any actionable unit the auto-end gate never fires, so the loop sits parked on
+  `cur_player == ours` through Return, `h` and OK clicks and burns the whole timeout without a single
+  year flip. Held units flip a round in 1-2 s, which is what makes a multi-boundary watch cheap.

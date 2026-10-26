@@ -18,7 +18,8 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 `code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
 `solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
 `production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate, completion chain, who fills the queue head, the
-produced-unit freeze, mock-mem predictor tests), `static-store-census.md`,
+produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
+reading, and the live write-enumeration acceptance in §9),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `git-workflow.md`, `wine-runnability.md`, `data-formats.md`, `ghidra-batch-export.md`,
 `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
@@ -97,7 +98,8 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
   the new text to a scratch path and `mv` it over (atomic, no re-read), or confirm the file is
   untouched (`git diff --stat HEAD -- NEXT_PROMPT.md` empty), then `rm` it and write, or patch in
-  place.
+  place. A `git checkout` of another branch rewrites tracked docs under your feet and invalidates an
+  earlier `read_file` the same way — take the scratch+mv route instead of re-reading the file.
 Delegated decodes belong to PARENT/static sessions: fire `delegate_task` before the milestone, never
 mid-way — a child's completion report is injected into the live turn at an arbitrary point and can
 exceed 10 KB. A milestone session that drives the live box runs no children at all.
@@ -457,8 +459,10 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   a modal event dialog, not a livelock.** With all units HELD the engine closes our turn on its own in
   1–2 s; `cur_player == ours` is a window, not a state. Heartbeat model and dismissal cadence:
   `references/solo-round-boundary.md`.
-- **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** A
-  produced unit arrives order 0, the cursor parks on it, and Return every 2 s for 150 s changes nothing
+- **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** So
+  HOLD every record (`+17` = 2, poked with TracerPid 0 and read back) BEFORE arming a multi-boundary
+  watch: held units flip a round in 1-2 s, an unheld box sits parked on our turn for the whole budget.
+  A produced unit arrives order 0, the cursor parks on it, and Return every 2 s for 150 s changes nothing
   (`cur_player` ours, `turn_flags` 0, year unmoved). ONE `h` on the cursor unit (→ HOLD) closes the turn
   at once, and that `h` needs orders mode `0x91b5b8` = 1 — at 0 every order key is a silent no-op
   (the base-display recipe turns it off, so restore it), which looks exactly like a wedged turn.
@@ -493,9 +497,14 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   inferior crawls (a round per ~45 s, year apparently frozen) — break on the STORE sites instead and
   condition each on the base pointer (`if $eax == 0x95ef70`). At a store site the register side-values
   are not evidence (`$ecx` printed a base INDEX where d0 was expected): read the fields from the baked
-  base address, and single-step (`si`) to capture that field BEFORE and AFTER the write. Bake addresses
-  as literals, `stdbuf -o0`, drive + snapshot in ONE backgrounded job
-  (`scripts/m53n_drive.py` is the template).
+  base address. Do **not** single-step for the after value — `si` inside a breakpoint commands list makes
+  `gdb -batch` stop after the step and DETACH, ending the watch after one hit; for a plain
+  `mov [reg+disp],src` the store's own source operand IS the value the field takes, and the sleeping
+  `/proc/pid/mem` sampler is what proves it. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
+  and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). The
+  census→live-enumeration method (filter the store census by call-graph reachability, condition each
+  breakpoint on the store's own base register, accept by replaying the stores against the sampler) is
+  `references/static-store-census.md` §9.
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 

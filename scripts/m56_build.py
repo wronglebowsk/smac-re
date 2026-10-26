@@ -406,14 +406,14 @@ def main():
                 f"(fac {o['base']['fac']}, ours={ours}); enemy-side arrivals are REPORTED "
                 f"(their queues refill inside their own AI turn - confounded, M55 #5)")
         # F3: queue bookkeeping on bases that were pending before the flip.
-        # M58 MEASUREMENT (evidence/m58pop.gdblog, two visits of Korolev Center
-        # 0x95ee40): VISIT#1 storage=9 pend=1 | 0x4ef7f6 add +0 (d0 0) | 0x4efedd pay
-        # 9->0 with pend STILL 1 | VISIT#2 storage=0 pend=0.  The pay does NOT pop:
-        # pending lands in the NEXT visit — the pop store 0x4ef641 lives in
-        # FUN_004ef5d0, whose unit-path calls out of FUN_004ef6d0 are at 0x4f037b /
-        # 0x4f0f46, after this visit's pay.  Session 96 recorded "pending 1 -> 0 in
-        # the same visit" (references/production-queue.md); these reads contradict
-        # that and the two checks below encode the measured order instead.
+        # M58 MEASUREMENTS. (a) evidence/m58pop.gdblog, two visits of Korolev Center
+        # 0x95ee40: VISIT#1 storage=9 pend=1 | 0x4ef7f6 add +0 (d0 0) | 0x4efedd pay
+        # 9->0 with pend STILL 1 | VISIT#2 storage=0 pend=0 — the pop store 0x4ef641
+        # (in FUN_004ef5d0, called from the unit path at 0x4f037b/0x4f0f46) runs
+        # strictly AFTER the pay store, so a boundary after-snapshot can land on either
+        # side of it: the 2177-box run read pending 1->1 in the pay window and 0 in the
+        # next one, the 2151-box run read 1->0 in the pay window (its r2).  Session 96
+        # recorded "pending 1 -> 0 in the same visit" as a rule; both orders are real.
         # The mineral identity must also carry the visit's income credit: the store
         # census (scripts/m57_stores.py, evidence/trace_m574c.jsonl) shows the only
         # +0x40 stores a visit reaches are the add at 0x4ef7f6 (== +0xd0 as read at
@@ -433,29 +433,33 @@ def main():
                     f"{pb['minerals']} + credit {credit} - price {p['price']} != "
                     f"{pa['minerals']}; the add 0x4ef7f6 and the pay 0x4efedd are the "
                     f"only +0x40 stores a visit reaches (evidence/trace_m574c.jsonl)")
-                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: the pay window does not "
-                    f"pop (pending and slots unchanged)",
-                    pa["pending"] == pb["pending"] and pa["queue"] == pb["queue"],
-                    f"pending {pb['pending']}->{pa['pending']} queue "
-                    f"{pb['queue'][:3]}->{pa['queue'][:3]}; the pop is the next visit's "
-                    f"(0x4ef641 in FUN_004ef5d0, called from 0x4f037b/0x4f0f46)")
-                if rk + 1 >= len(rounds):
-                    chk(f"r{rd_['r']} bookkeeping base {pb['i']}: arrival on the LAST "
-                        f"boundary — the pop window is outside the run", False,
-                        "the pending -- is measured one visit after the pay "
-                        "(evidence/m58pop.gdblog); request more boundaries")
-                else:
-                    nb = next(b for b in rounds[rk + 1]["prod_after"] if b["i"] == pb["i"])
-                    chk(f"r{rd_['r']} bookkeeping base {pb['i']}: pending decremented "
-                        f"in the window after the pay",
-                        nb["pending"] == pb["pending"] - 1,
-                        f"pending {pb['pending']} in the pay window -> {nb['pending']} "
-                        f"next window; slots stay stale after a completion (M57-4), so "
-                        f"pending is the only queue truth")
+                nb = (next(b for b in rounds[rk + 1]["prod_after"] if b["i"] == pb["i"])
+                      if rk + 1 < len(rounds) else None)
+                chk(f"r{rk} bookkeeping base {pb['i']}: pending decremented by exactly "
+                    f"1 in the pay window or the window after it",
+                    pa["pending"] == pb["pending"] - 1 or
+                    (nb is not None and nb["pending"] == pb["pending"] - 1),
+                    f"pending {pb['pending']} -> {pa['pending']}"
+                    + (f" -> {nb['pending']}" if nb is not None else " (last window)")
+                    + "; the pop store 0x4ef641 (FUN_004ef5d0) runs strictly AFTER the "
+                    "pay store — evidence/m58pop.gdblog reads pending 1 AT 0x4efedd and 0 "
+                    "at the next visit — so a boundary snapshot can land on either side "
+                    "(same window: this run's Korolev r2; next window: the 2177-box run "
+                    "r6, evidence/trace_m574c-era trace)")
             else:
-                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: NOT predicted to arrive -> queue held",
-                    pa["pending"] == pb["pending"] and pa["queue"] == pb["queue"],
-                    f"pending {pb['pending']}->{pa['pending']}, head {pb['queue'][0]}->{pa['queue'][0]} "
+                # The pop is applied strictly after the pay store, so the window AFTER a
+                # verified pay legitimately shows pending - 1 with no new arrival
+                # (measured: evidence/m58pop.gdblog, and the 2151-box run r8 pay / r9 pop
+                # in evidence/trace_m56_build_20261026_142139.jsonl).
+                deferred_pop = rk > 0 and any(
+                    pp["base"] == pb["i"] and pp["predict_arrive"]
+                    for pp in rounds[rk - 1]["predictions"])
+                exp_pending = pb["pending"] - (1 if deferred_pop else 0)
+                chk(f"r{rd_['r']} bookkeeping base {pb['i']}: NOT predicted to arrive -> "
+                    f"queue held" + (" (deferred pop excepted)" if deferred_pop else ""),
+                    pa["pending"] == exp_pending and pa["queue"] == pb["queue"],
+                    f"pending {pb['pending']}->{pa['pending']} (expected {exp_pending}), "
+                    f"head {pb['queue'][0]}->{pa['queue'][0]} "
                     f"(minerals {pb['minerals']} vs price {p['price'] if p else '?'})")
     chk("boundaries observed >= 2", n_flip >= 2, f"{n_flip} of {len(rounds)} rounds flipped")
     chk("at least 1 POSITIVE prediction verified (non-vacuous)",

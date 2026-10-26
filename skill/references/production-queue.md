@@ -262,3 +262,36 @@ What one visit actually does to `+0x40` (all read back at Korolev Center):
   --boundaries 10 --timeout 300` -> `FAIL production prediction accounting`, 0/0 positive
   predictions, arrival at 8+1 >= 9 vs price 10). The next RE target is the price itself:
   `0x4e40a0` (cost) x `0x5ac950` (factor).
+
+## M58 (session 97): the price IS named, and it is live STATE, not a constant
+
+`0x4efa2c-0x4efa52` (whole-`.text` dump): `ebx = [curbase+0x50]` (the queue head), `cl = byte
+[curbase+4]` (the owner), `push -1; push 1; push ecx; call 0x4e40a0` -> `edi` = the per-owner cost
+factor **in tenths**; then `push 0; push [0x68cbb0]; push ebx; call 0x5ac950` -> `eax` = the type's
+cost; `imul edi,eax` is the price the `0x4efa5e` gate compares.
+
+- `0x4e40a0(owner,1,-1)`: mask `[0x985b10]&0xff` bit(owner) -> 10, else the era table
+  `[0x68cbb8+era*4]` = {13,12,11,10,8,7}; rescale `[0x92a294]` (param_2==1 picks the +4 variant);
+  then **`[0x92ada8]`: 1 -> x9/10, 0 -> x8/10, else unchanged** (it is the difficulty scalar — the
+  scenario LOAD pane literally prints `difficulty level: talent`); then `switch` on
+  `[0x94d6a0 + owner*0x20bc]` (the government field; 0 = identity).
+- `0x5ac950(type, [0x68cbb0], 0)` = byte `0x98ad88 + type*52 + 41`, clamped to >=1 (<=999) ONLY when
+  plan byte `+42 == 8` and param_2 > -1; `type < 0x40` returns it immediately.
+- Live University-faction game: mask 0x08 (owner 3 in), a294 10, **ada8 1**, gov 0, type 2
+  `Scout Patrol` `+41 = 1` -> **price 9**. Sessions 56/64 measured ada8 = 2 -> price 10 and M52b
+  debited 10: **the price is per-game difficulty state**. `scripts/m58_price.py` prints the chain
+  from live memory; `m56_build.py cost_multiplier()` re-derives it per run.
+- **The pop is strictly after the pay** (`evidence/m58pop.gdblog`): the `0x4efedd` pay store executes
+  with pending STILL 1; pending reads 0 at the NEXT visit. The pop store is `0x4ef641` in
+  `FUN_004ef5d0` (called from the unit path at `0x4f037b`/`0x4f0f46`). A boundary after-snapshot can
+  land on either side — never assert a same-window pop.
+- **pending is NOT the queue truth**: a base paid the derived price twice more at **pending 0**
+  (minerals 7 + income 2 = 9: once with no unit appearing — confounded with a disband — once with a
+  unit appearing), and a second Scout Patrol appeared on a base with minerals 0 and pending 0. A
+  head SLOT holding a unit type keeps being bought whenever `storage + income >= price`. M59's job:
+  `FUN_004ef5d0`'s affordability call `0x5a73f0(head, owner, index)`, the `0x94de84 + owner*0x20bc`
+  byte array, and the slot array vs `+0x4c`.
+- Mineral bookkeeping is an IDENTITY, not a `>=`: `storage_after == storage_before + credit - price`
+  with credit = `+0xd0` when positive (the add at `0x4ef7f6` is gated `d0 >= 0`); measured
+  8+1-9=0, 8+2-9=1, 8+1-9=0. The old `storage_before - storage_after >= price` ignored the credit
+  the model itself predicts and only passed because the armed run had income 0.

@@ -102,8 +102,10 @@ with open(f"/proc/{pid}/mem", "rb", 0) as f:
     f.seek(0x98aaf4); blob = f.read(28 * 24)
 ```
 
-One pread settles any stride / table-field / multiplier claim that three static inferences would only
-suggest. Cross-check tables against `data/alpha.json` (`scripts/parse_alpha.py`) — the alpha comment
+**Read with `f.seek(a); f.read(n)`** — the repo's reader helpers all do it that way; `os.pread` on the
+same fd returns EIO on this host and reads like an unmapped page, which sends you hunting for a mapping
+problem you do not have. One read settles any stride / table-field / multiplier claim that three static
+inferences would only suggest. Cross-check tables against `data/alpha.json` (`scripts/parse_alpha.py`) — the alpha comment
 headers name the columns of bare-data sections. **Read the neighbours too**: a candidate array's slots
 that hold a value you already attribute elsewhere (year, `n_bases`, the faction mask) prove the array
 starts somewhere else.
@@ -131,3 +133,52 @@ code, in this order:
 Then re-census the whole window `[base−slack, base+extent)` classified by operand shape — a writer that
 only shows up under the folded name is still a writer. A store list built from one `DAT_` name is
 incomplete; a store list built from the window plus the shape filter is the census.
+
+## 9. From a static census to a live enumeration (proving you caught EVERY writer)
+
+When the question is "is this the complete list of writers of field X, and in what order", the static
+census is step one and the proof is a replay against live memory.
+
+1. **Census the whole image, then filter by call-graph reachability — not by which callees you
+   recognise.** Parse the `objdump` listing once: map every instruction to its owning function by
+   bisecting `ghidra_out/index.csv`, collect `call 0x…` targets as edges, BFS to depth ~4 from the
+   function that actually performs the operation. Find that DRIVER first by grepping the disasm for
+   `call <best-known-callee>` and reading the caller's block — the caller is where the record address is
+   computed and where the per-visit marker lives, and the callee set alone misses the sibling calls that
+   also write the field. Report both numbers ("65 stores in the image / 23 reachable"). Reachability
+   over-includes cheaply and never drops a callee you forgot; the breakpoint condition does the precise
+   filtering.
+2. **Audit the shapes the store regex cannot see before claiming completeness**: every
+   `lea reg,[reg2+<disp>]` of that displacement (list them and prove no store runs through the resulting
+   register — they are usually `[esp+…]` stack locals), `rep movs` bulk copies, and stores through a
+   register that already holds `record + field`.
+3. **Breakpoint AT the store instruction, conditioned on the store's OWN base register == the record
+   address.** The condition is literally "the target address is record+field", so it cannot mis-attribute
+   the same offset in another struct, and it fires only when the store executes, so guarded writes are
+   counted as executed-or-not rather than guessed. Instrument the whole reachable list — a breakpoint
+   whose condition never matches costs nothing measurable, and the completeness claim needs the breadth.
+4. **Take the after value from the store's own source operand**, not by stepping (`si` in a commands list
+   ends `gdb -batch`: `references/wine-operations.md`). For `mov [reg+disp],src` the source operand IS
+   the value the field takes; print it and let the sampler prove it.
+5. **Acceptance is a replay, not a timestamp alignment.** Start from the field value read before
+   attaching, walk the recorded stores in order and require:
+   - each store's `before` equals the replayed current value — a mismatch is a write at a site you did
+     not instrument;
+   - the sampler's distinct-value sequence is a **subsequence** of the replayed sequence (a sampler that
+     misses the interval between two writes legitimately skips intermediate values, so subsequence is the
+     right test and equality is too strict);
+   - at each anchor (every boundary, and the last good sample) `start + sum(deltas of stores whose wall
+     time <= anchor)` equals the value observed at the anchor. Equal anchors two rows in a row make the
+     per-boundary sums follow, so cut windows on the sampler's own timestamps and never on a post-detach
+     read-back (the game keeps playing after the last event you recorded).
+6. **Make the log parseable by construction.** Label tokens inside a hit line must contain no spaces —
+   `site=visit.pay(sub edi)` silently defeats a `site=(\S+)` regex, and a hit line your parser dropped
+   looks exactly like an unattributed write at the next store. Before trusting any accounting, grep the
+   raw log for the hit-counter sequence and require it gap-free.
+7. **Re-verify the subject's identity every sample.** Record arrays reorder/compact mid-run, which turns
+   a baked address into a different object without any write happening; read the name (or another
+   identity field) at the address each sample and end the watch at the change instead of splicing two
+   objects into one trace.
+8. **When the stores do not account for an observed jump, check the harness before the conclusion**: in
+   order — a dropped log line (point 6), the subject having moved (point 7), the anchor taken after the
+   watch ended (point 5) — and only then report an uninstrumented writer.
