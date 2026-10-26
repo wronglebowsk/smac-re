@@ -139,3 +139,42 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
    real credit sequence.
 5. Escape on the map raises the quit prompt; once dismissed the game stops taking KEYS (clicks still
    work). Reload is the only recovery.
+
+## M57-2/M57-3 (session 94) — what the mineral credit ACTUALLY is
+
+- Storage `base+0x40` is NOT `+= base+0xd0` once per round. Inside ONE base visit at the flip there
+  are SEVERAL stores; measured boundary sequence (2 ms sampler, `evidence/trace_m57c_q3.jsonl`):
+  `store 7->9, store 9->0 (pay), pending 1->0 (pop)`. The income add is gated
+  `d0 > 0 && head != -38 && !(flag30 & 2)` (disasm 0x4ef7db-0x4ef7f9) and **fires even with pending
+  0 while the head slot is stale** — the pop left-shifts the queue but leaves stale item ids in the
+  tail, so an "empty" (pending 0) base still accrues.
+- `base+0xd0` is recomputed EVERY visit (`FUN_004e93f0`) and moves with the garrison: measured walk
+  1->3->0->1->2->3->4 while produced units arrived and were support-disbanded. A per-round arrival
+  prediction is exact only while `+0xd0` is stable.
+- The pay at 0x4efed8 deducts `$edi` = the PRICE (m52a live: `SPENDA old=200 new=190 edi=10` at
+  price 10 — supersedes the old "edi = sweep-entry index" note). Clamp B (0x4eff20) stores only when
+  storage > min(`*0x92a370` = 10, d0).
+- The gate at 0x4f0a3d (`cmp [edx+0x40], edi`) is on the `*0x8f0d60`-current-base branch (reached via
+  the 0x4ef985 AND-test), NOT the per-base path — it does not fire for a base whose queue the UI
+  filled. The per-base completion runs through the loop-end pay block.
+- **gdb register side-values lie**: conditional breakpoints (`if $eax == <base addr>`) filter the
+  visit correctly and baked-base field reads match the sampler, but `$ecx`-as-d0 / `$edi`-as-price at
+  the sites printed garbage. Evidence = sampler + field read-backs. A hardware watchpoint on `+0x40`
+  is unusable for cadence (field read constantly → inferior crawls, year never moves).
+- Pokes lie while a tracer is attached: poke BEFORE attaching, verify after `kill -CONT`.
+- **The queue widget's base is INDEPENDENT of the display's base**: the right arrow (523,433) moves
+  the field `0x6a9480+0x3ff3c`; INSERT (497,343) lands on whichever base the widget holds. Cycle the
+  arrow until `+0x3ff3c` == the target index, then row 1 (185,437), cell, INSERT, OK (285,343),
+  reading pending after every click. The chooser grid position is ERA-DEPENDENT (Scout Patrol id 2
+  was cell 3 at 2152, cell 4 at 2168 — `DAT_009267e4` = [192,195,194,193,2,...]): locate the cell by
+  CONTENT. `scripts/m57_ui_enqueue.py` scripts all of it with read-backs.
+- The enqueue dispatch `0x417ee0` fires with `*0x8f0d60` = the target base (proved live), but
+  m53g_drive's static store addresses (`0x418b57/0x418ad3/0x418ac7/0x418b24`) did NOT hit on the
+  INSERT write — re-derive before trusting them.
+- The base array compacts mid-game: Korolev Center's index walked 17->18->17 within one session
+  (n_bases 29->19->23->25). Locate bases by NAME/(x,y), never by remembered index.
+- The acceptance run `m56_build.py --ui-queued 17 --boundaries 8 --timeout 240` FAILED
+  (`evidence/trace_m56_build_20261025_215056.jsonl`): 0/0 positive predictions (income read 1/round,
+  completion landed at minerals 7 + a fresh recompute), r4 bookkeeping BAD, r6/r7 walk-home BAD (the
+  after-snapshot at `--settle 0.3` caught cur_player mid-walk — use `--settle 2.5`; a sampling fix,
+  not a floor change). Nothing weakened; nothing merged.

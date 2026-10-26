@@ -82,8 +82,17 @@ def main():
     key("b")
     print(f"after b: pane base index = {u32(f, PANE_BASE_IDX)} (want {a.base_index})", flush=True)
 
-    click(ARROW_XY)
-    print(f"after right arrow: pane base index = {u32(f, PANE_BASE_IDX)}", flush=True)
+    # The QUEUE widget's base is INDEPENDENT of the display's base (measured 2163/2168:
+    # `b` opened on Korolev while the widget held University, and vice versa). Cycle the
+    # right arrow until the QUEUE widget shows the base we want: the pane base-index field
+    # follows the widget after an arrow click. Then open the chooser and INSERT.
+    for attempt in range(8):
+        if u32(f, PANE_BASE_IDX) == a.base_index:
+            break
+        click(ARROW_XY)
+        print(f"arrow {attempt+1}: pane base index = {u32(f, PANE_BASE_IDX)} "
+              f"(want {a.base_index})", flush=True)
+    print(f"queue widget on pane base index {u32(f, PANE_BASE_IDX)}", flush=True)
 
     click(ROW1_XY)
     time.sleep(0.6)
@@ -103,11 +112,22 @@ def main():
     print(f"after cell-{k} click: chooser guard (cell index) = {i32(f, 0x6A9E9C + 0xa774)}", flush=True)
 
     for n in range(a.inserts):
-        click(INSERT_XY)
-        time.sleep(1.0)      # an immediate read can show the OLD pending (session 93)
-        b1 = base_rec(f, a.base_index)
-        print(f"after INSERT {n+1}: pending={b1['pending']} head={b1['queue'][0]} "
-              f"slots={b1['queue']} minerals={b1['minerals']} d0={b1['d0']}", flush=True)
+        landed = False
+        for attempt in range(6):
+            click(INSERT_XY)
+            time.sleep(1.0)      # an immediate read can show the OLD pending (session 93)
+            b1 = base_rec(f, a.base_index)
+            print(f"after INSERT {n+1} (try {attempt+1}): pending={b1['pending']} "
+                  f"head={b1['queue'][0]} slots={b1['queue']} minerals={b1['minerals']} "
+                  f"d0={b1['d0']}", flush=True)
+            if b1["pending"] > 0:
+                landed = True
+                break
+            click(ARROW_XY)      # cycle the QUEUE widget to another base
+            print(f"  queue widget cycled; pane base index = {u32(f, PANE_BASE_IDX)}", flush=True)
+        if not landed:
+            print(f"FAIL: INSERT {n+1} never landed on base {a.base_index}", flush=True)
+            return 1
 
     click(OK_XY)
     time.sleep(0.8)
