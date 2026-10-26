@@ -149,7 +149,7 @@ def gdb_script(taddr, tname):
     site(POPAFT, "POPAFT", "addr=0x%x byte=%d sibling_dc=0x%x sibling=%d",
          f"$ecx, *(unsigned char*)$ecx, $ecx-0x200, *(unsigned char*)($ecx-0x200)")
     site(POPSHIFT, "POPSHIFT", "slot=%d dest=0x%x val=%d old=%d name=%s pend=%d",
-         f"($eax-0x{BASE_ARR:x}-$ebx*0x{BASE_SZ:x})/4, $eax, $edx, *(int*)$eax, "
+         f"($eax-0x{BASE_ARR:x}-$ebx*0x{BASE_SZ:x}-0x50)/4, $eax, $edx, *(int*)$eax, "
          f"(char*)({R}+19), *(int*)({R}+0x4c)")
     site(POPCNT, "POPCNT", "name=%s newpend=%d s0=%d s1=%d s2=%d s3=%d",
          f"(char*)({R}+19), $edx, *(int*)({R}+0x50), *(int*)({R}+0x54), "

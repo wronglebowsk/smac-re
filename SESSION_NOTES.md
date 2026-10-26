@@ -602,3 +602,108 @@ The readiness oracle has **15** unit cases, not 13: two horizon cases (`tight ho
 `roomy horizon is not`) were added after the session-101 notes were written, so the notes quoted a
 stale count. `python3 scripts/test_accept_ready.py` -> `PASS 15/15 readiness cases` (re-run before
 this commit). No code changed; `SESSION_NOTES.md` and `NEXT_PROMPT.md` now say 15/15.
+
+## Session 103 (2026-10-26) — M63: **THE QUEUE POP, MEASURED INSTRUCTION BY INSTRUCTION: IT DOES
+SHIFT (the "slots never move" reading was a duplicate-value artifact), the per-faction queued-count
+byte is `0x94de84 + 8380*owner + head` with the head added UNSCALED (read back 3 -> 2), and 384/386
+is an IDENTITY CROSSING, not a queue anomaly. NO acceptance PASS — three real invocations, three
+different measured reasons, and two of them are the harness's own observation races.**
+
+### What changed
+- `scripts/m63_pop.py` (NEW, ~300 lines): gdb-script generator that breakpoints the pop's own
+  instructions — `0x4ef5d0` entry, `0x4ef61a`/`0x4ef61c` around `dec BYTE PTR [ecx]`, `0x4ef62c` the
+  shift store, `0x4ef642` the pending store, `0x4ef655`/`0x4ef66a` the two validator calls,
+  `0x4ef65d` the validator's return — plus the M60/M61 pay `0x4efedd` and create `0x4eff4e`, plus a
+  hardware watchpoint on the target base's `+0x50`. Run:
+  `python3 scripts/m63_pop.py --base "Korolev Center" --boundaries 2 --tag m63pop` ->
+  `evidence/m63pop.gdblog` + the ordered stream `evidence/m63pop_seq.jsonl`.
+- `NAMED.md`: the M63 block (claims + the log lines that back them) and the `0x94dc84` CONFLICT line
+  deleted — measurement settled it.
+- `skill/references/production-queue.md`: the pop paragraph rewritten with the measured address
+  arithmetic and the validator semantics; the pairing trap extended (name AND coords are not
+  identity — assert the owner byte).
+- New evidence: `m63pop.gdblog`, `m63pop_seq.jsonl`,
+  `trace_m56_build_20261026_181020/181701/182354.jsonl` (the three acceptance runs),
+  `trace_m63t_*` (the post-reload turn). `scripts/evidence.py audit` -> `uncited evidence: 0 file(s)`;
+  budget 24.9 MB of 30 MB FAIL.
+
+### The pop, live (the numbers, with the command)
+From `evidence/m63pop.gdblog` (`m63_pop.py --base "Korolev Center" --boundaries 2`, Korolev's record
+`0x95ef70`):
+- `POPSHIFT dest=0x95efc0 val=2 old=2 name=Korolev Center pend=1` immediately followed by
+  `POPCNT name=Korolev Center newpend=0 s0=2 s1=2 s2=0 s3=0`: the pop really stores into `+0x50`
+  (`0x95efc0 = 0x95ef70 + 0x50`; the log's `slot=` field read 20 because the expression forgot the
+  `- 0x50`, which `m63_pop.py` now subtracts), and because the shifted value equals the head, the
+  array still reads `[2,2,0,0]`. M61/M62's "pending
+  decrements, slots do not move" is a **duplicate-value artifact**, and `[2,2,...]` is exactly the
+  unobservable case. Bytes agree: `4ef622 lea eax,[esi+0x95da60]` / `4ef628 mov edx,[eax+4]` /
+  `4ef62c mov [eax],edx` / `4ef639 jl 0x4ef628`, iterated `pending` times.
+- The count byte: `$ecx` at `0x4ef613` was `0x9540ba` for owner 3 / head 2 = `0x94de84 + 8380*3 + 2`
+  (row stride `0x20bc`; **head unscaled**, so the skill's `+ type*4` was wrong), and that byte read
+  **3 at `0x4ef61a`, 2 at `0x4ef61c`**. The sibling `0x94dc84` at the same offset read **6 before the
+  run and 7 after** — it went UP while a unit was produced, so it is a different counter. CONFLICT
+  closed in `NAMED.md` and the skill.
+- Order in the visit (round 2152): `PAY name=Korolev Center before=11 edi=9 after=2` -> `CREATE
+  guard=0 owner=3` -> `POPDEC` -> `POPSHIFT` -> `POPCNT newpend=0` -> `POPVAL item=2 owner=3 idx=18`
+  -> `POPRES result=1`. M61's "the pop runs after the pay" holds.
+- `0x5a73f0` / `0x5a6e70` are **predicates, not builders** (`0x5a73f0` tests type-record `+0x38` bit 0
+  and `+0x34` bit `owner`; `0x5a6e70` tests the availability globals `0x985aec`, `0x985ac4`,
+  `0x985bb8`); the pop's nonzero return is a validation failure (`0x4ef68b`), not a failed build.
+- The pop's argument is `DAT_0068cbb0` (a global base index) at all three call sites, and it is NOT
+  necessarily the visited base: `POPIN idx=8 addr=0x95e390 name=U.N. Court of Justice owner=7 pend=0
+  s0=-6 ... visit_addr=0x95ef70`.
+- Where 384/386 come from: `evidence/trace_m56_build_20261026_165917.jsonl` r4 — index 0 keeps the
+  name `"University Base"` AND the coords (28,42) while `faction 3 -> 6` and slots go `[2,2,0,0] ->
+  [384,2,0,0]`, `n_bases` 21 unchanged. A captured base keeps its record; M62's `queue held` was an
+  identity crossing.
+
+### Three acceptance invocations, all FAIL (`ACCEPT_EXIT=1` each time)
+1. `scripts/m56_build.py --ui-queued 18 --boundaries 10 --timeout 400 --no-poke-hold` ->
+   `positive predictions 3/3 verified; boundaries 10/10`, 61 checks, 1 BAD: `r7 boundary: player walk
+   came home to us after the flip — cur_player before 3 after 4; walk seen [3]`. The known harness
+   race the footing says to re-run rather than re-floor. Trace `..._181020.jsonl`.
+2. Same flags, `--ui-queued 17` (the array compacted; Korolev moved 18 -> 17) -> `1/2 positive
+   verified`, 59 checks, 3 BAD, all one cause: r2 predicted Korolev (minerals 8, gate 9) but storage
+   stayed 8, and the identity read `computed 8 + credit 1 - price 9 = 0, observed 8`. Korolev's
+   accrual across the ten windows: before/after `6/7`, `7/7`, `8/8`, `8/0` — the +income lands
+   INSIDE the window on r0/r3 and BETWEEN windows on r1/r2, so `gate_minerals = minerals + income`
+   double-counts whenever the before-snapshot already includes the round's accrual. The build itself
+   happened one round late (r3: 8+1-9 = 0, pending 1 -> 0, unit verified). Trace `..._181701.jsonl`.
+3. After a clean reload (`SMAC_SAVE=m54b_clean.SAV scripts/m54a_load.py --relaunch` -> HUD,
+   `m54g_prep.py`, one turn 2150->2151, `m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1`
+   -> `pending=1 head=2 minerals=2 d0=2`, `accept_ready.py` -> READY) -> `2/3 positive verified`,
+   BAD `r7 prediction base 18 (29,42) type 2 — predicted (pending 0, minerals 7 >= price 9); observed
+   net 0`, with the harness asserting `NOT deferred: at the after-snapshot ds:0x8f0d60 already named
+   this base`. **That assertion is false and the trace proves it in one round**: `round_after r7` is
+   `y2159 rnd59 cp3`, `cur_base=Korolev Center`, minerals `7 -> 0` (the pay DID happen, 7+2-9=0), our
+   units 7 with 2 on (29,42); `round_before r8` is the **same round** `y2159 rnd59`, `cur_base=None`,
+   our units 8 with **3** on (29,42). The unit Korolev paid for appeared between the two reads, so
+   `cur_base` naming the base does not prove the create had written the unit array. Trace
+   `..._182354.jsonl`.
+
+### Also measured, cheap and load-bearing
+- A base's per-round mineral income is **not constant**: Korolev's `income` field moved 2 -> 1 -> 2
+  inside run 1 (r3, r7) and 2 -> 1 -> 2 again in run 3 (r8, r9). Any one-round income projection
+  inherits a +-1 error on top of the phase error.
+- The box **auto-plays** while nothing drives it: with every unit on HOLD the game ends our turns by
+  itself (OCR `year 2163: no units need new orders`), the year moved 2151 -> 2164 while I read traces,
+  and Korolev's array index moved 18 -> 17 -> 18 across that drift. Arming a run races the game.
+- `progress` moves roughly with income and resets to a low value later in the run (run 3: 18 -> 2 at
+  r9); its exact relation to the create was NOT resolved.
+
+### Open
+- Two harness fixes, both evidenced above, neither a threshold change: (a) `gate_minerals` must know
+  whether the round's accrual already landed in the before-snapshot — and the harness can tell,
+  because `round_after rN` and `round_before rN+1` are the SAME round read twice; (b) the arrival
+  deferral test must not trust `cur_base`; re-read the unit array when `cur_base` is clear, or count
+  the between-window gap.
+- M63's own opens: which slot the BUILD UI's INSERT writes (needs an enqueue with two DIFFERENT type
+  ids — every value this session was 2, so the written index was unidentifiable); who writes
+  `DAT_0068cbb0` and when it is stale; why `0x5a73f0(2, 3, Korolev)` returns 1.
+- No PR, no merge: the acceptance never printed PASS on a real invocation. Branch `milestone/m63`
+  carries the instrument plus the corrected docs.
+
+### Next pick
+M64: fix (a) and (b) in `scripts/m56_build.py`, then re-run
+`scripts/m56_build.py --ui-queued <korolev> --boundaries 10 --timeout 400 --no-poke-hold`. Not the
+pop — the pop is answered. Reload first if `accept_ready.py` says no base can carry it.
