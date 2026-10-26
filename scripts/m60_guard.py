@@ -39,6 +39,28 @@ import m56_build as B
 
 GUARD = 0x8f0d70
 VISIT = 0x4ef6d0          # FUN_004ef6d0, the per-base production visit
+# M61: the two sites INSIDE the visit, plus the round markers.  Bytes (scratch/
+# m574/text.txt):
+#   4efec9 8b 0d 60 0d 8f  mov  ecx,ds:0x8f0d60        ; base being visited
+#   4efed8 8b 71 40        mov  esi,[ecx+0x40]         ; mineral storage
+#   4efedb 2b f7           sub  esi,edi                ; edi = the price
+#   4efedd 89 71 40        mov  [ecx+0x40],esi         ; THE PAY STORE (esi = after)
+#   4eff2c 89 86 98 00 00  mov  [esi+0x98],eax         ; storage mirror
+#   4eff32 a1 70 0d 8f 00  mov  eax,ds:0x8f0d70        ; THE GUARD
+#   4eff39 75 21           jne  0x4eff5c               ; nonzero -> no create
+#   4eff4e e8 fd b6 0b 00  call 0x5ab650               ; CREATE UNIT
+# No instruction in .text jumps to 0x4efedd, 0x4eff32 or 0x4eff4e (`grep -n
+# '0x4efedd\|0x4eff32\|0x4eff4e' scratch/m574/text.txt` returns only the three
+# instruction addresses plus the jne to 0x4eff5c), so every visit that reaches
+# the create has, in the SAME invocation, executed the pay store.
+# Round markers: 0x985b00 = year (the store is `a3 00 5b 98` at 0x51f54f, right
+# after `mov ds:0x985afc,eax` = round at 0x51f53c — NAMED.md calls the store
+# "0x51f554", which is the `call 0x478530` AFTER it; the bytes win, reported),
+# 0x985dcc = cur_player (the player walk position).
+PAY = 0x4efedd
+CREATE = 0x4eff4e
+YEAR_G = 0x985b00
+CURP_G = 0x985dcc
 NAMES = ["Korolev Center", "University Base"]
 EVID = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "evidence")
 
@@ -105,20 +127,45 @@ def main():
             raise SystemExit("a gdb is already running — run scripts/m57_credit.py --stop first")
         gpath = os.path.join(EVID, f"{a.tag}_watch.gdb")
         lpath = os.path.join(EVID, f"{a.tag}_watch.gdblog")
+        # ONE command list per site; every list is `silent` + a tagged printf +
+        # `continue`, so the inferior keeps running between hits and the log is a
+        # total order of the events.  3 hardware watchpoints (guard, year,
+        # cur_player) of the 4 available; the rest are int3 breakpoints.
         open(gpath, "w").write(
             "set pagination off\nset confirm off\nset height 0\nset verbose off\n"
             f"watch *{GUARD:#x}\ncommands\nsilent\n"
             f'printf "GUARDWRITE pc=0x%x new=%d\\n", $pc, *(int*){GUARD:#x}\n'
             "continue\nend\n"
+            f"watch *(int*){YEAR_G:#x}\ncommands\nsilent\n"
+            f'printf "YEARW year=%d round=%d cp=%d\\n", *(int*){YEAR_G:#x}, '
+            f"*(int*)0x985afc, *(int*){CURP_G:#x}\ncontinue\nend\n"
+            f"watch *(int*){CURP_G:#x}\ncommands\nsilent\n"
+            f'printf "PLAYERW pc=0x%x cp=%d year=%d round=%d\\n", $pc, '
+            f"*(int*){CURP_G:#x}, *(int*){YEAR_G:#x}, *(int*)0x985afc\ncontinue\nend\n"
             f"break *{VISIT:#x}\ncommands\nsilent\n"
-            f'printf "VISIT guard=%d\\n", *(int*){GUARD:#x}\n'
+            f'printf "VISIT guard=%d year=%d round=%d cp=%d base=%s owner=%d '
+            f"xy=%d,%d min=%d pend=%d head=%d\\n\", *(int*){GUARD:#x}, *(int*){YEAR_G:#x}, "
+            "*(int*)0x985afc, "
+            f"*(int*){CURP_G:#x}, (char*)(*(int*)0x8f0d60+19), "
+            "*(unsigned char*)(*(int*)0x8f0d60+4), *(short*)(*(int*)0x8f0d60), "
+            "*(short*)(*(int*)0x8f0d60+2), *(int*)(*(int*)0x8f0d60+0x40), "
+            f"*(int*)(*(int*)0x8f0d60+0x4c), *(int*)(*(int*)0x8f0d60+0x50)\ncontinue\nend\n"
+            f"break *{PAY:#x}\ncommands\nsilent\n"
+            f'printf "PAY year=%d round=%d cp=%d base=%s before=%d edi=%d after=%d\\n", '
+            f"*(int*){YEAR_G:#x}, *(int*)0x985afc, *(int*){CURP_G:#x}, "
+            "(char*)(*(int*)0x8f0d60+19), *(int*)(*(int*)0x8f0d60+0x40), $edi, $esi\n"
+            "continue\nend\n"
+            f"break *{CREATE:#x}\ncommands\nsilent\n"
+            f'printf "CREATE year=%d round=%d cp=%d guard=%d base=%s min=%d\\n", '
+            f"*(int*){YEAR_G:#x}, *(int*)0x985afc, *(int*){CURP_G:#x}, $eax, "
+            "(char*)(*(int*)0x8f0d60+19), *(int*)(*(int*)0x8f0d60+0x40)\n"
             "continue\nend\ncontinue\n")
-        log = open(lpath, "w")
+        log = open(lpath, "w")          # stdout straight to a file: nothing to drain
         g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath,
-                              "-p", str(pid)], stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT)
-        print(f"gdb armed pid {g.pid}; watching {GUARD:#x} for {a.boundaries} boundaries",
-              flush=True)
+                              "-p", str(pid)], stdout=log, stderr=subprocess.STDOUT)
+        print(f"gdb armed pid {g.pid}; sites guard={GUARD:#x} visit={VISIT:#x} "
+              f"pay={PAY:#x} create={CREATE:#x} year={YEAR_G:#x} cur_player={CURP_G:#x} "
+              f"for {a.boundaries} boundaries", flush=True)
         time.sleep(2.0)
         t0 = time.time()
         runs = []
@@ -129,7 +176,7 @@ def main():
                 "--orders-per-turn", "1", "--verbose", "--tag", f"{a.tag}_r{k}"],
                 capture_output=True, text=True)
             runs.append(r.returncode)
-            print(f"  turn {k}: rc={r.returncode}", flush=True)
+            print(f"  turn {k}: rc={r.returncode} t={time.time()-t0:.0f}s", flush=True)
         try:
             os.kill(g.pid, signal.SIGINT)
         except ProcessLookupError:
@@ -139,20 +186,75 @@ def main():
             g.kill()
         except ProcessLookupError:
             pass
-        out = g.stdout.read().decode("latin-1", "replace") if g.stdout else ""
-        log.write(out)
         log.close()
+        out = open(lpath, "r", errors="replace").read()
         writes = re.findall(r"GUARDWRITE pc=0x([0-9a-f]+) new=(-?\d+)", out)
         visits = re.findall(r"VISIT guard=(-?\d+)", out)
         seen = {}
         for pc, new in writes:
             seen.setdefault(int(pc, 16), []).append(int(new))
+        # ---- M61: parse the ordered event stream ------------------------------
+        ev = []
+        for ln in out.splitlines():
+            ln = ln.strip()
+            if ln.startswith("VISIT "):
+                d = dict(re.findall(r"(\w+)=(-?\d+)", ln))
+                nm = re.search(r"base=(.*?) owner=", ln + " ")
+                d["tag"], d["base"] = "VISIT", (nm.group(1) if nm else "?")
+            elif ln.startswith("PAY "):
+                d = dict(re.findall(r"(\w+)=(-?\d+)", ln))
+                nm = re.search(r"base=(.*?) before=", ln + " ")
+                d["tag"], d["base"] = "PAY", (nm.group(1) if nm else "?")
+            elif ln.startswith("CREATE "):
+                d = dict(re.findall(r"(\w+)=(-?\d+)", ln))
+                nm = re.search(r"base=(.*?) min=", ln + " ")
+                d["tag"], d["base"] = "CREATE", (nm.group(1) if nm else "?")
+            elif ln.startswith(("YEARW ", "PLAYERW ", "GUARDWRITE ")):
+                d = dict(re.findall(r"(\w+)=(-?\d+)", ln))
+                d["tag"], d["base"] = ln.split()[0], "*"
+            else:
+                continue
+            ev.append(d)
+        jpath = os.path.join(EVID, f"{a.tag}_seq.jsonl")
+        with open(jpath, "w") as fh:
+            for d in ev:
+                fh.write(json.dumps(d) + "\n")
+        ours = set(NAMES)
+        print("--- ordered sequence (year/cur_player markers + our two bases) ---")
+        for d in ev:
+            if d["tag"] in ("VISIT", "PAY", "CREATE") and d["base"] not in ours:
+                continue
+            if d["tag"] == "VISIT":
+                print(f"y{d.get('year')} r{d.get('round')} cp{d.get('cp')} "
+                      f"{d['tag']:7s} {d['base']:18s} min={d.get('min')} pend={d.get('pend')} "
+                      f"head={d.get('head')} guard={d.get('guard')}")
+            elif d["tag"] == "PAY":
+                print(f"y{d.get('year')} r{d.get('round')} cp{d.get('cp')} "
+                      f"{d['tag']:7s} {d['base']:18s} {d.get('before')}->{d.get('after')} "
+                      f"(edi={d.get('edi')})")
+            elif d["tag"] == "CREATE":
+                print(f"y{d.get('year')} r{d.get('round')} cp{d.get('cp')} "
+                      f"{d['tag']:7s} {d['base']:18s} guard={d.get('guard')} "
+                      f"min={d.get('min')}")
+            elif d["tag"] == "YEARW":
+                print(f"== YEAR FLIP to {d.get('year')} (round {d.get('round')}) "
+                      f"while cur_player={d.get('cp')}")
+            else:
+                print(f"   cur_player -> {d.get('cp')} (pc={d.get('pc')}) "
+                      f"year={d.get('year')}")
         print(json.dumps(dict(gdb_pid=g.pid, rc=g.poll(), boundaries=a.boundaries,
                               turn_rcs=runs, guard_writes=len(writes),
                               writers={f"0x{pc:x}": len(v) for pc, v in seen.items()},
                               visits=len(visits),
                               guard_values_at_visits=sorted(set(visits)),
-                              gdb_log=lpath), indent=1))
+                              events=dict((t, sum(1 for e in ev if e["tag"] == t))
+                                          for t in ("YEARW", "PLAYERW", "VISIT", "PAY",
+                                                    "CREATE", "GUARDWRITE")),
+                              events_at_our_bases=dict(
+                                  (f"{b}/{t}", sum(1 for e in ev if e["base"] == b and e["tag"] == t))
+                                  for b in NAMES for t in ("VISIT", "PAY", "CREATE")
+                                  if sum(1 for e in ev if e["base"] == b and e["tag"] == t)),
+                              seq=jpath, gdb_log=lpath), indent=1))
         if not writes:
             print(f"NO WRITE to {GUARD:#x} across {a.boundaries} boundaries "
                   f"(the only .text reference is the read at 0x4eff32)")
