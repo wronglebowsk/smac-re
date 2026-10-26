@@ -1,132 +1,167 @@
-# NEXT_PROMPT.md — footing for the next session (session 99 close, 2026-10-26)
+# NEXT_PROMPT.md — footing for the next session (session 100 close, 2026-10-26)
 
 ## THE LEDGER
 
 Merged: **M54A–M54E** (#39-#44), **M54F–M54i** (#47-#50), **M54i2/M54j/M54k** (#51-#53),
-**M54k2** (#54), **M55** (#55), **M56** (#56), **M57+M58+M59** (#57). Session 99 **PASSED M60**
-(`python3 scripts/m56_build.py --ui-queued 18 --boundaries 10 --timeout 400 --no-poke-hold` ->
-`PASS production prediction: 1 verified unit arrivals over 10 boundaries ... 0 memory writes`,
-**53 checks / 0 bad**, trace `evidence/trace_m56_build_20261026_153930.jsonl`); the M60 PR is the
-one this session submitted from `milestone/m60` — read `git log --oneline -3` / `gh pr list` for its
-number before quoting it.
+**M54k2** (#54), **M55** (#55), **M56** (#56), **M57+M58+M59** (#57), **M60** (#58). Session 100
+**PASSED M61** (`python3 scripts/m56_build.py --ui-queued 18 --boundaries 10 --timeout 400
+--no-poke-hold` -> `PASS production prediction: 3 verified unit arrivals over 10 boundaries, every
+prediction and every observed arrival accounted, queue bookkeeping exact — queue filled by the GAME's
+BUILD UI (0 memory writes), paid by income at 2/round`, **56 checks / 0 bad**, trace
+`evidence/trace_m56_build_20261026_162511.jsonl`); the M61 PR is the one this session submitted from
+`milestone/m61` — read `git log --oneline -3` / `gh pr list` for its number before quoting it.
 
-## WHAT SESSION 99 SETTLED (do not re-learn)
+## WHAT SESSION 100 SETTLED (do not re-learn)
 
-**THE CREATE GUARD IS THE PROCESS-GLOBAL DWORD `0x8f0d70`, NOT `[base+0x10]`.** The bytes at the
-guard are `4eff32: a1 70 0d 8f 00  mov eax,ds:0x8f0d70` / `4eff37: 85 c0  test eax,eax` /
-`4eff39: 75 21  jne 0x4eff5c` (skip the create). Base record `+0x10` is NOT the guard: it holds
-0x4b000000 on Korolev Center and 0x55000000 on University Base. `grep -c 0x8f0d70` over the whole
-`.text` dump is **1** (that read); `0x8f0d60`, its neighbour, is the current-base POINTER (929
-references). `scripts/m60_guard.py --stage watch --boundaries 2` -> `guard_writes: 0, writers: {},
-visits: 53, guard_values_at_visits: ["0"]` — a hardware watchpoint saw no writer at runtime.
-**Proven by poke, one variable, University as control:** guard 1 -> Korolev still PAYS (minerals
-9 -> 0) and NO unit arrives (our units 10 -> 10, guard reads back 1 after the turn); guard 0 -> the
-base pays and the unit ARRIVES (10 -> 11). A `m56_build` PASS run now asserts `guard == 0` in every
-sampled row (5534 rows, values [0]) — an added check, nothing weakened.
+**THE ROUND ORDER, read out of one ordered gdb stream** (`scripts/m60_guard.py --stage watch
+--boundaries 2 --timeout 400 --tag m61a`; `evidence/m61a_seq.jsonl`, `evidence/m61a_watch.gdblog`;
+`events {YEARW 2, PLAYERW 16, VISIT 52, PAY 8, CREATE 8, GUARDWRITE 0}`, `guard_writes 0`,
+`guard_values_at_visits ["0"]`):
 
-**A READ CAN BE EARLY — M59's "snapshot GAP" was this, not a slow create.** The year flip is not the
-end of the round: right after `smac_play --turns 1` printed `2189->2190`, Korolev held the poked 9
-minerals, `+0x3c` unmoved, `cur_player 7`, and a 100 s poll changed NOTHING; the pay and the create
-land later in the same round while the player walk comes home (then minerals 0, ours 10 -> 11,
-`cur_player 3`). The store tracer only looked like a cause because it WAITS for the walk
-(`m57_stores.py --tag m60c/m60d` -> `STORE#2 pc=0x4efedd site=visit.pay-minus-edi before=9 src=0`,
-`per-boundary net ['2184->2185=-9']` PASS). `m56_build` closes each window on `cur_player` coming
-home, so its windows are the valid ones; judge production only after the walk is ours again.
+```
+== YEAR FLIP to 2183 (round 83) while cur_player=7
+   cur_player -> 0 -> 1 -> 2 -> 3
+y2183 r83 cp3 VISIT  University Base   min=6 pend=0 head=2 guard=0
+y2183 r83 cp3 VISIT  Korolev Center    min=9 pend=0 head=2 guard=0
+y2183 r83 cp3 PAY    Korolev Center    9->0 (edi=9)      ; edi = the price (m58_price: 9)
+y2183 r83 cp3 CREATE Korolev Center    min=0
+   cur_player -> 4 -> 5 -> 6 -> 7
+== YEAR FLIP to 2184 ...
+```
 
-**`0x4f6030` = the production CHOOSER** (what a base builds next), called from `0x4e5ae0` and the
-BUILD UI for the base in `*(0x8f0d60)`: scores candidates, keeps the MINIMUM against `local_124[0]`
-seeded `0xf423f` (999999), score = cost × ~25 halve/double heuristics; a candidate is REJECTED
-unless `[base+0x38]` carries the bits its category needs — switch on `record[+0x32]` at `0x4fb4xx`:
-0->0x200, 1->0x1000, 2/3->0x1000 (0x400000 when `[base+0x38] & 0x1000` is clear or `record[+0x2c]
-!= 0`), 4->0x2000, 5->0x800, 6->0x400, 7/10->0x800000, 8->0x20000, 9->0x8000, 0xb->0x100000, plus
-0x80000 for types >= 0x40 whose `record[+0x38] & 4` is clear — and only for owners IN `0x985b10`.
-Fallback `0x4fd6a0-0x4fd6e5`: scan the 512 type records at `0x98ad80` stride `0x34` (end `0x9915b2`),
-keep `0x5a73f0`-buildable with category 1/2/3 and `record[+0x38] & 4`, take the lowest `record[+0x31]`.
-Korolev `[base+0x38] = 0x00dfbe41` carries 0x1000 so Scout Patrol (category 3) passes. Enemy heads
-stay REPORTED, never predicted: they are the argmin of that heuristic over the enemy's own plan mask.
+The year store is **`0x51f54f`** (`a3 00 5b 98`, right after the round store `0x51f53c`); NAMED.md's
+"year store `0x51f554`" is the `call 0x478530` AFTER the store — reported, bytes win. Our bases are
+visited **while `cur_player == 3`, in array order** (University idx 0 then Korolev idx 18), four
+player switches after the year flip, in the round whose year has just flipped.
 
-**GHIDRA GOTCHA (this is what wrote the old wrong note).** `DAT_008f0d60` is typed `short *`, so
-pseudocode `*(uint *)(DAT_008f0d60 + 0x1c)` is BYTE offset **+0x38** — proved by `0x4fb293 mov ecx,
-ds:0x8f0d60` / `0x4fb299 test DWORD PTR [ecx+0x38],0x80000000`. `+0x1c`->+0x38 (plan dword),
-`+0x20`->+0x40 (storage), `DAT_008f0d60[0]/[1]` -> the x/y words. Double every offset printed
-through that variable and check the disasm once per new site.
+**THE PAY AND THE CREATE ARE ONE VISIT INVOCATION.** `grep -n '0x4efedd\|0x4eff32\|0x4eff4e'
+scratch/m574/text.txt` returns only the three instruction addresses plus the `jne 0x4eff5c` — nothing
+jumps into that block — and the live log prints PAY then CREATE adjacent. So **an arrival is never a
+round late; a SNAPSHOT can be early.** The M59 "unit 6->7 across the snapshot gap" is the harness's
+after-snapshot landing at `cur_player 3` before player 3's upkeep reached the base, nothing more.
 
-**CONFLICTS still on the record, unresolved:** queued-count byte `0x94dc84` (skill) vs `0x94de84`
-(the pop instruction at `0x4ef613`); pay `0x4f0ca6` (old m56 docstring) vs `0x4efedd` (the gate's
-pay store). A writer for `0x8f0d70` outside `.text` is NOT excluded (the watchpoint covers runtime).
+**F1 IS ATTRIBUTED, NOT TOLERATED.** `ds:0x8f0d60` names the record the round processor is visiting
+(`0x4f5a70` stores it per base before the pipeline that reaches `0x4ef6d0`), so it says which base
+has been reached. `m56_build.py` has `cur_base()`, logs it as `cur_base` in every `round_after`
+event, carries it in `rounds[r]["cur_base_after"]`, and **refuses** the deferral when the
+after-snapshot already named the predicted base. Proof cases (`scratch/m61/mkfix.py` builds both from
+the real PASS trace; they differ in that ONE field): `--fixture scratch/m61/fixture_defer_ok.json`
+-> exit 0 PASS; `--fixture scratch/m61/fixture_beat_visit.json` -> exit 1 `BAD ... NOT deferred: at
+the after-snapshot ds:0x8f0d60 already named this base`. Fixture timelines now replay the guard
+samples too, so the guard floor cannot be vacuously true on a replay.
 
-## THE PICK — M61: WHERE THE CREATE SITS IN THE ROUND
+**`base+0x10` IS THE NAME, NOT A FLAG.** The name starts at record byte **+19**; a dword read at
+`+0x10` is bytes +16,+17,+18 (three small unnamed bytes) plus the name's FIRST CHARACTER in the top
+byte. `python3 scratch/m61/census10.py`: `topbyte==name[0]: 24 / 24` — Korolev `0x4b000000` = 'K',
+University `0x55000000` = 'U', both with +16..+18 zero. Bytes +16..+18 are unnamed (observation, not
+claim: +17 == 1 on all 8 faction-6 bases, +18 nonzero on several faction-2/7 bases); who writes them
+is unmeasured. The old `[base+0x10] == 0` guard note was wrong twice: Ghidra `short *` offsets, then
+this straddle. Check a record's BYTE layout before believing any dword-level claim about it.
+
+**HARNESS LESSONS THAT COST REAL TIME.** (1) A dialog on screen swallows every UI click —
+`m57_ui_enqueue` failed twice on University Base (`INSERT never landed`, chooser guard updating,
+pending stuck 0) with an Operations Director "minerals output ... not sufficient to support Scout
+Patrol ... disbanded" dialog (`classify()` == `dialog`) over the BUILD pane: Return clears it, one
+Escape closes the pane, re-check `classify() == hud` BEFORE an enqueue. (2) Producing a unit zeroes
+that base's mineral credit (`+0xd0` 1 -> 0 or -1) and the income add is gated `d0 > 0`, so storage
+cannot accrue again — after two productions BOTH our bases sat at minerals 0 / credit 0 and no
+positive prediction was possible; the fix is the reload, not a poke.
+
+**CONFLICTS still on the record.** queued-count byte `0x94dc84` (skill) vs `0x94de84` (the pop
+instruction at `0x4ef613`); a writer for `0x8f0d70` outside `.text` is not excluded (the watchpoint
+covers runtime); the NAMED.md "completion path" branch `0x4f0b78 -> 0x4f0ca1 pay -> 0x4f0f46 pop ->
+0x4f26d9 ret` is still unread — the UI-queued pay is `0x4efedd` (measured `before=9 edi=9 after=0`).
+
+## THE PICK — M62: WHAT THE POP ACTUALLY DOES TO THE QUEUE SLOTS
 
 One milestone, then stop. Do not tune `predict()` to observations.
 
-1. Record `(cur_player, visit 0x4ef6d0, pay 0x4efedd, create 0x4eff4e, guard 0x8f0d70)` tuples across
-   >= 2 boundaries — extend `scripts/m60_guard.py --stage watch` (it already stamps the guard at every
-   visit) with conditioned breakpoints on the pay and the create. Cite the disasm lines you arm.
-2. State the round sequence from the recorded tuples: where our base's visit sits relative to the
-   year flip and to `cur_player` coming home. Then make `m56_build`'s F1 deferral branch ("verified
-   by the next window's before-snapshot") a MEASURED position, not a tolerance — same floors, same or
-   stricter checks. If the model cannot state the arrival round exactly, say so and leave F1 as is.
-3. Say what base record `+0x10` is (0x4b000000-style on our bases; it is not the guard and not zero).
-   Cite the census sites that write it (`scratch/m59/queue_census.py`).
-4. Acceptance: `python3 scripts/m56_build.py --ui-queued <Korolev idx> --boundaries 10 --timeout
-   400 --no-poke-hold` prints **PASS** on ONE real invocation. If it cannot, record the negative and
-   merge nothing.
-5. `python3 scripts/test_m56_predict.py` (17/17 today) and the bad fixture (exit 1) stay green; add
-   cases for anything new.
+1. The observation to settle: pending went **1 -> 0** while Korolev's slot array stayed
+   `[2, 2, 2, 2]` (`evidence/trace_m56_build_20261026_160325.jsonl`, r0 and r1 `prod` rows) — the
+   documented "left-shift the slots + pending--" is UNVERIFIED for the slot array. Cite the pop
+   bytes: `FUN_004ef5d0`, `0x4ef5f4 je 0x4ef684` (pending == 0), the shift and the pending store
+   (`0x4ef613`, `0x4ef641`), and the per-faction queued-count byte.
+2. Measure it: extend `scripts/m60_guard.py --stage watch` (it already stamps visit/pay/create/guard/
+   year/cur_player) with a breakpoint on the pop entry and a hardware watchpoint on the queue dwords
+   of ONE named base (`base+0x4c` and `+0x50..+0x74`), run 2-3 boundaries with a queued base, and
+   print before/after per store. ONE variable per run; the other base is the control.
+3. State what the queue representation really is (head slot vs pending vs the slot array) and re-check
+   M59's "the head slot is the truth" against the stores — if a slot does shift, say when the head is
+   refilled; if it does not, say what the pop's shift operand actually is.
+4. Acceptance: `python3 scripts/m56_build.py --ui-queued <Korolev idx> --boundaries 10 --timeout 400
+   --no-poke-hold` prints **PASS** on ONE real invocation. If it cannot, record the negative and merge
+   nothing.
+5. `python3 scripts/test_m56_predict.py` (17/17), `--fixture scratch/m56_fixture_bad.json` (exit 1),
+   `--fixture scratch/m61/fixture_defer_ok.json` (exit 0) and `--fixture
+   scratch/m61/fixture_beat_visit.json` (exit 1) stay green; add cases for anything new.
 
 ## LIVE FACTS / KIT
 
-- **Box at session-99 close:** terran.exe alive, year **2172**, round 72, `cur_player 3`, guard 0,
-  Korolev Center idx 18 (29,42) minerals 8 income 1 pending 0 head 2, 4 units on its tile; University
-  Base idx 0 (28,42) minerals 0 income 0 pending 0 head 2, 5 on tile; 9 ours units. **Preflight
-  first:** `python3 scripts/smac_preflight.py` (read-only, exit 1 on FAIL).
-- **Reload recipe (the proven path):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py
-  --relaunch` (BARE filename; prints `difficulty level: talent`) -> `python3 scripts/m54g_prep.py` ->
-  `python3 scripts/smac_play.py --turns 1 --timeout 200 --no-escape 3000 --orders-per-turn 1
-  --verbose --tag t` (prints "Korolev Center founded in 2150") -> locate Korolev **BY NAME**
-  (`python3 scripts/m60_guard.py --stage read` prints `i`) -> `python3 scripts/m57_ui_enqueue.py
-  --base-index <fresh idx> --cell-item 2 --inserts 1` (prints `pending=1 head=2 ... minerals=5 d0=2`)
-  -> `python3 scripts/m59_head.py --stage read --hold` -> the acceptance run WITH `--no-poke-hold`.
+- **Box at session-100 close:** terran.exe alive, year **2162**, round 62, `cur_player 3`, guard 0,
+  Korolev Center idx 18 (29,42) minerals 3 income 2 pending 0 head 2, 3 units on tile; University
+  Base idx 0 (28,42) minerals 0 income -1 pending 0 head 2, 6 on tile; 9 ours units. **Preflight
+  first:** `python3 scripts/smac_preflight.py` (read-only, exit 1 on FAIL — evidence size is one of
+  the invariants).
+- **Reload recipe (the proven path, used for the M61 acceptance):** `SMAC_SAVE='m54b_clean.SAV'
+  python3 scripts/m54a_load.py --relaunch` (BARE filename; `difficulty level: talent`) -> `python3
+  scripts/m54g_prep.py` -> `python3 scripts/smac_play.py --turns 1 --timeout 200 --no-escape 3000
+  --orders-per-turn 1 --verbose --tag t` (`Korolev Center founded in 2150`, `turn 0: 2150->2151 OK`)
+  -> locate Korolev **BY NAME** (`python3 scripts/m60_guard.py --stage read` prints `i`; it was 18
+  after the reload) -> `python3 scripts/m57_ui_enqueue.py --base-index <fresh idx> --cell-item 2
+  --inserts 1` (`pending=1 head=2 slots=[2, 2, 0, 0, 0, 0] minerals=2 d0=2`) -> `python3
+  scripts/m59_head.py --stage read --hold` -> the acceptance run WITH `--no-poke-hold`.
 - `python3 scripts/m60_guard.py --stage read|poke --value N|watch --boundaries K --timeout T --tag t`
-  — read/poke the guard global, print both our bases (minerals, income, pending, head, `+0x30` flags,
-  `+0x38` plan dword, `+0x98` mirror, per-tile unit count, our unit total), or run the hw watchpoint.
-  `--stage watch` refuses if a gdb is already running (`scripts/m57_credit.py --stop` detaches one).
+  — read/poke the guard, print both our bases (minerals, income, pending, head, `+0x30`, `+0x38`,
+  `+0x98`, `+0x10`, per-tile unit count, our unit total), or run the ordered event stream. The watch
+  stage arms: hw watchpoints on `0x8f0d70` / `0x985b00` / `0x985dcc` (3 of the 4 DR slots) plus
+  breakpoints at `0x4ef6d0`, `0x4efedd`, `0x4eff4e`; every command list is `silent` + printf +
+  `continue` and gdb stdout goes straight to a file. It refuses if a gdb is already running
+  (`scripts/m57_credit.py --stop` detaches one). NOTE: on the CREATE line `owner=` is `$eax`, which at
+  `0x4eff47` holds `[ebp-0x28]` = the base OWNER byte; `guard=` reads the global.
 - `python3 scripts/m59_head.py [--stage read|poke --base NAME --minerals N] [--hold]`,
-  `python3 scripts/m58_price.py [--owner 3] [--type 2]`, `python3 scripts/m57_stores.py --base
-  "Korolev Center" --boundaries 3 --timeout 220 --tag t` (the `+0x40` store tracer; arm only when no
-  gdb runs; poke and read back BEFORE attaching — pokes lie under a tracer).
+  `python3 scripts/m58_price.py [--owner 3] [--type 2]` (price = factor_tenths x type_cost; owner 3
+  type 2 -> 9 x 1 = 9), `python3 scripts/m57_stores.py --base "Korolev Center" --boundaries 3
+  --timeout 220 --tag t` (the `+0x40` store tracer; arm only when no gdb runs; poke and read back
+  BEFORE attaching — pokes lie under a tracer).
 - `scratch/m574/text.txt` (whole `.text` objdump, 40,900,318 B; regenerate: `objdump -d -M intel
-  --section=.text programs/terran.exe > scratch/m574/text.txt`), `scratch/m59/queue_census.py`,
-  `scratch/m59/cfg.py`, `scratch/m59/dom.py` — gitignored. Ghidra pseudocode is in
-  `ghidra_out/shard_NNN.c`; `FUN_004f6030` is shard_012.c lines 24338-29064 (4727 lines — parse it
-  with Python, never read it whole), `FUN_004ef6d0` 20585-22298, `FUN_005ab650` shard_015.c
-  22934-23082 (151 lines, ONE negative return: `n_units > 0x7ff`).
-- Rule cases today: `test_m56_predict.py` 17/17; `m56_build.py --fixture scratch/m56_fixture_bad.json`
-  exit 1; `test_walk_diff.py` 37/37; `test_classify.py` 17/17; `check_classes.py` 17/0 (delete the
-  untracked `*_3x.png` siblings right after).
-- **Evidence 29.7 MB, the gate FAILs at 30.** `python3 scripts/evidence.py budget` before adding
-  anything; a full `m56_build` run costs ~0.65 MB. `prune` only reclaims images, so delete the traces
-  of runs you are NOT citing (record their numbers in SESSION_NOTES first) and any `*_3x.png`.
+  --section=.text programs/terran.exe > scratch/m574/text.txt`), `scratch/m61/census10.py`,
+  `scratch/m61/mkfix.py`, `scratch/m59/queue_census.py`, `scratch/m59/cfg.py`, `scratch/m59/dom.py` —
+  gitignored. Ghidra pseudocode in `ghidra_out/shard_NNN.c`: `FUN_004f6030` shard_012.c 24338-29064
+  (4727 lines — parse with Python, never read whole), `FUN_004ef6d0` 20585-22298, `FUN_005ab650`
+  shard_015.c 22934-23082 (151 lines, ONE negative return: `n_units > 0x7ff`).
+- Rule cases today: `test_m56_predict.py` 17/17; `m56_fixture_bad.json` exit 1;
+  `m61/fixture_defer_ok.json` exit 0; `m61/fixture_beat_visit.json` exit 1; `test_walk_diff.py`
+  37/37; `test_classify.py` 17/17; `check_classes.py` 17/0 (delete the untracked `*_3x.png` siblings
+  right after).
+- **Evidence 27.1 MB, the gate FAILs at 30.** `python3 scripts/evidence.py budget` before adding
+  anything; a full `m56_build` run costs ~0.65 MB, a `--stage watch` run ~0.05 MB. `prune` only
+  reclaims images, so delete the traces of runs you are NOT citing (record their numbers in
+  SESSION_NOTES first) and any `*_3x.png`. Session 100 deleted 17 uncited `trace_m56_build_*` files
+  (29.7 -> 25.7 MB) to get preflight green.
 
 ## TRAPS
 
-- **Judge production only after `cur_player` is ours again** — a read the instant the year flips can
-  be a whole visit early (see above). A `m57_stores` tracer run "fixes" it only by waiting.
-- The harness race is real: `r1 boundary: player walk came home to us after the flip — cur_player
-  before 3 after 0` burned run `..._153623` (58 checks, 3 bad) and made the next window span two
-  rounds (`6 + 2 + 2 - 9 = 1`). RE-RUN, do not edit the floor.
-- `m57_ui_enqueue.py` on a just-founded base can read an EMPTY chooser (`FAIL: item 2 not in
-  candidate array []`); a second attempt works. The base array compacts mid-run (18 -> 17 twice):
-  locate bases BY NAME every step; `--ui-queued <idx>` is only the START index.
-- A base display left open swallows every turn-end key (Escape closes a PANE safely; Escape on the
-  bare map raises the quit prompt — never click OK on it). The units-not-moved confirm takes NO
-  Return (`m56_build` clicks YES then the OK bar 26 px below). Orders mode `0x91b5b8 == 0` makes every
-  order key a no-op; `m57_ui_enqueue` restores it after the enqueue.
+- **Production runs inside our own slot, AFTER `cur_player` is written to 3.** A snapshot the instant
+  `cur_player` becomes 3 can be before the upkeep; `ds:0x8f0d60` says which base has been reached.
+  Judge production only after the walk is ours AND the pointer has reached the base.
+- The harness race is real: a run that trips `r1 boundary: player walk came home to us after the flip
+  — cur_player before 3 after 0` makes the next window span two rounds. RE-RUN, do not edit the floor.
+- A dialog/pane on screen swallows every click and every turn-end key. Check `classify()` before a UI
+  enqueue; Return clears a dialog's default row, Escape closes a PANE (Escape on the bare map raises
+  the quit prompt — never click OK on it). `m57_ui_enqueue` on a just-founded base can read an EMPTY
+  chooser (`FAIL: item 2 not in candidate array []`); a second attempt works. The base array compacts
+  mid-run (18 -> 17 twice): locate bases BY NAME every step; `--ui-queued <idx>` is only the START
+  index.
+- Producing a unit zeroes the base's `+0xd0` credit; with credit 0 storage cannot accrue (the add is
+  gated `d0 > 0`), so a base that just produced cannot fund its next build — reload rather than poke
+  your way into a UI-queued acceptance.
 - gdb: no `si` inside a breakpoint command list; `set print frame-quiet` is not a command here;
-  stdout must be DRAINED. For a plain `mov [reg+disp],src` the source operand IS the after value.
-  `os.pread` on `/proc/<pid>/mem` EIOs here — `seek`+`read`. Popup BARS ignore clicks (Return works on
-  the default row); MENU click (75,369); TURN COMPLETE (650,410).
-- Ghidra's `DAT_008f0d60 + 0xNN` is a `short *` — double the offset, then check the disasm.
+  stdout must be DRAINED (the watch stage redirects it to a file). For a plain `mov [reg+disp],src`
+  the source operand IS the after value. `os.pread` on `/proc/<pid>/mem` EIOs here — `seek`+`read`.
+  Popup BARS ignore clicks (Return works on the default row); MENU click (75,369); TURN COMPLETE
+  (650,410). Only 4 hardware watchpoints exist — budget them.
+- Ghidra's `DAT_008f0d60 + 0xNN` is a `short *` — double the offset, then check the disasm. And
+  record fields are BYTES: the name is at +19, so a dword at +16 straddles it.
 - One variable at a time; if two things moved together write "confounded". Documents lose to
   instruction bytes only after a poke — until then REPORT the conflict.
 - Never: commit to main; `pkill -f` / `pgrep|kill` by name; Escape on the title screen; OK on the quit
