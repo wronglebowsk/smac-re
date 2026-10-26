@@ -1,94 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-82-82.md` (1 sessions). Read it only when a question reaches back before session ## Session 82b.
-
-## Session 82b (2026-10-25) — M54e post-close audit: **THE RUN THAT PASSED ALSO LOST THE POSITION (bases_ours 0, our 8 records stacked at (47,47), flags stuck 0x100002), "OCCUPANCY" WAS THE WRONG CAUSE FOR M54d, AND THE TYPE BYTE IS +4 NOT +10 (that third claim was itself WRONG and is retracted in M54f — see item 1)** — `plugins` none; corrected `SESSION_NOTES.md` 82, `ORDERS.md §7`, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
-
-Audit done after #44 merged, by re-reading the box and re-running the checker on every
-milestone trace. Three claims that were wrong or unsupported, in order of how much they matter:
-
-1. **RETRACTED in M54f (session 83): this finding was WRONG — the type IS `+10`.** I compared
-   the two candidate offsets on the DEFEATED state (records in limbo after our faction lost
-   everything) and let a doc line outvote working code: there `+4` scored 117/119 "plausible"
-   only because `+4` is a flags byte that reads 0 on 79 of 119 records, and the Colony-Pod
-   cross-check was worthless for the same reason. Measured properly on a healthy load, three
-   independent reads agree on `+10`: (i) the panel, `SEL_G 0` -> "Scout Patrol (1-1-1)" at
-   (28,42), and record 0 — the record on that tile — has `+10 = 2`; (ii) `data/alpha.json` type
-   2 = Scout Patrol and class row 2 = cls 3 = Scout Patrol; (iii) the binary, which is what
-   settles it: `shard_012.c:2150` `iVar8 = *(short *)((int)&DAT_00933282 + local_10) * 0x34;`
-   then `(&DAT_0098adaf)[iVar8]` — the class table indexed by a SHORT at `UNIT_ARR + 0x0A + 52*i`
-   (same shape at `shard_012.c:2117`, `:2148`, `shard_001.c:4153`, `:4312`, `:9466`).
-   So every "class 9" line in M54c/M54d/M54e stands, and the `+10` type pokes really did change
-   the type. What the detour did teach: **the unit panel is NOT a usable oracle on demand** — a
-   `SEL_G` write does not redraw it (three different selections, byte-identical OCR text), so it
-   is only trustworthy at load or after a real in-game selection. And `+10` values of 128/256/320
-   on other factions' records are EMPTY STALE SLOTS, which is why `smac_state.counts()` now
-   requires `type < 24` before counting a record as a unit.
-2. **"The game will not path into a tile its own owner occupies" is not true.** The run's own
-   trace refutes it: at turn 9, records 5 and 8 both walked ONTO (6,12) while records 0 and 2
-   were already standing there (both turn-0 walkers read `still_at_start False`, and both
-   turn-9 walks landed). The M54d failure most likely had another cause: its walker stood at
-   (7,12), a half-tile offset that the even-x delta tables (`0x67850c` dx / `0x678990` dy) do
-   not list as a neighbour, while every M54e walker stood on a real neighbour (4,12).
-   `m54e_prep.py` changed two variables at once (emptied the base tile AND moved the walker
-   from (7,12) to (4,12)) and the write-up blamed the occupancy one.
-3. **The checker cannot see a defeat.** `m54a_check_run.py` asserts year deltas, STUCK and
-   order/move counts; the trace's start/end snapshot carries `n_bases` for all factions but not
-   how many bases WE own, so a run in which our faction loses every base still prints `PASS`.
-   The M54e run did exactly that. The fix is small: put `bases_ours` (and `units_ours`) in the
-   snapshot `smac_play` writes, and add a `--min-our-bases` floor (default 0 so old traces keep
-   working) to the checker.
-
-## Session 83 (2026-10-25) — M54f: **THE TYPE BYTE IS SETTLED (+10, FROM THE BINARY), THE BOX IS RESTORED FROM A CLEAN SAVE, AND THE RUN CHECKER CAN NO LONGER PASS A RUN THAT LOSES THE POSITION** — `plugins` none; changed `scripts/smac_state.py`, `scripts/smac_play.py`, `scripts/m54a_check_run.py`, `FOOTING.md`, `SAVE_FORMAT.md`, this file (82b item 1 retracted), skill `references/terraforming-order-path.md`
-
-**Box first.** Session 82 left a defeated faction (`bases_ours 0`, 8 records stacked at (47,47),
-`turn_flags 0x100002`). That state is not a base to build on, so step 5 of the footing applied:
-`SMAC_SAVE='Z:\home\n100\reverse\smac\programs\saves\m54b_clean.SAV' python3
-scripts/m54a_load.py --relaunch` -> `HUD reached live=True` in 38 s, and
-`python3 scripts/smac_state.py --json` -> `year 2150  turn_flags 0  n_bases 18  bases_ours 1
-units_ours 6`, with `m54d_census.py` showing all six of ours on `University Base` at (28,42).
-
-**The milestone: settle the type byte (the footing's blocking item) and give the checker eyes.**
-1. **Type = the u16 at `+10`. Proven three independent ways, not correlated.** (i) Panel at load:
-   `SEL_G 0` -> OCR reads "Scout Patrol (1-1-1)" and the location `(28,42)`; record 0 — the
-   record on that tile — has `+10 = 2`. (ii) `data/alpha.json` type 2 = Scout Patrol, and class
-   row 2 = cls 3 = Scout Patrol. (iii) **The binary decides it**: `shard_012.c:2150`
-   `iVar8 = *(short *)((int)&DAT_00933282 + local_10) * 0x34;` then `(&DAT_0098adaf)[iVar8]` —
-   `DAT_00933282` IS `UNIT_ARR + 0x0A`, the element is a SHORT, and it indexes the class table;
-   same shape at `shard_012.c:2117`, `:2148`, `shard_001.c:4153`, `:4312`, `:9466`. So the code
-   was right, `FOOTING.md` ("type byte@4") and `SAVE_FORMAT.md` ("`+10` is a flag word") were
-   wrong, and **session 82b's finding 1 is retracted in place** — it compared the two offsets on
-   the limbo records and let `+4` (a flags byte that reads 0 on 79/119 records) look plausible.
-   All "class 9" lines in M54c/M54d/M54e stand.
-2. **The unit panel is not an oracle on demand.** Poking `+10` 2 -> 0 and back changed nothing
-   on screen, and three different `SEL_G` writes produced byte-identical OCR: the panel is a
-   cached widget that only rebuilds on a real in-game selection. Worth knowing before anyone
-   tries the "poke and read the panel" test again.
-3. **The checker can now see a defeat.** `smac_state.snapshot()` gained `bases_ours` and
-   `units_ours` (base array faction byte, unit records with `type < 24` and in-range x/y — the
-   128/256/320 "types" on other factions' records are EMPTY STALE SLOTS), `smac_play` carries
-   both in every per-turn `state_before`/`state_after`, and `m54a_check_run.py` gained
-   `--min-our-bases` (default 0, fail-closed: a missing field is a failure).
-
-**ACCEPTANCE NUMBERS (MET).**
-`python3 scripts/smac_play.py --turns 4 --timeout 240 --no-escape 3000 --tag m54f` ->
-`evidence/trace_m54f_20261025_015637.jsonl` -> `python3 scripts/m54a_check_run.py
-evidence/trace_m54f_20261025_015637.jsonl --timeout 240 --min-our-bases 1` ->
-`advanced 4/4`, `year deltas {1: 4}`, `stuck 0` (max dt 39.7 s), `orders 6 VERIFIED of 6`,
-`ours bases_ours 1 units_ours 6 floor 1`, `PASS ... we still hold 1 bases`.
-The floor is not vacuous: the same command on `trace_m54e40_20261025_010855.jsonl` now prints
-`FAIL our faction holds None bases at the end, floor is 1`.
-
-**Open.** (a) The footing's pick (a) — **found a second base** — was not attempted; the type-byte
-settle and the checker floor came first by the footing's own order and took the session.
-(b) `turn_flags` bit `0x2` is set after any driver run and does NOT clear on a TURN COMPLETE
-click (year 2154 -> 2155 with the bit still set); a reload clears it (load reads `0`). Not a
-wedge — turns still flip — but do not read bit `0x2` as "the run is stuck".
-(c) 26 `unknown` panes in `trace_m54e40` are still unpinned; today's 4-turn run hit 4 `unknown`.
-
-**Next (M54g):** found a second base — key the Former settle order (NAMED.md 120-146 +
-the unit panel buttons), walk a Former to a tile it can enter, and prove `bases_ours 1 -> 2` in
-one unattended run with `--min-our-bases 2`.
+Older sessions: `docs/sessions/sessions-82-83.md` (2 sessions). Read it only when a question reaches back before session ## Session 84.
 
 ## Session 84 (2026-10-25) — M54g: **THE FOUNDING IS KEYED (`b`, ORDERS MODE ON): THE LOOP FOUNDED "KOROLEV CENTER" AND THE CHECKER PASSED THE `bases_ours 2` FLOOR** — changed `scripts/smac_play.py` (name-pane class, `tile_recs` deref + live pitch, `founding_gate`, `issue_found_for_unit`, the in-loop hook), `scripts/m54a_check_run.py` (a founding is labelled, not byte-keyed), `scripts/test_classify.py` + `scripts/check_classes.py` (16 frames), new `scripts/m54g_probe.py`, `scripts/m54g_prep.py`, this file, `NEXT_PROMPT.md`, skill `references/terraforming-order-path.md`
 
@@ -365,3 +277,17 @@ re-open and answer again; then the acceptance command above on a 6-turn run.
 **Open:** the production contradiction (#6) and why the whole map builds nothing; our flat-research round and the `LAB_ARR` shift (#7); death-cause attribution (#8); the auto-end gate condition (#2); enemy-side production attribution (confounded, #5). **The game is nearly lost: 1 base (Korolev Center 29,42), 5 units, year 2218, pid 1329211** — a future run may need the reload recipe before it can measure anything.
 
 **Next:** M56 — resolve the production contradiction: prove from memory whether ANY base builds (base queue/cost fields + faction sliders + the +0x3c accumulator) across 2-3 boundaries, with a floor that FAILs on a hand-typed production trace.
+
+## Session 92 (2026-10-25) — M56: **WHY NOTHING GETS BUILT — the gate is MINERAL STORAGE, the natural queues are EMPTY on all 28 bases, and session 91's "zero production" was a false negative (enemy bases produced in every boundary)** — changed `scripts/m56_build.py` (NEW: per-base production predictor + boundary verifier), `scripts/test_m56_predict.py` (NEW: 8 rule cases vs a mock /proc/mem), `NAMED.md` "M56 block", `ORDERS.md` §15, `scratch/m56_dump.py` + `scratch/m56_fixture_bad.json` (untracked), `evidence/m56/` (3 frames), this file, `NEXT_PROMPT.md`, skill `references/production-queue.md`
+
+**ACCEPTANCE MET.** `python3 scripts/m56_build.py --arm 17 --boundaries 3 --timeout 120` -> `PASS production prediction: 1 verified unit arrivals over 3 boundaries, every prediction and every observed arrival accounted, queue bookkeeping exact` — `evidence/trace_m56_build_20261025_201353.jsonl`: **3/3 boundaries flipped +1** (2226->2227->2228->2229, walks [0,2,3,5,6,7] each, home to us), **1 POSITIVE prediction verified**: base 17 Korolev Center (29,42) armed by the controlled poke (pending 0->1, head -38->2 Scout Patrol, minerals 0->100, read back) -> predicted (minerals 100 >= price 10 = 10 x type_cost +41=1) -> a (29,42,type2,fac3) record appeared on the base tile, `pending 1->0`, `queue [2,-38,-38]->[-38,-38,-38]`, `minerals 100->0` (the pay -10 then **clamp B `max(0,min(10,d0))=0`** re-caps storage — M53k §D, not a 100-cost). Fixture: `python3 scripts/m56_build.py --fixture scratch/m56_fixture_bad.json` -> **exit 1**, `BAD at least 1 POSITIVE prediction verified — 0/1` (the after-units mutated: the predicted arrival removed). Rule tests: `python3 scripts/test_m56_predict.py` -> `PASS 8/8 production-prediction cases` (empty queues predict nothing; minerals 9 < 10 no / 10 = 10 yes; progress 99 with minerals 9 does NOT predict; head -30 predicts no unit; out-mask owner not predicted; price scales with +41). Classifier gates untouched: `test_classify.py` 17/17, `check_classes.py` 17/0 (no new classes; untracked `_3x.png` deleted, tracked ones restored).
+
+**THE ANSWER TO THE MILESTONE (all read from memory).** (1) **The gate**: the queue processor `0x4ef6d0` (pipeline stage 6 of `0x4f5a70`, shard_012.c:24182) completes a queue head iff **mineral storage `base+0x40` >= price** (`0x4f0a3d cmp minerals,edi; jl return`), price = `0x4e40a0(owner,1,-1) x type_cost(+41)` = 10 x cost in-mask; pay `0x4f0ca6` -> clamp B -> POP `0x4ef5d0` (pending `+0x4c` -1, queue `+0x50..` left-shift, `faction[head]-1` at `0x94dc84`) -> `FUN_005ab650` creates the unit on the base tile (shard_012.c:20890, right after the debit). Per-round chain: `0x5208f0(p)` -> `0x520540(p)` -> the per-owner base loop (shard_013.c:11568) -> `0x4f5a70(base)` -> `0x4ef6d0` — **every base every round in solo; no "production phase" gate** (the `faction+0x104 & 2` gate at `0x521070` guards only the AI upkeep step `0x574370`; session 91's "sliders +0x104 = 0 for all 8 -> nothing can build" read the AI step, not the queue). (2) **`+0x3c` progress / `+0xcc` rate do NOT gate** — the armed base had income 0, rate 1, progress 32 and produced on the very next boundary; an accumulation model says no. Docs vs code: M53i's `cost <= +0xcc + +0x3c` completion test is the OUT-mask race scan / display path (`0x4ee8c7` "display only", M53k); the storage gate wins, proven by the poke. (3) **Why nothing builds**: natural state (read before any poke): **pending 0 + head -38 on ALL 28 bases**, every base net income `+0xd0` = 0 — the gate can never fire. (4) **The session 90/91 contradiction**: session 90 was RIGHT — enemy-side order-0 arrivals on enemy base tiles in EVERY M56 boundary ((20,24) fac 2 at 2223, base 22 fac 6 at 2226, base 24 fac 7, base 14 fac 2 at 2228); session 91 counted only OUR-side arrivals -> false negative.
+
+**Two freezes found the hard way (both in the script now).** (a) **A produced unit arrives order 0 and FREEZES the auto-end**: `cur_player` 3, `turn_flags` 0, Return every 2 s for 150 s does nothing (run r1 died twice); ONE `h` on the cursor unit -> HOLD closed the turn at once (`tf 0->2`, walk resumed) — the script escalates Return -> `h` every 4 s past 8 s parked on our turn. (b) **The Operations Director popup does not close on Return** — default row "Zoom to Base Control", Return CYCLES options; click OK at ~(630,247). The popup text is also the **support cliff**: "The minerals output of Korolev Center is not sufficient to support Scout Patrol unit. The unit has been disbanded." — produced units die to upkeep when the base has no mineral income (our units 7->3 at 2221-2222). Escape on the map raised the quit prompt AGAIN (`evidence/m56/quit_prompt_2220.png`; "Oops, no, wait!" default, Return takes it).
+
+**Open.** (1) Enemy-side predictions are REPORTED not floored (queues refill inside their AI turn — read them mid-turn for a real enemy-side floor). (2) The out-mask price model (era table `0x68cbb8` factor) is unmodeled. (3) Facility/project (negative-head) completions are not floored (bitmap `+0x8c` deltas). (4) The `h`-escalation assumes the cursor parks ON the actionable unit; if it parks elsewhere the loop falls back to the OK click. (5) The box after the acceptance run: **~2229, 1 base (Korolev), ~3 units, queue re-armed each run (pending 1 head 2 minerals poked 100)** — the support cliff eats every produced unit; the game is nearly lost and a reload (`m54b_clean.SAV` + re-found) may be needed before the next measurement.
+
+**Next (M57):** give the loop an ECONOMY: either (a) reload `m54b_clean.SAV` + re-found and get a real (non-poked) positive prediction — a base whose queue the game itself filled (AI chooser at `0x4f6030` fills enemy queues; ours needs the BUILD UI `0x417ee0` or a facility that yields minerals `+0xd0 > 0` so storage >= price naturally), or (b) prove the facility side: queue a facility (negative head) at an armed base and floor the `+0x8c` bitmap delta + the `0x417ee0` queue-edit dispatch from memory. Acceptance: `scripts/m56_build.py` (extended) prints PASS on ONE real invocation with a positive arrival **not** armed by a minerals poke. Re-read `NAMED.md` M56 block + `0x417ee0` (queue edit) before shaping.
+
+**Close addendum (follow-up session, 2026-10-25).** M56 was CLOSED in a follow-up session (the session-92 context died before the close sequence). Fresh deterministic re-verification: `test_m56_predict.py` -> `PASS 8/8 production-prediction cases`; `m56_build.py --fixture scratch/m56_fixture_bad.json` -> **exit 1** `FAIL production prediction accounting`; `test_classify.py` 17/17, `check_classes.py` 17/0, `test_walk_diff.py` 37/37. Fresh LIVE acceptance in that session: `python3 scripts/m56_build.py --arm 17 --boundaries 3 --timeout 120` -> `PASS production prediction: 1 verified unit arrivals over 3 boundaries, every prediction and every observed arrival accounted, queue bookkeeping exact` — 3/3 boundaries flipped +1 (2229->2230->2231->2232, walk [0,2,3,5,6,7] home to us each), 1/1 POSITIVE prediction verified (base 17 Korolev Center 29,42 type 2: pending 1->0, minerals 100->0 clamp B, queue left-shifted), trace `evidence/trace_m56_build_20261025_203513.jsonl`; the session-92 acceptance trace `..._201353.jsonl` was also re-parsed: 15/15 checks ok, `positive_verified 1`. Box at close: **year 2232, 1 base (Korolev Center 29,42), units_ours 2, n_bases 29, pid 1329211** — M57 should expect the reload recipe.

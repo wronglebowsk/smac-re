@@ -539,3 +539,24 @@ pump leaves it), so:
   at run1's end, still set at run3's end at 2204). The driver's `tf & 2` AI test and
   the blind gates' `& 2` mask are unaffected (run3 passed with it set); nobody has
   found what sets it. Do not treat it as nonsense state.
+
+## 15. Production at the boundary: the queue, the gate, and the two freezes (M56, session 92, 2026-10-25)
+
+The round boundary BUILDS from the base queue, and the gate is **mineral storage
+`base+0x40` >= price** (`price = 10 x type_cost(+41)` for in-mask owners), not the
+progress accumulator. Full mechanics + the controlled poke that settled it:
+`NAMED.md` "M56 block". For a turn loop the two operational facts are:
+
+1. **A produced unit arrives order 0 and FREEZES the auto-end.** The auto-advance
+   ("No units need new orders") only fires when NOTHING is actionable; a unit built
+   at the boundary is actionable, the cursor parks on it, and Return every 2 s for
+   150 s does nothing (`cur_player` stays 3, `turn_flags` 0). ONE `h` on the cursor
+   unit closes the turn at once (`0 -> 2`, walk resumes). `m56_build.py` escalates:
+   Return every 2 s, then `h` every 4 s while parked on our turn past 8 s.
+2. **The Operations Director popup does not close on Return.** Its default row is
+   "Zoom to Base Control"; Return CYCLES the options (this froze two runs). Click
+   OK at window coords ~= (630,247). The quit prompt's OK remains banned.
+
+`python3 scripts/m56_build.py --arm 17 --boundaries 3 --timeout 120` -> PASS (see
+SESSION_NOTES session 92 for the numbers); `--fixture scratch/m56_fixture_bad.json`
+-> exit 1. Rule tests: `python3 scripts/test_m56_predict.py` -> PASS 8/8.

@@ -2,8 +2,15 @@
 
 Rebuilds `base+0xbc` nutrient / `+0xc0` mineral / `+0xc4` energy / `+0xc8` psi IN PLACE on the base record
 (`esi` = `DAT_008f0d60`, records at `0x95da10`, stride `0x130`). Cites `A:NNN` = line NNN of the function's
-extracted objdump-intel window (regenerate: `zcat evidence/m53j_text.txt.gz | awk '/^  4e78e0:/{f=1} /^  4e8d60:/{f=0} f'`);
+extracted objdump-intel window (gz is git-kept but worktree-prunable: recover with `git show
+733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz`, then `zcat evidence/m53j_text.txt.gz
+| awk '/^  4e78e0:/{f=1} /^  4e8d60:/{f=0} f'`);
 source is `objdump -d -M intel --section=.text programs/terran.exe`, VA = file offset + 0x400000.
+**This file is the production VECTOR (yields) machine. The queue COMPLETION side — what a queued item
+needs to actually spawn a unit at the round boundary (`base+0x40` storage >= price, the POP `0x4ef5d0`,
+clamp B, the disband cliff) — is `references/production-queue.md`; do not conflate the `+0xbc..+0xc8`
+yield fields with the `+0x4c/+0x50/+0x40` queue fields.**
+
 Models: `scripts/m53o_recon.py` (36/76 bases exact), `scripts/m53p_recon_a.py` (50/76; its `mp_best` is the
 middle-pass candidate scorer). Yield dispatch `FUN_004e75f0(field, fac, bidx, x, y)` -> `4e6960` nutrient /
 `4e6d40` mineral / `4e7070` energy / field 3 = 0 and clears `DAT_008f0cc8`; per-tile values = alpha

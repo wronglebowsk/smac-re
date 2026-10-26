@@ -16,7 +16,9 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 **This file is deliberately small (~18 KB — safe to load whole, and `wc -c` keeps it under the repo's
 70,000-char FAIL).** Depth lives in `references/`; open the ONE file you need:
 `code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
-`production-rebuild.md` (production-vector machine rules), `static-store-census.md`,
+`solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
+`production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate,
+completion chain, the produced-unit freeze, mock-mem predictor tests), `static-store-census.md`,
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `git-workflow.md`, `wine-runnability.md`, `data-formats.md`, `ghidra-batch-export.md`,
 `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
@@ -150,7 +152,10 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   after the keypress can name a different record. During any burst, re-read WHO wears the byte
   (scan all records for the transition against the pre-press snapshot), not who sits at the slot. Snapshot ALL our records (type, x, y,
   `+17`, legs) before the keypress and diff after; take the field from the record that actually
-  changed, and report how many changed — two changed means the result is confounded.
+  changed, and report how many changed — two changed means the result is confounded. **Across a round
+  boundary even the BYTES are not identity**: upkeep/compaction decrements the u16 index references at
+  `+28/+48/+50` inside records that did nothing, so diff record sets on (x, y, type, owner, order) and
+  report byte rewrites as a feature (`references/solo-round-boundary.md`).
 - **Attributing a field to one keypress: the through-the-click watcher on the subject's own slot
   is the only proof.** A read taken after the click proves the field changed somewhere, not on
   which record — pair the byte and the field from the SAME sample. Use the post-click snapshot of
@@ -201,8 +206,9 @@ being in history is what makes deletion safe), and record every kept/dropped fil
 `find evidence -size +150k -printf '%s %p\n' | while read sz p; do git grep -qF "$(basename "$p")"
 -- '*.md' '*.py' || echo "$sz $p"; done` — one tool call per candidate eats dozens. The MB figure
 recorded in `NEXT_PROMPT.md` goes stale during the session that writes it; measure with `budget`
-at close, never from the footing. Keep `evidence/m53j_text.txt.gz` (~5.7 MB): it is the disassembly
-cache the whole method runs on.
+at close, never from the footing. `evidence/m53j_text.txt.gz` (~5.7 MB, the disassembly cache the
+method runs on) is PRUNED from the worktree when the gate nears 30 MB; it is git-kept — recover with
+`git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
 
 Measured 2026-10-25: 29.3 MB in 858 files (58 images = 13.9 MB of it) against the 30 MB FAIL — and
 `prune --dry-run` proposes NOTHING, because the rule only drops *images older than 7 days* and the
@@ -442,7 +448,17 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   TRUE window coords: YEA (310,495) / NAY (398,495) / ABSTAIN (485,495), single OK (393,495); click only
   after `xdotool windowfocus <win>`; OK >= 1.2 s after selecting. Capture with `xwd -display :99 -root
   -silent`, 2x ffmpeg upscale, tesseract (>=4 chars, region-constrained).
-- **A stalled round may be a LIVELOCK, not a modal:** run `python3 scripts/m53q_livelock.py` (census of
+- **A round advancing while you watch is AUTO-END, not progress, and a walk frozen on an AI faction is
+  a modal event dialog, not a livelock.** With all units HELD the engine closes our turn on its own in
+  1–2 s; `cur_player == ours` is a window, not a state. Heartbeat model and dismissal cadence:
+  `references/solo-round-boundary.md`.
+- **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** A
+  produced unit arrives order 0, the cursor parks on it, and Return every 2 s for 150 s changes nothing
+  (`cur_player` ours, `turn_flags` 0, year unmoved). ONE `h` on the cursor unit (→ HOLD) closes the turn
+  at once. And a popup whose default row is not OK does not close on Return — Return CYCLES its options
+  (Operations Director defaults to "Zoom to Base Control"); click its OK instead. Cadence, coords, and
+  the queue/gate rules: `references/production-queue.md`.
+- **A stalled round can be a LIVELOCK, not a modal:** run `python3 scripts/m53q_livelock.py` (census of
   the `unit+48`/`unit+50` chains; `--fix` repairs). Signature: `turn_flags` bit 1 set + a hot main thread
   + byte-identical screenshots.
 - **A turn that never advances can also be a CLASSIFIER miss, with no modal visible.** OCR here is
