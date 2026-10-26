@@ -7,6 +7,10 @@ The rule (settled by the 2026-10-25 controlled poke, base 17 Korolev Center):
       AND queue head (base+0x50) is a unit type (0..0x3f)
       AND the owner is in the event mask (0x985b10)
       AND mineral storage (base+0x40) >= price, price = 10 * type_cost(+41)
+  M57 refines the last term: the queue processor runs inside the base visit AFTER the
+  income add, so the storage it compares includes this round's income (+0xd0) —
+  `predict(..., income_first=True)` is the UI-queued shape; the M56 armed run
+  (storage poked to 100, income 0) is identical under both models.
   The progress accumulator (+0x3c) and the rate (+0xcc) do NOT gate it: the armed
   base had net income 0 and the unit arrived on the very next boundary with
   progress 32 < any accumulation model's requirement. An empty queue (pending 0,
@@ -137,11 +141,31 @@ def main():
     check("one prediction per base per round (pending 3 -> this round: 1 arrival)",
           len(p) == 1 and p[0]["predict_arrive"] and p[0]["pending"] == 3, p)
 
+    print("case 9: M57 — the gate compares storage AFTER the income add (income_first)")
+    mm = MockMem([base(0, pending=1, queue=[2] + [B.EMPTY_S] * 9, minerals=8, income=2)], {2: 1})
+    p_no = B.predict(mm, B.all_prod(mm), income_first=False)
+    p_yes = B.predict(mm, B.all_prod(mm), income_first=True)
+    check("minerals 8 + income 2 = 10 >= price 10 -> ARRIVE only when income_first",
+          len(p_no) == 1 and not p_no[0]["predict_arrive"]
+          and len(p_yes) == 1 and p_yes[0]["predict_arrive"], (p_no, p_yes))
+
+    print("case 10: income_first is not a licence — 8 + 1 = 9 < 10 still predicts nothing")
+    mm = MockMem([base(0, pending=1, queue=[2] + [B.EMPTY_S] * 9, minerals=8, income=1)], {2: 1})
+    p = B.predict(mm, B.all_prod(mm), income_first=True)
+    check("8 + 1 < 10 -> not predicted", len(p) == 1 and not p[0]["predict_arrive"], p)
+
+    print("case 11: the M56 armed shape is unchanged by the new flag (regression)")
+    mm = MockMem([base(0, pending=1, queue=[2] + [B.EMPTY_S] * 9, minerals=100, income=0)], {2: 1})
+    p0 = B.predict(mm, B.all_prod(mm), income_first=False)
+    p1 = B.predict(mm, B.all_prod(mm), income_first=True)
+    check("minerals 100, income 0 -> ARRIVE under both models",
+          p0[0]["predict_arrive"] and p1[0]["predict_arrive"], (p0, p1))
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 8/8 production-prediction cases")
+    print("PASS 11/11 production-prediction cases")
     return 0
 
 
