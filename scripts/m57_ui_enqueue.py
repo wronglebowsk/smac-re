@@ -134,7 +134,12 @@ def main():
     b2 = base_rec(f, a.base_index)
     print(f"after OK: pending={b2['pending']} head={b2['queue'][0]} slots={b2['queue']} "
           f"minerals={b2['minerals']} d0={b2['d0']}", flush=True)
-    print("orders mode now:", i32(f, ORDERS_MODE), " sel:", i32(f, SEL_G), flush=True)
+    # The recipe turns orders mode OFF to open the base display; leave it OFF and every order
+    # key (h/g/l) falls through to the cursor handler, and a turn with an actionable unit then
+    # never ends (measured: 240 s parked on cur_player 3 with Return/h/OK doing nothing).
+    # Restore it — this is setup state for a later run, NOT a queue/economy write.
+    sp.wr(f, ORDERS_MODE, struct.pack("<i", 1))
+    print("orders mode restored:", i32(f, ORDERS_MODE), " sel:", i32(f, SEL_G), flush=True)
     return 0
 
 
