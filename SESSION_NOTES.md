@@ -595,3 +595,10 @@ wrapped continuation lines are not joined).
 **Next pick (M63):** what writes 384/386 into `base+0x50`, and what the pop does to the slots —
 reload first, then pop breakpoint + a watchpoint on one named base's `+0x50..+0x74`, two-three
 boundaries, one variable per run.
+
+## Session 102 (2026-10-26) — correction to Session 101
+
+The readiness oracle has **15** unit cases, not 13: two horizon cases (`tight horizon is flagged`,
+`roomy horizon is not`) were added after the session-101 notes were written, so the notes quoted a
+stale count. `python3 scripts/test_accept_ready.py` -> `PASS 15/15 readiness cases` (re-run before
+this commit). No code changed; `SESSION_NOTES.md` and `NEXT_PROMPT.md` now say 15/15.
