@@ -1,0 +1,119 @@
+[New LWP 2307388]
+[New LWP 2307387]
+[New LWP 2307386]
+[New LWP 2307385]
+[New LWP 2307384]
+[New LWP 2307383]
+[New LWP 2307382]
+[New LWP 2307381]
+[New LWP 2307380]
+[New LWP 2307379]
+[New LWP 2307378]
+[New LWP 2307377]
+[New LWP 2307376]
+[New LWP 2307375]
+[New LWP 2307374]
+[New LWP 2307373]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf7b8b68b in ?? ()
+Hardware watchpoint 1: *0x8f0d70
+Hardware watchpoint 2: *(int*)0x985b00
+Hardware watchpoint 3: *(int*)0x985dcc
+Breakpoint 4 at 0x4ef6d0
+Breakpoint 5 at 0x4efedd
+Breakpoint 6 at 0x4eff4e
+PLAYERW pc=0x520cf5 cp=4 year=2182 round=82
+VISIT guard=0 year=2182 round=82 cp=4 base=Morgan Industries owner=4 xy=7,27 min=47 pend=0 head=-24
+VISIT guard=0 year=2182 round=82 cp=4 base=Morgan Energy Monopoly owner=4 xy=12,28 min=7 pend=0 head=256
+VISIT guard=0 year=2182 round=82 cp=4 base=Morgan Processing owner=4 xy=7,17 min=6 pend=0 head=-3
+PLAYERW pc=0x520cf5 cp=5 year=2182 round=82
+VISIT guard=0 year=2182 round=82 cp=5 base=Sparta Command owner=5 xy=4,4 min=28 pend=0 head=326
+VISIT guard=0 year=2182 round=82 cp=5 base=Assassin's Redoubt owner=5 xy=16,4 min=4 pend=0 head=321
+PLAYERW pc=0x520cf5 cp=6 year=2182 round=82
+VISIT guard=0 year=2182 round=82 cp=6 base=New Jerusalem owner=6 xy=10,56 min=6 pend=0 head=-39
+VISIT guard=0 year=2182 round=82 cp=6 base=House of Martyrs owner=6 xy=14,56 min=2 pend=0 head=386
+VISIT guard=0 year=2182 round=82 cp=6 base=Throne of God owner=6 xy=1,61 min=38 pend=0 head=385
+VISIT guard=0 year=2182 round=82 cp=6 base=Valley of the Faithful owner=6 xy=23,53 min=20 pend=0 head=386
+VISIT guard=0 year=2182 round=82 cp=6 base=Hallowed Ground owner=6 xy=12,48 min=28 pend=0 head=-27
+VISIT guard=0 year=2182 round=82 cp=6 base=Terrible Swift Sword owner=6 xy=20,48 min=8 pend=0 head=386
+VISIT guard=0 year=2182 round=82 cp=6 base=The Lord's Gift owner=6 xy=63,51 min=6 pend=0 head=386
+VISIT guard=0 year=2182 round=82 cp=6 base=The Lord's Truth owner=6 xy=58,58 min=18 pend=0 head=386
+VISIT guard=0 year=2182 round=82 cp=6 base=The Lord's Mercy owner=6 xy=28,50 min=10 pend=0 head=386
+VISIT guard=0 year=2182 round=82 cp=6 base=Judgement Seat owner=6 xy=1,43 min=0 pend=0 head=386
+PLAYERW pc=0x520cf5 cp=7 year=2182 round=82
+VISIT guard=0 year=2182 round=82 cp=7 base=U.N. Court of Justice owner=7 xy=57,13 min=6 pend=0 head=2
+PAY year=2182 round=82 cp=7 base=U.N. Court of Justice before=13 edi=9 after=4
+CREATE year=2182 round=82 cp=7 guard=7 base=U.N. Court of Justice min=4
+YEARW year=2183 round=83 cp=7
+PLAYERW pc=0x520cf5 cp=0 year=2183 round=83
+PLAYERW pc=0x520cf5 cp=1 year=2183 round=83
+VISIT guard=0 year=2183 round=83 cp=1 base=Virgin Soil owner=1 xy=20,10 min=16 pend=0 head=65
+PAY year=2183 round=83 cp=1 base=Virgin Soil before=19 edi=18 after=1
+CREATE year=2183 round=83 cp=1 guard=1 base=Virgin Soil min=1
+PLAYERW pc=0x520cf5 cp=2 year=2183 round=83
+VISIT guard=0 year=2183 round=83 cp=2 base=Gaia's Landing owner=2 xy=12,14 min=32 pend=0 head=133
+PAY year=2183 round=83 cp=2 base=Gaia's Landing before=37 edi=36 after=1
+CREATE year=2183 round=83 cp=2 guard=2 base=Gaia's Landing min=1
+VISIT guard=0 year=2183 round=83 cp=2 base=The Hive owner=2 xy=2,18 min=75 pend=0 head=131
+PAY year=2183 round=83 cp=2 base=The Hive before=85 edi=18 after=67
+CREATE year=2183 round=83 cp=2 guard=2 base=The Hive min=67
+VISIT guard=0 year=2183 round=83 cp=2 base=U.N. Headquarters owner=2 xy=61,11 min=8 pend=0 head=133
+VISIT guard=0 year=2183 round=83 cp=2 base=People's Endeavor owner=2 xy=5,11 min=33 pend=0 head=133
+PAY year=2183 round=83 cp=2 base=People's Endeavor before=39 edi=36 after=3
+CREATE year=2183 round=83 cp=2 guard=2 base=People's Endeavor min=3
+VISIT guard=0 year=2183 round=83 cp=2 base=Fallow Time owner=2 xy=15,11 min=0 pend=0 head=133
+VISIT guard=0 year=2183 round=83 cp=2 base=Fort Survivalist owner=2 xy=12,6 min=14 pend=0 head=134
+VISIT guard=0 year=2183 round=83 cp=2 base=Unity Lair owner=2 xy=0,14 min=17 pend=0 head=133
+PLAYERW pc=0x520cf5 cp=3 year=2183 round=83
+VISIT guard=0 year=2183 round=83 cp=3 base=University Base owner=3 xy=28,42 min=6 pend=0 head=2
+VISIT guard=0 year=2183 round=83 cp=3 base=Korolev Center owner=3 xy=29,42 min=9 pend=0 head=2
+PAY year=2183 round=83 cp=3 base=Korolev Center before=9 edi=9 after=0
+CREATE year=2183 round=83 cp=3 guard=3 base=Korolev Center min=0
+PLAYERW pc=0x520cf5 cp=4 year=2183 round=83
+VISIT guard=0 year=2183 round=83 cp=4 base=Morgan Industries owner=4 xy=7,27 min=51 pend=0 head=-24
+VISIT guard=0 year=2183 round=83 cp=4 base=Morgan Energy Monopoly owner=4 xy=12,28 min=15 pend=0 head=256
+PAY year=2183 round=83 cp=4 base=Morgan Energy Monopoly before=23 edi=18 after=5
+CREATE year=2183 round=83 cp=4 guard=4 base=Morgan Energy Monopoly min=5
+VISIT guard=0 year=2183 round=83 cp=4 base=Morgan Processing owner=4 xy=7,17 min=9 pend=0 head=-3
+PLAYERW pc=0x520cf5 cp=5 year=2183 round=83
+VISIT guard=0 year=2183 round=83 cp=5 base=Sparta Command owner=5 xy=4,4 min=32 pend=0 head=321
+VISIT guard=0 year=2183 round=83 cp=5 base=Assassin's Redoubt owner=5 xy=16,4 min=7 pend=0 head=321
+PLAYERW pc=0x520cf5 cp=6 year=2183 round=83
+VISIT guard=0 year=2183 round=83 cp=6 base=New Jerusalem owner=6 xy=10,56 min=10 pend=0 head=-39
+VISIT guard=0 year=2183 round=83 cp=6 base=House of Martyrs owner=6 xy=14,56 min=5 pend=0 head=386
+VISIT guard=0 year=2183 round=83 cp=6 base=Throne of God owner=6 xy=1,61 min=42 pend=0 head=385
+VISIT guard=0 year=2183 round=83 cp=6 base=Valley of the Faithful owner=6 xy=23,53 min=26 pend=0 head=386
+PAY year=2183 round=83 cp=6 base=Valley of the Faithful before=32 edi=27 after=5
+CREATE year=2183 round=83 cp=6 guard=6 base=Valley of the Faithful min=5
+VISIT guard=0 year=2183 round=83 cp=6 base=Hallowed Ground owner=6 xy=12,48 min=31 pend=0 head=-27
+VISIT guard=0 year=2183 round=83 cp=6 base=Terrible Swift Sword owner=6 xy=20,48 min=11 pend=0 head=386
+VISIT guard=0 year=2183 round=83 cp=6 base=The Lord's Gift owner=6 xy=63,51 min=9 pend=0 head=386
+VISIT guard=0 year=2183 round=83 cp=6 base=The Lord's Truth owner=6 xy=58,58 min=22 pend=0 head=386
+VISIT guard=0 year=2183 round=83 cp=6 base=The Lord's Mercy owner=6 xy=28,50 min=14 pend=0 head=386
+VISIT guard=0 year=2183 round=83 cp=6 base=Judgement Seat owner=6 xy=1,43 min=2 pend=0 head=386
+PLAYERW pc=0x520cf5 cp=7 year=2183 round=83
+VISIT guard=0 year=2183 round=83 cp=7 base=U.N. Court of Justice owner=7 xy=57,13 min=4 pend=0 head=-38
+YEARW year=2184 round=84 cp=7
+PLAYERW pc=0x520cf5 cp=0 year=2184 round=84
+PLAYERW pc=0x520cf5 cp=1 year=2184 round=84
+VISIT guard=0 year=2184 round=84 cp=1 base=Virgin Soil owner=1 xy=20,10 min=1 pend=0 head=65
+PLAYERW pc=0x520cf5 cp=2 year=2184 round=84
+VISIT guard=0 year=2184 round=84 cp=2 base=Gaia's Landing owner=2 xy=12,14 min=1 pend=0 head=133
+VISIT guard=0 year=2184 round=84 cp=2 base=The Hive owner=2 xy=2,18 min=67 pend=0 head=-42
+VISIT guard=0 year=2184 round=84 cp=2 base=U.N. Headquarters owner=2 xy=61,11 min=13 pend=0 head=133
+VISIT guard=0 year=2184 round=84 cp=2 base=People's Endeavor owner=2 xy=5,11 min=3 pend=0 head=133
+VISIT guard=0 year=2184 round=84 cp=2 base=Fallow Time owner=2 xy=15,11 min=7 pend=0 head=133
+VISIT guard=0 year=2184 round=84 cp=2 base=Fort Survivalist owner=2 xy=12,6 min=17 pend=0 head=134
+VISIT guard=0 year=2184 round=84 cp=2 base=Unity Lair owner=2 xy=0,14 min=21 pend=0 head=133
+PLAYERW pc=0x520cf5 cp=3 year=2184 round=84
+VISIT guard=0 year=2184 round=84 cp=3 base=University Base owner=3 xy=28,42 min=7 pend=0 head=2
+VISIT guard=0 year=2184 round=84 cp=3 base=Korolev Center owner=3 xy=29,42 min=0 pend=0 head=2
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf7d9e32c in __kernel_vsyscall ()
+[Inferior 1 (process 2307370) detached]

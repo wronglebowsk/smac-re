@@ -381,3 +381,45 @@ cost; `imul edi,eax` is the price the `0x4efa5e` gate compares.
   with credit = `+0xd0` when positive (the add at `0x4ef7f6` is gated `d0 >= 0`); measured
   8+1-9=0, 8+2-9=1, 8+1-9=0. The old `storage_before - storage_after >= price` ignored the credit
   the model itself predicts and only passed because the armed run had income 0.
+
+## M61 (session 100): where the create sits in the round; `base+0x10` is the NAME, not a field
+
+Measured with `scripts/m60_guard.py --stage watch --boundaries K` — conditioned breakpoints on the
+visit `0x4ef6d0`, the pay store `0x4efedd` and the create call `0x4eff4e`, plus hardware watchpoints
+on the guard `0x8f0d70`, the year `0x985b00` and `cur_player 0x985dcc`, every command list `silent`
++ tagged printf + `continue`, gdb stdout straight to a file (nothing to drain). Ordered log:
+`evidence/m61a_seq.jsonl`.
+
+- **The round order.** The year store `0x51f54f` (`a3 00 5b 98`, right after the round store
+  `0x51f53c`) fires while `cur_player` is STILL 7 -> `cur_player` 0 -> 1 -> 2 -> 3 -> our bases'
+  visits in ARRAY order (University idx 0, then Korolev idx 18) -> PAY `0x4efedd` (storage - `edi`,
+  `edi` = the price) -> CREATE `0x4eff4e` -> `cur_player` 4 -> 5 -> 6 -> 7 -> next year store. Our
+  production is therefore four player switches AFTER the flip, inside our own slot, and the pay and
+  the create are ONE visit invocation: nothing in `.text` jumps to `0x4efedd`, `0x4eff32` or
+  `0x4eff4e` (grep finds only the instruction addresses plus the `jne 0x4eff5c`), and the live log
+  prints PAY and CREATE adjacent with nothing between. NAMED.md calls the year store `0x51f554`;
+  that is the `call 0x478530` AFTER the store — the bytes win.
+- **An arrival is never a round late; a SNAPSHOT can be early.** `ds:0x8f0d60` names the record the
+  round processor is visiting (it is stored per base before the pipeline that reaches `0x4ef6d0`),
+  so it says which base has been reached. A window's after-snapshot that still names ANOTHER base
+  was taken before this base's visit, and an arrival missing from it says nothing about the create.
+  `m56_build.py` logs `cur_base` at every after-snapshot and REFUSES the F1 deferral when the
+  pointer already named the predicted base (`scratch/m61/fixture_beat_visit.json` exit 1 vs
+  `fixture_defer_ok.json` exit 0 — the two differ in that one field).
+- **`base+0x10` is not a field.** The base NAME starts at record byte +19, so a dword read at +0x10
+  is bytes +16, +17, +18 (three small unnamed bytes) plus the name's FIRST CHARACTER in the top
+  byte: 24/24 bases have top byte == name[0] (`scratch/m61/census10.py`) — Korolev Center
+  `0x4b000000` = 'K', University Base `0x55000000` = 'U', both with +16..+18 zero. Never read
+  `[base+0x10]` as a flag or a guard: the old note was wrong twice over (Ghidra `short *` offsets,
+  then this straddle). Check a record's BYTE layout before believing any dword-level claim about it.
+- **A dialog on screen swallows every UI click.** `m57_ui_enqueue`'s "INSERT never landed" was an
+  Operations Director "the minerals output of Korolev Center is not sufficient to support Scout
+  Patrol ... the unit has been disbanded" dialog (`classify()` == `dialog`) sitting over the BUILD
+  pane; the chooser guard updated, the INSERT clicks did nothing. Clear dialogs (Return on the
+  default row) and close panes (Escape) and re-check `classify()` == `hud` BEFORE a UI enqueue.
+- **Producing a unit zeroes the base's mineral credit** (`+0xd0` 1 -> 0, or -1), and the income add
+  is gated `d0 > 0`, so storage cannot accrue again until the credit turns positive: a base that
+  just produced cannot fund its own next build. A UI-queued acceptance needs `minerals < price`
+  AND `minerals + credit >= price` in the same window, i.e. credit >= 1 — after two productions
+  both our bases sat at minerals 0 / credit 0 and only a reload (`m54a_load --relaunch` ->
+  `m54g_prep` -> one turn -> enqueue) restored that shape.

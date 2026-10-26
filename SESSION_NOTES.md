@@ -1,43 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-90-90.md` (1 sessions). Read it only when a question reaches back before session ## Session 91.
-
-## Session 91 (2026-10-25) — M55: **THE SOLO ROUND BOUNDARY IS READ END TO END FROM MEMORY AND EVERY DIFF IS ACCOUNTED — `scripts/m55_boundary.py` prints PASS on a real invocation (2217->2218, 10/10 floors); a hand-typed fixture FAILs (5 floors) and the no-poke dry probe FAILs (no flip in 4 s)** — changed `scripts/m55_boundary.py` (NEW: reads one boundary from /proc/<pid>/mem, samples cur_player/year/round/stage/turn_flags at 2 ms, accounts every unit/base/faction diff), `scratch/m55_fixture_bad.json` (hand-typed negative), `NEXT_PROMPT.md`, this file, skill `references/wine-operations.md`
-
-**Acceptance — the exact commands and what they printed:**
-- `python3 scripts/m55_boundary.py` -> exit 0, `PASS boundary 2217->2218: player walk observed (cur_player [0, 2, 3, 5, 6, 7]), upkeep income read for 7 factions, research advanced, production: no net-new order-0 arrivals this round`, all 10 floors `ok`, trace `evidence/trace_m55_boundary_20261025_194440.jsonl`. An earlier identical PASS: 2215->2216, `evidence/trace_m55_boundary_20261025_194200.jsonl`.
-- `python3 scripts/m55_boundary.py --fixture scratch/m55_fixture_bad.json` -> exit 1, `FAIL boundary accounting`, 5 BAD (walk only 4,5; our unit moved (10,10)->(11,10); production arrived order 2; ledger {4: 7}; research flat for every faction).
-- `python3 scripts/m55_boundary.py --no-poke --no-enter --timeout 4` -> exit 1, `FAIL no round boundary (year never moved) within 4.0s` (the gate is not vacuous).
-
-**What the boundary actually is (all read from memory, this session):**
-1. **Solo heartbeat = the player WALK in `FUN_00520c10`.** `cur_player` walks every active player and ends at ours: observed sequences `[3,3,4,5,6,6,7,0,2,2,3]`, `[7,3,4,5,6,7,2,3]`, `[3,3,5,6,7,0,2,3]` — the walk ROTATES (starts after our id, not at 0). The MP 7-stage counter `DAT_0091c630` stayed 0 in every sample (15-40 samples/run) — never floor on stage in solo.
-2. **The boundary needs no key when every unit is HELD: the engine auto-ends our turn.** Rounds ran 2206->2208 with zero input; at 2210+ rounds closed 1-2 s after our turn opened. BUT at 2204 the same hold-all state stalled 90 s (`stage 0`, all semaphores 0) — the auto-end gate (`DAT_0091f69c & 1`, "No units need orders Press ENTER") is CONDITIONAL and the trigger condition is still unidentified. **Confounded/unknown — do not claim "idle never advances" (session 90) nor "idle always advances" (this session).**
-3. **Modal event dialogs FREEZE the walk.** "The Hive has eradicated the Gaians" held `cur_player = 2` for 90 s with every semaphore zero; the event chain then opened the PLANET display, which swallowed one Enter. Fix in the script: Return every 2 s while `cur_player != ours` (and while mid-walk) — safe, because Return is only consumed as turn-end when the human loop is running. `Escape` on the tactical map raises "Do you really want to quit?" — never press Escape (the footing already bans its OK; now ban the key).
-4. **The boundary REWRITES bytes inside records that did not move.** Our 11 held records changed at u16 +28 (legs_y[0]), +48, +50 — each **decrements by 1 per round** while dying units are compacted out (a 2205 boundary with ~20 enemy deaths moved all three; a quiet boundary moved only +28). Identity for accounting is therefore **(x, y, type, owner, order)**, not 52-byte equality.
-5. **Per-turn order resets and cargo.** AI units' transient orders (9, 14, 24, 27, 88) reset to 0 **in place**; order 24 = cargo/unload materialisation (two Settlers appeared at (12,50) with order 24, mp 3). Produced units arrive **order 0 on a base tile of their own faction**. Attribution across a boundary is confounded by moves + resets + cargo, so the floor is scoped to OUR side; enemy-side arrivals are labelled `production / cargo-or-order-reset / order-reset-in-place / move / unattributed`.
-6. **ZERO production was measured in every round of this session** (~7 boundaries): no net-new order-0 arrival on any base of any faction. Session 90's claim that "production drops `+17 = 0` units on base tiles at every round boundary" did NOT reproduce. Faction sliders read `+0x104 = 0, +0x108 = 5..6` for all 8; base record `+0x3c` ticked 23->25 on Korolev (+2/round, a shield-style accumulator), `+0x34`/`+0x38` static. **This contradiction is M56.**
-7. **Research is measured and it completes.** Three live completions: p2 rpoints 161->0 rtech 12->46; p6 -119 rtech 22->72; p2 190 pts rtech 46->44. Our points advanced +6, +12, +12, +3, +2 in most rounds — EXCEPT one boundary where ours stayed 8->8 with `labcnt 229->229` and `rtech 13->13`; ours had completed tech 36 at an earlier boundary (108->8). Our `labcnt` reads 229 while other factions read 5-137 and p0 reads -1 — **the `LAB_ARR` parallel array is suspicious after player 1 (Gaians) died** (faction slot 1 left the active mask 0xFF -> 0xFD); verify its indexing before trusting per-faction lab counts.
-8. **Our side took real losses.** Garrison at University Base attrited 11 -> 10 -> 6 -> 5 units at (28,42) with no arrival of the same class (deaths, cause unattributed); then **University Base (28,42) was CAPTURED by faction 6** at the 2214->2215 boundary — the base record survived with `faction 6` (28 bases before and after). C6's floor is therefore "no base of ours VANISHES; a capture is reported", not "we never lose a base".
-9. **`turn_flags` 0x100000 is set by Enter and cleared at the boundary** (observed `0x100002 -> 0x2` at +0.073 s, the only flip seen). With auto-end closing the turn, no flip appears at all (`0x2 -> 0x2`) — a flip is expected only when a key ends the turn.
-10. Energy deltas were read for 7-8 factions every round (e.g. `{0:0, 2:-11, 3:0, 4:3, 5:3, 6:-24, 7:-23}`), the spending ledger `faction+4` was zero for every player after upkeep in all runs, and energy never went negative (code clamp holds).
-
-**Open:** the production contradiction (#6) and why the whole map builds nothing; our flat-research round and the `LAB_ARR` shift (#7); death-cause attribution (#8); the auto-end gate condition (#2); enemy-side production attribution (confounded, #5). **The game is nearly lost: 1 base (Korolev Center 29,42), 5 units, year 2218, pid 1329211** — a future run may need the reload recipe before it can measure anything.
-
-**Next:** M56 — resolve the production contradiction: prove from memory whether ANY base builds (base queue/cost fields + faction sliders + the +0x3c accumulator) across 2-3 boundaries, with a floor that FAILs on a hand-typed production trace.
-
-## Session 92 (2026-10-25) — M56: **WHY NOTHING GETS BUILT — the gate is MINERAL STORAGE, the natural queues are EMPTY on all 28 bases, and session 91's "zero production" was a false negative (enemy bases produced in every boundary)** — changed `scripts/m56_build.py` (NEW: per-base production predictor + boundary verifier), `scripts/test_m56_predict.py` (NEW: 8 rule cases vs a mock /proc/mem), `NAMED.md` "M56 block", `ORDERS.md` §15, `scratch/m56_dump.py` + `scratch/m56_fixture_bad.json` (untracked), `evidence/m56/` (3 frames), this file, `NEXT_PROMPT.md`, skill `references/production-queue.md`
-
-**ACCEPTANCE MET.** `python3 scripts/m56_build.py --arm 17 --boundaries 3 --timeout 120` -> `PASS production prediction: 1 verified unit arrivals over 3 boundaries, every prediction and every observed arrival accounted, queue bookkeeping exact` — `evidence/trace_m56_build_20261025_201353.jsonl`: **3/3 boundaries flipped +1** (2226->2227->2228->2229, walks [0,2,3,5,6,7] each, home to us), **1 POSITIVE prediction verified**: base 17 Korolev Center (29,42) armed by the controlled poke (pending 0->1, head -38->2 Scout Patrol, minerals 0->100, read back) -> predicted (minerals 100 >= price 10 = 10 x type_cost +41=1) -> a (29,42,type2,fac3) record appeared on the base tile, `pending 1->0`, `queue [2,-38,-38]->[-38,-38,-38]`, `minerals 100->0` (the pay -10 then **clamp B `max(0,min(10,d0))=0`** re-caps storage — M53k §D, not a 100-cost). Fixture: `python3 scripts/m56_build.py --fixture scratch/m56_fixture_bad.json` -> **exit 1**, `BAD at least 1 POSITIVE prediction verified — 0/1` (the after-units mutated: the predicted arrival removed). Rule tests: `python3 scripts/test_m56_predict.py` -> `PASS 8/8 production-prediction cases` (empty queues predict nothing; minerals 9 < 10 no / 10 = 10 yes; progress 99 with minerals 9 does NOT predict; head -30 predicts no unit; out-mask owner not predicted; price scales with +41). Classifier gates untouched: `test_classify.py` 17/17, `check_classes.py` 17/0 (no new classes; untracked `_3x.png` deleted, tracked ones restored).
-
-**THE ANSWER TO THE MILESTONE (all read from memory).** (1) **The gate**: the queue processor `0x4ef6d0` (pipeline stage 6 of `0x4f5a70`, shard_012.c:24182) completes a queue head iff **mineral storage `base+0x40` >= price** (`0x4f0a3d cmp minerals,edi; jl return`), price = `0x4e40a0(owner,1,-1) x type_cost(+41)` = 10 x cost in-mask; pay `0x4f0ca6` -> clamp B -> POP `0x4ef5d0` (pending `+0x4c` -1, queue `+0x50..` left-shift, `faction[head]-1` at `0x94dc84`) -> `FUN_005ab650` creates the unit on the base tile (shard_012.c:20890, right after the debit). Per-round chain: `0x5208f0(p)` -> `0x520540(p)` -> the per-owner base loop (shard_013.c:11568) -> `0x4f5a70(base)` -> `0x4ef6d0` — **every base every round in solo; no "production phase" gate** (the `faction+0x104 & 2` gate at `0x521070` guards only the AI upkeep step `0x574370`; session 91's "sliders +0x104 = 0 for all 8 -> nothing can build" read the AI step, not the queue). (2) **`+0x3c` progress / `+0xcc` rate do NOT gate** — the armed base had income 0, rate 1, progress 32 and produced on the very next boundary; an accumulation model says no. Docs vs code: M53i's `cost <= +0xcc + +0x3c` completion test is the OUT-mask race scan / display path (`0x4ee8c7` "display only", M53k); the storage gate wins, proven by the poke. (3) **Why nothing builds**: natural state (read before any poke): **pending 0 + head -38 on ALL 28 bases**, every base net income `+0xd0` = 0 — the gate can never fire. (4) **The session 90/91 contradiction**: session 90 was RIGHT — enemy-side order-0 arrivals on enemy base tiles in EVERY M56 boundary ((20,24) fac 2 at 2223, base 22 fac 6 at 2226, base 24 fac 7, base 14 fac 2 at 2228); session 91 counted only OUR-side arrivals -> false negative.
-
-**Two freezes found the hard way (both in the script now).** (a) **A produced unit arrives order 0 and FREEZES the auto-end**: `cur_player` 3, `turn_flags` 0, Return every 2 s for 150 s does nothing (run r1 died twice); ONE `h` on the cursor unit -> HOLD closed the turn at once (`tf 0->2`, walk resumed) — the script escalates Return -> `h` every 4 s past 8 s parked on our turn. (b) **The Operations Director popup does not close on Return** — default row "Zoom to Base Control", Return CYCLES options; click OK at ~(630,247). The popup text is also the **support cliff**: "The minerals output of Korolev Center is not sufficient to support Scout Patrol unit. The unit has been disbanded." — produced units die to upkeep when the base has no mineral income (our units 7->3 at 2221-2222). Escape on the map raised the quit prompt AGAIN (`evidence/m56/quit_prompt_2220.png`; "Oops, no, wait!" default, Return takes it).
-
-**Open.** (1) Enemy-side predictions are REPORTED not floored (queues refill inside their AI turn — read them mid-turn for a real enemy-side floor). (2) The out-mask price model (era table `0x68cbb8` factor) is unmodeled. (3) Facility/project (negative-head) completions are not floored (bitmap `+0x8c` deltas). (4) The `h`-escalation assumes the cursor parks ON the actionable unit; if it parks elsewhere the loop falls back to the OK click. (5) The box after the acceptance run: **~2229, 1 base (Korolev), ~3 units, queue re-armed each run (pending 1 head 2 minerals poked 100)** — the support cliff eats every produced unit; the game is nearly lost and a reload (`m54b_clean.SAV` + re-found) may be needed before the next measurement.
-
-**Next (M57):** give the loop an ECONOMY: either (a) reload `m54b_clean.SAV` + re-found and get a real (non-poked) positive prediction — a base whose queue the game itself filled (AI chooser at `0x4f6030` fills enemy queues; ours needs the BUILD UI `0x417ee0` or a facility that yields minerals `+0xd0 > 0` so storage >= price naturally), or (b) prove the facility side: queue a facility (negative head) at an armed base and floor the `+0x8c` bitmap delta + the `0x417ee0` queue-edit dispatch from memory. Acceptance: `scripts/m56_build.py` (extended) prints PASS on ONE real invocation with a positive arrival **not** armed by a minerals poke. Re-read `NAMED.md` M56 block + `0x417ee0` (queue edit) before shaping.
-
-**Close addendum (follow-up session, 2026-10-25).** M56 was CLOSED in a follow-up session (the session-92 context died before the close sequence). Fresh deterministic re-verification: `test_m56_predict.py` -> `PASS 8/8 production-prediction cases`; `m56_build.py --fixture scratch/m56_fixture_bad.json` -> **exit 1** `FAIL production prediction accounting`; `test_classify.py` 17/17, `check_classes.py` 17/0, `test_walk_diff.py` 37/37. Fresh LIVE acceptance in that session: `python3 scripts/m56_build.py --arm 17 --boundaries 3 --timeout 120` -> `PASS production prediction: 1 verified unit arrivals over 3 boundaries, every prediction and every observed arrival accounted, queue bookkeeping exact` — 3/3 boundaries flipped +1 (2229->2230->2231->2232, walk [0,2,3,5,6,7] home to us each), 1/1 POSITIVE prediction verified (base 17 Korolev Center 29,42 type 2: pending 1->0, minerals 100->0 clamp B, queue left-shifted), trace `evidence/trace_m56_build_20261025_203513.jsonl`; the session-92 acceptance trace `..._201353.jsonl` was also re-parsed: 15/15 checks ok, `positive_verified 1`. Box at close: **year 2232, 1 base (Korolev Center 29,42), units_ours 2, n_bases 29, pid 1329211** — M57 should expect the reload recipe.
+Older sessions: `docs/sessions/sessions-91-92.md` (2 sessions). Read it only when a question reaches back before session ## Session 93.
 
 ## Session 93 (2026-10-25) — M57: **THE GAME'S OWN BUILD UI WROTE THE QUEUE (proven, 0 memory writes) AND THE QUEUED UNIT WAS PAID FOR BY INCOME — BUT THE EXACT-ROUND PREDICTION FAILED 1/2, SO NOTHING MERGES** — changed `scripts/m56_build.py` (`--ui-queued N` mode: no poke of any kind, `writes` counter, queue-provenance floor, "storage below price at run start" precondition/floor, `predict(..., income_first=)`), `scripts/test_m56_predict.py` (8 -> 11 cases), this file, `NEXT_PROMPT.md`
 
@@ -458,3 +421,122 @@ year flip and to walk-home, `m56_build`'s F1 "OR by the next window's before-sna
 becomes a measured position instead of a tolerance, and `predict()` can state the arrival round
 exactly. Second half of M61: say what base record `+0x10` is (it is not the guard, and it is not
 zero).
+
+## Session 100 (2026-10-26) — M61: **THE CREATE IS IN THE SAME VISIT AS THE PAY, THE ROUND ORDER IS MEASURED, AND `base+0x10` IS THE BASE NAME. ACCEPTANCE PASS on one real invocation.**
+
+**THE ROUND ORDER, read out of one ordered stream.** `python3 scripts/m60_guard.py --stage watch
+--boundaries 2 --timeout 400 --tag m61a` (the watch stage was extended this session: conditioned
+breakpoints on the visit `0x4ef6d0`, the pay store `0x4efedd` and the create call `0x4eff4e`,
+hardware watchpoints on the guard `0x8f0d70`, the year `0x985b00` and `cur_player` `0x985dcc`, each
+command list `silent` + tagged printf + `continue`, gdb stdout straight to a file) ->
+`events {"YEARW": 2, "PLAYERW": 16, "VISIT": 52, "PAY": 8, "CREATE": 8, "GUARDWRITE": 0}`,
+`events_at_our_bases {"Korolev Center/VISIT": 2, "Korolev Center/PAY": 1, "Korolev Center/CREATE": 1,
+"University Base/VISIT": 2}`, `visits 52`, `guard_values_at_visits ["0"]`, `guard_writes 0`,
+`turn_rcs [0, 0]`. One round of `evidence/m61a_seq.jsonl` (`evidence/m61a_watch.gdblog`):
+
+```
+== YEAR FLIP to 2183 (round 83) while cur_player=7
+   cur_player -> 0 -> 1 -> 2 -> 3
+y2183 r83 cp3 VISIT  University Base   min=6 pend=0 head=2 guard=0
+y2183 r83 cp3 VISIT  Korolev Center    min=9 pend=0 head=2 guard=0
+y2183 r83 cp3 PAY    Korolev Center    9->0 (edi=9)
+y2183 r83 cp3 CREATE Korolev Center    min=0
+   cur_player -> 4 -> 5 -> 6 -> 7
+== YEAR FLIP to 2184 (round 84) while cur_player=7
+```
+
+The year store is `0x51f54f` (`a3 00 5b 98`, right after the round store `0x51f53c`); NAMED.md's
+"the year store `0x51f554`" is the `call 0x478530` AFTER the store — reported conflict, bytes win.
+Our bases are visited while `cur_player == 3`, in ARRAY order (University idx 0, then Korolev idx
+18), four player switches after the flip, in the round whose year has just flipped. The pay and the
+create are ONE visit invocation: `grep -n '0x4efedd\|0x4eff32\|0x4eff4e' scratch/m574/text.txt`
+returns only the three instruction addresses plus the `jne 0x4eff5c`, so no control flow enters
+that block from elsewhere, and the log prints PAY then CREATE with nothing between. **An arrival is
+never a round late — a snapshot can be early.** Setup for that run was ONE variable:
+`m59_head.py --stage poke --base "Korolev Center" --minerals 9 --hold` -> `POKE ... +0x40: 0 -> 9
+(read back 9) OK`, `poke_hold: 0 units poked, all_held=True`, armed before attaching. The first
+run's CREATE line printed `guard=3`: at `0x4eff47` eax holds `[ebp-0x28]`, which `0x4ef71a` set
+from `BYTE [eax+4]` — the base OWNER byte, not the guard; the printf now reads the global and
+prints `owner=` separately.
+
+**F1 IS ATTRIBUTED, NOT TOLERATED.** `ds:0x8f0d60` names the record the round processor is visiting
+(`0x4f5a70` stores it per base before the pipeline that reaches `0x4ef6d0`), so it says which base
+has been reached. `m56_build.py` now reads it at every after-snapshot (`cur_base()`, logged as
+`cur_base` in the `round_after` event and carried in `rounds[r]["cur_base_after"]`) and REFUSES the
+deferral when that pointer already named the predicted base — the visit had run, so a still-missing
+arrival is a model gap. Run-layer fixtures built from the real PASS trace by
+`scratch/m61/mkfix.py` (they differ in that ONE field): `python3 scripts/m56_build.py --fixture
+scratch/m61/fixture_defer_ok.json` -> **exit 0**, `PASS production prediction: 1 verified unit
+arrivals over 2 boundaries ...`; `python3 scripts/m56_build.py --fixture
+scratch/m61/fixture_beat_visit.json` -> **exit 1**, `BAD r0 prediction base 18 (29,42) type 2 —
+... NOT deferred: at the after-snapshot ds:0x8f0d60 already named this base, so its visit had run
+and the predicted arrival really was absent`. Fixture timelines now also replay the guard samples
+(the guard floor cannot be vacuously true on a replayed run).
+
+**`base+0x10` IS THE NAME, NOT A FLAG.** The base name starts at record byte **+19** (NAMED.md
+`base_array` row, `M.parse_base`), so a dword read at `+0x10` is bytes +16, +17, +18 (three small
+unnamed bytes) plus the name's FIRST CHARACTER in the top byte. Census
+`python3 scratch/m61/census10.py` over all 24 live bases: `topbyte==name[0]: 24 / 24` — Korolev
+Center `0x4b000000` = 'K', University Base `0x55000000` = 'U', both with +16..+18 = 0; the other 22
+have small values there (e.g. People's Endeavor +16=1 +17=5 +18=2, Fallow Time +16=4). +17 == 1 on
+all 8 faction-6 bases and +18 is nonzero on several faction-2/7 bases — an OBSERVATION, unnamed.
+The old `[base+0x10] == 0` guard note was wrong twice over: Ghidra's `short *` offsets, and this
+straddle.
+
+**THE PAY SITE CONFLICT RESOLVES TO `0x4efedd` for this shape.** The live PAY stamp reads
+`before=9 edi=9 after=0` with the derived price 9 (`m58_price.py --owner 3 --type 2` -> `DERIVED
+price = factor_tenths 9 * type_cost 1 = 9`), immediately before the create. The `0x4f0ca1/0x4f0ca6`
+site in NAMED.md's "completion path" is a different branch of the same function and is still unread.
+
+**ACCEPTANCE — PASS on one real invocation, with the PATCHED script.** Reload recipe
+(`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> HUD, `difficulty level:
+talent`) -> `m54g_prep.py` -> `smac_play.py --turns 1 ... --tag m61t` (`Korolev Center founded in
+2150`, `turn 0: 2150->2151 OK`) -> Korolev located BY NAME (idx 18, minerals 2, income 2) ->
+`m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1` (`after INSERT 1 (try 1): pending=1
+head=2 slots=[2, 2, 0, 0, 0, 0] minerals=2 d0=2`) -> `m59_head.py --stage read --hold` (`poke_hold:
+6 units poked, all_held=True`) ->
+
+`python3 scripts/m56_build.py --ui-queued 18 --boundaries 10 --timeout 400 --no-poke-hold` ->
+**`PASS production prediction: 3 verified unit arrivals over 10 boundaries, every prediction and
+every observed arrival accounted, queue bookkeeping exact — queue filled by the GAME's BUILD UI (0
+memory writes), paid by income at 2/round`**, **56 checks, 0 bad**; `boundaries observed >= 2 — 10
+of 10 rounds flipped`; `at least 1 POSITIVE prediction verified — 3/3`; `create guard ds:0x8f0d70
+read 0 in every sampled row — 18619 sampled rows, values [0]`; `memory writes: 0`; `completion NOT
+armed: minerals 4 < price 9`. Trace `evidence/trace_m56_build_20261026_162511.jsonl`. Read back in
+memory after the run: ours **6 -> 9**, Korolev minerals 3, pending 0, head 2, guard 0. No deferral
+was needed (no `ATTRIBUTED` line in the log). An earlier PASS the same session, with the
+pre-patch script and the same UI shape, printed `PASS ... 1 verified unit arrivals over 10
+boundaries` with **51 checks, 0 bad** (`evidence/trace_m56_build_20261026_160325.jsonl`): in that
+trace the arrival is inside window r0 (ours 9 -> 10, Korolev tile 4 -> 5) — F1's deferral was not
+exercised there either.
+
+**Rule cases.** `python3 scripts/test_m56_predict.py` -> `PASS 17/17 production-prediction cases`;
+`python3 scripts/m56_build.py --fixture scratch/m56_fixture_bad.json` -> exit 1; plus the two new
+fixtures above.
+
+**Open.** (1) The pop did NOT visibly left-shift Korolev's slot array while pending went 1 -> 0
+(`slots [2, 2, 2, 2]` at r0 and at r1 of `trace_m56_build_20261026_160325.jsonl`) — the documented
+"left-shift + pending--" is unverified for the slot array. (2) What writes base bytes +16/+17/+18
+is unknown (no runtime watchpoint was armed on them); the dword-level answer is settled. (3) The
+failure path `0x4eff5c` (guard-skip and the `0x5ab650` cap share it) is unread. (4) The chooser's
+~25 score terms are still a shape, not an enumeration — enemy heads stay REPORTED. (5) The harness
+could close its window deterministically after our upkeep (the walk leaving our slot, or
+`ds:0x8f0d60` naming our last base) instead of polling on `cur_player == 3`; the deferral is now
+attributed but the window race itself is still open. (6) A writer for `0x8f0d70` outside `.text` is
+still not excluded. (7) The queued-count byte conflict (`0x94dc84` vs `0x94de84`) is untouched.
+
+**Harness lessons.** A dialog left on screen swallows every UI click: `m57_ui_enqueue` failed twice
+on University Base with `INSERT never landed` because an Operations Director "the minerals output of
+Korolev Center is not sufficient to support Scout Patrol ... the unit has been disbanded" dialog
+(`classify()` == `dialog`) was over the BUILD pane; Return cleared it, one Escape closed the pane.
+And producing a unit zeroes the base's mineral credit (`+0xd0` 1 -> 0 or -1) while the income add is
+gated `d0 > 0`, so both our bases sat at minerals 0 / credit 0 and no positive prediction was
+possible — the reload was the fix, not a poke.
+
+**Next pick (M62): what the POP actually does to the queue slots.** Pending went 1 -> 0 with the
+slot array unchanged; arm `m60_guard --stage watch`-style breakpoints on the pop `FUN_004ef5d0`
+(`0x4ef5f4` gates pending == 0, the shift/pending store, the `0x4ef613/0x4ef641 stores) and on the
+slot dwords `base+0x50..0x74`, run over 2-3 boundaries with a queued base, and state from the
+stores what the queue's representation really is — then re-check M59's "the head slot is the truth"
+against it. Acceptance stays `m56_build.py --ui-queued <idx> --boundaries 10 --timeout 400
+--no-poke-hold` printing PASS on one real invocation.

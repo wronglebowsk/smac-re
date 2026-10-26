@@ -1,0 +1,86 @@
+{"pc": "0", "cp": "4", "year": "2182", "round": "82", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "4", "owner": "4", "xy": "7", "min": "47", "pend": "0", "head": "-24", "tag": "VISIT", "base": "Morgan Industries"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "4", "owner": "4", "xy": "12", "min": "7", "pend": "0", "head": "256", "tag": "VISIT", "base": "Morgan Energy Monopoly"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "4", "owner": "4", "xy": "7", "min": "6", "pend": "0", "head": "-3", "tag": "VISIT", "base": "Morgan Processing"}
+{"pc": "0", "cp": "5", "year": "2182", "round": "82", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "5", "owner": "5", "xy": "4", "min": "28", "pend": "0", "head": "326", "tag": "VISIT", "base": "Sparta Command"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "5", "owner": "5", "xy": "16", "min": "4", "pend": "0", "head": "321", "tag": "VISIT", "base": "Assassin's Redoubt"}
+{"pc": "0", "cp": "6", "year": "2182", "round": "82", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "10", "min": "6", "pend": "0", "head": "-39", "tag": "VISIT", "base": "New Jerusalem"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "14", "min": "2", "pend": "0", "head": "386", "tag": "VISIT", "base": "House of Martyrs"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "1", "min": "38", "pend": "0", "head": "385", "tag": "VISIT", "base": "Throne of God"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "23", "min": "20", "pend": "0", "head": "386", "tag": "VISIT", "base": "Valley of the Faithful"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "12", "min": "28", "pend": "0", "head": "-27", "tag": "VISIT", "base": "Hallowed Ground"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "20", "min": "8", "pend": "0", "head": "386", "tag": "VISIT", "base": "Terrible Swift Sword"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "63", "min": "6", "pend": "0", "head": "386", "tag": "VISIT", "base": "The Lord's Gift"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "58", "min": "18", "pend": "0", "head": "386", "tag": "VISIT", "base": "The Lord's Truth"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "28", "min": "10", "pend": "0", "head": "386", "tag": "VISIT", "base": "The Lord's Mercy"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "6", "owner": "6", "xy": "1", "min": "0", "pend": "0", "head": "386", "tag": "VISIT", "base": "Judgement Seat"}
+{"pc": "0", "cp": "7", "year": "2182", "round": "82", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2182", "round": "82", "cp": "7", "owner": "7", "xy": "57", "min": "6", "pend": "0", "head": "2", "tag": "VISIT", "base": "U.N. Court of Justice"}
+{"year": "2182", "round": "82", "cp": "7", "before": "13", "edi": "9", "after": "4", "tag": "PAY", "base": "U.N. Court of Justice"}
+{"year": "2182", "round": "82", "cp": "7", "guard": "7", "min": "4", "tag": "CREATE", "base": "U.N. Court of Justice"}
+{"year": "2183", "round": "83", "cp": "7", "tag": "YEARW", "base": "*"}
+{"pc": "0", "cp": "0", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"pc": "0", "cp": "1", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "1", "owner": "1", "xy": "20", "min": "16", "pend": "0", "head": "65", "tag": "VISIT", "base": "Virgin Soil"}
+{"year": "2183", "round": "83", "cp": "1", "before": "19", "edi": "18", "after": "1", "tag": "PAY", "base": "Virgin Soil"}
+{"year": "2183", "round": "83", "cp": "1", "guard": "1", "min": "1", "tag": "CREATE", "base": "Virgin Soil"}
+{"pc": "0", "cp": "2", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "2", "owner": "2", "xy": "12", "min": "32", "pend": "0", "head": "133", "tag": "VISIT", "base": "Gaia's Landing"}
+{"year": "2183", "round": "83", "cp": "2", "before": "37", "edi": "36", "after": "1", "tag": "PAY", "base": "Gaia's Landing"}
+{"year": "2183", "round": "83", "cp": "2", "guard": "2", "min": "1", "tag": "CREATE", "base": "Gaia's Landing"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "2", "owner": "2", "xy": "2", "min": "75", "pend": "0", "head": "131", "tag": "VISIT", "base": "The Hive"}
+{"year": "2183", "round": "83", "cp": "2", "before": "85", "edi": "18", "after": "67", "tag": "PAY", "base": "The Hive"}
+{"year": "2183", "round": "83", "cp": "2", "guard": "2", "min": "67", "tag": "CREATE", "base": "The Hive"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "2", "owner": "2", "xy": "61", "min": "8", "pend": "0", "head": "133", "tag": "VISIT", "base": "U.N. Headquarters"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "2", "owner": "2", "xy": "5", "min": "33", "pend": "0", "head": "133", "tag": "VISIT", "base": "People's Endeavor"}
+{"year": "2183", "round": "83", "cp": "2", "before": "39", "edi": "36", "after": "3", "tag": "PAY", "base": "People's Endeavor"}
+{"year": "2183", "round": "83", "cp": "2", "guard": "2", "min": "3", "tag": "CREATE", "base": "People's Endeavor"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "2", "owner": "2", "xy": "15", "min": "0", "pend": "0", "head": "133", "tag": "VISIT", "base": "Fallow Time"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "2", "owner": "2", "xy": "12", "min": "14", "pend": "0", "head": "134", "tag": "VISIT", "base": "Fort Survivalist"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "2", "owner": "2", "xy": "0", "min": "17", "pend": "0", "head": "133", "tag": "VISIT", "base": "Unity Lair"}
+{"pc": "0", "cp": "3", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "3", "owner": "3", "xy": "28", "min": "6", "pend": "0", "head": "2", "tag": "VISIT", "base": "University Base"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "3", "owner": "3", "xy": "29", "min": "9", "pend": "0", "head": "2", "tag": "VISIT", "base": "Korolev Center"}
+{"year": "2183", "round": "83", "cp": "3", "before": "9", "edi": "9", "after": "0", "tag": "PAY", "base": "Korolev Center"}
+{"year": "2183", "round": "83", "cp": "3", "guard": "3", "min": "0", "tag": "CREATE", "base": "Korolev Center"}
+{"pc": "0", "cp": "4", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "4", "owner": "4", "xy": "7", "min": "51", "pend": "0", "head": "-24", "tag": "VISIT", "base": "Morgan Industries"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "4", "owner": "4", "xy": "12", "min": "15", "pend": "0", "head": "256", "tag": "VISIT", "base": "Morgan Energy Monopoly"}
+{"year": "2183", "round": "83", "cp": "4", "before": "23", "edi": "18", "after": "5", "tag": "PAY", "base": "Morgan Energy Monopoly"}
+{"year": "2183", "round": "83", "cp": "4", "guard": "4", "min": "5", "tag": "CREATE", "base": "Morgan Energy Monopoly"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "4", "owner": "4", "xy": "7", "min": "9", "pend": "0", "head": "-3", "tag": "VISIT", "base": "Morgan Processing"}
+{"pc": "0", "cp": "5", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "5", "owner": "5", "xy": "4", "min": "32", "pend": "0", "head": "321", "tag": "VISIT", "base": "Sparta Command"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "5", "owner": "5", "xy": "16", "min": "7", "pend": "0", "head": "321", "tag": "VISIT", "base": "Assassin's Redoubt"}
+{"pc": "0", "cp": "6", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "10", "min": "10", "pend": "0", "head": "-39", "tag": "VISIT", "base": "New Jerusalem"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "14", "min": "5", "pend": "0", "head": "386", "tag": "VISIT", "base": "House of Martyrs"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "1", "min": "42", "pend": "0", "head": "385", "tag": "VISIT", "base": "Throne of God"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "23", "min": "26", "pend": "0", "head": "386", "tag": "VISIT", "base": "Valley of the Faithful"}
+{"year": "2183", "round": "83", "cp": "6", "before": "32", "edi": "27", "after": "5", "tag": "PAY", "base": "Valley of the Faithful"}
+{"year": "2183", "round": "83", "cp": "6", "guard": "6", "min": "5", "tag": "CREATE", "base": "Valley of the Faithful"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "12", "min": "31", "pend": "0", "head": "-27", "tag": "VISIT", "base": "Hallowed Ground"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "20", "min": "11", "pend": "0", "head": "386", "tag": "VISIT", "base": "Terrible Swift Sword"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "63", "min": "9", "pend": "0", "head": "386", "tag": "VISIT", "base": "The Lord's Gift"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "58", "min": "22", "pend": "0", "head": "386", "tag": "VISIT", "base": "The Lord's Truth"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "28", "min": "14", "pend": "0", "head": "386", "tag": "VISIT", "base": "The Lord's Mercy"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "6", "owner": "6", "xy": "1", "min": "2", "pend": "0", "head": "386", "tag": "VISIT", "base": "Judgement Seat"}
+{"pc": "0", "cp": "7", "year": "2183", "round": "83", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2183", "round": "83", "cp": "7", "owner": "7", "xy": "57", "min": "4", "pend": "0", "head": "-38", "tag": "VISIT", "base": "U.N. Court of Justice"}
+{"year": "2184", "round": "84", "cp": "7", "tag": "YEARW", "base": "*"}
+{"pc": "0", "cp": "0", "year": "2184", "round": "84", "tag": "PLAYERW", "base": "*"}
+{"pc": "0", "cp": "1", "year": "2184", "round": "84", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "1", "owner": "1", "xy": "20", "min": "1", "pend": "0", "head": "65", "tag": "VISIT", "base": "Virgin Soil"}
+{"pc": "0", "cp": "2", "year": "2184", "round": "84", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "2", "owner": "2", "xy": "12", "min": "1", "pend": "0", "head": "133", "tag": "VISIT", "base": "Gaia's Landing"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "2", "owner": "2", "xy": "2", "min": "67", "pend": "0", "head": "-42", "tag": "VISIT", "base": "The Hive"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "2", "owner": "2", "xy": "61", "min": "13", "pend": "0", "head": "133", "tag": "VISIT", "base": "U.N. Headquarters"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "2", "owner": "2", "xy": "5", "min": "3", "pend": "0", "head": "133", "tag": "VISIT", "base": "People's Endeavor"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "2", "owner": "2", "xy": "15", "min": "7", "pend": "0", "head": "133", "tag": "VISIT", "base": "Fallow Time"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "2", "owner": "2", "xy": "12", "min": "17", "pend": "0", "head": "134", "tag": "VISIT", "base": "Fort Survivalist"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "2", "owner": "2", "xy": "0", "min": "21", "pend": "0", "head": "133", "tag": "VISIT", "base": "Unity Lair"}
+{"pc": "0", "cp": "3", "year": "2184", "round": "84", "tag": "PLAYERW", "base": "*"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "3", "owner": "3", "xy": "28", "min": "7", "pend": "0", "head": "2", "tag": "VISIT", "base": "University Base"}
+{"guard": "0", "year": "2184", "round": "84", "cp": "3", "owner": "3", "xy": "29", "min": "0", "pend": "0", "head": "2", "tag": "VISIT", "base": "Korolev Center"}
