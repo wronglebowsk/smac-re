@@ -18,6 +18,24 @@ Fields (NAMED.md M53i-k, cross-checked against ghidra_out/shard_012.c here):
 
 Floors (never weakened): every prediction verified, every observed arrival
 predicted, bookkeeping exact, >=1 POSITIVE prediction verified (non-vacuous).
+
+M64 (session 104) — two OBSERVATION fixes, no threshold, floor or economic term
+touched:
+  (a) the income add is NOT phase-locked to the before-snapshot.  A window's
+      after-snapshot and the next window's before-snapshot are the SAME ROUND read
+      twice, and the engine auto-plays in the gap, so the round's +0xd0 can already
+      be inside the before value; `accrual_phase()` measures it and predict() adds
+      income only when it is not.  (Double-counting is what made
+      evidence/trace_m56_build_20261026_181701.jsonl r2 predict a payment that never
+      happened: minerals 8 + income 1 >= price 9, storage read 8 -> 8.)
+  (b) an arrival missing from the after-snapshot is attributed by the PAY being
+      visible in that window's minerals — PAY 0x4efedd and CREATE 0x4eff4e are one
+      visit invocation (evidence/m61a_seq.jsonl) — and then READ BACK from a re-read
+      of the unit array in the same round.  It is never refused because
+      ds:0x8f0d60 named the base: that pointer was measured insufficient in
+      evidence/trace_m56_build_20261026_182354.jsonl (r7 paid 7 -> 0 with the pointer
+      naming Korolev Center, and the unit Korolev paid for appears at r8's
+      before-snapshot, the same round read later).
 """
 import argparse, json, struct, subprocess, sys, time
 from collections import Counter
@@ -165,7 +183,45 @@ def price_of(m, owner, head):
     out["price"] = cm["factor"] * cost
     return out
 
-def predict(m, bases, income_first=False):
+def accrual_phase(bases_now, prev_after):
+    """M64: which of our bases ALREADY have this round's income add inside `bases_now`.
+
+    WHY THIS IS MEASURABLE: a window's after-snapshot and the NEXT window's
+    before-snapshot are the same round read twice — evidence/trace_m56_build_20261026_182354.jsonl
+    logs `round_after r7` and `round_before r8` both at year 2159 round 59 — and the
+    gap between the two reads is not idle: with every unit held the engine ends our
+    turn itself, so a base's visit can run inside it.
+
+    MEASURED (evidence/trace_m56_build_20261026_181701.jsonl, Korolev Center, income 1,
+    price 9): r1-after read 7 and r2-before read 8 — the add landed in the gap — while
+    r2-after read 8 and r3-before read 8 — it did not.  `predict(..., income_first=True)`
+    added the income in both windows, so r2 predicted a payment (gate 8+1 >= 9) that
+    never happened (storage 8 -> 8) and the identity check printed `8 + credit 1 -
+    price 9 = 0, observed 8`.
+
+    The add is exactly +0xd0 at 0x4ef7f6 (scripts/m57_stores.py, evidence/trace_m574c.jsonl:
+    the only +0x40 stores a visit reaches are that add and the pay), so a gap delta of
+    exactly the income IS that add.  Pair BY NAME — the base array compacts mid-run.
+    Returns (names, rows); `rows` carry the numbers and go into the trace.
+    """
+    names, rows = set(), []
+    if not prev_after:
+        return names, rows
+    prev = {b["name"]: b for b in prev_after}
+    for b in bases_now:
+        p = prev.get(b["name"])
+        if p is None:
+            continue
+        delta = b["minerals"] - p["minerals"]
+        already = b["income"] > 0 and delta == b["income"]
+        rows.append(dict(name=b["name"], prev_after=p["minerals"], before=b["minerals"],
+                         gap_delta=delta, income=b["income"], already_accrued=already))
+        if already:
+            names.add(b["name"])
+    return names, rows
+
+
+def predict(m, bases, income_first=False, accrued=()):
     """M59 RESTATEMENT — the HEAD SLOT is the queue truth, PENDING is not.
 
     Static (scratch/m59/queue_census.py + scratch/m59/dom.py, both over
@@ -197,7 +253,12 @@ def predict(m, bases, income_first=False):
 
     income_first: the queue processor runs INSIDE the base visit after the income
     add (0x4ef7f6), so the storage the gate compares may already include this
-    round's income (+0xd0)."""
+    round's income (+0xd0).
+
+    M64 `accrued` (names from accrual_phase()): the add is not phase-locked to the
+    before-snapshot, so income is a term ONLY when this round's add has not already
+    landed in `minerals`.  Adding it to an already-accrued snapshot double-counts and
+    predicts the payment one window early."""
     our = M.u32(m, M.G["our_player"][0])
     out = []
     for b in bases:
@@ -208,11 +269,14 @@ def predict(m, bases, income_first=False):
         if not unit:
             continue      # a facility/project head builds no UNIT; nothing to predict
         pr = price_of(m, b["fac"], head & 0xff)
-        gate = b["minerals"] + (b["income"] if income_first else 0)
+        already = b["name"] in accrued
+        added = b["income"] if (income_first and not already and b["income"] > 0) else 0
+        gate = b["minerals"] + added
         arrive = pr["in_mask"] and gate >= pr["price"]
         out.append(dict(base=b["i"], name=b["name"], x=b["x"], y=b["y"], fac=b["fac"],
                         head=head, unit_type=head, pending=b["pending"],
                         minerals=b["minerals"], gate_minerals=gate, income=b["income"],
+                        income_added=added, accrued_already=already,
                         price=pr["price"], factor=pr["factor"],
                         cost=pr["cost"], in_mask=pr["in_mask"], predict_arrive=arrive,
                         pop_expected=bool(arrive and b["pending"] > 0), queue=b["queue"]))
@@ -362,10 +426,18 @@ def main():
         for rnum in range(a.boundaries):
             before = M.snapshot(m)
             bases_before = all_prod(m)
-            preds = predict(m, bases_before, income_first=bool(ui))
+            # M64: the accrual phase is MEASURED, not assumed.  This window's
+            # before-snapshot and the previous window's after-snapshot are the same
+            # round read twice, so a minerals delta of exactly the income between
+            # them is this round's add having landed in the gap.
+            accrued, accr_rows = accrual_phase(
+                bases_before, rounds[-1]["prod_after"] if rounds else None)
+            preds = predict(m, bases_before, income_first=bool(ui), accrued=accrued)
             y0 = before["globals"]["year"]
             log(dict(event="round_before", r=rnum, year=y0, snap=before,
-                     prod=bases_before, predictions=preds))
+                     prod=bases_before, predictions=preds, accrued=sorted(accrued)))
+            if accr_rows:
+                log(dict(event="accrual_phase", r=rnum, rows=accr_rows))
             # Close the turn and watch for the year flip from memory. Return every
             # 2 s UNCONDITIONALLY: it is consumed as turn-end by the human loop, as
             # dismissal by modal event dialogs, and as OK by popups. If the game
@@ -434,18 +506,50 @@ def main():
                 log(dict(event="round_fail", r=rnum, why="no year flip"))
                 rounds.append(dict(r=rnum, before=before, after=M.snapshot(m),
                                    prod_before=bases_before, prod_after=all_prod(m),
-                                   predictions=preds, timeline=timeline))
+                                   predictions=preds, timeline=timeline, accrued=accrued))
                 break
             after = M.snapshot(m)
             bases_after = all_prod(m)
             cur_after = cur_base(m)     # M61: which base the round processor had
                                         # visited when this snapshot was taken
+            # M64 READ-BACK.  The after-snapshot is a MULTI-STEP read (globals, then
+            # the unit array, then the base records), and the create's unit-array write
+            # can land between its own steps.  Measured: r7 of
+            # evidence/trace_m56_build_20261026_182354.jsonl read Korolev Center's
+            # minerals 7 -> 0 (the pay, 7 + 2 - 9 = 0) with 2 of our units on (29,42)
+            # and ds:0x8f0d60 naming Korolev Center, while r8's before-snapshot — the
+            # SAME ROUND read later, y2159 rnd59 — has 3 of our units on the tile.  So
+            # a missing arrival is re-read in the same round before it is called a
+            # model gap; the re-read stops the instant the round ends.
+            reread = None
+            if any(p["predict_arrive"] for p in preds):
+                want = {(p["x"], p["y"], p["unit_type"], p["fac"])
+                        for p in preds if p["predict_arrive"]}
+                missing = want - {keyf(u) for u in after["units"]}
+                if missing:
+                    t_r = time.time(); y_a = after["globals"]["year"]
+                    rr_units = None
+                    while time.time() - t_r < 2.0:
+                        rr = M.snapshot(m)
+                        if rr["globals"]["year"] != y_a:
+                            break          # left the round; no longer this window's read
+                        rr_units = rr["units"]
+                        if missing <= {keyf(u) for u in rr_units}:
+                            break
+                        time.sleep(a.poll)
+                    seen = {keyf(u) for u in (rr_units or [])}
+                    reread = dict(year=y_a, same_round=rr_units is not None,
+                                  t_ms=round((time.time() - t_r) * 1000, 1),
+                                  units_total=len(rr_units or []),
+                                  present=sorted(missing & seen),
+                                  still_missing=sorted(missing - seen))
+                    log(dict(event="arrival_reread", r=rnum, **reread))
             log(dict(event="round_after", r=rnum, snap=after, prod=bases_after,
                      cur_base=cur_after))
             rounds.append(dict(r=rnum, before=before, after=after,
                                prod_before=bases_before, prod_after=bases_after,
                                predictions=preds, timeline=timeline,
-                               cur_base_after=cur_after))
+                               cur_base_after=cur_after, accrued=accrued, reread=reread))
 
     checks = []
     def chk(name, ok, detail): checks.append(dict(check=name, ok=bool(ok), detail=detail))
@@ -457,6 +561,19 @@ def main():
         flipped = dy >= 1
         n_flip += 1 if flipped else 0
         cp_seen = sorted({t["cur_player"] for t in rd_["timeline"]})
+        # M64: a fixture replay carries no accrued set (the fixtures predate it), so
+        # recompute it from the recorded prod_after / prod_before exactly the way the
+        # live loop computed it — the pair is the same round read twice.
+        if "accrued" not in rd_:
+            rd_["accrued"], _ = accrual_phase(
+                rd_["prod_before"], rounds[rk - 1]["prod_after"] if rk else None)
+        accrued_r = rd_["accrued"]
+        # The visit's income credit for THIS window, per our base: 0 when the add
+        # already landed before the before-snapshot (it is inside `minerals` then),
+        # otherwise this round's +0xd0.  One definition, used by the arrival
+        # attribution below and by the mineral identity in F3.
+        credit_of = {b["name"]: (0 if b["name"] in accrued_r else max(0, b["income"]))
+                     for b in rd_["prod_before"] if b["fac"] == gb["our_player"]}
         chk(f"r{rd_['r']} boundary: year flipped exactly +1",
             dy == 1, f"year {gb['year']}->{ga['year']} (delta {dy}); cur_player walk {cp_seen}")
         chk(f"r{rd_['r']} boundary: player walk came home to us after the flip",
@@ -484,48 +601,68 @@ def main():
             ok = got is not None and got["n"] >= 1
             deferred = beat_visit = False
             cb = rd_.get("cur_base_after") or {}
+            # M64: the deferral test is the PAYMENT, not the pointer.
+            # MEASURED (scripts/m60_guard.py --stage watch --boundaries 2,
+            # evidence/m61a_seq.jsonl + evidence/m61a_watch.gdblog): the ordered stream
+            # inside one round, stamped by conditioned breakpoints on the visit
+            # 0x4ef6d0, the pay store 0x4efedd and the create call 0x4eff4e plus
+            # hardware watchpoints on the year 0x985b00 and cur_player 0x985dcc — year
+            # store 0x51f54f fires while cur_player is STILL 7 -> cur_player 0 -> 1 -> 2
+            # -> 3 -> VISIT University Base -> VISIT Korolev Center (minerals 9, guard
+            # 0) -> PAY 0x4efedd 9->0 with edi = the price 9 -> CREATE 0x4eff4e ->
+            # cur_player 4 -> 5 -> 6 -> 7 -> next year store.  PAY and CREATE are ONE
+            # visit invocation (nothing in .text jumps to 0x4efedd, 0x4eff32 or
+            # 0x4eff4e and the log prints them adjacent with nothing between), so a
+            # window whose minerals show the payment DID make the unit.
+            # M61 also required ds:0x8f0d60 NOT to name the base, and that pointer is
+            # now measured INSUFFICIENT: r7 of
+            # evidence/trace_m56_build_20261026_182354.jsonl read Korolev Center's
+            # minerals 7 -> 0 (7 + 2 - 9 = 0) with the pointer naming Korolev Center and
+            # 2 of our units on (29,42), while r8's before-snapshot — the SAME ROUND read
+            # later, y2159 rnd59 — has 3.  So attribute when the payment is visible AND
+            # the unit READS BACK (the same-round re-read above, or the next window's
+            # before-snapshot, which is that same round read later); refuse only when the
+            # payment is not visible, which says this prediction was the early one.
+            pb_pay = next((b for b in rd_["prod_before"] if b["name"] == p["name"]), None)
+            pa_pay = next((b for b in rd_["prod_after"] if b["name"] == p["name"]), None)
+            credit = credit_of.get(p["name"], 0)
+            paid_here = (pb_pay is not None and pa_pay is not None
+                         and pa_pay["minerals"] == pb_pay["minerals"] + credit - p["price"])
+            reread_present = {tuple(x) for x in ((rd_.get("reread") or {}).get("present") or [])}
+            if not ok and paid_here and k in reread_present:
+                ok, deferred = True, True          # read back in the SAME round
             if not ok and rk + 1 < len(rounds):
                 nxt = arrivals_on_bases(rd_["before"]["units"],
                                         rounds[rk + 1]["before"]["units"], tile2base)
                 got2 = next((o for o in nxt if o["t"] == k), None)
-                if got2 is not None and got2["n"] >= 1:
-                    # M61 MEASUREMENT (scripts/m60_guard.py --stage watch --boundaries 2,
-                    # evidence/m61a_seq.jsonl + evidence/m61a_watch.gdblog).  The ordered
-                    # stream inside one round, stamped by conditioned breakpoints on the
-                    # visit 0x4ef6d0, the pay store 0x4efedd and the create call 0x4eff4e
-                    # plus hardware watchpoints on the year 0x985b00 and cur_player
-                    # 0x985dcc:  year store 0x51f54f fires while cur_player is STILL 7
-                    # -> cur_player 0 -> 1 -> 2 -> 3 -> VISIT University Base -> VISIT
-                    # Korolev Center (minerals 9, guard 0) -> PAY 0x4efedd 9->0 with
-                    # edi = the price 9 -> CREATE 0x4eff4e -> cur_player 4 -> 5 -> 6 -> 7
-                    # -> next year store.  The pay and the create are one and the same
-                    # visit invocation (nothing in .text jumps to 0x4efedd, 0x4eff32 or
-                    # 0x4eff4e, and the log prints them adjacent with nothing between),
-                    # in the round whose year has just flipped, four player switches
-                    # after that flip, while cur_player == 3.  So an arrival is never a
-                    # round late: the only way it can be missing from this window's
-                    # after-snapshot is that the snapshot was taken at cur_player 3
-                    # BEFORE player 3's upkeep reached this base.  ds:0x8f0d60 names the
-                    # base the round processor reached last, so if the after-snapshot
-                    # already named THIS base the visit had run and the arrival really
-                    # was absent — a model gap, not a race, and not accepted.
-                    if cb.get("name") == p["name"]:
-                        beat_visit = True
-                    else:
-                        ok, deferred = True, True
+                if got2 is not None and got2["n"] >= 1 and paid_here:
+                    ok, deferred = True, True      # read back in the same round, later
+                elif got2 is not None and got2["n"] >= 1:
+                    beat_visit = True              # the unit reads back, the PAYMENT does not
             pos_ok += 1 if ok else 0
+            # A prediction recorded before M64 carries no income_added; its gate still
+            # says what the model added, so recover the term from the gate.
+            ia = p.get("income_added")
+            if ia is None:
+                ia = max(0, p.get("gate_minerals", p["minerals"]) - p["minerals"])
             chk(f"r{rd_['r']} prediction base {p['base']} ({p['x']},{p['y']}) type {p['unit_type']}",
-                ok, f"predicted (pending {p['pending']}, minerals {p['minerals']} >= price {p['price']}); "
+                ok, f"predicted (pending {p['pending']}, minerals {p['minerals']} + income "
+                    f"{ia} = gate "
+                    f"{p.get('gate_minerals', p['minerals'] + ia)} "
+                    f">= price {p['price']}); "
                     f"observed net {got['n'] if got else 0} of that tuple on the base tile"
-                    + ("; ATTRIBUTED, not tolerated: the create lands in the SAME visit "
-                       "as the pay (measured PAY->CREATE adjacent at cur_player 3, "
-                       "evidence/m61a_seq.jsonl), so this window's after-snapshot beat "
-                       "the visit — at that snapshot ds:0x8f0d60 named "
-                       f"{cb.get('name') or 'no base record'}"
+                    + ("; ATTRIBUTED, not tolerated: this window's minerals show the PAYMENT ("
+                       f"{pb_pay['minerals']} + credit {credit} - price {p['price']} = "
+                       f"{pa_pay['minerals']}, read back) and PAY 0x4efedd + CREATE 0x4eff4e are "
+                       "one visit invocation (evidence/m61a_seq.jsonl), so the unit was created "
+                       f"here; ds:0x8f0d60 named {cb.get('name') or 'no base record'} at the "
+                       "after-snapshot and is not evidence either way (measured insufficient)"
                        if deferred else "")
-                    + ("; NOT deferred: at the after-snapshot ds:0x8f0d60 already named "
-                       "this base, so its visit had run and the predicted arrival really "
-                       "was absent" if beat_visit else ""))
+                    + ("; the unit reads back in the NEXT window but this window's minerals do "
+                       f"NOT show the payment ({pb_pay['minerals'] if pb_pay else '?'} + credit "
+                       f"{credit} - price {p['price']} vs observed "
+                       f"{pa_pay['minerals'] if pa_pay else '?'}), so this prediction was the "
+                       "early one, not the arrival" if beat_visit else ""))
         # F2: every observed net arrival on a base tile was a prediction (or cargo)
         for o in obs:
             k = o["t"]
@@ -541,6 +678,28 @@ def main():
                 f"net +{o['n']} with orders {orders} on base {o['base']['i']} "
                 f"(fac {o['base']['fac']}, ours={ours}); enemy-side arrivals are REPORTED "
                 f"(their queues refill inside their own AI turn - confounded, M55 #5)")
+        # M64: the gap between this window's after-snapshot and the NEXT window's
+        # before-snapshot is the same round read twice, and the engine plays in it, so
+        # an arrival can land there — measured: the unit Korolev paid for in r7 of
+        # evidence/trace_m56_build_20261026_182354.jsonl appears only at r8's
+        # before-snapshot.  F2 diffs before -> after only, so account for the gap here
+        # rather than let an unexplained arrival hide in it.  A predicted arrival this
+        # window attributes is exactly the key in pred_keys.
+        if rk + 1 < len(rounds):
+            for o in arrivals_on_bases(rd_["after"]["units"],
+                                       rounds[rk + 1]["before"]["units"], tile2base):
+                k = o["t"]
+                if k in pred_keys: continue
+                cand = [u for u in rounds[rk + 1]["before"]["units"] if keyf(u) == k]
+                orders = sorted({u["order"] for u in cand})
+                ours = (o["base"]["fac"] == gb["our_player"])
+                chk(f"r{rd_['r']} gap to the next window: no unexplained ORDER-0 arrival "
+                    f"on OUR base {o['base']['i']}",
+                    (not ours) or (0 not in orders),
+                    f"net +{o['n']} with orders {orders} appeared between this window's "
+                    f"after-snapshot and the next window's before-snapshot (the same round "
+                    f"read twice) on base {o['base']['i']} (fac {o['base']['fac']}, "
+                    f"ours={ours}); only a prediction of this window is an explanation")
         # F3: queue bookkeeping on bases that were pending before the flip.
         # M58 MEASUREMENTS. (a) evidence/m58pop.gdblog, two visits of Korolev Center
         # 0x95ee40: VISIT#1 storage=9 pend=1 | 0x4ef7f6 add +0 (d0 0) | 0x4efedd pay
@@ -565,7 +724,8 @@ def main():
             # another faction's record in the after-snapshot.
             pa = next(b for b in rd_["prod_after"] if b["name"] == pb["name"])
             p = next((pp for pp in rd_["predictions"] if pp["name"] == pb["name"]), None)
-            credit = pb["income"] if pb["income"] > 0 else 0
+            credit = credit_of[pb["name"]]   # M64: 0 when this round's add already
+                                             # landed before the before-snapshot
             if p and p["predict_arrive"]:
                 chk(f"r{rd_['r']} bookkeeping base {pb['i']}: minerals identity "
                     f"storage + income - price == storage after",
