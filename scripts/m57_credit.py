@@ -265,6 +265,7 @@ def main():
             log(dict(event="gdb_exit", rc=g.returncode, t=round(now, 3)))
             print(f"gdb exited rc={g.returncode}", flush=True)
             break
+        time.sleep(0.002)      # 2 ms sampler (footing): unthrottled polling wrote 100 MB+ traces
 
     # detach
     os.kill(g.pid, signal.SIGINT)
