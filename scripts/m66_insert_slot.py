@@ -2,18 +2,24 @@
 """M66: which queue slot does the BUILD UI's INSERT write?
 
 Every earlier enqueue used the SAME item id (Scout Patrol, id 2) for every insert, so a
-slot array of [2,2,...] could not say whether INSERT wrote one slot or two, or whether it
-appended or overwrote.  This instrument enqueues TWO DIFFERENT item ids in one open chooser
-and reads the queue back after each INSERT, so the layout is identifiable.
+queue that read [2,2,...] could not say whether INSERT wrote one slot or two, whether it
+touched the head, or whether it shifted.  This instrument enqueues TWO DIFFERENT ids in one
+open chooser and reads the queue back after each INSERT.
 
-The four candidate layouts are written down BEFORE the run (PREDICTIONS below) and the run
-prints which one the read-backs select.  PASS requires exactly ONE match plus the integrity
-checks (pending +1 per INSERT, the enqueued ids present, the chooser guard moved to the cell
-that was clicked).  Nothing here pokes the queue: the only memory writes are the three
-enabling pokes the M57 recipe needs (cursor home, SEL_G, orders mode), never a queue field.
+Two confounds are handled explicitly:
+  * the chooser's candidate array is REBUILT by the chooser paint (`0x596000`, NAMED), so the
+    cell -> id map is read AFTER the chooser opens and again after each click, and the id the
+    game actually stored is compared with the array entry at the clicked cell at that moment;
+  * the queue tail usually holds STALE ids left by the pop, so the layout test is structural
+    (baseline -> after A -> after B) and the baseline must not contain either enqueue id.
 
-    python3 scripts/m66_insert_slot.py [--base-name "Korolev Center"]
-                                       [--item-a 193] [--item-b 194]
+The layouts below are written down BEFORE the run; each is a transformation rule with the
+written item id as a free variable.  PASS requires exactly ONE rule to explain both read-backs
+plus the integrity checks.  Nothing here writes a queue field: the only memory writes are the
+three enabling pokes the M57 recipe needs (cursor home, SEL_G, orders mode).
+
+    python3 scripts/m66_insert_slot.py [--base-name "University Base"]
+                                       [--item-a 193] [--item-b 195]
                                        [--trace evidence/m66_insert_slot.jsonl]
 """
 import argparse, json, os, struct, subprocess, sys, time
@@ -30,38 +36,82 @@ GUARD = 0x6A9E9C + 0xa774            # chooser selection field = the CELL INDEX
 PANE_BASE_IDX = 0x6A9480 + 0x3FF3C   # the base index the QUEUE widget is showing
 ARROW_XY, ROW1_XY = (523, 433), (185, 437)
 INSERT_XY, OK_XY = (497, 343), (285, 343)
-COUNT_A, COUNT_B = 0x94de84, 0x94dc84   # the two queued-count byte arrays in conflict
+COUNT_A, COUNT_B = 0x94de84, 0x94dc84   # the two per-faction byte arrays in conflict (NAMED)
 COUNT_STRIDE = 0x20bc                    # 8380 bytes per faction
-SLOTS = 10
+SLOTS = 8
 
-# The layouts, stated before observing.  baseline = the slots as they read BEFORE the first
-# INSERT (they are usually stale ids left by the pop), A = item_a, B = item_b, `s` = baseline.
+# ---- the layouts, stated before observing.  s = baseline slots, p0 = pending before,
+# X = the id the game stored on INSERT A, Y = the id it stored on INSERT B (X != Y).
+# Each rule returns the ids it needs, or None if the read-backs cannot be explained by it.
+
+
+def _inserted_at(dst, src, i):
+    """dst is src with a NEW value written at index i and everything from i rightward shifted
+    one slot: dst[:i] == src[:i], dst[i] is new, dst[i+1:] == src[i:-1]."""
+    return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i:-1]
+
+
+def _overwrote_at(dst, src, i):
+    """dst is src with index i overwritten and NOTHING else moved."""
+    return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i + 1:]
+
+
+def rule_insert_at_new_pending(s, pa, a, pb, b):
+    """INSERT writes base+0x50+4*pending_after and shifts the rest right by one; the head
+    slot +0x50 is NOT touched (disasm 0x418b32 reads [base+0x50+4*esi] with esi = the new
+    pending, 0x418b57 stores to +0x50 only when esi == 0)."""
+    i, j = pa, pb                      # index written = the new pending count
+    if i < 1 or j != i + 1:
+        return None
+    if not _inserted_at(a, s, i) or not _inserted_at(b, a, j):
+        return None
+    return (a[i], b[j])
+
+
+def rule_append_at_pending_before(s, pa, a, pb, b):
+    """INSERT writes base+0x50+4*pending_before and nothing else moves: the FIRST insert
+    overwrites the head slot."""
+    i, j = pa - 1, pb - 1
+    if i < 0 or j != i + 1:
+        return None
+    if not _overwrote_at(a, s, i) or not _overwrote_at(b, a, j):
+        return None
+    return (a[i], b[j])
+
+
+def rule_write_head_and_next_slot(s, pa, a, pb, b):
+    """INSERT writes BOTH base+0x50 and base+0x54 with the same id (the M57 doc claim)."""
+    if a[0] != a[1] or a[0] == s[0] or a[2:] != s[2:]:
+        return None
+    if b[0] != b[1] or b[0] == a[0] or b[2:] != a[2:]:
+        return None
+    return (a[0], b[0])
+
+
+def rule_write_head_and_shift_right(s, pa, a, pb, b):
+    """INSERT writes head +0x50 and shifts every existing slot right by one."""
+    if not _inserted_at(a, s, 0) or not _inserted_at(b, a, 0):
+        return None
+    return (a[0], b[0])
+
+
+def rule_eight_byte_entries(s, pa, a, pb, b):
+    """a queue ENTRY is 8 bytes (item id at +0x50, a companion dword at +0x54), so the second
+    entry starts at +0x58: INSERT A rewrites the head entry only, INSERT B the SECOND entry."""
+    if a[0] == s[0] or a[2:] != s[2:]:
+        return None
+    if b[0] != a[0] or b[1] != a[1] or b[2] == a[2] or b[4:] != a[4:]:
+        return None
+    return (a[0], b[2])
+
+
 PREDICTIONS = [
-    ("append_at_pending_index",
-     "INSERT writes base+0x50+4*pending_before (slot 0, then slot 1); the tail is untouched",
-     lambda base, a, b: a[0:2] == [A(base), base[1]] and b[0:2] == [A(base), B(base)]),
-    ("write_head_and_shift_right",
-     "INSERT writes head base+0x50 and shifts the existing slots right by one",
-     lambda base, a, b: a[0:3] == [A(base), base[0], base[1]] and b[0:3] == [B(base), A(base), base[0]]),
-    ("write_head_and_next_slot",
-     "INSERT writes BOTH base+0x50 and base+0x54 with the same item id (the M57 doc claim)",
-     lambda base, a, b: a[0:2] == [A(base), A(base)] and b[0:2] == [B(base), B(base)]),
-    ("eight_byte_entries",
-     "a queue ENTRY is 8 bytes: the item id at +0x50 and a companion dword at +0x54, so the "
-     "second entry starts at +0x58",
-     lambda base, a, b: a[0] == A(base) and b[0] == A(base) and b[2] == B(base)),
+    ("insert_at_new_pending_index", rule_insert_at_new_pending),
+    ("append_at_pending_before_index", rule_append_at_pending_before),
+    ("write_head_and_next_slot", rule_write_head_and_next_slot),
+    ("write_head_and_shift_right", rule_write_head_and_shift_right),
+    ("eight_byte_entries", rule_eight_byte_entries),
 ]
-
-
-def A(base):
-    return ENQ[0]
-
-
-def B(base):
-    return ENQ[1]
-
-
-ENQ = [None, None]
 
 
 def u32(f, a):
@@ -92,26 +142,34 @@ def base_rec(f, i):
                 minerals=g(0x40), d0=g(0xd0))
 
 
-def counts(f, owner, tids):
-    """Read BOTH contested per-faction count arrays at both indexings, for these type ids."""
+def cand(f):
+    n = max(0, min(i32(f, CAND_N), 128))
+    return [i32(f, CAND + 4 * j) for j in range(n)]
+
+
+def count_rows(f, owner):
+    o = owner * COUNT_STRIDE
+    return {"de84": sp.rd(f, COUNT_A + o, COUNT_STRIDE),
+            "dc84": sp.rd(f, COUNT_B + o, COUNT_STRIDE)}
+
+
+def row_diff(before, after):
     out = {}
-    for tid in tids:
-        for nm, base in (("de84", COUNT_A), ("dc84", COUNT_B)):
-            out[f"{nm}[{tid}]"] = struct.unpack("B", sp.rd(f, base + COUNT_STRIDE * owner + tid, 1))[0]
+    for k, a in before.items():
+        b = after[k]
+        for i, (x, y) in enumerate(zip(a, b)):
+            if x != y:
+                out[f"{k}[{i}]"] = f"{x}->{y}"
     return out
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--base-name", default="Korolev Center")
+    ap.add_argument("--base-name", default="University Base")
     ap.add_argument("--item-a", type=int, default=193)
-    ap.add_argument("--item-b", type=int, default=194)
+    ap.add_argument("--item-b", type=int, default=195)
     ap.add_argument("--trace", default="evidence/m66_insert_slot.jsonl")
     a = ap.parse_args()
-    ENQ[0], ENQ[1] = a.item_a, a.item_b
-    if a.item_a == a.item_b:
-        print("FAIL: the two item ids must DIFFER or the layout is unidentifiable")
-        return 1
 
     rows = []
 
@@ -131,29 +189,20 @@ def main():
 
     def snap(tag):
         r = base_rec(f, idx)
-        c = counts(f, r["fac"], (a.item_a, a.item_b, 2))
+        r["rows"] = count_rows(f, r["fac"])
         rec(tag, idx=r["i"], name=r["name"], x=r["x"], y=r["y"], minerals=r["minerals"],
-            pending=r["pending"], slots=r["queue"][:SLOTS], d0=r["d0"], counts=c,
+            pending=r["pending"], slots=r["queue"], d0=r["d0"],
             guard=i32(f, GUARD), pane_idx=u32(f, PANE_BASE_IDX))
-        r["counts"] = c
         return r
 
     before = snap("before")
-    base_slots = before["slots"]
-    if a.item_a in base_slots[:2] or a.item_b in base_slots[:2] or a.item_a == 2 or a.item_b == 2:
-        print(f"FAIL: the stale baseline slots {base_slots[:2]} must not contain either "
-              f"enqueue id, or the layout is confounded")
-        return 1
-
-    cand = [i32(f, CAND + 4 * j) for j in range(min(i32(f, CAND_N), 128))]
+    s = before["queue"]
+    p0 = before["pending"]
     for nm, tid in (("item_a", a.item_a), ("item_b", a.item_b)):
-        if tid not in cand:
-            print(f"FAIL: {nm} {tid} is not in the chooser candidate array {cand[:20]}...")
+        if tid in s or tid == 2:
+            print(f"FAIL: {nm} {tid} is in the stale baseline slots {s} — the layout would be "
+                  f"confounded; pick ids the queue does not already hold")
             return 1
-    ka, kb = cand.index(a.item_a), cand.index(a.item_b)
-    rec("plan", item_a=a.item_a, cell_a=ka, item_b=a.item_b, cell_b=kb,
-        cand=cand[:12], count=len(cand),
-        predictions=[(n, d) for n, d, _ in PREDICTIONS])
 
     # the three enabling pokes (NOT queue fields) — the M57 recipe
     tx, ty = hits[0]["x"], hits[0]["y"]
@@ -167,10 +216,10 @@ def main():
     rec("pokes", cursor=(i32(f, w + WIN_CUR_X), i32(f, w + WIN_CUR_Y)),
         sel=i32(f, SEL_G), orders_mode=i32(f, ORDERS_MODE))
 
-    win = sp.find_window()
+    sp.find_window()
     sp.focus()
     key("b")
-    for attempt in range(8):
+    for _ in range(8):
         if u32(f, PANE_BASE_IDX) == idx:
             break
         click(ARROW_XY)
@@ -181,91 +230,117 @@ def main():
 
     click(ROW1_XY)
     time.sleep(0.6)
-    rec("chooser_open", guard=i32(f, GUARD), pending=i32(f, sp.BASE_ARR + idx * sp.BASE_SZ + 0x4c))
+    c_open = cand(f)
+    rec("chooser_open", guard=i32(f, GUARD),
+        pending=i32(f, sp.BASE_ARR + idx * sp.BASE_SZ + 0x4c), cand=c_open[:12])
+    for nm, tid in (("item_a", a.item_a), ("item_b", a.item_b)):
+        if tid not in c_open:
+            print(f"FAIL: {nm} {tid} is not in the chooser's list as it reads with the chooser "
+                  f"OPEN: {c_open[:20]}")
+            return 1
+    ka, kb = c_open.index(a.item_a), c_open.index(a.item_b)
+    rec("plan", item_a=a.item_a, cell_a=ka, item_b=a.item_b, cell_b=kb,
+        layouts=[n for n, _ in PREDICTIONS], pending_before=p0, baseline=s)
+
+    state = {"pending": p0, "written": []}
 
     def insert(item, cell, tag):
         r = None
         click((128 + 127 * (cell % 5), 60 + 100 * (cell // 5)))
         g = i32(f, GUARD)
+        c_after_click = cand(f)
         if g != cell:
             print(f"FAIL: after clicking cell {cell} (item {item}) the chooser guard reads {g}")
             return None
         for try_n in range(4):
             click(INSERT_XY)
-            for _ in range(8):          # poll; do NOT click INSERT again on a stale read
+            for _ in range(8):          # poll; never click INSERT again on a stale read
                 time.sleep(0.5)
                 r = base_rec(f, idx)
-                if r["pending"] > prev_pending[0]:
+                if r["pending"] > state["pending"]:
                     break
-            if r["pending"] > prev_pending[0]:
-                c = counts(f, r["fac"], (a.item_a, a.item_b, 2))
-                rec(tag, guard=g, pending=r["pending"], slots=r["queue"][:SLOTS],
-                    minerals=r["minerals"], d0=r["d0"], counts=c, tries=try_n + 1)
-                prev_pending[0] = r["pending"]
+            if r["pending"] > state["pending"]:
+                c_after_insert = cand(f)
+                stored = [v for v in r["queue"] if v not in s]
+                rows_row = count_rows(f, r["fac"])
+                rec(tag, guard=g, pending=r["pending"], slots=r["queue"],
+                    minerals=r["minerals"], d0=r["d0"],
+                    cand_at_click=c_after_click[:max(ka, kb) + 1],
+                    cand_after_insert=c_after_insert[:max(ka, kb) + 1],
+                    cell_entry=c_after_click[cell] if cell < len(c_after_click) else None,
+                    new_slot_values=stored, row_delta=row_diff(before["rows"], rows_row),
+                    tries=try_n + 1)
+                state["pending"] = r["pending"]
+                state["written"] = stored
+                r["rows"] = rows_row
                 return r
             click(ARROW_XY)            # the widget may have moved off our base
             rec(tag + "_retry", pane_idx=u32(f, PANE_BASE_IDX), pending=r["pending"],
-                slots=r["queue"][:SLOTS], try_n=try_n + 1)
+                slots=r["queue"], try_n=try_n + 1)
         return None
 
-    prev_pending = [before["pending"]]
     ra = insert(a.item_a, ka, "insert_a")
     if ra is None:
-        print(f"FAIL: INSERT of item {a.item_a} never incremented pending "
-              f"{before['pending']} -> {prev_pending[0]}")
+        print(f"FAIL: INSERT of item {a.item_a} never incremented pending {p0}")
         return 1
     rb = insert(a.item_b, kb, "insert_b")
     if rb is None:
-        print(f"FAIL: INSERT of item {a.item_b} never incremented pending "
-              f"{prev_pending[0]} -> {prev_pending[0]}")
+        print(f"FAIL: INSERT of item {a.item_b} never incremented pending {state['pending']}")
         return 1
 
     click(OK_XY)
     time.sleep(0.8)
     after = snap("after_ok")
+    row_delta = row_diff(before["rows"], after["rows"])
 
     sp.wr(f, ORDERS_MODE, struct.pack("<i", 1))
     rec("orders_restored", orders_mode=i32(f, ORDERS_MODE))
     kind = None
-    for i in range(4):
+    for _ in range(4):
         png = sp.freeze("m66pane")
         kind = sp.classify(sp.ocr_fast(png), sp.region_colors(png), png)
         if kind != "base":
             break
         sp.key("Escape")
         time.sleep(1.6)
-    rec("pane_closed", screen_class=kind)
+    rec("pane_closed", screen_class=kind,
+        row_delta_after_ok=row_delta)
 
-    # ---- score the predictions against the two read-backs
-    sa, sb = ra["queue"], rb["queue"]
-    matched = [(n, fn(base_slots, sa, sb)) for n, _, fn in PREDICTIONS]
-    ok = [n for n, m in matched if m]
-    rec("score", baseline=base_slots, after_a=sa[:SLOTS], after_b=sb[:SLOTS],
-        pending_before=before["pending"], pending_after_a=ra["pending"],
-        pending_after_b=rb["pending"], matched=ok,
-        counts_before=before["counts"], counts_after_b=after["counts"])
+    scored = []
+    for nm, fn in PREDICTIONS:
+        ids = fn(s, ra["pending"], ra["queue"], rb["pending"], rb["queue"])
+        if ids:
+            scored.append((nm, ids))
+    distinct = {nm for nm, _ in scored}
+    integrity = (ra["pending"] == p0 + 1 and rb["pending"] == p0 + 2
+                 and after["pending"] == p0 + 2
+                 and all(ids[0] != ids[1] for _, ids in scored)
+                 and all(v in rb["queue"] for _, ids in scored for v in ids))
+    rec("score", baseline=s, pending_before=p0, after_a=ra["queue"],
+        pending_after_a=ra["pending"], after_b=rb["queue"], pending_after_b=rb["pending"],
+        after_ok=after["queue"], matched=[nm for nm, _ in scored],
+        written=[ids for _, ids in scored], integrity=integrity)
 
     print("\nlayout read-backs:")
-    print(f"  baseline  pending {before['pending']}  slots {base_slots[:6]}")
-    print(f"  after {a.item_a:<4}  pending {ra['pending']}  slots {sa[:6]}")
-    print(f"  after {a.item_b:<4}  pending {rb['pending']}  slots {sb[:6]}")
-    print(f"  after OK  pending {after['pending']}  slots {after['queue'][:6]}")
-    print("\ncount arrays (the contested pair), before -> after OK:")
-    for k in before["counts"]:
-        print(f"  {k:<14} {before['counts'][k]:>3} -> {after['counts'][k]:>3}")
+    print(f"  baseline   pending {p0:<2}  slots {s}")
+    print(f"  after {a.item_a:<5} pending {ra['pending']:<2}  slots {ra['queue']}")
+    print(f"  after {a.item_b:<5} pending {rb['pending']:<2}  slots {rb['queue']}")
+    print(f"  after OK   pending {after['pending']:<2}  slots {after['queue']}")
+    print("\ncontested per-faction byte arrays, entries that MOVED (before -> after OK):")
+    if row_delta:
+        for k, v in sorted(row_delta.items()):
+            print(f"  {k:<14} {v}")
+    else:
+        print("  (neither array moved)")
 
-    integrity = (ra["pending"] == before["pending"] + 1
-                 and rb["pending"] == before["pending"] + 2
-                 and after["pending"] == before["pending"] + 2
-                 and sa[0] == a.item_a)
-    if len(ok) == 1 and integrity:
-        print(f"\nPASS: exactly one layout matches — {ok[0]} "
-              f"(pending {before['pending']}->{ra['pending']}->{rb['pending']}, "
-              f"items {a.item_a} then {a.item_b})")
+    if len(distinct) == 1 and integrity:
+        nm, ids = scored[0]
+        print(f"\nPASS: exactly one layout explains both read-backs — {nm} "
+              f"(pending {p0}->{ra['pending']}->{rb['pending']}, ids stored {ids})")
         verdict = 0
     else:
-        print(f"\nFAIL: layouts matched = {ok} (need exactly one), integrity = {integrity}; "
-              f"no layout claim is made")
+        print(f"\nFAIL: layouts that fit = {sorted(distinct)} (need exactly one), "
+              f"integrity = {integrity}; no layout claim is made")
         verdict = 1
 
     trace = a.trace if a.trace.startswith("/") else os.path.join(ROOT, a.trace)
