@@ -8,6 +8,12 @@ Merged: **M54A–M54E** (#39-#44), **M54F–M54i** (#47-#50), **M54i2/M54j/M54k*
 queue's SORT KEY is the type-record PLAN byte `+42` descending, ties after; the COST byte `+41` is
 refuted live; the INSERT shift is capped to the 10-slot queue array).
 
+**M69 (this branch's PR) — the enqueue writes at the QUEUE WIDGET'S CURSOR, not at a sorted
+slot; acceptance PASS on one real invocation** (`scripts/m69_cursor_run.py --cursor 2 --item 193`
+-> `queue[2]=193`, plan rule says 1). M67's plan-descending order is the widget's LIST order, not
+an INSERT comparison. M68's `-3` is a recordless TYPE stored as a negative (196 -> -6), not a bad
+click. Details: NAMED.md's M69 block, SESSION_NOTES.md session 109.
+
 **M68 is NOT merged — its acceptance FAILED.** `milestone/m68` carries the 212-rule key
 identifier, its key-level gate, `m68_key_run.py`, the read-only `m68_typebytes.py`, the one-click
 `m68_cellprobe.py` and `test_m68_key_rules.py` (35/35). At round 51 on the save's University Base
@@ -54,7 +60,7 @@ queued-count half is independently confirmed from the enqueue side by M66.
 7. `python3 scripts/m56_build.py --fixture X` writes its trace to `$TMPDIR`, not `evidence/`;
    `m64_mkfixture.py` rebuilds the run-layer fixtures from committed traces.
 
-## WHAT M67 SETTLED (detail: skill references/production-queue.md)
+## WHAT M67 SETTLED (re-scoped by M69: the SORT is in the WIDGET, not in the enqueue)
 
 - **M67's live claim: INSERT sorts by the type-record PLAN byte `0x98ad88 + type*52 + 42`
   DESCENDING, ties after** — first region slot (`+0x50 + 4k`, `k = 1..pending`) whose plan is
@@ -73,50 +79,47 @@ queued-count half is independently confirmed from the enqueue side by M66.
   never by `ds:0x8f0d60`); the screen read is a look loop, `unknown` is not a modal, the bottom
   status bar is the stable row; income is not constant.
 
-## WHAT M68 MEASURED (NAMED.md M68 block)
+## WHAT M69 SETTLED (NAMED.md M69 block, session 109)
 
-- **The enqueue APPENDED.** Five INSERTs on an empty University Base region wrote slots 1,2,3,4,5
-  in click order (2, 1, 194, 192, 193), against the gate's certified
-  prediction of 1,1,3,4,3. 55 of 212 rules predict an append, so the run FAILED with no key.
-  `evidence/m68_key_run.jsonl:10-14`, `:18`.
-- **CONFLICT, unresolved:** M67 saw sorted landings from the same driver and button. Confounded
-  by base/round/minerals/queue-contents/chooser-size (one reload changed them together).
-- Static: `0x418ab3-0x418acb` copies `[base+0x74]` down to `[base+0x54]` up one slot, `+0x78`
-  untouched — M67's cap seen in the bytes. Sentinel `0x418b5f` is **-39**, not -38.
+- **The INSERT writes `queue[pos] = item`, `pos = *(int *)(0x6a9480 + 0x3ff5c)` — the queue
+  widget's CURSOR ROW.** `0x417dbf` reads the field, `0x417dd3-0x417deb` shifts slots `pos..`,
+  `0x417e04` stores, pending++ (cap 9). **No type-record byte is read on that path.**
+- **So there is no sort in the enqueue.** ONE click flow wrote at slot 1 then slot 4
+  (`evidence/m69_enqueue.gdblog`); M67's plan-descending order is the WIDGET's list order.
+- **ACCEPTANCE PASS:** `m69_cursor_run.py --cursor 2 --item 193` -> wrote `queue[2]` where the
+  plan rule says 1, and the instrument REFUSES a shape where cursor and plan index agree.
+  `test_m69_cursor.py` -> 15/15.
+- **A negative queue value belongs to the TYPE**, not to a bad click: 196 (recordless) -> -6,
+  195 -> -3, both on clicks whose guard verified. Never put 195/196+ in a shape.
+- The `0x418a99` dispatch (jump table `0x419c20`) is NOT the enqueue — it never fired.
 
-## THE PICK — M69
+## THE PICK — M70
 
-One milestone, then stop. Click-order searches are exhausted while the engine appends — instrument
-it instead:
+One milestone, then stop. The instrument exists (`scripts/m69_enqueue_gdb.py --arm|--stop|--parse`):
 
-1. **gdb the enqueue** (the `m63_pop.py` recipe, `milestone/m63`): break `*0x418afd` and print
-   `[base+0x4c]`, `esi` at `0x418b29`, and the value stored into `[base+esi*4+0x50]`; add an hw
-   watch on `base+0x54` for the whole run. That answers "sorted scan or `pending + 1`", "which
-   type-record byte the scan reads", and "where -3 comes from" in ONE live run.
-2. Then change ONE variable (base; minerals 3/1 vs 0; pending 4 vs 0; chooser 4-7 vs 67) and
-   write "confounded" unless the instrument shows otherwise.
-3. **Who writes the head slot `+0x50`, and what is the `esi == 0` head store `0x418b57` for?** It
-   never fired in seven enqueues; the pop consumes the head, so something refreshes it.
-3. The `income 1` live accrual case still open from 104/105: every M64 PASS window had
-   `gap_delta = 0` (the fix was INERT live). Needs an `income 1` base whose windows straddle the
-   add: `python3 scripts/m56_build.py --ui-queued <fresh idx> --boundaries 10 --timeout 400
-   --no-poke-hold`, and report the `accrual_phase` rows.
-4. Cheap side-quests: re-measure `scripts/m65_screen.py` at a quiet AND a loaded load (it records
-   `load1`; session 105's flake-vs-load measurement was confounded); settle `check_classes.py`,
-   which names three frames deleted back in #3 (it reports 14 PASS + 3 SKIP).
-5. Keep green: `test_accept_ready.py` (17/17), `test_hud_bar.py` (26/26), `test_m56_predict.py`
-   (19/19), `test_walk_diff.py` (37/37), `test_classify.py` (17/17), `test_m66_layouts.py` (10/10),
-   `test_m67_sort_keys.py` (15/15), `check_classes.py` (exit 0), `m56_build.py --fixture` bad=1,
-   `scratch/m61/fixture_defer_ok.json`=0, `scratch/m61/fixture_beat_visit.json`=1,
-   `scratch/m64/fixture_paid_readback.json`=0, `scratch/m64/fixture_paid_no_readback.json`=1.
+1. **Watch `[0x6a9480+0x3ff5c]` across one INSERT and one repaint** — names the writer of the
+   cursor and says whether the widget re-sorts its list on paint (the writers are
+   `0x40b018-0x40b081`, `0x4163b6/0x41650e`, `0x417e3b-0x417e7b`).
+2. **Read the queue-widget paint loop `0x40axxxx`** for the plan-byte comparison. That is where
+   M67's order must live; NAMED.md's M67 row needs re-scoping to "the widget's list" when it is
+   found, not left saying the INSERT sorts.
+3. The `-3 / -6` formula for recordless types (two points only, do not guess).
+4. Open from 104/105: the `income 1` accrual case (every M64 PASS window had `gap_delta = 0`):
+   `python3 scripts/m56_build.py --ui-queued <fresh idx> --boundaries 10 --timeout 400
+   --no-poke-hold`.
+5. Keep green: `test_accept_ready` 17/17, `test_hud_bar` 26/26, `test_m56_predict` 19/19,
+   `test_walk_diff` 37/37, `test_classify` 17/17, `test_m66_layouts` 10/10,
+   `test_m67_sort_keys` 15/15, `test_m68_key_rules` 35/35, `test_m69_cursor` 15/15,
+   `check_classes.py` exit 0.
 
 ## LIVE FACTS / KIT
 
-- **Box at session-108 close:** terran.exe alive, year 2152 round 52 `cur_player 3`; **University
-  Base idx 0 pending 5** (minerals 0, `+0xd0` 0, slot 10 9225) slots
-  `[2, 2, 1, 194, 192, 193, 0, 0, 0, 0, 9225, 0]` — the five M68 appends. The save's other bases
-  are untouched; **Korolev Center does not exist in this instance** (`m60_guard` cannot resolve the
-  name), so M67's Korolev state needs a fresh `m54g_prep`-style founding. The enqueue refuses
+- **Box at session-109 close:** terran.exe alive, year 2151 round 51 `cur_player 3`; **University
+  Base idx 0 pending 3** (minerals 0, `+0xd0` 0, slot 10 9225) slots
+  `[2, 192, 193, 194, 0, 0, 0, 0, 0, 0, 9225, 0]` — the M69 run's write. Korolev Center does not
+  exist in this instance, so M67's Korolev state needs a fresh `m54g_prep`-style founding.
+  **Free chooser ids are nearly gone: 195 -> -3, 196+ recordless -> negatives; reload before a
+  shape that needs a fresh id.** The enqueue refuses
   `pending >= 9` (`0x418b05`, static) and the instrument FAILs rather than arming when
   `pending + 2 > 9`. Live type records (stride 52, name at `+0`): 194 Impact Infantry cost 3/plan 1,
   0 Colony Pod 3/8, 192 Impact Squad 2/0, 195 Impact Battery 2/0, 193 Synthmetal Garrison 2/2,

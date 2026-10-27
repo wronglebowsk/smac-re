@@ -574,3 +574,34 @@ candidate set is `scripts/m68_typebytes.py`.
 - Static confirmation of M67's cap: `0x418ab3-0x418acb` copies `[base+0x74]` down to `[base+0x54]`
   up one slot and never touches `+0x78`. The head-slot sentinel compared at `0x418b5f` is
   `0xffffffd9` = **-39**, not the -38 earlier notes quoted.
+
+## M69 (session 109): the enqueue obeys the WIDGET CURSOR — stop looking for a sort key in the INSERT
+
+**The rule.** `INSERT` is `queue[pos] = item` with `pos = *(int *)(0x6a9480 + 0x3ff5c)`, the queue
+widget's cursor row: `0x417dbf` reads the field, `0x417dd3-0x417deb` shifts slots `pos..9` up one,
+`0x417e04` (`mov [eax+edx*4+0x50],ebx`) stores, then pending++ (cap 9). Nothing on that path reads
+a type-record byte. The `0x418a99` dispatch (jump table `0x419c20`, case 0 writes `base+0x40`,
+case 1 shifts+bumps) is a DIFFERENT handler — it never fired in four INSERTs.
+
+**Why it matters.** One continuous click flow wrote at slot 1 and then at slot 4
+(`evidence/m69_enqueue.gdblog`), so the queue order is whatever the widget's cursor/list says.
+M67's "the item goes at the first slot whose plan byte is below its own" describes the WIDGET's
+list order at that moment, not an enqueue comparison. Never quote M67 as "the engine sorts on
+insert" again; quote "the widget's list is plan-ordered and the insert lands at the cursor".
+
+**How to test it (the pattern worth reusing).** Poke the cursor, click INSERT, read the queue back:
+`python3 scripts/m69_cursor_run.py --cursor 2 --item 193` -> PASS when the write lands at exactly
+the poked row and the plan-sorted index is different; the script REFUSES a shape where the two
+agree, which is what makes the PASS mean something. Offline pinning: `test_m69_cursor.py` 15/15.
+
+**Gdb recipe** (`scripts/m69_enqueue_gdb.py --arm|--stop|--parse`): `TracerPid`/`ptrace_scope`
+guards, breakpoints at `0x417dbf`, `0x417e04` and the shift loop, `watch` on `base+0x54..+0x5c` for
+the first three slots, log drained to `evidence/m69_enqueue.gdblog`. The hardware watchpoint that
+fires at `pc=0x417e08` is the instruction right AFTER the store — that is how the store site was
+identified, so always `x/i $pc-1`-style check the instruction before a watchpoint hit.
+
+**A negative queue value is the TYPE's, not a bad click.** 196 (all-zero record) stored **-6** and
+195 stored **-3**, both on clicks whose `guard == cell`. Recordless ids cannot be used in a shape.
+
+**Trap found:** `[PANE_BASE_IDX] == 0` is also true when the pane is CLOSED, so a driver that opens
+the pane only `if pane != idx` silently never opens it. Always press the open key and click the row.

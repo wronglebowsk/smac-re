@@ -1,0 +1,63 @@
+[New LWP 2987094]
+[New LWP 2987093]
+[New LWP 2987092]
+[New LWP 2987091]
+[New LWP 2987090]
+[New LWP 2987089]
+[New LWP 2987088]
+[New LWP 2987087]
+[New LWP 2987086]
+[New LWP 2987085]
+[New LWP 2987084]
+[New LWP 2987083]
+[New LWP 2987082]
+[New LWP 2987081]
+[New LWP 2987080]
+[New LWP 2987079]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf395868b in ?? ()
+Breakpoint 1 at 0x417dbf
+Breakpoint 2 at 0x417e04
+Breakpoint 3 at 0x418a99
+Breakpoint 4 at 0x418aa9
+Breakpoint 5 at 0x418ab3
+Breakpoint 6 at 0x418acd
+Breakpoint 7 at 0x418ae3
+Breakpoint 8 at 0x418af1
+Breakpoint 9 at 0x418b32
+Hardware watchpoint 10: *(int *)($b + 0x54)
+Hardware watchpoint 11: *(int *)($b + 0x58)
+Hardware watchpoint 12: *(int *)($b + 0x5c)
+ARMED base=0x95da10
+ENQUEUE obj=0x6a9480 pos=1 pending=2
+ slots 2 194 1 0 0 0 0 0 0 0 9225 0
+  WRITE slot3 pc=0x417ddb now=1 pend=2
+  WRITE slot2 pc=0x417ddb now=194 pend=2
+STORE queue[1]=192 (item ebx) pending=3
+  WRITE slot1 pc=0x417e08 now=192 pend=3
+  list_append esi=1 slot[esi]=192 pending=3
+ENQUEUE obj=0x6a9480 pos=4 pending=3
+ slots 2 192 194 1 0 0 0 0 0 0 9225 0
+STORE queue[4]=193 (item ebx) pending=4
+  list_append esi=1 slot[esi]=192 pending=4
+  list_append esi=1 slot[esi]=192 pending=4
+ENQUEUE obj=0x6a9480 pos=4 pending=4
+ slots 2 192 194 1 193 0 0 0 0 0 9225 0
+STORE queue[4]=0 (item ebx) pending=5
+  list_append esi=1 slot[esi]=192 pending=5
+ENQUEUE obj=0x6a9480 pos=2 pending=5
+ slots 2 192 194 1 0 193 0 0 0 0 9225 0
+  WRITE slot3 pc=0x417ddb now=194 pend=5
+STORE queue[2]=-6 (item ebx) pending=6
+  WRITE slot2 pc=0x417e08 now=-6 pend=6
+  list_append esi=1 slot[esi]=192 pending=6
+
+Thread 6 "audio_client_ti" received signal SIGINT, Interrupt.
+[Switching to LWP 2987090]
+0xf3b6b32c in __kernel_vsyscall ()
+[Inferior 1 (process 2987075) detached]

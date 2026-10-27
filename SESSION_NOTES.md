@@ -834,3 +834,50 @@ again minutes later with the queue widget provably open).
 **Next pick.** S109 = instrument the enqueue with gdb (the `m63_pop.py` recipe), not another
 click-order search: the click-only method has now told us all it can — on THIS state the engine
 appends, and no click shape can identify a key an append engine does not use.
+
+## Session 109 (2026-10-27) — M69: THE ENQUEUE WRITES AT THE QUEUE WIDGET'S CURSOR. ACCEPTANCE PASS on one real invocation.
+
+**What changed / what is now known.** The BUILD-pane INSERT is not a sort and it does not read a
+type-record byte. It is `queue[pos] = item`, `pos = *(int *)(0x6a9480 + 0x3ff5c)` — the widget's
+cursor row — with the region shifted up from `pos` and pending bumped (capped 9).
+
+- gdb instrument `scripts/m69_enqueue_gdb.py` (`--arm|--stop|--parse`, TracerPid + ptrace_scope
+  guards, drained log). Breakpoints `0x417dbf` / `0x417e04` / the `0x417dd3` shift loop, hw
+  watchpoints on slots 1..3, plus the old `0x418a99` dispatch as a control.
+- Live log (`evidence/m69_enqueue.gdblog`): **one continuous click flow** produced
+  `ENQUEUE obj=0x6a9480 pos=1 pending=2` -> `STORE queue[1]=192` and then
+  `ENQUEUE obj=0x6a9480 pos=4 pending=3` -> `STORE queue[4]=193`. Front insert, then end insert,
+  same button, same session: the cursor moved.
+- The `0x418a99` block (jump table `0x419c20`, case 0 writes `base+0x40`, case 1 shifts+bumps)
+  **never fired** in four INSERTs — it is a different handler, and the M67 note that treated the
+  `0x418bxx` block as the insert path is superseded.
+
+**Acceptance (one real invocation).**
+`python3 scripts/m69_cursor_run.py --cursor 2 --item 193 --trace evidence/m69_cursor3.jsonl`
+-> **PASS**, region `[2,192,194]` -> `[2,192,193,194]`, pending 2->3, cursor read back as 2
+before the click, `plan_sorted_index 1`. The instrument refuses a shape where the cursor and the
+plan index agree (`--cursor 1` -> `FAIL: non-discriminating shape`), so the PASS discriminates.
+`python3 scripts/test_m69_cursor.py` -> `PASS 15/15 m69 cursor cases` (offline; pins the store
+arithmetic, the plan-vs-cursor disagreement, the M68 appends and both negative stores).
+
+**Correction to session 108.** `-3` was recorded as probably a bad click. It is not: with the
+click verified (`guard == cell`) and the cursor poked, item 196 (all-zero record) stored **-6**,
+and 195 stored **-3** on a guarded click. A type with no real record is stored as a negative
+value; two different negatives, so not one sentinel. Do not use 195/196/197+ in a shape.
+Also: the M68 `-3` claim that a poisoned entry makes the next INSERT "append a plan-9 item at the
+END" is re-read here as "the cursor had moved to the end", not as a fault.
+
+**Open.**
+1. What sets the cursor (`[widget+0x3ff5c]`)? The writers are `0x40b018-0x40b081` (arrow/move
+   handler, clamps to `[1, pending]`), `0x4163b6/0x41650e`, `0x417e3b-0x417e7b` (post-insert).
+   The chooser click is what a user expects to set it; the log shows it moving on its own
+   (2 -> 4 after one insert). An hw watchpoint on the field across ONE insert would name the
+   writer and settle whether the widget sorts by plan when it refreshes the list.
+2. The widget's LIST order (what M67 measured) — is it recomputed on paint from the plan byte?
+   `0x40axxxx` is the queue-widget paint code; that is where the plan comparison should live.
+3. `-3 / -6` for recordless types: what is the formula? (two points only.)
+
+**Next pick.** M70 = watch `[0x6a9480+0x3ff5c]` across one INSERT and one queue-list repaint,
+then read the widget's paint loop (`0x40axxxx`) for the plan-byte comparison. That closes the
+last link: the widget sorts (or not), the user-visible order is that list, and the enqueue just
+obeys the cursor.

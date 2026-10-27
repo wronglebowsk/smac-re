@@ -1,0 +1,8 @@
+{"tag": "before", "t": "08:09:42", "pending": 2, "slots": [2, 192, 194, 0, 0, 0, 0, 0, 0, 0, 9225, 0], "minerals": 0}
+{"tag": "cursor_before", "t": "08:09:42", "obj": "0x6a9480", "off": "0x3ff5c", "value": 1}
+{"tag": "chooser", "t": "08:09:47", "cand": [192, 194, 193, 2, 0, 1, 195, 196, 197, 198, 199, 200], "cand_n": 67}
+{"tag": "plan", "t": "08:09:47", "item": 193, "cell": 2, "plan": 2, "region_keys": [[1, 0], [2, 1]], "plan_sorted_index": 1}
+{"tag": "cell_click", "t": "08:09:47", "attempt": 1, "cell": 2, "guard": 2, "entry_at_cell": 193}
+{"tag": "cursor_poked", "t": "08:09:47", "want": 2, "read_back": 2}
+{"tag": "insert", "t": "08:09:48", "pending_before": 2, "pending_after": 3, "slots": [2, 192, 193, 194, 0, 0, 0, 0, 0, 0, 9225, 0], "landing": [2, 193], "stored": 193, "cursor_after": 4}
+{"tag": "verdict", "t": "08:09:48", "poked_cursor": 2, "wrote_at": 2, "stored": 193, "item": 193, "plan_sorted_index": 1}
