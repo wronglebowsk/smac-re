@@ -4,6 +4,25 @@ Static + dynamic reverse engineering of Sid Meier's Alpha Centauri (`terran.exe`
 run under Wine) to recover exact game rules: production, minerals/energy economy, growth,
 unit orders, map format, UI behavior.
 
+## Built with
+
+Created and run by **Hermes Agent** — Nous Research's autonomous agent
+([NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent),
+[documentation](https://hermes-agent.nousresearch.com/docs)). The milestones in
+`SESSION_NOTES.md` were planned, executed and verified by the agent itself: it boots the game
+under Wine, drives the UI with OCR-based clicks, arms gdb watchpoints on verified addresses,
+reads the game's memory back and writes the notes.
+
+- **Reverse Engineer Anything (REA)** — the Hermes plugin that supplies the reverse-engineering
+  toolset used throughout this repo (binary inspection, decompilation, cross-references,
+  function analysis, crash triage): [plugin](https://github.com/NousResearch/hermes-official-plugins/tree/main/rea),
+  built on the upstream open-source project [morluto/rea](https://github.com/morluto/rea) (MIT).
+- **Strata** — the project is primarily run with [Strata](https://github.com/wronglebowsk/Strata)
+  (MIT), an open-source local inference engine, on a local three-GPU box. It serves
+  **`qwen3.8-flash-next-iq3_xxs`** — Qwen3.8-Flash-Next at `iq3_xxs` quantization, 262,144-token
+  context, also exposed under the aliases `qwen3.8-flash-next-abliterated` and `qwen125b` — and
+  the agent reasons on that model. No cloud API is used.
+
 ## What is tracked
 
 - `*.md` — findings and living documentation. Start with `NEXT_PROMPT.md` (current footing
