@@ -240,14 +240,22 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
    chooser (open test: pixel (160,343) == (103,91,181)); the grid is 5 columns, cell k at
    x = 128 + 127*(k%5), y = 60 + 100*(k//5); the display order is the candidate array
    `DAT_009267e4` / count `0x9267e0`; the selection field `[pane+0xa1c+0xa774]` holds the CELL INDEX.
-3. **INSERT (497,343) does not write a slot index — it INSERTS BY COST** (M66: four enqueues with
-   two DIFFERENT ids, `scripts/m66_insert_slot.py`, queue read back after every click). The item
-   lands at the first queue slot (`base+0x50 + 4k`, `k = 1 .. pending`) whose type-record cost byte
-   (`0x98ad88 + type*52 + 41`, the byte `m58_price.py` prices from) is STRICTLY below the new item's
-   cost, else after the region at `k = pending + 1`; everything from that slot rightward shifts one
-   slot, and entries already at the same cost stay ahead of the newcomer. `pending` `+0x4c` rises by
-   1 (cap 9 at `0x418b05`) and **the head slot `+0x50` is never written by INSERT** — it read 2
-   before and after in all four runs. The M57 claim "INSERT writes head `+0x50`, pending `+0x4c`,
+3. **INSERT (497,343) does not write a slot index — it INSERTS BY PLAN** (M66 four enqueues with
+   two DIFFERENT ids + M67 three more with a cost/plan discriminator:
+   `scripts/m66_insert_slot.py --rules sort_key --slots 12`, queue read back after every click).
+   The item lands at the first queue slot (`base+0x50 + 4k`, `k = 1 .. pending`) whose type-record
+   PLAN byte (`0x98ad88 + type*52 + 42`, the alpha `#UNITS` Plan column) is STRICTLY below the new
+   item's plan, else after the region at `k = pending + 1`; everything from that slot rightward
+   shifts one slot, and entries already at the same plan stay ahead of the newcomer. **It is NOT
+   the cost byte `+41`** — M66 thought it was because every id it measured happens to order the
+   same way by cost and by plan; M67 enqueued 193 (plan 2, cost 2) into queues holding 194 (plan 1,
+   cost 3) and the item went IN FRONT of the cost-3 entries, twice, in two different bases
+   (`evidence/m67_sort_key.jsonl`, `evidence/m67_sort_key_accept.jsonl`). The shift is capped to
+   the 10-slot queue array `+0x50..+0x74` (head + 9 region slots): stale ids inside it are pushed
+   ALONG with the shift and the dword at `+0x78` (queue slot 10) never moves — read 12 slots, not
+   8, or the cap is invisible and a correct insert scores as no rule at all. `pending` `+0x4c`
+   rises by 1 (cap 9 at `0x418b05`) and **the head slot `+0x50` is never written by INSERT** — it
+   read 2 before and after in all seven runs. The M57 claim "INSERT writes head `+0x50`, pending `+0x4c`,
    slot `+0x54`" was a duplicate-value artifact: that run enqueued id 2 behind a head that was
    already 2. **OK (285,343)** commits (mode 0, no restore); CANCEL restores from the stack
    snapshot. Re-read pending ~1 s later. The enqueue also adds 1 to the per-faction queued byte

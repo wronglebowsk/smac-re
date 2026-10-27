@@ -20,7 +20,16 @@ three enabling pokes the M57 recipe needs (cursor home, SEL_G, orders mode).
 
     python3 scripts/m66_insert_slot.py [--base-name "University Base"]
                                        [--item-a 193] [--item-b 195]
+                                       [--rules layout|sort_key] [--slots 8]
                                        [--trace evidence/m66_insert_slot.jsonl]
+
+--rules layout   the six M66 slot-layout rules (the merged #64 acceptance).
+--rules sort_key the eight M67 type-record-KEY rules: cost (+41) or plan (+42), each in
+                 descending/ascending order with ties after/before.  They share the insert
+                 machinery and differ only in the key, so the run must be a shape in which
+                 cost order and plan order put the item in DIFFERENT slots — the script
+                 computes all eight predictions from the baseline BEFORE clicking anything and
+                 FAILs if they all agree (a shape that cannot discriminate earns nothing).
 """
 import argparse, json, os, struct, subprocess, sys, time
 
@@ -39,6 +48,11 @@ INSERT_XY, OK_XY = (497, 343), (285, 343)
 COUNT_A, COUNT_B = 0x94de84, 0x94dc84   # the two per-faction byte arrays in conflict (NAMED)
 COUNT_STRIDE = 0x20bc                    # 8380 bytes per faction
 TYPE_REC, TYPE_SZ, COST_OFF = 0x98ad88, 52, 41   # the type record cost byte (m58_price.py)
+PLAN_OFF = 42                                    # the alpha Plan column (NAMED M53f)
+QUEUE_CAP = 10      # queue slots the engine shifts within: head + 9 region slots (+0x50..+0x74);
+                    # the enqueue refuses pending >= 9 (disasm 0x418b05 cmp ecx,0x9/jge, read from
+                    # scratch/m574/text.txt, never poked), and the dword at +0x78 (queue slot 10)
+                    # is a different field that never moved in four enqueues
 SLOTS = 8
 
 # ---- the layouts, stated before observing.  s = baseline slots, p0 = pending before,
@@ -46,10 +60,25 @@ SLOTS = 8
 # Each rule returns the ids it needs, or None if the read-backs cannot be explained by it.
 
 
-def _inserted_at(dst, src, i):
+def _inserted_at(dst, src, i, cap=None):
     """dst is src with a NEW value written at index i and everything from i rightward shifted
-    one slot: dst[:i] == src[:i], dst[i] is new, dst[i+1:] == src[i:-1]."""
-    return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i:-1]
+    one slot: dst[:i] == src[:i], dst[i] is new, dst[i+1:] == src[i:-1].
+
+    With cap (the number of queue slots the engine shifts within) the shift stops at cap: the
+    value in slot cap-1 is pushed OUT of the array and everything from cap upward stays exactly
+    where it was.  The box does the capped thing.  The queue array is head + 9 region slots = 10
+    dwords (+0x50..+0x74; the disasm's enqueue refuses pending >= 9 at 0x418b05), and the dword
+    at queue slot 10 (+0x78) is some other field — it read 9225 on University Base and 545 on
+    Korolev Center and did NOT move in any of the four enqueues, while stale ids inside the
+    array were pushed along with the shift (evidence/m67_sort_key.jsonl,
+    evidence/m67_sort_key_korolev.jsonl: Korolev's stale 2 at slot 3 moved to slot 4 on the
+    first INSERT and to slot 5 on the second).  With a window whose tail past the region is all
+    zeros the capped and uncapped forms are indistinguishable, which is why the M66 runs (8-slot
+    window, zero tail) could not tell them apart."""
+    head = dst[:i] == src[:i] and dst[i] != src[i]
+    if cap is None:
+        return head and dst[i + 1:] == src[i:-1]
+    return head and dst[i + 1:cap] == src[i:cap - 1] and dst[cap:] == src[cap:]
 
 
 def _overwrote_at(dst, src, i):
@@ -57,11 +86,12 @@ def _overwrote_at(dst, src, i):
     return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i + 1:]
 
 
-def _shift_index(dst, src):
+def _shift_index(dst, src, cap=None):
     """the single index at which dst was inserted into src, or None if that is not what
     happened or if more than one index would explain it (returns the index and the id that
-    was written there)."""
-    hits = [(i, dst[i]) for i in range(len(src)) if _inserted_at(dst, src, i)]
+    was written there).  cap bounds the scan to the queue ARRAY, slots 0..cap-1."""
+    hi = len(src) if cap is None else min(cap, len(src))
+    hits = [(i, dst[i]) for i in range(0, hi) if _inserted_at(dst, src, i, cap)]
     if len(hits) != 1:
         return None
     return hits[0]
@@ -151,7 +181,7 @@ def rule_eight_byte_entries(c):
     return (a[0], b[2])
 
 
-PREDICTIONS = [
+LAYOUT_RULES = [
     ("sorted_descending_cost", rule_sorted_descending_cost),
     ("insert_at_new_pending_index", rule_insert_at_new_pending),
     ("append_at_pending_before_index", rule_append_at_pending_before),
@@ -159,6 +189,69 @@ PREDICTIONS = [
     ("write_head_and_shift_right", rule_write_head_and_shift_right),
     ("eight_byte_entries", rule_eight_byte_entries),
 ]
+PREDICTIONS = LAYOUT_RULES          # M66's merged acceptance (--rules layout)
+
+# ---- M67: WHICH BYTE IS THE SORT KEY.  M66 settled that INSERT is a sorted insert but could
+# not say by which type-record byte: the ids it measured happen to order the same way by cost
+# (+41) and by plan (+42).  These rules share the insert machinery of sorted_insert_index and
+# differ ONLY in the key byte and the direction/tie convention, so one enqueue whose key order
+# and cost order put the item in DIFFERENT slots separates them.  Written down before the run.
+KEY_RULES_SPEC = [
+    ("cost_desc_after",  COST_OFF, "desc", "after"),
+    ("cost_desc_before", COST_OFF, "desc", "before"),
+    ("cost_asc_after",   COST_OFF, "asc",  "after"),
+    ("cost_asc_before",  COST_OFF, "asc",  "before"),
+    ("plan_desc_after",  PLAN_OFF, "desc", "after"),
+    ("plan_desc_before", PLAN_OFF, "desc", "before"),
+    ("plan_asc_after",   PLAN_OFF, "asc",  "after"),
+    ("plan_asc_before",  PLAN_OFF, "asc",  "before"),
+]
+
+
+def key_insert_index(s, p, new_id, key, direction, tie):
+    """Region slots[1..p] (slot 0 is the head the pop consumes).  Scan for the first entry the
+    new item must go IN FRONT of: desc/after = first key strictly below its own (ties stay
+    ahead, M66's cost rule); desc/before = first key at or below; asc/after = first key
+    strictly above; asc/before = first key at or above.  No such entry -> after the region
+    (p+1)."""
+    c = key(new_id)
+    strict = tie == "after"
+    for i in range(1, p + 1):
+        k = key(s[i])
+        if direction == "desc":
+            if (k < c) if strict else (k <= c):
+                return i
+        else:
+            if (k > c) if strict else (k >= c):
+                return i
+    return p + 1
+
+
+def make_key_rule(spec):
+    name, off, direction, tie = spec
+    doc = (f"INSERT inserts by type record +{off} in {direction}ending order, ties "
+           f"{tie} the entries already at that value, shifting the tail right; the head slot "
+           f"+0x50 is never written by INSERT.")
+
+    def rule(c):
+        def key(tid):
+            return c["rec_byte"](tid, off)
+        s, a, b = c["s"], c["a"], c["b"]
+        ia, ib = _shift_index(a, s, QUEUE_CAP), _shift_index(b, a, QUEUE_CAP)
+        if not ia or not ib:
+            return None
+        i, x = ia
+        j, y = ib
+        if i != key_insert_index(s, c["p0"], x, key, direction, tie):
+            return None
+        if j != key_insert_index(a, c["pa"], y, key, direction, tie):
+            return None
+        return (x, y)
+    rule.__doc__ = doc
+    return name, rule
+
+
+SORT_KEY_RULES = [make_key_rule(spec) for spec in KEY_RULES_SPEC]
 
 
 def u32(f, a):
@@ -216,7 +309,17 @@ def main():
     ap.add_argument("--item-a", type=int, default=193)
     ap.add_argument("--item-b", type=int, default=195)
     ap.add_argument("--trace", default="evidence/m66_insert_slot.jsonl")
+    ap.add_argument("--rules", choices=("layout", "sort_key"), default="layout",
+                    help="layout = the six M66 slot-layout rules; sort_key = the eight M67 "
+                         "type-record-key rules (cost/plan x direction x tie)")
+    ap.add_argument("--slots", type=int, default=8,
+                    help="queue slots read (head + region); raise it when pending + 2 inserts "
+                         "would run past the read window")
     a = ap.parse_args()
+    global SLOTS
+    # the sort-key run must SEE the queue array's end, or the capped shift is invisible
+    SLOTS = max(a.slots, QUEUE_CAP) if a.rules == "sort_key" else max(a.slots, 2)
+    RULES = LAYOUT_RULES if a.rules == "layout" else SORT_KEY_RULES
 
     rows = []
 
@@ -246,15 +349,19 @@ def main():
     s = before["queue"]
     p0 = before["pending"]
 
-    cost_cache = {}
+    byte_cache = {}
+
+    def rec_byte(tid, off):
+        """one byte of the type record 0x98ad88 + tid*52 + off, or -1 for an id with no record"""
+        if (tid, off) not in byte_cache:
+            try:
+                byte_cache[(tid, off)] = sp.rd(f, TYPE_REC + tid * TYPE_SZ + off, 1)[0]
+            except Exception:
+                byte_cache[(tid, off)] = -1   # negative/absurd ids have no record
+        return byte_cache[(tid, off)]
 
     def cost(tid):
-        if tid not in cost_cache:
-            try:
-                cost_cache[tid] = sp.rd(f, TYPE_REC + tid * TYPE_SZ + COST_OFF, 1)[0]
-            except Exception:
-                cost_cache[tid] = -1          # negative/absurd ids have no cost byte
-        return cost_cache[tid]
+        return rec_byte(tid, COST_OFF)
 
     for nm, tid in (("item_a", a.item_a), ("item_b", a.item_b)):
         if tid == 0:
@@ -305,9 +412,41 @@ def main():
                   f"OPEN: {c_open[:20]}")
             return 1
     ka, kb = c_open.index(a.item_a), c_open.index(a.item_b)
+    involved = sorted(set([a.item_a, a.item_b] + s[:p0 + 1]))
+    keys = {off: {tid: rec_byte(tid, off) for tid in involved}
+            for off in (COST_OFF, PLAN_OFF)}
+    # what each candidate rule predicts for INSERT A, from the BASELINE only (no after-reads)
+    preds = {}
+    for nm, off, direction, tie in KEY_RULES_SPEC:
+        kv = keys[off]
+        preds[nm] = key_insert_index(s, p0, a.item_a, lambda t, kv=kv: kv[t], direction, tie)
     rec("plan", item_a=a.item_a, cell_a=ka, item_b=a.item_b, cell_b=kb,
-        layouts=[n for n, _ in PREDICTIONS], pending_before=p0, baseline=s,
-        costs={tid: cost(tid) for tid in sorted(set([a.item_a, a.item_b] + s[:p0 + 1]))})
+        rules=[n for n, _ in RULES], pending_before=p0, baseline=s,
+        costs={tid: cost(tid) for tid in involved},
+        plans={tid: rec_byte(tid, PLAN_OFF) for tid in involved},
+        predicted_index_a=preds if a.rules == "sort_key" else None)
+    if a.rules == "sort_key":
+        distinct_preds = sorted({v for v in preds.values()})
+        rec("shape_gate", predicted_indexes=distinct_preds,
+            rules_by_prediction={v: [n for n, ix in preds.items() if ix == v]
+                                 for v in distinct_preds})
+        if len(distinct_preds) < 2:
+            print(f"FAIL: all eight sort-key rules predict INSERT A at slot "
+                  f"{distinct_preds[0]} — this shape cannot discriminate the key, so no key "
+                  f"claim would be earned; pick an item whose key order differs from its cost "
+                  f"order in THIS queue (baseline {s}, costs {keys[COST_OFF]}, "
+                  f"plans {keys[PLAN_OFF]})")
+            return 1
+    if p0 + 2 > QUEUE_CAP - 1:
+        print(f"FAIL: pending {p0} + 2 inserts needs region slot {p0 + 2} but the queue array "
+              f"holds {QUEUE_CAP - 1} (the enqueue refuses pending >= 9 at 0x418b05); pick a "
+              f"base with room")
+        return 1
+    if p0 + 2 > SLOTS - 1:
+        print(f"FAIL: pending {p0} + 2 inserts needs region slot {p0 + 2} but only "
+              f"{SLOTS - 1} are read (--slots); the second write would land outside the "
+              f"read window")
+        return 1
 
     state = {"pending": p0, "written": []}
 
@@ -375,8 +514,8 @@ def main():
 
     scored = []
     ctx = dict(s=s, p0=p0, a=ra["queue"], pa=ra["pending"], b=rb["queue"], pb=rb["pending"],
-               cost=cost)
-    for nm, fn in PREDICTIONS:
+               cost=cost, rec_byte=rec_byte)
+    for nm, fn in RULES:
         ids = fn(ctx)
         if ids:
             scored.append((nm, ids))
@@ -388,7 +527,10 @@ def main():
     rec("score", baseline=s, pending_before=p0, after_a=ra["queue"],
         pending_after_a=ra["pending"], after_b=rb["queue"], pending_after_b=rb["pending"],
         after_ok=after["queue"], matched=[nm for nm, _ in scored],
-        written=[ids for _, ids in scored], integrity=integrity, costs=cost_cache)
+        written=[ids for _, ids in scored], integrity=integrity,
+        costs={tid: cost(tid) for tid in involved},
+        plans={tid: rec_byte(tid, PLAN_OFF) for tid in involved},
+        predicted_index_a=preds if a.rules == "sort_key" else None)
 
     print("\nlayout read-backs:")
     print(f"  baseline   pending {p0:<2}  slots {s}")
@@ -402,14 +544,24 @@ def main():
     else:
         print("  (neither array moved)")
 
+    _ia = _shift_index(ra["queue"], s, QUEUE_CAP)
+    ia_actual = _ia[0] if _ia else "?"
+    label = "sort-key rule" if a.rules == "sort_key" else "layout"
+    if a.rules == "sort_key":
+        print("\nwhat each rule predicted for INSERT A (baseline only) vs where it ACTUALLY "
+              "landed:")
+        for nm, off, direction, tie in KEY_RULES_SPEC:
+            fit = "FITS" if nm in distinct else "    "
+            print(f"  {fit} {nm:<18} +{off:<3} {direction:<4} ties {tie:<6} "
+                  f"predicted {preds[nm]:<3} actual {ia_actual}")
     if len(distinct) == 1 and integrity:
         nm, ids = scored[0]
-        print(f"\nPASS: exactly one layout explains both read-backs — {nm} "
+        print(f"\nPASS: exactly one {label} explains both read-backs — {nm} "
               f"(pending {p0}->{ra['pending']}->{rb['pending']}, ids stored {ids})")
         verdict = 0
     else:
-        print(f"\nFAIL: layouts that fit = {sorted(distinct)} (need exactly one), "
-              f"integrity = {integrity}; no layout claim is made")
+        print(f"\nFAIL: {label} rules that fit = {sorted(distinct)} (need exactly one), "
+              f"integrity = {integrity}; no {label} claim is made")
         verdict = 1
 
     trace = a.trace if a.trace.startswith("/") else os.path.join(ROOT, a.trace)
