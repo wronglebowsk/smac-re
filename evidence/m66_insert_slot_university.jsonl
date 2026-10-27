@@ -1,0 +1,11 @@
+{"tag": "before", "t": "21:19:32", "idx": 0, "name": "University Base", "x": 28, "y": 42, "minerals": 1, "pending": 0, "slots": [2, 0, 0, 0, 0, 0, 0, 0], "d0": 0, "guard": 1, "pane_idx": 17}
+{"tag": "pokes", "t": "21:19:32", "cursor": [28, 42], "sel": -1, "orders_mode": 0}
+{"tag": "pane", "t": "21:19:32", "pane_idx": 0, "want": 0}
+{"tag": "chooser_open", "t": "21:19:33", "guard": 5, "pending": 0, "cand": [192, 195, 194, 193, 2, 0, 1, 196, 197, 198, 199, 200]}
+{"tag": "plan", "t": "21:19:33", "item_a": 193, "cell_a": 3, "item_b": 195, "cell_b": 1, "layouts": ["insert_at_new_pending_index", "append_at_pending_before_index", "write_head_and_next_slot", "write_head_and_shift_right", "eight_byte_entries"], "pending_before": 0, "baseline": [2, 0, 0, 0, 0, 0, 0, 0]}
+{"tag": "insert_a", "t": "21:19:35", "guard": 3, "pending": 1, "slots": [2, 193, 0, 0, 0, 0, 0, 0], "minerals": 1, "d0": 0, "cand_at_click": [192, 195, 194, 193], "cand_after_insert": [192, 195, 194, 193], "cell_entry": 193, "new_slot_values": [193], "row_delta": {"de84[2]": "2->1", "dc84[514]": "2->1"}, "tries": 1}
+{"tag": "insert_b", "t": "21:19:36", "guard": 1, "pending": 2, "slots": [2, 193, 195, 0, 0, 0, 0, 0], "minerals": 1, "d0": 0, "cand_at_click": [192, 195, 194, 193], "cand_after_insert": [192, 195, 194, 193], "cell_entry": 195, "new_slot_values": [193, 195], "row_delta": {"de84[2]": "2->1", "dc84[514]": "2->1"}, "tries": 1}
+{"tag": "after_ok", "t": "21:19:38", "idx": 0, "name": "University Base", "x": 28, "y": 42, "minerals": 1, "pending": 2, "slots": [2, 193, 195, 0, 0, 0, 0, 0], "d0": 0, "guard": 1, "pane_idx": 0}
+{"tag": "orders_restored", "t": "21:19:38", "orders_mode": 1}
+{"tag": "pane_closed", "t": "21:20:14", "screen_class": "hud", "row_delta_after_ok": {"de84[193]": "0->1", "de84[195]": "1->2", "dc84[705]": "0->1", "dc84[707]": "1->2"}}
+{"tag": "score", "t": "21:20:14", "baseline": [2, 0, 0, 0, 0, 0, 0, 0], "pending_before": 0, "after_a": [2, 193, 0, 0, 0, 0, 0, 0], "pending_after_a": 1, "after_b": [2, 193, 195, 0, 0, 0, 0, 0], "pending_after_b": 2, "after_ok": [2, 193, 195, 0, 0, 0, 0, 0], "matched": ["insert_at_new_pending_index"], "written": [[193, 195]], "integrity": true}

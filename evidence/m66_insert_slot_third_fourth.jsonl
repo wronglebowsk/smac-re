@@ -1,0 +1,11 @@
+{"tag": "before", "t": "21:21:19", "idx": 0, "name": "University Base", "x": 28, "y": 42, "minerals": 1, "pending": 2, "slots": [2, 193, 195, 0, 0, 0, 0, 0], "d0": 0, "guard": 1, "pane_idx": 0}
+{"tag": "pokes", "t": "21:21:19", "cursor": [28, 42], "sel": -1, "orders_mode": 0}
+{"tag": "pane", "t": "21:21:20", "pane_idx": 0, "want": 0}
+{"tag": "chooser_open", "t": "21:21:21", "guard": 3, "pending": 2, "cand": [192, 195, 194, 193, 2, 0, 1, 196, 197, 198, 199, 200]}
+{"tag": "plan", "t": "21:21:21", "item_a": 194, "cell_a": 2, "item_b": 192, "cell_b": 0, "layouts": ["insert_at_new_pending_index", "append_at_pending_before_index", "write_head_and_next_slot", "write_head_and_shift_right", "eight_byte_entries"], "pending_before": 2, "baseline": [2, 193, 195, 0, 0, 0, 0, 0]}
+{"tag": "insert_a", "t": "21:21:23", "guard": 2, "pending": 3, "slots": [2, 194, 193, 195, 0, 0, 0, 0], "minerals": 1, "d0": 0, "cand_at_click": [192, 195, 194], "cand_after_insert": [192, 195, 194], "cell_entry": 194, "new_slot_values": [194], "row_delta": {"de84[2]": "2->1", "de84[193]": "1->0", "de84[195]": "2->1", "dc84[514]": "2->1", "dc84[705]": "1->0", "dc84[707]": "2->1"}, "tries": 1}
+{"tag": "insert_b", "t": "21:21:24", "guard": 0, "pending": 4, "slots": [2, 194, 193, 195, 192, 0, 0, 0], "minerals": 1, "d0": 0, "cand_at_click": [192, 195, 194], "cand_after_insert": [192, 195, 194], "cell_entry": 192, "new_slot_values": [194, 192], "row_delta": {"de84[2]": "2->1", "de84[193]": "1->0", "de84[195]": "2->1", "dc84[514]": "2->1", "dc84[705]": "1->0", "dc84[707]": "2->1"}, "tries": 1}
+{"tag": "after_ok", "t": "21:21:25", "idx": 0, "name": "University Base", "x": 28, "y": 42, "minerals": 1, "pending": 4, "slots": [2, 194, 193, 195, 192, 0, 0, 0], "d0": 0, "guard": 0, "pane_idx": 0}
+{"tag": "orders_restored", "t": "21:21:25", "orders_mode": 1}
+{"tag": "pane_closed", "t": "21:21:51", "screen_class": "hud", "row_delta_after_ok": {"de84[192]": "0->1", "de84[194]": "1->2", "dc84[704]": "0->1", "dc84[706]": "1->2"}}
+{"tag": "score", "t": "21:21:51", "baseline": [2, 193, 195, 0, 0, 0, 0, 0], "pending_before": 2, "after_a": [2, 194, 193, 195, 0, 0, 0, 0], "pending_after_a": 3, "after_b": [2, 194, 193, 195, 192, 0, 0, 0], "pending_after_b": 4, "after_ok": [2, 194, 193, 195, 192, 0, 0, 0], "matched": [], "written": [], "integrity": true}
