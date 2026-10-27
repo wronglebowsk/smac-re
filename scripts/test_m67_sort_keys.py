@@ -28,7 +28,9 @@ import m66_insert_slot as M  # noqa: E402
 
 COST = {0: 3, 1: 2, 2: 1, 192: 2, 193: 2, 194: 3, 195: 2}
 PLAN = {0: 8, 1: 9, 2: 3, 192: 0, 193: 2, 194: 1, 195: 0}
-Z = [0] * 8
+# the window has to be WIDER than the 10-slot queue array or the capped shift is invisible
+# (the scorer sees no slot past the array and cannot tell capped from uncapped)
+Z = [0] * 12
 
 
 def rec_byte(tid, off):
@@ -63,14 +65,25 @@ CASES = [
     # THE MEASURED UNIVERSITY READ-BACKS (evidence/m67_sort_key.jsonl, 2026-10-26 21:55):
     # pending 6 -> 7 -> 8, INSERT 193 landed at region slot 1 AHEAD of two cost-3 entries,
     # INSERT 192 landed at the end.  The window is 12 wide and slot 10 holds 9225 — a field
-    # just past the queue array that did NOT move while slots 1..8 shifted, which is what
-    # proves the region-bounded shift.  Exactly one rule explains both writes: the plan byte
-    # descending, ties after.  (Under the unbounded shift these same arrays explain NOTHING,
-    # which is how the first run of this instrument FAILED.)
+    # past the queue array that did NOT move while slots 1..8 shifted, which is what proves the
+    # shift is capped to the 10-slot queue array.  Exactly one rule explains both writes: the
+    # plan byte descending, ties after.  (Under an uncapped shift these same arrays explain
+    # NOTHING, which is how the first run of this instrument FAILED.)
     ("measured_university_insert193_then192", 6,
      [2, 194, 194, 193, 195, 192, 1, 0, 0, 0, 9225, 0],
      [2, 193, 194, 194, 193, 195, 192, 1, 0, 0, 9225, 0], 7,
      [2, 193, 194, 194, 193, 195, 192, 1, 192, 0, 9225, 0], 8,
+     ["plan_desc_after"]),
+    # THE MEASURED KOROLEV READ-BACKS (evidence/m67_sort_key_korolev.jsonl, 22:00): pending 2
+    # -> 3 -> 4.  This is the shape that separates the capped shift from a region-bounded one:
+    # the queue tail held a STALE id 2 at slot 3, and INSERT pushed it along to slot 4 and then
+    # to slot 5 instead of overwriting it, while the dword at slot 10 (545) never moved.  Same
+    # verdict: the plan byte descending, ties after — 193 (plan 2) went IN FRONT of 194 (plan 1)
+    # and 192 (plan 0) went behind 195 (plan 0), ties staying ahead.
+    ("measured_korolev_insert193_then192", 2,
+     [2, 194, 195, 2, 0, 0, 0, 0, 0, 0, 545, 0],
+     [2, 193, 194, 195, 2, 0, 0, 0, 0, 0, 545, 0], 3,
+     [2, 193, 194, 195, 192, 2, 0, 0, 0, 0, 545, 0], 4,
      ["plan_desc_after"]),
 ]
 

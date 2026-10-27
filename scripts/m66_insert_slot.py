@@ -48,6 +48,11 @@ INSERT_XY, OK_XY = (497, 343), (285, 343)
 COUNT_A, COUNT_B = 0x94de84, 0x94dc84   # the two per-faction byte arrays in conflict (NAMED)
 COUNT_STRIDE = 0x20bc                    # 8380 bytes per faction
 TYPE_REC, TYPE_SZ, COST_OFF = 0x98ad88, 52, 41   # the type record cost byte (m58_price.py)
+PLAN_OFF = 42                                    # the alpha Plan column (NAMED M53f)
+QUEUE_CAP = 10      # queue slots the engine shifts within: head + 9 region slots (+0x50..+0x74);
+                    # the enqueue refuses pending >= 9 (disasm 0x418b05 cmp ecx,0x9/jge, read from
+                    # scratch/m574/text.txt, never poked), and the dword at +0x78 (queue slot 10)
+                    # is a different field that never moved in four enqueues
 SLOTS = 8
 
 # ---- the layouts, stated before observing.  s = baseline slots, p0 = pending before,
@@ -55,21 +60,25 @@ SLOTS = 8
 # Each rule returns the ids it needs, or None if the read-backs cannot be explained by it.
 
 
-def _inserted_at(dst, src, i, p=None):
+def _inserted_at(dst, src, i, cap=None):
     """dst is src with a NEW value written at index i and everything from i rightward shifted
     one slot: dst[:i] == src[:i], dst[i] is new, dst[i+1:] == src[i:-1].
 
-    With p (pending = the last REGION slot) the shift is bounded to the region: only slots
-    i+1..p+1 move and everything past p+1 stays exactly where it was.  The box does the
-    bounded thing — in evidence/m67_sort_key.jsonl the dword at queue slot 10 (9225, a field
-    that lives just past the queue array) did NOT move while slots 1..8 shifted right by one,
-    so the bounded form is the measured one.  With a window whose tail past the region is all
-    zeros the two forms are indistinguishable, which is why the M66 runs (8-slot window, zero
-    tail) could not tell them apart."""
+    With cap (the number of queue slots the engine shifts within) the shift stops at cap: the
+    value in slot cap-1 is pushed OUT of the array and everything from cap upward stays exactly
+    where it was.  The box does the capped thing.  The queue array is head + 9 region slots = 10
+    dwords (+0x50..+0x74; the disasm's enqueue refuses pending >= 9 at 0x418b05), and the dword
+    at queue slot 10 (+0x78) is some other field — it read 9225 on University Base and 545 on
+    Korolev Center and did NOT move in any of the four enqueues, while stale ids inside the
+    array were pushed along with the shift (evidence/m67_sort_key.jsonl,
+    evidence/m67_sort_key_korolev.jsonl: Korolev's stale 2 at slot 3 moved to slot 4 on the
+    first INSERT and to slot 5 on the second).  With a window whose tail past the region is all
+    zeros the capped and uncapped forms are indistinguishable, which is why the M66 runs (8-slot
+    window, zero tail) could not tell them apart."""
     head = dst[:i] == src[:i] and dst[i] != src[i]
-    if p is None:
+    if cap is None:
         return head and dst[i + 1:] == src[i:-1]
-    return head and dst[i + 1:p + 2] == src[i:p + 1] and dst[p + 2:] == src[p + 2:]
+    return head and dst[i + 1:cap] == src[i:cap - 1] and dst[cap:] == src[cap:]
 
 
 def _overwrote_at(dst, src, i):
@@ -77,12 +86,12 @@ def _overwrote_at(dst, src, i):
     return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i + 1:]
 
 
-def _shift_index(dst, src, p=None):
+def _shift_index(dst, src, cap=None):
     """the single index at which dst was inserted into src, or None if that is not what
     happened or if more than one index would explain it (returns the index and the id that
-    was written there).  p bounds the scan to the REGION, slots 1..p+1 (see _inserted_at)."""
-    lo, hi = (0, len(src)) if p is None else (1, min(p + 2, len(src)))
-    hits = [(i, dst[i]) for i in range(lo, hi) if _inserted_at(dst, src, i, p)]
+    was written there).  cap bounds the scan to the queue ARRAY, slots 0..cap-1."""
+    hi = len(src) if cap is None else min(cap, len(src))
+    hits = [(i, dst[i]) for i in range(0, hi) if _inserted_at(dst, src, i, cap)]
     if len(hits) != 1:
         return None
     return hits[0]
@@ -187,7 +196,6 @@ PREDICTIONS = LAYOUT_RULES          # M66's merged acceptance (--rules layout)
 # (+41) and by plan (+42).  These rules share the insert machinery of sorted_insert_index and
 # differ ONLY in the key byte and the direction/tie convention, so one enqueue whose key order
 # and cost order put the item in DIFFERENT slots separates them.  Written down before the run.
-PLAN_OFF = 42
 KEY_RULES_SPEC = [
     ("cost_desc_after",  COST_OFF, "desc", "after"),
     ("cost_desc_before", COST_OFF, "desc", "before"),
@@ -229,7 +237,7 @@ def make_key_rule(spec):
         def key(tid):
             return c["rec_byte"](tid, off)
         s, a, b = c["s"], c["a"], c["b"]
-        ia, ib = _shift_index(a, s, c["p0"]), _shift_index(b, a, c["pa"])
+        ia, ib = _shift_index(a, s, QUEUE_CAP), _shift_index(b, a, QUEUE_CAP)
         if not ia or not ib:
             return None
         i, x = ia
@@ -309,7 +317,8 @@ def main():
                          "would run past the read window")
     a = ap.parse_args()
     global SLOTS
-    SLOTS = max(a.slots, 2)
+    # the sort-key run must SEE the queue array's end, or the capped shift is invisible
+    SLOTS = max(a.slots, QUEUE_CAP) if a.rules == "sort_key" else max(a.slots, 2)
     RULES = LAYOUT_RULES if a.rules == "layout" else SORT_KEY_RULES
 
     rows = []
@@ -428,6 +437,11 @@ def main():
                   f"order in THIS queue (baseline {s}, costs {keys[COST_OFF]}, "
                   f"plans {keys[PLAN_OFF]})")
             return 1
+    if p0 + 2 > QUEUE_CAP - 1:
+        print(f"FAIL: pending {p0} + 2 inserts needs region slot {p0 + 2} but the queue array "
+              f"holds {QUEUE_CAP - 1} (the enqueue refuses pending >= 9 at 0x418b05); pick a "
+              f"base with room")
+        return 1
     if p0 + 2 > SLOTS - 1:
         print(f"FAIL: pending {p0} + 2 inserts needs region slot {p0 + 2} but only "
               f"{SLOTS - 1} are read (--slots); the second write would land outside the "
@@ -530,7 +544,7 @@ def main():
     else:
         print("  (neither array moved)")
 
-    _ia = _shift_index(ra["queue"], s)
+    _ia = _shift_index(ra["queue"], s, QUEUE_CAP)
     ia_actual = _ia[0] if _ia else "?"
     label = "sort-key rule" if a.rules == "sort_key" else "layout"
     if a.rules == "sort_key":
