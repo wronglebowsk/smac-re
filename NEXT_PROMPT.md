@@ -93,9 +93,8 @@ it instead:
    `[base+0x4c]`, `esi` at `0x418b29`, and the value stored into `[base+esi*4+0x50]`; add an hw
    watch on `base+0x54` for the whole run. That answers "sorted scan or `pending + 1`", "which
    type-record byte the scan reads", and "where -3 comes from" in ONE live run.
-2. Then, and only then, change ONE variable to explain M67-vs-M68 (Korolev Center vs University
-   Base; minerals 3/1 vs 0; pending 4 vs 0; chooser 4-7 vs 67 entries) and write "confounded"
-   unless the instrument shows otherwise.
+2. Then change ONE variable (base; minerals 3/1 vs 0; pending 4 vs 0; chooser 4-7 vs 67) and
+   write "confounded" unless the instrument shows otherwise.
 3. **Who writes the head slot `+0x50`, and what is the `esi == 0` head store `0x418b57` for?** It
    never fired in seven enqueues; the pop consumes the head, so something refreshes it.
 3. The `income 1` live accrual case still open from 104/105: every M64 PASS window had
@@ -161,10 +160,9 @@ it instead:
   (`0x94de84 - 0x94dc84 = 0x200`) — diff whole rows, do not sample two indices and assume they are
   different arrays.
 - **An APPEND engine is consistent with ~55 rules.** Five appends in click order (M68) were
-  "predicted" by 55 of 212 candidate rules (every byte constant over those ids, plus monotone ones).
-  A FAIL there means "no key claim", not "the key is wrong" — and it does NOT overrule a live
-  sorted read-back from a different state: name the state, write "confounded", pick a gdb
-  instrument instead of another click order.
+  "predicted" by 55 of 212 rules (every byte constant over those ids, plus monotone ones), so a
+  FAIL there means "no key claim", not "the key is wrong" — and it does NOT overrule a live sorted
+  read-back from another state: name the state, write "confounded", gdb it.
 - **The chooser cell -> pixel map is unreliable past row 0** (`(128+127*(cell%5), 60+100*(cell//5))`):
   cells 6 and 4 failed to register in three probes (guard stayed on the previous selection, INSERT
   did nothing) and the one registering cell-6 click made the queue store **-3 (0xfffffffd)**. Verify
