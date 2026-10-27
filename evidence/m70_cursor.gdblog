@@ -1,0 +1,56 @@
+[New LWP 3001573]
+[New LWP 3001572]
+[New LWP 3001571]
+[New LWP 3001570]
+[New LWP 3001569]
+[New LWP 3001568]
+[New LWP 3001567]
+[New LWP 3001566]
+[New LWP 3001565]
+[New LWP 3001564]
+[New LWP 3001563]
+[New LWP 3001562]
+[New LWP 3001561]
+[New LWP 3001560]
+[New LWP 3001559]
+[New LWP 3001558]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xed15432c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x6e93dc
+Breakpoint 2 at 0x417dbf
+Breakpoint 3 at 0x417e04
+Breakpoint 4 at 0x40aa22
+Breakpoint 5 at 0x40b02c
+Breakpoint 6 at 0x40b081
+Breakpoint 7 at 0x417e3b
+Breakpoint 8 at 0x417e6b
+Breakpoint 9 at 0x417e7b
+Hardware watchpoint 10: *(int *)($b + 0x54)
+Hardware watchpoint 11: *(int *)($b + 0x58)
+Hardware watchpoint 12: *(int *)($b + 0x5c)
+ARMED base=0x95da10 cursor_abs=0x6e93dc cursor=0 pending=0
+ROWCLICK clicked=3 cursor_before=0 pending=0
+CURSORWRITE pc=0x40aaeb now=1 pend=0
+ENQUEUE obj=0x6a9480 pos=1 pending=0
+ slots 2 0 0 0 0 0 0 0 0 0 9225 0
+STORE queue[1]=193 (item ebx) pending=1
+SLOT1WRITE pc=0x417e08 now=193 pend=1
+ENQTAIL_SET cursor_new=2 pending=1
+CURSORWRITE pc=0x417e41 now=2 pend=1
+ENQUEUE obj=0x6a9480 pos=2 pending=1
+ slots 2 193 0 0 0 0 0 0 0 0 9225 0
+STORE queue[2]=192 (item ebx) pending=2
+SLOT2WRITE pc=0x417e08 now=192 pend=2
+ENQTAIL_SET cursor_new=3 pending=2
+CURSORWRITE pc=0x417e41 now=3 pend=2
+CURSORWRITE pc=0x4194bd now=0 pend=2
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3001567]
+0xed15432c in __kernel_vsyscall ()
+[Inferior 1 (process 3001555) detached]

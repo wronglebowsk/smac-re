@@ -605,3 +605,44 @@ identified, so always `x/i $pc-1`-style check the instruction before a watchpoin
 
 **Trap found:** `[PANE_BASE_IDX] == 0` is also true when the pane is CLOSED, so a driver that opens
 the pane only `if pane != idx` silently never opens it. Always press the open key and click the row.
+
+## M70 (session 110): WHO WRITES THE CURSOR — the row click sets it, the enqueue parks it at rows+1, and a `0x4d00` handler zeroes it
+
+**The rule (three writers, all live).** The cursor field is `[0x6a9480 + 0x3ff5c] = 0x6e93dc`;
+exactly 18 instructions in `.text` write it (`scripts/m70_scan_writers.py`). In one real BUILD-pane
+flow three fired, in this order:
+
+1. `0x40aae5` (queue-LIST row handler `FUN_0040a990`, read at `0x40aa22`):
+   `cursor = min(clicked_row, [[0x8f0d60]+0x4c] + 1)` — **a click on a queue row sets the cursor**.
+2. `0x417e3b` (enqueue tail): `eax = [[0x8f0d60]+0x4c]; inc eax; mov [ecx+0x3ff5c],eax` — after an
+   INSERT the cursor parks at rows+1, so consecutive INSERTs append unless something moves it.
+3. `0x4194b3`: after `push 0x4d00; call 0x584010` (with `eax = 0xffffffd9 - edi`, the -39 sentinel)
+   it **zeroes the cursor unconditionally** — that is why a post-run read-back reads 0, not rows+1.
+
+**Read `[[0x8f0d60]+0x4c]`, not the base's pending, when you model the cursor.** `DAT_008f0d60` is
+a POINTER to the base record (`0x40ad6c`/`0x40b00a`/`0x417d44` load it, then index `+0x4c` and
+`+0x50+4k`); Ghidra flattens the deref, so a pseudocode `[DAT_008f0d60+0x4c]` is really
+`[[0x8f0d60]]+0x4c`. The widget's own row count is what the clamp and the advance use.
+
+**A list row IS a queue slot**: the same handler indexes `[[0x8f0d60] + 4*row + 0x54]`
+(`0x40b041-0x40b04c`). There is no separate row array, and with 4 hardware watchpoints on slots
+1..3 armed across the whole flow (2 INSERTs, OK, Escape) the region was written only by the two
+enqueue stores (`pc=0x417e08`) — **a repaint does not rewrite the queue**.
+
+**The enqueue's own arithmetic, now pinned to the M69 log** (`test_m70_cursor.py`, 23/23): the
+shift runs from `min(9, max(pending+1, cursor))` down to `cursor+1` (so the slot AT `pending+1`
+moves and slots above keep stale values); the store uses the ORIGINAL cursor (the clamp at
+`0x417ddb` feeds only the `cmp` at `0x417e17`/`0x417df3`); `pending++` only when `pending < 9`.
+
+**Recipe** (`scripts/m70_cursor_watch.py --arm | --stop | --acceptance`): one hw watchpoint on the
+cursor field + three on slots 1..3 (4 is the ceiling), 8 breakpoints, log to
+`evidence/m70_cursor.gdblog`. **A watchpoint reports the pc of the instruction AFTER the store**
+(already noted in the M69 section — this run logged `0x40aaeb`/`0x417e41`/`0x4194bd` for stores at
+`0x40aae5`/`0x417e3b`/`0x4194b3`), so map logged pcs back to the store table before naming a
+writer (`attribute_store`, 16-byte window; an unmapped pc FAILs the run rather than being renamed).
+
+**Unresolved, keep it in view:** the negative-id table stride disagrees between sites
+(`(-v)*48` at `0x40adae`/`0x4164f5` vs `(-v)*16` at `0x418914`/`0x41894d`), and nothing in `.text`
+reads the plan byte `+42` — the only 52-byte type-address computations (`0x40ad92`, `0x4164dd`,
+`0x4188f9`, `0x418932`) just hand the record to the row's string builder. M67's plan-ordered list
+is a measured property of the WIDGET with no code behind it yet.

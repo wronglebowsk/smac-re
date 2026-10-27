@@ -1,0 +1,93 @@
+[
+{
+"tag": "armed",
+"cursor": 0,
+"pend": 0
+},
+{
+"tag": "rowclick",
+"clicked": 3,
+"cursor_before": 0,
+"pend": 0
+},
+{
+"tag": "cursor_write",
+"pc": 4238053,
+"raw_pc": 4238059,
+"mapped": true,
+"value": 1,
+"pend": 0
+},
+{
+"tag": "enqueue_read",
+"obj": 6984832,
+"pos": 1,
+"pend": 0
+},
+{
+"tag": "store",
+"slot": 1,
+"item": 193,
+"pend": 1
+},
+{
+"tag": "slot_write",
+"slot": 1,
+"pc": 4292104,
+"value": 193,
+"pend": 1
+},
+{
+"tag": "enqueue_tail_set",
+"value": 2,
+"pend": 1
+},
+{
+"tag": "cursor_write",
+"pc": 4292155,
+"raw_pc": 4292161,
+"mapped": true,
+"value": 2,
+"pend": 1
+},
+{
+"tag": "enqueue_read",
+"obj": 6984832,
+"pos": 2,
+"pend": 1
+},
+{
+"tag": "store",
+"slot": 2,
+"item": 192,
+"pend": 2
+},
+{
+"tag": "slot_write",
+"slot": 2,
+"pc": 4292104,
+"value": 192,
+"pend": 2
+},
+{
+"tag": "enqueue_tail_set",
+"value": 3,
+"pend": 2
+},
+{
+"tag": "cursor_write",
+"pc": 4292155,
+"raw_pc": 4292161,
+"mapped": true,
+"value": 3,
+"pend": 2
+},
+{
+"tag": "cursor_write",
+"pc": 4297907,
+"raw_pc": 4297917,
+"mapped": true,
+"value": 0,
+"pend": 2
+}
+]

@@ -74,6 +74,29 @@ WRITERS = {
     0x41e239: "handler 0x41e2xx: cursor = 9",
     0x41fa5f: "handler 0x41faxy: cursor = eax",
 }
+# EVERY `mov [reg+0x3ff5c], ...` in .text (scripts/m70_scan_writers.py found 18).  A gdb
+# watchpoint reports the pc of the instruction AFTER the store that dirtied the watch
+# (measured 2026-10-27: the run logged 0x40aaeb / 0x417e41 / 0x4194bd where the stores are
+# 0x40aae5 / 0x417e3b / 0x4194b3), so a logged pc is mapped back to the store that caused
+# it — and only when the gap is small, or an unrelated pc would be dressed up as a writer.
+CURSOR_STORES = (0x40AAE5, 0x40AE56, 0x40B021, 0x40B031, 0x40B081, 0x417D80, 0x417E3B,
+                 0x417E6B, 0x417E7B, 0x417ECA, 0x418723, 0x418734, 0x418785, 0x4194B3,
+                 0x41996B, 0x41E231, 0x41E239, 0x41FA5F)
+STORE_MAP_WINDOW = 16
+
+
+def attribute_store(pc):
+    """pc as gdb reported it (the instruction after the store) -> the storing instruction.
+
+    Returns (store_pc, mapped) where mapped is False when no cursor store lies within
+    STORE_MAP_WINDOW bytes below the logged pc — then the write is NOT ours to name.
+    """
+    cands = [s for s in CURSOR_STORES if s <= pc <= s + STORE_MAP_WINDOW]
+    if not cands:
+        return pc, False
+    return max(cands), True
+
+
 # the enqueue's own reads/stores, used as a control trace
 ENQUEUE_BPS = (0x417dbf, 0x417e04)
 ROW_BPS = (0x40aa22, 0x40aae5, 0x40ae56, 0x40b02c, 0x40b081, 0x417e3b, 0x417e6b, 0x417e7b)
@@ -296,7 +319,9 @@ def parse_lines(text):
         s = line.strip()
         m = re.match(r"CURSORWRITE pc=(0x[0-9a-f]+) now=(-?\d+) pend=(-?\d+)$", s)
         if m:
-            ev.append(dict(tag="cursor_write", pc=int(m.group(1), 16),
+            raw = int(m.group(1), 16)
+            store_pc, mapped = attribute_store(raw)
+            ev.append(dict(tag="cursor_write", pc=store_pc, raw_pc=raw, mapped=mapped,
                            value=int(m.group(2)), pend=int(m.group(3))))
             continue
         m = re.match(r"ENQUEUE obj=(0x[0-9a-f]+) pos=(-?\d+) pending=(-?\d+)$", s)
@@ -342,50 +367,98 @@ def parse_lines(text):
 
 
 def score(ev, cursor_before, cursor_after, pending_after, slots_before, slots_after):
-    """Pure acceptance: name the writers, and check the reads-back against the static model.
+    """Pure acceptance: name the writers of the cursor field and check the read-backs
+    against the static model of the enqueue.
+
+    The cursor is clamped and advanced against the WIDGET's own row count
+    (`[[0x8f0d60]+0x4c]` at 0x40aa22 / 0x417e14), not against the base record's pending
+    that `--stop` reads back, so the model check uses the widget rows the trace itself
+    carries (the `pend=` field of the ENQUEUE / ENQTAIL_SET events).
 
     PASS needs ALL of:
-      1. at least one CURSORWRITE actually observed (the field really is written live);
-      2. EVERY observed cursor write attributed to a pc in WRITERS (an unattributed write
-         means there is a writer we have not read — the claim would be incomplete);
-      3. the run DISCRIMINATES: a cursor write from a pc that is NOT the enqueue itself
-         (0x417xxx).  The enqueue always moves its own cursor, so an enqueue-only run proves
-         nothing about who the USER's cursor-setter is;
-      4. the enqueue tail's own prediction holds: the last post-insert cursor equals
-         pending_after + 1 (disasm 0x417e3b), i.e. the read-back agrees with the bytes;
+      1. at least one cursor write observed, and every one of them attributable to a known
+         `mov [reg+0x3ff5c]` in .text after mapping gdb's after-store pc back
+         (attribute_store); an unmapped pc means a writer we have not read;
+      2. the run DISCRIMINATES: a cursor write from a pc that is NOT the enqueue itself
+         (0x417xxx).  The enqueue always moves its own cursor, so an enqueue-only run
+         proves nothing about who sets the cursor for the user;
+      3. every write's VALUE equals what the static model predicts from the event it
+         follows (row click -> min(clicked, widget_rows + 1); enqueue tail -> the value it
+         printed; explicit zero stores -> 0);
+      4. the enqueue tail's prediction holds at the moment it fires: the last tail value
+         equals the widget rows it reported + 1 (disasm 0x417e2d-0x417e3b);
       5. the queue region changed (an INSERT really happened) and pending grew.
     """
     reasons = []
-    writes = [e for e in ev if e["tag"] == "cursor_write"]
     ok = True
+    writes = [e for e in ev if e["tag"] == "cursor_write"]
     if not writes:
         ok = False
         reasons.append("no CURSORWRITE event: the cursor field was never written while armed, "
                        "so no writer can be named")
-    unattr = sorted({e["pc"] for e in writes if e["pc"] not in WRITERS})
-    if unattr:
+    unmapped = sorted({e["raw_pc"] for e in writes if not e.get("mapped", True)})
+    if unmapped:
         ok = False
-        reasons.append("cursor writes from pcs not yet read: "
-                       + ", ".join("0x%x" % p for p in unattr))
-    non_enqueue = sorted({e["pc"] for e in writes if not (0x417000 <= e["pc"] < 0x418000)})
+        reasons.append("cursor writes from pcs with no known cursor store within %d bytes: %s"
+                       % (STORE_MAP_WINDOW, ", ".join("0x%x" % p for p in unmapped)))
+    non_enqueue = sorted({e["pc"] for e in writes
+                          if not (0x417000 <= e["pc"] < 0x418000)})
     if writes and not non_enqueue:
         ok = False
         reasons.append("every cursor write came from the enqueue (0x417xxx) itself: the enqueue "
                        "always moves its own cursor, so this shape cannot name a cursor-setter "
                        "for the user — click a queue LIST row (or move the selection) in the run")
+
+    # 3. value-by-value against the model.  A cursor write is judged against the last
+    # NON-cursor-write event before it (the event that caused the store).
+    rows = None
+    bad_values = []
+    prev = None
+    for e in ev:
+        if e["tag"] in ("enqueue_read", "enqueue_tail_set", "rowclick", "store") \
+                and "pend" in e:
+            rows = e["pend"]
+        if e["tag"] == "enqueue_tail_set":
+            if e["value"] != e["pend"] + 1:
+                bad_values.append("tail printed %d, model says widget_rows+1 = %d"
+                                  % (e["value"], e["pend"] + 1))
+        if e["tag"] == "cursor_write":
+            pred = None
+            if e["pc"] == 0x417E3B and prev is not None and prev["tag"] == "enqueue_tail_set":
+                pred = prev["value"]
+            elif e["pc"] in (0x40AAE5, 0x40AE56) and prev is not None and prev["tag"] == "rowclick":
+                pred = min(prev["clicked"], (rows if rows is not None else 0) + 1)
+            elif e["pc"] in (0x4194B3, 0x41996B):
+                pred = 0
+            if pred is not None and e["value"] != pred:
+                bad_values.append("write at 0x%x logged %d, model says %d"
+                                  % (e["pc"], e["value"], pred))
+        else:
+            prev = e
+    if bad_values:
+        ok = False
+        reasons.extend("model/value mismatch: " + b for b in bad_values)
+
     tail = [e for e in ev if e["tag"] == "enqueue_tail_set"]
     if not tail:
         ok = False
         reasons.append("the enqueue tail (0x417e3b) never fired — no INSERT ran while armed")
     else:
-        pred = pending_after + 1
-        if tail[-1]["value"] != pred:
+        last = tail[-1]
+        pred = last["pend"] + 1
+        if last["value"] != pred:
             ok = False
-            reasons.append("static model says cursor = pending+1 = %d after the last insert; "
-                           "the breakpoint saw %d" % (pred, tail[-1]["value"]))
-        if cursor_after != pred:
+            reasons.append("the last enqueue tail printed %d, model says widget_rows+1 = %d"
+                           % (last["value"], pred))
+        last_i = max(i for i, e in enumerate(ev) if e is last)
+        trailing = [e for i, e in enumerate(ev)
+                    if e["tag"] == "cursor_write" and i > last_i]
+        zeroers = {0x4194B3, 0x41996B}
+        if cursor_after != pred and not any(e["pc"] in zeroers for e in trailing):
             ok = False
-            reasons.append("cursor read back %d, model says pending+1 = %d" % (cursor_after, pred))
+            reasons.append("cursor read back %d, model says %d, and no explicit zero store "
+                           "(0x4194b3/0x41996b) fired after the last tail to explain it"
+                           % (cursor_after, pred))
     if slots_before == slots_after:
         ok = False
         reasons.append("the queue region is unchanged — no INSERT happened, so the run proves "
@@ -395,7 +468,9 @@ def score(ev, cursor_before, cursor_after, pending_after, slots_before, slots_af
         reasons.append("pending did not grow")
     named = sorted({e["pc"] for e in writes})
     return ok, dict(cursor_writes=len(writes), writer_pcs=["0x%x" % p for p in named],
+                    raw_pcs=["0x%x" % p for p in sorted({e["raw_pc"] for e in writes})],
                     non_enqueue_writers=["0x%x" % p for p in non_enqueue],
+                    widget_rows=rows,
                     rowclicks=sum(1 for e in ev if e["tag"] == "rowclick"),
                     slot_writes=sum(1 for e in ev if e["tag"] == "slot_write"),
                     cursor_before=cursor_before, cursor_after=cursor_after,
