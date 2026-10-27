@@ -29,7 +29,9 @@ export EMBEDDING_URL=http://<host>:8000/v1/embeddings       # scripts/index.py
 
 The same values can live in `~/.config/smac-re/env` (outside the repo, so it can never be
 committed) — `scripts/index.py` and `scripts/summarize.py` read it, and the environment wins.
-Unset is not guessed: the script names the missing variable and stops. `scripts/gate.py` fails
+Unset is not guessed: the script names the missing variable and stops. The rule was applied
+retroactively to history on 2026-10-27 (`git filter-repo --replace-text`, Session 112): keep new
+files inside the scheme instead of re-running that. `scripts/gate.py` fails
 the build on a private IPv4 literal or an `ssh <user>@<host>` line, so this stays true.
 
 ## Model
