@@ -38,6 +38,7 @@ ARROW_XY, ROW1_XY = (523, 433), (185, 437)
 INSERT_XY, OK_XY = (497, 343), (285, 343)
 COUNT_A, COUNT_B = 0x94de84, 0x94dc84   # the two per-faction byte arrays in conflict (NAMED)
 COUNT_STRIDE = 0x20bc                    # 8380 bytes per faction
+TYPE_REC, TYPE_SZ, COST_OFF = 0x98ad88, 52, 41   # the type record cost byte (m58_price.py)
 SLOTS = 8
 
 # ---- the layouts, stated before observing.  s = baseline slots, p0 = pending before,
@@ -56,11 +57,52 @@ def _overwrote_at(dst, src, i):
     return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i + 1:]
 
 
-def rule_insert_at_new_pending(s, pa, a, pb, b):
+def _shift_index(dst, src):
+    """the single index at which dst was inserted into src, or None if that is not what
+    happened or if more than one index would explain it (returns the index and the id that
+    was written there)."""
+    hits = [(i, dst[i]) for i in range(len(src)) if _inserted_at(dst, src, i)]
+    if len(hits) != 1:
+        return None
+    return hits[0]
+
+
+def sorted_insert_index(s, p, new_id, cost):
+    """The queue REGION is slots[1..p] (slot 0 is the head the pop consumes, not a queued
+    entry).  Scan it for the first entry whose cost is STRICTLY below the new item's; the new
+    item goes there, else it goes after the region (p+1).  Equal-cost entries therefore stay
+    ahead of a newly enqueued item of the same cost."""
+    c = cost(new_id)
+    for i in range(1, p + 1):
+        if cost(s[i]) < c:
+            return i
+    return p + 1
+
+
+def rule_sorted_descending_cost(c):
+    """INSERT inserts the item into the queue by DESCENDING cost (type record +41), ties going
+    after the entries already at that cost, shifting the tail right; the head slot +0x50 is
+    never written by INSERT."""
+    s, a, b, cost = c["s"], c["a"], c["b"], c["cost"]
+    ia = _shift_index(a, s)
+    ib = _shift_index(b, a)
+    if not ia or not ib:
+        return None
+    i, x = ia
+    j, y = ib
+    if i != sorted_insert_index(s, c["p0"], x, cost):
+        return None
+    if j != sorted_insert_index(a, c["pa"], y, cost):
+        return None
+    return (x, y)
+
+
+def rule_insert_at_new_pending(c):
     """INSERT writes base+0x50+4*pending_after and shifts the rest right by one; the head
     slot +0x50 is NOT touched (disasm 0x418b32 reads [base+0x50+4*esi] with esi = the new
     pending, 0x418b57 stores to +0x50 only when esi == 0)."""
-    i, j = pa, pb                      # index written = the new pending count
+    s, a, b = c["s"], c["a"], c["b"]
+    i, j = c["pa"], c["pb"]            # index written = the new pending count
     if i < 1 or j != i + 1:
         return None
     if not _inserted_at(a, s, i) or not _inserted_at(b, a, j):
@@ -68,10 +110,11 @@ def rule_insert_at_new_pending(s, pa, a, pb, b):
     return (a[i], b[j])
 
 
-def rule_append_at_pending_before(s, pa, a, pb, b):
+def rule_append_at_pending_before(c):
     """INSERT writes base+0x50+4*pending_before and nothing else moves: the FIRST insert
     overwrites the head slot."""
-    i, j = pa - 1, pb - 1
+    s, a, b = c["s"], c["a"], c["b"]
+    i, j = c["pa"] - 1, c["pb"] - 1
     if i < 0 or j != i + 1:
         return None
     if not _overwrote_at(a, s, i) or not _overwrote_at(b, a, j):
@@ -79,8 +122,9 @@ def rule_append_at_pending_before(s, pa, a, pb, b):
     return (a[i], b[j])
 
 
-def rule_write_head_and_next_slot(s, pa, a, pb, b):
+def rule_write_head_and_next_slot(c):
     """INSERT writes BOTH base+0x50 and base+0x54 with the same id (the M57 doc claim)."""
+    s, a, b = c["s"], c["a"], c["b"]
     if a[0] != a[1] or a[0] == s[0] or a[2:] != s[2:]:
         return None
     if b[0] != b[1] or b[0] == a[0] or b[2:] != a[2:]:
@@ -88,16 +132,18 @@ def rule_write_head_and_next_slot(s, pa, a, pb, b):
     return (a[0], b[0])
 
 
-def rule_write_head_and_shift_right(s, pa, a, pb, b):
+def rule_write_head_and_shift_right(c):
     """INSERT writes head +0x50 and shifts every existing slot right by one."""
+    s, a, b = c["s"], c["a"], c["b"]
     if not _inserted_at(a, s, 0) or not _inserted_at(b, a, 0):
         return None
     return (a[0], b[0])
 
 
-def rule_eight_byte_entries(s, pa, a, pb, b):
+def rule_eight_byte_entries(c):
     """a queue ENTRY is 8 bytes (item id at +0x50, a companion dword at +0x54), so the second
     entry starts at +0x58: INSERT A rewrites the head entry only, INSERT B the SECOND entry."""
+    s, a, b = c["s"], c["a"], c["b"]
     if a[0] == s[0] or a[2:] != s[2:]:
         return None
     if b[0] != a[0] or b[1] != a[1] or b[2] == a[2] or b[4:] != a[4:]:
@@ -106,6 +152,7 @@ def rule_eight_byte_entries(s, pa, a, pb, b):
 
 
 PREDICTIONS = [
+    ("sorted_descending_cost", rule_sorted_descending_cost),
     ("insert_at_new_pending_index", rule_insert_at_new_pending),
     ("append_at_pending_before_index", rule_append_at_pending_before),
     ("write_head_and_next_slot", rule_write_head_and_next_slot),
@@ -198,10 +245,29 @@ def main():
     before = snap("before")
     s = before["queue"]
     p0 = before["pending"]
+
+    cost_cache = {}
+
+    def cost(tid):
+        if tid not in cost_cache:
+            try:
+                cost_cache[tid] = sp.rd(f, TYPE_REC + tid * TYPE_SZ + COST_OFF, 1)[0]
+            except Exception:
+                cost_cache[tid] = -1          # negative/absurd ids have no cost byte
+        return cost_cache[tid]
+
     for nm, tid in (("item_a", a.item_a), ("item_b", a.item_b)):
-        if tid in s or tid == 2:
-            print(f"FAIL: {nm} {tid} is in the stale baseline slots {s} — the layout would be "
-                  f"confounded; pick ids the queue does not already hold")
+        if tid == 0:
+            print(f"FAIL: {nm} is id 0 and unused queue slots read 0 — the written slot "
+                  f"would be indistinguishable from an empty slot")
+            return 1
+        if s.count(tid) >= 2:
+            print(f"FAIL: {nm} {tid} already appears {s.count(tid)}x in the baseline slots {s} "
+                  f"— the written slot could not be identified")
+            return 1
+        if tid == 2 and 2 in s:
+            print(f"FAIL: {nm} is the ubiquitous stale id 2 and the queue already holds one "
+                  f"({s}) — the written slot could not be identified")
             return 1
 
     # the three enabling pokes (NOT queue fields) — the M57 recipe
@@ -240,7 +306,8 @@ def main():
             return 1
     ka, kb = c_open.index(a.item_a), c_open.index(a.item_b)
     rec("plan", item_a=a.item_a, cell_a=ka, item_b=a.item_b, cell_b=kb,
-        layouts=[n for n, _ in PREDICTIONS], pending_before=p0, baseline=s)
+        layouts=[n for n, _ in PREDICTIONS], pending_before=p0, baseline=s,
+        costs={tid: cost(tid) for tid in sorted(set([a.item_a, a.item_b] + s[:p0 + 1]))})
 
     state = {"pending": p0, "written": []}
 
@@ -307,8 +374,10 @@ def main():
         row_delta_after_ok=row_delta)
 
     scored = []
+    ctx = dict(s=s, p0=p0, a=ra["queue"], pa=ra["pending"], b=rb["queue"], pb=rb["pending"],
+               cost=cost)
     for nm, fn in PREDICTIONS:
-        ids = fn(s, ra["pending"], ra["queue"], rb["pending"], rb["queue"])
+        ids = fn(ctx)
         if ids:
             scored.append((nm, ids))
     distinct = {nm for nm, _ in scored}
@@ -319,7 +388,7 @@ def main():
     rec("score", baseline=s, pending_before=p0, after_a=ra["queue"],
         pending_after_a=ra["pending"], after_b=rb["queue"], pending_after_b=rb["pending"],
         after_ok=after["queue"], matched=[nm for nm, _ in scored],
-        written=[ids for _, ids in scored], integrity=integrity)
+        written=[ids for _, ids in scored], integrity=integrity, costs=cost_cache)
 
     print("\nlayout read-backs:")
     print(f"  baseline   pending {p0:<2}  slots {s}")
