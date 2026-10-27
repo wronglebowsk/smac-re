@@ -22,7 +22,10 @@ completion chain, and **the INSERT is not a sort** — it writes `queue[pos]=ite
 `pos = *(int *)(0x6a9480 + 0x3ff5c)`, the QUEUE WIDGET's cursor row, so the plan-byte (`+42`) order
 M67 measured is the WIDGET'S LIST order, not an enqueue comparison; **who writes that cursor** (row
 click `0x40aae5` -> `min(row, [[0x8f0d60]+0x4c]+1)`, enqueue tail `0x417e3b` -> rows+1, the `0x4d00`
-handler `0x4194b3` -> 0; clamp against the WIDGET's row count, not the base's pending), slots
+handler `0x4194b3` -> 0; clamp against the WIDGET's row count, not the base's pending); **the
+completion's POP pops ONE item when the new head validates and left-shifts only `0..pending-1`
+— K shifts are not shift-left-by-K, `queue[pending]` stays stale, and the completion writes the
+cursor field ZERO times**), slots
 1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
 NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
 reading, and the live write-enumeration acceptance in §9),

@@ -136,8 +136,17 @@ def base_row(m, name):
     raise SystemExit(f"base {name!r} not found in the base array")
 
 
-def state(m, tag, name):
+def state(m, tag, name, ids=None):
     b = base_row(m, name)
+    if ids is not None:                      # read the SAME id set before and after,
+        want = set(ids) | set(b["slots"][:max(b["pending"], 0) + 1])
+        counts = {}                          # else a consumed id silently leaves the check
+        for q in sorted(want):
+            if q < 0:
+                continue
+            m.seek(TABLE_DE + ROW_BYTES * b["fac"] + q)
+            counts[q] = m.read(1)[0]
+        b["counts"] = counts
     b["tag"] = tag
     return b
 
@@ -290,8 +299,9 @@ def score(before, after, ev, armed_addr):
     gates.append(("1 shape SINGLE vs DRAIN differ", discrim,
                   f"K=1 -> {cand[1]}  K={pb} -> {cand[pb]}"))
 
-    # 2 window
-    tl_moved = after["round"] > before["round"] or after["year"] > before["year"]
+    # 2 window.  A round boundary is the ROUND counter (year is derived: year = 2100 + round,
+    # M55), so the gate is on the round, not on a year that can only move with it.
+    tl_moved = after["round"] > before["round"]
     gates.append(("2 window >=1 POPIN for the armed base", len(pops) >= 1, f"{len(pops)} POPIN"))
     gates.append(("2 window >=1 POPCNT", K >= 1, f"{K} POPCNT"))
     gates.append(("2 window round boundary crossed", tl_moved,
@@ -452,7 +462,7 @@ def main():
     log.close()
 
     with open(f"/proc/{pid}/mem", "rb", 0) as m:
-        after = state(m, "after", a.base_name)
+        after = state(m, "after", a.base_name, ids=set(before["counts"]))
     text = open(lpath, "r", errors="replace").read()
     ev = parse(text)
     with open(os.path.join(EVID, f"{a.tag}_seq.jsonl"), "w") as fh:
