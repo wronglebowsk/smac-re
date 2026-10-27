@@ -17,6 +17,7 @@ Checks (HARD unless marked WARN):
   6. no conflict markers in changed text files
   7. skill/SKILL.md matches the live agent skill (local only, WARN)
   8. branch name looks like milestone/<id> (WARN)
+  9. no private IPv4 literal or ssh line naming a real host in tracked text files
 """
 
 import argparse
@@ -36,6 +37,22 @@ FORBIDDEN_TREES = ("programs/", "glsmac/", "ghidra_out/", "ghidra_proj/",
 CITE_RE = re.compile(r"(evidence/[A-Za-z0-9_./-]+\.(?:log|txt|gdb|json|png|csv)):(\d+)(?:-(\d+))?")
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 CONFLICT_RE = re.compile(r"^(<{7}|={7}|>{7})( |$)", re.M)
+
+# Endpoints are environment variables (docs/WORKFLOW.md). This is the check that keeps it true:
+# a private LAN address, an ssh line naming a real host, or a password-pusher in tracked text.
+SSH_PW = "ssh" + "pass"      # kept split so this file does not trip its own check
+PRIVATE_IP = re.compile(
+    r"(?<![\d.])"
+    r"(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+    r"|192\.168\.\d{1,3}\.\d{1,3}"
+    r"|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}"
+    r"|169\.254\.\d{1,3}\.\d{1,3})"
+    r"(?![\d.])")
+SSH_HOST = re.compile(r"\bssh(?:pass)?\s+(?:-\S+\s+)*[A-Za-z_][\w.-]*@(?:[A-Za-z0-9-]+\.[A-Za-z]{2,}|\d[\d.]*)")
+# Extracted game text may quote whatever the binary says; our own words and code may not.
+ENDPOINT_EXEMPT_TREES = ("evidence/", "index/", "data/", "scratch/", "programs/")
+ENDPOINT_EXEMPT_NAME = re.compile(r"(^|/)(FUN_[0-9A-Fa-f]+\.pseudocode\.txt|\.func_names\.json|\.rea_toolnames\.json)$")
+TEXT_EXT = {".py", ".md", ".sh", ".yml", ".yaml", ".json", ".jsonl", ".txt", ".cfg", ".ini", ".toml", ".html", ".js"}
 
 results = []  # (level, name, message)
 
@@ -108,6 +125,30 @@ def check_blobs():
         report("FAIL", "no game binaries tracked", ", ".join(bad[:8]))
     else:
         report("PASS", "no game binaries tracked", f"{len(tracked)} files")
+
+
+
+def check_endpoints():
+    """No private IPv4 literal, no ssh line naming a real host, no ssh password pipe."""
+    hits = []
+    for f in git("ls-files").splitlines():
+        if f.endswith(FORBIDDEN_EXT) or any(f.startswith(t) for t in ENDPOINT_EXEMPT_TREES):
+            continue
+        if ENDPOINT_EXEMPT_NAME.search(f) or os.path.splitext(f)[1].lower() not in TEXT_EXT:
+            continue
+        try:
+            with open(f, encoding="utf-8", errors="ignore") as fh:
+                for n, line in enumerate(fh, 1):
+                    if PRIVATE_IP.search(line) or SSH_HOST.search(line) or SSH_PW in line:
+                        hits.append(f"{f}:{n}")
+                        break
+        except OSError:
+            continue
+    if hits:
+        report("FAIL", "no committed endpoints",
+               f"{len(hits)} file(s) carry a host: " + ", ".join(hits[:6]) + " (use env vars / <user>@<host>)")
+    else:
+        report("PASS", "no committed endpoints", "env vars only, <user>@<host> placeholders")
 
 
 def check_sizes():
@@ -283,6 +324,7 @@ def main():
         raise SystemExit(f"base {base} not found")
 
     check_blobs()
+    check_endpoints()
     check_sizes()
     check_budget()
     check_checkpoint(base, args.docs_only)

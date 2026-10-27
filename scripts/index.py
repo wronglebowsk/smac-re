@@ -10,8 +10,8 @@ The index is derived data: `index/chunks.jsonl` (the text + a pointer back),
     python3 scripts/index.py search "why does our base never convert minerals"
     python3 scripts/index.py status             # counts, staleness, endpoint health
 
-Embedding server: http://192.168.1.213:8000/v1/embeddings (override with --endpoint
-or EMBEDDING_URL). One sequential client on purpose — the server 500s on concurrent
+Embedding server: `EMBEDDING_URL` (or `--endpoint`) — the repo ships no default host, see
+`docs/WORKFLOW.md`. One sequential client on purpose — the server 500s on concurrent
 requests ("Infer Request is busy"). Chunks are capped at 1500 chars because the model
 truncates at 512 tokens; anything longer is silently cut.
 """
@@ -34,7 +34,7 @@ CHUNKS = os.path.join(INDEX, "chunks.jsonl")
 VECTORS = os.path.join(INDEX, "vectors.f32")
 META = os.path.join(INDEX, "meta.json")
 SUMMARIES = os.path.join(INDEX, "summaries.jsonl")
-DEFAULT_ENDPOINT = os.environ.get("EMBEDDING_URL", "http://192.168.1.213:8000/v1/embeddings")
+DEFAULT_ENDPOINT = os.environ.get("EMBEDDING_URL", "")   # no default host: set it (docs/WORKFLOW.md)
 MODEL = "embeddinggemma-2"
 DIM = 768
 MAX_CHARS = 1500          # ~380 tokens, comfortably inside the model's 512-token window
@@ -208,6 +208,10 @@ def digest(text):
 
 def embed(texts, endpoint, retries=3):
     """Sequential batches. Returns a list of normalised float tuples."""
+    if not endpoint:
+        raise SystemExit(
+            "no embedding endpoint: this repo ships no default host.\n"
+            "  export EMBEDDING_URL=http://<host>:8000/v1/embeddings   (or pass --endpoint)")
     vectors = []
     for start in range(0, len(texts), BATCH):
         batch = texts[start:start + BATCH]
@@ -223,7 +227,7 @@ def embed(texts, endpoint, retries=3):
                 if attempt == retries - 1:
                     raise SystemExit(
                         f"embedding endpoint unavailable ({exc}).\n"
-                        f"  start it: ssh paul@192.168.1.213 'systemctl --user start embeddinggemma-production'\n"
+                        f"  start it: ssh <user>@<embedding-host> 'systemctl --user start <embedding-service>'\n"
                         f"  or skip the index: the merge still stands, only search is degraded.")
                 time.sleep(2 ** attempt)
         data = sorted(body["data"], key=lambda d: d["index"])

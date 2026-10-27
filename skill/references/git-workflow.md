@@ -68,8 +68,8 @@ assuming it did.
 
 **Semantic search** (`docs/SEARCH.md`): `python3 scripts/index.py search "<question>"`
 returns `file:line` / addresses for notes and named functions; `merge` rebuilds it
-(incremental ~1 s, cold ~35 s) and is fail-soft when the embedding endpoint on
-192.168.1.213:8000 is down. A hit is a lead, never evidence.
+(incremental ~1 s, cold ~35 s) and is fail-soft when the embedding endpoint
+(`$EMBEDDING_URL`) is down. A hit is a lead, never evidence.
 Only **2,786 of 10,284** functions are indexed — those carrying a `NAMED.md` row, string refs,
 data refs or ≥6 callees. Boilerplate bodies (`FUN_x calls FUN_x`) embed to near-identical vectors
 and are excluded; `--all` adds them back and makes results worse. **Naming a function in
