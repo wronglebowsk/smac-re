@@ -525,7 +525,13 @@ def main():
             if any(p["predict_arrive"] for p in preds):
                 want = {(p["x"], p["y"], p["unit_type"], p["fac"])
                         for p in preds if p["predict_arrive"]}
-                missing = want - {keyf(u) for u in after["units"]}
+                # COUNTS, not key presence: a garrison of the same (x,y,type,owner)
+                # already sits on the base tile, so "the key is in the snapshot" says
+                # nothing.  An arrival is one more record of that key than the window
+                # started with — the same net-diff rule F1 uses.
+                cnt_b, cnt_a = Counter(keyf(u) for u in before["units"]), Counter(keyf(u) for u in after["units"])
+                need = {k: cnt_b[k] + 1 for k in want}
+                missing = {k for k in want if cnt_a[k] < need[k]}
                 if missing:
                     t_r = time.time(); y_a = after["globals"]["year"]
                     rr_units = None
@@ -534,15 +540,16 @@ def main():
                         if rr["globals"]["year"] != y_a:
                             break          # left the round; no longer this window's read
                         rr_units = rr["units"]
-                        if missing <= {keyf(u) for u in rr_units}:
+                        cnt_r = Counter(keyf(u) for u in rr_units)
+                        if all(cnt_r[k] >= need[k] for k in missing):
                             break
                         time.sleep(a.poll)
-                    seen = {keyf(u) for u in (rr_units or [])}
+                    cnt_r = Counter(keyf(u) for u in (rr_units or []))
                     reread = dict(year=y_a, same_round=rr_units is not None,
                                   t_ms=round((time.time() - t_r) * 1000, 1),
                                   units_total=len(rr_units or []),
-                                  present=sorted(missing & seen),
-                                  still_missing=sorted(missing - seen))
+                                  present=sorted(k for k in missing if cnt_r[k] >= need[k]),
+                                  still_missing=sorted(k for k in missing if cnt_r[k] < need[k]))
                     log(dict(event="arrival_reread", r=rnum, **reread))
             log(dict(event="round_after", r=rnum, snap=after, prod=bases_after,
                      cur_base=cur_after))
