@@ -18,7 +18,8 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 `code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
 `solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
 `production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate,
-completion chain, the INSERT cost-ordered insert into slots 1..`pending` (never the head slot), the
+completion chain, the INSERT PLAN-ordered insert (`+42`, NOT cost `+41`) into slots 1..`pending`
+(never the head slot), the
 produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
 reading, and the live write-enumeration acceptance in §9),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
@@ -203,10 +204,19 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
 - **Pick the box state that makes the rival hypotheses DISAGREE before you run — a PASS on a state
   where they predict the same result proves nothing.** Write every rival rule down first, then choose
   the state that separates them (an empty queue region makes "writes slot `4*pending`" and "inserts by
-  cost" predict identical slots; a region holding unequal costs does not), and make the scorer print
+  a sort key" predict identical slots; a region holding unequal key values does not; two sort keys that
+  happen to rank the same ids identically — cost `+41` vs plan `+42` — need an item whose two orders
+  DISAGREE), and make the scorer print
   FAIL when more than one rule fits rather than picking one. This is the case-list discipline applied
   to the STATE: a green run on an undiscriminating state is refuted by the next run, and the refutation
   looks like a contradiction in your own ledger.
+- **Read the structure PLUS ONE SLOT PAST ITS END, and treat the read model as fallible.** A write
+  location is only interpretable if you can see where the array stops: SMAC's queue is 10 dwords
+  (`base+0x50..+0x74`) and the dword after it is a different field that never moves, so an 8-slot
+  read window hid the boundary and a correct insert scored as "no rule explains this" twice. When
+  measured bytes fit NO model you wrote, suspect the MODEL (shift bounded by the window? by the
+  region? by the array's capacity?), not the game. A read model is not a hypothesis about the game:
+  fix it, say which shapes each version predicted, and re-accept on a shape you have not used yet.
 - **Make the value you are locating distinguishable from what the structure already holds.** A
   write-location question (which slot did the game write?) is unanswerable when the written value
   equals a value already sitting in the array — enqueue or poke an id the structure does not hold, and
