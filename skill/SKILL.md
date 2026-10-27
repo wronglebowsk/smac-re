@@ -21,8 +21,9 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
 reading, and the live write-enumeration acceptance in §9),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
-`git-workflow.md`, `wine-runnability.md`, `data-formats.md`, `ghidra-batch-export.md`,
-`terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
+`screen-read.md` (why ONE OCR pass is not a screen read: the HUD's two rows, their measured read
+rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-formats.md`,
+`ghidra-batch-export.md`, `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
 need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
@@ -483,7 +484,12 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   + byte-identical screenshots.
 - **A turn that never advances can also be a CLASSIFIER miss, with no modal visible.** OCR here is
   unreliable in both directions: a clean HUD reads `unknown` when the TURN COMPLETE row fails to
-  render legibly — and with the production line drawn in the message box even the chrome
+  render legibly — measured 2026-10-26: 8 freezes of ONE unchanged HUD put `complete` in the button
+  row 3 of 8 times while the HUD's bottom status bar (`Mission Year` + the faction score row +
+  `Energy:`, y 548-592) read 8 of 8, and the bar fragments differently (`sisson tear zie`,
+  `esston 2388`) — which is why `accept_ready.py` re-freezes up to 4 times and believes the BAR
+  twice rather than trusting one pass (`smac_play.hud_status_bar`, `accept_ready.verdict`,
+  `references/screen-read.md`, `scripts/test_hud_bar.py`) — and with the production line drawn in the message box even the chrome
   (MENU/COMMLINK) goes illegible, so the clean-HUD oracle is MEMORY, not the chrome read:
   `cur_player == player`, `turn_flags & 2` clear, and no bar drawn at y 145-200. Peek one frame
   before running any Escape-on-`unknown` clearing loop — at a garbled-but-clean HUD it raises the
