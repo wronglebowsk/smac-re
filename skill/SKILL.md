@@ -18,10 +18,13 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 `code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
 `solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
 `production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate,
-completion chain, the INSERT's landing rule — PLAN-ordered by `+42` (NOT cost `+41`) in the states where
-it sorts, straight APPENDS in the state where it does not, so the file leads with that conflict — into
-slots 1..`pending` (never the head slot), the engine refusing a duplicate id, the
-produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
+completion chain, and **the INSERT is not a sort** — it writes `queue[pos]=item` with
+`pos = *(int *)(0x6a9480 + 0x3ff5c)`, the QUEUE WIDGET's cursor row, so the plan-byte (`+42`) order
+M67 measured is the WIDGET'S LIST order, not an enqueue comparison; **who writes that cursor** (row
+click `0x40aae5` -> `min(row, [[0x8f0d60]+0x4c]+1)`, enqueue tail `0x417e3b` -> rows+1, the `0x4d00`
+handler `0x4194b3` -> 0; clamp against the WIDGET's row count, not the base's pending), slots
+1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
+NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
 reading, and the live write-enumeration acceptance in §9),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `screen-read.md` (why ONE OCR pass is not a screen read: the HUD's two rows, their measured read
@@ -40,7 +43,11 @@ python3 cvr_decode.py --render programs/Drop.cvr          # -> Drop.render.png i
 ```
 
 ## Git workflow — `references/git-workflow.md`
-Never commit to `main`. Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
+Never commit to `main`. `milestone.py start <ID>` branches from **`main`**, so a milestone you must
+build on that was never merged (an acceptance FAIL left it on its branch) has NONE of its scripts in
+the tree — branch from it instead (`git checkout -B milestone/<ID> milestone/<prev>`) and say so in the
+session entry, rather than discovering the missing instrument halfway through the run.
+Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
 (must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
 **A GREEN gate is not permission to merge.** The gate audits docs, evidence and the harness; it says
 nothing about whether the milestone's acceptance passed. If the acceptance printed FAIL, keep the
@@ -201,6 +208,12 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   on** — pre-fill the leg arrays with the `-1` terminators. A zero-filled fixture decodes as extra
   real legs `(0,0)`, which silently inverts legs-changed comparisons and makes a correct rule look
   broken (or a broken rule look correct).
+- **`f.seek(off) or f.read(1)[0]` returns the OFFSET, not the byte.** `seek()` returns the new
+  position, so `or` short-circuits for every non-zero offset and a `/proc/<pid>/mem` reader written
+  that way silently hands back the address. It cost a run its discriminating check: the "plan byte"
+  printed as `10005938` (an address) and the shape gate compared addresses while the milestone's real
+  assertion still passed. Read in two statements, and log the value next to the offset it came from so
+  a reader bug cannot impersonate a measurement.
 - **Grep every consumer call site before changing a helper's sample/return shape** — probe scripts
   and hand-rolled fixtures keep the old shape, and tuple-index bugs surface only in the shard you
   did not re-run (a `(raw, ms, byte)` watcher whose readers still index `s[1]` silently never
@@ -249,12 +262,16 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   pre-open read and the open chooser), so a cell→item map taken before the open is stale; after the
   click read the widget's own selection field, then the array entry at that index, and credit the
   stored value only against the read taken at click time. **Cells past the first row can silently
-  not take**: uniform cell pitches do not guarantee the click lands on the row the pitch assumes —
-  cell 4 and cell 6 clicks left the selection field on the PREVIOUS value and the commit button did
-  nothing, and the one such click that did register made the structure store a negative code (-3)
-  instead of the item id. Treat a store of a value the widget never offered as a BAD CLICK, not as a
-  game rule, until a breakpoint on the store says otherwise, and re-assert `selection == intended
-  cell` AND `entry_at_cell == intended item` before every commit click.
+  not take**: a click can leave the selection field on the PREVIOUS value and the commit button then
+  does nothing, so re-assert `selection == intended cell` AND `entry_at_cell == intended item` before
+  every commit click. Look for the cause in the WIDGET STATE before blaming the pixel pitch — the same
+  cell 4 / cell 6 coordinates that failed three times registered first try once the pane open was
+  FORCED: a stale-open check (`if pane_base_idx != idx: open`) passes while the pane is CLOSED whenever
+  the index happens to equal 0, so always press the open key, click the row, and confirm the chooser
+  populated (candidate count > 0). A NEGATIVE code stored instead of the item id is the TYPE's, not the
+  click's: one click whose selection verified stored -6 for an all-zero record and another -3, both
+  with `selection == cell` — read a negative as "this id has no real record" and keep such ids out of
+  any shape.
 - **Before a diff counts as evidence that one of two similar arrays moved, check the addresses are
   disjoint.** Two byte arrays a few hundred bytes apart indexed with the same
   `base + stride*owner + id` formula OVERLAP — at a 512 B separation, `low[512+id]` IS `high[id]` — so
@@ -568,7 +585,13 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   base address. Do **not** single-step for the after value — `si` inside a breakpoint commands list makes
   `gdb -batch` stop after the step and DETACH, ending the watch after one hit; for a plain
   `mov [reg+disp],src` the store's own source operand IS the value the field takes, and the sleeping
-  `/proc/pid/mem` sampler is what proves it. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
+  `/proc/pid/mem` sampler is what proves it. A hardware watch reports `$pc` PAST the writing
+  instruction — the store is the instruction BEFORE the reported address (a hit at `0x417e08` named the
+  store at `0x417e04`), so disassemble BACKWARDS from a watch hit before hunting a store site. And when
+  the field that governs the behaviour is a UI cursor/selection, POKE it and prove the write lands at
+  the poked value: `queue[2]` for a cursor poked to 2 while the sort rule predicted slot 1 turned a
+  confounded click observation into a controlled experiment (and refuse the shape when the poked value
+  and the rival prediction agree). Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the store's own base register, accept by replaying the stores against the sampler) is

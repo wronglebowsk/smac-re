@@ -97,11 +97,11 @@ check("gate: an enqueue-only run FAILS (cannot name a user cursor-setter)",
 ok3, s3, r3 = W.score(ev_of("CURSORWRITE pc=0x401234 now=2 pend=1\n"), 4, 2, 2,
                       slots_before, slots_after)
 check("gate: an unattributed writer pc FAILS the run",
-      (not ok3) and any("not yet read" in r for r in r3), "; ".join(r3))
+      (not ok3) and any("no known cursor store" in r for r in r3), "; ".join(r3))
 
 ok4, s4, r4 = W.score(ev_of(M70_SHAPED), 4, 5, 2, slots_before, slots_after)
 check("gate: a cursor read-back that is not pending+1 FAILS",
-      (not ok4) and any("pending+1" in r for r in r4), "; ".join(r4))
+      (not ok4) and any("no explicit zero store" in r for r in r4), "; ".join(r4))
 
 ok5, s5, r5 = W.score(ev_of(M70_SHAPED), 4, 3, 2, slots_before, slots_before)
 check("gate: an unchanged queue region FAILS (no INSERT happened)",
@@ -109,6 +109,51 @@ check("gate: an unchanged queue region FAILS (no INSERT happened)",
 
 ok6, s6, r6 = W.score(ev_of(""), 1, 2, 0, slots_before, slots_after)
 check("gate: no events at all FAILS", not ok6, "; ".join(r6))
+
+# ---------------------------------------------------------------- pc attribution
+# gdb reports the pc of the instruction AFTER the store that dirtied a watchpoint
+# (measured 2026-10-27 in evidence/m70_cursor.gdblog).  The logged pcs must map back to
+# the real `mov [reg+0x3ff5c]` instructions, and a far-away pc must NOT be dressed up.
+check("attribution: the three logged pcs map to the stores that wrote the cursor",
+      W.attribute_store(0x40AAEB) == (0x40AAE5, True)
+      and W.attribute_store(0x417E41) == (0x417E3B, True)
+      and W.attribute_store(0x4194BD) == (0x4194B3, True))
+check("attribution: a pc with no cursor store within the window stays unmapped",
+      W.attribute_store(0x401234)[1] is False and W.attribute_store(0x40AAE6)[1] is True)
+
+# ---------------------------------------------------------------- the REAL run
+# evidence/m70_cursor.gdblog (2026-10-27), the one real invocation: arm at cursor 0 /
+# pending 0, click the queue-list row (clicked 3), INSERT 193, INSERT 192, OK.
+REAL_LOG = """ARMED base=0x95da10 cursor_abs=0x6e93dc cursor=0 pending=0
+ROWCLICK clicked=3 cursor_before=0 pending=0
+CURSORWRITE pc=0x40aaeb now=1 pend=0
+ENQUEUE obj=0x6a9480 pos=1 pending=0
+ slots 2 0 0 0 0 0 0 0 0 0 9225 0
+STORE queue[1]=193 (item ebx) pending=1
+SLOT1WRITE pc=0x417e08 now=193 pend=1
+ENQTAIL_SET cursor_new=2 pending=1
+CURSORWRITE pc=0x417e41 now=2 pend=1
+ENQUEUE obj=0x6a9480 pos=2 pending=1
+ slots 2 193 0 0 0 0 0 0 0 0 9225 0
+STORE queue[2]=192 (item ebx) pending=2
+SLOT2WRITE pc=0x417e08 now=192 pend=2
+ENQTAIL_SET cursor_new=3 pending=2
+CURSORWRITE pc=0x417e41 now=3 pend=2
+CURSORWRITE pc=0x4194bd now=0 pend=2
+"""
+_real = W.parse_lines(REAL_LOG)
+_ok, _summ, _reasons = W.score(_real, 0, 0, 2,
+                                [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9225, 0],
+                                [2, 193, 192, 0, 0, 0, 0, 0, 0, 0, 9225, 0])
+check("real run: the recorded log PASSes with the three writers named",
+      _ok and _summ["non_enqueue_writers"] == ["0x40aae5", "0x4194b3"],
+      "; ".join(_reasons) + " " + str(_summ["writer_pcs"]))
+check("real run: every logged value equals the model's prediction "
+      "(row click -> min(3, rows+1) = 1; tails -> 2 then 3; the 0x4194b3 handler -> 0)",
+      [e["value"] for e in _real if e["tag"] == "cursor_write"] == [1, 2, 3, 0]
+      and _summ["widget_rows"] == 2, str(_summ))
+check("real run: only the two enqueue stores wrote the queue region — no paint rewrite",
+      [e["pc"] for e in _real if e["tag"] == "slot_write"] == [0x417E08, 0x417E08])
 
 # ---------------------------------------------------------------- the cursor model
 MODEL = []
