@@ -24,9 +24,10 @@ import urllib.error
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import endpoints  # noqa: E402
 from index import ROOT, SUMMARIES, body_hash, iter_functions  # noqa: E402
 
-LLM = os.environ.get("SUMMARY_URL", "")   # no default host: set it (docs/WORKFLOW.md)
+LLM = endpoints.get("SUMMARY_URL")   # env, or ~/.config/smac-re/env (docs/WORKFLOW.md)
 MODEL = os.environ.get("SUMMARY_MODEL", "qwen125b")
 MAX_BODY = 8000
 PROMPT = ("Label this decompiled C function for a code-search index. Reply with ONE plain-English "
@@ -63,7 +64,7 @@ def label(body, retries=1):
     if not LLM:
         raise SystemExit(
             "no summary endpoint: this repo ships no default host.\n"
-            "  export SUMMARY_URL=http://<host>:8080/v1/chat/completions")
+            "  export SUMMARY_URL=http://<host>:8080/v1/chat/completions   (or ~/.config/smac-re/env)")
     payload = {"model": MODEL,
                "messages": [{"role": "user", "content": PROMPT.format(body=body[:MAX_BODY])}],
                "max_tokens": 120, "temperature": 0, "top_p": 1,

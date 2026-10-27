@@ -27,6 +27,8 @@ export SUMMARY_URL=http://<host>:8080/v1/chat/completions   # scripts/summarize.
 export EMBEDDING_URL=http://<host>:8000/v1/embeddings       # scripts/index.py
 ```
 
+The same values can live in `~/.config/smac-re/env` (outside the repo, so it can never be
+committed) — `scripts/index.py` and `scripts/summarize.py` read it, and the environment wins.
 Unset is not guessed: the script names the missing variable and stops. `scripts/gate.py` fails
 the build on a private IPv4 literal or an `ssh <user>@<host>` line, so this stays true.
 

@@ -28,13 +28,15 @@ import time
 import urllib.error
 import urllib.request
 
+import endpoints  # noqa: E402  (sits beside this file; no host is committed)
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INDEX = os.path.join(ROOT, "index")
 CHUNKS = os.path.join(INDEX, "chunks.jsonl")
 VECTORS = os.path.join(INDEX, "vectors.f32")
 META = os.path.join(INDEX, "meta.json")
 SUMMARIES = os.path.join(INDEX, "summaries.jsonl")
-DEFAULT_ENDPOINT = os.environ.get("EMBEDDING_URL", "")   # no default host: set it (docs/WORKFLOW.md)
+DEFAULT_ENDPOINT = endpoints.get("EMBEDDING_URL")   # env, or ~/.config/smac-re/env (docs/WORKFLOW.md)
 MODEL = "embeddinggemma-2"
 DIM = 768
 MAX_CHARS = 1500          # ~380 tokens, comfortably inside the model's 512-token window
@@ -211,7 +213,8 @@ def embed(texts, endpoint, retries=3):
     if not endpoint:
         raise SystemExit(
             "no embedding endpoint: this repo ships no default host.\n"
-            "  export EMBEDDING_URL=http://<host>:8000/v1/embeddings   (or pass --endpoint)")
+            "  export EMBEDDING_URL=http://<host>:8000/v1/embeddings   (or pass --endpoint,\n"
+            "  or put EMBEDDING_URL=... in ~/.config/smac-re/env)")
     vectors = []
     for start in range(0, len(texts), BATCH):
         batch = texts[start:start + BATCH]
