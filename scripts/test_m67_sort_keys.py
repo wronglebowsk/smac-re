@@ -60,6 +60,18 @@ CASES = [
     # no key/direction/tie combination predicts that pair, so the run must FAIL, not guess.
     ("no_rule_explains_it", 2, [2, 194, 193] + Z[3:], [2, 195, 194, 193] + Z[4:], 3,
      [2, 195, 194, 193, 192] + Z[3:], 4, []),
+    # THE MEASURED UNIVERSITY READ-BACKS (evidence/m67_sort_key.jsonl, 2026-10-26 21:55):
+    # pending 6 -> 7 -> 8, INSERT 193 landed at region slot 1 AHEAD of two cost-3 entries,
+    # INSERT 192 landed at the end.  The window is 12 wide and slot 10 holds 9225 — a field
+    # just past the queue array that did NOT move while slots 1..8 shifted, which is what
+    # proves the region-bounded shift.  Exactly one rule explains both writes: the plan byte
+    # descending, ties after.  (Under the unbounded shift these same arrays explain NOTHING,
+    # which is how the first run of this instrument FAILED.)
+    ("measured_university_insert193_then192", 6,
+     [2, 194, 194, 193, 195, 192, 1, 0, 0, 0, 9225, 0],
+     [2, 193, 194, 194, 193, 195, 192, 1, 0, 0, 9225, 0], 7,
+     [2, 193, 194, 194, 193, 195, 192, 1, 192, 0, 9225, 0], 8,
+     ["plan_desc_after"]),
 ]
 
 # The acceptance shape, pinned from the box's University Base queue at pending 6 (read before
@@ -80,6 +92,15 @@ SHAPE_CASES = [
      {"cost_desc_after": 1, "cost_desc_before": 1, "cost_asc_after": 4,
       "cost_asc_before": 4, "plan_desc_after": 2, "plan_desc_before": 2,
       "plan_asc_after": 1, "plan_asc_before": 1}),
+    # THE ACCEPTANCE SHAPE: Korolev Center's queue (pending 2, region [194 Impact Infantry
+    # cost 3/plan 1, 195 Impact Battery cost 2/plan 0]) with INSERT 193 (cost 2/plan 2).  Cost
+    # order says slot 3, plan-descending says slot 1, ascending-plan says 3 but the tie rules
+    # split them three ways — three distinct slots, so the shape discriminates, and the second
+    # insert (192, cost 2/plan 0) separates the four rules that agree on slot 1.
+    ("korolev_pending2_insert193", 2, [2, 194, 195] + Z[3:], 193,
+     {"cost_desc_after": 3, "cost_desc_before": 2, "cost_asc_after": 1,
+      "cost_asc_before": 1, "plan_desc_after": 1, "plan_desc_before": 1,
+      "plan_asc_after": 3, "plan_asc_before": 3}),
 ]
 
 

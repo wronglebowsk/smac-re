@@ -55,10 +55,21 @@ SLOTS = 8
 # Each rule returns the ids it needs, or None if the read-backs cannot be explained by it.
 
 
-def _inserted_at(dst, src, i):
+def _inserted_at(dst, src, i, p=None):
     """dst is src with a NEW value written at index i and everything from i rightward shifted
-    one slot: dst[:i] == src[:i], dst[i] is new, dst[i+1:] == src[i:-1]."""
-    return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i:-1]
+    one slot: dst[:i] == src[:i], dst[i] is new, dst[i+1:] == src[i:-1].
+
+    With p (pending = the last REGION slot) the shift is bounded to the region: only slots
+    i+1..p+1 move and everything past p+1 stays exactly where it was.  The box does the
+    bounded thing — in evidence/m67_sort_key.jsonl the dword at queue slot 10 (9225, a field
+    that lives just past the queue array) did NOT move while slots 1..8 shifted right by one,
+    so the bounded form is the measured one.  With a window whose tail past the region is all
+    zeros the two forms are indistinguishable, which is why the M66 runs (8-slot window, zero
+    tail) could not tell them apart."""
+    head = dst[:i] == src[:i] and dst[i] != src[i]
+    if p is None:
+        return head and dst[i + 1:] == src[i:-1]
+    return head and dst[i + 1:p + 2] == src[i:p + 1] and dst[p + 2:] == src[p + 2:]
 
 
 def _overwrote_at(dst, src, i):
@@ -66,11 +77,12 @@ def _overwrote_at(dst, src, i):
     return dst[:i] == src[:i] and dst[i] != src[i] and dst[i + 1:] == src[i + 1:]
 
 
-def _shift_index(dst, src):
+def _shift_index(dst, src, p=None):
     """the single index at which dst was inserted into src, or None if that is not what
     happened or if more than one index would explain it (returns the index and the id that
-    was written there)."""
-    hits = [(i, dst[i]) for i in range(len(src)) if _inserted_at(dst, src, i)]
+    was written there).  p bounds the scan to the REGION, slots 1..p+1 (see _inserted_at)."""
+    lo, hi = (0, len(src)) if p is None else (1, min(p + 2, len(src)))
+    hits = [(i, dst[i]) for i in range(lo, hi) if _inserted_at(dst, src, i, p)]
     if len(hits) != 1:
         return None
     return hits[0]
@@ -217,7 +229,7 @@ def make_key_rule(spec):
         def key(tid):
             return c["rec_byte"](tid, off)
         s, a, b = c["s"], c["a"], c["b"]
-        ia, ib = _shift_index(a, s), _shift_index(b, a)
+        ia, ib = _shift_index(a, s, c["p0"]), _shift_index(b, a, c["pa"])
         if not ia or not ib:
             return None
         i, x = ia
