@@ -36,7 +36,7 @@ queued-count half is now independently confirmed from the enqueue side by M66.
    `milestone/m63`) — the pop tracer: `0x4ef5d0` and its shift/pending stores, the pay `0x4efedd`,
    the create `0x4eff4e`, an hw watch on `+0x50`. Poke and read back BEFORE attaching.
 6. `python3 scripts/evidence.py audit [--delete]` / `... budget` — check the budget BEFORE adding
-   evidence (gate FAILs at 30 MB; **26.4 MB at this close**). `audit --delete` removes only UNCITED
+   evidence (gate FAILs at 30 MB; **26.3 MB at this close**). `audit --delete` removes only UNCITED
    files; `find evidence -name '*_3x.png' -delete` after any classifier test.
 7. `python3 scripts/m56_build.py --fixture X` writes its trace to `$TMPDIR`, not `evidence/`;
    `m64_mkfixture.py` rebuilds the run-layer fixtures from committed traces.
@@ -121,7 +121,7 @@ One milestone, then stop. Cheapest first, and none of them is a threshold change
   --section=.text programs/terran.exe > scratch/m574/text.txt`); Ghidra pseudocode is `ghidra_out/
   shard_NNN.c` (`FUN_00417ee0` = the UI dispatch, shard_001.c:8941, size 7459; `FUN_004f6030`
   shard_012.c 24338-29064) — parse with Python, never read whole. `scratch/` is gitignored.
-- **Evidence 26.4 MB of the 30 MB gate FAIL line** (warn band 20). A full `m56_build` run ~0.65 MB,
+- **Evidence 26.3 MB of the 30 MB gate FAIL line** (warn band 20). A full `m56_build` run ~0.65 MB,
   an `m63_pop` or `--stage watch` run ~0.05 MB, an `m66_insert_slot` run ~4 KB.
 
 ## TRAPS
