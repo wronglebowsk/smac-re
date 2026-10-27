@@ -1,123 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-93-94.md` (2 sessions). Read it only when a question reaches back before session ## Session 95.
-
-## Session 95 (2026-10-25) — M57-3: the gate ran on a GAME-filled queue and got 1/2 — the model premise is falsified, nothing merges
-
-**What changed.** `scripts/smac_preflight.py` (NEW, read-only orientation: authoritative address
-table, game alive, TracerPid/gdb, our bases BY NAME with index/coords/pending/head/minerals/income,
-unit decode, /tmp + evidence budget; `SMAC_PID` override is the negative test). `m56_build.py`:
-credit arithmetic printed BEFORE a --ui-queued run; the boundary watch now breaks when the walk is
-HOME (was a fixed settle, which either missed the walk or swallowed the next flip); and it answers
-the "SOME OF OUR UNITS HAVE NOT YET MOVED" confirm via `smac_play.answer_confirm` (that dialog takes
-NO Return — a 240 s run sat on it, year frozen). `m57_ui_enqueue.py` restores orders mode (0 makes
-every order key a no-op and the turn never ends). Sampler throttled to 2 ms + the 1.4 GB of traces
-downsampled to ~10 KB (the gate's 30 MB budget). Skill synced.
-
-**The acceptance, unchanged.** `python3 scripts/m56_build.py --ui-queued 18 --boundaries 8 --timeout
-240` on a fresh `m54b_clean.SAV` box (2154), Korolev Center [18] (29,42), queue filled by the GAME's
-BUILD UI (pending 1, head 2, minerals 2, income 2, **0 memory writes**): **FAIL, exit 1**. Floors that
-passed: 8/8 boundaries flipped +1 with the walk home, provenance GAME-filled/0 writes, storage below
-price at start, per-round bookkeeping on r0-r2 (2->4->6->8, pend 1). Floors that failed:
-- `1/2 positive predictions verified`. r3 predicted arrival (8 + income 2 = 10 >= price 10) and
-  storage stayed **8 -> 8, pend 1**: the visit added NOTHING while the round-start income field read
-  2. r4, with the identical round-start numbers, arrived: **8 -> 3, pend 0**.
-- `r4 minerals debited by >= price` — net -5 from 8 (or -7 from the post-add 10), not -10.
-- `r7 unexplained ORDER-0 arrival on OUR base 18` — storage **5 -> 0 with pending 0** and a new unit,
-  i.e. a pay with an empty pending count (the queue slots never left-shifted: `[2,2,0]` all run).
-So ONE queued Scout Patrol produced TWICE (r4 and r7) and the second production was paid at 5 < 10.
-
-**Measured support (`m57_credit.py --base Korolev --boundaries 3 --tag m57k`).** 3 flips (2162->2165,
-rounds 8.2/10.1/12.1 s — instant when everything is held), only 2 ADD hits and no GATE/PAY/CLMP for
-the base; the register side-values are the known trap (the "d0" printed 18 = the base INDEX) but the
-storage deltas agree with the sampler: an add of +1 while the field read 1, +2 while it read 2. **The
-add uses the d0 current at the visit, which moves inside the round** — that is why an exact-round
-prediction from the round-start snapshot is impossible, and why the same numbers produced no-arrival
-then arrival one round later. The pay amount is also not the price at 0x4efed8 (5 paid, 8 paid) and a
-produced unit's support is debited from the same field.
-
-**Conclusion: NOTHING MERGES.** The M57 gate asserts a model the engine contradicts (one add per
-round at the round-start income, one pay of exactly the price, pending as the queue truth). The
-observed positive (1/2) is real but not enough, and no floor was weakened. Branch `milestone/m57`
-holds: preflight, the arithmetic line, the confirm answer, the walk-home break, orders-mode restore,
-2 ms sampler, and `scripts/m57_ui_enqueue.py` (UI queue fill with read-backs).
-
-**Next pick (M57-4, the honest one): enumerate EVERY write to `base+0x40` inside one visit** —
-breakpoints at all disasm write sites (0x4ef7f6 add, 0x4eff20 clamp B, 0x4efee3/0x4efeec pay,
-0x4f0cc3 clamp-after-pay) over 3 boundaries on Korolev, with the queue filled by the UI, and record
-(value_before, value_after, site, pending, head, d0) for each store. Only then can the gate's debit
-floor and the second production be explained. Do NOT tune predict() to the observations.
-
-## Session 96 (2026-10-26) — M57-4: **THE STORE ENUMERATION PASSES — every write to `base+0x40` in a 3-boundary window is attributed to a NAMED census site — and the engine's price is 9, not 10, which is why the M56 gate still FAILS with every floor intact**
-
-**What changed.** `scripts/m57_stores.py` (NEW — 23 conditioned breakpoints + the visit marker +
-a 2 ms sampler + the replay acceptance), `scripts/m57_ui_enqueue.py` (now closes the base display
-it leaves open and verifies the class), scratch `scratch/m574/census.py` (the whole-image store
-census + call-graph filter that GENERATED the site table), skill `references/production-queue.md`
-and `references/wine-operations.md`, `NEXT_PROMPT.md`, this file.
-
-**ACCEPTANCE MET (M57-4's own gate).** `python3 scripts/m57_stores.py --boundaries 3 --timeout 200
---tag m574c` -> `PASS store-sequence enumeration: 4 stores over 3 boundaries, every store
-attributed to a named census site, every sampler value reproduced by the replay, per-boundary sums
-equal the observed net changes` — Korolev Center idx 17 (0x95ee40), queue filled by the GAME's
-BUILD UI (pending 1, the harness itself wrote nothing), 3 visits, 3 boundaries 2163->2166, sampler
-value sequence [7, 0, 1, 2], per-boundary sums 0/-7/+1/+1 == the observed nets, zero unattributed
-deltas. Trace `evidence/trace_m574c.jsonl`, gdb log `evidence/m574c.gdblog`.
-
-**The enumeration (read back at the sites, each breakpoint conditioned on the store's OWN base
-register == our record).** A visit is `FUN_004f5a70(index)`: it computes
-`lea ecx,[index*304+0x95da10]`, stores it to the current-base global `DAT_0x8f0d60` at **0x4f5a99**
-(the per-visit marker), and calls 0x4e8d60, 0x4e78e0, 0x4e92c0, 0x4e93f0, 0x4eaa10, **0x4ef6d0**
-(the production visit) and **0x4f26e0**. Whole-image census: **65 stores to `[reg+0x40]` in
-`.text`, 23 reachable** from the visit driver / the queue edit / the AI chooser; the
-`lea reg,[reg2+0x40]` pointer-arithmetic shape has no store through it in those sets. In the
-measured windows only two sites ever fire:
-- **`0x4ef7f6` ADD** — the delta EQUALS the `+0xd0` field as it reads AT THE VISIT (+2 with d0 2;
-  +1 with d0 1 twice; d0 itself moves with the garrison), gated `d0>=0 && head!=-38 &&
-  !([base+0x30]&2)` at 0x4ef7db-0x4ef7f9.
-- **`0x4efedd` PAY** — 9 -> 0 with pending 1 -> 0 in the same visit. The completion gate is
-  `cmp [curbase+0x40], edi ; jge` at **0x4efa5e**, where `edi` is built at 0x4efa4b-0x4efa52:
-  `edi = eax` from `call 0x4e40a0` (item cost for the faction) then `imul edi, eax` from
-  `call 0x5ac950` (a factor). **edi measured 9 twice** (10->1 in `m574b`, 9->0 in `m574c`) — the
-  deduction is 9, NOT the 10 the M56 model assumes.
-- the clamp sites `0x4eff20`/`0x4f0ce9` (store `max(0, min([0x92a370], d0))` only when storage >
-  that limit) NEVER fired; `0x4f2d7d` (the distribution store in `FUN_004f26e0`) never fired for
-  our base. Session 94's unnamed "second movement inside one visit" (7->9 then 9->0) is now NAMED:
-  the add at 0x4ef7f6 and the pay at 0x4efedd.
-
-**The M56 gate, re-run unchanged per the footing.** `python3 scripts/m56_build.py --ui-queued 17
---boundaries 10 --timeout 300` on the UI-filled queue (pending 1 head 2, `memory writes: 0`, start
-minerals 2 < price 10) -> **`FAIL production prediction accounting`**: `BAD at least 1 POSITIVE
-prediction verified (non-vacuous) — 0/0` and `BAD r7 bookkeeping base 17: NOT predicted to arrive
--> queue held — pending 1->0 ... (minerals 0 vs price 10)` — the arrival came at minerals 8
-(8 + income 1 = 9 >= the measured 9). 10/10 boundaries flipped; the provenance and
-storage-below-price floors passed. Nothing was weakened.
-
-**Traps found (all measured, all recorded in the skill).** (a) **`si` inside a breakpoint commands
-list ends `gdb -batch`** — the first hit printed the step location then `[Inferior 1 ... detached]`
-and the watch died after one store; the store's own source operand IS the after value for a plain
-`mov [reg+0x40],src`. (b) **the base array reorders mid-watch**: Korolev walked index 18 -> 17
-(0x95ef70 -> 0x95ee40) during a run, after which the baked address held ANOTHER faction's record
-(storage 19, head -27) — the sampler now checks the NAME at the address every sample and ends the
-watch at the move (the closing anchor is the last good sample, never a post-detach read-back: the
-game keeps playing after the last flip). (c) **the enqueue recipe leaves the base display open and a
-modal pane swallows every turn-end key** — a 90 s watch sat parked on `cur_player 3` through
-Return/h/OK; Escape closes the pane (safe there, unlike the bare map). (d) `set print frame-quiet`
-is not a command in this gdb and aborts the whole command file. (e) `os.pread` on `/proc/<pid>/mem`
-EIOs here; seek+read works. (f) all our units must be HOLD (poke `+17`=2, read back) or the auto-end
-never fires and a boundary watch burns its whole budget parked on our turn.
-
-**Open.** (1) **The price**: name `0x4e40a0` (the cost) and `0x5ac950` (the factor) and reproduce
-edi = 9 for a queued Scout Patrol — the M56 model's price constant is what is wrong, not its
-floors. (2) Session 95's pay-with-pending-0 (its r7) was NOT reproduced in any measured window;
-every pay seen had pending 1 at the store and popped in the same visit. (3) Whether a pay can fire
-in a visit whose income add did not run (the `d0 > 0` guard). (4) The clamp sites' live behaviour
-is still unmeasured. (5) **M57 stays UNMERGED** per the footing (the M56 gate is the merge
-condition); `milestone/m57` holds everything, still unpushed (a pre-receive hook refused it earlier).
-
-**Next pick (M58): the price.** Disassemble `0x4e40a0` and `0x5ac950`, reproduce `edi` for the
-queued Scout Patrol from static tables, and re-run `m56_build.py --ui-queued` with the price
-DERIVED rather than assumed. The floors do not move.
+Older sessions: `docs/sessions/sessions-95-96.md` (2 sessions). Read it only when a question reaches back before session ## Session 97.
 
 ## Session 97 (2026-10-26) — M58: **THE PRICE IS NAMED — `0x4e40a0(owner,1,-1)` × type record `+41`, and the multiplier is live STATE, not 10: `[0x92ada8] == 1` makes it 9.** The M56 gate's price-10 was one game's difficulty. The acceptance never printed PASS, so **nothing was merged**.
 
@@ -713,3 +596,105 @@ M65, cheapest first: (a) make `accept_ready.py`'s screen read re-freeze until a 
 instead of trusting one OCR pass (measured flake above; no game time needed), then (b) one run on
 an `income 1` base — the shape that produced the double-count — so the accrual fix gets its live
 case, then (c) the two-enqueue DIFFERENT-type-id test that finally says which slot INSERT writes.
+
+## Session 105 (2026-10-26) — M65: THE SCREEN READ IS A LOOK LOOP, NOT AN OCR COIN-FLIP. The HUD has two rows and only the bottom one is stable.
+
+### What changed (harness only — no threshold, floor or prediction term moved; `classify()` itself is UNTOUCHED, so the driver classifies exactly as before)
+
+- `smac_play.hud_status_bar(words)` — a NEW pure function, `HUD_BAR = (548, 592)`: >= 3 tokens in
+  the band AND (`mission` or a `ssion|sslon|sston|ismon|sshon` fragment or `year`/`tear`) AND (a
+  4-digit 2000-2500 number or `year`/`tear` or `energy`). It returns its components
+  (`nbar/mission/year/nums/energy/fire`) so a caller can print WHY it believed a frame.
+- `accept_ready.py`: `look()` (one freeze: classify + the bar), `verdict(looks, confirm)` (PURE —
+  the whole screen decision, unit-tested with no game and no OCR) and `screen_class(samples=4,
+  confirm=2, gap=0.8)` which re-freezes until a verdict lands. `decide()` is unchanged except that
+  an unresolved `unknown` now prints "freeze and look at the frame" instead of "press Return until
+  it reads hud" — a frame with neither row is not a KNOWN modal and a blind keypress on it is a
+  gamble. `--samples/--confirm` are CLI knobs; the read's evidence prints as a `SCREEN <class>:`
+  line and as `screen_evidence` in `--json`. `session_brief.py` needed no edit (it calls
+  `AR.screen_class()[0]` and `AR.decide`), and it inherits both fixes.
+- New instruments: `scripts/m65_screen.py` (N freezes of the live screen, per-sample class +
+  per-band tokens + load1; writes frames + `samples.json`, deletes its own `_3x` siblings),
+  `scripts/m65_anchor.py` and `scripts/m65_signals.py` (candidate HUD signals measured over the
+  saved classifier frames).
+
+### The measurement that chose the fix
+
+`python3 scripts/m65_screen.py --samples 8 --save /tmp/m65a` on ONE unchanged screen (terran.exe
+alive, year 2161 round 61 `cur_player 3`, nothing clicked, no key pressed) printed
+`CLASSES SEEN {"unknown": 5, "hud": 3} of 8 samples`. In the saved records
+(`evidence/m65/before_8looks_samples.json`, frames `evidence/m65/sample_00_unknown.png:1`,
+`sample_02_unknown.png:1`, `sample_04_unknown.png:1`, `sample_07_unknown.png:1` and the control
+`sample_05_hud.png:1`): `TURN@416 COMPLETE@416` in samples 1, 5, 6 ONLY, while
+`Mission@567 Year@567 2161@567` (+ the score row `1-1-1@581`, `Energy:@582`) is in all EIGHT.
+The bar fragments too, differently: `evidence/m25_t7.png` OCRs the whole row as
+`sisson@573 tear@573 zie@573` with NO year number, and `evidence/m54a/live_hud.png` as
+`[esston@572 2388@572` — so the signal is written against the fragments, not the clean words.
+
+### The pin — `python3 scripts/test_hud_bar.py` -> `PASS 26/26 hud-bar cases`, exit 0
+
+18 frames + 8 look sequences. Fires on all 3 saved HUD frames and on the 4 live `unknown` frames;
+**silent** on the base screen (4 bar tokens, none of them Mission/Year/number/Energy), the cdrom
+nag (0 bar tokens), the LOAD confirm (14 bar tokens, none of them), the HELP browser (234 tokens in
+the frame), the COMM pane and the artwork panel. On the 4 modals drawn OVER a still-drawn HUD
+(quit prompt, `m54e/chooser_live.png`, `m54h/chooser_g60b.png`, `m54g/newbase_pane.png`) the bar
+DOES fire — the case asserts the classify() NAME as well, because that is the only thing keeping a
+chooser from being called `hud`: the signal is consulted only on a frame classify() already called
+`unknown`, and every modal detector runs before classify() reaches that fall-through.
+`verdict()` cases pin the semantics: a named modal in ANY look decides the screen and beats a
+pending bar promotion; `hud` on any look is believed as before; the bar must fire in 2 of the 4
+looks (consecutive or not) to promote an `unknown`; one bar-only look is NOT believed; 4 looks with
+no row and no bar is still `unknown` and still BLOCKED — **the check was not weakened, the screen is
+re-read.**
+
+### The live read-back — the oracle no longer blocks a playable box on its screen
+
+`python3 scripts/accept_ready.py` three times, 20:55:45 -> 20:56:46 (year 2161 round 61, both bases
+pending 0, so the verdict stays BLOCKED on `pending 0 — not UI-queued` and the FIX line is the
+enqueue): run 1 `SCREEN hud: look 1: classify() == hud (the TURN COMPLETE row read)` (21 s),
+run 2 same (9 s), run 3 **`SCREEN hud: look 1: classify() == unknown, but the HUD's bottom status
+bar read in 2 of 2 look(s)`** (31 s) — the promotion path exercised live: neither look read the
+button row and the oracle still said `hud`. `python3 scripts/session_brief.py` at 20:56 prints
+`screen hud` (the same script printed `screen unknown` and "press Return until it reads 'hud'" at
+20:16 this session) and its FIX is now the enqueue.
+
+### Still green (all with the command)
+
+`test_accept_ready.py` **PASS 17/17** (two new cases: unresolved `unknown` blocks, a crashed screen
+read blocks, both needle `m65_screen.py`); `test_classify.py` **PASS 17/17**; `check_classes.py`
+exit 0 with **14 PASS + 3 SKIP** — `m15_hud.png`, `m15_mainmenu.png`, `m15_autolist.png` are gone
+from `evidence/` (deleted in #3 `214f982`, pre-existing, not this session); `test_m56_predict.py`
+**PASS 19/19**; `test_walk_diff.py` **PASS 37/37**; `m56_build.py --fixture` bad=1,
+`m61/fixture_defer_ok`=0, `m61/fixture_beat_visit`=1, `m64/fixture_paid_readback`=0,
+`m64/fixture_paid_no_readback`=1.
+
+### Confounded, and said so
+
+The 8-sample measurement ran while `top` showed 79.6% user / 0.0 idle on **4 cores**, load average
+13-15 (`jellyfin` 85%, `winedevice` 38%, tesseract ~200%): one OCR pass went from the ~1 s in
+`ocr_fast`'s own comment to ~70 s, and the classifier suites stretched from ~40 s to >20 min. When
+jellyfin finished the same suites ran in ~3 min and all three `accept_ready` runs finished in 61 s.
+**Per-sample load was not recorded in the first run** (`m65_screen.py` records `load1` now), so
+"the flake rate rises with CPU contention" is a HYPOTHESIS — the flake and the load were both
+extreme at the same time, and the read rate improved in the low-load window, which is not the same
+measurement. Do not read one OCR pass as a fact on a loaded box.
+
+### Open
+
+- Whether the accrual fix is right on a LIVE box (unchanged from session 104): needs an `income 1`
+  base whose windows straddle the add; the `income 2` reload makes both PASS runs `gap_delta = 0`.
+- Which slot the BUILD UI's INSERT writes (needs one enqueue with two DIFFERENT type ids).
+- Still open from M63, and `milestone/m63` still carries the pop instrument, the `0x94de84`
+  count-byte correction and the 384/386 identity-crossing finding with **no PR**.
+- `check_classes.py`'s default list names three frames that no longer exist; either restore them or
+  drop them from DEFAULT (nobody has done either).
+- The load hypothesis above: re-run `m65_screen.py` (it records `load1` now) at two different loads.
+- Evidence 26.3 MB of the 30 MB gate FAIL line (warn band 20) — the 5 new `evidence/m65/` frames are
+  0.8 MB of it.
+
+### Next pick
+
+M66, cheapest first: (a) the `income 1` live accrual case — `scripts/m56_build.py --ui-queued <fresh
+idx> --boundaries 10 --timeout 400 --no-poke-hold` on a base whose windows straddle the add, and
+report the `accrual_phase` rows; (b) the two-enqueue DIFFERENT-type-id test that finally says which
+slot INSERT writes; (c) cheap: re-measure the screen read at a quiet load and at a loaded one.

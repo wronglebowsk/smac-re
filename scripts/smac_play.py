@@ -447,6 +447,48 @@ def classify(words, ncolors=None, png=None):
     return "unknown"
 
 
+# The HUD's OWN bottom status bar: `Mission Year <year>` at y~567, the faction score row
+# at y~581 and the `Energy:` readout at y~582 — measured on 8 freezes of one unchanged
+# live HUD (scripts/m65_screen.py -> evidence/m65/samples.json) and on the saved
+# classifier frames (scripts/m65_signals.py).
+HUD_BAR = (548, 592)
+# OCR fragments of `Mission` seen on these frames: `sisson`, `esston`, `[esston`.
+MISSION_FRAG = re.compile(r"ssion|sslon|sston|ismon|sshon")
+
+
+def hud_status_bar(words):
+    """Second look at the HUD: is the bottom status bar on this frame?
+
+    classify() names the HUD off ONE row — the TURN COMPLETE button (380 < y < 450) — and
+    on a live animating map that row is the least stable thing on screen: 8 freezes of ONE
+    unchanged HUD read `complete` in 3 of 8 passes while the status bar at y~567 read in
+    8 of 8 (scripts/m65_screen.py, 2026-10-26; load average 13 on 4 cores). That is why
+    accept_ready.py's screen gate was a coin-flip that blocked 14 reads of a plain HUD in
+    session 104.
+
+    This is the SAME chrome one row lower, not a new screen class: it can only ever speak
+    about a frame classify() already called `unknown`, and every modal that draws over
+    this bar (the `g` chooser, the NEWBASE name pane, the quit prompt) is named by its own
+    detector before classify() falls through. Measured on the 17 saved frames
+    (scripts/m65_signals.py): it fires on all 3 saved HUD frames — including the two whose
+    button row and whose `Mission`/`Year` words both fragment (`sisson tear zie`,
+    `esston 2388`) — and on none of the standalone screens (title, cdrom nag, LOAD confirm,
+    base screen, HELP, COMM, the artwork panel).
+
+    Returns the components so a caller can print WHY it believed the frame.
+    """
+    bar = [w for w in words if HUD_BAR[0] <= w[2] <= HUD_BAR[1]]
+    letters = re.sub(r"[^a-z]", "", " ".join(t for t, *_ in bar).lower())
+    nums = [t for t, *_ in bar if t.isdigit() and len(t) == 4 and 2000 <= int(t) <= 2500]
+    d = dict(nbar=len(bar),
+             mission=("mission" in letters or bool(MISSION_FRAG.search(letters))),
+             year=("year" in letters or "tear" in letters),        # `Year` garbles to `tear`
+             nums=nums[:3], energy="energy" in letters)
+    d["fire"] = bool(d["nbar"] >= 3 and (d["mission"] or d["year"])
+                     and (d["nums"] or d["year"] or d["energy"]))
+    return d
+
+
 def click(xy):
     focus()
     sh(f"xdotool mousemove {int(xy[0])} {int(xy[1])} click 1")
