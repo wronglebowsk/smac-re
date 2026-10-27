@@ -40,6 +40,16 @@ CASES = [
                                                                                                     True,  "TIGHT"),
     ("roomy horizon is not",       dict(bases=[base(minerals=1, credit=1, pending=1)], boundaries=20),
                                                                                                     True,  "round(s)"),
+    # M65: the screen read is now multi-look, and an `unknown` it cannot resolve is STILL a
+    # block — the fix re-reads the screen, it does not lower the bar. The fix line changed
+    # from "press Return until it reads hud" (which was the coin-flip's advice) to "look at
+    # the frame", because a frame with no button row AND no status bar is not a known modal
+    # and a blind keypress on it is a gamble.
+    ("unresolved unknown blocks",  dict(bases=[base(minerals=8, credit=2, pending=1)], screen="unknown"),
+                                                                                                    False, "m65_screen.py"),
+    ("screen read that crashed blocks",
+                                  dict(bases=[base(minerals=8, credit=2, pending=1)],
+                                       screen="unknown (OSError)"),                                False, "m65_screen.py"),
 ]
 
 bad = 0

@@ -22,7 +22,7 @@ Why each condition is what it is (M56/M59/M61, all measured):
   * pending = gates only the POP, but the acceptance insists the queue came from the UI, so a
               base with pending == 0 cannot be the run's target
 """
-import argparse, json, os, subprocess, sys
+import argparse, json, os, subprocess, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import m55_boundary as M
@@ -40,23 +40,85 @@ def gdb_count():
     return len(out.split())
 
 
-def screen_class():
-    """What is on screen right now: ('hud'|'dialog'|'base'|'unknown', text head).
+def look(tag="acceptready"):
+    """One freeze: classify() plus the HUD status bar, from a single OCR pass.
+
+    Returns (class, bar_dict, text_head). classify() is left completely untouched —
+    the driver still sees exactly the classes it saw before; the status bar is only ever
+    consulted here, by the readiness oracle, to decide whether an `unknown` frame is really
+    the plain HUD.
+    """
+    import smac_play as sp
+    png = sp.freeze(tag)
+    words = sp.ocr_fast(png)
+    kind = sp.classify(words, sp.region_colors(png), png)
+    bar = sp.hud_status_bar(words)
+    txt = " ".join(t[0] if isinstance(t, tuple) else t for t in words)
+    return kind, bar, txt[:120]
+
+
+def verdict(looks, confirm=2):
+    """Pure: what N looks at the same screen mean. Each look is (class, bar_fired).
+
+    A modal is STABLE — it sits there until something answers it — so a named modal class
+    in ANY look decides the screen. The flake this exists for is the other direction: the
+    plain HUD read `unknown` 14 times in a row in session 104 and 5 of 8 freezes today,
+    because classify()'s only HUD evidence (the TURN COMPLETE row) fragments on an
+    animating map. So `unknown` is not treated as a modal: it is re-frozen until the HUD's
+    own status bar lands `confirm` times, and only a screen that never shows the bar and
+    never names a modal is called `unknown`.
+    """
+    hits = 0
+    for k, (kind, bar) in enumerate(looks):
+        if kind == "hud":
+            return "hud", f"look {k}: classify() == hud (the TURN COMPLETE row read)"
+        if kind != "unknown":
+            return kind, (f"look {k}: classify() == {kind!r} — a named modal swallows every "
+                          f"click and every turn-end key")
+        if bar:
+            hits += 1
+            if hits >= confirm:
+                return "hud", (f"look {k}: classify() == unknown, but the HUD's bottom status "
+                               f"bar read in {hits} of {k + 1} look(s) — the same chrome the "
+                               f"button row is part of")
+    return "unknown", (f"no verdict in {len(looks)} look(s): the button row never read and "
+                       f"the status bar fired {hits} time(s)")
+
+
+def screen_class(samples=4, confirm=2, gap=0.8):
+    """What is on screen right now: ('hud'|'dialog'|'base'|'unknown', why).
 
     A modal swallows EVERY click and every turn-end key, so it is checked first: in M61 an
     Operations Director "unit has been disbanded" dialog sat over the BUILD pane and two
     UI-enqueue attempts silently clicked into it. Return clears a dialog's default row;
     Escape closes a pane (Escape on the bare map raises the quit prompt — never OK it).
+
+    One OCR pass is NOT a reliable screen read on this box (see verdict()), so this re-freezes
+    until a verdict lands: the common case (a plain HUD) exits on look 0 or 1.
     """
-    try:
-        import smac_play as sp
-        png = sp.freeze("acceptready")
-        words = sp.ocr_fast(png)
-        kind = sp.classify(words, sp.region_colors(png), png)
-        txt = " ".join(t[0] if isinstance(t, tuple) else t for t in words)
-        return kind, txt[:120]
-    except Exception as e:                                    # no display / OCR down
-        return f"unknown ({type(e).__name__})", ""
+    looks = []
+    last_bar = None
+    for k in range(max(1, samples)):
+        try:
+            kind, bar, txt = look()
+        except Exception as e:                                # no display / OCR down
+            return f"unknown ({type(e).__name__})", ""
+        looks.append((kind, bool(bar["fire"])))
+        last_bar = (bar, txt)
+        if verdict(looks, confirm)[0] != "unknown":
+            break
+        if k + 1 < samples:
+            time.sleep(gap)
+    kind, why = verdict(looks, confirm)
+    detail = ""
+    if last_bar:
+        bar, txt = last_bar
+        detail = (f"{why}  [bar: n={bar['nbar']} mission={int(bar['mission'])} "
+                  f"year={int(bar['year'])} nums={bar['nums']} energy={int(bar['energy'])}]")
+        if txt:
+            detail += " text: " + txt
+    return kind, detail
+
 
 
 def collect(m):
@@ -80,6 +142,16 @@ def decide(bases, budget_mb=0.0, gdb_n=0, orphan_traces=0, screen=None, boundari
     """Pure decision function — the whole point of the script, unit-tested without a game."""
     reasons, capable = [], []
     if screen and screen != "hud":
+        if screen.startswith("unknown"):
+            return dict(ready=False, verdict="BLOCKED",
+                        fix="the screen read got NO verdict — freeze and look at the frame: "
+                            "python3 scripts/m65_screen.py --samples 4 --save /tmp/m65, then "
+                            "read /tmp/m65/sample_00_unknown.png. Return clears a dialog's "
+                            "default row and Escape closes a pane; the bare map needs neither",
+                        reasons=[f"no verdict from the screen read ({screen!r}): the HUD "
+                                 f"button row never read, the HUD status bar never fired and "
+                                 f"no modal detector named the frame"],
+                        bases=bases)
         key = "Escape" if screen in ("base", "pane", "city") else "Return"
         return dict(ready=False, verdict="BLOCKED",
                     fix=f"screen is {screen!r}: press {key} until it reads 'hud', then re-run",
@@ -155,6 +227,11 @@ def main():
     ap.add_argument("--budget", type=float, default=None, help="evidence MB (default: measure)")
     ap.add_argument("--no-screen", action="store_true",
                     help="skip the screen classification (memory-only, ~2 s faster)")
+    ap.add_argument("--samples", type=int, default=4,
+                    help="freezes the screen read may take to reach a verdict")
+    ap.add_argument("--confirm", type=int, default=2,
+                    help="how many of those looks must show the HUD status bar to call the "
+                         "screen 'hud' when classify() says 'unknown'")
     ap.add_argument("--boundaries", type=int, default=10,
                     help="boundaries the run will observe (sets the horizon warning)")
     a = ap.parse_args()
@@ -176,13 +253,13 @@ def main():
         tl = M.timeline_row(m)
     if a.base_index is not None:
         rows = [r for r in rows if r["i"] == a.base_index] or rows
-    kind, ktxt = ("", "") if a.no_screen else screen_class()
+    kind, ktxt = ("", "") if a.no_screen else screen_class(samples=a.samples, confirm=a.confirm)
     res = decide(rows, budget_mb=budget, gdb_n=gdb_count(), orphan_traces=orphans,
                  screen=kind, boundaries=a.boundaries)
     res["box"] = dict(pid=pid, year=tl["year"], round=tl["round"], screen=kind,
                       cur_player=tl["cur_player"], player=player, budget_mb=round(budget, 1))
     if ktxt:
-        res["screen_text"] = ktxt
+        res["screen_evidence"] = ktxt
 
     if a.json:
         print(json.dumps(res, indent=1))
@@ -190,6 +267,8 @@ def main():
     b = res["box"]
     print(f"{res['verdict']}  year {b['year']} round {b['round']} cur_player {b['cur_player']} "
           f"player {b['player']}  evidence {b['budget_mb']} MB")
+    if b["screen"]:
+        print(f"  SCREEN {b['screen']}: {res.get('screen_evidence', '')}")
     for r in rows:
         print(f"  i{r['i']:>3} {r['name'][:22]:22} min {r['minerals']:>4} credit {r['credit']:>3} "
               f"pend {r['pending']:>2} head {r['head']:>3} price {r['price']:>3}")
