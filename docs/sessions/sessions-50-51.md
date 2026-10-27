@@ -47,7 +47,7 @@ conflict; they were looking at two different writers, and neither invalidates th
 **Harness lessons (both cost real time).**
 - The 125B agent session died at ~101k tokens: it crossed the 86,016 compression threshold, compaction
   was refused on cooldown, the model returned empties, and the failure fell through to the configured
-  `openvino` fallback at 192.168.1.125:8000, which has been dead since the 258v box moved to .213.
+  `openvino` fallback host, which has been dead since the 258v box moved to its current address.
 - The driver's pane handlers missed the leader-profile pane, whose stylised font OCRs as garbage
   ("SCO*=CO#D'IPLLMATI¢"), so it fell into the colour row+bar cycle that re-opens the same pane.
   Escape leaves it; keyboard Down+Return closes the 3-row COMM pane. Both are now in the driver.

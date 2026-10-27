@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Launch ONE milestone session on the local 125B (provider qwen125b, Strata at 192.168.1.12:8080).
+# Launch ONE milestone session on the local model (provider qwen125b, Strata). No host is
+# committed: endpoints are environment variables, see docs/WORKFLOW.md (STRATA_URL, EMBEDDING_URL).
 #
 #   scripts/agent_session.sh m52a              # planned milestone from NEXT_PROMPT.md
 #   scripts/agent_session.sh m52a brief.md     # same, with extra instructions appended

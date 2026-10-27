@@ -40,7 +40,7 @@ it embeds to noise and dilutes real queries. That leaves 2,786 of 10,284 functio
 ## LLM summaries (`scripts/summarize.py`)
 
 The mechanical text for an unnamed function carries no meaning, so it is labelled once by the
-local 125B (`192.168.1.12:8080`) and the sentence is folded into the chunk:
+local 125B (`$SUMMARY_URL`) and the sentence is folded into the chunk:
 
 ```bash
 python3 scripts/summarize.py --dry-run     # work remaining

@@ -91,8 +91,18 @@ def main():
         git(wt, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qam", "fix citation")
         rc, out = gate(wt)
         check("valid milestone is GREEN", rc == 0 and "GATE GREEN" in out, out.strip().splitlines()[-1])
+        print("case 5: a committed endpoint is refused")
+        wt = worktree(tmp, "endpoint")
+        with open(os.path.join(wt, "docs", "endpoint_probe.md"), "w", encoding="utf-8") as f:
+            f.write("the model listens on " + "192." + "168.1.12:8080" + "\n")
+        git(wt, "add", "-A")
+        git(wt, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "endpoint probe")
+        rc, out = gate(wt)
+        check("committed private IPv4 is RED", rc != 0 and "committed endpoints" in out,
+              out.strip().splitlines()[-1])
+
     finally:
-        for name in ("clean", "binary", "cite"):
+        for name in ("clean", "binary", "cite", "endpoint"):
             subprocess.run(["git", "worktree", "remove", "--force", os.path.join(tmp, name)],
                            cwd=ROOT, capture_output=True)
         subprocess.run(["git", "branch", "-D", "test/cite"], cwd=ROOT, capture_output=True)
