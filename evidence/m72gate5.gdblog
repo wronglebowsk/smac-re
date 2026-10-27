@@ -1,0 +1,48 @@
+[New LWP 3344531]
+[New LWP 3344530]
+[New LWP 3344529]
+[New LWP 3344528]
+[New LWP 3344527]
+[New LWP 3344525]
+[New LWP 3344523]
+[New LWP 3344522]
+[New LWP 3344521]
+[New LWP 3344520]
+[New LWP 3344519]
+[New LWP 3344518]
+[New LWP 3344517]
+[New LWP 3344516]
+[New LWP 3344515]
+[New LWP 3344514]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe808e32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4ef6d0
+Breakpoint 2 at 0x4ef88e
+Breakpoint 3 at 0x4efa5e
+Breakpoint 4 at 0x4efa63
+Breakpoint 5 at 0x4efe41
+Breakpoint 6 at 0x4efed8
+Breakpoint 7 at 0x4eff4e
+Breakpoint 8 at 0x4f0a3d
+Breakpoint 9 at 0x4f0a42
+Breakpoint 10 at 0x4f0b4f
+Breakpoint 11 at 0x4f0b86
+Breakpoint 12 at 0x4f0c28
+Breakpoint 13 at 0x4f5a93
+ARMED base=0x95da10 head=193 pending=1 storage=27
+VISIT pend=1 s0=193 s1=192 min=27
+ENTRY base=0x95da10 storage=27 s0=193 pend=1
+HEAD id=193 own=197379 storage=27 pend=1
+POSAFF storage=27 edi=27 ebx=193 i1c=0x6234
+CMP40 ebx=193 edi=27 storage=27
+PAYA storage=27 edi=27
+CREATE id=193 arg3=3 storage=0
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xe808e32c in __kernel_vsyscall ()
+[Inferior 1 (process 3344510) detached]

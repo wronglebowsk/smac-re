@@ -25,7 +25,9 @@ click `0x40aae5` -> `min(row, [[0x8f0d60]+0x4c]+1)`, enqueue tail `0x417e3b` -> 
 handler `0x4194b3` -> 0; clamp against the WIDGET's row count, not the base's pending); **the
 completion's POP pops ONE item when the new head validates and left-shifts only `0..pending-1`
 — K shifts are not shift-left-by-K, `queue[pending]` stays stale, and the completion writes the
-cursor field ZERO times**), slots
+cursor field ZERO times**; **the visit's OWN affordability test is `0x4efa5e` with `edi` = its cost
+product, NOT `price_of` — head 193 wanted 27 where `price_of` said 18 — and its bail is `0x4efa63`,
+instrument `scripts/m72_gate_watch.py`**), slots
 1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
 NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
 reading, and the live write-enumeration acceptance in §9),

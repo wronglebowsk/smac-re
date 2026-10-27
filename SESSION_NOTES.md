@@ -820,3 +820,45 @@ reports `mergeCommit 245a686`).
 
 **Backup.** `~/.hermes/cache/scratch/smac-backup/pre-rewrite-20261027-1036.bundle` (99 MB) holds
 the pre-rewrite history. It is outside the repo: never publish it.
+
+---
+
+## Session 113 (2026-10-27) — M72: WHICH TEST SENDS THE VISIT HOME WITHOUT PAYING. ACCEPTANCE PASS on two real invocations that differ in ONE variable.
+
+**Setup (engine-produced, no queue poke).** Reloaded `m54b_clean.SAV`
+(`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> HUD), enqueued the proven
+pair with `python3 scripts/m66_insert_slot.py --base-name "University Base" --item-a 193
+--item-b 192` (queue `[2,193,192]`, pending 2), poked storage to 9 and read it back, then one
+`smac_play --turns 1` boundary let the head-2 Scout complete and pop -> read back
+**head 193, pending 1, queue `[193,192,192,0...]`** — the session-111 shape, produced by the game.
+
+**The runs.**
+- `python3 scripts/m72_gate_watch.py --base-name "University Base" --boundaries 2 --tag m72gate4`
+  -> **PASS**. Stream per visit: `VISIT pend=1 s0=193 min=18` -> `ENTRY` -> `HEAD id=193` ->
+  `POSAFF storage=18 edi=27` -> `BAILAFF storage=18 edi=27`. Read back: head 193 -> 193, pending
+  1 -> 1, storage 18 -> 18, round 57 -> 59.
+- `python3 scripts/m72_gate_watch.py --boundaries 1 --poke-minerals 27 --tag m72gate5` -> **PASS**.
+  `POSAFF storage=27 edi=27` -> `CMP40 ebx=193 edi=27` -> `PAYA storage=27 edi=27` ->
+  `CREATE id=193 arg3=3`; read back storage 0, head 192, pending 0.
+
+**What that names.** The visit's own affordability test is `0x4efa5e cmp [base+0x40],edi` on the
+unit path; below it the bail is `0x4efa63` (message pair `0x67164c/0x671644` -> epilogue
+`0x4f0bfa`). **`edi` is 27 for head 193 where `m56_build.price_of` says 18** — so M71's
+`m71pop2` FAIL is explained: storage 18 < 27, and the same state pays the moment it is 27. `edi` =
+`FUN_004e40a0(owner,1,-1) * FUN_005ac950(head, base, 0)`; the product is measured, the factor
+split inferred. The visitor runs 2-3x per two boundaries with identical operands, so repeats are
+one answer; the facility path's three no-pay exits (`0x4f0a42`, `0x4f0b86`, `0x4f0c28`) were
+armed and never exercised by a positive head.
+
+**Tooling.** New `scripts/m72_gate_watch.py` (12 conditional breakpoints, poke+read-back before
+attach, drives real boundaries itself, 8 gates, one-line PASS/FAIL) and
+`scripts/test_m72_gate.py` -> **21/21**. One real bug the tests caught: the parser blew up on a
+negative hex operand (`-0x10`) — fixed. A gp-error worth recording: gdb `printf` newlines need
+ONE backslash + `n` in the generated script; M72's first draft emitted two and merged every event
+onto the ARMED line (that run is deleted, not cited).
+
+**Open / next pick.** (1) M63 is still unmerged and M68's acceptance still FAILs — neither is
+touched here. (2) `edi`'s factor split: read `FUN_00595ad0` and the `0x94d438`/`0x927a98` guards
+inside `FUN_005ac950` to say whether the 27 is cost 3 x 9 or 1.5 x price. (3) The facility-path
+exits need a NEGATIVE head (a facility in the queue) to be exercised at all. (4) The `income 1`
+accrual case from 104/105 is still open.

@@ -1,0 +1,11 @@
+{"tag": "ARMED", "base": 9820688, "head": 193, "pending": 1, "storage": 18}
+{"tag": "VISIT", "pend": 1, "s0": 193, "s1": 192, "min": 18}
+{"tag": "ENTRY", "base": 9820688, "storage": 18, "s0": 193, "pend": 1}
+{"tag": "HEAD", "id": 193, "own": 197379, "storage": 18, "pend": 1}
+{"tag": "POSAFF", "storage": 18, "edi": 27, "ebx": 193, "i1c": 25140}
+{"tag": "BAILAFF", "storage": 18, "edi": 27, "ebx": 193}
+{"tag": "VISIT", "pend": 1, "s0": 193, "s1": 192, "min": 18}
+{"tag": "ENTRY", "base": 9820688, "storage": 18, "s0": 193, "pend": 1}
+{"tag": "HEAD", "id": 193, "own": 197379, "storage": 18, "pend": 1}
+{"tag": "POSAFF", "storage": 18, "edi": 27, "ebx": 193, "i1c": 25140}
+{"tag": "BAILAFF", "storage": 18, "edi": 27, "ebx": 193}

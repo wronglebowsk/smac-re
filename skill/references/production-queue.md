@@ -688,3 +688,37 @@ is a measured property of the WIDGET with no code behind it yet.
 - **Open:** a DESIGNED head (193) with `minerals == price` did NOT complete in two boundaries —
   one visit, no pay/pop/create; at the end `+0x3c` 5, `+0xcc` (rate) 0, `+0x30` `0x80007020`.
   Confounded with the head id; no mechanism claimed.
+
+## M72 (session 113): WHICH TEST SENDS THE VISIT HOME WITHOUT PAYING — `edi` is NOT `price_of`
+
+The visitor `FUN_004ef6d0` decides affordability itself, in two places, and the number it
+compares is its own product, **not** `m56_build.price_of`:
+
+- head `+0x50` positive (a unit or designed id) -> `0x4efa2c`; `edi = FUN_004e40a0(owner,1,-1)
+  * FUN_005ac950(head, base, 0)` (`0x4efa3c` / `0x4efa4d` / `imul 0x4efa52`), then
+  **`0x4efa5e cmp [base+0x40],edi`**. Below it: **`0x4efa63` BAILAFF** -> message pair
+  `0x67164c/0x671644` -> epilogue `0x4f0bfa`. At/above it: `0x4efadc`, the "special build"
+  test (`type+0x2a == 8`, `base+0x6 == 1`, `[base+0x30] & …`), then `0x4efe41 cmp ebx,0x40`,
+  then the SAME pay `0x4efed8` (`storage -= edi`) and `CREATE 0x4eff4e`.
+- head `+0x50` negative (a facility) -> `[ebp-0x30] = -head`, and three separate no-pay exits:
+  `0x4f0a42` (storage < edi at `0x4f0a3d`), `0x4f0b86` (`[ebp-0x30] <= 0`), `0x4f0c28`
+  (`[esi+0xcc]+[esi+0x3c] >= f()*table`, i.e. another base already holds this head).
+  Armed in M72, never exercised by a positive head — no claim.
+
+**Measured on the University Base save: head 193 wants `edi` = 27, while `price_of` says 18.**
+Storage 18 -> `POSAFF` + `BAILAFF`, nothing paid, queue untouched; the same state poked to 27 ->
+`POSAFF` + `CMP40` + `PAYA(storage 27 edi 27)` + `CREATE id=193 arg3=3`, storage 0, head 192,
+pending 0. So **never arm a completion acceptance on `price_of` for a designed id** — read the
+`edi` the visitor logs. Base-type heads (id < 0x40) go through the same `0x4efa5e` compare:
+M71's `edi` 9 for head 2 equals the same product there.
+
+The visitor runs MORE THAN ONCE per round boundary (2-3 `VISIT`/`ENTRY` rows per 2 boundaries
+with identical operands), so a repeated bail row is one answer, not a confound; two DIFFERENT
+bail kinds in one window is the refusal case.
+
+- **Instrument:** `scripts/m72_gate_watch.py` — 12 silent conditional breakpoints (entry, head,
+  both affordability compares, `0x4efe41`, pay, create, the three facility exits, the visit
+  marker), each conditioned on the base pointer; pokes storage and reads it BACK before
+  attaching; drives real boundaries; detaches; scores 8 gates including "one turn-around KIND"
+  and "the firing row's own operands satisfy its condition". Prints PASS/FAIL in one invocation.
+  `scripts/test_m72_gate.py` 21/21 pins the parser (incl. negative hex) and every gate.

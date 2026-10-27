@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 111 close, 2026-10-27)
+# NEXT_PROMPT.md — footing for the next session (session 113 close, 2026-10-27)
 
 ## THE LEDGER
 
@@ -8,10 +8,15 @@ Merged: **M54A-M54E** (#39-#44), **M54F-M54i** (#47-#50), **M54i2/M54j/M54k** (#
 (#65), **M69** (#66 — the enqueue writes `queue[cursor]`), **M70** (#67 — who writes the
 cursor; a repaint does not rewrite the queue).
 
-**M71 (this branch's PR) — THE COMPLETION'S POP, MEASURED LIVE. ACCEPTANCE PASS on one real
-invocation and REPRODUCED** (`python3 scripts/m71_pop_watch.py --boundaries 2 --tag m71pop`
--> PASS; the same command `--tag m71pop3` on a reloaded save -> PASS). `test_m71_pop.py`
-34/34. Details: NAMED.md's M71 block, SESSION_NOTES.md session 111.
+**M71 merged (#68) — the completion's pop pops ONE item, shifts `0..pending-1` only, never writes
+the cursor.**
+
+**M72 (this branch's PR) — WHICH TEST SENDS THE VISIT HOME WITHOUT PAYING. ACCEPTANCE PASS on two
+real invocations that differ in ONE variable**: `python3 scripts/m72_gate_watch.py --boundaries 2
+--tag m72gate4` -> PASS (storage 18: `POSAFF` -> `BAILAFF` `0x4efa63`, nothing paid); the same
+state with `--poke-minerals 27 --boundaries 1 --tag m72gate5` -> PASS (`PAYA` + `CREATE`). Head 193
+wants **`edi` 27 where `price_of` says 18**, which explains M71's `m71pop2` FAIL. `test_m72_gate.py`
+21/21. Details: NAMED.md's M72 block, SESSION_NOTES.md session 113.
 
 **M68 is NOT merged — its acceptance FAILED.** `milestone/m68` carries the 212-rule key
 identifier, its gate, `m68_key_run.py`, `m68_typebytes.py`, `m68_cellprobe.py` and
@@ -35,18 +40,17 @@ confirms its branch reading.
    `--no-screen` skips the OCR. If the screen reads `dialog`, run
    `python3 scripts/m70_clear_dialog.py` (it presses Return until the dialog is gone and
    prints each look); a BUILD/base PANE needs Escape, not Return.
-3. `python3 scripts/m71_pop_watch.py [--base-name NAME] [--boundaries 2] [--poke-minerals N]
-   [--tag m71pop]` — **the completion/pop instrument, one invocation prints PASS or FAIL.**
-   It pokes the base's minerals to the head's price and READS BACK before attaching (pokes lie
-   under a tracer), arms 4 hw watchpoints (the cursor field `0x6e93dc` + queue slots 1..3) and
-   10 silent conditional breakpoints (`0x4f5a93` visit marker; pop
-   `0x4ef5e4/0x4ef61a/0x4ef61c/0x4ef642/0x4ef65d/0x4ef68b`; BOTH pay sites `0x4efed8` and
-   `0x4f0ca1`; create `0x4eff4e`), drives real round boundaries with `smac_play`, detaches and
-   reads pending/region/cursor/counts back from `/proc/pid/mem`. Its 8 gates refuse: a shape
-   that cannot separate SINGLE from DRAIN, a window with no pop, a walk that ended for no
-   logged reason, a pending or region read-back the logged writes do not explain, a queued
-   count byte that moved by the wrong amount, ANY unmapped writer pc, and a base array that
-   moved out from under the watchpoints. Logs `evidence/<tag>.gdblog` + `<tag>_seq.jsonl`.
+3. `python3 scripts/m71_pop_watch.py [--base-name N] [--boundaries 2] [--poke-minerals N] [--tag m71pop]`
+   — the POP instrument (4 hw watchpoints on the cursor field `0x6e93dc` + slots 1..3, 10 silent
+   breakpoints on the pop/pay/create sites, drives real boundaries, reads the region back, 8 gates).
+   Only needed to REPRODUCE M71; the gate question is M72's instrument.
+3b. `python3 scripts/m72_gate_watch.py [--base-name NAME] [--boundaries 2] [--poke-minerals N]
+   [--tag m72gate]` — the VISIT-GATE instrument: 12 conditional breakpoints (entry `0x4ef6d0`,
+   head `0x4ef88e`, unit affordability `0x4efa5e`/bail `0x4efa63`, `0x4efe41`, pay `0x4efed8`,
+   create `0x4eff4e`, facility path `0x4f0a3d`/`0x4f0a42`/`0x4f0b4f`/`0x4f0b86`/`0x4f0c28`,
+   visit `0x4f5a93`), storage poked and READ BACK before attaching, drives real boundaries
+   itself, detaches, 8 gates, one-line PASS/FAIL. **Its `edi` is the visit's requirement — not
+   `price_of`** (193: 27 vs 18).
 4. `python3 scripts/m70_cursor_watch.py --arm / --stop / --acceptance` — the cursor
    instrument (same 4 hw watchpoints, the enqueue/row-click breakpoints), log
    `evidence/m70_cursor.gdblog`. `--acceptance` FAILs on any unmapped writer pc or an
@@ -67,38 +71,33 @@ confirms its branch reading.
 9. `python3 scratch/m71/dis.py 4ef5d0 4ef6c8` — an objdump window over `scratch/m574/text.txt`
    (small output; never read the whole dump). `m56_build.py --fixture X` writes to `$TMPDIR`.
 
-## WHAT M71 SETTLED (NAMED.md M71 block, session 111)
+## WHAT M71/M72 SETTLED (NAMED.md blocks, sessions 111 + 113)
 
-- **A completion pops EXACTLY ONE item when the new head validates as available**: pending 2 ->
-  1, region `[2,193,192,0...] -> [193,192,192,0...]` read back after detaching; the DRAIN
-  candidate (`pending -> 0`, `[192,192,192,...]`) predicts a different region and lost.
-- **The pop's shift touches `queue[k] = queue[k+1]` for k = 0..pending-1 ONLY** (store
-  `0x4ef62c`, gdb reports `pc=0x4ef62e`); `queue[pending]` keeps its STALE id — so K shifts
-  are NOT "shift left by K": index k is written `pending-k` times (`shift_predict` in the
-  instrument, pinned by the test). The duplicate id in a read-back is a stale slot, not a copy.
-- **The drain stops at the validator**: `POPRES head=193 r=1` -> `POPEXIT` (`0x4ef68b`), the
-  new head still in the queue. `0x5a73f0` returns 0 iff type-record `+0x30` bit 0 is clear OR
-  the owner-mask byte `+0x2c` lacks the faction bit; live records: 192 `+0x30=0x0001`,
-  193 `0x0041`, 194 `0x0041`, `+0x2c = 0` for all three.
-- **The completion does not touch the cursor field**: zero writes to `*0x6e93dc` across the
-  whole armed window, twice; the `0x4194b3` handler (M70's zeroer) does not fire there. So the
-  M67-vs-M68 difference is NOT produced by the completion — it left-shifts, it does not sort.
-- **The pay that fires for a UI-queued base-type head is `0x4efedd` with `edi` = the head's
-  PRICE** (`PAYA storage=9 edi=9`; run 3 `storage=10 edi=9` after the round's `+1` add at
-  `0x4ef7f6`) while the base's INDEX is 0 — so `edi` is not the sweep-entry index here.
-  `0x4f0ca1` never fired; `0x4f0ca6` is still unexamined, not refuted.
-- The queued-count dec happens at the address the GAME computed (`0x94de84 + 8380*owner + head`
-  = `0x9540ba` for owner 3 head 2); read back 1 -> 0 at `POPAFT`, and `de84[2]` read 0 after.
+- **A completion pops EXACTLY ONE item when the new head validates as available**, and the shift
+  writes `queue[k] = queue[k+1]` for k = 0..pending-1 ONLY (store `0x4ef62c`), so index k is
+  written `pending-k` times and `queue[pending]` keeps a STALE id. The drain stops at the
+  validator (`0x5a73f0`: type `+0x30` bit 0 clear OR owner-mask `+0x2c` lacks the bit -> 0).
+  The completion writes the cursor field ZERO times.
+- **The pay that fires is `0x4efed8` (`storage -= edi`)**, and `edi` is the VISIT'S OWN
+  requirement, not `price_of`: **head 193 -> `edi` 27 while `price_of` says 18** (head 2 -> 9,
+  where both agree). `edi = FUN_004e40a0(owner,1,-1) * FUN_005ac950(head,base,0)` (`0x4efa3c`,
+  `0x4efa4d`, `imul 0x4efa52`); product MEASURED, factor split INFERRED.
+- **The unaffordable turn-around is `0x4efa63`** (the `cmp [base+0x40],edi` at `0x4efa5e` on the
+  unit path) -> message pair `0x67164c/0x671644` -> epilogue `0x4f0bfa`. Storage 18: `POSAFF` ->
+  `BAILAFF`, nothing paid, queue untouched; storage 27: `POSAFF` -> `CMP40` -> `PAYA` -> `CREATE`.
+- **The visitor runs 2-3x per two boundaries with identical operands** — repeated bail rows are
+  ONE answer; two different bail KINDS in one window is the refusal case.
+- **The facility (negative-head) path's three no-pay exits are ARMED BUT UNEXERCISED**:
+  `0x4f0a42` (storage < edi), `0x4f0b86` (`-head <= 0`), `0x4f0c28` (another base already holds
+  the head). A NEGATIVE head is needed to exercise them; no claim is made.
 
 ## STILL OPEN (in priority order)
 
-1. **M72 pick — watch the completion GATE, not the pop.** `m71pop2` (head 193, a DESIGNED id,
-   minerals poked to its price 18 and read back) FAILed its window gate: 2 boundaries, ONE
-   `VISIT` with `min=18`, NO pay/pop/create; at the end `+0x3c` 5, `+0xcc` 0, `+0x30`
-   `0x80007020`, `+0x98` 18. Arm `0x4f0a37` (`cmp [base+0x40], edi`), `0x4f0abb`, `0x4f0b4f`,
-   `0x4f0b78` and `0x4efe41` (`cmp ebx,0x40`) and name which test sends the visit home without
-   paying, and what `edi` holds at each. That explains `m71pop2` and closes the pay-site
-   conflict for the designed branch. Do not re-litigate the pop — it is measured twice.
+1. **M73 pick — split `edi` = 27 for head 193.** Read `FUN_005ac950`'s `0x94d438`/`0x927a98`
+   guards and `FUN_00595ad0` to say whether 27 is cost 3x9 or 1.5x18, and log `edi` for a SECOND
+   designed id (194, `price_of` 27) to see whether it tracks cost or a derived value. Then exercise
+   the facility path with a NEGATIVE head: the three exits `0x4f0a42`/`0x4f0b86`/`0x4f0c28` are
+   armed in `m72_gate_watch.py` and have never fired.
 2. **Who calls the `0x4194b3` handler and what widget message `0x4d00` is** (it zeroes the
    cursor after a queue mutation; `0x584010` is the message sender, `0x4eb6b0` runs after it;
    it did NOT fire at a completion or a round boundary).
@@ -113,15 +112,13 @@ confirms its branch reading.
 6. Keep green: `test_accept_ready` 17/17, `test_hud_bar` 26/26, `test_m56_predict` 19/19,
    `test_walk_diff` 37/37, `test_classify` 17/17, `test_m66_layouts` 10/10,
    `test_m67_sort_keys` 15/15, `test_m68_key_rules` 35/35, `test_m69_cursor` 15/15,
-   `test_m70_cursor` 23/23, **`test_m71_pop` 34/34**, `check_classes.py` exit 0.
+   `test_m70_cursor` 23/23, `test_m71_pop` 34/34, **`test_m72_gate` 21/21**, `check_classes.py` exit 0.
 
 ## LIVE FACTS / KIT
 
-- **Box at session-111 close:** terran.exe alive, year 2153 round 53 `cur_player` varies;
-  **University Base idx 0 (record `0x95da10`) pending 1** slots
-  `[193, 192, 192, 0, 0, 0, 0, 0, 0, 0, 9225, 0]`, minerals 1, `+0xd0` 0, cursor field
-  `0x6e93dc` = 0. `de84[2]` 0, `de84[192]` 1, `de84[193]` 1, `de84[194]` 0. Korolev Center
-  does not exist in this instance (a fresh `m54g_prep`-style founding is needed for it).
+- **Box at session-113 close:** round 60; University Base idx 0 (`0x95da10`) head 192, pending 0,
+  storage 0 after M72's pay+create; unit 193 exists. RELOAD before any acceptance.
+  Korolev Center does not exist in this instance (a fresh `m54g_prep`-style founding is needed).
 - **Prices (`scripts/m56_build.py price_of`, multiplier 9 on this save):** head 2 Scout Patrol
   9, 192/193 (cost 2) 18, 194 Impact Infantry (cost 3) 27. **A head of type 2 completes the
   moment storage >= price; a head of type 193 did NOT complete in two boundaries** (open #1).
@@ -134,6 +131,8 @@ confirms its branch reading.
   --tag t` -> `accept_ready.py` (its FIX is "enqueue on University Base") ->
   `m66_insert_slot.py --base-name "University Base" --item-a 193 --item-b 192` (or
   `m57_ui_enqueue.py --base-index 0 --cell-item 2 --inserts 1`) -> the acceptance run.
+  **To put head 193 on top** (M72's shape): enqueue the 193+192 pair, poke storage to 9 and read
+  it back, then ONE boundary lets head 2 complete+pop -> head 193, pending 1, `[193,192,192,...]`.
 - gdb: 4 hardware watchpoints and **10 clean silent breakpoints worked** (M71's arm; ~35 s per
   boundary under them). Conditional breakpoints (`if $esi+0x95da10 == $b`, `if $ecx == $b`)
   keep every other base out of the log. No `si` inside a breakpoint command list; stdout must
