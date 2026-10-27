@@ -526,8 +526,6 @@ prose. Delete a line only when a measurement settles it, and move the answer int
 CONFLICT: year store — the M59/M60 notes and the skill say `0x51f554`; the instruction bytes are
 `0x51f54f` (`a3 00 5b 98`, immediately after the round store `0x51f53c`), and `0x51f554` is the
 `call 0x478530` AFTER the store. Bytes win: `evidence/m61a_watch.gdblog`.
-CONFLICT: per-faction queued-count byte — `0x94dc84` (skill text) vs `0x94de84` (operand at the
-pop, `0x4ef613`). Neither has been read live yet; do not quote either as fact.
 CONFLICT: pay site — `0x4f0ca6` (the NAMED "completion path", branch still unread) vs `0x4efedd`
 (measured live: `before 9 edi 9 after 0`, immediately before the create at `0x4eff4e`). For the
 UI-queued shape `0x4efedd` is the pay; the other branch is unexamined, not refuted.
@@ -543,3 +541,28 @@ slot array unchanged (`[2,2,0,0]` before and after), and r4 shows two bases' hea
 `384`/`386` while Korolev reads `2` — a garbage head still reached the bookkeeping comparison and
 was reported as a "queue held" failure. Open: what writes 384/386 into `+0x50`, and whether the pop
 shifts at all (M61's observation repeats here: pending decrements, slots do not move).
+
+## M66 block (session 106, 2026-10-26) — the queue's shape, measured by watching the BUILD UI write it
+
+Four live enqueues through the game's own INSERT (no queue poke in any of them; the only writes are
+the M57 recipe's three enabling pokes), each read back after every click
+(`scripts/m66_insert_slot.py`; traces `evidence/m66_insert_slot_run1_korolev.jsonl`,
+`evidence/m66_insert_slot_university.jsonl`, `evidence/m66_insert_slot_third_fourth.jsonl`,
+`evidence/m66_insert_slot_cost_order.jsonl`; the scorer is pinned by
+`python3 scripts/test_m66_layouts.py` -> `PASS 10/10 m66-layout cases`).
+
+| name | address / rule | conf | evidence |
+|---|---|---|---|
+| **the queue REGION is `base+0x54 ..`** — queued entry `k` (for `k = 1 .. pending`) lives at `base+0x50 + 4k`; `pending` (`base+0x4c`) is the count of the region | H (four enqueues, read back after each INSERT) | `evidence/m66_insert_slot_cost_order.jsonl:6-7`, `evidence/m66_insert_slot_third_fourth.jsonl:6-7` |
+| **INSERT does not write a slot index, it INSERTS BY COST**: the item goes at the first region slot whose type-record cost byte (`0x98ad88 + type*52 + 41`, the byte `m58_price.py` prices from) is STRICTLY below the new item's cost, else after the region (`pending + 1`); everything from that slot rightward shifts one slot; equal-cost entries stay ahead of the newcomer | H (live: a cost-3 item went after a cost-3 entry and before a cost-2 run — `cost_order.jsonl:6`; a cost-2 item went after three cost-2 entries — `cost_order.jsonl:7`; a cost-3 item went to index 1 while `pending` was 2, refuting "writes `4*pending`" — `third_fourth.jsonl:6`) | same rows; costs in `evidence/m66_insert_slot_cost_order.jsonl:5` |
+| **`base+0x50` (the head slot) is not a queued entry and INSERT never writes it** — it read 2 in all four runs, before and after; the pop consumes it (`0x4ef5d0`, M63's branch) and something else refreshes it (OPEN) | H (read back 8x) | `evidence/m66_insert_slot_university.jsonl:1,6,7`, `evidence/m66_insert_slot_cost_order.jsonl:1,6,7,8` |
+| **the per-faction QUEUED count is the byte array `0x94de84 + 0x20bc*owner + type_id`** — the UI enqueue adds 1 per item of that type (settled state, read after OK), the pop subtracts 1 (`0x4ef613`, M63's branch). The sibling `0x94dc84` (512 B lower, same stride) was NOT touched by any enqueue, at its own indexing; it is a different counter (what it counts is OPEN; it is incremented at `0x4d2a25`/`0x4d2fa7`). This closes the M62 CONFLICT line, which is now deleted | H (two runs, whole-row diffs before -> after OK) | `evidence/m66_insert_slot_cost_order.jsonl:10`, `evidence/m66_insert_slot_run1_korolev.jsonl:8` |
+| mid-click the whole row reads one LOWER for every queued id and by OK it is back with the new id added — read the SETTLED state, not the click instant | H | `evidence/m66_insert_slot_cost_order.jsonl:6` vs `:10` |
+| **the chooser's candidate array `DAT_009267e4` re-sorts between reads** (`0x596000` rebuilds all 128 entries per paint): the same box read `[192,194,193,2,0,1,195,...]` before the chooser opened and `[192,195,194,193,2,0,1]` with it open. The id the game stored always equalled the entry at the CLICKED cell read AT CLICK TIME (no +1 shift), so a cell -> id map is only valid for the frame it was read from | H | `evidence/m66_insert_slot_cost_order.jsonl:6` (`cand_at_click`, `cell_entry`), `evidence/m66_insert_slot_run1_korolev.jsonl:2` |
+| enqueue dispatch `FUN_00417ee0` (size 7459, `shard_001.c:8941`): pending is incremented at `0x418b0a-0x418b0b` with a CAP of 9 (`0x418b05 cmp ecx,0x9 / jge`), the slot at index = the new pending is read at `0x418b32` (`mov eax,[eax+esi*4+0x50]`) and pushed with the buffer `0x689974` into `0x62732a`, and the head store `mov [edx+0x50],eax` at `0x418b57` is gated on `esi == 0` (`0x418b46 test esi,esi / jne 0x418c39`) — which cannot happen after the increment, and did not fire in any of the four enqueues. STATIC: read from `scratch/m574/text.txt`, never poked, and which branch INSERT actually takes is still unassigned | M | disasm window `0x418ad0-0x418b74` |
+
+CONFLICT: type names — the live `+0` strings of the faction-3 designed records now read 192
+`Impact Squad`, 193 `Synthmetal Garrison`, 194 `Impact Infantry`, 195 `Impact Battery`; the M33-era
+row above says 193 `Scout Rover`, 194 `Synthmetal Garrison`, 195 `Laser Squad`. Read 2026-10-26 from
+`0x98ad88 + type*52`; nobody has established which read was right or whether the names are
+per-save, so do not quote either list as the name of an id.

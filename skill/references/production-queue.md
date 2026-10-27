@@ -52,7 +52,10 @@ per-faction queued-count byte at `[0x94de84 + owner*0x20bc + head]` — the head
 UNSCALED, not `*4`: for owner 3 / head 2 the address the game itself computed at `0x4ef613` was
 `0x9540ba` = `0x94de84 + 8380*3 + 2`, and that byte read 3 at `0x4ef61a` and 2 at `0x4ef61c`, so
 the M62 conflict is CLOSED in favour of `0x94de84` and the sibling `0x94dc84` (512 B lower, same
-stride) is a DIFFERENT counter — it went 6 -> 7 in the same window in which a unit was produced;
+stride) is a DIFFERENT counter — it went 6 -> 7 in the same window in which a unit was produced
+(M66 measured the other side of the same byte: the BUILD UI's INSERT adds 1 to
+`0x94de84 + owner*0x20bc + type` for the type it queues and never touches `0x94dc84` at its own
+indexing — `scripts/m66_insert_slot.py`, settled state read after OK);
 (2) left-shifts the slots `pending` times (`0x4ef62c`, seen live writing Korolev `+0x50` with the
 value that was at `+0x54`); (3) stores `pending-1` (`0x4ef642`); (4) hands the NEW head to a
 validator — `0x5a73f0(head, owner, idx)` for `head >= 0` (type record `+0x38` bit 0 / `+0x34` bit
@@ -237,8 +240,19 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
    chooser (open test: pixel (160,343) == (103,91,181)); the grid is 5 columns, cell k at
    x = 128 + 127*(k%5), y = 60 + 100*(k//5); the display order is the candidate array
    `DAT_009267e4` / count `0x9267e0`; the selection field `[pane+0xa1c+0xa774]` holds the CELL INDEX.
-3. **INSERT (497,343)** writes head `+0x50`, pending `+0x4c`, slot `+0x54`; **OK (285,343)** commits
-   (mode 0, no restore); CANCEL restores from the stack snapshot. Re-read pending ~1 s later.
+3. **INSERT (497,343) does not write a slot index — it INSERTS BY COST** (M66: four enqueues with
+   two DIFFERENT ids, `scripts/m66_insert_slot.py`, queue read back after every click). The item
+   lands at the first queue slot (`base+0x50 + 4k`, `k = 1 .. pending`) whose type-record cost byte
+   (`0x98ad88 + type*52 + 41`, the byte `m58_price.py` prices from) is STRICTLY below the new item's
+   cost, else after the region at `k = pending + 1`; everything from that slot rightward shifts one
+   slot, and entries already at the same cost stay ahead of the newcomer. `pending` `+0x4c` rises by
+   1 (cap 9 at `0x418b05`) and **the head slot `+0x50` is never written by INSERT** — it read 2
+   before and after in all four runs. The M57 claim "INSERT writes head `+0x50`, pending `+0x4c`,
+   slot `+0x54`" was a duplicate-value artifact: that run enqueued id 2 behind a head that was
+   already 2. **OK (285,343)** commits (mode 0, no restore); CANCEL restores from the stack
+   snapshot. Re-read pending ~1 s later. The enqueue also adds 1 to the per-faction queued byte
+   `0x94de84 + 0x20bc*owner + type` (read the SETTLED state after OK: mid-click the whole row reads
+   one lower for every queued id).
 4. `base+0xd0` is NOT the per-round mineral credit (measured deltas 0/+4/0/-5/+2 while it read 2),
    so a per-round arrival prediction built on it over-predicts. Watch `base+0x40` at 2 ms to get the
    real credit sequence.
@@ -274,10 +288,20 @@ memory writes** and the queued unit completed at a boundary where storage (8) wa
   arrow until `+0x3ff3c` == the target index, then row 1 (185,437), cell, INSERT, OK (285,343),
   reading pending after every click. The chooser grid position is ERA-DEPENDENT (Scout Patrol id 2
   was cell 3 at 2152, cell 4 at 2168 — `DAT_009267e4` = [192,195,194,193,2,...]): locate the cell by
-  CONTENT. `scripts/m57_ui_enqueue.py` scripts all of it with read-backs.
+  CONTENT, and by content read **with the chooser OPEN** — `0x596000` rebuilds and re-sorts all 128
+  entries on every paint, so the array read before opening the chooser is already stale (M66, the
+  same box: `[192,194,193,2,0,1,195,...]` pre-open vs `[192,195,194,193,2,0,1]` open; the id the
+  game stored always equalled the entry at the clicked cell read at click time).
+  `scripts/m57_ui_enqueue.py` and `scripts/m66_insert_slot.py` script all of it with read-backs.
 - The enqueue dispatch `0x417ee0` fires with `*0x8f0d60` = the target base (proved live), but
   m53g_drive's static store addresses (`0x418b57/0x418ad3/0x418ac7/0x418b24`) did NOT hit on the
-  INSERT write — re-derive before trusting them.
+  INSERT write — re-derive before trusting them. M66 read that window of the whole-`.text` dump:
+  `0x418b0a-0x418b0b` increments `*0x8f0d60 + 0x4c` (pending) with a cap of 9 at `0x418b05`,
+  `0x418b32` reads the slot at index = the NEW pending and pushes it into `0x62732a` with the buffer
+  `0x689974`, and `0x418b57` (`mov [edx+0x50],eax`, the head store) is gated on `esi == 0` at
+  `0x418b46`, which cannot hold after the increment — so none of these is the store that moved the
+  queue in the four measured enqueues. Which branch INSERT takes is still unassigned (STATIC, never
+  traced).
 - The base array compacts mid-game: Korolev Center's index walked 17->18->17 within one session
   (n_bases 29->19->23->25). Locate bases by NAME/(x,y), never by remembered index.
 - The acceptance run `m56_build.py --ui-queued 17 --boundaries 8 --timeout 240` FAILED
