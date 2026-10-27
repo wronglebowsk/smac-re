@@ -7,12 +7,16 @@ whole-name lexicographic rules = 212 candidate rules, and pays only if exactly O
 explains every write.  These cases pin both halves of that instrument:
 
   * the identifier: for each shape, the EXACT set of candidate rules that explains the
-    read-backs.  The three M67 read-backs are in here on purpose: they fit 11, 17 and 15 of
-    the 212 rules — M67 named `+42 desc after` but its two-item shapes could not tell it from
-    the name bytes, which is exactly the gap M68 exists to close;
+    read-backs, and therefore the set of KEYS (byte offsets, or the name string) that does.
+    The run pays on KEYS, not on rules: two conventions of ONE key is a PASS whose tie
+    direction was not tested, while two different keys fitting is no claim at all.
+    The three M67 read-backs are in here on purpose: they fit 11, 17 and 15 of the 212 rules
+    across 4-6 different keys — M67 named `+42 desc after` but its two-item shapes could not
+    tell it from the name bytes, which is exactly the gap M68 exists to close;
   * the shape gate: the predictions come from the BASELINE alone, and the run refuses a shape
-    where the rule under test is not the ONLY one predicting its landing sequence (the empty
-    region is that shape, and so is today's Korolev Center queue with two items).
+    where a DIFFERENT KEY predicts the landing sequence it is testing (the empty region is
+    that shape, and so is today's Korolev Center queue with two items, where three different
+    bytes predict the same two slots).
 
 Keys are the LIVE type records read off the box on 2026-10-26 (`scripts/m68_typebytes.py`,
 `evidence/m68_typebytes.jsonl`): the 52 bytes of ids 0, 1, 2, 192, 193, 194, 195, verbatim.
@@ -79,7 +83,11 @@ def key_of(off):
 
 
 SPECS = M.key_rule_specs()
-ITEMS = [2, 193, 194, 195, 1, 192]        # the acceptance click order
+RULE_KEY = {nm: off for nm, off, _d, _t in SPECS}
+ITEMS = [2, 193, 194, 195, 1, 192]        # six ids: the shape the gate was designed on
+ACCEPT_ITEMS = [2, 1, 194, 192, 193]      # the shape the run actually uses: 195 writes -3 (see
+                                          # scripts/m68_cellprobe.py), and a poisoned queue entry
+                                          # breaks the engine's own insert
 EMPTY = [2] + [0] * 11                    # a fresh base's queue: head slot 2, empty region
 KOR_TODAY = [2, 193, 193, 194, 195, 192, 192, 2, 0, 0, 545, 0]   # Korolev Center, pending 6
 
@@ -100,6 +108,13 @@ def sim(items, off, d, t, base, p):
 
 def fits(steps):
     return [nm for nm, off, d, t in SPECS if M.score_key_sequence(steps, key_of(off), d, t)]
+
+
+def fit_keys(steps):
+    """the verdict the run makes: the distinct KEYS (byte offsets, or None for the name string)
+    that explain every write.  Two conventions of one key is a PASS with the tie direction
+    untested; two keys is no claim."""
+    return sorted({str(RULE_KEY[nm]) for nm in fits(steps)})
 
 
 # (name, steps, the candidate rules that explain every write)
@@ -164,6 +179,30 @@ CASES = [
      ["7:desc:after", "7:desc:before", "name_str:desc:after", "name_str:desc:before"]),
     ("produced_by_name_str_asc", sim(ITEMS, None, "asc", "after", EMPTY, 0),
      ["7:asc:after", "7:asc:before", "name_str:asc:after", "name_str:asc:before"]),
+    # THE ACCEPTANCE SHAPE (five ids: 195 is left out because at this base it writes -3 into
+    # the queue — scripts/m68_cellprobe.py — and a queue entry with no type record breaks the
+    # engine's own insert).  The plan byte's writes are explained by the plan byte ONLY (its
+    # two descending conventions agree because nothing in this shape ties at plan, so the tie
+    # direction is NOT tested here — M67 settled it in PR #65); the cost byte's writes are
+    # explained by the cost byte only; and the name-side candidates each co-predict with other
+    # bytes, which is why a run whose writes matched them prints "no key claim is made".
+    ("accept_produced_by_42_desc", sim(ACCEPT_ITEMS, 42, "desc", "after", EMPTY, 0),
+     ["42:desc:after", "42:desc:before"]),
+    ("accept_produced_by_41_desc", sim(ACCEPT_ITEMS, 41, "desc", "after", EMPTY, 0),
+     ["41:desc:after"]),
+    ("accept_produced_by_1_desc", sim(ACCEPT_ITEMS, 1, "desc", "after", EMPTY, 0),
+     ["1:desc:after"]),
+    ("accept_produced_by_43_asc", sim(ACCEPT_ITEMS, 43, "asc", "after", EMPTY, 0),
+     ["43:asc:after"]),
+    ("accept_produced_by_0_desc", sim(ACCEPT_ITEMS, 0, "desc", "after", EMPTY, 0),
+     ["0:desc:after", "37:asc:after"]),
+    ("accept_produced_by_10_asc", sim(ACCEPT_ITEMS, 10, "asc", "after", EMPTY, 0),
+     ["8:asc:after", "8:asc:before", "10:asc:after"]),
+    ("accept_produced_by_15_desc", sim(ACCEPT_ITEMS, 15, "desc", "after", EMPTY, 0),
+     ["15:desc:after", "16:desc:after", "17:desc:after", "18:desc:after"]),
+    ("accept_produced_by_name_str", sim(ACCEPT_ITEMS, None, "desc", "after", EMPTY, 0),
+     ["0:desc:before", "2:asc:before", "7:desc:after", "7:desc:before", "37:asc:before",
+      "name_str:desc:after", "name_str:desc:before"]),
     # the plan byte's writes with the LAST write moved from region slot 6 to slot 3: no
     # convention predicts that, so the run must FAIL, not name a byte.
     ("no_rule_explains_it",
@@ -171,20 +210,38 @@ CASES = [
      + [([2, 1, 2, 193, 194, 195, 0, 0, 0, 0, 545, 0], 5,
          [2, 1, 2, 192, 193, 194, 195, 0, 0, 0, 545, 0], 6)],
      []),
+    # the acceptance shape's plan-descending writes with the last item (193, plan 2) written at
+    # region slot 4 instead of slot 3: nothing predicts it.
+    ("accept_no_rule_explains_it",
+     sim(ACCEPT_ITEMS[:4], 42, "desc", "after", EMPTY, 0)
+     + [([2, 1, 2, 194, 192, 0, 0, 0, 0, 0, 9225, 0], 4,
+         [2, 1, 2, 194, 193, 192, 0, 0, 0, 0, 9225, 0], 5)],
+     []),
 ]
 
 # (name, baseline, pending, items, expected landing, the rules predicting THAT sequence,
 #  number of distinct prediction sequences, size of the largest group)
 GATE_CASES = [
+    # (name, baseline, pending, items, expected landing, the rules predicting it, the KEYS
+    #  predicting it, distinct prediction sequences, largest group)
     ("acceptance_shape", EMPTY, 0, ITEMS,
-     [1, 2, 3, 4, 1, 6], ["42:desc:after"], 76, 47),
+     [1, 2, 3, 4, 1, 6], ["42:desc:after"], ["42"], 76, 47),
+    # THE SHAPE THE RUN USES: five ids, no 195.  Only the plan byte predicts its landing
+    # sequence (its two descending conventions, because nothing ties at plan in this shape),
+    # so the key gate passes; 12 of the 53 keys are decidable on it at all.
+    ("run_acceptance_shape", EMPTY, 0, ACCEPT_ITEMS,
+     [1, 1, 3, 4, 3], ["42:desc:after", "42:desc:before"], ["42"], 50, 57),
     # today's Korolev Center queue (pending 6) with the two items that fit there: three rules
     # predict the same pair of slots, so the gate REFUSES the shape and no claim is earned —
     # this is the measurement that says two inserts are not enough (evidence/m68_typebytes.jsonl)
+    # three rules predict the same pair of slots and they read THREE different bytes, so the
+    # gate refuses the shape and no claim is earned — this is the measurement that says two
+    # inserts are not enough (evidence/m68_typebytes.jsonl)
     ("korolev_today_two_items", KOR_TODAY, 6, [1, 194],
-     [1, 5], ["10:asc:after", "13:asc:after", "42:desc:after"], 18, 65),
+     [1, 5], ["10:asc:after", "13:asc:after", "42:desc:after"], ["10", "13", "42"], 18, 65),
     ("empty_region_one_item", EMPTY, 0, [193], [1],
-     [nm for nm, _o, _d, _t in SPECS], 1, 212),
+     [nm for nm, _o, _d, _t in SPECS],
+     sorted({str(RULE_KEY[nm]) for nm, _o, _d, _t in SPECS}), 1, 212),
 ]
 
 
@@ -199,18 +256,21 @@ def main():
     for name, steps, want in CASES:
         got = fits(steps)
         ok = got == want
-        print(f"{'ok ' if ok else 'BAD'} {name:28} fits={len(got):<3} want={len(want):<3} "
-              f"{got if got != want else ''}")
+        print(f"{'ok ' if ok else 'BAD'} {name:30} fits={len(got):<3} want={len(want):<3} "
+              f"keys={fit_keys(steps)}{'' if ok else ' GOT ' + str(got)}")
         if not ok:
             fails.append(name)
-    for name, base, p, items, want_lands, want_same, want_groups, want_largest in GATE_CASES:
+    for name, base, p, items, want_lands, want_same, want_keys, want_groups, want_largest \
+            in GATE_CASES:
         preds = M.key_shape_predictions(base, p, items, key_of)
-        lands, same, groups, largest = M.key_shape_gate(preds, "42:desc:after")
+        lands, same, groups, largest, keys = M.key_shape_gate(preds, "42:desc:after")
+        got_keys = sorted(str(k) for k in keys)
         ok = (list(lands) == want_lands and same == sorted(want_same)
-              and groups == want_groups and largest == want_largest)
-        diff = "" if same == sorted(want_same) else f" GOT {same[:8]} want {sorted(want_same)[:8]}"
+              and got_keys == sorted(want_keys) and groups == want_groups
+              and largest == want_largest)
+        diff = "" if got_keys == sorted(want_keys) else f" GOT keys {got_keys[:8]}"
         print(f"{'ok ' if ok else 'BAD'} {name:28} lands={list(lands)} same={len(same)} "
-              f"groups={groups} largest={largest}{diff}")
+              f"keys={got_keys} groups={groups} largest={largest}{diff}")
         if not ok:
             fails.append(name)
     # every rule must be EVALUATED on the acceptance shape (the run scores all 212)

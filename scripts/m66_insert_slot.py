@@ -329,15 +329,19 @@ def key_shape_predictions(s, p, items, key_of):
 
 
 def key_shape_gate(preds, expect):
-    """the shape gate: group the predictions and report whether the rule under test is the
-    ONLY one predicting its landing sequence.  Returns (expected_landing, rules_predicting_the_same,
-    n_distinct_prediction_groups, largest_group_size)."""
+    """the shape gate: group the predictions and report what it means to run this shape.
+    Returns (expected_landing, rules_predicting_the_same_landing, n_distinct_prediction_groups,
+    largest_group_size, the KEYS that predict it) — a rule's KEY is the type-record byte offset
+    it reads, or None for the whole-name key.  M68's question is WHICH KEY, so the gate runs at
+    key level: two conventions of the same key agreeing is fine (that shape just does not test
+    the tie direction, which M67 settled), two different KEYS agreeing earns nothing."""
     groups = {}
     for nm, lands in preds.items():
         groups.setdefault(tuple(lands), []).append(nm)
     exp = tuple(preds[expect])
     same = sorted(groups[exp])
-    return exp, same, len(groups), max(len(v) for v in groups.values())
+    keys = {off for nm, off, _d, _t in key_rule_specs() if nm in groups[exp]}
+    return exp, same, len(groups), max(len(v) for v in groups.values()), keys
 
 
 def u32(f, a):

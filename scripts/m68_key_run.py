@@ -11,13 +11,19 @@ slots).  Two inserts of two ids in one queue cannot separate them: on the box's 
 queue, three of the 208 byte rules predict the same two landing slots (measured by
 `scripts/m68_typebytes.py`, `evidence/m68_typebytes.jsonl`).
 
-This run inserts SIX different ids, in an order chosen from the live record bytes BEFORE
-clicking, and scores the whole sequence of read-backs.  The shape is only accepted if the rule
-under test (`--expect`, default `42:desc:after`, the M67 finding) is the ONLY one of the 212
-candidate rules that predicts the landing sequence — so a PASS means the sequence of writes
-identifies ONE byte convention and no other single byte of the 52-byte record, nor the name
-string, reproduces it.  A FAIL means either the shape could not discriminate (the gate refuses
-before any click) or the writes match zero or several rules.
+This run inserts FIVE different ids, in an order chosen from the live record bytes BEFORE
+clicking, and scores the whole sequence of read-backs.  The shape is only accepted if no key
+OTHER than the one under test (`--expect`, default `42:desc:after`, the M67 finding) predicts
+that landing sequence — two conventions of the same key may agree, which only means the shape
+does not test the tie direction (M67 settled it in PR #65).  A PASS means the sequence of
+writes is explained by ONE key: one byte of the 52-byte record, or the name string.  A FAIL
+means the gate refused the shape before any click, or the writes match zero keys or several.
+
+195 (Impact Battery) is not in the sequence: at this base an INSERT of it writes -3
+(0xfffffffd) into the queue instead of its type id (`scripts/m68_cellprobe.py`,
+`evidence/m68_cellprobe.jsonl`), and a queue entry with no type record breaks the engine's
+own insert (the next INSERT appended a plan-9 item at the END of the region), which would
+confound the shape with a fault rather than test it.
 
 Read model inherited from M67 (NOT a hypothesis): the queue REGION is slots[1..pending]
 (`base+0x54 ..`), the head slot `+0x50` is not a queued entry, and the INSERT shift is capped
@@ -28,7 +34,7 @@ The only memory writes are the M57 recipe's three enabling pokes (cursor home, S
 mode) — no queue field is ever poked.
 
     python3 scripts/m68_key_run.py --base-name "University Base" \
-        --items 2,193,194,195,1,192 --trace evidence/m68_key_run.jsonl
+        --items 2,1,194,192,193 --trace evidence/m68_key_run.jsonl
 """
 import argparse
 import json
@@ -54,7 +60,7 @@ def cell_xy(cell):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base-name", default="University Base")
-    ap.add_argument("--items", default="2,193,194,195,1,192",
+    ap.add_argument("--items", default="2,1,194,192,193",
                     help="type ids to INSERT, in click order (each at most once)")
     ap.add_argument("--expect", default="42:desc:after",
                     help="the rule the shape must single out (name:offset:direction:tie form)")
@@ -66,8 +72,28 @@ def main():
     items = [int(x) for x in a.items.split(",") if x.strip() != ""]
     specs = M.key_rule_specs()
     names = [nm for nm, _o, _d, _t in specs]
+    # a rule's KEY is the type-record byte offset it reads (None = the whole name string).
+    # M68's question is WHICH KEY, so the gate and the verdict work at key level: two
+    # conventions of the SAME key may agree on a shape (that shape just does not test the tie
+    # direction) while two different keys agreeing is the thing that earns nothing.
+    RULE_KEY = {nm: off for nm, off, _d, _t in specs}
 
     rows = []
+    trace_path = a.trace if a.trace.startswith("/") else os.path.join(ROOT, a.trace)
+
+    def write_trace():
+        os.makedirs(os.path.dirname(trace_path), exist_ok=True)
+        with open(trace_path, "w") as fh:
+            for r in rows:
+                fh.write(json.dumps(r) + "\n")
+        print(f"trace: {trace_path} ({len(rows)} rows)")
+
+    def bail(msg):
+        """every FAIL prints its reason AND leaves the trace behind, so a failed run is
+        still readable evidence."""
+        print(msg)
+        write_trace()
+        return 1
 
     def rec(tag, **kw):
         row = dict(tag=tag, t=time.strftime("%H:%M:%S"), **kw)
@@ -78,9 +104,8 @@ def main():
     mine = sp.own_bases_named(f, 3)
     hits = [b for b in mine if b["name"] == a.base_name]
     if len(hits) != 1:
-        print(f"FAIL: base {a.base_name!r} matched {len(hits)} of our bases: "
+        return bail(f"FAIL: base {a.base_name!r} matched {len(hits)} of our bases: "
               f"{[(b['idx'], b['name']) for b in mine]}")
-        return 1
     idx = hits[0]["idx"]
 
     old_slots = M.SLOTS
@@ -127,37 +152,31 @@ def main():
 
     for it in items:
         if it == 0:
-            print(f"FAIL: item {it} is id 0 and unused queue slots read 0 — the written slot "
+            return bail(f"FAIL: item {it} is id 0 and unused queue slots read 0 — the written slot "
                   f"would be indistinguishable from an empty slot")
-            return 1
         if s.count(it) >= 2:
-            print(f"FAIL: item {it} already appears {s.count(it)}x in the baseline slots {s} "
+            return bail(f"FAIL: item {it} already appears {s.count(it)}x in the baseline slots {s} "
                   f"— the written slot could not be identified")
-            return 1
         if it == 2 and 2 in s[1:p0 + 1]:
-            print(f"FAIL: item 2 (Scout Patrol) is already a queued entry in the region "
+            return bail(f"FAIL: item 2 (Scout Patrol) is already a queued entry in the region "
                   f"{s[1:p0 + 1]} — the written slot could not be identified")
-            return 1
     if len(set(items)) != len(items):
-        print(f"FAIL: --items repeats an id ({items}); the second write of the same id is "
+        return bail(f"FAIL: --items repeats an id ({items}); the second write of the same id is "
               f"unidentifiable")
-        return 1
     if p0 + len(items) > M.QUEUE_CAP - 1:
-        print(f"FAIL: pending {p0} + {len(items)} inserts needs region slot "
+        return bail(f"FAIL: pending {p0} + {len(items)} inserts needs region slot "
               f"{p0 + len(items)} but the queue array holds {M.QUEUE_CAP - 1} (the enqueue "
               f"refuses pending >= 9 at 0x418b05)")
-        return 1
     if p0 + len(items) > SLOTS - 1:
-        print(f"FAIL: pending {p0} + {len(items)} inserts needs region slot "
+        return bail(f"FAIL: pending {p0} + {len(items)} inserts needs region slot "
               f"{p0 + len(items)} but only {SLOTS - 1} are read (--slots)")
-        return 1
 
     preds = M.key_shape_predictions(s, p0, items, keyf)
     if a.expect not in preds:
-        print(f"FAIL: --expect {a.expect!r} is not one of the {len(specs)} candidate rules "
+        return bail(f"FAIL: --expect {a.expect!r} is not one of the {len(specs)} candidate rules "
               f"({names[:6]} ...)")
-        return 1
-    exp_lands, exp_group, n_groups, largest = M.key_shape_gate(preds, a.expect)
+    exp_lands, exp_group, n_groups, largest, exp_keys = M.key_shape_gate(preds, a.expect)
+    exp_key = RULE_KEY[a.expect]
     rec("plan", base=before["name"], items=items, pending_before=p0, baseline=s,
         expect=a.expect, expected_landing=list(exp_lands),
         records=table, n_candidate_rules=len(specs))
@@ -169,12 +188,15 @@ def main():
                      (set(exp_group) | {a.expect, "42:asc:after", "41:desc:after",
                                         "name_str:desc:after", "name_str:asc:after",
                                         "name_str:desc:before", "name_str:asc:before"})})
-    if len(exp_group) != 1:
-        print(f"FAIL: {len(exp_group)} candidate rules predict the same landing sequence "
-              f"{list(exp_lands)} as {a.expect} — this shape cannot identify the key byte, so "
-              f"no claim would be earned; pick items whose byte order differs (records "
-              f"{table})")
-        return 1
+    rec("key_gate", expect=a.expect, expect_key=exp_key, keys_predicting_the_same=sorted(
+        str(k) for k in exp_keys), rules_predicting_the_same=sorted(exp_group))
+    same_keys = sorted(str(k) for k in exp_keys)
+    if len(exp_keys) != 1:
+        return bail(f"FAIL: {len(exp_group)} candidate rules predict the same landing sequence "
+                    f"{list(exp_lands)} as {a.expect}, and they read bytes {same_keys} — "
+                    f"different keys agree, so this shape cannot identify the key byte and no "
+                    f"claim would be earned; pick items whose byte order differs (records "
+                    f"{table})")
     rival_groups = {}
     for nm, land in preds.items():
         rival_groups.setdefault(tuple(land), []).append(nm)
@@ -205,8 +227,7 @@ def main():
         M.click(M.ARROW_XY)
     rec("pane", pane_idx=M.u32(f, M.PANE_BASE_IDX), want=idx)
     if M.u32(f, M.PANE_BASE_IDX) != idx:
-        print("FAIL: the QUEUE widget never landed on the target base")
-        return 1
+        return bail("FAIL: the QUEUE widget never landed on the target base")
 
     M.click(M.ROW1_XY)
     time.sleep(0.6)
@@ -219,20 +240,17 @@ def main():
     for n, it in enumerate(items):
         c_now = M.cand(f)
         if it not in c_now:
-            print(f"FAIL: item {it} is not in the chooser's list as it reads before click "
+            return bail(f"FAIL: item {it} is not in the chooser's list as it reads before click "
                   f"{n + 1}: {c_now[:24]}")
-            return 1
         cell = c_now.index(it)
         if c_now.count(it) != 1:
-            print(f"FAIL: item {it} appears {c_now.count(it)}x in the candidate array "
+            return bail(f"FAIL: item {it} appears {c_now.count(it)}x in the candidate array "
                   f"{c_now[:24]} — the cell would be ambiguous")
-            return 1
         M.click(cell_xy(cell))
         g = M.i32(f, M.GUARD)
         c_after_click = M.cand(f)
         if g != cell:
-            print(f"FAIL: after clicking cell {cell} (item {it}) the chooser guard reads {g}")
-            return 1
+            return bail(f"FAIL: after clicking cell {cell} (item {it}) the chooser guard reads {g}")
         r = None
         for try_n in range(4):
             M.click(M.INSERT_XY)
@@ -247,8 +265,7 @@ def main():
             rec(f"insert_{n + 1}_retry", pane_idx=M.u32(f, M.PANE_BASE_IDX),
                 pending=r["pending"], slots=r["queue"], try_n=try_n + 1)
         if r is None or r["pending"] <= state["pending"]:
-            print(f"FAIL: INSERT of item {it} never incremented pending {state['pending']}")
-            return 1
+            return bail(f"FAIL: INSERT of item {it} never incremented pending {state['pending']}")
         after_slots = r["queue"]
         w_idx = M._shift_index(after_slots, state["slots"], M.QUEUE_CAP)
         stored = w_idx[1] if w_idx else None
@@ -260,10 +277,9 @@ def main():
             cell_entry=c_after_click[cell] if cell < len(c_after_click) else None,
             stored_id=stored, tries=try_n + 1)
         if stored != it:
-            print(f"FAIL: INSERT wrote {stored}, not the intended item {it} (cell {cell} read "
+            return bail(f"FAIL: INSERT wrote {stored}, not the intended item {it} (cell {cell} read "
                   f"{c_after_click[cell] if cell < len(c_after_click) else None} after the "
                   f"click); the candidate array re-sorted between the read and the click")
-            return 1
         state["pending"] = r["pending"]
         state["slots"] = list(after_slots)
 
@@ -298,12 +314,13 @@ def main():
                  and obs_ids == items
                  and all(M._shift_index(st[2], st[0], M.QUEUE_CAP) for st in steps)
                  and all(v in after["queue"] for v in items))
+    fit_keys = sorted({str(RULE_KEY[nm]) for nm in fits})
     rec("score", baseline=s, pending_before=p0, steps=[
         {"before": st[0], "pending_before": st[1], "after": st[2], "pending_after": st[3]}
         for st in steps],
         after_ok=after["queue"], observed_landing=obs, written_ids=obs_ids,
-        matched=fits, predicted_for_matches=detail, integrity=integrity,
-        n_candidate_rules=len(specs))
+        matched=fits, matched_keys=fit_keys, predicted_for_matches=detail,
+        integrity=integrity, n_candidate_rules=len(specs))
 
     print("\nread-backs (pending, queue slots, head slot first):")
     print(f"  baseline   pending {p0:<2}  slots {s}")
@@ -323,24 +340,26 @@ def main():
     else:
         print("  (neither array moved)")
 
-    if len(fits) == 1 and integrity:
-        nm = fits[0]
-        verdict_word = "MATCHED the expected rule" if nm == a.expect else "NOT the expected rule"
-        print(f"\nPASS: exactly one of the {len(specs)} type-record key rules explains all "
-              f"{len(steps)} writes — {nm} (pending {p0}->{after['pending']}, ids written "
+    # the verdict is at KEY level: one byte offset (or the name string) must explain every
+    # write.  Several CONVENTIONS of that one key may fit — that only means the shape did not
+    # test the tie direction, which M67 settled separately (PR #65).
+    if len(fit_keys) == 1 and integrity:
+        key = fit_keys[0]
+        conv = sorted(fits)
+        verdict_word = ("MATCHED the expected key" if key == str(exp_key)
+                        else "NOT the expected key")
+        print(f"\nPASS: exactly one type-record KEY explains all {len(steps)} writes — "
+              f"{'the name string' if key == 'None' else 'byte +' + key} "
+              f"(conventions that fit: {conv}; pending {p0}->{after['pending']}, ids written "
               f"{obs_ids}; expected {a.expect} -> {verdict_word})")
         verdict = 0
     else:
         print(f"\nFAIL: {len(fits)} of the {len(specs)} candidate rules fit = {sorted(fits)} "
-              f"(need exactly one), integrity = {integrity}; no key claim is made")
+              f"over keys {fit_keys} (need exactly one key), integrity = {integrity}; no key "
+              f"claim is made")
         verdict = 1
 
-    trace = a.trace if a.trace.startswith("/") else os.path.join(ROOT, a.trace)
-    os.makedirs(os.path.dirname(trace), exist_ok=True)
-    with open(trace, "w") as fh:
-        for r in rows:
-            fh.write(json.dumps(r) + "\n")
-    print(f"trace: {trace} ({len(rows)} rows)")
+    write_trace()
     M.SLOTS = old_slots
     return verdict
 
