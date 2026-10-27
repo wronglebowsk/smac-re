@@ -1,0 +1,11 @@
+{"tag": "type_rec", "id": 0, "name": "Colony Pod", "cost": 3, "plan": 8, "hex": "43 6f 6c 6f 6e 79 20 50 6f 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0e 00 01 00 03 08 28 00 ff ff 00 01 00 ff ff"}
+{"tag": "type_rec", "id": 1, "name": "Formers", "cost": 2, "plan": 9, "hex": "46 6f 72 6d 65 72 73 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0f 00 01 00 02 09 29 00 ff ff 00 01 00 06 00"}
+{"tag": "type_rec", "id": 2, "name": "Scout Patrol", "cost": 1, "plan": 3, "hex": "53 63 6f 75 74 20 50 61 74 72 6f 6c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 03 0a 00 ff ff 00 01 00 ff ff"}
+{"tag": "type_rec", "id": 192, "name": "Impact Squad", "cost": 2, "plan": 0, "hex": "49 6d 70 61 63 74 20 53 71 75 61 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 01 00 02 00 03 00 08 ff 00 01 00 00 00"}
+{"tag": "type_rec", "id": 193, "name": "Synthmetal Garrison", "cost": 2, "plan": 2, "hex": "53 79 6e 74 68 6d 65 74 61 6c 20 47 61 72 72 69 73 6f 6e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 02 02 02 00 08 ff 00 01 00 00 00"}
+{"tag": "type_rec", "id": 194, "name": "Impact Infantry", "cost": 3, "plan": 1, "hex": "49 6d 70 61 63 74 20 49 6e 66 61 6e 74 72 79 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 01 01 00 03 01 03 00 08 ff 00 01 00 00 00"}
+{"tag": "type_rec", "id": 195, "name": "Impact Battery", "cost": 2, "plan": 0, "hex": "49 6d 70 61 63 74 20 42 61 74 74 65 72 79 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 00 00 00 02 00 01 00 02 00 01 00 08 ff 00 41 00 00 00"}
+{"tag": "base", "name": "Korolev Center", "idx": 17, "pending": 6, "slots": [2, 193, 193, 194, 195, 192, 192, 2, 0, 0, 545, 0], "minerals": 3, "d0": 2}
+{"tag": "chooser_closed", "cand": [192, 195, 194, 193, 2, 0, 1, 196, 197, 198, 199, 200, 201, 202, 203, 204]}
+{"tag": "co_order", "base": "Korolev Center", "pending": 6, "region": [193, 193, 194, 195, 192, 192], "item_a": 1, "item_b": 194, "bytes_by_pred": {}}
+{"tag": "plan_desc_after_pred", "item_a": 1, "item_b": 194, "pred": [1, 5], "co_ordering_rules": ["10:asc:after", "13:asc:after", "42:desc:after"], "co_ordering_offsets": [10, 13, 42], "n_rules_total": 208, "n_co_ordering": 3}

@@ -1,109 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-98-98.md` (1 sessions). Read it only when a question reaches back before session ## Session 99.
-
-## Session 99 (2026-10-26) — M60: **THE CREATE GUARD IS A PROCESS GLOBAL, NOT A BASE FIELD — and a nonzero guard really does make a paid window produce no unit. The chooser is named. The "snapshot GAP" was an EARLY READ, not a slow create. ACCEPTANCE PASS on one real invocation.**
-
-changed `scripts/m60_guard.py` (NEW: read / poke / hw-watchpoint on `0x8f0d70`, plus our bases'
-minerals, `+0x98` mirror, `+0x30` flags, `+0x38` plan dword and per-tile unit count),
-`scripts/m56_build.py` (every sampled timeline row now carries `guard = [0x8f0d70]`; PASS asserts it
-stayed 0 — a check ADDED, none weakened), `evidence/m60w_watch.gdblog` + `evidence/m60c.gdblog` +
-`evidence/m60d.gdblog` (watchpoint and store-tracer transcripts),
-`evidence/trace_m56_build_20261026_153930.jsonl` (the PASS run), this file, `NEXT_PROMPT.md`,
-skill `references/production-queue.md`.
-
-**THE GUARD — the footing was wrong twice.** 0x4eff32 is `a1 70 0d 8f 00` = `mov eax,ds:0x8f0d70`,
-then `85 c0` / `75 21` = `test eax,eax; jne 0x4eff5c` — a process-global read, NOT `[base+0x10]`.
-Base record `+0x10` holds 0x4b000000 (Korolev) / 0x55000000 (University): not a flag.
-`grep -c 0x8f0d70` over the whole `.text` dump (40,900,318 B) is **1** — this read — while its
-neighbour 0x8f0d60 (the current-base pointer) has 929 references and 0x8f0d64/68/6c are written.
-`python3 scripts/m60_guard.py --stage watch --boundaries 2 --timeout 180 --tag m60w` ->
-`"guard_writes": 0, "writers": {}, "visits": 53, "guard_values_at_visits": ["0"]` — a hardware
-watchpoint saw no writer across 2 boundaries, value 0 at every one of the 53 base visits.
-
-**POKE, one variable, University as control (minerals 4 < price 9, so it cannot pay).**
-- guard 1: `python3 scripts/m60_guard.py --stage poke --value 1` -> `POKE 0x8f0d70 (create guard):
-  0 -> 1 (read back 1) OK`; `python3 scripts/m59_head.py --stage poke --base 'Korolev Center'
-  --minerals 9 --hold` -> `+0x40: 0 -> 9 (read back 9) OK` (`poke_hold: 0 units poked,
-  all_held=True` — all 10 were already order 2); `python3 scripts/smac_play.py --turns 1 --timeout
-  200 --no-escape 3000 --orders-per-turn 1 --verbose --tag m60a` -> `turn 0: 2182->2183 OK`;
-  read back: Korolev minerals **9 -> 0 (the pay ran)**, our unit count **10 -> 10 (no unit)**,
-  guard reads 1, University 4 -> 4.
-- guard 0: `--stage poke --value 0` -> `POKE 0x8f0d70: 1 -> 0 (read back 0) OK` (it had stayed 1
-  through the whole previous turn — nothing wrote it); minerals re-poked 0 -> 9; `smac_play ...
-  --tag m60f` -> `turn 0: 2190->2191 OK`; once the player walk came home: Korolev minerals **0**,
-  our units **10 -> 11 (the unit arrived)**, guard 0, `cur_player 3`.
-The two runs differ in the guard value and in nothing else (same base, same minerals poke, all
-units held). They are 8 rounds apart; the reads between them are the timing lesson below, not a
-state effect.
-
-**THE ROUND TIMING.** A read taken the instant the year flips can be EARLY. Runs `--tag m60c` and
-`--tag m60e` poked 9, ran one turn and read immediately: minerals still 9, `+0x3c` unmoved,
-`cur_player 7`, and a 100 s poll changed nothing; the pay and the create landed later in the same
-round while the walk came home (`m60f`: minerals 0, ours 11, `cur_player 3`). The store tracer only
-appeared to "cause" the pay by WAITING: `python3 scripts/m57_stores.py --base 'Korolev Center'
---boundaries 2 --timeout 220 --tag m60c` -> `VISIT#1 storage=9 pend=0 head=2` /
-`STORE#1 pc=0x4ef7f6 site=visit.income-add before=9 src=9` /
-`STORE#2 pc=0x4efedd site=visit.pay-minus-edi before=9 src=0` and
-`per-boundary net changes: ['2184->2185=-9', '2185->2186=0']` PASS (same shape for `--tag m60d`).
-`m56_build` already closes every window on `cur_player` coming home, so its windows are the valid
-ones; M59's "the create landed in the snapshot GAP" is this effect, named.
-
-**THE CHOOSER NAMED.** `0x4f6030` = what a base builds next: it scores candidates and keeps the
-MINIMUM against `local_124[0]` (seeded `0xf423f` = 999999, tie broken by a secondary key), score =
-cost × ~25 halve/double heuristics, and it REJECTS a candidate unless `[base+0x38]` carries the bits
-its category requires — the switch on `record[+0x32]` at `0x4fb4xx`: 0 -> 0x200, 1 -> 0x1000, 2 and
-3 -> 0x1000 (0x400000 when `[base+0x38] & 0x1000` is clear or `record[+0x2c] != 0`), 4 -> 0x2000,
-5 -> 0x800, 6 -> 0x400, 7 and 10 -> 0x800000, 8 -> 0x20000, 9 -> 0x8000, 0xb -> 0x100000, plus
-0x80000 for faction-specific types (>= 0x40) whose `record[+0x38] & 4` is clear — and that gate runs
-only for owners IN `0x985b10`. Fallback `0x4fd6a0-0x4fd6e5`: scan the 512 type records at `0x98ad80`
-stride `0x34` (end `0x9915b2`), keep the `0x5a73f0`-buildable ones with category 1/2/3 and
-`record[+0x38] & 4`, take the lowest `record[+0x31]`. Korolev's `[base+0x38] = 0x00dfbe41` carries
-0x1000, so Scout Patrol (category 3) passes. **The Ghidra gotcha that caused the old wrong note:**
-`DAT_008f0d60` is typed `short *`, so pseudocode `+0x1c` is BYTE `+0x38` — proved by `0x4fb293 mov
-ecx,ds:0x8f0d60` / `0x4fb299 test DWORD PTR [ecx+0x38],0x80000000`.
-
-**ACCEPTANCE — PASS on one real invocation.** Setup: `SMAC_SAVE='m54b_clean.SAV' python3
-scripts/m54a_load.py --relaunch` (HUD reached, `difficulty level: talent`) -> `python3
-scripts/m54g_prep.py` -> `python3 scripts/smac_play.py --turns 1 ... --tag t` (`Korolev Center
-founded in 2150`) -> `python3 scripts/m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1`
-(`after INSERT 1 (try 1): pending=1 head=2 slots=[2, 2, 2, 0, 0, 0] minerals=5 d0=2`) -> `python3
-scripts/m59_head.py --stage read --hold` (`poke_hold: 6 units poked, all_held=True`) ->
-`python3 scripts/m56_build.py --ui-queued 18 --boundaries 10 --timeout 400 --no-poke-hold` ->
-`PASS production prediction: 1 verified unit arrivals over 10 boundaries, every prediction and every
-observed arrival accounted, queue bookkeeping exact — queue filled by the GAME's BUILD UI (0 memory
-writes), paid by income at 2/round`; **53 checks, 0 bad**; `boundaries observed >= 2 — 10 of 10
-rounds flipped`; `at least 1 POSITIVE prediction verified — 1/1`; `create guard ds:0x8f0d70 read 0
-in every sampled row — 5534 sampled rows, values [0]`; `memory writes: 0`. Trace
-`evidence/trace_m56_build_20261026_153930.jsonl`. Rule cases `python3 scripts/test_m56_predict.py`
--> `PASS 17/17 production-prediction cases`; bad fixture `python3 scripts/m56_build.py --fixture
-scratch/m56_fixture_bad.json` -> exit 1.
-
-**One earlier run did NOT pass and no floor was weakened:** `..._153623` (58 checks, 3 bad) failed
-on `r1 boundary: player walk came home to us after the flip — cur_player before 3 after 0` (the
-known harness race — the footing says RE-RUN, do not edit the floor), which made the r2 window span
-TWO rounds (`kor: 6 -> 1` = 6 + 2 + 2 − 9), so r2's "unexplained ORDER-0 arrival" and
-`pending 1->0` were the missed round's events, not a model gap. Its trace was deleted after the
-numbers were recorded here (evidence is 29.7 MB of the 30 MB gate).
-
-**Open.** (1) the chooser's ~25 score terms are named as a SHAPE, not enumerated — an enemy base's
-head is still reported, never predicted; (2) base record `+0x10` (0x4b000000-style) is still
-unexplained — it is NOT the guard; (3) the failure path `0x4eff5c` (shared by a guard-skip and by a
-negative return from `0x5ab650`; prints through `0x406720`) and its effect on the rest of the visit
-is unread — note `0x5ab650` has exactly ONE negative return, the `n_units > 0x7ff` cap, and n_units
-was 96-108, so our paid windows were never cap-blocked; (4) the older reported conflicts
-(`0x94dc84` vs `0x94de84`; pay `0x4f0ca6` vs `0x4efedd`) stay unresolved; (5) a writer for
-`0x8f0d70` outside `.text` (a save loader, another section) is not excluded — the watchpoint covers
-runtime only.
-
-**Next pick (M61): pin the create's place in the round sequence and drop the deferral fudge.**
-Record `(cur_player, visit, pay, create)` tuples across boundaries — `m60_guard --stage watch`
-already prints the guard at every visit; extend it to stamp the walk position, the `0x4efedd` pay
-and the `0x4eff4e` create — so the round sequence says exactly where our visit sits relative to the
-year flip and to walk-home, `m56_build`'s F1 "OR by the next window's before-snapshot" branch
-becomes a measured position instead of a tolerance, and `predict()` can state the arrival round
-exactly. Second half of M61: say what base record `+0x10` is (it is not the guard, and it is not
-zero).
+Older sessions: `docs/sessions/sessions-99-99.md` (1 sessions). Read it only when a question reaches back before session ## Session 100.
 
 ## Session 100 (2026-10-26) — M61: **THE CREATE IS IN THE SAME VISIT AS THE PAY, THE ROUND ORDER IS MEASURED, AND `base+0x10` IS THE BASE NAME. ACCEPTANCE PASS on one real invocation.**
 
@@ -770,3 +667,114 @@ front, name-descending says behind, and it re-tests the tie direction for free; 
 head `+0x50` — an hw watch on `+0x50` across one boundary (`milestone/m63` has the pop
 instrument); (c) the `income 1` live accrual case; (d) cheap: `m65_screen.py` at a quiet AND a
 loaded load, and settle `check_classes.py`.
+
+## Session 108 (2026-10-26) — M68: THE 212-RULE KEY IDENTIFIER IS BUILT, ITS GATE IS GREEN, AND THE ACCEPTANCE **FAILED** — INSERT APPENDED. NOTHING MERGED.
+
+**What changed.** Nothing in the game's model is claimed. Tooling only:
+- `scripts/m66_insert_slot.py`: the full candidate set is now machine-readable — `BYTE_KEY_SPECS`
+  (52 offsets x desc/asc x ties after/before = 208) + `NAME_STR_SPECS` (4 whole-name rules) =
+  `SORT_KEY_RULES` (212), `score_key_sequence(steps, keyf, direction, tie)` (scores a whole
+  sequence of write read-backs, returns `None` when the read-back is not a legal shift),
+  `key_rule_specs()` -> `(name, off, d, t)` tuples, `key_shape_predictions()`, and a
+  `key_shape_gate()` that returns a **5-tuple** whose last element is the set of KEYS (byte
+  offsets; `None` = the name string) predicting the landing sequence.
+- `scripts/m68_typebytes.py` (read-only, `/proc/<pid>/mem`, clicks nothing): dumps every live
+  52-byte type record for the chooser + queue ids and reports per-offset co-ordering.
+- `scripts/m68_key_run.py`: the acceptance run. Pre-click shape gate from the baseline alone,
+  one click per id, pending polled, landing extracted by `_shift_index`, all 212 rules scored,
+  PASS only if exactly ONE key explains every write, `--trace` + `bail()` so every FAIL leaves
+  evidence behind.
+- `scripts/m68_cellprobe.py`: one click + INSERT, prints exactly what the queue received
+  (guard field, clicked cell entry, shift pattern, stored id) and writes a jsonl trace.
+- `scripts/test_m68_key_rules.py`: 35 pinned cases — `PASS 35/35 m68 key-identifier cases`.
+  The three M67 read-backs fit **11, 17 and 15** of the 212 rules across **4-6 different keys**,
+  which is the quantified proof that M67's two-item shapes could not identify a byte.
+
+**The run, with its numbers.**
+`python3 scripts/m68_key_run.py --base-name "University Base" --items 2,1,194,192,193
+--trace evidence/m68_key_run.jsonl` -> **exit 1**, after `SMAC_SAVE='m54b_clean.SAV' python3
+scripts/m54a_load.py --relaunch` + `python3 scripts/smac_play.py --turns 1 --timeout 200
+--no-escape 3000 --orders-per-turn 1 --verbose --tag m68t2` (round 51 -> 52, year 2151 -> 2152,
+60 s) + `python3 scripts/accept_ready.py` (READY, University Base idx 0, minerals 0, `+0xd0` 0,
+pending 0, head slot 2).
+- The gate accepted the shape: only `+42` predicts the plan-descending landing `1,1,3,4,3`
+  (`key_gate` row) — 12 of the 53 keys were decidable on it at all.
+- The engine wrote slots **1,2,3,4,5** — one append per click. Integrity True: every click
+  verified `guard == cell`, cell entry == intended id, stored id == intended id, pending +1.
+- **55 of 212 rules** predict `[1,2,3,4,5]` for this shape: every byte constant over these five
+  ids, plus `+45` (0xff, 0xff, 8, 8, 8) and `+50` (0xff, 6, 0, 0, 0), whose values are monotone
+  in click order. So the run cannot name a key — and nothing else is claimed.
+
+**The conflict (recorded, not resolved).** M67 measured sorted landings with this same driver and
+this same INSERT button; M68 measured appends. The runs differ in base (Korolev Center and a
+round-60 University Base vs the save's round-51 University Base), minerals (3 and 1 vs 0), queue
+occupancy at start (2/4/6 vs 0) and the chooser's candidate list (4-7 entries vs 67). One
+variable at a time was not achieved here: the reload changed all of them together. **Confounded —
+not "because".** M67's read-backs remain real and unexplained.
+
+**Two live rules found on the way.**
+- The engine **refuses to enqueue an id the queue already holds**: a second INSERT of 193 left
+  pending 5 and every slot unchanged (`evidence/m68_cellprobe_193.jsonl:4`).
+- The driver's chooser cell -> pixel mapping (5 columns) is **unreliable past the first row**:
+  cell 6 (255,160) and cell 4 (636,60) failed to register in three probes (guard stayed on the
+  previous selection, INSERT did nothing), and the one time the cell-6 click registered the queue
+  received **-3 (0xfffffffd)** instead of 195, after which the next INSERT appended a plan-9 item
+  at the end of the region.
+
+**Open.** (1) Why the enqueue sorts in one state and appends in another — the cheapest decisive
+instrument is a gdb breakpoint on the enqueue (`0x418afd-0x418b29`) printing the index and the
+value the engine stores, plus a watchpoint on `base+0x54`: it answers "sorted scan or
+`pending + 1`" and "where does -3 come from" in one run, without guessing. (2) The chooser cell
+mapping. (3) Whether a deferred paint/round-boundary sort rewrites the region (read the region
+again minutes later with the queue widget provably open).
+
+**Next pick.** S109 = instrument the enqueue with gdb (the `m63_pop.py` recipe), not another
+click-order search: the click-only method has now told us all it can — on THIS state the engine
+appends, and no click shape can identify a key an append engine does not use.
+
+## Session 109 (2026-10-27) — M69: THE ENQUEUE WRITES AT THE QUEUE WIDGET'S CURSOR. ACCEPTANCE PASS on one real invocation.
+
+**What changed / what is now known.** The BUILD-pane INSERT is not a sort and it does not read a
+type-record byte. It is `queue[pos] = item`, `pos = *(int *)(0x6a9480 + 0x3ff5c)` — the widget's
+cursor row — with the region shifted up from `pos` and pending bumped (capped 9).
+
+- gdb instrument `scripts/m69_enqueue_gdb.py` (`--arm|--stop|--parse`, TracerPid + ptrace_scope
+  guards, drained log). Breakpoints `0x417dbf` / `0x417e04` / the `0x417dd3` shift loop, hw
+  watchpoints on slots 1..3, plus the old `0x418a99` dispatch as a control.
+- Live log (`evidence/m69_enqueue.gdblog`): **one continuous click flow** produced
+  `ENQUEUE obj=0x6a9480 pos=1 pending=2` -> `STORE queue[1]=192` and then
+  `ENQUEUE obj=0x6a9480 pos=4 pending=3` -> `STORE queue[4]=193`. Front insert, then end insert,
+  same button, same session: the cursor moved.
+- The `0x418a99` block (jump table `0x419c20`, case 0 writes `base+0x40`, case 1 shifts+bumps)
+  **never fired** in four INSERTs — it is a different handler, and the M67 note that treated the
+  `0x418bxx` block as the insert path is superseded.
+
+**Acceptance (one real invocation).**
+`python3 scripts/m69_cursor_run.py --cursor 2 --item 193 --trace evidence/m69_cursor3.jsonl`
+-> **PASS**, region `[2,192,194]` -> `[2,192,193,194]`, pending 2->3, cursor read back as 2
+before the click, `plan_sorted_index 1`. The instrument refuses a shape where the cursor and the
+plan index agree (`--cursor 1` -> `FAIL: non-discriminating shape`), so the PASS discriminates.
+`python3 scripts/test_m69_cursor.py` -> `PASS 15/15 m69 cursor cases` (offline; pins the store
+arithmetic, the plan-vs-cursor disagreement, the M68 appends and both negative stores).
+
+**Correction to session 108.** `-3` was recorded as probably a bad click. It is not: with the
+click verified (`guard == cell`) and the cursor poked, item 196 (all-zero record) stored **-6**,
+and 195 stored **-3** on a guarded click. A type with no real record is stored as a negative
+value; two different negatives, so not one sentinel. Do not use 195/196/197+ in a shape.
+Also: the M68 `-3` claim that a poisoned entry makes the next INSERT "append a plan-9 item at the
+END" is re-read here as "the cursor had moved to the end", not as a fault.
+
+**Open.**
+1. What sets the cursor (`[widget+0x3ff5c]`)? The writers are `0x40b018-0x40b081` (arrow/move
+   handler, clamps to `[1, pending]`), `0x4163b6/0x41650e`, `0x417e3b-0x417e7b` (post-insert).
+   The chooser click is what a user expects to set it; the log shows it moving on its own
+   (2 -> 4 after one insert). An hw watchpoint on the field across ONE insert would name the
+   writer and settle whether the widget sorts by plan when it refreshes the list.
+2. The widget's LIST order (what M67 measured) — is it recomputed on paint from the plan byte?
+   `0x40axxxx` is the queue-widget paint code; that is where the plan comparison should live.
+3. `-3 / -6` for recordless types: what is the formula? (two points only.)
+
+**Next pick.** M70 = watch `[0x6a9480+0x3ff5c]` across one INSERT and one queue-list repaint,
+then read the widget's paint loop (`0x40axxxx`) for the plan-byte comparison. That closes the
+last link: the widget sorts (or not), the user-visible order is that list, and the enqueue just
+obeys the cursor.

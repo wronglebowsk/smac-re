@@ -539,3 +539,69 @@ Rules for any round-boundary harness that predicts per-base production from memo
   across three reads 4 s apart and three Return presses moved the year two rounds (and the base
   bought: minerals 5 -> 0, credit 2 -> 1). "It auto-plays while nothing drives it" is true only with
   everything on Hold.
+
+## M68 (session 108): the enqueue may APPEND — a sorted read-back does not make the sort universal
+
+**Rule that matters more than any single finding: a live sorted landing does not prove a sort
+key.** On the save's University Base at round 51 (minerals 0, region empty, 67-entry chooser) five
+INSERTs of ids 2, 1, 194, 192, 193 wrote region slots **1, 2, 3, 4, 5** — one append per click —
+while a pre-click gate had certified that only the plan byte `+42` predicted the landing sequence
+1,1,3,4,3 that M67's rule implies. An append is predicted by **55 of 212** candidate rules (every
+byte constant across those ids, plus `+45` and `+50`, whose values are monotone in that click
+order), so the run names no key. M67's three sorted read-backs (Korolev Center, and a University
+Base built up over 60 rounds, minerals 3 and 1, pending 2/4/6) remain real and unexplained — the
+difference is CONFOUNDED with base, round, minerals, queue occupancy and chooser size, because one
+reload changed all of them at once.
+
+**How to spend a session here.** Do not search click orders again while the engine demonstrably
+appends: score all 212 rules (52 offsets x desc/asc x ties after/before, plus four whole-name
+rules) against the WHOLE write sequence, gate on KEYS not conventions (`42:desc:after` and
+`42:desc:before` agreeing means the tie direction went untested, not that a rival agreed), and
+when the writes are an append, stop clicking and gdb the enqueue (`0x418afd` entry, `esi` at
+`0x418b29`, watch `base+0x54`). The identifier and the gate are `scripts/m68_key_run.py` +
+`scripts/test_m68_key_rules.py` (35 pinned cases); the read-only record dump that defines the
+candidate set is `scripts/m68_typebytes.py`.
+
+**Three live facts the clicks produced, worth more than the FAIL:**
+- The engine **refuses to enqueue a type the queue already holds** — a second INSERT of 193 left
+  pending and every slot unchanged. A duplicate is a no-op, not just an unreadable shift.
+- The chooser cell -> pixel map `(128+127*(cell%5), 60+100*(cell//5))` is **unreliable past row 0**:
+  cells 6 and 4 failed to register in three probes (the driver's `guard` field stayed on the previous
+  selection and INSERT did nothing). One cell-6 click that DID register made the queue store **-3
+  (0xfffffffd)**; the next INSERT then appended a plan-9 item at the END of the region. Verify
+  `guard == cell` AND the cell's entry before clicking INSERT; treat -3 as a bad click until gdb
+  says otherwise.
+- Static confirmation of M67's cap: `0x418ab3-0x418acb` copies `[base+0x74]` down to `[base+0x54]`
+  up one slot and never touches `+0x78`. The head-slot sentinel compared at `0x418b5f` is
+  `0xffffffd9` = **-39**, not the -38 earlier notes quoted.
+
+## M69 (session 109): the enqueue obeys the WIDGET CURSOR — stop looking for a sort key in the INSERT
+
+**The rule.** `INSERT` is `queue[pos] = item` with `pos = *(int *)(0x6a9480 + 0x3ff5c)`, the queue
+widget's cursor row: `0x417dbf` reads the field, `0x417dd3-0x417deb` shifts slots `pos..9` up one,
+`0x417e04` (`mov [eax+edx*4+0x50],ebx`) stores, then pending++ (cap 9). Nothing on that path reads
+a type-record byte. The `0x418a99` dispatch (jump table `0x419c20`, case 0 writes `base+0x40`,
+case 1 shifts+bumps) is a DIFFERENT handler — it never fired in four INSERTs.
+
+**Why it matters.** One continuous click flow wrote at slot 1 and then at slot 4
+(`evidence/m69_enqueue.gdblog`), so the queue order is whatever the widget's cursor/list says.
+M67's "the item goes at the first slot whose plan byte is below its own" describes the WIDGET's
+list order at that moment, not an enqueue comparison. Never quote M67 as "the engine sorts on
+insert" again; quote "the widget's list is plan-ordered and the insert lands at the cursor".
+
+**How to test it (the pattern worth reusing).** Poke the cursor, click INSERT, read the queue back:
+`python3 scripts/m69_cursor_run.py --cursor 2 --item 193` -> PASS when the write lands at exactly
+the poked row and the plan-sorted index is different; the script REFUSES a shape where the two
+agree, which is what makes the PASS mean something. Offline pinning: `test_m69_cursor.py` 15/15.
+
+**Gdb recipe** (`scripts/m69_enqueue_gdb.py --arm|--stop|--parse`): `TracerPid`/`ptrace_scope`
+guards, breakpoints at `0x417dbf`, `0x417e04` and the shift loop, `watch` on `base+0x54..+0x5c` for
+the first three slots, log drained to `evidence/m69_enqueue.gdblog`. The hardware watchpoint that
+fires at `pc=0x417e08` is the instruction right AFTER the store — that is how the store site was
+identified, so always `x/i $pc-1`-style check the instruction before a watchpoint hit.
+
+**A negative queue value is the TYPE's, not a bad click.** 196 (all-zero record) stored **-6** and
+195 stored **-3**, both on clicks whose `guard == cell`. Recordless ids cannot be used in a shape.
+
+**Trap found:** `[PANE_BASE_IDX] == 0` is also true when the pane is CLOSED, so a driver that opens
+the pane only `if pane != idx` silently never opens it. Always press the open key and click the row.

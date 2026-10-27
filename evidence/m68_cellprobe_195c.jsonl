@@ -1,0 +1,4 @@
+{"tag": "before", "t": "23:30:09", "item": 195, "pending": 5, "slots": [2, 2, 1, 194, 192, 193, 0, 0, 0, 0, 9225, 0], "minerals": 0, "guard": 2, "pane_idx": 0}
+{"tag": "chooser", "t": "23:30:09", "cand": [192, 194, 193, 2, 0, 1, 195, 196, 197, 198, 199, 200], "cand_n": 67, "cell": 6, "click_xy": [255, 160], "entry_at_cell": 195}
+{"tag": "after_click", "t": "23:30:10", "cell": 6, "guard": 2, "entry_at_cell": 195, "cand": [192, 194, 193, 2, 0, 1, 195, 196, 197, 198, 199, 200]}
+{"tag": "after_insert", "t": "23:30:15", "item": 195, "pending": 5, "pending_before": 5, "slots": [2, 2, 1, 194, 192, 193, 0, 0, 0, 0, 9225, 0], "shift_write": null, "stored_id": null, "minerals": 0}

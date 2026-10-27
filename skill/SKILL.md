@@ -18,8 +18,9 @@ Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 `code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
 `solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
 `production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate,
-completion chain, the INSERT PLAN-ordered insert (`+42`, NOT cost `+41`) into slots 1..`pending`
-(never the head slot), the
+completion chain, the INSERT's landing rule — PLAN-ordered by `+42` (NOT cost `+41`) in the states where
+it sorts, straight APPENDS in the state where it does not, so the file leads with that conflict — into
+slots 1..`pending` (never the head slot), the engine refusing a duplicate id, the
 produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
 reading, and the live write-enumeration acceptance in §9),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
@@ -41,6 +42,11 @@ python3 cvr_decode.py --render programs/Drop.cvr          # -> Drop.render.png i
 ## Git workflow — `references/git-workflow.md`
 Never commit to `main`. Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
 (must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
+**A GREEN gate is not permission to merge.** The gate audits docs, evidence and the harness; it says
+nothing about whether the milestone's acceptance passed. If the acceptance printed FAIL, keep the
+checkpoint commits on the branch, submit nothing (or leave the PR unmerged), and report the FAIL with
+its numbers — a branch carrying a documented FAIL is the honest end state, and weakening a threshold
+to turn it green is the one thing that is never allowed.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
 `NEXT_PROMPT.md` (<=15,500 bytes). `scratch/` is gitignored: scratch probes and one-off tools are
 NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
@@ -89,7 +95,11 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
 
 - The `NEXT_PROMPT.md` 15,500-byte cap is a hard budget, not advice (the gate fails at 16,000 chars,
   `scripts/evidence.py`): draft the rewrite to land near **15.2 k on the first write** — trimming a
-  finished 15.6 k file costs three follow-up patch calls for 60 characters, more than the overage. Well
+  finished 15.6 k file costs three follow-up patch calls for 60 characters, more than the overage.
+  **Trust only `python3 scripts/evidence.py budget` for that number** — it counts CHARS, and chars do
+  not equal `wc -c` / `os.path.getsize` (a file measuring 15,988 bytes scored 16,052 chars and failed
+  the gate), so trim until the tool's own line says `warn`, then stop. When trimming, DELETE whole
+  sentences or bullets: rewording trades characters for characters and the check stays red. Well
   over it, move footing into `FOOTING.md` at the repo root (or a `references/`
   file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
   context before any work starts, which is how sessions ratchet toward the wall.
@@ -210,6 +220,17 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   FAIL when more than one rule fits rather than picking one. This is the case-list discipline applied
   to the STATE: a green run on an undiscriminating state is refuted by the next run, and the refutation
   looks like a contradiction in your own ledger.
+- **A gate certificate is about the RULES, not about the game.** A pre-click gate can certify "only
+  key K predicts this landing sequence" and the run can still come back with a landing that NOTHING
+  in your model explains, because the mechanism you modelled was not running at all: five clicks
+  wrote consecutive slots (one append per click) where the gate had certified a sort-key sequence,
+  and "append in click order" is predicted by dozens of candidate keys at once (every byte constant
+  over the involved ids), so the run names no key. Read that FAIL as "no claim", never as "the key
+  is wrong", and never let it overwrite a live read-back from another state — record the two states
+  side by side and write CONFOUNDED. The next move is not another state or another click order: it
+  is a breakpoint at the write site (entry of the enqueue, the index it computes, the value it
+  stores) plus a hardware watch on the first element, which answers "sorted scan or append" and
+  "where the odd value came from" in one run.
 - **Read the structure PLUS ONE SLOT PAST ITS END, and treat the read model as fallible.** A write
   location is only interpretable if you can see where the array stops: SMAC's queue is 10 dwords
   (`base+0x50..+0x74`) and the dword after it is a different field that never moves, so an 8-slot
@@ -227,7 +248,13 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   paint rebuilds and re-sorts list data (the build chooser's candidate array changed order between a
   pre-open read and the open chooser), so a cell→item map taken before the open is stale; after the
   click read the widget's own selection field, then the array entry at that index, and credit the
-  stored value only against the read taken at click time.
+  stored value only against the read taken at click time. **Cells past the first row can silently
+  not take**: uniform cell pitches do not guarantee the click lands on the row the pitch assumes —
+  cell 4 and cell 6 clicks left the selection field on the PREVIOUS value and the commit button did
+  nothing, and the one such click that did register made the structure store a negative code (-3)
+  instead of the item id. Treat a store of a value the widget never offered as a BAD CLICK, not as a
+  game rule, until a breakpoint on the store says otherwise, and re-assert `selection == intended
+  cell` AND `entry_at_cell == intended item` before every commit click.
 - **Before a diff counts as evidence that one of two similar arrays moved, check the addresses are
   disjoint.** Two byte arrays a few hundred bytes apart indexed with the same
   `base + stride*owner + id` formula OVERLAP — at a 512 B separation, `low[512+id]` IS `high[id]` — so

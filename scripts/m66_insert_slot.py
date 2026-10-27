@@ -253,6 +253,96 @@ def make_key_rule(spec):
 
 SORT_KEY_RULES = [make_key_rule(spec) for spec in KEY_RULES_SPEC]
 
+# ---- M68: IS THE KEY A BYTE AT ALL, AND WHICH ONE.  M67 named the plan byte `+42` but said
+# plainly it had NOT separated it from the other type-record bytes that happen to rank its ids
+# the same way (NAMED.md M67 block: name bytes +0,+1,+3,+4,+6,+15..+18, +37 and +43 read
+# ASCENDING and predict the same slots).  M68 therefore scores EVERY single-byte key
+# (all 52 offsets x descending/ascending x ties after/before = 208 rules) plus the four
+# whole-name lexicographic rules, on a MULTI-INSERT sequence, on a shape chosen from the live
+# record bytes BEFORE clicking so that the rule under test is the ONLY rule predicting the
+# landing sequence.  A rule fits the run only if it predicts every written slot in the sequence.
+BYTE_KEY_SPECS = [(f"{off}:{d}:{t}", off, d, t)
+                  for off in range(TYPE_SZ) for d in ("desc", "asc") for t in ("after", "before")]
+NAME_STR_SPECS = [(f"name_str:{d}:{t}", d, t)
+                  for d in ("desc", "asc") for t in ("after", "before")]
+
+
+def byte_key_of(c):
+    """key functions over the LIVE type record: byte +off, or the name string at +0 (34 B,
+    NAMED.md M53f).  An id with no record reads -1 / "" (never a region entry on our bases)."""
+    def b(tid, off):
+        return c["rec_bytes"](tid)[off]
+    def n(tid):
+        return c["rec_name"](tid)
+    return b, n
+
+
+def key_sequence_index(s, p, items, keyf, direction, tie):
+    """the slots every item in `items` would land at if each were inserted, in order, into the
+    region slots[1..p] of `s` under one key convention (the queue array is capped at
+    QUEUE_CAP slots, so the region can never exceed QUEUE_CAP - 1 entries)."""
+    cur, pp, lands = list(s), p, []
+    for it in items:
+        i = key_insert_index(cur, pp, it, keyf, direction, tie)
+        lands.append(i)
+        cur.insert(i, it)
+        cur = cur[:QUEUE_CAP]
+        pp += 1
+    return lands
+
+
+def score_key_sequence(steps, keyf, direction, tie):
+    """do the landing slots one key convention predicts for the whole sequence match the
+    OBSERVED writes?  steps = [(slots_before, pending_before, slots_after, pending_after), ...];
+    the observed write of a step is the single index at which slots_after is slots_before with
+    one value inserted within the capped queue array (M67's read model).  Returns
+    (observed, expected, written_ids) or None if this convention explains no complete walk."""
+    obs, exp, written = [], [], []
+    for s, p, sa, _pa in steps:
+        w = _shift_index(sa, s, QUEUE_CAP)
+        if not w:
+            return None
+        i, x = w
+        obs.append(i)
+        exp.append(key_insert_index(s, p, x, keyf, direction, tie))
+        written.append(x)
+    if obs != exp:
+        return None
+    return obs, exp, written
+
+
+def key_rule_specs():
+    """the M68 candidate set: every single-byte key of the type record plus the whole-name
+    lexicographic keys.  Each entry is (name, off, direction, tie); `off` is None for the
+    whole-name key.  The caller builds the key function from the live record bytes."""
+    out = [(name, off, d, t) for name, off, d, t in BYTE_KEY_SPECS]
+    out += [(name, None, d, t) for name, d, t in NAME_STR_SPECS]
+    return out
+
+
+def key_shape_predictions(s, p, items, key_of):
+    """what EVERY candidate rule predicts for the whole insert sequence, from the baseline
+    alone (no after-reads).  `key_of(off)` returns the key function for offset `off` (None =
+    the whole name).  Returns {rule name: [landing slots per insert]}."""
+    return {nm: key_sequence_index(s, p, items, key_of(off), d, t)
+            for nm, off, d, t in key_rule_specs()}
+
+
+def key_shape_gate(preds, expect):
+    """the shape gate: group the predictions and report what it means to run this shape.
+    Returns (expected_landing, rules_predicting_the_same_landing, n_distinct_prediction_groups,
+    largest_group_size, the KEYS that predict it) — a rule's KEY is the type-record byte offset
+    it reads, or None for the whole-name key.  M68's question is WHICH KEY, so the gate runs at
+    key level: two conventions of the same key agreeing is fine (that shape just does not test
+    the tie direction, which M67 settled), two different KEYS agreeing earns nothing."""
+    groups = {}
+    for nm, lands in preds.items():
+        groups.setdefault(tuple(lands), []).append(nm)
+    exp = tuple(preds[expect])
+    same = sorted(groups[exp])
+    keys = {off for nm, off, _d, _t in key_rule_specs() if nm in groups[exp]}
+    return exp, same, len(groups), max(len(v) for v in groups.values()), keys
+
 
 def u32(f, a):
     return struct.unpack("<I", sp.rd(f, a, 4))[0]
