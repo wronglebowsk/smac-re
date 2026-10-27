@@ -45,10 +45,23 @@ an hw watchpoint on it stayed silent over 2 boundaries with 53 base visits, valu
 other base as control: guard 1 -> the base still PAYS (storage 9 -> 0) and NO unit arrives (our unit
 count 10 -> 10, guard reads back 1 after the turn); guard 0 -> the base pays and the unit ARRIVES
 (10 -> 11). The chooser `0x4f6030` uses the neighbours `0x8f0d74..0x8f0d90` as its best-pick scratch.
-The POP `0x4ef5d0` (pending −1, slots left-shift, per-faction queued-count byte
-`[0x94de84 + owner*0x20bc + type*4]` −1 — the disasm at `0x4ef613` reads `0x94de84`, older notes
-here said `0x94dc84: REPORTED CONFLICT, the instruction bytes win until a poke says otherwise)
-runs LATER in the same visit (`0x4f037b` / `0x4f0f46`) and only ADVANCES the queue; a boundary
+The POP `0x4ef5d0` — M63 measured it instruction by instruction
+(`scripts/m63_pop.py`, `evidence/m63pop.gdblog`): it WALKS the queue while `[base+0x4c] != 0`
+(`0x4ef5f4 je 0x4ef684` returns untouched when pending is 0), and per step it (1) decrements the
+per-faction queued-count byte at `[0x94de84 + owner*0x20bc + head]` — the head value is added
+UNSCALED, not `*4`: for owner 3 / head 2 the address the game itself computed at `0x4ef613` was
+`0x9540ba` = `0x94de84 + 8380*3 + 2`, and that byte read 3 at `0x4ef61a` and 2 at `0x4ef61c`, so
+the M62 conflict is CLOSED in favour of `0x94de84` and the sibling `0x94dc84` (512 B lower, same
+stride) is a DIFFERENT counter — it went 6 -> 7 in the same window in which a unit was produced;
+(2) left-shifts the slots `pending` times (`0x4ef62c`, seen live writing Korolev `+0x50` with the
+value that was at `+0x54`); (3) stores `pending-1` (`0x4ef642`); (4) hands the NEW head to a
+validator — `0x5a73f0(head, owner, idx)` for `head >= 0` (type record `+0x38` bit 0 / `+0x34` bit
+owner; returns 0 = fine) or `0x5a6e70(-head, owner, idx, 0)` for a negative code (tests the
+availability globals `0x985aec`, `0x985ac4`, `0x985bb8`) — and takes its error path `0x4ef68b` on a
+nonzero return (measured: `POPVAL item=2 owner=3 idx=18` then `POPRES result=1`). They are
+PREDICATES, not builders: the build is still the visit's pay `0x4efedd` + `call 0x5ab650` at
+`0x4eff4e`, and the pop runs LATER in the same visit (order measured: PAY -> CREATE -> POPDEC ->
+POPSHIFT -> POPCNT -> POPVAL) and only ADVANCES + VALIDATES the queue; a boundary
 snapshot can land on either side of it, and the create itself can land in the gap between one
 window's after-snapshot and the next window's before-snapshot (measured: pay 8→1 with pending
 still 1, unit 6→7 across the snapshot gap).
@@ -142,7 +155,13 @@ every one of our records BEFORE the run (`scripts/m59_head.py --stage read --hol
 and pass `--no-poke-hold`. Holding inside the run fails the floor the run exists to prove.
 - The `--ui-queued <index>` argument is only the START index. Pair each base across snapshots **BY
 NAME** — the 304-byte base array compacts mid-run, so an index carried across a boundary names another
-faction's record and the bookkeeping silently checks the wrong base.
+faction's record and the bookkeeping silently checks the wrong base. **Name alone is not enough
+either (M63):** a base that changes hands keeps its record, its index, its name AND its coords, and
+only the owner byte plus the queue change — measured in
+`evidence/trace_m56_build_20261026_165917.jsonl` r4, index 0 stayed `"University Base" (28,42)` while
+`faction 3 -> 6` and the slots went `[2,2,0,0] -> [384,2,0,0]` with `n_bases` 21 unchanged. So a
+cross-window pairing must assert the OWNER byte too; the M62 `queue held — head 2->384` failure was
+this identity crossing, not a queue anomaly.
 - The queue precondition is the GAME's UI (`scripts/m57_ui_enqueue.py`), and the storage precondition is
 `minerals < price` at start — never arm minerals for this mode, or the completion is indistinguishable
 from an armed one.
@@ -452,3 +471,39 @@ Rules that came out of it:
   are types" floor (it fails on AI bases every run) and never let a garbage head reach a prediction.
 - When a base dies mid-run, its record fields and the queue anomaly land in the SAME windows:
   write "confounded", keep both hypotheses, do not narrate a cause.
+
+## M64 (session 104): the accrual phase is MEASURABLE, and an arrival is attributed by the PAYMENT
+
+Rules for any round-boundary harness that predicts per-base production from memory:
+
+- **Never add this round's income to a before-snapshot without measuring whether it is already
+  inside it.** A window's after-snapshot and the NEXT window's before-snapshot are the same round
+  read twice (the loop breaks the instant `cur_player` comes home, then re-reads a few ms later),
+  and the engine plays in that gap, so a base's visit — and its `+0xd0` add at `0x4ef7f6` — can run
+  between the two reads. The pair itself is the tell: a minerals delta equal to the income IS that
+  add (the add is exactly `+0xd0`, gated `d0 > 0`). Measured, Korolev Center, income 1, price 9:
+  r1-after 7 -> r2-before 8 (add landed in the gap, so the gate is 8, not 9) and r2-after 8 ->
+  r3-before 8 (not yet, so the gate is 9). Adding the income both times predicts the payment one
+  window early and breaks the mineral identity.
+- **Attribute an arrival by the payment, never by the current-base pointer.** PAY `0x4efedd` and
+  CREATE `0x4eff4e` are one visit invocation, so a window whose minerals show
+  `after == before + credit - price` DID make the unit even when the unit-array read inside the
+  same snapshot missed the write. `ds:0x8f0d60` naming the base proves neither: it named Korolev
+  Center at the after-snapshot of a window that had just paid 7 -> 0 with no new unit on the tile,
+  and that unit was there in the next read of the SAME round.
+- **Read the arrival back, and compare COUNTS of `(x,y,type,owner)`, not key presence.** A garrison
+  of the same key already sits on the base tile, so "the key is in the snapshot" says nothing about
+  an arrival. The unit array compacts (records die, indices shift down: the same two garrisons read
+  54/62, then 53/61, then 52/60/73 across one round) and a produced unit's `order` goes 0 -> 2 the
+  moment anything orders it, so neither `idx` nor `order` is an identity across reads.
+- **Account for the snapshot gap explicitly.** A before->after diff cannot see anything that lands
+  between one window's after-snapshot and the next window's before-snapshot; if you attribute
+  arrivals into that gap, add a matching gap floor or an unexplained arrival hides there.
+- A screen gate built on ONE OCR pass is a coin-flip while the map animates: 14 straight
+  `classify() == 'unknown'` verdicts on frames that are visibly the plain HUD (MENU / COMMLINK / TURN
+  COMPLETE / unit panel / `Mission Year`). Re-freeze until a known token lands, and look at the
+  frame before believing a modal.
+- The box does **not** auto-play while one of our units needs orders: `cur_player 3` sat unchanged
+  across three reads 4 s apart and three Return presses moved the year two rounds (and the base
+  bought: minerals 5 -> 0, credit 2 -> 1). "It auto-plays while nothing drives it" is true only with
+  everything on Hold.

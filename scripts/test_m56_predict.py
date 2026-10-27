@@ -26,6 +26,11 @@ The rule (M59 restatement, 2026-10-26, static + one controlled poke):
   the income add, so the storage it compares includes this round's income (+0xd0) —
   `predict(..., income_first=True)` is the UI-queued shape; the M56 armed run
   (storage poked to 100, income 0) is identical under both models.
+  M64 (session 104): the add is NOT phase-locked to the snapshot.  predict() takes an
+  `accrued` set — base names whose before-snapshot already contains this round's add,
+  measured by accrual_phase() from the previous window's after-snapshot vs this
+  window's before-snapshot (the SAME ROUND read twice) — and adds income only when it
+  has not landed.  Cases 18-19.
   The progress accumulator (+0x3c) and the rate (+0xcc) do NOT gate it: the armed
   base had net income 0 and the unit arrived on the very next boundary with
   progress 32 < any accumulation model's requirement.
@@ -246,11 +251,66 @@ def main():
           p0[0]["predict_arrive"] == p1[0]["predict_arrive"] == True
           and p0[0]["pop_expected"] is False and p1[0]["pop_expected"] is True, (p0, p1))
 
+    print("case 18: M64 — the ALREADY-ACCRUED before-snapshot (the measured shape of "
+          "evidence/trace_m56_build_20261026_181701.jsonl r2: minerals 8, income 1, "
+          "price 9, and the r1-after -> r2-before gap already read 7 -> 8)")
+    mm = MockMem([base(0, name="Korolev Center", pending=1,
+                       queue=[2] + [B.EMPTY_S] * 9, minerals=8, income=1)], {2: 1}, ada8=1)
+    p_plain = B.predict(mm, B.all_prod(mm), income_first=True)
+    p_accr = B.predict(mm, B.all_prod(mm), income_first=True, accrued={"Korolev Center"})
+    check("ONE variable — the accrued set: gate 8+1=9 ARRIVES vs gate 8 does not, "
+          "because the round's +0xd0 is already inside the 8",
+          p_plain[0]["predict_arrive"] and p_plain[0]["gate_minerals"] == 9
+          and p_plain[0]["income_added"] == 1
+          and not p_accr[0]["predict_arrive"] and p_accr[0]["gate_minerals"] == 8
+          and p_accr[0]["income_added"] == 0 and p_accr[0]["accrued_already"] is True,
+          (p_plain, p_accr))
+    check("an already-accrued snapshot still arrives when the storage alone reaches the "
+          "price (minerals 9, accrued -> gate 9 >= 9)",
+          B.predict(MockMem([base(0, name="Korolev Center", pending=1,
+                                  queue=[2] + [B.EMPTY_S] * 9, minerals=9, income=1)],
+                           {2: 1}, ada8=1),
+                    [{"i": 0, "x": 29, "y": 42, "fac": 3, "name": "Korolev Center",
+                      "pending": 1, "queue": [2] + [B.EMPTY_S] * 9, "minerals": 9,
+                      "progress": 0, "rate": 0, "income": 1}],
+                    income_first=True, accrued={"Korolev Center"})[0]["predict_arrive"])
+
+    print("case 19: M64 accrual_phase() — the signal is the same round read twice "
+          "(prev after-snapshot vs this before-snapshot)")
+    def prod(minerals, income, name="Korolev Center"):
+        return [dict(i=17, x=29, y=42, fac=3, name=name, pending=1,
+                     queue=[2] + [B.EMPTY_S] * 9, minerals=minerals, progress=0,
+                     rate=0, income=income)]
+    names, rows = B.accrual_phase(prod(8, 1), prod(7, 1))     # the measured r1-after -> r2-before
+    check("7 -> 8 with income 1: the add landed in the gap, so DO NOT add it again",
+          names == {"Korolev Center"} and rows[0]["gap_delta"] == 1
+          and rows[0]["already_accrued"] is True, (names, rows))
+    names2, rows2 = B.accrual_phase(prod(8, 1), prod(8, 1))   # the measured r2-after -> r3-before
+    check("8 -> 8 with income 1: the add has not run yet, so income IS a term",
+          names2 == set() and rows2[0]["already_accrued"] is False, (names2, rows2))
+    names3, rows3 = B.accrual_phase(prod(8, 0), prod(7, 0))   # income 0: the add is gated d0>0
+    check("a +1 delta with income 0 is not the add (the add is +0xd0, gated d0>0)",
+          names3 == set() and rows3[0]["gap_delta"] == 1
+          and rows3[0]["already_accrued"] is False, (names3, rows3))
+    names4, rows4 = B.accrual_phase(prod(9, 2), prod(7, 2))
+    check("7 -> 9 with income 2 IS the add (the add is exactly +0xd0, so the delta that "
+          "equals it is that add)",
+          names4 == {"Korolev Center"} and rows4[0]["gap_delta"] == 2
+          and rows4[0]["already_accrued"] is True, (names4, rows4))
+    names6, rows6 = B.accrual_phase(prod(10, 2), prod(7, 2))
+    check("a +3 delta with income 2 is not the add — unmeasured, so the income term "
+          "stands rather than guessing",
+          names6 == set() and rows6[0]["gap_delta"] == 3
+          and rows6[0]["already_accrued"] is False, (names6, rows6))
+    names5, _ = B.accrual_phase(prod(8, 1), None)
+    check("no previous window -> nothing measured, the income term stands as before",
+          names5 == set())
+
     print()
     if FAILS:
         print(f"FAILED: {len(FAILS)} — {', '.join(FAILS)}")
         return 1
-    print("PASS 17/17 production-prediction cases")
+    print("PASS 19/19 production-prediction cases")
     return 0
 
 

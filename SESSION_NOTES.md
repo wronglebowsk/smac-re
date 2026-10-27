@@ -1,32 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-91-92.md` (2 sessions). Read it only when a question reaches back before session ## Session 93.
-
-## Session 93 (2026-10-25) — M57: **THE GAME'S OWN BUILD UI WROTE THE QUEUE (proven, 0 memory writes) AND THE QUEUED UNIT WAS PAID FOR BY INCOME — BUT THE EXACT-ROUND PREDICTION FAILED 1/2, SO NOTHING MERGES** — changed `scripts/m56_build.py` (`--ui-queued N` mode: no poke of any kind, `writes` counter, queue-provenance floor, "storage below price at run start" precondition/floor, `predict(..., income_first=)`), `scripts/test_m56_predict.py` (8 -> 11 cases), this file, `NEXT_PROMPT.md`
-
-**ACCEPTANCE: NOT MET.** `python3 scripts/m56_build.py --ui-queued 18 --boundaries 5 --timeout 120` -> exit 1, `FAIL production prediction accounting`; trace `evidence/trace_m56_build_20261025_212402.jsonl`. Floors that PASSED: 5/5 boundaries flipped +1 (2152->2157, walk [0,2,3,5,6,7]), `queue provenance: GAME-filled, zero memory writes by this script` (pending 2 head 2 base 18 Korolev Center, `memory writes: 0`), `completion NOT armed: storage below price at run start` (minerals 4 < price 10), and 1 of 2 positive predictions verified. Floors that FAILED: `r2 prediction ... observed net 0` and `at least 1 POSITIVE prediction verified — 1/2`. Nothing was weakened to hide it.
-
-**What was PROVEN (read back from memory, not inferred).** (1) **The queue can be filled by the GAME, not by us**: with the cursor poked to (29,42), `SEL=-1`, orders mode OFF, `b` opens the base display; the right arrow at (523,433) switches the QUEUE widget to Korolev; clicking queue row 1 at (185,437) opens the item chooser (bar pixel (160,343) = (103,91,181)); the candidate array `DAT_009267e4`/count `0x9267e0` maps 5-col grid order -> cell, Scout Patrol (id 2) at cell 3 -> (509,60), `[sub+0xa774]` reads 3; `INSERT` at (497,343) -> **pending 0->1, head +0x50 = 2, slot +0x54 = 2**; `OK` at (285,343) = mode 0 commits and does not restore. A second INSERT took pending to 2. (2) **The completion was paid from income**: at 2155->2156 the queued Scout Patrol arrived with **pre-boundary storage 8 < price 10**, pending 2->1, queue left-shifted. (3) `base+0xd0` reads 2 but the ACTUAL storage deltas across those five boundaries were **0, +4, 0, -5, +2** — `+0xd0` is NOT the per-round mineral credit, which is why `income_first` over-predicted r2 (8+2 >= 10, no arrival) and only r3 landed. That is the open question, and it is a base-field finding, not a threshold to relax.
-
-**Traps that cost this session (all measured).** (a) **Escape on the map raises the quit prompt, and once that prompt is dismissed the game stops accepting KEYS entirely** — `h`/Return left `cur_player 3`, `turn_flags 0`, order bytes unchanged for 150 s while mouse clicks on the HUD still worked (MENU opened); the map area rendered black. A 172 s run burned on this. Reload is the only recovery. (b) **`orders_mode` (`0x91b5b8`) silently at 0 disables every order key** — `h` falls through to the cursor-tile handler and nothing happens; the `h`-escalation therefore depends on orders mode being ON. (c) **Clicks on popup bars do not register** (obliterate OK, hint Close/"Don't Show Again"), but Return on the default row and Escape do; the obliterate prompt's NO is the default and Return spares the base (verified twice: both bases still ours). (d) **`/tmp` hit its quota and `P.freeze()` failed silently**, returning a path to a file that did not exist (`classify` then said `movie`) — check `df /tmp` before trusting a frame. (e) A first `INSERT` read `pending 0` immediately after the click and had in fact landed; re-read after ~1 s.
-
-**Next (M57-2):** find the true mineral credit. Watch `base+0x40` at 2 ms across one boundary with an EMPTY queue on an income base (`scripts/m55_boundary.py` sampler + `scratch/m56_dump.py`), record the credit sequence, and locate the writer that adds to `+0x40` (candidates: `0x4ef7f6` in the base visit, `FUN_004e9557` recompute). Then re-run `--ui-queued 18 --boundaries 5` unchanged: the acceptance floors stay exactly as they are, including 1/1 positive predictions.
-
-## Session 94 (2026-10-25) — M57-2: **THE CREDIT IS NOT A PER-ROUND CONSTANT AND THE UNCHANGED GATE RE-RUN PRINTED FAIL — so NOTHING MERGES; the measured answer: storage moves through SEVERAL stores inside one base visit (income add, a second unnamed movement, the pay, the pop) and the net per-round delta is event-dependent** — changed `scripts/m57_credit.py` (NEW: gdb breakpoints at the store sites conditioned on the base pointer + a fast sampler + m56_build's Return/h/OK escalation), `scripts/m57_ui_enqueue.py` (NEW: scripted BUILD-UI enqueue, read-back after every click, queue-widget cycling + INSERT retry + cell located by CONTENT), `scripts/m57_uiwatch.py` (NEW: gdb on the enqueue dispatch printing `*(0x8f0d60)` at every hit), `evidence/m57c_q.log` + `trace_m57c_q3.jsonl` (the boundary store sequence), `evidence/trace_m56_build_20261025_215056.jsonl` (the FAIL acceptance run), this file, `NEXT_PROMPT.md`, skill `references/production-queue.md`
-
-**ACCEPTANCE: NOT MET.** `python3 scripts/m56_build.py --ui-queued 17 --boundaries 8 --timeout 240` -> exit 1, `FAIL production prediction accounting`; trace `evidence/trace_m56_build_20261025_215056.jsonl`. The queue was GAME-written (UI enqueue read back `pending 0->1, head 2, slot4 0->2`, `memory writes: 0`) and the run start satisfied the precondition (`minerals 4 < price 10`). Floors: 8/8 boundaries flipped +1 (2168->2176, walks home in 6 of 8); provenance + storage-below-price floors `ok`; but **`BAD at least 1 POSITIVE prediction verified — 0/0`** (the model never predicted the completion: it read income 1/round; the visit completed at minerals 7), `BAD r4 bookkeeping base 17: NOT predicted to arrive -> queue held — pending 1->0` and `BAD r4 unexplained ORDER-0 arrival on OUR base 17` (the produced Scout Patrol), plus `BAD r6/r7 player walk came home after the flip` (the after-snapshot at `--settle 0.3` caught cur_player MID-WALK — a sampling artifact). Nothing was weakened. Rule/fixture/classifier gates stay green: `python3 scripts/test_m56_predict.py` -> `PASS 11/11 production-prediction cases`; `python3 scripts/m56_build.py --fixture scratch/m56_fixture_bad.json` -> exit 1 `FAIL production prediction accounting`; `test_classify.py` 17/17, `check_classes.py` 17/0 (no new classes, no new frames).
-
-**THE CREDIT, measured (all read from memory, `evidence/trace_m57c_q3.jsonl` + `evidence/m57c_q.log`).** Korolev Center (29,42), queued by the game's UI at minerals 4 < price 10. Korolev storage round start -> after: `4->5, 5->5, 5->6, 6->7, 7->0` with the income field reading 1,1,1,1,1 then 0 after the produced unit's upkeep landed. The completion fired in the round whose round-start income read 1, i.e. when minerals+income = 8 < 10 — the visit's NET delta is not the round-start `+0xd0`. The 2 ms boundary sequence: `store 7->9, store 9->0, pending 1->0` (income add, then a SECOND movement, then the pay, then the pop, all inside one base visit at the flip). `+0xd0` itself walked 1 -> 3 -> 0 -> 1 -> 2 -> 3 -> 4 across the run as produced units arrived and were DISBANDED (the support popup: "the minerals output of Korolev Center is not sufficient to support Scout Patrol") — upkeep tracks the garrison, so the credit is recomputed EVERY visit and is event-dependent. Confirmed against the disasm + m52a: the income add is gated `d0 > 0 && head != -38 && !(flag30 & 2)` (0x4ef7db-0x4ef7f9) and **DOES fire with pending 0 while the head slot is stale** (the pop left-shifts but leaves stale ids in the tail — measured: adds landed with pending 0, storage 0->1->2); the pay at 0x4efed8 deducts `$edi` (9 observed at storage 9); clamp B at 0x4eff20 stores only when storage > min(cap `0x92a370`=10, d0) — and m52a's live line (`SPENDA ... old=200 new=190 edi=10` at price 10) supersedes NAMED's "edi = the sweep-entry index" row: **edi is the price**.
-
-**gdb findings (the harness works; several of ITS prints did not mean what I assumed).** (a) The conditional breakpoints (`break *0x4ef7db if $eax == <base addr>`) DID filter to the Korolev visit — the printed `+0x40` (via the baked base pointer) matched the sampler transition for transition — but the REGISTER side-values printed garbage relative to the fields (`$ecx` as d0 read 4/5/6/18 where the field read 1-3; the clamp pair read cap=11 d0=104) and the GATE at `0x4f0a3d` never fired for Korolev in any run (it sits on the `*0x8f0d60`-current-base branch reached only via the 0x4ef985 AND-test, not on the per-base path). **Treat pc-tagged register prints as UNVERIFIED; only the sampler + field read-backs are evidence.** (b) The hardware watchpoint on `+0x40` is unusable for cadence work: the field is READ constantly, the inferior crawled (1 round in 45 s, year never moved) — use breakpoints at the write sites. (c) `m57_uiwatch` proved the enqueue dispatch `0x417ee0` fires with `curbase = 0x95ef70` = Korolev's record (param1=1 param2=1) on the INSERT click, but the static store addresses m53g_drive lists (`0x418b57/0x418ad3/0x418ac7/0x418b24`) did NOT hit on that write — the enqueue store addresses need re-derivation.
-
-**UI findings (all read back).** (a) The QUEUE widget's base is INDEPENDENT of the display's base (both orders observed: `b` opened on Korolev with the widget on University, and the reverse); the right arrow (523,433) moves the field `0x6a9480+0x3ff3c` and INSERT lands on whichever base the widget holds — recipe: cycle the arrow until `+0x3ff3c` == the target index, then row 1 (185,437), cell, INSERT (497,343), OK (285,343), reading pending after every click. (b) The chooser grid position is ERA-DEPENDENT: Scout Patrol (id 2) is cell **4** now (`DAT_009267e4` = [192,195,194,193,2,...], count 67) where session 93 measured cell 3 — locate the cell by CONTENT. (c) The base array compacts: Korolev's index walked 17 -> 18 -> 17 within this session (n_bases 29 -> 19 -> 23 -> 25); locate bases by NAME/(x,y), never by remembered index. (d) The box at close: **2176, Korolev minerals 0, income 0, pending 0 with stale head 2, 10 units all HELD, 2 bases, pid 1538414** — Korolev's income is now ZERO (the garrison's upkeep eats the yield), so nothing more accrues there without an economy change or a reload.
-
-**Open.** (1) Name the SECOND store: enumerate every write to `+0x40` inside one visit (the 7->9->0 middle movement is unnamed; candidates: a second income site, the upkeep/spend path, the recompute through another field) with breakpoints at ALL disasm write sites, not a hw watchpoint. (2) Whether `+0xd0` at round start can be predicted from garrison + facility bitmap (the disband/upkeep chain). (3) The r6/r7 walk-home FAIL is a settle artifact — `--settle` must exceed the walk (~1-2 s) or the floor must read the timeline's final cur_player. (4) The enqueue store addresses inside `0x417ee0`. (5) Whether a documented negative merges — per the rule ("merge ONLY on a PASS") the branch holds UNMERGED; no PR was opened.
-
-**Next (M57-3):** give the loop an income-STABLE base: reload `m54b_clean.SAV` + re-found (`m54g_prep.py`, 2 founding turns) exactly as session 93 did (that box had Korolev income 2 and produced the r3 completion), UI-enqueue ONE Scout Patrol at minerals < 10, then `python3 scripts/m56_build.py --ui-queued <index> --boundaries <enough for the accrual, ~6-10 at ~20 s/round> --timeout 240 --settle 2.5` (settle only moves WHEN the after-snapshot is taken, so the walk-home floor sees the walk finished — the floor semantics are unchanged). Acceptance unchanged: every floor as it stands + >= 1 verified positive prediction. If income is stable the model predicts the exact round; if the visit's second store still breaks it, the documented negative stands and the next step is Open (1), the full store enumeration.
-
-**Addendum (same session, after the close): why the session was slow, and two fixes.** The time went to *stale remembered facts*, not to hard problems: (a) a retyped `cur_player` address (`0x91c634` instead of `0x985dcc`) burned a 45 s smoke run and an OCR classification detour; (b) the UI recipe's arrow/cell/index facts had drifted (queue-widget base vs display base; Scout Patrol cell 3 -> 4; base index 17 -> 18 -> 17), so two enqueues silently landed on University Base; (c) a hardware watchpoint on a constantly-READ field made the inferior crawl (1 round/45 s) — breakpoints at the write sites are the tool; (d) the sampler ran unthrottled and wrote 1.4 GB of traces (gate RED until downsampled); (e) the 8-boundary acceptance was launched without first doing the credit arithmetic. Fixes added and tested: **`scripts/smac_preflight.py`** (read-only, exit 1 on any FAIL: the one authoritative address table, game alive, TracerPid=0, no gdb, our bases located BY NAME with index/coords/pending/head/minerals/income, unit decode, /tmp room, evidence budget; `SMAC_PID` override is the negative test — `SMAC_PID=999999` -> exit 1) and a **credit-arithmetic line in `m56_build.py --ui-queued`** printed BEFORE the run (`needs 4 more minerals at 1/round -> ~4 round(s) to the gate`, recorded as a trace event; a diagnostic, no floor touched). Verified live: preflight PASS on the real box; `python3 scripts/m56_build.py --ui-queued 0 --boundaries 1 --timeout 60` -> `credit arithmetic: needs 4 more minerals at 1/round -> ~4 round(s) to the gate`. Also observed by the preflight: the two failed enqueues left **University Base pending 2 (minerals 6, income 1)** — a GAME-written queue sitting there, which is a candidate for M57-3 as well.
+Older sessions: `docs/sessions/sessions-93-94.md` (2 sessions). Read it only when a question reaches back before session ## Session 95.
 
 ## Session 95 (2026-10-25) — M57-3: the gate ran on a GAME-filled queue and got 1/2 — the model premise is falsified, nothing merges
 
@@ -602,3 +576,140 @@ The readiness oracle has **15** unit cases, not 13: two horizon cases (`tight ho
 `roomy horizon is not`) were added after the session-101 notes were written, so the notes quoted a
 stale count. `python3 scripts/test_accept_ready.py` -> `PASS 15/15 readiness cases` (re-run before
 this commit). No code changed; `SESSION_NOTES.md` and `NEXT_PROMPT.md` now say 15/15.
+
+## Session 104 (2026-10-26) — M64: THE ACCRUAL PHASE IS MEASURED AND AN ARRIVAL IS ATTRIBUTED BY THE PAYMENT, NOT BY `ds:0x8f0d60`. ACCEPTANCE PASS on two real invocations.
+
+Branch `milestone/m64` off `origin/main` (`5c18670`, M62B #61). Session 103's M63 work is still
+**unmerged** on `milestone/m63`, so this branch does not carry its instrument or its `NAMED.md`
+edits; the two traces its findings rest on were copied forward (`git checkout milestone/m63 --
+evidence/trace_m56_build_20261026_181701.jsonl evidence/trace_m56_build_20261026_182354.jsonl`)
+because the gate's citation check requires cited paths to resolve in the tree.
+
+### What changed (harness only — no threshold, floor or economic term moved)
+
+`scripts/m56_build.py`:
+- **`accrual_phase(bases_now, prev_after)`** — a window's after-snapshot and the next
+  window's before-snapshot are the SAME ROUND read twice, and the engine plays in the gap, so a
+  minerals delta of exactly `+0xd0` between them IS this round's add (0x4ef7f6). `predict()` now
+  takes `accrued=` (names) and adds income only when the add has not already landed; every
+  prediction row carries `income_added` / `accrued_already`, and every window logs an
+  `accrual_phase` event with `prev_after / before / gap_delta / income / already_accrued`.
+  This is the fix for session 103's run-2 FAIL (`8 + credit 1 - price 9 = 0, observed 8`): in
+  `evidence/trace_m56_build_20261026_181701.jsonl` Korolev Center read 7 at r1-after and 8 at
+  r2-before (income 1), so the old `income_first=True` double-counted and predicted a payment at
+  r2 that never happened (storage 8 -> 8); r3 is where it really happened (8 + 1 - 9 = 0).
+- **F1 attributes by the PAYMENT, not the pointer.** An arrival missing from the after-snapshot is
+  accepted when this window's minerals show the payment (`after == before + credit - price`) AND
+  the unit reads back — either from a same-round re-read of the unit array (new
+  `arrival_reread` event, bounded 2 s, stops the instant the year changes) or from the next
+  window's before-snapshot, which is that same round read later. `ds:0x8f0d60` is reported in the
+  detail and used as evidence by nothing: it was measured insufficient (r7 of
+  `evidence/trace_m56_build_20261026_182354.jsonl` paid 7 -> 0 with the pointer naming Korolev
+  Center and 2 of our units on (29,42); r8's before-snapshot, same round y2159 rnd59, has 3).
+  The re-read compares **counts**, not key presence — a garrison of the same `(x,y,type,owner)`
+  already sits on the base tile, so "the key is in the snapshot" says nothing.
+- **New floor, not a weakened one:** the gap between a window's after-snapshot and the next
+  window's before-snapshot is now searched for unexplained ORDER-0 arrivals on our bases too
+  (`rN gap to the next window: ...`), because F2 diffs before -> after only and the attribution
+  above moves arrivals into that gap.
+- `credit_of` is computed once per window (0 when already accrued) and shared by the attribution
+  and the F3 mineral identity, so the two cannot disagree.
+
+`scripts/test_m56_predict.py` -> **`PASS 19/19 production-prediction cases`**: case 18 is the
+measured already-accrued snapshot (ONE variable, the accrued set: gate 8+1=9 ARRIVES vs gate 8
+does not); case 19 pins `accrual_phase` on the measured pairs (7->8 with income 1 = the add;
+8->8 = not yet; +1 with income 0 = not the add, the add is gated `d0 > 0`; +3 with income 2 =
+unmeasured, so the income term stands rather than guessing).
+
+`scripts/m64_mkfixture.py` (new) rebuilds the run-layer fixtures from committed traces:
+`python3 scripts/m56_build.py --fixture scratch/m64/fixture_paid_readback.json` -> **exit 0**
+(r7+r8 of the run-3 trace VERBATIM — the window pair session 103 failed on);
+`--fixture scratch/m64/fixture_paid_no_readback.json` -> **exit 1** (same two windows, the paid
+unit absent from every read: a paid window whose unit never reads back is the guard shape, not a
+race); `--fixture scratch/m61/fixture_defer_ok.json` exit 0, `--fixture scratch/m56_fixture_bad.json`
+exit 1, `test_walk_diff.py` 37/37, `test_classify.py` 17/17, `check_classes.py` 17/0.
+
+### CONFLICT reported, not silently picked
+
+The pick said "keep `scratch/m61/fixture_beat_visit.json` failing (exit 1)" AND "a paid window
+whose unit appears only in the NEXT read must verify". Its own new rule makes that impossible:
+the original beat_visit IS a paid window whose unit appears only in the next read (r0 minerals
+8 -> 0 with income 1 and price 9, unit present at r1's before-snapshot) and its only discriminator
+was the pointer, which session 103 measured insufficient. Under the new rule it **passes**
+(`--fixture scratch/m61/fixture_beat_visit.json` -> exit 0 with the M61 file). Rather than keep a
+green file named "must fail", `scripts/m64_mkfixture.py` rebuilds it in place — same path, same
+expectation, new discriminator (the paid unit removed from every read) -> **exit 1**. The pointer
+value is kept in the data and no longer means anything.
+
+### The acceptance — two real invocations, both PASS, plus the read-backs
+
+1. `python3 scripts/m56_build.py --ui-queued 18 --boundaries 10 --timeout 400 --no-poke-hold`
+   (after `SMAC_SAVE='m54b_clean.SAV' scripts/m54a_load.py --relaunch` -> `m54g_prep.py` ->
+   `smac_play.py --turns 1` -> `2150->2151 OK` (`evidence/trace_t_20261026_194949.jsonl`) ->
+   `m57_ui_enqueue.py --base-index 18 --cell-item 2
+   --inserts 1` -> `pending=1 head=2 slots=[2,2,0,0,0,0] minerals=2 d0=2`) ->
+   **`PASS production prediction: 2 verified unit arrivals over 10 boundaries ... queue filled by
+   the GAME's BUILD UI (0 memory writes), paid by income at 2/round`**, `ACCEPT_EXIT=0`,
+   52 checks all ok, `positive predictions 2/2 verified; boundaries 10/10`,
+   `evidence/trace_m56_build_20261026_195136.jsonl`. **Read back:** Korolev Center paid at r3
+   (minerals 8 -> 1 = 8 + 2 - 9) and at r7 (7 -> 0 = 7 + 2 - 9); our units on (29,42) went 1 -> 2
+   -> 3, and WHERE each reads back is the whole point: the r3 payment's unit is NOT in r3's
+   after-snapshot (tile still 1, orders [2]) and IS at r4's before-snapshot (tile 2, orders
+   [0, 2]), while the r7 payment's unit is already in r7's own after-snapshot (tile 3, orders
+   [0, 2, 2]). **The r3 arrival is the session-103 failure shape and it was ATTRIBUTED, not
+   tolerated:** the check detail reads
+   `observed net 0 of that tuple on the base tile; ATTRIBUTED ... this window's minerals show the
+   PAYMENT (8 + credit 2 - price 9 = 1, read back) ... ds:0x8f0d60 named Korolev Center at the
+   after-snapshot and is not evidence either way (measured insufficient)`. Under M61's rule that
+   window FAILED the run.
+2. The same command after the re-read was changed to compare counts (the only code change after
+   run 1, so the shipped code is the code that printed PASS; its reload turn is
+   `evidence/trace_t_20261026_195910.jsonl`, `turn 0: 2150->2151 OK`): -> **`PASS ... 2 verified unit
+   arrivals over 10 boundaries`, `ACCEPT_EXIT=0`**, 56 checks all ok,
+   `evidence/trace_m56_build_20261026_200045.jsonl`. Read back: payments at r3 (8 -> 1) and r7
+   (7 -> 0), tile counts 1 -> 2 (r3-after, order 0 present) -> 3 (r7-after, order 0 present); both
+   arrivals were observed directly, so no `arrival_reread` event and no attribution was needed.
+
+**Said plainly:** in BOTH PASS runs every `accrual_phase` row had `gap_delta = 0`
+(`evidence/trace_m56_build_20261026_200045.jsonl`: r1..r9 all `prev_after == before`), so the
+accrual fix was **inert live** this session — it is exercised by cases 18/19 and by the replayed
+run-2 trace, not by the acceptance. The attribution fix was exercised live exactly once, at r3 of
+`..._195136.jsonl`. Two clean PASSes with the fix inert are not proof the accrual fix is right on
+a live box; they are proof it does no harm there.
+
+### Also measured this session (cheap, load-bearing)
+
+- The box **stalls rather than auto-plays when an actionable unit exists**: year 2162 round 62
+  `cur_player 3` unchanged across three reads 4 s apart (`n_units` 67 all three); three `Return`
+  presses moved it 2162 -> 2164 and Korolev bought (minerals 5 -> 0, credit 2 -> 1). Session 103's
+  "the box auto-plays while nothing drives it" is true only while nothing needs orders.
+- `accept_ready.py`'s screen gate **flaked**: 8 consecutive `classify() == 'unknown'` verdicts on a
+  frame that `vision_analyze` shows as the plain tactical HUD (MENU / COMMLINK / TURN COMPLETE /
+  unit panel / `Mission Year 2164`), and 3 of 6 samples of the same screen classified `hud`
+  (`scripts/smac_play.classify(words, region_colors(png), png)`). The map labels OCR as garbage
+  (`UniversitKBratziew Center`) whenever the map is animating. Not a modal. The run itself was
+  unaffected (it presses Return every 2 s whatever the screen says).
+- Korolev Center's array index moved 18 -> 17 -> 18 again across the session; both enqueue
+  attempts located it BY NAME and the `--base-index` passed to `m56_build.py` was re-read every time.
+
+### Open
+
+- Whether the accrual fix is right on a live box (see "Said plainly"): needs a run whose windows
+  actually straddle an accrual — `income 1` bases (the 2164 box) produce that shape, the `income 2`
+  reload does not.
+- `accept_ready.py`'s screen gate is an OCR coin-flip on animated HUD frames; it blocked 14 reads
+  this session and all 14 were the plain HUD. Either re-freeze until a known token reads, or stop
+  treating `unknown` as a modal.
+- Still open from M63 (untouched): which slot the BUILD UI's INSERT writes (needs an enqueue with
+  two DIFFERENT type ids — every chooser value seen so far was 2); who writes `DAT_0068cbb0` and
+  when it is stale; why `0x5a73f0(2, 3, Korolev)` returns 1.
+- `milestone/m63` still carries the pop instrument (`m63_pop.py`), the `0x94de84` count-byte
+  correction and the 384/386 identity-crossing finding with no PR. M64 did not merge it.
+- Evidence 25.5 MB of the 30 MB gate FAIL line (warn band 20).
+
+### Next pick
+
+M65, cheapest first: (a) make `accept_ready.py`'s screen read re-freeze until a HUD token lands
+instead of trusting one OCR pass (measured flake above; no game time needed), then (b) one run on
+an `income 1` base — the shape that produced the double-count — so the accrual fix gets its live
+case, then (c) the two-enqueue DIFFERENT-type-id test that finally says which slot INSERT writes.
