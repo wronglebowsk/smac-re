@@ -1,0 +1,12 @@
+{"tag": "ARMED", "base": 9820688, "cursor": 0, "pending": 2, "s0": 2, "s1": 193, "s2": 192, "s3": 0}
+{"tag": "VISIT", "idx": 0, "pend": 2, "s0": 2, "s1": 193, "s2": 192, "s3": 0, "min": 9}
+{"tag": "PAYA", "base": 9820688, "storage": 10, "edi": 9}
+{"tag": "CREATE", "id": 2, "arg3": 3, "storage": 1}
+{"tag": "POPIN", "idx": 0, "pend": 2, "own": 197379, "s0": 2, "s1": 193, "s2": 192, "s3": 0, "min": 1}
+{"tag": "POPDEC", "count": 9781434, "byte": 1, "head": 2, "pend": 2}
+{"tag": "POPAFT", "count": 9781434, "byte": 0, "head": 2}
+{"tag": "SLOT1WRITE", "pc": 5174830, "now": 192, "slot": 1, "store_pc": 5174828, "mapped": true, "store_name": "pop shift store queue[k] = queue[k+1] (0x4ef62c)"}
+{"tag": "POPCNT", "newpend": 1, "s0": 193, "s1": 192, "s2": 192, "s3": 0}
+{"tag": "POPRES", "head": 193, "r": 1, "pend": 1}
+{"tag": "POPEXIT", "head": 193, "pend": 1}
+{"tag": "VISIT", "idx": 0, "pend": 1, "s0": 193, "s1": 192, "s2": 192, "s3": 0, "min": 1}

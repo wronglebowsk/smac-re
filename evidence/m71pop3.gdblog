@@ -1,0 +1,54 @@
+[New LWP 3058393]
+[New LWP 3058392]
+[New LWP 3058391]
+[New LWP 3058390]
+[New LWP 3058389]
+[New LWP 3058388]
+[New LWP 3058387]
+[New LWP 3058386]
+[New LWP 3058385]
+[New LWP 3058384]
+[New LWP 3058383]
+[New LWP 3058382]
+[New LWP 3058381]
+[New LWP 3058380]
+[New LWP 3058379]
+[New LWP 3058378]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf4b5432c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x6e93dc
+Hardware watchpoint 2: *(int *)($b + 0x54)
+Hardware watchpoint 3: *(int *)($b + 0x58)
+Hardware watchpoint 4: *(int *)($b + 0x5c)
+Breakpoint 5 at 0x4f5a93
+Breakpoint 6 at 0x4ef5e4
+Breakpoint 7 at 0x4ef61a
+Breakpoint 8 at 0x4ef61c
+Breakpoint 9 at 0x4ef642
+Breakpoint 10 at 0x4ef65d
+Breakpoint 11 at 0x4ef68b
+Breakpoint 12 at 0x4efed8
+Breakpoint 13 at 0x4f0ca1
+Breakpoint 14 at 0x4eff4e
+ARMED base=0x95da10 cursor=0 pending=2 s0=2 s1=193 s2=192 s3=0
+VISIT idx=0 pend=2 s0=2 s1=193 s2=192 s3=0 min=9
+PAYA base=0x95da10 storage=10 edi=9
+CREATE id=2 arg3=3 storage=1
+POPIN idx=0 pend=2 own=197379 s0=2 s1=193 s2=192 s3=0 min=1
+POPDEC count=0x9540ba byte=1 head=2 pend=2
+POPAFT count=0x9540ba byte=0 head=2
+SLOT1WRITE pc=0x4ef62e now=192
+POPCNT newpend=1 s0=193 s1=192 s2=192 s3=0
+POPRES head=193 r=1 pend=1
+POPEXIT head=193 pend=1
+VISIT idx=0 pend=1 s0=193 s1=192 s2=192 s3=0 min=1
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3058387]
+0xf4b5432c in __kernel_vsyscall ()
+[Inferior 1 (process 3058375) detached]

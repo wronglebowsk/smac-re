@@ -646,3 +646,45 @@ writer (`attribute_store`, 16-byte window; an unmapped pc FAILs the run rather t
 reads the plan byte `+42` — the only 52-byte type-address computations (`0x40ad92`, `0x4164dd`,
 `0x4188f9`, `0x418932`) just hand the record to the row's string builder. M67's plan-ordered list
 is a measured property of the WIDGET with no code behind it yet.
+
+## M71 (session 111): the completion's POP — one item per completion, and the shift touches only `0..pending-1`
+
+- **A completion pops ONE item when the new head validates as available.** The pop's own loop
+  (`0x4ef5fa`-`0x4ef67e`) reads like it drains the whole queue, and it does — but only while the
+  validator returns 0. `0x5a73f0` returns 0 iff type-record `+0x30` bit 0 is clear OR the
+  owner-mask byte `+0x2c` lacks the faction bit; designed records read `192:0x0001`,
+  `193:0x0041`, `194:0x0041` with `+0x2c = 0`, so the loop exits at `0x4ef68b` with the new head
+  STILL in the queue. Read the verdicts live (`POPRES`/`POPEXIT`); the loop shape alone cannot
+  tell you which happened.
+- **K shifts are NOT "shift left by K".** Each iteration shifts only `0..pending_j - 1` and
+  `pending` shrinks, so index k is written `pending-k` times and `queue[pending]` keeps its
+  STALE id. Compose with `shift_predict` (`scripts/m71_pop_watch.py`), never a slice: the
+  read-back `[2,193,192,0] -> [193,192,192,0]` shows a duplicate that no instruction wrote.
+- **The completion neither moves the widget cursor nor reorders the region**: ZERO writes to
+  `*(int *)0x6e93dc` across the whole armed window (twice), and the only region write was the
+  shift store `0x4ef62c`. When a sorted read-back and an appended read-back disagree, the
+  completion is not the culprit — the cursor mechanics at INSERT (M70) are.
+- **For a UI-queued base-type head the pay that fires is `0x4efedd` with `edi` = the head's
+  PRICE** (measured `storage 9 edi 9` and `storage 10 edi 9` on a base whose INDEX is 0, so in
+  that shape `edi` is not M49a's sweep-entry index). Arm BOTH pay sites (`0x4efed8` and
+  `0x4f0ca1`) — `0x4f0ca6` remains unexamined for the designed branch.
+- **Arm the pop with CONDITIONAL breakpoints keyed on the record** (`if $esi+0x95da10 == $b`,
+  `if $ecx == $b`, `if $edx == $b`): 10 silent breakpoints + 4 hw watchpoints cost ~35 s per
+  round boundary and keep every other base's pop out of the log.
+- **Poke the head's price into `base+0x40` and READ IT BACK before attaching** (pokes lie under
+  a tracer). A completion acceptance needs `minerals >= price`, the OPPOSITE shape from
+  `accept_ready`'s accrual readiness — name the shape in your own gate, do not bend the oracle.
+- **A dialog silently swallows chooser clicks** (the chooser guard stays 0 and pending is
+  unchanged) while the HUD status bar still reads through: run `scripts/m70_clear_dialog.py`
+  before blaming the chooser cell map. Twice this session the "minerals output of University
+  Base is not sufficient to support Scout" dialog made two different scripts' clicks no-ops;
+  after clearing, the identical click set the guard and the INSERT worked.
+- **Instrument:** `scripts/m71_pop_watch.py` — ONE invocation pokes, arms, drives real
+  boundaries, detaches, reads pending/region/cursor/counts back from `/proc/pid/mem` and prints
+  PASS/FAIL on 8 gates (shape must separate SINGLE from DRAIN; the window must contain a pop;
+  every writer pc must map; the read-back must equal the composition of the logged writes; the
+  armed record must still be the same base BY NAME). `scripts/test_m71_pop.py` 34/34 pins the
+  composition, the parser, both real logs and 10 negative fixtures.
+- **Open:** a DESIGNED head (193) with `minerals == price` did NOT complete in two boundaries —
+  one visit, no pay/pop/create; at the end `+0x3c` 5, `+0xcc` (rate) 0, `+0x30` `0x80007020`.
+  Confounded with the head id; no mechanism claimed.

@@ -1,0 +1,44 @@
+[New LWP 3039379]
+[New LWP 3039378]
+[New LWP 3039377]
+[New LWP 3039376]
+[New LWP 3039375]
+[New LWP 3039374]
+[New LWP 3039373]
+[New LWP 3039370]
+[New LWP 3039369]
+[New LWP 3039368]
+[New LWP 3039367]
+[New LWP 3039366]
+[New LWP 3039365]
+[New LWP 3039364]
+[New LWP 3039363]
+[New LWP 3039362]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee5a568b in ?? ()
+Hardware watchpoint 1: *(int *)0x6e93dc
+Hardware watchpoint 2: *(int *)($b + 0x54)
+Hardware watchpoint 3: *(int *)($b + 0x58)
+Hardware watchpoint 4: *(int *)($b + 0x5c)
+Breakpoint 5 at 0x4f5a93
+Breakpoint 6 at 0x4ef5e4
+Breakpoint 7 at 0x4ef61a
+Breakpoint 8 at 0x4ef61c
+Breakpoint 9 at 0x4ef642
+Breakpoint 10 at 0x4ef65d
+Breakpoint 11 at 0x4ef68b
+Breakpoint 12 at 0x4efed8
+Breakpoint 13 at 0x4f0ca1
+Breakpoint 14 at 0x4eff4e
+ARMED base=0x95da10 cursor=0 pending=2 s0=193 s1=2 s2=192 s3=192
+VISIT idx=0 pend=2 s0=193 s1=2 s2=192 s3=192 min=18
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3039373]
+0xee7b832c in __kernel_vsyscall ()
+[Inferior 1 (process 3039359) detached]
