@@ -1,0 +1,49 @@
+[New LWP 262670]
+[New LWP 262669]
+[New LWP 262668]
+[New LWP 262667]
+[New LWP 262666]
+[New LWP 262665]
+[New LWP 262664]
+[New LWP 262662]
+[New LWP 262661]
+[New LWP 262660]
+[New LWP 262659]
+[New LWP 262658]
+[New LWP 262657]
+[New LWP 262656]
+[New LWP 262655]
+[New LWP 262654]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf50f832c in __kernel_vsyscall ()
+ARMED round=68 year=2168 save=0
+Breakpoint 1 at 0x5aaa20
+Breakpoint 2 at 0x5aa880
+Breakpoint 3 at 0x5aa9b1
+Breakpoint 4 at 0x5aa9d3
+Breakpoint 5 at 0x5aa9d5
+Breakpoint 6 at 0x5aaac1
+Breakpoint 7 at 0x5aab60
+Breakpoint 8 at 0x51f320
+ENT n=1 fac=5 ret=0x5aaff3 save=0 round=68
+CHR n=1 eax=36 a1=0 a2=-1 a3=0 a4=5 fac=5
+ST n=1 addr=0x957ba8 val=36 chr=36 ret=0x5aaff3 fac=5 round=68
+RB n=1 addr=0x957ba8 mem=36
+CTRL n=1 round=68
+AAA n=1 arg0=2 ret=0x5aaf4b round=69
+CONS n=1 addr=0x951974 kind=13 band=2 round=69
+ENT n=2 fac=2 ret=0x5aaff3 save=0 round=69
+CHR n=2 eax=36 a1=0 a2=-1 a3=0 a4=2 fac=2
+ST n=2 addr=0x951974 val=36 chr=36 ret=0x5aaff3 fac=2 round=69
+RB n=2 addr=0x951974 mem=36
+CTRL n=2 round=69
+CTRL n=3 round=70
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf50f832c in __kernel_vsyscall ()
+[Inferior 1 (process 262651) detached]

@@ -231,3 +231,70 @@ Systematic mismatch: try the raw post-state variant before widening the model.
 - Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
 - What the install ships (rules text, map format, graphics containers) and what to parse vs
   what to RE: `references/data-formats.md`.
+
+## Byte-exact caller chains (the scan Ghidra shard greps miss)
+
+Containment comes from `ghidra_out/index.csv` (`addr,name,size_bytes,n_callers,shard`); the call
+sites come from a regex over `scratch/m574/text.txt` that matches WHOLE call instructions:
+`^\s*([0-9a-f]{6,8}):\s+e8\s+((?:[0-9a-f]{2} ){3}[0-9a-f]{2})\s+call\s+0x<addr>$` — the rel32 is
+printed as four space-separated bytes, NOT one 8-hex token (an 8-hex group matches nothing and a
+"zero callers" verdict from that shape is an instrument defect). Walk up level by level, printing
+each site's container + its size + its caller count. Exact for direct calls; misses indirect and
+vtable entries, so a zero result must be checked against `n_callers` in index.csv.
+
+## The 0x94d7fc per-faction slot: writers, stride, and the upkeep path into the helper
+
+Static, byte-backed (s139-parallel run; these facts are NOT yet in git main as of PR #92 — the
+next closing that rsyncs this skill carries them in):
+
+- `FUN_004f34b0` has EXACTLY ONE call site: `4f5c2e: e8 7d d8 ff ff call 0x4f34b0`, inside
+  `FUN_004f5a70` (base-round processor) at +0x1be, 0x5e before its energy-income store 0x4f5c8c.
+  Up-chain (each link a matched call): 0x5206d3 in 0x520540 -> 0x52091a in 0x5208f0 -> {0x520d02 in
+  0x520c10, 0x521169 in 0x521070 stage 1} -> 0x522a16 in 0x522850 -> 0x46652e in 0x466400 ->
+  0x64dd01 in entry (0x64dbe0). So M87's trigger path 4f34b0 -> 5aadf0 -> 5aaa20 -> 5a7970 is a
+  PER-BASE UPKEEP tail, not a load path. The call is gated (0x4f34c0 `jne 0x4f35d6`, further gates
+  0x4f3511/0x4f3544/0x4f354b, unread) — "runs for every base" is NOT claimed.
+- `FUN_005aa880` (pick-next-tech) has 4 call sites: 0x52132f (0x521070 stage 3, "Set Research"),
+  0x5aaaab + 0x5aab58 (0x5aaa20: the slot<0 allocate leg, and just before its own store 0x5aab60),
+  and 0x5aafee (0x5aadf0, just before that function's slot read at 0x5aaf07).
+- The other DIRECT slot writer is `FUN_005102f0` (177 B): esi = faction*8380 (0x5102f8-0x510307),
+  calls `FUN_005ab000(faction, 0, -1, 0)` at 0x51035f and stores the returned kind at 0x51038c,
+  guarded 0x510369 `jl` / 0x510375 `jl` (slot < 0) / 0x510379 `je` (skip when new == stored). Its
+  call sites: 0x499fe3 (0x499e70), 0x51376f (0x512b40), 0x51718b (0x516b80) — two of the nine
+  aaa20 callers. `FUN_005ab000` (frame 0xc5c, calls 0x489fd0 then 0x48b9a0 with 4 args) has no
+  NAMED row yet.
+- Stride: the slot is `0x94d7fc + faction*8380` (2095 dwords/record), confirmed by three lea chains
+  (0x5aaa29-0x5aaa45 edi, 0x5102f8-0x510307 esi, 0x5aa8c6-0x5aa8d5 edx=2095f used as
+  `[edx*4+0x94d7fc]`). `scripts/m87_aaa20_trigger.py`'s docstring "stride 191 dwords = 764 B" is a
+  mis-decode (191 = 2095/11): a /proc read at `0x94d7fc + f*764` returns zeros for f=1..7 where
+  `f*8380` returns live kinds.
+- Harness trap: `scripts/m54a_load.py` has NO argparse — `python3 scripts/m54a_load.py --help`
+  LAUNCHES A LOAD (it relaunched the box mid-M88 in the s139-parallel run). Probe harness scripts
+  with `sed -n '1,40p'` or grep their `add_argument` lines, never with `--help`.
+
+
+## The work-item slot provider chain (M89, byte- and live-backed)
+
+- `FUN_005aa880(faction)` never invents its value: on a solo box (`ds:0x920434 == 0`, so 0x5aa892
+  `je 0x5aa9a5`) it pushes 0/-1/0/edi, `call 0x5ab000` at 0x5aa9ac, then 0x5aa9b3 `mov ebx,eax`,
+  0x5aa9c5 `lea esi,[eax*4+0x94d7fc]`, 0x5aa9d3 `mov [esi],ebx`, and returns the same value
+  (0x5aaa1a `mov eax,ebx`). `FUN_005ab000(faction, 0, -1, 0)` IS the answer to "what value": it
+  reserves a 0xc5c-byte local (0x5ab018 `sub esp,0xc5c`), initializes it through 0x489fd0 (0x5ab025),
+  then re-pushes its own four args to 0x48b9a0 — a candidate scan, not a constant.
+- WHO ASKS and WHEN (`FUN_005aadf0` tail): 0x5aafcf reads `[esi+0x94d7f8]` (exit if < 0), 0x5aafda
+  `mov eax,[esi+0x94d7fc] / 85 c0 / 7d 18 jge 0x5aaffc` — asks ONLY when the slot is NEGATIVE — then
+  0x5aafe4 `cmp DWORD PTR ds:0x926bd4,1 / je 0x5aaffc`, 0x5aafee `call 0x5aa880`, 0x5aaff6 stores the
+  returned value a second time. Because `FUN_005aaa20` writes -1 at 0x5aaac1 right before calling the
+  helper, the ask is in the SAME 5aadf0 invocation: live order AAA(fac 2, ret 0x5aaf4b) -> CONS(slot2,
+  kind 13) -> ENT(fac 2, ret 0x5aaff3) -> CHR(eax 36) -> ST(slot2, 36).
+- 5aadf0 calls aaa20 a SECOND time at 0x5aafbb, after testing `[esi+0x94d430]` bit 0x40 at 0x5aaf7f and
+  clearing it at 0x5aafb1 (`and al,0xbf`); it fills a SIBLING slot `[esi+0x94d800]` from
+  `FUN_005aab70(faction)` (0x5aaf67 stores -1, 0x5aaf79 stores eax, 0x5aaf02 calls the same provider).
+- The value is NOT a type record id: 36, 44, 32, 48, 45 are EMPTY records at 0x98ad88 + id*52, while 3
+  Transport Foil, 5 Supply Crawler, 8 Mind Worms, 10 Locusts of Chiron, 13 Unity Foil are real
+  ANY-faction units (owner mask 0xff00). Every observed value is < 50; 0x5aaf10 `cmp ecx,0x59` (= 89)
+  bounds the domain at >= 89; 0x93325c/68/74 (shorts 10/25/26) is what FUN_005a7970 accepts.
+- Harness: `scripts/m89_alloc_census.py` — poke -1 from /proc, 8 print-only breakpoints, /proc read-back
+  per boundary. A gdb breakpoint CAN carry convenience variables across stops, which is how the caller's
+  return site (`[esp]` at entry) pairs with the store 12 instructions later. Args at a post-`ret` stop
+  are at `[esp] .. [esp+0xc]` (cdecl, caller pops at 0x5aa9ba) — printing esp+4..+16 shifts every label.
