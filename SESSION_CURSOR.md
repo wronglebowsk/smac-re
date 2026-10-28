@@ -1,1 +1,3 @@
-M90 m90tech1 FAIL (my events-slice bug) + m90tech2 PASS 8/8 | MERGED #95 (main, gate GREEN) | next: python3 scripts/session_brief.py then M91 per NEXT_PROMPT (what FUN_005a90a0 scores; how a chosen tech becomes the ACTIVE project; bVar14 in FUN_0048b9a0 undecoded) | box pid 262651 2180 r80, minerals 0 credit 0 at University Base | evidence 27.6 MB
+M91 in flight (branch milestone/m91 from main 4871643; nothing accepted yet). Box pid 262651 r80 y2180; human mask 0x8; 0x985ac4 bit200 SET (scorer multiplier m=4); 0x926bd4=0; e488 per fac [0,1,10,1,3,1,9,1].
+Acceptance: python3 scripts/m91_scorer_census.py --tag m91score1 --poke-index 5 --rounds 3 --timeout 120 (print-only bps: 0x5aa030 CALL, 0x5a930b BASE, 0x5aa159 SC, 0x5aa232 DRAW, 0x5aa247 WIN, 0x48bae9 TECH, 0x5aa9d3 ST, 0x5aa9d5 RB, 0x51f320 CTRL).
+MERGED? no. Next if cut: pgrep -a gdb (must be empty), re-run the census (no relaunch needed), then the CLOSING ORDER. Do NOT merge without a PASS.
