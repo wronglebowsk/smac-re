@@ -2,28 +2,22 @@
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
-The main model is also Hermes' compressor (`auxiliary.compression: auto` -> the same 262k model);
-its summaries die on the output cap (4x `finish_reason=length`, 2026-10-27; sessions 113/114 hit
-259,232/262,144 and were cut mid-sentence). **Whatever is not finished by ~150k tokens is not
-finished at all.**
-
-Counted in TOOL CALLS (the clock you can see):
+The main model is also Hermes' compressor (`auxiliary.compression: auto` -> the same 262k model)
+and its summaries die on the output cap (sessions 113/114 hit 259,232/262,144 mid-sentence).
+**Whatever is not finished by ~150k tokens is not finished at all.** Counted in TOOL CALLS:
 - **0-6** brief, this file, notes tail, `accept_ready.py`. No shard reading "for background".
-- **6-30** the milestone, one variable at a time. **At call 25: `git add -A && git commit -m
-  "<ID>: checkpoint"`** — the next turn may be the truncated one, so every step after it must leave a
-  committed file.
-- **30-40** STOP MEASURING. Acceptance not green = that IS the finding: write the blocker and the
-  failing number, merge nothing, close.
-- **40-50** the closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY
-  SECTION (budget FAILs at 16,000 chars — stay <= 15,500), never rewritten.
+- **6-30** the milestone, one variable at a time. **At call 25 `git add -A && git commit`** — the
+  next turn may be the truncated one, so every later step must leave a committed file.
+- **30-40** STOP MEASURING: an acceptance that is not green IS the finding — write the blocker and
+  the failing number, merge nothing, close.
+- **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION
+  (budget FAILs at 16,000 chars — stay <= 15,500), never rewritten.
 
-Survivability rules:
-- Before any step that can exceed 2 minutes (gdb run, relaunch, evidence audit), overwrite
-  `SESSION_CURSOR.md` (<= 600 B) with `<ID> | done | in flight | next command` — YOU write it,
-  nothing else records what was in flight. If the box is mid-run when you are cut off, say so there;
-  never `rm`/`git checkout --`.
-- Every doc write is an append or a <= 2 KB patch; never read-then-rewrite a file over 10 KB.
-  Keep tool results small — a multi-KB result is context that cannot be compressed back.
+Survivability: before any step that can exceed 2 minutes (gdb run, relaunch, evidence audit)
+overwrite `SESSION_CURSOR.md` (<= 600 B) with `<ID> | acceptance | merged? | next command` — YOU
+write it, nothing else records what was in flight; if the box is mid-run when you are cut off say so
+there, and never `rm`/`git checkout --`. Every doc write is an append or a <= 2 KB patch; never
+read-then-rewrite a file over 10 KB; keep tool results small.
 ## THE LEDGER
 
 Merged: **M54A-M77** (#39-#78); M78 lands on this branch.
@@ -54,14 +48,12 @@ the record PASSED IN; in a designed window the caller is the production inline s
 NAMED M76, s118.
 
 **M73-M75 (PR #74-#76) — price formula, the `+0x30 & 4` bit, what the sweep marks.** `edi = A x B` at
-the gate `0x4efa5e`: `A = 0x4e40a0(owner,1,-1)` (9 = Python `cost_multiplier`); designed head
-`B = 0x5ac950(head,[0x68cbb0],0) = byte(+0x29) + (C*P+50)/100`, markup skipped when `type < 0x40` OR
-`type[+0x30] & 4` (`0x5ac99c`). PRODUCTION sets that bit (`0x4efe60`, designed only) and first
-production calls FUN_00572800 at `0x4efe7e`, whose loop stores `or [rec+0x30],0x104` (`0x5729d5`) on
-EVERY valid UNMARKED designed record (live {192,193}); the `+0x24/25/26` triple + tier tables +
-category gate are ALPHA-PATH only (validator `0x5a6cd0`), UNTESTED live. NAMED M73/M74-RESOLVED/M75,
-s114-s117. Instruments `m73_price_split.py`, `m74_flag_hw.py`, `m75_sweep_replay.py`,
-`m77_gate_trace.py`, `m78_mark_clear.py`.
+the gate `0x4efa5e`, `A = 0x4e40a0(owner,1,-1)` (9 = Python `cost_multiplier`), designed head
+`B = byte(+0x29) + (C*P+50)/100` with the markup skipped whole when `type < 0x40` OR
+`type[+0x30] & 4` (`0x5ac99c`); PRODUCTION sets that bit (`0x4efe60`, designed only) and first
+production calls FUN_00572800 at `0x4efe7e`, whose loop marks EVERY valid UNMARKED designed record
+(`0x5729d5`, live {192,193}); the `+0x24/25/26` triple + tier tables + category gate are ALPHA-PATH
+only (validator `0x5a6cd0`), UNTESTED live. NAMED M73/M74-RESOLVED/M75, s114-s117.
 **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count,
 384/386 identity crossing. Branches hold their scripts.
 
@@ -69,26 +61,25 @@ s114-s117. Instruments `m73_price_split.py`, `m74_flag_hw.py`, `m75_sweep_replay
 
 1. `python3 scripts/session_brief.py` — <=4 KB: verdict, both bases, tagged CONFLICTs, the pick,
    the first commands. BLOCKED means do the FIX it prints before anything else.
-2. `python3 scripts/accept_ready.py` — the readiness oracle (17 unit cases:
-   `scripts/test_accept_ready.py`): screen, running gdb, evidence headroom, then per base
-   `pending > 0`, `minerals < price`, `credit > 0`. **Re-read it immediately before you arm.**
-   `--no-screen` skips the OCR. Screen `dialog` -> `scripts/m70_clear_dialog.py` (presses Return
-   until it clears); a BUILD/base PANE needs Escape, not Return.
-3. `m74_flag_hw.py` — 4 hw watchpoints on flag WORDS, prints pc+val per store, refuses to drive
-   unless gdb armed them (M74 tag `m74flag3`); `m72_gate_watch.py` — the VISIT GATE (12
-   conditional breakpoints, storage poked+read back); `m73_price_split.py` splits `edi`;
-   `m74_flag_watch.py` (FAILED twice); `m71_pop_watch.py` (reproduce M71 only).
-4. `m75_sweep_replay.py --tag m75sweep1` — M75's acceptance (predicts FUN_00572800(194,0)'s marked
-set from live memory, 4 hw watchpoints, early-stop, 5 gates). `m76_marker_clear.py --tag
-m76marker1` — M76's: 12 silent breakpoints over the clear `0x4ef398` (prints tid/owner/flags/return
-addr), both selectors, the upkeep inline clear, the marker setters, then replays the observed
-stores onto the before-census and reads the 0x100 bit back.
-5-9. The rest of the kit is self-documenting (`--help` before inventing a flag):
-   `m66_insert_slot.py`, `m57_ui_enqueue.py`, `m69_enqueue_gdb.py`, `m70_cursor_watch.py`
-   (cursor instrument), `test_hud_bar.py`, `m65_screen.py --samples 8` (READ-ONLY meter),
-   `m70_scan_writers.py` / `m70_type_sites.py` (static), `evidence.py audit [--delete]` /
-   `budget` (BEFORE adding), `scratch/m71/dis.py LO HI` for an objdump window over
-   `scratch/m574/text.txt`.
+   `python3 scripts/accept_ready.py` is the readiness oracle (17 unit cases in
+   `test_accept_ready.py`): screen, running gdb, evidence headroom, then per base `pending > 0`,
+   `minerals < price`, `credit > 0` — **re-read it immediately before you arm**. Screen fix:
+   dialog -> Return, base PANE -> Escape, quit-prompt -> Escape (`m78_mark_clear.py
+   normalize_screen()` does all three).
+2. The acceptances of the price/flag chain — each is silent breakpoints or hw watchpoints + a
+   prediction from live memory + a read-back: `m73_price_split.py` (splits `edi`),
+   `m74_flag_hw.py` (4 hw watchpoints on flag WORDS, refuses to drive unless gdb armed them),
+   `m75_sweep_replay.py` (`m75sweep1`), `m76_marker_clear.py` (`m76marker1`),
+   `m77_gate_trace.py` (`m77gate1`), `m78_mark_clear.py` (`m78order3`: 12 breakpoints over the
+   sweep entry `0x572800`, the mark `0x5729d5`, the clear `0x4ef398`/`0x52145e`, the setters
+   `0x4f05bd`/`0x5a7d00`/`0x5a7f67`, plus the census APPENDED into the gdb log).
+   `m72_gate_watch.py` is the VISIT GATE; `m74_flag_watch.py` FAILED twice; `m71_pop_watch.py`
+   reproduces M71 only.
+3. The rest is self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`,
+   `m57_ui_enqueue.py`, `m69_enqueue_gdb.py`, `m70_cursor_watch.py`, `test_hud_bar.py`,
+   `m65_screen.py --samples 8`, `m70_scan_writers.py` / `m70_type_sites.py` (static),
+   `evidence.py audit [--delete]` / `budget` (BEFORE adding), `scratch/m71/dis.py LO HI` for an
+   objdump window over `scratch/m574/text.txt`.
 ## STILL OPEN (in priority order)
 
 1. **M79 — NAME `DAT_00920434` and `DAT_00985b10`, and find what turns the `0x4f05bd` MARKSET
