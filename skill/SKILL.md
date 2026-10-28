@@ -750,25 +750,26 @@ read back BEFORE attaching that the watched event can even happen (queue head is
 `pending >= 1`, storage above what the gate can demand) — an unusable window is not a negative result
 (`references/static-store-census.md` §9.8–9).
 - **A leg census gates on PREDICTIONS, not on hits.** Compute each site's expected hit count from live
-  memory first (gate globals, the caller's args off `$esp`, the table values the branch itself loads),
-  print the predictions, then gate on agreement with the counters (`scripts/m86_helper_legs.py`,
-  `scripts/m87_aaa20_trigger.py`: PREDICTIONS, OBSERVED, then the branch bytes named). Demanding a hit at
-  a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor.
-  Tie every hit to a boundary (round/year printed at the hit); a window count is not a cadence.
+  memory first (gate globals, args off `$esp`, the table values the branch loads), print the
+  predictions, gate on agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`).
+  Demanding a hit at a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg
+  map, never the floor. Tie every hit to a boundary (round/year at the hit); a window count is not a
+  cadence.
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
-count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH"
-without touching the box. **To name who writes a field, use a hardware watchpoint on the address PLUS a
+count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH". **To name who writes a field, use a hardware watchpoint on the address PLUS a
 control watchpoint on an address you know changes** — a mnemonic grep misses stores made through
-pointer-form `lea`. `references/instrument-laws.md` carries the header order, the containment recipe, the
-DictReader trap, the watchpoint laws and the census laws for a VALUE (threading it across stops, pairing
-events by whole-list index, reading a wrapper's tail, naming the domain it indexes).
+pointer-form `lea`. **A gdb census >90 s goes through `terminal(background=true)` + `process_manage
+wait` loops: the foreground caps at 420 s and killing a census mid-run leaves Wine hung (round frozen
+after detach too) — recover via `m54a_load --relaunch`. Pair store-readback probes by EVENT ORDER
+(RB follows ST); a {addr: last-mem} dict mis-pairs an address re-written later in the window.**
+`references/instrument-laws.md` carries the header order, the containment recipe, DictReader trap,
+the watchpoint laws and the value-census laws.
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
-value — a class with no live instance logs zero hits at every one of its methods no matter how the
-window is driven, and no number of re-runs will change that (ownership + instance recipes:
+value — a class with no live instance logs zero hits at every method, whatever the window (recipes:
 `references/code-atlas.md`).
-Two more pre-arm checks, both cheap and both fatal when skipped:
+Two more pre-arm checks, both cheap, both fatal if skipped:
 - **The readiness oracle can print a FIX that is unreachable on the current save.** `credit` is
   `base+0xd0`, a save-LOADED field whose only writers are the player-record init stores — turns never
   raise it on a base whose income the save left at 0, so looping the printed reload chain cannot clear
