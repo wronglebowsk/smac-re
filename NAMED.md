@@ -1013,3 +1013,21 @@ M88 (s139; m88slot1-3 FAIL on my instruments, m88slot4 6/7, m88slot5 6/7, m88slo
 - **Chain:** FUN_005aa880 -> FUN_005ab000 (thin wrapper: 0x5ab047 `call 0x48b9a0`, 0x5ab04c `mov esi,eax`, 0x5ab0bf `mov eax,esi`) -> FUN_0048b9a0's non-human leg returns **FUN_005aa030()'s eax verbatim** (call site 0x48bae4 `e8 47 e5 11 00`, landing 0x48bae9) -> FUN_005aa030 gates with FUN_005a6cd0, scores with FUN_005a90a0, tie-breaks with `_rand`, returns the winning index.
 - **Live:** `python3 scripts/m90_tech_choice.py --tag m90tech2 --poke-index 5 --rounds 3 --timeout 100` = **PASS 8/8** — (fac5 36 'Integ'), (fac7 32 'DigSent') at round 77; (fac2 32 'DigSent'), (fac6 13 'Surface') at round 79; every store ret 0x5aaff3, every chooser param1 == the faction, every value read back from /proc; round 77->80, a030 calls 4, CONS 3.
 - **First attempt:** `--tag m90tech1` = FAIL on G6 only, from my own events-slice bug (sliced by the ST index inside `st`, not inside `events`); its data already agreed (idx_from_5aa030=22 == eax=22). Evidence: `evidence/m90tech1.gdblog`, `evidence/m90tech2.gdblog`.
+
+## M91 — FUN_005a90a0's BASE = SUM over four (cost,demand) pairs of (demand*m+1)*cost; the research pick is max-of-random-DRAWS, not max score (m91score5 PASS 7/7, MERGED)
+
+`python3 scripts/m91_scorer_census.py --tag m91score1 --poke-index 5 --rounds 3 --timeout 120` -> **FAIL 6/7**
+(G1 poke 36->-1; **G2 12/12 predicted BASE == engine [ebp-0x4] at 0x5a930b**; G3 FALSE; G4-G7 TRUE;
+round 80->83; fac5 win 36 'Integ', fac4 win 43 'EthCalc').
+Costs T0,T4,T8,Tc = *(0x92fdc4+idx*44+0,+4,+8,+0xc) (prereq1 +16 = 0x92fdd4, name +32); demand
+Y10/Y14/Y18/Y1c = *(fac*8380+0x94d810/14/18/1c); m = 1 if arg2 != 0 else 4/2 by 0x985ac4 bit 0x200 (SET);
+halved at 0x5a92fd iff all four pairs inert (bc = bit-0x10 popcount of 0x94d448 dwords 1..7,
+[fac*8380+0x94e488] >= 4). Tail 0x5a94fd-0x5a95f8 adds byte[fac*8380+0x94e5a8+esi]*Tc over divisors keyed
+by byte[+0x94eda8+esi] in {7,2,0} (fac5 idx36 15->112, fac4 idx60 19->38, unchanged where Tc==0).
+FUN_005aa030: score = score*256/level (0x5aa1e4, level = max FUN_005a6d40(p,1)); DRAW = _rand() % (score+1)
+(0x5aa217); keeps the STRICTLY greater draw (0x5aa232). Counter-example: fac4 winner idx43 final 16 vs
+candidate idx60 final 38, draws 1838 vs 2. ACCEPTANCE CLOSED by `--tag m91score5 --rounds 4` on a fresh
+load: **PASS 7/7** — 4 AI windows (fac5 8 'E=Mc2', fac5 22 'AGrav' final 31 vs max_final 56, fac4 60
+'PlaEcon', fac6 13 'Surface' final 36 vs 63 — max-score falsified twice more), 27 candidates 0 base
+mismatches, 4/4 ST/RB pairs, round 50->55. G3/G5 were instrument defects, fixed by bytes (0x5aa235 jle)
+and event order (0x5aa9d5 after 0x5aa9d3), not by floors. Evidence evidence/m91score1-5.gdblog.

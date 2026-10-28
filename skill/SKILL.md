@@ -56,7 +56,8 @@ session entry, rather than discovering the missing instrument halfway through th
 `milestone.py start <ID>` refuses a dirty worktree: stash the `SESSION_CURSOR.md` write, start, then pop
 it onto the new branch — never commit a cursor write to `main` just to get the tree clean. That commit is also what breaks a
 landing — a squash merge plus any local `main` commit makes `merge <n>` abort its ff-only pull AFTER
-GitHub has already merged (recovery in `references/git-workflow.md`). When the milestone you are re-running
+GitHub has already merged (recovery in `references/git-workflow.md`) — and `main` cannot be pushed at all
+(the pre-push hook refuses), so a post-merge cursor/footing tweak rides its own branch + PR. When the milestone you are re-running
 already has a branch, `start <ID>` refuses and leaves you on `main`, where the failed attempt's scripts
 are NOT in the tree: check that branch out and `ls scripts/<id>*` before concluding the instrument is
 missing.
@@ -423,7 +424,10 @@ Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zg
 p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.
 **Parse an objdump line by its TAB fields, never by the text after the colon:** the machine-code bytes
 sit between the address and the mnemonic, so `line.split(":")[1].startswith("mov")` matches NOTHING and a
-whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. Import
+whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. An
+address-keyed scan must require the shape `^[0-9a-f]{6,8}:\t` before `int(x, 16)`: the section header
+line `00401000 <.text>:` also starts with hex and raises `ValueError` mid-parse, killing the census
+before it arms. Import
 `scratch/m71/dis.py` under a non-clashing module name (`importlib.util.spec_from_file_location`), because
 stdlib `dis` shadows the plain `import dis`.
 
@@ -746,25 +750,26 @@ read back BEFORE attaching that the watched event can even happen (queue head is
 `pending >= 1`, storage above what the gate can demand) — an unusable window is not a negative result
 (`references/static-store-census.md` §9.8–9).
 - **A leg census gates on PREDICTIONS, not on hits.** Compute each site's expected hit count from live
-  memory first (gate globals, the caller's args off `$esp`, the table values the branch itself loads),
-  print the predictions, then gate on agreement with the counters (`scripts/m86_helper_legs.py`,
-  `scripts/m87_aaa20_trigger.py`: PREDICTIONS, OBSERVED, then the branch bytes named). Demanding a hit at
-  a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor.
-  A bp at an address that is BOTH a branch target and a loop-completion fallthrough is not a leg proof; a
-  hit count inside a window is not a CADENCE — tie each hit to a boundary (round/year at the hit).
+  memory first (gate globals, args off `$esp`, the table values the branch loads), print the
+  predictions, gate on agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`).
+  Demanding a hit at a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg
+  map, never the floor. Tie every hit to a boundary (round/year at the hit); a window count is not a
+  cadence.
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
-count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH"
-without touching the box. **To name who writes a field, use a hardware watchpoint on the address PLUS a
+count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH". **To name who writes a field, use a hardware watchpoint on the address PLUS a
 control watchpoint on an address you know changes** — a mnemonic grep misses stores made through
-pointer-form `lea`. `references/instrument-laws.md` carries the header order, the containment recipe, the
-DictReader trap and the watchpoint laws (s139).
+pointer-form `lea`. **A gdb census >90 s goes through `terminal(background=true)` + `process_manage
+wait` loops: the foreground caps at 420 s and killing a census mid-run leaves Wine hung (round frozen
+after detach too) — recover via `m54a_load --relaunch`. Pair store-readback probes by EVENT ORDER
+(RB follows ST); a {addr: last-mem} dict mis-pairs an address re-written later in the window.**
+`references/instrument-laws.md` carries the header order, the containment recipe, DictReader trap,
+the watchpoint laws and the value-census laws.
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
-value — a class with no live instance logs zero hits at every one of its methods no matter how the
-window is driven, and no number of re-runs will change that (ownership + instance recipes:
+value — a class with no live instance logs zero hits at every method, whatever the window (recipes:
 `references/code-atlas.md`).
-Two more pre-arm checks, both cheap and both fatal when skipped:
+Two more pre-arm checks, both cheap, both fatal if skipped:
 - **The readiness oracle can print a FIX that is unreachable on the current save.** `credit` is
   `base+0xd0`, a save-LOADED field whose only writers are the player-record init stores — turns never
   raise it on a base whose income the save left at 0, so looping the printed reload chain cannot clear
@@ -780,11 +785,8 @@ The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is
   `references/static-store-census.md` §9; §1–§3 carry the traps that make the STATIC half of it complete —
-objdump prints `PTR` UPPERCASE (a lowercase grep reports zero stores), a store through a record pointer
-never prints the table's base address (enumerate the absolute form AND the `+disp]` form before naming a
-setter set), and the operand width decides whether a bit filter is admissible at all. **Read §9 before
-hand-writing a new watcher script** — its condition arithmetic, log format and scorer gates are already
-solved, and a from-scratch instrument re-derives them wrong.
+**Read §9 before hand-writing a watcher script** — condition arithmetic, log format and scorer gates are
+solved there (uppercase-`PTR` greps, pointer-form stores, operand width).
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 

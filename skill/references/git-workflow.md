@@ -106,6 +106,16 @@ scripts/index.py build`). Prevention is the rule that counts: keep `main` free o
 pull fast-forwards. Because the squash's parent is the previous `main` tip, ANY local `main` commit
 is guaranteed divergence, not a race.
 
+**`main` cannot be pushed at all.** The repo's pre-push hook refuses with `refusing to push to main /
+main only moves by squash-merge of a pull request`, so commit-to-main is caught at the push, not only at
+`milestone.py`. Do not take the printed `--no-verify` override. A post-merge footing tweak (the
+`SESSION_CURSOR.md` line that records `MERGED <n> | next pick`) therefore needs its own branch and PR:
+`git checkout -b milestone/<id>cursor` from main, commit, `milestone.py submit --title …`,
+`gh pr checks <n>`, `milestone.py merge <n>` — a docs-only PR passes the gate (no SESSION_NOTES/NEXT_PROMPT
+change is a WARN, not a FAIL). Leaving it uncommitted instead transfers the cost to the next session,
+whose `milestone.py start` refuses the dirty tree; the cheapest option is to write the cursor line BEFORE
+the milestone's own commit and let it say what the closing steps are.
+
 **A close written but never committed is the next session's first job, not new work.** When `git status` shows a prior session's closing set uncommitted (a new `SESSION_NOTES.md` section, `NAMED.md` rows, a `NEXT_PROMPT.md` edit, an acceptance's `evidence/*.gdblog`), the milestone is DONE — adopt that close: finish the remaining closing steps (sync the skill, commit, `gate --base main`) and do NOT re-run the acceptance: a second invocation of a one-shot live acceptance confounds or supersedes the recorded verdict, and `milestone.py start` refuses the dirty tree anyway. When a sibling session commits the same close WHILE you are editing it (its commit lands between your reads — `git log` timestamps move mid-turn, the write tool names the sibling), do not re-apply your edits: `git diff HEAD` and commit only the residual delta on top, and never duplicate the sibling's `submit` — one submit per milestone; verify with `gh pr view <n> --json state,headRefOid` before opening another PR.
 
 A session that finds an open PR lands it instead of starting new work. Branch protection is
