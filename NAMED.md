@@ -836,3 +836,13 @@ read "Impact Squad"/"Impact Rover" — EMPTY at window start, created as the nex
 after 323. F573IN callers: ret 0x5749a7 x6, 0x574da9, 0x575424. **OPEN:** writer of `+0x30 = 0xc1`
 (bits 0/6/7) — unattributed, no breakpoint between the 32 B copy and 0x5741f0; meaning of bits
 6/7; the sweep's band-walk/mark guard `tid<0x40 || flags&4` never engages on a fresh record.
+
+## M81 block (session 123, ACCEPTANCE FAIL tags `m81write1`/`m81write1b`, NOTHING MERGED)
+
+`python3 scripts/m81_flag_writer.py --tag m81write1 --boundaries 2` then `--tag m81write1b --boundaries 3` (4 hw watchpoints on the flag WORDS 0x98ef88/0x98efbc/0x98eff0/0x98f024 = slots 324-327; silent bps 0x5741e1/0x5741f0/0x5741fe; storage poked 200 before each boundary; gates G1-G6). Result FAIL: FLAGW 0 events; run A armed 2 hw (slots 326/327 only) with all four slots EMPTY at baseline; run B armed 4 hw, baseline 324/325 = "Impact Squad"/"Impact Rover" flag 0xc1 (created between runs — a clean reload does NOT carry M80's live-created records), G1/G4 True, G2/G3/G5/G6 False.
+
+ONE REAL EVENT (`evidence/m81write1b.gdblog`): `TAG0 idx=($ebx/52) esi=6 ebx=20020 f30=0x81` at 0x5741e1 — record 385 (20020/52, faction 6's band) reached the sweep's 32 B copy with its flag WORD ALREADY 0x81. The +0x30 bits are written BEFORE the sweep's create path (consistent with M80's CLR4 pre=0xc1); the writer is still UNNAMED. Census flags 324/325 0xc1 vs this live 0x81 on 385 — created-record flag values DISAGREE, do not assert one.
+
+INSTRUMENT BUG (the blocker): a bp-command printf with `%.20s` fed `*(char *)(rec+0)` makes gdb error ("Cannot access memory at address 0x4c" — inferior pointer read as a host address), which ABORTS the batch script and detaches mid-window; later boundaries run uninstrumented while smac_play still exits 0. Next attempt: print idx/esi/ebx/f30 only (no name).
+
+BOX FACT (why the brief's FIX cannot restore credit): base+0xd0 (`credit`) has only two writers in .text, 0x6310c6/0x631154 (`mov [obj+0xd0],param_1`, player-record init via `call [obj+0x90]`); income is never recomputed per round; University Base income 0 rate 0 vs 1-6 on all 17 other bases; accrual 0x4ef7f6 adds 0. Route: per-boundary storage poke 200.
