@@ -1,1 +1,2 @@
-M82 (milestone/m82, s127) | acceptance m82bit7d PASS (gates G1-G7 all True, ONE invocation; edi W1=45 W2=45 W3=27) | merged? not yet (closing: notes/NAMED/NEXT_PROMPT/commit/gate/submit/merge) | next: append SESSION_NOTES + NAMED, patch NEXT_PROMPT, commit, gate, milestone.py submit/merge
+M84 IN FLIGHT (branch milestone/m84 from main 7a69b20; M83 static lives unmerged on milestone/m83) | acceptance: none run yet | merged? no | next: python3 scripts/m70_clear_dialog.py then accept_ready.py (screen reads 'dialog' NETFLASH modal)
+PICK M84 = what makes 0x496ad0 return +9999 (sole entry to the FUN_00577280 call at 0x418d8a). Static first (dis 0x496ad0); live only if static says the live shape can discriminate.
