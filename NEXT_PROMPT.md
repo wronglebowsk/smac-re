@@ -24,16 +24,19 @@ Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS) — BITS 6/7 OF THE 
 **M83+M84+M84b (s128-s130, UNMERGED milestone/m83, m84 PR #84, m84b) — 0x496ad0's -9999 IS THE DIALOG-CANCEL SENTINEL, NOT A PRICE KEY:** Escape arms `[chooser_sub 0x6a9e9c+0xa774] = -1` (only 0x496a43, object in EAX at 0x496a40, or 0x495541 setup); the gate 0x497683/0x49768f then returns 0xffffd8f1 and the caller restores the queue snapshot (0x418623-0x41863f), leaving via 0x4186d2 `jle 0x419967`; only 0x4187be `cmp edi,0x270f` enters 0x418d7d. m84canc2 G1/G2/G3/G8 True, G4-G7 False -> FAIL. NAMED M84/M84b.
 **M84e (s133, `m84edisp1/2/3` FAIL, UNMERGED milestone/m84e) — 0x4d00 IS A QUEUE POST, ITS HANDLER
 IS 0x52ed7d:** 0x584010 builds a 32-byte record (+0 code WORD, +0x10..+0x1c args 2-5) and posts it
-to queue 0x91db70 via 0x52a260 (guard 0x920438 inc/dec); pumps pop it with 0x6361ff and call
-0x52bce0 (`mov ebx,[ebp+0x8]` = record, `mov ax,[ebx]` = code, 53 arms) whose ONLY 0x4d00 arm
+to queue 0x91db70 via 0x52a260 (guard 0x920438 inc/dec); pumps pop it with 0x6361ff into
+0x52bce0 (ebx = record, ax = [ebx] = code, 53 arms) whose ONLY 0x4d00 arm
 0x52eb61/6c `je 0x52ed7d` leads; 0x4194a4 (chooser fn 0x417ee0) is the ONLY sender in .text. Handler
 record = 0x984d38 + a2*48 + 1872 (a2 = -39-edi, 1872 = 39*48 cancels the sentinel) = 0x984d38 -
 tid*48 — a THIRD stride-48 site for the M67 conflict; record+0x14 (0/1/2) selects sub-behaviours
 over 1436-byte records at 0x927590/0x927894. RETRACT M70's mechanism: the handler range writes
 nothing at +0x3ff5c; 0x4194b3 is in the SENDER and live ran with ebx=0x6a9480 (the static pane)
 writing 0x6aa9dc 15->0 — the cursor is PANE-relative, not the fixed 0x6e93dc; the POST leg is
-conditional (0x419464/0x419479/0x41948e/0x419492 jump past 0x4194a9). NAMED M84e.
-**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 (armed, mode 0), 0 (armed, mode!=0) or +/- the +4 word of the node seeked at `obj+0xa780` (0x6b461c); 0x4187be `cmp edi,0x270f` is the ONLY branch to 0x418d7d and the list's writers never insert 9999 (live keys 0..0x2a,161,192-194). 0x4a99e0 (`cmp [ebp+0x8],0x270f`; else a per-FACTION context switch over stride-0xb4c records at this+0x80, ds:0x888514 = faction index) is vtable slot 100 of the class whose vptr 0x67658c has ZERO live instances — 0 calls in 8 boundaries. NAMED M84c/M84d. **M80 (s122, m80band1) — 8 FACTION BANDS OF 64:** index = `counter<0x40 ? counter : (counter&0x3f)+faction*64`, record 0x98ad88+idx*52; 0x5741f0 clears flag bit 1, 0x5741fe `call 0x572800(faction, idx, 0)`. NAMED M80.
+conditional (0x419464/79/8e/92 jump past 0x4194a9) AND gated at 0x4193b2-0x4193b9 on
+ds:0x920434 != 0: s134 — that global is written 1 by exactly ONE function, FUN_0057ecf0 (the opening
+movie/scenario/TOPMENU/MULTIMENU loop), and 0 by every other store; live 0 on the hud, so a loaded
+game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
+**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 / 0 / +/- the seeked node's +4 KEY and no writer ever inserts 9999. 0x4a99e0 (per-faction context switch over stride-0xb4c records; ds:0x888514 = faction) is vtable slot 100 of a class with ZERO live instances — 0 calls in 8 boundaries. NAMED M84c/M84d.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e, A = 0x4e40a0(owner,1,-1), B = 0x5ac950(head,...); the markup is skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60) and first calls FUN_00572800 (0x4efe7e). NAMED.
 **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count. Branches hold their scripts.
 
@@ -53,11 +56,10 @@ conditional (0x419464/0x419479/0x41948e/0x419492 jump past 0x4194a9). NAMED M84e
 ## THE PICK
 
 **M84f: make the 0x4d00 POST leg fire, then read the handler.** The instrument is READY and
-byte-verified: `python3 scripts/m84e_msg_dispatch.py --tag m84fdisp1 --base-index <what the PANE
-shows>` — 7 silent bps 0x4194a9 POST / 0x4194b3 ZERO / 0x4194bd ZEROAFTER / 0x52bd3e if $ax==0x4d00
-DISP / 0x52eb6c if $eax==0x4d00 ARM / 0x52ed7d HND / 0x52eda4 IDX; `--tag selftest` proves the shape
-discriminates. s133 proved the cursor-zero leg IS live (ebx=0x6a9480, 15 -> 0 read back) and the
-POST leg is CONDITIONAL (0x419464/0x419479/0x41948e/0x419492 jump past 0x4194a9), so the missing
+byte-verified: `python3 scripts/m84e_msg_dispatch.py --tag m84fdisp1 --base-index <what the PANE shows>`
+(7 silent bps POST/ZZERO/DISP/ARM/HND/IDX; `--tag selftest` proves the shape discriminates). s133 proved the cursor-zero leg IS live (ebx=0x6a9480, 15 -> 0 read back) and the
+POST leg is CONDITIONAL (0x419464/79/8e/92) AND gated at 0x4193b9 on ds:0x920434 != 0 (1 only
+inside FUN_0057ecf0, the opening menu; live 0 — s134), so the missing
 input is a chooser selection that COMPLETES: enqueue `--no-ok`, then close the chooser ON A ROW.
 PITFALL (s133): INSERT clicks land on whatever base the PANE shows, not the one you name. Sub-leads: the handler's mode 0/1/2 semantics (0x927590/0x927894, 1436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
 

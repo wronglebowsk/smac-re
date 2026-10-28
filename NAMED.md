@@ -970,3 +970,15 @@ Evidence: evidence/m84dky1.gdblog.
   0x6e93dc; POST 0 DISP 0 ARM 0 HND 0 IDX 0 because the post is CONDITIONAL (0x419464/79/8e/92
   jump past 0x4194a9). merge nothing.
 Evidence: evidence/m84edisp1.gdblog, evidence/m84edisp2.gdblog, evidence/m84edisp3.gdblog.
+
+M84e (s134 static follow-up; acceptance m84edisp1/2/3 FAIL, PR #88, merge nothing): the 0x4d00 POST
+at 0x4194a9 is gated at 0x4193b2-0x4193b9 (`mov eax,ds:0x920434`; `test`; `je 0x4194b1`), at
+0x4193bf on FUN_00417ee0 arg1 == 0, and at 0x4193ca-0x4193d2 on base+0x50 (the queue HEAD) !=
+[ebp-0x1c]; 0x4194b1 (`push 1; mov [ebx+0x3ff5c],0; call 0x4eb6b0`) is the COMMON exit of four
+jumps, so the cursor zero runs WITHOUT any POST (that is s133's 15 -> 0 read-back). ds:0x920434 is
+set to 1 by exactly ONE writer, FUN_0057ecf0 (0x57ecf0, strings INTRO/SCENARIO/TOPMENU/MULTIMENU/
+openinga_pcx/fx_opening_menu_wav = the opening movie + scenario/top-menu loop), and to 0 by every
+other store (0x50fe70, 0x50fff5, 0x510196, 0x515ad8, 0x516f30, 0x51f267, 0x52280c, ...); live 0 on
+the hud. So the send->queue 0x91db70->pump 0x6361ff->switch 0x52bce0->arm 0x52eb61->handler 0x52ed7d
+chain belongs to the OPENING MENU, not to a loaded game. Evidence: instruction bytes only
+(scratch/m71/dis.py 419340-41940f; grep -n "ds:0x920434," scratch/m574/text.txt).
