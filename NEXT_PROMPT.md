@@ -33,8 +33,7 @@ over 1436-byte records at 0x927590/0x927894. RETRACT M70's mechanism: the handle
 nothing at +0x3ff5c; 0x4194b3 is in the SENDER and live ran with ebx=0x6a9480 (the static pane)
 writing 0x6aa9dc 15->0 — the cursor is PANE-relative, not the fixed 0x6e93dc; the POST leg is
 conditional (0x419464/79/8e/92 jump past 0x4194a9) AND gated at 0x4193b2-0x4193b9 on
-ds:0x920434 != 0: s134 — that global is written 1 by exactly ONE function, FUN_0057ecf0 (the opening
-movie/scenario/TOPMENU/MULTIMENU loop), and 0 by every other store; live 0 on the hud, so a loaded
+ds:0x920434 != 0 (s134: 1 only from FUN_0057ecf0, the opening-menu loop; live 0), so a loaded
 game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
 **M84f (s135, milestone/m84f, `m84fpath1` FAIL on my own G4; leg4/5 invalid) — THE GATE IS MEASURED LIVE:** on a real UI insert (`m84fpath1`) the block RUNS — CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, netgame 0, pend 5->6 — and stops at `mov eax,ds:0x920434` / `je 0x4194b1` (cursor zero + 0x4eb6b0, NO POST). gdb bp lists must be PRINTF-ONLY (a memory write aborts the batch: 'not an lvalue', then DETACH); poke ds:0x920434 via python /proc/pid/mem. Flag-1 arm unmeasured: box 2150 r50, chooser EMPTY. NAMED M84f.
 **M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 / 0 / +/- the seeked node's +4 KEY and no writer ever inserts 9999. 0x4a99e0 is vtable slot 100 of a class with ZERO live instances. NAMED M84c/M84d.
