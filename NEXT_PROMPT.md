@@ -2,10 +2,10 @@
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
-The main model is also Hermes' compressor (`auxiliary.compression: auto` -> the same 262k
-model); its summaries die on the output cap (`finish_reason=length`, aborted, 4x on 2026-10-27;
-sessions 113/114 hit 259,232/262,144 and were cut mid-sentence). **Whatever is not finished by
-~150k tokens is not finished at all.**
+The main model is also Hermes' compressor (`auxiliary.compression: auto` -> the same 262k model);
+its summaries die on the output cap (4x `finish_reason=length`, 2026-10-27; sessions 113/114 hit
+259,232/262,144 and were cut mid-sentence). **Whatever is not finished by ~150k tokens is not
+finished at all.**
 
 Counted in TOOL CALLS (the clock you can see):
 - **0-6** brief, this file, notes tail, `accept_ready.py`. No shard reading "for background".
@@ -49,9 +49,8 @@ M75 + M76, notes s117-118.
 
 **M73 (PR #74, merged) — WHAT THE GATE'S `edi` IS MADE OF. ACCEPTANCE PASS, tag `m73split4`:**
 `edi = A x B`; `A = 0x4e40a0(owner,1,-1)` (9 = Python `cost_multiplier`); designed head:
-`B = 0x5ac950(head,[0x68cbb0],0) = byte(+0x29) + (C*P+50)/100` (measured `C 3`, `P 50` ->
-`edi 45` for 194 where `price_of` says 27); markup skipped whole when `type < 0x40` OR
-`type[+0x30] & 4` (`0x5ac99c`). Full numbers: NAMED M73 block, notes s114.
+`B = 0x5ac950(head,[0x68cbb0],0) = byte(+0x29) + (C*P+50)/100`; markup skipped whole when
+`type < 0x40` OR `type[+0x30] & 4` (`0x5ac99c`). Full numbers: NAMED M73 block, notes s114.
 
 **M74 (PR #75, merged) — WHO sets `type[+0x30] & 4`, AND WHEN. ACCEPTANCE PASS, tag `m74flag3`:**
 PRODUCTION sets it (`0x4efe60` in FUN_004ef6d0, designed only, between gate `0x4efa5e` and pay
@@ -165,10 +164,9 @@ exist here. Always read `pending` back after an enqueue before arming.
   high byte or census the bit. A grep-derived register expression can be WRONG: `0x595f82/91/9c` with
   `$esi/52` printed tid 324/325 — esi there is not a type-record pointer, so check a breakpoint's
   tid expression against the instruction bytes before it goes inside a gate.
-- **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it** (a
-  "insufficient minerals to support Scout" dialog made two scripts' chooser clicks no-ops). Return
-  clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt —
-  never OK). Run `m70_clear_dialog.py` before blaming the chooser map.
+- **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it.**
+  Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit
+  prompt — never OK). Run `m70_clear_dialog.py` before blaming the chooser map.
 - **OCR cost is LOAD, not code:** one `ocr_fast` pass took ~70 s busy / ~3 min quiet. Check uptime.
 - The base array compacts mid-run: locate bases BY NAME, pair windows by name AND owner byte,
   pair units by `(x,y,type,owner)`. M71's gate 8 guards against watching another base's queue.
