@@ -171,17 +171,20 @@ def main():
     print("baseline 192/193/194: " + " ".join(f"{t}=0x{before[t]:03x}" for t in WATCH) +
           "  0x100-carriers: " + str([c for c in range(256) if before[c] & MARKER]), flush=True)
 
-    # predictions from the BASELINE, before the run: the two hypotheses must differ
-    pred_same = {t: "bit8 never set at a census" for t in WATCH}
-    pred_across = {192: "bit8 SET at the census of the marking boundary",
-                   193: "bit8 SET at the census of the marking boundary",
-                   194: "bit8 SET at the census of the marking boundary"}
-    print(f"PREDICT SAME   (mark+clear inside one visit): every boundary census reads 192=0x"
-          f"{before[192] & ~MARKER:03x} 193=0x{before[193] & ~MARKER:03x} "
-          f"194=0x{before[194] & ~MARKER:03x} with carriers=[]", flush=True)
-    print(f"PREDICT ACROSS (mark survives the census): the marking boundary reads 192=0x"
-          f"{before[192] | MARKER:03x} 193=0x{before[193] | MARKER:03x} with carriers=[192,193]; "
-          f"every later census is clean", flush=True)
+    # predictions from the BASELINE, before the run.  The unit of ordering is the VISIT (one entry
+    # of the production function, 0x4ef6d0), not the driver's boundary — a census can be taken
+    # while the engine is stopped mid-visit, which is exactly what M77 could not tell.
+    pred_same = "carriers visible at a census ONLY between that visit's MARK and its CLEAR"
+    pred_across = "some census reads a carrier OUTSIDE any mark->clear pair (a mark whose clear " \
+                  "lands in a later visit)"
+    print(f"baseline 192/193/194 have bit 8 clear; a MARK sets it (0x104), the pass at 0x4f05e2 "
+          f"clears it", flush=True)
+    print("PREDICT SAME-VISIT: " + pred_same + " — so a carrier census is a mid-visit snapshot and "
+          "the LAST census must read 192=0x%03x 193=0x%03x (bit 8 gone)" %
+          (before[192] | 4 & ~MARKER, before[193] | MARKER & ~MARKER), flush=True)
+    print("PREDICT ACROSS-VISIT: " + pred_across + " — a census reads 192=0x%03x 193=0x%03x while "
+          "no clear of that tid is pending in the same visit" %
+          (before[192] | MARKER, before[193] | MARKER), flush=True)
     print(f"the shape discriminates: {pred_same != pred_across}", flush=True)
 
     landed = False
@@ -211,7 +214,9 @@ def main():
     gpath = os.path.join(F.ROOT, "scratch", f"{a.tag}.gdb")
     lpath = os.path.join(EVID, f"{a.tag}.gdblog")
     open(gpath, "w").write(gdb_script(row["addr"]))
-    log = open(lpath, "w")
+    # O_APPEND on gdb's own fd: without it the driver's census lines are written past gdb's
+    # lagging file offset and the very next gdb printf OVERWRITES them (run 1 lost all 4 censuses)
+    log = open(lpath, "aw")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath, "-p", str(pid)],
                          stdout=log, stderr=subprocess.STDOUT)
     time.sleep(3.0)
@@ -255,21 +260,31 @@ def main():
     with open(os.path.join(EVID, f"{a.tag}_seq.jsonl"), "w") as fh:
         for d in ev: fh.write(json.dumps(d) + "\n")
 
-    # window index = how many BOUNDARY lines precede each event
-    idx, wi = 0, []
+    # VISIT index = how many production-function entries (FUNCIN 0x4ef6d0) precede the event.
+    # A BOUNDARY line carries the visit it was appended INTO: if the driver's census lands between
+    # that visit's MARK and its CLEAR, the census is a MID-VISIT SNAPSHOT, which is what M77 could
+    # not distinguish from a mark that survived to the next turn.
+    pos, v, wi = 0, 0, []
     for d in ev:
-        if d["tag"] == "BOUNDARY":
-            idx += 1
-        else:
-            wi.append((d, idx))
-    marks = sorted({(d["tid"], w) for d, w in wi if d["tag"] == "MARK"})
-    clears = sorted({(d["tid"], w) for d, w in wi if d["tag"] in CLR8})
-    sweepcalls = [d for d, _ in wi if d["tag"] == "SWEEPCALL"]
+        d["pos"] = pos
+        pos += 1
+        if d["tag"] == "FUNCIN":
+            v += 1
+        d["visit"] = v
+        if d["tag"] != "FUNCIN":
+            wi.append(d)
+    marks = [(d["tid"], d["visit"]) for d in wi if d["tag"] == "MARK"]
+    clears = [(d["tid"], d["visit"]) for d in wi if d["tag"] in CLR8]
+    sweepcalls = [d for d in wi if d["tag"] == "SWEEPCALL"]
     ret_hist = {"SWEEPCALL": {}, "CLEAR": {}}
-    for d, _ in wi:
+    for d in wi:
         if d["tag"] in ret_hist and "ret" in d:
             ret_hist[d["tag"]][d["ret"]] = ret_hist[d["tag"]].get(d["ret"], 0) + 1
-    bogus = sorted({d["tid"] for d, _ in wi if "tid" in d and not 0 <= d["tid"] < 256})
+    tracked_tags = SET8 + CLR8
+    bogus = sorted({d["tid"] for d in wi if "tid" in d and d["tag"] in tracked_tags
+                    and not 0 <= d["tid"] < 256})
+    wide = sorted({(d["tid"], d["tag"]) for d in wi if "tid" in d and d["tag"] not in tracked_tags
+                   and not 0 <= d["tid"] < 256})
 
     # replay of bit 8 only: baseline -> the event stream, compared at every BOUNDARY line
     bit8 = {t: bool(before[t] & MARKER) for t in range(256)}
@@ -284,7 +299,8 @@ def main():
             if not ok:
                 replay_ok = False
                 race.append((d["idx"], d["carriers"], carr,
-                             {t: (got[t], bit8[t]) for t in WATCH if bool((got[t] or 0) & MARKER) != bit8[t]}))
+                             {t: (got[t], bit8[t]) for t in WATCH
+                              if bool((got[t] or 0) & MARKER) != bit8[t]}))
             continue
         t = d.get("tid")
         if t is None or not 0 <= t < 256:
@@ -294,45 +310,67 @@ def main():
         elif d["tag"] in CLR8:
             bit8[t] = False
 
-    across = sorted({(t, i, j) for t, i in marks for t2, j in clears if t2 == t and j > i})
-    no_carrier = all(not d["carriers"] for d in ev if d["tag"] == "BOUNDARY")
-    same_holds = bool(marks) and bool(clears) and not across and no_carrier
-    across_holds = bool(across)
+    # is a carrier census INSIDE its tid's mark->clear pair of ONE visit?
+    def inside_pair(t, d):
+        mk = [x for x in wi if x["tag"] == "MARK" and x["tid"] == t and x["visit"] == d["visit"]
+              and x["pos"] < d["pos"]]
+        cl = [x for x in wi if x["tag"] in CLR8 and x["tid"] == t and x["visit"] == d["visit"]
+              and x["pos"] > d["pos"]]
+        return bool(mk) and bool(cl)
 
-    g1 = bool(sweepcalls) and any(d["tag"] == "MARK" for d, _ in wi) and bool(clears) and \
-         any(d["tag"] == "GATE" for d, _ in wi) and not bogus
+    census_class = []
+    for d in wi:
+        if d["tag"] != "BOUNDARY":
+            continue
+        cls = {t: ("mid-pair" if inside_pair(t, d) else "OUTSIDE") for t in d["carriers"]}
+        census_class.append((d["idx"], d["visit"], cls))
+    mid_pair = [c for c in census_class if c[2] and all(v2 == "mid-pair" for v2 in c[2].values())]
+    outside = [c for c in census_class if any(v2 == "OUTSIDE" for v2 in c[2].values())]
+
+    across_visit = sorted({(t, i, j) for t, i in marks for t2, j in clears
+                           if t2 == t and j != i})
+    same_visit = bool(marks) and bool(clears) and not across_visit and \
+        all(any(t2 == t and j == i for t2, j in clears) for t, i in marks)
+
+    g1 = bool(sweepcalls) and any(d["tag"] == "MARK" for d in wi) and bool(clears) and \
+         any(d["tag"] == "GATE" for d in wi) and not bogus
     g2 = bool(sweepcalls) and bool(ret_hist["SWEEPCALL"]) and bool(ret_hist["CLEAR"]) and \
          all(d["ret"] in SWEEP_RETS for d in sweepcalls) and \
          all(t in CLEAR_RETS for t in ret_hist["CLEAR"])
     g3 = pred_same != pred_across
-    g4 = same_holds != across_holds
+    g4 = same_visit != bool(across_visit)
     g5 = replay_ok and any(d["tag"] == "BOUNDARY" for d in ev)
-    g6 = bool(clears) and all((d["pre"] & MARKER) for d, _ in wi if d["tag"] in CLR8)
+    g6 = bool(clears) and all((d["pre"] & MARKER) for d in wi if d["tag"] in CLR8)
     cleared_tids = sorted({t for t, _ in clears})
     g7 = bool(cleared_tids) and all(not (after.get(t, 0) & MARKER) for t in cleared_tids)
     # g8: every sweep call from the production site follows a production flag store of the SAME tid
     prod_attr = []
-    for n, (d, w) in enumerate(wi):
+    for n, d in enumerate(wi):
         if d["tag"] == "SWEEPCALL" and d["ret"] == 0x4efe83:
-            prev = next((x for x, _ in reversed(wi[:n]) if x["tag"] in ("PRODFLAG", "SWEEPCALL")), None)
+            prev = next((x for x in reversed(wi[:n]) if x["tag"] in ("PRODFLAG", "SWEEPCALL")), None)
             prod_attr.append((d["tid"], prev.get("tid") if prev else None))
     g8 = any(d["ret"] == 0x4efe83 for d in sweepcalls) and bool(prod_attr) and \
          all(x == y for x, y in prod_attr)
+    # g9: M77's paradox reproduced AND explained — every census that saw 0x100 saw it inside the
+    # one visit that marked and cleared, i.e. the driver's census is a mid-visit snapshot.
+    g9 = bool(mid_pair) and not outside and same_visit
 
     for r_ in replay_rows:
         print(f"  census {r_[0]}: observed carriers {r_[1]} | replayed {r_[2]} | "
               f"observed words {r_[3]} | match={r_[4]}", flush=True)
-    print("MARK events (tid, boundary):", marks, flush=True)
-    print("CLEAR/UPKCLR events (tid, boundary):", clears, flush=True)
+    print("census classification (boundary, visit, per-carrier mid-pair/OUTSIDE):", census_class, flush=True)
+    print("MARK events (tid, visit):", marks, flush=True)
+    print("CLEAR/UPKCLR events (tid, visit):", clears, flush=True)
     print("SWEEPCALL callers observed:", {hex(k): (SWEEP_RETS.get(k, "UNVERIFIED"), v)
                                           for k, v in sorted(ret_hist["SWEEPCALL"].items())}, flush=True)
     print("CLEAR callers observed:", {hex(k): (CLEAR_RETS.get(k, "UNVERIFIED"), v)
                                       for k, v in sorted(ret_hist["CLEAR"].items())}, flush=True)
-    print("cross-boundary mark->clear pairs:", across, flush=True)
-    print(f"H_SAME holds={same_holds} (no cross-boundary pair={not across}, no carrier census={no_carrier}) "
-          f"H_ACROSS holds={across_holds}  census-race points={race}", flush=True)
+    print("cross-VISIT mark->clear pairs:", across_visit, flush=True)
+    print(f"H_SAME-VISIT holds={same_visit}  H_ACROSS-VISIT holds={bool(across_visit)}  "
+          f"mid-pair censuses={mid_pair}  outside censuses={outside}  race={race}", flush=True)
     print("production sweep-call attribution (sweep tid, preceding PRODFLAG tid):", prod_attr, flush=True)
-    print("out-of-array tids seen:", bogus, flush=True)
+    print("tracked tids outside the 256-record array:", bogus,
+          " non-tracked events at array indices >= 256:", wide, flush=True)
     res = {"g1_instrument_alive_sweep_mark_clear_gate": g1,
            "g2_every_caller_ret_is_a_static_call_target": g2,
            "g3_shape_discriminates": g3,
@@ -340,7 +378,8 @@ def main():
            "g5_census_replay_exact_every_boundary": g5,
            "g6_clears_only_ever_on_carriers": g6,
            "g7_no_cleared_tid_still_carries_0x100": g7,
-           "g8_production_sweeps_follow_their_own_prodstore": g8}
+           "g8_production_sweeps_follow_their_own_prodstore": g8,
+           "g9_every_carrier_census_is_a_mid_visit_snapshot": g9}
     for k, v in res.items():
         print(f"  {k}: {v}", flush=True)
     ok = all(res.values())

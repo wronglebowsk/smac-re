@@ -1,0 +1,149 @@
+[New LWP 3963382]
+[New LWP 3963381]
+[New LWP 3963379]
+[New LWP 3963378]
+[New LWP 3963377]
+[New LWP 3963375]
+[New LWP 3963345]
+[New LWP 3963327]
+[New LWP 3963326]
+[New LWP 3963325]
+[New LWP 3963324]
+[New LWP 3963323]
+[New LWP 3963322]
+[New LWP 3963321]
+[New LWP 3963320]
+[New LWP 3963319]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xef48432c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4ef6d0
+Breakpoint 2 at 0x4efe60
+Breakpoint 3 at 0x4efe6c
+Breakpoint 4 at 0x572800
+Breakpoint 5 at 0x5729d5
+Breakpoint 6 at 0x4f0591
+Breakpoint 7 at 0x4f05bd
+Breakpoint 8 at 0x4f05e0
+Breakpoint 9 at 0x4ef398
+Breakpoint 10 at 0x52145e
+Breakpoint 11 at 0x5a7d00
+Breakpoint 12 at 0x5a7f67
+ARMED base=0x95da10 head=2 pending=1 storage=200
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=1 rec=104 bit=0x2 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=3 rec=104 bit=0x8 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=322 pre=0x5
+L20FLAG edx=0 tid=322
+GATE l20=0 owner=5 rec=16744 bit=0x20 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+PRODFLAG tid=323 pre=0x5
+L20FLAG edx=0 tid=323
+GATE l20=0 owner=5 rec=16796 bit=0x20 g20434=0 b10=0x08 abc=0x3a7168
+SWEEPCALL owner=5 tid=324 mode=0 ret=0x574203
+SWEEPCALL owner=5 tid=325 mode=0 ret=0x574203
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=128 pre=0x5
+L20FLAG edx=0 tid=128
+GATE l20=0 owner=2 rec=6656 bit=0x4 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=194 pre=0x41
+L20FLAG edx=1 tid=194
+SWEEPCALL owner=3 tid=194 mode=0 ret=0x4efe83
+MARK tid=192 pre=0x1
+MARK tid=193 pre=0x41
+GATE l20=1 owner=3 rec=10088 bit=0x8 g20434=0 b10=0x08 abc=0x3a7168
+SWEEPIN owner=3 g20434=0 b10=0x08 l20=1
+CLEAR tid=192 owner=3 pre=0x105 ret=0x4f062b
+CLEAR tid=193 owner=3 pre=0x145 ret=0x4f062b
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=6 rec=104 bit=0x40 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=6 rec=104 bit=0x40 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=1 rec=104 bit=0x2 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=131 pre=0x5
+L20FLAG edx=0 tid=131
+GATE l20=0 owner=2 rec=6812 bit=0x4 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+PRODFLAG tid=194 pre=0x45
+L20FLAG edx=0 tid=194
+GATE l20=0 owner=3 rec=10088 bit=0x8 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=64 pre=0x5
+L20FLAG edx=0 tid=64
+GATE l20=0 owner=1 rec=3328 bit=0x2 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=194 pre=0x45
+L20FLAG edx=0 tid=194
+GATE l20=0 owner=3 rec=10088 bit=0x8 g20434=0 b10=0x08 abc=0x3a7168
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xef48432c in __kernel_vsyscall ()
+[Inferior 1 (process 3963316) detached]
