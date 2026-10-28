@@ -1,0 +1,75 @@
+[New LWP 3581721]
+[New LWP 3581720]
+[New LWP 3581719]
+[New LWP 3581718]
+[New LWP 3581717]
+[New LWP 3581716]
+[New LWP 3581715]
+[New LWP 3581714]
+[New LWP 3581713]
+[New LWP 3581712]
+[New LWP 3581711]
+[New LWP 3581710]
+[New LWP 3581709]
+[New LWP 3581708]
+[New LWP 3581707]
+[New LWP 3581706]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf48d068b in ?? ()
+Breakpoint 1 at 0x4ef6d0
+Breakpoint 2 at 0x4f5a93
+Breakpoint 3 at 0x4efa4b
+Breakpoint 4 at 0x4efa52
+Breakpoint 5 at 0x4efa5e
+Breakpoint 6 at 0x4efa63
+Breakpoint 7 at 0x4efed8
+Breakpoint 8 at 0x4eff4e
+Breakpoint 9 at 0x5aca28
+Breakpoint 10 at 0x5aca4b
+Breakpoint 11 at 0x5aca88
+ARMED base=0x95da10 head=2 pending=2 storage=111
+VISIT pend=2 s0=2 s1=194 min=111
+ENTRY base=0x95da10 storage=111 s0=2 pend=2
+FACTORA id=2 own=197379 A=9
+FACTORB id=2 A=9 B=1
+POSAFF storage=111 edi=9 ebx=2
+PAYA storage=111 edi=9 ebx=2
+CREATE id=2 arg3=3 storage=0
+VISIT pend=1 s0=194 s1=193 min=0
+ENTRY base=0x95da10 storage=0 s0=194 pend=1
+FACTORA id=194 own=197379 A=9
+PRICE_C id=194 P=50 byte=3 C=3 p2=0 ret=0xbefdd4
+PRICE_M id=194 Mpre=2
+FACTORB id=194 A=9 B=5
+POSAFF storage=0 edi=45 ebx=194
+BAILAFF storage=0 edi=45 ebx=194
+PRICE_C id=194 P=50 byte=3 C=3 p2=0 ret=0xbefd1c
+PRICE_M id=194 Mpre=2
+PRICE_C id=194 P=50 byte=3 C=3 p2=0 ret=0xbefd1c
+PRICE_M id=194 Mpre=2
+VISIT pend=1 s0=194 s1=193 min=0
+ENTRY base=0x95da10 storage=0 s0=194 pend=1
+FACTORA id=194 own=197379 A=9
+PRICE_C id=194 P=50 byte=3 C=3 p2=0 ret=0xbefdd4
+PRICE_M id=194 Mpre=2
+FACTORB id=194 A=9 B=5
+POSAFF storage=0 edi=45 ebx=194
+BAILAFF storage=0 edi=45 ebx=194
+VISIT pend=1 s0=194 s1=193 min=0
+ENTRY base=0x95da10 storage=0 s0=194 pend=1
+FACTORA id=194 own=197379 A=9
+PRICE_C id=194 P=50 byte=3 C=3 p2=0 ret=0xbefdd4
+PRICE_M id=194 Mpre=2
+FACTORB id=194 A=9 B=5
+POSAFF storage=0 edi=45 ebx=194
+BAILAFF storage=0 edi=45 ebx=194
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3581715]
+0xf4ae332c in __kernel_vsyscall ()
+[Inferior 1 (process 3581703) detached]

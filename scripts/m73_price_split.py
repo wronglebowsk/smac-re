@@ -32,20 +32,24 @@ price_of values differ (193: cost 2, price 18; 194: cost 3, price 27) in ONE inv
 the queue [2, 194, 193] so the engine itself makes each one the head in turn.
 
 THE ACCEPTANCE (written before the run; PASS on ONE real invocation):
-  1 arm        both armed ids sit in the armed base's first six queue slots and storage was
-               poked and READ BACK before gdb attached to at least what every queued id ahead of
-               them must pay (each one pays before it pops, so the last armed id can be visited);
+  1 arm        both armed ids sit in the armed base's first six queue slots, and EVERY storage
+               read-back — the arm poke and each per-boundary re-poke — is at least the largest
+               candidate edi.  It has to be re-poked: a completion zeroes the base's storage (M72
+               read 27 -> 0 across PAYA+CREATE), so without a fresh poke the next queued id can
+               never pay, never pops, and never becomes the head to be measured;
   2 window     the round counter advanced and >= 1 VISIT fired for the armed base;
   3 factors    >= 1 FACTORA and >= 1 FACTORB row for >= 2 distinct designed ids, and for each id
                A*B equals the edi logged at that id's POSAFF/PAYA/CREATE rows (the imul identity
                on the run's own numbers);
   4 A          every FACTORA row's A equals the Python cost_multiplier(owner) computed from the
                same snapshot before attach (A is the repo's model, not a new constant);
-  5 B          for each armed id, PRICE_C / PRICE_M / PRICE_B rows whose logged `ret` is the
-               visit's own call site 0x4efa52, with the markup read BEFORE the base-mask zeroing
-               satisfying Mpre == trunc_div(C*P+50, 100) on that row's own logged C and P, and
-               B == cost + M and B == that id's FACTORB B (a markup that later became 0 is the
-               base mask test at 0x5aca81 and is REPORTED, not accepted silently);
+  5 path       for each armed id the route through 0x5ac950 is measured at its own decision
+               point (0x5ac99c logs id, type[+0x30] and the cost byte; 0x5aca28 logs C, P, the
+               cost byte and the CALLER — only rows returning to 0x4efa52 count; 0x5aca4b logs the
+               markup before the base-mask zeroing).  Markup path: Mpre == trunc_div(C*P+50, 100)
+               and the visit's own FACTORB B == cost + Mpre.  Early path (id < 0x40 or
+               type[+0x30] & 4): the flag is logged set and FACTORB B == the bare cost.  A markup
+               that later became 0 is the base mask test at 0x5aca81 and is REPORTED;
   6 shape      the candidate edi vectors (built BEFORE attach from live memory: A x (cost +
                trunc_div(C*P+50,100)) over the readable type bytes 0x595820 is built from, with
                P = 0 when a static guard zeroes markup, plus A x cost = price_of) are NOT all
@@ -62,7 +66,7 @@ THE ACCEPTANCE (written before the run; PASS on ONE real invocation):
 
 Usage:
     python3 scripts/m73_price_split.py [--base-name "University Base"] [--ids 193,194]
-                                       [--boundaries 4] [--poke-minerals 120]
+                                       [--boundaries 4] [--poke-minerals 120] [--no-repoke]
                                        [--timeout 500] [--tag m73split]
 """
 import argparse
@@ -151,7 +155,8 @@ def static_inputs(m, t):
     guard_zero = early or flag200 or era <= 1
     P = 0 if (flag200 or era <= 1) else p_opt
     return dict(id=t, cost=tb["cost"], cat=cat, flag200=flag200, era=era, sel=sel, P=P,
-                P_opt=p_opt, early=early, guard_zero=guard_zero, cbytes=dict(
+                P_opt=p_opt, early=early, guard_zero=guard_zero, flags30=tb["flags30"],
+                cbytes=dict(
                     cost=tb["cost"], lvl=tb["lvl"], f26=tb["f26"], f27=tb["f27"],
                     cat_field=tb["cat_field"], one=1))
 
@@ -239,10 +244,16 @@ silent
 printf "CREATE id=%d arg3=%d storage=%d\n", $ebx, *(int *)($ebp - 0x28), *(int *)($b + 0x40)
 continue
 end
+break *0x5ac99c if $esi == @@ID0@@ || $esi == @@ID1@@
+commands
+silent
+printf "FLAG id=%d f30=0x%x byte=%d\n", $esi, *(int *)($ecx + 0x98adb8), *(unsigned char *)($ecx + 0x98adb1)
+continue
+end
 break *0x5aca28 if $esi == @@ID0@@ || $esi == @@ID1@@
 commands
 silent
-printf "PRICE_C id=%d P=%d byte=%d C=%d p2=%d ret=0x%x\n", $esi, $edi, $ebx, $eax, *(int *)($ebp + 0xc), *(int *)($sp + 0x10)
+printf "PRICE_C id=%d P=%d byte=%d C=%d p2=%d ret=0x%x\n", $esi, $edi, $ebx, $eax, *(int *)($ebp + 0xc), *(int *)($sp + 0x14)
 continue
 end
 break *0x5aca4b if *(int *)($ebp + 8) == @@ID0@@ || *(int *)($ebp + 8) == @@ID1@@
@@ -254,7 +265,7 @@ end
 break *0x5aca88 if *(int *)($ebp + 8) == @@ID0@@ || *(int *)($ebp + 8) == @@ID1@@
 commands
 silent
-printf "PRICE_B id=%d B=%d M=%d ret=0x%x\n", *(int *)($ebp + 8), $ebx, $esi, *(int *)($sp + 0x10)
+printf "PRICE_B id=%d B=%d M=%d ret=0x%x\n", *(int *)($ebp + 8), $ebx, $esi, *(int *)($sp + 0x14)
 continue
 end
 printf "ARMED base=0x%x head=%d pending=%d storage=%d\n", $b, *(int *)($b + 0x50), *(int *)($b + 0x4c), *(int *)($b + 0x40)
@@ -269,7 +280,7 @@ def gdb_script(addr, ids):
     return s
 
 
-LINE = re.compile(r"^(ENTRY|VISIT|FACTORA|FACTORB|POSAFF|BAILAFF|PAYA|CREATE|PRICE_C|PRICE_M|"
+LINE = re.compile(r"^(ENTRY|VISIT|FACTORA|FACTORB|POSAFF|BAILAFF|PAYA|CREATE|FLAG|PRICE_C|PRICE_M|"
                   r"PRICE_B|ARMED)\s*(.*)$")
 KV = re.compile(r"(\w+)=(-?0x[0-9a-f]+|-?\d+)")
 CHATTER = ("warning:", "Reading symbols", "0x", "Breakpoint", "[", "The program", "This GDB",
@@ -301,22 +312,30 @@ def parse(text):
 
 
 # ---------------------------------------------------------------- acceptance
-def score(before, after, ev, A_py, si, cands, required, bad_lines=()):
+def score(before, after, ev, A_py, si, cands, storages, flag_reads=(), bad_lines=()):
     """Pure acceptance.  Returns (ok, gates, findings).
 
-    `required` is the storage the engine must have by the time the LAST armed id is visited: the
-    largest candidate edi of every queued id up to and including it (each one pays before it pops).
+    `storages` is every storage value the instrument READ BACK, in order: the arm poke and each
+    per-boundary re-poke.  A completion zeroes the base's storage (M72's run read 27 -> 0 after
+    PAYA+CREATE), so each head needs its own poke to be able to pay and pop — otherwise the next
+    queued id never becomes the head and never gets visited.
     """
     gates, find = [], []
     rows = [e for e in ev if e["tag"] != "ARMED"]
     ids = [t for t in si]
+    maxcand = max(max(c["vector"].values()) for c in cands)
 
     pos = {t: k for k, t in enumerate(before["slots"]) if t in si}
-    gates.append(("1 the armed ids are in the armed base's queue and storage was read back >= "
-                  "every pay that must happen before the last of them is visited",
-                  all(0 <= pos.get(t, 99) < 6 for t in ids) and before["minerals"] >= required,
-                  f"queue {before['slots'][:6]} armed {ids} at {pos}, storage "
-                  f"{before['minerals']} vs required {required}"))
+    low = [v for v in storages if v < maxcand]
+    badflag = [f"id {t}: 0x{was:02x} -> 0x{back:02x}" for t, was, back in flag_reads if back & 4]
+    gates.append(("1 the armed ids sit in the armed base's first six queue slots, every storage "
+                  "read-back (arm and each boundary) is at least the largest candidate edi, and "
+                  "every type[+0x30] poke read back with bit 2 clear",
+                  all(0 <= pos.get(t, 99) < 6 for t in ids) and bool(storages) and not low
+                  and not badflag,
+                  f"queue {before['slots'][:6]} armed {ids} at {pos}; storages {list(storages)} "
+                  f"vs largest candidate {maxcand}" + (f"  low: {low}" if low else "")
+                  + (f"  flag pokes: {badflag}" if badflag else "")))
 
     visits = [e for e in rows if e["tag"] == "VISIT"]
     gates.append(("2 window round advanced and >= 1 VISIT for the armed base",
@@ -326,7 +345,7 @@ def score(before, after, ev, A_py, si, cands, required, bad_lines=()):
     fa = [e for e in rows if e["tag"] == "FACTORA"]
     fb = [e for e in rows if e["tag"] == "FACTORB"]
     gate_rows = [e for e in rows if e["tag"] in GATE_ROWS]
-    seen = sorted({e["id"] for e in fb} & {e["id"] for e in fa})
+    seen = sorted({e["id"] for e in fb} & {e["id"] for e in fa} & set(ids))
     bad_prod = []
     for t in seen:
         ab = {e["A"] * e["B"] for e in fb if e["id"] == t}
@@ -342,40 +361,60 @@ def score(before, after, ev, A_py, si, cands, required, bad_lines=()):
                   bool(fa) and not offA,
                   f"{len(fa)} FACTORA rows" + (f"  off: {offA}" if offA else "")))
 
-    # B's own terms, from the visit's own call (the logged `ret` says which caller it was).
-    # Mpre is read at 0x5aca4b, BEFORE the base-mask zeroing at 0x5aca81, so the formula is
-    # checked against the row's own logged C and P; a markup that later became 0 is the mask,
-    # and that is reported, not silently accepted.
+    # Which way 0x5ac950 went for each armed id, measured at ITS decision point.  0x5ac99c is the
+    # `cmp esi,0x40` whose two exits (id < 0x40, or type[+0x30] & 4) return the bare cost with NO
+    # markup, so the flag byte is logged there; the markup path goes on to 0x5aca28 (C, P, the
+    # cost byte, the caller) and 0x5aca4b (the markup, before the base-mask zeroing).  The
+    # composition is checked against the visit's own FACTORB row: gdb never stopped at 0x5aca88 in
+    # either run, so the claim is built from the rows that actually exist.
     pc = [e for e in rows if e["tag"] == "PRICE_C" and e.get("ret") == VISIT_CALLSITE]
     pb = [e for e in rows if e["tag"] == "PRICE_B" and e.get("ret") == VISIT_CALLSITE]
     pm = [e for e in rows if e["tag"] == "PRICE_M"]
-    bad_b, covered, mask_zero, guard_conflict = [], [], [], []
+    fl = [e for e in rows if e["tag"] == "FLAG"]
+    bad_b, covered, mask_zero, guard_conflict, paths, composed = [], [], [], [], {}, {}
     for t in ids:
         c = [e for e in pc if e["id"] == t]
-        b_ = [e for e in pb if e["id"] == t]
         m_ = [e for e in pm if e["id"] == t]
-        if not c or not b_:
-            bad_b.append(f"id {t}: no visit-path PRICE row")
+        f_ = [e for e in fl if e["id"] == t]
+        fbv = {e["B"] for e in fb if e["id"] == t}
+        if c:
+            C0, P0 = c[0]["C"], c[0]["P"]
+            if not m_:
+                bad_b.append(f"id {t}: markup path (PRICE_C) but no PRICE_M row")
+                continue
+            mk = m_[0]["Mpre"]
+            exp = B.trunc_div(C0 * P0 + 50, 100)
+            if mk != exp:
+                bad_b.append(f"id {t}: Mpre {mk} != (C {C0} * P {P0} + 50)/100 = {exp}")
+            composed[t] = c[0]["byte"] + mk
+            paths[t] = (f"id {t} markup path: cost {c[0]['byte']} + markup {mk} "
+                        f"(C {C0}, P {P0}) = B {composed[t]}")
+            if any(e["M"] != mk for e in pb if e["id"] == t):
+                mask_zero.append(f"id {t}: markup {mk} zeroed by the base mask test at 0x5aca81")
+                composed[t] = c[0]["byte"]
+        elif f_ and (f_[-1]["f30"] & 4):
+            composed[t] = f_[-1]["byte"]
+            paths[t] = (f"id {t} early return: type[+0x30] 0x{f_[-1]['f30']:x} & 4 -> the bare "
+                        f"cost {composed[t]}, no markup")
+        elif f_:
+            bad_b.append(f"id {t}: FLAG says f30 0x{f_[-1]['f30']:x} (bit 2 clear) yet no "
+                         f"visit-path PRICE row reached")
+            continue
+        else:
+            bad_b.append(f"id {t}: no FLAG row — 0x5ac950 never ran for it")
             continue
         covered.append(t)
-        C0, P0 = c[0]["C"], c[0]["P"]
-        exp = B.trunc_div(C0 * P0 + 50, 100)
-        if m_ and m_[0]["Mpre"] != exp:
-            bad_b.append(f"id {t}: Mpre {m_[0]['Mpre']} != (C {C0} * P {P0} + 50)/100 = {exp}")
-        for e in b_:
-            if e["B"] != si[t]["cost"] + e["M"]:
-                bad_b.append(f"id {t}: B {e['B']} != cost {si[t]['cost']} + M {e['M']}")
-            if m_ and e["M"] != m_[0]["Mpre"]:
-                mask_zero.append(f"id {t}: markup {m_[0]['Mpre']} zeroed by the base mask test")
-        fbv = {e["B"] for e in fb if e["id"] == t}
-        if fbv and fbv != {e["B"] for e in b_}:
-            bad_b.append(f"id {t}: 0x5ac950 B {sorted({e['B'] for e in b_})} != FACTORB B {sorted(fbv)}")
-        if si[t]["guard_zero"] and P0 != 0:
-            guard_conflict.append(f"id {t}: guard says markup 0 but the run logged P {P0}")
-    gates.append(("5 B's internals logged from the visit's own call (ret 0x4efa52): Mpre == "
-                  "(C*P+50)/100, B == cost + M, B == FACTORB B",
+        if fbv and fbv != {composed[t]}:
+            bad_b.append(f"id {t}: FACTORB B {sorted(fbv)} != the composed {composed[t]}")
+        if si[t]["early"] and not (f_ and (f_[-1]["f30"] & 4)):
+            guard_conflict.append(f"id {t}: static says early (flags30 {si[t]['flags30']:#x}) but "
+                                  f"the run took the markup path")
+    gates.append(("5 each armed id's path through 0x5ac950 is measured at its own decision point: "
+                  "markup path -> Mpre == (C*P+50)/100 and FACTORB B == cost + Mpre; early path "
+                  "-> type[+0x30] & 4 and FACTORB B == the bare cost",
                   bool(covered) and len(covered) == len(ids) and not bad_b,
-                  f"covered {covered}" + (f"  bad: {'; '.join(bad_b)}" if bad_b else "")))
+                  "; ".join(paths.get(t, f"id {t}: not measured") for t in ids)
+                  + (f"  bad: {'; '.join(bad_b)}" if bad_b else "")))
 
     vecs = sorted({tuple(c["vector"][t] for t in ids) for c in cands})
     gates.append(("6 the candidate edi vectors are not all equal (the shape discriminates)",
@@ -390,9 +429,8 @@ def score(before, after, ev, A_py, si, cands, required, bad_lines=()):
         if e["id"] in si:
             measured.setdefault(e["id"], set()).add(e["A"] * e["B"])
     for t in ids:
-        v = {e["B"] for e in pb if e["id"] == t}      # B already contains the markup (0x5aca86)
-        if len(v) == 1:
-            mlogged[t] = A_py * next(iter(v))
+        if t in composed:
+            mlogged[t] = A_py * composed[t]
     not_price_of = [t for t in ids if t in measured and all(
         x != A_py * si[t]["cost"] for x in measured[t])]
     bad_comp = [f"id {t}: measured {sorted(measured.get(t, []))} vs A * the logged B "
@@ -418,6 +456,7 @@ def score(before, after, ev, A_py, si, cands, required, bad_lines=()):
                   f"{len(bad_lines)} unknown lines"
                   + (": " + " | ".join(bad_lines[:3]) if bad_lines else "")))
 
+    find.append(f"storage read-backs (arm then each boundary): {list(storages)}")
     find.append(f"A (0x4e40a0) = {A_py}; per id: " + ", ".join(
         f"id {t}: cost +0x29 {si[t]['cost']} cat {si[t]['cat']} flag200 {si[t]['flag200']} "
         f"era {si[t]['era']} P {si[t]['P']} (sel {si[t]['sel']}) early {si[t]['early']} "
@@ -427,6 +466,8 @@ def score(before, after, ev, A_py, si, cands, required, bad_lines=()):
     find.append("PRICE_C rows: " + (", ".join(
         f"id {e['id']} P {e['P']} byte {e['byte']} C {e['C']} p2 {e['p2']}" for e in pc) or "none"))
     find.append("PRICE_B rows: " + (", ".join(f"id {e['id']} B {e['B']} M {e['M']}" for e in pb) or "none"))
+    find.append("path through 0x5ac950: " + "; ".join(paths.get(t, f"id {t}: not measured")
+                                                      for t in ids))
     find.append("markup zeroed by the base mask test: " + ("; ".join(sorted(set(mask_zero)))
                                                           or "none observed"))
     find.append("static guard vs logged P conflicts: " + ("; ".join(sorted(set(guard_conflict)))
@@ -446,6 +487,13 @@ def main():
     ap.add_argument("--ids", default="193,194")
     ap.add_argument("--boundaries", type=int, default=4)
     ap.add_argument("--poke-minerals", type=int, default=None)
+    ap.add_argument("--no-repoke", dest="repoke", action="store_false",
+                    help="poke storage once at arm time only (default: re-poke before EVERY "
+                         "boundary, because a completion zeroes the base's storage)")
+    ap.add_argument("--no-poke-flags", dest="poke_flags", action="store_false",
+                    help="leave type[+0x30] alone (default: clear bit 2 on each armed id, which "
+                         "is what 0x5ac9a3 tests to skip the markup entirely)")
+    ap.set_defaults(repoke=True, poke_flags=True)
     ap.add_argument("--timeout", type=float, default=500.0)
     ap.add_argument("--tag", default="m73split")
     a = ap.parse_args()
@@ -466,6 +514,20 @@ def main():
     if subprocess.run(["sysctl", "-n", "kernel.yama.ptrace_scope"],
                       capture_output=True, text=True).stdout.strip() != "0":
         raise SystemExit("ptrace_scope != 0")
+
+    flag_reads = []
+    if a.poke_flags:                       # a controlled poke of the field the branch tests
+        for t in ids:
+            addr = TYPE_ARR + t * TYPE_STRIDE + 0x30
+            with open(f"/proc/{pid}/mem", "rb+", 0) as m:
+                m.seek(addr)
+                was = m.read(1)[0]
+                m.seek(addr)
+                m.write(bytes([was & ~0x04]))
+                m.seek(addr)
+                flag_reads.append((t, was, m.read(1)[0]))
+        print("flag poke (type[+0x30] bit 2 cleared, read back): " + ", ".join(
+              f"id {t}: 0x{was:02x} -> 0x{back:02x}" for t, was, back in flag_reads))
 
     with open(f"/proc/{pid}/mem", "rb", 0) as m:
         before = base_row(m, a.base_name)
@@ -490,19 +552,26 @@ def main():
     print(f"  queue {before['slots'][:6]}: the engine must pay through {head_ids} before "
           f"{ids[-1]} is visited -> storage >= {required}")
 
-    poke = a.poke_minerals if a.poke_minerals is not None else required + 30
-    poked = None
-    if poke != before["minerals"]:
+    poke = a.poke_minerals if a.poke_minerals is not None else max(maxcand, required) + 30
+
+    def poke_storage(addr, value):
+        """Write base+0x40 and READ IT BACK (a poke under a tracer that is not read back is a
+        claim, not a fact).  Returns the read-back value."""
         with open(f"/proc/{pid}/mem", "rb+", 0) as m:
-            m.seek(before["addr"] + 0x40)
-            m.write(struct.pack("<i", poke))
-            m.seek(before["addr"] + 0x40)
-            poked = struct.unpack("<i", m.read(4))[0]
+            m.seek(addr + 0x40)
+            m.write(struct.pack("<i", value))
+            m.seek(addr + 0x40)
+            return struct.unpack("<i", m.read(4))[0]
+
+    storages = []
+    if poke != before["minerals"] or a.repoke:
+        poke_storage(before["addr"], poke)
         with open(f"/proc/{pid}/mem", "rb", 0) as m:
             before = base_row(m, a.base_name)
-    if before["minerals"] < required:
-        raise SystemExit(f"arm gate: storage {before['minerals']} < required {required} "
-                         f"after the poke")
+    storages.append(before["minerals"])
+    if before["minerals"] < maxcand:
+        raise SystemExit(f"arm gate: storage {before['minerals']} < largest candidate edi "
+                         f"{maxcand} after the poke")
 
     gpath = os.path.join(ROOT, "scratch", f"{a.tag}.gdb")
     lpath = os.path.join(EVID, f"{a.tag}.gdblog")
@@ -519,11 +588,18 @@ def main():
         raise SystemExit("gdb did not arm:\n" + head[-1500:])
     print(f"armed: base {a.base_name!r} addr 0x{before['addr']:x} head {before['slots'][0]} "
           f"pending {before['pending']} queue {before['slots'][:4]} storage {before['minerals']} "
-          f"({'read back' if poked else 'already'} vs largest candidate {maxcand}); "
+          f"(read back, largest candidate {maxcand}); "
           f"round {before['round']}", flush=True)
 
     t0 = time.time()
     for k in range(a.boundaries):
+        if a.repoke:
+            poke_storage(before["addr"], poke)
+            with open(f"/proc/{pid}/mem", "rb", 0) as m:
+                row = base_row(m, a.base_name)
+            storages.append(row["minerals"])
+            print(f"  re-poke before boundary {k}: storage read back {row['minerals']} "
+                  f"(head {row['slots'][0]} pending {row['pending']})", flush=True)
         r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "smac_play.py"),
                             "--turns", "1", "--timeout", str(int(min(a.timeout, 220))),
                             "--no-escape", "3000", "--orders-per-turn", "1",
@@ -558,7 +634,7 @@ def main():
           f"{before['pending']} -> {after['pending']}  queue {before['slots'][:4]} -> "
           f"{after['slots'][:4]}  storage {before['minerals']} -> {after['minerals']}  round "
           f"{before['round']} -> {after['round']}")
-    ok, gates, find = score(before, after, ev, A_py, si, cands, required, bad)
+    ok, gates, find = score(before, after, ev, A_py, si, cands, storages, flag_reads, bad)
     print("--- gates ---")
     for name, good, detail in gates:
         print(f"  [{'PASS' if good else 'FAIL'}] {name}: {detail}")

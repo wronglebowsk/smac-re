@@ -1,0 +1,78 @@
+[New LWP 3610822]
+[New LWP 3610821]
+[New LWP 3610820]
+[New LWP 3610819]
+[New LWP 3610818]
+[New LWP 3610817]
+[New LWP 3610816]
+[New LWP 3610815]
+[New LWP 3610814]
+[New LWP 3610813]
+[New LWP 3610812]
+[New LWP 3610811]
+[New LWP 3610810]
+[New LWP 3610809]
+[New LWP 3610808]
+[New LWP 3610807]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb58c32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4ef6d0
+Breakpoint 2 at 0x4f5a93
+Breakpoint 3 at 0x4efa4b
+Breakpoint 4 at 0x4efa52
+Breakpoint 5 at 0x4efa5e
+Breakpoint 6 at 0x4efa63
+Breakpoint 7 at 0x4efed8
+Breakpoint 8 at 0x4eff4e
+Breakpoint 9 at 0x5ac99c
+Breakpoint 10 at 0x5aca28
+Breakpoint 11 at 0x5aca4b
+Breakpoint 12 at 0x5aca88
+ARMED base=0x95da10 head=2 pending=2 storage=111
+VISIT pend=2 s0=2 s1=194 min=111
+ENTRY base=0x95da10 storage=111 s0=2 pend=2
+FACTORA id=2 own=197379 A=9
+FACTORB id=2 A=9 B=1
+POSAFF storage=111 edi=9 ebx=2
+PAYA storage=111 edi=9 ebx=2
+CREATE id=2 arg3=3 storage=0
+VISIT pend=1 s0=194 s1=193 min=111
+ENTRY base=0x95da10 storage=111 s0=194 pend=1
+FACTORA id=194 own=197379 A=9
+FLAG id=194 f30=0x41 byte=196867
+PRICE_C id=194 P=50 byte=3 C=3 p2=0 ret=0x4efa52
+PRICE_M id=194 Mpre=2
+FACTORB id=194 A=9 B=5
+POSAFF storage=111 edi=45 ebx=194
+PAYA storage=111 edi=45 ebx=194
+CREATE id=194 arg3=3 storage=0
+FLAG id=193 f30=0x45 byte=131586
+FLAG id=193 f30=0x45 byte=131586
+VISIT pend=0 s0=193 s1=193 min=111
+ENTRY base=0x95da10 storage=111 s0=193 pend=0
+FACTORA id=193 own=197379 A=9
+FLAG id=193 f30=0x45 byte=131586
+FACTORB id=193 A=9 B=2
+POSAFF storage=111 edi=18 ebx=193
+PAYA storage=111 edi=18 ebx=193
+CREATE id=193 arg3=3 storage=0
+FLAG id=193 f30=0x45 byte=131586
+FLAG id=193 f30=0x45 byte=131586
+VISIT pend=0 s0=193 s1=193 min=111
+ENTRY base=0x95da10 storage=111 s0=193 pend=0
+FACTORA id=193 own=197379 A=9
+FLAG id=193 f30=0x45 byte=131586
+FACTORB id=193 A=9 B=2
+POSAFF storage=111 edi=18 ebx=193
+PAYA storage=111 edi=18 ebx=193
+CREATE id=193 arg3=3 storage=0
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3610816]
+0xeb58c32c in __kernel_vsyscall ()
+[Inferior 1 (process 3610803) detached]

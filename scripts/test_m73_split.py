@@ -85,6 +85,7 @@ def build(m):
 def t1():
     ev, bad = S.parse("""ARMED base=0x95da10 head=193 pending=1 storage=120
 VISIT pend=1 s0=193 s1=192 min=120
+FLAG id=193 f30=0x45 byte=2
 FACTORA id=193 own=3 A=9
 FACTORB id=193 A=9 B=3
 POSAFF storage=120 edi=27 ebx=193
@@ -95,10 +96,11 @@ PRICE_C id=193 P=50 byte=2 C=2 p2=-1 ret=0x4efa52
 PRICE_M id=193 Mpre=1
 PRICE_B id=193 B=3 M=1""")
     eq(bad, [])
-    eq([e["tag"] for e in ev], ["ARMED", "VISIT", "FACTORA", "FACTORB", "POSAFF", "BAILAFF",
-                                "PAYA", "CREATE", "PRICE_C", "PRICE_M", "PRICE_B"])
-    eq(ev[2]["A"], 9); eq(ev[3]["B"], 3); eq(ev[5]["storage"], -1)
-    eq(ev[8]["ret"], 0x4efa52); eq(ev[8]["p2"], -1)
+    eq([e["tag"] for e in ev], ["ARMED", "VISIT", "FLAG", "FACTORA", "FACTORB", "POSAFF",
+                                "BAILAFF", "PAYA", "CREATE", "PRICE_C", "PRICE_M", "PRICE_B"])
+    eq(ev[2]["f30"], 0x45)
+    eq(ev[3]["A"], 9); eq(ev[4]["B"], 3); eq(ev[6]["storage"], -1)
+    eq(ev[9]["ret"], 0x4efa52); eq(ev[9]["p2"], -1)
 
 
 @case("parse keeps gdb chatter out of the unknown-line bucket")
@@ -123,9 +125,9 @@ def t3():
 def t4():
     s = S.gdb_script(0x95DA10, IDS)
     eq("@@" in s, False)
-    eq(s.count("break *"), 11)
+    eq(s.count("break *"), 12)
     for a in (S.ENTRY, S.VISIT, S.FACTORA, S.FACTORB, S.POSAFF, S.BAILAFF, S.PAYA, S.CREATE,
-              S.PRICE_C, S.PRICE_M, S.PRICE_B):
+              S.PRICE_C, S.PRICE_M, S.PRICE_B, 0x5AC99C):
         eq(f"break *0x{a:x}" in s, True, f"breakpoint 0x{a:x} missing")
     eq("193" in s and "194" in s, True, "the armed ids must be in the conditions")
 
@@ -205,7 +207,8 @@ def good_rows():
               ("PAYA", dict(storage=120, edi=edi, ebx=tid)),
               ("CREATE", dict(id=tid, arg3=cost, storage=120 - edi))]
         if tid != 2:
-            r += [("PRICE_C", dict(id=tid, P=50, byte=cost, C=cost, p2=5, ret=0x4EFA52)),
+            r += [("FLAG", dict(id=tid, f30=0x41, byte=cost)),
+                  ("PRICE_C", dict(id=tid, P=50, byte=cost, C=cost, p2=5, ret=0x4EFA52)),
                   ("PRICE_M", dict(id=tid, Mpre=mk)),
                   ("PRICE_B", dict(id=tid, B=cost + mk, M=mk, ret=0x4EFA52))]
     return rows(*r)
@@ -219,20 +222,21 @@ def state(slot, minerals, round_, addr=0x95DA10, name="University Base", slots=N
                 round=round_, addr=addr, name=name, pending=2, fac=3)
 
 
-def required_for(kw, slots=SHAPE):
-    """What the engine must have paid through before the last armed id is visited."""
-    A, si_all, cands_all = S.candidates(image(**kw), 3, [t for t in slots if t > 0])
-    return sum(max(c["vector"][t] for c in cands_all) for t in [t for t in slots if t > 0])
+def storages_for(kw, n=4):
+    """The read-backs the instrument records: the arm poke plus one re-poke per boundary."""
+    A, si_all, cands_all = S.candidates(image(**kw), 3, [t for t in SHAPE if t > 0])
+    need = max(max(c["vector"][t] for c in cands_all) for t in SHAPE if t > 0)
+    return [need + 30] * (1 + n)
 
 
-def run(ev=None, before=None, after=None, kw=None):
+def run(ev=None, before=None, after=None, kw=None, storages=None, flag_reads=()):
     kw = kw or TWO_IDS
     A, si, cands = build(image(**kw))
     ev = good_rows() if ev is None else ev
     before = state(2, 120, 60) if before is None else before
     after = state(192, 21, 62) if after is None else after
-    need = required_for(kw, before["slots"])
-    return S.score(before, after, ev, A, si, cands, need) + (A, si, cands,)
+    storages = storages_for(kw) if storages is None else storages
+    return S.score(before, after, ev, A, si, cands, storages, flag_reads) + (A, si, cands,)
 
 
 def only(ev, **kw):
@@ -276,12 +280,10 @@ def t14():
     eq(gates[4][1], False, gates[4][2])
 
 
-@case("gate 5 fails when B is not cost + markup")
+@case("gate 5 fails when an armed id's route through 0x5ac950 is unmeasured, not assumed")
 def t15():
-    ev = good_rows()
-    for e in ev:
-        if e["tag"] == "PRICE_B" and e["id"] == 193:
-            e["B"] = 2
+    ev = [e for e in good_rows()
+          if not (e.get("id") == 193 and e["tag"] in ("FLAG", "PRICE_C", "PRICE_M", "PRICE_B"))]
     ok, gates, *_ = only(ev)
     eq(gates[4][1], False, gates[4][2])
 
@@ -296,13 +298,45 @@ def t16():
     eq(gates[4][1], False, gates[4][2])
 
 
-@case("gate 5 fails when 0x5ac950's B disagrees with the FACTORB the visit used")
+@case("gate 5 fails when the visit's FACTORB B is not the composed cost + markup")
 def t17():
     ev = good_rows()
     for e in ev:
-        if e["tag"] == "PRICE_B" and e["id"] == 194:
+        if e["tag"] == "FACTORB" and e["id"] == 194:
             e["B"] = 6
-            e["M"] = 3
+    ok, gates, *_ = only(ev)
+    eq(gates[4][1], False, gates[4][2])
+
+
+@case("the early path is accepted when the logged flag has bit 2 and B is the bare cost")
+def t17b():
+    ev = good_rows()
+    for e in ev:
+        if e["tag"] == "FLAG" and e["id"] == 193:
+            e["f30"] = 0x45
+        elif e["tag"] == "PRICE_C" and e["id"] == 193:
+            e["ret"] = 0x4194B3          # only a display call reached the markup path
+        elif e["tag"] == "PRICE_M" and e["id"] == 193:
+            e["Mpre"] = 0
+        elif e["tag"] == "FACTORB" and e["id"] == 193:
+            e["B"] = 2
+        elif e["tag"] in ("POSAFF", "PAYA") and e.get("ebx") == 193:
+            e["edi"] = 18
+    ok, gates, *_ = only(ev)
+    eq(gates[4][1], True, gates[4][2])
+    eq(gates[6][1], True, "194 still differs from price_of, so the economic gate holds")
+
+
+@case("gate 5 fails when the early path's B is not the bare cost the flag implies")
+def t17c():
+    ev = good_rows()
+    for e in ev:
+        if e["tag"] == "FLAG" and e["id"] == 193:
+            e["f30"] = 0x45
+        elif e["tag"] == "PRICE_C" and e["id"] == 193:
+            e["ret"] = 0x4194B3
+        elif e["tag"] == "FACTORB" and e["id"] == 193:
+            e["B"] = 3
     ok, gates, *_ = only(ev)
     eq(gates[4][1], False, gates[4][2])
 
@@ -342,14 +376,15 @@ def t21():
 @case("gate 10 fails on an unparsed log line")
 def t22():
     A, si, cands = build(image(**TWO_IDS))
-    need = required_for(TWO_IDS)
     ok2, gates2, *_ = S.score(state(2, 120, 60), state(192, 21, 62), good_rows(), A, si, cands,
-                              need, bad_lines=("weird",))
+                              storages_for(TWO_IDS), bad_lines=("weird",))
     eq(gates2[9][1], False, gates2[9][2])
-    ok3, gates3, *_ = S.score(state(2, 120, 60), state(192, 21, 62), good_rows(), A, si, cands,
-                              need + 1000)
-    eq(gates3[0][1], False, "storage below what the queue must pay through must FAIL the arm")
-    eq(gates3[0][1], False)
+    ok3, gates3, *_ = S.score(state(2, 12, 60), state(192, 21, 62), good_rows(), A, si, cands,
+                              [12, 12, 12])
+    eq(gates3[0][1], False, "a storage read-back under the largest candidate edi must FAIL arm")
+    ok4, gates4, *_ = S.score(state(2, 120, 60), state(192, 21, 62), good_rows(), A, si, cands,
+                              storages_for(TWO_IDS, n=0) + [5])
+    eq(gates4[0][1], False, "a boundary re-poke that read back short must FAIL arm too")
 
 
 @case("markup zeroed by the base mask test is reported, not failed")
@@ -370,6 +405,25 @@ def t23():
     eq(any("base mask test" in f for f in find), True, "the mask zeroing must be reported")
     eq(gates[6][1], True, gates[6][2])
     eq(gates[2][1], True, "A*B == edi must still hold at 18")
+
+
+@case("gate 1 fails when any storage read-back is short of the largest candidate edi")
+def t24():
+    ok, gates, *_ = run(storages=[120, 20])
+    eq(gates[0][1], False, gates[0][2])
+
+
+@case("gate 1 fails when a type[+0x30] poke did not read back with bit 2 clear")
+def t26():
+    ok, gates, *_ = run(flag_reads=[(193, 0x45, 0x45), (194, 0x45, 0x41)])
+    eq(gates[0][1], False, gates[0][2])
+
+
+@case("gate 3 counts only the ARMED ids: measuring the head plus one armed id is not two")
+def t25():
+    ev = [e for e in good_rows() if not (e.get("id") == 193 or e.get("ebx") == 193)]
+    ok, gates, *_ = run(ev=ev)
+    eq(gates[2][1], False, gates[2][2])
 
 
 def main():
