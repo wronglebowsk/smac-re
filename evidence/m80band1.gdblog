@@ -1,0 +1,50 @@
+[New LWP 4073669]
+[New LWP 4073668]
+[New LWP 4073667]
+[New LWP 4073666]
+[New LWP 4073665]
+[New LWP 4073664]
+[New LWP 4073663]
+[New LWP 4073662]
+[New LWP 4073661]
+[New LWP 4073660]
+[New LWP 4073659]
+[New LWP 4073658]
+[New LWP 4073657]
+[New LWP 4073656]
+[New LWP 4073655]
+[New LWP 4073654]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf1d2732c in __kernel_vsyscall ()
+Breakpoint 1 at 0x573a90
+Breakpoint 2 at 0x5741fe
+Breakpoint 3 at 0x5741f0
+Breakpoint 4 at 0x572800
+Breakpoint 5 at 0x5729d5
+ARMED fac3_head=0 pend=3
+BOUNDARY 0 rc=0 hi=256,320,321,322,323,384,385,386,448,449
+F573IN ret=0x5749a7 fac=5 p2=0
+F573IN ret=0x5749a7 fac=5 p2=0
+CLR4 fac=5 ebxidx=324 slotidx=324 pre=0xc1
+SW573 fac=5 idx=324 ebx=16848
+SWENTER owner=5 tid=324 mode=0 ret=0x574203
+F573IN ret=0x5749a7 fac=5 p2=1
+CLR4 fac=5 ebxidx=325 slotidx=325 pre=0xc1
+SW573 fac=5 idx=325 ebx=16900
+SWENTER owner=5 tid=325 mode=0 ret=0x574203
+F573IN ret=0x5749a7 fac=5 p2=0
+F573IN ret=0x5749a7 fac=5 p2=1
+F573IN ret=0x574da9 fac=5 p2=0
+F573IN ret=0x575424 fac=5 p2=0
+F573IN ret=0x575c9b fac=5 p2=1
+F573IN ret=0x575fb3 fac=5 p2=1
+BOUNDARY 1 rc=0 hi=256,320,321,322,323,324,325,384,385,386,448,449
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf1d2732c in __kernel_vsyscall ()
+[Inferior 1 (process 4073650) detached]
