@@ -163,6 +163,10 @@ Systematic mismatch: try the raw post-state variant before widening the model.
   you hunting a writer that does not exist. Same for a pipeline accumulator that never changes:
   histogram the gating fields of the input records first — a filter no record satisfies makes the
   accumulator structurally zero (silent sweeps and watchpoints), not a hidden writer.
+- **The unit TYPE table is `0x98ad88 + tid*52`** (stride `0x34`, 256 records); its flags WORD sits at
+  `+0x30`, i.e. byte `tid*0x34 + 0x98adb8`, and bit 2 there is the production-markup switch. Read it in
+  gdb as `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` when `$ebx` holds the tid — `*4` lands in a
+  neighbouring record and prints 0, which is misrecorded as "flag clear".
 - Commands + patterns: `references/static-store-census.md`.
 - Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
 - What the install ships (rules text, map format, graphics containers) and what to parse vs

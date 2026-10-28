@@ -1,1 +1,1 @@
-M74 | m74flag3 run IN FLIGHT: 4 hw watchpoints on flag words 193/194/65/195, 3 boundaries, queue [2,194] pending 1 storage poked 200 | merged? NO | next: read evidence/m74flag3.gdblog, map pcs back 16B, then closing order
+M74 | m74flag3 PASS (setter 0x4efe60 production; sweep 0x5729d5; clear 0x4ef398) | merged? NO YET - closing docs in flight | next: notes -> NAMED -> NEXT_PROMPT -> skill rsync -> commit -> gate -> submit -> gh pr checks -> merge

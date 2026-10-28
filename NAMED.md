@@ -700,7 +700,7 @@ CONFLICT: `price_of` (the skill's M58 model) is `A x type_cost(+41)`; for a desi
 for head 2 and for any head whose bit 2 is set, which is why M72 measured 27 and this run 18 for
 the same id.
 
-## M74 block (branch milestone/m74, NO PR — acceptance FAILED twice)
+## M74 block (RESOLVED session 116, PR — see M74-RESOLVED block below; this block = the s115 state)
 
 `type[+0x30] & 4` is written by ELEVEN absolute-address sites in four functions
 (`0x4eed18` in FUN_004eec30 guarded by `0x3f < param_2`; `0x573fed/0x574107/0x574117` in
@@ -710,7 +710,25 @@ MEASURED, tag `m74flag2` (`evidence/m74flag2.gdblog`): at `0x4efa5e` head 194 re
 edi=45`, then in the same window `f30=0x45 edi=27` — the markup ON->OFF flip with the flag read
 at `tid*0x34 + 0x98adb8`. Census `193/194: 0x41 -> 0x05`; `65/195` also gained bit 2 (confounded);
 `pending 0 -> 0`, storage `200 -> 200` — no completion, so `when` is unproven. ZERO of the 11
-writer breakpoints fired: the leading candidate is now the whole-word sweep store
+writer breakpoints fired: the leading candidate was the whole-word sweep store
 `0x597487 mov WORD PTR [eax+0x30],dx` in FUN_00596850 (stride-52 copy of a source table into
 `+0x23..+0x30`, called only from FUN_00597ce0/FUN_00597ee0). Instrument
-`scripts/m74_flag_watch.py`, tests 37/37.
+`scripts/m74_flag_watch.py`, tests 37/37. RETRACTED s116: that store writes the `0x93327a`
+table from a stride-48 file buffer, save/load codec only — not the live `0x98ad88` table.
+
+## M74-RESOLVED block (session 116, ACCEPTANCE PASS tag `m74flag3`)
+
+WHO sets `type[+0x30] & 4`, WHEN: at PRODUCTION, inside FUN_004ef6d0 between the gate
+`0x4efa5e` and pay `0x4efed8`. `0x4efe60 mov WORD PTR [esi+0x98adb8],ax` (after `cmp ebx,0x40`
+skips non-designed; `mov ax,[rec]; or al,4; mov [rec],ax`) sets bit 2 on the produced designed
+record; `[ebp-0x20]=(~old)&4`; already-marked records jump straight to pay (`je 0x4efed8`).
+First production also calls FUN_00572800(tid) at `0x4efe7e`: stride-0x34 sweep, entry guard
+`tid>=0x40 && !(flag&4)`, ORs `0x104` (bit 2 + temp marker bit 8) onto valid unmarked records
+passing validator `0x5a6cd0` whose `+0x24/+0x25/+0x26` match the produced unit's (rank tables
+`DAT_0092b950`/`0x92fd18`); FUN_004ef380 `0x4ef398 and BYTE [ebx+0x98adb9],0xfe` clears the
+marker. LIVE (`evidence/m74flag3.gdblog`, 4 hw watchpoints on flag words): 194 `0x41->0x45` pc
+`0x4efe67` at its production (r52/53, after head 2 completed r51 and 194 popped); 193
+`0x41->0x145->0x45` pcs `0x5729de`/`0x4ef39f`; 65/195 unchanged. Markup story: first production
+charges M73's markup (bit clear at gate) then sets the bit; siblings pre-marked by the sweep skip
+it from their first production. Setter evaded both grep shapes: read-modify-write through a
+COPIED register (plain MOV with `0x98adb8` addend). Instrument `scripts/m74_flag_hw.py`.

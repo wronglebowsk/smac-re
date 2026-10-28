@@ -425,9 +425,17 @@ cost; `imul edi,eax` is the price the `0x4efa5e` gate compares.
   `C = 0x595ad0(type)` (measured `C = 3` for head 194 with `P = 50` -> markup 2 -> B 5 ->
   `edi = 9*5 = 45` while `price_of` says 27). Markup is forced 0 when
   `[0x927a98 + 1436*cat] & 0x200` or `[0x94d438 + 8380*cat] <= 1`, and is zeroed again by the
-  base-mask test at `0x5aca6b-0x5aca81`. `type[+0x30]` bit 2 is STATE: the unit-transformation
-  writers `0x4eec30` and `0x4d20f0` set it, and it flipped `0x41 -> 0x45` mid-window in a measured
-  run, so the same id can price 27 in one instance and 18 in the next. `price_of` is therefore NOT
+  base-mask test at `0x5aca6b-0x5aca81`. `type[+0x30]` bit 2 is STATE: **M74 SETTLED WHO/WHEN
+  (`evidence/m74flag3.gdblog`, 4 hw watchpoints on the flag words): PRODUCTION sets it** —
+  `0x4efe60` in FUN_004ef6d0 (`mov ax,[rec]; or al,4; mov [rec],ax`, designed-only via
+  `cmp ebx,0x40`) marks the produced record between the gate `0x4efa5e` and pay `0x4efed8`, and
+  FIRST production calls FUN_00572800(tid) at `0x4efe7e`: its stride-0x34 sweep ORs `0x104`
+  (bit 2 + temp marker bit 8) onto valid unmarked records passing validator `0x5a6cd0` whose
+  `+0x24/+0x25/+0x26` match the produced unit's; FUN_004ef380 `0x4ef398 and BYTE[..+1],0xfe`
+  clears the marker. The eleven transformation-path writers never fire at production; `0x597487`
+  is a save/load codec writing the `0x93327a` table, not a live setter. So the first production
+  of a designed type pays markup and later visits skip it; sibling records are pre-marked by the
+  sweep, so the same id can price 27 in one instance and 18 in the next. `price_of` is therefore NOT
   what the `0x4efa5e` gate compares for a designed head.
 - Live University-faction game: mask 0x08 (owner 3 in), a294 10, **ada8 1**, gov 0, type 2
   `Scout Patrol` `+41 = 1` -> **price 9**. Sessions 56/64 measured ada8 = 2 -> price 10 and M52b

@@ -10,7 +10,12 @@ cd ~/reverse/smac
 objdump -d -M intel --section=.text programs/terran.exe > evidence/<id>_text_disasm.txt   # ~40 MB
 ```
 
-- Printed addresses are **VAs** (`.text` file offset = VA − 0x400000, identity mapping).
+- Printed addresses are **VAs** (`.text` file offset = VA − 0x400000, identity mapping), printed
+  WITHOUT the common leading zeros (`4eec30:`, not `004eec30:`).
+- **Parsing the dump in Python:** many saved copies carry the opcode/mnemonic separator as the two
+  literal characters `\t`, not a tab. Normalize first (`line.replace("\\t", "  ")`) and anchor instruction
+  lines with `^\s+([0-9a-f]{6,8}):` — a window printer whose regex demands a real tab after the colon
+  returns an EMPTY function body and looks like "this address is not a function start".
 - Grep it, never paste it. Extract the windows you cite into small files, then **delete the 40 MB dump**
   — it is regenerable and the size gate does not want it tracked.
 - Map an address to its function by bisecting `ghidra_out/index.csv` (addr, name, size). Ghidra's
@@ -25,6 +30,10 @@ grep -c 'BYTE PTR \[.*98adb1\],al' evidence/<id>_refs.txt                # the s
 
 Report "30 references / 1 store", not "the corpus shows one writer". A Ghidra store census is a
 *rendering* census: it misses stores Ghidra cannot render as a `DAT_` write.
+- **Grep the disassembly case-sensitively.** objdump prints `BYTE PTR` / `WORD PTR` / `DWORD PTR` in
+  UPPERCASE, so a lowercase `ptr [` pattern reports **zero** stores for a field that has 101 and the
+  empty result reads like proof of no writer. Before trusting any census regex, run it once against a
+  line you already know exists and require a match.
 
 ## 3. Store shapes to grep (offsets alone miss three of them)
 
@@ -45,6 +54,12 @@ the loop's stride (`add esi,0x34`) and the initial `mov esi, <base+50>`.
   hit by width and by whether the immediate carries the bit. A `BYTE PTR`-filtered list reports two writers
   where the image holds eleven, and a "who sets this bit" answer built on it is incomplete before the run
   starts.
+- **Enumerate BOTH print forms before calling a writer set complete.** A store that reaches the field
+  through a record POINTER (`mov WORD PTR [eax+0x30],dx` with `add eax,0x34` in the loop) never prints
+  the table's absolute address, so a grep for `0x98adb8` misses it while a grep for the displacement
+  `+0x30]` finds it. Run both greps, then filter the displacement hits down to real stores: exclude
+  `cmp`/`test`/`lea`, and remember most `+0x30]` hits in a function prologue region are stack locals at
+  `-0x30`.
 
 ## 4. Jump tables: raw bytes, then bodies, before contradicting Ghidra
 
@@ -166,7 +181,10 @@ census is step one and the proof is a replay against live memory.
    match, and the run then reports "no writer fired" while the census shows the field flipped. Build the
    condition and the printed tid from the SAME arithmetic (`$reg == tid*13` paired with `$reg / 13`;
    `$reg == 0x98adb8 + tid*52` paired with `($reg - 0x98adb8) / 52`), and print the field's current byte in
-   the hit line so before-and-after arrive in one row.** The condition is literally "the target address is record+field", so it cannot mis-attribute
+   the hit line so before-and-after arrive in one row.** Where the site's register holds the **bare index**
+   (a visit-time check, e.g. the queue head at the affordability gate), reach the field by multiplying by
+   the stride — `$ebx * 0x34 + 0x98adb8`; a `*4` there reads a neighbouring record and prints 0, which is
+   misread as "the flag is clear". The condition is literally "the target address is record+field", so it cannot mis-attribute
    the same offset in another struct, and it fires only when the store executes, so guarded writes are
    counted as executed-or-not rather than guessed. Instrument the whole reachable list — a breakpoint
    whose condition never matches costs nothing measurable, and the completeness claim needs the breadth.
@@ -196,4 +214,13 @@ census is step one and the proof is a replay against live memory.
    the suspect, not the game**: check in order — the condition's address arithmetic (point 3: a scaled
    register compared to a bare index never fires; a whole-width store filtered out of the census never got
    a breakpoint), a dropped log line (point 6), the subject having moved (point 7), the anchor taken after the
-   watch ended (point 5) — and only then report an uninstrumented writer.
+   watch ended (point 5) — and only then report an uninstrumented writer. Arm at least one **control
+   breakpoint whose hit is guaranteed** in the window (the visit gate conditioned on the armed base) and
+   require its rows in the log: zero writer rows together with zero control rows is an instrument verdict,
+   never a finding about the game.
+9. **Prove the event you are watching for was possible BEFORE attaching.** For a WHEN question, read the
+   precondition back from memory first: the armed id is the queue head, `pending >= 1`, and storage exceeds
+   the largest value the gate can demand. Re-read the same fields after the run. A window whose read-backs
+   show the event never happened (`pending 0 -> 0`, head unchanged, storage unchanged) answers nothing —
+   report an unusable window and re-arm (enqueue, then read `pending` back), never "no writer fired during a
+   completion". Read a stale queue tail as nothing queued: `pending` is the only proof an id is in the queue.

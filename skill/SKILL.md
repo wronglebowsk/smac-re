@@ -625,28 +625,23 @@ against the bare index never fires (`references/static-store-census.md` §9.3). 
   the poked value: `queue[2]` for a cursor poked to 2 while the sort rule predicted slot 1 turned a
   confounded click observation into a controlled experiment (and refuse the shape when the poked value
   and the rival prediction agree). Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
-  and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). The
+  and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
+otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
+read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
+armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
+never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
+The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is
-  `references/static-store-census.md` §9.
+  `references/static-store-census.md` §9; §1–§3 carry the traps that make the STATIC half of it complete —
+objdump prints `PTR` UPPERCASE (a lowercase grep reports zero stores), a store through a record pointer
+never prints the table's base address (enumerate the absolute form AND the `+disp]` form before naming a
+setter set), and the operand width decides whether a bit filter is admissible at all. **Read §9 before
+hand-writing a new watcher script** — its condition arithmetic, log format and scorer gates are already
+solved, and a from-scratch instrument re-derives them wrong.
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 
 ## Still open (leads) — `references/open-leads.md`
 The per-milestone lead list lives in `references/open-leads.md`. `NEXT_PROMPT.md` holds the CURRENT pick
 and the authoritative open items; if the two disagree, `NEXT_PROMPT.md` wins.
-
-
-## Type-record flag addressing (M74, learned the hard way)
-
-- The type record is `0x98ad88 + tid*52`; its flags WORD is `+0x30`, i.e. `tid*0x34 + 0x98adb8`.
-  In gdb, `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` is the flag byte when `$ebx` is the tid —
-  `$ebx * 4 + 0x98adb8` reads a different record and prints 0.
-- objdump addressing tells you what a register holds: `[reg*4+0x98adb8]` means the register holds
-  `tid*13` (52/4) and `[reg+0x98adb8]` means it holds the record BYTE address `tid*52`. A gdb
-  conditional breakpoint that tests such a register against the bare tid NEVER fires — that is how
-  M74's first run reported "no writer fired" while two records visibly gained the bit.
-- objdump prints `DWORD PTR` / `WORD PTR`, uppercase. A lowercase `ptr [` grep reports zero stores.
-- The flags word is also written through a record POINTER (`mov WORD PTR [eax+0x30],dx`), so an
-  absolute-address grep for `0x98adb8` alone does NOT enumerate the writer set: grep both the
-  absolute form and the `+0x30]` displacement form (case-sensitively) before claiming it is closed.
