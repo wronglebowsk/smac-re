@@ -163,10 +163,25 @@ Systematic mismatch: try the raw post-state variant before widening the model.
   you hunting a writer that does not exist. Same for a pipeline accumulator that never changes:
   histogram the gating fields of the input records first — a filter no record satisfies makes the
   accumulator structurally zero (silent sweeps and watchpoints), not a hidden writer.
-- **The unit TYPE table is `0x98ad88 + tid*52`** (stride `0x34`, 256 records); its flags WORD sits at
-  `+0x30`, i.e. byte `tid*0x34 + 0x98adb8`, and bit 2 there is the production-markup switch. Read it in
-  gdb as `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` when `$ebx` holds the tid — `*4` lands in a
-  neighbouring record and prints 0, which is misrecorded as "flag clear".
+- **The unit TYPE table is `0x98ad88 + tid*52`** (stride `0x34`) and it holds **512 records = 8 FACTION
+  bands of 64**: `tid = faction*64 + slot`, a faction's designed types fill `band_start..` contiguously
+  and every slot past its created count reads all-zero (band 0 = 0..13 shipped types, band 3 = 192..
+  ours). A scan/production helper walks `counter < 0x40 ? counter : (counter & 0x3f) + faction*64` over
+  0..0x80 and REJECTS a record unless `tid/64` is 0 (shared) or the faction it is processing — so indices
+  above 255 are other factions' records, not anomalies, and a census capped at 255 never saw them. The
+  sweep `FUN_00572800` takes `(faction, tid, mode)` and its band walk bases on `param_1*0xd00` =
+  `faction*64*52`; at `0x5741fe` / `0x574203` `esi` is the **FACTION** (arg 1) while the tid is the second
+  argument, so a value printed from `esi` there is not a record index. The flags WORD sits at `+0x30`,
+  i.e. byte `tid*0x34 + 0x98adb8`, and bit 2 there is the production-markup switch.
+   WHO WRITES IT ON A CREATED RECORD (M81, 4 hw watchpoints, tag `m81write4`): the sweep itself, in the
+   visit BEFORE its own 32 B copy at `0x5741e1` — `0x5740f7 call 0x595b10` -> `0x595f82 mov WORD PTR
+   [esi+0x98adb8],0x1` (reset to bit 0; the same function also holds `0x105` at 0x595f91 and `0x115` at
+   0x595f9c, so the 0x100 marker is an init-time possibility), then `0x574125 or BYTE PTR
+   [ebx+0x98adb8],0x40` (bit 6, iff the local `[ebp-0xc]` != 0) and `0x57412c or ...,0x80` (bit 7,
+   unconditional on that path); bit 2's ORs are 0x574107 (`eax == -2`) and 0x574117 (`DWORD [0x985aec]
+   > 1`). Bits 6/7 semantics are still unexplained. Read it in gdb as
+  `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` when `$ebx` holds the tid — `*4` lands in a neighbouring
+  record and prints 0, which is misrecorded as "flag clear".
 - Commands + patterns: `references/static-store-census.md`.
 - Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
 - What the install ships (rules text, map format, graphics containers) and what to parse vs

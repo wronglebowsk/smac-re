@@ -224,3 +224,10 @@ census is step one and the proof is a replay against live memory.
    show the event never happened (`pending 0 -> 0`, head unchanged, storage unchanged) answers nothing —
    report an unusable window and re-arm (enqueue, then read `pending` back), never "no writer fired during a
    completion". Read a stale queue tail as nothing queued: `pending` is the only proof an id is in the queue.
+10. **A gdb command-list printf takes expressions as ARGUMENTS, never inside the format string.**
+    `idx=($ebx/52)` typed into the string prints ITSELF, so a log parser looking for `idx=<digits>`
+    drops every row and reports zero events on a window that has them. `%.20s` on an inferior pointer
+    makes gdb error, abort the batch script and DETACH mid-window. In a two-branch `re` alternation
+    `group(1)` is the WHOLE match — branch on a group from inside the taken branch, or a good log
+    crashes the parser. Never judge watchpoint arming from one early read of the gdb log: poll for the
+    ARMED line (a 3 s single read failed a run that had armed all four watchpoints).

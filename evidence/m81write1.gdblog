@@ -1,0 +1,33 @@
+[New LWP 4105754]
+[New LWP 4105753]
+[New LWP 4105752]
+[New LWP 4105751]
+[New LWP 4105750]
+[New LWP 4105749]
+[New LWP 4105748]
+[New LWP 4105747]
+[New LWP 4105746]
+[New LWP 4105745]
+[New LWP 4105744]
+[New LWP 4105743]
+[New LWP 4105742]
+[New LWP 4105741]
+[New LWP 4105740]
+[New LWP 4105739]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xea66c32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(short *)0x98eff0
+Hardware watchpoint 2: *(short *)0x98f024
+Breakpoint 3 at 0x5741e1
+Breakpoint 4 at 0x5741f0
+Breakpoint 5 at 0x5741fe
+ARMED 2 hw watchpoints at 0x98eff0 0x98f024
+TAG0 idx=($ebx/52) esi=5 ebx=16848 f30=0xc1 name=(null)
+TAG1 idx=($ebx/52) esi=5 ebx=16848 f30=0xc1 name=/home/n100/reverse/smac/scratch/m81write1.gdb:35: Error in sourced command file:
+Cannot access memory at address 0x49
+[Inferior 1 (process 4105736) detached]
