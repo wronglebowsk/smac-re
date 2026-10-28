@@ -1,1 +1,1 @@
-M85 | m85cens5 RUNNING (census w/ m55_boundary driver after fresh save load; box state was the blocker) | merged? no (#90) | next: read scratch/m85cens5.out VERDICT; if PASS close M85 per CLOSING ORDER
+M87 | ARMING m87trig1 (scripts/m87_aaa20_trigger.py: 10 print-only bps on FUN_005aaa20 legs + FUN_005a7970; driver m55_boundary looped up to 4 boundaries; predictions P1 first AAA on boundary 1 after fresh load, P2 save==0 -> LIVE==AAA/NET==0, P3 kind not in table shorts -> LOOP==0) | merged? no | next: relaunch box then run; read VERDICT; PASS -> close M87 per CLOSING ORDER
