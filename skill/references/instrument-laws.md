@@ -60,3 +60,37 @@ watchpoint on the address: one poke plus one boundary named the writer exactly o
   different records per boundary (4, 6, 1 / 3 / none / 4 of them). Gate on the invariant the game
   actually asserts (aaa20's kind == the slot value it read, 8/8 events) and treat "consumer did not run
   in this window" as an uninformative window, not a failure.
+
+## Threading, pairing, and naming a domain (census work on a value, not a store)
+
+- **Thread a datum between breakpoints with gdb convenience variables, and clear it at the entry stop** so
+  a stale value cannot impersonate a match: `set $ret = *(int *)$esp` at the callee's entry,
+  `set $chr = -999` there, then print `$chr` at the store site deeper in the SAME call. A gate that
+  compares a threaded value is only as strong as the thread: without the sentinel, the PREVIOUS call's
+  value passes the gate.
+- **Pair a look-back or look-ahead by the event's index in the WHOLE parsed list**, never by its index
+  inside a filtered sub-list: `for i, e in enumerate(st): ... events[:i]` slices at the wrong offsets, so
+  the look-back silently returns None and a gate FAILs on the instrument while the log already contains
+  the agreement. Build `pos = {id(e): i for i, e in enumerate(events)}` once and slice with it. Check the
+  informational columns of the same loop too — a wrong slice there is invisible until a later read trusts it.
+- **At a post-`call` landing site, cdecl arguments sit at `[esp] .. [esp+0xc]`** when the caller pops them
+  (`add esp,0x10` a few instructions later) — ONE SLOT LOWER than at the callee's entry. Printing
+  `esp+4 .. esp+0x10` labels every argument one position high, and the extra slot is the callee's own
+  pushed register, which often equals arg1 and reads like confirmation.
+- **A big local frame is not a candidate array.** `sub esp,0xNNN` plus `mov eax,fs:0x0` /
+  `mov fs:0x0,esp` plus a `[ebp-0x4]` state variable rewritten (`mov BYTE PTR [ebp-0x4],0x3`) before each
+  call of a small destructor-like function is an MSVC SEH frame with C++ locals, not a scan buffer.
+  **Read a wrapper's TAIL to learn what it returns:** `mov esi,eax` after the callee's call and
+  `mov eax,esi` before the `ret` is a verbatim pass-through, so the semantics live in the callee and the
+  wrapper is not the place to instrument.
+- **Naming an unknown value's domain, three cheap steps:** (1) a caller's `cmp reg, 0xNN` against the value
+  is usually the table's BOUND (`cmp ecx,0x59` ↔ 89 entries) — take the stride from the loop's own index
+  arithmetic (`[reg*0xb]` = 11 dwords = 44 B); (2) dump one record RAW from `/proc` for several indices the
+  census already produced and look for a fixed-offset name field (8 ASCII bytes at +16); (3) corroborate
+  with a relationship the domain must satisfy (entry 10 lists prereqs 30 and 7 — a real dependency pair).
+  A finding that stops at "an index into some table" is not finished: the NAME is what the next milestone
+  can reason with.
+- **Decode semantics without touching the box:** `grep -m1 0x<addr> ghidra_out/index.csv` gives size,
+  caller count and shard; `grep -n 'FUN_<addr> @' ghidra_out/shard_*.c` gives the pseudocode start; then
+  `sed -n 'A,Bp'` a 40-line window, or `awk 'NR>=A && NR<=B' shard_NNN.c | grep -n -E 'param_|return|"'`
+  to locate every argument use and every return in one call. A 27 KB pseudocode body is never read whole.

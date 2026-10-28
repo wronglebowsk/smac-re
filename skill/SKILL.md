@@ -56,7 +56,8 @@ session entry, rather than discovering the missing instrument halfway through th
 `milestone.py start <ID>` refuses a dirty worktree: stash the `SESSION_CURSOR.md` write, start, then pop
 it onto the new branch — never commit a cursor write to `main` just to get the tree clean. That commit is also what breaks a
 landing — a squash merge plus any local `main` commit makes `merge <n>` abort its ff-only pull AFTER
-GitHub has already merged (recovery in `references/git-workflow.md`). When the milestone you are re-running
+GitHub has already merged (recovery in `references/git-workflow.md`) — and `main` cannot be pushed at all
+(the pre-push hook refuses), so a post-merge cursor/footing tweak rides its own branch + PR. When the milestone you are re-running
 already has a branch, `start <ID>` refuses and leaves you on `main`, where the failed attempt's scripts
 are NOT in the tree: check that branch out and `ls scripts/<id>*` before concluding the instrument is
 missing.
@@ -423,7 +424,10 @@ Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zg
 p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.
 **Parse an objdump line by its TAB fields, never by the text after the colon:** the machine-code bytes
 sit between the address and the mnemonic, so `line.split(":")[1].startswith("mov")` matches NOTHING and a
-whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. Import
+whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. An
+address-keyed scan must require the shape `^[0-9a-f]{6,8}:\t` before `int(x, 16)`: the section header
+line `00401000 <.text>:` also starts with hex and raises `ValueError` mid-parse, killing the census
+before it arms. Import
 `scratch/m71/dis.py` under a non-clashing module name (`importlib.util.spec_from_file_location`), because
 stdlib `dis` shadows the plain `import dis`.
 
@@ -757,7 +761,8 @@ count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" 
 without touching the box. **To name who writes a field, use a hardware watchpoint on the address PLUS a
 control watchpoint on an address you know changes** — a mnemonic grep misses stores made through
 pointer-form `lea`. `references/instrument-laws.md` carries the header order, the containment recipe, the
-DictReader trap and the watchpoint laws (s139).
+DictReader trap, the watchpoint laws and the census laws for a VALUE (threading it across stops, pairing
+events by whole-list index, reading a wrapper's tail, naming the domain it indexes).
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr

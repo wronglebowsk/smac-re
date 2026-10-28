@@ -326,6 +326,29 @@ def main():
             cur = None
     st = by("ST")
     rb = {e["addr"]: e["mem"] for e in by("RB")}
+    # FUN_005a6d40(x, d) = d if x is not 0..88 else max(5a6d40(p1, d+1), 5a6d40(p2, d+1)).
+    # FUN_005aa030 0x5aa1b5-0x5aa1f0 (reached because 0x985ac4 bit 0x200 is live-set and the faction is
+    # AI) replaces the value the DRAW is taken modulo with: score = (score << 8) / max(5a6d40(p1,1),
+    # 5a6d40(p2,1)), signed idiv (truncates toward 0). level() below is that max.
+    with open("/proc/%d/mem" % pid, "rb", 0) as f:
+        f.seek(TECHBASE)
+        pre = f.read(44 * 89)
+    P1 = [int.from_bytes(pre[i * 44:i * 44 + 4], "little", signed=True) for i in range(TECHN)]
+    P2 = [int.from_bytes(pre[i * 44 + 4:i * 44 + 8], "little", signed=True) for i in range(TECHN)]
+
+    def depth(x, d):
+        if not (0 <= x < TECHN) or d > 200:
+            return d
+        return max(depth(P1[x], d + 1), depth(P2[x], d + 1))
+
+    def level(i):
+        return max(depth(P1[i], 1), depth(P2[i], 1))
+
+    def scaled(f, i):
+        v, lv = f * 256, level(i)
+        q = abs(v) // lv
+        return -q if v < 0 else q
+
     r_end = mem(pid, ROUND)
     slots_end = [mem(pid, slot_addr(i)) for i in range(8)]
 
@@ -342,6 +365,8 @@ def main():
             c["pred"], c["m"], c["halved"] = p, m, halved
             if p != c["base"]:
                 mism.append((w["fac"], c["idx"], p, c["base"], dict(c)))
+        for c in cands:
+            c["sc"] = scaled(c["final"], c["idx"])
         bases = {c["base"] for c in cands}
         if len(bases) < 2:
             continue
@@ -359,7 +384,11 @@ def main():
         nm = tech_name(pid, w["win"])
         stw = [s for s in st if s.get("fac") == w["fac"] and s["val"] == w["win"]]
         ok5 = bool(stw) and all(rb.get(s["addr"], -2) == s["val"] for s in stw)
-        okdraws = all(0 <= c["draw"] <= c["final"] for c in cands)
+        okdraws = all((0 <= c["draw"] <= c["sc"]) if c["sc"] >= 1 else c["draw"] == 0
+                      for c in cands)
+        print("CAND fac=%d win=%d " % (w["fac"], w["win"]) + " ".join(
+              "%s:b=%d/p=%d/f=%d/s=%d/d=%d" % (c["idx"], c["base"], c["pred"], c["final"], c["sc"],
+                                               c["draw"]) for c in cands), flush=True)
         rec = dict(fac=w["fac"], idx=w["win"], name=nm, mx=mx, wfinal=(winner or {}).get("final"),
                    md=md, first_max=first_max_draw["idx"], n_cand=len(cands), ok5=ok5, okdraws=okdraws,
                    distinct_base=len({c["base"] for c in cands}),
@@ -370,8 +399,6 @@ def main():
         g5 = g5 and ok5
         g6 = g6 and (nm is not None)
     g7 = (len(qual) >= 2 and r_end - r0 >= 2 and any(d["tail"] for d in detail))
-    g1 = after_poke_ok if after_poke_ok is not None else True
-    g1 = (slots0[a.poke_index] != -1) or True
 
     for d in detail:
         print(f"WINDOW fac={d['fac']} win={d['idx']} name={d['name']} max_final={d['mx']} "

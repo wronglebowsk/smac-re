@@ -1,0 +1,89 @@
+[New LWP 262670]
+[New LWP 262669]
+[New LWP 262668]
+[New LWP 262667]
+[New LWP 262666]
+[New LWP 262665]
+[New LWP 262664]
+[New LWP 262662]
+[New LWP 262661]
+[New LWP 262660]
+[New LWP 262659]
+[New LWP 262658]
+[New LWP 262657]
+[New LWP 262656]
+[New LWP 262655]
+[New LWP 262654]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf50f832c in __kernel_vsyscall ()
+ARMED round=80 year=2180 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x51f320
+ENT n=1 fac=5 ret=0x5aaff3 round=80
+CALL n=1 fac=5 round=80
+BASE n=1 idx=4 fac=5 a2=0 base=10 ac4=6670 T0=2 T4=1 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=1 p1=-1 p2=-1 round=80
+SC n=1 fac=5 idx=4 final=11
+DRAW n=1 fac=5 idx=4 draw=2726 best=-999
+BASE n=2 idx=22 fac=5 a2=0 base=26 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=1 p1=1 p2=2 round=80
+SC n=2 fac=5 idx=22 final=29
+DRAW n=2 fac=5 idx=22 draw=1399 best=2726
+BASE n=3 idx=32 fac=5 a2=0 base=24 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=1 p1=2 p2=-1 round=80
+SC n=3 fac=5 idx=32 final=25
+DRAW n=3 fac=5 idx=32 draw=371 best=2726
+BASE n=4 idx=36 fac=5 a2=0 base=15 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=1 p1=5 p2=-1 round=80
+SC n=4 fac=5 idx=36 final=112
+DRAW n=4 fac=5 idx=36 draw=6903 best=2726
+BASE n=5 idx=45 fac=5 a2=0 base=7 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=1 p1=1 p2=-1 round=80
+SC n=5 fac=5 idx=45 final=7
+DRAW n=5 fac=5 idx=45 draw=535 best=6903
+WIN n=1 fac=5 idx=36 round=80
+TECH n=1 idx=36 param1=5 round=80
+ST n=1 addr=0x957ba8 val=36 fac=5 round=80
+RB addr=0x957ba8 mem=36
+CTRL n=1 round=80
+CTRL n=2 round=81
+ENT n=2 fac=4 ret=0x5aaff3 round=82
+CALL n=2 fac=4 round=82
+BASE n=6 idx=8 fac=4 a2=0 base=4 ac4=6670 T0=0 T4=3 T8=0 Tc=4 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=4 p1=3 p2=2 round=82
+SC n=6 fac=4 idx=8 final=4
+DRAW n=6 fac=4 idx=8 draw=444 best=-999
+BASE n=7 idx=13 fac=4 a2=0 base=14 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=4 p1=1 p2=3 round=82
+SC n=7 fac=4 idx=13 final=14
+DRAW n=7 fac=4 idx=13 draw=1556 best=444
+BASE n=8 idx=35 fac=4 a2=0 base=3 ac4=6670 T0=4 T4=0 T8=0 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=4 p1=36 p2=46 round=82
+SC n=8 fac=4 idx=35 final=3
+DRAW n=8 fac=4 idx=35 draw=9 best=1556
+BASE n=9 idx=43 fac=4 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=4 p1=5 p2=4 round=82
+SC n=9 fac=4 idx=43 final=16
+DRAW n=9 fac=4 idx=43 draw=1838 best=1556
+BASE n=10 idx=48 fac=4 a2=0 base=5 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=4 p1=4 p2=0 round=82
+SC n=10 fac=4 idx=48 final=5
+DRAW n=10 fac=4 idx=48 draw=542 best=1838
+BASE n=11 idx=60 fac=4 a2=0 base=19 ac4=6670 T0=4 T4=0 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=4 p1=6 p2=49 round=82
+SC n=11 fac=4 idx=60 final=38
+DRAW n=11 fac=4 idx=60 draw=2 best=1838
+BASE n=12 idx=72 fac=4 a2=0 base=11 ac4=6670 T0=0 T4=4 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=4 p1=3 p2=22 round=82
+SC n=12 fac=4 idx=72 final=12
+DRAW n=12 fac=4 idx=72 draw=632 best=1838
+WIN n=2 fac=4 idx=43 round=82
+TECH n=2 idx=43 param1=4 round=82
+ST n=2 addr=0x955aec val=43 fac=4 round=82
+RB addr=0x955aec mem=43
+CTRL n=3 round=82
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf50f832c in __kernel_vsyscall ()
+[Inferior 1 (process 262651) detached]
