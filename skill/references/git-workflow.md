@@ -59,7 +59,7 @@ push (skill sync, `NAMED.md` rows) `gh pr checks <n>` can still report the earli
 commit.
 
 When a doc is over budget, **delete whole bullets/blocks** (cut from the offending line to the next
-`- ` or `## `) — rewording saves ~0 bytes — and re-measure with `wc -c`, not character count. These docs
+`- ` or `## `) — rewording saves ~0 bytes — and re-measure with `python3 scripts/evidence.py budget` — it counts CHARS, and chars do not equal `wc -c` bytes (a file at 15,988 bytes scored 16,052 chars and failed the gate). These docs
 **wrap mid-clause**, so an `old_string` copied from a rendered view misses the line break and the edit
 fails: do the trim in ONE python pass that either splices whole line ranges (process ranges in
 DESCENDING order so earlier line numbers stay valid) or regex-matches with `\s*\n\s*` wherever a wrap can
@@ -103,6 +103,8 @@ state,mergedAt,mergeCommit`, keep the local tip reachable (`git branch keep/<lab
 scripts/index.py build`). Prevention is the rule that counts: keep `main` free of local commits so the
 pull fast-forwards. Because the squash's parent is the previous `main` tip, ANY local `main` commit
 is guaranteed divergence, not a race.
+
+**A close written but never committed is the next session's first job, not new work.** When `git status` shows a prior session's closing set uncommitted (a new `SESSION_NOTES.md` section, `NAMED.md` rows, a `NEXT_PROMPT.md` edit, an acceptance's `evidence/*.gdblog`), the milestone is DONE — adopt that close: finish the remaining closing steps (sync the skill, commit, `gate --base main`) and do NOT re-run the acceptance: a second invocation of a one-shot live acceptance confounds or supersedes the recorded verdict, and `milestone.py start` refuses the dirty tree anyway. When a sibling session commits the same close WHILE you are editing it (its commit lands between your reads — `git log` timestamps move mid-turn, the write tool names the sibling), do not re-apply your edits: `git diff HEAD` and commit only the residual delta on top, and never duplicate the sibling's `submit` — one submit per milestone; verify with `gh pr view <n> --json state,headRefOid` before opening another PR.
 
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never

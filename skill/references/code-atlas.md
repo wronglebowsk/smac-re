@@ -49,7 +49,11 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
     **Coverage-check every dump**: instructions average 3.8 B here, so `x/2600i` silently stopped 2.4 KB
     short of a 12,298-byte function and M53a drew a WRONG conclusion ("no +0x50 writer in the pipeline")
     from the truncated window — compute the count from `index.csv` size ÷ 3.8 and confirm the last address
-    printed equals the next function's start.
+    printed equals the next function's start. The same check applies to every WINDOWED reader over a
+    saved dump — `scratch/m71/dis.py LO HI` caps its output (400 lines) and stops mid-range with no
+    warning, so a grep of a wider range reports "no call site / no writer here" when the sites sit past
+    the cut. Require the window's LAST printed address to reach the range end, and re-grep the remainder
+    in sub-windows before writing any absence claim.
 ### Store census, table reads and model rewrites — what misleads
 
 - **Grep store SHAPES on the linear disassembly, not offsets**: literal `&DAT_… =`, indexed stores,
@@ -80,6 +84,18 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   `0x406720` / `0x406060` / `0x5f6de9` is a scope-exit/destructor block, not game logic. Real branches
   jump OVER these blocks, so an address-ordered read puts the logic in the wrong order; skip them, but
   log where each one jumps, because many bodies funnel every early return to one shared cleanup label.
+- **Pseudocode line adjacency is not control flow.** Ghidra merges one variable name across branches, so
+  the assignment that feeds a test can sit hundreds of instructions away, in another basic block; reading
+  the two adjacent lines as producer-and-test names the wrong producer (and a value read as "the queue
+  head" can be a callee's return). Locate the producer in the disassembly: enumerate EVERY write to that
+  stack slot (`[ebp-0xNN]`) across the whole function range **in sub-windows** (a window printer caps its
+  output), then read the branch that reaches the test. Two corpus handles settle ownership in one command:
+  the function owning a pseudocode line — `awk 'NR<=LINE && /^\/\/ ====/ {last=NR": "$0} NR==LINE {print last; exit}' ghidra_out/shard_NNN.c`
+  — and a body's line range — `grep -n '^// ====' ghidra_out/shard_NNN.c | awk -F: '$1>N' | head -1`.
+- **A sentinel appears in BOTH signed print forms.** `cmp reg,0xffffd8f1` and `cmp reg,0x270f` are the
+  same constant (−9999 / +9999): grep the negative AND the positive immediate before concluding a value
+  has one consumer, or the branch that acts on the sentinel — usually the one you are hunting — is missed
+  while its error path is found.
 - A single-writer claim needs the census printed both ways: total references **and** the store count
   (`grep <hex-addr> <dump> | grep -c ',al'`), not "the corpus shows one writer".
 - **Census a DAT's stores in EVERY objdump print form.** Accumulator-form stores print
