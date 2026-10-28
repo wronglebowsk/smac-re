@@ -49,7 +49,11 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
     **Coverage-check every dump**: instructions average 3.8 B here, so `x/2600i` silently stopped 2.4 KB
     short of a 12,298-byte function and M53a drew a WRONG conclusion ("no +0x50 writer in the pipeline")
     from the truncated window — compute the count from `index.csv` size ÷ 3.8 and confirm the last address
-    printed equals the next function's start.
+    printed equals the next function's start. The same check applies to every WINDOWED reader over a
+    saved dump — `scratch/m71/dis.py LO HI` caps its output (400 lines) and stops mid-range with no
+    warning, so a grep of a wider range reports "no call site / no writer here" when the sites sit past
+    the cut. Require the window's LAST printed address to reach the range end, and re-grep the remainder
+    in sub-windows before writing any absence claim.
 ### Store census, table reads and model rewrites — what misleads
 
 - **Grep store SHAPES on the linear disassembly, not offsets**: literal `&DAT_… =`, indexed stores,
@@ -80,6 +84,18 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   `0x406720` / `0x406060` / `0x5f6de9` is a scope-exit/destructor block, not game logic. Real branches
   jump OVER these blocks, so an address-ordered read puts the logic in the wrong order; skip them, but
   log where each one jumps, because many bodies funnel every early return to one shared cleanup label.
+- **Pseudocode line adjacency is not control flow.** Ghidra merges one variable name across branches, so
+  the assignment that feeds a test can sit hundreds of instructions away, in another basic block; reading
+  the two adjacent lines as producer-and-test names the wrong producer (and a value read as "the queue
+  head" can be a callee's return). Locate the producer in the disassembly: enumerate EVERY write to that
+  stack slot (`[ebp-0xNN]`) across the whole function range **in sub-windows** (a window printer caps its
+  output), then read the branch that reaches the test. Two corpus handles settle ownership in one command:
+  the function owning a pseudocode line — `awk 'NR<=LINE && /^\/\/ ====/ {last=NR": "$0} NR==LINE {print last; exit}' ghidra_out/shard_NNN.c`
+  — and a body's line range — `grep -n '^// ====' ghidra_out/shard_NNN.c | awk -F: '$1>N' | head -1`.
+- **A sentinel appears in BOTH signed print forms.** `cmp reg,0xffffd8f1` and `cmp reg,0x270f` are the
+  same constant (−9999 / +9999): grep the negative AND the positive immediate before concluding a value
+  has one consumer, or the branch that acts on the sentinel — usually the one you are hunting — is missed
+  while its error path is found.
 - A single-writer claim needs the census printed both ways: total references **and** the store count
   (`grep <hex-addr> <dump> | grep -c ',al'`), not "the corpus shows one writer".
 - **Census a DAT's stores in EVERY objdump print form.** Accumulator-form stores print
@@ -90,6 +106,35 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   after a `ret` may be cold branch targets (a jcc/jmp earlier in the same body jumps past the ret
   into them, inside the same Ghidra function) — grep backward jump refs before calling such a
   store dead.
+- **Answer "who owns this function" from the image bytes, not from the pseudocode.** A function that
+  `index.csv` gives `n_callers` but that appears in `ghidra_out/` ONLY as its own `FUN_` definition is
+  reached through a POINTER, not a `call`: scan the PE file for the little-endian dword of its VA — read
+  the section table (`objdump -h programs/terran.exe` gives VMA / vsize / file offset per section) and
+  search each loaded section for `struct.pack('<I', va)` in Python. One hit in `.rdata` means it is a
+  slot in a dispatch/vtable array; grow the run outward while neighbours still look like code addresses
+  to get the table's extent and the slot index. Then scan for pointers INTO that region: hits inside
+  `.text` are instructions carrying the table base as an immediate — usually the constructors that store
+  the vptr at `[obj]` and, under multiple inheritance, a second one at `[obj+0xNNN]` (the matching thunk
+  starts `sub ecx,0xNNN`), which is what turns "no caller" into "slot N of this class".
+  If `.text` contains no `call DWORD PTR [reg+0xoffset]` for that slot either, the dispatch computes the
+  index at run time (message router / widget handler table) and the caller set is NOT resolvable by
+  grepping a displacement — say so instead of grepping three more shapes.
+- **Prove an instance exists before spending a live acceptance on a virtual.** Scan every writable
+  region of the running process (`grep -E 'rw-p' /proc/<pid>/maps`, read in ~2 MB chunks) for the vptr
+  value: zero hits means the class is not instantiated in the current mode, so a window of genuinely
+  normal play produces ZERO hits at any of its methods and the acceptance fails for a reason that is
+  neither the game nor the instrument. A giant private region is exactly where a big manager object
+  lives, so never skip a region for being large. Confirm the object is the one you think it is by
+  reading the SECONDARY vptr `[obj+0x444]` (or whichever offset the constructor stores) at the
+  breakpoint, and gate on it.
+- **Name a global by census, in one read-only probe.** Read the global from `/proc/<pid>/mem`, then walk
+  the array the code indexes with it — the stride comes from the disassembly (`imul reg,0x130`,
+  `*0x20bc`, `*0xb4c`) and the bound from its own loop guard — and print each record's ASCII name. A
+  19-entry stride-0x130 table reading "University Base", "Gaia's Landing", "The Hive" … is the base
+  table, and a global compared against those records' first byte is a FACTION index; the comparison site
+  plus the names settle the semantics in one call, with no gdb and no pseudocode read. Do this BEFORE
+  writing the model that consumes the global — a global guessed as a count when it is an index silently
+  inverts every index arithmetic downstream.
 - **Jump tables: dump the raw dwords before "correcting" Ghidra's case labels.**
   `struct.unpack_from('<I', img, va - 0x400000)` across the table, entry count checked against the guard
   (`add idx,7` / `cmp idx,6` / `ja`), each target mapped to its body first. A hand-decoded table that
