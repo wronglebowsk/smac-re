@@ -13,6 +13,16 @@ A queue head completes at the boundary iff:
   >= price**, price = `0x4e40a0(owner,1,−1) × type_cost` — the type cost is the byte at
   `+41` of the type record `0x98ad88 + type*52`; the economic factor is 10 only when the
   difficulty scalar `0x92ada8 >= 2`, else 9 (or 8) — see the M58 block in repo NAMED.md.
+  **CORRECTION (M73-M75, repo NAMED M73/M74/M75 blocks):** the gate's `edi` is
+  `A × (byte(+0x29) + (C×P+50)/100)` for DESIGNED heads (`type >= 0x40`) — the markup `C` comes
+  from `0x92ae81[+0x24×0x90]`, `P` from the faction row — and the markup is skipped whole when
+  `type < 0x40` OR `type[+0x30] & 4` (`0x5ac99c`). Bit 2 is set by PRODUCTION itself (`0x4efe60`,
+  designed only, between gate `0x4efa5e` and pay), and at a designed unit's FIRST production the
+  sweep `FUN_00572800` (`or [rec+0x30],0x104` at `0x5729d5`) marks EVERY valid unmarked designed
+  record (live {192,193} for tid 194 — the `+0x24/25/26` triple does NOT gate designed marking;
+  the tier tables `0x92b950`/`0x92fd18` + validator `0x5a6cd0` are alpha-path-only, untested);
+  so markup is charged at most once per designed record. Acceptance instruments:
+  `scripts/m73_price_split.py`, `scripts/m74_flag_hw.py`, `scripts/m75_sweep_replay.py`.
 
 **M59: `pending` (`base+0x4c`) is NOT a term of the gate.** The gate `0x4efa5e`
 `cmp [ecx+0x40], edi; jge 0x4efadc` prices whatever sits in the head slot; the pay store

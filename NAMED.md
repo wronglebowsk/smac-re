@@ -732,3 +732,13 @@ marker. LIVE (`evidence/m74flag3.gdblog`, 4 hw watchpoints on flag words): 194 `
 charges M73's markup (bit clear at gate) then sets the bit; siblings pre-marked by the sweep skip
 it from their first production. Setter evaded both grep shapes: read-modify-write through a
 COPIED register (plain MOV with `0x98adb8` addend). Instrument `scripts/m74_flag_hw.py`.
+
+## M75 block (session 117, ACCEPTANCE PASS tag `m75sweep1`) — WHAT THE PRODUCTION SWEEP MARKS: every valid UNMARKED designed record; the +0x24/25/26 triple does NOT gate designed marking.
+
+| item | finding | grade | evidence |
+|---|---|---|---|
+| `FUN_00572800(tid,0)` sweep effect, LIVE | at first production of designed tid: stores `or WORD [rec+0x30],0x104` at `0x5729d5` on **192 AND 193** (both unmarked, valid, designed) and on NOTHING else; marked designed 64/128/129/130/131 skipped; alpha 0-13 skipped; produced 194 marked by production `0x4efe60` first, so the sweep skips it. 192's triple (00,02,00) FAILS the tier test vs 194's (00,02,01) (rank `0x92fd18[02][0]=03 > 194's byte 02`) yet 192 was stored -> s116's "byte-match" claim RETRACTED for designed candidates | **H (live watchpoints + census diff)** | `evidence/m75sweep1.gdblog` (`0x5729de` pcs = the 0x5729d5 ors), `m75sweep1_seq.jsonl`; `scripts/m75_sweep_replay.py` gates g1-g5 |
+| tier tables | `0x92b950[+0x24]`, `0x92fd18[+0x25/+0x26]`: 16-BB rows, rank=row[0] signed >0 required, pass when produced byte >= rank; rows measured: 92b950 00->01 01->02 02->04 03->05 04->06 05->08; 92fd18 00->01 01->02 02->03 03->04 04->05 05->06. Only reachable for candidates < 0x40 after validator `0x5a6cd0` — UNTESTED live (zero alpha marks) | H (bytes) / OPEN (role) | s117 dump via `scratch/m75_fields.py` |
+| `+0x24` = domain-row selector | picks the 144-B row at `0x92ae80+(v*0x90)` — same row as M73's markup C byte (`0x92ae81[+0x24*0x90]`) and the build-base land test (`==1`); sweep category gate compares these rows (designed-marked path only) | H | s117 dump + NAMED `0x4d1280` row |
+| validator `0x5a6cd0(tid, shift)` | = `tid*0x14+0x92fdd4` dw0 >= 0 && bit `shift` of `0x985c1c[tech]`; in the sweep shift = produced record's +0x30 low byte (0x41 here); rejects all 14 alpha candidates this scenario | H (asm exact) | objdump `0x5a6cd0-0x5a6d36` |
+| 0x100 marker residue | sweep ORs 0x104; `0x4ef398` cleared 193's bit 8 but 192 STILL reads 0x105 live after the run — clear scope unreconciled; the clear writes +0x31 (outside the watched low word) | OPEN | census diff `192:0x01->0x105` |
