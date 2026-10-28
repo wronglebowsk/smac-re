@@ -96,7 +96,7 @@ printf "ARMED pend=%d head=%d cursor=%d bps=%d\n", *(int *)(*(int *)0x8f0d60 + 0
 continue
 """
 
-LINE = re.compile(r"^(POST|ZEROAFTER|ZERO|DISP|ARM|HND|IDX|ARMED)\s*(.*)$")
+LINE = re.compile(r"^(POST|ZEROAFTER|ZERO|DISP|ARMED|ARM|HND|IDX)\s*(.*)$")
 KV = re.compile(r"(\w+)=(-?0x[0-9a-f]+|-*\d+)")
 CHATTER = ("warning:", "Reading symbols", "0x", "Breakpoint", "[", "The program", "This GDB",
            "Enable debuginfod", "<https://debuginfod", "Debuginfod has been disabled",

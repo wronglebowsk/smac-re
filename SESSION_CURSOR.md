@@ -1,1 +1,1 @@
-M84e STARTED (milestone/m84e from main 7a69b20) | acceptance not written yet | merged? no | next: static on 0x4194b3 / widget msg 0x4d00 in scratch/m574/text.txt, then accept_ready.py before arming. Box: terran.exe UP, 2163 round 63, hud, READY (Korolev idx17 pend1).
+M84e m84edisp1 FAIL (0 events; driver failed: INSERT never landed) | merged? no | next: control run m57_ui_enqueue alone, then re-run acceptance with the trimmed 6-bp instrument (ARM conditioned on $eax only, hot 0x52bd3b bp dropped). Box terran.exe UP 2163 r63.
