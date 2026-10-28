@@ -231,3 +231,16 @@ census is step one and the proof is a replay against live memory.
     `group(1)` is the WHOLE match — branch on a group from inside the taken branch, or a good log
     crashes the parser. Never judge watchpoint arming from one early read of the gdb log: poll for the
     ARMED line (a 3 s single read failed a run that had armed all four watchpoints).
+11. **For a WHO-CALLS / WHEN claim, read the return address off the stack and assert the chain from the
+    log, not from pseudocode adjacency.** Breakpoint the callee's FIRST instruction and print
+    `*(int *)$esp` — the return address names the caller with no backtrace (arguments are
+    `*(int *)($esp + 4)`, `+ 8`, … because the bp sits before `push ebp; mov ebp,esp`). One hit matching
+    the predicted site proves A caller; require **every** entry row to carry that same return address
+    before writing "the only caller" — the pair that proves exclusivity is a single `call 0x…` in the
+    whole-image grep AND an all-rows match, and a gate that passes on zero rows proves nothing. Then gate
+    the trigger too: require each entry row to be immediately preceded, in log (program) order, by the row
+    the static reading says gates it — e.g. the branch whose compared register holds the value a named
+    callee returned, printed at the instruction right after that call. Locate that producer from the
+    disassembly, not from pseudocode line order (`references/code-atlas.md`), and let the scorer print the
+    distinct values the callee actually returned: a run where the sentinel never appeared is an unusable
+    window, not a negative answer about the caller.

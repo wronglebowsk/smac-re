@@ -755,3 +755,31 @@ bail kinds in one window is the refusal case.
   attaching; drives real boundaries; detaches; scores 8 gates including "one turn-around KIND"
   and "the firing row's own operands satisfy its condition". Prints PASS/FAIL in one invocation.
   `scripts/test_m72_gate.py` 21/21 pins the parser (incl. negative hex) and every gate.
+
+## M83 (s128) — WHO CALLS THE BAND-64 AUTO-PICK `FUN_00577280`, AND WHEN
+
+`grep -n 577280 scratch/m574/text.txt` = 2 hits: the function and its ONE call site, **0x418d8a
+inside FUN_00417ee0** (the production-queue routine on the UI's current base `*0x8f0d60`): `push 1`
+(param_2, so the `if (param_2 != 0)` Part A always runs) after `mov eax,ds:0x8f0d60` +
+`mov dl,BYTE PTR [eax+4]` (param_1 = the base's faction byte, live 3). The block is entered by ONE
+branch — 0x4187be `cmp edi,0x270f` / 0x4187c4 `je 0x418d7d` — where edi is the return value of the
+call at 0x41860a: `call 0x496ad0([ebx+0xa1c], *0x8f0d60, BYTE[*0x8f0d60+4], &[ebp-0x5e2c] (a 24 KB
+buffer), [ebx+0x3ff5c])`; its twin sentinel -9999 = 0xffffd8f1 is tested at 0x41861b/0x4186d2, so
+the WHEN is "0x496ad0 returned +9999". After the call returns to 0x418d8f: `0x4e3470([ebx+0x3ff3c])`
+then `0x4eb6b0(0)` at 0x418dac (the cursor zero). Part A scores the 64 records of `band param_1`
+(`pbVar8 = &DAT_0098adb4 + faction*0xd00`, stride 0x34): 999 when flag bit 0 is clear, `900 -
+queued_count[type]` (the 0x94de84 array — the same byte the queue-shift loop decrements at 0x4184b8)
+when the owner mask has the faction bit and the 0x94dc84 array byte == 0; it hands the minimum to
+`0x43f470`. Part B (the dialog, only when Part A finds NO candidate) holds the bit-7 clearer
+0x577ca8: result 3 toggles the record's owner mask (`^= 1<<(faction&31)`), `| 0x200` iff bit 3, sets
+bit 3, `& 0xfdf7` when not owned; result != 3 && != 4 -> `if ((iVar6 + (iVar6>>31 & 0x3f)) >> 6 != 0)`
+-> clear bit 7 -> call 0x43f470. So bit 7 clears ONLY for `index/64 != 0` (band != 0) — the census
+carriers 324/325/386/449, never band-3 192/193/194.
+
+**Instrument:** `scripts/m83_caller_when.py` — 4 silent breakpoints (0x41860f prints the edi sentinel
+value, 0x418d7d, 0x577280 reads the RETURN ADDRESS off the stack, 0x577ca8 prints tid = $eax/13) +
+a `pending` poke with read-back + a 512-record census. `m83cw2` FAIL: ARMED ptr=0x95ef70 fac=3
+pend=3 head=2, SENT 4 events with edi=[2] (never 9999), BRANCH/ENTRY/CLEAR 0, pending poked 4->0 and
+1->0, census bit7 [324,325,386,449] -> [324,325,385,387,449] with no CLEAR event; gates G1/G3/G4/G5/
+G7 False. `evidence/m83cw2.gdblog`.
+
