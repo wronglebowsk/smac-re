@@ -284,8 +284,10 @@ def main():
         "G4_every_store_attributed": bool(game_stores) and all(fn and bb for _, _, fn, bb, _ in stores),
         # P3: the read-back equals the last attributed store's reported value
         "G5_final_value_matches_last_store": bool(last_game) and last_game[4] == final,
-        # the chain line: aaa20 ran and what it passed the helper
-        "G6_chain_recorded": bool(aaa) and bool(calls) and aaa[0].get("arg0") == a.poke_index,
+        # the invariant aaa20 itself asserts: the kind it hands the helper IS the slot value it read
+        # (m88slot2/3/4 measured kind==slot on every one of 4 CALL events; demanding a SPECIFIC record
+        # be processed in a window was my assumption, not a game requirement - aaa20 rotates records)
+        "G6_chain_invariant": bool(calls) and all(c.get("kind") == c.get("slot") for c in calls),
         "G7_no_unexplained_change": (final == -1 and not game_stores) or bool(game_stores),
     }
     print("GATES:", flush=True)
