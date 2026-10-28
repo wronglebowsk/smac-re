@@ -1,6 +1,5 @@
-M80 | acceptance not run yet (planned tag m80band1) | NOT merged | branch milestone/m80
-| baseline census DONE (scripts/m80_band_census.py --json): array = 8 bands of 64, each band
-| filled contiguously from band_start (b0 0-13 seeds, b1 64, b2 128-131, b3 192-194 ours,
-| b4 256, b5 320-325, b6 384-386, b7 448-449); 387 is EMPTY. index = faction*64+slot.
-| next: reload clean save (SMAC_SAVE=m54b_clean.SAV scripts/m54a_load.py --relaunch) ->
-| enqueue -> gdb cond-bp at 0x5741fe printing esi, ebx, esi*52, [ebp+8], name at ebx+0x98ad88
+M80 | acceptance m80band1 PASS (G1-G6 green, one real invocation) | NOT merged yet | milestone/m80
+| finding: record array = 8 factions x 64 slots; FUN_00573a90 arg1 = FACTION (esi=5 live);
+| records 324/325 were EMPTY at window start, created mid-window as "Impact Squad"/"Impact
+| Rover" flags 0xc1 (next free slots after 323); sweep entered (owner=5,tid=324/325,mode=0),
+| MARKHIGH 0. next: append notes/NAMED/NEXT_PROMPT, rsync skill, commit, gate, submit, merge.

@@ -1,0 +1,18 @@
+{"tag": "ARMED", "fac3_head": 0, "pend": 3}
+{"tag": "BOUNDARY", "idx": 0}
+{"tag": "F573IN", "ret": 5720487, "fac": 5, "p2": 0}
+{"tag": "F573IN", "ret": 5720487, "fac": 5, "p2": 0}
+{"tag": "CLR4", "fac": 5, "ebxidx": 324, "slotidx": 324, "pre": 193}
+{"tag": "SW573", "fac": 5, "idx": 324, "ebx": 16848}
+{"tag": "SWENTER", "owner": 5, "tid": 324, "mode": 0, "ret": 5718531}
+{"tag": "F573IN", "ret": 5720487, "fac": 5, "p2": 1}
+{"tag": "CLR4", "fac": 5, "ebxidx": 325, "slotidx": 325, "pre": 193}
+{"tag": "SW573", "fac": 5, "idx": 325, "ebx": 16900}
+{"tag": "SWENTER", "owner": 5, "tid": 325, "mode": 0, "ret": 5718531}
+{"tag": "F573IN", "ret": 5720487, "fac": 5, "p2": 0}
+{"tag": "F573IN", "ret": 5720487, "fac": 5, "p2": 1}
+{"tag": "F573IN", "ret": 5721513, "fac": 5, "p2": 0}
+{"tag": "F573IN", "ret": 5723172, "fac": 5, "p2": 0}
+{"tag": "F573IN", "ret": 5725339, "fac": 5, "p2": 1}
+{"tag": "F573IN", "ret": 5726131, "fac": 5, "p2": 1}
+{"tag": "BOUNDARY", "idx": 1}

@@ -817,3 +817,22 @@ Evidence: `evidence/m78order3.gdblog`, `evidence/m78order3_seq.jsonl`.
 | `0x920434` | **NETGAME / MULTIPLAYER flag** (0 = single player) | H+LIVE: FUN_0057ecf0 sets 1 at entry, clears at its tail; 7 of 9 writers store right after `call 0x4e25e0`; FUN_00528930 returns 0 when it is 0; the production gate reads it at 0x4f05a5 and the poke to 1 (m79net5) moved the engine to the else branch 0x4f05ba-0x4f05c4 |
 | `0x985b10` | **HUMAN-PLAYER MASK**, byte, keyed `1 << faction` (live 0x08 = player 3) | H, **current-player reading ruled out**: gate visits print cur_player (0x985dcc) 1/2/5/6 while the mask stays 0x08; sibling 0x985b11 = 0xff (all 8 slots); writers 0x4df82e/0x4e08ca/0x512bf6(imm 0x10)/0x525eed/0x57f051/0x57f2da; FUN_004df630 `= 1<<p`, `= 0x985b11 & 0xfe`; FUN_00525e10 clears `1 << *(rec+0x788)`; FUN_0057ecf0 builds it from the 412-byte array 0x91e494 (count 0x91e2d0, live 0) |
 | `0x4f0591-0x4f0637` | production MARKER gate: admit iff `0x920434==0 \|\| !(0x985b10 & (1<<owner))`, ELSE `0x4f05bd or BYTE [tid*52+0x98adb9],1` and skip the clear pass | VERIFIED live m79net5: POKE pre 0 post 1, MARKSET tid 194, SWEEPIN/CLEAR 0, end census 192=0x105 193=0x145 194=0x145, replay exact 3/3 |
+
+## M80 block (session 122, ACCEPTANCE PASS tag `m80band1`) — THE TYPE-RECORD ARRAY IS 8 FACTION BANDS OF 64; FUN_00573a90'S ARG 1 IS THE FACTION; INDICES >= 256 ARE LIVE DESIGN SLOTS
+
+`0x98ad88` record array = **8 bands x 64 records x 52 B, band = faction**; a faction's designed
+types fill `band_start..` contiguously (census `scripts/m80_band_census.py`: b0 0..13 Colony
+Pod..Unity Foil, b1 64, b2 128..131, b3 192..194 ours, b4 256, b5 320..325, b6 384..386, b7
+448..449; 387+ empty). FUN_00573a90: `esi = [ebp+8]` = **FACTION** (0x573aa3); counter `[ebp-0x18]`
+0..0x80; index = `counter<0x40 ? counter : (counter&0x3f)+faction*64`; 0x574167-0x574176 rejects
+unless `index/64 in {0, faction}`; record = `0x98ad88 + index*52` (0x57417e); 32 B copied INTO the
+record at 0x5741e1 (`call 0x64c5e0`, len 0x20); 0x5741e9 clears record+0x1f; 0x5741f0
+`and BYTE [rec+0x30],0xfd`; 0x5741fe `call FUN_00572800(faction, index, 0)` and that sweep's own
+band base is `param_1*0xd00` = faction*64*52.
+LIVE (`evidence/m80band1.gdblog`, 2 boundaries): SW573 fac=5 idx=324/325 (ebx=16848=324*52),
+SWENTER owner=5 tid=324/325 mode=0, CLR4 pre=**0xc1** (bit 2 already clear → the `and ~4` is a
+no-op on this path), MARKHIGH (0x5729d5, tid>=256) **0**; census 324/325 `0 -> 0xc1` and they now
+read "Impact Squad"/"Impact Rover" — EMPTY at window start, created as the next two free slots
+after 323. F573IN callers: ret 0x5749a7 x6, 0x574da9, 0x575424. **OPEN:** writer of `+0x30 = 0xc1`
+(bits 0/6/7) — unattributed, no breakpoint between the 32 B copy and 0x5741f0; meaning of bits
+6/7; the sweep's band-walk/mark guard `tid<0x40 || flags&4` never engages on a fresh record.
