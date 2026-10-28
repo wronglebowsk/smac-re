@@ -36,8 +36,7 @@ lists must be PRINTF-ONLY (a memory write aborts the batch, 'not an lvalue', the
 0x920434 via python /proc/pid/mem. Flag-1 arm unmeasured. NAMED M84f.
 **M85 (s136-s137, milestone/m85 PR #90, `m85cens5` PASS) — THE SOLO BOUNDARY IS LIVE AND ENTERS THE HELPER:** FUN_00521070 (MP 7-stage driver) 0 visits -> 0x52145e silence by design; FUN_005a7970 entered once/boundary (eax=0, ret 0x569948 inside FUN_0055f650, NOT the human-loop 0x507e57); tails 0x5a7d00/0x5a7f67 UNTAKEN branches; 0x51f320 fires once. m44_idle cannot drive under gdb (asserts TracerPid==0; rounds=1 snapshot degenerate) — census drives with m55_boundary. The s135 box state swallowed Enter AND measured bar clicks (cause not isolated; fresh load repairs). NAMED M85.
 **M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 never sees a 9999 key; 0x4a99e0 has ZERO live instances. NAMED M84c/M84d.
-**M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). NAMED.
-**M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count. Branches hold their scripts.
+**M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). NAMED. **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
@@ -108,8 +107,8 @@ Next: `python3 scratch/m71/dis.py 5a7970 5a7d20` and `5a7f40 5a7f80` (entry + ta
 - **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it.**
   Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit
   prompt — never OK). Run `m78_mark_clear.normalize_screen()` first.
-- **A census interleaved into a gdb log needs O_APPEND on GDB's own fd** (or the next printf
-  overwrites it), and a census snapshots a STOPPED engine: order events by VISIT, not by boundary.
+- **A census interleaved into a gdb log needs O_APPEND on GDB's own fd**; a census snapshots a
+  STOPPED engine: order events by VISIT, not by boundary.
 - A gdb-log tag alternation must be LONGEST-first (`MARK` swallows `MARKSET`); a bp printf must NOT
   print inferior strings (aborts the batch, DETACHES mid-window); template expressions go in printf
   ARGUMENTS, never the format string; in a two-branch `re` alternation `m.group(1)` is the WHOLE
