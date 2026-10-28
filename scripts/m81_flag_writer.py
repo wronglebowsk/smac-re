@@ -56,7 +56,7 @@ end
 BBLOCK = r"""break *@@A@@
 commands
 silent
-printf "TAG@@T@@ idx=@@I@@ esi=%d ebx=%d f30=0x%x name=%.20s\n", @@E@@, @@B@@, *(short *)(@@R@@+0x30), (char *)(@@R@@+0)
+printf "TAG@@T@@ idx=%d esi=%d ebx=%d f30=0x%x\n", @@I@@, @@E@@, @@B@@, *(short *)(@@R@@+0x30)
 continue
 end
 """
@@ -144,9 +144,14 @@ def main():
     log = open(lpath, "w")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath,
                           "-p", str(pid)], stdout=log, stderr=subprocess.STDOUT)
-    time.sleep(3.0)
-    head = open(lpath, "r", errors="replace").read()
-    n_hw = head.count("Hardware watchpoint")
+    head = ""
+    n_hw = 0
+    for _ in range(60):
+        head = open(lpath, "r", errors="replace").read()
+        n_hw = head.count("Hardware watchpoint")
+        if ("ARMED" in head and n_hw >= len(WATCH)) or not os.path.exists("/proc/%d" % g.pid):
+            break
+        time.sleep(0.5)
     if "ARMED" not in head or n_hw < len(WATCH):
         try:
             os.kill(g.pid, signal.SIGINT)

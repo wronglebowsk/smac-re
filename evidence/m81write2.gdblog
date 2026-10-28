@@ -1,0 +1,47 @@
+[New LWP 4132148]
+[New LWP 4132147]
+[New LWP 4132146]
+[New LWP 4132145]
+[New LWP 4132144]
+[New LWP 4132143]
+[New LWP 4132142]
+[New LWP 4132141]
+[New LWP 4132140]
+[New LWP 4132139]
+[New LWP 4132138]
+[New LWP 4132137]
+[New LWP 4132136]
+[New LWP 4132135]
+[New LWP 4132134]
+[New LWP 4132133]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xefadd68b in ?? ()
+Hardware watchpoint 1: *(short *)0x98ef88
+Hardware watchpoint 2: *(short *)0x98efbc
+Hardware watchpoint 3: *(short *)0x98eff0
+Hardware watchpoint 4: *(short *)0x98f024
+Breakpoint 5 at 0x5741e1
+Breakpoint 6 at 0x5741f0
+Breakpoint 7 at 0x5741fe
+ARMED 4 hw watchpoints at 0x98ef88 0x98efbc 0x98eff0 0x98f024
+FLAGW tid=324 pc=0x595f8b val=0x1
+FLAGW tid=324 pc=0x57412c val=0x41
+FLAGW tid=324 pc=0x574133 val=0xc1
+TAG0 idx=($ebx/52) esi=5 ebx=16848 f30=0xc1
+TAG1 idx=($ebx/52) esi=5 ebx=16848 f30=0xc1
+TAG2 idx=($ebx/52) esi=5 ebx=16848 f30=0xc1
+FLAGW tid=325 pc=0x595f8b val=0x1
+FLAGW tid=325 pc=0x57412c val=0x41
+FLAGW tid=325 pc=0x574133 val=0xc1
+TAG0 idx=($ebx/52) esi=5 ebx=16900 f30=0xc1
+TAG1 idx=($ebx/52) esi=5 ebx=16900 f30=0xc1
+TAG2 idx=($ebx/52) esi=5 ebx=16900 f30=0xc1
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xefcf032c in __kernel_vsyscall ()
+[Inferior 1 (process 4132130) detached]
