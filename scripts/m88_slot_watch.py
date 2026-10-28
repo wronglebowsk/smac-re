@@ -147,7 +147,11 @@ def instr_window(addr, back=1):
                 break
             if a > addr:
                 break
-            prev = ln.strip()
+            # objdump prints an instruction's leftover bytes on a second labelled line; only a line
+            # with a mnemonic column is a real predecessor (else 0x5aaac8 was reported as the writer of
+            # aaa20's -1 store, whose real instruction is 0x5aaac1)
+            if len(ln.split("\t")) >= 3:
+                prev = ln.strip()
     return at, (before if back else None)
 
 
