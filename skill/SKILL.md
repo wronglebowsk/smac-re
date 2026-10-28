@@ -159,7 +159,14 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   so the trim is planned in the same call as the addition, not discovered at the gate.
   **Trust only `python3 scripts/evidence.py budget` for that number** — it counts CHARS, and chars do
   not equal `wc -c` / `os.path.getsize` (a file measuring 15,988 bytes scored 16,052 chars and failed
-  the gate), so trim until the tool's own line says `warn`, then stop. When trimming, DELETE whole
+  the gate), so trim until the tool's own line says `warn`, then stop. **Leave >100 bytes of headroom, not four**:
+  `scripts/test_loop.py` (the gate self-test CI runs) appends a few bytes to `NEXT_PROMPT.md` in a
+  throwaway worktree and then asserts "valid milestone is GREEN", so a 15,996-byte prompt makes CI's
+  gate FAIL at case 4 while your own `gate.py` run is GREEN. When CI says `gate fail` and the local run
+  is GREEN, reproduce with `python3 scripts/test_loop.py` (five cases, it prints which one breaks)
+  rather than re-running the gate; the worktrees check out HEAD, so an UNCOMMITTED trim fixes nothing —
+  commit it, then re-run. Inside such a worktree, `python3 scripts/evidence.py budget` names the
+  offending doc and its limit (that is where `FAIL (always)` shows up), which is faster than guessing. When trimming, DELETE whole
   sentences or bullets: rewording trades characters for characters and the check stays red. Well
   over it, move footing into `FOOTING.md` at the repo root (or a `references/`
   file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
@@ -676,7 +683,21 @@ against the bare index never fires (`references/static-store-census.md` §9.3). 
   confounded click observation into a controlled experiment (and refuse the shape when the poked value
   and the rival prediction agree). **A printf ERROR inside a breakpoint's commands block ABORTS the
   whole `gdb -batch` script and detaches the inferior mid-window**: the log truncates at the first hit
-  while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run. gdb's
+  while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run.
+  **A MEMORY WRITE in a command list fails the same way** — `set {int}ADDR = 1` and
+  `set var *(int *)ADDR = 1` both raise `Left operand of assignment is not an lvalue` and detach at the
+  FIRST hit; gdb reports the file's LAST sourced line (the trailing `continue`), so the line number names
+  nothing useful and the message looks like a syntax problem in a script that armed fine. Signature of
+  the whole class: an ARMED line + one `Breakpoint N at` per bp + `Error in sourced command file` + zero
+  events, while the driver still exits 0 and its own writes land because the detach resumed the inferior.
+  **So put the poke in Python, not in the breakpoint**: `fd = os.open('/proc/<pid>/mem', os.O_RDWR)` then
+  `os.pwrite(fd, (1).to_bytes(4, 'little'), ADDR)` succeeds WHILE gdb is attached (a 50 ms thread held a
+  gate global for a whole driver window: 632 writes, 0 errors, every printf-only bp logged). Keep the
+  command lists print-only and let a thread hold the forced value; restore it after the window.
+  **Guard every ARMED-time deref**: the selected-base pointer `ds:0x8f0d60` reads 0 until a pane is
+  opened, so `*(int *)($b + 0x4c)` in the arming printf faults on address 0x4c and kills the batch
+  before the first event — print `$b` alone or branch on `$b != 0`, and make a `/proc` reader return -1
+  on `OSError` (an unmapped page raises EIO, not 0) so a bad pointer cannot abort the harness. gdb's
   printf reads an inferior pointer as a HOST address, so `%.20s` fed `*(char *)(rec+0)` errors
   ("Cannot access memory"); bp printfs emit NUMBERS derived from registers only (raw reg, reg/stride,
   reg%stride, `*(short *)(...)` values), never inferior strings, gate every pointer deref behind
@@ -709,7 +730,7 @@ Two more pre-arm checks, both cheap and both fatal when skipped:
   unit/type records are live state that no save holds, so yesterday's census is fiction after a
   reload. Re-census the watched slots from `/proc/pid/mem` in the same invocation that arms the
   harness, and make the harness assert armed == len(designed watch list) rather than a fixed floor:
-  arming fewer watchpoints than the design list silently drops half the slots from the window.
+  arming fewer watchpoints than the design list silently drops half the slots from the window. **Check the save can HOST the experiment before you reload it**: `m54b_clean.SAV` loads at 2150 r50 — University Base only, `credit` 0, an EMPTY chooser candidate array — so an insert-driven run there dies at `item 2 not in candidate array []` however carefully the harness is armed: reloading to clear a stray modal costs the later state (2163 r63, candidates `[192,195,194,193,2,0,1,196]`) AND the experiment. Clear the modal itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
 The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is

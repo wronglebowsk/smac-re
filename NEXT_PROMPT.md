@@ -55,20 +55,15 @@ game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
    `budget`, `scratch/m71/dis.py LO HI` (objdump window).
 ## THE PICK
 
-**M84f retry: fire the POST leg.** s135: the block runs, stops at the gate; poke arm unmeasured -> `scripts/m84f_post_leg.py --inserts 2`. Was
-`scripts/m84e_msg_dispatch.py --tag m84fdisp1 --base-index <PANE shows>`
-(7 bps; `--tag selftest` discriminates). s133 proved the cursor-zero leg IS live (ebx=0x6a9480, 15 -> 0 read back) and the
-POST leg is gated at 0x4193b9 on ds:0x920434 (1 only
-inside FUN_0057ecf0, the opening menu; live 0), so the missing
-input is a chooser selection that COMPLETES (s135: the FLAG is what stops it).
-PITFALL: INSERT clicks land on whatever base the PANE shows, not the one you name. Sub-leads: the handler's mode 0/1/2 semantics (0x927590/0x927894, 1436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
+**M85: the turn boundary — does it reach tech/upkeep at all?** s135 CLOSED the 0x4d00 thread (opening-menu vocabulary, measured; do not retry the poke).
+Next: `python3 scripts/m55_boundary.py --tag m85bnd1 --boundaries 3` plus a PRINTF-ONLY census on `0x52145e / 0x5a7d00 / 0x5a7f67` (tech/upkeep: 0 events in 8 boundaries at M67 — the game or the instrument?) and one bp on the boundary entry.
+PASS iff each of the three is either seen with its argument read back, or provably unreachable from the boundary path (zero xrefs). Same instrument law as s135: print-only bps, /proc read-back.436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
 
 ## STILL OPEN (in priority order)
 
-1. **M84f (the pick): complete a chooser selection so the 0x4d00 POST leg fires** — see THE PICK.
-   Chooser residue: which widget message reaches handler case 7 (no direct `call` to 0x496950);
-   the instrument fix (print the cursor at **0x49771c**, AFTER the seek at 0x497717); bit 5
-   (0x531782); who clears bit 6; upkeep/tech 0x52145e/0x5a7d00/0x5a7f67 (ZERO events); alpha 0x5a6cd0.
+1. **M85 (the pick): boundary -> tech/upkeep census** — see THE PICK. Residue: chooser widget case 7
+   (no direct `call` to 0x496950); print the cursor at **0x49771c** (after the seek at 0x497717); bit 5
+   (0x531782); who clears bit 6; alpha 0x5a6cd0; **0x4d00 = CLOSED** (opening-menu vocabulary).
 2. **M67's plan-descending LIST order has no code behind it**: zero sites read plan byte `+42`; the
    only 52-byte type-address computations (0x40ad92/0x4164dd/0x4188f9/0x418932) hand records to
    string builders.
