@@ -248,8 +248,9 @@ def main():
     lpath = os.path.join(EVID, f"{a.tag}.gdblog")
     open(gpath, "w").write(gdb_script(row["addr"]))
     # O_APPEND on gdb's own fd: without it the driver's census lines are written past gdb's
-    # lagging file offset and the very next gdb printf OVERWRITES them (run 1 lost all 4 censuses)
-    log = open(lpath, "aw")
+    # lagging file offset and the very next gdb printf OVERWRITES them (run m78order1 lost all 4
+    # censuses).  Python's append mode is "a" — "aw" is not a valid mode.
+    log = open(lpath, "a")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath, "-p", str(pid)],
                          stdout=log, stderr=subprocess.STDOUT)
     time.sleep(3.0)
