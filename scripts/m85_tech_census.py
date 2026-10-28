@@ -181,11 +181,14 @@ def main():
     print([l for l in head.splitlines() if l.startswith("ARMED")][0], flush=True)
 
     t0 = time.time()
-    # DRIVER: m44_idle advances rounds by CLICKING the pane bars (colour route). The box has
-    # NO X input focus (`xdotool getactivewindow` is empty), so m55_boundary's Enter never lands
-    # and no keyboard path can end a turn here; the pointer path still works.
-    r1 = subprocess.run([sys.executable, os.path.join(HERE, "m44_idle.py"),
-                         "--tag", a.tag + "_drv", "--rounds", a.rounds, "--budget", str(a.timeout)],
+    # DRIVER (s137): m55_boundary presses Return from inside its sampler and works WHILE gdb is
+    # attached. The earlier m44_idle route is structurally dead here: m44 asserts TracerPid==0 at
+    # entry (it refuses to run under a tracer — census IS the tracer), and its --rounds 1 snapshot
+    # condition `y > last_year - 1 and not rounds` counts the CURRENT turn as a completed round, so
+    # the driver exited in 0 s having never clicked anything (m85cens1..4 all died this way).
+    r1 = subprocess.run([sys.executable, os.path.join(HERE, "m55_boundary.py"),
+                         "--timeout", str(a.timeout), "--trace",
+                         os.path.join(ROOT, "scratch", f"{a.tag}_bnd.jsonl")],
                         capture_output=True, text=True, timeout=a.timeout + 120)
     if r1.returncode != 0:
         print("driver stderr:", (r1.stderr or "").strip()[-400:], flush=True)

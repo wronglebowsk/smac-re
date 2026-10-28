@@ -1,1 +1,1 @@
-M85 (milestone/m85) | m85cens1/2/3 FAIL, box isolated: NO X input focus (getactivewindow empty) -> keys and m44's pane clicks cannot end a turn (year stuck 2150); window renders OK; static split PROVEN (0x52145e MP-only 1 caller; 0x5a7d00/0x5a7f67 in FUN_005a7970 47 callers) | merged? no | next: restore X focus, then m85_tech_census --tag m85cens4 --rounds 1
+M85 | m85cens5 RUNNING (census w/ m55_boundary driver after fresh save load; box state was the blocker) | merged? no (#90) | next: read scratch/m85cens5.out VERDICT; if PASS close M85 per CLOSING ORDER
