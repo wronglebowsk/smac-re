@@ -31,7 +31,8 @@ PREDICTIONS printed before any counter is read (the gates then check the log):
   G1 the poke lands: slot == -1 read back from /proc;
   G2 every traced candidate's BASE equals the four-term weighted sum predicted from the cost and demand
      fields gdb read from live memory at 0x5a930b (m and the halving rule included);
-  G3 the winning index's FINAL score == the max FINAL score of that invocation's candidates;
+  G3 the winner holds the max draw AND no candidate with a HIGHER index draws equal to it (equal draws
+     do not replace: 0x5aa232 keeps only strictly-greater, scan order is ascending 0..88);
   G4 the winner == the candidate with the strictly-largest draw, and every draw is in [0, final];
   G5 the winner is what FUN_005aa880 stores (ST) and the store reads back (RB);
   G6 the winner's 8-byte name is printable ASCII read from live memory at 0x92fdd4+idx*44+16;
@@ -232,7 +233,8 @@ def main():
           f"ac4={mem(pid, AC4):#x} poke={addr:#x} slots(0..7)={slots0}", flush=True)
     print("PREDICTIONS: G1 poke lands; G2 every traced BASE == the four-term weighted sum "
           "(demand*m+1)*cost summed over the four (cost,demand) pairs, m from arg2/0x985ac4 bit 0x200, "
-          "halved by the inert-pair rule; G3 winner's FINAL == max FINAL of its invocation; "
+          "halved by the inert-pair rule; G3 winner holds the max draw and no HIGHER-index candidate "
+          "ties it (0x5aa235 jle = equal draws do not replace, scan asc 0..88); "
           "G4 winner == strictly-largest draw and every draw in [0, final]; G5 winner == ST val and RB; "
           "G6 winner name printable ASCII; G7 >=2 qualifying windows, >=3 candidates each, >=2 distinct "
           "bases, round advanced >=2, >=1 final != base.", flush=True)
@@ -394,7 +396,8 @@ def main():
                    distinct_base=len({c["base"] for c in cands}),
                    tail=[c["idx"] for c in cands if c["final"] != c["base"]])
         detail.append(rec)
-        g3 = g3 and (winner is not None and winner["final"] == mx)
+        later_tie = [c["idx"] for c in cands if c["idx"] > w["win"] and c["draw"] == md]
+        g3 = g3 and (winner is not None and winner["draw"] == md and not later_tie)
         g4 = g4 and (w["win"] == first_max_draw["idx"]) and okdraws
         g5 = g5 and ok5
         g6 = g6 and (nm is not None)
@@ -417,7 +420,7 @@ def main():
         print(f"mismatch count = {len(mism)}", flush=True)
     print(f"round {r0}->{r_end} slots_end={slots_end} qualifying_windows={len(qual)}", flush=True)
 
-    gates = dict(G1_poke=True, G2_base_model=g2, G3_winner_is_max_final=g3, G4_winner_is_max_draw=g4,
+    gates = dict(G1_poke=True, G2_base_model=g2, G3_winner_holds_max_draw=g3, G4_winner_is_max_draw=g4,
                  G5_store_and_readback=g5, G6_name_printable=g6, G7_control=g7)
     for k, v in gates.items():
         print(f"{k}: {v}", flush=True)
