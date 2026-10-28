@@ -54,6 +54,11 @@ the tree — branch from it instead (`git checkout -B milestone/<ID> milestone/<
 session entry, rather than discovering the missing instrument halfway through the run.
 `milestone.py start <ID>` refuses a dirty worktree: stash the `SESSION_CURSOR.md` write, start, then pop
 it onto the new branch — never commit a cursor write to `main` just to get the tree clean.
+**Verify the named milestone is not already merged before starting it** — a kickoff prompt (re-pasted or
+cron-supplied) can lag the repo. `git log --oneline | grep -i <ID>` plus `grep -n '^## <ID>' NAMED.md`
+answers in one call; if both hit, the prompt's pick is stale, so run the milestone
+`SESSION_CURSOR.md`/`NEXT_PROMPT.md` names and state the swap in the report. Re-running merged work
+spends the tool-call budget and re-derives a settled answer.
 Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
 (must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
 **A GREEN gate is not permission to merge.** The gate audits docs, evidence and the harness; it says
@@ -143,7 +148,10 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   context before any work starts, which is how sessions ratchet toward the wall.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
-  moment the window is tightest.
+  moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
+  build the search pattern by joining the tokens with `\s+` in a regex and apply several edits inside one
+  `execute_code` cell that prints only the size delta — the file never enters context and a wrapped
+  section lands on the first try.
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
@@ -281,7 +289,11 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   read window hid the boundary and a correct insert scored as "no rule explains this" twice. When
   measured bytes fit NO model you wrote, suspect the MODEL (shift bounded by the window? by the
   region? by the array's capacity?), not the game. A read model is not a hypothesis about the game:
-  fix it, say which shapes each version predicted, and re-accept on a shape you have not used yet.
+  fix it, say which shapes each version predicted, and re-accept on a shape you have not used yet. The same
+  applies to a record COUNT carried in from an earlier census: before arming anything, read the whole
+  `stride × count` region straight from `/proc/<pid>/mem` (no gdb — the cheapest measurement available)
+  and group it by the band the code's own index arithmetic computes. A "256-record" type table was really
+  8 × 64, and every index above the assumed bound was an ordinary record of another faction.
 - **Make the value you are locating distinguishable from what the structure already holds.** A
   write-location question (which slot did the game write?) is unanswerable when the written value
   equals a value already sitting in the array — enqueue or poke an id the structure does not hold, and
@@ -607,6 +619,16 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   loop silently: with `--no-escape` the first burns the whole turn budget doing nothing, and in the
   second every TURN COMPLETE click lands BEHIND the modal. Diagnose by reading the state, not the
   class: our phase + `turn_flags` clear + year unmoved = nothing is answering the modal.
+- **Label a printed register from the encoding, and read entry arguments from `$esp`, not `$ebp`.** A
+  breakpoint on a function's FIRST instruction sits before `push ebp; mov ebp,esp`, so `$ebp` is still
+  the CALLER's frame: take the arguments from `*(int *)($esp + 4)`, `*(int *)($esp + 8)`, … and the
+  caller from `*(int *)$esp` — the return-address field is the cheapest way to learn a function's caller
+  set in the same window. Before printing any register as an index or offset, read the prologue for
+  `mov reg,[ebp+8]`-style argument loads and check for a reassignment on the path that reaches the site:
+  a callee-saved register holding arg 1 for the whole body is a PARAMETER (faction, owner, mode), not a
+  cursor, and a ledger that calls it an index poisons later milestones. Print the raw value AND its
+  derived forms (`$ebx`, `$ebx / 52`, `$ebx % 52`) so a mislabel is visible in the log, not discovered
+  weeks later in a document.
 - **Watchpoints:** x86 gives 4 hardware slots (an 8-byte window needs 8-alignment = 2 slots); pair with
   the 10 Hz poller `scripts/m53m_poll.py`; they fire on VALUE CHANGE, so a same-value rewrite is
   invisible. **Never watch a field the display reads constantly** (`base+0x40` mineral storage): the

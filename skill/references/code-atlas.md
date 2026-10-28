@@ -163,10 +163,19 @@ Systematic mismatch: try the raw post-state variant before widening the model.
   you hunting a writer that does not exist. Same for a pipeline accumulator that never changes:
   histogram the gating fields of the input records first — a filter no record satisfies makes the
   accumulator structurally zero (silent sweeps and watchpoints), not a hidden writer.
-- **The unit TYPE table is `0x98ad88 + tid*52`** (stride `0x34`, 256 records); its flags WORD sits at
-  `+0x30`, i.e. byte `tid*0x34 + 0x98adb8`, and bit 2 there is the production-markup switch. Read it in
-  gdb as `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` when `$ebx` holds the tid — `*4` lands in a
-  neighbouring record and prints 0, which is misrecorded as "flag clear".
+- **The unit TYPE table is `0x98ad88 + tid*52`** (stride `0x34`) and it holds **512 records = 8 FACTION
+  bands of 64**: `tid = faction*64 + slot`, a faction's designed types fill `band_start..` contiguously
+  and every slot past its created count reads all-zero (band 0 = 0..13 shipped types, band 3 = 192..
+  ours). A scan/production helper walks `counter < 0x40 ? counter : (counter & 0x3f) + faction*64` over
+  0..0x80 and REJECTS a record unless `tid/64` is 0 (shared) or the faction it is processing — so indices
+  above 255 are other factions' records, not anomalies, and a census capped at 255 never saw them. The
+  sweep `FUN_00572800` takes `(faction, tid, mode)` and its band walk bases on `param_1*0xd00` =
+  `faction*64*52`; at `0x5741fe` / `0x574203` `esi` is the **FACTION** (arg 1) while the tid is the second
+  argument, so a value printed from `esi` there is not a record index. The flags WORD sits at `+0x30`,
+  i.e. byte `tid*0x34 + 0x98adb8`, and bit 2 there is the production-markup switch (bits 6/7 appear on
+  designed records and are unexplained). Read it in gdb as
+  `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` when `$ebx` holds the tid — `*4` lands in a neighbouring
+  record and prints 0, which is misrecorded as "flag clear".
 - Commands + patterns: `references/static-store-census.md`.
 - Rebuild recipe, pitfalls and export stats: `references/ghidra-batch-export.md`.
 - What the install ships (rules text, map format, graphics containers) and what to parse vs
