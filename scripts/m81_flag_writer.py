@@ -90,7 +90,7 @@ def parse(text):
     for ln in text.splitlines():
         m = LINE.match(ln.strip())
         if m:
-            if m.group(1):
+            if m.group(2):
                 ev.append({"tag": "FLAGW", "tid": int(m.group(2)),
                            "pc": int(m.group(3), 16), "val": int(m.group(4), 16)})
             else:

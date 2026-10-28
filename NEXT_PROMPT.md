@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 119 close, 2026-10-28)
+# NEXT_PROMPT.md — footing for the next session (session 124, 2026-10-28)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -20,7 +20,7 @@ there, and never `rm`/`git checkout --`. Every doc write is an append or a <= 2 
 read-then-rewrite a file over 10 KB; keep tool results small.
 ## THE LEDGER
 
-Merged: **M54A-M80** (#39-#81). **M81 FAILED (s123, m81write1/1b, NOT merged):** 0x5741e1 caught record 385 (fac 6) with the flag WORD ALREADY 0x81 PRE-copy -> +0x30 is written before the sweep; writer unnamed; traps list the printf bug.
+Merged: **M54A-M81** (#39-#82). **M81 (s124, `m81write4`) — THE SWEEP WRITES A CREATED RECORD'S OWN `+0x30` BEFORE ITS COPY.** 0x5740f7 `call 0x595b10` -> 0x595f82 `mov WORD [esi+0x98adb8],1` (same fn: 0x105 at 0x595f91, 0x115 at 0x595f9c -> the marker is an INIT possibility); then 0x574125 `or BYTE [ebx+0x98adb8],0x40` (bit 6, iff [ebp-0xc] != 0) and 0x57412c `or ...,0x80` (bit 7, unconditional). Live FLAGW 324/325 0x1->0x41->0xc1, SWCOPY esi 5 f30 0xc1, read back Impact Squad/Rover. s123's FAIL was 4 instrument bugs (traps). NAMED M81, s124.
 
 **M79 (s121, m79net5) — THE MARKER GATE IS A NETGAME + HUMAN-PLAYER TEST.** Gate 0x4f0591-0x4f0637
 admits the 0x100-clear pass iff `0x920434 == 0 || !(0x985b10 & (1<<owner))`, ELSE 0x4f05bd marks
@@ -32,14 +32,13 @@ HUMAN-PLAYER mask keyed 1<<faction (live {3}), 0x985b11 = 0xff; NOT 1<<cur_playe
 `[ebp-0x18]` 0..0x80; index = `counter<0x40 ? counter : (counter&0x3f)+faction*64`;
 0x574167-0x574176 rejects unless `index/64 in {0, faction}`; record = 0x98ad88+index*52 (0x57417e);
 32 B copied INTO the record at 0x5741e1; 0x5741f0 `and BYTE [rec+0x30],0xfd`; 0x5741fe
-`call 0x572800(faction, index, 0)`, band base `param_1*0xd00`. LIVE (m80band1 PASS): SW573 fac=5 idx 324/325, SWENTER owner=5 tid=324/325, CLR4 pre=0xc1 (the `and ~4` a no-op), MARKHIGH 0; census 324/325 `0 -> 0xc1` "Impact Squad"/"Impact Rover", EMPTY at window start. NAMED M80, s122.
+`call 0x572800(faction, index, 0)`, band base `param_1*0xd00`. LIVE (m80band1 PASS): SW573 fac=5 idx 324/325, SWENTER owner=5 tid=324/325, CLR4 pre=0xc1 (the `and ~4` a NO-OP — M81 explains why), MARKHIGH 0; census 324/325 `0 -> 0xc1`, EMPTY at window start. NAMED M80, s122.
 
 **M78 (s120, `m78order3`) — THE 0x100 MARK AND ITS CLEAR ARE IN ONE PRODUCTION VISIT; THE CENSUS
 THAT READS 0x105 IS A MID-VISIT SNAPSHOT.** visit 36: PRODFLAG 194 (pre 0x41) -> SWEEPCALL ret
 `0x4efe83` -> MARK 192/193 (`0x5729d5`) -> GATE -> SWEEPIN -> CLEAR 192/193 (`0x4ef398`, pre
 0x105/0x145); cross-visit pairs = [], so nothing re-marks and M77's "carriers survive a boundary"
 is a MEASUREMENT ARTIFACT (the driver reads /proc/pid/mem between the two stores). Census replay 4/4.
-(M80: esi at 0x5741fe/0x574203 is the FACTION, not an index.)
 NAMED M78, s120.
 
 **M77 (#78)/M76 (#77):** the clear pass 0x4f05e2 is entered only through that gate (bail `[ebp-0x20]==0` 0x4f0599; eligibility written 0x4efe6c = FIRST production); the clear 0x4ef398 is FUN_004ef380's first statement on the record PASSED IN, called by the production inline selector iff `flags & 0x105 == 0x105`. NAMED M77/M76, s118-s119.
@@ -52,8 +51,7 @@ NAMED M73/M74/M75, s114-s117.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
-x
-   `python3 scripts/accept_ready.py` is the readiness oracle (17 unit cases in
+`python3 scripts/accept_ready.py` is the readiness oracle (17 unit cases in
    `test_accept_ready.py`): screen, running gdb, evidence headroom, then per base `pending > 0`,
    `minerals < price`, `credit > 0` — **re-read it immediately before you arm**. Screen fix:
    dialog -> Return, base PANE -> Escape, quit-prompt -> Escape (`m78_mark_clear.py
@@ -63,21 +61,19 @@ x
    refuses to drive unless gdb armed them), `m75_sweep_replay.py`, `m76_marker_clear.py`,
    `m77_gate_trace.py`, `m78_mark_clear.py` (census APPENDED into the gdb log), `m79_netgame_poke.py`
    (`m79net5`: POKE 0x4f05a5 + RESTORE 0x4f0637, needs >= 3 boundaries). `m72_gate_watch.py` is the
-   VISIT GATE; `m74_flag_watch.py` FAILED twice; `m81_flag_writer.py` FAILED once (fix its bp printf before re-running M81); `m71_pop_watch.py` reproduces M71 only.
+   VISIT GATE; `m81_flag_writer.py` (`m81write4`: 4 hw watchpoints on the flag WORDS of the next free band-5 slots, fresh reload first so they are EMPTY); `m71_pop_watch.py` reproduces M71 only.
 3. Self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`, `m57_ui_enqueue.py`,
    `m69_enqueue_gdb.py`, `m70_cursor_watch.py`, `m65_screen.py --samples 8`, `m70_scan_writers.py`
    (static), `evidence.py audit [--delete]` / `budget`, `scratch/m71/dis.py LO HI` (objdump window).
 ## STILL OPEN (in priority order)
 
-1. **M81 (re-run) — the record-creation writer and the `+0x30` bits 6/7.** M80: slots 324/325 were EMPTY at
-window start and read "Impact Squad"/"Impact Rover" with `+0x30 = 0xc1` by the time FUN_00573a90
-reached 0x5741f0 (CLR4 pre=0xc1, so the `and ~4` was a NO-OP); the 32 B copy at 0x5741e1 covers
-bytes 0..0x1f, so NOTHING named writes `+0x30` on the create path. Cheap shape: 4 hw watchpoints
-on the flag WORDS of the next free slots (326/327) + a breakpoint at 0x5741e1, one window. Then:
-what bits 6/7 mean (ours 192=0x105 193/194=0x145, AI 324/325/386=0xc1, 449=0x1c5); who calls
-FUN_00573a90 (ret 0x5749a7 x6 / 0x574da9 / 0x575424); why the sweep's band-walk guard
-`tid<0x40 || flags&4` never engages on a fresh record; the upkeep/tech passes (0x52145e/0x5a7d00/
-0x5a7f67, ZERO events ever); the alpha path (`0x5a6cd0`).
+1. **M82 — WHAT `+0x30` BITS 6/7 MEAN.** M81 named the writers, so now: census the flag WORD over all
+8 bands (0..511) in ONE window, then ONE controlled poke of bit 7 on our record 194 and re-read the
+price gate `0x4efa5e` (M73's `edi`). Bit 7 is set on every record the sweep inits, yet ours
+192/193/194 read 0x105/0x145 with bit 7 CLEAR, so it is NOT the M78 marker. Also: why `[ebp-0xc]`
+is != 0 for 324/325 and == 0 for s123's 385; who calls FUN_00573a90 (ret 0x5749a7 x6 / 0x574da9 /
+0x575424); what global `0x985aec` is (its `> 1` test ORs bit 2 = markup-off onto EVERY record the
+sweep touches); the upkeep/tech passes 0x52145e/0x5a7d00/0x5a7f67 (ZERO events ever); alpha 0x5a6cd0.
 2. **Who calls the `0x4194b3` handler / what widget message `0x4d00` is** (zeroes the cursor
    after a queue mutation; sender `0x584010`, `0x4eb6b0` runs after it; did NOT fire at a
    completion or round boundary).
@@ -86,16 +82,14 @@ FUN_00573a90 (ret 0x5749a7 x6 / 0x574da9 / 0x575424); why the sweep's band-walk 
    records to string builders.
 4. **The `-3 / -6` formula** — stride CONFLICT stands: `0x984d38 + (-v)*48` (`0x40adae`,
    `0x4164f5`) vs `+(-v)*16` (`0x418914`, `0x41894d`).
-5. Open from 104/105: the `income 1` accrual case (every M64 PASS window had `gap_delta = 0`):
-   `python3 scripts/m56_build.py --ui-queued <fresh idx> --boundaries 10 --timeout 400
-   --no-poke-hold`. Keep the suite green: `scripts/gate.py` runs every `test_*.py` + `check_classes.py`.
+5. Keep the suite green: `scripts/gate.py` runs every `test_*.py` + `check_classes.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at session-122 close:** `terran.exe` UP (the binary is `terran.exe` — pgrep -x terrans.exe
+- **Box at session-124 close:** `terran.exe` UP (the binary is `terran.exe` — pgrep -x terrans.exe
 finds nothing), fresh `m54b_clean.SAV`, round ~52, University Base idx 0 pending 1 head 2 price 9;
-slots 324/325 now EXIST as faction 5's "Impact Squad"/"Impact Rover" (flags 0xc1); our 192=0x105
-193=0x145 194=0x145 carry 0x100 (the M79 poke let MARKSET run). Gate globals: `0x920434`=0,
+slots 324/325 = faction 5's Impact Squad/Rover (0xc1, created live; a clean reload drops them); our 192=0x105
+193=0x145 194=0x145 carry 0x100 (M79 poke let MARKSET run). Gate globals: `0x920434`=0,
 `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3;
 `*DAT_008f0d60` = the base record (+4 owner, +0x40 storage, +0x4c pending, +0x50 queue head). Screen hygiene BEFORE arming: pane -> Escape, dialog -> Return,
 quit-prompt -> Escape (`m78_mark_clear.py normalize_screen()`); an Escape on the bare map RAISES
@@ -130,9 +124,8 @@ the quit prompt. Always read `pending` AND the head back after an enqueue.
 - **A gdb-log tag alternation must be LONGEST-first** (`MARK` swallows `MARKSET`; m79net4 KeyError); a census parser must re-read its own match object (m79net2 `int('BOUNDARY')`).
 - **PRODFLAG (0x4efe60) fires for EVERY record the pass walks** (m79net1: 128/322/323/194 — those are FACTION BANDS, M80), so attribute the sweep by its own predecessor.
 - **The gate visit for a record arrives in the boundary AFTER the sweep marks it**: m79net2 (2 boundaries) saw the 0x104 marks but never reached 0x4f0591, so a poke window needs >= 3 boundaries; 4 boundaries overruns the 420 s foreground cap (m79net1 was cut mid-window).
-- A bp-command printf must NOT print inferior strings (`%.20s` on `*(char *)(rec+0)` -> gdb "Cannot access memory", aborts the batch script, DETACHES mid-window; boundaries then run uninstrumented while smac_play exits 0 — the log looks empty).
+- A bp-command printf must NOT print inferior strings (`%.20s` on `*(char *)(rec+0)` -> gdb "Cannot access memory", aborts the batch script, DETACHES mid-window; boundaries then run uninstrumented while smac_play exits 0 — the log looks empty). A gdb-script TEMPLATE substitutes expressions as printf ARGUMENTS, never into the format string (`idx=@@I@@` printed the literal `($ebx/52)` and the log parsed as ZERO events). In a two-branch `re` alternation `m.group(1)` is the WHOLE match — branch on a group from inside the taken branch. Never trust one 3 s read of a gdb log for arming: poll.
 - A clean reload does NOT carry records created live last session (M80's 324/325 vanished on reload, reappeared between runs): census the watched slots BEFORE arming.
-- base+0xd0 (`credit`) is written ONLY at 0x6310c6/0x631154 (player-record init via `call [obj+0x90]`) — income is never recomputed per round (ours 0/0 vs 1-6 on 17 others); accept_ready's credit>0 is unrecoverable by turns — use the per-boundary storage poke 200.
 - base+0xd0 (`credit`) is written ONLY at 0x6310c6/0x631154 (player-record init, `call [obj+0x90]`) — income is never recomputed per round; University Base income 0 rate 0 vs 1-6 on the other 17 bases, so accept_ready's credit>0 cannot be restored by turns; use the per-boundary storage poke 200.
 - **The queue tail holds STALE ids** (the shift reaches only `0..pending-1`): never read a queue by
   "first empty slot", never treat slot 10 (`+0x78`) as an entry, never plan a duplicate, and never
@@ -165,4 +158,4 @@ paragraph, no new prose, no file opened "to double check". Closing is PART of th
 
 ## Report
 
-One screen: what changed, the acceptance numbers WITH the command, what is open, the next pick.
+One screen: what changed, acceptance numbers WITH the command, what is open, next pick.

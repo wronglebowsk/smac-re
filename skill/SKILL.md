@@ -139,6 +139,9 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
 - The `NEXT_PROMPT.md` 15,500-byte cap is a hard budget, not advice (the gate fails at 16,000 chars,
   `scripts/evidence.py`): draft the rewrite to land near **15.2 k on the first write** — trimming a
   finished 15.6 k file costs three follow-up patch calls for 60 characters, more than the overage.
+  Patching an over-budget file down costs roughly one call per 100 bytes of net reduction, so when a
+  section edit ADDS text, pair it in the same call with a compensating deletion elsewhere (retire the
+  oldest ledger paragraph or a stale box-state bullet) instead of chasing the overage afterwards.
   **Trust only `python3 scripts/evidence.py budget` for that number** — it counts CHARS, and chars do
   not equal `wc -c` / `os.path.getsize` (a file measuring 15,988 bytes scored 16,052 chars and failed
   the gate), so trim until the tool's own line says `warn`, then stop. When trimming, DELETE whole
@@ -646,12 +649,30 @@ against the bare index never fires (`references/static-store-census.md` §9.3). 
   the field that governs the behaviour is a UI cursor/selection, POKE it and prove the write lands at
   the poked value: `queue[2]` for a cursor poked to 2 while the sort rule predicted slot 1 turned a
   confounded click observation into a controlled experiment (and refuse the shape when the poked value
-  and the rival prediction agree). Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
+  and the rival prediction agree). **A printf ERROR inside a breakpoint's commands block ABORTS the
+  whole `gdb -batch` script and detaches the inferior mid-window**: the log truncates at the first hit
+  while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run. gdb's
+  printf reads an inferior pointer as a HOST address, so `%.20s` fed `*(char *)(rec+0)` errors
+  ("Cannot access memory"); bp printfs emit NUMBERS derived from registers only (raw reg, reg/stride,
+  reg%stride, `*(short *)(...)` values), never inferior strings — use `x/s` outside a commands block
+  when a name is genuinely wanted. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
 otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
 read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
 armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
 never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
+Two more pre-arm checks, both cheap and both fatal when skipped:
+- **The readiness oracle can print a FIX that is unreachable on the current save.** `credit` is
+  `base+0xd0`, a save-LOADED field whose only writers are the player-record init stores — turns never
+  raise it on a base whose income the save left at 0, so looping the printed reload chain cannot clear
+  that reason. Before re-running a printed FIX, check the state it demands is reachable; when it is
+  not, take the per-boundary storage poke above the gate's price (readiness then passes on minerals
+  alone) and report the oracle's premise as false instead of reloading a second time.
+- **A clean reload does NOT carry records created live in a previous session** — a prior run's new
+  unit/type records are live state that no save holds, so yesterday's census is fiction after a
+  reload. Re-census the watched slots from `/proc/pid/mem` in the same invocation that arms the
+  harness, and make the harness assert armed == len(designed watch list) rather than a fixed floor:
+  arming fewer watchpoints than the design list silently drops half the slots from the window.
 The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is

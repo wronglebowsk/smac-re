@@ -1,1 +1,1 @@
-M81 re-run | acceptance m81write2 NOT RUN YET | merged? NO | in flight: fresh reload (scripts/m54a_load.py --relaunch, SMAC_SAVE=m54b_clean.SAV) then python3 scripts/m81_flag_writer.py --tag m81write2 --boundaries 3. printf string bug + arm-check race fixed. Nothing committed yet this session.
+M81 | acceptance m81write4 PASS (G1-G6 True) | merged? submitting now | next: after merge, M82 = census +0x30 across all 8 bands then ONE poke of bit 7 on record 194 and re-read the price gate 0x4efa5e. Branch milestone/m81.

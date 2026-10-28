@@ -846,3 +846,21 @@ ONE REAL EVENT (`evidence/m81write1b.gdblog`): `TAG0 idx=($ebx/52) esi=6 ebx=200
 INSTRUMENT BUG (the blocker): a bp-command printf with `%.20s` fed `*(char *)(rec+0)` makes gdb error ("Cannot access memory at address 0x4c" — inferior pointer read as a host address), which ABORTS the batch script and detaches mid-window; later boundaries run uninstrumented while smac_play still exits 0. Next attempt: print idx/esi/ebx/f30 only (no name).
 
 BOX FACT (why the brief's FIX cannot restore credit): base+0xd0 (`credit`) has only two writers in .text, 0x6310c6/0x631154 (`mov [obj+0xd0],param_1`, player-record init via `call [obj+0x90]`); income is never recomputed per round; University Base income 0 rate 0 vs 1-6 on all 17 other bases; accrual 0x4ef7f6 adds 0. Route: per-boundary storage poke 200.
+
+
+## M81 (s124, `m81write4`) — WHO WRITES A CREATED RECORD'S `+0x30`, AND WHEN
+
+`FUN_00573a90` writes it itself, in the visit BEFORE its own 32 B copy at 0x5741e1:
+`0x5740f7 call 0x595b10` (the sweep forwards its six params) -> inside, `0x595f82
+mov WORD PTR [esi+0x98adb8],0x1` RESETS the flags WORD to bit 0 (the same function also
+holds `0x595f91 ...0x105` and `0x595f9c ...0x115`, so the 0x100 marker is an INIT-time
+possibility); then the sweep ORs `0x574125 or BYTE PTR [ebx+0x98adb8],0x40` (bit 6, iff the
+local `[ebp-0xc]` written at 0x573e9f from max(edi, movsx(al)) is != 0) and `0x57412c
+or BYTE PTR [ebx+0x98adb8],0x80` (bit 7, unconditional on that path). Bit 2's ORs (0x574107
+on `eax == -2`, 0x574117 on `DWORD [0x985aec] > 1`) did not run. LIVE (m81write4 PASS: 4 hw
+watchpoints on the flag WORDS of slots 324-327, fresh m54b_clean reload (all four EMPTY at
+baseline), 3 boundaries): FLAGW 324/325 pc 0x595f8b val 0x1 -> 0x57412c val 0x41 -> 0x574133
+val 0xc1; SWCOPY idx 324/325 esi 5 f30 0xc1; read back 324 "Impact Squad" 0xc1, 325 "Impact
+Rover" 0xc1, 326/327 empty. Store pcs are outside {0x5741e1,0x5741f0,0x5741fe,0x572800}.
+WHAT BITS 6/7 MEAN IS OPEN. Callers of 0x595b10: 0x4392fe/0x5740f7/0x57a021.
+Evidence: evidence/m81write4.gdblog, traces m81write4_r0..2.

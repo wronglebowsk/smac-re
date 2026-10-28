@@ -172,8 +172,14 @@ Systematic mismatch: try the raw post-state variant before widening the model.
   sweep `FUN_00572800` takes `(faction, tid, mode)` and its band walk bases on `param_1*0xd00` =
   `faction*64*52`; at `0x5741fe` / `0x574203` `esi` is the **FACTION** (arg 1) while the tid is the second
   argument, so a value printed from `esi` there is not a record index. The flags WORD sits at `+0x30`,
-  i.e. byte `tid*0x34 + 0x98adb8`, and bit 2 there is the production-markup switch (bits 6/7 appear on
-  designed records and are unexplained). Read it in gdb as
+  i.e. byte `tid*0x34 + 0x98adb8`, and bit 2 there is the production-markup switch.
+   WHO WRITES IT ON A CREATED RECORD (M81, 4 hw watchpoints, tag `m81write4`): the sweep itself, in the
+   visit BEFORE its own 32 B copy at `0x5741e1` — `0x5740f7 call 0x595b10` -> `0x595f82 mov WORD PTR
+   [esi+0x98adb8],0x1` (reset to bit 0; the same function also holds `0x105` at 0x595f91 and `0x115` at
+   0x595f9c, so the 0x100 marker is an init-time possibility), then `0x574125 or BYTE PTR
+   [ebx+0x98adb8],0x40` (bit 6, iff the local `[ebp-0xc]` != 0) and `0x57412c or ...,0x80` (bit 7,
+   unconditional on that path); bit 2's ORs are 0x574107 (`eax == -2`) and 0x574117 (`DWORD [0x985aec]
+   > 1`). Bits 6/7 semantics are still unexplained. Read it in gdb as
   `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` when `$ebx` holds the tid — `*4` lands in a neighbouring
   record and prints 0, which is misrecorded as "flag clear".
 - Commands + patterns: `references/static-store-census.md`.
