@@ -213,7 +213,7 @@ def main():
                                                    and len(sents) >= 1,
         "G5 ENTRY count == BRANCH count": len(entry) == len(branch) and len(branch) >= 1,
         "G6 every ENTRY shows ret=0x418d8f p2==1": bool(entry) and all(
-            e[1].get("ret") == 0x418d8f and e[1].get("p2") == 1 for e in entry),
+            ev[i][1].get("ret") == 0x418d8f and ev[i][1].get("p2") == 1 for i in entry),
         "G7 order ARM < GATE(-1) < SENT(-9999) < BRANCH < ENTRY": bool(arms) and any(
             a_ < g_ < s_ < b_ < e_ for a_ in arms for g_ in gates for s_ in sents
             for b_ in branch for e_ in entry),
