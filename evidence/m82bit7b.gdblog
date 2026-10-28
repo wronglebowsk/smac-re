@@ -1,0 +1,31 @@
+[New LWP 4141959]
+[New LWP 4141958]
+[New LWP 4141957]
+[New LWP 4141956]
+[New LWP 4141955]
+[New LWP 4141954]
+[New LWP 4141953]
+[New LWP 4141950]
+[New LWP 4141949]
+[New LWP 4141948]
+[New LWP 4141947]
+[New LWP 4141946]
+[New LWP 4141945]
+[New LWP 4141944]
+[New LWP 4141943]
+[New LWP 4141942]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xec57e32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4efa4b
+Breakpoint 2 at 0x4efa52
+Breakpoint 3 at 0x4efa5e
+Breakpoint 4 at 0x4efa63
+ARMED base=0x95da10 head=2 pending=1 storage=20
+FACTA id=2 own=197379 A=9
+FACTB id=2 A=9 B=1
+GATE id=2 storage=20 edi=9 f30=0x1

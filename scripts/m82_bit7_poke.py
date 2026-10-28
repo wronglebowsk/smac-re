@@ -183,17 +183,19 @@ def main():
     print(f"  bit6(0x40) carriers {b6}\n  bit7(0x80) carriers {b7}\n  bit2(0x4) carriers {b2}",
           flush=True)
 
-    # ---- setup: 194 at the head, bit 2 and bit 7 CLEAR, storage below both prices
-    if row["pending"] == 0 or row["slots"][0] != TID:
-        rc, tail = run_script([os.path.join(ROOT, "scripts", "m70_clear_dialog.py")])
-        print("dialog clear:", tail, flush=True)
-        rc, tail = run_script([os.path.join(ROOT, "scripts", "m57_ui_enqueue.py"),
-                               "--base-index", str(BASE_INDEX), "--cell-item", str(TID),
-                               "--inserts", "1"])
-        print(f"enqueue rc={rc}:", tail, flush=True)
-        with open(f"/proc/{pid}/mem", "rb", 0) as m:
-            row = F.base_row(m, BASE_NAME)
-    print(f"after enqueue: head {row['slots'][0]} pending {row['pending']} "
+    # ---- setup: 194 AT THE HEAD.  The UI chooser landed cell 2 twice (m82bit7a: pending 1,
+    # head 2), so the head is set by a CONTROLLED POKE of the queue head slot (+0x50) and the
+    # count (+0x4c), both read back before arming.  Bit 2 and bit 7 are then cleared on 194.
+    rc, tail = run_script([os.path.join(ROOT, "scripts", "m70_clear_dialog.py")])
+    print("dialog clear:", tail, flush=True)
+    with open(f"/proc/{pid}/mem", "rb+", 0) as mm:
+        mm.seek(addr + 0x50)
+        mm.write(struct.pack("<i", TID))
+        mm.seek(addr + 0x4c)
+        mm.write(struct.pack("<i", 1))
+    with open(f"/proc/{pid}/mem", "rb", 0) as m:
+        row = F.base_row(m, BASE_NAME)
+    print(f"queue poke: head {row['slots'][0]} pending {row['pending']} "
           f"slots {row['slots'][:3]}", flush=True)
     pre194, post194 = poke_flag_bits(pid, TID, clear_bits=0x84)   # clear bit 2 and bit 7
     print(f"setup flag 194: 0x{pre194:04x} -> 0x{post194:04x} (bit2 and bit7 cleared)", flush=True)

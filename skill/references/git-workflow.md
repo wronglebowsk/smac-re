@@ -93,6 +93,17 @@ HEAD still needs — filter-branch then drops it from the worktree too, so resto
 later commit does not resurrect the giant one. (2) Re-run the blob scan and confirm it is empty before
 re-submitting, otherwise the same hook rejects the push again.
 
+**A squash merge makes local `main` a liability if it carries any local-only commit.** `merge <n>` runs
+`gh pr merge --squash --delete-branch` (which LANDS the PR) and only THEN `git checkout main && git pull
+--ff-only`; a `main` holding a commit the squash folded in — a stray cursor or checkpoint commit — makes
+that pull print `Not possible to fast-forward, aborting`, so the command exits non-zero AFTER the work is
+already merged and never rebuilds the index. Do not re-merge: confirm with `gh pr view <n> --json
+state,mergedAt,mergeCommit`, keep the local tip reachable (`git branch keep/<label> <old-tip>`), then
+`git checkout main && git reset --hard origin/main` and finish the tail yourself (`python3
+scripts/index.py build`). Prevention is the rule that counts: keep `main` free of local commits so the
+pull fast-forwards. Because the squash's parent is the previous `main` tip, ANY local `main` commit
+is guaranteed divergence, not a race.
+
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
 merge by hand in the web UI without a green `gate` check. After editing this live skill, copy the whole
