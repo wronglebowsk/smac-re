@@ -1,44 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-118-119.md` (2 sessions). Read it only when a question reaches back before session ## Session 120.
-
-## Session 120 (2026-10-28) — M78: SAME-VISIT marks vs clears, and who else calls FUN_00572800/FUN_004ef380. ACCEPTANCE PASS (tag `m78order3`).
-
-`python3 scripts/m78_mark_clear.py --tag m78order3 --boundaries 4 --no-reload` (state from
-`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`, round 50): enqueue 194 at
-University Base idx 0, storage poked 200 read back 200, 12 silent breakpoints (FUNCIN 0x4ef6d0,
-PRODFLAG 0x4efe60, L20FLAG 0x4efe6c, SWEEPCALL 0x572800, MARK 0x5729d5, GATE 0x4f0591, MARKSET
-0x4f05bd, SWEEPIN 0x4f05e0, CLEAR 0x4ef398, UPKCLR 0x52145e, TECHSET 0x5a7d00/0x5a7f67) and the
-per-boundary census APPENDED into the gdb log, so events and censuses share ONE ordered stream.
-Baseline 192=0x001 193=0x041 194=0x041, carriers [].
-
-**ORDERING (unit = VISIT, i.e. one entry of the production function).** visit 36: PRODFLAG tid=194
-pre=0x41 -> L20FLAG edx=1 -> SWEEPCALL owner=3 tid=194 mode=0 ret=0x4efe83 -> MARK 192 (pre 0x001)
-+ MARK 193 (pre 0x041) -> GATE l20=1 owner=3 rec=10088 (=194*52) -> SWEEPIN -> CLEAR 192 (pre 0x105)
-+ CLEAR 193 (pre 0x145), all in the SAME visit. Cross-visit mark->clear pairs = [] and no later
-caller re-marks, so H_ACROSS is RULED OUT and M77's paradox is a MEASUREMENT ARTIFACT: the census
-that read 192=0x105 193=0x145 at boundary 1 sits BETWEEN the mark and the clear of visit 36 — the
-driver reads /proc/pid/mem while the engine is stopped inside the production pass. g9 asserts that
-every census which sees 0x100 is inside its tid's mark->clear pair; census 1 is the only one and it
-is. Census replay exact at all 4 boundaries (carriers [] / [192,193] / [] / []), so the
-instrumented writer set explains every 0x100 change; MARKSET 0, and 0x4ef5b3 / 0x52145e /
-0x5a7d00 / 0x5a7f67 printed ZERO events (the upkeep and tech passes still never ran).
-
-**CALLERS.** Static (instruction bytes): `call 0x572800` at 0x4394be (FUN_00438ad0), 0x4efe7e
-(FUN_004ef6d0), 0x5741fe (FUN_00573a90), 0x5a7d0e + 0x5a7f75 (FUN_005a7970); `call 0x4ef380` at
-0x4ef5ae (FUN_004ef540), 0x4f0626 (production inline), 0x521479 (FUN_00521070), 0x5a8568
-(FUN_005a7970). Live here: SWEEPCALL rets {0x4efe83 x1 (tid 194), 0x574203 x4 = FUN_00573a90 on
-array indices 324/325/385/387, other owners — those sweeps marked NOTHING}; CLEAR rets {0x4f062b
-x2}. Every observed ret is a static call target (g2). Side fact: the production loop also fires
-PRODFLAG/L20FLAG at indices 322/323, so it walks PAST the 256-record array the census covers.
-
-**OPEN.** (a) what the >=256 indices are and what FUN_00573a90's sweep does for them; (b)
-DAT_00920434 and DAT_00985b10 still unnamed (live 0 / 0x08 = owner 3; every GATE admitted, so the
-0x4f05bd else-branch stayed dead); (c) when the upkeep/tech passes run at all. NEXT pick: M79 —
-name those two globals and find what turns the MARKSET else-branch on.
-Evidence: `evidence/m78order3.gdblog`, `evidence/m78order3_seq.jsonl`, traces `m78order3_r0..r3`;
-failed instruments kept: `evidence/m78order1.gdblog` (census lines overwritten — a non-O_APPEND
-log fd) and tag m78order2 (a quit prompt raised by an Escape on the bare map swallowed the enqueue).
+Older sessions: `docs/sessions/sessions-120-120.md` (1 sessions). Read it only when a question reaches back before session ## Session 121.
 
 ## Session 121 (2026-10-28) — M79: NAME the two production-gate globals; what turns the 0x4f05bd MARKSET else-branch on. ACCEPTANCE PASS (tag `m79net5`).
 
@@ -388,3 +350,18 @@ STATIC (`scratch/m71/dis.py 5aaa20 5aab65`): aaa20(arg0=faction): edi = faction*
 CONFOUNDED, not causal: both windows that produced an AAA hit ended with driver rc=1 "FAIL boundary accounting" and a 2-round jump (50->52); the clean single-boundary windows (m86cens2, rc=0) produced no AAA. Two variables moved together.
 
 OPEN (M88 pick): who calls FUN_004f34b0, and what writes faction 5's slot = 8 during a fresh load (the kind FUN_005a7970 then refuses, because its table holds 10/25/26). Evidence: evidence/m87trig1.gdblog, evidence/m87trig2.gdblog; scratch/m87trig*.gdb. evidence 27.5 MB.
+
+## Session 139 (2026-10-28) — M88: the per-record slot IS written by FUN_005aa880 through a pointer; a mnemonic grep and a store-list census both miss it (m88slot6 PASS 7/7)
+
+Same Hermes session as s138 (M86/M87) continued; branch milestone/m88, commits 0cef077 -> 554deab -> cb25a0d -> e8e900b -> da4de47.
+
+ACCEPTANCE `python3 scripts/m88_slot_watch.py --tag m88slot6 --poke-index 5 --rounds 4 --timeout 120` (ONE invocation): **VERDICT PASS 7/7** — poke slot(5)=0x957ba8 13 -> -1 (read back); STORE EVENTS on the watched address: n=1 val=-1 in FUN_005aaa20 (aaa20's own consumption, instruction 0x5aaac1 `c7 87 fc d7 94 00 ff...`), n=2 pc=**0x5aa9d3 `mov DWORD PTR [esi],ebx` in FUN_005aa880 val=36**; read-back slots(0..7)=[-1,44,13,32,5,36,32,48], final slot(5)=36 == the last attributed store's value; control watchpoint on the ROUND counter fired 4x, writer 0x51f53c `a3 fc 5a 98 00 mov ds:0x985afc,eax` in FUN_0051f320; AAA 4 hits, CALL 4 hits with kind==slot every time (idx 4 kind 3 slot 3 etc.); round 64->68.
+
+HOW IT DIED BEFORE IT PASSED (three instrument defects, all mine, all fixed in place):
+1. `m88slot1` (scripts/m88_slot_writer.py) enumerated writers by grepping the mnemonic text for `0x94d7fc` and got only the DIRECT forms (0x51038c, 0x59cfce, the -1 stores). The slot is also written through pointers built by `lea esi,[eax*4+0x94d7fc]` (0x5aa9c5 in FUN_005aa880, 0x52ae09 in FUN_0052a720 - a 4859-B field accessor with 64 callers) and stored as `mov [esi],ebx` — invisible to that grep. It poked slot(5) 8 -> -1 and read 13 back with ZERO events: outcome UNEXPLAINED. It also carried my second typo of the s138 session (0x5aacc1 for 0x5aaac1) and printed `$esi` at aaa20's entry, where esi is not arg0 yet (the load is at 0x5aaa25) - so it reported idx=41900 (= 5*8380, the caller's byte offset).
+2. `m88slot2`/`m88slot3` armed `watch *(int *)0x957ba8` (and 0x94f8b8): gdb confirmed "Hardware watchpoint 4", CTRL fired, the value visibly changed - and zero events. `m88slot4` added a control watchpoint on ds:0x985afc and the mechanism fired there (writer 0x51f53c), so the watchpoints are NOT broken; what they miss is a write that happens while gdb is stopped between my poke and the game's next access - see 3.
+3. `m88slot5` PASSed 6/7 and died only on my own G6, which demanded that aaa20 process THE POKED record in the window. aaa20 rotates records (slot2: 4, 6, 1; slot4: 3; slot5: none; slot6: 4 of them), so that was an assumption about the game, not a game requirement; G6 became the invariant that WAS observed - every CALL event has kind == the slot value it read (4/4 in slot2, 4/4 in slot6).
+
+LIVE FACTS: the eight slots [0x94d7fc + idx*8380] right after a fresh m54b_clean load are [-1,3,8,22,49,8,5,48] - record 5 holds 8, which is the kind M86/M87 measured being handed to FUN_005a7970. A poke to -1 is refilled within one boundary by FUN_005aa880 (0x5aa9d3), and aaa20 stores -1 there itself at 0x5aaac1 just before it calls the helper. So the slot is a WORK ITEM ALLOCATION, not a constant: 45, 13, 36 were allocated in three consecutive windows.
+
+OPEN (M89 pick): FUN_005aa880 has 4 callers - name them (containment of the call sites), and decide what the allocated value indexes (the 1436-byte record at 0x9275c4 + idx*1436 and the 3-entry table 0x93325c/68/74 with shorts 10/25/26 are the two candidates FUN_005a7970 reads). Evidence: evidence/m88slot1.gdblog ... m88slot6.gdblog; scratch/m88slot*.gdb.

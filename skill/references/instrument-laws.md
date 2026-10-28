@@ -36,3 +36,27 @@ resolve the caller by containment).
   call bytes printed (`e8 d5 fa ff ff call 0x5aaa20`).
 - A typo in your own constant FAILs the instrument, not the game: m87trig1 died on 0x5aaccb where the
   real call site is 0x5aaacb. Print the bytes you claim to have named, and gate on them.
+
+## Who writes a field: pointer-form stores and the control watchpoint (s139, M88)
+
+A grep of the objdump for the mnemonic text `mov [...+0xBASE],reg` finds only DIRECT stores. A field is
+just as often written through a pointer built earlier — `lea esi,[eax*4+0xBASE]` (0x5aa9c5 in
+FUN_005aa880) or `lea esi,[esi+ecx*4+0x94d7fc]` inside the 64-caller accessor FUN_0052a720 (0x52ae09) —
+and then `mov [esi],ebx` (0x5aa9d3). Enumerate both forms, or stop guessing and use a hardware
+watchpoint on the address: one poke plus one boundary named the writer exactly once.
+
+- **Arm a CONTROL watchpoint on an address you know changes** (the round counter `ds:0x985afc`, written
+  at 0x51f53c `a3 fc 5a 98 00` inside FUN_0051f320). If the control fires and the target stays silent,
+  the target really was not written in that window; if NEITHER fires, the debug registers are not doing
+  anything and the run says nothing about the target. s138's m88slot2/3 looked like "watchpoints are
+  blind here" only because there was no control.
+- gdb stops at the instruction AFTER the store, so walk back one instruction to name the writer — and
+  skip objdump's byte-continuation lines (they carry an address label but no mnemonic column;
+  0x5aaac8 is a continuation of the store at 0x5aaac1, not an instruction).
+- A /proc/pid/mem poke from python does NOT trigger the inferior's debug registers (it is not an
+  instruction executed by the tracee), so the poke itself never appears as a watchpoint event; verify it
+  by read-back instead.
+- Do not demand that a rotating consumer process the record YOU poked within the window — aaa20 picks
+  different records per boundary (4, 6, 1 / 3 / none / 4 of them). Gate on the invariant the game
+  actually asserts (aaa20's kind == the slot value it read, 8/8 events) and treat "consumer did not run
+  in this window" as an uninformative window, not a failure.
