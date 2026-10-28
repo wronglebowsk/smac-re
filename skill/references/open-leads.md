@@ -117,3 +117,10 @@ dump). Reopen only if a milestone needs the bit-exact vector; each item is a pro
   `+0xe0`; byte@5 meaning; `turn_flags` bit 16; the bit-8 live-table disagreement at tile (45,9);
   `c80_end != stored d80` on idx 24/35; why pop-drift is fac-2-only; who writes the seed dwords
   (`faction+0x2e20`); the 417ee0 UI row-loop behind the 13x; M50c-e, M51b.
+
+M83 (s128) resolved the `417ee0` half of that list statically: the call block at 0x418d7d is entered
+only when `0x496ad0(...)` returns +9999 (see `references/production-queue.md`). OPEN next (M84): what
+input makes it return +9999 — live it returns 2; read the 24 KB buffer `[ebp-0x5e2c]` and
+`[ebx+0x3ff5c]`, and map which FUN_00417ee0 dispatch case an INSERT vs a completion takes. The
+bit-7 clear at 0x577ca8 has still never been seen live (3 runs).
+

@@ -1,64 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-109-110.md` (2 sessions). Read it only when a question reaches back before session ## Session 111.
-
-## Session 111 (2026-10-27) — M71: WHAT THE COMPLETION'S POP DOES TO THE QUEUE REGION AND THE CURSOR. ACCEPTANCE PASS on one real invocation, reproduced.
-
-**What changed.** New instrument `scripts/m71_pop_watch.py` (pokes minerals and reads it back
-BEFORE attaching, arms 4 hw watchpoints — the cursor field `0x6e93dc` + slots 1..3 — and 10
-breakpoints on the pop/pay/create/visit sites, drives real round boundaries itself, detaches,
-then reads the region back from `/proc/pid/mem`), `scripts/test_m71_pop.py` (**PASS 34/34**:
-the shift composition, the parser, both committed real logs, and 10 negative fixtures that
-must and do fail), and the NAMED.md M71 block. No threshold, floor or economic term moved;
-the only post-run edit to the acceptance was to make gate 2 test the ROUND counter alone
-(year is derived from it), which is STRICTER, and both committed logs still pass it.
-
-**Acceptance (one real invocation).** `python3 scripts/m71_pop_watch.py --boundaries 2 --tag
-m71pop` -> **PASS** (exit 0). Shape at arm: pending 2, slots `[2,193,192,0,...]`, minerals
-poked 0 -> 9 read back, head price 9, cursor field 0, round 51. The window logged, in order:
-`VISIT idx=0` -> `PAYA base=0x95da10 storage=9 edi=9` -> `CREATE id=2` -> `POPIN idx=0 pend=2`
--> `POPDEC count=0x9540ba byte=1 head=2` -> `POPAFT byte=0` -> `SLOT1WRITE pc=0x4ef62e` (the
-pop shift store `0x4ef62c`) `now=192` -> `POPCNT newpend=1 s0=193 s1=192 s2=192` ->
-`POPRES head=193 r=1` -> `POPEXIT`. Round 51 -> 53. READ BACK after detach: pending 2 -> 1,
-region `[2,193,192,0,...] -> [193,192,192,0,...]`, cursor 0 -> 0, minerals 9 -> 0, `de84[2]`
-1 -> 0. K = 1 = the SINGLE model; the DRAIN candidate predicted `[192,192,192,...]` with
-pending 0 — a different region, so the shape discriminated and the read-back chose SINGLE.
-**Reproduced**: the same command with `--tag m71pop3` on a freshly reloaded save
-(`SMAC_SAVE='m54b_clean.SAV' scripts/m54a_load.py --relaunch` -> `smac_play.py --turns 1` ->
-`m66_insert_slot.py --item-a 193 --item-b 192`) -> **PASS**, identical except `PAYA storage=10
-edi=9` (the round's `+1` add at `0x4ef7f6` landed before the gate) and minerals 9 -> 1.
-
-**A PASS is not an outcome — read back.** The armed region was written by exactly ONE store
-in the window, the pop shift at `0x4ef62c`; `queue[pending]` (slot 2) kept its stale 192
-rather than being written, which is why the read-back shows a duplicate. ZERO cursor writes
-happened across the whole window, so the completion neither moves the widget's cursor nor
-reorders the queue — it left-shifts it, and the `0x4194b3` handler does not fire there. The
-queued-count byte was read back at the address the game itself computed (`0x9540ba`).
-
-**The third run is an honest FAIL.** `--tag m71pop2` (head 193, a DESIGNED id, minerals poked
-to its price 18 and read back) FAILed its window gate: two boundaries (round 53 -> 55) gave
-ONE `VISIT` of the base with `min=18` and NO `PAY`/`POP`/`CREATE`; at the end `+0x3c` = 5,
-`+0xcc` (rate) = 0, `+0x30` = `0x80007020`, `+0x98` = 18. Confounded (head id 2 vs 193,
-progress, rate) — no mechanism claimed, nothing merged on it.
-
-**Side observations (not gated).** A "the minerals output of University Base is not sufficient
-to support Scout" dialog was swallowing chooser clicks: two scripts each clicked cell 1 (194)
-and cell 3 (2) and read guard 0 with pending unchanged; after `scripts/m70_clear_dialog.py`
-the same cell-3 click read guard 3 and the INSERT worked. Type records read live: `+0x30` =
-192 `0x0001`, 193 `0x0041`, 194 `0x0041`; `+0x2c` (owner mask) = 0 for all three — which is
-exactly the shape that makes `0x5a73f0` return nonzero and stops the pop's drain.
-
-**Open.** (1) why a designed head did not complete at storage == price; (2) who calls the
-`0x4194b3` handler and what widget message `0x4d00` is (it did NOT fire at a completion);
-(3) M67's plan-descending LIST order still has no code behind it; (4) the `-3 / -6` table
-stride conflict; (5) the pay-site conflict is narrowed, not closed — `0x4efedd` with `edi` =
-price is what fires for a UI-queued base-type head at index 0, `0x4f0ca6` is still unexamined.
-
-**Next pick.** M72 = watch the completion GATE, not the pop: arm `0x4f0a37` (`cmp
-[base+0x40], edi`), `0x4f0abb`, `0x4f0b4f`, `0x4f0b78` and `0x4efe41` (`cmp ebx,0x40`) on a
-base whose head is a DESIGNED id with storage >= its price, and name which test sends the
-visit home without paying and what `edi` holds at each. That explains `m71pop2` and closes the
-pay-site conflict for the designed branch. Do not re-litigate the pop: it is measured twice.
+Older sessions: `docs/sessions/sessions-111-111.md` (1 sessions). Read it only when a question reaches back before session ## Session 112.
 
 ## Session 112 (2026-10-27) — history rewritten: no LAN address anywhere in the repo
 
@@ -620,3 +562,61 @@ OPEN: what bit 5 (0x20 @ 0x531782) means; who clears bit 6; who calls FUN_00573a
 or bit 5 + FUN_00577280's identity.
 Evidence: evidence/m82bit7d.gdblog (6 gate rows), traces trace_m82bit7d_r0..r2,
 scratch/m82bit7d.out; failed instruments kept m82bit7a/b/c.
+
+## Session 129 (2026-10-28) - M84: WHAT MAKES 0x496ad0 RETURN +9999 (static, bytes); ACCEPTANCE m84canc1 FAIL - the cancel statement runs but the sentinel never fires
+
+The prompt opened with "M74" again; M74 is merged (#75). M83 is unmerged (m83cw2 FAIL, branch
+milestone/m83), so the ledger's pick M84 ran on milestone/m84 from main 7a69b20.
+
+STATIC (instruction bytes): 0x496ad0 (size 3310) picks its return value at 0x497680-0x4976ff -
+0x497683 `cmp DWORD [ecx+0xa774],-1` (ecx = `[ebp-0x10]` = the 24 KB buffer the caller passes at
+0x418601 `lea edx,[ebp-0x5e2c]`); if -1 and 0x49768f `cmp [edx+0xa778],0` is zero -> eax =
+0xffffd8f1 = +9999 (0x4976ce); if -1 and result != 0 -> eax = 0 (0x497698); if the field != -1 ->
+eax = the pump return (0x497704 ff15 0x401940, negated when 0x495480's bit 0x20 is clear). The
+field is written -1 in exactly TWO places in .text: **0x496a43** (inside FUN_00496950, the dialog's
+message handler: `mov [eax+0xa774],-1` right after `mov [ecx+0xa778],0` - handler case 7 = CANCEL:
+result 0 + armed) and 0x495541 (inside FUN_004954e0, the dialog's own setup, called once from
+0x496ad0). Handler FUN_00496950 (shard_009.c:14701) cases 0/2/5 `return` when the field is already
+-1; 1/3/4/6/8 set result 2/3/4/6/7. So +9999 = THE DIALOG-CANCEL SENTINEL: cancel arms the field,
+the next pump return becomes +9999, and the caller's 0x41861b/0x4186d2 `cmp edi,0xffffd8f1` is what
+gates the 0x270f block (M83). The SAME +0xa774 offset is the chooser's guard: m57_ui_enqueue.py
+reads `0x6A9E9C + 0xa774` as the chooser cell index, so the field is one UI-object convention, not
+production-specific.
+
+ACCEPTANCE FAIL (`python3 scripts/m84_cancel_sentinel.py --tag m84canc1 --escape --no-ok`, ONE
+invocation, 3 silent bps 0x41860f/0x496a43/0x497683 + M83's 0x418d7d/0x577280): ARMED ptr=0x95ef70
+fac=3 pend=0 head=2; enqueue rc=0 stopped with the chooser open (guard cell index 3, pending 1);
+Escape rc=0 closed it. events SENT 1 (edi=2), ARM 2 (one is the ARMED line; the real ARM printed
+**buf=0** + gdb "Cannot access memory at address 0xa774" - ecx was 0 at 0x496a43), GATE 1
+(buf=0x6a9e9c cancel=3 result=5), BRANCH 0, ENTRY 0 -> G1 True, G2-G7 False -> FAIL. So the
+cancel-arming STATEMENT does execute during a chooser session, but the buffer instance seen at the
+return gate held cancel=3 (a cell index, not -1) and the pump returned 2, not -9999.
+
+OPEN / NEXT (M84b): the ARM breakpoint's ecx is not the buffer there (register semantics, the trap
+says so) - take the buffer address from the caller's own push at 0x418601-0x41860a (bp at 0x41860a
+reads [esp+0xc]) and re-run the same 5-bp shape with events ORDERED by time; the claim to falsify
+is "Escape on the chooser routes through handler case 7 (0x496a43) and the next pump return is
++9999". Also open: which widget message code reaches FUN_00496950 case 7 (no direct `call` to
+0x496950 exists in .text - it is reached through a widget handler table); FUN_004954e0's -1 write
+at 0x495541 (setup-time arm?); who owns 0x6a9e9c.
+Evidence: evidence/m84canc1.gdblog, scratch/m84canc1.gdb, scratch/m84_tmpl.py (m83's script, the
+shape this reused). No new evidence dir files beyond the log (budget 27.5 MB, gate FAILs at 30).
+
+## Session 130 (2026-10-28) — M84b: THE CANCEL SENTINEL IS LIVE (Escape -> arm -> -9999); ACCEPTANCE m84canc2 FAIL ON THE 0x270f LEG
+
+s129's M84 sat unpushed (no PR): this session first ran `milestone.py submit` for it (PR #84; acceptance FAIL -> merge nothing), then ran the pick M84b on milestone/m84b from main 7a69b20, carrying the m84 footing forward (`git checkout milestone/m84 -- NEXT_PROMPT.md SESSION_NOTES.md NAMED.md scripts/m84_cancel_sentinel.py scripts/m57_ui_enqueue.py evidence/m84canc1.gdblog`) — an unmerged branch is the only place that footing lives.
+
+INSTRUMENT BUGS FOUND FROM BYTES BEFORE MEASURING (all three were s129's, not the game's): B1 0x496a40 `mov eax,[ebp-0x4]`, 0x496a43 `mov [eax+0xa774],-1` — the object is in EAX; m84canc1 printed $ecx (0), gdb faulted on 0xa774, its commands block aborted and gdb DETACHED, so that run died at the ARM. B2 0x496af1 `mov [ebp-0x10],ecx` + 0x497680 `mov ecx,[ebp-0x10]` — the guard field lives on the thiscall chooser_sub the caller loads at 0x418604 `lea ecx,[ebx+0xa1c]` = 0x6a9e9c, NOT the 24 KB `[ebp-0x5e2c]` buffer pushed at 0x418601 (live CALL: buf=0xbe3984, a stack address). B3 the sentinel is NEGATIVE: printf %d prints -9999, so m84canc1's `edi == 9999` gate could never pass; every sentinel read is now the unsigned 0xffffd8f1.
+
+ACCEPTANCE m84canc2 FAIL (`python3 scripts/m84_cancel_sentinel.py --tag m84canc2 --escape --no-ok`, ONE invocation, 6 silent bps 0x41860a/0x41860f/0x496a43/0x497683/0x418d7d/0x577280, events printed in log order; `python3 scratch/m84b_selftest.py` shows the shape discriminates — positive ALL, 6 negatives each fail >= 1 gate). Box was BLOCKED (screen 'base' -> one Escape -> hud; then its printed FIX `m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1` made it READY, pending 1). ORDERED: CALL obj=0x6a9e9c cancel=3 mode=0 slot=1 -> GATE cancel=3 mode=5 -> SENT edi=2 -> CALL obj=0x6a9e9c cancel=3 mode=5 slot=3 -> ARM obj=0x6a9e9c pre=3 mode=0 (the Escape; a real transition) -> GATE cancel=0xffffffff mode=0 -> SENT edi=-9999 edi_hex=0xffffd8f1. G1/G2/G3/G8 True; BRANCH 0, ENTRY 0 -> G4-G7 False -> FAIL, merge nothing.
+
+THE FAILED LEG IS THE FINDING (bytes, not instrument): 0x41861b `cmp edi,0xffffd8f1`/`jne 0x41864c` — on -9999 the loop 0x418623-0x41863f restores the ten queue slots into base+0x50..+0x78 and 0x418649 restores pending at base+0x4c from [ebp-0x20]; 0x4186d2 `cmp edi,0xffffd8f1`/`jle 0x419967` then leaves via 0x419967 (`push 1; mov [ebx+0x3ff5c],0; call 0x416080`). RETRACT s129's "0x41861b/0x4186d2 gate the 0x270f block": the ONLY branch to 0x418d7d is 0x4187be `cmp edi,0x270f`/`je`, i.e. POSITIVE +9999, reached on the mode 5/7 paths (0x4187a2/0x4187ad) only when [ebp+0x8] != 0. So 0x577280 (sole bit-7 clearer 0x577ca8) runs on a +9999 chooser result, not on cancel. OPEN: what puts 9999 in the chooser item list / makes 0x496ad0 return +9999.
+Evidence: evidence/m84canc2.gdblog, scratch/m84canc2.gdb, scratch/m84b_selftest.py (evidence 27.5 MB).
+
+## Session 131 (2026-10-28) — M84c: THE MODAL IS A 3-VALUE CHOOSER; +9999 IS A ROW KEY NO CODE INSERTS (acceptance m84cprobe1 FAIL)
+
+Prompt said M74 (merged #75 long ago); the repo pick was **M84c** — what makes 0x496ad0 return POSITIVE +9999 = 0x270f, the only value that enters 0x418d7d and thunks 0x577280. Branch milestone/m84c from main 7a69b20, carrying s128-s130 footing (`git checkout milestone/m84b -- NEXT_PROMPT.md SESSION_NOTES.md NAMED.md scripts/m84_cancel_sentinel.py evidence/m84canc[12].gdblog`). PITFALL: `milestone.py start` resets the tree to main, so the carried docs AND SESSION_CURSOR.md must be re-written AFTER it (mine reverted to s127's M82 line).
+
+STATIC (instruction bytes, scratch/m71/dis.py windows): the pump 0x497704 `mov ecx,[obj+0xa774]; push ecx; add ecx,0xa780; call 0x4026b0` = SEEK the list at obj+0xa780 (0x4026b0: index > [c+0x10]-1 -> return 0; cursor=[c+8]; walk `node=[cursor+0xc]`; [c+0x14]=index), then 0x497725 `call 0x495480; and eax,0x20` — bit SET -> 0x49773a `call 0x401940` (0x401940: `[c+8]==0 -> 0` else **return [[c+0xc]+4]**) -> 0x4977ab returns eax; bit CLEAR -> 0x497777 same call then `neg eax`. So the modal's THREE value sources are: -9999 (armed, mode 0), 0 (armed, mode != 0), and +/- the +4 word (the KEY) of the seeked node. Caller: 0x41860f `mov edi,eax`, 0x418616 snapshots it to [ebp-0x10], 0x418794/0x4187a2 reload it, 0x4187be `cmp edi,0x270f`. n_callers: 0x496ad0 = 1 (0x41860a only), FUN_004954e0 = 1, and the ONLY writers of that list are 4 functions calling FUN_0042ee20 — 0x4954e0 (2 sites, key = the setup loop var), 0x42e4d0/0x42ef40 (`(&DAT_00997120,0,4,0)`), 0x4b0a80; NO caller passes 9999.
+
+ACCEPTANCE FAIL (`python3 scripts/m84c_item_pump.py --tag m84cprobe1`, ONE invocation, 8 silent bps 0x41860a/0x42ee20/0x497704/0x4977ab/0x41860f/0x4187be/0x418d7d/0x577280): PUMP obj=0x6a9e9c idx=3 count=13 cur plus4=42 -> VAL eax=2 -> SENT 2 -> CHK edi=2 -> CALL mode=5 slot=3 -> PUMP cur plus4=2 -> VAL 2 -> SENT 2 -> CHK 2. gates G1 True G2 True **G3 False** G4 True **G5 False** G6 True G7 True; counts PUMP 2 NODE 2 VAL 2 SENT 2 INS-on-chooser-list 13 CHK 2 BRANCH 0 ENTRY 0; node+4 [2, 42]; inserted words [0,1,2,3,6,16,17,18,32,34,38,39,41,42,161,192,193,194]. G3 is MY INSTRUMENT: the NODE print sits at 0x497704, BEFORE the seek at 0x497717, so it prints the PREVIOUS cursor (fix: print at 0x49771c). G5 is the finding: the list keys are dialog category ids 0..0x2a — no 9999 item exists, so 0x418d7d/0x577280 is unreachable from the build chooser. merge nothing. OPEN: 0x4a99e0 `cmp [ebp+0x8],0x270f; jle` then `sub ecx,0x270f` + stride-0xb4c table at 0x888514 is where keys > 9999 mean something else — the next lead. Evidence: evidence/m84cprobe1.gdblog (27.5 MB).

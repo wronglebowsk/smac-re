@@ -1,0 +1,87 @@
+[New LWP 29800]
+[New LWP 29799]
+[New LWP 29798]
+[New LWP 29797]
+[New LWP 29796]
+[New LWP 29795]
+[New LWP 29794]
+[New LWP 29790]
+[New LWP 29789]
+[New LWP 29788]
+[New LWP 29787]
+[New LWP 29786]
+[New LWP 29785]
+[New LWP 29784]
+[New LWP 29783]
+[New LWP 29782]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe867832c in __kernel_vsyscall ()
+Breakpoint 1 at 0x41860a
+Breakpoint 2 at 0x42ee20
+Breakpoint 3 at 0x497704
+Breakpoint 4 at 0x4977ab
+Breakpoint 5 at 0x41860f
+Breakpoint 6 at 0x4187be
+Breakpoint 7 at 0x418d7d
+Breakpoint 8 at 0x577280
+ARMED ptr=0x95ef70 fac=3 pend=1 head=2
+CALL obj=0x6a9e9c idx=-1 mode=0 slot=1
+INS list=0x6b461c p1=0xbd31ac p2=192 p3=0xa1 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=194 p3=0xa1 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=193 p3=0xa1 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=2 p3=0x20 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=0 p3=0x20 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=1 p3=0x22 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=1 p3=0x12 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=3 p3=0x10 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=6 p3=0x12 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=38 p3=0x12 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=39 p3=0x11 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=41 p3=0x11 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+INS list=0x6b461c p1=0xbd31ac p2=42 p3=0x11 p4=0
+INS list=0x6b464c p1=0xbd30ac p2=0 p3=0x0 p4=0
+INS list=0x6b467c p1=0xbd2fac p2=0 p3=0x0 p4=0
+PUMP obj=0x6a9e9c idx=3 count=13 first=0x4bed1b0 cur=0x4beb9e0
+NODE cur=0x4beb9e0 plus4=42 plus8=79608208 plusc=0x4bed1b0
+VAL eax=2 eax_hex=0x2
+SENT eax=2 eax_hex=0x2
+CHK edi=2 edi_hex=0x2
+CALL obj=0x6a9e9c idx=3 mode=5 slot=3
+PUMP obj=0x6a9e9c idx=3 count=13 first=0x4bed1b0 cur=0x4beebd0
+NODE cur=0x4beebd0 plus4=2 plus8=79618880 plusc=0x4bee0e0
+VAL eax=2 eax_hex=0x2
+SENT eax=2 eax_hex=0x2
+CHK edi=2 edi_hex=0x2
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xe867832c in __kernel_vsyscall ()
+[Inferior 1 (process 29779) detached]
