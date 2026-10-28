@@ -19,11 +19,12 @@ was in flight; never `rm`/`git checkout --`. Every doc write is an append or a <
 ## THE LEDGER
 
 Merged: **M54A-M82** (#39-#83). **M83+M84+M84b (s128-s130, UNMERGED; m84canc2 FAIL): 0x496ad0's -9999 is the DIALOG-CANCEL SENTINEL, not a price key (Escape arms [0x6a9e9c+0xa774] = -1). NAMED.
-**M84e+M84f (s133/s135, `m84edisp1-3` + `m84fpath1` FAIL, UNMERGED milestone/m84e, m84f): 0x4d00 is a QUEUE POST (queue 0x91db70, dispatcher 0x52bce0, handler 0x52ed7d, sender 0x4194a4) gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0 (live 0); on a UI insert the block RUNS (CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, pend 5->6) and stops at `je 0x4194b1` — NO POST. NAMED.
-**M85+M86 (s136-s138, milestone/m85 PR #90 `m85cens5` PASS; milestone/m86 `m86cens1/2` FAIL, docs carried by m87): the solo boundary IS live — FUN_00521070 (MP driver) 0 visits (0x52145e silence BY DESIGN),  0x51f320 round-inc once/boundary; s138 RETRACTS 'FUN_005a7970 entered once/boundary'. FUN_005a7970's legs: 0x5a7e73 `jne 0x5a7f9f` SKIPS the 64-record band loop unless arg1 == the short at 0x93325c/68/74 (live 10/25/26); its tails 0x5a7d00/0x5a7f67 (`or BYTE PTR [eax*4+0x98adb9],0x1` = +0x31 bit0) also need 0x573a90 != self AND ds:0x920434!=0 (live 0) AND (1<<arg0)&ds:0x985b10. NAMED.
-**M87 (s138, milestone/m87, `m87trig2` PASS 8/8; `m87trig1` FAIL on my typo 0x5aaccb!=0x5aaacb) — THE CALLER OF FUN_005aaa20 IS FUN_005aadf0 (ret 0x5aaf4b -> site 0x5aaf46 `call 0x5aaa20`), whose only call site is 0x4f35cb inside FUN_004f34b0 (1 caller). aaa20(5) took the LIVE leg (save=0 -> `je 0x5aaaa0`), read its PER-FACTION SLOT [0x94d7fc + faction*8380] = 8 (KIND 0 -> FUN_005aa880 never ran), stored -1 (0x5aaac1), called FUN_005a7970(5,8,0) at 0x5aaacb -> WALK 3, LOOP 0. CONFOUNDED: AAA-hit windows also had driver rc=1 + a 2-round jump. NAMED.
-**M88 (s139, milestone/m88, `m88slot6` PASS 7/7; slot1-5 FAIL on my own instruments) — THE SLOT [0x94d7fc + idx*8380] IS WRITTEN THROUGH A POINTER BY FUN_005aa880:** hw watchpoint on 0x957ba8 + one poke of -1 + 4 boundaries -> n=1 val=-1 (aaa20's own 0x5aaac1) and n=2 val=36 from **0x5aa9d3 `89 1e mov [esi],ebx`** (esi = `lea esi,[eax*4+0x94d7fc]` at 0x5aa9c5); A mnemonic grep of `0x94d7fc` sees only DIRECT stores and MISSES the pointer forms (0x5aa9c5, 0x52ae09 in the 64-caller accessor FUN_0052a720). Slots after a fresh load = [-1,3,8,22,49,8,5,48]; 45/13/36 allocated in three windows -> a work-item allocation. NAMED.
-**M89 (s140, milestone/m89, `m89alloc1` + `m89alloc2`, each PASS 8/8) — THE SLOT VALUE IS FUN_005ab000's RETURN; WHO ASKS = FUN_005aadf0 (site 0x5aafee, ret 0x5aaff3), WHEN = the same invocation whose 0x5aaf46 call to aaa20 consumed the slot:** gated 0x5aafda `mov eax,[esi+0x94d7fc]; jge 0x5aaffc` (NEVER while >= 0) + 0x5aafe4 `cmp ds:0x926bd4,1`; 0x5aaff6 stores the value again. 5aa880's live leg (0x5aa892 `je 0x5aa9a5`, save 0) pushes 0/-1/0/edi, `call 0x5ab000` at 0x5aa9ac, `mov ebx,eax` at 0x5aa9b3, stores at 0x5aa9d3 — chr==val 3/3, /proc read-back 36. Other 3 sites (0x52132f MP, 0x5aaaab, 0x5aab58): ZERO. 36 is NOT a type id (empty at 0x98ad88+36*52; 3/5/8/10/13 are real units); all observed values < 50 while 0x5aaf10 `cmp ecx,0x59` says the domain reaches 89. CONFOUNDED: factions 5 and 2 both got 36. NAMED.
+**M84e+M84f (s133/s135, `m84edisp1-3` + `m84fpath1` FAIL, UNMERGED milestone/m84e, m84f): 0x4d00 is a QUEUE POST (queue 0x91db70, dispatcher 0x52bce0, handler 0x52ed7d, sender 0x4194a4) gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0 (live 0); on a UI insert the block runs and stops at `je 0x4194b1`, NO POST. NAMED.
+**M85+M86 (s136-s138, milestone/m85 PR #90 `m85cens5` PASS; milestone/m86 `m86cens1/2` FAIL, docs carried by m87): the solo boundary IS live — FUN_00521070 (MP driver) 0 visits (0x52145e silence BY DESIGN),  0x51f320 round-inc once/boundary; s138 RETRACTS 'FUN_005a7970 entered once/boundary'. FUN_005a7970's legs: 0x5a7e73 `jne 0x5a7f9f` SKIPS the 64-record band loop unless arg1 == the short at 0x93325c/68/74 (live 10/25/26 = Alloys/SingMec/ConSing, M90); its tails 0x5a7d00/0x5a7f67 (+0x31 bit0) also need ds:0x920434!=0 (live 0) AND (1<<arg0)&ds:0x985b10. NAMED.
+**M87 (s138, milestone/m87, `m87trig2` PASS 8/8; `m87trig1` FAIL on my typo 0x5aaccb!=0x5aaacb) — THE CALLER OF FUN_005aaa20 IS FUN_005aadf0 (ret 0x5aaf4b -> site 0x5aaf46), whose only call site is 0x4f35cb inside FUN_004f34b0 (1 caller). aaa20(5) took the LIVE leg (`je 0x5aaaa0`), read its PER-FACTION SLOT [0x94d7fc + faction*8380] = 8, stored -1 (0x5aaac1), called FUN_005a7970(5,8,0) at 0x5aaacb -> WALK 3, LOOP 0. CONFOUNDED: AAA-hit windows also had driver rc=1 + a 2-round jump. NAMED.
+**M88 (s139, milestone/m88, `m88slot6` PASS 7/7; slot1-5 FAIL on my own instruments) — THE SLOT [0x94d7fc + idx*8380] IS WRITTEN THROUGH A POINTER BY FUN_005aa880:** a hw watchpoint on 0x957ba8 + one poke of -1 -> n=2 val=36 from **0x5aa9d3 `89 1e mov [esi],ebx`** (esi = `lea esi,[eax*4+0x94d7fc]` at 0x5aa9c5); A mnemonic grep of `0x94d7fc` sees only DIRECT stores and MISSES the pointer forms (0x5aa9c5, 0x52ae09 in the 64-caller accessor FUN_0052a720). Slots after a fresh load = [-1,3,8,22,49,8,5,48] (tech indices). NAMED.
+**M89 (s140, milestone/m89, `m89alloc1` + `m89alloc2`, each PASS 8/8) — THE SLOT VALUE IS FUN_005ab000's RETURN; WHO ASKS = FUN_005aadf0 (site 0x5aafee, ret 0x5aaff3), WHEN = the same invocation whose 0x5aaf46 call to aaa20 consumed the slot:** gated 0x5aafda `mov eax,[esi+0x94d7fc]; jge 0x5aaffc` (NEVER while >= 0) + 0x5aafe4 `cmp ds:0x926bd4,1`; 0x5aaff6 stores the value again. 5aa880's live leg stores FUN_005ab000's eax verbatim (chr==val 3/3, /proc read-back 36). Other 3 sites (0x52132f MP, 0x5aaaab, 0x5aab58): ZERO. CONFOUNDED: factions 5 and 2 both got 36. NAMED.
+**M90 (s141, milestone/m90, `m90tech1` FAIL on my own events-slice bug, `m90tech2` PASS 8/8) — THE SLOT VALUE IS A TECH INDEX INTO 0x92fdd4 (89 entries x 44 B, 8-char name at +16, prereqs at +0/+4), CHOSEN BY FUN_005aa030(faction):** FUN_005ab000 is a thin wrapper (0x5ab047 `call 0x48b9a0` -> 0x5ab04c `mov esi,eax` -> 0x5ab0bf `mov eax,esi`); 48b9a0's NON-HUMAN leg (`(param_2==0 && (round==0 || !(0x985b10 & (1<<param_1))) || bVar14) && param_3<0`) returns FUN_005aa030()'s eax verbatim (site 0x48bae4, landing 0x48bae9); 5aa030 loops `iVar4 < 0x59`, gates with 0x5a6cd0, scores with 0x5a90a0, tie-breaks `_rand`. Live: fac5->36 'Integ', fac7->32 'DigSent' (r77), fac2->32 'DigSent', fac6->13 'Surface' (r79), all ret 0x5aaff3. Alloys(10) prereqs = Solids(30)+Chaos(7) = SMAC's real tree; M86's shorts 10/25/26 = Alloys/SingMec/ConSing. bVar14 UNDECODED. NAMED.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). **M68 FAILED**; **M63** `m63_pop.py`, `0x94de84` queued-count.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -32,31 +33,31 @@ Merged: **M54A-M82** (#39-#83). **M83+M84+M84b (s128-s130, UNMERGED; m84canc2 FA
 2. The price/flag/marker chain — silent breakpoints or hw watchpoints + a prediction from live memory
      + a read-back: `m73_price_split.py`, `m74_flag_hw.py`, `m72_gate_watch.py` (the VISIT GATE),
      `m81_flag_writer.py`, `m85_tech_census.py`, `m86_helper_legs.py`, `m87_aaa20_trigger.py`,
-     `m88_slot_watch.py`, `m89_alloc_census.py` (newest: caller return site at FUN_005aa880 entry,
-     chooser eax + 4 args at 0x5aa9b1, store 0x5aa9d3, post-store read 0x5aa9d5, aaa20's -1 at
-     0x5aaac1; PREDICTIONS, then counters, then the branch bytes named); the rest self-document.
+     `m88_slot_watch.py`, `m89_alloc_census.py`, `m90_tech_choice.py` (newest: FUN_005aa030's return at
+     its landing 0x48bae9, the store at 0x5aa9d3, then the tech NAME read from live memory at
+     0x92fdd4+idx*44+16; PREDICTIONS, then counters, then the branch bytes named); rest self-doc.
 3. Self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`, `m57_ui_enqueue.py`,
    `m65_screen.py --samples 8`, `m70_scan_writers.py`, `evidence.py audit [--delete]`/`budget`,
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M90: what does FUN_005ab000(faction, 0, -1, 0) pick, and what is the 0..89 domain it returns?** M89 CLOSED (`m89alloc1` + `m89alloc2`, each PASS 8/8): the slot value is that function's return, asked for by FUN_005aadf0 only while the slot is negative (gate 0x5aafda / 0x5aafe4, call 0x5aafee, second store 0x5aaff6); the value is NOT a type record id (36 names nothing at 0x98ad88+id*52).
-Next: `python3 scratch/m71/dis.py 5ab000 5ab200` (the 0xc5c local at [ebp-0xc68] is filled by 0x489fd0, then the 4 args are re-pushed to 0x48b9a0 — find which leg RETURNS eax and what it indexes). PASS iff a returned value is traced to a named entry of the 0..89 domain (read back from live memory) on >= 2 windows, chooser args printed.
+**M91: what does FUN_005a90a0(index, faction, 0) score, and where does a CHOSEN tech become the ACTIVE project?** M90 CLOSED (`m90tech2` PASS 8/8): the slot value is a tech index into 0x92fdd4 (89 x 44 B, name +16, prereqs +0/+4) returned by FUN_005aa030(faction) — gated by FUN_005a6cd0, scored by FUN_005a90a0, tie-broken by `_rand`, passed verbatim by 5ab000.
+Next: `python3 scratch/m71/dis.py 5a90a0 5a9200` and `dis.py 5a6cd0 5a6d40` (the scorer and the gate), and the fields 0x48b9a0 reads at 0x94d78c + faction*0x20bc (+0 `%5==1`, +0x84/+0x8c != 0, `iVar4 == DAT_0098adee`). PASS iff one window's winning index equals the max of the candidates' OWN scores read from live memory, on >= 2 windows, tech names read back from 0x92fdd4.
 
 ## STILL OPEN (in priority order)
 
-1. **M90 (the pick): what FUN_005ab000's scan selects — the 0xc5c-byte candidate buffer at
-   [ebp-0xc68] (0x489fd0 then 0x48b9a0 with the same 4 args) and the 0..89 domain it returns (10/25/26
-   are what 0x93325c/68/74 accepts).** Residue: the SIBLING slot [esi+0x94d800] fed by FUN_005aab70
-   (0x5aaf67 stores -1, 0x5aaf79 stores eax, 0x5aaf02 calls the provider); the band flag [esi+0x94d430]
-   bit 0x40 (tested 0x5aaf7f, cleared 0x5aafb1, aaa20 again at 0x5aafbb); ds:0x926bd4 and ds:0x920434
-   naming; chooser case 7; cursor print at **0x49771c**; bit 5 (0x531782); who clears bit 6; alpha 0x5a6cd0.
+1. **M91 (the pick): what FUN_005a90a0 scores, and how a chosen tech becomes the ACTIVE project.**
+   Residue: FUN_0048b9a0's `bVar14` predicate (UNDECODED — it is what lets a mask-set faction take the
+   0x5aa030 leg) and the human leg's FUN_00625af1; the SIBLING slot [esi+0x94d800] fed by FUN_005aab70
+   (0x5aaf67 -1, 0x5aaf79 eax, 0x5aaf02 provider); the band flag [esi+0x94d430] bit 0x40 (tested 0x5aaf7f,
+   cleared 0x5aafb1, aaa20 again 0x5aafbb); ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor
+   print at **0x49771c**; bit 5 (0x531782); who clears bit 6.
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
    **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite: `scripts/gate.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at s140:** `terran.exe` UP (pid 262651), 2171 r74, University Base pend 1 head 2; `m89_alloc_census.py` is the allocation census and NO relaunch is needed (5aadf0 -> aaa20 is a per-base upkeep tail that runs every boundary; M88's PASS also ran mid-session). X focus law: see TRAPS. **The PANE decides where INSERT lands:** pass the index the pane shows (read `*(int *)0x6a9480 + 0x3ff3c`), else the queue grows on another base. A quit-prompt mid-window swallows every click — run `m78_mark_clear.normalize_screen()` (it Escapes a quit-prompt; Return QUITS) first. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming; a veilbrowser Chrome window stacked at 0,0 makes `xwd` OCR the browser (`DISPLAY=:99 xdotool windowraise 0x400004`). Gate globals: `0x920434`=0, `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3; `*DAT_008f0d60` = the base record (+0x40 storage, +0x4c pending, +0x50..+0x74 queue).
+- **Box at s141:** `terran.exe` UP (pid 262651), 2180 r80, University Base minerals 0 credit 0 — `m57_ui_enqueue` then FAILs "INSERT never landed", so queue acceptances need a minerals poke first. `m90_tech_choice.py` is the tech-choice census; NO relaunch is needed (5aadf0 -> aaa20 -> 48b9a0 -> 5aa030 runs every boundary). X focus law: see TRAPS. **The PANE decides where INSERT lands:** pass the index the pane shows (read `*(int *)0x6a9480 + 0x3ff3c`), else the queue grows on another base. A quit-prompt mid-window swallows every click — run `m78_mark_clear.normalize_screen()` (it Escapes a quit-prompt; Return QUITS) first. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming; a veilbrowser Chrome window stacked at 0,0 makes `xwd` OCR the browser (`DISPLAY=:99 xdotool windowraise 0x400004`). Gate globals: `0x920434`=0, `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3; `*DAT_008f0d60` = the base record (+0x40 storage, +0x4c pending, +0x50..+0x74 queue).
 - **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `accept_ready.py` -> (enqueue) -> **read `pending` AND the head back** -> the run. Misread `movie` ~1 in 3: re-run `--relaunch`, never Return on the save browser. `artwork-close` is NOT a dialog — click its red CLOSE bar (`smac_play.close_bar`).
 - gdb: 4 hw watchpoints and 10-16 silent breakpoints work (~35 s per boundary); conditional bps keep other records out of the log; PREFER REGISTER-ONLY conditions on hot addresses (memory-read conditions cost seconds/hit — s133). No `si` in a command list; stdout DRAINED (`stdbuf -o0`); a watchpoint reports the pc AFTER the store.
 - `scratch/m574/text.txt` = whole `.text` objdump (40.9 MB; addresses WITHOUT leading zeros — grep
@@ -77,22 +78,19 @@ Next: `python3 scratch/m71/dis.py 5ab000 5ab200` (the 0xc5c local at [ebp-0xc68]
 - **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it.**
   Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit
   prompt — never OK). Run `m78_mark_clear.normalize_screen()` first.
-- **A census interleaved into a gdb log needs O_APPEND on GDB's own fd**; a census snapshots a STOPPED engine: order events by VISIT, not by boundary.
 - **Gates must PREDICT from live memory, then be confirmed by counters** — cens1 FAILed because it
-  demanded hits at sites the taken leg cannot reach (M85's wrong-question trap, new hat). A counter at
+  demanded hits at sites the taken leg cannot reach. A counter at
   a site that is BOTH a branch target and a loop-completion fallthrough is NOT a leg proof (0x5a7f9f).
 - A gdb-log tag alternation must be LONGEST-first (`MARK` swallows `MARKSET`); a bp printf must NOT
   print inferior strings (aborts the batch, DETACHES mid-window); template expressions go in printf
   ARGUMENTS, never the format string; in a two-branch `re` alternation `m.group(1)` is the WHOLE
-  match. Never trust one 3 s read of a gdb log for arming.
+  match.
 - **PRODFLAG (0x4efe60) fires for EVERY record the pass walks** (128/322/323/194 — FACTION BANDS, M80): attribute the sweep by its own predecessor. **The gate visit arrives in the boundary AFTER the sweep marks**: a poke window needs >= 3 boundaries.
 - **Focus: `getactivewindow` is a RED HERRING (always errors, no WM on :99) — use `getwindowfocus
  getwindowname`.** A box can swallow turn-end input WITH focus fine: prove keys land via a classify flip
  before blaming input. **Vision-tool coords are SCALE-SHIFTED** — click from OCR word bboxes (TURN
  COMPLETE center (675,416); (685,471) is the recenter box). **m44_idle asserts TracerPid==0** — never a
  driver under a census gdb; use m55_boundary.
-- A clean reload does NOT carry records created live last session (M80's 324/325 vanished on reload,
-  reappeared between runs): census the watched slots BEFORE arming.
 - base+0xd0 (`credit`) is written ONLY at player-record init (0x6310c6/0x631154) — income is never
   recomputed per round; University Base credit>0 cannot be restored by turns; use the per-boundary
   storage poke 200.

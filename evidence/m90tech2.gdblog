@@ -1,0 +1,67 @@
+[New LWP 262670]
+[New LWP 262669]
+[New LWP 262668]
+[New LWP 262667]
+[New LWP 262666]
+[New LWP 262665]
+[New LWP 262664]
+[New LWP 262662]
+[New LWP 262661]
+[New LWP 262660]
+[New LWP 262659]
+[New LWP 262658]
+[New LWP 262657]
+[New LWP 262656]
+[New LWP 262655]
+[New LWP 262654]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf4ee568b in ?? ()
+ARMED round=77 year=2177 save=0 mask=65288
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x48bae9
+Breakpoint 3 at 0x5aa880
+Breakpoint 4 at 0x5aa9b1
+Breakpoint 5 at 0x5aa9d3
+Breakpoint 6 at 0x5aa9d5
+Breakpoint 7 at 0x5aaac1
+Breakpoint 8 at 0x51f320
+ENT n=1 fac=5 ret=0x5aaff3 save=0 round=77
+A030 n=1 arg1=5 ret=0x48bae9 round=77
+TECH n=1 idx=36 param1=5 ret=0x5 round=77
+CHR n=1 eax=36 arg1=5 arg2=0 arg3=-1 arg4=0 idx_from_5aa030=36 fac=5
+ST n=1 addr=0x957ba8 val=36 chr=36 idx=36 ret=0x5aaff3 fac=5 round=77
+RB n=1 addr=0x957ba8 mem=36
+CONS n=1 addr=0x95bd20 kind=48 band=7 round=77
+ENT n=2 fac=7 ret=0x5aaff3 save=0 round=77
+A030 n=2 arg1=7 ret=0x48bae9 round=77
+TECH n=2 idx=32 param1=7 ret=0x7 round=77
+CHR n=2 eax=32 arg1=7 arg2=0 arg3=-1 arg4=0 idx_from_5aa030=32 fac=7
+ST n=2 addr=0x95bd20 val=32 chr=32 idx=32 ret=0x5aaff3 fac=7 round=77
+RB n=2 addr=0x95bd20 mem=32
+CTRL n=1 round=77
+CTRL n=2 round=78
+CONS n=2 addr=0x951974 kind=36 band=2 round=79
+ENT n=3 fac=2 ret=0x5aaff3 save=0 round=79
+A030 n=3 arg1=2 ret=0x48bae9 round=79
+TECH n=3 idx=32 param1=2 ret=0x2 round=79
+CHR n=3 eax=32 arg1=2 arg2=0 arg3=-1 arg4=0 idx_from_5aa030=32 fac=2
+ST n=3 addr=0x951974 val=32 chr=32 idx=32 ret=0x5aaff3 fac=2 round=79
+RB n=3 addr=0x951974 mem=32
+CONS n=3 addr=0x959c64 kind=32 band=6 round=79
+ENT n=4 fac=6 ret=0x5aaff3 save=0 round=79
+A030 n=4 arg1=6 ret=0x48bae9 round=79
+TECH n=4 idx=13 param1=6 ret=0x6 round=79
+CHR n=4 eax=13 arg1=6 arg2=0 arg3=-1 arg4=0 idx_from_5aa030=13 fac=6
+ST n=4 addr=0x959c64 val=13 chr=13 idx=13 ret=0x5aaff3 fac=6 round=79
+RB n=4 addr=0x959c64 mem=13
+CTRL n=3 round=79
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 262664]
+0xf50f832c in __kernel_vsyscall ()
+[Inferior 1 (process 262651) detached]

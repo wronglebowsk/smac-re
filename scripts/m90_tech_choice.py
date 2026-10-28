@@ -257,6 +257,8 @@ def main():
         events.append(kv)
     st = [e for e in events if e["_tag"] == "ST"]
     tech = [e for e in events if e["_tag"] == "TECH"]
+    # the slice must be taken in EVENTS order: enumerating st gave the wrong offsets (m90tech1 G6)
+    pos = {id(e): i for i, e in enumerate(events)}
     a0 = [e for e in events if e["_tag"] == "A030"]
     chr_ = [e for e in events if e["_tag"] == "CHR"]
     rb = [e for e in events if e["_tag"] == "RB"]
@@ -272,8 +274,10 @@ def main():
     for idx_e, e in enumerate(st):
         val, fac, rnd = e.get("val"), e.get("fac"), e.get("round")
         nm = tech_name(pid, val)
-        # the FUN_005aa030 return observed in this same call: the last TECH event before this store
-        t = next((x for x in reversed(events[:idx_e]) if x["_tag"] == "TECH"), None)
+        # the FUN_005aa030 return observed in this same call: the last TECH event before this store,
+        # counted in EVENTS order (m90tech1 sliced st's own offsets, so t was always None)
+        ei = pos[id(e)]
+        t = next((x for x in reversed(events[:ei]) if x["_tag"] == "TECH"), None)
         agree = bool(t) and t.get("idx") == val and t.get("param1") == fac
         conf = False
         j = (e.get("addr") - SLOTB) // STRIDE if e.get("addr") else -1
@@ -281,7 +285,7 @@ def main():
             if 0 <= j < 8 and sr >= (rnd if rnd is not None else 0) and sl[j] == val:
                 conf = True
                 break
-        sup = [x["_tag"] for x in events[idx_e + 1:] if x.get("addr") == e.get("addr")][:3]
+        sup = [x["_tag"] for x in events[ei + 1:] if x.get("addr") == e.get("addr")][:3]
         traced.append((e, nm, agree, conf, sup))
         print(f"  {e.get('n')} fac={fac} val={val} name={nm!r} round={rnd} ret={hex(e.get('ret') or 0)} "
               f"aa030_return={None if not t else t.get('idx')} param1={None if not t else t.get('param1')} "

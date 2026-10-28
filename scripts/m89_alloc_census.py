@@ -341,7 +341,9 @@ def main():
     # P4: each allocation is confirmed by a /proc read at or after its round, or explained by a later
     # logged write to the same address (aaa20's -1 consumption, or a newer allocation).
     later = []
+    pos = {id(x): i for i, x in enumerate(events)}  # slices must follow EVENTS order, not st's own
     for idx, e in enumerate(st):
+        idx = pos[id(e)]
         ad, val, rnd = e.get("addr"), e.get("val"), e.get("round")
         conf = False
         for sr, sl in snaps:
