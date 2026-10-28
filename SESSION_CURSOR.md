@@ -1,1 +1,1 @@
-M85 | m85cens5 RUNNING (census w/ m55_boundary driver after fresh save load; box state was the blocker) | merged? no (#90) | next: read scratch/m85cens5.out VERDICT; if PASS close M85 per CLOSING ORDER
+M86 | m86cens1 ARMING (scripts/m86_helper_legs.py: 12 print-only bps on FUN_005a7970 leg ladder + both gate blocks; driver m55_boundary; box fresh-loaded m54b_clean 2150 r50) | merged? no | next: read the m86cens1 VERDICT line; if PASS close M86 per CLOSING ORDER, if FAIL write the blocker and merge nothing
