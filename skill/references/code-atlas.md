@@ -298,3 +298,31 @@ next closing that rsyncs this skill carries them in):
   per boundary. A gdb breakpoint CAN carry convenience variables across stops, which is how the caller's
   return site (`[esp]` at entry) pairs with the store 12 instructions later. Args at a post-`ret` stop
   are at `[esp] .. [esp+0xc]` (cdecl, caller pops at 0x5aa9ba) — printing esp+4..+16 shifts every label.
+
+
+## The 89-entry TECH TABLE: what the work-item slot value means (M90, live-verified)
+
+- `0x92fdd4 + i*44`, **i < 0x59 (89 entries)** — SMAC's technology table. 8-char key at **+16**,
+  prerequisite indices at **+0** and **+4** (-1 / -2 = none / placeholder). Names read from live
+  memory (`scratch/m90/txthex.py PID 10 13 25 26 36 45`): 5 Ecology, 10 Alloys, 13 Surface,
+  22 AGrav, 25 SingMec, 26 ConSing, 32 DigSent, 36 Integ, 44 IndEcon, 45 IndAuto, 48 Gene, ... User0..User9, TranT.
+  Corroboration: Alloys' prereqs are 30 (Solids) + 7 (Chaos) = Alloy Theory <- Solid State Physics +
+  Chaos Theory, i.e. the real SMAC tree. `FUN_005a7970`'s table `0x93325c/68/74` (shorts 10/25/26) is
+  therefore Alloys/SingMec/ConSing — which is why M86/M87 saw WALK 3, LOOP 0 for ordinary choices.
+- The chooser is **`FUN_005aa030(faction)`** (554 B, 3 call sites: 0x48bae4, 0x59cfc8, 0x5a0113): it
+  loops `iVar4 < 0x59`, gates each candidate with `FUN_005a6cd0(prereq, faction)`, scores with
+  `FUN_005a90a0(index, faction, 0)`, tie-breaks `_rand() % (score+1)` for non-humans (the human faction
+  uses `FUN_00625af1`), keeps the max (`local_c`) and returns the INDEX; markers -999 / -1.
+- **`FUN_005ab000` is a thin wrapper**, not a candidate scan: 0x5ab047 `call 0x48b9a0`, 0x5ab04c
+  `mov esi,eax`, 0x5ab0bf `mov eax,esi`, ret. Its 0xc5c frame is SEH + 4 C++ locals (destructors
+  0x6170f3) — do not read it as a "candidate array". `FUN_0048b9a0` (8514 B, 1 caller) picks the leg:
+  `((param_2==0 && (round==0 || !(0x985b10 & (1<<param_1))) || bVar14) && param_3<0)` -> return
+  `FUN_005aa030()`'s eax verbatim; `bVar14` is UNDECODED (it is what lets a mask-set faction take the
+  leg anyway). Its call site 0x48bae4, landing **0x48bae9** — the cheapest live probe of the choice.
+- Harness: `scripts/m90_tech_choice.py` — poke a slot to -1, 8 print-only breakpoints, then read the
+  NAME from `/proc` at 0x92fdd4+idx*44+16. **Pair events by their index in the WHOLE event list, not by
+  the index within a filtered sub-list** (m90tech1 FAILed G6 exactly there). A census interleaved into a
+  gdb log needs O_APPEND on GDB's own fd; a census snapshots a STOPPED engine, so order events by VISIT.
+  A clean reload does NOT carry records created live in the previous session: census before arming.
+- Box state that blocks queue acceptances: with University Base minerals 0 / credit 0,
+  `m57_ui_enqueue` prints "INSERT 1 never landed" and pending stays 0 — poke minerals/storage first.
