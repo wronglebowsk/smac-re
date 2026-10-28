@@ -754,8 +754,10 @@ read back BEFORE attaching that the watched event can even happen (queue head is
   hit count inside a window is not a CADENCE — tie each hit to a boundary (round/year at the hit).
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
 count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH"
-without touching the box. `references/instrument-laws.md` carries the header order, the containment
-recipe and the DictReader trap.
+without touching the box. **To name who writes a field, use a hardware watchpoint on the address PLUS a
+control watchpoint on an address you know changes** — a mnemonic grep misses stores made through
+pointer-form `lea`. `references/instrument-laws.md` carries the header order, the containment recipe, the
+DictReader trap and the watchpoint laws (s139).
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
@@ -787,6 +789,6 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 
 ## Still open (leads)
-`references/open-leads.md`; `NEXT_PROMPT.md` holds the CURRENT pick and wins if they disagree.
+`references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
 
 

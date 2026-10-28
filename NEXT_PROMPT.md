@@ -18,14 +18,13 @@ Survivability: before any step that can exceed 2 minutes (gdb run, relaunch, evi
 was in flight; never `rm`/`git checkout --`. Every doc write is an append or a <= 2 KB patch; keep tool results small.
 ## THE LEDGER
 
-Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS): bits 6/7 of the flag word have NO tester.** NAMED.
-**M83+M84+M84b (s128-s130, UNMERGED m83 / m84 PR #84 / m84b; m84canc2 FAIL): 0x496ad0's -9999 is the DIALOG-CANCEL SENTINEL, not a price key — Escape arms [chooser_sub 0x6a9e9c+0xa774] = -1, gate 0x497683/0x49768f returns 0xffffd8f1; only 0x4187be `cmp edi,0x270f` enters 0x418d7d. NAMED.
-**M84e (s133, `m84edisp1/2/3` FAIL, UNMERGED milestone/m84e) — 0x4d00 IS A QUEUE POST (queue 0x91db70, dispatcher 0x52bce0, handler 0x52ed7d, sender 0x4194a4); the POST is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0 (live 0) so a loaded game exits at 0x4194b1, NO POST. RETRACT M70 (0x4194b3 is in the SENDER). NAMED.
+Merged: **M54A-M82** (#39-#83). **M83+M84+M84b (s128-s130, UNMERGED m83 / m84 PR #84 / m84b; m84canc2 FAIL): 0x496ad0's -9999 is the DIALOG-CANCEL SENTINEL, not a price key (Escape arms [chooser_sub 0x6a9e9c+0xa774] = -1). NAMED.
+**M84e (s133, `m84edisp1/2/3` FAIL, UNMERGED milestone/m84e): 0x4d00 is a QUEUE POST (queue 0x91db70, dispatcher 0x52bce0, handler 0x52ed7d, sender 0x4194a4), gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0 (live 0) -> a loaded game exits at 0x4194b1, NO POST. NAMED.
 **M84f (s135, milestone/m84f, `m84fpath1` FAIL): the 0x4d00 block RUNS on a UI insert (CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, pend 5->6) and stops at `je 0x4194b1` (cursor zero, NO POST); flag-1 arm unmeasured. NAMED.
-**M85 (s136-s137, milestone/m85 PR #90, `m85cens5` PASS): the solo boundary IS live — FUN_00521070 (MP 7-stage driver) 0 visits (0x52145e silence BY DESIGN), 0x51f320 round-inc once/boundary; m44_idle cannot drive under gdb (TracerPid assert) — census drives with m55_boundary. s138 RETRACTS 'FUN_005a7970 entered once/boundary' (m86cens2: 0 hits). NAMED.
-**M86 (s138, milestone/m86, `m86cens1`+`m86cens2` FAIL; docs carried by milestone/m87): FUN_005a7970's legs mapped — exits 0x5a7e00/0x5a7e0d -> 0x5a8f7d; 0x5a7e73 `jne 0x5a7f9f` SKIPS the 64-record band loop unless arg1 == the short at 0x93325c/68/74 (live 10/25/26); its tails 0x5a7d00/0x5a7f67 `or BYTE PTR [eax*4+0x98adb9],0x1` (+0x31 bit0) also need 0x573a90 != self AND ds:0x920434!=0 (live 0) AND (1<<arg0)&ds:0x985b10. NAMED.
+**M85 (s136-s137, milestone/m85 PR #90, `m85cens5` PASS): the solo boundary IS live — FUN_00521070 (MP driver) 0 visits (0x52145e silence BY DESIGN), 0x51f320 round-inc once/boundary; m44_idle cannot drive under gdb (TracerPid assert) — census drives with m55_boundary. s138 RETRACTS 'FUN_005a7970 entered once/boundary'. NAMED.
+**M86 (s138, milestone/m86, `m86cens1`+`m86cens2` FAIL; docs carried by m87): FUN_005a7970's legs mapped — 0x5a7e73 `jne 0x5a7f9f` SKIPS the 64-record band loop unless arg1 == the short at 0x93325c/68/74 (live 10/25/26); its tails 0x5a7d00/0x5a7f67 `or BYTE PTR [eax*4+0x98adb9],0x1` (+0x31 bit0) also need 0x573a90 != self AND ds:0x920434!=0 (live 0) AND (1<<arg0)&ds:0x985b10. NAMED.
 **M87 (s138, milestone/m87, `m87trig2` PASS 8/8 gates; `m87trig1` FAIL on my own typo 0x5aaccb!=0x5aaacb) — THE CALLER OF FUN_005aaa20 IS FUN_005aadf0, ON THE FIRST BOUNDARY AFTER A FRESH LOAD:** attribution by return site (ret 0x5aaf4b -> site 0x5aaf46 `e8 d5 fa ff ff call 0x5aaa20`); FUN_005aadf0's only call site is 0x4f35cb inside FUN_004f34b0 (298 B, 1 caller). aaa20(5) took the LIVE leg (save=0 -> `je 0x5aaaa0`), read its PER-FACTION SLOT [faction*191+0x94d7fc] = 8 (KIND 0 -> FUN_005aa880 never ran), stored -1 (0x5aaac1), called FUN_005a7970(5,8,0) at 0x5aaacb -> WALK 3, LOOP 0. CONFOUNDED: AAA-hit windows also had driver rc=1 + a 2-round jump. NAMED.
-**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED m84c PR #86 / m84d): the 0x270f vocabulary is a DEAD END on both sides (see NAMED).
+**M88 (s139, milestone/m88, `m88slot6` PASS 7/7; slot1-5 FAIL on my own instruments) — THE SLOT [0x94d7fc + idx*8380] IS WRITTEN THROUGH A POINTER BY FUN_005aa880:** hw watchpoint on 0x957ba8 + one poke of -1 + 4 boundaries -> n=1 val=-1 (aaa20's own 0x5aaac1) and n=2 val=36 from **0x5aa9d3 `89 1e mov [esi],ebx`** (esi = `lea esi,[eax*4+0x94d7fc]` at 0x5aa9c5); read-back final 36 == the last attributed store; the control watchpoint on ds:0x985afc fired 4x (writer 0x51f53c in FUN_0051f320). A mnemonic grep of `0x94d7fc` sees only direct stores and MISSES the pointer forms (0x5aa9c5, 0x52ae09 in the 64-caller accessor FUN_0052a720). Slots after a fresh load = [-1,3,8,22,49,8,5,48]; 45/13/36 allocated in three consecutive windows -> a work-item allocation, not a constant. NAMED.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). **M68 FAILED**; **M63** `m63_pop.py`, `0x94de84` queued-count.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -33,16 +32,16 @@ Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS): bits 6/7 of the fla
 1. **accept_ready.py** is the readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it immediately before you arm**. Screen fix: dialog -> Return, base PANE -> Escape, quit-prompt -> Escape (`m78_mark_clear.normalize_screen()` does all three).
 2. The price/flag/marker chain — silent breakpoints or hw watchpoints + a prediction from live memory
    + a read-back: `m73_price_split.py`, `m74_flag_hw.py`, `m72_gate_watch.py` (the VISIT GATE),
-   `m81_flag_writer.py`, `m84e_msg_dispatch.py`, `m85_tech_census.py`, `m86_helper_legs.py` and
-   `m87_aaa20_trigger.py` (leg/trigger censuses: PREDICTIONS from live memory, then OBSERVED counters,
-   then the branch bytes they named); the rest self-document (`m75/m76/m84_cancel_sentinel`).
+   `m81_flag_writer.py`, `m84e_msg_dispatch.py`, `m85_tech_census.py`, `m86_helper_legs.py`,
+   `m87_aaa20_trigger.py` and `m88_slot_watch.py` (leg/trigger/slot censuses: PREDICTIONS from live
+   memory, then OBSERVED counters, then the branch bytes named); the rest self-document.
 3. Self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`, `m57_ui_enqueue.py`,
    `m65_screen.py --samples 8`, `m70_scan_writers.py`, `evidence.py audit [--delete]`/`budget`,
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M88: the per-faction SLOT — what writes `[faction*191*4 + 0x94d7fc]` (the kind FUN_005a7970 then refuses), and who calls FUN_004f34b0?** M87 CLOSED (m87trig2 PASS 8/8): fresh load -> first boundary -> FUN_005aadf0 (site 0x4f35cb in FUN_004f34b0) -> FUN_005aaa20(5) -> slot 8 -> FUN_005a7970(5,8,0) -> table-miss (shorts 10/25/26) -> neither tail ran.
-Next: static first — `python3 scratch/m71/dis.py 4f34b0 4f35d0`, the containment of 0x4f35cb's caller, and a Python window over scratch/m574/text.txt for stores to `0x94d7fc` (never grep the 40 MB file raw); then a census with PRINTF-ONLY bps at the slot writers plus 0x5aadf0/0x5aaa20 entries, armed BEFORE the load completes if the write happens during load. FIRST fresh-load (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`). PASS iff the store that puts 8 in faction 5's slot is attributed to a pc whose bytes are printed AND the slot is read back before/after.
+**M89: what is the value FUN_005aa880 allocates into the slot, and which of its 4 callers asks for one?** M88 CLOSED (m88slot6 PASS 7/7): the slot is a work-item allocation written at 0x5aa9d3 (`mov [esi],ebx`, esi from `lea esi,[eax*4+0x94d7fc]` at 0x5aa9c5); 45/13/36 were allocated in three consecutive windows, aaa20 consumes it (0x5aaac1 stores -1) and hands it to the helper as arg1, where the table 0x93325c/68/74 (shorts 10/25/26) rejects it.
+Next: the 4 call sites of FUN_005aa880 with index.csv containment, plus `python3 scratch/m71/dis.py 5aa880 5aaa20` (the allocation path decides ebx before the store); then a census with PRINTF-ONLY bps at 0x5aa9c5/0x5aa9d3 (pointer + store, printing eax/ebx) and at aaa20's entry, over 2-4 boundaries on a FRESH-LOADED box. PASS iff each allocation is attributed to a caller by its own return-site bytes AND the allocated value is read back from the slot.
 
 ## STILL OPEN (in priority order)
 
@@ -50,8 +49,7 @@ Next: static first — `python3 scratch/m71/dis.py 4f34b0 4f35d0`, the containme
    FUN_004f34b0** — see THE PICK. Residue: chooser case 7 (no direct `call` 0x496950); cursor print at
    **0x49771c**; bit 5 (0x531782); who clears bit 6; alpha 0x5a6cd0; ds:0x920434 naming conflict.
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
-   **`-3 / -6` stride CONFLICT** stands (`0x984d38 + (-v)*48` at 0x40adae/0x4164f5 vs `+(-v)*16` at
-   0x418914/0x41894d). Keep the suite green: `scripts/gate.py` runs every `test_*.py` + `check_classes.py`.
+   **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite green: `scripts/gate.py`.
 
 ## LIVE FACTS / KIT
 
@@ -60,7 +58,7 @@ Next: static first — `python3 scratch/m71/dis.py 4f34b0 4f35d0`, the containme
    EMPTY at 2150, re-check at 2153). X focus law: see TRAPS. **The PANE decides where INSERT lands:** pass the index the pane
    shows (read `*(int *)0x6a9480 + 0x3ff3c`), else the queue grows on another base while m57 prints
    "INSERT 1 never landed" (s133). A quit-prompt mid-window swallows every click — run
-   `m78_mark_clear.normalize_screen()` (it Escapes a quit-prompt; Return QUITS the game) first. Records are re-inited between rounds. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
+   `m78_mark_clear.normalize_screen()` (it Escapes a quit-prompt; Return QUITS the game) first. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
  collision); a veilbrowser Chrome window stacked at 0,0 makes `xwd` OCR the browser
  (`DISPLAY=:99 xdotool windowraise 0x400004`). Gate globals: `0x920434`=0, `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3; `*DAT_008f0d60` = the base record (+0x40 storage, +0x4c pending, +0x50..+0x74 queue).
 - **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `accept_ready.py` -> (enqueue) -> **read `pending` AND the head back** -> the run. Misread `movie` ~1 in 3: re-run `--relaunch`, never Return on the save browser. `artwork-close` is NOT a dialog — click its red CLOSE bar (`smac_play.close_bar`).
@@ -106,9 +104,9 @@ Next: static first — `python3 scratch/m71/dis.py 4f34b0 4f35d0`, the containme
   "first empty slot", never treat slot 10 (`+0x78`) as an entry, never read a stale tail as proof an
   id IS queued. Id 0 is both Colony Pod and the empty marker; the sentinel is -39; a negative value
   belongs to the TYPE (196 -> -6, 195 -> -3).
-- **A PASS on a shape that cannot discriminate is not a PASS:** compute candidate predictions from
-  the baseline first; refuse the shape if they all agree. The harness race is real (`player walk
-  came home to us after the flip` = the window spans two rounds): RE-RUN, never edit the floor.
+- **A PASS on a shape that cannot discriminate is not a PASS:** compute candidate predictions from the
+  baseline first; refuse the shape if they all agree. The harness race is real (a window spanning two
+  rounds): RE-RUN, never edit the floor.
 - One variable at a time; if two things moved together write "confounded", not "because". Documents
   lose to instruction bytes only after a poke — until then REPORT the conflict.
 - **`milestone.py start <id>` resets the working tree to main**, so footing carried from an unmerged
@@ -121,9 +119,8 @@ Next: static first — `python3 scratch/m71/dis.py 4f34b0 4f35d0`, the containme
   with no fixed-displacement caller, scan every rw region of terran.exe for its vptr
   (`/proc/pid/mem`, no gdb — `scratch/m84d/probe3.py`) and confirm an instance exists; prove arming
   from the log ("Breakpoint 1 at ..." + a clean "[Inferior 1 ... detached]").
-- Never (also in the session prompt): commit to main; kills by name; Escape on the title screen; OK on
-  the quit prompt; `--mode stop`; `file://` with `--load`; a clear-prefixed command; backticks in a
-  commit message; `skill_manage delete`.
+- Never (full list in the session prompt): commit to main; kills by name; Escape on the title screen; OK
+  on the quit prompt; `--mode stop`; backticks in a commit message; `skill_manage delete`.
 
 
 ## CLOSING ORDER (exactly)
