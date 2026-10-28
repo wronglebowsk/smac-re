@@ -167,7 +167,9 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   rather than re-running the gate; the worktrees check out HEAD, so an UNCOMMITTED trim fixes nothing —
   commit it, then re-run. Inside such a worktree, `python3 scripts/evidence.py budget` names the
   offending doc and its limit (that is where `FAIL (always)` shows up), which is faster than guessing. When trimming, DELETE whole
-  sentences or bullets: rewording trades characters for characters and the check stays red. Well
+  sentences or bullets: rewording trades characters for characters and the check stays red — and so does
+  re-flowing, because joining wrapped lines saves one byte per line, not the paragraph's apparent width
+  (a trim pass that lands 15 bytes short is a wasted call: cut a clause or retire a paragraph). Well
   over it, move footing into `FOOTING.md` at the repo root (or a `references/`
   file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
   context before any work starts, which is how sessions ratchet toward the wall.
@@ -419,6 +421,11 @@ Two rules that generalise from how this one went wrong:
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && $1<=A {n=$2;p=$1} END{print
 p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.
+**Parse an objdump line by its TAB fields, never by the text after the colon:** the machine-code bytes
+sit between the address and the mnemonic, so `line.split(":")[1].startswith("mov")` matches NOTHING and a
+whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. Import
+`scratch/m71/dis.py` under a non-clashing module name (`importlib.util.spec_from_file_location`), because
+stdlib `dis` shadows the plain `import dis`.
 
 ## terran.exe PE layout (verified 2026-10-20 via section table + byte reads)
 
@@ -593,7 +600,10 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   exit 1 on any FAIL) checks the authoritative address table, `terran.exe` alive with `TracerPid: 0`
   and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
   the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
-  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank).
+  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). A repo brief that shells out to `pgrep`
+(`scripts/session_brief.py`) RAISES a `CalledProcessError` traceback instead of printing a verdict when
+`terran.exe` is down — fresh-load (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`)
+before reading anything out of it, and do not take its silence for BLOCKED.
 - **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
   `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors
   "claims not to support" even when focus is perfect). The authoritative check is
@@ -732,18 +742,20 @@ arguments, silently rewriting the breakpoints. Bake addresses and constants as l
 with `str.replace()` on a uniquely-marked token, and diff the emitted `scratch/<tag>.gdb` before attaching. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
 otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
-read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
-armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
-never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
+read back BEFORE attaching that the watched event can even happen (queue head is the armed id,
+`pending >= 1`, storage above what the gate can demand) — an unusable window is not a negative result
+(`references/static-store-census.md` §9.8–9).
+- **A leg census gates on PREDICTIONS, not on hits.** Compute each site's expected hit count from live
+  memory first (gate globals, the caller's args off `$esp`, the table values the branch itself loads),
+  print the predictions, then gate on agreement with the counters (`scripts/m86_helper_legs.py`,
+  `scripts/m87_aaa20_trigger.py`: PREDICTIONS, OBSERVED, then the branch bytes named). Demanding a hit at
+  a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor.
+  A bp at an address that is BOTH a branch target and a loop-completion fallthrough is not a leg proof; a
+  hit count inside a window is not a CADENCE — tie each hit to a boundary (round/year at the hit).
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
-count** — one `ghidra_out/index.csv` read splits the two causes without touching the box. The header is
-`addr,name,size_bytes,n_insns,n_callers,...`: read it, then match `addr <= site < addr+size_bytes`. A
-site inside a function with ONE call site, where the docs/strings name a mode you are not in (e.g. the
-multiplayer stage driver), is unreachable BY DESIGN — no re-run will ever log it. Two sites inside the
-SAME many-caller helper, one of whose callers sits in the human-turn loop, are an UNTAKEN BRANCH: the
-game is live, the breakpoint asked the wrong question. A `csv.DictReader` over this file with guessed
-column names and a bare `except: continue` reports "no containing function" for EVERY address — read
-the header line first, and print the resolved row so a wrong lookup cannot impersonate a finding.
+count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH"
+without touching the box. `references/instrument-laws.md` carries the header order, the containment
+recipe and the DictReader trap.
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
@@ -774,6 +786,7 @@ solved, and a from-scratch instrument re-derives them wrong.
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 
-## Still open (leads) — `references/open-leads.md`
-The per-milestone lead list lives in `references/open-leads.md`. `NEXT_PROMPT.md` holds the CURRENT pick
-and the authoritative open items; if the two disagree, `NEXT_PROMPT.md` wins.
+## Still open (leads)
+`references/open-leads.md`; `NEXT_PROMPT.md` holds the CURRENT pick and wins if they disagree.
+
+

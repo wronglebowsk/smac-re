@@ -1,1 +1,1 @@
-M85 | m85cens5 RUNNING (census w/ m55_boundary driver after fresh save load; box state was the blocker) | merged? no (#90) | next: read scratch/m85cens5.out VERDICT; if PASS close M85 per CLOSING ORDER
+M87 m87trig2 PASS (all 8 gates) | merged? closing now - branch milestone/m87 (24b2d89, 2ffc923, merge of milestone/m86 docs) | next: append notes+NAMED, patch NEXT_PROMPT (pick -> M88: who calls FUN_004f34b0 / what writes slot [faction*191+0x94d7fc]=8), rsync skill, commit, gate.py --base main, milestone.py submit, gh pr checks, merge

@@ -1,0 +1,50 @@
+[New LWP 250252]
+[New LWP 250251]
+[New LWP 250250]
+[New LWP 250249]
+[New LWP 250248]
+[New LWP 250247]
+[New LWP 250246]
+[New LWP 250245]
+[New LWP 250244]
+[New LWP 250243]
+[New LWP 250242]
+[New LWP 250241]
+[New LWP 250240]
+[New LWP 250239]
+[New LWP 250238]
+[New LWP 250237]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf202932c in __kernel_vsyscall ()
+ARMED round=50 year=2150 save=0 net26bd4=0 kind0=10 kind1=25 kind2=26
+Breakpoint 1 at 0x5aaa20
+Breakpoint 2 at 0x5aaa6f
+Breakpoint 3 at 0x5aaaa0
+Breakpoint 4 at 0x5aaab0
+Breakpoint 5 at 0x5aaabd
+Breakpoint 6 at 0x5aab66
+Breakpoint 7 at 0x5a7970
+Breakpoint 8 at 0x5a7e6d
+Breakpoint 9 at 0x5a7e79
+Breakpoint 10 at 0x5a7f9f
+AAA n=1 a0=41900 ret=0x5aaf4b save=0 net26bd4=0
+LIVE n=1 faction=5 slot=8 save=0
+CALL n=1 faction=5 kind=8 slot_after=8
+HENTRY n=1 a0=5 a1=8 a2=0 ret=0x5aaad0
+WALK n=1 ptr=0x93325c short=10 arg1=8
+ALT n=1
+WALK n=2 ptr=0x933268 short=25 arg1=8
+ALT n=2
+WALK n=3 ptr=0x933274 short=26 arg1=8
+ALT n=3
+EXIT n=1 eax=0
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 250246]
+0xf202932c in __kernel_vsyscall ()
+[Inferior 1 (process 250234) detached]
