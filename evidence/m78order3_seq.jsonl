@@ -1,0 +1,104 @@
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "GATE", "l20": 0, "owner": 1, "rec": 104, "bit": 2, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "GATE", "l20": 0, "owner": 3, "rec": 104, "bit": 8, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "BOUNDARY", "idx": 0, "carriers": [], "w192": 1, "w193": 65, "w194": 65}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "PRODFLAG", "tid": 322, "pre": 5}
+{"tag": "L20FLAG", "edx": 0, "tid": 322}
+{"tag": "GATE", "l20": 0, "owner": 5, "rec": 16744, "bit": 32, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "PRODFLAG", "tid": 323, "pre": 5}
+{"tag": "L20FLAG", "edx": 0, "tid": 323}
+{"tag": "GATE", "l20": 0, "owner": 5, "rec": 16796, "bit": 32, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "SWEEPCALL", "owner": 5, "tid": 324, "mode": 0, "ret": 5718531}
+{"tag": "SWEEPCALL", "owner": 5, "tid": 325, "mode": 0, "ret": 5718531}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "PRODFLAG", "tid": 128, "pre": 5}
+{"tag": "L20FLAG", "edx": 0, "tid": 128}
+{"tag": "GATE", "l20": 0, "owner": 2, "rec": 6656, "bit": 4, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "PRODFLAG", "tid": 194, "pre": 65}
+{"tag": "L20FLAG", "edx": 1, "tid": 194}
+{"tag": "SWEEPCALL", "owner": 3, "tid": 194, "mode": 0, "ret": 5176963}
+{"tag": "MARK", "tid": 192, "pre": 1}
+{"tag": "MARK", "tid": 193, "pre": 65}
+{"tag": "GATE", "l20": 1, "owner": 3, "rec": 10088, "bit": 8, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "BOUNDARY", "idx": 1, "carriers": [192, 193], "w192": 261, "w193": 325, "w194": 69}
+{"tag": "SWEEPIN", "owner": 3, "g20434": 0, "b10": 8, "l20": 1}
+{"tag": "CLEAR", "tid": 192, "owner": 3, "pre": 261, "ret": 5178923}
+{"tag": "CLEAR", "tid": 193, "owner": 3, "pre": 325, "ret": 5178923}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "GATE", "l20": 0, "owner": 6, "rec": 104, "bit": 64, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "GATE", "l20": 0, "owner": 6, "rec": 104, "bit": 64, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "PRODFLAG", "tid": 64, "pre": 5}
+{"tag": "L20FLAG", "edx": 0, "tid": 64}
+{"tag": "GATE", "l20": 0, "owner": 1, "rec": 3328, "bit": 2, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "PRODFLAG", "tid": 131, "pre": 5}
+{"tag": "L20FLAG", "edx": 0, "tid": 131}
+{"tag": "GATE", "l20": 0, "owner": 2, "rec": 6812, "bit": 4, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "PRODFLAG", "tid": 194, "pre": 69}
+{"tag": "L20FLAG", "edx": 0, "tid": 194}
+{"tag": "GATE", "l20": 0, "owner": 3, "rec": 10088, "bit": 8, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "BOUNDARY", "idx": 2, "carriers": [], "w192": 5, "w193": 69, "w194": 69}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "SWEEPCALL", "owner": 6, "tid": 385, "mode": 0, "ret": 5718531}
+{"tag": "SWEEPCALL", "owner": 6, "tid": 387, "mode": 0, "ret": 5718531}
+{"tag": "FUNCIN", "base": 9820688}
+{"tag": "BOUNDARY", "idx": 3, "carriers": [], "w192": 5, "w193": 69, "w194": 69}

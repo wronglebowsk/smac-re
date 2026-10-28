@@ -789,3 +789,23 @@ Evidence: `evidence/m76marker1.gdblog`, `evidence/m76marker1_seq.jsonl`.
 - RETRACTED (M76): "the clear pass fired on a visit that printed no production setter" — that
   instrument's PRODSET cond is `*(int *)0x8f0d60 == $b`, so it cannot print for another base.
 Evidence: `evidence/m77gate1.gdblog`, `evidence/m77gate1_seq.jsonl`.
+
+## M78 (session 120) — the 0x100 mark and its clear are in ONE production visit; the census that reads 0x105 is a mid-visit snapshot
+
+- `python3 scripts/m78_mark_clear.py --tag m78order3 --boundaries 4 --no-reload` -> PASS (g1-g9).
+  visit 36: PRODFLAG tid=194 pre=0x41 -> L20FLAG edx=1 -> SWEEPCALL owner=3 tid=194 mode=0
+  ret=0x4efe83 -> MARK 192 (pre 0x001) + MARK 193 (pre 0x041) at `0x5729d5` -> GATE l20=1
+  rec=10088 -> SWEEPIN `0x4f05e0` -> CLEAR 192 (pre 0x105) + CLEAR 193 (pre 0x145) at `0x4ef398`.
+  Cross-visit mark->clear pairs = []; the only carrier census (boundary 1, 192=0x105 193=0x145)
+  sits BETWEEN those stores, so it is a snapshot of a stopped engine, not a survivor. Census replay
+  exact at all 4 boundaries (carriers [] / [192,193] / [] / []).
+- Callers live: SWEEPCALL rets {0x4efe83 x1 tid 194; 0x574203 x4 = FUN_00573a90 on indices
+  324/325/385/387, other owners, ZERO marks}; CLEAR rets {0x4f062b x2}. Zero events: 0x4ef5b3
+  (FUN_004ef540), 0x52145e (upkeep inline clear), 0x5a7d00/0x5a7f67 (tech setters), MARKSET.
+- Static call sites (`call`, instruction bytes): 0x572800 <- 0x4394be FUN_00438ad0, 0x4efe7e
+  FUN_004ef6d0, 0x5741fe FUN_00573a90, 0x5a7d0e + 0x5a7f75 FUN_005a7970; 0x4ef380 <- 0x4ef5ae
+  FUN_004ef540, 0x4f0626 production inline, 0x521479 FUN_00521070, 0x5a8568 FUN_005a7970.
+- RETRACTED (M77 open (a)): "either another caller re-marks later, or the census races the pass" —
+  nothing re-marks; THE CENSUS RACES THE PASS. Side fact: PRODFLAG/L20FLAG also fire at indices
+  322/323, so the production loop walks past the 256-record array the census covers.
+Evidence: `evidence/m78order3.gdblog`, `evidence/m78order3_seq.jsonl`.

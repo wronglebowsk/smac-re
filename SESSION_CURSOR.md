@@ -1,12 +1,6 @@
-M78 | acceptance m78order2 RUNNING (scripts/m78_mark_clear.py --tag m78order2 --boundaries 4) |
-merged? no | in flight: gdb attached to terran.exe, reload+enqueue+4 boundaries, ~4-6 min
-| run 1 (tag m78order1) FAILED two gates for INSTRUMENT reasons, not engine reasons: (a) the driver's
-census lines were written past gdb's lagging file offset and got overwritten (no BOUNDARY lines in
-the log at all) — fixed by opening the log "aw"; (b) PRODFLAG/SWEEPCALL legitimately report array
-indices 322-325 (owner 5, ret 0x574203 FUN_00573a90) which my tid<256 test rejected — now only
-tracked tags (MARK/CLEAR/SET) must be in range.
-| run 1 log evidence/m78order1.gdblog lines 86-94 ALREADY show the answer: PRODFLAG 194 -> SWEEPCALL
-ret 0x4efe83 -> MARK 192/193 -> GATE l20=1 -> SWEEPIN -> CLEAR 192/193, ONE visit, no other marker.
-| if cut off: read evidence/m78order2.gdblog (census lines are IN it as "BOUNDARY n ... carriers=");
-next step is the closing order (SESSION_NOTES -> NAMED.md -> NEXT_PROMPT -> rsync skill -> commit ->
-gate.py --base main -> milestone.py submit -> gh pr checks -> merge). Branch milestone/m78.
+M78 | acceptance m78order3 PASS (g1-g9 all True) | merged? no (closing now) | in flight: none
+| finding: the 0x100 mark (0x5729d5) and its clear (0x4ef398) are in ONE production visit; the
+boundary census that reads 0x105 is a MID-VISIT snapshot (it sits between the two stores of visit
+36). No cross-visit pair, no other marker. Sweep callers live: 0x4efe83 (production, 1) and
+0x574203 (FUN_00573a90, 4, indices >= 256, marked nothing).
+| next: milestone.py submit -> gh pr checks <n> -> milestone.py merge <n> (branch milestone/m78).
