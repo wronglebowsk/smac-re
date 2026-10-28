@@ -167,7 +167,9 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   rather than re-running the gate; the worktrees check out HEAD, so an UNCOMMITTED trim fixes nothing —
   commit it, then re-run. Inside such a worktree, `python3 scripts/evidence.py budget` names the
   offending doc and its limit (that is where `FAIL (always)` shows up), which is faster than guessing. When trimming, DELETE whole
-  sentences or bullets: rewording trades characters for characters and the check stays red. Well
+  sentences or bullets: rewording trades characters for characters and the check stays red — and so does
+  re-flowing, because joining wrapped lines saves one byte per line, not the paragraph's apparent width
+  (a trim pass that lands 15 bytes short is a wasted call: cut a clause or retire a paragraph). Well
   over it, move footing into `FOOTING.md` at the repo root (or a `references/`
   file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
   context before any work starts, which is how sessions ratchet toward the wall.
@@ -419,6 +421,11 @@ Two rules that generalise from how this one went wrong:
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && $1<=A {n=$2;p=$1} END{print
 p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.
+**Parse an objdump line by its TAB fields, never by the text after the colon:** the machine-code bytes
+sit between the address and the mnemonic, so `line.split(":")[1].startswith("mov")` matches NOTHING and a
+whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. Import
+`scratch/m71/dis.py` under a non-clashing module name (`importlib.util.spec_from_file_location`), because
+stdlib `dis` shadows the plain `import dis`.
 
 ## terran.exe PE layout (verified 2026-10-20 via section table + byte reads)
 
@@ -593,7 +600,10 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   exit 1 on any FAIL) checks the authoritative address table, `terran.exe` alive with `TracerPid: 0`
   and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
   the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
-  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank).
+  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). A repo brief that shells out to `pgrep`
+(`scripts/session_brief.py`) RAISES a `CalledProcessError` traceback instead of printing a verdict when
+`terran.exe` is down — fresh-load (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`)
+before reading anything out of it, and do not take its silence for BLOCKED.
 - **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
   `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors
   "claims not to support" even when focus is perfect). The authoritative check is
@@ -735,6 +745,15 @@ otherwise**: arm one control breakpoint whose hit is guaranteed in the window an
 read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
 armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
 never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
+- **A leg census gates on PREDICTIONS, not on hits.** Compute every site's expected hit count from live
+  memory first — the gate globals, the caller-supplied args read off `$esp`, the table values the branch
+  itself loads — print those predictions, then compare them to the counters and gate on agreement
+  (`scripts/m86_helper_legs.py` is the working template: PREDICTIONS, then OBSERVED, then the branch
+  bytes it named). Demanding a hit at a site the TAKEN leg cannot reach FAILs the milestone, not the
+  game; the fix is the leg map, never a lowered floor. Two corollaries: a breakpoint at an address that
+  is BOTH a branch target and a loop-completion fallthrough is not a leg proof (read the predecessors in
+  the disassembly before naming a leg from a counter), and a hit count inside a window is not a CADENCE —
+  tie each hit to a boundary (round/year read at the hit) or write "cadence unproven".
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
 count** — one `ghidra_out/index.csv` read splits the two causes without touching the box. The header is
 `addr,name,size_bytes,n_insns,n_callers,...`: read it, then match `addr <= site < addr+size_bytes`. A
@@ -778,11 +797,4 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 The per-milestone lead list lives in `references/open-leads.md`. `NEXT_PROMPT.md` holds the CURRENT pick
 and the authoritative open items; if the two disagree, `NEXT_PROMPT.md` wins.
 
-## Leg census law (s138, M86)
 
-Acceptance gates must PREDICT from live memory first, then be confirmed by counters — never demand a
-hit at a site the taken leg cannot reach (that FAILs the milestone, not the game). A breakpoint whose
-address is BOTH a branch target and a loop-completion fallthrough is not a leg proof (0x5a7f9f is
-`jne 0x5a7f9f`'s target AND the band loop's fallthrough). Attribute a helper call by its RETURN SITE:
-`scripts/m86_helper_legs.py` reads the three stack args at 0x5a7970 and the ret from `(esp)`, which
-named FUN_005aaa20 (site 0x5aaacb) as the only live caller of FUN_005a7970 ever measured.
