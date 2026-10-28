@@ -754,8 +754,7 @@ read back BEFORE attaching that the watched event can even happen (queue head is
   print the predictions, then gate on agreement with the counters (`scripts/m86_helper_legs.py`,
   `scripts/m87_aaa20_trigger.py`: PREDICTIONS, OBSERVED, then the branch bytes named). Demanding a hit at
   a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor.
-  A bp at an address that is BOTH a branch target and a loop-completion fallthrough is not a leg proof; a
-  hit count inside a window is not a CADENCE — tie each hit to a boundary (round/year at the hit).
+  Tie every hit to a boundary (round/year printed at the hit); a window count is not a cadence.
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
 count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH"
 without touching the box. **To name who writes a field, use a hardware watchpoint on the address PLUS a
@@ -785,11 +784,8 @@ The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is
   `references/static-store-census.md` §9; §1–§3 carry the traps that make the STATIC half of it complete —
-objdump prints `PTR` UPPERCASE (a lowercase grep reports zero stores), a store through a record pointer
-never prints the table's base address (enumerate the absolute form AND the `+disp]` form before naming a
-setter set), and the operand width decides whether a bit filter is admissible at all. **Read §9 before
-hand-writing a new watcher script** — its condition arithmetic, log format and scorer gates are already
-solved, and a from-scratch instrument re-derives them wrong.
+**Read §9 before hand-writing a watcher script** — condition arithmetic, log format and scorer gates are
+solved there (uppercase-`PTR` greps, pointer-form stores, operand width).
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 
