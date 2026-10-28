@@ -49,6 +49,7 @@ set $n_ctrl = 0
 set $n_aaa = 0
 set $n_call = 0
 set $n_store = 0
+set $n_rstore = 0
 printf "ARMED round=%d year=%d slot=%d\\n", *(int *)0x985afc, *(int *)0x985b00, *(int *)SLOTX
 break *0x51f320
 commands
@@ -80,6 +81,15 @@ commands
 silent
 set $n_store = $n_store + 1
 printf "STORE n=%d pc=0x%x val=%d\n", $n_store, $pc, *(int *)SLOTX
+continue
+end
+watch *(int *)0x985afc
+commands
+silent
+set $n_rstore = $n_rstore + 1
+if $n_rstore < 8
+printf "RSTORE n=%d pc=0x%x round=%d\n", $n_rstore, $pc, *(int *)0x985afc
+end
 continue
 end
 continue
@@ -217,7 +227,7 @@ def main():
     fns = funcs()
     lo = min(ad for ad, _, _, _ in fns)
     hi = max(ad + sz for ad, sz, _, _ in fns)
-    stores, ctrl, aaa, calls = [], 0, [], []
+    stores, ctrl, aaa, calls, rstores = [], 0, [], [], []
     for ln in text.splitlines():
         p = ln.strip().split()
         if not p:
@@ -234,6 +244,8 @@ def main():
                 fn = next((n for ad, sz, n, c in fns if ad <= wpc < ad + sz), None)
                 pc = wpc
             stores.append((kv.get("n"), pc, fn, wpc_line, kv.get("val")))
+        elif p[0] == "RSTORE":
+            rstores.append((kv.get("n"), kv.get("pc"), kv.get("round")))
         elif p[0] == "CTRL":
             ctrl += 1
         elif p[0] == "AAA":
@@ -247,6 +259,14 @@ def main():
         print("AAA:", aaa[0], flush=True)
     if calls:
         print("CALL (aaa20 -> helper args):", calls[0], flush=True)
+    print("RSTORE (the control watchpoint on the ROUND counter, same mechanism):", flush=True)
+    for n, pc, rd in rstores[:6]:
+        at, prev = instr_window(pc)
+        fn = None
+        if prev:
+            wpc = int(prev.split(":", 1)[0].strip(), 16)
+            fn = next((x for ad, sz, x, c in fns if ad <= wpc < ad + sz), None)
+        print(f"  n={n} writer={wpc if prev else None:#x} {fn} round={rd}  {prev}", flush=True) if prev else print(f"  n={n} pc={pc:#x} round={rd} (no text instruction before it)", flush=True)
     final = mem(pid, addr)
     r1v = mem(pid, ROUND)
     slots1 = [mem(pid, slot_addr(i)) for i in range(8)]
