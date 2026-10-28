@@ -143,9 +143,10 @@ def poke_flag_bits(pid, t, set_bits=0, clear_bits=0):
     return (pre[0] | (pre[1] << 8)), (post[0] | (post[1] << 8))
 
 
-def run_script(args_list, timeout=200):
+def run_script(args_list, timeout=420):
     r = subprocess.run([sys.executable] + args_list, capture_output=True, text=True,
-                       timeout=timeout)
+                       timeout=timeout)  # 420 s: a concurrent veilbrowser window can occlude
+    #                                      the Wine window and make one screenshot cycle slow
     out = (r.stdout or "").strip().splitlines()
     return r.returncode, out[-3:] if out else [(r.stderr or "")[-200:]]
 

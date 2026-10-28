@@ -1,2 +1,2 @@
-M82 (milestone/m82, s125) | acceptance m82bit7a RUNNING (gdb attached, 3 boundaries) | merged? no | next: if the log has events, read evidence/m82bit7a.gdblog tail; if the run died, re-run python3 scripts/m82_bit7_poke.py --tag m82bit7b.
+M82 (milestone/m82, s125) | acceptance m82bit7b RUNNING (3 boundaries, gdb on terran.exe pid 4141935) | merged? no | next: read evidence/m82bit7b.gdblog + the script's gate lines.
 IF CUT HERE: the box is a single Wine process — check evidence/m82bit7a.gdblog before starting a competing run. Pick on record: M82 (NEXT_PROMPT STILL OPEN item 1). Evidence 27.4/30 MB. Plan: W1 bit2/7 clear -> edi; poke bit7 only -> W2; W3 bit2 ON control; census 0..511.
