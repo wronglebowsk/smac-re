@@ -1,0 +1,36 @@
+[New LWP 3716795]
+[New LWP 3716794]
+[New LWP 3716793]
+[New LWP 3716792]
+[New LWP 3716791]
+[New LWP 3716790]
+[New LWP 3716789]
+[New LWP 3716788]
+[New LWP 3716787]
+[New LWP 3716786]
+[New LWP 3716785]
+[New LWP 3716784]
+[New LWP 3716783]
+[New LWP 3716782]
+[New LWP 3716781]
+[New LWP 3716780]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf6e6a32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(short *)0x98d4ec
+Hardware watchpoint 2: *(short *)0x98d520
+Hardware watchpoint 3: *(short *)0x98baec
+Hardware watchpoint 4: *(short *)0x98d554
+ARMED 4 hw watchpoints at 0x98d4ec 0x98d520 0x98baec 0x98d554
+FLAGW tid=194 pc=0x4efe67 val=0x45
+FLAGW tid=193 pc=0x5729de val=0x145
+FLAGW tid=193 pc=0x4ef39f val=0x45
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3716789]
+0xf6e6a32c in __kernel_vsyscall ()
+[Inferior 1 (process 3716776) detached]

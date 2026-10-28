@@ -1,1 +1,1 @@
-M74 | acceptance m74flag + m74flag2 both FAIL (0 of 11 writer breakpoints fired; no completion in the window) | merged? NO, branch milestone/m74 holds the scripts | next: read FUN_00597ce0/FUN_00597ee0, breakpoint 0x597487 in FUN_00596850, arm only after reading pending>=1 back
+M74 | m74flag3 run IN FLIGHT: 4 hw watchpoints on flag words 193/194/65/195, 3 boundaries, queue [2,194] pending 1 storage poked 200 | merged? NO | next: read evidence/m74flag3.gdblog, map pcs back 16B, then closing order
