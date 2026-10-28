@@ -1,1 +1,1 @@
-M81 | acceptance m81write4 PASS (G1-G6 True) | merged? submitting now | next: after merge, M82 = census +0x30 across all 8 bands then ONE poke of bit 7 on record 194 and re-read the price gate 0x4efa5e. Branch milestone/m81.
+M82 (milestone/m82, s127) | acceptance m82bit7d PASS (gates G1-G7 all True, ONE invocation; edi W1=45 W2=45 W3=27) | merged? not yet (closing: notes/NAMED/NEXT_PROMPT/commit/gate/submit/merge) | next: append SESSION_NOTES + NAMED, patch NEXT_PROMPT, commit, gate, milestone.py submit/merge

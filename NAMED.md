@@ -864,3 +864,27 @@ val 0xc1; SWCOPY idx 324/325 esi 5 f30 0xc1; read back 324 "Impact Squad" 0xc1, 
 Rover" 0xc1, 326/327 empty. Store pcs are outside {0x5741e1,0x5741f0,0x5741fe,0x572800}.
 WHAT BITS 6/7 MEAN IS OPEN. Callers of 0x595b10: 0x4392fe/0x5740f7/0x57a021.
 Evidence: evidence/m81write4.gdblog, traces m81write4_r0..2.
+
+## M82 block (session 125, 2026-10-28, ACCEPTANCE FAIL — static half only)
+
+| what | finding | evidence |
+|---|---|---|
+| consumers of the flag WORD `0x98ad88+tid*52+0x30` | 168 sites enumerated; EVERY test uses 0x1/0x4/0x8/0x10 — **no test of bit 6 (0x40) or bit 7 (0x80)** in the absolute or the `[reg+0x30]` pointer form; the markup test is bit 2 only (`0x5ac99c`) and B comes only from `0x5ac950`, so the price gate's `edi` cannot depend on bits 6/7 | **H (bytes)** `grep -n 98adb8 scratch/m574/text.txt` |
+| bit 7 (0x80) | writer `0x57412c` (sweep, M81); the ONLY other bit-7-specific instruction is the CLEARER `and BYTE PTR [eax*4+0x98adb8],0x7f` at **`0x577ca8`** (`call 0x43f470` follows, ecx 0x71df20) | **H (bytes)** `dis.py 577c60 577cc0` |
+| bit 6 (0x40) is NOT markup-off | live, already in hand: gate row `f30=0x41` (bit 6 set, bit 2 clear) charged `edi 45` = markup ON | **H (live)** `evidence/m74flag2.gdblog` |
+| census of all 8 bands (0..511) | nonempty 34; bit6 carriers [193,194,324,325,386,449], bit7 [324,325,386,449], bit2 [64,128-131,256,320-323,448,449]; stock faction designs read 5 (bit0+bit2), band-0 designs 1 | **H (live)** `evidence/m82census_s126.txt` |
+| the census is a SNAPSHOT | 19 min later the same read gives 385=0x81, 386=0x1, new 387=0xc1, bit7 [324,325,385,387,449], 194=0x45 — faction records are re-inited and re-marked between rounds | **H (live)** `evidence/m82bit7c.gdblog` header |
+| the live poke test (bit 7 alone at the gate) | NOT MEASURED — acceptance m82bit7a/b/c FAIL (wrong chooser head; zero gate rows; a concurrent veilbrowser window occluded the Wine window; session 126 ran in the same worktree) | **OPEN** `evidence/m82bit7b.gdblog`, `evidence/m82bit7c.gdblog` |
+
+## M82 (s127, `m82bit7d`) — `+0x30` BIT 7 IS NOT A PRICE TEST (live proof; complements s125's static FAIL block)
+
+LIVE (one invocation, gates G1-G7 True, PASS): record 194 at University Base's head, storage held 20
+(below both prices) every boundary — W1 flag 0x41 -> gate `0x4efa5e` edi=45; controlled poke changed
+ONLY bit 7 (0x41 -> 0xc1, read back from /proc/pid/mem) -> W2 **edi=45 unchanged**; control bit2 on
+(0x45) -> **edi=27** (markup off, M73/M74), so the instrument can see a switch. VERDICT: bit 7 does
+NOT gate the price. Census (fresh m54b_clean): bit7 carriers [386, 449] = records the sweep (re)inits
+via 0x57412c; ours (192/193/194) never carry it. Static (all 168 flag-WORD sites): no `test` of bit 6
+or bit 7; the only bit-7 clearer is 0x577ca8 `and BYTE [tid*4+0x98adb8],0x7f` inside FUN_00577280
+(shard_014.c:19576), which also tests bit 0, bit 2 (`&4`), sets 0x200 when bit 3 set, clears bit 3;
+bit 5 (0x20) is ORed at 0x531782, bit 6 has no clearer found. Evidence: evidence/m82bit7d.gdblog,
+traces m82bit7d_r0..r2.

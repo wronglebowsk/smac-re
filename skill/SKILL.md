@@ -53,7 +53,12 @@ build on that was never merged (an acceptance FAIL left it on its branch) has NO
 the tree — branch from it instead (`git checkout -B milestone/<ID> milestone/<prev>`) and say so in the
 session entry, rather than discovering the missing instrument halfway through the run.
 `milestone.py start <ID>` refuses a dirty worktree: stash the `SESSION_CURSOR.md` write, start, then pop
-it onto the new branch — never commit a cursor write to `main` just to get the tree clean.
+it onto the new branch — never commit a cursor write to `main` just to get the tree clean. That commit is also what breaks a
+landing — a squash merge plus any local `main` commit makes `merge <n>` abort its ff-only pull AFTER
+GitHub has already merged (recovery in `references/git-workflow.md`). When the milestone you are re-running
+already has a branch, `start <ID>` refuses and leaves you on `main`, where the failed attempt's scripts
+are NOT in the tree: check that branch out and `ls scripts/<id>*` before concluding the instrument is
+missing.
 **Verify the named milestone is not already merged before starting it** — a kickoff prompt (re-pasted or
 cron-supplied) can lag the repo. `git log --oneline | grep -i <ID>` plus `grep -n '^## <ID>' NAMED.md`
 answers in one call; if both hit, the prompt's pick is stale, so run the milestone
@@ -209,6 +214,10 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
 - **Change one variable per prep poke.** Emptying a destination tile and moving the walker off a
   half-tile offset in one poke produced a confident, wrong root cause (that tile's occupancy)
   which the run's own trace later refuted. Split the poke, or label the cause unattributed.
+- **A harness that raises AFTER the measurement window is a harness bug, not a failed shape.** The events
+  are already in the evidence log: read the log, fix the harness, and re-run the SAME shape on a fresh box
+  state. Never read a piped acceptance's exit code as its verdict — `… | tail` masks the failure, so a
+  Traceback in the captured output means FAIL even when every interesting line printed.
 - **Record index is not identity, and the unit array GROWS mid-run** — a base building a unit
   shifts every index after it, so an index carried across a turn (or read a fraction of a second
   after the order lands) can name a different unit's record. It also COMPACTS mid-turn: a queued
@@ -654,7 +663,9 @@ against the bare index never fires (`references/static-store-census.md` §9.3). 
   while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run. gdb's
   printf reads an inferior pointer as a HOST address, so `%.20s` fed `*(char *)(rec+0)` errors
   ("Cannot access memory"); bp printfs emit NUMBERS derived from registers only (raw reg, reg/stride,
-  reg%stride, `*(short *)(...)` values), never inferior strings — use `x/s` outside a commands block
+  reg%stride, `*(short *)(...)` values), never inferior strings, and substitute expressions as printf ARGUMENTS — an expression pasted into the
+format string prints ITSELF and the log then parses as zero events (`references/static-store-census.md`
+§9 point 10) — use `x/s` outside a commands block
   when a name is genuinely wanted. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
 otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
