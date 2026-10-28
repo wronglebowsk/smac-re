@@ -1,0 +1,133 @@
+[New LWP 4057981]
+[New LWP 4057980]
+[New LWP 4057979]
+[New LWP 4057978]
+[New LWP 4057977]
+[New LWP 4057976]
+[New LWP 4057975]
+[New LWP 4057974]
+[New LWP 4057973]
+[New LWP 4057972]
+[New LWP 4057971]
+[New LWP 4057970]
+[New LWP 4057969]
+[New LWP 4057968]
+[New LWP 4057967]
+[New LWP 4057966]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf56ed32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4ef6d0
+Breakpoint 2 at 0x4efe60
+Breakpoint 3 at 0x572800
+Breakpoint 4 at 0x5729d5
+Breakpoint 5 at 0x4f0591
+Breakpoint 6 at 0x4f05bd
+Breakpoint 7 at 0x4f05e0
+Breakpoint 8 at 0x4ef398
+Breakpoint 9 at 0x52145e
+Breakpoint 10 at 0x4f05a5
+Breakpoint 11 at 0x4f0637
+ARMED base=0x95da10 head=2 pending=1 storage=200 netgame=0 mask=0x08/0xff pl=3
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=1 rec=104 bit=0x2 g20434=0 b10=0x08 b11=0xff pl=1
+RESTORE netgame=0 b10=0x08 pl=1
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=3 rec=104 bit=0x8 g20434=0 b10=0x08 b11=0xff pl=3
+RESTORE netgame=0 b10=0x08 pl=3
+BOUNDARY 0 w192=0x001 w193=0x041 w194=0x041 carriers=-
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=322 pre=0x5
+GATE l20=0 owner=5 rec=16744 bit=0x20 g20434=0 b10=0x08 b11=0xff pl=5
+RESTORE netgame=0 b10=0x08 pl=5
+FUNCIN base=0x95da10
+PRODFLAG tid=323 pre=0x5
+GATE l20=0 owner=5 rec=16796 bit=0x20 g20434=0 b10=0x08 b11=0xff pl=5
+RESTORE netgame=0 b10=0x08 pl=5
+SWEEPCALL owner=5 tid=324 mode=0 ret=0x574203
+SWEEPCALL owner=5 tid=325 mode=0 ret=0x574203
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=6 rec=104 bit=0x40 g20434=0 b10=0x08 b11=0xff pl=6
+RESTORE netgame=0 b10=0x08 pl=6
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=128 pre=0x5
+GATE l20=0 owner=2 rec=6656 bit=0x4 g20434=0 b10=0x08 b11=0xff pl=2
+RESTORE netgame=0 b10=0x08 pl=2
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=194 pre=0x41
+SWEEPCALL owner=3 tid=194 mode=0 ret=0x4efe83
+MARK tid=192 pre=0x1
+MARK tid=193 pre=0x41
+GATE l20=1 owner=3 rec=10088 bit=0x8 g20434=0 b10=0x08 b11=0xff pl=3
+BOUNDARY 1 w192=0x105 w193=0x145 w194=0x045 carriers=192,193
+POKE pre=0 b10=0x08 b11=0xff owner=3 rec=10088 bit=0x8 l20=1 pl=3
+POKEPOST post=1
+MARKSET tid=194 pre=0x45
+RESTORE netgame=0 b10=0x08 pl=3
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+GATE l20=0 owner=6 rec=104 bit=0x40 g20434=0 b10=0x08 b11=0xff pl=6
+RESTORE netgame=0 b10=0x08 pl=6
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=64 pre=0x5
+GATE l20=0 owner=1 rec=3328 bit=0x2 g20434=0 b10=0x08 b11=0xff pl=1
+RESTORE netgame=0 b10=0x08 pl=1
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+FUNCIN base=0x95da10
+PRODFLAG tid=131 pre=0x5
+GATE l20=0 owner=2 rec=6812 bit=0x4 g20434=0 b10=0x08 b11=0xff pl=2
+RESTORE netgame=0 b10=0x08 pl=2
+FUNCIN base=0x95da10
+PRODFLAG tid=194 pre=0x145
+GATE l20=0 owner=3 rec=10088 bit=0x8 g20434=0 b10=0x08 b11=0xff pl=3
+RESTORE netgame=0 b10=0x08 pl=3
+BOUNDARY 2 w192=0x105 w193=0x145 w194=0x145 carriers=192,193,194
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf56ed32c in __kernel_vsyscall ()
+[Inferior 1 (process 4057963) detached]

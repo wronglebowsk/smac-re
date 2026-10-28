@@ -116,7 +116,9 @@ BPS = [
 ]
 TAGS = ("FUNCIN", "PRODFLAG", "SWEEPCALL", "MARK", "GATE", "POKE", "POKEPOST", "MARKSET",
         "SWEEPIN", "CLEAR", "UPKCLR", "RESTORE", "BOUNDARY")
-LINE = re.compile(r"^(%s)\s*(.*)$" % "|".join(TAGS))
+# longest tag first: "MARK" would otherwise match the prefix of "MARKSET" and "POKE" of
+  # "POKEPOST", which strands the rest of the line in group 2 (run m79net4 died on that).
+LINE = re.compile(r"^(%s)\s*(.*)$" % "|".join(sorted(TAGS, key=len, reverse=True)))
 KV = re.compile(r"(\w+)=(-?0x[0-9a-f]+|-\d+|\d+)")
 
 
@@ -137,7 +139,7 @@ def parse(text):
         if d["tag"] == "BOUNDARY":
             d["idx"] = int(m.group(2).split()[0])
             m2 = re.search(r"carriers=(\S+)", m.group(2))
-            d["carriers"] = [] if m2.group(1) == "-" else [int(x) for x in m.group(1).split(",")]
+            d["carriers"] = [] if m2.group(1) == "-" else [int(x) for x in m2.group(1).split(",")]
             for k, v in re.findall(r"w(\d+)=0x([0-9a-f]+)", m.group(2)):
                 d["w" + k] = int(v, 16)
         else:
@@ -341,13 +343,21 @@ def main():
             bit8[t] = False
     g7 = replay_ok and bool(cands)
     # g8 only the gate global moved: mask/all-mask unchanged everywhere, the sweep call still
-    #    follows its own production store, and the sweep still marks exactly 192/193
-    g8 = all(d["b10"] == b10_0 and d["b11"] == b11_0 for d in gate + poke + restore) and \
+    #    follows a production store of the SAME record (m78's attribution — PRODFLAG fires for
+    #    EVERY record the pass walks, 128/322/323 in run m79net1, so "all PRODFLAG == 194" is not
+    #    a claim the engine can satisfy), and the sweep still marks exactly 192/193
+    attr = []
+    for n_, d in enumerate(ev):
+        if d["tag"] == "SWEEPCALL" and d["ret"] == 0x4efe83:
+            prev = next((x for x in reversed(ev[:n_])
+                         if x["tag"] in ("PRODFLAG", "SWEEPCALL")), None)
+            attr.append((d["tid"], prev.get("tid") if prev else None))
+    g8 = all(d["b10"] == b10_0 for d in gate + poke + restore) and \
+         all(d["b11"] == b11_0 for d in gate + poke) and \
          all(d["g20434"] == 0 for d in gate) and \
-         any(d["ret"] == 0x4efe83 and d["tid"] == PROD for d in sweeps) and \
          all(d["ret"] in SWEEP_RETS for d in sweeps) and \
          sorted({d["tid"] for d in marks}) == [192, 193] and \
-         all(d["tid"] == PROD for d in prodflags)
+         bool(attr) and all(x == y == PROD for x, y in attr)
     # g9 the state is restored: every visit ends with netgame 0 and the game reads baseline values
     g9 = len(restore) >= len(poke) and all(d["netgame"] == 0 for d in restore) and \
          ngA == 0 and b10A == b10_0 and b11A == b11_0

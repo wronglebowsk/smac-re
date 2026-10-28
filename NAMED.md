@@ -809,3 +809,11 @@ Evidence: `evidence/m77gate1.gdblog`, `evidence/m77gate1_seq.jsonl`.
   nothing re-marks; THE CENSUS RACES THE PASS. Side fact: PRODFLAG/L20FLAG also fire at indices
   322/323, so the production loop walks past the 256-record array the census covers.
 Evidence: `evidence/m78order3.gdblog`, `evidence/m78order3_seq.jsonl`.
+
+## M79 block (s121, tag m79net5)
+
+| addr | name / claim | evidence |
+|---|---|---|
+| `0x920434` | **NETGAME / MULTIPLAYER flag** (0 = single player) | H+LIVE: FUN_0057ecf0 sets 1 at entry, clears at its tail; 7 of 9 writers store right after `call 0x4e25e0`; FUN_00528930 returns 0 when it is 0; the production gate reads it at 0x4f05a5 and the poke to 1 (m79net5) moved the engine to the else branch 0x4f05ba-0x4f05c4 |
+| `0x985b10` | **HUMAN-PLAYER MASK**, byte, keyed `1 << faction` (live 0x08 = player 3) | H, **current-player reading ruled out**: gate visits print cur_player (0x985dcc) 1/2/5/6 while the mask stays 0x08; sibling 0x985b11 = 0xff (all 8 slots); writers 0x4df82e/0x4e08ca/0x512bf6(imm 0x10)/0x525eed/0x57f051/0x57f2da; FUN_004df630 `= 1<<p`, `= 0x985b11 & 0xfe`; FUN_00525e10 clears `1 << *(rec+0x788)`; FUN_0057ecf0 builds it from the 412-byte array 0x91e494 (count 0x91e2d0, live 0) |
+| `0x4f0591-0x4f0637` | production MARKER gate: admit iff `0x920434==0 \|\| !(0x985b10 & (1<<owner))`, ELSE `0x4f05bd or BYTE [tid*52+0x98adb9],1` and skip the clear pass | VERIFIED live m79net5: POKE pre 0 post 1, MARKSET tid 194, SWEEPIN/CLEAR 0, end census 192=0x105 193=0x145 194=0x145, replay exact 3/3 |
