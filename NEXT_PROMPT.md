@@ -8,15 +8,14 @@ sessions 113/114 hit 259,232/262,144 and were cut mid-sentence). **Whatever is n
 ~150k tokens is not finished at all.**
 
 Counted in TOOL CALLS (the clock you can see):
-- **0-6** brief, this file, notes tail, `accept_ready.py`. No shard reading "for background" —
-  the atlas/NAMED blocks are the summary and they are far smaller than the code.
-- **6-30** the milestone, one variable at a time (a gdb run ~2 calls, relaunch ~1, enqueue ~1).
-  **At call 25: `git add -A && git commit -m "<ID>: checkpoint"`** — after that every step leaves
-  a committed file, because the next turn may be the truncated one.
-- **30-40** STOP MEASURING. Acceptance not green = that is the finding: write the blocker and the
+- **0-6** brief, this file, notes tail, `accept_ready.py`. No shard reading "for background".
+- **6-30** the milestone, one variable at a time (gdb run ~2 calls, relaunch ~1, enqueue ~1).
+  **At call 25: `git add -A && git commit -m "<ID>: checkpoint"`** — the next turn may be the
+  truncated one, so every step after it must leave a committed file.
+- **30-40** STOP MEASURING. Acceptance not green = that IS the finding: write the blocker and the
   failing number, merge nothing, close.
-- **40-50** the closing order, and it may be TERSE: notes entry <= 2 KB, NAMED block <= 1 KB,
-  this file patched BY SECTION, never rewritten.
+- **40-50** the closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY
+  SECTION (budget FAILs at 16,000 chars — stay <= 15,500), never rewritten.
 
 Survivability rules:
 - Before any step that can exceed 2 minutes (gdb run, relaunch, evidence audit), overwrite
@@ -24,8 +23,7 @@ Survivability rules:
   nothing else records what was in flight. If the box is mid-run when you are cut off, say so there;
   never `rm`/`git checkout --`.
 - Every doc write is an append or a <= 2 KB patch; never read-then-rewrite a file over 10 KB.
-  Keep tool results small (`grep`/`sed -n` windows, `tail`, `scripts/evidence.py show`) — a
-  multi-KB result is context that cannot be compressed back.
+  Keep tool results small — a multi-KB result is context that cannot be compressed back.
 ## THE LEDGER
 
 Merged: **M54A-M76** (#39-#77)
@@ -56,10 +54,9 @@ M75 + M76, notes s117-118.
 `type[+0x30] & 4` (`0x5ac99c`). Full numbers: NAMED M73 block, notes s114.
 
 **M74 (PR #75, merged) — WHO sets `type[+0x30] & 4`, AND WHEN. ACCEPTANCE PASS, tag `m74flag3`:**
-PRODUCTION sets it: `0x4efe60` in FUN_004ef6d0 (designed only, between gate `0x4efa5e` and
-pay `0x4efed8`); first production calls FUN_00572800 at `0x4efe7e` (see M75 above for what
-that sweep marks); marker clear FUN_004ef380 `0x4ef398`. Instrument `m74_flag_hw.py`.
-RETRACTED: `0x597487` is a save/load codec (`0x93327a` table). Full text: NAMED M74-RESOLVED, s116.
+PRODUCTION sets it (`0x4efe60` in FUN_004ef6d0, designed only, between gate `0x4efa5e` and pay
+`0x4efed8`); first production calls FUN_00572800 at `0x4efe7e`. RETRACTED: `0x597487` is a
+save/load codec (`0x93327a` table). Full text: NAMED M74-RESOLVED, s116.
 
 **M68 (FAILED):** 212 sort rules, the live enqueue DID append — no key named (M70's cursor
 mechanics explain the appends). **M63:** `m63_pop.py`, the `0x94de84` queued-count correction,
@@ -75,10 +72,9 @@ mechanics explain the appends). **M63:** `m63_pop.py`, the `0x94de84` queued-cou
    `--no-screen` skips the OCR. Screen `dialog` -> `scripts/m70_clear_dialog.py` (presses Return
    until it clears); a BUILD/base PANE needs Escape, not Return.
 3. `m74_flag_hw.py` — 4 hw watchpoints on flag WORDS, prints pc+val per store, refuses to drive
-   unless gdb armed 4 HARDWARE watchpoints (M74 PASS tag `m74flag3`); `m72_gate_watch.py` — the
-   VISIT GATE (12 conditional breakpoints, storage poked+read back, 8 gates);
-   `m73_price_split.py` splits `edi` (M73, 10 gates); `m74_flag_watch.py` (M74: FAILED twice);
-   `m71_pop_watch.py` (reproduce M71 only).
+   unless gdb armed them (M74 tag `m74flag3`); `m72_gate_watch.py` — the VISIT GATE (12
+   conditional breakpoints, storage poked+read back); `m73_price_split.py` splits `edi`;
+   `m74_flag_watch.py` (FAILED twice); `m71_pop_watch.py` (reproduce M71 only).
 4. `m75_sweep_replay.py --tag m75sweep1` — M75's acceptance (predicts FUN_00572800(194,0)'s marked
 set from live memory, 4 hw watchpoints, early-stop, 5 gates). `m76_marker_clear.py --tag
 m76marker1` — M76's: 12 silent breakpoints over the clear `0x4ef398` (prints tid/owner/flags/return
@@ -128,15 +124,17 @@ finds nothing), round ~52 after m76marker1, University Base idx 0; flags after t
 Fresh `m54b_clean.SAV` loads 192/193/194 at `0x01/0x41/0x41` (193/194 carry bit 6, NOT bit 2 —
 s116's "0x41 = bit 2 set" was wrong: bit 2 = 0x4, 0x41 has it CLEAR). Korolev Center does not
 exist here. Always read `pending` back after an enqueue before arming.
-- **Prices (`price_of`, multiplier 9):** head 2 = 9, 192/193 = 18, 194 = 27 — but the gate
-  charges `edi` (M73/M74/M75: markup charged at most once per designed record; the sweep marks
-  the rest). Never assert arrival from `price_of`. Free chooser ids 194/2/1/0; 195 -> -3,
-  196+ recordless. Enqueue refuses `pending >= 9` (`0x418b05`).
-- **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3
-  scripts/m54a_load.py --relaunch` -> `accept_ready.py` -> enqueue (`m57_ui_enqueue.py --base-index
-  0 --cell-item 194 --inserts 1`) -> **read `pending` back** -> the acceptance run (or just run
-  `m75_sweep_replay.py`, which does all of it). The load stalls at a misread `movie` screen
-  ~1 in 3 times: re-run `--relaunch`, do NOT press Return on the save browser.
+- **Prices (`price_of`, multiplier 9):** head 2 = 9, 192/193 = 18, 194 = 27 — but the gate charges
+  `edi` (M73-M76: markup at most once per designed record; the sweep marks the rest). Never assert
+  arrival from `price_of`. Free chooser ids 194/2/1/0; 195 -> -3, 196+ recordless; enqueue refuses
+  `pending >= 9` (`0x418b05`).
+- **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py
+  --relaunch` -> `accept_ready.py` -> enqueue (`m57_ui_enqueue.py --base-index 0 --cell-item 194
+  --inserts 1`) -> **read `pending` back** -> the acceptance run (the acceptance scripts do all of
+  it). The load stalls at a misread `movie` screen ~1 in 3: re-run `--relaunch`, never Return on
+  the save browser. An `artwork-close` screen is NOT a dialog — click its red CLOSE bar
+  (`smac_play.close_bar`; `m70_clear_dialog.py` refuses it by design; `scratch/m76_close_artwork.py`
+  does the click).
 - gdb: 4 hardware watchpoints and 10-12 clean silent breakpoints work (~35 s per boundary under
   them); conditional breakpoints keep the other bases/records out of the log. No `si` inside a
   breakpoint command list; stdout DRAINED to a file (`stdbuf -o0`); a printf newline in a
