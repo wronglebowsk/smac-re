@@ -106,6 +106,35 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   after a `ret` may be cold branch targets (a jcc/jmp earlier in the same body jumps past the ret
   into them, inside the same Ghidra function) — grep backward jump refs before calling such a
   store dead.
+- **Answer "who owns this function" from the image bytes, not from the pseudocode.** A function that
+  `index.csv` gives `n_callers` but that appears in `ghidra_out/` ONLY as its own `FUN_` definition is
+  reached through a POINTER, not a `call`: scan the PE file for the little-endian dword of its VA — read
+  the section table (`objdump -h programs/terran.exe` gives VMA / vsize / file offset per section) and
+  search each loaded section for `struct.pack('<I', va)` in Python. One hit in `.rdata` means it is a
+  slot in a dispatch/vtable array; grow the run outward while neighbours still look like code addresses
+  to get the table's extent and the slot index. Then scan for pointers INTO that region: hits inside
+  `.text` are instructions carrying the table base as an immediate — usually the constructors that store
+  the vptr at `[obj]` and, under multiple inheritance, a second one at `[obj+0xNNN]` (the matching thunk
+  starts `sub ecx,0xNNN`), which is what turns "no caller" into "slot N of this class".
+  If `.text` contains no `call DWORD PTR [reg+0xoffset]` for that slot either, the dispatch computes the
+  index at run time (message router / widget handler table) and the caller set is NOT resolvable by
+  grepping a displacement — say so instead of grepping three more shapes.
+- **Prove an instance exists before spending a live acceptance on a virtual.** Scan every writable
+  region of the running process (`grep -E 'rw-p' /proc/<pid>/maps`, read in ~2 MB chunks) for the vptr
+  value: zero hits means the class is not instantiated in the current mode, so a window of genuinely
+  normal play produces ZERO hits at any of its methods and the acceptance fails for a reason that is
+  neither the game nor the instrument. A giant private region is exactly where a big manager object
+  lives, so never skip a region for being large. Confirm the object is the one you think it is by
+  reading the SECONDARY vptr `[obj+0x444]` (or whichever offset the constructor stores) at the
+  breakpoint, and gate on it.
+- **Name a global by census, in one read-only probe.** Read the global from `/proc/<pid>/mem`, then walk
+  the array the code indexes with it — the stride comes from the disassembly (`imul reg,0x130`,
+  `*0x20bc`, `*0xb4c`) and the bound from its own loop guard — and print each record's ASCII name. A
+  19-entry stride-0x130 table reading "University Base", "Gaia's Landing", "The Hive" … is the base
+  table, and a global compared against those records' first byte is a FACTION index; the comparison site
+  plus the names settle the semantics in one call, with no gdb and no pseudocode read. Do this BEFORE
+  writing the model that consumes the global — a global guessed as a count when it is an index silently
+  inverts every index arithmetic downstream.
 - **Jump tables: dump the raw dwords before "correcting" Ghidra's case labels.**
   `struct.unpack_from('<I', img, va - 0x400000)` across the table, entry count checked against the guard
   (`add idx,7` / `cmp idx,6` / `ja`), each target mapped to its body first. A hand-decoded table that

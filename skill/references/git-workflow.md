@@ -38,7 +38,9 @@ and the CI gate runs `scripts/test_loop.py`, whose case 4 appends **7 chars** to
 prompt at 15,99x is GREEN locally, RED in CI. Keep `NEXT_PROMPT.md` at ≤ ~15,500 (working target; 16,000 is the FAIL) and run
 `python3 scripts/test_loop.py` on the anchored branch (never detached HEAD) before `submit`.
 `submit` also prunes `SESSION_NOTES.md` and adds a `<MILE>: checkpoint` commit; `merge <pr>` rebuilds
-the semantic index.
+the semantic index. Because that prune rewrites the notes file under you, verify after submit that this
+session's section survived (`grep -c '^## Session <N>' SESSION_NOTES.md` == 1) and expect one extra
+commit in `git log` that is not yours — do not read that as history having been rewritten.
 
 **The gate has two more checks that silently cost a run.** (1) *Address registry*: a milestone that names
 a function or pins an address must add `NAMED.md` rows in the same commit, otherwise the gate prints

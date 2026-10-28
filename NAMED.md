@@ -947,3 +947,26 @@ traces m82bit7d_r0..r2.
   83 s "boundaries 8/8" with 1 verified production arrival: 0 KEY, 0 LOW, 0 OUT, 0 IN, 0 AFTER,
   0/0 notify, 0 SETFLAG2, 0 CLEARFLAG -> G1..G8 False. merge nothing.
 Evidence: evidence/m84dky1.gdblog.
+
+## M84e (session 133) — the 0x4d00 widget message: POST -> queue 0x91db70 -> dispatcher 0x52bce0 -> handler 0x52ed7d
+
+- STATUS **H (instruction bytes) / acceptance m84edisp1+2+3 FAIL, merge nothing**: sending 0x4d00 is
+  a queue POST, not a call; its handler is reached through a code switch, not a `call`.
+- POST: 0x584010 builds a 32-byte record on its OWN stack (+0 WORD code, +4 ds:0x91b5b4, +8 the
+  0x671368 result, +0xc ds:0x91f694, +0x10..+0x1c args 2-5), then `push [ebp+0xc]; push 0x20;
+  push &rec; mov ecx,0x91db70; call 0x52a260` under guard ds:0x920438 inc/dec. Pumps pop it with
+  `call 0x6361ff` and hand it to 0x52bce0 (16 pump loops, 0x5262ff-0x526707).
+- DISPATCH: 0x52bce0 `mov ebx,[ebp+0x8]` = record, `mov ax,[ebx]` = code, 53 arms; the ONLY 0x4d00
+  arm is 0x52eb61 `cmp eax,0x4d00` / 0x52eb66 `jg` / 0x52eb6c `je 0x52ed7d`. ONLY .text sender:
+  0x4194a4 (`push 0x4d00; call 0x584010`) inside the chooser function 0x417ee0.
+- HANDLER 0x52ed7d: record = 0x984d38 + a2*48 + 1872 where a2 = 0xffffffd9 - edi (1872 = 39*48
+  cancels the -39 sentinel) = 0x984d38 - tid*48 — a THIRD stride-48 site for the M67 conflict;
+  record+0x14 (0/1/2) selects three sub-behaviours over 1436-byte records at 0x927590/0x927894.
+- RETRACT M70 mechanism: 0x52ed7d-0x52f756 writes nothing at +0x3ff5c/0x6e93dc; 0x4194b3 is in the
+  SENDER, right after `call 0x584010` returns.
+- LIVE `scripts/m84e_msg_dispatch.py --tag m84edisp3 --base-index 0` (7 silent bps; --tag selftest
+  discriminates): ZERO obj=0x6a9480 pre=15 -> ZEROAFTER post=0, so the cursor store lands and the
+  cursor is PANE-relative (+0x3ff5c = 0x6aa9dc on the static pane 0x6a9480), NOT the fixed
+  0x6e93dc; POST 0 DISP 0 ARM 0 HND 0 IDX 0 because the post is CONDITIONAL (0x419464/79/8e/92
+  jump past 0x4194a9). merge nothing.
+Evidence: evidence/m84edisp1.gdblog, evidence/m84edisp2.gdblog, evidence/m84edisp3.gdblog.

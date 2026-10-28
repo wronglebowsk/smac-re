@@ -68,13 +68,13 @@ silent
 printf "ZEROAFTER obj=0x%x post=%d\n", $ebx, *(int *)($ebx + 0x3ff5c)
 continue
 end
-break *0x52bd3b if *(short *)$ebx == 0x4d00
+break *0x52bd3e if $ax == 0x4d00
 commands
 silent
-printf "DISP rec=0x%x code=%d player=%d a10=%d a14=%d a18=%d\n", $ebx, *(short *)$ebx, *(int *)($ebx + 4), *(int *)($ebx + 0x10), *(int *)($ebx + 0x14), *(int *)($ebx + 0x18)
+printf "DISP rec=0x%x code=%d player=%d a10=%d a14=%d a18=%d\n", $ebx, $ax, *(int *)($ebx + 4), *(int *)($ebx + 0x10), *(int *)($ebx + 0x14), *(int *)($ebx + 0x18)
 continue
 end
-break *0x52eb6c
+break *0x52eb6c if $eax == 0x4d00
 commands
 silent
 printf "ARM eax=%d eax_hex=0x%x\n", $eax, $eax
@@ -172,6 +172,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", required=True)
     ap.add_argument("--no-ok", action="store_true", help="NEGATIVE CONTROL: leave the chooser open")
+    ap.add_argument("--base-index", type=int, default=18, help="m57's index into 0x95da10 (0 = University Base)")
     ap.add_argument("--settle", type=float, default=10.0)
     ap.add_argument("--timeout", type=int, default=240)
     a = ap.parse_args()
@@ -238,7 +239,7 @@ def main():
 
     t0 = time.time()
     r1 = run_py([os.path.join(ROOT, "scripts", "m57_ui_enqueue.py"),
-                 "--base-index", str(BASE_INDEX), "--cell-item", str(CELL_ITEM),
+                 "--base-index", str(a.base_index), "--cell-item", str(CELL_ITEM),
                  "--inserts", "1"] + (["--no-ok"] if a.no_ok else []), timeout=a.timeout + 120)
     enq = (r1.stdout.strip().splitlines() or [""])[-1]
     print(f"  enqueue rc={r1.returncode} t={time.time()-t0:.0f}s {enq!r}", flush=True)

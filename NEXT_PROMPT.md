@@ -20,9 +20,20 @@ there, and never `rm`/`git checkout --`. Every doc write is an append or a <= 2 
 read-then-rewrite a file over 10 KB; keep tool results small.
 ## THE LEDGER
 
-Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS) — BITS 6/7 OF THE FLAG WORD HAVE NO TESTER:** every `test` of `0x98ad88+tid*52+0x30` uses 0x1/0x4/0x8/0x10, never 0x40/0x80; the only bit-7 instruction is the clearer 0x577ca8. Poke: bit 7 alone edi=45, control bit2 -> 27. NAMED M82.
-**M83+M84+M84b (s128-s130, UNMERGED milestone/m83, m84 PR #84, m84b) — 0x496ad0's -9999 IS THE DIALOG-CANCEL SENTINEL, NOT A PRICE KEY:** Escape on the chooser arms `[chooser_sub 0x6a9e9c+0xa774] = -1` (written only at 0x496a43 = handler case 7, object in EAX at 0x496a40, not the pushed 24 KB buffer; or 0x495541 setup); gate 0x497683/0x49768f then returns 0xffffd8f1 and the caller restores the queue snapshot (0x418623-0x41863f), leaving via 0x4186d2 `jle 0x419967`; RETRACT s129 — only 0x4187be `cmp edi,0x270f` enters 0x418d7d. m84canc2 G1/G2/G3/G8 True, G4-G7 False -> FAIL. NAMED M84/M84b.
-**M84c+M84d (s131/s132, `m84cprobe1` and `m84dky1` both FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** (c) 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 (armed, mode 0), 0 (armed, mode!=0) or +/- the +4 word (the KEY) of the node seeked by index at `obj+0xa780` (0x6b461c); 0x4187be `cmp edi,0x270f` is the ONLY branch to 0x418d7d and the list's only writers (4 functions calling 0x42ee20) never insert 9999 — live keys [0,1,2,3,6,16,17,18,32,34,38,39,41,42,161,192,193,194]. (d) 0x4a99e0 (`cmp [ebp+0x8],0x270f`/`jle`; else a per-FACTION context switch: outgoing (ds:0x888514-1) slot `+0xb38=-1` + notify `[[slot+0x80]+0xf0]`, incoming (key-9999-1) slot `+0xb38=2` + notify, then 0x4a72c0) is **vtable slot 100 of the class whose vptr is 0x67658c** (pointer once, 0x67671c; ctors 0x498ea6/0x498eac; secondary vptr [obj+0x444]=0x676584, thunk 0x498f00 `sub ecx,0x444`) with **ZERO live instances** (vptr scan of every rw region) — 0 calls in 8 boundaries. ds:0x888514 IS a faction index (0x4a0c17 compares it to BYTE[i*0x130] of the 19 base records at 0x95da14, owner at +0, ours 3; 0x499f13 indexes 0x94d7fc by it, stride 0x20bc). NAMED M84c/M84d. **M80 (s122, m80band1) — 8 FACTION BANDS OF 64:** index = `counter<0x40 ? counter : (counter&0x3f)+faction*64`, record 0x98ad88+idx*52; 0x5741f0 clears flag bit 1, 0x5741fe `call 0x572800(faction, idx, 0)`. NAMED M80.
+Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS) — BITS 6/7 OF THE FLAG WORD HAVE NO TESTER:** every `test` of `0x98ad88+tid*52+0x30` uses 0x1/0x4/0x8/0x10, never 0x40/0x80; the only bit-7 instruction is the clearer 0x577ca8. NAMED M82.
+**M83+M84+M84b (s128-s130, UNMERGED milestone/m83, m84 PR #84, m84b) — 0x496ad0's -9999 IS THE DIALOG-CANCEL SENTINEL, NOT A PRICE KEY:** Escape arms `[chooser_sub 0x6a9e9c+0xa774] = -1` (only 0x496a43, object in EAX at 0x496a40, or 0x495541 setup); the gate 0x497683/0x49768f then returns 0xffffd8f1 and the caller restores the queue snapshot (0x418623-0x41863f), leaving via 0x4186d2 `jle 0x419967`; only 0x4187be `cmp edi,0x270f` enters 0x418d7d. m84canc2 G1/G2/G3/G8 True, G4-G7 False -> FAIL. NAMED M84/M84b.
+**M84e (s133, `m84edisp1/2/3` FAIL, UNMERGED milestone/m84e) — 0x4d00 IS A QUEUE POST, ITS HANDLER
+IS 0x52ed7d:** 0x584010 builds a 32-byte record (+0 code WORD, +0x10..+0x1c args 2-5) and posts it
+to queue 0x91db70 via 0x52a260 (guard 0x920438 inc/dec); pumps pop it with 0x6361ff and call
+0x52bce0 (`mov ebx,[ebp+0x8]` = record, `mov ax,[ebx]` = code, 53 arms) whose ONLY 0x4d00 arm
+0x52eb61/6c `je 0x52ed7d` leads; 0x4194a4 (chooser fn 0x417ee0) is the ONLY sender in .text. Handler
+record = 0x984d38 + a2*48 + 1872 (a2 = -39-edi, 1872 = 39*48 cancels the sentinel) = 0x984d38 -
+tid*48 — a THIRD stride-48 site for the M67 conflict; record+0x14 (0/1/2) selects sub-behaviours
+over 1436-byte records at 0x927590/0x927894. RETRACT M70's mechanism: the handler range writes
+nothing at +0x3ff5c; 0x4194b3 is in the SENDER and live ran with ebx=0x6a9480 (the static pane)
+writing 0x6aa9dc 15->0 — the cursor is PANE-relative, not the fixed 0x6e93dc; the POST leg is
+conditional (0x419464/0x419479/0x41948e/0x419492 jump past 0x4194a9). NAMED M84e.
+**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 (armed, mode 0), 0 (armed, mode!=0) or +/- the +4 word of the node seeked at `obj+0xa780` (0x6b461c); 0x4187be `cmp edi,0x270f` is the ONLY branch to 0x418d7d and the list's writers never insert 9999 (live keys 0..0x2a,161,192-194). 0x4a99e0 (`cmp [ebp+0x8],0x270f`; else a per-FACTION context switch over stride-0xb4c records at this+0x80, ds:0x888514 = faction index) is vtable slot 100 of the class whose vptr 0x67658c has ZERO live instances — 0 calls in 8 boundaries. NAMED M84c/M84d. **M80 (s122, m80band1) — 8 FACTION BANDS OF 64:** index = `counter<0x40 ? counter : (counter&0x3f)+faction*64`, record 0x98ad88+idx*52; 0x5741f0 clears flag bit 1, 0x5741fe `call 0x572800(faction, idx, 0)`. NAMED M80.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e, A = 0x4e40a0(owner,1,-1), B = 0x5ac950(head,...); the markup is skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60) and first calls FUN_00572800 (0x4efe7e). NAMED.
 **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count. Branches hold their scripts.
 
@@ -33,30 +44,29 @@ Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS) — BITS 6/7 OF THE 
    **re-read it immediately before you arm**. Screen fix: dialog -> Return, base PANE -> Escape,
    quit-prompt -> Escape (`m78_mark_clear.py normalize_screen()` does all three).
 2. The price/flag/marker chain — silent breakpoints or hw watchpoints + a prediction from live
-   memory + a read-back: `m73_price_split.py`, `m74_flag_hw.py` (4 hw watchpoints on flag WORDS,
-   refuses to drive unless gdb armed them), `m75_sweep_replay.py`, `m76_marker_clear.py`,
-   `m77_gate_trace.py`, `m78_mark_clear.py`, `m79_netgame_poke.py`, `m72_gate_watch.py` (the VISIT
-   GATE), `m81_flag_writer.py`, `m84_cancel_sentinel.py`, `m84c_item_pump.py` (pump/seek/insert/gate).
+   memory + a read-back: `m73_price_split.py`, `m74_flag_hw.py`, `m75_sweep_replay.py`,
+   `m76_marker_clear.py`, `m72_gate_watch.py` (the VISIT GATE), `m81_flag_writer.py`,
+   `m84_cancel_sentinel.py`, `m84c_item_pump.py`, `m84e_msg_dispatch.py` (POST/dispatch/handler).
 3. Self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`, `m57_ui_enqueue.py`,
-   `m69_enqueue_gdb.py`, `m70_cursor_watch.py`, `m65_screen.py --samples 8`, `m70_scan_writers.py`
-   (static), `evidence.py audit [--delete]` / `budget`, `scratch/m71/dis.py LO HI` (objdump window).
+   `m65_screen.py --samples 8`, `m70_scan_writers.py` (static), `evidence.py audit [--delete]` /
+   `budget`, `scratch/m71/dis.py LO HI` (objdump window).
 ## THE PICK
 
-**M84e: the `0x4194b3` handler / widget message `0x4d00`** — it zeroes the cursor after a queue
-mutation (sender 0x584010, `0x4eb6b0` runs after it) and did NOT fire at a completion. Static FIRST:
-find the handler-table entry for 0x4d00 and what dispatches it (the same computed-index shape as
-M84's chooser table). Sub-leads if it stalls: who calls the constructor FUN_00498e20 (n_callers=1 —
-it builds the 0x4a99e0 context object, so it names the mode that owns the keys > 9999) and who WRITES
-ds:0x888514 (all 37 .text references to it are READS, so its writer goes through a pointer).
+**M84f: make the 0x4d00 POST leg fire, then read the handler.** The instrument is READY and
+byte-verified: `python3 scripts/m84e_msg_dispatch.py --tag m84fdisp1 --base-index <what the PANE
+shows>` — 7 silent bps 0x4194a9 POST / 0x4194b3 ZERO / 0x4194bd ZEROAFTER / 0x52bd3e if $ax==0x4d00
+DISP / 0x52eb6c if $eax==0x4d00 ARM / 0x52ed7d HND / 0x52eda4 IDX; `--tag selftest` proves the shape
+discriminates. s133 proved the cursor-zero leg IS live (ebx=0x6a9480, 15 -> 0 read back) and the
+POST leg is CONDITIONAL (0x419464/0x419479/0x41948e/0x419492 jump past 0x4194a9), so the missing
+input is a chooser selection that COMPLETES: enqueue `--no-ok`, then close the chooser ON A ROW.
+PITFALL (s133): INSERT clicks land on whatever base the PANE shows, not the one you name. Sub-leads: the handler's mode 0/1/2 semantics (0x927590/0x927894, 1436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
 
 ## STILL OPEN (in priority order)
 
-1. **M84e (the pick): the 0x4194b3 handler / widget message 0x4d00** — see THE PICK. Chooser
-   residue: which widget message reaches handler case 7 (no direct `call` to 0x496950 — a widget
-   handler table); the instrument fix (print the cursor at **0x49771c**, AFTER the seek at 0x497717 —
-   at 0x497704 you read the PREVIOUS cursor); bit 5 (0x531782); who clears bit 6; upkeep/tech
-   0x52145e/0x5a7d00/0x5a7f67 (ZERO events); alpha 0x5a6cd0. **Arm only on a quiet box** (kill a
-   stuck `winedbg --auto` BY PID first).
+1. **M84f (the pick): complete a chooser selection so the 0x4d00 POST leg fires** — see THE PICK.
+   Chooser residue: which widget message reaches handler case 7 (no direct `call` to 0x496950);
+   the instrument fix (print the cursor at **0x49771c**, AFTER the seek at 0x497717); bit 5
+   (0x531782); who clears bit 6; upkeep/tech 0x52145e/0x5a7d00/0x5a7f67 (ZERO events); alpha 0x5a6cd0.
 2. **M67's plan-descending LIST order has no code behind it**: zero sites read plan byte `+42`; the
    only 52-byte type-address computations (0x40ad92/0x4164dd/0x4188f9/0x418932) hand records to
    string builders.
@@ -66,8 +76,11 @@ ds:0x888514 (all 37 .text references to it are READS, so its writer goes through
 
 ## LIVE FACTS / KIT
 
-- **Box at s132 close:** `terran.exe` UP, `m54b_clean.SAV`, round ~63, screen hud, Korolev idx 18
-   UI-queued (`m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1`, `--no-ok` supported). Records are re-inited between rounds — a census is a snapshot. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
+- **Box at s133 close:** `terran.exe` UP, `m54b_clean.SAV`, round 63, screen hud READY; University
+   Base queue depth 14, Korolev 1. **The PANE decides where INSERT lands:** pass the index the pane
+   shows (read `*(int *)0x6a9480 + 0x3ff3c`), else the queue grows on another base while m57 prints
+   "INSERT 1 never landed" (s133). A quit-prompt mid-window swallows every click — run
+   `m78_mark_clear.normalize_screen()` (it Escapes a quit-prompt; Return QUITS the game) first. Records are re-inited between rounds — a census is a snapshot. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
  collision); a veilbrowser Chrome window stacked at 0,0 makes `xwd` OCR the browser
  (`DISPLAY=:99 xdotool windowraise 0x400004`). Gate globals: `0x920434`=0, `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3; `*DAT_008f0d60` = the base record (+0x40 storage, +0x4c pending, +0x50..+0x74 queue). Screen hygiene BEFORE arming: pane -> Escape, dialog -> Return, quit-prompt -> Escape (`m78_mark_clear.py normalize_screen()`); an Escape on the bare map RAISES the quit prompt. Always read `pending` AND the head back after an enqueue.
 - **Prices:** head 2 = 9, 192/193 = 18, 194 = 27 (gate charges `edi`, M73; ) free chooser ids 194/2/1/0; enqueue refuses `pending >= 9` (`0x418b05`).
@@ -76,7 +89,10 @@ ds:0x888514 (all 37 .text references to it are READS, so its writer goes through
    A misread `movie` screen ~1 in 3: re-run `--relaunch`, never Return on the save browser. An
    `artwork-close` screen is NOT a dialog — click its red CLOSE bar (`smac_play.close_bar`). Kill a
    stuck `winedbg --auto` BY PID when relaunch says `no window after relaunch`.
-- gdb: 4 hw watchpoints and 10-12 silent breakpoints work (~35 s per boundary); conditional bps keep other records out of the log. No `si` inside a command list; stdout DRAINED to a file (`stdbuf -o0`); a printf newline is ONE backslash + n; a watchpoint reports the pc AFTER the store.
+- gdb: 4 hw watchpoints and 10-12 silent breakpoints work (~35 s per boundary); conditional bps keep
+  other records out of the log; PREFER REGISTER-ONLY conditions on hot addresses (a memory-read
+  condition there costs seconds per hit — s133). No `si` inside a command list; stdout DRAINED to
+  a file (`stdbuf -o0`); a watchpoint reports the pc AFTER the store.
 - `scratch/m574/text.txt` = whole `.text` objdump (40.9 MB; addresses WITHOUT leading zeros —
   grep `4ef5d0:`, not `004ef5d0:`); Ghidra pseudocode is `ghidra_out/shard_NNN.c`. Parse with
   Python (`scratch/m71/dis.py`), never read whole. `scratch/` is gitignored.
@@ -87,24 +103,21 @@ ds:0x888514 (all 37 .text references to it are READS, so its writer goes through
 
 - **Register semantics live in the encoding, not the name:** `[reg*4+0x98adb8]` means the register
   holds `tid*13` (52/4), `[reg+0x98adb8]` the record BYTE address `tid*52`; a conditional bp testing
-  such a register against the bare tid can NEVER fire (0x595f82 printed tid 324/325: esi is not a
-  record pointer there).
-- **Grep objdump case-sensitively** (`DWORD PTR`, not `ptr [`), enumerate BOTH the absolute
-  (`[reg*4+0x98adb8]`) and POINTER (`[eax+0x30]`) store shapes, and remember a read-modify-write
-  through a COPIED register (`mov ax,[x]; or al,4; mov [x],ax`, 0x4efe60) evades both — when the
-  writer set is in doubt, HARDWARE watchpoints on the FIELD answer "who writes it" in one run. A
-  watchpoint on the flag LOW WORD never reports a BYTE store to +0x31 (0x4ef398).
+  such a register against the bare tid can NEVER fire.
+- **Grep objdump case-sensitively** (`DWORD PTR`, not `ptr [`), enumerate BOTH the absolute and the
+  POINTER store shapes, and remember a read-modify-write through a COPIED register (`mov ax,[x];
+  or al,4; mov [x],ax`, 0x4efe60) evades both — HARDWARE watchpoints on the FIELD answer "who
+  writes it" in one run. A watchpoint on the flag LOW WORD never reports a BYTE store to +0x31.
 - **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it.**
   Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit
   prompt — never OK). Run `m70_clear_dialog.py` before blaming the chooser map.
 - **A census interleaved into a gdb log needs O_APPEND on GDB's own fd** (or the next printf
   overwrites it), and a census snapshots a STOPPED engine: order events by VISIT, not by boundary.
-- A gdb-log tag alternation must be LONGEST-first (`MARK` swallows `MARKSET`); a census must re-read
-  its own match object (m79net2 `int('BOUNDARY')`). A bp printf must NOT print inferior strings
-  ("Cannot access memory" aborts the batch and DETACHES mid-window — the log looks empty while
-  smac_play exits 0); a script TEMPLATE substitutes expressions as printf ARGUMENTS, never into the
-  format string (`idx=@@I@@` printed `($ebx/52)`, log parsed as ZERO events); in a two-branch `re`
-  alternation `m.group(1)` is the WHOLE match. Never trust one 3 s read of a gdb log for arming.
+- A gdb-log tag alternation must be LONGEST-first (`MARK` swallows `MARKSET`); a bp printf must NOT
+  print inferior strings ("Cannot access memory" aborts the batch and DETACHES mid-window); a
+  script TEMPLATE substitutes expressions as printf ARGUMENTS, never into the format string; in a
+  two-branch `re` alternation `m.group(1)` is the WHOLE match. Never trust one 3 s read of a gdb
+  log for arming.
 - **PRODFLAG (0x4efe60) fires for EVERY record the pass walks** (m79net1: 128/322/323/194 — FACTION
   BANDS, M80): attribute the sweep by its own predecessor. **The gate visit arrives in the boundary
   AFTER the sweep marks** (m79net2): a poke window needs >= 3 boundaries, 4 overruns the 420 s cap.
@@ -128,12 +141,10 @@ ds:0x888514 (all 37 .text references to it are READS, so its writer goes through
 - **A list cursor read BEFORE the seek is the PREVIOUS cursor:** the chooser pump seeks with
   `call 0x4026b0` at 0x497717, so a node print at 0x497704 shows the old node (m84cprobe1 G3 was
   this, not the game) — print at 0x49771c.
-- **ZERO CALLS CAN BE THE GAME, NOT THE INSTRUMENT:** 0x4a99e0 is vtable slot 100 of a class whose
-  vptr (0x67658c) has NO live instance — before betting a live acceptance on a function with no
-  fixed-displacement caller, scan every rw region of terran.exe for the vptr value
-  (`scratch/m84d/probe3.py` shape, /proc/pid/mem, no gdb) and confirm an instance exists; then prove
-  arming from the log ("Breakpoint 1 at ..." + a clean "[Inferior 1 ... detached]", see
-  `scripts/m84d_faction_key.py`). A function with no live instance never fires, and that is a finding.
+- **ZERO CALLS CAN BE THE GAME, NOT THE INSTRUMENT:** before betting an acceptance on a function
+  with no fixed-displacement caller, scan every rw region of terran.exe for its vptr
+  (`/proc/pid/mem`, no gdb — `scratch/m84d/probe3.py`) and confirm an instance exists; prove arming
+  from the log ("Breakpoint 1 at ..." + a clean "[Inferior 1 ... detached]").
 - Never: commit to main; `pkill -f` / `pgrep|kill` by name; Escape on the title screen; OK on the
   quit prompt; `--mode stop`; `file://` with `--load`; a clear-prefixed command; backticks in a
   commit message; `skill_manage delete`.

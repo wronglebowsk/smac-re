@@ -1,1 +1,1 @@
-M84e m84edisp1 FAIL (0 events; driver failed: INSERT never landed) | merged? no | next: control run m57_ui_enqueue alone, then re-run acceptance with the trimmed 6-bp instrument (ARM conditioned on $eax only, hot 0x52bd3b bp dropped). Box terran.exe UP 2163 r63.
+M84e DONE (closing: docs written, gate+submit pending) | acceptance m84edisp1/2/3 FAIL (POST 0 DISP 0 ARM 0 HND 0 IDX 0; ZERO obj=0x6a9480 pre=15 -> post=0) | merged? no | next: milestone.py submit, then M84f (complete a chooser selection so the 0x4d00 POST leg fires). Box terran.exe UP 2163 r63 hud READY.

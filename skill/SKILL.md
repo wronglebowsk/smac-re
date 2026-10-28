@@ -677,15 +677,25 @@ against the bare index never fires (`references/static-store-census.md` §9.3). 
   while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run. gdb's
   printf reads an inferior pointer as a HOST address, so `%.20s` fed `*(char *)(rec+0)` errors
   ("Cannot access memory"); bp printfs emit NUMBERS derived from registers only (raw reg, reg/stride,
-  reg%stride, `*(short *)(...)` values), never inferior strings, and substitute expressions as printf ARGUMENTS — an expression pasted into the
+  reg%stride, `*(short *)(...)` values), never inferior strings, gate every pointer deref behind
+`if $reg != 0 … end` (a null deref faults exactly like a string one and detaches the same way), and
+substitute expressions as printf ARGUMENTS — an expression pasted into the
 format string prints ITSELF and the log then parses as zero events (`references/static-store-census.md`
 §9 point 10) — use `x/s` outside a commands block
-  when a name is genuinely wanted. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
+  when a name is genuinely wanted. Never build the gdb command list by running a Python `%`-format over
+it: the template is full of `%d`/`%x` printf conversions and Python eats the first ones as its own
+arguments, silently rewriting the breakpoints. Bake addresses and constants as literals, or substitute
+with `str.replace()` on a uniquely-marked token, and diff the emitted `scratch/<tag>.gdb` before attaching. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
 otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
 read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
 armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
 never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
+When the target is reached only through a vtable or handler table, the pre-arm check is whether an
+INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
+value — a class with no live instance logs zero hits at every one of its methods no matter how the
+window is driven, and no number of re-runs will change that (ownership + instance recipes:
+`references/code-atlas.md`).
 Two more pre-arm checks, both cheap and both fatal when skipped:
 - **The readiness oracle can print a FIX that is unreachable on the current save.** `credit` is
   `base+0xd0`, a save-LOADED field whose only writers are the player-record init stores — turns never
