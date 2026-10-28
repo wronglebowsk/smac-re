@@ -1,5 +1,1 @@
-M80 | acceptance m80band1 PASS (G1-G6 green, one real invocation) | NOT merged yet | milestone/m80
-| finding: record array = 8 factions x 64 slots; FUN_00573a90 arg1 = FACTION (esi=5 live);
-| records 324/325 were EMPTY at window start, created mid-window as "Impact Squad"/"Impact
-| Rover" flags 0xc1 (next free slots after 323); sweep entered (owner=5,tid=324/325,mode=0),
-| MARKHIGH 0. next: append notes/NAMED/NEXT_PROMPT, rsync skill, commit, gate, submit, merge.
+M81 | acceptance m81write1 (4 hw watchpoints on flag WORDS of next free slots 326/327 + bp 0x5741e1, one window, read +0x30 back) | merged? no | prompt said M74 but M74 is MERGED (#75, NAMED M74-RESOLVED, m74flag3, s116); cursor+NEXT_PROMPT pick M81, so running M81. Box BLOCKED (credit 0, minerals 0 < price 9): FIX reload in flight: SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch -> accept_ready.py -> enqueue -> instrument. next: python3 scripts/milestone.py start m81 after committing this cursor.
