@@ -742,27 +742,20 @@ arguments, silently rewriting the breakpoints. Bake addresses and constants as l
 with `str.replace()` on a uniquely-marked token, and diff the emitted `scratch/<tag>.gdb` before attaching. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
 otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
-read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
-armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
-never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
-- **A leg census gates on PREDICTIONS, not on hits.** Compute every site's expected hit count from live
-  memory first — the gate globals, the caller-supplied args read off `$esp`, the table values the branch
-  itself loads — print those predictions, then compare them to the counters and gate on agreement
-  (`scripts/m86_helper_legs.py` is the working template: PREDICTIONS, then OBSERVED, then the branch
-  bytes it named). Demanding a hit at a site the TAKEN leg cannot reach FAILs the milestone, not the
-  game; the fix is the leg map, never a lowered floor. Two corollaries: a breakpoint at an address that
-  is BOTH a branch target and a loop-completion fallthrough is not a leg proof (read the predecessors in
-  the disassembly before naming a leg from a counter), and a hit count inside a window is not a CADENCE —
-  tie each hit to a boundary (round/year read at the hit) or write "cadence unproven".
+read back BEFORE attaching that the watched event can even happen (queue head is the armed id,
+`pending >= 1`, storage above what the gate can demand) — an unusable window is not a negative result
+(`references/static-store-census.md` §9.8–9).
+- **A leg census gates on PREDICTIONS, not on hits.** Compute each site's expected hit count from live
+  memory first (gate globals, the caller's args off `$esp`, the table values the branch itself loads),
+  print the predictions, then gate on agreement with the counters (`scripts/m86_helper_legs.py`,
+  `scripts/m87_aaa20_trigger.py`: PREDICTIONS, OBSERVED, then the branch bytes named). Demanding a hit at
+  a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor.
+  A bp at an address that is BOTH a branch target and a loop-completion fallthrough is not a leg proof; a
+  hit count inside a window is not a CADENCE — tie each hit to a boundary (round/year at the hit).
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
-count** — one `ghidra_out/index.csv` read splits the two causes without touching the box. The header is
-`addr,name,size_bytes,n_insns,n_callers,...`: read it, then match `addr <= site < addr+size_bytes`. A
-site inside a function with ONE call site, where the docs/strings name a mode you are not in (e.g. the
-multiplayer stage driver), is unreachable BY DESIGN — no re-run will ever log it. Two sites inside the
-SAME many-caller helper, one of whose callers sits in the human-turn loop, are an UNTAKEN BRANCH: the
-game is live, the breakpoint asked the wrong question. A `csv.DictReader` over this file with guessed
-column names and a bare `except: continue` reports "no containing function" for EVERY address — read
-the header line first, and print the resolved row so a wrong lookup cannot impersonate a finding.
+count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH"
+without touching the box. `references/instrument-laws.md` carries the header order, the containment
+recipe and the DictReader trap.
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
@@ -793,8 +786,7 @@ solved, and a from-scratch instrument re-derives them wrong.
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 
-## Still open (leads) — `references/open-leads.md`
-The per-milestone lead list lives in `references/open-leads.md`. `NEXT_PROMPT.md` holds the CURRENT pick
-and the authoritative open items; if the two disagree, `NEXT_PROMPT.md` wins.
+## Still open (leads)
+`references/open-leads.md`; `NEXT_PROMPT.md` holds the CURRENT pick and wins if they disagree.
 
 
