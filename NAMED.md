@@ -888,3 +888,15 @@ or bit 7; the only bit-7 clearer is 0x577ca8 `and BYTE [tid*4+0x98adb8],0x7f` in
 (shard_014.c:19576), which also tests bit 0, bit 2 (`&4`), sets 0x200 when bit 3 set, clears bit 3;
 bit 5 (0x20) is ORed at 0x531782, bit 6 has no clearer found. Evidence: evidence/m82bit7d.gdblog,
 traces m82bit7d_r0..r2.
+
+## M84 (s129, `m84canc1`) - THE +9999 RETURN OF 0x496ad0 IS ITS DIALOG-CANCEL SENTINEL (static); acceptance FAIL
+
+- Return gate: 0x497683 `cmp [buf+0xa774],-1` / 0x49768f `cmp [buf+0xa778],0` -> 0x4976ce
+  `mov [ebp-0xb9c],0xffffd8f1` (= +9999); cancel==-1 with result != 0 -> 0 (0x497698); field != -1
+  -> the pump return (call 0x401940 at 0x497704/0x497777, negated iff 0x495480 bit 0x20 clear).
+- -1 is written ONLY at 0x496a43 (handler FUN_00496950 case 7 = CANCEL, together with result 0 at
+  0x496a27) and 0x495541 (FUN_004954e0 setup). Handler cases 0/2/5 bail when already -1.
+- Live (`scripts/m84_cancel_sentinel.py --tag m84canc1 --escape --no-ok`): SENT 1 edi=2, ARM 1
+  (buf=0, gdb could not read 0xa774), GATE 1 buf=0x6a9e9c cancel=3 result=5, BRANCH 0, ENTRY 0;
+  gates G1 True, G2-G7 False -> FAIL, merge nothing.
+- Evidence: evidence/m84canc1.gdblog.
