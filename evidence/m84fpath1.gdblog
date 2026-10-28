@@ -1,0 +1,49 @@
+[New LWP 29800]
+[New LWP 29799]
+[New LWP 29798]
+[New LWP 29797]
+[New LWP 29796]
+[New LWP 29795]
+[New LWP 29794]
+[New LWP 29790]
+[New LWP 29789]
+[New LWP 29788]
+[New LWP 29787]
+[New LWP 29786]
+[New LWP 29785]
+[New LWP 29784]
+[New LWP 29783]
+[New LWP 29782]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe846568b in ?? ()
+ARMED base=0x95ee40 pend=5 head=2 netgame=0
+Breakpoint 1 at 0x41860a
+Breakpoint 2 at 0x419355
+Breakpoint 3 at 0x4193a0
+Breakpoint 4 at 0x4193ec
+Breakpoint 5 at 0x4194b1
+Breakpoint 6 at 0x4eb6b0
+Breakpoint 7 at 0x528760
+EB6 first
+CHOOSER n=1
+CHOOSER n=2
+CASE n=1 arg1=1 arg2=1 pend=6 head=2
+BUMP n=1
+BUMP n=2
+BUMP n=3
+BUMP n=4
+BUMP n=5
+BUMP n=6
+BUMP n=7
+EXIT n=1 cur=7
+NETCALL n=1
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 29794]
+0xe867832c in __kernel_vsyscall ()
+[Inferior 1 (process 29779) detached]

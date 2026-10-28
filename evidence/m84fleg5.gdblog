@@ -1,0 +1,26 @@
+[New LWP 159674]
+[New LWP 159673]
+[New LWP 159672]
+[New LWP 159671]
+[New LWP 159670]
+[New LWP 159669]
+[New LWP 159666]
+[New LWP 159665]
+[New LWP 159664]
+[New LWP 159663]
+[New LWP 159662]
+[New LWP 159661]
+[New LWP 159660]
+[New LWP 159659]
+[New LWP 159658]
+[New LWP 159657]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe7ed968b in ?? ()
+ARMED base=0x0 pend=/home/n100/reverse/smac/scratch/m84fleg5.gdb:11: Error in sourced command file:
+Cannot access memory at address 0x4c
+[Inferior 1 (process 159654) detached]

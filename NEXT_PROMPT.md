@@ -36,7 +36,8 @@ conditional (0x419464/79/8e/92 jump past 0x4194a9) AND gated at 0x4193b2-0x4193b
 ds:0x920434 != 0: s134 — that global is written 1 by exactly ONE function, FUN_0057ecf0 (the opening
 movie/scenario/TOPMENU/MULTIMENU loop), and 0 by every other store; live 0 on the hud, so a loaded
 game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
-**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 / 0 / +/- the seeked node's +4 KEY and no writer ever inserts 9999. 0x4a99e0 (per-faction context switch over stride-0xb4c records; ds:0x888514 = faction) is vtable slot 100 of a class with ZERO live instances — 0 calls in 8 boundaries. NAMED M84c/M84d.
+**M84f (s135, milestone/m84f, `m84fpath1` FAIL on my own G4; leg4/5 invalid) — THE GATE IS MEASURED LIVE:** on a real UI insert (`m84fpath1`) the block RUNS — CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, netgame 0, pend 5->6 — and stops at `mov eax,ds:0x920434` / `je 0x4194b1` (cursor zero + 0x4eb6b0, NO POST). gdb bp lists must be PRINTF-ONLY (a memory write aborts the batch: 'not an lvalue', then DETACH); poke ds:0x920434 via python /proc/pid/mem. Flag-1 arm unmeasured: box 2150 r50, chooser EMPTY. NAMED M84f.
+**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 / 0 / +/- the seeked node's +4 KEY and no writer ever inserts 9999. 0x4a99e0 is vtable slot 100 of a class with ZERO live instances. NAMED M84c/M84d.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e, A = 0x4e40a0(owner,1,-1), B = 0x5ac950(head,...); the markup is skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60) and first calls FUN_00572800 (0x4efe7e). NAMED.
 **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count. Branches hold their scripts.
 
@@ -55,13 +56,13 @@ game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
    `budget`, `scratch/m71/dis.py LO HI` (objdump window).
 ## THE PICK
 
-**M84f: make the 0x4d00 POST leg fire, then read the handler.** The instrument is READY and
-byte-verified: `python3 scripts/m84e_msg_dispatch.py --tag m84fdisp1 --base-index <what the PANE shows>`
-(7 silent bps POST/ZZERO/DISP/ARM/HND/IDX; `--tag selftest` proves the shape discriminates). s133 proved the cursor-zero leg IS live (ebx=0x6a9480, 15 -> 0 read back) and the
-POST leg is CONDITIONAL (0x419464/79/8e/92) AND gated at 0x4193b9 on ds:0x920434 != 0 (1 only
-inside FUN_0057ecf0, the opening menu; live 0 — s134), so the missing
-input is a chooser selection that COMPLETES: enqueue `--no-ok`, then close the chooser ON A ROW.
-PITFALL (s133): INSERT clicks land on whatever base the PANE shows, not the one you name. Sub-leads: the handler's mode 0/1/2 semantics (0x927590/0x927894, 1436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
+**M84f retry: fire the POST leg.** s135: the block runs, stops at the gate; poke arm unmeasured -> `scripts/m84f_post_leg.py --inserts 2`. Was
+`scripts/m84e_msg_dispatch.py --tag m84fdisp1 --base-index <PANE shows>`
+(7 bps; `--tag selftest` discriminates). s133 proved the cursor-zero leg IS live (ebx=0x6a9480, 15 -> 0 read back) and the
+POST leg is gated at 0x4193b9 on ds:0x920434 (1 only
+inside FUN_0057ecf0, the opening menu; live 0), so the missing
+input is a chooser selection that COMPLETES (s135: the FLAG is what stops it).
+PITFALL: INSERT clicks land on whatever base the PANE shows, not the one you name. Sub-leads: the handler's mode 0/1/2 semantics (0x927590/0x927894, 1436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
 
 ## STILL OPEN (in priority order)
 
@@ -78,7 +79,7 @@ PITFALL (s133): INSERT clicks land on whatever base the PANE shows, not the one 
 
 ## LIVE FACTS / KIT
 
-- **Box at s133 close:** `terran.exe` UP, `m54b_clean.SAV`, round 63, screen hud READY; University
+- **Box at s135:** `terran.exe` UP, `m54b_clean.SAV` (s135 reloaded it: 2150 r50, chooser candidates EMPTY); at s133 University
    Base queue depth 14, Korolev 1. **The PANE decides where INSERT lands:** pass the index the pane
    shows (read `*(int *)0x6a9480 + 0x3ff3c`), else the queue grows on another base while m57 prints
    "INSERT 1 never landed" (s133). A quit-prompt mid-window swallows every click — run
