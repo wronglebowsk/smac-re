@@ -327,6 +327,17 @@ def main():
                 windows.append(cur)
             cur = None
     st = by("ST")
+    # pair each ST with the RB that FOLLOWS it in the event stream (0x5aa9d5 runs right after the
+    # store at 0x5aa9d3); a {addr: last-mem} dict mis-pairs a re-allocated slot (m91score3 G5:
+    # slot5 stored 36, was re-stored 4 later the same window, the dict held only 4).
+    rbpairs = {}
+    _last_st = None
+    for e in events:
+        if e["_tag"] == "ST":
+            _last_st = e
+        elif e["_tag"] == "RB" and _last_st is not None:
+            rbpairs[id(_last_st)] = e
+            _last_st = None
     rb = {e["addr"]: e["mem"] for e in by("RB")}
     # FUN_005a6d40(x, d) = d if x is not 0..88 else max(5a6d40(p1, d+1), 5a6d40(p2, d+1)).
     # FUN_005aa030 0x5aa1b5-0x5aa1f0 (reached because 0x985ac4 bit 0x200 is live-set and the faction is
@@ -385,7 +396,9 @@ def main():
         first_max_draw = next(c for c in cands if c["draw"] == md)
         nm = tech_name(pid, w["win"])
         stw = [s for s in st if s.get("fac") == w["fac"] and s["val"] == w["win"]]
-        ok5 = bool(stw) and all(rb.get(s["addr"], -2) == s["val"] for s in stw)
+        ok5 = bool(stw) and all(
+            (lambda r: r is not None and r["addr"] == s["addr"] and r["mem"] == s["val"])(rbpairs.get(id(s)))
+            for s in stw)
         okdraws = all((0 <= c["draw"] <= c["sc"]) if c["sc"] >= 1 else c["draw"] == 0
                       for c in cands)
         print("CAND fac=%d win=%d " % (w["fac"], w["win"]) + " ".join(
