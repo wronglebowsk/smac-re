@@ -20,25 +20,24 @@ there, and never `rm`/`git checkout --`. Every doc write is an append or a <= 2 
 read-then-rewrite a file over 10 KB; keep tool results small.
 ## THE LEDGER
 
-Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS) — BITS 6/7 OF THE FLAG WORD HAVE NO TESTER:** every `test` of `0x98ad88+tid*52+0x30` uses 0x1/0x4/0x8/0x10, never 0x40/0x80; the only bit-7 instruction is the clearer 0x577ca8. NAMED M82.
-**M83+M84+M84b (s128-s130, UNMERGED milestone/m83, m84 PR #84, m84b) — 0x496ad0's -9999 IS THE DIALOG-CANCEL SENTINEL, NOT A PRICE KEY:** Escape arms `[chooser_sub 0x6a9e9c+0xa774] = -1` (only 0x496a43, object in EAX at 0x496a40, or 0x495541 setup); the gate 0x497683/0x49768f then returns 0xffffd8f1 and the caller restores the queue snapshot (0x418623-0x41863f), leaving via 0x4186d2 `jle 0x419967`; only 0x4187be `cmp edi,0x270f` enters 0x418d7d. m84canc2 G1/G2/G3/G8 True, G4-G7 False -> FAIL. NAMED M84/M84b.
+Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS): bits 6/7 of the flag word have NO tester** (every `test` of `0x98ad88+tid*52+0x30` uses 0x1/0x4/0x8/0x10; only bit-7 instruction is the clearer 0x577ca8). NAMED M82.
+**M83+M84+M84b (s128-s130, UNMERGED milestone/m83, m84 PR #84, m84b) — 0x496ad0's -9999 IS THE DIALOG-CANCEL SENTINEL, NOT A PRICE KEY:** Escape arms `[chooser_sub 0x6a9e9c+0xa774] = -1`; the gate 0x497683/0x49768f returns 0xffffd8f1, the caller restores the queue snapshot (0x418623-0x41863f) and leaves via 0x4186d2 `jle 0x419967`; only 0x4187be `cmp edi,0x270f` enters 0x418d7d. m84canc2 G4-G7 False -> FAIL. NAMED M84/M84b.
 **M84e (s133, `m84edisp1/2/3` FAIL, UNMERGED milestone/m84e) — 0x4d00 IS A QUEUE POST, ITS HANDLER
-IS 0x52ed7d:** 0x584010 builds a 32-byte record (+0 code WORD, +0x10..+0x1c args 2-5) and posts it
-to queue 0x91db70 via 0x52a260 (guard 0x920438 inc/dec); pumps pop it with 0x6361ff into
-0x52bce0 (ebx = record, ax = [ebx] = code, 53 arms) whose ONLY 0x4d00 arm
-0x52eb61/6c `je 0x52ed7d` leads; 0x4194a4 (chooser fn 0x417ee0) is the ONLY sender in .text. Handler
-record = 0x984d38 + a2*48 + 1872 (a2 = -39-edi, 1872 = 39*48 cancels the sentinel) = 0x984d38 -
-tid*48 — a THIRD stride-48 site for the M67 conflict; record+0x14 (0/1/2) selects sub-behaviours
-over 1436-byte records at 0x927590/0x927894. RETRACT M70's mechanism: the handler range writes
-nothing at +0x3ff5c; 0x4194b3 is in the SENDER and live ran with ebx=0x6a9480 (the static pane)
-writing 0x6aa9dc 15->0 — the cursor is PANE-relative, not the fixed 0x6e93dc; the POST leg is
-conditional (0x419464/79/8e/92 jump past 0x4194a9) AND gated at 0x4193b2-0x4193b9 on
-ds:0x920434 != 0 (s134: 1 only from FUN_0057ecf0, the opening-menu loop; live 0), so a loaded
-game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
-**M84f (s135, milestone/m84f, `m84fpath1` FAIL on my own G4; leg4/5 invalid) — THE GATE IS MEASURED LIVE:** on a real UI insert (`m84fpath1`) the block RUNS — CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, netgame 0, pend 5->6 — and stops at `mov eax,ds:0x920434` / `je 0x4194b1` (cursor zero + 0x4eb6b0, NO POST). gdb bp lists must be PRINTF-ONLY (a memory write aborts the batch: 'not an lvalue', then DETACH); poke ds:0x920434 via python /proc/pid/mem. Flag-1 arm unmeasured: box 2150 r50, chooser EMPTY. NAMED M84f.
+IS 0x52ed7d:** 0x584010 posts a 32-byte record to queue 0x91db70; pumps pop it into dispatcher
+0x52bce0 (53 arms; only 0x4d00 arm 0x52eb61/6c -> 0x52ed7d); 0x4194a4 (chooser fn 0x417ee0) is the
+only sender. Handler record = 0x984d38 - tid*48 (a THIRD stride-48 site for the M67 conflict);
+record+0x14 (0/1/2) selects sub-behaviours over 1436-byte records at 0x927590/0x927894. RETRACT
+M70's mechanism: 0x4194b3 is in the SENDER; the cursor is PANE-relative (+0x3ff5c), not fixed
+0x6e93dc; the POST is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0 (1 only from the opening-menu
+loop FUN_0057ecf0; live 0) so a loaded game exits at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
+**M84f (s135, milestone/m84f, `m84fpath1` FAIL on my own G4; leg4/5 invalid) — THE GATE IS MEASURED
+LIVE:** on a real UI insert the block RUNS (CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, pend
+5->6) and stops at `mov eax,ds:0x920434` / `je 0x4194b1` — cursor zero + 0x4eb6b0, NO POST. gdb bp
+lists must be PRINTF-ONLY (a memory write aborts the batch, 'not an lvalue', then DETACH); poke
+0x920434 via python /proc/pid/mem. Flag-1 arm unmeasured. NAMED M84f.
 **M85 (s136-s137, milestone/m85 PR #90, `m85cens5` PASS) — THE SOLO BOUNDARY IS LIVE AND ENTERS THE HELPER:** FUN_00521070 (MP 7-stage driver) 0 visits -> 0x52145e silence by design; FUN_005a7970 entered once/boundary (eax=0, ret 0x569948 inside FUN_0055f650, NOT the human-loop 0x507e57); tails 0x5a7d00/0x5a7f67 UNTAKEN branches; 0x51f320 fires once. m44_idle cannot drive under gdb (asserts TracerPid==0; rounds=1 snapshot degenerate) — census drives with m55_boundary. The s135 box state swallowed Enter AND measured bar clicks (cause not isolated; fresh load repairs). NAMED M85.
-**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 returns only -9999 / 0 / +/- the seeked node's +4 KEY; no writer inserts 9999; 0x4a99e0 is vtable slot 100 of a class with ZERO live instances. NAMED M84c/M84d.
-**M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e, A = 0x4e40a0(owner,1,-1), B = 0x5ac950(head,...); the markup is skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60) and first calls FUN_00572800 (0x4efe7e). NAMED.
+**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 never sees a 9999 key; 0x4a99e0 has ZERO live instances. NAMED M84c/M84d.
+**M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). NAMED.
 **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count. Branches hold their scripts.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -82,13 +81,12 @@ Next: `python3 scratch/m71/dis.py 5a7970 5a7d20` and `5a7f40 5a7f80` (entry + ta
    "INSERT 1 never landed" (s133). A quit-prompt mid-window swallows every click — run
    `m78_mark_clear.normalize_screen()` (it Escapes a quit-prompt; Return QUITS the game) first. Records are re-inited between rounds — a census is a snapshot. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
  collision); a veilbrowser Chrome window stacked at 0,0 makes `xwd` OCR the browser
- (`DISPLAY=:99 xdotool windowraise 0x400004`). Gate globals: `0x920434`=0, `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3; `*DAT_008f0d60` = the base record (+0x40 storage, +0x4c pending, +0x50..+0x74 queue). Screen hygiene BEFORE arming: pane -> Escape, dialog -> Return, quit-prompt -> Escape (`m78_mark_clear.py normalize_screen()`); an Escape on the bare map RAISES the quit prompt. Always read `pending` AND the head back after an enqueue.
-- **Prices:** head 2 = 9, 192/193 = 18, 194 = 27 (gate charges `edi`, M73; ) free chooser ids 194/2/1/0; enqueue refuses `pending >= 9` (`0x418b05`).
+ (`DISPLAY=:99 xdotool windowraise 0x400004`). Gate globals: `0x920434`=0, `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3; `*DAT_008f0d60` = the base record (+0x40 storage, +0x4c pending, +0x50..+0x74 queue). Always read `pending` AND the head back after an enqueue.
 - **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py
-   --relaunch` -> `accept_ready.py` -> enqueue -> **read `pending` AND the head back** -> the run.
-   A misread `movie` screen ~1 in 3: re-run `--relaunch`, never Return on the save browser. An
-   `artwork-close` screen is NOT a dialog — click its red CLOSE bar (`smac_play.close_bar`). Kill a
-   stuck `winedbg --auto` BY PID when relaunch says `no window after relaunch`.
+   --relaunch` -> `accept_ready.py` -> (enqueue) -> **read `pending` AND the head back** -> the run.
+   Misread `movie` ~1 in 3: re-run `--relaunch`, never Return on the save browser. `artwork-close`
+   is NOT a dialog — click its red CLOSE bar (`smac_play.close_bar`). Kill a stuck `winedbg --auto`
+   BY PID when relaunch says `no window after relaunch`.
 - gdb: 4 hw watchpoints and 10-12 silent breakpoints work (~35 s per boundary); conditional bps keep
   other records out of the log; PREFER REGISTER-ONLY conditions on hot addresses (a memory-read
   condition there costs seconds per hit — s133). No `si` inside a command list; stdout DRAINED to
@@ -96,7 +94,7 @@ Next: `python3 scratch/m71/dis.py 5a7970 5a7d20` and `5a7f40 5a7f80` (entry + ta
 - `scratch/m574/text.txt` = whole `.text` objdump (40.9 MB; addresses WITHOUT leading zeros —
   grep `4ef5d0:`, not `004ef5d0:`); Ghidra pseudocode is `ghidra_out/shard_NNN.c`. Parse with
   Python (`scratch/m71/dis.py`), never read whole. `scratch/` is gitignored.
-- Ghidra's `DAT_008f0d60 + 0xNN` is a `short *` — double the offset, then check the disasm — and it is a POINTER to the base record. Records are BYTES: a type record (stride 52, base `0x98ad88`, **8 FACTION BANDS OF 64**, M80) has name `+0`, owner mask `+0x2c`, cost `+41`, plan `+42`, flags `+0x30` (bit 0 validator test, bit 2 markup-off, bit 8 sweep marker); a base record has name `+19`, storage `+0x40`, pending `+0x4c`, queue `+0x50..+0x74`, `+0x98` = a storage copy.
+- Ghidra's `DAT_008f0d60 + 0xNN` is a `short *` (double the offset, check disasm) and a POINTER to the base record. Records are BYTES: type record (stride 52, base `0x98ad88`, **8 FACTION BANDS OF 64**, M80): name `+0`, owner mask `+0x2c`, cost `+41`, plan `+42`, flags `+0x30` (bit 0 validator, bit 2 markup-off, bit 8 sweep marker); base record: name `+19`, storage `+0x40`, pending `+0x4c`, queue `+0x50..+0x74`, `+0x98` = storage copy.
 - **Evidence budget: the gate FAILs at 30 MB** — prune with `evidence.py audit --delete` BEFORE adding.
 
 ## TRAPS
@@ -104,20 +102,19 @@ Next: `python3 scratch/m71/dis.py 5a7970 5a7d20` and `5a7f40 5a7f80` (entry + ta
 - **Register semantics live in the encoding, not the name:** `[reg*4+0x98adb8]` means the register
   holds `tid*13` (52/4), `[reg+0x98adb8]` the record BYTE address `tid*52`; a conditional bp testing
   such a register against the bare tid can NEVER fire.
-- **Grep objdump case-sensitively** (`DWORD PTR`, not `ptr [`), enumerate BOTH the absolute and the
-  POINTER store shapes, and remember a read-modify-write through a COPIED register (`mov ax,[x];
-  or al,4; mov [x],ax`, 0x4efe60) evades both — HARDWARE watchpoints on the FIELD answer "who
-  writes it" in one run. A watchpoint on the flag LOW WORD never reports a BYTE store to +0x31.
+- **Grep objdump case-sensitively** (`DWORD PTR`, not `ptr [`); a read-modify-write through a COPIED
+  register (`mov ax,[x]; or al,4; mov [x],ax`, 0x4efe60) evades store-shape greps — HARDWARE
+  watchpoints on the FIELD answer "who writes it" in one run (a LOW-WORD watchpoint misses BYTE
+  stores to +0x31).
 - **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it.**
   Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit
-  prompt — never OK). Run `m70_clear_dialog.py` before blaming the chooser map.
+  prompt — never OK). Run `m78_mark_clear.normalize_screen()` first.
 - **A census interleaved into a gdb log needs O_APPEND on GDB's own fd** (or the next printf
   overwrites it), and a census snapshots a STOPPED engine: order events by VISIT, not by boundary.
 - A gdb-log tag alternation must be LONGEST-first (`MARK` swallows `MARKSET`); a bp printf must NOT
-  print inferior strings ("Cannot access memory" aborts the batch and DETACHES mid-window); a
-  script TEMPLATE substitutes expressions as printf ARGUMENTS, never into the format string; in a
-  two-branch `re` alternation `m.group(1)` is the WHOLE match. Never trust one 3 s read of a gdb
-  log for arming.
+  print inferior strings (aborts the batch, DETACHES mid-window); template expressions go in printf
+  ARGUMENTS, never the format string; in a two-branch `re` alternation `m.group(1)` is the WHOLE
+  match. Never trust one 3 s read of a gdb log for arming.
 - **PRODFLAG (0x4efe60) fires for EVERY record the pass walks** (m79net1: 128/322/323/194 — FACTION
   BANDS, M80): attribute the sweep by its own predecessor. **The gate visit arrives in the boundary
   AFTER the sweep marks** (m79net2): a poke window needs >= 3 boundaries, 4 overruns the 420 s cap.
