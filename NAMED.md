@@ -682,3 +682,20 @@ one `smac_play` boundary let the head-2 Scout complete and pop, leaving 193 on t
 | **the visitor runs more than once per round boundary, and the repeats are the SAME test** — 2 boundaries produced 2 (once 3) `VISIT`/`ENTRY`/`POSAFF`/`BAILAFF` rows with identical operands; so "two BAILAFF rows" is not a confound, while two DIFFERENT turn-around kinds would be (the instrument's gate 4 says exactly that) | H (live, 3 windows) | `evidence/m72gate4.gdblog`; `scripts/test_m72_gate.py` cases 10b/10c |
 | the facility (negative-head) path has THREE distinct no-pay exits, all armed and NONE exercised by a positive head: `0x4f0a42` (storage < edi at `0x4f0a3d`), `0x4f0b86` (`[ebp-0x30] <= 0`, i.e. `-head` not positive), `0x4f0c28` (`[esi+0xcc]+[esi+0x3c] >= f()*table` for another base already holding the same head) | armed, **not exercised** — no claim | `evidence/m72gate4.gdblog`, `evidence/m72gate5.gdblog` (no `GATE`/`BAILMIN`/`BAILDESC`/`BAILCNT` row) |
 | the instrument: `scripts/m72_gate_watch.py` — 12 silent conditional breakpoints (`0x4ef6d0` entry, `0x4ef88e` head, `0x4efa5e`/`0x4efa63` unit affordability, `0x4efe41`, `0x4efed8` pay, `0x4eff4e` create, `0x4f0a3d`/`0x4f0a42`/`0x4f0b4f`/`0x4f0b86`/`0x4f0c28` facility path, `0x4f5a93` visit), each conditioned on the base pointer, pokes+reads back storage before attaching, drives real boundaries, detaches, then scores 8 gates over the parsed stream | M (tool) | `scripts/m72_gate_watch.py`, `scripts/test_m72_gate.py` |
+
+## M73 block (session 114, 2026-10-27) — WHAT THE GATE'S `edi` IS MADE OF: `A x (cost + markup)`, with a live flag that switches the markup off. ACCEPTANCE PASS on one real invocation.
+
+| name | value / rule | confidence | evidence |
+|---|---|---|---|
+| `edi` at `0x4efa5e` | `A x B`, `A = 0x4e40a0(owner,1,-1)`, `B = 0x5ac950(head,[0x68cbb0],0)` | measured (M72, M73) | `m73split4` |
+| `A` | 9 on this save = Python `cost_multiplier(owner 3)` | measured, every visit | `FACTORA` rows |
+| `B`, designed head | `byte(+0x29) + trunc_div(C*P+50, 100)`; `C = 0x595ad0(type)`, `P` = option dword | measured | `PRICE_C`/`PRICE_M`/`FACTORB` |
+| `B`, head 194 | `C 3`, `P 50` -> markup 2 -> `B 5` -> `edi 45` (`price_of` 27) | measured | `evidence/m73split4.gdblog` |
+| markup OFF | `type < 0x40` OR `type[+0x30] & 4` at `0x5ac99c` -> bare cost (`0x5aca9c`) | measured | `FLAG` rows 0x41 vs 0x45 |
+| the flag | live STATE; 193 read `0x41` at arm, `0x45` at its first visit; 8/256 records set after the run | measured | `FLAG` rows + live reads |
+| writers | `0x4eec30`, `0x4d20f0` (`|= 4` on a unit transformation) — NOT yet tied to the flip | static only | `shard_012.c` |
+
+CONFLICT: `price_of` (the skill's M58 model) is `A x type_cost(+41)`; for a designed head above
+`0x3f` with `+0x30` bit 2 clear the gate charges `A x (cost + 50% markup)` instead. The two agree
+for head 2 and for any head whose bit 2 is set, which is why M72 measured 27 and this run 18 for
+the same id.

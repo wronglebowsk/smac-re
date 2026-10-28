@@ -381,6 +381,10 @@ What one visit actually does to `+0x40` (all read back at Korolev Center):
 - **ADD `0x4ef7f6`**: `edx = [base+0x40] + [base+0xd0]`; the delta EQUALS the `d0` field as it
   reads AT THE VISIT (measured +2 with d0 2, and +1 with d0 1 twice — d0 moves when the garrison
   changes), gated `d0 >= 0 && head != -38 && !([base+0x30] & 2)` (0x4ef7db-0x4ef7f9).
+- **a completion ZEROES the base's storage** (`PAYA storage=111 edi=9` then `CREATE ... storage=0`,
+  and M72 read 27 -> 0 the same way), so a queue of N items needs a fresh poke before EVERY
+  boundary or only the head ever completes and the next id never becomes head to be measured.
+  `scripts/m73_price_split.py` re-pokes and reads back per boundary.
 - **the completion gate is `cmp [curbase+0x40], edi ; jge` at 0x4efa5e**, with `edi` built at
   0x4efa4b-0x4efa52: `edi = eax` from `call 0x4e40a0` (item cost for the faction) then
   `imul edi, eax` from `call 0x5ac950` (a factor). Measured `edi = 9` for a queued Scout Patrol,
@@ -412,8 +416,19 @@ cost; `imul edi,eax` is the price the `0x4efa5e` gate compares.
   then **`[0x92ada8]`: 1 -> x9/10, 0 -> x8/10, else unchanged** (it is the difficulty scalar — the
   scenario LOAD pane literally prints `difficulty level: talent`); then `switch` on
   `[0x94d6a0 + owner*0x20bc]` (the government field; 0 = identity).
-- `0x5ac950(type, [0x68cbb0], 0)` = byte `0x98ad88 + type*52 + 41`, clamped to >=1 (<=999) ONLY when
-  plan byte `+42 == 8` and param_2 > -1; `type < 0x40` returns it immediately.
+- `0x5ac950(type, [0x68cbb0], 0)` = byte `0x98ad88 + type*52 + 41` (== `+0x29`, the byte
+  `type_cost` reads), clamped to >=1 (<=999) ONLY when plan byte `+42 == 8` and param_2 > -1.
+  **M73 (measured live, `evidence/m73split4.gdblog`): for a DESIGNED head that byte is only the
+  first term.** `type < 0x40` OR `type[+0x30] & 4` returns the bare byte
+  (`0x5ac99c` -> `0x5aca9c`); otherwise `eax = byte + (C*P + 50)/100`, where `P` is the option
+  dword `[0x92a2d0]`/`[0x92a2d4]`/`[0x92a2d8]` picked by `[0x92ae81 + 144*type[+0x24]]` (else / 1 / 2),
+  `C = 0x595ad0(type)` (measured `C = 3` for head 194 with `P = 50` -> markup 2 -> B 5 ->
+  `edi = 9*5 = 45` while `price_of` says 27). Markup is forced 0 when
+  `[0x927a98 + 1436*cat] & 0x200` or `[0x94d438 + 8380*cat] <= 1`, and is zeroed again by the
+  base-mask test at `0x5aca6b-0x5aca81`. `type[+0x30]` bit 2 is STATE: the unit-transformation
+  writers `0x4eec30` and `0x4d20f0` set it, and it flipped `0x41 -> 0x45` mid-window in a measured
+  run, so the same id can price 27 in one instance and 18 in the next. `price_of` is therefore NOT
+  what the `0x4efa5e` gate compares for a designed head.
 - Live University-faction game: mask 0x08 (owner 3 in), a294 10, **ada8 1**, gov 0, type 2
   `Scout Patrol` `+41 = 1` -> **price 9**. Sessions 56/64 measured ada8 = 2 -> price 10 and M52b
   debited 10: **the price is per-game difficulty state**. `scripts/m58_price.py` prints the chain

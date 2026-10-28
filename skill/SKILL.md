@@ -78,6 +78,24 @@ stop-after-one rule. Work through that chapter's milestones, writing the doc + e
 after each, and report once at the end — including what is still open. Do not relabel a
 partial result as done to make the chapter look finished (see `MILESTONES.md` F2).
 
+### The context ceiling is part of the task, not an accident
+
+Hermes' compressor resolves to the MAIN model (`auxiliary.compression: provider: auto`), and on
+2026-10-27 that model could not summarize itself: four attempts, `finish_reason=length`,
+`failure_class=summary_truncated_failure`, 132 s each, `commit_status=aborted`; the gateway also
+drops hygiene compression after a 10 s turn-hold. Measured outcome: the agent reached
+259,232/262,144 tokens and the CLOSING turn was cut mid-sentence twice — the milestone was done
+and accepted, the paperwork never landed. Rules that follow:
+
+- Budget by TOOL CALLS, not by feel: brief+accept_ready <= 6, milestone 6-30, **commit a
+  checkpoint at ~25**, stop measuring at 30-40, close at 40-50.
+- Past ~150k tokens the session is finishing something, not starting it — terse closing only.
+- Before any step that can exceed ~2 minutes (gdb run, relaunch, evidence audit), overwrite
+  `SESSION_CURSOR.md` (<= 600 B: id | acceptance | merged? | next command). Nothing else records
+  what was in flight; a cut turn costs the next session one read instead of a re-derivation.
+- Write docs by append or by <= 2 KB patch. Never read-then-rewrite a file over 10 KB.
+
+
 When a session turns heavy he asks for a **paste-ready resume prompt** for the next one.
 Write it as a self-contained block, not a chat summary: first actions (skill_view + which
 files to read), current footing (what is proven, do not re-derive), in-flight work with the

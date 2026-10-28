@@ -1,0 +1,36 @@
+{"tag": "ARMED", "base": 9820688, "head": 2, "pending": 2, "storage": 111}
+{"tag": "VISIT", "pend": 2, "s0": 2, "s1": 194, "min": 111}
+{"tag": "ENTRY", "base": 9820688, "storage": 111, "s0": 2, "pend": 2}
+{"tag": "FACTORA", "id": 2, "own": 197379, "A": 9}
+{"tag": "FACTORB", "id": 2, "A": 9, "B": 1}
+{"tag": "POSAFF", "storage": 111, "edi": 9, "ebx": 2}
+{"tag": "PAYA", "storage": 111, "edi": 9, "ebx": 2}
+{"tag": "CREATE", "id": 2, "arg3": 3, "storage": 0}
+{"tag": "VISIT", "pend": 1, "s0": 194, "s1": 193, "min": 111}
+{"tag": "ENTRY", "base": 9820688, "storage": 111, "s0": 194, "pend": 1}
+{"tag": "FACTORA", "id": 194, "own": 197379, "A": 9}
+{"tag": "FLAG", "id": 194, "f30": 65, "byte": 3}
+{"tag": "PRICE_C", "id": 194, "P": 50, "byte": 3, "C": 3, "p2": 0, "ret": 5175890}
+{"tag": "PRICE_M", "id": 194, "Mpre": 2}
+{"tag": "FACTORB", "id": 194, "A": 9, "B": 5}
+{"tag": "POSAFF", "storage": 111, "edi": 45, "ebx": 194}
+{"tag": "PAYA", "storage": 111, "edi": 45, "ebx": 194}
+{"tag": "CREATE", "id": 194, "arg3": 3, "storage": 0}
+{"tag": "VISIT", "pend": 0, "s0": 193, "s1": 193, "min": 111}
+{"tag": "ENTRY", "base": 9820688, "storage": 111, "s0": 193, "pend": 0}
+{"tag": "FACTORA", "id": 193, "own": 197379, "A": 9}
+{"tag": "FLAG", "id": 193, "f30": 69, "byte": 2}
+{"tag": "FACTORB", "id": 193, "A": 9, "B": 2}
+{"tag": "POSAFF", "storage": 111, "edi": 18, "ebx": 193}
+{"tag": "PAYA", "storage": 111, "edi": 18, "ebx": 193}
+{"tag": "CREATE", "id": 193, "arg3": 3, "storage": 0}
+{"tag": "FLAG", "id": 193, "f30": 69, "byte": 2}
+{"tag": "FLAG", "id": 193, "f30": 69, "byte": 2}
+{"tag": "VISIT", "pend": 0, "s0": 193, "s1": 193, "min": 111}
+{"tag": "ENTRY", "base": 9820688, "storage": 111, "s0": 193, "pend": 0}
+{"tag": "FACTORA", "id": 193, "own": 197379, "A": 9}
+{"tag": "FLAG", "id": 193, "f30": 69, "byte": 2}
+{"tag": "FACTORB", "id": 193, "A": 9, "B": 2}
+{"tag": "POSAFF", "storage": 111, "edi": 18, "ebx": 193}
+{"tag": "PAYA", "storage": 111, "edi": 18, "ebx": 193}
+{"tag": "CREATE", "id": 193, "arg3": 3, "storage": 0}
