@@ -777,3 +777,12 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 ## Still open (leads) — `references/open-leads.md`
 The per-milestone lead list lives in `references/open-leads.md`. `NEXT_PROMPT.md` holds the CURRENT pick
 and the authoritative open items; if the two disagree, `NEXT_PROMPT.md` wins.
+
+## Leg census law (s138, M86)
+
+Acceptance gates must PREDICT from live memory first, then be confirmed by counters — never demand a
+hit at a site the taken leg cannot reach (that FAILs the milestone, not the game). A breakpoint whose
+address is BOTH a branch target and a loop-completion fallthrough is not a leg proof (0x5a7f9f is
+`jne 0x5a7f9f`'s target AND the band loop's fallthrough). Attribute a helper call by its RETURN SITE:
+`scripts/m86_helper_legs.py` reads the three stack args at 0x5a7970 and the ret from `(esp)`, which
+named FUN_005aaa20 (site 0x5aaacb) as the only live caller of FUN_005a7970 ever measured.
