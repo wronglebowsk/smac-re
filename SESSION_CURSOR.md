@@ -1,6 +1,9 @@
-M78 | acceptance m78order3 PASS (g1-g9 all True) | merged? no (closing now) | in flight: none
-| finding: the 0x100 mark (0x5729d5) and its clear (0x4ef398) are in ONE production visit; the
-boundary census that reads 0x105 is a MID-VISIT snapshot (it sits between the two stores of visit
-36). No cross-visit pair, no other marker. Sweep callers live: 0x4efe83 (production, 1) and
-0x574203 (FUN_00573a90, 4, indices >= 256, marked nothing).
-| next: milestone.py submit -> gh pr checks <n> -> milestone.py merge <n> (branch milestone/m78).
+M79 | acceptance scripts/m79_netgame_poke.py --tag m79net1 (g1-g9) | NOT RUN YET | merged? no
+| next command: python3 scripts/m79_netgame_poke.py --tag m79net1  (reload m54b_clean.SAV ->
+| enqueue 194 idx 0 -> storage 200 -> 11 silent breakpoints incl. POKE 0x4f05a5
+| (`set var *(int *)0x920434 = 1`) and RESTORE 0x4f0637 -> 4 boundaries, census APPENDED to the
+| gdb log). If a gdb attach is live when this cursor is read, do NOT start a competing run.
+| static+live so far (no acceptance yet): gate 0x4f0591-0x4f0637 admits the clear pass iff
+| `0x920434 == 0 || !(0x985b10 & (1<<owner))`; MARKSET 0x4f05bd (`or BYTE [tid*52+0x98adb9],1`)
+| needs BOTH, so it is dead in solo. Live reads: 0x920434=0, 0x985b10=0x08, 0x985b11=0xff,
+| cur_player(0x985dcc)=3, 0x91e2d0=0.
