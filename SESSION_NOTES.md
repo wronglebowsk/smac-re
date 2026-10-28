@@ -620,3 +620,42 @@ OPEN: what bit 5 (0x20 @ 0x531782) means; who clears bit 6; who calls FUN_00573a
 or bit 5 + FUN_00577280's identity.
 Evidence: evidence/m82bit7d.gdblog (6 gate rows), traces trace_m82bit7d_r0..r2,
 scratch/m82bit7d.out; failed instruments kept m82bit7a/b/c.
+## Session 129 (2026-10-28) - M84: WHAT MAKES 0x496ad0 RETURN +9999 (static, bytes); ACCEPTANCE m84canc1 FAIL - the cancel statement runs but the sentinel never fires
+
+The prompt opened with "M74" again; M74 is merged (#75). M83 is unmerged (m83cw2 FAIL, branch
+milestone/m83), so the ledger's pick M84 ran on milestone/m84 from main 7a69b20.
+
+STATIC (instruction bytes): 0x496ad0 (size 3310) picks its return value at 0x497680-0x4976ff -
+0x497683 `cmp DWORD [ecx+0xa774],-1` (ecx = `[ebp-0x10]` = the 24 KB buffer the caller passes at
+0x418601 `lea edx,[ebp-0x5e2c]`); if -1 and 0x49768f `cmp [edx+0xa778],0` is zero -> eax =
+0xffffd8f1 = +9999 (0x4976ce); if -1 and result != 0 -> eax = 0 (0x497698); if the field != -1 ->
+eax = the pump return (0x497704 ff15 0x401940, negated when 0x495480's bit 0x20 is clear). The
+field is written -1 in exactly TWO places in .text: **0x496a43** (inside FUN_00496950, the dialog's
+message handler: `mov [eax+0xa774],-1` right after `mov [ecx+0xa778],0` - handler case 7 = CANCEL:
+result 0 + armed) and 0x495541 (inside FUN_004954e0, the dialog's own setup, called once from
+0x496ad0). Handler FUN_00496950 (shard_009.c:14701) cases 0/2/5 `return` when the field is already
+-1; 1/3/4/6/8 set result 2/3/4/6/7. So +9999 = THE DIALOG-CANCEL SENTINEL: cancel arms the field,
+the next pump return becomes +9999, and the caller's 0x41861b/0x4186d2 `cmp edi,0xffffd8f1` is what
+gates the 0x270f block (M83). The SAME +0xa774 offset is the chooser's guard: m57_ui_enqueue.py
+reads `0x6A9E9C + 0xa774` as the chooser cell index, so the field is one UI-object convention, not
+production-specific.
+
+ACCEPTANCE FAIL (`python3 scripts/m84_cancel_sentinel.py --tag m84canc1 --escape --no-ok`, ONE
+invocation, 3 silent bps 0x41860f/0x496a43/0x497683 + M83's 0x418d7d/0x577280): ARMED ptr=0x95ef70
+fac=3 pend=0 head=2; enqueue rc=0 stopped with the chooser open (guard cell index 3, pending 1);
+Escape rc=0 closed it. events SENT 1 (edi=2), ARM 2 (one is the ARMED line; the real ARM printed
+**buf=0** + gdb "Cannot access memory at address 0xa774" - ecx was 0 at 0x496a43), GATE 1
+(buf=0x6a9e9c cancel=3 result=5), BRANCH 0, ENTRY 0 -> G1 True, G2-G7 False -> FAIL. So the
+cancel-arming STATEMENT does execute during a chooser session, but the buffer instance seen at the
+return gate held cancel=3 (a cell index, not -1) and the pump returned 2, not -9999.
+
+OPEN / NEXT (M84b): the ARM breakpoint's ecx is not the buffer there (register semantics, the trap
+says so) - take the buffer address from the caller's own push at 0x418601-0x41860a (bp at 0x41860a
+reads [esp+0xc]) and re-run the same 5-bp shape with events ORDERED by time; the claim to falsify
+is "Escape on the chooser routes through handler case 7 (0x496a43) and the next pump return is
++9999". Also open: which widget message code reaches FUN_00496950 case 7 (no direct `call` to
+0x496950 exists in .text - it is reached through a widget handler table); FUN_004954e0's -1 write
+at 0x495541 (setup-time arm?); who owns 0x6a9e9c.
+Evidence: evidence/m84canc1.gdblog, scratch/m84canc1.gdb, scratch/m84_tmpl.py (m83's script, the
+shape this reused). No new evidence dir files beyond the log (budget 27.5 MB, gate FAILs at 30).
+XEOF && cat >> NAMED.md << 'XEOF'

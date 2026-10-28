@@ -272,3 +272,9 @@ Unlike watchpoints it survives the compaction; unlike a position diff it catches
   VAs equal runtime addresses, so `0x4d3888` maps straight to its function, and the live
   instructions can be matched one-for-one against the decompiled body (that is how `FUN_004d3770`
   was confirmed as the order setter: `mov %bl,0x933289(%ecx)` == `(&DAT_00933289)[i*0x34] = 2`).
+
+- A gdb command file written from a Python **raw** string: a printf newline must be ONE backslash +
+  `n`. Writing `\\n` (two chars before the n) makes gdb print a LITERAL backslash-n, so every event
+  lands on ONE line and a line-based parser silently sees a single event — no error and an empty-looking log: the rows are
+  there, concatenated, and a line-based parser reports one event (or none) instead of all of them.
+

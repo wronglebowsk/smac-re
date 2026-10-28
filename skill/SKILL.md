@@ -36,6 +36,7 @@ reading, and the live write-enumeration acceptance in §9),
 rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-formats.md`,
 `ghidra-batch-export.md`, `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
 need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
+**Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move.
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
 RE. Five spines (boot, solo turn, unit orders/combat, research/tech, save/load) drive Phases 1–2.
@@ -160,6 +161,7 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   build the search pattern by joining the tokens with `\s+` in a regex and apply several edits inside one
   `execute_code` cell that prints only the size delta — the file never enters context and a wrapped
   section lands on the first try.
+- **After a branch switch (`milestone.py start`, any `git checkout`) patch's exact-match can fail on a string you just read, because the tool view of a tracked doc can lag the disk.** Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context.
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
@@ -182,7 +184,11 @@ consumes the summary's output budget, which is why the summary truncates instead
 **Append to evidence/notes docs with the `patch` tool, not a shell heredoc.** The command blocklist scans
 HEREDOC BODY TEXT as well as the command (a sentence containing `init 0` trips the `init 0|6` shutdown rule
 and the whole append is refused), and backticks inside a `python3 -c "…"` payload are command-substituted by
-the shell, silently deleting those fragments — grep the written region after any shell-embedded write. An
+the shell, silently deleting those fragments — grep the written region after any shell-embedded write.
+Never CHAIN commands after a heredoc delimiter in one command block: if the delimiter does not land on its
+own line the shell swallows the delimiter text and every later command in the block silently becomes file
+content (a `cat >> NOTES` ate the `cat >> NAMED` that should have carried the registry block). Run an
+append in its own call, then read back the tail of BOTH files. An
 `execute_code` cell is hard-killed on its own timeout and does NOT stop a turn driver it spawned: `ps -p
 <pid>` for the orphan and kill that exact pid — this checkout's `smac_play.py` has **no `--mode stop`**
 flag (an earlier note here claimed otherwise), and never `pkill -f`/`pgrep|kill` by name: your own argv
