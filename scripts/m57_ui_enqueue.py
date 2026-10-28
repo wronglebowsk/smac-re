@@ -59,6 +59,9 @@ def main():
                     help="pick the cell whose candidate-array entry equals this item id "
                          "(the array order is era-dependent; 2 = Scout Patrol)")
     ap.add_argument("--inserts", type=int, default=1)
+    ap.add_argument("--no-ok", action="store_true",
+                    help="stop with the CHOOSER still open (the M84 cancel-sentinel test needs "
+                         "the pump to be running when the Cancel arrives)")
     a = ap.parse_args()
 
     pid, f = sp.mem()
@@ -128,6 +131,12 @@ def main():
         if not landed:
             print(f"FAIL: INSERT {n+1} never landed on base {a.base_index}", flush=True)
             return 1
+
+    if a.no_ok:
+        print("STOPPED with the chooser open (--no-ok): guard (cell index) =",
+              i32(f, 0x6A9E9C + 0xa774), "pending =",
+              i32(f, BASE_ARR + a.base_index * BASE_SZ + 0x4c), flush=True)
+        return 0
 
     click(OK_XY)
     time.sleep(0.8)

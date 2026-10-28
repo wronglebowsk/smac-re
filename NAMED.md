@@ -888,3 +888,36 @@ or bit 7; the only bit-7 clearer is 0x577ca8 `and BYTE [tid*4+0x98adb8],0x7f` in
 (shard_014.c:19576), which also tests bit 0, bit 2 (`&4`), sets 0x200 when bit 3 set, clears bit 3;
 bit 5 (0x20) is ORed at 0x531782, bit 6 has no clearer found. Evidence: evidence/m82bit7d.gdblog,
 traces m82bit7d_r0..r2.
+
+## M84 (s129, `m84canc1`) - THE +9999 RETURN OF 0x496ad0 IS ITS DIALOG-CANCEL SENTINEL (static); acceptance FAIL
+
+- Return gate: 0x497683 `cmp [ecx+0xa774],-1` / 0x49768f `cmp [edx+0xa778],0` -> 0x4976ce
+  `mov [ebp-0xb9c],0xffffd8f1` (= **-9999**, not +9999; ecx = [ebp-0x10] = the thiscall
+  chooser_sub 0x6a9e9c, which 0x496af1 loads from the caller's ecx, and the -1 is stored through
+  EAX at 0x496a43 — corrected live at s130); cancel==-1 with result != 0 -> 0 (0x497698); field != -1
+  -> the pump return (call 0x401940 at 0x497704/0x497777, negated iff 0x495480 bit 0x20 clear).
+- -1 is written ONLY at 0x496a43 (handler FUN_00496950 case 7 = CANCEL, together with result 0 at
+  0x496a27) and 0x495541 (FUN_004954e0 setup). Handler cases 0/2/5 bail when already -1.
+- Live (`scripts/m84_cancel_sentinel.py --tag m84canc1 --escape --no-ok`): SENT 1 edi=2, ARM 1
+  (buf=0, gdb could not read 0xa774), GATE 1 buf=0x6a9e9c cancel=3 result=5, BRANCH 0, ENTRY 0;
+  gates G1 True, G2-G7 False -> FAIL, merge nothing.
+- Evidence: evidence/m84canc1.gdblog.
+
+## M84b (s130, `m84canc2`) — THE CANCEL SENTINEL IS LIVE; THE 0x270f BLOCK IS A DIFFERENT (POSITIVE) SENTINEL
+
+- Live (`python3 scripts/m84_cancel_sentinel.py --tag m84canc2 --escape --no-ok`, ONE invocation,
+  6 silent bps 0x41860a/0x41860f/0x496a43/0x497683/0x418d7d/0x577280): CALL obj=0x6a9e9c cancel=3
+  mode=0 slot=1 -> GATE cancel=3 mode=5 -> SENT edi=2 -> CALL obj=0x6a9e9c cancel=3 mode=5 slot=3
+  -> ARM obj=0x6a9e9c pre=3 mode=0 (Escape) -> GATE cancel=0xffffffff mode=0 -> SENT edi=-9999
+  (0xffffd8f1). G1/G2/G3/G8 True; BRANCH 0 ENTRY 0 -> G4-G7 False -> FAIL, merge nothing.
+- Escape on the chooser reaches bar handler 0x496950 param -2, which stores -1 through EAX at
+  0x496a43; the chooser_sub is the thiscall ecx the caller loads at 0x418604 `lea ecx,[ebx+0xa1c]`
+  (pane 0x6a9480), NOT the pushed 24 KB buffer (live buf=0xbe3984, a stack address).
+- On -9999 the caller 0x417ee0 restores the queue from its snapshot (0x418623-0x41863f ->
+  base+0x50..+0x78; pending at +0x4c from [ebp-0x20]) and leaves via 0x4186d2 `jle 0x419967`
+  (`push 1; mov [ebx+0x3ff5c],0; call 0x416080`).
+- RETRACT (s129 wording): 0x41861b/0x4186d2 do not gate the 0x270f block — the ONLY branch to
+  0x418d7d is 0x4187be `cmp edi,0x270f`/`je`, POSITIVE +9999, on the mode 5/7 paths
+  (0x4187a2/0x4187ad) only when [ebp+0x8] != 0. So 0x577280 (sole bit-7 clearer 0x577ca8) runs on
+  a +9999 chooser result, not on cancel. OPEN: what yields +9999.
+- Evidence: evidence/m84canc2.gdblog, scratch/m84b_selftest.py.
