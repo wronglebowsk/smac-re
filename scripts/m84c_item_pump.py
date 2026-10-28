@@ -57,7 +57,7 @@ silent
 printf "INS list=0x%x p1=0x%x p2=%d p3=0x%x p4=%d\n", $ecx, *(int *)($esp + 4), *(int *)($esp + 8), *(int *)($esp + 0xc), *(int *)($esp + 0x10)
 continue
 end
-break *0x497704
+break *0x49771c
 commands
 silent
 set $o = *(int *)($ebp - 0x10)
