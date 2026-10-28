@@ -22,30 +22,28 @@ read-then-rewrite a file over 10 KB; keep tool results small.
 
 Merged: **M54A-M77** (#39-#78); M78 lands on this branch.
 
-**M78 (s120, acceptance `m78order3`) — THE 0x100 MARK AND ITS CLEAR ARE IN ONE PRODUCTION VISIT;
-THE CENSUS THAT READS 0x105 IS A MID-VISIT SNAPSHOT.** visit 36: PRODFLAG 194 (pre 0x41) ->
-L20FLAG edx=1 -> SWEEPCALL ret `0x4efe83` -> MARK 192/193 (`0x5729d5`) -> GATE l20=1 rec=10088 ->
-SWEEPIN -> CLEAR 192/193 (`0x4ef398`, pre 0x105/0x145). Cross-visit mark->clear pairs = [] — nothing
-re-marks, so M77's "carriers survive a boundary" is a MEASUREMENT ARTIFACT: the driver reads
-`/proc/pid/mem` while the engine sits between the two stores. Census replay exact at 4/4 boundaries.
-Callers live: SWEEPCALL {0x4efe83 x1, 0x574203 x4 = FUN_00573a90 on indices 324/325/385/387, zero
-MARKs}, CLEAR {0x4f062b x2}; `0x4ef5b3`/`0x52145e`/`0x5a7d00`/`0x5a7f67`/MARKSET printed ZERO.
-Static: `call 0x572800` at 0x4394be/0x4efe7e/0x5741fe/0x5a7d0e/0x5a7f75; `call 0x4ef380` at
-0x4ef5ae/0x4f0626/0x521479/0x5a8568. RETRACTED (M77 open (a)): the re-marking alternative. NAMED
-M78, s120. Instrument `scripts/m78_mark_clear.py` (9 gates; census APPENDED into the gdb log).
+**M78 (s120, `m78order3`) — THE 0x100 MARK AND ITS CLEAR ARE IN ONE PRODUCTION VISIT; THE CENSUS
+THAT READS 0x105 IS A MID-VISIT SNAPSHOT.** visit 36: PRODFLAG 194 (pre 0x41) -> L20FLAG edx=1 ->
+SWEEPCALL ret `0x4efe83` -> MARK 192/193 (`0x5729d5`) -> GATE l20=1 rec=10088 -> SWEEPIN -> CLEAR
+192/193 (`0x4ef398`, pre 0x105/0x145); cross-visit pairs = [], so nothing re-marks and M77's
+"carriers survive a boundary" is a MEASUREMENT ARTIFACT (the driver reads `/proc/pid/mem` while the
+engine sits between the two stores). Census replay exact 4/4. Live callers: SWEEPCALL {0x4efe83 x1,
+0x574203 x4 = FUN_00573a90 on indices 324/325/385/387, zero MARKs}, CLEAR {0x4f062b x2}; 0x4ef5b3 /
+0x52145e / 0x5a7d00 / 0x5a7f67 / MARKSET printed ZERO. Static: `call 0x572800` at
+0x4394be/0x4efe7e/0x5741fe/0x5a7d0e/0x5a7f75, `call 0x4ef380` at 0x4ef5ae/0x4f0626/0x521479/0x5a8568.
+NAMED M78, s120.
 
 **M77 (PR #78, `m77gate1`) — WHAT REACHES THE CLEAR PASS, AND ITS GATE:** `0x4f05e2` is entered only
 by fall-through `0x4f05e0` from the gate block `0x4f0591-0x4f05de`, which BAILS at `0x4f0599` when
-`[ebp-0x20]==0`, admits iff `DAT_00920434 == 0 || !(DAT_00985b10 & (1 << BYTE [base+4]))`
-(`0x4ef804-0x4ef815`), sweeps iff the owner bit is clear else iff `DAT_00985abc & 0x100000`, and its
-ELSE SETS the marker at `0x4f05bd`. Live 11 gate visits: 10 bail, 1 sweeps (`194*52`), MARKSET 0, and
-its eligibility local was last written at `0x4efe6c` (`edx=1` = FIRST production). NAMED M77, s119.
+`[ebp-0x20]==0`, admits iff `DAT_00920434 == 0 || !(DAT_00985b10 & (1 << BYTE [base+4]))`, sweeps iff
+the owner bit is clear else iff `DAT_00985abc & 0x100000`, ELSE sets the marker at `0x4f05bd`. Live:
+10 of 11 gate visits bail, 1 sweeps (`194*52`), MARKSET 0, eligibility local last written at
+`0x4efe6c` (`edx=1` = FIRST production). NAMED M77, s119.
 
-**M76 (PR #77, `m76marker1`) — WHO CLEARS THE 0x100 MARKER:** `0x4ef398 and BYTE
-[ebx+0x98adb9],0xfe` is the FIRST statement of FUN_004ef380(owner, tid) (ebx = tid*52) so it lands on
-the record PASSED IN; in a designed window the caller is the production inline selector (test
-`0x4f060f`, call `0x4f0626`, ret `0x4f062b`) and both selectors admit iff `flags & 0x105 == 0x105`.
-NAMED M76, s118.
+**M76 (PR #77, `m76marker1`):** the clear `0x4ef398 and BYTE [ebx+0x98adb9],0xfe` is the FIRST
+statement of FUN_004ef380(owner, tid) (ebx = tid*52) — it lands on the record PASSED IN; in a designed
+window the caller is the production inline selector (`test 0x4f060f`, `call 0x4f0626`, ret
+`0x4f062b`), selectors admit iff `flags & 0x105 == 0x105`. NAMED M76, s118.
 
 **M73-M75 (PR #74-#76) — price formula, the `+0x30 & 4` bit, what the sweep marks.** `edi = A x B` at
 the gate `0x4efa5e`, `A = 0x4e40a0(owner,1,-1)` (9 = Python `cost_multiplier`), designed head
