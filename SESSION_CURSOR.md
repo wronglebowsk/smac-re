@@ -1,1 +1,1 @@
-M82 (milestone/m82, s127) | acceptance m82bit7d PASS (gates G1-G7 all True, ONE invocation; edi W1=45 W2=45 W3=27) | merged? not yet (closing: notes/NAMED/NEXT_PROMPT/commit/gate/submit/merge) | next: append SESSION_NOTES + NAMED, patch NEXT_PROMPT, commit, gate, milestone.py submit/merge
+M84e STARTED (milestone/m84e from main 7a69b20) | acceptance not written yet | merged? no | next: static on 0x4194b3 / widget msg 0x4d00 in scratch/m574/text.txt, then accept_ready.py before arming. Box: terran.exe UP, 2163 round 63, hud, READY (Korolev idx17 pend1).

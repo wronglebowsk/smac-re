@@ -167,7 +167,13 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   nothing and does NOT restore the snapshot** (a committed edit survives OK); **CANCEL =
   `[sub+0xa774] = -1`** → returns −9999 → rewrites +0x50..+0x74 from the stack snapshot and exits
   without consulting the mode (makes armed REPLACE probes non-destructive); **HELP** opens the unit-design pane (bars y 356, CANCEL x≈614) whose
-  CANCEL re-opens the chooser. QUEUE rows 1..8 = pending slots +0x54..+0x70 (row text y =
+  CANCEL re-opens the chooser.
+- **Testing a chooser CANCEL / sentinel hypothesis live:** `scripts/m57_ui_enqueue.py --no-ok` stops after the
+  INSERT with the chooser still open, so the modal pump is running when the cancel arrives — then CLICK the
+  measured CANCEL bar (x ~659-705, y 336-352); `Escape` is NOT the bar's path (it closed the chooser and the
+  pump returned a mode code, never the sentinel). Take the instance/buffer pointer for a breakpoint from the
+  CALLER's push site (`break *0x41860a`, read `*(int *)($esp + 0xc)`) — a register at the arm site can be 0
+  there, and a field read through it aborts the batch script. QUEUE rows 1..8 = pending slots +0x54..+0x70 (row text y =
   439+12·(row−1)); the 9th pending slot +0x74 has no row; the head +0x50 is the LEFT panel.
 - **Type-record `+41` is the COST FACTOR (M53b), not a weight and not turns.** `0x98ad88 + type·52 + 0x29`,
   one writer: `FUN_00595b10` (`ghidra_out/shard_015.c:9358`) = `FUN_00595820(chassis, weapon, armor,

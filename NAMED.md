@@ -888,3 +888,62 @@ or bit 7; the only bit-7 clearer is 0x577ca8 `and BYTE [tid*4+0x98adb8],0x7f` in
 (shard_014.c:19576), which also tests bit 0, bit 2 (`&4`), sets 0x200 when bit 3 set, clears bit 3;
 bit 5 (0x20) is ORed at 0x531782, bit 6 has no clearer found. Evidence: evidence/m82bit7d.gdblog,
 traces m82bit7d_r0..r2.
+
+## M84 (s129, `m84canc1`) - THE +9999 RETURN OF 0x496ad0 IS ITS DIALOG-CANCEL SENTINEL (static); acceptance FAIL
+
+- Return gate: 0x497683 `cmp [ecx+0xa774],-1` / 0x49768f `cmp [edx+0xa778],0` -> 0x4976ce
+  `mov [ebp-0xb9c],0xffffd8f1` (= **-9999**, not +9999; ecx = [ebp-0x10] = the thiscall
+  chooser_sub 0x6a9e9c, which 0x496af1 loads from the caller's ecx, and the -1 is stored through
+  EAX at 0x496a43 — corrected live at s130); cancel==-1 with result != 0 -> 0 (0x497698); field != -1
+  -> the pump return (call 0x401940 at 0x497704/0x497777, negated iff 0x495480 bit 0x20 clear).
+- -1 is written ONLY at 0x496a43 (handler FUN_00496950 case 7 = CANCEL, together with result 0 at
+  0x496a27) and 0x495541 (FUN_004954e0 setup). Handler cases 0/2/5 bail when already -1.
+- Live (`scripts/m84_cancel_sentinel.py --tag m84canc1 --escape --no-ok`): SENT 1 edi=2, ARM 1
+  (buf=0, gdb could not read 0xa774), GATE 1 buf=0x6a9e9c cancel=3 result=5, BRANCH 0, ENTRY 0;
+  gates G1 True, G2-G7 False -> FAIL, merge nothing.
+- Evidence: evidence/m84canc1.gdblog.
+
+## M84b (s130, `m84canc2`) — THE CANCEL SENTINEL IS LIVE; THE 0x270f BLOCK IS A DIFFERENT (POSITIVE) SENTINEL
+
+- Live (`python3 scripts/m84_cancel_sentinel.py --tag m84canc2 --escape --no-ok`, ONE invocation,
+  6 silent bps 0x41860a/0x41860f/0x496a43/0x497683/0x418d7d/0x577280): CALL obj=0x6a9e9c cancel=3
+  mode=0 slot=1 -> GATE cancel=3 mode=5 -> SENT edi=2 -> CALL obj=0x6a9e9c cancel=3 mode=5 slot=3
+  -> ARM obj=0x6a9e9c pre=3 mode=0 (Escape) -> GATE cancel=0xffffffff mode=0 -> SENT edi=-9999
+  (0xffffd8f1). G1/G2/G3/G8 True; BRANCH 0 ENTRY 0 -> G4-G7 False -> FAIL, merge nothing.
+- Escape on the chooser reaches bar handler 0x496950 param -2, which stores -1 through EAX at
+  0x496a43; the chooser_sub is the thiscall ecx the caller loads at 0x418604 `lea ecx,[ebx+0xa1c]`
+  (pane 0x6a9480), NOT the pushed 24 KB buffer (live buf=0xbe3984, a stack address).
+- On -9999 the caller 0x417ee0 restores the queue from its snapshot (0x418623-0x41863f ->
+  base+0x50..+0x78; pending at +0x4c from [ebp-0x20]) and leaves via 0x4186d2 `jle 0x419967`
+  (`push 1; mov [ebx+0x3ff5c],0; call 0x416080`).
+- RETRACT (s129 wording): 0x41861b/0x4186d2 do not gate the 0x270f block — the ONLY branch to
+  0x418d7d is 0x4187be `cmp edi,0x270f`/`je`, POSITIVE +9999, on the mode 5/7 paths
+  (0x4187a2/0x4187ad) only when [ebp+0x8] != 0. So 0x577280 (sole bit-7 clearer 0x577ca8) runs on
+  a +9999 chooser result, not on cancel. OPEN: what yields +9999.
+- Evidence: evidence/m84canc2.gdblog, scratch/m84b_selftest.py.
+
+## M84c — the chooser modal 0x496ad0 has THREE value sources; +9999 is a row KEY nothing inserts
+
+`0x496ad0` (n_callers = 1, only 0x41860a) returns: **-9999** (0x4976ce, `[obj+0xa774]==-1` and `[obj+0xa778]==0`), **0** (0x497698, armed with mode != 0), or **+/- the +4 word of the seeked node** of the list at `obj+0xa780` (= 0x6b461c for the chooser_sub 0x6a9e9c): pump 0x497704 seeks with `call 0x4026b0` (index > `[c+0x10]`-1 -> 0; cursor = `[c+8]`; step `node = [cursor+0xc]`; index stored at `[c+0x14]`), then 0x497725 `call 0x495480; and eax,0x20` — bit SET -> 0x49773a `call 0x401940` (`[c+8]==0 -> 0`, else `[[c+0xc]+4]`), bit CLEAR -> 0x497777 same call then `neg eax`; 0x4977ab returns eax. The caller snapshots it (0x41860f `mov edi,eax`, 0x418616 -> `[ebp-0x10]`, 0x418794/0x4187a2 reload) and 0x4187be `cmp edi,0x270f` is the ONLY branch to the 0x270f block 0x418d7d -> 0x418d8a `call 0x577280`. The list's only writers are 4 functions calling 0x42ee20 (0x4954e0 x2 with key = its setup loop var, 0x42e4d0, 0x42ef40, 0x4b0a80) and **none passes 9999**. Live `python3 scripts/m84c_item_pump.py --tag m84cprobe1` (FAIL: G3 instrument, G5 the claim): PUMP idx=3 count=13 -> VAL 2, SENT 2, CHK edi=2, BRANCH 0, ENTRY 0; inserted words [0,1,2,3,6,16,17,18,32,34,38,39,41,42,161,192,193,194]. Evidence: evidence/m84cprobe1.gdblog.
+
+## M84d (s132, acceptance m84dky1 FAIL, branch milestone/m84d, UNMERGED) — 0x4a99e0 IS A VIRTUAL METHOD AND ITS >9999 LEG NEVER RUNS IN PLAY
+
+- OWNER: the dword 0x4a99e0 occurs ONCE in the image, at 0x67671c, inside the 197-slot pointer run
+  0x676584-0x676894. Constructors 0x498ea6/0x498eac store vptr 0x67658c at [obj] and 0x676584 at
+  [obj+0x444] (0x498f00 `sub ecx,0x444` = the secondary thunk), so it is primary vtable slot 100 /
+  secondary slot 102. No `call [reg+0x190]` in .text -> dispatched by a computed index. A scan of
+  every rw region of terran.exe found ZERO live objects with vptr 0x67658c/0x676584/0x67673c.
+- >9999 LEG = per-FACTION context switch: `[this+0x1d6f0]=1`; outgoing slot (ds:0x888514-1)*0xb4c
+  gets +0xb38 = -1 then notify `[[slot+0x80]+0xf0]`; incoming slot (key-9999-1) gets +0xb38 = 2
+  then the same notify; then `call 0x4a72c0(this, ds:0x86ae40, key-9999, [this+0x1d6e0])`. Records
+  are 2892 B (stride 0xb4c) at this+0x80. The <=9999 leg needs `[this+8]==4` and
+  `[this+0x1d6dc]==ds:0x91b5b4` (=3 live) and switches on 0xcef..0xcf4.
+- ds:0x888514 = FACTION INDEX (live 0): 0x4a0c17 compares it to BYTE[i*0x130] of the 19 base
+  records at 0x95da14 (names verified live: University Base 3, Gaia's Landing 2, The Hive 2, Morgan
+  Industries 4, Sparta Command 5, New Jerusalem 6, Korolev Center 3 — owner faction at +0);
+  0x499f13 also indexes 0x94d7fc by it with stride 0x20bc. All 37 .text references to it are READS.
+- LIVE: `scripts/m84d_faction_key.py --tag m84dky1 --boundaries 8` — 8 silent bps armed
+  ("Breakpoint 1 at 0x4a99ec".."Breakpoint 8 at 0x4a759f", clean detach), driver m56_build rc=0
+  83 s "boundaries 8/8" with 1 verified production arrival: 0 KEY, 0 LOW, 0 OUT, 0 IN, 0 AFTER,
+  0/0 notify, 0 SETFLAG2, 0 CLEARFLAG -> G1..G8 False. merge nothing.
+Evidence: evidence/m84dky1.gdblog.
