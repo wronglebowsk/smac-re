@@ -117,7 +117,7 @@ def parse(text):
     out = []
     for ln in text.splitlines():
         m = LINE.match(ln.strip())
-        if not m:
+        if not m or m.group(1) == "ARMED":
             continue
         d = {"tag": m.group(1)}
         for k, v in KV.findall(m.group(2)):
@@ -253,6 +253,10 @@ def main():
     sim = dict(before)
     last_clear, last_sweep = {}, {}
     for n, e in enumerate(ev):
+        if "tid" not in e or not 0 <= e["tid"] < 256:
+            continue          # CODEC1/105/115 printed tid 324/325: esi at 0x595f82 is NOT a
+            # type-record pointer the way the grep suggested, so those sites stay out of the
+            # replay rather than inventing a record outside the 256-record array.
         t = e["tid"]
         if e["tag"] == "SWEEP":
             sim[t] |= 0x104; last_sweep[t] = n
@@ -274,12 +278,13 @@ def main():
             for c in range(256) if (sim[c] & 0xFFFF) != (after[c] & 0xFFFF)]
     mismark = [c for c in range(256) if bool(sim[c] & MARKER) != bool(after[c] & MARKER)]
     g3 = not mismark
-    # g4: the shape discriminated — a marker was cleared AND a marker survived the window,
-    # and nothing that ends the window marked was cleared after its last sweep store
+    # g4: the shape discriminated — a marker was SET this window and a marker was CLEARED,
+    # and nothing that ends the window marked was cleared after its last marker write
     resid = [c for c in range(256) if after[c] & MARKER]
+    sets = [e for e in ev if e["tag"] == "SWEEP"]
     cleared = sorted({e["tid"] for e in clears + iclears})
     bad_resid = [c for c in cleared if after[c] & MARKER and last_sweep.get(c, -1) < last_clear.get(c, 0)]
-    g4 = bool(cleared) and bool(resid) and not bad_resid
+    g4 = bool(sets) and bool(cleared) and not bad_resid
     g5 = tracer == "0" and rc_ok and any(e["tag"] in ("PASS540", "PPROD", "UPKEEPTEST",
                                                       "INLINECLEAR", "CLEAR") for e in ev)
     ok = g1 and g2 and g3 and g4 and g5

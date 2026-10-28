@@ -28,7 +28,20 @@ Survivability rules:
   multi-KB result is context that cannot be compressed back.
 ## THE LEDGER
 
-Merged: **M54A-M75** (#39-#76)
+Merged: **M54A-M76** (#39-#77)
+
+**M76 (PR #77, merged) — WHO CLEARS THE 0x100 SWEEP MARKER, AND FOR WHICH RECORDS. ACCEPTANCE
+PASS, tag `m76marker1`:** the clear `0x4ef398 and BYTE [ebx+0x98adb9],0xfe` is the FIRST statement
+of FUN_004ef380(owner, tid) (ebx = tid*52 from `[ebp+0xc]*13<<2`), so it lands on the record PASSED
+IN. In a designed-production window the caller is the PRODUCTION function's own inline selector
+(test `0x4f060f`, call `0x4f0626`, ret `0x4f062b`, owner = edi = 3); the other selector
+FUN_004ef540 (test `0x4ef597`, called only from `0x5a7d14`/`0x5a7f7b`), the upkeep inline clear
+(`0x521452 and bh,0xfe` + `0x52145e mov WORD [edi],bx`, then a call at `0x521479`) and the tech
+setters `0x5a7d00`/`0x5a7f67` printed ZERO events. Both selectors walk `{0..63} U {owner*64..+63}`
+and call iff `flags & 0x105 == 0x105`. Live: the sweep marks 192/193 at the FIRST production, the
+NEXT visit clears both (census 192:0x001->0x005, 193:0x041->0x045, 194:0x041->0x045; the replay of
+the observed stores reproduces every flag word). Instrument `scripts/m76_marker_clear.py`. Full
+text: NAMED M76 block, notes s118.
 
 **M75 (PR #76, merged) — WHAT THE PRODUCTION SWEEP MARKS. ACCEPTANCE PASS, tag `m75sweep1`:**
 at a designed unit's first production FUN_00572800's loop stores `or [rec+0x30],0x104`
@@ -37,9 +50,9 @@ at a designed unit's first production FUN_00572800's loop stores `or [rec+0x30],
 192's `+0x24/25/26` triple FAILS the tier test vs 194's yet 192 was stored -> s116's
 "byte-match" claim RETRACTED for designed candidates; the triple + tier tables (`0x92b950`/
 `0x92fd18`, rank=row[0]) + category gate (`0x92ae80+(id*9)<<4`) are alpha-path-only (validator
-`0x5a6cd0(tid, produced flag byte)`) and UNTESTED live. 192 keeps the 0x100 marker (clear
-`0x4ef398` wrote 193 only; writes +0x31, outside a low-word watchpoint). Full text: NAMED M75
-block, notes s117.
+`0x5a6cd0(tid, produced flag byte)`) and UNTESTED live. Its "192 keeps the 0x100 marker" was a
+SNAPSHOT artifact (M76: the next pass clears EVERY carrier; the clear writes +0x31, invisible to a
+low-WORD watchpoint). Full text: NAMED M75 + M76 blocks, notes s117-118.
 
 **M73 (PR #74, merged) — WHAT THE GATE'S `edi` IS MADE OF. ACCEPTANCE PASS, tag `m73split4`:**
 `edi = A x B`; `A = 0x4e40a0(owner,1,-1)` (9 = Python `cost_multiplier`); designed head:
@@ -53,9 +66,9 @@ pay `0x4efed8`); first production calls FUN_00572800 at `0x4efe7e` (see M75 abov
 that sweep marks); marker clear FUN_004ef380 `0x4ef398`. Instrument `m74_flag_hw.py`.
 RETRACTED: `0x597487` is a save/load codec (`0x93327a` table). Full text: NAMED M74-RESOLVED, s116.
 
-**M68 (no PR, FAILED):** 212 sort rules, 55 predict an append, the live enqueue DID append — no
-key named (M70's cursor mechanics explain the appends). **M63 (no PR):** `m63_pop.py`, the
-`0x94de84` queued-count correction, 384/386 identity crossing. Branches hold their scripts.
+**M68 (FAILED):** 212 sort rules, the live enqueue DID append — no key named (M70's cursor
+mechanics explain the appends). **M63:** `m63_pop.py`, the `0x94de84` queued-count correction,
+384/386 identity crossing. Branches hold their scripts.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
@@ -91,19 +104,18 @@ stores @0x5729de, production store @0x4efe67, census newly-bit2 == predicted+pro
   head — no claim.
 ## STILL OPEN (in priority order)
 
-1. **M76 — the 0x100 SWEEP MARKER: who clears it, and for which records.** The sweep ORs
-`0x104` (bit 2 + marker bit 8) onto every valid unmarked designed record; `0x4ef398`
-(FUN_004ef380, `and BYTE [ebx+0x98adb9],0xfe`) cleared 193's marker but 192 STILL reads
-`0x105` live after m75sweep1 (census diff `192:0x01->0x105`). The clear writes the HIGH byte
-(+0x31) — invisible to a low-WORD watchpoint: watch `*(short*)(0x98adb8+tid*52+0x2e)` or census
-the 0x100 bit. Cheap shape: reload `m54b_clean.SAV`, enqueue 194, drive 2 boundaries, census
-which designed records keep 0x100, breakpoint `0x4ef398` printing `$ebx` (record byte addr =
-`tid*52`); read FUN_004ef380's caller chain (shard_013:12093, `DAT_0091b5b4`). Still open from
-M75: (a) the alpha path (validator `0x5a6cd0(tid, shift)` + tier tables) never fired — needs a
-tid<0x40 passing the validator (shift = produced flag byte 0x41: bit index >7 unrecovered);
-(b) the sweep's outer-loop window arithmetic (stores on 192/193 although the entry computes
-edi=194*52); (c) other FUN_00572800 callers (shard_002 `param_3=1`, shard_012:20852,
-shard_014:17826); (d) the s115 `0x41 -> 0x05` bit-6-LOST whole-word writer (`0x595f82/91/9c`).
+1. **M77 — the control flow INTO the production marker-clear pass, and its gate.** The pass
+(`0x4f05e2-0x4f0635`, test `0x4f060f`, call `0x4f0626`) fired on a visit that printed NO production
+setter (`0x4efe50`) first, so it was reached by another path; it is gated by
+`(DAT_00920434 == 0) || ((bVar8 & DAT_00985b10) == 0)` and its ELSE branch SETS the marker at
+`0x4f05bd` (0 events seen). Cheap shape, static first: `scratch/m71/dis.py 4efed8 4f05c6` to
+enumerate what reaches `0x4f05e2` (gate bail `0x4efa63`, pay epilogue `0x4efed8`, the facility
+exits `0x4f0a42/0x4f0b86/0x4f0c28`), then grep the writers/readers of `DAT_00920434` and
+`DAT_00985b10` and find where `bVar8` comes from; then ONE live confirmation — breakpoints at
+`0x4f05bd`/`0x4f05c6`/`0x4f0637` printing `$edi`, `$eax`, `*(int *)0x920434` over 2 boundaries.
+Still open from M75/M76 (all in the NAMED blocks): the alpha validator+tier path, the sweep's
+outer-loop window arithmetic, other FUN_00572800 callers, the s115 `0x41 -> 0x05` whole-word writer,
+and when the upkeep (FUN_00521070) / tech (FUN_005a7970) passes run at all.
 2. **Who calls the `0x4194b3` handler / what widget message `0x4d00` is** (zeroes the cursor
    after a queue mutation; sender `0x584010`, `0x4eb6b0` runs after it; did NOT fire at a
    completion or round boundary).
@@ -118,9 +130,9 @@ shard_014:17826); (d) the s115 `0x41 -> 0x05` bit-6-LOST whole-word writer (`0x5
 
 ## LIVE FACTS / KIT
 
-- **Box at session-117 close:** round ~52 (m75sweep1 window), `terran.exe` UP (the binary is
-`terran.exe` — pgrep -x terrans.exe finds nothing), University Base idx 0 head 194, flags
-after the run: 192=0x105 (marker residue), 193=0x45, 194=0x45, 64/128/129/130/131=0x05.
+- **Box at session-118 close:** `terran.exe` UP (the binary is `terran.exe` — pgrep -x terrans.exe
+finds nothing), round ~52 after m76marker1, University Base idx 0; flags after the run:
+192=0x005, 193=0x045, 194=0x045, 64/128/129/130/131=0x05 — NO record carries 0x100.
 Fresh `m54b_clean.SAV` loads 192/193/194 at `0x01/0x41/0x41` (193/194 carry bit 6, NOT bit 2 —
 s116's "0x41 = bit 2 set" was wrong: bit 2 = 0x4, 0x41 has it CLEAR). Korolev Center does not
 exist here. Always read `pending` back after an enqueue before arming.
@@ -160,7 +172,9 @@ exist here. Always read `pending` back after an enqueue before arming.
   both. When the writer set is in doubt, skip the grep: `m74_flag_hw.py`-style HARDWARE
   watchpoints on the FIELD answer "who writes it" in one run. A watchpoint on the flag LOW WORD
   (+0x30..0x31) never reports a BYTE store to +0x31 (the 0x100 clear `0x4ef398`) — watch the
-  high byte or census the bit.
+  high byte or census the bit. A grep-derived register expression can be WRONG: `0x595f82/91/9c` with
+  `$esi/52` printed tid 324/325 — esi there is not a type-record pointer, so check a breakpoint's
+  tid expression against the instruction bytes before it goes inside a gate.
 - **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it** (a
   "insufficient minerals to support Scout" dialog made two scripts' chooser clicks no-ops). Return
   clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt —

@@ -1,1 +1,1 @@
-M76 | instrument written (12 silent breakpoints), acceptance NOT yet run | not merged (branch milestone/m76) | next: python3 scripts/m76_marker_clear.py --tag m76marker1   # ~5-8 min: reload+enqueue+drive
+M76 | acceptance m76marker1 PASS (g1..g5 True, clears=[192,193], tracer=0) | NOT merged yet (closing: notes/NAMED/NEXT/commit/gate/submit) | next: milestone.py merge 77 after CI

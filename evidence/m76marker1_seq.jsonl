@@ -1,0 +1,14 @@
+{"tag": "VISIT", "tid": 2, "edi": 9, "storage": 200}
+{"tag": "CODEC1", "tid": 324, "word": 1}
+{"tag": "CODEC1", "tid": 325, "word": 1}
+{"tag": "VISIT", "tid": 194, "edi": 45, "storage": 200}
+{"tag": "PRODSET", "tid": 194, "flags": 65}
+{"tag": "SWEEP", "tid": 192, "flags": 1}
+{"tag": "SWEEP", "tid": 193, "flags": 65}
+{"tag": "PPROD", "owner": 3, "tid": 192, "flags": 261}
+{"tag": "CLEAR", "tid": 192, "owner": 3, "flags": 261, "ret": 5178923}
+{"tag": "PPROD", "owner": 3, "tid": 193, "flags": 325}
+{"tag": "CLEAR", "tid": 193, "owner": 3, "flags": 325, "ret": 5178923}
+{"tag": "PPROD", "owner": 3, "tid": 194, "flags": 69}
+{"tag": "VISIT", "tid": 194, "edi": 27, "storage": 200}
+{"tag": "PRODSET", "tid": 194, "flags": 69}

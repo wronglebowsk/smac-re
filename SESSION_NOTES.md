@@ -757,3 +757,53 @@ the instruction bytes); (d) other FUN_00572800 callers (shard_002 param_3=1, sha
 shard_014:17826). NEXT pick: M76 — the 0x100 sweep marker: who clears it and for which
 records (watch the +0x31 byte, census before/after a designed production).
 Evidence: `evidence/m75sweep1.gdblog`, `evidence/m75sweep1_seq.jsonl`, traces `m75sweep1_r0..r1`.
+
+## Session 118 (2026-10-28) — M76: WHO CLEARS THE 0x100 SWEEP MARKER, AND FOR WHICH RECORDS. ACCEPTANCE PASS (tag `m76marker1`).
+
+**Instrument.** `scripts/m76_marker_clear.py --tag m76marker1`: 12 silent breakpoints (gate
+`0x4efa5e`, production setter `0x4efe50`, sweep store `0x5729d5`, the clear `0x4ef398` printing
+tid/owner/flags/RETURN-ADDRESS, the two selectors `0x4ef597` and `0x4f060f`, the upkeep inline
+clear `0x52145e` + its test `0x521448`, the three marker setters `0x4f05bd`/`0x5a7d00`/`0x5a7f67`,
+the whole-word codec stores `0x595f82/91/9c`), reloads `m54b_clean.SAV`, enqueues 194, drives
+boundaries, then REPLAYS the observed stores onto the before-census and reads the 0x100 bit back.
+One real invocation:
+
+    reload rc=0; baseline 0x100-carriers: []; predicted sweep(194) marks: [192, 193]
+    boundary 0: rc=0 36s  192=0x001 193=0x041 194=0x041  0x100-carriers=[]
+    boundary 1: rc=0 69s  192=0x105 193=0x145 194=0x045  0x100-carriers=[192, 193]
+    boundary 2: rc=0 121s 192=0x005 193=0x045 194=0x045  0x100-carriers=[]
+    events: PRODSET 194 f=0x41 | SWEEP 192 f=0x1 | SWEEP 193 f=0x41 |
+            CLEAR 192 owner=3 f=0x105 ret=0x4f062b | CLEAR 193 owner=3 f=0x145 ret=0x4f062b |
+            PRODSET 194 f=0x45
+    census diff: 192:0x001->0x005, 193:0x041->0x045, 194:0x041->0x045
+    gates g1..g5 all True; cleared=[192,193] residue=[] marker_mismatch=[] word_mismatch=[]
+    ACCEPTANCE m76marker1: PASS (clears=2 residue=[] tracer=0)
+
+**WHO.** `0x4ef398 and BYTE PTR [ebx+0x98adb9],0xfe` is the FIRST statement of FUN_004ef380(owner,
+tid) — ebx = tid*52 comes from `[ebp+0xc]*13<<2` (`0x4ef386-0x4ef392`), so the clear always lands
+on the record PASSED IN. In this window the caller is the PRODUCTION function's own inline
+selector: test `0x4f060f` (`test cl,1` / `test cl,4` / `and ecx,0x100` / `test cx,cx`), call
+`0x4f0626`, return `0x4f062b`, owner = edi = 3. The OTHER selector FUN_004ef540 (test `0x4ef597`,
+called only from `0x5a7d14`/`0x5a7f7b` inside FUN_005a7970) printed ZERO pass entries; the upkeep
+inline clear (FUN_00521070 `and bh,0xfe` `0x521452` + `mov WORD PTR [edi],bx` `0x52145e`, which
+also reaches FUN_004ef380 at `0x521479`) and the tech-path setters `0x5a7d00`/`0x5a7f67`
+(`or BYTE [eax*4+0x98adb9],1`) printed nothing.
+
+**FOR WHICH RECORDS.** Both selectors walk the same 128-slot window `{0..63} U {owner*64..+63}`
+and call on `flags & 1 && flags & 4 && flags & 0x100`. Printed rows: 192 (0x105), 193 (0x145),
+194 (0x45) — the two carriers called, 194 (no marker) did not: predicted == observed.
+
+**WHEN.** LATER than the sweep, not in the same breath: the sweep marks at the FIRST production
+(marked at boundary 1) and every carrier is clear by the next boundary. M75's "192 keeps the 0x100
+marker" is RETRACTED as a snapshot artifact — the marker is transient. The clearing visit printed
+no PRODSET before its CLEARs, so it reached the pass without executing `0x4efe50`.
+
+**Open.** (a) which control path reaches `0x4f05e2` (gate bail `0x4efa63`? pay epilogue
+`0x4efed8`?) and what the pass gate `(DAT_00920434 == 0) || ((bVar8 & DAT_00985b10) == 0)` is —
+its else branch SETS the marker at `0x4f05bd` (0 events seen); (b) the upkeep inline clear and the
+FUN_005a7970 sweep+clear pair never fired here — when do those passes run; (c) the alpha
+validator/tier path (M75 open (a)) is still untested; (d) `0x595f82/91/9c` printed tid 324/325 with
+`$esi/52` — esi there is NOT a type-record pointer, so those sites are outside the 256-record
+array and were left out of the replay. NEXT pick: M77 — the control flow into the production
+inline pass + `DAT_00920434`.
+Evidence: `evidence/m76marker1.gdblog`, `evidence/m76marker1_seq.jsonl`, traces `m76marker1_r0..r2`.

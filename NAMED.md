@@ -742,3 +742,27 @@ COPIED register (plain MOV with `0x98adb8` addend). Instrument `scripts/m74_flag
 | `+0x24` = domain-row selector | picks the 144-B row at `0x92ae80+(v*0x90)` — same row as M73's markup C byte (`0x92ae81[+0x24*0x90]`) and the build-base land test (`==1`); sweep category gate compares these rows (designed-marked path only) | H | s117 dump + NAMED `0x4d1280` row |
 | validator `0x5a6cd0(tid, shift)` | = `tid*0x14+0x92fdd4` dw0 >= 0 && bit `shift` of `0x985c1c[tech]`; in the sweep shift = produced record's +0x30 low byte (0x41 here); rejects all 14 alpha candidates this scenario | H (asm exact) | objdump `0x5a6cd0-0x5a6d36` |
 | 0x100 marker residue | sweep ORs 0x104; `0x4ef398` cleared 193's bit 8 but 192 STILL reads 0x105 live after the run — clear scope unreconciled; the clear writes +0x31 (outside the watched low word) | OPEN | census diff `192:0x01->0x105` |
+
+## M76 — WHO CLEARS THE 0x100 SWEEP MARKER, AND FOR WHICH RECORDS (RESOLVED, PR #77, acceptance `m76marker1`)
+
+- The clear is `and BYTE PTR [ebx+0x98adb9],0xfe` at **0x4ef398**, the FIRST statement of
+  FUN_004ef380(owner, tid): ebx = tid*52 (`0x4ef386-0x4ef392` = `[ebp+0xc]` *13 << 2), so it lands on
+  the record PASSED IN; `[ebp+4]` is the caller's return address.
+- Callers of 0x4ef380 (`grep 'call   0x4ef380'`): `0x4ef5ae` in FUN_004ef540(owner) (test `0x4ef597`,
+  ret `0x4ef5b3`); `0x4f0626` in the production function FUN_004ef6d0 (test `0x4f060f`, ret
+  `0x4f062b`); `0x521479` in FUN_00521070 (the upkeep pass — it clears INLINE first: `and bh,0xfe`
+  `0x521452` + `mov WORD PTR [edi],bx` `0x52145e`); `0x5a8568` in FUN_005a7970. FUN_004ef540 itself
+  is called only at `0x5a7d14`/`0x5a7f7b`, right after a FUN_00572800 sweep call.
+- Both selectors walk the 128 slots `{0..63} U {owner*64..+63}` and call iff the flag WORD has
+  bits 0, 2 and 8 (`flags & 0x105 == 0x105`).
+- LIVE (`m54b_clean.SAV`, enqueue 194, storage 200, `scripts/m76_marker_clear.py`): the sweep marks
+  192/193 at the FIRST production (`0x5729d5 or WORD [edi+0x98adb8],0x104`); the NEXT visit of the
+  production function clears both (ret `0x4f062b`, owner 3); census 192:0x001->0x005, 193:0x041->0x045,
+  194:0x041->0x045, word_mismatch=[] — the observed stores reproduce the flag words. Gates g1-g5 True.
+- RETRACTED (M75): "192 keeps the 0x100 marker" was a snapshot artifact — the marker is transient and
+  every carrier is cleared on the next pass. Marker setters outside the sweep: `0x4f05bd`, `0x5a7d00`,
+  `0x5a7f67` (`or BYTE [...0x98adb9],1`) — 0 events here. `0x595f82/91/9c` printed tid 324/325 with
+  `$esi/52`: esi there is not a type-record pointer.
+- OPEN: which path reaches `0x4f05e2` without printing the setter at `0x4efe50`; what gates the pass
+  (`DAT_00920434 == 0 || (bVar8 & DAT_00985b10) == 0`); the upkeep and tech passes never fired here.
+Evidence: `evidence/m76marker1.gdblog`, `evidence/m76marker1_seq.jsonl`.
