@@ -766,3 +766,26 @@ COPIED register (plain MOV with `0x98adb8` addend). Instrument `scripts/m74_flag
 - OPEN: which path reaches `0x4f05e2` without printing the setter at `0x4efe50`; what gates the pass
   (`DAT_00920434 == 0 || (bVar8 & DAT_00985b10) == 0`); the upkeep and tech passes never fired here.
 Evidence: `evidence/m76marker1.gdblog`, `evidence/m76marker1_seq.jsonl`.
+
+## M77 (session 119) — what reaches the production marker-clear pass, and its gate
+- `0x4f05e2` (the 128-slot clear sweep in FUN_004ef6d0) is entered ONLY by fall-through from
+  `0x4f05e0 xor esi,esi`; in-edges `je 0x4f05e0` `0x4f05d2` + fall-through `0x4f05de`
+  (`test ds:0x985abc,0x100000`). Gate block `0x4f0591-0x4f05de`; `0x4f0599 je 0x4f0637` bails
+  when `[ebp-0x20] == 0` (the pass is not reached at all).
+- Gate operands: `DAT_00920434` (DWORD, `0x4f05a5`), `DAT_00985b10` low byte = a PER-PLAYER
+  mask (`0x4f05af`), `[ebp-0x2c]` = `1 << BYTE [base+4]` (owner) built `0x4ef804-0x4ef815`,
+  `DAT_00985abc & 0x100000` (`0x4f05d4`). Admit = `(0x920434==0 || !(mask & (1<<owner)))`;
+  then sweep iff `!(mask & (1<<owner))` or `0x985abc & 0x100000`. ELSE
+  (`0x920434!=0 && mask & (1<<owner)`) sets the marker `0x4f05bd or BYTE [rec+0x98adb9],1`
+  and skips the sweep.
+- LIVE (`scripts/m77_gate_trace.py`, tag `m77gate1`, PASS g1-g8): `0x920434=0`,
+  `0x985b10=0x08` (owner 3 set; owners 1/2/5/6 clear), `0x985abc=0x003a7168` bit20=1.
+  11 GATE visits, 10 bail on `[ebp-0x20]==0`; the one with `[ebp-0x20]=1` (owner 3,
+  `[ebp-0x1c]=10088=194*52`) took ROUTEB→SWEEPIN, cleared 192 (0x105) and 193 (0x145), both
+  end without 0x100. MARKSET 0 events while `0x920434==0` on every visit.
+- `[ebp-0x20]` writers: `0x4efe6c` (`= 1` iff flag bit 2 was clear before the `or al,4` store =
+  FIRST production of that record — the writer that admitted this sweep, printed `edx=1 tid=194`),
+  `0x4ef8c0` (1, queue-head codes 34-37; 0 events here), `0x4ef8c9`/`0x4efed1` (0).
+- RETRACTED (M76): "the clear pass fired on a visit that printed no production setter" — that
+  instrument's PRODSET cond is `*(int *)0x8f0d60 == $b`, so it cannot print for another base.
+Evidence: `evidence/m77gate1.gdblog`, `evidence/m77gate1_seq.jsonl`.

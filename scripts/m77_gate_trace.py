@@ -62,9 +62,15 @@ end
 # 0x4f0591 locals are ebp-relative; 0x4f05bd eax = tid*52 (0x4f05ba `mov eax,[ebp-0x1c]` then
 # `or BYTE PTR [eax+0x98adb9],1`); 0x4f05d4/0x4f05e0 edi = owner = [ebp-0x28]; 0x4f0626 eax = tid.
 BPS = [
-    (0x4ef6d0, "FUNCIN", "FUNCIN l20=%d owner=%d",
-     "*(int *)($ebp - 0x20), *(int *)($ebp - 0x28)", "1"),
-    (0x4f0591, "GATE", "GATE l20=%d owner=%d tid=%d bit=0x%x g20434=%d b10=0x%02x abc=0x%x",
+    (0x4ef6d0, "FUNCIN", "FUNCIN owner=%d", "*(int *)($ebp - 0x28)", "1"),
+    (0x4ef8c0, "L20ONE", "L20ONE ecx=%d q0=%d",
+     "$ecx, *(int *)(*(int *)0x8f0d60 + 0x50)", "1"),
+    (0x4ef8c9, "L20ZERO", "L20ZERO ecx=%d q0=%d",
+     "$ecx, *(int *)(*(int *)0x8f0d60 + 0x50)", "1"),
+    (0x4efe6c, "L20FLAG", "L20FLAG edx=%d tid=%d", "$edx, $esi / 52", "1"),
+    (0x4efed1, "L20CLR", "L20CLR tid=%d", "$ebx", "1"),
+    (0x4efae5, "RECSET", "RECSET tid=%d", "$ebx", "1"),
+    (0x4f0591, "GATE", "GATE l20=%d owner=%d rec=%d bit=0x%x g20434=%d b10=0x%02x abc=0x%x",
      "*(int *)($ebp - 0x20), *(int *)($ebp - 0x28), *(int *)($ebp - 0x1c), "
      "*(int *)($ebp - 0x2c) & 0xff, *(int *)0x920434, *(unsigned char *)0x985b10, "
      "*(int *)0x985abc", "1"),
@@ -77,7 +83,8 @@ BPS = [
      "$eax, *(unsigned short *)($eax * 52 + 0x98adb8)", "1"),
 ]
 
-LINE = re.compile(r"^(ARMED|FUNCIN|GATE|MARKSET|ROUTEB|SWEEPIN|CLEARCALL)\s*(.*)$")
+LINE = re.compile(r"^(ARMED|FUNCIN|L20ONE|L20ZERO|L20FLAG|L20CLR|RECSET|GATE|MARKSET|"
+                  r"ROUTEB|SWEEPIN|CLEARCALL)\s*(.*)$")
 KV = re.compile(r"(\w+)=(-?0x[0-9a-f]+|-\d+|\d+)")
 
 
@@ -269,15 +276,30 @@ def main():
     g4 = bool(gates) and all(e["g20434"] == 0 for e in gates) and not marks
     g5 = sel_ok
     g6 = bool(sweepin) and bool(cleared) and effect_ok
-    g7 = all((e["g20434"], (e["bit"] & 0xFF & e["b10"]) != 0, (e["abc"] >> 20) & 1)
-             == (g20434, (8 & b10) != 0, (abc >> 20) & 1) for e in gates)
+    # g7: the gate operands printed live match the globals read before attaching (no drift)
+    g7 = bool(gates) and all(e["g20434"] == g20434 and e["b10"] == b10 and e["abc"] == abc
+                             for e in gates)
+    # g8: every visit that reached the sweep had a NAMED nonzero writer of [ebp-0x20]
+    # (0x4ef8c0 -> 1, or 0x4efe6c -> edx != 0) as its LAST store to that local.
+    W = ("L20ONE", "L20ZERO", "L20FLAG", "L20CLR")
+    attribution = []
+    for e in sweepin:
+        i = ev.index(e)
+        last = next((x for x in reversed(ev[:i]) if x["tag"] in W), None)
+        attribution.append(None if last is None else
+                           (last["tag"], last.get("edx", last.get("ecx")), last.get("tid")))
+    g8 = bool(sweepin) and all(a is not None and (a[0] == "L20ONE" or a[1] == 1)
+                               for a in attribution)
     print(f"events: FUNCIN={len(funcin)} GATE={len(gates)} MARKSET={len(marks)} "
           f"ROUTEB={len(routeb)} SWEEPIN={len(sweepin)} CLEARCALL={len(clears)}", flush=True)
     print("cleared tids:", cleared, " 0x100-carriers after:", carriers_after, flush=True)
+    print("last [ebp-0x20] writer before each SWEEPIN:", attribution, flush=True)
+    print("writer events:", [(e["tag"], e.get("ecx", e.get("edx")), e.get("q0", e.get("tid")))
+                             for e in ev if e["tag"] in W][:24], flush=True)
     res = {"g1_instrument_alive_and_gate_fired": g1, "g2_branch_matches_operands": g2,
            "g3_shape_discriminates": g3, "g4_else_branch_dead_when_920434_zero": g4,
            "g5_selector_admits_only_carriers": g5, "g6_sweep_ran_and_effect_read_back": g6,
-           "g7_operands_match_pre_attach_read": g7}
+           "g7_operands_match_pre_attach_read": g7, "g8_sweep_visit_has_named_l20_writer": g8}
     for k, v in res.items():
         print(f"  {k}: {v}", flush=True)
     ok = all(res.values())

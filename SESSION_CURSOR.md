@@ -1,5 +1,4 @@
-M77 | acceptance m77gate1 NOT RUN YET | not merged | static done: gate block 0x4f0591-0x4f05de;
-sweep entered only by fall-through 0x4f05e0; live DAT_00920434=0, DAT_00985b10=0x08 (owner 3
-bit SET), DAT_00985abc bit20=1 -> route B admits; else-branch 0x4f05bd MARKSET dead while
-0x920434==0. Instrument scripts/m77_gate_trace.py written.
-next: timeout 500 python3 scripts/m77_gate_trace.py --tag m77gate1
+M77 | acceptance m77gate1 PASS (g1-g8 all True; 11 GATE visits, 1 sweep, MARKSET 0) | NOT merged
+yet (closing: notes/NAMED/NEXT done -> rsync skill -> commit -> gate -> submit -> merge) |
+next: milestone.py merge <PR#> after CI, then pick M78 (extend scripts/m77_gate_trace.py with the
+0x5729d5 mark store + 0x4ef398 clear to settle same-visit marks vs clears)

@@ -807,3 +807,48 @@ validator/tier path (M75 open (a)) is still untested; (d) `0x595f82/91/9c` print
 array and were left out of the replay. NEXT pick: M77 — the control flow into the production
 inline pass + `DAT_00920434`.
 Evidence: `evidence/m76marker1.gdblog`, `evidence/m76marker1_seq.jsonl`, traces `m76marker1_r0..r2`.
+
+## Session 119 (2026-10-28) — M77: WHAT REACHES the production marker-clear pass, and its GATE. ACCEPTANCE PASS (tag `m77gate1`).
+
+Static (instruction bytes, `scratch/m574/text.txt`, window `4ef6d0-4f0c60`, reverse CFG
+`scratch/m77_cfg.py`): `0x4f05e2` has ONE in-edge — the fall-through from `0x4f05e0`
+(`xor esi,esi`), whose only in-edges are `je 0x4f05e0` at `0x4f05d2` and the fall-through from
+`0x4f05de` (`test DWORD PTR ds:0x985abc,0x100000` → `je 0x4f0637`). Both come from the gate
+block `0x4f0591-0x4f05de` (in-edges: `0x4f056c`/`0x4f0578`/`0x4f057f` branches + fall-through
+`0x4f058e`), which first BAILS at `0x4f0599 je 0x4f0637` when `[ebp-0x20] == 0`. Operands:
+`eax = DAT_00920434` (`0x4f05a5`), `al = low byte DAT_00985b10` (`0x4f05af`), `bl = low byte
+[ebp-0x2c]` = `1 << owner` — `[ebp-0x2c]` is built at `0x4ef804-0x4ef815` (`mov esi,1; shl esi,cl`,
+cl = ebx = `BYTE [base+4]`, base = `*DAT_008f0d60`). Admission: `(0x920434 == 0 || !(mask &
+(1<<owner)))` → `0x4f05c6`; there, sweep iff `!(mask & bit)` (`0x4f05d2`) else iff
+`0x985abc & 0x100000` (`0x4f05d4`); the ELSE (`0x920434 != 0 && bit set`) SETS the marker at
+`0x4f05bd` and skips the sweep. The `[ebp-0x20]` writers are `0x4ef8c0` (1, queue-head special
+codes 34-37), `0x4ef8c9`/`0x4efed1` (0) and `0x4efe6c` (`edx = 1` iff the record's flag bit 2 was
+CLEAR before the `or al,4` store at `0x4efe60` — i.e. FIRST production of that record).
+
+LIVE (`scripts/m77_gate_trace.py --tag m77gate1`: reload `m54b_clean.SAV`, enqueue 194 idx 0,
+storage 200, 4 boundaries, 11 silent breakpoints): pre-attach `DAT_00920434=0`,
+`DAT_00985b10=0x08`, `DAT_00985abc=0x003a7168` (bit20=1). 11 GATE visits (owners 1,2,3,5,6):
+10 print `l20=0` and are followed by NOTHING (predicted NOENTRY, matched); the one with `l20=1`
+(owner 3, record `10088 = 194*52`) took ROUTEB (`0x4f05d4`) → SWEEPIN (`0x4f05e0`) and handed
+192 (flags 0x105) and 193 (0x145) to `0x4ef398`; both end the run WITHOUT 0x100. MARKSET 0
+events while every visit printed `0x920434 == 0` — the else branch is DEAD in this state (this
+is why M76 saw 0 events at `0x4f05bd`). Last `[ebp-0x20]` writer before the sweep printed
+`L20FLAG edx=1 tid=194` = `0x4efe6c`, first-production route; `0x4ef8c0` printed ZERO events.
+Census: b0 192=0x001 193=0x041 194=0x041; b1 192=0x105 193=0x145 194=0x045 (carriers);
+b2/b3 192=0x005 193=0x045 (clear). g1-g8 True → PASS.
+
+**RETRACTION (M76):** "the clear pass fired on a visit that printed NO production setter
+(`0x4efe50`)" is a conditioned-breakpoint artifact — M76's PRODSET cond is
+`*(int *)0x8f0d60 == $b`, so it cannot print for another base; the unconditional `0x4efe6c`
+breakpoint prints the setter on the sweeping visit.
+
+**Open.** (a) the census timing: the sweep visit's eligibility says FIRST production of 194, yet
+carriers survive to the boundary-1 census and are gone by boundary 2 — either the marks are
+re-applied later in the same turn by another FUN_00572800 caller (M76: FUN_004ef540 is called
+only at `0x5a7d14`/`0x5a7f7b`, right after a sweep call) or the census races the pass; (b)
+DAT_00920434 and DAT_00985b10 are unnamed (writers `0x50fe70/0x50fff5/0x510196/0x515ad8/
+0x516f30/0x51f267/0x52280c/0x57ed04/0x598db9/0x5a09ad` and `0x4df82e/0x4df9a3/0x4df9ab/0x4e08ca/
+0x512bf6 (imm 0x10)/0x512c0e/0x525eed/0x57f051/0x57f071/0x57f2da/0x57f2f8`); (c) the upkeep and
+tech passes still never fired. NEXT pick: M78 — same-visit marks vs clears + the other
+FUN_00572800 callers.
+Evidence: `evidence/m77gate1.gdblog`, `evidence/m77gate1_seq.jsonl`, traces `m77gate1_r0..r3`.

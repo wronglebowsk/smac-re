@@ -1,0 +1,184 @@
+[New LWP 3906331]
+[New LWP 3906330]
+[New LWP 3906329]
+[New LWP 3906328]
+[New LWP 3906327]
+[New LWP 3906326]
+[New LWP 3906325]
+[New LWP 3906324]
+[New LWP 3906323]
+[New LWP 3906322]
+[New LWP 3906321]
+[New LWP 3906320]
+[New LWP 3906319]
+[New LWP 3906318]
+[New LWP 3906317]
+[New LWP 3906316]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xebb7a32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x4ef6d0
+Breakpoint 2 at 0x4ef8c0
+Breakpoint 3 at 0x4ef8c9
+Breakpoint 4 at 0x4efe6c
+Breakpoint 5 at 0x4efed1
+Breakpoint 6 at 0x4efae5
+Breakpoint 7 at 0x4f0591
+Breakpoint 8 at 0x4f05bd
+Breakpoint 9 at 0x4f05d4
+Breakpoint 10 at 0x4f05e0
+Breakpoint 11 at 0x4f0626
+ARMED base=0x95da10 head=2 pending=1 storage=200
+FUNCIN owner=0
+L20ZERO ecx=7 q0=-7
+FUNCIN owner=1
+L20ZERO ecx=24 q0=-24
+FUNCIN owner=2
+FUNCIN owner=0
+FUNCIN owner=2
+FUNCIN owner=1
+RECSET tid=0
+FUNCIN owner=0
+FUNCIN owner=3
+FUNCIN owner=2
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+L20ZERO ecx=3 q0=-3
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=0
+RECSET tid=2
+L20CLR tid=2
+GATE l20=0 owner=1 rec=104 bit=0x2 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=1
+L20ZERO ecx=4 q0=-4
+FUNCIN owner=3
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+FUNCIN owner=2
+FUNCIN owner=0
+RECSET tid=2
+L20CLR tid=2
+GATE l20=0 owner=3 rec=104 bit=0x8 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=0
+L20ZERO ecx=7 q0=-7
+FUNCIN owner=1
+L20ZERO ecx=24 q0=-24
+FUNCIN owner=2
+FUNCIN owner=0
+RECSET tid=322
+L20FLAG edx=0 tid=322
+GATE l20=0 owner=5 rec=16744 bit=0x20 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=2
+RECSET tid=323
+L20FLAG edx=0 tid=323
+GATE l20=0 owner=5 rec=16796 bit=0x20 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=1
+RECSET tid=0
+FUNCIN owner=0
+FUNCIN owner=3
+FUNCIN owner=2
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+L20ZERO ecx=3 q0=-3
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=0
+FUNCIN owner=1
+L20ZERO ecx=4 q0=-4
+FUNCIN owner=3
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+RECSET tid=128
+L20FLAG edx=0 tid=128
+GATE l20=0 owner=2 rec=6656 bit=0x4 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=2
+FUNCIN owner=0
+RECSET tid=194
+L20FLAG edx=1 tid=194
+GATE l20=1 owner=3 rec=10088 bit=0x8 g20434=0 b10=0x08 abc=0x3a7168
+ROUTEB owner=3 bit20=1
+SWEEPIN owner=3 g20434=0 b10=0x08 l20=1
+CLEARCALL tid=192 flags=0x105
+CLEARCALL tid=193 flags=0x145
+FUNCIN owner=0
+L20ZERO ecx=7 q0=-7
+FUNCIN owner=1
+L20ZERO ecx=24 q0=-24
+FUNCIN owner=2
+FUNCIN owner=0
+FUNCIN owner=2
+FUNCIN owner=1
+RECSET tid=0
+FUNCIN owner=0
+RECSET tid=0
+FUNCIN owner=3
+RECSET tid=2
+L20CLR tid=2
+GATE l20=0 owner=6 rec=104 bit=0x40 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=2
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+RECSET tid=2
+L20CLR tid=2
+GATE l20=0 owner=6 rec=104 bit=0x40 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=0
+RECSET tid=64
+L20FLAG edx=0 tid=64
+GATE l20=0 owner=1 rec=3328 bit=0x2 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=1
+L20ZERO ecx=4 q0=-4
+FUNCIN owner=3
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+FUNCIN owner=2
+RECSET tid=131
+L20FLAG edx=0 tid=131
+GATE l20=0 owner=2 rec=6812 bit=0x4 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=0
+RECSET tid=194
+L20FLAG edx=0 tid=194
+GATE l20=0 owner=3 rec=10088 bit=0x8 g20434=0 b10=0x08 abc=0x3a7168
+FUNCIN owner=0
+L20ZERO ecx=7 q0=-7
+FUNCIN owner=1
+L20ZERO ecx=24 q0=-24
+FUNCIN owner=2
+FUNCIN owner=0
+FUNCIN owner=2
+FUNCIN owner=1
+RECSET tid=0
+FUNCIN owner=0
+RECSET tid=0
+FUNCIN owner=3
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=2
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+L20ZERO ecx=3 q0=-3
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=0
+L20ZERO ecx=27 q0=-27
+FUNCIN owner=1
+L20ZERO ecx=4 q0=-4
+FUNCIN owner=3
+FUNCIN owner=0
+L20ZERO ecx=6 q0=-6
+FUNCIN owner=1
+FUNCIN owner=2
+FUNCIN owner=0
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3906325]
+0xebb7a32c in __kernel_vsyscall ()
+[Inferior 1 (process 3906311) detached]

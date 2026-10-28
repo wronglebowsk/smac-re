@@ -1,0 +1,144 @@
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 7, "q0": -7}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 24, "q0": -24}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "RECSET", "tid": 0}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 3, "q0": -3}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 2}
+{"tag": "L20CLR", "tid": 2}
+{"tag": "GATE", "l20": 0, "owner": 1, "rec": 104, "bit": 2, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 4, "q0": -4}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 2}
+{"tag": "L20CLR", "tid": 2}
+{"tag": "GATE", "l20": 0, "owner": 3, "rec": 104, "bit": 8, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 7, "q0": -7}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 24, "q0": -24}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 322}
+{"tag": "L20FLAG", "edx": 0, "tid": 322}
+{"tag": "GATE", "l20": 0, "owner": 5, "rec": 16744, "bit": 32, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "RECSET", "tid": 323}
+{"tag": "L20FLAG", "edx": 0, "tid": 323}
+{"tag": "GATE", "l20": 0, "owner": 5, "rec": 16796, "bit": 32, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "RECSET", "tid": 0}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 3, "q0": -3}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 4, "q0": -4}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "RECSET", "tid": 128}
+{"tag": "L20FLAG", "edx": 0, "tid": 128}
+{"tag": "GATE", "l20": 0, "owner": 2, "rec": 6656, "bit": 4, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 194}
+{"tag": "L20FLAG", "edx": 1, "tid": 194}
+{"tag": "GATE", "l20": 1, "owner": 3, "rec": 10088, "bit": 8, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "ROUTEB", "owner": 3, "bit20": 1}
+{"tag": "SWEEPIN", "owner": 3, "g20434": 0, "b10": 8, "l20": 1}
+{"tag": "CLEARCALL", "tid": 192, "flags": 261}
+{"tag": "CLEARCALL", "tid": 193, "flags": 325}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 7, "q0": -7}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 24, "q0": -24}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "RECSET", "tid": 0}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 0}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "RECSET", "tid": 2}
+{"tag": "L20CLR", "tid": 2}
+{"tag": "GATE", "l20": 0, "owner": 6, "rec": 104, "bit": 64, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "RECSET", "tid": 2}
+{"tag": "L20CLR", "tid": 2}
+{"tag": "GATE", "l20": 0, "owner": 6, "rec": 104, "bit": 64, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 64}
+{"tag": "L20FLAG", "edx": 0, "tid": 64}
+{"tag": "GATE", "l20": 0, "owner": 1, "rec": 3328, "bit": 2, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 4, "q0": -4}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "RECSET", "tid": 131}
+{"tag": "L20FLAG", "edx": 0, "tid": 131}
+{"tag": "GATE", "l20": 0, "owner": 2, "rec": 6812, "bit": 4, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 194}
+{"tag": "L20FLAG", "edx": 0, "tid": 194}
+{"tag": "GATE", "l20": 0, "owner": 3, "rec": 10088, "bit": 8, "g20434": 0, "b10": 8, "abc": 3830120}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 7, "q0": -7}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 24, "q0": -24}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "RECSET", "tid": 0}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "RECSET", "tid": 0}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 3, "q0": -3}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 27, "q0": -27}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "L20ZERO", "ecx": 4, "q0": -4}
+{"tag": "FUNCIN", "owner": 3}
+{"tag": "FUNCIN", "owner": 0}
+{"tag": "L20ZERO", "ecx": 6, "q0": -6}
+{"tag": "FUNCIN", "owner": 1}
+{"tag": "FUNCIN", "owner": 2}
+{"tag": "FUNCIN", "owner": 0}
