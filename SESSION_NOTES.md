@@ -1,17 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-120-120.md` (1 sessions). Read it only when a question reaches back before session ## Session 121.
-
-## Session 121 (2026-10-28) — M79: NAME the two production-gate globals; what turns the 0x4f05bd MARKSET else-branch on. ACCEPTANCE PASS (tag `m79net5`).
-
-`python3 scripts/m79_netgame_poke.py --tag m79net5 --boundaries 3` (reload `m54b_clean.SAV`, enqueue at University Base idx 0, storage poked 200 read back 200, 11 silent breakpoints incl. POKE 0x4f05a5 (`set var *(int *)0x920434 = 1`) and RESTORE 0x4f0637, census APPENDED into the gdb log): baseline 192=0x001 193=0x041 194=0x041 carriers []; **end census 192=0x105 193=0x145 194=0x145 carriers [192,193,194] — exactly the NETGAME-ON prediction**; census replay exact 3/3; SWEEPIN/CLEAR/UPKCLR **0 events**; MARKSET tid=194 pre=0x45 once; POKE pre=0 post=1 once (owner 3, rec=10088=194*52); end globals 0x920434=0 0x985b10=0x08 0x985b11=0xff. g1-g9 True -> PASS.
-
-**THE GATE** (instruction bytes 0x4f0591-0x4f0637): bail at 0x4f0599 when `[ebp-0x20]==0`; `0x4f05a5 mov eax,ds:0x920434` / `0x4f05af mov al,ds:0x985b10`; admit iff netgame==0 OR the owner bit is absent from the mask; ELSE `0x4f05ba mov eax,[ebp-0x1c]` + `0x4f05bd or BYTE [eax+0x98adb9],0x1` (bit 0 of the flag WORD's high byte = 0x100) + `jmp 0x4f0637`, which SKIPS the clear pass. So MARKSET is netplay-only: solo netgame==0 kept it dead (m78order3 printed MARKSET 0). Poking the flag at the instruction that READS it (restored at the block's only convergence point) fires the else branch: MARKSET 0x100 on the produced record 194 and the sweep's 0x104 marks on 192/193 SURVIVE to the end census — read back from memory, not just from events.
-
-**NAMES.** `0x920434` = **netgame/multiplayer flag** (0 = single player): FUN_0057ecf0 (game launch) sets 1 at entry and clears it at its tail; 7 of its 9 writers store straight after `call 0x4e25e0`; FUN_00528930 (netplay move) returns 0 when it is 0. `0x985b10` = **human/local-player mask**, byte keyed `1 << faction` (live 0x08 = player 3), sibling `0x985b11` = 0xff = all 8 player slots; FUN_004df630 writes `= 1 << p` and `= 0x985b11 & 0xfe`, FUN_00525e10 clears `1 << *(rec+0x788)`, FUN_0057ecf0 rebuilds it from the 412-byte player array at 0x91e494 (count 0x91e2d0, live 0). **Ruled out: `1 << cur_player`** — the gate visits printed cur_player (0x985dcc) = 1, 2, 5, 6 while the mask stayed 0x08.
-
-**OPEN / PITFALLS.** (a) three instrument bugs fixed mid-milestone: the census parser must re-read `m2.group(1)` (m79net2 died on `int('BOUNDARY')`); the log tag alternation must be LONGEST-first or `MARK` swallows `MARKSET` and `POKE` swallows `POKEPOST` (m79net4 KeyError); PRODFLAG fires for EVERY record the pass walks (128/322/323/194 in m79net1), so attribute the sweep by its own predecessor. (b) the gate visit arrives in the boundary AFTER the marks: m79net2 (2 boundaries) caught the 0x104 marks but never reached 0x4f0591; a 4-boundary run dies on the 420 s foreground cap (m79net1, cut mid-window). (c) the chooser landed item 2 (`head 2 pending 1`) while 194 sat in the stale tail — and record 194's first-production visit happened anyway: the production pass WALKS the record array, the queue head is not what drives this gate. (d) 0x985b10's exact predicate (human mask vs players-with-a-controller) is inferred; the current-player reading is what the run ruled out. NEXT pick: M80 — what the record indices >= 256 are (128/322-325/385/387) and what FUN_00573a90's sweep does for them; the upkeep/tech passes still never fired.
-Evidence: `evidence/m79net5.gdblog`, `evidence/m79net5_seq.jsonl`, traces `m79net5_r0..r2`; failed instruments kept `m79net1/2/4`.
+Older sessions: `docs/sessions/sessions-121-121.md` (1 sessions). Read it only when a question reaches back before session ## Session 122.
 
 ## Session 122 (2026-10-28) — M80: THE RECORD ARRAY IS 8 FACTION BANDS OF 64; FUN_00573a90'S ARG 1 IS A FACTION; indices >= 256 ARE LIVE DESIGN SLOTS
 
@@ -365,7 +354,6 @@ HOW IT DIED BEFORE IT PASSED (three instrument defects, all mine, all fixed in p
 LIVE FACTS: the eight slots [0x94d7fc + idx*8380] right after a fresh m54b_clean load are [-1,3,8,22,49,8,5,48] - record 5 holds 8, which is the kind M86/M87 measured being handed to FUN_005a7970. A poke to -1 is refilled within one boundary by FUN_005aa880 (0x5aa9d3), and aaa20 stores -1 there itself at 0x5aaac1 just before it calls the helper. So the slot is a WORK ITEM ALLOCATION, not a constant: 45, 13, 36 were allocated in three consecutive windows.
 
 OPEN (M89 pick): FUN_005aa880 has 4 callers - name them (containment of the call sites), and decide what the allocated value indexes (the 1436-byte record at 0x9275c4 + idx*1436 and the 3-entry table 0x93325c/68/74 with shorts 10/25/26 are the two candidates FUN_005a7970 reads). Evidence: evidence/m88slot1.gdblog ... m88slot6.gdblog; scratch/m88slot*.gdb.
-
 
 ## Session 140 (2026-10-28) — M89: the slot value is FUN_005ab000's return; FUN_005aadf0 asks for one the moment the slot is negative (m89alloc1 PASS 8/8, m89alloc2 PASS 8/8)
 
