@@ -57,7 +57,7 @@ game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
 
 **M85: the turn boundary — does it reach tech/upkeep at all?** s135 CLOSED the 0x4d00 thread (opening-menu vocabulary, measured; do not retry the poke).
 Next: `python3 scripts/m55_boundary.py --tag m85bnd1 --boundaries 3` plus a PRINTF-ONLY census on `0x52145e / 0x5a7d00 / 0x5a7f67` (tech/upkeep: 0 events in 8 boundaries at M67 — the game or the instrument?) and one bp on the boundary entry.
-s136 result: the split is PROVEN statically (0x52145e in FUN_00521070 = MP-only, 1 caller; 0x5a7d00/0x5a7f67 in FUN_005a7970 = 47 callers) and the live arm is blocked by the TURN TRIGGER (Return inert, m55 fails without gdb too). PASS iff each site is seen with its argument read back, or provably unreachable; print-only bps, /proc read-back.436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
+s136: PROVEN statically (0x52145e in FUN_00521070 = MP-only, 1 caller; 0x5a7d00/0x5a7f67 in FUN_005a7970 = 47 callers). Live arm blocked at the BOX: no X focus (`getactivewindow` empty), Return inert both ways, m44_idle exits rc=0 with year still 2150. FIRST fix focus (`xdotool windowactivate --sync 10485761`, needs a WM), then `m85_tech_census --tag m85cens4 --rounds 1`. PASS iff each site is seen with its arg read back, or provably unreachable.436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
 
 ## STILL OPEN (in priority order)
 

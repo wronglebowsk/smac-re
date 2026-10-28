@@ -148,7 +148,8 @@ def static_facts():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", required=True)
-    ap.add_argument("--timeout", type=int, default=120)
+    ap.add_argument("--timeout", type=int, default=420)
+    ap.add_argument("--rounds", default="1")
     ap.add_argument("--settle", type=float, default=4.0)
     a = ap.parse_args()
 
@@ -180,9 +181,14 @@ def main():
     print([l for l in head.splitlines() if l.startswith("ARMED")][0], flush=True)
 
     t0 = time.time()
-    r1 = subprocess.run([sys.executable, os.path.join(HERE, "m55_boundary.py"),
-                         "--timeout", str(a.timeout)], capture_output=True, text=True,
-                        timeout=a.timeout + 150)
+    # DRIVER: m44_idle advances rounds by CLICKING the pane bars (colour route). The box has
+    # NO X input focus (`xdotool getactivewindow` is empty), so m55_boundary's Enter never lands
+    # and no keyboard path can end a turn here; the pointer path still works.
+    r1 = subprocess.run([sys.executable, os.path.join(HERE, "m44_idle.py"),
+                         "--tag", a.tag + "_drv", "--rounds", a.rounds, "--budget", str(a.timeout)],
+                        capture_output=True, text=True, timeout=a.timeout + 120)
+    if r1.returncode != 0:
+        print("driver stderr:", (r1.stderr or "").strip()[-400:], flush=True)
     print(f"driver rc={r1.returncode} t={time.time()-t0:.0f}s  {r1.stdout.strip().splitlines()[-1][:120] if r1.stdout.strip() else ''}", flush=True)
     time.sleep(a.settle)
     try:
