@@ -30,7 +30,7 @@ product, NOT `price_of` — head 193 wanted 27 where `price_of` said 18 — and 
 instrument `scripts/m72_gate_watch.py`**), slots
 1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
 NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
-reading, and the live write-enumeration acceptance in §9),
+reading, the live write-enumeration acceptance in §9, and §10 (why a site never fires: its gates, the block's common exit, who sets the gate global)),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `screen-read.md` (why ONE OCR pass is not a screen read: the HUD's two rows, their measured read
 rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-formats.md`,
@@ -75,7 +75,7 @@ to turn it green is the one thing that is never allowed.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
 `NEXT_PROMPT.md` (<=15,500 bytes). `scratch/` is gitignored: scratch probes and one-off tools are
 NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
-tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, run `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`
+tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, `diff -rq ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/` first, then copy whichever side is NEWER — plain `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/` when the live skill is ahead, `cp -a ~/reverse/smac/skill/. ~/.hermes/skills/smac-cvr-format/` when the repo copy is (a sibling session may have edited it since, and a blind `rsync -a` overwrites its newer references with yours)
 — the gate compares only `SKILL.md`, so an edited reference, template or script drifts silently
 otherwise. Editing this skill therefore leaves the repo copy stale until the next sync; do that
 sync in the same session, before the closing commit.
@@ -154,7 +154,9 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   finished 15.6 k file costs three follow-up patch calls for 60 characters, more than the overage.
   Patching an over-budget file down costs roughly one call per 100 bytes of net reduction, so when a
   section edit ADDS text, pair it in the same call with a compensating deletion elsewhere (retire the
-  oldest ledger paragraph or a stale box-state bullet) instead of chasing the overage afterwards.
+  oldest ledger paragraph or a stale box-state bullet) instead of chasing the overage afterwards. Measure
+  the size BEFORE the first patch: a file already over the cap when you open it makes your edit net-negative,
+  so the trim is planned in the same call as the addition, not discovered at the gate.
   **Trust only `python3 scripts/evidence.py budget` for that number** — it counts CHARS, and chars do
   not equal `wc -c` / `os.path.getsize` (a file measuring 15,988 bytes scored 16,052 chars and failed
   the gate), so trim until the tool's own line says `warn`, then stop. When trimming, DELETE whole
@@ -169,7 +171,7 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   `execute_code` cell that prints only the size delta — the file never enters context and a wrapped
   section lands on the first try.
 - **A gdb breakpoint that reads the WRONG register prints garbage and can kill the whole run**: the printf fault (`Cannot access memory at address 0xa774`) aborts the breakpoint's commands block and gdb DETACHES the inferior, so the run dies mid-window. Read the store's own bytes first — `mov eax,[ebp-0x4]` followed by `mov [eax+0xa774],-1` means the object is in EAX at that address, whatever the pseudo-code called it. The same trap applies to SIGNS: a 32-bit sentinel printed with `%d` prints NEGATIVE (0xffffd8f1 -> -9999), so print it as `0x%x` and gate on the unsigned constant, never on the positive decimal.
-- **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them, re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance (`references/git-workflow.md`).
+- **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them, re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last. When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on `pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance (`references/git-workflow.md`).
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
