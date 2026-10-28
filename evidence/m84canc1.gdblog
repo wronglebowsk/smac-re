@@ -1,0 +1,34 @@
+[New LWP 29800]
+[New LWP 29799]
+[New LWP 29798]
+[New LWP 29797]
+[New LWP 29796]
+[New LWP 29795]
+[New LWP 29794]
+[New LWP 29790]
+[New LWP 29789]
+[New LWP 29788]
+[New LWP 29787]
+[New LWP 29786]
+[New LWP 29785]
+[New LWP 29784]
+[New LWP 29783]
+[New LWP 29782]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe867832c in __kernel_vsyscall ()
+Breakpoint 1 at 0x41860f
+Breakpoint 2 at 0x496a43
+Breakpoint 3 at 0x497683
+Breakpoint 4 at 0x418d7d
+Breakpoint 5 at 0x577280
+ARMED ptr=0x95ef70 fac=3 pend=0 head=2
+GATE buf=0x6a9e9c cancel=3 result=5
+SENT ptr=0x95ef70 fac=3 edi=2
+ARM buf=0x0 pre=/home/n100/reverse/smac/scratch/m84canc1.gdb:36: Error in sourced command file:
+Cannot access memory at address 0xa774
+[Inferior 1 (process 29779) detached]
