@@ -35,6 +35,37 @@ import argparse, json, os, re, signal, struct, subprocess, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import m74_flag_watch as F
+import accept_ready as AR
+import smac_play as P
+
+
+def normalize_screen(maxtries=6):
+    """Drive the screen to 'hud' WITHOUT ever confirming a quit prompt.
+
+    A dialog takes Return; a base PANE takes Escape; a quit-prompt takes Escape (that is its
+    "Oops, no, wait!" answer — Return/OK quits the game).  m77_close_pane.py pressing Escape while
+    the bare map classifies as 'unknown' is what RAISES the quit prompt, after which every click
+    the enqueue makes is swallowed (run m78order2 attempt 0-2: pending stayed 0).
+    """
+    P.WIN = P.find_window()
+    seen = []
+    for _ in range(maxtries):
+        kind, bar, txt = AR.look(tag="m78_fix")
+        seen.append(kind)
+        if kind == "hud":
+            return True, seen
+        if kind == "quit-prompt":
+            P.key("Escape")
+        elif kind == "dialog":
+            P.key("Return")
+        elif kind == "base":
+            P.key("Escape")
+        else:
+            return False, seen
+        time.sleep(1.2)
+    kind, bar, txt = AR.look(tag="m78_fix")
+    seen.append(kind)
+    return kind == "hud", seen
 
 BASE_NAME = "University Base"
 PROD = 194
@@ -187,6 +218,8 @@ def main():
           (before[192] | MARKER, before[193] | MARKER), flush=True)
     print(f"the shape discriminates: {pred_same != pred_across}", flush=True)
 
+    ok_scr, seen = normalize_screen()
+    print(f"screen normalized before enqueue: hud={ok_scr} saw={seen}", flush=True)
     landed = False
     for attempt in range(3):
         r = subprocess.run([sys.executable, os.path.join(F.ROOT, "scripts", "m57_ui_enqueue.py"),
@@ -198,9 +231,9 @@ def main():
             landed = True
             break
         print(f"enqueue attempt {attempt}: rc={r.returncode} head {row['slots'][0]} "
-              f"pending {row['pending']}", flush=True)
-        subprocess.run([sys.executable, os.path.join(F.ROOT, "scripts", "m70_clear_dialog.py")],
-                       capture_output=True, text=True)
+              f"pending {row['pending']} out={r.stdout[-300:]!r}", flush=True)
+        ok_scr, seen = normalize_screen()
+        print(f"  recovery normalize: hud={ok_scr} saw={seen}", flush=True)
     print(f"after enqueue: head {row['slots'][0]} pending {row['pending']} landed={landed}", flush=True)
     if not landed:
         raise SystemExit(f"{a.tag}: enqueue did not land (pending {row['pending']})")
