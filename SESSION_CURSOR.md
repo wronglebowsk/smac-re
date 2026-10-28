@@ -1,2 +1,2 @@
-M84 IN FLIGHT (branch milestone/m84 from main 7a69b20; M83 static lives unmerged on milestone/m83) | acceptance: none run yet | merged? no | next: python3 scripts/m70_clear_dialog.py then accept_ready.py (screen reads 'dialog' NETFLASH modal)
-PICK M84 = what makes 0x496ad0 return +9999 (sole entry to the FUN_00577280 call at 0x418d8a). Static first (dis 0x496ad0); live only if static says the live shape can discriminate.
+M84 IN FLIGHT (milestone/m84, checkpoint 3225826 committed) | acceptance NOT yet run: python3 scripts/m84_cancel_sentinel.py --tag m84canc1 --escape --no-ok | merged? no | next: run acceptance, then closing (notes/NAMED/NEXT_PROMPT/rsync/commit/gate/submit-merge)
+FINDING (static, bytes): 0x496ad0 returns +9999 iff [buf+0xa774]==-1 && [buf+0xa778]==0 (gate 0x497683/0x49768f, -1 written ONLY at 0x496a43 handler case 7 and 0x495541); chooser object 0x6A9E9C uses the SAME +0xa774 guard.
