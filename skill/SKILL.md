@@ -594,6 +594,27 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
   the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
   the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank).
+- **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
+  `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors
+  "claims not to support" even when focus is perfect). The authoritative check is
+  `xdotool getwindowfocus getwindowname` == "Sid Meier's Alpha Centauri", and
+  `xdotool windowfocus 10485761` works WITHOUT a WM (windowactivate is the WM-needing verb; s136
+  misread this and lost a session). Prove keys land cheaply before blaming the box: one Escape on an
+  open base pane flips classify base->hud. A box CAN still swallow turn-end input with focus fine:
+  at the s135 state (2150 r50) XTEST Return AND a click on the measured TURN COMPLETE center both
+  did nothing (no confirm dialog, round unchanged) — the repair is a fresh save load
+  (`SMAC_SAVE=... scripts/m54a_load.py --relaunch`), which restored the boundary immediately.
+  `scripts/m44_idle.py` is NOT a driver under gdb: it asserts `TracerPid == 0` at entry (census gdb
+  IS the tracer) and its `--rounds 1` snapshot condition `y > last_year - 1 and not rounds` counts
+  the CURRENT turn as a completed round, so it exits rc=0 in 0 s having done nothing — use
+  `scripts/m55_boundary.py` (no tracer assert, windowfocuses itself) as the boundary driver.
+  Corollary for acceptances: any milestone whose PASS needs a boundary must gate on a live year/round
+  DELTA read from /proc/pid/mem first, or it will "prove" its sites unreachable from a box that
+  could not run them at all.
+- **Vision-tool coordinates are SCALE-SHIFTED on 800x600 frames; click targets must come from OCR
+  word bboxes or pixel scans.** s137: vision put the TURN COMPLETE bar at y~471 (real y 405-427, OCR
+  bbox center 675,416); the click at the vision coord hit the recenter box (y~484) and only scrolled
+  the map — it looked like "clicks land but the engine ignores the button".
 - **"Do you really want to quit?" is the killer dialog.** Escape returns to "Oops, no, wait!"; never
   click OK (the next OK exits the game and the process vanishes silently). Its banner IS the game title,
   so a classifier can mistake it for the title screen — this is also why the driver's own Escape press
@@ -714,6 +735,16 @@ otherwise**: arm one control breakpoint whose hit is guaranteed in the window an
 read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
 armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
 never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
+**Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
+count** — one `ghidra_out/index.csv` read splits the two causes without touching the box. The header is
+`addr,name,size_bytes,n_insns,n_callers,...`: read it, then match `addr <= site < addr+size_bytes`. A
+site inside a function with ONE call site, where the docs/strings name a mode you are not in (e.g. the
+multiplayer stage driver), is unreachable BY DESIGN — no re-run will ever log it. Two sites inside the
+SAME many-caller helper, one of whose callers sits in the human-turn loop, are an UNTAKEN BRANCH: the
+game is live, the breakpoint asked the wrong question. A `csv.DictReader` over this file with guessed
+column names and a bare `except: continue` reports "no containing function" for EVERY address — read
+the header line first, and print the resolved row so a wrong lookup cannot impersonate a finding.
+
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
 value — a class with no live instance logs zero hits at every one of its methods no matter how the

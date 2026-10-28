@@ -36,7 +36,8 @@ conditional (0x419464/79/8e/92 jump past 0x4194a9) AND gated at 0x4193b2-0x4193b
 ds:0x920434 != 0 (s134: 1 only from FUN_0057ecf0, the opening-menu loop; live 0), so a loaded
 game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
 **M84f (s135, milestone/m84f, `m84fpath1` FAIL on my own G4; leg4/5 invalid) — THE GATE IS MEASURED LIVE:** on a real UI insert (`m84fpath1`) the block RUNS — CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, netgame 0, pend 5->6 — and stops at `mov eax,ds:0x920434` / `je 0x4194b1` (cursor zero + 0x4eb6b0, NO POST). gdb bp lists must be PRINTF-ONLY (a memory write aborts the batch: 'not an lvalue', then DETACH); poke ds:0x920434 via python /proc/pid/mem. Flag-1 arm unmeasured: box 2150 r50, chooser EMPTY. NAMED M84f.
-**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 / 0 / +/- the seeked node's +4 KEY and no writer ever inserts 9999. 0x4a99e0 is vtable slot 100 of a class with ZERO live instances. NAMED M84c/M84d.
+**M85 (s136-s137, milestone/m85 PR #90, `m85cens5` PASS) — THE SOLO BOUNDARY IS LIVE AND ENTERS THE HELPER:** FUN_00521070 (MP 7-stage driver) 0 visits -> 0x52145e silence by design; FUN_005a7970 entered once/boundary (eax=0, ret 0x569948 inside FUN_0055f650, NOT the human-loop 0x507e57); tails 0x5a7d00/0x5a7f67 UNTAKEN branches; 0x51f320 fires once. m44_idle cannot drive under gdb (asserts TracerPid==0; rounds=1 snapshot degenerate) — census drives with m55_boundary. The s135 box state swallowed Enter AND measured bar clicks (cause not isolated; fresh load repairs). NAMED M85.
+**M84c+M84d (s131/s132, `m84cprobe1`+`m84dky1` FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** 0x496ad0 returns only -9999 / 0 / +/- the seeked node's +4 KEY; no writer inserts 9999; 0x4a99e0 is vtable slot 100 of a class with ZERO live instances. NAMED M84c/M84d.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e, A = 0x4e40a0(owner,1,-1), B = 0x5ac950(head,...); the markup is skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60) and first calls FUN_00572800 (0x4efe7e). NAMED.
 **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count. Branches hold their scripts.
 
@@ -55,15 +56,14 @@ game can only exit the block at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
    `budget`, `scratch/m71/dis.py LO HI` (objdump window).
 ## THE PICK
 
-**M85: the turn boundary — does it reach tech/upkeep at all?** s135 CLOSED the 0x4d00 thread (opening-menu vocabulary, measured; do not retry the poke).
-Next: `python3 scripts/m55_boundary.py --tag m85bnd1 --boundaries 3` plus a PRINTF-ONLY census on `0x52145e / 0x5a7d00 / 0x5a7f67` (tech/upkeep: 0 events in 8 boundaries at M67 — the game or the instrument?) and one bp on the boundary entry.
-s136: PROVEN statically (0x52145e in FUN_00521070 = MP-only, 1 caller; 0x5a7d00/0x5a7f67 in FUN_005a7970 = 47 callers). Live arm blocked at the BOX: no X focus (`getactivewindow` empty), Return inert both ways, m44_idle exits rc=0 with year still 2150. FIRST fix focus (`xdotool windowactivate --sync 10485761`, needs a WM), then `m85_tech_census --tag m85cens4 --rounds 1`. PASS iff each site is seen with its arg read back, or provably unreachable.436-byte records); FUN_00498e20's single caller; the writer of ds:0x888514.
+**M86: the helper's boundary visit — which leg does eax=0 take, and what gates 0x5a7d00 / 0x5a7f67?** M85 CLOSED (m85cens5 PASS, #90): FUN_00521070 never entered in solo (0x52145e silence BY DESIGN); FUN_005a7970 entered ONCE per boundary, eax=0, return site 0x569948 = inside FUN_0055f650 (54483 B, call sites 0x50dd84 / 0x56cf12), NEITHER tail ran; 0x51f320 round-inc fires once/boundary.
+Next: `python3 scratch/m71/dis.py 5a7970 5a7d20` and `5a7f40 5a7f80` (entry + tail branch bytes); identify the function containing 0x50dd84 (index.csv containment — the boundary's real path into the helper); then extend m85_tech_census's gdb template with PRINTF-ONLY bps at the branch decision points and re-run `scripts/m85_tech_census.py --tag m86cens1`. FIRST fresh-load the box (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`) — the s135 state swallows turn-end input. PASS iff the taken leg is named by its own branch bytes AND the two tails' gate operands are read back. Residue: chooser case 7 (no direct call 0x496950); cursor print at 0x49771c; bit 5 (0x531782); who clears bit 6; alpha 0x5a6cd0; ds:0x920434 save_later-vs-NETGAME.
 
 ## STILL OPEN (in priority order)
 
-1. **M85 (the pick): boundary -> tech/upkeep census** — see THE PICK. Residue: chooser widget case 7
-   (no direct `call` to 0x496950); print the cursor at **0x49771c** (after the seek at 0x497717); bit 5
-   (0x531782); who clears bit 6; alpha 0x5a6cd0; **0x4d00 = CLOSED** (opening-menu vocabulary).
+1. **M86 (the pick): the helper's boundary visit** — see THE PICK. Residue: chooser case 7 (no direct
+   `call` 0x496950); cursor print at **0x49771c**; bit 5 (0x531782); who clears bit 6; alpha 0x5a6cd0;
+   **0x4d00 = CLOSED**; ds:0x920434 naming conflict recorded.
 2. **M67's plan-descending LIST order has no code behind it**: zero sites read plan byte `+42`; the
    only 52-byte type-address computations (0x40ad92/0x4164dd/0x4188f9/0x418932) hand records to
    string builders.
@@ -73,8 +73,11 @@ s136: PROVEN statically (0x52145e in FUN_00521070 = MP-only, 1 caller; 0x5a7d00/
 
 ## LIVE FACTS / KIT
 
-- **Box at s135:** `terran.exe` UP, `m54b_clean.SAV` (s135 reloaded it: 2150 r50, chooser candidates EMPTY); at s133 University
-   Base queue depth 14, Korolev 1. **The PANE decides where INSERT lands:** pass the index the pane
+- **Box at s137:** `terran.exe` UP, `m54b_clean.SAV` FRESH-LOADED (boundaries live, 2153 r53; the s135
+   state swallowed Enter AND measured bar clicks — fresh load is the repair; chooser candidates were
+   EMPTY at 2150, re-check at 2153). X focus: `windowfocus 10485761` works WITHOUT a WM;
+   `getactivewindow` ALWAYS errors (:99 has no WM) — trust `getwindowfocus getwindowname`; keys land
+   (one Escape flips classify base->hud). **The PANE decides where INSERT lands:** pass the index the pane
    shows (read `*(int *)0x6a9480 + 0x3ff3c`), else the queue grows on another base while m57 prints
    "INSERT 1 never landed" (s133). A quit-prompt mid-window swallows every click — run
    `m78_mark_clear.normalize_screen()` (it Escapes a quit-prompt; Return QUITS the game) first. Records are re-inited between rounds — a census is a snapshot. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
@@ -118,6 +121,11 @@ s136: PROVEN statically (0x52145e in FUN_00521070 = MP-only, 1 caller; 0x5a7d00/
 - **PRODFLAG (0x4efe60) fires for EVERY record the pass walks** (m79net1: 128/322/323/194 — FACTION
   BANDS, M80): attribute the sweep by its own predecessor. **The gate visit arrives in the boundary
   AFTER the sweep marks** (m79net2): a poke window needs >= 3 boundaries, 4 overruns the 420 s cap.
+- **Focus: `getactivewindow` is a RED HERRING (always errors, no WM on :99) — use `getwindowfocus
+  getwindowname`.** A box can swallow turn-end input WITH focus fine (s135 state): prove keys land via
+  a classify flip before blaming input. **Vision-tool coords are SCALE-SHIFTED** — click targets from
+  OCR word bboxes (TURN COMPLETE center (675,416); (685,471) is the recenter box). **m44_idle asserts
+  TracerPid==0** — never a driver under a census gdb; use m55_boundary.
 - A clean reload does NOT carry records created live last session (M80's 324/325 vanished on reload,
   reappeared between runs): census the watched slots BEFORE arming.
 - base+0xd0 (`credit`) is written ONLY at 0x6310c6/0x631154 (player-record init) — income is never

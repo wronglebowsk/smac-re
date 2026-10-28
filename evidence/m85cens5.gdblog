@@ -1,0 +1,36 @@
+[New LWP 202030]
+[New LWP 202029]
+[New LWP 202028]
+[New LWP 202027]
+[New LWP 202026]
+[New LWP 202022]
+[New LWP 201972]
+[New LWP 201971]
+[New LWP 201970]
+[New LWP 201969]
+[New LWP 201968]
+[New LWP 201967]
+[New LWP 201966]
+[New LWP 201965]
+[New LWP 201964]
+[New LWP 201963]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xeb25232c in __kernel_vsyscall ()
+ARMED round=52 year=2152 savelater=0
+Breakpoint 1 at 0x521070
+Breakpoint 2 at 0x5a7970
+Breakpoint 3 at 0x52145e
+Breakpoint 4 at 0x5a7d00
+Breakpoint 5 at 0x5a7f67
+Breakpoint 6 at 0x51f320
+HELPER n=1 eax=0 ret=5699752
+ROUNDINC n=1 round=52
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xeb25232c in __kernel_vsyscall ()
+[Inferior 1 (process 201960) detached]
