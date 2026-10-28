@@ -231,3 +231,52 @@ census is step one and the proof is a replay against live memory.
     `group(1)` is the WHOLE match — branch on a group from inside the taken branch, or a good log
     crashes the parser. Never judge watchpoint arming from one early read of the gdb log: poll for the
     ARMED line (a 3 s single read failed a run that had armed all four watchpoints).
+11. **For a WHO-CALLS / WHEN claim, read the return address off the stack and assert the chain from the
+    log, not from pseudocode adjacency.** Breakpoint the callee's FIRST instruction and print
+    `*(int *)$esp` — the return address names the caller with no backtrace (arguments are
+    `*(int *)($esp + 4)`, `+ 8`, … because the bp sits before `push ebp; mov ebp,esp`). One hit matching
+    the predicted site proves A caller; require **every** entry row to carry that same return address
+    before writing "the only caller" — the pair that proves exclusivity is a single `call 0x…` in the
+    whole-image grep AND an all-rows match, and a gate that passes on zero rows proves nothing. Then gate
+    the trigger too: require each entry row to be immediately preceded, in log (program) order, by the row
+    the static reading says gates it — e.g. the branch whose compared register holds the value a named
+    callee returned, printed at the instruction right after that call. Locate that producer from the
+    disassembly, not from pseudocode line order (`references/code-atlas.md`), and let the scorer print the
+    distinct values the callee actually returned: a run where the sentinel never appeared is an unusable
+    window, not a negative answer about the caller.
+
+## 10. "Why does this site never fire": its gates, its common exit, who sets the gate global
+
+Answer reachability STATICALLY before arming anything: a site behind a mode gate logs zero hits in the
+other mode, and the run then reads like an instrument failure when it is already the answer.
+
+1. **List the jumps that skip the site.** Disassemble the block AHEAD of it (`scratch/<id>/dis.py
+   <block_start> <site>`) and collect every `je`/`jne`/`jg`/`ja`/`jmp` whose target lands past the site.
+   Each is a gate: name the tested global or register. A site whose gates test a GLOBAL is a MODE question,
+   not a WHEN question — no window choice makes it fire.
+2. **Find the block's COMMON EXIT.** Several gates usually jump to the SAME instruction. A breakpoint at or
+   after that shared landing point fires on the ordinary path too, so a hit there proves the BLOCK ran, not
+   that the gated branch ran. Zero hits at the gated site together with hits at its common-exit neighbour is
+   fully explained by the gates — report the pairing, because it is what separates "dead path" from "the
+   breakpoint never armed".
+3. **Who writes a bare global: comma = store.** objdump's Intel output prints the DESTINATION first, so a
+   comma immediately after the address means the global is being written:
+   `grep -n 'ds:0x920434,' evidence/<id>_text_disasm.txt` → every `mov DWORD PTR ds:…,reg`.
+   Run a SECOND grep for the source-less read-modify-write forms, which carry no comma:
+   `grep -nE '(inc|dec|add|sub|and|or|xor|shl) +(DWORD|BYTE) PTR ds:0x920434'`.
+   Loads (`mov reg,DWORD PTR ds:…`) and tests (`cmp DWORD PTR ds:…,0x0`) match neither, so "all N references
+   are reads" is only true after BOTH greps come back empty.
+4. **Pair each pseudocode write with its owning function, then name the mode from that function's strings:**
+   ```bash
+   grep -rn -B80 'DAT_00920434 = ' ghidra_out/*.c | grep -E '// ==== FUN_|DAT_00920434 = '
+   sed -n '<fn_start>,<fn_end>p' ghidra_out/shard_NNN.c | grep -oE 's_[A-Za-z0-9_]+_[0-9a-f]+' | sort -u
+   ```
+   The export prints a `// ==== FUN_<name> @ 0x<addr> size=` banner per function, so `-B80` piped through a
+   banner grep attributes every assignment to a function in ONE call. The UPPER_CASE string tokens a function
+   references name the screen it belongs to (`INTRO`/`SCENARIO`/`TOPMENU`/`MULTIMENU`/`*_pcx` = the opening
+   movie and its menus), which is how a mode gets identified without a live probe.
+5. **Report the mode, not the miss.** If the flag is written 1 by exactly one function and 0 by every other
+   writer, and the live value is 0, the gated path is dead in the current mode: name the owning mode, keep
+   the acceptance FAIL with its numbers, and make the next milestone ONE variable (poke the gate global, or
+   enter the mode that sets it) rather than another window on the same state. A path with no live instance
+   (`references/code-atlas.md` vptr scan) and a path behind a mode flag are the same finding shape.

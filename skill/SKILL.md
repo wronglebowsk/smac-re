@@ -30,12 +30,13 @@ product, NOT `price_of` — head 193 wanted 27 where `price_of` said 18 — and 
 instrument `scripts/m72_gate_watch.py`**), slots
 1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
 NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
-reading, and the live write-enumeration acceptance in §9),
+reading, the live write-enumeration acceptance in §9, and §10 (why a site never fires: its gates, the block's common exit, who sets the gate global)),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `screen-read.md` (why ONE OCR pass is not a screen read: the HUD's two rows, their measured read
 rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-formats.md`,
 `ghidra-batch-export.md`, `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
 need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
+**Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move.
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
 RE. Five spines (boot, solo turn, unit orders/combat, research/tech, save/load) drive Phases 1–2.
@@ -74,12 +75,19 @@ to turn it green is the one thing that is never allowed.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
 `NEXT_PROMPT.md` (<=15,500 bytes). `scratch/` is gitignored: scratch probes and one-off tools are
 NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
-tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, run `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`
+tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, `diff -rq ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/` first, then copy whichever side is NEWER — plain `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/` when the live skill is ahead, `cp -a ~/reverse/smac/skill/. ~/.hermes/skills/smac-cvr-format/` when the repo copy is (a sibling session may have edited it since, and a blind `rsync -a` overwrites its newer references with yours)
 — the gate compares only `SKILL.md`, so an edited reference, template or script drifts silently
 otherwise. Editing this skill therefore leaves the repo copy stale until the next sync; do that
 sync in the same session, before the closing commit.
 
 ## Session discipline (this project is context-heavy)
+
+- `milestone.py start <id>` resets the working tree to main: any footing carried from an unmerged
+  branch (docs + scripts via `git checkout <branch> -- ...`) AND `SESSION_CURSOR.md` must be
+  re-written AFTER it, or the cursor reverts and a later write is refused as stale.
+- A list cursor read BEFORE the seek is the PREVIOUS cursor: the chooser pump seeks with
+  `call 0x4026b0` (0x497717) and only then reads `[[c+0xc]+4]`; a node print at the pump entry
+  (0x497704) shows the old node, so a value-vs-node gate fails on the instrument, not the game.
 
 Paul wants SMAC RE broken into **small pieces**: complete ONE milestone, write it to a
 file, append one dated line to `~/reverse/smac/SESSION_NOTES.md`, then STOP — ending
@@ -146,10 +154,19 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   finished 15.6 k file costs three follow-up patch calls for 60 characters, more than the overage.
   Patching an over-budget file down costs roughly one call per 100 bytes of net reduction, so when a
   section edit ADDS text, pair it in the same call with a compensating deletion elsewhere (retire the
-  oldest ledger paragraph or a stale box-state bullet) instead of chasing the overage afterwards.
+  oldest ledger paragraph or a stale box-state bullet) instead of chasing the overage afterwards. Measure
+  the size BEFORE the first patch: a file already over the cap when you open it makes your edit net-negative,
+  so the trim is planned in the same call as the addition, not discovered at the gate.
   **Trust only `python3 scripts/evidence.py budget` for that number** — it counts CHARS, and chars do
   not equal `wc -c` / `os.path.getsize` (a file measuring 15,988 bytes scored 16,052 chars and failed
-  the gate), so trim until the tool's own line says `warn`, then stop. When trimming, DELETE whole
+  the gate), so trim until the tool's own line says `warn`, then stop. **Leave >100 bytes of headroom, not four**:
+  `scripts/test_loop.py` (the gate self-test CI runs) appends a few bytes to `NEXT_PROMPT.md` in a
+  throwaway worktree and then asserts "valid milestone is GREEN", so a 15,996-byte prompt makes CI's
+  gate FAIL at case 4 while your own `gate.py` run is GREEN. When CI says `gate fail` and the local run
+  is GREEN, reproduce with `python3 scripts/test_loop.py` (five cases, it prints which one breaks)
+  rather than re-running the gate; the worktrees check out HEAD, so an UNCOMMITTED trim fixes nothing —
+  commit it, then re-run. Inside such a worktree, `python3 scripts/evidence.py budget` names the
+  offending doc and its limit (that is where `FAIL (always)` shows up), which is faster than guessing. When trimming, DELETE whole
   sentences or bullets: rewording trades characters for characters and the check stays red. Well
   over it, move footing into `FOOTING.md` at the repo root (or a `references/`
   file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
@@ -160,6 +177,8 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   build the search pattern by joining the tokens with `\s+` in a regex and apply several edits inside one
   `execute_code` cell that prints only the size delta — the file never enters context and a wrapped
   section lands on the first try.
+- **A gdb breakpoint that reads the WRONG register prints garbage and can kill the whole run**: the printf fault (`Cannot access memory at address 0xa774`) aborts the breakpoint's commands block and gdb DETACHES the inferior, so the run dies mid-window. Read the store's own bytes first — `mov eax,[ebp-0x4]` followed by `mov [eax+0xa774],-1` means the object is in EAX at that address, whatever the pseudo-code called it. The same trap applies to SIGNS: a 32-bit sentinel printed with `%d` prints NEGATIVE (0xffffd8f1 -> -9999), so print it as `0x%x` and gate on the unsigned constant, never on the positive decimal.
+- **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them, re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last. When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on `pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance (`references/git-workflow.md`).
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
@@ -182,7 +201,11 @@ consumes the summary's output budget, which is why the summary truncates instead
 **Append to evidence/notes docs with the `patch` tool, not a shell heredoc.** The command blocklist scans
 HEREDOC BODY TEXT as well as the command (a sentence containing `init 0` trips the `init 0|6` shutdown rule
 and the whole append is refused), and backticks inside a `python3 -c "…"` payload are command-substituted by
-the shell, silently deleting those fragments — grep the written region after any shell-embedded write. An
+the shell, silently deleting those fragments — grep the written region after any shell-embedded write.
+Never CHAIN commands after a heredoc delimiter in one command block: if the delimiter does not land on its
+own line the shell swallows the delimiter text and every later command in the block silently becomes file
+content (a `cat >> NOTES` ate the `cat >> NAMED` that should have carried the registry block). Run an
+append in its own call, then read back the tail of BOTH files. An
 `execute_code` cell is hard-killed on its own timeout and does NOT stop a turn driver it spawned: `ps -p
 <pid>` for the orphan and kill that exact pid — this checkout's `smac_play.py` has **no `--mode stop`**
 flag (an earlier note here claimed otherwise), and never `pkill -f`/`pgrep|kill` by name: your own argv
@@ -571,6 +594,27 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
   the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
   the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank).
+- **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
+  `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors
+  "claims not to support" even when focus is perfect). The authoritative check is
+  `xdotool getwindowfocus getwindowname` == "Sid Meier's Alpha Centauri", and
+  `xdotool windowfocus 10485761` works WITHOUT a WM (windowactivate is the WM-needing verb; s136
+  misread this and lost a session). Prove keys land cheaply before blaming the box: one Escape on an
+  open base pane flips classify base->hud. A box CAN still swallow turn-end input with focus fine:
+  at the s135 state (2150 r50) XTEST Return AND a click on the measured TURN COMPLETE center both
+  did nothing (no confirm dialog, round unchanged) — the repair is a fresh save load
+  (`SMAC_SAVE=... scripts/m54a_load.py --relaunch`), which restored the boundary immediately.
+  `scripts/m44_idle.py` is NOT a driver under gdb: it asserts `TracerPid == 0` at entry (census gdb
+  IS the tracer) and its `--rounds 1` snapshot condition `y > last_year - 1 and not rounds` counts
+  the CURRENT turn as a completed round, so it exits rc=0 in 0 s having done nothing — use
+  `scripts/m55_boundary.py` (no tracer assert, windowfocuses itself) as the boundary driver.
+  Corollary for acceptances: any milestone whose PASS needs a boundary must gate on a live year/round
+  DELTA read from /proc/pid/mem first, or it will "prove" its sites unreachable from a box that
+  could not run them at all.
+- **Vision-tool coordinates are SCALE-SHIFTED on 800x600 frames; click targets must come from OCR
+  word bboxes or pixel scans.** s137: vision put the TURN COMPLETE bar at y~471 (real y 405-427, OCR
+  bbox center 675,416); the click at the vision coord hit the recenter box (y~484) and only scrolled
+  the map — it looked like "clicks land but the engine ignores the button".
 - **"Do you really want to quit?" is the killer dialog.** Escape returns to "Oops, no, wait!"; never
   click OK (the next OK exits the game and the process vanishes silently). Its banner IS the game title,
   so a classifier can mistake it for the title screen — this is also why the driver's own Escape press
@@ -660,18 +704,52 @@ against the bare index never fires (`references/static-store-census.md` §9.3). 
   confounded click observation into a controlled experiment (and refuse the shape when the poked value
   and the rival prediction agree). **A printf ERROR inside a breakpoint's commands block ABORTS the
   whole `gdb -batch` script and detaches the inferior mid-window**: the log truncates at the first hit
-  while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run. gdb's
+  while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run.
+  **A MEMORY WRITE in a command list fails the same way** — `set {int}ADDR = 1` and
+  `set var *(int *)ADDR = 1` both raise `Left operand of assignment is not an lvalue` and detach at the
+  FIRST hit; gdb reports the file's LAST sourced line (the trailing `continue`), so the line number names
+  nothing useful and the message looks like a syntax problem in a script that armed fine. Signature of
+  the whole class: an ARMED line + one `Breakpoint N at` per bp + `Error in sourced command file` + zero
+  events, while the driver still exits 0 and its own writes land because the detach resumed the inferior.
+  **So put the poke in Python, not in the breakpoint**: `fd = os.open('/proc/<pid>/mem', os.O_RDWR)` then
+  `os.pwrite(fd, (1).to_bytes(4, 'little'), ADDR)` succeeds WHILE gdb is attached (a 50 ms thread held a
+  gate global for a whole driver window: 632 writes, 0 errors, every printf-only bp logged). Keep the
+  command lists print-only and let a thread hold the forced value; restore it after the window.
+  **Guard every ARMED-time deref**: the selected-base pointer `ds:0x8f0d60` reads 0 until a pane is
+  opened, so `*(int *)($b + 0x4c)` in the arming printf faults on address 0x4c and kills the batch
+  before the first event — print `$b` alone or branch on `$b != 0`, and make a `/proc` reader return -1
+  on `OSError` (an unmapped page raises EIO, not 0) so a bad pointer cannot abort the harness. gdb's
   printf reads an inferior pointer as a HOST address, so `%.20s` fed `*(char *)(rec+0)` errors
   ("Cannot access memory"); bp printfs emit NUMBERS derived from registers only (raw reg, reg/stride,
-  reg%stride, `*(short *)(...)` values), never inferior strings, and substitute expressions as printf ARGUMENTS — an expression pasted into the
+  reg%stride, `*(short *)(...)` values), never inferior strings, gate every pointer deref behind
+`if $reg != 0 … end` (a null deref faults exactly like a string one and detaches the same way), and
+substitute expressions as printf ARGUMENTS — an expression pasted into the
 format string prints ITSELF and the log then parses as zero events (`references/static-store-census.md`
 §9 point 10) — use `x/s` outside a commands block
-  when a name is genuinely wanted. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
+  when a name is genuinely wanted. Never build the gdb command list by running a Python `%`-format over
+it: the template is full of `%d`/`%x` printf conversions and Python eats the first ones as its own
+arguments, silently rewriting the breakpoints. Bake addresses and constants as literals, or substitute
+with `str.replace()` on a uniquely-marked token, and diff the emitted `scratch/<tag>.gdb` before attaching. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
 otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
 read back from memory BEFORE attaching that the event you watch for can even happen (queue head is the
 armed id, `pending >= 1`, storage above the largest value the gate can demand) — a window where the event
 never occurred is an unusable window, not a negative result (`references/static-store-census.md` §9.8–9).
+**Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
+count** — one `ghidra_out/index.csv` read splits the two causes without touching the box. The header is
+`addr,name,size_bytes,n_insns,n_callers,...`: read it, then match `addr <= site < addr+size_bytes`. A
+site inside a function with ONE call site, where the docs/strings name a mode you are not in (e.g. the
+multiplayer stage driver), is unreachable BY DESIGN — no re-run will ever log it. Two sites inside the
+SAME many-caller helper, one of whose callers sits in the human-turn loop, are an UNTAKEN BRANCH: the
+game is live, the breakpoint asked the wrong question. A `csv.DictReader` over this file with guessed
+column names and a bare `except: continue` reports "no containing function" for EVERY address — read
+the header line first, and print the resolved row so a wrong lookup cannot impersonate a finding.
+
+When the target is reached only through a vtable or handler table, the pre-arm check is whether an
+INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
+value — a class with no live instance logs zero hits at every one of its methods no matter how the
+window is driven, and no number of re-runs will change that (ownership + instance recipes:
+`references/code-atlas.md`).
 Two more pre-arm checks, both cheap and both fatal when skipped:
 - **The readiness oracle can print a FIX that is unreachable on the current save.** `credit` is
   `base+0xd0`, a save-LOADED field whose only writers are the player-record init stores — turns never
@@ -683,7 +761,7 @@ Two more pre-arm checks, both cheap and both fatal when skipped:
   unit/type records are live state that no save holds, so yesterday's census is fiction after a
   reload. Re-census the watched slots from `/proc/pid/mem` in the same invocation that arms the
   harness, and make the harness assert armed == len(designed watch list) rather than a fixed floor:
-  arming fewer watchpoints than the design list silently drops half the slots from the window.
+  arming fewer watchpoints than the design list silently drops half the slots from the window. **Check the save can HOST the experiment before you reload it**: `m54b_clean.SAV` loads at 2150 r50 — University Base only, `credit` 0, an EMPTY chooser candidate array — so an insert-driven run there dies at `item 2 not in candidate array []` however carefully the harness is armed: reloading to clear a stray modal costs the later state (2163 r63, candidates `[192,195,194,193,2,0,1,196]`) AND the experiment. Clear the modal itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
 The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is

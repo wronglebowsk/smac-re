@@ -1,0 +1,189 @@
+{
+ "tag": "m85probe2",
+ "t": "2026-10-28 16:08:48",
+ "events": [
+  "preflight kind=base pane_end=False our_turn=True",
+  "svc: Escape on base screen",
+  "svc: Return on unknown pane",
+  "svc: Return on unknown pane",
+  "svc: Return on unknown pane",
+  "svc: Return on unknown pane"
+ ],
+ "pid": 159654,
+ "snap0": {
+  "year": 2150,
+  "cur": 3,
+  "nmine": 6,
+  "energy": {
+   "1": 28,
+   "2": 112,
+   "3": 69,
+   "4": 229,
+   "5": 60,
+   "6": 102,
+   "7": 37
+  },
+  "owners": {
+   "3": {
+    "bases": 1,
+    "minerals": 0,
+    "pop": 3
+   },
+   "2": {
+    "bases": 4,
+    "minerals": 34,
+    "pop": 14
+   },
+   "4": {
+    "bases": 3,
+    "minerals": 61,
+    "pop": 9
+   },
+   "5": {
+    "bases": 3,
+    "minerals": 67,
+    "pop": 7
+   },
+   "6": {
+    "bases": 4,
+    "minerals": 76,
+    "pop": 5
+   },
+   "7": {
+    "bases": 1,
+    "minerals": 0,
+    "pop": 4
+   },
+   "1": {
+    "bases": 2,
+    "minerals": 26,
+    "pop": 7
+   }
+  }
+ },
+ "rounds": [
+  {
+   "year": 2150,
+   "cur": 3,
+   "nmine": 6,
+   "energy": {
+    "1": 28,
+    "2": 112,
+    "3": 69,
+    "4": 229,
+    "5": 60,
+    "6": 102,
+    "7": 37
+   },
+   "owners": {
+    "3": {
+     "bases": 1,
+     "minerals": 0,
+     "pop": 3
+    },
+    "2": {
+     "bases": 4,
+     "minerals": 34,
+     "pop": 14
+    },
+    "4": {
+     "bases": 3,
+     "minerals": 61,
+     "pop": 9
+    },
+    "5": {
+     "bases": 3,
+     "minerals": 67,
+     "pop": 7
+    },
+    "6": {
+     "bases": 4,
+     "minerals": 76,
+     "pop": 5
+    },
+    "7": {
+     "bases": 1,
+     "minerals": 0,
+     "pop": 4
+    },
+    "1": {
+     "bases": 2,
+     "minerals": 26,
+     "pop": 7
+    }
+   },
+   "point": "start-of-our-turn",
+   "hud_econ_ocr": [
+    "are"
+   ]
+  }
+ ],
+ "svc_hud_clicks": 7,
+ "reason": "budget",
+ "final": {
+  "year": 2150,
+  "cur": 3,
+  "nmine": 6,
+  "energy": {
+   "1": 28,
+   "2": 112,
+   "3": 69,
+   "4": 229,
+   "5": 60,
+   "6": 102,
+   "7": 37
+  },
+  "owners": {
+   "3": {
+    "bases": 1,
+    "minerals": 0,
+    "pop": 3
+   },
+   "2": {
+    "bases": 4,
+    "minerals": 34,
+    "pop": 14
+   },
+   "4": {
+    "bases": 3,
+    "minerals": 61,
+    "pop": 9
+   },
+   "5": {
+    "bases": 3,
+    "minerals": 67,
+    "pop": 7
+   },
+   "6": {
+    "bases": 4,
+    "minerals": 76,
+    "pop": 5
+   },
+   "7": {
+    "bases": 1,
+    "minerals": 0,
+    "pop": 4
+   },
+   "1": {
+    "bases": 2,
+    "minerals": 26,
+    "pop": 7
+   }
+  }
+ },
+ "deltas_per_round": {
+  "rounds": 0,
+  "energy3": 0,
+  "energy_by_player": {},
+  "minerals_by_owner": {},
+  "bases_by_owner_end": {
+   "1": 2,
+   "2": 4,
+   "3": 1,
+   "4": 3,
+   "5": 3,
+   "6": 4,
+   "7": 1
+  }
+ }
+}

@@ -81,3 +81,25 @@ load was NOT recorded in the first run (`evidence/m65/before_8looks_samples.json
 `load1`; `m65_screen.py` records it now), so **"the flake rate rises with load" is a
 hypothesis, not a measurement** — both were extreme at the same time, that is all that was
 shown. Do not read a screen verdict as a fact without re-freezing on a loaded box.
+
+## Is the window rendering at all? (luma probe, before you blame OCR)
+
+When OCR returns nothing, first separate "blank/black window" from "dark frame with unreadable text".
+Grab the window itself (not the root) and measure luminance — no OCR, no classifier, one second:
+
+```bash
+xwd -id 10485761 -silent -out /tmp/w.xwd
+ffmpeg -hide_banner -loglevel error -i /tmp/w.xwd -frames:v 1 -f rawvideo -pix_fmt gray -y /tmp/w.raw
+python3 -c "d=open('/tmp/w.raw','rb').read(); n=len(d); print(n, round(sum(d)/n,1), max(d), round(sum(1 for b in d if b>32)/n,3))"
+```
+
+Measured on a LIVE map-view HUD at 800x600: **480,000 bytes, mean 19.3, max 255, 19.1% of pixels > 32** —
+a map is mostly dark, so a mean near 19 is healthy, not blank. Read the trio, not the mean: a dead window
+gives max 0 (or a single flat value), and a modal-heavy screen pushes the bright fraction up. This probe
+also settles "is the game stopped or is it merely idle": rendering + frozen `round`/`year` means the input
+path, not the content (see the focus preflight in SKILL.md).
+
+The corollary matters for OCR work: at 800x600 the tesseract route found essentially nothing even on a
+scaled 3x strip of the bottom 120 px of a live HUD (one stray token), so a silent OCR pass on a small
+window is NOT evidence of an empty screen. Prefer the memory oracle (`cur_player`, `turn_flags`, year) for
+state questions and keep OCR for named panes with known text bands.

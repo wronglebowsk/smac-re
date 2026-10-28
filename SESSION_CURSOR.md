@@ -1,1 +1,1 @@
-M82 (milestone/m82, s127) | acceptance m82bit7d PASS (gates G1-G7 all True, ONE invocation; edi W1=45 W2=45 W3=27) | merged? not yet (closing: notes/NAMED/NEXT_PROMPT/commit/gate/submit/merge) | next: append SESSION_NOTES + NAMED, patch NEXT_PROMPT, commit, gate, milestone.py submit/merge
+M85 | m85cens5 RUNNING (census w/ m55_boundary driver after fresh save load; box state was the blocker) | merged? no (#90) | next: read scratch/m85cens5.out VERDICT; if PASS close M85 per CLOSING ORDER
