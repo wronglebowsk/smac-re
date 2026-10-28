@@ -925,3 +925,25 @@ traces m82bit7d_r0..r2.
 ## M84c — the chooser modal 0x496ad0 has THREE value sources; +9999 is a row KEY nothing inserts
 
 `0x496ad0` (n_callers = 1, only 0x41860a) returns: **-9999** (0x4976ce, `[obj+0xa774]==-1` and `[obj+0xa778]==0`), **0** (0x497698, armed with mode != 0), or **+/- the +4 word of the seeked node** of the list at `obj+0xa780` (= 0x6b461c for the chooser_sub 0x6a9e9c): pump 0x497704 seeks with `call 0x4026b0` (index > `[c+0x10]`-1 -> 0; cursor = `[c+8]`; step `node = [cursor+0xc]`; index stored at `[c+0x14]`), then 0x497725 `call 0x495480; and eax,0x20` — bit SET -> 0x49773a `call 0x401940` (`[c+8]==0 -> 0`, else `[[c+0xc]+4]`), bit CLEAR -> 0x497777 same call then `neg eax`; 0x4977ab returns eax. The caller snapshots it (0x41860f `mov edi,eax`, 0x418616 -> `[ebp-0x10]`, 0x418794/0x4187a2 reload) and 0x4187be `cmp edi,0x270f` is the ONLY branch to the 0x270f block 0x418d7d -> 0x418d8a `call 0x577280`. The list's only writers are 4 functions calling 0x42ee20 (0x4954e0 x2 with key = its setup loop var, 0x42e4d0, 0x42ef40, 0x4b0a80) and **none passes 9999**. Live `python3 scripts/m84c_item_pump.py --tag m84cprobe1` (FAIL: G3 instrument, G5 the claim): PUMP idx=3 count=13 -> VAL 2, SENT 2, CHK edi=2, BRANCH 0, ENTRY 0; inserted words [0,1,2,3,6,16,17,18,32,34,38,39,41,42,161,192,193,194]. Evidence: evidence/m84cprobe1.gdblog.
+
+## M84d (s132, acceptance m84dky1 FAIL, branch milestone/m84d, UNMERGED) — 0x4a99e0 IS A VIRTUAL METHOD AND ITS >9999 LEG NEVER RUNS IN PLAY
+
+- OWNER: the dword 0x4a99e0 occurs ONCE in the image, at 0x67671c, inside the 197-slot pointer run
+  0x676584-0x676894. Constructors 0x498ea6/0x498eac store vptr 0x67658c at [obj] and 0x676584 at
+  [obj+0x444] (0x498f00 `sub ecx,0x444` = the secondary thunk), so it is primary vtable slot 100 /
+  secondary slot 102. No `call [reg+0x190]` in .text -> dispatched by a computed index. A scan of
+  every rw region of terran.exe found ZERO live objects with vptr 0x67658c/0x676584/0x67673c.
+- >9999 LEG = per-FACTION context switch: `[this+0x1d6f0]=1`; outgoing slot (ds:0x888514-1)*0xb4c
+  gets +0xb38 = -1 then notify `[[slot+0x80]+0xf0]`; incoming slot (key-9999-1) gets +0xb38 = 2
+  then the same notify; then `call 0x4a72c0(this, ds:0x86ae40, key-9999, [this+0x1d6e0])`. Records
+  are 2892 B (stride 0xb4c) at this+0x80. The <=9999 leg needs `[this+8]==4` and
+  `[this+0x1d6dc]==ds:0x91b5b4` (=3 live) and switches on 0xcef..0xcf4.
+- ds:0x888514 = FACTION INDEX (live 0): 0x4a0c17 compares it to BYTE[i*0x130] of the 19 base
+  records at 0x95da14 (names verified live: University Base 3, Gaia's Landing 2, The Hive 2, Morgan
+  Industries 4, Sparta Command 5, New Jerusalem 6, Korolev Center 3 — owner faction at +0);
+  0x499f13 also indexes 0x94d7fc by it with stride 0x20bc. All 37 .text references to it are READS.
+- LIVE: `scripts/m84d_faction_key.py --tag m84dky1 --boundaries 8` — 8 silent bps armed
+  ("Breakpoint 1 at 0x4a99ec".."Breakpoint 8 at 0x4a759f", clean detach), driver m56_build rc=0
+  83 s "boundaries 8/8" with 1 verified production arrival: 0 KEY, 0 LOW, 0 OUT, 0 IN, 0 AFTER,
+  0/0 notify, 0 SETFLAG2, 0 CLEARFLAG -> G1..G8 False. merge nothing.
+Evidence: evidence/m84dky1.gdblog.

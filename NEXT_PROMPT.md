@@ -20,9 +20,9 @@ there, and never `rm`/`git checkout --`. Every doc write is an append or a <= 2 
 read-then-rewrite a file over 10 KB; keep tool results small.
 ## THE LEDGER
 
-Merged: **M54A-M82** (#39-#83). **M82 (s125) — BITS 6/7 OF THE FLAG WORD HAVE NO TESTER:** every `test` of `0x98ad88+tid*52+0x30` uses 0x1/0x4/0x8/0x10, NEVER 0x40/0x80; the only bit-7 instruction is the CLEARER `and BYTE [...0x98adb8],0x7f` at 0x577ca8. Live poke m82bit7d PASS: flipping bit 7 alone left edi=45, control bit2 -> edi=27 — bit 7 does NOT gate the price. NAMED M82.
-**M83+M84 (s128/s129, UNMERGED milestone/m83 + m84, PR #84) — 0x577280's ONLY call is 0x418d8a inside FUN_00417ee0, and 0x496ad0's -9999 return is its DIALOG-CANCEL SENTINEL:** gate 0x497683 `cmp [obj+0xa774],-1` + 0x49768f `[obj+0xa778]==0` -> 0x4976ce `0xffffd8f1`; -1 is written only at 0x496a43 (handler case 7 = CANCEL) and 0x495541 (setup). NAMED M84. **M84b (s130, `m84canc2`, UNMERGED milestone/m84b) — THE CANCEL SENTINEL IS LIVE:** Escape on the chooser -> handler case 7 arms `[chooser_sub 0x6a9e9c+0xa774] = -1` (the object is EAX at 0x496a40, not the pushed 24 KB buffer) -> the next return is 0xffffd8f1 (-9999, signed); on -9999 the caller restores the queue snapshot (0x418623-0x41863f) and leaves via 0x4186d2 `jle 0x419967`. RETRACT s129: 0x41861b/0x4186d2 do NOT gate the 0x270f block. G1/G2/G3/G8 True, G4-G7 False -> FAIL. NAMED M84b.
-**M84c (s131, `m84cprobe1`, UNMERGED milestone/m84c, PR #86) — THE MODAL HAS THREE VALUE SOURCES AND +9999 IS A ROW KEY NOTHING INSERTS:** 0x496ad0 (n_callers=1, 0x41860a) returns -9999 (armed, mode 0), 0 (armed, mode!=0) or +/- the +4 word of the node SEEKN by index at `obj+0xa780` (= 0x6b461c): pump 0x497704 -> `call 0x4026b0` (index > `[c+0x10]`-1 -> 0; cursor=`[c+8]`; step `[cursor+0xc]`) -> 0x497725 `call 0x495480 & 0x20` -> bit SET: 0x49773a `call 0x401940` (`[c+8]==0` -> 0 else `[[c+0xc]+4]`); bit CLEAR: 0x497777 + `neg eax`; 0x4977ab returns eax. Caller 0x41860f `mov edi,eax` -> 0x418616 `[ebp-0x10]` -> 0x418794/0x4187a2 reload -> 0x4187be `cmp edi,0x270f`. The list's writers are only 4 functions calling 0x42ee20 (0x4954e0 x2 key = setup loop var, 0x42e4d0, 0x42ef40, 0x4b0a80) and NONE passes 9999. Live: PUMP idx=3 count=13 -> VAL 2, CHK edi=2, BRANCH 0, ENTRY 0, inserted words [0,1,2,3,6,16,17,18,32,34,38,39,41,42,161,192,193,194] -> G5 False = 0x418d7d/0x577280 unreachable from the build chooser. NAMED M84c. **M80 (s122, m80band1) — 8 FACTION BANDS OF 64:** index = `counter<0x40 ? counter : (counter&0x3f)+faction*64`, record 0x98ad88+idx*52 (0x57417e), 0x5741f0 `and [rec+0x30],0xfd`, 0x5741fe `call 0x572800(faction, idx, 0)`, band base `param_1*0xd00`. NAMED M80.
+Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS) — BITS 6/7 OF THE FLAG WORD HAVE NO TESTER:** every `test` of `0x98ad88+tid*52+0x30` uses 0x1/0x4/0x8/0x10, never 0x40/0x80; the only bit-7 instruction is the clearer 0x577ca8. Poke: bit 7 alone edi=45, control bit2 -> 27. NAMED M82.
+**M83+M84+M84b (s128-s130, UNMERGED milestone/m83, m84 PR #84, m84b) — 0x496ad0's -9999 IS THE DIALOG-CANCEL SENTINEL, NOT A PRICE KEY:** Escape on the chooser arms `[chooser_sub 0x6a9e9c+0xa774] = -1` (written only at 0x496a43 = handler case 7, object in EAX at 0x496a40, not the pushed 24 KB buffer; or 0x495541 setup); gate 0x497683/0x49768f then returns 0xffffd8f1 and the caller restores the queue snapshot (0x418623-0x41863f), leaving via 0x4186d2 `jle 0x419967`; RETRACT s129 — only 0x4187be `cmp edi,0x270f` enters 0x418d7d. m84canc2 G1/G2/G3/G8 True, G4-G7 False -> FAIL. NAMED M84/M84b.
+**M84c+M84d (s131/s132, `m84cprobe1` and `m84dky1` both FAIL, UNMERGED milestone/m84c PR #86 + milestone/m84d) — THE 0x270f VOCABULARY IS A DEAD END ON BOTH SIDES:** (c) 0x496ad0 (n_callers=1, 0x41860a) returns only -9999 (armed, mode 0), 0 (armed, mode!=0) or +/- the +4 word (the KEY) of the node seeked by index at `obj+0xa780` (0x6b461c); 0x4187be `cmp edi,0x270f` is the ONLY branch to 0x418d7d and the list's only writers (4 functions calling 0x42ee20) never insert 9999 — live keys [0,1,2,3,6,16,17,18,32,34,38,39,41,42,161,192,193,194]. (d) 0x4a99e0 (`cmp [ebp+0x8],0x270f`/`jle`; else a per-FACTION context switch: outgoing (ds:0x888514-1) slot `+0xb38=-1` + notify `[[slot+0x80]+0xf0]`, incoming (key-9999-1) slot `+0xb38=2` + notify, then 0x4a72c0) is **vtable slot 100 of the class whose vptr is 0x67658c** (pointer once, 0x67671c; ctors 0x498ea6/0x498eac; secondary vptr [obj+0x444]=0x676584, thunk 0x498f00 `sub ecx,0x444`) with **ZERO live instances** (vptr scan of every rw region) — 0 calls in 8 boundaries. ds:0x888514 IS a faction index (0x4a0c17 compares it to BYTE[i*0x130] of the 19 base records at 0x95da14, owner at +0, ours 3; 0x499f13 indexes 0x94d7fc by it, stride 0x20bc). NAMED M84c/M84d. **M80 (s122, m80band1) — 8 FACTION BANDS OF 64:** index = `counter<0x40 ? counter : (counter&0x3f)+faction*64`, record 0x98ad88+idx*52; 0x5741f0 clears flag bit 1, 0x5741fe `call 0x572800(faction, idx, 0)`. NAMED M80.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e, A = 0x4e40a0(owner,1,-1), B = 0x5ac950(head,...); the markup is skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60) and first calls FUN_00572800 (0x4efe7e). NAMED.
 **M68 FAILED** (enqueue appends, no key named); **M63** `m63_pop.py`, `0x94de84` queued-count. Branches hold their scripts.
 
@@ -42,30 +42,32 @@ Merged: **M54A-M82** (#39-#83). **M82 (s125) — BITS 6/7 OF THE FLAG WORD HAVE 
    (static), `evidence.py audit [--delete]` / `budget`, `scratch/m71/dis.py LO HI` (objdump window).
 ## THE PICK
 
-**M84d: `0x4a99e0` is where an item key > 9999 means something ELSE** — `cmp [ebp+0x8],0x270f`/`jle 0x4a9ad3`, else `[this+0x1d6f0]=1`, `sub ecx,0x270f` and `mov [this+edx+0xb38],-1` with `edx=(DAT_00888514-1)*0xb4c` (2892-byte records). Find who calls it with a key > 9999 and what those records are; that is where the 0x270f vocabulary lives, because M84c closed the chooser side: the modal returns only -9999 / 0 / +/- a node KEY and no code inserts a 9999 key.
+**M84e: the `0x4194b3` handler / widget message `0x4d00`** — it zeroes the cursor after a queue
+mutation (sender 0x584010, `0x4eb6b0` runs after it) and did NOT fire at a completion. Static FIRST:
+find the handler-table entry for 0x4d00 and what dispatches it (the same computed-index shape as
+M84's chooser table). Sub-leads if it stalls: who calls the constructor FUN_00498e20 (n_callers=1 —
+it builds the 0x4a99e0 context object, so it names the mode that owns the keys > 9999) and who WRITES
+ds:0x888514 (all 37 .text references to it are READS, so its writer goes through a pointer).
 
 ## STILL OPEN (in priority order)
 
-1. **M84d (the pick): `0x4a99e0` and the keys > 9999** — see THE PICK. Chooser residue: which widget
-   message reaches handler case 7 (no direct `call` to 0x496950 — a widget handler table); what
-   0x495541 arms at setup; the instrument fix (print the cursor at **0x49771c**, AFTER the seek at
-   0x497717 — at 0x497704 you read the PREVIOUS cursor, which is why m84cprobe1's G3 is False);
-   bit 5 (0x531782); who clears bit 6; upkeep/tech 0x52145e/0x5a7d00/0x5a7f67 (ZERO events); alpha
-   0x5a6cd0. **Arm only on a quiet box** (kill a stuck `winedbg --auto` BY PID first).
-2. **Who calls the `0x4194b3` handler / what widget message `0x4d00` is** (zeroes the cursor after a
-   queue mutation; sender `0x584010`, `0x4eb6b0` runs after it; did NOT fire at a completion).
-3. **M67's plan-descending LIST order has no code behind it**: zero sites read plan byte `+42`; the
+1. **M84e (the pick): the 0x4194b3 handler / widget message 0x4d00** — see THE PICK. Chooser
+   residue: which widget message reaches handler case 7 (no direct `call` to 0x496950 — a widget
+   handler table); the instrument fix (print the cursor at **0x49771c**, AFTER the seek at 0x497717 —
+   at 0x497704 you read the PREVIOUS cursor); bit 5 (0x531782); who clears bit 6; upkeep/tech
+   0x52145e/0x5a7d00/0x5a7f67 (ZERO events); alpha 0x5a6cd0. **Arm only on a quiet box** (kill a
+   stuck `winedbg --auto` BY PID first).
+2. **M67's plan-descending LIST order has no code behind it**: zero sites read plan byte `+42`; the
    only 52-byte type-address computations (0x40ad92/0x4164dd/0x4188f9/0x418932) hand records to
    string builders.
-4. **The `-3 / -6` formula** — stride CONFLICT stands: `0x984d38 + (-v)*48` (0x40adae, 0x4164f5) vs
+3. **The `-3 / -6` formula** — stride CONFLICT stands: `0x984d38 + (-v)*48` (0x40adae, 0x4164f5) vs
    `+(-v)*16` (0x418914, 0x41894d).
-5. Keep the suite green: `scripts/gate.py` runs every `test_*.py` + `check_classes.py`.
+4. Keep the suite green: `scripts/gate.py` runs every `test_*.py` + `check_classes.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at s131 close:** `terran.exe` UP, `m54b_clean.SAV`, round ~55; m84cprobe1's enqueue ran
-   WITH OK (Korolev idx 18 cell 2 committed), screen NOT re-read — `accept_ready.py` + normalize
-   before arming; Korolev idx 18 head 2 pending 1 at m84canc2 arm (`m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1`, `--no-ok` supported). Records are re-inited between rounds — a census is a snapshot. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
+- **Box at s132 close:** `terran.exe` UP, `m54b_clean.SAV`, round ~63, screen hud, Korolev idx 18
+   UI-queued (`m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1`, `--no-ok` supported). Records are re-inited between rounds — a census is a snapshot. **One box, ONE session:** check `git log -1` and `pgrep -a gdb` before arming (s125/s126
  collision); a veilbrowser Chrome window stacked at 0,0 makes `xwd` OCR the browser
  (`DISPLAY=:99 xdotool windowraise 0x400004`). Gate globals: `0x920434`=0, `0x985b10`=0x08 (human mask = player 3), `0x985b11`=0xff, cur_player `0x985dcc`=3; `*DAT_008f0d60` = the base record (+0x40 storage, +0x4c pending, +0x50..+0x74 queue). Screen hygiene BEFORE arming: pane -> Escape, dialog -> Return, quit-prompt -> Escape (`m78_mark_clear.py normalize_screen()`); an Escape on the bare map RAISES the quit prompt. Always read `pending` AND the head back after an enqueue.
 - **Prices:** head 2 = 9, 192/193 = 18, 194 = 27 (gate charges `edi`, M73; ) free chooser ids 194/2/1/0; enqueue refuses `pending >= 9` (`0x418b05`).
@@ -126,6 +128,12 @@ Merged: **M54A-M82** (#39-#83). **M82 (s125) — BITS 6/7 OF THE FLAG WORD HAVE 
 - **A list cursor read BEFORE the seek is the PREVIOUS cursor:** the chooser pump seeks with
   `call 0x4026b0` at 0x497717, so a node print at 0x497704 shows the old node (m84cprobe1 G3 was
   this, not the game) — print at 0x49771c.
+- **ZERO CALLS CAN BE THE GAME, NOT THE INSTRUMENT:** 0x4a99e0 is vtable slot 100 of a class whose
+  vptr (0x67658c) has NO live instance — before betting a live acceptance on a function with no
+  fixed-displacement caller, scan every rw region of terran.exe for the vptr value
+  (`scratch/m84d/probe3.py` shape, /proc/pid/mem, no gdb) and confirm an instance exists; then prove
+  arming from the log ("Breakpoint 1 at ..." + a clean "[Inferior 1 ... detached]", see
+  `scripts/m84d_faction_key.py`). A function with no live instance never fires, and that is a finding.
 - Never: commit to main; `pkill -f` / `pgrep|kill` by name; Escape on the title screen; OK on the
   quit prompt; `--mode stop`; `file://` with `--load`; a clear-prefixed command; backticks in a
   commit message; `skill_manage delete`.
