@@ -52,6 +52,8 @@ Never commit to `main`. `milestone.py start <ID>` branches from **`main`**, so a
 build on that was never merged (an acceptance FAIL left it on its branch) has NONE of its scripts in
 the tree — branch from it instead (`git checkout -B milestone/<ID> milestone/<prev>`) and say so in the
 session entry, rather than discovering the missing instrument halfway through the run.
+`milestone.py start <ID>` refuses a dirty worktree: stash the `SESSION_CURSOR.md` write, start, then pop
+it onto the new branch — never commit a cursor write to `main` just to get the tree clean.
 Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
 (must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
 **A GREEN gate is not permission to merge.** The gate audits docs, evidence and the harness; it says
@@ -103,6 +105,12 @@ exact verify/rerun command, ONE-milestone options, the operational kit (launch c
 preflight, coordinates/OCR rules), and the report style. It must work for an agent that has
 none of this conversation. A reusable, milestone-agnostic version of that block lives in
 `templates/session-kickoff.md` — copy it and substitute the milestone id and session number.
+
+When Paul asks for the loop to be **scheduled** rather than pasted (a cron that keeps advancing every
+hour), the job's prompt must NOT bake the milestone id: it reads the id from `NEXT_PROMPT.md`
+(`## THE PICK`, else the first open `## STILL OPEN` item), stops rather than inventing a milestone when
+nothing is open, and refuses to start a competing measurement while `SESSION_CURSOR.md` says a run is in
+flight — the box is one Wine process, so a second gdb attach or mineral poke confounds the first run.
 Keep every tool result small:
 grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dumps in
 `~/reverse/smac/` instead of re-dumping; page Ghidra facets in small slices; reuse saved
@@ -603,7 +611,9 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   the 10 Hz poller `scripts/m53m_poll.py`; they fire on VALUE CHANGE, so a same-value rewrite is
   invisible. **Never watch a field the display reads constantly** (`base+0x40` mineral storage): the
   inferior crawls (a round per ~45 s, year apparently frozen) — break on the STORE sites instead and
-  condition each on the base pointer (`if $eax == 0x95ef70`). At a store site the register side-values
+  condition each on the address the store's OWN encoding computes — `[reg*4+disp]` means the register holds
+`(index*stride)/4` and `[reg+disp]` means it holds the byte address, so a condition comparing the register
+against the bare index never fires (`references/static-store-census.md` §9.3). At a store site the register side-values
   are not evidence (`$ecx` printed a base INDEX where d0 was expected): read the fields from the baked
   base address. Do **not** single-step for the after value — `si` inside a breakpoint commands list makes
   `gdb -batch` stop after the step and DETACH, ending the watch after one hit; for a plain
@@ -617,7 +627,7 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   and the rival prediction agree). Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
   and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
-  breakpoint on the store's own base register, accept by replaying the stores against the sampler) is
+  breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is
   `references/static-store-census.md` §9.
 Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
@@ -625,3 +635,18 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 ## Still open (leads) — `references/open-leads.md`
 The per-milestone lead list lives in `references/open-leads.md`. `NEXT_PROMPT.md` holds the CURRENT pick
 and the authoritative open items; if the two disagree, `NEXT_PROMPT.md` wins.
+
+
+## Type-record flag addressing (M74, learned the hard way)
+
+- The type record is `0x98ad88 + tid*52`; its flags WORD is `+0x30`, i.e. `tid*0x34 + 0x98adb8`.
+  In gdb, `*(unsigned char *)($ebx * 0x34 + 0x98adb8)` is the flag byte when `$ebx` is the tid —
+  `$ebx * 4 + 0x98adb8` reads a different record and prints 0.
+- objdump addressing tells you what a register holds: `[reg*4+0x98adb8]` means the register holds
+  `tid*13` (52/4) and `[reg+0x98adb8]` means it holds the record BYTE address `tid*52`. A gdb
+  conditional breakpoint that tests such a register against the bare tid NEVER fires — that is how
+  M74's first run reported "no writer fired" while two records visibly gained the bit.
+- objdump prints `DWORD PTR` / `WORD PTR`, uppercase. A lowercase `ptr [` grep reports zero stores.
+- The flags word is also written through a record POINTER (`mov WORD PTR [eax+0x30],dx`), so an
+  absolute-address grep for `0x98adb8` alone does NOT enumerate the writer set: grep both the
+  absolute form and the `+0x30]` displacement form (case-sensitively) before claiming it is closed.

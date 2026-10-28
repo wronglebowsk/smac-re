@@ -699,3 +699,18 @@ CONFLICT: `price_of` (the skill's M58 model) is `A x type_cost(+41)`; for a desi
 `0x3f` with `+0x30` bit 2 clear the gate charges `A x (cost + 50% markup)` instead. The two agree
 for head 2 and for any head whose bit 2 is set, which is why M72 measured 27 and this run 18 for
 the same id.
+
+## M74 block (branch milestone/m74, NO PR — acceptance FAILED twice)
+
+`type[+0x30] & 4` is written by ELEVEN absolute-address sites in four functions
+(`0x4eed18` in FUN_004eec30 guarded by `0x3f < param_2`; `0x573fed/0x574107/0x574117` in
+FUN_00573a90; whole-word `= 1/0x105/0x115` at `0x595f82/0x595f91/0x595f9c` in FUN_00595b10;
+`0x59d273/0x59d375/0x59d432/0x59db65` in FUN_0059ce10). M73's `0x4d20f0` only READS the field.
+MEASURED, tag `m74flag2` (`evidence/m74flag2.gdblog`): at `0x4efa5e` head 194 read `f30=0x41
+edi=45`, then in the same window `f30=0x45 edi=27` — the markup ON->OFF flip with the flag read
+at `tid*0x34 + 0x98adb8`. Census `193/194: 0x41 -> 0x05`; `65/195` also gained bit 2 (confounded);
+`pending 0 -> 0`, storage `200 -> 200` — no completion, so `when` is unproven. ZERO of the 11
+writer breakpoints fired: the leading candidate is now the whole-word sweep store
+`0x597487 mov WORD PTR [eax+0x30],dx` in FUN_00596850 (stride-52 copy of a source table into
+`+0x23..+0x30`, called only from FUN_00597ce0/FUN_00597ee0). Instrument
+`scripts/m74_flag_watch.py`, tests 37/37.

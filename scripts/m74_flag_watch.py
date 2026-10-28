@@ -25,6 +25,8 @@ writes, both counted):
   W8 0x59d273 FUN_0059ce10  or  BYTE [eax*4+0x98adb8],4   guarded by `type[+0x30]&1` and the
                                                             owner mask `type[+0x2c]`
   W9 0x59db65 FUN_0059ce10  or  BYTE [ecx*4+0x98adb8],4
+  W10 0x59d375 FUN_0059ce10 or BYTE [eax*4+0x98adb8],4
+  W11 0x59d432 FUN_0059ce10 or BYTE [eax*4+0x98adb8],4
 
 `0x4d20f0` (M73's second candidate) is NOT in that set: inside it the only touches of
 `0x98adb8` are reads — `mov ax,BYTE[..]` at `0x4d258e`, `test BYTE[..],4` at `0x4d2f35` and
@@ -92,6 +94,8 @@ SITES = (
     (0x595F9C, "W7", "FUN_00595b10", "mov WORD [esi+0x98adb8],0x115", True, False),
     (0x59D273, "W8", "FUN_0059ce10", "or BYTE [eax*4+0x98adb8],4", True, False),
     (0x59DB65, "W9", "FUN_0059ce10", "or BYTE [ecx*4+0x98adb8],4", True, False),
+    (0x59D375, "W10", "FUN_0059ce10", "or BYTE [eax*4+0x98adb8],4", True, False),
+    (0x59D432, "W11", "FUN_0059ce10", "or BYTE [eax*4+0x98adb8],4", True, False),
 )
 SITE_BY_ADDR = {s[0]: s for s in SITES}
 SITE_BY_TAG = {s[1]: s for s in SITES}
@@ -155,36 +159,43 @@ end
 POSAFF_BLOCK = r"""break *0x4efa5e if *(int *)0x8f0d60 == $b
 commands
 silent
-printf "POSAFF storage=%d edi=%d id=%d f30=0x%x\n", *(int *)($b + 0x40), $edi, $ebx, *(unsigned char *)($ebx * 4 + 0x98adb8)
+printf "POSAFF storage=%d edi=%d id=%d f30=0x%x\n", *(int *)($b + 0x40), $edi, $ebx, *(unsigned char *)($ebx * 0x34 + 0x98adb8)
 continue
 end
 """
 # tid register / record-address expression per site, straight from the instruction bytes.
 # (tid expression, record-address expression, extra format text, extra argument expression)
+# (register, addressing mode, extra format text, extra argument expression).
+# `idx13` means the instruction is [reg*4+0x98adb8], so the register holds tid*13 (52/4); `byte`
+# means [reg+0x98adb8], so it holds the record BYTE address, tid*52.  The first run of this
+# instrument tested every condition as if the register held the bare tid, so nothing could match:
+# the sites reported zero writes while the census showed two flips.
 SITE_EXPR = {
-    "W1": ("$ebx", "$ebx * 4 + 0x98adb8", "own=%d", "*(int *)($ebp + 8)"),
-    "W2": ("$eax", "$eax * 4 + 0x98adb8", "", ""),
-    "W3": ("($ebx - 0x98adb8) / 4", "$ebx", "", ""),
-    "W4": ("($ebx - 0x98adb8) / 4", "$ebx", "", ""),
-    "W5": ("($esi - 0x98adb8) / 4", "$esi", "word=1", ""),
-    "W6": ("($esi - 0x98adb8) / 4", "$esi", "word=0x105", ""),
-    "W7": ("($esi - 0x98adb8) / 4", "$esi", "word=0x115", ""),
-    "W8": ("$eax", "$eax * 4 + 0x98adb8", "", ""),
-    "W9": ("$ecx", "$ecx * 4 + 0x98adb8", "", ""),
+    "W1": ("$ebx", "idx13", "own=%d", "*(int *)($ebp + 8)"),
+    "W2": ("$eax", "idx13", "", ""),
+    "W3": ("$ebx", "byte", "", ""),
+    "W4": ("$ebx", "byte", "", ""),
+    "W5": ("$esi", "byte", "word=1", ""),
+    "W6": ("$esi", "byte", "word=0x105", ""),
+    "W7": ("$esi", "byte", "word=0x115", ""),
+    "W8": ("$eax", "idx13", "", ""),
+    "W9": ("$ecx", "idx13", "", ""),
+    "W10": ("$eax", "idx13", "", ""),
+    "W11": ("$eax", "idx13", "", ""),
 }
 
 
 def gdb_script(addr, ids):
-    """The gdb script: 9 conditional writer breakpoints + the visit gate, 10 total."""
-    cond_idx = " || ".join(f"$X == {i}" for i in ids)
-    cond_rec = " || ".join(f"$X == {FLAG_ADDR + i * 4:#x}" for i in ids)
+    """The gdb script: 11 conditional writer breakpoints + the visit gate, 12 total."""
     blocks = []
-    for site_addr, tag, _fn, what, _sets, _clears in SITES:
-        tid, rec, extra_fmt, extra_arg = SITE_EXPR[tag]
-        mreg = re.search(r"\[(\w+)\*4\+0x98adb8\]", what) or re.search(r"\[(\w+)\+0x98adb8\]", what)
-        reg = "$" + mreg.group(1).lower()
-        # ebx/esi hold the RECORD ADDRESS at W3-W7, the INDEX everywhere else
-        cond = (cond_rec if tag in ("W3", "W4", "W5", "W6", "W7") else cond_idx).replace("$X", reg)
+    for site_addr, tag, _fn, _what, _sets, _clears in SITES:
+        reg, mode, extra_fmt, extra_arg = SITE_EXPR[tag]
+        if mode == "idx13":                      # [reg*4+0x98adb8]: reg holds tid*13 (52/4)
+            cond = " || ".join(f"{reg} == {i * 13}" for i in ids)
+            tid, rec = f"{reg} / 13", f"{reg} * 4 + 0x98adb8"
+        else:                                    # [reg+0x98adb8]: reg holds the byte address
+            cond = " || ".join(f"{reg} == {FLAG_ADDR + i * 0x34:#x}" for i in ids)
+            tid, rec = f"({reg} - 0x98adb8) / 52", reg
         fmt = f"{tag} site={site_addr:#x} tid=%d f30=0x%x" + (
               (" " + extra_fmt) if extra_fmt else "")
         args = [tid, f"*(unsigned char *)({rec})"] + ([extra_arg] if extra_arg else [])
@@ -195,7 +206,7 @@ def gdb_script(addr, ids):
             .replace("@@BREAKS@@", "".join(blocks)))
 
 
-LINE = re.compile(r"^(ARMED|POSAFF|W[1-9])\s*(.*)$")
+LINE = re.compile(r"^(ARMED|POSAFF|W1[01]|W[1-9])\s*(.*)$")
 KV = re.compile(r"(\w+)=(-?0x[0-9a-f]+|-\d+|\d+)")
 CHATTER = ("warning:", "Reading symbols", "0x", "Breakpoint", "[", "The program", "This GDB",
            "Enable debuginfod", "<https://debuginfod", "Debuginfod has been disabled",

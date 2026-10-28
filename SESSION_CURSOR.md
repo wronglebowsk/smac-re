@@ -1,1 +1,1 @@
-M74 | acceptance pending (tag m74flag) | merged? no | next: enqueue 194/193 on University Base, then python3 scripts/m74_flag_watch.py --tag m74flag --boundaries 4
+M74 | acceptance m74flag + m74flag2 both FAIL (0 of 11 writer breakpoints fired; no completion in the window) | merged? NO, branch milestone/m74 holds the scripts | next: read FUN_00597ce0/FUN_00597ee0, breakpoint 0x597487 in FUN_00596850, arm only after reading pending>=1 back

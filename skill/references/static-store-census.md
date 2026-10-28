@@ -39,6 +39,13 @@ The pointer-arithmetic shape is what hides a section loader's tail fields: the l
 holding `record + 50` and the fields go to `[esi-0x8]`, `[esi-0x9]`, `[esi-0x4]`. Confirm the base from
 the loop's stride (`add esi,0x34`) and the initial `mov esi, <base+50>`.
 
+- **Operand width is a shape too.** A whole-width store sets or clears the bit you are hunting:
+  `mov WORD PTR [esi+0x98adb8],0x105` writes the flags word and turns bit 2 on with no `or` anywhere.
+  Census a field by grepping its ABSOLUTE base address with no operand-width filter, then classify each
+  hit by width and by whether the immediate carries the bit. A `BYTE PTR`-filtered list reports two writers
+  where the image holds eleven, and a "who sets this bit" answer built on it is incomplete before the run
+  starts.
+
 ## 4. Jump tables: raw bytes, then bodies, before contradicting Ghidra
 
 ```python
@@ -152,8 +159,14 @@ census is step one and the proof is a replay against live memory.
    `lea reg,[reg2+<disp>]` of that displacement (list them and prove no store runs through the resulting
    register — they are usually `[esp+…]` stack locals), `rep movs` bulk copies, and stores through a
    register that already holds `record + field`.
-3. **Breakpoint AT the store instruction, conditioned on the store's OWN base register == the record
-   address.** The condition is literally "the target address is record+field", so it cannot mis-attribute
+3. **Breakpoint AT the store instruction, conditioned on the address THAT INSTRUCTION'S OWN ENCODING computes.
+   Read the machine code, not the pseudocode: `[reg*4+0x98adb8]` means the register holds
+   `(index*stride)/4` — for the 52-byte type record, `tid*13` — while `[reg+0x98adb8]` means it holds the
+   record BYTE address, `tid*52`. A condition that compares such a register to the bare index can never
+   match, and the run then reports "no writer fired" while the census shows the field flipped. Build the
+   condition and the printed tid from the SAME arithmetic (`$reg == tid*13` paired with `$reg / 13`;
+   `$reg == 0x98adb8 + tid*52` paired with `($reg - 0x98adb8) / 52`), and print the field's current byte in
+   the hit line so before-and-after arrive in one row.** The condition is literally "the target address is record+field", so it cannot mis-attribute
    the same offset in another struct, and it fires only when the store executes, so guarded writes are
    counted as executed-or-not rather than guessed. Instrument the whole reachable list — a breakpoint
    whose condition never matches costs nothing measurable, and the completeness claim needs the breadth.
@@ -179,6 +192,8 @@ census is step one and the proof is a replay against live memory.
    a baked address into a different object without any write happening; read the name (or another
    identity field) at the address each sample and end the watch at the change instead of splicing two
    objects into one trace.
-8. **When the stores do not account for an observed jump, check the harness before the conclusion**: in
-   order — a dropped log line (point 6), the subject having moved (point 7), the anchor taken after the
+8. **When a store census reports zero hits, or does not account for an observed jump, the instrument is
+   the suspect, not the game**: check in order — the condition's address arithmetic (point 3: a scaled
+   register compared to a bare index never fires; a whole-width store filtered out of the census never got
+   a breakpoint), a dropped log line (point 6), the subject having moved (point 7), the anchor taken after the
    watch ended (point 5) — and only then report an uninstrumented writer.

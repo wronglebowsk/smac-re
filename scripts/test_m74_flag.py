@@ -46,17 +46,20 @@ check("parse POSAFF flag byte", ev[2]["f30"], 0x41)
 
 # ---------------------------------------------------------------- gdb script
 s = W.gdb_script(0x95DA10, [193, 194])
-check("script arms 10 breakpoints", s.count("\nbreak *"), 10)
-check("script has the nine writer sites",
-      [f"break *{a:#x}" in s for a, _t, _f, _w, _se, _cl in W.SITES].count(True), 9)
+check("script arms 12 breakpoints", s.count("\nbreak *"), 12)
+check("script has all eleven writer sites",
+      [f"break *{a:#x}" in s for a, _t, _f, _w, _se, _cl in W.SITES].count(True), 11)
 wb = [b for b in s.split("break *")[1:] if "tid=%d" in b]
-check("nine writer blocks", len(wb), 9)
-check("writer conditions name both armed ids (index or record address)",
-      all(("== 193" in b or f"== {W.FLAG_ADDR + 193 * 4:#x}" in b) and
-          ("== 194" in b or f"== {W.FLAG_ADDR + 194 * 4:#x}" in b) for b in wb), True)
-check("W3-W7 conditions test the record address, not the index",
-      all(f"== {W.FLAG_ADDR + 193 * 4:#x}" in s and f"== {W.FLAG_ADDR + 194 * 4:#x}" in s
-          for _ in [0]), True)
+check("eleven writer blocks", len(wb), 11)
+check("scaled-index sites test tid*13, the value [reg*4+0x98adb8] encodes",
+      all(f"== {193 * 13}" in b and f"== {194 * 13}" in b for b in wb if "/ 13" in b), True)
+check("six scaled-index sites divide their register by 13 to name the tid",
+      sum("/ 13" in b for b in wb), 6)
+check("byte-address sites test 0x98adb8 + tid*52",
+      all(f"== {W.FLAG_ADDR + 193 * 0x34:#x}" in b and f"== {W.FLAG_ADDR + 194 * 0x34:#x}" in b
+          for b in wb if "/ 52" in b), True)
+check("five byte-address sites divide by 52 to name the tid", sum("/ 52" in b for b in wb), 5)
+check("no condition compares a register to the bare tid", "== 193" in s, False)
 check("printf newline is one backslash + n", s.count("\\n"), s.count("printf"))
 check("no unsubstituted placeholders", [t in s for t in ("@@", "$X")].count(True), 0)
 check("the visit gate is conditioned on the armed base",
