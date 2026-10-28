@@ -59,15 +59,18 @@ LEGS = [
     ("LOOP",   0x5A7E79, "reached only if arg1 == *(short*)0x93325c  -> the 64-record band loop"),
     ("ALT",    0x5A7F9F, "reached only if arg1 != *(short*)0x93325c  -> the other body"),
     ("EXIT",   0x5A8F7D, "the early-exit leg (round==0 or ds:0x926bcc!=0)"),
-    ("HEAD",   0x5A7E94, "band loop head (conditional: $esi==0 -> band 0 record 0 only)"),
+    ("WALK",   0x5A7E6D, "table-walk head (after mov edx,[ebp-0x1c): prints the pointer, its short and arg1 = the 0x5a7e73 operands"),
     ("GATE1",  0x5A7CE3, "twin gate block, operands printed"),
     ("OR1",    0x5A7D00, "twin OR leg taken"),
     ("ELSE1",  0x5A7D0A, "twin else leg taken (call 0x572800 + 0x4ef540)"),
     ("GATE2",  0x5A7F4A, "loop-tail gate, operands printed"),
     ("OR2",    0x5A7F67, "loop-tail OR leg taken"),
     ("ELSE2",  0x5A7F71, "loop-tail else leg taken (call 0x572800 + 0x4ef540)"),
+    ("DOWN",   0x5A7FBB, "post-walk ladder, operands printed (eax, edi, ds:0x91b5b4, ds:0x920434)"),
+    ("FD1",    0x5A7FD1, "reached only if eax!=0 AND edi==ds:0x91b5b4 AND ds:0x920434==0"),
 ]
-BRANCH = [0x5A7E00, 0x5A7E0D, 0x5A7E73, 0x5A7F52, 0x5A7F5F, 0x5A7CEB, 0x5A7CF8]
+BRANCH = [0x5A7E00, 0x5A7E0D, 0x5A7E73, 0x5A7F52, 0x5A7F5F, 0x5A7CEB, 0x5A7CF8,
+          0x5A7FBD, 0x5A7FC5, 0x5A7FCD]
 
 TMPL_HEAD = """set pagination off
 set confirm off
@@ -91,8 +94,11 @@ PRINTS = {
              '*(short *)0x93325c',
     "EXIT":  'printf "EXIT n=%d eax=%d round=%d flag26bcc=%d\\n", $n_exit, $eax, '
              '*(int *)0x985afc, *(int *)0x926bcc',
-    "HEAD":  'printf "HEAD n=%d esi=%d tid=%d mask=%d human=%d\\n", $n_head, $esi, $ebx, '
-             '*(int *)($ebp-0x10), *(unsigned char *)0x985b10',
+    "WALK":  'printf "WALK n=%d ptr=0x%x short=%d arg1=%d local14=%d\n", $n_walk, $edx, '
+             '*(short *)$edx, *(int *)($ebp+0xc), *(int *)($ebp-0x14)',
+    "DOWN":  'printf "DOWN n=%d eax=%d edi=%d c1b5b4=%d save=%d\n", $n_down, $eax, $edi, '
+             '*(int *)0x91b5b4, *(int *)0x920434',
+    "FD1":   'printf "FD1 n=%d eax=%d\n", $n_fd1, $eax',
     "GATE1": 'printf "GATE1 n=%d idx=%d save=%d mask=%d human=%d\\n", $n_gate1, $eax, '
              '*(int *)0x920434, *(int *)($ebp-0x10), *(unsigned char *)0x985b10',
     "GATE2": 'printf "GATE2 n=%d idx=%d tid=%d save=%d mask=%d human=%d\\n", $n_gate2, $eax, '
@@ -102,7 +108,7 @@ PRINTS = {
     "ELSE1": 'printf "ELSE1 n=%d idx=%d band=%d\\n", $n_else1, $eax, $edi',
     "ELSE2": 'printf "ELSE2 n=%d idx=%d band=%d\\n", $n_else2, $eax, $edi',
 }
-COND = {"HEAD": " if $esi == 0"}   # register-only condition (s133: memory-read conditions are slow)
+COND = {}   # no conditions: every site here is cold or fires <= 3 times per call
 
 
 def gdb_tmpl():
@@ -243,23 +249,44 @@ def main():
 
     cont = containment(0x5A7F67), containment(0x5A7D00), containment(0x50DD84)
     save_now = s1v if s1v >= 0 else s0
+    human1 = mem(pid, HUMANMASK, 1)
+    entry = [d for t, d in ev if t == "ENTRY"]
+    a0 = entry[0].get("a0") if entry else None
+    a1 = entry[0].get("a1") if entry else None
+    kinds = [mem(pid, KINDTABLE + 12 * i, 2, True) for i in range(3)]
+    mask = (1 << a0) if a0 is not None and 0 <= a0 < 32 else -1
+    pred_loop = a1 in kinds
+    pred_or = pred_loop and save_now != 0 and (mask & human1) != 0
+    down = [d for t, d in ev if t == "DOWN"]
+    d0 = down[0] if down else {}
+    pred_fd1 = bool(d0) and d0.get("eax", 0) != 0 and d0.get("edi") == d0.get("c1b5b4") and save_now == 0
+    print(f"PREDICTIONS (live memory + printed args, computed BEFORE reading the counters): "
+          f"table shorts {kinds} vs arg1={a1} -> LOOP {'>0' if pred_loop else '==0'}; "
+          f"save={save_now}, (1<<{a0})={mask} & human {human1} = {mask & human1} -> OR1+OR2 "
+          f"{'>0' if pred_or else '==0'}; downstream eax={d0.get('eax')} edi={d0.get('edi')} "
+          f"0x91b5b4={d0.get('c1b5b4')} save={save_now} -> FD1 {'>0' if pred_fd1 else '==0'}", flush=True)
+    print("OBSERVED:", {t: cnt.get(t, 0) for t in
+                        ("ENTRY", "E13", "WALK", "LOOP", "ALT", "EXIT", "GATE1", "OR1", "ELSE1",
+                         "GATE2", "OR2", "ELSE2", "DOWN", "FD1")}, flush=True)
     res = {
         "G1_boundary_moved": r1v > r0 and y1v >= y0,
-        "G2_helper_entered_with_args": cnt.get("ENTRY", 0) >= 1 and any(
-            d.get("a1") is not None for t, d in ev if t == "ENTRY"),
-        # every entered call resolved to exactly one named leg of the ladder
-        "G3_leg_ladder_resolved": cnt.get("ENTRY", 0) >= 1 and (
-            cnt.get("LOOP", 0) + cnt.get("ALT", 0) + cnt.get("EXIT", 0) >= cnt.get("ENTRY", 0)),
-        # the gate operands were printed AND the same globals read back from /proc match
-        "G4_gate_operands_read_back": (cnt.get("GATE1", 0) + cnt.get("GATE2", 0) >= 1
-                                       and s1v == s0 and hm == mem(pid, HUMANMASK, 1)),
-        # the tail leg agrees with the gate operands: save==0 forbids the OR legs, save!=0 demands them
-        "G5_tail_leg_matches_gate": (
-            (save_now == 0 and cnt.get("OR1", 0) == 0 and cnt.get("OR2", 0) == 0
-             and cnt.get("ELSE1", 0) + cnt.get("ELSE2", 0) >= 1)
-            or (save_now != 0 and cnt.get("OR1", 0) + cnt.get("OR2", 0) >= 1)),
-        "G6_branch_bytes_named": all(bb.get(x) for x in BRANCH),
-        "G7_static_containment": bool(cont[0] and cont[0][0] == "FUN_005a7970"
+        "G2_helper_entered_with_args": cnt.get("ENTRY", 0) >= 1 and a1 is not None,
+        # the 0x5a7e73 branch operands (table pointer, its short, arg1) printed from the running game
+        "G3_walk_operands_read_back": cnt.get("WALK", 0) >= 1 and all(
+            d.get("short") is not None and d.get("arg1") is not None
+            for t, d in ev if t == "WALK"),
+        # the leg the boundary takes is predicted from live memory and confirmed by the counters
+        "G4_loop_leg_prediction_confirmed": pred_loop == (cnt.get("LOOP", 0) > 0)
+                                            and cnt.get("WALK", 0) >= 1,
+        # both bit-set tails: operands read back live, OR legs match the prediction, and the loop-tail
+        # block never fires unless the loop ran (a wrong leg map would break this)
+        "G5_tail_gate_confirmed": (pred_or == (cnt.get("OR1", 0) + cnt.get("OR2", 0) > 0)
+                                   and (cnt.get("GATE2", 0) + cnt.get("OR2", 0) + cnt.get("ELSE2", 0) == 0
+                                        or cnt.get("LOOP", 0) > 0)),
+        "G6_downstream_leg_prediction_confirmed": pred_fd1 == (cnt.get("FD1", 0) > 0)
+                                                  and cnt.get("DOWN", 0) >= 1,
+        "G7_branch_bytes_named": all(bb.get(x) for x in BRANCH),
+        "G8_static_containment": bool(cont[0] and cont[0][0] == "FUN_005a7970"
                                       and cont[1] and cont[1][0] == "FUN_005a7970"
                                       and cont[2] and cont[2][0] == "FUN_0050d140"),
     }
@@ -267,13 +294,15 @@ def main():
     for k, v in res.items():
         print(f"  {'T' if v else 'F'} {k}", flush=True)
     ok = all(res.values())
-    print("VERDICT %s tag=%s entry=%d e13=%d loop=%d alt=%d exit=%d head=%d "
-          "gate1=%d or1=%d else1=%d gate2=%d or2=%d else2=%d round=%d->%d save=%d kind=%d "
-          "driver_rc=%d" % ("PASS" if ok else "FAIL", a.tag, cnt.get("ENTRY", 0), cnt.get("E13", 0),
-                            cnt.get("LOOP", 0), cnt.get("ALT", 0), cnt.get("EXIT", 0),
-                            cnt.get("HEAD", 0), cnt.get("GATE1", 0), cnt.get("OR1", 0),
-                            cnt.get("ELSE1", 0), cnt.get("GATE2", 0), cnt.get("OR2", 0),
-                            cnt.get("ELSE2", 0), r0, r1v, save_now, k0, r1.returncode), flush=True)
+    print("VERDICT %s tag=%s entry=%d e13=%d walk=%d loop=%d alt=%d exit=%d "
+          "gate1=%d or1=%d else1=%d gate2=%d or2=%d else2=%d down=%d fd1=%d round=%d->%d save=%d "
+          "kind=%d driver_rc=%d" % ("PASS" if ok else "FAIL", a.tag, cnt.get("ENTRY", 0),
+                                    cnt.get("E13", 0), cnt.get("WALK", 0), cnt.get("LOOP", 0),
+                                    cnt.get("ALT", 0), cnt.get("EXIT", 0), cnt.get("GATE1", 0),
+                                    cnt.get("OR1", 0), cnt.get("ELSE1", 0), cnt.get("GATE2", 0),
+                                    cnt.get("OR2", 0), cnt.get("ELSE2", 0), cnt.get("DOWN", 0),
+                                    cnt.get("FD1", 0), r0, r1v, save_now, k0,
+                                    r1.returncode), flush=True)
     print("evidence:", lpath, flush=True)
     return 0 if ok else 1
 
