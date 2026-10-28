@@ -14,9 +14,8 @@ and its summaries die on the output cap (sessions 113/114 hit 259,232/262,144 mi
   (budget FAILs at 16,000 chars — stay <= 15,500), never rewritten.
 
 Survivability: before any step that can exceed 2 minutes (gdb run, relaunch, evidence audit)
-overwrite `SESSION_CURSOR.md` (<= 600 B) with `<ID> | acceptance | merged? | next command` — YOU
-write it, nothing else records what was in flight; if the box is mid-run when you are cut off say so
-there, and never `rm`/`git checkout --`. Every doc write is an append or a <= 2 KB patch; never
+overwrite `SESSION_CURSOR.md` (<= 600 B) with `<ID> | acceptance | merged? | next command` — only
+you record what was in flight; never `rm`/`git checkout --`. Every doc write is an append or a <= 2 KB patch; never
 read-then-rewrite a file over 10 KB; keep tool results small.
 ## THE LEDGER
 
@@ -24,12 +23,12 @@ Merged: **M54A-M82** (#39-#83). **M82 (s125, m82bit7d PASS): bits 6/7 of the fla
 **M83+M84+M84b (s128-s130, UNMERGED milestone/m83, m84 PR #84, m84b) — 0x496ad0's -9999 IS THE DIALOG-CANCEL SENTINEL, NOT A PRICE KEY:** Escape arms `[chooser_sub 0x6a9e9c+0xa774] = -1`; the gate 0x497683/0x49768f returns 0xffffd8f1, the caller restores the queue snapshot (0x418623-0x41863f) and leaves via 0x4186d2 `jle 0x419967`; only 0x4187be `cmp edi,0x270f` enters 0x418d7d. m84canc2 G4-G7 False -> FAIL. NAMED M84/M84b.
 **M84e (s133, `m84edisp1/2/3` FAIL, UNMERGED milestone/m84e) — 0x4d00 IS A QUEUE POST, ITS HANDLER
 IS 0x52ed7d:** 0x584010 posts a 32-byte record to queue 0x91db70; pumps pop it into dispatcher
-0x52bce0 (53 arms; only 0x4d00 arm 0x52eb61/6c -> 0x52ed7d); 0x4194a4 (chooser fn 0x417ee0) is the
-only sender. Handler record = 0x984d38 - tid*48 (a THIRD stride-48 site for the M67 conflict);
+0x52bce0 (only 0x4d00 arm 0x52eb61/6c -> 0x52ed7d); 0x4194a4 (chooser fn 0x417ee0) is the only
+sender. Handler record = 0x984d38 - tid*48 (a THIRD stride-48 site for the M67 conflict);
 record+0x14 (0/1/2) selects sub-behaviours over 1436-byte records at 0x927590/0x927894. RETRACT
-M70's mechanism: 0x4194b3 is in the SENDER; the cursor is PANE-relative (+0x3ff5c), not fixed
-0x6e93dc; the POST is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0 (1 only from the opening-menu
-loop FUN_0057ecf0; live 0) so a loaded game exits at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
+M70's mechanism: 0x4194b3 is in the SENDER; the cursor is PANE-relative (+0x3ff5c). The POST is
+gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0 (1 only from the opening-menu loop FUN_0057ecf0;
+live 0) so a loaded game exits at 0x4194b1 (cursor zero, NO POST). NAMED M84e.
 **M84f (s135, milestone/m84f, `m84fpath1` FAIL on my own G4; leg4/5 invalid) — THE GATE IS MEASURED
 LIVE:** on a real UI insert the block RUNS (CHOOSER 2 / CASE 1 / BUMP 7 / EXIT 1 / NETCALL 1, pend
 5->6) and stops at `mov eax,ds:0x920434` / `je 0x4194b1` — cursor zero + 0x4eb6b0, NO POST. gdb bp
@@ -47,9 +46,9 @@ lists must be PRINTF-ONLY (a memory write aborts the batch, 'not an lvalue', the
    **re-read it immediately before you arm**. Screen fix: dialog -> Return, base PANE -> Escape,
    quit-prompt -> Escape (`m78_mark_clear.py normalize_screen()` does all three).
 2. The price/flag/marker chain — silent breakpoints or hw watchpoints + a prediction from live
-   memory + a read-back: `m73_price_split.py`, `m74_flag_hw.py`, `m75_sweep_replay.py`,
-   `m76_marker_clear.py`, `m72_gate_watch.py` (the VISIT GATE), `m81_flag_writer.py`,
-   `m84_cancel_sentinel.py`, `m84c_item_pump.py`, `m84e_msg_dispatch.py` (POST/dispatch/handler).
+   memory + a read-back: `m73_price_split.py`, `m74_flag_hw.py`, `m72_gate_watch.py` (the VISIT
+   GATE), `m81_flag_writer.py`, `m84e_msg_dispatch.py` (POST/dispatch/handler), `m85_tech_census.py`
+   (boundary+helper); the rest self-document (`m75/m76/m84_cancel_sentinel/m84c_item_pump`).
 3. Self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`, `m57_ui_enqueue.py`,
    `m65_screen.py --samples 8`, `m70_scan_writers.py` (static), `evidence.py audit [--delete]` /
    `budget`, `scratch/m71/dis.py LO HI` (objdump window).
@@ -100,8 +99,8 @@ Next: `python3 scratch/m71/dis.py 5a7970 5a7d20` and `5a7f40 5a7f80` (entry + ta
 ## TRAPS
 
 - **Register semantics live in the encoding, not the name:** `[reg*4+0x98adb8]` means the register
-  holds `tid*13` (52/4), `[reg+0x98adb8]` the record BYTE address `tid*52`; a conditional bp testing
-  such a register against the bare tid can NEVER fire.
+  holds `tid*13` (52/4), `[reg+0x98adb8]` the BYTE address `tid*52`; a conditional bp testing such
+  a register against the bare tid can NEVER fire.
 - **Grep objdump case-sensitively** (`DWORD PTR`, not `ptr [`); a read-modify-write through a COPIED
   register (`mov ax,[x]; or al,4; mov [x],ax`, 0x4efe60) evades store-shape greps — HARDWARE
   watchpoints on the FIELD answer "who writes it" in one run (a LOW-WORD watchpoint misses BYTE
@@ -125,9 +124,9 @@ Next: `python3 scratch/m71/dis.py 5a7970 5a7d20` and `5a7f40 5a7f80` (entry + ta
   TracerPid==0** — never a driver under a census gdb; use m55_boundary.
 - A clean reload does NOT carry records created live last session (M80's 324/325 vanished on reload,
   reappeared between runs): census the watched slots BEFORE arming.
-- base+0xd0 (`credit`) is written ONLY at 0x6310c6/0x631154 (player-record init) — income is never
-  recomputed per round; University Base income 0 vs 1-6 elsewhere, so accept_ready's credit>0 cannot
-  be restored by turns; use the per-boundary storage poke 200.
+- base+0xd0 (`credit`) is written ONLY at player-record init (0x6310c6/0x631154) — income is never
+  recomputed per round; University Base credit>0 cannot be restored by turns; use the per-boundary
+  storage poke 200.
 - **The queue tail holds STALE ids** (the shift reaches only `0..pending-1`): never read a queue by
   "first empty slot", never treat slot 10 (`+0x78`) as an entry, never read a stale tail as proof an
   id IS queued. Id 0 is both Colony Pod and the empty marker; the sentinel is -39; a negative value
