@@ -1,1 +1,1 @@
-M75 | m75sweep1 PASS | closing (notes+NAMED+NEXT done; commit+gate+submit next) | next pick M76: the 0x100 sweep marker (who clears 0x4ef398 and for which records); start: milestone.py start M76
+M76 | instrument written (12 silent breakpoints), acceptance NOT yet run | not merged (branch milestone/m76) | next: python3 scripts/m76_marker_clear.py --tag m76marker1   # ~5-8 min: reload+enqueue+drive
