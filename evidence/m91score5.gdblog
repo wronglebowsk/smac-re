@@ -1,0 +1,148 @@
+[New LWP 347989]
+[New LWP 347988]
+[New LWP 347987]
+[New LWP 347986]
+[New LWP 347985]
+[New LWP 347984]
+[New LWP 347983]
+[New LWP 347982]
+[New LWP 347981]
+[New LWP 347980]
+[New LWP 347979]
+[New LWP 347978]
+[New LWP 347977]
+[New LWP 347976]
+[New LWP 347975]
+[New LWP 347974]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf196f68b in ?? ()
+ARMED round=50 year=2150 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x51f320
+ENT n=1 fac=5 ret=0x5aaff3 round=50
+CALL n=1 fac=5 round=50
+BASE n=1 idx=4 fac=5 a2=0 base=10 ac4=6670 T0=2 T4=1 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=-1 p2=-1 round=50
+SC n=1 fac=5 idx=4 final=11
+DRAW n=1 fac=5 idx=4 draw=740 best=-999
+BASE n=2 idx=8 fac=5 a2=0 base=35 ac4=6670 T0=0 T4=3 T8=0 Tc=4 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=3 p2=2 round=50
+SC n=2 fac=5 idx=8 final=258
+DRAW n=2 fac=5 idx=8 draw=25257 best=740
+BASE n=3 idx=13 fac=5 a2=0 base=22 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=3 round=50
+SC n=3 fac=5 idx=13 final=56
+DRAW n=3 fac=5 idx=13 draw=2075 best=25257
+BASE n=4 idx=22 fac=5 a2=0 base=26 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=2 round=50
+SC n=4 fac=5 idx=22 final=31
+DRAW n=4 fac=5 idx=22 draw=3179 best=25257
+BASE n=5 idx=32 fac=5 a2=0 base=24 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=2 p2=-1 round=50
+SC n=5 fac=5 idx=32 final=25
+DRAW n=5 fac=5 idx=32 draw=816 best=25257
+BASE n=6 idx=36 fac=5 a2=0 base=15 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=5 p2=-1 round=50
+SC n=6 fac=5 idx=36 final=20
+DRAW n=6 fac=5 idx=36 draw=1183 best=25257
+BASE n=7 idx=45 fac=5 a2=0 base=7 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=-1 round=50
+SC n=7 fac=5 idx=45 final=7
+DRAW n=7 fac=5 idx=45 draw=677 best=25257
+WIN n=1 fac=5 idx=8 round=50
+TECH n=1 idx=8 param1=5 round=50
+ST n=1 addr=0x957ba8 val=8 fac=5 round=50
+RB addr=0x957ba8 mem=8
+CTRL n=1 round=50
+ENT n=2 fac=5 ret=0x5aaff3 round=51
+CALL n=2 fac=5 round=51
+BASE n=8 idx=4 fac=5 a2=0 base=10 ac4=6670 T0=2 T4=1 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=-1 p2=-1 round=51
+SC n=8 fac=5 idx=4 final=11
+DRAW n=8 fac=5 idx=4 draw=130 best=-999
+BASE n=9 idx=13 fac=5 a2=0 base=22 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=3 round=51
+SC n=9 fac=5 idx=13 final=56
+DRAW n=9 fac=5 idx=13 draw=1200 best=130
+BASE n=10 idx=22 fac=5 a2=0 base=26 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=2 round=51
+SC n=10 fac=5 idx=22 final=31
+DRAW n=10 fac=5 idx=22 draw=3540 best=1200
+BASE n=11 idx=32 fac=5 a2=0 base=24 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=2 p2=-1 round=51
+SC n=11 fac=5 idx=32 final=25
+DRAW n=11 fac=5 idx=32 draw=2678 best=3540
+BASE n=12 idx=36 fac=5 a2=0 base=15 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=5 p2=-1 round=51
+SC n=12 fac=5 idx=36 final=20
+DRAW n=12 fac=5 idx=36 draw=1148 best=3540
+BASE n=13 idx=45 fac=5 a2=0 base=7 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=-1 round=51
+SC n=13 fac=5 idx=45 final=7
+DRAW n=13 fac=5 idx=45 draw=172 best=3540
+WIN n=2 fac=5 idx=22 round=51
+TECH n=2 idx=22 param1=5 round=51
+ST n=2 addr=0x957ba8 val=22 fac=5 round=51
+RB addr=0x957ba8 mem=22
+CTRL n=2 round=51
+CTRL n=3 round=52
+CTRL n=4 round=53
+ENT n=3 fac=4 ret=0x5aaff3 round=54
+CALL n=3 fac=4 round=54
+BASE n=14 idx=3 fac=4 a2=0 base=11 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=-1 p2=-1 round=54
+SC n=14 fac=4 idx=3 final=12
+DRAW n=14 fac=4 idx=3 draw=445 best=-999
+BASE n=15 idx=5 fac=4 a2=0 base=5 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=-1 p2=-1 round=54
+SC n=15 fac=4 idx=5 final=6
+DRAW n=15 fac=4 idx=5 draw=1384 best=445
+BASE n=16 idx=22 fac=4 a2=0 base=10 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=1 p2=2 round=54
+SC n=16 fac=4 idx=22 final=11
+DRAW n=16 fac=4 idx=22 draw=449 best=1384
+BASE n=17 idx=48 fac=4 a2=0 base=9 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=4 p2=0 round=54
+SC n=17 fac=4 idx=48 final=9
+DRAW n=17 fac=4 idx=48 draw=612 best=1384
+BASE n=18 idx=60 fac=4 a2=0 base=19 ac4=6670 T0=4 T4=0 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=6 p2=49 round=54
+SC n=18 fac=4 idx=60 final=38
+DRAW n=18 fac=4 idx=60 draw=2079 best=1384
+WIN n=3 fac=4 idx=60 round=54
+TECH n=3 idx=60 param1=4 round=54
+ST n=3 addr=0x955aec val=60 fac=4 round=54
+RB addr=0x955aec mem=60
+ENT n=4 fac=6 ret=0x5aaff3 round=54
+CALL n=4 fac=6 round=54
+BASE n=19 idx=6 fac=6 a2=0 base=18 ac4=6670 T0=3 T4=1 T8=2 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=-1 p2=-1 round=54
+SC n=19 fac=6 idx=6 final=36
+DRAW n=19 fac=6 idx=6 draw=2465 best=-999
+BASE n=20 idx=13 fac=6 a2=0 base=18 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=3 round=54
+SC n=20 fac=6 idx=13 final=36
+DRAW n=20 fac=6 idx=13 draw=2975 best=2465
+BASE n=21 idx=22 fac=6 a2=0 base=14 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=2 round=54
+SC n=21 fac=6 idx=22 final=15
+DRAW n=21 fac=6 idx=22 draw=1871 best=2975
+BASE n=22 idx=32 fac=6 a2=0 base=12 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=2 p2=-1 round=54
+SC n=22 fac=6 idx=32 final=25
+DRAW n=22 fac=6 idx=32 draw=1186 best=2975
+BASE n=23 idx=36 fac=6 a2=0 base=31 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=5 p2=-1 round=54
+SC n=23 fac=6 idx=36 final=63
+DRAW n=23 fac=6 idx=36 draw=1146 best=2975
+BASE n=24 idx=43 fac=6 a2=0 base=27 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=5 p2=4 round=54
+SC n=24 fac=6 idx=43 final=28
+DRAW n=24 fac=6 idx=43 draw=1315 best=2975
+BASE n=25 idx=44 fac=6 a2=0 base=19 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=-1 round=54
+SC n=25 fac=6 idx=44 final=20
+DRAW n=25 fac=6 idx=44 draw=1506 best=2975
+BASE n=26 idx=45 fac=6 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=-1 round=54
+SC n=26 fac=6 idx=45 final=30
+DRAW n=26 fac=6 idx=45 draw=1280 best=2975
+BASE n=27 idx=48 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=0 round=54
+SC n=27 fac=6 idx=48 final=25
+DRAW n=27 fac=6 idx=48 draw=151 best=2975
+WIN n=4 fac=6 idx=13 round=54
+TECH n=4 idx=13 param1=6 round=54
+ST n=4 addr=0x959c64 val=13 fac=6 round=54
+RB addr=0x959c64 mem=13
+CTRL n=5 round=54
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf1b8232c in __kernel_vsyscall ()
+[Inferior 1 (process 347970) detached]
