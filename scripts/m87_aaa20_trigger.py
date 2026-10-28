@@ -54,7 +54,7 @@ SITES = [
     ("LOOP",  0x5A7E79, "reached only if arg1 == that table short -> the 64-record band loop"),
     ("ALT",   0x5A7F9F, "the table-miss leg / band-loop completion"),
 ]
-BRANCH = [0x5AAA6D, 0x5AAA76, 0x5AAAA8, 0x5AAAB7, 0x5AACCB, 0x5A7E73]
+BRANCH = [0x5AAA6D, 0x5AAA76, 0x5AAAA8, 0x5AAAB7, 0x5AAACB, 0x5A7E73]  # 0x5aaacb = aaa20's own call of the helper
 STATIC_SITES = {0x4f1d6c, 0x4f1d72, 0x514e56, 0x517df1, 0x52087f, 0x5212ed, 0x59cfd4,
                 0x5aaf46, 0x5aafb9}
 PRINTS = {
@@ -64,7 +64,7 @@ PRINTS = {
     "LIVE":  'printf "LIVE n=%d faction=%d slot=%d save=%d\\n", $n_live, $esi, '
              '*(int *)($edi+0x94d7fc), *(int *)0x920434',
     "KIND":  'printf "KIND n=%d kind=%d faction=%d\\n", $n_kind, $eax, $esi',
-    "CALL":  'printf "CALL n=%d faction=%d kind=%d slot_after=%d\\n", $n_call, $esi, $ebx, '
+    "CALL":  'printf "CALL n=%d faction=%d kind=%d slot_pre=%d\\n", $n_call, $esi, $ebx, '
              '*(int *)($edi+0x94d7fc)',
     "EXIT":  'printf "EXIT n=%d eax=%d\\n", $n_exit, $eax',
     "HENTRY":'printf "HENTRY n=%d a0=%d a1=%d a2=%d ret=0x%x\\n", $n_hentry, *(int *)($esp+4), '
