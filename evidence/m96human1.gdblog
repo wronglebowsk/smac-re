@@ -164,3 +164,10 @@ HDRAW n=7 fac=3 idx=72 hi=2049 state=56206571
 DRAW n=13 fac=3 idx=72 draw=1963 best=1093 score=2048 round=62
 RETV n=2 idx=0 best=1963 fac=3 rng=983889230 round=62
 TECH n=2 idx=72 param1=3 ret=0x3 round=62
+CTRL n=2 round=62
+CTRL n=3 round=63
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 614098]
+0xe86bf32c in __kernel_vsyscall ()
+[Inferior 1 (process 614038) detached]

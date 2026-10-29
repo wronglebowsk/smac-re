@@ -20,7 +20,7 @@ BYTE-BACKED SHAPE (scratch/m71/dis.py windows, ghidra_out/shard_009.c:9343-9388)
   (mod 2^32), value = (((state & 0xffff) * (hi-lo)) mod 2^32) >> 16 + lo — a SEPARATE LCG stream.
   mask-clear -> 0x5aa217-0x5aa230 draw = rand() % (score+1) (0x64c6f0), 0 when score <= 0.
   0x5aa232 cmp eax,[ebp-0x8]: the DRAW VALUE is the ranking key (strictly greater wins, ties keep the
-  earlier candidate); 0x5aa247 returns best_idx.
+  earlier candidate); 0x5aa247 mov eax,[ebp-0xc] then 0x5aa24a returns it (break AFTER the load).
   FUN_0048b9a0's chooser leg (shard_009.c:9359) is taken when param_2==0 && (round==0 || !(mask &
   (1<<param_1)) || bVar14) && param_3<0, and bVar14 = ((ds:0x985ac4 & 0x200) != 0 && param_3 <= 0)
   (shard_009.c:9343-9347) — bVar14 is what lets a HUMAN-masked faction take the leg at all.
@@ -44,7 +44,7 @@ CTRL = 0x51F320
 A030, TECH = 0x5AA030, 0x48BAE9
 SCORE, G164, M17E, SIB10, SIB18, S98, DIV, QUO, M204, HDRAW, RDRAW, DRAW, RETV, EARLY = (
     0x5AA159, 0x5AA164, 0x5AA17E, 0x5AA192, 0x5AA19C, 0x5AA1A6, 0x5AA1E4, 0x5AA1F0, 0x5AA204,
-    0x5AA20D, 0x5AA217, 0x5AA232, 0x5AA247, 0x5AA251)
+    0x5AA20D, 0x5AA217, 0x5AA232, 0x5AA24A, 0x5AA251)  # RETV at 0x5aa24a = AFTER the return-value load
 
 TMPL = r"""set pagination off
 set confirm off
@@ -72,7 +72,7 @@ commands
 silent
 set $n_a = $n_a + 1
 if $n_a < 40
-printf "A030 n=%d arg1=%d edi=%d ret=0x%x round=%d ebc=%d mask=%d rng=%d\n", $n_a, *(int *)($esp+4), $edi, *(int *)$esp, *(int *)0x985afc, *(int *)0x985ac4, *(int *)0x985b10, *(int *)0x999fa0
+printf "A030 n=%d fac=%d edi=%d ret=0x%x round=%d ebc=%d mask=%d rng=%d\n", $n_a, *(int *)($esp+4), $edi, *(int *)$esp, *(int *)0x985afc, *(int *)0x985ac4, *(int *)0x985b10, *(int *)0x999fa0
 end
 continue
 end
@@ -171,7 +171,7 @@ commands
 silent
 set $n_r = $n_r + 1
 if $n_r < 400
-printf "RDRAW n=%d fac=%d idx=%d score=%d\n", $n_r, $edi, $esi, *(int *)($ebp-4)
+printf "RDRAW n=%d fac=%d idx=%d score=%d modulus=%d\n", $n_r, *(int *)($ebp+8), $esi, *(int *)($ebp-4), $edi
 end
 continue
 end
@@ -180,11 +180,11 @@ commands
 silent
 set $n_w = $n_w + 1
 if $n_w < 400
-printf "DRAW n=%d fac=%d idx=%d draw=%d best=%d score=%d round=%d\n", $n_w, $edi, $esi, $eax, *(int *)($ebp-8), *(int *)($ebp-4), *(int *)0x985afc
+printf "DRAW n=%d fac=%d idx=%d draw=%d best=%d score=%d round=%d\n", $n_w, *(int *)($ebp+8), $esi, $eax, *(int *)($ebp-8), *(int *)($ebp-4), *(int *)0x985afc
 end
 continue
 end
-break *0x5aa247
+break *0x5aa24a
 commands
 silent
 set $n_ret = $n_ret + 1

@@ -1,0 +1,171 @@
+[New LWP 614106]
+[New LWP 614105]
+[New LWP 614104]
+[New LWP 614103]
+[New LWP 614102]
+[New LWP 614101]
+[New LWP 614098]
+[New LWP 614049]
+[New LWP 614048]
+[New LWP 614047]
+[New LWP 614046]
+[New LWP 614045]
+[New LWP 614044]
+[New LWP 614043]
+[New LWP 614042]
+[New LWP 614041]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe86bf32c in __kernel_vsyscall ()
+ARMED round=64 year=2164 save=0 mask=65288 ebc=6670 rng=1990439978 forced=6
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5aa159
+Breakpoint 3 at 0x5aa164
+Breakpoint 4 at 0x5aa17e
+Breakpoint 5 at 0x5aa192
+Breakpoint 6 at 0x5aa19c
+Breakpoint 7 at 0x5aa1a6
+Breakpoint 8 at 0x5aa1e4
+Breakpoint 9 at 0x5aa1f0
+Breakpoint 10 at 0x5aa204
+Breakpoint 11 at 0x5aa20d
+Breakpoint 12 at 0x5aa217
+Breakpoint 13 at 0x5aa232
+Breakpoint 14 at 0x5aa24a
+Breakpoint 15 at 0x5aa251
+Breakpoint 16 at 0x48bae9
+Breakpoint 17 at 0x51f320
+CTRL n=1 round=64
+A030 n=1 fac=2 edi=2 ret=0x48bae9 round=65 ebc=6670 mask=65288 rng=1321534689
+SC n=1 fac=2 idx=13 score=62 round=65
+G164 n=1 fac=2 idx=13 ebc=6670
+M17E n=1 fac=2 idx=13 bit=4 mbyte=8
+DIV n=1 fac=2 idx=13 score=62 div=2
+QUO n=1 fac=2 idx=13 q=7936
+M204 n=1 fac=2 idx=13 bit=4 mbyte=8 score=7936
+RDRAW n=1 fac=2 idx=13 score=7936 modulus=2
+DRAW n=1 fac=2 idx=13 draw=5837 best=-999 score=7936 round=65
+SC n=2 fac=2 idx=22 score=22 round=65
+G164 n=2 fac=2 idx=22 ebc=6670
+M17E n=2 fac=2 idx=22 bit=4 mbyte=8
+DIV n=2 fac=2 idx=22 score=22 div=2
+QUO n=2 fac=2 idx=22 q=2816
+M204 n=2 fac=2 idx=22 bit=4 mbyte=8 score=2816
+RDRAW n=2 fac=2 idx=22 score=2816 modulus=2
+DRAW n=2 fac=2 idx=22 draw=253 best=5837 score=2816 round=65
+SC n=3 fac=2 idx=32 score=21 round=65
+G164 n=3 fac=2 idx=32 ebc=6670
+M17E n=3 fac=2 idx=32 bit=4 mbyte=8
+DIV n=3 fac=2 idx=32 score=21 div=2
+QUO n=3 fac=2 idx=32 q=2688
+M204 n=3 fac=2 idx=32 bit=4 mbyte=8 score=2688
+RDRAW n=3 fac=2 idx=32 score=2688 modulus=2
+DRAW n=3 fac=2 idx=32 draw=923 best=5837 score=2688 round=65
+SC n=4 fac=2 idx=36 score=23 round=65
+G164 n=4 fac=2 idx=36 ebc=6670
+M17E n=4 fac=2 idx=36 bit=4 mbyte=8
+DIV n=4 fac=2 idx=36 score=23 div=2
+QUO n=4 fac=2 idx=36 q=2944
+M204 n=4 fac=2 idx=36 bit=4 mbyte=8 score=2944
+RDRAW n=4 fac=2 idx=36 score=2944 modulus=2
+DRAW n=4 fac=2 idx=36 draw=401 best=5837 score=2944 round=65
+SC n=5 fac=2 idx=44 score=39 round=65
+G164 n=5 fac=2 idx=44 ebc=6670
+M17E n=5 fac=2 idx=44 bit=4 mbyte=8
+DIV n=5 fac=2 idx=44 score=39 div=2
+QUO n=5 fac=2 idx=44 q=4992
+M204 n=5 fac=2 idx=44 bit=4 mbyte=8 score=4992
+RDRAW n=5 fac=2 idx=44 score=4992 modulus=2
+DRAW n=5 fac=2 idx=44 draw=610 best=5837 score=4992 round=65
+SC n=6 fac=2 idx=48 score=14 round=65
+G164 n=6 fac=2 idx=48 ebc=6670
+M17E n=6 fac=2 idx=48 bit=4 mbyte=8
+DIV n=6 fac=2 idx=48 score=14 div=2
+QUO n=6 fac=2 idx=48 q=1792
+M204 n=6 fac=2 idx=48 bit=4 mbyte=8 score=1792
+RDRAW n=6 fac=2 idx=48 score=1792 modulus=2
+DRAW n=6 fac=2 idx=48 draw=1368 best=5837 score=1792 round=65
+RETV n=1 idx=13 best=5837 fac=2 rng=1321534689 round=65
+TECH n=1 idx=13 param1=2 ret=0x2 round=65
+A030 n=2 fac=3 edi=3 ret=0x48bae9 round=65 ebc=6670 mask=65288 rng=911923404
+SC n=7 fac=3 idx=5 score=7 round=65
+G164 n=7 fac=3 idx=5 ebc=6670
+M17E n=7 fac=3 idx=5 bit=8 mbyte=8
+SIB10 n=1 off=9779780 val=0 fac=3 idx=5
+SIB18 n=2 off=9779788 val=0 fac=3 idx=5
+DIV n=7 fac=3 idx=5 score=7 div=1
+QUO n=7 fac=3 idx=5 q=1792
+M204 n=7 fac=3 idx=5 bit=8 mbyte=8 score=1792
+HDRAW n=1 fac=3 idx=5 hi=1793 state=911923404
+DRAW n=7 fac=3 idx=5 draw=432 best=-999 score=1792 round=65
+SC n=8 fac=3 idx=13 score=11 round=65
+G164 n=8 fac=3 idx=13 ebc=6670
+M17E n=8 fac=3 idx=13 bit=8 mbyte=8
+SIB10 n=3 off=9779780 val=0 fac=3 idx=13
+SIB18 n=4 off=9779788 val=0 fac=3 idx=13
+DIV n=8 fac=3 idx=13 score=11 div=2
+QUO n=8 fac=3 idx=13 q=1408
+M204 n=8 fac=3 idx=13 bit=8 mbyte=8 score=1408
+HDRAW n=2 fac=3 idx=13 hi=1409 state=1566129595
+DRAW n=8 fac=3 idx=13 draw=835 best=432 score=1408 round=65
+SC n=9 fac=3 idx=32 score=25 round=65
+G164 n=9 fac=3 idx=32 ebc=6670
+M17E n=9 fac=3 idx=32 bit=8 mbyte=8
+SIB10 n=5 off=9779780 val=0 fac=3 idx=32
+SIB18 n=6 off=9779788 val=0 fac=3 idx=32
+DIV n=9 fac=3 idx=32 score=25 div=2
+QUO n=9 fac=3 idx=32 q=3200
+M204 n=9 fac=3 idx=32 bit=8 mbyte=8 score=3200
+HDRAW n=3 fac=3 idx=32 hi=3201 state=-1882023970
+DRAW n=9 fac=3 idx=32 draw=370 best=835 score=3200 round=65
+SC n=10 fac=3 idx=44 score=12 round=65
+G164 n=10 fac=3 idx=44 ebc=6670
+M17E n=10 fac=3 idx=44 bit=8 mbyte=8
+SIB10 n=7 off=9779780 val=0 fac=3 idx=44
+SIB18 n=8 off=9779788 val=0 fac=3 idx=44
+DIV n=10 fac=3 idx=44 score=12 div=2
+QUO n=10 fac=3 idx=44 q=1536
+M204 n=10 fac=3 idx=44 bit=8 mbyte=8 score=1536
+HDRAW n=4 fac=3 idx=44 hi=1537 state=1196498341
+DRAW n=10 fac=3 idx=44 draw=304 best=835 score=1536 round=65
+SC n=11 fac=3 idx=45 score=7 round=65
+G164 n=11 fac=3 idx=45 ebc=6670
+M17E n=11 fac=3 idx=45 bit=8 mbyte=8
+SIB10 n=9 off=9779780 val=0 fac=3 idx=45
+SIB18 n=10 off=9779788 val=0 fac=3 idx=45
+DIV n=11 fac=3 idx=45 score=7 div=2
+QUO n=11 fac=3 idx=45 q=896
+M204 n=11 fac=3 idx=45 bit=8 mbyte=8 score=896
+HDRAW n=5 fac=3 idx=45 hi=897 state=309998272
+DRAW n=11 fac=3 idx=45 draw=24 best=835 score=896 round=65
+SC n=12 fac=3 idx=58 score=11 round=65
+G164 n=12 fac=3 idx=58 ebc=6670
+M17E n=12 fac=3 idx=58 bit=8 mbyte=8
+SIB10 n=11 off=9779780 val=0 fac=3 idx=58
+SIB18 n=12 off=9779788 val=0 fac=3 idx=58
+DIV n=12 fac=3 idx=58 score=11 div=3
+QUO n=12 fac=3 idx=58 q=938
+M204 n=12 fac=3 idx=58 bit=8 mbyte=8 score=938
+HDRAW n=6 fac=3 idx=58 hi=939 state=-778303713
+DRAW n=12 fac=3 idx=58 draw=623 best=835 score=938 round=65
+SC n=13 fac=3 idx=72 score=25 round=65
+G164 n=13 fac=3 idx=72 ebc=6670
+M17E n=13 fac=3 idx=72 bit=8 mbyte=8
+SIB10 n=13 off=9779780 val=0 fac=3 idx=72
+SIB18 n=14 off=9779788 val=0 fac=3 idx=72
+DIV n=13 fac=3 idx=72 score=25 div=3
+QUO n=13 fac=3 idx=72 q=2133
+M204 n=13 fac=3 idx=72 bit=8 mbyte=8 score=2133
+HDRAW n=7 fac=3 idx=72 hi=2134 state=-1103582734
+DRAW n=13 fac=3 idx=72 draw=5 best=835 score=2133 round=65
+RETV n=2 idx=13 best=835 fac=3 rng=296222889 round=65
+TECH n=2 idx=13 param1=3 ret=0x3 round=65
+CTRL n=2 round=65
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xe86bf32c in __kernel_vsyscall ()
+[Inferior 1 (process 614038) detached]
