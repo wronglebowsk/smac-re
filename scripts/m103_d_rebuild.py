@@ -113,8 +113,22 @@ TMPL = r"""set pagination off
 set confirm off
 @@BLOCKS@@printf "ARMED @@NB@@ silent bps at @@BPS@@\n"
 continue
-call (int (*)(int))@@FUNC@@(@@FAC@@)
-printf "M103S CALL fac=@@FAC@@ done=1 round=%d cp=%d\n", @@RND@@, @@CPP@@
+python
+import gdb
+forms = ["call (int (*)(int))@@FUNC@@(@@FAC@@)", "call *(int (*)(int))@@FUNC@@(@@FAC@@)",
+         "call (int)@@FUNC@@(@@FAC@@)"]
+ok = -1
+for i, fm in enumerate(forms):
+    try:
+        gdb.execute(fm, to_string=True)
+        ok = i
+        break
+    except Exception as e:
+        gdb.write("callerr form %d: %s\n" % (i, e))
+gdb.write("M103S CALL fac=@@FAC@@ done=%d form=%d round=%d cp=%d\n"
+          % (1 if ok >= 0 else 0, ok,
+             int(gdb.parse_and_eval("@@RND@@")), int(gdb.parse_and_eval("@@CPP@@"))))
+end
 clear *@@STOP@@
 continue
 """
@@ -145,18 +159,21 @@ def gdb_script(st):
     blocks, pcs = [], []
 
     def add(tpl, pc, cond, line, args):
+        # INSTRUMENT SELF-CHECK (run 1 died on a printf format/args mismatch): count the
+        # gdb conversion specs in the format against the printf arguments.
+        if len(re.findall(r"%[dx]", line)) != len(args):
+            raise SystemExit("printf arg count %d != specs %d for pc %#x: %s"
+                             % (len(args), len(re.findall(r"%[dx]", line)), pc, line))
         pcs.append("%#x" % pc)
         blocks.append(tpl.replace("@@PC@@", "%#x" % pc).replace("@@COND@@", cond)
                       .replace("@@LINE@@", line)
                       .replace("@@ARGS@@", "".join(", " + a for a in args)))
 
     # any execution of the two writers (unconditional -> catches every faction)
-    add(BPU, ENT_PC, "", "M103S ENT pc=0x59ec00 fac=%d ret=0x%%x round=%%d cp=%%d" % -1,
+    add(BPU, ENT_PC, "", "M103S ENT pc=0x%x fac=%%d ret=0x%%x round=%%d cp=%%d" % ENT_PC,
         ["*(int *)($esp+4)", "*(int *)($esp)", RND, CPP])
-    blocks[-1] = blocks[-1].replace("fac=-1 ", "fac=%d ")
-    add(BPU, ENT2_PC, "", "M103S ENT pc=0x59ec90 a0=0x%%x arg1=%d round=%%d cp=%%d" % -1,
+    add(BPU, ENT2_PC, "", "M103S ENT pc=0x%x a0=0x%%x arg1=%%d round=%%d cp=%%d" % ENT2_PC,
         ["*(int *)($esp+4)", "*(int *)($esp+8)", RND, CPP])
-    blocks[-1] = blocks[-1].replace("arg1=-1 ", "arg1=%d ")
     for f in POKED:
         lo, base = f * 2095, daddr(f)
         add(BPTPL, RESET_PC, "$edi==%#x" % (base + 4 * ND),
@@ -178,9 +195,8 @@ def gdb_script(st):
             ["$eax", "*(int *)($eax)", "$edi", RND, CPP])
     for pc in SITES:
         add(BPU, pc, "", "M103S SITE pc=0x%x n=1 round=%%d cp=%%d" % pc, [RND, CPP])
-    blocks.append(BPN.replace("@@PC@@", "%#x" % STOP_PC).replace("@@COND@@", "$edi==%d" % CALL_FAC)
-                   .replace("@@LINE@@", "M103S STOP fac=%d round=%%d cp=%%d" % CALL_FAC)
-                   .replace("@@ARGS@@", ", ".join(["$edi", RND, CPP])))
+    add(BPN, STOP_PC, "$edi==%d" % CALL_FAC,
+        "M103S STOP fac=%d round=%d cp=%d", ["$edi", RND, CPP])
     return (TMPL.replace("@@BLOCKS@@", "".join(blocks))
             .replace("@@NB@@", str(len(pcs))).replace("@@BPS@@", " ".join(pcs))
             .replace("@@FUNC@@", "%#x" % ENT_PC).replace("@@FAC@@", str(CALL_FAC))
@@ -323,7 +339,7 @@ def main():
     call_i = next((i for i, (t, f, r, c) in enumerate(ev) if t == "CALL"), None)
     pre = [e for i, e in enumerate(ev) if stop_i is not None and i < stop_i]
     post = [e for i, e in enumerate(ev) if stop_i is not None and i > stop_i]
-    w3 = model_of(fin["rec"][CALL_FAC])
+    w3 = model_of(fin["rec"][CALL_FAC][1])
     t3 = [(t, k, v) for t, k, v in fin["rec"][CALL_FAC][1] if t == 3]
     adds_post = [(f["key"], f["val"]) for t, f, r, c in post if t == "ADD" and f.get("fac") == CALL_FAC
                  and "twin" not in f]
@@ -341,8 +357,9 @@ def main():
         ("G4 NO writer event before the call (setup-only, not per-round)",
          not [e for e in pre if e[0] in ("ENT", "ADD", "RESET")],
          "pre ENT/ADD/RESET=%d" % len([e for e in pre if e[0] in ("ENT", "ADD", "RESET")])),
-        ("G5 the STOP bp fired and the inferior call completed",
-         stop_i is not None and call_i is not None, "stop=%s call=%s" % (stop_i, call_i)),
+        ("G5 the STOP bp fired and the inferior call completed (done=1)",
+         stop_i is not None and any(f.get("done") == 1 for t, f, r, c in ev if t == "CALL"),
+         "stop=%s call=%s" % (stop_i, [f for t, f, r, c in ev if t == "CALL"])),
         ("G6 the call ran the writer: ENT fac3 + the 11-dword reset",
          any(f.get("fac") == CALL_FAC for t, f, r, c in post if t == "ENT")
          and len(resets_post) >= 1 and all(all(f["v%d" % i] == 0 for i in range(ND))
