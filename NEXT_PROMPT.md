@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 149, 2026-10-29)
+# NEXT_PROMPT.md — footing for the next session (session 151, 2026-10-29)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -18,31 +18,23 @@ Survivability: before any step that can exceed 2 minutes (gdb run, relaunch, evi
 was in flight; never `rm`/`git checkout --`. Every doc write is an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92 (#98), M93 (#99) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
-**M90 (s141, #95, `m90tech2` PASS 8/8):** the per-faction slot [0x94d7fc + fac*8380] IS a TECH INDEX
-0..88 chosen by FUN_005aa030(faction) (gate FUN_005a6cd0 = "prereq known" = [0x985c1c+prereq]&(1<<fac);
-tie `_rand`), returned by FUN_005ab000 -> FUN_0048b9a0 (landing 0x48bae9), stored at 0x5aa9d3.
-bVar14 UNDECODED. NAMED.
-**M91 (s142-s143, #97, `m91score5` PASS 7/7):** FUN_005a90a0(idx, fac, arg2) BASE at 0x5a930b = `SUM
-over four (cost,demand) pairs of (demand*m+1)*cost` — costs *(0x92fdc4+idx*44 +0,+4,+8,+0xc) (record
-prereq1 = +16 = 0x92fdd4), demand *(fac*8380 + 0x94d810/14/18/1c), m = 1 if arg2 != 0 else 4/2 by
-0x985ac4 bit 0x200 (live SET), halved iff all four pairs inert (bc = bit-0x10 popcount of 0x94d448
-dwords 1..7; divisor >= 4 = >=4 bases): predicted == engine 27/27. The tail runs ONLY when arg2 == 0
-(0x5a9375). FUN_005aa030 **picks the STRICTLY-largest draw `_rand() % (score+1)` (0x5aa217-0x5aa232,
-asc 0..88) — NOT max score** (falsified 3x). NAMED.
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92-M94 (#98-#100), M95 (#101) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
+**M90/M91 (s141-s143, #95/#97):** the slot IS a tech index 0..88 chosen by the STRICTEST-largest
+draw; BASE = SUM of four (demand*m+1)*cost pairs (m=4 live); tail runs only arg2==0. NAMED.
 **M92 (s144-s146, #98, `m92tail18` PASS 8/8, fresh m54b_clean load r51->55):** FUN_005a90a0's tail
 (entered 0x5a9500 iff arg2==0) EXACTLY predicted: **TAILOUT at 0x5a9698 == BASE + the tail simulated
 from the per-faction block — 39/39 candidates, 0 mismatches, 2 qualifying windows, naive one-factor
 splits 19** (cat/mult/div offsets, the cat7/cat2/cat0/band legs and gates: skill code-atlas.md).
-**Block FROZEN within a round** (0/39 + 0/19 per-TAIL-hit dumps differ from own-round snapshots;
-div cross-check 39/39 bad=0), moves BETWEEN rounds — s145's in-round-motion claim RETRACTED (census defects, see TRAPS). Census needs a FRESH load. NAMED. **M92 MERGED (#98).**
-**M93 (s147-s148, `m93post3` PASS 9/9, fresh load r50->55):** the POST-tail cascade 0x5a9747-0x5aa022
-EXACTLY predicted (13/13 finals, nulls 11/13): `0x5a9020(a,X,f)` = prereq-closure membership at depth
-f; every stage applies iff idx is INSIDE its key/closure set (era-table words are ID keys; leg detail
-in skill code-atlas.md); TIMING LAW: ladder inputs (0x92adbc, era table, designed prereqs, demand
-dwords) move mid-round — freeze at the TAIL HIT (tailx1/tailx2 dumps), not the boundary snap.
+**Block FROZEN within a round** (0/39 + 0/19 dumps differ), moves BETWEEN rounds — s145's in-round-motion claim RETRACTED (census defects, see TRAPS). Census needs a FRESH load. NAMED. **M92 MERGED (#98).**
+**M93 (s147-s148, #99, `m93post3` PASS 9/9):** the POST cascade 0x5a9747-0x5aa022 EXACTLY predicted
+(13/13 finals): `0x5a9020(a,X,f)` = prereq-closure membership at depth f; stages apply iff idx is
+INSIDE their set (legs in skill code-atlas.md); TIMING LAW: ladder inputs move mid-round — freeze at
+the TAIL HIT, not the boundary snap. NAMED.
 
-**M94 (s149, `m94table3` PASS 7/7):** DIVISOR `[fac*8380+0x94e488]` RECOMPUTED 0..N every round by FUN_00556690 (per-faction upkeep stage of FUN_005208f0's sequence, 0x52094f arg=fac; also FUN_0059ce10 @0x59dd43): reset 0x94e484/488/48c<-0 (0x5566cf/pc 0x5566d5), rebuild `inc edx; mov [eax+0x94e488],edx` (0x556a87/0x556a8d). **== faction base count** (8/8 read back); cp==fac at every event; mults/cats rewritten in-stage; 0-base fac skips -> 0 events on 0x94e488. NAMED.
+**M94 (s149, #100, `m94table3` PASS 7/7):** DIVISOR `[fac*8380+0x94e488]` RECOMPUTED every round by
+FUN_00556690 (upkeep stage, arg=fac; also 0x59dd43): reset 0x94e484/488/48c<-0 (0x5566cf) then
+rebuild (0x556a87) — **== faction base count** (8/8); mults/cats rewritten in-stage; 0-base fac ->
+no events. NAMED.
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
 1. **accept_ready.py** is the readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it immediately before you arm**. Screen fix: dialog -> Return, base PANE -> Escape, quit-prompt -> Escape (`m78_mark_clear.normalize_screen()` does all three).
@@ -51,7 +43,7 @@ dwords) move mid-round — freeze at the TAIL HIT (tailx1/tailx2 dumps), not the
      `m81_flag_writer.py`, `m85_tech_census.py`, `m88_slot_watch.py`, `m90_tech_choice.py`,
      `m91_scorer_census.py`, `m92_tail_census.py` (base 0x5a930b, TAIL 0x5a9503, TAILOUT 0x5a9698,
      final 0x5aa159, draw 0x5aa232; simulate EACH candidate LIVE at its BASE hit on a FRESH load),
-     `m94_table_watch.py` (4 hw watchpoints on any 4 dwords; prints pc+new+round+cur_player, names
+     `m94_table_watch.py` (4 hw watchpoints on any 4 dwords), `m95_pay_sites.py` (13 cond bps + 2 hw wp on storage/pending of one base row; per-boundary storage poke; names the pay branch + POP caller; `--tag m95payN --boundaries 2`); prints pc+new+round+cur_player, names
      the writer by containment via ghidra_out/index.csv, movement-vs-events self-check, pokes
      storage per boundary; PREDICTIONS, then counters, then the branch bytes named); rest self-doc.
 3. Self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`, `m57_ui_enqueue.py`,
@@ -59,30 +51,37 @@ dwords) move mid-round — freeze at the TAIL HIT (tailx1/tailx2 dumps), not the
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M95: the pay-site conflict — 0x4f0ca6 (NAMED "completion path", branch unread) vs 0x4efedd: which
-pays/activates a completion, and from which field (storage +0x40 or credit +0xd0).** Cheap shape:
-silent bps at BOTH + a hw watchpoint on the ACTIVE-project dword, across ONE designed completion
-(enqueue -> poke storage 200 per boundary -> read head/pending/minerals back). M94 ACCEPTED (s149,
-`m94table3` PASS 7/7): divisor = FUN_00556690's per-faction upkeep recompute = BASE COUNT (NAMED);
-do NOT re-derive. THEN: human leg (bVar14, FUN_00625af1 @0x5aa20d); mult/cat inputs; 0x94e484/48c.
+**M95 ACCEPTED (s150, `m95pay4` PASS 9/9): the pay-site conflict is CLOSED** — a UI-queued completion
+pays AND activates in branch A: gate 0x4efa5e -> pay 0x4efedd (storage +0x40 -= price; credit +0xd0
+feeds ONLY the income add 0x4ef7f6 + the clamp) -> create 0x4eff4e -> POP 0x4f037b -> 0x4ef5d0
+(pending store 0x4ef648). 0x4f0ca6 is branch B's pay — B is entered ONLY for negative queue slots
+(typecode = -q0: >=39 unclaimed / >34 / 0x507410-mask-fail), same field, mutually exclusive, 0 live
+events on the UI shape. Stale-tail law: a non-sentinel q0 with pending 0 re-produces phantoms while
+storage >= price. NAMED.
+**M96 (THE PICK): the human leg** — FUN_00625af1 @0x5aa20d, bVar14 in FUN_0048b9a0, [esi+0x94d800]
+sibling slot, [esi+0x94d430] bit 0x40: what the human key multiplies before the draw; census bps for
+0x5aa159/0x5aa232 already exist in `m92_tail_census.py`/skill code-atlas — human mask 0x985b10 byte
+= 0x08 (fac3 only). Do NOT re-derive M92/M93/M94/M95.
 ## STILL OPEN (in priority order)
 
-1. **After M95 (THE PICK): the human leg (FUN_00625af1 at
-   0x5aa20d, bVar14 in FUN_0048b9a0); the SIBLING slot [esi+0x94d800] (FUN_005aab70); the band flag [esi+0x94d430] bit 0x40; ds:0x926bd4 /
-   ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5 (0x531782).**
+1. **After M96: the sibling slot [esi+0x94d800] (FUN_005aab70); band flag [esi+0x94d430] bit 0x40;
+   ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5 (0x531782);
+   WHO writes base+0xd0 (credit) mid-game (-1->0 seen r58/59, untraced); the negative-queue producer
+   that reaches branch B.**
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
    **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite: `scripts/gate.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at s149:** fresh m54b_clean load r50->54 (m94table3 PASS 7/7 ran there); no census.
+- **Box at s150:** m54b_clean r59->61, m95 census ran (m95pay1-4); pending 0, q0 STALE 2 (phantom
+  Scout Patrols created — do not trust the head slot), storage 0, credit -1.
   `scripts/m93_post_census.py` = m92's census + POST prints + `ladder_pred`/G9 + hit-timed
   tailx1/tailx2 specials dumps — run on a FRESH load.
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4). The human mask byte at 0x985b10 = 0x08 -> ONLY faction 3 is human (a dword read there
   shows 0x985b10 = 65288, mask the low byte). X focus law: see TRAPS. **The PANE decides where INSERT
   lands** (pass the index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
-- **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `accept_ready.py` -> (enqueue) -> **read `pending` AND the head back** -> the run. Misread `movie` ~1 in 3: re-run `--relaunch`, never Return on the save browser. `artwork-close` is NOT a dialog — click its red CLOSE bar (`smac_play.close_bar`).
+- **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `accept_ready.py` -> (enqueue) -> **read `pending` AND the head back** -> the run. Misread `movie` ~1 in 3: re-run `--relaunch`, never Return on the save browser.
 - gdb: 4 hw watchpoints and 10-16 silent breakpoints work (~35 s per boundary); conditional bps keep other records out of the log; PREFER REGISTER-ONLY conditions on hot addresses (memory-read conditions cost seconds/hit — s133). No `si` in a command list; stdout DRAINED (`stdbuf -o0`); a watchpoint reports the pc AFTER the store.
 - `scratch/m574/text.txt` = whole `.text` objdump (40.9 MB; addresses WITHOUT leading zeros — grep
   `4ef5d0:`, not `004ef5d0:`; only lines matching `^[0-9a-f]{6,8}:\t` are instructions). Ghidra
@@ -143,6 +142,12 @@ do NOT re-derive. THEN: human leg (bVar14, FUN_00625af1 @0x5aa20d); mult/cat inp
 - **In a gdb printf, `*(int *)($ebp-0x10)+0x92fdc4` prints an ADDRESS, not what is there:** a local that
   holds an offset needs double indirection — `*(int *)(*(int *)($ebp-0x10)+0x92fdc4)`.
 
+- **A bp condition built by f-string: a stray `*` turns `if $ecx==X` into a DEREFERENCE `if *$ecx==X`
+  — the bp silently never fires while hw watchpoints still carry the truth (s150: m95pay1 FAILed 4/9,
+  m95pay2 3/9 this way). Check the EMITTED script text before believing a no-event.** gdb printf `%x`
+  prints BARE hex (no 0x) — parse regexes accordingly.
+- **Faction upkeep runs in the faction's own turn segment ~1 cycle AFTER your turn-end: a 1-boundary
+  window can close mid-cycle (cur_player 2, ZERO events — m95pay2); use --boundaries >= 2.**
 - **gdb prints a stop-location line (`0x... in ?? ()` / `__kernel_vsyscall`) at attach AND at the SIGINT stop — a parse gate must whitelist `^0x[0-9a-f]+ in ` lines or the acceptance FAILs on chatter (s149: m94table1/2 FAILed 7/7-gates on this).**
 
 ## CLOSING ORDER (exactly)

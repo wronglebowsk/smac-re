@@ -1,50 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-131-131.md` (1 sessions). Read it only when a question reaches back before session ## Session 132.
-
-## Session 132 (2026-10-28) — M84d: WHO CALLS 0x4a99e0 WITH A KEY > 9999 — NOT THE PRODUCTION PATH (acceptance m84dky1 FAIL, merge nothing)
-
-Prompt said M74 (merged #75); the repo pick was M84d. Branch milestone/m84d from main, carrying
-the s128-s131 footing (`git checkout milestone/m84c -- NEXT_PROMPT.md SESSION_NOTES.md NAMED.md
-scripts/m84c_item_pump.py scripts/m84_cancel_sentinel.py evidence/...`).
-
-STATIC (bytes + a live /proc/pid/mem census, before measuring). (1) THE >9999 LEG IS A PER-FACTION
-CONTEXT SWITCH: 0x4a99e0 `cmp [ebp+0x8],0x270f`/`jle 0x4a9ad3`; 0x4a99fc `[this+0x1d6f0]=1`,
-0x4a9a09 `sub ecx,0x270f` (stored back at 0x4a9a0f), edx=(ds:0x888514-1)*0xb4c -> 0x4a9a24
-`[this+edx+0xb38]=-1`, 0x4a9a60 `call [[this+(fac-1)*0xb4c+0x80]+0xf0]`, 0x4a9a75
-`[this+(key-9999-1)*0xb4c+0xb38]=2`, 0x4a9aac the same notify on the new slot, 0x4a9ac9
-`call 0x4a72c0(this, ds:0x86ae40, key-9999, [this+0x1d6e0])`; records are 2892 B at this+0x80.
-The <=9999 leg needs `[this+8]==4` and `[this+0x1d6dc]==ds:0x91b5b4` (=3 live) and switches on
-0xcef..0xcf4, so the same argument is a message code below 10000 and an index above it.
-(2) WHO OWNS IT: the dword 0x4a99e0 appears ONCE in the image, 0x67671c, inside a 197-slot pointer
-run 0x676584-0x676894; 0x498ea6/0x498eac store vptr 0x67658c at [obj] and 0x676584 at [obj+0x444]
-(0x498f00 `sub ecx,0x444` is the secondary thunk), i.e. primary vtable slot 100 / secondary slot
-102, reached by a computed index (no `call [reg+0x190]` anywhere in .text); only 2 .text
-references to that table exist, both constructors (0x498ea8, 0x49988c). A scan of every rw region
-of terran.exe found ZERO objects with vptr 0x67658c/0x676584/0x67673c. (3) ds:0x888514 IS A
-FACTION INDEX (live 0): 0x4a0c17 loops i < ds:0x985af4 (=19) over stride-0x130 records at 0x95da14
-comparing BYTE[i] to it, and those 19 records read "University Base"(3), "Gaia's Landing"(2),
-"The Hive"(2), "Morgan Industries"(4), "Sparta Command"(5), "New Jerusalem"(6), "U.N.
-Headquarters"(2) ... "Korolev Center"(3) — base records with the OWNER FACTION at +0, ours = 3 =
-cur_player; 0x499f13 indexes a second per-faction array the same way (`imul eax,0x20bc` over
-0x94d7fc, 8380-byte records, slots 0..8 populated, slot 0 reads -1).
-
-ACCEPTANCE FAIL — `python3 scripts/m84d_faction_key.py --tag m84dky1 --boundaries 8 --timeout 380`
-(ONE invocation): gdb armed 8 silent bps (0x4a99ec entry, 0x4a9a24 OUT store, 0x4a9a60 notify-out,
-0x4a9a75 IN store, 0x4a9aac notify-in, 0x4a9ab2 AFTER, plus the sibling writers 0x4a7d84 and
-0x4a759f of [x+0x1d6f0]); the log shows "Breakpoint 1 at 0x4a99ec" ... "Breakpoint 8 at 0x4a759f"
-and a clean "[Inferior 1 (process 29779) detached]". Driver m56_build rc=0 in 83 s: "positive
-predictions 1/1 verified; boundaries 8/8" (a real production arrival). Events: keys 0, low 0,
-OUT 0, IN 0, AFTER 0, notify 0/0, SETFLAG2 0, CLEARFLAG 0 -> G1..G8 all False -> FAIL, merge
-nothing. So 0x4a99e0 was entered ZERO times (neither leg) in 8 boundaries and neither sibling flag
-writer ran: the class is not instantiated in a normal game loop, so the >9999 vocabulary is not on
-the build/production path — this closes the M84c lead (0x4a99e0 is not where 9999 means something
-ELSE for the chooser).
-OPEN: who calls the constructor FUN_00498e20 (n_callers=1) — that names the screen/mode that owns
-this object; the dispatcher that computes slot 100; who WRITES ds:0x888514 (all 37 .text
-references to it are reads — the writer is not a `mov ds:0x888514` in .text). NEXT pick: the
-0x4194b3 handler / widget message 0x4d00, or ds:0x888514's writer.
-Evidence: evidence/m84dky1.gdblog (36 lines), scratch/m84d/{peek,probe2,probe3}.py; evidence 28.0 MB.
+Older sessions: `docs/sessions/sessions-132-132.md` (1 sessions). Read it only when a question reaches back before session ## Session 133.
 
 ## Session 133 (2026-10-28) — M84e: 0x4d00 IS A QUEUE POST, NOT A CALL; ITS HANDLER IS 0x52ed7d (acceptance m84edisp1/2/3 FAIL, merge nothing)
 
@@ -405,3 +361,13 @@ Branch milestone/m94. ACCEPTANCE `M94_BASE="University Base" python3 scripts/m94
 - STATIC grep: 10 absolute store sites for 0x94e488 in 7 functions (0x4e4861 FUN_004e47d0, 0x4e4f79 FUN_004e4e10, 0x4f3b16/0x4f3b26 UNMAPPED, 0x5088ad/0x5088ba, 0x5566cf+0x556a87 FUN_00556690, 0x59efab, 0x5a0b2e `mov [edx*4+0x94e488],0x0`); only the FUN_00556690 pair fired in these windows — the production-path writers are OPEN (likely base-capture/loss paths).
 - OPEN: what the sibling dwords 0x94e484/0x94e48c count (live 9/37, 20/66 for fac0/fac2); the mult/cat inputs; human leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
 NEXT (M95): the pay-site conflict 0x4f0ca6 vs 0x4efedd. Evidence: evidence/m94table1-3.gdblog; scratch/m94table*_seq.jsonl. Box: fresh m54b_clean r50->54, University enqueued, no census.
+
+## Session 150 (2026-10-29) — M95 ACCEPTED: m95pay4 PASS 9/9. The pay-site conflict CLOSED: branch A 0x4efedd pays AND activates a UI-queued completion, from storage base+0x40
+
+Branch milestone/m95. ACCEPTANCE `python3 scripts/m95_pay_sites.py --tag m95pay4 --boundaries 2` (ONE invocation, m54b_clean r59->61, University Base row 0x95da10, tid 2 Scout Patrol, credit -1, storage poked 200/boundary): **PASS 9/9** — GATEA base=0x95da10 price=9 storage=200 pending=1 q0=2 -> PAYA price=9 storage=200 -> STOR pc 0x4efee0 new=191 (store 0x4efedd `sub esi,edi; mov [ecx+0x40],esi`) -> STOR pc 0x4eff23 new=0 (clamp 0x4eff20 = min(cap 0x92a370, credit d0) or 0, human owner) -> POSTA storage 0 mirror 0 -> CREATE tid 2 (0x4eff4e -> 0x5ab650) -> POP idx 0 retn 0x4f0380 (call 0x4ef5d0 at 0x4f037b, A-tail) -> PEND store pc 0x4ef648 new 0 (pending 1->0 read back); GATEB/PAYB/DEFERB/BRET/CLAIMED/DISP 0 events, no store at 0x4f0ca9. m95pay3 PASSed 8/9 on identical data (only my G9 expression was wrong); m95pay1 FAILed 4/9 + m95pay2 3/9 on instrument bugs (see traps) — floors never edited.
+
+DISPATCH (instruction bytes, scratch/m95/cfg.py): FUN_004ef6d0 loops the queue at 0x4ef88b: q0==-38 -> return; **q0 >= 0 -> branch A** (price 0x4efa4d/0x4efa52, gate 0x4efa5e cmp [base+0x40],edi, tid<0x40 skips the M74 mark block, pay 0x4efedd, clamp, mirror +0x98, create 0x4eff4e, POP 0x4f037b, loop). **q0 < 0 -> typecode = -q0** (0x4ef89f); branch B entered only when tc>=39 && claim[tc-39](0x985b3c)==-1 (0x4f0a3d gate), or tc>34 (0x4ef94a), or the 0x507410 mask test fails (0x4ef985); race scan 0x4f0af0-0x4f0b72 (+4-shifted: [esi+0x4c]=queue0, [esi+0xcc]+[esi+0x3c]=credit+storage) defers to a competing base that can pay (jge 0x4f0c28, no store); 0x4f0b80 `jg 0x4f0ca1` is the SOLE entry to B's pay — **0x4f0ca6 pays the SAME field** (`sub esi,edi; mov [edx+0x40],esi`), claim store 0x4f0d83, POP 0x4f0f46. NO back-edge from B's region into A's (cfg.py): the two pays are mutually exclusive shapes. ANSWER: the NAMED "completion path" B is the negative-queue/claim branch; the UI-queued designed completion pays AND activates in A.
+
+STALE-TAIL LAW (live x3): after pending 1->0 q0 stays 2 (shift never clears the tail): the next visit re-enters A — gate fails while storage 0 < price (GATEAF, no side effect); with storage poked >= price it PAYS + CREATEs a phantom unit and calls POP with pending 0 (no pending store) — m95pay3 r59. base+0xd0 -1->0 between r58/r59, writer untraced (+0xd0 unwatched).
+
+NEXT (M96): the human leg — FUN_00625af1 @0x5aa20d, bVar14 in FUN_0048b9a0, [esi+0x94d800] sibling, [esi+0x94d430] bit 0x40; census bps ready in skill code-atlas. OPEN: base+0xd0 writer; the negative-queue producer that reaches B. Evidence: evidence/m95pay1-4.gdblog; scratch/m95pay*_seq.jsonl, scratch/m95/cfg.py. Box: m54b_clean r59->61 census ran, pending 0, q0 stale 2.

@@ -1,0 +1,52 @@
+[New LWP 614106]
+[New LWP 614105]
+[New LWP 614104]
+[New LWP 614103]
+[New LWP 614102]
+[New LWP 614101]
+[New LWP 614098]
+[New LWP 614049]
+[New LWP 614048]
+[New LWP 614047]
+[New LWP 614046]
+[New LWP 614045]
+[New LWP 614044]
+[New LWP 614043]
+[New LWP 614042]
+[New LWP 614041]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe86bf32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x95da50
+Hardware watchpoint 2: *(int *)0x95da5c
+Breakpoint 3 at 0x4ef8fa
+Breakpoint 4 at 0x4efa61
+Breakpoint 5 at 0x4efa63
+Breakpoint 6 at 0x4efe67
+Breakpoint 7 at 0x4efed8
+Breakpoint 8 at 0x4eff32
+Breakpoint 9 at 0x4eff4e
+Breakpoint 10 at 0x4f0a40
+Breakpoint 11 at 0x4f0ca1
+Breakpoint 12 at 0x4f0c28
+Breakpoint 13 at 0x4f0b86
+Breakpoint 14 at 0x4f07c2
+Breakpoint 15 at 0x4ef5d0
+ARMED 2 hw and 13 bp
+M95W STOR pc=4efee0 new=191 round=55
+M95W STOR pc=4eff23 new=0 round=55
+M95E CREATE tid=2 owner=3 round=55
+M95E POP idx=0 retn=0x4f0380 round=55
+M95W PEND pc=4ef648 new=0 round=55
+M95W STOR pc=4efee0 new=191 round=56
+M95W STOR pc=4eff23 new=0 round=56
+M95E CREATE tid=2 owner=3 round=56
+M95E POP idx=0 retn=0x4f0380 round=56
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xe86bf32c in __kernel_vsyscall ()
+[Inferior 1 (process 614038) detached]

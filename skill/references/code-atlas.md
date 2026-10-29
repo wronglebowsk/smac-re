@@ -379,3 +379,50 @@ never assigned -> structurally False for 4 runs); pair tailout/tailbyidx FIRST-w
 later round has a different block); simulate each candidate from the round LIVE at its own BASE hit
 (windows opened by a CALL can span rounds); the tail census needs a FRESH load — at r59 only 3 AI
 factions had queued items -> 0 qualifying windows.
+
+## Unit-record type field — settled (moved from SKILL.md s150)
+**Unit-record type field — SETTLED: the u16 at `+10`. `+4` is the flags dword.** An earlier
+version of this paragraph claimed type@`+4` and `+10`=flags; that was wrong, and `FOOTING.md`
+("type byte@4") and `SAVE_FORMAT.md` ("`+10` is a flag word") have been corrected to match.
+Proof is the accessor, not a screen correlation: the class table is indexed with
+`*(short *)((int)&DAT_00933282 + rec_off) * 0x34` (`shard_012.c:2150`; same shape at `:2117`,
+`:2148`, `shard_001.c:4153`, `:4312`, `:9466`) and `DAT_00933282` is `UNIT_ARR + 0x0A`. The
+screen agrees — a selected record reads "Scout Patrol" on the panel with `+10 = 2`. `+10`
+values of 128/256/320 mark EMPTY STALE SLOTS: filter `type < 24` (and x/y in range) before
+counting a record as a unit. Movement/order fields (`+0/+2`, `+17`, `+20..+35`, `+40`) were
+never in doubt — pokes the game obeyed validated them.
+
+Two rules that generalise from how this one went wrong:
+- **Settle a field's identity from the binary accessor, not from which candidate looks plausible
+  on a dump.** Grep the table base (`grep -n '98adb2\|933282' ghidra_out/*.c`), then read the
+  cast: `*(short *)((int)&DAT_x + off)` gives the WIDTH and the OFFSET at once, and the code that
+  consumes it names the semantics. A correlation over live records only ranks candidates.
+- **Never compare candidate offsets on a state you already know is degraded.** The "`+4` wins
+  117/119" measurement was taken on records sitting in limbo after the faction lost its bases,
+  where the flags byte reads 0 on most records. Re-run layout questions on a freshly loaded,
+  healthy save, and do not let a format doc outvote code that demonstrably works.
+
+
+## Objdump/census parse rules (moved from SKILL.md s150)
+**Parse an objdump line by its TAB fields, never by the text after the colon:** the machine-code bytes
+sit between the address and the mnemonic, so `line.split(":")[1].startswith("mov")` matches NOTHING and a
+whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. An
+address-keyed scan must require the shape `^[0-9a-f]{6,8}:\t` before `int(x, 16)`: the section header
+line `00401000 <.text>:` also starts with hex and raises `ValueError` mid-parse, killing the census
+before it arms. Import
+`scratch/m71/dis.py` under a non-clashing module name (`importlib.util.spec_from_file_location`), because
+stdlib `dis` shadows the plain `import dis`.
+
+
+## Production pass FUN_004ef6d0 dispatch + pay sites (M95, s150, VERIFIED m95pay4)
+Queue loop at 0x4ef88b: q0==-38 return; q0>=0 -> branch A: price 0x4efa4d/0x4efa52 (edi), gate 0x4efa5e
+cmp [base+0x40],edi; tid<0x40 skips the M74 mark block (0x4efe41); pay 0x4efed8-0x4efedd `sub esi,edi;
+mov [ecx+0x40],esi` (storage!); clamp 0x4eff20 = min(cap 0x92a370, credit d0)/0 iff storage>max(cap,d0)
+&& human owner; mirror +0x98 0x4eff2c; create 0x4eff4e -> 0x5ab650; POP call 0x4ef5d0 at 0x4f037b
+(pending store 0x4ef648). q0<0 -> typecode=-q0 (0x4ef89f); branch B (gate 0x4f0a3d) iff tc>=39 &&
+claim[tc-39](0x985b3c)==-1, or tc>34 (0x4ef94a), or 0x507410 mask fails (0x4ef985); race scan
+0x4f0af0-0x4f0b72 (+4-shifted reads: [esi+0x4c]=queue0, [esi+0xcc]+[esi+0x3c]=credit+storage) defers
+(0x4f0c28, no store) when a competing human base can pay; 0x4f0b80 jg 0x4f0ca1 SOLE B-pay entry; B pay
+0x4f0ca6 SAME field; claim store 0x4f0d83; B POP 0x4f0f46. No back-edge B->A. Credit +0xd0 feeds only
+the income add 0x4ef7f6 (gated q0!=-38 && !(flag30&2) && d0>=0) + the clamp. Stale tail: non-sentinel
+q0 with pending 0 re-pays + CREATEs phantom units while storage>=price; POP then stores no pending.

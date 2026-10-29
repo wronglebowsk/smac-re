@@ -119,3 +119,23 @@ under-fire (4 candidates). Fix: dump the input regions AT the hit where the cons
 (gdb `append binary memory` per hit, like the tailx1/tailx2 dumps in scripts/m93_post_census.py).
 Corollary: when a model-vs-engine mismatch splits into "model fired, engine didn't" AND "engine
 fired, model didn't" on the same gate, suspect TIMING of the shared inputs, not the rule.
+
+## Generated breakpoint conditions: the register IS the address
+
+A harness that EMITS its own gdb conditions must compare the register bare when the site's own
+encoding shows the register holds the record address — `mov esi,[ecx+0x40]` and `cmp
+[ecx+0x40],edi` mean ECX *is* the base, so the condition is `if $ecx==0x95da10`. Emitting
+`if *$ecx==0x95da10` tests the dword AT that address, which virtually never equals an address, so
+those sites log ZERO events while a hardware watchpoint on the same field proves the leg ran.
+
+- Read the site's bytes to pick the register, then diff the emitted `scratch/<tag>.gdb` against
+  those bytes before attaching. The condition text is the cheapest thing in a run to get wrong and
+  the most expensive to discover afterwards: it turns a real event into "the site never fires".
+- Free self-check before arming: a printf body that prints `$ecx` as `base=0x%x` and a condition
+  that DEREFERENCES `$ecx` contradict each other — one of the two is wrong, and the bytes decide.
+- **Zero breakpoint events plus live watchpoint events on the same field in the same window is an
+  instrument verdict, not a negative result.** Only zero from both — with the control watchpoint
+  firing — says the game did not run the leg.
+- Two watchpoint hits on one field in one pass name TWO writers: read the pass as a store sequence
+  and disassemble backwards from EACH reported pc (the pay store and the clamp that follows it —
+  `references/production-queue.md` — both hit `base+0x40` inside one visit).
