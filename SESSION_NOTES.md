@@ -401,3 +401,15 @@ holds only for the 0x94e488 block; upkeep rewrites 0x92adbc/era-table/designed p
 NEXT (M94): who writes 0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds (the 8 esi positions are
 powers of 4); the human leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd. Evidence:
 evidence/m93post1-3.gdblog; scratch/m93post3.out + _tailx1/2.bin, scratch/m93/{model,dryrun}.py.
+
+## Session 149 (2026-10-29) — M94 ACCEPTED: m94table3 PASS 7/7. FUN_00556690 recomputes the tail divisor every round, in the faction's own upkeep segment; divisor == that faction's BASE COUNT
+
+Branch milestone/m94. ACCEPTANCE `M94_BASE="University Base" python3 scripts/m94_table_watch.py --tag m94table3 --boundaries 2` (fresh m54b_clean load, r52->54 inside, load r50): **PASS 7/7** — G1 4 hw watchpoints armed (DIV1 0x950544/DIV2 0x952600/DIV4 0x956778/DIV5 0x958834), G2 round 52->54 rc=0, G3 32 events, G4 every pc mapped, G5 no gaps, G6 read-back, G7 tracer 0. m94table1/2 measured the same thing and FAILed ONLY on the log-parse gate (gdb attach/SIGINT stop-location lines `0x... in ?? ()` were not whitelisted) — re-run, floor never edited.
+
+- WHO: the divisor `[fac*8380+0x94e488]` is written by **FUN_00556690**: reset `mov [edx+0x94e484/488/48c],esi(0)` (reported pc 0x5566d5, store 0x5566cf) then rebuild `inc edx; mov [eax+0x94e488],edx` (reported 0x556a8d, store 0x556a87) — recomputed 0..N EVERY round, not incremented. The multiplier `[+0x94e5a8+edi]` and category `[+0x94eda8+edi]` arrays are rewritten in the same stage (m94table1 pcs 0x556721/0x556b5a/0x55851d/0x558551; 0x950664 IS fac1's multiplier array).
+- WHEN: inside the faction's OWN upkeep segment — the printed cur_player (0x985dcc) equals the faction of every dword written (cp=2 events hit DIV2 etc.), once per round. FUN_00556690(arg=fac) is the 6th stage of FUN_005208f0's per-player turn sequence (call 0x52094f, after 0x5551e0); second caller FUN_0059ce10 @0x59dd43.
+- WHAT: **divisor == bases owned** — read back at r54: divisors [0,2,4,1,3,3,4,1] == bases/fac {1:2,2:4,3:1,4:3,5:3,6:4,7:1}. Count 0 -> the whole reset+rebuild block skips -> explains m94table1: fac0 (0 bases) watchpoint on the pick's 0x94e488 caught ZERO stores in 2 boundaries, value 0->0.
+- accept_ready BLOCKED (credit 0, income gated d0>0) on the fresh load; the m94 harness pokes storage 200 per boundary (documented recipe) and gates on round movement, not on completion — reported, not hidden.
+- STATIC grep: 10 absolute store sites for 0x94e488 in 7 functions (0x4e4861 FUN_004e47d0, 0x4e4f79 FUN_004e4e10, 0x4f3b16/0x4f3b26 UNMAPPED, 0x5088ad/0x5088ba, 0x5566cf+0x556a87 FUN_00556690, 0x59efab, 0x5a0b2e `mov [edx*4+0x94e488],0x0`); only the FUN_00556690 pair fired in these windows — the production-path writers are OPEN (likely base-capture/loss paths).
+- OPEN: what the sibling dwords 0x94e484/0x94e48c count (live 9/37, 20/66 for fac0/fac2); the mult/cat inputs; human leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
+NEXT (M95): the pay-site conflict 0x4f0ca6 vs 0x4efedd. Evidence: evidence/m94table1-3.gdblog; scratch/m94table*_seq.jsonl. Box: fresh m54b_clean r50->54, University enqueued, no census.

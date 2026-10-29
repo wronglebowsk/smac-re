@@ -1,0 +1,64 @@
+[New LWP 614106]
+[New LWP 614105]
+[New LWP 614104]
+[New LWP 614103]
+[New LWP 614102]
+[New LWP 614101]
+[New LWP 614098]
+[New LWP 614049]
+[New LWP 614048]
+[New LWP 614047]
+[New LWP 614046]
+[New LWP 614045]
+[New LWP 614044]
+[New LWP 614043]
+[New LWP 614042]
+[New LWP 614041]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe86bf32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x950544
+Hardware watchpoint 2: *(int *)0x952600
+Hardware watchpoint 3: *(int *)0x956778
+Hardware watchpoint 4: *(int *)0x958834
+ARMED 4 hw watchpoints at 0x950544 0x952600 0x956778 0x958834
+M94W DIV4 pc=0x5566d5 new=0x0 round=52 cp=4
+M94W DIV4 pc=0x556a8d new=0x1 round=52 cp=4
+M94W DIV4 pc=0x556a8d new=0x2 round=52 cp=4
+M94W DIV4 pc=0x556a8d new=0x3 round=52 cp=4
+M94W DIV5 pc=0x5566d5 new=0x0 round=52 cp=5
+M94W DIV5 pc=0x556a8d new=0x1 round=52 cp=5
+M94W DIV5 pc=0x556a8d new=0x2 round=52 cp=5
+M94W DIV5 pc=0x556a8d new=0x3 round=52 cp=5
+M94W DIV1 pc=0x5566d5 new=0x0 round=53 cp=1
+M94W DIV1 pc=0x556a8d new=0x1 round=53 cp=1
+M94W DIV1 pc=0x556a8d new=0x2 round=53 cp=1
+M94W DIV2 pc=0x5566d5 new=0x0 round=53 cp=2
+M94W DIV2 pc=0x556a8d new=0x1 round=53 cp=2
+M94W DIV2 pc=0x556a8d new=0x2 round=53 cp=2
+M94W DIV2 pc=0x556a8d new=0x3 round=53 cp=2
+M94W DIV2 pc=0x556a8d new=0x4 round=53 cp=2
+M94W DIV4 pc=0x5566d5 new=0x0 round=53 cp=4
+M94W DIV4 pc=0x556a8d new=0x1 round=53 cp=4
+M94W DIV4 pc=0x556a8d new=0x2 round=53 cp=4
+M94W DIV4 pc=0x556a8d new=0x3 round=53 cp=4
+M94W DIV5 pc=0x5566d5 new=0x0 round=53 cp=5
+M94W DIV5 pc=0x556a8d new=0x1 round=53 cp=5
+M94W DIV5 pc=0x556a8d new=0x2 round=53 cp=5
+M94W DIV5 pc=0x556a8d new=0x3 round=53 cp=5
+M94W DIV1 pc=0x5566d5 new=0x0 round=54 cp=1
+M94W DIV1 pc=0x556a8d new=0x1 round=54 cp=1
+M94W DIV1 pc=0x556a8d new=0x2 round=54 cp=1
+M94W DIV2 pc=0x5566d5 new=0x0 round=54 cp=2
+M94W DIV2 pc=0x556a8d new=0x1 round=54 cp=2
+M94W DIV2 pc=0x556a8d new=0x2 round=54 cp=2
+M94W DIV2 pc=0x556a8d new=0x3 round=54 cp=2
+M94W DIV2 pc=0x556a8d new=0x4 round=54 cp=2
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xe86bf32c in __kernel_vsyscall ()
+[Inferior 1 (process 614038) detached]

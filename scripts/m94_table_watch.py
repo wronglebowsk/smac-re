@@ -37,14 +37,15 @@ SCRATCH = os.path.join(ROOT, "scratch")
 STRIDE = 8380
 ROUND_ADDR = 0x985AFC
 BASE_ARR, BASE_SZ = 0x95DA10, 304
-BASE_NAME = "Korolev Center"
+BASE_NAME = os.environ.get("M94_BASE", "Korolev Center")
 
-# tag, addr — the pick's four addresses (dword watchpoints)
-WATCH = [("DIV0", 0x94E488), ("MUL0", 0x94E5A8), ("CAT0", 0x94EDA8),
-         ("MUL1", 0x950664)]
-# region diffs: watched arrays compared in FULL (64 B), divisor as dword
+# tag, addr — divisor instances that MOVED in run m94table1 (fac0's stayed 0,
+# its watchpoint proved nobody wrote 0x94e488 in 2 boundaries)
+WATCH = [("DIV1", 0x950544), ("DIV2", 0x952600), ("DIV4", 0x956778),
+         ("DIV5", 0x958834)]
+# region diffs: watched dwords plus the run-1 context arrays (context never gates)
 REGS = [("DIV0", 0x94E488, 4), ("MUL0", 0x94E5A8, 64), ("CAT0", 0x94EDA8, 64),
-        ("MUL1", 0x950664, 64)]
+        ("MUL1", 0x950664, 64)] + [(t, a, 4) for t, a in WATCH]
 
 TMPL = r"""set pagination off
 set confirm off
@@ -56,12 +57,12 @@ continue
 WBLOCK = r"""watch *(int *)@@A@@
 commands
 silent
-printf "M94W @@T@@ pc=0x%x new=0x%x round=%d\n", $pc, *(int *)@@A@@, *(int *)0x985afc
+printf "M94W @@T@@ pc=0x%x new=0x%x round=%d cp=%d\n", $pc, *(int *)@@A@@, *(int *)0x985afc, *(int *)0x985dcc
 continue
 end
 """
 
-LINE = re.compile(r"^M94W (\w+) pc=(0x[0-9a-f]+) new=(0x[0-9a-f]+) round=(\d+)\s*$")
+LINE = re.compile(r"^M94W (\w+) pc=(0x[0-9a-f]+) new=(0x[0-9a-f]+) round=(\d+) cp=(\d+)\s*$")
 
 
 def gdb_script():
@@ -203,7 +204,7 @@ def main():
 
     text = open(lpath, "r", errors="replace").read()
     ev = []
-    chatter = 0
+    armed = False
     for ln in text.splitlines():
         ln = ln.strip()
         if not ln:
@@ -211,11 +212,18 @@ def main():
         mm = LINE.match(ln)
         if mm:
             ev.append({"tag": mm.group(1), "pc": int(mm.group(2), 16),
-                       "new": int(mm.group(3), 16), "round": int(mm.group(4))})
-        elif "ARMED" in ln or "Hardware watchpoint" in ln or ln.startswith("[Inferior"):
-            chatter += 1
-        else:
-            ev.append({"tag": "?", "raw": ln})
+                       "new": int(mm.group(3), 16), "round": int(mm.group(4)),
+                       "cp": int(mm.group(5))})
+            continue
+        if not armed:
+            if "ARMED" in ln:
+                armed = True
+            continue  # attach preamble: LWP/debuginfod banners are not events
+        if ("Hardware watchpoint" in ln or ln.startswith("[Inferior")
+                or ln.startswith("Thread 1") or "__kernel_vsyscall" in ln
+                or re.match(r"0x[0-9a-f]+ in ", ln)):
+            continue  # gdb noise: watchpoint banners, stop-location lines
+        ev.append({"tag": "?", "raw": ln})
     with open(os.path.join(SCRATCH, f"{a.tag}_seq.jsonl"), "w") as fh:
         for d in ev:
             fh.write(json.dumps(d) + "\n")
@@ -223,16 +231,17 @@ def main():
     print(f"--- {len([e for e in ev if e['tag'] != '?'])} M94W events ---")
     for e in ev:
         if e["tag"] != "?":
-            print(f"  {e['tag']} pc 0x{e['pc']:x} new 0x{e['new']:x} round {e['round']}")
+            print(f"  {e['tag']} pc 0x{e['pc']:x} new 0x{e['new']:x} "
+                  f"round {e['round']} cp {e['cp']}")
     unparsed = [e for e in ev if e["tag"] == "?"]
 
-    # region movement vs events (instrument self-check)
+    # region movement vs events (instrument self-check; gates only WATCHed tags)
     moved, gaps = {}, []
     for name, addr, n in REGS:
         changed = before[name] != after[name]
         fired = any(e["tag"] == name for e in ev)
         moved[name] = (changed, fired)
-        if changed and not fired:
+        if any(t == name for t, _ in WATCH) and changed and not fired:
             gaps.append(name)
     print("movement: " + ", ".join(f"{k}: moved={v[0]} events={v[1]}"
                                    for k, v in moved.items()), flush=True)
@@ -252,7 +261,7 @@ def main():
     g2 = (rc_ok and r_after == r_before + a.boundaries)
     g3 = n_ev >= 1
     g4 = all(names[p] for p in pcs) and bool(pcs)
-    moved_any = any(v[0] for v in moved.values())
+    moved_any = any(moved[t][0] for t, _ in WATCH)
     g5 = (not gaps) and (moved_any or n_ev > 0)
     g6 = all(after[t][:4] == struct.pack("<I", [e for e in ev if e["tag"] == t][-1]["new"])
              for t, _ in WATCH if any(e["tag"] == t for e in ev))
