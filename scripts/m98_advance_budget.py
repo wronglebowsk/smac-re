@@ -63,14 +63,14 @@ FAC = int(os.environ.get("M98_FAC", "3"))
 TMPL = r"""set pagination off
 set confirm off
 set can-use-hw-watchpoints 1
-@@WATCHES@@@@BPS@@printf "ARMED @@N@@ hw watchpoints at @@ADDRS@@; @@NB@@ silent bps at @@BPS@@\n"
+@@WATCHES@@@@BLOCKS@@printf "ARMED @@N@@ hw watchpoints at @@ADDRS@@; @@NB@@ silent bps at @@BPS@@\n"
 continue
 """
 
 WBLOCK = r"""watch *(int *)@@A@@
 commands
 silent
-printf "M98W WP pc=0x%x new=%d fac=@@F@@ acc=%d round=%d cp=%d\n", $pc, *(int *)@@A@@, *(int *)@@A@@-0x8, *(int *)0x985afc, *(int *)0x985dcc
+printf "M98W WP pc=0x%x new=%d fac=@@F@@ acc=%d round=%d cp=%d\n", $pc, *(int *)@@A@@, *(int *)(@@A@@-0x8), *(int *)0x985afc, *(int *)0x985dcc
 continue
 end
 """
@@ -240,12 +240,12 @@ def gdb_script(watched):
                       "".join(", " + a for a in args)))
     blocks += bp_txt
     return (TMPL.replace("@@WATCHES@@", "".join(blocks[:len(watched)]))
-            .replace("@@BPS@@", "".join(blocks[len(watched):]))
+            .replace("@@BLOCKS@@", "".join(blocks[len(watched):]))
             .replace("@@N@@", str(len(watched))).replace("@@ADDRS@@", " ".join(addrs))
             .replace("@@NB@@", str(len(bp_pcs))).replace("@@BPS@@", " ".join(bp_pcs)))
 
 
-KV = re.compile(r"^(M98[SW]) (\w+)((?: [a-z]+=-?[\dxa-f]+)+) round=(\d+) cp=(\d+)\s*$")
+KV = re.compile(r"^(M98[SW]) (\w+)((?: [a-z][a-z0-9_]*=-?[\dxa-f]+)+) round=(\d+) cp=(\d+)\s*$")
 
 
 def parse(text):
@@ -283,6 +283,8 @@ def main():
     ap.add_argument("--timeout", type=int, default=120)
     ap.add_argument("--tag", default="m98budget1")
     ap.add_argument("--predict", action="store_true", help="print predictions, no game touch")
+    ap.add_argument("--arm-by", type=int, default=1,
+                    help="poke [fac*8380+0x94d7f8] to field+THIS before each boundary (arms the grant)")
     a = ap.parse_args()
 
     pid = M.find_pid()
@@ -339,7 +341,19 @@ def main():
 
     t0 = time.time()
     rc_ok = True
+
+    def poke_acc(fac, value):
+        with open(f"/proc/{pid}/mem", "rb+", 0) as mm:
+            mm.seek(ACC + fac * STRIDE)
+            mm.write(struct.pack("<i", value))
+            mm.seek(ACC + fac * STRIDE)
+            return struct.unpack("<i", mm.read(4))[0]
+
     for k in range(a.boundaries):
+        want = per[FAC]["field"] + a.arm_by
+        got = poke_acc(FAC, want)
+        print(f"  boundary {k}: ARM fac{FAC} acc poked {want} read back {got} "
+              f"(threshold {per[FAC]['field']})", flush=True)
         r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "smac_play.py"),
                             "--turns", "1", "--timeout", str(a.timeout), "--no-escape",
                             "3000", "--orders-per-turn", "1", "--verbose",

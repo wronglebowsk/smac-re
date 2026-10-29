@@ -1,0 +1,32 @@
+[New LWP 791916]
+[New LWP 791915]
+[New LWP 791914]
+[New LWP 791913]
+[New LWP 791912]
+[New LWP 791911]
+[New LWP 791908]
+[New LWP 791905]
+[New LWP 791904]
+[New LWP 791903]
+[New LWP 791902]
+[New LWP 791901]
+[New LWP 791900]
+[New LWP 791899]
+[New LWP 791898]
+[New LWP 791897]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf528c32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x953a34
+Breakpoint 2 at 0x5aaf5c
+Breakpoint 3 at 0x5aaf67
+Breakpoint 4 at 0x5aaf79
+Breakpoint 5 at 0x59f0c7
+Breakpoint 6 at 0x5aab70
+/home/n100/reverse/smac/scratch/m98budget1.gdb:47: Error in sourced command file:
+Bad format string, non-terminated '"'.
+[Inferior 1 (process 791846) detached]
