@@ -18,7 +18,7 @@ Survivability: the kickoff's SESSION_CURSOR rule (<= 600 B, written BEFORE any s
 an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92-M99 (#98-#105) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92-M99 (#98-#104, #106) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
 **M90-M94 (#95/#97-#100), all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest draw,
 tail only arg2==0); **TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block**
 (39/39; block FROZEN within a round, moves between rounds, a census needs a FRESH load); the POST
@@ -27,7 +27,7 @@ depth f; **FREEZE LADDER INPUTS AT THE TAIL HIT**); DIVISOR `[fac*8380+0x94e488]
 every round by FUN_00556690 (upkeep stage) and **== that faction's BASE COUNT** (8/8).
 All legs: skill code-atlas.md.
 
-**M95-M99 (#101-#105), all in NAMED.md:** the UI-queued completion pays AND activates in
+**M95-M99 (#101-#104, #106), all in NAMED.md:** the UI-queued completion pays AND activates in
 branch A (gate 0x4efa5e, pay 0x4efedd storage +0x40, POP 0x4f037b); 0x4f0ca6 is branch B's pay
 (negative queue slots only). The chooser ranks by the DRAW (score<<8 / prereq-chain depth
 FUN_005a6d40; human draws come from the LCG at ds:0x999fa0), NOT by score. base+0xd0 credit is
