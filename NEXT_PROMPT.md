@@ -53,8 +53,7 @@ it; KEEP the G2 base gate and the winner-on-DRAW gates. (2) name who WRITES 0x94
    PICK) and name who WRITES 0x94e488 / 0x94e5a8 / 0x94eda8 / the band tables 0x950664.** Then: the
    pay-site conflict 0x4f0ca6 vs 0x4efedd; the human leg (FUN_00625af1 at 0x5aa20d, bVar14 in
    FUN_0048b9a0); the SIBLING slot [esi+0x94d800] (FUN_005aab70); the band flag [esi+0x94d430] bit
-   0x40; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5
-   (0x531782); who clears bit 6.
+   0x40; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5 (0x531782).
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
    **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite: `scripts/gate.py`.
 
