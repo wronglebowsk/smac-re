@@ -54,13 +54,26 @@ only when param_5 == 0); clamps via &DAT_00927ac0 (type 4 = 0..999, type 10 = ha
 turn sequence, family of M94's FUN_00556690 @0x52094f); live 16 CALL events at 0x520909, cp == fac
 16/16, 2 per faction per round; all 7 pokes (live+10) undone, mults {0,-2,0,2,0,0,-2,0} restored. THAT
 is why `.text` has only LOADS of 0x94d6a4. NAMED.
-**M101 (THE PICK): what FEEDS that block** - who writes [fac*8380+0x94d658] (the 4 record indices) and
-the source array [fac*8380+0x94d700] (its slot 10 gave fac3 +2 and fac6 -2; fac1's -2 came from a
-category record); what the &DAT_0092babc category records are (stride 0xd4 = 4 rows of 0x2c). Cheapest:
-read 0x94d658..0x94d677, 0x94d700..0x94d72b and the records for facs 1/3/6 from /proc, model slot 10's
-sum OFFLINE (no run), then 4 hw watchpoints on [fac*8380+0x94d728] x 4 factions in the
-`scripts/m100_mult_watch.py` shape. ALSO OPEN: FUN_0056df40's `inc [ebx+0x94d7f8]` (0x56e024); what
-FUN_004eaa10 builds base+0x104 from; why FUN_0059ec90's -1 store (0x59f0c7) never ran.
+**M101 RUN (s156; branch milestone/m101, PR open, UNMERGED): slot 10's inputs are DECODED and the model
+reproduces the live mult 8/8 - but NO single invocation printed PASS.** row = &DAT_0092babc + cat*212 +
+idx*44 dword 10 (4 records per category; the 4 indices at [fac*8380+0x94d658], written ONLY at 0x4b2715
+FUN_004b2570) PLUS the accumulator [fac*8380+0x94d700] (EXACTLY 2 displacement stores, both `add`:
+0x59ec68 FUN_0059ec00, 0x5a0471 FUN_0059ec90; never zeroed) then clamps from [0x927a88+fac*1436] (type
+4 = clamp 0..999, type 10 = halve if negative); param_5 == 0 on all three calls (the third passes
+param_4 = 1) so live A10 == B10 == C10 - "C skips the D-add" RETRACTED. m101feed2 (r54) G2 8/8 WITH
+mixed signs (fac1 -2 from cat0/rec3; fac3 +2, fac6 -2 from D10) but its census counted `cmp` as a
+store; m101feed3 G2 6/8 - the mult LAGS D by one accrual; m101feed4 (frozen r56) 9/10, G2 8/8 and G3
+False because D accrued **+10 for factions 1-7** across r54->r56 and every mult went POSITIVE
+{8,10,12,10,10,8,10}. LAW: a STATE precondition (mixed signs; no accrual since the last rebuild) is
+checked and reported BEFORE the run - it is not a floor and not a refutation. Evidence
+evidence/m101drift.log, evidence/m101feed4.log.
+**M102 (THE PICK): the model AT the rebuild's own stores** - silent bps at 0x5a16d9 (`mov [edi],eax`),
+0x5a179e (`add [eax],edi`) and 0x5a1807 (`mov [ecx],eax`) with REGISTER-ONLY conditions on the watched
+field addresses (those registers hold the BYTE address), printing the 4 row10 values + D10 + the stored
+value AT the hit; gate model-at-the-hit == stored, 4 factions x --boundaries 2 (the
+scripts/m100_mult_watch.py shape); entry bps at 0x59ec00 and 0x59ec90 printing `*(int *)$esp` name the
++10 accrual's caller. Box: m54b_clean r56 cp3 hud FROZEN, mults ALL POSITIVE (reload m54b_clean for
+signs).
 
 ## STILL OPEN (in priority order)
 
@@ -73,14 +86,10 @@ FUN_004eaa10 builds base+0x104 from; why FUN_0059ec90's -1 store (0x59f0c7) neve
 
 ## LIVE FACTS / KIT
 
-- **Box at s155:** m54b_clean **r52->54** (the save was RELOADED at s155 - the brief's BLOCKED fix -
-  so the round number is NOT continuous with s154's r68); University Base pending 1 head 2 storage 0
-  credit 0, q0 STALE 2; ebc 0x1a0e (bit 0x200 SET), mask 8 -> ONLY fac3 human, forced short
-  0x98adee = 6; era [0x985aec] 2; accs [fac*8380+0x94d7f8] facs 1-7 = 51/46/43/93/1/49/16 at r52;
-  mults [0x94d6a4] 0,-2,0,2,0,0,-2,0 == block-A slot 10 (M100). Instruments:
-  `scripts/m100_mult_watch.py --tag t --boundaries 2` (`--predict` = live inputs + the prediction
-  table; `M100_WFACS=`, 4 hw watch + CALL bp 0x520909 + READ bp 0x4f352e, pokes facs 1-7) and
-  `scripts/m99_param2.py` (`M99_WFACS=`, `M99_POKE_FAC=`, `--poke-carry`).
+- **Box at s156:** m54b_clean r56 cp3 hud, FROZEN (the human turn is waiting, nothing accrues),
+  TracerPid 0, gdb detached; mults [0x94d6a4] ALL POSITIVE {8,10,12,10,10,8,10} for factions 1-7 and
+  A10 == B10 == C10 (evidence/m101drift.log). Reload recipe (~35 s, bare filename):
+  `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `accept_ready.py` -> run.
 
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4); mask byte 0x985b10 = 0x08 -> ONLY fac3 human (a dword read there = 65288: mask the

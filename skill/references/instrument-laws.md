@@ -200,3 +200,24 @@ game fact. Therefore: (1) put watchpoints on fields whose value actually changes
 prove a writer ran on a stable-valued field, POKEd it and read the restore back from /proc — the
 poke-undo IS the evidence, not the log; (3) never gate "no writer" on "zero events" for a field that
 can be rewritten with the same value.
+
+
+## Displacement census and offline /proc models (s156, M101)
+
+- A store census that classifies "the watched displacement sits in the FIRST operand" counts
+  `cmp DWORD PTR [ecx*4+0x94d700],0x0` as a store and silently inflates the site list (m101feed2
+  G8 expected 2, got 4). Filter on the MNEMONIC too: only mov/add/sub/and/or/xor/adc/sbb/inc/dec/
+  neg/shl/shr/rep write their first operand; cmp/test never do.
+- Derive a table stride by walking the lea chain in PROGRAM ORDER and tracking which register each
+  lea WRITES - a chain like `lea ebx,[edx+edx*4]` then `lea ebx,[edx+ebx*2]` is idx*5 then idx*11,
+  not two independent multipliers. Getting it wrong (200/60 instead of 212/44) makes every record
+  lookup land on the wrong row and turns a correct model into a mismatch (m101feed1 G2). Ghidra's
+  printed `*0xd4 / *0x2c` was right there; my parse was the bug - check the bytes, then believe the
+  pseudocode's scale.
+- An OFFLINE model (read the inputs + the target from /proc, no gdb) is only coherent while nothing
+  runs between the target's last recompute and the read. SMAC auto-advances rounds while the human
+  turn is pending, and a value rebuilt in faction f's own segment LAGS an accumulator bumped later in
+  that segment by one accrual - so a green offline gate can go red on the next read of the same box
+  (m101feed3 6/8, then m101feed4 8/8 on the frozen box). Probe the round twice ~10 s apart BEFORE
+  believing either verdict, and check the state can still satisfy your own gates (a sign-mixing gate
+  stops discriminating once every value drifts positive).
