@@ -113,22 +113,22 @@ TMPL = r"""set pagination off
 set confirm off
 @@BLOCKS@@printf "ARMED @@NB@@ silent bps at @@BPS@@\n"
 continue
-python
-import gdb
-forms = ["call (int (*)(int))@@FUNC@@(@@FAC@@)", "call *(int (*)(int))@@FUNC@@(@@FAC@@)",
-         "call (int)@@FUNC@@(@@FAC@@)"]
-ok = -1
-for i, fm in enumerate(forms):
-    try:
-        gdb.execute(fm, to_string=True)
-        ok = i
-        break
-    except Exception as e:
-        gdb.write("callerr form %d: %s\n" % (i, e))
-gdb.write("M103S CALL fac=@@FAC@@ done=%d form=%d round=%d cp=%d\n"
-          % (1 if ok >= 0 else 0, ok,
-             int(gdb.parse_and_eval("@@RND@@")), int(gdb.parse_and_eval("@@CPP@@"))))
-end
+set $m103eax = $eax
+set $m103ebx = $ebx
+set $m103ecx = $ecx
+set $m103edx = $edx
+set $m103esp = $esp
+set $esp = $esp - 8
+set *(int *)($esp) = @@STOP@@
+set *(int *)($esp+4) = @@FAC@@
+set $eip = 0x59ec00
+continue
+printf "M103S CALL fac=@@FAC@@ done=1 esp0=0x%x round=%d cp=%d\n",$m103esp, @@RND@@, @@CPP@@
+set $esp = $m103esp
+set $eax = $m103eax
+set $ebx = $m103ebx
+set $ecx = $m103ecx
+set $edx = $m103edx
 clear *@@STOP@@
 continue
 """
@@ -150,7 +150,7 @@ end
 BPN = r"""break *@@PC@@ if @@COND@@
 commands
 silent
-printf "@@LINE@@\n",@@ARGS@@
+printf "@@LINE@@\n"@@ARGS@@
 end
 """
 
