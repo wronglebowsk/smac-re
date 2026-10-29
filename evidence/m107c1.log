@@ -1,0 +1,53 @@
+M107 chunk map — 9 saves, 30 legs, tag=m107c1
+  leg 0x59688a  size=       ?  dest=?
+  leg 0x59692e  size=       ?  dest=?
+  leg 0x59697d  size=       ?  dest=?
+  leg 0x5969d2  size=       ?  dest=?
+  leg 0x596a33  size=       ?  dest=?
+  leg 0x596a91  size=       ?  dest=?
+  leg 0x596afc  size=       ?  dest=?
+  leg 0x596ed6  size=       ?  dest=?
+  leg 0x596f25  size=       ?  dest=?
+  leg 0x59702d  size=       ?  dest=?
+  leg 0x597084  size=       ?  dest=?
+  leg 0x5970e4  size=       ?  dest=?
+  leg 0x597141  size=       ?  dest=?
+  leg 0x5971ac  size=       ?  dest=?
+  leg 0x59720a  size=       ?  dest=?
+  leg 0x597294  size=       ?  dest=?
+  leg 0x597319  size=       ?  dest=?
+  leg 0x59738b  size=       ?  dest=?
+  leg 0x59751f  size=       ?  dest=?
+  leg 0x597636  size=       ?  dest=?
+  leg 0x59769e  size=       ?  dest=?
+  leg 0x597716  size=       ?  dest=?
+  leg 0x597781  size=       ?  dest=?
+  leg 0x5977dd  size=       ?  dest=?
+  leg 0x597834  size=       ?  dest=?
+  leg 0x597892  size=       ?  dest=?
+  leg 0x5978ef  size=       ?  dest=?
+  leg 0x59794f  size=       ?  dest=?
+  leg 0x5979f8  size=       ?  dest=edx
+  leg 0x597a19  size=     0x4  dest=eax
+
+  static destinations: 
+
+  file                                  size    dest h  pairs  gate  residual
+  Alpha Centauri Autosave 1.SAV       242927      0      0     0   242923
+  Alpha Centauri Autosave 10.SAV      242927      0      0     0   242923
+  Alpha Centauri Autosave 2.SAV       242875      0      0     0   242871
+  Alpha Centauri Autosave 20.SAV      243691      0      0     0   243687
+  Alpha Centauri Autosave 3.SAV       242971      0      0     0   242967
+  Alpha Centauri Autosave 30.SAV      243483      0      0     0   243479
+  Alpha Centauri Autosave 4.SAV       242815      0      0     0   242811
+  Alpha Centauri Autosave 5.SAV       242919      0      0     0   242915
+  m54b_clean.SAV                      242539      0      0     0   242535
+
+  [G1] PASS  30 fread sites in FUN_00596850, 0 outside
+  [G2] FAIL  immediate-size legs 1, computed 29 [0x59688a, 0x59692e, 0x59697d, 0x5969d2, 0x596a33, 0x596a91, 0x596afc, 0x596ed6, 0x596f25, 0x59702d, 0x597084, 0x5970e4, 0x597141, 0x5971ac, 0x59720a, 0x597294, 0x597319, 0x59738b, 0x59751f, 0x597636, 0x59769e, 0x597716, 0x597781, 0x5977dd, 0x597834, 0x597892, 0x5978ef, 0x59794f, 0x5979f8]
+  [G3] PASS  no (dest,size) table: dest hits [0], adjacent pairs [0] over 0 destinations x 9 saves
+  [G4] PASS  version gate u32@772 = [0] on 9/9 saves -> the malloc'd 0xe5e0 leg is live
+  [G5] FAIL  0 static-leg direct reads inside a declared span, 12 heap reads outside [0x927c84+0x2000, 0x94e104+0xf000, 0x927c84+0x2000, 0x40a75b0+0x15000, 0x986d51+0x2000, 0x98af49+0x6000, 0x92d9cd+0x2000, 0x94e104+0xf000, 0x40a75b0+0x15000, 0x986d51+0x2000, 0x98af49+0x6000, 0x92d9cd+0x2000]
+  [G6] PASS  immediate legs sum 4; residuals [242535, 242811, 242871]...
+  [G7] PASS  no gdb/strace/winedbg process: ''
+  VERDICT FAIL 5/7

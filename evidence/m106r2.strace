@@ -1,8 +1,0 @@
-# M106 filtered strace extract; the RAW logs are /home/n100/reverse/smac/scratch/m106r2_terran.strace and /home/n100/reverse/smac/scratch/m106r2_tree.strace
-# pids seen in log A: [] ; in log B: [1263394, 1263413, 1263414]
-## READ_REGION 0
-## SAV_READ 0
-## SCRATCH_SAV_READ 0
-## MAP_COVER 0
-## OUTWRITE 0
-## OPENS (fd -> path)

@@ -1,0 +1,53 @@
+M107 chunk map — 9 saves, 30 legs, tag=m107c2
+  leg 0x59688a  size=   0x31c  dest=0x985ab8
+  leg 0x59692e  size=   0xce0  dest=0x91f750
+  leg 0x59697d  size=     0x4  dest=0x92046c
+  leg 0x5969d2  size=    0xc0  dest=0x92fc50
+  leg 0x596a33  size=     0x4  dest=0x91b5b4
+  leg 0x596a91  size= 0x105e0  dest=0x94d430
+  leg 0x596afc  size=  0xe5e0  dest=edi
+  leg 0x596ed6  size=  0x2ce0  dest=0x927590
+  leg 0x596f25  size=    0x20  dest=0x926a78
+  leg 0x59702d  size=  0x3e80  dest=0x985e5c
+  leg 0x597084  size=     0x4  dest=0x927538
+  leg 0x5970e4  size=     eax  dest=0x930d7c
+  leg 0x597141  size=   0xe00  dest=0x989ce0
+  leg 0x5971ac  size=  0x6800  dest=0x98ad88
+  leg 0x59720a  size=   0x680  dest=edi
+  leg 0x597294  size=  0x1000  dest=0x92bff0
+  leg 0x597319  size=     edx  dest=0x933278
+  leg 0x59738b  size=     eax  dest=edi
+  leg 0x59751f  size=     eax  dest=0x95da10
+  leg 0x597636  size=   0x100  dest=0x991698
+  leg 0x59769e  size=   0x100  dest=0x991598
+  leg 0x597716  size=    0x98  dest=0x92bf58
+  leg 0x597781  size=  0x27a0  dest=0x92d4a0
+  leg 0x5977dd  size=     0x4  dest=0x91b5b8
+  leg 0x597834  size=     0x4  dest=0x91b5bc
+  leg 0x597892  size=     0x4  dest=eax
+  leg 0x5978ef  size=     0x4  dest=eax
+  leg 0x59794f  size=     0x4  dest=0x91b700
+  leg 0x5979f8  size=       ?  dest=edx
+  leg 0x597a19  size=     0x4  dest=eax
+
+  static destinations: 0x91b5b4, 0x91b5b8, 0x91b5bc, 0x91b700, 0x91f750, 0x92046c, 0x926a78, 0x927538, 0x927590, 0x92bf58, 0x92bff0, 0x92d4a0, 0x92fc50, 0x94d430, 0x985ab8, 0x985e5c, 0x989ce0, 0x98ad88, 0x991598, 0x991698
+
+  file                                  size    dest h  pairs  gate  residual
+  Alpha Centauri Autosave 1.SAV       242927      0      0     0    38423
+  Alpha Centauri Autosave 10.SAV      242927      0      0     0    38423
+  Alpha Centauri Autosave 2.SAV       242875      0      0     0    38371
+  Alpha Centauri Autosave 20.SAV      243691      0      0     0    39187
+  Alpha Centauri Autosave 3.SAV       242971      0      0     0    38467
+  Alpha Centauri Autosave 30.SAV      243483      0      0     0    38979
+  Alpha Centauri Autosave 4.SAV       242815      0      0     0    38311
+  Alpha Centauri Autosave 5.SAV       242919      0      0     0    38415
+  m54b_clean.SAV                      242539      0      0     0    38035
+
+  [G1] PASS  30 fread sites in FUN_00596850, 0 outside
+  [G2] PASS  immediate-size legs 25, computed 5 [0x5970e4, 0x597319, 0x59738b, 0x59751f, 0x5979f8]
+  [G3] PASS  no (dest,size) table: dest hits [0], adjacent pairs [0] over 20 destinations x 9 saves
+  [G4] PASS  version gate u32@772 = [0] on 9/9 saves -> the malloc'd 0xe5e0 leg is live
+  [G5] FAIL  10 static-leg direct reads inside a declared span, 2 heap reads outside [0x40a75b0+0x15000, 0x40a75b0+0x15000]
+  [G6] PASS  immediate legs sum 204,504; residuals [38035, 38311, 38371]...
+  [G7] PASS  no gdb/strace/winedbg process: ''
+  VERDICT FAIL 6/7

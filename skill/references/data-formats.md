@@ -31,6 +31,7 @@ parsing, not RE.
 - Map header in `.MP` partially decoded — see `MAP_FORMAT.md`.
 - `.SAV` — mission year is a `u16` at file offset `0x54`; autosave slots rotate **in place**,
   so read the year rather than trusting the slot number. See `SAVE_FORMAT.md`.
+- **The .SAV chunk map is HARD-CODED — there is no (address,size) table in the file** (M107, `scripts/m107_chunkmap.py --tag m107c3` PASS 7/7): `FUN_00596850` [0x596850,0x597a6b] contains **30 `fread` legs**, 25 of them `push <size>` immediates + 5 counted, in file order; 0 of the 20 static destinations occur as u32 LE in any of 9 saves and 0 (dest,size) pairs are adjacent. Sizes come from code, so a save splits only by replaying the legs. **Block A (0x94d430) is version-gated** (`cmp ds:0x985dbc,3` @0x596a43; 0x985dbc = 796-B header at 0x985ab8 + 0x304 = file offset **772**): u32@772 = 0 on every save we hold, and the r7 strace shows the **malloc'd 0xe5e0 leg** reading 86,016 B at heap 0x40a75b0 — the static 0x105e0 leg never runs. Live immediates = 137,464 B of m54b_clean's 242,539; the **105,075 B residual** is the counted legs (`[0x985af0]` → 52n at 0x933278 + 48p malloc; `[0x985af4]` → 304m at 0x95da10; 0x927538 count prefix), and their producers are OPEN (no 4-byte read site targets those globals; header u32@0x38/0x3c are 0/0-2).
 
 ## Map + save container formats (verified — repo docs MAP_FORMAT.md / SAVE_FORMAT.md are canonical)
 
