@@ -345,13 +345,34 @@ prereq1 (`[ecx+0x92fdd4]`, ecx=[ebp-0x10]): `cmp eax,-1; jl 0x5a96e6`; `cmp [ecx
 test; jne 0x5aa022` — the leg is SKIPPED when [0x985c1c+idx] carries the faction's bit; else 0x5a96e6
 `call 0x5312d0; test eax; je 0x5a9744`; 0x5a96ef `mov eax,ds:0x985a9c`, `test ebx; jl 0x5a9744`,
 `test eax; jl 0x5a9744`, `cmp ebx,eax; je 0x5a9735`, else `lea ecx,[eax+eax*4]; lea esi,[eax+ecx*2];
-shl esi,2` (= eax*48 stride — a 48-vs-44 stride conflict, M67-style), `mov edx,[esi+0x92fdd4];
-push 1; push edx; push ebx; call 0x5a9020` (a comparator), 0x5a9718 `add esp,0xc; test eax`.
-The 0x5aa022 final block `mov eax,[ebp-0x4]; lea eax,[eax+eax*2]; test cl,dl; mov [ebp-0x4],eax;
-je -> lea edx,[eax+eax]; mov [ebp-0x4],edx; test ebx,ebx; je 0x5aa022; lea ecx,[eax+eax*1+4];
-mov [ebp-0x4],ecx` — final = tailout*5 (the `+4` lands ONLY when idx == 0; `test ebx,ebx` is the
-INDEX). MEASURED (m92tail18 fac2): final - pf = 155/32/4/1/20/2 = tailout x5 for idx 8/13/22/36/44
-(31/32/22/23/19); pf == final where tailout 0 (idx 32/48).
+shl esi,2` (= eax*44 record stride — the s146 "48-vs-44 conflict" was a misread: 11*4 = 44),
+`mov edx,[esi+0x92fdd4]; push 1; push edx; push ebx; call 0x5a9020` (a comparator), 0x5a9718
+`add esp,0xc; test eax`.
+RETRACTION (s147, from full bytes 0x5a9747-0x5aa022): the s146 note "the 0x5aa022 block makes
+final = tailout*5, the +4 lands only when idx==0" is WRONG — those bytes are 0x5a9ff8 (human x3/x2)
+and 0x5aa014 (x2+4 when ebx!=0, ebx being a scan flag by then, not idx); the apparent x5 deltas are
+the CASCADE below. 0x5aa022 is just `mov eax,[ebp-0x4]; pop; ret`.
+
+THE CASCADE (s147+s148, ACCEPTED m93post3 PASS 9/9 — 13/13 finals, nulls split 11/13; full table in
+NAMED.md M93 block): from 0x5a9747 the acc = tailout runs a chain of apply-if-INSIDE gates;
+`0x5a9020(a,X,f) != 0` iff a is in the depth-f prereq expansion of X (f=0 equality, f=1 {X,pr1,pr2},
+f=0x270e full closure). Stages in address order: A x3 (47, cl 0x9305e8/ec) B x2 (61, 0x930850/854)
+C x2 (64, d2 0x9308d4/8d8) — all behind [0x94d71c]>0 AND [blk+0x94d810]!=0; D x2 (35, d1 0x9303d8/
+0x9303dc); E x2 (59, cl 0x9307f8/7fc; entered when [blk+0x94d818]!=0 OR [0x92adbc]==0); FIM
+x(2*(1+[blk+0x94d81c])) (validator rec+4 bit1, mask[0x985c1c+idx]==0, ac4 bit 0x200 clear); then
+[0x927a8c+fac*1436]>0 -> x2 via 0x98582c closures, else 0x93325c/0x933268 (x2,x2) + +1@0x5a99cc +
+x2@0x5a9a21 (closure legs); q=[blk+0x94dc28]/clamp([blk+0x94e488],1,0x270f) ADDED if q>[blk+0x94d81c]
+and idx in closure(0x984fec/0x984fbc/0x98531c/0x98534c); K1 x2 key [0x9851cc] / K2 x3/2 key
+[0x9851fc] (K2 also needs round>250) behind [0x927a80+arg2] > 0 — arg2=0 at tail calls, live 0;
+era table 0x92b954 x21 (flag=[e-4], id-word=[e]): idx==id -> x3 (x4 if ebc&hmask) ELSE idx==pr1/pr2
+(id) -> x2 (x3 if ebc) — legs EXCLUSIVE per entry, constants not table words; x3@0x5a9df3 when the
+89-tech scan (runs when [blk+0x94d814]!=0 or [blk+0x94d81c]==0) hits esi==idx with validator+mask
+clear; x2@0x5a9eb5 (x4 if ebc&hmask) when idx in {0x98adee + its prereq closures}; band region
+0x5a9f83+ (x3/x6 human @0x5a9ff8, x2+4 @0x5aa014 when ebx!=0): contributed x1 in every traced run
+(PBH 5 events, PS2p4 0). TIMING LAW (m93post2 FAIL 8/9 -> post3 PASS): 0x92adbc, the era table,
+designed prereq fields and demand dwords move BETWEEN the 0x51f320 boundary snap and the ladder —
+dump 0x927a00-0x933300 + 0x984f00-0x98b000 AT each TAIL hit (m93_post_census tailx1/tailx2) and
+re-read demand there (d814t/d818t/d81ct); M92's within-round freeze covers only the 0x94e488 block.
 
 CENSUS LAWS (s146, m92 harness): a gate may only read a field the harness SETS (G8 read c["tdiv"],
 never assigned -> structurally False for 4 runs); pair tailout/tailbyidx FIRST-wins (a re-scan in a

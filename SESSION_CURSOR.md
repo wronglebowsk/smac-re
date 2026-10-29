@@ -1,2 +1,5 @@
-M93 s148 CLOSED, NOT accepted: m93post2 FAIL 8/9 (G1-G8 green, G9 ladder 13 predicted/4 mismatch). Nothing merged, nothing submitted. Next: the 4 fixes in NEXT_PROMPT THE PICK (legs 0x5a9c17/0x5a9c68, 5 missing breakpoints, live-timing specials, PE2 over-application), then re-run scripts/m93_post_census.py --tag m93post3 --poke-index 7 --poke-extra 2,6 --rounds 4 --timeout 100. Box: fresh m54b_clean r50->55. Committed (2 commits) + pushed to origin/milestone/m93; gate GREEN;
- no PR, nothing merged (no PASS).
+M93 s147 CLOSING: m93post3 PASS 9/9 (ONE invocation, fresh m54b_clean r50->55; G9 13/13, nulls
+11/13; fac2 E=Mc2 186, fac5 Surface 56). Docs+skill committed, gate GREEN vs main. In flight:
+milestone.py submit -> gh pr checks <n> -> milestone.py merge <n>. Merged: NO.
+Cap reached (3/3 game runs). Box: hud r55. If merged: final cursor = merged YES, next pick M94
+(writers of 0x94e488/0x94e5a8/0x94eda8/0x950664, see NEXT_PROMPT THE PICK).

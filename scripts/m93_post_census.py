@@ -385,6 +385,51 @@ printf "PS2p4 fac=%d idx=%d acc=%d ebx=%d\n", *(int *)($ebp+0xc), *(int *)($ebp+
 end
 continue
 end
+break *0x5a9c14
+commands
+silent
+set $n_post = $n_post + 1
+if $n_post < 2400
+printf "PT1 fac=%d idx=%d acc=%d\n", *(int *)($ebp+0xc), *(int *)($ebp+8), $edx
+end
+continue
+end
+break *0x5a9c74
+commands
+silent
+set $n_post = $n_post + 1
+if $n_post < 2400
+printf "PT2 fac=%d idx=%d acc=%d\n", *(int *)($ebp+0xc), *(int *)($ebp+8), $eax
+end
+continue
+end
+break *0x5a9df0
+commands
+silent
+set $n_post = $n_post + 1
+if $n_post < 2400
+printf "PSX fac=%d idx=%d acc=%d esi=%d\n", *(int *)($ebp+0xc), *(int *)($ebp+8), $eax, $esi
+end
+continue
+end
+break *0x5a9eb5
+commands
+silent
+set $n_post = $n_post + 1
+if $n_post < 2400
+printf "PX2 fac=%d idx=%d acc=%d ebc=%d\n", *(int *)($ebp+0xc), *(int *)($ebp+8), $edx, *(int *)($ebp-0xc)
+end
+continue
+end
+break *0x5a9f83
+commands
+silent
+set $n_post = $n_post + 1
+if $n_post < 2400
+printf "PBH fac=%d idx=%d acc=%d edi=%d\n", *(int *)($ebp+0xc), *(int *)($ebp+8), $eax, $edi
+end
+continue
+end
 break *0x5aa022
 commands
 silent
@@ -1124,7 +1169,8 @@ def main():
             dc28 = int.from_bytes(sn[b + 0x7e0:b + 0x7e4], "little", signed=True)
         if dc28 is not None and dv488 is not None:
             q = int(dc28 / max(1, min(dv488, 9999))) if dv488 > 0 else dc28
-            if q > (d81c or 0) and (idx in cl(d4(0x984fec)) or idx in cl(d4(0x984fbc))):
+            if q > (d81c or 0) and any(idx in cl(d4(k)) for k in
+                                       (0x984fec, 0x984fbc, 0x98531c, 0x98534c)):
                 acc = s32(acc + q); fired.append("PLadd")
         if d81c:                                           # era table loop (0x5a9c93), legs EXCLUSIVE
             for k in range(21):
@@ -1135,8 +1181,18 @@ def main():
                     acc = s32(acc * (4 if humflag else 3)); fired.append(f"PM{k}")
                 elif 0 <= m1k < 89 and (idx == pr1(m1k) or idx == pr2(m1k)):
                     acc = s32(acc * (3 if humflag else 2)); fired.append(f"PN{k}")
-        if (c.get("round") or 0) > 250:                    # x1.5 leg (0x5a9c68)
-            acc = s32(acc * 3 // 2); fired.append("X15")
+        # legs K1/K2 (0x5a9bb7-0x5a9c7f): gated on [0x927a80] > 0 (arg2*4=0 at the tail call ->
+        # plain global). K1 x2 (key [0x9851cc]) applies iff idx in its closure set; if K1 misses,
+        # K2 x3/2 (key [0x9851fc]) applies ONLY when round > 250 (0x5a9c68 cmp 250). s148 read the
+        # region; m93post2's fac5 idx13 x2 was a K1/K2-family leg my earlier model lacked.
+        if (d4(0x927a80) or 0) > 0:
+            k1 = d4(0x9851cc)
+            if idx >= 0 and k1 is not None and idx in clpr(k1):
+                acc = s32(acc * 2); fired.append("K12")
+            else:
+                k2 = d4(0x9851fc)
+                if idx >= 0 and k2 is not None and idx in clpr(k2) and (c.get("round") or 0) > 250:
+                    acc = s32(acc * 3 // 2); fired.append("K32")
         if (d814 != 0 or d81c == 0) and valid and mask_idx == 0:   # esi scan x3 (0x5a9df0)
             acc = s32(acc * 3); fired.append("SX3")
         g = w2(0x98adee)

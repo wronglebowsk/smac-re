@@ -420,3 +420,34 @@ at 0x5a9c14/0x5a9c74/0x5a9df0/0x5a9eb5/0x5a9f83), add the 0x9851cc/0x9851fc legs
 snapshot, re-run. Evidence: evidence/m93post1.gdblog (run-1 trace, 6 scans / 41 candidates),
 evidence/m93post2.gdblog (the failing acceptance); scratch/m93post2.out, scratch/m93/{analyze1,
 analyze2}.py. Box: fresh load r50->55, census ran, nothing queued at U. Base.
+
+## Session 147 (2026-10-29) — M93 ACCEPTED: m93post3 PASS 9/9. The POST-tail ladder predicts every traced final
+
+Branch milestone/m93 (s147 continued after s148 closed; the runs interleave — s147 owned post1+post3,
+s148 owned post2 and the census-file commits). ACCEPTANCE `python3 scripts/m93_post_census.py --tag
+m93post3 --poke-index 7 --poke-extra 2,6 --rounds 4 --timeout 100` (ONE invocation, fresh m54b_clean
+load r50->55): **VERDICT PASS 9/9** — G9: 13 candidates predicted, **0 mismatches**, splits vs
+final==tailout null 11, vs final==tailout*5 (s146 claim) null 13; G1-G8 green (G3 41/41 tailouts,
+div cross-check 41/41 bad=0); 2 qualifying windows: fac2 win=8 E=Mc2 final 186 (= 31 x3 x2, PM+PN),
+fac5 win=13 Surface final 56 (= 28 x2, PN), ST/RB true, draws in range.
+
+TRACE (run 1/3, m93post1, census + 22 POST bps, PASS 8/8): 41 ladder passes -> the ladder is a
+cascade of apply-if-INSIDE gates; `0x5a9020(a,X,f) != 0` iff a is in the depth-f prereq expansion of
+X (f=0 equality, f=1 {X,pr1,pr2}, f=0x270e full closure); era-table legs are constants (x3/x4 then
+x2/x3 chosen by ebc&human-mask), the table WORDS are id keys. Model validated 21/21 offline
+(scratch/m93/model.py) and 21/21 against the harness function (scratch/m93/dryrun.py).
+
+FIXES after m93post2 FAIL 8/9 (all four post2 mismatches were TIMING, not rules): (1) the ladder's
+inputs (0x92adbc, the era table 0x92b954, designed prereq fields, demand dwords) move BETWEEN the
+boundary snap (0x51f320) and the ladder — dump the full specials regions AT each TAIL hit
+(tailx1 0x927a00-0x933300 + tailx2 0x984f00-0x98b000, 72 KB/hit) and re-read demand at the hit
+(d814t/d818t/d81ct); closures read the hit-timed copy. (2) legs K1 x2 (key [0x9851cc]) / K2 x3/2
+(key [0x9851fc], ONLY when round > 250) gated on [0x927a80] > 0 — live 0, PT1/PT2/PSX 0 events.
+(3) q-add gate also checks 0x98531c/0x98534c. (4) diagnostic bps PT1/PT2/PSX/PX2/PBH: PBH x5 proves
+the band region (0x92b076 closure) runs and contributes x1; x2+4 (0x5aa018) never ran (ebx==0).
+
+LAW: a snapshot must be frozen at the SAME timing as the consumer's read — M92's within-round freeze
+holds only for the 0x94e488 block; upkeep rewrites 0x92adbc/era-table/designed prereqs mid-round.
+NEXT (M94): who writes 0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds (the 8 esi positions are
+powers of 4); the human leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd. Evidence:
+evidence/m93post1-3.gdblog; scratch/m93post3.out + _tailx1/2.bin, scratch/m93/{model,dryrun}.py.
