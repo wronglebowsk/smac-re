@@ -1,5 +1,5 @@
-M100 (s155) | acceptance: scripts/m100_mult_watch.py --tag m100mult2 --boundaries 2 (4 hw watchpoints
-on [fac*8380+0x94d6a4] facs 1,2,3,6 + CALL bp 0x520909 + READ bp 0x4f352e; pokes facs 1-7 to live+10
-before each boundary) | merged: NO (run 1 m100mult1 FAIL 9/11, instrument fixed since) | next command:
-process_manage wait on the background census, then the CLOSING ORDER. Box: m54b_clean r52 cp3 hud,
-University pend 1 head 2 credit 0 (the M94/M99 accepted state). Evidence 28.0 MB (gate FAIL 30).
+M101 (s156) | acceptance: scripts/m101_block_feed.py --tag m101feed1 (OFFLINE: model FUN_005a15a0
+slot 10 from live /proc for all 8 factions, no gdb, no poke) | merged: NO (unmeasured) | next
+command: python3 scripts/m101_block_feed.py --tag m101feed1. Box: m54b_clean r52 cp3 hud, TracerPid 0,
+gdb detached. Branch milestone/m101 == main 7e84940 (M100 merged as #107 by the overlapping s155 run
+that this cron dispatch raced). Evidence 28 MB (gate FAIL 30).
