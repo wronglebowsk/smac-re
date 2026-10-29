@@ -1,0 +1,16 @@
+M108 counted legs — pid 1340394, m54b_clean.SAV
+  [0x985af0] units=67   52n=3,484  48p=3,216
+  [0x985af4] bases=18   304m=5,472
+  [0x92a38c]=2048  [0x92ae14]=0x40a6660  [0x985dbc]=9
+  immediate legs 204,504  residual 38,035  counted 12,172  deficit 25,863
+  store sites 0x985af0: 0x4e10d8(DWORD), 0x4e11cc(DWORD), 0x598476(DWORD), 0x5a109e(DWORD), 0x5abc5d(DWORD)
+  store sites 0x985af4: 0x4e10de, 0x4e11d8, 0x4e515d, 0x598470, 0x59b842, 0x5a1098
+  base names: University Base, Gaia's Landing, The Hive, Morgan Industries, Sparta Command, New Jerusalem, U.N. Headquarters, Morgan Energy Monopoly
+
+  [G1] PASS  terran.exe pid 1340394; record-block counts [0, 6, 5, 4, 3, 4, 5, 3] (header-year field 0 is not the mission year in memory) = the m54b_clean image
+  [G2] PASS  [0x985af0]=67 units -> 52n=3,484 48p=3,216; [0x985af4]=18 bases -> 304m=5,472
+  [G3] PASS  5 stores to 0x985af0, 6 to 0x985af4; the load pair 0x598470/0x598476 (6 B apart, one basic block) sits in the function starting 0x598340
+  [G4] PASS  RETRACT M107: [0x985dbc]=9 >= 3 -> the STATIC 0x105e0 block-A leg runs (r7 strace: direct read 0x94e104+0xf000 inside 0x94d430+0x105e0)
+  [G5] PASS  m54b_clean 242,539 - immediate legs 204,504 = residual 38,035; counted legs 12,172 -> DEFICIT 25,863 (the finding)
+  [G6] PASS  read-back: 18/18 base records at 0x95da10 carry printable names (first 'University Base')
+  VERDICT PASS 6/6

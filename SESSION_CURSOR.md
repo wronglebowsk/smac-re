@@ -1,5 +1,6 @@
-M107 ACCEPTED (m107c3 PASS 7/7) — branch milestone/m107, merging now.
-ANSWER: the save chunk map is HARD-CODED in FUN_00596850 — 30 fread legs (25 immediate + 5 counted); NO (address,size) table in the file (0/20 dests as u32, 0 adjacent pairs, 9 saves).
-Block A is version-gated: u32@772 < 3 on 9/9 -> the malloc'd 0xe5e0 leg runs (heap 0x40a75b0+0x15000); live immediate legs 137,464 -> 105,075 residual for the counted legs on m54b_clean.
-next: SESSION_NOTES/NAMED/NEXT_PROMPT/rsync/commit/gate/PR/merge, then M108 = who SETS [0x985af0]/[0x985af4].
+M108 ACCEPTED (m108c3 PASS 6/6) — branch milestone/m108 (from main 333bace), closing now.
+COUNTED LEGS ARE LIVE COUNTS: [0x985af0]=67 units, [0x985af4]=18 bases; landed by the pair store 0x598470/0x598476 in FUN_00598340; the 304-byte array at 0x95da10 holds 18 named records.
+RETRACT M107: live [0x985dbc]=9 (>=3) -> the STATIC 0x105e0 block-A leg runs; 0x985dbc is NOT file offset 772. M107's 105,075/old-path numbers withdrawn.
+OPEN: chunk map does not close — 38,035 residual vs 12,172 counted = 25,863 B unaccounted; the load's biggest read is a malloc'd 86,016 B at heap 0x40a75b0.
+next: notes/NAMED/NEXT_PROMPT(M109)/skill-correct/rsync/commit/gate/PR/merge.
 cron 1a88e12bd408 PAUSED 18:41 (single driver) - resume when this session ends.
