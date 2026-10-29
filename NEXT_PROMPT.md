@@ -46,13 +46,13 @@ counts M105 armed; the block head 488 B (fac0) and tail 2,808 B (fac7) come thro
 stdio buffer = ring-3 stores. copy_to_user raises no debug exception — the hardware watchpoint's
 blind spot. Harness `scripts/m106_load_restore.py` (two straces with raw args + maps + soft-dirty +
 8 count sentinels); a traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
-**M107 (THE PICK): the save CHUNK MAP** — that one fd-run reads 0x94e104+0xf000, 0x927c84+0x2000,
-0x40a75b0+0x15000, 0x986d51+0x2000, 0x98af49+0x6000, 0x92d9cd+0x2000 plus 0x1000 buffered chunks: is
-there a (address,size) TABLE in the file, or does FUN_00596850 hard-code the seek sequence? NO box
-needed: `scratch/m71/dis.py LO HI [cap]` over FUN_00597ee0 -> FUN_00596850 -> FUN_00596540, and line
-the read order up against `programs/saves/m54b_clean.SAV` (242,539 B; the record-block chunk sits at
-0x10e18, M104). THEN: what FUN_005791c0 (3112 B, shard_014) READS to build the block; the TYPE 0/2
-consumers; the 0x92babc category records; the record index at 0x4b2715.
+**M108 (THE PICK): who SETS the counted legs — M107 closed the table question.** HARD-CODED: 30 legs
+(`scripts/m107_chunkmap.py --tag m107c3` PASS 7/7), 25 `push <size>` immediates + 5 counted, NO
+(address,size) table in the file (0/20 dests as u32). Live immediates = 137,464 B of m54b_clean's
+242,539 → **105,075 B** for `[0x985af0]` (52n at 0x933278 + 48p malloc), `[0x985af4]` (304m at
+0x95da10), 0x927538 prefix leg. No read site targets them and header u32@0x38/0x3c are 0/0-2 → the
+DERIVATION (xrefs; then a hw watchpoint on both in one load). THEN: FUN_005791c0's startup reads;
+TYPE 0/2 consumers; 0x92babc records; 0x4b2715.
 
 ## STILL OPEN (in priority order)
 
