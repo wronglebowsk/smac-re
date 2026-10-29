@@ -1,3 +1,7 @@
-M97 ACCEPTED (session 152) | acceptance m97credit3 PASS 11/11 (ONE invocation) | merged? NO - submit+merge pending | milestone/m97
-FINDING: base+0xd0 (credit) is RECOMPUTED EVERY ROUND by FUN_004e93f0 (0x4e9557 = [+0xc0]-[+0xf0], 0x4e957f -= [+0xe0], mirror 0x4e9590 -> +0x94); callers FUN_004f5a70 (0x4f5ad2/0x4f5b46; itself 0x5206d3) + recalc helper FUN_004eb6b0 (0x4eb6db). "Init-only" trap RETRACTED. Docs written: SESSION_NOTES s152, NAMED M97 block, NEXT_PROMPT (pick = M98 the [fac*8380+0x94d800] sibling), skill code-atlas M97 leg.
-NEXT: rsync skill -> git add -A && commit -> python3 scripts/gate.py --base main -> milestone.py submit -> gh pr checks <n> -> milestone.py merge <n>
+M98 (milestone/m98, s153) — [fac*8380+0x94d800] is FUN_005aab70's per-faction ADVANCE-THRESHOLD
+cache (sibling accumulator [fac*8380+0x94d7f8]; only writers 0x5aaf67 -1 + 0x5aaf79 store in
+FUN_005aadf0, 0x59f0c7 -1 in FUN_0059ec90; grant iff threshold <= acc).
+Acceptance NOT RUN YET. Next: python3 scripts/accept_ready.py; then
+python3 scripts/m98_advance_budget.py --tag m98budget1 --boundaries 2
+Model validated offline on fac1/3/5/7 (81/72/81/64 == live). Merged? no.
+Box: m54b_clean r56, U pending 1 head 2, fields -1,81,112,72,166,81,77,64.
