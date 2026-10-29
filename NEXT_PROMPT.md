@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 147, 2026-10-28)
+# NEXT_PROMPT.md — footing for the next session (sessions 147-148, 2026-10-29)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -36,8 +36,13 @@ NOT replace, asc 0..88) — NOT max score** (falsified 3x). NAMED.
 from the per-faction block — 39/39 candidates, 0 mismatches, 2 qualifying windows, naive one-factor
 splits 19** (cat/mult/div offsets, the cat7/cat2/cat0/band legs and gates: skill code-atlas.md).
 **Block FROZEN within a round** (0/39 + 0/19 per-TAIL-hit dumps differ from own-round snapshots;
-div cross-check 39/39 bad=0), moves BETWEEN rounds — s145's in-round-motion claim RETRACTED (census defects, see TRAPS). Census needs a FRESH load. NAMED.
-**M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). **M68 FAILED**; **M63** `m63_pop.py`, `0x94de84` queued-count.
+div cross-check 39/39 bad=0), moves BETWEEN rounds — s145's in-round-motion claim RETRACTED (census defects, see TRAPS). Census needs a FRESH load. NAMED. **M92 MERGED (s147, #98, squash 106bdd8).**
+**M93 (s147-s148, `m93post3` PASS 9/9, fresh load r50->55):** the POST-tail cascade 0x5a9747-0x5aa022
+EXACTLY predicted (13/13 finals, nulls split 11/13): `0x5a9020(a,X,f)` = prereq-closure membership at
+depth f; every stage applies iff idx is INSIDE its key/closure set; era-table legs are x3or4/x2or3
+chosen by ebc&human-mask (table words are ID keys, not multipliers); TIMING LAW: ladder inputs
+(0x92adbc, era table, designed prereqs, demand dwords) move mid-round — freeze at the TAIL HIT
+(tailx1/tailx2 dumps), not the boundary snap; the band region contributes x1 here, x2+4 never ran.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
@@ -57,32 +62,26 @@ div cross-check 39/39 bad=0), moves BETWEEN rounds — s145's in-round-motion cl
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M93: the POST-tail leg 0x5a9698 -> 0x5aa022 — what the SCORE at 0x5aa159 adds on top of TAILOUT.**
-M92 is ACCEPTED (`m92tail18` PASS 8/8); the tail rule + census laws live in NAMED.md and the skill's code-atlas.md — never re-derive them. FULL STATIC for M93 is appended there too (s146):
-the leg is SKIPPED when [0x985c1c+idx] carries the faction's bit; else `call 0x5312d0`, then
-ds:0x985a9c drives a record at `[esi+0x92fdd4]` with an eax*48 stride (48-vs-44: an M67-style conflict)
-into `call 0x5a9020`; the 0x5aa022 block makes final = TAILOUT*5 (the `+4` lands only when
-idx == 0). MEASURED (m92tail18 fac2): final - pf = 155/32/4/1/20/2 = tailout x5 for idx 8/13/22/36/44;
-pf == final where tailout 0 (idx 32/48). FIRST SHAPE: extend m92_tail_census with POST prints at
-0x5a96e6/0x5a9735/0x5a9744/0x5aa014 (which branch each scan takes + values at the landings) and
-predict final = f(tailout, idx, [0x985c1c+idx], [0x985a9c], the 0x5312d0 result) per candidate from
-the candidate-round snapshot; ONE fresh-load invocation must print PASS. Then (M94+): who writes
-0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds (the 8 esi positions are powers of 4); the human
-leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
+**M94: who writes 0x94e488 / 0x94e5a8 / 0x94eda8 / 0x950664 between rounds — the per-faction tail
+block's divisor / multiplier / category / band tables (the 8 control dwords' esi positions are powers
+of 4).** Hardware watchpoints on those 4 addresses across ONE round boundary (arm before the boundary,
+print writing pc + old/new + round), then name the writer by containment. M93 ACCEPTED (s147,
+`m93post3` PASS 9/9): the POST ladder predicts every traced final — NAMED.md M93 block + skill
+code-atlas.md; do NOT re-derive. THEN (M95+): the human leg (bVar14, FUN_00625af1 at 0x5aa20d);
+pay-site 0x4f0ca6/0x4efedd.
 ## STILL OPEN (in priority order)
 
-1. **After M93 (THE PICK): the pay-site conflict 0x4f0ca6 vs 0x4efedd; the human leg (FUN_00625af1 at
-   0x5aa20d, bVar14 in FUN_0048b9a0); who writes 0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds;
-   the SIBLING slot [esi+0x94d800] (FUN_005aab70); the band flag [esi+0x94d430] bit 0x40; ds:0x926bd4 /
+1. **After M94 (THE PICK): the pay-site conflict 0x4f0ca6 vs 0x4efedd; the human leg (FUN_00625af1 at
+   0x5aa20d, bVar14 in FUN_0048b9a0); the SIBLING slot [esi+0x94d800] (FUN_005aab70); the band flag [esi+0x94d430] bit 0x40; ds:0x926bd4 /
    ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5 (0x531782).**
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
    **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite: `scripts/gate.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at s147:** r55 hud, Korolev idx 18 pend 1 head 2 UI-queued (s147); census ran r51->55; `scripts/m92_tail_census.py` is the tail census —
-  **ACCEPTANCE GREEN (`m92tail18` PASS 8/8)** but needs a FRESH m54b_clean load: at r59 only 3 AI
-  factions queued -> 0 qualifying windows (FAIL 5/8, box state).
+- **Box at s147:** fresh m54b_clean load r50->55 (m93post3 PASS 9/9 ran there).
+  `scripts/m93_post_census.py` = m92's census + POST prints + `ladder_pred`/G9 + hit-timed
+  tailx1/tailx2 specials dumps — run on a FRESH load.
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4). The human mask byte at 0x985b10 = 0x08 -> ONLY faction 3 is human (a dword read there
   shows 0x985b10 = 65288, mask the low byte). X focus law: see TRAPS. **The PANE decides where INSERT
@@ -99,6 +98,7 @@ leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
 
 ## TRAPS
 
+- **The `fired=` list on a `LADDER-MISMATCH` line is the MODEL's prediction, not observed events** — a leg listed there that no breakpoint caught is the model over-applying, not the instrument missing it (s148). A no-event at an apply site is only evidence once a breakpoint is confirmed to EXIST there (4 lacked one until s148).
 - **Register semantics live in the encoding, not the name:** `[reg*4+0x98adb8]` means the register
   holds `tid*13` (52/4), `[reg+0x98adb8]` the BYTE address `tid*52`; a conditional bp testing such
   a register against the bare tid can NEVER fire.

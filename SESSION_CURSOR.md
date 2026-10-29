@@ -1,6 +1,5 @@
-M92 s147 CLOSING: acceptance m92tail18 PASS 8/8 (fresh m54b_clean r51->55; 39/39 tail exact,
-2 qualifying windows, naive one-factor splits 19, G8 div cross-check 39/39 bad=0). Merged: NO.
-Docs+skill trimmed and committed (gate GREEN vs main, skill 69,825 B, NEXT_PROMPT 15,492 B).
-In flight: milestone.py submit -> PR #98 -> gh pr checks 98 -> milestone.py merge 98.
-Box: hud, Korolev idx 18 pend 1 queued (s147 enqueue). If checks green and merge lands:
-final cursor = merged YES, next pick M93 (post-tail leg, see NEXT_PROMPT THE PICK).
+M93 s147 CLOSING: m93post3 PASS 9/9 (ONE invocation, fresh m54b_clean r50->55; G9 13/13, nulls
+11/13; fac2 E=Mc2 186, fac5 Surface 56). Docs+skill committed, gate GREEN vs main. In flight:
+milestone.py submit -> gh pr checks <n> -> milestone.py merge <n>. Merged: NO.
+Cap reached (3/3 game runs). Box: hud r55. If merged: final cursor = merged YES, next pick M94
+(writers of 0x94e488/0x94e5a8/0x94eda8/0x950664, see NEXT_PROMPT THE PICK).

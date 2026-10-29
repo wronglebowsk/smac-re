@@ -1,0 +1,566 @@
+[New LWP 563148]
+[New LWP 563147]
+[New LWP 563146]
+[New LWP 563145]
+[New LWP 563144]
+[New LWP 563143]
+[New LWP 563142]
+[New LWP 563141]
+[New LWP 563140]
+[New LWP 563139]
+[New LWP 563138]
+[New LWP 563137]
+[New LWP 563136]
+[New LWP 563135]
+[New LWP 563134]
+[New LWP 563133]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee8ae32c in __kernel_vsyscall ()
+ARMED round=51 year=2151 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x5a9698
+Breakpoint 11 at 0x5a96eb
+Breakpoint 12 at 0x5a9735
+Breakpoint 13 at 0x5a9744
+Breakpoint 14 at 0x5a9747
+Breakpoint 15 at 0x5a97a4
+Breakpoint 16 at 0x5a97e1
+Breakpoint 17 at 0x5a9816
+Breakpoint 18 at 0x5a9859
+Breakpoint 19 at 0x5a98ac
+Breakpoint 20 at 0x5a98d8
+Breakpoint 21 at 0x5a9970
+Breakpoint 22 at 0x5a9980
+Breakpoint 23 at 0x5a99cc
+Breakpoint 24 at 0x5a9a21
+Breakpoint 25 at 0x5a9a58
+Breakpoint 26 at 0x5a9bb4
+Breakpoint 27 at 0x5a9cba
+Breakpoint 28 at 0x5a9d17
+Breakpoint 29 at 0x5a9ff8
+Breakpoint 30 at 0x5aa00e
+Breakpoint 31 at 0x5aa018
+Breakpoint 32 at 0x5a9c14
+Breakpoint 33 at 0x5a9c74
+Breakpoint 34 at 0x5a9df0
+Breakpoint 35 at 0x5a9eb5
+Breakpoint 36 at 0x5a9f83
+Breakpoint 37 at 0x5aa022
+Breakpoint 38 at 0x5a9503
+Breakpoint 39 at 0x51f320
+ENT n=1 fac=5 ret=0x5aaff3 round=51
+CALL n=1 fac=5 round=51
+BASE n=1 idx=4 fac=5 a2=0 base=10 ac4=6670 T0=2 T4=1 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=-1 p2=-1 div=3 hmask=5 round=51
+TAIL n=1 idx=4 fac=5 base=10 div=3 hmask=65288 ebc=32 v4=0 msk=12494558 d71c=0 d810=0 d814t=1 d818t=0 d81ct=1
+TAILOUT fac=5 idx=4 out=10
+P531 fac=5 idx=4 res=0
+P4S fac=5 idx=4 acc=10
+PENTRY fac=5 idx=4 acc=10 blk=0xa3ac ebx=4
+PI1 fac=5 idx=4 acc=10
+PKq fac=5 idx=4 q=0
+PFIN fac=5 idx=4 final=11 ebx=4
+SC n=1 fac=5 idx=4 final=11
+DRAW n=1 fac=5 idx=4 draw=885 best=-999
+BASE n=2 idx=13 fac=5 a2=0 base=22 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=3 div=3 hmask=5 round=51
+TAIL n=2 idx=13 fac=5 base=22 div=3 hmask=65288 ebc=32 v4=0 msk=0 d71c=0 d810=0 d814t=1 d818t=0 d81ct=1
+TAILOUT fac=5 idx=13 out=28
+P531 fac=5 idx=13 res=0
+P4S fac=5 idx=13 acc=28
+PENTRY fac=5 idx=13 acc=28 blk=0xa3ac ebx=13
+PKq fac=5 idx=13 q=0
+PNimul fac=5 idx=13 mult=2 acc=28
+PFIN fac=5 idx=13 final=56 ebx=13
+SC n=2 fac=5 idx=13 final=56
+DRAW n=2 fac=5 idx=13 draw=4593 best=885
+BASE n=3 idx=22 fac=5 a2=0 base=26 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=2 div=3 hmask=5 round=51
+TAIL n=3 idx=22 fac=5 base=26 div=3 hmask=65288 ebc=32 v4=2 msk=0 d71c=0 d810=0 d814t=1 d818t=0 d81ct=1
+TAILOUT fac=5 idx=22 out=30
+P531 fac=5 idx=22 res=0
+P4S fac=5 idx=22 acc=30
+PENTRY fac=5 idx=22 acc=30 blk=0xa3ac ebx=22
+PI1 fac=5 idx=22 acc=30
+PKq fac=5 idx=22 q=0
+PFIN fac=5 idx=22 final=31 ebx=22
+SC n=3 fac=5 idx=22 final=31
+DRAW n=3 fac=5 idx=22 draw=3525 best=4593
+BASE n=4 idx=32 fac=5 a2=0 base=24 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=2 p2=-1 div=3 hmask=5 round=51
+TAIL n=4 idx=32 fac=5 base=24 div=3 hmask=65288 ebc=32 v4=0 msk=16 d71c=0 d810=0 d814t=1 d818t=0 d81ct=1
+TAILOUT fac=5 idx=32 out=24
+P531 fac=5 idx=32 res=0
+P4S fac=5 idx=32 acc=24
+PENTRY fac=5 idx=32 acc=24 blk=0xa3ac ebx=32
+PI1 fac=5 idx=32 acc=24
+PKq fac=5 idx=32 q=0
+PFIN fac=5 idx=32 final=25 ebx=32
+SC n=4 fac=5 idx=32 final=25
+DRAW n=4 fac=5 idx=32 draw=1549 best=4593
+BASE n=5 idx=36 fac=5 a2=0 base=15 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=5 p2=-1 div=3 hmask=5 round=51
+TAIL n=5 idx=36 fac=5 base=15 div=3 hmask=65288 ebc=32 v4=0 msk=128 d71c=0 d810=0 d814t=1 d818t=0 d81ct=1
+TAILOUT fac=5 idx=36 out=19
+P531 fac=5 idx=36 res=0
+P4S fac=5 idx=36 acc=19
+PENTRY fac=5 idx=36 acc=19 blk=0xa3ac ebx=36
+PI1 fac=5 idx=36 acc=19
+PKq fac=5 idx=36 q=0
+PBH fac=5 idx=36 acc=0 edi=5
+PFIN fac=5 idx=36 final=20 ebx=0
+SC n=5 fac=5 idx=36 final=20
+DRAW n=5 fac=5 idx=36 draw=1998 best=4593
+BASE n=6 idx=45 fac=5 a2=0 base=7 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=1 e488=3 p1=1 p2=-1 div=3 hmask=5 round=51
+TAIL n=6 idx=45 fac=5 base=7 div=3 hmask=65288 ebc=32 v4=4 msk=167776276 d71c=0 d810=0 d814t=1 d818t=0 d81ct=1
+TAILOUT fac=5 idx=45 out=7
+P531 fac=5 idx=45 res=0
+P4S fac=5 idx=45 acc=7
+PENTRY fac=5 idx=45 acc=7 blk=0xa3ac ebx=45
+PKq fac=5 idx=45 q=0
+PFIN fac=5 idx=45 final=7 ebx=45
+SC n=6 fac=5 idx=45 final=7
+DRAW n=6 fac=5 idx=45 draw=231 best=4593
+WIN n=1 fac=5 idx=13 round=51
+TECH n=1 idx=13 param1=5 round=51
+ST n=1 addr=0x957ba8 val=13 fac=5 round=51
+RB addr=0x957ba8 mem=13
+ENT n=2 fac=6 ret=0x5aaff3 round=51
+CALL n=2 fac=6 round=51
+BASE n=7 idx=5 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=-1 p2=-1 div=4 hmask=6 round=51
+TAIL n=7 idx=5 fac=6 base=25 div=4 hmask=65288 ebc=64 v4=0 msk=1744879270 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=5 out=25
+P531 fac=6 idx=5 res=0
+P4S fac=6 idx=5 acc=25
+PENTRY fac=6 idx=5 acc=25 blk=0xc468 ebx=5
+PD2 fac=6 idx=5 acc=25
+PI1 fac=6 idx=5 acc=50
+PKq fac=6 idx=5 q=0
+PBH fac=6 idx=5 acc=0 edi=6
+PFIN fac=6 idx=5 final=51 ebx=0
+SC n=7 fac=6 idx=5 final=51
+DRAW n=7 fac=6 idx=5 draw=9492 best=-999
+BASE n=8 idx=6 fac=6 a2=0 base=18 ac4=6670 T0=3 T4=1 T8=2 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=-1 p2=-1 div=4 hmask=6 round=51
+TAIL n=8 idx=6 fac=6 base=18 div=4 hmask=65288 ebc=64 v4=256 msk=6815934 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=6 out=18
+P531 fac=6 idx=6 res=0
+P4S fac=6 idx=6 acc=18
+PENTRY fac=6 idx=6 acc=18 blk=0xc468 ebx=6
+PKq fac=6 idx=6 q=0
+PX2 fac=6 idx=6 acc=18 ebc=64
+PFIN fac=6 idx=6 final=36 ebx=6
+SC n=8 fac=6 idx=6 final=36
+DRAW n=8 fac=6 idx=6 draw=6264 best=9492
+BASE n=9 idx=13 fac=6 a2=0 base=18 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=3 div=4 hmask=6 round=51
+TAIL n=9 idx=13 fac=6 base=18 div=4 hmask=65288 ebc=64 v4=0 msk=0 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=13 out=18
+P531 fac=6 idx=13 res=0
+P4S fac=6 idx=13 acc=18
+PENTRY fac=6 idx=13 acc=18 blk=0xc468 ebx=13
+PKq fac=6 idx=13 q=0
+PNimul fac=6 idx=13 mult=2 acc=18
+PFIN fac=6 idx=13 final=36 ebx=13
+SC n=9 fac=6 idx=13 final=36
+DRAW n=9 fac=6 idx=13 draw=4523 best=9492
+BASE n=10 idx=22 fac=6 a2=0 base=14 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=2 div=4 hmask=6 round=51
+TAIL n=10 idx=22 fac=6 base=14 div=4 hmask=65288 ebc=64 v4=2 msk=0 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=22 out=14
+P531 fac=6 idx=22 res=0
+P4S fac=6 idx=22 acc=14
+PENTRY fac=6 idx=22 acc=14 blk=0xc468 ebx=22
+PI1 fac=6 idx=22 acc=14
+PKq fac=6 idx=22 q=0
+PFIN fac=6 idx=22 final=15 ebx=22
+SC n=10 fac=6 idx=22 final=15
+DRAW n=10 fac=6 idx=22 draw=347 best=9492
+BASE n=11 idx=32 fac=6 a2=0 base=12 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=2 p2=-1 div=4 hmask=6 round=51
+TAIL n=11 idx=32 fac=6 base=12 div=4 hmask=65288 ebc=64 v4=0 msk=16 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=32 out=12
+P531 fac=6 idx=32 res=0
+P4S fac=6 idx=32 acc=12
+PENTRY fac=6 idx=32 acc=12 blk=0xc468 ebx=32
+PD2 fac=6 idx=32 acc=12
+PI1 fac=6 idx=32 acc=24
+PKq fac=6 idx=32 q=0
+PFIN fac=6 idx=32 final=25 ebx=32
+SC n=11 fac=6 idx=32 final=25
+DRAW n=11 fac=6 idx=32 draw=2 best=9492
+BASE n=12 idx=44 fac=6 a2=0 base=19 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=-1 div=4 hmask=6 round=51
+TAIL n=12 idx=44 fac=6 base=19 div=4 hmask=65288 ebc=64 v4=0 msk=1053712 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=44 out=19
+P531 fac=6 idx=44 res=0
+P4S fac=6 idx=44 acc=19
+PENTRY fac=6 idx=44 acc=19 blk=0xc468 ebx=44
+PI1 fac=6 idx=44 acc=19
+PKq fac=6 idx=44 q=0
+PFIN fac=6 idx=44 final=20 ebx=44
+SC n=12 fac=6 idx=44 final=20
+DRAW n=12 fac=6 idx=44 draw=2492 best=9492
+BASE n=13 idx=45 fac=6 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=-1 div=4 hmask=6 round=51
+TAIL n=13 idx=45 fac=6 base=15 div=4 hmask=65288 ebc=64 v4=4 msk=167776276 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=45 out=15
+P531 fac=6 idx=45 res=0
+P4S fac=6 idx=45 acc=15
+PENTRY fac=6 idx=45 acc=15 blk=0xc468 ebx=45
+PD2 fac=6 idx=45 acc=15
+PKq fac=6 idx=45 q=0
+PFIN fac=6 idx=45 final=30 ebx=45
+SC n=13 fac=6 idx=45 final=30
+DRAW n=13 fac=6 idx=45 draw=207 best=9492
+BASE n=14 idx=48 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=0 div=4 hmask=6 round=51
+TAIL n=14 idx=48 fac=6 base=25 div=4 hmask=65288 ebc=64 v4=1 msk=10 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=48 out=25
+P531 fac=6 idx=48 res=0
+P4S fac=6 idx=48 acc=25
+PENTRY fac=6 idx=48 acc=25 blk=0xc468 ebx=48
+PKq fac=6 idx=48 q=0
+PFIN fac=6 idx=48 final=25 ebx=48
+SC n=14 fac=6 idx=48 final=25
+DRAW n=14 fac=6 idx=48 draw=417 best=9492
+WIN n=2 fac=6 idx=5 round=51
+TECH n=2 idx=5 param1=6 round=51
+ST n=2 addr=0x959c64 val=5 fac=6 round=51
+RB addr=0x959c64 mem=5
+ENT n=3 fac=7 ret=0x5aaff3 round=51
+CALL n=3 fac=7 round=51
+BASE n=15 idx=1 fac=7 a2=0 base=10 ac4=6670 T0=0 T4=1 T8=3 Tc=2 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=51
+TAIL n=15 idx=1 fac=7 base=10 div=1 hmask=65288 ebc=128 v4=0 msk=-563282820 d71c=0 d810=1 d814t=1 d818t=0 d81ct=0
+TAILOUT fac=7 idx=1 out=18
+P531 fac=7 idx=1 res=0
+P4S fac=7 idx=1 acc=18
+PENTRY fac=7 idx=1 acc=18 blk=0xe524 ebx=1
+PI1 fac=7 idx=1 acc=18
+PKq fac=7 idx=1 q=0
+PFIN fac=7 idx=1 final=19 ebx=1
+SC n=15 fac=7 idx=1 final=19
+DRAW n=15 fac=7 idx=1 draw=1055 best=-999
+BASE n=16 idx=3 fac=7 a2=0 base=15 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=51
+TAIL n=16 idx=3 fac=7 base=15 div=1 hmask=65288 ebc=128 v4=0 msk=-1096360340 d71c=0 d810=1 d814t=1 d818t=0 d81ct=0
+TAILOUT fac=7 idx=3 out=31
+P531 fac=7 idx=3 res=0
+P4S fac=7 idx=3 acc=31
+PENTRY fac=7 idx=3 acc=31 blk=0xe524 ebx=3
+PI1 fac=7 idx=3 acc=31
+PKq fac=7 idx=3 q=0
+PFIN fac=7 idx=3 final=32 ebx=3
+SC n=16 fac=7 idx=3 final=32
+DRAW n=16 fac=7 idx=3 draw=3201 best=1055
+BASE n=17 idx=32 fac=7 a2=0 base=28 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=2 p2=-1 div=1 hmask=7 round=51
+TAIL n=17 idx=32 fac=7 base=28 div=1 hmask=65288 ebc=128 v4=0 msk=16 d71c=0 d810=1 d814t=1 d818t=0 d81ct=0
+TAILOUT fac=7 idx=32 out=28
+P531 fac=7 idx=32 res=0
+P4S fac=7 idx=32 acc=28
+PENTRY fac=7 idx=32 acc=28 blk=0xe524 ebx=32
+PD2 fac=7 idx=32 acc=28
+PI1 fac=7 idx=32 acc=56
+PKq fac=7 idx=32 q=0
+PFIN fac=7 idx=32 final=57 ebx=32
+SC n=17 fac=7 idx=32 final=57
+DRAW n=17 fac=7 idx=32 draw=6669 best=3201
+BASE n=18 idx=43 fac=7 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=5 p2=4 div=1 hmask=7 round=51
+TAIL n=18 idx=43 fac=7 base=15 div=1 hmask=65288 ebc=128 v4=0 msk=269750278 d71c=0 d810=1 d814t=1 d818t=0 d81ct=0
+TAILOUT fac=7 idx=43 out=27
+P531 fac=7 idx=43 res=0
+P4S fac=7 idx=43 acc=27
+PENTRY fac=7 idx=43 acc=27 blk=0xe524 ebx=43
+PI1 fac=7 idx=43 acc=27
+PKq fac=7 idx=43 q=0
+PFIN fac=7 idx=43 final=28 ebx=43
+SC n=18 fac=7 idx=43 final=28
+DRAW n=18 fac=7 idx=43 draw=433 best=6669
+BASE n=19 idx=44 fac=7 a2=0 base=23 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=-1 div=1 hmask=7 round=51
+TAIL n=19 idx=44 fac=7 base=23 div=1 hmask=65288 ebc=128 v4=0 msk=1053712 d71c=0 d810=1 d814t=1 d818t=0 d81ct=0
+TAILOUT fac=7 idx=44 out=23
+P531 fac=7 idx=44 res=0
+P4S fac=7 idx=44 acc=23
+PENTRY fac=7 idx=44 acc=23 blk=0xe524 ebx=44
+PI1 fac=7 idx=44 acc=23
+PKq fac=7 idx=44 q=0
+PFIN fac=7 idx=44 final=24 ebx=44
+SC n=19 fac=7 idx=44 final=24
+DRAW n=19 fac=7 idx=44 draw=2712 best=6669
+BASE n=20 idx=48 fac=7 a2=0 base=41 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=0 div=1 hmask=7 round=51
+TAIL n=20 idx=48 fac=7 base=41 div=1 hmask=65288 ebc=128 v4=1 msk=10 d71c=0 d810=1 d814t=1 d818t=0 d81ct=0
+TAILOUT fac=7 idx=48 out=45
+P531 fac=7 idx=48 res=0
+P4S fac=7 idx=48 acc=45
+PENTRY fac=7 idx=48 acc=45 blk=0xe524 ebx=48
+PKq fac=7 idx=48 q=0
+PFIN fac=7 idx=48 final=45 ebx=48
+SC n=20 fac=7 idx=48 final=45
+DRAW n=20 fac=7 idx=48 draw=5213 best=6669
+WIN n=3 fac=7 idx=32 round=51
+TECH n=3 idx=32 param1=7 round=51
+ST n=3 addr=0x95bd20 val=32 fac=7 round=51
+RB addr=0x95bd20 mem=32
+CTRL n=1 snap=1 off=0 round=51
+ENT n=4 fac=2 ret=0x5aaff3 round=52
+CALL n=4 fac=2 round=52
+BASE n=21 idx=8 fac=2 a2=0 base=23 ac4=6670 T0=0 T4=3 T8=0 Tc=4 Y10=0 Y14=0 Y18=1 Y1c=1 bc=2 e488=4 p1=3 p2=2 div=4 hmask=2 round=52
+TAIL n=21 idx=8 fac=2 base=23 div=4 hmask=65288 ebc=4 v4=0 msk=104 d71c=0 d810=0 d814t=0 d818t=1 d81ct=1
+TAILOUT fac=2 idx=8 out=31
+P531 fac=2 idx=8 res=0
+P4S fac=2 idx=8 acc=31
+PENTRY fac=2 idx=8 acc=31 blk=0x4178 ebx=8
+PKq fac=2 idx=8 q=0
+PMimul fac=2 idx=8 mult=3 acc=31
+PNimul fac=2 idx=8 mult=2 acc=93
+PFIN fac=2 idx=8 final=186 ebx=8
+SC n=21 fac=2 idx=8 final=186
+DRAW n=21 fac=2 idx=8 draw=10903 best=-999
+BASE n=22 idx=13 fac=2 a2=0 base=26 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=0 Y14=0 Y18=1 Y1c=1 bc=2 e488=4 p1=1 p2=3 div=4 hmask=2 round=52
+TAIL n=22 idx=13 fac=2 base=26 div=4 hmask=65288 ebc=4 v4=0 msk=0 d71c=0 d810=0 d814t=0 d818t=1 d81ct=1
+TAILOUT fac=2 idx=13 out=32
+P531 fac=2 idx=13 res=0
+P4S fac=2 idx=13 acc=32
+PENTRY fac=2 idx=13 acc=32 blk=0x4178 ebx=13
+PKq fac=2 idx=13 q=0
+PNimul fac=2 idx=13 mult=2 acc=32
+PFIN fac=2 idx=13 final=64 ebx=13
+SC n=22 fac=2 idx=13 final=64
+DRAW n=22 fac=2 idx=13 draw=4136 best=10903
+BASE n=23 idx=22 fac=2 a2=0 base=18 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=1 bc=2 e488=4 p1=1 p2=2 div=4 hmask=2 round=52
+TAIL n=23 idx=22 fac=2 base=18 div=4 hmask=65288 ebc=4 v4=2 msk=0 d71c=0 d810=0 d814t=0 d818t=1 d81ct=1
+TAILOUT fac=2 idx=22 out=22
+P531 fac=2 idx=22 res=0
+P4S fac=2 idx=22 acc=22
+PENTRY fac=2 idx=22 acc=22 blk=0x4178 ebx=22
+PI1 fac=2 idx=22 acc=22
+PKq fac=2 idx=22 q=0
+PFIN fac=2 idx=22 final=23 ebx=22
+SC n=23 fac=2 idx=22 final=23
+DRAW n=23 fac=2 idx=22 draw=721 best=10903
+BASE n=24 idx=32 fac=2 a2=0 base=20 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=1 bc=2 e488=4 p1=2 p2=-1 div=4 hmask=2 round=52
+TAIL n=24 idx=32 fac=2 base=20 div=4 hmask=65288 ebc=4 v4=0 msk=16 d71c=0 d810=0 d814t=0 d818t=1 d81ct=1
+TAILOUT fac=2 idx=32 out=20
+P531 fac=2 idx=32 res=0
+P4S fac=2 idx=32 acc=20
+PENTRY fac=2 idx=32 acc=20 blk=0x4178 ebx=32
+PI1 fac=2 idx=32 acc=20
+PKq fac=2 idx=32 q=0
+PFIN fac=2 idx=32 final=21 ebx=32
+SC n=24 fac=2 idx=32 final=21
+DRAW n=24 fac=2 idx=32 draw=349 best=10903
+BASE n=25 idx=36 fac=2 a2=0 base=19 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=1 bc=2 e488=4 p1=5 p2=-1 div=4 hmask=2 round=52
+TAIL n=25 idx=36 fac=2 base=19 div=4 hmask=65288 ebc=4 v4=0 msk=128 d71c=0 d810=0 d814t=0 d818t=1 d81ct=1
+TAILOUT fac=2 idx=36 out=23
+P531 fac=2 idx=36 res=0
+P4S fac=2 idx=36 acc=23
+PENTRY fac=2 idx=36 acc=23 blk=0x4178 ebx=36
+PI1 fac=2 idx=36 acc=23
+PKq fac=2 idx=36 q=0
+PBH fac=2 idx=36 acc=0 edi=2
+PFIN fac=2 idx=36 final=24 ebx=0
+SC n=25 fac=2 idx=36 final=24
+DRAW n=25 fac=2 idx=36 draw=1558 best=10903
+BASE n=26 idx=44 fac=2 a2=0 base=19 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=1 bc=2 e488=4 p1=4 p2=-1 div=4 hmask=2 round=52
+TAIL n=26 idx=44 fac=2 base=19 div=4 hmask=65288 ebc=4 v4=0 msk=1053712 d71c=0 d810=0 d814t=0 d818t=1 d81ct=1
+TAILOUT fac=2 idx=44 out=19
+P531 fac=2 idx=44 res=0
+P4S fac=2 idx=44 acc=19
+PENTRY fac=2 idx=44 acc=19 blk=0x4178 ebx=44
+PE2 fac=2 idx=44 acc=19
+PI1 fac=2 idx=44 acc=38
+PKq fac=2 idx=44 q=0
+PFIN fac=2 idx=44 final=39 ebx=44
+SC n=26 fac=2 idx=44 final=39
+DRAW n=26 fac=2 idx=44 draw=509 best=10903
+BASE n=27 idx=48 fac=2 a2=0 base=13 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=0 Y14=0 Y18=1 Y1c=1 bc=2 e488=4 p1=4 p2=0 div=4 hmask=2 round=52
+TAIL n=27 idx=48 fac=2 base=13 div=4 hmask=65288 ebc=4 v4=1 msk=10 d71c=0 d810=0 d814t=0 d818t=1 d81ct=1
+TAILOUT fac=2 idx=48 out=15
+P531 fac=2 idx=48 res=0
+P4S fac=2 idx=48 acc=15
+PENTRY fac=2 idx=48 acc=15 blk=0x4178 ebx=48
+PKq fac=2 idx=48 q=0
+PFIN fac=2 idx=48 final=15 ebx=48
+SC n=27 fac=2 idx=48 final=15
+DRAW n=27 fac=2 idx=48 draw=889 best=10903
+WIN n=4 fac=2 idx=8 round=52
+TECH n=4 idx=8 param1=2 round=52
+ST n=4 addr=0x951974 val=8 fac=2 round=52
+RB addr=0x951974 mem=8
+CTRL n=2 snap=2 off=4311096 round=52
+CTRL n=3 snap=3 off=8622192 round=53
+ENT n=5 fac=4 ret=0x5aaff3 round=54
+CALL n=5 fac=4 round=54
+BASE n=28 idx=3 fac=4 a2=0 base=11 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=-1 p2=-1 div=3 hmask=4 round=54
+TAIL n=28 idx=3 fac=4 base=11 div=3 hmask=65288 ebc=16 v4=0 msk=-1096360340 d71c=0 d810=0 d814t=0 d818t=1 d81ct=0
+TAILOUT fac=4 idx=3 out=11
+P531 fac=4 idx=3 res=0
+P4S fac=4 idx=3 acc=11
+PENTRY fac=4 idx=3 acc=11 blk=0x82f0 ebx=3
+PI1 fac=4 idx=3 acc=11
+PKq fac=4 idx=3 q=0
+PFIN fac=4 idx=3 final=12 ebx=3
+SC n=28 fac=4 idx=3 final=12
+DRAW n=28 fac=4 idx=3 draw=728 best=-999
+BASE n=29 idx=5 fac=4 a2=0 base=5 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=-1 p2=-1 div=3 hmask=4 round=54
+TAIL n=29 idx=5 fac=4 base=5 div=3 hmask=65288 ebc=16 v4=0 msk=1744879270 d71c=0 d810=0 d814t=0 d818t=1 d81ct=0
+TAILOUT fac=4 idx=5 out=5
+P531 fac=4 idx=5 res=0
+P4S fac=4 idx=5 acc=5
+PENTRY fac=4 idx=5 acc=5 blk=0x82f0 ebx=5
+PI1 fac=4 idx=5 acc=5
+PKq fac=4 idx=5 q=0
+PBH fac=4 idx=5 acc=0 edi=4
+PFIN fac=4 idx=5 final=6 ebx=0
+SC n=29 fac=4 idx=5 final=6
+DRAW n=29 fac=4 idx=5 draw=472 best=728
+BASE n=30 idx=22 fac=4 a2=0 base=10 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=1 p2=2 div=3 hmask=4 round=54
+TAIL n=30 idx=22 fac=4 base=10 div=3 hmask=65288 ebc=16 v4=2 msk=0 d71c=0 d810=0 d814t=0 d818t=1 d81ct=0
+TAILOUT fac=4 idx=22 out=10
+P531 fac=4 idx=22 res=0
+P4S fac=4 idx=22 acc=10
+PENTRY fac=4 idx=22 acc=10 blk=0x82f0 ebx=22
+PI1 fac=4 idx=22 acc=10
+PKq fac=4 idx=22 q=0
+PFIN fac=4 idx=22 final=11 ebx=22
+SC n=30 fac=4 idx=22 final=11
+DRAW n=30 fac=4 idx=22 draw=1086 best=728
+BASE n=31 idx=48 fac=4 a2=0 base=9 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=4 p2=0 div=3 hmask=4 round=54
+TAIL n=31 idx=48 fac=4 base=9 div=3 hmask=65288 ebc=16 v4=1 msk=4106 d71c=0 d810=0 d814t=0 d818t=1 d81ct=0
+TAILOUT fac=4 idx=48 out=9
+P531 fac=4 idx=48 res=0
+P4S fac=4 idx=48 acc=9
+PENTRY fac=4 idx=48 acc=9 blk=0x82f0 ebx=48
+PKq fac=4 idx=48 q=0
+PFIN fac=4 idx=48 final=9 ebx=48
+SC n=31 fac=4 idx=48 final=9
+DRAW n=31 fac=4 idx=48 draw=663 best=1086
+BASE n=32 idx=60 fac=4 a2=0 base=19 ac4=6670 T0=4 T4=0 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=6 p2=49 div=3 hmask=4 round=54
+TAIL n=32 idx=60 fac=4 base=19 div=3 hmask=65288 ebc=16 v4=0 msk=0 d71c=0 d810=0 d814t=0 d818t=1 d81ct=0
+TAILOUT fac=4 idx=60 out=19
+P531 fac=4 idx=60 res=0
+P4S fac=4 idx=60 acc=19
+PENTRY fac=4 idx=60 acc=19 blk=0x82f0 ebx=60
+PE2 fac=4 idx=60 acc=19
+PKq fac=4 idx=60 q=0
+PFIN fac=4 idx=60 final=38 ebx=60
+SC n=32 fac=4 idx=60 final=38
+DRAW n=32 fac=4 idx=60 draw=1191 best=1086
+WIN n=5 fac=4 idx=60 round=54
+TECH n=5 idx=60 param1=4 round=54
+ST n=5 addr=0x955aec val=60 fac=4 round=54
+RB addr=0x955aec mem=60
+ENT n=6 fac=6 ret=0x5aaff3 round=54
+CALL n=6 fac=6 round=54
+BASE n=33 idx=6 fac=6 a2=0 base=18 ac4=6670 T0=3 T4=1 T8=2 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=-1 p2=-1 div=4 hmask=6 round=54
+TAIL n=33 idx=6 fac=6 base=18 div=4 hmask=65288 ebc=64 v4=256 msk=6815934 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=6 out=18
+P531 fac=6 idx=6 res=0
+P4S fac=6 idx=6 acc=18
+PENTRY fac=6 idx=6 acc=18 blk=0xc468 ebx=6
+PKq fac=6 idx=6 q=0
+PX2 fac=6 idx=6 acc=18 ebc=64
+PFIN fac=6 idx=6 final=36 ebx=6
+SC n=33 fac=6 idx=6 final=36
+DRAW n=33 fac=6 idx=6 draw=729 best=-999
+BASE n=34 idx=13 fac=6 a2=0 base=18 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=3 div=4 hmask=6 round=54
+TAIL n=34 idx=13 fac=6 base=18 div=4 hmask=65288 ebc=64 v4=0 msk=0 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=13 out=18
+P531 fac=6 idx=13 res=0
+P4S fac=6 idx=13 acc=18
+PENTRY fac=6 idx=13 acc=18 blk=0xc468 ebx=13
+PKq fac=6 idx=13 q=0
+PNimul fac=6 idx=13 mult=2 acc=18
+PFIN fac=6 idx=13 final=36 ebx=13
+SC n=34 fac=6 idx=13 final=36
+DRAW n=34 fac=6 idx=13 draw=1524 best=729
+BASE n=35 idx=22 fac=6 a2=0 base=14 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=2 div=4 hmask=6 round=54
+TAIL n=35 idx=22 fac=6 base=14 div=4 hmask=65288 ebc=64 v4=2 msk=0 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=22 out=14
+P531 fac=6 idx=22 res=0
+P4S fac=6 idx=22 acc=14
+PENTRY fac=6 idx=22 acc=14 blk=0xc468 ebx=22
+PI1 fac=6 idx=22 acc=14
+PKq fac=6 idx=22 q=0
+PFIN fac=6 idx=22 final=15 ebx=22
+SC n=35 fac=6 idx=22 final=15
+DRAW n=35 fac=6 idx=22 draw=968 best=1524
+BASE n=36 idx=32 fac=6 a2=0 base=12 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=2 p2=-1 div=4 hmask=6 round=54
+TAIL n=36 idx=32 fac=6 base=12 div=4 hmask=65288 ebc=64 v4=0 msk=16 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=32 out=12
+P531 fac=6 idx=32 res=0
+P4S fac=6 idx=32 acc=12
+PENTRY fac=6 idx=32 acc=12 blk=0xc468 ebx=32
+PD2 fac=6 idx=32 acc=12
+PI1 fac=6 idx=32 acc=24
+PKq fac=6 idx=32 q=0
+PFIN fac=6 idx=32 final=25 ebx=32
+SC n=36 fac=6 idx=32 final=25
+DRAW n=36 fac=6 idx=32 draw=384 best=1524
+BASE n=37 idx=36 fac=6 a2=0 base=31 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=5 p2=-1 div=4 hmask=6 round=54
+TAIL n=37 idx=36 fac=6 base=31 div=4 hmask=65288 ebc=64 v4=0 msk=128 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=36 out=31
+P531 fac=6 idx=36 res=0
+P4S fac=6 idx=36 acc=31
+PENTRY fac=6 idx=36 acc=31 blk=0xc468 ebx=36
+PD2 fac=6 idx=36 acc=31
+PI1 fac=6 idx=36 acc=62
+PKq fac=6 idx=36 q=0
+PBH fac=6 idx=36 acc=0 edi=6
+PFIN fac=6 idx=36 final=63 ebx=0
+SC n=37 fac=6 idx=36 final=63
+DRAW n=37 fac=6 idx=36 draw=7913 best=1524
+BASE n=38 idx=43 fac=6 a2=0 base=27 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=5 p2=4 div=4 hmask=6 round=54
+TAIL n=38 idx=43 fac=6 base=27 div=4 hmask=65288 ebc=64 v4=0 msk=269750278 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=43 out=27
+P531 fac=6 idx=43 res=0
+P4S fac=6 idx=43 acc=27
+PENTRY fac=6 idx=43 acc=27 blk=0xc468 ebx=43
+PI1 fac=6 idx=43 acc=27
+PKq fac=6 idx=43 q=0
+PFIN fac=6 idx=43 final=28 ebx=43
+SC n=38 fac=6 idx=43 final=28
+DRAW n=38 fac=6 idx=43 draw=1234 best=7913
+BASE n=39 idx=44 fac=6 a2=0 base=19 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=-1 div=4 hmask=6 round=54
+TAIL n=39 idx=44 fac=6 base=19 div=4 hmask=65288 ebc=64 v4=0 msk=1053712 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=44 out=19
+P531 fac=6 idx=44 res=0
+P4S fac=6 idx=44 acc=19
+PENTRY fac=6 idx=44 acc=19 blk=0xc468 ebx=44
+PI1 fac=6 idx=44 acc=19
+PKq fac=6 idx=44 q=0
+PFIN fac=6 idx=44 final=20 ebx=44
+SC n=39 fac=6 idx=44 final=20
+DRAW n=39 fac=6 idx=44 draw=2398 best=7913
+BASE n=40 idx=45 fac=6 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=-1 div=4 hmask=6 round=54
+TAIL n=40 idx=45 fac=6 base=15 div=4 hmask=65288 ebc=64 v4=4 msk=167776276 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=45 out=15
+P531 fac=6 idx=45 res=0
+P4S fac=6 idx=45 acc=15
+PENTRY fac=6 idx=45 acc=15 blk=0xc468 ebx=45
+PD2 fac=6 idx=45 acc=15
+PKq fac=6 idx=45 q=0
+PFIN fac=6 idx=45 final=30 ebx=45
+SC n=40 fac=6 idx=45 final=30
+DRAW n=40 fac=6 idx=45 draw=1251 best=7913
+BASE n=41 idx=48 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=0 div=4 hmask=6 round=54
+TAIL n=41 idx=48 fac=6 base=25 div=4 hmask=65288 ebc=64 v4=1 msk=4106 d71c=-1 d810=1 d814t=0 d818t=0 d81ct=1
+TAILOUT fac=6 idx=48 out=25
+P531 fac=6 idx=48 res=0
+P4S fac=6 idx=48 acc=25
+PENTRY fac=6 idx=48 acc=25 blk=0xc468 ebx=48
+PKq fac=6 idx=48 q=0
+PFIN fac=6 idx=48 final=25 ebx=48
+SC n=41 fac=6 idx=48 final=25
+DRAW n=41 fac=6 idx=48 draw=879 best=7913
+WIN n=6 fac=6 idx=36 round=54
+TECH n=6 idx=36 param1=6 round=54
+ST n=6 addr=0x959c64 val=36 fac=6 round=54
+RB addr=0x959c64 mem=36
+CTRL n=4 snap=4 off=12933288 round=54
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee8ae32c in __kernel_vsyscall ()
+/home/n100/reverse/smac/scratch/m93post3.gdb:373: Error in sourced command file:
+This command cannot be used at the top level.
+[Inferior 1 (process 563130) detached]

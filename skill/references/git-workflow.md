@@ -29,7 +29,10 @@ gate and misleads the next session.
 <file>` writes a ~2KB summary to `evidence/digests/`. `evidence.py budget` reports what each doc
 costs in context (target: always-loaded ≤6%). `SESSION_NOTES.md` is rotated by
 `scripts/session_rotate.py --apply` once it passes 110k chars; `evidence.py prune` removes
-uncited screenshots (git keeps history, `.prune_log.jsonl` records them). Policy:
+uncited screenshots (git keeps history, `.prune_log.jsonl` records them). `evidence.py audit
+--delete` goes further and drops every uncited file, tracked ones included — **a frame saved for a
+not-yet-written classifier test is uncited and dies in that sweep**: cite the path in the session
+notes before running audit, and recover anything dropped with `git show <commit>:<path> > <path>`. Policy:
 `~/reverse/smac/docs/EVIDENCE.md`.
 
 **Budget gotcha that passes locally and goes RED in CI (M53d).** `evidence.py budget` FAILs
@@ -41,6 +44,10 @@ prompt at 15,99x is GREEN locally, RED in CI. Keep `NEXT_PROMPT.md` at ≤ ~15,5
 the semantic index. Because that prune rewrites the notes file under you, verify after submit that this
 session's section survived (`grep -c '^## Session <N>' SESSION_NOTES.md` == 1) and expect one extra
 commit in `git log` that is not yours — do not read that as history having been rewritten.
+`--message` becomes the commit message `submit` lands (it rewrites your checkpoint commit's message).
+**When the PR is already open, `--title` is silently ignored** — the title stays whatever the first
+submit gave it, so a resubmit after a FAIL→PASS flip lands a green head under a stale verdict title:
+fix it yourself with `gh pr edit <n> --title` before merging.
 
 **The gate has two more checks that silently cost a run.** (1) *Address registry*: a milestone that names
 a function or pins an address must add `NAMED.md` rows in the same commit, otherwise the gate prints
@@ -58,7 +65,8 @@ findings doc must exist on disk, or the citation check drops it (the regex cover
 keeps it pointing at the right line). (3) **Poll CI by SHA**: after a follow-up
 push (skill sync, `NAMED.md` rows) `gh pr checks <n>` can still report the earlier run — use
 `gh pr view <n> --json headRefOid,statusCheckRollup` and merge only when SUCCESS is on the current head
-commit.
+commit. Immediately after a push the same command can print `no checks reported` while the run is
+still queueing — wait ~30 s and re-run before concluding CI never triggered.
 
 When a doc is over budget, **delete whole bullets/blocks** (cut from the offending line to the next
 `- ` or `## `) — rewording saves ~0 bytes — and re-measure with `python3 scripts/evidence.py budget` — it counts CHARS, and chars do not equal `wc -c` bytes (a file at 15,988 bytes scored 16,052 chars and failed the gate). These docs
@@ -100,9 +108,12 @@ re-submitting, otherwise the same hook rejects the push again.
 --ff-only`; a `main` holding a commit the squash folded in — a stray cursor or checkpoint commit — makes
 that pull print `Not possible to fast-forward, aborting`, so the command exits non-zero AFTER the work is
 already merged and never rebuilds the index. Do not re-merge: confirm with `gh pr view <n> --json
-state,mergedAt,mergeCommit`, keep the local tip reachable (`git branch keep/<label> <old-tip>`), then
+state,mergedAt,mergeCommit`, keep the local tip reachable (`git branch keep/<label> <old-tip>`) — or,
+when the stray is a single-file tweak the squash already supersedes, prove that with `git show <stray>
+--stat` plus `git cherry main origin/main` and skip the keeper — then
 `git checkout main && git reset --hard origin/main` and finish the tail yourself (`python3
-scripts/index.py build`). Prevention is the rule that counts: keep `main` free of local commits so the
+scripts/index.py build`; a hard reset also rewrites `SESSION_CURSOR.md` on disk, so re-read it before
+rewriting). Prevention is the rule that counts: keep `main` free of local commits so the
 pull fast-forwards. Because the squash's parent is the previous `main` tip, ANY local `main` commit
 is guaranteed divergence, not a race.
 

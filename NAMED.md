@@ -1074,3 +1074,16 @@ control dwords move between rounds, so the per-round snapshot must cover 0x94d44
   window/snapshot pairing defect).
 - M92 ACCEPTED (s146, `m92tail18` PASS 8/8, fresh load r51->55): TAILOUT == BASE + the simulated tail
   on **39/39 candidates, 0 mismatches, 2 qualifying windows**; naive one-factor splits 19.
+
+## M93 block (sessions 148+147, 2026-10-29) — the POST-tail leg 0x5a9698-0x5aa022 (ACCEPTED: m93post3 PASS 9/9)
+
+| fact | evidence |
+|---|---|
+| the POST leg is SKIPPED (final = tailout) when `[0x985c1c+idx] & (1<<fac)`; else `call 0x5312d0` (returned 0 for all 82 traced candidates) and only then the ds:0x985a9c leg may ×4 | 0x5a96d0-0x5a973f instruction bytes; evidence/m93post1/2.gdblog P531 res=0 82/82 |
+| `0x5a9020(a,X,d)` = a == X or a is a prereq-ANCESTOR of X within d levels (0x5a9063 recurses on [X*44+0x92fdd4]/+4 with d-1; a<0 or X<0 -> 0) | objdump 0x5a9020-0x5a9090 |
+| the cascade stages + their sets: A(47,0x9305e8/ec)x3 B(61,0x930850/854)x2 C(64,0x9308d4/8d8,d2)x2 D(35,0x9303d8/3dc,d1)x2 E(59,0x9307f8/7fc)x2 FIM(demand81c+1)x2 G(0x98582c)x2 if [0x927a8c+fac*1436]>0 else 0x93325c/0x933268 (x2,x2,+1@0x5a99cc,x2@0x5a9a21 if ac4 bit 0x200 clear) q=[0x94dc28]/clamp([0x94e488],1,0x270f) added if q>demand81c and idx in closure(0x984fec/984fbc/98531c/98534c) **x2@0x5a9c17 (0x9851cc) and x3/2@0x5a9c68 (0x9851fc) if [0x927a80+fac*1436]>0** era table 0x92b954 x21 (flag -4; ==id x3/x4, ==pr1/pr2 x2/x3) x3@0x5a9df3 (89-tech scan) x2/x4@0x5a9eb5 (0x98adee) | disassembly windows 0x5a9747-0x5aa022; scratch/m93post2.gdb |
+| the band scan 0x5a9f83-0x5aa022 (x3/x6 @0x5aa004, x2+4 @0x5aa01b) contributed NOTHING in this state: PQ3/PR2/PS2p4 = 0 events in 82 candidates; PFIN ebx is the scan's retry flag (0/1) or idx, never a tech id | evidence/m93post1.gdblog, m93post2.gdblog counters |
+| ACCEPTANCE m93post2 FAIL 8/9: G1-G8 green (tail exact 40/40, div 40/40, 2 windows), G9 ladder 13 predicted / 4 mismatch; RETRACTED "final = TAILOUT*5" | scratch/m93post2.out lines 27-31 |
+| ACCEPTED (s147): m93post3 PASS 9/9, ONE invocation, fresh m54b_clean r50->55 — G9 13/13 candidates, 0 mismatch, splits 11 vs final==tailout and 13 vs tailout*5; G1-G8 green; fac2 win=8 E=Mc2 186=31x3x2, fac5 win=13 Surface 56=28x2 | scratch/m93post3.out; evidence/m93post3.gdblog |
+| the 4 post2 mismatches were ALL TIMING: 0x92adbc, the era table and designed prereq fields move between the 0x51f320 boundary snap and the ladder — the census now dumps 0x927a00-0x933300 + 0x984f00-0x98b000 AT each TAIL hit and re-reads demand there (d814t/d818t/d81ct); LAW: freeze inputs at the consumer's read timing | m93post2 vs m93post3 verdicts; scratch/m93post3_tailx1/2.bin |
+| K1/K2 gate correction: 0x5a9bb7 reads [0x927a80 + arg2] UNSCALED and arg2 = 0 at every tail call (BASE a2=0) — plain global [0x927a80], live 0, so K1/K2 never fire (PT1/PT2/PSX = 0 events in m93post3); the band region DID run 5x (PBH) and contributed x1 | disasm 0x5a9bb7-0x5a9bc2; evidence/m93post3.gdblog PBH/PT1 counts |

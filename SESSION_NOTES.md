@@ -1,56 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-127-127.md` (1 sessions). Read it only when a question reaches back before session ## Session 129.
-
-## Session 129 (2026-10-28) - M84: WHAT MAKES 0x496ad0 RETURN +9999 (static, bytes); ACCEPTANCE m84canc1 FAIL - the cancel statement runs but the sentinel never fires
-
-The prompt opened with "M74" again; M74 is merged (#75). M83 is unmerged (m83cw2 FAIL, branch
-milestone/m83), so the ledger's pick M84 ran on milestone/m84 from main 7a69b20.
-
-STATIC (instruction bytes): 0x496ad0 (size 3310) picks its return value at 0x497680-0x4976ff -
-0x497683 `cmp DWORD [ecx+0xa774],-1` (ecx = `[ebp-0x10]` = the 24 KB buffer the caller passes at
-0x418601 `lea edx,[ebp-0x5e2c]`); if -1 and 0x49768f `cmp [edx+0xa778],0` is zero -> eax =
-0xffffd8f1 = +9999 (0x4976ce); if -1 and result != 0 -> eax = 0 (0x497698); if the field != -1 ->
-eax = the pump return (0x497704 ff15 0x401940, negated when 0x495480's bit 0x20 is clear). The
-field is written -1 in exactly TWO places in .text: **0x496a43** (inside FUN_00496950, the dialog's
-message handler: `mov [eax+0xa774],-1` right after `mov [ecx+0xa778],0` - handler case 7 = CANCEL:
-result 0 + armed) and 0x495541 (inside FUN_004954e0, the dialog's own setup, called once from
-0x496ad0). Handler FUN_00496950 (shard_009.c:14701) cases 0/2/5 `return` when the field is already
--1; 1/3/4/6/8 set result 2/3/4/6/7. So +9999 = THE DIALOG-CANCEL SENTINEL: cancel arms the field,
-the next pump return becomes +9999, and the caller's 0x41861b/0x4186d2 `cmp edi,0xffffd8f1` is what
-gates the 0x270f block (M83). The SAME +0xa774 offset is the chooser's guard: m57_ui_enqueue.py
-reads `0x6A9E9C + 0xa774` as the chooser cell index, so the field is one UI-object convention, not
-production-specific.
-
-ACCEPTANCE FAIL (`python3 scripts/m84_cancel_sentinel.py --tag m84canc1 --escape --no-ok`, ONE
-invocation, 3 silent bps 0x41860f/0x496a43/0x497683 + M83's 0x418d7d/0x577280): ARMED ptr=0x95ef70
-fac=3 pend=0 head=2; enqueue rc=0 stopped with the chooser open (guard cell index 3, pending 1);
-Escape rc=0 closed it. events SENT 1 (edi=2), ARM 2 (one is the ARMED line; the real ARM printed
-**buf=0** + gdb "Cannot access memory at address 0xa774" - ecx was 0 at 0x496a43), GATE 1
-(buf=0x6a9e9c cancel=3 result=5), BRANCH 0, ENTRY 0 -> G1 True, G2-G7 False -> FAIL. So the
-cancel-arming STATEMENT does execute during a chooser session, but the buffer instance seen at the
-return gate held cancel=3 (a cell index, not -1) and the pump returned 2, not -9999.
-
-OPEN / NEXT (M84b): the ARM breakpoint's ecx is not the buffer there (register semantics, the trap
-says so) - take the buffer address from the caller's own push at 0x418601-0x41860a (bp at 0x41860a
-reads [esp+0xc]) and re-run the same 5-bp shape with events ORDERED by time; the claim to falsify
-is "Escape on the chooser routes through handler case 7 (0x496a43) and the next pump return is
-+9999". Also open: which widget message code reaches FUN_00496950 case 7 (no direct `call` to
-0x496950 exists in .text - it is reached through a widget handler table); FUN_004954e0's -1 write
-at 0x495541 (setup-time arm?); who owns 0x6a9e9c.
-Evidence: evidence/m84canc1.gdblog, scratch/m84canc1.gdb, scratch/m84_tmpl.py (m83's script, the
-shape this reused). No new evidence dir files beyond the log (budget 27.5 MB, gate FAILs at 30).
-
-## Session 130 (2026-10-28) — M84b: THE CANCEL SENTINEL IS LIVE (Escape -> arm -> -9999); ACCEPTANCE m84canc2 FAIL ON THE 0x270f LEG
-
-s129's M84 sat unpushed (no PR): this session first ran `milestone.py submit` for it (PR #84; acceptance FAIL -> merge nothing), then ran the pick M84b on milestone/m84b from main 7a69b20, carrying the m84 footing forward (`git checkout milestone/m84 -- NEXT_PROMPT.md SESSION_NOTES.md NAMED.md scripts/m84_cancel_sentinel.py scripts/m57_ui_enqueue.py evidence/m84canc1.gdblog`) — an unmerged branch is the only place that footing lives.
-
-INSTRUMENT BUGS FOUND FROM BYTES BEFORE MEASURING (all three were s129's, not the game's): B1 0x496a40 `mov eax,[ebp-0x4]`, 0x496a43 `mov [eax+0xa774],-1` — the object is in EAX; m84canc1 printed $ecx (0), gdb faulted on 0xa774, its commands block aborted and gdb DETACHED, so that run died at the ARM. B2 0x496af1 `mov [ebp-0x10],ecx` + 0x497680 `mov ecx,[ebp-0x10]` — the guard field lives on the thiscall chooser_sub the caller loads at 0x418604 `lea ecx,[ebx+0xa1c]` = 0x6a9e9c, NOT the 24 KB `[ebp-0x5e2c]` buffer pushed at 0x418601 (live CALL: buf=0xbe3984, a stack address). B3 the sentinel is NEGATIVE: printf %d prints -9999, so m84canc1's `edi == 9999` gate could never pass; every sentinel read is now the unsigned 0xffffd8f1.
-
-ACCEPTANCE m84canc2 FAIL (`python3 scripts/m84_cancel_sentinel.py --tag m84canc2 --escape --no-ok`, ONE invocation, 6 silent bps 0x41860a/0x41860f/0x496a43/0x497683/0x418d7d/0x577280, events printed in log order; `python3 scratch/m84b_selftest.py` shows the shape discriminates — positive ALL, 6 negatives each fail >= 1 gate). Box was BLOCKED (screen 'base' -> one Escape -> hud; then its printed FIX `m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1` made it READY, pending 1). ORDERED: CALL obj=0x6a9e9c cancel=3 mode=0 slot=1 -> GATE cancel=3 mode=5 -> SENT edi=2 -> CALL obj=0x6a9e9c cancel=3 mode=5 slot=3 -> ARM obj=0x6a9e9c pre=3 mode=0 (the Escape; a real transition) -> GATE cancel=0xffffffff mode=0 -> SENT edi=-9999 edi_hex=0xffffd8f1. G1/G2/G3/G8 True; BRANCH 0, ENTRY 0 -> G4-G7 False -> FAIL, merge nothing.
-
-THE FAILED LEG IS THE FINDING (bytes, not instrument): 0x41861b `cmp edi,0xffffd8f1`/`jne 0x41864c` — on -9999 the loop 0x418623-0x41863f restores the ten queue slots into base+0x50..+0x78 and 0x418649 restores pending at base+0x4c from [ebp-0x20]; 0x4186d2 `cmp edi,0xffffd8f1`/`jle 0x419967` then leaves via 0x419967 (`push 1; mov [ebx+0x3ff5c],0; call 0x416080`). RETRACT s129's "0x41861b/0x4186d2 gate the 0x270f block": the ONLY branch to 0x418d7d is 0x4187be `cmp edi,0x270f`/`je`, i.e. POSITIVE +9999, reached on the mode 5/7 paths (0x4187a2/0x4187ad) only when [ebp+0x8] != 0. So 0x577280 (sole bit-7 clearer 0x577ca8) runs on a +9999 chooser result, not on cancel. OPEN: what puts 9999 in the chooser item list / makes 0x496ad0 return +9999.
-Evidence: evidence/m84canc2.gdblog, scratch/m84canc2.gdb, scratch/m84b_selftest.py (evidence 27.5 MB).
+Older sessions: `docs/sessions/sessions-129-130.md` (2 sessions). Read it only when a question reaches back before session ## Session 131.
 
 ## Session 131 (2026-10-28) — M84c: THE MODAL IS A 3-VALUE CHOOSER; +9999 IS A ROW KEY NO CODE INSERTS (acceptance m84cprobe1 FAIL)
 
@@ -376,3 +326,78 @@ re-run as m92tail18 on a reload, not weakened.
 NEXT (M93): the POST-tail leg 0x5a9698 -> 0x5aa022 (the SCORE at 0x5aa159 minus TAILOUT: +1/+29 at
 r76, +155 for fac2 idx8 in m92tail15/18 — final 186 vs tailout 31). Evidence:
 evidence/m92tail15-18.gdblog; scratch/m92tail1[5-8].out, scratch/m92tail18_snaps.bin + _tailarrs.bin.
+
+## Session 148 (2026-10-29) — M93 NOT accepted: the POST ladder predicts 9/13; 4 apply sites have no breakpoint, the specials' within-round freeze is unproven
+
+Branch milestone/m93. ACCEPTANCE `python3 scripts/m93_post_census.py --tag m93post2 --poke-index 7
+--poke-extra 2,6 --rounds 4 --timeout 100` (fresh m54b_clean load, r50->55): **FAIL 8/9** — G1-G8 all
+green (base 27/27, tail exact on 40 candidates, divisor cross-check 40/40 bad=0, 2 qualifying windows
+fac2/fac5, ST/RB + winner name read back), **G9_post_tail_ladder_final False: 13 candidates predicted,
+4 mismatches; splits vs the final==tailout null 11, vs the final==tailout*5 null 13.**
+
+THE POST LEG 0x5a9698-0x5aa022, from instruction bytes: ebx = idx reloaded at 0x5a969b; the leg is
+SKIPPED (return = tailout) when `[0x985c1c+idx]` carries the faction bit (0x5a96e0); else `call
+0x5312d0` — it returned 0 for all 82 traced candidates in both runs — and only if nonzero the
+ds:0x985a9c leg may ×4 (0x5a9738 `lea edi,[ecx*4]`). Then a cascade, each stage applying iff idx is IN
+its set = {a hard-coded tech} ∪ {prereq-ancestors of a LIVE special}: A(47, 0x9305e8/ec) ×3, B(61,
+0x930850/854) ×2, C(64, 0x9308d4/8d8, depth 2) ×2, D(35, 0x9303d8/3dc, depth 1) ×2, E(59, 0x9307f8/7fc)
+×2, FIM ((demand[0x94d81c]+1)×2; needs rec+4 bit 1, no faction knowing idx, ac4 bit 0x200 clear), G
+(0x98582c) ×2 only when [0x927a8c+fac*1436] > 0, else the 0x93325c/0x933268 legs (×2, ×2, +1 at
+0x5a99cc `inc edi`, then ×2 at 0x5a9a21 when ac4 bit 0x200 clear), q = [blk+0x94dc28]/clamp
+([blk+0x94e488],1,0x270f) added once when q > demand[0x94d81c] and idx is in the closure of
+0x984fec/0x984fbc/0x98531c/0x98534c, **0x5a9c17 ×2 keyed on 0x9851cc and 0x5a9c68 ×3/2 keyed on
+0x9851fc (both only when [0x927a80+fac*1436] > 0) — NEITHER is in the model**, the 21-entry era table
+0x92b954 (flag byte at -4; idx == id → ×3/×4, idx == pr1/pr2(id) → ×2/×3), 0x5a9df3 ×3 over the
+89-tech scan, 0x5a9eb5 ×2 (×4 human) keyed on 0x98adee, then the 0x92b076 exit gate and the band scan
+0x5a9f83-0x5aa022 (×3/×6 at 0x5aa004, ×2+4 at 0x5aa01b — 0 events in 82 candidates).
+`0x5a9020(a, X, d)` = a == X or a is a prereq-ANCESTOR of X within d levels.
+
+RETRACTION: the s146 ledger line "the 0x5aa022 block makes final = TAILOUT*5" is WRONG — the ×3/×2
+epilogues never ran; the ×5-looking deltas are the cascade (×2+1, ×2×2, ×3 then ×2).
+
+MISMATCH CAUSES, both model/instrument and not the game: (1) fac2 idx44 (19->39) and fac5 idx13
+(28->56): the engine applied an ×2 the model has no leg for (the missing 0x5a9c17/0x9851cc leg), and 4
+apply sites have NO breakpoint — 0x5a9c17, 0x5a9c77, 0x5a9df3, 0x5a9eb5. (2) fac5 idx4 (model 21,
+engine 11) and idx45 (model 14, engine 7): the MODEL fires PE2 where the engine did not — and note the
+`fired=` list on a LADDER-MISMATCH line is the model's own prediction, not observed events. Likely
+cause: the model reads the specials from the candidate's ROUND-BOUNDARY snapshot while the ladder reads
+them live mid-round; M92 proved the within-round freeze only for the 0x94e488 block, NOT for the
+0x9307xx specials.
+
+NEXT (M93 continues): add the 5 apply-site breakpoints (gdb blocks ready in scratch/m93/apply_patches.py
+at 0x5a9c14/0x5a9c74/0x5a9df0/0x5a9eb5/0x5a9f83), add the 0x9851cc/0x9851fc legs and the
+0x98531c/0x98534c q-gates, print the specials at the PENTRY hit (live timing) instead of the round
+snapshot, re-run. Evidence: evidence/m93post1.gdblog (run-1 trace, 6 scans / 41 candidates),
+evidence/m93post2.gdblog (the failing acceptance); scratch/m93post2.out, scratch/m93/{analyze1,
+analyze2}.py. Box: fresh load r50->55, census ran, nothing queued at U. Base.
+
+## Session 147 (2026-10-29) — M93 ACCEPTED: m93post3 PASS 9/9. The POST-tail ladder predicts every traced final
+
+Branch milestone/m93 (s147 continued after s148 closed; the runs interleave — s147 owned post1+post3,
+s148 owned post2 and the census-file commits). ACCEPTANCE `python3 scripts/m93_post_census.py --tag
+m93post3 --poke-index 7 --poke-extra 2,6 --rounds 4 --timeout 100` (ONE invocation, fresh m54b_clean
+load r50->55): **VERDICT PASS 9/9** — G9: 13 candidates predicted, **0 mismatches**, splits vs
+final==tailout null 11, vs final==tailout*5 (s146 claim) null 13; G1-G8 green (G3 41/41 tailouts,
+div cross-check 41/41 bad=0); 2 qualifying windows: fac2 win=8 E=Mc2 final 186 (= 31 x3 x2, PM+PN),
+fac5 win=13 Surface final 56 (= 28 x2, PN), ST/RB true, draws in range.
+
+TRACE (run 1/3, m93post1, census + 22 POST bps, PASS 8/8): 41 ladder passes -> the ladder is a
+cascade of apply-if-INSIDE gates; `0x5a9020(a,X,f) != 0` iff a is in the depth-f prereq expansion of
+X (f=0 equality, f=1 {X,pr1,pr2}, f=0x270e full closure); era-table legs are constants (x3/x4 then
+x2/x3 chosen by ebc&human-mask), the table WORDS are id keys. Model validated 21/21 offline
+(scratch/m93/model.py) and 21/21 against the harness function (scratch/m93/dryrun.py).
+
+FIXES after m93post2 FAIL 8/9 (all four post2 mismatches were TIMING, not rules): (1) the ladder's
+inputs (0x92adbc, the era table 0x92b954, designed prereq fields, demand dwords) move BETWEEN the
+boundary snap (0x51f320) and the ladder — dump the full specials regions AT each TAIL hit
+(tailx1 0x927a00-0x933300 + tailx2 0x984f00-0x98b000, 72 KB/hit) and re-read demand at the hit
+(d814t/d818t/d81ct); closures read the hit-timed copy. (2) legs K1 x2 (key [0x9851cc]) / K2 x3/2
+(key [0x9851fc], ONLY when round > 250) gated on [0x927a80] > 0 — live 0, PT1/PT2/PSX 0 events.
+(3) q-add gate also checks 0x98531c/0x98534c. (4) diagnostic bps PT1/PT2/PSX/PX2/PBH: PBH x5 proves
+the band region (0x92b076 closure) runs and contributes x1; x2+4 (0x5aa018) never ran (ebx==0).
+
+LAW: a snapshot must be frozen at the SAME timing as the consumer's read — M92's within-round freeze
+holds only for the 0x94e488 block; upkeep rewrites 0x92adbc/era-table/designed prereqs mid-round.
+NEXT (M94): who writes 0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds (the 8 esi positions are
+powers of 4); the human leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd. Evidence:
+evidence/m93post1-3.gdblog; scratch/m93post3.out + _tailx1/2.bin, scratch/m93/{model,dryrun}.py.

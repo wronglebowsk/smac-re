@@ -108,3 +108,14 @@ watchpoint on the address: one poke plus one boundary named the writer exactly o
 - **A null model built from the same term is not a null**: a cat-7-only null over a cat-7 block agrees
   with the true rule by construction and re-certifies itself green run after run (s145 burned six runs
   this way).
+
+## Freeze inputs at the CONSUMER's timing (s147, M93)
+
+A round-boundary snapshot is only valid for values the round does not rewrite. m93post2 FAIL 8/9 ->
+m93post3 PASS 9/9: the tail-block freeze (M92) holds for the 0x94e488 block, but 0x92adbc, the era
+table 0x92b954, designed prereq fields and the demand dwords move between the boundary hit (0x51f320)
+and the ladder inside the same round — closures/gates built on boundary-frozen copies over- and
+under-fire (4 candidates). Fix: dump the input regions AT the hit where the consumer reads them
+(gdb `append binary memory` per hit, like the tailx1/tailx2 dumps in scripts/m93_post_census.py).
+Corollary: when a model-vs-engine mismatch splits into "model fired, engine didn't" AND "engine
+fired, model didn't" on the same gate, suspect TIMING of the shared inputs, not the rule.
