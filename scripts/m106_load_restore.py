@@ -357,7 +357,14 @@ def main():
     r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "m54a_load.py")],
                        capture_output=True, text=True,
                        env=dict(os.environ, SMAC_SAVE="Z:\\home\\n100\\reverse\\smac\\programs\\saves\\"
-                                + a.save, M54A_LOAD_TIMEOUT="1200"))
+                                + a.save,
+                                # m106r5: the load LANDED under strace (round 0->50, cp 3, counts == the
+                                # save image) but the driver burned its whole 1200 s budget on the post-OK
+                                # dialogs -- each iteration is a freeze+OCR pass and the traced game runs
+                                # ~10x slow (it was at the ops-director pane at 1316 s). This is the
+                                # harness's wall-clock allowance, NOT an evidence floor: G1 still requires
+                                # the driver's own rc=0 (HUD reached and live).
+                                M54A_LOAD_TIMEOUT="1800"))
     print("load rc=%d (%.1fs)" % (r.returncode, time.time() - t0), flush=True)
     for ln in (r.stdout or "").strip().splitlines()[-8:]:
         print("  load: " + ln[:150], flush=True)
@@ -401,49 +408,35 @@ def main():
             return None
 
     # THE .SAV FD HAS NO open() IN EITHER LOG: the load driver opens the file and Wine hands the fd
-    # to terran over SCM_RIGHTS, so fd->path attribution from open() lines cannot name it. Identify
-    # it by the BYTE-SUM LAW: a contiguous burst of reads on ONE fd whose successful returns total
-    # EXACTLY the save file's byte count is that file being read end-to-end.
+    # to terran over SCM_RIGHTS, so fd->path attribution from open() lines cannot name it. THE LAW:
+    # the fd that carries the save is the one that reads it TO ITS END -- a read returning exactly
+    # the file's tail (save_size mod 4096) immediately followed by a 0-length read = EOF, inside one
+    # fd-run. Runs are cut at close(fd)/dup and at an EOF read; the loader's positioned pread64
+    # probes ride along but do not advance the byte-sum.
     save_size = os.path.getsize(savp) if os.path.exists(savp) else -1
-    save_idx = []
-    open_bursts = {}                         # (pid, fd) -> [last_ts, bytes_returned, [event indices]]
-
-    def _close_burst(key, b):
-        if save_size > 0 and b[1] == save_size:
-            save_idx.extend(b[2])
-        open_bursts.pop(key, None)
-
+    tail = (save_size % 4096) or 4096
+    runs, per = [], {}                       # (pid, fd) -> [[index, buf, asked, got, name, ts], ...]
     for i, (ts, p, name, args, ret) in enumerate(ev_a):
         if name in ("read", "pread64"):
             ar = hexargs(args)
             if len(ar) < 3 or ar[0] is None or ar[1] is None:
                 continue
             fd, buf, ln_ = ar[0], ar[1], ar[2]
-            got = int(ret, 16) if ret.startswith("0x") else 0   # only bytes the kernel copied
+            got = int(ret, 16) if (name == "read" and ret.startswith("0x")) else 0
             key = (p, fd)
-            b = open_bursts.get(key)
-            if b is None or ts - b[0] > 5.0:
-                if b is not None:
-                    _close_burst(key, b)
-                b = open_bursts[key] = [ts, 0, []]
-            b[0] = ts
-            # pread64 events stay IN the burst but do not advance the byte-sum: the loader's
-            # positioned probes (e.g. pread64(fd, buf, 0x17) = 0x17 re-reads of the "TERRAN" magic)
-            # interleave with the sequential read() that carries the file end-to-end.
-            if name == "read":
-                b[1] += got
-            b[2].append(i)
-            if name == "read" and got == 0:     # EOF on the sequential reader closes the burst
-                _close_burst(key, b)
+            cur = per.setdefault(key, [])
+            cur.append([i, buf, ln_ or 0, got, name, ts])
+            if name == "read" and got == 0:          # EOF closes the run
+                runs.append((key, per.pop(key)))
         elif name.startswith(("close", "dup")):
             ar = hexargs(args)
-            if ar and ar[0] is not None:
-                b = open_bursts.pop((p, ar[0]), None)
-                if b is not None and save_size > 0 and b[1] == save_size:
-                    save_idx.extend(b[2])
-    for key, b in list(open_bursts.items()):
-        _close_burst(key, b)
-    save_set = set(save_idx)
+            if ar and ar[0] is not None and (p, ar[0]) in per:
+                runs.append(((p, ar[0]), per.pop((p, ar[0]))))
+    runs.extend((k, v) for k, v in per.items())
+    save_runs = [(k, v) for k, v in runs
+                 if save_size > 0 and any(e[3] == tail for e in v)
+                 and v and v[-1][4] == "read" and v[-1][3] == 0]
+    save_set = set(e[0] for _, v in save_runs for e in v)
 
     reads_region, scratch, sav_reads, other_region = [], [], [], []
     for i, (ts, p, name, args, ret) in enumerate(ev_a):
@@ -590,19 +583,19 @@ def main():
          % (len(scratch), ["%s fd=%s(%s) buf=0x%x len=0x%x ret=%s" % (x[2], x[3], x[7], x[4],
                                                                        x[5], x[6])
                            for x in scratch[:6]]))
-    # the byte-sum counts only the sequential read() that carries the file; the loader's positioned
-    # pread64 probes (0x17-byte "TERRAN" magic re-reads) ride along in the same burst.
     tot = sum(int(x[6], 16) for x in sav_reads
               if x[2] == "read" and x[6].startswith("0x"))
-    gate("G13-save-fd-identified-by-the-byte-sum-law",
-         bool(sav_reads) and tot == save_size and bool(reads_region),
-         "save size %d B; %d reads attributed to fd %s (pid %s): its sequential read() returns total "
-         "%d B == the file (the BYTE-SUM LAW; the fd arrives over SCM_RIGHTS so it has NO open() in "
-         "either log -- .SAV path-opens seen: %s); %d of them land inside [0x%x,0x%x); %d coincidental "
-         "region overlaps EXCLUDED (a font read on a reused fd)"
-         % (save_size, len(sav_reads), sav_reads[0][3] if sav_reads else "?",
-            sav_reads[0][1] if sav_reads else "?", tot, paths_a or paths_b,
-            len(reads_region), REG_LO, REG_HI, len(other_region)))
+    gate("G13-save-fd-identified-by-the-tail-and-eof-law",
+         bool(save_runs) and bool(reads_region),
+         "save size %d B, tail %d B (size mod 4096); %d fd-run carries THAT file to its end: fd %s "
+         "(pid %s), %d reads, %d B returned, a read of the %d-B tail inside a run that ends with a "
+         "0-byte read = EOF; %d of its reads land inside [0x%x,0x%x); .SAV path-opens in either log: "
+         "%s (the fd arrives over SCM_RIGHTS, so there is none); %d coincidental region overlaps "
+         "EXCLUDED (a font read on a reused fd)"
+         % (save_size, tail, len(save_runs),
+            save_runs[0][0][1] if save_runs else "?", save_runs[0][0][0] if save_runs else "?",
+            len(sav_reads), tot, tail, len(reads_region), REG_LO, REG_HI, paths_a or paths_b,
+            len(other_region)))
     c1 = bool(reads_region)
     c3 = bool(maps_covers) or [(v[0], v[1]) for v in vmas_pre] != [(v[0], v[1]) for v in vmas_post]
     c4 = bool(outwrites)

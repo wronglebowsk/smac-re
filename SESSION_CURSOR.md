@@ -1,6 +1,3 @@
 M106 RUNNING (cron, milestone/m106): the invisible load-window restore.
-acceptance: m106r4 RUNNING (scripts/m106_load_restore.py --tag m106r4, stdout -> scratch/m106r4.out).
-vs r3 (FAIL 11/15): G13 now finds the .SAV fd by the BYTE-SUM LAW (sequential read() returns total == 242539 B;
-the fd arrives over SCM_RIGHTS so there is no open()); coincidental region overlaps excluded; G6 uses
-WFACS [1,3,6]; driver budget M54A_LOAD_TIMEOUT=1200.
-merged: NO | next: tail -25 scratch/m106r4.out
+acceptance: m106r6 RUNNING (-> scratch/m106r6.out). m106r5 FAIL 14/15: EVERY evidence gate green (G13 byte-sum law names the .SAV fd: 20 reads = 242539 B = the file; G5/G6 read() 0x2000 into 0x927c84 covers the fac1/3/6 counts M105 armed; G9 no remap; G10 soft-dirty 0->1 on 4/4; G11 0 out-of-process; G14 ONLY C1-kernel-write-via-read). Only G1 failed: the load LANDED (round 0->50 cp 3, counts restored) but the traced driver burned its 1200s budget on post-OK dialogs (ops-director at 1316s), so rc=1.
+merged: NO | next: tail -25 scratch/m106r6.out
