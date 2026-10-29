@@ -339,7 +339,11 @@ def main():
     print("PRE-LOAD pagemap (present,pfn,softdirty): %s" % pm_pre, flush=True)
 
     others = [p for p, _ in S.wine_pids() if p != pid]
-    pa = spawn(log_a, [pid], TRACE_SET, RAW_SET, log_ae, ONLY_EXIT)
+    # strace has NO "exit-only" -e qualifier: `-e read=<set>` is parsed as a DESCRIPTOR expression
+    # and strace dies at once with "invalid descriptor 'read'" (m106r4: the poke landed, the log was
+    # never created). The preflight cannot catch it because it tests TRACE_SET/RAW_SET, not the full
+    # argv. Run the plain entry+exit trace and give the load driver its 1200 s instead.
+    pa = spawn(log_a, [pid], TRACE_SET, RAW_SET, log_ae)
     time.sleep(2.0)
     if pa.poll() is not None or os.path.getsize(log_a) < 4096:
         raise SystemExit("strace A is BLIND (rc=%s, log %d B after 2s); strace stderr: %s"
