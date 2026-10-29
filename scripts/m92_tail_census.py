@@ -197,6 +197,10 @@ commands
 silent
 set $n_tail = $n_tail + 1
 printf "TAIL n=%d idx=%d fac=%d base=%d div=%d hmask=%d\n", $n_tail, *(int *)($ebp+8), *(int *)($ebp+0xc), *(int *)($ebp-0x4), *(int *)(*(int *)($ebp-0x8)+0x94e488), *(int *)0x985b10
+set $tarr = *(int *)($ebp-0x8) + 0x94e5a8
+append binary memory TAILARRSFILE $tarr $tarr + 64
+set $tcarr = *(int *)($ebp-0x8) + 0x94edA8
+append binary memory TAILARRSFILE $tcarr $tcarr + 64
 continue
 end
 break *0x51f320
@@ -395,10 +399,16 @@ def main():
     os.makedirs(EVID, exist_ok=True)
     open(gpath, "w").write(TMPL.replace("SNAPDIR", os.path.join(ROOT, "scratch")
                                .replace(chr(92), "/")).replace("SNAPFILE", os.path.join(ROOT, "scratch")
-                               .replace(chr(92), "/") + "/" + a.tag + "_snaps.bin").replace("TAG", a.tag))
+                               .replace(chr(92), "/") + "/" + a.tag + "_snaps.bin")
+                               .replace("TAILARRSFILE", os.path.join(ROOT, "scratch")
+                               .replace(chr(92), "/") + "/" + a.tag + "_tailarrs.bin")
+                               .replace("TAG", a.tag))
     snappath = os.path.join(ROOT, "scratch", a.tag + "_snaps.bin")
     if os.path.exists(snappath):      # append binary memory grows the file; start it EMPTY
         os.remove(snappath)
+    tarrpath = os.path.join(ROOT, "scratch", a.tag + "_tailarrs.bin")
+    if os.path.exists(tarrpath):      # per-TAIL-hit 64+64 B of mults/cats, in TAIL n order
+        os.remove(tarrpath)
     log = open(lpath, "w")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath, "-p", str(pid)],
                          stdout=log, stderr=subprocess.STDOUT)
@@ -478,6 +488,19 @@ def main():
             for e in by("CTRL"):
                 fh.seek(e["off"])
                 snaps[e["round"]] = fh.read(SNAPREGION)
+    # the category/multiplier arrays read AT each candidate's own tail hit (0x5a9503): the arrays
+    # MOVE inside a round (m92tail14: fac5's category byte changed after the round snapshot), so the
+    # per-candidate dump is the only non-stale source for them.  128 B per TAIL event: 64 B mults
+    # (0x94e5a8+fac*8380) then 64 B cats (0x94eda8+fac*8380), in TAIL n order.
+    tarrs = {}
+    if os.path.exists(tarrpath):
+        raw = open(tarrpath, "rb").read()
+        for n, e in enumerate(by("TAIL")):
+            chunk = raw[n * 128:(n + 1) * 128]
+            if len(chunk) == 128:
+                tarrs[e["n"]] = chunk
+    print(f"tail array dumps: {len(tarrs)} chunks of 128 B for {len(by('TAIL'))} TAIL events "
+          f"(file {os.path.getsize(tarrpath) if os.path.exists(tarrpath) else 0} B)", flush=True)
     print("counters: " + " ".join(f"{t}={len(by(t))}" for t in
           ("CALL", "BASE", "SC", "DRAW", "WIN", "TECH", "ENT", "ST", "RB", "CTRL", "TAIL", "TAILOUT")), flush=True)
 
@@ -508,10 +531,20 @@ def main():
             continue
         if t == "BASE":
             if e["idx"] not in cur["cand"]:
-                cur["cand"][e["idx"]] = dict(e)
+                cc = dict(e)
+                # the window's round is the CALL's; a window that never closes merges scans from
+                # LATER rounds (m92tail16: fac2 idx8 tailout 29 at r55 then 39 at r58, the block's
+                # dc58 moved 1->4 at r58).  Each BASE print carries the LIVE round -> stamp the
+                # candidate with its OWN round and simulate from THAT snapshot.
+                cc["round"] = e.get("round")
+                cur["cand"][e["idx"]] = cc
         elif t == "TAIL":
             if cur["tail"] is None:
                 cur["tail"] = e
+            cur.setdefault("tailidx", set()).add(e["idx"])
+            # FIRST hit wins, matching the first-wins tailout pairing (a re-scan in a later round
+            # has a different block; pairing round-N arrays with round-1 tailout is a fake mismatch)
+            cur.setdefault("tailbyidx", {}).setdefault(e["idx"], e["n"])
         elif t == "SC":
             c = cur["cand"].get(e["idx"])
             if c is not None:
@@ -592,7 +625,11 @@ def main():
     tail_seen = {e["fac"] for e in by("TAIL")}
     # the tail leg's OWN output, read at the outer-loop exit 0x5a9698: the milestone is that it equals
     # base + the simulated tail; the difference to the SCORE at 0x5aa159 is a POST-tail leg
-    tailout = {(e["fac"], e["idx"]): e["out"] for e in by("TAILOUT")}
+    tailout = {}
+    for e in by("TAILOUT"):
+        tailout.setdefault((e["fac"], e["idx"]), e["out"])  # FIRST scan wins: a re-scan in a later
+        # round has a DIFFERENT block; pairing the model of scan 1 with the tailout of scan N is what
+        # made m92tail16 report 4 phantom mismatches (idx8 tailout 29 then 39, the block moved at r58)
     # the DIVISOR the engine actually divided by, read at the tail entry: it MOVES INSIDE a round
     # (m92tail11: fac6 snapshot 1, live 6), so the block alone cannot supply it
     tdiv = {(e["fac"], e["idx"]): e["div"] for e in by("TAIL")}
@@ -606,16 +643,33 @@ def main():
             continue
         if (mask >> w["fac"]) & 1:  # the human faction takes 0x5a94f2; its draw rule is FUN_00625af1
             continue
-        blk = blocks_for(w.get("round")) or b""
         for c in cands:
             p, m, halved = pred_base(c)
             c["pred"], c["m"], c["halved"] = p, m, halved
             if p != c["base"]:
                 mism.append((w["fac"], c["idx"], p, c["base"], dict(c)))
-            if blk and len(blk) == SNAPREGION:
-                t, nterm, naive = sim_tail(blk, w["fac"], c["Tc"], c["bc"], c["a2"], mask,
+            # the candidate's OWN round snapshot (the BASE print carries the live round), not the
+            # window's CALL round: a window can span rounds and the block MOVES between them
+            cblk0 = blocks_for(c.get("round") or w.get("round")) or b""
+            if cblk0 and len(cblk0) == SNAPREGION:
+                # splice THIS candidate's live arrays over the snapshot copy: mults at
+                # b+0x120..0x160, cats at b+0x920..0x960 (the two 64-B dumps in hit order)
+                cblk = cblk0
+                b0 = BLK + STRIDE * w["fac"]
+                tn = (w.get("tailbyidx") or {}).get(c["idx"])
+                arr = tarrs.get(tn) if tn is not None else None
+                if arr is not None:
+                    cblk = cblk0[:b0 + 0x120] + arr[:64] + cblk0[b0 + 0x160:b0 + 0x920] \
+                        + arr[64:] + cblk0[b0 + 0x960:]
+                t, nterm, naive = sim_tail(cblk, w["fac"], c["Tc"], c["bc"], c["a2"], mask,
                                            div=tdiv.get((w["fac"], c["idx"])))
                 c["tail"], c["nterm"], c["naive"] = t, nterm, naive
+                # tdiv MUST be set: the G8 control test reads c["tdiv"], and the field was never
+                # assigned -> G8 was structurally False in every run (m92tail14/15 harness defect)
+                c["tdiv"] = tdiv.get((w["fac"], c["idx"]))
+                c["had_tail_event"] = c["idx"] in (w.get("tailidx") or set())
+                c["splice_differ"] = arr is not None and (arr[:64] != cblk0[b0 + 0x120:b0 + 0x160]
+                                                          or arr[64:] != cblk0[b0 + 0x920:b0 + 0x960])
                 c["pf"] = s32(c["base"] + t)
                 c["pnaive"] = s32(c["base"] + naive)
                 c["tailout"] = tailout.get((w["fac"], c["idx"]))
@@ -682,7 +736,7 @@ def main():
     # divisor and a real snapshot.
     g8 = (len(qual) >= 2 and r_end - r0 >= 2 and any(d["tail"] for d in detail)
           and any(d["has_tail"] for d in detail)
-          and all(c.get("tdiv") is not None and c.get("tailout") is not None
+          and all(c.get("had_tail_event") and c.get("tdiv") is not None and c.get("tailout") is not None
                   for w in qual for c in w["cand"].values() if "pf" in c))
 
     for d in detail:
@@ -707,6 +761,12 @@ def main():
         print(f"base mismatch count = {len(mism)}", flush=True)
     if tmism:
         print(f"tail mismatch count = {len(tmism)}", flush=True)
+    nsplice = sum(1 for w in qual for c in w["cand"].values() if c.get("splice_differ"))
+    nall = sum(1 for w in windows for c in w["cand"].values() if "splice_differ" in c)
+    nallsp = sum(1 for w in windows for c in w["cand"].values() if c.get("splice_differ"))
+    print(f"per-candidate live arrays: {nallsp}/{nall} traced candidates had a splice that DIFFERS "
+          f"from the round snapshot ({nsplice} in qualifying windows) — the arrays move inside a round",
+          flush=True)
     print(f"tail-model splits the naive cat-7-only model on {len(nmism)} candidates "
           f"(the shape discriminates: {bool(nmism)})", flush=True)
     print(f"round {r0}->{r_end} slots_end={slots_end} qualifying_windows={len(qual)} "
