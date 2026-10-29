@@ -1,0 +1,12 @@
+# M106 filtered strace extract; the RAW logs are /home/n100/reverse/smac/scratch/m106r3_terran.strace and /home/n100/reverse/smac/scratch/m106r3_tree.strace
+# pids seen in log A: [1275858, 1275924, 1275925, 1275926] ; in log B: [1275832]
+## READ_REGION 1
+(1793305366.390126, 1275858, 'read', 5, 9600132, 8192, '0x2000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+## SAV_READ 0
+## SCRATCH_SAV_READ 0
+## MAP_COVER 0
+## OUTWRITE 0
+## OPENS (fd -> path)
+open pid=1275858 fd=5 path=/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf
+open pid=1275858 fd=47 path=.
+open pid=1275858 fd=48 path=.
