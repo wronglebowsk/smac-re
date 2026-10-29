@@ -35,27 +35,24 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
    (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M100/M101/M102 (s155-157): the multiplier IS slot 10 of the 11-dword block `&DAT_0094d67c +
-fac*0x20bc`, rebuilt from zero every round by FUN_005a15a0 (caller FUN_005a1830(fac), `call` 0x4dbf8e
-+ 0x520904 in FUN_005208f0, cp == fac); `m102hit3` PASS 14/14 proved the model AT the store sites
-(0x5a16d9 CAT, 0x5a179e DADD, 0x5a1807 clamp) and that the D-accrual is NOT per-round; M101's offline
-run (#108) is superseded. NAMED.**
-**M103 RUN (s158, PR open, UNMERGED — never green in ONE invocation): THE D-WRITER IS FUN_0059ec00** —
-`rep stos` zero 0x59ec24 then `add [ecx*4+0x94d700],ebx` 0x59ec68 (ecx = fac*2095+key) for every record
-entry with TYPE==3 in the block 0x927a9c+fac*1436 (count +0, TYPE +0x04, KEY +0x24, VAL +0x44, stride 4
-— the SAME block the clamp loop reads); twin inline in FUN_0059ec90 (0x5a043e/0x5a0471); the ONLY
-0x94d700 stores in .text; FOUR callers, all setup/new-fac (0x4dbf6f FUN_004dbf40 = the s_RESETALLFAC
-cheat / UI msg 0x30077, 0x4e061b FUN_004e03d0 / msg 0x30075, 0x57ce48 + 0x57eee0 the new-fac paths) —
-0 live events there + at the twin in 2-boundary windows while 0x5a179e consumed the poked sentinels;
-model == live D 8/8 on five loads. `python3 scripts/m103_d_rebuild.py --tag m103d2 --boundaries 2`
-FAIL 6/13, 5 runs, every failure instrument-side (s158 TRAPS). NAMED.
+**M100-M102 (s155-157): the multiplier IS slot 10 of the 11-dword block `&DAT_0094d67c + fac*0x20bc`,
+rebuilt from zero every round by FUN_005a15a0 (caller FUN_005a1830(fac), `call` 0x4dbf8e + 0x520904 in
+FUN_005208f0, cp == fac); `m102hit3` PASS 14/14 proved the model AT the store sites (0x5a16d9 CAT,
+0x5a179e DADD, 0x5a1807 clamp) and that the D-accrual is NOT per-round. NAMED.**
+**M103 RUN (s158, PR open, UNMERGED, never green in ONE invocation): THE D-WRITER IS FUN_0059ec00** —
+zero the 11 dwords (`rep stos` 0x59ec24) then `add [ecx*4+0x94d700],ebx` 0x59ec68 (ecx = fac*2095+key)
+for every record entry with TYPE==3 in the block 0x927a9c+fac*1436 (count +0, TYPE +0x04, KEY +0x24,
+VAL +0x44, stride 4); twin inline in FUN_0059ec90 (0x5a043e/0x5a0471); the ONLY 0x94d700 stores in
+.text; 4 callers, all setup/new-fac (0x4dbf6f, 0x4e061b, 0x57ce48, 0x57eee0) — 0 live events there in
+2-round windows while 0x5a179e consumed the poked sentinels; model == live D 8/8 on five loads.
+`scripts/m103_d_rebuild.py --tag m103d2 --boundaries 2` FAIL 6/13, 5 runs, all instrument-side (s158
+TRAPS). NAMED.
 **M104 (THE PICK): who APPENDS the TYPE==3 entries to that record block** — the producer behind M101's
 +10 drift. Sites touching 0x927a9c/0x927ac0 (46 hits in scratch/m574/text.txt): 0x40d9f4, 0x4e4cd9,
 0x4f37b3, 0x4f3e5d, 0x4f47ba, 0x4fcdf3, 0x508c50, 0x522ad4, 0x589089, 0x5a0087/0x5a0492, 0x5a1689.
 Silent bps AT the stores into count(+0)/TYPE(+0x04)/KEY(+0x24)/VAL(+0x44) of ONE faction + a hw
-watchpoint on the count, `--boundaries 2`, name by containment, READ the effect back. THEN: what the
-0x92babc category records ARE; who chooses the record index at 0x4b2715; FUN_0056df40's
-`inc [ebx+0x94d7f8]`; why 0x59f0c7 never ran.
+watchpoint on the count, `--boundaries 2`, name by containment, READ the effect back. THEN: the
+0x92babc category records; the record index at 0x4b2715; FUN_0056df40's `inc [ebx+0x94d7f8]`.
 
 ## STILL OPEN (in priority order)
 
@@ -90,8 +87,8 @@ watchpoint on the count, `--boundaries 2`, name by containment, READ the effect 
 - **Check the instrument before believing a no-event or a wrong field:** an f-string bp condition that emits `if *$ecx==X` is a DEREFERENCE and silently never fires (m95pay1/2); a bp at a `mov eax,[ebp-0xc]` RETURN site prints the OLD eax — break at the NEXT instruction (0x5aa24a; m96human1 read idx=0); `lea edi,[eax+1]` @0x5aa21a makes edi the MODULUS on the rand path, so a bp at 0x5aa232 printing `$edi` gets score+1, not the faction — read `*(int *)($ebp+8)`; name every printed field the way the parser asks (m96human1 G4/G9/G11 were key names, not the game). ZERO CALLS can be the GAME: scan /proc for the function's vptr first (`scratch/m84d/probe3.py`).
 - **Register semantics live in the encoding, not the name:** `[reg*4+0x98adb8]` means the register holds `tid*13`, `[reg+0x98adb8]` the BYTE address `tid*52`; a condition testing such a register against the bare tid can NEVER fire. A read-modify-write through a COPIED register (`mov ax,[x]; or al,4; mov [x],ax`, 0x4efe60) evades store-shape greps — a HARDWARE watchpoint on the FIELD answers "who writes it" in one run.
 - **gdb printf/script laws:** no inferior strings (aborts the batch and DETACHES mid-window); template expressions go in printf ARGUMENTS, never the format; `%x` prints BARE hex (no 0x); a log tag alternation must be LONGEST-first (`MARK` swallows `MARKSET`); in a two-branch `re` alternation `m.group(1)` is the WHOLE match; a multi-line `python` block in a bp command list aborts the sourced script; `dump/append binary memory` need a LITERAL end address and a snapshot reader must use the region SIZE (m92tail3-7); gdb prints a stop-location line (`0x... in ?? ()`, `__kernel_vsyscall`) at attach AND at the SIGINT stop — a parse gate must whitelist `^0x[0-9a-f]+ in ` lines (m94table1/2). **A printf format/args mismatch — including a stray `%%` in a TMPL line that python never formats — ABORTS the sourced script and DETACHES at the first hit (m103d1/d2): count the specs against the args in the harness BEFORE the run.** A MANUAL call frame needs the RETADDR at esp+0 and the arg at esp+4 (reversed = param_1 0x520909 -> SIGSEGV at 0x59ec34, box dead, m103d5); gdb ABANDONS an inferior `call` as soon as ANY breakpoint hits inside it ("stopped while in a function called from GDB") — arm the store bps first, read the effect back from memory (m103d3).
-- **A >90 s gdb census NEVER runs in the foreground** — the terminal tool caps waits at 420 s and killing the census mid-run leaves Wine hung (round frozen, 0 CTRL events even after detach, s143): run background + `process_manage wait` (180 s clamp, loop), or keep `--rounds <= 4`. **Faction upkeep runs in that faction's OWN segment ~1 cycle after your turn-end: a 1-boundary window can close mid-cycle (m95pay2) — use `--boundaries >= 2`.**
-- **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it:** Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt — never OK); run `m78_mark_clear.normalize_screen()` first. `getactivewindow` is a RED HERRING (no WM on :99 — use `getwindowfocus getwindowname`); vision coords are SCALE-SHIFTED, click from OCR word bboxes (TURN COMPLETE (675,416)); `m44_idle` asserts TracerPid==0 — never a driver under a census gdb, use m55_boundary.
+- **A >90 s gdb census NEVER runs in the foreground** (the terminal caps waits at 420 s; killing it mid-run leaves Wine hung, round frozen, s143): background + `process_manage wait`, or keep `--rounds <= 4`. **Faction upkeep runs in that faction's OWN segment ~1 cycle after your turn-end: a 1-boundary window can close mid-cycle (m95pay2) — use `--boundaries >= 2`.**
+- **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it:** Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt — never OK); run `m78_mark_clear.normalize_screen()` first; vision coords are SCALE-SHIFTED, click from OCR word bboxes (TURN COMPLETE (675,416)). `m44_idle` asserts TracerPid==0 — never a driver under a census gdb, use m55_boundary.
 - **A PASS on a shape that cannot discriminate is not a PASS:** compute candidate predictions from the baseline first; refuse the shape if they all agree. RE-RUN on a harness race, never edit the floor.
 - **base+0xd0 (`credit`) is RECOMPUTED EVERY ROUND** (M97 FUN_004e93f0 0x4e9557/0x4e957f = [+0xc0] -
   [+0xf0] - [+0xe0]; "init-only" RETRACTED) — a poke there is undone next turn; gate on round movement
