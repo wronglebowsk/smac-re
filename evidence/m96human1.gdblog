@@ -1,0 +1,166 @@
+[New LWP 614106]
+[New LWP 614105]
+[New LWP 614104]
+[New LWP 614103]
+[New LWP 614102]
+[New LWP 614101]
+[New LWP 614098]
+[New LWP 614049]
+[New LWP 614048]
+[New LWP 614047]
+[New LWP 614046]
+[New LWP 614045]
+[New LWP 614044]
+[New LWP 614043]
+[New LWP 614042]
+[New LWP 614041]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xe86bf32c in __kernel_vsyscall ()
+ARMED round=61 year=2161 save=0 mask=65288 ebc=6670 rng=-1559261590 forced=6
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5aa159
+Breakpoint 3 at 0x5aa164
+Breakpoint 4 at 0x5aa17e
+Breakpoint 5 at 0x5aa192
+Breakpoint 6 at 0x5aa19c
+Breakpoint 7 at 0x5aa1a6
+Breakpoint 8 at 0x5aa1e4
+Breakpoint 9 at 0x5aa1f0
+Breakpoint 10 at 0x5aa204
+Breakpoint 11 at 0x5aa20d
+Breakpoint 12 at 0x5aa217
+Breakpoint 13 at 0x5aa232
+Breakpoint 14 at 0x5aa247
+Breakpoint 15 at 0x5aa251
+Breakpoint 16 at 0x48bae9
+Breakpoint 17 at 0x51f320
+CTRL n=1 round=61
+A030 n=1 arg1=2 edi=2 ret=0x48bae9 round=62 ebc=6670 mask=65288 rng=1256618214
+SC n=1 fac=2 idx=13 score=64 round=62
+G164 n=1 fac=2 idx=13 ebc=6670
+M17E n=1 fac=2 idx=13 bit=4 mbyte=8
+DIV n=1 fac=2 idx=13 score=64 div=2
+QUO n=1 fac=2 idx=13 q=8192
+M204 n=1 fac=2 idx=13 bit=4 mbyte=8 score=8192
+RDRAW n=1 fac=2 idx=13 score=8192
+DRAW n=1 fac=8193 idx=13 draw=4453 best=-999 score=8192 round=62
+SC n=2 fac=2 idx=22 score=23 round=62
+G164 n=2 fac=2 idx=22 ebc=6670
+M17E n=2 fac=2 idx=22 bit=4 mbyte=8
+DIV n=2 fac=2 idx=22 score=23 div=2
+QUO n=2 fac=2 idx=22 q=2944
+M204 n=2 fac=2 idx=22 bit=4 mbyte=8 score=2944
+RDRAW n=2 fac=2 idx=22 score=2944
+DRAW n=2 fac=2945 idx=22 draw=2285 best=4453 score=2944 round=62
+SC n=3 fac=2 idx=32 score=21 round=62
+G164 n=3 fac=2 idx=32 ebc=6670
+M17E n=3 fac=2 idx=32 bit=4 mbyte=8
+DIV n=3 fac=2 idx=32 score=21 div=2
+QUO n=3 fac=2 idx=32 q=2688
+M204 n=3 fac=2 idx=32 bit=4 mbyte=8 score=2688
+RDRAW n=3 fac=2 idx=32 score=2688
+DRAW n=3 fac=2689 idx=32 draw=1388 best=4453 score=2688 round=62
+SC n=4 fac=2 idx=36 score=24 round=62
+G164 n=4 fac=2 idx=36 ebc=6670
+M17E n=4 fac=2 idx=36 bit=4 mbyte=8
+DIV n=4 fac=2 idx=36 score=24 div=2
+QUO n=4 fac=2 idx=36 q=3072
+M204 n=4 fac=2 idx=36 bit=4 mbyte=8 score=3072
+RDRAW n=4 fac=2 idx=36 score=3072
+DRAW n=4 fac=3073 idx=36 draw=1864 best=4453 score=3072 round=62
+SC n=5 fac=2 idx=44 score=39 round=62
+G164 n=5 fac=2 idx=44 ebc=6670
+M17E n=5 fac=2 idx=44 bit=4 mbyte=8
+DIV n=5 fac=2 idx=44 score=39 div=2
+QUO n=5 fac=2 idx=44 q=4992
+M204 n=5 fac=2 idx=44 bit=4 mbyte=8 score=4992
+RDRAW n=5 fac=2 idx=44 score=4992
+DRAW n=5 fac=4993 idx=44 draw=4516 best=4453 score=4992 round=62
+SC n=6 fac=2 idx=48 score=15 round=62
+G164 n=6 fac=2 idx=48 ebc=6670
+M17E n=6 fac=2 idx=48 bit=4 mbyte=8
+DIV n=6 fac=2 idx=48 score=15 div=2
+QUO n=6 fac=2 idx=48 q=1920
+M204 n=6 fac=2 idx=48 bit=4 mbyte=8 score=1920
+RDRAW n=6 fac=2 idx=48 score=1920
+DRAW n=6 fac=1921 idx=48 draw=1871 best=4516 score=1920 round=62
+RETV n=1 idx=0 best=4516 fac=2 rng=1256618214 round=62
+TECH n=1 idx=44 param1=2 ret=0x2 round=62
+A030 n=2 arg1=3 edi=3 ret=0x48bae9 round=62 ebc=6670 mask=65288 rng=-1396393203
+SC n=7 fac=3 idx=5 score=6 round=62
+G164 n=7 fac=3 idx=5 ebc=6670
+M17E n=7 fac=3 idx=5 bit=8 mbyte=8
+SIB10 n=1 off=9779780 val=0 fac=3 idx=5
+SIB18 n=2 off=9779788 val=0 fac=3 idx=5
+DIV n=7 fac=3 idx=5 score=6 div=1
+QUO n=7 fac=3 idx=5 q=1536
+M204 n=7 fac=3 idx=5 bit=8 mbyte=8 score=1536
+HDRAW n=1 fac=3 idx=5 hi=1537 state=-1396393203
+DRAW n=7 fac=3 idx=5 draw=966 best=-999 score=1536 round=62
+SC n=8 fac=3 idx=13 score=10 round=62
+G164 n=8 fac=3 idx=13 ebc=6670
+M17E n=8 fac=3 idx=13 bit=8 mbyte=8
+SIB10 n=3 off=9779780 val=0 fac=3 idx=13
+SIB18 n=4 off=9779788 val=0 fac=3 idx=13
+DIV n=8 fac=3 idx=13 score=10 div=2
+QUO n=8 fac=3 idx=13 q=1280
+M204 n=8 fac=3 idx=13 bit=8 mbyte=8 score=1280
+HDRAW n=2 fac=3 idx=13 hi=1281 state=-1455906552
+DRAW n=8 fac=3 idx=13 draw=404 best=966 score=1280 round=62
+SC n=9 fac=3 idx=32 score=25 round=62
+G164 n=9 fac=3 idx=32 ebc=6670
+M17E n=9 fac=3 idx=32 bit=8 mbyte=8
+SIB10 n=5 off=9779780 val=0 fac=3 idx=32
+SIB18 n=6 off=9779788 val=0 fac=3 idx=32
+DIV n=9 fac=3 idx=32 score=25 div=2
+QUO n=9 fac=3 idx=32 q=3200
+M204 n=9 fac=3 idx=32 bit=8 mbyte=8 score=3200
+HDRAW n=3 fac=3 idx=32 hi=3201 state=507531463
+DRAW n=9 fac=3 idx=32 draw=1093 best=966 score=3200 round=62
+SC n=10 fac=3 idx=44 score=12 round=62
+G164 n=10 fac=3 idx=44 ebc=6670
+M17E n=10 fac=3 idx=44 bit=8 mbyte=8
+SIB10 n=7 off=9779780 val=0 fac=3 idx=44
+SIB18 n=8 off=9779788 val=0 fac=3 idx=44
+DIV n=10 fac=3 idx=44 score=12 div=2
+QUO n=10 fac=3 idx=44 q=1536
+M204 n=10 fac=3 idx=44 bit=8 mbyte=8 score=1536
+HDRAW n=4 fac=3 idx=44 hi=1537 state=1230067578
+DRAW n=10 fac=3 idx=44 draw=3 best=1093 score=1536 round=62
+SC n=11 fac=3 idx=45 score=7 round=62
+G164 n=11 fac=3 idx=45 ebc=6670
+M17E n=11 fac=3 idx=45 bit=8 mbyte=8
+SIB10 n=9 off=9779780 val=0 fac=3 idx=45
+SIB18 n=10 off=9779788 val=0 fac=3 idx=45
+DIV n=11 fac=3 idx=45 score=7 div=2
+QUO n=11 fac=3 idx=45 q=896
+M204 n=11 fac=3 idx=45 bit=8 mbyte=8 score=896
+HDRAW n=5 fac=3 idx=45 hi=897 state=-380305263
+DRAW n=11 fac=3 idx=45 draw=675 best=1093 score=896 round=62
+SC n=12 fac=3 idx=58 score=11 round=62
+G164 n=12 fac=3 idx=58 ebc=6670
+M17E n=12 fac=3 idx=58 bit=8 mbyte=8
+SIB10 n=11 off=9779780 val=0 fac=3 idx=58
+SIB18 n=12 off=9779788 val=0 fac=3 idx=58
+DIV n=12 fac=3 idx=58 score=11 div=3
+QUO n=12 fac=3 idx=58 q=938
+M204 n=12 fac=3 idx=58 bit=8 mbyte=8 score=938
+HDRAW n=6 fac=3 idx=58 hi=939 state=35831996
+DRAW n=12 fac=3 idx=58 draw=604 best=1093 score=938 round=62
+SC n=13 fac=3 idx=72 score=24 round=62
+G164 n=13 fac=3 idx=72 ebc=6670
+M17E n=13 fac=3 idx=72 bit=8 mbyte=8
+SIB10 n=13 off=9779780 val=0 fac=3 idx=72
+SIB18 n=14 off=9779788 val=0 fac=3 idx=72
+DIV n=13 fac=3 idx=72 score=24 div=3
+QUO n=13 fac=3 idx=72 q=2048
+M204 n=13 fac=3 idx=72 bit=8 mbyte=8 score=2048
+HDRAW n=7 fac=3 idx=72 hi=2049 state=56206571
+DRAW n=13 fac=3 idx=72 draw=1963 best=1093 score=2048 round=62
+RETV n=2 idx=0 best=1963 fac=3 rng=983889230 round=62
+TECH n=2 idx=72 param1=3 ret=0x3 round=62
