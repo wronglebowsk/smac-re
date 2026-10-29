@@ -1,0 +1,31 @@
+[New LWP 1176423]
+[New LWP 1176422]
+[New LWP 1176421]
+[New LWP 1176420]
+[New LWP 1176419]
+[New LWP 1176418]
+[New LWP 1176392]
+[New LWP 1176369]
+[New LWP 1176368]
+[New LWP 1176367]
+[New LWP 1176366]
+[New LWP 1176365]
+[New LWP 1176364]
+[New LWP 1176363]
+[New LWP 1176362]
+[New LWP 1176361]
+0xee53932c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x928038
+Hardware watchpoint 2: *(int *)0x928b70
+Hardware watchpoint 3: *(int *)0x929c44
+Hardware watchpoint 4: *(int *)0x985afc
+Breakpoint 5 at 0x57c550
+Breakpoint 6 at 0x57ecf0
+Breakpoint 7 at 0x59ec00
+Breakpoint 8 at 0x59ec90
+Breakpoint 9 at 0x57ce48
+Breakpoint 10 at 0x57eee0
+Breakpoint 11 at 0x4dbf6f
+Breakpoint 12 at 0x4e061b
+ARMED 4 hw watchpoints at 0x928038 0x928b70 0x929c44 0x985afc and 8 silent bps at 0x57c550 0x57ecf0 0x59ec00 0x59ec90 0x57ce48 0x57eee0 0x4dbf6f 0x4e061b
+[Inferior 1 (process 1176351) detached]

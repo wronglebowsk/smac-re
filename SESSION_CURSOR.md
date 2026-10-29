@@ -1,3 +1,3 @@
-M104 ACCEPTED (s159): m104w3 PASS 12/12 (python3 scripts/m104_append_watch.py --tag m104w3 --boundaries 3). branch milestone/m104, NOT yet submitted/merged.
-finding: nobody appends the record entries mid-game; the 1436-B per-faction blocks are load-time data (m54b_clean.SAV holds them verbatim at stride 1436).
-next: notes + NAMED + NEXT_PROMPT (pick M105) + skill sync + commit + gate + submit + merge.
+M105 RUNNING (s161, branch milestone/m105 from main 4049b87): who writes the 1436-B record block AT SETUP.
+s160 died WITH THE SESSION (gdblog ends at ARMED + [Inferior detached], no events, no seq.jsonl, whole wine tree killed) -> re-run same instrument as m105s2. Gates re-based first (INSTRUMENT fix, floors untouched): G8 = all 8 counts == the m104w3 image [0,6,5,4,3,4,5,3]; G10 = every CNT round is rnd_pre or a round a RND event reported (in-window), not "RND before CNT".
+acceptance: RUNNING (m105s2, setsid nohup -> scratch/m105s2.out; gdb log evidence/m105s2.gdblog) | merged: NO | next: grep ACCEPTANCE scratch/m105s2.out
