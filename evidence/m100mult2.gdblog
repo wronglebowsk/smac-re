@@ -1,0 +1,98 @@
+[New LWP 905607]
+[New LWP 905606]
+[New LWP 905605]
+[New LWP 905604]
+[New LWP 905603]
+[New LWP 905602]
+[New LWP 905601]
+[New LWP 905600]
+[New LWP 905597]
+[New LWP 905596]
+[New LWP 905595]
+[New LWP 905594]
+[New LWP 905593]
+[New LWP 905592]
+[New LWP 905591]
+[New LWP 905590]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf007332c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x94f760
+Hardware watchpoint 2: *(int *)0x95181c
+Hardware watchpoint 3: *(int *)0x9538d8
+Hardware watchpoint 4: *(int *)0x959b0c
+Breakpoint 5 at 0x4f352e
+Breakpoint 6 at 0x520909
+ARMED 4 hw watchpoints at 0x94f760 0x95181c 0x9538d8 0x959b0c; 2 silent bps at 0x4f352e 0x520909
+M100C CALL pc=0x520909 fac=4 round=52 cp=4
+M100B READ pc=0x4f352e fac=4 mult=0 round=52 cp=4
+M100B READ pc=0x4f352e fac=4 mult=0 round=52 cp=4
+M100B READ pc=0x4f352e fac=4 mult=0 round=52 cp=4
+M100C CALL pc=0x520909 fac=5 round=52 cp=5
+M100B READ pc=0x4f352e fac=5 mult=0 round=52 cp=5
+M100B READ pc=0x4f352e fac=5 mult=0 round=52 cp=5
+M100B READ pc=0x4f352e fac=5 mult=0 round=52 cp=5
+M100W WP pc=0x5a15b5 new=0 fac=6 round=52 cp=6
+M100W WP pc=0x5a17a0 new=-2 fac=6 round=52 cp=6
+M100C CALL pc=0x520909 fac=6 round=52 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=52 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=52 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=52 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=52 cp=6
+M100C CALL pc=0x520909 fac=7 round=52 cp=7
+M100B READ pc=0x4f352e fac=7 mult=0 round=52 cp=7
+M100C CALL pc=0x520909 fac=0 round=53 cp=0
+M100W WP pc=0x5a15b5 new=0 fac=1 round=53 cp=1
+M100W WP pc=0x5a16db new=-2 fac=1 round=53 cp=1
+M100C CALL pc=0x520909 fac=1 round=53 cp=1
+M100B READ pc=0x4f352e fac=1 mult=-2 round=53 cp=1
+M100B READ pc=0x4f352e fac=1 mult=-2 round=53 cp=1
+M100C CALL pc=0x520909 fac=2 round=53 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=53 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=53 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=53 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=53 cp=2
+M100W WP pc=0x5a15b5 new=0 fac=3 round=53 cp=3
+M100W WP pc=0x5a17a0 new=2 fac=3 round=53 cp=3
+M100C CALL pc=0x520909 fac=3 round=53 cp=3
+M100B READ pc=0x4f352e fac=3 mult=2 round=53 cp=3
+M100C CALL pc=0x520909 fac=4 round=53 cp=4
+M100B READ pc=0x4f352e fac=4 mult=0 round=53 cp=4
+M100B READ pc=0x4f352e fac=4 mult=0 round=53 cp=4
+M100B READ pc=0x4f352e fac=4 mult=0 round=53 cp=4
+M100C CALL pc=0x520909 fac=5 round=53 cp=5
+M100B READ pc=0x4f352e fac=5 mult=0 round=53 cp=5
+M100B READ pc=0x4f352e fac=5 mult=0 round=53 cp=5
+M100B READ pc=0x4f352e fac=5 mult=0 round=53 cp=5
+M100W WP pc=0x5a15b5 new=0 fac=6 round=53 cp=6
+M100W WP pc=0x5a17a0 new=-2 fac=6 round=53 cp=6
+M100C CALL pc=0x520909 fac=6 round=53 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=53 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=53 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=53 cp=6
+M100B READ pc=0x4f352e fac=6 mult=-2 round=53 cp=6
+M100C CALL pc=0x520909 fac=7 round=53 cp=7
+M100B READ pc=0x4f352e fac=7 mult=0 round=53 cp=7
+M100C CALL pc=0x520909 fac=0 round=54 cp=0
+M100W WP pc=0x5a15b5 new=0 fac=1 round=54 cp=1
+M100W WP pc=0x5a16db new=-2 fac=1 round=54 cp=1
+M100C CALL pc=0x520909 fac=1 round=54 cp=1
+M100B READ pc=0x4f352e fac=1 mult=-2 round=54 cp=1
+M100B READ pc=0x4f352e fac=1 mult=-2 round=54 cp=1
+M100C CALL pc=0x520909 fac=2 round=54 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=54 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=54 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=54 cp=2
+M100B READ pc=0x4f352e fac=2 mult=0 round=54 cp=2
+M100W WP pc=0x5a15b5 new=0 fac=3 round=54 cp=3
+M100W WP pc=0x5a17a0 new=2 fac=3 round=54 cp=3
+M100C CALL pc=0x520909 fac=3 round=54 cp=3
+M100B READ pc=0x4f352e fac=3 mult=2 round=54 cp=3
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf007332c in __kernel_vsyscall ()
+[Inferior 1 (process 905556) detached]

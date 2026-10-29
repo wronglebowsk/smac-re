@@ -503,3 +503,22 @@ FUN_005aadf0 `param_2 <= 0` returns at 0x5aaffc (no store); otherwise `[fac*8380
 never runs. Second live writer of the accumulator: `FUN_0056df40` 0x56e024 `inc [ebx+0x94d7f8]`.
 `[fac*8380+0x94d6a4]` and `[base+0x104]` are RECOMPUTED every round (pokes undone; +0x104 by
 FUN_004eaa10 called at 0x4f5ad7). Harness `scripts/m99_param2.py --tag t --boundaries 2`.
+
+## M100 — the research multiplier [fac*8380+0x94d6a4] = SLOT 10 (last) of the 11-dword block `&DAT_0094d67c + fac*0x20bc`
+- WRITER **FUN_005a15a0**(p1 = `[fac*8380+0x94d658]`, p2 = the block, p3 = fac, 0, p5): reset `rep stos`
+  0x5a15b3 (a watchpoint reports 0x5a15b5); category accumulate `mov [edi],eax` 0x5a16d9 (reports
+  0x5a16db); source accumulate `add [eax],edi` 0x5a179e (reports 0x5a17a0, only when p5 == 0); clamps
+  over `&DAT_00927ac0` rows (type 4 -> clamp 0..999, type 10 -> halve if <0); +1 to slot 5 iff
+  DAT_00985b70's base is this faction, +2 to slot 2 iff DAT_00985b98's is.
+- ROWS: 11 dwords at `&DAT_0092babc + cat*0xd4 + rec*0x2c`, rec = `*(int*)(p1 + cat*4)`, cat = 0..3.
+- SOURCE ARRAY: `[fac*8380+0x94d700]` (11 dwords). Blocks: A 0x94d67c (mult = slot 10), B 0x94d6a8,
+  C 0x94d6d4; FUN_005a1830 also shifts 4 dwords at 0x94d668 and calls 15a0 on A, B and C (p5 = 1).
+- CALLER **FUN_005a1830(fac)** — `call 0x5a1830` at 0x4dbf8e and 0x520904 inside **FUN_005208f0** (the
+  per-player turn sequence, the family of FUN_00556690 @0x52094f). Runs once per faction per round, in
+  that faction's own segment (live cp == fac 16/16 at 0x520909).
+- CONSUMERS (all LOADS, which is why no store mentions 0x94d6a4): 0x445abf, 0x4aac96 (clamp(-5,5)*10+100
+  build-time scale), 0x4f352e/0x4f3566 (FUN_004f34b0's param_2 scale, M99), 0x56dffa (FUN_0056df40's
+  `mult*-5 <= round` gate on the acc +1 at 0x56e024).
+- HARNESS: `scripts/m100_mult_watch.py` (4 hw watchpoints on the multiplier + CALL bp 0x520909 + READ bp
+  0x4f352e; pokes facs 1-7 to live+10 before each boundary; `--predict` prints the baseline table).
+  `m100mult2` PASS 13/13, m54b_clean r52->54.

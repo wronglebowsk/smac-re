@@ -41,6 +41,9 @@ EVID = os.path.join(ROOT, "evidence")
 SCRATCH = os.path.join(ROOT, "scratch")
 STRIDE, MULT, ACC = P.STRIDE, P.MULT, P.ACC
 READ_PC = 0x4f352e          # mov eax,[ecx+0x94d6a4] inside FUN_004f34b0 (the upkeep-tail consumer)
+CALL_PC = 0x520909          # the insn AFTER `push edi; call 0x5a1830` inside FUN_005208f0 (edi = fac)
+STORE_PCS = {0x5a15b5, 0x5a16db, 0x5a17a0}   # run 1: the rep-stos reset (reported = next insn) and
+#                                            the two accumulate stores 0x5a16d9/0x5a179e +length
 WFACS = [int(x) for x in re.split(",", os.environ.get("M100_WFACS", "1,2,3,6"))]
 POKE_ADD = int(os.environ.get("M100_POKE_ADD", "10"))
 
@@ -78,7 +81,9 @@ def gdb_script():
         addrs.append("%#x" % a)
         blocks.append(WBLOCK.replace("@@A@@", "%#x" % a).replace("@@F@@", str(f)))
     bps = [("READ", READ_PC, "M100B READ pc=0x4f352e fac=%d mult=%d round=%d cp=%d",
-            ["$ebx", "*(int *)($ecx+0x94d6a4)", RND, CPP])]
+            ["$ebx", "*(int *)($ecx+0x94d6a4)", RND, CPP]),
+           ("CALL", CALL_PC, "M100C CALL pc=0x520909 fac=%d round=%d cp=%d",
+            ["$edi", RND, CPP])]
     bp_txt, bp_pcs = [], []
     for tag, pc, line, args in bps:
         bp_pcs.append("%#x" % pc)
@@ -141,8 +146,9 @@ def main():
     human = (st["mask"] & -st["mask"]).bit_length() - 1
     print(f"pid {pid} round {rnd} cp {st['cp']} mask {st['mask']:#x} human fac{human} "
           f"ac4 {st['ac4']:#x}", flush=True)
+    POKED = list(range(1, 8))          # every live faction gets poked; 4 watchpoints watch WFACS
     sentinel = {}
-    for f in WFACS:
+    for f in sorted(set(POKED) | set(WFACS)):
         sentinel[f] = st[f][MULT] + (0 if a.no_poke else POKE_ADD)
     print("--- baseline (the PREDICTION table, computed before the run) ---", flush=True)
     for f in range(8):
@@ -190,7 +196,7 @@ def main():
     for k in range(a.boundaries):
         if not a.no_poke:
             row = []
-            for f in WFACS:
+            for f in POKED:
                 got = poke(MULT + f * STRIDE, sentinel[f])
                 row.append((f, sentinel[f], got, got == sentinel[f]))
             pokes.append(row)
@@ -260,48 +266,74 @@ def main():
     cps = sorted({d["cp"] for d in wp})
     print(f"  cp at the stores: {cps}  (the segment the writer ran in)", flush=True)
 
+    stores = [d for d in wp if d["pc"] in STORE_PCS]
+    pokeobs = [d for d in wp if d["pc"] not in STORE_PCS]
+    calls = by.get("CALL", [])
+    print(f"  store events {len(stores)}  poke-observed {len(pokeobs)} "
+          f"(pcs {sorted({hex(d['pc']) for d in pokeobs})})  call events {len(calls)}", flush=True)
     lastw = {}
-    for d in wp:
+    for d in stores:
         lastw[d["fac"]] = d["new"]
+    ALLF = sorted(set(POKED) | set(WFACS))
     rows = []
-    for f in WFACS:
-        ev_f = [d for d in wp if d["fac"] == f]
-        rounds_f = sorted({d["round"] for d in ev_f})
-        rows.append((f, len(ev_f), rounds_f, lastw.get(f), st2[f][MULT],
-                     st2[f][MULT] != sentinel[f]))
-    for f, n, rr, last, proc_val, undone in rows:
-        print(f"  fac{f}: events {n} rounds {rr} last store {last} /proc {proc_val} "
-              f"sentinel {sentinel[f]} undone={undone}", flush=True)
+    for f in ALLF:
+        ev_f = [d for d in stores if d["fac"] == f]
+        rows.append((f, len(ev_f), sorted({d["round"] for d in ev_f}), lastw.get(f),
+                     st2[f][MULT], st2[f][MULT] != sentinel[f], st[f][MULT]))
+    for f, n, rr, last, proc_val, undone, pre in rows:
+        print(f"  fac{f}: store events {n} rounds {rr} last store {last} /proc {proc_val} "
+              f"pre-run {pre} sentinel {sentinel[f]} undone={undone}", flush=True)
+    for f in range(1, 8):
+        cf = [d for d in calls if d["fac"] == f]
+        print(f"  CALL fac{f}: {len(cf)} in rounds {sorted({d['round'] for d in cf})} "
+              f"cp==fac {sum(1 for d in cf if d['cp'] == f)}/{len(cf)}", flush=True)
 
+    NZ = [f for f in WFACS if st[f][MULT] != 0]   # gdb suppresses an unchanged store, so only a
+    # nonzero-mult faction CAN log its rebuild (run-1 fac2: 0 events, poke still undone)
+    pairs = sorted({(d["fac"], d["round"]) for d in stores})
+    shape = []
+    for f_, r_ in pairs:
+        seq = [(d["pc"], d["new"]) for d in stores if d["fac"] == f_ and d["round"] == r_]
+        shape.append((f_, r_, seq, len(seq) == 2 and seq[0] == (0x5a15b5, 0)))
+    for f_, r_, seq, ok_ in shape:
+        print(f"  SHAPE fac{f_} r{r_}: {[(hex(p_), v) for p_, v in seq]} {'OK' if ok_ else 'BAD'}",
+              flush=True)
+    rd_w = [d for d in rd if d["fac"] in WFACS]
+    for f_ in WFACS:
+        rf = [d for d in rd_w if d["fac"] == f_]
+        print(f"  CONSUMER fac{f_}: {len(rf)} reads, mults {sorted({d['mult'] for d in rf})} "
+              f"(sentinel {sentinel[f_]})", flush=True)
     g1 = n_hw >= len(WFACS) and "ARMED" in head
     g2 = rc_ok and r_after == rnd + a.boundaries
-    g3 = bool(wp) and all(r[1] >= 1 for r in rows)
-    g4 = bool(pcs) and all(P.contain(p, funcs) for p in pcs)
-    g5 = bool(wp) and all(d["new"] != sentinel[d["fac"]] for d in wp)
-    g6 = all(r[5] for r in rows)
-    g7 = all(r[3] is not None and r[3] == r[4] for r in rows)
-    g8 = len({d["round"] for d in wp}) >= 2
-    rd_w = [d for d in rd if d["fac"] in WFACS]
-    seen = {f: [d for d in rd_w if d["fac"] == f] for f in WFACS}
-    for f in WFACS:
-        vals = sorted({d["mult"] for d in seen[f]})
-        print(f"  CONSUMER fac{f}: {len(seen[f])} reads, mult values seen {vals} "
-              f"(sentinel was {sentinel[f]})", flush=True)
-    g9 = bool(rd_w) and all(any(d["mult"] != sentinel[f] for d in seen[f]) for f in WFACS)
-    g10 = tracer == "0"
-    g11 = not unparsed
-    gates = [("G1_armed", g1), ("G2_boundary", g2), ("G3_event_per_faction", g3),
-             ("G4_writer_named", g4), ("G5_stored_not_the_poke", g5), ("G6_poke_undone", g6),
-             ("G7_readback", g7), ("G8_two_rounds", g8), ("G9_consumer_sees_restore", g9),
-             ("G10_clean", g10), ("G11_parsed", g11)]
+    g3 = all(any(r[0] == f and r[1] >= 2 for r in rows) for f in NZ)
+    g4 = bool(stores) and all(P.contain(p_, funcs) == "FUN_005a15a0"
+                              for p_ in {d["pc"] for d in stores})
+    g5 = bool(shape) and all(ok_ for _f, _r, _s, ok_ in shape) \
+        and len({r_ for _f, r_, _s, _o in shape}) >= 2
+    g6 = all(r[5] for r in rows if r[0] in POKED)
+    g7 = all(r[3] is not None and r[3] == r[4] for r in rows if r[0] in NZ)
+    g8 = all(r[4] == r[6] for r in rows if r[0] in NZ)
+    g9 = (bool(calls) and all(len([d for d in calls if d["fac"] == f]) >= a.boundaries
+                              for f in range(1, 8))
+          and len({d["round"] for d in calls}) >= 2
+          and all(d["cp"] == d["fac"] for d in calls))
+    g10 = bool(rd_w) and not [d for d in rd_w if d["mult"] == sentinel[d["fac"]]]
+    g11 = all(d["new"] != sentinel[d["fac"]] for d in stores)
+    g12 = tracer == "0"
+    g13 = not unparsed
+    gates = [("G1_armed", g1), ("G2_boundary", g2), ("G3_reset_set_each_nz_faction", g3),
+             ("G4_sole_writer_fun", g4), ("G5_rebuild_shape_every_round", g5),
+             ("G6_poke_undone_all7", g6), ("G7_readback", g7), ("G8_restored_to_pre_run", g8),
+             ("G9_caller_turn_seq_every_faction", g9), ("G10_consumer_never_sees_poke", g10),
+             ("G11_store_never_the_poke", g11), ("G12_clean", g12), ("G13_parsed", g13)]
     for n, v in gates:
         print(f"  {n}: {v}", flush=True)
     ok = all(v for _n, v in gates)
     print(f"ACCEPTANCE {a.tag}: {'PASS' if ok else 'FAIL'} ({sum(1 for _n, v in gates if v)}"
-          f"/{len(gates)}) wp={len(wp)} read={len(rd)} rounds {rnd}->{r_after} "
-          f"writers={ {k: v for k, v in writers.items()} } "
-          f"final_mults={ {f: st2[f][MULT] for f in WFACS} } "
-          f"sentinels={sentinel} cp={cps} unparsed={len(unparsed)}", flush=True)
+          f"/{len(gates)}) stores={len(stores)} pokeobs={len(pokeobs)} calls={len(calls)} "
+          f"rounds {rnd}->{r_after} writer_pcs={sorted(hex(p_) for p_ in {d['pc'] for d in stores})} "
+          f"final={ {f: st2[f][MULT] for f in range(8)} } pre={ {f: st[f][MULT] for f in range(8)} } "
+          f"unparsed={len(unparsed)}", flush=True)
 
 
 if __name__ == "__main__":

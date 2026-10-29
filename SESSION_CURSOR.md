@@ -1,5 +1,5 @@
-M100 (s155) | acceptance: scripts/m99_param2.py repointed at [fac*8380+0x94d6a4] x 4 factions,
---boundaries 2, tag m100mult* | merged: NO (unmeasured) | next command:
-python3 scripts/m57_ui_enqueue.py --base-index 0 --cell-item 2 --inserts 1 -> read pending AND head
--> the census. Box: fresh m54b_clean r50 cp3 hud; University min 0 credit 0 pend 0 head 2 price 9.
-Evidence 28.0 MB (gate FAIL 30). Branch milestone/m100 from main 37b0df8.
+M100 (s155) | acceptance: scripts/m100_mult_watch.py --tag m100mult2 --boundaries 2 (4 hw watchpoints
+on [fac*8380+0x94d6a4] facs 1,2,3,6 + CALL bp 0x520909 + READ bp 0x4f352e; pokes facs 1-7 to live+10
+before each boundary) | merged: NO (run 1 m100mult1 FAIL 9/11, instrument fixed since) | next command:
+process_manage wait on the background census, then the CLOSING ORDER. Box: m54b_clean r52 cp3 hud,
+University pend 1 head 2 credit 0 (the M94/M99 accepted state). Evidence 28.0 MB (gate FAIL 30).
