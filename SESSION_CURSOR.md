@@ -1,9 +1,6 @@
-M99 GATE FIXES APPLIED, RE-RUN: scripts/m99_param2.py --tag m99p3 --boundaries 2.
-m99p2 FAIL 11/13 (floors untouched; the ANSWER is already proven: G5 sole caller 38/38 ret
-0x4f35d0, G6 model 38/38, G13 carry poke discriminates, G9 read-back, G10 static writers).
-The 2 FAILs were MY gates: (a) G7 seeded fac3's carry from the pre-run read (60) but the
-harness POKES it to 0 between the read and the hit -> first hit per round now expects the poked
-value; (b) G8 paired C1/A1 per faction but FUN_005aadf0 returns early when param_2 <= 0 (one C1
-at r64 fac6 p2 0 has no A1) -> filter p2 > 0. LIVE FACT: ebx == param_2 on 37/37 calls - the
-AI "double param_2" leg NEVER runs in single-player (FUN_005312d0 returns 0) -> M98 framing
-retracted. Not merged. Next: read the ACCEPTANCE line.
+M99 ACCEPTED: m99p3 PASS 13/13 (ONE invocation, m54b_clean r66->68, 41 calls, model 41/41,
+no doubling live, carry poke discriminates). Merged? NOT YET.
+Next: git add -A && git commit -m 'M99: checkpoint'; python3 scripts/gate.py --base main;
+python3 scripts/milestone.py submit --title ...; gh pr checks <n>; python3 scripts/milestone.py
+merge <n>. Branch milestone/m99. Docs+skill to write: SESSION_NOTES 154, NAMED M99 block,
+NEXT_PROMPT (M100 pick = who writes [fac*8380+0x94d6a4]). Box m54b_clean r68, nothing in flight.

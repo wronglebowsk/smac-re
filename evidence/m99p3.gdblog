@@ -1,0 +1,479 @@
+[New LWP 791916]
+[New LWP 791915]
+[New LWP 791914]
+[New LWP 791913]
+[New LWP 791912]
+[New LWP 791911]
+[New LWP 791908]
+[New LWP 791905]
+[New LWP 791904]
+[New LWP 791903]
+[New LWP 791902]
+[New LWP 791901]
+[New LWP 791900]
+[New LWP 791899]
+[New LWP 791898]
+[New LWP 791897]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf507968b in ?? ()
+Hardware watchpoint 1: *(int *)0x951970
+Hardware watchpoint 2: *(int *)0x953a2c
+Hardware watchpoint 3: *(int *)0x957ba4
+Hardware watchpoint 4: *(int *)0x959c60
+Breakpoint 5 at 0x4f34df
+Breakpoint 6 at 0x4f351c
+Breakpoint 7 at 0x4f3558
+Breakpoint 8 at 0x4f3566
+Breakpoint 9 at 0x4f35b8
+Breakpoint 10 at 0x4f35c9
+Breakpoint 11 at 0x5aadf0
+Breakpoint 12 at 0x5aaee1
+Breakpoint 13 at 0x5aaef3
+Breakpoint 14 at 0x5aaf1b
+Breakpoint 15 at 0x5aaf66
+ARMED 4 hw watchpoints at 0x951970 0x953a2c 0x957ba4 0x959c60; 11 silent bps at 0x4f34df 0x4f351c 0x4f3558 0x4f3566 0x4f35b8 0x4f35c9 0x5aadf0 0x5aaee1 0x5aaef3 0x5aaf1b 0x5aaf66
+M99B P1 pc=0x4f34df base=0x95dda0 fac=4 raw=8 round=66 cp=4
+M99B P2 pc=0x4f351c fac=4 half=8 round=66 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=8 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=66 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=8 round=66 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=800 carryn=0 round=66 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=8 round=66 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=8 ret=0x4f35d0 round=66 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=8 acco=92 slot=5 flag=0 field=271 round=66 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=100 round=66 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=100 round=66 cp=4
+M99B P1 pc=0x4f34df base=0x95e260 fac=4 raw=8 round=66 cp=4
+M99B P2 pc=0x4f351c fac=4 half=8 round=66 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=8 mult=0 c30o=8 carryo=0 era2=3 ac4=6670 round=66 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=16 round=66 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=800 carryn=0 round=66 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=8 round=66 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=8 ret=0x4f35d0 round=66 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=8 acco=100 slot=5 flag=0 field=271 round=66 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=108 round=66 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=108 round=66 cp=4
+M99B P1 pc=0x4f34df base=0x95e980 fac=4 raw=4 round=66 cp=4
+M99B P2 pc=0x4f351c fac=4 half=4 round=66 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=4 mult=0 c30o=16 carryo=0 era2=3 ac4=6670 round=66 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=20 round=66 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=400 carryn=0 round=66 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=4 round=66 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=4 ret=0x4f35d0 round=66 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=4 acco=108 slot=5 flag=0 field=271 round=66 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=112 round=66 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=112 round=66 cp=4
+M99B P1 pc=0x4f34df base=0x95f0a0 fac=4 raw=4 round=66 cp=4
+M99B P2 pc=0x4f351c fac=4 half=4 round=66 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=4 mult=0 c30o=20 carryo=0 era2=3 ac4=6670 round=66 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=24 round=66 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=400 carryn=0 round=66 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=4 round=66 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=4 ret=0x4f35d0 round=66 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=4 acco=112 slot=5 flag=0 field=271 round=66 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=116 round=66 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=116 round=66 cp=4
+M99B P1 pc=0x4f34df base=0x95ded0 fac=5 raw=3 round=66 cp=5
+M99B P2 pc=0x4f351c fac=5 half=3 round=66 cp=5
+M99B P3 pc=0x4f3558 fac=5 raw2=3 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=66 cp=5
+M99B P4 pc=0x4f3566 fac=5 c30n=3 round=66 cp=5
+M99B P5 pc=0x4f35b8 fac=5 scaled=300 carryn=0 round=66 cp=5
+M99B P6 pc=0x4f35c9 fac=5 p2=3 round=66 cp=5
+M99C C1 pc=0x5aadf0 fac=5 p2=3 ret=0x4f35d0 round=66 cp=5
+M99C A1 pc=0x5aaee1 fac=5 ebx=3 acco=23 slot=12 flag=0 field=176 round=66 cp=5
+M99W WP pc=0x5aaef1 new=26 fac=5 round=66 cp=5
+M99C A2 pc=0x5aaef3 fac=5 accn=26 round=66 cp=5
+M99C S1 pc=0x5aaf15 fac=5 acc2=26 round=66 cp=5
+M99B P1 pc=0x4f34df base=0x95e850 fac=5 raw=1 round=66 cp=5
+M99B P2 pc=0x4f351c fac=5 half=1 round=66 cp=5
+M99B P3 pc=0x4f3558 fac=5 raw2=1 mult=0 c30o=3 carryo=0 era2=3 ac4=6670 round=66 cp=5
+M99B P4 pc=0x4f3566 fac=5 c30n=4 round=66 cp=5
+M99B P5 pc=0x4f35b8 fac=5 scaled=100 carryn=0 round=66 cp=5
+M99B P6 pc=0x4f35c9 fac=5 p2=1 round=66 cp=5
+M99C C1 pc=0x5aadf0 fac=5 p2=1 ret=0x4f35d0 round=66 cp=5
+M99C A1 pc=0x5aaee1 fac=5 ebx=1 acco=26 slot=12 flag=0 field=176 round=66 cp=5
+M99W WP pc=0x5aaef1 new=27 fac=5 round=66 cp=5
+M99C A2 pc=0x5aaef3 fac=5 accn=27 round=66 cp=5
+M99C S1 pc=0x5aaf15 fac=5 acc2=27 round=66 cp=5
+M99B P1 pc=0x4f34df base=0x95ed10 fac=5 raw=1 round=66 cp=5
+M99B P2 pc=0x4f351c fac=5 half=1 round=66 cp=5
+M99B P3 pc=0x4f3558 fac=5 raw2=1 mult=0 c30o=4 carryo=0 era2=3 ac4=6670 round=66 cp=5
+M99B P4 pc=0x4f3566 fac=5 c30n=5 round=66 cp=5
+M99B P5 pc=0x4f35b8 fac=5 scaled=100 carryn=0 round=66 cp=5
+M99B P6 pc=0x4f35c9 fac=5 p2=1 round=66 cp=5
+M99C C1 pc=0x5aadf0 fac=5 p2=1 ret=0x4f35d0 round=66 cp=5
+M99C A1 pc=0x5aaee1 fac=5 ebx=1 acco=27 slot=12 flag=0 field=176 round=66 cp=5
+M99W WP pc=0x5aaef1 new=28 fac=5 round=66 cp=5
+M99C A2 pc=0x5aaef3 fac=5 accn=28 round=66 cp=5
+M99C S1 pc=0x5aaf15 fac=5 acc2=28 round=66 cp=5
+M99B P1 pc=0x4f34df base=0x95e000 fac=6 raw=2 round=66 cp=6
+M99B P2 pc=0x4f351c fac=6 half=2 round=66 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=2 mult=-2 c30o=0 carryo=40 era2=3 ac4=6670 round=66 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=2 round=66 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=260 carryn=0 round=66 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=2 round=66 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=2 ret=0x4f35d0 round=66 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=2 acco=27 slot=58 flag=268435456 field=194 round=66 cp=6
+M99W WP pc=0x5aaef1 new=29 fac=6 round=66 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=29 round=66 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=29 round=66 cp=6
+M99B P1 pc=0x4f34df base=0x95e4c0 fac=6 raw=1 round=66 cp=6
+M99B P2 pc=0x4f351c fac=6 half=1 round=66 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=1 mult=-2 c30o=2 carryo=0 era2=3 ac4=6670 round=66 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=3 round=66 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=80 carryn=80 round=66 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=0 round=66 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=0 ret=0x4f35d0 round=66 cp=6
+M99B P1 pc=0x4f34df base=0x95ebe0 fac=6 raw=1 round=66 cp=6
+M99B P2 pc=0x4f351c fac=6 half=1 round=66 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=1 mult=-2 c30o=3 carryo=80 era2=3 ac4=6670 round=66 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=4 round=66 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=180 carryn=60 round=66 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=66 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=66 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=29 slot=58 flag=268435456 field=194 round=66 cp=6
+M99W WP pc=0x5aaef1 new=30 fac=6 round=66 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=30 round=66 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=30 round=66 cp=6
+M99B P1 pc=0x4f34df base=0x95ee40 fac=6 raw=2 round=66 cp=6
+M99B P2 pc=0x4f351c fac=6 half=2 round=66 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=2 mult=-2 c30o=4 carryo=60 era2=3 ac4=6670 round=66 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=6 round=66 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=260 carryn=20 round=66 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=2 round=66 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=2 ret=0x4f35d0 round=66 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=2 acco=30 slot=58 flag=268435456 field=194 round=66 cp=6
+M99W WP pc=0x5aaef1 new=32 fac=6 round=66 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=32 round=66 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=32 round=66 cp=6
+M99B P1 pc=0x4f34df base=0x95ef70 fac=6 raw=1 round=66 cp=6
+M99B P2 pc=0x4f351c fac=6 half=1 round=66 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=1 mult=-2 c30o=6 carryo=20 era2=3 ac4=6670 round=66 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=7 round=66 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=180 carryn=0 round=66 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=66 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=66 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=32 slot=58 flag=268435456 field=194 round=66 cp=6
+M99W WP pc=0x5aaef1 new=33 fac=6 round=66 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=33 round=66 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=33 round=66 cp=6
+M99B P1 pc=0x4f34df base=0x95e390 fac=7 raw=1 round=66 cp=7
+M99B P2 pc=0x4f351c fac=7 half=1 round=66 cp=7
+M99B P3 pc=0x4f3558 fac=7 raw2=1 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=66 cp=7
+M99B P4 pc=0x4f3566 fac=7 c30n=1 round=66 cp=7
+M99B P5 pc=0x4f35b8 fac=7 scaled=100 carryn=0 round=66 cp=7
+M99B P6 pc=0x4f35c9 fac=7 p2=1 round=66 cp=7
+M99C C1 pc=0x5aadf0 fac=7 p2=1 ret=0x4f35d0 round=66 cp=7
+M99C A1 pc=0x5aaee1 fac=7 ebx=1 acco=4 slot=8 flag=0 field=151 round=66 cp=7
+M99C A2 pc=0x5aaef3 fac=7 accn=5 round=66 cp=7
+M99C S1 pc=0x5aaf15 fac=7 acc2=5 round=66 cp=7
+M99B P1 pc=0x4f34df base=0x95eab0 fac=1 raw=2 round=67 cp=1
+M99B P2 pc=0x4f351c fac=1 half=2 round=67 cp=1
+M99B P3 pc=0x4f3558 fac=1 raw2=2 mult=-2 c30o=0 carryo=20 era2=3 ac4=6670 round=67 cp=1
+M99B P4 pc=0x4f3566 fac=1 c30n=2 round=67 cp=1
+M99B P5 pc=0x4f35b8 fac=1 scaled=160 carryn=80 round=67 cp=1
+M99B P6 pc=0x4f35c9 fac=1 p2=1 round=67 cp=1
+M99C C1 pc=0x5aadf0 fac=1 p2=1 ret=0x4f35d0 round=67 cp=1
+M99C A1 pc=0x5aaee1 fac=1 ebx=1 acco=7 slot=58 flag=0 field=176 round=67 cp=1
+M99C A2 pc=0x5aaef3 fac=1 accn=8 round=67 cp=1
+M99C S1 pc=0x5aaf15 fac=1 acc2=8 round=67 cp=1
+M99B P1 pc=0x4f34df base=0x95db40 fac=2 raw=1 round=67 cp=2
+M99B P2 pc=0x4f351c fac=2 half=1 round=67 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=1 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=67 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=1 round=67 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=100 carryn=0 round=67 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=1 round=67 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=1 ret=0x4f35d0 round=67 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=1 acco=61 slot=36 flag=67108864 field=203 round=67 cp=2
+M99W WP pc=0x5aaef1 new=62 fac=2 round=67 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=62 round=67 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=62 round=67 cp=2
+M99B P1 pc=0x4f34df base=0x95dc70 fac=2 raw=5 round=67 cp=2
+M99B P2 pc=0x4f351c fac=2 half=5 round=67 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=5 mult=0 c30o=1 carryo=0 era2=3 ac4=6670 round=67 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=6 round=67 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=500 carryn=0 round=67 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=5 round=67 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=5 ret=0x4f35d0 round=67 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=5 acco=62 slot=36 flag=67108864 field=203 round=67 cp=2
+M99W WP pc=0x5aaef1 new=67 fac=2 round=67 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=67 round=67 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=67 round=67 cp=2
+M99B P1 pc=0x4f34df base=0x95e130 fac=2 raw=1 round=67 cp=2
+M99B P2 pc=0x4f351c fac=2 half=1 round=67 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=1 mult=0 c30o=6 carryo=0 era2=3 ac4=6670 round=67 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=7 round=67 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=100 carryn=0 round=67 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=1 round=67 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=1 ret=0x4f35d0 round=67 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=1 acco=67 slot=36 flag=67108864 field=203 round=67 cp=2
+M99W WP pc=0x5aaef1 new=68 fac=2 round=67 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=68 round=67 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=68 round=67 cp=2
+M99B P1 pc=0x4f34df base=0x95e5f0 fac=2 raw=2 round=67 cp=2
+M99B P2 pc=0x4f351c fac=2 half=2 round=67 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=2 mult=0 c30o=7 carryo=0 era2=3 ac4=6670 round=67 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=9 round=67 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=200 carryn=0 round=67 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=2 round=67 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=2 ret=0x4f35d0 round=67 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=2 acco=68 slot=36 flag=67108864 field=203 round=67 cp=2
+M99W WP pc=0x5aaef1 new=70 fac=2 round=67 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=70 round=67 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=70 round=67 cp=2
+M99B P1 pc=0x4f34df base=0x95e720 fac=2 raw=1 round=67 cp=2
+M99B P2 pc=0x4f351c fac=2 half=1 round=67 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=1 mult=0 c30o=9 carryo=0 era2=3 ac4=6670 round=67 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=10 round=67 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=100 carryn=0 round=67 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=1 round=67 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=1 ret=0x4f35d0 round=67 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=1 acco=70 slot=36 flag=67108864 field=203 round=67 cp=2
+M99W WP pc=0x5aaef1 new=71 fac=2 round=67 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=71 round=67 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=71 round=67 cp=2
+M99B P1 pc=0x4f34df base=0x95da10 fac=3 raw=3 round=67 cp=3
+M99B P2 pc=0x4f351c fac=3 half=3 round=67 cp=3
+M99B P3 pc=0x4f3558 fac=3 raw2=3 mult=2 c30o=0 carryo=0 era2=2 ac4=6670 round=67 cp=3
+M99B P4 pc=0x4f3566 fac=3 c30n=3 round=67 cp=3
+M99B P5 pc=0x4f35b8 fac=3 scaled=360 carryn=60 round=67 cp=3
+M99B P6 pc=0x4f35c9 fac=3 p2=3 round=67 cp=3
+M99C C1 pc=0x5aadf0 fac=3 p2=3 ret=0x4f35d0 round=67 cp=3
+M99C A1 pc=0x5aaee1 fac=3 ebx=3 acco=17 slot=5 flag=0 field=135 round=67 cp=3
+M99W WP pc=0x5aaef1 new=20 fac=3 round=67 cp=3
+M99C A2 pc=0x5aaef3 fac=3 accn=20 round=67 cp=3
+M99C S1 pc=0x5aaf15 fac=3 acc2=20 round=67 cp=3
+M99B P1 pc=0x4f34df base=0x95dda0 fac=4 raw=8 round=67 cp=4
+M99B P2 pc=0x4f351c fac=4 half=8 round=67 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=8 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=67 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=8 round=67 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=800 carryn=0 round=67 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=8 round=67 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=8 ret=0x4f35d0 round=67 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=8 acco=116 slot=5 flag=0 field=271 round=67 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=124 round=67 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=124 round=67 cp=4
+M99B P1 pc=0x4f34df base=0x95e260 fac=4 raw=8 round=67 cp=4
+M99B P2 pc=0x4f351c fac=4 half=8 round=67 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=8 mult=0 c30o=8 carryo=0 era2=3 ac4=6670 round=67 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=16 round=67 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=800 carryn=0 round=67 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=8 round=67 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=8 ret=0x4f35d0 round=67 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=8 acco=124 slot=5 flag=0 field=271 round=67 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=132 round=67 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=132 round=67 cp=4
+M99B P1 pc=0x4f34df base=0x95e980 fac=4 raw=4 round=67 cp=4
+M99B P2 pc=0x4f351c fac=4 half=4 round=67 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=4 mult=0 c30o=16 carryo=0 era2=3 ac4=6670 round=67 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=20 round=67 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=400 carryn=0 round=67 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=4 round=67 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=4 ret=0x4f35d0 round=67 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=4 acco=132 slot=5 flag=0 field=271 round=67 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=136 round=67 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=136 round=67 cp=4
+M99B P1 pc=0x4f34df base=0x95f0a0 fac=4 raw=4 round=67 cp=4
+M99B P2 pc=0x4f351c fac=4 half=4 round=67 cp=4
+M99B P3 pc=0x4f3558 fac=4 raw2=4 mult=0 c30o=20 carryo=0 era2=3 ac4=6670 round=67 cp=4
+M99B P4 pc=0x4f3566 fac=4 c30n=24 round=67 cp=4
+M99B P5 pc=0x4f35b8 fac=4 scaled=400 carryn=0 round=67 cp=4
+M99B P6 pc=0x4f35c9 fac=4 p2=4 round=67 cp=4
+M99C C1 pc=0x5aadf0 fac=4 p2=4 ret=0x4f35d0 round=67 cp=4
+M99C A1 pc=0x5aaee1 fac=4 ebx=4 acco=136 slot=5 flag=0 field=271 round=67 cp=4
+M99C A2 pc=0x5aaef3 fac=4 accn=140 round=67 cp=4
+M99C S1 pc=0x5aaf15 fac=4 acc2=140 round=67 cp=4
+M99B P1 pc=0x4f34df base=0x95ded0 fac=5 raw=3 round=67 cp=5
+M99B P2 pc=0x4f351c fac=5 half=3 round=67 cp=5
+M99B P3 pc=0x4f3558 fac=5 raw2=3 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=67 cp=5
+M99B P4 pc=0x4f3566 fac=5 c30n=3 round=67 cp=5
+M99B P5 pc=0x4f35b8 fac=5 scaled=300 carryn=0 round=67 cp=5
+M99B P6 pc=0x4f35c9 fac=5 p2=3 round=67 cp=5
+M99C C1 pc=0x5aadf0 fac=5 p2=3 ret=0x4f35d0 round=67 cp=5
+M99C A1 pc=0x5aaee1 fac=5 ebx=3 acco=28 slot=12 flag=0 field=176 round=67 cp=5
+M99W WP pc=0x5aaef1 new=31 fac=5 round=67 cp=5
+M99C A2 pc=0x5aaef3 fac=5 accn=31 round=67 cp=5
+M99C S1 pc=0x5aaf15 fac=5 acc2=31 round=67 cp=5
+M99B P1 pc=0x4f34df base=0x95e850 fac=5 raw=1 round=67 cp=5
+M99B P2 pc=0x4f351c fac=5 half=1 round=67 cp=5
+M99B P3 pc=0x4f3558 fac=5 raw2=1 mult=0 c30o=3 carryo=0 era2=3 ac4=6670 round=67 cp=5
+M99B P4 pc=0x4f3566 fac=5 c30n=4 round=67 cp=5
+M99B P5 pc=0x4f35b8 fac=5 scaled=100 carryn=0 round=67 cp=5
+M99B P6 pc=0x4f35c9 fac=5 p2=1 round=67 cp=5
+M99C C1 pc=0x5aadf0 fac=5 p2=1 ret=0x4f35d0 round=67 cp=5
+M99C A1 pc=0x5aaee1 fac=5 ebx=1 acco=31 slot=12 flag=0 field=176 round=67 cp=5
+M99W WP pc=0x5aaef1 new=32 fac=5 round=67 cp=5
+M99C A2 pc=0x5aaef3 fac=5 accn=32 round=67 cp=5
+M99C S1 pc=0x5aaf15 fac=5 acc2=32 round=67 cp=5
+M99B P1 pc=0x4f34df base=0x95ed10 fac=5 raw=1 round=67 cp=5
+M99B P2 pc=0x4f351c fac=5 half=1 round=67 cp=5
+M99B P3 pc=0x4f3558 fac=5 raw2=1 mult=0 c30o=4 carryo=0 era2=3 ac4=6670 round=67 cp=5
+M99B P4 pc=0x4f3566 fac=5 c30n=5 round=67 cp=5
+M99B P5 pc=0x4f35b8 fac=5 scaled=100 carryn=0 round=67 cp=5
+M99B P6 pc=0x4f35c9 fac=5 p2=1 round=67 cp=5
+M99C C1 pc=0x5aadf0 fac=5 p2=1 ret=0x4f35d0 round=67 cp=5
+M99C A1 pc=0x5aaee1 fac=5 ebx=1 acco=32 slot=12 flag=0 field=176 round=67 cp=5
+M99W WP pc=0x5aaef1 new=33 fac=5 round=67 cp=5
+M99C A2 pc=0x5aaef3 fac=5 accn=33 round=67 cp=5
+M99C S1 pc=0x5aaf15 fac=5 acc2=33 round=67 cp=5
+M99B P1 pc=0x4f34df base=0x95e000 fac=6 raw=2 round=67 cp=6
+M99B P2 pc=0x4f351c fac=6 half=2 round=67 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=2 mult=-2 c30o=0 carryo=0 era2=3 ac4=6670 round=67 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=2 round=67 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=160 carryn=60 round=67 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=67 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=67 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=33 slot=58 flag=268435456 field=194 round=67 cp=6
+M99W WP pc=0x5aaef1 new=34 fac=6 round=67 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=34 round=67 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=34 round=67 cp=6
+M99B P1 pc=0x4f34df base=0x95e4c0 fac=6 raw=1 round=67 cp=6
+M99B P2 pc=0x4f351c fac=6 half=1 round=67 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=1 mult=-2 c30o=2 carryo=60 era2=3 ac4=6670 round=67 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=3 round=67 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=180 carryn=40 round=67 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=67 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=67 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=34 slot=58 flag=268435456 field=194 round=67 cp=6
+M99W WP pc=0x5aaef1 new=35 fac=6 round=67 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=35 round=67 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=35 round=67 cp=6
+M99B P1 pc=0x4f34df base=0x95ebe0 fac=6 raw=1 round=67 cp=6
+M99B P2 pc=0x4f351c fac=6 half=1 round=67 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=1 mult=-2 c30o=3 carryo=40 era2=3 ac4=6670 round=67 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=4 round=67 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=180 carryn=20 round=67 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=67 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=67 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=35 slot=58 flag=268435456 field=194 round=67 cp=6
+M99W WP pc=0x5aaef1 new=36 fac=6 round=67 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=36 round=67 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=36 round=67 cp=6
+M99B P1 pc=0x4f34df base=0x95ee40 fac=6 raw=2 round=67 cp=6
+M99B P2 pc=0x4f351c fac=6 half=2 round=67 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=2 mult=-2 c30o=4 carryo=20 era2=3 ac4=6670 round=67 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=6 round=67 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=160 carryn=80 round=67 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=67 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=67 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=36 slot=58 flag=268435456 field=194 round=67 cp=6
+M99W WP pc=0x5aaef1 new=37 fac=6 round=67 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=37 round=67 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=37 round=67 cp=6
+M99B P1 pc=0x4f34df base=0x95ef70 fac=6 raw=1 round=67 cp=6
+M99B P2 pc=0x4f351c fac=6 half=1 round=67 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=1 mult=-2 c30o=6 carryo=80 era2=3 ac4=6670 round=67 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=7 round=67 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=180 carryn=60 round=67 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=67 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=67 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=37 slot=58 flag=268435456 field=194 round=67 cp=6
+M99W WP pc=0x5aaef1 new=38 fac=6 round=67 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=38 round=67 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=38 round=67 cp=6
+M99B P1 pc=0x4f34df base=0x95f1d0 fac=6 raw=1 round=67 cp=6
+M99B P2 pc=0x4f351c fac=6 half=1 round=67 cp=6
+M99B P3 pc=0x4f3558 fac=6 raw2=1 mult=-2 c30o=7 carryo=60 era2=3 ac4=6670 round=67 cp=6
+M99B P4 pc=0x4f3566 fac=6 c30n=8 round=67 cp=6
+M99B P5 pc=0x4f35b8 fac=6 scaled=180 carryn=40 round=67 cp=6
+M99B P6 pc=0x4f35c9 fac=6 p2=1 round=67 cp=6
+M99C C1 pc=0x5aadf0 fac=6 p2=1 ret=0x4f35d0 round=67 cp=6
+M99C A1 pc=0x5aaee1 fac=6 ebx=1 acco=38 slot=58 flag=268435456 field=194 round=67 cp=6
+M99W WP pc=0x5aaef1 new=39 fac=6 round=67 cp=6
+M99C A2 pc=0x5aaef3 fac=6 accn=39 round=67 cp=6
+M99C S1 pc=0x5aaf15 fac=6 acc2=39 round=67 cp=6
+M99B P1 pc=0x4f34df base=0x95e390 fac=7 raw=1 round=67 cp=7
+M99B P2 pc=0x4f351c fac=7 half=1 round=67 cp=7
+M99B P3 pc=0x4f3558 fac=7 raw2=1 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=67 cp=7
+M99B P4 pc=0x4f3566 fac=7 c30n=1 round=67 cp=7
+M99B P5 pc=0x4f35b8 fac=7 scaled=100 carryn=0 round=67 cp=7
+M99B P6 pc=0x4f35c9 fac=7 p2=1 round=67 cp=7
+M99C C1 pc=0x5aadf0 fac=7 p2=1 ret=0x4f35d0 round=67 cp=7
+M99C A1 pc=0x5aaee1 fac=7 ebx=1 acco=5 slot=8 flag=0 field=151 round=67 cp=7
+M99C A2 pc=0x5aaef3 fac=7 accn=6 round=67 cp=7
+M99C S1 pc=0x5aaf15 fac=7 acc2=6 round=67 cp=7
+M99B P1 pc=0x4f34df base=0x95eab0 fac=1 raw=2 round=68 cp=1
+M99B P2 pc=0x4f351c fac=1 half=2 round=68 cp=1
+M99B P3 pc=0x4f3558 fac=1 raw2=2 mult=-2 c30o=0 carryo=80 era2=3 ac4=6670 round=68 cp=1
+M99B P4 pc=0x4f3566 fac=1 c30n=2 round=68 cp=1
+M99B P5 pc=0x4f35b8 fac=1 scaled=260 carryn=40 round=68 cp=1
+M99B P6 pc=0x4f35c9 fac=1 p2=2 round=68 cp=1
+M99C C1 pc=0x5aadf0 fac=1 p2=2 ret=0x4f35d0 round=68 cp=1
+M99C A1 pc=0x5aaee1 fac=1 ebx=2 acco=8 slot=58 flag=0 field=176 round=68 cp=1
+M99C A2 pc=0x5aaef3 fac=1 accn=10 round=68 cp=1
+M99C S1 pc=0x5aaf15 fac=1 acc2=10 round=68 cp=1
+M99B P1 pc=0x4f34df base=0x95db40 fac=2 raw=1 round=68 cp=2
+M99B P2 pc=0x4f351c fac=2 half=1 round=68 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=1 mult=0 c30o=0 carryo=0 era2=3 ac4=6670 round=68 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=1 round=68 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=100 carryn=0 round=68 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=1 round=68 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=1 ret=0x4f35d0 round=68 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=1 acco=71 slot=36 flag=67108864 field=203 round=68 cp=2
+M99W WP pc=0x5aaef1 new=72 fac=2 round=68 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=72 round=68 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=72 round=68 cp=2
+M99B P1 pc=0x4f34df base=0x95dc70 fac=2 raw=5 round=68 cp=2
+M99B P2 pc=0x4f351c fac=2 half=5 round=68 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=5 mult=0 c30o=1 carryo=0 era2=3 ac4=6670 round=68 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=6 round=68 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=500 carryn=0 round=68 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=5 round=68 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=5 ret=0x4f35d0 round=68 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=5 acco=72 slot=36 flag=67108864 field=203 round=68 cp=2
+M99W WP pc=0x5aaef1 new=77 fac=2 round=68 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=77 round=68 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=77 round=68 cp=2
+M99B P1 pc=0x4f34df base=0x95e130 fac=2 raw=1 round=68 cp=2
+M99B P2 pc=0x4f351c fac=2 half=1 round=68 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=1 mult=0 c30o=6 carryo=0 era2=3 ac4=6670 round=68 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=7 round=68 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=100 carryn=0 round=68 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=1 round=68 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=1 ret=0x4f35d0 round=68 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=1 acco=77 slot=36 flag=67108864 field=203 round=68 cp=2
+M99W WP pc=0x5aaef1 new=78 fac=2 round=68 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=78 round=68 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=78 round=68 cp=2
+M99B P1 pc=0x4f34df base=0x95e5f0 fac=2 raw=2 round=68 cp=2
+M99B P2 pc=0x4f351c fac=2 half=2 round=68 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=2 mult=0 c30o=7 carryo=0 era2=3 ac4=6670 round=68 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=9 round=68 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=200 carryn=0 round=68 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=2 round=68 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=2 ret=0x4f35d0 round=68 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=2 acco=78 slot=36 flag=67108864 field=203 round=68 cp=2
+M99W WP pc=0x5aaef1 new=80 fac=2 round=68 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=80 round=68 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=80 round=68 cp=2
+M99B P1 pc=0x4f34df base=0x95e720 fac=2 raw=1 round=68 cp=2
+M99B P2 pc=0x4f351c fac=2 half=1 round=68 cp=2
+M99B P3 pc=0x4f3558 fac=2 raw2=1 mult=0 c30o=9 carryo=0 era2=3 ac4=6670 round=68 cp=2
+M99B P4 pc=0x4f3566 fac=2 c30n=10 round=68 cp=2
+M99B P5 pc=0x4f35b8 fac=2 scaled=100 carryn=0 round=68 cp=2
+M99B P6 pc=0x4f35c9 fac=2 p2=1 round=68 cp=2
+M99C C1 pc=0x5aadf0 fac=2 p2=1 ret=0x4f35d0 round=68 cp=2
+M99C A1 pc=0x5aaee1 fac=2 ebx=1 acco=80 slot=36 flag=67108864 field=203 round=68 cp=2
+M99W WP pc=0x5aaef1 new=81 fac=2 round=68 cp=2
+M99C A2 pc=0x5aaef3 fac=2 accn=81 round=68 cp=2
+M99C S1 pc=0x5aaf15 fac=2 acc2=81 round=68 cp=2
+M99B P1 pc=0x4f34df base=0x95da10 fac=3 raw=3 round=68 cp=3
+M99B P2 pc=0x4f351c fac=3 half=3 round=68 cp=3
+M99B P3 pc=0x4f3558 fac=3 raw2=3 mult=2 c30o=0 carryo=0 era2=2 ac4=6670 round=68 cp=3
+M99B P4 pc=0x4f3566 fac=3 c30n=3 round=68 cp=3
+M99B P5 pc=0x4f35b8 fac=3 scaled=360 carryn=60 round=68 cp=3
+M99B P6 pc=0x4f35c9 fac=3 p2=3 round=68 cp=3
+M99C C1 pc=0x5aadf0 fac=3 p2=3 ret=0x4f35d0 round=68 cp=3
+M99C A1 pc=0x5aaee1 fac=3 ebx=3 acco=20 slot=5 flag=0 field=135 round=68 cp=3
+M99W WP pc=0x5aaef1 new=23 fac=3 round=68 cp=3
+M99C A2 pc=0x5aaef3 fac=3 accn=23 round=68 cp=3
+M99C S1 pc=0x5aaf15 fac=3 acc2=23 round=68 cp=3
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 791908]
+0xf528c32c in __kernel_vsyscall ()
+[Inferior 1 (process 791846) detached]

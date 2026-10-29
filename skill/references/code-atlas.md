@@ -488,3 +488,18 @@ bps at 0x4e9557/0x4e957f, register-only condition `$eax==row`).
   detach noise `Thread N "terran.exe" received signal SIGINT` + `[Switching to LWP n]` has to
   be whitelisted before a parse gate can be green.
 
+
+## M99 — the advance accumulator's input (FUN_005aadf0's param_2)
+`FUN_004f34b0` (per-base upkeep tail, called at 0x4f5c2e from FUN_004f5a70, once per base per
+round) is the ONLY caller of `FUN_005aadf0` in .text (call 0x4f35cb; the callee's return pc is
+0x4f35d0). Chain: raw = `[base_record+0x104]` (0x4f34d9, DAT_008f0d60) -> halved 0x4f3513 when the
+`FUN_00507410(0x17)` policy leg fires (`[0x95da9c + fac*0x130 + idx] & mask`) -> zeroed 0x4f3546
+(round < mult*-5) or 0x4f3556 (round < 5 && `[fac*8380+0x94d438]` < 2) -> `[fac*8380+0x94dc30] +=`
+raw (0x4f3560) -> `scaled = (clamp([fac*8380+0x94d6a4],-5,5)+10) * raw * 10` (0x4f3582-0x4f3590) ->
+`[fac*8380+0x94d808] += scaled%100`, and if that exceeds 99 `scaled += 100` (0x4f3597-0x4f35b2) ->
+`param_2 = scaled/100` (magic 0x51eb851f imul + sar 5 at 0x4f35b8) -> push, call. Inside
+FUN_005aadf0 `param_2 <= 0` returns at 0x5aaffc (no store); otherwise `[fac*8380+0x94d7f8] +=`
+(0x5aaeeb) — **no doubling live**: 0x5aae1a `call 0x5312d0` returns 0 single-player, so 0x5aaec1
+never runs. Second live writer of the accumulator: `FUN_0056df40` 0x56e024 `inc [ebx+0x94d7f8]`.
+`[fac*8380+0x94d6a4]` and `[base+0x104]` are RECOMPUTED every round (pokes undone; +0x104 by
+FUN_004eaa10 called at 0x4f5ad7). Harness `scripts/m99_param2.py --tag t --boundaries 2`.

@@ -80,4 +80,21 @@ the live value to that width before naming the members — and prefer to PRINT t
 series of dumps leaves only the last snapshot; `append` grows the file and Python reads hit *n* at
 `n * (end - start)` (compute that product in Python and bake it as the gdb-side literal, because the same
 subtraction inside gdb is 32-bit signed and underflows to a negative offset). Delete the file before the
-run, or a previous run's snapshots shift every offset.
+Delete the file before the run, or a previous run's snapshots shift every offset.
+
+## Template placeholders: one token, one payload
+
+A harness that builds its gdb script by `str.replace()` on `@@TOKEN@@` markers must give every payload
+its OWN token. A token used twice in the template is consumed by the FIRST replace call, so the second
+payload silently overwrites the first slot — and a leftover-token grep proves nothing, because both
+copies are gone. Symptom: a `printf` whose format string received a whole command block instead of an
+address list dies with `Bad format string, non-terminated '"'`, and since the error sits on the LAST
+sourced line the log holds `ARMED` plus one `Breakpoint N at` per breakpoint and ZERO events, with every
+breakpoint already set and the inferior already detached — an attach spent for nothing.
+
+- Emit the script and check it in ONE call before attaching: no leftover `@@`; each `printf` line's
+  `%d`/`%x` count equals its argument (comma) count; each format string still a single quoted line.
+  The arity check catches a swallowed payload and a missing/extra argument at the same time.
+- Count token occurrences in the TEMPLATE before substituting — exactly one payload per token, or name
+  them apart (`@@BLOCKS@@` for injected command blocks vs `@@BPS@@` for the address list inside the
+  message).

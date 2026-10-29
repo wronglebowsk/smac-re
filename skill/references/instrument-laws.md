@@ -53,6 +53,10 @@ watchpoint on the address: one poke plus one boundary named the writer exactly o
 - gdb stops at the instruction AFTER the store, so walk back one instruction to name the writer — and
   skip objdump's byte-continuation lines (they carry an address label but no mnemonic column;
   0x5aaac8 is a continuation of the store at 0x5aaac1, not an instruction).
+- When a GATE compares watchpoint-reported pcs with a static store list, the expected set is
+  `store + instruction length`, NOT the store addresses: 10 bytes for
+  `mov DWORD PTR [reg+disp32],imm32`, 6 for `mov [reg+disp32],reg`. Gating on the store address FAILs
+  the run on the instrument while the log already names exactly those stores.
 - A /proc/pid/mem poke from python does NOT trigger the inferior's debug registers (it is not an
   instruction executed by the tracee), so the poke itself never appears as a watchpoint event; verify it
   by read-back instead.
@@ -151,3 +155,37 @@ those sites log ZERO events while a hardware watchpoint on the same field proves
   >> 16 + lo`. Read the state at the call site BEFORE the call, predict, compare with the register at
   the next site: 7/7 exact and the stream advanced exactly one step per candidate (s151, m96human2).
   Non-human factions use `_rand() % (score+1)` (0x64c6f0) instead — a DIFFERENT stream.
+
+## The window, the memo, and what a poke may gate
+
+- **`rc == 0` from the turn driver does not mean the round's segments are done.** The driver returns as
+  soon as the round counter moves while the other factions' upkeep is still executing, so a gdb detach at
+  that moment loses the LAST stores — they run after the detach and log nothing, and the read-back gate
+  FAILs on the instrument with every other gate green. Telltale: the mismatched subject's `/proc` value is
+  the model's answer computed from the CURRENT inputs. Before detaching, poll `/proc/<pid>/mem` for
+  `cur_player` until it is back with the HUMAN faction (derive it from the mask global's low byte:
+  `(mask & -mask).bit_length() - 1`) — every segment in between has logged by then.
+- **A memoized field's gate reads its inputs AT the hit, not from the pre-run snapshot.** Where the site
+  stores a value a callee computes from globals, print every input that callee reads in the same printf
+  (expression arguments are free) and recompute from THOSE: a snapshot of a memo asserts when it was last
+  recomputed, which the engine does not owe you.
+- **Validate a model before spending an acceptance invocation on it.** Give the harness a `--predict` mode
+  that reads live memory, prints the prediction table and exits without attaching gdb or pressing a key —
+  seconds, not a run. When it disagrees with live cached values, sweep the plausible stale-input space
+  (era, per-faction counters, percent globals) for an input state that EXPLAINS each mismatch: a mismatch
+  an earlier state explains confirms BOTH the model and the cache law, and only a mismatch NO state
+  explains is a model bug. Off-by-one answers usually mean a mistranslated line — re-read the
+  pseudocode's variable lifetime (Ghidra reassigns pseudo-locals mid-function; see code-atlas.md) before
+  blaming the engine.
+- **A poke that ARMS the branch you also gate on discriminates nothing.** If forcing a value makes the
+  branch fire, "the branch fired because condition C held" is self-fulfilled: gate the ARITHMETIC instead
+  (the value the store wrote, recomputed from hit-time inputs), keep the poke minimal (`value + 1`, not
+  `1 << 30`), print the pre-poke live value next to the poked one, and say in the report which gates the
+  poke armed.
+
+## A breakpoint at the pc a hardware watchpoint REPORTS is eaten by the watchpoint
+A watchpoint reports `store + INSTRUCTION LENGTH`; a silent bp placed AT that same pc logs nothing
+for the watched records (m99p1: 27 of 37 store read-backs vanished at 0x5aaef1 = 0x5aaeeb+6). Put
+the read-back bp ONE instruction later and read the memory (`*(int *)($esi+0x94d7f8)`), not the
+register that held the value. Also: a poke is evidence only if the CONSUMER reads it — prove the
+value at the consumer site (m99p1: [0x94d6a4] poked -5, read back -5, live 0 at 0x4f3558).
