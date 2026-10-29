@@ -57,7 +57,9 @@ PCT_BASE, PCT_STRIDE = 0x927a88, 1436
 # FUN_005aab70's max-loop: int* stride 0x82f (8380 B) from 0x94f848 while < 0x95dd6c
 MAX_START, MAX_END, MAX_OFF = 0x94f848, 0x95dd6c, 0x78
 RESET, INVAL, STORE, INVAL2, ENTRY = 0x5aaf5c, 0x5aaf67, 0x5aaf79, 0x59f0c7, 0x5aab70
-FIELD_STORE_PCS = (INVAL, STORE, INVAL2)
+# the pc gdb REPORTS for each store = store address + instruction length (a watchpoint
+# fires on the next boundary; the stores are 10, 6 and 10 bytes)
+FIELD_STORE_PCS = (INVAL + 10, STORE + 6, INVAL2 + 10)
 FAC = int(os.environ.get("M98_FAC", "3"))
 
 TMPL = r"""set pagination off
@@ -270,7 +272,8 @@ def parse(text):
             continue
         if ("Hardware watchpoint" in ln or ln.startswith("[Inferior")
                 or ln.startswith("[New LWP") or ln.startswith("[Thread ")
-                or ln.startswith("[Detached") or ln.startswith("Thread 1")
+                or ln.startswith("[Detached") or ln.startswith("[Switching to LWP")
+                or re.match(r"Thread \d+ ", ln)
                 or "__kernel_vsyscall" in ln or re.match(r"0x[0-9a-f]+ in ", ln)):
             continue
         unparsed.append(ln)
@@ -283,6 +286,8 @@ def main():
     ap.add_argument("--timeout", type=int, default=120)
     ap.add_argument("--tag", default="m98budget1")
     ap.add_argument("--predict", action="store_true", help="print predictions, no game touch")
+    ap.add_argument("--arm-facs", default="1-7", help="comma/range list of factions whose "
+                        "accumulator is poked per boundary (default 1-7: fac0 has slot -1)")
     ap.add_argument("--arm-by", type=int, default=1,
                     help="poke [fac*8380+0x94d7f8] to field+THIS before each boundary (arms the grant)")
     a = ap.parse_args()
@@ -339,6 +344,10 @@ def main():
     print(f"armed: {n_hw} hardware watchpoint on fac{FAC} field {FIELD + FAC*STRIDE:#x} "
           f"+ 5 silent bps", flush=True)
 
+    ARM = []
+    for part in a.arm_facs.split(","):
+        lo, _, hi = part.partition("-")
+        ARM += list(range(int(lo), int(hi) + 1)) if _ else [int(lo)]
     t0 = time.time()
     rc_ok = True
 
@@ -350,10 +359,13 @@ def main():
             return struct.unpack("<i", mm.read(4))[0]
 
     for k in range(a.boundaries):
-        want = per[FAC]["field"] + a.arm_by
-        got = poke_acc(FAC, want)
-        print(f"  boundary {k}: ARM fac{FAC} acc poked {want} read back {got} "
-              f"(threshold {per[FAC]['field']})", flush=True)
+        with open(f"/proc/{pid}/mem", "rb", 0) as mm:
+            live = {f: struct.unpack("<i", M.rd(mm, FIELD + f * STRIDE, 4))[0] for f in ARM}
+        for f in ARM:
+            want = live[f] + a.arm_by
+            got = poke_acc(f, want)
+            print(f"  boundary {k}: ARM fac{f} acc poked {want} read back {got} "
+                  f"(threshold {live[f]})", flush=True)
         r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "smac_play.py"),
                             "--turns", "1", "--timeout", str(a.timeout), "--no-escape",
                             "3000", "--orders-per-turn", "1", "--verbose",
@@ -395,8 +407,11 @@ def main():
     a0, a1, a2, a3, a4, wp = (by.get(t, []) for t in ("A0", "A1", "A2", "A3", "A4", "WP"))
     print(f"--- events: {len(a0)} A0(acc reset) {len(a1)} A1(-1) {len(a2)} A2(store) "
           f"{len(a3)} A3(other -1) {len(a4)} A4(aab70 entry) {len(wp)} WP ---", flush=True)
-    for d in ev[:60]:
+    show = ([d for d in ev if d["tag"] != "A4"] + [d for d in ev if d["tag"] == "A4"])[:14]
+    for d in show:
         print("  ", json.dumps(d))
+    a4 = by.get("A4", [])
+    print(f"  A4 (aab70 entry) events {len(a4)}; cached>=0 on entry {sum(1 for d in a4 if d["cached"] >= 0)}; distinct rounds {sorted(set(d["round"] for d in a4))}", flush=True)
 
     funcs = load_funcs()
     pcs = sorted({d["pc"] for d in ev if "pc" in d})

@@ -1,0 +1,93 @@
+[New LWP 791916]
+[New LWP 791915]
+[New LWP 791914]
+[New LWP 791913]
+[New LWP 791912]
+[New LWP 791911]
+[New LWP 791908]
+[New LWP 791905]
+[New LWP 791904]
+[New LWP 791903]
+[New LWP 791902]
+[New LWP 791901]
+[New LWP 791900]
+[New LWP 791899]
+[New LWP 791898]
+[New LWP 791897]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf528c32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x953a34
+Breakpoint 2 at 0x5aaf5c
+Breakpoint 3 at 0x5aaf67
+Breakpoint 4 at 0x5aaf79
+Breakpoint 5 at 0x59f0c7
+Breakpoint 6 at 0x5aab70
+ARMED 1 hw watchpoints at 0x953a34; 5 silent bps at 0x5aaf5c 0x5aaf67 0x5aaf79 0x59f0c7 0x5aab70
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=56 cp=3
+M98S A4 pc=0x5aab70 fac=4 cached=166 ret=0x5aaf07 round=56 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=166 ret=0x5aaf07 round=56 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=166 ret=0x5aaf07 round=56 cp=4
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=56 cp=4
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=56 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=56 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=56 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=56 cp=5
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=56 cp=5
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=56 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=56 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=56 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=56 cp=6
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=56 cp=6
+M98S A4 pc=0x5aab70 fac=7 cached=64 ret=0x5aaf07 round=56 cp=7
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=56 cp=7
+M98S A4 pc=0x5aab70 fac=1 cached=81 ret=0x5aaf07 round=57 cp=1
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=57 cp=1
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=57 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=57 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=57 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=57 cp=2
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=57 cp=2
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x5aaf07 round=57 cp=3
+M98S A4 pc=0x5aab70 fac=3 cached=72 ret=0x445aac round=57 cp=3
+M98S A0 pc=0x5aaf5c fac=3 acc=73 field=72 slot=32 flag=0 round=57 cp=3
+M98S A1 pc=0x5aaf67 fac=3 old=72 acc=0 round=57 cp=3
+M98W WP pc=0x5aaf71 new=-1 fac=3 acc=0 round=57 cp=3
+M98S A4 pc=0x5aab70 fac=3 cached=-1 ret=0x5aaf76 round=57 cp=3
+M98S A2 pc=0x5aaf79 fac=3 val=86 old=-1 d78c=14 d790=0 d804=0 d728=2 d438=2 pct=100 era=2 afc=57 ac4=6670 mask=8 g298=100 g390=45 m0=12 m1=15 m2=14 m3=18 m4=12 m5=13 m6=10 round=57 cp=3
+M98W WP pc=0x5aaf7f new=86 fac=3 acc=0 round=57 cp=3
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=57 cp=3
+M98S A4 pc=0x5aab70 fac=4 cached=166 ret=0x5aaf07 round=57 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=166 ret=0x5aaf07 round=57 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=166 ret=0x5aaf07 round=57 cp=4
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=57 cp=4
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=57 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=57 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=57 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=57 cp=5
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=57 cp=5
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=57 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=57 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=57 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=57 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=57 cp=6
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=57 cp=6
+M98S A4 pc=0x5aab70 fac=7 cached=64 ret=0x5aaf07 round=57 cp=7
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=57 cp=7
+M98S A4 pc=0x5aab70 fac=1 cached=81 ret=0x5aaf07 round=58 cp=1
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=58 cp=1
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=58 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=58 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=58 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=58 cp=2
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=58 cp=2
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x5aaf07 round=58 cp=3
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 791908]
+0xf528c32c in __kernel_vsyscall ()
+[Inferior 1 (process 791846) detached]
