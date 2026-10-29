@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 147, 2026-10-28)
+# NEXT_PROMPT.md — footing for the next session (session 148, 2026-10-29)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -37,7 +37,6 @@ from the per-faction block — 39/39 candidates, 0 mismatches, 2 qualifying wind
 splits 19** (cat/mult/div offsets, the cat7/cat2/cat0/band legs and gates: skill code-atlas.md).
 **Block FROZEN within a round** (0/39 + 0/19 per-TAIL-hit dumps differ from own-round snapshots;
 div cross-check 39/39 bad=0), moves BETWEEN rounds — s145's in-round-motion claim RETRACTED (census defects, see TRAPS). Census needs a FRESH load. NAMED.
-**M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). **M68 FAILED**; **M63** `m63_pop.py`, `0x94de84` queued-count.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
@@ -57,18 +56,17 @@ div cross-check 39/39 bad=0), moves BETWEEN rounds — s145's in-round-motion cl
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M93: the POST-tail leg 0x5a9698 -> 0x5aa022 — what the SCORE at 0x5aa159 adds on top of TAILOUT.**
-M92 is ACCEPTED (`m92tail18` PASS 8/8); the tail rule + census laws live in NAMED.md and the skill's code-atlas.md — never re-derive them. FULL STATIC for M93 is appended there too (s146):
-the leg is SKIPPED when [0x985c1c+idx] carries the faction's bit; else `call 0x5312d0`, then
-ds:0x985a9c drives a record at `[esi+0x92fdd4]` with an eax*48 stride (48-vs-44: an M67-style conflict)
-into `call 0x5a9020`; the 0x5aa022 block makes final = TAILOUT*5 (the `+4` lands only when
-idx == 0). MEASURED (m92tail18 fac2): final - pf = 155/32/4/1/20/2 = tailout x5 for idx 8/13/22/36/44;
-pf == final where tailout 0 (idx 32/48). FIRST SHAPE: extend m92_tail_census with POST prints at
-0x5a96e6/0x5a9735/0x5a9744/0x5aa014 (which branch each scan takes + values at the landings) and
-predict final = f(tailout, idx, [0x985c1c+idx], [0x985a9c], the 0x5312d0 result) per candidate from
-the candidate-round snapshot; ONE fresh-load invocation must print PASS. Then (M94+): who writes
-0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds (the 8 esi positions are powers of 4); the human
-leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
+**M93 CONTINUES (s148 NOT accepted): make the POST ladder predict every traced final.**
+`s148` decoded the whole leg (NAMED.md M93 block; do NOT re-derive) and the census already carries a
+ladder model (`ladder_pred`, gate G9) that gets **9/13** on `--tag m93post2 --poke-index 7 --poke-extra
+2,6 --rounds 4 --timeout 100` (G1-G8 green). Four fixes, in this order: (1) the model has NO leg for
+0x5a9c17 (x2, key 0x9851cc) / 0x5a9c68 (x3/2, key 0x9851fc), both gated on [0x927a80+fac*1436] > 0, and
+its q-gate checks only 0x984fec/0x984fbc (engine also 0x98531c/0x98534c); (2) 4 apply sites have no
+breakpoint — 0x5a9c14/0x5a9c74/0x5a9df0/0x5a9eb5/0x5a9f83, gdb blocks are in scratch/m93/apply_patches.py
+(its anchor `G8_control=g8)` is stale, the dict now ends `G9_post_tail_ladder_final=g9)`); (3) the
+specials are read from the candidate's ROUND-BOUNDARY snapshot while the ladder reads them LIVE — print
+0x9303xx/0x9305xx/0x9307xx/0x9308xx/0x933xxx/0x984fxx/0x985xxx/0x98adee at the PENTRY hit and prove the
+freeze; (4) fac5 idx4/idx45: the model fires PE2 the engine skipped (over-application, same suspect).
 ## STILL OPEN (in priority order)
 
 1. **After M93 (THE PICK): the pay-site conflict 0x4f0ca6 vs 0x4efedd; the human leg (FUN_00625af1 at
@@ -80,9 +78,8 @@ leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
 
 ## LIVE FACTS / KIT
 
-- **Box at s147:** r55 hud, Korolev idx 18 pend 1 head 2 UI-queued (s147); census ran r51->55; `scripts/m92_tail_census.py` is the tail census —
-  **ACCEPTANCE GREEN (`m92tail18` PASS 8/8)** but needs a FRESH m54b_clean load: at r59 only 3 AI
-  factions queued -> 0 qualifying windows (FAIL 5/8, box state).
+- **Box at s148:** fresh m54b_clean load r50->55 (census ran there); G1-G8 green on that load, G9 fails.
+  `scripts/m93_post_census.py` = m92's census + the POST prints + `ladder_pred`/G9 — run on a FRESH load.
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4). The human mask byte at 0x985b10 = 0x08 -> ONLY faction 3 is human (a dword read there
   shows 0x985b10 = 65288, mask the low byte). X focus law: see TRAPS. **The PANE decides where INSERT
@@ -99,6 +96,7 @@ leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
 
 ## TRAPS
 
+- **The `fired=` list on a `LADDER-MISMATCH` line is the MODEL's prediction, not observed events** — a leg listed there that no breakpoint caught is the model over-applying, not the instrument missing it (s148: fac5 idx4/idx45). A no-event at an apply site is only evidence after you have checked a breakpoint EXISTS there (4 did not: 0x5a9c17/0x5a9c77/0x5a9df3/0x5a9eb5).
 - **Register semantics live in the encoding, not the name:** `[reg*4+0x98adb8]` means the register
   holds `tid*13` (52/4), `[reg+0x98adb8]` the BYTE address `tid*52`; a conditional bp testing such
   a register against the bare tid can NEVER fire.

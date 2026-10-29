@@ -398,11 +398,12 @@ break *0x5a9503
 commands
 silent
 set $n_tail = $n_tail + 1
-printf "TAIL n=%d idx=%d fac=%d base=%d div=%d hmask=%d ebc=%d v4=%d msk=%d d71c=%d d810=%d\n", $n_tail, *(int *)($ebp+8), *(int *)($ebp+0xc), *(int *)($ebp-0x4), *(int *)(*(int *)($ebp-0x8)+0x94e488), *(int *)0x985b10, *(int *)($ebp-0xc), *(int *)(*(int *)($ebp-0x10)+0x92fdb0), *(int *)(0x985c1c + *(int *)($ebp+8)), *(int *)(*(int *)($ebp-0x8)+0x94d71c), *(int *)(*(int *)($ebp-0x8)+0x94d810)
+printf "TAIL n=%d idx=%d fac=%d base=%d div=%d hmask=%d ebc=%d v4=%d msk=%d d71c=%d d810=%d d814t=%d d818t=%d d81ct=%d\n", $n_tail, *(int *)($ebp+8), *(int *)($ebp+0xc), *(int *)($ebp-0x4), *(int *)(*(int *)($ebp-0x8)+0x94e488), *(int *)0x985b10, *(int *)($ebp-0xc), *(int *)(*(int *)($ebp-0x10)+0x92fdb0), *(int *)(0x985c1c + *(int *)($ebp+8)), *(int *)(*(int *)($ebp-0x8)+0x94d71c), *(int *)(*(int *)($ebp-0x8)+0x94d810), *(int *)(*(int *)($ebp-0x8)+0x94d814), *(int *)(*(int *)($ebp-0x8)+0x94d818), *(int *)(*(int *)($ebp-0x8)+0x94d81c)
 set $tarr = *(int *)($ebp-0x8) + 0x94e5a8
 append binary memory TAILARRSFILE $tarr $tarr + 64
 set $tcarr = *(int *)($ebp-0x8) + 0x94edA8
 append binary memory TAILARRSFILE $tcarr $tcarr + 64
+append binary memory TAILRECFILE 0x92fdac 0x9306f8
 continue
 end
 break *0x51f320
@@ -612,6 +613,8 @@ def main():
                                .replace(chr(92), "/") + "/" + a.tag + "_snaps.bin")
                                .replace("TAILARRSFILE", os.path.join(ROOT, "scratch")
                                .replace(chr(92), "/") + "/" + a.tag + "_tailarrs.bin")
+                               .replace("TAILRECFILE", os.path.join(ROOT, "scratch")
+                               .replace(chr(92), "/") + "/" + a.tag + "_tailrec.bin")
                                .replace("EXTRA1FILE", os.path.join(ROOT, "scratch")
                                .replace(chr(92), "/") + "/" + a.tag + "_extra1.bin")
                                .replace("EXTRA2FILE", os.path.join(ROOT, "scratch")
@@ -624,7 +627,8 @@ def main():
     if os.path.exists(tarrpath):      # per-TAIL-hit 64+64 B of mults/cats, in TAIL n order
         os.remove(tarrpath)
     for xp in (os.path.join(ROOT, "scratch", a.tag + "_extra1.bin"),
-               os.path.join(ROOT, "scratch", a.tag + "_extra2.bin")):
+               os.path.join(ROOT, "scratch", a.tag + "_extra2.bin"),
+               os.path.join(ROOT, "scratch", a.tag + "_tailrec.bin")):
         if os.path.exists(xp):       # append grows; start EMPTY
             os.remove(xp)
     log = open(lpath, "w")
@@ -717,6 +721,18 @@ def main():
             chunk = raw[n * 128:(n + 1) * 128]
             if len(chunk) == 128:
                 tarrs[e["n"]] = chunk
+    # per-TAIL-hit rec table (3916 B, 89 records): designed prereq fields MOVE mid-round
+    # (m93post2 G9 FAIL 8/9: closures of 45/60 and pr1(8) read from the boundary-frozen copy
+    # disagreed with the engine's live read on 4 candidates). Closures read THIS, hit-timed.
+    TREC = 0x9306f8 - 0x92fdac
+    trecs = {}
+    trecpath = os.path.join(ROOT, "scratch", a.tag + "_tailrec.bin")
+    if os.path.exists(trecpath):
+        raw2 = open(trecpath, "rb").read()
+        for n, e in enumerate(by("TAIL")):
+            chunk = raw2[n * TREC:(n + 1) * TREC]
+            if len(chunk) == TREC:
+                trecs[e["n"]] = chunk
     # per-boundary SPECIALS/tables/masks/rec-table dump (EXTRA1 0x927a00-0x933300, EXTRA2
     # 0x984f00-0x98b000), frozen AT the CTRL hit like the blocks; the ladder gate reads its
     # specials and prereq closures from THESE, per the candidate's own round.
@@ -902,7 +918,7 @@ def main():
                 # assigned -> G8 was structurally False in every run (m92tail14/15 harness defect)
                 c["tdiv"] = tdiv.get((w["fac"], c["idx"]))
                 tev0 = tev.get((w["fac"], c["idx"])) or {}
-                for kx in ("ebc", "v4", "msk", "d71c", "d810"):
+                for kx in ("ebc", "v4", "msk", "d71c", "d810", "d814t", "d818t", "d81ct"):
                     c[kx] = tev0.get(kx)
                 c["had_tail_event"] = c["idx"] in (w.get("tailidx") or set())
                 c["splice_differ"] = arr is not None and (arr[:64] != cblk0[b0 + 0x120:b0 + 0x160]
@@ -1019,13 +1035,18 @@ def main():
     # f=0x270e full closure). Every stage applies iff idx is INSIDE its set (gates: block dwords,
     # 0x92adbc, ac4 bit 0x200, fac table 0x927a8c+fac*1436, era table 0x92b954 flag/id words,
     # validator byte rec+4 bit 1, mask byte 0x985c1c+idx, ebc=[ebp-0xc] & human mask).
-    def ladder_pred(fac, c):
+    def ladder_pred(fac, c, trec):
         rnd = c.get("round")
         ex = extras.get(rnd)
         if not ex:
             return None, None
         ex1, ex2 = ex
         def rd(addr, n, signed):
+            # rec-table reads come from the candidate's OWN TAIL-hit dump (live timing: designed
+            # prereq fields move mid-round; the engine reads them live at the hit).
+            if trec is not None and 0x92fdac <= addr and addr + n <= 0x9306f8:
+                o = addr - 0x92fdac
+                return int.from_bytes(trec[o:o + n], "little", signed=signed)
             buf, base = (ex1, 0x927a00) if addr < 0x940000 else (ex2, 0x984f00)
             o = addr - base
             if not buf or o < 0 or o + n > len(buf):
@@ -1034,8 +1055,8 @@ def main():
         def d4(a): return rd(a, 4, True)
         def w2(a): return rd(a, 2, True)
         def b1(a): return rd(a, 1, False)
-        def pr1(x): return d4(0x92fdd4 + x * 44) if 0 <= x < 89 else None
-        def pr2(x): return d4(0x92fdd8 + x * 44) if 0 <= x < 89 else None
+        def pr1(x): return d4(0x92fdd4 + x * 44) if x is not None and 0 <= x < 89 else None
+        def pr2(x): return d4(0x92fdd8 + x * 44) if x is not None and 0 <= x < 89 else None
         def cl(x, cap=200):
             seen, stack = set(), [x]
             while stack and len(seen) < cap:
@@ -1044,7 +1065,7 @@ def main():
                     continue
                 seen.add(y); stack += [pr1(y), pr2(y)]
             return seen
-        def d1(x): return {v for v in (x, pr1(x), pr2(x)) if v is not None}
+        def d1(x): return {v for v in ((x if x is not None and 0 <= x < 89 else None), pr1(x), pr2(x)) if v is not None}
         def d2f(x):
             s = d1(x)
             for z in list(s):
@@ -1052,13 +1073,15 @@ def main():
                     s |= {pr1(z), pr2(z)}
             return {v for v in s if v is not None}
         def clpr(g):   # "G or its prereq closures": apply-leg set of the 0x5a9e06/0x5a9900 pattern
-            if not (0 <= g < 89):
-                return {g}
+            if g is None or not (0 <= g < 89):
+                return {g} if g is not None else set()
             return {g} | cl(pr1(g)) | cl(pr2(g))
         idx, to = c["idx"], c.get("tailout")
         ebc, v4, msk = c.get("ebc"), c.get("v4"), c.get("msk")
         d71c, d810 = c.get("d71c"), c.get("d810")
-        d814, d818, d81c = c.get("Y10"), c.get("Y14"), c.get("Y18")
+        # demand dwords re-read AT the TAIL hit (they can move between calls within a round; the
+        # ladder gates run after the BASE print, so the BASE-copy values are the stale ones)
+        d814, d818, d81c = (c.get("d814t"), c.get("d818t"), c.get("d81ct"))
         if any(v is None for v in (to, ebc, v4, msk, d71c, d810, d814, d818, d81c)):
             return None, None
         valid = (v4 & 1) != 0
@@ -1094,7 +1117,7 @@ def main():
         dc28 = None
         sn = snaps.get(rnd)
         if sn:
-            b = BLK + STRIDE * fac
+            b = STRIDE * fac   # snap bytes start at 0x94d448; 0x94dc28 lives at +0x7e0
             dc28 = int.from_bytes(sn[b + 0x7e0:b + 0x7e4], "little", signed=True)
         if dc28 is not None and dv488 is not None:
             q = int(dc28 / max(1, min(dv488, 9999))) if dv488 > 0 else dc28
@@ -1124,7 +1147,8 @@ def main():
         for c in sorted(w["cand"].values(), key=lambda x: x["idx"]):
             if "final" not in c or c.get("tailout") is None:
                 continue
-            pred, fired = ladder_pred(w["fac"], c)
+            tn2 = (w.get("tailbyidx") or {}).get(c["idx"])
+            pred, fired = ladder_pred(w["fac"], c, trecs.get(tn2) if tn2 is not None else None)
             if pred is None:
                 continue
             n9 += 1

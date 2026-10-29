@@ -1,6 +1,1 @@
-M93 s148: run1 trace CLOSED (SIGINT 23:23; evidence/m93post1.gdblog = 6 scans/41 candidates with POST
-legs). POST leg decoded statically: a cascade of conditional acc multiplies keyed on 0x5a9020 =
-prereq-closure(target,tech,depth); 4 apply sites had NO print (0x5a9c17 x2, 0x5a9c77 x3/2, 0x5a9df3 x3,
-0x5a9eb5 x2, x4 if human). Next: write the evaluator (inputs come from the per-round SNAP/EXTRA1/EXTRA2
-dumps already in the template), add the POST gate, reload box (dialog at r55), run A, validate offline,
-run B = acceptance. Merged: NO. Cap: 2 runs left.
+M93 s148 CLOSED, NOT accepted: m93post2 FAIL 8/9 (G1-G8 green, G9 ladder 13 predicted/4 mismatch). Nothing merged, nothing submitted. Next: the 4 fixes in NEXT_PROMPT THE PICK (legs 0x5a9c17/0x5a9c68, 5 missing breakpoints, live-timing specials, PE2 over-application), then re-run scripts/m93_post_census.py --tag m93post3 --poke-index 7 --poke-extra 2,6 --rounds 4 --timeout 100. Box: fresh m54b_clean r50->55. Docs patched, commit pending.
