@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 158, 2026-10-29)
+# NEXT_PROMPT.md — footing for the next session (session 161, 2026-10-29)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -17,7 +17,7 @@ Survivability: the kickoff's SESSION_CURSOR rule (<= 600 B, written BEFORE any s
 2 minutes); never `rm`/`git checkout --`; every doc write is an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111) — detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing), M101 (#108, superseded by M102), M103 (#110, the D-writer, never green in one invocation).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112) — detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing), M101 (#108, superseded by M102), M103 (#110, the D-writer, never green in one invocation).
 **M90-M104, all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest draw, tail only arg2==0); TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block (block FROZEN within a round); the POST cascade 0x5a9747-0x5aa022 == the prereq-closure ladder (`0x5a9020(a,X,f)` = membership at depth f; FREEZE LADDER INPUTS AT THE TAIL HIT); DIVISOR [fac*8380+0x94e488] == that faction's BASE COUNT, recomputed every round by FUN_00556690; the UI-queued completion pays AND activates in branch A (gate 0x4efa5e, pay 0x4efedd storage +0x40, POP 0x4f037b), 0x4f0ca6 is branch B's pay; the chooser ranks by the DRAW (score<<8 / prereq depth FUN_005a6d40; human LCG at ds:0x999fa0), NOT by score; base+0xd0 credit is recomputed every round by FUN_004e93f0; [0x94d800] is FUN_005aab70's memoized ADVANCE THRESHOLD vs the accumulator [0x94d7f8]; param_2 has ONE producer, FUN_004f34b0 (M99); the multiplier is block A slot 10 (M100/M102); D [0x94d700] is FUN_0059ec00's rebuild from the record list (M103). the record block 0x927a9c+fac*1436 is LOAD-TIME data, nobody appends it in rounds (M104). All legs: skill code-atlas.md.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -35,29 +35,24 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
    (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M100-M102 (s155-157): the multiplier IS slot 10 of the 11-dword block `&DAT_0094d67c + fac*0x20bc`,
-rebuilt from zero every round by FUN_005a15a0 (caller FUN_005a1830(fac) at 0x4dbf8e + 0x520904, cp ==
-fac); `m102hit3` PASS 14/14 proved the model AT the store sites and that the D-accrual is NOT
-per-round. NAMED.**
-**M103 RUN (s158, PR #110 open, UNMERGED, never green in ONE invocation): THE D-WRITER IS FUN_0059ec00**
-— zero the 11 dwords (`rep stos` 0x59ec24) then `add [ecx*4+0x94d700],ebx` 0x59ec68 (ecx = fac*2095+key)
-for every TYPE==3 entry of the record block; twin inline in FUN_0059ec90; the ONLY 0x94d700 stores in
-.text; 4 callers, all setup/new-fac; 0 live events in round windows; model == live D 8/8 on five loads;
-`m103_d_rebuild.py --tag m103d2 --boundaries 2` FAIL 6/13, all instrument-side (s158 TRAPS). NAMED.
-**M104 ACCEPTED (s159, m104w3 PASS 12/12): NOBODY APPENDS mid-game** — 0 count-change events for facs
-1/3/6 across rounds 57->60 while the CONTROL hw watchpoint on [fac3*8380+0x94d7f8] logged 6 writes at
-0x5aaef1 (FUN_005aadf0); counts read back [0,6,5,4,3,4,5,3] unchanged for all 8; 0 events at 0x59ec00
-or its 4 callers; and m54b_clean.SAV carries the live 100-byte count+TYPE+KEY+VAL image at 0x113b4 /
-0x11eec / 0x12fc0 = consecutive at stride 1436 (fac0 base 0x10e18). The block is LOAD-TIME scenario
-data, so D and the multiplier's D leg are FROZEN after setup — M101's +10 drift was M100's POKES.
-Layout: count +0x00, TYPE +0x04, KEY +0x24, VAL +0x44, stride 4, 8 slots; no .text store reaches any
-of them by displacement (46 mentions, all scan loads/cmps). NAMED.
-**M105 (THE PICK): who writes the block AT SETUP** — attach gdb at PROCESS START (before the save
-load), 4 hw watchpoints on the counts (fac1 0x928038, fac3 0x928b70, fac6 0x929c44) + the CONTROL on
-[fac3*8380+0x94d7f8], then load m54b_clean and name the writer by containment: the save loader vs the
-1436-byte template copy at 0x57ce48 (FUN_0057c550) / 0x57eee0 (FUN_0057ecf0). THEN: what the TYPE 0 /
-TYPE 2 entries are for (fac3 carries (0,2,0) and (2,8,0)) and who consumes them; the 0x92babc category
-records; the record index at 0x4b2715.
+**M100-M104 (s155-159), all NAMED:** multiplier = slot 10 of the per-faction block rebuilt every
+round (FUN_005a15a0); D = FUN_0059ec00 rebuilt off the record block TYPE==3 entries (M103, PR #110
+unmerged); nobody appends the record block in rounds (m104w3 PASS 12/12) — D is FROZEN after setup.
+**M105 ACCEPTED (s161, m105s4 PASS 17/17): THE BLOCK IS BUILT AT PROCESS START** — at pid discovery
+the counts are all 0 and 15 count increments (fac1 1->6, fac3 1->4, fac6 1->5) all report
+**FUN_005791c0 [terran.exe+0x179b12]** (store+2), landing exactly on the m104 image [0,6,5,4,3,4,5,3];
+0 events at the 8 M103 setup sites (0x57c550 0x57ecf0 0x59ec00 0x59ec90 0x57ce48 0x57eee0 0x4dbf6f
+0x4e061b) and 0 CNT stores in the load window while the ROUND control fires at 0x64bfa3 = FUN_0064bf70.
+The template-copy hypothesis is DEAD; this closes M103 open question "who appends the type-3 entries".
+**M106 (THE PICK): the load-window restore a hw watchpoint CANNOT see** — m105s4 poked -77 into the
+counts WHILE ARMED at the quiescent CDROM screen, the load logged 0 CNT events, yet the counts end at
+the m104 image: something writes those pages with no store in an armed thread. Discriminators, no gdb:
+(1) /proc/pid/maps for 0x927a9c read at the CDROM screen and again after the load — a VMA split =
+MAP_FIXED remap (build elsewhere, then remap); (2) strace -f on the wine tree while
+`SMAC_SAVE=... scripts/m54a_load.py` runs, tracing mmap/mmap2/munmap/mprotect/process_vm_writev/
+pwrite64 — an out-of-process page write = wineserver; (3) the same watchpoints with
+`set can-use-hw-watchpoints 0` (gdb single-steps and sees every thread store).
+THEN: what FUN_005791c0 (3112 B, shard_014) READS to build the block; the TYPE 0 / TYPE 2 consumers, the 0x92babc category records; the record index at 0x4b2715.
 
 ## STILL OPEN (in priority order)
 
@@ -70,8 +65,8 @@ records; the record index at 0x4b2715.
 
 ## LIVE FACTS / KIT
 
-- **Box at s159: LIVE** — m54b_clean r60 cp3 hud, counts [0,6,5,4,3,4,5,3], Korolev Center pending 1
-  head 2, University pending 0, mults [0x94d6a4] {1:-2, 3:2, 6:-2}, eras ds:0x985b90/0x985b9c = -1
+- **Box at s161: LIVE** — pid 1231977, m54b_clean just loaded (round 50 cp 3 hud), counts
+  [0,6,5,4,3,4,5,3] = the FUN_005791c0 startup image; queue/mults NOT re-read this session (see s159), eras ds:0x985b90/0x985b9c = -1
   (the category-skip leg INERT until an era goes >= 0); no clamp entry with key 10. A stale winedbg +
   wineserver (left by a SIGSEGVed manual call frame) must be killed BY PID before a relaunch; rounds
   are NOT continuous across reloads. Recipe (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3
@@ -116,6 +111,7 @@ records; the record index at 0x4b2715.
   lines) and `[Inferior 1 (process N) detached]` frame the event stream and FAIL a zero-unparsed gate
   (m104w2 11/12 — an INSTRUMENT failure, floors untouched). Set `DEBUGINFOD_URLS=""` in the Popen env and
   whitelist `^\[Inferior `, `This GDB supports`, `Enable debuginfod`, `Debuginfod has`, `To make this setting`.
+- **ARM BEFORE ANY SCREEN (s161 law):** the setup writes finish before the first OCR-able screen, and the CDROM screen is QUIIESCENT for 4 min but only advances on driver input — a true-title wait DEADLOCKS. A hw watchpoint can MISS a change entirely (m105s4: the -77 sentinel came back to the save image through the load with NOTHING logged while the control in the same window fired); `[New LWP]` after ARMED = threads gdb may not have re-armed; a background census job DIES with its session (m105s1).
 
 - **A silent bp at the pc a HARDWARE watchpoint REPORTS is EATEN by the watchpoint** (m99p1 G8: 27
   of 37 store read-backs vanished at 0x5aaef1 = 0x5aaeeb+6) — put the read-back bp ONE instruction

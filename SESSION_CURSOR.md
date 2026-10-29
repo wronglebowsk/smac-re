@@ -1,3 +1,2 @@
-M104 ACCEPTED (s159): m104w3 PASS 12/12 (python3 scripts/m104_append_watch.py --tag m104w3 --boundaries 3). branch milestone/m104, NOT yet submitted/merged.
-finding: nobody appends the record entries mid-game; the 1436-B per-faction blocks are load-time data (m54b_clean.SAV holds them verbatim at stride 1436).
-next: notes + NAMED + NEXT_PROMPT (pick M105) + skill sync + commit + gate + submit + merge.
+M105 ACCEPTED (s161, branch milestone/m105): m105s4 PASS 17/17 — the record block is BUILT AT PROCESS START by FUN_005791c0 (count store reports 0x579b12); 0 events at the 8 M103 setup sites; 0 CNT stores in the load window and the -77 sentinel came back unlogged (OPEN = M106).
+merged: NO (submit pending) | next: python3 scripts/milestone.py submit; then gh pr checks + milestone.py merge <n>

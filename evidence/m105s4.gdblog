@@ -1,0 +1,50 @@
+0xe48aac08 in ?? ()
+Hardware watchpoint 1: *(int *)0x928038
+Hardware watchpoint 2: *(int *)0x928b70
+Hardware watchpoint 3: *(int *)0x929c44
+Hardware watchpoint 4: *(int *)0x985afc
+Breakpoint 5 at 0x57c550
+Breakpoint 6 at 0x57ecf0
+Breakpoint 7 at 0x59ec00
+Breakpoint 8 at 0x59ec90
+Breakpoint 9 at 0x57ce48
+Breakpoint 10 at 0x57eee0
+Breakpoint 11 at 0x4dbf6f
+Breakpoint 12 at 0x4e061b
+ARMED 4 hw watchpoints at 0x928038 0x928b70 0x929c44 0x985afc and 8 silent bps at 0x57c550 0x57ecf0 0x59ec00 0x59ec90 0x57ce48 0x57eee0 0x4dbf6f 0x4e061b
+[New LWP 1231988]
+[New LWP 1231989]
+[New LWP 1231990]
+[New LWP 1231991]
+[New LWP 1231992]
+[New LWP 1231993]
+[New LWP 1231994]
+[New LWP 1231995]
+[New LWP 1231996]
+[New LWP 1231997]
+[New LWP 1232001]
+[New LWP 1232002]
+[New LWP 1232003]
+[New LWP 1232004]
+[New LWP 1232005]
+[New LWP 1232006]
+M105W CNT fac=1 new=1 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=2 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=3 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=4 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=5 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=6 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=1 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=2 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=3 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=4 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=1 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=2 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=3 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=4 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=5 pc=0x579b12 round=0 cp=0
+M105W RND new=50 pc=0x64bfa3 round=50 cp=0
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xe8ade32c in __kernel_vsyscall ()
+[Inferior 1 (process 1231977) detached]

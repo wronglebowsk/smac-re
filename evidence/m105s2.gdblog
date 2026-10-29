@@ -1,0 +1,36 @@
+[New LWP 1221091]
+[New LWP 1221090]
+[New LWP 1221089]
+[New LWP 1221088]
+[New LWP 1221087]
+[New LWP 1221086]
+[New LWP 1221042]
+[New LWP 1221036]
+[New LWP 1221035]
+[New LWP 1221034]
+[New LWP 1221033]
+[New LWP 1221032]
+[New LWP 1221031]
+[New LWP 1221030]
+[New LWP 1221029]
+[New LWP 1221028]
+0xedc1c32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x928038
+Hardware watchpoint 2: *(int *)0x928b70
+Hardware watchpoint 3: *(int *)0x929c44
+Hardware watchpoint 4: *(int *)0x985afc
+Breakpoint 5 at 0x57c550
+Breakpoint 6 at 0x57ecf0
+Breakpoint 7 at 0x59ec00
+Breakpoint 8 at 0x59ec90
+Breakpoint 9 at 0x57ce48
+Breakpoint 10 at 0x57eee0
+Breakpoint 11 at 0x4dbf6f
+Breakpoint 12 at 0x4e061b
+ARMED 4 hw watchpoints at 0x928038 0x928b70 0x929c44 0x985afc and 8 silent bps at 0x57c550 0x57ecf0 0x59ec00 0x59ec90 0x57ce48 0x57eee0 0x4dbf6f 0x4e061b
+M105W RND new=50 pc=0x64bfa3 round=50 cp=0
+
+Thread 5 "wine_dsound_mix" received signal SIGINT, Interrupt.
+[Switching to LWP 1221088]
+0xedc1c32c in __kernel_vsyscall ()
+[Inferior 1 (process 1221023) detached]
