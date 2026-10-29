@@ -296,8 +296,10 @@ def sim_tail(snap, fac, Tc, bc, a2, mask, div=None):
         div = blkdiv
     if div == 0:
         return 0, 0, 0
-    dc44 = int.from_bytes(snap[b + 0xdc4:b + 0xdc8], "little", signed=True)
-    dc58 = int.from_bytes(snap[b + 0xdc8:b + 0xdcc], "little", signed=True)
+    # 0x94dc44 / 0x94dc58 are BEFORE the block base (0x94dc44 - 0x94d448 = 0x7fc, +0x14 apart):
+    # reading them at b+0xdc4 read two unrelated dwords and turned the cat-0 factor 2 into 4.
+    dc44 = int.from_bytes(snap[0x7fc + STRIDE * fac:0x800 + STRIDE * fac], "little", signed=True)
+    dc58 = int.from_bytes(snap[0x810 + STRIDE * fac:0x814 + STRIDE * fac], "little", signed=True)
     cats = snap[b + 0x920:b + 0x920 + 64]
     mults = snap[b + 0x120:b + 0x120 + 64]
     ctrl = [int.from_bytes(snap[STRIDE * fac + 4 * e:STRIDE * fac + 4 * e + 4],
@@ -326,7 +328,8 @@ def sim_tail(snap, fac, Tc, bc, a2, mask, div=None):
             continue
         elif cat == 0:
             if mult and Tc:
-                c = 4 if dc44 >= dc58 else 2
+                # 0x5a95be setge + 0x5a95c1 dec + 0x5a95cb and 0x2 + add 0x2: dc44 >= dc58 -> 2, else 4
+                c = 2 if dc44 >= dc58 else 4
                 d = div * 2 if human else div
                 s += idiv(mult * c * Tc, d)
                 n += 1
