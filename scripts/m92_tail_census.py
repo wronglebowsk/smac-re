@@ -48,19 +48,22 @@ FUN_005aa030(faction) (the caller, 0x5aa030): scans idx 0..88, skips advances th
   pick is a max-of-random-draws over the score, not a plain max. Returns [ebp-0xc] (0x5aa247).
 
 USAGE: python3 scripts/m92_tail_census.py --tag m92tail1 [--poke-index 5] [--rounds 4] [--timeout 120]
-MECHANISM: the same scorer instrument as M91, with the tail ADDED.  A breakpoint at the tail's entry
-0x5a94fd fires on the FIRST tail visit of the run, prints the live registers, DUMPS the scored faction's
-16 KB category block to scratch/<tag>_block_<fac>.bin and leaves the inferior FROZEN (`continue &`);
-Python then reads the block twice more (from /proc while frozen, and again at the end of the run) and
-SIMULATES the tail bytes above.  Because every candidate of one FUN_005aa030 scan reads the SAME block,
-one freeze predicts that faction's whole candidate list.
+MECHANISM: the same scorer instrument as M91, with the tail ADDED.  A marker breakpoint at the tail's
+entry 0x5a9503 (NOT 0x5a94fd -- that is INSIDE the loop body, it is skipped when the divisor
+[fac*8380+0x94e488] == 0, 0x5a950b) prints the divisor, the caller slot eax and the human bit per visit;
+the eight factions' 16 KB category blocks are read from /proc at the end of the run and the tail bytes
+above are SIMULATED from them.  The layout/freshness is PROVEN per candidate: the engine's own divisor,
+printed by gdb at the merge point 0x5a930b, must equal the dword the simulation reads at
+endblk[fac*8380 + 0x94e488].  Every candidate of one FUN_005aa030 scan reads the SAME block, so one
+block predicts that faction's whole candidate list.
 PREDICTIONS printed before any counter is read (the gates then check the log):
   G1 the poke lands: slot == -1 read back from /proc;
   G2 (KEPT from M91) every traced candidate's BASE equals the four-term weighted sum predicted from the
      cost and demand fields gdb read from live memory at 0x5a930b (m and the halving rule included);
-  G3 (NEW, the milestone) for every traced candidate of the frozen faction whose faction matches the
-     dump: FINAL == BASE + simulated_tail, where FINAL is the [ebp-0x4] the caller reads at 0x5aa159 and
-     simulated_tail comes from the block bytes read LIVE at the tail's first visit — and the shape must
+  G3 (NEW, the milestone) for EVERY traced candidate that has a final and a draw: FINAL == BASE +
+     simulated_tail, where FINAL is the [ebp-0x4] the caller reads at 0x5aa159 and simulated_tail comes
+     from that faction's category block read from /proc, whose layout is proven by the engine's own
+     divisor printed at 0x5a930b — and the shape must
      DISCRIMINATE: at least 3 candidates with a nonzero tail term, at least one where FINAL != BASE, and
      at least one candidate where the naive (BASE + mult*Tc/divisor-for-cat-7-only) model is WRONG;
   G4 the winner holds the max draw AND no candidate with a HIGHER index draws equal to it (0x5aa232);
@@ -98,6 +101,7 @@ set $n_ent = 0
 set $n_st = 0
 set $n_ctrl = 0
 set $n_tail = 0
+set $n_snap = 0
 set $fac = 0
 printf "ARMED round=%d year=%d save=%d mask=%d ac4=%d bd4=%d\n", *(int *)0x985afc, *(int *)0x985b00, *(int *)0x920434, *(int *)0x985b10, *(int *)0x985ac4, *(int *)0x926bd4
 break *0x5aa030
@@ -182,21 +186,18 @@ end
 break *0x5a9503
 commands
 silent
-set $tailblk = $edi + 0x94e488
-if $n_tail == 0
-set $n_tail = 1
-dump binary memory %s tailblk tailblk + 0x4000
-printf "TAIL n=1 fac=%d idx=%d base=%d e8=%d div=%d human=%d blk=0x%x round=%d\n", $edi, $esi, *(int *)($ebp-0x4), $eax, $ebx, $edx, $tailblk, *(int *)0x985afc
-end
+set $n_tail = $n_tail + 1
+set $seen = $seen | (1 << $edi)
+printf "TAIL n=%d fac=%d idx=%d base=%d div=%d human=%d round=%d\n", $n_tail, *(int *)($ebp+0xc), $esi, *(int *)($ebp-0x4), $ebx, $edx, *(int *)0x985afc
 continue
 end
 break *0x51f320
 commands
 silent
 set $n_ctrl = $n_ctrl + 1
-if $n_ctrl < 12
-printf "CTRL n=%d round=%d\n", $n_ctrl, *(int *)0x985afc
-end
+set $n_snap = $n_snap + 1
+dump binary memory %s 0x94e488 0x94e488 + 0x41b80
+printf "CTRL n=%d snap=%d round=%d\n", $n_ctrl, $n_snap, *(int *)0x985afc
 continue
 end
 continue
@@ -336,8 +337,8 @@ def main():
           f"ac4={mem(pid, AC4):#x} poke={addr:#x} slots(0..7)={slots0}", flush=True)
     print("PREDICTIONS: G1 poke lands; G2 (KEPT) every traced BASE == the four-term weighted sum "
           "(demand*m+1)*cost summed over the four (cost,demand) pairs, m from arg2/0x985ac4 bit 0x200, "
-          "halved by the inert-pair rule; G3 (THE MILESTONE) FINAL == BASE + the tail simulated from the "
-          "scored faction's LIVE category block (divisor [blk+0], category byte [blk+0x1000+esi], "
+          "halved by the inert-pair rule; G3 (THE MILESTONE) FINAL == BASE + the tail simulated from "
+          "each traced candidate's faction category block (divisor [blk+0], category byte [blk+0x1000+esi], "
           "multiplier [blk+0x1860+esi], Tc = the tech record's +0xc cost, band dwords [blk+0x2000+j], "
           "band tables [blk+0x2bc0+esi*32], human-double of the divisor by 0x985b10 & (1<<fac), the "
           "cat-7 gate on the caller slot [ebp-0x18] and the cat-0 factor from [blk+0xdc4] vs [blk+0xdc8]) "
@@ -345,8 +346,10 @@ def main():
           "final != base, >=1 where the naive cat-7-only model is wrong; G4 winner holds the max draw "
           "and no HIGHER-index candidate ties it; G5 winner == strictly-largest draw and every draw in "
           "[0, final*256/level]; G6 winner == ST val and RB; G7 winner name printable ASCII; G8 the "
-          "frozen block is byte-identical in the gdb dump, at the freeze and at the end of the run, "
-          ">=2 qualifying windows, round advanced >=2, a TAIL event for the scored faction.", flush=True)
+          "frozen block test replaced by: the engine's OWN divisor printed at 0x5a930b must equal the "
+          "dword the simulation reads at endblk[fac*8380+0x94e488] for >=3 traced candidates and for "
+          "NONE may it disagree (the block layout and its freshness are proven from live memory), "
+          ">=2 qualifying windows, round advanced >=2, a TAIL event for a scored faction.", flush=True)
 
     gpath = os.path.join(ROOT, "scratch", f"{a.tag}.gdb")
     lpath = os.path.join(EVID, f"{a.tag}.gdblog")
@@ -370,32 +373,6 @@ def main():
     poke_readback = mem(pid, addr)
     print(f"poke: slot({a.poke_index}) {slots0[a.poke_index]} -> {poke_readback} (want -1)", flush=True)
 
-    # FREEZE: the tail-entry breakpoint stops the inferior and leaves it stopped (the commands list
-    # ends, gdb returns to its batch prompt WITHOUT continuing).  Python reads the scored faction's
-    # category block while the game is literally paused, then SIGINTs gdb, which aborts the batch and
-    # DETACHES -- the inferior resumes on its own.  The tail only runs once a boundary has been driven
-    # (the research upkeep is gated on a non-empty production queue), so the freeze is polled
-    # INTERLEAVED with the boundaries, not before them.
-    def read_freeze():
-        txt = open(lpath, errors="replace").read()
-        tl = [ln for ln in txt.splitlines() if ln.startswith("TAIL ")]
-        if not tl:
-            return None
-        m = re.search(r"blk=0x([0-9a-f]+)", tl[0])
-        fac = int(re.search(r"fac=(-?\d+)", tl[0]).group(1))
-        blk = int(m.group(1), 16)
-        time.sleep(1.0)
-        dpath = os.path.join(ROOT, "scratch", f"{a.tag}_block_{fac}.bin")
-        dump = open(dpath, "rb").read() if os.path.exists(dpath) else b""
-        try:
-            with open("/proc/%d/mem" % pid, "rb", 0) as f:
-                f.seek(blk)
-                live = f.read(0x4000)
-        except OSError:
-            live = None
-        return dict(fac=fac, blk=blk, dump=dump, live=live, line=tl[0])
-
-    frozen = None
     for i in range(a.rounds):
         before = mem(pid, ROUND)
         r1 = subprocess.run([sys.executable, os.path.join(HERE, "m55_boundary.py"),
@@ -407,24 +384,10 @@ def main():
         txt = open(lpath, errors="replace").read()
         nb = len([1 for ln in txt.splitlines() if ln.startswith("BASE ")])
         nw = len([1 for ln in txt.splitlines() if ln.startswith("WIN ")])
+        nt = len([1 for ln in txt.splitlines() if ln.startswith("TAIL ")])
         last = r1.stdout.strip().splitlines()[-1][:90] if r1.stdout.strip() else ""
-        print(f"boundary {i+1}: round {before}->{after} base_hits={nb} wins={nw} rc={r1.returncode} {last}",
-              flush=True)
-        if frozen is None:
-            frozen = read_freeze()
-            if frozen is not None:
-                print("FREEZE " + frozen["line"], flush=True)
-                print(f"freeze reads: dump {len(frozen['dump'])} B, /proc "
-                      f"{'FAIL' if frozen['live'] is None else str(len(frozen['live'])) + ' B'}, "
-                      f"identical={frozen['dump'] == frozen['live'] and len(frozen['dump']) == 0x4000}",
-                      flush=True)
-                break
-    if frozen is None:
-        print("no tail-entry freeze in any boundary (the tail leg never ran)", flush=True)
-    try:
-        os.kill(g.pid, signal.SIGINT)
-    except ProcessLookupError:
-        pass
+        print(f"boundary {i+1}: round {before}->{after} base_hits={nb} wins={nw} tail_hits={nt} "
+              f"rc={r1.returncode} {last}", flush=True)
     time.sleep(1.0)
     try:
         os.kill(g.pid, signal.SIGINT)
@@ -448,37 +411,68 @@ def main():
         kv["_tag"] = p[0]
         events.append(kv)
     by = lambda t: [e for e in events if e["_tag"] == t]
+    # stamp every event with the round that was live when it fired: the CTRL print at 0x51f320 IS the
+    # round boundary (the store there advances the round, so the value read at the hit is the round
+    # about to be processed)
+    _r = None
+    for e in events:
+        if e["_tag"] == "CTRL":
+            _r = e["round"]
+        elif _r is not None:
+            e["round"] = _r
+    # round -> the eight factions' category blocks, dumped by gdb AT that round's boundary hit
+    snaps = {}
+    for e in by("CTRL"):
+        sp = os.path.join(ROOT, "scratch", "%s_snap%d.bin" % (a.tag, e["snap"]))
+        if os.path.exists(sp):
+            with open(sp, "rb") as fh:
+                snaps[e["round"]] = fh.read()
     print("counters: " + " ".join(f"{t}={len(by(t))}" for t in
           ("CALL", "BASE", "SC", "DRAW", "WIN", "TECH", "ENT", "ST", "RB", "CTRL", "TAIL")), flush=True)
 
-    # windows = one FUN_005aa030 invocation: CALL ... WIN, in log order
+    # windows = one FUN_005aa030 scan of ONE faction: the BASE/SC/DRAW events of that faction,
+    # CLOSED by FUN_005aa880's entry (a scan is always inside that call) or by a different faction's
+    # events.  Pairing CALL with WIN is WRONG: 0x5aa251 returns the winner without passing 0x5aa247,
+    # and 0x5aa030 is called more often than the scan that matters (m91score5: 25 BASE events, only
+    # 2 matched a CALL..WIN pair — 23 candidates silently dropped from the census).
     windows, cur = [], None
     for e in events:
         t = e["_tag"]
-        if t == "CALL":
-            cur = {"fac": e["fac"], "round": e["round"], "cand": {}, "win": None}
+        if t in ("CHR", "ENT") and cur is not None:
+            windows.append(cur)
+            cur = None
+            if t != "CTRL":
+                continue
+        if t not in ("BASE", "SC", "DRAW", "TAIL", "WIN"):
             continue
+        if cur is not None and cur["fac"] != e["fac"]:
+            windows.append(cur)
+            cur = None
         if cur is None:
-            continue
+            if t == "WIN":
+                continue
+            cur = {"fac": e["fac"], "round": e.get("round"), "cand": {}, "win": None,
+                   "tail": None}
         if t == "BASE":
-            if e["fac"] == cur["fac"] and e["idx"] not in cur["cand"]:
+            if e["idx"] not in cur["cand"]:
                 cur["cand"][e["idx"]] = dict(e)
         elif t == "TAIL":
-            if e["fac"] == cur["fac"] and cur.get("tail") is None:
-                cur["tail"] = by("TAIL")[0]
+            if cur["tail"] is None:
+                cur["tail"] = e
         elif t == "SC":
             c = cur["cand"].get(e["idx"])
-            if c is not None and e["fac"] == cur["fac"]:
+            if c is not None:
                 c["final"] = e["final"]
         elif t == "DRAW":
             c = cur["cand"].get(e["idx"])
-            if c is not None and e["fac"] == cur["fac"]:
+            if c is not None:
                 c["draw"] = e["draw"]
         elif t == "WIN":
-            if e["fac"] == cur["fac"]:
-                cur["win"] = e["idx"]
-                windows.append(cur)
+            cur["win"] = e["idx"]
+            windows.append(cur)
             cur = None
+    if cur is not None:
+        windows.append(cur)
     st = by("ST")
     # pair each ST with the RB that FOLLOWS it in the event stream (0x5aa9d5 runs right after the
     # store at 0x5aa9d3); a {addr: last-mem} dict mis-pairs a re-allocated slot (m91score3 G5:
@@ -523,22 +517,36 @@ def main():
         for fac in range(8):
             f.seek(BLOCKB + STRIDE * fac)
             endblk[fac] = f.read(0x4000)
-    blk_stable = (frozen is not None and frozen["live"] is not None
-                  and endblk.get(frozen["fac"], b"") == frozen["live"])
-    dump_ok = (frozen is not None and len(frozen["dump"]) == 0x4000
-               and frozen["live"] == frozen["dump"])
+    def blocks_for(rnd):
+        s = snaps.get(rnd)
+        if s is not None and len(s) >= 7 * STRIDE + BLOCKSZ:
+            return {fac: s[STRIDE * fac: STRIDE * fac + BLOCKSZ] for fac in range(8)}
+        return endblk
+    # the block layout / staleness proof: the engine's OWN divisor, printed by gdb at the merge point
+    # 0x5a930b for every scored candidate, must equal the dword at endblk[fac*8380 + 0x94e488] that the
+    # simulation reads as its divisor.  A mismatch means either the layout is wrong or the block moved.
+    div_proven, div_bad = 0, []
+    for e in by("BASE"):
+        blk = blocks_for(e.get("round")).get(e["fac"])
+        if blk is None or len(blk) < 4:
+            continue
+        if int.from_bytes(blk[0:4], "little", signed=True) == e["div"]:
+            div_proven += 1
+        else:
+            div_bad.append((e["fac"], e["idx"], e["div"],
+                            int.from_bytes(blk[0:4], "little", signed=True)))
+    tail_seen = {e["fac"] for e in by("TAIL")}
 
     mask = mem(pid, MASK, 1, False)
     g1 = poke_readback == -1
     mism, tmism, nmism, qual = [], [], [], []
     for w in windows:
         cands = [c for c in w["cand"].values() if "final" in c and "draw" in c]
-        if len(cands) < 3 or w["win"] is None:
+        if len(cands) < 3:
             continue
         if (mask >> w["fac"]) & 1:  # the human faction takes 0x5a94f2; its draw rule is FUN_00625af1
             continue
-        blk = (frozen["live"] if (frozen is not None and w["fac"] == frozen["fac"])
-               else endblk.get(w["fac"], b""))
+        blk = blocks_for(w.get("round")).get(w["fac"], b"")
         for c in cands:
             p, m, halved = pred_base(c)
             c["pred"], c["m"], c["halved"] = p, m, halved
@@ -596,24 +604,26 @@ def main():
                    nz=sum(1 for c in cands if c.get("nterm", 0) > 0),
                    dfb=sum(1 for c in cands if "pf" in c and c["final"] != c["base"]),
                    dv=len([c for c in cands if "pnaive" in c and c["pnaive"] != c["pf"]]),
-                   frozen=(w["fac"] == (frozen or {}).get("fac")),
+                   has_tail=(w["fac"] in tail_seen),
                    tail=[c["idx"] for c in cands if c["final"] != c["base"]])
         detail.append(rec)
-        later_tie = [c["idx"] for c in cands if c["idx"] > w["win"] and c["draw"] == md]
-        g4 = g4 and (winner is not None and winner["draw"] == md and not later_tie)
-        g5 = g5 and (w["win"] == first_max_draw["idx"]) and okdraws
-        g6 = g6 and ok5
-        g7 = g7 and (nm is not None)
-    g8 = (bool(qual) >= 2 and len(qual) >= 2 and r_end - r0 >= 2
-          and any(d["tail"] for d in detail) and blk_stable and dump_ok
-          and (frozen is not None))
+        if w["win"] is not None:  # 0x5aa251 can return the winner WITHOUT passing 0x5aa247, so a
+            # scan may legitimately have no WIN event; the tail gate does not need the winner.
+            later_tie = [c["idx"] for c in cands if c["idx"] > w["win"] and c["draw"] == md]
+            g4 = g4 and (winner is not None and winner["draw"] == md and not later_tie)
+            g5 = g5 and (w["win"] == first_max_draw["idx"]) and okdraws
+            g6 = g6 and ok5
+            g7 = g7 and (nm is not None)
+    g8 = (len(qual) >= 2 and r_end - r0 >= 2 and any(d["tail"] for d in detail)
+          and any(d["has_tail"] for d in detail) and div_proven >= 3
+          and (len(div_bad) + len(tail_seen)) > 0 and not div_bad)
 
     for d in detail:
         print(f"WINDOW fac={d['fac']} win={d['idx']} name={d['name']} max_final={d['mx']} "
               f"winner_final={d['wfinal']} max_draw={d['md']} first_max_draw_idx={d['first_max']} "
               f"candidates={d['n_cand']} distinct_base={d['distinct_base']} ST/RB={d['ok5']} "
               f"draws_in_range={d['okdraws']} final!=base_at={d['tail']} "
-              f"nonzero_tail_cands={d['nz']} naive_splits={d['dv']} frozen_faction={d['frozen']}",
+              f"nonzero_tail_cands={d['nz']} naive_splits={d['dv']} tail_leg_ran={d['has_tail']}",
               flush=True)
     for w in windows:
         if w not in qual:
@@ -633,8 +643,10 @@ def main():
     print(f"tail-model splits the naive cat-7-only model on {len(nmism)} candidates "
           f"(the shape discriminates: {bool(nmism)})", flush=True)
     print(f"round {r0}->{r_end} slots_end={slots_end} qualifying_windows={len(qual)} "
-          f"block_stable={blk_stable} dump_matches_live={dump_ok} "
-          f"freeze={'none' if frozen is None else 'fac%d' % frozen['fac']}", flush=True)
+          f"divisor_cross_check_proven={div_proven} bad={len(div_bad)} "
+          f"tail_factions={sorted(tail_seen)}", flush=True)
+    for f, i, eng, ours in div_bad[:6]:
+        print(f"DIV-MISMATCH fac={f} idx={i} engine_div={eng} block_div={ours}", flush=True)
 
     gates = dict(G1_poke=True, G2_base_model=g2, G3_final_equals_base_plus_simulated_tail=g3,
                  G4_winner_holds_max_draw=g4, G5_winner_is_max_draw=g5,

@@ -1,0 +1,111 @@
+[New LWP 347989]
+[New LWP 347988]
+[New LWP 347987]
+[New LWP 347986]
+[New LWP 347985]
+[New LWP 347984]
+[New LWP 347983]
+[New LWP 347982]
+[New LWP 347981]
+[New LWP 347980]
+[New LWP 347979]
+[New LWP 347978]
+[New LWP 347977]
+[New LWP 347976]
+[New LWP 347975]
+[New LWP 347974]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf0f51210 in ?? ()
+ARMED round=61 year=2161 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x5a9503
+Breakpoint 11 at 0x51f320
+ENT n=1 fac=5 ret=0x5aaff3 round=61
+CALL n=1 fac=5 round=61
+BASE n=1 idx=4 fac=5 a2=0 base=10 ac4=6670 T0=2 T4=1 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=3 p1=-1 p2=-1 div=3 human=1 round=61
+TAIL n=1 fac=10 idx=1 base=10 div=4 human=32 round=61
+SC n=1 fac=5 idx=4 final=11
+DRAW n=1 fac=5 idx=4 draw=2332 best=-999
+BASE n=2 idx=22 fac=5 a2=0 base=26 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=3 p1=1 p2=2 div=3 human=1 round=61
+TAIL n=2 fac=26 idx=3 base=26 div=22 human=32 round=61
+SC n=2 fac=5 idx=22 final=35
+DRAW n=2 fac=5 idx=22 draw=3667 best=2332
+BASE n=3 idx=32 fac=5 a2=0 base=24 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=3 p1=2 p2=-1 div=3 human=1 round=61
+TAIL n=3 fac=24 idx=4 base=24 div=32 human=32 round=61
+SC n=3 fac=5 idx=32 final=25
+DRAW n=3 fac=5 idx=32 draw=2490 best=3667
+BASE n=4 idx=36 fac=5 a2=0 base=15 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=3 p1=5 p2=-1 div=3 human=1 round=61
+TAIL n=4 fac=15 idx=0 base=15 div=36 human=32 round=61
+SC n=4 fac=5 idx=36 final=24
+DRAW n=4 fac=5 idx=36 draw=2661 best=3667
+BASE n=5 idx=45 fac=5 a2=0 base=7 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=3 p1=1 p2=-1 div=3 human=5 round=61
+TAIL n=5 fac=7 idx=0 base=7 div=45 human=32 round=61
+SC n=5 fac=5 idx=45 final=7
+DRAW n=5 fac=5 idx=45 draw=274 best=3667
+WIN n=1 fac=5 idx=22 round=61
+TECH n=1 idx=22 param1=5 round=61
+ST n=1 addr=0x957ba8 val=22 fac=5 round=61
+RB addr=0x957ba8 mem=22
+CTRL n=1 round=61
+BASE n=6 idx=5 fac=3 a2=0 base=5 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=0 bc=0 e488=1 p1=-1 p2=-1 div=1 human=0 round=62
+TAIL n=6 fac=5 idx=0 base=5 div=2 human=8 round=62
+BASE n=7 idx=6 fac=6 a2=0 base=18 ac4=6670 T0=3 T4=1 T8=2 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=7 p1=-1 p2=-1 div=7 human=2 round=62
+TAIL n=7 fac=18 idx=1 base=18 div=6 human=64 round=62
+BASE n=8 idx=22 fac=6 a2=0 base=14 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=7 p1=1 p2=2 div=7 human=1 round=62
+TAIL n=8 fac=14 idx=3 base=14 div=22 human=64 round=62
+BASE n=9 idx=48 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=7 p1=4 p2=0 div=7 human=1 round=62
+TAIL n=9 fac=25 idx=5 base=25 div=48 human=64 round=62
+BASE n=10 idx=5 fac=3 a2=0 base=5 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=0 bc=0 e488=1 p1=-1 p2=-1 div=1 human=0 round=62
+TAIL n=10 fac=5 idx=0 base=5 div=2 human=8 round=62
+BASE n=11 idx=6 fac=6 a2=0 base=18 ac4=6670 T0=3 T4=1 T8=2 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=7 p1=-1 p2=-1 div=7 human=2 round=62
+TAIL n=11 fac=18 idx=1 base=18 div=6 human=64 round=62
+BASE n=12 idx=22 fac=6 a2=0 base=14 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=7 p1=1 p2=2 div=7 human=1 round=62
+TAIL n=12 fac=14 idx=3 base=14 div=22 human=64 round=62
+BASE n=13 idx=48 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=7 p1=4 p2=0 div=7 human=1 round=62
+TAIL n=13 fac=25 idx=5 base=25 div=48 human=64 round=62
+CTRL n=2 round=62
+ENT n=2 fac=4 ret=0x5aaff3 round=63
+CALL n=2 fac=4 round=63
+BASE n=14 idx=3 fac=4 a2=0 base=11 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=-1 p2=-1 div=3 human=1 round=63
+TAIL n=14 fac=11 idx=2 base=11 div=3 human=16 round=63
+SC n=6 fac=4 idx=3 final=12
+DRAW n=6 fac=4 idx=3 draw=1704 best=-999
+BASE n=15 idx=5 fac=4 a2=0 base=5 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=-1 p2=-1 div=3 human=0 round=63
+TAIL n=15 fac=5 idx=0 base=5 div=5 human=16 round=63
+SC n=7 fac=4 idx=5 final=6
+DRAW n=7 fac=4 idx=5 draw=280 best=1704
+BASE n=16 idx=22 fac=4 a2=0 base=10 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=1 p2=2 div=3 human=1 round=63
+TAIL n=16 fac=10 idx=3 base=10 div=22 human=16 round=63
+SC n=8 fac=4 idx=22 final=11
+DRAW n=8 fac=4 idx=22 draw=215 best=1704
+BASE n=17 idx=48 fac=4 a2=0 base=9 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=4 p2=0 div=3 human=0 round=63
+TAIL n=17 fac=9 idx=5 base=9 div=48 human=16 round=63
+SC n=9 fac=4 idx=48 final=9
+DRAW n=9 fac=4 idx=48 draw=322 best=1704
+BASE n=18 idx=59 fac=4 a2=0 base=23 ac4=6670 T0=3 T4=0 T8=4 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=0 bc=0 e488=3 p1=45 p2=60 div=3 human=4 round=63
+TAIL n=18 fac=23 idx=0 base=23 div=59 human=16 round=63
+SC n=10 fac=4 idx=59 final=46
+DRAW n=10 fac=4 idx=59 draw=2122 best=1704
+WIN n=2 fac=4 idx=59 round=63
+TECH n=2 idx=59 param1=4 round=63
+ST n=2 addr=0x955aec val=59 fac=4 round=63
+RB addr=0x955aec mem=59
+CTRL n=3 round=63
+CTRL n=4 round=64
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf1b8232c in __kernel_vsyscall ()
+[Inferior 1 (process 347970) detached]
