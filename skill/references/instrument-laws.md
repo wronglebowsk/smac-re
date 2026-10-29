@@ -189,3 +189,14 @@ for the watched records (m99p1: 27 of 37 store read-backs vanished at 0x5aaef1 =
 the read-back bp ONE instruction later and read the memory (`*(int *)($esi+0x94d7f8)`), not the
 register that held the value. Also: a poke is evidence only if the CONSUMER reads it — prove the
 value at the consumer site (m99p1: [0x94d6a4] poked -5, read back -5, live 0 at 0x4f3558).
+
+## A /proc/pid/mem PEEK IS INVISIBLE to a hardware watchpoint (s155, m100mult1)
+gdb decides whether to REPORT a trap by comparing the watched value against its OWN last snapshot, and
+that snapshot only moves at a stop gdb reports. A poke written by another process through
+`/proc/pid/mem` is invisible until something else changes the word: when the game later stores the
+ORIGINAL value back, gdb sees "unchanged" and logs NOTHING. m100mult1: fac2, whose multiplier is 0,
+logged 0 of its 4 rebuild stores while three other factions logged 4/4 — an instrument artifact, not a
+game fact. Therefore: (1) put watchpoints on fields whose value actually changes in the window; (2) to
+prove a writer ran on a stable-valued field, POKEd it and read the restore back from /proc — the
+poke-undo IS the evidence, not the log; (3) never gate "no writer" on "zero events" for a field that
+can be rewritten with the same value.
