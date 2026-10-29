@@ -197,7 +197,7 @@ silent
 set $n_ctrl = $n_ctrl + 1
 set $n_snap = $n_snap + 1
 set $off = ($n_snap - 1) * (0x41b80 + 0x4000 - 0x94e488)
-dump binary memory SNAPFILE 0x94e488 0x94e488 + 0x41b80 + 0x4000 - 0x94e488
+dump binary memory SNAPFILE 0x94e488 0xd69c80
 printf "CTRL n=%d snap=%d off=%d round=%d\n", $n_ctrl, $n_snap, $off, *(int *)0x985afc
 continue
 end
@@ -330,7 +330,7 @@ def sim_tail(block, Tc, fac, bc, a2, ctrlw, bandb, maskv):
             for edi in range(1, 8):
                 dw = ctrlw[fac + edi]   # 0x5a9639 [0x94d448 + (fac+edi)*4]
                 gated = (not (dw & 0x8)) or ((dw & 0x3) and (dw & 0x20))   # 0x5a9640/45/4a
-                tbzero = BANDS * edi + esi >= len(bandb) or bandb[BANDS * edi + esi] == 0
+                tbzero = BANDSZ * edi + esi >= len(bandb) or bandb[BANDSZ * edi + esi] == 0
                 if not gated and not tbzero:
                     d2 = div * 2 if human else div
                     s += idiv(mult * Tc, d2)
@@ -361,9 +361,14 @@ def main():
           "(demand*m+1)*cost summed over the four (cost,demand) pairs, m from arg2/0x985ac4 bit 0x200, "
           "halved by the inert-pair rule; G3 (THE MILESTONE) FINAL == BASE + the tail simulated from "
           "each traced candidate's faction category block (divisor [blk+0], category byte [blk+0x1000+esi], "
-          "multiplier [blk+0x1860+esi], Tc = the tech record's +0xc cost, band dwords [blk+0x2000+j], "
-          "band tables [blk+0x2bc0+esi*32], human-double of the divisor by 0x985b10 & (1<<fac), the "
-          "cat-7 gate on the caller slot [ebp-0x18] and the cat-0 factor from [blk+0xdc4] vs [blk+0xdc8]) "
+          "multiplier [blk+0x1860+esi], Tc = the tech record's +0xc cost; cat 7 fires only when bc != 0 "
+          "(bc = [ebp-0x18], the callee's OWN prologue popcount of bit 0x10 over the 8 control dwords "
+          "at 0x94d448, NOT a caller slot) and the faction is NOT human, divisor undoubled; cat 2 adds "
+          "mult*Tc*4/(div*(1+human)); cat 0 uses factor 4 if [blk+0xdc4]>=[blk+0xdc8] else 2; any other "
+          "category runs an inner edi=1..7 loop over the GLOBAL band tables 0x950664+edi*0x20bc (the "
+          "edi-th table's OWN byte at +esi must be nonzero -- a SECOND multiplier, not the block byte), "
+          "skipped whole when arg2 == the faction, gated on the control dword [0x94d448+(fac+edi)*4] "
+          "needing bit 3 set and not (bits 0-1 set with bit 5 clear), adding mult*Tc/(div*(1+human))) "
           "-- and the shape must DISCRIMINATE: >=3 nonzero-tail candidates per window, >=1 with "
           "final != base, >=1 where the naive cat-7-only model is wrong; G4 winner holds the max draw "
           "and no HIGHER-index candidate ties it; G5 winner == strictly-largest draw and every draw in "
@@ -589,7 +594,8 @@ def main():
             if p != c["base"]:
                 mism.append((w["fac"], c["idx"], p, c["base"], dict(c)))
             if blk is not None and len(blk) == BLOCKSZ:
-                t, nterm, naive = sim_tail(blk, STRIDE * w["fac"], c["Tc"], c["human"])
+                t, nterm, naive = sim_tail(blk, c["Tc"], w["fac"], c["bc"], c["a2"],
+                                            ctrlw, bandb, mask)
                 c["tail"], c["nterm"], c["naive"] = t, nterm, naive
                 c["pf"] = s32(c["base"] + t)
                 c["pnaive"] = s32(c["base"] + naive)
