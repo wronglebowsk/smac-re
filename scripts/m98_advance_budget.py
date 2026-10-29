@@ -376,6 +376,21 @@ def main():
         print(f"  boundary {k}: rc={r.returncode} t={time.time()-t0:.0f}s "
               f"{r.stdout.strip().splitlines()[-1] if r.stdout.strip() else ''}", flush=True)
 
+    # SETTLE before detaching: the turn driver returns as soon as the round counter moves,
+    # but the AI factions' upkeep - where FUN_005aadf0 recomputes the threshold - is still
+    # playing out.  Detaching early leaves stores UNLOGGED (m98budget3: fac1/fac2 recomputed
+    # after the detach, so the read-back had no event to compare against - an artifact, not a
+    # law).  Control returns to the human player only once every segment has run.
+    human = (G["mask"] & -G["mask"]).bit_length() - 1
+    waited = 0
+    while waited < 60:
+        with open(f"/proc/{pid}/mem", "rb", 0) as mm:
+            cp = struct.unpack("<i", M.rd(mm, CP_ADDR, 4))[0]
+        if cp == human:
+            break
+        time.sleep(2)
+        waited += 2
+    print(f"  settle: cp back to the human fac{human} after {waited}s", flush=True)
     try:
         os.kill(g.pid, signal.SIGINT)
     except ProcessLookupError:
