@@ -1,2 +1,3 @@
-M105 ACCEPTED (s161, branch milestone/m105): m105s4 PASS 17/17 — the record block is BUILT AT PROCESS START by FUN_005791c0 (count store reports 0x579b12); 0 events at the 8 M103 setup sites; 0 CNT stores in the load window and the -77 sentinel came back unlogged (OPEN = M106).
-merged: NO (submit pending) | next: python3 scripts/milestone.py submit; then gh pr checks + milestone.py merge <n>
+M106 RUNNING (cron, milestone/m106): the invisible load-window restore - ANSWERED, acceptance pending r7.
+m106r5 FAIL 14/15 (only G1: the traced driver burned 1200s on post-OK dialogs; every evidence gate green). m106r6 FAIL 12/15 (G1 PASS with the 1800s budget; G5/G6/G13 lost the save fd because the loader SEEKS, so the exact byte-sum burst splits). Fix = the TAIL-AND-EOF LAW (a read of size mod 4096 = 875 B inside an fd-run ending in EOF); validated offline on the r5 AND r6 logs (both give 1 save run, the 0x927c84 region read, covered facs 1-6).
+m106r7 RUNNING -> scratch/m106r7.out | merged: NO | next: tail -25 scratch/m106r7.out

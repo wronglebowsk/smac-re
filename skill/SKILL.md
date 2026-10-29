@@ -31,6 +31,8 @@ instrument `scripts/m72_gate_watch.py`**), slots
 1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
 NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
 reading, the live write-enumeration acceptance in §9, and §10 (why a site never fires: its gates, the block's common exit, who sets the gate global)),
+`ptrace-level-probes.md` (strace raw args = read buffer POINTERS, soft-dirty/pagemap, maps before/after,
+one tracer per task, the candidate table for "who wrote these bytes with no store in my window"),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `screen-read.md` (why ONE OCR pass is not a screen read: the HUD's two rows, their measured read
 rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-formats.md`,
@@ -139,7 +141,7 @@ from `session_brief.py` (a pasted prompt that names one is usually stale).
 When Paul asks for the loop to be **scheduled** rather than pasted, the cron prompt must NOT bake the
 milestone id: read it from `NEXT_PROMPT.md` (`## THE PICK`, else the first open `## STILL OPEN` item),
 stop rather than invent when nothing is open, and refuse a competing measurement while
-`SESSION_CURSOR.md` says a run is in flight — the box is one Wine process, so a second gdb attach or
+`SESSION_CURSOR.md` says a run is in flight, and the cursor is only a hint — a cron-supplied kickoff and a pasted one can both be mid-run at once, so prove ownership from `~/.hermes/processes.json` and the cron `executions` table before you refuse (or start) — the box is one Wine process, so a second gdb attach or
 mineral poke confounds the first run.
 Keep every tool result small:
 grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dumps in
@@ -193,7 +195,8 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   `execute_code` cell that prints only the size delta — the file never enters context and a wrapped
   section lands on the first try.
 - **A gdb breakpoint that reads the WRONG register prints garbage and can kill the whole run**: the printf fault (`Cannot access memory at address 0xa774`) aborts the breakpoint's commands block and gdb DETACHES the inferior, so the run dies mid-window. Read the store's own bytes first — `mov eax,[ebp-0x4]` followed by `mov [eax+0xa774],-1` means the object is in EAX at that address, whatever the pseudo-code called it. The same trap applies to SIGNS: a 32-bit sentinel printed with `%d` prints NEGATIVE (0xffffd8f1 -> -9999), so print it as `0x%x` and gate on the unsigned constant, never on the positive decimal.
-- **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them — and keep an untracked deliverable OUTSIDE the worktree, because a sibling's `git clean`/`git checkout` deletes untracked files with no warning (a prompt file written into the repo root vanished mid-turn) — re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last; every shell the agent spawns carries `hermes-snap-<session-hash>.sh` in its own argv, so a hash that is not yours names a LIVE sibling even while it sits between commands and before it has committed anything — `git log` shows nothing foreign in exactly that window, so the process table, not the commit log, is the early warning. When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on `pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance (`references/git-workflow.md`).
+- **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them — and keep an untracked deliverable OUTSIDE the worktree, because a sibling's `git clean`/`git checkout` deletes untracked files with no warning (a prompt file written into the repo root vanished mid-turn) — re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last; every shell the agent spawns carries `hermes-snap-<session-hash>.sh` in its own argv, so a hash that is not yours names a LIVE sibling even while it sits between commands and before it has committed anything — `git log` shows nothing foreign in exactly that window, so the process table, not the commit log, is the early warning.
+  Cron-sibling ownership + collision etiquette: `references/git-workflow.md` §Sibling ownership.
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
@@ -338,7 +341,10 @@ The defeat was invisible because the trace carried only the map-wide base count,
   measured bytes fit NO model you wrote, suspect the MODEL (shift bounded by the window? by the
   region? by the array's capacity?), not the game. A read model is not a hypothesis about the game:
   fix it, say which shapes each version predicted, and re-accept on a shape you have not used yet. The same
-  applies to a record COUNT carried in from an earlier census: before arming anything, read the whole
+  applies to a record COUNT carried in from an earlier census (and to a file chunk: a helper handed a
+  buffer that was ALREADY sliced from some base must index it RELATIVE to the slice — re-adding the base
+  offset runs past the end and crashes the harness before the first measurement); before arming anything,
+  read the whole
   `stride × count` region straight from `/proc/<pid>/mem` (no gdb — the cheapest measurement available)
   and group it by the band the code's own index arithmetic computes. A "256-record" type table was really
   8 × 64, and every index above the assumed bound was an ordinary record of another faction.
@@ -438,7 +444,8 @@ Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical a
 (52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
 zeros-fraction pitfall. Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
-`FUN_00582260`); `FUN_00598340` is the magic/version dispatcher.
+`FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
+`references/ptrace-level-probes.md` §The .SAV chain.
 
 ## Format core (verified; details in FINDINGS.md)
 
@@ -550,7 +557,8 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). A repo brief that shells out to `pgrep`
 (`scripts/session_brief.py`) RAISES a `CalledProcessError` traceback instead of printing a verdict when
 `terran.exe` is down — fresh-load (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`)
-before reading anything out of it, and do not take its silence for BLOCKED.
+before reading anything out of it, and do not take its silence for BLOCKED. It reads the LIVE box, so it runs for
+MINUTES: request `timeout 400` (or background it) instead of the default, and read a timeout as slow, not as hung.
 - **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
   `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors
   "claims not to support" even when focus is perfect). The authoritative check is
@@ -697,6 +705,13 @@ lengths/offsets in Python and bake them as hex; one dump file per RUN with an `o
 beats a per-hit filename (a second dump to the same path overwrites the first); **`append binary
 memory` is what makes a per-hit series work** — plus loop-entry-vs-branch-target, the scan-window rule
 and the snapshot-cadence law: `references/gdb-command-list.md`.
+- **A hardware watchpoint cannot see a KERNEL write**: Linux installs a user DR breakpoint with the
+  exclude-kernel bit, so bytes landing via `copy_to_user` inside a `read()` change with zero events —
+  that is what a "silent census" means when a file read's destination IS the watched region. The fix is
+  a different LAYER, not a re-armed watchpoint: strace `-e raw=` (prints the read's BUFFER POINTER) +
+  `clear_refs=4`/pagemap soft-dirty + maps before/after; strace and gdb cannot both ptrace one task.
+  Table, invocation and parsing laws:
+  `references/ptrace-level-probes.md`.
 Never build the gdb command list by running a Python `%`-format over
 it: the template is full of `%d`/`%x` printf conversions and Python eats the first ones as its own
 arguments, silently rewriting the breakpoints. Bake addresses and constants as literals, or substitute
