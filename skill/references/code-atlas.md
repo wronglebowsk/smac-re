@@ -449,3 +449,42 @@ stores to `[reg+0xd0]` exist in .text: these two + 0x5ba9e8 (base-creation zero 
 NOT credit writers. gdb LAW: a hardware watchpoint only REPORTS a VALUE CHANGE; count stores with silent
 bps AT the store instruction — scripts/m97_credit_watch.py (4 hw watchpoints on a row's income chain +
 bps at 0x4e9557/0x4e957f, register-only condition `$eax==row`).
+
+## M98 (s153): `[fac*8380+0x94d800]` is the ADVANCE THRESHOLD — a memo of FUN_005aab70(faction)
+
+- FIVE references to 0x94d800 in all of .text: reads 0x593483 (FUN_0058fa40,
+  `FUN_005aab70()/2 <= [fac*8380+0x94d7f8]`, shard_013.c:35399) and 0x5aab8f (aab70's own cache
+  read); writes 0x59f0c7 `= -1` (FUN_0059ec90), 0x5aaf67 `= -1` and 0x5aaf79 `= eax`
+  (FUN_005aadf0's grant path, `call 0x5aab70` at 0x5aaf71 between them).
+- `FUN_005aadf0(faction, p)` (per-base upkeep tail 0x4f5c2e FUN_004f34b0 <- FUN_004f5a70 <-
+  0x5206d3): `[+0x94d7f8] += p` — the AI legs 0x5aae04-0x5aae71 double p, the human never;
+  if (netgame || slot >= 0) { t = aab70(fac); if (slot > 0x58) acc += p; if (t <= acc) {
+  print "Researched Advance"; FUN_005aaa20(fac) consumes the work-item slot; FUN_0047f590(fac,
+  item); acc = 0 @0x5aaf5c; field = -1 @0x5aaf67; field = aab70(fac) @0x5aaf79 } }; the
+  `[+0x94d430] & 0x40` leg prints "Secret Advance", clears the bit and consumes a SECOND item.
+- aab70(fac) returns the memo UNCHANGED when it is >= 0; only the -1 leg recomputes:
+  L = clamp([+0x94d804]*2 - [+0x94d790] + [+0x94d78c], 2, 9999); v5 = L/2; human =
+  (1<<fac)&[0x985b10]: x = [+0x94d438] -> 4x+8, mul = 3; AI: x = era (+1 if < 3) -> 29-3x,
+  mul = era; v2 = 12-v5 replaced by min(x, v5+12) when it is <= both; cap = ((v2+x2)*mul)/10+1
+  with x2 = ((ac4&0x20|0x40)>>5 * v2)>>1 clamped by v5 - [0x985afc]/((ac4&0x20|0x40)>>3);
+  m2 = (((max7/2 - mul) - v5)+7)/(8-mul) clamped by cap, max7 = max over facs 1..7 of
+  ([+0x94d78c] + 2*[+0x94d804]); v5b = clamp(v5 - sign([+0x94d728]), 1, 99999);
+  res = clamp([0x92a390]*v5b*((v2+x2)-m2)/56, 1, 99999999) after the [0x92a298] and
+  [0x927a88+fac*1436] percent legs and +50% iff ac4&0x20.
+- GHIDRA REASSIGNS local_8 to 3 (human) / era (AI) before the `*local_8/10+1` cap AND the
+  `(8-local_8)` divisor — using the clamped L there gave 68/101/151 where the game holds
+  64/77/166. Two other C translations that bite: the comma test
+  `((v2 <= x && v2 <= v4) && (v2 = x, v4 < x))` ASSIGNS x to v2 and then tests v4 < x; and
+  `iVar7 + (uint)(iVar7 < 3)` is a +1 when the value is below 3.
+- Harness `scripts/m98_advance_budget.py`: silent bps at 0x5aaf5c/0x5aaf67/0x5aaf79 + 0x59f0c7
+  + the aab70 ENTRY (arg is `[esp+4]` — the prologue has not run, ebp+8 is the CALLER's frame),
+  one HARDWARE watchpoint on a faction's field, `--arm-facs 1-7 --arm-by 1` pokes the
+  accumulator to field+1 per boundary to arm the grant, `--predict` prints the model table
+  without touching the game, and gdb is detached only after cur_player returns to the human.
+- Three laws this milestone paid for: a watchpoint REPORTS `store_pc + instruction length`
+  (0x5aaf67+10 = 0x5aaf71, 0x5aaf79+6 = 0x5aaf7f, 0x59f0c7+10 = 0x59f0d1) — gate on those, not
+  on the store addresses; the turn driver RETURNS WHILE THE AI UPKEEP IS STILL PLAYING, so a
+  detach at rc=0 loses the last recomputes (unlogged stores, read-back mismatch); and gdb's
+  detach noise `Thread N "terran.exe" received signal SIGINT` + `[Switching to LWP n]` has to
+  be whitelisted before a parse gate can be green.
+

@@ -1,3 +1,3 @@
-M97 ACCEPTED (session 152) | acceptance m97credit3 PASS 11/11 (ONE invocation) | merged? NO - submit+merge pending | milestone/m97
-FINDING: base+0xd0 (credit) is RECOMPUTED EVERY ROUND by FUN_004e93f0 (0x4e9557 = [+0xc0]-[+0xf0], 0x4e957f -= [+0xe0], mirror 0x4e9590 -> +0x94); callers FUN_004f5a70 (0x4f5ad2/0x4f5b46; itself 0x5206d3) + recalc helper FUN_004eb6b0 (0x4eb6db). "Init-only" trap RETRACTED. Docs written: SESSION_NOTES s152, NAMED M97 block, NEXT_PROMPT (pick = M98 the [fac*8380+0x94d800] sibling), skill code-atlas M97 leg.
-NEXT: rsync skill -> git add -A && commit -> python3 scripts/gate.py --base main -> milestone.py submit -> gh pr checks <n> -> milestone.py merge <n>
+M98 ACCEPTED: m98budget4 PASS 11/11 (ONE invocation, m54b_clean r60->62, 13 triples, 13/13 stores == model). Merged? NOT YET.
+Next: git add -A && git commit -m 'M98: checkpoint'; python3 scripts/gate.py --base main; python3 scripts/milestone.py submit --title ...; gh pr checks <n>; python3 scripts/milestone.py merge <n>.
+Branch milestone/m98. Docs+skill written; nothing else in flight.

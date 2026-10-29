@@ -1,0 +1,122 @@
+[New LWP 791916]
+[New LWP 791915]
+[New LWP 791914]
+[New LWP 791913]
+[New LWP 791912]
+[New LWP 791911]
+[New LWP 791908]
+[New LWP 791905]
+[New LWP 791904]
+[New LWP 791903]
+[New LWP 791902]
+[New LWP 791901]
+[New LWP 791900]
+[New LWP 791899]
+[New LWP 791898]
+[New LWP 791897]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf528c32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x953a34
+Breakpoint 2 at 0x5aaf5c
+Breakpoint 3 at 0x5aaf67
+Breakpoint 4 at 0x5aaf79
+Breakpoint 5 at 0x59f0c7
+Breakpoint 6 at 0x5aab70
+ARMED 1 hw watchpoints at 0x953a34; 5 silent bps at 0x5aaf5c 0x5aaf67 0x5aaf79 0x59f0c7 0x5aab70
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=58 cp=3
+M98S A4 pc=0x5aab70 fac=4 cached=166 ret=0x5aaf07 round=58 cp=4
+M98S A0 pc=0x5aaf5c fac=4 acc=175 field=166 slot=-1 flag=0 round=58 cp=4
+M98S A1 pc=0x5aaf67 fac=4 old=166 acc=0 round=58 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=-1 ret=0x5aaf76 round=58 cp=4
+M98S A2 pc=0x5aaf79 fac=4 val=184 old=-1 d78c=20 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=58 ac4=6670 mask=8 g298=100 g390=45 m0=12 m1=15 m2=14 m3=20 m4=12 m5=13 m6=10 round=58 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=184 ret=0x5aaf07 round=58 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=184 ret=0x5aaf07 round=58 cp=4
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=58 cp=4
+M98S A4 pc=0x5aab70 fac=5 cached=81 ret=0x5aaf07 round=58 cp=5
+M98S A0 pc=0x5aaf5c fac=5 acc=85 field=81 slot=-1 flag=0 round=58 cp=5
+M98S A1 pc=0x5aaf67 fac=5 old=81 acc=0 round=58 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=-1 ret=0x5aaf76 round=58 cp=5
+M98S A2 pc=0x5aaf79 fac=5 val=101 old=-1 d78c=14 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=58 ac4=6670 mask=8 g298=100 g390=45 m0=12 m1=15 m2=14 m3=20 m4=14 m5=13 m6=10 round=58 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=101 ret=0x5aaf07 round=58 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=101 ret=0x5aaf07 round=58 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=101 ret=0x5aaf07 round=58 cp=5
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=58 cp=5
+M98S A4 pc=0x5aab70 fac=6 cached=77 ret=0x5aaf07 round=58 cp=6
+M98S A0 pc=0x5aaf5c fac=6 acc=80 field=77 slot=-1 flag=268435456 round=58 cp=6
+M98S A1 pc=0x5aaf67 fac=6 old=77 acc=0 round=58 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=-1 ret=0x5aaf76 round=58 cp=6
+M98S A2 pc=0x5aaf79 fac=6 val=115 old=-1 d78c=15 d790=0 d804=0 d728=-2 d438=3 pct=100 era=2 afc=58 ac4=6670 mask=8 g298=100 g390=45 m0=12 m1=15 m2=14 m3=20 m4=14 m5=15 m6=10 round=58 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=115 ret=0x5aaf07 round=58 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=115 ret=0x5aaf07 round=58 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=115 ret=0x5aaf07 round=58 cp=6
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=58 cp=6
+M98S A4 pc=0x5aab70 fac=7 cached=64 ret=0x5aaf07 round=58 cp=7
+M98S A0 pc=0x5aaf5c fac=7 acc=66 field=64 slot=-1 flag=0 round=58 cp=7
+M98S A1 pc=0x5aaf67 fac=7 old=64 acc=0 round=58 cp=7
+M98S A4 pc=0x5aab70 fac=7 cached=-1 ret=0x5aaf76 round=58 cp=7
+M98S A2 pc=0x5aaf79 fac=7 val=81 old=-1 d78c=12 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=58 ac4=6670 mask=8 g298=100 g390=45 m0=12 m1=15 m2=14 m3=20 m4=14 m5=15 m6=12 round=58 cp=7
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=58 cp=7
+M98S A4 pc=0x5aab70 fac=1 cached=81 ret=0x5aaf07 round=59 cp=1
+M98S A0 pc=0x5aaf5c fac=1 acc=84 field=81 slot=-1 flag=0 round=59 cp=1
+M98S A1 pc=0x5aaf67 fac=1 old=81 acc=0 round=59 cp=1
+M98S A4 pc=0x5aab70 fac=1 cached=-1 ret=0x5aaf76 round=59 cp=1
+M98S A2 pc=0x5aaf79 fac=1 val=101 old=-1 d78c=14 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=59 ac4=6670 mask=8 g298=100 g390=45 m0=14 m1=15 m2=14 m3=20 m4=14 m5=15 m6=12 round=59 cp=1
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=59 cp=1
+M98S A4 pc=0x5aab70 fac=2 cached=112 ret=0x5aaf07 round=59 cp=2
+M98S A0 pc=0x5aaf5c fac=2 acc=114 field=112 slot=-1 flag=67108864 round=59 cp=2
+M98S A1 pc=0x5aaf67 fac=2 old=112 acc=0 round=59 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=-1 ret=0x5aaf76 round=59 cp=2
+M98S A2 pc=0x5aaf79 fac=2 val=128 old=-1 d78c=17 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=59 ac4=6670 mask=8 g298=100 g390=45 m0=14 m1=17 m2=14 m3=20 m4=14 m5=15 m6=12 round=59 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=128 ret=0x5aaf07 round=59 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=128 ret=0x5aaf07 round=59 cp=2
+M98S A4 pc=0x5aab70 fac=2 cached=128 ret=0x5aaf07 round=59 cp=2
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=59 cp=2
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x5aaf07 round=59 cp=3
+M98S A4 pc=0x5aab70 fac=3 cached=86 ret=0x445aac round=59 cp=3
+M98S A0 pc=0x5aaf5c fac=3 acc=87 field=86 slot=72 flag=0 round=59 cp=3
+M98S A1 pc=0x5aaf67 fac=3 old=86 acc=0 round=59 cp=3
+M98W WP pc=0x5aaf71 new=-1 fac=3 acc=0 round=59 cp=3
+M98S A4 pc=0x5aab70 fac=3 cached=-1 ret=0x5aaf76 round=59 cp=3
+M98S A2 pc=0x5aaf79 fac=3 val=112 old=-1 d78c=16 d790=0 d804=0 d728=2 d438=2 pct=100 era=2 afc=59 ac4=6670 mask=8 g298=100 g390=45 m0=14 m1=17 m2=16 m3=20 m4=14 m5=15 m6=12 round=59 cp=3
+M98W WP pc=0x5aaf7f new=112 fac=3 acc=0 round=59 cp=3
+M98S A4 pc=0x5aab70 fac=4 cached=184 ret=0x5aaf07 round=59 cp=4
+M98S A0 pc=0x5aaf5c fac=4 acc=193 field=184 slot=-1 flag=0 round=59 cp=4
+M98S A1 pc=0x5aaf67 fac=4 old=184 acc=0 round=59 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=-1 ret=0x5aaf76 round=59 cp=4
+M98S A2 pc=0x5aaf79 fac=4 val=212 old=-1 d78c=22 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=59 ac4=6670 mask=8 g298=100 g390=45 m0=14 m1=17 m2=16 m3=22 m4=14 m5=15 m6=12 round=59 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=212 ret=0x5aaf07 round=59 cp=4
+M98S A4 pc=0x5aab70 fac=4 cached=212 ret=0x5aaf07 round=59 cp=4
+M98S A4 pc=0x5aab70 fac=3 cached=112 ret=0x445aac round=59 cp=4
+M98S A4 pc=0x5aab70 fac=5 cached=101 ret=0x5aaf07 round=59 cp=5
+M98S A0 pc=0x5aaf5c fac=5 acc=105 field=101 slot=-1 flag=0 round=59 cp=5
+M98S A1 pc=0x5aaf67 fac=5 old=101 acc=0 round=59 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=-1 ret=0x5aaf76 round=59 cp=5
+M98S A2 pc=0x5aaf79 fac=5 val=128 old=-1 d78c=16 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=59 ac4=6670 mask=8 g298=100 g390=45 m0=14 m1=17 m2=16 m3=22 m4=16 m5=15 m6=12 round=59 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=128 ret=0x5aaf07 round=59 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=128 ret=0x5aaf07 round=59 cp=5
+M98S A4 pc=0x5aab70 fac=5 cached=128 ret=0x5aaf07 round=59 cp=5
+M98S A4 pc=0x5aab70 fac=3 cached=112 ret=0x445aac round=59 cp=5
+M98S A4 pc=0x5aab70 fac=6 cached=115 ret=0x5aaf07 round=59 cp=6
+M98S A0 pc=0x5aaf5c fac=6 acc=117 field=115 slot=-1 flag=268435456 round=59 cp=6
+M98S A1 pc=0x5aaf67 fac=6 old=115 acc=0 round=59 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=-1 ret=0x5aaf76 round=59 cp=6
+M98S A2 pc=0x5aaf79 fac=6 val=144 old=-1 d78c=17 d790=0 d804=0 d728=-2 d438=3 pct=100 era=2 afc=59 ac4=6670 mask=8 g298=100 g390=45 m0=14 m1=17 m2=16 m3=22 m4=16 m5=17 m6=12 round=59 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=144 ret=0x5aaf07 round=59 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=144 ret=0x5aaf07 round=59 cp=6
+M98S A4 pc=0x5aab70 fac=6 cached=144 ret=0x5aaf07 round=59 cp=6
+M98S A4 pc=0x5aab70 fac=3 cached=112 ret=0x445aac round=59 cp=6
+M98S A4 pc=0x5aab70 fac=7 cached=81 ret=0x5aaf07 round=59 cp=7
+M98S A0 pc=0x5aaf5c fac=7 acc=83 field=81 slot=-1 flag=0 round=59 cp=7
+M98S A1 pc=0x5aaf67 fac=7 old=81 acc=0 round=59 cp=7
+M98S A4 pc=0x5aab70 fac=7 cached=-1 ret=0x5aaf76 round=59 cp=7
+M98S A2 pc=0x5aaf79 fac=7 val=101 old=-1 d78c=14 d790=0 d804=0 d728=0 d438=3 pct=100 era=2 afc=59 ac4=6670 mask=8 g298=100 g390=45 m0=14 m1=17 m2=16 m3=22 m4=16 m5=17 m6=14 round=59 cp=7
+M98S A4 pc=0x5aab70 fac=3 cached=112 ret=0x445aac round=59 cp=7
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf528c32c in __kernel_vsyscall ()
+[Inferior 1 (process 791846) detached]
