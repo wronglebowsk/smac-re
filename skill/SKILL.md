@@ -706,12 +706,11 @@ beats a per-hit filename (a second dump to the same path overwrites the first); 
 memory` is what makes a per-hit series work** — plus loop-entry-vs-branch-target, the scan-window rule
 and the snapshot-cadence law: `references/gdb-command-list.md`.
 - **A hardware watchpoint cannot see a KERNEL write**: Linux installs a user DR breakpoint with the
-  exclude-kernel bit, so bytes that land via `copy_to_user` inside a `read()`/`pread()` syscall change
-  with zero events — which is exactly what a "silent census" means when the destination of a file read IS
-  the watched region. The fix is a different LAYER, not a re-armed watchpoint: strace with `-e raw=`
-  (raw args print the read's BUFFER POINTER; `-a 0` still prints content), plus `clear_refs=4` +
-  pagemap soft-dirty and maps before/after to separate "written in place" from "remapped" — and strace
-  and gdb cannot both ptrace one task. Table, invocation and parsing laws:
+  exclude-kernel bit, so bytes landing via `copy_to_user` inside a `read()` change with zero events —
+  that is what a "silent census" means when a file read's destination IS the watched region. The fix is
+  a different LAYER, not a re-armed watchpoint: strace `-e raw=` (prints the read's BUFFER POINTER) +
+  `clear_refs=4`/pagemap soft-dirty + maps before/after; strace and gdb cannot both ptrace one task.
+  Table, invocation and parsing laws:
   `references/ptrace-level-probes.md`.
 Never build the gdb command list by running a Python `%`-format over
 it: the template is full of `%d`/`%x` printf conversions and Python eats the first ones as its own
