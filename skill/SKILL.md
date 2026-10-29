@@ -85,7 +85,10 @@ sync in the same session, before the closing commit.
 
 - `milestone.py start <id>` resets the working tree to main: any footing carried from an unmerged
   branch (docs + scripts via `git checkout <branch> -- ...`) AND `SESSION_CURSOR.md` must be
-  re-written AFTER it, or the cursor reverts and a later write is refused as stale.
+  re-written AFTER it, or the cursor reverts and a later write is refused as stale. The kickoff ritual
+  reads `NEXT_PROMPT.md` BEFORE `start`, but `start` swaps that file for MAIN's copy — when the previous
+  session's update sits unmerged on its branch, the pre-start text is NOT what you patch: re-read the
+  sections after start and anchor edits on the post-start copy.
 - A list cursor read BEFORE the seek is the PREVIOUS cursor: the chooser pump seeks with
   `call 0x4026b0` (0x497717) and only then reads `[[c+0xc]+4]`; a node print at the pump entry
   (0x497704) shows the old node, so a value-vs-node gate fails on the instrument, not the game.
@@ -113,7 +116,9 @@ mid-sentence twice — the milestone was done and accepted, the paperwork never 
   checkpoint at ~25**, stop measuring at 30-40, close at 40-50.
 - **Cap ACCEPTANCE INVOCATIONS at three** (this budget is about judgment, not context): read WHY it
   failed, fix the instrument, re-run; the third failure IS the finding — write its numbers next to the
-  command that produced them and close. A dozen runs with no number burns evidence AND budget, and
+  command that produced them and close. When the failure was a harness PARSE or GROUPING bug, re-run the
+  FIXED parser over the failed run's log before spending the next invocation: the events may already
+  prove the model, and the fresh run is then only needed to make ONE invocation print PASS. A dozen runs with no number burns evidence AND budget, and
   every extra run risks the box (a mid-run kill hangs Wine).
 - Past ~150k tokens the session is finishing something, not starting it — terse closing only.
 - Before any step that can exceed ~2 minutes (gdb run, relaunch, evidence audit), overwrite
@@ -723,24 +728,25 @@ upkeep is still executing, so the last stores happen after the detach and log NO
 read-back gate on the instrument while every other gate is green
 (`references/instrument-laws.md`).**
 `references/instrument-laws.md` carries the header order, the containment recipe, DictReader trap,
-the watchpoint laws and the value-census laws.
+the watchpoint laws, the value-census laws, the printf-escape law and the event-grouping law.
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
 value — a class with no live instance logs zero hits at every method, whatever the window (recipes:
 `references/code-atlas.md`).
 Two more pre-arm checks, both cheap, both fatal if skipped:
-- **The readiness oracle can print a FIX that is unreachable on the current save.** `credit` is
-  `base+0xd0`, a save-LOADED field whose only writers are the player-record init stores — turns never
-  raise it on a base whose income the save left at 0, so looping the printed reload chain cannot clear
-  that reason. Before re-running a printed FIX, check the state it demands is reachable; when it is
-  not, take the per-boundary storage poke above the gate's price (readiness then passes on minerals
-  alone) and report the oracle's premise as false instead of reloading a second time.
+- **The readiness oracle can print a FIX that stays unsatisfied after you run it.** `credit` is
+  `base+0xd0`, RECOMPUTED EVERY ROUND by FUN_004e93f0 (M97: `[+0xc0] - [+0xf0] - [+0xe0]`; the
+  "init-only, turns never raise it" claim is RETRACTED) — it holds 0 when upkeep exceeds income, so the
+  reload chain restores a runnable box but will not clear the credit-0 line. That line blocks only the
+  PAY-SITE family (their gates need storage >= price — take the per-boundary storage poke above the
+  price); rebuild/upkeep censuses run green at credit 0 (M100/M102 did). Check the state a printed FIX
+  demands is actually reachable before looping it.
 - **A clean reload does NOT carry records created live in a previous session** — a prior run's new
   unit/type records are live state that no save holds, so yesterday's census is fiction after a
   reload. Re-census the watched slots from `/proc/pid/mem` in the same invocation that arms the
   harness, and make the harness assert armed == len(designed watch list) rather than a fixed floor:
-  arming fewer watchpoints than the design list silently drops half the slots from the window. **Check the save can HOST the experiment before you reload it**: `m54b_clean.SAV` loads at 2150 r50 — University Base only, `credit` 0, an EMPTY chooser candidate array — so an insert-driven run there dies at `item 2 not in candidate array []` however carefully the harness is armed: reloading to clear a stray modal costs the later state (2163 r63, candidates `[192,195,194,193,2,0,1,196]`) AND the experiment. Clear the modal itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
+  arming fewer watchpoints than the design list silently drops half the slots from the window. **Check the save can HOST the experiment before you reload it**: `m54b_clean.SAV` loads at 2150 r50 — University Base only, `credit` 0, and the chooser candidate array is ERA-DEPENDENT: after `m54g_prep` + one turn the INSERT lands even at minerals 0 / credit 0, but the FIRST enqueue attempt right after a turn-end can transiently print `item 2 not in candidate array []` — retry it once before blaming the save; reloading to clear a stray modal costs the later state (2163 r63, candidates `[192,195,194,193,2,0,1,196]`) AND the experiment. Clear the modal itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
 The
   census→live-enumeration method (filter the store census by call-graph reachability, condition each
   breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is

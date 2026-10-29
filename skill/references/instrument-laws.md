@@ -135,6 +135,9 @@ those sites log ZERO events while a hardware watchpoint on the same field proves
 - Read the site's bytes to pick the register, then diff the emitted `scratch/<tag>.gdb` against
   those bytes before attaching. The condition text is the cheapest thing in a run to get wrong and
   the most expensive to discover afterwards: it turns a real event into "the site never fires".
+  Verify the emitted file with a python `repr()` of its printf lines — backslash counts survive repr
+  and do NOT survive a bash-quoted grep pattern, so a shell-side check can flash "False" on correct
+  bytes while repr shows them exact.
 - Free self-check before arming: a printf body that prints `$ecx` as `base=0x%x` and a condition
   that DEREFERENCES `$ecx` contradict each other — one of the two is wrong, and the bytes decide.
 - **Zero breakpoint events plus live watchpoint events on the same field in the same window is an
@@ -233,3 +236,16 @@ can be rewritten with the same value.
   CALL line — group BACKWARD from the CALL. Forward grouping produced empty groups that failed
   every chain gate on perfect data (m102hit2 12/14, G3/G6 red, G4/G5/G7 green). Unwatched factions
   yield legitimately empty groups: skip them in chain gates, do not fail on them.
+- **Count printf SPECS against ARGS before the run.** A format/args mismatch — including a stray
+  `%%` in a gdb-script line that python never `%`-formats (TMPL blocks are `.replace`d, not formatted,
+  so `%%d` there is a literal percent) — ABORTS the whole sourced script and DETACHES at the first
+  hit, so the window collapses to the events before that breakpoint (m103d1/d2 both died this way
+  after 2 useful events). Assert it in the harness when you build the script.
+- **Calling a game function from gdb.** An inferior `call` is ABANDONED ("The program being debugged
+  stopped while in a function called from GDB") as soon as ANY breakpoint hits inside the callee — the
+  body still runs, so arm the store bps first and read the effect back from /proc (m103d3 got the
+  rebuild, but the call line said done=0). A MANUAL frame (`set $esp = $esp - 8`, write the two words,
+  `set $eip = func`) must put the RETURN ADDRESS at esp+0 and the ARG at esp+4 — cdecl order — and
+  save/restore eax/ecx/edx around it (the callee clobbers them; edi/esi/ebp are pushed by the prologue);
+  reversed words made param_1 = 0x520909 and SIGSEGVed terran.exe at 0x59ec34, which killed the box and
+  left a winedbg that had to be cleared before the next relaunch (m103d4/d5).

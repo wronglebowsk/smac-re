@@ -1,0 +1,61 @@
+[New LWP 969503]
+[New LWP 969502]
+[New LWP 969501]
+[New LWP 969500]
+[New LWP 969499]
+[New LWP 969498]
+[New LWP 969497]
+[New LWP 969496]
+[New LWP 969495]
+[New LWP 969494]
+[New LWP 969493]
+[New LWP 969492]
+[New LWP 969491]
+[New LWP 969490]
+[New LWP 969489]
+[New LWP 969488]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf554f32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x59ec00
+Breakpoint 2 at 0x59ec90
+Breakpoint 3 at 0x59ec26
+Breakpoint 4 at 0x59ec68
+Breakpoint 5 at 0x5a0440
+Breakpoint 6 at 0x5a0471
+Breakpoint 7 at 0x5a179e
+Breakpoint 8 at 0x59ec26
+Breakpoint 9 at 0x59ec68
+Breakpoint 10 at 0x5a0440
+Breakpoint 11 at 0x5a0471
+Breakpoint 12 at 0x5a179e
+Breakpoint 13 at 0x4dbf6f
+Breakpoint 14 at 0x4e061b
+Breakpoint 15 at 0x57ce48
+Breakpoint 16 at 0x57eee0
+Breakpoint 17 at 0x520909
+ARMED 17 silent bps at 0x59ec00 0x59ec90 0x59ec26 0x59ec68 0x5a0440 0x5a0471 0x5a179e 0x59ec26 0x59ec68 0x5a0440 0x5a0471 0x5a179e 0x4dbf6f 0x4e061b 0x57ce48 0x57eee0 0x520909
+M103S DADD fac=6 dest=0x959b0c old=0 src=75 round=61 cp=6
+M103S DADD fac=3 dest=0x9538d8 old=0 src=79 round=62 cp=3
+M103S STOP fac=3 round=62 cp=3
+callerr form 0: The program being debugged stopped while in a function called from GDB.
+Evaluation of the expression containing the function
+(at 0x0x59ec00) will be abandoned.
+When the function is done executing, GDB will silently stop.
+callerr form 1: The program being debugged stopped while in a function called from GDB.
+Evaluation of the expression containing the function
+(at 0x0x59ec00) will be abandoned.
+When the function is done executing, GDB will silently stop.
+callerr form 2: The program being debugged stopped while in a function called from GDB.
+Evaluation of the expression containing the function
+(at 0x0x59ec00) will be abandoned.
+When the function is done executing, GDB will silently stop.
+M103S CALL fac=3 done=0 form=-1 round=62 cp=3
+M103S RESET fac=3 base=0x953934 v0=0 v1=0 v2=0 v3=0 v4=0 v5=0 v6=0 v7=0 v8=0 v9=0 v10=0 round=62 cp=3
+M103S ADD fac=3 key=10 old=0 val=2 round=62 cp=3
+M103S ADD fac=3 key=8 old=0 val=-2 round=62 cp=3
+[Inferior 1 (process 969484) detached]
