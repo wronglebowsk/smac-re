@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 156, 2026-10-29)
+# NEXT_PROMPT.md — footing for the next session (session 158, 2026-10-29)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -17,7 +17,7 @@ Survivability: the kickoff's SESSION_CURSOR rule (<= 600 B, written BEFORE any s
 2 minutes); never `rm`/`git checkout --`; every doc write is an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92-M100 (#98-#104, #106-#107) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92-M100 (#98-#104, #106-#107), M102 (#109) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10), M101 (#108, the OFFLINE model hits 8/8 but the mult LAGS D by one accrual — never green in ONE invocation; superseded by M102).
 **M90-M99 (#95/#97-#104, #106), all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest
 draw, tail only arg2==0); TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block
 (39/39; block FROZEN within a round); the POST cascade 0x5a9747-0x5aa022 == the prereq-closure ladder
@@ -46,25 +46,29 @@ param_2 has ONE producer, FUN_004f34b0 (M99). All legs: skill code-atlas.md.
 ## THE PICK
 
 **M100 ACCEPTED (s155, `m100mult2` PASS 13/13): the multiplier IS slot 10 (last) of the 11-dword block
-`&DAT_0094d67c + fac*0x20bc`, REBUILT FROM ZERO every round by FUN_005a15a0**: reset `rep stos` 0x5a15b3
-(rep 0x5a15b5); 4 category adds - `*(int*)([fac*8380+0x94d658] + cat*4)` picks a record of 11 dwords at
-&DAT_0092babc + cat*0xd4 + rec*0x2c (rep 0x5a16db); the [fac*8380+0x94d700] array add (rep 0x5a17a0,
-only when param_5 == 0); clamps via &DAT_00927ac0 (type 4 = 0..999, type 10 = halve if <0). Caller
-**FUN_005a1830(fac)**: `call 0x5a1830` at 0x4dbf8e and **0x520904 inside FUN_005208f0** (the per-player
-turn sequence, family of M94's FUN_00556690 @0x52094f); live 16 CALL events at 0x520909, cp == fac
-16/16, 2 per faction per round; all 7 pokes (live+10) undone, mults {0,-2,0,2,0,0,-2,0} restored. THAT
-is why `.text` has only LOADS of 0x94d6a4. NAMED.
-**M101 (THE PICK): what FEEDS that block** - who writes [fac*8380+0x94d658] (the 4 record indices) and
-the source array [fac*8380+0x94d700] (its slot 10 gave fac3 +2 and fac6 -2; fac1's -2 came from a
-category record); what the &DAT_0092babc category records are (stride 0xd4 = 4 rows of 0x2c). Cheapest:
-read 0x94d658..0x94d677, 0x94d700..0x94d72b and the records for facs 1/3/6 from /proc, model slot 10's
-sum OFFLINE (no run), then 4 hw watchpoints on [fac*8380+0x94d728] x 4 factions in the
-`scripts/m100_mult_watch.py` shape. ALSO OPEN: FUN_0056df40's `inc [ebx+0x94d7f8]` (0x56e024); what
-FUN_004eaa10 builds base+0x104 from; why FUN_0059ec90's -1 store (0x59f0c7) never ran.
+`&DAT_0094d67c + fac*0x20bc`, REBUILT FROM ZERO every round by FUN_005a15a0; caller FUN_005a1830(fac),
+`call` at 0x4dbf8e and 0x520904 inside FUN_005208f0 (the per-player turn sequence), cp == fac. NAMED.**
+**M101 RUN (s156; PR #108 open, UNMERGED): the OFFLINE model hits 8/8 but
+the mult LAGS D by one accrual — never green in ONE invocation (feed2/3/4 9/10). SUPERSEDED by M102.**
+**M102 ACCEPTED (s157, `m102hit3` PASS 14/14): THE MODEL AT THE STORE SITES IS EXACT** — silent bps at
+0x5a16d9 (`mov [edi],eax`: edi = dest BYTE addr, ecx = row value, eax = old + ecx), 0x5a179e
+(`add [eax],edi`: eax = dest, edi = D value) and 0x5a1807 (clamp store), register-only conditions on
+A10 facs 1,2,3,6 + ENT 0x59ec00/0x59ec90 + CALL 0x520909; 36 CAT + 9 DADD events, every stored ==
+old + src AT the hit, chains 0 -> final, cp == fac 45/45, CLAMP 0 == predicted (no key-10 entry),
+ENT 0 AND D10 unmoved -> **THE ACCRUAL IS NOT PER-ROUND** (M101's +10 drift came from a trigger absent
+here or a POINTER-form writer). Instrument `scripts/m102_rebuild_at_hit.py` (`--predict`; M102_WFACS=;
+no pokes — bps fire on execution). NAMED.
+**M103 (THE PICK): who WRITES [fac*8380+0x94d700] (the D accumulator)** — the displacement census saw
+only 0x59ec68/0x5a0471 and BOTH ran 0x in three windows. (a) 4 hw watchpoints on [fac*8380+0x94d728]
+(facs 1,3,6 + one zero fac), `m100_mult_watch.py` shape, `--boundaries 2` — the M97 law: copied-register
+RMW evades displacement greps, the watchpoint sees them all; (b) if 0 events again, let the box
+AUTO-ADVANCE 2 rounds with NO driver and read D10 before/after (one variable: the driver absent);
+(c) pointer-form census. ALSO OPEN: what the 0x92babc category records ARE; who
+chooses the record index at 0x4b2715; FUN_0056df40's `inc [ebx+0x94d7f8]`; why 0x59f0c7 never ran.
 
 ## STILL OPEN (in priority order)
 
-1. **After M101: band flag [esi+0x94d430] bit 0x40 = 0 for ALL 8 factions -> the M89 second-ask is
+1. **After M102: band flag [esi+0x94d430] bit 0x40 = 0 for ALL 8 factions -> the M89 second-ask is
    inert, find the setter; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print at
    **0x49771c**; bit 5 (0x531782); WORD ds:0x98adee (forced-pick key, live 6); the negative-queue
    producer that reaches branch B; what [+0x94d78c] counts; when 0x59f0c7 runs.**
@@ -73,14 +77,15 @@ FUN_004eaa10 builds base+0x104 from; why FUN_0059ec90's -1 store (0x59f0c7) neve
 
 ## LIVE FACTS / KIT
 
-- **Box at s155:** m54b_clean **r52->54** (the save was RELOADED at s155 - the brief's BLOCKED fix -
-  so the round number is NOT continuous with s154's r68); University Base pending 1 head 2 storage 0
-  credit 0, q0 STALE 2; ebc 0x1a0e (bit 0x200 SET), mask 8 -> ONLY fac3 human, forced short
-  0x98adee = 6; era [0x985aec] 2; accs [fac*8380+0x94d7f8] facs 1-7 = 51/46/43/93/1/49/16 at r52;
-  mults [0x94d6a4] 0,-2,0,2,0,0,-2,0 == block-A slot 10 (M100). Instruments:
-  `scripts/m100_mult_watch.py --tag t --boundaries 2` (`--predict` = live inputs + the prediction
-  table; `M100_WFACS=`, 4 hw watch + CALL bp 0x520909 + READ bp 0x4f352e, pokes facs 1-7) and
-  `scripts/m99_param2.py` (`M99_WFACS=`, `M99_POKE_FAC=`, `--poke-carry`).
+- **Box at s157:** m54b_clean **r57 cp3 hud** (rounds are NOT continuous across the s155/s157 reloads);
+  University pending 1 head 2 storage 0 credit 0, q0 STALE 2; mask 8 -> ONLY fac3 human; mults
+  [0x94d6a4] {1:-2, 3:2, 6:-2} (facs 0,2,4,5,7 zero), D10 [0x94d728] {3:2, 6:-2}; eras ds:0x985b90 /
+  ds:0x985b9c = -1 (the category-skip leg is INERT until an era goes >= 0); no clamp entry with key 10.
+  Reload recipe (~35 s, bare filename): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py
+  --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `m57_ui_enqueue.py --base-index 0
+  --cell-item 2 --inserts 1` (the enqueue fails once right after a turn-end — retry) ->
+  `accept_ready.py`; the credit-0 BLOCKED line is the pay-site family's requirement —
+  M100/M102 ran green with credit 0.
 
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4); mask byte 0x985b10 = 0x08 -> ONLY fac3 human (a dword read there = 65288: mask the
@@ -119,6 +124,13 @@ FUN_004eaa10 builds base+0x104 from; why FUN_0059ec90's -1 store (0x59f0c7) neve
   against its OWN last snapshot, so a poke that is later rewritten with the ORIGINAL value logs
   NOTHING (m100mult1 fac2: 0 events, the poke still undone). Watch only fields whose value changes;
   prove the writer ran on the others by poking them and reading the restore back from /proc.
+
+- **A gdb printf FORMAT string passes VERBATIM to C printf:** `"...\n"` (ONE backslash) prints a
+  newline; `"...\\n"` (TWO) prints a LITERAL `\n` and collapses the whole event stream into ONE
+  unparsed line that reads as ZERO events (m102hit1: 47 events emitted, 0 parsed, floors innocent).
+  A bp at the insn AFTER `call X` fires AFTER the callee's events — group per-invocation events
+  BACKWARD from it; unwatched factions yield legitimately empty groups: skip, do not fail on them
+  (m102hit2 12/14 on perfect data; skill instrument-laws.md).
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 
