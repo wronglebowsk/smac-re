@@ -1,0 +1,47 @@
+[New LWP 791916]
+[New LWP 791915]
+[New LWP 791914]
+[New LWP 791913]
+[New LWP 791912]
+[New LWP 791911]
+[New LWP 791908]
+[New LWP 791905]
+[New LWP 791904]
+[New LWP 791903]
+[New LWP 791902]
+[New LWP 791901]
+[New LWP 791900]
+[New LWP 791899]
+[New LWP 791898]
+[New LWP 791897]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf507968b in ?? ()
+Hardware watchpoint 1: *(int *)0x95dae0
+Hardware watchpoint 2: *(int *)0x95dad0
+Hardware watchpoint 3: *(int *)0x95db00
+Hardware watchpoint 4: *(int *)0x95daa4
+ARMED 4 hw watchpoints at 0x95dae0 0x95dad0 0x95db00 0x95daa4
+M97W GROSS pc=0x4e79a8 ret=0x4f5acd ptr=0x95da10 new=0 c0=0 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5acd ptr=0x95da10 new=1 c0=1 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5acd ptr=0x95da10 new=2 c0=2 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5acd ptr=0x95da10 new=3 c0=3 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5acd ptr=0x95da10 new=4 c0=4 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e79a8 ret=0x4f5b41 ptr=0x95da10 new=0 c0=0 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5b41 ptr=0x95da10 new=1 c0=1 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5b41 ptr=0x95da10 new=2 c0=2 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5b41 ptr=0x95da10 new=3 c0=3 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4f5b41 ptr=0x95da10 new=4 c0=4 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e79a8 ret=0x4eb6d6 ptr=0x95da10 new=0 c0=0 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4eb6d6 ptr=0x95da10 new=1 c0=1 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4eb6d6 ptr=0x95da10 new=2 c0=2 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4eb6d6 ptr=0x95da10 new=3 c0=3 f0=5 e0=0 d0=-1 round=53 cp=3
+M97W GROSS pc=0x4e7c19 ret=0x4eb6d6 ptr=0x95da10 new=4 c0=4 f0=5 e0=0 d0=-1 round=53 cp=3
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf50e94ec in ?? ()
+[Inferior 1 (process 791846) detached]

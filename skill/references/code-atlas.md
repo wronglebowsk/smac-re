@@ -434,3 +434,18 @@ claim[tc-39](0x985b3c)==-1, or tc>34 (0x4ef94a), or 0x507410 mask fails (0x4ef98
 0x4f0ca6 SAME field; claim store 0x4f0d83; B POP 0x4f0f46. No back-edge B->A. Credit +0xd0 feeds only
 the income add 0x4ef7f6 (gated q0!=-38 && !(flag30&2) && d0>=0) + the clamp. Stale tail: non-sentinel
 q0 with pending 0 re-pays + CREATEs phantom units while storage>=price; POP then stores no pending.
+
+## Base income recompute FUN_004e93f0 — base+0xd0 credit (M97, s152, VERIFIED m97credit3 PASS 11/11)
+eax = ds:0x8f0d60 = the CURRENT BASE RECORD pointer. Called per base EVERY ROUND from FUN_004f5a70 (the
+per-base turn stage: call 0x4f5ad2 after the queue pass 0x4ef6d0, call 0x4f5b46 after 0x4e8d60/0x4e78e0/
+0x4e92c0; FUN_004f5a70 itself called at 0x5206d3) and from the recalc helper FUN_004eb6b0 (call
+0x4eb6db; runs whenever arg1 != 0, many UI callers from 0x40b232). Stores: 0x4e953e [+0xf0] =
+DAT_008f0c38 + DAT_008f0c4c (WHOLE-FACTION upkeep — one facility anywhere raises every base's upkeep);
+0x4e9557 [+0xd0] = [+0xc0] - [+0xf0]; 0x4e9562 [+0xe0] = 0; 0x4e957f [+0xd0] -= [+0xe0]; 0x4e9590
+[+0x94] = [+0xd0] (display copy). GROSS [+0xc0] is rebuilt from 0 every call by FUN_004e78e0 (reset
+0x4e79a8, +1 per facility 0x4e7c19, +1 at 0x4e85c1) then 0x4e9525 = ((facCount+2)*[+0xc0])/2. Only SIX
+stores to `[reg+0xd0]` exist in .text: these two + 0x5ba9e8 (base-creation zero sweep +0xa0..+0xe8),
+0x6310c6/0x631154 (record init), 0x6315e2 (=0) — so 0x4ef7f6/0x4eff20 (which write [+0x40] storage) are
+NOT credit writers. gdb LAW: a hardware watchpoint only REPORTS a VALUE CHANGE; count stores with silent
+bps AT the store instruction — scripts/m97_credit_watch.py (4 hw watchpoints on a row's income chain +
+bps at 0x4e9557/0x4e957f, register-only condition `$eax==row`).
