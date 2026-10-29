@@ -249,3 +249,4 @@ can be rewritten with the same value.
   save/restore eax/ecx/edx around it (the callee clobbers them; edi/esi/ebp are pushed by the prologue);
   reversed words made param_1 = 0x520909 and SIGSEGVed terran.exe at 0x59ec34, which killed the box and
   left a winedbg that had to be cleared before the next relaunch (m103d4/d5).
+- **gdb STARTUP/EXIT chatter is not protocol but must be whitelisted**: the debuginfod prompt block (This GDB supports / <https://...> / Enable debuginfod / Debuginfod has / To make this setting) prints BEFORE the sourced script first arms, and [Inferior 1 (process N) detached] prints after the last event — so a zero-unparsed gate FAILs on an instrument that armed and logged fine (m104w2 11/12, floors untouched). Set DEBUGINFOD_URLS= in the Popen env AND whitelist those prefixes plus [New LWP <pid> (a bare [New LWP] alternative never matches the banner with its pid in it).

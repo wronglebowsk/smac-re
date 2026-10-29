@@ -1,3 +1,3 @@
-M104 RUNNING (s159): acceptance invocation 3 (FINAL) in flight (background): python3 scripts/m104_append_watch.py --tag m104w3 --boundaries 3 -> scratch/m104w3.out, evidence/m104w3.gdblog
-w2 = 11/12 (only G10 failed: gdb debuginfod/Inferior banners unparsed - parser fixed, w2 log now reparses 0 unparsed). w1/w2: 0 count-change events facs 1/3/6 over 3 boundaries (rounds 54->57), ACC control 7 events FUN_005aadf0, WALK 126 facs 1/2/4 counts static, ENT 0, model==D 3/3, .SAV holds the 1436-B blocks at stride 1436.
-acceptance: pending | merged? no | next: read scratch/m104w3.out then CLOSING ORDER (notes, NAMED, NEXT_PROMPT pick M105, commit, gate, submit).
+M104 ACCEPTED (s159): m104w3 PASS 12/12 (python3 scripts/m104_append_watch.py --tag m104w3 --boundaries 3). branch milestone/m104, NOT yet submitted/merged.
+finding: nobody appends the record entries mid-game; the 1436-B per-faction blocks are load-time data (m54b_clean.SAV holds them verbatim at stride 1436).
+next: notes + NAMED + NEXT_PROMPT (pick M105) + skill sync + commit + gate + submit + merge.

@@ -1,0 +1,164 @@
+[New LWP 1098280]
+[New LWP 1098279]
+[New LWP 1098278]
+[New LWP 1098277]
+[New LWP 1098276]
+[New LWP 1098275]
+[New LWP 1098272]
+[New LWP 1098235]
+[New LWP 1098234]
+[New LWP 1098233]
+[New LWP 1098232]
+[New LWP 1098231]
+[New LWP 1098230]
+[New LWP 1098229]
+[New LWP 1098228]
+[New LWP 1098227]
+0xeb21c32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x928038
+Hardware watchpoint 2: *(int *)0x928b70
+Hardware watchpoint 3: *(int *)0x929c44
+Hardware watchpoint 4: *(int *)0x953a2c
+Breakpoint 5 at 0x59ec00
+Breakpoint 6 at 0x4dbf6f
+Breakpoint 7 at 0x4e061b
+Breakpoint 8 at 0x57ce48
+Breakpoint 9 at 0x57eee0
+Breakpoint 10 at 0x5a1689
+ARMED 4 hw watchpoints at 0x928038 0x928b70 0x929c44 0x953a2c and 6 silent bps at 0x59ec00 0x4dbf6f 0x4e061b 0x57ce48 0x57eee0 0x5a1689
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=57 cp=4
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=58 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=58 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=58 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=58 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=58 cp=1
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=58 cp=2
+M104W ACC fac=3 new=9 pc=0x5aaef1 round=58 cp=3
+M104W ACC fac=3 new=12 pc=0x5aaef1 round=58 cp=3
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=58 cp=4
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=59 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=59 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=59 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=59 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=59 cp=1
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=59 cp=2
+M104W ACC fac=3 new=15 pc=0x5aaef1 round=59 cp=3
+M104W ACC fac=3 new=18 pc=0x5aaef1 round=59 cp=3
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=5744 cnt=3 round=59 cp=4
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=60 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=60 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=60 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=60 cp=1
+M104S WALK pc=0x5a1689 off=1436 cnt=6 round=60 cp=1
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104S WALK pc=0x5a1689 off=2872 cnt=5 round=60 cp=2
+M104W ACC fac=3 new=21 pc=0x5aaef1 round=60 cp=3
+M104W ACC fac=3 new=24 pc=0x5aaef1 round=60 cp=3
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xeb21c32c in __kernel_vsyscall ()
+[Inferior 1 (process 1098213) detached]
