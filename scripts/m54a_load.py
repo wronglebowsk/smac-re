@@ -89,7 +89,8 @@ def main():
         print("no window after relaunch", flush=True)
         return 3
     t0, last, browser_done = time.time(), None, False
-    while time.time() - t0 < 220:
+    budget = int(os.environ.get("M54A_LOAD_TIMEOUT", "220"))   # an under-strace game is slower
+    while time.time() - t0 < budget:
         P.WIN = P.find_window()
         if not P.WIN:
             print("no window", flush=True)
