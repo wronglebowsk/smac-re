@@ -50,12 +50,12 @@ ROUND, CP, MASK, AC4 = 0x985afc, 0x985dcc, 0x985b10, 0x985ac4
 RAW = 0x104                                   # base-record research output
 P1, P2, P3, P4, P5, P6 = 0x4f34df, 0x4f351c, 0x4f3558, 0x4f3566, 0x4f35b8, 0x4f35c9
 CALLSITE_RET = 0x4f35d0                       # return pc of the ONLY call to FUN_005aadf0
-C1, A1, A2, S1, R1 = 0x5aadf0, 0x5aaee1, 0x5aaef1, 0x5aaf1b, 0x5aaf66
+C1, A1, A2, S1, R1 = 0x5aadf0, 0x5aaee1, 0x5aaef3, 0x5aaf1b, 0x5aaf66
 # every static store to [reg+0x94d7f8] in .text, as the pc gdb REPORTS (store + length)
 WP_EXPECT = {0x5090a9, 0x51038c, 0x51bf5e, 0x51bfce, 0x56e024, 0x594158, 0x59f24c,
              0x5aaef1, 0x5aaf1b, 0x5aaf66}
 WFACS = [int(x) for x in re.split(",", os.environ.get("M99_WFACS", "2,3,5,6"))]
-POKE_FAC = int(os.environ.get("M99_POKE_FAC", "2"))
+POKE_FAC = int(os.environ.get("M99_POKE_FAC", "3"))
 
 TMPL = r"""set pagination off
 set confirm off
@@ -136,8 +136,8 @@ def gdb_script():
                    "round=%d cp=%d",
          ["$edi", "$ebx", "*(int *)($esi+0x94d7f8)", "*(int *)($esi+0x94d7fc)",
           "*(int *)($esi+0x94d430)", "*(int *)($esi+0x94d800)", RND, CPP]),
-        ("A2", A2, "M99C A2 pc=0x5aaef1 fac=%d accn=%d round=%d cp=%d",
-         ["$edi", "$ecx", RND, CPP]),
+        ("A2", A2, "M99C A2 pc=0x5aaef3 fac=%d accn=%d round=%d cp=%d",
+         ["$edi", "*(int *)($esi+0x94d7f8)", RND, CPP]),
         ("S1", S1, "M99C S1 pc=0x5aaf15 fac=%d acc2=%d round=%d cp=%d",
          ["$edi", "*(int *)($esi+0x94d7f8)", RND, CPP]),
         ("R1", R1, "M99C R1 pc=0x5aaf5c fac=%d acc0=%d round=%d cp=%d",
@@ -222,8 +222,9 @@ def main():
     ap.add_argument("--timeout", type=int, default=120)
     ap.add_argument("--tag", default="m99p1")
     ap.add_argument("--predict", action="store_true", help="print live inputs, no game touch")
-    ap.add_argument("--poke-mult", type=int, default=-5,
-                    help="poke [fac*8380+0x94d6a4] to THIS before every boundary (-5 => x0.5)")
+    ap.add_argument("--poke-carry", type=int, default=0,
+                    help="poke [fac*8380+0x94d808] to THIS before every boundary: the percent-100 "
+                         "carry that decides whether param_2 gets its +1")
     ap.add_argument("--no-poke", action="store_true")
     a = ap.parse_args()
 
@@ -238,9 +239,9 @@ def main():
         s = st[f]
         print(f"  fac {f}: mult {s[MULT]} acc {s[ACC]} carry {s[CARRY]} c30 {s[C30]} "
               f"field {s[FIELD]} slot {s[SLOT]} era2 {s[ERA2]}", flush=True)
-    print(f"  poke fac{POKE_FAC} mult -> {a.poke_mult} "
-          f"(x{(max(-5,min(5,a.poke_mult))+10)}/10 of the base output)" if not a.no_poke else
-          "  no poke", flush=True)
+    print("  poke fac%d [0x94d808] carry -> %d (natural pre-run carry %d)"
+          % (POKE_FAC, a.poke_carry, st[POKE_FAC][CARRY]) if not a.no_poke else "  no poke",
+          flush=True)
     if a.predict:
         return
 
@@ -277,8 +278,8 @@ def main():
 
     for k in range(a.boundaries):
         if not a.no_poke:
-            got = poke(MULT + POKE_FAC * STRIDE, a.poke_mult)
-            print(f"  boundary {k}: POKE fac{POKE_FAC} mult {a.poke_mult} read back {got}",
+            got = poke(CARRY + POKE_FAC * STRIDE, a.poke_carry)
+            print(f"  boundary {k}: POKE fac{POKE_FAC} carry {a.poke_carry} read back {got}",
                   flush=True)
         r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "smac_play.py"),
                             "--turns", "1", "--timeout", str(a.timeout), "--no-escape",
@@ -344,7 +345,10 @@ def main():
 
     # G6: for EVERY call, predict param_2 from the values printed at the hits.
     g6rows, g7rows = [], []
-    chain = {}
+    chain = {f: st[f][CARRY] for f in range(8)}
+    # the harness pokes the carry BETWEEN the pre-run read and the hit, so the first hit of
+    # each round for the poked faction must read the POKED value (m99p2: seed 60 vs carryo 0)
+    poked_seen = set()
     for i, h in enumerate(p3):
         nxt = p4[i] if i < len(p4) else None
         q5 = p5[i] if i < len(p5) else None
@@ -353,16 +357,23 @@ def main():
             continue
         if not (nxt["fac"] == q5["fac"] == q6["fac"] == h["fac"]):
             continue
+        seed = chain.get(h["fac"])
+        if ((not a.no_poke) and h["fac"] == POKE_FAC
+                and (h["fac"], h["round"]) not in poked_seen):
+            seed = a.poke_carry
+            poked_seen.add((h["fac"], h["round"]))
         scaled, carry_new, p2w = scale(h["raw2"], h["mult"], h["carryo"])
+        _s, _c, p2_nat = scale(h["raw2"], h["mult"], st[h["fac"]][CARRY])
         g6rows.append((h["fac"], h["round"], p2w, q6["p2"], p2w == q6["p2"], h["raw2"],
-                       h["mult"]))
+                       h["mult"], h["carryo"], p2_nat))
         g7rows.append((h["fac"], scaled, q5["scaled"], carry_new, q5["carryn"],
                        wrap(h["c30o"] + h["raw2"]) == wrap(nxt["c30n"]),
-                       chain.get(h["fac"]) == h["carryo"], h["carryo"]))
+                       seed == h["carryo"], h["carryo"]))
         chain[h["fac"]] = q5["carryn"]
-    for fac, rnd2, want, got, ok, raw2, mult in g6rows:
-        print(f"  PREDICT fac {fac} r{rnd2} raw {raw2} mult {mult}: model p2 {want} "
-              f"pushed {got} {'OK' if ok else 'MISMATCH'}", flush=True)
+    for fac, rnd2, want, got, ok, raw2, mult, carryo, pnat in g6rows:
+        print(f"  PREDICT fac {fac} r{rnd2} raw {raw2} mult {mult} carry {carryo}: model p2 "
+              f"{want} pushed {got} {'OK' if ok else 'MISMATCH'} (pre-run-carry model "
+              f"{pnat})", flush=True)
     # C1 must agree with P6 for the same call
     c1_ok = sum(1 for h, k in zip(p6, c1) if h["fac"] == k["fac"] and h["p2"] == k["p2"])
     # G8: the accumulator law on every A1/A2 pair
@@ -372,12 +383,20 @@ def main():
             continue
         g8rows.append((h["fac"], h["acco"], h["ebx"], k["accn"],
                        wrap(h["acco"] + h["ebx"]) == wrap(k["accn"])))
-    dbl = {}
-    # pairing param_2 (C1) with ebx (A1) in call order
-    p2s = [k["p2"] for k in c1]
-    for i, h in enumerate(a1):
-        if i < len(p2s):
-            dbl[h["fac"]] = dbl.get(h["fac"], 0) + (1 if h["ebx"] == 2 * p2s[i] else 0)
+    # pair each call's param_2 (C1) with its ebx (A1) PER FACTION, in order
+    dbl, modes = {}, []
+    per_f = {}
+    for k in c1:
+        # FUN_005aadf0 returns at 0x5aaffc when param_2 <= 0: no acc store, so that call has
+        # a C1 but no A1 - pairing must skip it or every later pair shifts by one (m99p2 G8)
+        if k["p2"] > 0:
+            per_f.setdefault(k["fac"], []).append(k)
+    for f, lst in per_f.items():
+        alist = [h for h in a1 if h["fac"] == f]
+        for h, k in zip(alist, lst):
+            mode = 2 if h["ebx"] == 2 * k["p2"] else (1 if h["ebx"] == k["p2"] else 0)
+            dbl[f] = dbl.get(f, 0) + (1 if mode == 2 else 0)
+            modes.append((f, k["p2"], h["ebx"], mode))
     for fac, acco, ebx, accn, ok in g8rows[:6]:
         print(f"  ACC fac {fac}: old {acco} + ebx {ebx} -> {accn} {'OK' if ok else 'MISMATCH'}",
               flush=True)
@@ -400,12 +419,13 @@ def main():
     # scaled answer differs from the naive "param_2 == raw" answer.
     g13 = []
     if not a.no_poke:
-        for fac, rnd2, want, got, ok, raw2, mult in g6rows:
-            if fac == POKE_FAC and mult == a.poke_mult and ok and want != raw2:
-                g13.append((fac, raw2, mult, want, got))
-    for row in g13[:4]:
-        print(f"  POKE fac{row[0]} raw {row[1]} mult {row[2]} -> p2 {row[3]} pushed {row[4]} "
-              f"(naive raw-model would say {row[1]})", flush=True)
+        for fac, rnd2, want, got, ok, raw2, mult, carryo, pnat in g6rows:
+            if fac == POKE_FAC and ok and carryo == a.poke_carry and want != pnat:
+                g13.append((fac, rnd2, raw2, mult, carryo, want, got, pnat))
+    for fac, rnd2, raw2, mult, carryo, want, got, pnat in g13[:4]:
+        print(f"  POKE fac{fac} r{rnd2}: carry poked to {carryo}, raw {raw2} mult {mult} -> "
+              f"model p2 {want} pushed {got}; the pre-run carry {st[POKE_FAC][CARRY]} would "
+              f"have given {pnat}", flush=True)
 
     g1 = n_hw >= len(WFACS) and len(pcs) >= 8
     g2 = rc_ok and r_after == rnd + a.boundaries
@@ -415,7 +435,8 @@ def main():
     g5 = bool(c1) and all(d["ret"] == CALLSITE_RET for d in c1)
     g6 = bool(g6rows) and all(r[4] for r in g6rows) and c1_ok == len(g6rows)
     g7 = bool(g7rows) and all(r[1] == r[2] and r[3] == r[4] and r[5] and r[6] for r in g7rows)
-    g8 = bool(g8rows) and all(r[4] for r in g8rows) and len(g8rows) >= 4
+    g8 = (bool(g8rows) and all(r[4] for r in g8rows) and len(g8rows) >= 4
+          and bool(modes) and all(m[3] in (1, 2) for m in modes))
     g9 = all(r[3] for r in rb) and all(f in lastw for f in WFACS)
     g10 = bool(wp) and all(d["pc"] in WP_EXPECT for d in wp)
     g11 = tracer == "0"
