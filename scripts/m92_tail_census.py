@@ -196,7 +196,11 @@ commands
 silent
 set $n_ctrl = $n_ctrl + 1
 set $n_snap = $n_snap + 1
-dump binary memory %s 0x94e488 0x94e488 + 0x41b80
+python
+sn = "SNAPDIR/TAG_snap%d.bin" % int(gdb.parse_and_eval("$n_snap"))
+n = 0x41b80 + 0x4000 - 0x94e488
+open(sn, "wb").write(bytes(gdb.selected_inferior().read_memory(0x94e488, n)))
+end
 printf "CTRL n=%d snap=%d round=%d\n", $n_ctrl, $n_snap, *(int *)0x985afc
 continue
 end
@@ -354,7 +358,8 @@ def main():
     gpath = os.path.join(ROOT, "scratch", f"{a.tag}.gdb")
     lpath = os.path.join(EVID, f"{a.tag}.gdblog")
     os.makedirs(EVID, exist_ok=True)
-    open(gpath, "w").write(TMPL)
+    open(gpath, "w").write(TMPL.replace("SNAPDIR", os.path.join(ROOT, "scratch")
+                               .replace(chr(92), "/")).replace("TAG", a.tag))
     log = open(lpath, "w")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath, "-p", str(pid)],
                          stdout=log, stderr=subprocess.STDOUT)

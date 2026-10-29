@@ -1,2 +1,9 @@
-M92 in flight (branch milestone/m92, commit 4c384e3). Acceptance scripts/m92_tail_census.py NOT green yet. Findings so far: m92probe1 (r55-57) = ZERO gdb events until University Base pending>0 (enqueue unblocks the research upkeep); m92tail1 (r57-61) = TAIL=0 because 0x5a94fd is INSIDE the loop body, the entry is 0x5a9503 (0x5a950b skips the loop when the divisor [fac*8380+0x94e488]==0); mask 0xFF28 => human factions 3,4,6 (fac 3 NOT human). Merged: NO.
-Next: python3 scripts/m92_tail_census.py --tag m92tail2 --poke-index 5 --rounds 4 --timeout 100 (BACKGROUND).
+M92 in flight (milestone/m92, sibling commits 4c384e3+061f302 adopted; tree had uncommitted snap fix).
+m92tail3 AND m92tail4 both DIED at the CTRL hit: (a) `dump binary memory %s` is invalid, (b) a multi-line
+gdb `python` block inside a breakpoint command list aborts the sourced file ("Argument to arithmetic
+operation not a number or boolean") -> snapshots never written.  Single-line `python ...` is the fix.
+Three instrument defects found by disassembly of 0x5a9500-0x5a9698: (1) windows close at the ENT print
+(0x48bae9), which fires BEFORE the scan's BASE events -> candidates=0 every run; (2) the tail's cat-7 gate
+[ebp-0x18] is the callee's OWN prologue popcount bc (0x5a90ae/0x5a90d6), not the caller slot; (3) the
+band leg's multiplier is byte[0x950664+edi*0x20bc+esi] (a GLOBAL band table, stride 844), not the block.
+Merged: NO.  Next: python3 scripts/m92_tail_census.py --tag m92tail5 --poke-index 5 --rounds 4 --timeout 100
