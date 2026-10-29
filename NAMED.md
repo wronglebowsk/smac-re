@@ -1053,3 +1053,20 @@ fac7's observed finals reproduce EXACTLY as base + idiv(16*Tc, 1) (cats[40] = 16
 model (caller-slot gate, band tables inside the block at +0x2bc0) was off by >3 orders of magnitude.
 UNNAMED still: who writes 0x94e488 / 0x94e5a8 / 0x94eda8 / the 0x950664 band tables. The band gate's
 control dwords move between rounds, so the per-round snapshot must cover 0x94d448..0x966000.
+
+### M92 block (branch milestone/m92, NOT merged — acceptance FAIL 5/8)
+- `FUN_005a90a0` TAIL, 0x5a9500-0x5a9698, runs **only when arg2 == 0** (0x5a9375 `je 0x5a9500`) and only for a
+  NON-human faction (0x5a931a sends a human to 0x5a94f2). Entry = **0x5a9503**; 0x5a94fd is inside the body.
+- `ebx = [fac*8380 + 0x94e488]` = DIVISOR; 0x5a950b `je 0x5a9698` -> whole tail adds 0.
+- Category byte `[fac*8380 + esi + 0x94eda8]` = **blk+0x920+esi**; multiplier `[fac*8380 + esi + 0x94e5a8]`
+  = **blk+0x120+esi**; loop esi = 1..62. cat 7 -> `mult*Tc/div` gated on `[ebp-0x18] != 0` and non-human,
+  and on gate failure it FALLS THROUGH to the band leg; cat 2 -> `mult*Tc*4/(div*(1+human))`; cat 0 ->
+  `mult*c*Tc/(div*(1+human))` with **c = 2 if [0x94dc44] >= [0x94dc58] else 4** (those two live at
+  blk-0x844 / blk-0x830, i.e. +0x7fc/+0x810 from 0x94d448); band leg -> `mult*Tc/(div*(1+human))` per
+  accepted edi 1..7, gated on `[esi+0x950664+edi*0x8380] != 0` and the control dword
+  `[0x94d448+fac*8380+4*edi]` having 0x8 and not (0x3 without 0x20).
+- `TAILOUT` at **0x5a9698** = the tail's output; the SCORE at 0x5aa159 is a **post-tail leg** on top
+  (0x5a9698 -> 0x5aa022), +1/+29 observed. Gating the tail on `final` conflates two legs.
+- The DIVISOR and the arrays MOVE INSIDE A ROUND: the divisor must be read at 0x5a9503 per candidate.
+- Model vs engine: 38/41 exact on one fresh-load run, 5/5 on another; the misses are one human faction
+  whose category byte changed after the round snapshot.

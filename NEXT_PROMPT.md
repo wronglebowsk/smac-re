@@ -21,9 +21,6 @@ was in flight; never `rm`/`git checkout --`. Every doc write is an append or a <
 Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#95)**, **M91 (#97, m91score5 PASS 7/7)** — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (FUN_005a7970's legs: 0x5a7e73 skips the 64-record band loop unless arg1 == the short at 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
 **M90 (s141, #95, `m90tech2` PASS 8/8):** the per-faction slot [0x94d7fc + fac*8380] IS a TECH INDEX 0..88 chosen by FUN_005aa030(faction) (gate FUN_005a6cd0 = "prereq known", tested as [0x985c1c + prereq] & (1<<fac); tie `_rand`), returned verbatim by FUN_005ab000 -> FUN_0048b9a0 (call 0x48bae4, landing 0x48bae9) and stored at 0x5aa9d3. bVar14 in 48b9a0 UNDECODED. NAMED.
 **M91 (s142-s143, #97, `m91score5` PASS 7/7 after `m91score1-4` FAILed on my own gates/harness):** FUN_005a90a0(idx, fac, arg2) SCORES `SUM over four (cost, demand) pairs of (demand*m+1)*cost` — costs *(0x92fdc4 + idx*44 +0,+4,+8,+0xc) (that record's prereq1 is +16 = 0x92fdd4, its name +32: M90's "base 0x92fdd4" is the +16 FIELD, not the record start), demand *(fac*8380 + 0x94d810/14/18/1c), m = 1 if arg2 != 0 else 4/2 by 0x985ac4 bit 0x200 (live SET), halved at 0x5a92fd iff all four pairs inert (bc = bit-0x10 popcount of 0x94d448 dwords 1..7; [fac*8380+0x94e488] >= 4): **predicted == the engine's [ebp-0x4] at 0x5a930b on 27/27 traced candidates (m91score5, fresh load, 4 windows).** A 62-iteration tail (0x5a94fd-0x5a95f8) then adds byte[fac*8380+0x94e5a8+esi]*Tc over divisors keyed by byte[+0x94eda8+esi] in {7,2,0} (UNPREDICTED — M92); the level leg 0x5a93b3-0x5a94f2 runs ONLY when arg2 != 0 (0x5a9375 `je 0x5a9500`). FUN_005aa030 then divides (0x5aa1e4 `shl eax,8; idiv edi`, divisor = max(FUN_005a6d40(p1,1), FUN_005a6d40(p2,1))) and **picks the candidate with the strictly-largest draw `_rand() % (score+1)` (0x5aa217-0x5aa230, compare 0x5aa232 `cmp eax,[ebp-0x8]; jle` = equal draws do NOT replace, scan asc 0..88, best starts -999) — NOT the max score**: falsified 3x (fac4 43 f16 over 60 f38; fac5 22 'AGrav' f31 over max 56; fac6 13 'Surface' f36 over 63). NAMED.
-**M92 (s144, milestone/m92, NOT merged):** the tail 0x5a9503-0x5a9698 is DECODED and validated on the
-engine's OWN finals (fac7 == base + idiv(16*Tc,1); NAMED); the census never went green (m92tail2-7
-FAILed on my own dump/reader/print defects). NAMED.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). **M68 FAILED**; **M63** `m63_pop.py`, `0x94de84` queued-count.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -40,17 +37,19 @@ FAILed on my own dump/reader/print defects). NAMED.
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M92 (continue — the tail is DECODED, the census is not green).** s144 decoded 0x5a9503-0x5a9698 and
-validated it on the engine's own finals (NAMED + SESSION_NOTES s144 — do NOT re-derive). Left:
-(1) make `scripts/m92_tail_census.py` print PASS on ONE invocation; only its dump/reader is broken —
-the per-round snapshot must be a LITERAL-address range (`dump binary memory <path> 0x94d448 0x966000`,
-the band gate's control dwords MOVE between rounds), `SNAPREGION` = the region SIZE, `off=` indexes
-it; KEEP the G2 base gate and the winner-on-DRAW gates. (2) name who WRITES 0x94e488 / 0x94e5a8 /
-0x94eda8 / the band tables 0x950664. Offline re-check: `python3 scratch/m92/verify7.py` (no game).
+**M92 CONTINUED (s145): the tail RULE is right — 38/41 exact — the last 3 miss because the block moves.
+NOT accepted, nothing merged.** Never re-derive these four; each cost a run:
+1. arrays are **blk+0x920+esi** (category) and **blk+0x120+esi** (multiplier), NOT +0x1000/+0x1860;
+2. cat-0 factor is **2 when [0x94dc44] >= [0x94dc58] else 4** — those dwords are at **blk-0x844/-0x830**
+   (+0x7fc/+0x810 from 0x94d448), the s144 note has the comparison inverted;
+3. the DIVISOR moves INSIDE a round — read it at 0x5a9503 per candidate, never from a round snapshot;
+4. `TAILOUT` at **0x5a9698** is the tail's output; `final` (0x5aa159) is a **POST-tail leg**
+   (0x5a9698 -> 0x5aa022). Gate on TAILOUT, then make the post-tail leg its own milestone.
+Next: append the two arrays AT the TAIL hit (128 B at 0x94e488+fac*8380+0x120 and +0x920) so the
+stale-category misses die; `--poke-extra 2,6` so >1 faction is scanned.
 ## STILL OPEN (in priority order)
 
-1. **M92 (the pick, continued): the tail IS decoded (NAMED s144) — fix the census dump/reader (THE
-   PICK) and name who WRITES 0x94e488 / 0x94e5a8 / 0x94eda8 / the band tables 0x950664.** Then: the
+1. **After M92 (THE PICK): the
    pay-site conflict 0x4f0ca6 vs 0x4efedd; the human leg (FUN_00625af1 at 0x5aa20d, bVar14 in
    FUN_0048b9a0); the SIBLING slot [esi+0x94d800] (FUN_005aab70); the band flag [esi+0x94d430] bit
    0x40; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5 (0x531782).

@@ -447,55 +447,14 @@ only *data* reads above ≈0x6a9000 need a runtime snapshot (`gdb -batch -ex 'du
 (3) `_SELFMOD` is a 0x415d-byte section — a small patch area, not a whole-image unpacker, so there is no
 "import of the wrong image" problem.
 
-## Map + save container formats (verified 2026-10-20 — see MAP_FORMAT.md / SAVE_FORMAT.md)
+## Map + save container formats
 
-`.MP` map — `15 + 2724 + W*H*22 + trailer == file size`, checked on both shipped maps:
-```
-0        15 B   b"TERRANMAP\0" 0x1A u32 version(=5)
-15     2724 B   header struct: u32 width, u32 height, ... (word 5 = land cells = W*H/2)
-2739    W*H*22  raw cell records, row-major (no XOR)
-+      var      trailer, starts b"????????" (128 B @80x80, 338 B @128x128)
-```
-planet.MP 80x80 143,667 B; planetx.MP 128x128 363,525 B. Parser `scripts/decode_map.py`.
-
-`.SAV` save — `b"TERRAN\0" 0x1A u32 version(=86)`, 796 B header, mission year u16 at **+0x54**;
-then sections read in a fixed order (see SAVE_FORMAT.md). Section *sizes* come from header counts
-and shrink as the game progresses, so arbitrary saves can't be split yet.
-
-**`FUN_00597a70` is the save/scenario block loader, not the map loader** — an earlier note here
-claimed otherwise. The map grid is read raw by `FUN_00582260`.
-
-`.SAV` section sizes (from the `push` sites in `FUN_00596850`): 796, 67,040, 11,488, 16,000, 3,584,
-26,624, 4,096, 256, 152, 10,144 are immediates; three are computed — one raw count (`DAT_00927538`),
-one **52 B/record** (`edx` records), one **304 B/record** (`DAT_00985af4` records). Two are skipped
-outright under version/count conditions, so the section list is conditional.
-`.SAV` is fully splittable from the file alone — `scripts/decode_save.py --sections` sums to the byte.
-Key facts: u32 **own player at file offset 808**; a **u32 count prefix immediately before** one
-variable section; the other two variable sections are `n × 52 B` and `m × 304 B` records, split by
-solving `52n + 304m = region` and choosing on zeros-fraction (304 B records ~80% zero, 52 B ~40%).
-Caller-scoped gdb condition that makes small reads loggable without flooding:
-`break *0x64cc00 if *(void**)$esp >= 0x596850 && *(void**)$esp <= 0x597a6b`.
-Anchors that pin a save's layout byte-exact (verified on two saves of different ages): map dims
-`50 00 00 00 50 00 00 00` at **79,372** and `????????` at **222,896**; gap 143,524 = 2,724 + 140,800.
-`scripts/decode_save.py --anchors` checks it.
-**Pitfall:** never validate an offset by "fraction of identical bytes" — these files are mostly
-zeros, so the match rate is flat across wrong offsets. Use a unique content signature instead.
-
-### Technique that cracked both: runtime read trace, not static reading
-Break on the read wrapper and log the **caller** and size:
-```
-break *0x64cc00 if *(int*)($esp+8) >= 64      # 0x64c9a0 is the sibling wrapper
-commands
-silent
-printf "R3 caller=%#x size=%d count=%d file=%#x\n", *(void**)$esp, *(int*)($esp+8), *(int*)($esp+12), *(void**)($esp+16)
-continue
-end
-```
-- Unconditional breakpoints here fire **34,000+ times** (the game reads 1-2 bytes constantly) and
-  slow it to a crawl; the `>= 64` condition is what makes the run usable.
-- The caller address maps each read to its function, so the section order falls out in one run.
-- Then close the arithmetic against the file size: if `sum(reads) + known_prefix == filesize`, the
-  layout is complete. That is the check that distinguishes a real format from a guess.
+Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical and the depth lives in
+`references/data-formats.md` — the `.MP` size formula, the `.SAV` section list with its two record strides
+(52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
+zeros-fraction pitfall. Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
+`FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
+`FUN_00582260`); `FUN_00598340` is the magic/version dispatcher.
 
 ## Format core (verified; details in FINDINGS.md)
 
@@ -641,7 +600,8 @@ before reading anything out of it, and do not take its silence for BLOCKED.
   order counts only as that memory delta, never as a screenshot. `--no-escape N` = "press no Escape during
   the first N seconds" — set N above `--timeout`. Bound a backgrounded driver with shell `timeout`.
   Launch a long run through the agent's tracked background mode (`exec python3 scripts/smac_play.py
-  … > /tmp/<tag>.log 2>&1`), never `nohup … &` in a foreground call: the wrapper is refused there, and
+  … > /tmp/<tag>.log 2>&1`), never `nohup … &` — nor ANY `&`-backgrounded chain, `cmd && other &` included — in a foreground call:
+the wrapper is refused there (re-send the whole thing through the tracked background mode), and
   a shell that backgrounds and exits hides the driver's own pid — find it with `pgrep -f smac_play.py`
   and `kill <pid>`. Never signal by name (`pkill -f`/`pgrep|kill` matches your own argv).
 - **A PROPOSAL vote pane stalls the AI phase.** `YEA: 2  NAY: 3` is the TALLY, not a key hint. Bars in
@@ -740,7 +700,17 @@ against the bare index never fires (`references/static-store-census.md` §9.3). 
 substitute expressions as printf ARGUMENTS — an expression pasted into the
 format string prints ITSELF and the log then parses as zero events (`references/static-store-census.md`
 §9 point 10) — use `x/s` outside a commands block
-  when a name is genuinely wanted. Never build the gdb command list by running a Python `%`-format over
+  when a name is genuinely wanted. **A `dump binary memory` in a command list is the same class of killer:**
+a non-literal target (`%s`, a convenience variable), an ARITHMETIC address range, or a
+`python … read_memory … end` block each abort the sourced script at the first hit — the run logs `ARMED`
++ one `Breakpoint N at` per bp + ZERO events while the round keeps advancing, indistinguishable from "the
+mechanism never ran". Bake the dump target as a literal absolute path (substitute with `str.replace()` on
+a unique token), give the range two LITERAL addresses, and note convenience-variable arithmetic is 32-bit
+SIGNED — an `end - start` inside gdb underflows and poisons every offset derived from it, so compute
+lengths/offsets in Python and bake them as hex; one dump file per RUN with an `off=` field in the log
+beats a per-hit filename (a second dump to the same path overwrites the first). Loop-entry-vs-branch-
+target, the scan-window rule and the snapshot-cadence law: `references/gdb-command-list.md`.
+Never build the gdb command list by running a Python `%`-format over
 it: the template is full of `%d`/`%x` printf conversions and Python eats the first ones as its own
 arguments, silently rewriting the breakpoints. Bake addresses and constants as literals, or substitute
 with `str.replace()` on a uniquely-marked token, and diff the emitted `scratch/<tag>.gdb` before attaching. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
@@ -748,7 +718,11 @@ with `str.replace()` on a uniquely-marked token, and diff the emitted `scratch/<
 otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
 read back BEFORE attaching that the watched event can even happen (queue head is the armed id,
 `pending >= 1`, storage above what the gate can demand) — an unusable window is not a negative result
-(`references/static-store-census.md` §9.8–9).
+(`references/static-store-census.md` §9.8–9). **A whole subsystem path can be gated on another
+subsystem's state**: with every base's production queue empty the research upkeep never runs, so a scorer
+census logs zero events across boundaries while the round advances — satisfy the printed readiness FIX
+before calling the sites unreachable, and echo the precondition in the harness's output so "gate unmet" is
+distinguishable from "mechanism refuted".
 - **A leg census gates on PREDICTIONS, not on hits.** Compute each site's expected hit count from live
   memory first (gate globals, args off `$esp`, the table values the branch loads), print the
   predictions, gate on agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`).

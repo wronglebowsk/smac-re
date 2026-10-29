@@ -352,3 +352,25 @@ all 0, live at round 63+ nonzero for records 1-7), plus WHO WRITES 0x94e488 / 0x
 the 0x950664 band tables (the 8 esi positions are powers of 4). Human leg (bVar14, FUN_00625af1) and
 the pay-site conflict 0x4f0ca6 vs 0x4efedd still open. Evidence: evidence/m92tail2-7.gdblog;
 scratch/m92/{tailcheck,verify7}.py; scratch/m92tail*.out.
+
+## Session 145 (2026-10-28) — M92 NOT accepted: the tail is predicted from the live block (38/41 exact), the offsets were the bug and the block MOVES inside a round
+
+Branch milestone/m92, nothing merged. Three instrument truths, each from instruction bytes or measured adds:
+1. category byte `[eax+esi+0x94eda8]` and multiplier `[eax+esi+0x94e5a8]` with `eax=fac*8380` are at
+   **+0x920 / +0x120** from 0x94e488 — the +0x1000/+0x1860 I used read zeros and produced the 12312 tails.
+2. `0x94dc44`/`0x94dc58` are **BEFORE** the block (+0x7fc/+0x810 from 0x94d448) and the cat-0 factor is
+   **2 when [0x94dc44] >= [0x94dc58], else 4** (0x5a95be setge / dec / and 2 / add 2) — inverted in the
+   s144 note, which is why fac 2 read 16 where the engine added 8.
+3. **The divisor moves INSIDE a round** (fac6 snapshot 1 live 6; fac2 8 live 9), and so can the category
+   byte: take the divisor from the TAIL record (read at 0x5a9503 for that candidate), the arrays from the
+   round snapshot.
+MEASURED, not modelled: the four add sites (scratch/m92probe_adds.gdb) show ONE term per candidate,
+`mult*Tc*4/div`; `TAILOUT` at 0x5a9698 is the tail output, and `final` (0x5aa159) is a **POST-tail leg**
+on top of it (+1, +29 at r76) — gating on `final` conflated two legs.
+ACCEPTANCE `scripts/m92_tail_census.py --tag m92tail14 --poke-index 7 --poke-extra 2,6 --rounds 4
+--timeout 100` (fresh load, 41 candidates, 6 scans): **FAIL 5/8** — 41/41 divisors and TAILOUTs clean,
+**3 wrong** (fac 5: model Tc, engine 2Tc = a category byte that moved after the snapshot). Replaying the
+same snapshots offline with the fixed model: **38/41 exact (m92tail14), 5/5 (m92tail12)**.
+NEXT: append the two arrays AT the score (0x94e488+fac*8380+0x120 and +0x920, 128 B at the TAIL hit) so
+the last 3 go exact; then the post-tail leg 0x5a9698 -> 0x5aa022.
+Evidence: evidence/m92tail9-14.gdblog, m92adds1.gdblog; scratch/m92adds.py, m92probe_adds.gdb.

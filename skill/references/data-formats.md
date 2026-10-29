@@ -32,6 +32,53 @@ parsing, not RE.
 - `.SAV` — mission year is a `u16` at file offset `0x54`; autosave slots rotate **in place**,
   so read the year rather than trusting the slot number. See `SAVE_FORMAT.md`.
 
+## Map + save container formats (verified — repo docs MAP_FORMAT.md / SAVE_FORMAT.md are canonical)
+
+`.MP` map — `15 + 2724 + W*H*22 + trailer == file size`, checked on both shipped maps:
+```
+0        15 B   b"TERRANMAP\0" 0x1A u32 version(=5)
+15     2724 B   header struct: u32 width, u32 height, ... (word 5 = land cells = W*H/2)
+2739    W*H*22  raw cell records, row-major (no XOR)
++      var      trailer, starts b"????????" (128 B @80x80, 338 B @128x128)
+```
+planet.MP 80x80 143,667 B; planetx.MP 128x128 363,525 B. Parser `scripts/decode_map.py`.
+
+`.SAV` save — `b"TERRAN\0" 0x1A u32 version(=86)`, 796 B header, mission year u16 at **+0x54**; then
+sections read in a fixed order. **`FUN_00597a70` is the save/scenario block loader, not the map loader**
+(the map grid is read raw by `FUN_00582260`); `FUN_00598340` is the magic/version dispatcher.
+
+`.SAV` section sizes (from the `push` sites in `FUN_00596850`): 796, 67,040, 11,488, 16,000, 3,584,
+26,624, 4,096, 256, 152, 10,144 are immediates; three are computed — one raw count (`DAT_00927538`), one
+**52 B/record** (`edx` records), one **304 B/record** (`DAT_00985af4` records). Two are skipped outright
+under version/count conditions, so the section list is conditional; sizes shrink as the game progresses.
+`.SAV` is fully splittable from the file alone — `scripts/decode_save.py --sections` sums to the byte.
+Key facts: u32 **own player at file offset 808**; a **u32 count prefix immediately before** one variable
+section; the other two variable sections are `n × 52 B` and `m × 304 B` records, split by solving
+`52n + 304m = region` and choosing on zeros-fraction (304 B records ~80% zero, 52 B ~40%).
+Caller-scoped gdb condition that makes small reads loggable without flooding:
+`break *0x64cc00 if *(void**)$esp >= 0x596850 && *(void**)$esp <= 0x597a6b`.
+Anchors that pin a save's layout byte-exact (verified on two saves of different ages): map dims
+`50 00 00 00 50 00 00 00` at **79,372** and `????????` at **222,896**; gap 143,524 = 2,724 + 140,800.
+`scripts/decode_save.py --anchors` checks it.
+**Pitfall:** never validate an offset by "fraction of identical bytes" — these files are mostly zeros, so
+the match rate is flat across wrong offsets. Use a unique content signature instead.
+
+### Technique that cracked both: runtime read trace, not static reading
+Break on the read wrapper and log the **caller** and size:
+```
+break *0x64cc00 if *(int*)($esp+8) >= 64      # 0x64c9a0 is the sibling wrapper
+commands
+silent
+printf "R3 caller=%#x size=%d count=%d file=%#x\n", *(void**)$esp, *(int*)($esp+8), *(int*)($esp+12), *(void**)($esp+16)
+continue
+end
+```
+- Unconditional breakpoints here fire **34,000+ times** (the game reads 1-2 bytes constantly) and slow it
+  to a crawl; the `>= 64` condition is what makes the run usable.
+- The caller address maps each read to its function, so the section order falls out in one run.
+- Then close the arithmetic against the file size: if `sum(reads) + known_prefix == filesize`, the layout
+  is complete. That is the check that distinguishes a real format from a guess.
+
 ## Graphics
 
 - CVR: `cvr_decode.py` (validates 113/113), renderer output in `png/` (gitignored, regenerable).
