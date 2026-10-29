@@ -45,7 +45,7 @@ an accumulation model predicts no. When docs and code disagree on which field ga
 one-variable poke (arm queue + storage, change nothing else) and let the arrival decide.
 
 After the gate passes: pay `0x4efedd` (`storage −= price`) → the clamp at `0x4eff02-0x4eff23`
-re-caps storage for in-mask owners when it exceeds `max(0x92a370, income)` → the create-unit call
+re-caps storage for in-mask owners when it exceeds `min(0x92a370, income)` — the compare at `0x4efefa` uses `edx` built at `0x4efef2-0x4efef8` as `(0x92a370 < d0) ? 0x92a370 : d0`, and the in-mask test is `0x4eff02 test BYTE PTR ds:0x985b10, dl` against the local at `[ebp-0x2c]` → the create-unit call
 `0x5ab650(type, ?, x, y) @ 0x4eff4e`, guarded at `0x4eff32` by the PROCESS-GLOBAL dword at
 `0x8f0d70` (`a1 70 0d 8f 00` = `mov eax,ds:0x8f0d70`; `test eax,eax; jne 0x4eff5c` skips the create).
 M60 fixed the old claim here (`[base+0x10] == 0`): base record `+0x10` holds 0x4b000000 / 0x55000000
@@ -404,7 +404,7 @@ What one visit actually does to `+0x40` (all read back at Korolev Center):
   `storage + d0 >= 9`, which is exactly how the price-10 model fails live (arrival measured at
   minerals 8 while the gate printed "queue held — minerals 8 vs price 10").
 - **CLAMP `0x4eff20` / `0x4f0ce9`** store `max(0, min(cap `[0x92a370]`, d0))` and only when
-  `storage >` that limit; they never fired in any measured window (storage after the pay is 0-1).
+  `storage >` that limit; they fire whenever `d0 <= 0`: `min` goes negative so the clamp writes **0** one store after the pay (watch pair `pc=4efee0 new=191` then `pc=4eff23 new=0`), and `0x4eff29-0x4eff2c` mirrors that 0 into `+0x98` in the same breath. A window where they stay silent only means storage after the pay was already 0-1 — never read a silent clamp as "the clamp leg is unreachable", and never credit the post-pay 0 to the pay itself: two writers touch `+0x40` in one visit. This is the mechanical reason `accept_ready`'s `credit > 0` reason cannot be cleared by spending turns and why the per-boundary storage poke is load-bearing.
 - **`0x4f2d7d`** in `FUN_004f26e0` (the driver's post-visit call) is a division-based distribution
   store — instrumented, never hit for our base in the measured windows.
 - the pop leaves stale ids in the slot tail: slots read `[2,2,2,2,2,0]` after four completions,
@@ -700,7 +700,10 @@ is a measured property of the WIDGET with no code behind it yet.
 - **For a UI-queued base-type head the pay that fires is `0x4efedd` with `edi` = the head's
   PRICE** (measured `storage 9 edi 9` and `storage 10 edi 9` on a base whose INDEX is 0, so in
   that shape `edi` is not M49a's sweep-entry index). Arm BOTH pay sites (`0x4efed8` and
-  `0x4f0ca1`) — `0x4f0ca6` remains unexamined for the designed branch.
+  `0x4f0ca1`), but check the shape can discriminate first: the visitor picks the branch on the SIGN of
+  `+0x50` before either gate runs, so a run that only ever enqueues a POSITIVE head leaves the negative
+  branch unexercised and "A fired, B silent" is not "A pays completions". `0x4f0ca6` remains
+  unexamined for the designed branch.
 - **Arm the pop with CONDITIONAL breakpoints keyed on the record** (`if $esi+0x95da10 == $b`,
   `if $ecx == $b`, `if $edx == $b`): 10 silent breakpoints + 4 hw watchpoints cost ~35 s per
   round boundary and keep every other base's pop out of the log.

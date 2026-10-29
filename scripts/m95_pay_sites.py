@@ -210,7 +210,9 @@ def main():
                 armed = True
             continue
         if ("Hardware watchpoint" in ln or ln.startswith("[Inferior")
-                or ln.startswith("Thread 1") or "Breakpoint" in ln
+                or re.match(r"^Thread \d+", ln) or "Breakpoint" in ln
+                or "debuginfod" in ln.lower() or "This GDB supports" in ln
+                or "auto-downloading" in ln
                 or "__kernel_vsyscall" in ln or re.match(r"^0x[0-9a-f]+ in ", ln)):
             continue
         unparsed.append(ln)
@@ -234,7 +236,9 @@ def main():
     g1 = armed and n_hw == len(WATCH) and n_bp == len(BPS) + 1
     g2 = st1["pending"] == 0 and st0["pending"] == 1
     g3 = st1["round"] == st0["round"] + a.boundaries and rc_ok
-    g4 = len(pays) == 1
+    g4 = (bool(pays) and all(e["tag"] == "PAYA" for e in pays)
+          and not any(e["tag"] == "PAYB" for e in ev)
+          and not any(e["tag"] == "W_STOR" and e["pc"] == 0x4F0CA9 for e in ev))
     pay = pays[0] if pays else None
     g5 = False
     if pay:
@@ -250,9 +254,9 @@ def main():
             and all(0x4EF5D0 <= e["pc"] < 0x4EF6D0 for e in pend_evs))
     g7 = tracer == "0"
     g8 = not unparsed
-    g9 = bool(pays) and (sum(1 for e in ev if e["tag"] == "PAYA") == 1) != (sum(1 for e in ev if e["tag"] == "PAYB") == 1)
+    g9 = (any(e["tag"] == "PAYA" for e in pays)) != (any(e["tag"] == "PAYB" for e in ev))
     gates = [("G1_armed", g1), ("G2_completion", g2), ("G3_rounds", g3),
-             ("G4_one_pay", g4), ("G5_pay_math", g5), ("G6_pop_activation", g6),
+             ("G4_pay_is_A_only", g4), ("G5_pay_math", g5), ("G6_pop_activation", g6),
              ("G7_clean", g7), ("G8_clean_log", g8), ("G9_discriminates", g9)]
     for n, v in gates:
         print(f"  {n}: {v}")
