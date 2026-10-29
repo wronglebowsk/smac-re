@@ -457,7 +457,8 @@ bps at 0x4e9557/0x4e957f, register-only condition `$eax==row`).
   read); writes 0x59f0c7 `= -1` (FUN_0059ec90), 0x5aaf67 `= -1` and 0x5aaf79 `= eax`
   (FUN_005aadf0's grant path, `call 0x5aab70` at 0x5aaf71 between them).
 - `FUN_005aadf0(faction, p)` (per-base upkeep tail 0x4f5c2e FUN_004f34b0 <- FUN_004f5a70 <-
-  0x5206d3): `[+0x94d7f8] += p` — the AI legs 0x5aae04-0x5aae71 double p, the human never;
+  0x5206d3): `[+0x94d7f8] += p` — the AI legs 0x5aae04-0x5aae71 WOULD double p, the human never, but NO
+  faction doubles live (M99 retraction: 0x5aae1a `call 0x5312d0` returns 0 single-player);
   if (netgame || slot >= 0) { t = aab70(fac); if (slot > 0x58) acc += p; if (t <= acc) {
   print "Researched Advance"; FUN_005aaa20(fac) consumes the work-item slot; FUN_0047f590(fac,
   item); acc = 0 @0x5aaf5c; field = -1 @0x5aaf67; field = aab70(fac) @0x5aaf79 } }; the
@@ -522,3 +523,36 @@ FUN_004eaa10 called at 0x4f5ad7). Harness `scripts/m99_param2.py --tag t --bound
 - HARNESS: `scripts/m100_mult_watch.py` (4 hw watchpoints on the multiplier + CALL bp 0x520909 + READ bp
   0x4f352e; pokes facs 1-7 to live+10 before each boundary; `--predict` prints the baseline table).
   `m100mult2` PASS 13/13, m54b_clean r52->54.
+
+## M102 — FUN_005a15a0 internals at slot 10, verified AT the store sites (m102hit3 PASS 14/14)
+
+- LOOP SHAPE: after the `rep stos` reset, a 4-category outer loop (cat 0..3, idx = p1[cat]) wraps an
+  11-slot inner loop (`edi` and the row pointer `[ebp-0x8]` both `add 4` per iteration, counter
+  `[ebp-0x10]` = 0xb), so 0x5a16d9 executes 44 times per rebuild — once per (slot, category); a
+  register condition on the slot-10 BYTE address selects exactly 4 hits. At the hit `edi` = dest byte
+  address, `ecx` = the row dword, `eax` = old + ecx (add at 0x5a16d7). D-add loop 0x5a1799-0x5a17a4:
+  11 iterations, `eax` walks the block, `edi` = the D dword; at 0x5a179e `eax` = dest, `edi` = value.
+- CLAMP/ADJUST TABLE at `0x927a9c + fac*1436`: count dword, then three PARALLEL dword arrays — types at
+  `+0x20`, keys at `+0x40`, values at `+0x60`. Type 4 = clamp block[key] 0..999 (ALWAYS stores, even
+  unchanged), type 10 = halve-if-negative (ceil; stores only when < 0); types 5/6 are per-category
+  ADJUST legs: `key == cat && value == idx` mutates the CURRENT slot by -/+ row[slot] BEFORE the
+  0x5a16d9 add, so adjustments are baked into `old` read at the hit. param_5 != 0 skips the D-add, era
+  and clamp legs together (0x5a1712 jumps to the ret tail at 0x5a181d).
+- CATEGORY-SKIP leg (0x5a1601-0x5a1671): a category skips its slot add iff row[slot] < 0 AND
+  (cat,idx) in {(3,1),(3,3),(2,1)} AND the era byte matches the faction — (3,1) tests
+  `*(uint8 *)(0x95da14 + 304*ds:0x985b90)`, (3,3) and (2,1) test `... * ds:0x985b9c`. Those globals are
+  BASE INDICES; `0x95da14 + 304*b` is base record b (rows at 0x95da10, stride 304) byte `+4` = its OWNER
+  FACTION. Era globals read -1 live (r50-r57), which makes the leg inert.
+- LIVE (m102hit3, m54b_clean r55->57, 15 silent bps, NO pokes — bps fire on EXECUTION, so watchpoint
+  suppression is moot): 36 CAT + 9 DADD events, every stored == old + src AT the hit, every chain
+  0 -> final, cp == fac 45/45, CLAMP 0 events == predicted (no key-10 entry on any faction), final ==
+  /proc {1:-2,2:0,3:2,6:-2}. Harness `scripts/m102_rebuild_at_hit.py` (`--predict` prints live inputs +
+  prediction table; M102_WFACS=; group events BACKWARD from the CALL bp — see instrument-laws).
+- **THE D ACCUMULATOR DOES NOT ACCRUE PER-ROUND**: 0x59ec00/0x59ec90 — the only displacement stores to
+  `[fac*8380+0x94d700]` — logged ZERO events across two complete rounds while every D slot held its
+  value. A "+10 per faction per 2 rounds" drift seen on the idle box came from a trigger the driver does
+  not reproduce, or from a POINTER-form writer the displacement census cannot see: the writer of
+  `[fac*8380+0x94d700]` is OPEN — answer it with watchpoints on the D slots, not greps.
+
+## The per-faction record block (M104: bytes + live reads + the save image)
+`0x927a9c + fac*1436` = the count dword, then three PARALLEL stride-4 arrays of 8 slots each: TYPE at +0x04, KEY at +0x24, VAL at +0x44 (FUN_0059ec00 anchors on +0x24 and reads TYPE at [p-0x20], VAL at [p+0x20]; the 0x20 spacing is what caps the list at 8 entries). TYPE==3 -> D[KEY] += VAL (M103); TYPE 4/10 are FUN_005a15a0 clamps; TYPE 7/8 do inc on D slots 17/18 at 0x5a78e7/0x5a78f2. NO store in .text reaches count/TYPE/KEY/VAL by displacement — all 46 mentions are scan-loop loads or cmps (0x40d9f4 0x4e4cd9 0x4f37b3 0x4f3e5d 0x4f47ba 0x4fcdf3 0x508c50 0x522ad4 0x589089 0x5a0087 0x5a0443 0x5a1689 0x5a78d0), so ask who-writes-it of a HARDWARE WATCHPOINT on the count dword. The list is LOAD-TIME data: a .SAV carries the block verbatim at the same stride (m54b_clean.SAV fac0 base 0x10e18, fac1 0x113b4, fac3 0x11eec, fac6 0x12fc0) and nothing appends it during rounds (m104w3 PASS 12/12: 0 count-change events over 3 boundaries while a control watchpoint on the same faction logged 6 writes), so D — and the research multiplier D leg — is FROZEN after scenario setup.

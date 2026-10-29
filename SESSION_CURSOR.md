@@ -1,1 +1,3 @@
-M102 PASS 14/14 (m102hit3, one invocation, r55->57) | merged? NO YET (branch milestone/m102; next: checkpoint commit -> gate --base main -> submit -> checks -> merge) | docs closing in flight: SESSION_NOTES + NAMED + NEXT_PROMPT patched by section, skill rsync. Box: m54b_clean r57 cp3 hud, mults {1:-2,3:2,6:-2}, University pend 1 head 2. Evidence 28.1 MB (gate FAIL 30).
+M104 ACCEPTED (s159): m104w3 PASS 12/12 (python3 scripts/m104_append_watch.py --tag m104w3 --boundaries 3). branch milestone/m104, NOT yet submitted/merged.
+finding: nobody appends the record entries mid-game; the 1436-B per-faction blocks are load-time data (m54b_clean.SAV holds them verbatim at stride 1436).
+next: notes + NAMED + NEXT_PROMPT (pick M105) + skill sync + commit + gate + submit + merge.
