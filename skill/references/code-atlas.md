@@ -312,13 +312,21 @@ next closing that rsyncs this skill carries them in):
 - The chooser is **`FUN_005aa030(faction)`** (554 B, 3 call sites: 0x48bae4, 0x59cfc8, 0x5a0113): it
   loops `iVar4 < 0x59`, gates each candidate with `FUN_005a6cd0(prereq, faction)`, scores with
   `FUN_005a90a0(index, faction, 0)`, tie-breaks `_rand() % (score+1)` for non-humans (the human faction
-  uses `FUN_00625af1`), keeps the max (`local_c`) and returns the INDEX; markers -999 / -1.
+  uses `FUN_00625af1`), keeps the max (`local_c`) and returns the INDEX; markers -999 / -1. **M96
+  (s151, live 13/13 + 7/7 + 2/2): the max is over the DRAW, not the score — a score-weighted LOTTERY
+  (idx72 scaled 2133 drew 5 and lost to idx13 scaled 1408 draw 835); every candidate's score is first
+  scaled `<< 8 / max(FUN_005a6d40(prereq1,1), FUN_005a6d40(prereq2,1))` (prereq-CHAIN DEPTH) under the
+  gate `ds:0x985ac4 & 0x200` at 0x5aa164 — that gate is NOT the human mask (it fires for AI factions
+  too); the human mask byte 0x985b10 only arms the forced pick ([fac*8380+0x94d810]/[+0x94d818] != 0 ->
+  the candidate == WORD ds:0x98adee returns un-drawn at 0x5aa251) and swaps the draw to the 0x999fa0
+  LCG. Harness: `scripts/m96_human_leg.py`.**
 - **`FUN_005ab000` is a thin wrapper**, not a candidate scan: 0x5ab047 `call 0x48b9a0`, 0x5ab04c
   `mov esi,eax`, 0x5ab0bf `mov eax,esi`, ret. Its 0xc5c frame is SEH + 4 C++ locals (destructors
   0x6170f3) — do not read it as a "candidate array". `FUN_0048b9a0` (8514 B, 1 caller) picks the leg:
   `((param_2==0 && (round==0 || !(0x985b10 & (1<<param_1))) || bVar14) && param_3<0)` -> return
-  `FUN_005aa030()`'s eax verbatim; `bVar14` is UNDECODED (it is what lets a mask-set faction take the
-  leg anyway). Its call site 0x48bae4, landing **0x48bae9** — the cheapest live probe of the choice.
+  `FUN_005aa030()`'s eax verbatim; `bVar14` = `((ds:0x985ac4 & 0x200) != 0 && param_3 <= 0)`
+  (shard_009.c:9343-9347; live ebc 0x1a0e, bit 0x200 SET) — that is what lets a mask-set (human)
+  faction take the leg anyway (s151, A030 fac=3 observed landing 0x48bae9). Its call site 0x48bae4, landing **0x48bae9** — the cheapest live probe of the choice.
 - Harness: `scripts/m90_tech_choice.py` — poke a slot to -1, 8 print-only breakpoints, then read the
   NAME from `/proc` at 0x92fdd4+idx*44+16. **Pair events by their index in the WHOLE event list, not by
   the index within a filtered sub-list** (m90tech1 FAILed G6 exactly there). A census interleaved into a

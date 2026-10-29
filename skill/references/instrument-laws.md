@@ -139,3 +139,15 @@ those sites log ZERO events while a hardware watchpoint on the same field proves
 - Two watchpoint hits on one field in one pass name TWO writers: read the pass as a store sequence
   and disassemble backwards from EACH reported pc (the pay store and the clamp that follows it —
   `references/production-queue.md` — both hit `base+0x40` inside one visit).
+- A breakpoint at a `mov eax,[ebp-0xc]` RETURN site prints the OLD eax: break at the NEXT instruction
+  (in the tech chooser FUN_005aa030, 0x5aa247 is the load, 0x5aa24a is where `$eax` is the return value;
+  m96human1 printed idx=0 for that reason). Likewise a register that a loop repurposes as a divisor or
+  modulus is not the loop variable: at 0x5aa232 `edi` is `score+1` on the rand path (`lea edi,[eax+1]`
+  at 0x5aa21a), so read the faction from `*(int *)($ebp+8)`, never `$edi`. Name every printf field the
+  way the parser asks for it — a field-name bug reads as a game FAIL (m96human1 G4/G9/G11).
+- A chooser/scorer leg can be predicted EXACTLY from a global RNG object: the human tech pick is
+  `FUN_00625af1(0, score+1)` = thiscall `FUN_00625a0f(&ds:0x999fa0, lo, hi)` — swap if lo>hi, then
+  `state = state*0x19660d + 0x3c6ef35f (mod 2^32)` and `val = ((state & 0xffff) * (hi-lo)) mod 2^32
+  >> 16 + lo`. Read the state at the call site BEFORE the call, predict, compare with the register at
+  the next site: 7/7 exact and the stream advanced exactly one step per candidate (s151, m96human2).
+  Non-human factions use `_rand() % (score+1)` (0x64c6f0) instead — a DIFFERENT stream.
