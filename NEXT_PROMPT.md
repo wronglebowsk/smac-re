@@ -49,8 +49,7 @@ param_2 has ONE producer, FUN_004f34b0 (M99). All legs: skill code-atlas.md.
 `&DAT_0094d67c + fac*0x20bc`, REBUILT FROM ZERO every round by FUN_005a15a0; caller FUN_005a1830(fac),
 `call` at 0x4dbf8e and 0x520904 inside FUN_005208f0 (the per-player turn sequence), cp == fac. NAMED.**
 **M101 RUN (s156; milestone/m101, PR #108 open, UNMERGED): the OFFLINE model reproduces the mult 8/8 but
-the mult LAGS D by one accrual — no single invocation printed PASS (m101feed2/3 9/10, feed4 9/10).
-SUPERSEDED by M102.**
+the mult LAGS D by one accrual — never green in ONE invocation (feed2/3/4 9/10). SUPERSEDED by M102.**
 **M102 ACCEPTED (s157, `m102hit3` PASS 14/14): THE MODEL AT THE STORE SITES IS EXACT** — silent bps at
 0x5a16d9 (`mov [edi],eax`: edi = dest BYTE addr, ecx = row value, eax = old + ecx), 0x5a179e
 (`add [eax],edi`: eax = dest, edi = D value) and 0x5a1807 (clamp store), register-only conditions on
@@ -58,14 +57,14 @@ A10 facs 1,2,3,6 + ENT 0x59ec00/0x59ec90 + CALL 0x520909; 36 CAT + 9 DADD events
 old + src AT the hit, chains 0 -> final, cp == fac 45/45, CLAMP 0 == predicted (no key-10 entry),
 ENT 0 AND D10 unmoved -> **THE ACCRUAL IS NOT PER-ROUND** (M101's +10 drift came from a trigger absent
 here or a POINTER-form writer). Skip leg 0x5a1601-0x5a1671 inert: era globals ds:0x985b90/0x985b9c = -1.
-Instrument `scripts/m102_rebuild_at_hit.py --tag t --boundaries 2` (`--predict`; M102_WFACS=; NO pokes —
-bps fire on EXECUTION, so watchpoint suppression is moot). NAMED.
+Instrument `scripts/m102_rebuild_at_hit.py` (`--predict`; M102_WFACS=; no pokes — bps fire on
+execution, so watchpoint suppression is moot). NAMED.
 **M103 (THE PICK): who WRITES [fac*8380+0x94d700] (the D accumulator)** — the displacement census saw
 only 0x59ec68/0x5a0471 and BOTH ran 0x in three windows. (a) 4 hw watchpoints on [fac*8380+0x94d728]
 (facs 1,3,6 + one zero fac), `m100_mult_watch.py` shape, `--boundaries 2` — the M97 law: copied-register
 RMW evades displacement greps, the watchpoint sees them all; (b) if 0 events again, let the box
 AUTO-ADVANCE 2 rounds with NO driver and read D10 before/after (one variable: the driver absent);
-(c) pointer-form census of 0x94d700 stores. ALSO OPEN: what the 0x92babc category records ARE; who
+(c) pointer-form census. ALSO OPEN: what the 0x92babc category records ARE; who
 chooses the record index at 0x4b2715; FUN_0056df40's `inc [ebx+0x94d7f8]`; why 0x59f0c7 never ran.
 
 ## STILL OPEN (in priority order)
@@ -85,8 +84,8 @@ chooses the record index at 0x4b2715; FUN_0056df40's `inc [ebx+0x94d7f8]`; why 0
   ds:0x985b9c = -1 (the category-skip leg is INERT until an era goes >= 0); no clamp entry with key 10.
   Reload recipe (~35 s, bare filename): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py
   --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `m57_ui_enqueue.py --base-index 0
-  --cell-item 2 --inserts 1` (the enqueue FAILS ONCE right after a turn-end with "candidate array []" —
-  just retry) -> `accept_ready.py`; the credit-0 BLOCKED line is the pay-site family's requirement —
+  --cell-item 2 --inserts 1` (the enqueue fails once right after a turn-end — retry) ->
+  `accept_ready.py`; the credit-0 BLOCKED line is the pay-site family's requirement —
   M100/M102 ran green with credit 0.
 
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
@@ -130,9 +129,9 @@ chooses the record index at 0x4b2715; FUN_0056df40's `inc [ebx+0x94d7f8]`; why 0
 - **A gdb printf FORMAT string passes VERBATIM to C printf:** `"...\n"` (ONE backslash) prints a
   newline; `"...\\n"` (TWO) prints a LITERAL `\n` and collapses the whole event stream into ONE
   unparsed line that reads as ZERO events (m102hit1: 47 events emitted, 0 parsed, floors innocent).
-  And a bp at the insn AFTER `call X` fires AFTER the callee's own events — group per-invocation
-  events BACKWARD from it; unwatched factions yield legitimately empty groups: skip them in chain
-  gates, do not fail on them (m102hit2 12/14 on perfect data). Skill instrument-laws.md.
+  A bp at the insn AFTER `call X` fires AFTER the callee's events — group per-invocation events
+  BACKWARD from it; unwatched factions yield legitimately empty groups: skip, do not fail on them
+  (m102hit2 12/14 on perfect data; skill instrument-laws.md).
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 
