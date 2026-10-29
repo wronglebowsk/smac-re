@@ -403,38 +403,12 @@ The address/field atlas (base-record offsets, terrain record formula, faction + 
 map, pointer-type scale traps, VA→function recipe) lives in `references/code-atlas.md`. Open it when you
 need a field offset — do not re-derive one from pseudocode: Ghidra types some DATs `short*`/`int*`, so a
 pseudocode offset can be HALF or 4x the real byte offset.
-**Unit-record type field — SETTLED: the u16 at `+10`. `+4` is the flags dword.** An earlier
-version of this paragraph claimed type@`+4` and `+10`=flags; that was wrong, and `FOOTING.md`
-("type byte@4") and `SAVE_FORMAT.md` ("`+10` is a flag word") have been corrected to match.
-Proof is the accessor, not a screen correlation: the class table is indexed with
-`*(short *)((int)&DAT_00933282 + rec_off) * 0x34` (`shard_012.c:2150`; same shape at `:2117`,
-`:2148`, `shard_001.c:4153`, `:4312`, `:9466`) and `DAT_00933282` is `UNIT_ARR + 0x0A`. The
-screen agrees — a selected record reads "Scout Patrol" on the panel with `+10 = 2`. `+10`
-values of 128/256/320 mark EMPTY STALE SLOTS: filter `type < 24` (and x/y in range) before
-counting a record as a unit. Movement/order fields (`+0/+2`, `+17`, `+20..+35`, `+40`) were
-never in doubt — pokes the game obeyed validated them.
-
-Two rules that generalise from how this one went wrong:
-- **Settle a field's identity from the binary accessor, not from which candidate looks plausible
-  on a dump.** Grep the table base (`grep -n '98adb2\|933282' ghidra_out/*.c`), then read the
-  cast: `*(short *)((int)&DAT_x + off)` gives the WIDTH and the OFFSET at once, and the code that
-  consumes it names the semantics. A correlation over live records only ranks candidates.
-- **Never compare candidate offsets on a state you already know is degraded.** The "`+4` wins
-  117/119" measurement was taken on records sitting in limbo after the faction lost its bases,
-  where the flags byte reads 0 on most records. Re-run layout questions on a freshly loaded,
-  healthy save, and do not let a format doc outvote code that demonstrably works.
-
+Unit-record type field: the u16 at `+10` (`+4` = flags) — settled from the accessor;
+the full story + the two generalizing rules are in `references/code-atlas.md`.
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && $1<=A {n=$2;p=$1} END{print
 p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.
-**Parse an objdump line by its TAB fields, never by the text after the colon:** the machine-code bytes
-sit between the address and the mnemonic, so `line.split(":")[1].startswith("mov")` matches NOTHING and a
-whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. An
-address-keyed scan must require the shape `^[0-9a-f]{6,8}:\t` before `int(x, 16)`: the section header
-line `00401000 <.text>:` also starts with hex and raises `ValueError` mid-parse, killing the census
-before it arms. Import
-`scratch/m71/dis.py` under a non-clashing module name (`importlib.util.spec_from_file_location`), because
-stdlib `dis` shadows the plain `import dis`.
+Parse objdump by TAB fields (bytes sit between address and mnemonic); require `^[0-9a-f]{6,8}:\t` before int(x,16) — details in `references/code-atlas.md`.
 
 ## terran.exe PE layout (verified 2026-10-20 via section table + byte reads)
 
