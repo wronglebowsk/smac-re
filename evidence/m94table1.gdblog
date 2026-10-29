@@ -1,0 +1,39 @@
+[New LWP 563148]
+[New LWP 563147]
+[New LWP 563146]
+[New LWP 563145]
+[New LWP 563144]
+[New LWP 563143]
+[New LWP 563142]
+[New LWP 563141]
+[New LWP 563140]
+[New LWP 563139]
+[New LWP 563138]
+[New LWP 563137]
+[New LWP 563136]
+[New LWP 563135]
+[New LWP 563134]
+[New LWP 563133]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xee8ae32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x94e488
+Hardware watchpoint 2: *(int *)0x94e5a8
+Hardware watchpoint 3: *(int *)0x94eda8
+Hardware watchpoint 4: *(int *)0x950664
+ARMED 4 hw watchpoints at 0x94e488 0x94e5a8 0x94eda8 0x950664
+M94W CAT0 pc=0x55851d new=0x8080800 round=56
+M94W CAT0 pc=0x558551 new=0x8080000 round=56
+M94W MUL1 pc=0x556721 new=0x0 round=56
+M94W MUL1 pc=0x556b5a new=0x100 round=56
+M94W CAT0 pc=0x55851d new=0x8080800 round=57
+M94W CAT0 pc=0x558551 new=0x8080000 round=57
+M94W MUL1 pc=0x556721 new=0x0 round=57
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xee8ae32c in __kernel_vsyscall ()
+[Inferior 1 (process 563130) detached]
