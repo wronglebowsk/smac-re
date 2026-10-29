@@ -1,4 +1,2 @@
-M105 RUNNING (s161, branch milestone/m105, instrument m105_setup_watch.py): who writes the 1436-B record block AT SETUP.
-ANSWER SO FAR (m105s3, VERIFIED): at process start the arena is ZERO (counts [0,0,...] at pid discovery); an APPEND loop at pc 0x579b12 (store+2, before the M103 candidates 0x57c550/0x57ecf0) increments each count 1..N and the 15 logged appends land EXACTLY on the m104 image [0,6,5,4,3,4,5,3]; the CDROM screen is then QUIIESCENT for 4 min (no further events). m105s2 proved the save LOAD logs 0 count stores while the ROUND control fires at 0x64bfa3 (FUN_0064bf70), but its sentinel died in the 3 s pre-arm window.
-m105s4 = arm early + poke -77 WHILE ARMED at the quiescent cdrom screen + load; G17 asks whether every sentinel replacement is logged.
-acceptance: RUNNING (m105s4 -> scratch/m105s4.out, evidence/m105s4.gdblog) | merged: NO | next: grep ACCEPTANCE scratch/m105s4.out
+M105 ACCEPTED (s161, branch milestone/m105): m105s4 PASS 17/17 — the record block is BUILT AT PROCESS START by FUN_005791c0 (count store reports 0x579b12); 0 events at the 8 M103 setup sites; 0 CNT stores in the load window and the -77 sentinel came back unlogged (OPEN = M106).
+merged: NO (submit pending) | next: python3 scripts/milestone.py submit; then gh pr checks + milestone.py merge <n>
