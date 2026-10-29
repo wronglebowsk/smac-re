@@ -51,9 +51,9 @@ blind spot. Harness `scripts/m106_load_restore.py` (two straces with raw args + 
 0x598476, FUN_00598340; 18 named records at 0x95da10), and RETRACTED M107's gate claim (live
 `[0x985dbc]` = 9 → the STATIC 0x105e0 leg runs). The map still does NOT close: 242,539 − 204,504
 immediate = **38,035** vs 52·67 + 48·67 + 304·18 = 12,172 → **25,863 B unaccounted**, and the loudest
-read is a **malloc'd 86,016 B at heap 0x40a75b0** (42 × 2,048). Walk the r7 reads BACKWARDS (each
+read is a **malloc'd 86,016 B at 0x40a75b0** (42 × 2,048). Walk the r7 reads BACKWARDS (each
 read's tail fixes its leg) or break at the malloc 0x596ab2. THEN: FUN_00598340; FUN_005791c0's startup
-reads; TYPE 0/2; 0x92babc; 0x4b2715.
+reads; TYPE 0/2; 0x4b2715.
 
 ## STILL OPEN (in priority order)
 
