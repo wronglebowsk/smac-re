@@ -717,7 +717,11 @@ control watchpoint on an address you know changes** — a mnemonic grep misses s
 pointer-form `lea`. **A gdb census >90 s goes through `terminal(background=true)` + `process_manage
 wait` loops: the foreground caps at 420 s and killing a census mid-run leaves Wine hung (round frozen
 after detach too) — recover via `m54a_load --relaunch`. Pair store-readback probes by EVENT ORDER
-(RB follows ST); a {addr: last-mem} dict mis-pairs an address re-written later in the window.**
+(RB follows ST); a {addr: last-mem} dict mis-pairs an address re-written later in the window; and
+**detach only after the window is really over** — the turn driver returns rc=0 while other factions'
+upkeep is still executing, so the last stores happen after the detach and log NOTHING, which FAILs a
+read-back gate on the instrument while every other gate is green
+(`references/instrument-laws.md`).**
 `references/instrument-laws.md` carries the header order, the containment recipe, DictReader trap,
 the watchpoint laws and the value-census laws.
 

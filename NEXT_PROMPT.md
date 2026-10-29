@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 154, 2026-10-29)
+# NEXT_PROMPT.md — footing for the next session (session 155, 2026-10-29)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -18,7 +18,7 @@ Survivability: the kickoff's SESSION_CURSOR rule (<= 600 B, written BEFORE any s
 an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92-M98 (#98-#104) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97), M92-M99 (#98-#104, #106) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
 **M90-M94 (#95/#97-#100), all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest draw,
 tail only arg2==0); **TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block**
 (39/39; block FROZEN within a round, moves between rounds, a census needs a FRESH load); the POST
@@ -26,6 +26,13 @@ cascade 0x5a9747-0x5aa022 == the prereq-closure ladder (13/13; `0x5a9020(a,X,f)`
 depth f; **FREEZE LADDER INPUTS AT THE TAIL HIT**); DIVISOR `[fac*8380+0x94e488]` is recomputed
 every round by FUN_00556690 (upkeep stage) and **== that faction's BASE COUNT** (8/8).
 All legs: skill code-atlas.md.
+
+**M95-M99 (#101-#104, #106), all in NAMED.md:** the UI-queued completion pays AND activates in
+branch A (gate 0x4efa5e, pay 0x4efedd storage +0x40, POP 0x4f037b); 0x4f0ca6 is branch B's pay
+(negative queue slots only). The chooser ranks by the DRAW (score<<8 / prereq-chain depth
+FUN_005a6d40; human draws come from the LCG at ds:0x999fa0), NOT by score. base+0xd0 credit is
+recomputed every round by FUN_004e93f0. [fac*8380+0x94d800] is FUN_005aab70's memoized ADVANCE
+THRESHOLD vs the accumulator [0x94d7f8]. param_2 has ONE producer, FUN_004f34b0 (M99).
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
 
@@ -43,35 +50,21 @@ All legs: skill code-atlas.md.
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M95 ACCEPTED (s150, `m95pay4` PASS 9/9): pay-site conflict CLOSED** — a UI-queued completion pays
-AND activates in branch A (gate 0x4efa5e, pay 0x4efedd `storage -= price`, create 0x4eff4e, POP
-0x4f037b, pending store 0x4ef648); 0x4f0ca6 is branch B's pay (negative queue slots only, typecode
--q0). Stale tail: non-sentinel q0 with pending 0 re-produces phantoms while storage >= price. NAMED.
-**M96 ACCEPTED (s151, `m96human2` PASS 12/12): chooser human leg CLOSED** — score scaled `shl eax,8`
-(0x5aa1e7, gate 0x5aa164 on ds:0x985ac4&0x200) / prereq-chain DEPTH (FUN_005a6d40), NOT
-human-specific; the human mask 0x985b10 only (a) gates a forced pick ([+0x94d810]/[+0x94d818] != 0 ->
-candidate == WORD ds:0x98adee; INERT live) and (b) swaps the DRAW to the LCG at ds:0x999fa0.
-**THE WINNER IS THE MAX DRAW, NOT THE MAX SCORE** (0x5aa232, best starts -999). NAMED.
+**M99 ACCEPTED (s154, `m99p3` PASS 13/13): the param_2 producer is CLOSED** — `.text` has exactly
+ONE `call 0x5aadf0` (0x4f35cb, inside **FUN_004f34b0**, the per-base upkeep tail called at
+0x4f5c2e): 41/41 callee return pcs == 0x4f35d0. param_2 = (clamp([fac*8380+0x94d6a4],-5,5)+10)
+x [base_record+0x104] x 10, +100 when the %100 carry in [0x94d808] overflows, then /100 (C trunc,
+magic 0x51eb851f at 0x4f35b8); halve leg 0x4f3513 (FUN_00507410(0x17) policy word), zero legs
+0x4f3546/0x4f3556; the pre-scale total goes to [0x94dc30]. **NO doubling live** (ebx == param_2
+40/40; FUN_005312d0 returns 0) — M98's "AI legs double it" RETRACTED. NAMED.
+**M100 (THE PICK): who writes [fac*8380+0x94d6a4] (the research multiplier) every round** — poked
+-5 and read back -5, live **0** at the consumer 0x4f3558. Cheapest: 4 HARDWARE watchpoints on the
+multiplier for 4 factions over `--boundaries 2` in the `scripts/m99_param2.py` shape (repoint the
+watch at `[f*8380+0x94d6a4]`; it already prints mult at every hit), name the writers by
+containment, read back from /proc. ALSO OPEN: FUN_0056df40's `inc [ebx+0x94d7f8]` (0x56e024, a
+second live accumulator writer); what FUN_004eaa10 builds base+0x104 from; why FUN_0059ec90's -1
+store (0x59f0c7) never ran in these windows.
 
-**M97 ACCEPTED (s152, `m97credit3` PASS 11/11): base+0xd0 (credit) is RECOMPUTED EVERY ROUND** —
-FUN_004e93f0 stores it twice per call (0x4e9557 `= [+0xc0]-[+0xf0]`, 0x4e957f `-= [+0xe0]`, mirror
-0x4e9590 -> +0x94), called from FUN_004f5a70 (per-base turn stage) and the recalc helper FUN_004eb6b0;
-GROSS [+0xc0] is rebuilt from 0 by FUN_004e78e0, UPKEEP [+0xf0] is whole-faction; 0x4ef7f6/0x4eff20
-write [+0x40] STORAGE, not +0xd0; only 6 stores to `[reg+0xd0]` exist in .text. NAMED.
-
-**M98 ACCEPTED (s153, `m98budget4` PASS 11/11): the sibling slot is CLOSED** —
-[fac*8380+0x94d800] is FUN_005aab70(fac)'s MEMO = the faction's **ADVANCE THRESHOLD**, compared
-against the accumulator [fac*8380+0x94d7f8] by FUN_005aadf0 (per-base upkeep tail): grant iff
-threshold <= acc -> print "Researched Advance", FUN_005aaa20 consumes the work-item slot, FUN_0047f590
-applies it, acc = 0 (0x5aaf5c), field = -1 (0x5aaf67), field = aab70(fac) (0x5aaf79). Five references
-to 0x94d800 in all of .text; aab70 returns the memo unchanged when >= 0. Formula + model (13/13 stores predicted): NAMED.md + skill code-atlas.md.
-**M99 (THE PICK): who feeds param_2 into FUN_005aadf0** — the accumulator [+0x94d7f8] is `+= param_2`
-every call (the AI legs 0x5aae04-0x5aae71 DOUBLE it; the human never). Cheapest: 4 HARDWARE
-watchpoints on `[fac*8380+0x94d7f8]` for 4 factions over `--boundaries 2` in the
-`scripts/m98_advance_budget.py` shape (it arms the grant by poking acc to field+1; `--arm-facs 1-7`),
-name the writers by containment, read back from /proc. ALSO OPEN: what [fac*8380+0x94d78c] counts
-(it drives the threshold: 12->14->16 for fac3 while it builds) and why FUN_0059ec90's -1 store
-(0x59f0c7) logged 0 events in these windows.
 
 ## STILL OPEN (in priority order)
 
@@ -85,11 +78,11 @@ name the writers by containment, read back from /proc. ALSO OPEN: what [fac*8380
 
 ## LIVE FACTS / KIT
 
-- **Box at s153:** m54b_clean r56->62; 13 advance grants ran (facs 1-7); University Base pending 1
-  head 2 storage 0 credit 0, q0 STALE 2; ebc 0x1a0e (bit 0x200 SET), mask 8 -> ONLY fac3 human,
-  forced short 0x98adee = 6; era [0x985aec] 2, [0x985afc] 56->59, [0x92a390] 45, [0x92a298] 100;
-  thresholds after r62 -1,176,203,135,271,176,194,151. Instrument: `scripts/m98_advance_budget.py
-  --tag t --boundaries 2` (`M98_FAC=` picks the watched faction; `--arm-facs` arms the grant).
+- **Box at s154:** m54b_clean r66->68 (the M99 runs); University Base pending 1 head 2 storage 0
+  credit 0, q0 STALE 2; ebc 0x1a0e (bit 0x200 SET), mask 8 -> ONLY fac3 human, forced short
+  0x98adee = 6; era [0x985aec] 2; accs [fac*8380+0x94d7f8] facs 2/3/5/6 = 81/23/33/39; mults
+  [0x94d6a4] 0,-2,0,2,0,0,-2,0 (RECOMPUTED every round). Instrument: `scripts/m99_param2.py --tag t
+  --boundaries 2` (`--predict` = live inputs only; `M99_WFACS=`, `M99_POKE_FAC=`, `--poke-carry`).
 
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4). The human mask byte at 0x985b10 = 0x08 -> ONLY faction 3 is human (a dword read there
@@ -127,6 +120,11 @@ name the writers by containment, read back from /proc. ALSO OPEN: what [fac*8380
 - **The queue tail holds STALE ids** (the shift reaches only `0..pending-1`): never read a queue by "first empty slot" or a stale tail as proof an id IS queued; id 0 is Colony Pod AND the empty marker, the sentinel is -39, a negative belongs to the TYPE (196 -> -6, 195 -> -3). **PRODFLAG (0x4efe60) fires for EVERY record the pass walks** (128/322/323/194 = FACTION BANDS, M80): attribute the sweep by its own predecessor; the gate visit arrives in the boundary AFTER the sweep marks (poke window >= 3 boundaries).
 - **A list cursor read BEFORE the seek is the PREVIOUS cursor:** the chooser pump seeks with `call 0x4026b0` at 0x497717, so a node print at 0x497704 shows the old node — print at 0x49771c. **`milestone.py start <id>` refuses a dirty tree and resets to main:** stash a carried doc edit, start, pop, THEN re-write `SESSION_CURSOR.md`.
 - **Grep objdump case-sensitively** (`DWORD PTR`, not `ptr [`).
+
+- **A silent bp at the pc a HARDWARE watchpoint REPORTS is EATEN by the watchpoint** (m99p1 G8: 27
+  of 37 store read-backs vanished at 0x5aaef1 = 0x5aaeeb+6) — put the read-back bp ONE instruction
+  later (0x5aaef3) and read memory, not the register. A poke is only evidence if the CONSUMER reads
+  it: [0x94d6a4] poked -5, read back -5, live 0 at 0x4f3558 (recomputed per round, like base+0xd0).
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 

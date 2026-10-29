@@ -1,3 +1,5 @@
-M98 ACCEPTED: m98budget4 PASS 11/11 (ONE invocation, m54b_clean r60->62, 13 triples, 13/13 stores == model). Merged? NOT YET.
-Next: git add -A && git commit -m 'M98: checkpoint'; python3 scripts/gate.py --base main; python3 scripts/milestone.py submit --title ...; gh pr checks <n>; python3 scripts/milestone.py merge <n>.
-Branch milestone/m98. Docs+skill written; nothing else in flight.
+M99 ACCEPTED: m99p3 PASS 13/13 (ONE invocation, m54b_clean r66->68, 41 calls, model 41/41,
+carry 41/41, acc law 40/40, no doubling live, carry poke discriminates). Gate GREEN. Docs+skill
+written, committed 100bf63. Merged? SUBMIT IN FLIGHT.
+Next: gh pr checks <n>; python3 scripts/milestone.py merge <n>. Then stop. Box m54b_clean r68,
+nothing in flight. NEXT pick written into NEXT_PROMPT: M100 = who writes [fac*8380+0x94d6a4].
