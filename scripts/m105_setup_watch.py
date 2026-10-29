@@ -227,7 +227,9 @@ def wait_title(timeout):
                 print("  [%5.1fs] class=%s body=%s" % (time.time() - t0, kind, body[:56]),
                       flush=True)
                 last = kind
-            if kind == "title" or "start game" in body:  # s161: 'cdrom' is still STARTUP
+            if kind in ("title", "cdrom") or "start game" in body:  # s161 LAW: the CDROM screen IS
+                # the quiescent pre-load point — m105s3 logged 15 startup appends then 4 MINUTES of
+                # silence there, and the startup image [0,6,5,4,3,4,5,3] is already complete on it
                 return True
         time.sleep(2)
     return False

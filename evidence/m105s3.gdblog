@@ -1,0 +1,46 @@
+[New LWP 1226364]
+[New LWP 1226358]
+[New LWP 1226356]
+[New LWP 1226355]
+[New LWP 1226354]
+[New LWP 1226353]
+[New LWP 1226352]
+[New LWP 1226351]
+[New LWP 1226350]
+[New LWP 1226349]
+0xf2b2b32c in __kernel_vsyscall ()
+Hardware watchpoint 1: *(int *)0x928038
+Hardware watchpoint 2: *(int *)0x928b70
+Hardware watchpoint 3: *(int *)0x929c44
+Hardware watchpoint 4: *(int *)0x985afc
+Breakpoint 5 at 0x57c550
+Breakpoint 6 at 0x57ecf0
+Breakpoint 7 at 0x59ec00
+Breakpoint 8 at 0x59ec90
+Breakpoint 9 at 0x57ce48
+Breakpoint 10 at 0x57eee0
+Breakpoint 11 at 0x4dbf6f
+Breakpoint 12 at 0x4e061b
+ARMED 4 hw watchpoints at 0x928038 0x928b70 0x929c44 0x985afc and 8 silent bps at 0x57c550 0x57ecf0 0x59ec00 0x59ec90 0x57ce48 0x57eee0 0x4dbf6f 0x4e061b
+[New LWP 1226369]
+[New LWP 1226370]
+[New LWP 1226371]
+[New LWP 1226372]
+[New LWP 1226373]
+[New LWP 1226374]
+M105W CNT fac=1 new=1 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=2 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=3 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=4 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=5 pc=0x579b12 round=0 cp=0
+M105W CNT fac=1 new=6 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=1 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=2 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=3 pc=0x579b12 round=0 cp=0
+M105W CNT fac=3 new=4 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=1 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=2 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=3 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=4 pc=0x579b12 round=0 cp=0
+M105W CNT fac=6 new=5 pc=0x579b12 round=0 cp=0
+[Inferior 1 (process 1226343) detached]
