@@ -64,8 +64,7 @@ write [+0x40] STORAGE, not +0xd0; only 6 stores to `[reg+0xd0]` exist in .text. 
 against the accumulator [fac*8380+0x94d7f8] by FUN_005aadf0 (per-base upkeep tail): grant iff
 threshold <= acc -> print "Researched Advance", FUN_005aaa20 consumes the work-item slot, FUN_0047f590
 applies it, acc = 0 (0x5aaf5c), field = -1 (0x5aaf67), field = aab70(fac) (0x5aaf79). Five references
-to 0x94d800 in all of .text; aab70 returns the memo unchanged when >= 0. Formula + the model that
-predicted 13/13 stores: NAMED.md + skill code-atlas.md.
+to 0x94d800 in all of .text; aab70 returns the memo unchanged when >= 0. Formula + model (13/13 stores predicted): NAMED.md + skill code-atlas.md.
 **M99 (THE PICK): who feeds param_2 into FUN_005aadf0** — the accumulator [+0x94d7f8] is `+= param_2`
 every call (the AI legs 0x5aae04-0x5aae71 DOUBLE it; the human never). Cheapest: 4 HARDWARE
 watchpoints on `[fac*8380+0x94d7f8]` for 4 factions over `--boundaries 2` in the
@@ -90,7 +89,7 @@ name the writers by containment, read back from /proc. ALSO OPEN: what [fac*8380
   head 2 storage 0 credit 0, q0 STALE 2; ebc 0x1a0e (bit 0x200 SET), mask 8 -> ONLY fac3 human,
   forced short 0x98adee = 6; era [0x985aec] 2, [0x985afc] 56->59, [0x92a390] 45, [0x92a298] 100;
   thresholds after r62 -1,176,203,135,271,176,194,151. Instrument: `scripts/m98_advance_budget.py
-  --tag t --boundaries 2` (`--predict` = model table only; `M98_FAC=` picks the watched faction).
+  --tag t --boundaries 2` (`M98_FAC=` picks the watched faction; `--arm-facs` arms the grant).
 
   The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4). The human mask byte at 0x985b10 = 0x08 -> ONLY faction 3 is human (a dword read there
