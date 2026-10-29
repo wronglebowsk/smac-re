@@ -1,5 +1,1 @@
-M100 (s155) | acceptance: scripts/m100_mult_watch.py --tag m100mult2 --boundaries 2 (4 hw watchpoints
-on [fac*8380+0x94d6a4] facs 1,2,3,6 + CALL bp 0x520909 + READ bp 0x4f352e; pokes facs 1-7 to live+10
-before each boundary) | merged: NO (run 1 m100mult1 FAIL 9/11, instrument fixed since) | next command:
-process_manage wait on the background census, then the CLOSING ORDER. Box: m54b_clean r52 cp3 hud,
-University pend 1 head 2 credit 0 (the M94/M99 accepted state). Evidence 28.0 MB (gate FAIL 30).
+M102 PASS 14/14 (m102hit3, one invocation, r55->57) | merged? NO YET (branch milestone/m102; next: checkpoint commit -> gate --base main -> submit -> checks -> merge) | docs closing in flight: SESSION_NOTES + NAMED + NEXT_PROMPT patched by section, skill rsync. Box: m54b_clean r57 cp3 hud, mults {1:-2,3:2,6:-2}, University pend 1 head 2. Evidence 28.1 MB (gate FAIL 30).

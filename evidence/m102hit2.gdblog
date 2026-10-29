@@ -1,0 +1,93 @@
+[New LWP 969503]
+[New LWP 969502]
+[New LWP 969501]
+[New LWP 969500]
+[New LWP 969499]
+[New LWP 969498]
+[New LWP 969497]
+[New LWP 969496]
+[New LWP 969495]
+[New LWP 969494]
+[New LWP 969493]
+[New LWP 969492]
+[New LWP 969491]
+[New LWP 969490]
+[New LWP 969489]
+[New LWP 969488]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf554f32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x5a16d9
+Breakpoint 2 at 0x5a179e
+Breakpoint 3 at 0x5a1807
+Breakpoint 4 at 0x5a16d9
+Breakpoint 5 at 0x5a179e
+Breakpoint 6 at 0x5a1807
+Breakpoint 7 at 0x5a16d9
+Breakpoint 8 at 0x5a179e
+Breakpoint 9 at 0x5a1807
+Breakpoint 10 at 0x5a16d9
+Breakpoint 11 at 0x5a179e
+Breakpoint 12 at 0x5a1807
+Breakpoint 13 at 0x59ec00
+Breakpoint 14 at 0x59ec90
+Breakpoint 15 at 0x520909
+ARMED 15 silent bps (4 CAT + 4 DADD + 4 CLAMP + 2 ENT + 1 CALL)
+M102S CALL fac=4 round=53 cp=4
+M102S CALL fac=5 round=53 cp=5
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=53 cp=6
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=53 cp=6
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=53 cp=6
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=53 cp=6
+M102S DADD fac=6 dest=0x959b0c old=0 src=-2 d10=-2 round=53 cp=6
+M102S CALL fac=6 round=53 cp=6
+M102S CALL fac=7 round=53 cp=7
+M102S CALL fac=0 round=54 cp=0
+M102S CAT fac=1 dest=0x94f760 old=0 src=-2 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=1
+M102S CAT fac=1 dest=0x94f760 old=-2 src=0 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=1
+M102S CAT fac=1 dest=0x94f760 old=-2 src=0 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=1
+M102S CAT fac=1 dest=0x94f760 old=-2 src=0 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=1
+M102S DADD fac=1 dest=0x94f760 old=-2 src=0 d10=0 round=54 cp=1
+M102S CALL fac=1 round=54 cp=1
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=2
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=2
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=2
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=2
+M102S DADD fac=2 dest=0x95181c old=0 src=0 d10=0 round=54 cp=2
+M102S CALL fac=2 round=54 cp=2
+M102S CAT fac=3 dest=0x9538d8 old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=3
+M102S CAT fac=3 dest=0x9538d8 old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=3
+M102S CAT fac=3 dest=0x9538d8 old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=3
+M102S CAT fac=3 dest=0x9538d8 old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=3
+M102S DADD fac=3 dest=0x9538d8 old=0 src=2 d10=2 round=54 cp=3
+M102S CALL fac=3 round=54 cp=3
+M102S CALL fac=4 round=54 cp=4
+M102S CALL fac=5 round=54 cp=5
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=6
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=6
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=6
+M102S CAT fac=6 dest=0x959b0c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=-2 e0=-1 e1=-1 b0=0 b1=0 round=54 cp=6
+M102S DADD fac=6 dest=0x959b0c old=0 src=-2 d10=-2 round=54 cp=6
+M102S CALL fac=6 round=54 cp=6
+M102S CALL fac=7 round=54 cp=7
+M102S CALL fac=0 round=55 cp=0
+M102S CAT fac=1 dest=0x94f760 old=0 src=-2 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=1
+M102S CAT fac=1 dest=0x94f760 old=-2 src=0 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=1
+M102S CAT fac=1 dest=0x94f760 old=-2 src=0 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=1
+M102S CAT fac=1 dest=0x94f760 old=-2 src=0 new=-2 r0=-2 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=1
+M102S DADD fac=1 dest=0x94f760 old=-2 src=0 d10=0 round=55 cp=1
+M102S CALL fac=1 round=55 cp=1
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=2
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=2
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=2
+M102S CAT fac=2 dest=0x95181c old=0 src=0 new=0 r0=0 r1=0 r2=0 r3=0 d10=0 e0=-1 e1=-1 b0=0 b1=0 round=55 cp=2
+M102S DADD fac=2 dest=0x95181c old=0 src=0 d10=0 round=55 cp=2
+M102S CALL fac=2 round=55 cp=2
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf5069377 in ?? ()
+[Inferior 1 (process 969484) detached]
