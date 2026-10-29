@@ -73,3 +73,11 @@ the set" from the full dword read (`0x00FF28` -> bits 3,4,6) is wrong: at shift 
 byte (0x28 -> 3,5) can ever be consulted. Take the width from the instruction's operand encoding and mask
 the live value to that width before naming the members — and prefer to PRINT the engine's own test result
 (the shifted operand) at the site rather than recomputing membership in the harness.
+
+## Per-hit dump series (s146, M92)
+
+`append binary memory <path> <start> <end>` is what makes a PER-HIT series work — `dump` truncates, so a
+series of dumps leaves only the last snapshot; `append` grows the file and Python reads hit *n* at
+`n * (end - start)` (compute that product in Python and bake it as the gdb-side literal, because the same
+subtraction inside gdb is 32-bit signed and underflows to a negative offset). Delete the file before the
+run, or a previous run's snapshots shift every offset.

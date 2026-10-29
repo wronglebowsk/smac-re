@@ -374,3 +374,42 @@ same snapshots offline with the fixed model: **38/41 exact (m92tail14), 5/5 (m92
 NEXT: append the two arrays AT the score (0x94e488+fac*8380+0x120 and +0x920, 128 B at the TAIL hit) so
 the last 3 go exact; then the post-tail leg 0x5a9698 -> 0x5aa022.
 Evidence: evidence/m92tail9-14.gdblog, m92adds1.gdblog; scratch/m92adds.py, m92probe_adds.gdb.
+
+## Session 146 (2026-10-28) — M92 ACCEPTED: m92tail18 PASS 8/8. The tail rule is exact 39/39; the block is FROZEN within a round and the stale reads were WINDOWS, not the block
+
+Branch milestone/m92. ACCEPTANCE `python3 scripts/m92_tail_census.py --tag m92tail18 --poke-index 7
+--poke-extra 2,6 --rounds 4 --timeout 100` (ONE invocation on a fresh m54b_clean load, r51->55):
+**VERDICT PASS 8/8** — G3: TAILOUT(0x5a9698) == BASE + simulated tail on **39/39 traced candidates, 0
+mismatches, 2 qualifying windows (fac2 win=44 IndEcon nz5/splits5, fac5)**; G8: divisor cross-check
+39/39 proven, round +4, TAIL events for the scored factions. Naive one-factor model splits on 19
+candidates (the shape discriminates).
+
+THREE HARNESS DEFECTS found and fixed (mine, none a floor) — each one had been reported as a game
+finding, which it was not:
+1. `c["tdiv"]` was NEVER assigned although G8 reads it -> **G8 was structurally False in every run**
+   (m92tail14/15/16/17 all failed it regardless of the game).
+2. `tailout[(fac,idx)]` was LAST-wins while the model used the FIRST scan: a re-scan in a later round
+   has a different block, so m92tail16's 4 "mismatches" (idx8 tailout 29 then 39) were pairing scan-1's
+   model with scan-4's output. tailout + tailbyidx are now FIRST-wins.
+3. windows are opened by a CALL and can span rounds (no WIN/ENT close), and the census simulated every
+   candidate from the WINDOW's CALL-round snapshot. Candidates now carry their OWN live round (the
+   BASE print reads *(0x985afc) at the hit) and are simulated from THAT round's snapshot.
+
+RETRACTION (this session, from the new instrument): **the category/multiplier arrays and the divisor do
+NOT move inside a round.** The TAIL hit now appends 64 B mults (0x94e5a8+fac*8380) + 64 B cats
+(0x94eda8+fac*8380) per candidate (scratch/<tag>_tailarrs.bin, hit-ordered); compared to the
+candidate's own round snapshot: **0/39 (m92tail15) and 0/19 (m92tail17) differ**, and
+divisor_cross_check_proven == 39/39 bad=0 (m92tail15/18). So s145's "the divisor moves inside a round
+(fac6 snapshot 1 live 6)" and "3 misses = a category byte that moved after the snapshot" were defects
+2/3 above, not block motion. The block DOES move BETWEEN rounds (m92tail16: fac2 mult(esi1) 4->5 at
+r56, dc58 1->2 at r57 and 2->4 at r58 -> the cat-0 factor flipped 2->4) — which is exactly what the
+per-candidate round stamp now tracks.
+
+BOX: brief BLOCKED twice (screen 'dialog' -> normalize_screen() -> hud; credit 0 -> the printed reload
+recipe m54a_load --relaunch -> m54g_prep -> smac_play --turns 1 -> m57_ui_enqueue --base-index 18
+--cell-item 2 --inserts 1 -> READY). m92tail17 (r59, a degraded box) scanned only 3 factions -> 0
+qualifying windows -> FAIL 5/8: the census needs a FRESH load (8 factions queued); the acceptance was
+re-run as m92tail18 on a reload, not weakened.
+NEXT (M93): the POST-tail leg 0x5a9698 -> 0x5aa022 (the SCORE at 0x5aa159 minus TAILOUT: +1/+29 at
+r76, +155 for fac2 idx8 in m92tail15/18 — final 186 vs tailout 31). Evidence:
+evidence/m92tail15-18.gdblog; scratch/m92tail1[5-8].out, scratch/m92tail18_snaps.bin + _tailarrs.bin.

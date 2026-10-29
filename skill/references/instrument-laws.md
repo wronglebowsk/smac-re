@@ -94,3 +94,17 @@ watchpoint on the address: one poke plus one boundary named the writer exactly o
   caller count and shard; `grep -n 'FUN_<addr> @' ghidra_out/shard_*.c` gives the pseudocode start; then
   `sed -n 'A,Bp'` a 40-line window, or `awk 'NR>=A && NR<=B' shard_NNN.c | grep -n -E 'param_|return|"'`
   to locate every argument use and every return in one call. A 27 KB pseudocode body is never read whole.
+
+## Where a breakpoint prints the wrong thing (s146, M92)
+
+- **A breakpoint on a LOAD prints the register's PREVIOUS value** — a bp at `mov ebx,[ecx+0x94e488]`
+  reports that field as whatever the last call left in `ebx`; read the memory operand outright or break
+  one instruction later.
+- Same class: a bp on a loop's first BODY address never fires when the loop is skipped — a zero there is
+  the gate, not a missing mechanism. Break at the loop's condition, and at its EXIT when the leg's OUTPUT
+  is what you intend to gate on rather than the leg plus whatever the function does next.
+- **Any value the round itself mutates cannot come from a round-start snapshot** — read it per hit, and
+  let the snapshot supply only the arrays.
+- **A null model built from the same term is not a null**: a cat-7-only null over a cat-7 block agrees
+  with the true rule by construction and re-certifies itself green run after run (s145 burned six runs
+  this way).

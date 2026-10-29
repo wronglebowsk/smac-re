@@ -1067,6 +1067,10 @@ control dwords move between rounds, so the per-round snapshot must cover 0x94d44
   `[0x94d448+fac*8380+4*edi]` having 0x8 and not (0x3 without 0x20).
 - `TAILOUT` at **0x5a9698** = the tail's output; the SCORE at 0x5aa159 is a **post-tail leg** on top
   (0x5a9698 -> 0x5aa022), +1/+29 observed. Gating the tail on `final` conflates two legs.
-- The DIVISOR and the arrays MOVE INSIDE A ROUND: the divisor must be read at 0x5a9503 per candidate.
-- Model vs engine: 38/41 exact on one fresh-load run, 5/5 on another; the misses are one human faction
-  whose category byte changed after the round snapshot.
+- The DIVISOR and the arrays are **FROZEN WITHIN A ROUND** (s146: 0/39 and 0/19 per-TAIL-hit dumps
+  differ from the candidate's own round snapshot; divisor cross-check 39/39 proven, bad=0). They move
+  **BETWEEN rounds** (fac2 mult(esi1) 4->5 at r56, dc58 1->2 at r57, 2->4 at r58) — a census must stamp
+  each candidate with the round live at ITS score (s145's "moves inside a round" RETRACTED: it was the
+  window/snapshot pairing defect).
+- M92 ACCEPTED (s146, `m92tail18` PASS 8/8, fresh load r51->55): TAILOUT == BASE + the simulated tail
+  on **39/39 candidates, 0 mismatches, 2 qualifying windows**; naive one-factor splits 19.

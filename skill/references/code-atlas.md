@@ -326,3 +326,35 @@ next closing that rsyncs this skill carries them in):
   A clean reload does NOT carry records created live in the previous session: census before arming.
 - Box state that blocks queue acceptances: with University Base minerals 0 / credit 0,
   `m57_ui_enqueue` prints "INSERT 1 never landed" and pending stays 0 — poke minerals/storage first.
+
+## M93 footing: FUN_005a90a0's POST-tail leg 0x5a9698 -> 0x5aa022 (the SCORE minus TAILOUT)
+
+M92 (`m92tail18` PASS 8/8): TAILOUT at 0x5a9698 == BASE + the tail simulated from the per-faction
+block; cat byte blk+0x920+esi, mult blk+0x120+esi, div blk+0 read live at 0x5a9503 (je 0x5a9698 = no
+tail); cat7 `mult*Tc/div` gated bc!=0 AND non-human (gate fail FALLS THROUGH to the band leg); cat2
+`mult*Tc*4/(div*(1+human))`; cat0 `mult*c*Tc/(div*(1+human))`, c=2 iff [0x94dc44]>=[0x94dc58] (at
++0x7fc/+0x810 from 0x94d448) else 4; else band edi=1..7 gated [esi+0x950664+edi*0x8380]!=0 and ctrl
+[0x94d448+fac*8380+4*edi] bit8 set and not (bits0-1 set w/o bit5), adds `mult*Tc/(div*(1+human))`.
+The block is FROZEN within a round (0/39 + 0/19 per-TAIL-hit 64+64 B dumps differ from the
+candidate's own round snapshot; div cross-check 39/39 bad=0) and moves BETWEEN rounds.
+
+STATIC (bytes read s146 via scratch/m71/dis.py): 0x5a9698 `mov eax,[ebp+0xc]` (fac) `mov ebx,[ebp+8]`
+(idx) `test eax; jle 0x5a96e6`; `cmp ebx,-1; je 0x5aa022`; `cmp ebx,0x58; jge 0x5a96e6`; eax = rec
+prereq1 (`[ecx+0x92fdd4]`, ecx=[ebp-0x10]): `cmp eax,-1; jl 0x5a96e6`; `cmp [ecx+0x92fdd8],-1` then
+`cmp eax,-1; jne 0x5a96e6`; 0x5a96d0 `mov al,[ebx+0x985c1c]; and al,dl (fac bit); neg; sbb; neg;
+test; jne 0x5aa022` — the leg is SKIPPED when [0x985c1c+idx] carries the faction's bit; else 0x5a96e6
+`call 0x5312d0; test eax; je 0x5a9744`; 0x5a96ef `mov eax,ds:0x985a9c`, `test ebx; jl 0x5a9744`,
+`test eax; jl 0x5a9744`, `cmp ebx,eax; je 0x5a9735`, else `lea ecx,[eax+eax*4]; lea esi,[eax+ecx*2];
+shl esi,2` (= eax*48 stride — a 48-vs-44 stride conflict, M67-style), `mov edx,[esi+0x92fdd4];
+push 1; push edx; push ebx; call 0x5a9020` (a comparator), 0x5a9718 `add esp,0xc; test eax`.
+The 0x5aa022 final block `mov eax,[ebp-0x4]; lea eax,[eax+eax*2]; test cl,dl; mov [ebp-0x4],eax;
+je -> lea edx,[eax+eax]; mov [ebp-0x4],edx; test ebx,ebx; je 0x5aa022; lea ecx,[eax+eax*1+4];
+mov [ebp-0x4],ecx` — final = tailout*5 (the `+4` lands ONLY when idx == 0; `test ebx,ebx` is the
+INDEX). MEASURED (m92tail18 fac2): final - pf = 155/32/4/1/20/2 = tailout x5 for idx 8/13/22/36/44
+(31/32/22/23/19); pf == final where tailout 0 (idx 32/48).
+
+CENSUS LAWS (s146, m92 harness): a gate may only read a field the harness SETS (G8 read c["tdiv"],
+never assigned -> structurally False for 4 runs); pair tailout/tailbyidx FIRST-wins (a re-scan in a
+later round has a different block); simulate each candidate from the round LIVE at its own BASE hit
+(windows opened by a CALL can span rounds); the tail census needs a FRESH load — at r59 only 3 AI
+factions had queued items -> 0 qualifying windows.

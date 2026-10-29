@@ -101,15 +101,20 @@ partial result as done to make the chapter look finished (see `MILESTONES.md` F2
 
 ### The context ceiling is part of the task, not an accident
 
-Hermes' compressor resolves to the MAIN model (`auxiliary.compression: provider: auto`), and on
-2026-10-27 that model could not summarize itself: four attempts, `finish_reason=length`,
-`failure_class=summary_truncated_failure`, 132 s each, `commit_status=aborted`; the gateway also
-drops hygiene compression after a 10 s turn-hold. Measured outcome: the agent reached
-259,232/262,144 tokens and the CLOSING turn was cut mid-sentence twice — the milestone was done
-and accepted, the paperwork never landed. Rules that follow:
+Hermes' compressor resolves to the MAIN model (`auxiliary.compression: provider: auto`) and cannot
+summarize itself: attempts die on the output cap (`finish_reason=length`, aborted, ~132 s each) and the
+gateway drops hygiene compression after a 10 s turn-hold. Measured outcome: CLOSING turns were cut
+mid-sentence twice — the milestone was done and accepted, the paperwork never landed. Rules that follow:
 
+- The window was DOUBLED on 2026-10-28 to 524,288 tokens (`compression.threshold_tokens: 424,000`).
+  Never quote a limit carried in from a prior session — read `~/.hermes/config.yaml`. A bigger window
+  does NOT repair the compressor (same model, same cap); every rule here still holds.
 - Budget by TOOL CALLS, not by feel: brief+accept_ready <= 6, milestone 6-30, **commit a
   checkpoint at ~25**, stop measuring at 30-40, close at 40-50.
+- **Cap ACCEPTANCE INVOCATIONS at three** (this budget is about judgment, not context): read WHY it
+  failed, fix the instrument, re-run; the third failure IS the finding — write its numbers next to the
+  command that produced them and close. A dozen runs with no number burns evidence AND budget, and
+  every extra run risks the box (a mid-run kill hangs Wine).
 - Past ~150k tokens the session is finishing something, not starting it — terse closing only.
 - Before any step that can exceed ~2 minutes (gdb run, relaunch, evidence audit), overwrite
   `SESSION_CURSOR.md` (<= 600 B: id | acceptance | merged? | next command). Nothing else records
@@ -123,13 +128,14 @@ files to read), current footing (what is proven, do not re-derive), in-flight wo
 exact verify/rerun command, ONE-milestone options, the operational kit (launch command,
 preflight, coordinates/OCR rules), and the report style. It must work for an agent that has
 none of this conversation. A reusable, milestone-agnostic version of that block lives in
-`templates/session-kickoff.md` — copy it and substitute the milestone id and session number.
+`templates/session-kickoff.md` — copy it, substitute the session number, and take the milestone id
+from `session_brief.py` (a pasted prompt that names one is usually stale).
 
-When Paul asks for the loop to be **scheduled** rather than pasted (a cron that keeps advancing every
-hour), the job's prompt must NOT bake the milestone id: it reads the id from `NEXT_PROMPT.md`
-(`## THE PICK`, else the first open `## STILL OPEN` item), stops rather than inventing a milestone when
-nothing is open, and refuses to start a competing measurement while `SESSION_CURSOR.md` says a run is in
-flight — the box is one Wine process, so a second gdb attach or mineral poke confounds the first run.
+When Paul asks for the loop to be **scheduled** rather than pasted, the cron prompt must NOT bake the
+milestone id: read it from `NEXT_PROMPT.md` (`## THE PICK`, else the first open `## STILL OPEN` item),
+stop rather than invent when nothing is open, and refuse a competing measurement while
+`SESSION_CURSOR.md` says a run is in flight — the box is one Wine process, so a second gdb attach or
+mineral poke confounds the first run.
 Keep every tool result small:
 grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dumps in
 `~/reverse/smac/` instead of re-dumping; page Ghidra facets in small slices; reuse saved
@@ -137,8 +143,9 @@ screenshots and take a new one only after a real state change.
 
 ### Close before you hand off (the handoff is what overflows)
 
-A one-milestone turn routinely runs 130-150 tool calls and 250 k+ prompt tokens against a 262,144-token
-window, so the last ~15 k tokens are the entire margin. Order the ending, every time:
+A one-milestone turn routinely runs 130-150 tool calls. The 524,288-token window is not the binding
+constraint — the handoff is: the largest single generation of a turn and the step that strands a
+finished milestone on a dirty branch. Order the ending, every time:
 
 1. gate GREEN
 2. `SESSION_NOTES.md` entry (patch, never a full rewrite)
@@ -181,7 +188,7 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   `execute_code` cell that prints only the size delta — the file never enters context and a wrapped
   section lands on the first try.
 - **A gdb breakpoint that reads the WRONG register prints garbage and can kill the whole run**: the printf fault (`Cannot access memory at address 0xa774`) aborts the breakpoint's commands block and gdb DETACHES the inferior, so the run dies mid-window. Read the store's own bytes first — `mov eax,[ebp-0x4]` followed by `mov [eax+0xa774],-1` means the object is in EAX at that address, whatever the pseudo-code called it. The same trap applies to SIGNS: a 32-bit sentinel printed with `%d` prints NEGATIVE (0xffffd8f1 -> -9999), so print it as `0x%x` and gate on the unsigned constant, never on the positive decimal.
-- **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them, re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last. When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on `pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance (`references/git-workflow.md`).
+- **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them — and keep an untracked deliverable OUTSIDE the worktree, because a sibling's `git clean`/`git checkout` deletes untracked files with no warning (a prompt file written into the repo root vanished mid-turn) — re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last. When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on `pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance (`references/git-workflow.md`).
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
@@ -217,10 +224,9 @@ matches.
 ### Verify the OUTCOME, not the mechanism
 
 An acceptance script that counts the loop's own work (year deltas, verified order bytes, landed
-walks, STUCK) will happily pass a run that lost the game: a 40-turn run printed `PASS` with
-`40/40`, `{1: 40}`, `stuck 0` and 5 landed walks while the faction owned **zero** bases at the end
-and its 8 surviving records sat stacked on one limbo tile with `turn_flags` stuck at `0x100002`.
-The defeat was invisible because the trace snapshot carried only the map-wide base count, never
+walks, STUCK) will happily pass a run that lost the game: a 40-turn run printed `PASS` with `40/40`
+and 5 landed walks while the faction owned **zero** bases at the end.
+The defeat was invisible because the trace carried only the map-wide base count, never
 "how many bases do WE own".
 
 - After every unattended run, re-read the position and assert the outcome out loud: bases of our
@@ -230,10 +236,9 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   the position. **Use the floor on every run that is supposed to keep what it has**; it fails
   closed, so a trace predating the fields FAILs instead of passing vacuously.
 - **A record that vanishes after a position poke was probably parked on an impassable tile, not killed.**
-  Read the tile's flag byte (record `+3` for even x, `+7` for odd x; bit `0x40` = impassable) before
-  writing "died in the war" — the game deletes records standing on impassable tiles within seconds, and
-  the deletion looks exactly like a combat loss in the census. Use the multiset-diff poller
-  (`references/wine-operations.md`) to catch the disappearance tick.
+  Read the tile's flag byte (record `+3` even x, `+7` odd x; bit `0x40` = impassable) first: the game
+  deletes records standing on impassable tiles within seconds and it looks exactly like a combat loss
+  in the census. Use the multiset-diff poller (`references/wine-operations.md`) to catch the tick.
 - **Never write a handoff sentence about where the game ended up from the plan.** "The garrison is
   back on University Base" was inferred from the pre-run census plus the walk destinations, never
   read back, and was false. Read it, then quote the numbers.
@@ -246,27 +251,26 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   Traceback in the captured output means FAIL even when every interesting line printed.
 - **Record index is not identity, and the unit array GROWS mid-run** — a base building a unit
   shifts every index after it, so an index carried across a turn (or read a fraction of a second
-  after the order lands) can name a different unit's record. It also COMPACTS mid-turn: a queued
-  MOVE can execute inside our phase (`turn_flags & 2` set while `cur_player` is ours, the year
-  flipping every ~4.6 s), and every flip re-shuffles the slots — so even a byte read taken seconds
-  after the keypress can name a different record. During any burst, re-read WHO wears the byte
+  after the order lands) can name a different unit's record. It also COMPACTS mid-turn — a queued MOVE
+  can execute inside our phase and every flip re-shuffles the slots, so even a byte read seconds after
+  the keypress can name a different record. During any burst, re-read WHO wears the byte
   (scan all records for the transition against the pre-press snapshot), not who sits at the slot. Snapshot ALL our records (type, x, y,
   `+17`, legs) before the keypress and diff after; take the field from the record that actually
   changed, and report how many changed — two changed means the result is confounded. **Across a round
   boundary even the BYTES are not identity**: upkeep/compaction decrements the u16 index references at
-  `+28/+48/+50` inside records that did nothing, so diff record sets on (x, y, type, owner, order) and
-  report byte rewrites as a feature (`references/solo-round-boundary.md`).** The 304-byte BASE array
+  `+28/+48/+50` inside idle records, so diff record sets on (x, y, type, owner, order) and report byte
+  rewrites as a feature (`references/solo-round-boundary.md`).** The 304-byte BASE array
     reorders and compacts too — pair a base across snapshots by NAME (or `(x,y)`), never by remembered
-    index, and treat a `--ui-queued <index>`-style argument as a start index only.
+    index, and treat `--ui-queued <index>` as a start index only.
 - **Attributing a field to one keypress: the through-the-click watcher on the subject's own slot
   is the only proof.** A read taken after the click proves the field changed somewhere, not on
-  which record — pair the byte and the field from the SAME sample. Use the post-click snapshot of
-  the whole array only to look for RIVALS (the pump may already have consumed the byte, and a
-  mid-run unit build shifts every index after it). A destination counts as this order's only when
+  which record — pair the byte and the field from the SAME sample. Use the post-click array snapshot
+  only to look for RIVALS (the pump may have consumed the byte; a unit build shifts every index).
+  A destination counts as this order's only when
   `+17` went 0 -> the byte on the watched slot, the leg arrays CHANGED against that record's own
   pre-press value (stale legs survive the pump and name somebody else's trip), and no rival — a
-  same-type/same-tile look-alike freshly ordered, a record carrying the watched signature under a
-  shifted index, or a subject that left its tile while its old index wears the signature — exists.
+  same-type/same-tile look-alike freshly ordered, a record wearing the watched signature under a
+  shifted index, or a subject that left its tile — exists.
   Any of those: report the walk UNATTRIBUTED / CONFOUNDED with the rival records quoted; a guessed
   destination poisons the next session's footing.
 - **A position claim needs a DELTA, not a match.** "A record of this type sits on the destination
@@ -277,8 +281,7 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   `+17` to a standing order (SENTRY) and read it back, so exactly one subject can move.
 - **Click a pane button at its measured centre, never at the merged midpoint of the bars in a
   y-range.** A chooser that grows rows drags its button band down and its row bars merge into the
-  same y-window; the midpoint of that span is a Sort button, and clicking it re-sorts the pane
-  instead of answering it while the loop waits for the order to land. Derive the button band
+  same y-window; the  midpoint of that span is a Sort button — clicking it re-sorts instead of answering. Derive the button band
   (equal-width groups on an even pitch), index it (OK fourth, CANCEL last), and fall back to the
   midpoint only when no button band was measured.
 - **Make a test fixture of the 52-byte record match the FORMAT, not just the fields you assert
@@ -287,9 +290,8 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   broken (or a broken rule look correct).
 - **`f.seek(off) or f.read(1)[0]` returns the OFFSET, not the byte.** `seek()` returns the new
   position, so `or` short-circuits for every non-zero offset and a `/proc/<pid>/mem` reader written
-  that way silently hands back the address. It cost a run its discriminating check: the "plan byte"
-  printed as `10005938` (an address) and the shape gate compared addresses while the milestone's real
-  assertion still passed. Read in two statements, and log the value next to the offset it came from so
+  that way silently hands back the ADDRESS — which can cost a run its discriminating check. Read in two
+  statements, and log the value next to the offset it came from so
   a reader bug cannot impersonate a measurement.
 - **Grep every consumer call site before changing a helper's sample/return shape** — probe scripts
   and hand-rolled fixtures keep the old shape, and tuple-index bugs surface only in the shard you
@@ -307,7 +309,10 @@ The defeat was invisible because the trace snapshot carried only the map-wide ba
   a sort key" predict identical slots; a region holding unequal key values does not; two sort keys that
   happen to rank the same ids identically — cost `+41` vs plan `+42` — need an item whose two orders
   DISAGREE), and make the scorer print
-  FAIL when more than one rule fits rather than picking one. This is the case-list discipline applied
+  FAIL when more than one rule fits rather than picking one. **A null model built from the same term is
+  not a null**: if model and null agree on every candidate the run cannot discriminate — print the split
+  count and refuse the shape (`references/instrument-laws.md`: a cat-7-only null over a cat-7 block
+  re-certifies itself green). This is the case-list discipline applied
   to the STATE: a green run on an undiscriminating state is refuted by the next run, and the refutation
   looks like a contradiction in your own ledger.
 - **A gate certificate is about the RULES, not about the game.** A pre-click gate can certify "only
@@ -667,7 +672,9 @@ the wrapper is refused there (re-send the whole thing through the tracked backgr
 `(index*stride)/4` and `[reg+disp]` means it holds the byte address, so a condition comparing the register
 against the bare index never fires (`references/static-store-census.md` §9.3). At a store site the register side-values
   are not evidence (`$ecx` printed a base INDEX where d0 was expected): read the fields from the baked
-  base address. Do **not** single-step for the after value — `si` inside a breakpoint commands list makes
+  base address. **A bp on a LOAD prints the register's PREVIOUS value; a bp on a skipped loop's body
+  never fires (a zero there is the gate); round-mutated values cannot come from a round-start
+  snapshot** — `references/instrument-laws.md` §Where a breakpoint prints the wrong thing. Do **not** single-step for the after value — `si` inside a breakpoint commands list makes
   `gdb -batch` stop after the step and DETACH, ending the watch after one hit; for a plain
   `mov [reg+disp],src` the store's own source operand IS the value the field takes, and the sleeping
   `/proc/pid/mem` sampler is what proves it. A hardware watch reports `$pc` PAST the writing
@@ -708,8 +715,9 @@ mechanism never ran". Bake the dump target as a literal absolute path (substitut
 a unique token), give the range two LITERAL addresses, and note convenience-variable arithmetic is 32-bit
 SIGNED — an `end - start` inside gdb underflows and poisons every offset derived from it, so compute
 lengths/offsets in Python and bake them as hex; one dump file per RUN with an `off=` field in the log
-beats a per-hit filename (a second dump to the same path overwrites the first). Loop-entry-vs-branch-
-target, the scan-window rule and the snapshot-cadence law: `references/gdb-command-list.md`.
+beats a per-hit filename (a second dump to the same path overwrites the first); **`append binary
+memory` is what makes a per-hit series work** — plus loop-entry-vs-branch-target, the scan-window rule
+and the snapshot-cadence law: `references/gdb-command-list.md`.
 Never build the gdb command list by running a Python `%`-format over
 it: the template is full of `%d`/`%x` printf conversions and Python eats the first ones as its own
 arguments, silently rewriting the breakpoints. Bake addresses and constants as literals, or substitute

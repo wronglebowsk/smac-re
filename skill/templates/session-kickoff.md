@@ -1,12 +1,17 @@
 # Reusable kickoff prompt — ~/reverse/smac
 
-Substitute `<MILESTONE-ID>` and `<N>`. Everything else is per-project constant and lives in
-`NEXT_PROMPT.md`; this block is only the discipline, so it stays reusable across milestones.
+Substitute `<N>` (the session number), never `<MILESTONE-ID>` from memory: the id is whatever
+`python3 scripts/session_brief.py` prints as NEXT. Everything else is per-project constant and
+lives in `NEXT_PROMPT.md`; this block is only the discipline, so it stays reusable across
+milestones.
 
 ---
 
 You are working in `~/reverse/smac` (SMAC reverse-engineering: Ghidra exports plus a Python
-driver that plays the game under Wine). Do exactly ONE milestone, then stop.
+driver that plays the game under Wine). Do exactly ONE milestone, then stop. The milestone is NOT
+named in this prompt — `python3 scripts/session_brief.py` names it, and the repo wins over any id
+carried in from outside (a kickoff that named an already-merged milestone has cost four sessions
+in a row their first calls).
 
 FIRST, in this order, before anything else:
 1. Read `NEXT_PROMPT.md` in full — it is the footing: the ledger, the pick, the traps, the
@@ -14,6 +19,10 @@ FIRST, in this order, before anything else:
 2. `tail -80 SESSION_NOTES.md` — the last few sessions only; never read the whole file.
 3. `git status`; `git branch --show-current` (must not be `main`);
    `python3 scripts/milestone.py start <MILESTONE-ID>` — it creates the branch off `origin/main`.
+   Then `git log --oneline -8`: a commit you did not write means a SIBLING is on this branch —
+   reconcile before you measure (never silently adopt a file that changed under you, never repeat
+   a claim a foreign commit makes), and keep any untracked deliverable OUTSIDE the worktree, where
+   a sibling's `git clean` cannot delete it.
 4. `python3 scripts/smac_state.py --json` — read what the box actually holds before touching it.
    Do not trust the footing's description of the state: it can be stale, and it has been.
 5. If the state reads impossibly (nonsense types, flags that never clear, zero bases of ours,
@@ -34,8 +43,19 @@ NON-NEGOTIABLES
   never from a plausibility score over a degraded state.
 - New screen classes / panes go into the classifier tests (with saved frames) BEFORE the driver
   uses them.
+- **A gate you have not shown to discriminate is not a gate.** Compute the candidate predictions
+  from the baseline BEFORE the run; if your model and your null agree on every candidate, the
+  shape is void — fix the shape, do not spend the run.
+- **Cap ACCEPTANCE INVOCATIONS at three.** Run it, read WHY it failed, fix the instrument, run it
+  again; the third failure IS the finding — write its numbers next to the command, merge nothing,
+  close. A dozen invocations with no number burns the evidence along with the budget, and every
+  extra run risks the box (a mid-run kill hangs Wine).
 
 CONTEXT DISCIPLINE (this is what kills sessions)
+- The window is 524,288 tokens with compaction at 424,000 (doubled 2026-10-28) — verify, do not
+  quote: `grep -nE 'context_length|threshold_tokens' ~/.hermes/config.yaml`. A bigger window does
+  not repair the compressor (same model, output cap unchanged), so compaction is still not a
+  safety net: what runs out is ATTEMPTS.
 - Every tool result small: `grep`/`sed` windows, `tail`, `scripts/evidence.py show <f>:<line>`.
   Never `cat` a log or a 40-turn trace — parse it with a short Python snippet.
 - No `delegate_task` and no subagents: their reports land mid-turn and cost more than they save.
