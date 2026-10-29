@@ -17,7 +17,7 @@ Survivability: the kickoff's SESSION_CURSOR rule (<= 600 B, written BEFORE any s
 2 minutes); never `rm`/`git checkout --`; every doc write is an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112) — detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing), M101 (#108, superseded by M102), M103 (#110, the D-writer, never green in one invocation).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112), M106 (#113) — detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing), M101 (#108, superseded by M102), M103 (#110, the D-writer, never green in one invocation).
 **M90-M104, all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest draw, tail only arg2==0); TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block (block FROZEN within a round); the POST cascade 0x5a9747-0x5aa022 == the prereq-closure ladder (`0x5a9020(a,X,f)` = membership at depth f; FREEZE LADDER INPUTS AT THE TAIL HIT); DIVISOR [fac*8380+0x94e488] == that faction's BASE COUNT, recomputed every round by FUN_00556690; the UI-queued completion pays AND activates in branch A (gate 0x4efa5e, pay 0x4efedd storage +0x40, POP 0x4f037b), 0x4f0ca6 is branch B's pay; the chooser ranks by the DRAW (score<<8 / prereq depth FUN_005a6d40; human LCG at ds:0x999fa0), NOT by score; base+0xd0 credit is recomputed every round by FUN_004e93f0; [0x94d800] is FUN_005aab70's memoized ADVANCE THRESHOLD vs the accumulator [0x94d7f8]; param_2 has ONE producer, FUN_004f34b0 (M99); the multiplier is block A slot 10 (M100/M102); D [0x94d700] is FUN_0059ec00's rebuild from the record list (M103). the record block 0x927a9c+fac*1436 is LOAD-TIME data, nobody appends it in rounds (M104). All legs: skill code-atlas.md.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -35,24 +35,24 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
    (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M100-M104 (s155-159), all NAMED:** multiplier = slot 10 of the per-faction block rebuilt every
-round (FUN_005a15a0); D = FUN_0059ec00 rebuilt off the record block TYPE==3 entries (M103, PR #110
-unmerged); nobody appends the record block in rounds (m104w3 PASS 12/12) — D is FROZEN after setup.
-**M105 ACCEPTED (s161, m105s4 PASS 17/17): THE BLOCK IS BUILT AT PROCESS START** — at pid discovery
-the counts are all 0 and 15 count increments (fac1 1->6, fac3 1->4, fac6 1->5) all report
-**FUN_005791c0 [terran.exe+0x179b12]** (store+2), landing exactly on the m104 image [0,6,5,4,3,4,5,3];
-0 events at the 8 M103 setup sites (0x57c550 0x57ecf0 0x59ec00 0x59ec90 0x57ce48 0x57eee0 0x4dbf6f
-0x4e061b) and 0 CNT stores in the load window while the ROUND control fires at 0x64bfa3 = FUN_0064bf70.
-The template-copy hypothesis is DEAD; this closes M103 open question "who appends the type-3 entries".
-**M106 (THE PICK): the load-window restore a hw watchpoint CANNOT see** — m105s4 poked -77 into the
-counts WHILE ARMED at the quiescent CDROM screen, the load logged 0 CNT events, yet the counts end at
-the m104 image: something writes those pages with no store in an armed thread. Discriminators, no gdb:
-(1) /proc/pid/maps for 0x927a9c read at the CDROM screen and again after the load — a VMA split =
-MAP_FIXED remap (build elsewhere, then remap); (2) strace -f on the wine tree while
-`SMAC_SAVE=... scripts/m54a_load.py` runs, tracing mmap/mmap2/munmap/mprotect/process_vm_writev/
-pwrite64 — an out-of-process page write = wineserver; (3) the same watchpoints with
-`set can-use-hw-watchpoints 0` (gdb single-steps and sees every thread store).
-THEN: what FUN_005791c0 (3112 B, shard_014) READS to build the block; the TYPE 0 / TYPE 2 consumers, the 0x92babc category records; the record index at 0x4b2715.
+**M100-M106, all in NAMED.md:** multiplier = block A slot 10 rebuilt per round (M100/M102); D =
+FUN_0059ec00 off the record block TYPE==3 entries (M103, PR #110 unmerged); nobody appends the block
+in rounds (M104); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/17). **M106 ACCEPTED
+(s164, m106r7 PASS 15/15): THE LOAD RESTORES THE REGION BY read() INTO IT** — the .SAV fd arrives
+over SCM_RIGHTS (there is NO open() of it in either strace log; name it by the TAIL-AND-EOF LAW: a
+read returning size mod 4096 == 875 B inside an fd-run that ends with a 0-byte read = EOF), and
+inside that run `read(0x5, 0x927c84, 0x2000) = 0x2000` lands in the record block covering exactly the
+counts M105 armed; the block head 488 B (fac0) and tail 2,808 B (fac7) come through the CRT's 0x1000
+stdio buffer = ring-3 stores. copy_to_user raises no debug exception — the hardware watchpoint's
+blind spot. Harness `scripts/m106_load_restore.py` (two straces with raw args + maps + soft-dirty +
+8 count sentinels); a traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
+**M107 (THE PICK): the save CHUNK MAP** — that one fd-run reads 0x94e104+0xf000, 0x927c84+0x2000,
+0x40a75b0+0x15000, 0x986d51+0x2000, 0x98af49+0x6000, 0x92d9cd+0x2000 plus 0x1000 buffered chunks: is
+there a (address,size) TABLE in the file, or does FUN_00596850 hard-code the seek sequence? NO box
+needed: `scratch/m71/dis.py LO HI [cap]` over FUN_00597ee0 -> FUN_00596850 -> FUN_00596540, and line
+the read order up against `programs/saves/m54b_clean.SAV` (242,539 B; the record-block chunk sits at
+0x10e18, M104). THEN: what FUN_005791c0 (3112 B, shard_014) READS to build the block; the TYPE 0/2
+consumers; the 0x92babc category records; the record index at 0x4b2715.
 
 ## STILL OPEN (in priority order)
 

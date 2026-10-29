@@ -23,6 +23,16 @@ FIRST, in this order, before anything else:
    reconcile before you measure (never silently adopt a file that changed under you, never repeat
    a claim a foreign commit makes), and keep any untracked deliverable OUTSIDE the worktree, where
    a sibling's `git clean` cannot delete it.
+   A commit is not the only sibling signal: `git log` shows NOTHING foreign while a cron-dispatched session is mid-run,
+   because its shells are children of the gateway and its background harness shows only as `/bin/bash -lic …`. Before
+   arming, NAME THE BOX OWNER — read `~/.hermes/processes.json` (records carry `command`, `pid`, `owner_task_id`,
+   `session_key`; an `owner_task_id` like `cron:<job>:<exec>` that is not your session key is the sibling's live run)
+   and `~/.hermes/cron/executions.db` (`select id,job_id,status,started_at,progress_at,pid from executions order by
+   started_at desc limit 5` — `running` with a fresh `progress_at` is alive NOW); a mtime on `scripts/<harness>.py` or
+   `SESSION_CURSOR.md` newer than the last commit, or the game's Wine pid changing, says the same. The cursor is a
+   belief, not a fact — it can still mark a finished run RUNNING, or name you a run the sibling queued for itself.
+   If a sibling owns the box: skip the readiness oracle's printed FIX (it pokes THEIR box), spend zero acceptance
+   invocations, write no shared doc, commit nothing, and report the collision with the command that proved ownership.
 4. `python3 scripts/smac_state.py --json` — read what the box actually holds before touching it.
    Do not trust the footing's description of the state: it can be stale, and it has been.
 5. If the state reads impossibly (nonsense types, flags that never clear, zero bases of ours,

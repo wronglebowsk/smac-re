@@ -1,3 +1,3 @@
-M106 RUNNING (cron, milestone/m106): the invisible load-window restore.
-acceptance: m106r6 RUNNING (-> scratch/m106r6.out). m106r5 FAIL 14/15: EVERY evidence gate green (G13 byte-sum law names the .SAV fd: 20 reads = 242539 B = the file; G5/G6 read() 0x2000 into 0x927c84 covers the fac1/3/6 counts M105 armed; G9 no remap; G10 soft-dirty 0->1 on 4/4; G11 0 out-of-process; G14 ONLY C1-kernel-write-via-read). Only G1 failed: the load LANDED (round 0->50 cp 3, counts restored) but the traced driver burned its 1200s budget on post-OK dialogs (ops-director at 1316s), so rc=1.
-merged: NO | next: tail -25 scratch/m106r6.out
+M106 RUNNING (cron, milestone/m106): the invisible load-window restore - ANSWERED, acceptance pending r7.
+m106r5 FAIL 14/15 (only G1: the traced driver burned 1200s on post-OK dialogs; every evidence gate green). m106r6 FAIL 12/15 (G1 PASS with the 1800s budget; G5/G6/G13 lost the save fd because the loader SEEKS, so the exact byte-sum burst splits). Fix = the TAIL-AND-EOF LAW (a read of size mod 4096 = 875 B inside an fd-run ending in EOF); validated offline on the r5 AND r6 logs (both give 1 save run, the 0x927c84 region read, covered facs 1-6).
+m106r7 RUNNING -> scratch/m106r7.out | merged: NO | next: tail -25 scratch/m106r7.out

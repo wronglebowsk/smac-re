@@ -1,0 +1,49 @@
+# M106 filtered strace extract; the RAW logs are /home/n100/reverse/smac/scratch/m106r7_terran.strace and /home/n100/reverse/smac/scratch/m106r7_tree.strace
+# pids seen in log A: [1340394, 1340434, 1340457, 1340458, 1340459] ; in log B: [1340362]
+## READ_REGION 1
+(1793311255.23073, 1340394, 'read', 5, 9600132, 8192, '0x2000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+## SAV_READ 20
+(1793311255.230423, 1340394, 'pread64', 5, 11467020, 23, '0x17', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230511, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230633, 1340394, 'read', 5, 9756932, 61440, '0xf000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230692, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.23073, 1340394, 'read', 5, 9600132, 8192, '0x2000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230763, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230797, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235572, 1340394, 'read', 5, 67794352, 86016, '0x15000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235637, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235696, 1340394, 'read', 5, 9989457, 8192, '0x2000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235727, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235762, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235801, 1340394, 'read', 5, 10006345, 24576, '0x6000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235836, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235878, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.23593, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235969, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.236017, 1340394, 'read', 5, 9624013, 8192, '0x2000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.236049, 1340394, 'read', 5, 67786280, 4096, '0x36b', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.236079, 1340394, 'read', 5, 67787155, 3221, '0', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+## SCRATCH_SAV_READ 17
+(1793311255.230511, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230633, 1340394, 'read', 5, 9756932, 61440, '0xf000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230692, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230763, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.230797, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235572, 1340394, 'read', 5, 67794352, 86016, '0x15000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235637, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235696, 1340394, 'read', 5, 9989457, 8192, '0x2000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235727, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235762, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235801, 1340394, 'read', 5, 10006345, 24576, '0x6000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235836, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235878, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.23593, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.235969, 1340394, 'read', 5, 67786280, 4096, '0x1000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.236017, 1340394, 'read', 5, 9624013, 8192, '0x2000', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+(1793311255.236049, 1340394, 'read', 5, 67786280, 4096, '0x36b', '/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf')
+## MAP_COVER 0
+## OUTWRITE 0
+## OPENS (fd -> path)
+open pid=1340394 fd=5 path=/home/n100/tools/wine-10.20-staging-tkg-x86/share/wine/fonts/arial.ttf
+open pid=1340394 fd=48 path=.
+open pid=1340394 fd=49 path=.
