@@ -46,14 +46,12 @@ counts M105 armed; the block head 488 B (fac0) and tail 2,808 B (fac7) come thro
 stdio buffer = ring-3 stores. copy_to_user raises no debug exception — the hardware watchpoint's
 blind spot. Harness `scripts/m106_load_restore.py` (two straces with raw args + maps + soft-dirty +
 8 count sentinels); a traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
-**M109 (THE PICK): the missing counted leg — close the chunk map.** M108 (`scripts/m108_count_sources.py
---tag m108c3` PASS 6/6) named the counts: `[0x985af0]` = 67 units, `[0x985af4]` = 18 bases (0x598470/
-0x598476, FUN_00598340; 18 named records at 0x95da10), and RETRACTED M107's gate claim (live
-`[0x985dbc]` = 9 → the STATIC 0x105e0 leg runs). The map still does NOT close: 242,539 − 204,504
-immediate = **38,035** vs 52·67 + 48·67 + 304·18 = 12,172 → **25,863 B unaccounted**, and the loudest
-read is a **malloc'd 86,016 B at 0x40a75b0** (42 × 2,048). Walk the r7 reads BACKWARDS (each
-read's tail fixes its leg) or break at the malloc 0x596ab2. THEN: FUN_00598340; FUN_005791c0's startup
-reads; TYPE 0/2; 0x4b2715.
+**M109 (STILL THE PICK, 2 of 3 attempts used — m109l2 FAIL 2/5): resolve the 30 leg GATES, not the sizes.**
+Measured live: count leg **176**, 52n = **3,484** (52·67), 304m = **5,472** (304·18); **0x59738b (48p) logged
+0 events** and **0x5979f8 is a 4-byte read**. Remainder still **28,899 B** of 242,539. So the legs are
+CONDITIONAL: gated at 0x596a43 (`ds:0x985dbc,3`), 0x5974b7 (`ds:0x985dbc,0`), 0x5974d3 (`[0x985af4]`) and
+others. Read every gate between 0x596a43 and 0x597a00, emit an if/then leg list, re-run ONE load to confirm.
+Size from `*(int*)($esp+4)`. THEN: FUN_00598340; FUN_005791c0; TYPE 0/2; 0x4b2715.
 
 ## STILL OPEN (in priority order)
 

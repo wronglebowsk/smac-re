@@ -1,0 +1,33 @@
+[New LWP 1389543]
+[New LWP 1389542]
+[New LWP 1389541]
+[New LWP 1389540]
+[New LWP 1389539]
+[New LWP 1389538]
+[New LWP 1389537]
+[New LWP 1389536]
+[New LWP 1389535]
+0xe57b0a78 in ?? ()
+Breakpoint 1 at 0x597319
+Breakpoint 2 at 0x59738b
+Breakpoint 3 at 0x59751f
+Breakpoint 4 at 0x5970e4
+Breakpoint 5 at 0x5979f8
+Breakpoint 6 at 0x596ab7
+ARMED 6 bps at 0x597319 0x59738b 0x59751f 0x5970e4 0x5979f8 0x596ab7
+[New LWP 1389546]
+[New LWP 1389547]
+[New LWP 1389554]
+[New LWP 1389555]
+[New LWP 1389562]
+[New LWP 1389563]
+[New LWP 1389566]
+M109L LEGCNT size=176 round=50 cp=3
+M109L LEG52 size=3484 round=50 cp=3
+M109L LEG304 size=5472 round=50 cp=3
+M109L LEGTAIL size=4 round=50 cp=3
+
+Thread 11 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 1389546]
+0xe95a632c in __kernel_vsyscall ()
+[Inferior 1 (process 1389526) detached]

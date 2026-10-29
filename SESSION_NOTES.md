@@ -328,3 +328,15 @@ Branch milestone/m108 (from main 333bace, M107 merged #114). ACCEPTANCE `python3
 - THE DEFICIT (the finding): m54b_clean 242,539 − immediate legs 204,504 = **38,035**, but the declared counted legs are only 52·67 + 48·67 + 304·18 = **12,172** → **25,863 B unaccounted**; the load's biggest read is a **malloc'd 86,016 B (0x15000) at heap 0x40a75b0**, a size matching no declared count (86,016 = 42 × [0x92a38c] = 2,048). At least one counted leg or size expression is still missing from the leg table.
 - TRAP: the in-memory header's +0x54 is NOT the mission year (it reads 0); identify a loaded save by the record-block counts, not by the header year.
 Evidence: evidence/m108c3.log; scripts/m108_count_sources.py. Box: pid 1340394 at the HUD, m54b_clean r50.
+
+## Session 167 (2026-10-29) — M109 RUN, NOT ACCEPTED (m109l2 FAIL 2/5, 2 of 3 attempts used): the counted legs are measured, but the 30 legs are GATED — the map needs conditions, not sizes
+
+Branch milestone/m109 (from main aad8267, M108 merged #115). ACCEPTANCE `python3 scripts/m109_leg_sizes.py --tag m109l2 --relaunch` (6 silent bps armed before any screen — the 5 counted legs + the malloc — then ONE m54b_clean load): **FAIL 2/5** — G1 6 bps armed, 0 gdb errors, 4 events; G2/G3 only 4 leg events; G4 remainder 28,899.
+
+- MEASURED LIVE (the value): count-prefix leg **176 B**; **52n = 3,484 = 52 × 67**; **304m = 5,472 = 304 × 18** — the model from [0x985af0]=67 / [0x985af4]=18 is EXACT on two legs.
+- **0x59738b (the 48p $eax leg) logged ZERO events** — it does not run for m54b_clean, so "48·n" is not a leg of this load.
+- **0x5979f8 is a 4-BYTE read (arg size = 4)**, NOT the tail section — my M107/M109 leg label for it was wrong.
+- THE BLOCKER: immediates 204,504 + counted 9,136 = 213,640 vs 242,539 → **28,899 B unaccounted**. The 30 legs are CONDITIONAL (0x596a43 `cmp ds:0x985dbc,3`; 0x5974b7 `cmp ds:0x985dbc,0`; 0x5974d3 `test [0x985af4]` …), so a chunk map needs the GATE for each leg, not just its size. m109l1 (instrument: `M.rd` was not in the imported module) and m109l2's $edx-vs-stack-arg error were mine, floors never edited.
+- LAW (new): at an `fread` call the ARGUMENT layout on the stack is [esp]=dest, [esp+4]=size, [esp+8]=count, [esp+0xc]=FILE* — read the SIZE from `*(int*)($esp+4)`, never from a register that the block has since clobbered (0x5979f8 gave 12,462,004 from $edx).
+- TRAP: the launch needs ~7 min before the load driver's window (the movie + CDROM screen), so a 6-min check is too early; the harness must not be judged before ~8 min.
+Evidence: evidence/m109l1.gdblog + evidence/m109l2.gdblog/.log; scratch/m109l*.gdb; scripts/m109_leg_sizes.py. Branch milestone/m109 committed, NOT pushed for merge. Box: pid 1389526 at the HUD, m54b_clean r50.
