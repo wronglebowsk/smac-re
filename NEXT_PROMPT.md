@@ -21,6 +21,10 @@ was in flight; never `rm`/`git checkout --`. Every doc write is an append or a <
 Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#95)**, **M91 (#97, m91score5 PASS 7/7)** — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (FUN_005a7970's legs: 0x5a7e73 skips the 64-record band loop unless arg1 == the short at 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
 **M90 (s141, #95, `m90tech2` PASS 8/8):** the per-faction slot [0x94d7fc + fac*8380] IS a TECH INDEX 0..88 chosen by FUN_005aa030(faction) (gate FUN_005a6cd0 = "prereq known", tested as [0x985c1c + prereq] & (1<<fac); tie `_rand`), returned verbatim by FUN_005ab000 -> FUN_0048b9a0 (call 0x48bae4, landing 0x48bae9) and stored at 0x5aa9d3. bVar14 in 48b9a0 UNDECODED. NAMED.
 **M91 (s142-s143, #97, `m91score5` PASS 7/7 after `m91score1-4` FAILed on my own gates/harness):** FUN_005a90a0(idx, fac, arg2) SCORES `SUM over four (cost, demand) pairs of (demand*m+1)*cost` — costs *(0x92fdc4 + idx*44 +0,+4,+8,+0xc) (that record's prereq1 is +16 = 0x92fdd4, its name +32: M90's "base 0x92fdd4" is the +16 FIELD, not the record start), demand *(fac*8380 + 0x94d810/14/18/1c), m = 1 if arg2 != 0 else 4/2 by 0x985ac4 bit 0x200 (live SET), halved at 0x5a92fd iff all four pairs inert (bc = bit-0x10 popcount of 0x94d448 dwords 1..7; [fac*8380+0x94e488] >= 4): **predicted == the engine's [ebp-0x4] at 0x5a930b on 27/27 traced candidates (m91score5, fresh load, 4 windows).** A 62-iteration tail (0x5a94fd-0x5a95f8) then adds byte[fac*8380+0x94e5a8+esi]*Tc over divisors keyed by byte[+0x94eda8+esi] in {7,2,0} (UNPREDICTED — M92); the level leg 0x5a93b3-0x5a94f2 runs ONLY when arg2 != 0 (0x5a9375 `je 0x5a9500`). FUN_005aa030 then divides (0x5aa1e4 `shl eax,8; idiv edi`, divisor = max(FUN_005a6d40(p1,1), FUN_005a6d40(p2,1))) and **picks the candidate with the strictly-largest draw `_rand() % (score+1)` (0x5aa217-0x5aa230, compare 0x5aa232 `cmp eax,[ebp-0x8]; jle` = equal draws do NOT replace, scan asc 0..88, best starts -999) — NOT the max score**: falsified 3x (fac4 43 f16 over 60 f38; fac5 22 'AGrav' f31 over max 56; fac6 13 'Surface' f36 over 63). NAMED.
+**M92 (s144, branch milestone/m92, NOT merged):** the scorer's tail 0x5a9503-0x5a9698 is DECODED
+(leg-by-leg against `scratch/m71/dis.py` and validated on the engine's OWN finals — fac7 reproduces
+exactly as base + idiv(16*Tc,1); the old model was off by >3 orders); the CENSUS has never been green
+(m92tail2-7 all FAIL: window-close site, snapshot dump range/reader length, TAIL print fields). NAMED.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). **M68 FAILED**; **M63** `m63_pop.py`, `0x94de84` queued-count.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -37,24 +41,36 @@ Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#9
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M92: the scorer's 62-category TAIL (0x5a94fd-0x5a9698) and what [fac*8380+0x94e488], [+0x94e5a8+esi] and [+0x94eda8+esi] are.** M91 CLOSED the base (12/12 exact) and the draw rule; the FINAL score is still unpredicted. `python3 scratch/m71/dis.py 5a95fd 5a96a0` then `5a96a0 5a9720`; census `final == base + tail` on >= 2 windows with the SAME instrument (scripts/m91_scorer_census.py — swap gates G2/G3 for the tail formula and KEEP the base gate). Print the three byte arrays at the 0x5a930b hit so the tail is predicted from live memory, and keep the winner gate on the DRAW (max draw), never on max score.
+**M92 (continue — the tail is DECODED, the census is not green).** s144 decoded 0x5a9503-0x5a9698
+leg-by-leg and validated it on the engine's own finals (fac7 == base + idiv(16*Tc,1); see NAMED.md +
+SESSION_NOTES s144 — do NOT re-derive). The job left: (1) make `scripts/m92_tail_census.py` print PASS
+on ONE invocation. Its reader/dump chain is the only thing still broken: the per-round snapshot must be
+a LITERAL-address range (`dump binary memory <path> 0x94d448 0x966000` — cover the band gate's control
+dwords, which MOVE between rounds: snap0 all 0 vs live nonzero; an arithmetic range or a substituted
+path inside the address expression aborts the sourced script at the first CTRL hit; `SNAPREGION` must
+be the region SIZE, not an offset) and the `off=` field must index that range. KEEP G2 (the base model)
+and the winner-on-DRAW gates. (2) Then answer WHO WRITES [fac*8380+0x94e488], +0x94e5a8, +0x94eda8 and
+the global band tables 0x950664+edi*0x20bc (the 8 nonzero esi are 0,4,24,36,40,44,48,52). Offline
+re-check: `python3 scratch/m92/verify7.py` (no game touch).
 ## STILL OPEN (in priority order)
 
-1. **M92 (the pick): the tail loop 0x5a94fd-0x5a9698 — byte[fac*8380+0x94e5a8+esi] * Tc over divisors keyed
-   by byte[+0x94eda8+esi] in {7,2,0}, divided by [fac*8380+0x94e488] — and who WRITES those three arrays.**
-   Then: where the chosen index becomes the ACTIVE project (pay-site conflict 0x4f0ca6 vs 0x4efedd); the
-   human leg (FUN_00625af1 at 0x5aa20d, bVar14 in FUN_0048b9a0); the SIBLING slot [esi+0x94d800] fed by
-   FUN_005aab70; the band flag [esi+0x94d430] bit 0x40; ds:0x926bd4 / ds:0x920434 naming; chooser case 7;
-   cursor print at **0x49771c**; bit 5 (0x531782); who clears bit 6.
+1. **M92 (the pick, continued): the tail IS decoded (NAMED s144) — fix the census dump/reader (see THE
+   PICK) and name who WRITES [fac*8380+0x94e488], +0x94e5a8, +0x94eda8 and the band tables 0x950664.**
+   Then: the pay-site conflict 0x4f0ca6 vs 0x4efedd; the human leg (FUN_00625af1 at 0x5aa20d, bVar14 in
+   FUN_0048b9a0); the SIBLING slot [esi+0x94d800] fed by FUN_005aab70; the band flag [esi+0x94d430] bit
+   0x40; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5
+   (0x531782); who clears bit 6.
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
    **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite: `scripts/gate.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at s143:** `terran.exe` UP (pid 347970), fresh m54b_clean load, round 55 after `m91score5`
-  (slots_end [-1,3,8,22,60,22,13,48]); accept_ready BLOCKS on `credit <= 0` (income add gated on d0 > 0;
-  its printed FIX is a clean reload, ~35 s) but a census that needs only BOUNDARIES runs fine without
-  one. 0x985ac4 bit 0x200 SET (scorer m = 4), 0x926bd4 = 0, e488 per faction = [0,1,10,1,3,1,9,1].
+- **Box at s144:** `terran.exe` pid 405430, round ~63 (m92tail7 window 59->63), slots_end
+  [-1,58,13,22,3,32,36,3]; `scripts/m92_tail_census.py` is the tail census (branch milestone/m92,
+  NOT merged; acceptance NOT green — every m92tail run FAILed, see NAMED). A census that needs only
+  BOUNDARIES runs fine without a reload. 0x985ac4 bit 0x200 SET (scorer m = 4). Mask 0x985b10 = 8 ->
+  ONLY faction 3 is human. `cat0/cat2/cat7` category bytes and the band control dwords MOVE between
+  rounds, so any tail census must snapshot them per-round (see THE PICK).
   `scripts/m91_scorer_census.py`
   is the scorer census; NO relaunch is needed (5aadf0 -> aaa20 -> 5aa880 -> 5ab000 -> 48b9a0 -> 5aa030
   runs whenever a faction's slot is negative). X focus law: see TRAPS. **The PANE decides where INSERT
@@ -109,6 +125,11 @@ Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#9
 - **A list cursor read BEFORE the seek is the PREVIOUS cursor:** the chooser pump seeks with
   `call 0x4026b0` at 0x497717, so a node print at 0x497704 shows the old node (m84cprobe1 G3 was
   this, not the game) — print at 0x49771c.
+- **`dump binary memory` needs a LITERAL end address:** `... <path> 0x94e488 0x94e488 + 0x41b80` aborts
+  the whole sourced script at the first hit ("Argument to arithmetic operation not a number or boolean")
+  and a path substituted INTO that expression makes it worse; a multi-line `python` block inside a
+  breakpoint command list aborts too (use one line). A snapshot reader must use the region SIZE, never
+  `end + size - base` (that is an offset, and negative here). Proven the hard way: m92tail3-7.
 - **ZERO CALLS CAN BE THE GAME, NOT THE INSTRUMENT:** before betting an acceptance on a function
   with no fixed-displacement caller, scan every rw region of terran.exe for its vptr
   (`/proc/pid/mem`, no gdb — `scratch/m84d/probe3.py`) and confirm an instance exists; prove arming

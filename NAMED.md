@@ -1031,3 +1031,25 @@ load: **PASS 7/7** — 4 AI windows (fac5 8 'E=Mc2', fac5 22 'AGrav' final 31 vs
 'PlaEcon', fac6 13 'Surface' final 36 vs 63 — max-score falsified twice more), 27 candidates 0 base
 mismatches, 4/4 ST/RB pairs, round 50->55. G3/G5 were instrument defects, fixed by bytes (0x5aa235 jle)
 and event order (0x5aa9d5 after 0x5aa9d3), not by floors. Evidence evidence/m91score1-5.gdblog.
+
+## M92 — the scorer's tail 0x5a9503-0x5a9698 (NOT YET MERGED; acceptance m92tail2-7 all FAIL, model decoded)
+
+THE TAIL, verified against the engine's own finals (evidence/m92tail5.gdblog CAND line fac7,
+scratch/m92/verify7.py over evidence/m92tail7.gdblog + scratch/m92tail7_snaps.bin):
+- divisor `[fac*8380+0x94e488]` (0x5a9503; 0 -> the tail adds nothing; the value MOVES between rounds);
+- category byte `[fac*8380+0x94eda8+esi]`, multiplier `[fac*8380+0x94e5a8+esi]`, esi = 1..62
+  (0x5a9518 skips 63); the two arrays hold EQUAL nonzero bytes at the same esi = 0,4,24,36,40,44,48,52;
+- Tc multiplier source = the tech record's +0xc cost (`imul eax,[edx+0x92fdd0]` = 0x92fdc4+idx*44+0xc);
+- cat 7 adds `mult*Tc / div` (NOT doubled) only when bc != 0 AND the faction is not human;
+  bc = [ebp-0x18] is FUN_005a90a0's OWN prologue popcount of bit 0x10 over the 8 control dwords
+  [0x94d448+4*i] (0x5a90ae/0x5a90d6) — NOT a caller slot;
+- cat 2 adds `mult*Tc*4 / (div*(1+human))`; cat 0 uses factor 4 if `[blk+0x94dc44] >= [blk+0x94dc58]`
+  else 2, over `(div*(1+human))`;
+- any other category: inner edi=1..7 (skipped whole when arg2 == the faction, 0x5a960e) over the GLOBAL
+  band tables `0x950664 + edi*0x20bc` (stride 844) whose OWN byte at +esi must be nonzero (a SECOND
+  multiplier), gated on the control dword `[0x94d448 + (fac+edi)*4]` needing bit 0x8 and not
+  (bits 0-1 with bit 5 clear); adds `mult*Tc / (div*(1+human))`.
+fac7's observed finals reproduce EXACTLY as base + idiv(16*Tc, 1) (cats[40] = 16, div 1); the previous
+model (caller-slot gate, band tables inside the block at +0x2bc0) was off by >3 orders of magnitude.
+UNNAMED still: who writes 0x94e488 / 0x94e5a8 / 0x94eda8 / the 0x950664 band tables. The band gate's
+control dwords move between rounds, so the per-round snapshot must cover 0x94d448..0x966000.
