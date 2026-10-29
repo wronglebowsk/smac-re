@@ -1,3 +1,3 @@
-M104 RUNNING (s159): acceptance invocation 2 in flight (background): python3 scripts/m104_append_watch.py --tag m104w2 --boundaries 3 -> scratch/m104w2.out, evidence/m104w2.gdblog
-run 1 (m104w1): 0 count-change events facs 1/3/6 over 3 boundaries; ACC control 6 events pc 0x5aaef1; WALK 126 (facs 1/2/4, counts 6/5/3 unchanged); ENT 0; model==live D 3/3. The .SAV holds the 1436-B record blocks verbatim at stride 1436 (fac3 0x11eec, fac6 0x12fc0) -> entries are load-time data, not round appends.
-acceptance: pending | merged? no | next: read scratch/m104w2.out, then CLOSING ORDER (notes, NAMED, NEXT_PROMPT pick M105, commit, gate, submit).
+M104 RUNNING (s159): acceptance invocation 3 (FINAL) in flight (background): python3 scripts/m104_append_watch.py --tag m104w3 --boundaries 3 -> scratch/m104w3.out, evidence/m104w3.gdblog
+w2 = 11/12 (only G10 failed: gdb debuginfod/Inferior banners unparsed - parser fixed, w2 log now reparses 0 unparsed). w1/w2: 0 count-change events facs 1/3/6 over 3 boundaries (rounds 54->57), ACC control 7 events FUN_005aadf0, WALK 126 facs 1/2/4 counts static, ENT 0, model==D 3/3, .SAV holds the 1436-B blocks at stride 1436.
+acceptance: pending | merged? no | next: read scratch/m104w3.out then CLOSING ORDER (notes, NAMED, NEXT_PROMPT pick M105, commit, gate, submit).

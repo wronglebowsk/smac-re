@@ -139,9 +139,11 @@ def gdb_script():
 KV = re.compile(r"^(M104W) (CNT|ACC)((?: [a-z][a-z0-9_]*=-?[\dxa-f]+)+) round=(\d+) cp=(\d+)\s*$")
 KS = re.compile(r"^(M104S) (ENT|WALK)((?: [a-z][a-z0-9_]*=-?[\dxa-f]+)+) round=(\d+) cp=(\d+)\s*$")
 OK_LINE = re.compile(r"^(ARMED |0x[0-9a-f]+ in |\[New LWP |\[Thread |\[Switching to |"
-                     r"Thread \d+ |This is not |^\$[0-9]+ = |^Continue|^\^|warning:|Cannot "
-                     r"breakpoint|Breakpoint \d+ at |Hardware watchpoint \d+: |"
-                     r"Watchpoint \d+: |Delete the |$)")
+                     r"Thread \d+ |This is not |^\$[0-9]+ = |^Continue|^\^|warning:|"
+                     r"Cannot breakpoint|\[Inferior \d+ |This GDB supports |\s+<https://|"
+                     r"Enable debuginfod|Debuginfod has|To make this setting |"
+                     r"Breakpoint \d+ at |Hardware watchpoint \d+: |Watchpoint \d+: |"
+                     r"Delete the |$)")
 
 
 def parse(text):
@@ -207,7 +209,8 @@ def main():
     open(gpath, "w").write(gdb_script())
     log = open(lpath, "w")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath, "-p", str(pid)],
-                         stdout=log, stderr=subprocess.STDOUT)
+                         stdout=log, stderr=subprocess.STDOUT,
+                         env=dict(os.environ, DEBUGINFOD_URLS=""))
     time.sleep(3.0)
     head = open(lpath, "r", errors="replace").read()
     if "ARMED" not in head:
