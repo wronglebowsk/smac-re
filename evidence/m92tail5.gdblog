@@ -1,0 +1,69 @@
+[New LWP 405448]
+[New LWP 405447]
+[New LWP 405446]
+[New LWP 405445]
+[New LWP 405444]
+[New LWP 405443]
+[New LWP 405442]
+[New LWP 405441]
+[New LWP 405440]
+[New LWP 405439]
+[New LWP 405438]
+[New LWP 405437]
+[New LWP 405436]
+[New LWP 405435]
+[New LWP 405434]
+[New LWP 405433]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf16a932c in __kernel_vsyscall ()
+ARMED round=50 year=2150 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x5a9503
+Breakpoint 11 at 0x51f320
+ENT n=1 fac=7 ret=0x5aaff3 round=50
+CALL n=1 fac=7 round=50
+BASE n=1 idx=1 fac=7 a2=0 base=10 ac4=6670 T0=0 T4=1 T8=3 Tc=2 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 human=0 round=50
+TAIL n=1 idx=1 fac=7 base=10 div=1 hbit=128 round=50
+SC n=1 fac=7 idx=1 final=19
+DRAW n=1 fac=7 idx=1 draw=747 best=-999
+BASE n=2 idx=3 fac=7 a2=0 base=15 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 human=0 round=50
+TAIL n=2 idx=2 fac=7 base=15 div=3 hbit=128 round=50
+SC n=2 fac=7 idx=3 final=32
+DRAW n=2 fac=7 idx=3 draw=1640 best=747
+BASE n=3 idx=32 fac=7 a2=0 base=28 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=2 p2=-1 div=1 human=0 round=50
+TAIL n=3 idx=4 fac=7 base=28 div=32 hbit=128 round=50
+SC n=3 fac=7 idx=32 final=57
+DRAW n=3 fac=7 idx=32 draw=2823 best=1640
+BASE n=4 idx=43 fac=7 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=5 p2=4 div=1 human=0 round=50
+TAIL n=4 idx=0 fac=7 base=15 div=43 hbit=128 round=50
+SC n=4 fac=7 idx=43 final=28
+DRAW n=4 fac=7 idx=43 draw=335 best=2823
+BASE n=5 idx=44 fac=7 a2=0 base=23 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=-1 div=1 human=0 round=50
+TAIL n=5 idx=1 fac=7 base=23 div=44 hbit=128 round=50
+SC n=5 fac=7 idx=44 final=24
+DRAW n=5 fac=7 idx=44 draw=413 best=2823
+BASE n=6 idx=48 fac=7 a2=0 base=41 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=0 div=1 human=0 round=50
+TAIL n=6 idx=5 fac=7 base=41 div=48 hbit=128 round=50
+SC n=6 fac=7 idx=48 final=45
+DRAW n=6 fac=7 idx=48 draw=2971 best=2823
+WIN n=1 fac=7 idx=48 round=50
+TECH n=1 idx=48 param1=7 round=50
+ST n=1 addr=0x95bd20 val=48 fac=7 round=50
+RB addr=0x95bd20 mem=48
+Python Exception <class 'OverflowError'>: can't convert negative int to unsigned
+/home/n100/reverse/smac/scratch/m92tail5.gdb:113: Error in sourced command file:
+Error occurred in Python: can't convert negative int to unsigned
+[Inferior 1 (process 405430) detached]

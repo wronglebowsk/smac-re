@@ -83,6 +83,7 @@ STRIDE, SLOTB = 8380, 0x94D7FC
 ROUND, YEAR, SAVE, MASK = 0x985AFC, 0x985B00, 0x920434, 0x985B10
 TECHBASE, TECHN, TECHNAME = 0x92FDD4, 89, 16
 BLOCKB, BLOCKSZ = 0x94E488, 0x4000
+CTRLB, BANDTB, BANDSZ = 0x94D448, 0x950664, 0x20BC   # band control dwords + the 8 global band tables
 AC4 = 0x985AC4
 CALL, BASE, SC, DRAW, WIN = 0x5AA030, 0x5A930B, 0x5AA159, 0x5AA232, 0x5AA247
 TECH, ENT, CHR, ST, RB, CTRL = 0x48BAE9, 0x5AA880, 0x5AA9B1, 0x5AA9D3, 0x5AA9D5, 0x51F320
@@ -118,7 +119,7 @@ commands
 silent
 set $n_base = $n_base + 1
 if $n_base < 400
-printf "BASE n=%d idx=%d fac=%d a2=%d base=%d ac4=%d T0=%d T4=%d T8=%d Tc=%d Y10=%d Y14=%d Y18=%d Y1c=%d bc=%d e488=%d p1=%d p2=%d div=%d human=%d round=%d\n", $n_base, *(int *)($ebp+8), *(int *)($ebp+0xc), *(int *)($ebp+0x10), *(int *)($ebp-0x4), *(int *)0x985ac4, *(int *)($ebp-0x14), *(int *)(*(int *)($ebp-0x10)+0x92fdc8), *(int *)(*(int *)($ebp-0x10)+0x92fdcc), *(int *)(*(int *)($ebp-0x10)+0x92fdd0), *(int *)($ebp-0x1c), *(int *)(*(int *)($ebp-0x8)+0x94d814), *(int *)(*(int *)($ebp-0x8)+0x94d818), *(int *)(*(int *)($ebp-0x8)+0x94d81c), *(int *)($ebp-0x18), *(int *)(*(int *)($ebp-0x8)+0x94e488), *(int *)(*(int *)($ebp-0x10)+0x92fdd4), *(int *)(*(int *)($ebp-0x10)+0x92fdd8), *(int *)(*(int *)($ebp-0x8)+0x94e488), $edx, *(int *)0x985afc
+printf "BASE n=%d idx=%d fac=%d a2=%d base=%d ac4=%d T0=%d T4=%d T8=%d Tc=%d Y10=%d Y14=%d Y18=%d Y1c=%d bc=%d e488=%d p1=%d p2=%d div=%d human=%d round=%d\n", $n_base, *(int *)($ebp+8), *(int *)($ebp+0xc), *(int *)($ebp+0x10), *(int *)($ebp-0x4), *(int *)0x985ac4, *(int *)($ebp-0x14), *(int *)(*(int *)($ebp-0x10)+0x92fdc8), *(int *)(*(int *)($ebp-0x10)+0x92fdcc), *(int *)(*(int *)($ebp-0x10)+0x92fdd0), *(int *)($ebp-0x1c), *(int *)(*(int *)($ebp-0x8)+0x94d814), *(int *)(*(int *)($ebp-0x8)+0x94d818), *(int *)(*(int *)($ebp-0x8)+0x94d81c), *(int *)($ebp-0x18), *(int *)(*(int *)($ebp-0x8)+0x94e488), *(int *)(*(int *)($ebp-0x10)+0x92fdd4), *(int *)(*(int *)($ebp-0x10)+0x92fdd8), *(int *)(*(int *)($ebp-0x8)+0x94e488), *(int *)($ebp+0xc), *(int *)0x985afc
 end
 continue
 end
@@ -187,8 +188,7 @@ break *0x5a9503
 commands
 silent
 set $n_tail = $n_tail + 1
-set $seen = $seen | (1 << $edi)
-printf "TAIL n=%d fac=%d idx=%d base=%d div=%d human=%d round=%d\n", $n_tail, *(int *)($ebp+0xc), $esi, *(int *)($ebp-0x4), $ebx, $edx, *(int *)0x985afc
+printf "TAIL n=%d idx=%d fac=%d base=%d div=%d hbit=%d round=%d\n", $n_tail, $esi, *(int *)($ebp+0xc), *(int *)($ebp-0x4), $ebx, $edx, *(int *)0x985afc
 continue
 end
 break *0x51f320
@@ -196,12 +196,11 @@ commands
 silent
 set $n_ctrl = $n_ctrl + 1
 set $n_snap = $n_snap + 1
-python
-sn = "SNAPDIR/TAG_snap%d.bin" % int(gdb.parse_and_eval("$n_snap"))
-n = 0x41b80 + 0x4000 - 0x94e488
-open(sn, "wb").write(bytes(gdb.selected_inferior().read_memory(0x94e488, n)))
+set $off = ($n_snap - 1) * (0x41b80 + 0x4000 - 0x94e488)
+dump binary memory SNAPFILE 0x94e488 0x94e488 + 0x41b80 + 0x4000 - 0x94e488
+printf "CTRL n=%d snap=%d off=%d round=%d\n", $n_ctrl, $n_snap, $off, *(int *)0x985afc
+continue
 end
-printf "CTRL n=%d snap=%d round=%d\n", $n_ctrl, $n_snap, *(int *)0x985afc
 continue
 end
 continue
@@ -270,56 +269,75 @@ def idiv(a, b):
     return -q if (a < 0) != (b < 0) else q
 
 
-def sim_tail(block, fo, Tc, human):
-    """FUN_005a90a0's tail leg (0x5a9500-0x5a9698), simulated byte-for-byte from the faction's
-    category block read LIVE at the tail's first visit.  Returns (sum_added, n_terms, naive_sum)."""
+def sim_tail(block, Tc, fac, bc, a2, ctrlw, bandb, maskv):
+    """a2 is the candidate's arg2 (0x5a960e skips the inner band loop when arg2 == the faction).
+    FUN_005a90a0's tail leg (0x5a9500-0x5a9698), simulated from the faction's category block.
+    Byte-for-byte against the disassembly:
+      0x5a9503 div = [blk+0x94e488]; je 0x5a9698 (div 0 -> tail adds 0)
+      loop esi=1..62 (0x5a9518 and eax,0x3f skips esi==63; 0x5a9692 jl 0x5a9516)
+      0x5a952f cat = byte[blk+0x94eda8+esi]
+      cat 7 (0x5a9536): gate [ebp-0x18] = the CALLER's [ebp-0x18], which FUN_005a90a0's own prologue
+        0x5a90ae/0x5a90d6 fills with bc = the popcount of bit 0x10 over the 8 control dwords
+        [0x94d448+4*i] (i=0..7), NOT a caller slot; then 0x5a9541 skips when the faction IS human
+        (0x985b10 & (1<<fac)); adds mult*Tc/div (div NOT doubled).
+      cat 2 (0x5a956f): adds mult*Tc*4 / (div*(1+human))
+      cat 0 (0x5a95a9): factor 4 if [blk+0x94dc44] >= [blk+0x94dc58] else 2; / (div*(1+human))
+      else (0x5a95fd): an inner edi loop 1..7 over GLOBAL band tables 0x950664 + edi*0x20bc
+        (stride 844): skip when arg1 == edi (0x5a960e), when byte[table+esi] == 0 (0x5a9615),
+        when the multiplier byte[blk+0x94e5a8+esi] == 0; gate on the TYPE-RECORD control dword
+        [0x94d448 + (fac+edi)*4] (the index 0x5a9628-0x5a9637 computes (fac+edi)*13 dwords) needing
+        bit 0x8 set and NOT (bits 0-1 set AND bit 5 clear); adds mult*Tc/(div*(1+human)).
+    The multiplier for cats 7/2/0 is byte[blk+0x94e5a8+esi]; the band leg uses ITS OWN multiplier
+    byte[0x950664+edi*0x20bc+esi].  Returns (sum_added, n_terms, naive) where naive drops the
+    bc/human gates and the band table's own multiplier."""
     div = int.from_bytes(block[0:4], "little", signed=True)
     if div == 0:
         return 0, 0, 0
+    human = 1 if (maskv >> fac) & 1 else 0
     dc44 = int.from_bytes(block[0xdc4:0xdc8], "little", signed=True)
     dc58 = int.from_bytes(block[0xdc8:0xdcc], "little", signed=True)
-    dwords = [int.from_bytes(block[0x2000 + j * 4:0x2004 + j * 4], "little", signed=True) for j in range(8)]
     cats = [block[0x1000 + esi] for esi in range(64)]
     mults = [block[0x1860 + esi] for esi in range(64)]
     s = naive = 0
     n = 0
-    for esi in range(1, 64):
-        if esi == 63:
-            continue
+    for esi in range(1, 63):
         cat, mult = cats[esi], mults[esi]
         if cat == 7:
-            if human != 0 and (mult != 0 and Tc != 0):
-                naive += idiv(mult * Tc, div)
-            if human == 0:
+            if bc == 0 or human:
                 continue
             if mult and Tc:
                 s += idiv(mult * Tc, div)
                 n += 1
+                naive += idiv(mult * Tc, div)
         elif cat == 2:
             if mult and Tc:
                 d2 = div * 2 if human else div
                 s += idiv(mult * Tc * 4, d2)
                 n += 1
+                naive += idiv(mult * Tc * 4, d2)
         elif cat == 0:
             if mult and Tc:
                 c = 4 if dc44 >= dc58 else 2
                 d2 = div * 2 if human else div
                 s += idiv(mult * c * Tc, d2)
                 n += 1
+                naive += idiv(mult * c * Tc, d2)
         else:
             if not (mult and Tc):
                 continue
+            if a2 == fac:               # 0x5a960e cmp ecx(arg1 = the faction),edi; je exits the loop
+                break
             for edi in range(1, 8):
-                band = int.from_bytes(block[0x2bc0 + esi * 32 + (edi - 1) * 4:
-                                            0x2bc4 + esi * 32 + (edi - 1) * 4], "little", signed=True)
-                if band == 0 or cats[esi] == 0:
-                    continue
-                dw = dwords[edi]
-                if not (dw & 0x8) or (dw & 0x3) or (dw & 0x20):
-                    continue
-                d2 = div * 2 if human else div
-                s += idiv(mult * Tc, d2)
-                n += 1
+                dw = ctrlw[fac + edi]   # 0x5a9639 [0x94d448 + (fac+edi)*4]
+                gated = (not (dw & 0x8)) or ((dw & 0x3) and (dw & 0x20))   # 0x5a9640/45/4a
+                tbzero = BANDS * edi + esi >= len(bandb) or bandb[BANDS * edi + esi] == 0
+                if not gated and not tbzero:
+                    d2 = div * 2 if human else div
+                    s += idiv(mult * Tc, d2)
+                    n += 1
+                if not gated:           # naive: ignores the band table's own byte (0x5a9615)
+                    d2 = div * 2 if human else div
+                    naive += idiv(mult * Tc, d2)
     return s32(s), n, s32(naive)
 
 
@@ -359,7 +377,8 @@ def main():
     lpath = os.path.join(EVID, f"{a.tag}.gdblog")
     os.makedirs(EVID, exist_ok=True)
     open(gpath, "w").write(TMPL.replace("SNAPDIR", os.path.join(ROOT, "scratch")
-                               .replace(chr(92), "/")).replace("TAG", a.tag))
+                               .replace(chr(92), "/")).replace("SNAPFILE", os.path.join(ROOT, "scratch")
+                               .replace(chr(92), "/") + "/" + a.tag + "_snaps.bin").replace("TAG", a.tag))
     log = open(lpath, "w")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath, "-p", str(pid)],
                          stdout=log, stderr=subprocess.STDOUT)
@@ -427,11 +446,13 @@ def main():
             e["round"] = _r
     # round -> the eight factions' category blocks, dumped by gdb AT that round's boundary hit
     snaps = {}
-    for e in by("CTRL"):
-        sp = os.path.join(ROOT, "scratch", "%s_snap%d.bin" % (a.tag, e["snap"]))
-        if os.path.exists(sp):
-            with open(sp, "rb") as fh:
-                snaps[e["round"]] = fh.read()
+    SNAPREGION = 0x41b80 + 0x4000 - 0x94e488
+    spath = os.path.join(ROOT, "scratch", a.tag + "_snaps.bin")
+    if os.path.exists(spath):
+        with open(spath, "rb") as fh:
+            for e in by("CTRL"):
+                fh.seek(e["off"])
+                snaps[e["round"]] = fh.read(SNAPREGION)
     print("counters: " + " ".join(f"{t}={len(by(t))}" for t in
           ("CALL", "BASE", "SC", "DRAW", "WIN", "TECH", "ENT", "ST", "RB", "CTRL", "TAIL")), flush=True)
 
@@ -443,21 +464,23 @@ def main():
     windows, cur = [], None
     for e in events:
         t = e["_tag"]
-        if t in ("CHR", "ENT") and cur is not None:
-            windows.append(cur)
-            cur = None
-            if t != "CTRL":
-                continue
-        if t not in ("BASE", "SC", "DRAW", "TAIL", "WIN"):
+        if t == "CTRL":
             continue
-        if cur is not None and cur["fac"] != e["fac"]:
-            windows.append(cur)
-            cur = None
-        if cur is None:
-            if t == "WIN":
-                continue
+        if t in ("ENT", "TECH"):       # 0x48bae9: FUN_005aa030 returned -> the scan is over
+            if cur is not None:
+                windows.append(cur)
+                cur = None
+            continue
+        if t == "CALL":                 # 0x5aa030's entry opens ONE scan of ONE faction
             cur = {"fac": e["fac"], "round": e.get("round"), "cand": {}, "win": None,
                    "tail": None}
+            continue
+        if cur is None or t not in ("BASE", "SC", "DRAW", "TAIL", "WIN"):
+            continue
+        if e["fac"] != cur["fac"]:      # interleaved scan of another faction
+            windows.append(cur)
+            cur = None
+            continue
         if t == "BASE":
             if e["idx"] not in cur["cand"]:
                 cur["cand"][e["idx"]] = dict(e)
@@ -476,6 +499,7 @@ def main():
             cur["win"] = e["idx"]
             windows.append(cur)
             cur = None
+    # (the ENT/TECH prints at 0x48bae9 close each scan inside the loop above)
     if cur is not None:
         windows.append(cur)
     st = by("ST")
@@ -522,6 +546,13 @@ def main():
         for fac in range(8):
             f.seek(BLOCKB + STRIDE * fac)
             endblk[fac] = f.read(0x4000)
+        # the band leg's operands: 16 control dwords at 0x94d448 (the gate indexes record fac+edi)
+        # and the 8 global band tables at 0x950664 + edi*0x20bc, each 844 bytes (the multiplier)
+        f.seek(CTRLB)
+        cwraw = f.read(64)
+        f.seek(BANDTB)
+        bandb = f.read(BANDSZ * 8)
+    ctrlw = [int.from_bytes(cwraw[j * 4:j * 4 + 4], "little", signed=True) for j in range(16)]
     def blocks_for(rnd):
         s = snaps.get(rnd)
         if s is not None and len(s) >= 7 * STRIDE + BLOCKSZ:
