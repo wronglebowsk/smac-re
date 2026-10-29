@@ -164,8 +164,8 @@ def main():
     nu, nb = read_counts(pid)
 
     gates = []
-    gates.append(("G1", f"%d bps armed, {len(errs)} gdb errors, {len(ev)} events",
-                  "ARMED" in text and not errs and ev))
+    gates.append(("G1", f"{len(LEGS)} bps armed, {len(errs)} gdb errors, {len(ev)} events",
+                  "ARMED" in text and not errs and bool(ev)))
     gates.append(("G2", "legs logged: " + "; ".join(f"{k}={v}" for k, v in sizes.items()),
                   len(sizes) == len(LEGS)))
     model = {"LEG52": 52 * nu, "LEG48": 48 * nu, "LEG304": 304 * nb}
