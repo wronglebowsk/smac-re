@@ -139,13 +139,16 @@ OK_LINE = re.compile(r"^(ARMED |0x[0-9a-f]+ in |\[New LWP |\[Thread |\[Switching
 
 def parse(text):
     ev, bad = [], []
-    for ln in text.splitlines():
+    pos = 0
+    for ln in text.split("\n"):
+        cur = pos
+        pos += len(ln) + 1
         ln = ln.rstrip()
         if not ln:
             continue
         m = KV.match(ln) or KE.match(ln)
         if m:
-            d = {"kind": m.group(2)}
+            d = {"kind": m.group(2), "_off": cur}
             for tok in m.group(3).split():
                 k, v = tok.split("=", 1)
                 d[k] = int(v, 16) if v.startswith("0x") else int(v)
@@ -224,7 +227,7 @@ def wait_title(timeout):
                 print("  [%5.1fs] class=%s body=%s" % (time.time() - t0, kind, body[:56]),
                       flush=True)
                 last = kind
-            if kind in ("title", "cdrom") or "start game" in body:
+            if kind == "title" or "start game" in body:  # s161: 'cdrom' is still STARTUP
                 return True
         time.sleep(2)
     return False
@@ -264,29 +267,10 @@ def main():
         if not pid:
             raise SystemExit("no terran.exe after relaunch")
         print("terran.exe pid %d up after %.1fs" % (pid, time.time()), flush=True)
-        if not wait_title(a.load_timeout):
-            raise SystemExit("no title screen after relaunch")
-    else:
-        pid = terran_pid()
-        if not pid:
-            raise SystemExit("no terran.exe running")
-
     with open("/proc/%d/mem" % pid, "rb", 0) as mm:
-        pre = {f: read_block(mm, f) for f in range(8)}
-        rnd_pre = struct.unpack("<i", M.rd(mm, ROUND_ADDR, 4))[0]
-    print("AT TITLE (no save loaded yet): round=%d counts=%s"
-          % (rnd_pre, [pre[f][0] for f in range(8)]), flush=True)
-    print("  entries at title: " + "; ".join(
-        "fac%d %s" % (f, pre[f][1]) for f in WFACS), flush=True)
-
-    with open("/proc/%d/mem" % pid, "wb", 0) as mm:
-        for f in WFACS:
-            mm.seek(cnt_addr(f))
-            mm.write(struct.pack("<i", SENT))
-    with open("/proc/%d/mem" % pid, "rb", 0) as mm:
-        poked = {f: struct.unpack("<i", M.rd(mm, cnt_addr(f), 4))[0] for f in WFACS}
-    print("poke %d -> counts facs %s read back %s" % (SENT, WFACS, list(poked.values())),
-          flush=True)
+        disc = [struct.unpack("<i", M.rd(mm, cnt_addr(f), 4))[0] for f in range(8)]
+        rnd_disc = struct.unpack("<i", M.rd(mm, ROUND_ADDR, 4))[0]
+    print("AT DISCOVERY (earliest read): round=%d counts=%s" % (rnd_disc, disc), flush=True)
 
     log = open(lpath, "w")
     g = subprocess.Popen(["stdbuf", "-o0", "gdb", "-batch", "-nx", "-x", gpath, "-p", str(pid)],
@@ -302,7 +286,29 @@ def main():
         subprocess.run(["kill", "-CONT", str(pid)], capture_output=True)
         raise SystemExit("gdb did not arm:\n" + head[-1200:])
     armed = [ln for ln in head.splitlines() if ln.startswith("ARMED")]
-    print("armed: %s" % (armed[0][:200] if armed else "<none>"), flush=True)
+    print("armed EARLY (before the title): %s" % (armed[0][:200] if armed else "<none>"),
+          flush=True)
+    off_arm = os.path.getsize(lpath)
+
+    if not wait_title(a.load_timeout):
+        raise SystemExit("no true title screen after relaunch")
+    with open("/proc/%d/mem" % pid, "rb", 0) as mm:
+        pre = {f: read_block(mm, f) for f in range(8)}
+        rnd_pre = struct.unpack("<i", M.rd(mm, ROUND_ADDR, 4))[0]
+    print("AT TRUE TITLE (no save loaded): round=%d counts=%s"
+          % (rnd_pre, [pre[f][0] for f in range(8)]), flush=True)
+    print("  entries at title: " + "; ".join(
+        "fac%d %s" % (f, pre[f][1]) for f in WFACS), flush=True)
+
+    with open("/proc/%d/mem" % pid, "wb", 0) as mm:
+        for f in WFACS:
+            mm.seek(cnt_addr(f))
+            mm.write(struct.pack("<i", SENT))
+    with open("/proc/%d/mem" % pid, "rb", 0) as mm:
+        poked = {f: struct.unpack("<i", M.rd(mm, cnt_addr(f), 4))[0] for f in WFACS}
+    print("poke %d at the idle title -> counts facs %s read back %s"
+          % (SENT, WFACS, list(poked.values())), flush=True)
+    off_title = os.path.getsize(lpath)
 
     r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "m54a_load.py")],
                        capture_output=True, text=True,
@@ -396,10 +402,22 @@ def main():
     errl = [ln for ln in text.splitlines() if "Undefined" in ln or "Missing" in ln
             or "doesn't match" in ln]
     gate("G13-no-gdb-errors", not errl, "%d error lines %s" % (len(errl), errl[:2]))
-    ent_after = [e for e in ent_e if e["kind"] == "ENT" and e["pc"] in (0x59ec00, 0x59ec90)]
+    off_arm = head.index("ARMED")  # the arm printf; every event line follows it
+    startup_e = [e for e in ev if e["_off"] < off_title]
+    load_e = [e for e in ev if e["_off"] >= off_title]
+    def brief(es):
+        return sorted({"%s %s@%s" % (e["kind"], ("fac%d" % e["fac"]) if "fac" in e else "RND",
+                                     name_of(e["pc"])) for e in es})
     gate("G14-rebuild-or-caller-events", True,
          "%d ENT/CALL events %s" % (len(ent_e), sorted({"%s %s" % (e["kind"], name_of(e["pc"]))
                                                         for e in ent_e})))
+    gate("G16-window-partition", off_title > off_arm and all(e["_off"] >= off_arm for e in ev),
+         "arm@%d title@%d; %d STARTUP-window events %s; %d LOAD-window events %s"
+         % (off_arm, off_title, len(startup_e), brief(startup_e), len(load_e), brief(load_e)))
+    unlogged = [f for f in WFACS if fin[f][0] != SENT
+                and not any(e["kind"] == "CNT" and e["fac"] == f for e in ev)]
+    gate("G17-every-sentinel-replacement-logged", not unlogged,
+         "survivors %s; replaced-without-an-event %s" % (surviving, unlogged))
     savp = os.path.join(ROOT, "programs", "saves", a.save)
     sav = open(savp, "rb").read() if os.path.exists(savp) else b""
     hits = {}

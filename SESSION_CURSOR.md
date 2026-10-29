@@ -1,3 +1,4 @@
-M105 RUNNING (s161, branch milestone/m105 from main 4049b87): who writes the 1436-B record block AT SETUP.
-s160 died WITH THE SESSION (gdblog ends at ARMED + [Inferior detached], no events, no seq.jsonl, whole wine tree killed) -> re-run same instrument as m105s2. Gates re-based first (INSTRUMENT fix, floors untouched): G8 = all 8 counts == the m104w3 image [0,6,5,4,3,4,5,3]; G10 = every CNT round is rnd_pre or a round a RND event reported (in-window), not "RND before CNT".
-acceptance: RUNNING (m105s2, setsid nohup -> scratch/m105s2.out; gdb log evidence/m105s2.gdblog) | merged: NO | next: grep ACCEPTANCE scratch/m105s2.out
+M105 RUNNING (s161, branch milestone/m105, instrument re-shaped after m105s2): who writes the 1436-B record block AT SETUP.
+m105s2 FACTS: at the cdrom screen (round 0, no save) counts ALREADY [0,6,5,4,3,4,5,3] + the full entry image; the save load logged 0 CNT stores while the ROUND control fired at 0x64bfa3 (FUN_0064bf70); sentinel -77 vanished UNLOGGED => it was undone in the 3 s between the poke and the arm (poke was too early: 'cdrom' is still startup).
+m105s3 = attach EARLY (arm before the title), wait the TRUE title (cdrom no longer accepted), read, poke -77 while armed, load; events split by log offset (off_arm..off_title = STARTUP, after = LOAD); gates +G16 partition +G17 every-replacement-logged.
+acceptance: RUNNING (m105s3 -> scratch/m105s3.out, evidence/m105s3.gdblog) | merged: NO | next: grep ACCEPTANCE scratch/m105s3.out
