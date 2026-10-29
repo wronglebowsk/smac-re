@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 142, 2026-10-28)
+# NEXT_PROMPT.md — footing for the next session (session 147, 2026-10-28)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -18,9 +18,25 @@ Survivability: before any step that can exceed 2 minutes (gdb run, relaunch, evi
 was in flight; never `rm`/`git checkout --`. Every doc write is an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#95)**, **M91 (#97, m91score5 PASS 7/7)** — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (FUN_005a7970's legs: 0x5a7e73 skips the 64-record band loop unless arg1 == the short at 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
-**M90 (s141, #95, `m90tech2` PASS 8/8):** the per-faction slot [0x94d7fc + fac*8380] IS a TECH INDEX 0..88 chosen by FUN_005aa030(faction) (gate FUN_005a6cd0 = "prereq known", tested as [0x985c1c + prereq] & (1<<fac); tie `_rand`), returned verbatim by FUN_005ab000 -> FUN_0048b9a0 (call 0x48bae4, landing 0x48bae9) and stored at 0x5aa9d3. bVar14 in 48b9a0 UNDECODED. NAMED.
-**M91 (s142-s143, #97, `m91score5` PASS 7/7 after `m91score1-4` FAILed on my own gates/harness):** FUN_005a90a0(idx, fac, arg2) SCORES `SUM over four (cost, demand) pairs of (demand*m+1)*cost` — costs *(0x92fdc4 + idx*44 +0,+4,+8,+0xc) (that record's prereq1 is +16 = 0x92fdd4, its name +32: M90's "base 0x92fdd4" is the +16 FIELD, not the record start), demand *(fac*8380 + 0x94d810/14/18/1c), m = 1 if arg2 != 0 else 4/2 by 0x985ac4 bit 0x200 (live SET), halved at 0x5a92fd iff all four pairs inert (bc = bit-0x10 popcount of 0x94d448 dwords 1..7; [fac*8380+0x94e488] >= 4): **predicted == the engine's [ebp-0x4] at 0x5a930b on 27/27 traced candidates (m91score5, fresh load, 4 windows).** A 62-iteration tail (0x5a94fd-0x5a95f8) then adds byte[fac*8380+0x94e5a8+esi]*Tc over divisors keyed by byte[+0x94eda8+esi] in {7,2,0} (UNPREDICTED — M92); the level leg 0x5a93b3-0x5a94f2 runs ONLY when arg2 != 0 (0x5a9375 `je 0x5a9500`). FUN_005aa030 then divides (0x5aa1e4 `shl eax,8; idiv edi`, divisor = max(FUN_005a6d40(p1,1), FUN_005a6d40(p2,1))) and **picks the candidate with the strictly-largest draw `_rand() % (score+1)` (0x5aa217-0x5aa230, compare 0x5aa232 `cmp eax,[ebp-0x8]; jle` = equal draws do NOT replace, scan asc 0..88, best starts -999) — NOT the max score**: falsified 3x (fac4 43 f16 over 60 f38; fac5 22 'AGrav' f31 over max 56; fac6 13 'Surface' f36 over 63). NAMED.
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90 (#95), M91 (#97, m91score5 PASS 7/7) — full detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (FUN_005a7970's legs: 0x5a7e73 skips the 64-record band loop unless arg1 == the short at 0x93325c/68/74 = Alloys/SingMec/ConSing; both bit-set tails need ds:0x920434 != 0 AND (1<<arg0)&ds:0x985b10).
+**M90 (s141, #95, `m90tech2` PASS 8/8):** the per-faction slot [0x94d7fc + fac*8380] IS a TECH INDEX
+0..88 chosen by FUN_005aa030(faction) (gate FUN_005a6cd0 = "prereq known" = [0x985c1c+prereq]&(1<<fac);
+tie `_rand`), returned by FUN_005ab000 -> FUN_0048b9a0 (call 0x48bae4, landing 0x48bae9), stored at
+0x5aa9d3. bVar14 in 48b9a0 UNDECODED. NAMED.
+**M91 (s142-s143, #97, `m91score5` PASS 7/7):** FUN_005a90a0(idx, fac, arg2) BASE at 0x5a930b = `SUM
+over four (cost,demand) pairs of (demand*m+1)*cost` — costs *(0x92fdc4+idx*44 +0,+4,+8,+0xc) (record
+prereq1 = +16 = 0x92fdd4), demand *(fac*8380 + 0x94d810/14/18/1c), m = 1 if arg2 != 0 else 4/2 by
+0x985ac4 bit 0x200 (live SET), halved iff all four pairs inert (bc = bit-0x10 popcount of 0x94d448
+dwords 1..7; [fac*8380+0x94e488] >= 4): predicted == engine 27/27. The tail (M92) runs ONLY when
+arg2 == 0 (0x5a9375 je 0x5a9500). FUN_005aa030 divides (0x5aa1e4 shl 8; idiv max(FUN_005a6d40(p1,1),
+p2)) and **picks the STRICTLY-largest draw `_rand() % (score+1)` (0x5aa217-0x5aa232, equal draws do
+NOT replace, asc 0..88) — NOT max score** (falsified 3x). NAMED.
+**M92 (s144-s146, #98, `m92tail18` PASS 8/8, fresh m54b_clean load r51->55):** FUN_005a90a0's tail
+(entered 0x5a9500 iff arg2==0) EXACTLY predicted: **TAILOUT at 0x5a9698 == BASE + the tail simulated
+from the per-faction block — 39/39 candidates, 0 mismatches, 2 qualifying windows, naive one-factor
+splits 19** (cat/mult/div offsets, the cat7/cat2/cat0/band legs and gates: skill code-atlas.md).
+**Block FROZEN within a round** (0/39 + 0/19 per-TAIL-hit dumps differ from own-round snapshots;
+div cross-check 39/39 bad=0), moves BETWEEN rounds — s145's in-round-motion claim RETRACTED (census defects, see TRAPS). Census needs a FRESH load. NAMED.
 **M73-M75 (#74-76):** price `edi = A x B` at the gate 0x4efa5e; markup skipped when `type < 0x40` OR `type[+0x30] & 4` (0x5ac99c); PRODUCTION sets that bit (0x4efe60). **M68 FAILED**; **M63** `m63_pop.py`, `0x94de84` queued-count.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -29,7 +45,11 @@ Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#9
 2. The price/flag/marker chain — silent breakpoints or hw watchpoints + a prediction from live memory
      + a read-back: `m73_price_split.py`, `m74_flag_hw.py`, `m72_gate_watch.py` (the VISIT GATE),
      `m81_flag_writer.py`, `m85_tech_census.py`, `m86_helper_legs.py`, `m87_aaa20_trigger.py`,
-     `m88_slot_watch.py`, `m89_alloc_census.py`, `m90_tech_choice.py`, `m91_scorer_census.py` (newest: the scorer's OWN base at 0x5a930b, its final at the 0x5aa159 landing, the draw at 0x5aa232, the winner at 0x5aa247 — predictions computed from the cost/demand fields gdb reads out of live memory at the hit) — also FUN_005aa030's return at
+     `m88_slot_watch.py`, `m89_alloc_census.py`, `m90_tech_choice.py`, `m91_scorer_census.py`,
+     `m92_tail_census.py` (newest: base 0x5a930b, TAIL entry 0x5a9503 (div live + 64+64 B mults/cats
+     appended per hit to scratch/<tag>_tailarrs.bin), TAILOUT 0x5a9698, final 0x5aa159, draw 0x5aa232,
+     winner 0x5aa247; simulate EACH candidate from the round LIVE at its BASE hit; pair tailout
+     FIRST-wins; run on a FRESH load) — also FUN_005aa030's return at
      its landing 0x48bae9, the store at 0x5aa9d3, then the tech NAME read from live memory at
      0x92fdd4+idx*44+16; PREDICTIONS, then counters, then the branch bytes named); rest self-doc.
 3. Self-documenting (`--help` before inventing a flag): `m66_insert_slot.py`, `m57_ui_enqueue.py`,
@@ -37,29 +57,37 @@ Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#9
    `scratch/m71/dis.py LO HI [cap]` (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M92: the scorer's 62-category TAIL (0x5a94fd-0x5a9698) and what [fac*8380+0x94e488], [+0x94e5a8+esi] and [+0x94eda8+esi] are.** M91 CLOSED the base (12/12 exact) and the draw rule; the FINAL score is still unpredicted. `python3 scratch/m71/dis.py 5a95fd 5a96a0` then `5a96a0 5a9720`; census `final == base + tail` on >= 2 windows with the SAME instrument (scripts/m91_scorer_census.py — swap gates G2/G3 for the tail formula and KEEP the base gate). Print the three byte arrays at the 0x5a930b hit so the tail is predicted from live memory, and keep the winner gate on the DRAW (max draw), never on max score.
+**M93: the POST-tail leg 0x5a9698 -> 0x5aa022 — what the SCORE at 0x5aa159 adds on top of TAILOUT.**
+M92 is ACCEPTED (`m92tail18` PASS 8/8); the tail rule + census laws live in NAMED.md and the skill's code-atlas.md — never re-derive them. FULL STATIC for M93 is appended there too (s146):
+the leg is SKIPPED when [0x985c1c+idx] carries the faction's bit; else `call 0x5312d0`, then
+ds:0x985a9c drives a record at `[esi+0x92fdd4]` with an eax*48 stride (48-vs-44: an M67-style conflict)
+into `call 0x5a9020`; the 0x5aa022 block makes final = TAILOUT*5 (the `+4` lands only when
+idx == 0). MEASURED (m92tail18 fac2): final - pf = 155/32/4/1/20/2 = tailout x5 for idx 8/13/22/36/44;
+pf == final where tailout 0 (idx 32/48). FIRST SHAPE: extend m92_tail_census with POST prints at
+0x5a96e6/0x5a9735/0x5a9744/0x5aa014 (which branch each scan takes + values at the landings) and
+predict final = f(tailout, idx, [0x985c1c+idx], [0x985a9c], the 0x5312d0 result) per candidate from
+the candidate-round snapshot; ONE fresh-load invocation must print PASS. Then (M94+): who writes
+0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds (the 8 esi positions are powers of 4); the human
+leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
 ## STILL OPEN (in priority order)
 
-1. **M92 (the pick): the tail loop 0x5a94fd-0x5a9698 — byte[fac*8380+0x94e5a8+esi] * Tc over divisors keyed
-   by byte[+0x94eda8+esi] in {7,2,0}, divided by [fac*8380+0x94e488] — and who WRITES those three arrays.**
-   Then: where the chosen index becomes the ACTIVE project (pay-site conflict 0x4f0ca6 vs 0x4efedd); the
-   human leg (FUN_00625af1 at 0x5aa20d, bVar14 in FUN_0048b9a0); the SIBLING slot [esi+0x94d800] fed by
-   FUN_005aab70; the band flag [esi+0x94d430] bit 0x40; ds:0x926bd4 / ds:0x920434 naming; chooser case 7;
-   cursor print at **0x49771c**; bit 5 (0x531782); who clears bit 6.
+1. **After M93 (THE PICK): the pay-site conflict 0x4f0ca6 vs 0x4efedd; the human leg (FUN_00625af1 at
+   0x5aa20d, bVar14 in FUN_0048b9a0); who writes 0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds;
+   the SIBLING slot [esi+0x94d800] (FUN_005aab70); the band flag [esi+0x94d430] bit 0x40; ds:0x926bd4 /
+   ds:0x920434 naming; chooser case 7; cursor print at **0x49771c**; bit 5 (0x531782).**
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
    **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite: `scripts/gate.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at s143:** `terran.exe` UP (pid 347970), fresh m54b_clean load, round 55 after `m91score5`
-  (slots_end [-1,3,8,22,60,22,13,48]); accept_ready BLOCKS on `credit <= 0` (income add gated on d0 > 0;
-  its printed FIX is a clean reload, ~35 s) but a census that needs only BOUNDARIES runs fine without
-  one. 0x985ac4 bit 0x200 SET (scorer m = 4), 0x926bd4 = 0, e488 per faction = [0,1,10,1,3,1,9,1].
-  `scripts/m91_scorer_census.py`
-  is the scorer census; NO relaunch is needed (5aadf0 -> aaa20 -> 5aa880 -> 5ab000 -> 48b9a0 -> 5aa030
-  runs whenever a faction's slot is negative). X focus law: see TRAPS. **The PANE decides where INSERT
-  lands** (pass the index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`). A quit-prompt mid-window swallows
-  every click — run `m78_mark_clear.normalize_screen()` first.
+- **Box at s147:** r55 hud, Korolev idx 18 pend 1 head 2 UI-queued (s147); census ran r51->55; `scripts/m92_tail_census.py` is the tail census —
+  **ACCEPTANCE GREEN (`m92tail18` PASS 8/8)** but needs a FRESH m54b_clean load: at r59 only 3 AI
+  factions queued -> 0 qualifying windows (FAIL 5/8, box state).
+  The census pokes slots 7/2/6 to -1; a degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
+  (scorer m = 4). The human mask byte at 0x985b10 = 0x08 -> ONLY faction 3 is human (a dword read there
+  shows 0x985b10 = 65288, mask the low byte). X focus law: see TRAPS. **The PANE decides where INSERT
+  lands** (pass the index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`). A quit-prompt mid-window
+  swallows every click — run `m78_mark_clear.normalize_screen()` first.
 - **Reload recipe (~35 s, bare filename):** `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `accept_ready.py` -> (enqueue) -> **read `pending` AND the head back** -> the run. Misread `movie` ~1 in 3: re-run `--relaunch`, never Return on the save browser. `artwork-close` is NOT a dialog — click its red CLOSE bar (`smac_play.close_bar`).
 - gdb: 4 hw watchpoints and 10-16 silent breakpoints work (~35 s per boundary); conditional bps keep other records out of the log; PREFER REGISTER-ONLY conditions on hot addresses (memory-read conditions cost seconds/hit — s133). No `si` in a command list; stdout DRAINED (`stdbuf -o0`); a watchpoint reports the pc AFTER the store.
 - `scratch/m574/text.txt` = whole `.text` objdump (40.9 MB; addresses WITHOUT leading zeros — grep
@@ -80,44 +108,40 @@ Merged: **M54A-M82** (#39-#83); **M87 (#90)**, **M88**, **M89 (#93)**, **M90 (#9
 - **A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it.**
   Return clears a dialog; a BUILD/base PANE needs Escape (Escape on the bare map raises the quit
   prompt — never OK). Run `m78_mark_clear.normalize_screen()` first.
-- **Gates must PREDICT from live memory, then be confirmed by counters** — cens1 FAILed because it
-  demanded hits at sites the taken leg cannot reach. A counter at
-  a site that is BOTH a branch target and a loop-completion fallthrough is NOT a leg proof (0x5a7f9f).
-- A gdb-log tag alternation must be LONGEST-first (`MARK` swallows `MARKSET`); a bp printf must NOT
-  print inferior strings (aborts the batch, DETACHES mid-window); template expressions go in printf
-  ARGUMENTS, never the format string; in a two-branch `re` alternation `m.group(1)` is the WHOLE
-  match.
+- **Gates must PREDICT from live memory, then be confirmed by counters** — cens1 FAILed demanding hits
+  at sites the taken leg cannot reach; a counter at a site that is BOTH a branch target and a
+  loop-completion fallthrough is NOT a leg proof (0x5a7f9f). **A gate may only read a field the harness
+  SETS: m92's G8 read c["tdiv"], a field nothing assigned, so G8 was structurally False for 4 runs
+  while the milestone itself was green** (s146). A gdb-log tag alternation must be LONGEST-first
+  (`MARK` swallows `MARKSET`); a bp printf must NOT print inferior strings (aborts the batch, DETACHES
+  mid-window); template expressions go in printf ARGUMENTS, never the format string; in a two-branch
+  `re` alternation `m.group(1)` is the WHOLE match.
 - **PRODFLAG (0x4efe60) fires for EVERY record the pass walks** (128/322/323/194 — FACTION BANDS, M80): attribute the sweep by its own predecessor. **The gate visit arrives in the boundary AFTER the sweep marks**: a poke window needs >= 3 boundaries.
-- **Focus: `getactivewindow` is a RED HERRING (always errors, no WM on :99) — use `getwindowfocus
- getwindowname`.** A box can swallow turn-end input WITH focus fine: prove keys land via a classify flip
- before blaming input. **Vision-tool coords are SCALE-SHIFTED** — click from OCR word bboxes (TURN
- COMPLETE center (675,416); (685,471) is the recenter box). **m44_idle asserts TracerPid==0** — never a
- driver under a census gdb; use m55_boundary.
+- **`getactivewindow` is a RED HERRING (always errors, no WM on :99) — use `getwindowfocus
+ getwindowname`; prove keys land via a classify flip before blaming input.** **Vision-tool coords are
+ SCALE-SHIFTED** — click from OCR word bboxes (TURN COMPLETE center (675,416)). **m44_idle asserts
+ TracerPid==0** — never a driver under a census gdb; use m55_boundary.
 - base+0xd0 (`credit`) is written ONLY at player-record init (0x6310c6/0x631154) — income is never
   recomputed per round; University Base credit>0 cannot be restored by turns; use the per-boundary
   storage poke 200.
 - **The queue tail holds STALE ids** (the shift reaches only `0..pending-1`): never read a queue by
-  "first empty slot", never treat slot 10 (`+0x78`) as an entry, never read a stale tail as proof an
-  id IS queued. Id 0 is both Colony Pod and the empty marker; the sentinel is -39; a negative value
-  belongs to the TYPE (196 -> -6, 195 -> -3).
+  "first empty slot" or a stale tail as proof an id IS queued. Id 0 is Colony Pod AND the empty marker;
+  the sentinel is -39; a negative belongs to the TYPE (196 -> -6, 195 -> -3).
 - **A PASS on a shape that cannot discriminate is not a PASS:** compute candidate predictions from the
-  baseline first; refuse the shape if they all agree. The harness race is real (a window spanning two
-  rounds): RE-RUN, never edit the floor.
+  baseline first; refuse the shape if they all agree. RE-RUN on a harness race, never edit the floor.
 - **`milestone.py start <id>` refuses a dirty tree and resets to main**: stash a carried doc edit,
   start, pop (s140 did exactly that with the skill's code-atlas carrier). `SESSION_CURSOR.md` must be
   re-written AFTER it.
 - **A list cursor read BEFORE the seek is the PREVIOUS cursor:** the chooser pump seeks with
   `call 0x4026b0` at 0x497717, so a node print at 0x497704 shows the old node (m84cprobe1 G3 was
   this, not the game) — print at 0x49771c.
+- **`dump binary memory`/`append binary memory` need a LITERAL end address:** an arithmetic range (worse
+  with a substituted path) aborts the sourced script at the first hit; a multi-line `python` block in a
+  breakpoint command list aborts too. A snapshot reader must use the region SIZE, not an offset.
+  Proven the hard way: m92tail3-7.
 - **ZERO CALLS CAN BE THE GAME, NOT THE INSTRUMENT:** before betting an acceptance on a function
-  with no fixed-displacement caller, scan every rw region of terran.exe for its vptr
-  (`/proc/pid/mem`, no gdb — `scratch/m84d/probe3.py`) and confirm an instance exists; prove arming
-  from the log ("Breakpoint 1 at ..." + a clean "[Inferior 1 ... detached]").
-
-
-- **The research pick is a MAX OF RANDOM DRAWS, not a max score:** FUN_005aa030 draws `_rand() % (score+1)`
-  per candidate and keeps the strictly-greater one (0x5aa217/0x5aa232), so a low-score winner IS the rule
-  (m91score1 G3: winner final 16 beat a candidate at 38). Never re-gate a census on max-score.
+  with no fixed-displacement caller, scan terran.exe rw regions for its vptr (`/proc/pid/mem`, no gdb —
+  `scratch/m84d/probe3.py`), confirm an instance exists; prove arming from the log.
 - **A >90 s gdb census NEVER runs in the foreground: the terminal tool caps waits at 420 s and KILLING
   the census mid-run leaves Wine hung (round frozen, CTRL watchpoint 0 events even after detach) — costs
   a ~15 min detour + a reload (s143: m91score4).** Run background + `process_manage wait` (clamped 180 s,

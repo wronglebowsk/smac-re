@@ -1,0 +1,52 @@
+[New LWP 405448]
+[New LWP 405447]
+[New LWP 405446]
+[New LWP 405445]
+[New LWP 405444]
+[New LWP 405443]
+[New LWP 405442]
+[New LWP 405441]
+[New LWP 405440]
+[New LWP 405439]
+[New LWP 405438]
+[New LWP 405437]
+[New LWP 405436]
+[New LWP 405435]
+[New LWP 405434]
+[New LWP 405433]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf16a932c in __kernel_vsyscall ()
+ARMED round=74 fac7div=1 mask=65288
+Breakpoint 1 at 0x5a930b
+Breakpoint 2 at 0x5a9565
+Breakpoint 3 at 0x5a95a1
+Breakpoint 4 at 0x5a95f5
+Breakpoint 5 at 0x5a9676
+Breakpoint 6 at 0x5aa159
+BASE idx=1 base=10 Tc=2 bc=1 a2=0
+ADD cat2 idx=1 esi=1 add=8 run=10
+SC fac=7 idx=1 final=19
+BASE idx=3 base=15 Tc=4 bc=1 a2=0
+ADD cat2 idx=3 esi=1 add=16 run=15
+SC fac=7 idx=3 final=32
+BASE idx=32 base=28 Tc=0 bc=1 a2=0
+ADD cat2 idx=32 esi=1 add=0 run=28
+SC fac=7 idx=32 final=57
+BASE idx=43 base=15 Tc=3 bc=1 a2=0
+ADD cat2 idx=43 esi=1 add=12 run=15
+SC fac=7 idx=43 final=28
+BASE idx=44 base=23 Tc=0 bc=1 a2=0
+ADD cat2 idx=44 esi=1 add=0 run=23
+SC fac=7 idx=44 final=24
+BASE idx=48 base=41 Tc=1 bc=1 a2=0
+ADD cat2 idx=48 esi=1 add=4 run=41
+SC fac=7 idx=48 final=45
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf11770ac in ?? ()
+[Inferior 1 (process 405430) detached]

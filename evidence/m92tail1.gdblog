@@ -1,0 +1,68 @@
+[New LWP 347989]
+[New LWP 347988]
+[New LWP 347987]
+[New LWP 347986]
+[New LWP 347985]
+[New LWP 347984]
+[New LWP 347983]
+[New LWP 347982]
+[New LWP 347981]
+[New LWP 347980]
+[New LWP 347979]
+[New LWP 347978]
+[New LWP 347977]
+[New LWP 347976]
+[New LWP 347975]
+[New LWP 347974]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf1b8232c in __kernel_vsyscall ()
+ARMED round=57 year=2157 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x5a94fd
+Breakpoint 11 at 0x51f320
+ENT n=1 fac=5 ret=0x5aaff3 round=57
+CALL n=1 fac=5 round=57
+BASE n=1 idx=4 fac=5 a2=0 base=10 ac4=6670 T0=2 T4=1 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=4 p1=-1 p2=-1 round=57
+SC n=1 fac=5 idx=4 final=11
+DRAW n=1 fac=5 idx=4 draw=2483 best=-999
+BASE n=2 idx=13 fac=5 a2=0 base=22 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=4 p1=1 p2=3 round=57
+SC n=2 fac=5 idx=13 final=56
+DRAW n=2 fac=5 idx=13 draw=4543 best=2483
+BASE n=3 idx=22 fac=5 a2=0 base=26 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=4 p1=1 p2=2 round=57
+SC n=3 fac=5 idx=22 final=31
+DRAW n=3 fac=5 idx=22 draw=3645 best=4543
+BASE n=4 idx=32 fac=5 a2=0 base=24 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=4 p1=2 p2=-1 round=57
+SC n=4 fac=5 idx=32 final=25
+DRAW n=4 fac=5 idx=32 draw=186 best=4543
+BASE n=5 idx=36 fac=5 a2=0 base=15 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=4 p1=5 p2=-1 round=57
+SC n=5 fac=5 idx=36 final=20
+DRAW n=5 fac=5 idx=36 draw=384 best=4543
+BASE n=6 idx=45 fac=5 a2=0 base=4 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=0 Y14=1 Y18=0 Y1c=1 bc=2 e488=4 p1=1 p2=-1 round=57
+SC n=6 fac=5 idx=45 final=4
+DRAW n=6 fac=5 idx=45 draw=401 best=4543
+WIN n=1 fac=5 idx=13 round=57
+TECH n=1 idx=13 param1=5 round=57
+ST n=1 addr=0x957ba8 val=13 fac=5 round=57
+RB addr=0x957ba8 mem=13
+CTRL n=1 round=57
+CTRL n=2 round=58
+CTRL n=3 round=59
+ENT n=2 fac=3 ret=0x5aab5d round=60
+CALL n=2 fac=3 round=60
+BASE n=7 idx=5 fac=3 a2=0 base=5 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=0 Y14=1 Y18=0 Y1c=0 bc=0 e488=1 p1=-1 p2=-1 round=60
+/home/n100/reverse/smac/scratch/m92tail1.gdb:116: Error in sourced command file:
+No symbol table is loaded.  Use the "file" command.
+[Inferior 1 (process 347970) detached]

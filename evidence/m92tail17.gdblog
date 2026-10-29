@@ -1,0 +1,160 @@
+[New LWP 466789]
+[New LWP 466788]
+[New LWP 466787]
+[New LWP 466786]
+[New LWP 466785]
+[New LWP 466784]
+[New LWP 466783]
+[New LWP 466782]
+[New LWP 466781]
+[New LWP 466780]
+[New LWP 466779]
+[New LWP 466778]
+[New LWP 466777]
+[New LWP 466776]
+[New LWP 466775]
+[New LWP 466774]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xea7b632c in __kernel_vsyscall ()
+ARMED round=59 year=2159 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x5a9698
+Breakpoint 11 at 0x5a9503
+Breakpoint 12 at 0x51f320
+ENT n=1 fac=6 ret=0x5aaff3 round=59
+CALL n=1 fac=6 round=59
+BASE n=1 idx=5 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=0 T8=0 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=-1 p2=-1 div=4 hmask=6 round=59
+TAIL n=1 idx=5 fac=6 base=25 div=4 hmask=65288
+TAILOUT fac=6 idx=5 out=25
+SC n=1 fac=6 idx=5 final=51
+DRAW n=1 fac=6 idx=5 draw=4058 best=-999
+BASE n=2 idx=13 fac=6 a2=0 base=18 ac4=6670 T0=0 T4=1 T8=2 Tc=3 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=3 div=4 hmask=6 round=59
+TAIL n=2 idx=13 fac=6 base=18 div=4 hmask=65288
+TAILOUT fac=6 idx=13 out=18
+SC n=2 fac=6 idx=13 final=36
+DRAW n=2 fac=6 idx=13 draw=1940 best=4058
+BASE n=3 idx=22 fac=6 a2=0 base=14 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=2 div=4 hmask=6 round=59
+TAIL n=3 idx=22 fac=6 base=14 div=4 hmask=65288
+TAILOUT fac=6 idx=22 out=14
+SC n=3 fac=6 idx=22 final=15
+DRAW n=3 fac=6 idx=22 draw=1802 best=4058
+BASE n=4 idx=32 fac=6 a2=0 base=12 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=2 p2=-1 div=4 hmask=6 round=59
+TAIL n=4 idx=32 fac=6 base=12 div=4 hmask=65288
+TAILOUT fac=6 idx=32 out=12
+SC n=4 fac=6 idx=32 final=25
+DRAW n=4 fac=6 idx=32 draw=1886 best=4058
+BASE n=5 idx=44 fac=6 a2=0 base=19 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=-1 div=4 hmask=6 round=59
+TAIL n=5 idx=44 fac=6 base=19 div=4 hmask=65288
+TAILOUT fac=6 idx=44 out=19
+SC n=5 fac=6 idx=44 final=20
+DRAW n=5 fac=6 idx=44 draw=1020 best=4058
+BASE n=6 idx=45 fac=6 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=5 Tc=0 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=1 p2=-1 div=4 hmask=6 round=59
+TAIL n=6 idx=45 fac=6 base=15 div=4 hmask=65288
+TAILOUT fac=6 idx=45 out=15
+SC n=6 fac=6 idx=45 final=30
+DRAW n=6 fac=6 idx=45 draw=2652 best=4058
+BASE n=7 idx=48 fac=6 a2=0 base=25 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=0 Y18=0 Y1c=1 bc=0 e488=4 p1=4 p2=0 div=4 hmask=6 round=59
+TAIL n=7 idx=48 fac=6 base=25 div=4 hmask=65288
+TAILOUT fac=6 idx=48 out=25
+SC n=7 fac=6 idx=48 final=25
+DRAW n=7 fac=6 idx=48 draw=1045 best=4058
+WIN n=1 fac=6 idx=5 round=59
+TECH n=1 idx=5 param1=6 round=59
+ST n=1 addr=0x959c64 val=5 fac=6 round=59
+RB addr=0x959c64 mem=5
+ENT n=2 fac=7 ret=0x5aaff3 round=59
+CALL n=2 fac=7 round=59
+BASE n=8 idx=1 fac=7 a2=0 base=10 ac4=6670 T0=0 T4=1 T8=3 Tc=2 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=59
+TAIL n=8 idx=1 fac=7 base=10 div=1 hmask=65288
+TAILOUT fac=7 idx=1 out=18
+SC n=8 fac=7 idx=1 final=19
+DRAW n=8 fac=7 idx=1 draw=196 best=-999
+BASE n=9 idx=3 fac=7 a2=0 base=15 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=59
+TAIL n=9 idx=3 fac=7 base=15 div=1 hmask=65288
+TAILOUT fac=7 idx=3 out=31
+SC n=9 fac=7 idx=3 final=32
+DRAW n=9 fac=7 idx=3 draw=645 best=196
+BASE n=10 idx=32 fac=7 a2=0 base=28 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=2 p2=-1 div=1 hmask=7 round=59
+TAIL n=10 idx=32 fac=7 base=28 div=1 hmask=65288
+TAILOUT fac=7 idx=32 out=28
+SC n=10 fac=7 idx=32 final=57
+DRAW n=10 fac=7 idx=32 draw=5099 best=645
+BASE n=11 idx=43 fac=7 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=5 p2=4 div=1 hmask=7 round=59
+TAIL n=11 idx=43 fac=7 base=15 div=1 hmask=65288
+TAILOUT fac=7 idx=43 out=27
+SC n=11 fac=7 idx=43 final=28
+DRAW n=11 fac=7 idx=43 draw=2603 best=5099
+BASE n=12 idx=44 fac=7 a2=0 base=23 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=-1 div=1 hmask=7 round=59
+TAIL n=12 idx=44 fac=7 base=23 div=1 hmask=65288
+TAILOUT fac=7 idx=44 out=23
+SC n=12 fac=7 idx=44 final=24
+DRAW n=12 fac=7 idx=44 draw=1979 best=5099
+BASE n=13 idx=48 fac=7 a2=0 base=41 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=0 div=1 hmask=7 round=59
+TAIL n=13 idx=48 fac=7 base=41 div=1 hmask=65288
+TAILOUT fac=7 idx=48 out=45
+SC n=13 fac=7 idx=48 final=45
+DRAW n=13 fac=7 idx=48 draw=644 best=5099
+WIN n=2 fac=7 idx=32 round=59
+TECH n=2 idx=32 param1=7 round=59
+ST n=2 addr=0x95bd20 val=32 fac=7 round=59
+RB addr=0x95bd20 mem=32
+CTRL n=1 snap=1 off=0 round=59
+ENT n=3 fac=2 ret=0x5aaff3 round=60
+CALL n=3 fac=2 round=60
+BASE n=14 idx=8 fac=2 a2=0 base=23 ac4=6670 T0=0 T4=3 T8=0 Tc=4 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=5 p1=3 p2=2 div=5 hmask=2 round=60
+TAIL n=14 idx=8 fac=2 base=23 div=5 hmask=65288
+TAILOUT fac=2 idx=8 out=39
+SC n=14 fac=2 idx=8 final=234
+DRAW n=14 fac=2 idx=8 draw=13784 best=-999
+BASE n=15 idx=22 fac=2 a2=0 base=18 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=5 p1=1 p2=2 div=5 hmask=2 round=60
+TAIL n=15 idx=22 fac=2 base=18 div=5 hmask=65288
+TAILOUT fac=2 idx=22 out=26
+SC n=15 fac=2 idx=22 final=27
+DRAW n=15 fac=2 idx=22 draw=2673 best=13784
+BASE n=16 idx=32 fac=2 a2=0 base=20 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=5 p1=2 p2=-1 div=5 hmask=2 round=60
+TAIL n=16 idx=32 fac=2 base=20 div=5 hmask=65288
+TAILOUT fac=2 idx=32 out=20
+SC n=16 fac=2 idx=32 final=21
+DRAW n=16 fac=2 idx=32 draw=1252 best=13784
+BASE n=17 idx=36 fac=2 a2=0 base=19 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=5 p1=5 p2=-1 div=5 hmask=2 round=60
+TAIL n=17 idx=36 fac=2 base=19 div=5 hmask=65288
+TAILOUT fac=2 idx=36 out=27
+SC n=17 fac=2 idx=36 final=28
+DRAW n=17 fac=2 idx=36 draw=1598 best=13784
+BASE n=18 idx=44 fac=2 a2=0 base=19 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=5 p1=4 p2=-1 div=5 hmask=2 round=60
+TAIL n=18 idx=44 fac=2 base=19 div=5 hmask=65288
+TAILOUT fac=2 idx=44 out=19
+SC n=18 fac=2 idx=44 final=39
+DRAW n=18 fac=2 idx=44 draw=4726 best=13784
+BASE n=19 idx=48 fac=2 a2=0 base=13 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=5 p1=4 p2=0 div=5 hmask=2 round=60
+TAIL n=19 idx=48 fac=2 base=13 div=5 hmask=65288
+TAILOUT fac=2 idx=48 out=17
+SC n=19 fac=2 idx=48 final=17
+DRAW n=19 fac=2 idx=48 draw=2029 best=13784
+WIN n=3 fac=2 idx=8 round=60
+TECH n=3 idx=8 param1=2 round=60
+ST n=3 addr=0x951974 val=8 fac=2 round=60
+RB addr=0x951974 mem=8
+CTRL n=2 snap=2 off=4311096 round=60
+CTRL n=3 snap=3 off=8622192 round=61
+CTRL n=4 snap=4 off=12933288 round=62
+
+Thread 8 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 466783]
+0xea7b632c in __kernel_vsyscall ()
+/home/n100/reverse/smac/scratch/m92tail17.gdb:125: Error in sourced command file:
+This command cannot be used at the top level.
+[Inferior 1 (process 466771) detached]

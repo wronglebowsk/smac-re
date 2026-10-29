@@ -1,0 +1,39 @@
+[New LWP 347989]
+[New LWP 347988]
+[New LWP 347987]
+[New LWP 347986]
+[New LWP 347985]
+[New LWP 347984]
+[New LWP 347983]
+[New LWP 347982]
+[New LWP 347981]
+[New LWP 347980]
+[New LWP 347979]
+[New LWP 347978]
+[New LWP 347977]
+[New LWP 347976]
+[New LWP 347975]
+[New LWP 347974]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf1b8232c in __kernel_vsyscall ()
+ARMED round=55 year=2155 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x5a94fd
+Breakpoint 11 at 0x51f320
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf1b8232c in __kernel_vsyscall ()
+[Inferior 1 (process 347970) detached]

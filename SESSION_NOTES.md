@@ -1,88 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-123-124.md` (2 sessions). Read it only when a question reaches back before session ## Session 125.
-
-## Session 125 (2026-10-28) — M82: BITS 6/7 OF THE TYPE-RECORD FLAG WORD HAVE NO TESTER; THE LIVE POKE TEST DID NOT RUN (acceptance FAIL, nothing merged)
-
-CONCURRENT SESSION: session 126 ran the same prompt in the SAME worktree while I was running
-(`evidence/m82census_s126.txt` 11:49, commit 989db9b "acceptance m82bit7b in flight" 11:53).
-The box is ONE Wine process, so the third window (m82bit7c, armed 11:56) ran with another agent
-able to attach/poke it.
-
-STATIC (bytes; `grep -n 98adb8 scratch/m574/text.txt` = 168 sites, `python3 scratch/m71/dis.py
-577c60 577cc0`): every `test BYTE PTR [...0x98adb8],imm` uses 0x1/0x4/0x8/0x10 — NO test of bit 6
-(0x40) or bit 7 (0x80) in the absolute form, and no pointer-form `test BYTE PTR [reg+0x30/0x31],
-0x40/0x80` either (both shapes grepped). The only bit-7-specific instruction is the CLEARER
-`and BYTE PTR [eax*4+0x98adb8],0x7f` at 0x577ca8 (followed by `call 0x43f470` with ecx 0x71df20).
-The markup test is bit 2 ONLY (`test BYTE PTR [ecx+0x98adb8],0x4`, 0x5ac99c) and B comes only from
-0x5ac950, so the gate's `edi` cannot depend on bits 6/7. M74's live row (f30=0x41 — bit 6 SET —
-with edi 45 = markup ON, evidence/m74flag2.gdblog) already falsifies "bit 6 = markup off".
-
-CENSUS (`python3 scripts/m82_bit7_poke.py` PART 1, 512 slots read at once, 11:47): nonempty 34;
-band0 0-13 = 0x1; 64 = 5; 128-131 = 5; 192 = 1, 193/194 = 0x41; 256 = 5; 320-323 = 5, 324/325 =
-0xc1; 384/385 = 1, 386 = 0xc1; 448 = 5, 449 = 0x1c5. bit6 carriers [193,194,324,325,386,449],
-bit7 [324,325,386,449], bit2 [64,128-131,256,320-323,448,449]. THE CENSUS MOVES: the 12:06 re-read
-reads 385 = 0x81, 386 = 0x1, a NEW 387 = 0xc1, bit6 [193,194,324,325,387,449], bit7
-[324,325,385,387,449], 194 = 0x45 — the sweep re-inits and re-marks faction records between
-rounds, so a carrier list is a snapshot, not a property of the record.
-
-ACCEPTANCE m82bit7a/b/c FAIL (`python3 scripts/m82_bit7_poke.py --tag m82bit7X`, 3 boundaries, 4
-base-conditioned silent bps 0x4efa4b/0x4efa52/0x4efa5e/0x4efa63). a: died at 200 s inside the
-m70_clear_dialog step — a concurrent veilbrowser Chrome window (pid 4179644 "PeopleSearchNow Opt
-Out", 1280x800) was stacked OVER the Wine window at 0,0, so `xwd -root` cropped to 800x600:0:0
-OCR'd the BROWSER and every screen read hung (session_brief and m65_screen also printed nothing in
-60 s); fixed with `DISPLAY=:99 xdotool windowraise 0x400004`. b: armed and printed `ARMED
-base=0x95da10 head=2 pending=1 storage=20` then `GATE id=2 storage=20 edi=9 f30=0x1` — the UI
-chooser (`m57_ui_enqueue --cell-item 194`) landed cell 2 again, so the gate never visited 194; cut
-at the 420 s foreground cap. c: head set by a controlled poke (+0x50 = 194, +0x4c = 1, read back
-head 194 pending 1), flag 194 0x45 -> 0x41, storage 20, `ARMED ... head=194 pending=1 storage=20`,
-then ZERO GATE/BAIL rows in 10 min (trace_m82bit7c_r0 is 0 bytes — the first smac_play never wrote
-a look; a NETFLASH dialog stack was up at arm time).
-
-OPEN / NEXT (M83): the same three-window test on a QUIET box — no concurrent session, Wine window
-raised, dialogs cleared, queue head poked — W1 (bit2 off, bit7 off) -> edi, poke ONLY bit 7 -> W2,
-W3 bit2 ON as the control that the instrument can see a markup switch; the bytes predict edi
-unchanged. Still open: why `[ebp-0xc]` != 0 for 324/325 and == 0 for 385; who calls FUN_00573a90;
-what re-inits 385/386/387 between rounds.
-Evidence: evidence/m82bit7b.gdblog, evidence/m82bit7c.gdblog, evidence/m82census_s126.txt (s126's
-copy of the same census), traces trace_m82bit7b_r0..r2, trace_m82bit7c_r0.
-
-## Session 127 (2026-10-28) — M82: BIT 7 OF THE TYPE FLAG WORD DOES NOT TOUCH THE PRICE GATE; ACCEPTANCE PASS (tag `m82bit7d`)
-
-The prompt opened with \"M74\" again; M74 is merged (#75). The cursor's pick M82 ran. s125/s126's
-live test never completed: their m82bit7c armed (head 194 pending 1 storage 20) but terran.exe died
-into a Wine \"serious problem\" dialog (stuck `winedbg --auto 124 20`, zero gate rows). Box fix:
-killed winedbg by PID, `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` (twice
-\"no window after relaunch\", third attempt after the winedbg kill reached HUD ~36 s).
-
-ACCEPTANCE `m82bit7d` PASS on ONE invocation (`python3 scripts/m82_bit7_poke.py --tag m82bit7d`,
-3 boundaries, 4 silent base-conditioned bps 0x4efa4b/52/5e/63, storage poked 20 read back 20 every
-boundary): baseline census `CENSUS 512 slots: nonempty 32 ... bit6 [193, 194, 386, 449] bit7 [386,
-449] bit2 [64, 128, 129, 130, 131, 194, 256, 320, 321, 322, 323, 448, 449]`; queue poke head 194
-pending 1 slots [194, 0, 0]; setup flag 194 0x41 -> 0x41. W1 flag 0x41: GATE+BAIL id=194 storage=20
-**edi=45** f30=0x41 (t=53s rows=5); POKE bit7 only: 0x41 -> 0xc1 changed=[128], read back from
-/proc/pid/mem; W2 flag 0xc1: GATE+BAIL **edi=45** (t=91s rows=4); CONTROL bit7 off + bit2 on ->
-0x45; W3: GATE+BAIL **edi=27** (t=127s rows=4) — the instrument demonstrably sees the markup switch.
-`edi W1=45 W2=45 W3 control=27 -> VERDICT bit7 does NOT gate the price`; gates G1..G7 all True ->
-PASS. After census: bit6 [193, 194, 324, 325, 386, 449] bit7 [324, 325, 386, 449] flag(194)=0x45
-(bit7 back off; 324/325 re-created mid-window, the s124 reload behavior).
-
-WHY THE SHAPE DISCRIMINATES: W2 differs from W1 by exactly one bit (G4 proves it) and W3 differs
-from W1 in a bit the gate DOES test (edi 45 vs 27 = markup on vs off, M73/M74). Bit 7 set moved
-nothing. Census + static agree: bit 7 lives only on sweep-created band-6/7 records (386/449; 324/325
-band 5 when created live) — records that went through 0x57412c — and never on ours (192/193/194).
-Static enumeration of all 168 flag-WORD sites: ORs 0x4 (0x4eed18, 0x573fed, 0x574107/117), 0x8
-(0x573499, 0x573a81), 0x10/0x20 (0x531747/0x531782), 0x40 (0x574125), 0x80 (0x57412c), 0x104
-(0x5729d5); ANDs 0xfe (0x4eed2b, 0x5727ed), 0xfd (0x5741f0), **0x7f (0x577ca8 — the ONLY bit-7
-clearer**, inside FUN_00577280, shard_014.c:19576: validate test bit 0, `&4` markup test, a value
-`(+0x30<<8|high)+0x19 * 0x34`-style compared > 0x3f, sets 0x200 when bit 3 set, then clears bit 3
-and bit 7); NO `test` of bit 6/0x40 anywhere.
-OPEN: what bit 5 (0x20 @ 0x531782) means; who clears bit 6; who calls FUN_00573a90/FUN_00577280;
-`[ebp-0xc]` != 0 for 324/325 vs 0 for 385; global 0x985aec; upkeep/tech passes 0x52145e/0x5a7d00/
-0x5a7f67 (ZERO events ever); alpha 0x5a6cd0. NEXT pick: the 0x4194b3 handler / widget message 0x4d00,
-or bit 5 + FUN_00577280's identity.
-Evidence: evidence/m82bit7d.gdblog (6 gate rows), traces trace_m82bit7d_r0..r2,
-scratch/m82bit7d.out; failed instruments kept m82bit7a/b/c.
+Older sessions: `docs/sessions/sessions-127-127.md` (1 sessions). Read it only when a question reaches back before session ## Session 129.
 
 ## Session 129 (2026-10-28) - M84: WHAT MAKES 0x496ad0 RETURN +9999 (static, bytes); ACCEPTANCE m84canc1 FAIL - the cancel statement runs but the sentinel never fires
 
@@ -346,3 +264,115 @@ Same milestone as s142 (branch milestone/m91, commits 95fa804 + fe55c33 + this d
 ACCEPTANCE `python3 scripts/m91_scorer_census.py --tag m91score5 --poke-index 5 --rounds 4 --timeout 120` (ONE invocation on a fresh m54b_clean load, pid 347970 r50): **VERDICT PASS 7/7** — G1 poke 8->-1 read back; G2 TRUE (every traced BASE == predicted (demand*m+1)*cost sum, m=4 via 0x985ac4 bit 0x200, halving rule; 27 candidates 0 mismatches); G3 TRUE 4/4; G4 TRUE (all draws in [0, final*256/level]); G5 TRUE 4/4 ST/RB pairs; G6 names Integ/AGrav/E=Mc2/PlaEcon/Surface read from 0x92fdd4; G7 TRUE (4 qualifying windows fac5/5/4/6, round 50->55). Windows DISPROVE max-score twice: fac5 win 22 'AGrav' final 31 vs max_final 56; fac6 win 13 'Surface' final 36 vs 63. Prior runs same session: m91score2 6/7 (G7 one AI window — box state, only fac5 had a work item), m91score3 6/7 (G5 dict bug; its 4 windows already showed G3/G4/G6/G7 True), m91score4 5/7 HARNESS DEATH: the tool's 420 s foreground cap killed the census mid-run and left Wine hung at round 92 (CTRL=0, no year move even after detach) — recovered via m54a_load --relaunch.
 
 OPEN (M92): the tail 0x5a94fd-0x5a9698 arithmetic (final != base at 6-8 candidates/window; who writes [fac*8380+0x94e488] + the 0x94e5a8/0x94eda8 category bytes); the human leg (bVar14, FUN_00625af1); where the chosen index becomes the ACTIVE project (pay-site 0x4f0ca6 vs 0x4efedd); SIBLING slot [esi+0x94d800]. Evidence: evidence/m91score2-5.gdblog; scratch/m91score*.gdb/.out. evidence 27.6 MB.
+
+## Session 144 (2026-10-28) — M92: the tail 0x5a9503-0x5a9698 DECODED and validated against the engine's own finals; the census harness is still not green (m92tail2-7 all FAIL)
+
+Prompt said M74 (merged #75); repo pick M92. A sibling session had m92tail3/4 in flight on
+milestone/m92; I adopted its commits (6c15d37 mine) instead of competing, then verified the MODEL
+offline from committed evidence (scratch/m92/verify7.py reads evidence/m92tail7.gdblog +
+scratch/m92tail7_snaps.bin + /proc — no gdb, no poke).
+
+THE TAIL, leg by leg (scratch/m71/dis.py 5a9500 5a96a0): 0x5a9503 `mov ebx,[ecx+0x94e488]` is the
+divisor, `je 0x5a9698` skips the whole loop when 0; loop esi=1..62 (0x5a9518 `and eax,0x3f` skips
+esi==63, 0x5a9692 `jl 0x5a9516`). Category byte = [fac*8380+0x94eda8+esi], multiplier =
+[fac*8380+0x94e5a8+esi], Tc = the tech record's +0xc (0x5a955b `imul eax,[edx+0x92fdd0]`).
+CAT 7 (0x5a9536): gate `mov ecx,[ebp-0x18]; je` — [ebp-0x18] is the CALLEE's own prologue counter
+(0x5a90ae zeroed, 0x5a90d6 `inc edx` per control dword [0x94d448+4*i] with bit 0x10 set, i=0..7) =
+the bc the BASE print already carries, NOT a caller slot (the census never writes caller [ebp-0x18]:
+FUN_005aa030 sub esp,0xc, locals -0xc..-0x4); then 0x5a9541 skips when the faction IS human; adds
+`idiv mult*Tc, ebx` — divisor NOT doubled. CAT 2: mult*Tc*4 / (div*(1+human)). CAT 0: factor 4 if
+[blk+0x94dc44] >= [blk+0x94dc58] else 2, / (div*(1+human)). ELSE (0x5a95fd): 0x5a960e skips the inner
+loop when arg2 == the faction; edi=1..7 over GLOBAL band tables 0x950664 + edi*0x20bc (stride 844):
+the edi-th table's OWN byte at +esi must be nonzero (0x5a9615 — a SECOND multiplier, not the block
+byte); gate on the control dword [0x94d448+(fac+edi)*4] needing bit 0x8 set and NOT (bits 0-1 set with
+bit 5 clear) (0x5a9640/45/4a, index 0x5a9628-0x5a9637 = (fac+edi)*13 dwords); adds mult*Tc/(div*2 if
+human else div). The tail mutates [ebp-0x4] in place; 0x5aa159 `mov [ebp-0x4],eax` is the FINAL.
+
+THE MODEL DISCRIMINATES, against the engine's own numbers (m92tail5 CAND line, fac7): observed finals
+19/32/57/28/24/45 for bases 10/15/28/15/23/41 == base + idiv(16*Tc, 1) = the cat-7 leg with mult
+[fac7*8380+0x94eda8+40] = 16 and div 1; the old model (cat-7 gated on a caller slot, band tables read
+from [blk+0x2bc0+esi*32]) predicted 12322/24639/18483/6197 — off by >3 orders. m92tail7 fac3 (bc 0,
+div 1, cats all 0, mults nz only at esi 0,4,24,36,40,44,48,52): finals are base + 0/1 exactly where
+Tc is 0, i.e. the band legs contribute 0 because the control dwords are 0 at that round (snap0 ctrl
+[0x94d448..] all zero) — the gate is real, not decorative. cats and mults hold EQUAL nonzero bytes at
+the same esi (0,4,24,36,40,44,48,52 = powers of 4), values per faction (fac3 5/18/1/2/1/4/2/2,
+fac5 12/10/4/3/2/4/2/1, fac7 1/6/1/1/24/1/255...).
+
+INSTRUMENT DEFECTS found and fixed (all mine/mine-adopted, none a floor): (1) windows closed at the
+ENT print 0x48bae9, which fires BEFORE the scan's BASE events -> candidates=0 in m92tail2/3/4; windows
+now open at the CALL print (0x5aa030) and close at ENT/TECH (m92tail5/6/7 collect 6-13 BASE per
+boundary, G2 TRUE). (2) snapshots: `dump binary memory %s ...` is invalid; a multi-line gdb `python`
+block inside a bp command list aborts the sourced file ("Argument to arithmetic operation not a
+number or boolean"); read_memory threw OverflowError; and an ARITHMETIC dump range with a substituted
+path poisons the address expression — the range must be LITERAL (0x94e488 0xd61c88 = 8*8380), the
+reader's SNAPREGION must not conflate offset with range (0x41b80+0x4000-0x94e488 < 0 -> ValueError).
+(3) the TAIL print had idx/fac swapped ($esi is arg0 = the tech index, [ebp+0xc] = the faction) and
+printed $edi as a mask (at 0x5a9503 edi is esi+0x950664); BASE `human=` printed $edx = 1<<fac.
+
+OPEN (M92 continues): the census has NEVER been green — the next run needs the dump range extended to
+0x94d448..0x966000 so the band gate's control dwords are per-round (they move between rounds: snap0
+all 0, live at round 63+ nonzero for records 1-7), plus WHO WRITES 0x94e488 / 0x94e5a8 / 0x94eda8 /
+the 0x950664 band tables (the 8 esi positions are powers of 4). Human leg (bVar14, FUN_00625af1) and
+the pay-site conflict 0x4f0ca6 vs 0x4efedd still open. Evidence: evidence/m92tail2-7.gdblog;
+scratch/m92/{tailcheck,verify7}.py; scratch/m92tail*.out.
+
+## Session 145 (2026-10-28) — M92 NOT accepted: the tail is predicted from the live block (38/41 exact), the offsets were the bug and the block MOVES inside a round
+
+Branch milestone/m92, nothing merged. Three instrument truths, each from instruction bytes or measured adds:
+1. category byte `[eax+esi+0x94eda8]` and multiplier `[eax+esi+0x94e5a8]` with `eax=fac*8380` are at
+   **+0x920 / +0x120** from 0x94e488 — the +0x1000/+0x1860 I used read zeros and produced the 12312 tails.
+2. `0x94dc44`/`0x94dc58` are **BEFORE** the block (+0x7fc/+0x810 from 0x94d448) and the cat-0 factor is
+   **2 when [0x94dc44] >= [0x94dc58], else 4** (0x5a95be setge / dec / and 2 / add 2) — inverted in the
+   s144 note, which is why fac 2 read 16 where the engine added 8.
+3. **The divisor moves INSIDE a round** (fac6 snapshot 1 live 6; fac2 8 live 9), and so can the category
+   byte: take the divisor from the TAIL record (read at 0x5a9503 for that candidate), the arrays from the
+   round snapshot.
+MEASURED, not modelled: the four add sites (scratch/m92probe_adds.gdb) show ONE term per candidate,
+`mult*Tc*4/div`; `TAILOUT` at 0x5a9698 is the tail output, and `final` (0x5aa159) is a **POST-tail leg**
+on top of it (+1, +29 at r76) — gating on `final` conflated two legs.
+ACCEPTANCE `scripts/m92_tail_census.py --tag m92tail14 --poke-index 7 --poke-extra 2,6 --rounds 4
+--timeout 100` (fresh load, 41 candidates, 6 scans): **FAIL 5/8** — 41/41 divisors and TAILOUTs clean,
+**3 wrong** (fac 5: model Tc, engine 2Tc = a category byte that moved after the snapshot). Replaying the
+same snapshots offline with the fixed model: **38/41 exact (m92tail14), 5/5 (m92tail12)**.
+NEXT: append the two arrays AT the score (0x94e488+fac*8380+0x120 and +0x920, 128 B at the TAIL hit) so
+the last 3 go exact; then the post-tail leg 0x5a9698 -> 0x5aa022.
+Evidence: evidence/m92tail9-14.gdblog, m92adds1.gdblog; scratch/m92adds.py, m92probe_adds.gdb.
+
+## Session 146 (2026-10-28) — M92 ACCEPTED: m92tail18 PASS 8/8. The tail rule is exact 39/39; the block is FROZEN within a round and the stale reads were WINDOWS, not the block
+
+Branch milestone/m92. ACCEPTANCE `python3 scripts/m92_tail_census.py --tag m92tail18 --poke-index 7
+--poke-extra 2,6 --rounds 4 --timeout 100` (ONE invocation on a fresh m54b_clean load, r51->55):
+**VERDICT PASS 8/8** — G3: TAILOUT(0x5a9698) == BASE + simulated tail on **39/39 traced candidates, 0
+mismatches, 2 qualifying windows (fac2 win=44 IndEcon nz5/splits5, fac5)**; G8: divisor cross-check
+39/39 proven, round +4, TAIL events for the scored factions. Naive one-factor model splits on 19
+candidates (the shape discriminates).
+
+THREE HARNESS DEFECTS found and fixed (mine, none a floor) — each one had been reported as a game
+finding, which it was not:
+1. `c["tdiv"]` was NEVER assigned although G8 reads it -> **G8 was structurally False in every run**
+   (m92tail14/15/16/17 all failed it regardless of the game).
+2. `tailout[(fac,idx)]` was LAST-wins while the model used the FIRST scan: a re-scan in a later round
+   has a different block, so m92tail16's 4 "mismatches" (idx8 tailout 29 then 39) were pairing scan-1's
+   model with scan-4's output. tailout + tailbyidx are now FIRST-wins.
+3. windows are opened by a CALL and can span rounds (no WIN/ENT close), and the census simulated every
+   candidate from the WINDOW's CALL-round snapshot. Candidates now carry their OWN live round (the
+   BASE print reads *(0x985afc) at the hit) and are simulated from THAT round's snapshot.
+
+RETRACTION (this session, from the new instrument): **the category/multiplier arrays and the divisor do
+NOT move inside a round.** The TAIL hit now appends 64 B mults (0x94e5a8+fac*8380) + 64 B cats
+(0x94eda8+fac*8380) per candidate (scratch/<tag>_tailarrs.bin, hit-ordered); compared to the
+candidate's own round snapshot: **0/39 (m92tail15) and 0/19 (m92tail17) differ**, and
+divisor_cross_check_proven == 39/39 bad=0 (m92tail15/18). So s145's "the divisor moves inside a round
+(fac6 snapshot 1 live 6)" and "3 misses = a category byte that moved after the snapshot" were defects
+2/3 above, not block motion. The block DOES move BETWEEN rounds (m92tail16: fac2 mult(esi1) 4->5 at
+r56, dc58 1->2 at r57 and 2->4 at r58 -> the cat-0 factor flipped 2->4) — which is exactly what the
+per-candidate round stamp now tracks.
+
+BOX: brief BLOCKED twice (screen 'dialog' -> normalize_screen() -> hud; credit 0 -> the printed reload
+recipe m54a_load --relaunch -> m54g_prep -> smac_play --turns 1 -> m57_ui_enqueue --base-index 18
+--cell-item 2 --inserts 1 -> READY). m92tail17 (r59, a degraded box) scanned only 3 factions -> 0
+qualifying windows -> FAIL 5/8: the census needs a FRESH load (8 factions queued); the acceptance was
+re-run as m92tail18 on a reload, not weakened.
+NEXT (M93): the POST-tail leg 0x5a9698 -> 0x5aa022 (the SCORE at 0x5aa159 minus TAILOUT: +1/+29 at
+r76, +155 for fac2 idx8 in m92tail15/18 — final 186 vs tailout 31). Evidence:
+evidence/m92tail15-18.gdblog; scratch/m92tail1[5-8].out, scratch/m92tail18_snaps.bin + _tailarrs.bin.
