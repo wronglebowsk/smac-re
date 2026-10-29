@@ -196,24 +196,7 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   section lands on the first try.
 - **A gdb breakpoint that reads the WRONG register prints garbage and can kill the whole run**: the printf fault (`Cannot access memory at address 0xa774`) aborts the breakpoint's commands block and gdb DETACHES the inferior, so the run dies mid-window. Read the store's own bytes first — `mov eax,[ebp-0x4]` followed by `mov [eax+0xa774],-1` means the object is in EAX at that address, whatever the pseudo-code called it. The same trap applies to SIGNS: a 32-bit sentinel printed with `%d` prints NEGATIVE (0xffffd8f1 -> -9999), so print it as `0x%x` and gate on the unsigned constant, never on the positive decimal.
 - **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them — and keep an untracked deliverable OUTSIDE the worktree, because a sibling's `git clean`/`git checkout` deletes untracked files with no warning (a prompt file written into the repo root vanished mid-turn) — re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last; every shell the agent spawns carries `hermes-snap-<session-hash>.sh` in its own argv, so a hash that is not yours names a LIVE sibling even while it sits between commands and before it has committed anything — `git log` shows nothing foreign in exactly that window, so the process table, not the commit log, is the early warning.
-  **A cron-dispatched sibling is invisible to those greps**: its shells are children of the gateway process and its
-  tracked background run shows only as `/bin/bash -lic …` (systemd unit `hermes-worker-proc_<proc-id>.scope`), so read
-  the files that NAME the owner — `~/.hermes/processes.json` (one record per tracked background run: `command`, `pid`,
-  `owner_task_id`, `session_key`, `parent_session_id`; an `owner_task_id` of the form `cron:<job>:<exec>` that is not
-  your session key means the harness running right now is the sibling's) and `~/.hermes/cron/executions.db` (`select
-  id,job_id,status,started_at,progress_at,pid from executions order by started_at desc limit 5` — `running` with
-  `progress_at` inside the last minute or two is alive and working NOW). A mtime on `scripts/<harness>.py` or on
-  `SESSION_CURSOR.md` newer than the last commit is the same verdict, and the game's Wine pid changing under you means
-  the sibling already relaunched the box. `SESSION_CURSOR.md` records what a session BELIEVED was in flight and is
-  written by whoever touched it last, so it goes stale in both directions — a finished run still marked RUNNING, or the
-  next run queued for the sibling while the cursor names yours — so trust the owner files over the cursor, and do not
-  overwrite a cursor another session wrote.
-  **When another session owns the box mid-acceptance, the collision report IS the deliverable**: spend ZERO acceptance
-  invocations, skip the readiness oracle's printed FIX (an enqueue/pane poke lands on THEIR box and confounds their
-  run), touch no shared doc, commit nothing, and quote the command that produced the ownership verdict. In that state
-  `gate.py --base main` reads RED on `milestone checkpoint: not updated: SESSION_NOTES.md, NEXT_PROMPT.md` plus
-  `skill sync` — that is the sibling's unwritten closing order, not a defect to repair by writing their docs for them.
-  When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on `pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance (`references/git-workflow.md`).
+  Cron-sibling ownership + collision etiquette: `references/git-workflow.md` §Sibling ownership.
 - The guard also **refuses** a wholesale `write_file` of a doc the session only ever saw through a
   shell dump (a terminal print of the file) rather than a real `read_file` — which is exactly how the
   footing ritual reads `NEXT_PROMPT.md` before rewriting it. Don't re-read 15 KB to satisfy it: write
@@ -461,15 +444,8 @@ Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical a
 (52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
 zeros-fraction pitfall. Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
-`FUN_00582260`); `FUN_00598340` is the magic/version dispatcher. The .SAV chain: `FUN_00597ee0` opens the
-file, `_strcmp`s the 256-byte header against the `TERRAN` magic, then calls **`FUN_00596850`** (the body
-loader), which reads whole global regions **in place** through the fread-shaped wrapper
-`FUN_0064cc00(dest, size, count, handle)` — e.g. `FUN_0064cc00(&DAT_00927590, 0x2ce0 /*11488 = 8×1436*/,
-1, handle)`, the per-faction structure array whose record block sits at anchor+0x50C = 0x927a9c (count at
-+0, TYPE +4, KEY +0x24, VAL +0x44 relative to the count). When `DAT_00926a14 != 0` the sibling
-`FUN_00596540` runs instead: it mallocs a scratch buffer, reads into it, and stores into the destination
-in ring 3 (byte-order fixup) — the two paths differ in whether a hardware watchpoint can see the write at
-all (static from the Ghidra export; probe consequences in `references/ptrace-level-probes.md`).
+`FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
+`references/ptrace-level-probes.md` §The .SAV chain.
 
 ## Format core (verified; details in FINDINGS.md)
 

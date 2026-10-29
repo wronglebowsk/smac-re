@@ -77,3 +77,16 @@ anything, the box is still parked at that screen with its process-start data bui
 harness's `--no-relaunch` flag instead of paying the relaunch again; build that flag into every harness
 that starts from a fresh process, and print the screen class plus the baseline values it found, so the
 reused state is verified rather than assumed.
+
+## The .SAV chain (static, from the Ghidra export)
+
+`FUN_00598340` is the magic/version dispatcher. The .SAV chain: `FUN_00597ee0` opens the file, `_strcmp`s the
+256-byte header against the `TERRAN` magic, then calls **`FUN_00596850`** (the body loader), which reads whole
+global regions **in place** through the fread-shaped wrapper `FUN_0064cc00(dest, size, count, handle)` — e.g.
+`FUN_0064cc00(&DAT_00927590, 0x2ce0 /*11488 = 8×1436*/, 1, handle)`, the per-faction structure array whose
+record block sits at anchor+0x50C = 0x927a9c (count at +0, TYPE +4, KEY +0x24, VAL +0x44 relative to the count).
+When `DAT_00926a14 != 0` the sibling `FUN_00596540` runs instead: it mallocs a scratch buffer, reads into it, and
+stores into the destination in ring 3 (byte-order fixup) — the two paths differ in whether a hardware watchpoint
+can see the write at all. LIVE (M106, m106r7 PASS 15/15): the in-place path is what runs — `read(0x5,
+0x927c84, 0x2000) = 0x2000` inside the fd-run that carries the save to EOF, and a DR breakpoint CANNOT see a
+kernel `copy_to_user` write (Linux installs the user DR breakpoint with the exclude-kernel bit).
