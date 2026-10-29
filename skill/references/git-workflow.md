@@ -135,3 +135,32 @@ merge by hand in the web UI without a green `gate` check. After editing this liv
 dir — `SKILL.md` **and** `references/` — to `~/reverse/smac/skill/` and commit: the gate compares only
 `SKILL.md`, so an edited reference drifts silently. Protocol detail:
 `~/reverse/smac/AGENTS.md` and `docs/WORKFLOW.md`.
+
+## Sibling ownership (a cron dispatch colliding with a live session)
+
+**A cron-dispatched sibling is invisible to those greps**: its shells are children of the gateway process and its
+tracked background run shows only as `/bin/bash -lic …` (systemd unit `hermes-worker-proc_<proc-id>.scope`), so read
+the files that NAME the owner — `~/.hermes/processes.json` (one record per tracked background run: `command`, `pid`,
+`owner_task_id`, `session_key`, `parent_session_id`; an `owner_task_id` of the form `cron:<job>:<exec>` that is not
+your session key means the harness running right now is the sibling's) and `~/.hermes/cron/executions.db` (`select
+id,job_id,status,started_at,progress_at,pid from executions order by started_at desc limit 5` — `running` with
+`progress_at` inside the last minute or two is alive and working NOW). A mtime on `scripts/<harness>.py` or on
+`SESSION_CURSOR.md` newer than the last commit is the same verdict, and the game's Wine pid changing under you means
+the sibling already relaunched the box. `SESSION_CURSOR.md` records what a session BELIEVED was in flight and is
+written by whoever touched it last, so it goes stale in both directions — a finished run still marked RUNNING, or the
+next run queued for the sibling while the cursor names yours — so trust the owner files over the cursor, and do not
+overwrite a cursor another session wrote.
+
+**When another session owns the box mid-acceptance, the collision report IS the deliverable**: spend ZERO acceptance
+invocations, skip the readiness oracle's printed FIX (an enqueue/pane poke lands on THEIR box and confounds their
+run), touch no shared doc, commit nothing, and quote the command that produced the ownership verdict. In that state
+`gate.py --base main` reads RED on `milestone checkpoint: not updated: SESSION_NOTES.md, NEXT_PROMPT.md` plus
+`skill sync` — that is the sibling's unwritten closing order, not a defect to repair by writing their docs for them.
+
+When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on
+`pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of
+a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a
+second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only
+the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and
+prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close
+while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance.
