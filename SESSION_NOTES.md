@@ -1,16 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-142-142.md` (1 sessions). Read it only when a question reaches back before session ## Session 143.
-
-## Session 143 (2026-10-28) — M91 CLOSED: m91score5 PASS 7/7 (one invocation, fresh box, 4 AI windows, 27 candidates, 0 base mismatches)
-
-Same milestone as s142 (branch milestone/m91, commits 95fa804 + fe55c33 + this docs commit). Two gates were MY instrument defects, both fixed in place, each fix justified by instruction bytes or event order, never by weakening a floor:
-1. G3 demanded winner == max FINAL — my hypothesis, not a byte rule; 0x5aa232/0x5aa235 `cmp eax,[ebp-0x8]; jle` (esi asc 0..88, best starts -999 at 0x5aa03c) proves the engine keeps the strictly-greatest DRAW and equal draws never replace. G3 became: winner holds the max draw AND no higher-index candidate ties it.
-2. G5 read RB from a {addr: last-mem} dict: slot5 was allocated twice in one window (36 then 4), the dict held only 4 -> m91score3 FAIL 6/7. Pairing each ST with the RB that follows it in the event stream (0x5aa9d5 runs right after 0x5aa9d3) is the honest pairing.
-
-ACCEPTANCE `python3 scripts/m91_scorer_census.py --tag m91score5 --poke-index 5 --rounds 4 --timeout 120` (ONE invocation on a fresh m54b_clean load, pid 347970 r50): **VERDICT PASS 7/7** — G1 poke 8->-1 read back; G2 TRUE (every traced BASE == predicted (demand*m+1)*cost sum, m=4 via 0x985ac4 bit 0x200, halving rule; 27 candidates 0 mismatches); G3 TRUE 4/4; G4 TRUE (all draws in [0, final*256/level]); G5 TRUE 4/4 ST/RB pairs; G6 names Integ/AGrav/E=Mc2/PlaEcon/Surface read from 0x92fdd4; G7 TRUE (4 qualifying windows fac5/5/4/6, round 50->55). Windows DISPROVE max-score twice: fac5 win 22 'AGrav' final 31 vs max_final 56; fac6 win 13 'Surface' final 36 vs 63. Prior runs same session: m91score2 6/7 (G7 one AI window — box state, only fac5 had a work item), m91score3 6/7 (G5 dict bug; its 4 windows already showed G3/G4/G6/G7 True), m91score4 5/7 HARNESS DEATH: the tool's 420 s foreground cap killed the census mid-run and left Wine hung at round 92 (CTRL=0, no year move even after detach) — recovered via m54a_load --relaunch.
-
-OPEN (M92): the tail 0x5a94fd-0x5a9698 arithmetic (final != base at 6-8 candidates/window; who writes [fac*8380+0x94e488] + the 0x94e5a8/0x94eda8 category bytes); the human leg (bVar14, FUN_00625af1); where the chosen index becomes the ACTIVE project (pay-site 0x4f0ca6 vs 0x4efedd); SIBLING slot [esi+0x94d800]. Evidence: evidence/m91score2-5.gdblog; scratch/m91score*.gdb/.out. evidence 27.6 MB.
+Older sessions: `docs/sessions/sessions-143-143.md` (1 sessions). Read it only when a question reaches back before session ## Session 144.
 
 ## Session 144 (2026-10-28) — M92: the tail 0x5a9503-0x5a9698 DECODED and validated against the engine's own finals; the census harness is still not green (m92tail2-7 all FAIL)
 
@@ -328,3 +318,13 @@ Branch milestone/m107 (from main 20f3d5a, M106 merged #113). ACCEPTANCE `python3
 - OPEN (next, M108): **who SETS [0x985af0]/[0x985af4]** — no 4-byte read site targets them and u32@0x38/0x3c of the header are 0/0-2, so they are DERIVED, not read; then the exact split 52n + 48p + 304m + tail = 105,075.
 - TRAP: a `push`-lookback that stops at the first jmp/call finds **0 legs** — the direct-path site is entered by `je` and its pushes live BEFORE the buffered-path call; look back <=14 instructions and stop only at `ret`.
 Evidence: evidence/m107c3.log; scratch/m107c3_map.json; scripts/m107_chunkmap.py. Box: untouched (cron 1a88e12bd408 paused 18:41 so one session drives).
+
+## Session 166 (2026-10-29) — M108 ACCEPTED: m108c3 PASS 6/6. The counted legs are LIVE COUNTS ([0x985af0]=67 units, [0x985af4]=18 bases) — and M107's version-gate claim is RETRACTED
+
+Branch milestone/m108 (from main 333bace, M107 merged #114). ACCEPTANCE `python3 scripts/m108_count_sources.py --tag m108c3` (live /proc reads only — no gdb, no poke, no relaunch): **PASS 6/6** — G1 the live image is m54b_clean (record-block counts [0,6,5,4,3,4,5,3]); G2 **[0x985af0]=67 units → 52n=3,484, 48p=3,216; [0x985af4]=18 bases → 304m=5,472**; G3 5 stores to 0x985af0 and 6 to 0x985af4, the load pair **0x598470/0x598476 (6 B apart, one basic block)** in the function starting **0x598340**; G4 the retraction; G5 the closure deficit **25,863 B**; G6 read-back **18/18** 304-byte base records at 0x95da10 carry printable names (University Base first).
+
+- **RETRACTION of M107's G4**: M107 read `cmp ds:0x985dbc,3` @0x596a43 and ASSUMED 0x985dbc = header 0x985ab8 + 0x304 = file offset 772 (u32@772 = 0 in every save) → "the malloc'd 0xe5e0 leg runs". **Live [0x985dbc] = 9**, so the gate takes the >= 3 branch and the **static 0x105e0 block-A leg runs** — exactly what the r7 strace already showed (direct read 0x94e104+0xf000 inside 0x94d430+0x105e0). 0x985dbc is a RUNTIME field inside the header's address range, not the file's u32@772. M107's "105,075 residual / old path" is WITHDRAWN; the flat residual 38,035 is the real one.
+- THE COUNTS: [0x985af0] and [0x985af4] are the UNIT and BASE counts of the loaded save, landed by one basic block (0x598470/0x598476) in FUN_00598340; the 304-byte array at 0x95da10 holds exactly [0x985af4] records with names at +19.
+- THE DEFICIT (the finding): m54b_clean 242,539 − immediate legs 204,504 = **38,035**, but the declared counted legs are only 52·67 + 48·67 + 304·18 = **12,172** → **25,863 B unaccounted**; the load's biggest read is a **malloc'd 86,016 B (0x15000) at heap 0x40a75b0**, a size matching no declared count (86,016 = 42 × [0x92a38c] = 2,048). At least one counted leg or size expression is still missing from the leg table.
+- TRAP: the in-memory header's +0x54 is NOT the mission year (it reads 0); identify a loaded save by the record-block counts, not by the header year.
+Evidence: evidence/m108c3.log; scripts/m108_count_sources.py. Box: pid 1340394 at the HUD, m54b_clean r50.

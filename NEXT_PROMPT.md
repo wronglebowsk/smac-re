@@ -46,13 +46,14 @@ counts M105 armed; the block head 488 B (fac0) and tail 2,808 B (fac7) come thro
 stdio buffer = ring-3 stores. copy_to_user raises no debug exception — the hardware watchpoint's
 blind spot. Harness `scripts/m106_load_restore.py` (two straces with raw args + maps + soft-dirty +
 8 count sentinels); a traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
-**M108 (THE PICK): who SETS the counted legs — M107 closed the table question.** HARD-CODED: 30 legs
-(`scripts/m107_chunkmap.py --tag m107c3` PASS 7/7), 25 `push <size>` immediates + 5 counted, NO
-(address,size) table in the file (0/20 dests as u32). Live immediates = 137,464 B of m54b_clean's
-242,539 → **105,075 B** for `[0x985af0]` (52n at 0x933278 + 48p malloc), `[0x985af4]` (304m at
-0x95da10), 0x927538 prefix leg. No read site targets them and header u32@0x38/0x3c are 0/0-2 → the
-DERIVATION (xrefs; then a hw watchpoint on both in one load). THEN: FUN_005791c0's startup reads;
-TYPE 0/2 consumers; 0x92babc records; 0x4b2715.
+**M109 (THE PICK): the missing counted leg — close the chunk map.** M108 (`scripts/m108_count_sources.py
+--tag m108c3` PASS 6/6) named the counts: `[0x985af0]` = 67 units, `[0x985af4]` = 18 bases (0x598470/
+0x598476, FUN_00598340; 18 named records at 0x95da10), and RETRACTED M107's gate claim (live
+`[0x985dbc]` = 9 → the STATIC 0x105e0 leg runs). The map still does NOT close: 242,539 − 204,504
+immediate = **38,035** vs 52·67 + 48·67 + 304·18 = 12,172 → **25,863 B unaccounted**, and the loudest
+read is a **malloc'd 86,016 B at 0x40a75b0** (42 × 2,048). Walk the r7 reads BACKWARDS (each
+read's tail fixes its leg) or break at the malloc 0x596ab2. THEN: FUN_00598340; FUN_005791c0's startup
+reads; TYPE 0/2; 0x4b2715.
 
 ## STILL OPEN (in priority order)
 
