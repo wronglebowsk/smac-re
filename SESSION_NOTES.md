@@ -1,14 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-129-130.md` (2 sessions). Read it only when a question reaches back before session ## Session 131.
-
-## Session 131 (2026-10-28) — M84c: THE MODAL IS A 3-VALUE CHOOSER; +9999 IS A ROW KEY NO CODE INSERTS (acceptance m84cprobe1 FAIL)
-
-Prompt said M74 (merged #75 long ago); the repo pick was **M84c** — what makes 0x496ad0 return POSITIVE +9999 = 0x270f, the only value that enters 0x418d7d and thunks 0x577280. Branch milestone/m84c from main 7a69b20, carrying s128-s130 footing (`git checkout milestone/m84b -- NEXT_PROMPT.md SESSION_NOTES.md NAMED.md scripts/m84_cancel_sentinel.py evidence/m84canc[12].gdblog`). PITFALL: `milestone.py start` resets the tree to main, so the carried docs AND SESSION_CURSOR.md must be re-written AFTER it (mine reverted to s127's M82 line).
-
-STATIC (instruction bytes, scratch/m71/dis.py windows): the pump 0x497704 `mov ecx,[obj+0xa774]; push ecx; add ecx,0xa780; call 0x4026b0` = SEEK the list at obj+0xa780 (0x4026b0: index > [c+0x10]-1 -> return 0; cursor=[c+8]; walk `node=[cursor+0xc]`; [c+0x14]=index), then 0x497725 `call 0x495480; and eax,0x20` — bit SET -> 0x49773a `call 0x401940` (0x401940: `[c+8]==0 -> 0` else **return [[c+0xc]+4]**) -> 0x4977ab returns eax; bit CLEAR -> 0x497777 same call then `neg eax`. So the modal's THREE value sources are: -9999 (armed, mode 0), 0 (armed, mode != 0), and +/- the +4 word (the KEY) of the seeked node. Caller: 0x41860f `mov edi,eax`, 0x418616 snapshots it to [ebp-0x10], 0x418794/0x4187a2 reload it, 0x4187be `cmp edi,0x270f`. n_callers: 0x496ad0 = 1 (0x41860a only), FUN_004954e0 = 1, and the ONLY writers of that list are 4 functions calling FUN_0042ee20 — 0x4954e0 (2 sites, key = the setup loop var), 0x42e4d0/0x42ef40 (`(&DAT_00997120,0,4,0)`), 0x4b0a80; NO caller passes 9999.
-
-ACCEPTANCE FAIL (`python3 scripts/m84c_item_pump.py --tag m84cprobe1`, ONE invocation, 8 silent bps 0x41860a/0x42ee20/0x497704/0x4977ab/0x41860f/0x4187be/0x418d7d/0x577280): PUMP obj=0x6a9e9c idx=3 count=13 cur plus4=42 -> VAL eax=2 -> SENT 2 -> CHK edi=2 -> CALL mode=5 slot=3 -> PUMP cur plus4=2 -> VAL 2 -> SENT 2 -> CHK 2. gates G1 True G2 True **G3 False** G4 True **G5 False** G6 True G7 True; counts PUMP 2 NODE 2 VAL 2 SENT 2 INS-on-chooser-list 13 CHK 2 BRANCH 0 ENTRY 0; node+4 [2, 42]; inserted words [0,1,2,3,6,16,17,18,32,34,38,39,41,42,161,192,193,194]. G3 is MY INSTRUMENT: the NODE print sits at 0x497704, BEFORE the seek at 0x497717, so it prints the PREVIOUS cursor (fix: print at 0x49771c). G5 is the finding: the list keys are dialog category ids 0..0x2a — no 9999 item exists, so 0x418d7d/0x577280 is unreachable from the build chooser. merge nothing. OPEN: 0x4a99e0 `cmp [ebp+0x8],0x270f; jle` then `sub ecx,0x270f` + stride-0xb4c table at 0x888514 is where keys > 9999 mean something else — the next lead. Evidence: evidence/m84cprobe1.gdblog (27.5 MB).
+Older sessions: `docs/sessions/sessions-131-131.md` (1 sessions). Read it only when a question reaches back before session ## Session 132.
 
 ## Session 132 (2026-10-28) — M84d: WHO CALLS 0x4a99e0 WITH A KEY > 9999 — NOT THE PRODUCTION PATH (acceptance m84dky1 FAIL, merge nothing)
 
@@ -401,3 +393,15 @@ holds only for the 0x94e488 block; upkeep rewrites 0x92adbc/era-table/designed p
 NEXT (M94): who writes 0x94e488/0x94e5a8/0x94eda8/0x950664 between rounds (the 8 esi positions are
 powers of 4); the human leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd. Evidence:
 evidence/m93post1-3.gdblog; scratch/m93post3.out + _tailx1/2.bin, scratch/m93/{model,dryrun}.py.
+
+## Session 149 (2026-10-29) — M94 ACCEPTED: m94table3 PASS 7/7. FUN_00556690 recomputes the tail divisor every round, in the faction's own upkeep segment; divisor == that faction's BASE COUNT
+
+Branch milestone/m94. ACCEPTANCE `M94_BASE="University Base" python3 scripts/m94_table_watch.py --tag m94table3 --boundaries 2` (fresh m54b_clean load, r52->54 inside, load r50): **PASS 7/7** — G1 4 hw watchpoints armed (DIV1 0x950544/DIV2 0x952600/DIV4 0x956778/DIV5 0x958834), G2 round 52->54 rc=0, G3 32 events, G4 every pc mapped, G5 no gaps, G6 read-back, G7 tracer 0. m94table1/2 measured the same thing and FAILed ONLY on the log-parse gate (gdb attach/SIGINT stop-location lines `0x... in ?? ()` were not whitelisted) — re-run, floor never edited.
+
+- WHO: the divisor `[fac*8380+0x94e488]` is written by **FUN_00556690**: reset `mov [edx+0x94e484/488/48c],esi(0)` (reported pc 0x5566d5, store 0x5566cf) then rebuild `inc edx; mov [eax+0x94e488],edx` (reported 0x556a8d, store 0x556a87) — recomputed 0..N EVERY round, not incremented. The multiplier `[+0x94e5a8+edi]` and category `[+0x94eda8+edi]` arrays are rewritten in the same stage (m94table1 pcs 0x556721/0x556b5a/0x55851d/0x558551; 0x950664 IS fac1's multiplier array).
+- WHEN: inside the faction's OWN upkeep segment — the printed cur_player (0x985dcc) equals the faction of every dword written (cp=2 events hit DIV2 etc.), once per round. FUN_00556690(arg=fac) is the 6th stage of FUN_005208f0's per-player turn sequence (call 0x52094f, after 0x5551e0); second caller FUN_0059ce10 @0x59dd43.
+- WHAT: **divisor == bases owned** — read back at r54: divisors [0,2,4,1,3,3,4,1] == bases/fac {1:2,2:4,3:1,4:3,5:3,6:4,7:1}. Count 0 -> the whole reset+rebuild block skips -> explains m94table1: fac0 (0 bases) watchpoint on the pick's 0x94e488 caught ZERO stores in 2 boundaries, value 0->0.
+- accept_ready BLOCKED (credit 0, income gated d0>0) on the fresh load; the m94 harness pokes storage 200 per boundary (documented recipe) and gates on round movement, not on completion — reported, not hidden.
+- STATIC grep: 10 absolute store sites for 0x94e488 in 7 functions (0x4e4861 FUN_004e47d0, 0x4e4f79 FUN_004e4e10, 0x4f3b16/0x4f3b26 UNMAPPED, 0x5088ad/0x5088ba, 0x5566cf+0x556a87 FUN_00556690, 0x59efab, 0x5a0b2e `mov [edx*4+0x94e488],0x0`); only the FUN_00556690 pair fired in these windows — the production-path writers are OPEN (likely base-capture/loss paths).
+- OPEN: what the sibling dwords 0x94e484/0x94e48c count (live 9/37, 20/66 for fac0/fac2); the mult/cat inputs; human leg (bVar14, FUN_00625af1); pay-site 0x4f0ca6/0x4efedd.
+NEXT (M95): the pay-site conflict 0x4f0ca6 vs 0x4efedd. Evidence: evidence/m94table1-3.gdblog; scratch/m94table*_seq.jsonl. Box: fresh m54b_clean r50->54, University enqueued, no census.
