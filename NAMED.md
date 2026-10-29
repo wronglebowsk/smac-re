@@ -1073,7 +1073,9 @@ control dwords move between rounds, so the per-round snapshot must cover 0x94d44
   each candidate with the round live at ITS score (s145's "moves inside a round" RETRACTED: it was the
   window/snapshot pairing defect).
 - M92 ACCEPTED (s146, `m92tail18` PASS 8/8, fresh load r51->55): TAILOUT == BASE + the simulated tail
-  on **39/39 candidates, 0 mismatches, 2 qualifying windows**; naive one-factor splits 19.## M93 block (session 148, 2026-10-29) — the POST-tail leg 0x5a9698-0x5aa022 (NOT accepted)
+  on **39/39 candidates, 0 mismatches, 2 qualifying windows**; naive one-factor splits 19.
+
+## M93 block (session 148, 2026-10-29) — the POST-tail leg 0x5a9698-0x5aa022 (NOT accepted)
 
 | fact | evidence |
 |---|---|

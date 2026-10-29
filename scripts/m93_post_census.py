@@ -403,7 +403,8 @@ set $tarr = *(int *)($ebp-0x8) + 0x94e5a8
 append binary memory TAILARRSFILE $tarr $tarr + 64
 set $tcarr = *(int *)($ebp-0x8) + 0x94edA8
 append binary memory TAILARRSFILE $tcarr $tcarr + 64
-append binary memory TAILRECFILE 0x92fdac 0x9306f8
+append binary memory TAILX1FILE 0x927a00 0x933300
+append binary memory TAILX2FILE 0x984f00 0x98b000
 continue
 end
 break *0x51f320
@@ -613,8 +614,10 @@ def main():
                                .replace(chr(92), "/") + "/" + a.tag + "_snaps.bin")
                                .replace("TAILARRSFILE", os.path.join(ROOT, "scratch")
                                .replace(chr(92), "/") + "/" + a.tag + "_tailarrs.bin")
-                               .replace("TAILRECFILE", os.path.join(ROOT, "scratch")
-                               .replace(chr(92), "/") + "/" + a.tag + "_tailrec.bin")
+                               .replace("TAILX1FILE", os.path.join(ROOT, "scratch")
+                               .replace(chr(92), "/") + "/" + a.tag + "_tailx1.bin")
+                               .replace("TAILX2FILE", os.path.join(ROOT, "scratch")
+                               .replace(chr(92), "/") + "/" + a.tag + "_tailx2.bin")
                                .replace("EXTRA1FILE", os.path.join(ROOT, "scratch")
                                .replace(chr(92), "/") + "/" + a.tag + "_extra1.bin")
                                .replace("EXTRA2FILE", os.path.join(ROOT, "scratch")
@@ -628,7 +631,8 @@ def main():
         os.remove(tarrpath)
     for xp in (os.path.join(ROOT, "scratch", a.tag + "_extra1.bin"),
                os.path.join(ROOT, "scratch", a.tag + "_extra2.bin"),
-               os.path.join(ROOT, "scratch", a.tag + "_tailrec.bin")):
+               os.path.join(ROOT, "scratch", a.tag + "_tailx1.bin"),
+               os.path.join(ROOT, "scratch", a.tag + "_tailx2.bin")):
         if os.path.exists(xp):       # append grows; start EMPTY
             os.remove(xp)
     log = open(lpath, "w")
@@ -721,18 +725,20 @@ def main():
             chunk = raw[n * 128:(n + 1) * 128]
             if len(chunk) == 128:
                 tarrs[e["n"]] = chunk
-    # per-TAIL-hit rec table (3916 B, 89 records): designed prereq fields MOVE mid-round
-    # (m93post2 G9 FAIL 8/9: closures of 45/60 and pr1(8) read from the boundary-frozen copy
-    # disagreed with the engine's live read on 4 candidates). Closures read THIS, hit-timed.
-    TREC = 0x9306f8 - 0x92fdac
+    # per-TAIL-hit SPECIALS regions (same bytes as the boundary EXTRA dumps but frozen AT the
+    # hit -- engine timing). m93post2 G9 FAIL 8/9 proved the boundary timing is wrong: designed
+    # prereq fields AND 0x92adbc AND the era table move between 0x51f320 (snap) and the ladder.
+    TX1SZ, TX2SZ = 0x933300 - 0x927a00, 0x98b000 - 0x984f00
     trecs = {}
-    trecpath = os.path.join(ROOT, "scratch", a.tag + "_tailrec.bin")
-    if os.path.exists(trecpath):
-        raw2 = open(trecpath, "rb").read()
+    for fnum, sz in ((1, TX1SZ), (2, TX2SZ)):
+        xpath = os.path.join(ROOT, "scratch", f"{a.tag}_tailx{fnum}.bin")
+        if not os.path.exists(xpath):
+            continue
+        raw2 = open(xpath, "rb").read()
         for n, e in enumerate(by("TAIL")):
-            chunk = raw2[n * TREC:(n + 1) * TREC]
-            if len(chunk) == TREC:
-                trecs[e["n"]] = chunk
+            chunk = raw2[n * sz:(n + 1) * sz]
+            if len(chunk) == sz:
+                trecs.setdefault(e["n"], [b"", b""])[fnum - 1] = chunk
     # per-boundary SPECIALS/tables/masks/rec-table dump (EXTRA1 0x927a00-0x933300, EXTRA2
     # 0x984f00-0x98b000), frozen AT the CTRL hit like the blocks; the ladder gate reads its
     # specials and prereq closures from THESE, per the candidate's own round.
@@ -1035,18 +1041,15 @@ def main():
     # f=0x270e full closure). Every stage applies iff idx is INSIDE its set (gates: block dwords,
     # 0x92adbc, ac4 bit 0x200, fac table 0x927a8c+fac*1436, era table 0x92b954 flag/id words,
     # validator byte rec+4 bit 1, mask byte 0x985c1c+idx, ebc=[ebp-0xc] & human mask).
-    def ladder_pred(fac, c, trec):
+    def ladder_pred(fac, c, tx):
         rnd = c.get("round")
         ex = extras.get(rnd)
         if not ex:
             return None, None
         ex1, ex2 = ex
+        if tx is not None:
+            ex1, ex2 = tx          # hit-timed beats boundary-timed for EVERY ladder input
         def rd(addr, n, signed):
-            # rec-table reads come from the candidate's OWN TAIL-hit dump (live timing: designed
-            # prereq fields move mid-round; the engine reads them live at the hit).
-            if trec is not None and 0x92fdac <= addr and addr + n <= 0x9306f8:
-                o = addr - 0x92fdac
-                return int.from_bytes(trec[o:o + n], "little", signed=signed)
             buf, base = (ex1, 0x927a00) if addr < 0x940000 else (ex2, 0x984f00)
             o = addr - base
             if not buf or o < 0 or o + n > len(buf):
