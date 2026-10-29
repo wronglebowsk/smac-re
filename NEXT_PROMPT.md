@@ -48,7 +48,7 @@ param_2 has ONE producer, FUN_004f34b0 (M99). All legs: skill code-atlas.md.
 **M100 ACCEPTED (s155, `m100mult2` PASS 13/13): the multiplier IS slot 10 (last) of the 11-dword block
 `&DAT_0094d67c + fac*0x20bc`, REBUILT FROM ZERO every round by FUN_005a15a0; caller FUN_005a1830(fac),
 `call` at 0x4dbf8e and 0x520904 inside FUN_005208f0 (the per-player turn sequence), cp == fac. NAMED.**
-**M101 RUN (s156; milestone/m101, PR #108 open, UNMERGED): the OFFLINE model reproduces the mult 8/8 but
+**M101 RUN (s156; PR #108 open, UNMERGED): the OFFLINE model hits 8/8 but
 the mult LAGS D by one accrual — never green in ONE invocation (feed2/3/4 9/10). SUPERSEDED by M102.**
 **M102 ACCEPTED (s157, `m102hit3` PASS 14/14): THE MODEL AT THE STORE SITES IS EXACT** — silent bps at
 0x5a16d9 (`mov [edi],eax`: edi = dest BYTE addr, ecx = row value, eax = old + ecx), 0x5a179e
@@ -56,9 +56,8 @@ the mult LAGS D by one accrual — never green in ONE invocation (feed2/3/4 9/10
 A10 facs 1,2,3,6 + ENT 0x59ec00/0x59ec90 + CALL 0x520909; 36 CAT + 9 DADD events, every stored ==
 old + src AT the hit, chains 0 -> final, cp == fac 45/45, CLAMP 0 == predicted (no key-10 entry),
 ENT 0 AND D10 unmoved -> **THE ACCRUAL IS NOT PER-ROUND** (M101's +10 drift came from a trigger absent
-here or a POINTER-form writer). Skip leg 0x5a1601-0x5a1671 inert: era globals ds:0x985b90/0x985b9c = -1.
-Instrument `scripts/m102_rebuild_at_hit.py` (`--predict`; M102_WFACS=; no pokes — bps fire on
-execution, so watchpoint suppression is moot). NAMED.
+here or a POINTER-form writer). Instrument `scripts/m102_rebuild_at_hit.py` (`--predict`; M102_WFACS=;
+no pokes — bps fire on execution). NAMED.
 **M103 (THE PICK): who WRITES [fac*8380+0x94d700] (the D accumulator)** — the displacement census saw
 only 0x59ec68/0x5a0471 and BOTH ran 0x in three windows. (a) 4 hw watchpoints on [fac*8380+0x94d728]
 (facs 1,3,6 + one zero fac), `m100_mult_watch.py` shape, `--boundaries 2` — the M97 law: copied-register
