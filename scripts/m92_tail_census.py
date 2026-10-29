@@ -451,7 +451,7 @@ def main():
             e["round"] = _r
     # round -> the eight factions' category blocks, dumped by gdb AT that round's boundary hit
     snaps = {}
-    SNAPREGION = 0x41b80 + 0x4000 - 0x94e488
+    SNAPREGION = 0x45b80  # 0x41b80 + 0x4000 - 0x94e488 (the whole region, NOT the offset)
     spath = os.path.join(ROOT, "scratch", a.tag + "_snaps.bin")
     if os.path.exists(spath):
         with open(spath, "rb") as fh:
