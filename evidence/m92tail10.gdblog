@@ -1,0 +1,113 @@
+[New LWP 405448]
+[New LWP 405447]
+[New LWP 405446]
+[New LWP 405445]
+[New LWP 405444]
+[New LWP 405443]
+[New LWP 405442]
+[New LWP 405441]
+[New LWP 405440]
+[New LWP 405439]
+[New LWP 405438]
+[New LWP 405437]
+[New LWP 405436]
+[New LWP 405435]
+[New LWP 405434]
+[New LWP 405433]
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+0xf149668b in ?? ()
+ARMED round=76 year=2176 save=0 mask=65288 ac4=6670 bd4=0
+Breakpoint 1 at 0x5aa030
+Breakpoint 2 at 0x5a930b
+Breakpoint 3 at 0x5aa159
+Breakpoint 4 at 0x5aa232
+Breakpoint 5 at 0x5aa247
+Breakpoint 6 at 0x48bae9
+Breakpoint 7 at 0x5aa880
+Breakpoint 8 at 0x5aa9d3
+Breakpoint 9 at 0x5aa9d5
+Breakpoint 10 at 0x5a9698
+Breakpoint 11 at 0x5a9503
+Breakpoint 12 at 0x51f320
+ENT n=1 fac=7 ret=0x5aaff3 round=76
+CALL n=1 fac=7 round=76
+BASE n=1 idx=1 fac=7 a2=0 base=10 ac4=6670 T0=0 T4=1 T8=3 Tc=2 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=76
+TAIL n=1 idx=1 fac=7 base=10 div=1 hmask=65288
+TAILOUT fac=7 idx=1 out=12
+SC n=1 fac=7 idx=1 final=13
+DRAW n=1 fac=7 idx=1 draw=2911 best=-999
+BASE n=2 idx=3 fac=7 a2=0 base=15 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=76
+TAIL n=2 idx=2 fac=7 base=15 div=1 hmask=65288
+TAILOUT fac=7 idx=3 out=19
+SC n=2 fac=7 idx=3 final=20
+DRAW n=2 fac=7 idx=3 draw=2441 best=2911
+BASE n=3 idx=32 fac=7 a2=0 base=28 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=2 p2=-1 div=1 hmask=7 round=76
+TAIL n=3 idx=4 fac=7 base=28 div=1 hmask=65288
+TAILOUT fac=7 idx=32 out=28
+SC n=3 fac=7 idx=32 final=57
+DRAW n=3 fac=7 idx=32 draw=4590 best=2911
+BASE n=4 idx=43 fac=7 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=5 p2=4 div=1 hmask=7 round=76
+TAIL n=4 idx=0 fac=7 base=15 div=1 hmask=65288
+TAILOUT fac=7 idx=43 out=18
+SC n=4 fac=7 idx=43 final=19
+DRAW n=4 fac=7 idx=43 draw=368 best=4590
+BASE n=5 idx=44 fac=7 a2=0 base=23 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=-1 div=1 hmask=7 round=76
+TAIL n=5 idx=1 fac=7 base=23 div=1 hmask=65288
+TAILOUT fac=7 idx=44 out=23
+SC n=5 fac=7 idx=44 final=24
+DRAW n=5 fac=7 idx=44 draw=2908 best=4590
+BASE n=6 idx=48 fac=7 a2=0 base=41 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=0 div=1 hmask=7 round=76
+TAIL n=6 idx=5 fac=7 base=41 div=1 hmask=65288
+TAILOUT fac=7 idx=48 out=42
+SC n=6 fac=7 idx=48 final=42
+DRAW n=6 fac=7 idx=48 draw=211 best=4590
+WIN n=1 fac=7 idx=32 round=76
+TECH n=1 idx=32 param1=7 round=76
+ST n=1 addr=0x95bd20 val=32 fac=7 round=76
+RB addr=0x95bd20 mem=32
+CTRL n=1 snap=1 off=0 round=76
+ENT n=2 fac=7 ret=0x5aaff3 round=77
+CALL n=2 fac=7 round=77
+BASE n=7 idx=1 fac=7 a2=0 base=10 ac4=6670 T0=0 T4=1 T8=3 Tc=2 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=77
+TAIL n=7 idx=1 fac=7 base=10 div=1 hmask=65288
+TAILOUT fac=7 idx=1 out=12
+SC n=7 fac=7 idx=1 final=13
+DRAW n=7 fac=7 idx=1 draw=426 best=-999
+BASE n=8 idx=3 fac=7 a2=0 base=15 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 hmask=7 round=77
+TAIL n=8 idx=2 fac=7 base=15 div=1 hmask=65288
+TAILOUT fac=7 idx=3 out=19
+SC n=8 fac=7 idx=3 final=20
+DRAW n=8 fac=7 idx=3 draw=4269 best=426
+BASE n=9 idx=43 fac=7 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=5 p2=4 div=1 hmask=7 round=77
+TAIL n=9 idx=0 fac=7 base=15 div=1 hmask=65288
+TAILOUT fac=7 idx=43 out=18
+SC n=9 fac=7 idx=43 final=19
+DRAW n=9 fac=7 idx=43 draw=542 best=4269
+BASE n=10 idx=44 fac=7 a2=0 base=23 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=-1 div=1 hmask=7 round=77
+TAIL n=10 idx=1 fac=7 base=23 div=1 hmask=65288
+TAILOUT fac=7 idx=44 out=23
+SC n=10 fac=7 idx=44 final=24
+DRAW n=10 fac=7 idx=44 draw=1320 best=4269
+BASE n=11 idx=48 fac=7 a2=0 base=41 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=0 div=1 hmask=7 round=77
+TAIL n=11 idx=5 fac=7 base=41 div=1 hmask=65288
+TAILOUT fac=7 idx=48 out=42
+SC n=11 fac=7 idx=48 final=42
+DRAW n=11 fac=7 idx=48 draw=768 best=4269
+WIN n=2 fac=7 idx=3 round=77
+TECH n=2 idx=3 param1=7 round=77
+ST n=2 addr=0x95bd20 val=3 fac=7 round=77
+RB addr=0x95bd20 mem=3
+CTRL n=2 snap=2 off=4311096 round=77
+CTRL n=3 snap=3 off=8622192 round=78
+CTRL n=4 snap=4 off=12933288 round=79
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf16a932c in __kernel_vsyscall ()
+/home/n100/reverse/smac/scratch/m92tail10.gdb:121: Error in sourced command file:
+This command cannot be used at the top level.
+[Inferior 1 (process 405430) detached]

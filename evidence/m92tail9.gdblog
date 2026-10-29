@@ -33,3 +33,69 @@ Breakpoint 8 at 0x5aa9d3
 Breakpoint 9 at 0x5aa9d5
 Breakpoint 10 at 0x5a9503
 Breakpoint 11 at 0x51f320
+ENT n=1 fac=7 ret=0x5aaff3 round=67
+CALL n=1 fac=7 round=67
+BASE n=1 idx=1 fac=7 a2=0 base=10 ac4=6670 T0=0 T4=1 T8=3 Tc=2 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 human=7 round=67
+TAIL n=1 idx=1 fac=7 base=10 div=1 hbit=128 round=67
+SC n=1 fac=7 idx=1 final=19
+DRAW n=1 fac=7 idx=1 draw=3874 best=-999
+BASE n=2 idx=3 fac=7 a2=0 base=15 ac4=6670 T0=0 T4=2 T8=1 Tc=4 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=-1 p2=-1 div=1 human=7 round=67
+TAIL n=2 idx=2 fac=7 base=15 div=3 hbit=128 round=67
+SC n=2 fac=7 idx=3 final=32
+DRAW n=2 fac=7 idx=3 draw=6531 best=3874
+BASE n=3 idx=32 fac=7 a2=0 base=28 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=2 p2=-1 div=1 human=7 round=67
+TAIL n=3 idx=4 fac=7 base=28 div=32 hbit=128 round=67
+SC n=3 fac=7 idx=32 final=57
+DRAW n=3 fac=7 idx=32 draw=1751 best=6531
+BASE n=4 idx=43 fac=7 a2=0 base=15 ac4=6670 T0=2 T4=0 T8=2 Tc=3 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=5 p2=4 div=1 human=7 round=67
+TAIL n=4 idx=0 fac=7 base=15 div=43 hbit=128 round=67
+SC n=4 fac=7 idx=43 final=28
+DRAW n=4 fac=7 idx=43 draw=2216 best=6531
+BASE n=5 idx=44 fac=7 a2=0 base=23 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=-1 div=1 human=7 round=67
+TAIL n=5 idx=1 fac=7 base=23 div=44 hbit=128 round=67
+SC n=5 fac=7 idx=44 final=24
+DRAW n=5 fac=7 idx=44 draw=15 best=6531
+BASE n=6 idx=48 fac=7 a2=0 base=41 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=1 Y14=1 Y18=0 Y1c=0 bc=1 e488=1 p1=4 p2=0 div=1 human=7 round=67
+TAIL n=6 idx=5 fac=7 base=41 div=48 hbit=128 round=67
+SC n=6 fac=7 idx=48 final=45
+DRAW n=6 fac=7 idx=48 draw=5125 best=6531
+WIN n=1 fac=7 idx=3 round=67
+TECH n=1 idx=3 param1=7 round=67
+ST n=1 addr=0x95bd20 val=3 fac=7 round=67
+RB addr=0x95bd20 mem=3
+CTRL n=1 snap=1 off=0 round=67
+CTRL n=2 snap=2 off=285568 round=68
+CTRL n=3 snap=3 off=571136 round=69
+CTRL n=4 snap=4 off=856704 round=70
+ENT n=2 fac=2 ret=0x5aaff3 round=71
+CALL n=2 fac=2 round=71
+BASE n=7 idx=22 fac=2 a2=0 base=18 ac4=6670 T0=0 T4=3 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=7 p1=1 p2=2 div=7 human=2 round=71
+TAIL n=7 idx=3 fac=2 base=18 div=22 hbit=4 round=71
+SC n=7 fac=2 idx=22 final=23
+DRAW n=7 fac=2 idx=22 draw=1103 best=-999
+BASE n=8 idx=32 fac=2 a2=0 base=20 ac4=6670 T0=1 T4=4 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=7 p1=2 p2=-1 div=7 human=2 round=71
+TAIL n=8 idx=4 fac=2 base=20 div=32 hbit=4 round=71
+SC n=8 fac=2 idx=32 final=21
+DRAW n=8 fac=2 idx=32 draw=304 best=1103
+BASE n=9 idx=36 fac=2 a2=0 base=19 ac4=6670 T0=4 T4=0 T8=1 Tc=2 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=7 p1=5 p2=-1 div=7 human=2 round=71
+TAIL n=9 idx=0 fac=2 base=19 div=36 hbit=4 round=71
+SC n=9 fac=2 idx=36 final=24
+DRAW n=9 fac=2 idx=36 draw=950 best=1103
+BASE n=10 idx=44 fac=2 a2=0 base=19 ac4=6670 T0=3 T4=1 T8=3 Tc=0 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=7 p1=4 p2=-1 div=7 human=2 round=71
+TAIL n=10 idx=1 fac=2 base=19 div=44 hbit=4 round=71
+SC n=10 fac=2 idx=44 final=39
+DRAW n=10 fac=2 idx=44 draw=2678 best=1103
+BASE n=11 idx=48 fac=2 a2=0 base=13 ac4=6670 T0=3 T4=5 T8=0 Tc=1 Y10=0 Y14=0 Y18=1 Y1c=1 bc=3 e488=7 p1=4 p2=0 div=7 human=2 round=71
+TAIL n=11 idx=5 fac=2 base=13 div=48 hbit=4 round=71
+SC n=11 fac=2 idx=48 final=15
+DRAW n=11 fac=2 idx=48 draw=713 best=2678
+WIN n=2 fac=2 idx=44 round=71
+TECH n=2 idx=44 param1=2 round=71
+ST n=2 addr=0x951974 val=44 fac=2 round=71
+RB addr=0x951974 mem=44
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf16a932c in __kernel_vsyscall ()
+/home/n100/reverse/smac/scratch/m92tail9.gdb:115: Error in sourced command file:
+This command cannot be used at the top level.
+[Inferior 1 (process 405430) detached]
