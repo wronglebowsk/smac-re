@@ -196,7 +196,7 @@ commands
 silent
 set $n_ctrl = $n_ctrl + 1
 set $n_snap = $n_snap + 1
-set $off = ($n_snap - 1) * (0x41b80 + 0x4000 - 0x94e488)
+set $off = ($n_snap - 1) * 0x45b80
 dump binary memory SNAPFILE 0x94e488 0xd69c80
 printf "CTRL n=%d snap=%d off=%d round=%d\n", $n_ctrl, $n_snap, $off, *(int *)0x985afc
 continue
