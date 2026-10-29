@@ -302,13 +302,16 @@ def sim_tail(snap, fac, Tc, bc, a2, mask, div=None):
     mults = snap[b + 0x120:b + 0x120 + 64]
     ctrl = [int.from_bytes(snap[STRIDE * fac + 4 * e:STRIDE * fac + 4 * e + 4],
                            "little", signed=True) for e in range(8)]
-    s = naive = 0
+    # NULL MODEL for the discrimination check: the m91-era "one factor for every category" reading,
+    # i.e. every category contributes mult*Tc*4/div.  It differs from the true model wherever the
+    # category byte is not 2 (cat 7 and the band leg divide by 1, not 4), so a match here would mean
+    # the block's category bytes are NOT what decides the term.
+    naive = s32(sum(idiv(mults[e] * Tc * 4, div) for e in range(1, 63) if mults[e] and Tc))
+    s = 0
     n = 0
     for esi in range(1, 63):
         cat, mult = cats[esi], mults[esi]
         if cat == 7:
-            if mult and Tc:
-                naive += idiv(mult * Tc, div)
             if bc != 0 and not human:
                 if mult and Tc:
                     s += idiv(mult * Tc, div)
@@ -350,6 +353,10 @@ def main():
     ap.add_argument("--rounds", type=int, default=3)
     ap.add_argument("--timeout", type=int, default=120)
     ap.add_argument("--settle", type=float, default=2.5)
+    ap.add_argument("--poke-extra", default="",
+                    help="comma-separated extra faction slots to clear, so MORE THAN ONE faction is"
+                         " scanned in the window (a single scan yields one window and cannot satisfy"
+                         " the >=2-window control gate)")
     a = ap.parse_args()
     pid = pid_of()
     if not pid:
@@ -403,8 +410,13 @@ def main():
         raise SystemExit("gdb did not arm:\n" + head[-700:])
     print([l for l in head.splitlines() if l.startswith("ARMED")][0], flush=True)
     poke(pid, addr, -1)
+    extra = [int(x) for x in a.poke_extra.split(",") if x.strip()]
+    for ei in extra:
+        poke(pid, slot_addr(ei), -1)
     time.sleep(0.6)
     poke_readback = mem(pid, addr)
+    if extra:
+        print("extra pokes: " + " ".join(f"slot({e})={mem(pid, slot_addr(e))}" for e in extra), flush=True)
     print(f"poke: slot({a.poke_index}) {slots0[a.poke_index]} -> {poke_readback} (want -1)", flush=True)
 
     for i in range(a.rounds):
