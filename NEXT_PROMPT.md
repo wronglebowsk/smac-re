@@ -48,16 +48,19 @@ the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); i
 FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**M111/M112 RESOLVED (s171, m112p1 — the .SAV trailer IS READ; nothing merged, PR #116).**
-`scripts/m112_trailer_poke.py --tag m112p1 --relaunch`: 10 dwords of 0xCAFEBABE planted in the five trailer rows
-of a save copy (40 B changed, size unchanged, magic 0x in the original) -> **load rc=0, counts 67/18, 522.9 MB
-scanned, 41 hits**, structural ones at 0x3bc2110 / 0x3be45c8 / 0x3c06a80 / 0x3c28f38 / 0x3c4b3f0 = the m111b3
-"pollution" loop dests minus 8. **Reader = the 6-site per-entity loop** (0x59666d, 0x5966c1, 0x596715, 0x596769,
-0x5967bd, 0x59683b) restoring each `[id,0,0,-6,32,32]` row (id 3..7) into heap records 0x915758, 0x3b7d7a8,
-0x3b9fc60, 0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8), 0x8eb7c4.
-**RETRACTED: "contiguous 0..242,383 / 156 B unread / 99.94%"** — the census over-runs (+468 m54b_clean, +144
-autosave) are its ORDER assumption (bytes touched twice: bulk + per row), not missing data.
-LAW: identify bytes by POKING a pattern and scanning memory; a size*count sum cannot decide a map. Next: re-derive the .SAV map with the loop as the trailer's reader.
+**M111/M112 RESOLVED, M113 ACCEPTED (s171): the .SAV map now has 20 poke anchors; refine with a 2 KB step.**
+Trailer: the last 156 B ARE read — reader = the 6-site per-entity loop (0x59666d/0x5966c1/0x596715/0x596769/
+0x5967bd/0x59683b) -> heap 0x915758, 0x3b7d7a8..0x3c4b3f8 (stride 0x224B8). Proof m112p1: 10x0xCAFEBABE poked,
+load rc=0, counts 67/18, 41 hits. **M110's "contiguous 0..242,383 / 156 B unread" RETRACTED.**
+Anchors (m113map1, 20/20 found, 0 absent): 16,384->0x951104 .. 65,536->0x95d104 (slope 1) | 81,920->0x92ad6c
+(map header) | 98,304..163,840->0x40aa5b0..0x40ba5b0 (the 90,112-B grid at 0x40a6660) | 172,287->0x15e2baf
+(map trailer) | 180,224->0x987d51 | 188,291->0x989cd4, 188,467->0x930e20 (176 B = the 0x930d7c count prefix) |
+196,608..212,992->0x98bf49..0x98ff49 (slope 1) | 218,675->0x99157c, 222,771->0x92cfe4 (4,096 B later) |
+229,376->0x95e635.
+LAW: identify bytes by POKING a marker and finding it in memory (a read census over-runs, a subset-sum is
+underdetermined).
+NEXT (attempt 2): `m113_save_map.py --tag m113map2 --step 2048` to fix the three region boundaries to the KB,
+then the 52/304 record split inside 222,771..229,376+.
 
 ## STILL OPEN
 
