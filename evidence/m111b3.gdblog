@@ -304,3 +304,4 @@ Thread 13 "audio_client_ti" received signal SIGINT, Interrupt.
 Thread 1 "terran.exe" received signal SIGCONT, Continued.
 [Switching to LWP 1573718]
 0xf17f732c in __kernel_vsyscall ()
+[Inferior 1 (process 1573718) detached]

@@ -275,3 +275,10 @@ at 1 s CPU (the m109g3 starvation shape). Kill by pid and re-shape; do not wait 
 Without `handle SIGUSR1 nostop noprint pass` (plus SIGUSR2/SIGPIPE) and a tail of ~400 `continue` lines, a
 `gdb -batch` census stops after 3 events and prints `[Inferior 1 ... detached]`. A harness copied from an
 older one may be missing both — check the generated .gdb before relaunching.
+
+## The census can leave gdb ATTACHED after it prints its verdict (s171)
+
+`m109_leg_census.py` SIGINTs gdb and waits 20 s for it to vanish, then `kill -CONT` the game — but gdb can
+survive the SIGINT and keep all bps inserted with the inferior running (`TracerPid` ≠ 0, gdb at 0 s CPU).
+Always check `grep TracerPid /proc/<game>/status` before declaring the box clean, and kill the stale gdb BY PID
+(SIGTERM detaches and restores the patched int3s; the loaded game survives, counts unchanged).
