@@ -1,0 +1,30 @@
+M113 .SAV map by poke — m54b_clean.SAV -> m113map.SAV, 25 markers of 0xc0de0000|x, step 2048
+  load rc=0  counts 67/18 (m54b_clean = 67/18)  scanned 523.0 MB
+  file_offset   marker       destinations
+  -----------   ----------   ------------
+        64000   0xc0de0001   0x95cb04
+        66048   0xc0de0002   0x95d304
+        68096   0xc0de0003   0x927684
+        70144   0xc0de0004   0x927e84 0xea3c2e92
+        72192   0xc0de0005   0x928684 0x7ec2ad16 0x7ef16d16
+        74240   0xc0de0006   0x928e84 0xe8132afd
+        76288   0xc0de0007   0x929684
+        78336   0xc0de0008   0x929e84
+        80384   0xc0de0009   0x92a76c
+        82432   0xc0de000a   0x40a67b0
+       163000   0xc0de000b   0x40ba268
+       165048   0xc0de000c   0x40baa68
+       167096   0xc0de000d   0x40bb268 0xe9399792
+       169144   0xc0de000e   0x40bba68
+       171192   0xc0de000f   0x40bc268 0xe76dfc92 0xe776abe2
+       173240   0xc0de0010   0x986209
+       174000   0xc0de0011   0x986501
+       176048   0xc0de0012   0x986d01
+       178096   0xc0de0013   0x987501
+       180144   0xc0de0014   0x987d01
+       221000   0xc0de0015   0x92c8f9
+       223048   0xc0de0016   (absent)
+       225096   0xc0de0017   0x933b81
+       227144   0xc0de0018   0x95dd7d
+       229192   0xc0de0019   0x95e57d
+  VERDICT 24/25 marker offsets found in memory; 1 absent — absent offsets are file regions the loader never restores

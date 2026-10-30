@@ -129,7 +129,12 @@ load rc=0, counts 67/18, 522.7 MB scanned. Inside a section the mapping is 1:1 (
 218,675/222,771 -> 0x99157c / 0x92cfe4       4,096 B apart
 229,376         -> 0x95e635
 ```
-Region boundaries are where the destination JUMPS (block A -> map header between 65,536 and 81,920; map ->
-trailer between 163,840 and 172,287; trailer -> next section between 172,287 and 180,224). This is the only
+Region boundaries are where the destination JUMPS. A band refinement (`--band lo-hi[:step]`, 25 markers at
+2 KB: `--tag m113map2`) brackets them: block A -> block B between **66,048 (0x95d304)** and **68,096
+(0x927684)** — the 67,840 split falls inside; grid -> next section between **171,192 (0x40bc268)** and
+**173,240 (0x986209)**, with the 91-B map trailer (file 172,200..172,291) inside that bracket; 174,000..180,144
+-> 0x986501..0x987d01 at step 0x800. **One offset is ABSENT: 223,048**, between present neighbours 221,000
+(0x92c8f9) and 225,096 (0x933b81) — a hole inside the 52-record block (~222,783), still unexplained. The harness
+refuses 60+ markers on purpose: that many pokes mutilate counts and pointers and the load stops meaning anything. This is the only
 instrument that has held on this file: a read census over-ran its own file (+468, +144) and a subset-sum over the
 legs admits 181,769 exact decompositions, while an anchor is an exact (offset, address) pair.

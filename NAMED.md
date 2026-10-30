@@ -1228,3 +1228,11 @@ two leg boundaries corroborated to the byte (188,291->188,467 = 176 B, the 0x930
 222,771 = 4,096 B, the 0x92bff0 leg). Boundaries are the destination jumps: block A -> map header between 65,536
 and 81,920; map -> trailer between 163,840 and 172,287; trailer -> next section between 172,287 and 180,224.
 A poke anchor cannot over-run its file and needs no cumulative offset column.
+## M113b (m113map2, s171) — 2 KB band refinement: boundaries bracketed, ONE absent offset
+
+`m113_save_map.py --tag m113map2 --relaunch --step 2048 --band 64000-82500:2048 --band 163000-174000:2048
+--band 174000-182000:2048 --band 221000-231000:2048`: 25 markers, load rc=0, counts 67/18, **24/25 found**.
+block A -> block B bracketed 66,048 (0x95d304) / 68,096 (0x927684), split 67,840 inside it; grid -> next section
+bracketed 171,192 (0x40bc268) / 173,240 (0x986209), the 91-B map trailer inside it; 174,000..180,144 ->
+0x986501..0x987d01 step 0x800. **223,048 is ABSENT** while its neighbours (221,000 / 225,096) are present — an
+offset inside the 52-record block (~222,783) that the load does not restore verbatim. New flag `--band lo-hi[:step]`.

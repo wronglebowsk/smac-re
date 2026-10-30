@@ -1,3 +1,3 @@
-M113 attempt 2 firing (tag m113map2, BAND refinement): bands 64000-82500, 163000-174000, 174000-182000, 221000-231000 at step 2048 = 25 markers in m113map.SAV; load, scan. Pins the block-A->map-header, grid->trailer, trailer->section boundaries and the record area to ~2 KB.
-PREDICT: anchors step 1:1 inside a run and JUMP across a boundary, so each boundary is bracketed by the last-and-first anchor of adjacent runs.
-Main = da69b48 (M113 merged #119). Do not touch the box until m113map2 exits; then read evidence/m113map2.log.
+M113b (m113map2) 24/25: boundaries bracketed to 2 KB — block A->B at 66,048/68,096 (split 67,840 inside), grid->next at 171,192/173,240 (91-B map trailer inside), 174,000..180,144 -> 0x986501..0x987d01. OPEN: 223,048 ABSENT between 221,000 (0x92c8f9) and 225,096 (0x933b81) = a hole inside the 52-record block (~222,783).
+M113 merged #119 (main da69b48); this branch milestone/m113b is NOT merged. BOX: terran.exe loaded (67/18), TracerPid 0.
+next: --band 222000-224500:128 to resolve the 223,048 hole.

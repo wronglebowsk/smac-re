@@ -305,3 +305,25 @@ What the anchors establish (each independently of any census):
 - Region boundaries are where the destination JUMPS: block A -> map header between 65,536 and 81,920; map ->
   trailer between 163,840 and 172,287; trailer -> section between 172,287 and 180,224.
 Harness `scripts/m113_save_map.py`; it plants markers, loads through `m54a_load.py`, and prints every anchor.
+
+## Session 171 (cont. 6) — M113 attempt 2 (m113map2): boundaries bracketed to 2 KB; one offset is ABSENT
+
+`python3 scripts/m113_save_map.py --tag m113map2 --relaunch --step 2048 --band 64000-82500:2048
+--band 163000-174000:2048 --band 174000-182000:2048 --band 221000-231000:2048` — 25 markers inside four named
+bands (a full 118-marker sweep is refused by the harness: 60+ pokes mutilate counts and pointers). Load rc=0,
+counts 67/18, 523.0 MB scanned, **24/25 found, 1 absent**.
+
+Boundaries, now bracketed by adjacent runs rather than assumed:
+- block A -> block B: last A anchor **66,048 -> 0x95d304**, next **68,096 -> 0x927684** (block B = 0x927590). The
+  documented 67,840 split falls inside the bracket. Slope-1 continues through block B, the 32-B table and the map
+  header: 68,096..80,384 -> 0x927684..0x92a76c, then **82,432 -> 0x40a67b0** (grid).
+- grid -> trailer -> next section: 163,000..171,192 -> 0x40ba268..0x40bc268 (grid, step 0x800), then
+  **173,240 -> 0x986209** (the 0x985e5c section). So the grid ends and the 91-B map trailer (file 172,200..172,291)
+  lives inside the bracket 171,192..173,240 — consistent with run 1's 172,287 -> 0x15e2baf.
+- 174,000..180,144 -> 0x986501..0x987d01, step 0x800, all inside the 16,000-B section.
+- record area: 221,000 -> 0x92c8f9, **223,048 -> ABSENT**, 225,096 -> 0x933b81, 227,144 -> 0x95dd7d,
+  229,192 -> 0x95e57d (step 0x800). The 52-record block starts ~222,783 (0x933278 anchors it), so the absent poke
+  sits INSIDE that block: either a gated/unused record or a field the loader rewrites after the copy. Not resolved.
+
+So two of three boundaries are now pinned to the KB, the third (record area) has a specific open question with an
+address to chase, and the harness gained `--band lo-hi[:step]` plus a hard cap of 60 markers.
