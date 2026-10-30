@@ -169,6 +169,10 @@ def main():
     print(out[:4000])
     with open(os.path.join(M.EVID, a.tag + ".log"), "w") as f:
         f.write(out + "\n")
+    if not legs:
+        print("EXIT 3: 0 read calls — the load never ran (a bp conditioned on *($esp) freezes the game; "
+              "see the instrument laws). This is NOT a measurement.", flush=True)
+        return 3
     return 0
 
 
