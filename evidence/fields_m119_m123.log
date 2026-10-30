@@ -1,0 +1,72 @@
+M119 stride census: 52 refs to 0x984d38
+   x48 via lea [v+v*2] + shl 4      18
+   x48 via imul 0x30                18
+   direct/base only                 0
+   x16 standalone                   0
+   other                            16
+   odd: 40db40  mov    edx,DWORD PTR [ebp-0x4] | push   0xffffffff | push   0xffffffff
+   odd: 40db5a  mov    ecx,DWORD PTR [ebp-0x4] | push   0xffffffff | push   0xffffffff
+   odd: 40db9f  fffffff | mov    eax,DWORD PTR [ecx+0x984d44] | lea    ebx,[eax+eax*4]
+   odd: 40ff41  shl    esi,0x4 | add    ebx,0x41 | mov    ecx,0x997b28
+   odd: 41ca7f  push   0xffffffff | shl    eax,0x4 | push   0xffffffff
+   odd: 4e589e  push   0xffffffff | shl    ecx,0x4 | push   0xffffffff
+   VERDICT PASS — stride is 0x30 (48 B) at every indexed site; the *16 in the listing is `shl 4` applied to 3v, i.e. part of the x48 computation, so M67's conflict is a misread
+
+M120 the gate above 0x531782:
+   531764  mov    edx,esi
+   531766  add    esp,0x30
+   531769  shl    edx,0x6
+   53176c  add    edx,esi
+   53176e  lea    eax,[esi+edx*2]
+   531771  shl    eax,0x4
+   531774  sub    eax,esi
+   531776  add    eax,edi
+   531778  test   BYTE PTR [eax*4+0x94d448],0x1
+   53177f  
+   531780  je     0x5317a2
+   531782  or     BYTE PTR [ebx+0x98adb8],0x20
+   index is 2095*first + second (2095 dwords = 8,380 B = the faction stride): True
+   VERDICT PASS — bit 0x20 of the entity byte [ebx+0x98adb8] is set exactly when the faction-block dword at 0x94d448+inner*4 has bit 0 (test at 0x531778, `je` at 0x531780 skips the OR)
+
+M121 ds:0x98adee: 7 referencing instructions, 0 writes
+   neighbouring dword accesses (0x98ade8/0x98adec/0x98adf0): 0
+   R 4e499d movsx  ecx,word ptr ds:0x98adee              [FUN_004e47d0]
+   R 4eeb35 movsx  ecx,word ptr ds:0x98adee              [FUN_004ee410]
+   R 4f948c movsx  ecx,word ptr ds:0x98adee              [FUN_004f6030]
+   R 51ff61 movsx  ecx,word ptr ds:0x98adee              [FUN_0051fe90]
+   R 5a9e06 movsx  eax,word ptr ds:0x98adee              [FUN_005a90a0]
+   R 5a9e5f movsx  eax,word ptr ds:0x98adee              [FUN_005a90a0]
+   R 5aa1a6 movsx  eax,word ptr ds:0x98adee              [FUN_005aa030]
+   VERDICT PASS — read-only in the image (7 movsx readers, 0 writers of any width, no access to the enclosing dwords): the value arrives with the LOAD, so it is save/scenario data, not a gameplay counter
+
+M122 the 0x1c loop:
+   52b744  mov    ecx,0x91cb80
+   52b749  mov    eax,0x98aaf8
+   52b74e  mov    edx,DWORD PTR [ecx-0x4]
+   52b751  add    ecx,0x1c
+   52b754  mov    DWORD PTR [eax-0x4],edx
+   52b757  mov    edx,DWORD PTR [ecx-0x1c]
+   52b75a  mov    DWORD PTR [eax],edx
+   52b75c  mov    edx,DWORD PTR [ecx-0x18]
+   52b75f  mov    DWORD PTR [eax+0x4],edx
+   52b762  mov    dx,WORD PTR [ecx-0x14]
+   52b766  mov    WORD PTR [eax+0x8],dx
+   52b76a  add    eax,0x1c
+   52b76d  cmp    eax,0x98ad98
+   52b772  jl     0x52b74e
+   52b774  jmp    0x52b85a
+   52b779  mov    edx,0x91cb70
+   src 0x91cb80=True  dst 0x98aaf8=True  step 0x1c=True  bound 0x98ad98=True  touches 0x984d38=False
+   records = (0x98ad98-0x98aaf8)/0x1c = 24, exact=True
+   VERDICT PASS — the 0x1c loop is a NEW copy (0x91cb80 -> 0x98aaf8, 24 records of 28 B) and never references 0x984d38; there is no third stride, M67's conflict was between two different arrays
+
+M123 ds:0x94d78c: 72 refs — 48 as [reg+disp], 24 as [reg*4+disp], 6 writes
+   W 4dfe9f mov    dword ptr [eax*4+0x94d78c],edi          [FUN_004dfc10]
+   W 515152 mov    dword ptr [edx*4+0x94d78c],0x1          [FUN_00512b40]
+   W 59cfee mov    dword ptr [esi+0x94d78c],eax            [FUN_0059ce10]
+   W 59f230 mov    dword ptr [ebx+0x94d78c],eax            [FUN_0059ec90]
+   W 5a7e1a mov    dword ptr [edx+0x94d78c],eax            [FUN_005a7970]
+   W 5a7e38 mov    dword ptr [edx+0x94d78c],eax            [FUN_005a7970]
+   array-form sites with a 2095-scaled index: 24 of 24
+   VERDICT PASS — both forms are the SAME dword inside the 8,380-byte faction block: [reg+disp] when reg is the block base, [reg*4+disp] when the compiler already folded the 2095-dword stride into the index. No second array, and a third independent confirmation of 8,380
+

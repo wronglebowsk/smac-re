@@ -195,7 +195,11 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   `i = t.index('<heading or first words>')`, `j = t.index('<next heading>')`, `t = t[:i] + new + t[j:]` — and
   `assert '<a phrase from the new text>' in t` BEFORE writing, then `grep` the file afterwards. The checkpoint
   gate names the miss (`not updated: NEXT_PROMPT.md`): read that line as "the write never landed", not as a
-  stale-file complaint.
+  stale-file complaint. Two corollaries that bite repeatedly: a cell that measures OVER budget writes NOTHING, so
+  trim inside that SAME cell — the next cell re-reads the OLD text, its `.replace` no-ops, and the size check then
+  passes on text you only thought you had replaced; and anchor on a heading you just grepped in the file, not one you
+  remember writing — after two rewrites of the same section the remembered heading string no longer exists and
+  `t.index()` raises before any edit is attempted.
 - **Every always-loaded doc has its OWN cap, and the registry is the one that surprises you.** `evidence.py
   budget` prints a per-file verdict: `NEXT_PROMPT.md` fails at 16,000 chars, `NAMED.md` warns at 150,000 and
   FAILs at 250,000, the in-repo `skill/SKILL.md` has a hard cap of its own. A milestone that appends four
@@ -664,8 +668,10 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 
 ## Still open (leads)
 `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
-**Band-flag gate** `[f*0x8380+0x94d430]` bit 0x40 is a BYTE test at `0x5aaf7f` in FUN_005aadf0, and no `or` in the
-image sets 0x40 — harness `scripts/m116_band_flag.py` (operand-width scan + live 8-faction read; see
-`references/instrument-laws.md` §Is this bit ever SET).
+**Band-flag gate — CLOSED, do not re-open.** Bit 0x40 of the per-faction flag word (stride **8,380 DEC = 0x20BC**,
+NOT hex 0x8380) is tested at `0x5aaf7f` in FUN_005aadf0 and REACHED every round, but it has no setter in the image and
+no save carries it, so that branch is inert BY CONSTRUCTION. `scripts/m118_flag_never_set.py` re-proves all four
+checks offline in seconds; `scripts/m116_band_flag.py` only reads the live words (`references/instrument-laws.md`
+§Is this bit ever SET).
 
 

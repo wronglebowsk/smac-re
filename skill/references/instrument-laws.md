@@ -215,8 +215,15 @@ can be rewritten with the same value.
   lea WRITES - a chain like `lea ebx,[edx+edx*4]` then `lea ebx,[edx+ebx*2]` is idx*5 then idx*11,
   not two independent multipliers. Getting it wrong (200/60 instead of 212/44) makes every record
   lookup land on the wrong row and turns a correct model into a mismatch (m101feed1 G2). Ghidra's
-  printed `*0xd4 / *0x2c` was right there; my parse was the bug - check the bytes, then believe the
-  pseudocode's scale.
+  printed `*0xd4 / *0x2c` was right there; my parse was the bug - check the bytes, then believe
+  the pseudocode's scale.
+- **A stride written in the registry is DECIMAL until proven otherwise, and an OBSERVED register is the arbiter.**
+  A documented `f*8380` is 8,380 bytes (0x20BC), not hex 0x8380 (33,664): read as hex it samples every fourth
+  record, and a per-faction table built that way is confidently wrong while looking well-formed ("this faction's
+  word is 0xFFFFFFFF" was really a neighbouring structure). Derive the stride from the register actually used at
+  the site (the `esi` steps logged at the gate) before tabulating anything per record, and make the parser SHOUT
+  when a value is not a multiple of the assumed stride (`esi % STRIDE != 0`) — that one assertion is what catches
+  it. A live snapshot can only contradict a registry row after its ADDRESS ARITHMETIC is verified.
 - An OFFLINE model (read the inputs + the target from /proc, no gdb) is only coherent while nothing
   runs between the target's last recompute and the read. SMAC auto-advances rounds while the human
   turn is pending, and a value rebuilt in faction f's own segment LAGS an accumulator bumped later in
@@ -388,6 +395,20 @@ arithmetic — not an access at all).
 - **Zero setters means the bit can only arrive through a whole-word store.** Enumerate those `mov [disp],reg`
   sites and say so explicitly — "no immediate sets it; it is written only by whole-dword copies" is a much
   stronger and much more falsifiable statement than "it is never set".
+- **The real setter is often a REGISTER op, invisible to a displacement grep.** `or al,0x40` / `and ah,0xbf` on a
+  value later stored at the displacement never matches a scan for `or DWORD PTR [disp],imm`. Enumerate every
+  register-level bit op whose result REACHES a store at that displacement, then read the store itself: the only
+  such site here reloads the word into `eax` and masks it (`and eax,0xfc3fffff`) before writing, so the or'd bit
+  never lands — the block TRANSLATES one bit into another (`source 0x800000 -> derived 0x40`) and parks the derived
+  word in a global that no instruction moves back. "An `or` exists near this field" is neither a setter nor proof
+  of one; the store's own source operand decides.
+- **A bit no code sets can still arrive as DATA — check the format corpus.** The flag word lives in a block the
+  loader restores 1:1, so a file carrying the bit would set it. Reading the field's offset in every save on disk
+  (12 files x 8 records) is one loop, needs no box time, and is what upgrades "never observed set" into "cannot be
+  set on this build and this format version". Do this before writing an inert-branch conclusion, and say which
+  build/version it is scoped to.
+- End-to-end harness for the whole question (tests, dword ORs, register ops, store masks, corpus):
+  `scripts/m118_flag_never_set.py`.
 - **An all-ones field is not a semantic value.** A live dword (and its neighbour) reading 0xFFFFFFFF next to
   zeros elsewhere has two readings: the flag is on, or the record was `-1`-filled/uninitialised. State the
   value, label the meaning INFERENCE, and decide it with a take/no-take observation — clear the bit and count
@@ -397,20 +418,13 @@ arithmetic — not an access at all).
   refutes the sentence, not the world. Report both (the value, then which prior row it retracts) and leave the
   semantics open until the controlled poke runs.
 
-## Strides written in NAMED are DECIMAL until proven otherwise (s171, M116 -> M117)
 
-NAMED writes per-faction addressing as `f*8380`. That is **8,380 bytes = 0x20BC**, not hex `0x8380` (33,664). Reading
-it as hex sampled factions 0, 4, 8, 12 and produced a confident, wrong table ("0xFFFFFFFF for faction 1") that had to
-be retracted after a run showed the real `esi` steps: 0x20bc, 0x4178, 0x6234 ... = 8,380 apart. Rule: derive the stride
-from an OBSERVED register (`esi` at the site) before any per-faction table, and have the parser SHOUT when a value is
-not a multiple of the assumed stride (`esi % STRIDE != 0`) — that single line caught this one.
+## A "stride conflict" is usually ONE multiplication read in two pieces (s171, M119/M123)
 
-## A byte-field bit is tested and set with BYTE/register ops — a dword-immediate scan cannot see it (s171, M116 -> M118)
-
-`test BYTE PTR [esi+0x94d430],0x40` gates the M89 second ask, and the setters are `or al,0x40` (22 of them), not
-`or DWORD PTR [disp],0x40`. Scanning only dword-immediate ORs therefore finds ZERO setters and invites the false
-conclusion "nothing can set this bit". Resolve it with the full set of checks in `scripts/m118_flag_never_set.py`:
-(a) the byte test sites, (b) dword OR immediates, (c) every REGISTER-level bit op whose result reaches a store at that
-displacement (here exactly one, 0x4dc226 -> store 0x4dc296, and that store RELOADS the word and masks 0xfc3fffff, so
-the or'd bit never lands — the block is a bit TRANSLATION, source 0x800000 -> derived 0x40 into ds:0x99aa38),
-(d) whether any save on disk carries the bit (here 0 of 12, and block A is restored 1:1, so a save would set it).
+`lea X,[v+v*2]; shl X,4` is v*48, not v*3 and not v*16 — the shl is the tail of the same multiply. Two rules:
+(1) when you meet a claim of two conflicting strides for one array, count the SITES (52/52 here were x48) instead of
+arguing from one listing line; (2) when one address appears as BOTH `[reg+disp]` and `[reg*4+disp]`, the *4 form is
+usually the same field with the stride folded into the register — prove it by requiring the 2095-dword sequence
+(`shl 6 / add / lea [v+X*2] / shl 4 / sub`, 24/24 sites here), because 2095 dwords = 8,380 B = the faction stride.
+Third law, cheap and reusable: a global with readers and ZERO writers of any width (0x98adee, 7 `movsx`, 0 writes,
+no neighbour-dword access) is LOAD-TIME data, not a gameplay counter — check the enclosing dwords before concluding.
