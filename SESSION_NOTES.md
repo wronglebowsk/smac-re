@@ -276,3 +276,26 @@ load an AUTOSAVE (its trailer sits at a DIFFERENT offset) under a FILE*-filtered
 tail" is too strong — the honest statement is that its destination `0x92bf58` holds `[9999,9999,0,0,2100,2600]`,
 NOT the trailer rows, so that leg is some other section. What survives: the trailer's offset varies per save, its
 rows reach memory only as records (6x at heap 0x34f0000), and the 156 B is absent verbatim from memory.
+
+### Session 171 (cont. 2) — M112 attempt 1 (m112a1): the FILE* filter works, the SUM DOES NOT — and the trailer question needs a poke, not a census
+
+`python3 scripts/m109_leg_census.py --tag m112a1 --relaunch --ranges 0x400000-0x62afff --filter-file --save
+m112auto1.SAV` (copy of "Alpha Centauri Autosave 1.SAV", 242,927 B, trailer at 242,771; counts 68/19):
+**savefile=0x6a79a0 captured at 0x596850, 83 legs, 0 gdb errors, sum 243,071 vs file 242,927 -> OVER by 144.**
+Predictions before the run were H1 structural-trailer sum = 242,771, H2 fixed-read-set 242,383, H3 trailer-read
+242,927; the observation matches NONE of them, which is itself the result: **the cumulative offset column is
+still invalid after filtering** (unfiltered m111b3 was over by 468; filtered, by 144). Two runs, two different
+saves, two different over-runs: the size*count sum cannot decide this question at all.
+No (site,dest,size) group repeats, so the 144 B are re-reads at different destinations/sites, not one duplicated
+leg. Read-back at the final group's destination (0x62ae0f 128 + 0x62aec8 16 + 0x62af05 16 into 0xbefd3c) shows
+[9552352, 839181731, 1, 1, 5, 24592, ...] — NOT the trailer: 0xbefd3c is a shared CRT stdio buffer that later
+reads of OTHER files overwrite, so the buffer content is not evidence either.
+
+**Reframe (the useful part):** the loader consumes through a 4096-B stdio buffer, so the trailer's bytes are
+pulled into RAM no matter what; "read or not" is not answerable by counting consumer fread sizes. The next
+experiment must make the bytes IDENTIFIABLE: poke a unique pattern into the trailer of a save copy, load it, and
+scan /proc/<pid>/mem for that pattern. Pattern present = the trailer is loaded; absent = it is never consumed.
+That is one run, needs no offset model, and cannot be confounded by a shared buffer.
+
+Box after the run: terran.exe 1878861 (autosave m112auto1 loaded, counts 68/19). gdb 1878864 was LEFT ATTACHED
+again after the harness printed its verdict — killed by pid, TracerPid now 0. (Second occurrence of the law.)

@@ -39,6 +39,7 @@ rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-forma
 `ghidra-batch-export.md`, `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
 need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
 **Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move.
+The same rule kills NEGATIVE claims: before writing "no code uses constant X", grep the docs' size/offset lists for X AND its near neighbours — a documented 152-B leg is 156 minus a 4-byte field, so an exact-value grep for 156 supports a conclusion that is one subtraction wrong. Then confirm the candidate leg by reading its DESTINATION in `/proc` and comparing content, not by its size (`references/instrument-laws.md` §Proving a read leg).
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
 RE. Five spines (boot, solo turn, unit orders/combat, research/tech, save/load) drive Phases 1–2.
@@ -188,6 +189,10 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   over it, move footing into `FOOTING.md` at the repo root (or a `references/`
   file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
   context before any work starts, which is how sessions ratchet toward the wall.
+  **Confirm the edit LANDED, not just that it measured well**: a size-check loop that iterates an
+  in-memory copy writes nothing, so after trimming `grep` a phrase you claim to have added (or
+  `git diff --stat -- NEXT_PROMPT.md`); a printed byte count is not a write, and a plan you only
+  computed never lands in the next session's footing.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
   moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
@@ -442,7 +447,11 @@ only *data* reads above ≈0x6a9000 need a runtime snapshot (`gdb -batch -ex 'du
 Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical and the depth lives in
 `references/data-formats.md` — the `.MP` size formula, the `.SAV` section list with its two record strides
 (52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
-zeros-fraction pitfall. Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
+zeros-fraction pitfall. **The last 156 B of every save is a fixed TRAILER, not game data** — the final
+152 B are identical across nine saves, only the trailing dword varies, and its offset moves with the file
+size, so no hard-coded leg can index it; its reader is still unnamed (`references/data-formats.md`
+§`.SAV` trailer, and the instrument rule in `references/instrument-laws.md` §Proving a read leg).
+Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
 `FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
 `references/ptrace-level-probes.md` §The .SAV chain.

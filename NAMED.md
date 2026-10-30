@@ -1197,3 +1197,14 @@ CORRECTION (s171): the loader pushes a 152-B immediate at 0x597716; its dest 0x9
 [9999,9999,0,0,2100,2600], NOT the trailer — so the trailer's reader is still unnamed, but "no constant can size
 it" is too strong (152 = 156 - 4). The trailer's offset varies per save (file sizes 242,539..243,691).
 
+## M112 (attempt m112a1, s171) — FILE* filter armed (savefile=0x6a79a0), sum still over-runs; census cannot decide
+
+`m109_leg_census.py --tag m112a1 --relaunch --ranges 0x400000-0x62afff --filter-file --save m112auto1.SAV`
+(autosave copy 242,927 B, trailer at 242,771, counts 68/19): 83 legs, 0 gdb errors, **sum 243,071 vs 242,927 ->
+OVER by 144** (no repeated (site,dest,size) group). Pre-registered predictions H1 242,771 / H2 242,383 / H3
+242,927 — none matched. With m111b3 at +468 (unfiltered, m54b_clean) the conclusion is that the cumulative
+`file_off` column is invalid in this harness, not that the trailer is read or unread. Read-back of the final
+group's destination 0xbefd3c is a shared CRT stdio buffer (other files overwrite it), so it is not evidence.
+NEXT INSTRUMENT: poke a unique pattern into the trailer of a save copy, load, scan /proc/<pid>/mem for it —
+identification, not byte counting. New `--filter-file` flag added to the census (captures the FILE* at 0x596850,
+logs only `[esp+0xc] == $savefile`, exits 5 when the filter never arms).

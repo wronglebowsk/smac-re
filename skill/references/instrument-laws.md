@@ -283,3 +283,24 @@ froze for 7 minutes with the load driver at 1 s CPU. That is the starvation shap
   attempt budget and leaves the box mid-run.
 - Bound the damage the same way a store census does: prefer "the sites this mechanism calls" (a filtered
   band, or a FILE\*-conditioned superset) over "everything in this address window".
+
+## Proving a read leg: destination content, not a size constant
+
+- **Check the documented size list before claiming a constant does not exist.** A grep for the byte count
+you measured (156) finds nothing while the loader pushes a NEAR MISS (152 = 156 - 4) that the format doc
+already lists as an immediate leg — a negative claim built on one exact-value search is one subtraction
+away from wrong. Grep the docs (`references/data-formats.md`, `SAVE_FORMAT.md`) for the value AND its
+neighbours, then confirm the leg you found is the section you meant.
+- **A leg is proved by WHERE it writes, not by how much it reads.** Read its destination from
+`/proc/<pid>/mem` after the load and compare with the bytes you expect: the 152-B leg that looked like the
+answer landed on `[9999,9999,0,0,2100,2600]`, i.e. a different section entirely. Size agreement is a
+coincidence generator; content agreement is the proof.
+- **Scan objdump for an immediate VALUE, not for its bytes.** Strip bracketed operands first
+(`re.sub(r"\[[^\]]*\]","[]",asm)`) or every `[ebp-0x9c]` stack slot counts as the constant you are
+hunting — 630 raw hits collapsed to 13 real ones for one 2-digit value, and only the survivors can
+support "no code uses this size".
+- **Compare across the format's corpus to separate structure from data.** N files of one format that share
+bytes are saying those bytes are structure: nine saves shared their final 152 bytes exactly, with only the
+trailing dword varying, so the block is a fixed trailer rather than game state — and because their SIZES
+differed, its offset moves per file, so no hard-coded read leg can index it and any claim about it must be
+a per-file, EOF-relative read.
