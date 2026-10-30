@@ -428,3 +428,21 @@ usually the same field with the stride folded into the register — prove it by 
 (`shl 6 / add / lea [v+X*2] / shl 4 / sub`, 24/24 sites here), because 2095 dwords = 8,380 B = the faction stride.
 Third law, cheap and reusable: a global with readers and ZERO writers of any width (0x98adee, 7 `movsx`, 0 writes,
 no neighbour-dword access) is LOAD-TIME data, not a gameplay counter — check the enclosing dwords before concluding.
+
+## A harness exit code is a CLAIM: a negative result is still a result
+
+A gate that encodes "the branch was reached and not taken" as a non-zero exit makes its own finding look like a
+broken run — the next reader (or the same session, an hour later) treats a valid negative as a failed instrument and
+either re-runs it or reports the milestone as blocked. Fix the exit vocabulary, not the verdict:
+
+- `0` = **measured**. The site was reached; whether the branch was taken is the RESULT, reported in the verdict
+  line (`taken`, `never taken`). A closed gate is a finding, not an error.
+- `4` = the site was never reached → INCONCLUSIVE. Only this means "the run cannot decide anything".
+- `5` = the driver wedged / issued no orders → **NO MEASUREMENT**. Distinguish this from `4` explicitly: a wedge
+  produces zero events at every site, so reporting it as "the mechanism never ran" publishes the box's fault as a
+  fact about the game.
+- `8` = the box was left dirty (`TracerPid != 0`) after the run.
+
+Corollary that applies to every harness: the verdict LINE must name which of these happened, and the parser must
+read the driver's return code BEFORE interpreting a zero-event stream. One wedge that reads as "never reached"
+costs an acceptance attempt and a wrong sentence in the registry.
