@@ -412,7 +412,8 @@ arithmetic — not an access at all).
 - **An all-ones field is not a semantic value.** A live dword (and its neighbour) reading 0xFFFFFFFF next to
   zeros elsewhere has two readings: the flag is on, or the record was `-1`-filled/uninitialised. State the
   value, label the meaning INFERENCE, and decide it with a take/no-take observation — clear the bit and count
-  hits at the branch TARGET — never by re-reading the value.
+  hits at the branch TARGET — never by re-reading the value (the two-breakpoint shape that does this per subject:
+  §Count BOTH sides of a branch).
 - **A live snapshot can CONTRADICT the registry, so keep the claim and the observation separate.** "Bit N is 0
   for all 8 factions" is a measurement with a time and a state; a later read that shows it set for one faction
   refutes the sentence, not the world. Report both (the value, then which prior row it retracts) and leave the
@@ -447,6 +448,43 @@ Corollary that applies to every harness: the verdict LINE must name which of the
 read the driver's return code BEFORE interpreting a zero-event stream. One wedge that reads as "never reached"
 costs an acceptance attempt and a wrong sentence in the registry.
 
+## Count BOTH sides of a branch: the test site and the take site, per subject
+
+A value read out of memory (a flag is set, a counter is 0) is a CORRELATION. Turning it into a causal claim costs
+one window with two silent breakpoints, not two runs: one at the TEST instruction (print the tested operand AND the
+subject register) and one at the TAKEN target (print the subject). Harness: `scripts/m117_gate_take.py`.
+
+- Print the counts per SUBJECT (register / stride), never one total: the table is what shows which subjects reach
+the branch and which take it, and a single total cannot distinguish "nobody reaches it" from "everybody reaches it
+and nobody passes".
+- Have the parser SHOUT when a printed subject value is not a multiple of the assumed stride. That assertion is what
+surfaced a decimal-vs-hex stride error that a well-formed-looking table had hidden.
+- Read the verdict the table earns: `tests > 0, takes == 0` = the gate is CLOSED on the measured state (a RESULT,
+exit 0, printed as "never taken"); `takes` with the tested bit CLEAR = the reading is FALSIFIED, and it is reported
+as falsified rather than re-interpreted; `tests == 0` = the site was never reached (exit 4, inconclusive).
+- Print "reached N x per turn" next to the take count. It separates "this gate cannot fire" from "the code never
+gets here", which are different findings and different next steps.
+- A closed-on-this-state result is not yet an inert branch: prove the CONSTRUCTION too (does any site set it, does
+any file in the format corpus carry it) before the word "inert" goes into the registry. Conversely an inert-by-
+construction proof still owes the reachability number, or it cannot say how the branch would behave if it ever opened.
+
+## An open item that names a CASE without naming its SWITCH is under-specified
+
+A footing line like "chooser case 7" is not yet a question: the switch it indexes is unnamed, and no amount of
+reading the nominally relevant function will find it. Locating the DISPATCH is the first deliverable, and it is
+cheap — enumerate every `jmp DWORD PTR [reg*4+table]` in the image and keep those preceded by a bound test
+(`cmp reg,0x7` / `ja`) — because the answer is usually that none of them sits in the address range the wording
+implies.
+
+- When that happens the valid close is the SEARCH NUMBERS, not an invented finding: "N jump tables scanned, M with a
+  7-bound, none inside 0x…-0x…" plus the question that would disambiguate (which switch, which enum, which entry
+  point). Record it in the registry so the next session starts from the scan instead of from the phrase.
+- Never substitute a nearby answer for the missing one. "The closest switch I could find" published as the finding
+  is worse than an open item with numbers: it retires the question with a wrong row.
+- The same test applies to any open item phrased by VALUE alone ("the negative-queue producer"): if a scan for the
+  literal value and for the obvious arithmetic both come back empty, the item is a shape question, and saying so
+  with the two scans' results is the honest end state.
+
 ## Two doc budgets, one fix: archive the settled middle, keep the RULES live (s171)
 
 `NEXT_PROMPT.md` (15.5k) and `NAMED.md` (250k) both hit their caps while still being the only place findings could be
@@ -470,3 +508,12 @@ enum global, resolve every string constant in the +/-10 instructions around each
 displacement form, so a heavily-read field looked unread and a live-verified behaviour looked unsupported. Rule: for any
 record field, grep the ABSOLUTE address of the field (base + stride + offset) AND the literal displacement, and report
 both counts. Same family as the M116 stride trap: the encoding, not the syntax, decides.
+
+## A switch is found by its TABLE, not by its `cmp .. ,0xN` (s171, M130)
+
+"chooser case 7" looked unlocatable because I scanned for `cmp <reg>,0x7` immediately before a jump-table jump in the
+chooser's own address range (0x5a6xxx-0x5aaxxx): 9 of 319 tables matched, none there. The real dispatch is in
+`FUN_00546800` at 0x54eafc, keyed on the RETURN VALUE of `FUN_00542ea0` (`call` -> `cmp eax,0x7` -> `ja` -> `jmp
+[eax*4+TABLE]`), i.e. the switch is in the CONSUMER of a helper, not in the "chooser" code. Rule: search all 319
+`jmp DWORD PTR [reg*4+imm]` sites for the ones behind a bound check on the SAME register in the previous ~6
+instructions, then read the table out of the PE to map every case; do not filter by the address range you expect.

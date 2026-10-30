@@ -128,7 +128,9 @@ mid-sentence twice — the milestone was done and accepted, the paperwork never 
   checkpoint at ~25**, stop measuring at 30-40, close at 40-50.
 - **Size a batch by instrument, not by ambition.** 3 milestones is comfortable, 5 is the ceiling and only when they
   share ONE instrument and one script (five field probes through a single `field_census`-style tool: one write, one
-  run, one evidence file, one PR). Unrelated milestones each cost their own harness, so 5 unrelated ones is really 5
+  run, one evidence file, one PR) — inside that one PR keep ONE commit and ONE registry block per milestone id, since
+  the registry rows are what make each finding findable later, and split the PR only when a member needs its own
+  acceptance. Unrelated milestones each cost their own harness, so 5 unrelated ones is really 5
   batches. Box-time milestones go **ONE per batch** — each is a 6-10 min window holding a three-invocation cap, and a
   mid-batch wedge strands every milestone queued behind it. State the batch size in the kickoff's BUDGET section so the
   next session does not re-learn it.

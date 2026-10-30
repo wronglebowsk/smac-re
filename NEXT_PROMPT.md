@@ -65,8 +65,11 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
   `[reg*4+0x98adb2]`, 0 literal `+0x2a]`) -> the "zero sites" item is RETRACTED; the chooser's pre/post-seek pair is in
   the code (0x497707 / seek 0x497717 / post 0x49771c); FUN_00546800's guard (faction bit 0x8000000 + 0x920434 != ebx +
   0x92044c bit 0x2) **consumes** that byte at 0x5469d3.
-- Pick from: chooser case 7 (the switch was NOT located — 9 of 319 jump tables have `cmp ...,0x7`, none in 0x5a6xxx-
-  0x5aaxxx), the negative-queue producer (no constant store and no `sub 0xca` — the mapping is arithmetic elsewhere).
+- **M130-M132 (m130_m132_chooser.py, all PASS):** the chooser's 8-way dispatch is `FUN_00546800` 0x54eafc on
+  `FUN_00542ea0`'s return (table 0x54ef34, case 7 = 0x54ec58 -> sets 0x920700=0xc, 0x92077c=1); 0x920434 is NOT a record
+  field (0 folded refs vs 0x92044c's 24); 0x92077c is a mode code tested vs 1/3/7 (copy vs 6), meaning unnamed.
+- Pick from: the negative-queue producer (no constant store, no `sub 0xca` — arithmetic elsewhere); what FUN_00542ea0
+  returns (the dispatch key, unnamed); 0x920700's 8 writers.
 
 ## LIVE FACTS / KIT
 
