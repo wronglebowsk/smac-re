@@ -413,3 +413,17 @@ at 0x5469d3. 0x92044c's bit 1 is a per-record "already consumed" marker for this
 global, NOT the +0 field of that record. **M132** ds:0x92077c: 4 writes (1,1,ebx,eax), 9 tests vs 1/3/7, a copy vs 6 at
 0x54eb1b; partner 0x920700 (8 writes) set in the same body -> a (state, mode) pair; meaning unnamed (no strings nearby).
 
+## M133-M142 (s171, all PASS) — ten censuses: the dispatch key, the 1436-byte stride, and eight field shapes
+
+`scripts/m133_m142_census.py`. **M133** FUN_00542ea0 (1456 B, 341 insns, 28 callees, only call site 0x54eaeb) is the
+chooser's dispatch key. **M137** its index folds to **359 dwords = 1436 BYTES** (0x542ed9-0x542eed: lea [v+v*4] ->
+lea [v*9] -> shl 3 -> sub v -> shl 2) loading `[eax+0x927590]`; 1436 == M104's 0x927a9c+fac*1436 stride, same record
+family, base 0x50c lower. **M134** ds:0x920700 UI state code (31 refs/8 writes; tests 6, 8, 0xd; case 7 sets 0xc).
+**M135** ds:0x94d7fc per-faction counter, -1 = unset (its `jl` at 0x5aafd8 is the other half of M124's skip).
+**M136** ds:0x927a78 = input of FUN_0059ec90 only (2 refs, 0 writes). **M138** 0x94d650 accumulator (261/34) vs
+0x94d654 companion (13/2, zeroed at 0x59f0c1). **M139** ds:0x91c630 upkeep-synch counter (27/34 refs in FUN_00521070,
+`inc` at 0x5213c6). **M140** ds:0x985afc read-dominant (336 refs / 5 writes) = run state, unnamed. **M141**
+FUN_00495480 (21 insns) cached-flag getter with a null guard (0 = no cache object, not "flag clear"). **M142**
+FUN_004026b0 (`ret 4`, 201 B) = LIST SEEK: index >= [obj+0x10] rejected, nodes walked via [node+0xc]/[node+0x10],
+cursor stored at [obj+0x14] — the mechanism behind M128.
+

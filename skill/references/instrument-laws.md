@@ -517,3 +517,11 @@ chooser's own address range (0x5a6xxx-0x5aaxxx): 9 of 319 tables matched, none t
 [eax*4+TABLE]`), i.e. the switch is in the CONSUMER of a helper, not in the "chooser" code. Rule: search all 319
 `jmp DWORD PTR [reg*4+imm]` sites for the ones behind a bound check on the SAME register in the previous ~6
 instructions, then read the table out of the PE to map every case; do not filter by the address range you expect.
+
+## A decompiler's `arr[i*N]` is an ELEMENT index - multiply by the width before calling it a stride (s171, M137)
+
+Ghidra printed `(&DAT_00927590)[param_1 * 0x167]` and it is tempting to name 0x167 (359) the record stride. The
+disassembly shows the index folded arithmetically (lea [v+v*4] -> lea [v*9] -> shl 3 -> sub v -> shl 2), i.e.
+`i*359*4` = **1436 bytes**, which is exactly the stride already known from M104 (0x927a9c+fac*1436). Always read the
+index-building instructions and the shl/mul width before quoting a stride from decompiled C; a factor-of-4 error here
+would have "discovered" a second record family that does not exist.

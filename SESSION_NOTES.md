@@ -576,3 +576,26 @@ folded `[reg*4+disp]` encoding; count BOTH forms before saying "no site reads X"
   9 tests against **1, 3, 7**, plus a copy compared to **6** at the dispatch (0x54eb1b, right after the case-1/2 body).
   Its partner `ds:0x920700` has 8 writes and is set in the same case-7 body, so the two form a (state, mode) pair.
   Meaning NOT named: no string constant sits within 8 instructions of any write — recorded as a bounded unknown.
+
+## Session 171 (cont. 21) — M133-M142, ten censuses, all PASS (`scripts/m133_m142_census.py`)
+
+SUMMARY M133=PASS ... M142=PASS (evidence/m133_m142.log). Highlights with numbers:
+
+- **M133** FUN_00542ea0 (1456 B, 341 insns, 28 callees) is the chooser's dispatch key; its ONLY call site is 0x54eaeb.
+- **M137** its index arithmetic at 0x542ed9-0x542eed folds to **359 dwords = 1436 BYTES**: `lea [esi+esi*4]` (5v) ->
+  `lea [eax+eax*8]` (45v) -> `shl 3` (360v) -> `sub esi` (359v) -> `shl 2` (1436) -> `mov ecx,[eax+0x927590]`.
+  **1436 is exactly M104's record-block stride** (0x927a9c+fac*1436) — same per-faction record family, base 0x50c lower.
+  The decompiler's `param_1*0x167` is an ELEMENT index, not a byte stride.
+- **M134** ds:0x920700 = UI state code: 31 refs / 8 writes, tested vs 6, 8, 0xd, set to 0xc by chooser case 7.
+- **M135** ds:0x94d7fc (per-faction) = counter with **-1 = unset** (8 writes incl. 0xffffffff); its `jl` at 0x5aafd8 is
+  the OTHER half of the band-flag skip that M124 named.
+- **M136** ds:0x927a78: exactly 2 refs, both inside FUN_0059ec90 -> an input of the advance-budget routine (bounded).
+- **M138** 0x94d650 / 0x94d654 = accumulator + per-step companion (261/34 vs 13/2 refs/writes).
+- **M139** ds:0x91c630 = upkeep-synch counter (27 of 34 refs in FUN_00521070; incremented at 0x5213c6 after the second
+  "Skipping upkeep synch").
+- **M140** ds:0x985afc = read-dominant (336 refs / 5 writes) -> run state, NOT a counter; meaning unnamed.
+- **M141** FUN_00495480 (21 insns) = cached-flag getter with a null guard -> the `and eax,0x20` at 0x49772a tests a
+  cached field's bit; 0 means "no cache object", not "flag clear".
+- **M142** FUN_004026b0 (201 B, `ret 4`) = the LIST SEEK: rejects index >= [obj+0x10], walks nodes via [node+0xc] /
+  [node+0x10], stores the cursor at **[obj+0x14]** — the mechanism behind M128's pre/post-seek pair.
+Law added: a decompiler's `arr[i*N]` is an ELEMENT index; multiply by the element width before calling it a stride.
