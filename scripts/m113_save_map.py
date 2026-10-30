@@ -101,6 +101,24 @@ def scan_all(pid, wanted):
     return found, scanned
 
 
+def local_1to1(pid, save_bytes, off, dest, w=8):
+    """Do the w bytes either side of the marker match the file? A hit proves the marker landed; this proves the
+    mapping around it is 1:1, which is the assumption every later diff leans on (M114's error was leaning on a
+    mapping constant across a boundary)."""
+    lo, hi = max(0, off - w), min(len(save_bytes), off + w)
+    try:
+        fd = os.open("/proc/%d/mem" % pid, os.O_RDONLY)
+        try:
+            mem = os.pread(fd, hi - lo, dest - (off - lo))
+        finally:
+            os.close(fd)
+    except OSError:
+        return None
+    if len(mem) != hi - lo:
+        return None
+    return sum(1 for a, b in zip(save_bytes[lo:hi], mem) if a != b)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default="m113map1")
@@ -135,6 +153,7 @@ def main():
     pid = M.find_pid()
     nu, nb = counts(pid)
     found, scanned = scan_all(pid, set(marks.values()))
+    save_bytes = open(src, "rb").read()
     lines = ["M113 .SAV map by poke — %s -> %s, %d markers of 0x%08x|x, step %d" %
              (a.save, a.poked, len(marks), BASE_MARK, a.step),
              "  load rc=%d  counts %d/%d (m54b_clean = 67/18)  scanned %.1f MB" %
@@ -147,7 +166,9 @@ def main():
         hits = found[v]
         if hits:
             hit_off += 1
-            lines.append("  %11d   0x%08x   %s" % (off, v, " ".join("0x%x" % h for h in hits[:4])))
+            d = local_1to1(pid, save_bytes, off, hits[0])
+            tag = "" if d == 0 else ("  LOCAL_DIFF %d B" % d if d is not None else "  LOCAL_?")
+            lines.append("  %11d   0x%08x   %s%s" % (off, v, " ".join("0x%x" % h for h in hits[:4]), tag))
         else:
             missing += 1
             lines.append("  %11d   0x%08x   (absent)" % (off, v))

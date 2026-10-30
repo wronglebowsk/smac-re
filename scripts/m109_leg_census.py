@@ -194,8 +194,29 @@ def main():
         if not os.path.exists("/proc/%d" % g.pid):
             break
         time.sleep(0.5)
+    # A census that PRINTS ITS VERDICT while gdb is still attached leaves the box unusable for the next run:
+    # gdb survived the SIGINT with all bps inserted in m111b3 and m112a1, and the harness still reported a
+    # result. Kill it by pid, then PROVE the box is clean instead of assuming it.
+    for sig in (signal.SIGTERM, signal.SIGKILL):
+        if not os.path.exists("/proc/%d" % g.pid):
+            break
+        try:
+            os.kill(g.pid, sig)
+        except ProcessLookupError:
+            break
+        for _ in range(20):
+            if not os.path.exists("/proc/%d" % g.pid):
+                break
+            time.sleep(0.5)
     subprocess.run(["kill", "-CONT", str(pid)], capture_output=True)
     log.close()
+    tracer = "?"
+    try:
+        for line in open("/proc/%d/status" % pid):
+            if line.startswith("TracerPid:"):
+                tracer = line.split()[1]
+    except OSError:
+        pass
 
     text = open(lpath, errors="replace").read()
     legs = []
@@ -211,7 +232,7 @@ def main():
     savefile = sf[0].split()[1] if sf else "NEVER"
     lines = [f"M109c leg census — {a.save}, pid {pid}, {len(legs)} executed read sites, "
              f"{len(errs)} gdb errors, counts {nu}/{nb}",
-             f"  ranges {a.ranges}  filter_file={a.filter_file}  savefile={savefile}",
+             f"  ranges {a.ranges}  filter_file={a.filter_file}  savefile={savefile}  TracerPid={tracer}",
              f"  sum(size*count) = {total:,}  vs file {file_size:,}  -> {file_size - total:,}"]
     off = 0
     for site, dest, size, cnt in legs:
@@ -233,6 +254,10 @@ def main():
         print("EXIT 3: 0 read calls — the load never ran (a bp conditioned on *($esp) freezes the game; "
               "see the instrument laws). This is NOT a measurement.", flush=True)
         return 3
+    if tracer != "0":
+        print("EXIT 8: the box is NOT CLEAN — TracerPid=%s after teardown (gdb %d). The measurement above may be "
+              "sound, but kill that gdb by pid before anything else touches the box." % (tracer, g.pid), flush=True)
+        return 8
     if closed:
         return 0
     print("EXIT 4: PARTIAL — %d of %d bytes unaccounted; a partial census is not a closure."

@@ -143,7 +143,9 @@ records are rewritten by post-load processing (which is also why a read census o
 both at the first offset; grid 82,088..172,200 (k=0x40925B0) 10 bytes, starting at the first offset. So the save is
 restored **1:1**; only the leading bytes of the header/grid and the 52-record array's 2 dwords diverge. **A diff
 window that straddles a region boundary compared with one region's k manufactures diffs that look exactly like
-rewriting** — an earlier version of this note claimed two "rewritten tails" that were only that artifact. `m54a_load.py` returns
+rewriting** — an earlier version of this note claimed two "rewritten tails" that were only that artifact. Use
+`scripts/save_diff.py`: it derives the regions from the anchors, refuses a range that crosses a known boundary
+(67,852 / 82,088 / 172,200 / 172,291 / 222,783) and names it (`test_save_diff.py` PASS 7/7). `m54a_load.py` returns
 **4** when the HUD is reached but its liveness probe fails — with counts correct that is a GOOD load; judge a map
 run on the anchors and counts, not on that probe (`m113_save_map.py` accepts rc 0 and 4, fails only 1/3). The harness
 refuses 60+ markers on purpose: that many pokes mutilate counts and pointers and the load stops meaning anything. This is the only

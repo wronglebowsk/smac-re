@@ -384,3 +384,20 @@ at the START of the map header and the START of the grid, plus the 2 dwords alre
 0x95D70C holds 65,535 in BOTH the file and memory, i.e. no rewrite there.
 LAW: a diff window must lie WHOLLY inside one region — a window across a boundary compared with one region's `k`
 manufactures diffs that look exactly like real rewriting.
+
+## Session 171 (cont. 10) — the two systemic fixes, as CODE (not advice)
+
+1. **`scripts/save_diff.py` + `scripts/test_save_diff.py` (PASS 7/7)** — the region guard M114 needed. It derives
+   regions from the poke anchors (`k = dest - off`), refuses any range that crosses a KNOWN section boundary
+   (67,852 block B / 82,088 grid / 172,200 trailer / 172,291 next section / 222,783 52-records — each derived from
+   an anchor plus its documented destination base, not a midpoint), and names the boundary it refused on.
+   The two windows M114 merged are now REFUSED BY THE TOOL (`67072-69120` -> boundary 67,072; `81408-82100` ->
+   the grid start), so the next session cannot repeat that comparison by accident.
+2. **`scripts/m109_leg_census.py` teardown** — after the verdict it SIGTERM/SIGKILLs gdb by pid in a loop, then
+   READS `TracerPid` from /proc and records it in the log header; if it is not 0 the harness exits **8** with the
+   pid to kill. Two runs today (m111b3, m112a1) printed a verdict while gdb was still attached to the game.
+3. **`scripts/m113_save_map.py` now verifies every anchor LOCALLY** (`local_1to1`, ±8 B by default): a hit proves
+   the marker landed, the local comparison proves the mapping AROUND it is 1:1, which is the assumption every
+   later diff leans on. Checked against the live box: 64,000->0x95CB04, 68,096->0x927684, 81,408->0x92AB6C (±64),
+   82,432->0x40A67B0 (±64) and 174,000->0x986501 all return 0 local diffs — which independently confirms that
+   M114's "map header tail" was the straddle artifact and nothing else.

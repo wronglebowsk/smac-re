@@ -1260,3 +1260,12 @@ map header (79,364..82,088, k=0x916D6C) 2 bytes, both at the FIRST offset; grid 
 bytes starting at the FIRST offset. The .SAV is restored 1:1; the only divergences are those leading bytes plus the
 52-record array's 2 dwords (222,831 cleared, 223,152 field normalised).
 
+## M115 (s171) — the guard is now code: save_diff.py refuses boundary-crossing ranges; the census proves a clean box
+
+`scripts/save_diff.py` (+ `test_save_diff.py` PASS 7/7): regions from the poke anchors, KNOWN section boundaries
+67,852 / 82,088 / 172,200 / 172,291 / 222,783 (each derived from an anchor plus its documented dest base), refuses
+a range that crosses one and names it — M114's two windows are refused by the tool. `m109_leg_census.py` now
+SIGTERM/SIGKILLs gdb by pid after its verdict, reads `TracerPid` into the log header and exits **8** if the box is
+not clean. `m113_save_map.py --verify` (default ±8 B `local_1to1`): every anchor is checked against the file
+locally — live check 64,000/68,096/81,408(±64)/82,432(±64)/174,000 all 0 diffs.
+
