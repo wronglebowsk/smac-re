@@ -48,16 +48,15 @@ the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); i
 FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**M111/M112 RESOLVED, M113 ACCEPTED (m113map1 20/20, m113map2 24/25 — boundaries now bracketed to 2 KB).**
+**M111/M112 RESOLVED; M113 CLOSED (m113map1 20/20, m113map2 24/25, m113map3 19/20) — the .SAV map is anchored.**
 Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d/0x5966c1/0x596715/0x596769/0x5967bd/
 0x59683b) -> heap 0x915758..0x3c4b3f8. **M110's "0..242,383 / 156 B unread" RETRACTED.**
-Anchors (1:1 inside a section, JUMP across a boundary): block A -> block B bracketed 66,048->0x95d304 /
-68,096->0x927684 (split 67,840 inside); grid -> next section bracketed 171,192->0x40bc268 / 173,240->0x986209
-with the 91-B map trailer inside it (172,287->0x15e2baf); 174,000..180,144 -> 0x986501..0x987d01; grid run
-98,304..171,192 all +0x800; 196,608..212,992 -> 0x98bf49..0x98ff49; 227,144/229,192 -> 0x95dd7d/0x95e57d.
-**OPEN: 223,048 is ABSENT** while 221,000 (0x92c8f9) and 225,096 (0x933b81) are present — a hole inside the
-52-record block (~222,783, 0x933278). Chase it with `--band 222000-224500:128`: either a gated record or a field
-the loader rewrites after the copy.
+Map: 1:1 inside a section, JUMP across a boundary. block A -> block B bracketed 66,048->0x95d304 / 68,096->0x927684; grid -> next section bracketed 171,192->0x40bc268 / 173,240->0x986209 with the 91-B
+map trailer inside (172,287->0x15e2baf); 174,000..180,144 -> 0x986501..0x987d01; grid 98,304..171,192 all
++0x800; 196,608..212,992 -> 0x98bf49..0x98ff49. **52-record base = file 222,783 -> 0x933278, to the byte**
+(222,896->0x9332E9, step +0x80 per +128 B).
+RESIDUAL: the one "absent" marker MOVES (223,048 -> 0x933351 = record 4 byte 9; 223,152 -> 0x9333E9 = record 7
+byte 5), neighbours 128 B away present — not an unread region but dwords rewritten by post-load processing.
 LAW: identify bytes by POKING a marker and finding it in memory (a read census over-runs, a subset-sum is
 underdetermined); the harness caps at 60 markers — 60+ pokes mutilate counts and pointers.
 

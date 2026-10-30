@@ -302,6 +302,32 @@ survives what the census fails at:
 Harness template: `scripts/m112_trailer_poke.py` (no gdb, ~10 min, cheaper than a third census on a shape
 that already failed).
 
+## Extract a LAYOUT with anchors: many markers, one scan
+
+The same poke answers "where does file offset X land?". Plant a UNIQUE 4-byte marker at each of N known
+offsets, load once, and scan every readable region for all N values in ONE pass (`os.pread` per region, one
+`find` per value). Each hit is an exact (offset -> destination) anchor, and anchors chain into the layout:
+inside a section the mapping is 1:1 (equal offset deltas, equal destination deltas), and a section BOUNDARY is
+where the destination JUMPS while the offset keeps stepping. Harness `scripts/m113_save_map.py --tag <t>
+--relaunch --step 16384`: 20 markers gave 20/20 anchors on a .SAV, three slope-1 runs, the grid at 0x40a6660,
+and two leg sizes corroborated TO THE BYTE from neighbouring anchors (176 B and 4,096 B) — a layout claim no
+byte sum had been able to make.
+
+- **Keep the marker count small and CONCENTRATED.** 60+ scattered pokes land in counts, pointers and length
+  fields; the load then fails or parses garbage and every anchor means nothing. Make the harness refuse a
+  dense sweep ("60+ markers is a mutilation, not a map") and refine with bands: `--band lo-hi[:step]`, e.g.
+  four 2 KB bands around the boundaries already bracketed to 16 KB.
+- **A MISSING marker is a finding, not a failed poke.** With present neighbours on both sides, an absent
+  offset is a region the loader does not restore verbatim — a gated leg or a field rewritten after the copy.
+  Bracket it with a finer band and report it; do not re-run the same step hoping it appears.
+- **Boundaries are named by an anchor PAIR.** Report the last anchor of one run and the first of the next
+  ("block A -> block B between 66,048 and 68,096, the documented 67,840 split inside it") so the next session
+  narrows with one run instead of re-deriving the table.
+- **A subset-sum over candidate legs is NOT a map.** Solving "which optional sections are live" by requiring
+  the sizes to sum to the file admits a huge family of exact answers (181,769 decompositions of one
+  242,539 B file, even after the map size constant was corrected) — an answer set that large cannot pick a
+  layout. Only a content constraint or an anchor filters it; do not spend a run on the arithmetic.
+
 ## A hot address band starves the driver — arm by relevance, not by address range
 
 Band-based site selection is a convenience that fails silently. The MSVC CRT band 0x62b000-0x62d000 holds 31
