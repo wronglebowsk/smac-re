@@ -344,3 +344,20 @@ address to chase, and the harness gained `--band lo-hi[:step]` plus a hard cap o
   loader's post-processing after the bulk copy. That also explains the census's re-read/over-run pattern.
 So M113 closes with: three boundaries bracketed to the KB (attempt 2), the record block's base pinned to the byte
 (attempt 3), and one residual class of rewritten fields, named and located, instead of an unexplained 156-B hole.
+
+## Session 171 (cont. 8) — M114 (zero box time): the .SAV is restored 1:1; live rewriting is confined to two zones
+
+Method: with the poked save loaded, diff `/proc/<pid>/mem` against the FILE at the anchor-derived mapping
+`dest = off + k`, 1 KB windows at 12 anchors spread over the whole file. **10 of 12 windows are byte-identical**
+(k constant within a region: block A 0x94D104, grid 0x40925B0, the post-map section 0x95BD51, 196,608/212,992 ->
+0x95BF49, 52-records 0x926635). The two exceptions:
+- **map header tail: file 81,408..82,100 differs (665 bytes, contiguous)** — the game rewrites the end of the
+  2,724-B map header on load (the grid itself at 82,432 is clean).
+- **block A tail: file 67,080..67,143 differs (238 bytes) with a 16-byte STRIDE, 2 bytes per hit** — a per-record
+  u16 array the load recomputes (first hits 67,080/67,081, 67,096/67,097, 67,112/67,113 ...).
+And the 52-record array (3,484 B, base file 222,783 -> 0x933278) differs in exactly **2 dwords**:
+222,831 `0x0003FFFF -> 0x00000000` (the game clears it) and the poked field at 223,152 whose top byte came back
+`0xC0 -> 0xD6` (the game normalises that field). That is the whole residual: two zones plus one normalised field,
+not an unread region.
+Also from the anchors: block B's base is file **67,852** -> 0x927590 (the documented 67,840 is 12 B early), pinned
+by 68,096 -> 0x927684.
