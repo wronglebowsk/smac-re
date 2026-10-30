@@ -188,9 +188,13 @@ def main():
     print(out, flush=True)
     with open(os.path.join(M.EVID, a.tag + ".log"), "w") as fh:
         fh.write(out + "\n")
-    rc = 0 if (not tests or takes) else 4
+    # Exit semantics: a NEGATIVE result is still a result. "tests > 0, takes == 0" means the gate is CLOSED on
+    # this state, which is what M117 set out to find, and must not look like a broken run (it did: m117g2 exited 4).
+    rc = 0
     if p.returncode != 0:
-        rc = 5
+        rc = 5          # wedge / no orders -> NO MEASUREMENT
+    elif not tests:
+        rc = 4          # the site was never reached -> inconclusive, not a gate result
     if tracer(pid) != "0":
         print("EXIT 8: box not clean (TracerPid=%s) — kill gdb %d by pid" % (tracer(pid), g.pid), flush=True)
         rc = 8

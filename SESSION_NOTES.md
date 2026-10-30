@@ -438,3 +438,12 @@ the 17 `or` sites, none of which sets 0x40). `scripts/m116_band_flag.py` now car
 "matches NAMED" when no faction has the bit.
 Also: m117g1 was a WEDGE (`smac_play` rc=5, HUD byte-static 61 s) — the harness now reports a wedge as
 **NO MEASUREMENT** instead of "the test was never reached", because those are different facts.
+
+## Session 171 (cont. 13) — the M117 harness called a NEGATIVE RESULT a failure (exit 4)
+
+`m117g2` exited **4** because its code was `rc = 0 if (not tests or takes) else 4` — i.e. "the gate was reached and
+never taken" was encoded as a failure. That is the milestone's actual FINDING (17 test hits, 0 takes, bit 0x40 clear
+for all eight), so the harness was mislabelling its own result. Fixed:
+`rc = 0` whenever the site was reached (take or no take), `4` only when the site was never reached (inconclusive),
+`5` for a wedge (no measurement), `8` for a dirty box. Same class as m111b3/m112a1's stale-gdb "success": an exit
+code that does not mean what its reader will assume.

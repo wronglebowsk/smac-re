@@ -55,11 +55,11 @@ Map (poke anchors, k per region): block A 0x94D104; block B base 67,852 -> 0x927
 0x40925B0 at 0x40a6660; 16,000 @172,291; 52 records 222,783 -> 0x933278. Restore **1:1**; ranges via `save_diff.py`.
 **M116+M117: the gate is a BYTE test** — `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f (FUN_005aadf0+0x18f, take
 0x5aaf88); 17 `or` sites there, **none sets 0x40** (18 whole-dword stores are the candidates). `--tag m117g2
---turns 1 --relaunch`: **17 test hits, 0 takes**, factions 1..7 every round -> inert ON THIS STATE, branch live.
+--turns 1 --relaunch`: **17 test hits, 0 takes**, factions 1..7 -> inert here, branch live.
 **STRIDE TRAP: NAMED's `f*8380` is DECIMAL 8,380 = 0x20BC, not hex 0x8380** — M116's first live table divided by
 0x8380 and mislabelled factions (RETRACTED; true words 0,0,0x04000000,0,0,0,0x10000000,0). NEXT: watch the 18
-stores for a 0x40 setter.
-LAW: identify bytes by POKING a marker and finding it in memory; cap 60 markers.
+stores for a 0x40 setter (rc: 0 measured, 4 never reached, 5 wedge).
+LAW: identify bytes by POKING a marker; cap 60 markers.
 
 ## STILL OPEN
 
