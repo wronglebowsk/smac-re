@@ -1236,3 +1236,11 @@ block A -> block B bracketed 66,048 (0x95d304) / 68,096 (0x927684), split 67,840
 bracketed 171,192 (0x40bc268) / 173,240 (0x986209), the 91-B map trailer inside it; 174,000..180,144 ->
 0x986501..0x987d01 step 0x800. **223,048 is ABSENT** while its neighbours (221,000 / 225,096) are present — an
 offset inside the 52-record block (~222,783) that the load does not restore verbatim. New flag `--band lo-hi[:step]`.
+## M113c (m113map3, s171) — 128-B band: the record array maps 1:1, the "absent" offset MOVES (fields are rewritten)
+
+`m113_save_map.py --tag m113map3 --relaunch --step 128 --band 222000-224500:128`: 20 markers, counts 67/18,
+**19/20 found**. 222,896 -> 0x9332E9, 223,024 -> 0x933369, 223,280 -> 0x933469, 224,432 -> 0x9338E9 (step +0x80
+per +128 B) → the 52-record array's base is **file 222,783 -> 0x933278**, to the byte. The absent offset is
+223,152 here but was 223,048 in m113map2 (expected dests 0x9333E9 and 0x933351 = record 7 byte 5 and record 4
+byte 9), with present neighbours 128 B away: **not an unread region** — individual dwords in the 52-B records are
+rewritten by post-load processing. `m54a_load.py` returned rc=4 (HUD live-check) with counts already correct.

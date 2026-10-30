@@ -60,6 +60,15 @@ commit in `git log` that is not yours — do not read that as history having bee
 submit gave it, so a resubmit after a FAIL→PASS flip lands a green head under a stale verdict title:
 fix it yourself with `gh pr edit <n> --title` before merging.
 
+**If `gh pr create` (or `submit`) dies with `GraphQL: Something went wrong`, open the PR over REST instead of
+re-running submit in a loop.** The branch is already pushed, so only the PR object is missing:
+`curl -s -X POST -H "Authorization: bearer $(gh auth token)" -H "Accept: application/vnd.github+json"
+https://api.github.com/repos/<owner>/<repo>/pulls -d '{"title":"…","head":"<branch>","base":"main","body":"…"}'`
+(HTTP 201 = created; check auth and rate limit first — `gh api rate_limit` — so a genuine credential problem is
+not mistaken for this). `gh pr checks <n>` and `milestone.py merge <n>` then work normally. Before merging,
+confirm exactly ONE open PR for that head (`gh pr list --head <branch> --state open`) — a retried create can
+leave a duplicate.
+
 **The gate has two more checks that silently cost a run.** (1) *Address registry*: a milestone that names
 a function or pins an address must add `NAMED.md` rows in the same commit, otherwise the gate prints
 `[WARN] address registry: NAMED.md untouched` — the verdict stays GREEN and merge still proceeds, so a

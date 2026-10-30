@@ -327,3 +327,20 @@ Boundaries, now bracketed by adjacent runs rather than assumed:
 
 So two of three boundaries are now pinned to the KB, the third (record area) has a specific open question with an
 address to chase, and the harness gained `--band lo-hi[:step]` plus a hard cap of 60 markers.
+
+## Session 171 (cont. 7) — M113 attempt 3 (m113map3): the "hole" is not a hole — the 52-record array maps 1:1 and a few FIELDS are rewritten after the copy
+
+`python3 scripts/m113_save_map.py --tag m113map3 --relaunch --step 128 --band 222000-224500:128` — 20 markers at
+128-B spacing, load counts 67/18, 522.5 MB scanned, **19/20 found**. (`m54a_load.py` returned rc=4, its HUD
+"live" check failing while counts were already correct — the load itself ran; the harness treats rc!=0 as exit 6.)
+
+- The 52-record array maps **1:1 with an odd base**: 222,896 -> 0x9332E9, 223,024 -> 0x933369, 223,280 ->
+  0x933469, ..., 224,432 -> 0x9338E9, every step +0x80 for +128 B. The base is **file 222,783 -> 0x933278**
+  (0x9332E9 = 0x933278 + 113 = 0x933278 + (222,896 - 222,783)), which pins the block start that the leg list only
+  guessed.
+- **The absent offset MOVED**: 223,048 in m113map2, 223,152 in m113map3. Expected dests 0x933351 (record 4, byte 9
+  of 52) and 0x9333E9 (record 7, byte 5). Different fields in different runs, both with present neighbours 128 B
+  away — so this is **not an unread region**; a handful of dwords in the 52-byte records are rewritten by the
+  loader's post-processing after the bulk copy. That also explains the census's re-read/over-run pattern.
+So M113 closes with: three boundaries bracketed to the KB (attempt 2), the record block's base pinned to the byte
+(attempt 3), and one residual class of rewritten fields, named and located, instead of an unexplained 156-B hole.

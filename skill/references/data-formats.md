@@ -133,8 +133,11 @@ Region boundaries are where the destination JUMPS. A band refinement (`--band lo
 2 KB: `--tag m113map2`) brackets them: block A -> block B between **66,048 (0x95d304)** and **68,096
 (0x927684)** — the 67,840 split falls inside; grid -> next section between **171,192 (0x40bc268)** and
 **173,240 (0x986209)**, with the 91-B map trailer (file 172,200..172,291) inside that bracket; 174,000..180,144
--> 0x986501..0x987d01 at step 0x800. **One offset is ABSENT: 223,048**, between present neighbours 221,000
-(0x92c8f9) and 225,096 (0x933b81) — a hole inside the 52-record block (~222,783), still unexplained. The harness
+-> 0x986501..0x987d01 at step 0x800. The 52-byte record array maps 1:1 with an odd base: **file 222,783 -> 0x933278** (222,896 -> 0x9332E9,
+223,024 -> 0x933369, every +128 B giving +0x80, to the byte). One offset reads ABSENT and **the absent one
+MOVES**: 223,048 (dest 0x933351 = record 4 byte 9) in m113map2, 223,152 (0x9333E9 = record 7 byte 5) in
+m113map3, each with present neighbours 128 B away — so it is NOT an unread region: individual dwords in the 52-B
+records are rewritten by post-load processing (which is also why a read census over-ran). The harness
 refuses 60+ markers on purpose: that many pokes mutilate counts and pointers and the load stops meaning anything. This is the only
 instrument that has held on this file: a read census over-ran its own file (+468, +144) and a subset-sum over the
 legs admits 181,769 exact decompositions, while an anchor is an exact (offset, address) pair.

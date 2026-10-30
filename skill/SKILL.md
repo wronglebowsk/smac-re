@@ -103,6 +103,12 @@ stop-after-one rule. Work through that chapter's milestones, writing the doc + e
 after each, and report once at the end — including what is still open. Do not relabel a
 partial result as done to make the chapter look finished (see `MILESTONES.md` F2).
 
+**A bare "keep going" after a report is approval for the recommendation, not a request for more analysis.**
+When your report ends by naming the next step (merge PR N, spend the next acceptance, write the plan into the
+pick), the go-ahead means DO that step and report in one screen — including `milestone.py merge <n>` on a green
+PR. Re-asking or re-summarising costs a turn and reads as stalling; the discipline that still binds is one
+milestone per merge and three acceptance invocations, not one question per step.
+
 ### The context ceiling is part of the task, not an accident
 
 Hermes' compressor resolves to the MAIN model (`auxiliary.compression: provider: auto`) and cannot
@@ -176,9 +182,12 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   re-flowing trade characters for characters (joining wrapped lines saves 1 B/line, not the paragraph width)
   and the check stays red. Well over, move footing into `FOOTING.md` or a `references/` file and leave a
   pointer (session 75 did this with the M48d->M53s rebuild model).
-  **Confirm the edit LANDED, not just that it measured well**: a size-check loop over an in-memory copy
-  writes nothing — `grep` the phrase you claim to have added, or `git diff --stat`; a printed byte count is
-  not a write.
+  **Confirm the edit LANDED, not just that it measured well**: build the replacement AND write it in the SAME
+  `execute_code` cell. A cell that computes the new text, prints its size and defers the write loses it — the
+  next cell re-reads the file from disk and rewrites the OLD content (this happened twice in one session). If
+  the size check fails, trim inside that same cell; then `grep` the phrase you claim to have added, or
+  `git diff --stat`. The checkpoint gate names the miss (`not updated: NEXT_PROMPT.md`): read that line as
+  "the write never landed", not as a stale-file complaint.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
   moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
@@ -437,7 +446,10 @@ zeros-fraction pitfall. **The last 156 B of every save is a fixed TRAILER, not g
 152 B are identical across nine saves, only the trailing dword varies, and its offset moves with the file
 size, so no hard-coded leg can index it; Its reader is the **6-site per-entity loop** that restores each row into per-entity heap records
 (stride `0x224B8`), proved by POKING a marker into the rows and finding it in memory — never by a byte sum
-(`references/data-formats.md` §`.SAV` trailer; `references/instrument-laws.md` §Identify bytes).
+(`references/data-formats.md` §`.SAV` trailer; `references/instrument-laws.md` §Identify bytes). The offset->
+memory map itself is anchored the same way: `scripts/m113_save_map.py` plants markers at known offsets and
+reports where each lands — 1:1 inside a section, a JUMP at a boundary (`references/instrument-laws.md`
+§Extract a LAYOUT with anchors, `references/data-formats.md` §anchors).
 Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
 `FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
