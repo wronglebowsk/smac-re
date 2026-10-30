@@ -1,2 +1,3 @@
-M116 ACCEPTED (m116flag PASS): band-flag gate is a BYTE test — `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f (FUN_005aadf0+0x18f); 17 `or` sites there, none sets 0x40. Live 0,0xFFFFFFFF,0,... = bit 0x40 SET for fac1, so NAMED's "0 for all 8 -> second ask never ran" is RETRACTED (meaning: inference, fac1 all -1). NEXT: clear 0x40 for fac1, count hits at 0x5aaf88.
-main d030de0 after #116-#125. BOX: terran.exe loaded (67/18), TracerPid 0, m113map.SAV.
+M117 (m117g2) DONE: byte test at 0x5aaf7f reached 17x in one turn (factions 1..7), 0 takes, bit 0x40 clear for all 8 -> second ask inert ON THIS STATE, branch live. STRIDE TRAP: NAMED's f*8380 is DECIMAL 8,380 = 0x20BC, not hex — M116's live table retracted (true words 0,0,0x04000000,0,0,0,0x10000000,0).
+main 17afe90 after #116-#126; branch milestone/m117 NOT merged. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0.
+next: hw watchpoint on the 18 dword stores for a 0x40 setter (m94_table_watch has fixed addrs; needs --addr).

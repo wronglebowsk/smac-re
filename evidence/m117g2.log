@@ -1,0 +1,15 @@
+M117 gate take — m117g2, 1 turn(s), 17 test hits, 0 take hits, gdb errors 0
+  faction   bit0x40   reached test   took branch
+  -------   -------   ------------   -----------
+        0   clr         10              0
+        1   SET          7              0
+        2   clr          0              0
+        3   clr          0              0
+        4   clr          0              0
+        5   clr          0              0
+        6   clr          0              0
+        7   clr          0              0
+  esi values seen: 0x20bc 0x4178 0x6234 0x82f0 0xa3ac 0xc468   **NOT multiples of 0x8380: the f column is wrong**
+  takes with the bit CLEAR: none
+  bit set but never taken: [1]
+  VERDICT CONSISTENT-BUT-EMPTY: the test was reached 17 time(s) and never taken while bit 0x40 is set only for 1 — re-run on a state where a faction has the bit set and the branch is live

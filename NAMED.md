@@ -1253,14 +1253,25 @@ SIGTERM/SIGKILLs gdb by pid after its verdict, reads `TracerPid` into the log he
 not clean. `m113_save_map.py --verify` (default ±8 B `local_1to1`): every anchor is checked against the file
 locally — live check 64,000/68,096/81,408(±64)/82,432(±64)/174,000 all 0 diffs.
 
-## M116 (m116flag, s171, PASS) — the band-flag gate is a BYTE test; no OR sets 0x40; "0 for all 8" is FALSE at this state
+## M116+M117 (s171) — the band-flag gate: BYTE test at 0x5aaf7f, reached 17x/round, never taken; stride is DECIMAL
 
-`test BYTE PTR [esi+0x94d430],0x40` exists exactly once, at **0x5aaf7f** in **FUN_005aadf0+0x18f**, three
-instructions after `mov [esi+0x94d800],eax` (FUN_005aab70 threshold reload). 170 instructions touch the
-displacement; its 17 `or` sites set 0x800000..0x80000000 and 0x2 — **none sets 0x40**, so the bit can only arrive via
-a whole-dword store (18 sites). Live words at 0x94d430+f*0x8380: 0, **0xFFFFFFFF**, 0, 0, 0, 0, 0, 0 -> bit 0x40 SET
-for faction 1, zero for the rest. **The old row "bit 0x40 = 0 for all 8 factions at r66 -> the M89 second-ask never
-ran" is RETRACTED as a measurement**; whether the gate MEANS "second ask enabled" stays INFERENCE because faction 1's
-dword and 0x94d434 are both 0xFFFFFFFF (also the shape of a -1-filled record). Controlled test: clear the bit for
-faction 1 and count hits at 0x5aaf88.
+Static (M116, stands): `test BYTE PTR [esi+0x94d430],0x40` exists exactly once, at **0x5aaf7f** in
+**FUN_005aadf0+0x18f** (taken branch 0x5aaf88). 170 instructions touch the displacement; its 17 `or` sites set
+0x800000..0x80000000 and 0x2 — **none sets 0x40**, so the bit can only arrive via a whole-dword store (18 sites).
+Live (M117, `m117_gate_take.py --tag m117g2 --turns 1 --relaunch --save m54b_clean.SAV`, bps at 0x5aaf7f +
+0x5aaf88): **17 test hits, 0 takes**; factions 1..7 reach the test every round (0 never); bit 0x40 clear for all
+eight -> the M89 second ask is inert ON THIS STATE with the branch live, so the open question is what SETS 0x40.
+**CORRECTION:** the stride in NAMED's `f*8380` is **DECIMAL 8,380 (0x20BC)**, not hex 0x8380 — M116's first live
+table divided by 0x8380, sampled factions 0,4,8.. and wrongly reported "0xFFFFFFFF for faction 1". True words:
+0, 0, 0x04000000, 0, 0, 0, 0x10000000, 0.
+## M117 (m117g2, s171) — the byte test is reached 17x a round and never taken; stride is DECIMAL
+
+`m117_gate_take.py --tag m117g2 --turns 1 --relaunch --save m54b_clean.SAV` (bps at 0x5aaf7f + 0x5aaf88):
+**17 test hits, 0 takes**, factions 1..7 reach the test each round (0 never). With bit 0x40 clear for all eight the
+M89 second ask is inert ON THIS STATE while the branch stays live — so the question is what SETS 0x40 (no `or` does;
+the 18 dword stores are the candidates).
+**CORRECTION to M116's live half:** the faction stride in NAMED's `f*8380` is **DECIMAL 8,380 (0x20BC)**, not hex
+0x8380. M116 divided by 0x8380 and sampled factions 0,4,8.., so its "0xFFFFFFFF for faction 1" was 0x94d430+0x8380, a
+different structure; the true words are 0, 0, 0x04000000, 0, 0, 0, 0x10000000, 0 (bit 0x40 clear everywhere). M116's
+static half (test at 0x5aaf7f in FUN_005aadf0+0x18f; 17 `or` sites, none sets 0x40) STANDS.
 

@@ -1,10 +1,11 @@
 M116 band-flag gate — [f*0x8380+0x94d430] bit 0x40
+  stride 8380 (0x20bc) per faction — NAMED's 'f*8380' is DECIMAL
   instructions touching 0x94d430: 170   (reads+tests+stores)
   OR sites: 17 — immediates 0x800000, 0x400000, 0x1000000, 0x2000000, 0x4000000, 0x8000000, 0x10000000, 0x80000000, 0x40000000, 0x20000000, 0x200000, 0x1000000, 0x2000000, 0x4000000, 0x8000000, 0x10000000, 0x2
   OR sites that set 0x40: 0
   BYTE tests of 0x40 at that displacement: 1
     0x5aaf7f  test   BYTE PTR [esi+0x94d430],0x40   in FUN_005aadf0+0x18f (size 528)
-  live words (pid 2032152): 0x00000000 0xffffffff 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
-  bit 0x40 set: .Y......  -> 1 of 8 factions
-  **CONTRADICTS NAMED's 'bit 0x40 = 0 for all 8 factions at r66'** — set for faction(s) 1, so the bit is not globally zero. CAUTION: that faction's whole dword (and +4) is 0xffffffff, which is also the shape of a -1-filled/uninitialised record, so 'the gate MEANS second-ask enabled' is an INFERENCE, not this measurement. Decide it with a controlled poke: clear the bit and count hits at 0x5aaf88.
+  live words (pid 2149336): 0x00000000 0x00000000 0x04000000 0x00000000 0x00000000 0x00000000 0x10000000 0x00000000
+  bit 0x40 set: ........  -> 0 of 8 factions
+  (matches NAMED's 'bit 0x40 = 0 for all 8')
   VERDICT PASS

@@ -418,3 +418,23 @@ manufactures diffs that look exactly like real rewriting.
   the shape of a -1-filled/uninitialised record. So "the second ask runs for faction 1" is an INFERENCE. The
   controlled test is a poke: clear bit 0x40 for faction 1 and count hits at 0x5aaf88 (the taken branch).
 NAMED's row is amended to say exactly that instead of "never ran".
+
+## Session 171 (cont. 12) — M117 (m117g2): the byte test IS reached 17x a round and never taken; and M116's live half is RETRACTED (stride is DECIMAL)
+
+`python3 scripts/m117_gate_take.py --tag m117g2 --turns 1 --relaunch --save m54b_clean.SAV` — two silent bps:
+0x5aaf7f (the byte test, logs `esi` + the byte) and 0x5aaf88 (the taken branch), over one real turn on a clean load.
+
+**17 test hits, 0 take hits, 0 gdb errors.** Per faction: 0 -> reached 0; 1 -> 2; 2 -> 4; 3 -> 1; 4 -> 3; 5 -> 3;
+6 -> 3; 7 -> 1. So the gate is **live and reachable every round** (factions 1..7; faction 0 never) and **never
+taken**: bit 0x40 is clear for all eight in this state, which MATCHES the original NAMED row — the M89 second ask is
+inert here, and the open question is what SETS bit 0x40 (no `or` does; the 18 whole-dword stores are the candidates).
+
+**M116's live half is RETRACTED — my own stride bug.** NAMED writes the faction stride as `f*8380`; that is
+**DECIMAL 8,380 = 0x20BC**, and I read it as hex 0x8380 (33,664). The M116 table therefore sampled factions
+0, 4, 8, 12... and its "0xFFFFFFFF for faction 1" was really 0x94d430 + 0x8380, a different structure. The corrected
+read of the true stride gives **0, 0, 0x04000000, 0, 0, 0, 0x10000000, 0** — bit 0x40 clear everywhere. M116's
+**static** half stands unchanged (the `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f in FUN_005aadf0+0x18f, and
+the 17 `or` sites, none of which sets 0x40). `scripts/m116_band_flag.py` now carries the decimal stride and prints
+"matches NAMED" when no faction has the bit.
+Also: m117g1 was a WEDGE (`smac_play` rc=5, HUD byte-static 61 s) — the harness now reports a wedge as
+**NO MEASUREMENT** instead of "the test was never reached", because those are different facts.

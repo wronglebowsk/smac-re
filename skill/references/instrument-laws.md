@@ -327,6 +327,14 @@ byte sum had been able to make.
   the sizes to sum to the file admits a huge family of exact answers (181,769 decompositions of one
   242,539 B file, even after the map size constant was corrected) — an answer set that large cannot pick a
   layout. Only a content constraint or an anchor filters it; do not spend a run on the arithmetic.
+- **Read the derived address LIVE before you arm on it, diff it, or publish it.** An anchor gives you a
+  mapping constant; applying that constant to an offset in ANOTHER section is an assumption, not a
+  measurement. The one-call check is: `os.pread(/proc/<pid>/mem, n, off + k)` and compare with the file's
+  bytes at `off` — 0 differences means the constant holds locally, anything else means you are comparing two
+  different sections and every "differing byte" you report is your own arithmetic. Do this BEFORE arming a
+  watchpoint at a computed address (a clean zero-event run there is an instrument verdict that reads as "no
+  writer"), and have the layout harness verify each anchor's neighbourhood automatically
+  (`m113_save_map.local_1to1`, ±8 B) so a wrong destination cannot reach the report.
 
 ## A hot address band starves the driver — arm by relevance, not by address range
 
@@ -362,3 +370,37 @@ bytes are saying those bytes are structure: nine saves shared their final 152 by
 trailing dword varying, so the block is a fixed trailer rather than game state — and because their SIZES
 differed, its offset moves per file, so no hard-coded read leg can index it and any claim about it must be
 a per-file, EOF-relative read.
+
+## Is this bit ever SET? Scan the displacement, then check the OPERAND WIDTH
+
+"This flag is always 0, so the branch never runs" is a claim about the whole image, and one grep either
+supports it or destroys it. Scan every instruction that touches the displacement and bucket it by mnemonic:
+`mov` (reads and whole-word stores), `or`/`and`/`xor` (bit surgery), `test`/`cmp` (readers), `lea` (address
+arithmetic — not an access at all).
+
+- **Width is part of the test, and a byte test is invisible to a dword-shaped search.** A gate that reads
+  `test BYTE PTR [reg+disp],0x40` tests bit 6 of the LOW BYTE; a scan for `test DWORD PTR [...],0x40` or for
+  `or [...],0x40` finds nothing and "proves" the flag dead. Match the displacement first, then read the
+  operand size and the immediate actually used.
+- **Do not confuse a high bit with the low one.** The same displacement carried 17 `or` sites setting
+  0x200000 .. 0x80000000 and 0x2 — none of them touches 0x40. A flag word accumulates unrelated bits at
+  different widths; bucket by the exact immediate, never by "an `or` exists here".
+- **Zero setters means the bit can only arrive through a whole-word store.** Enumerate those `mov [disp],reg`
+  sites and say so explicitly — "no immediate sets it; it is written only by whole-dword copies" is a much
+  stronger and much more falsifiable statement than "it is never set".
+- **An all-ones field is not a semantic value.** A live dword (and its neighbour) reading 0xFFFFFFFF next to
+  zeros elsewhere has two readings: the flag is on, or the record was `-1`-filled/uninitialised. State the
+  value, label the meaning INFERENCE, and decide it with a take/no-take observation — clear the bit and count
+  hits at the branch TARGET — never by re-reading the value.
+- **A live snapshot can CONTRADICT the registry, so keep the claim and the observation separate.** "Bit N is 0
+  for all 8 factions" is a measurement with a time and a state; a later read that shows it set for one faction
+  refutes the sentence, not the world. Report both (the value, then which prior row it retracts) and leave the
+  semantics open until the controlled poke runs.
+
+## Strides written in NAMED are DECIMAL until proven otherwise (s171, M116 -> M117)
+
+NAMED writes per-faction addressing as `f*8380`. That is **8,380 bytes = 0x20BC**, not hex `0x8380` (33,664). Reading
+it as hex sampled factions 0, 4, 8, 12 and produced a confident, wrong table ("0xFFFFFFFF for faction 1") that had to
+be retracted after a run showed the real `esi` steps: 0x20bc, 0x4178, 0x6234 ... = 8,380 apart. Rule: derive the stride
+from an OBSERVED register (`esi` at the site) before any per-faction table, and have the parser SHOUT when a value is
+not a multiple of the assumed stride (`esi % STRIDE != 0`) — that single line caught this one.

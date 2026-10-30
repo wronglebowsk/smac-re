@@ -34,7 +34,7 @@ M = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(M)      # exposes SCRATCH, EVID, wine_pids, terran_pid like m109_leg_census uses
 
 FLAG = 0x94D430
-STRIDE = 0x8380
+STRIDE = 8380          # DECIMAL 8,380 = 0x20BC — NAMED's 'f*8380' is not hex
 TEST_PC = 0x5AAF7F
 TAKEN_PC = 0x5AAF88
 NL = chr(92) + "n"

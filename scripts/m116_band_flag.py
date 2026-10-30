@@ -27,7 +27,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.path.join(ROOT, "scratch/m574/text.txt")
 INDEX = os.path.join(ROOT, "ghidra_out/index.csv")
 DISP = "0x94d430"
-STRIDE = 0x8380
+STRIDE = 8380          # NAMED writes f*8380: that is DECIMAL 8,380 = 0x20BC, not hex 0x8380 (M117 caught this)
 BASE = 0x94D430
 GATE_PC = 0x5AAF7F
 
@@ -87,6 +87,7 @@ def main():
 
     touching, ors, byte40 = static_facts()
     lines = ["M116 band-flag gate — [f*0x8380+0x94d430] bit 0x40",
+             "  stride %d (0x%x) per faction — NAMED's 'f*8380' is DECIMAL" % (STRIDE, STRIDE),
              "  instructions touching %s: %d   (reads+tests+stores)" % (DISP, len(touching)),
              "  OR sites: %d — immediates %s" % (len(ors), ", ".join("0x%x" % i for _, _, i in ors if i is not None))]
     or40 = [s for s in ors if s[2] is not None and (s[2] & 0x40)]

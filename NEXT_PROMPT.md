@@ -48,17 +48,18 @@ the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); i
 FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**s171 (M111-M116): the .SAV map is anchored, the restore is 1:1, and the band-flag gate is re-measured.**
+**s171 (M111-M117): .SAV map anchored, restore 1:1, band-flag gate measured on both sides of its branch.**
 Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d..0x59683b) -> heap 0x915758..0x3c4b3f8.
 **M110's "0..242,383 / 156 B unread" RETRACTED.**
-Map (poke anchors, k per region): block A 0x94D104; block B base 67,852 -> 0x927590; header 0x916D6C (to 82,088);
-grid 0x40925B0 at 0x40a6660 (to 172,200); 16,000 section 172,291; 52 records 222,783 -> 0x933278.
-Restore **1:1**; M114's "two rewritten tails" RETRACTED (boundary-straddling windows). Ranges via `save_diff.py`.
-**M116 (m116flag PASS): the band-flag gate is a BYTE test** — `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f
-(FUN_005aadf0+0x18f); 17 `or` sites at that displacement, **none sets 0x40**. Live 0,**0xFFFFFFFF**,0,... -> bit 0x40
-SET for fac1: **NAMED's "0 for all 8 -> second ask never ran" RETRACTED** (meaning: inference, fac1 all -1).
-NEXT: clear bit 0x40 for fac1 and count hits at 0x5aaf88.
-LAW: identify bytes by POKING a marker and finding it in memory; cap at 60 markers; verify anchors locally.
+Map (poke anchors, k per region): block A 0x94D104; block B base 67,852 -> 0x927590; header 0x916D6C; grid
+0x40925B0 at 0x40a6660; 16,000 @172,291; 52 records 222,783 -> 0x933278. Restore **1:1**; ranges via `save_diff.py`.
+**M116+M117: the gate is a BYTE test** — `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f (FUN_005aadf0+0x18f, take
+0x5aaf88); 17 `or` sites there, **none sets 0x40** (18 whole-dword stores are the candidates). `--tag m117g2
+--turns 1 --relaunch`: **17 test hits, 0 takes**, factions 1..7 every round -> inert ON THIS STATE, branch live.
+**STRIDE TRAP: NAMED's `f*8380` is DECIMAL 8,380 = 0x20BC, not hex 0x8380** — M116's first live table divided by
+0x8380 and mislabelled factions (RETRACTED; true words 0,0,0x04000000,0,0,0,0x10000000,0). NEXT: watch the 18
+stores for a 0x40 setter.
+LAW: identify bytes by POKING a marker and finding it in memory; cap 60 markers.
 
 ## STILL OPEN
 

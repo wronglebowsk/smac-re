@@ -74,6 +74,11 @@ nothing about whether the milestone's acceptance passed. If the acceptance print
 checkpoint commits on the branch, submit nothing (or leave the PR unmerged), and report the FAIL with
 its numbers — a branch carrying a documented FAIL is the honest end state, and weakening a threshold
 to turn it green is the one thing that is never allowed.
+**A squash-merge TITLE outlives the finding inside it.** `milestone.py submit` titles the PR with the session
+headline, and a milestone often opens as "BLOCKED / not accepted" and only resolves later in the same branch —
+the merged title then contradicts the merged commits, and the next session reads the title first. When that
+happens, land a small docs PR that states the correction (cursor, ledger row, one line saying the title
+predates the result) instead of leaving two versions of the truth on `main`.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
 `NEXT_PROMPT.md` (<=15,500 bytes). `scratch/` is gitignored: scratch probes and one-off tools are
 NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
@@ -191,6 +196,13 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   `assert '<a phrase from the new text>' in t` BEFORE writing, then `grep` the file afterwards. The checkpoint
   gate names the miss (`not updated: NEXT_PROMPT.md`): read that line as "the write never landed", not as a
   stale-file complaint.
+- **Every always-loaded doc has its OWN cap, and the registry is the one that surprises you.** `evidence.py
+  budget` prints a per-file verdict: `NEXT_PROMPT.md` fails at 16,000 chars, `NAMED.md` warns at 150,000 and
+  FAILs at 250,000, the in-repo `skill/SKILL.md` has a hard cap of its own. A milestone that appends four
+  registry blocks turns the gate RED on a file nobody edited by hand. When the registry is tight, CONSOLIDATE
+  YOUR OWN same-session blocks (newest, most redundant, and yours to merge) into one shorter block that keeps
+  every number; never trim an older session's rows — that history is not reconstructible. Then re-run `budget`,
+  because the gate's budget check reads only that tool's output.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
   moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
@@ -237,6 +249,9 @@ matches.
 Depth: `references/verify-outcome.md` — a gate that counts the harness's own work passes a run that lost the
 game (a 40-turn `PASS` with zero bases); compute candidate predictions from the baseline before the run, refuse a
 shape where your model and the null agree on every candidate, and read the effect back from memory/state.
+**Publishing rule (§Publishing rule): one instrument is a lead, never a finding** — pair it with one that can fail
+DIFFERENTLY (a byte sum vs a poke-and-scan, a log vs a live read-back), assert the state the run leaves behind
+(`TracerPid`, counts, armed count) rather than its exit code, and pre-register the falsifier.
 
 ### Evidence budget and delegated decodes (both bite every milestone)
 
@@ -649,5 +664,8 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 
 ## Still open (leads)
 `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
+**Band-flag gate** `[f*0x8380+0x94d430]` bit 0x40 is a BYTE test at `0x5aaf7f` in FUN_005aadf0, and no `or` in the
+image sets 0x40 — harness `scripts/m116_band_flag.py` (operand-width scan + live 8-faction read; see
+`references/instrument-laws.md` §Is this bit ever SET).
 
 
