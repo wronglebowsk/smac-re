@@ -1,0 +1,10 @@
+M118 — is bit 0x40 of [f*8380+0x94d430] satisfiable?
+
+A  byte tests of 0x40 at the displacement: 1  (0x5aaf7f)
+B  dword OR sites: 17, of which set 0x40: 0
+C  low-byte `or al,0x40` sites: 22; of those reaching a flag store: 0x4dc226
+   store 0x4dc296: eax reloaded from the flag = True, masked 0xfc3fffff = True
+   instructions moving 0x99aa38 back into a +0x94d430 slot: 0
+D  saves checked: 12
+   (file, faction) with bit 0x40 SET: none
+VERDICT PASS — bit 0x40 has no setter in the image and no save carries it: the M89 second ask is inert BY CONSTRUCTION on this build and this save version, not merely on the state M117 measured

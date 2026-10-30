@@ -1,3 +1,3 @@
-M117 (m117g2) DONE: byte test at 0x5aaf7f reached 17x in one turn (factions 1..7), 0 takes, bit 0x40 clear for all 8 -> second ask inert ON THIS STATE, branch live. STRIDE TRAP: NAMED's f*8380 is DECIMAL 8,380 = 0x20BC, not hex — M116's live table retracted (true words 0,0,0x04000000,0,0,0,0x10000000,0).
-main 17afe90 after #116-#126; branch milestone/m117 NOT merged. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0.
-next: hw watchpoint on the 18 dword stores for a 0x40 setter (m94_table_watch has fixed addrs; needs --addr).
+M118 ACCEPTED (m118flag PASS): bit 0x40 has NO setter and 0 of 12 saves carry it -> the M89 second ask is inert BY CONSTRUCTION (byte test 0x5aaf7f, take 0x5aaf88, 17 hits/turn). The only or al,0x40 reaching a store (0x4dc226->0x4dc296) writes a DERIVED copy into ds:0x99aa38 after reload+mask 0xfc3fffff.
+main efa4aa2 after #116-#128; branch milestone/m118 NOT merged. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0.
+next: the second ask is closed by construction; pick from STILL OPEN (chooser case 7 / bit 5 at 0x531782 / when 0x59f0c7 runs).

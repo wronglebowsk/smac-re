@@ -447,3 +447,22 @@ for all eight), so the harness was mislabelling its own result. Fixed:
 `rc = 0` whenever the site was reached (take or no take), `4` only when the site was never reached (inconclusive),
 `5` for a wedge (no measurement), `8` for a dirty box. Same class as m111b3/m112a1's stale-gdb "success": an exit
 code that does not mean what its reader will assume.
+
+## Session 171 (cont. 14) — M118 ACCEPTED (m118flag, PASS): bit 0x40 has NO setter and no save carries it — the second ask is inert BY CONSTRUCTION
+
+`python3 scripts/m118_flag_never_set.py` — four independent checks, no box time:
+
+- **A** exactly one `test BYTE PTR [..+0x94d430],0x40` in the image: **0x5aaf7f** (FUN_005aadf0+0x18f, take 0x5aaf88).
+- **B** the 17 dword `or` sites at that displacement set 0x800000..0x80000000 and 0x2 — **none sets 0x40**.
+- **C** the byte-bit setters are REGISTER ops (`or al,0x40`), which a dword-immediate scan cannot see: 22 such sites,
+  and exactly ONE (0x4dc226) reaches a flag store — 0x4dc296 — but that store takes `eax` **reloaded from the flag**
+  and masked `0xfc3fffff`, so the or'd bit never reaches the source; the derived value goes to `ds:0x99aa38` and
+  **0 instructions move it back** into a +0x94d430 slot. The block is a bit TRANSLATION (source bit 0x800000 ->
+  derived bit 0x40), not a setter.
+- **D** bit 0x40 is clear for all 8 factions in **all 12 saves** on disk (m54b_clean + 8 autosaves + the three pokes)
+  — and block A is restored 1:1 (M114), so a save carrying the bit would set it.
+
+**Verdict: the M89 second ask cannot fire on this build and this save version.** M117's "inert on this state" is
+strengthened to "inert by construction" — while the branch stays live and reachable (17 hits a turn).
+Lesson recorded in the skill: a byte-field bit test/set is `test BYTE PTR [x],0x40` / `or al,0x40`; scanning only
+`or DWORD PTR [disp],imm` misses every real setter (I nearly concluded "no setter" from exactly that gap).

@@ -49,13 +49,14 @@ FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restor
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
 **s171 (M111-M117): .SAV map anchored, restore 1:1, band-flag gate measured on both sides of its branch.**
-Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d..0x59683b) -> heap 0x915758..0x3c4b3f8.
+Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d..0x59683b) -> heap 0x915758.
 **M110's "0..242,383 / 156 B unread" RETRACTED.**
-Map (poke anchors, k per region): block A 0x94D104; block B base 67,852 -> 0x927590; header 0x916D6C; grid
-0x40925B0 at 0x40a6660; 16,000 @172,291; 52 records 222,783 -> 0x933278. Restore **1:1**; ranges via `save_diff.py`.
-**M116+M117: the gate is a BYTE test** — `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f (FUN_005aadf0+0x18f, take
-0x5aaf88); 17 `or` sites there, **none sets 0x40** (18 whole-dword stores are the candidates). `--tag m117g2
---turns 1 --relaunch`: **17 test hits, 0 takes**, factions 1..7 -> inert here, branch live.
+Map: block A 0x94D104; block B base 67,852 -> 0x927590; header 0x916D6C; grid 0x40925B0; 52 records 222,783 ->
+0x933278. Restore 1:1.
+**M116-M118: the band-flag gate is inert BY CONSTRUCTION.** `test BYTE PTR [esi+0x94d430],0x40` exists once, at
+0x5aaf7f (FUN_005aadf0+0x18f, take 0x5aaf88); reached **17x a turn** (factions 1..7), never taken. No dword OR sets
+0x40; the only `or al,0x40` reaching a flag store (0x4dc226 -> 0x4dc296) writes a DERIVED copy (eax reloaded + masked
+0xfc3fffff, derived -> ds:0x99aa38, nothing moves it back), and **0 of 12 saves carry the bit**.
 **STRIDE TRAP: NAMED's `f*8380` is DECIMAL 8,380 = 0x20BC, not hex 0x8380** — M116's first live table divided by
 0x8380 and mislabelled factions (RETRACTED; true words 0,0,0x04000000,0,0,0,0x10000000,0). NEXT: watch the 18
 stores for a 0x40 setter (rc: 0 measured, 4 never reached, 5 wedge).

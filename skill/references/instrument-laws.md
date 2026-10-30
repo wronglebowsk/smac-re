@@ -404,3 +404,13 @@ it as hex sampled factions 0, 4, 8, 12 and produced a confident, wrong table ("0
 be retracted after a run showed the real `esi` steps: 0x20bc, 0x4178, 0x6234 ... = 8,380 apart. Rule: derive the stride
 from an OBSERVED register (`esi` at the site) before any per-faction table, and have the parser SHOUT when a value is
 not a multiple of the assumed stride (`esi % STRIDE != 0`) — that single line caught this one.
+
+## A byte-field bit is tested and set with BYTE/register ops — a dword-immediate scan cannot see it (s171, M116 -> M118)
+
+`test BYTE PTR [esi+0x94d430],0x40` gates the M89 second ask, and the setters are `or al,0x40` (22 of them), not
+`or DWORD PTR [disp],0x40`. Scanning only dword-immediate ORs therefore finds ZERO setters and invites the false
+conclusion "nothing can set this bit". Resolve it with the full set of checks in `scripts/m118_flag_never_set.py`:
+(a) the byte test sites, (b) dword OR immediates, (c) every REGISTER-level bit op whose result reaches a store at that
+displacement (here exactly one, 0x4dc226 -> store 0x4dc296, and that store RELOADS the word and masks 0xfc3fffff, so
+the or'd bit never lands — the block is a bit TRANSLATION, source 0x800000 -> derived 0x40 into ds:0x99aa38),
+(d) whether any save on disk carries the bit (here 0 of 12, and block A is restored 1:1, so a save would set it).
