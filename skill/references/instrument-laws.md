@@ -446,3 +446,12 @@ either re-runs it or reports the milestone as blocked. Fix the exit vocabulary, 
 Corollary that applies to every harness: the verdict LINE must name which of these happened, and the parser must
 read the driver's return code BEFORE interpreting a zero-event stream. One wedge that reads as "never reached"
 costs an acceptance attempt and a wrong sentence in the registry.
+
+## Two doc budgets, one fix: archive the settled middle, keep the RULES live (s171)
+
+`NEXT_PROMPT.md` (15.5k) and `NAMED.md` (250k) both hit their caps while still being the only place findings could be
+recorded, and three "consolidations" in one session were just shaving bytes. The durable fix is a SPLIT, not a squeeze:
+`docs/pick-archive.md` holds the milestone narrative + full trap text (the footing keeps 22 one-line RULES);
+`docs/named-archive-m32-m84e.md` holds the settled blocks (the registry keeps the method + the current era). Both moves
+must be verified line-by-line against the archive (0 missing here) and both files must point at each other, because a
+future reader grep-ing one file must be told the other exists.
