@@ -68,8 +68,13 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
 - **M130-M132 (m130_m132_chooser.py, all PASS):** the chooser's 8-way dispatch is `FUN_00546800` 0x54eafc on
   `FUN_00542ea0`'s return (table 0x54ef34, case 7 = 0x54ec58 -> sets 0x920700=0xc, 0x92077c=1); 0x920434 is NOT a record
   field (0 folded refs vs 0x92044c's 24); 0x92077c is a mode code tested vs 1/3/7 (copy vs 6), meaning unnamed.
-- Pick from: the negative-queue producer (no constant store, no `sub 0xca` — arithmetic elsewhere); what FUN_00542ea0
-  returns (the dispatch key, unnamed); 0x920700's 8 writers.
+- **M133-M142 (m133_m142_census.py, all PASS):** the chooser dispatches on FUN_00542ea0 (only call site 0x54eaeb); its
+  index arithmetic gives the per-faction stride **1436 BYTES = M104's 0x927a9c+fac*1436** (a decompiler `arr[i*0x167]`
+  is an ELEMENT index); 0x920700 = UI state code (6/8/0xc/0xd); 0x94d7fc = per-faction counter, -1 = unset; 0x91c630 =
+  upkeep-synch counter; 0x985afc = read-dominant run state (336/5); FUN_00495480 = cached-flag getter; FUN_004026b0 =
+  LIST SEEK, cursor stored at [obj+0x14].
+- Pick from: 0x94d448 bit 0x8000000's producer; what FUN_00544530 does with 0x920700 (20 refs); the negative-queue
+  producer (arithmetic, still unlocated); FUN_00542ea0's 3 strings.
 
 ## LIVE FACTS / KIT
 
