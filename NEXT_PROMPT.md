@@ -17,7 +17,7 @@ Survivability: cursor <= 600 B before any >2-min step; never `rm`/`git checkout 
 appends or <= 2 KB patches.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112), M106 (#113) — detail in NAMED.md. UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded by M102), M103 (#110, never green), M109+M111 (gates answered, model void).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112), M106 (#113), M110-M112 (#116, includes the M110 map) — detail in NAMED.md. UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded by M102), M103 (#110, never green), M109 (gates answered, model void).
 **M90-M104, all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest draw, tail only arg2==0);
 TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block (FROZEN within a round); the POST
 cascade 0x5a9747-0x5aa022 == the prereq-closure ladder (0x5a9020(a,X,f) = membership at depth f; FREEZE INPUTS
