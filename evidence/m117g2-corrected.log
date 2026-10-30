@@ -1,0 +1,12 @@
+M117 gate take — m117g2 CORRECTED (stride 8,380 DEC; the first parse divided by 0x8380 and mislabelled factions)
+  faction  flag         bit0x40  reached test  took branch
+        0  0x00000000   clear        0             0
+        1  0x00000000   clear        2             0
+        2  0x04000000   clear        4             0
+        3  0x00000000   clear        1             0
+        4  0x00000000   clear        3             0
+        5  0x00000000   clear        3             0
+        6  0x10000000   clear        3             0
+        7  0x00000000   clear        1             0
+  totals: 17 test hits, 0 take hits, gdb errors 0
+  VERDICT CONSISTENT-INERT: the byte test at 0x5aaf7f IS reached every round for factions 1..7 (17 hits) and NEVER taken, with bit 0x40 clear for all 8 — the M89 second ask is inert ON THIS STATE, and the branch is live and reachable, so the open question is what sets bit 0x40 (no OR does; 18 dword stores are the candidates).

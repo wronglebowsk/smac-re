@@ -4,9 +4,7 @@ Read this before writing or trusting any acceptance gate: a gate that counts the
 run that lost the game, and a PASS on a shape that cannot discriminate is not a PASS. Nothing here is loaded by
 default — open it when you are choosing what a milestone's acceptance should assert.
 
-# Verify the OUTCOME, not the mechanism
-
-An acceptance script that counts the loop's own work (year deltas, verified order bytes, landed
+## An acceptance script that counts its own work (year deltas, verified order bytes, landed
 walks, STUCK) will happily pass a run that lost the game: a 40-turn run printed `PASS` with `40/40`
 and 5 landed walks while the faction owned **zero** bases at the end.
 The defeat was invisible because the trace carried only the map-wide base count, never
@@ -150,3 +148,28 @@ The defeat was invisible because the trace carried only the map-wide base count,
   sampling one index in each can "confirm" the same byte twice. Diff whole rows and subtract addresses.
 - A `turn_flags` bit that survives a year flip means the box is wedged mid-round, not that the
   click failed — hand that over explicitly and start the next session from a known-good save.
+
+## Publishing rule: one instrument is a lead, never a finding
+
+Every instrument here lies in a plausible way, and always the same way: its failure mode looks like its
+success mode. `gdb -batch` detaches after 3 events and prints a clean end. A conditioned breakpoint that
+ever fires prints nothing at all. A census whose byte sum over-runs its own file still prints a total. A poke
+whose target was mis-derived prints a clean zero. So a structural claim goes out only when two instruments
+that can fail DIFFERENTLY agree, and the harness states the state it left behind.
+
+- **Pair the claim with an instrument that cannot share its failure.** A byte sum closes to the file, or a
+  poke lands in memory: only the second survives a wrong offset model. A log says the loader ran, a live
+  count says the save is in the game. A register print names the writer, a `/proc` read-back names the value.
+  When the two disagree, the INTERESTING one is the one that does not depend on your arithmetic.
+- **Assert the state an instrument leaves behind, not its exit code.** After any instrumented run the box
+  must be provably clean (`TracerPid: 0`, no stale gdb, counts still the loaded save's) and the run's own
+  precondition must be printed in the log (armed count, filter value, prediction table). An exit code of 0
+  is a rumour about the process; `TracerPid` is a fact about the box.
+- **Pre-register the predictions AND the falsifier before the run.** Write the two or three candidate
+  numbers the models predict, and the sentence you will retract if none matches. A run where every
+  prediction fails is a result (it retires the shape); a run that "looks plausible" with nothing
+  pre-registered is a lead that will be quoted later as fact.
+- **Retract in place, in the sentence that asserted it.** When a later measurement refutes a claim, edit the
+  block that made it and add one line saying which part died and what replaced it. Appending a correction
+  below a still-standing wrong sentence leaves the next session reading whichever it hits first — and a
+  merged PR title is the first thing anyone reads.

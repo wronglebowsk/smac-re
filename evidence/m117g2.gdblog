@@ -1,0 +1,41 @@
+[New LWP 2149354]
+[New LWP 2149353]
+[New LWP 2149352]
+[New LWP 2149351]
+[New LWP 2149350]
+[New LWP 2149349]
+[New LWP 2149348]
+[New LWP 2149347]
+[New LWP 2149346]
+[New LWP 2149345]
+[New LWP 2149344]
+[New LWP 2149343]
+[New LWP 2149342]
+[New LWP 2149341]
+[New LWP 2149340]
+[New LWP 2149339]
+0xe9ffe32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x5aaf7f
+Breakpoint 2 at 0x5aaf88
+ARMED gate bps
+M117G test esi=0x82f0 byte=0x0
+M117G test esi=0x82f0 byte=0x0
+M117G test esi=0x82f0 byte=0x0
+M117G test esi=0xa3ac byte=0x0
+M117G test esi=0xa3ac byte=0x0
+M117G test esi=0xa3ac byte=0x0
+M117G test esi=0xc468 byte=0x0
+M117G test esi=0xc468 byte=0x0
+M117G test esi=0xc468 byte=0x0
+M117G test esi=0xe524 byte=0x0
+M117G test esi=0x20bc byte=0x0
+M117G test esi=0x20bc byte=0x0
+M117G test esi=0x4178 byte=0x0
+M117G test esi=0x4178 byte=0x0
+M117G test esi=0x4178 byte=0x0
+M117G test esi=0x4178 byte=0x0
+M117G test esi=0x6234 byte=0x0
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xe9ffe32c in __kernel_vsyscall ()
+[Inferior 1 (process 2149336) detached]
