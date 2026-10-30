@@ -525,3 +525,12 @@ disassembly shows the index folded arithmetically (lea [v+v*4] -> lea [v*9] -> s
 `i*359*4` = **1436 bytes**, which is exactly the stride already known from M104 (0x927a9c+fac*1436). Always read the
 index-building instructions and the shl/mul width before quoting a stride from decompiled C; a factor-of-4 error here
 would have "discovered" a second record family that does not exist.
+
+## Prove a STRUCT by base-register reuse, not by neighbouring offsets (s171, M164/M165)
+
+Five displacements four bytes apart (`0x94d80c/10/14/18/1c`) looked like one struct and five fields equally. The
+decidable test is (function, base-register) reuse: collect `[reg+disp]` pairs per function and require the SAME base to
+reach SEVERAL of the candidates - 11 pairs reach all five here (so: one 20-byte struct), while 0x94d488 shares a base
+with 0x94d55c in only one function (so: a separate field, despite adjacent ref counts). Also: a field with MANY readers
+and ONE writer is an initialisation-time value (here a faction RANK, the writer an `dec ebx` loop) - degree asymmetry is
+evidence, and reading the single writer tells you what the value means.

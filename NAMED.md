@@ -439,3 +439,12 @@ M129) · `0x94d650` 261/34 (M138 accumulator) · **`0x94d434` 196 refs, 1 write*
 `0x94d7fc` 47 (M135) · `0x94d818` 46 · `0x94d754` 44 · `0x94d814` 42 · `0x94d4e8` 40 · `0x94d4a8` 38/26.
 These are SHAPE entries; a `—` in `in NAMED?` means the field is genuinely unnamed.
 
+## M163-M165 (s171, all PASS) — 0x94d434 is a RANK written once; 0x94d80c..0x94d81c is one 20-byte struct; 0x94d554+55c an 8-byte pair
+
+`scripts/m163_m165_structs.py`. **M163** the ONLY writer of `[faction*8380+0x94d434]` is 0x59ac8a in FUN_0059aa00, an
+init loop that ranks factions: scan 0x926a7c-0x926a98 for the max, store -1 in the winner's slot 0x926a78+n*4, write
+the rank and `dec ebx` (196 readers, 1 write, tests vs 2/4/5/6). **M164** 0x94d80c/10/14/18/1c: 11 (fn,base) pairs
+address all five off ONE base -> one 20-byte struct (FUN_0040b960, 004dc100, 004e78e0, 004f6030, 00522b70, 0055a940,
+00574370 x2, 0059ec90 x2). **M165** 0x94d554+0x94d55c = 8-byte pair (5 pairs; FUN_00546800 with 3 bases); 0x94d488 is
+separate (17 base-pairs, one shared function).
+
