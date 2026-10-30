@@ -1,6 +1,3 @@
-M109 RUN s168, NOT ACCEPTED, NOT MERGED — branch milestone/m109 (HEAD 1db9c80 + gate commit); main aad8267.
-Gate GREEN (`python3 scripts/gate.py --base main`, 1 pre-existing WARN). m109g4 FAIL 1/6: 5 bps armed
-clean but 0 ENTER at FUN_00596850 — the load never ran under gdb (4 runs, 0 loads). THE GATES are
-answered statically: evidence/m109_skel_loader.txt + NAMED.md M109 + SESSION_NOTS s168.
-NEXT: `python3 scripts/m109_leg_gates.py --tag m109g5` on a box AT THE HUD (no --relaunch, no gdb during
-the menu), then G3 closure = sum(size*count) == 242,539. Box: terran.exe 1464418 at the LOAD GAME panel.
+s169 (manual, cron paused 21:30) M109: RUNNING scripts/m109_leg_census.py --tag m109b1 --relaunch (bg pid 1483152) — 4 READER bps CONDITIONED on ra inside FUN_00596850 [0x596850,0x597a6b], printing ra/cnt/size/dest per executed leg; aim = sum(size*count) == 242,539 (the closure s168 could not get: its 4 runs had 0 loads).
+Branch milestone/m109; main aad8267 (M107 #114, M108 #115 merged). s168 committed 1db9c80 (static gate map: 4 readers, version thresholds >=4/>=3/>=3/>=6/>7/<3, the 8x0x680 loop not a leg, 48p = a 48->52 expansion gated version<0, 105 reader sites OUTSIDE the loader).
+next: read evidence/m109b1.log; if it closes -> close M109 (notes/NAMED/NEXT_PROMPT/commit/PR/merge). If not, the numbers are the deliverable.

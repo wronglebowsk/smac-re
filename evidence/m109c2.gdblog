@@ -1,0 +1,14 @@
+[New LWP 1493886]
+[New LWP 1493885]
+[New LWP 1493884]
+[New LWP 1493883]
+[New LWP 1493882]
+[New LWP 1493881]
+[New LWP 1493880]
+[New LWP 1493879]
+[New LWP 1493878]
+0xea1bc27f in ?? ()
+Breakpoint 1 at 0x91b93
+/home/n100/reverse/smac/scratch/m109c2.gdb:9: Error in sourced command file:
+Invalid number "59688a".
+[Inferior 1 (process 1493868) detached]

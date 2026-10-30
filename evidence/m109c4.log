@@ -1,0 +1,25 @@
+M109c leg census — m54b_clean.SAV, pid 1501243, 23 executed read sites, 0 gdb errors, counts 67/18
+  sum(size*count) = 149,380  vs file 242,539  -> 93,159
+  site=0x59688a dest=0x985ab8 size=796 cnt=1
+  site=0x596a33 dest=0x91b5b4 size=4 cnt=1
+  site=0x596a91 dest=0x94d430 size=67040 cnt=1
+  site=0x596ed6 dest=0x927590 size=11488 cnt=1
+  site=0x596f25 dest=0x926a78 size=32 cnt=1
+  site=0x59702d dest=0x985e5c size=16000 cnt=1
+  site=0x597084 dest=0x927538 size=4 cnt=1
+  site=0x5970e4 dest=0x930d7c size=176 cnt=1
+  site=0x597141 dest=0x989ce0 size=3584 cnt=1
+  site=0x5971ac dest=0x98ad88 size=26624 cnt=1
+  site=0x597294 dest=0x92bff0 size=4096 cnt=1
+  site=0x597319 dest=0x933278 size=3484 cnt=1
+  site=0x59751f dest=0x95da10 size=5472 cnt=1
+  site=0x59769e dest=0x991598 size=256 cnt=1
+  site=0x597716 dest=0x92bf58 size=152 cnt=1
+  site=0x597781 dest=0x92d4a0 size=10144 cnt=1
+  site=0x5977dd dest=0x91b5b8 size=4 cnt=1
+  site=0x597834 dest=0x91b5bc size=4 cnt=1
+  site=0x597892 dest=0x91b5f0 size=4 cnt=1
+  site=0x5978ef dest=0x91b670 size=4 cnt=1
+  site=0x59794f dest=0x91b700 size=4 cnt=1
+  site=0x5979f8 dest=0xbe27b4 size=4 cnt=1
+  site=0x597a19 dest=0xbe27b0 size=4 cnt=1

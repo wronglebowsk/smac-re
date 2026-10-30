@@ -41,14 +41,13 @@ in rounds (M104); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/
 copy_to_user, so no ring-3 store and no debug exception (the hardware watchpoint's blind spot); the .SAV
 fd arrives over SCM_RIGHTS, name it by the TAIL-AND-EOF LAW. Harness `scripts/m106_load_restore.py`; a
 traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
-**M109 (THE PICK; 6 attempts, none green — the GATES are ANSWERED, the CLOSURE is not).** The gate list is
-committed at `evidence/m109_skel_loader.txt`: FOUR readers, not one (0x596470/0x596540 = CONVERTING, chosen by
-[0x926a14] = [0x985ae8]&0x10000000, live 0 -> the 0x64c9a0/0x64cc00 DIRECT pair); the count arg is always 1;
-version [0x985dbc] gates at 0x59689a/0x596a43/0x597159/0x597246/0x5972cb/0x5974b7/0x597542/0x597650/0x5976c8/
-0x597733; 0x5971c8 is an 8x0x680 stride-0xd00 LOOP (M107 double-counts 1,664 B); 0x5973bc is a 48->52
-expansion gated version<0; **105 reader call sites exist OUTSIDE the loader** (the 86,016 B heap read is one).
-NEXT RUN: **never attach gdb while the driver drives the menu** (4 runs, 0 loads) — arm `scripts/m109_leg_gates.py
---tag m109g5` (no --relaunch) on a box AT THE HUD, then drive the load. Then G3 closure.
+**M110 (THE PICK): the reads OUTSIDE the loader — M109 settled the inside.** The live census (`scripts/
+m109_leg_census.py --tag m109c4`, 116 static bps, one load) executes **23 sites, Σ(size×count) = 149,380 B
+of 242,539** — the loader is only 61.6% of the file; **93,159 B comes from its callers** (105 reader call
+sites outside [0x596850,0x597a6b]). Gates and the four reader entry points are in
+`evidence/m109_skel_loader.txt`. Enumerate every reader call outside the loader by containing function,
+census the ones a load reaches, closure target Σ == 242,539. Static bps are fine during the menu; a bp
+CONDITIONED on *($esp) freezes the game.
 
 ## STILL OPEN (in priority order)
 
