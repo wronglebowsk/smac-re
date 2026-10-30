@@ -503,3 +503,13 @@ Headroom 195 B -> 2,564 B (13x). Verified nothing was lost: 21 identifier tokens
 own check (0x93ff3c vs 0x3ff3c) and a name written as FUN_005a6d40 rather than 0x5a6d40.
 Also recorded the batch-size finding in BUDGET: 3 milestones comfortable, 5 max when they share one instrument,
 box-time milestones 1 per batch.
+
+## Session 171 (cont. 17) — NAMED.md split: the historical middle is archived, the live registry has headroom again
+
+`NAMED.md` was 249,762 B against a 250,000 budget (238 B free), so the next milestone could not be recorded. The
+registry's bulk is HISTORY: blocks M32-M84e (sessions 32-133, 52 blocks) are settled findings nobody re-reads to pick
+work. Moved byte-identically to `docs/named-archive-m32-m84e.md` (182,747 B); `NAMED.md` keeps the method, `Not yet
+named`, and every block from M89 on, and now carries an ARCHIVED pointer telling the reader to grep both files.
+**249,762 -> 68,064 B** (181,936 free). Integrity checked line by line: 0 of the moved lines absent from the archive.
+Rules that keep this honest: the move is a rename across files in one commit (git records it, nothing is deleted from
+history), and the archive names its block order in its own header.
