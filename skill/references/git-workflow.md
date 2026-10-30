@@ -144,7 +144,9 @@ A session that finds an open PR lands it instead of starting new work. Branch pr
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
 merge by hand in the web UI without a green `gate` check. After editing this live skill, copy the whole
 dir — `SKILL.md` **and** `references/` — to `~/reverse/smac/skill/` and commit: the gate compares only
-`SKILL.md`, so an edited reference drifts silently. Protocol detail:
+`SKILL.md`, so an edited reference drifts silently. If `python3 scripts/evidence.py budget` reports
+`skill/SKILL.md … FAIL` (70,000 chars), compress PROSE inside that file until it passes — never raise the
+limit, and re-sync both ways once the curator or a sibling has touched the live copy. Protocol detail:
 `~/reverse/smac/AGENTS.md` and `docs/WORKFLOW.md`.
 
 ## Sibling ownership (a cron dispatch colliding with a live session)

@@ -263,12 +263,44 @@ against a 242,539-byte file — over by 468 B**. The extras were three 160-B CRT
 - **An over-run is a MODEL verdict, not a rounding error to shave.** It says the offset column is not a
   statement about the file at all; do not "find 468 bytes of double counting" and keep the map.
 - **Filter by the FILE\*** before trusting any closure figure: capture the stream at the loader's entry
-  (`set $savefile = *(unsigned int *)($esp+0x10)`) and condition every reader bp on
+  (`set $savefile = *(unsigned int *)($esp+4)` at the loader's FIRST instruction — at a CALL SITE the same
+  FILE is `[esp+0xc]`, one slot lower than the callee's entry, so a slot copied from the other shape makes
+the condition permanently false and the run exits with 0 legs) and condition every reader bp on
   `*(unsigned int *)($esp+0xc) == $savefile`. Without it, a site that reads another file through the same
   wrapper counts into your map.
 - Corollary: **a figure that closes to the byte is a claim about the ARMED SET**, not about the loader.
   Re-derive an inherited closure figure (even one at 99.94%) with the complete site set before quoting it
   as proof; un-armed sites are indistinguishable from unread bytes.
+- **An over-run can also mean the model DOUBLE-COUNTS a real read** — file the extras as `unknown`, never as
+  noise to discard. The "three 160-B CRT reads plus a 9-iteration per-entity loop" above were the very
+  mechanism a later milestone was hunting: that loop IS the trailer's reader, and the same bytes are also
+  consumed in bulk earlier in the load, which is exactly why the sum exceeded the file. Calling a site
+  "pollution" is a claim about the file's content — do not make it from a sum that has already failed.
+- **The FILE filter is necessary, not sufficient**: with it armed (savefile captured, 83 legs, 0 gdb errors,
+  counts 68/19) the sum still over-ran by 144 B on a second, differently-sized save. Two files, two
+  over-runs = the model, not the file.
+
+## Identify bytes, don't count them: the poke-and-scan
+
+"Does the loader consume THIS region of the file?" is answerable without any offset model, which is why it
+survives what the census fails at:
+
+1. Copy the file; plant a **unique** pattern (e.g. `0xCAFEBABE` in 10 dwords) in the region under test,
+   changing nothing else — not the size, not the trailing dword. Assert the pattern occurs **0 times** in the
+   original, so every hit in memory is yours. Keep it out of a field the format validates (a length or
+   checksum): a refused load is a third valid outcome ("the region is VALIDATED") but it does not answer
+   "is it consumed".
+2. Load the copy, then scan every readable `/proc/<pid>/maps` region for the pattern (`os.pread` per region,
+   skip >512 MB, count hits). Prove the load really ran by reading the live unit/base counts afterwards.
+3. Three conclusive verdicts: hits > 0 = CONSUMED; hits == 0 with the load at the HUD and counts unchanged =
+   NOT consumed; load refused = VALIDATED. Print the hit ADDRESSES — a hit names the destination, and the
+   destination's owning structure names the reader via `index.csv` containment.
+4. Corroborate against the census you already have: the hits should be destinations it logged, shifted by the
+   field you poked (the trailer loop's hits sat at `dest - 8` because the census printed the 2nd word's
+   address). Two independent instruments agreeing is the proof; either alone is a lead.
+
+Harness template: `scripts/m112_trailer_poke.py` (no gdb, ~10 min, cheaper than a third census on a shape
+that already failed).
 
 ## A hot address band starves the driver — arm by relevance, not by address range
 

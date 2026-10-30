@@ -342,3 +342,31 @@ Two cheap shapes were tried and both are disqualified BEFORE any box time:
 So the .SAV map stays OPEN, and the next attempt must be poke-driven: plant a marker at a candidate section start
 in a save copy, load, and look for it (the m112p1 instrument, one section per run, 2-3 candidates per save).
 Nothing merged; no acceptance invocation spent on this.
+
+## Session 171 (cont. 5) — M113 ACCEPTED (m113map1): the .SAV offset->memory map, extracted by pokes (20/20 anchors)
+
+`python3 scripts/m113_save_map.py --tag m113map1 --relaunch --step 16384` — 20 markers `0xC0DE000i` planted at
+16 KB offsets + the 6 candidate section starts in a copy of m54b_clean, loaded (rc=0, counts 67/18), and every
+marker searched in 522.7 MB of /proc memory: **20/20 found, 0 absent**. Anchor table (file offset -> destination):
+
+```
+16,384 0x951104   32,768 0x955104   49,152 0x959104   65,536 0x95d104      <- run 1, slope 1
+81,920 0x92ad6c                                                           <- map header
+98,304 0x40aa5b0  114,688 0x40ae5b0 131,072 0x40b25b0 147,456 0x40b65b0
+163,840 0x40ba5b0                                                         <- run 2 (the 90,112-B grid), slope 1
+172,287 0x15e2baf                                                         <- map trailer region
+180,224 0x987d51  188,291 0x989cd4  188,467 0x930e20  192,051 0x98aad4
+196,608 0x98bf49  212,992 0x98ff49  218,675 0x99157c  222,771 0x92cfe4
+229,376 0x95e635
+```
+
+What the anchors establish (each independently of any census):
+- **Three slope-1 runs** — 16,384..65,536 -> 0x951104..0x95d104; 98,304..163,840 -> 0x40aa5b0..0x40ba5b0;
+  196,608..212,992 -> 0x98bf49..0x98ff49. Inside a section, file offset maps to destination 1:1.
+- **The 90,112-B grid is at 0x40a6660** — the run-2 anchors sit on it with step 0x4000, confirming M110's map
+  from an instrument that cannot over-run anything.
+- **Two leg boundaries corroborated to the byte**: 188,291 -> 188,467 is exactly **176 B** apart and lands at
+  0x930e20 (the count-prefix leg at 0x930d7c), and 218,675 -> 222,771 is **4,096 B** apart (the 0x92bff0 leg).
+- Region boundaries are where the destination JUMPS: block A -> map header between 65,536 and 81,920; map ->
+  trailer between 163,840 and 172,287; trailer -> section between 172,287 and 180,224.
+Harness `scripts/m113_save_map.py`; it plants markers, loads through `m54a_load.py`, and prints every anchor.

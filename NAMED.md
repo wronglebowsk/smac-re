@@ -1218,3 +1218,13 @@ the m111b3 "pollution" loop destinations minus 8. Reader = the 6-site per-entity
 0x915758, 0x3b7d7a8, 0x3b9fc60, 0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8), 0x8eb7c4.
 **M110's "contiguous 0..242,383 / 156 B unread / 99.94%" is RETRACTED**: the sum over-runs (+468, +144) because
 the cumulative `file_off` column assumes file order while these bytes are touched twice (bulk + per row).
+## M113 ACCEPTED (m113map1, s171) — .SAV offset->dest anchors by poke; 20/20 found
+
+`scripts/m113_save_map.py --tag m113map1 --relaunch --step 16384`: 20 x 0xC0DE000i planted at 16 KB offsets and
+at the 6 candidate section starts of m54b_clean; load rc=0, counts 67/18, 522.7 MB scanned, **20/20 anchors
+found, 0 absent**. Three slope-1 runs (16,384..65,536 -> 0x951104..0x95d104; 98,304..163,840 ->
+0x40aa5b0..0x40ba5b0; 196,608..212,992 -> 0x98bf49..0x98ff49), the 90,112-B grid confirmed at 0x40a6660, and
+two leg boundaries corroborated to the byte (188,291->188,467 = 176 B, the 0x930d7c count prefix; 218,675->
+222,771 = 4,096 B, the 0x92bff0 leg). Boundaries are the destination jumps: block A -> map header between 65,536
+and 81,920; map -> trailer between 163,840 and 172,287; trailer -> next section between 172,287 and 180,224.
+A poke anchor cannot over-run its file and needs no cumulative offset column.
