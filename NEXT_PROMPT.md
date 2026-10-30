@@ -53,8 +53,7 @@ Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d/0x5966
 0x59683b) -> heap 0x915758..0x3c4b3f8. **M110's "0..242,383 / 156 B unread" RETRACTED.**
 Map (poke anchors, `k = dest - off` constant inside a region): block A k=0x94D104; block B base **file 67,852** ->
 0x927590 (not 67,840); grid k=0x40925B0 (90,112 B at 0x40a6660); post-map section k=0x95BD51;
-196,608/212,992 k=0x95BF49; **52 records: file 222,783 -> 0x933278** (k=0x926635). Boundaries bracketed 66,048 ->
-0x95d304 / 68,096 -> 0x927684 and 171,192 -> 0x40bc268 / 173,240 -> 0x986209.
+196,608/212,992 k=0x95BF49; **52 records: file 222,783 -> 0x933278** (k=0x926635). Boundaries bracketed 66,048/68,096 and 171,192/173,240.
 Restore fidelity (diff vs file, 12 windows): **10/12 byte-identical**; rewriting is confined to the map header TAIL
 (81,408..82,100, 665 B) and the block A TAIL (67,080..67,143, 16-B stride, 2 B per hit); the 52-record array has
 exactly 2 differing dwords (222,831 cleared, the poked field at 223,152 normalised 0xC0->0xD6).

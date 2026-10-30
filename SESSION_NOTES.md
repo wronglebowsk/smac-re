@@ -361,3 +361,26 @@ And the 52-record array (3,484 B, base file 222,783 -> 0x933278) differs in exac
 not an unread region.
 Also from the anchors: block B's base is file **67,852** -> 0x927590 (the documented 67,840 is 12 B early), pinned
 by 68,096 -> 0x927684.
+
+## Session 171 (cont. 9) — M114 CORRECTION: the "two rewritten tails" are a K STRADDLING ARTIFACT. The save is 1:1.
+
+M114's claim is RETRACTED, caught 20 minutes later by checking the addresses before arming a watchpoint on them.
+The two "rewrite zones" came from windows that STRADDLE a region boundary but were compared with ONE region's
+`k`, so they diffed by construction:
+- "block A tail 67,080..67,143" is below block B's base (67,852) and was diffed with block B's k=0x916C84 -> the
+  238 "diffs" are block-A-vs-block-B content, and the 16-byte "stride" is just two different arrays lining up.
+- "map header tail 81,408..82,100" straddles the grid start (82,088) and was diffed with the GRID's k=0x40925B0.
+
+With per-region k the whole file is CLEAN:
+```
+block A      66,048..67,840   k=0x94D104   0 byte diffs
+block B      67,852..79,328   k=0x916C84   0 byte diffs
+map header   79,364..82,088   k=0x916D6C   2 byte diffs, both at the FIRST offset (79,364)
+grid         82,088..172,200  k=0x40925B0  10 byte diffs, starting at the FIRST offset (82,088)
+```
+So the restore is **1:1 for every byte of the four big regions**, and the only divergences are a handful of bytes
+at the START of the map header and the START of the grid, plus the 2 dwords already known in the 52-record array
+(222,831 cleared, the poked field at 223,152 normalised). Confirmed live before arming anything: file 67,080 ->
+0x95D70C holds 65,535 in BOTH the file and memory, i.e. no rewrite there.
+LAW: a diff window must lie WHOLLY inside one region — a window across a boundary compared with one region's `k`
+manufactures diffs that look exactly like real rewriting.
