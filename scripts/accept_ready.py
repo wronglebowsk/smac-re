@@ -236,7 +236,10 @@ def main():
                     help="boundaries the run will observe (sets the horizon warning)")
     a = ap.parse_args()
 
-    pid = os.environ.get("SMAC_PID") or M.find_pid()
+    try:
+        pid = os.environ.get("SMAC_PID") or M.find_pid()
+    except (subprocess.CalledProcessError, SystemExit):
+        pid = None   # box down is BLOCKED, not a traceback
     if not pid or not os.path.exists(f"/proc/{pid}"):
         print("BLOCKED: terran.exe not running — load a save (m54a_load.py --relaunch)")
         return 1

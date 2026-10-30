@@ -153,6 +153,7 @@ def main():
     r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "m54a_load.py")],
                        capture_output=True, text=True,
                        env=dict(os.environ,
+                                M54A_LOAD_TIMEOUT="1800",   # a traced game is ~10x slow (m106 law)
                                 SMAC_SAVE="Z:\\home\\n100\\reverse\\smac\\programs\\saves\\" + a.save))
     print("load rc=%d" % r.returncode, flush=True)
     for ln in (r.stdout or "").strip().splitlines()[-3:]:
@@ -187,6 +188,10 @@ def main():
     for site, dest, size, cnt in legs:
         lines.append("  site=0x%x dest=0x%x size=%d cnt=%d file_off=%d" % (site, dest, size, cnt, off))
         off += size * cnt
+    gap = file_size - total
+    closed = gap == 0
+    lines.append("VERDICT %s: sum(size*count) %d vs file %d, gap %d, %d executed of %d armed sites"
+                 % ("CLOSED" if closed else "PARTIAL", total, file_size, gap, len(legs), len(ss)))
     out = "\n".join(lines)
     print(out[:4000])
     with open(os.path.join(M.EVID, a.tag + ".log"), "w") as f:
@@ -195,7 +200,11 @@ def main():
         print("EXIT 3: 0 read calls — the load never ran (a bp conditioned on *($esp) freezes the game; "
               "see the instrument laws). This is NOT a measurement.", flush=True)
         return 3
-    return 0
+    if closed:
+        return 0
+    print("EXIT 4: PARTIAL — %d of %d bytes unaccounted; a partial census is not a closure."
+          % (gap, file_size), flush=True)
+    return 4
 
 
 if __name__ == "__main__":

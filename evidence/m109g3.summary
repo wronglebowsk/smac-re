@@ -1,6 +1,0 @@
-M109 m109g3 - the wrapper-entry census WITHOUT a stream filter (2026-10-29)
-armed: 5 bps (0x596850 ENTER + 0x596470/0x596540/0x64c9a0/0x64cc00), relaunch, M54A_LOAD_TIMEOUT=900
-hits at 572 s uptime: 25957 M109R READ events, 0 M109E ENTER events, round=0x0 cp=0x0 throughout
-the reads are the startup movie/other files: ra=0x62b8f5/0x62b974/0x62ae14 stream=0x6a79a0/0x6a79c0 sizes 1,2,16,128 B
-=> FUN_00596850 was never entered; an UNFILTERED census at the 4 reader entries costs
-   26k ptrace stops and starves the load driver. Fix = filter the bp by stream ($savefile).

@@ -65,7 +65,10 @@ def main():
     ap.add_argument("--no-screen", action="store_true")
     a = ap.parse_args()
 
-    pid = M.find_pid()
+    try:
+        pid = M.find_pid()
+    except (subprocess.CalledProcessError, SystemExit):
+        pid = None  # box down is a BLOCKED brief, not a traceback
     budget = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(os.path.join(ROOT, "evidence"))
                  for f in fs) / 1e6
     rows, tl, screen = [], {}, ""
