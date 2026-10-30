@@ -534,3 +534,11 @@ reach SEVERAL of the candidates - 11 pairs reach all five here (so: one 20-byte 
 with 0x94d55c in only one function (so: a separate field, despite adjacent ref counts). Also: a field with MANY readers
 and ONE writer is an initialisation-time value (here a faction RANK, the writer an `dec ebx` loop) - degree asymmetry is
 evidence, and reading the single writer tells you what the value means.
+
+## A write-dominant field is a DERIVED CACHE, and a struct's writer sets reveal its parts (s171, M167/M168)
+
+0x94d488 has 49 refs but 22 writes across NINE functions and a single comparison: that asymmetry says "recomputed by
+many paths" (like base+0xd0 credit, M97), so it must not be gated on as authoritative state. Conversely, when every
+member of a candidate struct has the same WRITE COUNT (6 each here), check the writer SETS, not the counts: the header
+dword's writers (and its constants 0/1/-1 plus 7 tests) differed from the four payload dwords' five shared writers, so
+the 20 bytes are a header + payload quad rather than five peers. Write counts hide structure; writer sets expose it.

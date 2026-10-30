@@ -448,3 +448,12 @@ address all five off ONE base -> one 20-byte struct (FUN_0040b960, 004dc100, 004
 00574370 x2, 0059ec90 x2). **M165** 0x94d554+0x94d55c = 8-byte pair (5 pairs; FUN_00546800 with 3 bases); 0x94d488 is
 separate (17 base-pairs, one shared function).
 
+## M166-M168 (s171, all PASS) — the rank is an ordering test; the 20-byte struct = header + payload quad; 0x94d488 is a derived cache
+
+`scripts/m166_m168_roles.py`. **M166** 0x94d434: 196 refs, 92 `cmp` vs 2/4/5/6/7, ranking input = the 7-dword table
+**0x926a7c** (2 refs: 0x59ac55 in the init loop, 0x532150 in FUN_00531df0), top entry EXCLUDED by `-1` at 0x59ac72 into
+0x926a78+n*4 -> an order among 7 candidates, one discarded; what is ranked = unnamed. **M167** the 20-byte struct at
+0x94d80c: +0x00 = header (writers FUN_004dc100 x3 + FUN_0059ec90 x3; consts 0/1/-1; 7 tests), +0x04/+0x08/+0x0c/+0x10 =
+payload quad written together by FUN_004dc100/00510230/00512b40/00516b80/0059ec90. **M168** 0x94d488: 22 writes over 9
+functions vs 49 refs and 1 comparison = derived/cached (recomputed by many paths), not authoritative state.
+

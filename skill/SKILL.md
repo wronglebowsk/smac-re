@@ -69,6 +69,13 @@ answers in one call; if both hit, the prompt's pick is stale, so run the milesto
 spends the tool-call budget and re-derives a settled answer.
 Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
 (must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
+**Create the PR with a JSON FILE, not an inline `curl -d`:** a body containing an apostrophe (`tail's`,
+`decompiler's`) closes the shell's single-quoted payload and the whole command fails to parse, so NOTHING in that
+block runs — including the `git push` before it — and the next attempt returns 422 `head invalid` rather than a body
+error. Build it with `json.dump({...}, open('/tmp/pr.json','w'))` and post with `curl --data @/tmp/pr.json`.
+**Merging several PRs in one session is queue-bound, not build-bound:** `gh pr checks` can sit `pending` for 2-4
+minutes with the job merely QUEUED, so poll with a ~200 s sleep instead of re-submitting; `milestone.py merge`
+correctly refuses while a check is pending, and a force-merge is never the answer.
 **A GREEN gate is not permission to merge.** The gate audits docs, evidence and the harness; it says
 nothing about whether the milestone's acceptance passed. If the acceptance printed FAIL, keep the
 checkpoint commits on the branch, submit nothing (or leave the PR unmerged), and report the FAIL with

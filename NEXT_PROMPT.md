@@ -59,8 +59,11 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
   0x920434 reset-published id (NOT a record field); 0x920700 UI state {6,8,0xc,0xd}; 0x92077c mode {1,3,7}; 0x94d434
   **rank**, written ONCE at init (M163); 0x94d80c..0x94d81c = ONE 20-byte struct (M164); 0x94d554+0x94d55c = an 8-byte
   pair (M165); FUN_004026b0 = LIST SEEK (cursor -> [obj+0x14]); FUN_00495480 = cached-flag getter.
-- Pick from: the 20-byte struct's five members; who READS 0x94d434 as a rank (196 sites, is it sorted on?);
-  0x94d488 (17 base-pairs, no partner); FUN_00574370 (the cluster's heaviest reader).
+- **M166-M168 (m166_m168_roles.py, all PASS):** 0x94d434 is consumed as an ORDER (92 `cmp` vs 2/4/5/6/7) from the
+  7-dword table 0x926a7c with the top entry excluded (`-1` at 0x59ac72); the 20-byte struct at 0x94d80c = a HEADER dword
+  + a 4-dword PAYLOAD written by a different, shared writer set; 0x94d488 = a DERIVED CACHE (22 writes / 9 functions).
+- Pick from: what the 7-entry 0x926a7c table holds (only 2 readers); FUN_00531df0 (the rank's other consumer);
+  FUN_004dc100 (writes the struct's header AND payload); 0x94d54c / 0x94d560 (the struct's neighbours).
 
 ## LIVE FACTS / KIT
 
