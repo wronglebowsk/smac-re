@@ -455,3 +455,10 @@ recorded, and three "consolidations" in one session were just shaving bytes. The
 `docs/named-archive-m32-m84e.md` holds the settled blocks (the registry keeps the method + the current era). Both moves
 must be verified line-by-line against the archive (0 missing here) and both files must point at each other, because a
 future reader grep-ing one file must be told the other exists.
+
+## A small state code is named by the STRINGS printed around its writers (s171, M124)
+
+ds:0x926bd4 had 4 writes and 2 `== 1` readers and no obvious name until the format strings at the write sites were read
+from the image: both 0x68ea94 and 0x68eacc are "Skipping upkeep synch", which made the value a phase code and made its
+reader at 0x5aafe4 (the band-flag function) explain a previously-unexplained skip. Cheap and high-yield: for any small
+enum global, resolve every string constant in the +/-10 instructions around each write before theorising about meaning.

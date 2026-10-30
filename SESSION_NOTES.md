@@ -513,3 +513,25 @@ named`, and every block from M89 on, and now carries an ARCHIVED pointer telling
 **249,762 -> 68,064 B** (181,936 free). Integrity checked line by line: 0 of the moved lines absent from the archive.
 Rules that keep this honest: the move is a rename across files in one commit (git records it, nothing is deleted from
 history), and the archive names its block order in its own header.
+
+## Session 171 (cont. 18) — M124-M126, three names settled statically (all PASS, zero box time)
+
+`python3 scripts/m124_state_and_memo.py` — SUMMARY M124=PASS M125=PASS M126=PASS (evidence/m124_m126.log).
+
+- **M124 ds:0x926bd4 = the UPKEEP-SYNCH PHASE CODE.** 4 writes and 2 tests in the whole image. `= 1` at the loop entry
+  (0x5210aa, right after 0x744f24 / 0x91c658 / 0x91c630 are zeroed), `= 2` after the message at 0x521297 (0x68ea94 =
+  **"Skipping upkeep synch"**), back to `esi`=0 at 0x5213c7 after the second (0x68eacc = the same string) with the
+  counter `0x91c630` incremented, and `= setne al` (0/1) at 0x57f8c5. **Both readers are `cmp ...,0x1`**: 0x5aaa6f (in
+  FUN_005aaa20, after the "Earning a Tech" print) and **0x5aafe4 inside FUN_005aadf0** — the band-flag function, where
+  `phase == 1` OR `[fab+0x94d7fc] < 0` skips the tail. So the reason that tail is skipped during upkeep synch is now
+  named, not inferred.
+- **M125 ds:0x920434 = the ID the window-reset entry publishes, NOT a faction field.** 15 writes, 619 reads, and **12 of
+  the 15 writes sit inside a reset sequence** (`mov ecx,0x91db70; call 0x4e25e0` clears the widget object, preceded by
+  `[0x91f738]=0xff`, `[0x91f6e0]=esi`, `rep stos`, `call 0x581280`); the stored value is the caller's id (esi/ebx/edi)
+  or a constant; **0 references use a faction-scaled base**; the readers compare it against ids (0x546887:
+  `if ([eax+0x94d448] & 0x8000000) && (0x920434 != ebx) && ([esi*4+0x92044c] & 2)`).
+- **M126 0x59f0c7 = the INVALIDATION of the memoized advance threshold.** `mov [ebx+0x94d800],-1` inside FUN_0059ec90,
+  immediately after `[ebx+0x94d650] += [eax+0x927a78]+ecx+ds:0x985afc` and `[ebx+0x94d654] = 0`. Its 3 call sites are
+  0x5a0b39 (FUN_005a0aa0), 0x5a123e and 0x5a1277 (FUN_005a0fa0); the first zeroes the DIVISOR `[edx*4+0x94e488]` just
+  before the call — so the memo dies exactly when a faction's base count changes.
+Method law added to the skill: a small state code is named by the STRINGS printed around its writers.

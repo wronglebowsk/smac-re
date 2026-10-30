@@ -57,7 +57,11 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
   0x94d448+inner*4 bit 0; ds:0x98adee read-only (load data); the 0x1c loop copies 0x91cb80->0x98aaf8; 0x94d78c = one
   dword in two encodings.
 - **STRIDE LAW: `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords**, never hex 0x8380. Identify bytes by POKING a marker.
-- Pick from: ds:0x926bd4, ds:0x920434, chooser case 7, when 0x59f0c7 runs, the negative-queue producer, plan byte `+42`.
+- **M124-M126 (m124_state_and_memo.py, all PASS):** ds:0x926bd4 = the UPKEEP-SYNCH PHASE CODE {0,1,2} (its `== 1`
+  reader at 0x5aafe4 is why the band-flag tail is skipped during upkeep); ds:0x920434 = the id the window-reset entry
+  publishes, **not** a faction field (0 faction-scaled refs); 0x59f0c7 = the invalidation of the memoized advance
+  threshold `[fab+0x94d800] = -1`, and one of its 3 callers zeroes the DIVISOR first.
+- Pick from: chooser case 7, cursor print 0x49771c, the negative-queue producer, plan byte `+42` (M67's order claim).
 
 ## LIVE FACTS / KIT
 

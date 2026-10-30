@@ -1,3 +1,3 @@
-Docs s171 (cont.17): NAMED.md 249,762 -> 68,064 B; M32-M84e (52 blocks) moved byte-identically to docs/named-archive-m32-m84e.md (182,747 B), 0 lines lost, grep both files. NEXT_PROMPT 12,936 B.
-main d23345e after #116-#131. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0, idle.
-next: milestone batch from ds:0x926bd4 / ds:0x920434 / chooser case 7.
+M124-M126 PASS (m124_state_and_memo.py): 0x926bd4 = UPKEEP-SYNCH PHASE {0,1,2} (== 1 at 0x5aafe4 skips the band-flag tail); 0x920434 = id published by the window-reset entry, 0 faction-scaled refs; 0x59f0c7 sets [fab+0x94d800]=-1, one caller zeroes the DIVISOR first.
+main 7030032 after #116-#132. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0, idle.
+next: chooser case 7 | cursor print 0x49771c | negative-queue producer | plan byte +42.
