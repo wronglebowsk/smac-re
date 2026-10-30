@@ -48,19 +48,18 @@ the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); i
 FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**M111/M112 RESOLVED, M113 ACCEPTED (s171): the .SAV map now has 20 poke anchors; refine with a 2 KB step.**
-Trailer: the last 156 B ARE read — reader = the 6-site per-entity loop (0x59666d/0x5966c1/0x596715/0x596769/
-0x5967bd/0x59683b) -> heap 0x915758, 0x3b7d7a8..0x3c4b3f8 (stride 0x224B8). Proof m112p1: 10x0xCAFEBABE poked,
-load rc=0, counts 67/18, 41 hits. **M110's "contiguous 0..242,383 / 156 B unread" RETRACTED.**
-Anchors (m113map1, 20/20 found, 0 absent): 16,384->0x951104 .. 65,536->0x95d104 (slope 1) | 81,920->0x92ad6c
-(map header) | 98,304..163,840->0x40aa5b0..0x40ba5b0 (the 90,112-B grid at 0x40a6660) | 172,287->0x15e2baf
-(map trailer) | 180,224->0x987d51 | 188,291->0x989cd4, 188,467->0x930e20 (176 B = the 0x930d7c count prefix) |
-196,608..212,992->0x98bf49..0x98ff49 (slope 1) | 218,675->0x99157c, 222,771->0x92cfe4 (4,096 B later) |
-229,376->0x95e635.
+**M111/M112 RESOLVED, M113 ACCEPTED (m113map1 20/20, m113map2 24/25 — boundaries now bracketed to 2 KB).**
+Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d/0x5966c1/0x596715/0x596769/0x5967bd/
+0x59683b) -> heap 0x915758..0x3c4b3f8. **M110's "0..242,383 / 156 B unread" RETRACTED.**
+Anchors (1:1 inside a section, JUMP across a boundary): block A -> block B bracketed 66,048->0x95d304 /
+68,096->0x927684 (split 67,840 inside); grid -> next section bracketed 171,192->0x40bc268 / 173,240->0x986209
+with the 91-B map trailer inside it (172,287->0x15e2baf); 174,000..180,144 -> 0x986501..0x987d01; grid run
+98,304..171,192 all +0x800; 196,608..212,992 -> 0x98bf49..0x98ff49; 227,144/229,192 -> 0x95dd7d/0x95e57d.
+**OPEN: 223,048 is ABSENT** while 221,000 (0x92c8f9) and 225,096 (0x933b81) are present — a hole inside the
+52-record block (~222,783, 0x933278). Chase it with `--band 222000-224500:128`: either a gated record or a field
+the loader rewrites after the copy.
 LAW: identify bytes by POKING a marker and finding it in memory (a read census over-runs, a subset-sum is
-underdetermined).
-NEXT (attempt 2): `m113_save_map.py --tag m113map2 --step 2048` to fix the three region boundaries to the KB,
-then the 52/304 record split inside 222,771..229,376+.
+underdetermined); the harness caps at 60 markers — 60+ pokes mutilate counts and pointers.
 
 ## STILL OPEN
 
