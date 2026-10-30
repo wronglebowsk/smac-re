@@ -164,7 +164,12 @@ that can fail DIFFERENTLY agree, and the harness states the state it left behind
 - **Assert the state an instrument leaves behind, not its exit code.** After any instrumented run the box
   must be provably clean (`TracerPid: 0`, no stale gdb, counts still the loaded save's) and the run's own
   precondition must be printed in the log (armed count, filter value, prediction table). An exit code of 0
-  is a rumour about the process; `TracerPid` is a fact about the box.
+  is a rumour about the process; `TracerPid` is a fact about the box. **And make the exit code MEAN its verdict — a
+  measured NEGATIVE exits 0.** Encode the states apart: 0 = the site/effect was measured (it fired or it did not),
+  4 = the site was never reached (inconclusive, no claim), 5 = the window was a wedge / the driver did no work (no
+  measurement at all), 8 = the box was left dirty. Encoding "reached N times and never taken" as a failure makes a
+  milestone's own finding look like a broken run, and encoding a wedge as "never reached" converts a driver problem
+  into a claim about the game; both directions mislead the next reader, so name the states in the harness header.
 - **Pre-register the predictions AND the falsifier before the run.** Write the two or three candidate
   numbers the models predict, and the sentence you will retract if none matches. A run where every
   prediction fails is a result (it retires the shape); a run that "looks plausible" with nothing

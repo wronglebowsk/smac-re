@@ -1264,3 +1264,13 @@ fire on this build/save version.
 **STRIDE TRAP:** NAMED's `f*8380` is **DECIMAL 8,380 (0x20BC)**, not hex 0x8380 — M116's first live table divided by
 0x8380, sampled factions 0,4,8.. and wrongly reported "0xFFFFFFFF for faction 1" (RETRACTED; true words
 0,0,0x04000000,0,0,0,0x10000000,0).
+## M119-M123 (s171, all PASS) — five fields settled statically: stride 0x30, bit 0x20 @0x531782, 0x98adee read-only, the 0x1c copy, 0x94d78c one dword
+
+`scripts/field_census.py`. **M119** 0x984d38 stride = **0x30** at 52/52 indexed sites (45 `lea [v+v*2]+shl 4`, 7
+`imul 0x30`), 0 standalone `shl 4` -> M67's -3/-6 conflict was the ×48 tail, not a second stride. **M120** bit 0x20 of
+[ebx+0x98adb8] set iff faction dword `0x94d448+inner*4` has bit 0 (test 0x531778, je 0x531780, or 0x531782); index
+`esi*2095+edi` = 8,380-B stride folded in. **M121** ds:0x98adee: 7 `movsx` readers, 0 writers any width, no
+neighbour-dword access -> load-only save/scenario field. **M122** the 0x1c loop is a COPY 0x91cb80 -> 0x98aaf8
+(24 × 28 B, exact), never touches 0x984d38. **M123** ds:0x94d78c: 72 refs (48 `[reg+disp]`, 24 `[reg*4+disp]`, 6
+writes); all 24 array-form sites are 2095-scaled -> one field, two encodings, no second array.
+

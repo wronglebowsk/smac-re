@@ -43,33 +43,30 @@ nobody appends it in rounds (M104). Legs: skill code-atlas.md.
    (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M100-M106, in NAMED.md:** multiplier = block A slot 10, rebuilt per round (M100/M102); D = FUN_0059ec00 off
-the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); it is BUILT AT PROCESS START by
-FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
-ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
-Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**s171 (M111-M117): .SAV map anchored, restore 1:1, band-flag gate measured on both sides of its branch.**
-Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d..0x59683b) -> heap 0x915758.
-**M110's "0..242,383 / 156 B unread" RETRACTED.**
-Map: block A 0x94D104; block B base 67,852 -> 0x927590; header 0x916D6C; grid 0x40925B0; 52 records 222,783 ->
-0x933278. Restore 1:1.
-**M116-M118: the band-flag gate is inert BY CONSTRUCTION.** `test BYTE PTR [esi+0x94d430],0x40` exists once, at
-0x5aaf7f (FUN_005aadf0+0x18f, take 0x5aaf88); reached **17x a turn** (factions 1..7), never taken. No dword OR sets
-0x40; the only `or al,0x40` reaching a flag store (0x4dc226 -> 0x4dc296) writes a DERIVED copy (eax reloaded + masked
-0xfc3fffff, derived -> ds:0x99aa38, nothing moves it back), and **0 of 12 saves carry the bit**.
-**STRIDE TRAP: NAMED's `f*8380` is DECIMAL 8,380 = 0x20BC, not hex 0x8380** — M116's first live table divided by
-0x8380 and mislabelled factions (RETRACTED; true words 0,0,0x04000000,0,0,0,0x10000000,0). NEXT: watch the 18
-stores for a 0x40 setter (rc: 0 measured, 4 never reached, 5 wedge).
-LAW: identify bytes by POKING a marker; cap 60 markers.
+**M100-M106 (NAMED.md):** multiplier = block A slot 10 (M100/M102); D = FUN_0059ec00 off the TYPE==3 entries
+(M103); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/17); **M106 PASS 15/15: the load restores by
+read() INTO the region** (kernel copy_to_user, no ring-3 store, invisible to a hw watchpoint; .SAV fd via
+SCM_RIGHTS). Traced loads are ~10x slow: M54A_LOAD_TIMEOUT=1800.
+**s171 .SAV map:** the 156-B trailer IS read (6-site loop 0x59666d..0x59683b); block A 0x94D104; block B 67,852 ->
+0x927590; header 0x916D6C; grid 0x40925B0; 52 records 222,783 -> 0x933278; restore 1:1.
+**Band flag:** `test BYTE PTR [esi+0x94d430],0x40` once at 0x5aaf7f (take 0x5aaf88), reached 17x/turn, never taken;
+no dword OR sets 0x40; the only `or al,0x40` reaching a store writes a DERIVED copy (mask 0xfc3fffff -> ds:0x99aa38);
+0 of 12 saves carry the bit -> **inert BY CONSTRUCTION**.
+**M119-M123 (scripts/field_census.py, all PASS):** 0x984d38 stride **0x30** (52/52 sites; the "x16" is `shl 4` on 3v,
+so M67's conflict is a misread); bit 0x20 of [ebx+0x98adb8] set iff faction dword 0x94d448+inner*4 has bit 0 (index
+esi*2095+edi); ds:0x98adee = 7 readers / 0 writers of any width = load-only save data; the 0x1c loop COPIES
+0x91cb80->0x98aaf8 (24 x 28 B) and never touches 0x984d38; 0x94d78c is ONE dword in two encodings (24/24 array-form
+sites 2095-scaled).
+**STRIDE LAW: `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords**, never hex 0x8380. Identify bytes by POKING a marker.
 
 ## STILL OPEN
 
-1. **After M102: band flag [esi+0x94d430] bit 0x40 = 0 for ALL 8 factions -> the M89 second-ask is
-   inert, find the setter; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print 0x49771c;
-   bit 5 (0x531782); WORD ds:0x98adee (forced-pick key, live 6); the negative-queue producer reaching
-   branch B; what [+0x94d78c] counts; when 0x59f0c7 runs.**
-2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
-   **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`).
+1. **ds:0x926bd4 naming** (4 writes: 0x5210aa=1, 0x521297=2, 0x5213c7=esi, 0x57f8c5=eax; 2 tests `== 1` at
+   0x5aaa6f and 0x5aafe4 — the second is inside FUN_005aadf0, the band-flag function, so it gates that tail);
+   **ds:0x920434 naming** (15 writes, 11 of them a value computed just after `mov ecx,0x91db70; call
+   0x4e25e0`, a clear/reset helper — a per-window slot, not a faction field); chooser case 7; cursor print 0x49771c;
+   the negative-queue producer reaching branch B; when 0x59f0c7 runs.
+2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`).
 
 ## LIVE FACTS / KIT
 
