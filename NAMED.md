@@ -1244,3 +1244,12 @@ per +128 B) → the 52-record array's base is **file 222,783 -> 0x933278**, to t
 223,152 here but was 223,048 in m113map2 (expected dests 0x9333E9 and 0x933351 = record 7 byte 5 and record 4
 byte 9), with present neighbours 128 B away: **not an unread region** — individual dwords in the 52-B records are
 rewritten by post-load processing. `m54a_load.py` returned rc=4 (HUD live-check) with counts already correct.
+## M114 (s171, zero box time) — restore fidelity by diff: 10/12 sampled windows are byte-identical
+
+Diff of the loaded game against the poked save at `dest = off + k` (1 KB windows, 12 anchors): block A k=0x94D104,
+grid k=0x40925B0, post-map section k=0x95BD51, 196,608/212,992 k=0x95BF49, 52-records k=0x926635. Clean windows:
+16,384 / 49,152 / 80,384 / 114,688 / 163,000 / 174,000 / 180,144 / 196,608 / 212,992 / 227,144.
+**Rewriting is confined to**: the map header TAIL (file 81,408..82,100, 665 B contiguous) and the block A TAIL
+(file 67,080..67,143, 238 B on a 16-B stride, 2 B per hit = a per-record u16 array). The 52-record array differs
+in exactly 2 dwords: 222,831 `0x0003FFFF -> 0` (cleared) and the poked field at 223,152 top byte `0xC0 -> 0xD6`
+(normalised). Block B's base is file **67,852** -> 0x927590 (the documented 67,840 is 12 B early).
