@@ -42,6 +42,14 @@ set confirm off
 handle SIGUSR1 nostop noprint pass
 handle SIGUSR2 nostop noprint pass
 handle SIGPIPE nostop noprint pass
+set $savefile = 0
+break *0x596850
+commands
+silent
+set $savefile = *(unsigned int *)($esp+4)
+printf "SAVEFILE 0x%x@@NL@@", $savefile
+continue
+end
 @@BLOCKS@@printf "ARMED @@N@@ static read-site bps@@NL@@"
 continue
 @@TAIL@@"""
@@ -81,8 +89,20 @@ def sites(ranges=None):
     return sorted(set(out))
 
 
-def gdb_script(ss):
-    blocks = [BP.replace("@@PC@@", "%#x" % pc).replace("@@FMT@@", FMT.replace("@@PC@@", "%#x" % pc))
+BP_FILT = """break *@@PC@@
+commands
+silent
+if *(unsigned int *)($esp+0xc) == $savefile
+printf "@@FMT@@", *(unsigned int *)$esp, *(unsigned int *)($esp+4), *(unsigned int *)($esp+8)
+end
+continue
+end
+"""
+
+
+def gdb_script(ss, use_filter=False):
+    tmplbp = BP_FILT if use_filter else BP
+    blocks = [tmplbp.replace("@@PC@@", "%#x" % pc).replace("@@FMT@@", FMT.replace("@@PC@@", "%#x" % pc))
               for pc in ss]
     return (TMPL.replace("@@BLOCKS@@", "".join(blocks)).replace("@@N@@", str(len(ss)))
             .replace("@@NL@@", NL).replace("@@TAIL@@", "continue\n" * 400))
@@ -104,14 +124,18 @@ def main():
     ap.add_argument("--relaunch", action="store_true")
     ap.add_argument("--ranges", default=DEFAULT_RANGES,
                     help="address ranges to census, comma separated lo-hi (hex)")
+    ap.add_argument("--filter-file", action="store_true",
+                    help="log only reads whose FILE* (at [esp+0xc]) is the save stream captured at "
+                         "the loader entry 0x596850 — the only way the size*count sum means anything "
+                         "when the armed set also reads other files")
     a = ap.parse_args()
     ss = sites(a.ranges)
     if not ss:
         raise SystemExit("no read sites parsed from the skeleton")
     gpath = os.path.join(M.SCRATCH, a.tag + ".gdb")
     lpath = os.path.join(M.EVID, a.tag + ".gdblog")
-    open(gpath, "w").write(gdb_script(ss))
-    print("%d static read-site bps" % len(ss), flush=True)
+    open(gpath, "w").write(gdb_script(ss, a.filter_file))
+    print("%d static read-site bps%s" % (len(ss), " (FILE*-filtered)" if a.filter_file else ""), flush=True)
 
     pid = None
     if a.relaunch:
@@ -183,9 +207,11 @@ def main():
     nu, nb = read_counts(pid)
     file_size = os.path.getsize(os.path.join(ROOT, "programs/saves", a.save))
     errs = [l for l in text.splitlines() if l.startswith("Error") or "Cannot access memory" in l]
+    sf = [l for l in text.splitlines() if l.startswith("SAVEFILE")]
+    savefile = sf[0].split()[1] if sf else "NEVER"
     lines = [f"M109c leg census — {a.save}, pid {pid}, {len(legs)} executed read sites, "
              f"{len(errs)} gdb errors, counts {nu}/{nb}",
-             f"  ranges {a.ranges}",
+             f"  ranges {a.ranges}  filter_file={a.filter_file}  savefile={savefile}",
              f"  sum(size*count) = {total:,}  vs file {file_size:,}  -> {file_size - total:,}"]
     off = 0
     for site, dest, size, cnt in legs:
@@ -199,6 +225,10 @@ def main():
     print(out[:4000])
     with open(os.path.join(M.EVID, a.tag + ".log"), "w") as f:
         f.write(out + "\n")
+    if a.filter_file and savefile in ("NEVER", "0x0"):
+        print("EXIT 5: the FILE* filter never armed ($savefile=%s) — 0x596850 did not take the save "
+              "handle from [esp+4]; 0 legs means the filter, not the game." % savefile, flush=True)
+        return 5
     if not legs:
         print("EXIT 3: 0 read calls — the load never ran (a bp conditioned on *($esp) freezes the game; "
               "see the instrument laws). This is NOT a measurement.", flush=True)
