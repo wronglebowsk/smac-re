@@ -491,3 +491,15 @@ copy=PASS dual=PASS.
   syntax). Third confirmation of 8,380.
 Instrument note: `open(p,"w").write(open(p).read()...)` truncated field_census.py to 0 bytes — read BEFORE opening for
 write; the file was rebuilt from the conversation, not from a backup.
+
+## Session 171 (cont. 16) — doc restructure: the footing file is now an index, the narrative is archived
+
+`NEXT_PROMPT.md` was 15,305 B against a 15,500 cap — 195 B of headroom, and every milestone needs ~600 B of pick text,
+so the next batch could not be recorded without deleting findings (three consolidations today were exactly that).
+Split instead of shaved: `docs/pick-archive.md` (10,957 B) now holds the M90-M123 milestone narrative and the FULL trap
+text; `NEXT_PROMPT.md` (12,936 B) keeps the RULES as 22 one-liners plus the live footing and the closing order.
+Headroom 195 B -> 2,564 B (13x). Verified nothing was lost: 21 identifier tokens checked across both files, all present
+(0x5a7e7f/0x94d6a4/probe3.py/0x4efe60/TAILOUT/0x93325c/0x6a9480/0x59666d ...); the only "missing" hits were a typo in my
+own check (0x93ff3c vs 0x3ff3c) and a name written as FUN_005a6d40 rather than 0x5a6d40.
+Also recorded the batch-size finding in BUDGET: 3 milestones comfortable, 5 max when they share one instrument,
+box-time milestones 1 per batch.

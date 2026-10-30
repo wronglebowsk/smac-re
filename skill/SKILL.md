@@ -212,7 +212,10 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
   build the search pattern by joining the tokens with `\s+` in a regex and apply several edits inside one
   `execute_code` cell that prints only the size delta — the file never enters context and a wrapped
-  section lands on the first try.
+  section lands on the first try. **Never write a file through `open(p,"w").write(open(p).read()…)`:** the
+  write-open truncates the file BEFORE the read is evaluated, so that one-liner replaces any file with 0 bytes and
+  reports success — read into a variable first, then open for write (a fresh 10 KB harness died this way
+  mid-session and had to be rebuilt from the conversation).
 - **A gdb breakpoint that reads the WRONG register prints garbage and can kill the whole run**: the printf fault (`Cannot access memory at address 0xa774`) aborts the breakpoint's commands block and gdb DETACHES the inferior, so the run dies mid-window. Read the store's own bytes first — `mov eax,[ebp-0x4]` followed by `mov [eax+0xa774],-1` means the object is in EAX at that address, whatever the pseudo-code called it. The same trap applies to SIGNS: a 32-bit sentinel printed with `%d` prints NEGATIVE (0xffffd8f1 -> -9999), so print it as `0x%x` and gate on the unsigned constant, never on the positive decimal.
 - **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them — and keep an untracked deliverable OUTSIDE the worktree, because a sibling's `git clean`/`git checkout` deletes untracked files with no warning (a prompt file written into the repo root vanished mid-turn) — re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last; every shell the agent spawns carries `hermes-snap-<session-hash>.sh` in its own argv, so a hash that is not yours names a LIVE sibling even while it sits between commands and before it has committed anything — `git log` shows nothing foreign in exactly that window, so the process table, not the commit log, is the early warning.
   Cron-sibling ownership + collision etiquette: `references/git-workflow.md` §Sibling ownership.
@@ -301,6 +304,11 @@ Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zg
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && $1<=A {n=$2;p=$1} END{print
 p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.
 Parse objdump by TAB fields (bytes sit between address and mnemonic); require `^[0-9a-f]{6,8}:\t` before int(x,16) — details in `references/code-atlas.md`.
+Two static instruments answer "what IS this field" with no box time: `scripts/name_global.py <addr> [--disp]`
+(every referencing instruction, its containing function, and whether it reads, writes or tests — use it before
+naming a global from the one reader that mattered) and `scripts/field_census.py [stride|bit5|readonly|copy|dual]`
+(the five shape checks: stride unanimity over all sites, a gate's index provenance, a zero-writer proof, a
+copy-vs-array discrimination, and dual addressing forms for one address).
 
 ## terran.exe PE layout (verified 2026-10-20 via section table + byte reads)
 
