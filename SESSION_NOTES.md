@@ -535,3 +535,25 @@ history), and the archive names its block order in its own header.
   0x5a0b39 (FUN_005a0aa0), 0x5a123e and 0x5a1277 (FUN_005a0fa0); the first zeroes the DIVISOR `[edx*4+0x94e488]` just
   before the call — so the memo dies exactly when a faction's base count changes.
 Method law added to the skill: a small state code is named by the STRINGS printed around its writers.
+
+## Session 171 (cont. 19) — M127-M129 (all PASS): the plan byte's 369 readers, the seek pair in code, the three-condition consume
+
+`python3 scripts/m127_m129_fields.py` — SUMMARY M127=PASS M128=PASS M129=PASS (evidence/m127_m129.log).
+
+- **M127 — the open item "zero sites read plan byte `+42`" is RETRACTED: 369 sites read it.** The type-record PLAN byte
+  is `0x98adb2` (= `0x98ad88 + type*52 + 42`) and it has **369 references**, of which **149 are the folded
+  `[reg*4+0x98adb2]` form** (reg holds `tid*13`, so *4 = tid*52, the record stride) and **0 use a literal `+0x2a]`**.
+  M67's earlier search grepped the literal displacement and therefore could not see any of them; the live-verified
+  plan-descending order now has static readers behind it (top: FUN_00502cd0 48, FUN_0055f650 33, FUN_004f6030 24,
+  FUN_0055c920 23, FUN_00585720 17, FUN_00556690 15, FUN_00595b10 14).
+- **M128 — the "cursor read before the seek is the PREVIOUS cursor" trap is in the CODE.** `mov ecx,[eax+0xa774]` at
+  0x497707 is pushed BEFORE `call 0x4026b0` (the seek, 0x497717); the object is then re-derived
+  (`mov ecx,[ebp-0x10]; add ecx,0xa780`) at 0x49771c/0x49771f and `call 0x495480` + `and eax,0x20` (0x49772a) test the
+  first flag bit of the POST-seek query. So 0x497704 shows the old node and 0x49771c is the first instruction that sees
+  the new one — the rule is structural, not a log artefact.
+- **M129 — FUN_00546800's guard is one unit with a CONSUME.** It proceeds only when the faction dword at `0x94d448` has
+  bit `0x8000000`, `ds:0x920434 != ebx`, AND the per-record byte `0x92044c` has bit `0x2` — then it **zeroes** that
+  byte at 0x5469d3. So `0x92044c` bit 1 is a consumed marker for this path (which is why it reads 0 in the saves and
+  after a pass), not persistent state.
+Search-shape law added to the skill (second occurrence after the M116 stride): a literal-displacement grep misses the
+folded `[reg*4+disp]` encoding; count BOTH forms before saying "no site reads X".

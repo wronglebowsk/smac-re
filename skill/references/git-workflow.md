@@ -82,7 +82,20 @@ rows are `| addr | proposed name | conf | evidence-with-file:line |` and the row
 function searchable in the semantic index. (2) *Evidence citations*: every `evidence/<file>` cited in the
 findings doc must exist on disk, or the citation check drops it (the regex covers only
 `.log/.txt/.gdb/.json/.png/.csv`, so an `evidence/x.md:NN` cite is never checked and only your own care
-keeps it pointing at the right line). (3) **Poll CI by SHA**: after a follow-up
+keeps it pointing at the right line). (3) **Build that POST body as a FILE, never as a shell-quoted string.** One apostrophe in
+`-d '{"body":"… tail's …"}'` makes bash abort the whole command line at PARSE time, so the `git push` chained
+ahead of the curl never runs either and the create that finally reaches GitHub answers **422, `field: head, code:
+invalid`** — a 422 on `head` means the branch does not exist yet, not that the body is wrong. Write it with
+`python3 -c 'import json; json.dump({"title":…,"head":…,"base":"main","body":…}, open("/tmp/pr.json","w"))'`
+then `curl … --data @/tmp/pr.json`, and read the http code: 201 = created, 422 = inspect the `errors` list, which
+names the offending field. Keep long prose in a Python variable, not in the shell.
+
+**An amended commit needs a force-push before CI is worth watching.** `git commit --amend` after the branch is
+pushed leaves the remote on the OLD sha, so the next `git push origin <branch>` prints a non-fast-forward hint (and
+the chain continues, so the PR then gets created from the pre-amend tree); push with `-f` and confirm the PR's
+`headRefOid` equals your local `HEAD` before interpreting a check result.
+
+**Poll CI by SHA**: after a follow-up
 push (skill sync, `NAMED.md` rows) `gh pr checks <n>` can still report the earlier run — use
 `gh pr view <n> --json headRefOid,statusCheckRollup` and merge only when SUCCESS is on the current head
 commit. Immediately after a push the same command can print `no checks reported` while the run is

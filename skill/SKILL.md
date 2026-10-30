@@ -126,6 +126,12 @@ mid-sentence twice — the milestone was done and accepted, the paperwork never 
   does NOT repair the compressor (same model, same cap); every rule here still holds.
 - Budget by TOOL CALLS, not by feel: brief+accept_ready <= 6, milestone 6-30, **commit a
   checkpoint at ~25**, stop measuring at 30-40, close at 40-50.
+- **Size a batch by instrument, not by ambition.** 3 milestones is comfortable, 5 is the ceiling and only when they
+  share ONE instrument and one script (five field probes through a single `field_census`-style tool: one write, one
+  run, one evidence file, one PR). Unrelated milestones each cost their own harness, so 5 unrelated ones is really 5
+  batches. Box-time milestones go **ONE per batch** — each is a 6-10 min window holding a three-invocation cap, and a
+  mid-batch wedge strands every milestone queued behind it. State the batch size in the kickoff's BUDGET section so the
+  next session does not re-learn it.
 - **Cap ACCEPTANCE INVOCATIONS at three** (this budget is about judgment, not context): read WHY it
   failed, fix the instrument, re-run; the third failure IS the finding — write its numbers next to the
   command that produced them and close. When the failure was a harness PARSE or GROUPING bug, re-run the
@@ -206,7 +212,13 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   registry blocks turns the gate RED on a file nobody edited by hand. When the registry is tight, CONSOLIDATE
   YOUR OWN same-session blocks (newest, most redundant, and yours to merge) into one shorter block that keeps
   every number; never trim an older session's rows — that history is not reconstructible. Then re-run `budget`,
-  because the gate's budget check reads only that tool's output.
+  because the gate's budget check reads only that tool's output. Consolidation buys a few hundred bytes; when a cap
+  binds for a SECOND session, **SPLIT instead of shaving**: move the settled era into a topical archive
+  (`docs/pick-archive.md` = the milestone narrative + the full trap text, `docs/named-archive-<era>.md` = the settled
+  registry blocks) and leave the live file holding the RULES plus a pointer to it. A split turns 195 B of headroom
+  into ~2.5 kB and 238 B into ~180 kB. Rules that keep a move honest: verify it LINE BY LINE against the archive
+  (count of moved lines missing must be 0), make both files name each other so a reader grepping one is told the
+  other exists, and land the move as one commit so git records it as a rename rather than a deletion.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
   moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
@@ -259,6 +271,13 @@ shape where your model and the null agree on every candidate, and read the effec
 **Publishing rule (§Publishing rule): one instrument is a lead, never a finding** — pair it with one that can fail
 DIFFERENTLY (a byte sum vs a poke-and-scan, a log vs a live read-back), assert the state the run leaves behind
 (`TracerPid`, counts, armed count) rather than its exit code, and pre-register the falsifier.
+**An exit code is a claim, so make it mean what its reader will assume.** A harness that exits non-zero for a
+NEGATIVE result (`the site was reached and never taken`) makes its own finding read as a broken run and costs the
+next session a debugging pass on a green answer. Encode the four states explicitly and PRINT which applies:
+**0 = measured** (taken or not), **4 = the site was never reached** (inconclusive, not a gate result), **5 = the
+driver wedged / produced no orders (NO MEASUREMENT — never file it as evidence the gate is inert)**, **8 = the box
+was left dirty** (`TracerPid != 0`). A wedge and a negative result are different facts; conflating them is the same
+failure class as a stale-gdb "success".
 
 ### Evidence budget and delegated decodes (both bite every milestone)
 
