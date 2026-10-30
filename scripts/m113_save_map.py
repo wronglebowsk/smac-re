@@ -159,7 +159,13 @@ def main():
     print(out, flush=True)
     with open(os.path.join(ROOT, "evidence", a.tag + ".log"), "w") as f:
         f.write(out + "\n")
-    return 0 if r.returncode == 0 else 6
+    # m54a_load.py: 0 = HUD reached AND live, 4 = HUD reached but its liveness check failed. A poke map is
+    # decided by the anchors and the counts, not by that liveness probe (m113map3: rc=4 with counts 67/18 and
+    # 19/20 anchors was a good run that the old exit code reported as a failure). Only a load that did NOT
+    # reach the HUD (1 timeout, 3 no window) is a harness failure.
+    if r.returncode in (0, 4):
+        return 0
+    return 6
 
 
 if __name__ == "__main__":

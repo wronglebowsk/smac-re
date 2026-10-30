@@ -137,7 +137,9 @@ Region boundaries are where the destination JUMPS. A band refinement (`--band lo
 223,024 -> 0x933369, every +128 B giving +0x80, to the byte). One offset reads ABSENT and **the absent one
 MOVES**: 223,048 (dest 0x933351 = record 4 byte 9) in m113map2, 223,152 (0x9333E9 = record 7 byte 5) in
 m113map3, each with present neighbours 128 B away — so it is NOT an unread region: individual dwords in the 52-B
-records are rewritten by post-load processing (which is also why a read census over-ran). The harness
+records are rewritten by post-load processing (which is also why a read census over-ran). `m54a_load.py` returns
+**4** when the HUD is reached but its liveness probe fails — with counts correct that is a GOOD load; judge a map
+run on the anchors and counts, not on that probe (`m113_save_map.py` accepts rc 0 and 4, fails only 1/3). The harness
 refuses 60+ markers on purpose: that many pokes mutilate counts and pointers and the load stops meaning anything. This is the only
 instrument that has held on this file: a read census over-ran its own file (+468, +144) and a subset-sum over the
 legs admits 181,769 exact decompositions, while an anchor is an exact (offset, address) pair.
