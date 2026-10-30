@@ -35,7 +35,7 @@ COUNT_U, COUNT_B = 0x985af0, 0x985af4
 # M110: the loader, the second-phase function right after it, and the map loader family
 # (the only outside functions whose reader calls a load can plausibly reach).
 DEFAULT_RANGES = ("0x596620-0x5966ff,0x596850-0x597a6b,0x597a70-0x5986ff,0x5821e0-0x5823ff,"
-                  "0x44b780-0x44b8ff,0x5c7200-0x5c7400")
+                  "0x44b780-0x44b8ff,0x5c7200-0x5c7400,0x62b000-0x62d000")
 
 TMPL = """set pagination off
 set confirm off
