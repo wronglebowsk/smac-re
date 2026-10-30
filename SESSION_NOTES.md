@@ -318,3 +318,10 @@ trailer is consumed; it is 5 `[id,0,0,-6,32,32]` rows (id 3..7) restored one row
 +468 (m54b_clean) and +144 (autosave) over-runs are the ORDER assumption in its cumulative `file_off` column
 (the same bytes are touched twice, once bulk and once per row), never missing or extra file content.
 Harness `scripts/m112_trailer_poke.py`; verdicts CONSUMED / NOT CONSUMED / REFUSED (all three conclusive, exit 0).
+
+## Session 171 (close-out) — M110-M112 merged as #116 (squash 645384b)
+
+The PR TITLE still reads "M111 BLOCKED: the 156-B tail has no named reader, and the census model is VOID" because
+it was opened while that was true; the merge carries the later commits and the resolution above (m112p1: the
+trailer IS read, by the per-entity loop; M110's 99.94%/unread claim retracted). Read the commits and NAMED.md,
+not the PR title. main = 645384b; branch deleted; local tree clean.
