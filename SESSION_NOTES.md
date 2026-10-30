@@ -325,3 +325,20 @@ The PR TITLE still reads "M111 BLOCKED: the 156-B tail has no named reader, and 
 it was opened while that was true; the merge carries the later commits and the resolution above (m112p1: the
 trailer IS read, by the per-entity loop; M110's 99.94%/unread claim retracted). Read the commits and NAMED.md,
 not the PR title. main = 645384b; branch deleted; local tree clean.
+
+## Session 171 (cont. 4) — the offline "re-derive the .SAV map" attempt is VOID (recorded so nobody spends a run on it)
+
+Two cheap shapes were tried and both are disqualified BEFORE any box time:
+
+1. **decode_save.py --sections cannot run on these saves** — it dies with `no 52/304 split of a 0-byte region`
+   on all 9. Its `MAP_SECTIONS = 2724 + 140800` is a 128x128 grid; m54b_clean's map is `2,724 + 90,112 + 91 =
+   92,927` (M110: 64x64x22), so the constant alone over-runs the file by ~50 KB and every later offset is wrong.
+   A real lead: derive the map size from the header dims per file (data-formats.md has the formula for .MP).
+2. **A subset-sum over the candidate legs is UNDERDETERMINED, not a solution.** With the 64x64 map and 52n+304m
+   free, m54b_clean admits **181,769** exact decompositions of its 242,539 B (e.g. `maptrailer91` + n=32/m=531);
+   auto1 admits 182,718, auto30 184,074. A search whose answer set is that large cannot pick a layout — the same
+   "shape that cannot discriminate" trap the kickoff warns about. Content constraints or pokes must filter it.
+
+So the .SAV map stays OPEN, and the next attempt must be poke-driven: plant a marker at a candidate section start
+in a save copy, load, and look for it (the m112p1 instrument, one section per run, 2-3 candidates per save).
+Nothing merged; no acceptance invocation spent on this.

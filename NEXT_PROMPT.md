@@ -57,8 +57,7 @@ scanned, 41 hits**, structural ones at 0x3bc2110 / 0x3be45c8 / 0x3c06a80 / 0x3c2
 0x3b9fc60, 0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8), 0x8eb7c4.
 **RETRACTED: "contiguous 0..242,383 / 156 B unread / 99.94%"** — the census over-runs (+468 m54b_clean, +144
 autosave) are its ORDER assumption (bytes touched twice: bulk + per row), not missing data.
-LAW: identify bytes by POKING a pattern and scanning memory; a size*count sum with a cumulative offset column
-cannot decide what a file read covers. Next: re-derive the .SAV map with the loop as the trailer's reader.
+LAW: identify bytes by POKING a pattern and scanning memory; a size*count sum cannot decide a map. Next: re-derive the .SAV map with the loop as the trailer's reader.
 
 ## STILL OPEN
 
