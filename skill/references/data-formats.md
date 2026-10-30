@@ -31,7 +31,7 @@ parsing, not RE.
 - Map header in `.MP` partially decoded — see `MAP_FORMAT.md`.
 - `.SAV` — mission year is a `u16` at file offset `0x54`; autosave slots rotate **in place**,
   so read the year rather than trusting the slot number. See `SAVE_FORMAT.md`.
-- **The .SAV chunk map is HARD-CODED — there is no (address,size) table in the file** (M107, `scripts/m107_chunkmap.py --tag m107c3` PASS 7/7): `FUN_00596850` [0x596850,0x597a6b] contains **30 `fread` legs**, 25 of them `push <size>` immediates + 5 counted, in file order; 0 of the 20 static destinations occur as u32 LE in any of 9 saves and 0 (dest,size) pairs are adjacent. Sizes come from code, so a save splits only by replaying the legs. **Block A (0x94d430) is gated on `[0x985dbc]` >= 3** (`cmp ds:0x985dbc,3` @0x596a43): live it is **9**, so the **static 0x105e0 leg runs** (r7: direct read 0x94e104+0xf000) — 0x985dbc is a RUNTIME field, **NOT** file offset 772, and the file's u32@772 = 0 must not be used to pick the branch (that inference was wrong once). The counted legs are sized by the **live unit/base counts**: `[0x985af0]` = 67 units (52n at 0x933278, 48p malloc) and `[0x985af4]` = 18 bases (304m at 0x95da10), landed by one basic block **0x598470/0x598476 in FUN_00598340**. Live immediates = 204,504 B of m54b_clean's 242,539 → **residual 38,035** against 12,172 counted = **25,863 B unaccounted**, and the loudest read is a **malloc'd 86,016 B (0x15000) at heap 0x40a75b0** — so the 30-leg table is still missing at least one counted leg.
+- **The .SAV chunk map is HARD-CODED — there is no (address,size) table in the file** (M107, `scripts/m107_chunkmap.py --tag m107c3` PASS 7/7): `FUN_00596850` [0x596850,0x597a6b] contains **30 `fread` legs**, 25 of them `push <size>` immediates + 5 counted, in file order; 0 of the 20 static destinations occur as u32 LE in any of 9 saves and 0 (dest,size) pairs are adjacent. Sizes come from code, so a save splits only by replaying the legs. **Block A (0x94d430) is gated on `[0x985dbc]` >= 3** (`cmp ds:0x985dbc,3` @0x596a43): live it is **9**, so the **static 0x105e0 leg runs** (r7: direct read 0x94e104+0xf000) — 0x985dbc is a RUNTIME field, **NOT** file offset 772, and the file's u32@772 = 0 must not be used to pick the branch (that inference was wrong once). The counted legs are sized by the **live unit/base counts**: `[0x985af0]` = units (52n at 0x933278) and `[0x985af4]` = bases (304m at 0x95da10) — measured live 67/18 → **52n = 3,484, 304m = 5,472**, both EXACT; the count-prefix leg was **176**. `0x59738b` (a 48·n leg) and the 0xe5e0 malloc leg **do not execute** on m54b_clean, and `0x5979f8` is a **4-byte** read, not a tail section — the legs are GATED (0x596a43 `ds:0x985dbc,3`, 0x5974b7 `ds:0x985dbc,0`, 0x5974d3 `[0x985af4]`), so a chunk map needs each gate, not just each size. **Read a fread SIZE from `*(int*)($esp+4)`**, never a register the block has clobbered. **The loader alone cannot close the map**: a live census of its 116 read sites (`scripts/m109_leg_census.py --tag m109c4`) executes **23 sites = Σ(size×count) 149,380 B of 242,539 (61.6%)**; the other **93,159 B is read by callers outside [0x596850,0x597a6b]** (105 reader sites; the 86,016-B heap read is one). Instruments: a breakpoint **conditioned on `*($esp)` freezes the game** (gdb stops on an undereferenceable register; the load driver then never gets past the menu — that is how four runs logged 0 loads) — use STATIC bps at the loader's own call instructions; and gdb printf needs the two chars `\`+`n` built in code (`chr(92)+"n"`), `%#x` for addresses (a bare `%x` gives `break *596883` → Invalid number), and no leftover `%%` from Python formatting.
 
 ## Map + save container formats (verified — repo docs MAP_FORMAT.md / SAVE_FORMAT.md are canonical)
 
@@ -84,3 +84,23 @@ end
 
 - CVR: `cvr_decode.py` (validates 113/113), renderer output in `png/` (gitignored, regenerable).
 - FLIC: decoded with standard tools; frames in `flc_out/` (gitignored, regenerable).
+
+### `.SAV` trailer — the last 156 B (s171, M111/M112)
+
+Every save on this box ends with a **fixed trailer**: the last **152 B are byte-identical** across m54b_clean
+(242,539 B) and the 8 autosaves (242,815 / 242,875 / 242,919 / 242,927 / 242,971 / 243,483 / 243,691 B) — only
+the FINAL dword differs (365,402,425 / 766,622,009 / 746,214,987 ...). Layout: 5 x `[id,0,0,-6,32,32]` for
+id 3..7, then `[1,1,0x80000080,-14,32,32]`, then `[800,387,X]`. The file size varies, so the trailer's OFFSET
+varies per save: no hard-coded leg can index it, and any "reads the last 156 B" claim has to be a per-file seek.
+It is **not** the loader's 152-B immediate leg — `0x597716` pushes 152 but its destination `0x92bf58` holds
+`[9999,9999,0,0,2100,2600]`, not the trailer rows. After a load the 156 B is absent verbatim from 523 MB of
+memory; its 12-B row signature (`fa ff ff ff 20 00 00 00 20 00 00 00`) sits 6x in ONE heap block (0x34f0000)
+and in 0 of the 24 files in programs/, i.e. the rows reach memory as records, not as a block read. Reader still
+**The reader is the 6-site per-entity loop** (`0x59666d`, `0x5966c1`, `0x596715`, `0x596769`, `0x5967bd`,
+`0x59683b`), which restores each `[id,0,0,-6,32,32]` row (id 3..7) into heap records at `0x915758`,
+`0x3b7d7a8`, `0x3b9fc60`, `0x3bc2118`, `0x3be45d0`, `0x3c06a88`, `0x3c28f40`, `0x3c4b3f8` (stride `0x224B8`)
+and `0x8eb7c4`. Proved by identification, not arithmetic: `scripts/m112_trailer_poke.py --tag m112p1` plants
+`0xCAFEBABE` in the rows of a save copy, loads it, and finds the pattern 41x in /proc memory (load rc=0,
+counts 67/18); the structural hits are those loop destinations minus 8. **A census sum over-runs the file
+(+468 on m54b_clean, +144 on an autosave) because its cumulative `file_off` assumes file order while these bytes
+are touched twice — bulk and per row.** So "the last 156 B are unread" is wrong; do not gate on a byte sum.

@@ -1,0 +1,9 @@
+M109 counted legs — m54b_clean.SAV, pid 1389526
+  counts nu=67 nb=18
+  events: M109L LEGCNT size=176 round=50 cp=3 | M109L LEG52 size=3484 round=50 cp=3 | M109L LEG304 size=5472 round=50 cp=3 | M109L LEGTAIL size=4 round=50 cp=3
+  [G1] PASS  %d bps armed, 0 gdb errors, 4 events
+  [G2] FAIL  legs logged: LEGCNT=[176]; LEG52=[3484]; LEG304=[5472]; LEGTAIL=[4]
+  [G3] FAIL  counts nu=67 nb=18 -> model {'LEG52': 3484, 'LEG48': 3216, 'LEG304': 5472}; live {'LEG52': [3484], 'LEG48': None, 'LEG304': [5472]}
+  [G4] FAIL  immediates 204,504 + counted 9,136 = 213,640 vs file 242,539 -> remainder 28,899
+  [G5] PASS  malloc leg declared 58,848 B (0xe5e0); live heap buffer []
+  VERDICT FAIL 2/5

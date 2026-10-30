@@ -1,0 +1,32 @@
+[New LWP 1464435]
+[New LWP 1464434]
+[New LWP 1464433]
+[New LWP 1464432]
+[New LWP 1464431]
+[New LWP 1464430]
+[New LWP 1464429]
+[New LWP 1464428]
+[New LWP 1464427]
+0xf1d5768b in ?? ()
+Breakpoint 1 at 0x596850
+Breakpoint 2 at 0x596470
+Breakpoint 3 at 0x596540
+Breakpoint 4 at 0x64c9a0
+Breakpoint 5 at 0x64cc00
+ARMED 5 bps at 0x596850 0x596470 0x596540 0x64c9a0 0x64cc00
+[New LWP 1464438]
+[New LWP 1464442]
+[New LWP 1464443]
+[New LWP 1464444]
+[New LWP 1464445]
+[New LWP 1464446]
+[New LWP 1464447]
+
+Thread 11 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 1464438]
+0xf1f6a32c in __kernel_vsyscall ()
+
+Thread 1 "terran.exe" received signal SIGCONT, Continued.
+[Switching to LWP 1464418]
+0xf1d5768b in ?? ()
+[Inferior 1 (process 1464418) detached]

@@ -1154,3 +1154,67 @@ The save chunk map is **HARD-CODED in FUN_00596850**: 30 fread legs (25 `push <s
 
 ## M108
 [0x985af0] is the **UNIT count** (67) and [0x985af4] the **BASE count** (18) of the loaded save, landed by ONE basic block — **0x598470 / 0x598476, 6 B apart — inside FUN_00598340**; 5 stores exist to 0x985af0 (0x4e10d8 reset, 0x4e11cc zero, 0x598476 load, 0x5a109e, 0x5abc5d) and 6 to 0x985af4 (0x4e10de, 0x4e11d8, 0x4e515d, 0x598470, 0x59b842, 0x5a1098). Read-back: the 304-byte array at 0x95da10 holds exactly 18 records with printable names. **RETRACTION of M107's gate claim**: live [0x985dbc] = **9** (>= 3), so the **static 0x105e0 block-A leg runs**, not the malloc'd 0xe5e0 one — 0x985dbc is a runtime field, NOT file offset 772; M107's 105,075/old-path numbers are withdrawn. **The chunk map does NOT close**: 38,035 B residual vs 12,172 counted = **25,863 B unaccounted**, and the r7 load's largest read is a **malloc'd 86,016 B at heap 0x40a75b0** (= 42 x [0x92a38c] = 2,048). ACCEPTANCE m108c3 PASS 6/6 (`scripts/m108_count_sources.py --tag m108c3`).
+
+## M109 (RUN, NOT ACCEPTED)
+The counted legs MEASURED LIVE on m54b_clean (6 silent bps before the load, `scripts/m109_leg_sizes.py --tag m109l2`): count-prefix leg **176 B**, **52n = 3,484 = 52 × 67**, **304m = 5,472 = 304 × 18** — the model from [0x985af0]=67 units / [0x985af4]=18 bases is EXACT on both. **0x59738b (the 48p leg) never executes** for this save and **its malloc (0x596ab7) never fires either** — that whole 48·n path is gated off here — and **0x5979f8 is a 4-byte read, not a tail section**. The map does not close: 204,504 immediate + 9,136 counted = 213,640 vs 242,539 → **28,899 B unaccounted**, because the 30 legs are CONDITIONAL (gates at 0x596a43 `ds:0x985dbc,3`, 0x5974b7 `ds:0x985dbc,0`, 0x5974d3 `[0x985af4]`). LAW: at an fread call the stack holds [esp]=dest, [esp+4]=size, [esp+8]=count, [esp+0xc]=FILE* — read the size from `*(int*)($esp+4)`, never a clobbered register. **CENSUS (s169, `scripts/m109_leg_census.py --tag m109c4`): one clean load executes 23 read sites = Σ(size×count) 149,380 B of the 242,539-B file — the loader's own reads are only 61.6%; the other 93,159 B is issued by 105 call sites OUTSIDE [0x596850,0x597a6b] (the 86,016-B heap read is one). A chunk map from FUN_00596850 alone can never close.**
+
+## M110 (RUN — 99.94% closed, nothing merged)
+Six ranges, 182 static bps, one load (`m110a2`): **45 executed sites, Σ = 242,383 of 242,539 → 156 B short, coverage CONTIGUOUS 0..242,383.** The MAP is named and it sits mid-file: `0x5822a7` **2,724 B** header at offset **79,364**; `0x5822f2` grid **90,112 B = 64×64×22** at **82,088**; `0x582318` **91 B** trailer at **172,200** — m54b_clean is a **64×64** map, which is why the 80×80 dims signature was never in it. **The old 86,016-B heap read is the grid minus its first 4,096-B stdio block (90,112 − 86,016 = 4,096)** — that closes M107/M108's open item. The last **156 B** (242,383..242,538) are a 6-dword table `[3,0,0,-6,32,32] … [7,…]` plus three trailing dwords, read by a site outside the six ranges (CRT fscanf 0x62b6xx/0x62c3xx excluded on purpose). **The 0x59666d/0x5966c1 pair is a 9-iteration loop** (18 × 4 B): each iteration writes a 4-B count and a 4-B value into `a+0x1dd78` / `a+0x1dd74` of a DIFFERENT structure, and 7 of the 9 destinations step by a constant **0x224B8 = 140,472 B** (`0x3b7d7a8 → 0x3b9fc60 → … → 0x3c4b3f8`), with `0x915758` first and `0x8eb7c4` last out of line — i.e. per-entity records ~140 KB apart, not one section. **CROSS-LINK to M108**: `[0x92ae14]` — read there as an unexplained heap pointer `0x40a6660` — IS the grid pointer: `0x5822f2` reads 90,112 B **into `0x40a6660`**, and the 2,724-B map struct lands at `0x92a378` with the grid pointer at **+0xA9C (2,716)** of it, i.e. the last-8-bytes-but-one field of the header struct.
+
+## M109 (s168, RUN, NOT ACCEPTED — no green acceptance, nothing merged)
+- The save loader's 30 `call 0x64cc00` legs are ONE OF FOUR readers: 0x596470/0x596540 = CONVERTING (malloc size*count, read, copy), 0x64c9a0/0x64cc00 = DIRECT; the pair is chosen by [0x926a14], set at 0x5968a7 = ([0x985ae8] & 0x10000000). The count arg is ALWAYS 1 -> bytes == size.
+- Leg gates are the loaded VERSION [0x985dbc] (live 9): 0x59689a >=4, 0x596a43 >=3, 0x597159 >=3, 0x597246 >=6, 0x5972cb >=0, 0x5974b7 >7, 0x597542 <3, 0x5975e6 = [0x985ae8]&0x10, 0x597650 >=1, 0x5976c8 >=2, 0x597733 >=7.
+- 0x5971c8-0x597244 = LOOP: 8 x read 0x680 with stride 0xd00 while edi < 0x991588 (the version<3 sparse form of 0x6800@0x98ad88); M107's 204,504 double-counts 1,664.
+- 0x5973bc-0x597495 = 48->52 record expansion (0x30-byte source -> 0x34-byte records at 0x93327a, [0x985af0] iterations), gated version<0 -> 0x59738b never runs.
+- 0x596620(a,stream) = 4-B read into a+0x1dd78 (8 calls off the dword table at 0x7cdecc + 1 with 0x8cda4c) = 36 B.
+- 105 reader call sites exist outside FUN_00596850 -> the 30-leg table is not the whole read set. OPEN: the closure arithmetic, and who reads the malloc'd 86,016 B. Harness scripts/m109_leg_gates.py.
+## M111 (s171, RUN, NOT ACCEPTED — the tail's reader is unnamed and the census model is VOID)
+
+Command: `python3 scripts/m109_leg_census.py --tag m111b3 --relaunch --ranges 0x400000-0x62afff`
+(190 static call sites to the four readers = 221 total minus the 31 CRT-band ones).
+Result: 90 sites executed, 0 gdb errors, counts 67/18 (the load ran), **sum(size*count) = 243,007 vs file
+242,539 → over by 468 B**. An order-based `file_off` column that over-runs the file is not a partial map, it is
+an INVALID model: the executed set includes three 160-B CRT reads (0x62ae0f/0x62aec8/0x62af05 into 0x7cda1c,
+0xbe8c10, 0xbefd3c) and a 9-iteration per-entity loop of 6 x 4-B reads into heap (0x3b7d7a8 .. 0x3c4b420,
+stride 0x224B8) — the M110 pair 0x59666d/0x5966c1. **M110's "contiguous 0..242,383" is RETRACTED as a closure
+claim**; it measured an un-armed site set.
+Two failed instruments: m111b1 detached after 3 events (no SIGUSR1 handle), m111b2 armed the 31 CRT sites and
+starved (0x62b8f0/0x62b935 8,277 hits each in 12 min, ZERO loader hits, stream frozen = m109g3).
+Read-back (523 MB of /proc mem, no gdb): the 156-B tail is NOT present verbatim; its 12-B row signature
+`fa ff ff ff 20 00 00 00 20 00 00 00` appears exactly 6x at **0x34f0000** — records restored per record, no
+bulk 156-B read. Next shape: filter every bp by the save FILE* (set $savefile at 0x596850, `[esp+0xc]`).
+## M112 (STATIC PASS, s171 cont.) — the last 156 B is a fixed TRAILER, write-only by construction
+
+Nine saves (m54b_clean 242,539 B + 8 autosaves 242,815..243,691 B) share their final **152 bytes exactly**; only
+the last dword differs. Layout: 5 x `[id,0,0,-6,32,32]` (id 3..7), `[1,1,0x80000080,-14,32,32]`, `[800,387,X]`.
+Immediate 156 (0x9c) appears 13x in the EXE, **never** in 0x58xxxx-0x59xxxx (the two `push 0x9c` are 0x4b3476 /
+0x4b3e3d), so no loader code can size a 156-B read. Not restored: 0xbe27b0/0xbe27b4 (the loader's last read
+dests, sites 0x597a19/0x5979f8) hold unrelated values; the exact 156 B is absent from 523 MB of memory; its 12-B
+row signature is 6x at heap 0x34f0000 and in 0 of the 24 files in programs/.
+Acceptance to close (unspent): an autosave (trailer at a different offset) under a FILE*-filtered census,
+prediction sum = filesize - 156.
+CORRECTION (s171): the loader pushes a 152-B immediate at 0x597716; its dest 0x92bf58 holds
+[9999,9999,0,0,2100,2600], NOT the trailer — so the trailer's reader is still unnamed, but "no constant can size
+it" is too strong (152 = 156 - 4). The trailer's offset varies per save (file sizes 242,539..243,691).
+
+## M112 (attempt m112a1, s171) — FILE* filter armed (savefile=0x6a79a0), sum still over-runs; census cannot decide
+
+`m109_leg_census.py --tag m112a1 --relaunch --ranges 0x400000-0x62afff --filter-file --save m112auto1.SAV`
+(autosave copy 242,927 B, trailer at 242,771, counts 68/19): 83 legs, 0 gdb errors, **sum 243,071 vs 242,927 ->
+OVER by 144** (no repeated (site,dest,size) group). Pre-registered predictions H1 242,771 / H2 242,383 / H3
+242,927 — none matched. With m111b3 at +468 (unfiltered, m54b_clean) the conclusion is that the cumulative
+`file_off` column is invalid in this harness, not that the trailer is read or unread. Read-back of the final
+group's destination 0xbefd3c is a shared CRT stdio buffer (other files overwrite it), so it is not evidence.
+NEXT INSTRUMENT: poke a unique pattern into the trailer of a save copy, load, scan /proc/<pid>/mem for it —
+identification, not byte counting. New `--filter-file` flag added to the census (captures the FILE* at 0x596850,
+logs only `[esp+0xc] == $savefile`, exits 5 when the filter never arms).
+## M112 RESOLVED (s171, m112p1) — the 156-B trailer IS READ; the per-entity loop is its reader
+
+`scripts/m112_trailer_poke.py --tag m112p1 --relaunch`: 10 dwords of 0xCAFEBABE planted in the five trailer
+rows of a save copy (40 B changed, size unchanged, magic absent from the original) -> load rc=0, counts 67/18,
+522.9 MB scanned, **41 hits**, structural ones at 0x3bc2110 / 0x3be45c8 / 0x3c06a80 / 0x3c28f38 / 0x3c4b3f0 =
+the m111b3 "pollution" loop destinations minus 8. Reader = the 6-site per-entity loop (0x59666d, 0x5966c1,
+0x596715, 0x596769, 0x5967bd, 0x59683b) restoring each `[id,0,0,-6,32,32]` row (id 3..7) to heap records
+0x915758, 0x3b7d7a8, 0x3b9fc60, 0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8), 0x8eb7c4.
+**M110's "contiguous 0..242,383 / 156 B unread / 99.94%" is RETRACTED**: the sum over-runs (+468, +144) because
+the cumulative `file_off` column assumes file order while these bytes are touched twice (bulk + per row).

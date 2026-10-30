@@ -1,162 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-143-143.md` (1 sessions). Read it only when a question reaches back before session ## Session 144.
-
-## Session 144 (2026-10-28) — M92: the tail 0x5a9503-0x5a9698 DECODED and validated against the engine's own finals; the census harness is still not green (m92tail2-7 all FAIL)
-
-Prompt said M74 (merged #75); repo pick M92. A sibling session had m92tail3/4 in flight on
-milestone/m92; I adopted its commits (6c15d37 mine) instead of competing, then verified the MODEL
-offline from committed evidence (scratch/m92/verify7.py reads evidence/m92tail7.gdblog +
-scratch/m92tail7_snaps.bin + /proc — no gdb, no poke).
-
-THE TAIL, leg by leg (scratch/m71/dis.py 5a9500 5a96a0): 0x5a9503 `mov ebx,[ecx+0x94e488]` is the
-divisor, `je 0x5a9698` skips the whole loop when 0; loop esi=1..62 (0x5a9518 `and eax,0x3f` skips
-esi==63, 0x5a9692 `jl 0x5a9516`). Category byte = [fac*8380+0x94eda8+esi], multiplier =
-[fac*8380+0x94e5a8+esi], Tc = the tech record's +0xc (0x5a955b `imul eax,[edx+0x92fdd0]`).
-CAT 7 (0x5a9536): gate `mov ecx,[ebp-0x18]; je` — [ebp-0x18] is the CALLEE's own prologue counter
-(0x5a90ae zeroed, 0x5a90d6 `inc edx` per control dword [0x94d448+4*i] with bit 0x10 set, i=0..7) =
-the bc the BASE print already carries, NOT a caller slot (the census never writes caller [ebp-0x18]:
-FUN_005aa030 sub esp,0xc, locals -0xc..-0x4); then 0x5a9541 skips when the faction IS human; adds
-`idiv mult*Tc, ebx` — divisor NOT doubled. CAT 2: mult*Tc*4 / (div*(1+human)). CAT 0: factor 4 if
-[blk+0x94dc44] >= [blk+0x94dc58] else 2, / (div*(1+human)). ELSE (0x5a95fd): 0x5a960e skips the inner
-loop when arg2 == the faction; edi=1..7 over GLOBAL band tables 0x950664 + edi*0x20bc (stride 844):
-the edi-th table's OWN byte at +esi must be nonzero (0x5a9615 — a SECOND multiplier, not the block
-byte); gate on the control dword [0x94d448+(fac+edi)*4] needing bit 0x8 set and NOT (bits 0-1 set with
-bit 5 clear) (0x5a9640/45/4a, index 0x5a9628-0x5a9637 = (fac+edi)*13 dwords); adds mult*Tc/(div*2 if
-human else div). The tail mutates [ebp-0x4] in place; 0x5aa159 `mov [ebp-0x4],eax` is the FINAL.
-
-THE MODEL DISCRIMINATES, against the engine's own numbers (m92tail5 CAND line, fac7): observed finals
-19/32/57/28/24/45 for bases 10/15/28/15/23/41 == base + idiv(16*Tc, 1) = the cat-7 leg with mult
-[fac7*8380+0x94eda8+40] = 16 and div 1; the old model (cat-7 gated on a caller slot, band tables read
-from [blk+0x2bc0+esi*32]) predicted 12322/24639/18483/6197 — off by >3 orders. m92tail7 fac3 (bc 0,
-div 1, cats all 0, mults nz only at esi 0,4,24,36,40,44,48,52): finals are base + 0/1 exactly where
-Tc is 0, i.e. the band legs contribute 0 because the control dwords are 0 at that round (snap0 ctrl
-[0x94d448..] all zero) — the gate is real, not decorative. cats and mults hold EQUAL nonzero bytes at
-the same esi (0,4,24,36,40,44,48,52 = powers of 4), values per faction (fac3 5/18/1/2/1/4/2/2,
-fac5 12/10/4/3/2/4/2/1, fac7 1/6/1/1/24/1/255...).
-
-INSTRUMENT DEFECTS found and fixed (all mine/mine-adopted, none a floor): (1) windows closed at the
-ENT print 0x48bae9, which fires BEFORE the scan's BASE events -> candidates=0 in m92tail2/3/4; windows
-now open at the CALL print (0x5aa030) and close at ENT/TECH (m92tail5/6/7 collect 6-13 BASE per
-boundary, G2 TRUE). (2) snapshots: `dump binary memory %s ...` is invalid; a multi-line gdb `python`
-block inside a bp command list aborts the sourced file ("Argument to arithmetic operation not a
-number or boolean"); read_memory threw OverflowError; and an ARITHMETIC dump range with a substituted
-path poisons the address expression — the range must be LITERAL (0x94e488 0xd61c88 = 8*8380), the
-reader's SNAPREGION must not conflate offset with range (0x41b80+0x4000-0x94e488 < 0 -> ValueError).
-(3) the TAIL print had idx/fac swapped ($esi is arg0 = the tech index, [ebp+0xc] = the faction) and
-printed $edi as a mask (at 0x5a9503 edi is esi+0x950664); BASE `human=` printed $edx = 1<<fac.
-
-OPEN (M92 continues): the census has NEVER been green — the next run needs the dump range extended to
-0x94d448..0x966000 so the band gate's control dwords are per-round (they move between rounds: snap0
-all 0, live at round 63+ nonzero for records 1-7), plus WHO WRITES 0x94e488 / 0x94e5a8 / 0x94eda8 /
-the 0x950664 band tables (the 8 esi positions are powers of 4). Human leg (bVar14, FUN_00625af1) and
-the pay-site conflict 0x4f0ca6 vs 0x4efedd still open. Evidence: evidence/m92tail2-7.gdblog;
-scratch/m92/{tailcheck,verify7}.py; scratch/m92tail*.out.
-
-## Session 145 (2026-10-28) — M92 NOT accepted: the tail is predicted from the live block (38/41 exact), the offsets were the bug and the block MOVES inside a round
-
-Branch milestone/m92, nothing merged. Three instrument truths, each from instruction bytes or measured adds:
-1. category byte `[eax+esi+0x94eda8]` and multiplier `[eax+esi+0x94e5a8]` with `eax=fac*8380` are at
-   **+0x920 / +0x120** from 0x94e488 — the +0x1000/+0x1860 I used read zeros and produced the 12312 tails.
-2. `0x94dc44`/`0x94dc58` are **BEFORE** the block (+0x7fc/+0x810 from 0x94d448) and the cat-0 factor is
-   **2 when [0x94dc44] >= [0x94dc58], else 4** (0x5a95be setge / dec / and 2 / add 2) — inverted in the
-   s144 note, which is why fac 2 read 16 where the engine added 8.
-3. **The divisor moves INSIDE a round** (fac6 snapshot 1 live 6; fac2 8 live 9), and so can the category
-   byte: take the divisor from the TAIL record (read at 0x5a9503 for that candidate), the arrays from the
-   round snapshot.
-MEASURED, not modelled: the four add sites (scratch/m92probe_adds.gdb) show ONE term per candidate,
-`mult*Tc*4/div`; `TAILOUT` at 0x5a9698 is the tail output, and `final` (0x5aa159) is a **POST-tail leg**
-on top of it (+1, +29 at r76) — gating on `final` conflated two legs.
-ACCEPTANCE `scripts/m92_tail_census.py --tag m92tail14 --poke-index 7 --poke-extra 2,6 --rounds 4
---timeout 100` (fresh load, 41 candidates, 6 scans): **FAIL 5/8** — 41/41 divisors and TAILOUTs clean,
-**3 wrong** (fac 5: model Tc, engine 2Tc = a category byte that moved after the snapshot). Replaying the
-same snapshots offline with the fixed model: **38/41 exact (m92tail14), 5/5 (m92tail12)**.
-NEXT: append the two arrays AT the score (0x94e488+fac*8380+0x120 and +0x920, 128 B at the TAIL hit) so
-the last 3 go exact; then the post-tail leg 0x5a9698 -> 0x5aa022.
-Evidence: evidence/m92tail9-14.gdblog, m92adds1.gdblog; scratch/m92adds.py, m92probe_adds.gdb.
-
-## Session 146 (2026-10-28) — M92 ACCEPTED: m92tail18 PASS 8/8. The tail rule is exact 39/39; the block is FROZEN within a round and the stale reads were WINDOWS, not the block
-
-Branch milestone/m92. ACCEPTANCE `python3 scripts/m92_tail_census.py --tag m92tail18 --poke-index 7
---poke-extra 2,6 --rounds 4 --timeout 100` (ONE invocation on a fresh m54b_clean load, r51->55):
-**VERDICT PASS 8/8** — G3: TAILOUT(0x5a9698) == BASE + simulated tail on **39/39 traced candidates, 0
-mismatches, 2 qualifying windows (fac2 win=44 IndEcon nz5/splits5, fac5)**; G8: divisor cross-check
-39/39 proven, round +4, TAIL events for the scored factions. Naive one-factor model splits on 19
-candidates (the shape discriminates).
-
-THREE HARNESS DEFECTS found and fixed (mine, none a floor) — each one had been reported as a game
-finding, which it was not:
-1. `c["tdiv"]` was NEVER assigned although G8 reads it -> **G8 was structurally False in every run**
-   (m92tail14/15/16/17 all failed it regardless of the game).
-2. `tailout[(fac,idx)]` was LAST-wins while the model used the FIRST scan: a re-scan in a later round
-   has a different block, so m92tail16's 4 "mismatches" (idx8 tailout 29 then 39) were pairing scan-1's
-   model with scan-4's output. tailout + tailbyidx are now FIRST-wins.
-3. windows are opened by a CALL and can span rounds (no WIN/ENT close), and the census simulated every
-   candidate from the WINDOW's CALL-round snapshot. Candidates now carry their OWN live round (the
-   BASE print reads *(0x985afc) at the hit) and are simulated from THAT round's snapshot.
-
-RETRACTION (this session, from the new instrument): **the category/multiplier arrays and the divisor do
-NOT move inside a round.** The TAIL hit now appends 64 B mults (0x94e5a8+fac*8380) + 64 B cats
-(0x94eda8+fac*8380) per candidate (scratch/<tag>_tailarrs.bin, hit-ordered); compared to the
-candidate's own round snapshot: **0/39 (m92tail15) and 0/19 (m92tail17) differ**, and
-divisor_cross_check_proven == 39/39 bad=0 (m92tail15/18). So s145's "the divisor moves inside a round
-(fac6 snapshot 1 live 6)" and "3 misses = a category byte that moved after the snapshot" were defects
-2/3 above, not block motion. The block DOES move BETWEEN rounds (m92tail16: fac2 mult(esi1) 4->5 at
-r56, dc58 1->2 at r57 and 2->4 at r58 -> the cat-0 factor flipped 2->4) — which is exactly what the
-per-candidate round stamp now tracks.
-
-BOX: brief BLOCKED twice (screen 'dialog' -> normalize_screen() -> hud; credit 0 -> the printed reload
-recipe m54a_load --relaunch -> m54g_prep -> smac_play --turns 1 -> m57_ui_enqueue --base-index 18
---cell-item 2 --inserts 1 -> READY). m92tail17 (r59, a degraded box) scanned only 3 factions -> 0
-qualifying windows -> FAIL 5/8: the census needs a FRESH load (8 factions queued); the acceptance was
-re-run as m92tail18 on a reload, not weakened.
-NEXT (M93): the POST-tail leg 0x5a9698 -> 0x5aa022 (the SCORE at 0x5aa159 minus TAILOUT: +1/+29 at
-r76, +155 for fac2 idx8 in m92tail15/18 — final 186 vs tailout 31). Evidence:
-evidence/m92tail15-18.gdblog; scratch/m92tail1[5-8].out, scratch/m92tail18_snaps.bin + _tailarrs.bin.
-
-## Session 148 (2026-10-29) — M93 NOT accepted: the POST ladder predicts 9/13; 4 apply sites have no breakpoint, the specials' within-round freeze is unproven
-
-Branch milestone/m93. ACCEPTANCE `python3 scripts/m93_post_census.py --tag m93post2 --poke-index 7
---poke-extra 2,6 --rounds 4 --timeout 100` (fresh m54b_clean load, r50->55): **FAIL 8/9** — G1-G8 all
-green (base 27/27, tail exact on 40 candidates, divisor cross-check 40/40 bad=0, 2 qualifying windows
-fac2/fac5, ST/RB + winner name read back), **G9_post_tail_ladder_final False: 13 candidates predicted,
-4 mismatches; splits vs the final==tailout null 11, vs the final==tailout*5 null 13.**
-
-THE POST LEG 0x5a9698-0x5aa022, from instruction bytes: ebx = idx reloaded at 0x5a969b; the leg is
-SKIPPED (return = tailout) when `[0x985c1c+idx]` carries the faction bit (0x5a96e0); else `call
-0x5312d0` — it returned 0 for all 82 traced candidates in both runs — and only if nonzero the
-ds:0x985a9c leg may ×4 (0x5a9738 `lea edi,[ecx*4]`). Then a cascade, each stage applying iff idx is IN
-its set = {a hard-coded tech} ∪ {prereq-ancestors of a LIVE special}: A(47, 0x9305e8/ec) ×3, B(61,
-0x930850/854) ×2, C(64, 0x9308d4/8d8, depth 2) ×2, D(35, 0x9303d8/3dc, depth 1) ×2, E(59, 0x9307f8/7fc)
-×2, FIM ((demand[0x94d81c]+1)×2; needs rec+4 bit 1, no faction knowing idx, ac4 bit 0x200 clear), G
-(0x98582c) ×2 only when [0x927a8c+fac*1436] > 0, else the 0x93325c/0x933268 legs (×2, ×2, +1 at
-0x5a99cc `inc edi`, then ×2 at 0x5a9a21 when ac4 bit 0x200 clear), q = [blk+0x94dc28]/clamp
-([blk+0x94e488],1,0x270f) added once when q > demand[0x94d81c] and idx is in the closure of
-0x984fec/0x984fbc/0x98531c/0x98534c, **0x5a9c17 ×2 keyed on 0x9851cc and 0x5a9c68 ×3/2 keyed on
-0x9851fc (both only when [0x927a80+fac*1436] > 0) — NEITHER is in the model**, the 21-entry era table
-0x92b954 (flag byte at -4; idx == id → ×3/×4, idx == pr1/pr2(id) → ×2/×3), 0x5a9df3 ×3 over the
-89-tech scan, 0x5a9eb5 ×2 (×4 human) keyed on 0x98adee, then the 0x92b076 exit gate and the band scan
-0x5a9f83-0x5aa022 (×3/×6 at 0x5aa004, ×2+4 at 0x5aa01b — 0 events in 82 candidates).
-`0x5a9020(a, X, d)` = a == X or a is a prereq-ANCESTOR of X within d levels.
-
-RETRACTION: the s146 ledger line "the 0x5aa022 block makes final = TAILOUT*5" is WRONG — the ×3/×2
-epilogues never ran; the ×5-looking deltas are the cascade (×2+1, ×2×2, ×3 then ×2).
-
-MISMATCH CAUSES, both model/instrument and not the game: (1) fac2 idx44 (19->39) and fac5 idx13
-(28->56): the engine applied an ×2 the model has no leg for (the missing 0x5a9c17/0x9851cc leg), and 4
-apply sites have NO breakpoint — 0x5a9c17, 0x5a9c77, 0x5a9df3, 0x5a9eb5. (2) fac5 idx4 (model 21,
-engine 11) and idx45 (model 14, engine 7): the MODEL fires PE2 where the engine did not — and note the
-`fired=` list on a LADDER-MISMATCH line is the model's own prediction, not observed events. Likely
-cause: the model reads the specials from the candidate's ROUND-BOUNDARY snapshot while the ladder reads
-them live mid-round; M92 proved the within-round freeze only for the 0x94e488 block, NOT for the
-0x9307xx specials.
-
-NEXT (M93 continues): add the 5 apply-site breakpoints (gdb blocks ready in scratch/m93/apply_patches.py
-at 0x5a9c14/0x5a9c74/0x5a9df0/0x5a9eb5/0x5a9f83), add the 0x9851cc/0x9851fc legs and the
-0x98531c/0x98534c q-gates, print the specials at the PENTRY hit (live timing) instead of the round
-snapshot, re-run. Evidence: evidence/m93post1.gdblog (run-1 trace, 6 scans / 41 candidates),
-evidence/m93post2.gdblog (the failing acceptance); scratch/m93post2.out, scratch/m93/{analyze1,
-analyze2}.py. Box: fresh load r50->55, census ran, nothing queued at U. Base.
+Older sessions: `docs/sessions/sessions-144-148.md` (4 sessions). Read it only when a question reaches back before session ## Session 147.
 
 ## Session 147 (2026-10-29) — M93 ACCEPTED: m93post3 PASS 9/9. The POST-tail ladder predicts every traced final
 
@@ -328,3 +172,149 @@ Branch milestone/m108 (from main 333bace, M107 merged #114). ACCEPTANCE `python3
 - THE DEFICIT (the finding): m54b_clean 242,539 − immediate legs 204,504 = **38,035**, but the declared counted legs are only 52·67 + 48·67 + 304·18 = **12,172** → **25,863 B unaccounted**; the load's biggest read is a **malloc'd 86,016 B (0x15000) at heap 0x40a75b0**, a size matching no declared count (86,016 = 42 × [0x92a38c] = 2,048). At least one counted leg or size expression is still missing from the leg table.
 - TRAP: the in-memory header's +0x54 is NOT the mission year (it reads 0); identify a loaded save by the record-block counts, not by the header year.
 Evidence: evidence/m108c3.log; scripts/m108_count_sources.py. Box: pid 1340394 at the HUD, m54b_clean r50.
+
+## Session 167 (2026-10-29) — M109 RUN, NOT ACCEPTED (m109l2 FAIL 2/5, 2 of 3 attempts used): the counted legs are measured, but the 30 legs are GATED — the map needs conditions, not sizes
+
+Branch milestone/m109 (from main aad8267, M108 merged #115). ACCEPTANCE `python3 scripts/m109_leg_sizes.py --tag m109l2 --relaunch` (6 silent bps armed before any screen — the 5 counted legs + the malloc — then ONE m54b_clean load): **FAIL 2/5** — G1 6 bps armed, 0 gdb errors, 4 events; G2/G3 only 4 leg events; G4 remainder 28,899.
+
+- MEASURED LIVE (the value): count-prefix leg **176 B**; **52n = 3,484 = 52 × 67**; **304m = 5,472 = 304 × 18** — the model from [0x985af0]=67 / [0x985af4]=18 is EXACT on two legs.
+- **0x59738b (the 48p $eax leg) logged ZERO events** — it does not run for m54b_clean, so "48·n" is not a leg of this load.
+- **0x5979f8 is a 4-BYTE read (arg size = 4)**, NOT the tail section — my M107/M109 leg label for it was wrong.
+- THE BLOCKER: immediates 204,504 + counted 9,136 = 213,640 vs 242,539 → **28,899 B unaccounted**. The 30 legs are CONDITIONAL (0x596a43 `cmp ds:0x985dbc,3`; 0x5974b7 `cmp ds:0x985dbc,0`; 0x5974d3 `test [0x985af4]` …), so a chunk map needs the GATE for each leg, not just its size. m109l1 (instrument: `M.rd` was not in the imported module) and m109l2's $edx-vs-stack-arg error were mine, floors never edited.
+- LAW (new): at an `fread` call the ARGUMENT layout on the stack is [esp]=dest, [esp+4]=size, [esp+8]=count, [esp+0xc]=FILE* — read the SIZE from `*(int*)($esp+4)`, never from a register that the block has since clobbered (0x5979f8 gave 12,462,004 from $edx).
+- TRAP: the launch needs ~7 min before the load driver's window (the movie + CDROM screen), so a 6-min check is too early; the harness must not be judged before ~8 min. **And the driver returns rc=1 with "timeout reaching HUD" at ~320 s under gdb while the loader's legs STILL fire** (m109l1: 4 lead events at round 50 cp 3 with load rc=1; m109l2 the same) — under an attached gdb, rc=1 is NOT a measurement failure; gate on the events, not on the driver's return code.
+Evidence: evidence/m109l1.gdblog + evidence/m109l2.gdblog/.log; scratch/m109l*.gdb; scripts/m109_leg_sizes.py. Branch milestone/m109 committed, NOT pushed for merge. Box: pid 1389526 at the HUD, m54b_clean r50.
+
+## Session 169 (2026-10-29) — M109 RUN AGAIN, NOT ACCEPTED (the map cannot close inside the loader): one clean load reads **23 sites = 149,380 B of 242,539**, the other **93,159 B comes from code OUTSIDE FUN_00596850**
+
+Branch milestone/m109. ACCEPTANCE `python3 scripts/m109_leg_census.py --tag m109c4 --relaunch` (116 STATIC read-site bps parsed from evidence/m109_skel_loader.txt — every `call` to 0x596470/0x596540/0x64c9a0/0x64cc00 whose own address is inside the loader — then ONE m54b_clean load): **23 executed sites, 0 gdb errors, Σ(size×count) = 149,380 vs 242,539 → 93,159 unaccounted.**
+
+- THE EXECUTED LEGS (site dest size): 0x59688a header 796; 0x596a33 own-player 4; 0x596a91 block A **67,040**; 0x596ed6 block B 11,488; 0x596f25 32; 0x59702d 16,000; 0x597084 prefix 4; 0x5970e4 **176**; 0x597141 3,584; 0x5971ac 26,624; 0x597294 4,096; 0x597319 **3,484**; 0x59751f **5,472**; 0x59769e 256; 0x597716 152; 0x597781 10,144; five 4-byte tail reads; 0x5979f8 4 (dest 0xbe27b4 — a stack local, NOT a section); 0x597a19 4.
+- **The finding**: the loader function's own read set is 61.6% of the file. The rest (**93,159 B**) is issued by the readers' callers outside [0x596850,0x597a6b] — s168 counted **105 such call sites** — and the 86,016-byte heap read at 0x40a75b0 is one of them. So a chunk map assembled from FUN_00596850 alone can never close; the census must span the whole read set.
+- The three counted legs reproduce m109l2 independently (176 / 3,484 / 5,472), so the two instruments agree.
+- LAWS (instruments, all mine): **a breakpoint CONDITIONED on `*(unsigned int *)$esp` halts the inferior when gdb cannot dereference, so the game freezes and the load never runs** — that is s168's "0 ENTER, 4 runs" and m109b1's 0 reads; use STATIC bps at the loader's own call instructions instead. gdb's `printf` needs the two characters `\`+`n` built in code (`chr(92)+"n"`): a file-level `\n` becomes a real newline (non-terminated string), a `\\n` prints a literal `\n` (one unparsed line), and a `%%x` left from Python `%`-formatting reaches gdb as a literal `%%x` (0 specs, 3 args → "Invalid number"). `break *%x` without the `0x` fails the same way — always `%#x`.
+Evidence: evidence/m109c4.log (+ m109c1-c3 as instrument failures), scratch/m109c4.gdb, scripts/m109_leg_census.py. Box: terran.exe 1501243 at the HUD, m54b_clean r50, counts 67/18.
+
+## Session 170 (2026-10-29) — M110: the chunk map closes to **156 bytes (99.94%)**, the MAP is named (2,724 + 64×64×22 + 91), and the old 86,016-byte read is resolved — branch committed, NOT merged (closure target missed by 156 B)
+
+Branch milestone/m109 (M110 work landed there; the pick in NEXT_PROMPT is M111). ACCEPTANCE `python3 scripts/m109_leg_census.py --tag m110a2 --relaunch` (182 static read-site bps over SIX ranges: 0x596620 helper, the loader, 0x597a70 phase-2, the map loader, 0x44b7xx, 0x5c72xx; CRT 0x62xxxx excluded on purpose): **45 executed sites, 0 gdb errors, Σ(size×count) = 242,383 vs 242,539 → 156 B short.**
+
+- **THE MAP (in the save, mid-file, not at EOF):** `0x5822a7` reads **2,724 B** (map header struct) at file offset **79,364**; `0x5822f2` reads **90,112 B = 64×64×22** (the grid) at **82,088**; `0x582318` reads **91 B** (map trailer) at **172,200**. So m54b_clean is a **64×64** map — not 80×80, which is why the 80×80 dims signature was never found in it.
+- **THE OLD 86,016-B READ IS EXPLAINED**: 90,112 − 86,016 = 4,096, i.e. the grid's first stdio-buffer block; r7 saw only the direct remainder. M107/M108's "malloc'd 86,016 at heap 0x40a75b0" was the map grid all along.
+- **COVERAGE IS CONTIGUOUS 0..242,383** (45 legs, file_off printed per leg): 4 + 796 + 4 + 67,040 + 11,488 + 32 + 2,724 + 90,112 + 91 + 16,000 + 4 + 176 + 3,584 + 26,624 + 4,096 + 3,484 + 5,472 + 256 + 152 + 10,144 + 18×4 (the 9×2 dword-pair loop of 0x59666d/0x5966c1) + 2×4.
+- **THE LAST 156 B (the open remainder)**: offsets 242,383..242,538 are a **6-dword record table** — `[3,0,0,-6,32,32] [4,…] [5,…] [6,…] [7,…]` (ids 3-7, sentinel −6, 32/32) then three trailing dwords `[1,1,0x7FFFFF00,-14,32,32] [800,387,365402425]`. Its reader is NOT in the six enumerated ranges, so either the CRT `fscanf` path (0x62b68e/0x62c36f/0x62b3da/0x62bdeb, 25 sites — excluded because they fire for every config read) or a loop that ran fewer times than the table has entries.
+- Means to the previous sessions: M109's 23 legs (149,380) + the map (93,515) + the helper loop (72) + 2×4 = 242,383. Everything the loader and its map loader touch is now named.
+Evidence: evidence/m110a1.log (27 legs, 228 B short — 3 ranges), evidence/m110a2.log (45 legs, 156 B short — 6 ranges), scratch/m110a1/a2.gdb; scripts/m109_leg_census.py --ranges. Box: terran.exe 1532323 at the HUD, m54b_clean r50.
+
+## Session 168 (2026-10-29) — M109 RUN AGAIN, NOT ACCEPTED (m109g1 FAIL 1/6, m109g4 FAIL 1/6): the leg GATES are now read off the disassembly, but no load has EVER run with the census attached
+
+Branch milestone/m109 (from main aad8267). ACCEPTANCE `python3 scripts/m109_leg_gates.py --tag m109g4 --relaunch` (5 bps: FUN_00596850 ENTER logs the FILE* it was handed into `$savefile`; the four read wrappers 0x596470/0x596540/0x64c9a0/0x64cc00 print ra,ptr,size,count,stream filtered by `*(int *)($esp+0x10)==$savefile`): **FAIL 1/6** — G1 5 bps armed, 0 gdb errors, **0 ENTER events**, 0 reads on the save stream; G3 sum 0 vs file 242,539; G5 PASS vacuously (nothing ran); G6 TracerPid 1464421 (gdb still attached when /proc was read). The load never executed: driver "title -> LOAD GAME row, then blind browser step", class=movie at 329.5 s, "timeout reaching HUD" at 910 s. m109g1 FAIL 1/6 = the driver's **220 s default budget** expired at the CDROM screen (0 ENTER, header fields still 0); m109g2 = **gdb -batch DETACHED on wineserver's SIGUSR1** (evidence/m109g2.gdblog, 30 lines, "[Inferior 1 ... detached]" after 3 events); m109g3 = the UNFILTERED census logged **25,957 wrapper hits with 0 ENTER** in 572 s and starved the driver (evidence/m109g3.summary). Floors never edited, nothing merged.
+- THE GATES (evidence/m109_skel_loader.txt = the push/call/branch spine of FUN_00596850 [0x596850,0x597a6b], 839 lines): the 30 `call 0x64cc00` sites are only ONE of FOUR readers — 0x596470/0x596540 are the CONVERTING pair (`imul size,count`, round odd up, malloc via 0x5be090, read, copy) and 0x64c9a0/0x64cc00 the DIRECT pair; the pair is chosen by `[0x926a14]`, SET at 0x5968a7 to `([0x985ae8] & 0x10000000)` (live 0 -> DIRECT). The count arg is ALWAYS the immediate 1 (`push esi; push 1; push size; push ptr`), so bytes == size.
+- IF/THEN: every leg gate is `cmp ds:0x985dbc,N` = the loaded VERSION (live 9): 0x59689a >=4, 0x596a43 >=3 (else malloc 0xe5e0), 0x597159 >=3 (else the sparse loop), 0x597246 >=6 (0x1000@0x92bff0), 0x5972cb >=0 (52n), 0x5974b7 >7, 0x597542 <3, 0x5975e6 needs `[0x985ae8]&0x10` (live 0 -> the 0x100@0x991698 leg OFF), 0x597650 >=1, 0x5976c8 >=2, 0x597733 >=7 (0x27a0).
+- 0x5971c8-0x597244 is a LOOP, not a leg: 8 x `read 0x680 into edi`, `add edi,0xd00` (stride 3328 != size 1664) while edi < 0x991588 — the version<3 sparse form of the 0x6800@0x98ad88 leg. M107's table lists BOTH, so its 204,504 double-counts 1,664 B for any save.
+- The 48p path is a 48->52 record EXPANSION loop (0x5973bc-0x597495, [0x985af0] iterations, 0x30-byte source records rewritten into 0x34-byte records at 0x93327a), gated at 0x5972cb on version < 0 — that is why 0x59738b logged 0 events on every save here.
+- 0x596620(a,stream) = a 4-B read into `a+0x1dd78`; the loader calls it 8x off the dword table at 0x7cdecc then once with 0x8cda4c — 36 B, not a section.
+- **105 reader call sites exist OUTSIDE [0x596850,0x597a6b]** (0x44b6e1.., 0x52c359, 0x5821f4.., 0x597ab1..), so the 30-leg table is not the whole read set — the malloc'd 86,016 B read belongs to one of them.
+NEXT: arm gdb only AFTER the save's FILE* is open (four runs, zero loads: the census cannot be attached while the driver drives the menu), or bp the 122 in-loader call sites; then G3 closure. Evidence: evidence/m109g1.gdblog, m109g2.gdblog, m109g3.summary, m109g4.gdblog, m109g4.log; evidence/m109_skel_loader.txt; scripts/m109_leg_gates.py. Box: relaunch terran.exe pid 1464418 at the LOAD GAME panel, untraced.
+
+## Session 171 (2026-10-29) — M111 BLOCKED: the 156-B tail has no named reader, and the census model is VOID (over-counts by 468 B)
+
+Three acceptance invocations, none green, nothing merged.
+
+1. m111b1 `python3 scripts/m109_leg_census.py --tag m111b1 --relaunch --ranges 0x44b000-0x630000`
+   (all 221 call sites to the 4 readers) — gdb DETACHED after 3 events on wineserver's SIGUSR1
+   (`handle SIGUSR1 nostop noprint pass` + a 400-continue tail were MISSING from this harness; now in it).
+   Events logged before the detach: 0x62ae0f dest=0x7cda1c size=128, 0x62aec8 size=16, 0x62af05 size=16.
+2. m111b2 same range with the SIGUSR1 handles — the 31 CRT-band sites (0x62b000-0x62d000) are HOT:
+   0x62b8f0 and 0x62b935 fired 8,277x each during STARTUP, 25,957 stops in 12 min, ZERO loader hits,
+   then the event stream froze for 7 min = the m109g3 starvation shape. Killed by pid.
+3. m111b3 `python3 scripts/m109_leg_census.py --tag m111b3 --relaunch --ranges 0x400000-0x62afff`
+   (190 sites = 221 minus the CRT band): the load RAN (counts 67/18) and completed —
+   0 gdb errors, 90 executed sites, **sum(size*count) = 243,007 vs file 242,539 → OVER by 468 B**.
+   So the cumulative "file_off" column is not a statement about the save: the executed set mixes in
+   (a) three 160-B CRT reads into 0x7cda1c / 0xbe8c10 / 0xbefd3c, and (b) a 9-iteration per-entity loop
+   of 6 x 4-B reads into heap dests 0x3b7d7a8 .. 0x3c4b420 (stride 0x224B8, the M110 pair 0x59666d/0x5966c1).
+   The M110 "contiguous 0..242,383" figure is therefore an artifact of UN-ARMED sites, not proof of what is
+   unread. Do not repeat it as a closure.
+
+READ-BACK after the load (no gdb, /proc/1573718/mem, 523 MB of readable maps): the save's last 156 B are NOT
+present verbatim anywhere; the 12-B row signature `fa ff ff ff 20 00 00 00 20 00 00 00` (6 rows in the save)
+appears exactly 6x in ONE region, 0x34f0000. The RECORDS reach memory, the BLOB does not — a per-record
+restore, not a bulk 156-B read.
+
+Instrument fixes this session (committed): session_brief.py and accept_ready.py print BLOCKED instead of a
+CalledProcessError traceback when terran.exe is down; m109_leg_census.py now sets M54A_LOAD_TIMEOUT=1800,
+carries the SIGUSR1/USR2/SIGPIPE handles + 400-continue tail, and prints a CLOSED/PARTIAL verdict (exit 4).
+test_accept_ready.py PASS 17/17 after the change.
+
+### Session 171 (cont.) — M112 static pass: the 156-B tail is a fixed TRAILER, almost certainly write-only
+
+No box time, no acceptance invocation spent. Three laws, each with the command that produced it.
+
+1. **It is a trailer, not data.** `programs/saves/*.SAV` + `programs/saves/auto/*.SAV` (9 files, sizes
+   242,539 (m54b_clean) and 242,815 / 242,875 / 242,919 / 242,927 / 242,971 / 243,483 / 243,691): the last
+   **152 B are byte-identical in all 9**, only the FINAL dword differs (365,402,425 / 766,622,009 /
+   746,214,987 ...). Structure: 5 rows of 24 B `[id,0,0,-6,32,32]` for id 3..7, then `[1,1,0x80000080,-14,32,32]`,
+   then `[800,387,X]`. A section of game data would vary with the game; this does not, and it sits at EOF at a
+   per-save offset — so nothing hard-coded can index it.
+2. **No code can size it.** The value 156 (0x9c) occurs as an *immediate* only 13x in the whole executable
+   (objdump `scratch/m574/text.txt`, stack-frame displacements `[ebp-0x9c]` excluded) and **never inside the
+   save family 0x58xxxx-0x59xxxx**; the only two `push 0x9c` are 0x4b3476 / 0x4b3e3d. The loader's own code has
+   no constant that could bound a 156-B read.
+3. **It is not restored.** Live read-back (no gdb): memory at the loader's LAST read destinations
+   0xbe27b0 / 0xbe27b4 (sites 0x597a19 / 0x5979f8, the end of FUN_00596850) holds unrelated values — no 800, no
+   387; the 156 B is absent verbatim from 523 MB of readable memory; its 12-B row signature
+   `fa ff ff ff 20 00 00 00 20 00 00 00` appears exactly 6x at heap **0x34f0000** and in **0 of the 24 files**
+   in programs/ (so it is not a static table the game carries).
+
+**Read this as:** the M110/M111 "156 B of save data with no reader" framing is wrong. The writer emits a fixed
+trailer at save time; the loader's read set does not cover it. The acceptance for closing it (not yet spent):
+load an AUTOSAVE (its trailer sits at a DIFFERENT offset) under a FILE*-filtered census and predict
+**sum = filesize - 156 again** — two files, two offsets, same shortfall.
+
+**Correction, same session:** the loader DOES push a **152** immediate (`0x597716`), so "no constant can size the
+tail" is too strong — the honest statement is that its destination `0x92bf58` holds `[9999,9999,0,0,2100,2600]`,
+NOT the trailer rows, so that leg is some other section. What survives: the trailer's offset varies per save, its
+rows reach memory only as records (6x at heap 0x34f0000), and the 156 B is absent verbatim from memory.
+
+### Session 171 (cont. 2) — M112 attempt 1 (m112a1): the FILE* filter works, the SUM DOES NOT — and the trailer question needs a poke, not a census
+
+`python3 scripts/m109_leg_census.py --tag m112a1 --relaunch --ranges 0x400000-0x62afff --filter-file --save
+m112auto1.SAV` (copy of "Alpha Centauri Autosave 1.SAV", 242,927 B, trailer at 242,771; counts 68/19):
+**savefile=0x6a79a0 captured at 0x596850, 83 legs, 0 gdb errors, sum 243,071 vs file 242,927 -> OVER by 144.**
+Predictions before the run were H1 structural-trailer sum = 242,771, H2 fixed-read-set 242,383, H3 trailer-read
+242,927; the observation matches NONE of them, which is itself the result: **the cumulative offset column is
+still invalid after filtering** (unfiltered m111b3 was over by 468; filtered, by 144). Two runs, two different
+saves, two different over-runs: the size*count sum cannot decide this question at all.
+No (site,dest,size) group repeats, so the 144 B are re-reads at different destinations/sites, not one duplicated
+leg. Read-back at the final group's destination (0x62ae0f 128 + 0x62aec8 16 + 0x62af05 16 into 0xbefd3c) shows
+[9552352, 839181731, 1, 1, 5, 24592, ...] — NOT the trailer: 0xbefd3c is a shared CRT stdio buffer that later
+reads of OTHER files overwrite, so the buffer content is not evidence either.
+
+**Reframe (the useful part):** the loader consumes through a 4096-B stdio buffer, so the trailer's bytes are
+pulled into RAM no matter what; "read or not" is not answerable by counting consumer fread sizes. The next
+experiment must make the bytes IDENTIFIABLE: poke a unique pattern into the trailer of a save copy, load it, and
+scan /proc/<pid>/mem for that pattern. Pattern present = the trailer is loaded; absent = it is never consumed.
+That is one run, needs no offset model, and cannot be confounded by a shared buffer.
+
+Box after the run: terran.exe 1878861 (autosave m112auto1 loaded, counts 68/19). gdb 1878864 was LEFT ATTACHED
+again after the harness printed its verdict — killed by pid, TracerPid now 0. (Second occurrence of the law.)
+
+### Session 171 (cont. 3) — M112 attempt 2 (m112p1, POKE): the 156-B trailer IS READ. The per-entity loop is its reader. M110's shortfall is RETRACTED.
+
+`python3 scripts/m112_trailer_poke.py --tag m112p1 --relaunch` — copies m54b_clean.SAV, plants **10 dwords of
+0xCAFEBABE** in the two zero fields of each of the 5 trailer rows (40 B changed, file size unchanged, and the
+magic occurs **0 times** in the original save, so any hit is ours), loads it, then scans /proc/<pid>/mem.
+
+Result: **load rc=0, counts 67/18, 522.9 MB scanned, 41 MAGIC hits**, the five structural ones at
+**0x3bc2110, 0x3be45c8, 0x3c06a80, 0x3c28f38, 0x3c4b3f0**. Those are EXACTLY the destinations I dismissed as
+"pollution" in m111b3, minus 8: the 6-site per-entity loop (0x59666d / 0x5966c1 / 0x596715 / 0x596769 /
+0x5967bd / 0x59683b) reads each trailer row's 6 dwords into heap record starts 0x915758, 0x3b7d7a8, 0x3b9fc60,
+0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8) and 0x8eb7c4. The census logged the
+2nd/3rd word's dest (row+8) and the poke shows the row's own bytes there — so the loop IS the trailer's reader.
+
+Consequences: M110/M111's "contiguous 0..242,383, 156 B with no reader" is **RETRACTED, not narrowed** — the
+trailer is consumed; it is 5 `[id,0,0,-6,32,32]` rows (id 3..7) restored one row per heap record. The census's
++468 (m54b_clean) and +144 (autosave) over-runs are the ORDER assumption in its cumulative `file_off` column
+(the same bytes are touched twice, once bulk and once per row), never missing or extra file content.
+Harness `scripts/m112_trailer_poke.py`; verdicts CONSUMED / NOT CONSUMED / REFUSED (all three conclusive, exit 0).

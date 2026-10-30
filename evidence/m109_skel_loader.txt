@@ -1,0 +1,840 @@
+SKELETON 839 lines 0x596850-0x597a6b
+596850 push   ebp 
+596859 push   ebx 
+59685a push   esi 
+59685e push   edi 
+596861 push   esi 
+596862 push   0x1 
+596864 cmp    eax ,ebx
+596866 push   0x31c 
+59687c push   0x985ab8 
+596881 je     0x59688a 
+596883 call   0x64c9a0 
+596888 jmp    0x59688f 
+59688a call   0x64cc00 
+596892 cmp    eax ,ebx
+596894 je     0x596fdc 
+59689a cmp DWORD PTR ds:0x985dbc,0x4
+5968a1 jl     0x5969ea 
+5968b6 je     0x5969f0 
+5968c1 push   esi 
+5968c2 push   0x1 
+5968c4 cmp    eax ,ebx
+5968c6 push   0x31c 
+5968cb push   0x985ab8 
+5968d0 je     0x5968d9 
+5968d2 call   0x596470 
+5968d7 jmp    0x5968de 
+5968d9 call   0x596540 
+5968e1 cmp    eax ,ebx
+5968e3 je     0x596fdc 
+5968ee cmp    eax ,ebx
+5968f5 je     0x596916 
+5968f7 push   esi 
+5968f8 push   0x1 
+5968fa cmp    eax ,ebx
+5968fc push   0xce0 
+596901 push   0x91f750 
+596906 je     0x59690f 
+596908 call   0x596470 
+59690d jmp    0x596933 
+59690f call   0x596540 
+596914 jmp    0x596933 
+596916 push   esi 
+596917 push   0x1 
+596919 cmp    eax ,ebx
+59691b push   0xce0 
+596920 push   0x91f750 
+596925 je     0x59692e 
+596927 call   0x64c9a0 
+59692c jmp    0x596933 
+59692e call   0x64cc00 
+596936 cmp    eax ,ebx
+596938 je     0x596fdc 
+596943 cmp    eax ,ebx
+59694a je     0x596968 
+59694c push   esi 
+59694d push   0x1 
+59694f cmp    eax ,ebx
+596951 push   0x4 
+596953 push   0x92046c 
+596958 je     0x596961 
+59695a call   0x596470 
+59695f jmp    0x596982 
+596961 call   0x596540 
+596966 jmp    0x596982 
+596968 push   esi 
+596969 push   0x1 
+59696b cmp    eax ,ebx
+59696d push   0x4 
+59696f push   0x92046c 
+596974 je     0x59697d 
+596976 call   0x64c9a0 
+59697b jmp    0x596982 
+59697d call   0x64cc00 
+596985 cmp    eax ,ebx
+596987 je     0x596fdc 
+596992 cmp    eax ,ebx
+596999 je     0x5969ba 
+59699b push   esi 
+59699c push   0x1 
+59699e cmp    eax ,ebx
+5969a0 push   0xc0 
+5969a5 push   0x92fc50 
+5969aa je     0x5969b3 
+5969ac call   0x596470 
+5969b1 jmp    0x5969d7 
+5969b3 call   0x596540 
+5969b8 jmp    0x5969d7 
+5969ba push   esi 
+5969bb push   0x1 
+5969bd cmp    eax ,ebx
+5969bf push   0xc0 
+5969c4 push   0x92fc50 
+5969c9 je     0x5969d2 
+5969cb call   0x64c9a0 
+5969d0 jmp    0x5969d7 
+5969d2 call   0x64cc00 
+5969da cmp    eax ,ebx
+5969dc jne    0x596a0a 
+5969e9 ret 
+5969f5 push   esi 
+5969f6 push   0x1 
+5969f8 cmp    eax ,ebx
+5969fa push   0x4 
+5969fc push   0x91b5b4 
+596a01 je     0x596a33 
+596a03 call   0x64c9a0 
+596a08 jmp    0x596a38 
+596a0a cmp DWORD PTR ds:0x926a14,ebx
+596a10 je     0x5969f0 
+596a17 push   esi 
+596a18 push   0x1 
+596a1a cmp    eax ,ebx
+596a1c push   0x4 
+596a1e push   0x91b5b4 
+596a23 je     0x596a2c 
+596a25 call   0x596470 
+596a2a jmp    0x596a38 
+596a2c call   0x596540 
+596a31 jmp    0x596a38 
+596a33 call   0x64cc00 
+596a3b cmp    eax ,ebx
+596a3d je     0x596fdc 
+596a43 cmp DWORD PTR ds:0x985dbc,0x3
+596a4a jl     0x596aad 
+596a51 cmp    eax ,ebx
+596a58 je     0x596a79 
+596a5a push   esi 
+596a5b push   0x1 
+596a5d cmp    eax ,ebx
+596a5f push   0x105e0 
+596a64 push   0x94d430 
+596a69 je     0x596a72 
+596a6b call   0x596470 
+596a70 jmp    0x596a96 
+596a72 call   0x596540 
+596a77 jmp    0x596a96 
+596a79 push   esi 
+596a7a push   0x1 
+596a7c cmp    eax ,ebx
+596a7e push   0x105e0 
+596a83 push   0x94d430 
+596a88 je     0x596a91 
+596a8a call   0x64c9a0 
+596a8f jmp    0x596a96 
+596a91 call   0x64cc00 
+596a99 cmp    eax ,ebx
+596a9b jne    0x596e91 
+596aac ret 
+596aad push   0xe5e0 
+596ab2 call   0x5be090 
+596ac1 cmp    eax ,ebx
+596acb je     0x596ae8 
+596acd push   esi 
+596ace push   0x1 
+596ad0 cmp    eax ,ebx
+596ad2 push   0xe5e0 
+596ad7 push   edi 
+596ad8 je     0x596ae1 
+596ada call   0x596470 
+596adf jmp    0x596b01 
+596ae1 call   0x596540 
+596ae6 jmp    0x596b01 
+596ae8 push   esi 
+596ae9 push   0x1 
+596aeb cmp    eax ,ebx
+596aed push   0xe5e0 
+596af2 push   edi 
+596af3 je     0x596afc 
+596af5 call   0x64c9a0 
+596afa jmp    0x596b01 
+596afc call   0x64cc00 
+596b04 cmp    eax ,ebx
+596b06 je     0x596fdc 
+596b1d push   0x1cbc 
+596b28 push   ecx 
+596b29 push   edx 
+596b2a call   0x64bf70 
+596b51 cmp    eax ,0x200
+596b56 jl     0x596b3c 
+596b95 jmp    0x596b9d 
+596bcb jne    0x596b97 
+596bec jne    0x596b6f 
+596d0f cmp    eax ,0x80
+596d14 jl     0x596c68 
+596d5b jne    0x596d30 
+596d9e jne    0x596d73 
+596e1c jne    0x596e11 
+596e3a jne    0x596e2f 
+596e64 jne    0x596e59 
+596e72 cmp    esi ,0x95e464
+596e78 jl     0x596b17 
+596e81 test   eax ,eax
+596e83 je     0x596e8e 
+596e85 push   eax 
+596e86 call   0x64a7f0 
+596e96 test   eax ,eax
+596e9d je     0x596ebe 
+596e9f push   esi 
+596ea0 push   0x1 
+596ea2 test   eax ,eax
+596ea4 push   0x2ce0 
+596ea9 push   0x927590 
+596eae je     0x596eb7 
+596eb0 call   0x596470 
+596eb5 jmp    0x596edb 
+596eb7 call   0x596540 
+596ebc jmp    0x596edb 
+596ebe push   esi 
+596ebf push   0x1 
+596ec1 test   eax ,eax
+596ec3 push   0x2ce0 
+596ec8 push   0x927590 
+596ecd je     0x596ed6 
+596ecf call   0x64c9a0 
+596ed4 jmp    0x596edb 
+596ed6 call   0x64cc00 
+596ede test   eax ,eax
+596ee0 je     0x596fdc 
+596eeb test   eax ,eax
+596ef2 je     0x596f10 
+596ef4 push   esi 
+596ef5 push   0x1 
+596ef7 test   eax ,eax
+596ef9 push   0x20 
+596efb push   0x926a78 
+596f00 je     0x596f09 
+596f02 call   0x596470 
+596f07 jmp    0x596f2a 
+596f09 call   0x596540 
+596f0e jmp    0x596f2a 
+596f10 push   esi 
+596f11 push   0x1 
+596f13 test   eax ,eax
+596f15 push   0x20 
+596f17 push   0x926a78 
+596f1c je     0x596f25 
+596f1e call   0x64c9a0 
+596f23 jmp    0x596f2a 
+596f25 call   0x64cc00 
+596f2d test   eax ,eax
+596f2f je     0x596fdc 
+596f3a test   eax ,eax
+596f3c jne    0x596fb6 
+596f43 test   eax ,eax
+596f45 jne    0x596fcf 
+596f4b test BYTE PTR ds:0x985ae8,0x1
+596f52 jne    0x596fcf 
+596f64 push   edx 
+596f65 call   0x507440 
+596f6d cmp    eax ,0x1
+596f70 jle    0x596fad 
+596f8d test   ebx ,eax
+596f8f je     0x596f9e 
+596f91 test BYTE PTR ds:0x985b10,al
+596f97 je     0x596f9e 
+596f99 cmp DWORD PTR [edx],0x0
+596f9c jne    0x596fbe 
+596fa5 cmp    edx ,0x95fa88
+596fab jl     0x596f84 
+596fb2 test   eax ,eax
+596fb4 je     0x596fcf 
+596fb6 push   esi 
+596fb7 call   0x5821e0 
+596fbc jmp    0x596fd5 
+596fce ret 
+596fcf push   esi 
+596fd0 call   0x582260 
+596fd8 test   eax ,eax
+596fda je     0x596fe8 
+596fe7 ret 
+596fed test   eax ,eax
+596ff4 je     0x597015 
+596ff6 push   esi 
+596ff7 push   0x1 
+596ff9 test   eax ,eax
+596ffb push   0x3e80 
+597000 push   0x985e5c 
+597005 je     0x59700e 
+597007 call   0x596470 
+59700c jmp    0x597032 
+59700e call   0x596540 
+597013 jmp    0x597032 
+597015 push   esi 
+597016 push   0x1 
+597018 test   eax ,eax
+59701a push   0x3e80 
+59701f push   0x985e5c 
+597024 je     0x59702d 
+597026 call   0x64c9a0 
+59702b jmp    0x597032 
+59702d call   0x64cc00 
+597035 test   eax ,eax
+597037 jne    0x597045 
+597044 ret 
+59704a test   eax ,eax
+597051 je     0x59706f 
+597053 push   esi 
+597054 push   0x1 
+597056 test   eax ,eax
+597058 push   0x4 
+59705a push   0x927538 
+59705f je     0x597068 
+597061 call   0x596470 
+597066 jmp    0x597089 
+597068 call   0x596540 
+59706d jmp    0x597089 
+59706f push   esi 
+597070 push   0x1 
+597072 test   eax ,eax
+597074 push   0x4 
+597076 push   0x927538 
+59707b je     0x597084 
+59707d call   0x64c9a0 
+597082 jmp    0x597089 
+597084 call   0x64cc00 
+59708c test   eax ,eax
+59708e jne    0x59709c 
+59709b ret 
+5970a1 test   eax ,eax
+5970a3 je     0x5970fc 
+5970ab test   ecx ,ecx
+5970b3 je     0x5970d0 
+5970b5 push   esi 
+5970b6 push   0x1 
+5970b8 test   ecx ,ecx
+5970ba push   eax 
+5970bb push   0x930d7c 
+5970c0 je     0x5970c9 
+5970c2 call   0x596470 
+5970c7 jmp    0x5970e9 
+5970c9 call   0x596540 
+5970ce jmp    0x5970e9 
+5970d0 push   esi 
+5970d1 push   0x1 
+5970d3 test   ecx ,ecx
+5970d5 push   eax 
+5970d6 push   0x930d7c 
+5970db je     0x5970e4 
+5970dd call   0x64c9a0 
+5970e2 jmp    0x5970e9 
+5970e4 call   0x64cc00 
+5970ec test   eax ,eax
+5970ee jne    0x5970fc 
+5970fb ret 
+597101 test   eax ,eax
+597108 je     0x597129 
+59710a push   esi 
+59710b push   0x1 
+59710d test   eax ,eax
+59710f push   0xe00 
+597114 push   0x989ce0 
+597119 je     0x597122 
+59711b call   0x596470 
+597120 jmp    0x597146 
+597122 call   0x596540 
+597127 jmp    0x597146 
+597129 push   esi 
+59712a push   0x1 
+59712c test   eax ,eax
+59712e push   0xe00 
+597133 push   0x989ce0 
+597138 je     0x597141 
+59713a call   0x64c9a0 
+59713f jmp    0x597146 
+597141 call   0x64cc00 
+597149 test   eax ,eax
+59714b jne    0x597159 
+597158 ret 
+597163 cmp    eax ,ebx
+597165 jl     0x5971c8 
+59716c test   eax ,eax
+597173 je     0x597194 
+597175 push   esi 
+597176 push   0x1 
+597178 test   eax ,eax
+59717a push   0x6800 
+59717f push   0x98ad88 
+597184 je     0x59718d 
+597186 call   0x596470 
+59718b jmp    0x5971b1 
+59718d call   0x596540 
+597192 jmp    0x5971b1 
+597194 push   esi 
+597195 push   0x1 
+597197 test   eax ,eax
+597199 push   0x6800 
+59719e push   0x98ad88 
+5971a3 je     0x5971ac 
+5971a5 call   0x64c9a0 
+5971aa jmp    0x5971b1 
+5971ac call   0x64cc00 
+5971b4 test   eax ,eax
+5971b6 jne    0x597246 
+5971c7 ret 
+5971d2 test   eax ,eax
+5971d9 je     0x5971f6 
+5971db push   esi 
+5971dc push   0x1 
+5971de test   eax ,eax
+5971e0 push   0x680 
+5971e5 push   edi 
+5971e6 je     0x5971ef 
+5971e8 call   0x596470 
+5971ed jmp    0x59720f 
+5971ef call   0x596540 
+5971f4 jmp    0x59720f 
+5971f6 push   esi 
+5971f7 push   0x1 
+5971f9 test   eax ,eax
+5971fb push   0x680 
+597200 push   edi 
+597201 je     0x59720a 
+597203 call   0x64c9a0 
+597208 jmp    0x59720f 
+59720a call   0x64cc00 
+597212 test   eax ,eax
+597214 je     0x597a25 
+597236 jne    0x597225 
+59723e cmp    edi ,0x991588
+597244 jl     0x5971cd 
+597246 cmp DWORD PTR ds:0x985dbc,0x6
+59724d jl     0x5972ac 
+597254 test   eax ,eax
+59725b je     0x59727c 
+59725d push   esi 
+59725e push   0x1 
+597260 test   eax ,eax
+597262 push   0x1000 
+597267 push   0x92bff0 
+59726c je     0x597275 
+59726e call   0x596470 
+597273 jmp    0x597299 
+597275 call   0x596540 
+59727a jmp    0x597299 
+59727c push   esi 
+59727d push   0x1 
+59727f test   eax ,eax
+597281 push   0x1000 
+597286 push   0x92bff0 
+59728b je     0x597294 
+59728d call   0x64c9a0 
+597292 jmp    0x597299 
+597294 call   0x64cc00 
+59729c test   eax ,eax
+59729e jne    0x5972bd 
+5972ab ret 
+5972ae push   edi 
+5972af call   0x571380 
+5972b8 cmp    edi ,0x8
+5972bb jl     0x5972ae 
+5972c3 test   edx ,edx
+5972c5 je     0x5974b7 
+5972cb cmp DWORD PTR ds:0x985dbc,ebx
+5972d1 jl     0x597335 
+5972e1 test   eax ,eax
+5972e8 je     0x597305 
+5972ea push   esi 
+5972eb push   0x1 
+5972ed test   eax ,eax
+5972ef push   edx 
+5972f0 push   0x933278 
+5972f5 je     0x5972fe 
+5972f7 call   0x596470 
+5972fc jmp    0x59731e 
+5972fe call   0x596540 
+597303 jmp    0x59731e 
+597305 push   esi 
+597306 push   0x1 
+597308 test   eax ,eax
+59730a push   edx 
+59730b push   0x933278 
+597310 je     0x597319 
+597312 call   0x64c9a0 
+597317 jmp    0x59731e 
+597319 call   0x64cc00 
+597321 test   eax ,eax
+597323 jne    0x5974b1 
+597334 ret 
+59733b push   ecx 
+59733c call   0x5be090 
+59735a test   ecx ,ecx
+597362 je     0x59737b 
+597364 push   esi 
+597365 push   0x1 
+597367 test   ecx ,ecx
+597369 push   eax 
+59736a push   edi 
+59736b je     0x597374 
+59736d call   0x596470 
+597372 jmp    0x597390 
+597374 call   0x596540 
+597379 jmp    0x597390 
+59737b push   esi 
+59737c push   0x1 
+59737e test   ecx ,ecx
+597380 push   eax 
+597381 push   edi 
+597382 je     0x59738b 
+597384 call   0x64c9a0 
+597389 jmp    0x597390 
+59738b call   0x64cc00 
+597393 test   eax ,eax
+597395 jne    0x5973a3 
+5973a2 ret 
+5973a9 test   edx ,edx
+5973ab jle    0x5974a4 
+597432 jne    0x597416 
+597495 jne    0x5973bc 
+5974a4 test   edi ,edi
+5974a6 je     0x5974b7 
+5974a8 push   edi 
+5974a9 call   0x64a7f0 
+5974b7 cmp DWORD PTR ds:0x985dbc,0x7
+5974be jg     0x5974ce 
+5974d3 test   eax ,eax
+5974d5 je     0x597542 
+5974e6 test   ecx ,ecx
+5974ee je     0x59750b 
+5974f0 push   esi 
+5974f1 push   0x1 
+5974f3 test   ecx ,ecx
+5974f5 push   eax 
+5974f6 push   0x95da10 
+5974fb je     0x597504 
+5974fd call   0x596470 
+597502 jmp    0x597524 
+597504 call   0x596540 
+597509 jmp    0x597524 
+59750b push   esi 
+59750c push   0x1 
+59750e test   ecx ,ecx
+597510 push   eax 
+597511 push   0x95da10 
+597516 je     0x59751f 
+597518 call   0x64c9a0 
+59751d jmp    0x597524 
+59751f call   0x64cc00 
+597527 test   eax ,eax
+597529 jne    0x597537 
+597536 ret 
+597542 cmp DWORD PTR ds:0x985dbc,0x3
+597549 jge    0x5975e6 
+59754f test   edx ,edx
+597551 jle    0x597588 
+597571 jns    0x597578 
+597581 jne    0x59755a 
+597588 test   eax ,eax
+59758a jle    0x5975e6 
+59759b cmp DWORD PTR [eax],0x0
+59759e jl     0x5975d5 
+5975a5 test   ecx ,ecx
+5975a7 jl     0x5975cb 
+5975bd jns    0x5975c4 
+5975d1 cmp    ebx ,ecx
+5975d3 jle    0x5975a3 
+5975e4 jne    0x597596 
+5975e6 test BYTE PTR ds:0x985ae8,0x10
+5975ed je     0x59764e 
+5975f6 cmp    eax ,ebx
+5975fd je     0x59761e 
+5975ff push   esi 
+597600 push   0x1 
+597602 cmp    eax ,ebx
+597604 push   0x100 
+597609 push   0x991698 
+59760e je     0x597617 
+597610 call   0x596470 
+597615 jmp    0x59763b 
+597617 call   0x596540 
+59761c jmp    0x59763b 
+59761e push   esi 
+59761f push   0x1 
+597621 cmp    eax ,ebx
+597623 push   0x100 
+597628 push   0x991698 
+59762d je     0x597636 
+59762f call   0x64c9a0 
+597634 jmp    0x59763b 
+597636 call   0x64cc00 
+59763e cmp    eax ,ebx
+597640 jne    0x597650 
+59764d ret 
+597650 cmp DWORD PTR ds:0x985dbc,0x1
+597657 jl     0x5976b6 
+59765e cmp    eax ,ebx
+597665 je     0x597686 
+597667 push   esi 
+597668 push   0x1 
+59766a cmp    eax ,ebx
+59766c push   0x100 
+597671 push   0x991598 
+597676 je     0x59767f 
+597678 call   0x596470 
+59767d jmp    0x5976a3 
+59767f call   0x596540 
+597684 jmp    0x5976a3 
+597686 push   esi 
+597687 push   0x1 
+597689 cmp    eax ,ebx
+59768b push   0x100 
+597690 push   0x991598 
+597695 je     0x59769e 
+597697 call   0x64c9a0 
+59769c jmp    0x5976a3 
+59769e call   0x64cc00 
+5976a6 cmp    eax ,ebx
+5976a8 jne    0x5976c8 
+5976b5 ret 
+5976b6 push   0x926a20 
+5976bb push   0x991598 
+5976c0 call   0x64b9d0 
+5976c8 cmp DWORD PTR ds:0x985dbc,0x2
+5976cf jl     0x59772e 
+5976d6 cmp    eax ,ebx
+5976dd je     0x5976fe 
+5976df push   esi 
+5976e0 push   0x1 
+5976e2 cmp    eax ,ebx
+5976e4 push   0x98 
+5976e9 push   0x92bf58 
+5976ee je     0x5976f7 
+5976f0 call   0x596470 
+5976f5 jmp    0x59771b 
+5976f7 call   0x596540 
+5976fc jmp    0x59771b 
+5976fe push   esi 
+5976ff push   0x1 
+597701 cmp    eax ,ebx
+597703 push   0x98 
+597708 push   0x92bf58 
+59770d je     0x597716 
+59770f call   0x64c9a0 
+597714 jmp    0x59771b 
+597716 call   0x64cc00 
+59771e cmp    eax ,ebx
+597720 jne    0x597733 
+59772d ret 
+59772e call   0x5a0f60 
+597733 cmp DWORD PTR ds:0x985dbc,0x7
+59773a jl     0x597799 
+597741 cmp    eax ,ebx
+597748 je     0x597769 
+59774a push   esi 
+59774b push   0x1 
+59774d cmp    eax ,ebx
+59774f push   0x27a0 
+597754 push   0x92d4a0 
+597759 je     0x597762 
+59775b call   0x596470 
+597760 jmp    0x597786 
+597762 call   0x596540 
+597767 jmp    0x597786 
+597769 push   esi 
+59776a push   0x1 
+59776c cmp    eax ,ebx
+59776e push   0x27a0 
+597773 push   0x92d4a0 
+597778 je     0x597781 
+59777a call   0x64c9a0 
+59777f jmp    0x597786 
+597781 call   0x64cc00 
+597789 cmp    eax ,ebx
+59778b jne    0x59779e 
+597798 ret 
+597799 call   0x47f450 
+5977a3 cmp    eax ,ebx
+5977aa je     0x5977c8 
+5977ac push   esi 
+5977ad push   0x1 
+5977af cmp    eax ,ebx
+5977b1 push   0x4 
+5977b3 push   0x91b5b8 
+5977b8 je     0x5977c1 
+5977ba call   0x596470 
+5977bf jmp    0x5977e2 
+5977c1 call   0x596540 
+5977c6 jmp    0x5977e2 
+5977c8 push   esi 
+5977c9 push   0x1 
+5977cb cmp    eax ,ebx
+5977cd push   0x4 
+5977cf push   0x91b5b8 
+5977d4 je     0x5977dd 
+5977d6 call   0x64c9a0 
+5977db jmp    0x5977e2 
+5977dd call   0x64cc00 
+5977e5 cmp    eax ,ebx
+5977e7 jne    0x5977f5 
+5977f4 ret 
+5977fa cmp    eax ,ebx
+597801 je     0x59781f 
+597803 push   esi 
+597804 push   0x1 
+597806 cmp    eax ,ebx
+597808 push   0x4 
+59780a push   0x91b5bc 
+59780f je     0x597818 
+597811 call   0x596470 
+597816 jmp    0x597839 
+597818 call   0x596540 
+59781d jmp    0x597839 
+59781f push   esi 
+597820 push   0x1 
+597822 cmp    eax ,ebx
+597824 push   0x4 
+597826 push   0x91b5bc 
+59782b je     0x597834 
+59782d call   0x64c9a0 
+597832 jmp    0x597839 
+597834 call   0x64cc00 
+59783c cmp    eax ,ebx
+59783e jne    0x59784c 
+59784b ret 
+597858 cmp    ecx ,ebx
+597867 je     0x597881 
+597869 push   esi 
+59786a push   0x1 
+59786c cmp    ecx ,ebx
+59786e push   0x4 
+597870 push   eax 
+597871 je     0x59787a 
+597873 call   0x596470 
+597878 jmp    0x597897 
+59787a call   0x596540 
+59787f jmp    0x597897 
+597881 push   esi 
+597882 push   0x1 
+597884 cmp    ecx ,ebx
+597886 push   0x4 
+597888 push   eax 
+597889 je     0x597892 
+59788b call   0x64c9a0 
+597890 jmp    0x597897 
+597892 call   0x64cc00 
+59789a cmp    eax ,ebx
+59789c jne    0x5978aa 
+5978a9 ret 
+5978b5 cmp    ecx ,ebx
+5978c4 je     0x5978de 
+5978c6 push   esi 
+5978c7 push   0x1 
+5978c9 cmp    ecx ,ebx
+5978cb push   0x4 
+5978cd push   eax 
+5978ce je     0x5978d7 
+5978d0 call   0x596470 
+5978d5 jmp    0x5978f4 
+5978d7 call   0x596540 
+5978dc jmp    0x5978f4 
+5978de push   esi 
+5978df push   0x1 
+5978e1 cmp    ecx ,ebx
+5978e3 push   0x4 
+5978e5 push   eax 
+5978e6 je     0x5978ef 
+5978e8 call   0x64c9a0 
+5978ed jmp    0x5978f4 
+5978ef call   0x64cc00 
+5978f7 cmp    eax ,ebx
+5978f9 jne    0x597907 
+597906 ret 
+59790c cmp    eax ,ebx
+59790e je     0x597916 
+597916 cmp DWORD PTR ds:0x926a14,ebx
+59791c je     0x59793a 
+59791e push   esi 
+59791f push   0x1 
+597921 cmp    eax ,ebx
+597923 push   0x4 
+597925 push   0x91b700 
+59792a je     0x597933 
+59792c call   0x596470 
+597931 jmp    0x597954 
+597933 call   0x596540 
+597938 jmp    0x597954 
+59793a push   esi 
+59793b push   0x1 
+59793d cmp    eax ,ebx
+59793f push   0x4 
+597941 push   0x91b700 
+597946 je     0x59794f 
+597948 call   0x64c9a0 
+59794d jmp    0x597954 
+59794f call   0x64cc00 
+597957 cmp    eax ,ebx
+597959 jne    0x597967 
+597966 ret 
+59796e push   esi 
+59796f push   ecx 
+597970 call   0x596620 
+597978 test   eax ,eax
+59797a jne    0x597a25 
+597983 cmp    edi ,0x7cdeec
+597989 jl     0x59796c 
+59798b push   esi 
+59798c push   0x8cda4c 
+597991 call   0x596620 
+597999 test   eax ,eax
+59799b je     0x5979a9 
+5979a8 ret 
+5979ac push   esi 
+5979ad cmp    eax ,ebx
+5979af push   0x1 
+5979b1 push   0x4 
+5979b3 je     0x5979f4 
+5979b5 push   0x91c18c 
+5979ba call   0x64c9a0 
+5979c2 test   eax ,eax
+5979c4 jne    0x5979d2 
+5979d1 ret 
+5979d2 push   esi 
+5979d3 push   0x1 
+5979d5 push   0x4 
+5979d7 push   0x91c188 
+5979dc call   0x64c9a0 
+5979e4 test   eax ,eax
+5979e6 jne    0x597a64 
+5979f3 ret 
+5979f7 push   edx 
+5979f8 call   0x64cc00 
+597a00 test   eax ,eax
+597a02 jne    0x597a10 
+597a0f ret 
+597a10 push   esi 
+597a11 push   0x1 
+597a16 push   0x4 
+597a18 push   eax 
+597a19 call   0x64cc00 
+597a21 test   eax ,eax
+597a23 jne    0x597a31 
+597a30 ret 
+597a39 cmp    ecx ,eax
+597a3b jne    0x597a49 
+597a45 cmp    edx ,eax
+597a47 je     0x597a64 
+597a50 cmp    ecx ,ebx
+597a52 je     0x597a5a 
+597a5d cmp    eax ,0x7cdeec
+597a62 jl     0x597a4e 

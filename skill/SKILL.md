@@ -39,6 +39,7 @@ rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-forma
 `ghidra-batch-export.md`, `terraforming-order-path.md`. `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
 need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
 **Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move.
+The same rule kills NEGATIVE claims: before writing "no code uses constant X", grep the docs' size/offset lists for X AND its near neighbours — a documented 152-B leg is 156 minus a 4-byte field, so an exact-value grep for 156 supports a conclusion that is one subtraction wrong. Then confirm the candidate leg by reading its DESTINATION in `/proc` and comparing content, not by its size (`references/instrument-laws.md` §Proving a read leg).
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
 RE. Five spines (boot, solo turn, unit orders/combat, research/tech, save/load) drive Phases 1–2.
@@ -164,30 +165,22 @@ Never leave the commit until after the handoff docs. The prompt rewrite is the s
 of a turn and its tool-call arguments re-enter the prompt, so an overflow there strands everything on a
 dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the whole milestone uncommitted.
 
-- The `NEXT_PROMPT.md` 15,500-byte cap is a hard budget, not advice (the gate fails at 16,000 chars,
-  `scripts/evidence.py`): draft the rewrite to land near **15.2 k on the first write** — trimming a
-  finished 15.6 k file costs three follow-up patch calls for 60 characters, more than the overage.
-  Patching an over-budget file down costs roughly one call per 100 bytes of net reduction, so when a
-  section edit ADDS text, pair it in the same call with a compensating deletion elsewhere (retire the
-  oldest ledger paragraph or a stale box-state bullet) instead of chasing the overage afterwards. Measure
-  the size BEFORE the first patch: a file already over the cap when you open it makes your edit net-negative,
-  so the trim is planned in the same call as the addition, not discovered at the gate.
-  **Trust only `python3 scripts/evidence.py budget` for that number** — it counts CHARS, and chars do
-  not equal `wc -c` / `os.path.getsize` (a file measuring 15,988 bytes scored 16,052 chars and failed
-  the gate), so trim until the tool's own line says `warn`, then stop. **Leave >100 bytes of headroom, not four**:
-  `scripts/test_loop.py` (the gate self-test CI runs) appends a few bytes to `NEXT_PROMPT.md` in a
-  throwaway worktree and then asserts "valid milestone is GREEN", so a 15,996-byte prompt makes CI's
-  gate FAIL at case 4 while your own `gate.py` run is GREEN. When CI says `gate fail` and the local run
-  is GREEN, reproduce with `python3 scripts/test_loop.py` (five cases, it prints which one breaks)
-  rather than re-running the gate; the worktrees check out HEAD, so an UNCOMMITTED trim fixes nothing —
-  commit it, then re-run. Inside such a worktree, `python3 scripts/evidence.py budget` names the
-  offending doc and its limit (that is where `FAIL (always)` shows up), which is faster than guessing. When trimming, DELETE whole
-  sentences or bullets: rewording trades characters for characters and the check stays red — and so does
-  re-flowing, because joining wrapped lines saves one byte per line, not the paragraph's apparent width
-  (a trim pass that lands 15 bytes short is a wasted call: cut a clause or retire a paragraph). Well
-  over it, move footing into `FOOTING.md` at the repo root (or a `references/`
-  file) and leave a pointer. Session 75 did exactly this with the M48d->M53s rebuild model. An oversized prompt also spends the next session's opening
-  context before any work starts, which is how sessions ratchet toward the wall.
+- The `NEXT_PROMPT.md` 15,500-byte cap is a hard budget (gate fails at 16,000); draft to ~15.2 k on the FIRST
+  write — patching an over-budget file down costs ~1 call per 100 B. When an edit ADDS text, pair it in the
+  same call with a compensating deletion (retire the oldest ledger paragraph or a stale box bullet), and
+  measure BEFORE the first patch: a file already over the cap makes the edit net-negative.
+  **Trust only `python3 scripts/evidence.py budget`** — it counts CHARS, not `wc -c` (15,988 bytes scored
+  16,052 chars and failed). **Leave >100 bytes of headroom**: `scripts/test_loop.py` appends a few bytes to
+  the prompt in a throwaway worktree, so 15,996 makes CI's case 4 FAIL while local `gate.py` is GREEN —
+  reproduce with `python3 scripts/test_loop.py` (it prints the failing case) rather than re-running the gate;
+  worktrees check out HEAD, so commit an uncommitted trim first. That budget run also names the offending
+  doc and its limit, which is faster than guessing. Trim by DELETING whole sentences: rewording and
+  re-flowing trade characters for characters (joining wrapped lines saves 1 B/line, not the paragraph width)
+  and the check stays red. Well over, move footing into `FOOTING.md` or a `references/` file and leave a
+  pointer (session 75 did this with the M48d->M53s rebuild model).
+  **Confirm the edit LANDED, not just that it measured well**: a size-check loop over an in-memory copy
+  writes nothing — `grep` the phrase you claim to have added, or `git diff --stat`; a printed byte count is
+  not a write.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
   moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
@@ -442,7 +435,11 @@ only *data* reads above ≈0x6a9000 need a runtime snapshot (`gdb -batch -ex 'du
 Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical and the depth lives in
 `references/data-formats.md` — the `.MP` size formula, the `.SAV` section list with its two record strides
 (52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
-zeros-fraction pitfall. Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
+zeros-fraction pitfall. **The last 156 B of every save is a fixed TRAILER, not game data** — the final
+152 B are identical across nine saves, only the trailing dword varies, and its offset moves with the file
+size, so no hard-coded leg can index it; its reader is still unnamed (`references/data-formats.md`
+§`.SAV` trailer, and the instrument rule in `references/instrument-laws.md` §Proving a read leg).
+Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
 `FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
 `references/ptrace-level-probes.md` §The .SAV chain.
@@ -554,10 +551,9 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   exit 1 on any FAIL) checks the authoritative address table, `terran.exe` alive with `TracerPid: 0`
   and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
   the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
-  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). A repo brief that shells out to `pgrep`
-(`scripts/session_brief.py`) RAISES a `CalledProcessError` traceback instead of printing a verdict when
-`terran.exe` is down — fresh-load (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`)
-before reading anything out of it, and do not take its silence for BLOCKED. It reads the LIVE box, so it runs for
+  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). `scripts/session_brief.py` and `accept_ready.py` print `BLOCKED: terran.exe not running` (exit 1) when the
+box is down — read that as "relaunch first". A `CalledProcessError` traceback from either means the checkout
+predates the pid guard (`M.find_pid()` unguarded): fix it there, do not fresh-load blind. It reads the LIVE box, so it runs for
 MINUTES: request `timeout 400` (or background it) instead of the default, and read a timeout as slow, not as hung.
 - **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
   `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors

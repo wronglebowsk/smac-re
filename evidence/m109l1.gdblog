@@ -1,0 +1,32 @@
+0xebece32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x597319
+Breakpoint 2 at 0x59738b
+Breakpoint 3 at 0x59751f
+Breakpoint 4 at 0x5970e4
+Breakpoint 5 at 0x5979f8
+Breakpoint 6 at 0x596ab7
+ARMED 6 bps at 0x597319 0x59738b 0x59751f 0x5970e4 0x5979f8 0x596ab7
+[New LWP 1383655]
+[New LWP 1383656]
+[New LWP 1383657]
+[New LWP 1383658]
+[New LWP 1383659]
+[New LWP 1383660]
+[New LWP 1383661]
+[New LWP 1383662]
+[New LWP 1383663]
+[New LWP 1383680]
+[New LWP 1383684]
+[New LWP 1383698]
+[New LWP 1383703]
+[New LWP 1383704]
+[New LWP 1383705]
+[New LWP 1383706]
+M109L LEGCNT size=176 round=50 cp=3
+M109L LEG52 size=3484 round=50 cp=3
+M109L LEG304 size=5472 round=50 cp=3
+M109L LEGTAIL size=12462004 round=50 cp=3
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xebece32c in __kernel_vsyscall ()
+[Inferior 1 (process 1383638) detached]

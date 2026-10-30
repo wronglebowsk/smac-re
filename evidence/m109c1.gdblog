@@ -1,0 +1,5 @@
+0xef697b84 in ?? ()
+Breakpoint 1 at 0x91b93
+/home/n100/reverse/smac/scratch/m109c1.gdb:9: Error in sourced command file:
+Invalid number "59688a".
+[Inferior 1 (process 1490433) detached]
