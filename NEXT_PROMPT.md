@@ -62,8 +62,13 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
 - **M166-M168 (m166_m168_roles.py, all PASS):** 0x94d434 is consumed as an ORDER (92 `cmp` vs 2/4/5/6/7) from the
   7-dword table 0x926a7c with the top entry excluded (`-1` at 0x59ac72); the 20-byte struct at 0x94d80c = a HEADER dword
   + a 4-dword PAYLOAD written by a different, shared writer set; 0x94d488 = a DERIVED CACHE (22 writes / 9 functions).
-- Pick from: what the 7-entry 0x926a7c table holds (only 2 readers); FUN_00531df0 (the rank's other consumer);
-  FUN_004dc100 (writes the struct's header AND payload); 0x94d54c / 0x94d560 (the struct's neighbours).
+- **M169-M171 (m169_m171_aggregate.py, all PASS):** 0x926a7c is TOTALLED (count ds:0x9204ac, sum ds:0x9204c4) in a
+  per-faction loop at stride 0x20bc inside **FUN_00531df0** (6459 B, 1905 insns, 17 call sites) — the aggregator, which
+  gates on the M163 rank as `cmp [ebx+0x94d434],0x5`; and **FUN_004dc100 (647 B) is a BIT-DECODER**: one byte in AL ->
+  four boolean dwords (+0x94d810/14/18/1c from al&1/2/4/8), header tristate (+0x94d80c = 1/-1/0 from al&0x10/0x20), and
+  al&0x40 -> `or [+0x94d430],0x800000`.
+- Pick from: WHO CALLS FUN_004dc100 (2 callers — the source byte's owner); ds:0x9204c4 / 0x9204ac consumers; the
+  tristate header's 7 test sites (M167); FUN_00531df0's 17 call sites.
 
 ## LIVE FACTS / KIT
 
