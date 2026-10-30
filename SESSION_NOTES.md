@@ -271,3 +271,8 @@ No box time, no acceptance invocation spent. Three laws, each with the command t
 trailer at save time; the loader's read set does not cover it. The acceptance for closing it (not yet spent):
 load an AUTOSAVE (its trailer sits at a DIFFERENT offset) under a FILE*-filtered census and predict
 **sum = filesize - 156 again** — two files, two offsets, same shortfall.
+
+**Correction, same session:** the loader DOES push a **152** immediate (`0x597716`), so "no constant can size the
+tail" is too strong — the honest statement is that its destination `0x92bf58` holds `[9999,9999,0,0,2100,2600]`,
+NOT the trailer rows, so that leg is some other section. What survives: the trailer's offset varies per save, its
+rows reach memory only as records (6x at heap 0x34f0000), and the 156 B is absent verbatim from memory.

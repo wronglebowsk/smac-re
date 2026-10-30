@@ -98,3 +98,23 @@ breakpoint already set and the inferior already detached — an attach spent for
 - Count token occurrences in the TEMPLATE before substituting — exactly one payload per token, or name
   them apart (`@@BLOCKS@@` for injected command blocks vs `@@BPS@@` for the address list inside the
   message).
+
+## Batch lifecycle: it detaches early, or it refuses to die
+
+A `gdb -batch` script has two failure modes that both leave the harness looking like it measured something.
+
+- **It DETACHES after a few events.** `gdb -batch` exits the moment a stop has no queued command to follow
+  it, and wineserver delivers SIGUSR1 during a Wine game's startup, so the default behaviour is
+  `Thread 1 received signal SIGUSR1` -> `[Inferior 1 detached]` after ~3 events. Every census script needs
+  `handle SIGUSR1 nostop noprint pass`, the same for SIGUSR2 and SIGPIPE, AND a tail of ~400 `continue`
+  lines after the arming `continue` (the breakpoints' own inline `continue`s do not cover a stop outside
+  them). A harness copied from an older one can be missing both: grep the emitted `scratch/<tag>.gdb` for
+  `handle SIG` and for a continue tail before attaching, and treat the 3-event log as an instrument glitch
+  rather than "the sites never fired".
+- **It REFUSES to die after printing the verdict.** The usual teardown (SIGINT, wait ~20 s for `/proc` to
+  disappear, `kill -CONT` the game) can time out with gdb still attached, all breakpoints still inserted and
+  the inferior running — `grep TracerPid /proc/<game>/status` shows the stale tracer while the harness has
+  already printed its numbers, so "the run finished" and "the box is clean" are different facts. Check
+  `TracerPid` before any next step and `kill -TERM` the stale gdb BY PID: gdb detaches on SIGTERM, restoring
+  the patched `int3`s, and the loaded game survives with its counters unchanged. Never SIGKILL it — that
+  leaves the `int3`s in memory.

@@ -251,34 +251,35 @@ can be rewritten with the same value.
   left a winedbg that had to be cleared before the next relaunch (m103d4/d5).
 - **gdb STARTUP/EXIT chatter is not protocol but must be whitelisted**: the debuginfod prompt block (This GDB supports / <https://...> / Enable debuginfod / Debuginfod has / To make this setting) prints BEFORE the sourced script first arms, and [Inferior 1 (process N) detached] prints after the last event — so a zero-unparsed gate FAILs on an instrument that armed and logged fine (m104w2 11/12, floors untouched). Set DEBUGINFOD_URLS= in the Popen env AND whitelist those prefixes plus [New LWP <pid> (a bare [New LWP] alternative never matches the banner with its pid in it).
 
-## A census whose bytes OVER-RUN the file has no model (s171, M111)
+## A read census that OVER-RUNS the file has no model
 
 A read census that sums `size*count` in execution order and prints a cumulative `file_off` per site is only
-valid if every executed site reads the SAME file sequentially. Arm a superset of call sites and that dies:
-`--ranges 0x400000-0x62afff` (190 sites) executed 90, loaded the save (counts 67/18) and summed **243,007
-against a 242,539-B file (over by 468 B)** — the extras were three 160-B CRT reads (0x62ae0f/0x62aec8/0x62af05
-into 0x7cda1c, 0xbe8c10, 0xbefd3c) plus a 9-iteration per-entity loop of 6 x 4-B reads into heap
-(0x3b7d7a8..0x3c4b420, stride 0x224B8; the 0x59666d/0x5966c1 pair). An over-run does NOT mean "468 B of
-double counting to shave": it means the offset column is not a statement about the file. Filter by the FILE*
-(`set $savefile` at the loader entry, condition `[esp+0xc] == $savefile`) before trusting any closure figure.
-Corollary: a figure that closes to the byte (M110's 0..242,383 at 99.94%) is a claim about the ARMED SET, not
-about the loader — re-derive it before using it as a proof.
+valid if every executed site reads the SAME stream sequentially. Arm a superset of call sites and that
+assumption dies: 190 sites executed 90, the load really ran (counts 67/18), and the sum came to **243,007
+against a 242,539-byte file — over by 468 B**. The extras were three 160-B CRT reads (into 0x7cda1c,
+0xbe8c10, 0xbefd3c) plus a 9-iteration per-entity loop of 6 x 4-B reads into heap (dest 0x3b7d7a8 ..
+0x3c4b420, stride 0x224B8, the 0x59666d/0x5966c1 pair).
 
-## The CRT band 0x62b000-0x62d000 is HOT — never arm it unconditioned
+- **An over-run is a MODEL verdict, not a rounding error to shave.** It says the offset column is not a
+  statement about the file at all; do not "find 468 bytes of double counting" and keep the map.
+- **Filter by the FILE\*** before trusting any closure figure: capture the stream at the loader's entry
+  (`set $savefile = *(unsigned int *)($esp+0x10)`) and condition every reader bp on
+  `*(unsigned int *)($esp+0xc) == $savefile`. Without it, a site that reads another file through the same
+  wrapper counts into your map.
+- Corollary: **a figure that closes to the byte is a claim about the ARMED SET**, not about the loader.
+  Re-derive an inherited closure figure (even one at 99.94%) with the complete site set before quoting it
+  as proof; un-armed sites are indistinguishable from unread bytes.
 
-31 sites there call the same reader as the loader. Armed, 0x62b8f0 and 0x62b935 fired 8,277x each during
-STARTUP; 25,957 stops in 12 min, ZERO loader-band hits, then the event stream froze for 7 min with the driver
-at 1 s CPU (the m109g3 starvation shape). Kill by pid and re-shape; do not wait it out.
+## A hot address band starves the driver — arm by relevance, not by address range
 
-## batch gdb detaches on wineserver's SIGUSR1 (repeat of m109g2, hit again in s171)
+Band-based site selection is a convenience that fails silently. The MSVC CRT band 0x62b000-0x62d000 holds 31
+sites calling the same four read wrappers as the loader; armed unconditioned, 0x62b8f0 and 0x62b935 fire
+**8,277x each during STARTUP** — 25,957 stops in 12 minutes, ZERO loader-band hits, then the event stream
+froze for 7 minutes with the load driver at 1 s CPU. That is the starvation shape, not a broken game.
 
-Without `handle SIGUSR1 nostop noprint pass` (plus SIGUSR2/SIGPIPE) and a tail of ~400 `continue` lines, a
-`gdb -batch` census stops after 3 events and prints `[Inferior 1 ... detached]`. A harness copied from an
-older one may be missing both — check the generated .gdb before relaunching.
-
-## The census can leave gdb ATTACHED after it prints its verdict (s171)
-
-`m109_leg_census.py` SIGINTs gdb and waits 20 s for it to vanish, then `kill -CONT` the game — but gdb can
-survive the SIGINT and keep all bps inserted with the inferior running (`TracerPid` ≠ 0, gdb at 0 s CPU).
-Always check `grep TracerPid /proc/<game>/status` before declaring the box clean, and kill the stale gdb BY PID
-(SIGTERM detaches and restores the patched int3s; the loaded game survives, counts unchanged).
+- Before arming a band, count how often each site fires **outside** the mechanism you care about: a startup
+  data-loader sharing the wrapper will drown a save-load census every time.
+- Kill the starved run by pid and re-shape — it never recovers on its own; waiting it out only spends the
+  attempt budget and leaves the box mid-run.
+- Bound the damage the same way a store census does: prefer "the sites this mechanism calls" (a filtered
+  band, or a FILE\*-conditioned superset) over "everything in this address window".

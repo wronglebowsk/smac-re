@@ -84,3 +84,17 @@ end
 
 - CVR: `cvr_decode.py` (validates 113/113), renderer output in `png/` (gitignored, regenerable).
 - FLIC: decoded with standard tools; frames in `flc_out/` (gitignored, regenerable).
+
+### `.SAV` trailer — the last 156 B (s171, M111/M112)
+
+Every save on this box ends with a **fixed trailer**: the last **152 B are byte-identical** across m54b_clean
+(242,539 B) and the 8 autosaves (242,815 / 242,875 / 242,919 / 242,927 / 242,971 / 243,483 / 243,691 B) — only
+the FINAL dword differs (365,402,425 / 766,622,009 / 746,214,987 ...). Layout: 5 x `[id,0,0,-6,32,32]` for
+id 3..7, then `[1,1,0x80000080,-14,32,32]`, then `[800,387,X]`. The file size varies, so the trailer's OFFSET
+varies per save: no hard-coded leg can index it, and any "reads the last 156 B" claim has to be a per-file seek.
+It is **not** the loader's 152-B immediate leg — `0x597716` pushes 152 but its destination `0x92bf58` holds
+`[9999,9999,0,0,2100,2600]`, not the trailer rows. After a load the 156 B is absent verbatim from 523 MB of
+memory; its 12-B row signature (`fa ff ff ff 20 00 00 00 20 00 00 00`) sits 6x in ONE heap block (0x34f0000)
+and in 0 of the 24 files in programs/, i.e. the rows reach memory as records, not as a block read. Reader still
+unnamed: test with an AUTOSAVE (trailer at a different offset) under a FILE*-filtered census, predicting
+`sum = filesize - 156` again.

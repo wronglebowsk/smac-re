@@ -554,10 +554,9 @@ strings (TOUR1*, SOCTOUR*, DRONETOUR*).
   exit 1 on any FAIL) checks the authoritative address table, `terran.exe` alive with `TracerPid: 0`
   and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
   the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
-  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). A repo brief that shells out to `pgrep`
-(`scripts/session_brief.py`) RAISES a `CalledProcessError` traceback instead of printing a verdict when
-`terran.exe` is down — fresh-load (`SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch`)
-before reading anything out of it, and do not take its silence for BLOCKED. It reads the LIVE box, so it runs for
+  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). `scripts/session_brief.py` and `accept_ready.py` print `BLOCKED: terran.exe not running` (exit 1) when the
+box is down — read that as "relaunch first". A `CalledProcessError` traceback from either means the checkout
+predates the pid guard (`M.find_pid()` unguarded): fix it there, do not fresh-load blind. It reads the LIVE box, so it runs for
 MINUTES: request `timeout 400` (or background it) instead of the default, and read a timeout as slow, not as hung.
 - **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
   `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors

@@ -18,6 +18,17 @@ and commit with a real message; always `start <ID>` (or `git checkout -b`) first
 dirty tree and an existing branch, so a crashed session's milestone (its branch + untracked `evidence/`)
 is resumed by checking it out and finishing that work, never by re-running `start`.
 
+**Building on an UNMERGED milestone: `start` forks `main` and the predecessor's scripts vanish.** When the
+previous milestone ended blocked (its branch never merged), the next one needs that branch's harness, and
+`start` will not give it to you. Branch from the predecessor instead: `git checkout -B milestone/<new>
+milestone/<prev>`. Order matters when the tree carries uncommitted edits: stash them FIRST, then
+`checkout -B`, then pop. A pop performed after a `start` (or after any move to `main`) hits
+`error: … deleted by us` for every file the predecessor owns and `main` does not, refuses to drop the stash,
+and leaves the index needing a merge — recover with `git reset --hard` (the stash is still there, it is only
+kept because the pop refused), then `checkout -B <new> <prev>` and pop again. Two consequences to state in
+the session entry: the branch is STACKED, so its PR legitimately contains the predecessor's commits, and the
+predecessor's unmerged docs on that branch are what you are editing, not the copies `start` checked out.
+
 A crashed session usually leaves its parent findings note written while the children's notes were never
 produced: grep that note for the `evidence/` files it promises and confirm each one exists before calling
 the milestone done. Re-derive inherited line-cites by grepping the instruction address they name — the

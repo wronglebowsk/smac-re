@@ -48,17 +48,17 @@ the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); i
 FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**M111 BLOCKED (s171) -> M112 = prove what the 156-B tail IS, cheapest evidence first. Not merged (PR #116).**
-State: `--tag m111b3 --ranges 0x400000-0x62afff` armed 190, exec 90, 0 gdb errors, counts 67/18,
-**sum = 243,007 vs 242,539 -> OVER by 468 B** -> the order-based file_off column is INVALID; **M110's
-"contiguous 0..242,383" is RETRACTED** (it measured an armed set, not the loader). Pollution: 3x160B CRT reads
-(0x62ae0f -> 0x7cda1c / 0xbe8c10 / 0xbefd3c) + the 9x6-dw per-entity loop (0x59666d/0x5966c1, dest
-0x3b7d7a8..0x3c4b420, stride 0x224B8). The 31 CRT-band sites are HOT (8,277 hits each, starve the driver).
-Read-back (523 MB mem, no gdb): the 156 B is absent verbatim; its 12-B row signature appears 6x at 0x34f0000.
-1. STATIC, no box: the loader FUN_00596850 ends 0x597a6b, last reads +0x11a8/+0x11c9 - is any 156-B read in
-   there? Then the save WRITER: if it emits 242,539 while the loader consumes 242,383, the tail is WRITE-ONLY
-   (never restored) and M110/M111 close on that.
-2. Only if that leaves a gap: filter every bp by the save FILE* ($savefile at 0x596850, `[esp+0xc] == $savefile`).
+**M111 BLOCKED (s171) -> M112: static pass DONE — the 156-B tail is a fixed TRAILER; its reader is UNNAMED.**
+Law 1, it is a trailer, not game data: the last **152 B are byte-identical** across all 9 saves (8 autosaves
+242,815..243,691 + m54b_clean 242,539), only the FINAL dword differs — 5 rows `[id,0,0,-6,32,32]` for id 3..7,
+then `[1,1,0x80000080,-14,32,32]`, then `[800,387,X]`. The OFFSET varies per save, so no hard-coded leg indexes it.
+Law 2, no leg reads it: the loader's 152-B immediate (0x597716) lands at 0x92bf58 holding [9999,9999,0,0,2100,
+2600], NOT the trailer; 156 (0x9c) is an immediate 13x in the EXE, never in 0x58xxxx-0x59xxxx.
+Law 3, it never lands: absent verbatim from 523 MB of mem; its 12-B row signature is 6x in ONE heap block
+0x34f0000 and 0 of 24 files in programs/; 0xbe27b0/0xbe27b4 (the loader's last read dests) are unrelated.
+ACCEPTANCE (one run, unspent): load an AUTOSAVE (trailer at a DIFFERENT offset) under a FILE*-filtered census
+($savefile at 0x596850, `[esp+0xc] == $savefile`) and predict sum = filesize - 156 AGAIN. Two files, two
+offsets, one shortfall. Prior m111b3 shape and pollution numbers: NAMED.md M111/M112.
 
 ## STILL OPEN
 

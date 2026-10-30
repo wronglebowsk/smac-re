@@ -84,8 +84,10 @@ CLOSING ORDER (exactly)
 3. `rsync -a ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/` (the gate checks the sync).
 4. `git add -A && git commit -m "<ID>: checkpoint"`.
 5. `python3 scripts/gate.py --base main` — must be GREEN.
-6. `python3 scripts/milestone.py submit --title "..."`; note the PR number; `gh pr checks <n>`;
-   `python3 scripts/milestone.py merge <n>`.
+6. `python3 scripts/milestone.py submit --title "..."`; note the PR number; `gh pr checks <n>`.
+   **Merge ONLY on a real acceptance PASS.** Otherwise leave the PR open with its CI green and
+   say why in the report — a branch carrying a documented blocker is the honest end state, and a
+   GREEN gate audits docs/evidence/harness, never whether the milestone was proven.
 Then STOP and report.
 
 IF THE CONTEXT WINDOW RUNS OUT
@@ -101,3 +103,18 @@ NEVER
 REPORT (one screen)
 What changed · the acceptance numbers with the command that produced them · what is open
 (including anything you could not verify) · the next pick. No narration of the journey.
+
+WHEN THE MILESTONE ENDED BLOCKED (Paul asks for this, in three escalating shapes)
+1. **Status** — branch/HEAD, PR + CI state, "merged? no", the failing number WITH its command, the
+   box state (pid, loaded counts, `TracerPid`), the next pick. One screen.
+2. **"In layman's terms"** — plain language BEFORE any offset: what the artifact is, an everyday
+   analogy for the accounting, what broke in the instrument, what the invalidating number means, and
+   what is still known (the read-back). Name the retraction explicitly; never let a wrong earlier
+   claim stand with a softer wording.
+3. **Recommendation** — an ordered plan, cheapest evidence first (static/no-box step before any
+   acceptance invocation), the expected outcome of each step stated as a prediction, what you would
+   NOT do (usually "merge the unmerged predecessor to tidy up"), and ONE question at the end.
+Offer to fold that plan into `NEXT_PROMPT.md`'s pick; when he says proceed, do it and keep the file
+under its character cap by pairing the addition with a deletion in the same edit.
+A crash in a pre-flight tool (`session_brief.py`, `accept_ready.py`) on a DOWN box is a harness bug to
+fix in place — they must print `BLOCKED` + the fix command, never a traceback.

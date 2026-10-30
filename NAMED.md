@@ -1193,3 +1193,7 @@ dests, sites 0x597a19/0x5979f8) hold unrelated values; the exact 156 B is absent
 row signature is 6x at heap 0x34f0000 and in 0 of the 24 files in programs/.
 Acceptance to close (unspent): an autosave (trailer at a different offset) under a FILE*-filtered census,
 prediction sum = filesize - 156.
+CORRECTION (s171): the loader pushes a 152-B immediate at 0x597716; its dest 0x92bf58 holds
+[9999,9999,0,0,2100,2600], NOT the trailer — so the trailer's reader is still unnamed, but "no constant can size
+it" is too strong (152 = 156 - 4). The trailer's offset varies per save (file sizes 242,539..243,691).
+
