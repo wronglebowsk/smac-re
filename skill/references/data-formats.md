@@ -96,5 +96,11 @@ It is **not** the loader's 152-B immediate leg — `0x597716` pushes 152 but its
 `[9999,9999,0,0,2100,2600]`, not the trailer rows. After a load the 156 B is absent verbatim from 523 MB of
 memory; its 12-B row signature (`fa ff ff ff 20 00 00 00 20 00 00 00`) sits 6x in ONE heap block (0x34f0000)
 and in 0 of the 24 files in programs/, i.e. the rows reach memory as records, not as a block read. Reader still
-unnamed: test with an AUTOSAVE (trailer at a different offset) under a FILE*-filtered census, predicting
-`sum = filesize - 156` again.
+**The reader is the 6-site per-entity loop** (`0x59666d`, `0x5966c1`, `0x596715`, `0x596769`, `0x5967bd`,
+`0x59683b`), which restores each `[id,0,0,-6,32,32]` row (id 3..7) into heap records at `0x915758`,
+`0x3b7d7a8`, `0x3b9fc60`, `0x3bc2118`, `0x3be45d0`, `0x3c06a88`, `0x3c28f40`, `0x3c4b3f8` (stride `0x224B8`)
+and `0x8eb7c4`. Proved by identification, not arithmetic: `scripts/m112_trailer_poke.py --tag m112p1` plants
+`0xCAFEBABE` in the rows of a save copy, loads it, and finds the pattern 41x in /proc memory (load rc=0,
+counts 67/18); the structural hits are those loop destinations minus 8. **A census sum over-runs the file
+(+468 on m54b_clean, +144 on an autosave) because its cumulative `file_off` assumes file order while these bytes
+are touched twice — bulk and per row.** So "the last 156 B are unread" is wrong; do not gate on a byte sum.

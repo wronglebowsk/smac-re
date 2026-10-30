@@ -1208,3 +1208,13 @@ group's destination 0xbefd3c is a shared CRT stdio buffer (other files overwrite
 NEXT INSTRUMENT: poke a unique pattern into the trailer of a save copy, load, scan /proc/<pid>/mem for it —
 identification, not byte counting. New `--filter-file` flag added to the census (captures the FILE* at 0x596850,
 logs only `[esp+0xc] == $savefile`, exits 5 when the filter never arms).
+## M112 RESOLVED (s171, m112p1) — the 156-B trailer IS READ; the per-entity loop is its reader
+
+`scripts/m112_trailer_poke.py --tag m112p1 --relaunch`: 10 dwords of 0xCAFEBABE planted in the five trailer
+rows of a save copy (40 B changed, size unchanged, magic absent from the original) -> load rc=0, counts 67/18,
+522.9 MB scanned, **41 hits**, structural ones at 0x3bc2110 / 0x3be45c8 / 0x3c06a80 / 0x3c28f38 / 0x3c4b3f0 =
+the m111b3 "pollution" loop destinations minus 8. Reader = the 6-site per-entity loop (0x59666d, 0x5966c1,
+0x596715, 0x596769, 0x5967bd, 0x59683b) restoring each `[id,0,0,-6,32,32]` row (id 3..7) to heap records
+0x915758, 0x3b7d7a8, 0x3b9fc60, 0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8), 0x8eb7c4.
+**M110's "contiguous 0..242,383 / 156 B unread / 99.94%" is RETRACTED**: the sum over-runs (+468, +144) because
+the cumulative `file_off` column assumes file order while these bytes are touched twice (bulk + per row).

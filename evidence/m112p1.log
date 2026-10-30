@@ -1,0 +1,4 @@
+M112 trailer poke — m54b_clean.SAV -> m112poke.SAV, 10 dwords of 0xcafebabe at trailer words 1,2 of rows 0..4
+  load rc=0  counts 67/18 (m54b_clean = 67/18)  scanned 522.9 MB
+  MAGIC hits in memory: 41  at 0x3bc2110, 0x3be45c8, 0x3c06a80, 0x3c28f38, 0x3c4b3f0, 0xe6e7b403, 0xe6e7b45f, 0xe6e7b6e3
+  VERDICT CONSUMED: the load reached the HUD AND 41 poked dwords are in memory — the loader reads the 156-B trailer

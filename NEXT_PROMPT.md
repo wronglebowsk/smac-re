@@ -48,17 +48,17 @@ the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); i
 FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**M111 BLOCKED (s171) -> M112: static pass DONE — the 156-B tail is a fixed TRAILER; its reader is UNNAMED.**
-Law 1, it is a trailer, not game data: the last **152 B are byte-identical** across all 9 saves (8 autosaves
-242,815..243,691 + m54b_clean 242,539), only the FINAL dword differs — 5 rows `[id,0,0,-6,32,32]` for id 3..7,
-then `[1,1,0x80000080,-14,32,32]`, then `[800,387,X]`. The OFFSET varies per save, so no hard-coded leg indexes it.
-Law 2, no leg reads it: the loader's 152-B immediate (0x597716) lands at 0x92bf58 holding [9999,9999,0,0,2100,
-2600], NOT the trailer; 156 (0x9c) is an immediate 13x in the EXE, never in 0x58xxxx-0x59xxxx.
-Law 3, it never lands: absent verbatim from 523 MB of mem; its 12-B row signature is 6x in ONE heap block
-0x34f0000 and 0 of 24 files in programs/; 0xbe27b0/0xbe27b4 (the loader's last read dests) are unrelated.
-ACCEPTANCE (one run, unspent): load an AUTOSAVE (trailer at a DIFFERENT offset) under a FILE*-filtered census
-($savefile at 0x596850, `[esp+0xc] == $savefile`) and predict sum = filesize - 156 AGAIN. Two files, two
-offsets, one shortfall. Prior m111b3 shape and pollution numbers: NAMED.md M111/M112.
+**M111/M112 RESOLVED (s171, m112p1 — the .SAV trailer IS READ; nothing merged, PR #116).**
+`scripts/m112_trailer_poke.py --tag m112p1 --relaunch`: 10 dwords of 0xCAFEBABE planted in the five trailer rows
+of a save copy (40 B changed, size unchanged, magic 0x in the original) -> **load rc=0, counts 67/18, 522.9 MB
+scanned, 41 hits**, structural ones at 0x3bc2110 / 0x3be45c8 / 0x3c06a80 / 0x3c28f38 / 0x3c4b3f0 = the m111b3
+"pollution" loop dests minus 8. **Reader = the 6-site per-entity loop** (0x59666d, 0x5966c1, 0x596715, 0x596769,
+0x5967bd, 0x59683b) restoring each `[id,0,0,-6,32,32]` row (id 3..7) into heap records 0x915758, 0x3b7d7a8,
+0x3b9fc60, 0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8), 0x8eb7c4.
+**RETRACTED: "contiguous 0..242,383 / 156 B unread / 99.94%"** — the census over-runs (+468 m54b_clean, +144
+autosave) are its ORDER assumption (bytes touched twice: bulk + per row), not missing data.
+LAW: identify bytes by POKING a pattern and scanning memory; a size*count sum with a cumulative offset column
+cannot decide what a file read covers. Next: re-derive the .SAV map with the loop as the trailer's reader.
 
 ## STILL OPEN
 

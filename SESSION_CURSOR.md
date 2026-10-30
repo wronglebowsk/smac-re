@@ -1,3 +1,2 @@
-M112 ACCEPTANCE attempt 2 firing (tag m112p1, POKE instrument): scripts/m112_trailer_poke.py --tag m112p1 --relaunch pokes 10 dwords of 0xCAFEBABE into the 5 trailer rows of m54b_clean (40 B changed, size unchanged, magic absent from the file), loads it, scans /proc/<pid>/mem.
-PREDICT: hits>0 = trailer CONSUMED; hits=0 + HUD 67/18 = NOT consumed; load refused = VALIDATED. Not merged (PR #116).
-Do not touch the box until m112p1 exits; then read evidence/m112p1.log VERDICT.
+M111/M112 RESOLVED (s171, m112p1 POKE): the 156-B .SAV trailer IS READ — reader = the 6-site per-entity loop (0x59666d/0x5966c1/0x596715/0x596769/0x5967bd/0x59683b), rows restored to heap 0x915758, 0x3b7d7a8..0x3c4b3f8 (stride 0x224B8). Proof: 10x0xCAFEBABE poked into the rows, load rc=0 counts 67/18, 41 hits, structural ones = the m111b3 loop dests -8. M110's 99.94%/156-B-unread RETRACTED. Not merged, PR #116.
+next: re-derive the .SAV map counting the loop as the trailer's reader; then decide on merging #116.

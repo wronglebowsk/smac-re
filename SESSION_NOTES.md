@@ -299,3 +299,22 @@ That is one run, needs no offset model, and cannot be confounded by a shared buf
 
 Box after the run: terran.exe 1878861 (autosave m112auto1 loaded, counts 68/19). gdb 1878864 was LEFT ATTACHED
 again after the harness printed its verdict — killed by pid, TracerPid now 0. (Second occurrence of the law.)
+
+### Session 171 (cont. 3) — M112 attempt 2 (m112p1, POKE): the 156-B trailer IS READ. The per-entity loop is its reader. M110's shortfall is RETRACTED.
+
+`python3 scripts/m112_trailer_poke.py --tag m112p1 --relaunch` — copies m54b_clean.SAV, plants **10 dwords of
+0xCAFEBABE** in the two zero fields of each of the 5 trailer rows (40 B changed, file size unchanged, and the
+magic occurs **0 times** in the original save, so any hit is ours), loads it, then scans /proc/<pid>/mem.
+
+Result: **load rc=0, counts 67/18, 522.9 MB scanned, 41 MAGIC hits**, the five structural ones at
+**0x3bc2110, 0x3be45c8, 0x3c06a80, 0x3c28f38, 0x3c4b3f0**. Those are EXACTLY the destinations I dismissed as
+"pollution" in m111b3, minus 8: the 6-site per-entity loop (0x59666d / 0x5966c1 / 0x596715 / 0x596769 /
+0x5967bd / 0x59683b) reads each trailer row's 6 dwords into heap record starts 0x915758, 0x3b7d7a8, 0x3b9fc60,
+0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8) and 0x8eb7c4. The census logged the
+2nd/3rd word's dest (row+8) and the poke shows the row's own bytes there — so the loop IS the trailer's reader.
+
+Consequences: M110/M111's "contiguous 0..242,383, 156 B with no reader" is **RETRACTED, not narrowed** — the
+trailer is consumed; it is 5 `[id,0,0,-6,32,32]` rows (id 3..7) restored one row per heap record. The census's
++468 (m54b_clean) and +144 (autosave) over-runs are the ORDER assumption in its cumulative `file_off` column
+(the same bytes are touched twice, once bulk and once per row), never missing or extra file content.
+Harness `scripts/m112_trailer_poke.py`; verdicts CONSUMED / NOT CONSUMED / REFUSED (all three conclusive, exit 0).
