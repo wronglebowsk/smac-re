@@ -1,0 +1,15 @@
+M117 gate take — m117g1, 1 turn(s), 0 test hits, 0 take hits, gdb errors 0
+  faction   bit0x40   reached test   took branch
+  -------   -------   ------------   -----------
+        0   clr          0              0
+        1   SET          0              0
+        2   clr          0              0
+        3   clr          0              0
+        4   clr          0              0
+        5   clr          0              0
+        6   clr          0              0
+        7   clr          0              0
+  esi values seen: 
+  takes with the bit CLEAR: none
+  bit set but never taken: none
+  VERDICT NO TEST HITS: FUN_005aadf0 never reached 0x5aaf7f in this window — the run cannot decide anything (not evidence that the gate is inert)

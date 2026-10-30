@@ -167,7 +167,10 @@ def main():
                                               "" if not off else "   **NOT multiples of 0x8380: the f column is wrong**"))
     lines.append("  takes with the bit CLEAR: %s" % (viol or "none"))
     lines.append("  bit set but never taken: %s" % (idle or "none"))
-    if not tests:
+    if p.returncode != 0:
+        verdict = ("NO MEASUREMENT: the turn driver returned rc=%d (wedge/no orders) — 0 test hits is the DRIVER, not "
+                   "the gate. Relaunch and load a clean save, then re-run." % p.returncode)
+    elif not tests:
         verdict = ("NO TEST HITS: FUN_005aadf0 never reached 0x5aaf7f in this window — the run cannot decide "
                    "anything (not evidence that the gate is inert)")
     elif viol:
@@ -185,7 +188,9 @@ def main():
     print(out, flush=True)
     with open(os.path.join(M.EVID, a.tag + ".log"), "w") as fh:
         fh.write(out + "\n")
-    rc = 0 if takes or not tests else 4
+    rc = 0 if (not tests or takes) else 4
+    if p.returncode != 0:
+        rc = 5
     if tracer(pid) != "0":
         print("EXIT 8: box not clean (TracerPid=%s) — kill gdb %d by pid" % (tracer(pid), g.pid), flush=True)
         rc = 8

@@ -1,0 +1,24 @@
+[New LWP 2032170]
+[New LWP 2032169]
+[New LWP 2032168]
+[New LWP 2032167]
+[New LWP 2032166]
+[New LWP 2032165]
+[New LWP 2032164]
+[New LWP 2032163]
+[New LWP 2032162]
+[New LWP 2032161]
+[New LWP 2032160]
+[New LWP 2032159]
+[New LWP 2032158]
+[New LWP 2032157]
+[New LWP 2032156]
+[New LWP 2032155]
+0x005a5b1f in ?? ()
+Breakpoint 1 at 0x5aaf7f
+Breakpoint 2 at 0x5aaf88
+ARMED gate bps
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0x005a5b05 in ?? ()
+[Inferior 1 (process 2032152) detached]
