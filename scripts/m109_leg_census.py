@@ -30,7 +30,12 @@ spec.loader.exec_module(M)
 READERS = (0x596470, 0x596540, 0x64c9a0, 0x64cc00)
 LO, HI = 0x596850, 0x597a6b
 SKEL = os.path.join(ROOT, "evidence/m109_skel_loader.txt")
+TEXT = os.path.join(ROOT, "scratch/m574/text.txt")
 COUNT_U, COUNT_B = 0x985af0, 0x985af4
+# M110: the loader, the second-phase function right after it, and the map loader family
+# (the only outside functions whose reader calls a load can plausibly reach).
+DEFAULT_RANGES = ("0x596620-0x5966ff,0x596850-0x597a6b,0x597a70-0x5986ff,0x5821e0-0x5823ff,"
+                  "0x44b780-0x44b8ff,0x5c7200-0x5c7400")
 
 TMPL = """set pagination off
 set confirm off
@@ -50,15 +55,26 @@ end
 """
 
 
-def sites():
+def sites(ranges=None):
+    """Every `call <reader>` whose own address is inside one of the ranges."""
+    rs = []
+    for part in (ranges or DEFAULT_RANGES).split(","):
+        lo, _, hi = part.strip().partition("-")
+        rs.append((int(lo, 16), int(hi, 16)))
     out = []
-    for line in open(SKEL, errors="replace"):
-        m = re.match(r"([0-9a-f]{6,8}) call\s+0x([0-9a-f]+)", line.strip())
-        if not m:
-            continue
-        a, tgt = int(m.group(1), 16), int(m.group(2), 16)
-        if tgt in READERS and LO <= a <= HI:
-            out.append(a)
+    with open(TEXT, errors="replace") as f:
+        for line in f:
+            m = re.match(r"\s*([0-9a-f]{6,8}):\s", line)
+            if not m:
+                continue
+            a = int(m.group(1), 16)
+            if not any(lo <= a <= hi for lo, hi in rs):
+                continue
+            parts = line.rstrip("\n").split("\t")
+            asm = parts[2].strip() if len(parts) > 2 else ""
+            c = re.match(r"call\s+0x([0-9a-f]+)", asm)
+            if c and int(c.group(1), 16) in READERS:
+                out.append(a)
     return sorted(set(out))
 
 
@@ -83,8 +99,10 @@ def main():
     ap.add_argument("--tag", default="m109c1")
     ap.add_argument("--save", default="m54b_clean.SAV")
     ap.add_argument("--relaunch", action="store_true")
+    ap.add_argument("--ranges", default=DEFAULT_RANGES,
+                    help="address ranges to census, comma separated lo-hi (hex)")
     a = ap.parse_args()
-    ss = sites()
+    ss = sites(a.ranges)
     if not ss:
         raise SystemExit("no read sites parsed from the skeleton")
     gpath = os.path.join(M.SCRATCH, a.tag + ".gdb")
@@ -163,8 +181,12 @@ def main():
     errs = [l for l in text.splitlines() if l.startswith("Error") or "Cannot access memory" in l]
     lines = [f"M109c leg census — {a.save}, pid {pid}, {len(legs)} executed read sites, "
              f"{len(errs)} gdb errors, counts {nu}/{nb}",
+             f"  ranges {a.ranges}",
              f"  sum(size*count) = {total:,}  vs file {file_size:,}  -> {file_size - total:,}"]
-    lines += ["  site=0x%x dest=0x%x size=%d cnt=%d" % t for t in legs]
+    off = 0
+    for site, dest, size, cnt in legs:
+        lines.append("  site=0x%x dest=0x%x size=%d cnt=%d file_off=%d" % (site, dest, size, cnt, off))
+        off += size * cnt
     out = "\n".join(lines)
     print(out[:4000])
     with open(os.path.join(M.EVID, a.tag + ".log"), "w") as f:

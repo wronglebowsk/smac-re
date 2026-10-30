@@ -41,13 +41,12 @@ in rounds (M104); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/
 copy_to_user, so no ring-3 store and no debug exception (the hardware watchpoint's blind spot); the .SAV
 fd arrives over SCM_RIGHTS, name it by the TAIL-AND-EOF LAW. Harness `scripts/m106_load_restore.py`; a
 traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
-**M110 (THE PICK): the reads OUTSIDE the loader — M109 settled the inside.** The live census (`scripts/
-m109_leg_census.py --tag m109c4`, 116 static bps, one load) executes **23 sites, Σ(size×count) = 149,380 B
-of 242,539** — the loader is only 61.6% of the file; **93,159 B comes from its callers** (105 reader call
-sites outside [0x596850,0x597a6b]). Gates and the four reader entry points are in
-`evidence/m109_skel_loader.txt`. Enumerate every reader call outside the loader by containing function,
-census the ones a load reaches, closure target Σ == 242,539. Static bps are fine during the menu; a bp
-CONDITIONED on *($esp) freezes the game.
+**M111 (THE PICK): the last 156 B — the map is already named.** `scripts/m109_leg_census.py --tag m110a2`
+(six ranges, 182 static bps) closes the save to **242,383 of 242,539 (99.94%), contiguous 0..242,383**: the
+MAP is `0x5822a7` 2,724 B header @79,364 + `0x5822f2` grid **90,112 = 64x64x22** @82,088 + `0x582318` 91 B
+trailer @172,200, and the "86,016-B heap read" was the grid minus one 4,096 block. The 156 B at 242,383 is a
+6-dword table [3,0,0,-6,32,32]..[7,..]; find its reader — add the CRT ranges (0x62b000-0x62d000) or
+loop-count the 0x59666d/0x5966c1 helper (9 pairs seen). Closure target Σ == 242,539.
 
 ## STILL OPEN (in priority order)
 
