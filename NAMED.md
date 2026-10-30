@@ -1269,3 +1269,14 @@ SIGTERM/SIGKILLs gdb by pid after its verdict, reads `TracerPid` into the log he
 not clean. `m113_save_map.py --verify` (default ±8 B `local_1to1`): every anchor is checked against the file
 locally — live check 64,000/68,096/81,408(±64)/82,432(±64)/174,000 all 0 diffs.
 
+## M116 (m116flag, s171, PASS) — the band-flag gate is a BYTE test; no OR sets 0x40; "0 for all 8" is FALSE at this state
+
+`test BYTE PTR [esi+0x94d430],0x40` exists exactly once, at **0x5aaf7f** in **FUN_005aadf0+0x18f**, three
+instructions after `mov [esi+0x94d800],eax` (FUN_005aab70 threshold reload). 170 instructions touch the
+displacement; its 17 `or` sites set 0x800000..0x80000000 and 0x2 — **none sets 0x40**, so the bit can only arrive via
+a whole-dword store (18 sites). Live words at 0x94d430+f*0x8380: 0, **0xFFFFFFFF**, 0, 0, 0, 0, 0, 0 -> bit 0x40 SET
+for faction 1, zero for the rest. **The old row "bit 0x40 = 0 for all 8 factions at r66 -> the M89 second-ask never
+ran" is RETRACTED as a measurement**; whether the gate MEANS "second ask enabled" stays INFERENCE because faction 1's
+dword and 0x94d434 are both 0xFFFFFFFF (also the shape of a -1-filled record). Controlled test: clear the bit for
+faction 1 and count hits at 0x5aaf88.
+

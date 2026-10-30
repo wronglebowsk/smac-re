@@ -401,3 +401,20 @@ manufactures diffs that look exactly like real rewriting.
    later diff leans on. Checked against the live box: 64,000->0x95CB04, 68,096->0x927684, 81,408->0x92AB6C (±64),
    82,432->0x40A67B0 (±64) and 174,000->0x986501 all return 0 local diffs — which independently confirms that
    M114's "map header tail" was the straddle artifact and nothing else.
+
+## Session 171 (cont. 11) — M116 ACCEPTED (m116flag, PASS): the band-flag gate is a BYTE test, no OR sets 0x40, and "0 for all 8" is FALSE
+
+`python3 scripts/m116_band_flag.py` (static over the image + live read of the 8 faction words) — **PASS**.
+
+- **The gate is a byte test** at **0x5aaf7f**: `test BYTE PTR [esi+0x94d430],0x40`, inside **FUN_005aadf0+0x18f**
+  (528 B), three instructions after `mov [esi+0x94d800],eax` (the FUN_005aab70 advance threshold is reloaded and
+  stored, then the byte is tested). Exactly ONE such test exists in the image.
+- **Nothing ORs 0x40 into it.** 170 instructions touch disp 0x94d430; the 17 `or` sites set 0x800000, 0x400000,
+  0x1000000, 0x2000000, 0x4000000, 0x8000000, 0x10000000, 0x80000000, 0x40000000, 0x20000000, 0x200000 and 0x2 —
+  **zero set 0x40**, so the bit can only arrive through a whole-dword store (18 sites).
+- **"bit 0x40 = 0 for all 8 factions" is FALSE at the current state**: the eight words read
+  0, **0xFFFFFFFF**, 0, 0, 0, 0, 0, 0 — bit 0x40 is SET for faction 1 and zero for the other seven.
+- **But the interpretation is NOT established.** Faction 1's whole dword (and 0x94d434) is 0xFFFFFFFF, which is also
+  the shape of a -1-filled/uninitialised record. So "the second ask runs for faction 1" is an INFERENCE. The
+  controlled test is a poke: clear bit 0x40 for faction 1 and count hits at 0x5aaf88 (the taken branch).
+NAMED's row is amended to say exactly that instead of "never ran".
