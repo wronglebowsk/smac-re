@@ -1,7 +1,6 @@
-M109 attempt 3 RUNNING NOW (m109g1), NOT ACCEPTED — branch milestone/m109; main = aad8267 (M108 #115).
-CMD: python3 scripts/m109_leg_gates.py --tag m109g1 --relaunch — 5 bps: FUN_00596850 ENTER (the FILE*)
-+ read wrappers 0x596470/596540/64c9a0/64cc00 (ra,ptr,size,count,stream).
-STATIC (scratch/m109/skel_loader.txt): those 4 are 2 PAIRS — 596470/596540 = CONVERTING (malloc
-size*count), 64c9a0/64cc00 = DIRECT; chosen by [0x926a14]=([0x985ae8]&0x10000000), live 0 -> DIRECT.
-count is ALWAYS 1. 105 reader sites exist OUTSIDE FUN_00596850 -> M107's 30-leg table is incomplete.
-next if PASS: gate.py --base main -> milestone.py submit -> merge.
+M109 attempt 3 IN FLIGHT (m109g2), NOT ACCEPTED — branch milestone/m109 (committed bf4b721); main aad8267.
+CMD: setsid env M54A_LOAD_TIMEOUT=900 python3 scripts/m109_leg_gates.py --tag m109g2 --relaunch
+(5 bps: FUN_00596850 ENTER = the FILE*; the 4 read wrappers 0x596470/596540/64c9a0/64cc00 -> ra,ptr,
+size,count,stream). m109g1 FAIL 1/6 was NOT the map: the driver's 220 s budget expired at the CDROM
+screen, so FUN_00596850 was NEVER ENTERED (0 ENTER events, header fields still 0).
+Result file when it ends: scratch/m109g2.out + evidence/m109g2.log. If PASS: gate.py --base main -> submit -> merge.

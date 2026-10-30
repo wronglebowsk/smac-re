@@ -49,9 +49,11 @@ RND, CPP = M.RND, M.CPP
 TMPL = """set pagination off
 set confirm off
 set print elements 0
+handle SIGUSR1 nostop noprint pass
+handle SIGUSR2 nostop noprint pass
+handle SIGPIPE nostop noprint pass
 @@BLOCKS@@printf "ARMED 5 bps at 0x596850 0x596470 0x596540 0x64c9a0 0x64cc00\\n"
-continue
-"""
+@@TAIL@@"""
 
 ENTER_BP = """break *0x596850
 commands
@@ -79,7 +81,7 @@ def gdb_script():
     for pc in READERS:
         blocks += (READ_BP.replace("@@PC@@", "%#x" % pc)
                    .replace("@RND@", RND).replace("@CPP@", CPP))
-    return TMPL.replace("@@BLOCKS@@", blocks)
+    return TMPL.replace("@@BLOCKS@@", blocks).replace("@@TAIL@@", "continue\n" * 400)
 
 
 def check_script(script):
@@ -87,7 +89,7 @@ def check_script(script):
     for line in script.splitlines():
         if line.startswith("printf"):
             nspec = len(re.findall(r"%[dux]", line))
-            narg = line.count("*(int *)") + line.count(RND) + line.count(CPP)
+            narg = line.count("*(int *)(") + line.count(RND) + line.count(CPP)
             if nspec != narg:
                 raise SystemExit("printf arg-count mismatch (%d specs / %d args): %s"
                                  % (nspec, narg, line))
@@ -195,7 +197,8 @@ def main():
                                   stream=int(m.group(5), 16),
                                   rnd=int(m.group(6), 16), cp=int(m.group(7), 16)))
                 continue
-        unparsed.append(l)
+        if l.startswith("M109"):
+            unparsed.append(l)
     errs = [l for l in lines if l.startswith("Error") or "Cannot access memory" in l]
     chatter = [l for l in lines if CHATTER.match(l)]
 

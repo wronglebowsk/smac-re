@@ -1,0 +1,30 @@
+[New LWP 1448343]
+[New LWP 1448342]
+[New LWP 1448341]
+[New LWP 1448340]
+[New LWP 1448339]
+[New LWP 1448338]
+[New LWP 1448337]
+[New LWP 1448336]
+[New LWP 1448335]
+0xf7944698 in ?? ()
+Breakpoint 1 at 0x596850
+Breakpoint 2 at 0x596470
+Breakpoint 3 at 0x596540
+Breakpoint 4 at 0x64c9a0
+Breakpoint 5 at 0x64cc00
+ARMED 5 bps at 0x596850 0x596470 0x596540 0x64c9a0 0x64cc00
+[New LWP 1448350]
+[New LWP 1448357]
+[New LWP 1448358]
+[New LWP 1448359]
+[New LWP 1448360]
+[New LWP 1448361]
+[New LWP 1448362]
+M109R ra=0x62ae14 ptr=0x7cda1c size=128 count=1 stream=0x6a79c0 round=0x0 cp=0x0
+M109R ra=0x62aecd ptr=0x7cdacc size=16 count=1 stream=0x6a79c0 round=0x0 cp=0x0
+M109R ra=0x62af0a ptr=0x7cdadc size=16 count=1 stream=0x6a79c0 round=0x0 cp=0x0
+
+Thread 1 "terran.exe" received signal SIGUSR1, User defined signal 1.
+0xf7a6132c in __kernel_vsyscall ()
+[Inferior 1 (process 1448330) detached]
