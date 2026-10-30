@@ -52,7 +52,15 @@ sections read in a fixed order. **`FUN_00597a70` is the save/scenario block load
 26,624, 4,096, 256, 152, 10,144 are immediates; three are computed — one raw count (`DAT_00927538`), one
 **52 B/record** (`edx` records), one **304 B/record** (`DAT_00985af4` records). Two are skipped outright
 under version/count conditions, so the section list is conditional; sizes shrink as the game progresses.
-`.SAV` is fully splittable from the file alone — `scripts/decode_save.py --sections` sums to the byte.
+`.SAV` splits from the file alone, but **`decode_save.py --sections` sums to the byte only for 128×128 saves**:
+its `MAP_SECTIONS = 2724 + 140800` hard-codes that grid, while a 64×64 save's map is `2,724 + 90,112 + 91 =
+92,927` (`FUN_00582260`), so the constant over-runs the file and every later offset is wrong — on this box it
+dies with `no 52/304 split of a 0-byte region` on all nine saves. Derive the map size from the header dims
+(`MAP_FORMAT.md`'s `15 + 2724 + W*H*22 + trailer`) before believing any offset after it.
+**Never close a save layout by subset-sum.** With the map corrected and `52n + 304m` free, m54b_clean's
+242,539 B admits **181,769** exact decompositions of the candidate legs (auto1 182,718, auto30 184,074) — an
+answer set that size names nothing. Constrain with content (anchors, per-stride zeros-fraction) or with pokes
+(`references/instrument-laws.md` §Identify bytes).
 Key facts: u32 **own player at file offset 808**; a **u32 count prefix immediately before** one variable
 section; the other two variable sections are `n × 52 B` and `m × 304 B` records, split by solving
 `52n + 304m = region` and choosing on zeros-fraction (304 B records ~80% zero, 52 B ~40%).
@@ -95,7 +103,7 @@ varies per save: no hard-coded leg can index it, and any "reads the last 156 B" 
 It is **not** the loader's 152-B immediate leg — `0x597716` pushes 152 but its destination `0x92bf58` holds
 `[9999,9999,0,0,2100,2600]`, not the trailer rows. After a load the 156 B is absent verbatim from 523 MB of
 memory; its 12-B row signature (`fa ff ff ff 20 00 00 00 20 00 00 00`) sits 6x in ONE heap block (0x34f0000)
-and in 0 of the 24 files in programs/, i.e. the rows reach memory as records, not as a block read. Reader still
+and in 0 of the 24 files in programs/, i.e. the rows reach memory as records, not as a block read.
 **The reader is the 6-site per-entity loop** (`0x59666d`, `0x5966c1`, `0x596715`, `0x596769`, `0x5967bd`,
 `0x59683b`), which restores each `[id,0,0,-6,32,32]` row (id 3..7) into heap records at `0x915758`,
 `0x3b7d7a8`, `0x3b9fc60`, `0x3bc2118`, `0x3be45d0`, `0x3c06a88`, `0x3c28f40`, `0x3c4b3f8` (stride `0x224B8`)
@@ -104,3 +112,24 @@ and `0x8eb7c4`. Proved by identification, not arithmetic: `scripts/m112_trailer_
 counts 67/18); the structural hits are those loop destinations minus 8. **A census sum over-runs the file
 (+468 on m54b_clean, +144 on an autosave) because its cumulative `file_off` assumes file order while these bytes
 are touched twice — bulk and per row.** So "the last 156 B are unread" is wrong; do not gate on a byte sum.
+
+### `.SAV` offset -> memory anchors (s171, m113map1 — pokes, 20/20 found)
+
+`scripts/m113_save_map.py --tag m113map1 --relaunch --step 16384` plants `0xC0DE000i` at 16 KB offsets and at
+candidate section starts in a save copy, loads it, and searches memory for each marker: 20/20 found, 0 absent,
+load rc=0, counts 67/18, 522.7 MB scanned. Inside a section the mapping is 1:1 (three slope-1 runs):
+```
+16,384..65,536  -> 0x951104..0x95d104        block A
+81,920          -> 0x92ad6c                  map header
+98,304..163,840 -> 0x40aa5b0..0x40ba5b0      the 90,112-B grid at 0x40a6660
+172,287         -> 0x15e2baf                 map trailer region
+180,224         -> 0x987d51
+188,291/188,467 -> 0x989cd4 / 0x930e20       176 B apart = the 0x930d7c count prefix
+196,608..212,992-> 0x98bf49..0x98ff49        slope 1
+218,675/222,771 -> 0x99157c / 0x92cfe4       4,096 B apart
+229,376         -> 0x95e635
+```
+Region boundaries are where the destination JUMPS (block A -> map header between 65,536 and 81,920; map ->
+trailer between 163,840 and 172,287; trailer -> next section between 172,287 and 180,224). This is the only
+instrument that has held on this file: a read census over-ran its own file (+468, +144) and a subset-sum over the
+legs admits 181,769 exact decompositions, while an anchor is an exact (offset, address) pair.

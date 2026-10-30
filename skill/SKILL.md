@@ -60,10 +60,8 @@ session entry, rather than discovering the missing instrument halfway through th
 it onto the new branch — never commit a cursor write to `main` just to get the tree clean. That commit is also what breaks a
 landing — a squash merge plus any local `main` commit makes `merge <n>` abort its ff-only pull AFTER
 GitHub has already merged (recovery in `references/git-workflow.md`) — and `main` cannot be pushed at all
-(the pre-push hook refuses), so a post-merge cursor/footing tweak rides its own branch + PR. When the milestone you are re-running
-already has a branch, `start <ID>` refuses and leaves you on `main`, where the failed attempt's scripts
-are NOT in the tree: check that branch out and `ls scripts/<id>*` before concluding the instrument is
-missing.
+(the pre-push hook refuses), so a post-merge cursor/footing tweak rides its own branch + PR. When the milestone you are re-running already has a branch, `start <ID>` refuses and leaves you on `main`:
+check that branch out and `ls scripts/<id>*` before concluding the instrument is missing.
 **Verify the named milestone is not already merged before starting it** — a kickoff prompt (re-pasted or
 cron-supplied) can lag the repo. `git log --oneline | grep -i <ID>` plus `grep -n '^## <ID>' NAMED.md`
 answers in one call; if both hit, the prompt's pick is stale, so run the milestone
@@ -437,8 +435,9 @@ Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical a
 (52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
 zeros-fraction pitfall. **The last 156 B of every save is a fixed TRAILER, not game data** — the final
 152 B are identical across nine saves, only the trailing dword varies, and its offset moves with the file
-size, so no hard-coded leg can index it; its reader is still unnamed (`references/data-formats.md`
-§`.SAV` trailer, and the instrument rule in `references/instrument-laws.md` §Proving a read leg).
+size, so no hard-coded leg can index it; Its reader is the **6-site per-entity loop** that restores each row into per-entity heap records
+(stride `0x224B8`), proved by POKING a marker into the rows and finding it in memory — never by a byte sum
+(`references/data-formats.md` §`.SAV` trailer; `references/instrument-laws.md` §Identify bytes).
 Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
 `FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
