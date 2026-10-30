@@ -1,5 +1,4 @@
-M109 RUN s169, NOT ACCEPTED, NOT MERGED — branch milestone/m109 HEAD bc47a6f (gate GREEN, tree clean); main aad8267.
-FINDING: 116 static in-loader read-site bps + ONE load = 23 executed sites, sum(size*count) 149,380 B of 242,539 (61.6%); the other 93,159 B is read by callers OUTSIDE [0x596850,0x597a6b] (105 reader sites; the 86,016-B heap read is one). The chunk map cannot close inside the loader.
-Confirmed live: count leg 176, 52n 3,484 (52x67), 304m 5,472 (304x18); 0x59738b and its malloc 0x596ab7 never fire.
-next: M110 = enumerate the outside reader calls by containing function, census them, closure sum == 242,539.
-Box: terran.exe 1501243 at the HUD, m54b_clean r50, counts 67/18. cron 1a88e12bd408 RESUMED at the end of s169.
+M110 SORTED to 99.94% (s170) — branch milestone/m109 HEAD 4a7dc5d, gate GREEN, tree clean, NOT merged (Σ 242,383 of 242,539, 156 B short).
+MAP NAMED: 0x5822a7 2,724 B header @79,364 + 0x5822f2 grid 90,112 = 64x64x22 @82,088 + 0x582318 91 B trailer @172,200. Coverage contiguous 0..242,383 over 45 read sites. The old 86,016-B heap read = the grid minus its first 4,096 stdio block.
+REMAINDER 156 B at 242,383: a 6-dword table [3,0,0,-6,32,32]..[7,..] + 3 dwords; reader NOT in the six ranges (CRT 0x62b000-0x62d000, or an under-counted 0x59666d/0x5966c1 loop).
+next: M111 = find that reader; then Σ == 242,539 closes and the branch can merge. cron 1a88e12bd408 RESUMED at the end of s170.
