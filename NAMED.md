@@ -404,3 +404,12 @@ post-seek flag word. Any print at 0x497704 shows the PREVIOUS node; 0x49771c is 
 Proceeds iff `[0x94d448]` bit 0x8000000 AND `ds:0x920434 != ebx` AND `[esi*4+0x92044c]` bit 0x2, then zeroes that byte
 at 0x5469d3. 0x92044c's bit 1 is a per-record "already consumed" marker for this path, not persistent state.
 
+## M130-M132 (s171, all PASS) — chooser dispatch @0x54eafc (case 7 = 0x54ec58), 0x920434 is not a record field, 0x92077c = a mode code
+
+**M130** `FUN_00546800` 0x54eaeb: `call 0x542ea0` -> `cmp eax,0x7` -> `ja` -> `jmp [eax*4+0x54ef34]`; table
+`[0x54ed3f, 0x54eb03, 0x54eb03, 0x54eb29, 0x54ec34, 0x54ec40, 0x54ec4c, 0x54ec58]` (1&2 share 0x54eb03; 4/5/6 =
+0x54ec34/40/4c). **CASE 7 = 0x54ec58** sets `ds:0x920700 = 0xc` and `ds:0x92077c = 1` — the only case writing a pair.
+**M131** 0x92044c: 24 refs, 24 folded (`[reg*4+..]`, tid*13 -> tid*52); 0x920434: 634 refs, **0 folded** -> standalone
+global, NOT the +0 field of that record. **M132** ds:0x92077c: 4 writes (1,1,ebx,eax), 9 tests vs 1/3/7, a copy vs 6 at
+0x54eb1b; partner 0x920700 (8 writes) set in the same body -> a (state, mode) pair; meaning unnamed (no strings nearby).
+

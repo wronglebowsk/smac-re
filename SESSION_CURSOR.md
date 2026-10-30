@@ -1,3 +1,3 @@
-M127-M129 PASS (m127_m129_fields.py): PLAN byte 0x98adb2 has 369 readers (149 folded [reg*4+..], 0 literal +0x2a]) -> "zero sites" RETRACTED; chooser pre/post-seek pair in code (0x497707 / seek 0x497717 / post 0x49771c); FUN_00546800 consumes 0x92044c bit 0x2 at 0x5469d3.
-main 1e4d186 after #116-#133. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0, idle.
-next: chooser case 7 (switch not located) | negative-queue producer (arithmetic elsewhere).
+M130-M132 PASS (m130_m132_chooser.py): chooser 8-way dispatch FUN_00546800 @0x54eafc on FUN_00542ea0's return, table 0x54ef34, case 7 = 0x54ec58 -> 0x920700=0xc + 0x92077c=1; 0x920434 NOT a record field (0 folded refs); 0x92077c = mode code (tests 1/3/7, copy vs 6), meaning unnamed.
+main 79c7568 after #116-#134. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0, idle.
+next: what FUN_00542ea0 returns (dispatch key) | 0x920700's 8 writers | negative-queue producer (arithmetic).
