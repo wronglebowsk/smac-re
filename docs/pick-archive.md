@@ -100,3 +100,40 @@ THRESHOLD vs [0x94d7f8]; param_2's ONE producer FUN_004f34b0 (M99); the multipli
 (M100/M102); D [0x94d700] = FUN_0059ec00's rebuild (M103); the record block 0x927a9c+fac*1436 is LOAD-TIME,
 nobody appends it in rounds (M104). Legs: skill code-atlas.md.
 
+
+## THE PICK — the s171 milestone lines, verbatim (moved out at cont. 23)
+
+## THE PICK — index (detail: `docs/pick-archive.md`)
+
+- **.SAV is mapped and restores 1:1.** block A k=0x94D104; block B 67,852 -> 0x927590; header 0x916D6C; grid 0x40925B0;
+  52 records 222,783 -> 0x933278; the 156-B trailer IS read (6-site loop 0x59666d..0x59683b). The load restores by
+  **read() INTO the region** (M106: kernel copy_to_user, invisible to a hw watchpoint; .SAV fd via SCM_RIGHTS).
+- **The band flag is inert BY CONSTRUCTION** — `test BYTE PTR [esi+0x94d430],0x40` once at 0x5aaf7f, reached 17x/turn,
+  never taken, no setter, 0 of 12 saves. Do not re-open it.
+- **M119-M123 (field_census.py, all PASS):** 0x984d38 stride 0x30; bit 0x20 of [ebx+0x98adb8] gated by faction dword
+  0x94d448+inner*4 bit 0; ds:0x98adee read-only (load data); the 0x1c loop copies 0x91cb80->0x98aaf8; 0x94d78c = one
+  dword in two encodings.
+- **STRIDE LAW: `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords**, never hex 0x8380. Identify bytes by POKING a marker.
+- **M124-M126 (m124_state_and_memo.py, all PASS):** ds:0x926bd4 = the UPKEEP-SYNCH PHASE CODE {0,1,2} (its `== 1`
+  reader at 0x5aafe4 is why the band-flag tail is skipped during upkeep); ds:0x920434 = the id the window-reset entry
+  publishes, **not** a faction field (0 faction-scaled refs); 0x59f0c7 = the invalidation of the memoized advance
+  threshold `[fab+0x94d800] = -1`, and one of its 3 callers zeroes the DIVISOR first.
+- **M127-M129 (m127_m129_fields.py, all PASS):** the PLAN byte `0x98adb2` has **369 readers** (149 folded
+  `[reg*4+0x98adb2]`, 0 literal `+0x2a]`) -> the "zero sites" item is RETRACTED; the chooser's pre/post-seek pair is in
+  the code (0x497707 / seek 0x497717 / post 0x49771c); FUN_00546800's guard (faction bit 0x8000000 + 0x920434 != ebx +
+  0x92044c bit 0x2) **consumes** that byte at 0x5469d3.
+- **M130-M132 (m130_m132_chooser.py, all PASS):** the chooser's 8-way dispatch is `FUN_00546800` 0x54eafc on
+  `FUN_00542ea0`'s return (table 0x54ef34, case 7 = 0x54ec58 -> sets 0x920700=0xc, 0x92077c=1); 0x920434 is NOT a record
+  field (0 folded refs vs 0x92044c's 24); 0x92077c is a mode code tested vs 1/3/7 (copy vs 6), meaning unnamed.
+- **M133-M142 (m133_m142_census.py, all PASS):** the chooser dispatches on FUN_00542ea0 (only call site 0x54eaeb); its
+  index arithmetic gives the per-faction stride **1436 BYTES = M104's 0x927a9c+fac*1436** (a decompiler `arr[i*0x167]`
+  is an ELEMENT index); 0x920700 = UI state code (6/8/0xc/0xd); 0x94d7fc = per-faction counter, -1 = unset; 0x91c630 =
+  upkeep-synch counter; 0x985afc = read-dominant run state (336/5); FUN_00495480 = cached-flag getter; FUN_004026b0 =
+  LIST SEEK, cursor stored at [obj+0x14].
+- **M143-M162 (m143_m162_atlas.py):** the faction-block FIELD ATLAS is generated into `docs/field-atlas-faction.md` —
+  the 20 most-referenced `+0x94dXXX` displacements (150 distinct exist) with refs/writes/consts/tests/functions. Shape
+  only; `—` in `in NAMED?` = genuinely unnamed. Start here before re-deriving a field.
+- Pick from: 0x94d434 (196 refs, ONE write); 0x94d80c / 0x94d81c / 0x94d818 / 0x94d814 (the 78/62/46/42 cluster in
+  FUN_0040b960+FUN_0041f0e0); 0x94d554+0x94d488 (FUN_004da2c0 pair); 0x94d4a8 (26 writes).
+
+
