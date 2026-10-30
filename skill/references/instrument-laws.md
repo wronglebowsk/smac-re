@@ -462,3 +462,11 @@ ds:0x926bd4 had 4 writes and 2 `== 1` readers and no obvious name until the form
 from the image: both 0x68ea94 and 0x68eacc are "Skipping upkeep synch", which made the value a phase code and made its
 reader at 0x5aafe4 (the band-flag function) explain a previously-unexplained skip. Cheap and high-yield: for any small
 enum global, resolve every string constant in the +/-10 instructions around each write before theorising about meaning.
+
+## A literal-displacement grep misses the folded encoding - count BOTH before saying "no site reads X" (s171, M67 -> M127)
+
+"Zero sites read plan byte +42" was wrong: 369 sites read `0x98adb2`, and **all** of them use `[reg*4+0x98adb2]`
+(reg holds `tid*13`, so *4 = the 52-byte record stride) rather than `[reg+0x2a]`. The earlier search grepped the literal
+displacement form, so a heavily-read field looked unread and a live-verified behaviour looked unsupported. Rule: for any
+record field, grep the ABSOLUTE address of the field (base + stride + offset) AND the literal displacement, and report
+both counts. Same family as the M116 stride trap: the encoding, not the syntax, decides.

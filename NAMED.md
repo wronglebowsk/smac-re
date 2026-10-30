@@ -386,3 +386,21 @@ Inside FUN_0059ec90, right after `[ebx+0x94d650] += [eax+0x927a78]+ecx+ds:0x985a
 0x5a0b39 (FUN_005a0aa0), 0x5a123e and 0x5a1277 (FUN_005a0fa0); the first zeroes the DIVISOR [edx*4+0x94e488] just
 before the call. The memo (M98) therefore dies exactly when a faction's base count changes.
 
+## M127 (s171) — the type-record PLAN byte 0x98adb2 (= 0x98ad88+type*52+42) has 369 readers; "zero sites" RETRACTED
+
+149 of them are the folded `[reg*4+0x98adb2]` form (reg = tid*13 -> tid*52), 0 use a literal `+0x2a]`. Top readers:
+FUN_00502cd0 (48), FUN_0055f650 (33), FUN_004f6030 (24), FUN_0055c920 (23), FUN_00585720 (17), FUN_00556690 (15, the
+base-count recompute), FUN_00595b10 (14, unit_type_builder), FUN_0059ce10 (10). M67's plan-descending sort key is
+therefore supported statically; the registry's "zero sites read plan byte +42" was a literal-grep artifact.
+
+## M128 (s171) — the chooser pump's PRE/POST-seek pair, in code: 0x497707 (pre), 0x497717 (seek), 0x49771c (post)
+
+`mov ecx,[eax+0xa774]` (0x497707) + push happen BEFORE `call 0x4026b0` at 0x497717; after it the object is re-derived
+(`mov ecx,[ebp-0x10]; add ecx,0xa780` at 0x49771c/0x49771f) and `call 0x495480` + `and eax,0x20` (0x49772a) read the
+post-seek flag word. Any print at 0x497704 shows the PREVIOUS node; 0x49771c is the first instruction that sees the new.
+
+## M129 (s171) — FUN_00546800's three-condition guard CONSUMES 0x92044c bit 0x2
+
+Proceeds iff `[0x94d448]` bit 0x8000000 AND `ds:0x920434 != ebx` AND `[esi*4+0x92044c]` bit 0x2, then zeroes that byte
+at 0x5469d3. 0x92044c's bit 1 is a per-record "already consumed" marker for this path, not persistent state.
+

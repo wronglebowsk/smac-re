@@ -61,7 +61,12 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
   reader at 0x5aafe4 is why the band-flag tail is skipped during upkeep); ds:0x920434 = the id the window-reset entry
   publishes, **not** a faction field (0 faction-scaled refs); 0x59f0c7 = the invalidation of the memoized advance
   threshold `[fab+0x94d800] = -1`, and one of its 3 callers zeroes the DIVISOR first.
-- Pick from: chooser case 7, cursor print 0x49771c, the negative-queue producer, plan byte `+42` (M67's order claim).
+- **M127-M129 (m127_m129_fields.py, all PASS):** the PLAN byte `0x98adb2` has **369 readers** (149 folded
+  `[reg*4+0x98adb2]`, 0 literal `+0x2a]`) -> the "zero sites" item is RETRACTED; the chooser's pre/post-seek pair is in
+  the code (0x497707 / seek 0x497717 / post 0x49771c); FUN_00546800's guard (faction bit 0x8000000 + 0x920434 != ebx +
+  0x92044c bit 0x2) **consumes** that byte at 0x5469d3.
+- Pick from: chooser case 7 (the switch was NOT located — 9 of 319 jump tables have `cmp ...,0x7`, none in 0x5a6xxx-
+  0x5aaxxx), the negative-queue producer (no constant store and no `sub 0xca` — the mapping is arithmetic elsewhere).
 
 ## LIVE FACTS / KIT
 
