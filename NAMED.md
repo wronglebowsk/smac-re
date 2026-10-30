@@ -365,3 +365,24 @@ neighbour-dword access -> load-only save/scenario field. **M122** the 0x1c loop 
 (24 × 28 B, exact), never touches 0x984d38. **M123** ds:0x94d78c: 72 refs (48 `[reg+disp]`, 24 `[reg*4+disp]`, 6
 writes); all 24 array-form sites are 2095-scaled -> one field, two encodings, no second array.
 
+## M124 (s171) — ds:0x926bd4 = the UPKEEP-SYNCH PHASE CODE {0 idle, 1/2 synching}
+
+4 writes, 2 tests in the image. `=1` at 0x5210aa (loop entry, after 0x744f24/0x91c658/0x91c630 are zeroed), `=2` at
+0x521297 after the print at 0x68ea94 ("Skipping upkeep synch"), back to 0 at 0x5213c7 after the second (0x68eacc) with
+counter 0x91c630 incremented, `=setne al` at 0x57f8c5 (FUN_0057f740). Both readers are `cmp [0x926bd4],1`: 0x5aaa6f
+(FUN_005aaa20, after the "Earning a Tech" print at 0x693884) and **0x5aafe4 in FUN_005aadf0**, where phase==1 OR
+[fab+0x94d7fc]<0 skips the tail — the named reason the band-flag tail is skipped during upkeep synch.
+
+## M125 (s171) — ds:0x920434 = the ID published by the window-reset entry (NOT a faction field)
+
+15 writes / 619 reads. 12 of 15 writes sit inside a reset sequence (`mov ecx,0x91db70; call 0x4e25e0` clears the widget
+object; preceded by [0x91f738]=0xff, [0x91f6e0]=esi, `rep stos`, `call 0x581280`); the value is the caller's id
+(esi/ebx/edi) or a constant. **0 references use a faction-scaled (8380) base** and the readers compare it to ids
+(0x546887). It is the subject id a reset publishes, not per-faction storage.
+
+## M126 (s171) — 0x59f0c7 INVALIDATES the memoized advance threshold ([fab+0x94d800] = -1)
+
+Inside FUN_0059ec90, right after `[ebx+0x94d650] += [eax+0x927a78]+ecx+ds:0x985afc` and `[ebx+0x94d654] = 0`. Callers:
+0x5a0b39 (FUN_005a0aa0), 0x5a123e and 0x5a1277 (FUN_005a0fa0); the first zeroes the DIVISOR [edx*4+0x94e488] just
+before the call. The memo (M98) therefore dies exactly when a faction's base count changes.
+
