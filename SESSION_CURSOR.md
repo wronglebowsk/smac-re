@@ -1,3 +1,3 @@
-M113 ACCEPTED (m113map1, 20/20 anchors). .SAV offset->dest: 16,384..65,536->0x951104..0x95d104 | 98,304..163,840->0x40aa5b0..0x40ba5b0 (grid 0x40a6660) | 172,287->0x15e2baf (map trailer) | 188,291/467 = 176 B count prefix at 0x930e20 | 196,608..212,992->0x98bf49..0x98ff49 | 218,675->0x99157c, 222,771->0x92cfe4. Trailer 156 B IS read (per-entity loop). M110's 99.94% RETRACTED.
-next: m113_save_map --tag m113map2 --step 2048 to fix the 3 region boundaries to the KB.
-BOX: terran.exe loaded (67/18), TracerPid 0. Main has #116/#117/#118; this branch milestone/m113 is NOT merged.
+M113 attempt 2 firing (tag m113map2, BAND refinement): bands 64000-82500, 163000-174000, 174000-182000, 221000-231000 at step 2048 = 25 markers in m113map.SAV; load, scan. Pins the block-A->map-header, grid->trailer, trailer->section boundaries and the record area to ~2 KB.
+PREDICT: anchors step 1:1 inside a run and JUMP across a boundary, so each boundary is bracketed by the last-and-first anchor of adjacent runs.
+Main = da69b48 (M113 merged #119). Do not touch the box until m113map2 exits; then read evidence/m113map2.log.

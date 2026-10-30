@@ -31,17 +31,27 @@ CANDS = [796 + 4 + 67040 + 11488 + 32 + 2724 + 90112 + 91,   # first section aft
 COUNT_U, COUNT_B = 0x985af0, 0x985af4
 
 
-def build(src, dst, step, extra):
+def build(src, dst, step, extra, bands=()):
+    """bands: (lo, hi, step) triples — mark only inside them, so a refinement run does not scatter
+    100+ pokes through fields the loader parses (a poke in a count or pointer can abort the load)."""
     data = bytearray(open(src, "rb").read())
     size = len(data)
     offs = set()
-    o = step
-    while o < size - TRAILER_GUARD:
-        offs.add(o - (o % 4))
-        o += step
+    if not bands:
+        o = step
+        while o < size - TRAILER_GUARD:
+            offs.add(o - (o % 4))
+            o += step
+    for lo, hi, st in bands:
+        o = lo
+        while o < min(hi, size - TRAILER_GUARD):
+            offs.add(o - (o % 4))
+            o += st
     for b in extra:
         if 16 <= b < size - TRAILER_GUARD:
             offs.add(b)
+    if len(offs) > 60:
+        raise SystemExit("refusing %d markers — narrow the bands (a load with 60+ pokes is not a map, it is a mutilation)" % len(offs))
     marks = {}
     for i, off in enumerate(sorted(offs)):
         val = BASE_MARK | (i + 1)
@@ -98,12 +108,19 @@ def main():
     ap.add_argument("--poked", default="m113map.SAV")
     ap.add_argument("--step", type=int, default=8192)
     ap.add_argument("--boundary", action="append", type=int, default=None)
+    ap.add_argument("--band", action="append", default=None,
+                    help="lo-hi[:step] band to refine inside (decimal or 0x hex); repeatable")
     ap.add_argument("--relaunch", action="store_true")
     a = ap.parse_args()
 
     src = os.path.join(ROOT, "programs/saves", a.save)
     dst = os.path.join(ROOT, "programs/saves", a.poked)
-    marks, size = build(src, dst, a.step, (a.boundary or []) + CANDS)
+    bands = []
+    for spec in (a.band or []):
+        rng, _, st = spec.partition(":")
+        lo, _, hi = rng.partition("-")
+        bands.append((int(lo, 0), int(hi, 0), int(st, 0) if st else a.step))
+    marks, size = build(src, dst, a.step, (a.boundary or []) + ([] if bands else CANDS), bands)
     print("planted %d markers (step %d) in %s, file %d B" % (len(marks), a.step, a.poked, size), flush=True)
 
     r = subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "m54a_load.py")]
