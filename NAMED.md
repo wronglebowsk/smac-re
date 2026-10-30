@@ -457,3 +457,12 @@ separate (17 base-pairs, one shared function).
 payload quad written together by FUN_004dc100/00510230/00512b40/00516b80/0059ec90. **M168** 0x94d488: 22 writes over 9
 functions vs 49 refs and 1 comparison = derived/cached (recomputed by many paths), not authoritative state.
 
+## M169-M171 (s171, all PASS) — 0x926a7c is totalled; FUN_00531df0 is the aggregator; FUN_004dc100 is a BIT-DECODER
+
+`scripts/m169_m171_aggregate.py`. **M169** 0x926a7c's second reader (0x532150, FUN_00531df0) is a per-faction loop at
+stride 0x20bc stepping the table by 4, with `ds:0x9204ac++` (count) and `ds:0x9204c4 += [eax+0x926a7c]` (sum).
+**M170** FUN_00531df0 (6459 B, 1905 insns, 17 call sites) = per-faction AGGREGATOR: `1<<f` mask (`shl edi,cl`), gate
+`cmp [ebx+0x94d434],0x5` (the M163 rank as a `< 5` threshold), accumulators 0x9204ac / 0x9204c4 / 0x920720 / 0x9204c8.
+**M171** FUN_004dc100 (647 B) = BIT-DECODER: one byte in AL -> `[+0x94d810/14/18/1c] = setne(al&1/2/4/8)` (four boolean
+dwords), header `[+0x94d80c]` = tristate 1/-1/0 from al&0x10 / al&0x20, and al&0x40 -> `or [+0x94d430],0x800000`.
+

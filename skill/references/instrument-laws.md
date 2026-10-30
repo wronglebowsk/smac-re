@@ -542,3 +542,11 @@ many paths" (like base+0xd0 credit, M97), so it must not be gated on as authorit
 member of a candidate struct has the same WRITE COUNT (6 each here), check the writer SETS, not the counts: the header
 dword's writers (and its constants 0/1/-1 plus 7 tests) differed from the four payload dwords' five shared writers, so
 the 20 bytes are a header + payload quad rather than five peers. Write counts hide structure; writer sets expose it.
+
+## A "struct" filled from ONE byte is a bit-decoder (s171, M171)
+
+Five dwords at 0x94d80c..0x94d81c looked like a header plus a payload quad, and the writer set confirmed the split - but
+the writer is a DECODER: `[+0x10/+0x14/+0x18/+0x1c] = setne(al & 1/2/4/8)` and `[+0x0c] = 1 / -1 / 0` from `al & 0x10`
+and `al & 0x20`, with `al & 0x40` also OR-ing 0x800000 into a DIFFERENT word. So the 20 bytes are one source byte's
+bits, expanded. Read a struct writer's SOURCE before naming the members: `setne`/`shr`/`and` chains mean the fields are
+booleans of a bitfield, and the field that receives an OR elsewhere is a side-effect, not a member.
