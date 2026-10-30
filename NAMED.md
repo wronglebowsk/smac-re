@@ -1218,32 +1218,16 @@ the m111b3 "pollution" loop destinations minus 8. Reader = the 6-site per-entity
 0x915758, 0x3b7d7a8, 0x3b9fc60, 0x3bc2118, 0x3be45d0, 0x3c06a88, 0x3c28f40, 0x3c4b3f8 (stride 0x224B8), 0x8eb7c4.
 **M110's "contiguous 0..242,383 / 156 B unread / 99.94%" is RETRACTED**: the sum over-runs (+468, +144) because
 the cumulative `file_off` column assumes file order while these bytes are touched twice (bulk + per row).
-## M113 ACCEPTED (m113map1, s171) — .SAV offset->dest anchors by poke; 20/20 found
+## M113 ACCEPTED (m113map1/2/3, s171) — .SAV offset->dest anchors by poke: 20/20, then 24/25 and 19/20
 
-`scripts/m113_save_map.py --tag m113map1 --relaunch --step 16384`: 20 x 0xC0DE000i planted at 16 KB offsets and
-at the 6 candidate section starts of m54b_clean; load rc=0, counts 67/18, 522.7 MB scanned, **20/20 anchors
-found, 0 absent**. Three slope-1 runs (16,384..65,536 -> 0x951104..0x95d104; 98,304..163,840 ->
-0x40aa5b0..0x40ba5b0; 196,608..212,992 -> 0x98bf49..0x98ff49), the 90,112-B grid confirmed at 0x40a6660, and
-two leg boundaries corroborated to the byte (188,291->188,467 = 176 B, the 0x930d7c count prefix; 218,675->
-222,771 = 4,096 B, the 0x92bff0 leg). Boundaries are the destination jumps: block A -> map header between 65,536
-and 81,920; map -> trailer between 163,840 and 172,287; trailer -> next section between 172,287 and 180,224.
-A poke anchor cannot over-run its file and needs no cumulative offset column.
-## M113b (m113map2, s171) — 2 KB band refinement: boundaries bracketed, ONE absent offset
-
-`m113_save_map.py --tag m113map2 --relaunch --step 2048 --band 64000-82500:2048 --band 163000-174000:2048
---band 174000-182000:2048 --band 221000-231000:2048`: 25 markers, load rc=0, counts 67/18, **24/25 found**.
-block A -> block B bracketed 66,048 (0x95d304) / 68,096 (0x927684), split 67,840 inside it; grid -> next section
-bracketed 171,192 (0x40bc268) / 173,240 (0x986209), the 91-B map trailer inside it; 174,000..180,144 ->
-0x986501..0x987d01 step 0x800. **223,048 is ABSENT** while its neighbours (221,000 / 225,096) are present — an
-offset inside the 52-record block (~222,783) that the load does not restore verbatim. New flag `--band lo-hi[:step]`.
-## M113c (m113map3, s171) — 128-B band: the record array maps 1:1, the "absent" offset MOVES (fields are rewritten)
-
-`m113_save_map.py --tag m113map3 --relaunch --step 128 --band 222000-224500:128`: 20 markers, counts 67/18,
-**19/20 found**. 222,896 -> 0x9332E9, 223,024 -> 0x933369, 223,280 -> 0x933469, 224,432 -> 0x9338E9 (step +0x80
-per +128 B) → the 52-record array's base is **file 222,783 -> 0x933278**, to the byte. The absent offset is
-223,152 here but was 223,048 in m113map2 (expected dests 0x9333E9 and 0x933351 = record 7 byte 5 and record 4
-byte 9), with present neighbours 128 B away: **not an unread region** — individual dwords in the 52-B records are
-rewritten by post-load processing. `m54a_load.py` returned rc=4 (HUD live-check) with counts already correct.
+`scripts/m113_save_map.py` plants 0xC0DE000i at known file offsets in a save copy, loads it, and finds each marker in
+memory. m113map1 (step 16384): **20/20 found**, counts 67/18 — three slope-1 runs (16,384..65,536 ->
+0x951104..0x95d104; 98,304..163,840 -> 0x40aa5b0..0x40ba5b0; 196,608..212,992 -> 0x98bf49..0x98ff49), the 90,112-B
+grid at 0x40a6660. m113map2 (2 KB bands): 24/25 — block A -> block B bracketed 66,048 (0x95d304) / 68,096
+(0x927684); grid -> next section bracketed 171,192 (0x40bc268) / 173,240 (0x986209) with the 91-B map trailer
+inside; 174,000..180,144 -> 0x986501..0x987d01. m113map3 (128 B): 19/20 — the 52-record array maps 1:1 from **file
+222,783 -> 0x933278** to the byte, and the single "absent" marker MOVES between runs (223,048 -> 0x933351, 223,152 ->
+0x9333E9) with present neighbours: a normalised field, not an unread region.
 ## M114 (s171, zero box time) — restore fidelity by diff: 10/12 sampled windows are byte-identical
 
 Diff of the loaded game against the poked save at `dest = off + k` (1 KB windows, 12 anchors): block A k=0x94D104,
