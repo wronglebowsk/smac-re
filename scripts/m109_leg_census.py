@@ -39,9 +39,12 @@ DEFAULT_RANGES = ("0x596620-0x5966ff,0x596850-0x597a6b,0x597a70-0x5986ff,0x5821e
 
 TMPL = """set pagination off
 set confirm off
+handle SIGUSR1 nostop noprint pass
+handle SIGUSR2 nostop noprint pass
+handle SIGPIPE nostop noprint pass
 @@BLOCKS@@printf "ARMED @@N@@ static read-site bps@@NL@@"
 continue
-"""
+@@TAIL@@"""
 
 NL = chr(92) + "n"          # the two characters gdb's printf needs; built in code so file escaping cannot eat it
 FMT = "M109C site=@@PC@@ dest=0x%x size=%d cnt=%d" + NL
@@ -82,7 +85,7 @@ def gdb_script(ss):
     blocks = [BP.replace("@@PC@@", "%#x" % pc).replace("@@FMT@@", FMT.replace("@@PC@@", "%#x" % pc))
               for pc in ss]
     return (TMPL.replace("@@BLOCKS@@", "".join(blocks)).replace("@@N@@", str(len(ss)))
-            .replace("@@NL@@", NL))
+            .replace("@@NL@@", NL).replace("@@TAIL@@", "continue\n" * 400))
 
 
 def read_counts(pid):
