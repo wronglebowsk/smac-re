@@ -1,7 +1,6 @@
-M109 NOT ACCEPTED, NOT MERGED — branch milestone/m109 (last commit 414910a); main = aad8267 (M108 #115).
-m109g4 FAIL 1/6: 5 bps armed clean, but the load NEVER ran under gdb — 0 ENTER at FUN_00596850,
-0 reads on the save stream, driver "timeout reaching HUD" at 910 s (it reached the LOAD GAME panel at
-329 s and the blind browser step never confirmed). m109g1/g2/g3 died on my instrument (220 s driver
-budget, SIGUSR1 detach, 25,957 unfiltered wrapper hits). The GATE ANSWER is static and committed in
-scratch/m109/skel_loader.txt. next: drive the load WITHOUT gdb attached during the menu (arm gdb only
-after the save's FILE* is open), or bp the 122 in-loader call sites; then gate.py --base main.
+M109 RUN s168, NOT ACCEPTED, NOT MERGED — branch milestone/m109 (HEAD 1db9c80 + gate commit); main aad8267.
+Gate GREEN (`python3 scripts/gate.py --base main`, 1 pre-existing WARN). m109g4 FAIL 1/6: 5 bps armed
+clean but 0 ENTER at FUN_00596850 — the load never ran under gdb (4 runs, 0 loads). THE GATES are
+answered statically: evidence/m109_skel_loader.txt + NAMED.md M109 + SESSION_NOTS s168.
+NEXT: `python3 scripts/m109_leg_gates.py --tag m109g5` on a box AT THE HUD (no --relaunch, no gdb during
+the menu), then G3 closure = sum(size*count) == 242,539. Box: terran.exe 1464418 at the LOAD GAME panel.

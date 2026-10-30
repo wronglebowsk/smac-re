@@ -29,3 +29,4 @@ Thread 11 "wined3d_cs" received signal SIGINT, Interrupt.
 Thread 1 "terran.exe" received signal SIGCONT, Continued.
 [Switching to LWP 1464418]
 0xf1d5768b in ?? ()
+[Inferior 1 (process 1464418) detached]
