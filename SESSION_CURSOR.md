@@ -1,6 +1,7 @@
-M109 attempt 3 IN FLIGHT (m109g2), NOT ACCEPTED — branch milestone/m109 (committed bf4b721); main aad8267.
-CMD: setsid env M54A_LOAD_TIMEOUT=900 python3 scripts/m109_leg_gates.py --tag m109g2 --relaunch
-(5 bps: FUN_00596850 ENTER = the FILE*; the 4 read wrappers 0x596470/596540/64c9a0/64cc00 -> ra,ptr,
-size,count,stream). m109g1 FAIL 1/6 was NOT the map: the driver's 220 s budget expired at the CDROM
-screen, so FUN_00596850 was NEVER ENTERED (0 ENTER events, header fields still 0).
-Result file when it ends: scratch/m109g2.out + evidence/m109g2.log. If PASS: gate.py --base main -> submit -> merge.
+M109 NOT ACCEPTED, NOT MERGED — branch milestone/m109 (last commit 414910a); main = aad8267 (M108 #115).
+m109g4 FAIL 1/6: 5 bps armed clean, but the load NEVER ran under gdb — 0 ENTER at FUN_00596850,
+0 reads on the save stream, driver "timeout reaching HUD" at 910 s (it reached the LOAD GAME panel at
+329 s and the blind browser step never confirmed). m109g1/g2/g3 died on my instrument (220 s driver
+budget, SIGUSR1 detach, 25,957 unfiltered wrapper hits). The GATE ANSWER is static and committed in
+scratch/m109/skel_loader.txt. next: drive the load WITHOUT gdb attached during the menu (arm gdb only
+after the save's FILE* is open), or bp the 122 in-loader call sites; then gate.py --base main.

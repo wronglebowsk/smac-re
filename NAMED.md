@@ -1157,3 +1157,11 @@ The save chunk map is **HARD-CODED in FUN_00596850**: 30 fread legs (25 `push <s
 
 ## M109 (RUN, NOT ACCEPTED)
 The counted legs MEASURED LIVE on m54b_clean (6 silent bps before the load, `scripts/m109_leg_sizes.py --tag m109l2`): count-prefix leg **176 B**, **52n = 3,484 = 52 × 67**, **304m = 5,472 = 304 × 18** — the model from [0x985af0]=67 units / [0x985af4]=18 bases is EXACT on both. **0x59738b (the 48p leg) never executes** for this save and **its malloc (0x596ab7) never fires either** — that whole 48·n path is gated off here — and **0x5979f8 is a 4-byte read, not a tail section**. The map does not close: 204,504 immediate + 9,136 counted = 213,640 vs 242,539 → **28,899 B unaccounted**, because the 30 legs are CONDITIONAL (gates at 0x596a43 `ds:0x985dbc,3`, 0x5974b7 `ds:0x985dbc,0`, 0x5974d3 `[0x985af4]`). LAW: at an fread call the stack holds [esp]=dest, [esp+4]=size, [esp+8]=count, [esp+0xc]=FILE* — read the size from `*(int*)($esp+4)`, never a clobbered register.
+
+## M109 (s168, RUN, NOT ACCEPTED — no green acceptance, nothing merged)
+- The save loader's 30 `call 0x64cc00` legs are ONE OF FOUR readers: 0x596470/0x596540 = CONVERTING (malloc size*count, read, copy), 0x64c9a0/0x64cc00 = DIRECT; the pair is chosen by [0x926a14], set at 0x5968a7 = ([0x985ae8] & 0x10000000). The count arg is ALWAYS 1 -> bytes == size.
+- Leg gates are the loaded VERSION [0x985dbc] (live 9): 0x59689a >=4, 0x596a43 >=3, 0x597159 >=3, 0x597246 >=6, 0x5972cb >=0, 0x5974b7 >7, 0x597542 <3, 0x5975e6 = [0x985ae8]&0x10, 0x597650 >=1, 0x5976c8 >=2, 0x597733 >=7.
+- 0x5971c8-0x597244 = LOOP: 8 x read 0x680 with stride 0xd00 while edi < 0x991588 (the version<3 sparse form of 0x6800@0x98ad88); M107's 204,504 double-counts 1,664.
+- 0x5973bc-0x597495 = 48->52 record expansion (0x30-byte source -> 0x34-byte records at 0x93327a, [0x985af0] iterations), gated version<0 -> 0x59738b never runs.
+- 0x596620(a,stream) = 4-B read into a+0x1dd78 (8 calls off the dword table at 0x7cdecc + 1 with 0x8cda4c) = 36 B.
+- 105 reader call sites exist outside FUN_00596850 -> the 30-leg table is not the whole read set. OPEN: the closure arithmetic, and who reads the malloc'd 86,016 B. Harness scripts/m109_leg_gates.py.

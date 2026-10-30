@@ -49,6 +49,7 @@ RND, CPP = M.RND, M.CPP
 TMPL = """set pagination off
 set confirm off
 set print elements 0
+set $savefile = -1
 handle SIGUSR1 nostop noprint pass
 handle SIGUSR2 nostop noprint pass
 handle SIGPIPE nostop noprint pass
@@ -58,12 +59,13 @@ handle SIGPIPE nostop noprint pass
 ENTER_BP = """break *0x596850
 commands
 silent
+set $savefile = *(int *)($esp+4)
 printf "M109E ENTER stream=0x%x round=0x%x cp=0x%x\\n", *(int *)($esp+4), @RND@, @CPP@
 continue
 end
 """
 
-READ_BP = """break *@@PC@@
+READ_BP = """break *@@PC@@ if *(int *)($esp+0x10) == $savefile
 commands
 silent
 printf "M109R ra=0x%x ptr=0x%x size=%d count=%d stream=0x%x round=0x%x cp=0x%x\\n", *(int *)($esp), *(int *)($esp+4), *(int *)($esp+8), *(int *)($esp+0xc), *(int *)($esp+0x10), @RND@, @CPP@

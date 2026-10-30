@@ -17,7 +17,7 @@ Survivability: the kickoff's SESSION_CURSOR rule (<= 600 B, written BEFORE any s
 2 minutes); never `rm`/`git checkout --`; every doc write is an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112), M106 (#113) — detail in NAMED.md. UNMERGED branches: M83/M84/M84b/M84e/M84f (0x496ad0's -9999 is the DIALOG-CANCEL sentinel, Escape arms [0x6a9e9c+0xa774] = -1; the 0x4d00 queue post is gated at 0x4193b2-0x4193b9 on ds:0x920434 != 0, live 0, so a UI insert posts NOTHING), M86 (0x5a7e73 skips the 64-record band loop unless arg1 == 0x93325c/68/74 = Alloys/SingMec/ConSing), M101 (#108, superseded by M102), M103 (#110, the D-writer, never green in one invocation).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112), M106 (#113) — detail in NAMED.md. UNMERGED branches: M83/M84 family (the -9999 at 0x496ad0 is the DIALOG-CANCEL sentinel; the 0x4d00 queue post is gated at 0x4193b2 on ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded by M102), M103 (#110, never green), M109 (s167+s168: the GATES answered, no green acceptance).
 **M90-M104, all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest draw, tail only arg2==0); TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block (block FROZEN within a round); the POST cascade 0x5a9747-0x5aa022 == the prereq-closure ladder (`0x5a9020(a,X,f)` = membership at depth f; FREEZE LADDER INPUTS AT THE TAIL HIT); DIVISOR [fac*8380+0x94e488] == that faction's BASE COUNT, recomputed every round by FUN_00556690; the UI-queued completion pays AND activates in branch A (gate 0x4efa5e, pay 0x4efedd storage +0x40, POP 0x4f037b), 0x4f0ca6 is branch B's pay; the chooser ranks by the DRAW (score<<8 / prereq depth FUN_005a6d40; human LCG at ds:0x999fa0), NOT by score; base+0xd0 credit is recomputed every round by FUN_004e93f0; [0x94d800] is FUN_005aab70's memoized ADVANCE THRESHOLD vs the accumulator [0x94d7f8]; param_2 has ONE producer, FUN_004f34b0 (M99); the multiplier is block A slot 10 (M100/M102); D [0x94d700] is FUN_0059ec00's rebuild from the record list (M103). the record block 0x927a9c+fac*1436 is LOAD-TIME data, nobody appends it in rounds (M104). All legs: skill code-atlas.md.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -37,21 +37,18 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
 
 **M100-M106, all in NAMED.md:** multiplier = block A slot 10 rebuilt per round (M100/M102); D =
 FUN_0059ec00 off the record block TYPE==3 entries (M103, PR #110 unmerged); nobody appends the block
-in rounds (M104); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/17). **M106 ACCEPTED
-(s164, m106r7 PASS 15/15): THE LOAD RESTORES THE REGION BY read() INTO IT** — the .SAV fd arrives
-over SCM_RIGHTS (there is NO open() of it in either strace log; name it by the TAIL-AND-EOF LAW: a
-read returning size mod 4096 == 875 B inside an fd-run that ends with a 0-byte read = EOF), and
-inside that run `read(0x5, 0x927c84, 0x2000) = 0x2000` lands in the record block covering exactly the
-counts M105 armed; the block head 488 B (fac0) and tail 2,808 B (fac7) come through the CRT's 0x1000
-stdio buffer = ring-3 stores. copy_to_user raises no debug exception — the hardware watchpoint's
-blind spot. Harness `scripts/m106_load_restore.py` (two straces with raw args + maps + soft-dirty +
-8 count sentinels); a traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
-**M109 (STILL THE PICK, 2 of 3 attempts used — m109l2 FAIL 2/5): resolve the 30 leg GATES, not the sizes.**
-Measured live: count leg **176**, 52n = **3,484** (52·67), 304m = **5,472** (304·18); **0x59738b (48p) logged
-0 events** and **0x5979f8 is a 4-byte read**. Remainder still **28,899 B** of 242,539. So the legs are
-CONDITIONAL: gated at 0x596a43 (`ds:0x985dbc,3`), 0x5974b7 (`ds:0x985dbc,0`), 0x5974d3 (`[0x985af4]`) and
-others. Read every gate between 0x596a43 and 0x597a00, emit an if/then leg list, re-run ONE load to confirm.
-Size from `*(int*)($esp+4)`. THEN: FUN_00598340; FUN_005791c0; TYPE 0/2; 0x4b2715.
+in rounds (M104); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (s164, m106r7 PASS 15/15): THE LOAD RESTORES THE REGION BY read() INTO IT** — a kernel
+copy_to_user, so no ring-3 store and no debug exception (the hardware watchpoint's blind spot); the .SAV
+fd arrives over SCM_RIGHTS, name it by the TAIL-AND-EOF LAW. Harness `scripts/m106_load_restore.py`; a
+traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
+**M109 (THE PICK; 6 attempts, none green — the GATES are ANSWERED, the CLOSURE is not).** The gate list is
+committed at `evidence/m109_skel_loader.txt`: FOUR readers, not one (0x596470/0x596540 = CONVERTING, chosen by
+[0x926a14] = [0x985ae8]&0x10000000, live 0 -> the 0x64c9a0/0x64cc00 DIRECT pair); the count arg is always 1;
+version [0x985dbc] gates at 0x59689a/0x596a43/0x597159/0x597246/0x5972cb/0x5974b7/0x597542/0x597650/0x5976c8/
+0x597733; 0x5971c8 is an 8x0x680 stride-0xd00 LOOP (M107 double-counts 1,664 B); 0x5973bc is a 48->52
+expansion gated version<0; **105 reader call sites exist OUTSIDE the loader** (the 86,016 B heap read is one).
+NEXT RUN: **never attach gdb while the driver drives the menu** (4 runs, 0 loads) — arm `scripts/m109_leg_gates.py
+--tag m109g5` (no --relaunch) on a box AT THE HUD, then drive the load. Then G3 closure.
 
 ## STILL OPEN (in priority order)
 
@@ -64,13 +61,12 @@ Size from `*(int*)($esp+4)`. THEN: FUN_00598340; FUN_005791c0; TYPE 0/2; 0x4b271
 
 ## LIVE FACTS / KIT
 
-- **Box at s161: LIVE** — pid 1231977, m54b_clean just loaded (round 50 cp 3 hud), counts
-  [0,6,5,4,3,4,5,3] = the FUN_005791c0 startup image; queue/mults NOT re-read this session (see s159), eras ds:0x985b90/0x985b9c = -1
-  (the category-skip leg INERT until an era goes >= 0); no clamp entry with key 10. A stale winedbg +
-  wineserver (left by a SIGSEGVed manual call frame) must be killed BY PID before a relaunch; rounds
-  are NOT continuous across reloads. Recipe (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3
-  scripts/m54a_load.py --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` ->
-  `m57_ui_enqueue.py --base-index 18 --cell-item 2 --inserts 1` -> `accept_ready.py`.
+- **Box at s168: terran.exe pid 1464418, m54b_clean NOT loaded (the driver timed out at the LOAD GAME
+  panel)**, counts [0,6,5,4,3,4,5,3] = the FUN_005791c0 startup image, version [0x985dbc]=9, convert
+  [0x926a14]=0, [0x985af0]=67, [0x985af4]=18, eras ds:0x985b90/0x985b9c = -1 (the category-skip leg INERT
+  until an era goes >= 0); no clamp entry with key 10. A stale winedbg + wineserver must be killed BY PID
+  before a relaunch; rounds are NOT continuous across reloads. Recipe (~35 s): `SMAC_SAVE='m54b_clean.SAV'
+  python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `accept_ready.py`.
 
   A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET
   (scorer m = 4); mask byte 0x985b10 = 0x08 -> ONLY fac3 human (a dword read there = 65288: mask the
@@ -124,6 +120,13 @@ Size from `*(int*)($esp+4)`. THEN: FUN_00598340; FUN_005791c0; TYPE 0/2; 0x4b271
   A bp at the insn AFTER `call X` fires AFTER the callee's events — group per-invocation events
   BACKWARD from it; unwatched factions yield legitimately empty groups: skip, do not fail on them
   (m102hit2 12/14 on perfect data; skill instrument-laws.md).
+
+  - **gdb -batch EXITS the moment a stop has no command left to follow it**: wineserver delivers SIGUSR1
+    during a Wine game's startup, so a batch census MUST carry `handle SIGUSR1 nostop noprint pass` (also
+    SIGUSR2/SIGPIPE) and a tail of ~400 `continue` lines, or it detaches after 3 events (m109g2). And a
+    breakpoint on a function that serves the WHOLE game (the four read wrappers) costs one ptrace stop per
+    read: 25,957 stops in 572 s starved the load driver to ZERO loads (m109g3) — filter the bp by the
+    FILE* (`set $savefile` at the loader's entry, `if *(int *)($esp+0x10)==$savefile` on the readers).
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 

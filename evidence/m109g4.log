@@ -1,0 +1,11 @@
+M109b gated leg map - m54b_clean.SAV, pid 1464418, loader stream 0x0
+  version=0 convert=0 units=0 bases=0 counts=[0, 6, 5, 4, 3, 4, 5, 3]
+  0 reads on the loader stream, 0 on other streams, 0 distinct return sites, total 0 B
+  LEGS ra -> n x (ptr,size,count): 
+  [G1] FAIL  5 bps armed, 0 gdb errors, 0 ENTER, 0 READ events
+  [G2] FAIL  0 reads on the loader stream 0x0: 0 attributed inside FUN_00596850 [596850,597a6b], 0 attributed elsewhere; 0 reads on other streams
+  [G3] FAIL  map CLOSES: sum(size*count) on stream 0x0 = 0 vs file 242539 (remainder 242539)
+  [G4] FAIL  counted legs: 0x933278 got -1 model 0; 0x95da10 got -1 model 0; 0x930d7c got -1 model 0
+  [G5] PASS  gated-off legs absent: 0x680-sparse 0, 0xe5e0 0, 0x991698 0, 48p 0 (version=0 convert=0 units=0 bases=0)
+  [G6] FAIL  TracerPid 1464421, 0 unparsed lines, 18 gdb chatter lines (whitelisted)
+  VERDICT FAIL 1/6
