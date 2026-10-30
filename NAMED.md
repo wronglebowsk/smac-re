@@ -1183,3 +1183,13 @@ starved (0x62b8f0/0x62b935 8,277 hits each in 12 min, ZERO loader hits, stream f
 Read-back (523 MB of /proc mem, no gdb): the 156-B tail is NOT present verbatim; its 12-B row signature
 `fa ff ff ff 20 00 00 00 20 00 00 00` appears exactly 6x at **0x34f0000** — records restored per record, no
 bulk 156-B read. Next shape: filter every bp by the save FILE* (set $savefile at 0x596850, `[esp+0xc]`).
+## M112 (STATIC PASS, s171 cont.) — the last 156 B is a fixed TRAILER, write-only by construction
+
+Nine saves (m54b_clean 242,539 B + 8 autosaves 242,815..243,691 B) share their final **152 bytes exactly**; only
+the last dword differs. Layout: 5 x `[id,0,0,-6,32,32]` (id 3..7), `[1,1,0x80000080,-14,32,32]`, `[800,387,X]`.
+Immediate 156 (0x9c) appears 13x in the EXE, **never** in 0x58xxxx-0x59xxxx (the two `push 0x9c` are 0x4b3476 /
+0x4b3e3d), so no loader code can size a 156-B read. Not restored: 0xbe27b0/0xbe27b4 (the loader's last read
+dests, sites 0x597a19/0x5979f8) hold unrelated values; the exact 156 B is absent from 523 MB of memory; its 12-B
+row signature is 6x at heap 0x34f0000 and in 0 of the 24 files in programs/.
+Acceptance to close (unspent): an autosave (trailer at a different offset) under a FILE*-filtered census,
+prediction sum = filesize - 156.

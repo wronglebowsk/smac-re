@@ -246,3 +246,28 @@ Instrument fixes this session (committed): session_brief.py and accept_ready.py 
 CalledProcessError traceback when terran.exe is down; m109_leg_census.py now sets M54A_LOAD_TIMEOUT=1800,
 carries the SIGUSR1/USR2/SIGPIPE handles + 400-continue tail, and prints a CLOSED/PARTIAL verdict (exit 4).
 test_accept_ready.py PASS 17/17 after the change.
+
+### Session 171 (cont.) — M112 static pass: the 156-B tail is a fixed TRAILER, almost certainly write-only
+
+No box time, no acceptance invocation spent. Three laws, each with the command that produced it.
+
+1. **It is a trailer, not data.** `programs/saves/*.SAV` + `programs/saves/auto/*.SAV` (9 files, sizes
+   242,539 (m54b_clean) and 242,815 / 242,875 / 242,919 / 242,927 / 242,971 / 243,483 / 243,691): the last
+   **152 B are byte-identical in all 9**, only the FINAL dword differs (365,402,425 / 766,622,009 /
+   746,214,987 ...). Structure: 5 rows of 24 B `[id,0,0,-6,32,32]` for id 3..7, then `[1,1,0x80000080,-14,32,32]`,
+   then `[800,387,X]`. A section of game data would vary with the game; this does not, and it sits at EOF at a
+   per-save offset — so nothing hard-coded can index it.
+2. **No code can size it.** The value 156 (0x9c) occurs as an *immediate* only 13x in the whole executable
+   (objdump `scratch/m574/text.txt`, stack-frame displacements `[ebp-0x9c]` excluded) and **never inside the
+   save family 0x58xxxx-0x59xxxx**; the only two `push 0x9c` are 0x4b3476 / 0x4b3e3d. The loader's own code has
+   no constant that could bound a 156-B read.
+3. **It is not restored.** Live read-back (no gdb): memory at the loader's LAST read destinations
+   0xbe27b0 / 0xbe27b4 (sites 0x597a19 / 0x5979f8, the end of FUN_00596850) holds unrelated values — no 800, no
+   387; the 156 B is absent verbatim from 523 MB of readable memory; its 12-B row signature
+   `fa ff ff ff 20 00 00 00 20 00 00 00` appears exactly 6x at heap **0x34f0000** and in **0 of the 24 files**
+   in programs/ (so it is not a static table the game carries).
+
+**Read this as:** the M110/M111 "156 B of save data with no reader" framing is wrong. The writer emits a fixed
+trailer at save time; the loader's read set does not cover it. The acceptance for closing it (not yet spent):
+load an AUTOSAVE (its trailer sits at a DIFFERENT offset) under a FILE*-filtered census and predict
+**sum = filesize - 156 again** — two files, two offsets, same shortfall.

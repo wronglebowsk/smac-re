@@ -43,12 +43,11 @@ nobody appends it in rounds (M104). Legs: skill code-atlas.md.
    (objdump window; import it as a module, `dis` clashes with stdlib).
 ## THE PICK
 
-**M100-M106, all in NAMED.md:** multiplier = block A slot 10 rebuilt per round (M100/M102); D =
-FUN_0059ec00 off the record block TYPE==3 entries (M103, PR #110 unmerged); nobody appends the block
-in rounds (M104); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (s164, m106r7 PASS 15/15): THE LOAD RESTORES THE REGION BY read() INTO IT** — a kernel
-copy_to_user, so no ring-3 store and no debug exception (the hardware watchpoint's blind spot); the .SAV
-fd arrives over SCM_RIGHTS, name it by the TAIL-AND-EOF LAW. Harness `scripts/m106_load_restore.py`; a
-traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
+**M100-M106, in NAMED.md:** multiplier = block A slot 10, rebuilt per round (M100/M102); D = FUN_0059ec00 off
+the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); it is BUILT AT PROCESS START by
+FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
+ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
+Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
 **M111 BLOCKED (s171) -> M112 = prove what the 156-B tail IS, cheapest evidence first. Not merged (PR #116).**
 State: `--tag m111b3 --ranges 0x400000-0x62afff` armed 190, exec 90, 0 gdb errors, counts 67/18,
 **sum = 243,007 vs 242,539 -> OVER by 468 B** -> the order-based file_off column is INVALID; **M110's
