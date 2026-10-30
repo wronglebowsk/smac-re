@@ -1,3 +1,2 @@
-M114 DONE (zero box time): restore is 1:1 — 12 windows of diff vs the poked save, 10 byte-identical. Rewriting only in the map header TAIL (81,408..82,100) and block A TAIL (67,080..67,143, 16-B stride); 52-record array has 2 differing dwords (222,831 cleared; poked field 223,152 normalised C0->D6). Block B base = file 67,852 -> 0x927590 (doc said 67,840, 12 B early).
-main 0219ff5 after #116-#122. BOX: terran.exe loaded (67/18), TracerPid 0.
-next: name the writers of the two tails (hw watchpoint on 0x9277xx / map-header tail) or move to the STILL OPEN band-flag setter.
+M115 DONE: guard is code. scripts/save_diff.py refuses boundary-crossing ranges (67,852/82,088/172,200/172,291/222,783) + test_save_diff.py PASS 7/7; m109 census kills stale gdb by pid, logs TracerPid, exits 8 if dirty; m113 verifies each anchor locally (local_1to1). Pick on main carries the M114 correction.
+BOX: terran.exe loaded with m113map.SAV (67/18), TracerPid 0. main after #116-#124; next: STILL OPEN band-flag setter, or the two section tails are now proven 1:1 so nothing to chase there.
