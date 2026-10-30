@@ -1253,3 +1253,10 @@ grid k=0x40925B0, post-map section k=0x95BD51, 196,608/212,992 k=0x95BF49, 52-re
 (file 67,080..67,143, 238 B on a 16-B stride, 2 B per hit = a per-record u16 array). The 52-record array differs
 in exactly 2 dwords: 222,831 `0x0003FFFF -> 0` (cleared) and the poked field at 223,152 top byte `0xC0 -> 0xD6`
 (normalised). Block B's base is file **67,852** -> 0x927590 (the documented 67,840 is 12 B early).
+CORRECTION (s171, M114): the "two rewritten tails" (block A 67,080..67,143 and map header 81,408..82,100) are
+RETRACTED as a k-straddling artifact — those windows cross a region boundary and were diffed with one region's k.
+With per-region k: block A (66,048..67,840, k=0x94D104) 0 diffs; block B (67,852..79,328, k=0x916C84) 0 diffs;
+map header (79,364..82,088, k=0x916D6C) 2 bytes, both at the FIRST offset; grid (82,088..172,200, k=0x40925B0) 10
+bytes starting at the FIRST offset. The .SAV is restored 1:1; the only divergences are those leading bytes plus the
+52-record array's 2 dwords (222,831 cleared, 223,152 field normalised).
+
