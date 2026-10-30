@@ -73,8 +73,11 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
   is an ELEMENT index); 0x920700 = UI state code (6/8/0xc/0xd); 0x94d7fc = per-faction counter, -1 = unset; 0x91c630 =
   upkeep-synch counter; 0x985afc = read-dominant run state (336/5); FUN_00495480 = cached-flag getter; FUN_004026b0 =
   LIST SEEK, cursor stored at [obj+0x14].
-- Pick from: 0x94d448 bit 0x8000000's producer; what FUN_00544530 does with 0x920700 (20 refs); the negative-queue
-  producer (arithmetic, still unlocated); FUN_00542ea0's 3 strings.
+- **M143-M162 (m143_m162_atlas.py):** the faction-block FIELD ATLAS is generated into `docs/field-atlas-faction.md` —
+  the 20 most-referenced `+0x94dXXX` displacements (150 distinct exist) with refs/writes/consts/tests/functions. Shape
+  only; `—` in `in NAMED?` = genuinely unnamed. Start here before re-deriving a field.
+- Pick from: 0x94d434 (196 refs, ONE write); 0x94d80c / 0x94d81c / 0x94d818 / 0x94d814 (the 78/62/46/42 cluster in
+  FUN_0040b960+FUN_0041f0e0); 0x94d554+0x94d488 (FUN_004da2c0 pair); 0x94d4a8 (26 writes).
 
 ## LIVE FACTS / KIT
 

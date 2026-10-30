@@ -330,6 +330,23 @@ Two static instruments answer "what IS this field" with no box time: `scripts/na
 naming a global from the one reader that mattered) and `scripts/field_census.py [stride|bit5|readonly|copy|dual]`
 (the five shape checks: stride unanimity over all sites, a gate's index provenance, a zero-writer proof, a
 copy-vs-array discrimination, and dual addressing forms for one address).
+**The census family, one shape per script** — reach for these before writing a new probe: `field_census.py` (a
+displacement's shape), `name_global.py` (every reader/writer of a global, with containment),
+`m118_flag_never_set.py` (is a gate satisfiable AT ALL: test sites, OR immediates, register-level bit ops, and whether
+any SAVE carries the bit), `m124_state_and_memo.py` (a state code named from the strings printed around its writers; a
+memo-invalidation store), `m127_m129_fields.py` (one field's two addressing encodings, a pre/post-call pair, a guard
+that CONSUMES a flag), `m130_m132_chooser.py` (a switch read straight out of the PE jump table), `m133_m142_census.py`
+(ten globals in one pass: refs, writes, stored values, containment). Ten census questions through one script is a
+legit batch; ten that each need their own harness is ten batches.
+**Three structural laws this family settled** (depth: `references/instrument-laws.md`): (1) a decompiler's `arr[i*N]`
+is an ELEMENT index — multiply by the element width before calling it a stride, because `param_1*0x167` was 359
+dwords = 1436 BYTES, the stride the record block already had; (2) a `switch` is found by its TABLE, not by the
+address range you expect — scan every `jmp DWORD PTR [reg*4+imm]` for the ones behind a bound check on the same
+register, since this dispatch sits in the CONSUMER of a helper and keys on that helper's return; (3) count a record
+field in BOTH encodings (`[reg+0x2a]` literal AND the folded `[reg*4+abs]` where the register already holds
+`index*stride`), because a literal-only grep reported "zero readers" for a field that has 369.
+The chooser/dispatch state family (dispatch table, list seek, state+mode pair, the counters around it) is mapped in
+`references/ui-chooser-state.md` — read it before re-deriving any of it.
 
 ## terran.exe PE layout (verified 2026-10-20 via section table + byte reads)
 
