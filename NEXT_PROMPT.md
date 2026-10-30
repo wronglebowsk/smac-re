@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 161, 2026-10-29)
+# NEXT_PROMPT.md — footing for the next session (session 171, 2026-10-29)
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -17,7 +17,7 @@ Survivability: the kickoff's SESSION_CURSOR rule (<= 600 B, written BEFORE any s
 2 minutes); never `rm`/`git checkout --`; every doc write is an append or a <= 2 KB patch.
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112), M106 (#113) — detail in NAMED.md. UNMERGED branches: M83/M84 family (the -9999 at 0x496ad0 is the DIALOG-CANCEL sentinel; the 0x4d00 queue post is gated at 0x4193b2 on ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded by M102), M103 (#110, never green), M109 (s167+s168: the GATES answered, no green acceptance).
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105 (#112), M106 (#113) — detail in NAMED.md. UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded by M102), M103 (#110, never green), M109+M111 (gates answered, model void).
 **M90-M104, all in NAMED.md:** the slot IS a tech index 0..88 (STRICTEST-largest draw, tail only arg2==0); TAILOUT 0x5a9698 == BASE + the tail simulated from the per-faction block (block FROZEN within a round); the POST cascade 0x5a9747-0x5aa022 == the prereq-closure ladder (`0x5a9020(a,X,f)` = membership at depth f; FREEZE LADDER INPUTS AT THE TAIL HIT); DIVISOR [fac*8380+0x94e488] == that faction's BASE COUNT, recomputed every round by FUN_00556690; the UI-queued completion pays AND activates in branch A (gate 0x4efa5e, pay 0x4efedd storage +0x40, POP 0x4f037b), 0x4f0ca6 is branch B's pay; the chooser ranks by the DRAW (score<<8 / prereq depth FUN_005a6d40; human LCG at ds:0x999fa0), NOT by score; base+0xd0 credit is recomputed every round by FUN_004e93f0; [0x94d800] is FUN_005aab70's memoized ADVANCE THRESHOLD vs the accumulator [0x94d7f8]; param_2 has ONE producer, FUN_004f34b0 (M99); the multiplier is block A slot 10 (M100/M102); D [0x94d700] is FUN_0059ec00's rebuild from the record list (M103). the record block 0x927a9c+fac*1436 is LOAD-TIME data, nobody appends it in rounds (M104). All legs: skill code-atlas.md.
 
 ## THE INSTRUMENTS (run these FIRST, they replace reading prose)
@@ -41,26 +41,28 @@ in rounds (M104); the block is BUILT AT PROCESS START by FUN_005791c0 (M105, 17/
 copy_to_user, so no ring-3 store and no debug exception (the hardware watchpoint's blind spot); the .SAV
 fd arrives over SCM_RIGHTS, name it by the TAIL-AND-EOF LAW. Harness `scripts/m106_load_restore.py`; a
 traced game is ~10x slow, so the load driver needs M54A_LOAD_TIMEOUT=1800.
-**M111 (THE PICK): the last 156 B — the map is already named.** `scripts/m109_leg_census.py --tag m110a2`
-(six ranges, 182 static bps) closes the save to **242,383 of 242,539 (99.94%), contiguous 0..242,383**: the
-MAP is `0x5822a7` 2,724 B header @79,364 + `0x5822f2` grid **90,112 = 64x64x22** @82,088 + `0x582318` 91 B
-trailer @172,200, and the "86,016-B heap read" was the grid minus one 4,096 block. The 156 B at 242,383 is a
-6-dword table [3,0,0,-6,32,32]..[7,..]; find its reader — add the CRT ranges (0x62b000-0x62d000) or
-loop-count the 0x59666d/0x5966c1 helper (9 pairs seen). Closure target Σ == 242,539.
+**M111 (THE PICK, BLOCKED s171 — no merge): the last 156 B has no named reader and the census MODEL is void.**
+`--tag m111b3 --ranges 0x400000-0x62afff` (190 sites, band out): 90 executed, 0 gdb errors, counts 67/18,
+**Σ = 243,007 vs 242,539 → OVER by 468 B**, so the order-based file_off column is invalid and M110's
+"contiguous 0..242,383" is RETRACTED. Pollution: 3 x 160-B CRT reads (0x62ae0f cluster → 0x7cda1c / 0xbe8c10
+/ 0xbefd3c) and the 9 x 6-dword per-entity loop (0x59666d/0x5966c1, dest 0x3b7d7a8..0x3c4b420, stride
+0x224B8). The 31 CRT sites are HOT (8,277 hits each, starve the driver — m111b2). Read-back: the 156 B is NOT
+in 523 MB of game memory verbatim; its 12-B row signature appears exactly 6x at **0x34f0000**.
+NEXT SHAPE: filter every bp by the save FILE* ($savefile at 0x596850, `[esp+0xc] == $savefile`).
 
 ## STILL OPEN (in priority order)
 
 1. **After M102: band flag [esi+0x94d430] bit 0x40 = 0 for ALL 8 factions -> the M89 second-ask is
-   inert, find the setter; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print at
-   **0x49771c**; bit 5 (0x531782); WORD ds:0x98adee (forced-pick key, live 6); the negative-queue
-   producer that reaches branch B; what [+0x94d78c] counts; when 0x59f0c7 runs.**
+   inert, find the setter; ds:0x926bd4 / ds:0x920434 naming; chooser case 7; cursor print 0x49771c;
+   bit 5 (0x531782); WORD ds:0x98adee (forced-pick key, live 6); the negative-queue producer reaching
+   branch B; what [+0x94d78c] counts; when 0x59f0c7 runs.**
 2. **M67's plan-descending LIST order has no code behind it** (zero sites read plan byte `+42`); the
    **`-3 / -6` stride CONFLICT** (`0x984d38 + (-v)*48` vs `+(-v)*16`). Suite: `scripts/gate.py`.
 
 ## LIVE FACTS / KIT
 
-- **Box at s168: terran.exe pid 1464418, m54b_clean NOT loaded (the driver timed out at the LOAD GAME
-  panel)**, counts [0,6,5,4,3,4,5,3] = the FUN_005791c0 startup image, version [0x985dbc]=9, convert
+- **Box at s171: terran.exe pid 1573718, m54b_clean LOADED (counts 67/18), no gdb, no driver**,
+  version [0x985dbc]=9, convert
   [0x926a14]=0, [0x985af0]=67, [0x985af4]=18, eras ds:0x985b90/0x985b9c = -1 (the category-skip leg INERT
   until an era goes >= 0); no clamp entry with key 10. A stale winedbg + wineserver must be killed BY PID
   before a relaunch; rounds are NOT continuous across reloads. Recipe (~35 s): `SMAC_SAVE='m54b_clean.SAV'
@@ -129,13 +131,13 @@ loop-count the 0x59666d/0x5966c1 helper (9 pairs seen). Closure target Σ == 242
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 
 Terse path past ~35 calls: acceptance numbers verbatim, no new prose, no file opened "to double
-check"; closing is PART of the milestone. 0 `SESSION_CURSOR.md` (<= 600 B: `<ID> | acceptance |
-merged? | next command`) BEFORE the rest. 1 `## Session <N>` APPENDED to `SESSION_NOTES.md`
-(<= 2 KB, numbers WITH the command). 2 the `<ID>` block APPENDED to `NAMED.md` (<= 1 KB). 3 this
+check"; closing is PART of the milestone. 0 `SESSION_CURSOR.md` (<=600 B: id | acceptance | merged?
+| next) BEFORE the rest. 1 `## Session <N>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers WITH
+the command). 2 the `<ID>` block to `NAMED.md` (<=1 KB). 3 this
 file patched BY SECTION, `wc -c NEXT_PROMPT.md` <= 15,500. 4 `rsync -a
 ~/.hermes/skills/smac-cvr-format/ ~/reverse/smac/skill/`. 5 `git add -A && git commit -m '<ID>:
 checkpoint'` then `python3 scripts/gate.py --base main` GREEN. 6 submit/merge ONLY on a real PASS.
 
 ## Report
 
-One screen: what changed, acceptance numbers WITH the command, what is open, next pick.
+One screen: what changed, acceptance numbers WITH the command, what is open, next.

@@ -1,1 +1,3 @@
-M111 (s171) | acceptance: python3 scripts/m109_leg_census.py --tag m111b1 --relaunch --ranges 0x44b000-0x630000 — ALL 221 call sites to the 4 readers (the 7 range bands missed 25 of them, incl. 0x62ae0f-0x62af05 and 0x59651f-0x59683b) | PREDICT before run: null = 242,383 (no site reaches file_off 242,383); alt = 242,539 | merged? no | next: census running in background (relaunch + load, ~30 min), then read the VERDICT line in evidence/m111b1.log.
+M111 BLOCKED (s171), no merge. `m109_leg_census.py --tag m111b3 --relaunch --ranges 0x400000-0x62afff`: 190 armed, 90 executed, 0 gdb errors, counts 67/18, sum=243,007 vs file 242,539 → OVER by 468 B → sequential model VOID. Tail 156 B unnamed.
+BOX LOADED: terran.exe 1573718, 67/18, no gdb, no driver.
+next: re-run with FILE* filter ($savefile at 0x596850, cond [esp+0xc]==$savefile); pollution = 3×160-B CRT reads (0x62ae0f, dest 0x7cda1c/0xbe8c10/0xbefd3c) + 9×6-dword loop (dest 0x3b7d7a8..0x3c4b420, stride 0x224B8).

@@ -1,0 +1,306 @@
+[New LWP 1573737]
+[New LWP 1573736]
+[New LWP 1573735]
+[New LWP 1573734]
+[New LWP 1573733]
+[New LWP 1573732]
+[New LWP 1573731]
+[New LWP 1573730]
+[New LWP 1573729]
+0xf15e468b in ?? ()
+Breakpoint 1 at 0x44b6e1
+Breakpoint 2 at 0x44b779
+Breakpoint 3 at 0x44b7ef
+Breakpoint 4 at 0x44b806
+Breakpoint 5 at 0x44b877
+Breakpoint 6 at 0x44b903
+Breakpoint 7 at 0x52c359
+Breakpoint 8 at 0x5821f4
+Breakpoint 9 at 0x582220
+Breakpoint 10 at 0x582245
+Breakpoint 11 at 0x5822a7
+Breakpoint 12 at 0x5822f2
+Breakpoint 13 at 0x582318
+Breakpoint 14 at 0x59651f
+Breakpoint 15 at 0x596578
+Breakpoint 16 at 0x59664b
+Breakpoint 17 at 0x596652
+Breakpoint 18 at 0x596666
+Breakpoint 19 at 0x59666d
+Breakpoint 20 at 0x5966a2
+Breakpoint 21 at 0x5966a9
+Breakpoint 22 at 0x5966ba
+Breakpoint 23 at 0x5966c1
+Breakpoint 24 at 0x5966f6
+Breakpoint 25 at 0x5966fd
+Breakpoint 26 at 0x59670e
+Breakpoint 27 at 0x596715
+Breakpoint 28 at 0x59674a
+Breakpoint 29 at 0x596751
+Breakpoint 30 at 0x596762
+Breakpoint 31 at 0x596769
+Breakpoint 32 at 0x59679e
+Breakpoint 33 at 0x5967a5
+Breakpoint 34 at 0x5967b6
+Breakpoint 35 at 0x5967bd
+Breakpoint 36 at 0x5967f2
+Breakpoint 37 at 0x596807
+Breakpoint 38 at 0x596826
+Breakpoint 39 at 0x59683b
+Breakpoint 40 at 0x596883
+Breakpoint 41 at 0x59688a
+Breakpoint 42 at 0x5968d2
+Breakpoint 43 at 0x5968d9
+Breakpoint 44 at 0x596908
+Breakpoint 45 at 0x59690f
+Breakpoint 46 at 0x596927
+Breakpoint 47 at 0x59692e
+Breakpoint 48 at 0x59695a
+Breakpoint 49 at 0x596961
+Breakpoint 50 at 0x596976
+Breakpoint 51 at 0x59697d
+Breakpoint 52 at 0x5969ac
+Breakpoint 53 at 0x5969b3
+Breakpoint 54 at 0x5969cb
+Breakpoint 55 at 0x5969d2
+Breakpoint 56 at 0x596a03
+Breakpoint 57 at 0x596a25
+Breakpoint 58 at 0x596a2c
+Breakpoint 59 at 0x596a33
+Breakpoint 60 at 0x596a6b
+Breakpoint 61 at 0x596a72
+Breakpoint 62 at 0x596a8a
+Breakpoint 63 at 0x596a91
+Breakpoint 64 at 0x596ada
+Breakpoint 65 at 0x596ae1
+Breakpoint 66 at 0x596af5
+Breakpoint 67 at 0x596afc
+Breakpoint 68 at 0x596eb0
+Breakpoint 69 at 0x596eb7
+Breakpoint 70 at 0x596ecf
+Breakpoint 71 at 0x596ed6
+Breakpoint 72 at 0x596f02
+Breakpoint 73 at 0x596f09
+Breakpoint 74 at 0x596f1e
+Breakpoint 75 at 0x596f25
+Breakpoint 76 at 0x597007
+Breakpoint 77 at 0x59700e
+Breakpoint 78 at 0x597026
+Breakpoint 79 at 0x59702d
+Breakpoint 80 at 0x597061
+Breakpoint 81 at 0x597068
+Breakpoint 82 at 0x59707d
+Breakpoint 83 at 0x597084
+Breakpoint 84 at 0x5970c2
+Breakpoint 85 at 0x5970c9
+Breakpoint 86 at 0x5970dd
+Breakpoint 87 at 0x5970e4
+Breakpoint 88 at 0x59711b
+Breakpoint 89 at 0x597122
+Breakpoint 90 at 0x59713a
+Breakpoint 91 at 0x597141
+Breakpoint 92 at 0x597186
+Breakpoint 93 at 0x59718d
+Breakpoint 94 at 0x5971a5
+Breakpoint 95 at 0x5971ac
+Breakpoint 96 at 0x5971e8
+Breakpoint 97 at 0x5971ef
+Breakpoint 98 at 0x597203
+Breakpoint 99 at 0x59720a
+Breakpoint 100 at 0x59726e
+Breakpoint 101 at 0x597275
+Breakpoint 102 at 0x59728d
+Breakpoint 103 at 0x597294
+Breakpoint 104 at 0x5972f7
+Breakpoint 105 at 0x5972fe
+Breakpoint 106 at 0x597312
+Breakpoint 107 at 0x597319
+Breakpoint 108 at 0x59736d
+Breakpoint 109 at 0x597374
+Breakpoint 110 at 0x597384
+Breakpoint 111 at 0x59738b
+Breakpoint 112 at 0x5974fd
+Breakpoint 113 at 0x597504
+Breakpoint 114 at 0x597518
+Breakpoint 115 at 0x59751f
+Breakpoint 116 at 0x597610
+Breakpoint 117 at 0x597617
+Breakpoint 118 at 0x59762f
+Breakpoint 119 at 0x597636
+Breakpoint 120 at 0x597678
+Breakpoint 121 at 0x59767f
+Breakpoint 122 at 0x597697
+Breakpoint 123 at 0x59769e
+Breakpoint 124 at 0x5976f0
+Breakpoint 125 at 0x5976f7
+Breakpoint 126 at 0x59770f
+Breakpoint 127 at 0x597716
+Breakpoint 128 at 0x59775b
+Breakpoint 129 at 0x597762
+Breakpoint 130 at 0x59777a
+Breakpoint 131 at 0x597781
+Breakpoint 132 at 0x5977ba
+Breakpoint 133 at 0x5977c1
+Breakpoint 134 at 0x5977d6
+Breakpoint 135 at 0x5977dd
+Breakpoint 136 at 0x597811
+Breakpoint 137 at 0x597818
+Breakpoint 138 at 0x59782d
+Breakpoint 139 at 0x597834
+Breakpoint 140 at 0x597873
+Breakpoint 141 at 0x59787a
+Breakpoint 142 at 0x59788b
+Breakpoint 143 at 0x597892
+Breakpoint 144 at 0x5978d0
+Breakpoint 145 at 0x5978d7
+Breakpoint 146 at 0x5978e8
+Breakpoint 147 at 0x5978ef
+Breakpoint 148 at 0x59792c
+Breakpoint 149 at 0x597933
+Breakpoint 150 at 0x597948
+Breakpoint 151 at 0x59794f
+Breakpoint 152 at 0x5979ba
+Breakpoint 153 at 0x5979dc
+Breakpoint 154 at 0x5979f8
+Breakpoint 155 at 0x597a19
+Breakpoint 156 at 0x597ab1
+Breakpoint 157 at 0x597abf
+Breakpoint 158 at 0x597aea
+Breakpoint 159 at 0x597af5
+Breakpoint 160 at 0x597b09
+Breakpoint 161 at 0x597b14
+Breakpoint 162 at 0x597b4d
+Breakpoint 163 at 0x597b5b
+Breakpoint 164 at 0x597b75
+Breakpoint 165 at 0x597b83
+Breakpoint 166 at 0x597bb5
+Breakpoint 167 at 0x597bc3
+Breakpoint 168 at 0x597bdd
+Breakpoint 169 at 0x597beb
+Breakpoint 170 at 0x597c1c
+Breakpoint 171 at 0x597c2a
+Breakpoint 172 at 0x597c44
+Breakpoint 173 at 0x597c52
+Breakpoint 174 at 0x597c79
+Breakpoint 175 at 0x597c84
+Breakpoint 176 at 0x597c98
+Breakpoint 177 at 0x597ca3
+Breakpoint 178 at 0x597df0
+Breakpoint 179 at 0x597e19
+Breakpoint 180 at 0x597f53
+Breakpoint 181 at 0x597ff2
+Breakpoint 182 at 0x5982ed
+Breakpoint 183 at 0x5983ee
+Breakpoint 184 at 0x5c73dc
+Breakpoint 185 at 0x5c73f6
+Breakpoint 186 at 0x5c7419
+Breakpoint 187 at 0x5c74a3
+Breakpoint 188 at 0x62ae0f
+Breakpoint 189 at 0x62aec8
+Breakpoint 190 at 0x62af05
+ARMED 190 static read-site bps
+[New LWP 1573743]
+[New LWP 1573746]
+[New LWP 1573747]
+[New LWP 1573748]
+[New LWP 1573749]
+[New LWP 1573750]
+[New LWP 1573751]
+M109C site=0x62ae0f dest=0x7cda1c size=128 cnt=1
+M109C site=0x62aec8 dest=0x7cdacc size=16 cnt=1
+M109C site=0x62af05 dest=0x7cdadc size=16 cnt=1
+M109C site=0x62ae0f dest=0xbe8c10 size=128 cnt=1
+M109C site=0x62aec8 dest=0xbe8cc0 size=16 cnt=1
+M109C site=0x62af05 dest=0xbe8cd0 size=16 cnt=1
+M109C site=0x597f53 dest=0xbe28f8 size=4 cnt=1
+M109C site=0x59688a dest=0x985ab8 size=796 cnt=1
+M109C site=0x596a33 dest=0x91b5b4 size=4 cnt=1
+M109C site=0x596a91 dest=0x94d430 size=67040 cnt=1
+M109C site=0x596ed6 dest=0x927590 size=11488 cnt=1
+M109C site=0x596f25 dest=0x926a78 size=32 cnt=1
+M109C site=0x5822a7 dest=0x92a378 size=2724 cnt=1
+M109C site=0x5822f2 dest=0x40a6660 size=90112 cnt=1
+M109C site=0x582318 dest=0x15e1210 size=91 cnt=1
+M109C site=0x59702d dest=0x985e5c size=16000 cnt=1
+M109C site=0x597084 dest=0x927538 size=4 cnt=1
+M109C site=0x5970e4 dest=0x930d7c size=176 cnt=1
+M109C site=0x597141 dest=0x989ce0 size=3584 cnt=1
+M109C site=0x5971ac dest=0x98ad88 size=26624 cnt=1
+M109C site=0x597294 dest=0x92bff0 size=4096 cnt=1
+M109C site=0x597319 dest=0x933278 size=3484 cnt=1
+M109C site=0x59751f dest=0x95da10 size=5472 cnt=1
+M109C site=0x59769e dest=0x991598 size=256 cnt=1
+M109C site=0x597716 dest=0x92bf58 size=152 cnt=1
+M109C site=0x597781 dest=0x92d4a0 size=10144 cnt=1
+M109C site=0x5977dd dest=0x91b5b8 size=4 cnt=1
+M109C site=0x597834 dest=0x91b5bc size=4 cnt=1
+M109C site=0x597892 dest=0x91b5f0 size=4 cnt=1
+M109C site=0x5978ef dest=0x91b670 size=4 cnt=1
+M109C site=0x59794f dest=0x91b700 size=4 cnt=1
+M109C site=0x59666d dest=0x915758 size=4 cnt=1
+M109C site=0x5966c1 dest=0x915754 size=4 cnt=1
+M109C site=0x596715 dest=0x915750 size=4 cnt=1
+M109C site=0x596769 dest=0x915778 size=4 cnt=1
+M109C site=0x5967bd dest=0x91577c size=4 cnt=1
+M109C site=0x59683b dest=0x915780 size=4 cnt=1
+M109C site=0x59666d dest=0x3b7d7a8 size=4 cnt=1
+M109C site=0x5966c1 dest=0x3b7d7a4 size=4 cnt=1
+M109C site=0x596715 dest=0x3b7d7a0 size=4 cnt=1
+M109C site=0x596769 dest=0x3b7d7c8 size=4 cnt=1
+M109C site=0x5967bd dest=0x3b7d7cc size=4 cnt=1
+M109C site=0x59683b dest=0x3b7d7d0 size=4 cnt=1
+M109C site=0x59666d dest=0x3b9fc60 size=4 cnt=1
+M109C site=0x5966c1 dest=0x3b9fc5c size=4 cnt=1
+M109C site=0x596715 dest=0x3b9fc58 size=4 cnt=1
+M109C site=0x596769 dest=0x3b9fc80 size=4 cnt=1
+M109C site=0x5967bd dest=0x3b9fc84 size=4 cnt=1
+M109C site=0x59683b dest=0x3b9fc88 size=4 cnt=1
+M109C site=0x59666d dest=0x3bc2118 size=4 cnt=1
+M109C site=0x5966c1 dest=0x3bc2114 size=4 cnt=1
+M109C site=0x596715 dest=0x3bc2110 size=4 cnt=1
+M109C site=0x596769 dest=0x3bc2138 size=4 cnt=1
+M109C site=0x5967bd dest=0x3bc213c size=4 cnt=1
+M109C site=0x59683b dest=0x3bc2140 size=4 cnt=1
+M109C site=0x59666d dest=0x3be45d0 size=4 cnt=1
+M109C site=0x5966c1 dest=0x3be45cc size=4 cnt=1
+M109C site=0x596715 dest=0x3be45c8 size=4 cnt=1
+M109C site=0x596769 dest=0x3be45f0 size=4 cnt=1
+M109C site=0x5967bd dest=0x3be45f4 size=4 cnt=1
+M109C site=0x59683b dest=0x3be45f8 size=4 cnt=1
+M109C site=0x59666d dest=0x3c06a88 size=4 cnt=1
+M109C site=0x5966c1 dest=0x3c06a84 size=4 cnt=1
+M109C site=0x596715 dest=0x3c06a80 size=4 cnt=1
+M109C site=0x596769 dest=0x3c06aa8 size=4 cnt=1
+M109C site=0x5967bd dest=0x3c06aac size=4 cnt=1
+M109C site=0x59683b dest=0x3c06ab0 size=4 cnt=1
+M109C site=0x59666d dest=0x3c28f40 size=4 cnt=1
+M109C site=0x5966c1 dest=0x3c28f3c size=4 cnt=1
+M109C site=0x596715 dest=0x3c28f38 size=4 cnt=1
+M109C site=0x596769 dest=0x3c28f60 size=4 cnt=1
+M109C site=0x5967bd dest=0x3c28f64 size=4 cnt=1
+M109C site=0x59683b dest=0x3c28f68 size=4 cnt=1
+M109C site=0x59666d dest=0x3c4b3f8 size=4 cnt=1
+M109C site=0x5966c1 dest=0x3c4b3f4 size=4 cnt=1
+M109C site=0x596715 dest=0x3c4b3f0 size=4 cnt=1
+M109C site=0x596769 dest=0x3c4b418 size=4 cnt=1
+M109C site=0x5967bd dest=0x3c4b41c size=4 cnt=1
+M109C site=0x59683b dest=0x3c4b420 size=4 cnt=1
+M109C site=0x59666d dest=0x8eb7c4 size=4 cnt=1
+M109C site=0x5966c1 dest=0x8eb7c0 size=4 cnt=1
+M109C site=0x596715 dest=0x8eb7bc size=4 cnt=1
+M109C site=0x596769 dest=0x8eb7e4 size=4 cnt=1
+M109C site=0x5967bd dest=0x8eb7e8 size=4 cnt=1
+M109C site=0x59683b dest=0x8eb7ec size=4 cnt=1
+M109C site=0x5979f8 dest=0xbe27b4 size=4 cnt=1
+M109C site=0x597a19 dest=0xbe27b0 size=4 cnt=1
+M109C site=0x62ae0f dest=0xbefd3c size=128 cnt=1
+M109C site=0x62aec8 dest=0xbefdec size=16 cnt=1
+M109C site=0x62af05 dest=0xbefdfc size=16 cnt=1
+
+Thread 13 "audio_client_ti" received signal SIGINT, Interrupt.
+[Switching to LWP 1573747]
+0xf17f732c in __kernel_vsyscall ()
+
+Thread 1 "terran.exe" received signal SIGCONT, Continued.
+[Switching to LWP 1573718]
+0xf17f732c in __kernel_vsyscall ()

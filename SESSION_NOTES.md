@@ -372,3 +372,33 @@ Branch milestone/m109 (from main aad8267). ACCEPTANCE `python3 scripts/m109_leg_
 - 0x596620(a,stream) = a 4-B read into `a+0x1dd78`; the loader calls it 8x off the dword table at 0x7cdecc then once with 0x8cda4c — 36 B, not a section.
 - **105 reader call sites exist OUTSIDE [0x596850,0x597a6b]** (0x44b6e1.., 0x52c359, 0x5821f4.., 0x597ab1..), so the 30-leg table is not the whole read set — the malloc'd 86,016 B read belongs to one of them.
 NEXT: arm gdb only AFTER the save's FILE* is open (four runs, zero loads: the census cannot be attached while the driver drives the menu), or bp the 122 in-loader call sites; then G3 closure. Evidence: evidence/m109g1.gdblog, m109g2.gdblog, m109g3.summary, m109g4.gdblog, m109g4.log; evidence/m109_skel_loader.txt; scripts/m109_leg_gates.py. Box: relaunch terran.exe pid 1464418 at the LOAD GAME panel, untraced.
+
+## Session 171 (2026-10-29) — M111 BLOCKED: the 156-B tail has no named reader, and the census model is VOID (over-counts by 468 B)
+
+Three acceptance invocations, none green, nothing merged.
+
+1. m111b1 `python3 scripts/m109_leg_census.py --tag m111b1 --relaunch --ranges 0x44b000-0x630000`
+   (all 221 call sites to the 4 readers) — gdb DETACHED after 3 events on wineserver's SIGUSR1
+   (`handle SIGUSR1 nostop noprint pass` + a 400-continue tail were MISSING from this harness; now in it).
+   Events logged before the detach: 0x62ae0f dest=0x7cda1c size=128, 0x62aec8 size=16, 0x62af05 size=16.
+2. m111b2 same range with the SIGUSR1 handles — the 31 CRT-band sites (0x62b000-0x62d000) are HOT:
+   0x62b8f0 and 0x62b935 fired 8,277x each during STARTUP, 25,957 stops in 12 min, ZERO loader hits,
+   then the event stream froze for 7 min = the m109g3 starvation shape. Killed by pid.
+3. m111b3 `python3 scripts/m109_leg_census.py --tag m111b3 --relaunch --ranges 0x400000-0x62afff`
+   (190 sites = 221 minus the CRT band): the load RAN (counts 67/18) and completed —
+   0 gdb errors, 90 executed sites, **sum(size*count) = 243,007 vs file 242,539 → OVER by 468 B**.
+   So the cumulative "file_off" column is not a statement about the save: the executed set mixes in
+   (a) three 160-B CRT reads into 0x7cda1c / 0xbe8c10 / 0xbefd3c, and (b) a 9-iteration per-entity loop
+   of 6 x 4-B reads into heap dests 0x3b7d7a8 .. 0x3c4b420 (stride 0x224B8, the M110 pair 0x59666d/0x5966c1).
+   The M110 "contiguous 0..242,383" figure is therefore an artifact of UN-ARMED sites, not proof of what is
+   unread. Do not repeat it as a closure.
+
+READ-BACK after the load (no gdb, /proc/1573718/mem, 523 MB of readable maps): the save's last 156 B are NOT
+present verbatim anywhere; the 12-B row signature `fa ff ff ff 20 00 00 00 20 00 00 00` (6 rows in the save)
+appears exactly 6x in ONE region, 0x34f0000. The RECORDS reach memory, the BLOB does not — a per-record
+restore, not a bulk 156-B read.
+
+Instrument fixes this session (committed): session_brief.py and accept_ready.py print BLOCKED instead of a
+CalledProcessError traceback when terran.exe is down; m109_leg_census.py now sets M54A_LOAD_TIMEOUT=1800,
+carries the SIGUSR1/USR2/SIGPIPE handles + 400-continue tail, and prints a CLOSED/PARTIAL verdict (exit 4).
+test_accept_ready.py PASS 17/17 after the change.

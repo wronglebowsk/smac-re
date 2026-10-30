@@ -1168,3 +1168,18 @@ Six ranges, 182 static bps, one load (`m110a2`): **45 executed sites, Σ = 242,3
 - 0x5973bc-0x597495 = 48->52 record expansion (0x30-byte source -> 0x34-byte records at 0x93327a, [0x985af0] iterations), gated version<0 -> 0x59738b never runs.
 - 0x596620(a,stream) = 4-B read into a+0x1dd78 (8 calls off the dword table at 0x7cdecc + 1 with 0x8cda4c) = 36 B.
 - 105 reader call sites exist outside FUN_00596850 -> the 30-leg table is not the whole read set. OPEN: the closure arithmetic, and who reads the malloc'd 86,016 B. Harness scripts/m109_leg_gates.py.
+## M111 (s171, RUN, NOT ACCEPTED — the tail's reader is unnamed and the census model is VOID)
+
+Command: `python3 scripts/m109_leg_census.py --tag m111b3 --relaunch --ranges 0x400000-0x62afff`
+(190 static call sites to the four readers = 221 total minus the 31 CRT-band ones).
+Result: 90 sites executed, 0 gdb errors, counts 67/18 (the load ran), **sum(size*count) = 243,007 vs file
+242,539 → over by 468 B**. An order-based `file_off` column that over-runs the file is not a partial map, it is
+an INVALID model: the executed set includes three 160-B CRT reads (0x62ae0f/0x62aec8/0x62af05 into 0x7cda1c,
+0xbe8c10, 0xbefd3c) and a 9-iteration per-entity loop of 6 x 4-B reads into heap (0x3b7d7a8 .. 0x3c4b420,
+stride 0x224B8) — the M110 pair 0x59666d/0x5966c1. **M110's "contiguous 0..242,383" is RETRACTED as a closure
+claim**; it measured an un-armed site set.
+Two failed instruments: m111b1 detached after 3 events (no SIGUSR1 handle), m111b2 armed the 31 CRT sites and
+starved (0x62b8f0/0x62b935 8,277 hits each in 12 min, ZERO loader hits, stream frozen = m109g3).
+Read-back (523 MB of /proc mem, no gdb): the 156-B tail is NOT present verbatim; its 12-B row signature
+`fa ff ff ff 20 00 00 00 20 00 00 00` appears exactly 6x at **0x34f0000** — records restored per record, no
+bulk 156-B read. Next shape: filter every bp by the save FILE* (set $savefile at 0x596850, `[esp+0xc]`).
