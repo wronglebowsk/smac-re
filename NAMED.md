@@ -1275,3 +1275,6 @@ the 18 dword stores are the candidates).
 different structure; the true words are 0, 0, 0x04000000, 0, 0, 0, 0x10000000, 0 (bit 0x40 clear everywhere). M116's
 static half (test at 0x5aaf7f in FUN_005aadf0+0x18f; 17 `or` sites, none sets 0x40) STANDS.
 
+CORRECTION (s171): `m117_gate_take.py` exits 0 when the site was reached (taken or not), 4 = never reached, 5 =
+wedge, 8 = box dirty; m117g2's exit 4 mislabelled a valid negative result.
+
