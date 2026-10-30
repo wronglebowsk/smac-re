@@ -1,2 +1,2 @@
-M115 DONE: guard is code. scripts/save_diff.py refuses boundary-crossing ranges (67,852/82,088/172,200/172,291/222,783) + test_save_diff.py PASS 7/7; m109 census kills stale gdb by pid, logs TracerPid, exits 8 if dirty; m113 verifies each anchor locally (local_1to1). Pick on main carries the M114 correction.
-BOX: terran.exe loaded with m113map.SAV (67/18), TracerPid 0. main after #116-#124; next: STILL OPEN band-flag setter, or the two section tails are now proven 1:1 so nothing to chase there.
+M116 ACCEPTED (m116flag PASS): band-flag gate is a BYTE test — `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f (FUN_005aadf0+0x18f); 17 `or` sites there, none sets 0x40. Live 0,0xFFFFFFFF,0,... = bit 0x40 SET for fac1, so NAMED's "0 for all 8 -> second ask never ran" is RETRACTED (meaning: inference, fac1 all -1). NEXT: clear 0x40 for fac1, count hits at 0x5aaf88.
+main d030de0 after #116-#125. BOX: terran.exe loaded (67/18), TracerPid 0, m113map.SAV.

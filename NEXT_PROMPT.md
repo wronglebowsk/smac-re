@@ -48,19 +48,17 @@ the block's TYPE==3 entries (M103); nobody appends the block in rounds (M104); i
 FUN_005791c0 (M105, 17/17). **M106 ACCEPTED (m106r7 PASS 15/15): the load restores by read() INTO the region** — kernel copy_to_user, no
 ring-3 store, invisible to a hw watchpoint; the .SAV fd arrives via SCM_RIGHTS (TAIL-AND-EOF LAW).
 Harness `scripts/m106_load_restore.py`; a traced game is ~10x slow, so pass M54A_LOAD_TIMEOUT=1800.
-**M111/M112 RESOLVED; M113 CLOSED; M114 CORRECTED; M115 DONE (s171) — the .SAV map is anchored, restore is 1:1.**
-Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d/0x5966c1/0x596715/0x596769/0x5967bd/
-0x59683b) -> heap 0x915758..0x3c4b3f8. **M110's "0..242,383 / 156 B unread" RETRACTED.**
-Map (poke anchors, k per region): block A k=0x94D104; block B base **67,852** -> 0x927590; map header k=0x916D6C
-(ends 82,088); grid k=0x40925B0 at 0x40a6660 (ends 172,200); 16,000 section base 172,291; 52 records **222,783** ->
-0x933278.
-Restore **1:1**: block A and B clean; map header 2 bytes, grid 10 bytes, at the first byte; 52-record array 2 dwords
-(222,831 cleared; 223,152 normalised 0xC0->0xD6). **M114's "two rewritten tails" RETRACTED** — those windows
-straddled a boundary and used one region's k.
-Ranges go through `scripts/save_diff.py`: refuses a range crossing a known boundary (67,852 / 82,088 / 172,200 /
-172,291 / 222,783) and names it; `test_save_diff.py` PASS 7/7.
-LAW: identify bytes by POKING a marker and finding it in memory (a census over-runs; a subset-sum is
-underdetermined); cap at 60 markers; verify each anchor LOCALLY (`local_1to1`, ±8 B).
+**s171 (M111-M116): the .SAV map is anchored, the restore is 1:1, and the band-flag gate is re-measured.**
+Trailer: the last 156 B ARE read — the 6-site per-entity loop (0x59666d..0x59683b) -> heap 0x915758..0x3c4b3f8.
+**M110's "0..242,383 / 156 B unread" RETRACTED.**
+Map (poke anchors, k per region): block A 0x94D104; block B base 67,852 -> 0x927590; header 0x916D6C (to 82,088);
+grid 0x40925B0 at 0x40a6660 (to 172,200); 16,000 section 172,291; 52 records 222,783 -> 0x933278.
+Restore **1:1**; M114's "two rewritten tails" RETRACTED (boundary-straddling windows). Ranges via `save_diff.py`.
+**M116 (m116flag PASS): the band-flag gate is a BYTE test** — `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f
+(FUN_005aadf0+0x18f); 17 `or` sites at that displacement, **none sets 0x40**. Live 0,**0xFFFFFFFF**,0,... -> bit 0x40
+SET for fac1: **NAMED's "0 for all 8 -> second ask never ran" RETRACTED** (meaning: inference, fac1 all -1).
+NEXT: clear bit 0x40 for fac1 and count hits at 0x5aaf88.
+LAW: identify bytes by POKING a marker and finding it in memory; cap at 60 markers; verify anchors locally.
 
 ## STILL OPEN
 
