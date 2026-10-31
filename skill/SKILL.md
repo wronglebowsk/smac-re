@@ -738,7 +738,7 @@ The
   `references/static-store-census.md` §9; §1–§3 carry the traps that make the STATIC half of it complete —
 **Read §9 before hand-writing a watcher script** — condition arithmetic, log format and scorer gates are
 solved there (uppercase-`PTR` greps, pointer-form stores, operand width).
-Depth: `references/wine-operations.md` (moved verbatim from here), `references/wine-headless-harness.md`
+Depth: `references/wine-operations.md`, `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 
 ## Still open (leads)
