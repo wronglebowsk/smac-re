@@ -128,7 +128,7 @@ summarize itself: attempts die on the output cap (`finish_reason=length`, aborte
 gateway drops hygiene compression after a 10 s turn-hold. Measured outcome: CLOSING turns were cut
 mid-sentence twice — the milestone was done and accepted, the paperwork never landed. Rules that follow:
 
-- The window was DOUBLED on 2026-10-28 to 524,288 tokens (`compression.threshold_tokens: 424,000`).
+- The window was DOUBLED to 524,288 tokens (`compression.threshold_tokens: 424,000`).
   Never quote a limit carried in from a prior session — read `~/.hermes/config.yaml`. A bigger window
   does NOT repair the compressor (same model, same cap); every rule here still holds.
 - Budget by TOOL CALLS, not by feel: brief+accept_ready <= 6, milestone 6-30, **commit a
@@ -141,6 +141,13 @@ mid-sentence twice — the milestone was done and accepted, the paperwork never 
   batches. Box-time milestones go **ONE per batch** — each is a 6-10 min window holding a three-invocation cap, and a
   mid-batch wedge strands every milestone queued behind it. State the batch size in the kickoff's BUDGET section so the
   next session does not re-learn it.
+- **When he asks for a big number ("do 10", "do 20"), answer with capacity first and then change the ARTEFACT, not the
+  quality claim.** Ten means ten homogeneous CENSUSES through one script (one write, one run, one evidence file).
+  Twenty means ONE generated artefact with a mechanical, re-derivable selection rule (e.g. the top-20 displacements by
+  reference count, emitted as a table), because twenty claimed MEANINGS would be fiction — say so in the artefact's own
+  legend, label rows shape-only, and let a dash mean unnamed. State the ceiling out loud: a batch that size buys a map,
+  and the next session spends it. Run the archive pass BEFORE such a batch (the pick file's cap binds at exactly that
+  size) and expect it to be full again afterwards.
 - **Cap ACCEPTANCE INVOCATIONS at three** (this budget is about judgment, not context): read WHY it
   failed, fix the instrument, re-run; the third failure IS the finding — write its numbers next to the
   command that produced them and close. When the failure was a harness PARSE or GROUPING bug, re-run the
@@ -236,7 +243,10 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   section lands on the first try. **Never write a file through `open(p,"w").write(open(p).read()…)`:** the
   write-open truncates the file BEFORE the read is evaluated, so that one-liner replaces any file with 0 bytes and
   reports success — read into a variable first, then open for write (a fresh 10 KB harness died this way
-  mid-session and had to be rebuilt from the conversation).
+  mid-session and had to be rebuilt from the conversation). It recurred after this rule was already written, so add the
+  cheap detector rather than trusting care: after ANY such one-liner, `assert os.path.getsize(p) > 0` in the same cell.
+  An untracked file cannot be recovered from git — only from the conversation — so create new harnesses with `write_file`
+  and patch them with `patch`, using a Python one-liner only for edits to a file git already tracks.
 - **A gdb breakpoint that reads the WRONG register prints garbage and can kill the whole run**: the printf fault (`Cannot access memory at address 0xa774`) aborts the breakpoint's commands block and gdb DETACHES the inferior, so the run dies mid-window. Read the store's own bytes first — `mov eax,[ebp-0x4]` followed by `mov [eax+0xa774],-1` means the object is in EAX at that address, whatever the pseudo-code called it. The same trap applies to SIGNS: a 32-bit sentinel printed with `%d` prints NEGATIVE (0xffffd8f1 -> -9999), so print it as `0x%x` and gate on the unsigned constant, never on the positive decimal.
 - **Two Hermes sessions can work the same repo at once** (a cron dispatch plus a sibling or a duplicate): a doc you just patched can be rewritten under you (the write tool names the sibling session id and its timestamp). Commit your own notes/NAMED/scripts EARLY so a sibling cannot bury them — and keep an untracked deliverable OUTSIDE the worktree, because a sibling's `git clean`/`git checkout` deletes untracked files with no warning (a prompt file written into the repo root vanished mid-turn) — re-read a doc immediately before patching it, and never start a competing measurement before `tail -5 SESSION_CURSOR.md` + `ls -lt evidence/*.gdblog | head`. **Name the owner before arming:** `ps -eo pid,etime,cmd | grep -E '<instrument>.py|<driver>.py'` prints a sibling's live command line (its argv carries the whole pipeline it is running) and `stat -c '%y %n' SESSION_CURSOR.md evidence/<recent>.gdblog` shows who wrote last; every shell the agent spawns carries `hermes-snap-<session-hash>.sh` in its own argv, so a hash that is not yours names a LIVE sibling even while it sits between commands and before it has committed anything — `git log` shows nothing foreign in exactly that window, so the process table, not the commit log, is the early warning.
   Cron-sibling ownership + collision etiquette: `references/git-workflow.md` §Sibling ownership.
@@ -302,15 +312,11 @@ at close, never from the footing. `evidence/m53j_text.txt.gz` (~5.7 MB, the disa
 method runs on) is PRUNED from the worktree when the gate nears 30 MB; it is git-kept — recover with
 `git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
 
-Measured 2026-10-25: 29.3 MB in 858 files (58 images = 13.9 MB of it) against the 30 MB FAIL — and
-`prune --dry-run` proposes NOTHING, because the rule only drops *images older than 7 days* and the
-whole tree was days old. So the margin is real, not theoretical: a 40-turn trace is ~55 KB, but one
-screenshot is 400 KB and `check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs
-(delete those immediately). Run `budget` BEFORE adding new frames, and expect to prune in bulk once
-the footage ages out. When `prune --dry-run` proposes nothing (it only drops uncited images older than
-7 days, and a young tree offers no victims), free the room instead by gzipping a large *text* file that
-no markdown cites — `grep -rn <basename> --include=*.md .` first, because a cited path must stay
-readable at its recorded path; an uncompressed disassembly dump is worth ~8x its gzipped size.
+Measured margin: 29.3 MB / 858 files against the 30 MB FAIL, and `prune --dry-run` offered NOTHING (it drops
+only uncited images older than 7 days). A 40-turn trace is ~55 KB but one screenshot is 400 KB, and
+`check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs (delete those immediately); run
+`budget` BEFORE adding frames. When prune offers no victims, free room by gzipping a large *text* file no
+markdown cites (`grep -rn <basename> --include=*.md .` first — a cited path must stay readable at its path).
 - **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a **1.4 GB** trace and turned the gate RED *after* the milestone work was already done. Sleep the loop (2 ms is the sampling cadence the footing asks for anyway), and downsample before the first commit of the trace: keep the first sample, every sample where a watched field CHANGES, one heartbeat per second, and the last — 1.29M samples collapse to 68 lines / ~10 KB with the boundary sequence intact. `prune` offers no victims here: it drops only uncited images, and a cited trace must survive at its recorded path. A giant blob also stays in the branch's HISTORY once committed, so a later delete does not un-poison a push (see `references/git-workflow.md`).
 
 Delegating a static decode works well (a child can map a 1450-line function in minutes), but a child's
@@ -343,8 +349,14 @@ displacement's shape), `name_global.py` (every reader/writer of a global, with c
 any SAVE carries the bit), `m124_state_and_memo.py` (a state code named from the strings printed around its writers; a
 memo-invalidation store), `m127_m129_fields.py` (one field's two addressing encodings, a pre/post-call pair, a guard
 that CONSUMES a flag), `m130_m132_chooser.py` (a switch read straight out of the PE jump table), `m133_m142_census.py`
-(ten globals in one pass: refs, writes, stored values, containment). Ten census questions through one script is a
-legit batch; ten that each need their own harness is ten batches.
+(ten globals in one pass: refs, writes, stored values, containment), `m163_m165_structs.py` (an init-time value, plus
+struct-vs-neighbours proved by base-register reuse), `m166_m168_roles.py` (what a rank is compared against, a candidate
+struct's writer SETS, a derived cache), `m169_m171_aggregate.py` (a table that is TOTALLED rather than flagged, the
+aggregator around it, and a struct written from ONE byte). Ten census questions through one script is a
+legit batch; ten that each need their own harness is ten batches. The per-faction FIELD ATLAS is generated, never
+hand-written: `scripts/m143_m162_atlas.py` -> `docs/field-atlas-faction.md` (top-20 `+0x94dXXX` displacements by
+reference count, with refs/writes/consts/tests/functions) — regenerate it instead of re-censusing a field, and read its
+`in NAMED?` dash as "genuinely unnamed", not as a gap to be filled by a guess.
 **Three structural laws this family settled** (depth: `references/instrument-laws.md`): (1) a decompiler's `arr[i*N]`
 is an ELEMENT index — multiply by the element width before calling it a stride, because `param_1*0x167` was 359
 dwords = 1436 BYTES, the stride the record block already had; (2) a `switch` is found by its TABLE, not by the
@@ -352,6 +364,15 @@ address range you expect — scan every `jmp DWORD PTR [reg*4+imm]` for the ones
 register, since this dispatch sits in the CONSUMER of a helper and keys on that helper's return; (3) count a record
 field in BOTH encodings (`[reg+0x2a]` literal AND the folded `[reg*4+abs]` where the register already holds
 `index*stride`), because a literal-only grep reported "zero readers" for a field that has 369.
+**Three more laws, all about how a field is SHAPED by its readers and writers:** (4) degree asymmetry is evidence — a
+displacement with hundreds of readers and ONE writer is an init-time value (a rank/order), so read that single writer
+and its loop instead of sampling readers; (5) a candidate struct is proved by (function, base-register) reuse —
+several pairs addressing SEVERAL of the offsets off one register — and its parts are then separated by writer SETS,
+because equal write COUNTS hide the split (a header dword with its own writers plus a payload quad written together
+by a different shared set); (6) read the writer's SOURCE before naming members: `setne`/`shr`/`and` chains mean the
+fields are booleans of ONE source bitfield (one byte expanded into four dwords, a tristate header, and an `or` into a
+DIFFERENT word as a side-effect), and a displacement with many writes but almost no tests is a recomputed CACHE,
+never state a gate may read.
 The chooser/dispatch state family (dispatch table, list seek, state+mode pair, the counters around it) is mapped in
 `references/ui-chooser-state.md` — read it before re-deriving any of it.
 
@@ -721,10 +742,7 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 
 ## Still open (leads)
 `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
-**Band-flag gate — CLOSED, do not re-open.** Bit 0x40 of the per-faction flag word (stride **8,380 DEC = 0x20BC**,
-NOT hex 0x8380) is tested at `0x5aaf7f` in FUN_005aadf0 and REACHED every round, but it has no setter in the image and
-no save carries it, so that branch is inert BY CONSTRUCTION. `scripts/m118_flag_never_set.py` re-proves all four
-checks offline in seconds; `scripts/m116_band_flag.py` only reads the live words (`references/instrument-laws.md`
-§Is this bit ever SET).
+**Band-flag gate — CLOSED, do not re-open** (bit 0x40 of the per-faction flag word is tested but has no setter and no
+save carries it; stride is 8,380 DEC = 0x20BC, not hex 0x8380): `scripts/m118_flag_never_set.py` re-proves it offline.
 
 

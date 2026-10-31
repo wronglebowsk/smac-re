@@ -466,3 +466,19 @@ stride 0x20bc stepping the table by 4, with `ds:0x9204ac++` (count) and `ds:0x92
 **M171** FUN_004dc100 (647 B) = BIT-DECODER: one byte in AL -> `[+0x94d810/14/18/1c] = setne(al&1/2/4/8)` (four boolean
 dwords), header `[+0x94d80c]` = tristate 1/-1/0 from al&0x10 / al&0x20, and al&0x40 -> `or [+0x94d430],0x800000`.
 
+## M172-M174 (s172, all PASS) — FUN_004dc100 is a SAVE-SECTION WRITER; the count/sum consumers; the tristate as a signed modifier
+
+`scripts/m172_m174_savewriter.py`. **M172** FUN_004dc100's 2 callers are arg-free dispatch legs (FUN_00512b40 0x51500f,
+FUN_00516b80 0x517eb6). The byte is the shared scratch **ds:0x99aa38** (74 refs / 33 stores; 19 stores in the 0x41a9xx
+UI-build block FUN_0041a8f0) — NOT a caller argument (M171's "one byte arrives in AL" is RETRACTED): the PACK leg
+(0x4dc1a4-0x4dc279) rewrites 22 `or/and al,ah` bits from +0x94d80c..1c + [esi+0x94d430] bits 0x800000/0x400000/0x1000000/
+0x2000000 + [esi+0x94f4b0] bit 0x20, stores the byte, writes it via the tagged writer 0x6267a5 (18 sites, 12 in the
+0x4d9xxx-0x4e1xxx save band); the DECODE leg (0x4dc29c, after the write's `jl` gate) reloads the SAME global and rebuilds
+the struct. Context opener 0x4d9fb0 has EXACTLY 4 callers: FUN_004dc100/0x4dc390/0x4e0260/0x5a2930.
+**M173** 0x9204ac (count) consumers = 0x53346c (in FUN_00531df0: `count<2` -> `table[ebx] >= 3*(sum+table[ecx])` ->
+`rank<6`), 0x53a9cc (FUN_0053a9c0: `count + ds:0x920720`), 0x54d30d (FUN_00546800: `count != 0`); 0x9204c4 (sum) has the
+ONE consumer 0x533478. Each has 2 stores (zero + loop RMW). **M174** 0x94d80c: 7 tests in 4 fns (2 vs 0, 4 vs 1, 1 reg
+`cmp [eax+0x94d80c],ecx` @0x5520cd) + 7 arithmetic uses (`sub` x6 across FUN_0053cb20/0x546800 x2/0x5551e0/0x55f650,
+`add` x1) — a 1/0/-1 SIGNED MODIFIER in scoring; FUN_00531df0 reads it as |value| (0x53206f).
+
+

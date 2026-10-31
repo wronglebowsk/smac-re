@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 172, 2026-10-30)
+# NEXT_PROMPT.md — footing for the next session (session 173, 2026-10-31)
 
 Structure: this file = RULES + live footing. Detail is on disk: `docs/pick-archive.md` (milestone narrative M90-M123
 + the FULL trap text), `NAMED.md` (semantic registry), `skill/references/instrument-laws.md` (instrument laws). Read
@@ -17,7 +17,7 @@ finished at all.** Counted in TOOL CALLS:
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.
 
 Survivability: cursor <= 600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
-patches. **Batch size (s171): 3 milestones comfortable, 5 max and only when they share one instrument; box-time
+patches. **Batch size (s172): 3 static milestones through ONE census script is comfortable; box-time milestones go 1 per batch.
 milestones go 1 per batch.** The binding cap is doc headroom, not capability.
 
 ## THE LEDGER
@@ -67,12 +67,13 @@ M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's
   gates on the M163 rank as `cmp [ebx+0x94d434],0x5`; and **FUN_004dc100 (647 B) is a BIT-DECODER**: one byte in AL ->
   four boolean dwords (+0x94d810/14/18/1c from al&1/2/4/8), header tristate (+0x94d80c = 1/-1/0 from al&0x10/0x20), and
   al&0x40 -> `or [+0x94d430],0x800000`.
-- Pick from: WHO CALLS FUN_004dc100 (2 callers — the source byte's owner); ds:0x9204c4 / 0x9204ac consumers; the
+- **M172-M174 (m172_m174_savewriter.py, all PASS):** FUN_004dc100 is a **SAVE-SECTION WRITER** — its 2 callers are arg-free dispatch legs (FUN_00512b40 0x51500f, FUN_00516b80 0x517eb6); the byte is the shared scratch **ds:0x99aa38**  a caller argument (M171's "arrives in AL" retracted): PACK leg 0x4dc1a4-0x4dc279 rewrites 22 `or/and al,ah` from the struct + band bits, writes via 0x6267a5, 0x4d9fb0 has exactly 4 callers (0x4dc100/0x4dc390/0x4e0260/0x5a2930). Count/sum 0x9204ac/0x9204c4: consumers 0x53346c (inside FUN_00531df0: count<2 -> table[ebx] >= 3*(sum+table[ecx]) -> rank<6), 0x53a9cc (FUN_0053a9c0), 0x54d30d (FUN_00546800); sum's only reader 0x533478. Header 0x94d80c: 7 tests in 4 fns + 7 arithmetic uses (`sub` x6, `add` x1) = a 1/0/-1 **signed modifier** in scoring; the aggregator reads it as |value|.
+- Pick from: FUN_00531df0's 17 call sites (who asks for the aggregate); FUN_0041a8f0's 0x41a9xx block (what UI state builds the byte bit by bit); consumers of ds:0x920720 (the count's partner); the save-band siblings 0x4dc390/0x4e0260/0x5a2930 (what each writes).
   tristate header's 7 test sites (M167); FUN_00531df0's 17 call sites.
 
 ## LIVE FACTS / KIT
 
-- **Box at s171: terran.exe pid 1573718, m54b_clean LOADED (counts 67/18), no gdb, no driver**, version [0x985dbc]=9,
+- **BOX DOWN at s172 close: terran.exe not running** (s172 was fully static). Relaunch before any box pick (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `accept_ready.py`; 
   convert [0x926a14]=0, [0x985af0]=67, [0x985af4]=18, eras ds:0x985b90/0x985b9c = -1 (category-skip leg INERT); no clamp
   entry with key 10. Kill a stale winedbg + wineserver BY PID before a relaunch; rounds are NOT continuous across
   reloads. Recipe (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` ->
