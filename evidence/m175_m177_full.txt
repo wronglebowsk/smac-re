@@ -1,0 +1,44 @@
+== M175 ==
+M175 17 sites in 13 owners:
+   FUN_004282d0   x1  sites: 0x429416
+   FUN_0043ff20   x1  sites: 0x43ff6c
+   FUN_004a5eb0   x2  sites: 0x4a6209, 0x4a633e
+   FUN_00533e70   x1  sites: 0x533ef3
+   FUN_00534180   x1  sites: 0x534215
+   FUN_005344c0   x1  sites: 0x534529
+   FUN_00534fa0   x2  sites: 0x535069, 0x5351b9
+   FUN_00535700   x1  sites: 0x535829
+   FUN_00535c60   x1  sites: 0x535c9e
+   FUN_00546800   x2  sites: 0x5469be, 0x54ebb1
+   FUN_005551e0   x2  sites: 0x55568c, 0x5559e1
+   FUN_0055f650   x1  sites: 0x569415
+   FUN_0058fa40   x1  sites: 0x59549b
+M175  PASS — the aggregator's demand set is 17 sites in 13 functions: FUN_00546800 (AI hub) x2, FUN_005551e0 x2, FUN_004a5eb0 x2, FUN_00534fa0 x2 (the 0x94d4a8-priming pair) + single sites in FUN_004282d0, FUN_0043ff20 (wrapper: arg1 = ds:0x91b5b4, the current-faction global), FUN_00533e70, FUN_00534180, FUN_005344c0, FUN_00535700, FUN_00535c60 (re-arms the SEH/context globals then calls with arg3=0), FUN_0055f650, FUN_0058fa40 (the save path, next to a 0x626634 staging call)
+== M176 ==
+M176 prologue arg1->esi: True | block-deref registers: {'esi': 4, 'edi': 12, 'ebx': 23, 'ecx': 20, 'edx': 17, 'eax': 20} | arg3 reloaded at 5 sites, first: [('0x532194', 'mov    eax,dword ptr [ebp+0x10]'), ('0x532fef', 'mov    eax,dword ptr [ebp+0x10]'), ('0x533094', 'mov    edx,dword ptr [ebp+0x10]')] | arg3!=0 gate exports [edx+0x94d4a8] -> ds:0x9204b0: True
+M176 owners: 13
+M176 owners carrying the *8380 chain (shl 6 + shl 4 + sub): 10 of 13 {'FUN_004282d0': False, 'FUN_0043ff20': False, 'FUN_004a5eb0': False}
+M176 last-push-before-call (arg3 candidates): 12 x 0x0, 1 x 0x1, other: ['<reg>', '<reg>', '<reg>', '<reg>']
+M176  PASS — the convention is (faction BLOCK base, record base, mode): arg1 arrives in ESI (prologue `mov esi,[ebp+0x8]`) and is dereferenced as a 0x20bc-stride block base through 6 registers; 10 of the 13 callers compute that base with the folded *8380 chain (shl 6, lea [i+i*2], shl 4, sub i) — the same multiply M169's loop uses; arg3 (pushed LAST, read at [ebp+0x10]) is a MODE CODE reloaded at 5 sites inside — the decisive one is 0x532194 AFTER the per-faction loop: `test eax,eax; je 0x5321a9` skips, else `mov edx,[ebp-0x10]; mov eax,[edx+0x94d4a8]; mov ds:0x9204b0,eax` EXPORTS the stamped value — and 12 of 17 sites push 0x0 (1 pushes 0x1)
+== M177 ==
+M177 pre-call stores to [block+0x94d4a8] (within 15 insns of a call):
+   call 0x533ef3 in FUN_00533e70   store 0x533eec  mov    DWORD PTR [edx*4+0x94d4a8],eax
+   call 0x534215 in FUN_00534180   store 0x53420e  mov    DWORD PTR [edx*4+0x94d4a8],eax
+   call 0x534529 in FUN_005344c0   store 0x534522  mov    DWORD PTR [ecx*4+0x94d4a8],edx
+   value source before 0x533eec: shl    ebx,0x4 shl    edx,0x4 sub    ebx,edi sub    edx,esi shl    ebx,0x2 add    edx,edi mov    BYTE PTR [ebx+esi*1+0x94d4e8],0x0 
+   value source before 0x53420e: shl    edi,0x4 shl    edx,0x4 sub    edi,ebx sub    edx,esi shl    edi,0x2 add    edx,ebx mov    BYTE PTR [edi+esi*1+0x94d4e8],0x0 
+   value source before 0x534522: add    eax,edi push   0x0 push   ebx push   edi lea    ecx,[edi+eax*2] shl    ecx,0x4 sub    ecx,edi add    ecx,ebx
+M177 `sub reg,[block+0x94d4a8]` age tests: 6
+   0x555559 FUN_005551e0   sub    ecx,dword ptr [edx*4+0x94d4a8]
+   0x55561f FUN_005551e0   sub    edx,dword ptr [ecx*4+0x94d4a8]
+   0x555971 FUN_005551e0   sub    edx,dword ptr [ecx+0x94d4a8]
+   0x569401 FUN_0055f650   sub    edx,dword ptr [eax*4+0x94d4a8]
+   0x569464 FUN_0055f650   sub    eax,dword ptr [edx*4+0x94d4a8]
+   0x569ec1 FUN_0055f650   sub    eax,dword ptr [edx*4+0x94d4a8]
+M177 gate at 0x569401 (sub, cmp 0x10, jl past the call): True
+M177 0x94d4a8: 38 refs = 26 stores + 6 subs + 6 other
+M177 split: 26 stores + 5 loads + 1 lea + 6 subs = 38 refs
+M177 components: 3 6 True 38 26 5 1
+M177  PASS — callers PRIME the per-faction stamp before asking: 3 of the 17 sites store the run-state global ds:0x985afc into [block+0x94d4a8] within 15 instructions of the call (0x533eec, 0x53420e, 0x534522 — each preceded by `mov eax,ds:0x985afc`), and a 4th (0x569401 in FUN_0055f650) CONSUMES it as an age test instead; the aggregator reads the field at 0x53219e only when arg3 != 0 and exports it to ds:0x9204b0; 6 `sub reg,[block+0x94d4a8]` age tests consume it — one (0x569401: `sub edx,[eax*4+0x94d4a8]; cmp edx,0x10; jl 0x5696fd`) SKIPS the call when the stamp is fresher than 16, so 0x94d4a8 is a last-run stamp compared against the round counter (38 refs = 26 stores + 6 loads + 1 lea + 6 subs = 38)
+
+SUMMARY M175=PASS M176=PASS M177=PASS

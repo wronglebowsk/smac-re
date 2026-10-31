@@ -538,3 +538,25 @@ again (was 15,041/15,500 = 459 B free; now 13321 B). Then three structural answe
   FUN_004a5eb0), 4 `cmp vs 1` (0x55ee48 FUN_0055ec10; 0x576891/0x576bd8/0x576e45 FUN_00574370), 1 `cmp [eax+0x94d80c],ecx`
   (0x5520cd FUN_00551e50) — plus 7 ARITHMETIC reads: `sub reg,[hdr]` x6 (FUN_0053cb20 x2, FUN_00546800 x2, FUN_005551e0,
   FUN_0055f650) + `add ebx,[hdr]` (FUN_005551e0); the aggregator reads it as |value| (0x53206f + neg/jge into [ebp-0x20]).
+
+## Session 173 (cont. 27) — M175-M177 (all PASS): the aggregator's 17 demand sites, its calling convention, and the stamp callers prime
+
+`python3 scripts/m175_m177_aggcallers.py` — SUMMARY M175=PASS M176=PASS M177=PASS (evidence/m175_m177.log, full census in evidence/m175_m177_full.txt).
+
+- **M175 — 17 sites, 13 owners.** FUN_00546800 (AI hub) x2 (0x5469be, 0x54ebb1), FUN_005551e0 x2, FUN_004a5eb0 x2,
+  FUN_00534fa0 x2, + singles in FUN_004282d0, FUN_0043ff20 (a 244-insn wrapper whose arg1 is `ds:0x91b5b4`, the
+  current-faction global), FUN_00533e70, FUN_00534180, FUN_005344c0, FUN_00535700, FUN_00535c60 (re-arms the SEH/context
+  globals first), FUN_0055f650, FUN_0058fa40 (the SAVE path — the site sits ~40 insns from a 0x626634 staging call).
+- **M176 — the convention is (faction BLOCK base, record base, mode).** Prologue `mov esi,[ebp+8]`; arg1 is dereferenced
+  as a 0x20bc-stride block base through 6 registers, and 10 of 13 callers compute it with the SAME folded *8380 chain
+  (shl 6, lea [i+i*2], shl 4, sub i) M169's loop uses. Arg3 (pushed LAST, read at [ebp+0x10]) is reloaded at 5 sites;
+  the decisive one is 0x532194 AFTER the per-faction loop: `test eax,eax; je 0x5321a9` skips, else
+  `mov edx,[ebp-0x10]; mov eax,[edx+0x94d4a8]; mov ds:0x9204b0,eax` — mode != 0 EXPORTS the stamped value. 12 of 17
+  sites push 0x0, one pushes 0x1 (0x5469be in the AI hub).
+- **M177 — callers prime a last-run stamp before asking.** 3 sites store `ds:0x985afc` into `[block+0x94d4a8]` within
+  15 insns of the call (0x533eec, 0x53420e, 0x534522); a 4th (0x569401, FUN_0055f650) CONSUMES it instead:
+  `sub edx,[eax*4+0x94d4a8]; cmp edx,0x10; jl 0x5696fd` SKIPS the call when the stamp is fresher than 16. The field has
+  38 refs = 26 stores + 5 loads + 1 lea + 6 `sub` age tests (FUN_005551e0 x3, FUN_0055f650 x3); the aggregator reads it
+  only under mode != 0 (0x53219e). So 0x94d4a8 is a per-faction last-run stamp compared against the round counter
+  ds:0x985afc (336 refs, read-dominant).
+

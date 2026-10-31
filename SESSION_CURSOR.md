@@ -1,3 +1,3 @@
-M172-M174 PASS (scripts/m172_m174_savewriter.py, evidence/m172_m174.log): FUN_004dc100 = SAVE-SECTION WRITER (2 arg-free dispatch legs FUN_00512b40 0x51500f / FUN_00516b80 0x517eb6; byte = shared scratch ds:0x99aa38, packed from struct+band bits, written via 0x6267a5, decoded back); 0x9204ac/0x9204c4 count+sum: 3+1 consumers (gate 0x53346c: count<2, table[ebx]>=3*(sum+table[ecx]), rank<6); 0x94d80c: 7 tests/4 fns + 7 arithmetic uses.
-state: M172-M174 MERGED #141; main 2f71d9c (after #142 footing). BOX: terran.exe DOWN - relaunch before any box pick.
-next (static): FUN_00531df0's 17 call sites | FUN_0041a8f0's 0x41a9xx byte-builder | ds:0x920720 consumers | save-band siblings 0x4dc390/0x4e0260/0x5a2930.
+M175-M177 PASS (m175_m177_aggcallers.py): FUN_00531df0: 17 sites in 13 owners (AI hub 0x546800 x2, 0x5551e0 x2, 0x4a5eb0 x2, 0x534fa0 x2 + 9 singles (0x43ff20 arg1=ds:0x91b5b4; save path 0x58fa40)); convention = (BLOCK base via folded *8380, record base, mode); arg3 reloaded 5x; 0x532194 `test/je` gates export [edx+0x94d4a8]->ds:0x9204b0; 3 sites prime [blk+0x94d4a8]=ds:0x985afc pre-call, 6 sub-age-tests; 0x569401 cmp 0x10 jl skips the call.
+state: milestone/m175 (main 11b4388), NOT merged. BOX DOWN.
+next: docs->gate->submit. After: 0x41a8f0 byte-builder | ds:0x920720 | save-band siblings.
