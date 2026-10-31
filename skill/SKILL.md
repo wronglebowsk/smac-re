@@ -335,8 +335,9 @@ pseudocode offset can be HALF or 4x the real byte offset.
 Unit-record type field: the u16 at `+10` (`+4` = flags) — settled from the accessor;
 the full story + the two generalizing rules are in `references/code-atlas.md`.
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
-`gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && $1<=A {n=$2;p=$1} END{print
-p,n}' ghidra_out/index.csv` (commas, no spaces); pseudocode `scripts/fn.py 0xADDR`.
+`gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && strtonum($1)<=strtonum(A){n=$2;p=$1} END{print
+p,n}' ghidra_out/index.csv` (commas, no spaces; strtonum REQUIRED — bare `$1<=A` is a STRING compare, every row matches
+and you get the file's LAST function, not the owner); pseudocode `scripts/fn.py 0xADDR` (prints the index row as header).
 Parse objdump by TAB fields (bytes sit between address and mnemonic); require `^[0-9a-f]{6,8}:\t` before int(x,16) — details in `references/code-atlas.md`.
 Two static instruments answer "what IS this field" with no box time: `scripts/name_global.py <addr> [--disp]`
 (every referencing instruction, its containing function, and whether it reads, writes or tests — use it before
