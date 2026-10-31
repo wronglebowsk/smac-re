@@ -744,6 +744,6 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 ## Still open (leads)
 `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
 **Band-flag gate — CLOSED, do not re-open** (bit 0x40 of the per-faction flag word is tested but has no setter and no
-save carries it; stride is 8,380 DEC = 0x20BC, not hex 0x8380): `scripts/m118_flag_never_set.py` re-proves it offline.
+save carries it): `scripts/m118_flag_never_set.py` re-proves it offline.
 
 
