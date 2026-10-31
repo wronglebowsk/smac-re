@@ -128,7 +128,7 @@ summarize itself: attempts die on the output cap (`finish_reason=length`, aborte
 gateway drops hygiene compression after a 10 s turn-hold. Measured outcome: CLOSING turns were cut
 mid-sentence twice — the milestone was done and accepted, the paperwork never landed. Rules that follow:
 
-- The window was DOUBLED on 2026-10-28 to 524,288 tokens (`compression.threshold_tokens: 424,000`).
+- The window was DOUBLED to 524,288 tokens (`compression.threshold_tokens: 424,000`).
   Never quote a limit carried in from a prior session — read `~/.hermes/config.yaml`. A bigger window
   does NOT repair the compressor (same model, same cap); every rule here still holds.
 - Budget by TOOL CALLS, not by feel: brief+accept_ready <= 6, milestone 6-30, **commit a
@@ -312,15 +312,11 @@ at close, never from the footing. `evidence/m53j_text.txt.gz` (~5.7 MB, the disa
 method runs on) is PRUNED from the worktree when the gate nears 30 MB; it is git-kept — recover with
 `git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
 
-Measured 2026-10-25: 29.3 MB in 858 files (58 images = 13.9 MB of it) against the 30 MB FAIL — and
-`prune --dry-run` proposes NOTHING, because the rule only drops *images older than 7 days* and the
-whole tree was days old. So the margin is real, not theoretical: a 40-turn trace is ~55 KB, but one
-screenshot is 400 KB and `check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs
-(delete those immediately). Run `budget` BEFORE adding new frames, and expect to prune in bulk once
-the footage ages out. When `prune --dry-run` proposes nothing (it only drops uncited images older than
-7 days, and a young tree offers no victims), free the room instead by gzipping a large *text* file that
-no markdown cites — `grep -rn <basename> --include=*.md .` first, because a cited path must stay
-readable at its recorded path; an uncompressed disassembly dump is worth ~8x its gzipped size.
+Measured margin: 29.3 MB / 858 files against the 30 MB FAIL, and `prune --dry-run` offered NOTHING (it drops
+only uncited images older than 7 days). A 40-turn trace is ~55 KB but one screenshot is 400 KB, and
+`check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs (delete those immediately); run
+`budget` BEFORE adding frames. When prune offers no victims, free room by gzipping a large *text* file no
+markdown cites (`grep -rn <basename> --include=*.md .` first — a cited path must stay readable at its path).
 - **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a **1.4 GB** trace and turned the gate RED *after* the milestone work was already done. Sleep the loop (2 ms is the sampling cadence the footing asks for anyway), and downsample before the first commit of the trace: keep the first sample, every sample where a watched field CHANGES, one heartbeat per second, and the last — 1.29M samples collapse to 68 lines / ~10 KB with the boundary sequence intact. `prune` offers no victims here: it drops only uncited images, and a cited trace must survive at its recorded path. A giant blob also stays in the branch's HISTORY once committed, so a later delete does not un-poison a push (see `references/git-workflow.md`).
 
 Delegating a static decode works well (a child can map a 1450-line function in minutes), but a child's
@@ -746,10 +742,7 @@ Depth: `references/wine-operations.md` (moved verbatim from here), `references/w
 
 ## Still open (leads)
 `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
-**Band-flag gate — CLOSED, do not re-open.** Bit 0x40 of the per-faction flag word (stride **8,380 DEC = 0x20BC**,
-NOT hex 0x8380) is tested at `0x5aaf7f` in FUN_005aadf0 and REACHED every round, but it has no setter in the image and
-no save carries it, so that branch is inert BY CONSTRUCTION. `scripts/m118_flag_never_set.py` re-proves all four
-checks offline in seconds; `scripts/m116_band_flag.py` only reads the live words (`references/instrument-laws.md`
-§Is this bit ever SET).
+**Band-flag gate — CLOSED, do not re-open** (bit 0x40 of the per-faction flag word is tested but has no setter and no
+save carries it; stride is 8,380 DEC = 0x20BC, not hex 0x8380): `scripts/m118_flag_never_set.py` re-proves it offline.
 
 
