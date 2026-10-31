@@ -22,12 +22,12 @@ milestones go 1 per batch.** The binding cap is doc headroom, not capability.
 
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111), M105
-(#112), M106 (#113), M110-M112 (#116), M113 (#121), M116 (#126), M117 (#127), exit-code fix (#128), M118 (#129),
-M119-M123 (#130). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
-ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded by
-M102), M103 (#110, never green), M109 (gates answered, model void). **M90-M104's registry summary now lives in
-`docs/pick-archive.md`; the semantics themselves in `NAMED.md`, the legs in `skill/references/code-atlas.md`.**
+Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
+M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
+M172-M174 (#141). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
+M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
+`NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
 
 ## THE INSTRUMENTS (run FIRST)
 
