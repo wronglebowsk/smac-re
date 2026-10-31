@@ -1,3 +1,3 @@
-M169-M171 PASS (m169_m171_aggregate.py): 0x926a7c totalled (0x9204ac count, 0x9204c4 sum) in a 0x20bc-stride faction loop of FUN_00531df0 (6459 B/1905 insns/17 callers) which gates on rank<5 (cmp [ebx+0x94d434],0x5); FUN_004dc100 (647 B) = BIT-DECODER: al -> 4 boolean dwords (+0x94d810/14/18/1c = setne(al&1/2/4/8)), header tristate (1/-1/0 from al&0x10/0x20), al&0x40 -> or [+0x94d430],0x800000.
-main ebd39df after #116-#139. BOX: terran.exe loaded m54b_clean (67/18), TracerPid 0, idle.
-next: FUN_004dc100's 2 callers (source byte owner) | 0x9204c4/0x9204ac consumers | FUN_00531df0's 17 callers.
+M172-M174 PASS (scripts/m172_m174_savewriter.py, evidence/m172_m174.log): FUN_004dc100 = SAVE-SECTION WRITER (2 arg-free dispatch legs FUN_00512b40 0x51500f / FUN_00516b80 0x517eb6; byte = shared scratch ds:0x99aa38, packed from struct+band bits, written via 0x6267a5, decoded back); 0x9204ac/0x9204c4 count+sum: 3+1 consumers (gate 0x53346c: count<2, table[ebx]>=3*(sum+table[ecx]), rank<6); 0x94d80c: 7 tests/4 fns + 7 arithmetic uses.
+state: milestone/m172 from main 3cb9060 (#140), NOT merged. BOX: terran.exe down.
+next: docs -> gate -> submit. After: FUN_00531df0's 17 call sites | FUN_0041a8f0 | ds:0x920720.
