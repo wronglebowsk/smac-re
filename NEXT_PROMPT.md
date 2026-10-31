@@ -24,7 +24,7 @@ milestones go 1 per batch.** The binding cap is doc headroom, not capability.
 
 Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
-M172-M174 (#141), M175-M177 (#145). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+M172-M174 (#141), M175-M177 (#145), M178-M180 (#147). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
 M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
 `NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
@@ -59,8 +59,6 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   0x920434 reset-published id (NOT a record field); 0x920700 UI state {6,8,0xc,0xd}; 0x92077c mode {1,3,7}; 0x94d434
   **rank**, written ONCE at init (M163); 0x94d80c..0x94d81c = ONE 20-byte struct (M164); 0x94d554+0x94d55c = an 8-byte
   pair (M165); FUN_004026b0 = LIST SEEK (cursor -> [obj+0x14]); FUN_00495480 = cached-flag getter.
-- **s171-s173 findings (M163-M177) are in `NAMED.md`; the shape rules they established are the six
-  structural laws in the skill + the census scripts below — do not re-derive a field from the block atlas.**
 - **M175-M177 (m175_m177_aggcallers.py, all PASS):** FUN_00531df0's 17 sites live in 13 owners (AI hub
   0x546800 x2, 0x5551e0 x2, 0x4a5eb0 x2, 0x534fa0 x2 + 9 singles: wrapper 0x43ff20 arg1=ds:0x91b5b4, save
   path 0x58fa40, 0x535c60, 0x533e70/0x534180/0x5344c0/0x535700, 0x4282d0, 0x55f650); the convention is
@@ -68,16 +66,26 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   `test/je` gates exporting [edx+0x94d4a8] -> ds:0x9204b0; 12/17 sites push mode 0. [block+0x94d4a8] is a
   LAST-RUN STAMP vs the round counter ds:0x985afc: 3 callers prime it pre-call (0x533eec/0x53420e/0x534522),
   6 `sub` age tests consume it, and 0x569401 (`cmp edx,0x10; jl`) SKIPS a call when the stamp is fresh.
-- Pick from: FUN_0041a8f0's 0x41a9xx block (what UI state builds the ds:0x99aa38 byte bit by bit); consumers
-  of ds:0x920720 (the count's partner) and ds:0x9204b0 (the stamp export); the save-band siblings 0x4dc390/
-  0x4e0260/0x5a2930 (what each writes); who calls FUN_00535c60.
+- - **s174 (M178-M180, all PASS) named the staging slot.** ds:0x99aa38 is the tagged-record STAGING dword (third
+  field of the ds:0x99aa1c/0x99aa20 pair, 637 stores each): 33 stores in 14 functions, 9 of the 13 outside
+  FUN_0041a8f0 sit directly before `call 0x6267a5` with (0, 0x41, <name ptr>) and those names read out of
+  terran.exe as GOVOPTIONS 0x6899ec, ASSEMBLEGROUP 0x68c774, AIEDITOR 0x68c80c, AIEDITOR2 0x68c818, RULES
+  0x68c824 + 0x691e30, SCENRULES 0x68c82c, SCENVICTORY 0x68c838, TECHRANDOM 0x68db28, EDITVEH 0x68c87c (the
+  exe's record-type NAME table - not file bytes). FUN_00518c50 = set/clear scratch BIT (arg1 index). Band =
+  scratch bits 0..17 (FUN_0041a8f0 18); FUN_004dc5f0 == FUN_0057c550 unpack leg-for-leg 18/18; FUN_004dc100
+  packs the M164 struct with 0x94d80c as a SIGN PAIR. ds:0x920720 = the aggregator's bit-25-CLEAR count (AI-hub
+  loop bound + two `cmp ,0x2` gates); ds:0x9204b0 = the stamp export, age-tested as ds:0x985afc - stamp.
+  Detail: `NAMED.md` M178-M180, `evidence/m178_m180_scratchband.txt`, `scripts/m178_m180_scratchband.py`.
+- Pick from: what the SAME writer calls put in ds:0x99aa1c / ds:0x99aa20 (the staging pair's other two fields);
+  the whole-value writers (FUN_004d9ae0 12-iteration bit loop, FUN_004dc390 12-leg RESTORER, FUN_004dde00,
+  FUN_00512b40) vs the leg packers; FUN_0053a9c0's use of the count (it reads 0x9204ac and 0x920720 together at
+  entry); who calls FUN_00535c60; the save-band siblings 0x4e0260 / 0x5a2930 (what each writes).
 ## LIVE FACTS / KIT
 
-- **BOX DOWN at s172 close: terran.exe not running** (s172 was fully static). Relaunch before any box pick (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `accept_ready.py`; 
+- **BOX DOWN at s174 close (s172-s174 were all static): terran.exe not running** (s172 was fully static). Relaunch before any box pick (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `accept_ready.py`; 
   convert [0x926a14]=0, [0x985af0]=67, [0x985af4]=18, eras ds:0x985b90/0x985b9c = -1 (category-skip leg INERT); no clamp
   entry with key 10. Kill a stale winedbg + wineserver BY PID before a relaunch; rounds are NOT continuous across
-  reloads. Recipe (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` ->
-  `smac_play.py --turns 1` -> `accept_ready.py`. A traced load is ~10x slow: M54A_LOAD_TIMEOUT=1800.
+  reloads.  A traced load is ~10x slow: M54A_LOAD_TIMEOUT=1800.
 - A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
   ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
   index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).

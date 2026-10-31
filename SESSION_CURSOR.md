@@ -1,3 +1,6 @@
-M175-M177 PASS (m175_m177_aggcallers.py): FUN_00531df0: 17 sites in 13 owners (AI hub 0x546800 x2, 0x5551e0 x2, 0x4a5eb0 x2, 0x534fa0 x2 + 9 singles (0x43ff20 arg1=ds:0x91b5b4; save path 0x58fa40)); convention = (BLOCK base via folded *8380, record base, mode); arg3 reloaded 5x; 0x532194 `test/je` gates export [edx+0x94d4a8]->ds:0x9204b0; 3 sites prime [blk+0x94d4a8]=ds:0x985afc pre-call, 6 sub-age-tests; 0x569401 cmp 0x10 jl skips the call.
-state: M175-M177 MERGED #145; main 94d6da5. BOX DOWN.
-next (static): 0x41a8f0 byte-builder | ds:0x920720 + ds:0x9204b0 consumers | save-band siblings | callers of 0x535c60.
+M178-M180 PASS (scripts/m178_m180_scratchband.py -> evidence/m178_m180_scratchband.txt): ds:0x99aa38 = the
+tagged-record STAGING slot (33 stores/14 fns; 9 precede `call 0x6267a5` with the exe's record-name table,
+GOVOPTIONS is FUN_0041a8f0's); FUN_0041a8f0 = 19-bit lossy pack/unpack of [ds:0x8f0d60+0x38] ->
+[fac*8380+0x94d600]; ds:0x920720 = bit-25-clear count; ds:0x9204b0 = stamp export (age = 0x985afc - stamp).
+state: milestone/m178, submitting (ledger says #147). BOX DOWN.
+next: gh pr checks 147 then milestone.py merge 147 on green; picks in NEXT_PROMPT.md THE PICK.
