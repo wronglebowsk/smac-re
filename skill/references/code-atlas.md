@@ -413,6 +413,8 @@ Two rules that generalise from how this one went wrong:
 
 ## Objdump/census parse rules (moved from SKILL.md s150)
 **Parse an objdump line by its TAB fields, never by the text after the colon:** the machine-code bytes
+- Write census gates as `\s+` regexes, never exact padding: exact single-space patterns miss objdump's mnemonic padding, so a gate written with literal spaces silently matches nothing (s174 hit this while writing `m178_m180_scratchband.py`).
+- **objdump prints the operand decorations in CAPS and the address WITH its `0x`:** a class of `[0-9a-f]+` stops at the `x`, so `dword ptr ds:[0-9a-f]+` never matches `DWORD PTR DS:0x985ac4` — write `ds:0x[0-9a-f]+`. And lowercase the whole line before a store census: a case-sensitive `^mov dword ptr ds:X,` silently drops the uppercase stores. s174's hand census of `0x99aa38` reported 28 stores in 10 functions; the corrected instrument found 33 in 14, and the 4 missed writers are the AIEDITOR2 / ASSEMBLEGROUP / EDITVEH / TECHRANDOM whole-value restorers — an undercount is what makes "nothing else writes this field" look true.
 sit between the address and the mnemonic, so `line.split(":")[1].startswith("mov")` matches NOTHING and a
 whole-function scan silently reports zero stores — take the LAST tab field for the mnemonic. An
 address-keyed scan must require the shape `^[0-9a-f]{6,8}:\t` before `int(x, 16)`: the section header
@@ -420,6 +422,17 @@ line `00401000 <.text>:` also starts with hex and raises `ValueError` mid-parse,
 before it arms. Import
 `scratch/m71/dis.py` under a non-clashing module name (`importlib.util.spec_from_file_location`), because
 stdlib `dis` shadows the plain `import dis`.
+
+**Match instruction TEXT with `\s+`, never with the padding you see in the raw dump.** The census helpers
+(`field_census.INS`, `name_global.py`) normalize mnemonic padding — raw objdump prints `test   eax,eax`
+(3 spaces) where the corpus holds `test    eax,eax` (4), and a `jmp`/`je` row is indistinguishable from a
+`jmp`-suffixed register by exact string. So a gate written as an exact-string `in` test silently never
+matches and the milestone FAILs on its own harness: write gates as regexes with `\s+` between mnemonic and
+operands (`re.search(r"test\s+eax,eax", window)`), and when a gate does fail while every printed number is
+right, suspect a spacing or format-string bug in the harness before touching the floor. The sibling trap: a
+finding sentence built with `"%d" % x` needs exactly as many conversions as arguments — one extra `%d` in a
+concatenated string raises `TypeError: not enough arguments for format string` mid-run and loses the whole
+census printout, so count conversions in the SAME pass that writes the script.
 
 
 ## Production pass FUN_004ef6d0 dispatch + pay sites (M95, s150, VERIFIED m95pay4)

@@ -47,7 +47,11 @@ notes before running audit, and recover anything dropped with `git show <commit>
 `~/reverse/smac/docs/EVIDENCE.md`.
 
 **Budget gotcha that passes locally and goes RED in CI (M53d).** `evidence.py budget` FAILs
-`NEXT_PROMPT.md` above **16,000** chars (warn 12,000; SKILL.md 70k, SESSION_NOTES 150k, NAMED 250k),
+`NEXT_PROMPT.md` above **16,000** chars (warn 12,000; SESSION_NOTES 150k, NAMED 250k) and the in-repo
+`skill/SKILL.md` above **70,000 BYTES** — the tool prints a char count, but the caps are enforced on bytes
+and 3-byte arrows make bytes > chars, so a file the tool shows as 69,558 "chars" can sit at 70,009 bytes and
+fail: measure with `python3 -c "print(len(open(p,'rb').read()))"` before pushing a skill trim, and prefer
+cutting whole sentences over rewording (rewording trades characters for characters and the check stays red).
 and the CI gate runs `scripts/test_loop.py`, whose case 4 appends **7 chars** to `NEXT_PROMPT.md` — a
 prompt at 15,99x is GREEN locally, RED in CI. Keep `NEXT_PROMPT.md` at ≤ ~15,500 (working target; 16,000 is the FAIL) and run
 `python3 scripts/test_loop.py` on the anchored branch (never detached HEAD) before `submit`.
@@ -156,7 +160,9 @@ main only moves by squash-merge of a pull request`, so commit-to-main is caught 
 `SESSION_CURSOR.md` line that records `MERGED <n> | next pick`) therefore needs its own branch and PR:
 `git checkout -b milestone/<id>cursor` from main, commit, `milestone.py submit --title …`,
 `gh pr checks <n>`, `milestone.py merge <n>` — a docs-only PR passes the gate (no SESSION_NOTES/NEXT_PROMPT
-change is a WARN, not a FAIL). Leaving it uncommitted instead transfers the cost to the next session,
+change is a WARN, not a FAIL). Leave the content COMMITTED before the first push: pushing an empty branch
+(one that equals `main`) and creating the PR afterwards returns 422 `Validation Failed` — there is no diff
+to review — and the dangling remote branch must be deleted. Order: write -> commit -> push -> create. Leaving it uncommitted instead transfers the cost to the next session,
 whose `milestone.py start` refuses the dirty tree; the cheapest option is to write the cursor line BEFORE
 the milestone's own commit and let it say what the closing steps are.
 

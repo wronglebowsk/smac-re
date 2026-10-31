@@ -495,3 +495,21 @@ the base with the folded *8380 chain (shl 6 / lea [i+i*2] / shl 4 / sub i); arg3
 
 
 
+
+
+## M178-M180 (s174, all PASS) — the GOVOPTIONS bit filter, the save band's staging slot, the two aggregate globals
+**M178** FUN_0041a8f0 0x41a9xx = 19-bit pack/unpack of `[ds:0x8f0d60+0x38]` through ds:0x99aa38; unpack restores
+the INVERSE permutation (19/19, all destinations that same field); `and ecx,0xf000000` (0x41abdc) keeps only bits
+24-27 -> source bits 1,2,3,4,8,14,28,29,30 are DESTROYED; rebuilt dword published to `[fac*8380+0x94d600]` (0x41ad94).
+**M179** ds:0x99aa38 = the tagged-record STAGING slot (third field of the 0x99aa1c/0x99aa20 pair, 637 stores each):
+33 stores / 14 functions, 9 sit directly before `call 0x6267a5` with (0, 0x41, name); names read out of terran.exe
+= ASSEMBLEGROUP 0x68c774, AIEDITOR 0x68c80c, AIEDITOR2 0x68c818, RULES 0x68c824 + 0x691e30, SCENRULES 0x68c82c,
+SCENVICTORY 0x68c838, TECHRANDOM 0x68db28, GOVOPTIONS 0x6899ec, EDITVEH 0x68c87c (the exe NAME table, not file bytes).
+FUN_00518c50 = set/clear scratch BIT (arg1 = index). Band = scratch bits 0..17 (FUN_0041a8f0: 18); the 6
+leg-sequence writers read ascending; 0x4dc5f0 == 0x57c550 unpack leg-for-leg 18/18 (sources 0x985ac4 low +
+0x985ae8:23/24); 0x4dc8d0 / 0x4dcc10 same positions from 0x985ac4 HIGH + 0x985ae8 / 0x985dc8; 0x4dc100 from the
+M164 struct [esi+0x94d80c..0x94d81c] with 0x94d80c as a sign pair (scratch4 >0, scratch5 <0).
+**M180** ds:0x920720 = the aggregator's bit-25-CLEAR COUNT (1 writer function: zero 0x53207e + inc 0x53210c; 11
+reads in 4 consumers: 0x53a9c0 x4, 0x53bb90, 0x53cb20 (round>=50), 0x546800 x5 incl. 2 `cmp ,0x2` gates + a loop
+bound). ds:0x9204b0 = the stamp EXPORT, bidirectional: writers 0x5321a4 (from [blk+0x94d4a8]) and 0x54d121
+(re-prime with 0x985afc); readers 0x5406b4 (age = 0x985afc - stamp), 0x546d44 `jl`, 0x54bf5f `jle`.

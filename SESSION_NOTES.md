@@ -560,3 +560,38 @@ again (was 15,041/15,500 = 459 B free; now 13321 B). Then three structural answe
   only under mode != 0 (0x53219e). So 0x94d4a8 is a per-faction last-run stamp compared against the round counter
   ds:0x985afc (336 refs, read-dominant).
 
+
+
+## Session 174 (2026-10-31) — M178-M180, all PASS (static; the box stayed down)
+
+Instrument: `python3 scripts/m178_m180_scratchband.py` -> `evidence/m178_m180_scratchband.txt` (leg parser over
+the static .text dump + index.csv containment + terran.exe's own section table for the name strings).
+- **M178 — FUN_0041a8f0's 0x41a9xx block is a 19-bit LOSSY FILTER, and its output lands in a faction block.**
+  20 stores to ds:0x99aa38 (the image-wide zero-init 0x41a9b7 + one after each of 19 legs); the pack legs feed
+  scratch bits 0..18 from source bits [0,5,6,7,9,10,11,12,13,15,16,17,18,19,20,21,22,23,31] of
+  [ds:0x8f0d60+0x38]; the unpack legs restore EXACTLY the inverse permutation (19/19 agree, 19/19 destinations
+  are that same field) after `mov ecx,[eax+0x38]; and ecx,0xf000000; mov [eax+0x38],ecx` (0x41abdc) keeps only
+  bits 24-27 — so 9 source bits (1,2,3,4,8,14,28,29,30) are cleared and never restored. The rebuilt dword is
+  published at 0x41ad94 `mov DWORD PTR [edx*4+0x94d600],ecx`, edx = fac*2095 dwords folded from the byte [ctx+4].
+- **M179 — ds:0x99aa38 is the save band's STAGING slot, not a record's flag.** 33 stores in 14 functions (my
+  first hand census said 28/10: objdump prints `DWORD PTR`/`DS:` in caps, so a `[0-9a-f]+` class stops at the
+  `x` of `0x…` and a case-sensitive `^mov dword ptr` misses stores). 9 of the 13 stores outside FUN_0041a8f0 sit
+  directly before `call 0x6267a5` with the push triple (0, 0x41, <name ptr>); those name pointers read out of
+  terran.exe as ASSEMBLEGROUP 0x68c774, AIEDITOR 0x68c80c, AIEDITOR2 0x68c818, RULES 0x68c824 AND 0x691e30,
+  SCENRULES 0x68c82c, SCENVICTORY 0x68c838, TECHRANDOM 0x68db28 (x3), GOVOPTIONS 0x6899ec, EDITVEH 0x68c87c —
+  the exe's record-type NAME table (none of them appears as ASCII in the save file, which stores numeric tags).
+  Neighbours ds:0x99aa1c / ds:0x99aa20 carry 637 stores each (the 0x626634 write-bytes args), so this is that
+  staging record's third field. FUN_00518c50 is a set/clear-scratch-BIT helper (`shl 1,cl; or ds:0x99aa38,eax` /
+  `not edx; and eax,edx; mov ds:0x99aa38,eax`) indexed by arg1. All 6 writers with >= 12 legs read the scratch in
+  ascending order; FUN_004dc5f0 and FUN_0057c550 share their 18-leg unpack sequence LEG FOR LEG (18/18 identical
+  destination operand+bit pairs) while packing from ds:0x985ac4's low band + ds:0x985ae8 bits 23/24;
+  FUN_004dc8d0 / FUN_004dcc10 feed the same positions from the HIGH band of ds:0x985ac4 plus ds:0x985ae8 /
+  ds:0x985dc8; FUN_004dc100 feeds them from the M164 struct [esi+0x94d80c..0x94d81c] (esi = fac*8380 folded at
+  0x4dc1a9-0x4dc1b6), serializing 0x94d80c as a SIGN PAIR (scratch4 = `jle`>0, scratch5 = `jge`<0).
+- **M180 — consumers of the aggregator's two globals.** ds:0x920720: 13 refs, ONE writer function (FUN_00531df0
+  zeroes at 0x53207e, incs at 0x53210c under `test [ecx],0x2000000; jne` — counts records whose flag bit 25 is
+  CLEAR); 11 reads in 4 consumers (FUN_0053a9c0 x4 incl. the entry read paired with ds:0x9204ac; FUN_0053bb90
+  equality under the rank<5 test; FUN_0053cb20 zero test under `cmp ds:0x985afc,0x32` = round >= 50; FUN_00546800
+  x5 = 2 zero tests falling back to ds:0x9204c8, a loop bound, and TWO `cmp ,0x2; jl` gates at 0x548b1e/0x548f6b).
+  ds:0x9204b0: 5 refs, 2 writers (0x5321a4 exports [block+0x94d4a8]; 0x54d121 re-primes it with ds:0x985afc) and
+  3 readers — 0x5406b4 computes the AGE as round - stamp, 0x546d44 tests `jl`, 0x54bf5f tests `jle`.
