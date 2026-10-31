@@ -1,3 +1,3 @@
 M172-M174 PASS (scripts/m172_m174_savewriter.py, evidence/m172_m174.log): FUN_004dc100 = SAVE-SECTION WRITER (2 arg-free dispatch legs FUN_00512b40 0x51500f / FUN_00516b80 0x517eb6; byte = shared scratch ds:0x99aa38, packed from struct+band bits, written via 0x6267a5, decoded back); 0x9204ac/0x9204c4 count+sum: 3+1 consumers (gate 0x53346c: count<2, table[ebx]>=3*(sum+table[ecx]), rank<6); 0x94d80c: 7 tests/4 fns + 7 arithmetic uses.
-state: milestone/m172 from main 3cb9060 (#140), NOT merged. BOX: terran.exe down.
-next: docs -> gate -> submit. After: FUN_00531df0's 17 call sites | FUN_0041a8f0 | ds:0x920720.
+state: M172-M174 MERGED #141; main 2f71d9c (after #142 footing). BOX: terran.exe DOWN - relaunch before any box pick.
+next (static): FUN_00531df0's 17 call sites | FUN_0041a8f0's 0x41a9xx byte-builder | ds:0x920720 consumers | save-band siblings 0x4dc390/0x4e0260/0x5a2930.
