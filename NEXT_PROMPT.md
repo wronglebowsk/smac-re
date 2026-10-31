@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 173, 2026-10-31)
+# NEXT_PROMPT.md — footing for the next session (session 174, 2026-10-31)
 
 Structure: this file = RULES + live footing. Detail is on disk: `docs/pick-archive.md` (milestone narrative M90-M123
 + the FULL trap text), `NAMED.md` (semantic registry), `skill/references/instrument-laws.md` (instrument laws). Read
@@ -59,18 +59,18 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   0x920434 reset-published id (NOT a record field); 0x920700 UI state {6,8,0xc,0xd}; 0x92077c mode {1,3,7}; 0x94d434
   **rank**, written ONCE at init (M163); 0x94d80c..0x94d81c = ONE 20-byte struct (M164); 0x94d554+0x94d55c = an 8-byte
   pair (M165); FUN_004026b0 = LIST SEEK (cursor -> [obj+0x14]); FUN_00495480 = cached-flag getter.
-- **M166-M168 (m166_m168_roles.py, all PASS):** 0x94d434 is consumed as an ORDER (92 `cmp` vs 2/4/5/6/7) from the
-  7-dword table 0x926a7c with the top entry excluded (`-1` at 0x59ac72); the 20-byte struct at 0x94d80c = a HEADER dword
-  + a 4-dword PAYLOAD written by a different, shared writer set; 0x94d488 = a DERIVED CACHE (22 writes / 9 functions).
-- **M169-M171 (m169_m171_aggregate.py, all PASS):** 0x926a7c is TOTALLED (count ds:0x9204ac, sum ds:0x9204c4) in a
-  per-faction loop at stride 0x20bc inside **FUN_00531df0** (6459 B, 1905 insns, 17 call sites) — the aggregator, which
-  gates on the M163 rank as `cmp [ebx+0x94d434],0x5`; and **FUN_004dc100 (647 B) is a BIT-DECODER**: one byte in AL ->
-  four boolean dwords (+0x94d810/14/18/1c from al&1/2/4/8), header tristate (+0x94d80c = 1/-1/0 from al&0x10/0x20), and
-  al&0x40 -> `or [+0x94d430],0x800000`.
-- **M172-M174 (m172_m174_savewriter.py, all PASS):** FUN_004dc100 is a **SAVE-SECTION WRITER** — its 2 callers are arg-free dispatch legs (FUN_00512b40 0x51500f, FUN_00516b80 0x517eb6); the byte is the shared scratch **ds:0x99aa38**  a caller argument (M171's "arrives in AL" retracted): PACK leg 0x4dc1a4-0x4dc279 rewrites 22 `or/and al,ah` from the struct + band bits, writes via 0x6267a5, 0x4d9fb0 has exactly 4 callers (0x4dc100/0x4dc390/0x4e0260/0x5a2930). Count/sum 0x9204ac/0x9204c4: consumers 0x53346c (inside FUN_00531df0: count<2 -> table[ebx] >= 3*(sum+table[ecx]) -> rank<6), 0x53a9cc (FUN_0053a9c0), 0x54d30d (FUN_00546800); sum's only reader 0x533478. Header 0x94d80c: 7 tests in 4 fns + 7 arithmetic uses (`sub` x6, `add` x1) = a 1/0/-1 **signed modifier** in scoring; the aggregator reads it as |value|.
-- Pick from: FUN_00531df0's 17 call sites (who asks for the aggregate); FUN_0041a8f0's 0x41a9xx block (what UI state builds the byte bit by bit); consumers of ds:0x920720 (the count's partner); the save-band siblings 0x4dc390/0x4e0260/0x5a2930 (what each writes).
-  tristate header's 7 test sites (M167); FUN_00531df0's 17 call sites.
-
+- **s171-s173 findings (M163-M177) are in `NAMED.md`; the shape rules they established are the six
+  structural laws in the skill + the census scripts below — do not re-derive a field from the block atlas.**
+- **M175-M177 (m175_m177_aggcallers.py, all PASS):** FUN_00531df0's 17 sites live in 13 owners (AI hub
+  0x546800 x2, 0x5551e0 x2, 0x4a5eb0 x2, 0x534fa0 x2 + 9 singles: wrapper 0x43ff20 arg1=ds:0x91b5b4, save
+  path 0x58fa40, 0x535c60, 0x533e70/0x534180/0x5344c0/0x535700, 0x4282d0, 0x55f650); the convention is
+  (faction BLOCK base via the folded *8380 chain, record base, mode) — arg3 reloaded at 5 sites, 0x532194
+  `test/je` gates exporting [edx+0x94d4a8] -> ds:0x9204b0; 12/17 sites push mode 0. [block+0x94d4a8] is a
+  LAST-RUN STAMP vs the round counter ds:0x985afc: 3 callers prime it pre-call (0x533eec/0x53420e/0x534522),
+  6 `sub` age tests consume it, and 0x569401 (`cmp edx,0x10; jl`) SKIPS a call when the stamp is fresh.
+- Pick from: FUN_0041a8f0's 0x41a9xx block (what UI state builds the ds:0x99aa38 byte bit by bit); consumers
+  of ds:0x920720 (the count's partner) and ds:0x9204b0 (the stamp export); the save-band siblings 0x4dc390/
+  0x4e0260/0x5a2930 (what each writes); who calls FUN_00535c60.
 ## LIVE FACTS / KIT
 
 - **BOX DOWN at s172 close: terran.exe not running** (s172 was fully static). Relaunch before any box pick (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `accept_ready.py`; 

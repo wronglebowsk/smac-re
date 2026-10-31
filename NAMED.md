@@ -481,4 +481,17 @@ ONE consumer 0x533478. Each has 2 stores (zero + loop RMW). **M174** 0x94d80c: 7
 `cmp [eax+0x94d80c],ecx` @0x5520cd) + 7 arithmetic uses (`sub` x6 across FUN_0053cb20/0x546800 x2/0x5551e0/0x55f650,
 `add` x1) — a 1/0/-1 SIGNED MODIFIER in scoring; FUN_00531df0 reads it as |value| (0x53206f).
 
+## M175-M177 (s173, all PASS) — FUN_00531df0's demand set, its (block, record, mode) convention, and the primed stamp
+
+`scripts/m175_m177_aggcallers.py`. **M175** 17 call sites in 13 owners: FUN_00546800 x2, FUN_005551e0 x2, FUN_004a5eb0 x2,
+FUN_00534fa0 x2 + singles FUN_004282d0, FUN_0043ff20 (wrapper, arg1=`ds:0x91b5b4` current faction), FUN_00533e70,
+FUN_00534180, FUN_005344c0, FUN_00535700, FUN_00535c60, FUN_0055f650, FUN_0058fa40 (save path, near a 0x626634 call).
+**M176** args = (faction BLOCK base at stride 0x20bc, record base, mode): prologue `mov esi,[ebp+8]`; 10/13 callers build
+the base with the folded *8380 chain (shl 6 / lea [i+i*2] / shl 4 / sub i); arg3 reloaded at 5 sites — 0x532194
+`test eax,eax; je` gates `mov eax,[edx+0x94d4a8]; mov ds:0x9204b0,eax` (mode!=0 EXPORTS the stamp); 12/17 push 0, 1 pushes 1.
+**M177** [block+0x94d4a8] = per-faction LAST-RUN stamp vs the round counter ds:0x985afc: 3 sites prime it pre-call
+(0x533eec/0x53420e/0x534522); 6 `sub reg,[blk+0x94d4a8]` age tests, one GATING a call (0x569401 `cmp edx,0x10; jl` skips);
+38 refs = 26 stores + 5 loads + 1 lea + 6 subs.
+
+
 
