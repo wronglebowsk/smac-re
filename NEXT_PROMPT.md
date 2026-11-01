@@ -34,7 +34,7 @@ Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
 ## THE LEDGER
 
 Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
-M235-M237 (#176), B0 (#170), B1 (#178), M240 (#pending), s175 cap triage (#153), docs #169/#174/#175/#177.
+M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), s175 cap triage (#153), docs #169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `pick-archive.md`,
