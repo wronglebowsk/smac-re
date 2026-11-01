@@ -1,0 +1,29 @@
+  info save-map-word5    header word 5=2048, land cells (cell+7=0xff)=1426, (W/2)*H records=2048 -> the .MP 'word5 == land cells' law does NOT hold in a save
+  info reference-walk    decode_save --sections RAISES on this file: no 52/304 split of a 0-byte region (its section table is the 80x80 one - the record region solves to 0 B on a 64x64 save)
+  ok   decode-save parity   sim=(242799, 86, 2153) decode_save=(242799, 86, 2153)
+  ok   header-counts      17 saves, header unit/base counts match the shape scan; tails=[10800], count-prefix=[176, 192, 208], bad=none
+  ok   walk-closure     count u32@188299=176 -> units 222783 (content 222783) -> bases 226527 (content 226527) -> tail 231999+10800=EOF 242799, closes=True on all 17 saves
+  ok   faction-count      block-A slots=8 (67040/8380), mask byte 0xff popcount=8, distinct record owners=8 [0, 1, 2, 3, 4, 5, 6, 7]
+  ok   home-base-faction  7 names from the SAVE_FORMAT.md live table checked at rec+5; mismatches=none; rec+4 != rec+5 on [1, 6]
+  ok   embedded-map       64x64: 44-B record view == 22-B cell view on 4096/4096 tiles, terrain [0, 1, 2, 8, 9, 10] out_of_range=0
+  ok   recorded-80x80     sim arithmetic on the traced 80x80 save (n=119 m=37 count=328) -> [273660, 279848, 291096, 301896] vs SAVE_FORMAT.md [273660, 279848, 291096, 301896]
+PASS B2: 7/7 gates on m242_probe_B.SAV
+== per-save walk (the same instrument, every save under programs/saves)
+save                               size    yr    n   m  cnt    units    bases    tail closes
+Alpha Centauri Autosave 1.SAV   242,799  2153   72  18  176  222,783  226,527  10,800 True
+Alpha Centauri Autosave 10.SAV  242,927  2160   68  19  208  222,815  226,351  10,800 True
+Alpha Centauri Autosave 2.SAV   242,747  2152   71  18  176  222,783  226,475  10,800 True
+Alpha Centauri Autosave 20.SAV  243,691  2160   83  19  192  222,799  227,115  10,800 True
+Alpha Centauri Autosave 3.SAV   242,591  2151   68  18  176  222,783  226,319  10,800 True
+Alpha Centauri Autosave 30.SAV  243,483  2160   79  19  192  222,799  226,907  10,800 True
+Alpha Centauri Autosave 4.SAV   242,591  2151   68  18  176  222,783  226,319  10,800 True
+Alpha Centauri Autosave 5.SAV   242,927  2160   68  19  208  222,815  226,351  10,800 True
+m241_probe.SAV                  242,799  2153   72  18  176  222,783  226,527  10,800 True
+m241_probe_A.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m241_probe_B.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m242_probe_A.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m242_probe_B.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m112auto1.SAV                   242,927  2160   68  19  208  222,815  226,351  10,800 True
+m112poke.SAV                    242,539  2150   67  18  176  222,783  226,267  10,800 True
+m113map.SAV                     242,539  2150   67  18  176  222,783  226,267  10,800 True
+m54b_clean.SAV                  242,539  2150   67  18  176  222,783  226,267  10,800 True

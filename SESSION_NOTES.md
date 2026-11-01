@@ -1,38 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-175-175.md` (1 sessions). Read it only when a question reaches back before session ## Session 176.
-
-## Session 176 (2026-10-31) — M191-M193, all PASS (static batch of three, one instrument)
-
-Acceptance, ONE invocation, rc 0: `python3 scripts/m191_m193_channels.py > evidence/m191_m193_channels.txt`
-(15,360 B) -> `SUMMARY M191a=PASS M191b=PASS M191c=PASS M192a=PASS M192b=PASS M192c=PASS M193a=PASS
-M193b=PASS M193c=PASS`. Three earlier invocations died on MY instrument, not the game: (1) I eyeballed
-0x64b9e0's store count as 6 where the census says 7; (2) a 5-tuple printed with a 2-name unpack; (3) the
-fold matcher tested "seed S appears in the add/sub/lea steps" over rows[1:7], which includes the ADD-C
-step, so all four chains reported matched=False while the printed S/C were right. No floor weakened.
-
-**M191** 0x626634 (callee at 0x530fc0) is NOT an emitter: 44 insns / 7 stores / 11 loads / 1 callee
-(0x64b9e0, 84 insns, all 7 stores through [edi], 0x7efefeff zero-byte scan on both args = append-until-
-NUL); guards `cmp [ebp+0xc],0 je` + `cmp [ebp+8],9 jle` -> `mov eax,3`, success `xor eax,eax`; negative
-arg3/arg4 fall back to ds:0x99aa1c/0x99aa20. Computed geometry 0x999fcc +10*4= 0x999ff4 +10*4= 0x99a01c
-+10*256= 0x99aa1c: the staging record IS slot 10 of a 10-slot channel table (2 dword arrays + 256-byte
-text) and `<=9` is the slot bound. 1584 sites / 190 fns (0x6267a5: 18/17); immediates only 0..9
-(0:548 1:349 2:251 3:135 4:73 5:59 6:39 7:7 8:18 9:17), 88 register slots; writers 2/2/3 from 3 fns,
-text slots read in 26 fns. Site 0x530fc0 = (7, &[ebp-0x100] from the 0x5808b0 call at 0x530fab, -1, -1).
-**M192** FUN_0052a720's 2 0x94d448 stores are the PUBLISH half of an 18-load/18-store bracket over 9
-fields {0x94d448,468,488,4a8,4c8,4e8,558,55c,57c} (the byte field is captured by MOVSX — a mov-only
-census reports 16/8 and the bracket looks asymmetric). [ebp-0x50]/[ebp-0x4c]: 1 writer (the field's own
-load 0x52aff5/0x52affe) + 1 reader whose next insn is the store; 0 of 23 direct callees stores the
-field; both sides build the base as 8380*S + 4*C (`mov r,S; shl 6; add S; lea [S+r*2]; shl 4; sub S;
-add C; shl 2`), capture (edi,ebx)/(ebx,edi), publish (edx,esi)/(esi,edx) reloaded from the single-write
-spills [ebp-0x2c]/[ebp-0x30], 0 writes to edi/ebx between -> ADDRESS-EXACT. QUALIFIES M190: 0x10 is
-PRESERVED here, not produced (remaining carriers 0x55540a/0x55580f store ADDRESSES).
-**M193** FUN_0053a9c0 writes 23 stores to 8 globals {0x99aa1c 6, 0x99aa20 6, 0x997120 5, 0x9206e4 2,
-0x920774 1, 0x9204b4 1, 0x920718 1, 0x7a75c8 1}; 0x9204ac (2 stores in the image) / 0x920720 (1) are
-written ONLY by 0x531df0 and are READ-ONLY here; 0x9206e4/0x920774 are 2 of the 15 that 0x535940 resets
-(8 writers / 10 readers each). Its only site 0x545cfa is gated `ds:0x920700 == 2` (8 stores in 0x544530
-x7 + 0x546800 x1), the caller tests the return, and its tail zeroes 0x9204b4/0x920718, calls 0x533e70,
-returns 1. Box untouched (state carried from s174e); M181 still has no positive control.
+Older sessions: `docs/sessions/sessions-176-176.md` (1 sessions). Read it only when a question reaches back before session ## Session 177.
 
 ## Session 177 (2026-10-31) — M194-M196, all PASS (three static milestones, one instrument + one tracerless live read)
 
@@ -442,3 +410,43 @@ PITFALLS: a staging pair spread over two arrays is not contiguous - read each sl
   0x597970/0x597991 `FUN_00596620` push `esi`=handle), since every codec leg is now accounted;
   roles of `FUN_0059a0c0`/`0x59a2b0`/`0x59bec0`. #180 (M241) still open. Box untouched (no gdb, no
   ptrace; `/proc/mem` reads only).
+
+## Session 195 (2026-11-01, B2 BUILD fire — `sim/save.py`: a .SAV loads into the state model)
+
+`python3 scripts/track_mode.py` -> `MODE=BUILD next_rung=B2` (no box time, no `/proc`, no gdb;
+`grep -c 'box time owed' SESSION_CURSOR.md` printed 0, so nothing was owed).
+
+**Acceptance** — `python3 -m sim.selftest --sav "programs/saves/auto/m242_probe_B.SAV"` ->
+`PASS B2: 7/7 gates` (one invocation, 1.5 s) -> `evidence/b2_save_walk.txt` (gate output + a
+per-save table of all 17 saves under `programs/saves`). B1 re-run unchanged: `PASS B1: 10/10`.
+
+**The .SAV layout, closed on the byte on 17/17 saves** (`closes=True`): 12 prefix | 796 state
+header | 4 own player (808) | 67,040 block A | 11,488 | 32 | 2,724 map header (dims u32 at
+79,372/79,376) | W*H*22 grid at 82,096 | **91-B** trailer at 172,208 | 16,000 | **u32 count at
+188,299** (176/192/208 = `DAT_00927538`) | 3,584 | 26,624 | 4,096 | **52·n units** | **304·m
+bases** | 256+152+10,144+28+220 = 10,800 = EOF.
+- The counts are IN the header — `0x985af0` = 72 units, `0x985af4` = 18 bases (file 68/72) — and
+  the shape scan finds exactly 72/18 on every save, so no 52/304 Diophantine solve is needed.
+- Faction count 8, three agreeing sources: 67,040/8,380 = 8 block-A records (the 8 "Template 1..8"
+  groups sit 8,380 B apart and 8·8,380 = 67,040 exactly), mask byte `0x985b11` = 0xff (popcount 8),
+  and 8 distinct record owners (0..7).
+- Base rec: x u16 +0, y u16 +2, name at +19. **rec+4 != rec+5 on 2 of 18** (Gaia's Landing 2/1,
+  U.N. Headquarters 2/7); +5 is the byte that matches the faction the NAME belongs to for all 7
+  home bases, so +5 = home/builder, +4 = OPEN (current owner after capture?).
+
+**CORRECTIONS.** (1) M110a's map offsets (79,364 / 82,088 / 172,200) are **8 B low**: at 82,088 no
+cell has +7 == 0xff and the terrain set degenerates to {0,1,2,3}; at 82,096 the land markers number
+1,426 and the terrain set is {0,1,2,8,9,10} — the set planet.MP gives at its own grid start.
+(2) `.MP`'s "map-header word 5 == land cells" does NOT hold in a save: word 5 = 2,048 = (W/2)·H,
+the record count. (3) M243's open item closes arithmetically: 93,159 = 92,927 (map block,
+`FUN_00582260`) + 220 (reader unnamed) + 12 (magic+version, `FUN_00597ce0`) — exact on 242,539 and
+on 242,799. (4) `decode_save.py --sections` RAISES on every 64×64 save (`no 52/304 split of a
+0-byte region`): its table is the 80×80 one, so `sim/save.py` is now the working reader.
+
+**Pitfall (cost one re-run).** A 52-B record whose +10 type >= 64 is a production-queue BAND (128/
+130/131/256/320-323 here), not a unit: its +0/+2 are not tile coords (m113map rec 12 = 3076/56832),
+so a coord check over the whole array rejects 18 of 67. Type-gate the coord test.
+
+**OPEN:** trailer-length formula (91 at 64×64, 128 at 80×80, 338 at 128×128); contents of the
+176/192/208-B count-prefixed block; who reads the 220-B block; which base byte is the CURRENT owner;
+what band records' +0/+2 are.

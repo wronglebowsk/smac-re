@@ -1,9 +1,9 @@
 # `.SAV` save format — skeleton decoded, section sizes still open
 
-Status: **header parsed, read order established from a runtime trace, per-section size formulas
-not yet recovered.** Do not treat the section table below as a general layout: it is the exact
-sequence for one save (80×80 map, mission year 2112) and the sizes of the variable sections shrink
-in earlier saves (Autosave 5, year 2108, is 287,564 B — smaller than the fixed sections alone).
+Status: **header parsed; on this box's 64×64 saves the WHOLE file closes on the byte — see §The 64×64
+layout closes (B2).** Do not treat the section table below as a general layout: it is the exact
+sequence for one 80×80 save (mission year 2112); every variable section shrinks with the world
+(every 64×64 save here is 242,539-243,691 B, and `scripts/decode_save.py --sections` RAISES on all of them).
 
 ## Header (796 B at file offset 12 — M242: the writer `FUN_00597ce0` puts the 8-byte `TERRAN\0\x1a` magic and the 4-byte version 0x56 first, then `FUN_00596850(handle, 1)` writes this block verbatim; the year u16 at file 0x54 = block+0x48. The same function is the READ side with mode 0 — this table is also the write order.)
 
@@ -165,6 +165,27 @@ a SHORT at `UNIT_ARR + 0x0A + 52*i` (`shard_012.c:2150`, same shape at 2117/2148
 `+4` is the flag dword (bit 0x04000000 cleared = has not moved, etc.). Four unit records sit at (20, 50) — exactly the coordinates of `University
 Base` — which is the cross-check that ties the two tables together: garrison units share their base's
 tile.
+
+## The 64×64 layout closes on the byte (B2, session 195)
+
+`python3 -m sim.selftest --sav "programs/saves/auto/m242_probe_B.SAV"` -> `PASS B2: 7/7 gates`; 17/17
+saves under `programs/saves` close exactly (`evidence/b2_save_walk.txt` has the per-save table). File
+order: 12 prefix | 796 state header | 4 own player (808) | 67,040 block A (**8 records × 8,380** — the
+8 "Template 1..8" groups sit 8,380 B apart and 8·8,380 = 67,040) | 11,488 | 32 | 2,724 map header (u32
+W,H at 79,372/79,376) | W·H·22 grid at 82,096 | **91-B trailer** at 172,208 | 16,000 | **u32 count at
+188,299** (176 / 192 / 208 = `DAT_00927538`) + that many bytes | 3,584 | 26,624 | 4,096 | **52·n units**
+| **304·m bases** | 256 + 152 + 10,144 + 28 + 220 = **10,800 = EOF**.
+
+n and m come from the state header itself — u32 at file 68 (`0x985af0`) = 72 and u32 at file 72
+(`0x985af4`) = 18 on m242_probe_B — and a shape scan finds exactly that many records on every save, so
+the 52/304 split needs **no solver**: `solve_records` is a work-around for a count the file stores. The
+faction count is 8 three ways (67,040/8,380, the mask byte at file 101 = `0x985b11` = 0xff, and 8
+distinct record owners). The tail the codec does not move is accounted: 93,159 = 92,927 (map block,
+`FUN_00582260`) + 220 (reader unnamed) + 12 (magic+version, `FUN_00597ce0`).
+
+Two `.MP` laws do NOT cross over: in a save, map-header word 5 is the 44-B **record** count (2,048 at
+64×64), not the land-cell count (1,426); and a 52-B record whose +10 type ≥ 64 is a production-queue
+band, not a unit — its +0/+2 are not tile coords (m113map rec 12 = 3076/56832).
 
 ## What is still unknown
 

@@ -791,3 +791,26 @@ state/version gates, not mode gates. Static sizes of the 7 = 67,716 B; the tail 
 move is 93,159 B on a save AND on a load (`242799-149640 = 242539-149380`). Instrument:
 `scripts/m243_leg_gates.py` (CFG of 0x596850-0x597a6b, live guards from `/proc/mem`, gates from
 `evidence/m242_b.gdblog` + `evidence/m109c4.log`), run output `evidence/m243_leg_gates.txt`.
+
+## B2 (s195, BUILD track) — `sim/save.py`: a .SAV loads into the state model, and the walk closes on the byte
+
+`python3 -m sim.selftest --sav "programs/saves/auto/m242_probe_B.SAV"` -> `PASS B2: 7/7 gates`,
+all 17 saves under `programs/saves` close -> `evidence/b2_save_walk.txt` (per-save table).
+
+| field | file offset (mem) | probe_B | status |
+|---|---|---|---|
+| unit count | 68 (`0x985af0`) | 72 | V: 72 shape-valid 52-B records |
+| base count | 72 (`0x985af4`) | 18 | V: 18 records, name at +19 |
+| year u16 | 84 (`0x985b00`) | 2153 | V: == decode_save.py |
+| faction mask byte | 101 (`0x985b11`) | 0xff -> 8 | V: == 8 distinct owners == 67,040/8,380 |
+| count-prefix u32 | 188,299 (`0x927538`) | 176 | V: closes 17/17 saves (176/192/208) |
+| map trailer | 172,208 + 91 | 91 B at 64x64, 128 B at 80x80 | V by closure; formula OPEN |
+| tail | last 10,800 = 256+152+10,144+28+220 | constant | V |
+
+CORRECTIONS: M110a's map offsets are 8 B LOW — content puts the dims at 79,372, the grid at 82,096
+(1,426 land markers `cell+7==0xff` there, 0 at 82,088) and the trailer marker at 172,208. `.MP`'s
+"map-header word 5 == land cells" law does NOT hold in a save (word 5 = 2,048 = (W/2)*H records).
+The 93,159 B the codec does not move = 92,927 (map block, `FUN_00582260`) + 220 (reader unnamed) +
+12 (magic+version, `FUN_00597ce0`) — exact on m54b_clean AND on a 242,799-B save. A 52-B record
+whose +10 type >= 64 is a production-queue BAND, not a unit: its +0/+2 are NOT tile coords
+(m113map rec 12 = 3076/56832), so coord checks must be type-gated.
