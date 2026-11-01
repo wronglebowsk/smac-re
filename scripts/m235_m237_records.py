@@ -269,9 +269,9 @@ def m235():
     hitsl = sorted(((o, CALLD.get(o, 0)) for o, f in sl), key=lambda x: -x[1])
     tot = sum(c for o, c in hitsl)
     zero = [o for o, c in hitsl if c == 0]
-    G("M235 %d of the 88 slots have at least one member-scale (disp < 0x2000) `call [reg+slot]` site image-wide (%d sites, busiest +%s x%d); EXACTLY %d slot has zero dispatchers (+%s); +0x15c itself carries %d sites, so the class's LAST slot is an ordinary self-dispatch point - the largest call displacement of any form in the image is +%s, which is where the panel's stored FIELD callback sits (M225)"
+    G("M235 %d of the 88 slots have at least one member-scale (disp < 0x2000) `call [reg+slot]` site image-wide (%d sites, busiest +%s x%d); EXACTLY %d slot has zero dispatchers (+%s); +0x15c itself carries %d sites, so the class's LAST slot is an ordinary self-dispatch point. The largest displacement of ANY call-through form in the image is +%s - that is an indexed function-pointer TABLE base in .data, not a member offset; the largest true member-scale one is +%s"
       % (sum(1 for o, c in hitsl if c), tot, hex(hitsl[0][0]), hitsl[0][1], len(zero), hex(zero[0]) if zero else "-",
-         CALLD.get(0x15c, 0), hex(max(CALLALL))),
+         CALLD.get(0x15c, 0), hex(max(CALLALL)), hex(max(CALLD))),
       tot > 0 and CALLD.get(0x15c, 0) >= 1 and len(zero) == 1,
       ([(hex(o), c) for o, c in hitsl[:6]], "zero_dispatch_slots=%s of_%d max_member_disp=%s all_form_max=%s sites_at_0x15c=%d" %
        ([hex(x) for x in zero], n, hex(max(CALLD)), hex(max(CALLALL)), CALLD.get(0x15c, 0))))
@@ -384,7 +384,7 @@ def m236():
     g9 = [(pc, s, fnof(pc)) for pc, s in NM if "0x9965b8" in s]
     g9st = collections.Counter(f for pc, s, f in g9 if classify(s)[0] in ("store", "rmw"))
     g9ld = collections.Counter(f for pc, s, f in g9 if classify(s)[0] in ("load", "read"))
-    G("M236 the +4 pointer IS allocated, but not here: image-wide %d sites store a call result into [reg+4] within 8 insns of that call over %d callees, the top being FUN_00%s with %d sites in %d functions; and the record-under-construction global 0x9965b8 has %d stores in %d functions and %d loads in %d functions - the writer that fills these records consumes THAT global"
+    G("M236 the +4 pointer IS allocated, but not here: image-wide %d sites store a call result into [reg+4] within 8 insns of that call over %d callees, the top being FUN_00%s with %d sites in %d functions; and the record-under-construction global 0x9965b8 has %d stores in %d functions and %d loads in %d functions; the LOADERS, not the +8 stamper, are the only candidates for the writer that fills these records"
       % (sum(len(v) for _, v in ld4.items()), len(ld4), top[0][0] if top else "?", len(top[0][1]) if top else 0,
          len(set(f for _, f in top[0][1])) if top else 0, sum(g9st.values()), len(g9st), sum(g9ld.values()), len(g9ld)),
       len(ld4) >= 3 and bool(top) and len(top[0][1]) >= 10 and len(g9ld) >= 1,
