@@ -19,6 +19,15 @@ Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout -
 patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
 go 1 per batch). The binding cap is doc headroom, not capability.**
 
+## BUILD TRACK — every 4th fire builds (added s187)
+
+`python3 scripts/track_mode.py` prints the verdict from merged history: `MODE=BUILD|ANALYSE`, `next_rung=B<n>`.
+**MODE=BUILD ⇒ this fire is a build fire**: take that rung from `BUILD_SPINE.md` and build it in `sim/` — runnable
+acceptance command, parity against a recorded trace, never a census claim, no box time, no `/proc`, no gdb. The
+other three fires analyse exactly as before. Why: after 226 milestones `sim/` was still empty, so every proven fact
+was about `terran.exe` and none about a game that runs. Build rungs are `B<n>` in the commit and PR title so the
+cadence can be counted.
+
 ## THE LEDGER
 
 Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
