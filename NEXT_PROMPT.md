@@ -64,9 +64,6 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and those results live in
-  `NAMED.md` + `docs/pick-archive.md`; newest instruments `scripts/m240_terrain_repack.py`,
-  `m235_m237_records.py`, `m231_m234_staging.py`.
 - ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors;
   the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks; FUN_005f5a11's write-only triple) —
   detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on BOTH maps. s191 **M240**
