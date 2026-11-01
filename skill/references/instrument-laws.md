@@ -593,3 +593,14 @@ the repair costs a doc-correction PR after the milestone has already merged.
   true — assert the one you printed.
 - The same test applies to any constant riding a shared helper: a `(dest, len)` read wrapper, a type id, a
   mode flag. The constant belongs to the CALL; the helper's body documents only the shape.
+
+## Ghidra prints small offsets in DECIMAL and large ones in HEX — a pattern built one way matches nothing (s180)
+
+- Ghidra prints an offset BELOW 0x10 without the prefix (`*in_ECX + 4`, `+ 8`) and 0x10 and above in HEX
+  (`+ 0x30`, `+ 0x15c`). A pattern assembled with `str(off)` — decimal — therefore matched 0 C sites for
+  every slot >= 0x10 and a correct claim read FAIL. Assemble the operand as an alternation,
+  `(?:0x%x|%d)`, or normalize the C before matching.
+- The same class of bug in the disassembly: a "within N of this site" test over `window(pc, pc+N)` is
+  N **BYTES**, not N instructions. A 40-byte lookahead missed a dispatch 45 bytes away (the prologue that
+  pushes a boolean is `and/neg/sbb/neg/push`) and printed "0 of 2". Count instructions, or size the window
+  in bytes from the longest prologue you know is there, and print the gap you measured.

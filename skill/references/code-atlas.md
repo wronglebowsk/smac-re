@@ -590,3 +590,25 @@ FUN_004eaa10 called at 0x4f5ad7). Harness `scripts/m99_param2.py --tag t --bound
 
 ## The per-faction record block (M104: bytes + live reads + the save image)
 `0x927a9c + fac*1436` = the count dword, then three PARALLEL stride-4 arrays of 8 slots each: TYPE at +0x04, KEY at +0x24, VAL at +0x44 (FUN_0059ec00 anchors on +0x24 and reads TYPE at [p-0x20], VAL at [p+0x20]; the 0x20 spacing is what caps the list at 8 entries). TYPE==3 -> D[KEY] += VAL (M103); TYPE 4/10 are FUN_005a15a0 clamps; TYPE 7/8 do inc on D slots 17/18 at 0x5a78e7/0x5a78f2. NO store in .text reaches count/TYPE/KEY/VAL by displacement — all 46 mentions are scan-loop loads or cmps (0x40d9f4 0x4e4cd9 0x4f37b3 0x4f3e5d 0x4f47ba 0x4fcdf3 0x508c50 0x522ad4 0x589089 0x5a0087 0x5a0443 0x5a1689 0x5a78d0), so ask who-writes-it of a HARDWARE WATCHPOINT on the count dword. The list is LOAD-TIME data: a .SAV carries the block verbatim at the same stride (m54b_clean.SAV fac0 base 0x10e18, fac1 0x113b4, fac3 0x11eec, fac6 0x12fc0) and nothing appends it during rounds (m104w3 PASS 12/12: 0 count-change events over 3 boundaries while a control watchpoint on the same faction logged 6 writes), so D — and the research multiplier D leg — is FROZEN after scenario setup.
+
+## The DIALOG class (M201-M202): ctor FUN_00405ef0, vtable 0x67164c, run method FUN_005f1394
+
+`FUN_00405ef0` (99 ctor sites in 90 functions) is the constructor: `call 0x5ee350` (the this+0 subobject),
+`add ecx,0x3230; call 0x5f6b8c`, then `mov [eax],0x67164c` (0x405f31) and `mov [ecx+0x444],0x671644`
+(0x405f3a) — the object carries a SECOND (CPane) vtable at byte +0x444. `FUN_005f1394` (11,207 B, 94
+direct calls, 0 data references to its own address image-wide, one exit `ret 0x8` at 0x5f3f58) is the run
+method, and at 90/94 sites `this` is the CALLER'S STACK OBJECT. It is the only reader of the label pool at
+0x698e40 ('OK' 'OK' 'Cancel' 'OK', alternating) — i.e. it is the OK/CANCEL dialog. Fields: flags dword
++0x30a8 (18 mentions, all loads — the tests are `and reg,imm` after the load), sub-dialog pointer +0x285
+(byte +0xa14), item count +0x858 (byte +0x2160), result dword +0x290 (byte +0xa40) read ONCE at 0x5f3f45
+and written by no site inside the pump (37 candidate writers image-wide — the writer is OPEN). Slots
+dispatched on *this, read out of 0x67164c: +0x4=0x406750, +0x8=0x4068a0, +0x30=0x406970, +0xdc=0x5ce5bd,
++0x15c=0x406990, +0x160=0x404e70, +0x164=0x407060, +0x16c=0x407280, +0x170=0x407660 — but the table also
+holds the class's `return 0` stub 0x404ed0 in ~40 slots, so "that slot is a stub" is a live possibility:
+READ the entry, do not assume. The +0xdc method FUN_005ce5bd (`ret 0xc`, 3 args) CALLS its arg2
+(`cmp [ebp+0xc],0` 0x5ce6bd, `call dword ptr [ebp+0xc]` 0x5ce6c3), so the pump's arg2 is a caller-supplied
+callback; only 17/94 sites supply one and both addresses (0x530d70 x16, 0x530db0 x1) are code islands in
+the 0x530d45-0x530df0 gap — no index row contains them, `fnof()` answers "?" and a containment census
+loses them, so grep the gap by address. Return domain {0, -1, [this+0x290], pass-through}: 0
+`mov eax,imm` in 11,207 bytes, 5 `xor eax,eax`, 2 `or eax,0xffffffff`, and `mov eax,ds:0x698d0c` whose
+dword IS 0xffffffff (the image has exactly 1 reader of that dword and it is here).
