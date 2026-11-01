@@ -1,28 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-174-174.md` (3 sessions). Read it only when a question reaches back before session ## Session 174e.
-
-## Session 174e (2026-10-31) — M185-M187, all PASS (second static batch of three, one instrument)
-
-`python3 scripts/m185_m187_visits.py` -> `evidence/m185_m187_visits.txt`, `SUMMARY M185=PASS M186=PASS M187=PASS`.
-- **M185 — the visit's two sub-passes are asymmetric in what they touch.** FUN_00530e30 writes exactly three
-  globals (`ds:0x920740 = 0xf`, plus the staging payload pair `ds:0x99aa1c` / `ds:0x99aa20` = record fields
-  +0x0/+0x4) and makes 10 calls, including `0x626634` (the write-bytes emitter) at 0x530fc0. FUN_00535940 writes
-  47 globals — 13 to -1 (`edi`) and 12 to 0 (`ebx`) — i.e. it RESETS the aggregate scratch set (0x9204c0/0x9206f4/
-  0x9206e8/0x9206e4/0x920774/0x9204d8/0x9204cc/0x920750 to -1; 0x9204b8/0x920710/0x920770/0x9204e0/0x920490/
-  0x9206ec to 0) and calls 0x5a6cd0 x2.
-- **M186 — `[fac*4+0x94d448]` is ASSIGNED, never bit-set.** 27 store sites in 8 functions (FUN_005551e0 x15,
-  FUN_00552970 x5, FUN_0052a720 x2 + 5 singles), every one a plain `mov [reg+0x94d448],reg`, and ZERO
-  `or`/`and`/`add`/`sub` sites at that displacement. Its 653 refs are byte tests with masks 0x1 (150), 0x10 (62),
-  0x20 (34), 0x7 (18), 0x2 (16), 0x8 (10), 0x3 (8) plus whole-dword loads; the 0x40030 mask that FUN_00535c60
-  tests appears at exactly TWO sites (0x535ccb and 0x4f2bba in FUN_004f26e0). A claim that a visit is gated on
-  bits 0x10/0x20/0x40000 therefore needs the ASSIGNED values, not the test.
-- **M187 — the record's +0x20 dword (`ds:0x99aa3c`) is a 3-valued SELECTOR.** 5 stores: three (FUN_00626b46 /
-  FUN_00626dfc / FUN_00626f19) copy `[[ds:0x99aa40]+0x3100]` into it, two come from FUN_0048ee00 / FUN_0048ef80.
-  14 reads, three of them `cmp`: FUN_004d9ae0 branches on ==1 (0x4d9da0 — writes a unit record at
-  0x933289/0x93328c/0x933294, clears bits in [rec+0x93327c], calls 0x4d97c0) and on ==2 (0x4d9dff, only while
-  `ds:0x985af0 > 0`); FUN_00616b89 tests ==0. ASSEMBLEGROUP is driven by a 3-way mode stored inside the record it
-  emits.
+Older sessions: `docs/sessions/sessions-174-174.md` (1 sessions). Read it only when a question reaches back before session ## Session 175.
 
 ## Session 175 (2026-10-31) — cap triage (#153, merged), then M188-M190 all PASS (static batch of three, one instrument)
 
@@ -425,4 +403,36 @@ PITFALLS: a staging pair spread over two arrays is not contiguous - read each sl
 - **Open:** what the seven mask copies mean and who fills them at map GENERATION (the load path only
   reads them in); record bytes 1, 3, 4-7 and 12-15 unnamed; `decode_map.py` and `sim/map.py` still split
   the grid into 22-byte cells — their B1 gates are position parity so they stay valid, but their "cells"
-  are record halves; M181 box debt unpaid (terran.exe alive, TracerPid 0 — this fire took a static pick).
+  are record halves; M181 box debt  unpaid (terran.exe alive, TracerPid 0 — this fire took a static pick).
+
+## Session 193 (2026-11-01, M242 — the save WRITE function; static first, then ONE box lifecycle; S192/M241's notes live on the open PR #180)
+
+- **Static, zero box time** (`scripts/fn.py`, `scripts/name_global.py`, `scratch/m71/dis.py` windows on
+  `ghidra_out/shard_015.c`): `FUN_00597ce0` (363 B) IS the writer — `FUN_0063c610(path, ds:0x692fa0)`
+  open (return 1 at 0x597dcf), `FUN_00570640(s_TERRAN ds:0x692fa4)` magic, `FUN_0064c9a0(&local_c=0x56,
+  4,1)` version, `FUN_00596850(handle, 1)` body, 4-byte timeGetTime, `FUN_0064c730` fclose, and
+  `FUN_0064d710(path)` DELETES the file on any failure code. `FUN_00596850` is ONE codec both ways:
+  0x59686b stores param_2 to `DAT_00926a0c`, every leg is `cmp/je` → `call 0x64cc00` (read) else
+  `call 0x64c9a0` (write) — 30 write / 28 read sites, plus 28+28 swap siblings `0x596470`/`0x596540`
+  gated on `DAT_00985ae8 & 0x10000000`. The writer's 8 call sites: 0x521697 (turn-loop autosave, 10
+  insns after the "Writing save file" push at 0x521688), 0x52221e, 0x598c73 (UI Save browser),
+  0x59a121/0x59a166/0x59a1bc, 0x59a372, 0x59bf46.
+- **Acceptance** `sudo -n python3 scripts/m242_save_write.py` → `PASS M242: 5/5 gates`, rc 0, invocation
+  2 (invocation 1 filled every gate then died in `tally()`: the ENCODEC line had no address token —
+  fixed in 60a2afb, nothing weakened). `evidence/m242_save_write.txt` has both invocations. G1
+  host-statted saves A 242,799 B mtime +11.2 s / B 242,799 B +4.5 s, each inside its own window; G2 131
+  bps armed, zero insert warnings, TracerPid 0 after detach; G3 `ENT 597ce0 p=00bef174
+  path16='Z:\home\n100\rev'` ×1 reached through exactly one armed site, `0x598c73`; G4 codec entry
+  mode=1 swap=0, header leg `W 596883 dir=1 dst=0x985ab8 sz=796 n=1`, **23 hits at 23 of 30 write sites
+  vs 0 at 28 read sites, 0 swap** (M109 measured 23 of 28 read sites on a load — the same legs are
+  conditional both ways); G5 TERRAN + version 86 at file 8 + the live 796-B block verbatim at offset 12
+  + year 2153 mem==file, on BOTH saves.
+- **Corrections:** SAVE_FORMAT.md's "796 B at offset 0" → the block is at file offset **12** (8-byte
+  `TERRAN\0\x1a` + 4-byte version 0x56 precede it), so its read-order table is also the write-order
+  table. M241's premise is dead: the writer never touches 0x99aa38 — though `FUN_005985e0` does store
+  +1c/+20 (advisor-text substitution) on the UI route.
+- **Open:** which 7 write legs are dead and by which gate; the write-side sites OUTSIDE 0x596850 (M109:
+  93,159 B of a load is issued by 105 sites outside it); `FUN_0059a0c0`/`0x59a2b0`/`0x59bec0` unnamed.
+  #180 (M241) stays open, superseded by this answer. Box: one lifecycle, no relaunch, TracerPid 0.
+- **Pitfall:** a census parser must give EVERY logged line an address token — mine crashed in tally()
+  after the measurement was already complete, wasting an acceptance invocation.

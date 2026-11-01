@@ -1,6 +1,6 @@
-S191 M240 PR #179 (gate green, merging). Acceptance = `python3 scripts/m240_terrain_repack.py` ->
-`PASS M240: 6/6 gates on planet.MP, planetx.MP` -> evidence/m240_terrain_repack.txt (3rd invocation
-green; G5 rewritten per-function = stricter, nothing weakened). FINDING: the .MP grid IS the live
-terrain-record array — FUN_00582260 reads `DAT_0092a38c*0x2c` into DAT_0092ae14 verbatim, count=(W/2)*H,
-one record = TWO map columns; +16..+43 = 7 copies of the +8 mask (OPEN). RETRACTED "cell+7 = land marker"
-and FOOTING's "+7 = owner byte". Zero box time: M181 debt STILL owed. NEXT: `scripts/track_mode.py`.
+S193 M242 (gate green, submitting). `sudo -n python3 scripts/m242_save_write.py` -> `PASS M242: 5/5
+gates` (2nd invocation; 1st died in tally() post-measurement) -> evidence/m242_save_write.txt.
+FINDING: the save WRITE function is FUN_00597ce0(path) — fopen + TERRAN magic + version 0x56 + body +
+fclose (FUN_0064d710 deletes on failure) -> FUN_00596850(handle, 1), ONE codec both ways (mode =
+DAT_00926a0c): 23/30 write legs hot, 0/28 read, 796-B DAT_00985ab8 verbatim at file offset 12. UI save
+via 0x598c73. Box clean (TracerPid 0). #180 open. NEXT: `track_mode.py` (BUILD rung B2 = save load).
