@@ -612,3 +612,23 @@ the static .text dump + index.csv containment + terran.exe's own section table f
   not the call that follows its store (that store's next call is 0x64b9e0). `m178_m180_scratchband.py` now prints
   the triple table and gates `0x41 x7, 0x1 x2` — re-run: `SUMMARY M178=PASS M179=PASS M180=PASS`, rc 0.
   SESSION_NOTES/NAMED.md M178-M180 and NEXT_PROMPT's pick paragraph carry the corrected text.
+
+
+## Session 174c (2026-10-31) — box relaunched, first live probe of the M178 staging dword (inconclusive)
+
+- **Box up** after a relaunch that took >9 min on a cold prefix: terran.exe pid 319926, year 2153 round 53,
+  University Base (28,42), 6 units HELD, TracerPid 0; `sudo -n python3 scripts/smac_preflight.py` PASSes every
+  invariant.
+- **New operational law:** the relaunch was killed at a tool timeout and the game came up parented to wineserver,
+  not to this session; `yama ptrace_scope=1` then refuses `/proc/<pid>/mem` to the SAME uid
+  (`PermissionError` at `smac_preflight.py:56`). Read under `sudo -n`, or relaunch from a tracked background job.
+  Written into skill `references/wine-operations.md` ("A relaunched game is NOT your child").
+- **M181 probe (live, NOT a finding):** a 2 ms sampler (`scratch/m181/pair.py`: `ds:0x99aa38`, `ds:0x920720`,
+  `ds:0x9204b0`, `[0x94d600+3*8380]`, `ds:0x8f0d60`, round/year/cur_player) ran across one boundary driven by
+  `m55_boundary.py --settle 0.4`: round 52->53 (+1 exactly), year 2152->2153, cur_player walked the whole player
+  loop 3->4->5->6->7->0->...->3, `selobj` churned 11 values. `ds:0x99aa38` stayed **00000000** the whole window —
+  consistent with M178's static reading (a UI/scenario writer) — but `ds:0x920720` and `ds:0x9204b0` were also 0
+  and static, so the aggregate pass had nothing to aggregate and the probe has NO positive control.
+  `m55_boundary.py` itself exited rc=1 on its accounting gates. Falsifier for the next run: arm the sampler, then
+  trigger a save or a governor-options OK — a staging change there confirms the writer's trigger; no change
+  anywhere means the address or the sampler is wrong.
