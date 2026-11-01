@@ -1,0 +1,81 @@
+  [PASS] the adder FUN_005e774d (ret 0x18) writes item+0x14=arg1, +0x10=arg2, +0=arg3, +4=arg4, +8=arg3+arg5, +0xc=arg4+arg6 - read out of its own body
+        map=[('0x0', "('arg', 16)"), ('0x10', "('arg', 12)"), ('0x14', "('arg', 8)"), ('0x4', "('arg', 20)"), ('0x8', "('arg+arg', 16, 24)"), ('0xc', "('arg+arg', 20, 28)")]
+        ret=['0x5e77e4']
+  [PASS] its only failure path is count>=capacity -> return -1: it never allocates and never grows
+        full-test and or-eax-0xffffffff present; allocator calls=0
+  [PASS] FUN_00403b00 (75 B) spills ecx to [ebp-0x4] in its prologue, calls FUN_005e774d exactly once and returns 0xc: the CONTAINER is its own `this`, its 3 args are (gate, payload, RECT)
+        spill=['0x403b09'] call sites=['0x403b3d'] ret=['ret 0xc'] size=75
+  [PASS] its 6 pushes resolve to arg1, arg2, [rect+0], [rect+4], [rect+8]-[rect+0], [rect+0xc]-[rect+4]: the 3rd arg is an {x,y,right,bottom} RECT turned into (x,y,w,h)
+        pushed=['M[ebp+0x8]', 'M[ebp+0xc]', 'M[ebp+0x10+0x0]', 'M[ebp+0x10+0x4]', 'SUB(M[ebp+0x10+0x8],M[ebp+0x10+0x0])', 'SUB(M[ebp+0x10+0xc],M[ebp+0x10+0x4])']
+  [PASS] all 23 sites of the wrapper sit in 16 functions: 22 pass the container as their own ecx plus ONE of 8 member displacements, 1 forwards ecx bare (FUN_00403ad0)
+        kinds={'loaded': 1, 'member': 22}
+        disps=[('0x12758', 2), ('0x12764', 1), ('0x15e0', 5), ('0x28ac', 4), ('0x5994', 3), ('0xa48', 1), ('0xcc4', 5), ('0xe40', 1)]
+  [PASS] NO wrapper site and NO direct add-site carries the dialog's container displacement 0x3098: its 10-item list is allocated, reset and scanned but never appended anywhere in the image
+        wrapper disps=['0x12758', '0x12764', '0x15e0', '0x28ac', '0x5994', '0xa48', '0xcc4', '0xe40']
+        direct add-sites at +0x3098=0
+  [PASS] at those 23 sites the slot written to item+0x14 (the one the click dispatcher tests for 0) is an immediate 4 times and a register/loaded value 19 times; the slot written to item+0x10 (the one it hands to +0xa8) is an immediate 19 times with values ['0x0', '0x1', '0x2', '0x3', '0x4', '0xa', '0xb'] - 0xa/0xb lie OUTSIDE M218's {0,1..8,0x45} gate set
+        slot+0x14 imms=[('0x0', 2), ('0x3', 1), ('0x64', 1)]
+        slot+0x10 imms=[('0x0', 7), ('0x1', 4), ('0x2', 3), ('0x3', 2), ('0x4', 1), ('0xa', 1), ('0xb', 1)]
+  [PASS] the 4 remaining register-passed adders run on the GLOBAL object at 0x6a9480: FUN_0041f310 is slot +0x30 of vtable 0x672448 and all 3 of its sites pass ecx = 0x6a9480, and 8 of the 15 adder sites pass the same immediate; FUN_004105b0's container is this+0x402f0 (`lea ebx,[edi+0x402f0]`), a DIFFERENT member from the dialog's +0x3098
+        hub sites=[('0x4e0338', "('mov', '0x6a9480')"), ('0x4e03b0', "('mov', '0x6a9480')"), ('0x4f5eb4', "('mov', '0x6a9480')")]
+        pane-immediate add-sites=8
+        ebx=lea ebx,[edi+0x402f0]
+  -> M222 PASS (8/8 gates)
+  [PASS] FUN_005f5a11 has 0 direct call sites, sits in NO vtable, and the dword 0x5f5a11 occurs in the image only as the imm32 of the 3 stores that install it (hit-6 == a store pc)
+        direct=0 slots=[]
+        data hits=['0x5f48bc', '0x5f4915', '0x5f4a76'] stores=['0x5f48b6', '0x5f490f', '0x5f4a70']
+  [PASS] the 3 installed fields are READ by nothing: 0 dereferences that are not stores, 0 lea-address-takes, 0 indirect calls with a displacement in 0x21c0..0x2260, 4 rep movs in a function touching the window (all 4 bracket refs are stores)
+        refs=[('0x406c57', 'mov dword ptr [ecx+eax*1+0x2210],0x0'), ('0x5f48b6', 'mov dword ptr [edx+0x2234],0x5f5a11'), ('0x5f490f', 'mov dword ptr [eax+0x2210],0x5f5a11'), ('0x5f4a70', 'mov dword ptr [edx+0x2224],0x5f5a11')]
+        reads=[] lea=[] ind=[] reps=[(6219342, 'FUN_005ee350'), (6219363, 'FUN_005ee350')]
+  [PASS] the writers are 2 functions and the readers 0: FUN_005f3f5b installs the callback 3x and FUN_00406990 zeroes one field in a loop
+        stores=[('0x406c57', 'FUN_00406990'), ('0x5f48b6', 'FUN_005f3f5b'), ('0x5f490f', 'FUN_005f3f5b'), ('0x5f4a70', 'FUN_005f3f5b')]
+  [PASS] its body proves it is a method of the MODAL object: it reads ds:0x9977f0 (the handle the pump publishes), gates [h+0x2350] against 1 and -1, reads 0x21d0/0x30a8 and dispatches slots +0x8 and +0xe0
+        read disps=['0x8', '0xec', '0xa14', '0x21d0', '0x229c', '0x2350', '0x30a8']
+        dispatched=['0x8', '0xe0']
+        size=299 insns=83
+  [PASS] the window IS live through its other members: the dialog runner FUN_005f1394 calls FUN_0060c436 with ecx = obj+0x21d0 and pushes [obj+0x2350] as an argument
+        site=['0x5f1e33'] ecx=('add', 8656) args=['M[ebp-0x394+0x2350]', 'M[ebp-0x394+0xa3c]', 'M[ebp-0x24]']
+  [PASS] and it is live as a CONTAINER: FUN_0060c436 hands its own this+0xb14 to FUN_00607eca, which subtracts 0xa94 before the adder, so the list is this+0x80 = obj+0x2250 - 0x1c above the last write-only field, in the same block
+        adder site=['0x60820b'] ecx=('mov', 'dword ptr [ebp-0x70]')
+        0xb14-0xa94=0x80  0x21d0+0x80=0x2250  fields 0x2210/0x2224/0x2234
+  -> M223 PASS (6/6 gates)
+  [PASS] FUN_00459bb0 (1722 B) has exactly ONE call site (0x45a755, inside FUN_0045a740, itself 56 B with 1 caller) and sits in no vtable
+        sites=['0x45a755'] callers of 45a740=['FUN_00580260']
+  [PASS] the 27 globals 0x9978ac..0x997914 are written by exactly 9 functions of 42 B (3 refs each), each called once and only from FUN_00459bb0 - M219's setter set re-derived from the stores
+        setters=['FUN_0045a4d0', 'FUN_0045a500', 'FUN_0045a530', 'FUN_0045a560', 'FUN_0045a590', 'FUN_0045a5c0', 'FUN_0045a5f0', 'FUN_0045a620', 'FUN_0045a650']
+        other writers=['FUN_005faec0', 'FUN_005fb038']
+  [PASS] M219's split CONFIRMED: 3 of the 9 setter calls pass three grid pointers each, 6 pass (0,0,0)
+        pointer calls={'FUN_0045a530': ['0x774c64', '0x774ce8', '0x774d6c'], 'FUN_0045a590': ['0x774c38', '0x774cbc', '0x774d40'], 'FUN_0045a5c0': ['0x774c90', '0x774d14', '0x774d98']}
+        zero calls=6
+  [PASS] the pointers are the 0x2c-stride grid 0x774c38+0x2c*i (i=0..8): 24 pushes drawn from exactly 9 addresses, each used [2, 2, 2, 3, 3, 3, 3, 3, 3] times
+        grid=['0x774c38', '0x774c64', '0x774c90', '0x774cbc', '0x774ce8', '0x774d14', '0x774d40', '0x774d6c', '0x774d98']
+        per-entry counts=[2, 2, 2, 3, 3, 3, 3, 3, 3]
+  [PASS] the grid is all-zero across the window 0x774c38..0x774dc4 (99 dwords, 0 nonzero; the file image ends at 0x6ed000 so the block is past the last mapped byte (BSS)): runtime state, not load-time data
+        dwords=99 nonzero=0 file_end=0x6ed000 past_eof=True
+  [PASS] its only other window reference FUN_0041f450 (8250 B, 1 caller) touches the 0x774xxx region 39 times and INSTALLS the page bases: its 5 stores all go to [obj+0xb24] - 0x774c0c x4 (one entry below the grid base) and 0x774a80 x1 (nine entries below) - and 5 other functions load [obj+0xb24], so the grid is reached through that field
+        installs=[('0x420b4f', 'mov dword ptr [ebx+0xb24],0x774c0c'), ('0x420c7c', 'mov dword ptr [ebx+0xb24],0x774c0c'), ('0x420e97', 'mov dword ptr [ebx+0xb24],0x774a80'), ('0x4210b2', 'mov dword ptr [ebx+0xb24],0x774c0c'), ('0x4211df', 'mov dword ptr [ebx+0xb24],0x774c0c')]
+        region refs=39
+        loaders of +0xb24=['FUN_0042d2c0', 'FUN_00488e80', 'FUN_004893e0', 'FUN_004894c0', 'FUN_00612c4c']
+  -> M224 PASS (6/6 gates)
+  [PASS] the panel's slot +0xa8 dispatches 7 times: +0xb8 x2, +0x2144 x2, +0x5c, +0x1c, +0xf0 - and +0x2144 is larger than EVERY vtable slot in the image (max 0x178 over 188 vtables), so it is a call through the panel's own last field, not a vmethod
+        dispatches=[('0x1c', 1), ('0x2144', 2), ('0x5c', 1), ('0xb8', 2), ('0xf0', 1)]
+        max vtable slot=0x178 over 188 vtables
+  [PASS] it is slot +0xa8 of exactly 1 vtable (the panel 0x671d94) and its 2 +0xb8 calls are made on the link neighbours it unlinks: 23 references to the 0xa18/0xa20/0xa24/0xa2c/0xa38/0xa3c block, including 2 stores of the relink `mov [eax+0xa2c],edx`
+        slots=[('0x671d94', '0xa8')]
+        link refs=23
+  [PASS] that field has 17 writers (['FUN_00406990', 'FUN_0048f080', 'FUN_0048f100', 'FUN_00497d80', 'FUN_00498ae0', 'FUN_00498b50', 'FUN_00498b70', 'FUN_00498bd0', 'FUN_0057bf00', 'FUN_005aa310', 'FUN_005ce50f', 'FUN_005ee350', 'FUN_005eede6', 'FUN_005f0583', 'FUN_005f6b8c', 'FUN_005f6de9', 'FUN_00626b46']) and 7 reader/caller functions over 54 sites - a stored callback in the object's last dword, not a vtable slot
+        sites=54 writers=['FUN_00406990', 'FUN_0048f080', 'FUN_0048f100', 'FUN_00497d80', 'FUN_00498ae0', 'FUN_00498b50', 'FUN_00498b70', 'FUN_00498bd0', 'FUN_0057bf00', 'FUN_005aa310', 'FUN_005ce50f', 'FUN_005ee350', 'FUN_005eede6', 'FUN_005f0583', 'FUN_005f6b8c', 'FUN_005f6de9', 'FUN_00626b46'] readers=['FUN_004079c0', 'FUN_00441400', 'FUN_005f3f5b', 'FUN_005f608d', 'FUN_005f86ad', 'FUN_005f882f', 'FUN_005f90d7']
+  -> M225 PASS (3/3 gates)
+  [PASS] the row class's slot +0x30 FUN_005fb1a5 (4202 B, 1000 insns) is a DRAW: 21 of its calls switch ecx to the CPane subobject (`add ecx,0x444`) and it makes exactly ONE indirect call, [reg+0x14]
+        slots=[('0x67194c', '0x30')]
+        add ecx,0x444 sites=21
+        indirect=[('0x5fbfe6', 'call dword ptr [edx+0x14]')]
+  [PASS] it reads the group fields as an INDEXED dword array (2 sites of the form `[reg+reg*4+0xabc]` / `+0xac8`) and also loads 0x98/0xa7c/0xa88/0xa8c: the 9 groups are arrays inside the row, not 9 separate members
+        indexed sites=2
+        field reads=[('0x4c4', 7), ('0x4c8', 7), ('0x98', 1), ('0xa78', 1), ('0xa7c', 5), ('0xa88', 2), ('0xa8c', 2), ('0xa90', 4), ('0xa94', 2), ('0xa9c', 2), ('0xab8', 1), ('0xabc', 1), ('0xac8', 1), ('0xad4', 3), ('0xae0', 3), ('0xaec', 5), ('0xaf8', 4), ('0xb04', 4), ('0xb10', 5), ('0xb1c', 5), ('0xb28', 5), ('0xb34', 5), ('0xb40', 1), ('0xc4', 5)]
+  [PASS] its callees are the text/label emitters FUN_005dd09c x5, FUN_005c153f x5, FUN_005ca7c3 x4
+        emitters=[('0x5dd09c', 5), ('0x5c153f', 5), ('0x5ca7c3', 4)]
+        distinct direct callees=16
+  -> M226 PASS (3/3 gates)
+
+SUMMARY M222=PASS M223=PASS M224=PASS M225=PASS M226=PASS (26/26 gates)

@@ -417,3 +417,26 @@ other mode, and the run then reads like an instrument failure when it is already
   displacement in the enclosing window, means the installed callback is reached some other way (or not at
   all) — say so, and pre-register the alternative (a block copy / `rep movs` over the window) as the next
   falsifier instead of assuming the grep missed.
+
+## 15. Push-argument provenance and claim-sized filters (s186, M222-M226)
+
+- **Resolve a pushed value at ITS OWN push pc, not at the call pc.** The register a push loads was
+  defined before that push; later instructions overwrite it. Resolving all six pushes of FUN_00403b00 at
+  the call pc reported arg2 as `[ebp-0x4]` (the this-spill made two instructions before the call) instead
+  of `[ebp+0xc]`. Collect `(operand, pc-of-that-push)` pairs and resolve provenance there.
+- **`[ebp+0x10]` prints the plus INSIDE the bracket.** A provenance regex `\[ebp(0x[0-9a-f]+)\]` matches
+  nothing and the map comes back empty, which reads as "the body does not say" when the body says it
+  plainly; write `\[ebp\+(0x[0-9a-f]+)\]`.
+- **Compare like types.** `sorted(set(push_texts)) == sorted(table_ints)` is never true — an operand
+  census yields `'0x774c38'` strings, a computed grid yields ints. Convert in the condition, not in the
+  print: `hex()` on a string raises after 25 gates have already printed and loses the run.
+- **A token filter's width IS the claim.** `0x774c|0x774d` missed 0x774a80 (a page base nine entries
+  below the grid) and reported 4 installs where there are 5; widened to `0x774[a-f][0-9a-f]{2}` it
+  matched 39 unrelated region references. Filter on the FIELD being written
+  (`^mov dword ptr \[\w+\+0xb24\],`) and report the region-reference count as its own number.
+- **A displacement larger than every vtable slot is a FIELD, not a method.** Compute the maximum slot
+  offset over all vtables first (terran.exe: 0x178 over 188 vtables). `call [reg+0x2144]` on a 0x214c
+  object is a call through the object's last dword, and 17 writer functions / 7 reader-caller functions
+  over 54 sites is a stored per-object callback, not a class slot.
+- **Read the emitted number, not the probe sample, before hard-coding a count.** An "x6" taken from a
+  truncated callee histogram failed a gate that the same run's own print disproved (x5).

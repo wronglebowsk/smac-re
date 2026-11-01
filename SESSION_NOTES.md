@@ -1,63 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-171-171.md` (2 sessions). Read it only when a question reaches back before session ## Session 171.
-
-## Session 171 (cont. 21) — M133-M142, ten censuses, all PASS (`scripts/m133_m142_census.py`)
-
-SUMMARY M133=PASS ... M142=PASS (evidence/m133_m142.log). Highlights with numbers:
-
-- **M133** FUN_00542ea0 (1456 B, 341 insns, 28 callees) is the chooser's dispatch key; its ONLY call site is 0x54eaeb.
-- **M137** its index arithmetic at 0x542ed9-0x542eed folds to **359 dwords = 1436 BYTES**: `lea [esi+esi*4]` (5v) ->
-  `lea [eax+eax*8]` (45v) -> `shl 3` (360v) -> `sub esi` (359v) -> `shl 2` (1436) -> `mov ecx,[eax+0x927590]`.
-  **1436 is exactly M104's record-block stride** (0x927a9c+fac*1436) — same per-faction record family, base 0x50c lower.
-  The decompiler's `param_1*0x167` is an ELEMENT index, not a byte stride.
-- **M134** ds:0x920700 = UI state code: 31 refs / 8 writes, tested vs 6, 8, 0xd, set to 0xc by chooser case 7.
-- **M135** ds:0x94d7fc (per-faction) = counter with **-1 = unset** (8 writes incl. 0xffffffff); its `jl` at 0x5aafd8 is
-  the OTHER half of the band-flag skip that M124 named.
-- **M136** ds:0x927a78: exactly 2 refs, both inside FUN_0059ec90 -> an input of the advance-budget routine (bounded).
-- **M138** 0x94d650 / 0x94d654 = accumulator + per-step companion (261/34 vs 13/2 refs/writes).
-- **M139** ds:0x91c630 = upkeep-synch counter (27 of 34 refs in FUN_00521070; incremented at 0x5213c6 after the second
-  "Skipping upkeep synch").
-- **M140** ds:0x985afc = read-dominant (336 refs / 5 writes) -> run state, NOT a counter; meaning unnamed.
-- **M141** FUN_00495480 (21 insns) = cached-flag getter with a null guard -> the `and eax,0x20` at 0x49772a tests a
-  cached field's bit; 0 means "no cache object", not "flag clear".
-- **M142** FUN_004026b0 (201 B, `ret 4`) = the LIST SEEK: rejects index >= [obj+0x10], walks nodes via [node+0xc] /
-  [node+0x10], stores the cursor at **[obj+0x14]** — the mechanism behind M128's pre/post-seek pair.
-Law added: a decompiler's `arr[i*N]` is an ELEMENT index; multiply by the element width before calling it a stride.
-
-## Session 171 (cont. 22) — M143-M162: the faction-block field atlas (20 rows, one reproducible rule)
-
-`python3 scripts/m143_m162_atlas.py` -> `docs/field-atlas-faction.md` (3,687 B) + `evidence/m143_m162_atlas.log`,
-SUMMARY PASS. Selection rule is mechanical, not cherry-picked: count every `+0x94dXXX` displacement in the objdump
-(**150 distinct**), take the 20 with the most references, and record per row: refs, writes, shape, constants written,
-values tested, top containing functions, and whether the address text appears in NAMED/archives.
-
-Top of the atlas: **0x94d448 653 refs / 27 writes / 139 functions** (the faction flag word M129's bit 0x8000000 lives in),
-0x94d650 261/34 (the M138 accumulator), **0x94d434 196 refs but only ONE write** (a nearly-const field — 196 readers of a
-value the game sets once), 0x94d430 168/18 (the band-flag word), 0x94dc84 89, 0x94d80c 78, 0x94d468 75, 0x94d438 72,
-0x94d78c 72 (M123), 0x94d81c 62, 0x94d554 57, 0x94d734 57, 0x94d758 51 (12 writes, one const 5), 0x94d488 49/22,
-0x94d7fc 47 (M135), 0x94d818 46, 0x94d754 44, 0x94d814 42, 0x94d4e8 40, 0x94d4a8 38/26.
-Honesty note baked into the artefact: these are SHAPE entries, not meanings — the table's own legend says a `—` in
-`in NAMED?` means genuinely unnamed, not a gap to fill by guessing. Six of the 20 (0x94d434, 0x94d80c, 0x94d468,
-0x94d81c, 0x94d554, 0x94d734, 0x94d754, 0x94d814, 0x94d4e8, 0x94d4a8) are new to the registry as addresses.
-
-## Session 171 (cont. 23) — archive pass + M163-M165 (all PASS): the once-written rank and two contiguous structs
-
-Footing hygiene first: the s171 pick lines moved verbatim to `docs/pick-archive.md`, so `NEXT_PROMPT.md` is an index
-again (was 15,041/15,500 = 459 B free; now 13321 B). Then three structural answers from the atlas's oddest rows
-(`scripts/m163_m165_structs.py`, SUMMARY M163=PASS M164=PASS M165=PASS):
-
-- **M163 — 0x94d434 is a per-faction RANK, written exactly once.** The single writer at 0x59ac8a sits in an
-  initialisation loop (0x59ac4b-0x59ac94) inside FUN_0059aa00: it scans the 7-dword table 0x926a7c-0x926a98 for the
-  largest entry, stores **-1** in the winner's slot (0x926a78+n*4), then writes `[faction*8380+0x94d434] = ebx` and
-  **decrements ebx** while looping. 196 readers, 1 writer, tests against 2/4/5/6 — that is a rank, not a counter.
-- **M164 — 0x94d80c/10/14/18/1c is ONE 20-byte struct.** **11** (function, base-register) pairs address all five
-  displacements off a SINGLE base (FUN_0040b960, 004dc100, 004e78e0, 004f6030, 00522b70, 0055a940, 00574370 x2,
-  0059ec90 x2), and every member has >30 refs. Five separate fields would have to explain why 11 call sites address
-  them off one register in sequence.
-- **M165 — 0x94d554+0x94d55c is an 8-byte pair** (5 (fn,base) pairs, most in FUN_00546800 with three different bases),
-  while **0x94d488 is separate** (17 base-pairs, shares a base with 0x94d55c in only one function) — so the atlas's
-  neighbouring ref counts are not a layout.
+Older sessions: `docs/sessions/sessions-171-171.md` (3 sessions). Read it only when a question reaches back before session ## Session 171.
 
 ## Session 171 (cont. 24) — M166-M168 (all PASS): what the rank is, how the struct splits, and a derived cache
 
@@ -521,3 +464,15 @@ M219 9 setters 42 B / 18 insns / 3 stores rel [0,4,8] / 1 site / 0 slots; 27 sto
 M220 FUN_005f3f5b = 0x6717cc+0x15c (95 slots, 70 installs), `cmp [ebp-0xf4],0x9` + `jmp [ecx*4+0x5f5731]` (10 targets, all inside); the only 3 refs to 0x5f5a11 are its stores to +0x2210/+0x2224/+0x2234; those disps have 2/1/1 refs image-wide, 0 loads, and 0 indirect calls carry any displacement in 0x21c0..0x2260; FUN_00406990 = +0x15c of 4 vtables (396 installs) calls it twice (0x406c24, 0x406f26); FUN_005f5a11 has 0 direct calls and 0 slots.
 M221 0x671d94 = 87 slots / 275 installs, identical 74/87 to 0x6717cc, 63/87 to 0x67164c, 71/87 to the row 0x67194c; +0x4c = FUN_005f84ff (no click dispatcher), +0xa8 = FUN_005f90d7; ctor FUN_005f6b8c 605 B / 136 insns / 16 sites, callees {0x5faec0 x2, 0x5e3b80 x1}, 0x671d8c (3 slots, 268 installs) at +0x444, block stores 0xa14..0xaa0; size 0x214c uniform in FUN_00409e70 (3 panels) and FUN_004947c0 (4), highest ctor store 0x2148, row 2 ends 0x2144; FUN_005f90d7 stores 0xa38 x1 + 0xa2c x2, 0xa40 x0, 7 indirect calls, dispatches [edx+0xb8]; FUN_005f5759 stores 0xa40 x4, 0xa38/0xa2c x0, 3 indirect; FUN_00405ef0 embeds one panel at +0x3230 (site 0x405f29).
 OPEN: who dispatches the dialog's +0x4c (box falsifier, unchanged); who calls FUN_005f5a11 if its 3 fields are write-only; who fills the dialog's +0x3098 list (the register-passed adders, e.g. FUN_00403b00, and their callers); what FUN_00459bb0 is (1 callsite, 0 slots) and who reads the 9 triples' table; s174e box state unverified; M181 still a LEAD.
+
+## Session 186 (2026-11-01, M222-M226, static, zero box time)
+
+`python3 scripts/m222_m226_rows.py` -> `SUMMARY M222=PASS M223=PASS M224=PASS M225=PASS M226=PASS (26/26 gates)`, rc 0; `evidence/m222_m226_rows.txt` 10,130 B. Invocations #1 crash (a gate unpacked a tuple), #2 10/14 + crash, #3 22/26, #4 25/26, #5 green — every failure an INSTRUMENT-definition bug: provenance resolved at the CALL pc instead of each push's own pc; `\[ebp(0x..)\]` missing the `\+`; a str-vs-int set comparison; a `0x774c|0x774d` filter that missed 0x774a80 and, widened, over-matched 39 region refs; expected counts read off the wrong probe window. No threshold, floor or claim direction was changed to get green.
+
+M222 the adder's own body maps item+0x14=arg1, +0x10=arg2, +0=arg3, +4=arg4, +8=arg3+arg5, +0xc=arg4+arg6 (ret 0x18; only failure path count>=capacity -> -1, 0 allocator calls). FUN_00403b00 (75 B, ret 0xc) spills ecx to [ebp-0x4] and pushes (arg1, arg2, rect+0, rect+4, rect+8-rect+0, rect+0xc-rect+4): a (gate, payload, RECT) wrapper. 23 sites / 16 functions: 22 pass the container as their own ecx plus one of 8 member disps {a48:1, cc4:5, e40:1, 15e0:5, 28ac:4, 5994:3, 12758:2, 12764:1}, 1 forwards ecx bare (FUN_00403ad0). 0 wrapper sites and 0 direct add-sites carry +0x3098: the dialog's 10-item list is never appended. The +0x14 slot is an immediate at 4/23 sites (0,0,3,0x64) and a register/loaded value at 19/23; the +0x10 slot is an immediate at 19/23 with values {0,1,2,3,4,0xa,0xb} — 0xa/0xb lie outside M218's {0,1..8,0x45}. FUN_0041f310 = slot +0x30 of 0x672448, all 3 sites `mov ecx,0x6a9480`; 8 of the 15 sites of FUN_0040f830/004105b0/00411840/00415d10 pass the same immediate; FUN_004105b0's container is this+0x402f0.
+M223 FUN_005f5a11: 0 direct calls, 0 vtable slots, and the dword 0x5f5a11 occurs in the image only as the imm32 of the 3 installing stores (hits 0x5f48bc/0x5f4915/0x5f4a76 = stores 0x5f48b6/0x5f490f/0x5f4a70 + 6). The 3 fields have 4 bracket refs, ALL stores (3 installs + FUN_00406990's zero loop), 0 reads, 0 lea-address-takes, 0 indirect calls with a disp in 0x21c0..0x2260. Its body reads ds:0x9977f0, gates [h+0x2350] against 1 and -1, reads 0x21d0/0x229c/0x30a8, dispatches +0x8/+0xe0: a method of the MODAL object. The window IS live through its other members: FUN_005f1394@0x5f1e33 calls FUN_0060c436 with ecx = obj+0x21d0 and arg1 = [obj+0x2350]; FUN_0060c436 passes this+0xb14 to FUN_00607eca, which does `sub ecx,0xa94` before `call 0x5e774d` (0x60820b) -> container = this+0x80 = obj+0x2250.
+
+M224 FUN_00459bb0 (1722 B): 1 call site 0x45a755 (in FUN_0045a740, 56 B, 1 caller FUN_00580260), 0 slots. The 27 globals 0x9978ac..0x997914 are written by exactly 9 functions of 42 B (3 refs each), each called once and only from FUN_00459bb0 — M219's split CONFIRMED: 3 receive grid pointers, 6 receive (0,0,0). The grid = 0x774c38+0x2c*i (i=0..8): 24 pushes over 15 calls, per-entry counts [2,2,2,3,3,3,3,3,3]; its 99 dwords all read 0 and the block lies past the file image (ends 0x6ec8c0) = BSS. FUN_0041f450 (8250 B, 1 caller) references the 0x774xxx region 39 times and its 5 stores all go to [obj+0xb24]: 0x774c0c x4 (grid base - 0x2c) and 0x774a80 x1 (grid base - 0x18c = 9 entries); 9 other functions load [obj+0xb24].
+M225 FUN_005f90d7 (slot +0xa8 of exactly 0x671d94) dispatches 7x: [reg+0xb8] x2 on the link neighbours it unlinks (2 `mov [eax+0xa2c],edx` relinks, `mov [eax+0xa38],0x0`, `mov [eax+0xa3c],0xffffffff`), [reg+0x5c] then [reg+0x1c], [reg+0xf0], and [reg+0x2144] x2 — the max vtable slot over 188 vtables is 0x178, so +0x2144 is the panel's own last FIELD: 54 sites, 17 writer functions, 7 reader/caller functions.
+M226 FUN_005fb1a5 = row vtable 0x67194c slot +0x30 (4202 B, 1000 insns): 14 `add ecx,0x444` receiver switches to the CPane subobject, exactly 1 indirect call `call [edx+0x14]`, reads the groups as indexed arrays `[reg+reg*4+0xabc]`/`+0xac8` plus 0x98/0xa7c/0xa88/0xa8c, and calls the text/label emitters FUN_005dd09c x5 / FUN_005c153f x5 / FUN_005ca7c3 x4.
+OPEN: who dispatches the dialog's +0x4c (box, unchanged); whether the dialog's +0x3098 list is dead or filled through a field-held pointer (the live container in that block is obj+0x2250, a DIFFERENT member); who calls FUN_005f5a11; what the 0x774xxx grid holds and who reads it via [obj+0xb24]; the 17 writers of the panel's +0x2144 callback; s174e box state unverified; M181 still a LEAD.
