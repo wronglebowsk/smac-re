@@ -25,10 +25,10 @@ go 1 per batch). The binding cap is doc headroom, not capability.**
 
 ## BUILD TRACK — every 4th fire builds (added s187; full text moved VERBATIM to `docs/pick-archive.md` at s194)
 
-`python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. **BUILD** ⇒
-build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance command, parity against a recorded trace,
-never a census claim, no box time, no `/proc`, no gdb), title the commit and PR `B<n>`, and the box-debt pre-step
-does NOT apply; **ANALYSE** ⇒ pick from this file exactly as usual.
+`python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
+build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census
+claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`); ANALYSE
+⇒ pick from this file exactly as usual.
 
 ## THE LEDGER
 
@@ -63,20 +63,17 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s196 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
-  **M242**, **M243**, **B2**, **M244** (`PASS M244: 5/5 gates`, `python3 scripts/m244_save_tail.py`,
-  17 saves + planet.MP + planetx.MP): the map "trailer" IS the coarse region map (length
-  `((Rw+1)/2)*Rh`, `Rw=(W+4)/5`, 91/128/338 at 64/80/128); the count-prefixed block is the 8-B
-  base-site event log [type, faction, turn, x, y], base **+4 = current owner**, **+5 = previous**;
-  the tail is 256 | 152 | 10,144 | 20 | 216 | 8 | 4 = 10,800 (B2's `+220 +12` split RETRACTED).
-  M244's numbers VERBATIM in `docs/pick-archive.md` §s197, B2's walk detail in §s196, per-id claims in
-  `NAMED.md`. Headline: the save codec is `FUN_00597ce0` → `FUN_00596850` (one codec both directions),
-  7 dead legs = 7 dead twins. **M245/M246/M247** (`PASS M245: 5/5 gates`, `sudo -n python3
-  scripts/m245_tail_legs_census.py`, 17 saves + 2 .MP + /proc): the 216-B leg is the 9 map-view
-  objects' display state (id, active flag, bit flags, a −6 constant, CENTRE TILE); the trailing 4 B is
-  the `timeGetTime()` dword `FUN_00597ce0` writes after the codec (Δ == Δmtime on 5/5 same-session
-  pairs); the region-map accessors use `Rw>>1` where alloc/file use `(Rw+1)/2` ⇒ bytes 79..90 never
-  written, `0xcd` 17/17.
+- ANSWERED (do not re-pick): s187-s197 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**, **B2**, **M244** (`PASS M244: 5/5 gates`), **M245/M246/M247** (`PASS M245: 5/5
+  gates`, `sudo -n python3 scripts/m245_tail_legs_census.py`, 17 saves + 2 .MP + a live /proc read):
+  the map "trailer" IS the coarse region map (`((Rw+1)/2)*Rh` = 91/128/338 at 64/80/128) and its two
+  accessors index with stride `Rw>>1`, so bytes 79..90 are never written (`0xcd` in 17/17 saves); the
+  count-prefixed block is the 8-B base-site event log (base +4 = current owner, +5 = previous); the
+  tail is 256|152|10,144|20|216|8|4 = 10,800 (B2's `+220 +12` RETRACTED), its 216 B are 9 map-view
+  objects' state (id, active flag, bit flags, −6 constant, CENTRE TILE) and its last 4 B are a
+  `timeGetTime()` save-CREATION stamp. Headline: the codec is `FUN_00597ce0` → `FUN_00596850` (one
+  codec both directions), 7 dead legs = 7 dead twins. Numbers VERBATIM: `NAMED.md` per-id,
+  `docs/pick-archive.md` §s196/§s197.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B3** — turn engine — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
