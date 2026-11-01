@@ -1,39 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-171-171.md` (3 sessions). Read it only when a question reaches back before session ## Session 171.
-
-## Session 171 (cont. 24) — M166-M168 (all PASS): what the rank is, how the struct splits, and a derived cache
-
-`python3 scripts/m166_m168_roles.py` — SUMMARY M166=PASS M167=PASS M168=PASS.
-
-- **M166 — the rank is consumed as an ORDERING TEST.** 0x94d434: 196 refs of which **92 are `cmp`**, against small
-  constants **2/4/5/6/7**; the ranking INPUT is the 7-entry dword table at **0x926a7c**, read by only two functions (the
-  init loop in FUN_0059aa00 and FUN_00531df0 at 0x532150), and the top entry is EXCLUDED by the single `-1` store at
-  0x59ac72 into `0x926a78+n*4`. So the shape is: an order among 7 candidates, one discarded, the result compared
-  against small thresholds. **What is being ranked stays unnamed** — recorded as bounded.
-- **M167 — the 20-byte struct SPLITS into a header + a payload quad.** All five members have exactly 6 writes, but the
-  WRITER SETS differ: `+0x00` is written by FUN_004dc100 (x3) and FUN_0059ec90 (x3) with constants 0/1/0xffffffff and
-  carries 7 tests, while `+0x04/+0x08/+0x0c/+0x10` share the SAME five writers (FUN_004dc100, FUN_00510230,
-  FUN_00512b40, FUN_00516b80, FUN_0059ec90 x2). Uniformity would have shown one writer set for all five; it does not.
-- **M168 — 0x94d488 is a DERIVED/CACHED value, not state.** 22 writes spread over **9 functions** against 49 refs and a
-  single comparison. That is the write-dominant profile (cf. base+0xd0 credit, M97): many paths recompute it, so a test
-  that treats it as authoritative state is reading whichever path ran last.
-
-## Session 171 (cont. 25) — M169-M171 (all PASS): the totalled table, the aggregator, and a bit-decoder dressed as a struct
-
-`python3 scripts/m169_m171_aggregate.py` — SUMMARY M169=PASS M170=PASS M171=PASS.
-
-- **M169 — 0x926a7c is TOTALLED, not flagged.** Its second reader (FUN_00531df0, 0x532150) runs inside a per-faction
-  loop that walks the blocks at stride **0x20bc (8,380)** while stepping the table index by 4, doing
-  `ds:0x9204ac++` and `ds:0x9204c4 += [eax+0x926a7c]` — a COUNT and a SUM. So the array M163 ranks is a per-faction
-  quantity being totalled across factions.
-- **M170 — FUN_00531df0 is the per-faction AGGREGATOR** (6459 B, 1905 insns, 17 call sites): it builds a `1<<faction`
-  mask (`shl edi,cl`), gates on **`cmp [ebx+0x94d434],0x5`** — the M163 rank used as a `< 5` threshold, exactly what its
-  92 comparisons predicted — and accumulates the count/sum above (plus 0x920720 / 0x9204c8 counters).
-- **M171 — FUN_004dc100 is a BIT-DECODER, not a copier.** One byte arrives in AL and the "20-byte struct" is filled as
-  **four BOOLEAN dwords**: `[esi+0x94d810/14/18/1c] = setne(al & 1/2/4/8)` (four `setne dl`), the header
-  `[esi+0x94d80c]` gets the TRISTATE 1 / -1 / 0 from the `al & 0x10` / `al & 0x20` tests, and `al & 0x40` triggers
-  `or [esi+0x94d430],0x800000`. M164's "header + payload quad" is the decoded shape of ONE SOURCE BYTE's bits.
+Older sessions: `docs/sessions/sessions-171-171.md` (2 sessions). Read it only when a question reaches back before session ## Session 172.
 
 ## Session 172 (cont. 26) — M172-M174 (all PASS): the "bit-decoder" is a SAVE-SECTION WRITER, and the aggregator's counters have three consumers
 
@@ -476,3 +443,13 @@ M224 FUN_00459bb0 (1722 B): 1 call site 0x45a755 (in FUN_0045a740, 56 B, 1 calle
 M225 FUN_005f90d7 (slot +0xa8 of exactly 0x671d94) dispatches 7x: [reg+0xb8] x2 on the link neighbours it unlinks (2 `mov [eax+0xa2c],edx` relinks, `mov [eax+0xa38],0x0`, `mov [eax+0xa3c],0xffffffff`), [reg+0x5c] then [reg+0x1c], [reg+0xf0], and [reg+0x2144] x2 — the max vtable slot over 188 vtables is 0x178, so +0x2144 is the panel's own last FIELD: 54 sites, 17 writer functions, 7 reader/caller functions.
 M226 FUN_005fb1a5 = row vtable 0x67194c slot +0x30 (4202 B, 1000 insns): 14 `add ecx,0x444` receiver switches to the CPane subobject, exactly 1 indirect call `call [edx+0x14]`, reads the groups as indexed arrays `[reg+reg*4+0xabc]`/`+0xac8` plus 0x98/0xa7c/0xa88/0xa8c, and calls the text/label emitters FUN_005dd09c x5 / FUN_005c153f x5 / FUN_005ca7c3 x4.
 OPEN: who dispatches the dialog's +0x4c (box, unchanged); whether the dialog's +0x3098 list is dead or filled through a field-held pointer (the live container in that block is obj+0x2250, a DIFFERENT member); who calls FUN_005f5a11; what the 0x774xxx grid holds and who reads it via [obj+0xb24]; the 17 writers of the panel's +0x2144 callback; s174e box state unverified; M181 still a LEAD.
+
+## Session 187 (2026-11-01, M227-M230, static; box re-verified, no box milestone)
+
+`python3 scripts/m227_m230_mirrors.py > evidence/m227_m230_mirrors.txt` -> `SUMMARY M227=PASS M228=PASS M229=PASS M230=PASS (12/12 gates)`, rc 0, 10,083 B (`evidence/m227_m230_mirrors.txt:41`). Invocation #1 11/12: the FUN_0041f450 store census filtered `startswith("mov dword ptr [") and endswith("+0xb24]")`, which misses every store whose VALUE is the last token (`mov dword ptr [ebx+0xb24],0x774c0c`); fixed to `^mov dword ptr \[[a-z]+\+0xb24\],`. No threshold or claim changed. Box RE-VERIFIED (read, not poked): `sudo -n python3 scripts/smac_preflight.py` -> PASS on all 14 invariants (terran.exe 319926 TracerPid 0, year 2153, cur_player 3, mask 0xff08, 18 bases / 72 units, University Base (28,42) pend 0 head 2, 6 ours 0 actionable): the s174e "unverified" flag is CLOSED. M181 got no trigger this fire - still a LEAD, box time owed.
+
+- **M227** 0x3098 = 18 insns: 8 MEMBER + 10 frame slots `[ebp-0x3098]`. In FUN_0058dfd0/FUN_0058e2b0 the slots ARE the members through a stack base: each stores PANEL vtable 0x671d94 at [ebp-0x3098], DIALOG vtable 0x6717cc at [ebp-0x62c8] and calls ctor FUN_00405ef0, so base = ebp-0x62c8, +0x3230 = ebp-0x3098 (panel, M221) and +0x3098 = ebp-0x3230 (THE LIST), where each frame does `lea ecx,[ebp-0x3230]` -> `call 0x5e7665`. All 8 member takes reach {call 0x5e7665 x4, jmp 0x5e7665 x1, call 0x5e764f x1, call 0x5e7678 x1, call 0x5e7917 x1}, 0 an appender: the dialog's 10-item list is allocated, cleared, reset, scanned and NEVER appended image-wide.
+- **M228** +0x2144: 54 refs, 24 stores = 10 zero + 3 sentinel 0xffffffff + 11 register, 0 with a text-range immediate; provenance {frame-slot 8, .rdata 0x689f88 table load 1, 0x7543d8 table-slot lea 2}. Exactly 3 callers, 6 `cmp ,0x0`-guarded calls: FUN_005f86ad = 0x671d94+0x48, FUN_005f882f = +0x60, FUN_005f90d7 = +0xa8 - all panel vmethods. The 3 sentinel writers load first (4/1/1): read-and-invalidate.
+- **M229** [obj+0xb24]: 25 refs = 12 stores in 6 fns + 12 loads in 5 fns + 1 `cmp ,0xffffffff`. **RETRACTS M224's "9 other functions load [obj+0xb24]" -> 5** (FUN_0042d2c0, 00488e80 x5, 004893e0 x2, 004894c0 x3, 00612c4c). 0 reference 0x774xxx; 1 load indexes the 0x2c-stride table at 0x7543d8 (index*44), 10 are pushed to callees. FUN_0041f450's 5 stores = {0x774c0c:4, 0x774a80:1}; grid file offset 0x374c38 > len(terran.exe) 0x2ed000 = BSS, 99 dwords 0. 0xb24 is a COLLISION: a page address for one owner, a slot index for the loaders' owner.
+- **M230** FUN_00455c70 (88 B, 33 insns, 0 stores) is a trampoline: {0x5dbdc0:1, 0x5e3412:2}, each preceded by `mov ecx,[ebp+0x8]` (arg1 = the callee's this), injecting {0x109:3, 0x107, 0x106, 0x792a30, 0x0}; 15 sites in FUN_00459bb0 pass 11 distinct BSS buffers + 4 registers, 0 inside the grid. The 0x45a320..0x45a6e0 run = 21 functions, 9 pair publishers writing (0x99aa9c+4i, +0x24), i=0..8.
+OPEN: who dispatches +0x4c (box); who calls FUN_005f5a11; what the 9 grid entries hold, who writes the 0x7543d8 table and the 0x99aa9c..0x99aae0 pairs; M181's control (box).

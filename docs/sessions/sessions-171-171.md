@@ -3,59 +3,35 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
-## Session 171 (cont. 21) — M133-M142, ten censuses, all PASS (`scripts/m133_m142_census.py`)
+## Session 171 (cont. 24) — M166-M168 (all PASS): what the rank is, how the struct splits, and a derived cache
 
-SUMMARY M133=PASS ... M142=PASS (evidence/m133_m142.log). Highlights with numbers:
+`python3 scripts/m166_m168_roles.py` — SUMMARY M166=PASS M167=PASS M168=PASS.
 
-- **M133** FUN_00542ea0 (1456 B, 341 insns, 28 callees) is the chooser's dispatch key; its ONLY call site is 0x54eaeb.
-- **M137** its index arithmetic at 0x542ed9-0x542eed folds to **359 dwords = 1436 BYTES**: `lea [esi+esi*4]` (5v) ->
-  `lea [eax+eax*8]` (45v) -> `shl 3` (360v) -> `sub esi` (359v) -> `shl 2` (1436) -> `mov ecx,[eax+0x927590]`.
-  **1436 is exactly M104's record-block stride** (0x927a9c+fac*1436) — same per-faction record family, base 0x50c lower.
-  The decompiler's `param_1*0x167` is an ELEMENT index, not a byte stride.
-- **M134** ds:0x920700 = UI state code: 31 refs / 8 writes, tested vs 6, 8, 0xd, set to 0xc by chooser case 7.
-- **M135** ds:0x94d7fc (per-faction) = counter with **-1 = unset** (8 writes incl. 0xffffffff); its `jl` at 0x5aafd8 is
-  the OTHER half of the band-flag skip that M124 named.
-- **M136** ds:0x927a78: exactly 2 refs, both inside FUN_0059ec90 -> an input of the advance-budget routine (bounded).
-- **M138** 0x94d650 / 0x94d654 = accumulator + per-step companion (261/34 vs 13/2 refs/writes).
-- **M139** ds:0x91c630 = upkeep-synch counter (27 of 34 refs in FUN_00521070; incremented at 0x5213c6 after the second
-  "Skipping upkeep synch").
-- **M140** ds:0x985afc = read-dominant (336 refs / 5 writes) -> run state, NOT a counter; meaning unnamed.
-- **M141** FUN_00495480 (21 insns) = cached-flag getter with a null guard -> the `and eax,0x20` at 0x49772a tests a
-  cached field's bit; 0 means "no cache object", not "flag clear".
-- **M142** FUN_004026b0 (201 B, `ret 4`) = the LIST SEEK: rejects index >= [obj+0x10], walks nodes via [node+0xc] /
-  [node+0x10], stores the cursor at **[obj+0x14]** — the mechanism behind M128's pre/post-seek pair.
-Law added: a decompiler's `arr[i*N]` is an ELEMENT index; multiply by the element width before calling it a stride.
+- **M166 — the rank is consumed as an ORDERING TEST.** 0x94d434: 196 refs of which **92 are `cmp`**, against small
+  constants **2/4/5/6/7**; the ranking INPUT is the 7-entry dword table at **0x926a7c**, read by only two functions (the
+  init loop in FUN_0059aa00 and FUN_00531df0 at 0x532150), and the top entry is EXCLUDED by the single `-1` store at
+  0x59ac72 into `0x926a78+n*4`. So the shape is: an order among 7 candidates, one discarded, the result compared
+  against small thresholds. **What is being ranked stays unnamed** — recorded as bounded.
+- **M167 — the 20-byte struct SPLITS into a header + a payload quad.** All five members have exactly 6 writes, but the
+  WRITER SETS differ: `+0x00` is written by FUN_004dc100 (x3) and FUN_0059ec90 (x3) with constants 0/1/0xffffffff and
+  carries 7 tests, while `+0x04/+0x08/+0x0c/+0x10` share the SAME five writers (FUN_004dc100, FUN_00510230,
+  FUN_00512b40, FUN_00516b80, FUN_0059ec90 x2). Uniformity would have shown one writer set for all five; it does not.
+- **M168 — 0x94d488 is a DERIVED/CACHED value, not state.** 22 writes spread over **9 functions** against 49 refs and a
+  single comparison. That is the write-dominant profile (cf. base+0xd0 credit, M97): many paths recompute it, so a test
+  that treats it as authoritative state is reading whichever path ran last.
 
-## Session 171 (cont. 22) — M143-M162: the faction-block field atlas (20 rows, one reproducible rule)
+## Session 171 (cont. 25) — M169-M171 (all PASS): the totalled table, the aggregator, and a bit-decoder dressed as a struct
 
-`python3 scripts/m143_m162_atlas.py` -> `docs/field-atlas-faction.md` (3,687 B) + `evidence/m143_m162_atlas.log`,
-SUMMARY PASS. Selection rule is mechanical, not cherry-picked: count every `+0x94dXXX` displacement in the objdump
-(**150 distinct**), take the 20 with the most references, and record per row: refs, writes, shape, constants written,
-values tested, top containing functions, and whether the address text appears in NAMED/archives.
+`python3 scripts/m169_m171_aggregate.py` — SUMMARY M169=PASS M170=PASS M171=PASS.
 
-Top of the atlas: **0x94d448 653 refs / 27 writes / 139 functions** (the faction flag word M129's bit 0x8000000 lives in),
-0x94d650 261/34 (the M138 accumulator), **0x94d434 196 refs but only ONE write** (a nearly-const field — 196 readers of a
-value the game sets once), 0x94d430 168/18 (the band-flag word), 0x94dc84 89, 0x94d80c 78, 0x94d468 75, 0x94d438 72,
-0x94d78c 72 (M123), 0x94d81c 62, 0x94d554 57, 0x94d734 57, 0x94d758 51 (12 writes, one const 5), 0x94d488 49/22,
-0x94d7fc 47 (M135), 0x94d818 46, 0x94d754 44, 0x94d814 42, 0x94d4e8 40, 0x94d4a8 38/26.
-Honesty note baked into the artefact: these are SHAPE entries, not meanings — the table's own legend says a `—` in
-`in NAMED?` means genuinely unnamed, not a gap to fill by guessing. Six of the 20 (0x94d434, 0x94d80c, 0x94d468,
-0x94d81c, 0x94d554, 0x94d734, 0x94d754, 0x94d814, 0x94d4e8, 0x94d4a8) are new to the registry as addresses.
-
-## Session 171 (cont. 23) — archive pass + M163-M165 (all PASS): the once-written rank and two contiguous structs
-
-Footing hygiene first: the s171 pick lines moved verbatim to `docs/pick-archive.md`, so `NEXT_PROMPT.md` is an index
-again (was 15,041/15,500 = 459 B free; now 13321 B). Then three structural answers from the atlas's oddest rows
-(`scripts/m163_m165_structs.py`, SUMMARY M163=PASS M164=PASS M165=PASS):
-
-- **M163 — 0x94d434 is a per-faction RANK, written exactly once.** The single writer at 0x59ac8a sits in an
-  initialisation loop (0x59ac4b-0x59ac94) inside FUN_0059aa00: it scans the 7-dword table 0x926a7c-0x926a98 for the
-  largest entry, stores **-1** in the winner's slot (0x926a78+n*4), then writes `[faction*8380+0x94d434] = ebx` and
-  **decrements ebx** while looping. 196 readers, 1 writer, tests against 2/4/5/6 — that is a rank, not a counter.
-- **M164 — 0x94d80c/10/14/18/1c is ONE 20-byte struct.** **11** (function, base-register) pairs address all five
-  displacements off a SINGLE base (FUN_0040b960, 004dc100, 004e78e0, 004f6030, 00522b70, 0055a940, 00574370 x2,
-  0059ec90 x2), and every member has >30 refs. Five separate fields would have to explain why 11 call sites address
-  them off one register in sequence.
-- **M165 — 0x94d554+0x94d55c is an 8-byte pair** (5 (fn,base) pairs, most in FUN_00546800 with three different bases),
-  while **0x94d488 is separate** (17 base-pairs, shares a base with 0x94d55c in only one function) — so the atlas's
-  neighbouring ref counts are not a layout.
+- **M169 — 0x926a7c is TOTALLED, not flagged.** Its second reader (FUN_00531df0, 0x532150) runs inside a per-faction
+  loop that walks the blocks at stride **0x20bc (8,380)** while stepping the table index by 4, doing
+  `ds:0x9204ac++` and `ds:0x9204c4 += [eax+0x926a7c]` — a COUNT and a SUM. So the array M163 ranks is a per-faction
+  quantity being totalled across factions.
+- **M170 — FUN_00531df0 is the per-faction AGGREGATOR** (6459 B, 1905 insns, 17 call sites): it builds a `1<<faction`
+  mask (`shl edi,cl`), gates on **`cmp [ebx+0x94d434],0x5`** — the M163 rank used as a `< 5` threshold, exactly what its
+  92 comparisons predicted — and accumulates the count/sum above (plus 0x920720 / 0x9204c8 counters).
+- **M171 — FUN_004dc100 is a BIT-DECODER, not a copier.** One byte arrives in AL and the "20-byte struct" is filled as
+  **four BOOLEAN dwords**: `[esi+0x94d810/14/18/1c] = setne(al & 1/2/4/8)` (four `setne dl`), the header
+  `[esi+0x94d80c]` gets the TRISTATE 1 / -1 / 0 from the `al & 0x10` / `al & 0x20` tests, and `al & 0x40` triggers
+  `or [esi+0x94d430],0x800000`. M164's "header + payload quad" is the decoded shape of ONE SOURCE BYTE's bits.
