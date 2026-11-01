@@ -1,6 +1,6 @@
-M178-M180 MERGED #147; #149 split SKILL.md (54.9 KB) + corrected the s174 writer-call claim.
-BOX IS UP: terran.exe 319926, year 2153 round 53, 6 units HELD, TracerPid 0 (read /proc under `sudo -n`:
-yama ptrace_scope=1 refuses a non-ancestor). Nothing in flight.
-M181 lead (inconclusive): ds:0x99aa38 stayed 0 across one boundary; count720/stamp4b0 also 0 = no positive
-control yet. next: arm scratch/m181/pair.py, trigger a save or governor-options OK, re-read; picks in
-NEXT_PROMPT.md THE PICK.
+M178-M184 MERGED (#147/#149/#150 + this PR). BOX UP: terran.exe 319926, y2155, 6 units HELD, TracerPid 0
+(read /proc under `sudo -n`: yama ptrace_scope=1 refuses a non-ancestor).
+M182-M184 PASS (m182_m184_bandrecord.py): 0x99aa1c = base of the 0x41-byte record; packers touch
++0,+4,+0x1c,+0x20; 0x4dc390 is a RESTORER; 0x535c60 = per-faction visit wrapper.
+M181 still a LEAD: needs a positive control (save or governor-options OK) with scratch/m181/pair.py armed.
+next: picks in NEXT_PROMPT.md THE PICK (0x530e30/0x535940, 0x40030 flag, +0x20 dword, 0x4e0260/0x5a2930).

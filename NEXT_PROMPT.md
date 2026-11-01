@@ -66,24 +66,21 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   `test/je` gates exporting [edx+0x94d4a8] -> ds:0x9204b0; 12/17 sites push mode 0. [block+0x94d4a8] is a
   LAST-RUN STAMP vs the round counter ds:0x985afc: 3 callers prime it pre-call (0x533eec/0x53420e/0x534522),
   6 `sub` age tests consume it, and 0x569401 (`cmp edx,0x10; jl`) SKIPS a call when the stamp is fresh.
-- - **s174 (M178-M180, all PASS) named the staging slot.** ds:0x99aa38 is the tagged-record STAGING dword (third
-  field of the ds:0x99aa1c/0x99aa20 pair, 637 stores each): 33 stores in 14 functions, 9 of the 13 outside
-  FUN_0041a8f0 sit directly before `call 0x6267a5` (args: name, size, extra — 7 pass 0x41, TECHRANDOM 0x1) and those names read out of
-  terran.exe as GOVOPTIONS 0x6899ec, ASSEMBLEGROUP 0x68c774, AIEDITOR 0x68c80c, AIEDITOR2 0x68c818, RULES
-  0x68c824 + 0x691e30, SCENRULES 0x68c82c, SCENVICTORY 0x68c838, TECHRANDOM 0x68db28, EDITVEH 0x68c87c (the
-  exe's record-type NAME table - not file bytes). FUN_00518c50 = set/clear scratch BIT (arg1 index). Band =
-  scratch bits 0..17 (FUN_0041a8f0 18); FUN_004dc5f0 == FUN_0057c550 unpack leg-for-leg 18/18; FUN_004dc100
-  packs the M164 struct with 0x94d80c as a SIGN PAIR. ds:0x920720 = the aggregator's bit-25-CLEAR count (AI-hub
-  loop bound + two `cmp ,0x2` gates); ds:0x9204b0 = the stamp export, age-tested as ds:0x985afc - stamp.
-  Detail: NAMED.md M178-M180 + evidence/m178_m180_scratchband.txt.
-- **M181 lead (live, INCONCLUSIVE):** across one boundary (round 52->53, year 2152->2153) `ds:0x99aa38`
-  stayed 0 — as M178 predicts for a UI writer — but `ds:0x920720` / `ds:0x9204b0` were also 0, so the
-  aggregate pass had nothing to do and there is no positive control yet. Next: arm
-  `scratch/m181/pair.py`, trigger a save or governor-options OK, re-read.
-- Pick from: what the SAME writer calls put in ds:0x99aa1c / ds:0x99aa20 (the staging pair's other two fields);
-  the whole-value writers (FUN_004d9ae0 12-iteration bit loop, FUN_004dc390 12-leg RESTORER, FUN_004dde00,
-  FUN_00512b40) vs the leg packers; FUN_0053a9c0's use of the count (it reads 0x9204ac and 0x920720 together at
-  entry); who calls FUN_00535c60; the save-band siblings 0x4e0260 / 0x5a2930 (what each writes).
+- - **s174 band map (M178-M184, all PASS):** `ds:0x99aa38` is field **+0x1c of the 65-byte record at
+  `ds:0x99aa1c`**; 33 stores / 14 functions, 9 feed `call 0x6267a5` (name, size 0x41 x7 / 0x1 x2);
+  the 13 packers touch only +0, +4, +0x1c, +0x20 and +0xc..+0x18 belong to the emitter FUN_00626b46;
+  the four whole-value writers are NOT packers (0x4dc390 = 17-test RESTORER, 0x4d9ae0 = a 12-iteration
+  `shl edx,cl` copy, 0x512b40 drives FUN_00518c50 by index); `FUN_00535c60` = per-faction visit wrapper
+  (3 sites / 2 owners, calls 0x531df0 -> 0x530e30 -> 0x535940, then `[eax*4+0x94d448] & 0x40030`).
+  GOVOPTIONS = FUN_0041a8f0; `ds:0x920720` = bit-25-clear count; `ds:0x9204b0` = stamp export.
+  Detail: NAMED.md M178-M184 + evidence/m178_m180_scratchband.txt, m182_m184_bandrecord.txt.
+- **M181 lead (live, INCONCLUSIVE):** `ds:0x99aa38` stayed 0 across THREE boundaries (round 52->55) - as
+  M182 predicts for a UI/scenario field - but `ds:0x920720`/`ds:0x9204b0` were also 0, so no positive
+  control yet. Next: arm `scratch/m181/pair.py`, trigger a save or governor-options OK, re-read.
+- Pick from: what 0x530e30 and 0x535940 (the two sub-passes 0x535c60 calls) do; the 0x40030 flag test in
+  0x535c60 (who sets it); the record's +0x20 dword (0x99aa3c, 5 stores) and the +0x0/+0x4 payload
+  sources; FUN_0053a9c0's use of the count (reads 0x9204ac + 0x920720 at entry); the save-band
+  siblings 0x4e0260 / 0x5a2930 (what each writes).
 ## LIVE FACTS / KIT
 
 - **BOX IS UP at s174 close:** terran.exe 319926, year 2153 round 53, University Base (28,42), 6 units
