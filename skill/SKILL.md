@@ -86,7 +86,10 @@ to turn it green is the one thing that is never allowed.
 headline, and a milestone often opens as "BLOCKED / not accepted" and only resolves later in the same branch —
 the merged title then contradicts the merged commits, and the next session reads the title first. When that
 happens, land a small docs PR that states the correction (cursor, ledger row, one line saying the title
-predates the result) instead of leaving two versions of the truth on `main`.
+predates the result) instead of leaving two versions of the truth on `main`. The same rule covers a QUALIFICATION:
+when a later session narrows an earlier finding, patch that finding's own registry block (`NAMED.md`) in place — a
+retraction that lives only in `SESSION_NOTES.md` leaves the block future sessions grep still asserting the older,
+stronger claim, and the registry is what they read first.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
 `NEXT_PROMPT.md` (<=15,500 CHARS — `evidence.py budget` counts chars, `wc -c` disagrees). `scratch/` is gitignored: scratch probes and one-off tools are
 NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
@@ -138,6 +141,9 @@ milestone per merge and three acceptance invocations, not one question per step.
   batch size — a green three-milestone batch can end a session 30 B from the cap.
 - Two sessions can share this repo: commit notes/NAMED/scripts EARLY, keep untracked deliverables outside the
   worktree, and name the owner from the process table before arming a measurement.
+- Scheduling the loop to run unattended: copy `templates/cron-milestone-loop.md` — a cron prompt validated end to end
+  (takes the pick from `NEXT_PROMPT.md`, triages doc caps first as its own PR, proves ownership before arming, caps
+  the batch, merges only on a real PASS). Cadence and the "verify the fire" rules ride with it.
 
 
 ### Verify the OUTCOME, not the mechanism
@@ -150,6 +156,15 @@ shape where your model and the null agree on every candidate, and read the effec
 adjacent to the sentence stays green while the doc drifts, and the correction then costs its own PR. Put the
 number into the assertion FIRST (print the table, `assert len(...) == N`), then write the sentence from the
 printed table — never from the draft prose.
+**And derive that number from the SAME parser that produces the claim, after any fix to that parser.** A hand
+census or a second tool yields a gate that FAILs on correct evidence: a caps-blind grep counted 28 stores where the
+parser counts 33, and a draft's "12 scratch tests" became 17 once the parser's byte-op shift was fixed — both times
+the parser was right and the number was the draft's. **Never assert an exact sorted list or exact count over a
+whole-function window**: a duplicate of the same idiom further down a 5 KB body satisfies any set check and breaks
+an equality check (a second `shl eax,0x4` did), so assert on the first N or on the window between two known
+addresses and PRINT the whole table so an excess is visible. **A "makes no calls / has no writer / never fires"
+claim needs the WHOLE function body** — a `POS[a]:POS[a]+N` slice is how "zero calls" was asserted for a function
+that makes ten, one of them the emitter carrying the finding.
 **Publishing rule (§Publishing rule): one instrument is a lead, never a finding** — pair it with one that can fail
 DIFFERENTLY (a byte sum vs a poke-and-scan, a log vs a live read-back), assert the state the run leaves behind
 (`TracerPid`, counts, armed count) rather than its exit code, and pre-register the falsifier.
@@ -567,7 +582,11 @@ distinguishable from "mechanism refuted".
 **Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
 count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH". **To name who writes a field, use a hardware watchpoint on the address PLUS a
 control watchpoint on an address you know changes** — a mnemonic grep misses stores made through
-pointer-form `lea`. **A gdb census >90 s goes through `terminal(background=true)` + `process_manage
+pointer-form `lea`; the static half of the same trap is to **classify each store by how its SOURCE register was
+computed** — scan back for `or`/`and`/`lea` on that register before writing "assigned, never bit-set". Twenty-three
+of twenty-seven memory-form `mov [reg+0x94d448],reg` stores were the write half of a register-level bit RMW, so the
+field IS bit-set and only the four whole-value assignments (one a `lea`) can deliver an untouched bit: a store-shape
+census sees the operand, never the provenance. **A gdb census >90 s goes through `terminal(background=true)` + `process_manage
 wait` loops: the foreground caps at 420 s and killing a census mid-run leaves Wine hung (round frozen
 after detach too) — recover via `m54a_load --relaunch`. Pair store-readback probes by EVENT ORDER
 (RB follows ST); a {addr: last-mem} dict mis-pairs an address re-written later in the window; and
