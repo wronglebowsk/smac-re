@@ -273,9 +273,11 @@ def m195(L):
     for pc, s in body("FUN_00544530"):
         mn, o1, o2 = ops(s)
         if mn == "mov" and ismem(o1) and not o1.strip().startswith("[ebp"):
-            m = re.search(r"0x(9[0-9a-f]{6})", o1)
-            if m:
-                g544["0x" + m.group(1)] += 1
+            # the data globals are 6 hex digits (0x920700), not 7 - a 7-digit regex finds none of them
+            for t in re.findall(r"0x([0-9a-f]{6,8})", o1):
+                v = int(t, 16)
+                if 0x900000 <= v < 0x9C0000:
+                    g544["0x%06x" % v] += 1
     namedtxt = open(os.path.join(ROOT, "NAMED.md"), errors="replace").read()
     hits = [(g, n, g in namedtxt) for g, n in g544.most_common(12)]
     print(f"   FUN_00544530 absolute-global stores: {dict(g544.most_common(12))}")
@@ -291,12 +293,12 @@ def m195(L):
        f"it is a MODE CODE, not a flag: every test compares a VALUE (no mask), the tested set is "
        f"{sorted(hex(v) for v in union)} - {len(union)} distinct values up to {hex(max(union))}, including the 0x2 "
        f"that gates FUN_0053a9c0 at 0x545cfa - and the live value is {hex(L['mode'])}")
-    ok("M195c", all(lit[n][1] == 0 for n in names) and argtest >= 1,
+    ok("M195c", all(lit[n][1] == 0 for n in names) and argtest >= 1 and g544.get("0x920700") == 7,
        f"NOBODY names it: the four functions that write or test it contain ZERO string literals "
        f"({', '.join(f'{n}:{lit[n][1]}' for n in names)}); the mode is identified only structurally - FUN_00544530 is "
        f"a {len(body('FUN_00544530'))}-insn dispatcher that takes the value as a parameter ({argtest} tests of "
-       f"[ebp+0x8]) and stores it 7 times, alongside globals NAMED.md already carries "
-       f"({', '.join(g for g, _, _ in hits[:5])})")
+       f"[ebp+0x8]) and stores it 7 times; its 0x9xxxxx store set is {dict(g544.most_common(8))}, of which "
+       f"NAMED.md already names {', '.join(g for g, _, h in hits if h)})")
 
 
 # ------------------------------------------------------------------ M196

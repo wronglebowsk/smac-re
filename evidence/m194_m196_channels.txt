@@ -60,11 +60,11 @@ M195 0x920700: 31 mentions = 8 stores / 17 loads / 6 direct tests / 0 other form
    FUN_00546800: decompiled body 0 lines, 0 string literals
    FUN_00540390: decompiled body 0 lines, 0 string literals
    FUN_00545c50: decompiled body 0 lines, 0 string literals
-   FUN_00544530 absolute-global stores: {}
-   of its top globals, already named in NAMED.md: 
+   FUN_00544530 absolute-global stores: {'0x997120': 28, '0x99aa20': 14, '0x99aa1c': 14, '0x920700': 7, '0x920748': 3, '0x92077c': 3, '0x920728': 3, '0x9206fc': 2, '0x991e24': 2}
+   of its top globals, already named in NAMED.md: 0x997120x28, 0x99aa20x14, 0x99aa1cx14, 0x920700x7, 0x92077cx3
 M195a  PASS - the mode word has EXACTLY TWO writers and no read-modify-write form anywhere: 31 mentions = 8 stores / 17 loads / 6 tests / 0 other (no inc/dec/add/and/or/xor on it); FUN_00544530 x7 (stores ebx/eax) and FUN_00546800 x1 (the only immediate store, 0xc at 0x54ec5c)
 M195b  PASS - it is a MODE CODE, not a flag: every test compares a VALUE (no mask), the tested set is ['0x1', '0x2', '0x4', '0x5', '0x6', '0x7', '0x8', '0x9', '0xa', '0xb', '0xc', '0xd'] - 12 distinct values up to 0xd, including the 0x2 that gates FUN_0053a9c0 at 0x545cfa - and the live value is 0x0
-M195c  PASS - NOBODY names it: the four functions that write or test it contain ZERO string literals (FUN_00544530:0, FUN_00546800:0, FUN_00540390:0, FUN_00545c50:0); the mode is identified only structurally - FUN_00544530 is a 1531-insn dispatcher that takes the value as a parameter (2 tests of [ebp+0x8]) and stores it 7 times, alongside globals NAMED.md already carries ()
+M195c  PASS - NOBODY names it: the four functions that write or test it contain ZERO string literals (FUN_00544530:0, FUN_00546800:0, FUN_00540390:0, FUN_00545c50:0); the mode is identified only structurally - FUN_00544530 is a 1531-insn dispatcher that takes the value as a parameter (2 tests of [ebp+0x8]) and stores it 7 times; its 0x9xxxxx store set is {'0x997120': 28, '0x99aa20': 14, '0x99aa1c': 14, '0x920700': 7, '0x920748': 3, '0x92077c': 3, '0x920728': 3, '0x9206fc': 2}, of which NAMED.md already names 0x997120, 0x99aa20, 0x99aa1c, 0x920700, 0x92077c)
 M196 0x94d448: 653 mentions; 466 scaled [reg*4+disp], 185 [reg+disp], 2 other
    index-register provenance of the scaled sites: 365 = 'add <sub-index>' AFTER a >=3-op fold chain on the SAME register (the 2095-block fold), 3 other def after a fold, 93 def with no fold in 40 insns, 5 no def in 40 insns
    297 scaled tests, mnemonics {'test': 297}; 29 distinct numeric operands (widest 5 bits: 0x40c30); operands that are address candidates (in 0x400000-0x7fffffe with >1 bit set): []
