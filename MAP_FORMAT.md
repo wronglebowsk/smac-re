@@ -66,13 +66,13 @@ are flag bytes; bytes with many distinct values are numeric fields.
 
 | off | distinct | shape | working name |
 |---|---|---|---|
-| 0-1 | 42 / 120 | numeric | elevation / altitude (u16?) |
-| 2 | 38 | small enum | terrain type |
+| 0-1 | 42 / 120 | numeric | elevation / altitude (u16?); byte 0 = `(cat<<5) + low5` with cat ∈ 0..6 and low5 ∈ {0,1,2,8,9,10,16,17,18}; cats 1-6 are 100 % land, cat 0 is 59/3259 (`evidence/b1_selftest.txt:3-4`) |
+| 2 | 42 / 44 | **two nibbles** | high = terrain type (all 16 values used in both maps, no gaps), low = owner player index, `0xf` unowned, never 8..14 (`evidence/b1_selftest.txt:6-7`, `:10-11`) |
 | 3 | 33 | enum | terrain subtype / vegetation |
 | 4 | 6 | `00 10 12 02` | flags (rocky?) |
 | 5 | 6 | `00 40 80 10` | flags (road?) |
 | 6 | 7 | `00 80 20 a0` | flags |
-| 7 | **6** | `ff`×3,200 / `00`×3,180 | **river / border mask** — half the map |
+| 7 | **6** | `ff` ×3,200 (planet) / ×8,192 (planetx) | **land marker** — cells with `+7 == 0xff` number exactly the header's land-cell word (word 5) in both maps (`evidence/b1_selftest.txt:8`, `:12`); the other values carry the river/border bits, still unnamed |
 | 8 | 9 | `00 20 10 80` | flags |
 | 9-14 | 8-11 | flags | bonus-resource / supply-pod / landmark ids |
 | 15 | **141** | `ff`×2,728 | **ownership or landmark index** (only one with 141 values) |
@@ -103,3 +103,17 @@ sparse per-cell list rather than a fixed struct. Consumers: the third read in `F
 the **save/scenario** path. The `.MP` map grid is read raw, 22 bytes per cell, with no decoder.
 The earlier "5,459 bytes unaccounted" figure came from adding those blocks against the map file size;
 it is not a gap in the map format, it was a gap in my reading.
+
+## The file cell vs the live terrain record — OPEN (s190, build rung B1)
+
+`sim/map.py` re-derives the grid independently of `scripts/decode_map.py`, and `python3 -m sim.selftest`
+measures the cell fields over **both** shipped maps (`evidence/b1_selftest.txt`). Two things follow:
+
+1. **byte 2 is two 4-bit fields, not one enum.** High nibble = terrain type (0..15, all used, both maps);
+   low nibble = owner (only 0..7 and 0xf ever appear; 0xf = unowned). That is why reading it as a single
+   enum under-counted it as "38 distinct".
+2. **the file's category field is not the live one.** `cell+0 >> 5` takes 7 values and cats 1-6 are **100 %
+   land**, cat 0 is 59/3259 land — while the live record's `rec[0] & 0xe0` is documented as "ocean iff < 0x60"
+   (FOOTING.md), which would make cats 0-2 ocean. The grid is 140,800 B and the live array is 3,200 records
+   x 0x2c = 140,800 B, so the sizes match; the transform that repacks a 22-byte file cell into the 44-byte
+   record — and rewrites byte 0 — has no name and no owner function yet. Census pick, not a build rung.

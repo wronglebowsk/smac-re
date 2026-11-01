@@ -37,7 +37,8 @@ one tracer per task, the candidate table for "who wrote these bytes with no stor
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
 `screen-read.md` (why ONE OCR pass is not a screen read: the HUD's two rows, their measured read
 rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-formats.md`,
-`ghidra-batch-export.md`, `terraforming-order-path.md`. `session-discipline.md` (budget, closing order, handoff procedure). `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
+`ghidra-batch-export.md`, `terraforming-order-path.md`. `session-discipline.md` (budget, closing order, handoff procedure,
+and how to SHADOW-RUN the cron loop by hand and judge whether a fire behaved as intended). `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
 need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
 **Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move.
 The same rule kills NEGATIVE claims: before writing "no code uses constant X", grep the docs' size/offset lists for X AND its near neighbours — a documented 152-B leg is 156 minus a 4-byte field, so an exact-value grep for 156 supports a conclusion that is one subtraction wrong. Then confirm the candidate leg by reading its DESTINATION in `/proc` and comparing content, not by its size (`references/instrument-laws.md` §Proving a read leg).
@@ -127,8 +128,11 @@ milestone per merge and three acceptance invocations, not one question per step.
 
 ### Budget, closing order and doc caps — depth: `references/session-discipline.md`
 
-- Budget by TOOL CALLS: brief+accept <= 6, milestone 6-30, **checkpoint commit at ~25**, stop measuring at
-  30-40, close at 40-50. Cap ACCEPTANCE INVOCATIONS at three; the third failure IS the finding.
+- Budget by TOOL CALLS: brief+accept <= 6, milestone 6-30, **checkpoint commit by ~15**, stop measuring at
+  30-40, close at 40-50. Cap ACCEPTANCE INVOCATIONS at three; the third failure IS the finding. The commit
+  number is measured, not ceremonial: on this loop a fire costs ~5-7 k tokens per call, so a "commit at ~25"
+  rule lands at ~167 k context with NOTHING committed (two fires in a row did exactly that and needed an
+  operator steer); branch + commit the census SKELETON before probing and the same fire saves at ~108 k.
 - Close order, every time: gate GREEN -> notes entry (`patch`) -> **checkpoint commit** -> `NEXT_PROMPT.md`
   rewrite -> submit/PR. Never leave the commit until after the handoff docs.
 - `NEXT_PROMPT.md` <= 15,300 BYTES AT CLOSE — the unattended kickoff's cap-triage trigger. `evidence.py budget`

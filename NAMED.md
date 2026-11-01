@@ -744,3 +744,14 @@ installer FUN_005f3f5b (6102 B), same pointer into all three fields. No bulk cop
 `rep movs` image-wide, 4 in 2 window functions naming only +0x21c0..+0x21d0). ds:0x9977f0 (the handle the
 callback gates on): 2 stores, both absolute, both in FUN_005f1394, 7 loads, live 0x0 — no modal object,
 so the triple is unverifiable from the box until a dialog is open.
+
+## B1 (s190, PASS) — the `.MP` 22-byte cell is TWO nibbles; the file cell ↔ live 44-byte terrain-record transform is unnamed
+
+| field / artifact | finding | conf | evidence |
+|---|---|---|---|
+| cell+2 high nibble | terrain type index: both shipped maps use exactly 0..15, contiguous, nothing above 15 | M — cardinality 16 ASSUMED (a nibble cannot exceed 15, so the range gate can only fail on gaps) | `evidence/b1_selftest.txt:6`, `:10` |
+| cell+2 low nibble | owner player index, `0xf` = unowned; only {0..7, 0xf} ever appear, never 8..14 — the shape M43 pinned live, now seen in the file image on 22,784 cells | M→H | `evidence/b1_selftest.txt:7`, `:11` |
+| cell+7 == 0xff | land marker: the count equals the header's land-cell word (word 5) exactly in both maps, 3200/3200 and 8192/8192 | H (arithmetic identity over two files) | `evidence/b1_selftest.txt:8`, `:12` |
+| cell+0 | `(cat<<5) + low5`, cat ∈ 0..6, low5 ∈ {0,1,2,8,9,10,16,17,18} (two 3-valued fields, bit2 always 0); cats 1-6 are 100% land, cat 0 is 59/3259 | LEAD (printed as `info`, not graded) | `evidence/b1_selftest.txt:3-4` |
+| file cell → live record | the file's cat field is NOT the live `rec[0]&0xe0` category (FOOTING.md: ocean iff <0x60, yet cats 1 and 2 are all-land). Grid 140,800 B = 3,200 live records × 0x2c, so the sizes match; the transform that repacks a 22-byte cell into the 44-byte record is unnamed | OPEN | `evidence/b1_selftest.txt:3-4` |
+| `sim/map.py` `sim/rules.py` `sim/selftest.py` | R1 rung B1: an independent `.MP` decoder whose dims/cells/size/offsets match `scripts/decode_map.py` on both maps + the 45-section alpha.json loader (650 records, none empty) | H (runnable acceptance) | `evidence/b1_selftest.txt:15` |
