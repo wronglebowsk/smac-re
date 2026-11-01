@@ -280,3 +280,26 @@ other mode, and the run then reads like an instrument failure when it is already
    the acceptance FAIL with its numbers, and make the next milestone ONE variable (poke the gate global, or
    enter the mode that sets it) rather than another window on the same state. A path with no live instance
    (`references/code-atlas.md` vptr scan) and a path behind a mode flag are the same finding shape.
+
+## 11. Capture/publish brackets, byte-field captures, and the x8380 fold (s176, M191-M193)
+
+- **A field CAPTURE can be `movsx reg, BYTE PTR [..+disp]`.** A load census filtered on `mov` drops the
+  byte fields, so a capture/publish pair looks asymmetric (16 loads / 8 displacements against 18 stores
+  / 9) and the extra published field reads like an unexplained write. Count `movzx`/`movsx` with the
+  loads before comparing the two runs.
+- **A whole-width store into a flag dword is not automatically a producer.** When the stored value comes
+  from a stack slot with exactly ONE writer - fed by that same field's own load a few instructions after
+  the frame was set up - and exactly ONE reader, which is the instruction right before the store, the
+  site is the PUBLISH half of a snapshot bracket and the write is value-preserving: the field keeps the
+  value it had on entry. Check the slot's writer/reader count before naming which function sets a bit.
+- **The faction-block base has a canonical shape**: `mov r,S; shl r,6; add r,S; lea r,[S+r*2]; shl r,4;
+  sub r,S; add r,C; shl r,2` = `8380*S + 4*C` (2095 dwords folded to bytes, plus a 4*C dword sub-index).
+  Match it by mnemonic-and-immediate shape plus the seed register, then prove two sites address the SAME
+  block by following S and C: on the publish side they are usually reloaded from spill slots - verify
+  each such slot has exactly one writer (the capture-time register) and that nothing writes those
+  registers between the spill and the use.
+- **A "publish primitive" can have >1000 call sites.** Before calling a 0x626xxx routine a save emitter,
+  count its call sites: `0x6267a5` (tagged writer, 18 sites / 17 functions) vs `0x626634` (1584 / 190) -
+  the fan-out separates a serializer from a general publish. A publish takes a slot index plus optional
+  values, where a sentinel (-1) means "use the shared staging globals", so the staging record can be one
+  slot of a table whose other slots are indexed (`0x99a01c + 10*256 == 0x99aa1c`).

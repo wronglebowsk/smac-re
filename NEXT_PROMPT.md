@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 175, 2026-10-31)
+# NEXT_PROMPT.md — footing for the next session (session 176, 2026-10-31)
 
 Structure: this file = RULES + live footing. Detail is on disk: `docs/pick-archive.md` (milestone narrative M90-M123
 + the FULL trap text), `NAMED.md` (semantic registry), `skill/references/instrument-laws.md` (instrument laws). Read
@@ -25,7 +25,7 @@ milestones go 1 per batch.** The binding cap is doc headroom, not capability.
 Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151), M185-M187 (#152),
-M188-M190 (#154), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+M188-M190 (#154), M191-M193 (#157), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
 M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
 `NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
@@ -56,27 +56,32 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **Merged-era footing (s171-s174e, M163-M187, all PASS) is ARCHIVED:** the verbatim milestone lines are
-  in `docs/pick-archive.md` §the s171-s174e milestone lines; per-field semantics in `NAMED.md`; census
-  outputs `evidence/m175_m177_aggcallers.txt`, `m178_m180_scratchband.txt`, `m182_m184_bandrecord.txt`,
-  `m185_m187_visits.txt`; generated field map `docs/field-atlas-faction.md`. The short version of that era
-  (staging scratch `ds:0x99aa1c` + its +0x1c/+0x20 fields, the visit wrapper 0x535c60 and its 0x94d448
-  test, the aggregate scratch RESET 0x535940) is in `NAMED.md` M175-M187 — read it there, not here.
-- **M181 lead (live, INCONCLUSIVE):** `ds:0x99aa38` stayed 0 across THREE boundaries (round 52->55) as a
-  UI/scenario field should, but the controls `ds:0x920720`/`ds:0x9204b0` were also 0 — NO positive control.
-  Falsifier: arm `scratch/m181/pair.py` (2 ms sampler), trigger a SAVE or a governor-options OK; a staging
-  change confirms the writer's trigger, nothing changing anywhere means the address or the sampler is wrong.
-- **s175 (M188-M190, all PASS, `scripts/m188_m190_uses.py`):** FUN_0053a9c0's entry sum `ds:0x9204ac +
-  ds:0x920720 (+1 iff 0x920720 != 0)` is PRIVATE bookkeeping — 43 mentions, 11/11 reads consumed by
-  inc/dec/re-store/cmp/test, 0 pushed, 0 index forms, 4 windows naming 0x94d434/0x985afc; FUN_004e0260
-  writes only the staging pair + `[block(fac)+0] = ds:0x999fa4` (7 records x 0x59c = 1436 B while ebx
-  walks 0x20bc = 8380 B blocks) + 4 emitter calls; FUN_005a2930 writes NOTHING (0 stores, 5 callees, the
-  last gated on `ds:0x920434 == 0`); **23 of the 27 `0x94d448` movs are register-level bit RMWs** (M186's
-  "zero bit-setters" was memory-operand only): 0x20 set at 2 / cleared at 4, 0x40000 set at 2 / cleared at
-  0, and 0x10 NEVER touched — it arrives only via the 4 whole-value assignments (0x52b9c7/0x52b9d0 from
-  `[ebp-0x50]`/`[ebp-0x4c]`; 0x55540a/0x55580f store lea-built addresses).
-- Pick from: 0x530e30's record write (0x626634 at 0x530fc0); M181's positive control (box); the aggregate
-  pass's OUTPUT side (what the 0x9204ac/0x920720 pair is for, if not forwarded).
+- **Merged-era footing s171-s175 (M163-M190, all PASS) is ARCHIVED:** per-field semantics and the
+  milestone lines live in `NAMED.md` (M175-M190) + `docs/pick-archive.md`; census outputs
+  `evidence/m175_m177_aggcallers.txt`, `m178_m180_scratchband.txt`, `m182_m184_bandrecord.txt`,
+  `m185_m187_visits.txt`, `m188_m190_uses.txt`; field map `docs/field-atlas-faction.md`. Read them there.
+- **s175/s176 (M188-M193, all PASS) — the count pair and the output leg are ANSWERED; the rows are in
+  `NAMED.md` M188-M190 / M191-M193.** The short of it: `0x626634` (the callee at 0x530fc0) is NOT an
+  emitter, it is the **10-slot CHANNEL PUBLISH** — guard `arg1 <= 9`, writes `A[slot]@0x999fcc` /
+  `B[slot]@0x999ff4`, zeroes then appends arg2 into the 256-byte text slot `0x99a01c + arg1*0x100`, and
+  a negative arg3/arg4 means "take the staging pair"; `0x99a01c + 10*256 == 0x99aa1c`, so the staging
+  record M178/M182 own IS slot 10 of that table. 1584 sites in 190 functions, every immediate slot in
+  0..9. FUN_0053a9c0's whole global write set is 23 stores to 8 globals; `0x9204ac`/`0x920720` have
+  ZERO stores in it (their only writers in the image are the aggregator 0x531df0) — the pair is consumed
+  and dropped; what survives is `0x9206e4`/`0x920774` (2 of the 15 the reset pass 0x535940 clears) and a
+  return its caller TESTS, at the pass's ONE call site 0x545cfa, gated `ds:0x920700 == 2`. **M192
+  RETRACTS the "0x10 producer" reading of M190:** FUN_0052a720's two `0x94d448` stores are the publish
+  half of an 18-load / 18-store bracket over 9 block fields; both sides compute the base as
+  `8380*S + 4*C` (`mov r,S; shl 6; add S; lea [S+r*2]; shl 4; sub S; add C; shl 2`) with the publish's
+  S/C reloaded from the single-write spills `[ebp-0x2c]`/`[ebp-0x30]` — address-exact, so bit 0x10 is
+  PRESERVED there, never produced; the only remaining carriers 0x55540a / 0x55580f store **addresses**
+  (`lea eax,[eax*4+0x94d4a8] ; or eax,0x20000`, `lea eax,[ecx*4+0x94d448] ; and ah,0xdf`), where 0x10 is
+  index arithmetic (set iff `i mod 8` in 2..5).
+- Pick from: name the channel table's CONSUMERS (`0x99a01c` text slots are read in 26 functions; the
+  other writer is `FUN_006265a2`) and what slot 7 carries; which functions set the mode gate
+  `ds:0x920700` (8 stores: 0x544530 x7, 0x546800 x1) and what mode they name; whether
+  `[fac*4+0x94d448]` is a POINTER (the two 0x40030 tests at 0x535ccb / 0x4f2bba vs FUN_005551e0's
+  address stores); M181's positive control (box).
 ## LIVE FACTS / KIT
 
 - **BOX state CARRIED from s174e (s175 spent no box time, so NOT re-verified):** terran.exe 319926, y2153
