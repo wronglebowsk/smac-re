@@ -116,7 +116,9 @@ Scan/budget/middle-pass rules: skill `references/production-rebuild.md`.
   faction records **0x94ae14 + fac*0x20bc** (0x92ae14 is the terrain POINTER, not the record base;
   +0x2880 = `&DAT_0094d694`, +0x2e18 production total, +0x2e20 the 4 seed dwords), terrain array
   base = the DWORD at 0x92ae14 (live 0x40a6ba8), record = base + (40*y + (x>>1))*0x2c, category =
-  rec[0]&0xe0 (ocean iff < 0x60), +4 = per-faction seen bits, +7 = owner byte, +8 = mask dword (bit
+  rec[0]&0xe0 (ocean iff < 0x60), +4 = per-faction seen bits, +7 = **CONSTANT 0xff in every record of
+  both maps** (M240 retracts this line's "+7 = owner byte"; the owner is the LOW nibble of +2, live-
+  written by `FUN_00582c80`), +8 = mask dword, +16..+43 = 7 copies of that mask dword (M240) (bit
   1 = unit-stack occupancy, bit 0 = the 4e63b0 terrain test, **bit 0x800000 = the unit-presence bit
   4e7070's neighbour loop reads**), +0xc = list head/uc; relation/stance bytes **0x94d448 +
   fac*0x20bc + 4*other** (&3==0 = "no pact/treaty/truce", **bit 2 = alliance — either direction
