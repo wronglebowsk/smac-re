@@ -171,3 +171,25 @@ PASS against a recorded trace — a mismatch is the finding, never a reason to e
   and once it was steered to `milestone.py start` + commit it still closed cleanly (M227-M230, 12/12 gates, merged).
   Steering works — Hermes injects the message after the next tool call — and the recovery path is: start the branch,
   write the one census script for the questions already answered, commit, close.
+
+## The XML-drift rejection (s188 — the real cause of "missing required field 'path'")
+
+On qwen125b the `path`-missing rejection is **not** a size cap and **not** an omission: the raw `arguments` string ends
+with the model's XML tool syntax wrapped inside the JSON —
+
+```
+{"content":"...last line  </parameter> <parameter=path> /home/n100/reverse/smac/scripts/m231_m234_staging.py </parameter> </function>"}
+```
+
+so `content` swallows the terminator and `path` is never a JSON key. It reproduces on `write_file` AND `patch`, on
+payloads of ~4-6 KB (4 rejections in one fire ≈ 28k tokens and 10 minutes). Rules that actually help: keep every
+`content`/`new_string` under ~2 KB and append in pieces; on a rejection, assume XML drift and re-emit pure JSON with
+`"path"` first. Telling the model "path first" alone does NOT fix it — the model is not emitting fields at all.
+
+## Two fires, one lesson: the artifact must exist before the measuring
+
+s187 and s188 both reached 150k+ context on probes with nothing committed, and the s187 fire only survived because an
+operator steered it. s188 started its branch unaided (prompt rule) but still committed at call ~35. The prompt line is
+necessary but not sufficient — so the footing now also requires: **`milestone.py start` right after the footing, then
+commit the census-script SKELETON (gate names + SUMMARY line, no logic) before any probing.** An artifact committed
+early is what turns a context death into a checkpoint instead of a lost fire.
