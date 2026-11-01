@@ -330,3 +330,24 @@ other mode, and the run then reads like an instrument failure when it is already
   - **Data globals print as SIX hex digits** (`ds:0x920700`, `0x99aa1c`). A census regex written as
   `0x9[0-9a-f]{6}` matches none of them and prints an empty store set that reads like "this function writes no
   globals". Match `0x[0-9a-f]{6}` and filter by value range.
+
+## 12. Naming a function from its own strings, and walking a string pool (s178, M197-M200)
+
+- **"This function contains no string literals" is a FALSE result if you grepped for a quote char.** Ghidra renders
+  a referenced literal as a named symbol (`s_PROPOSALMENU_00690a84`, `LAB_…`, `PTR_…`) that contains no `"`. Census a
+  body with `\bs_[A-Za-z0-9]+_(00[0-9a-f]{6})\b` and READ the bytes at each address (file offset = VA − 0x400000 over
+  .text/.rdata/.data): the tokens often name the function better than its disassembly does.
+- **A .data string pool is 4-aligned, NUL-terminated, NUL-padded to the next multiple of 4, and the pool is
+  terminated by 0xFFFFFFFF.** Walk forward with `next = va + len + 1 + pad`; walk backward by "the LONGEST 4-aligned
+  padded string whose bytes END exactly at va" (fragments of it start later, so the earliest match is the real
+  entry). A fixed-stride walk is wrong — entries are variable-length, and a 16-byte slot assumption truncates or
+  misaligns the run.
+- **Keys and sentences share the pool.** Classify every entry (one word = a lookup KEY, contains a space = a message
+  line) instead of stopping at the first multi-word entry, or your "table extent" is really "the first sentence".
+- **Receiving a text pointer does not make a function a formatter.** Prove substitution from what it calls: 0 `0x25`
+  immediates, 0 printf-family calls and 0 calls to the function that indexes the text table means it copies
+  VERBATIM. Census the vmethod offsets used through a global handle (`(**(code **)(*DAT_handle + 0xNN))` renders in
+  the C) to tell whether two functions are the same kind of object.
+- **`local_20 = <code address>; call X();` is usually the SEH resume cookie, not an argument.** When Ghidra assigns
+  both small integers and in-function addresses to the same pseudo-local, it is modelling the exception-state chain:
+  do not read the calling convention from those lines.
