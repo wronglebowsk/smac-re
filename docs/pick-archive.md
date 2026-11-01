@@ -401,3 +401,25 @@ M181's control (box). ANSWERED by M213-M216 - see `evidence/m213_m216_hotspot.tx
    BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt — never OK), run
    `m78_mark_clear.normalize_screen()` first, click from OCR word bboxes (TURN COMPLETE (675,416)). `m44_idle` asserts
    TracerPid==0 — never a driver under a census gdb, use m55_boundary.
+
+
+## s192 headroom triage: the s187-s190 ANSWERED detail, the s181-s188 pointer and the field-question
+## laws moved out of NEXT_PROMPT (verbatim)
+
+- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO
+  ctors; the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks; FUN_005f5a11's
+  write-only triple) — detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on
+  BOTH maps.
+- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and those results live in
+  `NAMED.md` + `docs/pick-archive.md`; newest instruments `scripts/m240_terrain_repack.py`,
+  `m235_m237_records.py`, `m231_m234_staging.py`.
+- **Laws that decide field questions:** `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords; a decompiler
+  `arr[i*N]` is an ELEMENT index (x4 for bytes); a field may appear as `[reg+disp]` OR folded
+  `[reg*4+abs]` — count BOTH before saying "no site reads X"; a `[ebp-0xNNNN]` slot can BE a member of a
+  stack-constructed object (M227); a hw watchpoint only reports a CHANGE.
+
+Survivability rules moved out of NEXT_PROMPT at the s192 close (verbatim):
+
+Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
+patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
+go 1 per batch). The binding cap is doc headroom, not capability.**

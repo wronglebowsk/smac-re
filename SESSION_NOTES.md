@@ -1,28 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-174-174.md` (3 sessions). Read it only when a question reaches back before session ## Session 174e.
-
-## Session 174e (2026-10-31) — M185-M187, all PASS (second static batch of three, one instrument)
-
-`python3 scripts/m185_m187_visits.py` -> `evidence/m185_m187_visits.txt`, `SUMMARY M185=PASS M186=PASS M187=PASS`.
-- **M185 — the visit's two sub-passes are asymmetric in what they touch.** FUN_00530e30 writes exactly three
-  globals (`ds:0x920740 = 0xf`, plus the staging payload pair `ds:0x99aa1c` / `ds:0x99aa20` = record fields
-  +0x0/+0x4) and makes 10 calls, including `0x626634` (the write-bytes emitter) at 0x530fc0. FUN_00535940 writes
-  47 globals — 13 to -1 (`edi`) and 12 to 0 (`ebx`) — i.e. it RESETS the aggregate scratch set (0x9204c0/0x9206f4/
-  0x9206e8/0x9206e4/0x920774/0x9204d8/0x9204cc/0x920750 to -1; 0x9204b8/0x920710/0x920770/0x9204e0/0x920490/
-  0x9206ec to 0) and calls 0x5a6cd0 x2.
-- **M186 — `[fac*4+0x94d448]` is ASSIGNED, never bit-set.** 27 store sites in 8 functions (FUN_005551e0 x15,
-  FUN_00552970 x5, FUN_0052a720 x2 + 5 singles), every one a plain `mov [reg+0x94d448],reg`, and ZERO
-  `or`/`and`/`add`/`sub` sites at that displacement. Its 653 refs are byte tests with masks 0x1 (150), 0x10 (62),
-  0x20 (34), 0x7 (18), 0x2 (16), 0x8 (10), 0x3 (8) plus whole-dword loads; the 0x40030 mask that FUN_00535c60
-  tests appears at exactly TWO sites (0x535ccb and 0x4f2bba in FUN_004f26e0). A claim that a visit is gated on
-  bits 0x10/0x20/0x40000 therefore needs the ASSIGNED values, not the test.
-- **M187 — the record's +0x20 dword (`ds:0x99aa3c`) is a 3-valued SELECTOR.** 5 stores: three (FUN_00626b46 /
-  FUN_00626dfc / FUN_00626f19) copy `[[ds:0x99aa40]+0x3100]` into it, two come from FUN_0048ee00 / FUN_0048ef80.
-  14 reads, three of them `cmp`: FUN_004d9ae0 branches on ==1 (0x4d9da0 — writes a unit record at
-  0x933289/0x93328c/0x933294, clears bits in [rec+0x93327c], calls 0x4d97c0) and on ==2 (0x4d9dff, only while
-  `ds:0x985af0 > 0`); FUN_00616b89 tests ==0. ASSEMBLEGROUP is driven by a 3-way mode stored inside the record it
-  emits.
+Older sessions: `docs/sessions/sessions-174-174.md` (1 sessions). Read it only when a question reaches back before session ## Session 175.
 
 ## Session 175 (2026-10-31) — cap triage (#153, merged), then M188-M190 all PASS (static batch of three, one instrument)
 
@@ -426,3 +404,41 @@ PITFALLS: a staging pair spread over two arrays is not contiguous - read each sl
   reads them in); record bytes 1, 3, 4-7 and 12-15 unnamed; `decode_map.py` and `sim/map.py` still split
   the grid into 22-byte cells — their B1 gates are position parity so they stay valid, but their "cells"
   are record halves; M181 box debt unpaid (terran.exe alive, TracerPid 0 — this fire took a static pick).
+
+## Session 192 (2026-11-01, M241 — M181's falsifier RAN, box-first; acceptance FAIL 2/5, PR left OPEN)
+
+- Box-first per the operator rule (`grep -c 'box time owed' SESSION_CURSOR.md` was stale-worded but
+  terran.exe 319926 was alive with TracerPid 0). `python3 scripts/track_mode.py` -> `MODE=ANALYSE
+  analyse_since_build=1 next_rung=B2`. Instrument `scripts/m241_m181_control.py` committed as a
+  skeleton BEFORE any probing (a5c423d); the box was never relaunched — one lifecycle, two saves.
+- **Acceptance:** `sudo -n python3 scripts/m241_m181_control.py` -> `FAIL M241: 2/5 gates`, rc 1
+  (3 invocations appended to `evidence/m241_m181_control.txt`). Invocation 1 (3/5): the save route was
+  verified by OCR, and tesseract renders the GAME submenu's small type as garbage ('Load Game...' ->
+  'lad'), so it aborted a route that WAS open; its Escape x2 raised the quit prompt (trap 7).
+  Invocation 2 (2/5): save detection compared FILENAMES, but phase B types the same name as phase A, so
+  a successful overwrite adds no filename and the traced window looked empty. Fixed to MTIME detection
+  + per-phase names + a 0x6267a5 control (42 bps). No threshold or claim was weakened; the SAMPLER
+  control was replaced because it is unsatisfiable by construction (see the retraction).
+- **The measurement (invocation 3, with its commands):** G1 PASS — two host-verified saves
+  `programs/saves/auto/m241_probe_{A,B}.SAV`, 242,799 B each, mtime +8.4 s and +1.1 s inside their
+  windows. G3 PASS — `42 bps armed`, zero gdb warnings, `TracerPid after detach=0`, box re-verified by
+  `sudo -n python3 scripts/smac_preflight.py` -> PASS (14 invariants). **G2+G4 FAIL — the traced save
+  executed ZERO of the 42 armed sites:** `gdb hits=0`, `store hits at ds:0x99aa38: 0 at 0 of 33 census
+  sites`, `tagged-writer 0x6267a5 hits in the traced window: 0`.
+- **FINDING — M181 answered, and it RETRACTS a label:** a save-game write does not go through the
+  0x99aa1c staging record at all. M172/M179/M182's "save band" was a static inference from call shape;
+  the registry already says what 0x99aa1c/0x99aa20 are — the DEFAULT VALUES of the advisor-text
+  substitution slots written by `0x626634(slot, text, v3, v4)` (`docs/named-archive-m32-m84e.md:175`,
+  live-verified "v<0 => defaults 0x99aa1c/0x99aa20"). The save LOAD side is FUN_00596850 `save_load`
+  (NAMED.md:47); the write path is elsewhere and 0x6267a5 is not it.
+- **Why M181's zero was never evidence:** in invocations 1-2 the same 42-bp census logged exactly ONE
+  store, at 0x626cf6 (FUN_00626b46), during UI navigation, while ds:0x99aa38 read 0x00000000 at both
+  ends of every window (invocation 2: 47,909 samples, ~0.6 ms resolution). Writers that DO fire store a
+  value a sampler cannot distinguish (same value, or a write inside one sample interval). LAW: a value
+  sampler is not a store census; count stores with silent bps AT the sites and prove the trigger outside
+  the game (stat the file the game wrote).
+- **OPEN:** the save WRITE function (find it from the "Writing save file..." string's xrefs, then re-run
+  this census against it); who dispatches FUN_00512020 (GOVERNORCONTROL, name 0x68dc84, gated on
+  ds:0x91c62c == 0 [live 0] + [arg1+0x23be8] != 0 + human mask 0x985b10) — it logged ZERO calls during a
+  save, so it is a scenario/editor record, not the gameplay save; and all four `call 0x41a8f0` sites
+  logged ZERO live calls, so the GOVOPTIONS packer never ran in this box session.

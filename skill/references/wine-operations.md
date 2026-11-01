@@ -266,7 +266,15 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   it is written with the pane-loop's current-base global, not a per-loop index. The flat rendering
   `*(int *)(&DAT_00985aa0 + idx*4)` is the compiler folding that subtraction, and `0x985aa0..0x985b38`
   are unrelated globals (year, `n_bases`, mask) — not early claim slots.
-- **M54b in-game menu + save geometry (measured 2026-10-24, /tmp/m54b_menu.png, m54b_submenu.png,
+- **Saving from the live box (measured s192, `scripts/m241_m181_control.py`):** `Ctrl+S` is the GAME
+  submenu's own hotkey for `Save Game...` (read off the submenu frame), so the dropdown is optional:
+  Ctrl+S -> browser NAME (406,304) -> End + 200 BackSpace -> type the full `Z:\...\name.SAV` -> OK
+  (330,327); the file lands 1-8 s later. VERIFY each step by FRAME DIFF, not OCR — tesseract renders the
+  submenu's small type as garbage ('Load Game...' -> 'lad'), so an OCR check for "save" aborts a route that
+  is genuinely open. Detect the save by MTIME, not by filename: a run that reuses the name OVERWRITES and a
+  name-difference reports zero saves. Escape ONCE after OK; if the frame then reads "really ... quit",
+  Escape again (never OK).
+- **M54b in-game menu + save geometry (measured 2026-10-24, /tmp/m54b_menu.png, m54b_submenu.png,**
   m54b_savebrowser.png):** the console MENU button is at **(61,369)** (OCR token `MENU`; clicking it
   opens the left dropdown GAME/HQ/NETWORK/MAP/ACTION/TERRAFORM/SCENARIO/EDIT MAP/HELP). GAME row
   (30,186) -> submenu: **Save Game... (200,331)**, Load Game... (200,353), Quit (Ctrl+Q) (170,428).
