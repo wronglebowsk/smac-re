@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 191, 2026-11-01, M240: the `.MP` grid IS the live terrain-record array)
+# NEXT_PROMPT.md — footing for the next session (session 193, 2026-11-01, M242: the save WRITE function is FUN_00597ce0 -> FUN_00596850(handle, 1))
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -34,10 +34,12 @@ Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
 ## THE LEDGER
 
 Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
-M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), s175 cap triage (#153), docs #169/#174/#175/#177.
+M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), s175 cap triage (#153),
+docs #169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
-superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `pick-archive.md`,
+superseded), M103 (#110, never green), M109 (gates answered, model void), M241 (#180, 2/5 — its PR stays
+open; M242 answered the same question from the right premise). Summaries: `pick-archive.md`,
 `NAMED.md`, `skill/references/code-atlas.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -59,10 +61,6 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
 
 ## THE PICK — index (detail: `docs/pick-archive.md`)
 
-- **Laws that decide field questions:** `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords; a decompiler `arr[i*N]`
-  is an ELEMENT index (x4 for bytes); a field may appear as `[reg+disp]` OR folded `[reg*4+abs]` — count BOTH
-  before saying "no site reads X"; a `[ebp-0xNNNN]` slot can BE a member of a stack-constructed object (M227);
-  a hw watchpoint only reports a CHANGE.
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
@@ -71,21 +69,25 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   `m235_m237_records.py`, `m231_m234_staging.py`.
 - ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors;
   the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks; FUN_005f5a11's write-only triple) —
-  detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on BOTH maps. s191 **M240**:
-  `python3 scripts/m240_terrain_repack.py` -> `PASS M240: 6/6 gates` -> **the `.MP` grid IS the live
-  terrain-record array**: FUN_00582260 reads `DAT_0092a38c*0x2c` (count = (W/2)*H) straight into
-  DAT_0092ae14, no loop; one record covers TWO map columns. RETRACTED "cell+7 = land marker" (0xff in
-  11,392/11,392 records) and FOOTING's "+7 = owner byte"; word 5 = record count; the 128/338 "trailer" is
-  the coarse region map DAT_0092ae18; record +16..+43 = 7 copies of the +8 mask (meaning OPEN).
+  detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on BOTH maps. s191 **M240**
+  (6/6): the `.MP` grid IS the live terrain-record array (44-B records = TWO map columns; "cell+7 = land
+  marker" / "+7 = owner byte" RETRACTED; +16..+43 = 7 copies of the +8 mask, OPEN). s192 **M241** (`FAIL
+  2/5`, PR #180 open): a SAVE ran ZERO of the 42 armed 0x99aa38-band sites — not the write path. s193
+  **M242** (`PASS 5/5`, `sudo -n python3 scripts/m242_save_write.py`): the save WRITE function is
+  **`FUN_00597ce0(path)`** -> **`FUN_00596850(handle, 1)`**, ONE codec both ways (mode → `DAT_00926a0c`;
+  30 write / 28 read sites; a save ran 23/30 write, ZERO read); the 796-B `DAT_00985ab8` block sits
+  verbatim at **file offset 12** (corrects SAVE_FORMAT.md). Full text: `NAMED.md` M240/M242 blocks.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`, and B2 must
-  read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells): WHO dispatches the dialog's
+  read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells, and a .SAV as magic at 0 /
+  version dword at 8 / the 796-B header at 12): WHO dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
   — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30,
   +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c);
   WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
   ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record
-  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); M181's control
-  (box; trigger = the 4 callers of FUN_0041a8f0, s189 notes).
+  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); **which 7 of
+  FUN_00596850's 30 write legs are dead on a save, and which sites outside it write the rest of the file**
+  (new from M242, static).
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
@@ -154,8 +156,10 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
     scanning `or DWORD PTR [disp],imm` alone finds zero setters and invites the false conclusion that none exists.
 21. A "stride conflict" is usually ONE multiply read in two pieces (`lea X,[v+v*2]; shl X,4` = v*48): count the SITES.
     `[reg*4+disp]` beside `[reg+disp]` is usually the same field with the stride folded into the register.
-22. A global with readers and ZERO writers of any width is LOAD-TIME data, not a gameplay counter — check the enclosing
-    dwords before concluding.
+22. A global with readers and ZERO writers of any width is LOAD-TIME data, not a gameplay counter — check the
+    enclosing dwords before concluding.
+23. A VALUE SAMPLER IS NOT A STORE CENSUS (a same-value store leaves no trace) and a census PARSER is not a
+    log — VERBATIM laws: skill `references/instrument-laws.md` (M241/M242, s192-s193).
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 

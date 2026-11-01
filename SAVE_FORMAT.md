@@ -5,7 +5,7 @@ not yet recovered.** Do not treat the section table below as a general layout: i
 sequence for one save (80×80 map, mission year 2112) and the sizes of the variable sections shrink
 in earlier saves (Autosave 5, year 2108, is 287,564 B — smaller than the fixed sections alone).
 
-## Header (796 B at offset 0)
+## Header (796 B at file offset 12 — M242: the writer `FUN_00597ce0` puts the 8-byte `TERRAN\0\x1a` magic and the 4-byte version 0x56 first, then `FUN_00596850(handle, 1)` writes this block verbatim; the year u16 at file 0x54 = block+0x48. The same function is the READ side with mode 0 — this table is also the write order.)
 
 ```
 0    6 B    b"TERRAN" + NUL

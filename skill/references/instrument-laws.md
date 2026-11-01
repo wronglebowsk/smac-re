@@ -620,3 +620,21 @@ the repair costs a doc-correction PR after the milestone has already merged.
   TEXTS (the pool stores the same word at two addresses). Report sites / addresses / texts, in that order.
 - Indirect calls (`call ebx`, `call ecx`) carry no hex operand: a census doing `int(ops[1], 16)` over `call`
   sites dies on them mid-run. Filter `startswith("0x")` first.
+
+## A value sampler is not a store census (M241/M242, s192-s193)
+
+A 2 ms `/proc/<pid>/mem` sampler only reports CHANGES: a store that writes the SAME value, or a write that
+starts and finishes inside one sample interval, leaves no trace — so "the field never changed" is NOT
+evidence that no writer ran. Count stores with silent breakpoints AT the store sites, and prove the trigger
+OUTSIDE the game's own bookkeeping: stat the file it wrote, BY MTIME (a same-name overwrite adds no new
+filename, so a name-diff sees zero saves). M241 armed 42 sites and logged zero hits while the save DID land
+on disk; M242 then found the real writer (`FUN_00597ce0` -> `FUN_00596850(handle, 1)`, mode in
+`DAT_00926a0c`) and its 30 write / 28 read legs, 23 of 30 hot on a save and ZERO of the read family.
+
+## Give every logged line an address token (M242, s193)
+
+A census that parses its own gdb log with `line.split()[1]` dies on a line that carries no address. M242's
+`ENCODEC mode=...` line had none, so `tally()` raised AFTER the whole window was already measured, and the
+acceptance invocation was spent. Bake the site address into every printf tag (`"ENCODEC %06x mode=%%d ..."
+% addr`), and keep the raw log on disk (`scratch/<tag>.gdblog`) so a crashed run's numbers can still be
+read out and the run re-issued without re-arming the box.

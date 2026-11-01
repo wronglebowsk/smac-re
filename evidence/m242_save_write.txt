@@ -12,3 +12,28 @@ Traceback (most recent call last):
   File "/home/n100/reverse/smac/scripts/m242_save_write.py", line 218, in tally
     a = int(h[1], 16)
 ValueError: invalid literal for int() with base 16: 'mode=1'
+pid=319926  dir ds:0x926a0c=1  swap ds:0x985ae8&0x10000000=0x0  ds:0x920434=0  ds:0x985dbc=9  year=2153
+PHASE A (no tracer): browser open, name typed / ok
+  A file /home/n100/reverse/smac/programs/saves/auto/m242_probe_A.SAV  242799 B  mtime +11.2 s
+  A file bytes: magic=True ver=86  block-at=12  matching-at-12=796/796  year mem/file=(2153, 2153)
+PHASE B (tracer): browser open, name typed / ok  hits=32  TracerPid after detach=0
+  B file /home/n100/reverse/smac/programs/saves/auto/m242_probe_B.SAV  242799 B  mtime +4.5 s
+  B file bytes: magic=True ver=86  block-at=12  matching-at-12=796/796  year mem/file=(2153, 2153)
+  WRITER entry p=00bef174 path16=b'Z:\\home\\n100\\rev'
+  via 0x598c73 (FUN_005985e0 UI save) x1
+  writer site 0x597db7 fopen x1 a0=0xbe8ae0 a1=6893472
+  writer site 0x597ddb magic x1 a0=0x692fa4 a1=6977952
+  writer site 0x597df0 version x1 a0=0xbe8be0 a1=4
+  writer site 0x597e04 codec x1 a0=0x6a79a0 a1=1
+  writer site 0x597e19 time x1 a0=0xbe8be4 a1=4
+  writer site 0x597e28 fclose x1 a0=0x6a79a0 a1=0
+  codec entry: 1 hits mode=[1] swap-bits=[0]
+  write legs (call 0x64c9a0): 23 hits at 23 of 30 sites; read legs (call 0x64cc00): 0 hits at 0 of 28; swap-write 0; swap-read 0
+  header leg 0x596883 x1 dir=1 dst=0x985ab8 sz=796 n=1 h=0x6a79a0
+VERDICT: CONFIRMED: a save runs FUN_00597ce0 (open + TERRAN magic + version 0x56 + body + close, delete-on-fail) which calls FUN_00596850(handle, 1); its 30 write legs ran (23 hits at 23 sites), its 28 read legs ran ZERO, and the 796-B global it serializes is verbatim at file offset 12 of the file the host statted
+PASS G1 trigger: a >200 KB .SAV whose mtime is inside BOTH save windows (host stat)
+PASS G2 instrument: 131 bps armed, no gdb insert warnings, TracerPid back to 0, inferior alive
+PASS G3 the writer FUN_00597ce0 ran in the traced window and every run is attributed to one of its armed call sites
+PASS G4 one codec, write direction: mode==1 at 0x596850, write legs hot with the predicted dst/size/count, read legs ZERO, swap siblings match ds:0x985ae8&0x10000000
+PASS G5 outcome in the file the game wrote: TERRAN magic, version 0x56 at 8, the live 796-B block verbatim at 12, year agrees
+PASS M242: 5/5 gates
