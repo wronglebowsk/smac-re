@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 185, 2026-11-02, M217-M221 all PASS)
+# NEXT_PROMPT.md — footing for the next session (session 187, 2026-11-01, M227-M230 all PASS)
 
 Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s183
 milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
@@ -34,7 +34,8 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151),
 M185-M187 (#152), M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159),
-M201-M204 (#161), M205-M208 (#162), M209-M212 (#163), M213-M216 (#164), M217-M221 (#165), M222-M226 (#168), s175 cap triage (#153).
+M201-M204 (#161), M205-M208 (#162), M209-M212 (#163), M213-M216 (#164), M217-M221 (#165), M222-M226 (#168),
+M227-M230 (#171), B0 (#170), s175 cap triage (#153).
 UNMERGED: M83/M84 family (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `docs/pick-archive.md`,
@@ -61,30 +62,31 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
 
 - **Laws that decide field questions:** `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords; a decompiler `arr[i*N]` is
   an ELEMENT index (x4 for bytes); a record field may appear as `[reg+disp]` OR the folded `[reg*4+abs]` - count BOTH
-  before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
+  before saying "no site reads X"; a `[ebp-0xNNNN]` slot can BE a member of a stack-constructed object (resolve
+  it against the frame's vtable stores before calling it a coincidence, M227); a hw watchpoint only reports a CHANGE.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **s181-s186 footing is ARCHIVED** (M205-M226): the hotspot/dialog model and the M222-M226 results (the
-  ADD wrapper, the unreachable callback, the 0x774c38 grid, the panel DETACH's field callback, the row
-  DRAW) are in `docs/pick-archive.md` (§"s186 footing moved out"), semantics rows in `NAMED.md`,
-  instruments `scripts/m222_m226_rows.py` (+ `m217_m221_panel.py`, `m209_m212_dispatch.py`,
-  `m213_m216_hotspot.py`, `m205_m208_fields.py`).
-- Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls; all 12 image-wide
+- **s181-s187 footing is ARCHIVED** (M205-M230): the hotspot/dialog model, the M222-M226 results and the
+  M227-M230 results (+0x3098 stack-mirror, the tail field's content, the 0xb24 collision, the FUN_00455c70
+  trampoline) live in `NAMED.md` + `evidence/m227_m230_mirrors.txt` + `docs/pick-archive.md`; newest
+  instruments `scripts/m227_m230_mirrors.py`, `m222_m226_rows.py`.
+- ANSWERED at s187 (do not re-pick): the dialog's this+0x3098 list (M227 - taken only at its own
+  clear/alloc/reset/scan sites, NEVER appended) and the panel's +0x2144 field (M228 - a pointer to a
+  caller's frame or table slot, never a code address).
+- Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide
   `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click, box);
-  whether the dialog's this+0x3098 list is DEAD or filled through a pointer stored in a field (M222:
-  neither the wrapper nor any direct add-site carries that displacement; the live container in the same
-  block is obj+0x2250 - census `lea reg,[X+0x3098]` address-takes and what their callees do); what the
-  0x774c38 grid holds (9 entries x 0x2c, all-zero BSS; FUN_0041f450 installs 0x774c0c/0x774a80 at
-  [obj+0xb24] and 9 functions load that field - census what they index, and the 15 FUN_00455c70 calls);
-  who installs the panel's +0x2144 field callback (17 writers, 7 readers/callers) and what it points at;
-  who CALLS FUN_005f5a11 (0 direct, 0 slots, 0 data copies, 0 reads, 0 lea-takes - the only route left
-  is a pointer to +0x2210/+0x2224/+0x2234 loaded from a field); M181's control (box).
+  who CALLS FUN_005f5a11 (0 direct, 0 slots, 0 data copies, 0 reads, 0 lea-takes; only route left is a
+  pointer to +0x2210/+0x2224/+0x2234 loaded from a field); what the 9 entries of the 0x774c38 grid hold
+  and who WRITES the 0x2c-stride table at 0x7543d8 that the +0xb24 loaders index (M229: 0xb24 is a
+  collision - a page address for FUN_0041f450's object, a slot index for the 5 loaders) and the
+  0x99aa9c/0x99aac0 pair arrays (M230: 9 publishers, i = 0..8); what FUN_005dbdc0 (ret 0x1c) and
+  FUN_005e3412 do with the (buffer, 0x109, 0x107/0x106) arguments FUN_00455c70 hands them; M181's control (box).
 ## LIVE FACTS / KIT
 
-- **BOX state CARRIED from s174e (s175/s178 spent no box time, so NOT re-verified):** terran.exe 319926, y2153 r53,
-  University Base (28,42), 6 units HELD, TracerPid 0 — not this session's descendant, so read `/proc/mem` with
-  `sudo -n` (yama `ptrace_scope=1`). Run `scripts/smac_preflight.py` before arming. Launch recipe + cold-box
-  timing: skill `references/wine-operations.md`.
+- **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
+  terran.exe 319926, y2153, cur_player 3, mask 0xff08, 18 bases / 72 units, University Base (28,42) pend 0 head 2,
+  6 ours 0 actionable, TracerPid 0 — NOT this session's descendant, so read `/proc/mem` with `sudo -n` (yama
+  ptrace_scope=1); launch recipe + cold-box timing: skill `references/wine-operations.md`.
 - A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
   ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
   index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
