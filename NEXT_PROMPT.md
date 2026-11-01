@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 176, 2026-10-31)
+# NEXT_PROMPT.md — footing for the next session (session 177, 2026-10-31)
 
 Structure: this file = RULES + live footing. Detail is on disk: `docs/pick-archive.md` (milestone narrative M90-M123
 + the FULL trap text), `NAMED.md` (semantic registry), `skill/references/instrument-laws.md` (instrument laws). Read
@@ -25,7 +25,7 @@ milestones go 1 per batch.** The binding cap is doc headroom, not capability.
 Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151), M185-M187 (#152),
-M188-M190 (#154), M191-M193 (#157), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
 M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
 `NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
@@ -60,28 +60,26 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   milestone lines live in `NAMED.md` (M175-M190) + `docs/pick-archive.md`; census outputs
   `evidence/m175_m177_aggcallers.txt`, `m178_m180_scratchband.txt`, `m182_m184_bandrecord.txt`,
   `m185_m187_visits.txt`, `m188_m190_uses.txt`; field map `docs/field-atlas-faction.md`. Read them there.
-- **s175/s176 (M188-M193, all PASS) — the count pair and the output leg are ANSWERED; the rows are in
-  `NAMED.md` M188-M190 / M191-M193.** The short of it: `0x626634` (the callee at 0x530fc0) is NOT an
-  emitter, it is the **10-slot CHANNEL PUBLISH** — guard `arg1 <= 9`, writes `A[slot]@0x999fcc` /
-  `B[slot]@0x999ff4`, zeroes then appends arg2 into the 256-byte text slot `0x99a01c + arg1*0x100`, and
-  a negative arg3/arg4 means "take the staging pair"; `0x99a01c + 10*256 == 0x99aa1c`, so the staging
-  record M178/M182 own IS slot 10 of that table. 1584 sites in 190 functions, every immediate slot in
-  0..9. FUN_0053a9c0's whole global write set is 23 stores to 8 globals; `0x9204ac`/`0x920720` have
-  ZERO stores in it (their only writers in the image are the aggregator 0x531df0) — the pair is consumed
-  and dropped; what survives is `0x9206e4`/`0x920774` (2 of the 15 the reset pass 0x535940 clears) and a
-  return its caller TESTS, at the pass's ONE call site 0x545cfa, gated `ds:0x920700 == 2`. **M192
-  RETRACTS the "0x10 producer" reading of M190:** FUN_0052a720's two `0x94d448` stores are the publish
-  half of an 18-load / 18-store bracket over 9 block fields; both sides compute the base as
-  `8380*S + 4*C` (`mov r,S; shl 6; add S; lea [S+r*2]; shl 4; sub S; add C; shl 2`) with the publish's
-  S/C reloaded from the single-write spills `[ebp-0x2c]`/`[ebp-0x30]` — address-exact, so bit 0x10 is
-  PRESERVED there, never produced; the only remaining carriers 0x55540a / 0x55580f store **addresses**
-  (`lea eax,[eax*4+0x94d4a8] ; or eax,0x20000`, `lea eax,[ecx*4+0x94d448] ; and ah,0xdf`), where 0x10 is
-  index arithmetic (set iff `i mod 8` in 2..5).
-- Pick from: name the channel table's CONSUMERS (`0x99a01c` text slots are read in 26 functions; the
-  other writer is `FUN_006265a2`) and what slot 7 carries; which functions set the mode gate
-  `ds:0x920700` (8 stores: 0x544530 x7, 0x546800 x1) and what mode they name; whether
-  `[fac*4+0x94d448]` is a POINTER (the two 0x40030 tests at 0x535ccb / 0x4f2bba vs FUN_005551e0's
-  address stores); M181's positive control (box).
+- **s175-s177 (M188-M196, all PASS): rows in `NAMED.md` M188-M190 / M191-M193 / M194-M196; census outputs
+  `evidence/m188_m190_uses.txt`, `m191_m193_channels.txt`, `m194_m196_channels.txt`.** Short of the three
+  newest: `0x626634` is the **10-slot CHANNEL PUBLISH** (guard `arg1<=9`; writes `A[slot]@0x999fcc` /
+  `B[slot]@0x999ff4`; zeroes then appends arg2 into `0x99a01c + arg1*0x100`; a negative arg3/arg4 takes the
+  staging pair, and `0x99a01c + 10*256 == 0x99aa1c`, so the staging record IS slot 10) — 1584 sites in 190
+  functions. Its slots are consumed by POINTER PASSING, not by reads: the window is 113 sites / 31 fns of
+  which 93 push the base or a slot address; 16 callees receive it (6 = the C string layer, 2 indirect) and
+  FUN_00631afb / FUN_00632cad are the formatters that take slot addresses; live slots 0-4 hold one faction's
+  sentence parts ('disciplined'/'Provost'/'Zakharov'/'University'/'Mission Year 2150'), 5-9 empty, and slot 7
+  is WRITE-ONLY (7 publishers, 0 address pushes). `ds:0x920700` is a 13-value MODE CODE (2 writers, 12 tested
+  values up to 0xd, live 0, ZERO strings in the 4 functions that touch it; FUN_00544530 also writes 0x997120
+  x28 and the staging pair x14/x14). `[reg*4+0x94d448]` is NOT a pointer — 365/466 scaled sites carry the
+  2095-fold (address = 0x94d448 + 8380*S + 4*C), all 297 tests are `test`+mask (0 cmp, widest 5 bits), 0/139
+  loads is dereferenced and 0/66 live dwords lie in the mapped range; **M196 RETRACTS M190's "carriers
+  0x55540a/0x55580f store addresses"** (bit ops on the flag word; the 0x5553d2 lea is the store-through alias
+  of the 0x5553df store).
+- Pick from: what FUN_00544530 IS — its call sites and what the 13 values switch over (it writes 0x997120 x28
+  and the staging pair, so it may be the mode the aggregate pass's gate waits on); what 0x631afb / 0x632cad
+  substitute (they receive slot addresses; 1076 / 288 insns); the text source behind slot 7's 7 publishes (the
+  calls at 0x5808b0, 0x580a60, 0x426680); M181's positive control (box).
 ## LIVE FACTS / KIT
 
 - **BOX state CARRIED from s174e (s175 spent no box time, so NOT re-verified):** terran.exe 319926, y2153

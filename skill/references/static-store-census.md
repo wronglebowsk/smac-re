@@ -303,3 +303,30 @@ other mode, and the run then reads like an instrument failure when it is already
   the fan-out separates a serializer from a general publish. A publish takes a slot index plus optional
   values, where a sentinel (-1) means "use the shared staging globals", so the staging record can be one
   slot of a table whose other slots are indexed (`0x99a01c + 10*256 == 0x99aa1c`).
+
+  ## 12. Pointer-or-flags, consumer census, and the 6-digit global (s177, M194-M196)
+
+  - **A scaled-index displacement is not an array census.** `mov reg,[ix*4+0x94d448]` and `mov reg,[bx+0x94d448]`
+  are the SAME family when `ix` is a folded block index: attribute the index register's definition chain (walk
+  back in the function to the last write of that register; if it is `add reg,<sub-index>` preceded by a >=3-op
+  fold chain on the same register, the address is `base + stride*S + 4*C`, a record field, not element `fac`).
+  In SMAC 365 of 466 `0x94d448` scaled sites are block fields; a "per-faction pointer array" reading that
+  ignores the fold is wrong before the first gate runs.
+  - **Classify a bit-field test by MNEMONIC + popcount, never by operand magnitude.** All 297 tests of that field
+  are `test <dword>,mask` with ZERO `cmp` and the widest mask carries 5 bits - not one compares the dword
+  against a value, let alone a pointer. A size filter (`imm >= 0x400000`) flags `0x800000`, `0x1000000`,
+  `0x2000000` as "address-sized" when each is a single bit. Pair the census with a tracerless `/proc/<pid>/mem`
+  read of BOTH readings (`+4*i` and `+stride*f`): if no value lies in the mapped user range, it holds flags.
+  - **`lea reg,[mem]` right before `mov [reg],val` is Ghidra's store-through alias, not a tagged pointer.** The
+  clamp idiom `mov edx,[ix*4+abs]; lea eax,[ix*4+abs]; cmp edx,ecx; ...; mov [eax],ecx` writes the very dword
+  the lea computed; reading such a pair as "it stores addresses" cost a retraction (M190 -> M196).
+  - **A table whose slots are PASSED is consumed elsewhere.** Counting `push 0x99a01c` as a "read" made M191
+  report "26 reader functions"; 93 of the 113 sites in the window push the base or a slot address into a
+  callee, so the consumers are the 16 callees (mostly the C string layer: two short thunks, `_strlen`,
+  `_strcmp`, `_strncpy`, the 0x7efefeff append-copy) plus the two formatters that index the table themselves.
+  Attribute each push to the following `call`, classify the callee, and read the live slot contents - they name
+  the channel ('disciplined'/'Provost'/'Zakharov'/'University'/'Mission Year 2150' = one faction's sentence
+  parts). A slot with publishers but zero address-pushes is write-only.
+  - **Data globals print as SIX hex digits** (`ds:0x920700`, `0x99aa1c`). A census regex written as
+  `0x9[0-9a-f]{6}` matches none of them and prints an empty store set that reads like "this function writes no
+  globals". Match `0x[0-9a-f]{6}` and filter by value range.

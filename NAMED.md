@@ -585,3 +585,24 @@ in the image) and 0x920720 (1) are written ONLY by FUN_00531df0 and are READ-ONL
 0x546800). Its one call site 0x545cfa (FUN_00545c50) is gated `ds:0x920700 == 2` (0x920700: 8 stores in
 0x544530 x7 + 0x546800 x1), the caller tests the return, and the tail zeroes 0x9204b4/0x920718, calls
 0x533e70 and returns 1.
+
+## M194-M196 (s177, all PASS) — channel-table consumers, the 0x920700 mode code, 0x94d448 is not a pointer
+
+**M194** the 10 text slots are consumed by POINTER PASSING: window 0x99a01c..0x99aa1b = 113 sites/31 fns, 93 push the
+base or a slot address (base 50, slot1 15, slot2 8, slot3 6, slot5 6, slot4 5, slot6 2) vs 20 direct memory ops; 16
+callees receive it - 6 are the C string layer (0x64b9d0/0x64c460 thunks, _strlen, _strcmp, _strncpy, the 0x7efefeff
+append-copy 0x64b9e0), 2 indirect via `call dword ptr ds:0x6713xx`; FUN_00631afb (1076 insns) / FUN_00632cad (288)
+take slot addresses at 5/7 and 2/4 sites. Register indexers FUN_00625b20 (4 shl-reg,8 -> add-reg,0x99a01c pairs,
+77 sites/23 fns) and FUN_005f0583 (1 pair, 99/66); FUN_006265a2 is FUN_00626634's sibling publish (86/39, 4 signature
+insns shared). Slot 7 is WRITE-ONLY: 7 publishers (0x4d10dd 0x5022a6 0x509163 0x530fc0 0x53438d 0x552eb9 0x594e65),
+0 pushes of 0x99a71c; live slots 0-4 hold 'disciplined'/'Provost'/'Zakharov'/'University'/'Mission Year 2150' - one
+faction's sentence parts - and 5-9 are empty.
+**M195** ds:0x920700 is a 13-value MODE CODE: 31 mentions = 8 stores/17 loads/6 tests/0 RMW; writers FUN_00544530 x7
++ FUN_00546800 x1 (0xc at 0x54ec5c); tested {1,2,4,5,6,7,8,9,a,b,c,d}, live 0; ZERO string literals in all four
+functions that write or test it - unnamed. FUN_00544530 (1531 insns) also writes 0x997120 x28 and the staging pair
+0x99aa1c/0x99aa20 x14 each.
+**M196** `[reg*4+0x94d448]` is NOT a pointer: 365/466 scaled sites carry the 2095-fold (= 0x94d448+8380*S+4*C, the
+block field at +0x344), all 297 tests are `test`+mask (0 cmp, widest 5 bits), 0/139 loads is dereferenced, and 0/66
+live dwords (33 at +4i, 33 at +8380*fac) lie in the mapped range. RETRACTS M190's "carriers 0x55540a/0x55580f store
+addresses" - they follow `or eax,0x20000`/`and ah,0xdf` on the flag word; the 0x5553d2 lea is the store-through alias
+of the 0x5553df store.

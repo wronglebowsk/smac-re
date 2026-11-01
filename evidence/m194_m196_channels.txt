@@ -1,0 +1,82 @@
+# M194-M196 census: channel-table consumers, the 0x920700 mode word, what 0x94d448 holds
+# command: sudo -n python3 scripts/m194_m196_channels.py > evidence/m194_m196_channels.txt
+M194 window 0x99a01c..0x99aa1b: 113 sites in 31 functions; 93 push-an-address, 20 direct memory ops
+   pushes per slot: {0: 51, 1: 15, 2: 8, 3: 6, 4: 5, 5: 6, 6: 2}
+   direct-op roles: {'load': 2, 'cmp': 1, 'add': 7, 'store': 5, 'movsx': 5}
+   93 pushes are immediately followed by a call; 16 distinct callee targets
+     call 0x64b9d0 x32 -> FUN_0064b9d0 insns 3 stores 0 nul-scan 0 own-callsites 271 [thunk]
+     call 0x64c460 x26 -> FUN_0064c460 insns 8 stores 0 nul-scan 0 own-callsites 75 [thunk]
+     call 0x631afb x6 -> FUN_00631afb insns 1076 stores 199 nul-scan 0 own-callsites 7 [other]
+     call 0x627307 x6 -> FUN_00627307 insns 16 stores 0 nul-scan 0 own-callsites 47 [other]
+     call 0x64bac0 x3 -> _strlen insns 44 stores 0 nul-scan 1 own-callsites 499 [named-C-string]
+     call 0x58f010 x3 -> FUN_0058f010 insns 13 stores 0 nul-scan 0 own-callsites 9 [other]
+     call 0x632cad x3 -> FUN_00632cad insns 288 stores 43 nul-scan 0 own-callsites 4 [other]
+     call 0x5842c0 x3 -> FUN_005842c0 insns 33 stores 6 nul-scan 0 own-callsites 5 [other]
+     call 0x5ee284 x2 -> FUN_005ee284 insns 35 stores 2 nul-scan 0 own-callsites 25 [other]
+     call 0x584240 x2 -> FUN_00584240 insns 41 stores 9 nul-scan 0 own-callsites 2 [other]
+     call 0x64b9e0 x2 -> FUN_0064b9e0 insns 84 stores 7 nul-scan 2 own-callsites 1968 [nul-scan-copy]
+     call 0x64c550 x1 -> _strcmp insns 55 stores 0 nul-scan 0 own-callsites 33 [named-C-string]
+     call 0x64c5e0 x1 -> _strncpy insns 109 stores 10 nul-scan 1 own-callsites 42 [named-C-string]
+     INDIRECT call dword ptr ds:0x671324 x1 (a function-pointer slot, no static target)
+     call 0x583770 x1 -> FUN_00583770 insns 28 stores 3 nul-scan 0 own-callsites 14 [other]
+     INDIRECT call dword ptr ds:0x67134c x1 (a function-pointer slot, no static target)
+   formatter 0x631afb: 7 call sites, 5 of them push a window address
+   formatter 0x632cad: 4 call sites, 2 of them push a window address
+M194a  PASS - the table is consumed by POINTER PASSING, not by direct reads: 113 sites in 31 fns, 93 pass an address of the table or of one slot vs 20 direct memory ops ({'load': 2, 'cmp': 1, 'add': 7, 'store': 5, 'movsx': 5}); 16 distinct callees receive it (6 of them the C string layer: named _strlen/_strcmp/_strncpy, the 0x7efefeff append-copy 0x64b9e0, or <=10-insn thunks), 2 of them indirectly through a function-pointer slot; the two big text formatters 0x631afb, 0x632cad have 11 sites, 7 of which pass a window address as an argument
+   FUN_00625b20: 4 'shl reg,0x8' -> 'add reg,0x99a01c' slot-index pairs, 77 call sites in 23 functions
+   FUN_005f0583: 1 'shl reg,0x8' -> 'add reg,0x99a01c' slot-index pairs, 99 call sites in 66 functions
+   FUN_006265a2 (45 insns, 86 sites in 39 fns) shares 4 guard/store signature instructions with FUN_00626634: ['cmp dword ptr [ebp+0x8],0x9', 'mov byte ptr [edx+0x99a01c],0x0', 'mov dword ptr [edx*4+0x999ff4],eax', 'shl edx,0x8']
+M194b  PASS - the slots are indexed by REGISTER: FUN_00625b20 4 pairs (77 sites in 23 fns), FUN_005f0583 1 pairs (99 sites in 66 fns); FUN_006265a2 is FUN_00626634's SIBLING publish - same guard 'cmp [ebp+0x8],9', same 'mov [edx*4+0x999ff4]', same 'shl edx,8' + zero-the-slot (4 instructions in common), 86 sites in 39 fns
+   slot-7 publish 0x4d10dd FUN_004d0f60 pushes=['0xffffffff', '0xffffffff', 'eax', '0x7'] last call before: 0x4d10cb call 0x6265a2
+   slot-7 publish 0x5022a6 FUN_00501fc0 pushes=['edx', '0x7'] last call before: none
+   slot-7 publish 0x509163 FUN_00507ef0 pushes=['0xffffffff', '0xffffffff', 'edx', '0x7'] last call before: 0x509151 call 0x626634
+   slot-7 publish 0x530fc0 FUN_00530e30 pushes=['0xffffffff', '0xffffffff', 'eax', '0x7'] last call before: 0x530fab call 0x5808b0
+   slot-7 publish 0x53438d FUN_00534180 pushes=['0x9', 'ebx', 'eax', '0x7'] last call before: 0x534382 call 0x580a60
+   slot-7 publish 0x552eb9 FUN_00552d90 pushes=['0xffffffff', '0xffffffff', 'ecx', '0x7'] last call before: 0x552e96 call 0x626634
+   slot-7 publish 0x594e65 FUN_0058fa40 pushes=['0xffffffff', 'esi', 'eax', '0x7'] last call before: 0x594e5a call 0x426680
+   pushes of slot 7's own address 0x99a71c: 0  pushes of slots 8/9 (0x99a81c/0x99a91c): 0
+   LIVE slot contents (pid 319926): slot 0='disciplined'; slot 1='Provost'; slot 2='Zakharov'; slot 3='University'; slot 4='Mission Year 2150'; slot 5=''; slot 6=''; slot 7=''; slot 8=''; slot 9=''
+   LIVE A[10]=['0x1', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0'] B[10]=['0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0'] staging=['0x0', '0x0']
+M194c  PASS - slot 7 is a WRITE-ONLY channel: 7 publish sites pass it a computed buffer (FUN_004d0f60, FUN_00501fc0, FUN_00507ef0, FUN_00530e30, FUN_00534180, FUN_00552d90, FUN_0058fa40) while ZERO sites push its address 0x99a71c (slots 0-6 get 93 such pushes); live it is EMPTY, and the filled slots are one faction's sentence parts - 5 of 10 non-empty, all 10 printable ASCII: 'disciplined' / 'Provost' / 'Zakharov' / 'University' / 'Mission Year 2150'
+M195 0x920700: 31 mentions = 8 stores / 17 loads / 6 direct tests / 0 other forms
+   store 0x54458b FUN_00544530 mov dword ptr ds:0x920700,ebx
+   store 0x544a99 FUN_00544530 mov ds:0x920700,eax
+   store 0x544ce9 FUN_00544530 mov ds:0x920700,eax
+   store 0x545040 FUN_00544530 mov dword ptr ds:0x920700,ebx
+   store 0x5451fe FUN_00544530 mov dword ptr ds:0x920700,ebx
+   store 0x545802 FUN_00544530 mov dword ptr ds:0x920700,ebx
+   store 0x54581b FUN_00544530 mov dword ptr ds:0x920700,ebx
+   store 0x54ec5c FUN_00546800 mov dword ptr ds:0x920700,0xc
+   test  0x5405dc FUN_00540390 cmp dword ptr ds:0x920700,0x8
+   test  0x540a62 FUN_00540390 cmp dword ptr ds:0x920700,0x8
+   test  0x540c1a FUN_00540390 cmp dword ptr ds:0x920700,0x6
+   test  0x540d62 FUN_00540390 cmp dword ptr ds:0x920700,0xd
+   test  0x540e18 FUN_00540390 cmp dword ptr ds:0x920700,0x4
+   test  0x540efd FUN_00540390 cmp dword ptr ds:0x920700,0x9
+   writers: {'FUN_00544530': 7, 'FUN_00546800': 1}  readers/testers: {'FUN_00540390': 8, 'FUN_00544530': 13, 'FUN_00545c50': 2}
+   tested immediates: direct ['0x4', '0x6', '0x8', '0x9', '0xd'] + register-mediated ['0x1', '0x2', '0x4', '0x5', '0x6', '0x7', '0x8', '0x9', '0xa', '0xb', '0xc', '0xd']
+   value domain = ['0x1', '0x2', '0x4', '0x5', '0x6', '0x7', '0x8', '0x9', '0xa', '0xb', '0xc', '0xd'] (12 distinct, max 0xd), stored immediate 0xc at 0x54ec5c, LIVE value 0x0
+   FUN_00544530: decompiled body 0 lines, 0 string literals
+   FUN_00546800: decompiled body 0 lines, 0 string literals
+   FUN_00540390: decompiled body 0 lines, 0 string literals
+   FUN_00545c50: decompiled body 0 lines, 0 string literals
+   FUN_00544530 absolute-global stores: {'0x997120': 28, '0x99aa20': 14, '0x99aa1c': 14, '0x920700': 7, '0x920748': 3, '0x92077c': 3, '0x920728': 3, '0x9206fc': 2, '0x991e24': 2}
+   of its top globals, already named in NAMED.md: 0x997120x28, 0x99aa20x14, 0x99aa1cx14, 0x920700x7, 0x92077cx3
+M195a  PASS - the mode word has EXACTLY TWO writers and no read-modify-write form anywhere: 31 mentions = 8 stores / 17 loads / 6 tests / 0 other (no inc/dec/add/and/or/xor on it); FUN_00544530 x7 (stores ebx/eax) and FUN_00546800 x1 (the only immediate store, 0xc at 0x54ec5c)
+M195b  PASS - it is a MODE CODE, not a flag: every test compares a VALUE (no mask), the tested set is ['0x1', '0x2', '0x4', '0x5', '0x6', '0x7', '0x8', '0x9', '0xa', '0xb', '0xc', '0xd'] - 12 distinct values up to 0xd, including the 0x2 that gates FUN_0053a9c0 at 0x545cfa - and the live value is 0x0
+M195c  PASS - NOBODY names it: the four functions that write or test it contain ZERO string literals (FUN_00544530:0, FUN_00546800:0, FUN_00540390:0, FUN_00545c50:0); the mode is identified only structurally - FUN_00544530 is a 1531-insn dispatcher that takes the value as a parameter (2 tests of [ebp+0x8]) and stores it 7 times; its 0x9xxxxx store set is {'0x997120': 28, '0x99aa20': 14, '0x99aa1c': 14, '0x920700': 7, '0x920748': 3, '0x92077c': 3, '0x920728': 3, '0x9206fc': 2}, of which NAMED.md already names 0x997120, 0x99aa20, 0x99aa1c, 0x920700, 0x92077c)
+M196 0x94d448: 653 mentions; 466 scaled [reg*4+disp], 185 [reg+disp], 2 other
+   index-register provenance of the scaled sites: 365 = 'add <sub-index>' AFTER a >=3-op fold chain on the SAME register (the 2095-block fold), 3 other def after a fold, 93 def with no fold in 40 insns, 5 no def in 40 insns
+   297 scaled tests, mnemonics {'test': 297}; 29 distinct numeric operands (widest 5 bits: 0x40c30); operands that are address candidates (in 0x400000-0x7fffffe with >1 bit set): []
+   operand set: ['0x1', '0x10', '0x1000000', '0x11', '0x2', '0x20', '0x2000000', '0x3', '0x30', '0x40', '0x40000', '0x40020', '0x40030', '0x40c30', '0x6', '0x60', '0x7', '0x70', '0x8', '0x80', '0x80000', '0x800000', '0x8000000', '0x8000008', '0x8020', '0x810', '0xc10', '0xc11', '0xc30']
+   139 scaled loads; use of the loaded value within 3 insns: {'arithmetic/compare': 125, 'pushed-as-arg': 14}; derefs = 0
+   FUN_005551e0 field RMW quad verbatim at 0x5553e1/0x5553e7/0x5553ed/0x5553f3: True ['mov edx,dword ptr [edi+0x94d448]', 'and edx,0xfffdfbff', 'or edx,0x840', 'mov dword ptr [edi+0x94d448],edx']
+   the 'address store' pair: 0x5553d2 'lea eax,[eax*4+0x94d4a8]' then 0x5553df 'mov dword ptr [eax],ecx' - the lea computes the very dword the next store writes (store-through alias, not a tagged pointer): True
+   the two 0x10 carriers [(5592074, 'mov dword ptr [edi+0x94d448],eax'), (5593103, 'mov dword ptr [edi+0x94d448],eax')], each immediately after a bit op on the stored value: ['or eax,0x20000', 'and ah,0xdf']
+   LIVE (pid 319926) 0x94d448+4i i<33: ['0x0', '0x80008118', '0x80008118', '0x80008118', '0x80008118', '0x80008118', '0x80008118', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0xa', '0x2', '0x8', '0x8', '0x2', '0x4', '0x6', '0x3', '0xffffffff', '0xffffffff', '0xffffffff', '0xffffffff', '0xffffffff', '0xffffffff', '0xffffffff', '0xffffffff', '0x0']
+   LIVE 0x94d448+8380*fac fac<33: ['0x0', '0x80008118', '0x80008118', '0x80008118', '0x80008118', '0x80008118', '0x80008118', '0x0', '0x74697372', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']
+   values inside the mapped user range 0x400000-0x7fffffe: 0 + 0 of 66
+M196a  PASS - the scaled form is the BLOCK FIELD, not a pointer array: 365 of 466 scaled sites take their index from 'add reg,<sub-index>' built on a >=3-op 2095-fold of the SAME register, so the address is 0x94d448 + 8380*S + 4*C - a per-faction block field at block offset 0x344 + 4*C - beside 185 [reg+disp] sites of the same family
+M196b  PASS - the 0x40030 sites were never pointer tests and neither was anything else: both are 'test <dword>,0x40030' (bits 4,5,18) followed by a je, and ALL 297 scaled tests use the TEST mnemonic - 0 cmp, so not one of them compares the dword against a value, let alone an address - across 29 distinct operands the widest carries 5 bits and NONE is an address candidate ([]); of the 139 scaled loads NONE dereferences the loaded value ({'arithmetic/compare': 125, 'pushed-as-arg': 14})
+M196c  PASS - M190's 'the two carriers store ADDRESSES' reading is RETRACTED: 0x55540a/0x55580f store eax right after 'or eax,0x20000' / 'and ah,0xdf' - bit ops on the field's own flag bits - and their neighbours are the register-level RMW quad 'mov edx,[edi+0x94d448] / and edx,0xfffdfbff / or edx,0x840 / mov [edi+0x94d448],edx', while the lea at 0x5553d2 is the store-through alias of the dword written at 0x5553df; LIVE neither the 33 dwords at 0x94d448+4i nor the 33 per-block fields at +8380*fac hold any value in the mapped user range (0+0 of 66) - they are 0, -1, small ints and one bit-31 flag pattern
+SUMMARY M194a=PASS M194b=PASS M194c=PASS M195a=PASS M195b=PASS M195c=PASS M196a=PASS M196b=PASS M196c=PASS
