@@ -377,3 +377,15 @@ other mode, and the run then reads like an instrument failure when it is already
   cmp-imm from cmp-reg before claiming "N sites compare against a constant".
 - **An `INSTALLS` displacement string from `mov dword ptr [esi+0xa14],imm` has no closing `]`** — test
   `endswith("+0xa14")`; demanding `"+0xa14]"` fails a gate whose data is right.
+- **A store census that requires `[` in the destination operand MISSES absolute stores.** objdump prints a
+  store to a global three ways: `mov DWORD PTR ds:0x9977f0,ecx` (89 05), `mov ds:0x9977f0,eax` (a3 — NO
+  brackets and NO `ptr` keyword) and `mov BYTE PTR ds:0x997120,0x0`. A bracket test reported 1 of the 2
+  stores to ds:0x9977f0 and ZERO writers for 9 globals that each have exactly one (`mov ds:0x9978ac,eax`),
+  which read as "read-only load-time data" when they are runtime setter state. Classify a destination as
+  memory if it has `[` OR matches `d?word ptr ds:` OR matches a bare `[a-z]{2}:?0x[0-9a-f]{5,8}`.
+- **Resolve the RECEIVER of a vmethod's helper call, not just the callee.** When a vmethod's body does
+  `add ecx,0x3098` (or `lea ecx,[esi+0xNNN]`) immediately before `call helper`, the helper runs on the
+  SUBOBJECT at this+0x3098, not on `this`. Ghidra reuses `in_ECX` on both sides of the call, so the C reads
+  as if the list/field belonged to the object itself — that misreading made M209 report the hotspot list as
+  the object whose +0xa8 is dispatched. Also: a `mov [X+idx*4+DISP]` store written for idx 0..N-1 ends at
+  DISP + 4*(N-1), so an object's extent is that +4, not DISP+4 (the row class ends at 0xb40+8+4 = 0xb4c).
