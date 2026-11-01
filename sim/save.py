@@ -8,8 +8,9 @@ evidence/b2_save_walk.txt.
 
   prefix 12 | state header 796 | own player 4 | block A 67,040 = 8 x 8,380 | block B 11,488
   | small table 32 | map header struct 2,724 (u32 W, u32 H at +0/+4) | grid W*H*22
-  | trailer 128 | section 16,000 | MIDDLE (layout OPEN) | units 52*n | bases 304*m
-  | tail 10,800 = 256+152+10,144+28+220
+  | map trailer (91 B at 64x64, 128 B at 80x80 - formula OPEN) | section 16,000
+  | u32 count + count bytes (176 / 192 / 208 measured) | 3,584 | 26,624 | 4,096
+  | units 52*n | bases 304*m | tail 10,800 = 256+152+10,144+28+220 = EOF
 
 The two record arrays are located by SHAPE (coords inside the dims, a NUL-terminated printable
 name at base+19), never by the counts; the header counts are then compared with what the scan
@@ -38,8 +39,12 @@ BLOCK_B_OFF, BLOCK_B_LEN = 67852, 11488
 SMALL_OFF, SMALL_LEN = 79340, 32
 MAP_HDR_OFF, MAP_HDR_LEN = 79372, 2724
 CELL_LEN, REC_LEN = 22, 44
-TRAILER_LEN = 128
+# The map trailer is dims-dependent and the formula is OPEN: 91 B was measured on all 17
+# 64x64 saves (the closure below fails by 37 B on any other value), 128 B is the traced
+# 80x80 read (SAVE_FORMAT.md row 6), 338 B is planetx.MP's (128x128).
+TRAILER_LEN = {(64, 64): 91, (80, 80): 128}
 SEC16000_LEN = 16000
+MIDDLE_SECTIONS = 3584 + 26624 + 4096
 UNIT_LEN, BASE_LEN = 52, 304
 UNIT_TYPE_BAND = 64         # +10 >= 64: production-queue band record, not a unit (OPEN)
 BASE_NAME_OFF = 19
@@ -131,14 +136,21 @@ class Save:
         self.mask_factions = bin(self.faction_mask).count("1")
 
         self.width, self.height = _u32(data, MAP_HDR_OFF), _u32(data, MAP_HDR_OFF + 4)
+        dims = (self.width, self.height)
+        if dims not in TRAILER_LEN:
+            raise SaveError("%s: no measured map-trailer length for %dx%d" % (path, *dims))
         self.grid_off = MAP_HDR_OFF + MAP_HDR_LEN
         self.grid_len = self.width * self.height * CELL_LEN
         self.trailer_off = self.grid_off + self.grid_len
-        if self.trailer_off + TRAILER_LEN > self.size:
-            raise SaveError("%s: grid+trailer runs past EOF (%d + %d > %d)"
-                            % (path, self.trailer_off, TRAILER_LEN, self.size))
-        self.sec_off = self.trailer_off + TRAILER_LEN
-        self.mid_off = self.sec_off + SEC16000_LEN
+        self.sec_off = self.trailer_off + TRAILER_LEN[dims]
+        self.count_off = self.sec_off + SEC16000_LEN
+        if self.count_off + 4 > self.size:
+            raise SaveError("%s: count prefix at %d runs past EOF (%d)" % (path, self.count_off,
+                                                                           self.size))
+        self.count_len = _u32(data, self.count_off)        # DAT_00927538, 176/192/208 measured
+        self.units_pred = self.count_off + 4 + self.count_len + MIDDLE_SECTIONS
+        self.bases_pred = self.units_pred + UNIT_LEN * self.n_units
+        self.tail_pred = self.bases_pred + BASE_LEN * self.n_bases
 
         self.bases_off, self.found_bases = _locate_bases(data, self.width, self.height)
         self.units_off = self.bases_off - UNIT_LEN * self.n_units
@@ -148,9 +160,10 @@ class Save:
             self.found_units += 1
         self.units = [self.unit(i) for i in range(self.n_units)]
         self.bases = [self.base(i) for i in range(self.n_bases)]
-        self.mid_len = self.units_off - self.mid_off
         self.tail_off = self.bases_off + BASE_LEN * self.n_bases
         self.tail_len = self.size - self.tail_off
+        self.closes = (self.units_pred == self.units_off and self.bases_pred == self.bases_off
+                       and self.tail_off + TAIL_LEN == self.size and self.tail_len == TAIL_LEN)
         owners = {u["owner"] for u in self.units} | {b["fac"] for b in self.bases}
         self.owner_ids = sorted(owners)
         self.faction_count = self.mask_factions

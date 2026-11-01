@@ -108,21 +108,24 @@ def run_save(target, results):
             bad.append("%s: unit array does not end at the base array" % os.path.basename(p))
         if t.tail_len != sosave.TAIL_LEN:
             bad.append("%s: tail %d != %d" % (os.path.basename(p), t.tail_len, sosave.TAIL_LEN))
-        if t.mid_len <= 0:
-            bad.append("%s: middle region is %d B" % (os.path.basename(p), t.mid_len))
+        if not t.closes:
+            bad.append("%s: walk predicts units@%d bases@%d tail@%d, content says %d/%d/%d "
+                       "(size %d)" % (os.path.basename(p), t.units_pred, t.bases_pred,
+                                      t.tail_pred, t.units_off, t.bases_off, t.tail_off, t.size))
         if not t.owner_ids or max(t.owner_ids) >= t.mask_factions:
             bad.append("%s: owners %s vs mask %d" % (os.path.basename(p), t.owner_ids,
                                                      t.mask_factions))
-        mids.add(t.mid_len)
+        mids.add(t.count_len)
         tails.add(t.tail_len)
     results.append(("header-counts      %d saves, header unit/base counts match the shape scan; "
-                    "tails=%s middle=%s bad=%s"
+                    "tails=%s, count-prefix=%s, bad=%s"
                     % (len(files), sorted(tails), sorted(mids), bad or "none"), not bad))
-    results.append(("tiling             mid_off %d <= units %d .. bases %d .. tail %d (%d B, "
-                    "layout OPEN), EOF %d"
-                    % (s.mid_off, s.units_off, s.bases_off, s.tail_off, s.tail_len, s.size),
-                    s.mid_off <= s.units_off and s.units_off < s.bases_off
-                    and s.tail_off + s.tail_len == s.size))
+    results.append(("walk-closure     count u32@%d=%d -> units %d (content %d) -> bases %d "
+                    "(content %d) -> tail %d+%d=EOF %d, closes=%s on all %d saves"
+                    % (s.count_off, s.count_len, s.units_pred, s.units_off, s.bases_pred,
+                       s.bases_off, s.tail_off, s.tail_len, s.size, s.closes, len(files)),
+                    s.closes and not any(not t.closes for t in
+                                         [sosave.parse(p) for p in files])))
 
     agree = (s.faction_slots == s.mask_factions == len(s.owner_ids))
     results.append(("faction-count      block-A slots=%d (67040/8380), mask byte %#x popcount=%d, "
