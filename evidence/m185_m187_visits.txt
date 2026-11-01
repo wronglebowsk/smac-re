@@ -1,0 +1,34 @@
+FUN_00530e30 @0x530e30 (454 bytes): 143 insns, 10 calls, 3 global stores
+   0x530e6e mov    DWORD PTR ds:0x920740,0xf
+   0x530efd mov    DWORD PTR ds:0x99aa1c,ecx
+   0x530f11 mov    DWORD PTR ds:0x99aa20,edx
+FUN_00535940 @0x535940 (798 bytes): 208 insns, 5 calls, 47 global stores
+   0x535952 mov    DWORD PTR ds:0x9204c0,edi
+   0x53595d mov    DWORD PTR ds:0x9206f4,edi
+   0x535963 mov    DWORD PTR ds:0x9206e8,edi
+   0x535969 mov    DWORD PTR ds:0x9206e4,edi
+   0x53596f mov    DWORD PTR ds:0x920774,edi
+   0x535975 mov    DWORD PTR ds:0x9204d8,edi
+   0x53597b mov    DWORD PTR ds:0x9204cc,edi
+   0x535981 mov    DWORD PTR ds:0x9204b8,ebx
+   0x535987 mov    DWORD PTR ds:0x920710,ebx
+   0x53598d mov    DWORD PTR ds:0x920770,ebx
+M185 0x530e30 stores ['0x920740', '0x99aa1c', '0x99aa20'] (imm 0xf x1) ; 0x535940: 47 stores = 13 x -1 (edi) + 12 x 0 (ebx), calls Counter({'0x5a6cd0': 3, '0x5a90a0': 2})
+M185  PASS - the two sub-passes FUN_00535c60 calls after the aggregator are ASYMMETRIC in what they TOUCH: FUN_00530e30 writes exactly three globals - ds:0x920740 = 0xf (a 15-wide budget/limit) and the staging payload pair ds:0x99aa1c / ds:0x99aa20, i.e. it FILLS record fields +0x0/+0x4 for the faction it was handed - while making 10 calls (incl. 0x626634, the write-bytes emitter, at 0x530fc0); FUN_00535940 writes 47 globals, 13 of them -1 (0x9204c0/0x9206f4/0x9206e8/0x9206e4/0x920774/0x9204d8/0x9204cc/0x920750) and 12 of them 0 (0x9204b8/0x920710/0x920770/0x9204e0/0x920490/0x9206ec), i.e. it RESETS the aggregate scratch set (the 0x9207xx / 0x9204xx family that 0x920720 and 0x9204b0 belong to) before the next visit re-derives it; it is the only one of the two that calls out (0x5a6cd0 x2).
+M186 ds:0x94d448: 653 refs, 27 whole-dword stores in 8 functions, 0 or/and/add/sub sites
+   store owners: {'FUN_005551e0': 15, 'FUN_00552970': 5, 'FUN_0052a720': 2, 'FUN_00551a20': 1, 'FUN_00551cf0': 1, 'FUN_00552f10': 1, 'FUN_00554850': 1, 'FUN_00554d10': 1}
+   test masks (mask: count): {'0x1': 150, '0x10': 62, '0x20': 34, '0x7': 18, '0x2': 16, '0x8': 10, '0x3': 8, '0x2000000': 5}
+   0x52b9c7 FUN_0052a720   mov    dword ptr [eax+0x94d448],edx
+   0x52b9d0 FUN_0052a720   mov    dword ptr [ecx+0x94d448],edx
+   0x551b1d FUN_00551a20   mov    dword ptr [eax+0x94d448],edx
+   0x551d22 FUN_00551cf0   mov    dword ptr [eax+0x94d448],edx
+   0x552cca FUN_00552970   mov    dword ptr [ebx+0x94d448],edx
+   0x552cd8 FUN_00552970   mov    dword ptr [eax+0x94d448],edx
+M186 the 0x40030 test site: ['0x4f2bba', '0x535ccb']
+M186  PASS - the per-faction dword at [fac*4+0x94d448] is ASSIGNED wholesale, never bit-set: 27 store sites in 8 functions (FUN_005551e0 x15, FUN_00552970 x5, FUN_0052a720 x2 + 5 singles), EVERY one a plain `mov [reg+0x94d448],reg`, and ZERO `or`/`and`/`add`/`sub` sites at that displacement. Its 653 reads are byte tests with masks ['0x1', '0x10', '0x20', '0x7', '0x2', '0x8'] plus whole-dword loads, and the 0x40030 test FUN_00535c60 makes (0x535ccb) appears at exactly TWO sites in the image (the other is FUN_004f26e0 at 0x4f2bba, the per-turn processor) with no bit-level setter anywhere - so bits 0x10/0x20/0x40000 can only arrive as part of an assigned value, and a claim that the visit is gated on them needs the assigned values, not the test.
+M187 ds:0x99aa3c: 19 refs = 5 stores + 14 reads; comparisons [('0x4d9da0', 'cmp dword ptr ds:0x99aa3c,0x1'), ('0x4d9dff', 'cmp dword ptr ds:0x99aa3c,0x2'), ('0x616c00', 'cmp dword ptr ds:0x99aa3c,0x0')]
+   stores: [('0x48eeb0', 'FUN_0048ee00'), ('0x48f035', 'FUN_0048ef80'), ('0x626d0c', 'FUN_00626b46'), ('0x626eac', 'FUN_00626dfc'), ('0x626fc5', 'FUN_00626f19')]
+   emitter-family provenance ([[0x99aa40]+0x3100]): {'0x626d0c': ['mov ecx,dword ptr [eax+0x3100]'], '0x626eac': ['mov eax,dword ptr [edx+0x3100]'], '0x626fc5': ['mov edx,dword ptr [ecx+0x3100]']}
+   the ==1 branch writes unit records: [('0x4d9dd1', 'mov    BYTE PTR [eax+0x933289],0x18'), ('0x4d9dd8', 'mov    WORD PTR [eax+0x93328c],si'), ('0x4d9ddf', 'mov    WORD PTR [eax+0x933294],cx'), ('0x4d9de6', 'mov    ecx,DWORD PTR [eax+0x93327c]')]
+M187  PASS - the record's +0x20 dword (ds:0x99aa3c) is a 3-VALUED SELECTOR, not a flag byte: 5 stores - three of them (FUN_00626b46 / 0x626dfc / 0x626f19) copying [[ds:0x99aa40]+0x3100] into it, two from the FUN_0048ee00 / FUN_0048ef80 wrappers - and 14 reads, including THREE `cmp` sites: FUN_004d9ae0 branches on ==1 (0x4d9da0) and writes a unit record at 0x933289/0x93328c/0x933294 then clears bits in [rec+0x93327c], and on ==2 (0x4d9dff) acting only while ds:0x985af0 > 0; FUN_00616b89 tests it ==0. So ASSEMBLEGROUP is driven by a 3-way mode stored INSIDE the record it is about to emit.
+SUMMARY M185=PASS M186=PASS M187=PASS
