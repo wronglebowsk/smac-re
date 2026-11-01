@@ -1,50 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-171-171.md` (2 sessions). Read it only when a question reaches back before session ## Session 171.
-
-## Session 171 (cont. 16) — doc restructure: the footing file is now an index, the narrative is archived
-
-`NEXT_PROMPT.md` was 15,305 B against a 15,500 cap — 195 B of headroom, and every milestone needs ~600 B of pick text,
-so the next batch could not be recorded without deleting findings (three consolidations today were exactly that).
-Split instead of shaved: `docs/pick-archive.md` (10,957 B) now holds the M90-M123 milestone narrative and the FULL trap
-text; `NEXT_PROMPT.md` (12,936 B) keeps the RULES as 22 one-liners plus the live footing and the closing order.
-Headroom 195 B -> 2,564 B (13x). Verified nothing was lost: 21 identifier tokens checked across both files, all present
-(0x5a7e7f/0x94d6a4/probe3.py/0x4efe60/TAILOUT/0x93325c/0x6a9480/0x59666d ...); the only "missing" hits were a typo in my
-own check (0x93ff3c vs 0x3ff3c) and a name written as FUN_005a6d40 rather than 0x5a6d40.
-Also recorded the batch-size finding in BUDGET: 3 milestones comfortable, 5 max when they share one instrument,
-box-time milestones 1 per batch.
-
-## Session 171 (cont. 17) — NAMED.md split: the historical middle is archived, the live registry has headroom again
-
-`NAMED.md` was 249,762 B against a 250,000 budget (238 B free), so the next milestone could not be recorded. The
-registry's bulk is HISTORY: blocks M32-M84e (sessions 32-133, 52 blocks) are settled findings nobody re-reads to pick
-work. Moved byte-identically to `docs/named-archive-m32-m84e.md` (182,747 B); `NAMED.md` keeps the method, `Not yet
-named`, and every block from M89 on, and now carries an ARCHIVED pointer telling the reader to grep both files.
-**249,762 -> 68,064 B** (181,936 free). Integrity checked line by line: 0 of the moved lines absent from the archive.
-Rules that keep this honest: the move is a rename across files in one commit (git records it, nothing is deleted from
-history), and the archive names its block order in its own header.
-
-## Session 171 (cont. 18) — M124-M126, three names settled statically (all PASS, zero box time)
-
-`python3 scripts/m124_state_and_memo.py` — SUMMARY M124=PASS M125=PASS M126=PASS (evidence/m124_m126.log).
-
-- **M124 ds:0x926bd4 = the UPKEEP-SYNCH PHASE CODE.** 4 writes and 2 tests in the whole image. `= 1` at the loop entry
-  (0x5210aa, right after 0x744f24 / 0x91c658 / 0x91c630 are zeroed), `= 2` after the message at 0x521297 (0x68ea94 =
-  **"Skipping upkeep synch"**), back to `esi`=0 at 0x5213c7 after the second (0x68eacc = the same string) with the
-  counter `0x91c630` incremented, and `= setne al` (0/1) at 0x57f8c5. **Both readers are `cmp ...,0x1`**: 0x5aaa6f (in
-  FUN_005aaa20, after the "Earning a Tech" print) and **0x5aafe4 inside FUN_005aadf0** — the band-flag function, where
-  `phase == 1` OR `[fab+0x94d7fc] < 0` skips the tail. So the reason that tail is skipped during upkeep synch is now
-  named, not inferred.
-- **M125 ds:0x920434 = the ID the window-reset entry publishes, NOT a faction field.** 15 writes, 619 reads, and **12 of
-  the 15 writes sit inside a reset sequence** (`mov ecx,0x91db70; call 0x4e25e0` clears the widget object, preceded by
-  `[0x91f738]=0xff`, `[0x91f6e0]=esi`, `rep stos`, `call 0x581280`); the stored value is the caller's id (esi/ebx/edi)
-  or a constant; **0 references use a faction-scaled base**; the readers compare it against ids (0x546887:
-  `if ([eax+0x94d448] & 0x8000000) && (0x920434 != ebx) && ([esi*4+0x92044c] & 2)`).
-- **M126 0x59f0c7 = the INVALIDATION of the memoized advance threshold.** `mov [ebx+0x94d800],-1` inside FUN_0059ec90,
-  immediately after `[ebx+0x94d650] += [eax+0x927a78]+ecx+ds:0x985afc` and `[ebx+0x94d654] = 0`. Its 3 call sites are
-  0x5a0b39 (FUN_005a0aa0), 0x5a123e and 0x5a1277 (FUN_005a0fa0); the first zeroes the DIVISOR `[edx*4+0x94e488]` just
-  before the call — so the memo dies exactly when a faction's base count changes.
-Method law added to the skill: a small state code is named by the STRINGS printed around its writers.
+Older sessions: `docs/sessions/sessions-171-171.md` (3 sessions). Read it only when a question reaches back before session ## Session 171.
 
 ## Session 171 (cont. 19) — M127-M129 (all PASS): the plan byte's 369 readers, the seek pair in code, the three-condition consume
 
@@ -585,3 +541,13 @@ edi; 0 pump sites test -9999 and 0 of the 56 +0xa40 stores write it. Pump's 94 c
 eax,eax / 4 cmp-imm (0x8 x2, 0x3, 0x1) / 6 cmp-reg / 5 pop / 3 push / 2 lea / 2 jmp / 1 dec; 1 tests -1 within 12
 insns.
 OPEN: s174e box state unverified; M181 still a LEAD (no positive control).
+
+## Session 183 (2026-11-02) — M213-M216 all PASS: point-in-rect hotspots; the dialog's +0x4c is a CLICK DISPATCHER over the list at this+0x3098; the 0xb4c row class and its label buffer; 0x6738e4 and the modal handle's readers
+
+Acceptance `python3 scripts/m213_m216_hotspot.py` -> `SUMMARY M213=PASS M214=PASS M215=PASS M216=PASS (17/17 gates)`, rc 0, `evidence/m213_m216_hotspot.txt` (8,352 B). Invocation #1 was 15/17 on two EXPECTATION errors of mine, not data: my store census demanded `[` in the destination operand, so it missed the BARE no-`ptr` forms `mov ds:0x9977f0,eax` / `mov ds:0x9978ac,eax` (a3) — ds:0x9977f0 has 2 stores not 1, and each layout triple has 1 writer not 0 — and I asserted one writer function where index.csv resolves 9 distinct one-store functions. 3 `--probe` runs fixed 5 earlier ones (half-open window = 53 insns; read publish offsets off the SOURCE operand; FUN_00403a80's stores are mov/add/mov triples and FUN_00478080 calls it 4x not 3x; a `call dword ptr ds:imm` target and a pc outside any indexed function both crash an `int()`/`IDXMAP[]` census; a scaled `[X+idx*4+0xb40]` store's last field is disp+8, not disp+4). No threshold weakened. Zero box time.
+
+- **M213** FUN_005e75a0 (29 insns, 0 callees) = POINT-IN-RECT over a 16-B {l,t,r,b} box, half-open: 4 cmp at +0/4/8/c, 4 `xor eax,eax`, 1 `mov eax,1`, 0 stores, bare `ret`. FUN_005e7917 = reverse scan of 24-B items (count `[obj+8]`, start count-1, 3 `imul ,0x18`, base `[obj+0]`) publishing item[+0x14]->param_3 / item[+0x10]->param_4, `or eax,-1` on no match, `ret 0x10`: HIGHEST hit wins (last drawn). 61 sites/25 fns vs 44/43. FUN_00478080 (143 insns, 0 direct call sites) builds one stack rect via FUN_00403a40 + 4x FUN_00403a80 and dispatches +0xa8 4x with 0/1/2/3 = the ZONE NUMBER.
+- **M214** FUN_005f6aa3 = +0x4c of 5 vtables (466 installs), 0 direct calls; the insn before `call 0x5e7917` is `add ecx,0x3098` — the hotspot list is a MEMBER AT this+0x3098, not the object (Ghidra's `in_ECX` reuse reads it wrong); gate `cmp [ebp-0x4],0` = item[+0x14]==0, arg = item[+0x10], `call [eax+0xa8]` self-dispatch, `ret 0x8` (x,y). Lists are reusable: 44 scan sites -> 19 distinct this-displacements (34 sites) + global 0x8a9108 + 9 stack locals; `[reg+0x3098/9c/a0]` = 1/0/0. All 12 image-wide `call [reg+0x4c]` sites belong to OTHER hierarchies (3 inside +0x4c vmethods of 0x676fc0/0x673ca8-family/0x67275c, 2 inside +0x40/+0x58 vmethods, 7 in non-vmethods, 2 not in any indexed fn) -> the family's +0x4c dispatcher is OPEN.
+- **M215** row 0xb4c verified twice (`add ecx,0xaac`/`0x15f8` before 2 `call 0x5faec0`; top store `[X+idx*4+0xb40]`, idx 0..2, ends 0xb4c). Ctor installs 0x67194c + subobject 0x671944 at [ecx+0x444], 20 stores; its 27-dword 0xae0..0xb48 block copies 9 stride-0xc triples 0x9978ac..0x99790c that are read 3x and written ONCE each by a bare `mov ds:imm,eax` in 9 distinct one-store fns FUN_0045a4d0..FUN_0045a650 (0x30 apart) = runtime setter state, not load-time data. FUN_005f9e85 (0 slots, 90 sites/23 fns) = labelled-control creator (id->[this+0xa78], malloc'd label->[this+0xa7c], rect = param_3..6, parent = param_7). Label census: 44 x the global scratch text buffer ds:0x997120 (4089 refs / 668 stores, ZERO indexed, 466 base-clears `mov byte ptr ds:0x997120,0x0`; 1425 of 3232 pushes hand it to the emitter FUN_0064b9e0), 15 NULL, 30 reg/field, 1 literal ("Create Session (Translate)" @0x69a7bc).
+- **M216** 0x6738e4: 87 slots, 2 installs (0x43fa14, 0x43fc3e), +0xa8 = FUN_0043fee0 (1 slot, 0 direct calls); shares 75/87 slots with 0x6717cc, 73 with 0x671d94, 66 with 0x67164c, 70 with 0x67194c — every differing set contains 0x0/0x4c/0xa8. ds:0x9977f0 = 9 refs, 2 stores (0x5f3d70/0x5f3e02, both in the pump FUN_005f1394), 7 loads in 4 fns: the forwarder, FUN_005d69fa (current-object picker -> publishes ds:0x9939ac, returns the object's [+0xa8] DELEGATE, 3 callers dispatch +0x12c/+0x130/+0x134) and FUN_005f5a11 (0 slots, 0 direct calls; installed 3x as an immediate into [reg+0x2210/0x2224/0x2234] = a callback FIELD; dispatches +0xe0 on [handle+0xa14] or the handle, writes [handle+0xa40]).
+OPEN: who dispatches +0x4c (box falsifier); who builds the this+0x3098 list (`call 0x5e7665` on `[esi+0x3098]` at 0x421ea0 in the dialog ctor FUN_00421da0); s174e box state unverified; M181 still a LEAD (no positive control).
