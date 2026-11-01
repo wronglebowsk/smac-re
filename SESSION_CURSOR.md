@@ -1,6 +1,7 @@
-S191 M240 PR #179 (gate green, merging). Acceptance = `python3 scripts/m240_terrain_repack.py` ->
-`PASS M240: 6/6 gates on planet.MP, planetx.MP` -> evidence/m240_terrain_repack.txt (3rd invocation
-green; G5 rewritten per-function = stricter, nothing weakened). FINDING: the .MP grid IS the live
-terrain-record array — FUN_00582260 reads `DAT_0092a38c*0x2c` into DAT_0092ae14 verbatim, count=(W/2)*H,
-one record = TWO map columns; +16..+43 = 7 copies of the +8 mask (OPEN). RETRACTED "cell+7 = land marker"
-and FOOTING's "+7 = owner byte". Zero box time: M181 debt STILL owed. NEXT: `scripts/track_mode.py`.
+S192 M241 IN FLIGHT (box-first: the M181 falsifier) — this run owns the measurement.
+acceptance: `sudo -n python3 scripts/m241_m181_control.py` -> `PASS M241: 5/5 gates`
+-> evidence/m241_m181_control.txt. Two UI saves: A = no-tracer 2 ms sampler over the 16 staging
+dwords at 0x99aa1c; B = 41 silent counting bps (33 census stores of ds:0x99aa38, the 4
+`call 0x41a8f0` sites, 0x41a8f0 entry, 0x41abd4 post-pack, GOVERNORCONTROL writer 0x512020 +
+0x512069). Verdict = CONFIRMED (stores fired) or REFUTED (0 stores with G1/G2/G4 passing).
+merged? no. box time owed: M181 until a verdict prints. terran.exe 319926 TracerPid 0 at arm.
