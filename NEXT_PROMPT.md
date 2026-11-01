@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 174, 2026-10-31)
+# NEXT_PROMPT.md — footing for the next session (session 175, 2026-10-31)
 
 Structure: this file = RULES + live footing. Detail is on disk: `docs/pick-archive.md` (milestone narrative M90-M123
 + the FULL trap text), `NAMED.md` (semantic registry), `skill/references/instrument-laws.md` (instrument laws). Read
@@ -24,7 +24,8 @@ milestones go 1 per batch.** The binding cap is doc headroom, not capability.
 
 Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
-M172-M174 (#141), M175-M177 (#145), M178-M180 (#147). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151), M185-M187 (#152),
+M188-M190 (#154), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
 M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
 `NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
@@ -58,25 +59,30 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
 - **Merged-era footing (s171-s174e, M163-M187, all PASS) is ARCHIVED:** the verbatim milestone lines are
   in `docs/pick-archive.md` §the s171-s174e milestone lines; per-field semantics in `NAMED.md`; census
   outputs `evidence/m175_m177_aggcallers.txt`, `m178_m180_scratchband.txt`, `m182_m184_bandrecord.txt`,
-  `m185_m187_visits.txt`; generated field map `docs/field-atlas-faction.md`. One-line version:
-  `ds:0x99aa1c` = the 0x41-byte tagged-record STAGING scratch (+0x0/+0x4 written by 0x530e30, +0x1c =
-  `ds:0x99aa38`, +0x20 = `ds:0x99aa3c` 3-valued selector driving ASSEMBLEGROUP unit placement);
-  `FUN_00535c60` = per-faction visit wrapper (0x531df0 -> 0x530e30 -> 0x535940, then
-  `[fac*4+0x94d448] & 0x40030` at 0x535ccb); that dword is ASSIGNED by 27 plain movs with ZERO
-  bit-setters; 0x535940 = the aggregate scratch RESET (47 global stores, 13 x -1 / 12 x 0); `0x94d434` =
-  rank written once at init; FUN_004026b0 = LIST SEEK; FUN_00495480 = cached-flag getter.
+  `m185_m187_visits.txt`; generated field map `docs/field-atlas-faction.md`. The short version of that era
+  (staging scratch `ds:0x99aa1c` + its +0x1c/+0x20 fields, the visit wrapper 0x535c60 and its 0x94d448
+  test, the aggregate scratch RESET 0x535940) is in `NAMED.md` M175-M187 — read it there, not here.
 - **M181 lead (live, INCONCLUSIVE):** `ds:0x99aa38` stayed 0 across THREE boundaries (round 52->55) as a
   UI/scenario field should, but the controls `ds:0x920720`/`ds:0x9204b0` were also 0 — NO positive control.
   Falsifier: arm `scratch/m181/pair.py` (2 ms sampler), trigger a SAVE or a governor-options OK; a staging
   change confirms the writer's trigger, nothing changing anywhere means the address or the sampler is wrong.
-- Pick from: FUN_0053a9c0's use of the count (0x9204ac + 0x920720 at entry); 0x4e0260 / 0x5a2930 (what
-  each writes); WHO ASSIGNS the 0x94d448 values carrying 0x40030 (the 27 movs' sources); 0x530e30's
-  record write (0x626634 at 0x530fc0).
+- **s175 (M188-M190, all PASS, `scripts/m188_m190_uses.py`):** FUN_0053a9c0's entry sum `ds:0x9204ac +
+  ds:0x920720 (+1 iff 0x920720 != 0)` is PRIVATE bookkeeping — 43 mentions, 11/11 reads consumed by
+  inc/dec/re-store/cmp/test, 0 pushed, 0 index forms, 4 windows naming 0x94d434/0x985afc; FUN_004e0260
+  writes only the staging pair + `[block(fac)+0] = ds:0x999fa4` (7 records x 0x59c = 1436 B while ebx
+  walks 0x20bc = 8380 B blocks) + 4 emitter calls; FUN_005a2930 writes NOTHING (0 stores, 5 callees, the
+  last gated on `ds:0x920434 == 0`); **23 of the 27 `0x94d448` movs are register-level bit RMWs** (M186's
+  "zero bit-setters" was memory-operand only): 0x20 set at 2 / cleared at 4, 0x40000 set at 2 / cleared at
+  0, and 0x10 NEVER touched — it arrives only via the 4 whole-value assignments (0x52b9c7/0x52b9d0 from
+  `[ebp-0x50]`/`[ebp-0x4c]`; 0x55540a/0x55580f store lea-built addresses).
+- Pick from: 0x530e30's record write (0x626634 at 0x530fc0); M181's positive control (box); the aggregate
+  pass's OUTPUT side (what the 0x9204ac/0x920720 pair is for, if not forwarded).
 ## LIVE FACTS / KIT
 
-- **BOX IS UP at s174 close:** terran.exe 319926, year 2153 round 53, University Base (28,42), 6 units
-  HELD, TracerPid 0 — NOT this session's descendant, so read `/proc/mem` with `sudo -n` (yama
-  `ptrace_scope=1`). Launch recipe + the cold-box timing: skill `references/wine-operations.md`.
+- **BOX state CARRIED from s174e (s175 spent no box time, so NOT re-verified):** terran.exe 319926, y2153
+  r53, University Base (28,42), 6 units HELD, TracerPid 0 — not this session's descendant, so read
+  `/proc/mem` with `sudo -n` (yama `ptrace_scope=1`). Run `scripts/smac_preflight.py` before arming.
+  Launch recipe + cold-box timing: skill `references/wine-operations.md`.
 - A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
   ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
   index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).

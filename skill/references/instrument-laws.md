@@ -568,6 +568,14 @@ the harness still prints a clean result:
   bit 31 appears that no site writes.
 - **Only count an `or`/`and` leg whose immediate is a SINGLE bit.** A bare `and eax,0x1` is a truncation,
   not a 31-bit clear — counting it as a destination adds a phantom leg and shifts every subsequent one.
+- **A byte op's immediate sits at the BYTE's bit position, not at bit 0.** `or ah,0x8` sets 0x800 and
+  `and ah,0x7f` clears 0x8000: shift the immediate left by 8 for `ah/ch/dh/bh` before unioning, or a
+  whole census reports bits 0..7 for ops that live at bits 8..15 and the mask picture is silently wrong.
+- **To name a store's SOURCE, walk back to the ULTIMATE definition**: skip modifiers
+  (`and/or/xor/add/sub/shl/shr/inc/dec`) and keep going, stop at `mov/lea/movzx/pop/neg` or at a call that
+  clobbers the register. Stopping at the first write reports `and edx,ecx` as the source and hides the
+  read-modify-write: that one fix turned "27 plain assignments, zero bit-setters" into 23 register-level
+  bit RMWs + 4 whole-value assignments (M190, `scripts/m188_m190_uses.py`).
 
 Gate the result TWICE: the leg COUNT and the bit SET, both printed as tables, so a shifted leg is visible
 instead of plausible. A gate that asserts only "the pack has legs" passes any parse, including one that

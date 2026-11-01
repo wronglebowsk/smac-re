@@ -1,0 +1,91 @@
+M188 entry pcs: 0x920720=0x53a9c6 0x9204ac=0x53a9cc add=0x53a9d1 test=0x53a9da je=0x53a9df inc=0x53a9e1  stores=0x53a9dc,0x53a9e2
+M188a  PASS - entry computes [ebp-4] = ds:0x9204ac + ds:0x920720 and stores it, then adds +1 ONLY when ds:0x920720 != 0 (test edx,edx / je / inc eax / re-store in that order)
+M188 [ebp-0x4] mentions in FUN_0053a9c0: 43
+   add imm 0x2                1
+   add reg edx                1
+   dec                        11
+   inc                        8
+   read-count-to-reg          11
+   store-to-count             10
+   sub reg eax                1
+M188b  PASS - the count is a SCALAR working value, never an address: 43 mentions = 11 reads-to-reg + 10 stores-from-reg + 8 inc + 11 dec + 2 reg-arithmetic; ZERO direct push of the slot and ZERO scaled/index address forms ([])
+M188 how each of the 11 reads is consumed:
+   branch taken before any use        2
+   cmp/test against it                3
+   dec on the register                3
+   inc on the register                3
+   read 0x53ab14 into eax  -> inc on the register                at 0x53ab1d anchor=True  :: mov ecx,dword ptr ds:0x985afc | inc eax | mov dword ptr [ebp-0x4],eax | mov eax,ds:0x920434 | neg eax | sbb eax,eax
+   read 0x53ab3f into eax  -> inc on the register                at 0x53ab42 anchor=False :: inc eax | mov dword ptr [ebp-0x4],eax | mov eax,dword ptr [ebp-0xc] | test eax,eax | je 0x53abe5 | mov edx,dword ptr [ebp-0x4]
+   read 0x53ab51 into edx  -> dec on the register                at 0x53ab56 anchor=False :: mov ecx,eax | dec edx | push 0x0 | push ecx | mov dword ptr [ebp-0x4],edx | call 0x531090
+   read 0x53abf8 into edx  -> branch taken before any use        at 0x53ac0b anchor=False :: lea eax,[edx+eax*1-0xa] | mov dword ptr [ebp-0x4],eax | mov eax,dword ptr [ebx+0x94d558] | cmp eax,0x2 | jl 0x53ac1a | mov ecx,dword ptr ds:0x920744
+   read 0x53aca4 into eax  -> dec on the register                at 0x53aca7 anchor=True  :: dec eax | jmp 0x53ad29 | mov edx,dword ptr ds:0x920720 | cmp eax,0x6 | jl 0x53ab36 | cmp dword ptr [ecx+0x94d434],0x4
+   read 0x53acf5 into eax  -> dec on the register                at 0x53acf8 anchor=True  :: dec eax | jmp 0x53ab43 | cmp eax,0x7 | jne 0x53ad0c | mov edx,dword ptr ds:0x920720 | add dword ptr [ebp-0x4],edx
+   read 0x53ad25 into eax  -> inc on the register                at 0x53ad28 anchor=True  :: inc eax | mov dword ptr [ebp-0x4],eax | mov ecx,dword ptr [ebx+0x94d434] | mov eax,0x5 | cmp ecx,eax | jg 0x53ad49
+   read 0x53ad49 into edx  -> branch taken before any use        at 0x53ad53 anchor=False :: mov eax,ds:0x920768 | cmp eax,edx | jg 0x53ad5f | mov eax,dword ptr [ebx+0x94d438] | test eax,eax | jne 0x53addb
+   read 0x53b2c1 into eax  -> cmp/test against it                at 0x53b2c4 anchor=False :: test eax,eax | jne 0x53b2d3 | mov eax,dword ptr [ebp-0x18] | test eax,eax | je 0x53b925 | mov eax,ds:0x920774
+   read 0x53b643 into eax  -> cmp/test against it                at 0x53b646 anchor=False :: test eax,eax | jne 0x53b655 | mov eax,dword ptr [ebp-0x18] | test eax,eax | je 0x53b8ac | test ebx,ebx
+   read 0x53b8a5 into eax  -> cmp/test against it                at 0x53b8a8 anchor=False :: test eax,eax | jne 0x53b8b3 | mov eax,dword ptr [ebp-0x10] | test eax,eax | je 0x53b925 | mov eax,dword ptr [ebp-0x1c]
+M188 hypothesis split: argument-to-callee 0 vs local-bookkeeping 11 (unclassified 0); reads whose 12-insn window names 0x94d434 / 0x985afc / 0x920720: 4
+M188c  PASS - the count is LOCAL BOOKKEEPING, not an argument: 11 of 11 reads are consumed by arithmetic or comparison on the register and 0 are pushed / reach a call; 4 reads' windows name 0x94d434 / 0x985afc / 0x920720, so the +/-1 steps are gated on rank and round tests
+M189 FUN_004e0260: 78 insns, 4 stores (2 to ds: globals), 7 distinct callees (index.csv n_callees=7)
+   STORE 0x4e027d mov dword ptr [ebp-0x4],eax
+   STORE 0x4e02c1 mov ds:0x99aa1c,eax
+   STORE 0x4e02c6 mov dword ptr ds:0x99aa20,0x0
+   STORE 0x4e0336 mov dword ptr [esi],eax
+   CALL  0x41f310     x1
+   CALL  0x4d9fb0     x1
+   CALL  0x50fc20     x1
+   CALL  0x59a2b0     x1
+   CALL  0x626581     x1
+   CALL  0x626634     x2
+   CALL  0x626ec4     x1
+   loop gates: {'add esi,0x59c': 1, 'add ebx,0x20bc': 1, 'cmp esi,0x92a2a4': 1, 'lea esi,[ecx*4+0x94d650]': 1, 'lea edx,[ecx*4+0x927894]': 1, 'mov dword ptr [esi],eax': 1, 'mov ds:0x99aa1c,eax': 1, 'mov dword ptr ds:0x99aa20,0x0': 1}
+   trip = (0x92a2a4-0x927b60)/0x59c = 7 remainder 0; 0x59c=1436 B = 359 dwords, 0x20bc=8380 B = 2095 dwords = the faction BLOCK stride; 0x94d650+8380*idx is a block base
+   stores that are NOT stack spills: 3 ['0x4e02c1', '0x4e02c6', '0x4e0336']
+M189a  PASS - FUN_004e0260 writes EXACTLY 3 non-spill places - the staging pair ds:0x99aa1c / ds:0x99aa20 and [block(fac)+0x0] = ds:0x999fa4 (plus 1 spill store to [ebp-4]) - and everything else leaves through 4 calls into the 0x626xxx emitters (0x626634 x2); its loop walks 7 records at stride 0x59c (1436 B = 359 dwords) while ebx walks the 0x20bc (8380 B) faction blocks
+M189 FUN_005a2930: 37 insns, 0 stores (0 to ds: globals), 5 distinct callees (index.csv n_callees=5)
+   CALL  0x4b5f90     x1
+   CALL  0x4b6060     x1
+   CALL  0x4d9fb0     x1
+   CALL  0x5844f0     x1
+   CALL  0x5a1950     x1
+M189b  PASS - FUN_005a2930 writes NOTHING (0 stores of any width): it is a gated DISPATCHER - 5 tests (test al,0x80, test al,0xc0, test byte ptr ds:0x985dc8,0x8, test eax,eax, test esi,esi) and exactly 5 callees ['0x4b5f90', '0x4b6060', '0x4d9fb0', '0x5844f0', '0x5a1950'], the 0x5a1950 call reached only when ds:0x920434 reads 0
+M190 stores whose DESTINATION carries displacement 0x94d448: 27
+   per-function: FUN_005551e0 x15  FUN_00552970 x5  FUN_0052a720 x2  FUN_00551a20 x1  FUN_00551cf0 x1  FUN_00552f10 x1  FUN_00554850 x1  FUN_00554d10 x1
+   source kinds: RMW same field x23  load other x2  computed x2
+   0x52b9c7   FUN_0052a720   dword ptr [eax+0x94d448] src=edx  load other dword ptr [ebp-0x50] mov edx,dword ptr [ebp-0x50]
+   0x52b9d0   FUN_0052a720   dword ptr [ecx+0x94d448] src=edx  load other dword ptr [ebp-0x4c] mov edx,dword ptr [ebp-0x4c]
+   0x551b1d   FUN_00551a20   dword ptr [eax+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [eax+0x94d448] ; mods ['and edx,0xfaeef378'] ; set 0x0 clear 0x5110c87
+   0x551d22   FUN_00551cf0   dword ptr [eax+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [eax+0x94d448] ; mods ['or edx,ecx'] ; set 0x0 clear 0x0 unresolved ['or edx,ecx']
+   0x552cca   FUN_00552970   dword ptr [ebx+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [ebx+0x94d448] ; mods ['and edx,ecx'] ; set 0x0 clear 0x20
+   0x552cd8   FUN_00552970   dword ptr [eax+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [eax+0x94d448] ; mods ['and edx,ecx'] ; set 0x0 clear 0x20
+   0x552ce6   FUN_00552970   dword ptr [ebx+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [ebx+0x94d448] ; mods ['or al,0x40'] ; set 0x40 clear 0x0
+   0x552d6f   FUN_00552970   dword ptr [eax+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [eax+0x94d448] ; mods ['and edx,ecx'] ; set 0x0 clear 0x20
+   0x552d7d   FUN_00552970   dword ptr [ebx+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [ebx+0x94d448] ; mods ['and edx,ecx'] ; set 0x0 clear 0x20
+   0x5530c3   FUN_00552f10   dword ptr [ebx*4+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [ebx*4+0x94d448] ; mods ['and eax,0xfeeffffe'] ; set 0x0 clear 0x1100001
+   0x55487f   FUN_00554850   dword ptr [eax+0x94d448] src=ecx  RMW same field       def mov ecx,dword ptr [eax+0x94d448] ; mods ['or ecx,0x40020'] ; set 0x40020 clear 0x0
+   0x554d42   FUN_00554d10   dword ptr [eax+0x94d448] src=esi  RMW same field       def mov esi,dword ptr [eax+0x94d448] ; mods ['or esi,0xc0020'] ; set 0xc0020 clear 0x0
+   0x5552d3   FUN_005551e0   dword ptr [edi+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [edi+0x94d448] ; mods ['and al,0xbf'] ; set 0x0 clear 0x40
+   0x555394   FUN_005551e0   dword ptr [edi+0x94d448] src=ecx  RMW same field       def mov ecx,dword ptr [edi+0x94d448] ; mods ['and ecx,0xfffdf3ff'] ; set 0x0 clear 0x20c00
+   0x5553f3   FUN_005551e0   dword ptr [edi+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [edi+0x94d448] ; mods ['and edx,0xfffdfbff', 'or edx,0x840'] ; set 0x840 clear 0x20400
+   0x55540a   FUN_005551e0   dword ptr [edi+0x94d448] src=eax  computed lea         lea eax,[eax*4+0x94d4a8] ; mods ['or eax,0x20000']
+   0x555430   FUN_005551e0   dword ptr [edi+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [edi+0x94d448] ; mods ['and ah,0x7f'] ; set 0x0 clear 0x8000
+   0x5556eb   FUN_005551e0   dword ptr [edi+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [edi+0x94d448] ; mods ['and eax,0xfffdfbff', 'or eax,0x840'] ; set 0x840 clear 0x20400
+   0x555758   FUN_005551e0   dword ptr [edi+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [edi+0x94d448] ; mods ['and eax,0x7fffffff'] ; set 0x0 clear 0x80000000
+   0x5557d9   FUN_005551e0   dword ptr [edi+0x94d448] src=ebx  RMW same field       def mov ebx,dword ptr [edi+0x94d448] ; mods ['and ebx,0xfbffffff'] ; set 0x0 clear 0x4000000
+   0x55580f   FUN_005551e0   dword ptr [edi+0x94d448] src=eax  computed lea         lea eax,[ecx*4+0x94d448] ; mods ['and ah,0xdf']
+   0x5558f5   FUN_005551e0   dword ptr [edi+0x94d448] src=ecx  RMW same field       def mov ecx,dword ptr [edi+0x94d448] ; mods ['and ecx,0xfbffffff'] ; set 0x0 clear 0x4000000
+   0x555a45   FUN_005551e0   dword ptr [ebx+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [ebx+0x94d448] ; mods ['or ah,0x8'] ; set 0x800 clear 0x0
+   0x555a60   FUN_005551e0   dword ptr [ebx+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [ebx+0x94d448] ; mods ['or ah,0x8', 'or ah,0x8'] ; set 0x800 clear 0x0
+   0x555a6e   FUN_005551e0   dword ptr [ebx+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [ebx+0x94d448] ; mods ['or ah,0x8', 'or ah,0x8', 'or ah,0x4'] ; set 0xc00 clear 0x0
+   0x555f39   FUN_005551e0   dword ptr [ecx+0x94d448] src=eax  RMW same field       def mov eax,dword ptr [ecx+0x94d448] ; mods ['and ah,0xfd'] ; set 0x0 clear 0x200
+   0x555f4b   FUN_005551e0   dword ptr [eax+0x94d448] src=edx  RMW same field       def mov edx,dword ptr [eax+0x94d448] ; mods ['and dh,0xfd'] ; set 0x0 clear 0x200
+M190a  PASS - 27 stores at 0x94d448 in 8 functions; 0 of them have an IMMEDIATE source (the value is never baked into the store)
+M190b  PASS - 23 of the 27 are the STORE HALF of a register-level bit RMW of the SAME field; bits SET across them = 0xe0c60, bits CLEARED = 0x8513aee7 (0x40 IS set and 0x20 IS cleared at runtime although no `or/and DWORD PTR [..+0x94d448],imm` instruction exists)
+M190 the three bits of the 0x40030 mask, by origin (of the 23 RMW sites, 4 whole-value assignments, touched 0x851faee7):
+   bit 0x10     set at 0 sites [] ; cleared at 0 sites []
+   bit 0x20     set at 2 sites ['0x55487f', '0x554d42'] ; cleared at 4 sites ['0x552cca', '0x552cd8', '0x552d6f', '0x552d7d']
+   bit 0x40000  set at 2 sites ['0x55487f', '0x554d42'] ; cleared at 0 sites []
+   whole-value assignments: 0x52b9c7 load other dword ptr [ebp-0x50]; 0x52b9d0 load other dword ptr [ebp-0x4c]; 0x55540a computed lea; 0x55580f computed lea
+M190c  PASS - the RMWs themselves put 0x20 (2 setter sites) and 0x40000 (2 setter sites) into the field, but bit 0x10 is NEVER set or cleared by any of the 27 stores - it can only arrive through the 4 whole-value assignments ['0x52b9c7', '0x52b9d0', '0x55540a', '0x55580f'] (source kinds ['computed lea', 'load other dword ptr [ebp-0x4c]', 'load other dword ptr [ebp-0x50]'])
+SUMMARY M188a=PASS M188b=PASS M188c=PASS M189a=PASS M189b=PASS M190a=PASS M190b=PASS M190c=PASS
