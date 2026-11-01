@@ -65,16 +65,13 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   displacements, M143-M162). Start there before re-deriving a field.
 - ANSWERED (do not re-pick): s187-s196 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
   **M242**, **M243**, **B2**, **M244** (`PASS M244: 5/5 gates`, `python3 scripts/m244_save_tail.py`,
-  17 saves + planet.MP + planetx.MP): the map "trailer" IS the coarse region map, length
-  `((Rw+1)/2)*Rh` with `Rw=(W+4)/5`, `Rh=(H+4)/5` (91/128/338 at 64/80/128 — closes both .MP files
-  on the byte); the count-prefixed block is the 8-B base-site event log [type {0 add, 1 re-own,
-  2 remove}, faction, turn, x, y] whose replay == the base records' (x, y, **+4 = current owner**,
-  **+5 = the faction written just before it**); the tail is 256 | 152 | 10,144 | 20 | 216 | 8 | 4 =
-  10,800 — **no 220-B and no 28-B block** (B2's split and its `93,159 = 92,927 + 220 + 12` are
-  RETRACTED). Full text: `NAMED.md` per-id blocks; B2's walk detail and the retired picks VERBATIM
-  in `docs/pick-archive.md` (§s196 overflow). Headline: the save codec is `FUN_00597ce0` →
-  `FUN_00596850` (one codec both directions), its 7 dead write legs are its 7 dead read twins,
-  killed by 3 gate families.
+  17 saves + planet.MP + planetx.MP): the map "trailer" IS the coarse region map (length
+  `((Rw+1)/2)*Rh`, `Rw=(W+4)/5`, 91/128/338 at 64/80/128); the count-prefixed block is the 8-B
+  base-site event log [type, faction, turn, x, y], base **+4 = current owner**, **+5 = previous**;
+  the tail is 256 | 152 | 10,144 | 20 | 216 | 8 | 4 = 10,800 — **no 220-B and no 28-B block**
+  (B2's `93,159 = 92,927 + 220 + 12` RETRACTED). M244's numbers VERBATIM in `docs/pick-archive.md`
+  §s197, B2's walk detail in §s196, per-id claims in `NAMED.md`. Headline: the save codec is
+  `FUN_00597ce0` → `FUN_00596850` (one codec both directions), 7 dead legs = 7 dead twins.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B3** — turn engine — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies

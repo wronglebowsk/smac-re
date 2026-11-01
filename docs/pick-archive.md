@@ -454,3 +454,15 @@ Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
 - retired pick, answered by M244: **what the block after the count prefix at 188,303 holds
   (176/192/208 B), who reads the 220-B block, and the map-trailer length formula (91 B at 64×64,
   128 at 80×80, 338 at 128×128)** (new from B2, static).
+
+## §s197 overflow — moved VERBATIM from NEXT_PROMPT.md (s197)
+
+- **M244** (`PASS M244: 5/5 gates`, `python3 scripts/m244_save_tail.py`, 17 saves + planet.MP +
+  planetx.MP): the map "trailer" IS the coarse region map, length `((Rw+1)/2)*Rh` with `Rw=(W+4)/5`,
+  `Rh=(H+4)/5` (91/128/338 at 64/80/128 — closes both .MP files on the byte); the count-prefixed
+  block is the 8-B base-site event log [type {0 add, 1 re-own, 2 remove}, faction, turn, x, y] whose
+  replay == the base records' (x, y, **+4 = current owner**, **+5 = the faction written just before
+  it**); the tail is 256 | 152 | 10,144 | 20 | 216 | 8 | 4 = 10,800 — **no 220-B and no 28-B block**
+  (B2's split and its `93,159 = 92,927 + 220 + 12` are RETRACTED). Headline: the save codec is
+  `FUN_00597ce0` → `FUN_00596850` (one codec both directions), its 7 dead write legs are its 7 dead
+  read twins, killed by 3 gate families.
