@@ -101,6 +101,8 @@ class Map:
         d, n = self._d, self.cells
         terrain = {}
         owner = {}
+        cat = {}          # cell+0 >> 5 -> [cells, of-which-land]  (informational, gate-free)
+        low5 = {}
         land = 0
         bad_terrain = 0
         bad_owner = 0
@@ -111,7 +113,13 @@ class Map:
             w = b2 & OWNER_MASK
             terrain[t] = terrain.get(t, 0) + 1
             owner[w] = owner.get(w, 0) + 1
-            if d[o + 7] == LAND_MARK:
+            island = d[o + 7] == LAND_MARK
+            k = d[o] >> 5
+            r = cat.setdefault(k, [0, 0])
+            r[0] += 1
+            r[1] += island
+            low5[d[o] & 0x1F] = low5.get(d[o] & 0x1F, 0) + 1
+            if island:
                 land += 1
             if t >= TERRAIN_CARDINALITY:
                 bad_terrain += 1
@@ -126,6 +134,8 @@ class Map:
             "owner_invalid": bad_owner,
             "land_cells": land,
             "header_land_cells": self.header_words[HDR_LAND_WORD],
+            "byte0_cat": {k: tuple(v) for k, v in sorted(cat.items())},
+            "byte0_low5": sorted(low5),
         }
 
 

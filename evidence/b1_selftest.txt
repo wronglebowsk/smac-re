@@ -1,5 +1,7 @@
 $ python3 -m sim.selftest --map programs/maps/planet.MP --rules data/alpha.json
 note: --map expanded to programs/maps/planetx.MP (rung B1 requires parity for both the 80x80 and the 128x128 grid)
+  info byte0-structure planet.MP    cat(byte0>>5) cells/land={0: (3259, 59), 1: (578, 578), 2: (1189, 1189), 3: (973, 973), 4: (342, 342), 5: (57, 57), 6: (2, 2)} low5-distinct=[0, 1, 2, 8, 9, 10, 16, 17, 18]
+  info byte0-structure planetx.MP   cat(byte0>>5) cells/land={0: (8310, 118), 1: (2087, 2087), 2: (2938, 2938), 3: (2220, 2220), 4: (690, 690), 5: (134, 134), 6: (5, 5)} low5-distinct=[0, 1, 2, 8, 9, 10, 16, 17, 18]
   ok   parity planet.MP        sim=(80, 80, 6400, 143667, 2739, 128, 5) decode_map=(80, 80, 6400, 143667, 2739, 128, 5)
   ok   terrain-range planet.MP    used=0..15 (16 values) out_of_range=0 gaps=none
   ok   owner-nibble planet.MP   hist=[(0, 3197), (1, 1), (2, 6), (3, 3), (4, 3), (5, 2), (6, 3), (7, 3), (15, 3182)] invalid=0

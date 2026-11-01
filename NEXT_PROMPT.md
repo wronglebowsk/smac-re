@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 189, 2026-11-01, M235-M237 all PASS)
+# NEXT_PROMPT.md — footing for the next session (session 190, 2026-11-01, B1 build rung: 10/10 gates PASS)
 
 Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s183
 milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
@@ -28,14 +28,13 @@ go 1 per batch). The binding cap is doc headroom, not capability.**
 `python3 scripts/track_mode.py` prints the verdict from merged history: `MODE=BUILD|ANALYSE`, `next_rung=B<n>`.
 **MODE=BUILD ⇒ this fire is a build fire**: take that rung from `BUILD_SPINE.md` and build it in `sim/` — runnable
 acceptance command, parity against a recorded trace, never a census claim, no box time, no `/proc`, no gdb. The
-other three fires analyse exactly as before. Why: after 226 milestones `sim/` was still empty, so every proven fact
-was about `terran.exe` and none about a game that runs. Build rungs are `B<n>` in the commit and PR title so the
-cadence can be counted.
+other three fires analyse exactly as before, and a build fire does NOT pay the box debt (it never touches Wine).
+Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
 
 ## THE LEDGER
 
 Merged: M54A-M123 (#39-#130, gaps inside: `docs/pick-archive.md`), M163-M200 (#138-#159),
-M201-M234 (#161-#173), M235-M237 (#176), B0 (#170), s175 cap triage (#153), cursor/docs PRs #169/#174/#175.
+M201-M234 (#161-#173), M235-M237 (#176), B0 (#170), B1 (#178), s175 cap triage (#153), docs #169/#174/#175/#177.
 UNMERGED: M83/M84 family (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `docs/pick-archive.md`,
@@ -66,21 +65,24 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   it against the frame's vtable stores before calling it a coincidence, M227); a hw watchpoint only reports a CHANGE.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and the M222-M234 results (the +0x3098
-  stack-mirror, the tail field, the 0xb24 collision, the FUN_00455c70 trampoline, the pair staging, the writer-free
-  0x774c38 grid, the 0x7543d8 record table, the trampoline's callees) live in `NAMED.md` +
-  `evidence/m227_m230_mirrors.txt` + `evidence/m231_m234_staging.txt` + `docs/pick-archive.md`; newest instruments
-  `scripts/m231_m234_staging.py`, `m227_m230_mirrors.py`.
-- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (the 0x679f98 class = 88 slots, TWO
-  ctors, 70 slots shared with 0x6717cc/0x671d94; the +8=9 record STAMPER FUN_005dbb5f and the ds:0x9965b8
-  record-under-construction global; +4 allocated by FUN_005be090 and block-strided live; FUN_005f5a11's triple is
-  write-only, installed 3x by FUN_005f3f5b, no bulk-copy route, live modal handle 0) - `scripts/m235_m237_records.py`.
-- Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
-  sites belong to other hierarchies - falsifier = a live vtable read at a click, box); what the 15 UNIQUE slots of
-  0x679f98 do (+0x0, +0x8, +0x30, +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 is called by
-  FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c); WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes,
-  and which of the 3 loaders of ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B) and why ONE callback
-  goes into +0x2210/+0x2224/+0x2234; M181's control (box; trigger = the 4 callers of FUN_0041a8f0, s189 notes).
+- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and the M222-M234 results live in
+  `NAMED.md` + `evidence/m227_m230_mirrors.txt` + `evidence/m231_m234_staging.txt` + `docs/pick-archive.md`;
+  newest instruments `scripts/m231_m234_staging.py`, `m227_m230_mirrors.py`, `m235_m237_records.py`.
+- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors, 70
+  shared with 0x6717cc/0x671d94; the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks;
+  FUN_005f5a11's write-only triple, no bulk-copy route, live modal handle 0) — detail in `NAMED.md`. s190 **B1**
+  (first build rung, `sim/` exists): `python3 -m sim.selftest --map programs/maps/planet.MP --rules data/alpha.json`
+  -> `PASS B1: 10/10 gates` on BOTH maps -> `evidence/b1_selftest.txt`. `.MP` cell+2 = terrain<<4 | owner,
+  cell+7==0xff == header word 5, terrain cardinality 16 ASSUMED. `sim/map.py` measures the file side.
+- Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`): the 22-B file
+  cell -> 44-B live terrain-record transform (`cell+0>>5` cats 1-6 are 100% land, FOOTING.md's live `rec[0]&0xe0`
+  says <0x60 is ocean, 140,800 B = 3,200 records x 0x2c, so a repack exists and is unnamed — static); WHO
+  dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to
+  other hierarchies — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0,
+  +0x8, +0x30, +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 /
+  FUN_00641f3c); WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
+  ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); M181's control (box; trigger = the 4 callers of
+  FUN_0041a8f0, s189 notes).
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):

@@ -59,6 +59,10 @@ def check_map(path, results):
     results.append(("land-count %-14s cells+7=0xff:%d header word5:%d" % (
         os.path.basename(path), st["land_cells"], st["header_land_cells"]),
         st["land_cells"] == st["header_land_cells"]))
+    # informational, not graded: the cell+0 structure this rung measured (see the
+    # B1 block in NAMED.md - the file's cat field is NOT the live rec[0]&0xe0 category)
+    print("  info byte0-structure %-12s cat(byte0>>5) cells/land=%s low5-distinct=%s" % (
+        os.path.basename(path), st["byte0_cat"], st["byte0_low5"]))
     return (m.width, m.height)
 
 
