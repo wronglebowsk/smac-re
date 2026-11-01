@@ -30,7 +30,7 @@ PRUNE_LOG = os.path.join(EVID, ".prune_log.jsonl")
 CHARS_PER_TOKEN = 4
 CONTEXT_TOKENS = 262_144
 
-DOC_BUDGETS = {          # warn, fail — characters
+DOC_BUDGETS = {          # warn, fail — BYTES (cmd_budget compares os.path.getsize, not characters)
     "NEXT_PROMPT.md": (12_000, 16_000),
     "SESSION_NOTES.md": (110_000, 150_000),
     "NAMED.md": (150_000, 250_000),
@@ -79,7 +79,7 @@ def human(n):
 
 def cmd_budget(_args):
     print(f"context: {CONTEXT_TOKENS:,} tokens ≈ {CONTEXT_TOKENS * CHARS_PER_TOKEN / 1e6:.2f}M chars\n")
-    print(f"{'artifact':22} {'chars':>9} {'~tokens':>9}  {'% ctx':>6}  status")
+    print(f"{'artifact':22} {'bytes':>9} {'~tokens':>9}  {'% ctx':>6}  status")
     always = lookups = 0
     bad = 0
     for name, (warn, fail) in DOC_BUDGETS.items():

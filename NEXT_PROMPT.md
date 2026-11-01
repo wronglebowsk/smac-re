@@ -1,7 +1,8 @@
-# NEXT_PROMPT.md — footing for the next session (session 178, 2026-11-01)
+# NEXT_PROMPT.md — footing for the next session (session 179, 2026-11-01, cap triage)
 
-Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123 + FULL trap text),
-`NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws). Read the archive only for the section picked.
+Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s178
+milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
+Read the archive only for the section picked.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -57,29 +58,13 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
 - **Merged-era footing s171-s177 (M163-M196, all PASS) is ARCHIVED:** per-field semantics and milestone lines in
   `NAMED.md` + `docs/pick-archive.md`; census outputs `evidence/m175_m177_aggcallers.txt` … `m194_m196_channels.txt`;
   field map `docs/field-atlas-faction.md`. Read them there.
-- **s178 (M197-M200, all PASS): rows in `NAMED.md` M197-M200; census output `evidence/m197_m200_proposal.txt`.**
-  Short of it: FUN_00544530 is the **DIPLOMACY PROPOSAL COMPOSER** for a faction pair — ONE call site in the image
-  (0x545c99 in FUN_00545c50, `[ebp+0x10]==0` guard, args [ebp+8]/[ebp+0xc], return tested) — and `ds:0x920700` is
-  **ONE FIELD OF A 5-FIELD SELECTOR BLOCK** {0x9206fc,700,728,748,77c} it clears at entry and fills from 6 calls
-  to the chooser FUN_005f1394; 6 of its 7 stores there are the constant 0, the image's only immediate store being
-  0xc at 0x54ec5c. **M197 RETRACTS M195's "ZERO string literals"**: the body names PROPOSALMENU/REJWARALREADY/
-  NOCOMMLINK (Ghidra renders a referenced literal as a named `s_*` symbol — no quote char). Those keys sit in the
-  string pool **0x690160..0x69107c** (0xFFFFFFFF-terminated both ends): 311 single-word KEYS + 18 spaced message
-  lines, 257 keys with code refs (key→function printed) — the diplomacy vocabulary (full list in `NAMED.md` M198).
-  **M199: FUN_00625b20 IS THE SUBSTITUTION ENGINE** — _strstr for '$'
-  (0x69911c), switch on the next char over 5 cases (closer '>' 0x699138, '$HEX' 0x699130), kinds M=0/F=1/N=2/#n/
-  n→B[n]@0x999ff4+A[n]@0x999fcc, slot text `0x99a01c+n*0x100`, copy the Nth ':'-separated segment; FUN_005808b0
-  COMPOSES `$<`+{M,F,N}+{1,2}+`:`+arg+`>` from record dwords +0x2fc/+0x300 and FUN_00580a60 PARSES that head into
-  0x99aa1c/0x99aa20 — the staging record IS a parsed tag head. **M200 RETRACTS M194's "formatters 0x631afb/
-  0x632cad"**: both are ROW WRITERS on the handle DAT_0099d020 (vtable +0x10/18/38/58/60; alloc 0x5be090, free
-  0x64a7f0, append 0x64b9e0) with 0 `0x25` immediates, 0 printf calls and 0 refs to FUN_00625b20 — VERBATIM copies.
-- **s175-s177 (M188-M196, all PASS): rows in `NAMED.md`; census outputs: the ARCHIVED row above.** Short of
-  the newest: `0x626634` is the 10-slot CHANNEL PUBLISH (guard `arg1<=9`; writes `A[slot]@0x999fcc`/`B[slot]@0x999ff4`;
-  appends arg2 into `0x99a01c+arg1*0x100`;
-  a negative arg3/arg4 takes the staging pair, `0x99a01c+10*256 == 0x99aa1c`) — its 1584 sites in 190 functions are
-  consumed by POINTER PASSING (113 sites/31 fns in the window, 93 push the base or a slot address, 16 callees get it).
-  `[reg*4+0x94d448]` is NOT a pointer (the 2095-fold carries 365/466 scaled sites; **M196 RETRACTS M190's
-  store-address carriers**).
+- **s178 (M197-M200, all PASS) is ARCHIVED the same way:** rows in `NAMED.md` M197-M200, census output
+  `evidence/m197_m200_proposal.txt`, verbatim footing lines in `docs/pick-archive.md`. Short of it: FUN_00544530
+  is the DIPLOMACY PROPOSAL COMPOSER (ONE call site, 0x545c99); `ds:0x920700` is ONE FIELD of a 5-field selector
+  block {0x9206fc,700,728,748,77c} filled from 6 calls to the chooser FUN_005f1394; the diplomacy KEY pool is
+  `0x690160..0x69107c` (311 keys + 18 message lines, 257 with code refs); FUN_00625b20 IS the `$`-tag engine
+  (copies the Nth ':'-separated segment of `0x99a01c+n*0x100`); FUN_00631afb/0x632cad are DB ROW WRITERS that
+  copy text VERBATIM. The s175-s177 (M188-M196) lines moved out with it, verbatim in the same archive file.
 - Pick from: FUN_005f1394 (the 11 KB chooser, 94 callers, called 6x by the composer) — what it selects over and
   what its return domain is; FUN_00625b20's $H/$L/$N cases and FUN_0062898e (the name→slot resolver it calls when
   a payload has 0 colons); the 257-entry key→function map read as "which function emits which message"; M181's
@@ -161,6 +146,8 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
 Terse path past ~35 calls: acceptance numbers verbatim, no new prose, no file opened "to double check"; closing is PART
 of the milestone. 0 `SESSION_CURSOR.md` (<=600 B: id | acceptance | merged? | next) BEFORE the rest. 1 `## Session <N>`
 APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers WITH the command). 2 the `<ID>` block to `NAMED.md` (<=1 KB). 3 this
-file patched BY SECTION, `wc -c NEXT_PROMPT.md` <= 15,500. 4 `rsync -a ~/.hermes/skills/smac-cvr-format/
+file patched BY SECTION, `wc -c NEXT_PROMPT.md` <= 15,300 BYTES (what `evidence.py budget` prints; the kickoff's
+cap-triage trigger — closing at the gate's 16,000 FAIL or at 15,500 hands the next fire a docs-only split).
+4 `rsync -a ~/.hermes/skills/smac-cvr-format/
 ~/reverse/smac/skill/`. 5 `git add -A && git commit -m '<ID>: checkpoint'` then `python3 scripts/gate.py --base main`
 GREEN. 6 submit/merge ONLY on a real PASS.

@@ -91,7 +91,8 @@ when a later session narrows an earlier finding, patch that finding's own regist
 retraction that lives only in `SESSION_NOTES.md` leaves the block future sessions grep still asserting the older,
 stronger claim, and the registry is what they read first.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
-`NEXT_PROMPT.md` (<=15,500 CHARS — `evidence.py budget` counts chars, `wc -c` disagrees). `scratch/` is gitignored: scratch probes and one-off tools are
+`NEXT_PROMPT.md` (<=15,300 BYTES at close — `evidence.py budget` prints `os.path.getsize`, exactly `wc -c`; a doc
+full of em-dashes and arrows is a few dozen CHARACTERS smaller than that number). `scratch/` is gitignored: scratch probes and one-off tools are
 NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
 tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, sync it with `~/reverse/smac/skill/` **by content, not mtime**: a `git checkout` resets the repo copy's mtimes and a merged PR can leave it holding a rule the live skill never got — the newer-mtime side is often the content-stale one, and a wholesale copy then silently reverts tracked findings while the gate's `skill sync` check still PASSes. Per file: `diff -rq` both dirs, `git checkout HEAD -- <path>` the repo side, re-apply only your new bullets, copy repo -> live
 Detail: `references/git-workflow.md` — the gate compares only `SKILL.md`, so an edited reference drifts
@@ -130,9 +131,12 @@ milestone per merge and three acceptance invocations, not one question per step.
   30-40, close at 40-50. Cap ACCEPTANCE INVOCATIONS at three; the third failure IS the finding.
 - Close order, every time: gate GREEN -> notes entry (`patch`) -> **checkpoint commit** -> `NEXT_PROMPT.md`
   rewrite -> submit/PR. Never leave the commit until after the handoff docs.
-- `NEXT_PROMPT.md` <= 15,500 CHARS (gate FAILs at 16,000; `test_loop.py` appends bytes in CI, so leave >100 B
-  headroom). Trust only `python3 scripts/evidence.py budget`. `SESSION_CURSOR.md` <= 600 B before any step
-  that can exceed ~2 min.
+- `NEXT_PROMPT.md` <= 15,300 BYTES AT CLOSE — the unattended kickoff's cap-triage trigger. `evidence.py budget`
+  prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
+  used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate
+  only FAILs at 16,000, so a fire that closes at 15,4xx hands the NEXT fire a docs-only split: s175 and s179 were
+  both such splits. `test_loop.py` appends bytes in CI, so keep >100 B of headroom under whatever number you quote.
+  `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
 - Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file`; in hard-wrapped docs anchor by
   regex `\s+` joins or by INDEX, and write in the SAME cell that measured the result.
 - Every always-loaded doc has its own cap and the tool prints them. When a cap binds a SECOND session, SPLIT:

@@ -165,3 +165,35 @@ nobody appends it in rounds (M104). Legs: skill code-atlas.md.
   5 stores copy `[[0x99aa40]+0x3100]`; FUN_004d9ae0 branches ==1 -> unit placement, ==2 -> `ds:0x985af0`).
 
 
+
+
+## THE PICK — the s175-s178 milestone lines, verbatim (moved out of the footing at the s179 cap triage)
+
+Registry rows: `NAMED.md` M188-M200. Census outputs: `evidence/m188_m190_uses.txt`,
+`m191_m193_channels.txt`, `m194_m196_channels.txt`, `m197_m200_proposal.txt`. In the second bullet below,
+"the ARCHIVED row above" is the s171-s177 footing bullet that STAYS in `NEXT_PROMPT.md`; its outputs are
+`evidence/m175_m177_aggcallers.txt` … `m194_m196_channels.txt`.
+
+- **s178 (M197-M200, all PASS): rows in `NAMED.md` M197-M200; census output `evidence/m197_m200_proposal.txt`.**
+  Short of it: FUN_00544530 is the **DIPLOMACY PROPOSAL COMPOSER** for a faction pair — ONE call site in the image
+  (0x545c99 in FUN_00545c50, `[ebp+0x10]==0` guard, args [ebp+8]/[ebp+0xc], return tested) — and `ds:0x920700` is
+  **ONE FIELD OF A 5-FIELD SELECTOR BLOCK** {0x9206fc,700,728,748,77c} it clears at entry and fills from 6 calls
+  to the chooser FUN_005f1394; 6 of its 7 stores there are the constant 0, the image's only immediate store being
+  0xc at 0x54ec5c. **M197 RETRACTS M195's "ZERO string literals"**: the body names PROPOSALMENU/REJWARALREADY/
+  NOCOMMLINK (Ghidra renders a referenced literal as a named `s_*` symbol — no quote char). Those keys sit in the
+  string pool **0x690160..0x69107c** (0xFFFFFFFF-terminated both ends): 311 single-word KEYS + 18 spaced message
+  lines, 257 keys with code refs (key→function printed) — the diplomacy vocabulary (full list in `NAMED.md` M198).
+  **M199: FUN_00625b20 IS THE SUBSTITUTION ENGINE** — _strstr for '$'
+  (0x69911c), switch on the next char over 5 cases (closer '>' 0x699138, '$HEX' 0x699130), kinds M=0/F=1/N=2/#n/
+  n→B[n]@0x999ff4+A[n]@0x999fcc, slot text `0x99a01c+n*0x100`, copy the Nth ':'-separated segment; FUN_005808b0
+  COMPOSES `$<`+{M,F,N}+{1,2}+`:`+arg+`>` from record dwords +0x2fc/+0x300 and FUN_00580a60 PARSES that head into
+  0x99aa1c/0x99aa20 — the staging record IS a parsed tag head. **M200 RETRACTS M194's "formatters 0x631afb/
+  0x632cad"**: both are ROW WRITERS on the handle DAT_0099d020 (vtable +0x10/18/38/58/60; alloc 0x5be090, free
+  0x64a7f0, append 0x64b9e0) with 0 `0x25` immediates, 0 printf calls and 0 refs to FUN_00625b20 — VERBATIM copies.
+- **s175-s177 (M188-M196, all PASS): rows in `NAMED.md`; census outputs: the ARCHIVED row above.** Short of
+  the newest: `0x626634` is the 10-slot CHANNEL PUBLISH (guard `arg1<=9`; writes `A[slot]@0x999fcc`/`B[slot]@0x999ff4`;
+  appends arg2 into `0x99a01c+arg1*0x100`;
+  a negative arg3/arg4 takes the staging pair, `0x99a01c+10*256 == 0x99aa1c`) — its 1584 sites in 190 functions are
+  consumed by POINTER PASSING (113 sites/31 fns in the window, 93 push the base or a slot address, 16 callees get it).
+  `[reg*4+0x94d448]` is NOT a pointer (the 2095-fold carries 365/466 scaled sites; **M196 RETRACTS M190's
+  store-address carriers**).

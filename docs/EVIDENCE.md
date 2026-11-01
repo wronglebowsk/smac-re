@@ -19,7 +19,10 @@ pruned — and the tools that enforce it.
 | a log you must understand | `evidence.py digest` first | digest ≤ 3 k |
 
 Ritual target: **~60 k chars ≈ 15 k tokens (6 % of context)**, leaving the rest for the work.
-`evidence.py budget` prints the live numbers with the percentage of context each file costs.
+`evidence.py budget` prints the live numbers with the percentage of context each file costs — and those numbers
+are **BYTES** (`os.path.getsize`, exactly what `wc -c` reports), not characters: the table's caps are byte caps.
+A doc full of arrows and em-dashes is a few dozen characters smaller than the number `budget` prints, so quote
+the `budget` figure and call it bytes (s179: NEXT_PROMPT.md 14,018 B = 13,954 chars).
 
 ## Three tiers
 
