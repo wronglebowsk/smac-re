@@ -1,50 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-171-171.md` (5 sessions). Read it only when a question reaches back before session ## Session 171.
-
-## Session 171 (cont. 14) — M118 ACCEPTED (m118flag, PASS): bit 0x40 has NO setter and no save carries it — the second ask is inert BY CONSTRUCTION
-
-`python3 scripts/m118_flag_never_set.py` — four independent checks, no box time:
-
-- **A** exactly one `test BYTE PTR [..+0x94d430],0x40` in the image: **0x5aaf7f** (FUN_005aadf0+0x18f, take 0x5aaf88).
-- **B** the 17 dword `or` sites at that displacement set 0x800000..0x80000000 and 0x2 — **none sets 0x40**.
-- **C** the byte-bit setters are REGISTER ops (`or al,0x40`), which a dword-immediate scan cannot see: 22 such sites,
-  and exactly ONE (0x4dc226) reaches a flag store — 0x4dc296 — but that store takes `eax` **reloaded from the flag**
-  and masked `0xfc3fffff`, so the or'd bit never reaches the source; the derived value goes to `ds:0x99aa38` and
-  **0 instructions move it back** into a +0x94d430 slot. The block is a bit TRANSLATION (source bit 0x800000 ->
-  derived bit 0x40), not a setter.
-- **D** bit 0x40 is clear for all 8 factions in **all 12 saves** on disk (m54b_clean + 8 autosaves + the three pokes)
-  — and block A is restored 1:1 (M114), so a save carrying the bit would set it.
-
-**Verdict: the M89 second ask cannot fire on this build and this save version.** M117's "inert on this state" is
-strengthened to "inert by construction" — while the branch stays live and reachable (17 hits a turn).
-Lesson recorded in the skill: a byte-field bit test/set is `test BYTE PTR [x],0x40` / `or al,0x40`; scanning only
-`or DWORD PTR [disp],imm` misses every real setter (I nearly concluded "no setter" from exactly that gap).
-
-## Session 171 (cont. 15) — M119-M123, five field questions settled from the static image (all PASS, zero box time)
-
-`python3 scripts/field_census.py` (evidence/fields_m119_m123.log) — SUMMARY stride=PASS bit5=PASS readonly=PASS
-copy=PASS dual=PASS.
-
-- **M119 stride conflict RESOLVED.** The array at 0x984d38 is addressed with **0x30 (48 B)** at all 52 indexed sites:
-  45 via `lea X,[v+v*2]; shl X,4` and 7 via `imul X,0x30`; **0 standalone `shl 4`** on a bare index. M67's "conflict"
-  was a misread: the ×16 in the listing is `shl 4` applied to 3v — the tail of the ×48 computation, not a second stride.
-- **M120 bit 0x20 at 0x531782 NAMED.** `test BYTE PTR [eax*4+0x94d448],0x1` at 0x531778, `je 0x5317a2` at 0x531780,
-  then `or BYTE PTR [ebx+0x98adb8],0x20`: the entity-status bit is set **iff the faction-block dword at
-  0x94d448+inner*4 has bit 0**. The index is `esi*2095 + edi` — 2095 dwords = 8,380 B, so the "array" is the faction
-  block with the stride folded in (a second independent confirmation of 8,380 after M117).
-- **M121 ds:0x98adee is READ-ONLY.** 7 `movsx` readers (0x4e499d, 0x4eeb35, 0x4f948c, 0x51ff61, 0x5a9e06, 0x5a9e5f,
-  0x5aa1a6), **0 writers of any width**, and no access to the enclosing dwords (0x98ade8/0x98adec/0x98adf0). The
-  "forced-pick key, live 6" therefore arrives with the LOAD — save/scenario data, not a gameplay counter.
-- **M122 the 0x1c loop is a COPY, not a third stride.** 0x52b744-0x52b76a copies **0x91cb80 -> 0x98aaf8**, 28-B
-  records, 24 of them ((0x98ad98-0x98aaf8)/0x1c exact), and never references 0x984d38. The two arrays merely sit in
-  the same address neighbourhood.
-- **M123 ds:0x94d78c is ONE dword, two addressing forms.** 72 refs: 48 `[reg+0x94d78c]`, 24 `[reg*4+0x94d78c]`, 6
-  writes. All **24** array-form sites carry a 2095-scaled index (`shl 6 / add / lea *2 / shl 4 / sub`), so the *4 is
-  the compiler's folded faction stride — same field, no second array (M116's law applied: read the encoding, not the
-  syntax). Third confirmation of 8,380.
-Instrument note: `open(p,"w").write(open(p).read()...)` truncated field_census.py to 0 bytes — read BEFORE opening for
-write; the file was rebuilt from the conversation, not from a backup.
+Older sessions: `docs/sessions/sessions-171-171.md` (2 sessions). Read it only when a question reaches back before session ## Session 171.
 
 ## Session 171 (cont. 16) — doc restructure: the footing file is now an index, the narrative is archived
 
@@ -594,3 +550,38 @@ Acceptance: `python3 scripts/m205_m208_fields.py` -> `SUMMARY M205=PASS M206=PAS
 **Pitfalls recorded.** (1) A store census keyed on MNEMONIC alone is direction-blind: `mov reg,[reg+disp]` is a load. Classify by which operand carries the displacement. (2) A displacement is shared by unrelated structs — scope a field census to a class by testing whether the containing function is a member of that class's vtable (here 56 stores / 30 functions collapse to 2 class functions). (3) "N distinct keys" must say WHICH identity: 111 sites / 109 addresses / 97 texts. (4) `call ebx`/`call ecx` indirect sites break any `int(ops[1],16)` census — filter `startswith("0x")`.
 
 No box time again: the s174e box state is STILL unverified and M181 is STILL a LEAD (no positive control).
+
+## Session 182 (2026-11-02) — M209-M212 all PASS: who dispatches dialog slot +0xa8; the dialog stack = two parallel arrays (arg3 write-only); +0xe4 is a bool; FUN_00542ea0 wraps the pump; -9999 is FUN_00496ad0's sentinel
+
+Instrument `scripts/m209_m212_dispatch.py`: whole-image disasm + image bytes + a vtable model (bases = the imm32
+of `mov dword ptr [reg+disp],imm`, extent = code-pointer dwords capped at the next base -> 188 bases). Acceptance
+`python3 scripts/m209_m212_dispatch.py` -> `SUMMARY M209=PASS M210=PASS M211=PASS M212=PASS (18/18 gates)`, rc 0,
+FIRST acceptance invocation; 3 `--probe` runs fixed 6 expectation errors (457/7 install split, 3 not 4
+`[this+0x3c]` sites, INSTALLS displacement carries no `]`, read the guard off the call site's next 3 insns,
+`cmp eax,esi` is a REG compare, arg_of must start one insn before the call); no threshold weakened.
+`evidence/m209_m212_dispatch.txt` (5,859 B). Zero box time. Semantics: NAMED.md `## M209-M212`.
+
+- **M209** +0xa8 = 33 implementations over 188 vtables; exactly 3 map it to FUN_005f5759 (0x67164c 390 / 0x6717cc
+70 / 0x6728c0 4 installs, 70 ctor fns, 457 at `[ebp-disp]` — dialogs are stack locals). Dispatchers: FUN_005f6aa3
+(the family's own +0x4c, 5 vtables, 0 direct calls) via FUN_005e7917 (24-B list walk from `[obj+8]-1`, publishes
+item[+0x14]/item[+0x10], -1 on failure) and FUN_0043fee0 (+0xa8 of 0x6738e4, 0 direct calls) via ds:0x9977f0 (9
+refs, 2 stores, both inside the pump at 0x5f3d70/0x5f3e02). RETRACTED: FUN_0043a4e0 (+0x60 of 0x673498 ->
+FUN_004394e0) and the -0xa14 thunks (0x6723f4/0x672bfc/0x673444 installed at `[reg+0xa14]`) — 0 of 13 outer
+targets is FUN_005f5759. FUN_004bb900 = +0xa8 of 8 vtables, forwards to [this+0x3c], 0x14 if null. Args: 19
+immediates (5x -1, 1x -2) + 10 registers.
+- **M210** dialogs[] 0x992db8 6 refs (4 stores / 2 loads, 3 fns); arg3[] 0x992dc8 3 stores, 0 LOADS = write-only;
+current 0x9939c4 22/3, depth 0x9939c8 21/3, writers only FUN_005ce5bd + FUN_005ce6ff. +0xe4: 2 dispatch sites;
+dialog family = FUN_005f6056 `return ds:0x997770 == 0`, sibling = FUN_004060d0 `return 1`; ds:0x997770 3 refs = 2
+stores (0x5f3e6e = 0, 0x5f6081 = 1) + 1 read; the runner gates its arg2 callback on it (`test eax,eax; je
+0x5ce6f6`). M206's "+0xe4 = events" RETRACTED.
+- **M211** FUN_00542ea0 (1456 B, 1 caller = FUN_00546800 at 0x54eaeb) calls FUN_00405ef0 (0x542ecb) and the pump
+ONCE (0x54322b), returns its eax; table 0x54ef34 = 8 entries (9th dword 0x90909090), guard `add esp,0x8; cmp
+eax,0x7; ja 0x54ec82`; cases 0..7 -> FUN_005306b0 / FUN_00545c50 (1,2) / FUN_00626a17 (key 0x690fc0, stub
+0x530d70) / FUN_0053fce0 / FUN_00541bb0 / FUN_00542810 / ds:0x920700=0xc + ds:0x92077c=1 then FUN_00545c50. M207's
+"0 pump calls" is direct-only.
+- **M212** -9999 (0xffffd8f1) 14 sites / 10 fns (3 cmp, 11 mov): 0x4976ce init + 0x4976f9 read-back inside
+FUN_00496ad0, which has 1 caller (FUN_00417ee0 at 0x41860a `call 0x496ad0; mov edi,eax`) and its 2 tests read
+edi; 0 pump sites test -9999 and 0 of the 56 +0xa40 stores write it. Pump's 94 consumers: 49 mov / 22 test
+eax,eax / 4 cmp-imm (0x8 x2, 0x3, 0x1) / 6 cmp-reg / 5 pop / 3 push / 2 lea / 2 jmp / 1 dec; 1 tests -1 within 12
+insns.
+OPEN: s174e box state unverified; M181 still a LEAD (no positive control).

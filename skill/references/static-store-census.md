@@ -351,3 +351,29 @@ other mode, and the run then reads like an instrument failure when it is already
 - **`local_20 = <code address>; call X();` is usually the SEH resume cookie, not an argument.** When Ghidra assigns
   both small integers and in-function addresses to the same pseudo-local, it is modelling the exception-state chain:
   do not read the calling convention from those lines.
+
+## 13. Vtable model + "who dispatches slot +0xNN" (s182, M209-M212)
+
+- **Build the vtable map from the image, not from Ghidra** (index.csv is functions only): a base is the imm32 of
+  `mov dword ptr [reg+disp],imm32` in the data range whose own first dword is a code address; extent = consecutive
+  code-pointer dwords, **capped at the next candidate base** (188 bases in terran.exe). Walking code pointers in
+  both directions without the cap merges neighbouring vtables into one 645-slot run and every offset you then
+  report is wrong.
+- **"Who dispatches slot +0xa8" is TWO questions.** (a) which vtables IMPLEMENT it — one slot had 33 distinct
+  implementations over 188 vtables, so naming a dispatcher means naming the class; (b) for each `call [reg+0xNN]`
+  site, what class the register holds. Resolve a site by the containing function's vtable membership: scan the
+  image for the dword == &fn and map each hit to (base, byte offset). A function in no vtable with 0 direct
+  `call` sites is dead-or-table-reached; a function IN a vtable is a vmethod, so its `call [*this + 0xNN]` is a
+  SELF-dispatch of its own class's implementation of that slot — which is how the pick's "6-site candidate"
+  FUN_0043a4e0 turned out to dispatch a different class's +0xa8 (0x673498 -> FUN_004394e0).
+- **Three dispatch shapes to name explicitly:** an ADJUSTOR THUNK (tiny fn, `sub ecx,<delta>` or
+  `mov eax,[reg-delta]` for the outer vtable — resolve the outer class from the ctor that installs the subobject
+  vtable at `[reg+delta]`); a COMPOSITE (FUN_004bb900 = +0xa8 of 8 vtables, forwards to `[this+0x3c]`, returns
+  the constant 0x14 when the child is null — a callee of the slot, not a caller of it); a GLOBAL-HANDLE forwarder
+  (`if (ds:0x9977f0) (*(*ds:0x9977f0 + 0xa8))(arg1)` — census that global's writers: 2 stores, both inside the
+  pump, means the pump publishes the live modal object).
+- **A `push`-argument census starts one instruction BEFORE the call site** — walking back from the site itself
+  hits the `call` first and every argument reads as unknown. And `cmp eax,esi` is not a constant compare: split
+  cmp-imm from cmp-reg before claiming "N sites compare against a constant".
+- **An `INSTALLS` displacement string from `mov dword ptr [esi+0xa14],imm` has no closing `]`** — test
+  `endswith("+0xa14")`; demanding `"+0xa14]"` fails a gate whose data is right.

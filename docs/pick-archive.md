@@ -256,3 +256,27 @@ Registry rows: `NAMED.md` M188-M200. Census outputs: `evidence/m188_m190_uses.tx
   calls the tag engine 0x625b20, writes [this+0x2350] 7x, attaches via FUN_005eede6); FUN_00626a17 is a
   38-B thunk to the writer FUN_00626b19 and FUN_0064b9e0 is the SWAR strlen - M204's "76-site sink"
   measures the key text, it does not emit it.
+
+## s181 footing moved out of NEXT_PROMPT at s182 close (verbatim)
+
+**s180 (M201-M204) and s181 (M205-M208) footing is ARCHIVED:** milestone lines in `docs/pick-archive.md`,
+  semantics rows in `NAMED.md`, census outputs `evidence/m201_m204_dialog.txt` + `m205_m208_fields.txt`,
+  instruments `scripts/m201_m204_dialog.py` + `m205_m208_fields.py`. Short of it: FUN_005f1394 is the
+  OK/CANCEL DIALOG RUNNER (class ctor FUN_00405ef0, vtable 0x67164c) and it RETURNS `[this+0xa40]` =
+  Ghidra `this[0x290]`, written only by the class vmethods FUN_005f5759 (+0xa8/+0x228) and FUN_005f58fa
+  (+0x64/+0x1e4) - each with 0 direct call sites - from the item list, or 0 / 0xffffffff; `this[0x285]` =
+  byte +0xa14, a slot of a 7-pointer link block (0xa14..0xa2c), is the CHILD the +0xdc dispatch delegates
+  to (0x5f3dbe child / 0x5f3df6 self, identical args); +0xdc = FUN_005ce5bd, a modal loop over a 4-deep
+  dialog stack (guard `cmp ds:0x9939c8,4`, [d*4+0x992db8], current ds:0x9939c4); FUN_00546800 switches
+  12/5/8 at 0x54eef8/0x54ef14/0x54ef34 and builds a dialog on its own frame without calling the pump;
+  ds:0x997528 is a write-only staging buffer (103 address-passes, 0 absolute loads) drained by
+  FUN_005f0583 (79 of them).
+- Pick from: WHO DISPATCHES dialog slot +0xa8 (the result-field writer): 29 `call [reg+0xa8]` sites in 17
+  fns image-wide, NONE of them in a pump-caller or ctor-caller function - read FUN_0043a4e0 (6 sites) and
+  FUN_00478080 (4) and say whether either dispatches a 0x67164c object and with what argument; the DIALOG
+  STACK FUN_005ce5bd keeps - what its arg3 (stored to [depth*4+0x992dc8]) is, who else reads
+  0x992db8/0x992dc8/0x9939c4/0x9939a0, and what slot +0xe4 (the event pump) returns; the 0xb4c-byte ROW
+  object (ctor FUN_005faec0 - now also known to be called twice by FUN_005f6b8c, on this+0xaac and
+  this+0x15f8 - layout FUN_005f9e85, 90 sites / 23 fns) and where its label text comes from;
+  FUN_00542ea0's return domain (the 8-entry switch 0x54ef34, gated on ds:0x920434 and ds:0x985ae8 bit
+  0x800); the pump's -1 vs the UNMERGED M83/M84 "-9999 at 0x496ad0 = DIALOG-CANCEL"; M181's control (box).
