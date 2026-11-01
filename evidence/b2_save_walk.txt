@@ -8,5 +8,22 @@
   ok   embedded-map       64x64: 44-B record view == 22-B cell view on 4096/4096 tiles, terrain [0, 1, 2, 8, 9, 10] out_of_range=0
   ok   recorded-80x80     sim arithmetic on the traced 80x80 save (n=119 m=37 count=328) -> [273660, 279848, 291096, 301896] vs SAVE_FORMAT.md [273660, 279848, 291096, 301896]
 PASS B2: 7/7 gates on m242_probe_B.SAV
-== per-save walk (python3 -m sim.selftest --sav evidence source, B2 s195)
+== per-save walk (the same instrument, every save under programs/saves)
 save                               size    yr    n   m  cnt    units    bases    tail closes
+Alpha Centauri Autosave 1.SAV   242,799  2153   72  18  176  222,783  226,527  10,800 True
+Alpha Centauri Autosave 10.SAV  242,927  2160   68  19  208  222,815  226,351  10,800 True
+Alpha Centauri Autosave 2.SAV   242,747  2152   71  18  176  222,783  226,475  10,800 True
+Alpha Centauri Autosave 20.SAV  243,691  2160   83  19  192  222,799  227,115  10,800 True
+Alpha Centauri Autosave 3.SAV   242,591  2151   68  18  176  222,783  226,319  10,800 True
+Alpha Centauri Autosave 30.SAV  243,483  2160   79  19  192  222,799  226,907  10,800 True
+Alpha Centauri Autosave 4.SAV   242,591  2151   68  18  176  222,783  226,319  10,800 True
+Alpha Centauri Autosave 5.SAV   242,927  2160   68  19  208  222,815  226,351  10,800 True
+m241_probe.SAV                  242,799  2153   72  18  176  222,783  226,527  10,800 True
+m241_probe_A.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m241_probe_B.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m242_probe_A.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m242_probe_B.SAV                242,799  2153   72  18  176  222,783  226,527  10,800 True
+m112auto1.SAV                   242,927  2160   68  19  208  222,815  226,351  10,800 True
+m112poke.SAV                    242,539  2150   67  18  176  222,783  226,267  10,800 True
+m113map.SAV                     242,539  2150   67  18  176  222,783  226,267  10,800 True
+m54b_clean.SAV                  242,539  2150   67  18  176  222,783  226,267  10,800 True
