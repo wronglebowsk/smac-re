@@ -1,8 +1,6 @@
-S194 M243 MERGED #182 (CI gate pass, 12 s). `sudo -n python3 scripts/m243_leg_gates.py` ->
-`PASS M243: 4/4 gates` (one invocation) -> evidence/m243_leg_gates.txt. FINDING: the 7 dead write
-legs of FUN_00596850 are its 7 dead read twins too, in 3 families: swap bit (0x596927 3296 @0x91f750,
-0x596976 4, 0x5969cb
-192 — plain twins, dead in BOTH swap states); `ds:0x985dbc < 3` legacy scratch buffer (0x596af5
-58,848, 0x597203 1,664, 0x597384 48n); `ds:0x985ae8 & 0x10` (0x59762f 256 @0x991698). RETRACT: 30
-read sites, not 28. Box untouched. NEXT: `track_mode.py` (ANALYSE; B2 = save load) or "who writes
-the 93,159-B tail".
+S195 B2 OPEN (PR pending). `python3 -m sim.selftest --sav
+"programs/saves/auto/m242_probe_B.SAV"` -> `PASS B2: 7/7 gates`, 17 saves close ->
+evidence/b2_save_walk.txt. The .SAV walk closes on the byte: counts at file 68/72, count-prefix
+u32@188,299 (176/192/208), map trailer 91 B at 64x64, tail 10,800. 93,159 = 92,927 map + 220 + 12.
+Box untouched (no /proc, no gdb). NEXT: `python3 scripts/track_mode.py` (ANALYSE) — who reads the
+220-B block, or the 7 mask copies at terrain-record +16..+43.

@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 194, 2026-11-01, M243: the save codec's 7 dead write legs and the 3 gates that kill them)
+# NEXT_PROMPT.md — footing for the next session (session 195, 2026-11-01, B2: the .SAV layout closes on the byte - record counts live in the 796-B state header)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -33,7 +33,7 @@ does NOT apply; **ANALYSE** ⇒ pick from this file exactly as usual.
 ## THE LEDGER
 
 Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
-M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), s175 cap triage (#153),
+M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), B2 (s195, 7/7), s175 cap triage (#153),
 docs #169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
@@ -63,22 +63,26 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s194 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
-  **M242**, **M243**. Full text: `NAMED.md` per-id blocks; the s187-s194 ANSWERED bullet VERBATIM in
+- ANSWERED (do not re-pick): s187-s195 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**, **B2** (`PASS B2: 7/7 gates`, `python3 -m sim.selftest --sav <save>`, 17/17 saves
+  close): the .SAV walk is 12 | 796 state header | 4 own | 67,040 block A (8×8,380) | 11,488 | 32 |
+  2,724 map hdr | W·H·22 grid | **91-B trailer** | 16,000 | **u32 count @188,299** | 3,584 | 26,624 |
+  4,096 | 52·n units | 304·m bases | 10,800 = EOF, with n/m read from the header (`0x985af0`/`0x985af4`
+  at file 68/72) and 8 factions three ways; 93,159 = 92,927 map + 220 + 12 (M243's open item closed). Full text: `NAMED.md` per-id blocks; the s187-s194 ANSWERED bullet VERBATIM in
   `docs/pick-archive.md` (§s195 overflow). Headline: the save codec is `FUN_00597ce0` → `FUN_00596850`
   (one codec both directions), its 7 dead write legs are its 7 dead read twins, killed by 3 gate families.
-- Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`, and B2 must
-  read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells, and a .SAV as magic at 0 /
-  version dword at 8 / the 796-B header at 12): WHO dispatches the dialog's
+- Pick from (ANALYSE fires; the next BUILD fire takes **B3** — turn engine — from `BUILD_SPINE.md`): WHO
+  dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
   — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30,
   +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c);
   WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
   ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B);  **what the 7 mask copies at record
   +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); **which
-  sites outside FUN_00596850 write the 93,159-B tail** — the codec's handle-carrying callees 0x596fb7
-  `FUN_005821e0` / 0x596fd0 `FUN_00582260` / 0x5972af `FUN_00571380` / 0x597970+0x597991 `FUN_00596620`
-  are the only candidates (new from M243, static).
+  sites outside FUN_00596850 write the 93,159-B tail** (ANSWERED by B2's arithmetic: 92,927 map block +
+  220 + 12); **what the block after the count prefix at 188,303 holds (176/192/208 B), who reads the
+  220-B block, and the map-trailer length formula (91 B at 64×64, 128 at 80×80, 338 at 128×128)**
+  (new from B2, static).
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):

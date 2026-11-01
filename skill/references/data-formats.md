@@ -63,6 +63,21 @@ its `MAP_SECTIONS = 2724 + 140800` hard-codes that grid, while a 64×64 save's m
 92,927` (`FUN_00582260`), so the constant over-runs the file and every later offset is wrong — on this box it
 dies with `no 52/304 split of a 0-byte region` on all nine saves. Derive the map size from the header dims
 (`MAP_FORMAT.md`'s `15 + 2724 + W*H*22 + trailer`) before believing any offset after it.
+
+**A save stores the sizes it needs (B2, s195).** The record counts are u32s IN the 796-B state header
+(`0x985af0` units at file 68, `0x985af4` bases at file 72) and the count-prefixed block's u32 sits at
+file 188,299 for a 64×64 world; with those plus the dims the walk closes to the byte on 17/17 saves
+(`sim/save.py`, `python3 -m sim.selftest --sav <save>` -> `PASS B2: 7/7 gates`). So never solve
+`52n + 304m = region` — read n and m. The map trailer is dims-dependent (91 B at 64×64, 128 at 80×80,
+338 at 128×128; formula OPEN), and M110a's map offsets (79,364 / 82,088 / 172,200) are **8 B low**:
+content (the dims, `cell+7==0xff` land markers, the 0x3f trailer marker) puts them at 79,372 / 82,096 /
+172,208. `.MP` laws do not cross over: in a save, map-header word 5 is the 44-B record count (2,048 at
+64×64), not the land-cell count (1,426).
+
+**A stride census must know what a mixed array holds.** The 52-B array at `0x933278` is units (+10 type
+< 64) AND production-queue bands (+10 type >= 64: 128/130/131/256/320-323 measured); a band's +0/+2 are
+NOT tile coords (m113map rec 12 = 3076/56832), so a coord-bounds check applied to the whole array
+rejects valid records and a "N of M records fail" reading is not evidence the stride is wrong.
 **Never close a save layout by subset-sum.** With the map corrected and `52n + 304m` free, m54b_clean's
 242,539 B admits **181,769** exact decompositions of the candidate legs (auto1 182,718, auto30 184,074) — an
 answer set that size names nothing. Constrain with content (anchors, per-stride zeros-fraction) or with pokes
