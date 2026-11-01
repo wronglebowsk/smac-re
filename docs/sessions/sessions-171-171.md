@@ -3,88 +3,46 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
-## Session 171 (cont. 9) — M114 CORRECTION: the "two rewritten tails" are a K STRADDLING ARTIFACT. The save is 1:1.
+## Session 171 (cont. 14) — M118 ACCEPTED (m118flag, PASS): bit 0x40 has NO setter and no save carries it — the second ask is inert BY CONSTRUCTION
 
-M114's claim is RETRACTED, caught 20 minutes later by checking the addresses before arming a watchpoint on them.
-The two "rewrite zones" came from windows that STRADDLE a region boundary but were compared with ONE region's
-`k`, so they diffed by construction:
-- "block A tail 67,080..67,143" is below block B's base (67,852) and was diffed with block B's k=0x916C84 -> the
-  238 "diffs" are block-A-vs-block-B content, and the 16-byte "stride" is just two different arrays lining up.
-- "map header tail 81,408..82,100" straddles the grid start (82,088) and was diffed with the GRID's k=0x40925B0.
+`python3 scripts/m118_flag_never_set.py` — four independent checks, no box time:
 
-With per-region k the whole file is CLEAN:
-```
-block A      66,048..67,840   k=0x94D104   0 byte diffs
-block B      67,852..79,328   k=0x916C84   0 byte diffs
-map header   79,364..82,088   k=0x916D6C   2 byte diffs, both at the FIRST offset (79,364)
-grid         82,088..172,200  k=0x40925B0  10 byte diffs, starting at the FIRST offset (82,088)
-```
-So the restore is **1:1 for every byte of the four big regions**, and the only divergences are a handful of bytes
-at the START of the map header and the START of the grid, plus the 2 dwords already known in the 52-record array
-(222,831 cleared, the poked field at 223,152 normalised). Confirmed live before arming anything: file 67,080 ->
-0x95D70C holds 65,535 in BOTH the file and memory, i.e. no rewrite there.
-LAW: a diff window must lie WHOLLY inside one region — a window across a boundary compared with one region's `k`
-manufactures diffs that look exactly like real rewriting.
+- **A** exactly one `test BYTE PTR [..+0x94d430],0x40` in the image: **0x5aaf7f** (FUN_005aadf0+0x18f, take 0x5aaf88).
+- **B** the 17 dword `or` sites at that displacement set 0x800000..0x80000000 and 0x2 — **none sets 0x40**.
+- **C** the byte-bit setters are REGISTER ops (`or al,0x40`), which a dword-immediate scan cannot see: 22 such sites,
+  and exactly ONE (0x4dc226) reaches a flag store — 0x4dc296 — but that store takes `eax` **reloaded from the flag**
+  and masked `0xfc3fffff`, so the or'd bit never reaches the source; the derived value goes to `ds:0x99aa38` and
+  **0 instructions move it back** into a +0x94d430 slot. The block is a bit TRANSLATION (source bit 0x800000 ->
+  derived bit 0x40), not a setter.
+- **D** bit 0x40 is clear for all 8 factions in **all 12 saves** on disk (m54b_clean + 8 autosaves + the three pokes)
+  — and block A is restored 1:1 (M114), so a save carrying the bit would set it.
 
-## Session 171 (cont. 10) — the two systemic fixes, as CODE (not advice)
+**Verdict: the M89 second ask cannot fire on this build and this save version.** M117's "inert on this state" is
+strengthened to "inert by construction" — while the branch stays live and reachable (17 hits a turn).
+Lesson recorded in the skill: a byte-field bit test/set is `test BYTE PTR [x],0x40` / `or al,0x40`; scanning only
+`or DWORD PTR [disp],imm` misses every real setter (I nearly concluded "no setter" from exactly that gap).
 
-1. **`scripts/save_diff.py` + `scripts/test_save_diff.py` (PASS 7/7)** — the region guard M114 needed. It derives
-   regions from the poke anchors (`k = dest - off`), refuses any range that crosses a KNOWN section boundary
-   (67,852 block B / 82,088 grid / 172,200 trailer / 172,291 next section / 222,783 52-records — each derived from
-   an anchor plus its documented destination base, not a midpoint), and names the boundary it refused on.
-   The two windows M114 merged are now REFUSED BY THE TOOL (`67072-69120` -> boundary 67,072; `81408-82100` ->
-   the grid start), so the next session cannot repeat that comparison by accident.
-2. **`scripts/m109_leg_census.py` teardown** — after the verdict it SIGTERM/SIGKILLs gdb by pid in a loop, then
-   READS `TracerPid` from /proc and records it in the log header; if it is not 0 the harness exits **8** with the
-   pid to kill. Two runs today (m111b3, m112a1) printed a verdict while gdb was still attached to the game.
-3. **`scripts/m113_save_map.py` now verifies every anchor LOCALLY** (`local_1to1`, ±8 B by default): a hit proves
-   the marker landed, the local comparison proves the mapping AROUND it is 1:1, which is the assumption every
-   later diff leans on. Checked against the live box: 64,000->0x95CB04, 68,096->0x927684, 81,408->0x92AB6C (±64),
-   82,432->0x40A67B0 (±64) and 174,000->0x986501 all return 0 local diffs — which independently confirms that
-   M114's "map header tail" was the straddle artifact and nothing else.
+## Session 171 (cont. 15) — M119-M123, five field questions settled from the static image (all PASS, zero box time)
 
-## Session 171 (cont. 11) — M116 ACCEPTED (m116flag, PASS): the band-flag gate is a BYTE test, no OR sets 0x40, and "0 for all 8" is FALSE
+`python3 scripts/field_census.py` (evidence/fields_m119_m123.log) — SUMMARY stride=PASS bit5=PASS readonly=PASS
+copy=PASS dual=PASS.
 
-`python3 scripts/m116_band_flag.py` (static over the image + live read of the 8 faction words) — **PASS**.
-
-- **The gate is a byte test** at **0x5aaf7f**: `test BYTE PTR [esi+0x94d430],0x40`, inside **FUN_005aadf0+0x18f**
-  (528 B), three instructions after `mov [esi+0x94d800],eax` (the FUN_005aab70 advance threshold is reloaded and
-  stored, then the byte is tested). Exactly ONE such test exists in the image.
-- **Nothing ORs 0x40 into it.** 170 instructions touch disp 0x94d430; the 17 `or` sites set 0x800000, 0x400000,
-  0x1000000, 0x2000000, 0x4000000, 0x8000000, 0x10000000, 0x80000000, 0x40000000, 0x20000000, 0x200000 and 0x2 —
-  **zero set 0x40**, so the bit can only arrive through a whole-dword store (18 sites).
-- **"bit 0x40 = 0 for all 8 factions" is FALSE at the current state**: the eight words read
-  0, **0xFFFFFFFF**, 0, 0, 0, 0, 0, 0 — bit 0x40 is SET for faction 1 and zero for the other seven.
-- **But the interpretation is NOT established.** Faction 1's whole dword (and 0x94d434) is 0xFFFFFFFF, which is also
-  the shape of a -1-filled/uninitialised record. So "the second ask runs for faction 1" is an INFERENCE. The
-  controlled test is a poke: clear bit 0x40 for faction 1 and count hits at 0x5aaf88 (the taken branch).
-NAMED's row is amended to say exactly that instead of "never ran".
-
-## Session 171 (cont. 12) — M117 (m117g2): the byte test IS reached 17x a round and never taken; and M116's live half is RETRACTED (stride is DECIMAL)
-
-`python3 scripts/m117_gate_take.py --tag m117g2 --turns 1 --relaunch --save m54b_clean.SAV` — two silent bps:
-0x5aaf7f (the byte test, logs `esi` + the byte) and 0x5aaf88 (the taken branch), over one real turn on a clean load.
-
-**17 test hits, 0 take hits, 0 gdb errors.** Per faction: 0 -> reached 0; 1 -> 2; 2 -> 4; 3 -> 1; 4 -> 3; 5 -> 3;
-6 -> 3; 7 -> 1. So the gate is **live and reachable every round** (factions 1..7; faction 0 never) and **never
-taken**: bit 0x40 is clear for all eight in this state, which MATCHES the original NAMED row — the M89 second ask is
-inert here, and the open question is what SETS bit 0x40 (no `or` does; the 18 whole-dword stores are the candidates).
-
-**M116's live half is RETRACTED — my own stride bug.** NAMED writes the faction stride as `f*8380`; that is
-**DECIMAL 8,380 = 0x20BC**, and I read it as hex 0x8380 (33,664). The M116 table therefore sampled factions
-0, 4, 8, 12... and its "0xFFFFFFFF for faction 1" was really 0x94d430 + 0x8380, a different structure. The corrected
-read of the true stride gives **0, 0, 0x04000000, 0, 0, 0, 0x10000000, 0** — bit 0x40 clear everywhere. M116's
-**static** half stands unchanged (the `test BYTE PTR [esi+0x94d430],0x40` at 0x5aaf7f in FUN_005aadf0+0x18f, and
-the 17 `or` sites, none of which sets 0x40). `scripts/m116_band_flag.py` now carries the decimal stride and prints
-"matches NAMED" when no faction has the bit.
-Also: m117g1 was a WEDGE (`smac_play` rc=5, HUD byte-static 61 s) — the harness now reports a wedge as
-**NO MEASUREMENT** instead of "the test was never reached", because those are different facts.
-
-## Session 171 (cont. 13) — the M117 harness called a NEGATIVE RESULT a failure (exit 4)
-
-`m117g2` exited **4** because its code was `rc = 0 if (not tests or takes) else 4` — i.e. "the gate was reached and
-never taken" was encoded as a failure. That is the milestone's actual FINDING (17 test hits, 0 takes, bit 0x40 clear
-for all eight), so the harness was mislabelling its own result. Fixed:
-`rc = 0` whenever the site was reached (take or no take), `4` only when the site was never reached (inconclusive),
-`5` for a wedge (no measurement), `8` for a dirty box. Same class as m111b3/m112a1's stale-gdb "success": an exit
-code that does not mean what its reader will assume.
+- **M119 stride conflict RESOLVED.** The array at 0x984d38 is addressed with **0x30 (48 B)** at all 52 indexed sites:
+  45 via `lea X,[v+v*2]; shl X,4` and 7 via `imul X,0x30`; **0 standalone `shl 4`** on a bare index. M67's "conflict"
+  was a misread: the ×16 in the listing is `shl 4` applied to 3v — the tail of the ×48 computation, not a second stride.
+- **M120 bit 0x20 at 0x531782 NAMED.** `test BYTE PTR [eax*4+0x94d448],0x1` at 0x531778, `je 0x5317a2` at 0x531780,
+  then `or BYTE PTR [ebx+0x98adb8],0x20`: the entity-status bit is set **iff the faction-block dword at
+  0x94d448+inner*4 has bit 0**. The index is `esi*2095 + edi` — 2095 dwords = 8,380 B, so the "array" is the faction
+  block with the stride folded in (a second independent confirmation of 8,380 after M117).
+- **M121 ds:0x98adee is READ-ONLY.** 7 `movsx` readers (0x4e499d, 0x4eeb35, 0x4f948c, 0x51ff61, 0x5a9e06, 0x5a9e5f,
+  0x5aa1a6), **0 writers of any width**, and no access to the enclosing dwords (0x98ade8/0x98adec/0x98adf0). The
+  "forced-pick key, live 6" therefore arrives with the LOAD — save/scenario data, not a gameplay counter.
+- **M122 the 0x1c loop is a COPY, not a third stride.** 0x52b744-0x52b76a copies **0x91cb80 -> 0x98aaf8**, 28-B
+  records, 24 of them ((0x98ad98-0x98aaf8)/0x1c exact), and never references 0x984d38. The two arrays merely sit in
+  the same address neighbourhood.
+- **M123 ds:0x94d78c is ONE dword, two addressing forms.** 72 refs: 48 `[reg+0x94d78c]`, 24 `[reg*4+0x94d78c]`, 6
+  writes. All **24** array-form sites carry a 2095-scaled index (`shl 6 / add / lea *2 / shl 4 / sub`), so the *4 is
+  the compiler's folded faction stride — same field, no second array (M116's law applied: read the encoding, not the
+  syntax). Third confirmation of 8,380.
+Instrument note: `open(p,"w").write(open(p).read()...)` truncated field_census.py to 0 bytes — read BEFORE opening for
+write; the file was rebuilt from the conversation, not from a backup.
