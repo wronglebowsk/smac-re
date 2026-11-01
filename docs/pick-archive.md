@@ -486,3 +486,13 @@ From LIVE FACTS (BOX state as measured at s197, superseded by the next preflight
   terran.exe 319926, y2153, cur_player 3, mask 0xff08, 18 bases / 72 units, University Base (28,42) pend 0 head 2,
   6 ours 0 actionable, TracerPid 0 — NOT this session's descendant, so read `/proc/mem` with `sudo -n` (yama
   ptrace_scope=1); launch recipe + cold-box timing: skill `references/wine-operations.md`.
+
+TRAPS items 20-22 moved VERBATIM out of NEXT_PROMPT.md at the s198 close (headroom; the same
+laws live in skill `references/instrument-laws.md`):
+
+20. A byte-field bit is tested/set with BYTE/register ops (`or al,0x40`), which a dword-immediate scan cannot see —
+    scanning `or DWORD PTR [disp],imm` alone finds zero setters and invites the false conclusion that none exists.
+21. A "stride conflict" is usually ONE multiply read in two pieces (`lea X,[v+v*2]; shl X,4` = v*48): count the SITES.
+    `[reg*4+disp]` beside `[reg+disp]` is usually the same field with the stride folded into the register.
+22. A global with readers and ZERO writers of any width is LOAD-TIME data, not a gameplay counter — check the
+    enclosing dwords before concluding.
