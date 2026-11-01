@@ -77,10 +77,14 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
 - **M181 lead (live, INCONCLUSIVE):** `ds:0x99aa38` stayed 0 across THREE boundaries (round 52->55) - as
   M182 predicts for a UI/scenario field - but `ds:0x920720`/`ds:0x9204b0` were also 0, so no positive
   control yet. Next: arm `scratch/m181/pair.py`, trigger a save or governor-options OK, re-read.
-- Pick from: what 0x530e30 and 0x535940 (the two sub-passes 0x535c60 calls) do; the 0x40030 flag test in
-  0x535c60 (who sets it); the record's +0x20 dword (0x99aa3c, 5 stores) and the +0x0/+0x4 payload
-  sources; FUN_0053a9c0's use of the count (reads 0x9204ac + 0x920720 at entry); the save-band
-  siblings 0x4e0260 / 0x5a2930 (what each writes).
+- **s174e (M185-M187, all PASS):** 0x530e30 writes only `ds:0x920740=0xf` + the staging +0/+4 pair yet
+  makes 10 calls (incl. 0x626634 at 0x530fc0); 0x535940 writes 47 globals (13 x -1, 12 x 0) = the aggregate
+  scratch RESET. `[fac*4+0x94d448]` is ASSIGNED by 27 plain movs (8 fns, ZERO bit-setters); the 0x40030 mask
+  is tested at 2 sites (0x535ccb + 0x4f2bba). The record's +0x20 (`0x99aa3c`) is a 3-valued SELECTOR (3 of
+  5 stores copy `[[0x99aa40]+0x3100]`; FUN_004d9ae0 branches ==1 -> unit placement, ==2 -> `ds:0x985af0`).
+- Pick from: FUN_0053a9c0's use of the count (0x9204ac + 0x920720 at entry); 0x4e0260 / 0x5a2930 (what
+  each writes); WHO ASSIGNS the 0x94d448 values carrying 0x40030 (the 27 movs' sources); 0x530e30's
+  record write (0x626634 at 0x530fc0).
 ## LIVE FACTS / KIT
 
 - **BOX IS UP at s174 close:** terran.exe 319926, year 2153 round 53, University Base (28,42), 6 units
