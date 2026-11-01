@@ -426,3 +426,41 @@ PITFALLS: a staging pair spread over two arrays is not contiguous - read each sl
   reads them in); record bytes 1, 3, 4-7 and 12-15 unnamed; `decode_map.py` and `sim/map.py` still split
   the grid into 22-byte cells — their B1 gates are position parity so they stay valid, but their "cells"
   are record halves; M181 box debt unpaid (terran.exe alive, TracerPid 0 — this fire took a static pick).
+
+## Session 192 (2026-11-01, M241 — M181's falsifier RAN, box-first; acceptance FAIL 2/5, PR left OPEN)
+
+- Box-first per the operator rule (`grep -c 'box time owed' SESSION_CURSOR.md` was stale-worded but
+  terran.exe 319926 was alive with TracerPid 0). `python3 scripts/track_mode.py` -> `MODE=ANALYSE
+  analyse_since_build=1 next_rung=B2`. Instrument `scripts/m241_m181_control.py` committed as a
+  skeleton BEFORE any probing (a5c423d); the box was never relaunched — one lifecycle, two saves.
+- **Acceptance:** `sudo -n python3 scripts/m241_m181_control.py` -> `FAIL M241: 2/5 gates`, rc 1
+  (3 invocations appended to `evidence/m241_m181_control.txt`). Invocation 1 (3/5): the save route was
+  verified by OCR, and tesseract renders the GAME submenu's small type as garbage ('Load Game...' ->
+  'lad'), so it aborted a route that WAS open; its Escape x2 raised the quit prompt (trap 7).
+  Invocation 2 (2/5): save detection compared FILENAMES, but phase B types the same name as phase A, so
+  a successful overwrite adds no filename and the traced window looked empty. Fixed to MTIME detection
+  + per-phase names + a 0x6267a5 control (42 bps). No threshold or claim was weakened; the SAMPLER
+  control was replaced because it is unsatisfiable by construction (see the retraction).
+- **The measurement (invocation 3, with its commands):** G1 PASS — two host-verified saves
+  `programs/saves/auto/m241_probe_{A,B}.SAV`, 242,799 B each, mtime +8.4 s and +1.1 s inside their
+  windows. G3 PASS — `42 bps armed`, zero gdb warnings, `TracerPid after detach=0`, box re-verified by
+  `sudo -n python3 scripts/smac_preflight.py` -> PASS (14 invariants). **G2+G4 FAIL — the traced save
+  executed ZERO of the 42 armed sites:** `gdb hits=0`, `store hits at ds:0x99aa38: 0 at 0 of 33 census
+  sites`, `tagged-writer 0x6267a5 hits in the traced window: 0`.
+- **FINDING — M181 answered, and it RETRACTS a label:** a save-game write does not go through the
+  0x99aa1c staging record at all. M172/M179/M182's "save band" was a static inference from call shape;
+  the registry already says what 0x99aa1c/0x99aa20 are — the DEFAULT VALUES of the advisor-text
+  substitution slots written by `0x626634(slot, text, v3, v4)` (`docs/named-archive-m32-m84e.md:175`,
+  live-verified "v<0 => defaults 0x99aa1c/0x99aa20"). The save LOAD side is FUN_00596850 `save_load`
+  (NAMED.md:47); the write path is elsewhere and 0x6267a5 is not it.
+- **Why M181's zero was never evidence:** in invocations 1-2 the same 42-bp census logged exactly ONE
+  store, at 0x626cf6 (FUN_00626b46), during UI navigation, while ds:0x99aa38 read 0x00000000 at both
+  ends of every window (invocation 2: 47,909 samples, ~0.6 ms resolution). Writers that DO fire store a
+  value a sampler cannot distinguish (same value, or a write inside one sample interval). LAW: a value
+  sampler is not a store census; count stores with silent bps AT the sites and prove the trigger outside
+  the game (stat the file the game wrote).
+- **OPEN:** the save WRITE function (find it from the "Writing save file..." string's xrefs, then re-run
+  this census against it); who dispatches FUN_00512020 (GOVERNORCONTROL, name 0x68dc84, gated on
+  ds:0x91c62c == 0 [live 0] + [arg1+0x23be8] != 0 + human mask 0x985b10) — it logged ZERO calls during a
+  save, so it is a scenario/editor record, not the gameplay save; and all four `call 0x41a8f0` sites
+  logged ZERO live calls, so the GOVOPTIONS packer never ran in this box session.

@@ -764,3 +764,20 @@ so the triple is unverifiable from the box until a dialog is open.
 | record `+7` | constant 0xff in every record of both maps (11,392/11,392): B1's "land marker" and FOOTING's "+7 = owner byte" are RETRACTED. At 22-byte granularity only the even cells carry it — that is why its count equalled header word 5, which is the RECORD count `(W/2)*H`, not a land count | V | gate G4, `:10-11` |
 | record `+0`, `+2` | category = bits 5-7 (`FUN_005823c0` writes `& 0x1f | p<<5`; cats 0..6 only); `+2` high nibble = terrain (`FUN_00582cc0`), low nibble = owner (`FUN_00582c80`) — the file's two nibbles ARE the live fields. cat<3 = water (`shard_001.c:3515`): 1,826/1,374 and 5,143/3,049 water/land | V (layout), M (split) | gates G4-G5 |
 | record `+16..+43` | 7 dwords, all seven equal in 3,145/3,200 + 8,192/8,192 records; equal to the record's own `+8` mask in 8,191/8,192 fresh records, a strict subset in 1,100/3,200 planet records (bit 5 814×, 20 344×, 30 101×); `FUN_0051c750` walks slots 4..7 and re-sets those bits in slot 4 and `+8`. Meaning OPEN | V (census), OPEN (meaning) | INFO `:14-17`, `shard_013.c:9451-9465` |
+
+## M241 (s192, acceptance FAIL 2/5 — the falsifier RAN; PR left OPEN)
+
+`scripts/m241_m181_control.py`. A host-verified SAVE (`programs/saves/auto/m241_probe_B.SAV`,
+242,799 B, mtime +1.1 s inside the window, 42/42 bps armed, TracerPid 0 after detach) executed ZERO of
+the 42 armed sites: `gdb hits=0`, `store hits at ds:0x99aa38: 0 at 0 of 33`, `0x6267a5 hits: 0`. Armed
+set = the 33 census stores of ds:0x99aa38 (M179), the 4 `call 0x41a8f0` sites 0x41e3bd/0x49b306/
+0x4a9e0e/0x5120d0, the packer entry 0x41a8f0, its post-pack read 0x41abd4, FUN_00512020 entry + its
+0x512069 tagged call, and 0x6267a5. **RETRACTION: the 0x99aa1c "staging record" is not the save-game
+write path** — 0x99aa1c/0x99aa20 are the DEFAULT VALUES of the advisor-text substitution slots written
+by `0x626634(slot, text, v3, v4)` (`docs/named-archive-m32-m84e.md:175`, live-verified); the save LOAD
+is FUN_00596850 `save_load` (NAMED.md:47) and 0x6267a5 is not the save writer. What the census DID log
+live: exactly 1 store, 0x626cf6 (FUN_00626b46), during UI navigation, with ds:0x99aa38 == 0 at both
+ends of every window (47,909 samples @ ~0.6 ms) — so M181's zero is a sampler artifact, not a absence.
+GOVERNORCONTROL = the record name at 0x68dc84 that FUN_00512020 writes (size 0x40), gated on
+ds:0x91c62c == 0 (live 0), [arg1+0x23be8] != 0 and the human mask byte 0x985b10; never dispatched on a
+save. OPEN: the save WRITE function (from the "Writing save file..." xrefs) and its own staging.

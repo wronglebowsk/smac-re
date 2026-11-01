@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 191, 2026-11-01, M240: the `.MP` grid IS the live terrain-record array)
+# NEXT_PROMPT.md — footing for the next session (session 192, 2026-11-01, M241: a SAVE does not touch the 0x99aa1c band — M181 answered)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -19,9 +19,6 @@ mid-sentence). **Whatever is not finished by ~150k tokens is not finished at all
   merge nothing, close.
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.
 
-Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
-patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
-go 1 per batch). The binding cap is doc headroom, not capability.**
 
 ## BUILD TRACK — every 4th fire builds (added s187)
 
@@ -37,7 +34,8 @@ Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159
 M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), s175 cap triage (#153), docs #169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
-superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `pick-archive.md`,
+superseded), M103 (#110, never green), M109 (gates answered, model void), M241 (s192, 2/5 — the box falsifier
+RAN and answered M181; its PR stays open until a re-run passes). Summaries: `pick-archive.md`,
 `NAMED.md`, `skill/references/code-atlas.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -59,24 +57,19 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
 
 ## THE PICK — index (detail: `docs/pick-archive.md`)
 
-- **Laws that decide field questions:** `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords; a decompiler `arr[i*N]`
-  is an ELEMENT index (x4 for bytes); a field may appear as `[reg+disp]` OR folded `[reg*4+abs]` — count BOTH
-  before saying "no site reads X"; a `[ebp-0xNNNN]` slot can BE a member of a stack-constructed object (M227);
-  a hw watchpoint only reports a CHANGE.
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and those results live in
-  `NAMED.md` + `docs/pick-archive.md`; newest instruments `scripts/m240_terrain_repack.py`,
-  `m235_m237_records.py`, `m231_m234_staging.py`.
-- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors;
-  the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks; FUN_005f5a11's write-only triple) —
-  detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on BOTH maps. s191 **M240**:
-  `python3 scripts/m240_terrain_repack.py` -> `PASS M240: 6/6 gates` -> **the `.MP` grid IS the live
-  terrain-record array**: FUN_00582260 reads `DAT_0092a38c*0x2c` (count = (W/2)*H) straight into
-  DAT_0092ae14, no loop; one record covers TWO map columns. RETRACTED "cell+7 = land marker" (0xff in
-  11,392/11,392 records) and FOOTING's "+7 = owner byte"; word 5 = record count; the 128/338 "trailer" is
-  the coarse region map DAT_0092ae18; record +16..+43 = 7 copies of the +8 mask (meaning OPEN).
+- ANSWERED (do not re-pick): s181-s190 (M205-M234, M227/M228, M231-M234, M235-M237, B1 `10/10 gates` on both
+  maps) — VERBATIM detail moved to `docs/pick-archive.md` §s192 triage, results in `NAMED.md`. s191 **M240**: `scripts/m240_terrain_repack.py` -> `PASS M240: 6/6
+  gates` -> **the `.MP` grid IS the live terrain-record array** (one record = TWO map columns; loader family
+  + the 44-B table are in `MAP_FORMAT.md`; +16..+43 = 7 copies of the +8 mask, OPEN).
+  s192 **M241** (`FAIL M241: 2/5`, PR open): a host-verified SAVE (242,799 B, mtime in window, 42 bps armed,
+  TracerPid 0 after) executed **ZERO of the 42 armed sites** (the 33 ds:0x99aa38 stores, the 4 `call
+  0x41a8f0` sites, 0x41a8f0, 0x41abd4, FUN_00512020 + its 0x6267a5 call, 0x6267a5 — list in `NAMED.md`).
+  **The 0x99aa1c "staging record" is NOT the save-game write path**: 0x99aa1c/+20 are the advisor-text
+  substitution defaults (`0x626634`, named-archive-m32-m84e.md:175); the census logged 1 store (0x626cf6)
+  during UI nav with +1c == 0 at both ends.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`, and B2 must
   read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells): WHO dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
@@ -84,11 +77,12 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c);
   WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
   ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record
-  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); M181's control
-  (box; trigger = the 4 callers of FUN_0041a8f0, s189 notes).
+  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); **the save WRITE
+  function** (new from M241: it is NOT 0x6267a5 and not the 0x99aa1c band — find it from the "Writing save
+  file..." string's xrefs, then re-run `scripts/m241_m181_control.py` against it, box).
 ## LIVE FACTS / KIT
 
-- **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
+- **BOX state VERIFIED 2026-11-01 12:48** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
   terran.exe 319926, y2153, cur_player 3, mask 0xff08, 18 bases / 72 units, University Base (28,42) pend 0 head 2,
   6 ours 0 actionable, TracerPid 0 — NOT this session's descendant, so read `/proc/mem` with `sudo -n` (yama
   ptrace_scope=1); launch recipe + cold-box timing: skill `references/wine-operations.md`.
@@ -156,6 +150,9 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
     `[reg*4+disp]` beside `[reg+disp]` is usually the same field with the stride folded into the register.
 22. A global with readers and ZERO writers of any width is LOAD-TIME data, not a gameplay counter — check the enclosing
     dwords before concluding.
+23. A VALUE SAMPLER IS NOT A STORE CENSUS: a same-value store, or a write that fits inside one sample interval,
+    leaves no trace. Count stores with silent bps AT the sites, and prove a trigger OUTSIDE the game's own
+    bookkeeping — stat the file it wrote, BY MTIME (a same-name overwrite adds no filename).
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 

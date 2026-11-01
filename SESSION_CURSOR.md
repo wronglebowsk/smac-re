@@ -1,7 +1,6 @@
-S192 M241 IN FLIGHT (box-first: the M181 falsifier) — this run owns the measurement.
-acceptance: `sudo -n python3 scripts/m241_m181_control.py` -> `PASS M241: 5/5 gates`
--> evidence/m241_m181_control.txt. Two UI saves: A = no-tracer 2 ms sampler over the 16 staging
-dwords at 0x99aa1c; B = 41 silent counting bps (33 census stores of ds:0x99aa38, the 4
-`call 0x41a8f0` sites, 0x41a8f0 entry, 0x41abd4 post-pack, GOVERNORCONTROL writer 0x512020 +
-0x512069). Verdict = CONFIRMED (stores fired) or REFUTED (0 stores with G1/G2/G4 passing).
-merged? no. box time owed: M181 until a verdict prints. terran.exe 319926 TracerPid 0 at arm.
+S192 M241 — box falsifier RAN; acceptance `FAIL M241: 2/5 gates` (rc 1) on the 3rd invocation, so the
+PR is OPEN, NOT merged. `sudo -n python3 scripts/m241_m181_control.py` -> evidence/m241_m181_control.txt.
+M181 PAID: a host-verified SAVE (m241_probe_B.SAV, 242,799 B, mtime +1.1 s in window, 42/42 bps armed,
+TracerPid 0 after) executed ZERO of the 42 armed sites -> the 0x99aa1c "staging band" is
+NOT the save-game write path (0x99aa1c/+20 = advisor-text substitution defaults, 0x626634). Box clean.
+NEXT: `scripts/track_mode.py`; pick = the save WRITE function (xrefs of "Writing save file...").

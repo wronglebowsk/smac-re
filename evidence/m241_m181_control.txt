@@ -31,3 +31,24 @@ PASS G3 instrument: 41 bps armed, no gdb warnings, TracerPid back to 0, inferior
 PASS G4 band control: the traced save executed >=1 armed site (band code ran under tracer)
 FAIL G5 falsifier decides: stores fired, OR zero stores with G1+G2+G4 controls passing
 FAIL M241: 2/5 gates
+
+=== INVOCATION 3 (mtime detection + 42 bps) ===
+pid=319926  baseline: +00=00000000 +04=00000000 +08=00000000 +0c=00000000 +10=00000000 +14=00000000 +18=00000000 +1c=00000000 +20=00000000 +24=014d6750 +28=00000000 +2c=01504990 +30=00000001 +34=00000000 +38=00000000 +3c=00000012 cp=00000003 curfac=00000003 gate91c62c=00000000 round=00000035 selobj=0095da10 year=00000869 selflag=00dfbe41 pub94d600=00dfbe41
+gate ds:0x91c62c=0 (FUN_00512020 skips the GOVERNORCONTROL record unless it is 0)
+PHASE A (no tracer): browser open, name typed / ok  samples=1198 change-rows=1
+  save file /home/n100/reverse/smac/programs/saves/auto/m241_probe_A.SAV  242799 B  mtime +8.5 s
+  staging fields that CHANGED value (all but +1c): NONE
+  +1c (ds:0x99aa38) timeline: 00000000@0.00
+PHASE B (tracer): browser open, name typed / ok  gdb hits=0  sampler samples=1644  TracerPid after detach=0
+  save file /home/n100/reverse/smac/programs/saves/auto/m241_probe_B.SAV  242799 B  mtime +1.1 s
+  store hits at ds:0x99aa38: 0 at 0 of 33 census sites -> by function {}
+  +1c timeline under the tracer (1644 samples): 00000000@0.00
+  tagged-writer 0x6267a5 hits in the traced window: 0
+  NOTE: a value sampler resolves 1644 samples across the window; a store that writes the SAME value, or a write that fits inside one sample interval, is INVISIBLE to it — that is why M181's zero is not evidence and why the counters carry the verdict.
+VERDICT: UNDECIDED: the traced window held no completed save (G1) or no tagged write (G2); the trigger/control never fired, so neither side of M181 is settled
+PASS G1 trigger: a .SAV > 20 KB whose mtime is inside BOTH save windows
+FAIL G2 save-under-tracer control: the tagged-record writer 0x6267a5 ran in the traced window
+PASS G3 instrument: 42 bps armed, no gdb warnings, TracerPid back to 0, inferior alive
+FAIL G4 tracer saw the band: >=1 hit at an armed site during the traced window
+FAIL G5 falsifier decides: stores fired with G1+G2 passing, OR zero stores with them passing
+FAIL M241: 2/5 gates
