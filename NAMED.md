@@ -502,7 +502,8 @@ the base with the folded *8380 chain (shl 6 / lea [i+i*2] / shl 4 / sub i); arg3
 the INVERSE permutation (19/19, all destinations that same field); `and ecx,0xf000000` (0x41abdc) keeps only bits
 24-27 -> source bits 1,2,3,4,8,14,28,29,30 are DESTROYED; rebuilt dword published to `[fac*8380+0x94d600]` (0x41ad94).
 **M179** ds:0x99aa38 = the tagged-record STAGING slot (third field of the 0x99aa1c/0x99aa20 pair, 637 stores each):
-33 stores / 14 functions, 9 sit directly before `call 0x6267a5` with (0, 0x41, name); names read out of terran.exe
+33 stores / 14 functions, 9 sit directly before `call 0x6267a5` (args = name, size, extra): 7 pass size 0x41,
+the TECHRANDOM pair 0x1 (0x510289/0x5170ae); names read out of terran.exe
 = ASSEMBLEGROUP 0x68c774, AIEDITOR 0x68c80c, AIEDITOR2 0x68c818, RULES 0x68c824 + 0x691e30, SCENRULES 0x68c82c,
 SCENVICTORY 0x68c838, TECHRANDOM 0x68db28, GOVOPTIONS 0x6899ec, EDITVEH 0x68c87c (the exe NAME table, not file bytes).
 FUN_00518c50 = set/clear scratch BIT (arg1 = index). Band = scratch bits 0..17 (FUN_0041a8f0: 18); the 6
