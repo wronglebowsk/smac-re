@@ -387,3 +387,17 @@ M181's control (box). ANSWERED by M213-M216 - see `evidence/m213_m216_hotspot.tx
   0x178, so +0x2144 is the panel's own last field (54 sites, 17 writers, 7 readers/callers). FUN_005fb1a5
   = row 0x67194c slot +0x30: 14 `add ecx,0x444` receiver switches, 1 indirect `call [edx+0x14]`, groups
   read as [reg+reg*4+0xabc]/+0xac8 indexed arrays, emitters 0x5dd09c x5 / 0x5c153f x5 / 0x5ca7c3 x4.
+
+### Moved VERBATIM out of NEXT_PROMPT.md at s191 (headroom; the same laws live in `skill/references/instrument-laws.md`)
+
+4. gdb printf/script laws: no inferior strings; expressions go in printf ARGUMENTS; an arg-count or `%%` mismatch
+   ABORTS the sourced script and DETACHES at the first hit — count specs against args BEFORE the run; a manual call
+   frame needs the RETADDR at esp+0 and the arg at esp+4 (reversed = SIGSEGV, box dead); gdb ABANDONS an inferior
+   `call` as soon as any bp hits inside it (arm the store bps first, read the effect back from memory).
+5. `printf "...\\n"` (ONE backslash) prints a newline; TWO prints a LITERAL `\n` and collapses the stream into ONE
+   unparsed line that reads as ZERO events. A bp at the insn AFTER `call X` fires AFTER the callee's events — group
+   backward; unwatched factions yield legitimately empty groups: skip, do not fail on them.
+7. A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it: Return clears a dialog, a
+   BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt — never OK), run
+   `m78_mark_clear.normalize_screen()` first, click from OCR word bboxes (TURN COMPLETE (675,416)). `m44_idle` asserts
+   TracerPid==0 — never a driver under a census gdb, use m55_boundary.

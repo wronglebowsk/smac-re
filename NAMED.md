@@ -755,3 +755,12 @@ so the triple is unverifiable from the box until a dialog is open.
 | cell+0 | `(cat<<5) + low5`, cat ∈ 0..6, low5 ∈ {0,1,2,8,9,10,16,17,18} (two 3-valued fields, bit2 always 0); cats 1-6 are 100% land, cat 0 is 59/3259 | LEAD (printed as `info`, not graded) | `evidence/b1_selftest.txt:3-4` |
 | file cell → live record | the file's cat field is NOT the live `rec[0]&0xe0` category (FOOTING.md: ocean iff <0x60, yet cats 1 and 2 are all-land). Grid 140,800 B = 3,200 live records × 0x2c, so the sizes match; the transform that repacks a 22-byte cell into the 44-byte record is unnamed | OPEN | `evidence/b1_selftest.txt:3-4` |
 | `sim/map.py` `sim/rules.py` `sim/selftest.py` | R1 rung B1: an independent `.MP` decoder whose dims/cells/size/offsets match `scripts/decode_map.py` on both maps + the 45-section alpha.json loader (650 records, none empty) | H (runnable acceptance) | `evidence/b1_selftest.txt:15` |
+
+## M240 (s191, PASS) — the `.MP` grid IS the live terrain-record array (verbatim, no repack)
+
+| field / artifact | finding | conf | evidence |
+|---|---|---|---|
+| `0x582260` + `0x582000` = `map_load_arrays` / `terrain_alloc_arrays` | reads 0xaa4→`&DAT_0092a378`, `DAT_0092a38c*0x2c`→`DAT_0092ae14`, `DAT_0092ada4`→`DAT_0092ae18`; `DAT_00692184 = W/2`, count = `(W/2)*H`, no loop in either ⇒ the grid lands VERBATIM as (W/2)×H records of 0x2c, index `((W/2)*y + (x>>1))*0x2c` = two map columns per record | V | `shard_014.c:27258-27266`, `:27347-27405`; gates G1-G3 |
+| record `+7` | constant 0xff in every record of both maps (11,392/11,392): B1's "land marker" and FOOTING's "+7 = owner byte" are RETRACTED. At 22-byte granularity only the even cells carry it — that is why its count equalled header word 5, which is the RECORD count `(W/2)*H`, not a land count | V | gate G4, `:10-11` |
+| record `+0`, `+2` | category = bits 5-7 (`FUN_005823c0` writes `& 0x1f | p<<5`; cats 0..6 only); `+2` high nibble = terrain (`FUN_00582cc0`), low nibble = owner (`FUN_00582c80`) — the file's two nibbles ARE the live fields. cat<3 = water (`shard_001.c:3515`): 1,826/1,374 and 5,143/3,049 water/land | V (layout), M (split) | gates G4-G5 |
+| record `+16..+43` | 7 dwords, all seven equal in 3,145/3,200 + 8,192/8,192 records; equal to the record's own `+8` mask in 8,191/8,192 fresh records, a strict subset in 1,100/3,200 planet records (bit 5 814×, 20 344×, 30 101×); `FUN_0051c750` walks slots 4..7 and re-sets those bits in slot 4 and `+8`. Meaning OPEN | V (census), OPEN (meaning) | INFO `:14-17`, `shard_013.c:9451-9465` |

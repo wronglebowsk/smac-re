@@ -1,6 +1,6 @@
-S190 B1 MERGED #178 (build fire: track_mode MODE=BUILD). Acceptance =
-`python3 -m sim.selftest --map programs/maps/planet.MP --rules data/alpha.json` ->
-`PASS B1: 10/10 gates on planet.MP, planetx.MP`, rc 0 -> evidence/b1_selftest.txt (16 lines, green on the
-FIRST invocation, nothing weakened). sim/{__init__,map,rules,selftest}.py. Zero box time: M181 debt STILL
-owed (terran.exe 319926 TracerPid 0). Next: `python3 scripts/track_mode.py` -> B2 (save load, BUILD_SPINE),
-or a census pick; NEW pick from B1: the 22-byte file cell -> 44-byte live terrain-record transform.
+S191 M240 PR #179 (gate green, merging). Acceptance = `python3 scripts/m240_terrain_repack.py` ->
+`PASS M240: 6/6 gates on planet.MP, planetx.MP` -> evidence/m240_terrain_repack.txt (3rd invocation
+green; G5 rewritten per-function = stricter, nothing weakened). FINDING: the .MP grid IS the live
+terrain-record array — FUN_00582260 reads `DAT_0092a38c*0x2c` into DAT_0092ae14 verbatim, count=(W/2)*H,
+one record = TWO map columns; +16..+43 = 7 copies of the +8 mask (OPEN). RETRACTED "cell+7 = land marker"
+and FOOTING's "+7 = owner byte". Zero box time: M181 debt STILL owed. NEXT: `scripts/track_mode.py`.

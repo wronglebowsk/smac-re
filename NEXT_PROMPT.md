@@ -1,8 +1,8 @@
-# NEXT_PROMPT.md — footing for the next session (session 190, 2026-11-01, B1 build rung: 10/10 gates PASS)
+# NEXT_PROMPT.md — footing for the next session (session 191, 2026-11-01, M240: the `.MP` grid IS the live terrain-record array)
 
-Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s183
-milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
-Read the archive only for the section picked.
+Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
+VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
+(laws).
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -33,12 +33,12 @@ Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
 
 ## THE LEDGER
 
-Merged: M54A-M123 (#39-#130, gaps inside: `docs/pick-archive.md`), M163-M200 (#138-#159),
-M201-M234 (#161-#173), M235-M237 (#176), B0 (#170), B1 (#178), s175 cap triage (#153), docs #169/#174/#175/#177.
-UNMERGED: M83/M84 family (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
+Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
+M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), s175 cap triage (#153), docs #169/#174/#175/#177.
+UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
-superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `docs/pick-archive.md`,
-`NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
+superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `pick-archive.md`,
+`NAMED.md`, `skill/references/code-atlas.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
@@ -59,30 +59,33 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
 
 ## THE PICK — index (detail: `docs/pick-archive.md`)
 
-- **Laws that decide field questions:** `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords; a decompiler `arr[i*N]` is
-  an ELEMENT index (x4 for bytes); a record field may appear as `[reg+disp]` OR the folded `[reg*4+abs]` - count BOTH
-  before saying "no site reads X"; a `[ebp-0xNNNN]` slot can BE a member of a stack-constructed object (resolve
-  it against the frame's vtable stores before calling it a coincidence, M227); a hw watchpoint only reports a CHANGE.
-- **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
-  refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and the M222-M234 results live in
-  `NAMED.md` + `evidence/m227_m230_mirrors.txt` + `evidence/m231_m234_staging.txt` + `docs/pick-archive.md`;
-  newest instruments `scripts/m231_m234_staging.py`, `m227_m230_mirrors.py`, `m235_m237_records.py`.
-- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors, 70
-  shared with 0x6717cc/0x671d94; the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks;
-  FUN_005f5a11's write-only triple, no bulk-copy route, live modal handle 0) — detail in `NAMED.md`. s190 **B1**
-  (first build rung, `sim/` exists): `python3 -m sim.selftest --map programs/maps/planet.MP --rules data/alpha.json`
-  -> `PASS B1: 10/10 gates` on BOTH maps -> `evidence/b1_selftest.txt`. `.MP` cell+2 = terrain<<4 | owner,
-  cell+7==0xff == header word 5, terrain cardinality 16 ASSUMED. `sim/map.py` measures the file side.
-- Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`): the 22-B file
-  cell -> 44-B live terrain-record transform (`cell+0>>5` cats 1-6 are 100% land, FOOTING.md's live `rec[0]&0xe0`
-  says <0x60 is ocean, 140,800 B = 3,200 records x 0x2c, so a repack exists and is unnamed — static); WHO
-  dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to
-  other hierarchies — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0,
-  +0x8, +0x30, +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 /
-  FUN_00641f3c); WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
-  ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); M181's control (box; trigger = the 4 callers of
-  FUN_0041a8f0, s189 notes).
+- **Laws that decide field questions:** `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords; a decompiler `arr[i*N]`
+  is an ELEMENT index (x4 for bytes); a field may appear as `[reg+disp]` OR folded `[reg*4+abs]` — count BOTH
+  before saying "no site reads X"; a `[ebp-0xNNNN]` slot can BE a member of a stack-constructed object (M227);
+  a hw watchpoint only reports a CHANGE.
+- **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
+  family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
+  displacements, M143-M162). Start there before re-deriving a field.
+- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and those results live in
+  `NAMED.md` + `docs/pick-archive.md`; newest instruments `scripts/m240_terrain_repack.py`,
+  `m235_m237_records.py`, `m231_m234_staging.py`.
+- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors;
+  the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks; FUN_005f5a11's write-only triple) —
+  detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on BOTH maps. s191 **M240**:
+  `python3 scripts/m240_terrain_repack.py` -> `PASS M240: 6/6 gates` -> **the `.MP` grid IS the live
+  terrain-record array**: FUN_00582260 reads `DAT_0092a38c*0x2c` (count = (W/2)*H) straight into
+  DAT_0092ae14, no loop; one record covers TWO map columns. RETRACTED "cell+7 = land marker" (0xff in
+  11,392/11,392 records) and FOOTING's "+7 = owner byte"; word 5 = record count; the 128/338 "trailer" is
+  the coarse region map DAT_0092ae18; record +16..+43 = 7 copies of the +8 mask (meaning OPEN).
+- Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`, and B2 must
+  read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells): WHO dispatches the dialog's
+  +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
+  — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30,
+  +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c);
+  WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
+  ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record
+  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); M181's control
+  (box; trigger = the 4 callers of FUN_0041a8f0, s189 notes).
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
@@ -104,20 +107,19 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
 3. Register semantics live in the ENCODING: `[reg*4+disp]` vs `[reg+disp]` differ by the register's scaling, so a
    condition testing one against the other can never fire; a read-modify-write through a COPIED register evades
    store-shape greps — a hw watchpoint on the FIELD answers "who writes it".
-4. gdb printf/script laws: no inferior strings; expressions go in printf ARGUMENTS; an arg-count or `%%` mismatch
-   ABORTS the sourced script and DETACHES at the first hit — count specs against args BEFORE the run; a manual call
-   frame needs the RETADDR at esp+0 and the arg at esp+4 (reversed = SIGSEGV, box dead); gdb ABANDONS an inferior
-   `call` as soon as any bp hits inside it (arm the store bps first, read the effect back from memory).
-5. `printf "...\n"` (ONE backslash) prints a newline; TWO prints a LITERAL `\n` and collapses the stream into ONE
-   unparsed line that reads as ZERO events. A bp at the insn AFTER `call X` fires AFTER the callee's events — group
-   backward; unwatched factions yield legitimately empty groups: skip, do not fail on them.
+4-5. gdb printf/script laws — VERBATIM text moved to `docs/pick-archive.md` at s191 (also in the skill's
+   instrument-laws.md): no inferior strings; expressions go in printf ARGUMENTS and specs must match them (a
+   mismatch ABORTS the sourced script and DETACHES at the first hit); a manual call frame needs the RETADDR at
+   esp+0 and the arg at esp+4; gdb ABANDONS an inferior `call` once any bp hits inside it; ONE `\n` prints a
+   newline, TWO prints a literal one and the stream reads as ZERO events; a bp at the insn AFTER `call X` fires
+   AFTER the callee's events — group backward, and unwatched factions legitimately yield empty groups.
 6. A >90 s gdb census NEVER runs in the foreground (waits cap at 420 s; killing it leaves Wine hung): background + wait,
    or `--rounds <= 4`. Faction upkeep runs in its OWN segment ~1 cycle after turn-end, so a 1-boundary window can close
    mid-cycle — use `--boundaries >= 2`.
-7. A dialog swallows every click and every turn-end key while the HUD bar reads THROUGH it: Return clears a dialog, a
-   BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt — never OK), run
-   `m78_mark_clear.normalize_screen()` first, click from OCR word bboxes (TURN COMPLETE (675,416)). `m44_idle` asserts
-   TracerPid==0 — never a driver under a census gdb, use m55_boundary.
+7. Dialogs swallow every click and turn-end key while the HUD bar reads THROUGH them: Return clears a dialog, a
+   BUILD/base PANE needs Escape (bare-map Escape raises the quit prompt — never OK); normalize first
+   (`m78_mark_clear.normalize_screen()`), click from OCR word bboxes; `m44_idle` asserts TracerPid==0 — never a
+   driver under a census gdb (use m55_boundary). Verbatim: `docs/pick-archive.md`, s191 block.
 8. A PASS on a non-discriminating shape is no PASS: compute candidate predictions from the baseline first; refuse the
    shape if they all agree. RE-RUN on a harness race, never edit the floor.
 9. base+0xd0 (`credit`) is RECOMPUTED EVERY ROUND (FUN_004e93f0 0x4e9557/0x4e957f = [+0xc0]-[+0xf0]-[+0xe0]) — a poke

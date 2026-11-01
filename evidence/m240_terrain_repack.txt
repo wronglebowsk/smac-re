@@ -1,0 +1,18 @@
+M240 - the .MP grid IS the live terrain record array (verbatim read)
+G1 PASS
+    planet.MP 80x80: 15+2724+3200*44+128=143667 vs size 143667, word5=3200 vs n=3200
+    planetx.MP 128x128: 15+2724+8192*44+338=363525 vs size 363525, word5=8192 vs n=8192
+G2 PASS
+    reads=['&DAT_0092a378,0xaa4,1,param_1', 'DAT_0092ae14,DAT_0092a38c * 0x2c,1,param_1', 'DAT_0092ae18,DAT_0092ada4,1,param_1'] loops=False
+G3 PASS
+    missing=none
+G4 PASS
+    planet.MP: recs=3200 +7==ff:3200 +29==ff:0 cats=[(0, 59), (1, 578), (2, 1189), (3, 973), (4, 342), (5, 57), (6, 2)] odd-half cats=[0] terr=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] own=[0, 1, 2, 3, 4, 5, 6, 7, 15] sea(cat<3)=1826 land=1374
+    planetx.MP: recs=8192 +7==ff:8192 +29==ff:0 cats=[(0, 118), (1, 2087), (2, 2938), (3, 2220), (4, 690), (5, 134), (6, 5)] odd-half cats=[0] terr=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] own=[15] sea(cat<3)=5143 land=3049
+G5 PASS
+    missing=none (7 accessors verified)
+G6 PASS
+    refs=492 max_off=0xe hist=[(1, 8), (2, 6), (3, 173), (4, 30), (5, 22), (6, 2), (7, 11), (8, 180), (9, 1), (10, 3), (11, 6), (12, 47), (13, 2), (14, 1)]
+INFO record-pointer offsets (vars holding a record): [(1, 1), (2, 63), (3, 11), (4, 60), (5, 14), (6, 2), (7, 5), (8, 102), (12, 57), (16, 1), (44, 1)]
+INFO planet.MP: slots=7 distinct=[34, 33, 33, 32, 34, 33, 33] all7equal=3145/3200; planetx.MP: slots=7 distinct=[46, 46, 46, 46, 46, 46, 46] all7equal=8192/8192
+SUMMARY PASS M240: 6/6 gates on planet.MP, planetx.MP

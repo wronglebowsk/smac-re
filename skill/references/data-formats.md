@@ -35,14 +35,20 @@ parsing, not RE.
 
 ## Map + save container formats (verified — repo docs MAP_FORMAT.md / SAVE_FORMAT.md are canonical)
 
-`.MP` map — `15 + 2724 + W*H*22 + trailer == file size`, checked on both shipped maps:
+`.MP` map — `15 + 2724 + (W/2)*H*44 + region == file size`, checked on both shipped maps (M240):
 ```
 0        15 B   b"TERRANMAP\0" 0x1A u32 version(=5)
-15     2724 B   header struct: u32 width, u32 height, ... (word 5 = land cells = W*H/2)
-2739    W*H*22  raw cell records, row-major (no XOR)
-+      var      trailer, starts b"????????" (128 B @80x80, 338 B @128x128)
+15     2724 B   header struct: u32 width, u32 height, ... (word 5 = RECORD count = (W/2)*H)
+2739   (W/2)*H*44  the live 44-byte terrain RECORDS, row-major, VERBATIM (no XOR, no repack)
++      var      coarse region map = ((W+4)/5+1)/2 * ((H+4)/5)  (128 B @80x80, 338 B @128x128)
 ```
-planet.MP 80x80 143,667 B; planetx.MP 128x128 363,525 B. Parser `scripts/decode_map.py`.
+planet.MP 80x80 143,667 B; planetx.MP 128x128 363,525 B. Parsers: `scripts/decode_map.py` (still splits
+22-B cells — half a record) and `scripts/m240_terrain_repack.py` (records). `FUN_00582260` reads the grid
+into the array `FUN_00582000` allocates (`DAT_0092ae14`, count `(W/2)*H`, stride `0x2c`) with no transform
+loop, so one record = TWO map columns: `base + ((W/2)*y + (x>>1))*0x2c`. Fields live in bytes 0..21
+(cat in bits 5-7, +2 hi nibble = terrain type, +2 lo nibble = owner, +8 mask dword, +0xc list head,
++16..+43 = 7 copies of the +8 mask, meaning OPEN); byte +7 is the CONSTANT 0xff — NOT a land marker
+and NOT an owner byte (both were retracted at M240).
 
 `.SAV` save — `b"TERRAN\0" 0x1A u32 version(=86)`, 796 B header, mission year u16 at **+0x54**; then
 sections read in a fixed order. **`FUN_00597a70` is the save/scenario block loader, not the map loader**
