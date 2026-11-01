@@ -55,25 +55,9 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **s181-s184 footing is ARCHIVED** (M205-M221): milestone lines in `docs/pick-archive.md`, semantics
-  rows in `NAMED.md` (M163-M221), census outputs `evidence/m175_m177_aggcallers.txt` .. `m217_m221_panel.txt`,
-  instruments `scripts/m205_m208_fields.py`, `m209_m212_dispatch.py`, `m213_m216_hotspot.py`,
-  `m217_m221_panel.py`. The dialog model in one line: the hotspot list is a CONTAINER {array@+0,
-  capacity@+4, count@+8} of 24-B items - FUN_005e7665 clear (130 sites, a wrapper over the free+reset
-  FUN_005e760d) / FUN_005e7678 alloc n (21 sites, capacities 1..0x100) / FUN_005e774d ADD(gate,
-  payload, x, y, w, h) (32 sites, the ONLY writer of item+0x10/+0x14, -1 when full) / FUN_005e78c7
-  remove-by-payload (32) / FUN_005e7917 hit-test publishing +0x14->arg3 and +0x10->arg4 - and it is a
-  MEMBER (47 member sites over 21 displacements 0x10..0x402f0 + 81 stack locals); the dialog's at
-  this+0x3098 is allocated 10 items by FUN_005ef957, reset by FUN_005ee350, scanned by FUN_005f6aa3
-  (which gates on item[+0x14]==0 and dispatches +0xa8 with item[+0x10]) and has 0 add-sites. The row
-  class 0x67194c (0xb4c) copies 9 triples 0x9978ac..0x997914 written by 9 THREE-store setters, all
-  called once by FUN_00459bb0 (3 pass 0x774c38+0x2c*i, 6 pass 0,0,0). FUN_005f3f5b (+0x15c of 0x6717cc,
-  10-case switch at 0x5f5731, called twice by FUN_00406990 = +0x15c of the 0x67164c family) is the ONLY
-  writer of +0x2210/+0x2224/+0x2234 (3 stores of FUN_005f5a11) and those fields have 0 LOADS. The panel
-  0x671d94 (87 slots, 275 installs, size 0x214c, ctor FUN_005f6b8c, 2 rows at +0xaac/+0x15f8, CPane
-  subobject 0x671d8c at +0x444, embedded by the dialog ctor at +0x3230) has no click dispatcher; its
-  +0xa8 FUN_005f90d7 is a DETACH (clears +0xa38, unlinks via +0xa20/+0xa24/+0xa2c, dispatches +0xb8) vs
-  the dialog's FUN_005f5759, which writes the result field +0xa40 (4 stores).
+- **s181-s185 footing is ARCHIVED** (M205-M221): milestone lines + the M205-M221 hotspot/dialog model are in
+  `docs/pick-archive.md` (§"s185 footing moved out"), semantics rows in `NAMED.md`, instruments
+  `scripts/m217_m221_panel.py` (+ `m205_m208_fields.py`, `m209_m212_dispatch.py`, `m213_m216_hotspot.py`).
 - Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls; all 12 image-wide
   `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click, box);
   who FILLS the dialog's this+0x3098 list (0 add-sites carry that displacement: the 6 add-sites that
