@@ -145,3 +145,16 @@ The fire captures the main model at dispatch time, so changing the main model (o
 only affects the NEXT tick. Read the model from the fire's own log line (`OpenAI client created ... model=<x>`) and
 state which one is running rather than assuming the switch applied. Config edits are safe mid-fire (the worker
 already built its client); repo edits are not.
+
+## The build track (added 2026-11-01)
+
+A loop that only ever analyses is a loop that never ships: after 226 milestones `sim/` was still empty, so every
+acceptance described `terran.exe` rather than a game that runs. The fix is a cadence, not a second job —
+`scripts/track_mode.py` derives `MODE=BUILD|ANALYSE` (and `next_rung=B<n>`) from merged history: 3 analyse
+milestones between build fires, keyed on the `B<n>` / `M<n>` commit prefixes. On MODE=BUILD the fire takes the
+next rung of `BUILD_SPINE.md` instead of a census pick; the other fires analyse exactly as before.
+
+Derive the mode from git, never from a counter file — a counter drifts, gets half-written, or is dropped by a
+sibling's `git checkout`, while `git log` on `origin/main` cannot. Build fires need no box time, never import the
+harness (`sim/` may reuse the decoders, never gdb/Wine/`/proc`), and a rung is done only when its command prints
+PASS against a recorded trace — a mismatch is the finding, never a reason to edit the trace.
