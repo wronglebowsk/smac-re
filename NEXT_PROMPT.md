@@ -55,33 +55,20 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **Named in s171:** 0x926bd4 upkeep-synch phase {0,1,2}; 0x94d7fc counter (-1=unset); 0x91c630 synch counter;
-  0x920434 reset-published id (NOT a record field); 0x920700 UI state {6,8,0xc,0xd}; 0x92077c mode {1,3,7}; 0x94d434
-  **rank**, written ONCE at init (M163); 0x94d80c..0x94d81c = ONE 20-byte struct (M164); 0x94d554+0x94d55c = an 8-byte
-  pair (M165); FUN_004026b0 = LIST SEEK (cursor -> [obj+0x14]); FUN_00495480 = cached-flag getter.
-- **M175-M177 (m175_m177_aggcallers.py, all PASS):** FUN_00531df0's 17 sites live in 13 owners (AI hub
-  0x546800 x2, 0x5551e0 x2, 0x4a5eb0 x2, 0x534fa0 x2 + 9 singles: wrapper 0x43ff20 arg1=ds:0x91b5b4, save
-  path 0x58fa40, 0x535c60, 0x533e70/0x534180/0x5344c0/0x535700, 0x4282d0, 0x55f650); the convention is
-  (faction BLOCK base via the folded *8380 chain, record base, mode) — arg3 reloaded at 5 sites, 0x532194
-  `test/je` gates exporting [edx+0x94d4a8] -> ds:0x9204b0; 12/17 sites push mode 0. [block+0x94d4a8] is a
-  LAST-RUN STAMP vs the round counter ds:0x985afc: 3 callers prime it pre-call (0x533eec/0x53420e/0x534522),
-  6 `sub` age tests consume it, and 0x569401 (`cmp edx,0x10; jl`) SKIPS a call when the stamp is fresh.
-- - **s174 band map (M178-M184, all PASS):** `ds:0x99aa38` is field **+0x1c of the 65-byte record at
-  `ds:0x99aa1c`**; 33 stores / 14 functions, 9 feed `call 0x6267a5` (name, size 0x41 x7 / 0x1 x2);
-  the 13 packers touch only +0, +4, +0x1c, +0x20 and +0xc..+0x18 belong to the emitter FUN_00626b46;
-  the four whole-value writers are NOT packers (0x4dc390 = 17-test RESTORER, 0x4d9ae0 = a 12-iteration
-  `shl edx,cl` copy, 0x512b40 drives FUN_00518c50 by index); `FUN_00535c60` = per-faction visit wrapper
-  (3 sites / 2 owners, calls 0x531df0 -> 0x530e30 -> 0x535940, then `[eax*4+0x94d448] & 0x40030`).
-  GOVOPTIONS = FUN_0041a8f0; `ds:0x920720` = bit-25-clear count; `ds:0x9204b0` = stamp export.
-  Detail: NAMED.md M178-M184 + evidence/m178_m180_scratchband.txt, m182_m184_bandrecord.txt.
-- **M181 lead (live, INCONCLUSIVE):** `ds:0x99aa38` stayed 0 across THREE boundaries (round 52->55) - as
-  M182 predicts for a UI/scenario field - but `ds:0x920720`/`ds:0x9204b0` were also 0, so no positive
-  control yet. Next: arm `scratch/m181/pair.py`, trigger a save or governor-options OK, re-read.
-- **s174e (M185-M187, all PASS):** 0x530e30 writes only `ds:0x920740=0xf` + the staging +0/+4 pair yet
-  makes 10 calls (incl. 0x626634 at 0x530fc0); 0x535940 writes 47 globals (13 x -1, 12 x 0) = the aggregate
-  scratch RESET. `[fac*4+0x94d448]` is ASSIGNED by 27 plain movs (8 fns, ZERO bit-setters); the 0x40030 mask
-  is tested at 2 sites (0x535ccb + 0x4f2bba). The record's +0x20 (`0x99aa3c`) is a 3-valued SELECTOR (3 of
-  5 stores copy `[[0x99aa40]+0x3100]`; FUN_004d9ae0 branches ==1 -> unit placement, ==2 -> `ds:0x985af0`).
+- **Merged-era footing (s171-s174e, M163-M187, all PASS) is ARCHIVED:** the verbatim milestone lines are
+  in `docs/pick-archive.md` §the s171-s174e milestone lines; per-field semantics in `NAMED.md`; census
+  outputs `evidence/m175_m177_aggcallers.txt`, `m178_m180_scratchband.txt`, `m182_m184_bandrecord.txt`,
+  `m185_m187_visits.txt`; generated field map `docs/field-atlas-faction.md`. One-line version:
+  `ds:0x99aa1c` = the 0x41-byte tagged-record STAGING scratch (+0x0/+0x4 written by 0x530e30, +0x1c =
+  `ds:0x99aa38`, +0x20 = `ds:0x99aa3c` 3-valued selector driving ASSEMBLEGROUP unit placement);
+  `FUN_00535c60` = per-faction visit wrapper (0x531df0 -> 0x530e30 -> 0x535940, then
+  `[fac*4+0x94d448] & 0x40030` at 0x535ccb); that dword is ASSIGNED by 27 plain movs with ZERO
+  bit-setters; 0x535940 = the aggregate scratch RESET (47 global stores, 13 x -1 / 12 x 0); `0x94d434` =
+  rank written once at init; FUN_004026b0 = LIST SEEK; FUN_00495480 = cached-flag getter.
+- **M181 lead (live, INCONCLUSIVE):** `ds:0x99aa38` stayed 0 across THREE boundaries (round 52->55) as a
+  UI/scenario field should, but the controls `ds:0x920720`/`ds:0x9204b0` were also 0 — NO positive control.
+  Falsifier: arm `scratch/m181/pair.py` (2 ms sampler), trigger a SAVE or a governor-options OK; a staging
+  change confirms the writer's trigger, nothing changing anywhere means the address or the sampler is wrong.
 - Pick from: FUN_0053a9c0's use of the count (0x9204ac + 0x920720 at entry); 0x4e0260 / 0x5a2930 (what
   each writes); WHO ASSIGNS the 0x94d448 values carrying 0x40030 (the 27 movs' sources); 0x530e30's
   record write (0x626634 at 0x530fc0).
