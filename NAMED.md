@@ -536,9 +536,27 @@ called with indices 1/2/3 (no mask built); FUN_004dde00 = tests of [esi+0x93327c
 -1 (0x9204c0/0x9206f4/0x9206e8/0x9206e4/0x920774/0x9204d8/0x9204cc/0x920750), 12 to 0 (0x9204b8/0x920710/0x920770/
 0x9204e0/0x920490/0x9206ec), + 0x5a6cd0 x2.
 **M186** `[fac*4+0x94d448]` ASSIGNED not bit-set: 27 plain-mov stores in 8 functions (FUN_005551e0 x15, FUN_00552970 x5,
-FUN_0052a720 x2 + 5 singles), ZERO or/and/add/sub sites; 653 refs, byte tests 0x1/0x10/0x20/0x7/0x2/0x8/0x3; the 0x40030
+FUN_0052a720 x2 + 5 singles), ZERO or/and/add/sub **memory-operand** sites (M190: 23 of those 27 movs ARE
+register-level bit RMWs, so the field IS bit-set/cleared); 653 refs, byte tests 0x1/0x10/0x20/0x7/0x2/0x8/0x3; the 0x40030
 mask tested at exactly 2 sites (0x535ccb in FUN_00535c60, 0x4f2bba in FUN_004f26e0).
 **M187** `ds:0x99aa3c` (record +0x20) = 3-VALUED SELECTOR: 5 stores (3 copy `[[ds:0x99aa40]+0x3100]` from FUN_00626b46/
 0x626dfc/0x626f19, 2 from FUN_0048ee00/0x48ef80), 14 reads; FUN_004d9ae0 branches ==1 (0x4d9da0: unit record at
 0x933289/8c/94, clears bits in [rec+0x93327c], calls 0x4d97c0) and ==2 (0x4d9dff, needs ds:0x985af0 > 0); FUN_00616b89
 tests ==0.
+
+## M188-M190 (s175, all PASS) — the aggregate count's use, the two save-path writers, 0x94d448 provenance
+**M188** FUN_0053a9c0's `[ebp-4]` = `ds:0x9204ac + ds:0x920720` (+1 iff `ds:0x920720 != 0`) is LOCAL
+bookkeeping: 43 mentions = 11 reads + 10 re-stores + 8 inc + 11 dec + 2 reg-arith; 0 `push`, 0 index forms;
+11/11 reads consumed by arithmetic/cmp on the register, none reaches a call; 4 windows name rank `0x94d434`
+or round `0x985afc` or `0x920720`.
+**M189** FUN_004e0260 writes 3 non-spill places (staging pair `ds:0x99aa1c`/`ds:0x99aa20` +
+`[block(fac)+0] = ds:0x999fa4` at 0x4e0336) + 1 spill; 4 emitter calls (0x626634 x2, 0x626581, 0x626ec4);
+loop = 7 records at stride 0x59c (1436 B = 359 dwords) while ebx walks 0x20bc (8380 B) blocks from
+0x94f70c. FUN_005a2930 = 0 stores, 5 tests, 5 callees (0x4d9fb0/0x4b6060/0x4b5f90/0x5844f0/0x5a1950), the
+last reached only when `ds:0x920434` reads 0.
+**M190** 27 stores at displacement 0x94d448 (8 functions), 0 immediate sources; **23 are the store half of a
+register-level bit RMW of the same field**; sets union 0xe0c60, clears union 0x8513aee7. Of the 0x40030
+mask: 0x20 set at 2 sites (0x55487f `or ecx,0x40020`, 0x554d42 `or esi,0xc0020`) and cleared at 4
+(0x552cca/cd8/d6f/d7d `and edx,ecx`, ecx=0xffffffdf); 0x40000 set at 2, never cleared; **0x10 never set or
+cleared at all** — it arrives only via the 4 whole-value assignments (0x52b9c7/0x52b9d0 load
+`[ebp-0x50]`/`[ebp-0x4c]` in FUN_0052a720; 0x55540a/0x55580f store `lea`-built addresses).
