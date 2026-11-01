@@ -129,7 +129,9 @@ ranked. Close with the levers as concrete options, not a list of questions.
   assuming a partial commit. Mechanism: `model.max_tokens` sits far below what the model itself advertises
   (`max_completion_tokens`), and a whole-document write at 140 k+ of context needs more of it than that. Two
   legitimate fixes: raise `max_tokens` for the loop's model, and close with `patch`-anchored sections so no single
-  call carries a whole doc.
+  call carries a whole doc. **Applied 2026-11-01:** `model.max_tokens` 16,384 -> 32,768 and
+  `providers.qwen125b.extra_body.max_tokens` raised to match (a bare per-provider `max_tokens` key is ignored — the
+  cap has to ride `extra_body.max_tokens`), and the live cron prompt now forbids any single write over ~6 KB.
 - **`in=` climbing past ~140 k with no checkpoint commit** = the tool-call budget rule biting (whatever is not
   committed by ~call 25 is not saved), not a slow model. Do not read a 20 min no-commit fire as measurement.
 - **`status='running'` with a stale `started_at`** = a crashed worker left the row; check the pid in the process
