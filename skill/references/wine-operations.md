@@ -391,3 +391,17 @@ is what separates the two classes.
   back): with any actionable unit the auto-end gate never fires, so the loop sits parked on
   `cur_player == ours` through Return, `h` and OK clicks and burns the whole timeout without a single
   year flip. Held units flip a round in 1-2 s, which is what makes a multi-boundary watch cheap.
+
+## A relaunched game is NOT your child: yama ptrace_scope blocks /proc/mem (s174)
+
+`/proc/sys/kernel/yama/ptrace_scope = 1` on this host means a same-uid process may only be read
+(`/proc/<pid>/mem`, `gdb -p`) by one of its ANCESTORS. A relaunch driven through a shell the agent's
+tool later killed leaves terran.exe parented to wineserver/explorer, so every later shell gets
+`PermissionError: [Errno 13] Permission denied: '/proc/<pid>/mem'` **even though `ps` shows the same
+uid and mode 0600** — and `smac_preflight.py` dies on line 56 with that traceback instead of reporting.
+Fix: read under `sudo -n` (CAP_SYS_PTRACE) — `sudo -n python3 scripts/smac_preflight.py` works — or
+relaunch from a tracked background job so the game stays a descendant of the session that will read it.
+Corollary: the relaunch is NOT ~35 s on a cold box. Measured s174: `m54a_load.py --relaunch` exceeded
+9 minutes after a day idle (wine prefix + CD path), so run it as a tracked background job and poll
+`pgrep -x terran.exe` rather than holding a 500 s foreground call — a SIGTERM at the tool timeout kills
+the driver but leaves the game half-loaded, which is exactly how you lose ptrace access.

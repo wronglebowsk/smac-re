@@ -76,16 +76,19 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   packs the M164 struct with 0x94d80c as a SIGN PAIR. ds:0x920720 = the aggregator's bit-25-CLEAR count (AI-hub
   loop bound + two `cmp ,0x2` gates); ds:0x9204b0 = the stamp export, age-tested as ds:0x985afc - stamp.
   Detail: NAMED.md M178-M180 + evidence/m178_m180_scratchband.txt.
+- **M181 lead (live, INCONCLUSIVE):** across one boundary (round 52->53, year 2152->2153) `ds:0x99aa38`
+  stayed 0 — as M178 predicts for a UI writer — but `ds:0x920720` / `ds:0x9204b0` were also 0, so the
+  aggregate pass had nothing to do and there is no positive control yet. Next: arm
+  `scratch/m181/pair.py`, trigger a save or governor-options OK, re-read.
 - Pick from: what the SAME writer calls put in ds:0x99aa1c / ds:0x99aa20 (the staging pair's other two fields);
   the whole-value writers (FUN_004d9ae0 12-iteration bit loop, FUN_004dc390 12-leg RESTORER, FUN_004dde00,
   FUN_00512b40) vs the leg packers; FUN_0053a9c0's use of the count (it reads 0x9204ac and 0x920720 together at
   entry); who calls FUN_00535c60; the save-band siblings 0x4e0260 / 0x5a2930 (what each writes).
 ## LIVE FACTS / KIT
 
-- **BOX DOWN at s174 close (s172-s174 were all static): terran.exe not running** (s172 was fully static). Relaunch before any box pick (~35 s): `SMAC_SAVE='m54b_clean.SAV' python3 scripts/m54a_load.py --relaunch` -> `m54g_prep.py` -> `smac_play.py --turns 1` -> `accept_ready.py`; 
-  convert [0x926a14]=0, [0x985af0]=67, [0x985af4]=18, eras ds:0x985b90/0x985b9c = -1 (category-skip leg INERT); no clamp
-  entry with key 10. Kill a stale winedbg + wineserver BY PID before a relaunch; rounds are NOT continuous across
-  reloads.  A traced load is ~10x slow: M54A_LOAD_TIMEOUT=1800.
+- **BOX IS UP at s174 close:** terran.exe 319926, year 2153 round 53, University Base (28,42), 6 units
+  HELD, TracerPid 0 — NOT this session's descendant, so read `/proc/mem` with `sudo -n` (yama
+  `ptrace_scope=1`). Launch recipe + the cold-box timing: skill `references/wine-operations.md`.
 - A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
   ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
   index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
