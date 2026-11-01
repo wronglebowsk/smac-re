@@ -212,7 +212,7 @@ def m231():
     G("M231 the 9 publishers 0x45a320+0x30*i each store its 2 ARG VALUES into slot i of both arrays "
       "(2 arg-loads, 2 stores, 0 callees, 0 dereference)", good,
       "per-fn (insns,stores,dests,sources): " + "; ".join(
-          "%s %d/%d %s<-%s" % (p_["dests"][0], p["insns"], p["nst"], p["dests"], p["args"])
+          "%s %d/%d %s<-%s" % (p_[0], p["insns"], p["nst"], p["dests"], p["args"])
           for p_, p in zip(want, per))[:520])
     wh = window_hits(PAIR0, PAIR1 + 36)
     st = [x for x in wh if is_store(x[1])]
@@ -237,11 +237,14 @@ def m231():
               hex(disps[0]) if disps else "-", hex(disps[-1]) if disps else "-", len(disps), len(installs),
               {hex(v): VT.get(v, ("-", "-"))[0] for v in (want_vt or ())}))
     n1 = len([1 for _, s in NM if s == "call 0x62d630"]); n2 = len([1 for _, s in NM if s == "call 0x62d78d"])
-    G("M231 FUN_0062d630 has direct call sites; FUN_0062d78d has ZERO direct call sites and is not a "
-      "vtable slot - it is reached only if someone takes its address", n1 == 6 and n2 == 0 and not slots_holding(0x62d78d),
-      "call 0x62d630=%d (fns %s); call 0x62d78d=%d; vtable slots holding 0x62d78d=%s; address-takes=%d" % (
-          n1, sorted(set(fnof(p) for p, s in NM if s == "call 0x62d630")), n2, slots_holding(0x62d78d),
-          len(hits("0x62d78d"))))
+    sl = slots_holding(0x62d78d)
+    G("M231 FUN_0062d78d has ZERO direct call sites and ZERO code address-takes: it is reached ONLY as "
+      "slot +0x15c of the very vtable 0x679f98 that FUN_0062d630 installs - the same slot offset the "
+      "dialog family uses for its +0x15c installer (M220), so the copy-in is a vmethod, not a callee",
+      n1 == 6 and n2 == 0 and len(hits("0x62d78d")) == 0 and sl == [(0x679f98, 0x15c, 2)],
+      "call 0x62d630=%d (fns %s); call 0x62d78d=%d; code refs of 0x62d78d=%d; vtable slots=%s" % (
+          n1, sorted(set(fnof(p) for p, s in NM if s == "call 0x62d630")), n2, len(hits("0x62d78d")),
+          [(hex(b), hex(o), ins) for b, o, ins in sl]))
 
 
 # ============== M232: the 0x774c38 grid, its zero writers, and who receives it ==============
@@ -272,16 +275,22 @@ def staging_slots(f):
 
 
 def m232():
-    reg = window_hits(0x774a00, 0x774e00)
+    lo, hi = 0x774a00, 0x774e00
+    reg = window_hits(lo, hi)
     st = [x for x in reg if is_store(x[1])]
-    into = [x for x in st if named_in(dest_operand(x[1]), 0x774a00, 0x774e00)]
-    G("M232 the grid has ZERO writers in the image: of the %d stores naming [0x774a00,0x774e00), "
-      "%d store a region address as a VALUE, %d store INTO one; all %d go to [reg+0xb24]"
-      % (len(st), len(st) - len(into), len(into), len(st)),
-      len(into) == 0 and len(st) == 4 and all("+0xb24]" in dest_operand(x[1]) for x in st),
-      "region refs=%d stores=%d store fns=%s dests=%s" % (
-          len(reg), len(st), dict(collections.Counter(fnof(x[0]) for x in st)),
-          dict(collections.Counter(dest_operand(x[1]) for x in st))))
+    into = [x for x in st if named_in(dest_operand(x[1]), lo, hi)]
+    srcs = [x for x in st if named_in(x[1].split(",", 1)[1] if "," in x[1] else "", lo, hi)]
+    disps = collections.Counter(m.group(2) for x in st for m in
+                                [re.search(r"\[(\w+)\+(0x[0-9a-f]+)\]", dest_operand(x[1]))] if m)
+    inblk = all(0xaf0 <= int(d, 16) <= 0xb30 for d in disps)
+    G("M232 the grid has ZERO writers: of the %d stores naming [0x774a00,0x774e00), %d carry a region "
+      "address in the DESTINATION and %d carry one in the SOURCE (FUN_0041f450 installing page bases "
+      "into one field block at [reg+0xaf0..0xb30]); the region is written only through pointers"
+      % (len(st), len(into), len(srcs)),
+      len(into) == 0 and len(srcs) == len(st) == 39 and inblk and len(disps) == 9,
+      "region refs=%d stores=%d into=%d source-carried=%d store fns=%s dest disps=%s" % (
+          len(reg), len(st), len(into), len(srcs),
+          dict(collections.Counter(fnof(x[0]) for x in st)), dict(sorted(disps.items()))))
     ho = handouts()
     push_ct = collections.Counter(v for _, _, _, gs in ho for v in gs)
     tri = sorted((tuple(sorted((v - GR) // GRS for v in g)), c) for _, c, _, g in ho if len(g) == 3)
@@ -314,7 +323,7 @@ def m232():
             slots = staging_slots(fn)
             if len(slots) == len(gs):
                 exp[fn] = (slots, list(reversed(gs)))
-    got = {f: (s, list(LIVE.dw(s[0], len(s)))) for f, s in exp.items()}
+    got = {f: (v[0], [LIVE.dw(a, 1)[0] for a in v[0]]) for f, v in exp.items()}
     G("M232 live read-back: every triple/pair the calls passed is EXACTLY what its staging slots hold "
       "now (the row group data are POINTERS to grid records, not values)",
       all(exp[f][1] == got[f][1] for f in exp) and len(exp) == 9,
@@ -385,19 +394,35 @@ def m233():
 
 
 # ============== M234: what the trampoline's callees do with (buffer, 0x109, 0x107/0x106) ==============
-def argvecs(fn, want):
-    """(site, callee, this-source, args in order) derived from PUSH ORDER (last push = arg1)."""
+def resolve(op, pc):
+    """A pushed REGISTER is resolved at ITS OWN push pc (s186 law) to its defining operand."""
+    if not re.fullmatch(r"\w+", op):
+        return op
+    i = bisect.bisect_left(PCS, pc)
+    for _, s in reversed(NM[max(0, i - 12):i]):
+        m = re.match(r"^mov %s,(.*)$" % op, s)
+        if m:
+            return m.group(1).strip().replace("dword ptr ", "").replace("ds:", "")
+    return op
+
+
+def argvecs(fn, nargs):
+    """(site, callee, this-source, args in order) from push order, truncated to the callee's own
+    cleaned arg count (its ret imm) and with register pushes resolved to their defining load."""
     out = []; pend = []; ecx = None
     for pc, s in body(fn):
         m = re.match(r"^push\s+(\S.*)$", s)
         if m:
-            pend.append(m.group(1).strip()); continue
+            pend.append((m.group(1).strip(), pc)); continue
         if re.match(r"^mov ecx,dword ptr \[ebp\+0x8\]$", s):
             ecx = "[ebp+0x8]"; continue
         m = re.match(r"^call\s+(0x[0-9a-f]+)$", s)
-        if m and m.group(1) in want:
-            out.append((pc, m.group(1), ecx, tuple(reversed(pend))))
-        pend = []; ecx = None
+        if m:
+            cn = m.group(1)
+            if cn in nargs and nargs[cn]:
+                n = nargs[cn]
+                out.append((pc, cn, ecx, tuple(resolve(o, p) for o, p in reversed(pend[-n:]))))
+            pend = []; ecx = None
     return out
 
 
@@ -414,7 +439,12 @@ def shape(fn):
 
 
 def m234():
-    av = argvecs("FUN_00455c70", ("0x5dbdc0", "0x5e3412"))
+    na = {}
+    for c in ("0x5dbdc0", "0x5e3412"):
+        rt = [s for _, s in body("FUN_00%s" % c[2:]) if s.startswith("ret")]
+        m = re.match(r"^ret 0x([0-9a-f]+)$", rt[0]) if rt else None
+        na[c] = int(m.group(1), 16) // 4 if m else 0
+    av = argvecs("FUN_00455c70", na)
     dbtv = ("0x792a30", "0x109", "[ebp+0xc]", "[ebp+0x10]", "[ebp+0x14]", "[ebp+0x18]", "0x0")
     ok1 = (len(av) == 3 and all(t == "[ebp+0x8]" for _, _, t, _ in av) and
            [a for _, c, _, a in av if c == "0x5dbdc0"] == [dbtv] and
@@ -422,7 +452,8 @@ def m234():
     G("M234 FUN_00455c70 hands its OWN arg1 to both callees as `this` (mov ecx,[ebp+0x8] before every "
       "call) and injects arg1=&0x792a30 + arg2=0x109 for FUN_005dbdc0 and (0x107,0x109)/(0x106,0x109) "
       "for the two FUN_005e3412 calls", ok1,
-      "derived arg vectors=%s" % [(hex(p), c, t, a) for p, c, t, a in av])
+      "callee-cleaned arg counts (from their own ret imm)=%s; derived arg vectors=%s" % (
+          na, [(hex(p), c, t, a) for p, c, t, a in av]))
     d = shape("FUN_005dbdc0"); e = shape("FUN_005e3412")
     n_d = len([1 for _, s in NM if s == "call 0x5dbdc0"]); n_e = len([1 for _, s in NM if s == "call 0x5e3412"])
     ok2 = (d["ret"] == ["ret 0x1c"] and d["indirect"] == 0 and n_d == 59 and
@@ -459,18 +490,22 @@ def m234():
             if pend and re.fullmatch(r"0x[0-9a-f]{6,8}", pend[-1]):
                 bufs.append((pc, int(pend[-1], 16), len(pend)))
             pend = []
+        elif s.startswith("call"):
+            pend = []
     rows = [LIVE.dw(b, 11) for _, b, _ in bufs]
+    exact = sum(1 for r in rows if (r[3] * r[5]) % 4 == 0)
     ok4 = (len(bufs) == 11 and len(set(b for _, b, _ in bufs)) == 11 and
            all(b > FILEMAP_END and nargs == 5 for _, b, nargs in bufs) and
-           all(r[0] == 0 and LIVE.loaded(r[1]) and r[2] == 9 and r[3] == r[4] and (r[3] * r[5]) % 4 == 0
+           all(r[0] == 0 and LIVE.loaded(r[1]) and r[2] == 9 and r[3] == r[4] and r[5] != 0
                for r in rows))
     G("M234 live: the 11 buffers FUN_00459bb0 passes as the trampoline's arg1 are distinct BSS records "
-      "(> FILEMAP_END) of the SAME shape as the 0x774c38 grid entries {+0=0, +4=mapped data pointer, "
-      "+8=9, +0xc=+0x10=N, +0x14=M} - and N*M is a whole dword count, exactly the length FUN_005e3412 "
-      "computes as [this+0xc]*[this+0x14]>>2", ok4,
-      "buffers=%s; per-buffer (+4,+8,+0xc,+0x10,+0x14,N*M/4)=%s" % (
+      "(> FILEMAP_END) of the SAME 11-dword shape as the 0x774c38 grid entries {+0=0, +4=mapped data "
+      "pointer, +8=9, +0xc=+0x10=N, +0x14=M} - they ARE grid-type records, and FUN_005e3412's length is "
+      "the TRUNCATING dword count (N*M)>>2 (%d of 11 divide exactly)" % exact, ok4,
+      "buffers=%s; per-buffer (+4,+8,+0xc,+0x10,+0x14,(N*M)>>2,N*M%%4)=%s" % (
           [hex(b) for _, b, _ in bufs],
-          [(hex(r[1]), r[2], hex(r[3]), hex(r[4]), hex(r[5]), (r[3] * r[5]) // 4) for r in rows]))
+          [(hex(r[1]), r[2], hex(r[3]), hex(r[4]), hex(r[5]), (r[3] * r[5]) >> 2, (r[3] * r[5]) % 4)
+           for r in rows]))
 
 
 def main():
