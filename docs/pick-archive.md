@@ -230,3 +230,29 @@ Registry rows: `NAMED.md` M188-M200. Census outputs: `evidence/m188_m190_uses.tx
   (&DAT_00997528, key, -1, 0, ...)), FUN_0064b9e0 x76 and FUN_00405220 x33 (thunk to
   FUN_00404010(&DAT_00997120, key)) = 258/313; only 11 of the 29 referrers call the pump and 56 of the 67
   pump callers name no key - the paths join only as 0x530d70 -> FUN_00519a20 -> FUN_00546800.
+
+- **s181 (M205-M208, all PASS): rows in `NAMED.md`; full detail in `SESSION_NOTES.md` Session 181; census
+  output `evidence/m205_m208_fields.txt`; instrument `scripts/m205_m208_fields.py`** (acceptance
+  `python3 scripts/m205_m208_fields.py` -> `M205=PASS M206=PASS M207=PASS M208=PASS (14/14 gates)`, rc 0 on
+  the FIRST acceptance invocation; two `--probe` runs first fixed 5 gate expectations - [ebp-0x30] has 3
+  stores (0x5f13d8 init), the +0xa40 census spans 30 fns, +0xa14 needs a DIRECTION-aware load/store split
+  (10 loads + 1 store), the 2nd +0xe0 dispatch is 0x5f5893, `ds:0x9939c4,edx` is 0x5ce60e - no threshold
+  weakened). **M205** the pump returns `[this+0xa40]` (`this[0x290]`) on the ONE leg gated by
+  `[ebp-0x30]==0`; writers = the class vmethods FUN_005f5759 (+0xa8/+0x228, 4 stores) and FUN_005f58fa
+  (+0x64/+0x1e4, 3 stores), 0 direct call sites each, value = `[node+[node+8]+0xec]` or `call 0x5fdcf7`
+  or 0 / 0xffffffff; FUN_005f5759 also parks its arg in [this+0x3100]; forwarders FUN_005ce4a9/0x5ce4dc
+  write through [this+0x43c]/[this+0x440]; base ctor FUN_005ee350 zeroes it (0x5ee7a5). **M206**
+  `this[0x285]` = +0xa14, a slot of the 7-pointer link block 0xa14..0xa2c spliced by FUN_005ee350/0x5eede6
+  (9 stores each) and FUN_005f6b8c (6, seeded from the global ds:0x997850, vtable 0x671d94 installed at
+  0x5f6bdc); the pump's 0x5f3d7c test delegates +0xdc to the child (0x5f3dbe) or to self (0x5f3df6) with
+  identical args; +0xdc = FUN_005ce5bd, a modal loop over a 4-deep dialog stack (guard `cmp ds:0x9939c8,4`,
+  [d*4+0x992db8]/[d*4+0x992dc8], current ds:0x9939c4, suspend +0x10, activate +0x4, events +0xe4,
+  `call [ebp+0xc]`, close +0xe0, `ret 0xc`). **M207** FUN_00546800: switches 12/5/8 at
+  0x54eef8/0x54ef14/0x54ef34 (guards cmp 6 / cmp 0xa + byte-permute 0x54ef28 / cmp 7 on `call 0x542ea0`,
+  the last behind ds:0x920434 and ds:0x985ae8 bit 0x800); builds a dialog on its 0x5534-byte frame, 0 pump
+  calls; 111 single-word key sites = 109 addresses = 97 texts; 29 in the prologue, 68 from 0x54ad65, 7
+  across the 8 result-code regions. **M208** ds:0x997528: 103 address-pushes + 1 byte clear (0x5f58de) +
+  1 arg-slot store, 0 absolute loads; drain = FUN_005f0583 (79/103, defaults its text arg to the buffer,
+  calls the tag engine 0x625b20, writes [this+0x2350] 7x, attaches via FUN_005eede6); FUN_00626a17 is a
+  38-B thunk to the writer FUN_00626b19 and FUN_0064b9e0 is the SWAR strlen - M204's "76-site sink"
+  measures the key text, it does not emit it.
