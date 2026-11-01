@@ -55,7 +55,13 @@ sections read in a fixed order. **`FUN_00597a70` is the save/scenario block load
 (the map grid is read raw by `FUN_00582260`); `FUN_00598340` is the magic/version dispatcher.
 
 `.SAV` section sizes (from the `push` sites in `FUN_00596850`): 796, 67,040, 11,488, 16,000, 3,584,
-26,624, 4,096, 256, 152, 10,144 are immediates; three are computed — one raw count (`DAT_00927538`), one
+26,624, 4,096, 256, 256, 152, 10,144 are immediates (the last 10,800 B are 256 | 152 | 10,144 | 20 |
+216 | 8 | 4 — one 256 leg is gated by `DAT_00985ae8 & 0x10`, the 216 B are 9 rows of 24 B that
+`FUN_00596620` reads 6 dwords at a time, the final 4 B are outside the codec, and there is NO 220- or
+28-B block, M244); three are computed — one raw count (`DAT_00927538` is a BYTE length: that block is
+8-B base-site records [type {0 add, 1 re-own, 2 remove}, faction, turn (`DAT_00985afc`), x, y] that
+`FUN_0059bcb0` replays into the base list, so base +4 = the log's last faction = the CURRENT owner and
++5 = the faction written just before it, M244), one
 **52 B/record** (`edx` records), one **304 B/record** (`DAT_00985af4` records). Two are skipped outright
 under version/count conditions, so the section list is conditional; sizes shrink as the game progresses.
 `.SAV` splits from the file alone, but **`decode_save.py --sections` sums to the byte only for 128×128 saves**:
@@ -69,7 +75,8 @@ dies with `no 52/304 split of a 0-byte region` on all nine saves. Derive the map
 file 188,299 for a 64×64 world; with those plus the dims the walk closes to the byte on 17/17 saves
 (`sim/save.py`, `python3 -m sim.selftest --sav <save>` -> `PASS B2: 7/7 gates`). So never solve
 `52n + 304m = region` — read n and m. The map trailer is dims-dependent (91 B at 64×64, 128 at 80×80,
-338 at 128×128; formula OPEN), and M110a's map offsets (79,364 / 82,088 / 172,200) are **8 B low**:
+338 at 128×128; its LENGTH FORMULA is code — `((Rw+1)/2)*Rh` with `Rw=(W+4)/5`, `Rh=(H+4)/5` (`FUN_00582000`,
+shard_014.c:27263-27265; M244 closes planet.MP 143,667 and planetx.MP 363,525 on the byte), and M110a's map offsets (79,364 / 82,088 / 172,200) are **8 B low**:
 content (the dims, `cell+7==0xff` land markers, the 0x3f trailer marker) puts them at 79,372 / 82,096 /
 172,208. `.MP` laws do not cross over: in a save, map-header word 5 is the 44-B record count (2,048 at
 64×64), not the land-cell count (1,426).

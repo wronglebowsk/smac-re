@@ -1,45 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-176-176.md` (1 sessions). Read it only when a question reaches back before session ## Session 177.
-
-## Session 177 (2026-10-31) — M194-M196, all PASS (three static milestones, one instrument + one tracerless live read)
-
-Acceptance: `sudo -n python3 scripts/m194_m196_channels.py > evidence/m194_m196_channels.txt` (12,080 B, rc 0)
--> `SUMMARY M194a=PASS M194b=PASS M194c=PASS M195a=PASS M195b=PASS M195c=PASS M196a=PASS M196b=PASS M196c=PASS`.
-`sudo -n python3 scripts/smac_preflight.py` PASSed first (terran.exe 319926, 1 base ours, 6 units held 0 actionable).
-Two earlier invocations died on my instrument, not the game: I predicted 15 callee targets and the census found 16
-(2 reached through `call dword ptr ds:0x671324` / `ds:0x67134c`); and my "address-sized operand" filter was
-SIZE-based, so it flagged 0x800000/0x1000000/0x2000000 - each a single bit - while the discriminator is mnemonic +
-popcount (0 `cmp` among 297 tests, widest operand 5 bits). A print-only bug (a 7-hex-digit global regex matches none
-of the 6-digit 0x9xxxxx globals, so FUN_00544530's store set printed `{}`) was fixed and the gate STRENGTHENED to
-require g544["0x920700"]==7 before the accepted run. No floor was lowered.
-
-- **M194** window 0x99a01c..0x99aa1b = 113 sites / 31 fns: 93 PUSH an address (base 50, slot1 15, slot2 8, slot3 6,
-  slot5 6, slot4 5, slot6 2, 0x99a01d 1) vs 20 direct memory ops (5 store, 5 movsx, 7 add, 2 load, 1 cmp). 16 callees
-  receive the pointer: 6 are the C string layer (0x64b9d0 thunk x32, 0x64c460 thunk x26, _strlen, _strcmp, _strncpy,
-  the 0x7efefeff append-copy 0x64b9e0), 2 indirect; FUN_00631afb (1076 insns, 7 sites) and FUN_00632cad (288, 4) take
-  slot addresses at 5 and 2 of their sites. Register indexers: FUN_00625b20 4 `shl reg,8` -> `add reg,0x99a01c` pairs
-  (77 sites / 23 fns), FUN_005f0583 1 pair (99 / 66). FUN_006265a2 is 0x626634's SIBLING publish (86 sites / 39 fns):
-  shares the guard `cmp [ebp+8],9`, `mov [edx*4+0x999ff4],eax`, `shl edx,8`, `mov byte [edx+0x99a01c],0`. Slot 7: 7
-  publishers (0x4d10dd 0x5022a6 0x509163 0x530fc0 0x53438d 0x552eb9 0x594e65), ZERO pushes of 0x99a71c (slots 8/9 also
-  0). Live pid 319926: slots 0-4 = 'disciplined'/'Provost'/'Zakharov'/'University'/'Mission Year 2150', 5-9 empty;
-  A[10]={1,0x9}, B[10]=0x10, staging 0/0.
-- **M195** 0x920700: 31 mentions = 8 stores / 17 loads / 6 tests / 0 RMW. Writers FUN_00544530 x7 (ebx/eax) +
-  FUN_00546800 x1 (`mov ds:0x920700,0xc` at 0x54ec5c). Tested set {1,2,4,5,6,7,8,9,a,b,c,d} (12 distinct, max 0xd,
-  includes the 0x2 that gates 0x545cfa); live 0x0. ZERO string literals in FUN_00544530 / 00546800 / 00540390 /
-  00545c50 -> the mode is UNNAMED. FUN_00544530 (1531 insns, 2 tests of [ebp+8]) also stores 0x997120 x28,
-  0x99aa1c x14, 0x99aa20 x14, 0x920748/0x92077c/0x920728 x3, 0x9206fc x2, 0x991e24 x2 - it seeds the staging pair.
-- **M196** 0x94d448: 653 mentions = 466 scaled `[reg*4+disp]` + 185 `[reg+disp]` + 2 other. 365 scaled sites take
-  their index from `add reg,C` after a >=3-op 2095-fold of the SAME register, so the address is
-  0x94d448 + 8380*S + 4*C - a block field at +0x344 (+4*C), not an array element. 297 scaled tests, ALL `test`
-  (0 cmp), 29 operands, widest 5 bits, none an address candidate; 139 loads, 0 dereferenced (125 arithmetic/compare,
-  14 pushed). RMW quad verbatim at 0x5553e1/e7/ed/f3 (`mov edx,[edi+0x94d448] / and edx,0xfffdfbff / or edx,0x840 /
-  mov [edi+0x94d448],edx`). RETRACTS M190's "the carriers 0x55540a/0x55580f store ADDRESSES": they follow
-  `or eax,0x20000` / `and ah,0xdf` on the flag word, and the lea at 0x5553d2 is the store-through alias of the store
-  at 0x5553df. Live: 0 of 33 dwords at +4*i and 0 of 33 fields at +8380*fac lie in 0x400000-0x7fffffe (0,
-  0x80008118 x6, 0xffffffff x8, small ints).
-Pitfalls: a scaled-4 displacement census is NOT an array census - attribute the index register's def chain;
-classify a bit-field test by MNEMONIC + popcount, never by operand magnitude; data globals are 6 hex digits.
+Older sessions: `docs/sessions/sessions-177-177.md` (1 sessions). Read it only when a question reaches back before session ## Session 178.
 
 ## Session 178 (2026-11-01) — M197-M200: the proposal composer, the diplomacy key pool, the tag engine, the row writers
 
@@ -450,3 +411,38 @@ so a coord check over the whole array rejects 18 of 67. Type-gate the coord test
 **OPEN:** trailer-length formula (91 at 64×64, 128 at 80×80, 338 at 128×128); contents of the
 176/192/208-B count-prefixed block; who reads the 220-B block; which base byte is the CURRENT owner;
 what band records' +0/+2 are.
+
+## Session 196 (2026-11-01, M244 ANALYSE — save tail: the region-map formula, the count-prefixed
+block is the base-site event log, the tail's real legs)
+
+`python3 scripts/m244_save_tail.py` -> `PASS M244: 5/5 gates` (rc=0; 4th invocation — the 3rd was
+4/5 because gate 3 built `final` from the record history, which keeps sites a type-2 record
+removed: 19-vs-18 on Autosave 1, 20-vs-19 on Autosave 10; replay() now carries each live entry's
+own history, no threshold moved) -> `evidence/m244_save_tail.txt`. `python3 -m sim.selftest --sav
+"programs/saves/auto/m242_probe_B.SAV"` -> `PASS B2: 7/7` with sim/save.py's TRAILER_LEN table
+replaced by the formula. Box: /proc reads only (`sudo -n python3 scripts/m244_tail_legmap.py`), no
+gdb, terran.exe 319926 TracerPid 0.
+
+- The map "trailer" IS the coarse region map; its length is code: `FUN_00582000`
+  `DAT_0092ada4 = ((DAT_0092ad9c + 1)/2) * DAT_0092ada0`, `DAT_0092ad9c = (W+4)/5`,
+  `DAT_0092ada0 = (H+4)/5` (shard_014.c:27263-27265) = 91/128/338 at 64/80/128. Closes planet.MP
+  (15+2,724+140,800+128 = 143,667), planetx.MP (15+2,724+360,448+338 = 363,525) and puts the
+  count u32 at 188,299 on 17/17 saves.
+- The count-prefixed block (176/192/208 B) is an 8-B-record base-site event log: [u8 type {0 add,
+  1 re-own, 2 remove}, u8 faction, u16 turn (`DAT_00985afc` = file 80), u16 x, u16 y]. The u32 is
+  a BYTE length — `FUN_0059c150` appends 8 B and does `DAT_00927538 += 8` (shard_015.c:13891-13908,
+  debug label "Replay Base Info"); `FUN_0059bcb0` (shard_015.c:13657-13708) replays it into a
+  (x, y, faction) triple list. Replayed live set == the base records' (x, y, +4) on 17/17 saves;
+  0 orphan type-1/2 records; count%8==0, x<W, y<H, turns non-decreasing and <= the header's.
+- B2's open item CLOSED: base +4 = the site's current owner (the log's last write), +5 = the
+  faction written just before it (previous owner; == +4 where the site was written once); 42 bases
+  over 17 saves differ, each one a type-1 record (Autosave 10 (15,11) 2/5: founded 1, 5 at turn
+  54, 2 at 55).
+- RETRACTED: no 220-B and no 28-B block exists. The tail's codec pushes are 0x100, 0x100, 0x98,
+  0x27a0 (shard_015.c:10654/10676/10698/10720); one 0x100 is gated by `(DAT_00985ae8 & 0x10)`
+  (file 60) == 0 on all 17 saves. Last 10,800 B = 256 | 152 (the unique [9999,9999,0,0,2100,2600]
+  row at tail+256; live `DAT_0092bf58` = file 232,255) | 10,144 (`DAT_0092d4a0`, gated
+  `DAT_00985dbc >= 7`; dest-file k = 232,407 on three probes) | 20 (five 4-B globals) | 216 (9
+  rows of 24 B, six dwords per row, `FUN_00596620` 0x596620-0x596850 over `DAT_007cdecc..0x7cdeec`
+  + `DAT_008cda4c`) | 8 ([800,387]) | 4 (the per-save final dword, outside the codec). s195's
+  `93,159 = 92,927 + 220 + 12` was a coincidence of totals, not a split.

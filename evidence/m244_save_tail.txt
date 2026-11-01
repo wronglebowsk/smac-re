@@ -1,0 +1,73 @@
+$ python3 scripts/m244_save_tail.py
+ok   region-formula  planet.MP 80x80 reg=128 pred=143667 file=143667; planetx.MP 128x128 reg=338 pred=363525 file=363525; cites=True 80x80=(273660, 279848, 291096, 301896) vs (273660, 279848, 291096, 301896) dims=(91,128,338)=True closes=17/17
+ok   count-shape     17 saves, count%8==0, type in {0,1,2}, fac<=7, x<w, y<h, step<=hdr-u32@80 and non-decreasing; bad=[]
+FAIL replay-bases    replayed (x,y,owner) == the 304-B base records' (x,y,+4) on 0/17 saves; orphan type-1/2 records=0; bad=[('Alpha Centauri Autosave 1.SAV', 19, 18, 0), ('Alpha Centauri Autosave 10.SAV', 20, 19, 0), ('Alpha Centauri Autosave 2.SAV', 19, 18, 0)]
+ok   owner-byte      base+4 == the log's LAST faction for the site and base+5 == the faction it wrote just before (the previous owner; == +4 where the site was written once); bases where +4!=+5 = 42; bad=[]
+ok   tail-legs       tail pushes FUN_0064cc00 sizes: 0x100/0x98/0x27a0 present=True, 220/28/0x1c/0xdc absent=True; legs [256, 152, 10144, 20, 216, 8, 4] sum=10800==TAIL_LEN; 9999-anchor at tail+256 on 17/17; feature bit 0x10 clear and subver>=7 on 17/17; [800,387] at EOF-12..-4 on 17/17; final dword distinct=14; the 4 B after it is outside the codec
+FAIL M244: 4/5 gates on 17 saves + planet.MP,planetx.MP
+rc=1
+
+$ python3 -m sim.selftest --sav "programs/saves/auto/m242_probe_B.SAV"
+  info save-map-word5    header word 5=2048, land cells (cell+7=0xff)=1426, (W/2)*H records=2048 -> the .MP 'word5 == land cells' law does NOT hold in a save
+  info reference-walk    decode_save --sections RAISES on this file: no 52/304 split of a 0-byte region (its section table is the 80x80 one - the record region solves to 0 B on a 64x64 save)
+  ok   decode-save parity   sim=(242799, 86, 2153) decode_save=(242799, 86, 2153)
+  ok   header-counts      17 saves, header unit/base counts match the shape scan; tails=[10800], count-prefix=[176, 192, 208], bad=none
+  ok   walk-closure     count u32@188299=176 -> units 222783 (content 222783) -> bases 226527 (content 226527) -> tail 231999+10800=EOF 242799, closes=True on all 17 saves
+  ok   faction-count      block-A slots=8 (67040/8380), mask byte 0xff popcount=8, distinct record owners=8 [0, 1, 2, 3, 4, 5, 6, 7]
+  ok   home-base-faction  7 names from the SAVE_FORMAT.md live table checked at rec+5; mismatches=none; rec+4 != rec+5 on [1, 6]
+  ok   embedded-map       64x64: 44-B record view == 22-B cell view on 4096/4096 tiles, terrain [0, 1, 2, 8, 9, 10] out_of_range=0
+  ok   recorded-80x80     sim arithmetic on the traced 80x80 save (n=119 m=37 count=328) -> [273660, 279848, 291096, 301896] vs SAVE_FORMAT.md [273660, 279848, 291096, 301896]
+PASS B2: 7/7 gates on m242_probe_B.SAV
+rc=0
+
+$ sudo -n python3 scripts/m244_tail_legmap.py programs/saves/auto/m242_probe_B.SAV
+pid=319926 TracerPid:	0  file=programs/saves/auto/m242_probe_B.SAV size=242799
+== DAT_00991598 @0x991598 len 256  head=00000000000000000000000000000000  all-zero=True
+   probe +     0  (all-zero window, not identifying)
+   probe +    64  (all-zero window, not identifying)
+   probe +   128  (all-zero window, not identifying)
+   probe +   192  (all-zero window, not identifying)
+   probe +   240  (all-zero window, not identifying)
+== DAT_00991698 @0x991698 len 256  head=00000000000000000000000000000000  all-zero=True
+   probe +     0  (all-zero window, not identifying)
+   probe +    64  (all-zero window, not identifying)
+   probe +   128  (all-zero window, not identifying)
+   probe +   192  (all-zero window, not identifying)
+   probe +   240  (all-zero window, not identifying)
+== DAT_0092bf58 @0x92bf58 len 152  head=0f2700000f2700000000000000000000  all-zero=False
+   probe +     0 hits=[232255]  implied dest-file k=[232255]
+   probe +    38  (all-zero window, not identifying)
+   probe +    76  (all-zero window, not identifying)
+   probe +   114  (all-zero window, not identifying)
+   probe +   136  (all-zero window, not identifying)
+== DAT_0092d4a0 @0x92d4a0 len 10144  head=00000000000000000000000000000000  all-zero=False
+   probe +     0  (all-zero window, not identifying)
+   probe +  2536 hits=[234943]  implied dest-file k=[232407]
+   probe +  5072 hits=[237479, 241283]  implied dest-file k=[232407, 236211]
+   probe +  7608 hits=[240015]  implied dest-file k=[232407]
+   probe + 10128  (all-zero window, not identifying)
+== the 152-B leg's file start is the unique 9999-row; the 10,144-B leg's start is
+   dest-file k from its non-zero windows; the tail legs then sum 256+152+10144+20+216+8+4
+   = 10,800 = EOF - bases_end.
+
+--- attempt 4. Attempt 3 (above) failed ONLY because its `final` set was built from the record history, which still holds sites a type-2 record removed: 19-vs-18 on Autosave 1, 20-vs-19 on Autosave 10. replay() now carries each live entry's own faction history and final/prev come from the LIVE list; no threshold changed ---
+$ python3 scripts/m244_save_tail.py
+ok   region-formula  planet.MP 80x80 reg=128 pred=143667 file=143667; planetx.MP 128x128 reg=338 pred=363525 file=363525; cites=True 80x80=(273660, 279848, 291096, 301896) vs (273660, 279848, 291096, 301896) dims=(91,128,338)=True closes=17/17
+ok   count-shape     17 saves, count%8==0, type in {0,1,2}, fac<=7, x<w, y<h, step<=hdr-u32@80 and non-decreasing; bad=[]
+ok   replay-bases    replayed (x,y,owner) == the 304-B base records' (x,y,+4) on 17/17 saves; orphan type-1/2 records=0; bad=[]
+ok   owner-byte      base+4 == the log's LAST faction for the site and base+5 == the faction it wrote just before (the previous owner; == +4 where the site was written once); bases where +4!=+5 = 42; bad=[]
+ok   tail-legs       tail pushes FUN_0064cc00 sizes: 0x100/0x98/0x27a0 present=True, 220/28/0x1c/0xdc absent=True; legs [256, 152, 10144, 20, 216, 8, 4] sum=10800==TAIL_LEN; 9999-anchor at tail+256 on 17/17; feature bit 0x10 clear and subver>=7 on 17/17; [800,387] at EOF-12..-4 on 17/17; final dword distinct=14; the 4 B after it is outside the codec
+PASS M244: 5/5 gates on 17 saves + planet.MP,planetx.MP
+rc=0
+$ python3 -m sim.selftest --sav "programs/saves/auto/m242_probe_B.SAV"
+  info save-map-word5    header word 5=2048, land cells (cell+7=0xff)=1426, (W/2)*H records=2048 -> the .MP 'word5 == land cells' law does NOT hold in a save
+  info reference-walk    decode_save --sections RAISES on this file: no 52/304 split of a 0-byte region (its section table is the 80x80 one - the record region solves to 0 B on a 64x64 save)
+  ok   decode-save parity   sim=(242799, 86, 2153) decode_save=(242799, 86, 2153)
+  ok   header-counts      17 saves, header unit/base counts match the shape scan; tails=[10800], count-prefix=[176, 192, 208], bad=none
+  ok   walk-closure     count u32@188299=176 -> units 222783 (content 222783) -> bases 226527 (content 226527) -> tail 231999+10800=EOF 242799, closes=True on all 17 saves
+  ok   faction-count      block-A slots=8 (67040/8380), mask byte 0xff popcount=8, distinct record owners=8 [0, 1, 2, 3, 4, 5, 6, 7]
+  ok   home-base-faction  7 names from the SAVE_FORMAT.md live table checked at rec+5; mismatches=none; rec+4 != rec+5 on [1, 6]
+  ok   embedded-map       64x64: 44-B record view == 22-B cell view on 4096/4096 tiles, terrain [0, 1, 2, 8, 9, 10] out_of_range=0
+  ok   recorded-80x80     sim arithmetic on the traced 80x80 save (n=119 m=37 count=328) -> [273660, 279848, 291096, 301896] vs SAVE_FORMAT.md [273660, 279848, 291096, 301896]
+PASS B2: 7/7 gates on m242_probe_B.SAV
+rc=0

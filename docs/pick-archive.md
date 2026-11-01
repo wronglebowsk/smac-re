@@ -439,3 +439,18 @@ Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
   in BOTH swap states = dead code), `ds:0x985dbc < 3` legacy scratch-buffer legs (58,848 + 1,664 +
   48n B, malloc'd via `call 0x5be090`), and the feature bit `ds:0x985ae8 & 0x10` (256 B at 0x991698).
   The codec has **30** read sites, not 28 (`0x5979f8`/`0x597a19`).
+
+## §s196 overflow — moved VERBATIM from NEXT_PROMPT.md (s196)
+
+- ANSWERED (do not re-pick): s187-s195 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**, **B2** (`PASS B2: 7/7 gates`, `python3 -m sim.selftest --sav <save>`, 17/17 saves
+  close): the .SAV walk is 12 | 796 state header | 4 own | 67,040 block A (8×8,380) | 11,488 | 32 |
+  2,724 map hdr | W·H·22 grid | **91-B trailer** | 16,000 | **u32 count @188,299** | 3,584 | 26,624 |
+  4,096 | 52·n units | 304·m bases | 10,800 = EOF, with n/m read from the header (`0x985af0`/`0x985af4`
+  at file 68/72) and 8 factions three ways; 93,159 = 92,927 map + 220 + 12 (M243's open item closed).
+  (M244 RETRACTS the `+ 220 + 12` split and the `28 + 220` tail decomposition: the last 10,800 B are
+  256 | 152 | 10,144 | 20 | 216 | 8 | 4, and the 93,159-B unmoved tail is the grid tail plus
+  everything after it — a coincidence of totals, not a structure.)
+- retired pick, answered by M244: **what the block after the count prefix at 188,303 holds
+  (176/192/208 B), who reads the 220-B block, and the map-trailer length formula (91 B at 64×64,
+  128 at 80×80, 338 at 128×128)** (new from B2, static).
