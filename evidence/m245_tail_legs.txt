@@ -1,0 +1,12 @@
+PASS G1 216-B leg = 9 rows x 6 view fields (codec loop + FUN_00596620 offsets + row ids)
+    offsets=['0x1dd78', '0x1dd74', '0x1dd70', '0x1dd98', '0x1dd9c', '0x1dda0'] slots=8 inline=True rows=9  row0..7 ids==0..7 on 17/17 saves bad=[]
+PASS G2 the live 9 view objects' 6 fields == the 216 B of >=1 save and NOT of all 17
+    pid=319926 TracerPid=0 ptrs=['0x8f79e0', '0x3b5f4e8', '0x3b819a0', '0x3ba3e58', '0x3bc6310', '0x3be87c8', '0x3c0ac80', '0x3c2d138'] live216head=0000000001000000e30e016000000000 live[c188,c18c]=8301000020030000 matches=7/17 ['Alpha Centauri Autosave 1.SAV', 'Alpha Centauri Autosave 20.SAV', 'm241_probe.SAV', 'm241_probe_A.SAV', 'm241_probe_B.SAV', 'm242_probe_A.SAV', 'm242_probe_B.SAV']
+PASS G3 trailing dword == the timeGetTime() dword written after the codec, not at file write
+    timeGetTime@15 codec@42 trailing-write@44; same-session pairs=5 violations=[]; one dword many mtimes=[('0x15c79939', 486979.09233140945, 3), ('0x2db1b939', 71224.37668919563, 2)]
+PASS G4 every DAT_0092ae18 accessor indexes with Rw>>1; (Rw+1)/2 appears only as the length
+    funcs={'FUN_00581fc0': '--/blob', 'FUN_00582000': '-/plus1/blob', 'FUN_005821e0': '--/blob', 'FUN_00582260': '--/blob', 'FUN_00582340': 'stride6-', 'FUN_00582360': 'stride6-'} stride6-funcs=2 non-accessor-non-blob=[] (Rw+1)/2 sites image-wide=1
+PASS G5 builder write set == 0..78 at 64x64; bytes 79..90 are 0xcd residue in 17/17 saves
+    saves: addressable 0..78 contiguous, slack 12 == 0xcd, no 0xcd in 0..78 -> 17/17; .MP (rw even) slack 0; bad=[]
+
+SUMMARY 5/5 gates on 17 saves + 2 .MP

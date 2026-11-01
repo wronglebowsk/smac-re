@@ -56,9 +56,17 @@ sections read in a fixed order. **`FUN_00597a70` is the save/scenario block load
 
 `.SAV` section sizes (from the `push` sites in `FUN_00596850`): 796, 67,040, 11,488, 16,000, 3,584,
 26,624, 4,096, 256, 256, 152, 10,144 are immediates (the last 10,800 B are 256 | 152 | 10,144 | 20 |
-216 | 8 | 4 — one 256 leg is gated by `DAT_00985ae8 & 0x10`, the 216 B are 9 rows of 24 B that
-`FUN_00596620` reads 6 dwords at a time, the final 4 B are outside the codec, and there is NO 220- or
-28-B block, M244); three are computed — one raw count (`DAT_00927538` is a BYTE length: that block is
+216 | 8 | 4 — one 256 leg is gated by `DAT_00985ae8 & 0x10`, and there is NO 220- or 28-B block,
+M244); the 216 B are **9 map-VIEW objects x 6 dwords** — the codec loop takes the 8 pointers
+`DAT_007cdecc..DAT_007cdee8` (heap objects ~140 KB, live slots 1..7 spaced `0x224b8`) then the inline
+`DAT_008cda4c`, and `FUN_00596620` moves `+0x1dd78` (view id 0..7), `+0x1dd74` (active flag),
+`+0x1dd70` (bit flags), `+0x1dd98` (−6 while `DAT_0091c18c` < 1000) and `+0x1dd9c`/`+0x1dda0` (the
+CENTRE TILE; the window bounds `+0x1ddcc..0x1ddc8` and origins `+0x1dda4`/`+0x1dda8` are derived
+from it, M245); the 8-B leg is [`DAT_0091c18c`=800, `DAT_0091c188`=387] and the final 4 B are the
+`timeGetTime()` dword `FUN_00597ce0` writes after the codec returns — a save-CREATION stamp, not a
+checksum (M246); the coarse region map's two accessors index with stride `Rw>>1` while the alloc/file
+length is `(Rw+1)/2`, so with ODD `Rw` the last `Rh−1` bytes are never written (12 B of `0xcd` at
+64×64, 17/17 saves; even-Rw `.MP` files have no slack, M247); three are computed — one raw count (`DAT_00927538` is a BYTE length: that block is
 8-B base-site records [type {0 add, 1 re-own, 2 remove}, faction, turn (`DAT_00985afc`), x, y] that
 `FUN_0059bcb0` replays into the base list, so base +4 = the log's last faction = the CURRENT owner and
 +5 = the faction written just before it, M244), one

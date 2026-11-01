@@ -826,6 +826,33 @@ whose +10 type >= 64 is a production-queue BAND, not a unit: its +0/+2 are NOT t
 | the count-prefixed block = 8-B records [u8 type {0 add, 1 re-own, 2 remove}, u8 faction, u16 turn (`DAT_00985afc`, file 80), u16 x, u16 y]; the u32 is a BYTE length | `FUN_0059c150` shard_015.c:13891-13908 (logs "Replay Base Info", `DAT_00927538 += 8`); applied by `FUN_0059bcb0` shard_015.c:13657-13708; shape-valid on 17/17 | V |
 | replayed live (x,y,faction) == the 304-B base records' (x,y,+4); **+4 = current owner, +5 = the faction written just before it** | 17/17 saves, 0 orphan type-1/2 records; the 42 bases with +4 != +5 are exactly the type-1 moves | V |
 | tail = 256 \| 152 \| 10,144 \| 20 \| 216 \| 8 \| 4 = 10,800; **no 220-B and no 28-B leg** | shard_015.c:10654/10676/10698/10720 pushes (one 0x100 gated by `(DAT_00985ae8 & 0x10)`, file 60); unique 9999-row at tail+256; `DAT_0092d4a0` dest-file k = 232,407 (/proc legmap) | V |
-| the 9 rows of 24 B are read by `FUN_00596620` (6 dwords/row, `DAT_007cdecc..0x7cdeec` + `DAT_008cda4c`); who reads the final 4 B; what the region-map bytes mean | — | OPEN |
+| the 9 rows of 24 B are read by `FUN_00596620` (6 dwords/row, `DAT_007cdecc..0x7cdeec` + `DAT_008cda4c`); who reads the final 4 B; what the region-map bytes mean | the rows and the final 4 B CLOSED at M245/M246 (below); the byte VALUES still unnamed | OPEN (part) |
 
 RETRACTS B2's `tail 10,800 = 256+152+10,144+28+220` and its `93,159 = 92,927 + 220 + 12` split.
+
+## M245 (s197) — the 216-B tail leg is 9 map-view objects' display state
+
+`sudo -n python3 scripts/m245_tail_legs_census.py` -> `PASS M245: 5/5 gates` -> `evidence/m245_tail_legs.txt`
+
+| claim | evidence | status |
+|---|---|---|
+| the 216 B (EOF-228..EOF-12) = the 8 pointers `DAT_007cdecc..0x7cdee8` (loop bound `< 0x7cdeec`) + the inline `&DAT_008cda4c`, each moved as 6 dwords `+0x1dd78 +0x1dd74 +0x1dd70 +0x1dd98 +0x1dd9c +0x1dda0` in that order | shard_015.c:10807-10822 + `FUN_00596620` (shard_015.c:9862-9970); 9*6*4 = 216; live `/proc` (pid 319926, TracerPid 0) == 7/17 saves' 216 B byte for byte, 10 differ | V |
+| `+0x1dd78` = view slot id (rows 0..7 carry 0..7 on 17/17, the inline row carries 1); `+0x1dd74` = its active flag (`FUN_00469860` shard_008.c:5894; cleared by the codec load leg shard_015.c:10845 when `[DAT_0091c18c, DAT_0091c188]` = [800, 387] changes, plus 4 invalidators); `+0x1dd70` = bit flags tested shard_008.c:8983/9033/9076/9318; `+0x1dd98` = −6 while `DAT_0091c18c < 1000` | cited sites, 17/17 saves, live pair 387/800 | V |
+| `+0x1dd9c`/`+0x1dda0` = CENTRE TILE (init W/2, H/2 shard_008.c:5895-5898; set by `FUN_004739a0` :10117-10124); the window bounds `+0x1ddcc..0x1ddc8` and origins `+0x1dda4`/`+0x1dda8` are DERIVED from it by `FUN_00469860` :5949-6017 and read by the click hit test `FUN_00422060` (shard_001.c:14164-14183) | cited assignments; Autosave 1 rows 0-1 centre (28,42) = University Base | V |
+| who allocates the ~140 KB view objects (live slots 1..7 spaced `0x224b8`, slot 0 at `0x8f79e0`) | — | OPEN |
+
+## M246 (s197) — the save's last 4 B are a `timeGetTime()` save-CREATION stamp
+
+| claim | evidence | status |
+|---|---|---|
+| `FUN_00597ce0` takes `local_8 = timeGetTime()` at entry (body line 15), calls `FUN_00596850(iVar2,1)` (line 42), then `FUN_0064c9a0(&local_8,4,1,iVar2)` (line 44) writes the trailing dword, which the codec never reads | shard_015.c `FUN_00597ce0`; Δ(dword) vs Δ(mtime) ≤ 2.5 s on 5/5 same-session pairs (Autosave 2→1 31 s / 30,989 ms; m241_probe_A→B 16 s / 16,785 ms) | V |
+| creation-stamped, not file-write-stamped: `0x15c79939` sits on 3 files 486,979 s apart, `0x2db1b939` on 2 files 71,224 s apart | census G3 over 17 saves | V |
+
+## M247 (s197) — the region map's row stride is `Rw>>1`, not `(Rw+1)/2`
+
+| claim | evidence | status |
+|---|---|---|
+| `DAT_0092ae18` has 6 referencing functions; the only element accessors `FUN_00582340`/`FUN_00582360` index `(param_1>>1) + DAT_0092ae18 + (DAT_0092ad9c>>1)*param_2` (shard_014.c:27392/27401); `(Rw+1)/2` appears once image-wide (the length, 27266) | census G4 over all shards: stride-6 funcs 2, non-accessor/non-blob funcs 0, `(Rw+1)/2` sites 1 | V |
+| builder `FUN_0058ce00` (shard_015.c:4707-4747) walks y < Rh, x = (y&1) step 2 < Rw, so its write set is exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 when Rw is odd, else 0 | census G5, computed from the loop bounds | V |
+| the slack is never written: bytes 79..90 are `0xcd` (uninitialized-heap fill) in 17/17 saves with no `0xcd` in 0..78; both .MP (even Rw) have slack 0 and no `0xcd` | 17 saves + planet.MP + planetx.MP | V |
+| what the byte VALUES mean: `FUN_0058ce00` takes terrain record `+3` of the first of 9 sampled tiles whose `+1 & 0xe0 > 0x5f`, else 0 (shard_015.c:4716-4741); values 0x3f/0x01/0x00/0x10 seen, `+3` unnamed | rule V, meaning OPEN | OPEN |
