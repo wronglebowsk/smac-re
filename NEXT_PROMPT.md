@@ -67,21 +67,21 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   it against the frame's vtable stores before calling it a coincidence, M227); a hw watchpoint only reports a CHANGE.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **s181-s187 footing is ARCHIVED** (M205-M230): the hotspot/dialog model, the M222-M226 results and the
-  M227-M230 results (+0x3098 stack-mirror, the tail field's content, the 0xb24 collision, the FUN_00455c70
-  trampoline) live in `NAMED.md` + `evidence/m227_m230_mirrors.txt` + `docs/pick-archive.md`; newest
-  instruments `scripts/m227_m230_mirrors.py`, `m222_m226_rows.py`.
-- ANSWERED at s187 (do not re-pick): the dialog's this+0x3098 list (M227 - taken only at its own
-  clear/alloc/reset/scan sites, NEVER appended) and the panel's +0x2144 field (M228 - a pointer to a
-  caller's frame or table slot, never a code address).
-- Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide
-  `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click, box);
-  who CALLS FUN_005f5a11 (0 direct, 0 slots, 0 data copies, 0 reads, 0 lea-takes; only route left is a
-  pointer to +0x2210/+0x2224/+0x2234 loaded from a field); what the 9 entries of the 0x774c38 grid hold
-  and who WRITES the 0x2c-stride table at 0x7543d8 that the +0xb24 loaders index (M229: 0xb24 is a
-  collision - a page address for FUN_0041f450's object, a slot index for the 5 loaders) and the
-  0x99aa9c/0x99aac0 pair arrays (M230: 9 publishers, i = 0..8); what FUN_005dbdc0 (ret 0x1c) and
-  FUN_005e3412 do with the (buffer, 0x109, 0x107/0x106) arguments FUN_00455c70 hands them; M181's control (box).
+- **s181-s188 footing is ARCHIVED** (M205-M234): the hotspot/dialog model and the M222-M234 results (the +0x3098
+  stack-mirror, the tail field, the 0xb24 collision, the FUN_00455c70 trampoline, the pair staging, the writer-free
+  0x774c38 grid, the 0x7543d8 record table, the trampoline's callees) live in `NAMED.md` +
+  `evidence/m227_m230_mirrors.txt` + `evidence/m231_m234_staging.txt` + `docs/pick-archive.md`; newest instruments
+  `scripts/m231_m234_staging.py`, `m227_m230_mirrors.py`.
+- ANSWERED (do not re-pick): s187 M227/M228 (the +0x3098 list is never appended; +0x2144 holds a pointer - s188 M233
+  names it &0x7543d8[4*idx]); s188 M231-M234 (the 0x99aa9c/0x99aac0 staging pair arrays, the 0x774c38 grid and its
+  11-dword records, the 0x7543d8 table's 3 writer sites, FUN_005dbdc0/FUN_005e3412) - semantics in `NAMED.md`.
+- Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
+  sites belong to other hierarchies - falsifier = a live vtable read at a click, box); who CALLS FUN_005f5a11 (0
+  direct, 0 slots, 0 data copies, 0 reads, 0 lea-takes AND 0 add-adjustors of 0x2210/0x2224/0x2234 - the only route
+  left is a read through a register already holding obj+0x21XX, the adjustor idiom M233 caught at 0x7543d8); what
+  class vtable 0x679f98 is (installed only by FUN_0062d630, 2 installs, its +0x15c is FUN_0062d78d - name its slots
+  against 0x6717cc/0x671d94); who ALLOCATES and fills the grid records' +4 buffer and the table entries' -0x40*i
+  blocks (no in-image store touches either region, so a pointer-passed writer exists and is unnamed); M181's control (box).
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
