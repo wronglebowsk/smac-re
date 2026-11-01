@@ -598,11 +598,41 @@ insns shared). Slot 7 is WRITE-ONLY: 7 publishers (0x4d10dd 0x5022a6 0x509163 0x
 0 pushes of 0x99a71c; live slots 0-4 hold 'disciplined'/'Provost'/'Zakharov'/'University'/'Mission Year 2150' - one
 faction's sentence parts - and 5-9 are empty.
 **M195** ds:0x920700 is a 13-value MODE CODE: 31 mentions = 8 stores/17 loads/6 tests/0 RMW; writers FUN_00544530 x7
-+ FUN_00546800 x1 (0xc at 0x54ec5c); tested {1,2,4,5,6,7,8,9,a,b,c,d}, live 0; ZERO string literals in all four
-functions that write or test it - unnamed. FUN_00544530 (1531 insns) also writes 0x997120 x28 and the staging pair
++ FUN_00546800 x1 (0xc at 0x54ec5c); tested {1,2,4,5,6,7,8,9,a,b,c,d}, live 0; "ZERO string literals in all four
+functions that write or test it" was **RETRACTED by M197** (the body names PROPOSALMENU / REJWARALREADY /
+NOCOMMLINK); FUN_00544530 (1531 insns) also writes 0x997120 x28 and the staging pair
 0x99aa1c/0x99aa20 x14 each.
 **M196** `[reg*4+0x94d448]` is NOT a pointer: 365/466 scaled sites carry the 2095-fold (= 0x94d448+8380*S+4*C, the
 block field at +0x344), all 297 tests are `test`+mask (0 cmp, widest 5 bits), 0/139 loads is dereferenced, and 0/66
 live dwords (33 at +4i, 33 at +8380*fac) lie in the mapped range. RETRACTS M190's "carriers 0x55540a/0x55580f store
 addresses" - they follow `or eax,0x20000`/`and ah,0xdf` on the flag word; the 0x5553d2 lea is the store-through alias
 of the 0x5553df store.
+
+## M197-M200 (s178, all PASS) — FUN_00544530 = the proposal composer, the diplomacy KEY pool, FUN_00625b20 = the tag engine, 0x631afb/0x632cad = row writers
+
+**M197** FUN_00544530 (1502 insns) is the **DIPLOMACY PROPOSAL COMPOSER** for a faction pair: exactly 1 call
+site in the image (0x545c99 in FUN_00545c50, guarded `[ebp+0x10]==0`, args [ebp+8]/[ebp+0xc], return tested).
+ds:0x920700 is **ONE FIELD OF A 5-FIELD SELECTOR BLOCK** {0x9206fc, 0x920700, 0x920728, 0x920748, 0x92077c}:
+the function calls FUN_005f1394 6x (0x544a91 544c2c 544f2b 0x5451e4 545686 5457f4), assigns the return to 5
+distinct fields, clears all 5 within its first 112 bytes, and 6 of its 7 stores to 0x920700 are the constant 0
+— the image's only immediate store there is 0xc at 0x54ec5c. Its body names 3 string globals whose bytes read
+PROPOSALMENU / REJWARALREADY / NOCOMMLINK → **M195's "ZERO string literals" RETRACTED** (Ghidra renders a
+referenced literal as a named `s_*` symbol, which carries no quote char).
+**M198** those keys live in the string pool **0x690160..0x69107c**, 0xFFFFFFFF-terminated at BOTH ends: 329
+entries = 311 single-word KEYS + 18 spaced message lines; **257 of the 311 keys have code references** and the
+census prints key→function. The vocabulary is diplomacy message kinds: NEVERBASESWAP / PROPOSALMENU /
+PROPOSEATTACK / ATTACKSTRING / REJWARALREADY / PROPOSECOMMLINK / NOCOMMLINK / PROPOSEBASE / COUNTER* /
+COUNCILVOTE* / *TRUCE / *TREATY / PACT / DEMANDATTACK / INTRODUCEENEMY / BETRAYFRIEND / RANSOMDEMAND /
+WEASELOUT / ASKFORLOAN / …
+**M199** FUN_00625b20 (char*,char*) **IS THE SUBSTITUTION ENGINE**: _strstr for '$' (the byte at 0x69911c),
+switch on the char after it over 5 cases ($, <, H, L, N), closer '>' at 0x699138, '$HEX' at 0x699130; kinds
+M=0 / F=1 / N=2 / '#n' / n→B[n]@0x999ff4 + A[n]@0x999fcc; slot text `&DAT_0099a01c + n*0x100`; it then copies
+the Nth ':'-separated segment. FUN_005808b0 COMPOSES `$<`+{M,F,N}+{1,2}+`:`+arg+`>` from the record dwords
++0x2fc/+0x300 (literal bytes 0x692144..0x692160); FUN_00580a60 PARSES that head back into 0x99aa1c (F→1,
+N→2, else 0) and 0x99aa20 (2nd char '2') — inverse-consistent, so **the staging record IS a parsed tag head**.
+FUN_00426680 returns the name text at record +0x34 (record = 0x927590 + fac*0x59c).
+**M200** FUN_00631afb / FUN_00632cad are **ROW WRITERS** on the table handle DAT_0099d020 (vtable
++0x10/+0x18/+0x38/+0x58/+0x60; alloc FUN_005be090, free FUN_0064a7f0, append FUN_0064b9e0): 0 `0x25`
+immediates, 0 printf-family calls, 0 references to FUN_00625b20 — they copy their text argument VERBATIM, so
+**M194's "the formatters" is RETRACTED**; the 16-byte memcmp keys 0x67bd20/0x67bd30 are GUIDs (a class test),
+not table names.

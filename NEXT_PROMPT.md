@@ -1,14 +1,12 @@
-# NEXT_PROMPT.md — footing for the next session (session 177, 2026-10-31)
+# NEXT_PROMPT.md — footing for the next session (session 178, 2026-11-01)
 
-Structure: this file = RULES + live footing. Detail is on disk: `docs/pick-archive.md` (milestone narrative M90-M123
-+ the FULL trap text), `NAMED.md` (semantic registry), `skill/references/instrument-laws.md` (instrument laws). Read
-the archive only for the section you are picking.
+Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123 + FULL trap text),
+`NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws). Read the archive only for the section picked.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
-The main model is also Hermes' compressor (`auxiliary.compression: auto` -> the same 262k model) and its summaries die
-on the output cap (s113/s114 hit 259,232/262,144 mid-sentence). **Whatever is not finished by ~150k tokens is not
-finished at all.** Counted in TOOL CALLS:
+The main model is also Hermes' compressor, and its summaries die on the output cap (s113/s114 hit 259,232/262,144
+mid-sentence). **Whatever is not finished by ~150k tokens is not finished at all.** Counted in TOOL CALLS:
 - **0-6** brief, this file, notes tail, `accept_ready.py`. No shard reading "for background".
 - **6-30** the milestone, one variable at a time. **At call 25 `git add -A && git commit`** — the next turn may be the
   truncated one, so every later step must leave a committed file.
@@ -16,16 +14,16 @@ finished at all.** Counted in TOOL CALLS:
   merge nothing, close.
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.
 
-Survivability: cursor <= 600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
-patches. **Batch size (s172): 3 static milestones through ONE census script is comfortable; box-time milestones go 1 per batch.
-milestones go 1 per batch.** The binding cap is doc headroom, not capability.
+Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
+patches. **Batch size (s172, re-confirmed s178): 4 static milestones through ONE census script is comfortable;
+box-time milestones go 1 per batch.** The binding cap is doc headroom, not capability.
 
 ## THE LEDGER
 
 Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151), M185-M187 (#152),
-M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
 M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
 `NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
@@ -45,7 +43,7 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
    (is a gate even satisfiable: test sites, OR immediates, register-level bit ops, and whether any save carries the
    bit), `fn.py 0xADDR` (decompiled body), `scratch/m71/dis.py LO HI [cap]` (objdump window; import as a module, `dis`
    clashes with stdlib), `evidence.py audit [--delete]|budget`.
-4. Self-documenting: `m66_insert_slot.py`, `m57_ui_enqueue.py`, `m65_screen.py --samples 8`, `m70_scan_writers.py`.
+4. Self-documenting: `m66_insert_slot.py`, `m57_ui_enqueue.py`, `m65_screen.py --samples 8`.
 
 ## THE PICK — index (detail: `docs/pick-archive.md`)
 
@@ -56,36 +54,42 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **Merged-era footing s171-s175 (M163-M190, all PASS) is ARCHIVED:** per-field semantics and the
-  milestone lines live in `NAMED.md` (M175-M190) + `docs/pick-archive.md`; census outputs
-  `evidence/m175_m177_aggcallers.txt`, `m178_m180_scratchband.txt`, `m182_m184_bandrecord.txt`,
-  `m185_m187_visits.txt`, `m188_m190_uses.txt`; field map `docs/field-atlas-faction.md`. Read them there.
-- **s175-s177 (M188-M196, all PASS): rows in `NAMED.md` M188-M190 / M191-M193 / M194-M196; census outputs
-  `evidence/m188_m190_uses.txt`, `m191_m193_channels.txt`, `m194_m196_channels.txt`.** Short of the three
-  newest: `0x626634` is the **10-slot CHANNEL PUBLISH** (guard `arg1<=9`; writes `A[slot]@0x999fcc` /
-  `B[slot]@0x999ff4`; zeroes then appends arg2 into `0x99a01c + arg1*0x100`; a negative arg3/arg4 takes the
-  staging pair, and `0x99a01c + 10*256 == 0x99aa1c`, so the staging record IS slot 10) — 1584 sites in 190
-  functions. Its slots are consumed by POINTER PASSING, not by reads: the window is 113 sites / 31 fns of
-  which 93 push the base or a slot address; 16 callees receive it (6 = the C string layer, 2 indirect) and
-  FUN_00631afb / FUN_00632cad are the formatters that take slot addresses; live slots 0-4 hold one faction's
-  sentence parts ('disciplined'/'Provost'/'Zakharov'/'University'/'Mission Year 2150'), 5-9 empty, and slot 7
-  is WRITE-ONLY (7 publishers, 0 address pushes). `ds:0x920700` is a 13-value MODE CODE (2 writers, 12 tested
-  values up to 0xd, live 0, ZERO strings in the 4 functions that touch it; FUN_00544530 also writes 0x997120
-  x28 and the staging pair x14/x14). `[reg*4+0x94d448]` is NOT a pointer — 365/466 scaled sites carry the
-  2095-fold (address = 0x94d448 + 8380*S + 4*C), all 297 tests are `test`+mask (0 cmp, widest 5 bits), 0/139
-  loads is dereferenced and 0/66 live dwords lie in the mapped range; **M196 RETRACTS M190's "carriers
-  0x55540a/0x55580f store addresses"** (bit ops on the flag word; the 0x5553d2 lea is the store-through alias
-  of the 0x5553df store).
-- Pick from: what FUN_00544530 IS — its call sites and what the 13 values switch over (it writes 0x997120 x28
-  and the staging pair, so it may be the mode the aggregate pass's gate waits on); what 0x631afb / 0x632cad
-  substitute (they receive slot addresses; 1076 / 288 insns); the text source behind slot 7's 7 publishes (the
-  calls at 0x5808b0, 0x580a60, 0x426680); M181's positive control (box).
+- **Merged-era footing s171-s177 (M163-M196, all PASS) is ARCHIVED:** per-field semantics and milestone lines in
+  `NAMED.md` + `docs/pick-archive.md`; census outputs `evidence/m175_m177_aggcallers.txt` … `m194_m196_channels.txt`;
+  field map `docs/field-atlas-faction.md`. Read them there.
+- **s178 (M197-M200, all PASS): rows in `NAMED.md` M197-M200; census output `evidence/m197_m200_proposal.txt`.**
+  Short of it: FUN_00544530 is the **DIPLOMACY PROPOSAL COMPOSER** for a faction pair — ONE call site in the image
+  (0x545c99 in FUN_00545c50, `[ebp+0x10]==0` guard, args [ebp+8]/[ebp+0xc], return tested) — and `ds:0x920700` is
+  **ONE FIELD OF A 5-FIELD SELECTOR BLOCK** {0x9206fc,700,728,748,77c} it clears at entry and fills from 6 calls
+  to the chooser FUN_005f1394; 6 of its 7 stores there are the constant 0, the image's only immediate store being
+  0xc at 0x54ec5c. **M197 RETRACTS M195's "ZERO string literals"**: the body names PROPOSALMENU/REJWARALREADY/
+  NOCOMMLINK (Ghidra renders a referenced literal as a named `s_*` symbol — no quote char). Those keys sit in the
+  string pool **0x690160..0x69107c** (0xFFFFFFFF-terminated both ends): 311 single-word KEYS + 18 spaced message
+  lines, 257 keys with code refs (key→function printed) — the diplomacy vocabulary (full list in `NAMED.md` M198).
+  **M199: FUN_00625b20 IS THE SUBSTITUTION ENGINE** — _strstr for '$'
+  (0x69911c), switch on the next char over 5 cases (closer '>' 0x699138, '$HEX' 0x699130), kinds M=0/F=1/N=2/#n/
+  n→B[n]@0x999ff4+A[n]@0x999fcc, slot text `0x99a01c+n*0x100`, copy the Nth ':'-separated segment; FUN_005808b0
+  COMPOSES `$<`+{M,F,N}+{1,2}+`:`+arg+`>` from record dwords +0x2fc/+0x300 and FUN_00580a60 PARSES that head into
+  0x99aa1c/0x99aa20 — the staging record IS a parsed tag head. **M200 RETRACTS M194's "formatters 0x631afb/
+  0x632cad"**: both are ROW WRITERS on the handle DAT_0099d020 (vtable +0x10/18/38/58/60; alloc 0x5be090, free
+  0x64a7f0, append 0x64b9e0) with 0 `0x25` immediates, 0 printf calls and 0 refs to FUN_00625b20 — VERBATIM copies.
+- **s175-s177 (M188-M196, all PASS): rows in `NAMED.md`; census outputs: the ARCHIVED row above.** Short of
+  the newest: `0x626634` is the 10-slot CHANNEL PUBLISH (guard `arg1<=9`; writes `A[slot]@0x999fcc`/`B[slot]@0x999ff4`;
+  appends arg2 into `0x99a01c+arg1*0x100`;
+  a negative arg3/arg4 takes the staging pair, `0x99a01c+10*256 == 0x99aa1c`) — its 1584 sites in 190 functions are
+  consumed by POINTER PASSING (113 sites/31 fns in the window, 93 push the base or a slot address, 16 callees get it).
+  `[reg*4+0x94d448]` is NOT a pointer (the 2095-fold carries 365/466 scaled sites; **M196 RETRACTS M190's
+  store-address carriers**).
+- Pick from: FUN_005f1394 (the 11 KB chooser, 94 callers, called 6x by the composer) — what it selects over and
+  what its return domain is; FUN_00625b20's $H/$L/$N cases and FUN_0062898e (the name→slot resolver it calls when
+  a payload has 0 colons); the 257-entry key→function map read as "which function emits which message"; M181's
+  positive control (box).
 ## LIVE FACTS / KIT
 
-- **BOX state CARRIED from s174e (s175 spent no box time, so NOT re-verified):** terran.exe 319926, y2153
-  r53, University Base (28,42), 6 units HELD, TracerPid 0 — not this session's descendant, so read
-  `/proc/mem` with `sudo -n` (yama `ptrace_scope=1`). Run `scripts/smac_preflight.py` before arming.
-  Launch recipe + cold-box timing: skill `references/wine-operations.md`.
+- **BOX state CARRIED from s174e (s175/s178 spent no box time, so NOT re-verified):** terran.exe 319926, y2153 r53,
+  University Base (28,42), 6 units HELD, TracerPid 0 — not this session's descendant, so read `/proc/mem` with
+  `sudo -n` (yama `ptrace_scope=1`). Run `scripts/smac_preflight.py` before arming. Launch recipe + cold-box
+  timing: skill `references/wine-operations.md`.
 - A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
   ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
   index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
@@ -160,7 +164,3 @@ APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers WITH the command). 2 the `<ID>` 
 file patched BY SECTION, `wc -c NEXT_PROMPT.md` <= 15,500. 4 `rsync -a ~/.hermes/skills/smac-cvr-format/
 ~/reverse/smac/skill/`. 5 `git add -A && git commit -m '<ID>: checkpoint'` then `python3 scripts/gate.py --base main`
 GREEN. 6 submit/merge ONLY on a real PASS.
-
-## Report
-
-One screen: what changed, acceptance numbers WITH the command, what is open, next.

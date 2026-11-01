@@ -186,3 +186,5 @@
 {"path": "evidence/m37c_pre.png", "sha256": "446a5a3ba6b2b08560a0538163134ba9ca25581f3bf85de2432c0383b8e0d72b", "bytes": 277894, "at_commit": "a027121", "ts": "2026-10-22T20:23:25Z"}
 {"path": "evidence/m47_ret.png", "sha256": "50b873ae81ac82f4152cc1f7605b4a287fc434cf5595051f3dba4f112fea320d", "bytes": 424284, "at_commit": "a027121", "ts": "2026-10-22T20:23:25Z"}
 {"path": "evidence/px_stuck_t0.png", "sha256": "80d24de4a1749e2a0b8258fd3728ecd48cd883bc0d24c01d1f8330dc3df4312e", "bytes": 163768, "at_commit": "a027121", "ts": "2026-10-22T20:23:25Z"}
+{"path": "evidence/m54d/chooser_offbase.png", "sha256": "6baa0f86319dcfc2a8bca27adb504b90ff267170fc89bdf5b7aaefa702935d31", "bytes": 165192, "at_commit": "d0597e9", "ts": "2026-11-01T04:57:52Z"}
+{"path": "evidence/m54a/live_now3.png", "sha256": "4b8eef2d0ea036a93b6ff8c4fdfec07d36ac7b7ef4b19ef14b3033f67fd19e08", "bytes": 160853, "at_commit": "d0597e9", "ts": "2026-11-01T04:57:52Z"}

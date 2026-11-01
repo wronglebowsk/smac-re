@@ -1,0 +1,290 @@
+M197.callers :: 1 call site(s): 0x545c99 in FUN_00545c50
+M197.mentions :: the operand text '544530' appears 1 time(s) in the 790695-instruction listing: ['0x545c99']
+M197a  PASS - FUN_00544530 (1502 insns, 5909 bytes) has EXACTLY ONE CALLER IN THE IMAGE: the single `call 0x544530` at 0x545c99 inside FUN_00545c50 is the ONLY occurrence of that address as an operand in 790695 disassembled instructions, so nothing reaches it by name, by a jump, or by a second call
+M197.callsite :: before: mov ecx,dword ptr [ebp+0x10] ; mov ebx,dword ptr [ebp+0xc] ; mov esi,dword ptr [ebp+0x8] ; xor eax,eax ; cmp ecx,eax ; mov dword ptr [ebp-0x4],eax ; mov ds:0x92079c,eax ; jne 0x545cd4 ; push ebx ; push esi | after: add esp,0x8 ; test eax,eax ; jne 0x545cd4 ; mov dword ptr [ebp-0x5388],0x67164c
+M197b  PASS - the call site is GUARDED and 2-ARG: 2 pushes (push ebx, push esi) after loads of [ebp+8]/[ebp+0xc]/[ebp+0x10], a `jne 0x545cd4` bypass and a zero store to the block sibling 0x92079c; the return is cleaned `add esp,0x8` then `test eax,eax` - the callee's two args are the FACTION PAIR it must compose a message for
+M197.stores :: stores to 0x920700: 8 total; 7 inside FUN_00544530 ['0x54458b', '0x544a99', '0x544ce9', '0x545040', '0x5451fe', '0x545802', '0x54581b']; 1 elsewhere ['0x54ec5c `mov dword ptr ds:0x920700,0xc` in FUN_00546800']
+M197.values :: DAT_00920700 assignments in the body: {'0': 6, 'FUN_005f1394()': 1}
+M197c  PASS - THE MODE CODE'S PROVENANCE: FUN_00544530 stores 0x920700 7 times and its own body says 6 of them are the CONSTANT 0 while exactly 1 is `FUN_005f1394()`'s return; the only immediate store to 0x920700 anywhere in the image is `0xc` at 0x54ec5c (the chooser FUN_00546800, M130's case 7) - so the 13 values M195 enumerated are NOT hand-set constants; their domain IS FUN_005f1394's return set
+M197.selector :: FUN_005f1394 calls inside FUN_00544530: 6 at ['0x544a91', '0x544c2c', '0x544f2b', '0x5451e4', '0x545686', '0x5457f4']; returns assigned to ['009206fc', '00920700', '00920728', '00920748', '0092077c'] (5 distinct); entry clears 5 block globals in its first 112 bytes
+M197d  PASS - ds:0x920700 IS ONE FIELD OF A 5-FIELD SELECTOR BLOCK: FUN_00544530 calls the chooser FUN_005f1394 (11 KB, 94 callers) 6 times and its body assigns the return to 5 distinct globals ['009206fc', '00920700', '00920728', '00920748', '0092077c'], every one of which it clears at entry (5 clears inside its first 112 bytes at ['0x544574', '0x544579', '0x544583', '0x54458b', '0x544591']) - a per-proposal selection vector written by ONE chooser, not a mode its caller sets
+M197.strings :: named string symbols in the body: 3 -> ["s_NOCOMMLINK@0x690ae4='NOCOMMLINK'", "s_PROPOSALMENU@0x690a84='PROPOSALMENU'", "s_REJWARALREADY@0x690ab4='REJWARALREADY'"]
+M197e  PASS - RETRACTION of M195's 'ZERO string literals in all four functions that write or test 0x920700': the body names 3 string globals whose bytes read 'NOCOMMLINK', 'PROPOSALMENU', 'REJWARALREADY' - the function's OWN vocabulary names it a diplomacy PROPOSAL composer (M195 grepped the C for a quote char; Ghidra renders a referenced literal as a named s_* symbol, which contains none)
+M198.pool :: the string pool containing 0x690a84 runs 0x690160..0x69107c: 329 entries = 311 single-word KEYS + 18 spaced message TEXT lines
+M198.keys :: the KEYS in address order: NEEDGLOBAL PROTO PACT RIVAL ENDPACT1 ENDPACT2 ENDPACT3 MAKEPACT HERESTHEMAP PACT MAKETREATY COMMERCE TIMETOLEAVE MAKETRUCE INTRO NEW MAD PLANETBUSTER0 PLANETBUSTER URGENTCOMM URGENTCOMM COMM WITHSUNWAR WITHSUNNO WITHSUNYES BROKEPACT BUYNOTALK BUYPROMISED BUYALREADY BUYNO BUYNO BUYVOTE YEA NAY ABSTAIN GOV 4 3 2 1 A BUYVOTEMENU BUY PROTO COMMLINK TECH HIGH ENERGYFREEBIE ENERGYLOAN REJENERGY REJSELLNONE REJSELLAFFORD ENERGYTECH 2 SELLSECOND REJSELLSECOND REJTECHHATE REJTECHFEAR REJTECHFEAR REJTECHFEAR1 REJTECHADVANCED REJTECHPROJ COMMLINKFREE TECHSLAVE TECHFREEBIE REJCOMMLINK REJTECHLATER COMMLINKTECH TRADETECH TRADETECHOPT REJTECHINSTEAD REJTECHSECOND REJPACTMEEK REJPACTHATE REJPACTAHEAD REJPACTPOWER REJPACT REJPACT GIMMETECH GIMMEENERGY REJPACTBADBRIBE REJPACTNOBRIBE GIMMEHELP REJPACTNOHELP REJTREATYMEEK REJTREATYHATE REJTREATYAHEAD REJTREATY GIMMETECH GIMMEENERGY REJTREATYBADBRIBE REJTREATYNOBRIBE GIMMEHELP REJTREATYNOHELP REJMAPS TRADEMAPS REJWARALREADY REJWARFAR WARPACT REJWARTRUST REJWARNOBRIBE MAYBEWARTECH PACT FAR 4 3 2 MAYBEWARENERGY PACT FAR MAYBEWARPRICE REJWAR INCITED INCITEDPACT INCITEDTREATY REJTECHNOTHING OFFERTECH OFFERTECH2 GAVETECH 2 1 OFFERENERGY GAVEENERGY 2 1 BASEGIFT 2 1 BASEGIFT NEVER RUNNINGDOG NOWAYJOSE TURNABOUT WITHDRAWPACT WITHDRAWTRUCE WITHDRAW NOWITHDRAW PROVOKED REJWARALREADY WARPACT WARTHREAT EXTORTENERGY EXTORTCOMMLINK EXTORTTECH BASENOCEDE BASEOK ENDPACT FEND PROVOKED IGNORE NEVERBATTLEPLANS MAPBATTLEPLANS NOBATTLEPLANS BATTLEPLANS BATTLEPLAN BATTLENO BATTLENO BATTLEYES CALLOFF ATTACKSTRING TOTHEDEATH NOPEHIRED THEIRFAULT CALLEDOFF DIPLO DIPLOMENU NOHQ NOMYHQ NEVERBASESWAP YESBASESWAP NOBASESWAP3 NOBASESWAP PAYBASESWAP BASEOK NOBASESWAP2 TECHBASESWAP BASEOK NOBASESWAP PROPOSAL PROPOSALMENU PROPOSEATTACK ATTACKSTRING REJWARALREADY PROPOSECOMMLINK ATTACKSTRING NOCOMMLINK PROPOSEBASE COUNTER COUNTERMENU COUNTERBASE REPAIDLOAN COUNCILMATTER | COUNCILVOTE COUNCILVOTEGOV GETOUT BOTHOUT OUTRAGE GOAWAY INOURTERRITORY2 NOPATIENCEFRIEND NOPATIENCE PLEA PACT TECH PROPOSE PACT a b a b DEMANDATTACK INTRODUCEENEMY BETRAYFRIEND BETRAYFRIEND ENEMYMAP 1 2 METFRIEND a BOTHFRIEND ANYNEWS RANSOMDEMAND DEMANDBRIBE DEMANDBRIBE9 b a HALFBRIBE WEASELOUT WEASELEDOUT DEMANDTECH A AGREEDENERGY DEMANDTECHAGAIN1 AGREEDTECH DEMANDTECHAGAIN2 DEMANDTECH ASKFORLOAN SOCIAL CAT PACT WAR BREAKPACT COLLABORATOR BULLY VENDETTA ATROCIOUS SWEARAPACT GIMMEHELP REJPACTNOHELP RANSOMTREATY OFFERTRUCE MUSTTRUCE WANTTOTRUCE FACTIONTRUCE TECHTRUCE ENERGYTRUCE TRUCEPLEASE NOTORIETY TRUCEMEPAY TRUCEYOUPAY MOREWAR FACTIONTREATY OFFERTREATY 2 ENERGYTREATY MILDPACT MILDTREATY MILD REBUFFEDPACT REBUFFEDTREATY REBUFFED LOWPATIENCEPACT LOWPATIENCE WHATSUPPACT WHATSUPTREATY WHATSUP HELLOPACT HELLOTREATY HELLO WRONGED ENEMY MIGHTY MEEK SOCIAL CAT GOOD BAD COMMITTEDATROCITY SELFATROCITY HERESTHEMAP REPORTLOSING REPORTWINNING REPORTEVEN TEAMTECH TERRITORY QUISLING REALLYBROKE DROIDS BROKEPACT TIMESUPALLY TIMESUP RENEWTRUCE ENDTRUCE ERADICATED NOTMETYET ALREADYDONE DIPLOALREADY SUNSPOTSNO DIPLOCOMM NOCHANNEL
+M198.bounds :: the walk stops ABOVE 0x69107c where the next 8 bytes read ffffffffffffffff (0xFFFFFFFF pool terminator: True); it stops BELOW 0x690160 because no 4-aligned padded string ends there - the 16 bytes at 0x690150 read b'ed to\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff'
+M198a  PASS - the composer reads its text BY NAME out of a string pool at 0x690160..0x69107c that the walk proves is terminated by 0xFFFFFFFF: 329 entries = 311 single-word KEYS + 18 spaced message lines, and the key set contains ATTACKSTRING, NOCOMMLINK, PROPOSALMENU, PROPOSEATTACK, PROPOSEBASE, PROPOSECOMMLINK, REJWARALREADY - a diplomacy-message VOCABULARY (BASESWAP / COUNTER / COUNCILVOTE / TRUCE / TREATY / PACT / DEMANDATTACK / ...), not prose
+M198.refs :: keys with >=1 code reference: 257 of 311
+  1@0x690c2c 1 site(s) in FUN_00546800
+  2@0x690e48 1 site(s) in FUN_00546800
+  3@0x690750 1 site(s) in FUN_0053cb20
+  4@0x69074c 1 site(s) in FUN_0053cb20
+  A@0x690cbc 1 site(s) in FUN_00546800
+  ABSTAIN@0x690404 1 site(s) in FUN_00535c60
+  AGREEDENERGY@0x690cc0 1 site(s) in FUN_00546800
+  AGREEDTECH@0x690ce4 1 site(s) in FUN_00546800
+  ALREADYDONE@0x691024 1 site(s) in FUN_0054ef60
+  ANYNEWS@0x690c50 1 site(s) in FUN_00546800
+  ASKFORLOAN@0x690d10 1 site(s) in FUN_00546800
+  ATROCIOUS@0x690d64 1 site(s) in FUN_00546800
+  ATTACKSTRING@0x690ad4 1 site(s) in FUN_00544530
+  BAD@0x690f3c 1 site(s) in FUN_00546800
+  BASEGIFT@0x690820 1 site(s) in FUN_0053e7d0
+  BASENOCEDE@0x6908ec 1 site(s) in FUN_00540390
+  BASEOK@0x690a64 1 site(s) in FUN_00543c50
+  BATTLENO@0x69097c 1 site(s) in FUN_00541bb0
+  BATTLEPLAN@0x690964 1 site(s) in FUN_00541bb0
+  BATTLEPLANS@0x690958 1 site(s) in FUN_00541bb0
+  BATTLEYES@0x690988 1 site(s) in FUN_00541bb0
+  BETRAYFRIEND@0x690c10 1 site(s) in FUN_00546800
+  BOTHFRIEND@0x690c44 1 site(s) in FUN_00546800
+  BOTHOUT@0x690b60 1 site(s) in FUN_00546800
+  BREAKPACT@0x690d34 1 site(s) in FUN_00546800
+  BROKEPACT@0x690fd4 1 site(s) in FUN_00546800
+  BULLY@0x690d50 1 site(s) in FUN_00546800
+  BUY@0x690430 1 site(s) in FUN_00537180
+  BUYALREADY@0x6903d8 1 site(s) in FUN_00535c60
+  BUYNO@0x6903ec 1 site(s) in FUN_00535c60
+  BUYNOTALK@0x6903c0 1 site(s) in FUN_00535c60
+  BUYPROMISED@0x6903cc 1 site(s) in FUN_00535c60
+  BUYVOTE@0x6903f4 1 site(s) in FUN_00535c60
+  BUYVOTEMENU@0x690424 1 site(s) in FUN_00535c60
+  CALLEDOFF@0x6909d0 1 site(s) in FUN_00542810
+  CALLOFF@0x690994 1 site(s) in FUN_00542810
+  CAT@0x690f30 1 site(s) in FUN_00546800
+  COLLABORATOR@0x690d40 1 site(s) in FUN_00546800
+  COMM@0x690388 1 site(s) in FUN_00534fa0
+  COMMERCE@0x69031c 1 site(s) in FUN_00534180
+  COMMITTEDATROCITY@0x690f40 1 site(s) in FUN_00546800
+  COMMLINK@0x69043c 1 site(s) in FUN_00537180
+  COMMLINKFREE@0x690518 1 site(s) in FUN_00538040
+  COMMLINKTECH@0x69055c 1 site(s) in FUN_00538040
+  COUNCILMATTER@0x690b28 1 site(s) in FUN_00545c50
+  COUNCILVOTE@0x690b3c 1 site(s) in FUN_00545c50
+  COUNCILVOTEGOV@0x690b48 1 site(s) in FUN_00545c50
+  COUNTER@0x690afc 1 site(s) in FUN_00544530
+  COUNTERBASE@0x690b10 1 site(s) in FUN_00544530
+  COUNTERMENU@0x690b04 1 site(s) in FUN_00544530
+  DEMANDATTACK@0x690be0 1 site(s) in FUN_00546800
+  DEMANDBRIBE@0x690c68 1 site(s) in FUN_00546800
+  DEMANDBRIBE9@0x690c74 1 site(s) in FUN_00546800
+  DEMANDTECH@0x690d04 2 site(s) in FUN_00546800
+  DEMANDTECHAGAIN1@0x690cd0 1 site(s) in FUN_00546800
+  DEMANDTECHAGAIN2@0x690cf0 1 site(s) in FUN_00546800
+  DIPLO@0x6909dc 1 site(s) in FUN_00542ea0
+  DIPLOALREADY@0x691030 1 site(s) in FUN_0054ef60
+  DIPLOCOMM@0x69104c 1 site(s) in FUN_0054f1d0
+  DIPLOMENU@0x6909e4 1 site(s) in FUN_00542ea0
+  DROIDS@0x690fcc 1 site(s) in FUN_00546800
+  ENDPACT@0x690900 1 site(s) in FUN_00540390
+  ENDPACT1@0x6902cc 1 site(s) in FUN_005339e0
+  ENDPACT2@0x6902d8 1 site(s) in FUN_005339e0
+  ENDPACT3@0x6902e4 1 site(s) in FUN_005339e0
+  ENDTRUCE@0x691000 1 site(s) in FUN_00546800
+  ENEMY@0x690f10 1 site(s) in FUN_00546800
+  ENEMYMAP@0x690c20 1 site(s) in FUN_00546800
+  ENERGYFREEBIE@0x690458 1 site(s) in FUN_005375e0
+  ENERGYLOAN@0x690468 1 site(s) in FUN_005375e0
+  ENERGYTECH@0x69049c 1 site(s) in FUN_005375e0
+  ENERGYTREATY@0x690e4c 1 site(s) in FUN_00546800
+  ENERGYTRUCE@0x690de8 1 site(s) in FUN_00546800
+  ERADICATED@0x69100c 1 site(s) in FUN_0054ef60
+  EXTORTCOMMLINK@0x6908d0 1 site(s) in FUN_00540390
+  EXTORTENERGY@0x6908c0 1 site(s) in FUN_00540390
+  EXTORTTECH@0x6908e0 1 site(s) in FUN_00540390
+  FACTIONTREATY@0x690e2c 1 site(s) in FUN_00546800
+  FACTIONTRUCE@0x690dcc 1 site(s) in FUN_00546800
+  FAR@0x690770 1 site(s) in FUN_0053cb20
+  FEND@0x690908 1 site(s) in FUN_00540390
+  GAVEENERGY@0x6907f8 1 site(s) in FUN_0053e7d0
+  GAVETECH@0x6907d8 1 site(s) in FUN_0053e7d0
+  GETOUT@0x690b58 1 site(s) in FUN_00546800
+  GIMMEENERGY@0x69068c 1 site(s) in FUN_0053bb90
+  GIMMEHELP@0x690d7c 1 site(s) in FUN_00546800
+  GIMMETECH@0x690680 1 site(s) in FUN_0053bb90
+  GOAWAY@0x690b70 1 site(s) in FUN_00546800
+  GOOD@0x690f34 1 site(s) in FUN_00546800
+  GOV@0x69040c 1 site(s) in FUN_00535c60
+  HALFBRIBE@0x690c8c 1 site(s) in FUN_00546800
+  HELLO@0x690f00 1 site(s) in FUN_00546800
+  HELLOPACT@0x690ee8 1 site(s) in FUN_00546800
+  HELLOTREATY@0x690ef4 1 site(s) in FUN_00546800
+  HERESTHEMAP@0x690f64 1 site(s) in FUN_00546800
+  HIGH@0x690450 1 site(s) in FUN_00537180
+  IGNORE@0x69091c 1 site(s) in FUN_00540390
+  INCITED@0x69078c 1 site(s) in FUN_0053cb20
+  INCITEDPACT@0x690794 1 site(s) in FUN_0053cb20
+  INCITEDTREATY@0x6907a0 1 site(s) in FUN_0053cb20
+  INOURTERRITORY2@0x690b78 1 site(s) in FUN_00546800
+  INTRO@0x690340 1 site(s) in FUN_005346b0
+  INTRODUCEENEMY@0x690bf0 1 site(s) in FUN_00546800
+  LOWPATIENCE@0x690eb8 1 site(s) in FUN_00546800
+  LOWPATIENCEPACT@0x690ea8 1 site(s) in FUN_00546800
+  MAD@0x69034c 1 site(s) in FUN_005346b0
+  MAKEPACT@0x6902f0 1 site(s) in FUN_00533e70
+  MAKETREATY@0x690310 1 site(s) in FUN_00534180
+  MAKETRUCE@0x690334 1 site(s) in FUN_005344c0
+  MAPBATTLEPLANS@0x690938 1 site(s) in FUN_00541bb0
+  MAYBEWARENERGY@0x690758 1 site(s) in FUN_0053cb20
+  MAYBEWARPRICE@0x690774 1 site(s) in FUN_0053cb20
+  MAYBEWARTECH@0x690730 1 site(s) in FUN_0053cb20
+  MEEK@0x690f20 1 site(s) in FUN_00546800
+  METFRIEND@0x690c34 1 site(s) in FUN_00546800
+  MIGHTY@0x690f18 1 site(s) in FUN_00546800
+  MILD@0x690e74 1 site(s) in FUN_00546800
+  MILDPACT@0x690e5c 1 site(s) in FUN_00546800
+  MILDTREATY@0x690e68 1 site(s) in FUN_00546800
+  MOREWAR@0x690e24 1 site(s) in FUN_00546800
+  MUSTTRUCE@0x690db4 1 site(s) in FUN_00546800
+  NAY@0x690400 1 site(s) in FUN_00535c60
+  NEEDGLOBAL@0x690288 2 site(s) in FUN_00530cb0,FUN_00535700
+  NEVER@0x69082c 1 site(s) in FUN_0053fce0
+  NEVERBASESWAP@0x690a00 1 site(s) in FUN_00543c50
+  NEVERBATTLEPLANS@0x690924 1 site(s) in FUN_00541bb0
+  NEW@0x690348 1 site(s) in FUN_005346b0
+  NOBASESWAP@0x690a6c 1 site(s) in FUN_00543c50
+  NOBASESWAP2@0x690a48 1 site(s) in FUN_00543c50
+  NOBASESWAP3@0x690a1c 1 site(s) in FUN_00543c50
+  NOBATTLEPLANS@0x690948 1 site(s) in FUN_00541bb0
+  NOCHANNEL@0x691070 1 site(s) in FUN_0054f1d0
+  NOCOMMLINK@0x690ae4 1 site(s) in FUN_00544530
+  NOHQ@0x6909f0 1 site(s) in FUN_00543c50
+  NOMYHQ@0x6909f8 1 site(s) in FUN_00543c50
+  NOPATIENCE@0x690b9c 1 site(s) in FUN_00546800
+  NOPATIENCEFRIEND@0x690b88 1 site(s) in FUN_00546800
+  NOPEHIRED@0x6909b8 1 site(s) in FUN_00542810
+  NOTMETYET@0x691018 1 site(s) in FUN_0054ef60
+  NOTORIETY@0x690e00 1 site(s) in FUN_00546800
+  NOWAYJOSE@0x690840 1 site(s) in FUN_0053fce0
+  NOWITHDRAW@0x690884 1 site(s) in FUN_0053fce0
+  OFFERENERGY@0x6907ec 1 site(s) in FUN_0053e7d0
+  OFFERTECH@0x6907c0 1 site(s) in FUN_0053e7d0
+  OFFERTECH2@0x6907cc 1 site(s) in FUN_0053e7d0
+  OFFERTREATY@0x690e3c 1 site(s) in FUN_00546800
+  OFFERTRUCE@0x690da8 1 site(s) in FUN_00546800
+  OUTRAGE@0x690b68 1 site(s) in FUN_00546800
+  PACT@0x690d28 1 site(s) in FUN_00546800
+  PAYBASESWAP@0x690a34 1 site(s) in FUN_00543c50
+  PLANETBUSTER@0x690360 1 site(s) in FUN_005346b0
+  PLANETBUSTER0@0x690350 1 site(s) in FUN_005346b0
+  PLEA@0x690ba8 1 site(s) in FUN_00546800
+  PROPOSAL@0x690a78 1 site(s) in FUN_00544530
+  PROPOSALMENU@0x690a84 1 site(s) in FUN_00544530
+  PROPOSE@0x690bc0 1 site(s) in FUN_00546800
+  PROPOSEATTACK@0x690a94 1 site(s) in FUN_00544530
+  PROPOSEBASE@0x690af0 1 site(s) in FUN_00544530
+  PROPOSECOMMLINK@0x690ac4 1 site(s) in FUN_00544530
+  PROTO@0x690434 1 site(s) in FUN_00537180
+  PROVOKED@0x690910 1 site(s) in FUN_00540390
+  QUISLING@0x690fb4 1 site(s) in FUN_00546800
+  RANSOMDEMAND@0x690c58 1 site(s) in FUN_00546800
+  RANSOMTREATY@0x690d98 1 site(s) in FUN_00546800
+  REALLYBROKE@0x690fc0 1 site(s) in FUN_00546800
+  REBUFFED@0x690e9c 1 site(s) in FUN_00546800
+  REBUFFEDPACT@0x690e7c 1 site(s) in FUN_00546800
+  REBUFFEDTREATY@0x690e8c 1 site(s) in FUN_00546800
+  REJCOMMLINK@0x690540 1 site(s) in FUN_00538040
+  REJENERGY@0x690474 1 site(s) in FUN_005375e0
+  REJMAPS@0x6906dc 2 site(s) in FUN_0053ca00,FUN_00545c50
+  REJPACT@0x6905e8 1 site(s) in FUN_0053a9c0
+  REJPACTAHEAD@0x6905c0 1 site(s) in FUN_0053a9c0
+  REJPACTBADBRIBE@0x690608 1 site(s) in FUN_0053a9c0
+  REJPACTHATE@0x6905b4 1 site(s) in FUN_0053a9c0
+  REJPACTMEEK@0x6905a8 1 site(s) in FUN_0053a9c0
+  REJPACTNOBRIBE@0x690618 1 site(s) in FUN_0053a9c0
+  REJPACTNOHELP@0x690d88 1 site(s) in FUN_00546800
+  REJPACTPOWER@0x6905d0 1 site(s) in FUN_0053a9c0
+  REJSELLAFFORD@0x69048c 1 site(s) in FUN_005375e0
+  REJSELLNONE@0x690480 1 site(s) in FUN_005375e0
+  REJSELLSECOND@0x6904b8 1 site(s) in FUN_005375e0
+  REJTECHADVANCED@0x6904fc 1 site(s) in FUN_00538040
+  REJTECHFEAR@0x6904e0 1 site(s) in FUN_00538040
+  REJTECHFEAR1@0x6904ec 1 site(s) in FUN_00538040
+  REJTECHHATE@0x6904c8 1 site(s) in FUN_00538040
+  REJTECHINSTEAD@0x690588 1 site(s) in FUN_00538040
+  REJTECHLATER@0x69054c 1 site(s) in FUN_00538040
+  REJTECHNOTHING@0x6907b0 1 site(s) in FUN_0053e7d0
+  REJTECHPROJ@0x69050c 1 site(s) in FUN_00538040
+  REJTECHSECOND@0x690598 1 site(s) in FUN_00538040
+  REJTREATY@0x690674 1 site(s) in FUN_0053bb90
+  REJTREATYAHEAD@0x690664 1 site(s) in FUN_0053bb90
+  REJTREATYBADBRIBE@0x690698 1 site(s) in FUN_0053bb90
+  REJTREATYHATE@0x690654 1 site(s) in FUN_0053bb90
+  REJTREATYMEEK@0x690644 1 site(s) in FUN_0053bb90
+  REJTREATYNOBRIBE@0x6906ac 1 site(s) in FUN_0053bb90
+  REJTREATYNOHELP@0x6906cc 1 site(s) in FUN_0053bb90
+  REJWAR@0x690784 1 site(s) in FUN_0053cb20
+  REJWARALREADY@0x690ab4 1 site(s) in FUN_00544530
+  REJWARFAR@0x690700 1 site(s) in FUN_0053cb20
+  REJWARNOBRIBE@0x690720 1 site(s) in FUN_0053cb20
+  REJWARTRUST@0x690714 1 site(s) in FUN_0053cb20
+  RENEWTRUCE@0x690ff4 1 site(s) in FUN_00546800
+  REPAIDLOAN@0x690b1c 1 site(s) in FUN_00545c50
+  REPORTEVEN@0x690f90 1 site(s) in FUN_00546800
+  REPORTLOSING@0x690f70 1 site(s) in FUN_00546800
+  REPORTWINNING@0x690f80 1 site(s) in FUN_00546800
+  RIVAL@0x6902c4 1 site(s) in FUN_005316b0
+  RUNNINGDOG@0x690834 1 site(s) in FUN_0053fce0
+  SELFATROCITY@0x690f54 1 site(s) in FUN_00546800
+  SELLSECOND@0x6904ac 1 site(s) in FUN_005375e0
+  SOCIAL@0x690f28 1 site(s) in FUN_00546800
+  SUNSPOTSNO@0x691040 1 site(s) in FUN_0054f1d0
+  SWEARAPACT@0x690d70 1 site(s) in FUN_00546800
+  TEAMTECH@0x690f9c 1 site(s) in FUN_00546800
+  TECH@0x690bb8 1 site(s) in FUN_00546800
+  TECHBASESWAP@0x690a54 1 site(s) in FUN_00543c50
+  TECHFREEBIE@0x690534 1 site(s) in FUN_00538040
+  TECHSLAVE@0x690528 1 site(s) in FUN_00538040
+  TECHTRUCE@0x690ddc 2 site(s) in FUN_00546800
+  TERRITORY@0x690fa8 1 site(s) in FUN_00546800
+  THEIRFAULT@0x6909c4 1 site(s) in FUN_00542810
+  TIMESUP@0x690fec 1 site(s) in FUN_00546800
+  TIMESUPALLY@0x690fe0 1 site(s) in FUN_00546800
+  TIMETOLEAVE@0x690328 1 site(s) in FUN_00534180
+  TOTHEDEATH@0x6909ac 1 site(s) in FUN_00542810
+  TRADEMAPS@0x6906e4 2 site(s) in FUN_0053ca00,FUN_00545c50
+  TRADETECH@0x69056c 1 site(s) in FUN_00538040
+  TRADETECHOPT@0x690578 1 site(s) in FUN_00538040
+  TRUCEMEPAY@0x690e0c 1 site(s) in FUN_00546800
+  TRUCEPLEASE@0x690df4 1 site(s) in FUN_00546800
+  TRUCEYOUPAY@0x690e18 1 site(s) in FUN_00546800
+  TURNABOUT@0x69084c 1 site(s) in FUN_0053fce0
+  URGENTCOMM@0x69037c 1 site(s) in FUN_00534fa0
+  VENDETTA@0x690d58 1 site(s) in FUN_00546800
+  WANTTOTRUCE@0x690dc0 1 site(s) in FUN_00546800
+  WAR@0x690d30 1 site(s) in FUN_00546800
+  WARPACT@0x6908ac 1 site(s) in FUN_00540390
+  WARTHREAT@0x6908b4 1 site(s) in FUN_00540390
+  WEASELEDOUT@0x690ca4 1 site(s) in FUN_00546800
+  WEASELOUT@0x690c98 1 site(s) in FUN_00546800
+  WHATSUP@0x690ee0 1 site(s) in FUN_00546800
+  WHATSUPPACT@0x690ec4 1 site(s) in FUN_00546800
+  WHATSUPTREATY@0x690ed0 1 site(s) in FUN_00546800
+  WITHDRAW@0x690878 1 site(s) in FUN_0053fce0
+  WITHDRAWPACT@0x690858 1 site(s) in FUN_0053fce0
+  WITHDRAWTRUCE@0x690868 1 site(s) in FUN_0053fce0
+  WITHSUNNO@0x69039c 1 site(s) in FUN_00535610
+  WITHSUNWAR@0x690390 1 site(s) in FUN_00535610
+  WITHSUNYES@0x6903a8 1 site(s) in FUN_00535610
+  WRONGED@0x690f08 1 site(s) in FUN_00546800
+  YEA@0x6903fc 1 site(s) in FUN_00535c60
+  YESBASESWAP@0x690a10 1 site(s) in FUN_00543c50
+  a@0x690c88 1 site(s) in FUN_00546800
+  b@0x690c84 1 site(s) in FUN_00546800
+  |@0x690b38 1 site(s) in FUN_00545c50
+M198b  PASS - 257 of the 311 keys are referenced by code (the rest is vocabulary nothing asks for), and the 3 keys named in FUN_00544530's body are each referenced FROM FUN_00544530 - the table is live and the proposal composer is one of its consumers
+M199.needle :: needle@0x69911c='$' closer@0x699138='>' hexkey@0x699130='$HEX'; cases ['$', '<', 'H', 'L', 'N']; slot-index exprs 4; metadata globals ['9fa4', '9fcc', '9ff4']; ':' tests 4
+M199a  PASS - FUN_00625b20 IS THE SUBSTITUTION ENGINE M194 only saw indexing slots: it _strstr()s for the 1-byte needle whose bytes at 0x69911c read '$', switches on the char AFTER it over 5 cases ['$', '<', 'H', 'L', 'N'] (the tag closer read at 0x699138 is '>'; the 'H' case compares 4 bytes at 0x699130 = '$HEX'), indexes the channel slots as `&DAT_0099a01c + n*0x100` (4 sites) and reads the per-slot metadata {0x999fcc, 0x999ff4, 0x999fa4} = the A[]/B[] arrays M191 found the publish guarded by
+M199b  PASS - the tag payload is a COLON-SEGMENT SELECTOR: 4 `*p == ':'` tests count colons in the payload, build a segment index from that count plus the two metadata values (local_18 from B[], local_c from A[]), walk the slot text to the Nth colon and copy that segment out - a channel slot holds SEVERAL alternate phrasings separated by ':' and the tag picks one
+M199.compose :: FUN_005808b0 references 8 string globals: ["00692144='$<'", "00692148='M'", "0069214c='F'", "00692150='N'", "00692154='1'", "00692158='2'", "0069215c=':'", "00692160='>'"]
+M199c  PASS - FUN_005808b0 COMPOSES ONE TAG OUT OF 1-BYTE PIECES: the 8 string globals its body names, in address order, read ['$<', 'M', 'F', 'N', '1', '2', ':', '>'] - append '$<', then M/F/N picked by the faction-record dword at +0x2fc, then 1/2 (or nothing) picked by the dword at +0x300, then ':', then the argument, then '>'
+M199.parse :: FUN_00580a60 char compares ['2', 'F', 'N', 'f', 'n']; staging assigns [('aa1c', '0'), ('aa1c', '1'), ('aa1c', '2'), ('aa20', "(uint)(pcVar5[1] == '2')")]
+M199d  PASS - FUN_00580a60 PARSES THE SAME TAG BACK INTO THE STAGING RECORD: it sets 0x99aa1c to 1 on first char 'F'/'f' and to 2 on 'N'/'n' (0 otherwise) and 0x99aa20 to `pcVar5[1] == '2'`, then publishes the record's two name fields into slots 0/1 with that pair and emits the key 'PLAYERFILE' - the pair is the INVERSE of the composer's kind table (M=0, F=1, N=2; digit '2'), so 0x99aa1c/0x99aa20 IS a parsed tag head (kind, sub-flag), which is what M191 saw the publish take when arg3/arg4 are negative
+M199e  PASS - the record side: FUN_00426680 is `FUN_00423c70((&DAT_00927590)[fac*0x167], 0); return &DAT_009275c4 + fac*0x59c` - a 1436-byte (0x167-dword) per-faction record at 0x927590 whose NAME text sits at record offset +0x34, the same record whose +0x2fc/+0x300 dwords drive the tag composer
+M200.shape :: FUN_00631afb (4530 bytes of body): handle DAT_0099d020 x19, vmethod offsets ['0x10', '0x18', '0x38', '0x58', '0x60'], helpers ['FUN_005be090', 'FUN_0064a7f0', 'FUN_0064b9e0'], `0x25` immediates 0 [], printf-family [], references to the M199 engine FUN_00625b20: 0
+M200.shape :: FUN_00632cad (950 bytes of body): handle DAT_0099d020 x13, vmethod offsets ['0x10', '0x38', '0x58', '0x60', '0x7c'], helpers ['FUN_005be090', 'FUN_0064a7f0', 'FUN_0064b9e0'], `0x25` immediates 0 [], printf-family [], references to the M199 engine FUN_00625b20: 0
+M200a  PASS - FUN_00631afb and FUN_00632cad are THE SAME KIND OF OBJECT: both bail out when the global table handle DAT_0099d020 is 0, both call through its vtable at ['0x10', '0x18', '0x38', '0x58', '0x60'] (shared ['0x10', '0x38', '0x58', '0x60']), and both use the alloc/free/append trio FUN_005be090 / FUN_0064a7f0 / FUN_0064b9e0 - a record-writer pair on one table object
+M200b  PASS - RETRACTION of M194's 'FUN_00631afb / FUN_00632cad are the FORMATTERS that take slot addresses': across both bodies (4530 + 950 bytes) there are 0 `0x25` immediates, 0 printf-family calls and 0 references to FUN_00625b20, the substitution engine M199 just identified; each one allocates, copies the buffer it was handed VERBATIM with FUN_0064b9e0 and commits it through the table handle - they STORE channel text and substitute NOTHING
+M200c  PASS - and the 16-byte memcmp keys at 0x67bd20/0x67bd30 that FUN_00632cad compares against [ecx+0x6e4] are NOT text - their bytes read 60a7ea4468cbcf119c4e00a0c905425e / 60681d0fd988cf119c4e00a0c905425e (GUID-shaped, the .rdata class-id family), so that compare is a CLASS test on the object it is working through, not a table-name lookup
+
+SUMMARY M197=PASS M198=PASS M199=PASS M200=PASS  (15/15 gates)
