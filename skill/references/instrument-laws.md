@@ -550,3 +550,38 @@ the writer is a DECODER: `[+0x10/+0x14/+0x18/+0x1c] = setne(al & 1/2/4/8)` and `
 and `al & 0x20`, with `al & 0x40` also OR-ing 0x800000 into a DIFFERENT word. So the 20 bytes are one source byte's
 bits, expanded. Read a struct writer's SOURCE before naming the members: `setne`/`shr`/`and` chains mean the fields are
 booleans of a bitfield, and the field that receives an OR elsewhere is a side-effect, not a member.
+
+## A bit-LEG census: four parse rules, each of which alone reports the wrong leg list
+
+Deriving a pack/unpack bit mapping from an objdump window means pairing a TEST (the source bit) with a
+write (the destination mask). Each of these shapes, missed, silently empties or shifts the leg list while
+the harness still prints a clean result:
+
+- **Accept a MEMORY-operand test as a source.** A packer samples a byte in the record, not a register:
+  `test BYTE PTR [esi+0x94f4b0],0x20` is the 0x20 leg. A parser that only accepts `test reg,imm`, or only
+  the DOCUMENTED width at one displacement, finds a single leg and reports success.
+- **Resolve a mask REGISTER to its last `mov reg,imm`.** `test eax,ebx` / `or ecx,ebx` carry the bit in a
+  register; pair each by the nearest preceding load (`mov ebx,0x40`). Skip this and every "distinct masks"
+  figure collapses to one register name.
+- **Normalize the two "bit 0" idioms.** `shr reg,N` + `and reg,1` and `and reg,0x80000000` + `neg/sbb/neg`
+  both yield bit 0 of the same source and are ONE leg; unnormalized, bit 0 appears twice and a phantom
+  bit 31 appears that no site writes.
+- **Only count an `or`/`and` leg whose immediate is a SINGLE bit.** A bare `and eax,0x1` is a truncation,
+  not a 31-bit clear — counting it as a destination adds a phantom leg and shifts every subsequent one.
+
+Gate the result TWICE: the leg COUNT and the bit SET, both printed as tables, so a shifted leg is visible
+instead of plausible. A gate that asserts only "the pack has legs" passes any parse, including one that
+dropped half of them.
+
+## A shared writer's argument TUPLE is per-site — enumerate the pushes at EVERY call
+
+A generic tagged-record emitter takes `(name-ptr, size, payload)` and the name/size are NOT properties of
+the helper: across nine call sites seven pass size `0x41`, two pass `0x1`, and one passes a register. A
+finding that measures one site and says "the record is 0x41 bytes" is wrong at the sites that differ, and
+the repair costs a doc-correction PR after the milestone has already merged.
+
+- Scan `INS[i-8:i]` for the pushes before EACH `call`, print the distinct tuples as a table, and gate on the
+  TABLE (counts per tuple). "9/9 pass 0x41" and "7 x 0x41, 2 x 0x1" are different facts and only one is
+  true — assert the one you printed.
+- The same test applies to any constant riding a shared helper: a `(dest, len)` read wrapper, a type id, a
+  mode flag. The constant belongs to the CALL; the helper's body documents only the shape.

@@ -89,7 +89,7 @@ findings doc must exist on disk, or the citation check drops it (the regex cover
 keeps it pointing at the right line). (3) **Build that POST body as a FILE, never as a shell-quoted string.** One apostrophe in
 `-d '{"body":"… tail's …"}'` makes bash abort the whole command line at PARSE time, so the `git push` chained
 ahead of the curl never runs either and the create that finally reaches GitHub answers **422, `field: head, code:
-invalid`** — a 422 on `head` means the branch does not exist yet, not that the body is wrong. Write it with
+invalid`** — a 422 on `head` means the branch does not exist yet, not that the body is wrong. The same parse-time abort hits `milestone.py submit --title "<text containing an apostrophe>"` (and `--message`): bash closes the quote mid-argument, so NOTHING in the chained line runs — not even the push — and the error prints only the tail of your own command; re-emitting the title double-quoted (or with the apostrophes dropped) is the fix. Write it with
 `python3 -c 'import json; json.dump({"title":…,"head":…,"base":"main","body":…}, open("/tmp/pr.json","w"))'`
 then `curl … --data @/tmp/pr.json`, and read the http code: 201 = created, 422 = inspect the `errors` list, which
 names the offending field. Keep long prose in a Python variable, not in the shell.
@@ -162,7 +162,7 @@ main only moves by squash-merge of a pull request`, so commit-to-main is caught 
 `gh pr checks <n>`, `milestone.py merge <n>` — a docs-only PR passes the gate (no SESSION_NOTES/NEXT_PROMPT
 change is a WARN, not a FAIL). Leave the content COMMITTED before the first push: pushing an empty branch
 (one that equals `main`) and creating the PR afterwards returns 422 `Validation Failed` — there is no diff
-to review — and the dangling remote branch must be deleted. Order: write -> commit -> push -> create. Leaving it uncommitted instead transfers the cost to the next session,
+to review — and the dangling remote branch must be deleted. Order: write -> commit -> push -> create. Keep the cursor itself to `id | acceptance | merged? | next command`: a cursor that carries the finding text blows the 600 B cap, and every rewrite of the too-long file is another call — name the artefact that holds the detail (`NAMED.md <ID>`, `evidence/<id>_….txt`) instead of quoting it. Leaving it uncommitted instead transfers the cost to the next session,
 whose `milestone.py start` refuses the dirty tree; the cheapest option is to write the cursor line BEFORE
 the milestone's own commit and let it say what the closing steps are.
 
@@ -170,12 +170,20 @@ the milestone's own commit and let it say what the closing steps are.
 
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
-merge by hand in the web UI without a green `gate` check. After editing this live skill, copy the whole
-dir — `SKILL.md` **and** `references/` — to `~/reverse/smac/skill/` and commit: the gate compares only
-`SKILL.md`, so an edited reference drifts silently. If `python3 scripts/evidence.py budget` reports
-`skill/SKILL.md … FAIL` (70,000 chars), compress PROSE inside that file until it passes — never raise the
-limit, and re-sync both ways once the curator or a sibling has touched the live copy. Protocol detail:
-`~/reverse/smac/AGENTS.md` and `docs/WORKFLOW.md`.
+merge by hand in the web UI without a green `gate` check. After editing this live skill, sync `SKILL.md` **and** `references/`
+with `~/reverse/smac/skill/` and commit: the gate compares only `SKILL.md`, so an edited reference drifts
+silently. **Resolve that drift by CONTENT, never by mtime and never by a wholesale copy:** every `git checkout`
+(a `milestone.py start`, a `merge`, a hard reset) rewrites the repo copy's mtimes to the checkout time, and a
+merged PR can leave the repo copy holding a rule the live skill never received — so the newer-mtime side is
+often the content-stale side, and copying it over the other silently reverts tracked findings while the gate's
+`skill sync` check still PASSes. Go file by file: `diff -rq` the two dirs; for each differing file restore the
+repo side with `git checkout HEAD -- <path>` (git history, not mtime, is the arbiter of what the repo copy is
+supposed to contain), re-apply only your own new bullets into it, then copy that file repo -> live so both
+sides match byte for byte; finish with `diff -rq` (must be clean) and `git diff --stat HEAD -- skill/` (must
+show only your intended additions). If `python3 scripts/evidence.py budget` reports `skill/SKILL.md … FAIL`
+(70,000 BYTES — see the budget gotcha above), compress PROSE inside that file until it passes — never raise the
+limit; and when it sits within ~50 B of the cap, put the new rule in the reference file SKILL.md already points
+at instead of into SKILL.md. Protocol detail: `~/reverse/smac/AGENTS.md` and `docs/WORKFLOW.md`.
 
 ## Sibling ownership (a cron dispatch colliding with a live session)
 
