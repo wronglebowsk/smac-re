@@ -63,26 +63,29 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s195 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
-  **M242**, **M243**, **B2** (`PASS B2: 7/7 gates`, `python3 -m sim.selftest --sav <save>`, 17/17 saves
-  close): the .SAV walk is 12 | 796 state header | 4 own | 67,040 block A (8×8,380) | 11,488 | 32 |
-  2,724 map hdr | W·H·22 grid | **91-B trailer** | 16,000 | **u32 count @188,299** | 3,584 | 26,624 |
-  4,096 | 52·n units | 304·m bases | 10,800 = EOF, with n/m read from the header (`0x985af0`/`0x985af4`
-  at file 68/72) and 8 factions three ways; 93,159 = 92,927 map + 220 + 12 (M243's open item closed). Full text: `NAMED.md` per-id blocks; the s187-s194 ANSWERED bullet VERBATIM in
-  `docs/pick-archive.md` (§s195 overflow). Headline: the save codec is `FUN_00597ce0` → `FUN_00596850`
-  (one codec both directions), its 7 dead write legs are its 7 dead read twins, killed by 3 gate families.
+- ANSWERED (do not re-pick): s187-s196 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**, **B2**, **M244** (`PASS M244: 5/5 gates`, `python3 scripts/m244_save_tail.py`,
+  17 saves + planet.MP + planetx.MP): the map "trailer" IS the coarse region map, length
+  `((Rw+1)/2)*Rh` with `Rw=(W+4)/5`, `Rh=(H+4)/5` (91/128/338 at 64/80/128 — closes both .MP files
+  on the byte); the count-prefixed block is the 8-B base-site event log [type {0 add, 1 re-own,
+  2 remove}, faction, turn, x, y] whose replay == the base records' (x, y, **+4 = current owner**,
+  **+5 = the faction written just before it**); the tail is 256 | 152 | 10,144 | 20 | 216 | 8 | 4 =
+  10,800 — **no 220-B and no 28-B block** (B2's split and its `93,159 = 92,927 + 220 + 12` are
+  RETRACTED). Full text: `NAMED.md` per-id blocks; B2's walk detail and the retired picks VERBATIM
+  in `docs/pick-archive.md` (§s196 overflow). Headline: the save codec is `FUN_00597ce0` →
+  `FUN_00596850` (one codec both directions), its 7 dead write legs are its 7 dead read twins,
+  killed by 3 gate families.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B3** — turn engine — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
   — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30,
   +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c);
   WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
-  ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B);  **what the 7 mask copies at record
-  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); **which
-  sites outside FUN_00596850 write the 93,159-B tail** (ANSWERED by B2's arithmetic: 92,927 map block +
-  220 + 12); **what the block after the count prefix at 188,303 holds (176/192/208 B), who reads the
-  220-B block, and the map-trailer length formula (91 B at 64×64, 128 at 80×80, 338 at 128×128)**
-  (new from B2, static).
+  ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record
+  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); NEW from M244
+  (static): who reads the 9 tail rows of 24 B that `FUN_00596620` fills (`DAT_007cdecc..0x7cdeec` +
+  `DAT_008cda4c+0x1dd70`) and the final 4 B the codec does not read; why the region-map accessors use
+  stride `DAT_0092ad9c >> 1` (= 6 at 64x64) when the array is `(Rw+1)/2` = 7 wide.
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):

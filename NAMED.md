@@ -814,3 +814,18 @@ The 93,159 B the codec does not move = 92,927 (map block, `FUN_00582260`) + 220 
 12 (magic+version, `FUN_00597ce0`) — exact on m54b_clean AND on a 242,799-B save. A 52-B record
 whose +10 type >= 64 is a production-queue BAND, not a unit: its +0/+2 are NOT tile coords
 (m113map rec 12 = 3076/56832), so coord checks must be type-gated.
+
+## M244 (s196) — save tail: the region-map formula, the count-prefixed block is the base-site log
+
+`python3 scripts/m244_save_tail.py` -> `PASS M244: 5/5 gates` (17 saves + planet.MP + planetx.MP)
+-> `evidence/m244_save_tail.txt`.
+
+| claim | evidence | status |
+|---|---|---|
+| the map "trailer" IS the coarse region map, length `((Rw+1)/2)*Rh`, `Rw=(W+4)/5`, `Rh=(H+4)/5` | `FUN_00582000` shard_014.c:27263-27265; planet.MP 15+2,724+140,800+128 = 143,667 and planetx.MP 15+2,724+360,448+338 = 363,525 close exactly; 91/128/338 | V |
+| the count-prefixed block = 8-B records [u8 type {0 add, 1 re-own, 2 remove}, u8 faction, u16 turn (`DAT_00985afc`, file 80), u16 x, u16 y]; the u32 is a BYTE length | `FUN_0059c150` shard_015.c:13891-13908 (logs "Replay Base Info", `DAT_00927538 += 8`); applied by `FUN_0059bcb0` shard_015.c:13657-13708; shape-valid on 17/17 | V |
+| replayed live (x,y,faction) == the 304-B base records' (x,y,+4); **+4 = current owner, +5 = the faction written just before it** | 17/17 saves, 0 orphan type-1/2 records; the 42 bases with +4 != +5 are exactly the type-1 moves | V |
+| tail = 256 \| 152 \| 10,144 \| 20 \| 216 \| 8 \| 4 = 10,800; **no 220-B and no 28-B leg** | shard_015.c:10654/10676/10698/10720 pushes (one 0x100 gated by `(DAT_00985ae8 & 0x10)`, file 60); unique 9999-row at tail+256; `DAT_0092d4a0` dest-file k = 232,407 (/proc legmap) | V |
+| the 9 rows of 24 B are read by `FUN_00596620` (6 dwords/row, `DAT_007cdecc..0x7cdeec` + `DAT_008cda4c`); who reads the final 4 B; what the region-map bytes mean | — | OPEN |
+
+RETRACTS B2's `tail 10,800 = 256+152+10,144+28+220` and its `93,159 = 92,927 + 220 + 12` split.
