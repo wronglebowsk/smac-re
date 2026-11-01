@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 182, 2026-11-02, M205-M208 all PASS)
+# NEXT_PROMPT.md — footing for the next session (session 183, 2026-11-02, M209-M212 all PASS)
 
 Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s181
 milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
@@ -25,7 +25,7 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151), M185-M187 (#152),
 M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159), M201-M204 (#161), M205-M208 (#162),
-s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 = FUN_00496ad0's 'unset' return per M212, 1 caller FUN_00417ee0; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
 M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
 `NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
@@ -60,27 +60,27 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   and milestone lines in `NAMED.md` + `docs/pick-archive.md`; census outputs
   `evidence/m175_m177_aggcallers.txt` … `m194_m196_channels.txt`, `m197_m200_proposal.txt`,
   `m201_m204_dialog.txt`; field map `docs/field-atlas-faction.md`. Read them there.
-- **s180 (M201-M204) and s181 (M205-M208) footing is ARCHIVED:** milestone lines in `docs/pick-archive.md`,
-  semantics rows in `NAMED.md`, census outputs `evidence/m201_m204_dialog.txt` + `m205_m208_fields.txt`,
-  instruments `scripts/m201_m204_dialog.py` + `m205_m208_fields.py`. Short of it: FUN_005f1394 is the
-  OK/CANCEL DIALOG RUNNER (class ctor FUN_00405ef0, vtable 0x67164c) and it RETURNS `[this+0xa40]` =
-  Ghidra `this[0x290]`, written only by the class vmethods FUN_005f5759 (+0xa8/+0x228) and FUN_005f58fa
-  (+0x64/+0x1e4) - each with 0 direct call sites - from the item list, or 0 / 0xffffffff; `this[0x285]` =
-  byte +0xa14, a slot of a 7-pointer link block (0xa14..0xa2c), is the CHILD the +0xdc dispatch delegates
-  to (0x5f3dbe child / 0x5f3df6 self, identical args); +0xdc = FUN_005ce5bd, a modal loop over a 4-deep
-  dialog stack (guard `cmp ds:0x9939c8,4`, [d*4+0x992db8], current ds:0x9939c4); FUN_00546800 switches
-  12/5/8 at 0x54eef8/0x54ef14/0x54ef34 and builds a dialog on its own frame without calling the pump;
-  ds:0x997528 is a write-only staging buffer (103 address-passes, 0 absolute loads) drained by
-  FUN_005f0583 (79 of them).
-- Pick from: WHO DISPATCHES dialog slot +0xa8 (the result-field writer): 29 `call [reg+0xa8]` sites in 17
-  fns image-wide, NONE of them in a pump-caller or ctor-caller function - read FUN_0043a4e0 (6 sites) and
-  FUN_00478080 (4) and say whether either dispatches a 0x67164c object and with what argument; the DIALOG
-  STACK FUN_005ce5bd keeps - what its arg3 (stored to [depth*4+0x992dc8]) is, who else reads
-  0x992db8/0x992dc8/0x9939c4/0x9939a0, and what slot +0xe4 (the event pump) returns; the 0xb4c-byte ROW
-  object (ctor FUN_005faec0 - now also known to be called twice by FUN_005f6b8c, on this+0xaac and
-  this+0x15f8 - layout FUN_005f9e85, 90 sites / 23 fns) and where its label text comes from;
-  FUN_00542ea0's return domain (the 8-entry switch 0x54ef34, gated on ds:0x920434 and ds:0x985ae8 bit
-  0x800); the pump's -1 vs the UNMERGED M83/M84 "-9999 at 0x496ad0 = DIALOG-CANCEL"; M181's control (box).
+- **s181 (M205-M208) + s182 (M209-M212) footing is ARCHIVED:** milestone lines in `docs/pick-archive.md`,
+  semantics rows in `NAMED.md`, census outputs `evidence/m205_m208_fields.txt` + `m209_m212_dispatch.txt`,
+  instruments `scripts/m205_m208_fields.py` + `m209_m212_dispatch.py`. Short of it: slot +0xa8 has 33
+  implementations over the 188 vtables the model finds; 3 (0x67164c/0x6717cc/0x6728c0, 464 installs, 457 at
+  `[ebp-disp]` - dialogs are stack locals) map it to FUN_005f5759, the writer of `[this+0xa40]`. Its dispatchers:
+  the family's own +0x4c vmethod FUN_005f6aa3 (FUN_005e7917 walks a 24-B list from `[obj+8]-1` and publishes
+  item[+0x14]/[+0x10]; the call runs when the index != -1 and the 2nd out-param == 0) and FUN_0043fee0 (+0xa8 of
+  0x6738e4, 0 direct calls) via the handle ds:0x9977f0, which ONLY the pump writes (0x5f3d70/0x5f3e02). Dialog
+  stack = dialogs[] 0x992db8 (4 stores/2 loads) + WRITE-ONLY arg3[] 0x992dc8; current 0x9939c4 / depth 0x9939c8
+  written only by FUN_005ce5bd + FUN_005ce6ff; slot +0xe4 is a bool (`ds:0x997770 == 0`; sibling `return 1`), not
+  an event pump. FUN_00542ea0 wraps the pump (ctor FUN_00405ef0 + 1 pump call + `return uVar2`), so the 8-case
+  switch at 0x54ef34 keys on the PUMP's result code. -9999 = FUN_00496ad0's "unset" return (init 0x4976ce,
+  read-back 0x4976f9, 1 caller FUN_00417ee0), disjoint from the pump's -1.
+- Pick from: the 0xb4c-byte ROW object (ctor FUN_005faec0, called twice by FUN_005f6b8c on this+0xaac and
+  this+0x15f8; layout FUN_005f9e85, 90 sites / 23 fns) and where its label text comes from; the object FUN_005e7917
+  walks (`[obj+8]` = item count, 24-byte items, item[+0x10]/[+0x14] = the pair FUN_005f6aa3 publishes) and what
+  FUN_005e75a0 tests per item - FUN_00478080 retries it 4x, then dispatches +0xa8 with 0..3; who dispatches
+  +0x4c (12 sites) = FUN_005f6aa3's 5 callers; the class whose +0xa8 IS FUN_0043fee0 (vtable
+  0x6738e4: installs, frame displacement, other slots) and what the other two readers of ds:0x9977f0 do
+  (FUN_005f5a11 0x5f5a17, FUN_005d69fa 0x5d6a17); the SIBLING dialog family 0x671d94 (275 installs, +0xa8 =
+  FUN_005f90d7, +0x64 = FUN_0043fb00, +0xe4 = `return 1`) vs 0x67164c; M181's control (box).
 ## LIVE FACTS / KIT
 
 - **BOX state CARRIED from s174e (s175/s178 spent no box time, so NOT re-verified):** terran.exe 319926, y2153 r53,
