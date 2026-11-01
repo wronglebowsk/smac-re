@@ -466,3 +466,23 @@ Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
   (B2's split and its `93,159 = 92,927 + 220 + 12` are RETRACTED). Headline: the save codec is
   `FUN_00597ce0` → `FUN_00596850` (one codec both directions), its 7 dead write legs are its 7 dead
   read twins, killed by 3 gate families.
+
+## §s198 overflow — moved VERBATIM from NEXT_PROMPT.md (M248 close, headroom)
+
+From the ANSWERED bullet:
+
+  the map "trailer" IS the coarse region map (`((Rw+1)/2)*Rh` = 91/128/338 at 64/80/128) and its two
+  accessors index with stride `Rw>>1`, so bytes 79..90 are never written (`0xcd` in 17/17 saves); the
+  count-prefixed block is the 8-B base-site event log (base +4 = current owner, +5 = previous); the
+  tail is 256|152|10,144|20|216|8|4 = 10,800 (B2's `+220 +12` RETRACTED), its 216 B are 9 map-view
+  objects' state (id, active flag, bit flags, −6 constant, CENTRE TILE) and its last 4 B are a
+  `timeGetTime()` save-CREATION stamp. Headline: the codec is `FUN_00597ce0` → `FUN_00596850` (one
+  codec both directions), 7 dead legs = 7 dead twins. Numbers VERBATIM: `NAMED.md` per-id,
+  `docs/pick-archive.md` §s196/§s197.
+
+From LIVE FACTS (BOX state as measured at s197, superseded by the next preflight run):
+
+- **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
+  terran.exe 319926, y2153, cur_player 3, mask 0xff08, 18 bases / 72 units, University Base (28,42) pend 0 head 2,
+  6 ours 0 actionable, TracerPid 0 — NOT this session's descendant, so read `/proc/mem` with `sudo -n` (yama
+  ptrace_scope=1); launch recipe + cold-box timing: skill `references/wine-operations.md`.

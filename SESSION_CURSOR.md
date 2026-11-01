@@ -1,6 +1,6 @@
-S198 M248/M249 IN FLIGHT (branch milestone/m248, skeleton committed). Question: what the coarse
-region-map bytes mean + what terrain record +3 is. Acceptance: `python3
-scripts/m248_region_values_census.py` -> `PASS M248: 5/5 gates` -> evidence/m248_region_values.txt.
-NOT merged. Gates: G1 builder rule / G2 recompute==stored / G3 DAT_0092ae18 ref census / G4 +3
-writers / G5 label value-sets. Box: terran.exe 319926 alive, TracerPid 0, /proc reads only. Open
-PRs #180 (M241 FAIL 2/5, intentional), #105 (docs badge NO-CI; merge refuses without --force).
+S198 M248/M249 submitted (branch milestone/m248). `python3 scripts/m248_region_values_census.py`
+-> `PASS M248: 5/5 gates` (2nd invocation; 1st 3/5 on three instrument bugs, fixed, no threshold
+moved) -> evidence/m248_region_values.txt. Region bytes = terrain record +3 (the map REGION LABEL:
+<0x40 land, >=0x41 water) of the first land tile of a centre-first 9-diamond sample; recomputed ==
+stored 19/19 files; +3's only writer = FUN_00582d00 (4 sites, all map generation). Box untouched.
+NEXT: python3 scripts/track_mode.py (the next BUILD fire takes B3 — turn engine).

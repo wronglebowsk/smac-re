@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 195, 2026-11-01, B2: the .SAV layout closes on the byte - record counts live in the 796-B state header)
+# NEXT_PROMPT.md — footing for the next session (session 198, 2026-11-01, M248/M249: terrain record +3 IS the map's REGION LABEL, and the coarse region map is a per-region copy of it)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -33,8 +33,8 @@ claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; ti
 ## THE LEDGER
 
 Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
-M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), B2 (s195, 7/7), s175 cap triage (#153),
-docs #169/#174/#175/#177.
+M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), B2 (s195, 7/7),
+M244 (#185), M245-M247 (#186), M248/M249 (s198, 5/5), s175 cap triage (#153), docs #169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void), M241 (#180, 2/5 — its PR stays
@@ -63,17 +63,18 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s197 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
-  **M242**, **M243**, **B2**, **M244** (`PASS M244: 5/5 gates`), **M245/M246/M247** (`PASS M245: 5/5
-  gates`, `sudo -n python3 scripts/m245_tail_legs_census.py`, 17 saves + 2 .MP + a live /proc read):
-  the map "trailer" IS the coarse region map (`((Rw+1)/2)*Rh` = 91/128/338 at 64/80/128) and its two
-  accessors index with stride `Rw>>1`, so bytes 79..90 are never written (`0xcd` in 17/17 saves); the
-  count-prefixed block is the 8-B base-site event log (base +4 = current owner, +5 = previous); the
-  tail is 256|152|10,144|20|216|8|4 = 10,800 (B2's `+220 +12` RETRACTED), its 216 B are 9 map-view
-  objects' state (id, active flag, bit flags, −6 constant, CENTRE TILE) and its last 4 B are a
-  `timeGetTime()` save-CREATION stamp. Headline: the codec is `FUN_00597ce0` → `FUN_00596850` (one
-  codec both directions), 7 dead legs = 7 dead twins. Numbers VERBATIM: `NAMED.md` per-id,
-  `docs/pick-archive.md` §s196/§s197.
+- ANSWERED (do not re-pick): s187-s198 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**, **B2**, **M244**, **M245/M246/M247** (codec `FUN_00597ce0`→`FUN_00596850`, the
+  save tail's legs, the region-map stride) and **M248/M249** (`PASS M248: 5/5 gates`, `python3
+  scripts/m248_region_values_census.py`, 17 saves + 2 .MP, zero box time): the coarse region map's
+  bytes are a per-region copy of **terrain record +3 = the map's REGION LABEL** — `FUN_0058ce00`
+  samples a centre-first 9-diamond (dx/dy read from terran.exe 0x67850c/0x678990) and stores the
+  first LAND tile's +3, else 0; recomputed == stored byte for byte on 19/19 files (1809 cells, 0
+  mismatch); +3 < 0x40 on every land tile and >= 0x41 on every water tile (0 exceptions), 0x40
+  unused; its ONLY writer is the byte setter `FUN_00582d00` (shard_014.c:27745), 4 call sites all in
+  map generation (`FUN_0058d120` shard_015.c:4862/4892, `FUN_0058d390` :5086/5097); the map has
+  exactly 1 reader fn (`FUN_00556690`) and 1 writer fn. Numbers VERBATIM: `NAMED.md` per-id,
+  `docs/pick-archive.md` §s196/§s197/§s198.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B3** — turn engine — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
@@ -82,16 +83,19 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
   ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record
   +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); NEW from
-  M245-M247 (static): what the region-map byte VALUES mean (`FUN_0058ce00` takes terrain record +3 of
-  the first of 9 sampled tiles whose +1 & 0xe0 > 0x5f, shard_015.c:4716-4741; 0x3f/0x01/0x00/0x10 seen,
-  +3 unnamed); who allocates the ~140 KB view objects (slots 1..7 are `0x224b8` apart, slot 0 at
-  `0x8f79e0`) and what sets/clears view `+0x1dd74`.
+  M248/M249 (static, record +3 is now NAMED as the region label): who calls the generators
+  `FUN_0058d120`/`FUN_0058d390` and in what order at NEW GAME (that is where region ids are assigned,
+  and `FUN_0058ce00` must run after them); what the per-faction 0x20bc-byte block at `DAT_0094eda8`
+  — indexed by region id (shard_012.c:2681-2683) — holds, and what `FUN_00556690`'s coarse label
+  search is FOR (callers `FUN_005208f0` shard_013.c:11666, `FUN_0059ce10` shard_015.c:14862); who
+  allocates the ~140 KB view objects (slots 1..7 are `0x224b8` apart, slot 0 at `0x8f79e0`) and what
+  sets/clears view `+0x1dd74`.
 ## LIVE FACTS / KIT
 
-- **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):
-  terran.exe 319926, y2153, cur_player 3, mask 0xff08, 18 bases / 72 units, University Base (28,42) pend 0 head 2,
-  6 ours 0 actionable, TracerPid 0 — NOT this session's descendant, so read `/proc/mem` with `sudo -n` (yama
-  ptrace_scope=1); launch recipe + cold-box timing: skill `references/wine-operations.md`.
+- **BOX state as of s197** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants; re-run
+  it before arming): terran.exe 319926 alive, TracerPid 0 and NOT this session's descendant, so read
+  `/proc/<pid>/mem` with `sudo -n` (yama ptrace_scope=1); launch recipe + cold-box timing: skill
+  `references/wine-operations.md`. The full s197 state dump is verbatim in `docs/pick-archive.md` §s198.
 - A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
   ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
   index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
