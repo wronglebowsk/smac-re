@@ -401,3 +401,27 @@ M181's control (box). ANSWERED by M213-M216 - see `evidence/m213_m216_hotspot.tx
    BUILD/base PANE needs Escape (Escape on the bare map raises the quit prompt — never OK), run
    `m78_mark_clear.normalize_screen()` first, click from OCR word bboxes (TURN COMPLETE (675,416)). `m44_idle` asserts
    TracerPid==0 — never a driver under a census gdb, use m55_boundary.
+
+## s194 overflow (moved VERBATIM from NEXT_PROMPT.md's ANSWERED bullet at M243)
+
+- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors;
+  the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks; FUN_005f5a11's write-only triple) —
+  detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on BOTH maps. s191 **M240**
+  (6/6): the `.MP` grid IS the live terrain-record array (44-B records = TWO map columns; "cell+7 = land
+  marker" / "+7 = owner byte" RETRACTED; +16..+43 = 7 copies of the +8 mask, OPEN). s192 **M241** (`FAIL
+  2/5`, PR #180 open): a SAVE ran ZERO of the 42 armed 0x99aa38-band sites — not the write path. s193
+  **M242** (`PASS 5/5`, `sudo -n python3 scripts/m242_save_write.py`): the save WRITE function is
+  **`FUN_00597ce0(path)`** -> **`FUN_00596850(handle, 1)`**, ONE codec both ways (mode → `DAT_00926a0c`;
+  30 write / 28 read sites; a save ran 23/30 write, ZERO read); the 796-B `DAT_00985ab8` block sits
+  verbatim at **file offset 12** (corrects SAVE_FORMAT.md). Full text: `NAMED.md` M240/M242 blocks.
+  (s194 note: the "28 read sites" figure was corrected to 30 by M243.)
+
+## BUILD TRACK block moved VERBATIM out of NEXT_PROMPT.md at s194 (headroom)
+
+## BUILD TRACK — every 4th fire builds (added s187)
+
+`python3 scripts/track_mode.py` prints the verdict from merged history: `MODE=BUILD|ANALYSE`, `next_rung=B<n>`.
+**MODE=BUILD ⇒ this fire is a build fire**: take that rung from `BUILD_SPINE.md` and build it in `sim/` — runnable
+acceptance command, parity against a recorded trace, never a census claim, no box time, no `/proc`, no gdb. The
+other three fires analyse exactly as before, and a build fire does NOT pay the box debt (it never touches Wine).
+Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.

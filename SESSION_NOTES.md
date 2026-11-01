@@ -1,41 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-174-174.md` (1 sessions). Read it only when a question reaches back before session ## Session 175.
-
-## Session 175 (2026-10-31) — cap triage (#153, merged), then M188-M190 all PASS (static batch of three, one instrument)
-
-- **CAP TRIAGE first, as its own PR (#153):** `NEXT_PROMPT.md` measured 15,466 chars (> the 15,300 triage
-  line), so the settled era was SPLIT not shaved — the s171-s174e milestone lines moved verbatim to
-  `docs/pick-archive.md` §the s171-s174e milestone lines, the footing keeps one archive pointer + the M181
-  lead: 15,466 -> 14,003 chars. The same PR fixed the gate's `skill sync` FAIL: the tracked `skill/` copy
-  was CONTENT-STALE in 4 files (70,000-BYTE cap wording, NEXT_PROMPT char-vs-byte cap, batch-DOC-cost rule,
-  numbers-as-assertions law, bit-leg census + per-site argument-tuple laws). `git log -S<string> -- skill/`
-  returns NOTHING for each, proving the live copy was the newer side — it was rsynced INTO the repo, not the
-  reverse.
-- **Acceptance (ONE invocation, rc 0):** `python3 scripts/m188_m190_uses.py` -> `evidence/m188_m190_uses.txt`
-  (11,794 B) -> `SUMMARY M188a=PASS M188b=PASS M188c=PASS M189a=PASS M189b=PASS M190a=PASS M190b=PASS
-  M190c=PASS`. Two earlier invocations died on MY parser, not the game: a `%`-format with 7 specs and 2 args
-  (traceback rc 1), and `is_store_dest` missing objdump's `dword ptr ds:` spelling (undercounted stores -> 3
-  gates FAIL, and 23/27 RMWs invisible until the byte-op bit shift was fixed). No floor was edited.
-- **M188 — the entry count is private bookkeeping.** FUN_0053a9c0 entry: `edx=ds:0x920720`, `eax=ds:0x9204ac`,
-  `add eax,edx` -> `[ebp-4]` at 0x53a9dc, +1 ONLY when `ds:0x920720 != 0` (test 0x53a9da / je 0x53a9df / inc
-  0x53a9e1 / re-store 0x53a9e2). 43 mentions of `[ebp-4]` = 11 reads + 10 re-stores + 8 inc + 11 dec + 2
-  reg-arithmetic; ZERO `push [ebp-4]`, ZERO scaled/index forms; 11/11 reads are consumed by arithmetic or
-  cmp/test on the register and NONE reaches a call, so the sum is never forwarded; 4 windows name the rank
-  field 0x94d434, the round counter 0x985afc or 0x920720 — the ±1 steps are rank/round-conditioned.
-- **M189 — FUN_004e0260 writes 3 non-spill places** (staging pair `ds:0x99aa1c`/`ds:0x99aa20`, and
-  `[block(fac)+0x0] = ds:0x999fa4` at 0x4e0336) + 1 spill to `[ebp-4]`; everything else leaves through 4
-  emitter calls (0x626634 x2, 0x626581, 0x626ec4); its loop walks 7 records at stride 0x59c = 1436 B (359
-  dwords) while ebx walks the 0x20bc = 8380 B faction blocks (0x94f70c + i*8380). **FUN_005a2930 writes
-  NOTHING**: 0 stores, 5 tests, exactly 5 callees (0x4d9fb0/0x4b6060/0x4b5f90/0x5844f0/0x5a1950), the last
-  reached only when `ds:0x920434` reads 0.
-- **M190 — 23 of the 27 "plain mov" stores at 0x94d448 are the store half of a REGISTER-level bit RMW of the
-  same field**, which qualifies M186's "ZERO bit-setters" (true only of memory-operand `or/and [..+disp],imm`):
-  `or al,0x40` (0x552ce4), `or ecx,0x40020` (0x55487f), `or esi,0xc0020` (0x554d42) SET; `and edx,ecx` with
-  ecx=0xffffffdf at 4 sites and `and al,0xbf` CLEAR. Sets union 0xe0c60, clears union 0x8513aee7. Of the
-  0x40030 mask: 0x20 set at 2 / cleared at 4, 0x40000 set at 2 / cleared at 0, and **0x10 is never set or
-  cleared by any of the 27** — it arrives only via the 4 whole-value assignments (0x52b9c7/0x52b9d0 load
-  `[ebp-0x50]`/`[ebp-0x4c]` in FUN_0052a720; 0x55540a/0x55580f store `lea`-built ADDRESSES).
+Older sessions: `docs/sessions/sessions-175-175.md` (1 sessions). Read it only when a question reaches back before session ## Session 176.
 
 ## Session 176 (2026-10-31) — M191-M193, all PASS (static batch of three, one instrument)
 
@@ -436,3 +401,44 @@ PITFALLS: a staging pair spread over two arrays is not contiguous - read each sl
   #180 (M241) stays open, superseded by this answer. Box: one lifecycle, no relaunch, TracerPid 0.
 - **Pitfall:** a census parser must give EVERY logged line an address token — mine crashed in tally()
   after the measurement was already complete, wasting an acceptance invocation.
+
+## Session 194 (2026-11-01, M243 — the 7 dead write legs of the save codec and their gates; static, zero box time)
+
+- **Acceptance:** `sudo -n python3 scripts/m243_leg_gates.py` → `PASS M243: 4/4 gates` (one
+  invocation) → `evidence/m243_leg_gates.txt`.
+- **Instrument:** the codec's CFG from `scratch/m574/text.txt` (1500 insns, 359 blocks),
+  forward-interpreted under the LIVE state read from `/proc/<pid>/mem` (`ds:0x926a0c`=1 mode,
+  `ds:0x926a14`=0 swap, `ds:0x985dbc`=9, `ds:0x985af0`=72 units, `ds:0x985af4`=18 bases,
+  `ds:0x985ae8`=0x2). Guards are evaluated, edges the state falsifies are pruned, and each dead leg
+  is attributed the pruned edges that are NECESSARY for it (full-CFG reachability with that one edge
+  removed). The dead set comes from two COMMITTED box logs — no new box time:
+  `evidence/m242_b.gdblog` (a save: 23 of 30 write sites hit) and `evidence/m109c4.log` (a load: 23
+  of 30 read sites hit).
+- **G1** the two logs agree on the SAME 7 legs — dead write `596927 596976 5969cb 596af5 597203
+  597384 59762f`, dead read `59692e 59697d 5969d2 596afc 59720a 59738b 597636` (twins by index) ⇒
+  state gates, not mode gates. **G2** the model marks exactly those 7 unreachable and reaches all 23
+  measured-hot legs (37 pruned edges). **G4** `242799-149640 = 242539-149380 = 93159` — the codec
+  moves 93,159 B less than the file in BOTH directions, so the dead legs are not hidden bytes; the
+  7 dead legs' static sizes total 67,716 B, which is why no save is ever that much bigger.
+- **G3, 7/7 named gates, 3 families.** (1) `0x5968b6 je 0x5969f0` on `and eax,0x10000000`
+  (ds:0x985ae8=0x2, swap bit CLEAR): region 0x5968bc-0x5969d7 is the swap-only region and the three
+  PLAIN legs inside it are unreachable in *both* swap states — 0x596927 (0x91f750, 3296 B), 0x596976
+  (0x92046c, 4 B), 0x5969cb (0x92fc50, 192 B) are unreachable code either way. (2) version<3 legacy:
+  0x596a4a `cmp ds:0x985dbc,3`, 0x597165 `cmp eax,ebx` (eax=9), 0x5972d1 `cmp ds:0x985dbc,ebx`
+  (ebx=3, propagated from `mov ebx,0x3` at 0x59715e) — these legs serialize a scratch buffer
+  malloc'd by `call 0x5be090` (0x596ab2 push 0xe5e0 = 58,848; 0x59733c push 48·n): 0x596af5 58,848 B,
+  0x597203 1,664 B, 0x597384 48·n = 3,456 at n=72. (3) feature bit: 0x5975ed `test ds:0x985ae8,0x10`
+  (live 0x2) → 0x59762f writes the 256 B at 0x991698 only when that bit is set.
+- **RETRACTION:** the codec has **30** `call 0x64cc00` read sites, not 28 — M242's armed list missed
+  `0x5979f8`/`0x597a19`, which the M109 load DID execute. Symmetry restored: 30 write / 30 read, 23
+  hot each way, the same 7 dead each way. NAMED's M242 row corrected.
+- **Pitfalls (into the skill's instrument-laws.md):** `test reg,reg` + `je` is TAKEN when the result
+  is ZERO — opposite polarity to `cmp`, so a model reading `je` as "nonzero" routes every leg wrong;
+  `and`/`or`/`add` are flag-SETTERS, not clobbers (as clobbers they make the swap gate unresolvable);
+  a call clobbers only eax/ecx/edx — ebx/esi/edi survive it, which is what makes the handle and the
+  loop constants resolvable across legs.
+- **OPEN:** who writes the 93,159-B tail outside the codec — the codec's handle-carrying callees are
+  the only candidates (0x596fb7 `FUN_005821e0`, 0x596fd0 `FUN_00582260`, 0x5972af `FUN_00571380`,
+  0x597970/0x597991 `FUN_00596620` push `esi`=handle), since every codec leg is now accounted;
+  roles of `FUN_0059a0c0`/`0x59a2b0`/`0x59bec0`. #180 (M241) still open. Box untouched (no gdb, no
+  ptrace; `/proc/mem` reads only).
