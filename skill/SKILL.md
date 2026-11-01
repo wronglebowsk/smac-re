@@ -13,8 +13,9 @@ in-repo under `skill/` — after editing the skill, refresh it there and push. G
 `git add -f` them.
 Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 
-**This file is deliberately small (~18 KB — safe to load whole, and `wc -c` keeps it under the repo's
-70,000-char FAIL).** Depth lives in `references/`; open the ONE file you need:
+**This file is capped at 70,000 BYTES by the repo gate (`wc -c`, not a char count) and sits around 55 KB
+after the session-discipline split — it is safe to load whole, but every append spends headroom, so run
+`python3 scripts/evidence.py budget` before and after one.** Depth lives in `references/`; open the ONE file you need:
 `code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
 `solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
 `production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate,
@@ -87,7 +88,7 @@ the merged title then contradicts the merged commits, and the next session reads
 happens, land a small docs PR that states the correction (cursor, ledger row, one line saying the title
 predates the result) instead of leaving two versions of the truth on `main`.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
-`NEXT_PROMPT.md` (<=15,500 bytes). `scratch/` is gitignored: scratch probes and one-off tools are
+`NEXT_PROMPT.md` (<=15,500 CHARS — `evidence.py budget` counts chars, `wc -c` disagrees). `scratch/` is gitignored: scratch probes and one-off tools are
 NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
 tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, sync it with `~/reverse/smac/skill/` **by content, not mtime**: a `git checkout` resets the repo copy's mtimes and a merged PR can leave it holding a rule the live skill never got — the newer-mtime side is often the content-stale one, and a wholesale copy then silently reverts tracked findings while the gate's `skill sync` check still PASSes. Per file: `diff -rq` both dirs, `git checkout HEAD -- <path>` the repo side, re-apply only your new bullets, copy repo -> live
 Detail: `references/git-workflow.md` — the gate compares only `SKILL.md`, so an edited reference drifts
@@ -132,7 +133,9 @@ milestone per merge and three acceptance invocations, not one question per step.
 - Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file`; in hard-wrapped docs anchor by
   regex `\s+` joins or by INDEX, and write in the SAME cell that measured the result.
 - Every always-loaded doc has its own cap and the tool prints them. When a cap binds a SECOND session, SPLIT:
-  move the settled era into a topical archive, leave the RULES plus a pointer, re-run `budget`.
+  move the settled era into a topical archive, leave the RULES plus a pointer, re-run `budget`. A batch's DOC
+  cost is ~350-700 chars of `NEXT_PROMPT.md` per new milestone block, so measure headroom BEFORE choosing the
+  batch size — a green three-milestone batch can end a session 30 B from the cap.
 - Two sessions can share this repo: commit notes/NAMED/scripts EARLY, keep untracked deliverables outside the
   worktree, and name the owner from the process table before arming a measurement.
 
@@ -142,6 +145,11 @@ milestone per merge and three acceptance invocations, not one question per step.
 Depth: `references/verify-outcome.md` — a gate that counts the harness's own work passes a run that lost the
 game (a 40-turn `PASS` with zero bases); compute candidate predictions from the baseline before the run, refuse a
 shape where your model and the null agree on every candidate, and read the effect back from memory/state.
+**Every number the prose quotes must be COMPUTED by the gate that ships with it.** A finding that says "7 of
+9 sites pass size 0x41" needs the script to count that and FAIL otherwise: a gate measuring something
+adjacent to the sentence stays green while the doc drifts, and the correction then costs its own PR. Put the
+number into the assertion FIRST (print the table, `assert len(...) == N`), then write the sentence from the
+printed table — never from the draft prose.
 **Publishing rule (§Publishing rule): one instrument is a lead, never a finding** — pair it with one that can fail
 DIFFERENTLY (a byte sum vs a poke-and-scan, a log vs a live read-back), assert the state the run leaves behind
 (`TracerPid`, counts, armed count) rather than its exit code, and pre-register the falsifier.
@@ -568,7 +576,8 @@ upkeep is still executing, so the last stores happen after the detach and log NO
 read-back gate on the instrument while every other gate is green
 (`references/instrument-laws.md`).**
 `references/instrument-laws.md` carries the header order, the containment recipe, DictReader trap,
-the watchpoint laws, the value-census laws, the printf-escape law and the event-grouping law.
+the watchpoint laws, the value-census laws, the printf-escape law, the event-grouping law, and the bit-leg
+census / per-site argument-tuple parse rules.
 
 When the target is reached only through a vtable or handler table, the pre-arm check is whether an
 INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr

@@ -119,6 +119,27 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   If `.text` contains no `call DWORD PTR [reg+0xoffset]` for that slot either, the dispatch computes the
   index at run time (message router / widget handler table) and the caller set is NOT resolvable by
   grepping a displacement — say so instead of grepping three more shapes.
+- **Name a pointer argument by reading the string at its VA out of the PE image in Python — no gdb, no box.**
+  Parse the section table from Python (`pe = struct.unpack_from('<I', b, 0x3c)[0]`; section headers start at
+  `pe + 24 + SizeOfOptionalHeader`, with the size read from `pe + 20` — omitting the optional-header size lands
+  the table inside it and yields garbage 'sections'), each entry's `VirtualAddress` is an **RVA** so compare
+  against `0x400000 + va`, and only the first 0x20000 bytes of `.data` ship in the file: file bytes cover VA
+  0x689000-0x6a9000, everything above is BSS with none. Then `b[PointerToRawData + (va - (0x400000 + rva))]`
+  up to the NUL. Run it on every `push 0x…` that feeds a writer call: the pointers pushed before
+  `call 0x6267a5` (the tagged record writer) resolve to the exe's record-type NAME table — GOVOPTIONS,
+  ASSEMBLEGROUP, AIEDITOR, AIEDITOR2, RULES, SCENRULES, SCENVICTORY, TECHRANDOM, EDITVEH around
+  0x6899xx-0x68c8xx / 0x68db28 / 0x691exx — which is what says WHICH record a given staging-slot writer emits
+  (`ds:0x99aa38` is the staging dword all of them pack; `FUN_00518c50` is its set/clear-bit helper, arg1 = bit
+  index). Before calling such a name a FILE tag, grep the save/scenario files for it: these do NOT appear as
+  ASCII in a `.SAV`, which stores numeric tags, so label them the exe's name table.
+- **When a multi-gate census script FAILs, find WHICH gate failed before editing anything.** Do not re-run the
+  whole script on a hunch: `exec` its source up to the driver loop in a probe namespace
+  (`ns = {"__name__": "probe", "__file__": <path>}`, cutting the text at the `only = (sys.argv…` line) and
+  recompute each gate condition, printing one boolean per condition. Two reasons this is the fast route: the
+  driver loop is not `__main__`-guarded, so a plain import runs every milestone and its `sys.exit(1)` raises
+  SystemExit inside your cell — silently, with the prints after it never reached; and a live-box acceptance must
+  never be re-spent on an instrument question. Expect the failing conjunct to be your own expectation rather than
+  the game's — recount the derived number from the table the last run already printed before touching a floor.
 - **Prove an instance exists before spending a live acceptance on a virtual.** Scan every writable
   region of the running process (`grep -E 'rw-p' /proc/<pid>/maps`, read in ~2 MB chunks) for the vptr
   value: zero hits means the class is not instantiated in the current mode, so a window of genuinely
