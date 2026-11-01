@@ -1,0 +1,112 @@
+  [PASS] FUN_005e75e5 zeroes the container header: 3 stores, disps [0,4,8], all immediate 0
+        stores=3 disps=[0, 4, 8] vals=['0x0', '0x0', '0x0']
+  [PASS] FUN_005e7678 (ret 0x4) allocates n*0x18 and writes +0 ptr / +4 capacity / +8 count=0
+        stores=3 disps=[0, 4, 8] callees=['0x5be090', '0x5e760d'] ret=ret 0x4
+  [PASS] FUN_005e774d (ret 0x18) writes the 6 item fields (each from its argument) plus count at +8
+        item+0x00 = arg3 (x)                       store@['0x5e7797'] from 'mov eax,dword ptr [ebp+0x10]' found=True
+        item+0x04 = arg4 (y)                       store@['0x5e779f'] from 'mov edx,dword ptr [ebp+0x14]' found=True
+        item+0x08 = arg3+arg5 (x+w)                store@['0x5e77ab'] from 'add eax,dword ptr [ebp+0x18]' found=True
+        item+0x0c = arg4+arg6 (y+h)                store@['0x5e77b7'] from 'add edx,dword ptr [ebp+0x1c]' found=True
+        item+0x14 = arg1 (the GATE M214 tests ==0) store@['0x5e77c8'] from 'mov edx,dword ptr [ebp+0x8]' found=True
+        item+0x10 = arg2 (the PAYLOAD M214 dispatches) store@['0x5e77da'] from 'mov ecx,dword ptr [ebp+0xc]' found=True
+        stores=7 disps=[0, 4, 8, 8, 12, 16, 20] ret=ret 0x18
+  [PASS] the adder returns -1 when count >= capacity and increments count otherwise
+        mov edx,dword ptr [eax+0x8]=True
+        cmp edx,dword ptr [ecx+0x4]=True
+        or eax,0xffffffff=True
+        add eax,0x1=True
+        mov dword ptr [ecx+0x8],eax=True
+  [PASS] FUN_005e7917 hands item+0x14 to arg3 and item+0x10 to arg4 (M214's gate/payload pair)
+        gate -> out1   mov ecx,dword ptr [ecx+edx*1+0x14]       out-param mov eax,dword ptr [ebp+0x10] publish@['0x5e7979'] found=True
+        payload -> out2 mov ecx,dword ptr [ecx+edx*1+0x10]       out-param mov eax,dword ptr [ebp+0x14] publish@['0x5e7993'] found=True
+  [PASS] image-wide, FUN_005e774d is the ONLY writer of a 24-B item's +0x10/+0x14 (2 stores); every reader is inside the 0x5e7300-0x5e7d00 family
+        writers=['FUN_005e774d x2']
+        readers=['FUN_005e76be x2', 'FUN_005e7861 x2', 'FUN_005e78c7 x1', 'FUN_005e7917 x2', 'FUN_005e79a3 x2', 'FUN_005e7a5f x2']
+  [PASS] FUN_005e78c7 (ret 0x4) scans count-1..0 for item+0x10 == arg1 and calls FUN_005e77e7 on the index
+        callees=['0x5e77e7'] ret=ret 0x4 sites=32
+  [PASS] FUN_005e7665 is a 9-insn wrapper whose only callee is the free+reset FUN_005e760d, 130 call sites
+        insns=9 callees=['0x5e760d'] callsites=130 size=19
+  -> M217 PASS (8/8 gates)
+  [PASS] the 130 clear-sites take the list from this-relative members or stack locals (a MEMBER, not an object)
+        kinds=['loaded=2', 'member=47', 'stack=81'] (sum=130)
+        distinct member displacements=21: ['0x10', '0x12758', '0x12764', '0x15e0', '0x1d670', '0x20f0', '0x214c', '0x25034', '0x28ac', '0x3098', '0x402e4', '0x402f0', '0x4b0', '0x5994', '0xa20', '0xa2c', '0xa48', '0xa50', '0xcc4', '0xe40', '0xfd4']
+        stack locals=81, frame offsets -0x11f78..-0x1a8
+  [PASS] the 21 alloc-sites size each list explicitly (1..0x100 items) on a member or a stack local
+        kinds=['loaded=1', 'member=20']
+        immediate capacities (13 distinct)=['0x1', '0x10', '0x100', '0x18', '0x20', '0x28', '0x30', '0x40', '0x6', '0x64', '0x8', '0xa', '0xc8']
+        register-passed capacities=['FUN_004038c0 ecx', 'FUN_004b0a80 edx', 'FUN_005e8c53 edx', 'FUN_00607eca ecx']
+  [PASS] of the 32 add-sites the gate operand is either an immediate or a register; the non-zero immediates are 1..8 (one owner, its own list) plus 0x45
+        kinds=['loaded=6', 'member=26']
+        gate immediates=['0x0', '0x1', '0x2', '0x3', '0x4', '0x45', '0x5', '0x6', '0x7', '0x8']
+        non-zero-gate sites=9 owners=['FUN_0047c0e0', 'FUN_00486c30']
+        register-gate sites=21
+  [PASS] the dialog's list at this+0x3098: cleared by 2 ctors, allocated 10 items by FUN_005ef957, reset by FUN_005ee350, scanned by the +0x4c dispatcher, and NEVER filled by an add-site
+        clear sites (ctors)=[('0x405fb3', 'FUN_00405f60'), ('0x421eaa', 'FUN_00421da0')]
+        SEH unwind stubs that re-clear the same member=['0x661efb', '0x66f76b']
+        alloc site=[('0x5eff25', 'FUN_005ef957', '0xa')]
+        add sites=0 reset=['0x5ee5fe'] scan=['0x5f6ac5']
+  [PASS] no add-site targets a list at +0x3098: the dialog's list is filled through a register-passed list pointer (loaded-value receivers)
+        add-site member displacements=['0x20f0', '0x214c', '0x402e4', '0x402f0', '0x4b0', '0x5994', '0xa2c', '0xa50', '0xcc4']
+        loaded/reg receivers=6 of 32
+        loaded-receiver fns=['FUN_00403b00', 'FUN_0040f830', 'FUN_004105b0', 'FUN_00411840', 'FUN_00415d10', 'FUN_00607eca']
+  -> M218 PASS (5/5 gates)
+  [PASS] the 9 setters are 42-B THREE-argument, THREE-store triple setters (RETRACTION of M215's 'one-store setters')
+        FUN_0045a4d0 base=0x9978ac size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a500 base=0x9978b8 size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a530 base=0x9978c4 size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a560 base=0x9978d0 size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a590 base=0x9978dc size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a5c0 base=0x9978e8 size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a5f0 base=0x9978f4 size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a620 base=0x997900 size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+        FUN_0045a650 base=0x99790c size=42 insns=18 stores=3 rel-disps=[0, 4, 8] bare=1 frame-reads=['0x10', '0x8', '0xc'] sites=1 slots=[]
+  [PASS] 27 stores write the 27 dwords 0x9978ac..0x997914; 9 of them are the BARE a3 form a bracket-only classifier misses
+        total stores=27 bare-form=9 bracketed=18
+        bare sites=['0x45a4dc', '0x45a50c', '0x45a53c', '0x45a56c', '0x45a59c', '0x45a5cc', '0x45a5fc', '0x45a62c', '0x45a65c']
+  [PASS] every setter has exactly ONE call site and all 9 are inside ONE function FUN_00459bb0 (1722 B, 450 insns, 1 callsite, 0 vtable slots)
+        callers={'FUN_00459bb0': 9}
+        FUN_00459bb0 size=1722 insns=450 sites=1 slots=[]
+  [PASS] the run passes 3 stack args per setter: 3 calls hand over pointers into one 9-entry 0x2c-stride BSS table at 0x774c38, 6 pass (0,0,0)
+        cleanup-after-every-site=['add esp,0xc']
+        table pointers=['0x774c38', '0x774c64', '0x774c90', '0x774cbc', '0x774ce8', '0x774d14', '0x774d40', '0x774d6c', '0x774d98']
+        uniform stride=['0x2c']
+        zero-arg sites=6 (['0x459ef2', '0x459f00', '0x459ee4', '0x459ec8', '0x459ed6', '0x459f0e'])
+  [PASS] both the triples and the table the 3 calls point at are ABOVE the file-mapped image (BSS at runtime) - runtime setter state, not load-time data
+        file-mapped image ends at 0x6ed000; table base 0x774c38, triple base 0x9978ac
+  [PASS] the row class's own vmethod +0x30 (FUN_005fb1a5 of vtable 0x67194c) is a consumer of the 0xae0..0xb48 copy: every site lands on the 4-byte grid inside the 9 triples
+        slots=['0x67194c+48'] sites=55 on-grid=55 groups=['group0:4', 'group1:6', 'group2:5', 'group3:5', 'group4:9', 'group5:8', 'group6:8', 'group7:8', 'group8:2']
+  -> M219 PASS (6/6 gates)
+  [PASS] FUN_005f3f5b is slot +0x15c of exactly one vtable (0x6717cc, 95 slots, 70 installs)
+        slots=['0x6717cc+348'] vt(0x6717cc)=(95, 70)
+  [PASS] it is a 10-case jump-table switch: cmp [ebp-0xf4],0x9 + jmp [ecx*4+0x5f5731] with all 10 targets inside the function
+        table=['0x5f49fd', '0x5f49ff', '0x5f48b0', '0x5f48c5', '0x5f49ff', '0x5f491e', '0x5f49ff', '0x5f49ff', '0x5f49ff', '0x5f4950'] all-inside=True fn=0x5f3f5b..0x5f5731
+  [PASS] the image holds exactly 3 references to 0x5f5a11 and all 3 are stores of it into +0x2210 / +0x2224 / +0x2234, all inside FUN_005f3f5b
+        refs=3 stores=3 dests=['dword ptr [eax+0x2210]', 'dword ptr [edx+0x2224]', 'dword ptr [edx+0x2234]']
+        ['005f48b6 FUN_005f3f5b     mov dword ptr [edx+0x2234],0x5f5a11', '005f490f FUN_005f3f5b     mov dword ptr [eax+0x2210],0x5f5a11', '005f4a70 FUN_005f3f5b     mov dword ptr [edx+0x2224],0x5f5a11']
+  [PASS] those 3 fields are WRITE-ONLY: 0 loads of any width, and no indirect call anywhere carries a displacement in 0x21c0..0x2260
+        refs={'+0x2210': 2, '+0x2234': 1, '+0x2224': 1} loads=0 calls-in-window=[]
+        the 2 +0x2210 refs = the callback store + the clear-loop store in FUN_00406990; push 0x2210 at 0x528000 and cmp eax,0x2210 at 0x52d1bf are the netcode LOCK message id (a value collision, not an offset)
+  [PASS] FUN_00406990 is slot +0x15c of the 4 sibling vtables (396 installs) and calls FUN_005f3f5b twice, so the install runs for both dialog classes
+        slots=['0x67164c+348', '0x6728c0+348', '0x675cc4+348', '0x6776c8+348'] installs=396
+        call sites=['0x406c24', '0x406f26'] in ['FUN_00406990']
+  [PASS] FUN_005f5a11 has 0 direct calls and 0 vtable slots: those 3 stores are its only reachability in the image
+        direct calls=0 slots=[] size=299 insns=83
+  -> M220 PASS (6/6 gates)
+  [PASS] vtable 0x671d94 = 87 slots / 275 installs, 74/87 identical to 0x6717cc, 63/87 to 0x67164c, 71/87 to the row 0x67194c
+        slots=87 installs=275 identical=['0x67164c:63/87', '0x6717cc:74/87', '0x67194c:71/87']
+  [PASS] the panel has NO click dispatcher: +0x4c is FUN_005f84ff (not the click dispatcher FUN_005f6aa3) and +0xa8 is FUN_005f90d7 (not FUN_005f5759)
+        +0x4c=FUN_005f84ff +0xa8=FUN_005f90d7 click-dispatcher vtables=['0x67164c', '0x6717cc', '0x6728c0', '0x675cc4', '0x6776c8']
+  [PASS] the panel ctor FUN_005f6b8c builds 2 row subobjects (+0xaac, +0x15f8) plus the CPane subobject (0x671d8c, 3 slots, 268 installs) at +0x444 and initialises the 0xa14..0xaa0 block
+        size=605 insns=136 sites=16 callees=['0x5e3b80 x1', '0x5faec0 x2']
+        row-ctor calls=['0x5f6bc2', '0x5f6bd4'] vt(0x671d8c)=(3, 268) block stores 0xa14..0xaa0 n=24 distinct=24 highest field store=0x2148
+  [PASS] the panel is 0x214c bytes: two independent containers embed panels at a uniform 0x214c stride (3 in FUN_00409e70, 4 in FUN_004947c0), row 2 ends at 0x15f8+0xb4c = 0x2144 and the ctor still writes +0x2144/+0x2148
+        ["FUN_00409e70 disps=['0x40884', '0x429d0', '0x44b1c'] deltas=['0x214c']", "FUN_004947c0 disps=['0xa78c', '0xc8d8', '0xea24', '0x10b70'] deltas=['0x214c']"]
+        uniform-0x214c containers=['FUN_00409e70', 'FUN_004947c0'] highest ctor store=0x2148 row2 end=0x2144
+  [PASS] the two +0xa8 implementations differ: the panel's clears [this+0xa38], unlinks itself through the 0xa20/0xa24/0xa2c link block and dispatches [reg+0xb8]; the dialog's writes the RESULT field [this+0xa40] (4 stores) and never touches 0xa38/0xa2c
+        FUN_005f90d7 stores={'0xa38': 1, '0xa2c': 2} insns=142 indirect=7 slots=['0x671d94+168']
+        FUN_005f5759 stores={'0xa40': 4} insns=98 indirect=3 slots=['0x67164c+168', '0x6717cc+168', '0x6728c0+168']
+  [PASS] the dialog class ctor FUN_00405ef0 embeds exactly one panel, at this+0x3230
+        sites=['0x405f29'] disp=12848
+  -> M221 PASS (6/6 gates)
+
+SUMMARY M217=PASS M218=PASS M219=PASS M220=PASS M221=PASS (31/31 gates)
