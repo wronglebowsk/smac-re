@@ -119,6 +119,79 @@ def gdb_script():
     return "\n".join(L) + "\n"
 
 
+def frame_diff(a, b):
+    from PIL import Image, ImageChops
+    return ImageChops.difference(Image.open(a), Image.open(b)).getbbox() is not None
+
+
+def open_browser(tag):
+    """Get to the SAVE browser with the path typed, but the write NOT yet done.
+
+    Ctrl+S is the GAME submenu's own hotkey for Save Game... (read off the submenu frame
+    m241_a_sub.png), so it skips the dropdown. Verified by FRAME DIFF, not OCR: tesseract renders
+    the submenu's small type as garbage ('Load Game...' -> 'lad'), so an OCR 'save' check aborts a
+    route that is in fact open — that is what killed invocation 1."""
+    P.WIN = P.find_window()
+    if not P.WIN:
+        return False, "no game window"
+    P.focus()
+    a = P.freeze(tag + "_f0")
+    P.sh("xdotool key ctrl+s")
+    time.sleep(2.2)
+    if not frame_diff(a, P.freeze(tag + "_f1")):
+        P.click(MENU)
+        time.sleep(2.0)
+        if not frame_diff(a, P.freeze(tag + "_f2")):
+            return False, "neither Ctrl+S nor a MENU click changed the frame"
+        P.click(GAME_ROW)
+        time.sleep(1.5)
+        if not frame_diff(a, P.freeze(tag + "_f3")):
+            return False, "GAME row click did not change the frame"
+        P.click(SAVE_ROW)
+        time.sleep(2.2)
+        if not frame_diff(a, P.freeze(tag + "_f4")):
+            return False, "Save Game row click did not change the frame"
+    P.click(NAME_BOX)
+    time.sleep(0.8)
+    P.sh("xdotool key End")
+    P.sh("xdotool key --repeat 200 BackSpace")
+    P.sh('xdotool type --delay 25 "%s"' % SAVE_NAME)
+    time.sleep(0.8)
+    return True, "browser open, name typed"
+
+
+def press_ok_and_wait(tag, before, t0):
+    """The ONE trigger action: click OK (330,327). The save landing on disk IS the trigger proof."""
+    P.click(SAVE_OK)
+    nf = []
+    for _ in range(25):
+        time.sleep(1.0)
+        nf = new_saves(before)
+        if nf:
+            break
+        b = body(P.freeze(tag + "_wait"))
+        if "exist" in b or "overwrite" in b or "really" in b:
+            P.key("Return")
+    return nf, ("ok" if nf else "no .SAV appeared within 25 s of the OK click")
+
+
+def close_leftovers(tag):
+    """Escape ONCE closes a still-open browser; a bare-map Escape raises the quit prompt, so look
+    for it and Escape again (m54a_load: 'really ... quit' -> Escape = 'Oops, no, wait!', never OK)."""
+    P.key("Escape")
+    time.sleep(1.2)
+    b = body(P.freeze(tag + "_close"))
+    if "really" in b and "quit" in b:
+        P.key("Escape")
+        time.sleep(1.2)
+        b = body(P.freeze(tag + "_close2"))
+    return b
+
+
+def all_savs():
+    return glob.glob(os.path.join(ROOT, "programs", "saves", "**", "*.SAV"), recursive=True)
+
+
 def new_saves(before):
     now = set(glob.glob(os.path.join(ROOT, "programs", "saves", "**", "*.SAV"), recursive=True))
     return sorted(now - before)
@@ -126,57 +199,6 @@ def new_saves(before):
 
 def body(png):
     return " ".join(w[0] for w in P.ocr(png)).lower()
-
-
-def do_save(tag):
-    """The measured M54b save route: MENU (61,369) -> GAME (30,186) -> Save Game... (200,331) ->
-    browser NAME (406,304) -> type the full Z:\\ path -> OK (330,327). Each step is verified by OCR
-    before the next click, so a dead MENU never sends map clicks into the tile under it."""
-    t0, before = time.time(), set(glob.glob(os.path.join(ROOT, "programs", "saves", "**", "*.SAV"),
-                                            recursive=True))
-    P.WIN = P.find_window()
-    if not P.WIN:
-        return [], t0, "no game window"
-    P.focus()
-    P.click(MENU)
-    time.sleep(2.0)
-    b = body(P.freeze(tag + "_menu"))
-    if "game" not in b:
-        P.key("Escape")
-        time.sleep(1.0)
-        return [], t0, "MENU click opened nothing (body=%s)" % b[:70]
-    P.click(GAME_ROW)
-    time.sleep(1.5)
-    b = body(P.freeze(tag + "_sub"))
-    if "save" not in b:
-        P.key("Escape")
-        time.sleep(0.8)
-        P.key("Escape")
-        time.sleep(0.8)
-        return [], t0, "GAME row opened no submenu (body=%s)" % b[:70]
-    P.click(SAVE_ROW)
-    time.sleep(2.5)
-    b = body(P.freeze(tag + "_browser"))
-    if "continue" in b and "name" not in b:          # a first-view TOUR popup ate the click
-        P.click((325, 585))
-        time.sleep(1.5)
-    P.click(NAME_BOX)
-    time.sleep(0.8)
-    P.sh("xdotool key End")
-    P.sh("xdotool key --repeat 200 BackSpace")
-    P.sh('xdotool type --delay 25 "%s"' % SAVE_NAME)
-    time.sleep(0.8)
-    P.click(SAVE_OK)
-    nf = []
-    for _ in range(20):
-        time.sleep(1.0)
-        nf = new_saves(before)
-        if nf:
-            break
-        b = body(P.freeze(tag + "_wait"))
-        if "exist" in b or "overwrite" in b:
-            P.key("Return")
-    return nf, t0, "ok"
 
 
 def timelines(rows):
@@ -204,21 +226,31 @@ def main():
     print("gate ds:0x91c62c=%d (FUN_00512020 skips the GOVERNORCONTROL record unless it is 0)"
           % base[FIELD_NAMES.index("gate91c62c")], flush=True)
 
+    beforeA, tA = set(all_savs()), time.time()
+    okA, msgA = open_browser("m241_a")
+    if not okA:
+        raise SystemExit("BLOCKER phase A: " + msgA)
     stop, rows, cnt = threading.Event(), [], [0]
     threading.Thread(target=lambda: cnt.__setitem__(0, run_sampler(fd, stop, rows)), daemon=True).start()
-    time.sleep(1.0)
-    nfA, tA, msgA = do_save("m241_a")
+    time.sleep(0.5)
+    nfA, msgA2 = press_ok_and_wait("m241_a", beforeA, tA)
     time.sleep(1.0)
     stop.set()
     time.sleep(0.3)
+    close_leftovers("m241_a")
     tl = timelines(rows)
     churn = [FIELD_NAMES[i] for i in range(16) if i != 7 and len(tl[i]) >= 2]
-    print("PHASE A (no tracer): %s  samples=%d change-rows=%d" % (msgA, cnt[0], len(rows)), flush=True)
+    print("PHASE A (no tracer): %s / %s  samples=%d change-rows=%d"
+          % (msgA, msgA2, cnt[0], len(rows)), flush=True)
     for f in nfA:
         print("  save file %s  %d B  mtime +%.1f s" % (f, os.path.getsize(f), os.path.getmtime(f) - tA))
     print("  staging fields that CHANGED value (all but +1c): %s" % (churn or "NONE"))
     print("  +1c (ds:0x99aa38) timeline: %s" % show(tl[7], 8), flush=True)
 
+    okB, msgB = open_browser("m241_b")          # navigate BEFORE arming: only the write is traced
+    if not okB:
+        raise SystemExit("BLOCKER phase B: " + msgB)
+    beforeB, tB = set(all_savs()), time.time()
     gpath = os.path.join(ROOT, "scratch", "m241_b.gdb")
     lpath = os.path.join(ROOT, "scratch", "m241_b.gdblog")
     open(gpath, "w").write(gdb_script())
@@ -240,7 +272,7 @@ def main():
     stop2, rows2, cnt2 = threading.Event(), [], [0]
     threading.Thread(target=lambda: cnt2.__setitem__(0, run_sampler(fd, stop2, rows2)), daemon=True).start()
     time.sleep(0.5)
-    nfB, tB, msgB = do_save("m241_b")
+    nfB, msgB2 = press_ok_and_wait("m241_b", beforeB, tB)
     time.sleep(2.0)
     stop2.set()
     os.kill(g.pid, signal.SIGINT)
@@ -257,8 +289,9 @@ def main():
     warns = [l for l in txt.splitlines() if re.search(r"warning|error:|Cannot access|cannot insert", l, re.I)]
     tracer = next(l.split()[1] for l in open("/proc/%d/status" % pid) if l.startswith("TracerPid"))
     tl2 = timelines(rows2)
-    print("PHASE B (tracer): %s  gdb hits=%d  sampler samples=%d  TracerPid after detach=%s"
-          % (msgB, len(hits), cnt2[0], tracer), flush=True)
+    close_leftovers("m241_b")                   # AFTER the detach: one Escape, quit-prompt-guarded
+    print("PHASE B (tracer): %s / %s  gdb hits=%d  sampler samples=%d  TracerPid after detach=%s"
+          % (msgB, msgB2, len(hits), cnt2[0], tracer), flush=True)
     for f in nfB:
         print("  save file %s  %d B  mtime +%.1f s" % (f, os.path.getsize(f), os.path.getmtime(f) - tB))
     sh = {}
@@ -280,11 +313,14 @@ def main():
     G2 = len(churn) >= 2
     G3 = armed and not warns and tracer == "0" and os.path.exists("/proc/%d" % pid)
     G4 = len(hits) >= 1
-    G5 = nstore >= 1 or (G1 and G2 and G4)
-    verdict = ("CONFIRMED: a save DOES run stores to ds:0x99aa38 (%d stores, %s)" % (nstore, byfn)
-               if nstore else
-               "REFUTED for this trigger: 0 stores at the 33 sites during a traced save that DID "
-               "write records (control G1/G2/G4) — so the writer for a save is not in this site set")
+    G5 = (nstore >= 1 and G1) or (nstore == 0 and G1 and G2 and G4)
+    verdict = (("CONFIRMED: the traced save ran %d stores to ds:0x99aa38 at %d of %d census sites %s"
+                % (nstore, len(sh), len(STORES), byfn)) if (nstore and G1) else
+               ("REFUTED for this trigger: 0 stores at the 33 sites during a traced save that DID "
+                "write records (G1/G2/G4 passed) — no writer in this site set fires on a save"
+                if G5 else
+                "UNDECIDED: the traced window held no COMPLETED save (G1) — the trigger never "
+                "fired, so neither side of M181 is settled"))
     print("VERDICT: " + verdict)
     names = ["G1 trigger: a new .SAV > 20 KB appeared in BOTH save windows",
              "G2 sampler control: >=2 non-+1c staging fields changed value in the save window",
