@@ -576,12 +576,14 @@ the static .text dump + index.csv containment + terran.exe's own section table f
 - **M179 — ds:0x99aa38 is the save band's STAGING slot, not a record's flag.** 33 stores in 14 functions (my
   first hand census said 28/10: objdump prints `DWORD PTR`/`DS:` in caps, so a `[0-9a-f]+` class stops at the
   `x` of `0x…` and a case-sensitive `^mov dword ptr` misses stores). 9 of the 13 stores outside FUN_0041a8f0 sit
-  directly before `call 0x6267a5` with the push triple (0, 0x41, <name ptr>); those name pointers read out of
+  directly before `call 0x6267a5`, whose args are (name, size, extra) and whose SIZE IS NOT UNIFORM — 7 pass
+  0x41, the TECHRANDOM pair passes 0x1 (0x510289 / 0x5170ae) — and those name pointers read out of
   terran.exe as ASSEMBLEGROUP 0x68c774, AIEDITOR 0x68c80c, AIEDITOR2 0x68c818, RULES 0x68c824 AND 0x691e30,
-  SCENRULES 0x68c82c, SCENVICTORY 0x68c838, TECHRANDOM 0x68db28 (x3), GOVOPTIONS 0x6899ec, EDITVEH 0x68c87c —
+  SCENRULES 0x68c82c, SCENVICTORY 0x68c838, TECHRANDOM 0x68db28 (x3), GOVOPTIONS 0x6899ec, and EDITVEH 0x68c87c (a SECOND record write in FUN_004dde00,
+  not the call after its store) —
   the exe's record-type NAME table (none of them appears as ASCII in the save file, which stores numeric tags).
-  Neighbours ds:0x99aa1c / ds:0x99aa20 carry 637 stores each (the 0x626634 write-bytes args), so this is that
-  staging record's third field. FUN_00518c50 is a set/clear-scratch-BIT helper (`shl 1,cl; or ds:0x99aa38,eax` /
+  Neighbours ds:0x99aa1c / ds:0x99aa20 carry 637 stores each (the 0x626634 write-bytes args), so this is one field of that
+  staging record. FUN_00518c50 is a set/clear-scratch-BIT helper (`shl 1,cl; or ds:0x99aa38,eax` /
   `not edx; and eax,edx; mov ds:0x99aa38,eax`) indexed by arg1. All 6 writers with >= 12 legs read the scratch in
   ascending order; FUN_004dc5f0 and FUN_0057c550 share their 18-leg unpack sequence LEG FOR LEG (18/18 identical
   destination operand+bit pairs) while packing from ds:0x985ac4's low band + ds:0x985ae8 bits 23/24;
@@ -595,3 +597,18 @@ the static .text dump + index.csv containment + terran.exe's own section table f
   x5 = 2 zero tests falling back to ds:0x9204c8, a loop bound, and TWO `cmp ,0x2; jl` gates at 0x548b1e/0x548f6b).
   ds:0x9204b0: 5 refs, 2 writers (0x5321a4 exports [block+0x94d4a8]; 0x54d121 re-primes it with ds:0x985afc) and
   3 readers — 0x5406b4 computes the AGE as round - stamp, 0x546d44 tests `jl`, 0x54bf5f tests `jle`.
+
+
+## Session 174b (2026-10-31) — process pass (no new findings; one claim corrected)
+
+- **SKILL.md cap triage (it sat 36 B under its 70,000-BYTE hard cap).** Split, not shaved: the two procedural
+  subsections "The context ceiling is part of the task" and "Close before you hand off" moved VERBATIM into
+  `references/session-discipline.md`; SKILL.md keeps a 6-bullet RULES digest (budget bands, 3-invocation cap,
+  close order, doc-write laws, split-dont-shave, sibling sessions) plus the pointer. 69,964 -> 54,902 bytes,
+  ~15.1 KB of headroom; the reference carries the full trap text. Skill synced to `skill/` (gate: skill sync PASS).
+- **The s174 writer-call claim was overdrawn and is now corrected + asserted.** The call is `(name, size, extra)`
+  and the sizes are NOT uniform: of the 9 stores that feed `0x6267a5`, 7 pass size **0x41** and the TECHRANDOM
+  pair passes **0x1** (0x510289 / 0x5170ae), all with extra=0; EDITVEH is a SECOND record write in FUN_004dde00,
+  not the call that follows its store (that store's next call is 0x64b9e0). `m178_m180_scratchband.py` now prints
+  the triple table and gates `0x41 x7, 0x1 x2` — re-run: `SUMMARY M178=PASS M179=PASS M180=PASS`, rc 0.
+  SESSION_NOTES/NAMED.md M178-M180 and NEXT_PROMPT's pick paragraph carry the corrected text.

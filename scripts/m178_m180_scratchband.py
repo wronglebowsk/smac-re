@@ -404,6 +404,28 @@ def m179():
     sizes = sorted(set(norm(s) for pc, f in st for _q, s in INS[POS_OF_PC[pc] - 8:POS_OF_PC[pc]]
                        if norm(s).startswith("push 0x")))
     print("M179 push immediates preceding the stores: %s" % sizes)
+    triples = []
+    for pc, f in st:
+        if next_call(pc) != "0x6267a5":
+            continue
+        j = None
+        for k in range(POS_OF_PC[pc] + 1, POS_OF_PC[pc] + 40):
+            if norm(INS[k][1]).startswith("call 0x6267a5"):
+                j = k
+                break
+        if j is None:
+            continue
+        pushes = [m.group(1) for m in (re.match(r"^push\s+(0x[0-9a-f]+)$", norm(x))
+                                       for _p, x in INS[j - 14:j]) if m]
+        if len(pushes) >= 3:
+            extra, size, name = pushes[-3:]
+            triples.append((f, at(pc1(name)), size, extra))
+    print("M179 the writer call is (name, size, extra) - stores that feed 0x6267a5:")
+    for f, nm, size, extra in triples:
+        print("   %-14s name=%-14s size=%-5s extra=%s" % (f, nm, size, extra))
+    n41 = sum(1 for x in triples if x[2] == "0x41")
+    n1 = sum(1 for x in triples if x[2] == "0x1")
+    print("M179 sizes at those 9 calls: 0x41 x%d, 0x1 x%d" % (n41, n1))
     sav = subprocess.run(["bash", "-lc",
                           "cd %s && for t in GOVOPTIONS ASSEMBLEGROUP AIEDITOR AIEDITOR2 FACOBJ; do "
                           "for f in *.SAV programs/*.SAV programs/*.SC maps/*.MP; do [ -f \"$f\" ] || continue; "
@@ -429,12 +451,14 @@ def m179():
        len(st) == 33 and len(by_fn) == 14 and all(band_ok.values()) and max(bands["FUN_0041a8f0"]) == 18
        and all(asc.values()) and len(d5) == 18 and same == 18 and len(c1c) >= 5 and len(sign) == 2
        and helper_ok and tags.get("FUN_0041a8f0") == {"GOVOPTIONS@0x6899ec"} and len(tags) == 12
-       and len(calls.get("0x6267a5", [])) == 9 and all(v > 500 for v in staging.values()),
+       and len(calls.get("0x6267a5", [])) == 9 and len(triples) == 9 and n41 == 7 and n1 == 2
+       and all(v > 500 for v in staging.values()),
        ("{sc} is the SAVE BAND'S STAGING DWORD, not one record's flag: {n} stores in {nf} functions. Its "
         "neighbours ds:0x99aa1c / ds:0x99aa20 carry {s1} / {s2} stores game-wide (the 0x626634 write-bytes "
         "arguments), and this slot is that staging record's third field: {nrec} of the {nout} stores outside "
         "FUN_0041a8f0 sit directly before `call 0x6267a5` (the tagged record writer) with the push triple "
-        "(0, 0x41, <name ptr>); the name pointers pushed with the stores read out of terran.exe as {tags} - "
+        "(name, size, extra), and the sizes are NOT uniform: 7 pass 0x41 and the TECHRANDOM pair passes "
+        "0x1 (0x510289 / 0x5170ae); the name pointers read out of terran.exe as {tags} - "
         "one record type per writer, all of them packing the SAME staging slot (the names are the exe's "
         "record-type NAME table: none appears as ASCII in the save file on disk, which stores numeric tags). "
         "FUN_00518c50 is a set/clear-scratch-BIT helper indexed by arg1 (`mov eax,1; shl eax,cl; or "

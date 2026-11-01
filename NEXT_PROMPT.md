@@ -68,14 +68,14 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   6 `sub` age tests consume it, and 0x569401 (`cmp edx,0x10; jl`) SKIPS a call when the stamp is fresh.
 - - **s174 (M178-M180, all PASS) named the staging slot.** ds:0x99aa38 is the tagged-record STAGING dword (third
   field of the ds:0x99aa1c/0x99aa20 pair, 637 stores each): 33 stores in 14 functions, 9 of the 13 outside
-  FUN_0041a8f0 sit directly before `call 0x6267a5` with (0, 0x41, <name ptr>) and those names read out of
+  FUN_0041a8f0 sit directly before `call 0x6267a5` (args: name, size, extra — 7 pass 0x41, TECHRANDOM 0x1) and those names read out of
   terran.exe as GOVOPTIONS 0x6899ec, ASSEMBLEGROUP 0x68c774, AIEDITOR 0x68c80c, AIEDITOR2 0x68c818, RULES
   0x68c824 + 0x691e30, SCENRULES 0x68c82c, SCENVICTORY 0x68c838, TECHRANDOM 0x68db28, EDITVEH 0x68c87c (the
   exe's record-type NAME table - not file bytes). FUN_00518c50 = set/clear scratch BIT (arg1 index). Band =
   scratch bits 0..17 (FUN_0041a8f0 18); FUN_004dc5f0 == FUN_0057c550 unpack leg-for-leg 18/18; FUN_004dc100
   packs the M164 struct with 0x94d80c as a SIGN PAIR. ds:0x920720 = the aggregator's bit-25-CLEAR count (AI-hub
   loop bound + two `cmp ,0x2` gates); ds:0x9204b0 = the stamp export, age-tested as ds:0x985afc - stamp.
-  Detail: `NAMED.md` M178-M180, `evidence/m178_m180_scratchband.txt`, `scripts/m178_m180_scratchband.py`.
+  Detail: NAMED.md M178-M180 + evidence/m178_m180_scratchband.txt.
 - Pick from: what the SAME writer calls put in ds:0x99aa1c / ds:0x99aa20 (the staging pair's other two fields);
   the whole-value writers (FUN_004d9ae0 12-iteration bit loop, FUN_004dc390 12-leg RESTORER, FUN_004dde00,
   FUN_00512b40) vs the leg packers; FUN_0053a9c0's use of the count (it reads 0x9204ac and 0x920720 together at
