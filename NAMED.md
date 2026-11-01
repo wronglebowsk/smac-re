@@ -535,7 +535,7 @@ called with indices 1/2/3 (no mask built); FUN_004dde00 = tests of [esi+0x93327c
 +0x0/+0x4) but makes 10 calls incl. 0x626634 at 0x530fc0. FUN_00535940 = the aggregate scratch RESET: 47 stores, 13 to
 -1 (0x9204c0/0x9206f4/0x9206e8/0x9206e4/0x920774/0x9204d8/0x9204cc/0x920750), 12 to 0 (0x9204b8/0x920710/0x920770/
 0x9204e0/0x920490/0x9206ec), + 0x5a6cd0 x2.
-**M186** `[fac*4+0x94d448]` ASSIGNED not bit-set: 27 plain-mov stores in 8 functions (FUN_005551e0 x15, FUN_00552970 x5,
+**M186** `[fac*4+0x94d448]`: 27 plain-mov stores in 8 functions, ZERO memory-operand `or/and [..+disp],imm` -- **QUALIFIED by M190**: 23 of the 27 are the store half of a REGISTER-level bit RMW of the same field (a copied register or'd/and'ed then written back), so the field IS bit-set; only 4 are whole-value assignments and bit 0x10 arrives only through those. Stores in 8 functions (FUN_005551e0 x15, FUN_00552970 x5,
 FUN_0052a720 x2 + 5 singles), ZERO or/and/add/sub **memory-operand** sites (M190: 23 of those 27 movs ARE
 register-level bit RMWs, so the field IS bit-set/cleared); 653 refs, byte tests 0x1/0x10/0x20/0x7/0x2/0x8/0x3; the 0x40030
 mask tested at exactly 2 sites (0x535ccb in FUN_00535c60, 0x4f2bba in FUN_004f26e0).
