@@ -9,7 +9,8 @@ Read the archive only for the section picked.
 The main model is also Hermes' compressor, and its summaries die on the output cap (s113/s114 hit 259,232/262,144
 mid-sentence). **Whatever is not finished by ~150k tokens is not finished at all.** Counted in TOOL CALLS:
 - **0-6** brief, this file, notes tail, `accept_ready.py`. No shard reading "for background".
-- **6-30** the milestone, one variable at a time. **At call 25 `git add -A && git commit`** — the next turn may be the
+- **6-30** the milestone, one variable at a time. **At call 15 `git add -A && git commit`** (s187: a fire hit 167k
+  context at call 25 with zero commits — a fire costs ~7k tokens per call) — the next turn may be the
   truncated one, so every later step must leave a committed file.
 - **30-40** STOP MEASURING: an acceptance that is not green IS the finding — write the blocker and the failing number,
   merge nothing, close.

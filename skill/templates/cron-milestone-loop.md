@@ -158,3 +158,16 @@ Derive the mode from git, never from a counter file — a counter drifts, gets h
 sibling's `git checkout`, while `git log` on `origin/main` cannot. Build fires need no box time, never import the
 harness (`sim/` may reuse the decoders, never gdb/Wine/`/proc`), and a rung is done only when its command prints
 PASS against a recorded trace — a mismatch is the finding, never a reason to edit the trace.
+
+## Two model-level defects this loop produces (s187, observed live on qwen125b)
+
+- **`write_file` rejected as "missing required field 'path'"** — on a large write the model emits `content` first and
+  drops the `path` key entirely; the sanitizer rejects the call and nothing lands. It happened TWICE in one fire, both
+  times on a 13k-token write. Fix in the prompt: `"path"` is the FIRST key of every write, and no single write goes
+  over ~4 KB (split a big script into appends). This is a model quirk, not a context limit — the completion was well
+  under `max_tokens`.
+- **~7k context per tool call** — a fire reaches the ~150k budget law around call 20, not call 30. So the first
+  checkpoint commit belongs at **call 15**, not 25: an observed fire sat at 167k context on call 25 with ZERO commits,
+  and once it was steered to `milestone.py start` + commit it still closed cleanly (M227-M230, 12/12 gates, merged).
+  Steering works — Hermes injects the message after the next tool call — and the recovery path is: start the branch,
+  write the one census script for the questions already answered, commit, close.
