@@ -154,9 +154,8 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
     MUST carry `handle SIGUSR1 nostop noprint pass` (SIGUSR2/SIGPIPE too) and a ~400-`continue` tail. A bp on a function
     that serves the whole game (the four read wrappers) costs one ptrace stop per read: 25,957 stops starved the load
     driver to ZERO loads — filter by FILE* (`set $savefile` at the loader's entry).
-20-22. A byte-field bit is set with BYTE/register ops a dword-immediate scan cannot see; a
-    "stride conflict" is usually ONE multiply read in two pieces; a global with ZERO writers
-    is LOAD-TIME data — moved VERBATIM to `docs/pick-archive.md` §s198.
+20-22. byte-field BIT OPS vs dword scans; a "stride conflict" is ONE multiply read in two pieces; a
+    global with ZERO writers is LOAD-TIME data — verbatim: `docs/pick-archive.md` §s198.
 23. A VALUE SAMPLER IS NOT A STORE CENSUS (a same-value store leaves no trace) and a census PARSER is not a
     log — VERBATIM laws: skill `references/instrument-laws.md` (M241/M242, s192-s193).
 
