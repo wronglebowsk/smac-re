@@ -770,6 +770,24 @@ so the triple is unverifiable from the box until a dialog is open.
 | field / artifact | finding | conf | evidence |
 |---|---|---|---|
 | `0x597ce0` = `save_write_file(path)` | 363 B: `FUN_0063c610(path, ds:0x692fa0)` open (→ return 1 at 0x597dcf), `FUN_00570640(s_TERRAN ds:0x692fa4)` magic, `FUN_0064c9a0(&local_c = 0x56, 4, 1)` version, `FUN_00596850(handle, 1)` body, 4-byte timeGetTime, `FUN_0064c730` fclose; `FUN_0064d710(path)` DELETES the file on any non-zero code; returns 0 = ok | V | `fn.py 0x597ce0` (shard_015), `evidence/m242_save_write.txt` ENT/INT lines |
-| `0x596850` = `save_codec(handle, mode)` | **both directions in one function**: 0x59686b stores mode → `DAT_00926a0c`; every leg is `cmp eax,ebx / je` → `call 0x64cc00` (read) else `call 0x64c9a0` (write). 30 write / 28 read sites + 28+28 swap siblings `0x596470`/`0x596540` gated on `DAT_00985ae8 & 0x10000000`. LIVE on a save: mode=1, header leg `dst=0x985ab8 sz=796 n=1`, 23 hits at 23 of 30 write sites, 0 at 28 read, 0 swap | V | gates G3-G4, `evidence/m242_save_write.txt` |
+| `0x596850` = `save_codec(handle, mode)` | **both directions in one function**: 0x59686b stores mode → `DAT_00926a0c`; every leg is `cmp eax,ebx / je` → `call 0x64cc00` (read) else `call 0x64c9a0` (write). 30 write / **30** read sites (M243: the M242 armed list missed `0x5979f8`/`0x597a19`) + 28+28 swap siblings `0x596470`/`0x596540` gated on `DAT_00985ae8 & 0x10000000`. LIVE on a save: mode=1, header leg `dst=0x985ab8 sz=796 n=1`, 23 hits at 23 of 30 write sites, 0 at 28 read, 0 swap; the 7 dead legs and their gates: M243 block below | V | gates G3-G4, `evidence/m242_save_write.txt`, `evidence/m243_leg_gates.txt` |
 | save-file prefix | file[0:8] `TERRAN\0\x1a`, file[8:12] version 0x56 (86), the 796-B `DAT_00985ab8` block VERBATIM at file offset **12** (year u16 at 0x54 = block+0x48) — corrects SAVE_FORMAT.md "796 B at offset 0" | V | gate G5, both saves |
 | writer's 8 call sites | 0x521697 turn-loop autosave (after the "Writing save file" push 0x521688), 0x52221e end-turn, 0x598c73 UI Save browser (`FUN_005985e0`; prints SAVE FAILED via `FUN_00626634` when the writer returns ≠ 0), 0x59a121/0x59a166/0x59a1bc (`FUN_0059a0c0`), 0x59a372, 0x59bf46. LIVE: a UI save runs 0x598c73 exactly once | V (sites, and the UI route), M (roles of `0x59a0c0/0x59a2b0/0x59bec0`) | `evidence/m242_save_write.txt` CALLER |
+
+## M243 (s194, PASS 4/4) — the 7 dead write legs of `FUN_00596850`, and the 3 gates that kill them
+
+| leg | what it would write | gate (branch + guard, live value) | family | conf |
+|---|---|---|---|---|
+| `0x596927` / read twin `0x59692e` | 3,296 B at `0x91f750` | `0x5968b6 je 0x5969f0` on `and eax,0x10000000` (ds:0x985ae8=0x2 → swap bit CLEAR) | swap-only region; the PLAIN twin inside it is unreachable in **both** swap states = dead code | V |
+| `0x596976` / `0x59697d` | 4 B at `0x92046c` | same `0x5968b6` | same | V |
+| `0x5969cb` / `0x5969d2` | 192 B at `0x92fc50` | same `0x5968b6` | same | V |
+| `0x596af5` / `0x596afc` | 58,848 B from the malloc'd buffer (`edi`, `call 0x5be090` at `0x596ab2` push `0xe5e0`) | `0x596a4a jl 0x596aad` on `cmp ds:0x985dbc, 3` (live 9) | version < 3 legacy path | V |
+| `0x597203` / `0x59720a` | 1,664 B from `edi` | `0x597165` on `cmp eax, ebx` (eax=ds:0x985dbc=9, ebx=3 from `mov ebx,0x3` at 0x59715e) | version < 3 legacy path | V |
+| `0x597384` / `0x59738b` | 48·n B from `edi` (n = `ds:0x985af0` = 72 → 3,456; malloc `call 0x5be090` at `0x59733c`) | `0x5972d1 jl 0x597335` on `cmp ds:0x985dbc, ebx` (9 vs 3); `0x597335` has exactly ONE incoming edge | version < 3 legacy path | V |
+| `0x59762f` / `0x597636` | 256 B at `0x991698` | `0x5975ed je` on `test ds:0x985ae8, 0x10` (live 0x2 — bit clear) | feature bit in the same header global that holds the swap bit | V |
+
+Dead in BOTH directions (the write sites and their read twins are the same 7 legs) ⇒ these are
+state/version gates, not mode gates. Static sizes of the 7 = 67,716 B; the tail the codec does not
+move is 93,159 B on a save AND on a load (`242799-149640 = 242539-149380`). Instrument:
+`scripts/m243_leg_gates.py` (CFG of 0x596850-0x597a6b, live guards from `/proc/mem`, gates from
+`evidence/m242_b.gdblog` + `evidence/m109c4.log`), run output `evidence/m243_leg_gates.txt`.

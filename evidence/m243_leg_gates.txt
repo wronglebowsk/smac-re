@@ -1,0 +1,15 @@
+M243 acceptance run. cmd: sudo -n python3 scripts/m243_leg_gates.py  (evidence/m242_b.gdblog = the save census raw log, evidence/m109c4.log = the load leg census)
+codec 0x596850-0x597a6b: 1500 insns, 359 blocks; live mode ds:0x926a0c=1 swap ds:0x926a14=0 ds:0x985dbc=9 ds:0x985af0=72 ds:0x985af4=18
+logs: save hot 23/30 write sites (file 242799 B); load hot 23 read sites sum 149380 (file 242539 B)
+PASS G1 the two box logs agree on the SAME 7 legs (write sites and their read twins)  dead W 596927 596976 5969cb 596af5 597203 597384 59762f | dead R 59692e 59697d 5969d2 596afc 59720a 59738b 597636
+PASS G2 the CFG read under the LIVE state makes exactly those 7 unreachable and reaches all 23 the box measured hot  model dead 596927 596976 5969cb 596af5 597203 597384 59762f ; pruned edges 37
+  DEAD 0x596927 args 0x91f750 0xce0 0x1 esi gates 0x5968b6 and eax, 0x10000000  0x2 vs 0x10000000
+  DEAD 0x596976 args 0x92046c 0x4 0x1 esi gates 0x5968b6 and eax, 0x10000000  0x2 vs 0x10000000
+  DEAD 0x5969cb args 0x92fc50 0xc0 0x1 esi gates 0x5968b6 and eax, 0x10000000  0x2 vs 0x10000000
+  DEAD 0x596af5 args edi 0xe5e0 0x1 esi gates 0x596a4a cmp ds:0x985dbc, 0x3  0x9 vs 0x3
+  DEAD 0x597203 args edi 0x680 0x1 esi gates 0x597165 cmp eax, ebx  0x9 vs 0x3
+  DEAD 0x597384 args edi eax 0x1 esi gates 0x5972d1 cmp ds:0x985dbc, ebx  0x9 vs 0x3
+  DEAD 0x59762f args 0x991698 0x100 0x1 esi gates 0x5975ed test ds:0x985ae8, 0x10  0x2 vs 0x10
+PASS G3 every dead leg has a NAMED gate: a real branch whose guard is false in the live state  legs with >=1 gate 7/7
+PASS G4 the arithmetic closes both ways: what the codec does NOT move is 93,159 B on a save AND on a load, so the dead legs are not hidden bytes  save 242799-149640=93159 ; load 242539-149380=93159
+SUMMARY PASS M243: 4/4 gates

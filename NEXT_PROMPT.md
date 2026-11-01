@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 193, 2026-11-01, M242: the save WRITE function is FUN_00597ce0 -> FUN_00596850(handle, 1))
+# NEXT_PROMPT.md — footing for the next session (session 194, 2026-11-01, M243: the save codec's 7 dead write legs and the 3 gates that kill them)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -23,18 +23,17 @@ Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout -
 patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
 go 1 per batch). The binding cap is doc headroom, not capability.**
 
-## BUILD TRACK — every 4th fire builds (added s187)
+## BUILD TRACK — every 4th fire builds (added s187; full text moved VERBATIM to `docs/pick-archive.md` at s194)
 
-`python3 scripts/track_mode.py` prints the verdict from merged history: `MODE=BUILD|ANALYSE`, `next_rung=B<n>`.
-**MODE=BUILD ⇒ this fire is a build fire**: take that rung from `BUILD_SPINE.md` and build it in `sim/` — runnable
-acceptance command, parity against a recorded trace, never a census claim, no box time, no `/proc`, no gdb. The
-other three fires analyse exactly as before, and a build fire does NOT pay the box debt (it never touches Wine).
-Build rungs are `B<n>` in the commit and PR title so the cadence can be counted.
+`python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. **BUILD** ⇒
+build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance command, parity against a recorded trace,
+never a census claim, no box time, no `/proc`, no gdb), title the commit and PR `B<n>`, and the box-debt pre-step
+does NOT apply; **ANALYSE** ⇒ pick from this file exactly as usual.
 
 ## THE LEDGER
 
 Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
-M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), s175 cap triage (#153),
+M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), s175 cap triage (#153),
 docs #169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
@@ -64,16 +63,17 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (0x679f98 = 88 slots, TWO ctors;
-  the +8=9 stamper FUN_005dbb5f + ds:0x9965b8; FUN_005be090's +4 blocks; FUN_005f5a11's write-only triple) —
-  detail in `NAMED.md`. s190 **B1**: `sim.selftest` -> `PASS B1: 10/10 gates` on BOTH maps. s191 **M240**
-  (6/6): the `.MP` grid IS the live terrain-record array (44-B records = TWO map columns; "cell+7 = land
-  marker" / "+7 = owner byte" RETRACTED; +16..+43 = 7 copies of the +8 mask, OPEN). s192 **M241** (`FAIL
-  2/5`, PR #180 open): a SAVE ran ZERO of the 42 armed 0x99aa38-band sites — not the write path. s193
-  **M242** (`PASS 5/5`, `sudo -n python3 scripts/m242_save_write.py`): the save WRITE function is
-  **`FUN_00597ce0(path)`** -> **`FUN_00596850(handle, 1)`**, ONE codec both ways (mode → `DAT_00926a0c`;
-  30 write / 28 read sites; a save ran 23/30 write, ZERO read); the 796-B `DAT_00985ab8` block sits
-  verbatim at **file offset 12** (corrects SAVE_FORMAT.md). Full text: `NAMED.md` M240/M242 blocks.
+- ANSWERED (do not re-pick; `NAMED.md` carries the full text, `docs/pick-archive.md` the s187-s193 detail
+  VERBATIM): s187-s189 M227-M237 (0x679f98 = 88 slots, TWO ctors); s190 **B1** 10/10 on BOTH maps; s191
+  **M240** 6/6 (`.MP` grid IS the live terrain-record array; "+7 = land/owner byte" RETRACTED; +16..+43 =
+  7 mask copies OPEN); s192 **M241** FAIL 2/5, #180 open; s193 **M242** PASS 5/5 (the save WRITE function
+  is **`FUN_00597ce0(path)`** → **`FUN_00596850(handle, 1)`**, ONE codec both ways; the 796-B
+  `DAT_00985ab8` block verbatim at **file offset 12**); s194 **M243** PASS 4/4 (`sudo -n python3 scripts/m243_leg_gates.py`, static,
+  zero box time): the codec's 7 dead write legs ARE its 7 dead read twins (state gates, not mode
+  gates), killed by 3 families — the swap bit (3 plain twins inside the swap-only region, unreachable
+  in BOTH swap states = dead code), `ds:0x985dbc < 3` legacy scratch-buffer legs (58,848 + 1,664 +
+  48n B, malloc'd via `call 0x5be090`), and the feature bit `ds:0x985ae8 & 0x10` (256 B at 0x991698).
+  The codec has **30** read sites, not 28 (`0x5979f8`/`0x597a19`).
 - Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`, and B2 must
   read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells, and a .SAV as magic at 0 /
   version dword at 8 / the 796-B header at 12): WHO dispatches the dialog's
@@ -81,10 +81,11 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30,
   +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c);
   WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of
-  ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record
-  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); **which 7 of
-  FUN_00596850's 30 write legs are dead on a save, and which sites outside it write the rest of the file**
-  (new from M242, static).
+  ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B);  **what the 7 mask copies at record
+  +16..+43 are for, and who writes them when a map is GENERATED** (new from M240, static); **which
+  sites outside FUN_00596850 write the 93,159-B tail** — the codec's handle-carrying callees 0x596fb7
+  `FUN_005821e0` / 0x596fd0 `FUN_00582260` / 0x5972af `FUN_00571380` / 0x597970+0x597991 `FUN_00596620`
+  are the only candidates (new from M243, static).
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):

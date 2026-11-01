@@ -638,3 +638,34 @@ A census that parses its own gdb log with `line.split()[1]` dies on a line that 
 acceptance invocation was spent. Bake the site address into every printf tag (`"ENCODEC %06x mode=%%d ..."
 % addr`), and keep the raw log on disk (`scratch/<tag>.gdblog`) so a crashed run's numbers can still be
 read out and the run re-issued without re-arming the box.
+
+## A CFG model of a codec must know x86 flag semantics (M243, s194)
+
+When a script interprets a function's branches instead of executing them, three semantics decide
+whether the model explains the measured hot/dead split or contradicts it:
+
+1. **`test reg,reg` + `je` is TAKEN when the result is ZERO** — the opposite polarity from `cmp a,b`
+   + `je` (taken when a == b). A model that treats every `je` as "the operand was nonzero" routes
+   every `if (flag) … else …` leg the wrong way: in `FUN_00596850` it made 8 executed write legs
+   look unreachable and 4 dead legs look reachable. Encode the two cases separately and assert the
+   model reaches every leg a box log measured hot — that check is what catches a polarity inversion.
+2. **`and`/`or`/`add`/`sub`/`inc`/`dec`/`neg`/`not`/`shl` SET the flags a jcc reads.** Treating them
+   as clobbers ("flags modified, guard unknown") makes the real gate unresolvable: the codec's
+   swap-mode dispatch is `mov eax,ds:0x985ae8 / and eax,0x10000000 / mov ds:0x926a14,eax / je target`
+   — the `mov` between the `and` and the `je` does NOT touch flags, so the guard is the `and`. Scan
+   back for the nearest flag-SETTER, skipping `mov`/`push`, and evaluate the jcc from it.
+3. **A call clobbers only eax/ecx/edx.** ebx/esi/edi/ebp are callee-saved, so a backward value scan
+   that stops at any call cannot resolve the FILE* handle (`esi`) or a loop constant (`ebx`) across a
+   leg — and those are exactly the operands the gates test. Also: to resolve an instruction's own
+   operand, start the def-scan at the PRECEDING instruction (an instruction uses its operands, it
+   does not define them), and treat `pop reg` as a write.
+
+For a register whose value depends on the path, do not guess: run constant propagation over the
+reachable CFG (a block passes the incoming value unless it writes the register, in which case the
+value is the immediate it writes, else unknown; meet = agree-or-unknown). That is what proved
+`ebx = 3` at the 48·n gate `0x5972d1` (`mov ebx,0x3` at 0x59715e is the only reachable write), which
+is the only way to show the leg is dead by a version gate rather than by luck. Iterate the
+interpretation: pruning shrinks the reachable set, which makes more constants provable, which prunes
+more. And attribute a gate to a dead leg by removing ONE edge at a time from the full CFG — if the
+leg stops being reachable, that edge is a necessary gate; re-running the whole interpreter per edge
+is 200× the cost for the same answer.
