@@ -20,7 +20,7 @@ Static (ghidra_out/shard_015.c + objdump windows, all VERIFIED before any box ti
 
   sudo -n python3 scripts/m242_save_write.py [--pid N]
 
-Phase A (no tracer): ONE UI save, host-statted.  Phase B (tracer): the same save again with 130
+Phase A (no tracer): ONE UI save, host-statted.  Phase B (tracer): the same save again with 131
 silent bps on the writer's 7 own sites, its 8 callers, the codec entry, and all 114 wrapper/sibling
 call sites inside FUN_00596850.  Detection is OUTSIDE the game: the .SAV the game wrote is statted
 by MTIME (distinct name per phase - a same-name overwrite adds no filename) and its BYTES are
@@ -104,7 +104,7 @@ def gdb_script():
         bp(a, "INT %06x %s a0=%%d a1=%%d" % (a, nm), "(*(int*)$esp), (*(int*)($esp+4))")
     for a, nm in sorted(CALLERS.items()):
         bp(a, "CALLER %06x arg0=%%d" % a, "(*(int*)$esp)")
-    bp(CODEC, "ENCODEC mode=%d f=%d swap=%d",
+    bp(CODEC, "ENCODEC %06x mode=%%d f=%%d swap=%%d" % CODEC,
        "(*(int*)($esp+8)), (*(int*)($esp+4)), (*(int*)0x985ae8) & 0x10000000")
     for a in WSITES:
         cs(a, "W")
@@ -208,8 +208,7 @@ def hdr_check(fd, path):
 
 
 def kv(h):
-    return {p.split("=", 1)[0]: int(p.split("=", 1)[1], 16) if p.split("=", 1)[0] == "p"
-            else int(p.split("=", 1)[1]) for p in h[2:] if "=" in p}
+    return {p.split("=", 1)[0]: int(p.split("=", 1)[1]) for p in h[2:] if "=" in p}
 
 
 def tally(hits, tag):

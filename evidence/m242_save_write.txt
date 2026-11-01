@@ -1,0 +1,14 @@
+pid=319926  dir ds:0x926a0c=1  swap ds:0x985ae8&0x10000000=0x0  ds:0x920434=0  ds:0x985dbc=9  year=2153
+PHASE A (no tracer): browser open, name typed / ok
+  A file /home/n100/reverse/smac/programs/saves/auto/m242_probe_A.SAV  242799 B  mtime +7.9 s
+  A file bytes: magic=True ver=86  block-at=12  matching-at-12=796/796  year mem/file=(2153, 2153)
+Traceback (most recent call last):
+  File "/home/n100/reverse/smac/scripts/m242_save_write.py", line 361, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/n100/reverse/smac/scripts/m242_save_write.py", line 292, in main
+    ent, callers, enc = tally(hits, "ENT"), tally(hits, "CALLER"), tally(hits, "ENCODEC")
+                                                                   ~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/n100/reverse/smac/scripts/m242_save_write.py", line 218, in tally
+    a = int(h[1], 16)
+ValueError: invalid literal for int() with base 16: 'mode=1'
