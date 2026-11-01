@@ -1,42 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-177-177.md` (1 sessions). Read it only when a question reaches back before session ## Session 178.
-
-## Session 178 (2026-11-01) — M197-M200: the proposal composer, the diplomacy key pool, the tag engine, the row writers
-
-Static-only fire, NO box time: one census script, one evidence file.
-`python3 scripts/m197_m200_proposal.py > evidence/m197_m200_proposal.txt` (23,988 B, rc 0) ->
-`SUMMARY M197=PASS M198=PASS M199=PASS M200=PASS (15/15 gates)` (evidence/m197_m200_proposal.txt:290; every
-number below is cited to a line of that file); `--probe` prints the same lines
-without verdicts. Two earlier invocations died on MY instrument, not the game: `for s in post` iterated
-(pc,text) tuples -> TypeError; and I first gated M198a on an 0xFFFFFFFF terminator at the last KEY's end,
-but the pool interleaves 18 spaced message lines, so the walk must accept multi-word entries - the fix
-RAISED the floor (>=25 keys -> >=200), it did not lower it.
-
-**M197** FUN_00544530 (1502 insns) has EXACTLY ONE call site: `call 0x544530` at 0x545c99 in FUN_00545c50,
-and the operand text "544530" occurs 1x in 790,695 instructions (:2-3). Guarded `[ebp+0x10]==0` /
-`jne 0x545cd4`, 2 args (esi=[ebp+8], ebx=[ebp+0xc] - the faction pair), return cleaned `add esp,0x8` +
-`test eax,eax` (:5). Of the 8 stores to ds:0x920700, 7 are inside it and its own body says 6 are the
-constant 0 while 1 is `FUN_005f1394()`'s return; the only immediate store in the image is 0xc at 0x54ec5c
-(:8). It calls FUN_005f1394 6x and assigns the return to 5 distinct globals {0x9206fc,700,728,748,77c},
-all cleared in its first 112 bytes (:10). RETRACTS M195's "ZERO string literals": the body names 3 string
-globals whose bytes read PROPOSALMENU / REJWARALREADY / NOCOMMLINK (:12). **M198** those 3 sit in a string
-pool at 0x690160..0x69107c bounded by 0xFFFFFFFF at BOTH ends: 329 entries = 311 single-word KEYS + 18
-spaced message lines, and 257 of the 311 keys have code references, printed as key->function (:13-16, :275).
-**M199** the substitution engine is FUN_00625b20: _strstr for the needle whose byte at 0x69911c is '$',
-switch on the char after it over 5 cases (closer 0x699138 = '>'; 'H' compares 4 bytes at 0x699130 =
-'$HEX'), index `&DAT_0099a01c + n*0x100`, metadata A[]@0x999fcc / B[]@0x999ff4 / 0x999fa4, then copy the
-Nth ':'-separated segment of the slot (:277-278). FUN_005808b0 COMPOSES `$<`+{M,F,N}+{1,2}+`:`+arg+`>`
-from the record dwords +0x2fc/+0x300 (the bytes at 0x692144..0x692160, :280); FUN_00580a60 PARSES that
-head back into 0x99aa1c (F->1, N->2, else 0) and 0x99aa20 (2nd char=='2') - inverse-consistent, so the
-staging pair IS a parsed tag head (:282). **M200** FUN_00631afb / FUN_00632cad are row WRITERS through
-the handle DAT_0099d020 (vtable +0x10/+0x18/+0x38/+0x58/+0x60; alloc FUN_005be090, free FUN_0064a7f0,
-append FUN_0064b9e0, :286): 0 `0x25` immediates, 0 printf-family calls, 0 references to FUN_00625b20, and
-each copies the buffer it is handed VERBATIM - RETRACTS M194's "the formatters" (:287); its 16-byte
-memcmp keys 0x67bd20/0x67bd30 are GUIDs, not table names (:288). (Pitfalls written to the skill,
-`references/static-store-census.md` §12: Ghidra renders a referenced literal as a named `s_NAME_…` symbol, so a `"`
-grep finds ZERO strings in a function that references three; a string pool is 4-aligned, NUL-padded and INTERLEAVES
-keys with message lines - walk it by "the longest padded entry ENDING at va", never by a fixed stride.)
+Older sessions: `docs/sessions/sessions-178-178.md` (1 sessions). Read it only when a question reaches back before session ## Session 179.
 
 ## Session 179 (2026-11-01) — CAP TRIAGE ONLY: NEXT_PROMPT.md 15,496 -> 14,052 BYTES (split, never shave)
 
@@ -446,3 +410,42 @@ gdb, terran.exe 319926 TracerPid 0.
   rows of 24 B, six dwords per row, `FUN_00596620` 0x596620-0x596850 over `DAT_007cdecc..0x7cdeec`
   + `DAT_008cda4c`) | 8 ([800,387]) | 4 (the per-save final dword, outside the codec). s195's
   `93,159 = 92,927 + 220 + 12` was a coincidence of totals, not a split.
+
+## Session 197 (2026-11-01, M245/M246/M247 ANALYSE — the tail's last three legs)
+
+`sudo -n python3 scripts/m245_tail_legs_census.py` -> `PASS M245: 5/5 gates` (rc=0; 3rd invocation:
+the 1st was 4/5 because G2 demanded that EXACTLY ONE save match the live 216 B — the box refuted the
+premise, 7/17 match because those saves come from one session without scrolling; the byte-for-byte
+equality is unchanged, the gate now asks for >=1 match and NOT all 17) -> evidence/m245_tail_legs.txt.
+`sudo -n python3 scripts/smac_preflight.py` -> PASS 14 invariants. Box: /proc reads only, terran.exe
+319926 TracerPid 0, no gdb.
+
+- M245 the 216-B leg (EOF-228..EOF-12) = 9 map-view objects x 6 fields. Codec loop
+  (shard_015.c:10807-10822): `puVar18 = &DAT_007cdecc; do FUN_00596620(*puVar18,..) while ((int)
+  puVar18 < 0x7cdeec); FUN_00596620(&DAT_008cda4c,..)` = 8 heap pointers (live 0x8f79e0, then
+  0x3b5f4e8… spaced 0x224b8) + 1 inline object. Fields (FUN_00596620's order): +0x1dd78 view id
+  (rows 0..7 = 0..7 on 17/17 saves, inline row = 1), +0x1dd74 active flag (set FUN_00469860
+  shard_008.c:5894; cleared by the codec's load leg shard_015.c:10845 when the [800,387] pair changes
+  and by 4 invalidators), +0x1dd70 bit flags (tested shard_008.c:8983/9033/9076/9318), +0x1dd98 = -6
+  while DAT_0091c18c < 1000 (5892), +0x1dd9c/+0x1dda0 centre tile (init W/2,H/2 5895-5898; set by
+  FUN_004739a0 :10117-10124). The window bounds +0x1ddcc..0x1ddc8 and origins +0x1dda4/+0x1dda8 are
+  DERIVED from the centre by FUN_00469860:5949-6017 and read by the click hit test FUN_00422060
+  (shard_001.c:14164-14183). Live read-back == 7/17 saves' 216 B byte for byte (10 differ); live
+  DAT_0091c188/c18c = 387/800 = the 8-B leg; Autosave 1 rows 0-1 centre (28,42) = University Base.
+- M246 the final 4 B = `local_8 = timeGetTime()` (FUN_00597ce0 body line 15) written by
+  `FUN_0064c9a0(&local_8,4,1,iVar2)` (line 44) AFTER `FUN_00596850(iVar2,1)` (line 42); the codec
+  never reads it. Δ(dword) vs Δ(mtime) ≤ 2.5 s on 5/5 same-session pairs (Autosave 2→1 31 s /
+  30,989 ms; m241_probe_A→B 16 s / 16,785 ms); 0x15c79939 sits on 3 files 486,979 s apart and
+  0x2db1b939 on 2 files 71,224 s apart -> stamped at save CREATION, not at file write.
+- M247 DAT_0092ae18 has 6 referencing functions; the only element accessors FUN_00582340/2360 index
+  `(param_1>>1) + DAT_0092ae18 + (DAT_0092ad9c>>1)*param_2` (shard_014.c:27392/27401) and `(Rw+1)/2`
+  appears once image-wide (the length, 27266). The builder FUN_0058ce00 (shard_015.c:4707-4747) walks
+  y < Rh, x = (y&1) step 2 < Rw, so its write set is exactly bytes 0..78 at 64x64 (Rw=Rh=13): slack =
+  Rh-1 when Rw is odd, else 0. The 12 slack bytes are `0xcd` in 17/17 saves (none in 0..78); both .MP
+  files have even Rw -> slack 0, no 0xcd.
+- OPEN: what the region byte VALUES mean (the builder takes terrain record +3 of the first of 9
+  sampled tiles whose +1 & 0xe0 > 0x5f, else 0 — shard_015.c:4716-4741; 0x3f/0x01/0x00/0x10 seen);
+  who allocates the ~140 KB view objects; the 7 mask copies at record +16..+43 still stand.
+- PITFALL: a byte-for-byte live-vs-file match gate must state what it discriminates. "Exactly one
+  file matches" is a premise about the STATE, not about the claim; unchanged state across saves
+  breaks it. Require >=1 match AND some files differ.
