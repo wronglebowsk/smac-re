@@ -440,3 +440,27 @@ other mode, and the run then reads like an instrument failure when it is already
   over 54 sites is a stored per-object callback, not a class slot.
 - **Read the emitted number, not the probe sample, before hard-coding a count.** An "x6" taken from a
   truncated callee histogram failed a gate that the same run's own print disproved (x5).
+
+## 16. Census shapes that ate a whole probe budget (s189, M235-M237)
+
+- **An objdump line is `addr:` TAB opcode-bytes PAD TAB mnemonic operands.** A regex that anchors the
+  mnemonic right after the colon matches NOTHING and reports "0 call sites" for a function that has 18.
+  Split on tabs (field 2 is the mnemonic) or allow the byte field: `):\s+(?:[0-9a-f]{2} )*\s*(\S+)`.
+- **Absolute operands are memory operands, on the LOAD side too.** A classifier that knows only
+  `[reg+disp]` reported 0 writers for ds:0x9977f0 (its 2 stores are `mov dword ptr ds:0x9977f0,ecx` and
+  `mov ds:0x9977f0,eax`) and 0 loaders for a pointer field that has 9. Accept
+  `^(?:\w+ ptr )?d?s?:0x[0-9a-f]+$` as a third operand form.
+- **Separate member offsets from table bases in a call-through census.** `call [reg*4+0x6a75a8]` is an
+  indexed function-pointer TABLE in .data; pooled with `call [reg+0x14]` it makes "the largest vtable
+  slot in the image" read as 0x6a75a8 when the member-scale maximum is +0xf3c. Filter disp < 0x2000
+  (or scale == 1) and report both maxima.
+- **A cluster is a run of EQUAL consecutive gaps, not a set of pairwise differences.** All-pairs turns
+  6 pointers 0x70 apart plus 3 pointers 0x568 apart into 7 "gaps" and 4 clusters and fails a claim the
+  data supports. When scanning sorted pointers advance to `j+1`, never `max(j, i+1)` — the latter
+  restarts a cluster on its own last element and invents a 2-element cluster at the seam.
+- **Name the print form an immediate census covers.** `mov [reg+8],9` has exactly 1 site in terran.exe
+  (`mov byte ptr [ecx+0x8],0x9`, the record stamper) while the same value also arrives in registers;
+  "the only writer of 9 at +8" is true of the IMMEDIATE form only and must say so in the claim.
+- **Parenthesise a `%`-format's argument tuple when it begins with a list comprehension:**
+  `"a=%s b=%d" % [x for ...], y` binds the list alone and dies mid-run with "not enough arguments for
+  format string" — after every gate has already been built.

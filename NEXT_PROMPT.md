@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 187, 2026-11-01, M227-M230 all PASS)
+# NEXT_PROMPT.md — footing for the next session (session 189, 2026-11-01, M235-M237 all PASS)
 
 Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s183
 milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
@@ -33,12 +33,8 @@ cadence can be counted.
 
 ## THE LEDGER
 
-Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
-M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
-M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151),
-M185-M187 (#152), M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159),
-M201-M204 (#161), M205-M208 (#162), M209-M212 (#163), M213-M216 (#164), M217-M221 (#165), M222-M226 (#168),
-M227-M230 (#171), M231-M234 (#173), B0 (#170), s175 cap triage (#153).
+Merged: M54A-M123 (#39-#130, gaps inside: `docs/pick-archive.md`), M163-M200 (#138-#159),
+M201-M234 (#161-#173), M235-M237 (#176), B0 (#170), s175 cap triage (#153), cursor/docs PRs #169/#174/#175.
 UNMERGED: M83/M84 family (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `docs/pick-archive.md`,
@@ -74,16 +70,16 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   0x774c38 grid, the 0x7543d8 record table, the trampoline's callees) live in `NAMED.md` +
   `evidence/m227_m230_mirrors.txt` + `evidence/m231_m234_staging.txt` + `docs/pick-archive.md`; newest instruments
   `scripts/m231_m234_staging.py`, `m227_m230_mirrors.py`.
-- ANSWERED (do not re-pick): s187 M227/M228 (the +0x3098 list is never appended; +0x2144 holds a pointer - s188 M233
-  names it &0x7543d8[4*idx]); s188 M231-M234 (the 0x99aa9c/0x99aac0 staging pair arrays, the 0x774c38 grid and its
-  11-dword records, the 0x7543d8 table's 3 writer sites, FUN_005dbdc0/FUN_005e3412) - semantics in `NAMED.md`.
+- ANSWERED (do not re-pick): s187 M227/M228; s188 M231-M234; s189 M235-M237 (the 0x679f98 class = 88 slots, TWO
+  ctors, 70 slots shared with 0x6717cc/0x671d94; the +8=9 record STAMPER FUN_005dbb5f and the ds:0x9965b8
+  record-under-construction global; +4 allocated by FUN_005be090 and block-strided live; FUN_005f5a11's triple is
+  write-only, installed 3x by FUN_005f3f5b, no bulk-copy route, live modal handle 0) - `scripts/m235_m237_records.py`.
 - Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
-  sites belong to other hierarchies - falsifier = a live vtable read at a click, box); who CALLS FUN_005f5a11 (0
-  direct, 0 slots, 0 data copies, 0 reads, 0 lea-takes AND 0 add-adjustors of 0x2210/0x2224/0x2234 - the only route
-  left is a read through a register already holding obj+0x21XX, the adjustor idiom M233 caught at 0x7543d8); what
-  class vtable 0x679f98 is (installed only by FUN_0062d630, 2 installs, its +0x15c is FUN_0062d78d - name its slots
-  against 0x6717cc/0x671d94); who ALLOCATES and fills the grid records' +4 buffer and the table entries' -0x40*i
-  blocks (no in-image store touches either region, so a pointer-passed writer exists and is unnamed); M181's control (box).
+  sites belong to other hierarchies - falsifier = a live vtable read at a click, box); what the 15 UNIQUE slots of
+  0x679f98 do (+0x0, +0x8, +0x30, +0x40..+0x68) and which screen calls its ctors (FUN_0062d630 is called by
+  FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c); WHO CALLS FUN_005be090 at the 13 [reg+4] sites and with what sizes,
+  and which of the 3 loaders of ds:0x9965b8 fills the records; who calls FUN_005f3f5b (6102 B) and why ONE callback
+  goes into +0x2210/+0x2224/+0x2234; M181's control (box; trigger = the 4 callers of FUN_0041a8f0, s189 notes).
 ## LIVE FACTS / KIT
 
 - **BOX state VERIFIED 2026-11-01 08:33** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants):

@@ -721,3 +721,26 @@ FUN_00405220 x33 (thunk to FUN_00404010(&0x997120, key)); 11 of the 29 referrers
 **M233 the 0x7543d8 record table** 3 writer sites image-wide: 2 folded stores of 0xd7 into +0x18/+0x1c of entry idx (idx=[ebp-0x4], `imul 0x2c`, inside FUN_00459490's loop bound 0x59 = 89 iterations) and 1 count store to 0x7543d4 (FUN_00459bb0). 0x7543d8 itself is never a destination: 13 base-takes = 2 push-as-arg (0x64bda0/0x64bc40), 5 receiver adjustors `add reg,0x7543d8` before a call (0x5dbcc4, 0x403b50 x2, 0x440c90 x2), 6 lea. 2 sites in FUN_005aa310 store `lea reg,[reg*4+0x7543d8]` into the panel's tail field [edi+0x2144] (M228's provenance; stride 4 against the 0xd7 writer's stride 0x2c - the same collision M229 found for [obj+0xb24]). Live: count 11, entries 0..15 = {+0 = 0x15064c0-0x40*i (mapped: entries point BACKWARD at 64-byte blocks), +4=0, +8=9, +0x18=+0x1c=0xd7, rest 0}.
 
 **M234 the trampoline's callees** FUN_00455c70 gives its OWN arg1 to all three callees as `this` and injects (arg1=&0x792a30, arg2=0x109) for FUN_005dbdc0 and (0x107,0x109)/(0x106,0x109) for the two FUN_005e3412 calls. FUN_005dbdc0 (ret 0x1c = 7 args, 408 insns, 59 direct sites, 0 indirect calls) gates arg1 non-null through 0x5ca8d2, requires [ebp+0x18] and [ebp+0x1c] non-zero, returns 3 on 3 paths, reads [arg1+0x80] as the extent it compares arg3+arg5 against, allocates via 0x5be090 - a record consumer, not a formatter. FUN_005e3412 (ret 0x8, 91 insns, 0 callees of any kind, 14 sites) returns 7 when [this+4]==0, clamps both args with `and reg,0xff`, walks the [this+4] data rewriting 5 byte-matches of low(arg1) to low(arg2), length = [this+0xc]*[this+0x14]>>2 truncating (2 of 11 buffers have N*M %% 4 == 1). The 11 buffers FUN_00459bb0 passes are distinct BSS records of the same 11-dword grid shape.
+
+## M235-M237 (s189, all PASS) — the 0x679f98 class, the record stamper, the write-only callback triple
+
+`scripts/m235_m237_records.py` + `evidence/m235_m237_records.txt` (12/12 gates).
+**M235** vtable 0x679f98 = 88 slots, +0x15c = FUN_0062d78d, next dword 0xfffffffc. EXACTLY 2 installs,
+both `[reg+0]`, by TWO constructors: FUN_0062d630 (the 18-dword staging copy-in, M231) and FUN_0062d764
+(41 B). Its 88 slot functions reference 0 string literals: the class is named structurally — 72 slots
+implementation-identical to 0x6717cc, 71 to 0x671d94, 70 identical in all three, 15 unique (+0x0, +0x8,
++0x30, +0x40..+0x68). 87/88 have member-scale dispatchers (1920 sites; +0xf0 x301, +0x8 x282, +0x4 x252);
++0x0 none; +0x15c 28 sites. Largest member-scale call disp +0xf3c; larger call-through disps are indexed
+function-pointer TABLES in .data (max +0x6a75a8), not slots.
+**M236** the 9 at record +8 (grid 0x774c38, table 0x7543d8, the 11 trampoline buffers) has ONE emitter in
+the image: `mov byte ptr [ecx+0x8],0x9` @0x5dbbd1 inside FUN_005dbb5f — a 33-insn, 0-call STAMPER that
+zeroes +4..+0x28 and publishes the record pointer to ds:0x9965b8 (3 stores / 3 loads with FUN_005dbbe6
+and FUN_005dbdc0, M234). +4 is allocated by FUN_005be090 (13 of the image's 55 "[reg+4] = eax within 8
+insns of a call" sites, in 13 functions). Live: 9 grid +4 pointers = 2 clusters (6 x 0x70, 3 x 0x568),
+all mapped; table entries' +0 step -0x40 (count 11) — block-strided allocations, not per-record mallocs.
+**M237** the callback fields 0x2210/0x2224/0x2234 are write-only: 3 stores, 0 loads/calls/lea/add, while
+their own block [0x21c0,0x2260) carries 118 sites and 80 loads (+0x21d0 x62). All 3 installs sit in ONE
+installer FUN_005f3f5b (6102 B), same pointer into all three fields. No bulk copy reaches them (108
+`rep movs` image-wide, 4 in 2 window functions naming only +0x21c0..+0x21d0). ds:0x9977f0 (the handle the
+callback gates on): 2 stores, both absolute, both in FUN_005f1394, 7 loads, live 0x0 — no modal object,
+so the triple is unverifiable from the box until a dialog is open.
