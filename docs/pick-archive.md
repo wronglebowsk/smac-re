@@ -304,3 +304,38 @@ dispatches +0xa8 with 0..3; who dispatches +0x4c (12 sites) = FUN_005f6aa3's 5 c
 readers of ds:0x9977f0 do (FUN_005f5a11 0x5f5a17, FUN_005d69fa 0x5d6a17); the SIBLING dialog family
 0x671d94 (275 installs, +0xa8 = FUN_005f90d7, +0x64 = FUN_0043fb00, +0xe4 = `return 1`) vs 0x67164c;
 M181's control (box). ANSWERED by M213-M216 - see `evidence/m213_m216_hotspot.txt` + `NAMED.md`.
+
+## s184 footing moved out of NEXT_PROMPT at s184 close (verbatim)
+
+- **s181-s183 footing is ARCHIVED** (M205-M216): milestone lines in `docs/pick-archive.md`, semantics rows
+  in `NAMED.md`, census outputs `evidence/m205_m208_fields.txt`, `m209_m212_dispatch.txt`,
+  `m213_m216_hotspot.txt`, instruments `scripts/m205_m208_fields.py`, `m209_m212_dispatch.py`,
+  `m213_m216_hotspot.py`. The dialog model in one line: the pump FUN_005f1394 returns `[this+0xa40]`,
+  written only by vmethods +0xa8 (FUN_005f5759) / +0x64; +0xa8 (33 impls / 188 vtables) IS THE
+  CLICK-RESULT SLOT - its dispatcher is the family's own +0x4c vmethod FUN_005f6aa3 (5 vtables, 466
+  installs, 0 direct calls), which hit-tests (x,y) against the hotspot list AT this+0x3098 (FUN_005e7917:
+  24-B items {x0,y0,x1,y1,gate@0x14,payload@0x10}; FUN_005e75a0 = half-open point-in-rect; reverse scan,
+  highest hit wins) and dispatches +0xa8 with item[+0x10] when item[+0x14]==0; the row class 0x67194c is
+  0xb4c (2 embedded in 0x671d94 at +0xaac/+0x15f8), FUN_005f9e85 builds its labelled controls and its
+  label is the global scratch text buffer ds:0x997120 (1425 of 3232 pushes hand that buffer to the emitter
+  FUN_0064b9e0); ds:0x9977f0 = 2 stores (the pump) + 7 loads in 4 fns (the forwarder FUN_0043fee0, the
+  current-object picker FUN_005d69fa -> its [+0xa8] DELEGATE, the callback FUN_005f5a11 installed at
+  [reg+0x2210/2224/2234]). Stack = dialogs[] 0x992db8 + WRITE-ONLY arg3[] 0x992dc8; +0xe4 is a bool;
+  FUN_00542ea0 wraps the pump; -9999 = FUN_00496ad0's unset sentinel.
+- Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls; all 12 image-wide
+  `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click, box);
+  who BUILDS the this+0x3098 list (`call 0x5e7665` on `[esi+0x3098]` at 0x421ea0 of the dialog ctor
+  FUN_00421da0 - census `call 0x5e7665` sites + their owner displacements, and what writes `[list+0]` /
+  `[list+8]`); FUN_005f5a11's host (who stores 0x5f5a11 into [reg+0x2210/0x2224/0x2234] and who calls
+  those fields); the 9 one-store setters FUN_0045a4d0..FUN_0045a650 (what the triples 0x9978ac..0x99790c
+  hold, who reads the row's 0xae0..0xb48 copy); the 0x671d94 sibling panel (ctor FUN_005f6b8c, 275
+  installs, fields 0xa1c..0xaa0, 2 embedded rows) and its +0xa8 FUN_005f90d7 vs FUN_005f5759; M181's
+  control (box).
+
+## s184: the .SAV restore bullet and the s171-s180 pointer moved out of NEXT_PROMPT (verbatim)
+
+- **.SAV is mapped and restores 1:1** (block A 0x94D104, B 67,852->0x927590, grid 0x40925B0, 52 records 222,783->
+  0x933278; the 156-B trailer IS read); the load restores by **read() into the region** (M106).
+
+- **s171-s180 footing is ARCHIVED** (M163-M204): semantics + milestone lines in `NAMED.md` +
+  `docs/pick-archive.md`; census outputs `evidence/m175_m177_aggcallers.txt` … `m201_m204_dialog.txt`.

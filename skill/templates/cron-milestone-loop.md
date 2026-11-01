@@ -78,6 +78,9 @@ REPORT one screen: what changed, the acceptance numbers with the command that pr
 Size it from the work: a static three-milestone batch runs 15-25 min of wall time, a box batch 40-60. 90 min lands
 most fires on fresh state; an overrun is refused by its own ownership check, so a short interval costs tokens rather
 than correctness. State the trade-off when asked for "faster" instead of silently shortening the interval.
+**A short schedule does not give short spacing:** a fire that runs 25-45 min pushes the next tick, so "every 30m"
+produces roughly one fire per hour. Judge throughput from the `executions` timestamps, never from the schedule
+string, and compare landings-per-fire (not fired-per-hour) when deciding whether the loop is healthy.
 
 ## Verifying a fire
 
@@ -86,3 +89,57 @@ instrument it shipped (one invocation must print `SUMMARY ... =PASS`), read its 
 and run `evidence.py budget` to see whether the doc surgery landed. A fire that qualified an earlier finding must
 have patched that finding's registry block — if the qualification lives only in `SESSION_NOTES.md`, land the small
 docs PR yourself.
+
+## Auditing the loop (fires you did not run)
+
+"How is the loop doing?" is a READ-ONLY job: while a fire is in flight it owns the worktree, the branch and the box,
+so restrict yourself to `git log`/`git status`, the sqlite ledger, `~/.hermes/logs`, `du`, `gh` and `/proc` — never run
+`scripts/`, `milestone.py` or a driver in the repo, and never `git checkout`/`stash` anything.
+
+Read in this order, cheapest first:
+
+1. `cronjob_manage(action='list')` — `last_status`, `last_error` (the fire's own exception, not a delivery problem),
+   `next_run_at`, `continuity`, `workdir`.
+2. `sqlite3 ~/.hermes/cron/executions.db "select started_at,finished_at,status,substr(error,1,60) from executions
+   where job_id='<id>' order by started_at desc limit 12"` — the per-fire ledger, and the ONLY place a fire that is
+   live this second appears (`status='running'`, with `process_id`/`pid`). Durations come from the timestamps: a
+   static batch is 15-30 min, a box batch 40-70, so a 20 min fire that landed nothing died early.
+3. `ls -t ~/.hermes/cron/output/<job_id>/` and the newest report file — one per fire; the failed one ends in its
+   traceback.
+4. `git log --format='%h %ad %s' --date=format:'%m-%d %H:%M' -8` — landings WITH times, aligned against the ledger.
+   A run of completed fires with no commit between them did no work.
+5. `du -sb evidence/` and `wc -c NEXT_PROMPT.md` — the two caps that decide the NEXT fire's shape (15,300 B trigger,
+   20/30 MB evidence). Report headroom in bytes, since that is what the gate compares.
+6. `gh pr list --state open` — a tail of documented FAILs is normal; a PR nobody in this project opened is not.
+7. Box idleness: `/proc/<terran pid>/status` (`TracerPid: 0`) plus that pid's elapsed time. Several consecutive
+   static-only fires is a loop that has drifted off live proof — say so and name the lead that needs box time; an
+   absence claim with no positive control is still a lead, not a finding.
+
+Report shape (one screen, no narration): what landed since the last report with ids + commit, the rate
+(milestones/batch, landings/hour, and how many fires were spent per landing), the last failure with its MECHANISM
+and whether anything half-landed, the fire in flight and which model it captured, then the caps/backlog/box risks
+ranked. Close with the levers as concrete options, not a list of questions.
+
+## Failure signatures
+
+- **A run of `Unrepairable tool_call arguments for <tool> — replaced with empty` lines at ~2 min intervals, ended by
+  `RuntimeError: The model's reply was cut off ... output length limit`** = one oversized `write_file` hit the OUTPUT
+  cap mid-JSON at close. Each retry is a full model turn, so 4-5 of them eat the last ten minutes of a fire and
+  NOTHING lands — the sanitizer drops the call, so verify with `git status` (clean, not half-written) instead of
+  assuming a partial commit. Mechanism: `model.max_tokens` sits far below what the model itself advertises
+  (`max_completion_tokens`), and a whole-document write at 140 k+ of context needs more of it than that. Two
+  legitimate fixes: raise `max_tokens` for the loop's model, and close with `patch`-anchored sections so no single
+  call carries a whole doc.
+- **`in=` climbing past ~140 k with no checkpoint commit** = the tool-call budget rule biting (whatever is not
+  committed by ~call 25 is not saved), not a slow model. Do not read a 20 min no-commit fire as measurement.
+- **`status='running'` with a stale `started_at`** = a crashed worker left the row; check the pid in the process
+  table before believing a fire is live.
+- **A fire that lands a milestone but leaves its own doc caps 30 B from red** hands the next fire a docs-only split;
+  count it as a lost fire when judging throughput.
+
+## A model switch does not retarget an in-flight fire
+
+The fire captures the main model at dispatch time, so changing the main model (or `model.max_tokens`) afterwards
+only affects the NEXT tick. Read the model from the fire's own log line (`OpenAI client created ... model=<x>`) and
+state which one is running rather than assuming the switch applied. Config edits are safe mid-fire (the worker
+already built its client); repo edits are not.

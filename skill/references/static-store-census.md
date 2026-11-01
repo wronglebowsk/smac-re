@@ -389,3 +389,31 @@ other mode, and the run then reads like an instrument failure when it is already
   as if the list/field belonged to the object itself — that misreading made M209 report the hotspot list as
   the object whose +0xa8 is dispatched. Also: a `mov [X+idx*4+DISP]` store written for idx 0..N-1 ends at
   DISP + 4*(N-1), so an object's extent is that +4, not DISP+4 (the row class ends at 0xb40+8+4 = 0xb4c).
+
+## 14. Census-parser traps that made a green run read as a FAIL (s184, M217-M221)
+
+- **Drop the frame spills before counting an object's field writes.** A ctor/reset body begins with
+  `mov [ebp-0x4],ecx`; a store census that keeps `[ebp-0xNN]` destinations reports the frame slot as a
+  field write (FUN_005e75e5 reported 4 stores at disps [-4,0,4,8] instead of the 3 header zeroes).
+- **Classify a store by the operand that CARRIES THE TOKEN.** `census(tok)`'s store half asks whether the
+  DEST contains tok — right for a store to a global, wrong for a store OF a value: the 3 refs
+  `mov [eax+0x2210],0x5f5a11` are stores whose SOURCE carries the token, so a dest test reported
+  "3 refs / 0 stores" and failed a gate whose data was right.
+- **Ghidra's index.csv DOES name the SEH unwind stubs** (`Unwind@00661ef2`), so "is this pc inside an
+  indexed function" does not exclude them. They contain real `add ecx,disp; call ...` receiver forms, so
+  a member-displacement census counts them as owners (the dialog's +0x3098 list has 4 clear sites, 2 of
+  them unwind stubs). Filter by NAME, and report the stubs instead of hiding them.
+- **The same instruction TEXT can occur twice in one body.** `mov [ecx+0x8],eax` is both the count++ and
+  the item+8 write in the hotspot adder, so `txt.index(store)` picks the wrong one and a
+  "value provenance" test fails on correct evidence. Enumerate every occurrence and require the source
+  load in THAT occurrence's window.
+- **x87 arithmetic reuses the scaled-index form** (`fsub qword ptr [eax+edx*1+0x10]` walks a double array
+  with the same 0x18 multiply), so an item-field census keyed on `*1+0x10]` must drop `f*` mnemonics and
+  qword operands or it reports readers outside the family.
+- **A displacement that is also a message id.** 0x2210 is the netcode LOCK type, so `push 0x2210`
+  (0x528000) and `cmp eax,0x2210` (0x52d1bf) show up in an offset census as value collisions. Separate
+  them before reporting "N refs to the field".
+- **Zero loads IS a finding.** Three fields written 3x and loaded 0x, with no indirect call carrying any
+  displacement in the enclosing window, means the installed callback is reached some other way (or not at
+  all) — say so, and pre-register the alternative (a block copy / `rep movs` over the window) as the next
+  falsifier instead of assuming the grep missed.

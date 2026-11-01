@@ -1,47 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-171-171.md` (3 sessions). Read it only when a question reaches back before session ## Session 171.
-
-## Session 171 (cont. 19) — M127-M129 (all PASS): the plan byte's 369 readers, the seek pair in code, the three-condition consume
-
-`python3 scripts/m127_m129_fields.py` — SUMMARY M127=PASS M128=PASS M129=PASS (evidence/m127_m129.log).
-
-- **M127 — the open item "zero sites read plan byte `+42`" is RETRACTED: 369 sites read it.** The type-record PLAN byte
-  is `0x98adb2` (= `0x98ad88 + type*52 + 42`) and it has **369 references**, of which **149 are the folded
-  `[reg*4+0x98adb2]` form** (reg holds `tid*13`, so *4 = tid*52, the record stride) and **0 use a literal `+0x2a]`**.
-  M67's earlier search grepped the literal displacement and therefore could not see any of them; the live-verified
-  plan-descending order now has static readers behind it (top: FUN_00502cd0 48, FUN_0055f650 33, FUN_004f6030 24,
-  FUN_0055c920 23, FUN_00585720 17, FUN_00556690 15, FUN_00595b10 14).
-- **M128 — the "cursor read before the seek is the PREVIOUS cursor" trap is in the CODE.** `mov ecx,[eax+0xa774]` at
-  0x497707 is pushed BEFORE `call 0x4026b0` (the seek, 0x497717); the object is then re-derived
-  (`mov ecx,[ebp-0x10]; add ecx,0xa780`) at 0x49771c/0x49771f and `call 0x495480` + `and eax,0x20` (0x49772a) test the
-  first flag bit of the POST-seek query. So 0x497704 shows the old node and 0x49771c is the first instruction that sees
-  the new one — the rule is structural, not a log artefact.
-- **M129 — FUN_00546800's guard is one unit with a CONSUME.** It proceeds only when the faction dword at `0x94d448` has
-  bit `0x8000000`, `ds:0x920434 != ebx`, AND the per-record byte `0x92044c` has bit `0x2` — then it **zeroes** that
-  byte at 0x5469d3. So `0x92044c` bit 1 is a consumed marker for this path (which is why it reads 0 in the saves and
-  after a pass), not persistent state.
-Search-shape law added to the skill (second occurrence after the M116 stride): a literal-displacement grep misses the
-folded `[reg*4+disp]` encoding; count BOTH forms before saying "no site reads X".
-
-## Session 171 (cont. 20) — M130-M132 (all PASS): chooser case 7 found and named, the 24-byte gap is not a layout, 0x92077c is a mode code
-
-`python3 scripts/m130_m132_chooser.py` — SUMMARY M130=PASS M131=PASS M132=PASS (evidence/m130_m132.log).
-
-- **M130 — "chooser case 7" now has a definition and an answer.** The dispatch is in **FUN_00546800** at 0x54eaeb-0x54eafc:
-  `call 0x542ea0` -> `cmp eax,0x7` -> `ja 0x54ec82` -> `jmp DWORD PTR [eax*4+0x54ef34]`. The 8-entry table at
-  **0x54ef34** is `[0x54ed3f, 0x54eb03, 0x54eb03, 0x54eb29, 0x54ec34, 0x54ec40, 0x54ec4c, 0x54ec58]`: cases 1 and 2 share
-  0x54eb03, case 3 is 0x54eb29, cases 4/5/6 are 0x54ec34/40/4c, and **case 7 = 0x54ec58** — the only case that writes a
-  state PAIR: `ds:0x920700 = 0xc` and `ds:0x92077c = 1`. (My earlier scan missed it because it looked for a switch in
-  0x5a6xxx-0x5aaxxx; the dispatch is keyed on the return of FUN_00542ea0, not on a chooser-internal enum.)
-- **M131 — the 24-byte gap between 0x920434 and 0x92044c is NOT a record layout.** 0x92044c: 24 refs, **24 folded**
-  (`[reg*4+0x92044c]`, reg = tid*13 -> tid*52). 0x920434: 634 refs, **0 folded** — a standalone global (M125's
-  reset-published id). Treating 0x920434 as the `+0` field of that record would have fabricated a layout out of two
-  neighbouring addresses; the M127 law caught it in one command.
-- **M132 — ds:0x92077c is a MODE CODE with a small domain.** 4 writes (two of them the constant 1, one `ebx`, one `eax`),
-  9 tests against **1, 3, 7**, plus a copy compared to **6** at the dispatch (0x54eb1b, right after the case-1/2 body).
-  Its partner `ds:0x920700` has 8 writes and is set in the same case-7 body, so the two form a (state, mode) pair.
-  Meaning NOT named: no string constant sits within 8 instructions of any write — recorded as a bounded unknown.
+Older sessions: `docs/sessions/sessions-171-171.md` (2 sessions). Read it only when a question reaches back before session ## Session 171.
 
 ## Session 171 (cont. 21) — M133-M142, ten censuses, all PASS (`scripts/m133_m142_census.py`)
 
@@ -551,3 +510,14 @@ Acceptance `python3 scripts/m213_m216_hotspot.py` -> `SUMMARY M213=PASS M214=PAS
 - **M215** row 0xb4c verified twice (`add ecx,0xaac`/`0x15f8` before 2 `call 0x5faec0`; top store `[X+idx*4+0xb40]`, idx 0..2, ends 0xb4c). Ctor installs 0x67194c + subobject 0x671944 at [ecx+0x444], 20 stores; its 27-dword 0xae0..0xb48 block copies 9 stride-0xc triples 0x9978ac..0x99790c that are read 3x and written ONCE each by a bare `mov ds:imm,eax` in 9 distinct one-store fns FUN_0045a4d0..FUN_0045a650 (0x30 apart) = runtime setter state, not load-time data. FUN_005f9e85 (0 slots, 90 sites/23 fns) = labelled-control creator (id->[this+0xa78], malloc'd label->[this+0xa7c], rect = param_3..6, parent = param_7). Label census: 44 x the global scratch text buffer ds:0x997120 (4089 refs / 668 stores, ZERO indexed, 466 base-clears `mov byte ptr ds:0x997120,0x0`; 1425 of 3232 pushes hand it to the emitter FUN_0064b9e0), 15 NULL, 30 reg/field, 1 literal ("Create Session (Translate)" @0x69a7bc).
 - **M216** 0x6738e4: 87 slots, 2 installs (0x43fa14, 0x43fc3e), +0xa8 = FUN_0043fee0 (1 slot, 0 direct calls); shares 75/87 slots with 0x6717cc, 73 with 0x671d94, 66 with 0x67164c, 70 with 0x67194c — every differing set contains 0x0/0x4c/0xa8. ds:0x9977f0 = 9 refs, 2 stores (0x5f3d70/0x5f3e02, both in the pump FUN_005f1394), 7 loads in 4 fns: the forwarder, FUN_005d69fa (current-object picker -> publishes ds:0x9939ac, returns the object's [+0xa8] DELEGATE, 3 callers dispatch +0x12c/+0x130/+0x134) and FUN_005f5a11 (0 slots, 0 direct calls; installed 3x as an immediate into [reg+0x2210/0x2224/0x2234] = a callback FIELD; dispatches +0xe0 on [handle+0xa14] or the handle, writes [handle+0xa40]).
 OPEN: who dispatches +0x4c (box falsifier); who builds the this+0x3098 list (`call 0x5e7665` on `[esi+0x3098]` at 0x421ea0 in the dialog ctor FUN_00421da0); s174e box state unverified; M181 still a LEAD (no positive control).
+
+## Session 184 (2026-11-02) — M217-M221 all PASS: the hotspot list is a 3-dword CONTAINER {array@+0, capacity@+4, count@+8} of 24-B items with an 8-member API; the dialog's list is a MEMBER allocated 10 items; the 9 row triples have THREE-store setters (M215's "one-store" RETRACTED); the +0x15c method installs the modal callback into three WRITE-ONLY fields; the 0x671d94 panel is 0x214c and its +0xa8 is a DETACH
+
+`python3 scripts/m217_m221_panel.py` -> `SUMMARY M217=PASS M218=PASS M219=PASS M220=PASS M221=PASS (31/31 gates)`, rc 0; `evidence/m217_m221_panel.txt` 11,571 B; zero box time. Invocations #1 22/31 + crash, #2 28/31, #3 29/31, #4 green: every failure was an INSTRUMENT-definition bug, no threshold or claim was changed — (a) the store census counted `[ebp-0xNN]` frame spills as field writes (FUN_005e75e5 read 4 stores, disps [-4,0,4,8]); (b) `txt.index()` took the FIRST textual match and `mov [ecx+0x8],eax` occurs twice in the adder (count++ and item+8); (c) `census()`'s store half tests whether the DEST carries the token — for a stored VALUE (`mov [eax+0x2210],0x5f5a11`) the token is the SOURCE, so 3 refs reported 0 stores; (d) index.csv DOES name the SEH unwind stubs (`Unwind@00661ef2`), so "in the index" does not exclude them (+0x3098 has 4 clear sites, 2 of them stubs); (e) x87 `fsub qword ptr [reg+edx*1+0x10]` reuses the 24-B index form and inflated the item-field reader set.
+
+M217 FUN_005e75e5 3 zero stores [0,4,8]; FUN_005e7678 `ret 0x4`, callees {0x5be090,0x5e760d}, `imul eax,eax,0x18`; FUN_005e774d `ret 0x18`, 7 stores [0,4,8,8,c,10,14], +0x14<-arg1 (gate), +0x10<-arg2 (payload), x=arg3, y=arg4, x1=x+arg5, y1=y+arg6, guard `cmp count,[+4]`/`jl` + `or eax,0xffffffff`; FUN_005e7917 publishes +0x14->arg3/+0x10->arg4; image-wide FUN_005e774d is the ONLY writer of +0x10/+0x14 (2 stores), readers 0x5e76be/861/8c7/917/9a3/a5f (all in 0x5e7300-0x5e7d00); FUN_005e78c7 removes by payload (32 sites) via FUN_005e77e7; FUN_005e7665 = 9 insns, callee 0x5e760d, 130 sites.
+M218 clear receivers member=47 / stack=81 / loaded=2 over 21 distinct member displacements 0x10..0x402f0; 21 alloc sites, 13 immediate capacities 0x1..0x100; 32 add sites member=26 / loaded=6, gate immediates {0,1..8,0x45}; the +0x3098 list is cleared at 0x405fb3 (FUN_00405f60) + 0x421eaa (FUN_00421da0) + 2 unwind stubs, allocated 10 items at 0x5eff25 (FUN_005ef957), reset at 0x5ee5fe (FUN_005ee350), scanned at 0x5f6ac5 (FUN_005f6aa3), and has 0 add-sites: it is filled through a register-passed list pointer (6 add-sites take the list from a loaded value; FUN_00403b00 is one such wrapper).
+M219 9 setters 42 B / 18 insns / 3 stores rel [0,4,8] / 1 site / 0 slots; 27 stores = 9 bare a3 + 18 `mov dword ptr ds:`; all 9 sites inside FUN_00459bb0 (1722 B, 450 insns, 1 site, 0 slots), each followed by `add esp,0xc`; 3 calls pass 0x774c38+0x2c*i (i 0..8, one entry each), 6 pass (0,0,0); both ranges above FILEMAP_END 0x6ed000; FUN_005fb1a5 = 0x67194c+0x30 reads the 0xae0..0xb48 groups on the 4-byte grid.
+M220 FUN_005f3f5b = 0x6717cc+0x15c (95 slots, 70 installs), `cmp [ebp-0xf4],0x9` + `jmp [ecx*4+0x5f5731]` (10 targets, all inside); the only 3 refs to 0x5f5a11 are its stores to +0x2210/+0x2224/+0x2234; those disps have 2/1/1 refs image-wide, 0 loads, and 0 indirect calls carry any displacement in 0x21c0..0x2260; FUN_00406990 = +0x15c of 4 vtables (396 installs) calls it twice (0x406c24, 0x406f26); FUN_005f5a11 has 0 direct calls and 0 slots.
+M221 0x671d94 = 87 slots / 275 installs, identical 74/87 to 0x6717cc, 63/87 to 0x67164c, 71/87 to the row 0x67194c; +0x4c = FUN_005f84ff (no click dispatcher), +0xa8 = FUN_005f90d7; ctor FUN_005f6b8c 605 B / 136 insns / 16 sites, callees {0x5faec0 x2, 0x5e3b80 x1}, 0x671d8c (3 slots, 268 installs) at +0x444, block stores 0xa14..0xaa0; size 0x214c uniform in FUN_00409e70 (3 panels) and FUN_004947c0 (4), highest ctor store 0x2148, row 2 ends 0x2144; FUN_005f90d7 stores 0xa38 x1 + 0xa2c x2, 0xa40 x0, 7 indirect calls, dispatches [edx+0xb8]; FUN_005f5759 stores 0xa40 x4, 0xa38/0xa2c x0, 3 indirect; FUN_00405ef0 embeds one panel at +0x3230 (site 0x405f29).
+OPEN: who dispatches the dialog's +0x4c (box falsifier, unchanged); who calls FUN_005f5a11 if its 3 fields are write-only; who fills the dialog's +0x3098 list (the register-passed adders, e.g. FUN_00403b00, and their callers); what FUN_00459bb0 is (1 callsite, 0 slots) and who reads the 9 triples' table; s174e box state unverified; M181 still a LEAD.

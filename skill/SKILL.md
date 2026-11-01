@@ -31,7 +31,7 @@ product, NOT `price_of` — head 193 wanted 27 where `price_of` said 18 — and 
 instrument `scripts/m72_gate_watch.py`**), slots
 1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
 NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
-reading, the live write-enumeration acceptance in §9, and §10 (why a site never fires: its gates, the block's common exit, who sets the gate global)),
+reading, the live write-enumeration acceptance in §9, §10 (why a site never fires: its gates, the block's common exit, who sets the gate global), §13 (vtable model + who dispatches a slot) and §14 (census-parser traps: frame spills, token-in-source vs token-in-dest, `Unwind@` stubs, duplicate instruction text, x87 index forms)),
 `ptrace-level-probes.md` (strace raw args = read buffer POINTERS, soft-dirty/pagemap, maps before/after,
 one tracer per task, the candidate table for "who wrote these bytes with no store in my window"),
 `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
@@ -137,7 +137,9 @@ milestone per merge and three acceptance invocations, not one question per step.
   only FAILs at 16,000, so a fire that closes at 15,4xx hands the NEXT fire a docs-only split: s175 and s179 were
   both such splits. `test_loop.py` appends bytes in CI, so keep >100 B of headroom under whatever number you quote.
   `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
-- Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file`; in hard-wrapped docs anchor by
+- Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file` — one whole-doc call must fit the
+  model's OUTPUT cap, so an oversized one truncates mid-JSON, the sanitizer drops it (`Unrepairable tool_call
+  arguments`), and every retry spends a full turn; in hard-wrapped docs anchor by
   regex `\s+` joins or by INDEX, and write in the SAME cell that measured the result.
 - Every always-loaded doc has its own cap and the tool prints them. When a cap binds a SECOND session, SPLIT:
   move the settled era into a topical archive, leave the RULES plus a pointer, re-run `budget`. A batch's DOC
@@ -147,7 +149,9 @@ milestone per merge and three acceptance invocations, not one question per step.
   worktree, and name the owner from the process table before arming a measurement.
 - Scheduling the loop to run unattended: copy `templates/cron-milestone-loop.md` — a cron prompt validated end to end
   (takes the pick from `NEXT_PROMPT.md`, triages doc caps first as its own PR, proves ownership before arming, caps
-  the batch, merges only on a real PASS). Cadence and the "verify the fire" rules ride with it.
+  the batch, merges only on a real PASS). Cadence, the "verify the fire" rules, and the READ-ONLY AUDIT for
+  answering "how is the loop doing" (ledger query, failure signatures, the output-cap death, mid-fire model
+  capture) ride with it.
 
 
 ### Verify the OUTCOME, not the mechanism

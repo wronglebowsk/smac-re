@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 184, 2026-11-02, M213-M216 all PASS)
+# NEXT_PROMPT.md — footing for the next session (session 185, 2026-11-02, M217-M221 all PASS)
 
 Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s183
 milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
@@ -16,8 +16,8 @@ mid-sentence). **Whatever is not finished by ~150k tokens is not finished at all
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.
 
 Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
-patches. **Batch size (s172, re-confirmed s178): 4 static milestones through ONE census script is comfortable;
-box-time milestones go 1 per batch.** The binding cap is doc headroom, not capability.
+patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
+go 1 per batch). The binding cap is doc headroom, not capability.**
 
 ## THE LEDGER
 
@@ -25,7 +25,7 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151),
 M185-M187 (#152), M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159),
-M201-M204 (#161), M205-M208 (#162), M209-M212 (#163), M213-M216 (#164), s175 cap triage (#153).
+M201-M204 (#161), M205-M208 (#162), M209-M212 (#163), M213-M216 (#164), M217-M221 (#165), s175 cap triage (#153).
 UNMERGED: M83/M84 family (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `docs/pick-archive.md`,
@@ -50,39 +50,40 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
 
 ## THE PICK — index (detail: `docs/pick-archive.md`)
 
-- **.SAV is mapped and restores 1:1** (block A 0x94D104, B 67,852->0x927590, grid 0x40925B0, 52 records 222,783->
-  0x933278; the 156-B trailer IS read); the load restores by **read() into the region** (M106).
 - **Laws that decide field questions:** `f*8380` is DECIMAL 8,380 = 0x20BC = 2095 dwords; a decompiler `arr[i*N]` is
   an ELEMENT index (x4 for bytes); a record field may appear as `[reg+disp]` OR the folded `[reg*4+abs]` - count BOTH
   before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **s171-s180 footing is ARCHIVED** (M163-M204): semantics + milestone lines in `NAMED.md` +
-  `docs/pick-archive.md`; census outputs `evidence/m175_m177_aggcallers.txt` … `m201_m204_dialog.txt`.
-- **s181-s183 footing is ARCHIVED** (M205-M216): milestone lines in `docs/pick-archive.md`, semantics rows
-  in `NAMED.md`, census outputs `evidence/m205_m208_fields.txt`, `m209_m212_dispatch.txt`,
-  `m213_m216_hotspot.txt`, instruments `scripts/m205_m208_fields.py`, `m209_m212_dispatch.py`,
-  `m213_m216_hotspot.py`. The dialog model in one line: the pump FUN_005f1394 returns `[this+0xa40]`,
-  written only by vmethods +0xa8 (FUN_005f5759) / +0x64; +0xa8 (33 impls / 188 vtables) IS THE
-  CLICK-RESULT SLOT - its dispatcher is the family's own +0x4c vmethod FUN_005f6aa3 (5 vtables, 466
-  installs, 0 direct calls), which hit-tests (x,y) against the hotspot list AT this+0x3098 (FUN_005e7917:
-  24-B items {x0,y0,x1,y1,gate@0x14,payload@0x10}; FUN_005e75a0 = half-open point-in-rect; reverse scan,
-  highest hit wins) and dispatches +0xa8 with item[+0x10] when item[+0x14]==0; the row class 0x67194c is
-  0xb4c (2 embedded in 0x671d94 at +0xaac/+0x15f8), FUN_005f9e85 builds its labelled controls and its
-  label is the global scratch text buffer ds:0x997120 (1425 of 3232 pushes hand that buffer to the emitter
-  FUN_0064b9e0); ds:0x9977f0 = 2 stores (the pump) + 7 loads in 4 fns (the forwarder FUN_0043fee0, the
-  current-object picker FUN_005d69fa -> its [+0xa8] DELEGATE, the callback FUN_005f5a11 installed at
-  [reg+0x2210/2224/2234]). Stack = dialogs[] 0x992db8 + WRITE-ONLY arg3[] 0x992dc8; +0xe4 is a bool;
-  FUN_00542ea0 wraps the pump; -9999 = FUN_00496ad0's unset sentinel.
+- **s181-s184 footing is ARCHIVED** (M205-M221): milestone lines in `docs/pick-archive.md`, semantics
+  rows in `NAMED.md` (M163-M221), census outputs `evidence/m175_m177_aggcallers.txt` .. `m217_m221_panel.txt`,
+  instruments `scripts/m205_m208_fields.py`, `m209_m212_dispatch.py`, `m213_m216_hotspot.py`,
+  `m217_m221_panel.py`. The dialog model in one line: the hotspot list is a CONTAINER {array@+0,
+  capacity@+4, count@+8} of 24-B items - FUN_005e7665 clear (130 sites, a wrapper over the free+reset
+  FUN_005e760d) / FUN_005e7678 alloc n (21 sites, capacities 1..0x100) / FUN_005e774d ADD(gate,
+  payload, x, y, w, h) (32 sites, the ONLY writer of item+0x10/+0x14, -1 when full) / FUN_005e78c7
+  remove-by-payload (32) / FUN_005e7917 hit-test publishing +0x14->arg3 and +0x10->arg4 - and it is a
+  MEMBER (47 member sites over 21 displacements 0x10..0x402f0 + 81 stack locals); the dialog's at
+  this+0x3098 is allocated 10 items by FUN_005ef957, reset by FUN_005ee350, scanned by FUN_005f6aa3
+  (which gates on item[+0x14]==0 and dispatches +0xa8 with item[+0x10]) and has 0 add-sites. The row
+  class 0x67194c (0xb4c) copies 9 triples 0x9978ac..0x997914 written by 9 THREE-store setters, all
+  called once by FUN_00459bb0 (3 pass 0x774c38+0x2c*i, 6 pass 0,0,0). FUN_005f3f5b (+0x15c of 0x6717cc,
+  10-case switch at 0x5f5731, called twice by FUN_00406990 = +0x15c of the 0x67164c family) is the ONLY
+  writer of +0x2210/+0x2224/+0x2234 (3 stores of FUN_005f5a11) and those fields have 0 LOADS. The panel
+  0x671d94 (87 slots, 275 installs, size 0x214c, ctor FUN_005f6b8c, 2 rows at +0xaac/+0x15f8, CPane
+  subobject 0x671d8c at +0x444, embedded by the dialog ctor at +0x3230) has no click dispatcher; its
+  +0xa8 FUN_005f90d7 is a DETACH (clears +0xa38, unlinks via +0xa20/+0xa24/+0xa2c, dispatches +0xb8) vs
+  the dialog's FUN_005f5759, which writes the result field +0xa40 (4 stores).
 - Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls; all 12 image-wide
   `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click, box);
-  who BUILDS the this+0x3098 list (`call 0x5e7665` on `[esi+0x3098]` at 0x421ea0 of the dialog ctor
-  FUN_00421da0 - census `call 0x5e7665` sites + their owner displacements, and what writes `[list+0]` /
-  `[list+8]`); FUN_005f5a11's host (who stores 0x5f5a11 into [reg+0x2210/0x2224/0x2234] and who calls
-  those fields); the 9 one-store setters FUN_0045a4d0..FUN_0045a650 (what the triples 0x9978ac..0x99790c
-  hold, who reads the row's 0xae0..0xb48 copy); the 0x671d94 sibling panel (ctor FUN_005f6b8c, 275
-  installs, fields 0xa1c..0xaa0, 2 embedded rows) and its +0xa8 FUN_005f90d7 vs FUN_005f5759; M181's
-  control (box).
+  who FILLS the dialog's this+0x3098 list (0 add-sites carry that displacement: the 6 add-sites that
+  take the list from a loaded value are FUN_00403b00/0040f830/004105b0/00411840/00415d10/00607eca -
+  census their callers and what list pointer each passes); who CALLS FUN_005f5a11 if its 3 fields are
+  write-only (the FUN_005f3f5b switch cases + any block copy/`rep movs` spanning 0x21d0..0x2260); what
+  FUN_00459bb0 is (1722 B, 1 callsite, 0 slots: who calls it, what reads the 0x774c38 table); the
+  panel's row pipeline (FUN_005f90d7's 7 indirect calls - which slots it dispatches on the rows at
+  +0xaac/+0x15f8 - and what row-vmethod +0x30 FUN_005fb1a5 does with the 9 groups); M181's control
+  (box).
 ## LIVE FACTS / KIT
 
 - **BOX state CARRIED from s174e (s175/s178 spent no box time, so NOT re-verified):** terran.exe 319926, y2153 r53,
