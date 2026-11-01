@@ -168,6 +168,15 @@ the milestone's own commit and let it say what the closing steps are.
 
 **A close written but never committed is the next session's first job, not new work.** When `git status` shows a prior session's closing set uncommitted (a new `SESSION_NOTES.md` section, `NAMED.md` rows, a `NEXT_PROMPT.md` edit, an acceptance's `evidence/*.gdblog`), the milestone is DONE — adopt that close: finish the remaining closing steps (sync the skill, commit, `gate --base main`) and do NOT re-run the acceptance: a second invocation of a one-shot live acceptance confounds or supersedes the recorded verdict, and `milestone.py start` refuses the dirty tree anyway. When a sibling session commits the same close WHILE you are editing it (its commit lands between your reads — `git log` timestamps move mid-turn, the write tool names the sibling), do not re-apply your edits: `git diff HEAD` and commit only the residual delta on top, and never duplicate the sibling's `submit` — one submit per milestone; verify with `gh pr view <n> --json state,headRefOid` before opening another PR.
 
+**A backlog of never-green PRs is CLOSED, not left open.** When a lineage's question has since been
+answered by a later milestone — its verdict recorded in the ledger and the detail in
+`docs/pick-archive.md` — close the superseded PRs with `gh pr close <n> --comment "…"` naming where
+the finding now lives. Closing is reversible and keeps the branch on origin (the diffs stay
+recoverable), while `gh pr list` stops reporting a backlog that every report otherwise has to
+explain; a ledger's `(#NNN)` reference keeps resolving after the close. Never close a PR from an
+OUTSIDE contributor: that one goes to Paul as a question, because accepting or declining it is his
+call, not the loop's.
+
 A session that finds an open PR lands it instead of starting new work. Branch protection is
 unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
 merge by hand in the web UI without a green `gate` check. After editing this live skill, sync `SKILL.md` **and** `references/`

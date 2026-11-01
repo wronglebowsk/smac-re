@@ -25,7 +25,7 @@ Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151),
 M185-M187 (#152), M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159),
-M201-M204 (#161), M205-M208 (#162), M209-M212 (#163), M213-M216 (#164), M217-M221 (#165), s175 cap triage (#153).
+M201-M204 (#161), M205-M208 (#162), M209-M212 (#163), M213-M216 (#164), M217-M221 (#165), M222-M226 (#168), s175 cap triage (#153).
 UNMERGED: M83/M84 family (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void). Summaries: `docs/pick-archive.md`,
@@ -55,19 +55,21 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **s181-s185 footing is ARCHIVED** (M205-M221): milestone lines + the M205-M221 hotspot/dialog model are in
-  `docs/pick-archive.md` (§"s185 footing moved out"), semantics rows in `NAMED.md`, instruments
-  `scripts/m217_m221_panel.py` (+ `m205_m208_fields.py`, `m209_m212_dispatch.py`, `m213_m216_hotspot.py`).
+- **s181-s186 footing is ARCHIVED** (M205-M226): the hotspot/dialog model and the M222-M226 results (the
+  ADD wrapper, the unreachable callback, the 0x774c38 grid, the panel DETACH's field callback, the row
+  DRAW) are in `docs/pick-archive.md` (§"s186 footing moved out"), semantics rows in `NAMED.md`,
+  instruments `scripts/m222_m226_rows.py` (+ `m217_m221_panel.py`, `m209_m212_dispatch.py`,
+  `m213_m216_hotspot.py`, `m205_m208_fields.py`).
 - Pick from: WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls; all 12 image-wide
   `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click, box);
-  who FILLS the dialog's this+0x3098 list (0 add-sites carry that displacement: the 6 add-sites that
-  take the list from a loaded value are FUN_00403b00/0040f830/004105b0/00411840/00415d10/00607eca -
-  census their callers and what list pointer each passes); who CALLS FUN_005f5a11 if its 3 fields are
-  write-only (the FUN_005f3f5b switch cases + any block copy/`rep movs` spanning 0x21d0..0x2260); what
-  FUN_00459bb0 is (1722 B, 1 callsite, 0 slots: who calls it, what reads the 0x774c38 table); the
-  panel's row pipeline (FUN_005f90d7's 7 indirect calls - which slots it dispatches on the rows at
-  +0xaac/+0x15f8 - and what row-vmethod +0x30 FUN_005fb1a5 does with the 9 groups); M181's control
-  (box).
+  whether the dialog's this+0x3098 list is DEAD or filled through a pointer stored in a field (M222:
+  neither the wrapper nor any direct add-site carries that displacement; the live container in the same
+  block is obj+0x2250 - census `lea reg,[X+0x3098]` address-takes and what their callees do); what the
+  0x774c38 grid holds (9 entries x 0x2c, all-zero BSS; FUN_0041f450 installs 0x774c0c/0x774a80 at
+  [obj+0xb24] and 9 functions load that field - census what they index, and the 15 FUN_00455c70 calls);
+  who installs the panel's +0x2144 field callback (17 writers, 7 readers/callers) and what it points at;
+  who CALLS FUN_005f5a11 (0 direct, 0 slots, 0 data copies, 0 reads, 0 lea-takes - the only route left
+  is a pointer to +0x2210/+0x2224/+0x2234 loaded from a field); M181's control (box).
 ## LIVE FACTS / KIT
 
 - **BOX state CARRIED from s174e (s175/s178 spent no box time, so NOT re-verified):** terran.exe 319926, y2153 r53,

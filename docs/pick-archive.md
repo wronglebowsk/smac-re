@@ -361,3 +361,29 @@ M181's control (box). ANSWERED by M213-M216 - see `evidence/m213_m216_hotspot.tx
   subobject 0x671d8c at +0x444, embedded by the dialog ctor at +0x3230) has no click dispatcher; its
   +0xa8 FUN_005f90d7 is a DETACH (clears +0xa38, unlinks via +0xa20/+0xa24/+0xa2c, dispatches +0xb8) vs
   the dialog's FUN_005f5759, which writes the result field +0xa40 (4 stores).
+
+## s186 footing moved out of NEXT_PROMPT at the post-s186 close (verbatim)
+
+- **s186 result (M222-M226, 26/26 gates on one invocation, `scripts/m222_m226_rows.py`)**: the hotspot
+  adder FUN_005e774d maps arg1->item+0x14, arg2->item+0x10, arg3->item+0, arg4->item+4, item+8=arg3+arg5,
+  item+0xc=arg4+arg6 and returns -1 when count>=capacity (no allocator, a full list DROPS the item).
+  FUN_00403b00 (75 B, ret 0xc) is the image's only ADD WRAPPER: container = its own ecx (spilled to
+  [ebp-0x4]), args (gate, payload, RECT); 23 sites in 16 functions, container = own ecx plus one of 8
+  member disps {a48, cc4, e40, 15e0, 28ac, 5994, 12758, 12764}; 0 wrapper and 0 direct add-sites carry
+  the dialog's +0x3098 (its 10-item list is never appended). At those sites the +0x14 slot is an
+  immediate 4/23 times and a loaded value 19/23, the +0x10 slot an immediate 19/23 with values
+  {0,1,2,3,4,0xa,0xb} (0xa/0xb outside M218's {0,1..8,0x45}). FUN_0041f310 = +0x30 of 0x672448 with all
+  3 sites `ecx=0x6a9480`; 8 of the 15 sites of FUN_0040f830/004105b0/00411840/00415d10 pass the same
+  immediate (the pane object); FUN_004105b0's container = this+0x402f0. FUN_005f5a11: 0 direct calls, 0
+  slots, 0 data copies outside its 3 install immediates, 0 reads / 0 lea-takes / 0 indirect calls in
+  0x21c0..0x2260; its body reads ds:0x9977f0 and gates [h+0x2350] in {1,-1} -> a method of the MODAL
+  object. The block IS live: FUN_005f1394@0x5f1e33 calls FUN_0060c436 with ecx = obj+0x21d0 (arg1 =
+  [obj+0x2350]); FUN_0060c436 -> FUN_00607eca (this+0xb14, which subtracts 0xa94) fills the container at
+  obj+0x2250. FUN_00459bb0: 1 call site (0x45a755 in FUN_0045a740, 56 B, 1 caller FUN_00580260), 9 42-B
+  triple setters each called once from it (M219 CONFIRMED: 3 receive grid pointers, 6 receive (0,0,0));
+  grid = 0x774c38+0x2c*i (i=0..8), 24 pushes over 15 calls, all-zero BSS; FUN_0041f450 installs 0x774c0c
+  x4 + 0x774a80 x1 at [obj+0xb24] and 9 functions load it. FUN_005f90d7 (panel +0xa8) dispatches
+  [reg+0xb8] x2, [reg+0x5c], [reg+0x1c], [reg+0xf0] and [reg+0x2144] x2 — max vtable slot in the image =
+  0x178, so +0x2144 is the panel's own last field (54 sites, 17 writers, 7 readers/callers). FUN_005fb1a5
+  = row 0x67194c slot +0x30: 14 `add ecx,0x444` receiver switches, 1 indirect `call [edx+0x14]`, groups
+  read as [reg+reg*4+0xabc]/+0xac8 indexed arrays, emitters 0x5dd09c x5 / 0x5c153f x5 / 0x5ca7c3 x4.
