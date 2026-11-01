@@ -12,8 +12,9 @@ mid-sentence). **Whatever is not finished by ~150k tokens is not finished at all
 - **6-30** the milestone, one variable at a time. **At call 15 `git add -A && git commit`** (s187: a fire hit 167k
   context at call 25 with zero commits — a fire costs ~7k tokens per call) — the next turn may be the
   truncated one, so every later step must leave a committed file.
-- JSON only: no XML tags inside tool arguments (s188 rejected 4 calls as a missing `path`); edits <= 2 KB. Branch and
-  commit the census skeleton BEFORE probing.
+- JSON only: no XML tags inside tool arguments. Writes over ~4 KB drift and are rejected as a missing `path` — expect one
+  retry, then re-emit the same content as pure JSON (do NOT fragment into many tiny writes). Branch + skeleton commit
+  BEFORE probing; s189 measured the skeleton landing at 108k context instead of 167k.
 - **30-40** STOP MEASURING: an acceptance that is not green IS the finding — write the blocker and the failing number,
   merge nothing, close.
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.

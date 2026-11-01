@@ -193,3 +193,14 @@ operator steered it. s188 started its branch unaided (prompt rule) but still com
 necessary but not sufficient — so the footing now also requires: **`milestone.py start` right after the footing, then
 commit the census-script SKELETON (gate names + SUMMARY line, no logic) before any probing.** An artifact committed
 early is what turns a context death into a checkpoint instead of a lost fire.
+
+### Measured cost of the drift (s189, one unattended fire)
+
+4 of 10 `write_file` calls were rejected, at argument sizes 4,308 / 5,369 / 5,640 / 5,703 chars — while 3,367 / 4,085 /
+4,131 / 5,273 succeeded, so size is a correlate, not a threshold. Every rejection recovered on the very next call once the
+model re-emitted pure JSON. **Do not fight it by fragmenting**: 4 retries cost ~28k tokens, whereas splitting those four
+writes into ~12 small appends would have cost ~84k. Teach the retry, not the workaround.
+
+The same fire also validated the artifact-first rule: branch at call ~15, skeleton committed at 108k context, census green
+(12/12) by ~call 48, PR merged. Compare s187 (no commit until a steer at 167k) and s188 (branch unaided at 147k, commit at
+~call 35). The skeleton commit is the single biggest survivability gain measured so far.
