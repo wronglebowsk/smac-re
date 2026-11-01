@@ -1,8 +1,8 @@
 # NEXT_PROMPT.md — footing for the next session (session 191, 2026-11-01, M240: the `.MP` grid IS the live terrain-record array)
 
-Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s183
-milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
-Read the archive only for the section picked.
+Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
+VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
+(laws).
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -76,8 +76,7 @@ superseded), M103 (#110, never green), M109 (gates answered, model void). Summar
   terrain-record array**: FUN_00582260 reads `DAT_0092a38c*0x2c` (count = (W/2)*H) straight into
   DAT_0092ae14, no loop; one record covers TWO map columns. RETRACTED "cell+7 = land marker" (0xff in
   11,392/11,392 records) and FOOTING's "+7 = owner byte"; word 5 = record count; the 128/338 "trailer" is
-  the coarse region map DAT_0092ae18; record +16..+43 = 7 copies of the +8 mask (meaning OPEN). B1's
-  "cells" are record halves — its position parity still holds, its names were wrong.
+  the coarse region map DAT_0092ae18; record +16..+43 = 7 copies of the +8 mask (meaning OPEN).
 - Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`, and B2 must
   read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells): WHO dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
