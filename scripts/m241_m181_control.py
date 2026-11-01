@@ -57,7 +57,8 @@ for _fn, _addrs in {
 CALLSITES = {0x41E3BD: "FUN_0041e160", 0x49B306: "FUN_0049af50",
              0x4A9E0E: "FUN_004a99e0", 0x5120D0: "FUN_00512020"}
 PACKER, POSTPACK, GOVW, GOVW_CALL = 0x41A8F0, 0x41ABD4, 0x512020, 0x512069
-NBP = len(STORES) + len(CALLSITES) + 4                # 33 + 4 + entry/post/writer/writer-call = 41
+TAGWR = 0x6267A5              # the tagged-record writer: every record a save emits goes through it
+NBP = len(STORES) + len(CALLSITES) + 5     # 33 stores + 4 call sites + packer entry/post + writer x2
 
 
 def u32(fd, a):
@@ -114,6 +115,7 @@ def gdb_script():
     bp(GOVW, "GOVW arg1=%d f23be8=%d gate=%d fac=%d stage=%d",
        "$ecx, (*(int*)($ecx+0x23be8)), (*(int*)0x91c62c), (*(int*)0x91b5b4), " + S)
     bp(GOVW_CALL, "GOVWRITE stage=%d", S)
+    bp(TAGWR, "TAGWR 6267a5 stage=%d", S)
     L.append('printf "ARMED n=%d\\n"' % NBP)
     L.append("continue")
     return "\n".join(L) + "\n"
@@ -155,24 +157,27 @@ def open_browser(tag):
     time.sleep(0.8)
     P.sh("xdotool key End")
     P.sh("xdotool key --repeat 200 BackSpace")
-    P.sh('xdotool type --delay 25 "%s"' % SAVE_NAME)
+    name = SAVE_NAME[:-4] + "_" + tag[-1:].upper() + ".SAV"   # distinct per phase: no overwrite
+    P.sh('xdotool type --delay 25 "%s"' % name)               # confirm, no "exist" dialog to dismiss
     time.sleep(0.8)
     return True, "browser open, name typed"
 
 
 def press_ok_and_wait(tag, before, t0):
-    """The ONE trigger action: click OK (330,327). The save landing on disk IS the trigger proof."""
+    """The ONE trigger action: click OK (330,327). Detection is by MTIME, not by name-set difference:
+    phase B types the SAME name as phase A, so a successful overwrite adds no new filename and a
+    name-diff sees ZERO saves — that is what made invocation 2's traced window look empty."""
     P.click(SAVE_OK)
     nf = []
-    for _ in range(25):
+    for _ in range(30):
         time.sleep(1.0)
-        nf = new_saves(before)
+        nf = [f for f in all_savs() if os.path.getmtime(f) > t0]
         if nf:
             break
         b = body(P.freeze(tag + "_wait"))
         if "exist" in b or "overwrite" in b or "really" in b:
             P.key("Return")
-    return nf, ("ok" if nf else "no .SAV appeared within 25 s of the OK click")
+    return nf, ("ok" if nf else "no .SAV mtime newer than the window start within 30 s of the OK click")
 
 
 def close_leftovers(tag):
@@ -284,8 +289,8 @@ def main():
     time.sleep(1.5)
     log.close()
     txt = open(lpath, errors="replace").read()
-    hits = [l.split() for l in txt.splitlines()
-            if l.split() and l.split()[0] in ("ENT", "W", "CALL", "POST", "GOVW", "GOVWRITE")]
+    tags = ("ENT", "W", "CALL", "POST", "GOVW", "GOVWRITE", "TAGWR")
+    hits = [l.split() for l in txt.splitlines() if l.split() and l.split()[0] in tags]
     warns = [l for l in txt.splitlines() if re.search(r"warning|error:|Cannot access|cannot insert", l, re.I)]
     tracer = next(l.split()[1] for l in open("/proc/%d/status" % pid) if l.startswith("TracerPid"))
     tl2 = timelines(rows2)
@@ -299,34 +304,39 @@ def main():
         if h[0] == "W":
             sh[int(h[1], 16)] = sh.get(int(h[1], 16), 0) + 1
     nstore = sum(sh.values())
+    ntag = len([h for h in hits if h[0] == "TAGWR"])
     byfn = {}
     for a, c in sorted(sh.items()):
         byfn[STORES[a]] = byfn.get(STORES[a], 0) + c
     print("  store hits at ds:0x99aa38: %d at %d of %d census sites -> by function %s"
           % (nstore, len(sh), len(STORES), byfn or "{}"))
     for h in hits:
-        if h[0] in ("ENT", "CALL", "POST", "GOVW", "GOVWRITE"):
+        if h[0] in tags:
             print("  %s %s" % (h[0], " ".join(h[1:])))
-    print("  +1c timeline under the tracer: %s" % show(tl2[7], 8))
+    print("  +1c timeline under the tracer (%d samples): %s" % (cnt2[0], show(tl2[7], 8)))
+    print("  tagged-writer 0x6267a5 hits in the traced window: %d" % ntag)
+    print("  NOTE: a value sampler resolves %d samples across the window; a store that writes the SAME "
+          "value, or a write that fits inside one sample interval, is INVISIBLE to it — that is why "
+          "M181's zero is not evidence and why the counters carry the verdict." % cnt2[0])
     G1 = all(nf and all(os.path.getsize(f) > 20000 and os.path.getmtime(f) > t - 1 for f in nf)
              for nf, t in ((nfA, tA), (nfB, tB)))
-    G2 = len(churn) >= 2
+    G2 = ntag >= 1
     G3 = armed and not warns and tracer == "0" and os.path.exists("/proc/%d" % pid)
     G4 = len(hits) >= 1
-    G5 = (nstore >= 1 and G1) or (nstore == 0 and G1 and G2 and G4)
+    G5 = (nstore >= 1 and G1 and G2) or (nstore == 0 and G1 and G2 and G4)
     verdict = (("CONFIRMED: the traced save ran %d stores to ds:0x99aa38 at %d of %d census sites %s"
-                % (nstore, len(sh), len(STORES), byfn)) if (nstore and G1) else
-               ("REFUTED for this trigger: 0 stores at the 33 sites during a traced save that DID "
-                "write records (G1/G2/G4 passed) — no writer in this site set fires on a save"
-                if G5 else
-                "UNDECIDED: the traced window held no COMPLETED save (G1) — the trigger never "
-                "fired, so neither side of M181 is settled"))
+                % (nstore, len(sh), len(STORES), byfn)) if (nstore and G1 and G2) else
+               ("REFUTED for this trigger: 0 stores at the 33 sites while the traced save DID write "
+                "%d records through 0x6267a5 (G1+G2) — no writer in the M179 site set fires on a save"
+                % ntag if G5 else
+                "UNDECIDED: the traced window held no completed save (G1) or no tagged write (G2); "
+                "the trigger/control never fired, so neither side of M181 is settled"))
     print("VERDICT: " + verdict)
-    names = ["G1 trigger: a new .SAV > 20 KB appeared in BOTH save windows",
-             "G2 sampler control: >=2 non-+1c staging fields changed value in the save window",
-             "G3 instrument: 41 bps armed, no gdb warnings, TracerPid back to 0, inferior alive",
-             "G4 band control: the traced save executed >=1 armed site (band code ran under tracer)",
-             "G5 falsifier decides: stores fired, OR zero stores with G1+G2+G4 controls passing"]
+    names = ["G1 trigger: a .SAV > 20 KB whose mtime is inside BOTH save windows",
+             "G2 save-under-tracer control: the tagged-record writer 0x6267a5 ran in the traced window",
+             "G3 instrument: 42 bps armed, no gdb warnings, TracerPid back to 0, inferior alive",
+             "G4 tracer saw the band: >=1 hit at an armed site during the traced window",
+             "G5 falsifier decides: stores fired with G1+G2 passing, OR zero stores with them passing"]
     npass = 0
     for nm, ok in zip(names, (G1, G2, G3, G4, G5)):
         print("%s %s" % ("PASS" if ok else "FAIL", nm))

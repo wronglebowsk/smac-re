@@ -13,3 +13,21 @@ PASS G3 instrument: 41 bps armed, no gdb warnings, TracerPid back to 0, inferior
 PASS G4 band control: the traced save executed >=1 armed site (band code ran under tracer)
 PASS G5 falsifier decides: stores fired, OR zero stores with G1+G2+G4 controls passing
 FAIL M241: 3/5 gates
+
+=== INVOCATION 2 (instrument fixed) ===
+pid=319926  baseline: +00=00000000 +04=00000000 +08=00000000 +0c=00000000 +10=00000000 +14=00000000 +18=00000000 +1c=00000000 +20=00000000 +24=014d6750 +28=00000000 +2c=01504990 +30=00000001 +34=00000000 +38=00000000 +3c=00000012 cp=00000003 curfac=00000003 gate91c62c=00000000 round=00000035 selobj=0095da10 year=00000869 selflag=00dfbe41 pub94d600=00dfbe41
+gate ds:0x91c62c=0 (FUN_00512020 skips the GOVERNORCONTROL record unless it is 0)
+PHASE A (no tracer): browser open, name typed / ok  samples=1206 change-rows=2
+  save file /home/n100/reverse/smac/programs/saves/auto/m241_probe.SAV  242799 B  mtime +8.4 s
+  staging fields that CHANGED value (all but +1c): ['+04']
+  +1c (ds:0x99aa38) timeline: 00000000@0.00
+PHASE B (tracer): browser open, name typed / no .SAV appeared within 25 s of the OK click  gdb hits=1  sampler samples=47909  TracerPid after detach=0
+  store hits at ds:0x99aa38: 1 at 1 of 33 census sites -> by function {'FUN_00626b46': 1}
+  +1c timeline under the tracer: 00000000@0.00
+VERDICT: UNDECIDED: the traced window held no COMPLETED save (G1) — the trigger never fired, so neither side of M181 is settled
+FAIL G1 trigger: a new .SAV > 20 KB appeared in BOTH save windows
+FAIL G2 sampler control: >=2 non-+1c staging fields changed value in the save window
+PASS G3 instrument: 41 bps armed, no gdb warnings, TracerPid back to 0, inferior alive
+PASS G4 band control: the traced save executed >=1 armed site (band code ran under tracer)
+FAIL G5 falsifier decides: stores fired, OR zero stores with G1+G2+G4 controls passing
+FAIL M241: 2/5 gates
