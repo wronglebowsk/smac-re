@@ -1,8 +1,6 @@
-S197 M245/M246/M247 submitted (milestone/m245). `sudo -n python3 scripts/m245_tail_legs_census.py`
--> `PASS M245: 5/5 gates` (3rd invocation; 1st 4/5 on G2's false premise "exactly one save matches"
-— 7/17 match) -> evidence/m245_tail_legs.txt. 216-B leg = 9 map-view objects (8 ptrs
-0x7cdecc..0x7cdee8 + inline 0x8cda4c) x 6 fields (id, active, flags, -6, centre tile); live == 7/17
-saves. Trailing 4 B = timeGetTime() written by FUN_00597ce0 after the codec. Region map: accessors
-use Rw>>1, alloc (Rw+1)/2 -> bytes 79..90 never written, 0xcd in 17/17. Box /proc reads only,
-terran.exe 319926 TracerPid 0. NEXT: track_mode.py — 7 mask copies at record +16..+43, or the
-dialog +0x4c dispatch (box).
+S198 M248/M249 IN FLIGHT (branch milestone/m248, skeleton committed). Question: what the coarse
+region-map bytes mean + what terrain record +3 is. Acceptance: `python3
+scripts/m248_region_values_census.py` -> `PASS M248: 5/5 gates` -> evidence/m248_region_values.txt.
+NOT merged. Gates: G1 builder rule / G2 recompute==stored / G3 DAT_0092ae18 ref census / G4 +3
+writers / G5 label value-sets. Box: terran.exe 319926 alive, TracerPid 0, /proc reads only. Open
+PRs #180 (M241 FAIL 2/5, intentional), #105 (docs badge NO-CI; merge refuses without --force).
