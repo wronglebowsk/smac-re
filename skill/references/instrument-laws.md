@@ -604,3 +604,19 @@ the repair costs a doc-correction PR after the milestone has already merged.
   N **BYTES**, not N instructions. A 40-byte lookahead missed a dispatch 45 bytes away (the prologue that
   pushes a boolean is `and/neg/sbb/neg/push`) and printed "0 of 2". Count instructions, or size the window
   in bytes from the longest prologue you know is there, and print the gap you measured.
+
+## A store census is DIRECTION-aware and CLASS-scoped — and "N distinct keys" must name its identity (s181)
+
+- `mov reg,[reg+disp]` is a LOAD and `mov [reg+disp],reg` is a STORE. A census keyed on the MNEMONIC set
+  alone drops both in the same bucket, so a field with 10 loads and 1 store reports 11 writes. Classify by
+  WHICH operand carries the displacement (objdump Intel prints the destination first).
+- A displacement is shared by unrelated structs: +0xa40 has 56 stores in 30 functions image-wide, but only
+  2 of those functions are members of the dialog vtable 0x67164c. Scope a field census to a class by
+  intersecting the store sites' containing functions with that class's vtable targets (read the table's
+  dwords, map each through `ghidra_out/index.csv`), and report BOTH numbers.
+- Ghidra's `this[0x290]` is byte offset 0xa40 (element index x stride 4). Convert before grepping, and say
+  which notation a quoted offset is in.
+- "N distinct keys" is ambiguous: 111 push sites resolve to 109 distinct ADDRESSES but only 97 distinct
+  TEXTS (the pool stores the same word at two addresses). Report sites / addresses / texts, in that order.
+- Indirect calls (`call ebx`, `call ecx`) carry no hex operand: a census doing `int(ops[1], 16)` over `call`
+  sites dies on them mid-run. Filter `startswith("0x")` first.
