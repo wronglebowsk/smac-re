@@ -1,0 +1,84 @@
+PASS G1: FUN_0058ce00 builds the region map from a centre-first 9-diamond sample: the first land tile's record +3, else 0 (9/9 checks)
+INFO G1 body ghidra_out/shard_015.c:4690-4752 (63 lines). 9 (dx,dy) read from the image at 0x67850c/0x678990: [(0, 0), (1, -1), (2, 0), (1, 1), (0, 2), (-1, 1), (-2, 0), (-1, -1), (0, -2)]
+INFO consumer FUN_00556690 uses the same 9 offsets (0x6784a0/0x6784c4), ring first: [(1, -1), (2, 0), (1, 1), (0, 2), (-1, 1), (-2, 0), (-1, -1), (0, -2), (0, 0)]
+  HIT 9 samples: local_14 < 0x24 with local_14 += 4
+  HIT dx from &DAT_0067850c, dy from &DAT_00678990 (int tables)
+  HIT land test 0x5f < (record +0 & 0xe0), i.e. category > 2
+  HIT the value taken is record +3
+  HIT no land sample -> 0
+  HIT stored through FUN_00582360(x, y, value)
+  HIT x wraps mod DAT_0092a378; y only bounds-checked vs DAT_0092a37c
+  HIT region walk: x = y&1 step 2 < Rw; map coord x*5, row coord y*5
+  HIT the 9 offsets are centre + 8 distinct ring neighbours, max |offset| 2
+PASS G2: the stored region map is reproducible from the terrain grid by that rule, byte for byte: 19 files, 1809 written cells, 0 mismatches, 38 samples needed the x-wrap
+  Alpha Centauri Autosave 1.SAV    W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  Alpha Centauri Autosave 10.SAV   W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  Alpha Centauri Autosave 2.SAV    W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  Alpha Centauri Autosave 20.SAV   W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  Alpha Centauri Autosave 3.SAV    W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  Alpha Centauri Autosave 30.SAV   W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  Alpha Centauri Autosave 4.SAV    W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  Alpha Centauri Autosave 5.SAV    W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m241_probe.SAV                   W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m241_probe_A.SAV                 W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m241_probe_B.SAV                 W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m242_probe_A.SAV                 W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m242_probe_B.SAV                 W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m112auto1.SAV                    W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m112poke.SAV                     W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m113map.SAV                      W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  m54b_clean.SAV                   W=64 H=64 Rw=13 Rh=13 len=91 written=79 slack=12 mismatch=0 wrapped-samples=0
+  planet.MP                        W=80 H=80 Rw=16 Rh=16 len=128 written=128 slack=0 mismatch=0 wrapped-samples=12
+  planetx.MP                       W=128 H=128 Rw=26 Rh=26 len=338 written=338 slack=0 mismatch=0 wrapped-samples=26
+PASS G3: the region map has exactly one reader function and one writer function; its other 17 references are alloc/free/file-I/O/clears, all in shard_014.c
+INFO G3 direct refs to DAT_0092ae18: 17, all in ['shard_014.c']; kinds [('accessor-body', 2), ('alloc', 1), ('clear', 5), ('file-io', 2), ('free', 3), ('null-guard', 4)]
+INFO refs: shard_014.c:27235 FUN_00581fc0(null-guard), shard_014.c:27236 FUN_00581fc0(free), shard_014.c:27239 FUN_00581fc0(clear), shard_014.c:27267 FUN_00582000(alloc), shard_014.c:27268 FUN_00582000(null-guard), shard_014.c:27274 FUN_00582000(clear), shard_014.c:27279 FUN_00582000(null-guard), shard_014.c:27280 FUN_00582000(free), shard_014.c:27283 FUN_00582000(clear), shard_014.c:27342 FUN_005821e0(file-io), shard_014.c:27357 FUN_00582260(null-guard), shard_014.c:27358 FUN_00582260(free), shard_014.c:27361 FUN_00582260(clear), shard_014.c:27367 FUN_00582260(clear), shard_014.c:27376 FUN_00582260(file-io), shard_014.c:27392 FUN_00582340(accessor-body), shard_014.c:27401 FUN_00582360(accessor-body)
+INFO map READERS (call sites of FUN_00582340): [('shard_014.c', 3450, 'FUN_00556690'), ('shard_014.c', 3469, 'FUN_00556690')]
+INFO map WRITERS (call sites of FUN_00582360): [('shard_015.c', 4739, 'FUN_0058ce00')]
+  HIT every direct ref is in shard_014.c
+  HIT every direct ref classifies as alloc/free/file-io/clear/null-guard/accessor-body
+  HIT exactly ONE function reads the map (FUN_00556690, 2 sites)
+  HIT exactly ONE function writes the map (FUN_0058ce00, 1 site)
+PASS G4: record +3 has exactly ONE writer in the image, the byte setter FUN_00582d00 (1 of 18 record-array stores touch byte 3, all of them that setter), reached at 4 call sites that are all in shard_015.c's map-generation code (shard_015.c:4862 FUN_0058d120, shard_015.c:4892 FUN_0058d120, shard_015.c:5086 FUN_0058d390, shard_015.c:5097 FUN_0058d390); the +3 plane is identical across 17 saves spanning 5 distinct turns, so gameplay never rewrites the region label
+INFO G4 stores into the terrain record array (decompile, all shards): 18
+INFO   shard_012.c:19651 FUN_004ebef0 off=8 w=4, shard_012.c:19666 FUN_004ebef0 off=8 w=4, shard_012.c:19683 FUN_004ebef0 off=8 w=4, shard_014.c:27411 FUN_00582390 off=1 w=1, shard_014.c:27475 FUN_005823c0 off=8 w=4, shard_014.c:27584 FUN_005823c0 off=0 w=1, shard_014.c:27645 FUN_00582a60 off=1 w=1, shard_014.c:27734 FUN_00582cc0 off=2 w=1, shard_014.c:27745 FUN_00582d00 off=3 w=1, shard_014.c:27840 FUN_00582ea0 off=8 w=4, shard_014.c:27887 FUN_00582f70 off=12 w=4, shard_014.c:28160 FUN_00583570 off=2 w=1, shard_014.c:28180 FUN_005835f0 off=8 w=4, shard_014.c:28183 FUN_005835f0 off=8 w=4, shard_014.c:28199 FUN_005835f0 off=2 w=1, shard_014.c:28653 FUN_00583c70 off=8 w=4, shard_014.c:28655 FUN_00583c70 off=12 w=4, shard_015.c:14888 FUN_0059ce10 off=8 w=4
+INFO stores whose width covers byte 3: 1 [('shard_014.c', 27745, 'FUN_00582d00', 3, 1)]
+INFO FUN_00582d00 call sites: [('shard_015.c', 4862, 'FUN_0058d120'), ('shard_015.c', 4892, 'FUN_0058d120'), ('shard_015.c', 5086, 'FUN_0058d390'), ('shard_015.c', 5097, 'FUN_0058d390')]
+INFO lines that READ record +3 (approximate line count): 191
+INFO distinct +3 planes across the 17 saves: 1; turn field (file 80) values [50, 51, 52, 53, 60]
+  HIT FUN_00582d00's body is a byte store to record +3
+  HIT every store covering byte 3 belongs to FUN_00582d00
+  HIT FUN_00582d00 has exactly 4 call sites, all in shard_015.c (map generation)
+  HIT every save carries the SAME record+3 plane (17 saves)
+  HIT those saves span >= 2 distinct turns (a writer had chances to run)
+PASS G5: record +3 is the map's REGION LABEL -- +3 < 0x40 on every land tile and >= 0x41 on every water tile (0 exceptions on all 19 files examined), 0x40 unused, the region map's bytes are exactly a per-region copy of it, land ids [18, 25, 62] by map size, readers index a per-faction array with it (shard_012.c:2682) and split it at 0x40 (shard_012.c:7336)
+  Alpha Centauri Autosave 1.SAV  W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  Alpha Centauri Autosave 10.SAV W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  Alpha Centauri Autosave 2.SAV  W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  Alpha Centauri Autosave 20.SAV W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  Alpha Centauri Autosave 3.SAV  W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  Alpha Centauri Autosave 30.SAV W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  Alpha Centauri Autosave 4.SAV  W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  Alpha Centauri Autosave 5.SAV  W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m241_probe.SAV                 W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m241_probe_A.SAV               W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m241_probe_B.SAV               W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m242_probe_A.SAV               W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m242_probe_B.SAV               W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m112auto1.SAV                  W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m112poke.SAV                   W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m113map.SAV                    W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  m54b_clean.SAV                 W=64 H=64 land=1082 water=966 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=18 water-ids=6 region-ids=9 region-subset-of-land=True
+  planet.MP                      W=80 H=80 land=1374 water=1826 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=25 water-ids=6 region-ids=11 region-subset-of-land=True
+  planetx.MP                     W=128 H=128 land=3049 water=5143 land>=0x40=0 water<0x40=0 +3==0x40=0 land-ids=62 water-ids=8 region-ids=29 region-subset-of-land=True
+INFO land-id/water-id counts by map size: [((64, 64), (18, 6)), ((80, 80), (25, 6)), ((128, 128), (62, 8))]
+INFO +3 used as an array index (per-faction block, stride 0x20bc): shard_012.c:2682
+INFO +3 tested as `a < 0x40 == b < 0x40`: shard_012.c:7336
+  HIT no land tile has +3 >= 0x40 and no water tile has +3 < 0x40, on every file
+  HIT the value 0x40 itself never appears in any +3 plane
+  HIT every nonzero region byte is a +3 value present on that file's land tiles
+  HIT distinct land-id count grows with map area: [18, 25, 62]
+  HIT a reader indexes a per-faction byte array with +3
+  HIT a reader splits +3 at 0x40
+
+SUMMARY 5/5 gates on 17 saves + 2 .MP
