@@ -636,3 +636,30 @@ FUN_00426680 returns the name text at record +0x34 (record = 0x927590 + fac*0x59
 immediates, 0 printf-family calls, 0 references to FUN_00625b20 — they copy their text argument VERBATIM, so
 **M194's "the formatters" is RETRACTED**; the 16-byte memcmp keys 0x67bd20/0x67bd30 are GUIDs (a class test),
 not table names.
+
+## M201-M204 (s180, all PASS) — FUN_005f1394 = the OK/CANCEL DIALOG RUNNER (class ctor FUN_00405ef0, vtable 0x67164c), its return is a result code, FUN_0062898e = first-digit scanner, the key pool = an emitter list
+
+**M201** FUN_005f1394 is a **thiscall member of the game's dialog class**: ctor FUN_00405ef0 installs
+vtable 0x67164c at this+0 (0x405f31) and 0x671644 at this+0x444 (the CPane subobject), 99 ctor sites in 90
+functions, 53 of the 67 pump-caller functions construct it. The dword 0x5f1394 appears 0 times as data
+image-wide - not a vmethod, not a jump target; 94 direct calls, one exit `ret 0x8` (0x5f3f58), 90/94 sites
+load ECX from the caller's own stack frame. It is the ONLY reader of 0x698e40 'OK', 0x698e44 'OK',
+0x698e48 'Cancel', 0x698e50 'OK'. Slots it dispatches through *this, all resolved in 0x67164c:
++0x4=0x406750, +0x8=0x4068a0, +0x30=0x406970, +0xdc=0x5ce5bd, +0x15c=0x406990, +0x160=0x404e70,
++0x164=0x407060, +0x16c=0x407280, +0x170=0x407660; the +0xdc dispatch is made twice, on *this and on
+*[this+0x285]. **M202** its return domain is {0, -1, [this+0x290], a passed-through dispatch value}: 0
+`mov eax,imm` in 11,207 bytes, 5 `xor eax,eax`, 2 `or eax,0xffffffff`, `mov eax,ds:0x698d0c` (that dword IS
+0xffffffff, 1 reader image-wide) and the single `[reg+0xa40]` read at 0x5f3f45 (0 stores). Its arg2 is a
+CALLBACK the modal handler invokes - vtable+0xdc FUN_005ce5bd (`ret 0xc`) does `cmp [ebp+0xc],0` (0x5ce6bd)
+then `call dword ptr [ebp+0xc]` (0x5ce6c3); 17/94 sites pass 0x530d70 (16) or 0x530db0 (1), unnamed
+islands in the 0x530d45-0x530df0 gap that gate on ds:0x920434 and ds:0x991588, guard with ds:0x920790 (its
+only 4 stores) and call FUN_00519a20. **M197's "chooser" is RETRACTED**: ds:0x920700 (31 sites, 4 fns,
+tested {4,6,8,9,d}) holds a dialog RESULT CODE, stored there by all 6 composer calls. **M203**
+FUN_0062898e is a FIRST-DIGIT scanner (61 B, 0 callees, only '0'/'9' bounds), 5/5 sites inside
+FUN_00625b20; $H compares 4 bytes with 0x699130 '$HEX' -> `__itoa([0x999fa4][n])`, else digit -> slot text
+0x99a01c+n*0x100; $L's exception is 0x69913c '$LINK<'; $N gotos the default tail; the engine returns only
+14 (x6, behind 8 `9 < local_1c` guards) and 3. **M204** the key pool is an EMITTER LIST: 313 `push <key
+VA>` sites / 255 keys / 29 functions, all inside 0x5316b0..0x54f1d0, FUN_00546800 owning 111 sites / 97
+keys; sinks FUN_00626a17 x149 (thunk to FUN_00626b19(&0x997528, key, -1, 0, ...)), FUN_0064b9e0 x76,
+FUN_00405220 x33 (thunk to FUN_00404010(&0x997120, key)); 11 of the 29 referrers call the pump, 56 of the
+67 pump callers name no key - the paths join only as 0x530d70 -> FUN_00519a20 -> FUN_00546800.

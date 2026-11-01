@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md — footing for the next session (session 179, 2026-11-01, cap triage)
+# NEXT_PROMPT.md — footing for the next session (session 180, 2026-11-01, M201-M204 all PASS)
 
-Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s178
+Structure: RULES + live footing. Detail on disk: `docs/pick-archive.md` (narrative M90-M123, the s171-s180
 milestone lines VERBATIM, + FULL trap text), `NAMED.md` (semantics), `skill/references/instrument-laws.md` (laws).
 Read the archive only for the section picked.
 
@@ -24,7 +24,7 @@ box-time milestones go 1 per batch.** The binding cap is doc headroom, not capab
 Merged: M54A-M82 (#39-#83), M87-M89 (#90/#93), M90-M100 (#95/#97-#104, #106-#107), M102 (#109), M104 (#111),
 M105-M106 (#112/#113), M110-M113 (#116/#121), M116-M118 (#126-#129), M119-M123 (#130), M163-M171 (#138-#140),
 M172-M174 (#141), M175-M177 (#145), M178-M180 (#147, docs #149/#150), M182-M184 (#151), M185-M187 (#152),
-M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
+M188-M190 (#154), M191-M193 (#157), M194-M196 (#158), M197-M200 (#159), M201-M204 (#161), s175 cap triage (#153). UNMERGED: M83/M84 family (-9999 at 0x496ad0 = DIALOG-CANCEL; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108, superseded),
 M103 (#110, never green), M109 (gates answered, model void). Registry summaries: `docs/pick-archive.md` (M90-M104),
 `NAMED.md` (semantics), `skill/references/code-atlas.md` (legs).
@@ -55,20 +55,30 @@ M103 (#110, never green), M109 (gates answered, model void). Registry summaries:
   before saying "no site reads X"; a hw watchpoint only reports a CHANGE; a gate may only read a field the harness SETS.
 - **Where the map lives now:** `docs/field-atlas-faction.md` = the 20 most-referenced faction-block displacements with
   refs/writes/consts/tests/functions (M143-M162). Start there before re-deriving a field.
-- **Merged-era footing s171-s177 (M163-M196, all PASS) is ARCHIVED:** per-field semantics and milestone lines in
-  `NAMED.md` + `docs/pick-archive.md`; census outputs `evidence/m175_m177_aggcallers.txt` … `m194_m196_channels.txt`;
-  field map `docs/field-atlas-faction.md`. Read them there.
-- **s178 (M197-M200, all PASS) is ARCHIVED the same way:** rows in `NAMED.md` M197-M200, census output
-  `evidence/m197_m200_proposal.txt`, verbatim footing lines in `docs/pick-archive.md`. Short of it: FUN_00544530
-  is the DIPLOMACY PROPOSAL COMPOSER (ONE call site, 0x545c99); `ds:0x920700` is ONE FIELD of a 5-field selector
-  block {0x9206fc,700,728,748,77c} filled from 6 calls to the chooser FUN_005f1394; the diplomacy KEY pool is
-  `0x690160..0x69107c` (311 keys + 18 message lines, 257 with code refs); FUN_00625b20 IS the `$`-tag engine
-  (copies the Nth ':'-separated segment of `0x99a01c+n*0x100`); FUN_00631afb/0x632cad are DB ROW WRITERS that
-  copy text VERBATIM. The s175-s177 (M188-M196) lines moved out with it, verbatim in the same archive file.
-- Pick from: FUN_005f1394 (the 11 KB chooser, 94 callers, called 6x by the composer) — what it selects over and
-  what its return domain is; FUN_00625b20's $H/$L/$N cases and FUN_0062898e (the name→slot resolver it calls when
-  a payload has 0 colons); the 257-entry key→function map read as "which function emits which message"; M181's
-  positive control (box).
+- **s171-s177 (M163-M196), s178 (M197-M200) and s180 (M201-M204) footing is ARCHIVED:** per-field semantics
+  and milestone lines in `NAMED.md` + `docs/pick-archive.md`; census outputs
+  `evidence/m175_m177_aggcallers.txt` … `m194_m196_channels.txt`, `m197_m200_proposal.txt`,
+  `m201_m204_dialog.txt`; field map `docs/field-atlas-faction.md`. Read them there.
+- **s180 (M201-M204, all PASS), short of it: FUN_005f1394 IS THE OK/CANCEL DIALOG RUNNER** — class ctor
+  FUN_00405ef0 (99 sites) installs vtable 0x67164c at this+0 and 0x671644 at this+0x444 (the CPane
+  subobject); 0 data refs to 0x5f1394 image-wide (not a vmethod), 94 direct calls, one `ret 0x8`, 90/94
+  sites load `this` from the caller's own frame; it is the only reader of the OK/Cancel pool at 0x698e40.
+  Return domain {0, -1, [this+0x290], pass-through}; its arg2 is a CALLBACK that vtable+0xdc FUN_005ce5bd
+  calls (`call dword ptr [ebp+0xc]` at 0x5ce6c3); 17/94 sites pass the gap stubs 0x530d70 / 0x530db0
+  (gate ds:0x920434 + ds:0x991588, guard ds:0x920790, call FUN_00519a20). **M197's "chooser" is RETRACTED:
+  ds:0x920700 is a dialog RESULT CODE** (31 sites, 4 fns, tested {4,6,8,9,d}). **FUN_0062898e is a
+  first-DIGIT scanner**, not a name resolver; $H/$L/$N and the unnamed default all end at digit → slot
+  text (only `$HEX` → `__itoa([0x999fa4][n])` and `$LINK<` are exceptions); the engine returns only 14
+  and 3. **The key pool is an EMITTER LIST**: 313 `push <key VA>` sites / 255 keys / 29 fns, all in
+  0x5316b0..0x54f1d0, FUN_00546800 owning 111 sites / 97 keys; sinks FUN_00626a17 ×149, FUN_0064b9e0 ×76,
+  FUN_00405220 ×33; 11 of the 29 referrers call the pump and 56 of the 67 pump callers name no key.
+- Pick from: who WRITES the dialog result field [this+0x290] (byte +0xa40 — 37 write sites image-wide, 0
+  inside the pump) and what `[this+0x285]`, the sub-dialog pointer the +0xdc dispatch switches on, holds;
+  FUN_00546800 (34,550 B, 111 key sites, 5 call sites) — how a result code selects a key, and what DRAINS
+  the message channel at ds:0x997528 that FUN_00626b19 writes; the 0xb4c-byte ROW object the pump
+  allocates in the loop bounded by [this+0x2160] (ctor FUN_005faec0, layout FUN_005f9e85) and where its
+  label text comes from; the pump's -1 vs the UNMERGED M83/M84 "-9999 at 0x496ad0 = DIALOG-CANCEL";
+  M181's positive control (box).
 ## LIVE FACTS / KIT
 
 - **BOX state CARRIED from s174e (s175/s178 spent no box time, so NOT re-verified):** terran.exe 319926, y2153 r53,

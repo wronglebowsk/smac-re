@@ -197,3 +197,36 @@ Registry rows: `NAMED.md` M188-M200. Census outputs: `evidence/m188_m190_uses.tx
   consumed by POINTER PASSING (113 sites/31 fns in the window, 93 push the base or a slot address, 16 callees get it).
   `[reg*4+0x94d448]` is NOT a pointer (the 2095-fold carries 365/466 scaled sites; **M196 RETRACTS M190's
   store-address carriers**).
+
+- **s180 (M201-M204, all PASS): rows in `NAMED.md`; census output `evidence/m201_m204_dialog.txt`;
+  instrument `scripts/m201_m204_dialog.py`** (acceptance `python3 scripts/m201_m204_dialog.py` ->
+  `M201=PASS M202=PASS M203=PASS M204=PASS (15/15 gates)`, rc 0; invocation 1 was 12/15 on 3 instrument
+  bugs, fixed without weakening a threshold). **M201** FUN_005f1394 (11,207 B) is a thiscall member of
+  the dialog class whose ctor FUN_00405ef0 installs vtable 0x67164c at this+0 (0x405f31) and 0x671644 at
+  this+0x444 (0x405f3a, the CPane subobject), after subobject ctors 0x5ee350 and 0x5f6b8c(this+0x3230);
+  99 ctor sites in 90 functions, 53 of the 67 pump-caller functions construct it. 0 data occurrences of
+  0x5f1394 image-wide (no vtable or switch holds it); 94 direct calls; one exit `ret 0x8` at 0x5f3f58;
+  90/94 sites load ECX from the caller's own frame. It is the ONLY reader of 0x698e40 'OK', 0x698e44 'OK',
+  0x698e48 'Cancel', 0x698e50 'OK' (1 site each; the pool alternates). It dispatches 9 resolvable slots
+  of 0x67164c (+0x4=0x406750, +0x8=0x4068a0, +0x30=0x406970, +0xdc=0x5ce5bd, +0x15c=0x406990,
+  +0x160=0x404e70, +0x164=0x407060, +0x16c=0x407280, +0x170=0x407660) and dispatches +0xdc twice, on
+  *this and on *[this+0x285]. **M202** return domain {0 (5 `xor eax,eax`), -1 (2 `or eax,0xffffffff` +
+  `mov eax,ds:0x698d0c` at 0x5f3f38, that dword IS 0xffffffff), [this+0x290] (the single `[reg+0xa40]`
+  read at 0x5f3f45, 0 stores), pass-through}: 0 `mov eax,imm` in the whole body. arg2 IS A CALLBACK: its
+  2 uses (0x5f3d87, 0x5f3dcb) both feed a +0xdc dispatch and vtable+0xdc FUN_005ce5bd (`ret 0xc`, 3 args)
+  tests it at 0x5ce6bd and `call dword ptr [ebp+0xc]` at 0x5ce6c3. 17/94 sites pass a code pointer, 16x
+  0x530d70 + 1x 0x530db0, unnamed islands in the 0x530d45-0x530df0 gap: gate on ds:0x920434 then
+  ds:0x991588, set ds:0x920790=1 (its only 4 stores image-wide), call FUN_00519a20, clear, return 1/0.
+  **M202 RETRACTS M197's "chooser"**: all 6 composer calls store the return into
+  {0x9206fc,0x920700,0x920728,0x920748,0x92077c} within 4 instructions and test it against a small
+  integer; 0x920700 is touched at 31 sites in 4 functions and compared with {4,6,8,9,d} - a dialog RESULT
+  CODE, not a mode. **M203** FUN_0062898e is a first-DIGIT scanner (61 B, 0 callees, only '0'/'9' bounds
+  plus the NUL test), 5/5 call sites inside FUN_00625b20; $H compares 4 bytes with 0x699130 '$HEX' ->
+  `__itoa([0x999fa4][n])`, else digit -> slot text `0x99a01c+n*0x100`; $L's exception is 0x69913c
+  '$LINK<'; $N gotos switchD_00625bb6_caseD_4e, the same tail as the unnamed default; the engine returns
+  only 14 (x6, behind 8 `9 < local_1c` guards) and 3 (null args). **M204** the key pool is an EMITTER
+  LIST: 313 `push <key VA>` sites / 255 distinct keys / 29 functions, all inside 0x5316b0..0x54f1d0,
+  FUN_00546800 owning 111 sites / 97 keys; the sinks are FUN_00626a17 x149 (thunk to FUN_00626b19
+  (&DAT_00997528, key, -1, 0, ...)), FUN_0064b9e0 x76 and FUN_00405220 x33 (thunk to
+  FUN_00404010(&DAT_00997120, key)) = 258/313; only 11 of the 29 referrers call the pump and 56 of the 67
+  pump callers name no key - the paths join only as 0x530d70 -> FUN_00519a20 -> FUN_00546800.
