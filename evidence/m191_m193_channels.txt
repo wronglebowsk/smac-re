@@ -1,0 +1,115 @@
+M191 FUN_00626634: 44 insns (141 B), 7 stores, 11 loads, callees {'0x64b9e0': 1}
+   key pcs: g_size=0x62663a  g_size_jmp=0x62663e  g_slot=0x626640  g_slot_jmp=0x626644  bail_val=0x626646  bail_jmp=0x62664b  a3_test=0x62664d  a3_staging=0x62665b  storeA=0x62666a  a4_test=0x626671  a4_staging=0x62667f  storeB=0x62668e  slotmul=0x626698  clear=0x62669b  push_arg2=0x6266a5  buflea=0x6266ac  push_buf=0x6266b2  call_copy=0x6266b3  clean=0x6266b8  ok_val=0x6266bb
+   stores: 0x626656 mov dword ptr [ebp-0x4],eax ; 0x626661 mov dword ptr [ebp-0x4],ecx ; 0x62666a mov dword ptr [edx*4+0x999ff4],eax ; 0x62667a mov dword ptr [ebp-0x8],ecx ; 0x626685 mov dword ptr [ebp-0x8],edx ; 0x62668e mov dword ptr [eax*4+0x999fcc],ecx ; 0x62669b mov byte ptr [edx+0x99a01c],0x0
+   the negative-argument fallbacks read the STAGING pair: mov ecx,dword ptr ds:0x99aa1c ; mov edx,dword ptr ds:0x99aa20
+   callee FUN_0064b9e0: 84 insns (224 B), 7 stores of which 7 go through [edi], 2 uses of the 0x7efefeff zero-byte trick, 4 rets, args read ['mov eax,dword ptr [esp+0x8]', 'mov ecx,dword ptr [esp+0x4]']
+M191a  PASS - 0x626634 is a GUARDED COPY, not an emitter: 44 insns / 7 stores / 11 loads / exactly 1 callee, and the guards run in the order g_size@0x62663a, g_size_jmp@0x62663e, g_slot@0x626640, g_slot_jmp@0x626644, bail_val@0x626646, bail_jmp@0x62664b, a3_test@0x62664d, a3_staging@0x62665b, storeA@0x62666a, a4_test@0x626671, a4_staging@0x62667f, storeB@0x62668e, slotmul@0x626698, clear@0x62669b, push_arg2@0x6266a5, buflea@0x6266ac, push_buf@0x6266b2, call_copy@0x6266b3, clean@0x6266b8, ok_val@0x6266bb - arg2 must be non-zero and arg1 <= 9, else 'mov eax,0x3' IS the return value and the success path ends 'xor eax,eax'; a negative arg3/arg4 is replaced by the staging pair ds:0x99aa1c / ds:0x99aa20; its single callee 0x64b9e0 writes ONLY through [edi] (7 of 7 stores) with the 0x7efefeff zero-byte scan on BOTH operands = an append-until-NUL byte copy
+M191 geometry: A=0x999fcc B=0x999ff4 strings=0x99a01c staging=0x99aa1c, 10 slots
+   A->B: 0x999fcc + 10*4 == 0x999ff4 : True
+   B->strings: 0x999ff4 + 10*4 == 0x99a01c : True
+   strings->staging: 0x99a01c + 10*256 == 0x99aa1c : True
+   slot addressing in the body: 'mov [edx*4+0x999ff4],eax' (dword slot), 'shl edx,0x8 / mov byte [edx+0x99a01c],0x0' (256-byte slot); guard bound 9 == 10 slots
+M191b  PASS - the three destinations are ONE table of 10 slots: dwords A[10] at 0x999fcc, B[10] at 0x999ff4 (A + 10*4 == B: True), 256-byte text slots at 0x99a01c (B + 10*4 == strings: True), and strings + 10*256 == 0x99aa1c = the staging record base M178/M182 already own (True) - the staging pair IS slot 10 of the channel table, and 'cmp [ebp+8],0x9' is exactly the bound of slots 0..9
+M191 fan-out: call 0x626634 = 1584 sites in 190 functions; call 0x6267a5 (the tagged writer, M179) = 18 sites in 17 functions
+   arg1 (slot) as pushed: slot 0 x548  slot 1 x349  slot 2 x251  slot 3 x135  slot 4 x73  slot 5 x59  slot 6 x39  slot 7 x7  slot 8 x18  slot 9 x17  ebx x50  eax x3  edi x23  esi x11  ecx x1
+   immediates outside 0..9: [] ; sites passing a REGISTER slot: 88
+   table stores: A {'FUN_006265a2': 1, 'FUN_00626634': 1} ; B {'FUN_006265a2': 1, 'FUN_00626634': 1} ; strings {'FUN_006265a2': 1, 'FUN_00626634': 1, 'FUN_00636b1e': 1}
+   table reads/tests: A in 1 fns ; B in 1 fns ; strings in 26 fns {'FUN_00511530': 8, 'FUN_00510a40': 6, 'FUN_004e2770': 4, 'FUN_0057c550': 4, 'FUN_0043c130': 3, 'FUN_004e2b90': 3, 'FUN_00636b1e': 3, 'FUN_004e03d0': 2}
+   the FUN_00530e30 site 0x530fc0 is reached after: add esp,0xc ; push 0xffffffff ; lea eax,[ebp-0x100] ; push 0xffffffff ; push eax ; push 0x7
+M191c  PASS - 0x626634 is a GENERAL publish primitive, not a save emitter: 1584 sites in 190 functions (the tagged writer 0x6267a5 has 18 in 17); all 10 immediate slots lie in 0..9 (['0x0', '0x1', '0x2', '0x3', '0x4', '0x5', '0x6', '0x7', '0x8', '0x9']), 88 sites pass a register; the table it fills takes only 2/2/3 stores from 2/2/3 functions while the 256-byte slots are read in 26 functions - few writers, many readers. The visit's own site 0x530fc0 follows 'lea eax,[ebp-0x100]' (filled by the 0x5808b0 call at 0x530fab) and pushes (slot 7, &[ebp-0x100], -1, -1): channel 7 with BOTH dwords taken from the staging pair
+M192 FUN_0052a720: 1369 insns, 4859 B, ret 0x1c
+   every 0x94d448 mention: 0x52aff5 mov edx,dword ptr [eax+0x94d448] ; 0x52affe mov edx,dword ptr [ecx+0x94d448] ; 0x52b9c7 mov dword ptr [eax+0x94d448],edx ; 0x52b9d0 mov dword ptr [ecx+0x94d448],edx
+   capture side: 18 loads of a 0x94dXXX field (17 mov + 2 movzx), published back as 18 stores
+     CAP 0x94d4e8   0x52af52   byte ptr [edx+ebx*1+0x94d4e8] -> ecx
+     CAP 0x94d558   0x52af68   dword ptr [edx+0x94d558] -> edx
+     CAP 0x94d4e8   0x52af6e   byte ptr [eax+edi*1+0x94d4e8] -> ecx
+     CAP 0x94d558   0x52af8e   dword ptr [edx+0x94d558] -> edx
+     CAP 0x94d488   0x52af9c   dword ptr [eax+0x94d488] -> ecx
+     CAP 0x94d55c   0x52afa2   dword ptr [eax+0x94d55c] -> edx
+     CAP 0x94d55c   0x52afc2   dword ptr [ecx+0x94d55c] -> edx
+     CAP 0x94d488   0x52afc8   dword ptr [ecx+0x94d488] -> ebx
+     CAP 0x94d57c   0x52afd1   dword ptr [eax+0x94d57c] -> edx
+     CAP 0x94d57c   0x52afda   dword ptr [ecx+0x94d57c] -> edx
+     CAP 0x94d4a8   0x52afe3   dword ptr [eax+0x94d4a8] -> edx
+     CAP 0x94d4a8   0x52afec   dword ptr [ecx+0x94d4a8] -> edx
+     CAP 0x94d448   0x52aff5   dword ptr [eax+0x94d448] -> edx
+     CAP 0x94d448   0x52affe   dword ptr [ecx+0x94d448] -> edx
+     CAP 0x94d468   0x52b007   dword ptr [eax+0x94d468] -> edx
+     CAP 0x94d4c8   0x52b00d   dword ptr [eax+0x94d4c8] -> eax
+     CAP 0x94d468   0x52b016   dword ptr [ecx+0x94d468] -> edx
+     CAP 0x94d4c8   0x52b01c   dword ptr [ecx+0x94d4c8] -> ecx
+     PUB 0x52b93d   byte ptr [edi+esi*1+0x94d4e8] <- cl
+     PUB 0x52b94f   byte ptr [ebx+edx*1+0x94d4e8] <- cl
+     PUB 0x52b959   dword ptr [eax+0x94d488] <- ecx
+     PUB 0x52b976   dword ptr [ecx+0x94d488] <- edx
+     PUB 0x52b97f   dword ptr [edi+0x94d558] <- edx
+     PUB 0x52b988   dword ptr [ebx+0x94d558] <- edx
+     PUB 0x52b991   dword ptr [eax+0x94d55c] <- edx
+     PUB 0x52b99a   dword ptr [ecx+0x94d55c] <- edx
+     PUB 0x52b9a3   dword ptr [eax+0x94d57c] <- edx
+     PUB 0x52b9ac   dword ptr [ecx+0x94d57c] <- edx
+     PUB 0x52b9b5   dword ptr [eax+0x94d4a8] <- edx
+     PUB 0x52b9be   dword ptr [ecx+0x94d4a8] <- edx
+     PUB 0x52b9c7   dword ptr [eax+0x94d448] <- edx
+     PUB 0x52b9d0   dword ptr [ecx+0x94d448] <- edx
+     PUB 0x52b9d9   dword ptr [eax+0x94d468] <- edx
+     PUB 0x52b9e2   dword ptr [ecx+0x94d468] <- edx
+     PUB 0x52b9eb   dword ptr [eax+0x94d4c8] <- edx
+     PUB 0x52b9f6   dword ptr [ecx+0x94d4c8] <- eax
+   captured fields (9): ['0x94d448', '0x94d468', '0x94d488', '0x94d4a8', '0x94d4c8', '0x94d4e8', '0x94d558', '0x94d55c', '0x94d57c']
+   published fields (9): ['0x94d448', '0x94d468', '0x94d488', '0x94d4a8', '0x94d4c8', '0x94d4e8', '0x94d558', '0x94d55c', '0x94d57c']  EQUAL=True
+   stores to any 0x94d field OUTSIDE the publish run: []
+M192a  PASS - the two 0x94d448 stores are the PUBLISH half of a bracket: 4 mentions of 0x94d448 (2 loads into edx, 2 stores out); the function captures 9 block fields (['0x94d448', '0x94d468', '0x94d488', '0x94d4a8', '0x94d4c8', '0x94d4e8', '0x94d558', '0x94d55c', '0x94d57c']) with 18 field loads and its ONLY stores to any 0x94d field are the 18-store run at 0x52b93d-0x52b9f6 that writes back those SAME 9 displacements; 0 stores of 0x94d fields lie outside that run
+   slot [ebp-0x50] writer(s) ['0x52affb mov dword ptr [ebp-0x50],edx'] fed by ['0x52aff5 mov edx,dword ptr [eax+0x94d448]'] ; reader(s) ['0x52b9c4 mov edx,dword ptr [ebp-0x50]'] -> next insn ['0x52b9c7 mov dword ptr [eax+0x94d448],edx']
+   slot [ebp-0x4c] writer(s) ['0x52b004 mov dword ptr [ebp-0x4c],edx'] fed by ['0x52affe mov edx,dword ptr [ecx+0x94d448]'] ; reader(s) ['0x52b9cd mov edx,dword ptr [ebp-0x4c]'] -> next insn ['0x52b9d0 mov dword ptr [ecx+0x94d448],edx']
+   23 distinct direct callees; those that store 0x94d448: []
+   the image's 0x94d448 store functions: {'FUN_005551e0': 15, 'FUN_00552970': 5, 'FUN_0052a720': 2, 'FUN_00551a20': 1, 'FUN_00551cf0': 1, 'FUN_00552f10': 1, 'FUN_00554850': 1, 'FUN_00554d10': 1}
+M192b  PASS - the bracket is VALUE-PRESERVING for 0x94d448: [ebp-0x50] / [ebp-0x4c] each have exactly 1 writer (fed by the field's own load ['mov edx,dword ptr [eax+0x94d448]', 'mov edx,dword ptr [ecx+0x94d448]']) and exactly 1 reader whose very next instruction is the store back (['mov dword ptr [eax+0x94d448],edx', 'mov dword ptr [ecx+0x94d448],edx']), and 0 of this function's 23 direct callees store 0x94d448 (the image's 8 store functions are ['FUN_0052a720', 'FUN_00551a20', 'FUN_00551cf0', 'FUN_00552970', 'FUN_00552f10', 'FUN_00554850', 'FUN_00554d10', 'FUN_005551e0'], none a callee) - the published value IS the value the field held on entry, so FUN_0052a720 PRESERVES bit 0x10, it does not produce it
+   capture A  matched=True  clean=True  S=edi  C=ebx   0x52af76 mov eax,edi | 0x52af7b shl eax,0x6 | 0x52af7e add eax,edi | 0x52af86 lea eax,[edi+eax*2] | 0x52af89 shl eax,0x4 | 0x52af8c sub eax,edi | 0x52af94 add eax,ebx | 0x52af99 shl eax,0x2
+   capture B  matched=True  clean=True  S=ebx  C=edi   0x52afab mov ecx,ebx | 0x52afad shl ecx,0x6 | 0x52afb0 add ecx,ebx | 0x52afb5 lea ecx,[ebx+ecx*2] | 0x52afb8 shl ecx,0x4 | 0x52afbb sub ecx,ebx | 0x52afbd add ecx,edi | 0x52afbf shl ecx,0x2
+   publish A  matched=True  clean=True  S=edx  C=esi   0x52b924 mov eax,edx | 0x52b926 shl eax,0x6 | 0x52b929 add eax,edx | 0x52b930 lea eax,[edx+eax*2] | 0x52b938 shl eax,0x4 | 0x52b93b sub eax,edx | 0x52b947 add eax,esi | 0x52b94c shl eax,0x2
+   publish B  matched=True  clean=True  S=esi  C=edx   0x52b95f mov ecx,esi | 0x52b961 shl ecx,0x6 | 0x52b964 add ecx,esi | 0x52b966 lea ecx,[esi+ecx*2] | 0x52b969 shl ecx,0x4 | 0x52b96c sub ecx,esi | 0x52b96e add ecx,edx | 0x52b973 shl ecx,0x2
+   slot [ebp-0x2c] written at ['0x52af1e'] ; read at ['0x52b873', '0x52b88c']
+   slot [ebp-0x30] written at ['0x52af23'] ; read at ['0x52b876', '0x52b88f']
+   writes to edi/ebx between the spills and the capture seed: []
+   writes to edx/esi between the last spill reload (0x52b88f) and the publish seed (0x52b90a): [('0x52b89e', 'mov edx,dword ptr [ebp-0x1c]'), ('0x52b8c4', 'pop esi'), ('0x52b8de', 'pop esi'), ('0x52b8f8', 'pop esi')]  [all of them lie on ax-branches that ret 0x1c, not on the cmp ax,0x16 fallthrough the publish run sits on]
+M192c  PASS - the publish addresses EXACTLY the two bases the capture read, by the same arithmetic: all four chains are the canonical fold 'mov r,S; shl r,6; add r,S; lea r,[S+r*2]; shl r,4; sub r,S; add r,C; shl r,2' = 8380*S + 4*C (the M176 *8380 stride plus a 4*C dword sub-index), with no jump or call inside any chain; capture A = 8380*edi + 4*ebx and capture B = 8380*ebx + 4*edi, publish A = 8380*edx + 4*esi and publish B = 8380*esi + 4*edx, and edx/esi are reloaded from [ebp-0x2c]/[ebp-0x30] - written exactly ONCE each, by 'mov [ebp-0x2c],edi' at ['0x52af1e'] and 'mov [ebp-0x30],ebx' at ['0x52af23'] - before the capture, with 0 writes to edi/ebx in between; so 8380*edx+4*esi == 8380*edi+4*ebx and the round trip is ADDRESS-EXACT
+M193 FUN_0053a9c0: 1424 insns, 4557 B; 23 global stores to 8 distinct globals {'0x99aa20': 6, '0x99aa1c': 6, '0x997120': 5, '0x9206e4': 2, '0x920774': 1, '0x7a75c8': 1, '0x9204b4': 1, '0x920718': 1}
+   0x53ae08   dword ptr ds:0x99aa20  <- 0x0
+   0x53ae2f   dword ptr ds:0x99aa1c  <- ecx
+   0x53ae50   dword ptr ds:0x99aa1c  <- edx
+   0x53ae56   dword ptr ds:0x99aa20  <- 0x0
+   0x53b063   byte ptr ds:0x997120   <- 0x0
+   0x53b2b7   dword ptr ds:0x9206e4  <- 0xffffffff
+   0x53b3ee   ds:0x99aa1c            <- eax
+   0x53b3fe   dword ptr ds:0x99aa20  <- 0x0
+   0x53b41b   byte ptr ds:0x997120   <- 0x0
+   0x53b465   byte ptr ds:0x997120   <- 0x0
+   0x53b47e   byte ptr ds:0x997120   <- 0x0
+   0x53b630   ds:0x9206e4            <- eax
+   0x53b635   ds:0x920774            <- eax
+   0x53b6b7   dword ptr ds:0x99aa20  <- 0x0
+   0x53b6db   dword ptr ds:0x99aa1c  <- ecx
+   0x53b6f0   byte ptr ds:0x997120   <- 0x0
+   0x53b87b   dword ptr ds:0x7a75c8  <- 0x0
+   0x53b950   dword ptr ds:0x99aa1c  <- edx
+   0x53b956   dword ptr ds:0x99aa20  <- 0x0
+   0x53b98c   dword ptr ds:0x99aa1c  <- ecx
+   0x53b995   dword ptr ds:0x99aa20  <- edx
+   0x53bb6b   dword ptr ds:0x9204b4  <- ebx
+   0x53bb71   dword ptr ds:0x920718  <- ebx
+   the count pair inside: 0x9204ac 1 mention(s) / 0 stores ; 0x920720 4 mentions / 0 stores
+   image stores of 0x9204ac by function: {'FUN_00531df0': 2} ; of 0x920720: {'FUN_00531df0': 1}
+   FUN_00535940 (the reset pass, M185) resets 15 globals: {'0x9206f4': 5, '0x920490': 5, '0x9206e8': 4, '0x9204d8': 4, '0x9206ec': 4, '0x9204c0': 3, '0x9206e4': 3, '0x9204b8': 3, '0x920710': 3, '0x920750': 3, '0x920774': 2, '0x9204cc': 2, '0x920770': 2, '0x9204e0': 2, '0x920738': 2}
+   INTERSECT(this pass writes, reset pass clears) = ['0x9206e4', '0x920774']
+   fan-out 0x9206e4: 8 writer functions, 10 reader functions, top readers {'FUN_00546800': 16, 'FUN_00535c60': 7, 'FUN_005375e0': 6, 'FUN_00538040': 6}
+   fan-out 0x920774: 8 writer functions, 10 reader functions, top readers {'FUN_00546800': 25, 'FUN_00538040': 13, 'FUN_0053bb90': 8, 'FUN_00535c60': 7}
+M193a  PASS - the pass's WHOLE global write set is 23 stores to 8 globals {'0x99aa20': 6, '0x99aa1c': 6, '0x997120': 5, '0x9206e4': 2, '0x920774': 1, '0x7a75c8': 1, '0x9204b4': 1, '0x920718': 1}; the pair M188 followed (0x9204ac 1 mention, 0x920720 4 mentions) has ZERO stores in it, and the image holds no store of either global by this function at all (0x9204ac writers {'FUN_00531df0': 2} ; 0x920720 writers {'FUN_00531df0': 1}) - the count is a pure INPUT to this pass
+M193b  PASS - the OUTPUT side is the aggregate scratch: exactly ['0x9206e4', '0x920774'] of the 8 globals this pass writes are among the 15 that the reset pass 0x535940 clears, and both are shared scratch ([8, 8] writer functions respectively) - the pair 0x9204ac/0x920720 is consumed and dropped; what survives the visit is 0x9206e4 / 0x920774 plus the staging pair, the 0x997120 flag and 2 scratch zeros
+M193 caller: 1 site(s): 0x545cfa in FUN_00545c50
+   8 insns before:  ; sete al ; mov edi,eax ; mov eax,ds:0x920700 ; cmp eax,0x2 ; jne 0x545d43 ; push ebx ; push esi
+   7 insns after:  add esp,0x8 ; test eax,eax ; jne 0x545d14 ; test edi,edi ; je 0x545d14 ; push ebx ; push esi
+   the pass's own last 14 insns: call 0x528610 ; mov dword ptr ds:0x9204b4,ebx ; mov dword ptr ds:0x920718,ebx ; push esi ; push edi ; call 0x533e70 ; add esp,0x8 ; mov eax,0x1 ; pop edi ; pop esi ; pop ebx ; mov esp,ebp ; pop ebp ; ret
+   gate global ds:0x920700: 8 stores in 2 functions {'FUN_00544530': 7, 'FUN_00546800': 1} ; 23 reads in 3 functions
+M193c  PASS - the pass has ONE entry point, it is MODE-GATED, and its answer is TESTED: 0x545cfa in FUN_00545c50 is reached only after 'mov eax,ds:0x920700' ; 'cmp eax,0x2' (the gate global ds:0x920700 takes 8 stores in 2 functions), the caller's next block branches on 'test eax,eax' (['jne 0x545d14', 'je 0x545d14']), and the pass's own tail zeroes ds:0x9204b4 and ds:0x920718, calls 0x533e70 (one of the 17 aggregator call sites, M175) and returns 1
+SUMMARY M191a=PASS M191b=PASS M191c=PASS M192a=PASS M192b=PASS M192c=PASS M193a=PASS M193b=PASS M193c=PASS

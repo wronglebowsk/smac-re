@@ -560,3 +560,28 @@ mask: 0x20 set at 2 sites (0x55487f `or ecx,0x40020`, 0x554d42 `or esi,0xc0020`)
 (0x552cca/cd8/d6f/d7d `and edx,ecx`, ecx=0xffffffdf); 0x40000 set at 2, never cleared; **0x10 never set or
 cleared at all** — it arrives only via the 4 whole-value assignments (0x52b9c7/0x52b9d0 load
 `[ebp-0x50]`/`[ebp-0x4c]` in FUN_0052a720; 0x55540a/0x55580f store `lea`-built addresses).
+
+## M191-M193 (s176, all PASS) — the channel publish primitive, the 0x94d448 bracket, the pass's output leg
+**M191** FUN_00626634 = 10-slot CHANNEL PUBLISH (44 insns, 7 stores, 11 loads, 1 callee 0x64b9e0 =
+append-until-NUL copy): bail `mov eax,3` unless arg2 != 0 and arg1 <= 9; writes [edx*4+0x999ff4] and
+[eax*4+0x999fcc], zeroes then appends arg2 into the 256-byte text slot 0x99a01c + arg1*0x100; a negative
+arg3/arg4 takes ds:0x99aa1c / ds:0x99aa20, and 0x99a01c + 10*256 == 0x99aa1c — the staging record IS
+slot 10 of the same table. 1584 sites in 190 fns (immediates only 0..9; 88 register slots); table
+writers 0x6265a2/0x626634/0x636b1e only, text slots read in 26 fns. The visit's site 0x530fc0 =
+(slot 7, &[ebp-0x100] built by 0x5808b0, -1, -1).
+**M192** FUN_0052a720's 0x94d448 stores (0x52b9c7/0x52b9d0) are the PUBLISH half of an 18-load /
+18-store bracket over 9 block fields {0x94d448,468,488,4a8,4c8,4e8,558,55c,57c} (byte field captured by
+movsx). [ebp-0x50]/[ebp-0x4c]: 1 writer (the field's own load 0x52aff5/0x52affe) + 1 reader (the insn
+before each store); 0 of its 23 direct callees stores the field. Both sides compute the base as
+8380*S + 4*C via `mov r,S; shl 6; add S; lea [S+r*2]; shl 4; sub S; add C; shl 2` — capture
+(edi,ebx)/(ebx,edi), publish (edx,esi)/(esi,edx) reloaded from the single-write spills [ebp-0x2c]/
+[ebp-0x30]: ADDRESS-EXACT. M190 QUALIFIED: bit 0x10 is PRESERVED here, not produced; its only remaining
+carriers are 0x55540a (`lea eax,[eax*4+0x94d4a8]; or eax,0x20000`) and 0x55580f (`lea eax,[ecx*4+
+0x94d448]; and ah,0xdf`) — both store ADDRESSES, where 0x10 is index arithmetic (i mod 8 in 2..5).
+**M193** FUN_0053a9c0 = the aggregate pass's OUTPUT leg: 23 global stores to 8 globals {0x99aa1c 6,
+0x99aa20 6, 0x997120 5, 0x9206e4 2, 0x920774 1, 0x9204b4 1, 0x920718 1, 0x7a75c8 1}; 0x9204ac (2 stores
+in the image) and 0x920720 (1) are written ONLY by FUN_00531df0 and are READ-ONLY here; 0x9206e4/
+0x920774 are 2 of the 15 the reset pass 0x535940 clears (8 writers / 10 readers each, top reader
+0x546800). Its one call site 0x545cfa (FUN_00545c50) is gated `ds:0x920700 == 2` (0x920700: 8 stores in
+0x544530 x7 + 0x546800 x1), the caller tests the return, and the tail zeroes 0x9204b4/0x920718, calls
+0x533e70 and returns 1.
