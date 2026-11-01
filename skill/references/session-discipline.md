@@ -15,7 +15,7 @@ mid-sentence twice — the milestone was done and accepted, the paperwork never 
   Never quote a limit carried in from a prior session — read `~/.hermes/config.yaml`. A bigger window
   does NOT repair the compressor (same model, same cap); every rule here still holds.
 - Budget by TOOL CALLS, not by feel: brief+accept_ready <= 6, milestone 6-30, **commit a
-  checkpoint at ~25**, stop measuring at 30-40, close at 40-50.
+  checkpoint by ~15**, stop measuring at 30-40, close at 40-50.
 - **Size a batch by instrument, not by ambition.** 3 milestones is comfortable, 5 is the ceiling and only when they
   share ONE instrument and one script (five field probes through a single `field_census`-style tool: one write, one
   run, one evidence file, one PR) — inside that one PR keep ONE commit and ONE registry block per milestone id, since
@@ -79,6 +79,35 @@ passed. Verify it like any delegated decode: re-run the instrument it shipped (O
 doc surgery actually landed. Then check whether it QUALIFIED an earlier finding in `SESSION_NOTES.md` but left that
 finding's registry block asserting the old claim — the registry is what the next session greps, so land the small
 docs PR yourself if it did.
+
+### Observe the loop by hand (shadow-run a fire)
+
+To answer "is the loop working as intended", run its prompt in a real session rather than waiting for the tick:
+
+1. `cronjob_manage action=pause`. A pause does **not** stop a live fire — read the cron `executions` table for
+   `status='running'` and the `external-worker` pids first, or two workers share one repo and one Wine process.
+2. Launch a PTY background session in the repo on the loop's own model:
+   `terminal(command="cd <repo> && hermes chat --yolo --provider <p> -m <m>", background=true, pty=true)`, then
+   `process_manage action=submit` the kickoff. Copy the live prompt OUT of `~/.hermes/cron/jobs.json` and sha256 it
+   against the job — a hand-typed copy tests a prompt nobody runs. An explicit `--provider/-m` matters: a `/model`
+   switch in the chat is a per-session override and the next fire still takes the config default.
+3. Observe the TRACE, not the screen: `select id,role,tool_name,tool_calls,content from messages where session_id=…`
+   in `~/.hermes/state.db` prints the clean call list; the PTY log is mostly spinner noise. Per-call context comes
+   from `agent.log` (`API call #N … in= out=`), which is what shows a fire running out of window.
+4. Steer with `process_manage action=submit` — the message lands after the next tool call, so a mid-flight "commit
+   now" is heard. How the model recovers from a steer is itself the finding worth recording.
+5. Verify the outcome off-repo (`git log`, the evidence file, `gh pr view`), then `/exit`; a shadow run leaves no PR
+   of its own.
+
+"As intended" for THIS loop, in order: `track_mode.py`'s verdict is the one the fire acted on; the doc cap was
+checked before the pick; a branch plus a census-SKELETON commit exist before any probing; a write rejected for a
+missing `path` was retried as pure JSON instead of fragmented; the box debt was paid or named; and the close ended in
+a merged PR with `NEXT_PROMPT.md` under 15,300 B.
+
+**Answer state questions from live state, never from what you did earlier in the session.** "Should we resume the
+cron?" is answered by `jobs.json` (`state`, `enabled`, `next_run_at`) plus the newest `executions` row — a job resumed
+an hour ago is still running, and offering to resume it reads as not having looked.
+
 Keep every tool result small:
 grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dumps in
 `~/reverse/smac/` instead of re-dumping; page Ghidra facets in small slices; reuse saved
@@ -104,8 +133,9 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   write — patching an over-budget file down costs ~1 call per 100 B. When an edit ADDS text, pair it in the
   same call with a compensating deletion (retire the oldest ledger paragraph or a stale box bullet), and
   measure BEFORE the first patch: a file already over the cap makes the edit net-negative.
-  **Trust only `python3 scripts/evidence.py budget`** — it counts CHARS, not `wc -c` (15,988 bytes scored
-  16,052 chars and failed). **Leave >100 bytes of headroom**: `scripts/test_loop.py` appends a few bytes to
+  **Trust only `python3 scripts/evidence.py budget`** — it prints `os.path.getsize`, i.e. exactly `wc -c` BYTES (the
+  column header says `bytes`; an earlier version of this line said "chars" and was wrong — the instrument was right,
+  the prose was not, and 14,018 bytes measured 14,018). **Leave >100 bytes of headroom**: `scripts/test_loop.py` appends a few bytes to
   the prompt in a throwaway worktree, so 15,996 makes CI's case 4 FAIL while local `gate.py` is GREEN —
   reproduce with `python3 scripts/test_loop.py` (it prints the failing case) rather than re-running the gate;
   worktrees check out HEAD, so commit an uncommitted trim first. That budget run also names the offending
