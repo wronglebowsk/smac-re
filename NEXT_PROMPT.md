@@ -63,17 +63,10 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick; `NAMED.md` carries the full text, `docs/pick-archive.md` the s187-s193 detail
-  VERBATIM): s187-s189 M227-M237 (0x679f98 = 88 slots, TWO ctors); s190 **B1** 10/10 on BOTH maps; s191
-  **M240** 6/6 (`.MP` grid IS the live terrain-record array; "+7 = land/owner byte" RETRACTED; +16..+43 =
-  7 mask copies OPEN); s192 **M241** FAIL 2/5, #180 open; s193 **M242** PASS 5/5 (the save WRITE function
-  is **`FUN_00597ce0(path)`** → **`FUN_00596850(handle, 1)`**, ONE codec both ways; the 796-B
-  `DAT_00985ab8` block verbatim at **file offset 12**); s194 **M243** PASS 4/4 (`sudo -n python3 scripts/m243_leg_gates.py`, static,
-  zero box time): the codec's 7 dead write legs ARE its 7 dead read twins (state gates, not mode
-  gates), killed by 3 families — the swap bit (3 plain twins inside the swap-only region, unreachable
-  in BOTH swap states = dead code), `ds:0x985dbc < 3` legacy scratch-buffer legs (58,848 + 1,664 +
-  48n B, malloc'd via `call 0x5be090`), and the feature bit `ds:0x985ae8 & 0x10` (256 B at 0x991698).
-  The codec has **30** read sites, not 28 (`0x5979f8`/`0x597a19`).
+- ANSWERED (do not re-pick): s187-s194 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**. Full text: `NAMED.md` per-id blocks; the s187-s194 ANSWERED bullet VERBATIM in
+  `docs/pick-archive.md` (§s195 overflow). Headline: the save codec is `FUN_00597ce0` → `FUN_00596850`
+  (one codec both directions), its 7 dead write legs are its 7 dead read twins, killed by 3 gate families.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B2** — save load — from `BUILD_SPINE.md`, and B2 must
   read the map as 44-B records at `((W/2)*y + (x>>1))*0x2c`, not 22-B cells, and a .SAV as magic at 0 /
   version dword at 8 / the 796-B header at 12): WHO dispatches the dialog's
