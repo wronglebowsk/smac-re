@@ -58,6 +58,27 @@ milestone id: read it from `NEXT_PROMPT.md` (`## THE PICK`, else the first open 
 stop rather than invent when nothing is open, and refuse a competing measurement while
 `SESSION_CURSOR.md` says a run is in flight, and the cursor is only a hint — a cron-supplied kickoff and a pasted one can both be mid-run at once, so prove ownership from `~/.hermes/processes.json` and the cron `executions` table before you refuse (or start) — the box is one Wine process, so a second gdb attach or
 mineral poke confounds the first run.
+Copy **`templates/cron-milestone-loop.md`** — the working prompt, validated end to end (one fire produced a
+cap-triage PR plus a three-milestone batch, all PASS, merged). It front-loads `evidence.py budget` so the cap
+triage lands as its own PR, takes the pick from the file, proves ownership, caps the batch, uses
+`sudo -n smac_preflight.py`, and ends in the exact closing order with merge-only-on-PASS. **Reuse the existing job
+instead of creating a near-duplicate** — `cronjob_manage` action `update` with prompt, schedule, `skills`,
+`continuity: true`, `workdir`, then `resume`; a paused job from months ago is the same loop and its history is worth
+keeping.
+**Size the cadence from the work, then cut the work.** Measured fires: a static three-milestone batch is 26-29 min,
+a cap-triage-plus-batch fire 26.5, and a box fire 70-113 — so a 90 m interval lands every fire on fresh state, while a
+30 m interval is only sane because the collision path costs ~4 calls and stops. The real lever is the FIRE, not the
+interval: **one PR per fire** (a cap-triage fire lands the triage and STOPS — two PRs means two CI waits, 6-10 min of the
+fire), **up to five static milestones through ONE census script**, and **`skills: []` on the job** — attaching the 55 KB
+skill re-prefills ~16 k tokens before every fire's first tool call while the kickoff prompt already carries the binding
+rules; the prompt instead NAMES the one reference to load (`code-atlas`, `static-store-census`, `instrument-laws`,
+`wine-operations`, `production-queue`). Say the trade-off out loud instead of silently shortening the interval.
+**A fire's completion block is a self-report.** `Result: ok` means the job process exited 0, not that a milestone
+passed. Verify it like any delegated decode: re-run the instrument it shipped (ONE invocation must print
+`SUMMARY ... =PASS`), read its `NAMED.md` block against the claim, and run `evidence.py budget` to see whether the
+doc surgery actually landed. Then check whether it QUALIFIED an earlier finding in `SESSION_NOTES.md` but left that
+finding's registry block asserting the old claim — the registry is what the next session greps, so land the small
+docs PR yourself if it did.
 Keep every tool result small:
 grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dumps in
 `~/reverse/smac/` instead of re-dumping; page Ghidra facets in small slices; reuse saved
