@@ -632,3 +632,24 @@ the static .text dump + index.csv containment + terran.exe's own section table f
   `m55_boundary.py` itself exited rc=1 on its accounting gates. Falsifier for the next run: arm the sampler, then
   trigger a save or a governor-options OK — a staging change there confirms the writer's trigger; no change
   anywhere means the address or the sampler is wrong.
+
+
+## Session 174d (2026-10-31) — M182-M184, all PASS (static batch of three, one instrument)
+
+`python3 scripts/m182_m184_bandrecord.py` -> `evidence/m182_m184_bandrecord.txt`, `SUMMARY M182=PASS M183=PASS
+M184=PASS`, rc 0.
+- **M182 — ds:0x99aa1c is the BASE of the record 0x6267a5 emits.** 14 dwords are referenced in
+  [0x99aa1c, 0x99aa5c]; the 13 packers touch exactly FOUR (+0x0 0x99aa1c 637 stores = the generic write-bytes
+  argument, +0x4 0x99aa20 637, +0x1c 0x99aa38 33 = the flag dword M178/M179 mapped, +0x20 0x99aa3c 5) and
+  +0xc..+0x18 (0x99aa28/2c/30/34) are written ONLY by the emitter FUN_00626b46 (+0x24 by it plus the 0x626xxx
+  siblings; +0x30..+0x40 by the 0x627xxx serializers). The 0x41 size pushed with GOVOPTIONS equals the span
+  0x99aa1c..0x99aa5c — INFERRED alignment, not proven.
+- **M183 — the four whole-value writers are not packers** (each stores the scratch once, vs 9-19 legs): 0x4dc390
+  is a RESTORER (17 `test al/ah,imm` scratch-bit tests, 1 mask op) — the mirror of 0x4dc100's 24 pack ops;
+  0x4d9ae0 copies bits 0..11 of 0x58e760's return through `shl edx,cl / test eax,edx / or|and esi,edx / inc
+  ecx / cmp ecx,0xc` (12 iterations); 0x512b40 computes a `setne` boolean and asks FUN_00518c50 with indices
+  1/2/3 (3 call sites) instead of building a mask; 0x4dde00 builds from [esi+0x93327c] tests and pushes EDITVEH.
+- **M184 — FUN_00535c60 is a per-faction VISIT wrapper**: 3 call sites in 2 owners (FUN_004266c0 x2 passing
+  ds:0x91b5b4 + [ebp-0x14] + eax; FUN_00545c50 x1 with (esi, 0, ebx, eax)); its first 40 insns call 0x531df0 ->
+  0x530e30 -> 0x535940 IN THAT ORDER, then fold arg1 with the 2095-dword chain into [ebp-0x14] and test
+  `[eax*4+0x94d448] & 0x40030`.

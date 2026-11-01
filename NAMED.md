@@ -514,3 +514,17 @@ M164 struct [esi+0x94d80c..0x94d81c] with 0x94d80c as a sign pair (scratch4 >0, 
 reads in 4 consumers: 0x53a9c0 x4, 0x53bb90, 0x53cb20 (round>=50), 0x546800 x5 incl. 2 `cmp ,0x2` gates + a loop
 bound). ds:0x9204b0 = the stamp EXPORT, bidirectional: writers 0x5321a4 (from [blk+0x94d4a8]) and 0x54d121
 (re-prime with 0x985afc); readers 0x5406b4 (age = 0x985afc - stamp), 0x546d44 `jl`, 0x54bf5f `jle`.
+
+
+## M182-M184 (s174d, all PASS) — the staging record's field map, the whole-value writers, FUN_00535c60's callers
+**M182** ds:0x99aa1c = BASE of the record 0x6267a5 emits: 14 dwords in [0x99aa1c, 0x99aa5c]; the 13 packers
+touch +0x0 (637 stores, the write-bytes arg), +0x4 (637), +0x1c (0x99aa38, 33 = the flag dword), +0x20 (0x99aa3c,
+5) ONLY; +0xc..+0x18 belong to the emitter FUN_00626b46; +0x24 shared with the 0x626xxx siblings; +0x30..+0x40 are
+0x627xxx serializer fields. 0x41 size pushed with GOVOPTIONS == the 0x41-byte span (INFERRED).
+**M183** whole-value writers (1 store each, not leg packers): FUN_004dc390 = RESTORER (17 `test al/ah,imm`, 1 mask
+op; mirror of FUN_004dc100's 24 pack ops); FUN_004d9ae0 = 12-iteration `shl edx,cl / test eax,edx / or|and esi,edx
+/ inc ecx / cmp ecx,0xc` copy of bits 0..11 of FUN_0058e760's return; FUN_00512b40 = `setne` boolean + FUN_00518c50
+called with indices 1/2/3 (no mask built); FUN_004dde00 = tests of [esi+0x93327c], pushes EDITVEH.
+**M184** FUN_00535c60 = per-faction VISIT wrapper, 3 call sites in 2 owners (FUN_004266c0 x2: ds:0x91b5b4,
+[ebp-0x14], eax; FUN_00545c50 x1: esi, 0, ebx, eax). Body: 0x531df0 -> 0x530e30 -> 0x535940 in that order, then the
+2095-dword fold into [ebp-0x14], then `test [eax*4+0x94d448],0x40030`.
