@@ -1,22 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-180-180.md` (1 sessions). Read it only when a question reaches back before session ## Session 181.
-
-## Session 181 (2026-11-02) — M205-M208 all PASS: who writes the dialog RESULT field; [this+0x285] is a child-dialog link slot; FUN_00546800's three switches; ds:0x997528 is a write-only staging buffer drained by FUN_005f0583
-
-Acceptance: `python3 scripts/m205_m208_fields.py` -> `SUMMARY M205=PASS M206=PASS M207=PASS M208=PASS (14/14 gates)`, rc 0, `evidence/m205_m208_fields.txt` (14,015 B) — GREEN ON THE FIRST ACCEPTANCE INVOCATION. Two `--probe` runs first fixed five gate expectations that were INSTRUMENT/typo errors, not thresholds: `[ebp-0x30]` has 3 stores in the pump (0x5f13d8 inits it to 0), the +0xa40 census spans 30 functions not 31, the pump's +0xa14 sites are 10 loads + 1 store once the classifier is DIRECTION-aware (`mov ecx,[edx+0xa14]` is a LOAD), the second +0xe0 dispatch is 0x5f5893 not 0x5f5890, and `ds:0x9939c4,edx` is at 0x5ce60e not 0x5ce60b. No threshold, floor or check was weakened.
-
-**M205** the pump returns `[this+0xa40]` = Ghidra `this[0x290]`: 0x5f3f3f `mov eax,[ebp-0x394]` -> 0x5f3f45 `mov eax,[eax+0xa40]`, reached only when `[ebp-0x30]==0` (0x5f3f1a/1e); [ebp-0x394] has exactly 1 store in 11,207 B (0x5f13b2 = entry ECX). The other two legs both give -1: `or eax,0xffffffff` (0x5f3f33) behind `[this+0x30a8]&0x40`, else `mov eax,ds:0x698d0c` (0x5f3f38; that dword IS 0xffffffff). Writer census: 56 store-shaped +0xa40 sites in 30 functions; exactly TWO are dialog vmethods — FUN_005f5759 (slots +0xa8,+0x228; 4 stores: 0, `[node+[node+8]+0xec]`, the `call 0x5fdcf7` result, 0xffffffff) and FUN_005f58fa (+0x64,+0x1e4; 3 stores) — each with **0 direct call sites image-wide**. FUN_005f5759 also keeps its ARG in a second slot [this+0x3100] (0x5f584a) testing sentinels 0xfffffffe/0xffffffff. Two 51-B forwarders FUN_005ce4a9/FUN_005ce4dc write `[this+0x43c]+0xa40` / `[this+0x440]+0xa40` (2 call sites each, both in FUN_005ff462/FUN_00603fec); the base ctor FUN_005ee350 zeroes the field at 0x5ee7a5 (dialog ctor calls it with ecx=this, 0x405f14). WHO dispatches slot +0xa8 stays OPEN: 29 `call [reg+0xa8]` sites in 17 fns, 0 of them in a pump-caller or ctor-caller function.
-
-**M206** [this+0x285] = byte +0xa14: 10 loads + 1 store (0x5f1561, value 0) in the pump. 0x5f3d7c `cmp [edx+0xa14],0` selects `call [[this+0xa14]-vtable+0xdc]` (0x5f3dbe) over `call [*this+0xdc]` (0x5f3df6) with IDENTICAL args (0, the pump's arg2 callback, boolean of `[this+0x30a8]&0x200000`); the result is the [ebp-0x30] that picks the return leg. FUN_005f5759 dispatches +0xe0 the same way (0x5f5883 / 0x5f5893), so the child shares the class's vtable shape. The field is one slot of a 7-pointer link block 0xa14..0xa2c spliced in triples by FUN_005ee350 (9 stores), FUN_005eede6 (9), FUN_005f6b8c (6); the latter seeds it from the GLOBAL ds:0x997850 (0x5f6bf2-0x5f6bf7) and installs vtable 0x671d94 (0x5f6bdc) + 0x671d8c at +0x444 (0x5f6be5) on the object it constructs. The +0xdc target FUN_005ce5bd is a MODAL LOOP over a 4-deep dialog stack: guard `cmp ds:0x9939c8,4` (0x5ce5cd), push `[depth*4+0x992db8]`/`[depth*4+0x992dc8]`, current = ds:0x9939c4 (0x5ce60e), suspend the previous modal via slot +0x10, activate via +0x4, pump events via +0xe4, `call [ebp+0xc]` (the callback), close via +0xe0, `ret 0xc`, 1 direct call site (FUN_004413b0 @0x4413cf).
-
-**M207** FUN_00546800 (34,550 B): THREE jump tables, 12/5/8 entries at 0x54eef8/0x54ef14/0x54ef34, all 19 targets inside the function; guards `cmp eax,0x6; ja 0x54a3cf` (arg2), `cmp ebx,0xa` + a BYTE-PERMUTATION table at 0x54ef28, and `cmp eax,0x7; ja` on the return of `call 0x542ea0` — the last reached only when ds:0x920434 != 0 and ds:0x985ae8 bit 0x800 is clear (0x54ead2/0x54eae0). Its args are the canonical faction-block fold (shl 6 / add / lea [s+e*2] / shl 4 / sub / add edi / shl 2) feeding `test [eax+0x94d448],0x8000000`; it builds a dialog on its own 0x5534-byte frame (`lea ecx,[ebp-0x5534]` -> `call 0x405ef0`) and calls the pump 0 times. Of 162 .rdata pushes, 111 name single-word keys = 109 distinct addresses = **97 distinct texts** (M204's 97 is the TEXT count), + 50 message lines + 1 SEH cookie. Partitioned by switch region: 29 key sites before the first target (prologue), 68 in the region starting at 0x54ad65, and the 8 result-code regions hold 0-3 each (7 total) — the result code picks a SHORT branch, the vocabulary lives elsewhere. 5 call sites: FUN_00519a20, FUN_0054f1d0, FUN_005525d0, FUN_005551e0 x2.
-
-**M208** ds:0x997528: 105 references = 103 `push <addr>` + 1 absolute byte clear (0x5f58de, in FUN_005f58bd, which strlen's its arg first and returns 3 when len > 0xc) + 1 store of the address into a stack arg slot; **ZERO absolute loads**. 79/103 pushes feed FUN_005f0583 (3,601 B, 99 call sites): it substitutes 0x997528 for a null text arg (0x5f06f8-0x5f06fe), runs it through the tag engine 0x625b20 (0x5f0779), writes [this+0x2350] 7 times with 1/2/4/0x10 from arg5 bits, and calls the attach FUN_005eede6 (0x5f05bf) unless arg5 & 0x80. FUN_00626a17 (M204's 149-site "sink") is a 38-B thunk whose only call is to the writer FUN_00626b19 with (buffer, key, -1, 0, ...); FUN_0064b9e0 is the SWAR strlen (0x7efefeff/0x81010100, reads [esp+0x4], never touches the buffer) — M204's "76-site sink" is a MEASUREMENT of the key text, not an emit.
-
-**Pitfalls recorded.** (1) A store census keyed on MNEMONIC alone is direction-blind: `mov reg,[reg+disp]` is a load. Classify by which operand carries the displacement. (2) A displacement is shared by unrelated structs — scope a field census to a class by testing whether the containing function is a member of that class's vtable (here 56 stores / 30 functions collapse to 2 class functions). (3) "N distinct keys" must say WHICH identity: 111 sites / 109 addresses / 97 texts. (4) `call ebx`/`call ecx` indirect sites break any `int(ops[1],16)` census — filter `startswith("0x")`.
-
-No box time again: the s174e box state is STILL unverified and M181 is STILL a LEAD (no positive control).
+Older sessions: `docs/sessions/sessions-181-181.md` (1 sessions). Read it only when a question reaches back before session ## Session 182.
 
 ## Session 182 (2026-11-02) — M209-M212 all PASS: who dispatches dialog slot +0xa8; the dialog stack = two parallel arrays (arg3 write-only); +0xe4 is a bool; FUN_00542ea0 wraps the pump; -9999 is FUN_00496ad0's sentinel
 
@@ -471,3 +455,61 @@ the phases the sampler collapsed (220 emissions, 11 per cycle).
 — so whether the engine writes `turn_flags` before `cur_player` at TURN COMPLETE is unsettled;
 the internal order of {4,5,6} needs a denser or longer trace. `nb` (base count @0x985AF4) moves
 51→58 with one decrease (row 28, 57→56) and is not modelled by B3. No box time: no /proc, no gdb.
+
+## Session 200 (2026-11-01, M250/M251/M252 ANALYSE — who assigns the region labels, in what order, and who reads them)
+
+`python3 scripts/m250_region_generation.py` → `SUMMARY PASS: 7/7 gates on terran.exe (static image,
+no box)`, rc=0, 2.7 s, ONE invocation → `evidence/m250_region_generation.txt`. Static only: objdump
+of `programs/terran.exe` (regenerated, 40 MB, kept in `scratch/`, not tracked) + `ghidra_out`. No
+preflight, no `/proc`, no gdb; terran.exe untouched.
+
+**M250 — the region generator and its ORDER.** `FUN_0058d390` (0x58d390, 1293 B) has exactly 3 call
+sites, image-wide (G1): `0x5add8f` in `FUN_005add30`, `0x5af0c7` in `FUN_005af0c0`, `0x5b09e3` in
+`FUN_005b09b0`; the generator driver `FUN_005b2970` (shard_015.c:28040-28115) calls the first two
+and has 4 call sites (`FUN_004e10c0`, `FUN_004e11b0`, `FUN_0057c550`, `FUN_0057ecf0`). In the driver
+the order is `FUN_00582170` (default records) → placement loop (`FUN_005ad970` ×, `FUN_005adbc0(4)`)
+→ `FUN_005add30` → **`FUN_0058d390`** → `FUN_005aef40` → the while-condition `FUN_005af0c0()` which
+re-runs `FUN_0058d390` and returns "retry" (up to 4 attempts while `DAT_00985ae8 & 0x80 == 0`); the
+third caller `FUN_005b09b0` is the "ADJUSTING WORLD CLIMATE" stage (22 call sites) that re-runs the
+generator after the climate pass. Inside `FUN_0058d390` (G2/G3/G4): clear `+3` over every record
+(store `0x58d3b8`, step `add ecx,0x2c`, back edge `0x58d3c7→0x58d3b8`) → parity-2 tile scan whose
+back edges `0x58d5fa→0x58d3f9` and `0x58d60c→0x58d3e2` both enclose the flood-fill call
+`0x58d47e` → the two border-ring calls `0x58d649`/`0x58d6c3` → stats + adjacency → and
+**`FUN_0058ce00` (the coarse label map) is the LAST call before the free `FUN_005e9e0d`
+(`0x58d88c`, `0x58d891`): no back edge encloses it**, so the coarse map is built after every id is
+assigned. Id bands from the body's immediates (G4): land `1..0x3e`, water `0x41..0x7e`
+(`0x40` never assigned — the counter is pre-incremented), and when a band is exhausted the smallest
+region in it is relocated to the overflow slot `0x3f`/`0x7f` (shard_015.c:5007-5073), which is why
+M249 saw "25 ids / 47 components". Region table `DAT_00989ce0`, stride `0x1c` = 7 dwords reached
+through the `lea [r*8+0]` + `sub r` fold (8 sites), dword 0 = tile count, `+0x14` = an 8-byte bitmap
+of adjacent opposite-class regions written by the land/water border pass (`FUN_00507410` bit index).
+
+**M251 — `DAT_0094eda8` is the per-faction, per-REGION category byte** (G5): 79 refs in 18
+functions, **6 store sites in 2 writers** (`FUN_00556690` ×5 at 0x557fdf/0x558516/0x558549/0x55855e/
+0x55856b, `FUN_0055f650` ×1 at 0x564ad7), values written exactly `{0, 2, 7, 8}`; addressed
+`[region + faction*0x20bc]` (shard_014.c:2159/2217/2220 spell it out) and the stage's region loop is
+`cmp reg,0x80` at 0x556737/0x558b1c → **128 entries = the whole id space**. Sibling arrays in the
+same block, same index: `0x94e4a8` (short ×128, ends exactly at `0x94e5a8`), `0x94e5a8` (the byte
+SCORE the pick loop compares), `0x94e628` (cleared per region each pass), `0x94e7a8` (flag bytes).
+Effects pinned, NAMES OPEN: `< 2` is a preferred expansion candidate (+1000 bonus,
+shard_014.c:3409-3411), `== 7` is accepted at its face score (:3429), `== 8` only when the region is
+small (`DAT_00989ce0[region] < 0x96` = 150 tiles, :3439) and it also raises `FUN_00556370`'s divisor
+2→4 and decrements `FUN_00556150`'s 1..10 score; `== 2` blocks the pick and forces `FUN_00556370` to
+1. At the top of each pass the four reserved ids (`id & 0x3f` ∈ {0, 0x3f} → 0, 0x3f, 0x40, 0x7f) with
+score 0 are stamped 8 (:3188-3191) and every water id ends the pass at 7 (:3583).
+
+**M252 — what the coarse label search is FOR** (G6/G7): the coarse accessor `FUN_00582340` is
+called at exactly 2 sites in the whole image, both inside `FUN_00556690` (`0x55878a`, `0x558812`) —
+the coarse region map has ONE consumer. `FUN_00556690` (14 349 B, called only from `FUN_005208f0`
+`0x52094f` and `FUN_0059ce10` `0x59dd43`, G7) walks the coarse grid by its own dimensions
+(`DAT_0092ad9c` × `DAT_0092ada0`, 7 refs), keeps the cells whose label equals the candidate region,
+turns a coarse cell into terrain coordinates (`x = cell*5`, `local_68 = local_44*5`), scans the
+neighbour footprints for land tiles and scores them, then gates the best site by the terraform cost
+`FUN_004cc7b0` (2 calls) against the faction's budget and issues
+`FUN_0056d350(faction, 0x29, 2, x, y, -1)` — the 2 `push 0x29` sites (`0x556a47`, `0x558ad9`) each
+reach a `call 0x56d350` 3 instructions later. So the coarse map is the spatial index by which the AI
+finds where a region IS; the per-faction category/score arrays say whether it wants it.
+
+**OPEN.** The names of categories 0/2/7/8 (only their effects are pinned); the internal order of the
+M249 {4,5,6} question and every earlier pick's OPEN item stand. `FUN_005b2970`'s 4 call sites are
+counted but not attributed to modes. No retraction.

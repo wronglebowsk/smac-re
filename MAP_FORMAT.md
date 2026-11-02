@@ -81,7 +81,7 @@ carries both maps (`:10` planet, `:11` planetx).
 | 0 | 39 | `cat<<5 \| low5` | **category** in bits 5-7 — `FUN_005823c0` writes `& 0x1f \| (char)param_3 << 5`; cats 0..6 only, 7 never. `FUN_005831a0` branches on `cat<2`, `cat<3`, `2<cat`, and the pressure-recycle site tests `(rec[0]&0xe0) < 0x60` on the base's tile (`shard_001.c:3515-3517`, `:3546-3549`) ⇒ **cat 0-2 = water, 3-6 = land**: 1,826 water / 1,374 land on planet.MP, 5,143 / 3,049 on planetx.MP. B1's "cats 1-6 are 100 % land, cat 0 is 59/3259" was the 22-byte view mixing record byte 0 with record byte 22 (cat 0 in 100 % of records) |
 | 1 | 120 | numeric | unnamed; `FUN_00582390` writes the byte, `FUN_00582a10`/`0x582a60` read and modify it |
 | 2 | 33 | **two nibbles** | high = **terrain type** (`FUN_00582cc0`: `& 0xf \| param_3 << 4`; 0..15 all used in both maps, no gaps), low = **owner** (`FUN_00582c80` modifies the low nibble with `& 0xf`; only {0..7, 0xf} ever appear, `0xf` = unowned) |
-| 3 | 31 | enum | unnamed; `FUN_00582d00` writes the whole byte |
+| 3 | 31 | enum | **the REGION LABEL** (M248/M249); `FUN_00582d00` writes the whole byte; assigned by the `FUN_0058d390` + `FUN_0058d120` flood fill (M250): land `1..0x3e`, water `0x41..0x7e`, overflow `0x3f`/`0x7f`, `0` = unassigned |
 | 4-7 | 1 / 3 / 6 / **1** | dword | seen bits (FOOTING.md). In the file byte 4 is 0 everywhere and **byte 7 is the CONSTANT 0xff in every record of both maps (3,200 + 8,192 = 11,392)** — B1's "land marker" and FOOTING's "+7 = owner byte" are both RETRACTED (M240) |
 | 8-11 | 4 / 6 / 6 / 6 | dword | **mask** (`FUN_00582ea0` writes it, `FUN_00582ed0` read-modify-writes it, 78 callers); file values sit on bits 5, 7, 8, 20, 30 |
 | 12-15 | 9 / 4 / 1 / **141** | dword | list head / uc; `FUN_00582f70` writes the byte at +15 (`& 0xffffff \| param_3 << 0x18`); +15 is the only field with 141 values |
@@ -98,7 +98,14 @@ DAT_0092ada0` with `DAT_0092ad9c = (W+4)/5` and `DAT_0092ada0 = (H+4)/5` (`shard
 which is 128 for 80×80 and 338 for 128×128, and `FUN_00582260`'s third read puts it in `DAT_0092ae18`
 (allocated with the same expression). So it is a second array sized from the dimensions — a
 `(W+4)/5 × (H+4)/5` region grid, ~1 byte per 25 tiles — not a trailer and not a sparse per-cell list.
-`FUN_00582340`/`FUN_00582360` are its accessor pair. Not yet decoded beyond that.
+`FUN_00582340`/`FUN_00582360` are its accessor pair. **M250/M252 decoded its role:** it is written
+LAST inside the region generator (`FUN_0058d390` @`0x58d88c`, after every id is assigned, no back
+edge encloses it) and read by exactly ONE consumer in the image — the 2 accessor calls
+`0x55878a`/`0x558812` inside `FUN_00556690`, the per-faction upkeep stage, which uses it as the
+spatial index "where is region R": it walks the grid by its own dims (`DAT_0092ad9c` × `DAT_0092ada0`),
+keeps cells whose label equals the candidate region, converts a cell to terrain `x = cell*5`, scores
+the land tiles in the neighbour footprints and issues the best site as a goal
+(`FUN_0056d350(faction, 0x29, 2, x, y, -1)`). Census: `evidence/m250_region_generation.txt`.
 
 ## Functions
 
