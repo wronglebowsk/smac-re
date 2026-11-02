@@ -881,3 +881,34 @@ RETRACTS B2's `tail 10,800 = 256+152+10,144+28+220` and its `93,159 = 92,927 + 2
 | 20 presses = 20 year bumps = 20 tf clears, year 2213→2233, final (3,0,2233) == last row | G6 — `evidence/b3_turn_replay.txt:6` | V |
 | OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
 | instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
+
+## M250 (s200, PASS 7/7) — the region generator: 3 callers, and the coarse map is built LAST inside it
+
+| claim | evidence | conf |
+|---|---|---|
+| `FUN_0058d390` (0x58d390, 1293 B) has exactly 3 call sites image-wide: `0x5add8f` `FUN_005add30`, `0x5af0c7` `FUN_005af0c0`, `0x5b09e3` `FUN_005b09b0` | G1, `evidence/m250_region_generation.txt:1` | V |
+| the new-game driver is `FUN_005b2970` (shard_015.c:28040-28115, 4 call sites `FUN_004e10c0`/`FUN_004e11b0`/`FUN_0057c550`/`FUN_0057ecf0`): `FUN_00582170` → placement loop → `FUN_005add30`→`FUN_0058d390`, then the loop condition `FUN_005af0c0()` re-runs the generator and votes retry (≤4, while `DAT_00985ae8 & 0x80 == 0`); `FUN_005b09b0` = the "ADJUSTING WORLD CLIMATE" stage (22 sites) re-runs it | G1 + shard_015.c:24616/25519/26549/28102-28108 | V (static), OPEN (which driver site is NEW GAME) |
+| inside `FUN_0058d390` the flood-fill `call 0x58d120` @`0x58d47e` is enclosed by BOTH scan back edges (`0x58d5fa→0x58d3f9`, `0x58d60c→0x58d3e2`); `FUN_0058ce00` @`0x58d88c` is enclosed by NONE and is the last call but one (`0x58d891` = `FUN_005e9e0d`, the free) | G3 | V |
+| id bands: land `1..0x3e`, water `0x41..0x7e` (`0x40` never assigned — counter pre-incremented), overflow `0x3f`/`0x7f` for the border rings (`and ..,0x40; add ..,0x3f`, 2 sites) and for the band-exhaustion merge (smallest region relocated, shard_015.c:5007-5073) — explains M249's "25 ids / 47 components" | G4 (immediates 0x3e/0x7e/0x3f = 1/1/2), shard_015.c:4976-5101 | V |
+| region table `DAT_00989ce0`, stride `0x1c` (7 dwords via `lea [r*8+0]`+`sub`, 8 folds, 13 refs in d390 / 4 in d120): dword 0 = tile count, `+0x14` = 8-byte bitmap of adjacent opposite-class regions (`FUN_00507410` bit index, shard_015.c:5119-5160) | G4 | V |
+| instrument: `python3 scripts/m250_region_generation.py` → `SUMMARY PASS: 7/7` | rc=0, 2.7 s, one invocation, static image | V |
+
+## M251 (s200, PASS 7/7) — `DAT_0094eda8` = the per-faction, per-REGION category byte (128 ids, 4 values)
+
+| claim | evidence | conf |
+|---|---|---|
+| shape `[region + faction*0x20bc]` byte array, base exactly `0x94eda8`; 128 entries (the stage's region loop `cmp reg,0x80` @`0x556737`/`0x558b1c`) | shard_014.c:2159/2217/2220, G5 | V |
+| 79 refs in 18 functions; **6 store sites in 2 writers**: `FUN_00556690` ×5 (`0x557fdf`=8, `0x558516`=dl, `0x558549`=0, `0x55855e`=2, `0x55856b`=7), `FUN_0055f650` ×1 (`0x564ad7`=7); values written exactly {0,2,7,8} | G5, `evidence/m250_region_generation.txt:5` | V |
+| effects: `< 2` preferred candidate (+1000, shard_014.c:3409-3411); `== 7` accepted at face score (:3429); `== 8` accepted only if `DAT_00989ce0[region] < 0x96` (150 tiles, :3439), raises `FUN_00556370`'s divisor 2→4 and decrements `FUN_00556150`'s 1..10 score; `== 2` blocks the pick and forces `FUN_00556370` to 1 | :3409-3440, :2159-2224 | V (effects), OPEN (which value NAMES which state) |
+| reset per pass: the 4 reserved ids (`id & 0x3f` ∈ {0,0x3f} → 0, 0x3f, 0x40, 0x7f) with score 0 are stamped 8 (:3188-3191); every water id ends at 7 (:3583) | :3188-3191, :3583 | V |
+| siblings in the same block, same index: `0x94e4a8` short ×128 (ends exactly at `0x94e5a8`), `0x94e5a8` byte SCORE, `0x94e628` (cleared per region), `0x94e7a8` flag bytes | G5 + shard_014.c:3188-3300 | V (addressing), OPEN (meanings) |
+
+## M252 (s200, PASS 7/7) — the coarse region map has ONE consumer: `FUN_00556690`'s site search
+
+| claim | evidence | conf |
+|---|---|---|
+| the coarse accessor `FUN_00582340` is called at exactly 2 sites in the image, both inside `FUN_00556690` (`0x55878a`, `0x558812`) | G6/G7, `evidence/m250_region_generation.txt:6-7` | V |
+| `FUN_00556690` (14 349 B) is called only from `FUN_005208f0` `0x52094f` and `FUN_0059ce10` `0x59dd43` (M94's per-player upkeep sequence) | G7 | V |
+| the search walks the coarse grid by its own dims (`DAT_0092ad9c` × `DAT_0092ada0`, 7 refs), keeps cells whose label == the candidate region, converts cell → terrain `x = cell*5`, scans neighbour footprints for land tiles, scores them | shard_014.c:3443-3556 | V |
+| the winner is gated by the terraform cost `FUN_004cc7b0` (2 calls in the stage) against the faction's budget, then issued as `FUN_0056d350(faction, 0x29, 2, x, y, -1)`; both `push 0x29` sites (`0x556a47`, `0x558ad9`) reach a `call 0x56d350` 3 insns later | G6 | V |
+| so the coarse map is the SPATIAL INDEX for "where is region R", not a minimap layer | G6/G7 + the 2-site census | V |
