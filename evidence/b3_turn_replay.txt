@@ -1,0 +1,7 @@
+  ok   trace-wellformed rows=67 own=[3] tf==0_rows=21(all cur==3) out_of_range=0 unchanged_rows=0 cycles=20 year 2213->2233(+20)
+  ok   replay-parity matched=67/67 rows (initial 1 + transitions 66/66) unmatched=0 emitted=220 collapsed_by_sampler=154 final=(3, 0, 2233) recorded_last=(3, 0, 2233)
+  ok   year-edge pinned=[7] runner_up=[(7, 66), (0, 22), (1, 22), (2, 10)] (witness row 22: {'t': 88.631, 'year': 2221, 'cur': 7, 'tf': 2, 'nb': 56, 'own': 3})
+  ok   landing-state required: merged_landing=5/66 vs baseline 66/66; press-transition unobservable: no_press=66/66 (OPEN)
+  ok   model-space tested=322560 reproduce=48 (0.0149%) distinct_cyclic_orders=6 edges_shared_by_all=[(0, 1), (1, 2), (2, 3), (7, 0)] year_edge_shared_by_all=7
+  ok   cycle-accounting presses=20 emissions_per_cycle=11 year_bumps=20 tf_clears=20 final=(3, 0, 2233)
+PASS B3: 6/6 gates on m30_turn_trace.jsonl — the turn engine reproduces the recorded sequence

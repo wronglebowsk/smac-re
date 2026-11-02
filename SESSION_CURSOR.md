@@ -1,6 +1,7 @@
-S198 M248/M249 submitted (branch milestone/m248). `python3 scripts/m248_region_values_census.py`
--> `PASS M248: 5/5 gates` (2nd invocation; 1st 3/5 on three instrument bugs, fixed, no threshold
-moved) -> evidence/m248_region_values.txt. Region bytes = terrain record +3 (the map REGION LABEL:
-<0x40 land, >=0x41 water) of the first land tile of a centre-first 9-diamond sample; recomputed ==
-stored 19/19 files; +3's only writer = FUN_00582d00 (4 sites, all map generation). Box untouched.
-NEXT: python3 scripts/track_mode.py (the next BUILD fire takes B3 — turn engine).
+S199 B3 submitted (branch milestone/b3). `python3 -m sim.selftest --replay
+evidence/m30_turn_trace.jsonl` -> `PASS B3: 6/6 gates`, `matched=67/67` (ONE invocation,
+rc=0, 22.3 s) -> evidence/b3_turn_replay.txt. sim/turn.py implements M30's engine: the walk
+is ASCENDING over 8 slots (human 3), the year fires on the 7->0 edge while cur is still 7,
+and tf clears ONE STEP AFTER cur is written to 3; 48 of 322560 candidate models reproduce
+the trace and all 48 agree on those edges. Box untouched: no /proc, no gdb.
+NEXT: python3 scripts/track_mode.py (BUILD -> B4 economy; ANALYSE -> a NEXT_PROMPT pick).

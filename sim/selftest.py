@@ -181,6 +181,121 @@ def run_save(target, results):
     return None
 
 
+def run_replay(path, results):
+    """B3 gates (BUILD_SPINE.md:55): the turn engine must reproduce the recorded
+    (cur, tf, year) sequence of evidence/m30_turn_trace.jsonl, matched=N/N, no tolerance.
+
+    The trace is a 0.2 s SAMPLE of a fast state machine (scripts/turn_trace.py:59 logs one
+    row per change-set of (year, cur, tf)), so parity is an ORDERED SUBSEQUENCE: every
+    recorded row must be a state the engine reaches, in order; states the sampler skipped
+    are the collapsed AI phases.  Model + rationale: sim/turn.py's module docstring."""
+    import itertools
+    import json
+    from . import turn
+    rows = [json.loads(l) for l in open(path, encoding="utf-8") if l.strip()]
+    if not rows:
+        return fail("replay: no rows in %s" % path)
+    rec = [(r["cur"], r["tf"], r["year"]) for r in rows]
+    body = rec[1:]
+    own = sorted({r["own"] for r in rows})
+    tf0 = [i for i, s in enumerate(rec) if s[1] == 0]
+    bad = ([i for i, s in enumerate(rec) if not 0 <= s[0] < turn.SLOTS]
+           + [i for i, s in enumerate(rec) if s[1] not in (0, turn.TF_CYCLE)]
+           + [i for i in tf0 if rec[i][0] != turn.HUMAN])
+    same = [i for i in range(1, len(rec)) if rec[i] == rec[i - 1]]
+    cycles = len(tf0) - 1
+    results.append((
+        "trace-wellformed rows=%d own=%s tf==0_rows=%d(all cur==3) out_of_range=%d "
+        "unchanged_rows=%d cycles=%d year %d->%d(+%d)" % (
+            len(rec), own, len(tf0), len(bad), len(same), cycles,
+            rec[0][2], rec[-1][2], rec[-1][2] - rec[0][2]),
+        own == [turn.HUMAN] and not bad and not same and cycles == 20
+        and rec[-1][2] - rec[0][2] == cycles))
+
+    eng = turn.Engine(rec[0][2])
+    init = eng.state()
+    emitted = []
+    for _ in range(cycles):
+        emitted.extend(eng.press())
+    matched, missing, _used = turn.match(emitted, body)
+    n_ok = (1 if init == rec[0] else 0) + matched
+    results.append((
+        "replay-parity matched=%d/%d rows (initial 1 + transitions %d/%d) unmatched=%d "
+        "emitted=%d collapsed_by_sampler=%d final=%s recorded_last=%s" % (
+            n_ok, len(rec), matched, len(body), len(missing), len(emitted),
+            len(emitted) - matched, eng.state(), rec[-1]),
+        n_ok == len(rec) and not missing and eng.state() == rec[-1]))
+
+    # gate 3: at which edge may the new year first be visible? all 8 candidates.
+    edge = {}
+    for ya in range(turn.SLOTS):
+        _e, s = turn.replay(rec[0][2], cycles, year_after=ya)
+        edge[ya] = turn.match(s, body)[0]
+    best = sorted(k for k, v in edge.items() if v == len(body))
+    results.append((
+        "year-edge pinned=%s runner_up=%s (witness row 22: %s)" % (
+            best, sorted(edge.items(), key=lambda kv: -kv[1])[:4], rows[22]),
+        best == [7]))
+    # gate 4: is (cur==3, tf==2) at the end of the walk a real state, or is tf cleared in
+    # the same step cur is written?  Discriminate by removing it from the model.
+    n_merged = turn.match(turn.replay(rec[0][2], cycles, merge_landing=True)[1], body)[0]
+    n_nopress = turn.match(turn.replay(rec[0][2], cycles, emit_press=False)[1], body)[0]
+    results.append((
+        "landing-state required: merged_landing=%d/%d vs baseline %d/%d; press-transition "
+        "unobservable: no_press=%d/%d (OPEN)" % (
+            n_merged, len(body), matched, len(body), n_nopress, len(body)),
+        n_merged < len(body) and matched == len(body) and n_nopress == len(body)))
+
+    # gate 5: how many candidate models reproduce the trace at all?  The engine is a cyclic
+    # walk order over the 8 slots plus the edge at which the year fires: 7! orders of the
+    # non-human slots x 8 positions for the human x 8 edges = 322,560 models.
+    ai = [s for s in range(turn.SLOTS) if s != turn.HUMAN]
+    tested = 0
+    hits = []
+    for perm in itertools.permutations(ai):
+        for hp in range(turn.SLOTS):
+            order = list(perm)
+            order.insert(hp, turn.HUMAN)
+            for ya in order:
+                tested += 1
+                _e, s = turn.replay(rec[0][2], cycles, order=order, year_after=ya)
+                if turn.match(s, body)[0] != len(body):
+                    continue
+                hits.append((tuple(order), ya))
+    # a model is (successor-of-each-slot, year edge); intersect over the ones that pass to
+    # see which parts of it the trace actually pins down.
+    forms = []
+    for order, ya in hits:
+        pos = {s: i for i, s in enumerate(order)}
+        forms.append((tuple(order[(pos[s] + 1) % turn.SLOTS] for s in range(turn.SLOTS)), ya))
+    shared = None
+    for succ, ya in forms:
+        shared = list(succ) + [ya] if shared is None else [
+            a if a == b else -1 for a, b in zip(shared, list(succ) + [ya])]
+    det = sorted((s, shared[s]) for s in range(turn.SLOTS) if shared[s] >= 0)
+    cyclic = set()
+    for order, _ya in hits:
+        i3 = order.index(turn.HUMAN)
+        cyclic.add(tuple(order[i3:] + order[:i3]))
+    results.append((
+        "model-space tested=%d reproduce=%d (%.4f%%) distinct_cyclic_orders=%d "
+        "edges_shared_by_all=%s year_edge_shared_by_all=%s" % (
+            tested, len(hits), 100.0 * len(hits) / tested, len(cyclic), det, shared[8]),
+        bool(hits) and shared[8] == 7
+        and det == [(0, 1), (1, 2), (2, 3), (7, 0)]))
+
+    # gate 6: cycle accounting against the trace's own counters.
+    seq_all = [init] + emitted
+    bumps = sum(1 for a, b in zip(seq_all, seq_all[1:]) if a[2] != b[2])
+    clears = sum(1 for s in emitted if s[1] == 0)
+    results.append((
+        "cycle-accounting presses=%d emissions_per_cycle=%d year_bumps=%d tf_clears=%d "
+        "final=%s" % (cycles, len(emitted) // cycles, bumps, clears, eng.state()),
+        len(emitted) == 11 * cycles and bumps == cycles and clears == cycles
+        and eng.state() == (turn.HUMAN, 0, rec[-1][2])))
+    return None
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -190,6 +305,19 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     results = []
+    if args.replay:
+        if not os.path.exists(args.replay):
+            return fail("replay trace not found: %s" % args.replay)
+        run_replay(args.replay, results)
+        bad = [n for n, ok in results if not ok]
+        for name, ok in results:
+            print(("  ok   " if ok else "  BAD  ") + name)
+        if bad:
+            return fail("B3: %d/%d gates failed: %s" % (
+                len(bad), len(results), "; ".join(bad)))
+        print("PASS B3: %d/%d gates on %s — the turn engine reproduces the recorded "
+              "sequence" % (len(results), len(results), os.path.basename(args.replay)))
+        return 0
     if args.sav and not args.map:
         run_save(args.sav, results)
         bad = [n for n, ok in results if not ok]
