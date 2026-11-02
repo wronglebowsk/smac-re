@@ -1,16 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-187-187.md` (1 sessions). Read it only when a question reaches back before session ## Session 188.
-
-## Session 188 (2026-11-01, M231-M234, static + read-only /proc; box untouched, M181 still a lead)
-
-`sudo -n python3 scripts/m231_m234_staging.py > evidence/m231_m234_staging.txt` -> rc 0, **17/17 gates PASS on one invocation**, 8,862 B. Invocations 1-4 gave no verdict (instrument bugs; no threshold, floor or check changed): a format string missing its `%`; `p_["dests"]` indexing a list with a string; a read-back that assumed 0x99aa9c+4i and 0x99aac0+4i were adjacent (they are 0x24 apart) and compared the wrong dword; a push list not truncated to the callee's own cleaned arg count, so FUN_00455c70's prologue pushes read as arguments; `pend` reset only at the tracked call, so the first trampoline call inherited 2 pushes from an earlier one.
-
-TWO CLAIMS REWRITTEN FROM THE DATA, NOT LOOSENED: (1) M232's "4 stores name the region" is 39 stores - every one carries the region address in its SOURCE (FUN_0041f450 installing page bases into [ebx+0xaf0..0xb30]) and ZERO in its DESTINATION, so the grid has NO in-image writer; (2) M231's "FUN_0062d78d is not a vtable slot" is FALSE - it is slot +0x15c of 0x679f98, the very vtable FUN_0062d630 installs.
-
-HEADLINES (all from the command above; semantics in NAMED.md). M231: publishers 0x45a320+0x30*i = 15 insns / 2 arg-loads / 2 stores / 0 callees, publishing ARG VALUES; 18 staging dwords, 18 writers, readers ONLY FUN_0062d630 (6 sites, installs 0x679f98/[+0x444]=0x679f90) and FUN_0062d78d (0 direct sites, 0 code refs); both copy the 18 dwords to [this+0xab8..0xafc]; live 3/9 pairs non-zero, every value a grid address. M232: 24 grid pushes over 9 calls (triples (0,3,6)/(1,4,7)/(2,5,8) to 6 functions, pairs (e,e+6) to 3); live entry {0, mapped ptr, 9, N, N, 0x14, N, 0x14, 0,0,0}, N=3 x6 / 0x43 x3; staging reads back exactly the pointers passed. M233: 3 writer sites (2 folded 0xd7 at +0x18/+0x1c in FUN_00459490's 89-iteration bound-0x59 loop, idx*0x2c; 1 count store to 0x7543d4), 13 base-takes (2 push / 5 add-adjustor / 6 lea), 0 to the base, 2 FUN_005aa310 sites storing &table[4*idx] into [edi+0x2144]; live count 11, entries 0..15 {0x15064c0-0x40*i mapped, 0, 9, 0,0,0, 0xd7, 0xd7, 0,0,0}. M234: FUN_005dbdc0 (ret 0x1c, 408 insns, 59 sites, 0 indirect) gates arg1=&0x792a30 via 0x5ca8d2 and reads [arg1+0x80]; FUN_005e3412 (ret 0x8, 91 insns, 0 callees, 14 sites) clamps args with `and reg,0xff` and rewrites 5 byte-matches of low(arg1) to low(arg2) over [this+4], length [this+0xc]*[this+0x14]>>2 truncating (2/11 buffers N*M %% 4 == 1); the 11 buffers are BSS records of the same grid shape.
-
-PITFALLS: a staging pair spread over two arrays is not contiguous - read each slot; a callee's arg vector is its own `ret imm`/4 pushes counted back from the call; box time still owed (scratch/m181/pair.py never armed).
+Older sessions: `docs/sessions/sessions-188-188.md` (1 sessions). Read it only when a question reaches back before session ## Session 189.
 
 ## Session 189 (2026-11-01, M235-M237 all PASS, static + read-only /proc; box untouched, M181 still a LEAD)
 
