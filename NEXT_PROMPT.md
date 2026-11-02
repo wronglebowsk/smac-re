@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 207, 2026-11-02, **B5 DONE: `sim/units.py` replays the recorded M27 arrow-key moves — one lattice step of the 0x6784a0 ring per press at 3 MP, 6 MP per unit per round, x wrapped by the width, y bounds-checked — 9/9 on `evidence/m27_solowrap*.log`; M265-M266 done, numbers `NAMED.md` §M265-§M266**)
+# NEXT_PROMPT.md — footing for the next session (session 208, 2026-11-02, **M267-M268 DONE: the 0x6725ac/0x6725a4 "pair" is ONE vtable with entry points 8 B apart, installed by 1 ctor + 4 destructors of 4 variants of the virtual base at [desc+4] (`[vptr-4] = [desc+4] - 0x21a6c`); the 201 x 608 = 122,208-B block is POD, never indexed by computed code, never saved — 14/14 on `evidence/m267_m268_census.txt`; B5 done, numbers `NAMED.md` §B5**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -58,36 +58,42 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s207 — M227-M237, **B1-B5**, M240-M266 (M241 FAIL 2/5, #180 open;
+- ANSWERED (do not re-pick): s187-s208 — M227-M237, **B1-B5**, M240-M268 (M241 FAIL 2/5, #180 open;
   the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
   test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
   view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class, what
-  the 7 allocated blocks ARE, why FUN_00583c70 is unreferenced). Numbers VERBATIM: `NAMED.md` per-id,
-  §s196-§s206; the s205 RESULT block moved VERBATIM to `docs/pick-archive.md` §s206 (+ traps 16-19 at
+  the 7 allocated blocks ARE, why FUN_00583c70 is unreferenced, what the 201 608-B elements ARE NOT,
+  which variants share the 0x6725ac/0x6725a4 pair). Numbers VERBATIM: `NAMED.md` per-id,
+  §s196-§s208; the s205 RESULT block moved VERBATIM to `docs/pick-archive.md` §s206 (+ traps 16-19 at
   §trim-s205). FUN_005f3f5b is NOT open — see M220.
-- RESULT (s206): the 7 view-table blocks are objects of the class whose descriptor is 0x675964
-  (201 × 608-B elements +0xc..+0x1dd6c + a 2,580-B virtual subobject at +0x21a6c, size proven to the
-  byte 0x21a6c+0xa14 = 0x22480); FUN_00583c70 is statically unreachable (0 refs in .text operands AND
-  0 address-taken dwords image-wide), 1 of an 8-function dead cluster. Numbers VERBATIM: `NAMED.md`
-  §M265-§M266; census `scripts/m265_m266_census.py` -> 12/12, `evidence/m265_m266_census.txt`.
-- RESULT (s207, BUILD): **the arrow-key step is executable** — `sim/units.py` +
-  `sim/selftest.py::run_m27_replay`, `python3 -m sim.selftest --replay-m27` -> **PASS B5: 9/9 gates**
-  (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`): dir 1 = (+2,0) from the 0x6784a0 ring read at
-  `evidence/m248_region_values.txt:3`; STEP_MP 3 = alpha `#RULES` field 0 (FUN_005ac550 returns
-  `DAT_0092a278 * moves`), 6 MP = 2 moves, can-act = FUN_005acc00's `total-spent>0`; x wraps by the
-  width, y is bounded; 6/6 re-stamps of other units match the replay. OPEN: per-terrain move cost
-  (ASSUMED uniform 3), the bonus behind `moves = 2`, rec118's first step (outside the trace window).
+- RESULT (s208): the "pair" 0x6725ac/0x6725a4 is ONE vtable read from two entry points 8 B apart
+  (0x6725a4 = 0x6725ac-8, the code run ends 0x672a38, 291 vs 293 slots, heads 0x4222c0/0x405350/
+  0x422190 are not function starts); its 5 installers are 1 ctor (FUN_00469650, descriptor 0x675964)
+  + 4 DEstructors (FUN_00421950 the base; FUN_00518980 the 0x678458 variant, pair 0x678184/0x67817c at
+  +0x23d94; FUN_0059c1e0 and FUN_0059bec0 the 0x67194c/0x671944 variant — the latter a 0x25318-B STACK
+  instance that calls the save writer), NONE of them address-taken image-wide; the offsets differ
+  because the subobject is a VIRTUAL BASE: `[vptr-4] = [desc+4] - 0x21a6c` (shard_008.c:5869). The
+  201 x 608 = **122,208 B** block (+0xc..+0x1dd6c, not 121,600) is POD — ctor 0x62514b and dtor
+  0x62516c write the same {dword0=3, dword1=0} — and NO code computes a 608-strided address (all 21
+  0x260 immediates are iterator args or their unwind records); the 94 folded (d-0xc)%608==0
+  displacements are chance (3.65x uniform, none in a view-loading function) and the per-view codec
+  FUN_00596620 saves only +0x1dd70..+0x1dda0. Census `scripts/m267_m268_census.py` -> 14/14,
+  `evidence/m267_m268_census.txt`. s206's numbers: `NAMED.md` §M265-§M266, census 12/12.
+- RESULT (s207, BUILD): the arrow-key step is executable — `python3 -m sim.selftest --replay-m27` ->
+  **PASS B5: 9/9 gates** (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`). Model, parity numbers
+  and its 3 OPEN items VERBATIM: `NAMED.md` §B5 (per-terrain move cost ASSUMED uniform 3; the bonus
+  behind `moves = 2`; rec118's first step lies outside the trace window).
 - Pick from (ANALYSE fires; the next BUILD fire takes **B6** — the headless run — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
   `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save —
   the box is DOWN, cold relaunch >9 min); **what the row stride 188 means** (new from M257: `esi =
   2*region + 188*fac`, regions 94..127 pass the next row — one live read of both indexings of `0x94eaa8`
-  settles it; box); **what the 201 608-B elements ARE** (new from M265: 121,600 of the 140,416-B block,
-  element ctor 0x62514b sets only {dword0=3, dword1=0} — cross-check 4/196/201 vs `data/alpha.json` row
-  counts and find who walks +0xc..+0x1dd6c at a 0x260 stride; static); **which variants share the
-  0x6725ac/0x6725a4 pair** (new from M265: 5 ctors install it at different offsets and FUN_0050aa60 calls
-  0x5e3b80 TWICE (+0x23d94 then +0x21a68) — read the installers' descriptors+sizes; static).
+  settles it; box); **the virtual-base delta census** (new from M267: all 5 installers compute
+  `[vptr-4] = [desc+4] - 0x21a6c` — find every site of that shape image-wide, list the K values and
+  the descriptors whose dword[+4] equals each; static); **who constructs the 0x67194c/0x671944 class**
+  (new from M267: its destructors are FUN_0059c1e0 + FUN_0059bec0, its vtable has 361 slots and slot 0
+  = 0x406130 — find the installer of 0x67194c and the allocation size; static).
 ## LIVE FACTS / KIT
 
 - **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
