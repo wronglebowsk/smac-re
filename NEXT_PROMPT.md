@@ -79,13 +79,10 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   displacements are chance (3.65x uniform, none in a view-loading function) and the per-view codec
   FUN_00596620 saves only +0x1dd70..+0x1dda0. Census `scripts/m267_m268_census.py` -> 14/14,
   `evidence/m267_m268_census.txt`. s206's numbers: `NAMED.md` §M265-§M266, census 12/12.
-- RESULT (s207, BUILD): **the arrow-key step is executable** — `sim/units.py` +
-  `sim/selftest.py::run_m27_replay`, `python3 -m sim.selftest --replay-m27` -> **PASS B5: 9/9 gates**
-  (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`): dir 1 = (+2,0) from the 0x6784a0 ring read at
-  `evidence/m248_region_values.txt:3`; STEP_MP 3 = alpha `#RULES` field 0 (FUN_005ac550 returns
-  `DAT_0092a278 * moves`), 6 MP = 2 moves, can-act = FUN_005acc00's `total-spent>0`; x wraps by the
-  width, y is bounded; 6/6 re-stamps of other units match the replay. OPEN: per-terrain move cost
-  (ASSUMED uniform 3), the bonus behind `moves = 2`, rec118's first step (outside the trace window).
+- RESULT (s207, BUILD): the arrow-key step is executable — `python3 -m sim.selftest --replay-m27` ->
+  **PASS B5: 9/9 gates** (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`). Model, parity numbers
+  and its 3 OPEN items VERBATIM: `NAMED.md` §B5 (per-terrain move cost ASSUMED uniform 3; the bonus
+  behind `moves = 2`; rec118's first step lies outside the trace window).
 - Pick from (ANALYSE fires; the next BUILD fire takes **B6** — the headless run — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
