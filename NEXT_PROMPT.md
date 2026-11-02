@@ -33,7 +33,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.j
 
 ## THE LEDGER
 
-Merged M54A-M268 + B0-B5 (through #198); M269-M271 on its own open PR. UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M271 + B0-B5 (through #199). UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
