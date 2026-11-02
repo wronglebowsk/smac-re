@@ -557,3 +557,22 @@ runtime offset is read from the class descriptor, which is exactly M265's `[desc
 reserves 0x25318 = 152,856 B on the stack (the only 0x25318 in the image, G8), constructs the object
 with flag 1 (push 0x1 at 0x59beed, so the descriptor store is skipped), calls the save writer
 FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
+
+## Session 209 (2026-11-02, ANALYSE, docs-only cap triage) — NEXT_PROMPT 15,359 -> 14,506 B: the ANSWERED topic enumeration and the s207 RESULT block moved VERBATIM to docs/pick-archive.md §trim-s209
+
+- Trigger: kickoff `wc -c NEXT_PROMPT.md` = 15,359 > the 15,300 cap-triage trigger;
+  `track_mode.py` = ANALYSE (analyse_since_build=1, next rung B6); box DOWN, `grep -c 'box time owed'
+  SESSION_CURSOR.md` = 0; tree clean. Per the loop rule the cap triage is the whole fire — no
+  milestone was started.
+- Split, not shave: the two oldest footing blocks moved VERBATIM into `docs/pick-archive.md`
+  §trim-s209 (54,860 -> 56,524 B): the ANSWERED bullet's topic enumeration (756 B) and the
+  RESULT (s207, BUILD) block (378 B). Provenance checked by script against
+  `git show main:NEXT_PROMPT.md`: both strings present in the archive, absent from the live file.
+  The live file keeps the id-range + pointers (`NAMED.md` per-id §s196-§s208; the BUILD TRACK B5
+  line already carries `NAMED.md` §B5 with its 3 OPEN items).
+- Stale footing fixed in passing: ledger now `Merged M54A-M268 + B0-B5 (through #197)` (was
+  `M54A-M266 + B0-B4 ... B5 is this PR`).
+- Headroom: 14,506 + a ~1,000 B RESULT append lands under 15,300; the next close must move the
+  s208 RESULT block (1,274 B) VERBATIM to keep the cycle.
+- Not triggered: skill/SKILL.md 59,419 B (<69,000); evidence/ 28.3 MB (warn, trigger 28.5 not
+  reached); no new evidence files this fire.

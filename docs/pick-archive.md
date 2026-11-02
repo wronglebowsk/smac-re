@@ -610,3 +610,30 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   FUN_005dbdc0 is the filler). `python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11
   gates PASS` (rc=0, 3.7 s; inv 1 was 10/11 on a count copied from a truncated probe print, moved only
   after an objdump corpus said 39/12). Gate-by-gate numbers VERBATIM: `NAMED.md` §M262-§M264.
+
+
+## §trim-s209 — ANSWERED enumeration + s207 RESULT block, moved VERBATIM out of
+NEXT_PROMPT.md (cap triage, s209)
+
+Provenance: NEXT_PROMPT.md stood at 15,359 B (> the 15,300 trigger); these two blocks moved
+VERBATIM for headroom. Live pointers that stay in NEXT_PROMPT.md: the ANSWERED id-range +
+`NAMED.md` per-id §s196-§s208, and the B5 line in BUILD TRACK (its 3 OPEN items live VERBATIM
+in `NAMED.md` §B5).
+
+### The ANSWERED bullet (as it stood at s208):
+
+- ANSWERED (do not re-pick): s187-s208 — M227-M237, **B1-B5**, M240-M268 (M241 FAIL 2/5, #180 open;
+  the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
+  test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
+  view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class, what
+  the 7 allocated blocks ARE, why FUN_00583c70 is unreferenced, what the 201 608-B elements ARE NOT,
+  which variants share the 0x6725ac/0x6725a4 pair). Numbers VERBATIM: `NAMED.md` per-id,
+  §s196-§s208; the s205 RESULT block moved VERBATIM to `docs/pick-archive.md` §s206 (+ traps 16-19 at
+  §trim-s205). FUN_005f3f5b is NOT open — see M220.
+
+### The RESULT (s207, BUILD) block (as it stood at s208):
+
+- RESULT (s207, BUILD): the arrow-key step is executable — `python3 -m sim.selftest --replay-m27` ->
+  **PASS B5: 9/9 gates** (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`). Model, parity numbers
+  and its 3 OPEN items VERBATIM: `NAMED.md` §B5 (per-terrain move cost ASSUMED uniform 3; the bonus
+  behind `moves = 2`; rec118's first step lies outside the trace window).
