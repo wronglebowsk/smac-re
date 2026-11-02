@@ -1,0 +1,120 @@
+M269 delta stores 41 sites / 8 distinct K / 31 functions (of those sites 14 have a field expr displaced < 0x1000 from its base; 21 stores of a delta value through the same field are NOT 4 below the virtual base)
+  K=0x18     (    24) sites=11  fns=11  FUN_004063a0 x1, FUN_004d6fb0 x1, FUN_004ef6d0 x1, FUN_0052bce0 x1, FUN_00538040 x1, FUN_0053cb20 x1, FUN_00544530 x1, FUN_0057c550 x1
+  K=0x1c     (    28) sites=2   fns=2   FUN_00604ad8 x1, FUN_00604bff x1
+  K=0x48     (    72) sites=2   fns=2   FUN_005fe1e0 x1, FUN_005fe38f x1
+  K=0x8c     (   140) sites=4   fns=4   FUN_00607460 x1, FUN_006077ea x1, FUN_0060a590 x1, FUN_0060a6d9 x1
+  K=0x188    (   392) sites=14  fns=14  FUN_004061b0 x1, FUN_0041d480 x1, FUN_004d6fb0 x1, FUN_004ef6d0 x1, FUN_0052bce0 x1, FUN_00535c60 x1, FUN_00538040 x1, FUN_0053cb20 x1
+  K=0x21a6c  (137836) sites=5   fns=5   FUN_00421950 x1, FUN_00469650 x1, FUN_00518980 x1, FUN_0059bec0 x1, FUN_0059c1e0 x1
+  K=0x22050  (139344) sites=1   fns=1   FUN_0048dc20 x1
+  K=0x23d94  (146836) sites=2   fns=2   FUN_0050aa60 x1, FUN_00518980 x1
+  SITE FUN_004061b0   0x406240 K=0x188    F=(ebp-408) dp=0x-18c  DWORD PTR [ecx+eax*1-0x18c],edx
+  SITE FUN_004063a0   0x406403 K=0x18     F=(ebp-28) dp=0x-1c  DWORD PTR [ecx+eax*1-0x1c],edx
+  SITE FUN_0041d480   0x41df17 K=0x188    F=(ebp-16648) dp=0x-410c  DWORD PTR [ebp+eax*1-0x410c],ecx
+  SITE FUN_00421950   0x4219a4 K=0x21a6c  F=(esi-137836) dp=0x-21a70  DWORD PTR [eax+esi*1-0x21a70],edx
+  SITE FUN_00469650   0x4697cd K=0x21a6c  F=(ebp-16) dp=0x-4  DWORD PTR [edx+ecx*1-0x4],eax
+  SITE FUN_0048dc20   0x48dcd4 K=0x22050  F=(ebp-16) dp=0x-4  DWORD PTR [edx+ecx*1-0x4],eax
+  SITE FUN_004d6fb0   0x4d7584 K=0x188    F=(ebp-12984) dp=0x-32bc  DWORD PTR [ebp+eax*1-0x32bc],ecx
+  SITE FUN_004d6fb0   0x4d764c K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [esi+eax*1-0x4],edx
+  SITE FUN_004ef6d0   0x4f237a K=0x188    F=(ebp-12892) dp=0x-3260  DWORD PTR [ebp+eax*1-0x3260],ecx
+  SITE FUN_004ef6d0   0x4f2442 K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [eax+esi*1-0x4],edx
+  SITE FUN_0050aa60   0x50ab84 K=0x23d94  F=(esi+0) dp=0x-4  DWORD PTR [eax+esi*1-0x4],ecx
+  SITE FUN_00518980   0x5189d7 K=0x23d94  F=(esi-146836) dp=0x-23d98  DWORD PTR [eax+esi*1-0x23d98],edx
+  SITE FUN_00518980   0x518ab8 K=0x21a6c  F=(esi-137836) dp=0x-21a70  DWORD PTR [eax+esi*1-0x21a70],edx
+  SITE FUN_0052bce0   0x52f8f0 K=0x188    F=(ebp-13088) dp=0x-3324  DWORD PTR [ebp+eax*1-0x3324],ecx
+  SITE FUN_0052bce0   0x52f9b8 K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [esi+eax*1-0x4],edx
+  SITE FUN_00535c60   0x536f77 K=0x188    F=(ebp-12824) dp=0x-321c  DWORD PTR [ebp+eax*1-0x321c],ecx
+  SITE FUN_00538040   0x53a362 K=0x188    F=(ebp-13060) dp=0x-3308  DWORD PTR [ebp+eax*1-0x3308],edx
+  SITE FUN_00538040   0x53a42a K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [esi+eax*1-0x4],edx
+  SITE FUN_0053cb20   0x53e4f2 K=0x188    F=(ebp-12852) dp=0x-3238  DWORD PTR [ebp+eax*1-0x3238],ecx
+  SITE FUN_0053cb20   0x53e5ba K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [esi+eax*1-0x4],edx
+  SITE FUN_00541bb0   0x542550 K=0x188    F=(ebp-12748) dp=0x-31d0  DWORD PTR [ebp+eax*1-0x31d0],ecx
+  SITE FUN_00544530   0x545983 K=0x188    F=(ebp-12836) dp=0x-3228  DWORD PTR [ebp+eax*1-0x3228],ecx
+  SITE FUN_00544530   0x545a4b K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [eax+esi*1-0x4],edx
+  SITE FUN_0057c550   0x57d577 K=0x188    F=(ebp-18624) dp=0x-48c4  DWORD PTR [ebp+eax*1-0x48c4],ecx
+  SITE FUN_0057c550   0x57d63f K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [eax+esi*1-0x4],edx
+  SITE FUN_00585720   0x58a8b3 K=0x188    F=(ebp-12864) dp=0x-3244  DWORD PTR [ebp+eax*1-0x3244],ecx
+  SITE FUN_00585720   0x58a97b K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [esi+eax*1-0x4],edx
+  SITE FUN_0059bec0   0x59c048 K=0x21a6c  F=(ebp-143364) dp=0x-23008  DWORD PTR [ebp+eax*1-0x23008],ecx
+  SITE FUN_0059c1e0   0x59c281 K=0x21a6c  F=(edi+8992) dp=0x-21a70  DWORD PTR [eax+esi*1-0x21a70],edx
+  SITE FUN_005a7970   0x5a8c21 K=0x188    F=(ebp-12848) dp=0x-3234  DWORD PTR [ebp+eax*1-0x3234],ecx
+  SITE FUN_005a7970   0x5a8ce9 K=0x18     F=(esi+0) dp=0x-4  DWORD PTR [esi+eax*1-0x4],edx
+  SITE FUN_005fe1e0   0x5fe296 K=0x48     F=(ebp-20) dp=0x-4  DWORD PTR [ecx+eax*1-0x4],edx
+  SITE FUN_005fe38f   0x5fe3ed K=0x48     F=(ebp-76) dp=0x-4c  DWORD PTR [ecx+eax*1-0x4c],edx
+  SITE FUN_00604ad8   0x604b8e K=0x1c     F=(ebp-20) dp=0x-4  DWORD PTR [ecx+eax*1-0x4],edx
+  SITE FUN_00604bff   0x604c5d K=0x1c     F=(ebp-32) dp=0x-20  DWORD PTR [ecx+eax*1-0x20],edx
+  SITE FUN_00607460   0x60763b K=0x8c     F=(ebp-40) dp=0x-4  DWORD PTR [edx+ecx*1-0x4],eax
+  SITE FUN_006077ea   0x607877 K=0x8c     F=(ebp-200) dp=0x-90  DWORD PTR [ecx+eax*1-0x90],edx
+  SITE FUN_0060a590   0x60a64c K=0x8c     F=(ebp-24) dp=0x-4  DWORD PTR [ecx+eax*1-0x4],edx
+  SITE FUN_0060a6d9   0x60a74f K=0x8c     F=(ebp-144) dp=0x-90  DWORD PTR [ecx+eax*1-0x90],edx
+  SITE FUN_0060c2b0   0x60c3f0 K=0x188    F=(ebp-20) dp=0x-4  DWORD PTR [edx+ecx*1-0x4],eax
+  SITE FUN_0060d8e8   0x60d99e K=0x18     F=(ebp-20) dp=0x-4  DWORD PTR [ecx+eax*1-0x4],edx
+  BAD FUN_00617957 0x617aff K=0x1 F=('ebp', -20) dp=0x14  DWORD PTR [eax+0x14],edx
+  BAD FUN_00617957 0x617b18 K=0x1 F=('ebp', -20) dp=0x1c  DWORD PTR [ecx+0x1c],eax
+  BAD FUN_00617957 0x617b81 K=0x1 F=('ebp', -20) dp=0x3c  DWORD PTR [edx+0x3c],ecx
+  BAD FUN_00617957 0x617b9a K=0x1 F=('ebp', -20) dp=0x44  DWORD PTR [eax+0x44],edx
+  BAD FUN_00617957 0x617bbd K=0x1 F=('ebp', -20) dp=0x4c  DWORD PTR [edx+0x4c],ecx
+  BAD FUN_0061e6ae 0x61e6bd K=0x1 F=('ebp', 8) dp=0x4  DWORD PTR [edx+0x4],ecx
+  BAD FUN_0061ee0a 0x61ee19 K=0x1 F=('ebp', 8) dp=0x4  DWORD PTR [edx+0x4],ecx
+  BAD FUN_0061f38f 0x61f39e K=0x1 F=('ebp', 8) dp=0x4  DWORD PTR [edx+0x4],ecx
+  BAD FUN_0062750d 0x62751c K=0x1 F=('ebp', 8) dp=0x4  DWORD PTR [edx+0x4],ecx
+  BAD FUN_0064d520 0x64d56b K=0x1 F=('ebp', 8) dp=0x4  DWORD PTR [ecx+0x4],eax
+M269 vptr installs through a vbptr: 177 stores of 33 distinct rdata values
+  0x006713a0 n=52  primary=52  secondary=0   fns=FUN_004010a0,FUN_0041d480,FUN_00421490,FUN_00421ac0,FUN_00465cf0
+  0x00671ac0 n=14  primary=14  secondary=0   fns=FUN_004061b0,FUN_0041d480,FUN_004d6fb0,FUN_004ef6d0,FUN_0052bce0
+  0x00671ab8 n=14  primary=0   secondary=14  fns=FUN_004061b0,FUN_0041d480,FUN_004d6fb0,FUN_004ef6d0,FUN_0052bce0
+  0x00671c30 n=11  primary=11  secondary=0   fns=FUN_004063a0,FUN_004d6fb0,FUN_004ef6d0,FUN_0052bce0,FUN_00538040
+  0x00671c28 n=11  primary=0   secondary=11  fns=FUN_004063a0,FUN_004d6fb0,FUN_004ef6d0,FUN_0052bce0,FUN_00538040
+  0x00671410 n=6   primary=6   secondary=0   fns=FUN_004021e0,FUN_004e24c0,FUN_004e32a0,FUN_005300d0,FUN_005302c0
+  0x00671438 n=6   primary=6   secondary=0   fns=FUN_00402d40,FUN_00631afb,FUN_00639a70
+  0x006725ac n=5   primary=5   secondary=0   fns=FUN_00421950,FUN_00469650,FUN_00518980,FUN_0059bec0,FUN_0059c1e0
+  0x006725a4 n=5   primary=0   secondary=5   fns=FUN_00421950,FUN_00469650,FUN_00518980,FUN_0059bec0,FUN_0059c1e0
+  0x00673338 n=5   primary=5   secondary=0   fns=FUN_00465cf0,FUN_0047c0e0,FUN_0048a170,FUN_00497d80,FUN_004c6920
+  0x0067a278 n=5   primary=5   secondary=0   fns=FUN_00639a70,FUN_0063a8e0
+  0x006780b0 n=4   primary=4   secondary=0   fns=FUN_004e3020,FUN_004e31d0,FUN_005300d0,FUN_005302c0
+  0x006713e8 n=3   primary=3   secondary=0   fns=FUN_00401a10,FUN_0063668a,FUN_00639910
+  0x006713fc n=3   primary=3   secondary=0   fns=FUN_00401f80,FUN_004e3020,FUN_005300d0
+  INST 0x006713a0 primary   FUN_004010a0   0x4010c2 F=('ebp', -28)  DWORD PTR [ecx+eax*1-0x18],0x6713a0
+  INST 0x006713a0 primary   FUN_0041d480   0x41dff7 F=('ebp', -16724)  DWORD PTR [ebp+edx*1-0x4154],0x6713a0
+  INST 0x006713a0 primary   FUN_0041d480   0x41e044 F=('ebp', -16772)  DWORD PTR [ebp+edx*1-0x4184],0x6713a0
+  INST 0x00671ac0 primary   FUN_004061b0   0x4061e0 F=('ebp', -408)  DWORD PTR [eax+edx*1-0x188],0x671ac0
+  INST 0x00671ac0 primary   FUN_0041d480   0x41ded5 F=('ebp', -16648)  DWORD PTR [ebp+eax*1-0x4108],0x671ac0
+  INST 0x00671ac0 primary   FUN_004d6fb0   0x4d7542 F=('ebp', -12984)  DWORD PTR [ebp+eax*1-0x32b8],0x671ac0
+  INST 0x00671ab8 secondary FUN_004061b0   0x4061fa F=('ebp', -408)  DWORD PTR [ecx+eax*1+0x2bc],0x671ab8
+  INST 0x00671ab8 secondary FUN_0041d480   0x41dee9 F=('ebp', -16648)  DWORD PTR [ebp+edx*1-0x3cc4],0x671ab8
+  INST 0x00671ab8 secondary FUN_004d6fb0   0x4d7556 F=('ebp', -12984)  DWORD PTR [ebp+edx*1-0x2e74],0x671ab8
+  INST 0x00671c30 primary   FUN_004063a0   0x4063b8 F=('ebp', -28)  DWORD PTR [eax+edx*1-0x18],0x671c30
+  INST 0x00671c30 primary   FUN_004d6fb0   0x4d7621 F=('esi', 0)  DWORD PTR [eax+esi*1],0x671c30
+  INST 0x00671c30 primary   FUN_004ef6d0   0x4f2417 F=('esi', 0)  DWORD PTR [eax+esi*1],0x671c30
+M271 vbtable candidates 32 of 247 distinct rdata immediates stored through a register; 21 distinct [+4] virtual-base offsets
+  [+4]=0x4        (     4) descs=0x67a314 installed-by(2)=FUN_00639a70,FUN_0063a8e0
+  [+4]=0x10       (    16) descs=0x671448 installed-by(1)=FUN_00402da0
+  [+4]=0x14       (    20) descs=0x67143c installed-by(3)=FUN_00402d40,FUN_00631afb,FUN_00639a70
+  [+4]=0x18       (    24) descs=0x6713ac,0x6713f4,0x671408,0x67141c,0x671430 installed-by(13)=FUN_00401000,FUN_00401970,FUN_00401ee0,FUN_00402140,FUN_00402e40,FUN_00402ff0
+  [+4]=0x19       (    25) descs=0x678e18 installed-by(1)=FUN_004ebef0
+  [+4]=0x1c       (    28) descs=0x679a98 installed-by(1)=FUN_00604ad8
+  [+4]=0x20       (    32) descs=0x671480,0x67a10c installed-by(3)=FUN_004031d0,FUN_006303c6,FUN_0063668a
+  [+4]=0x24       (    36) descs=0x673344,0x679c20 installed-by(10)=FUN_0042ee60,FUN_00465cf0,FUN_0047c0e0,FUN_0048a170,FUN_00497d80,FUN_004c6920
+  [+4]=0x34       (    52) descs=0x6780a8 installed-by(3)=FUN_004e24c0,FUN_00636b1e,FUN_00641f3c
+  [+4]=0x48       (    72) descs=0x67991c installed-by(1)=FUN_005fe1e0
+  [+4]=0x58       (    88) descs=0x671460 installed-by(2)=FUN_00402f20,FUN_006303c6
+  [+4]=0x8c       (   140) descs=0x679c28,0x679da4 installed-by(2)=FUN_00607460,FUN_0060a590
+  [+4]=0x90       (   144) descs=0x679db0 installed-by(1)=FUN_0060c2b0
+  [+4]=0x118      (   280) descs=0x679dbc installed-by(1)=FUN_0060c2b0
+  [+4]=0x130      (   304) descs=0x679dc8 installed-by(1)=FUN_0060c2b0
+  [+4]=0x144      (   324) descs=0x679dd4 installed-by(1)=FUN_0060c2b0
+  [+4]=0x188      (   392) descs=0x679de0 installed-by(1)=FUN_0060c2b0
+  [+4]=0x5f66     ( 24422) descs=0x673a54 installed-by(1)=FUN_0043ff20
+  [+4]=0x21a6c    (137836) descs=0x675964 installed-by(1)=FUN_00469650
+  [+4]=0x22050    (139344) descs=0x6763fc installed-by(1)=FUN_0048dc20
+  [+4]=0x23d94    (146836) descs=0x678458 installed-by(1)=FUN_0050aa60
+PASS G1 each of the 5 known installers has exactly one delta store, all at K=0x21a6c  fns=FUN_00421950,FUN_00469650,FUN_00518980,FUN_0059bec0,FUN_0059c1e0
+PASS G2 the install census and the delta census name the SAME 5 functions for 0x6725ac/0x6725a4  primary=5 secondary=5 delta=5
+PASS G3 the two known vbtables confirm the rule: [0x675964]=0,[+4]=0x21a6c installed by FUN_00469650 and [0x678458+4]=0x23d94 installed by FUN_0050aa60, both installers carry a delta store at that K  [0x675964]=0x0 [+4]=0x21a6c by ['FUN_00469650']; [0x678458+4]=0x23d94 by ['FUN_0050aa60']; K=0x23d94 fns=['FUN_0050aa60', 'FUN_00518980']
+PASS G4 every secondary-view install has its primary table 8 B above it with the SAME install count (M267's pair is the general rule)  9 secondary tables: 0x671ab8:14/671ac0:14 0x671c28:11/671c30:11 0x6725a4:5/6725ac:5 0x676298:1/6762a0:1 0x67817c:2/678184:2 0x6797b8:2/6797c0:2 0x679934:2/67993c:2 0x679ab0:2/679ab8:2 0x679c40:2/679c48:2
+PASS G9 the vbtable census contains both known descriptors and no candidate has zero installers  32 candidates; 0x675964 -> (0, 137836); 0x678458 -> (0, 146836)
+PASS G10 every K the delta census found is the [+4] virtual-base offset of at least one vbtable the descriptor census found (the two censuses close on each other)  K=0x18->0x6713ac,0x6713f4,0x671408 K=0x1c->0x679a98 K=0x48->0x67991c K=0x8c->0x679c28,0x679da4 K=0x188->0x679de0 K=0x21a6c->0x675964 K=0x22050->0x6763fc K=0x23d94->0x678458
+PASS G5 the 0x678e40 vtable is installed exactly ONCE image-wide (its secondary 0x678e38 once, 0x2444 below), both inside FUN_0059bec0; slot 0 of each is that class's deleting-dtor wrapper  occ=['0x59bf22'] ['0x59bf2c'] stores=['DWORD PTR [ebp-0x25324],0x678e40'] | ['DWORD PTR [ebp-0x24ee0],0x678e38'] slot0=0x59c380/0x59c3b0
+FAIL G6 neither FUN_0059c1e0 (the dtor body) nor FUN_0059bec0 is address-taken anywhere in the image; the dtor is reached only as slot 0 of 0x678e40 / 0x678e3c  callers(59c1e0)=['FUN_0059c380'] callers(59bec0)=['FUN_0050fea0', 'FUN_00512b40', 'FUN_00516b80', 'FUN_0051e700'] occ(59c380)=['0x678e40'] occ(59c3b0)=['0x678e38']
+FAIL G7 FUN_0059c1e0 installs the row vtables 0x67194c/0x671944 at +0x247a0 and +0x247a0+0x444 (NOT at [this+0]: the row is a SUBOBJECT, M215's class), and FUN_0059bec0 constructs at +0 the 0x5e3b80 object, at +0x2320 the 0x675964 class, at +0x247a0 the row, at +0x24fec the 0x614150 object  row=['DWORD PTR [esi],0x67194c'] ['DWORD PTR [esi+0x444],0x671944'] lea=['esi,[edi+0x247a0]'] ctor={'0x5e3b80': [0], '0x469650': [8992], '0x5faec0': [149408], '0x614150': [152300]}
+FAIL G8 the layout closes on itself: +0x2320 + the 0x675964 class's 0x22480 allocation == +0x247a0 (the row), + that row's 0xb4c == +0x24fec (the next member), +0x2320 + 0x21a6c == +0x23d8c (the virtual base both FUN_0059c1e0 and FUN_0059bec0 destroy), and the object span 0x25324-0xc == the single 0x25318 alloca probe == the object size  dtor leas=['ecx,[edi+0x252ec]'] ['esi,[edi+0x23d8c]'] probe=['eax,0x25318']
+SUMMARY M269/M270/M271: 7/10 gates PASS

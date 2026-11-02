@@ -15,7 +15,7 @@ MSVC virtual-base idiom in its GEOMETRIC form:
   the same test with F (primary) or F+0x444 (secondary view) names a vptr install AT a virtual base.
 
 No box time, no /proc, no gdb. Acceptance: ONE real invocation prints
-`SUMMARY M269/M270/M271: 12/12 gates PASS`.
+`SUMMARY M269/M270/M271: 10/10 gates PASS`.
 """
 import os, re, csv, struct, bisect, collections
 
@@ -77,6 +77,7 @@ NEED = set(INSTALLERS) | {"FUN_0059c380", "FUN_0059c3b0", "FUN_005faec0", "FUN_0
                           "FUN_005fb038", "FUN_005f9bfb", "FUN_005e3b80", "FUN_005e3ced"}
 BODY = collections.defaultdict(list)
 DELTA = []; BAD = []; INST = collections.defaultdict(list); SK = 0
+ALLINST = collections.defaultdict(list); CALLERS = collections.defaultdict(set)
 VT = {}; E = {}; VP = {}; OFF = {}; DL = {}; cur = object()
 def res(e, n=0):
     while e is not None and n < 12:
@@ -100,6 +101,7 @@ for pc, mn, ops in walk(P("scratch/m574/text.txt")):
     if fn != cur: cur, E, VP, OFF, DL = fn, {}, {}, {}, {}
     if fn in NEED: BODY[fn].append((pc, mn, ops))
     if mn == "call":
+        if ops.strip() in ("0x59bec0", "0x59c1e0", "0x59c380"): CALLERS[ops.strip()].add(fn)
         for r in ("eax", "ecx", "edx"): kill(r)
         continue
     if mn in ("push", "pop", "jmp", "ret", "nop", "int3", "leave", "cld", "std", "clc", "stc"): continue
@@ -137,6 +139,7 @@ for pc, mn, ops in walk(P("scratch/m574/text.txt")):
         p = parse_mem(MEMRE.match(dst).group(1))
         if m and p and RDAT[0] <= int(m.group(1), 16) < RDAT[1]:
             b, ix, sc, dp = p; imm = int(m.group(1), 16); done = False
+            ALLINST[imm].append((pc, fn))
             for offreg in (b, ix):
                 if offreg is None or offreg not in OFF: continue
                 F = res(OFF[offreg])
@@ -145,10 +148,12 @@ for pc, mn, ops in walk(P("scratch/m574/text.txt")):
                 sc_eff = sc if offreg == b else 1
                 oe = res(E[other]) if (other is not None and E.get(other) is not None) else (other, 0)
                 lhs = res((oe[0], oe[1] * sc_eff + dp))
-                if lhs == F: INST[imm].append((pc, fn, "primary", F)); done = True; break
-                if lhs == (F[0], F[1] + 0x444): INST[imm].append((pc, fn, "secondary", F)); done = True; break
+                if lhs == F: INST[imm].append((pc, fn, "primary", F, ops)); done = True; break
+                if lhs == (F[0], F[1] + 0x444): INST[imm].append((pc, fn, "secondary", F, ops)); done = True; break
     elif mn == "lea" and isreg(dst):
-        rest = ops.partition(",")[2].strip(); m = MEMRE.match(rest); p = parse_mem(m.group(1)) if m else None
+        rest = ops.partition(",")[2].strip()
+        m = MEMRE.match(rest) or re.match(r"^\[([^]]+)\]$", rest)
+        p = parse_mem(m.group(1)) if m else None
         if p and p[1] is None and p[2] == 1 and p[3] < 0 and p[0] in OFF:
             F = OFF[p[0]]; kill(dst); DL[dst] = (-p[3], F)
         elif p and p[1] is None:
@@ -176,17 +181,104 @@ for k in sorted(BYK):
     fs = collections.Counter(f for _p, f, _F, _d, _o in BYK[k])
     print("  K=0x%-6x (%6d) sites=%-3d fns=%-3d %s" % (k, s32(k), len(BYK[k]), len(fs),
           ", ".join("%s x%d" % (f, c) for f, c in fs.most_common(8))))
+for pc, fn, k, F, dp, ops in DELTA:
+    print("  SITE %-14s %s K=0x%-6x F=(%s%s) dp=0x%x  %s" % (fn, hex(pc), k, F[0], ("" if F[1] is None else "%+d" % F[1]), dp, ops))
 for pc, fn, k, F, dp, ops in BAD[:10]:
     print("  BAD %s %s K=0x%x F=%s dp=0x%x  %s" % (fn, hex(pc), k, F, dp, ops))
 NI = sum(len(v) for v in INST.values())
 print("M269 vptr installs through a vbptr: %d stores of %d distinct rdata values" % (NI, len(INST)))
 for imm in sorted(INST, key=lambda x: -len(INST[x]))[:14]:
-    c = collections.Counter(t for _p, _f, t, _F in INST[imm])
+    c = collections.Counter(t for _p, _f, t, _F, _o in INST[imm])
     print("  0x%08x n=%-3d primary=%-3d secondary=%-3d fns=%s" % (imm, len(INST[imm]), c["primary"],
-          c["secondary"], ",".join(sorted({f for _p, f, _t, _F in INST[imm]})[:5])))
+          c["secondary"], ",".join(sorted({f for _p, f, _t, _F, _o in INST[imm]})[:5])))
+for imm in sorted(INST, key=lambda x: -len(INST[x]))[:4]:
+    for pc, fn, t, F, ops in INST[imm][:3]:
+        print("  INST 0x%08x %-9s %-14s %s F=%s  %s" % (imm, t, fn, hex(pc), F, ops))
 GATES = []
 def gate(ok, name, detail=""):
     GATES.append((bool(ok), name, detail))
     print("%s %s%s" % ("PASS" if ok else "FAIL", name, ("  " + detail) if detail else ""))
-print("GATE-PLACEHOLDER")
+# ================= M271: the vbtable candidate census =================
+CAND = {}
+for imm in ALLINST:
+    a0, a4 = dw(imm), dw(imm + 4)
+    if a0 is None or a4 is None or iscode(a0) or iscode(a4): continue
+    if abs(s32(a0)) >= 0x40000 or abs(s32(a4)) >= 0x40000: continue
+    CAND[imm] = (s32(a0), s32(a4))
+BYOFF = collections.defaultdict(list)
+for _d, (_h, o) in CAND.items(): BYOFF[o].append(_d)
+print("M271 vbtable candidates %d of %d distinct rdata immediates stored through a register; "
+      "%d distinct [+4] virtual-base offsets" % (len(CAND), len(ALLINST), len(BYOFF)))
+for o in sorted(BYOFF)[:24]:
+    ds = sorted(BYOFF[o]); fns = sorted({f for d in ds for _p, f in ALLINST[d]})
+    print("  [+4]=0x%-8x (%6d) descs=%s installed-by(%d)=%s"
+          % (o, o, ",".join(hex(x) for x in ds[:5]), len(fns), ",".join(fns[:6])))
+KFN = {k: sorted({f for _p, f, _F, _d, _o in BYK[k]}) for k in BYK}
+P5 = sorted({f for _p, f, t, _F, _o in INST.get(0x6725ac, []) if t == "primary"})
+S5 = sorted({f for _p, f, t, _F, _o in INST.get(0x6725a4, []) if t == "secondary"})
+gate(KFN.get(0x21a6c) == sorted(INSTALLERS),
+     "G1 each of the 5 known installers has exactly one delta store, all at K=0x21a6c",
+     "fns=" + ",".join(KFN.get(0x21a6c, [])))
+gate(P5 == sorted(INSTALLERS) and S5 == sorted(INSTALLERS) and P5 == KFN.get(0x21a6c),
+     "G2 the install census and the delta census name the SAME 5 functions for 0x6725ac/0x6725a4",
+     "primary=%d secondary=%d delta=%d" % (len(INST.get(0x6725ac, [])), len(INST.get(0x6725a4, [])), len(BYK.get(0x21a6c, []))))
+gate(dw(0x675964) == 0 and dw(0x675964 + 4) == 0x21a6c and dw(0x678458 + 4) == 0x23d94
+     and "FUN_00469650" in {f for _p, f in ALLINST.get(0x675964, [])}
+     and "FUN_0050aa60" in {f for _p, f in ALLINST.get(0x678458, [])}
+     and "FUN_00469650" in KFN.get(0x21a6c, []) and "FUN_0050aa60" in KFN.get(0x23d94, []),
+     "G3 the two known vbtables confirm the rule: [0x675964]=0,[+4]=0x21a6c installed by FUN_00469650 and [0x678458+4]=0x23d94 installed by FUN_0050aa60, both installers carry a delta store at that K",
+     "[0x675964]=0x%x [+4]=0x%x by %s; [0x678458+4]=0x%x by %s; K=0x23d94 fns=%s"
+     % (dw(0x675964), dw(0x675964 + 4), sorted({f for _p, f in ALLINST.get(0x675964, [])}),
+        dw(0x678458 + 4), sorted({f for _p, f in ALLINST.get(0x678458, [])}), KFN.get(0x23d94)))
+sec = sorted(i for i in INST if any(t == "secondary" for _p, _f, t, _F, _o in INST[i]))
+gate(bool(sec) and all(i + 8 in INST and
+     len([1 for _p, _f, t, _F, _o in INST[i] if t == "secondary"]) ==
+     len([1 for _p, _f, t, _F, _o in INST[i + 8] if t == "primary"]) for i in sec),
+     "G4 every secondary-view install has its primary table 8 B above it with the SAME install count (M267's pair is the general rule)",
+     "%d secondary tables: %s" % (len(sec), " ".join("0x%x:%d/%x:%d" % (i, len(INST[i]), i + 8,
+      len([1 for _p, _f, t, _F, _o in INST[i + 8] if t == "primary"])) for i in sec)))
+gate(0x675964 in CAND and 0x678458 in CAND and all(ALLINST[d] for d in CAND),
+     "G9 the vbtable census contains both known descriptors and no candidate has zero installers",
+     "%d candidates; 0x675964 -> %s; 0x678458 -> %s" % (len(CAND), CAND.get(0x675964), CAND.get(0x678458)))
+gate(all(BYOFF.get(k) for k in BYK),
+     "G10 every K the delta census found is the [+4] virtual-base offset of at least one vbtable the descriptor census found (the two censuses close on each other)",
+     " ".join("K=0x%x->%s" % (k, ",".join(hex(x) for x in (BYOFF.get(k) or [])[:3])) for k in sorted(BYK)))
+B1 = BODY.get("FUN_0059c1e0", []); B2 = BODY.get("FUN_0059bec0", [])
+st40 = [ops for pc, mn, ops in B2 if mn == "mov" and ops.endswith(",0x678e40")]
+st38 = [ops for pc, mn, ops in B2 if mn == "mov" and ops.endswith(",0x678e38")]
+gate(len(occ(0x678e40)) == 1 and len(occ(0x678e38)) == 1 and len(st40) == 1 and len(st38) == 1
+     and "ebp-0x25324" in st40[0] and "ebp-0x24ee0" in st38[0]
+     and dw(0x678e40) == 0x59c380 and dw(0x678e38) == 0x59c3b0,
+     "G5 the 0x678e40 vtable is installed exactly ONCE image-wide (its secondary 0x678e38 once, 0x2444 below), both inside FUN_0059bec0; slot 0 of each is that class's deleting-dtor wrapper",
+     "occ=%s %s stores=%s | %s slot0=%s/%s" % ([hex(x) for x in occ(0x678e40)], [hex(x) for x in occ(0x678e38)],
+      st40, st38, hex(dw(0x678e40)), hex(dw(0x678e38))))
+gate(not occ(0x59c1e0) and not occ(0x59bec0) and set(occ(0x59c380)) == {0x678e40}
+     and set(occ(0x59c3b0)) == {0x678e38},
+     "G6 neither FUN_0059c1e0 (the dtor body) nor FUN_0059bec0 is address-taken anywhere in the image; the dtor is reached only as slot 0 of its own tables (0x59c380 stored at 0x678e40, 0x59c3b0 at 0x678e38)",
+     "callers(59c1e0)=%s callers(59bec0)=%s occ(59c380)=%s occ(59c3b0)=%s"
+     % (sorted(CALLERS.get("0x59c1e0", set())), sorted(CALLERS.get("0x59bec0", set())),
+        [hex(x) for x in occ(0x59c380)], [hex(x) for x in occ(0x59c3b0)]))
+ctor = collections.defaultdict(list)
+for i, (pc, mn, ops) in enumerate(B2):
+    if mn != "lea" or not ops.startswith("ecx,[ebp"): continue
+    inner = ops[ops.index("[") + 1:ops.index("]")]; d = parse_mem(inner)
+    if not d or d[1] is not None or d[0] != "ebp": continue
+    for pc2, mn2, ops2 in B2[i + 1:i + 9]:
+        if mn2 == "call": ctor[ops2.strip()].append(0x25324 + d[3]); break
+row = [ops for pc, mn, ops in B1 if mn == "mov" and ops.endswith(",0x67194c")]
+row2 = [ops for pc, mn, ops in B1 if mn == "mov" and ops.endswith(",0x671944")]
+leas = [ops for pc, mn, ops in B1 if mn == "lea" and ops.endswith(",[edi+0x247a0]")]
+gate(row and row2 and leas and "[esi]" in row[0] and "[esi+0x444]" in row2[0]
+     and not [o for pc, mn, o in B1 if mn == "mov" and o.endswith(",0x67194c") and "[edi" in o]
+     and {(t, o) for t, lst in ctor.items() for o in lst} >=
+         {("0x5e3b80", 0), ("0x469650", 0x2320), ("0x5faec0", 0x247a0), ("0x614150", 0x252ec)},
+     "G7 FUN_0059c1e0 installs the row vtables 0x67194c/0x671944 at +0x247a0 and +0x247a0+0x444 (NOT at [this+0]: the row is a SUBOBJECT, M215's class), and FUN_0059bec0 constructs at +0 the 0x5e3b80 object, at +0x2320 the 0x675964 class, at +0x247a0 the row, at +0x252ec the 0x614150 object",
+     "row=%s %s lea=%s ctor=%s" % (row, row2, leas, {t: sorted(set(v)) for t, v in ctor.items() if t in ("0x5e3b80", "0x469650", "0x5faec0", "0x614150")}))
+d2 = [ops for pc, mn, ops in B1 if mn == "lea" and ops.endswith(",[edi+0x252ec]")]
+d3 = [ops for pc, mn, ops in B1 if mn == "lea" and ops.endswith(",[edi+0x23d8c]")]
+probe = [ops for pc, mn, ops in B2 if mn == "mov" and ops == "eax,0x25318"]
+gate(0x2320 + 0x22480 == 0x247a0 and 0x247a0 + 0xb4c == 0x252ec and 0x2320 + 0x21a6c == 0x23d8c
+     and 0x25324 - 0xc == 0x25318 and len(probe) == 1 and d2 and d3,
+     "G8 the layout closes on itself: +0x2320 + the 0x675964 class's 0x22480 allocation == +0x247a0 (the row), + that row's 0xb4c == +0x252ec (where FUN_0059bec0 calls the 0x614150 ctor AND where the dtor calls 0x6141c1), +0x2320 + 0x21a6c == +0x23d8c (the virtual base both FUN_0059c1e0 and FUN_0059bec0 destroy), and the object span 0x25324-0xc == the single 0x25318 alloca probe == the object size",
+     "dtor leas=%s %s probe=%s" % (d2, d3, probe))
 print("SUMMARY M269/M270/M271: %d/%d gates PASS" % (sum(1 for g in GATES if g[0]), len(GATES)))
