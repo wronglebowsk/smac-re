@@ -1,0 +1,13 @@
+PASS G1 | call 0x469650: 7 sites = 40a027@FUN_00409e70, 468fc0@FUN_00468fb0, 48dc7a@FUN_0048dc20, 4cb5cf@FUN_004cb570, 50aaae@FUN_0050aa60, 5803b2@FUN_00580260, 59befc@FUN_0059bec0
+PASS G2 | [eax],0x675964 at 0x469681 behind cmp[ebp+8],0=True je-past=True; 0x675964 named 1x
+PASS G3 | arrays(off,size,count,ctor,dtor)=[('0xc', ['0x260', '0x4', '0x62514b', '0x62516c']), ('0x98c', ['0x260', '0xc4', '0x62514b', '0x62516c']), ('0x1ef54', ['0xabc', '0x4', '0x6251d0', '0x625209'])] in-place elem ctor 0x62514b at 0x1db0c; 200 elems +0xc..+0x1db0c contiguous, 201st +0x1db0c..+0x1dd6c=True
+PASS G4 | 0x6725ac stored 5x in 5 fns FUN_00421950,FUN_00469650,FUN_00518980,FUN_0059bec0,FUN_0059c1e0; 0x6725a4 stored 5x delta+0x444=True; slot0 0x422190/0x4222c0 code=True
+PASS G5 | desc 0x675964@FUN_00469650[+4]=0x21a6c in 0x5e3b80-ecx offsets 0x469690:0x21a6c imms=1 desc 0x6763fc@FUN_0048dc20[+4]=0x22050 in 0x5e3b80-ecx offsets 0x48dc60:0x22050 imms=1 desc 0x678458@FUN_0050aa60[+4]=0x23d94 in 0x5e3b80-ecx offsets 0x50aaa0:0x23d94,0x50aabc:0x21a68 imms=1
+PASS G6 | subobject ctor FUN_005e3b80 tops out at +0xa10; 0x21a6c+0xa14+4=0x22480=the allocation 0x22480, pushed 1 time(s)
+PASS G7 | FUN_00479e90 insn order [8, 13, 16, 18, 20, 21] = free [this+4] via 0x4017d0 then this+=[desc+4] -> 0x5e3d74; FUN_004412a0 desc+4=True virtual calls ['DWORD PTR [edx+0x8]', 'DWORD PTR [eax+0x4]']; slots+4/+8=0x5cdd0a/0x5cdf82 also called on 0x8cc520 at 0x4412de>0x5cdd0a,0x441332>0x5cdf82
+PASS G8 | 0x583c70 in .text operands: 0 [] | as an LE dword anywhere in the file image (all 8 sections): 0 hits []
+PASS G9 | bytes 0x583c6c..0x583c6f=90909090, 0x583c6b is a ret of FUN_00583c20=True, 0x583c70 prologue push ebp/mov esp,ebp=True
+PASS G10 | functions in 0x583000..0x584300 with n_callers==0: 8, of which 0 address-taken dwords: 8 -> FUN_00583000@0x583000(39 insns,0 hits), FUN_005835f0@0x5835f0(72 insns,0 hits), FUN_00583c70@0x583c70(159 insns,0 hits), FUN_00583ea0@0x583ea0(10 insns,0 hits), FUN_00583ec0@0x583ec0(11 insns,0 hits), FUN_00583ee0@0x583ee0(20 insns,0 hits), FUN_00583f10@0x583f10(16 insns,0 hits), FUN_00584080@0x584080(41 insns,0 hits)
+PASS G11 | FUN_00583c70 callees ['0x582000', '0x5b09b0', '0x625af1', '0x64a7f0']; globals ['0x692184', '0x926780', '0x926784', '0x926788', '0x92a378', '0x92a37c', '0x92a380', '0x92a384', '0x92a388', '0x92a38c', '0x92a398', '0x92ae14']; sibling FUN_00583c20 (1 caller, stride-0x2c record walk=True) globals ['0x92a378', '0x92a37c', '0x92ae14']
+PASS G12 | mnemonic signature 159 tokens == index.csv n_insns=159; other functions >=40 insns with the SAME signature: 0 []
+SUMMARY M265/M266: 12/12 gates PASS
