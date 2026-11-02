@@ -520,15 +520,153 @@ def run_economy_hud(results):
     return None
 
 
+M27_LOGS = ("evidence/m27_solowrap.log", "evidence/m27_solowrap2.log")
+# turn_driver.md §M25/§M27: all 8 survivors were stacked on (41,11); §M27 item 4 records where
+# they were found afterwards. §M27 item 1 records one Right on rec117 before the trace window.
+M27_PRE = {i: (41, 11) for i in range(116, 124)}
+M27_POST = {117: (45, 11), 118: (45, 11), 119: (43, 11), 120: (43, 11),
+            121: (41, 11), 122: (41, 11), 123: (41, 11)}
+
+
+def run_m27_replay(results):
+    """B5: replay the recorded M27 arrow-key moves through sim.units (BUILD_SPINE rung B5)."""
+    from . import units as sounits
+    paths = [os.path.join(REPO, p) for p in M27_LOGS]
+    for p in paths:
+        if not os.path.exists(p):
+            results.append(("trace %s found" % os.path.basename(p), False))
+            return
+    logs = [sounits.moves(sounits.parse_trace(p)) for p in paths]
+    mv = logs[0] + logs[1]
+
+    shape = (len(logs[0]) == 1 and len(logs[1]) == 3
+             and all(m["dir"] == 1 and m["exec"] == (m["idx"], 1, 3) and m["dest"]
+                     and m["sentinel"][0] == (m["idx"], -2, -2) for m in mv))
+    results.append(("trace-shape %d presses idx=%s all dir=1, EXEC mode=3, own (-2,-2) "
+                    "stamp first" % (len(mv), [m["idx"] for m in mv]), shape))
+
+    dest = {m["idx"]: m["dest"][-1][1:] for m in mv}
+    got = [dest.get(i) for i in (117, 118, 119, 120)]
+    want = [M27_POST[i] for i in (117, 118, 119, 120)]
+    results.append(("destinations %s == turn_driver §M27 post-state %s" % (got, want),
+                    got == want))
+
+    # the one start the trace itself proves: rec117 is re-stamped at (43,11) inside the first
+    # log's move, before its own press in the second log.
+    proven = [s for s in logs[0][0]["restamp"] if s[0] == 117]
+    u117 = sounits.Unit(117, proven[0][1], proven[0][2]) if proven else None
+    pred = u117.step(1, 80, 80) if u117 else None
+    results.append(("dir1-delta %s from the trace-proven start %s -> %s == recorded (45,11)"
+                    % (sounits.delta(1), proven, pred),
+                    sounits.delta(1) == (2, 0) and pred == (45, 11)
+                    and dest.get(117) == (45, 11)))
+
+    ring_ok = all(sounits.delta(d) == sounits.ring(d) for d in range(8)) and \
+        all((dx + dy) % 2 == 0 for dx, dy in zip(sounits.DIR_DX, sounits.DIR_DY)) and \
+        set(sounits.DIR_DX and list(zip(sounits.DIR_DX, sounits.DIR_DY))) == \
+        set(sounits.RING_CENTRE_FIRST) - {(0, 0)}
+    results.append(("ring-identity 8 dirs == the 0x6784a0 ring read at m248:3 shifted one "
+                    "index, == the 0x67850c ring at m248:2 minus (0,0), all %d pairs preserve "
+                    "(x+y) parity" % 8, ring_ok))
+
+    r = sorules.load(os.path.join(REPO, "data/alpha.json"))
+    scale = sounits.mp_scale(r)
+    econ = (scale == 3 and sounits.STEP_MP == scale and sounits.MP_PER_TURN == 6
+            and sounits.MOVES_PER_TURN == 2)
+    results.append(("mp-economy alpha #RULES[0]=%s == STEP_MP=%d, MP_PER_TURN=%d == %d moves "
+                    "== FUN_005ac550's scale*moves" % (scale, sounits.STEP_MP,
+                                                       sounits.MP_PER_TURN,
+                                                       sounits.MOVES_PER_TURN), econ))
+
+    u = sounits.Unit(121, 41, 11)
+    seq = [(u.can_act(), u.step(1, 80, 80), u.spent) for _ in range(3)]
+    gate_ok = [seq[0][0], seq[1][0], seq[2][0]] == [True, True, False] and \
+        [seq[0][1], seq[1][1], seq[2][1]] == [(43, 11), (45, 11), None] and \
+        [s[2] for s in seq] == [3, 6, 6] and u.x == 45
+    results.append(("can-act-gate total-spent>0 admits steps at spent 0 and 3, refuses the "
+                    "third (spent stays %d, x stays %d)" % (u.spent, u.x), gate_ok))
+
+    m = somap.parse(os.path.join(REPO, "programs/maps/planet.MP"))
+    raw = open(os.path.join(REPO, "programs/maps/planet.MP"), "rb").read()
+    tiles = [(43, 11), (45, 11), (sounits.wrap_x(79 + 2, 80), 11),
+             (sounits.wrap_x(0 - 2, 80), 11)]
+    view_ok = True
+    for x, y in tiles:
+        rec, half = sounits.tile_record(x, y, m.width)
+        off = m.grid_off + 44 * rec + 22 * half
+        view_ok = view_ok and raw[off:off + 22] == m.cell(x, y) == \
+            raw[m.grid_off + m.cell_index(x, y) * 22:][:22]
+    wr = (sounits.wrap_x(79 + 2, 80), sounits.wrap_x(0 - 2, 80))
+    edge = sounits.Unit(122, 79, 11).step(1, 80, 80)
+    south = sounits.Unit(123, 41, 79).step(3, 80, 80)
+    wrap_ok = view_ok and wr == (1, 78) and edge == (1, 11) and south is None
+    results.append(("wrap-and-cell-view x wraps %d+%d->%d and %d-%d->%d on the 80-wide map, "
+                    "y=79+2 refused, %d tile views agree between my (w/2)*y+(x>>1)+x&1 index, "
+                    "sim.map's cell_index and the packed 44-B record"
+                    % (79, 2, wr[0], 0, 2, wr[1], len(tiles)), wrap_ok))
+
+    held = {i: list(M27_PRE[i]) for i in M27_PRE}
+    units = {i: sounits.Unit(i, *M27_PRE[i]) for i in M27_PRE}
+    units[117].step(1, 80, 80)                      # §M27 item 1, before the trace window
+    held[117] = [43, 11]
+    for i in units:
+        units[i].spent = 0                          # §M37: REFRESH zeroes spent each round
+    restamp_bad, checked = [], 0
+    for group in logs:
+        for mm in group:
+            u = units.get(mm["idx"])
+            stepped = u.step(mm["dir"], 80, 80) if u else None
+            if stepped:
+                held[mm["idx"]] = list(stepped)
+            for i, x, y in mm["restamp"]:
+                checked += 1
+                if held.get(i) != [x, y]:
+                    restamp_bad.append((mm["idx"], i, (x, y), held.get(i)))
+    results.append(("restamps-agree %d re-stamps of other units all match the position the "
+                    "replay holds for them (mismatches %s)" % (checked, restamp_bad),
+                    checked >= 5 and not restamp_bad))
+
+    steps_from_pre = {i: (M27_POST[i][0] - M27_PRE[i][0]) // 2 for i in (117, 118, 119, 120)}
+    exact = all((M27_POST[i][0] - M27_PRE[i][0]) % 2 == 0 and M27_POST[i][1] == M27_PRE[i][1]
+                for i in steps_from_pre)
+    afford = {i: steps_from_pre[i] * sounits.STEP_MP for i in steps_from_pre}
+    results.append(("displacement-from-(41,11) %s tiles -> %d MP each, every one <= the %d-MP "
+                    "round budget, no off-axis move"
+                    % (steps_from_pre, max(afford.values()), sounits.MP_PER_TURN),
+                    exact and all(v <= sounits.MP_PER_TURN for v in afford.values())
+                    and min(steps_from_pre.values()) >= 1))
+    print("  info rec118's logged press covers 2 tiles (41->45): one of its %d steps is outside "
+          "the committed trace window; the model lands it at %s"
+          % (steps_from_pre[118], tuple(held[118])))
+    print("  info ASSUMED: %s | %s" % sounits.ASSUMED)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
     ap.add_argument("--rules", help="path to data/alpha.json")
     ap.add_argument("--sav")
     ap.add_argument("--replay")
+    ap.add_argument("--replay-m27", action="store_true",
+                    help="rung B5: replay evidence/m27_solowrap*.log through sim.units")
     args = ap.parse_args(argv)
 
     results = []
+    if args.replay_m27:
+        from . import units as su_b5
+        run_m27_replay(results)
+        bad = [n for n, ok in results if not ok]
+        for name, ok in results:
+            print(("  ok   " if ok else "  BAD  ") + name)
+        if bad:
+            return fail("B5: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                        "; ".join(bad)))
+        print("PASS B5: %d/%d gates on %s — %s" % (
+            len(results), len(results), " + ".join(M27_LOGS),
+            "one lattice step of %s per press at %d MP, %d MP per unit per round, x wrapped "
+            "by the map width, y bounds-checked (no box time, no /proc, no gdb)"
+            % (su_b5.DIR_DX, su_b5.STEP_MP, su_b5.MP_PER_TURN)))
+        return 0
     if args.replay:
         if not os.path.exists(args.replay):
             return fail("replay trace not found: %s" % args.replay)
