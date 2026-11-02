@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 204, 2026-11-02, **M259-M261 DONE: the terrain +16..+43 band is the per-FACTION copy of the +8 mask; the ~140 KB map views are STATIC .bss, not malloc'd; the 0x679f98 class's 15 unique slots and its ctor screens are named**)
+# NEXT_PROMPT.md — footing for the next session (session 205, 2026-11-02, **M262-M264 DONE: the view-table entries 1..7 are ALLOCATED at startup (7 × 0x22480, stored through a cursor — M260 retracted); the LOAD never re-derives the per-faction band; FUN_005be090 is operator-new and ds:0x9965b8 is a linear record cursor**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -28,8 +28,7 @@ go 1 per batch). The binding cap is doc headroom, not capability.**
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
-ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`sim/base.py` +
-`sim/economy.py`; the base name field is 32 B, not 20; text `NAMED.md` §B4). **B3 DONE (s199)** 6/6 (§s200).
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json`, **B3 DONE (s199)** 6/6 — text `NAMED.md` §B4 + §s200.
 **Next rung B5 = units/movement.**
 
 ## THE LEDGER
@@ -60,42 +59,46 @@ semantics in `NAMED.md`.
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s204 — M227-M237, **B1-B4**, M240-M261 (M241 FAIL 2/5, #180 open;
+- ANSWERED (do not re-pick): s187-s205 — M227-M237, **B1-B4**, M240-M264 (M241 FAIL 2/5, #180 open;
   the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
   test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
-  static map views, the 0x679f98 class). Numbers VERBATIM: `NAMED.md` per-id, §s196-§s204; the s202
-  worth-test block moved VERBATIM to `docs/pick-archive.md` §s204.
-- RESULT (s204): record bytes +16..+43 = dword 3+fac for FACTIONS 1..7 (faction 0 uses the +8 master
-  mask; both refreshes guard `test ebx,ebx / je`). Writers closed at 10 indexed stores (the list is in
-  `NAMED.md` §M259) plus FUN_0051c750's walk store 0x51ca52; two whole-array refreshes copy `[rec+8]`
-  into slot fac over `ds:0x92a38c` records; FUN_0053a820 merges slots both ways through the mask;
-  FUN_004e14d0 takes the slot from `[view+0x23bd4]`. The generator does NOT write the band — the
-  refresh loops re-derive it. `0x224b8` occurs 0 times in the image: view 0 is a static .bss object at
-  0x8f79e0, ctor FUN_00518820 runs once on it from FUN_00580260, which zeroes table entries 1..7; the
-  ctor's fields reach this+0x23bec > 0x224b8, so the stride is not an object size. 15 unique 0x679f98
-  slots named; its ctors belong to the session-chooser (FUN_00636b1e) and graphics-options (FUN_00493a10)
-  screens. `python3 scripts/m259_m261_census.py` -> `SUMMARY M259/M260/M261: 14/14 gates PASS` (3.3 s).
-  RETRACTS M240's "record = two 22-byte columns" for bytes 16..43.
+  view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class).
+  Numbers VERBATIM: `NAMED.md` per-id, §s196-§s205; the s204 RESULT block moved VERBATIM to
+  `docs/pick-archive.md` §s205 (+ traps 16-19 at §trim-s205). FUN_005f3f5b is NOT open — see M220.
+- RESULT (s205): **the view-table entries 1..7 ARE allocated** — FUN_00580260's loop at 0x580392 walks esi
+  0x7cded0 → 0x7cdeec step 4 (7 iters): `push 0x22480 ; call 0x64bc20` → `push 1 ; mov ecx,eax ; call
+  0x469650` → the POINTER-ARITHMETIC store `mov [esi],eax` (0 only on the failure path). M260's "zeroes
+  entries 1..7" / "the ~140 KB views are not allocated" RETRACTED (0x224b8 = 0x22480 + 0x38, INFERRED).
+  **The LOAD trusts the file's band bytes**: none of the 8 writer functions (+ FUN_0051c750's walk store)
+  is in the depth-9 forward closure of the 6 load-path functions (276 functions) and none sits in a
+  vtable slot; FUN_00583c70 (writer 0x583e1d) has ZERO references image-wide. **FUN_005be090 is
+  operator-new** (→ 0x649e00 → 0x649e70 with the heap handle ds:0x99d5f8; the NULL path reports through
+  the global pointer ds:0x671320): 0 slots, 119 sites in 74 functions, and the footing's "13 [reg+4]
+  sites" are store-after-alloc (14 in 13 functions). ds:0x9965b8 is a LINEAR RECORD CURSOR (FUN_005dbb5f
+  bumps +0x2c and stamps [rec+8]=9; FUN_005dbbe6 rewinds −w*h and frees [rec+4] via FUN_0064a7f0;
+  FUN_005dbdc0 is the filler). `python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11
+  gates PASS` (rc=0, 3.7 s; inv 1 was 10/11 on a count copied from a truncated probe print, moved only
+  after an objdump corpus said 39/12). Gate-by-gate numbers VERBATIM: `NAMED.md` §M262-§M264.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
-  sites belong to other hierarchies — falsifier = a live vtable read at a click, box); WHO CALLS
-  FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of ds:0x9965b8
-  fills the records; who calls FUN_005f3f5b (6102 B); **who writes view-table entries 1..7
-  (DAT_007cdec8..0x7cdee8) — NO store in the image names them and the codec only reads them as
-  pointers (new from M260; static lead: a loop whose cursor is set from 0x7cded0, else a live read of
-  the table on NEW GAME vs a loaded save)**; **does the LOAD path re-derive the per-faction band or
-  trust the file** (new from M259: the band is saved with the map; lead = the codec's map leg plus
-  FUN_004e14d0's refresh trigger, static); **does `FUN_0057ecf0` also run on a LOAD** (new from M255,
-  box: bp the `FUN_005b2970` entry, load a save — the box is DOWN, cold relaunch >9 min); **what the
-  row stride 188 means** (new from M257: `esi = 2*region + 188*fac` and regions 94..127 pass the next
-  row — one live read of both indexings of `0x94eaa8` settles it; box).
+  sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
+  `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save —
+  the box is DOWN, cold relaunch >9 min); **what the row stride 188 means** (new from M257: `esi =
+  2*region + 188*fac`, regions 94..127 pass the next row — one live read of both indexings of `0x94eaa8`
+  settles it; box); **what the 7 allocated view blocks are FOR** (new from M262: entries 1..7 hold
+  0x22480-B blocks built by FUN_00469650, yet every indexed use only tests them for non-null and only
+  entry 0 is used as a field base (+0x1dd70/+0x1dd84/+0x53b4) — static lead: compare FUN_00469650's own
+  field writes with the static view ctor FUN_00518820's, and read the 12 entry-1 readers, esp.
+  FUN_004412a0 (8) and the teardown callee FUN_00479e90 (69 B)); **why FUN_00583c70 exists with ZERO
+  references** (new from M263: it allocates through FUN_00582000 and writes the band at 0x583e1d, but no
+  call, imm32 or vtable slot names it — static lead: the PE relocation table, and the target set of every
+  computed `call [reg]` whose register could hold it).
 ## LIVE FACTS / KIT
 
 - **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
   python3 scripts/m54a_load.py --relaunch` as a TRACKED background job; `sudo -n
   python3 scripts/smac_preflight.py` (yama ptrace_scope=1 ⇒ `/proc/<pid>/mem` needs sudo) before arming.
-  Recipe, cold timing, the degraded-box poke facts (0x985ac4 bit 0x200, mask byte 0x985b10, the PANE
-  decides where INSERT lands) and the full state dumps VERBATIM: skill `references/wine-operations.md`,
+  Recipe, cold timing, the degraded-box poke facts and the state dumps VERBATIM: skill `references/wine-operations.md`,
   `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
 
 ## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
@@ -142,16 +145,11 @@ semantics in `NAMED.md`.
     194 = FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
 15. A list cursor read BEFORE the seek is the PREVIOUS cursor (the pump seeks at 0x497717 — print at 0x49771c).
     `milestone.py start <id>` refuses a dirty tree and resets to main: stash, start, pop, THEN rewrite the cursor.
-16. Grep objdump case-sensitively (`DWORD PTR`, not `ptr [`).
-17. gdb startup/exit chatter must be whitelisted (`DEBUGINFOD_URLS=""`; `^\[Inferior `, `This GDB supports`, `Enable
-    debuginfod`, `Debuginfod has`, `To make this setting`) or a zero-unparsed gate FAILs on a clean run.
-18. ARM BEFORE ANY SCREEN: setup writes finish before the first OCR-able screen and the CDROM screen is QUIESCENT for
-    4 min but only advances on driver input — a true-title wait DEADLOCKS. A hw watchpoint can MISS a change entirely;
-    `[New LWP]` after ARMED = threads gdb may not have re-armed; a background census job DIES with its session.
-19. `gdb -batch` EXITS the moment a stop has no command left: wineserver sends SIGUSR1 during startup, so a batch census
-    MUST carry `handle SIGUSR1 nostop noprint pass` (SIGUSR2/SIGPIPE too) and a ~400-`continue` tail. A bp on a function
-    that serves the whole game (the four read wrappers) costs one ptrace stop per read: 25,957 stops starved the load
-    driver to ZERO loads — filter by FILE* (`set $savefile` at the loader's entry).
+16-19. objdump prints UPPERCASE (`DWORD PTR`, not `ptr [`); gdb startup/exit chatter must be whitelisted
+    (`DEBUGINFOD_URLS=""`, the `^[Inferior `/debuginfod lines); ARM BEFORE ANY SCREEN (the CDROM screen
+    quiesces 4 min but only advances on driver input); a `gdb -batch` census needs the SIGUSR1/SIGUSR2/
+    SIGPIPE `handle ... nostop noprint pass` tail + a ~400-`continue` tail, and a bp on a game-wide reader
+    costs one ptrace stop per read. VERBATIM text: `docs/pick-archive.md` §trim-s205.
 20-22. byte-field BIT OPS vs dword scans; a "stride conflict" is ONE multiply read in two pieces; a global
     with ZERO writers is LOAD-TIME data — verbatim: `docs/pick-archive.md` §s198.
 23. A VALUE SAMPLER IS NOT A STORE CENSUS (a same-value store leaves no trace) and a census PARSER is not a

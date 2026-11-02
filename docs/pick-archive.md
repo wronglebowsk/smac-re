@@ -562,3 +562,34 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   12-array family `0x94e4a8..0x94ee28` — every gap 0x80 (byte/region) or 0x100 (word/region), zero
   DWORD accesses, 128 entries each (`cmp ecx,0x80`, `0x558b1c`); `0x94e7a8` is a WORD array (retracts
   the s201 "flag bytes" row). `python3 scripts/m256_worth_operands.py` -> `SUMMARY PASS: 8/8` (static).
+
+## §s205 move — the s204 RESULT block, moved VERBATIM from NEXT_PROMPT.md (footing headroom)
+
+- RESULT (s204): record bytes +16..+43 = dword 3+fac for FACTIONS 1..7 (faction 0 uses the +8 master
+  mask; both refreshes guard `test ebx,ebx / je`). Writers closed at 10 indexed stores (the list is in
+  `NAMED.md` §M259) plus FUN_0051c750's walk store 0x51ca52; two whole-array refreshes copy `[rec+8]`
+  into slot fac over `ds:0x92a38c` records; FUN_0053a820 merges slots both ways through the mask;
+  FUN_004e14d0 takes the slot from `[view+0x23bd4]`. The generator does NOT write the band — the
+  refresh loops re-derive it. `0x224b8` occurs 0 times in the image: view 0 is a static .bss object at
+  0x8f79e0, ctor FUN_00518820 runs once on it from FUN_00580260, which zeroes table entries 1..7; the
+  ctor's fields reach this+0x23bec > 0x224b8, so the stride is not an object size. 15 unique 0x679f98
+  slots named; its ctors belong to the session-chooser (FUN_00636b1e) and graphics-options (FUN_00493a10)
+  screens. `python3 scripts/m259_m261_census.py` -> `SUMMARY M259/M260/M261: 14/14 gates PASS` (3.3 s).
+  RETRACTS M240's "record = two 22-byte columns" for bytes 16..43.
+
+  (Note added at s205: M262 retracted this block's "FUN_00580260 ... zeroes table entries 1..7" and
+  "the ~140 KB views are not allocated" — the loop allocates 0x22480 B per entry and stores it through
+  a cursor; see `NAMED.md` §M262.)
+
+## §trim-s205 — traps 16-19, moved VERBATIM out of NEXT_PROMPT.md (footing headroom)
+
+16. Grep objdump case-sensitively (`DWORD PTR`, not `ptr [`).
+17. gdb startup/exit chatter must be whitelisted (`DEBUGINFOD_URLS=""`; `^\[Inferior `, `This GDB supports`, `Enable
+    debuginfod`, `Debuginfod has`, `To make this setting`) or a zero-unparsed gate FAILs on a clean run.
+18. ARM BEFORE ANY SCREEN: setup writes finish before the first OCR-able screen and the CDROM screen is QUIESCENT for
+    4 min but only advances on driver input — a true-title wait DEADLOCKS. A hw watchpoint can MISS a change entirely;
+    `[New LWP]` after ARMED = threads gdb may not have re-armed; a background census job DIES with its session.
+19. `gdb -batch` EXITS the moment a stop has no command left: wineserver sends SIGUSR1 during startup, so a batch census
+    MUST carry `handle SIGUSR1 nostop noprint pass` (SIGUSR2/SIGPIPE too) and a ~400-`continue` tail. A bp on a function
+    that serves the whole game (the four read wrappers) costs one ptrace stop per read: 25,957 stops starved the load
+    driver to ZERO loads — filter by FILE* (`set $savefile` at the loader's entry).

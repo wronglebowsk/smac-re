@@ -1005,13 +1005,16 @@ G3). Readers: 44 indexed sites in 25 functions, incl. FUN_004e15c0 (NATPLACE, 3)
 
 **M260 the views** — the live 0x224b8 spacing is NOT an allocation: the token occurs 0 times in the
 3,067,904-B image, as an immediate and as a 4-byte LE constant (G8). View 0 is a **static .bss object at
-0x8f79e0**: the startup init FUN_00580260 (1 caller FUN_00522850) zeroes table entries 1..7 (esi
-0x7cded0..0x7cdeec), stores the immediate 0x8f79e0 into DAT_007cdecc at 0x5803e1, then calls the ctor
+0x8f79e0**: the startup init FUN_00580260 (1 caller FUN_00522850) — **CORRECTED by M262: the esi
+0x7cded0..0x7cdeec loop does NOT zero entries 1..7, it ALLOCATES them** (0x22480 B each via FUN_0064bc20,
+stored by the pointer-arithmetic `mov [esi],eax` at 0x5803bb) — stores the immediate 0x8f79e0 into DAT_007cdecc at 0x5803e1, then calls the ctor
 FUN_00518820 once on it (its only call site 0x580406) (G9). The ctor's own stores reach `this+0x23bec` =
 146,412 B > 140,472 = the live stride, so the stride is not an object size (G10); no store in the image
 names 0x7cdec8..0x7cdee8 except 0x5803e1. The save codec walks the 8 entries as POINTERS to per-view state
 rows and clears `*(p+0x1dd74)` for entries 1..7 (never 0) when DAT_0091c18c/0091c188 changes
-(shard_015.c:10822, :10842-10845) (G11). OPEN: who writes entries 1..7.
+(shard_015.c:10822, :10842-10845) (G11). ANSWERED by M262: entries 1..7 are allocated at startup, 0x22480 B
+each, through the cursor store — "the ~140 KB views are not allocated" is RETRACTED (0x224b8 = 0x22480 +
+0x38, a 56-B heap header, INFERRED).
 
 **M261 the class** — vtable 0x679f98: 88 slots, 2 installs, 15 slots differ from ALL of
 0x6717cc/0x671d94/0x67164c (G12): +0x0 FUN_0062ecc0 (46-B dtor, calls FUN_0062d764), +0x8 FUN_004060f0
@@ -1022,3 +1025,46 @@ FUN_005fa7f5 (752 B, dispatches slot +0x4c), +0x44/+0x48/+0x4c/+0x50/+0x54 (97/3
 FUN_005b3000(2)/FUN_00641f3c(3); FUN_0062d764 ← FUN_00636b1e(15)/FUN_0063a770(3)/FUN_00456670(2)/
 FUN_00493a10(2)/FUN_0045a840(1)/FUN_0062ecc0(1); FUN_00636b1e = "Start a new session or..." the
 session-chooser dialog, FUN_00493a10 = "Gamma Correction" the graphics-options screen (G14).
+
+## M262-M264 (s205, PASS 11/11) — the view table IS allocated at startup; the LOAD never re-derives the band; the allocator and the record cursor
+
+**M262 the view table** — band 0x7cdecc..0x7cdee8: 426 mentions, exactly 1 store names it (0x5803e1, entry 0
+= the static object), and all 39 `[reg*4+0x7cdecc]` mentions in 12 functions are reads/cmps — 0 indexed
+stores (G1, cross-checked against a regenerated objdump corpus: 39 mentions / 0 indexed stores / 1 band
+store). The writer of entries 1..7 is FUN_00580260's loop at 0x580392: cursor esi 0x7cded0, bound
+`cmp esi,0x7cdeec` / `jl 0x580397`, step `add esi,4` = 7 iterations; body `push 0x22480 ; call 0x64bc20`
+(140,416 B each) → `push 1 ; mov ecx,eax ; call 0x469650` (515-B SEH ctor; it does NOT call the view ctor
+0x518820) → **`mov [esi],eax`** at 0x5803bb, the pointer-arithmetic shape an address-grep cannot see;
+`xor eax,eax` feeds it only on the alloc-failure path, which is why M260 read the loop as a zero-fill (G2).
+0x22480 is named exactly once image-wide (0x580397), 0x224b8 zero times, delta 0x38 (G3). 35 address-of-band
+sites, only 4 escapes and all 4 hand out `&DAT_007cdecc` (push at 0x50ba50/0x50baee/0x50bd98/0x517553); the
+4 lea'd `[reg*4+0x7cdecc]` cursors (0x50a68a, 0x50a79e, 0x512ea5, 0x512fd1) are re-read only (G4). Entry 1
+(0x7cded0): 32 reads in ≥12 functions (FUN_004412a0 8, FUN_004411b0/FUN_004cb650/004cb6b0/004cb7b0 4 each);
+the load-side FUN_00597ee0 walks entries 2..7 from 0x597f6d (esi 0x7cded4 → 0x7cdeec step 4) clearing
+`*(entry+0x1dd74)` and calling FUN_00479e90(entry) for every non-null one (G5).
+
+**M263 the band on LOAD** — the writer set re-derives to 8 functions / 10 indexed stores {FUN_004e14d0
+0x4e153b; FUN_004ef6d0 0x4f0def; FUN_0053a820 0x53a8d9 + 0x53a90c; FUN_00582fc0 0x582fec; FUN_00583c70
+0x583e1d; FUN_005a3470 0x5a3b95 + 0x5a3d3f; FUN_005a7970 0x5a7afd + 0x5a86aa} plus FUN_0051c750's walk
+store 0x51ca52 (G6). Only FUN_00596850 (call at 0x596fd0) and FUN_00597a70 (0x597cc0) call map_load_arrays
+0x582260; the depth-9 forward closure of those two plus their 4 callers (FUN_00597ce0/FUN_00597ee0/
+FUN_00598250/FUN_00598340) is 276 functions and meets the writer set in ZERO, and no band writer sits in
+any vtable slot — so neither a direct nor an indirect route reaches them from a load: **the LOAD trusts the
+file's band bytes** (G7). FUN_00582260 itself has no band-shaped store and no call into the writer set;
+FUN_00583c70 has ZERO references in the image (no call, no imm32, no slot), so 0x583e1d can never execute;
+the other writers hang off gameplay passes: FUN_004e14d0 ← FUN_00516b80 ← FUN_005186b0, FUN_004ef6d0 ←
+FUN_004f5a70, FUN_0051c750 ← FUN_0051f320, FUN_005a7970 ← 24 callers (G8).
+
+**M264 the allocator + the record cursor** — FUN_005be090 (72 B / 24 insns) is operator-new: arg1 →
+FUN_00649e00 (29 B) → FUN_00649e70(size, ds:0x99d5f8 = the heap handle, 1, 0, 0); the NULL path reports
+through the GLOBAL function pointer ds:0x671320 with 0x698890 "FATAL ERROR" and 0x69889c "Windows has run
+out of virtual memory; the game will exit. Recom…", then `push 4 ; call 0x649c80`. No vtable slot holds it;
+119 direct sites in 74 functions (G9) — the footing's "13 [reg+4] sites" are store-after-alloc sites, not
+dispatch: 14 sites in 13 functions store the new pointer at [obj+4] within 8 insns (0x479647, 0x479da5,
+0x47a0d0, 0x58aefc, 0x58af0d, 0x5be208, 0x5be4d8, 0x5be5fc, 0x5becb5, 0x5cca3c, 0x5dc1ed, 0x5e351a,
+0x5e361c, 0x62cd28) (G10). ds:0x9965b8 — 6 mentions = 3 read/modify/write pairs, one per function — is a
+LINEAR RECORD CURSOR: FUN_005dbb5f (33 insns, ~150 callers) stamps a blank record (10 dword zero stores +
+`mov byte ptr [ecx+0x8],0x9`) and `add ecx,0x2c`; FUN_005dbbe6 (63 insns) gates [rec+0x28]==0 and
+[rec+4]!=0, `sub edx,ecx` with ecx = [rec+0x10]*[rec+0x14], and frees [rec+4] via FUN_0064a7f0 (19 B,
+221 callers); FUN_005dbdc0 (1303 B, ret 0x1c) is the FILLER — allocates [rec+0x10]*[rec+0x14] bytes at
+0x5dc1ed, stores the pointer at [rec+4], then advances the cursor by the same product (G11).
