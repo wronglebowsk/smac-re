@@ -528,3 +528,25 @@ engine: ascending walk over the 8 slots (our slot 3), **year++ on the 7→0 edge
 models reproduce the trace, all 48 agreeing on those edges; OPEN: the press transition (unobservable) and
 the order of {4,5,6}. Parity is an **ordered subsequence** — the trace is a 0.2 s change-set sample
 (`turn_trace.py:59`); read `sim/turn.py`'s docstring before writing B4's check. Next rung: **B4 economy**.
+
+## §trim-s202 — moved VERBATIM out of NEXT_PROMPT.md for headroom (s202)
+
+**B3 DONE (s199)** — 6/6 gates, `matched=67/67`, one invocation: `sim/turn.py` IS the turn engine
+(ascending 8-slot walk, our slot 3; year++ on the 7→0 edge; `tf` cleared one step after `cur` hits 3).
+Full result text VERBATIM: `docs/pick-archive.md` §s200. Read its docstring before writing B4's check.
+
+Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
+M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), B2 (s195, 7/7),
+M244 (#185), M245-M247 (#186), M248/M249 (s198, 5/5), B3 (s199, 6/6), M250-M252 (s200, 7/7), M253-M255 (s201, 8/8), s175
+cap triage (#153), docs #169/#174/#175/#177.
+UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
+ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
+superseded), M103 (#110, never green), M109 (gates answered, model void), M241 (#180, 2/5 — its PR stays
+open; M242 answered the same question from the right premise). Summaries: `pick-archive.md`,
+`NAMED.md`, `skill/references/code-atlas.md`.
+
+- **BOX**: s197 preflight PASS (14 invariants), terran.exe 319926 alive, TracerPid 0, not this session's
+  descendant ⇒ `/proc/<pid>/mem` needs `sudo -n` (yama ptrace_scope=1); RE-RUN
+  `sudo -n python3 scripts/smac_preflight.py` before arming. Recipe, cold-box timing, the degraded-box poke
+  facts (0x985ac4 bit 0x200, mask byte 0x985b10, the PANE decides where INSERT lands) and the full state
+  dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199.
