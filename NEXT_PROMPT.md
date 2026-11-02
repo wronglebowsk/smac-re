@@ -23,19 +23,14 @@ Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout -
 patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
 go 1 per batch). The binding cap is doc headroom, not capability.**
 
-## BUILD TRACK — every 4th fire builds (added s187; full text moved VERBATIM to `docs/pick-archive.md` at s194)
+## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
-build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census
-claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`); ANALYSE
-⇒ pick from this file exactly as usual.
-
-**B3 DONE (s199)** 6/6, `matched=67/67` (VERBATIM: `docs/pick-archive.md` §s200). **B4 DONE (s203)** —
-`sim/base.py` + `sim/economy.py`; `python3 -m sim.selftest --replay evidence/m44d_idle.json` →
-`PASS B4: 9/9 gates` (rc=0, 1.3 s, one invocation, `evidence/b4_economy.txt:26`): the idle replay nets
-0 on all 12 rounds (our energy 15 flat) and the engine reproduces the game's own HUD triple (2,2,0)
-plus both aggregator detail arrays on the recorded M46 state; the base name field is 32 B, not 20.
-**Next rung B5 = units/movement.** Text: `NAMED.md` §B4, `SESSION_NOTES.md` §Session 203.
+build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
+census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`sim/base.py` +
+`sim/economy.py`; the base name field is 32 B, not 20; text `NAMED.md` §B4). **B3 DONE (s199)** 6/6 (§s200).
+**Next rung B5 = units/movement.**
 
 ## THE LEDGER
 
@@ -71,16 +66,15 @@ semantics in `NAMED.md`.
   static map views, the 0x679f98 class). Numbers VERBATIM: `NAMED.md` per-id, §s196-§s204; the s202
   worth-test block moved VERBATIM to `docs/pick-archive.md` §s204.
 - RESULT (s204): record bytes +16..+43 = dword 3+fac for FACTIONS 1..7 (faction 0 uses the +8 master
-  mask; both refreshes guard `test ebx,ebx / je`). Writers closed at 10 indexed stores — 0x4e153b,
-  0x4f0def, 0x53a8d9, 0x53a90c, 0x582fec, 0x583e1d, 0x5a3b95, 0x5a3d3f, 0x5a7afd, 0x5a86aa — plus
-  FUN_0051c750's walk store 0x51ca52; two whole-array refreshes copy `[rec+8]` into slot fac over
-  `ds:0x92a38c` records; FUN_0053a820 merges slots both ways through the mask; FUN_004e14d0 takes the
-  slot from `[view+0x23bd4]`. The generator does NOT write the band — the refresh loops re-derive it.
-  `0x224b8` occurs 0 times in the image: view 0 is a static .bss object at 0x8f79e0, ctor FUN_00518820
-  runs once on it from FUN_00580260, which zeroes table entries 1..7; the ctor's fields reach
-  this+0x23bec > 0x224b8, so the stride is not an object size. 15 unique 0x679f98 slots named; its
-  ctors belong to the session-chooser (FUN_00636b1e) and graphics-options (FUN_00493a10) screens.
-  `python3 scripts/m259_m261_census.py` -> `SUMMARY M259/M260/M261: 14/14 gates PASS` (static, 3.3 s).
+  mask; both refreshes guard `test ebx,ebx / je`). Writers closed at 10 indexed stores (the list is in
+  `NAMED.md` §M259) plus FUN_0051c750's walk store 0x51ca52; two whole-array refreshes copy `[rec+8]`
+  into slot fac over `ds:0x92a38c` records; FUN_0053a820 merges slots both ways through the mask;
+  FUN_004e14d0 takes the slot from `[view+0x23bd4]`. The generator does NOT write the band — the
+  refresh loops re-derive it. `0x224b8` occurs 0 times in the image: view 0 is a static .bss object at
+  0x8f79e0, ctor FUN_00518820 runs once on it from FUN_00580260, which zeroes table entries 1..7; the
+  ctor's fields reach this+0x23bec > 0x224b8, so the stride is not an object size. 15 unique 0x679f98
+  slots named; its ctors belong to the session-chooser (FUN_00636b1e) and graphics-options (FUN_00493a10)
+  screens. `python3 scripts/m259_m261_census.py` -> `SUMMARY M259/M260/M261: 14/14 gates PASS` (3.3 s).
   RETRACTS M240's "record = two 22-byte columns" for bytes 16..43.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
