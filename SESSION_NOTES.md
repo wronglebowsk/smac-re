@@ -541,3 +541,39 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   s208 RESULT block (1,274 B) VERBATIM to keep the cycle.
 - Not triggered: skill/SKILL.md 59,419 B (<69,000); evidence/ 28.3 MB (warn, trigger 28.5 not
   reached); no new evidence files this fire.
+
+## Session 210 (2026-11-02, ANALYSE, M269+M270+M271 through ONE instrument, PASS 10/10) — the virtual-base delta is image-wide (41 stores / 8 K / 31 functions); the 0x678e40 class is a 152,856-B stack object with ONE instance site; 32 vbtable descriptors close the K census
+
+- ONE script `scripts/m269_m271_census.py` (whole-image `.text` shadow + PE image + `ghidra_out/index.csv`;
+  no box, no `/proc`, no gdb) -> `SUMMARY M269/M270/M271: 10/10 gates PASS`; evidence
+  `evidence/m269_m271_census.txt`. Acceptance invocations used: 2 (the first printed 7/10 — three offsets I
+  had transcribed from a disassembly window into MY gate texts were wrong: the 0x614150 ctor is called at
+  +0x252ec not +0x24fec; M215's row ends at 0x247a0+0xb4c = 0x252ec; the dword 0x59c380 appears only at
+  0x678e40 because dw(0x678e3c) = 0x405350). No gate, floor or check was weakened.
+- M269: the geometric test (a store counts only if its address resolves to `field + [desc+4] - 4`) matches
+  41 delta stores in 31 functions at 8 distinct K: 0x18 x11, 0x1c x2, 0x48 x2, 0x8c x4, 0x188 x14,
+  0x21a6c x5, 0x22050 x1, 0x23d94 x2. G1/G2: the 5 K=0x21a6c functions ARE M267's 5 installers — the delta
+  detector and the install detector name the same 5. Same pass: 177 vptr installs made THROUGH a vbptr of 33
+  distinct tables; 9 secondary-view tables each have their primary 8 B above with the identical count;
+  biggest family 0x6713a0 (52 installs). 21 lineage-matched stores of a delta value are `sub reg,1`
+  arithmetic — reported, not gated.
+- M271: 32 of the 247 rdata immediates stored through a register are vbtables (dword[0] and dword[+4] both
+  |v| < 0x40000, neither a code pointer), 21 distinct [+4] offsets, and every K M269 found is one of them
+  (0x21a6c->0x675964, 0x23d94->0x678458, 0x22050->0x6763fc, 0x188->0x679de0, 0x8c->0x679c28/0x679da4,
+  0x48->0x67991c, 0x1c->0x679a98, 0x18->0x6713ac/0x6713f4/0x671408). [0x675964]=0,[+4]=0x21a6c is installed
+  only by FUN_00469650 and [0x678458+4]=0x23d94 only by FUN_0050aa60, and both installers carry a delta
+  store at their own K.
+- M270: 0x678e40 (secondary 0x678e38 at +0x2444) stored exactly once image-wide each, both inside
+  FUN_0059bec0 (0x59bf1c/0x59bf26). Slot 0 of each is its deleting-dtor wrapper (0x59c380 -> FUN_0059c1e0 ->
+  0x64bb70). Layout closes on itself: +0 the 0x5e3b80/0x5e3ced class, +0x2320 the 0x675964 class
+  (0x2320+0x22480 = 0x247a0), +0x247a0 M215's 0xb4c row (= +0x252ec, exactly where the 0x614150 ctor is
+  called AND where the dtor calls 0x6141c1), virtual base +0x23d8c = 0x2320+0x21a6c (destroyed via 0x5e3ced
+  in both, so it is the same type as the +0 object), size 0x25318 = the only 0x25318 immediate image-wide
+  (the alloca probe at 0x59bed1) = the span [ebp-0x25324, ebp-0xc). RETRACT part of M267: FUN_0059bec0 is
+  not a destructor (four ctor calls precede its 0x678e40 install; the same objects die at its tail) and its
+  0x67194c/0x671944 are M215's ROW at +0x247a0, never [this+0] — the installer of 0x67194c at [this+0] is
+  FUN_005faec0 (M215). Callers of FUN_0059bec0: FUN_0050fea0, FUN_00512b40, FUN_00516b80, FUN_0051e700.
+- Pitfall (mine, cost one acceptance): offsets read off a head/tail window and typed into a gate are not
+  evidence. Let the instrument print them (hex AND decimal) first, then write the sentence.
+- Box DOWN (`ps` shows no terran.exe), nothing owed (`grep -c 'box time owed' SESSION_CURSOR.md` = 0); M181
+  still unarmed (no box, no positive control). M241 (#180, 2/5) still open by design.

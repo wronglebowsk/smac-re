@@ -637,3 +637,19 @@ in `NAMED.md` §B5).
   **PASS B5: 9/9 gates** (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`). Model, parity numbers
   and its 3 OPEN items VERBATIM: `NAMED.md` §B5 (per-terrain move cost ASSUMED uniform 3; the bonus
   behind `moves = 2`; rec118's first step lies outside the trace window).
+
+## trim-s210 - the s208 RESULT block moved VERBATIM from NEXT_PROMPT.md (session 210)
+
+- RESULT (s208): the "pair" 0x6725ac/0x6725a4 is ONE vtable read from two entry points 8 B apart
+  (0x6725a4 = 0x6725ac-8, the code run ends 0x672a38, 291 vs 293 slots, heads 0x4222c0/0x405350/
+  0x422190 are not function starts); its 5 installers are 1 ctor (FUN_00469650, descriptor 0x675964)
+  + 4 DEstructors (FUN_00421950 the base; FUN_00518980 the 0x678458 variant, pair 0x678184/0x67817c at
+  +0x23d94; FUN_0059c1e0 and FUN_0059bec0 the 0x67194c/0x671944 variant — the latter a 0x25318-B STACK
+  instance that calls the save writer), NONE of them address-taken image-wide; the offsets differ
+  because the subobject is a VIRTUAL BASE: `[vptr-4] = [desc+4] - 0x21a6c` (shard_008.c:5869). The
+  201 x 608 = **122,208 B** block (+0xc..+0x1dd6c, not 121,600) is POD — ctor 0x62514b and dtor
+  0x62516c write the same {dword0=3, dword1=0} — and NO code computes a 608-strided address (all 21
+  0x260 immediates are iterator args or their unwind records); the 94 folded (d-0xc)%608==0
+  displacements are chance (3.65x uniform, none in a view-loading function) and the per-view codec
+  FUN_00596620 saves only +0x1dd70..+0x1dda0. Census `scripts/m267_m268_census.py` -> 14/14,
+  `evidence/m267_m268_census.txt`. s206's numbers: `NAMED.md` §M265-§M266, census 12/12.

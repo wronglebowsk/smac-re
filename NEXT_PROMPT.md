@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 209, 2026-11-02, **M267-M268 DONE: the 0x6725ac/0x6725a4 "pair" is ONE vtable with entry points 8 B apart, installed by 1 ctor + 4 destructors of 4 variants of the virtual base at [desc+4] (`[vptr-4] = [desc+4] - 0x21a6c`); the 201 x 608 = 122,208-B block is POD, never indexed by computed code, never saved — 14/14 on `evidence/m267_m268_census.txt`; B5 done, numbers `NAMED.md` §B5**)
+# NEXT_PROMPT.md - footing for the next session (session 210, 2026-11-02, **M269-M271 DONE: the `[vptr-4] = [desc+4] - K` virtual-base delta is IMAGE-WIDE (41 stores / 8 K / 31 functions, 177 vptr installs through a vbptr of 33 tables, 9 primary+0x444-secondary pairs 8 B apart; 32 vbtable descriptors close the K census); the 0x67194c "variant" is M215 s row at +0x247a0 inside the 0x678e40 class, a 0x25318-B stack local of FUN_0059bec0 - 10/10 on `evidence/m269_m271_census.txt`; B5 done, numbers `NAMED.md` §B5**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -33,7 +33,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.j
 
 ## THE LEDGER
 
-Merged M54A-M268 + B0-B5 (through #197). UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M268 + B0-B5 (through #198); M269-M271 on its own open PR. UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -58,33 +58,32 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s208 — M227-M237, **B1-B5**, M240-M268 (M241 FAIL 2/5, #180 open).
+- ANSWERED (do not re-pick): s187-s210 - M227-M237, **B1-B5**, M240-M271 (M241 FAIL 2/5, #180 open).
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
-  per-id §s196-§s208 (+ archive §s206, §trim-s205). FUN_005f3f5b is NOT open — see M220.
-- RESULT (s208): the "pair" 0x6725ac/0x6725a4 is ONE vtable read from two entry points 8 B apart
-  (0x6725a4 = 0x6725ac-8, the code run ends 0x672a38, 291 vs 293 slots, heads 0x4222c0/0x405350/
-  0x422190 are not function starts); its 5 installers are 1 ctor (FUN_00469650, descriptor 0x675964)
-  + 4 DEstructors (FUN_00421950 the base; FUN_00518980 the 0x678458 variant, pair 0x678184/0x67817c at
-  +0x23d94; FUN_0059c1e0 and FUN_0059bec0 the 0x67194c/0x671944 variant — the latter a 0x25318-B STACK
-  instance that calls the save writer), NONE of them address-taken image-wide; the offsets differ
-  because the subobject is a VIRTUAL BASE: `[vptr-4] = [desc+4] - 0x21a6c` (shard_008.c:5869). The
-  201 x 608 = **122,208 B** block (+0xc..+0x1dd6c, not 121,600) is POD — ctor 0x62514b and dtor
-  0x62516c write the same {dword0=3, dword1=0} — and NO code computes a 608-strided address (all 21
-  0x260 immediates are iterator args or their unwind records); the 94 folded (d-0xc)%608==0
-  displacements are chance (3.65x uniform, none in a view-loading function) and the per-view codec
-  FUN_00596620 saves only +0x1dd70..+0x1dda0. Census `scripts/m267_m268_census.py` -> 14/14,
-  `evidence/m267_m268_census.txt`. s206's numbers: `NAMED.md` §M265-§M266, census 12/12.
-- Pick from (ANALYSE fires; the next BUILD fire takes **B6** — the headless run — from `BUILD_SPINE.md`):
-  WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
-  sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
-  `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save —
-  the box is DOWN, cold relaunch >9 min); **what the row stride 188 means** (new from M257: `esi =
-  2*region + 188*fac`, regions 94..127 pass the next row — one live read of both indexings of `0x94eaa8`
-  settles it; box); **the virtual-base delta census** (new from M267: all 5 installers compute
-  `[vptr-4] = [desc+4] - 0x21a6c` — find every site of that shape image-wide, list the K values and
-  the descriptors whose dword[+4] equals each; static); **who constructs the 0x67194c/0x671944 class**
-  (new from M267: its destructors are FUN_0059c1e0 + FUN_0059bec0, its vtable has 361 slots and slot 0
-  = 0x406130 — find the installer of 0x67194c and the allocation size; static).
+  per-id §s196-§s210 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
+- RESULT (s208): VERBATIM now in `docs/pick-archive.md` §trim-s210 - the 0x6725ac/0x6725a4 pair is
+  ONE vtable (entry points 8 B apart, 5 installers, virtual-base delta `[vptr-4] = [desc+4] - 0x21a6c`)
+  and the 201 x 608 = 122,208-B block is POD, never indexed, never saved (14/14, `evidence/m267_m268_census.txt`).
+- RESULT (s210): the virtual-base delta is an IMAGE-WIDE mechanism, not one family - a geometric shadow (the
+  store lands exactly 4 below the virtual base its own field expression computes) finds **41 delta stores /
+  8 K / 31 functions** (K = 0x18, 0x1c, 0x48, 0x8c, 0x188, 0x21a6c, 0x22050, 0x23d94) and **177 vptr installs
+  through a vbptr of 33 tables**; 9 secondary-view tables each have their primary 8 B above with the
+  identical install count (the 9 pairs are tabulated in `NAMED.md` §M269) - so M267's pair is the rule, not
+  a curiosity. The 5 K=0x21a6c delta functions ARE the 5 installers (two independent detectors, same answer).
+  **32 of 247** rdata immediates stored through a register are vbtables (dword[0] and [+4] small signed,
+  neither a code pointer) and every K is one of their [+4] values (map in `NAMED.md` §M271). The 0x67194c/0x671944
+  "variant" is M215 s ROW at +0x247a0 inside a class whose vtable 0x678e40 (secondary 0x678e38 at +0x2444)
+  is installed EXACTLY ONCE image-wide, as a 0x25318-B stack local of FUN_0059bec0 (+0 the 0x5e3b80/0x5e3ced class,
+  +0x2320 the 0x675964 class, +0x247a0 row, +0x252ec; dtor body FUN_0059c1e0 via slot 0 = 0x59c380).
+  RETRACT part of M267: FUN_0059bec0 is not a destructor, and 0x67194c is never installed at [this+0] there.
+  Census `scripts/m269_m271_census.py` -> 10/10, `evidence/m269_m271_census.txt`; numbers `NAMED.md` §M269.
+- Pick from (ANALYSE fires; the next BUILD fire takes **B6** - the headless run - from `BUILD_SPINE.md`):
+  ALL THREE ARE BOX PICKS and the box is DOWN (cold relaunch >9 min): WHO dispatches the dialog s +0x4c
+  (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies -
+  falsifier = a live vtable read at a click); does `FUN_0057ecf0` also run on a LOAD (bp the `FUN_005b2970`
+  entry, load a save); what the row stride 188 means (`esi = 2*region + 188*fac`, regions 94..127 pass the
+  next row - one live read of both indexings of `0x94eaa8`). Both s209-queued STATIC picks are DONE, see
+  RESULT (s210): the virtual-base delta census and the 0x67194c/0x671944 class.
 ## LIVE FACTS / KIT
 
 - **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
