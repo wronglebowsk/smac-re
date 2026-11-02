@@ -60,6 +60,14 @@ the loop's stride (`add esi,0x34`) and the initial `mov esi, <base+50>`.
   `+0x30]` finds it. Run both greps, then filter the displacement hits down to real stores: exclude
   `cmp`/`test`/`lea`, and remember most `+0x30]` hits in a function prologue region are stack locals at
   `-0x30`.
+- **A cursor store names NOTHING, and a store's MEANING comes from the value register.** `mov [esi],eax`
+  inside `mov esi,<base>; …; add esi,4; cmp esi,<end>; jl` writes 4-byte slots without ever printing the
+  address, so a window census reports "no store names the band" while the loop is in fact the writer.
+  Before calling such a store a zero-fill, trace where the stored register comes from: M260 read
+  `mov [esi],eax` as "zeroes entries 1..7" when eax was the result of `push 0x22480; call <alloc>` — the
+  zero only arrives on the failure branch (`xor eax,eax` behind the `je`). The mirror trap: an allocation
+  size can appear in the image ONLY as the push inside such a loop (0x22480 occurs once, the live stride
+  0x224b8 never), so census the SIZE as well as the address and the stride.
 
 ## 4. Jump tables: raw bytes, then bodies, before contradicting Ghidra
 
