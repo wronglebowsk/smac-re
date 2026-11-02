@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 208, 2026-11-02, **M267-M268 DONE: the 0x6725ac/0x6725a4 "pair" is ONE vtable with entry points 8 B apart, installed by 1 ctor + 4 destructors of 4 variants of the virtual base at [desc+4] (`[vptr-4] = [desc+4] - 0x21a6c`); the 201 x 608 = 122,208-B block is POD, never indexed by computed code, never saved — 14/14 on `evidence/m267_m268_census.txt`; B5 done, numbers `NAMED.md` §B5**)
+# NEXT_PROMPT.md — footing for the next session (session 209, 2026-11-02, **M267-M268 DONE: the 0x6725ac/0x6725a4 "pair" is ONE vtable with entry points 8 B apart, installed by 1 ctor + 4 destructors of 4 variants of the virtual base at [desc+4] (`[vptr-4] = [desc+4] - 0x21a6c`); the 201 x 608 = 122,208-B block is POD, never indexed by computed code, never saved — 14/14 on `evidence/m267_m268_census.txt`; B5 done, numbers `NAMED.md` §B5**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -33,7 +33,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.j
 
 ## THE LEDGER
 
-Merged M54A-M266 + B0-B4 (through #195); B5 is this PR. UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M268 + B0-B5 (through #197). UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -58,14 +58,9 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s208 — M227-M237, **B1-B5**, M240-M268 (M241 FAIL 2/5, #180 open;
-  the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
-  test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
-  view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class, what
-  the 7 allocated blocks ARE, why FUN_00583c70 is unreferenced, what the 201 608-B elements ARE NOT,
-  which variants share the 0x6725ac/0x6725a4 pair). Numbers VERBATIM: `NAMED.md` per-id,
-  §s196-§s208; the s205 RESULT block moved VERBATIM to `docs/pick-archive.md` §s206 (+ traps 16-19 at
-  §trim-s205). FUN_005f3f5b is NOT open — see M220.
+- ANSWERED (do not re-pick): s187-s208 — M227-M237, **B1-B5**, M240-M268 (M241 FAIL 2/5, #180 open).
+  Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
+  per-id §s196-§s208 (+ archive §s206, §trim-s205). FUN_005f3f5b is NOT open — see M220.
 - RESULT (s208): the "pair" 0x6725ac/0x6725a4 is ONE vtable read from two entry points 8 B apart
   (0x6725a4 = 0x6725ac-8, the code run ends 0x672a38, 291 vs 293 slots, heads 0x4222c0/0x405350/
   0x422190 are not function starts); its 5 installers are 1 ctor (FUN_00469650, descriptor 0x675964)
@@ -79,10 +74,6 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   displacements are chance (3.65x uniform, none in a view-loading function) and the per-view codec
   FUN_00596620 saves only +0x1dd70..+0x1dda0. Census `scripts/m267_m268_census.py` -> 14/14,
   `evidence/m267_m268_census.txt`. s206's numbers: `NAMED.md` §M265-§M266, census 12/12.
-- RESULT (s207, BUILD): the arrow-key step is executable — `python3 -m sim.selftest --replay-m27` ->
-  **PASS B5: 9/9 gates** (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`). Model, parity numbers
-  and its 3 OPEN items VERBATIM: `NAMED.md` §B5 (per-terrain move cost ASSUMED uniform 3; the bonus
-  behind `moves = 2`; rec118's first step lies outside the trace window).
 - Pick from (ANALYSE fires; the next BUILD fire takes **B6** — the headless run — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
