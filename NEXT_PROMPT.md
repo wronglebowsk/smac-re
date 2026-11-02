@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 198, 2026-11-01, M248/M249: terrain record +3 IS the map's REGION LABEL, and the coarse region map is a per-region copy of it)
+# NEXT_PROMPT.md — footing for the next session (session 199, 2026-11-01, **B3: the C1 turn engine is EXECUTABLE — `sim/turn.py` replays M30's 20-turn trace 67/67**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -30,11 +30,21 @@ build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs 
 claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`); ANALYSE
 ⇒ pick from this file exactly as usual.
 
+**B3 DONE (s199).** `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` -> `PASS B3: 6/6
+gates`, `matched=67/67` (one invocation, rc=0) -> `evidence/b3_turn_replay.txt`. `sim/turn.py` IS the
+engine: ascending walk over the 8 slots (our slot 3), **year++ on the 7→0 edge while `cur` is still 7**
+(witness row 22; other edges 0-22/66) and **`tf` cleared ONE STEP AFTER `cur_player` reaches
+3** (merge them: 5/66; M30's "never 3 while tf&2" retracted). 48 of 322,560 candidate (order × edge)
+models reproduce the trace, all 48 agreeing on those edges; OPEN: the press transition (unobservable) and
+the order of {4,5,6}. Parity is an **ordered subsequence** — the trace is a 0.2 s change-set sample
+(`turn_trace.py:59`); read `sim/turn.py`'s docstring before writing B4's check. Next rung: **B4 economy**.
+
 ## THE LEDGER
 
 Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
 M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), B2 (s195, 7/7),
-M244 (#185), M245-M247 (#186), M248/M249 (s198, 5/5), s175 cap triage (#153), docs #169/#174/#175/#177.
+M244 (#185), M245-M247 (#186), M248/M249 (s198, 5/5), B3 (s199, 6/6), s175 cap triage (#153), docs
+#169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
 superseded), M103 (#110, never green), M109 (gates answered, model void), M241 (#180, 2/5 — its PR stays
@@ -48,9 +58,9 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
    in TRAPS).
 2. Writer/flag chain — silent bps or hw watchpoints + a prediction from live memory + a read-back:
    `m94_table_watch.py` (4 hw watchpoints on any 4 dwords), `m97_credit_watch.py`, `m100_mult_watch.py`,
-   `m102_rebuild_at_hit.py`, `m103_d_rebuild.py` (all three take `--predict`, which prints the model table without
-   touching the game), `m92_tail_census.py`, `m95_pay_sites.py`, `m98_advance_budget.py`, `m117_gate_take.py`; each
-   prints pc+new+round+cp and names the writer by containment (ghidra_out/index.csv). Flags via `--help` first.
+   `m102_rebuild_at_hit.py`, `m103_d_rebuild.py`, `m92_tail_census.py`, `m95_pay_sites.py`, `m98_advance_budget.py`, `m117_gate_take.py`; each
+   prints pc+new+round+cp and names the writer by containment (ghidra_out/index.csv). `--predict` prints the model
+   table without touching the game. Flags via `--help` first.
 3. Static-first kit (s171, zero box time): `field_census.py` (a displacement/global's shape from its addressing form
    and index arithmetic), `name_global.py` (every reader/writer of a global + containment), `m118_flag_never_set.py`
    (is a gate even satisfiable: test sites, OR immediates, register-level bit ops, and whether any save carries the
@@ -63,19 +73,13 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s198 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
-  **M242**, **M243**, **B2**, **M244**, **M245/M246/M247** (codec `FUN_00597ce0`→`FUN_00596850`, the
-  save tail's legs, the region-map stride) and **M248/M249** (`PASS M248: 5/5 gates`, `python3
-  scripts/m248_region_values_census.py`, 17 saves + 2 .MP, zero box time): the coarse region map's
-  bytes are a per-region copy of **terrain record +3 = the map's REGION LABEL** — `FUN_0058ce00`
-  samples a centre-first 9-diamond (dx/dy read from terran.exe 0x67850c/0x678990) and stores the
-  first LAND tile's +3, else 0; recomputed == stored byte for byte on 19/19 files (1809 cells, 0
-  mismatch); +3 < 0x40 on every land tile and >= 0x41 on every water tile (0 exceptions), 0x40
-  unused; its ONLY writer is the byte setter `FUN_00582d00` (shard_014.c:27745), 4 call sites all in
-  map generation (`FUN_0058d120` shard_015.c:4862/4892, `FUN_0058d390` :5086/5097); the map has
-  exactly 1 reader fn (`FUN_00556690`) and 1 writer fn. Numbers VERBATIM: `NAMED.md` per-id,
-  `docs/pick-archive.md` §s196/§s197/§s198.
-- Pick from (ANALYSE fires; the next BUILD fire takes **B3** — turn engine — from `BUILD_SPINE.md`): WHO
+- ANSWERED (do not re-pick): s187-s199 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**, **B2**, **M244**, **M245/M246/M247** (save-codec chain `FUN_00597ce0`→`FUN_00596850`,
+  the tail's legs, the region-map stride), **M248/M249** (the coarse region map = a per-region copy of
+  **terrain record +3 = the map's REGION LABEL**; the rule, the 19/19 recomputation and the single writer
+  `FUN_00582d00` are in `NAMED.md`) and **B3** (the turn engine — see BUILD TRACK above). Numbers
+  VERBATIM: `NAMED.md` per-id, `docs/pick-archive.md` §s196-§s198.
+- Pick from (ANALYSE fires; the next BUILD fire takes **B4** — economy — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
   — falsifier = a live vtable read at a click, box); what the 15 UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30,
@@ -92,13 +96,11 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   sets/clears view `+0x1dd74`.
 ## LIVE FACTS / KIT
 
-- **BOX state as of s197** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants; re-run
-  it before arming): terran.exe 319926 alive, TracerPid 0 and NOT this session's descendant, so read
-  `/proc/<pid>/mem` with `sudo -n` (yama ptrace_scope=1); launch recipe + cold-box timing: skill
-  `references/wine-operations.md`. The full s197 state dump is verbatim in `docs/pick-archive.md` §s198.
-- A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
-  ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
-  index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
+- **BOX**: s197 preflight PASS (14 invariants), terran.exe 319926 alive, TracerPid 0, not this session's
+  descendant ⇒ `/proc/<pid>/mem` needs `sudo -n` (yama ptrace_scope=1); RE-RUN
+  `sudo -n python3 scripts/smac_preflight.py` before arming. Recipe, cold-box timing, the degraded-box poke
+  facts (0x985ac4 bit 0x200, mask byte 0x985b10, the PANE decides where INSERT lands) and the full state
+  dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199.
 
 ## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
 
@@ -154,8 +156,8 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
     MUST carry `handle SIGUSR1 nostop noprint pass` (SIGUSR2/SIGPIPE too) and a ~400-`continue` tail. A bp on a function
     that serves the whole game (the four read wrappers) costs one ptrace stop per read: 25,957 stops starved the load
     driver to ZERO loads — filter by FILE* (`set $savefile` at the loader's entry).
-20-22. byte-field BIT OPS vs dword scans; a "stride conflict" is ONE multiply read in two pieces; a
-    global with ZERO writers is LOAD-TIME data — verbatim: `docs/pick-archive.md` §s198.
+20-22. byte-field BIT OPS vs dword scans; a "stride conflict" is ONE multiply read in two pieces; a global
+    with ZERO writers is LOAD-TIME data — verbatim: `docs/pick-archive.md` §s198.
 23. A VALUE SAMPLER IS NOT A STORE CENSUS (a same-value store leaves no trace) and a census PARSER is not a
     log — VERBATIM laws: skill `references/instrument-laws.md` (M241/M242, s192-s193).
 

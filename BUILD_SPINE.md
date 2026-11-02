@@ -89,7 +89,7 @@ This is R1 marked DONE in `MILESTONES.md`.
 | chapter | state |
 |---|---|
 | D1–D4, F1, F2, C2 | DONE (proven live or byte-exact) |
-| C1 turn engine | model written (M30) — B3 makes it executable |
+| C1 turn engine | **DONE** — model written (M30) and executable (B3, s199: `sim/turn.py`, 67/67 on the recorded trace) |
 | C3 economy | pipeline named (M46/M47) — B4 makes it executable |
 | C4 research, C5 combat, C6 AI | todo; the data tables are decoded, the rules are the census work |
 | U1/U2 UI | todo; asset decoders exist (`cvr_decode.py`, `flc_decode*.py`, rendered frames in repo root) |

@@ -496,3 +496,13 @@ laws live in skill `references/instrument-laws.md`):
     `[reg*4+disp]` beside `[reg+disp]` is usually the same field with the stride folded into the register.
 22. A global with readers and ZERO writers of any width is LOAD-TIME data, not a gameplay counter — check the
     enclosing dwords before concluding.
+
+## s199 — box footing moved VERBATIM out of NEXT_PROMPT.md at the B3 close (headroom)
+
+- **BOX state as of s197** (`sudo -n python3 scripts/smac_preflight.py` -> PASS, 14 invariants; re-run
+  it before arming): terran.exe 319926 alive, TracerPid 0 and NOT this session's descendant, so read
+  `/proc/<pid>/mem` with `sudo -n` (yama ptrace_scope=1); launch recipe + cold-box timing: skill
+  `references/wine-operations.md`. The full s197 state dump is verbatim in `docs/pick-archive.md` §s198.
+- A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
+  ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
+  index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
