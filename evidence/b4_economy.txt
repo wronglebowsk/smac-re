@@ -1,0 +1,26 @@
+  round  0 year 2304 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  1 year 2305 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  2 year 2306 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  3 year 2307 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  4 year 2308 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  5 year 2309 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  6 year 2310 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  7 year 2311 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  8 year 2312 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round  9 year 2313 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round 10 year 2314 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  round 11 year 2315 our_bases=0 gross=0 upkeep=0 net=0 energy sim=15 recorded=15 delta=0
+  info table-later       Fusion Lab           alpha line 14 upkeep 3 vs M46 live read 4 DIFFERS (OPEN: runtime row order is not alpha order)
+  info table-later       Nanoreplicator       alpha line 19 upkeep 6 vs M46 live read 4 DIFFERS (OPEN: runtime row order is not alpha order)
+  info table-later       Quantum Converter    alpha line 20 upkeep 5 vs M46 live read 6 DIFFERS (OPEN: runtime row order is not alpha order)
+  info table-later       Quantum Lab          alpha line 15 upkeep 4 vs M46 live read 3 DIFFERS (OPEN: runtime row order is not alpha order)
+  ok   trace-wellformed rounds=12 years 2304..2315 consecutive=True cur==3 on all=True point-set=['start-of-our-turn'] our_energy=[15] our_bases_per_round=[0] harness deltas.energy3=0.0
+  ok   idle-replay matched=12/12 states (initial 1 + transitions 11/11) nets=[0] nonzero_net=0 sim_sequence=[15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
+  ok   hud-triple-idle engine=(gross 0, upkeep 0, net 0) == (SUM base+0xfc, SUM upkeep, difference) on 0 bases; recorded economy-pane OCR legible on 3/12 rounds, all three rows read 0/turn on 3 of them (evidence/m44d_idle.json:150)
+  ok   record-decode-parity 13/13 fields of the recorded 76-dword base record 'Climactic Research' reproduce the harness's own reads (mismatch=none)
+  ok   save-records 17 saves 311 base records decoded; sim.base vs sim.save seam mismatches=none; owners=[1, 2, 3, 4, 5, 6, 7] max_facility_id=27(<32) storage_negative=0 name_window_without_NUL=0 longest_name=22 bases_with_facilities=249 bases_with_gross=293
+  ok   hud-triple-postfound engine=[(2, 2, 0), (2, 2, 0)] recorded_game_globals=[(2, 2, 0), (2, 2, 0)] on 2 rounds; energy [19, 19] -> predicted [19, 19] final 19 recorded_final 19
+  ok   aggregator-arrays per_base_upkeep 75 entries == recorded 0x744f2c [(72, 2)] (engine nonzero [(72, 2)]); item_counts 39 entries == recorded 0x745738 (nonzero [(1, 1), (3, 1), (6, 1), (7, 1), (8, 1)]); round2 same=True
+  ok   upkeep-table base 'Climactic Research' facilities [1, 3, 6, 7, 8]; alpha #FACILITIES upkeep at (runtime id - 1) == the five live-pinned (id, name, cost) rows [(1, ('Headquarters', 0)), (3, ('Recycling Tanks', 0)), (6, ('Recreation Commons', 1)), (7, ('Energy Bank', 1)), (8, ('Network Node', 1))] mismatches=none; raw sum 3, with the recorded disabled list 2 == recorded 0x744f28 2
+  ok   model-discrimination recorded=(2,2,0); candidates {'A gross=SUM base+0xfc, upkeep with the recorded disabled list': (2, 2, 0), 'B no disabled list': (2, 3, -1), 'C gross=SUM base+0x100': (0, 2, -2), 'D runtime id == alpha line (no +1)': (2, 3, -1)}; matching=1 ['A gross=SUM base+0xfc, upkeep with the recorded disabled list']
+PASS B4: 9/9 gates on m44d_idle.json — the economy model reproduces the recorded idle rounds and the game's own HUD triple

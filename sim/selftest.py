@@ -296,6 +296,230 @@ def run_replay(path, results):
     return None
 
 
+OUR_FAC = 3                     # the human faction: both harnesses hardcode owner == 3
+M46_TRACE = "evidence/m46e_econ.json"   # recorded post-founding state B4's HUD parity uses
+DISABLED_OURS = frozenset({8})  # Network Node, recorded live (m32-m84e.md:272)
+
+
+def _ocr_zero(tok):
+    """A HUD value token the OCR read as zero: 'Olturn'/'Ofturn'/'Oturn' are '0/turn'."""
+    return bool(tok) and tok[0] in "O0" and tok.lower().endswith("turn") \
+        and not any(c in "123456789" for c in tok)
+
+
+def run_economy_replay(trace, results):
+    """B4 gates 1-3 (BUILD_SPINE.md:62): reproduce the 12 idle rounds of
+    evidence/m44d_idle.json -- our faction energy flat at 15, net 0 on every round -- and the
+    HUD triple (gross, upkeep, net) as M46's sums: SUM base+0xfc, SUM upkeep, difference.
+
+    The trace samples at start-of-our-turn, i.e. after the round's upkeep phase has already
+    landed, so a transition is `next = apply(net of the round that just ran)`. Our faction owns
+    no base in any of the 12 rounds (gate 1 asserts that from the trace's own owners map), so
+    the model is alignment-insensitive here: every candidate alignment nets 0.
+    """
+    from . import economy as soecon
+    from . import rules as sorules
+    import os
+
+    rounds = trace["rounds"]
+    table = soecon.upkeep_table(sorules.load(os.path.join(REPO, "data/alpha.json")))
+    years = [r["year"] for r in rounds]
+    e3 = [r["energy"][str(OUR_FAC)] for r in rounds]
+    nours = [r["owners"].get(str(OUR_FAC), {}).get("bases", 0) for r in rounds]
+    results.append((
+        "trace-wellformed rounds=%d years %d..%d consecutive=%s cur==%d on all=%s "
+        "point-set=%s our_energy=%s our_bases_per_round=%s harness deltas.energy3=%s" % (
+            len(rounds), years[0], years[-1], years == list(range(years[0], years[-1] + 1)),
+            OUR_FAC, all(r["cur"] == OUR_FAC for r in rounds),
+            sorted({r.get("point") for r in rounds}), sorted(set(e3)), sorted(set(nours)),
+            trace.get("deltas_per_round", {}).get("energy3")),
+        len(rounds) == 12 and years == list(range(years[0], years[-1] + 1))
+        and all(r["cur"] == OUR_FAC for r in rounds)
+        and {r.get("point") for r in rounds} == {"start-of-our-turn"}
+        and len(set(e3)) == 1 and set(nours) == {0}
+        and trace.get("deltas_per_round", {}).get("energy3") == 0.0))
+
+    states, seq = [], [e3[0]]
+    for i, r in enumerate(rounds):
+        bases = [soecon.base_from_trace(b) for b in r.get("bases", []) if b["owner"] == OUR_FAC]
+        st = soecon.faction_round(OUR_FAC, bases, table, DISABLED_OURS)
+        states.append(st)
+        if i + 1 < len(rounds):
+            seq.append(soecon.apply_round(seq[-1], st["net"]))
+    matched = sum(1 for a, b in zip(seq, e3) if a == b)
+    for i, r in enumerate(rounds):
+        st = states[i]
+        print("  round %2d year %d our_bases=%d gross=%d upkeep=%d net=%d energy sim=%d "
+              "recorded=%d delta=%d" % (i, r["year"], st["n_bases"], st["gross"], st["upkeep"],
+                                        st["net"], seq[i], e3[i], seq[i] - e3[i]))
+    results.append((
+        "idle-replay matched=%d/%d states (initial 1 + transitions %d/%d) nets=%s "
+        "nonzero_net=%d sim_sequence=%s" % (
+            matched, len(rounds), sum(1 for a, b in zip(seq[1:], e3[1:]) if a == b),
+            len(rounds) - 1, sorted({s["net"] for s in states}),
+            sum(1 for s in states if s["net"]), seq),
+        matched == len(rounds) and all(s["net"] == 0 for s in states)))
+
+    triple = (states[-1]["gross"], states[-1]["upkeep"], states[-1]["net"])
+    legible = zeros = 0
+    for r in rounds:
+        toks = r.get("hud_econ_ocr") or []
+        vals = {}
+        for label in ("Income:", "Costs:", "INCOME:"):
+            if label in toks and toks.index(label) + 1 < len(toks):
+                vals[label] = toks[toks.index(label) + 1]
+        if len(vals) == 3:
+            legible += 1
+            zeros += all(_ocr_zero(v) for v in vals.values())
+    results.append((
+        "hud-triple-idle engine=(gross %d, upkeep %d, net %d) == (SUM base+0xfc, SUM upkeep, "
+        "difference) on %d bases; recorded economy-pane OCR legible on %d/12 rounds, all three "
+        "rows read 0/turn on %d of them (evidence/m44d_idle.json:150)" % (
+            triple[0], triple[1], triple[2], states[-1]["n_bases"], legible, zeros),
+        triple == (0, 0, 0) and legible >= 1 and zeros == legible))
+    return states
+
+
+PINNED_ITEMS = {1: ("Headquarters", 0), 3: ("Recycling Tanks", 0), 6: ("Recreation Commons", 1),
+                7: ("Energy Bank", 1), 8: ("Network Node", 1)}  # live table read, m32-m84e.md:270-272
+LATER_ITEMS = {"Fusion Lab": 4, "Quantum Lab": 3, "Nanoreplicator": 4, "Quantum Converter": 6}
+
+
+def run_economy_hud(results):
+    """B4 gates 4-9: the record decoder against a recorded 304-B live read and against every
+    .SAV in the repo, then the economy model against the globals the GAME itself computed in the
+    recorded post-founding state (gross evidence/m46e_econ.json:56, per-base upkeep :102,
+    item counts :61).  Nothing here is graded against a number this file invented."""
+    import glob
+    import json
+    import os
+
+    from . import base as sobase
+    from . import economy as soecon
+    from . import rules as sorules
+    from . import save as sosave
+
+    rules = sorules.load(os.path.join(REPO, "data/alpha.json"))
+    table = soecon.upkeep_table(rules)
+    m46 = json.load(open(os.path.join(REPO, M46_TRACE), encoding="utf-8"))
+    m46_rounds = m46["rounds"]
+
+    live = [b for b in m46_rounds[0]["bases"] if "full" in b][0]
+    dec = sobase.decode_dwords(live["full"])
+    want = {"owner": live["owner"], "pop": live["pop"], "growth": live["growth"],
+            "storage": live["minerals"], "c4": live["c4"], "d4": live["d4"], "e4": live["e4"],
+            "f4": live["f4"], "gross": live["prod_fc"], "b100": live["prod_energy"],
+            "b104": live["prod_104"], "b108": live["prod_108"], "name": live["name"]}
+    got = {k: dec[k] for k in want}
+    results.append((
+        "record-decode-parity %d/%d fields of the recorded %d-dword base record %r reproduce "
+        "the harness's own reads (mismatch=%s)" % (
+            sum(1 for k in want if got[k] == want[k]), len(want), len(live["full"]),
+            want["name"], {k: (want[k], got[k]) for k in want if got[k] != want[k]} or "none"),
+        got == want))
+
+    saves = sorted(glob.glob(os.path.join(REPO, "programs/saves/**/*.SAV"), recursive=True))
+    bad, nrec, owners, withfac, withgross = [], 0, set(), 0, 0
+    maxfac, neg, nonterm, maxlen = -1, 0, 0, 0
+    for p in saves:
+        s = sosave.parse(p)
+        for b in sobase.from_save(s):
+            seam = s.base(b["i"])
+            nrec += 1
+            if (b["i"], b["off"], b["owner"], b["name"]) != (seam["i"], seam["off"],
+                                                             seam["own4"], seam["name"]):
+                bad.append("%s#%d" % (os.path.basename(p), b["i"]))
+            win = s.data[b["off"] + sobase.NAME_OFF:b["off"] + sobase.NAME_OFF + sobase.NAME_LEN]
+            nonterm += b"\0" not in win
+            maxfac = max([maxfac] + b["facilities"])
+            maxlen = max(maxlen, len(b["name"]))
+            neg += b["storage"] < 0
+            owners.add(b["owner"])
+            withfac += bool(b["facilities"])
+            withgross += b["gross"] > 0
+    results.append((
+        "save-records %d saves %d base records decoded; sim.base vs sim.save seam mismatches=%s; "
+        "owners=%s max_facility_id=%d(<%d) storage_negative=%d name_window_without_NUL=%d "
+        "longest_name=%d bases_with_facilities=%d bases_with_gross=%d" % (
+            len(saves), nrec, bad or "none", sorted(owners), maxfac, sobase.FAC_MAX, neg,
+            nonterm, maxlen, withfac, withgross),
+        not bad and maxfac < sobase.FAC_MAX and set(owners) <= set(range(8))
+        and not neg and not nonterm and maxlen > 20))
+
+    bases = [soecon.base_from_trace(b) for b in m46_rounds[0]["bases"]]
+    per = [(r, soecon.faction_round(OUR_FAC, [soecon.base_from_trace(b) for b in r["bases"]],
+                                    table, DISABLED_OURS)) for r in m46_rounds]
+    got3 = [(s["gross"], s["upkeep"], s["net"]) for _r, s in per]
+    rec3 = [(r["scratch"]["gross_745734"],
+             r["scratch"]["upkeep_744f28"], r["scratch"]["net_7457dc"]) for r in m46_rounds]
+    e = [r["fac"][str(OUR_FAC)][0] for r in m46_rounds]
+    pred = [e[0]]
+    for _r, s in per[:-1]:
+        pred.append(soecon.apply_round(pred[-1], s["net"]))
+    final = soecon.apply_round(pred[-1], per[-1][1]["net"])
+    results.append((
+        "hud-triple-postfound engine=%s recorded_game_globals=%s on %d rounds; energy %s -> "
+        "predicted %s final %s recorded_final %s" % (
+            got3, rec3, len(per), e, pred, final, m46["final"]["energy"][str(OUR_FAC)]),
+        got3 == rec3 and all(t == (2, 2, 0) for t in rec3) and pred == e
+        and final == m46["final"]["energy"][str(OUR_FAC)]))
+
+    r0, s0 = per[0]
+    pb_ok = s0["per_base_upkeep"] == r0["scratch"]["per_base_upkeep_744f2c"]
+    ic_ok = s0["item_counts"] == r0["scratch"]["item_counts_745738"]
+    r1, s1 = per[1]
+    results.append((
+        "aggregator-arrays per_base_upkeep %d entries == recorded 0x744f2c %s (engine nonzero %s); "
+        "item_counts %d entries == recorded 0x745738 (nonzero %s); round2 same=%s" % (
+            len(s0["per_base_upkeep"]), [(i, v) for i, v in enumerate(
+                r0["scratch"]["per_base_upkeep_744f2c"]) if v],
+            [(i, v) for i, v in enumerate(s0["per_base_upkeep"]) if v], len(s0["item_counts"]),
+            [(i, v) for i, v in enumerate(s0["item_counts"]) if v],
+            s1["per_base_upkeep"] == r1["scratch"]["per_base_upkeep_744f2c"]
+            and s1["item_counts"] == r1["scratch"]["item_counts_745738"]),
+        pb_ok and ic_ok and s1["per_base_upkeep"] == r1["scratch"]["per_base_upkeep_744f2c"]
+        and s1["item_counts"] == r1["scratch"]["item_counts_745738"]))
+
+    ours_fac = dec["facilities"]
+    raw = sum(table[i] for i in ours_fac)
+    adj = sum(soecon.item_upkeep(table, i, DISABLED_OURS) for i in ours_fac)
+    names = {i: soecon.item_name(rules, i) for i in PINNED_ITEMS}
+    wrong = [i for i in PINNED_ITEMS if (names[i], table[i]) != PINNED_ITEMS[i]]
+    results.append((
+        "upkeep-table base %r facilities %s; alpha #FACILITIES upkeep at (runtime id - 1) == the "
+        "five live-pinned (id, name, cost) rows %s mismatches=%s; raw sum %d, with the recorded "
+        "disabled list %d == recorded 0x744f28 %d" % (
+            want["name"], ours_fac, sorted(PINNED_ITEMS.items()), wrong or "none", raw, adj,
+            r0["scratch"]["upkeep_744f28"]),
+        not wrong and ours_fac == sorted(PINNED_ITEMS) and raw == 3 and adj == 2
+        and adj == r0["scratch"]["upkeep_744f28"]))
+
+    variants = {
+        "A gross=SUM base+0xfc, upkeep with the recorded disabled list": got3[0],
+        "B no disabled list": soecon.faction_round(OUR_FAC, bases, table, frozenset()),
+        "C gross=SUM base+0x100": soecon.faction_round(
+            OUR_FAC, [dict(b, gross=b.get("b100", 0)) for b in bases], table, DISABLED_OURS),
+        "D runtime id == alpha line (no +1)": soecon.faction_round(
+            OUR_FAC, bases, soecon.upkeep_table(rules, shift=0), DISABLED_OURS),
+    }
+    tri = lambda s: (s["gross"], s["upkeep"], s["net"])
+    variants = {k: tri(v) if isinstance(v, dict) else v for k, v in variants.items()}
+    hits = sorted(k for k, v in variants.items() if v == rec3[0])
+    results.append((
+        "model-discrimination recorded=(%d,%d,%d); candidates %s; matching=%d %s" % (
+            rec3[0][0], rec3[0][1], rec3[0][2],
+            {k: v for k, v in sorted(variants.items())}, len(hits), hits),
+        hits == ["A gross=SUM base+0xfc, upkeep with the recorded disabled list"]))
+
+    for name, recorded in sorted(LATER_ITEMS.items()):
+        line = rules.find_by_first_field(soecon.FACILITIES, name)
+        upk = int(rules.field(soecon.FACILITIES, line, soecon.UPKEEP_COL))
+        print("  info table-later       %-20s alpha line %d upkeep %d vs M46 live read %d %s"
+              % (name, line, upk, recorded,
+                 "==" if upk == recorded else "DIFFERS (OPEN: runtime row order is not alpha order)"))
+    return None
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -308,15 +532,29 @@ def main(argv=None):
     if args.replay:
         if not os.path.exists(args.replay):
             return fail("replay trace not found: %s" % args.replay)
-        run_replay(args.replay, results)
+        import json
+        rung = None
+        try:
+            doc = json.loads(open(args.replay, encoding="utf-8").read())
+        except ValueError:
+            doc = None
+        if isinstance(doc, dict) and "rounds" in doc:      # an economy trace (m44d/m46 shape)
+            run_economy_replay(doc, results)
+            run_economy_hud(results)
+            rung = "B4"
+        else:                                              # a turn trace (m30 .jsonl)
+            run_replay(args.replay, results)
+            rung = "B3"
         bad = [n for n, ok in results if not ok]
         for name, ok in results:
             print(("  ok   " if ok else "  BAD  ") + name)
         if bad:
-            return fail("B3: %d/%d gates failed: %s" % (
-                len(bad), len(results), "; ".join(bad)))
-        print("PASS B3: %d/%d gates on %s — the turn engine reproduces the recorded "
-              "sequence" % (len(results), len(results), os.path.basename(args.replay)))
+            return fail("%s: %d/%d gates failed: %s" % (
+                rung, len(bad), len(results), "; ".join(bad)))
+        print("PASS %s: %d/%d gates on %s — %s" % (
+            rung, len(results), len(results), os.path.basename(args.replay),
+            "the economy model reproduces the recorded idle rounds and the game's own HUD triple"
+            if rung == "B4" else "the turn engine reproduces the recorded sequence"))
         return 0
     if args.sav and not args.map:
         run_save(args.sav, results)
