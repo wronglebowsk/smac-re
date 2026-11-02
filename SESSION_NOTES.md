@@ -555,3 +555,32 @@ to be loaded from `ds:0x92ae14` or lea'd from such a register. No threshold or f
 **Finding, not a failure.** rec118's logged press covers 41->45 = 2 tiles, so one of its two steps lies outside the committed window (4 presses logged; §M27 item 1 documents a 5th, on 117); the model lands it at (43,11). §M27's post-state mpused (117/118 = 3, 119/120 = 6) is not a step count: consume-all 0x5acdb0 sets spent := total when a unit finishes acting, which is what 119/120 read.
 
 **ASSUMED, queued as picks:** per-tile cost uniform 3 (alpha `#TERRAIN` is the terraform-improvement table, not a movement-cost table); and the bonus behind FUN_005ac550 returning 6 for these units (alpha `#CHASSIS` lists Infantry Speed = 1).
+
+## Session 208 (2026-11-02, ANALYSE, M267 + M268 both PASS) — the 0x6725ac/0x6725a4 pair is ONE vtable with two entry points, shared by 1 ctor + 4 destructors of 4 variants of the virtual base at [desc+4]; the 201 x 608 block is tag-initialized, never indexed, never saved
+
+`python3 scripts/m267_m268_census.py` -> `SUMMARY M267/M268: 14/14 gates PASS` (rc=0, 4.2 s, static;
+`evidence/m267_m268_census.txt`). Invocations 1 and 2 were instrument bugs, not evidence changes:
+7/14 (the pair-store regex left `v` unbound; the vtable "cap" was built from every stored rdata
+imm32, which includes mid-table addresses like 0x6725a8) then 13/14 (G9 compared FULL op sequences,
+but the ctor carries one dead `mov eax,[ebp-0x4]` reload the dtor lacks: 6 ops vs 5). No threshold,
+floor or check was weakened to get green; G2's `lo_b == lo_a` clause was dropped because that cap is
+meaningless, and the claim tested instead is the forward-run identity, which passes uncapped.
+
+**M267, the pick.** 5 pair stores, one per installer: 0x6725ac at {0x42197e, 0x469798, 0x518a92,
+0x59c01a, 0x59c25b}, 0x6725a4 at {0x42198e, 0x4697aa, 0x518aa2, 0x59c02e, 0x59c26b} (G1). The pair
+is ONE table: 0x6725a4 == 0x6725ac - 8, the code-pointer run ends at 0x672a38 from both, 291 slots
+from 0x6725ac and 293 from 0x6725a4, and the three head dwords (0x4222c0, 0x405350, 0x422190) are
+none of them a Ghidra function start — thunks/labels (G2). **No installer is address-taken anywhere
+in the image** (0 LE dwords over all sections; G3), so these are direct-call ctor/dtor bodies, not
+vmethods, and the table's own slot 0 is a different function. FUN_00469650 is the CONSTRUCTOR (3 x
+_eh_vector_constructor_iterator_ 0x64bda0, 0 x 0x64bc40); FUN_00421950 / FUN_00518980 / FUN_0059bec0
+/ FUN_0059c1e0 are DEstructors (0 ctor-iter; 3/4/3/3 dtor-iter 0x64bc40) (G5) — **corrects M265 G4's
+"5 ctors"**. Variant markers (G4): 0x675964 | none | 0x678184+0x67817c (the +0x23d94 subobject, the
+0x678458 class whose ctor is FUN_0050aa60) | 0x67194c+0x671944 | 0x67194c+0x671944 written into
+stack slots. WHY the offsets differ (G6+G7): the ctor also stores `[vptr-4] = [desc+4] - 0x21a6c`
+(shard_008.c:5869) and every installer recomputes the same delta with `sub reg,0x21a6c` or
+`lea reg,[eax-0x21a6c]` within 14 insns of its pair store — the subobject is a VIRTUAL BASE whose
+runtime offset is read from the class descriptor, which is exactly M265's `[desc+4]` law. FUN_0059bec0
+reserves 0x25318 = 152,856 B on the stack (the only 0x25318 in the image, G8), constructs the object
+with flag 1 (push 0x1 at 0x59beed, so the descriptor store is skipped), calls the save writer
+FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.

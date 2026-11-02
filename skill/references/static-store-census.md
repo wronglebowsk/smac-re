@@ -482,3 +482,15 @@ other mode, and the run then reads like an instrument failure when it is already
 - **Before calling an unreferenced function a linker duplicate, compare MNEMONIC SEQUENCES**, not bytes: index `" ".join(mnemonics)` for every function with >= 40 insns and look the subject up. A 159-insn signature with zero matches is a unique body (dead code), not an ICF leftover. Validate the parser in the same gate: the signature length must equal index.csv `n_insns`.
 - **Alignment padding proves a separate function**: if the predecessor ends in `ret` and the gap to the candidate is 0x90 NOPs, nothing falls through into it, so "no references" is not "Ghidra split one body".
 - **A class descriptor sits at [obj+0] and its dword[+4] IS the offset of the virtual subobject** (terran.exe: 0x675964->0x21a6c, 0x6763fc->0x22050, 0x678458->0x23d94). Tell it from a vtable: a descriptor's dword[0] is 0 and dword[+4] is an in-object offset (< the object size), a vtable's dword[0] is a code address. Prove the reading from the ctor and the teardown together: the `add ecx,K`/`lea ecx,[reg+K]` that feeds the subobject ctor uses exactly K, and the teardown does `mov edx,[ecx] ; add ecx,[edx+4] ; call <dtor>`. The allocation size then falls out: subobject offset + subobject extent == the malloc'd size (0x21a6c + 0xa14 == 0x22480).
+- **A vptr PAIR 8 B apart is ONE table read two ways** (s208, M267): 0x6725a4 = 0x6725ac - 8 and both
+  entry points sit in ONE code-pointer run ending 0x672a38 (291 slots from the first, 293 from the
+  second); the 2 extra head dwords are the secondary base's adjustor thunks. Report one extent, not two
+  tables, and say which slot offsets the two views share (0x6725a4+0xc == 0x6725ac+4).
+- **The "cap at the next candidate base" law needs REAL bases only**: mid-table addresses are stored as
+  imm32 too (0x6725a8 = 0x6725a4+4, and 0x672708), so a candidate set built from "every stored rdata
+  imm32 whose dword[0] is code" caps a 291-slot vtable at 87. Test the forward run from each entry
+  point instead — the identity of the END is the claim, and it needs no cap.
+- **`[vptr-4] = [desc+4] - K` names a VIRTUAL BASE** (s208, M267): the dword before a vptr holds the
+  delta between the runtime subobject offset (`[class descriptor]+4`) and the compile-time constant K
+  the body was compiled against; every ctor/dtor of every variant recomputes it (`sub reg,K` /
+  `lea reg,[eax-K]`) within ~14 insns of installing the pair. Ghidra renders the store as `+ -4)`.
