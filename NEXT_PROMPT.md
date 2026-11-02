@@ -33,9 +33,9 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.j
 
 ## THE LEDGER
 
-Merged M54A-M255 + B0-B3 (through #190); UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5,
-PR open)**. Full list with PR numbers and reasons VERBATIM: `docs/pick-archive.md` §trim-s202; per-id
-semantics in `NAMED.md`.
+Merged M54A-M264 + B0-B4 (through #194); M265-M266 is this PR. UNMERGED M83/M84, M86, M101, M103, M109
+and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
+`docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
@@ -66,42 +66,36 @@ semantics in `NAMED.md`.
   the 7 allocated blocks ARE, why FUN_00583c70 is unreferenced). Numbers VERBATIM: `NAMED.md` per-id,
   §s196-§s206; the s205 RESULT block moved VERBATIM to `docs/pick-archive.md` §s206 (+ traps 16-19 at
   §trim-s205). FUN_005f3f5b is NOT open — see M220.
-- RESULT (s206): **the 7 blocks are class-0x675964 objects** — ctor FUN_00469650, 7 call sites
-  {0x40a027, 0x468fc0, 0x48dc7a, 0x4cb5cf, 0x50aaae, 0x5803b2, 0x59befc}, `[ebp+0x8]` gating the install
-  `mov [this+0],0x675964` (0x469681, the only mention image-wide). [0] = a 2-dword class descriptor whose
-  dword[+4] IS the base-subobject offset (law holds for 0x675964→0x21a6c, 0x6763fc→0x22050,
-  0x678458→0x23d94, each matching the `add ecx,K`/`lea ecx,[reg+K]` feeding `call 0x5e3b80`, 53 callers);
-  [4] = a lazily-freed pointer; **201 contiguous 608-B elements +0xc..+0x1dd6c** (0x64bda0 constructs 4 at
-  +0xc and 196 at +0x98c, element ctor/dtor 0x62514b/0x62516c, the same element ctor then runs in place at
-  +0x1db0c) — ending 8 B before the +0x1dd74 the load-side clears; +0x1ef54 = 4 × 2756-B elements (ctor
-  0x6251d0 → vtable 0x679e08); the subobject at +0x21a6c has its vptr pair overwritten to 0x6725ac there
-  and 0x6725a4 at +0x21eb0 (delta 0x444) — a pair stored at 5 sites in 5 ctors {FUN_00421950, FUN_00469650,
-  FUN_00518980, FUN_0059bec0, FUN_0059c1e0}. **SIZE PROVEN**: FUN_005e3b80's stores top out at +0xa10 and
-  0x21a6c + 0xa14 = 0x22480 = the allocation. Dispatch: FUN_004412a0 reads [desc+4] and calls slots +4/+8
-  of 0x6725ac (= FUN_005cdd0a / FUN_005cdf82), the same two it calls directly on the static instance
-  0x8cc520; FUN_00479e90 frees [this+4] via 0x4017d0 then `this += [desc+4]` → 0x5e3d74. **M266**:
-  0x583c70 appears in ZERO .text operands and as an LE dword in ZERO offsets of the whole file image; not
-  fallthrough-entered (FUN_00583c20 rets at 0x583c6b + four 0x90 pad); 1 of 8 functions in
-  0x583000..0x584300 with n_callers==0, all 8 with zero address-taken dwords; its 159-insn mnemonic
-  signature matches 0 other functions ≥40 insns (not a linker duplicate); it is a terrain-record helper of
-  FUN_00583c20's family (callees {0x582000, 0x5b09b0, 0x625af1, 0x64a7f0}, globals ds:0x92a378/0x92a37c) —
-  0x583e1d can never execute. `python3 scripts/m265_m266_census.py` -> `SUMMARY M265/M266: 12/12 gates
-  PASS` (rc=0, 2.68 s; green on inv 3 — inv 1 a TypeError in my own push-order helper, inv 2 6/12 on five
-  of my own expectations, each fixed against the corpus's own print). Numbers VERBATIM: `NAMED.md`
-  §M265-§M266.
+- RESULT (s206): **the 7 blocks are class-0x675964 objects** — ctor FUN_00469650 (7 call sites, one of
+  them the startup loop at 0x5803b2), `[ebp+0x8]` gating `mov [this+0],0x675964` (0x469681, the only
+  mention image-wide). [0] = a 2-dword class descriptor whose dword[+4] IS the base-subobject offset
+  (holds for 0x675964→0x21a6c, 0x6763fc→0x22050, 0x678458→0x23d94, each matching the `add ecx,K`/
+  `lea ecx,[reg+K]` feeding `call 0x5e3b80`, 53 callers); [4] = a lazily-freed pointer; **201 contiguous
+  608-B elements +0xc..+0x1dd6c** (4 at +0xc + 196 at +0x98c via 0x64bda0, element ctor/dtor
+  0x62514b/0x62516c, the 201st in place at +0x1db0c), ending 8 B before the +0x1dd74 the load-side
+  clears; +0x1ef54 = 4 × 2756-B elements (ctor 0x6251d0 → vtable 0x679e08); the subobject at +0x21a6c
+  gets the vptr pair 0x6725ac / 0x6725a4@+0x21eb0 (delta 0x444), a pair stored at 5 sites in 5 ctors.
+  **SIZE PROVEN**: FUN_005e3b80's stores top out at +0xa10 and 0x21a6c+0xa14 = 0x22480 = the allocation.
+  FUN_004412a0 dispatches through [desc+4] to slots +4/+8 of 0x6725ac (= FUN_005cdd0a/FUN_005cdf82), the
+  same two it calls directly on the static instance 0x8cc520; FUN_00479e90 frees [this+4] via 0x4017d0
+  then `this += [desc+4]` → 0x5e3d74. **M266**: 0x583c70 is in ZERO .text operands and an LE dword at
+  ZERO offsets of the whole file image; not fallthrough-entered (FUN_00583c20 rets at 0x583c6b + four
+  0x90 pad); 1 of 8 functions in 0x583000..0x584300 with n_callers==0, all 8 with zero address-taken
+  dwords; its 159-insn mnemonic signature matches 0 other functions ≥40 insns; a terrain-record helper
+  of FUN_00583c20's family (globals ds:0x92a378/0x92a37c) — 0x583e1d can never execute.
+  `python3 scripts/m265_m266_census.py` -> `SUMMARY M265/M266: 12/12 gates PASS` (rc=0, 2.68 s; green on
+  inv 3, inv 1-2 failed on my own expectations). Numbers VERBATIM: `NAMED.md` §M265-§M266.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
   `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save —
   the box is DOWN, cold relaunch >9 min); **what the row stride 188 means** (new from M257: `esi =
   2*region + 188*fac`, regions 94..127 pass the next row — one live read of both indexings of `0x94eaa8`
-  settles it; box); **what the 201 608-B elements ARE** (new from M265: they are 121,600 of the
-  140,416-B block, the element ctor 0x62514b only sets {dword0=3, dword1=0} and the dtor is 0x62516c —
-  cross-check the 4/196/201 counts against `data/alpha.json` row counts and find who walks +0xc..+0x1dd6c
-  with a 0x260 stride; static); **which variants share the 0x6725ac/0x6725a4 pair** (new from M265: 5 ctors
-  install it at different object offsets and FUN_0050aa60 calls the subobject ctor 0x5e3b80 TWICE
-  (+0x23d94 then +0x21a68) — read the 5 installers' descriptors + sizes and what the text after
-  0x675964+8 is for; static).
+  settles it; box); **what the 201 608-B elements ARE** (new from M265: 121,600 of the 140,416-B block,
+  element ctor 0x62514b sets only {dword0=3, dword1=0} — cross-check 4/196/201 vs `data/alpha.json` row
+  counts and find who walks +0xc..+0x1dd6c at a 0x260 stride; static); **which variants share the
+  0x6725ac/0x6725a4 pair** (new from M265: 5 ctors install it at different offsets and FUN_0050aa60 calls
+  0x5e3b80 TWICE (+0x23d94 then +0x21a68) — read the installers' descriptors+sizes; static).
 ## LIVE FACTS / KIT
 
 - **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
