@@ -550,3 +550,15 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   `sudo -n python3 scripts/smac_preflight.py` before arming. Recipe, cold-box timing, the degraded-box poke
   facts (0x985ac4 bit 0x200, mask byte 0x985b10, the PANE decides where INSERT lands) and the full state
   dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199.
+
+## §s204 move — the s202 RESULT block, moved VERBATIM from NEXT_PROMPT.md (footing headroom)
+
+- RESULT (s202): the worth test behind the 7/8 verdict byte is `cmp edx,ecx` at `0x5584b4` (`jle
+  0x5584e3` -> false) ANDed with leg2 `cmp eax,ecx` at `0x5584d8`, then OR'd with a 4-bit reason word
+  [ebp-0x54]. LHS = 2*((DWORD[block+0x94d810] - DWORD[block+0x94d818] + [ebp-0x60]) *
+  BYTE[block+region+0x94e5a8]); RHS = WORD[0x94eaa8 + 2*region] + WORD[0x94eaa8 + 2*region + 188*fac];
+  [ebp-0x60]'s live store is `0x558424` = 3 + (ds:0x985afc>75) + FUN_00531090(ds:0x985b30,0) + the
+  base-count/mode-bit/0x94eca8-byte adjustments + the 8-slot fold count. The per-region arrays are a
+  12-array family `0x94e4a8..0x94ee28` — every gap 0x80 (byte/region) or 0x100 (word/region), zero
+  DWORD accesses, 128 entries each (`cmp ecx,0x80`, `0x558b1c`); `0x94e7a8` is a WORD array (retracts
+  the s201 "flag bytes" row). `python3 scripts/m256_worth_operands.py` -> `SUMMARY PASS: 8/8` (static).
