@@ -20,8 +20,8 @@ mid-sentence). **Whatever is not finished by ~150k tokens is not finished at all
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.
 
 Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
-patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
-go 1 per batch). The binding cap is doc headroom, not capability.**
+patches. **Batch size: FIVE static milestones fit through ONE census script; box milestones 1 per batch. The
+binding cap is doc headroom, not capability.**
 
 ## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
@@ -56,9 +56,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 ## THE PICK — index (detail: `docs/pick-archive.md`)
 
-- **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
-  family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
-  displacements, M143-M162). Start there before re-deriving a field.
+- **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
+  family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
 - ANSWERED (do not re-pick): s187-s206 — M227-M237, **B1-B4**, M240-M266 (M241 FAIL 2/5, #180 open;
   the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
   test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
@@ -69,8 +68,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 - RESULT (s206): **the 7 blocks are class-0x675964 objects** — ctor FUN_00469650 (7 call sites, one of
   them the startup loop at 0x5803b2), `[ebp+0x8]` gating `mov [this+0],0x675964` (0x469681, the only
   mention image-wide). [0] = a 2-dword class descriptor whose dword[+4] IS the base-subobject offset
-  (holds for 0x675964→0x21a6c, 0x6763fc→0x22050, 0x678458→0x23d94, each matching the `add ecx,K`/
-  `lea ecx,[reg+K]` feeding `call 0x5e3b80`, 53 callers); [4] = a lazily-freed pointer; **201 contiguous
+  (holds for 0x675964→0x21a6c, 0x6763fc→0x22050, 0x678458→0x23d94 — each matches the `add ecx,K` feeding
+  `call 0x5e3b80`, 53 callers); [4] = a lazily-freed pointer; **201 contiguous
   608-B elements +0xc..+0x1dd6c** (4 at +0xc + 196 at +0x98c via 0x64bda0, element ctor/dtor
   0x62514b/0x62516c, the 201st in place at +0x1db0c), ending 8 B before the +0x1dd74 the load-side
   clears; +0x1ef54 = 4 × 2756-B elements (ctor 0x6251d0 → vtable 0x679e08); the subobject at +0x21a6c
@@ -81,8 +80,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   then `this += [desc+4]` → 0x5e3d74. **M266**: 0x583c70 is in ZERO .text operands and an LE dword at
   ZERO offsets of the whole file image; not fallthrough-entered (FUN_00583c20 rets at 0x583c6b + four
   0x90 pad); 1 of 8 functions in 0x583000..0x584300 with n_callers==0, all 8 with zero address-taken
-  dwords; its 159-insn mnemonic signature matches 0 other functions ≥40 insns; a terrain-record helper
-  of FUN_00583c20's family (globals ds:0x92a378/0x92a37c) — 0x583e1d can never execute.
+  dwords; its 159-insn signature matches 0 other functions ≥40 insns; it is FUN_00583c20's terrain-record
+  sibling (globals ds:0x92a378/0x92a37c) — 0x583e1d can never execute.
   `python3 scripts/m265_m266_census.py` -> `SUMMARY M265/M266: 12/12 gates PASS` (rc=0, 2.68 s; green on
   inv 3, inv 1-2 failed on my own expectations). Numbers VERBATIM: `NAMED.md` §M265-§M266.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
