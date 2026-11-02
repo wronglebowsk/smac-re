@@ -31,9 +31,8 @@ claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; ti
 ⇒ pick from this file exactly as usual.
 
 **B3 DONE (s199)** — 6/6 gates, `matched=67/67`, one invocation: `sim/turn.py` IS the turn engine
-(ascending 8-slot walk, our slot 3; year++ on the 7→0 edge; `tf` cleared one step after `cur` reaches 3).
-Full result text VERBATIM: `docs/pick-archive.md` §s200. Read `sim/turn.py`'s docstring before writing
-B4's check. Next rung: **B4 economy**.
+(ascending 8-slot walk, our slot 3; year++ on the 7→0 edge; `tf` cleared one step after `cur` hits 3).
+Full result text VERBATIM: `docs/pick-archive.md` §s200. Read its docstring before writing B4's check.
 
 ## THE LEDGER
 
