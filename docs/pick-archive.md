@@ -580,3 +580,16 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   (Note added at s205: M262 retracted this block's "FUN_00580260 ... zeroes table entries 1..7" and
   "the ~140 KB views are not allocated" — the loop allocates 0x22480 B per entry and stores it through
   a cursor; see `NAMED.md` §M262.)
+
+## §trim-s205 — traps 16-19, moved VERBATIM out of NEXT_PROMPT.md (footing headroom)
+
+16. Grep objdump case-sensitively (`DWORD PTR`, not `ptr [`).
+17. gdb startup/exit chatter must be whitelisted (`DEBUGINFOD_URLS=""`; `^\[Inferior `, `This GDB supports`, `Enable
+    debuginfod`, `Debuginfod has`, `To make this setting`) or a zero-unparsed gate FAILs on a clean run.
+18. ARM BEFORE ANY SCREEN: setup writes finish before the first OCR-able screen and the CDROM screen is QUIESCENT for
+    4 min but only advances on driver input — a true-title wait DEADLOCKS. A hw watchpoint can MISS a change entirely;
+    `[New LWP]` after ARMED = threads gdb may not have re-armed; a background census job DIES with its session.
+19. `gdb -batch` EXITS the moment a stop has no command left: wineserver sends SIGUSR1 during startup, so a batch census
+    MUST carry `handle SIGUSR1 nostop noprint pass` (SIGUSR2/SIGPIPE too) and a ~400-`continue` tail. A bp on a function
+    that serves the whole game (the four read wrappers) costs one ptrace stop per read: 25,957 stops starved the load
+    driver to ZERO loads — filter by FILE* (`set $savefile` at the loader's entry).

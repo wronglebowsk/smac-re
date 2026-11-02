@@ -28,8 +28,7 @@ go 1 per batch). The binding cap is doc headroom, not capability.**
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
-ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`sim/base.py` +
-`sim/economy.py`; the base name field is 32 B, not 20; text `NAMED.md` §B4). **B3 DONE (s199)** 6/6 (§s200).
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json`, **B3 DONE (s199)** 6/6 — text `NAMED.md` §B4 + §s200.
 **Next rung B5 = units/movement.**
 
 ## THE LEDGER
@@ -65,29 +64,21 @@ semantics in `NAMED.md`.
   test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
   view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class).
   Numbers VERBATIM: `NAMED.md` per-id, §s196-§s205; the s204 RESULT block moved VERBATIM to
-  `docs/pick-archive.md` §s205. FUN_005f3f5b is NOT open: M220 has it (slot +0x15c of 0x6717cc, 70
-  installs, called directly twice by FUN_00406990); s205 counted 28 image-wide `call [reg+0x15c]` sites.
-- RESULT (s205): **the view-table entries 1..7 ARE allocated** — FUN_00580260's loop at 0x580392 walks
-  esi 0x7cded0 → `cmp esi,0x7cdeec`/`jl`, step 4 (7 iterations), `push 0x22480 ; call 0x64bc20` then
-  `push 1 ; mov ecx,eax ; call 0x469650`, and stores with the POINTER-ARITHMETIC `mov [esi],eax` at
-  0x5803bb; 0 lands there only on the alloc-failure path, so M260's "zeroes entries 1..7" and "the
-  ~140 KB views are not allocated" are RETRACTED (0x224b8 = 0x22480 + 0x38, heap header, INFERRED).
-  Band census: 426 mentions, 1 store naming it, 39 indexed mentions in 12 functions, 0 indexed stores,
-  4 of 35 address-of sites escape and all 4 hand out &DAT_007cdecc (G1-G5). **The LOAD trusts the file's
-  band bytes**: the writer set re-derives to M259's 8 functions / 10 stores + FUN_0051c750's walk store,
-  and the depth-9 forward closure of the 6 load-path functions (FUN_00596850/FUN_00597a70 + their 4
-  callers FUN_00597ce0/FUN_00597ee0/FUN_00598250/FUN_00598340) is 276 functions meeting it in ZERO, with
-  no writer in any vtable slot (G6-G8); FUN_00583c70 (writer 0x583e1d) has ZERO references image-wide.
-  **FUN_005be090 is operator-new** (72 B → FUN_00649e00 → FUN_00649e70 with the heap handle ds:0x99d5f8;
-  the NULL path reports "FATAL ERROR" / "Windows has run out of virtual memory; the game will exit…"
-  through the global function pointer ds:0x671320): 0 vtable slots, 119 sites in 74 functions, and the
-  footing's "13 [reg+4] sites" are store-after-alloc sites — 14 in 13 functions (G9-G10). ds:0x9965b8 is
-  a LINEAR RECORD CURSOR: FUN_005dbb5f stamps a blank record (10 zero stores + `mov byte ptr [ecx+0x8],0x9`)
-  and bumps +0x2c, FUN_005dbbe6 rewinds −[rec+0x10]*[rec+0x14] and frees [rec+4] via FUN_0064a7f0,
-  FUN_005dbdc0 is the filler (mallocs w*h at 0x5dc1ed into [rec+4], then advances by the same product)
-  (G11). `python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11 gates PASS` (rc=0,
-  3.7 s, one green invocation; inv 1 was 10/11 on a count copied from a truncated probe print — moved
-  only after an objdump corpus said 39/12).
+  `docs/pick-archive.md` §s205 (+ traps 16-19 at §trim-s205). FUN_005f3f5b is NOT open — see M220.
+- RESULT (s205): **the view-table entries 1..7 ARE allocated** — FUN_00580260's loop at 0x580392 walks esi
+  0x7cded0 → 0x7cdeec step 4 (7 iters): `push 0x22480 ; call 0x64bc20` → `push 1 ; mov ecx,eax ; call
+  0x469650` → the POINTER-ARITHMETIC store `mov [esi],eax` (0 only on the failure path). M260's "zeroes
+  entries 1..7" / "the ~140 KB views are not allocated" RETRACTED (0x224b8 = 0x22480 + 0x38, INFERRED).
+  **The LOAD trusts the file's band bytes**: none of the 8 writer functions (+ FUN_0051c750's walk store)
+  is in the depth-9 forward closure of the 6 load-path functions (276 functions) and none sits in a
+  vtable slot; FUN_00583c70 (writer 0x583e1d) has ZERO references image-wide. **FUN_005be090 is
+  operator-new** (→ 0x649e00 → 0x649e70 with the heap handle ds:0x99d5f8; the NULL path reports through
+  the global pointer ds:0x671320): 0 slots, 119 sites in 74 functions, and the footing's "13 [reg+4]
+  sites" are store-after-alloc (14 in 13 functions). ds:0x9965b8 is a LINEAR RECORD CURSOR (FUN_005dbb5f
+  bumps +0x2c and stamps [rec+8]=9; FUN_005dbbe6 rewinds −w*h and frees [rec+4] via FUN_0064a7f0;
+  FUN_005dbdc0 is the filler). `python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11
+  gates PASS` (rc=0, 3.7 s; inv 1 was 10/11 on a count copied from a truncated probe print, moved only
+  after an objdump corpus said 39/12). Gate-by-gate numbers VERBATIM: `NAMED.md` §M262-§M264.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
@@ -107,8 +98,7 @@ semantics in `NAMED.md`.
 - **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
   python3 scripts/m54a_load.py --relaunch` as a TRACKED background job; `sudo -n
   python3 scripts/smac_preflight.py` (yama ptrace_scope=1 ⇒ `/proc/<pid>/mem` needs sudo) before arming.
-  Recipe, cold timing, the degraded-box poke facts (0x985ac4 bit 0x200, mask byte 0x985b10, the PANE
-  decides where INSERT lands) and the full state dumps VERBATIM: skill `references/wine-operations.md`,
+  Recipe, cold timing, the degraded-box poke facts and the state dumps VERBATIM: skill `references/wine-operations.md`,
   `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
 
 ## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
@@ -155,16 +145,11 @@ semantics in `NAMED.md`.
     194 = FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
 15. A list cursor read BEFORE the seek is the PREVIOUS cursor (the pump seeks at 0x497717 — print at 0x49771c).
     `milestone.py start <id>` refuses a dirty tree and resets to main: stash, start, pop, THEN rewrite the cursor.
-16. Grep objdump case-sensitively (`DWORD PTR`, not `ptr [`).
-17. gdb startup/exit chatter must be whitelisted (`DEBUGINFOD_URLS=""`; `^\[Inferior `, `This GDB supports`, `Enable
-    debuginfod`, `Debuginfod has`, `To make this setting`) or a zero-unparsed gate FAILs on a clean run.
-18. ARM BEFORE ANY SCREEN: setup writes finish before the first OCR-able screen and the CDROM screen is QUIESCENT for
-    4 min but only advances on driver input — a true-title wait DEADLOCKS. A hw watchpoint can MISS a change entirely;
-    `[New LWP]` after ARMED = threads gdb may not have re-armed; a background census job DIES with its session.
-19. `gdb -batch` EXITS the moment a stop has no command left: wineserver sends SIGUSR1 during startup, so a batch census
-    MUST carry `handle SIGUSR1 nostop noprint pass` (SIGUSR2/SIGPIPE too) and a ~400-`continue` tail. A bp on a function
-    that serves the whole game (the four read wrappers) costs one ptrace stop per read: 25,957 stops starved the load
-    driver to ZERO loads — filter by FILE* (`set $savefile` at the loader's entry).
+16-19. objdump prints UPPERCASE (`DWORD PTR`, not `ptr [`); gdb startup/exit chatter must be whitelisted
+    (`DEBUGINFOD_URLS=""`, the `^[Inferior `/debuginfod lines); ARM BEFORE ANY SCREEN (the CDROM screen
+    quiesces 4 min but only advances on driver input); a `gdb -batch` census needs the SIGUSR1/SIGUSR2/
+    SIGPIPE `handle ... nostop noprint pass` tail + a ~400-`continue` tail, and a bp on a game-wide reader
+    costs one ptrace stop per read. VERBATIM text: `docs/pick-archive.md` §trim-s205.
 20-22. byte-field BIT OPS vs dword scans; a "stride conflict" is ONE multiply read in two pieces; a global
     with ZERO writers is LOAD-TIME data — verbatim: `docs/pick-archive.md` §s198.
 23. A VALUE SAMPLER IS NOT A STORE CENSUS (a same-value store leaves no trace) and a census PARSER is not a
