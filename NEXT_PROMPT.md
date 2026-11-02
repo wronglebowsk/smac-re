@@ -30,21 +30,14 @@ build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs 
 claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`); ANALYSE
 ⇒ pick from this file exactly as usual.
 
-**B3 DONE (s199)** — 6/6 gates, `matched=67/67`, one invocation: `sim/turn.py` IS the turn engine
-(ascending 8-slot walk, our slot 3; year++ on the 7→0 edge; `tf` cleared one step after `cur` hits 3).
-Full result text VERBATIM: `docs/pick-archive.md` §s200. Read its docstring before writing B4's check.
+**B3 DONE (s199)** — 6/6 gates, `matched=67/67`, one invocation. Full result text VERBATIM:
+`docs/pick-archive.md` §s200. Read `sim/turn.py`'s docstring before writing B4's check.
 
 ## THE LEDGER
 
-Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
-M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), B2 (s195, 7/7),
-M244 (#185), M245-M247 (#186), M248/M249 (s198, 5/5), B3 (s199, 6/6), M250-M252 (s200, 7/7), M253-M255 (s201, 8/8), s175
-cap triage (#153), docs #169/#174/#175/#177.
-UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
-ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
-superseded), M103 (#110, never green), M109 (gates answered, model void), M241 (#180, 2/5 — its PR stays
-open; M242 answered the same question from the right premise). Summaries: `pick-archive.md`,
-`NAMED.md`, `skill/references/code-atlas.md`.
+Merged M54A-M255 + B0-B3 (through #190); UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5,
+PR open)**. Full list with PR numbers and reasons VERBATIM: `docs/pick-archive.md` §trim-s202; per-id
+semantics in `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
@@ -68,17 +61,21 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s201 — M227-M237, **B1**, **M240-M244** (M241 FAIL 2/5, #180 open),
+- ANSWERED (do not re-pick): s187-s202 — M227-M237, **B1**, **M240-M244** (M241 FAIL 2/5, #180 open),
   **B2**, **M245-M249** (save-codec chain, tail legs, region-map stride, region label = record +3),
   **B3** (turn engine), **M250-M252** (the generator, its ORDER, the per-faction region verdict array,
   the coarse map's single consumer), **M253-M255** (the verdict codes NAMED by their guards, the contact
-  test `FUN_00531bf0`, `FUN_0057ecf0` = NEW GAME). Numbers VERBATIM: `NAMED.md` per-id, §s196-§s200.
-- RESULT (s201): `DAT_0094eda8[region + fac*0x20bc]` is a four-state VERDICT code, written once per
-  upkeep pass: **8** = reserved id (`id & 0x3f` in {0,0x3f}) with score 0, region skipped; **7** = the
-  water band (always) or the worth-test true; **0** = no contact; **2** = another faction's units are in
-  contact with mine in that region (`FUN_00531bf0` walks the unit array over terrain records, matching
-  record byte +3 to the region, then asks `FUN_0058b1b0` for a route). Guards/pcs/counts V, names
-  INFERRED. `python3 scripts/m253_region_categories.py` -> `SUMMARY PASS: 8/8` (static, no box).
+  test `FUN_00531bf0`, `FUN_0057ecf0` = NEW GAME), **M256-M258** (the worth test's operands, the row
+  fold, the 12-array per-region family). Numbers VERBATIM: `NAMED.md` per-id, §s196-§s202.
+- RESULT (s202): the worth test behind the 7/8 verdict byte is `cmp edx,ecx` at `0x5584b4` (`jle
+  0x5584e3` -> false) ANDed with leg2 `cmp eax,ecx` at `0x5584d8`, then OR'd with a 4-bit reason word
+  [ebp-0x54]. LHS = 2*((DWORD[block+0x94d810] - DWORD[block+0x94d818] + [ebp-0x60]) *
+  BYTE[block+region+0x94e5a8]); RHS = WORD[0x94eaa8 + 2*region] + WORD[0x94eaa8 + 2*region + 188*fac];
+  [ebp-0x60]'s live store is `0x558424` = 3 + (ds:0x985afc>75) + FUN_00531090(ds:0x985b30,0) + the
+  base-count/mode-bit/0x94eca8-byte adjustments + the 8-slot fold count. The per-region arrays are a
+  12-array family `0x94e4a8..0x94ee28` — every gap 0x80 (byte/region) or 0x100 (word/region), zero
+  DWORD accesses, 128 entries each (`cmp ecx,0x80`, `0x558b1c`); `0x94e7a8` is a WORD array (retracts
+  the s201 "flag bytes" row). `python3 scripts/m256_worth_operands.py` -> `SUMMARY PASS: 8/8` (static).
 - Pick from (ANALYSE fires; the next BUILD fire takes **B4** — economy — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); what the 15
@@ -88,17 +85,18 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record +16..+43 are for, and who writes
   them when a map is GENERATED** (new from M240/M250, static: `FUN_0058d120`/`FUN_0058d390`/
   `FUN_0051c750`); who allocates the ~140 KB view objects (slots 1..7 are `0x224b8` apart, slot 0 at
-  `0x8f79e0`) and what sets/clears view `+0x1dd74`; **what the worth test's operands are** (new from
-  M253: `[0x94d810]-[0x94d818]`+`local_64` vs `[0x94eaa8][region]`+a faction field; the sibling
-  per-region arrays `0x94e4a8`/`0x94e628`/`0x94e7a8`/`0x94eaa8` are still unnamed); **does
-  `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save).
+  `0x8f79e0`) and what sets/clears view `+0x1dd74`; **does `FUN_0057ecf0` also run on a LOAD** (new
+  from M255, box: bp the `FUN_005b2970` entry, load a save — the box is DOWN, cold relaunch >9 min);
+  **what the row stride 188 means** (new from M257: `esi = 2*region + 188*fac` and regions 94..127 pass
+  the next row — one live read of both indexings of `0x94eaa8` settles it; box).
 ## LIVE FACTS / KIT
 
-- **BOX**: s197 preflight PASS (14 invariants), terran.exe 319926 alive, TracerPid 0, not this session's
-  descendant ⇒ `/proc/<pid>/mem` needs `sudo -n` (yama ptrace_scope=1); RE-RUN
-  `sudo -n python3 scripts/smac_preflight.py` before arming. Recipe, cold-box timing, the degraded-box poke
-  facts (0x985ac4 bit 0x200, mask byte 0x985b10, the PANE decides where INSERT lands) and the full state
-  dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199.
+- **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
+  python3 scripts/m54a_load.py --relaunch` as a TRACKED background job; `sudo -n
+  python3 scripts/smac_preflight.py` (yama ptrace_scope=1 ⇒ `/proc/<pid>/mem` needs sudo) before arming.
+  Recipe, cold timing, the degraded-box poke facts (0x985ac4 bit 0x200, mask byte 0x985b10, the PANE
+  decides where INSERT lands) and the full state dumps VERBATIM: skill `references/wine-operations.md`,
+  `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
 
 ## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
 

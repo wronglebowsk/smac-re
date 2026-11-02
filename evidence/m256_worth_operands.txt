@@ -1,0 +1,144 @@
+M256/M257/M258 worth-test operands + per-region array family (static, no box)
+command: python3 scripts/m256_worth_operands.py
+acceptance: SUMMARY PASS: 8/8 gates on terran.exe (static image, no box)
+
+G1 PASS: 13/13 pinned pcs decoded, 0 outside FUN_00556690 (-); first mov edi,DWORD PTR [ebp-0x18] last mov cx,WORD PTR [edi*2+0x94eaa8]
+G2 PASS: cmp=cmp edx,ecx | jle 0x5584e3 | leg2 cmp eax,ecx (jge 0x5584e3) | sete dl; add edx,0x7; mov BYTE PTR [esi+edi*1+0x94eda8],dl
+G3 PASS: LHS = 2 * (([block+0x94d810] - [block+0x94d818] + [ebp-0x60]) * [ebp-0x3c]); [ebp-0x60] has 4 stores in FUN_00556690 (0x558010,0x5580b9,0x558424,0x558905); the last one before the 0x55849b load is 0x558424 (mov DWORD PTR [ebp-0x60],edx) whose value is 3 + (ds:0x985afc > 75) + call 0x531090(ds:0x985b30, 0) adjusted by the base count [block+0x94e488] > 4 and the byte [block+region+0x94eca8] < 4, + the fold count [ebp-0x68]; 0 pinned pcs mismatched: 
+G4 PASS: RHS = mov cx,WORD PTR [edi*2+0x94eaa8] + mov ax,WORD PTR [edi+0x94eaa8] -> add ecx,eax (ecx zeroed at 0x5584a0 by xor ecx,ecx); row slot from mov DWORD PTR [ebp-0x18],esi; 0x94eaa8 refs image-wide = 4: 0x51df61 inc WORD PTR [eax+0x94eaa8] [FUN_0051dcb0]; 0x558452 mov ax,WORD PTR [edi+0x94eaa8] [FUN_00556690]; 0x5584aa mov cx,WORD PTR [edi*2+0x94eaa8] [FUN_00556690]; 0x564ab1 add WORD PTR [eax+0x94eaa8],0xfff6 [FUN_0055f650]
+G5 PASS: row = add eax,edi; lea eax,[edi+eax*2]; shl eax,0x4; sub eax,edi; lea esi,[ecx+eax*2]; shl esi,1 -> esi = 2*region + 188*arg1; inc ecx, cmp ecx,0x80, jl 0x557fb8 (region loop 1..127, init mov DWORD PTR [ebp-0x10],0x1); 188 B per faction row vs 2 B per region means region 94..127 spills past its own row (max offset 188*7 + 254 = 1570), so the row reading is a STRIDE CONFLICT the image cannot settle - OPEN (one live read of both indexings settles it)
+G6 PASS: the 8-slot fold walks lea eax,[ecx*2+0x950764] (word per region) and lea eax,[ecx+0x950664] (byte per region), stepped by mov ecx,0x20bc == the faction stride 0x20bc over cmp eax,0x8 slots (counter [ebp-0x14], init 1 at 0x558047, tested at 0x5583a0); per-slot reads mov cx,WORD PTR [eax] / mov al,BYTE PTR [ecx]; the shifted halves accumulate into [ebp-0x6c] (0x5580aa-0x5580af) and [ebp-0x60] (0x5580b2-0x5580b9), the nonzero count into [ebp-0x68] (0x5580be-0x5580c5)
+G7 PASS: the folded pair is mov bx,WORD PTR [eax-0x200] (0x200 BELOW the cursor) vs mov cx,WORD PTR [eax] (AT it); cursor = lea eax,[ecx*2+0x950764], so the pair is 0x950764 + 2*region and 0x950564 + 2*region; 0x950564 is itself a table base at 0x4f7a0a (lea esi,[esi*2+0x950564]); step mov ecx,0x20bc; byte row lea eax,[ecx+0x950664]. 0x950564 is past the file image (3067904 B -> the image ends at VA 0x6ed000): runtime data, its row count is NOT readable statically - OPEN
+G8 PASS: 0x94e4a8..0x94ee28 is 12 per-region arrays; every gap is 0x80 or 0x100 and matches the observed operand width (0x80 = byte per region, 0x100 = word per region), with ZERO DWORD accesses anywhere; cmp ecx,0x80 at 0x558b1c supplies the 128 entries each. 0x94e4a8: 23 refs in 23 pcs / 9 funcs, 2 stores, +1 alias 0, B=0 W=23 D=0, gap 0x100 -> word x 128 OK; 0x94e5a8: 99 refs in 99 pcs / 24 funcs, 5 stores, +1 alias 0, B=97 W=0 D=0, gap 0x80 -> byte x 128 OK; 0x94e628: 10 refs in 10 pcs / 3 funcs, 4 stores, +1 alias 0, B=10 W=0 D=0, gap 0x80 -> byte x 128 OK; 0x94e6a8: 23 refs in 23 pcs / 7 funcs, 1 stores, +1 alias 0, B=0 W=22 D=0, gap 0x100 -> word x 128 OK; 0x94e7a8: 28 refs in 28 pcs / 4 funcs, 9 stores, +1 alias 28, B=14 W=13 D=0, gap 0x100 -> word x 128 OK; 0x94e8a8: 2 refs in 2 pcs / 2 funcs, 1 stores, +1 alias 0, B=0 W=2 D=0, gap 0x100 -> word x 128 OK; 0x94e9a8: 2 refs in 2 pcs / 2 funcs, 0 stores, +1 alias 0, B=0 W=2 D=0, gap 0x100 -> word x 128 OK; 0x94eaa8: 4 refs in 4 pcs / 3 funcs, 2 stores, +1 alias 0, B=0 W=4 D=0, gap 0x100 -> word x 128 OK; 0x94eba8: 5 refs in 5 pcs / 3 funcs, 1 stores, +1 alias 0, B=0 W=5 D=0, gap 0x100 -> word x 128 OK; 0x94eca8: 8 refs in 8 pcs / 4 funcs, 0 stores, +1 alias 0, B=6 W=0 D=0, gap 0x80 -> byte x 128 OK; 0x94ed28: 3 refs in 3 pcs / 2 funcs, 0 stores, +1 alias 0, B=2 W=0 D=0, gap 0x80 -> byte x 128 OK; 0x94eda8: 79 refs in 79 pcs / 18 funcs, 6 stores, +1 alias 0, B=79 W=0 D=0, gap 0x80 -> byte x 128 OK
+
+worth-test span:
+  0x55844b: mov edi,DWORD PTR [ebp-0x18]
+  0x558452: mov ax,WORD PTR [edi+0x94eaa8]
+  0x558459: mov cx,WORD PTR [edi+0x94eba8]
+  0x558460: mov dl,BYTE PTR [edi+0x94e7a8]
+  0x558466: mov edi,DWORD PTR [ebp-0x3c]
+  0x558469: mov esi,eax
+  0x55846b: and edx,0x8
+  0x55846e: sub esi,ecx
+  0x558472: cmp edi,0x14
+  0x55848f: mov edx,DWORD PTR [ecx+0x94d810]
+  0x558495: sub edx,DWORD PTR [ecx+0x94d818]
+  0x5584a2: imul edx,edi
+  0x5584aa: mov cx,WORD PTR [edi*2+0x94eaa8]
+
+loop head / region bound / flag-word sites:
+  0x5584b4: cmp edx,ecx
+  0x5584b6: jle 0x5584e3
+  0x5584d8: cmp eax,ecx
+  0x5584da: jge 0x5584e3
+  0x5584e3: xor ecx,ecx
+  0x5584eb: or eax,ecx
+  0x5584fe: test eax,eax
+  0x558500: je 0x55850b
+  0x558502: or BYTE PTR [ecx+0x94e7a8],0x1
+  0x558509: test eax,eax
+  0x55850b: mov eax,DWORD PTR [ebp-0x64]
+  0x55850e: sete dl
+  0x558511: add edx,0x7
+  0x558514: test eax,eax
+  0x558516: mov BYTE PTR [esi+edi*1+0x94eda8],dl
+  0x55851d: jne 0x558533
+  0x558b18: mov ecx,DWORD PTR [ebp-0x10]
+  0x558b1b: inc ecx
+  0x558b1c: cmp ecx,0x80
+  0x558b22: mov DWORD PTR [ebp-0x10],ecx
+  0x558b25: jl 0x557fb8
+  0x557fbe: mov eax,ecx
+  0x558002: add eax,edi
+  0x55800d: lea eax,[edi+eax*2]
+  0x558013: shl eax,0x4
+  0x558016: sub eax,edi
+  0x558021: lea esi,[ecx+eax*2]
+  0x558026: shl esi,1
+  0x558028: mov DWORD PTR [ebp-0x4c],edx
+  0x55802b: lea edx,[ebx+0x94d44c]
+  0x558031: mov ax,WORD PTR [esi+0x94e4a8]
+  0x558038: mov DWORD PTR [ebp-0x18],esi
+  0x55803b: mov DWORD PTR [ebp-0x54],eax
+  0x558040: mov ax,WORD PTR [esi+0x94e6a8]
+  0x55804e: mov DWORD PTR [ebp-0x78],eax
+  0x558053: mov al,BYTE PTR [ebx+ecx*1+0x94e5a8]
+  0x55805d: mov DWORD PTR [ebp-0x3c],eax
+  0x558060: lea eax,[ecx+0x950664]
+  0x558069: lea eax,[ecx*2+0x950764]
+  0x558070: mov DWORD PTR [ebp-0x70],eax
+  0x55807f: mov cx,WORD PTR [eax]
+  0x558082: mov bx,WORD PTR [eax-0x200]
+  0x558094: mov al,BYTE PTR [ecx]
+  0x558096: mov cl,BYTE PTR [edx]
+  0x558098: test cl,0x1
+  0x5580a0: add ebx,ebx
+  0x5580a2: add eax,eax
+  0x5580aa: mov ecx,DWORD PTR [ebp-0x6c]
+  0x5580b2: mov ecx,DWORD PTR [ebp-0x60]
+  0x5580b5: add ecx,eax
+  0x5580b9: mov DWORD PTR [ebp-0x60],ecx
+  0x5580d6: or WORD PTR [esi+0x94e7a8],ax
+  0x5580e6: test cl,0x10
+  0x5580eb: or al,0x40
+  0x5580ed: mov WORD PTR [esi+0x94e7a8],ax
+  0x557fc0: mov BYTE PTR [ebx+ecx*1+0x94e628],0x0
+  0x557fc8: and eax,0x3f
+  0x557fd4: mov al,BYTE PTR [ebx+ecx*1+0x94e5a8]
+  0x557fdf: mov BYTE PTR [ebx+ecx*1+0x94eda8],0x8
+  0x557fe7: jmp 0x558b18
+  0x5583b2: mov esi,DWORD PTR [ebp-0xc]
+  0x5583b5: mov edi,DWORD PTR [ebp-0x10]
+  0x5583b8: mov edx,DWORD PTR ds:0x985b30
+  0x5583be: push 0x0
+  0x5583c0: mov bl,BYTE PTR [esi+edi*1+0x94eca8]
+  0x5583c7: push edx
+  0x5583c8: call 0x531090
+  0x5583cd: mov ecx,DWORD PTR ds:0x985ae8
+  0x5583d6: shr ecx,0x7
+  0x5583d9: and ecx,0x2
+  0x5583de: cmp DWORD PTR [esi+0x94e488],0x4
+  0x5583e5: setg dl
+  0x5583e8: sub edx,ecx
+  0x5583ea: add eax,edx
+  0x5583ec: cmp bl,0x4
+  0x5583ef: sbb ecx,ecx
+  0x5583f3: neg ecx
+  0x5583f5: add eax,ecx
+  0x5583f7: mov ecx,DWORD PTR ds:0x92a38c
+  0x5583fd: cmp ecx,0xc80
+  0x558403: mov ecx,DWORD PTR [ebp-0x68]
+  0x558406: setg dl
+  0x558409: add edx,ecx
+  0x55840b: xor ecx,ecx
+  0x55840d: cmp DWORD PTR ds:0x985afc,0x4b
+  0x558414: setg cl
+  0x558417: add edx,eax
+  0x55841b: lea edx,[ecx+edx*1+0x3]
+  0x55841f: mov ecx,DWORD PTR [ebp-0x3c]
+  0x558422: test ecx,ecx
+  0x558424: mov DWORD PTR [ebp-0x60],edx
+  0x558427: je 0x5584ed
+  0x55842d: cmp bl,0x2
+  0x558432: mov al,BYTE PTR [esi+edi*1+0x94e5a8]
+  0x558439: mov DWORD PTR [ebp-0x54],0x1
+  0x558440: test al,al
+  0x558444: mov DWORD PTR [ebp-0x54],0x0
+  0x5584e5: mov eax,DWORD PTR [ebp-0x54]
+  0x5584e8: mov esi,DWORD PTR [ebp-0xc]
+  0x5584eb: or eax,ecx
+  0x5584ed: mov ecx,DWORD PTR [ebp-0x4c]
+  0x5584f0: test ecx,ecx
+  0x5584f2: mov ecx,DWORD PTR [ebp-0x18]
+  0x5584f5: je 0x5584fe
+  0x5584f7: or BYTE PTR [ecx+0x94e7a8],0x4
+  0x55851b: <missing>
+  0x55851f: mov al,BYTE PTR [esi+edi*1+0x94e5a8]
+  0x558b03: xor edx,edx
+  0x558b05: cmp ecx,edi
+  0x558b0a: sete dl
+  0x558b0d: push edx
+  0x558b0f: push eax
+  0x558b10: call 0x4e5e10
+  0x558b15: add esp,0xc
+  0x4f7a0a: lea esi,[esi*2+0x950564]
