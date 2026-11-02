@@ -1,18 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-184-184.md` (1 sessions). Read it only when a question reaches back before session ## Session 186.
-
-## Session 186 (2026-11-01, M222-M226, static, zero box time)
-
-`python3 scripts/m222_m226_rows.py` -> `SUMMARY M222=PASS M223=PASS M224=PASS M225=PASS M226=PASS (26/26 gates)`, rc 0; `evidence/m222_m226_rows.txt` 10,130 B. Invocations #1 crash (a gate unpacked a tuple), #2 10/14 + crash, #3 22/26, #4 25/26, #5 green — every failure an INSTRUMENT-definition bug: provenance resolved at the CALL pc instead of each push's own pc; `\[ebp(0x..)\]` missing the `\+`; a str-vs-int set comparison; a `0x774c|0x774d` filter that missed 0x774a80 and, widened, over-matched 39 region refs; expected counts read off the wrong probe window. No threshold, floor or claim direction was changed to get green.
-
-M222 the adder's own body maps item+0x14=arg1, +0x10=arg2, +0=arg3, +4=arg4, +8=arg3+arg5, +0xc=arg4+arg6 (ret 0x18; only failure path count>=capacity -> -1, 0 allocator calls). FUN_00403b00 (75 B, ret 0xc) spills ecx to [ebp-0x4] and pushes (arg1, arg2, rect+0, rect+4, rect+8-rect+0, rect+0xc-rect+4): a (gate, payload, RECT) wrapper. 23 sites / 16 functions: 22 pass the container as their own ecx plus one of 8 member disps {a48:1, cc4:5, e40:1, 15e0:5, 28ac:4, 5994:3, 12758:2, 12764:1}, 1 forwards ecx bare (FUN_00403ad0). 0 wrapper sites and 0 direct add-sites carry +0x3098: the dialog's 10-item list is never appended. The +0x14 slot is an immediate at 4/23 sites (0,0,3,0x64) and a register/loaded value at 19/23; the +0x10 slot is an immediate at 19/23 with values {0,1,2,3,4,0xa,0xb} — 0xa/0xb lie outside M218's {0,1..8,0x45}. FUN_0041f310 = slot +0x30 of 0x672448, all 3 sites `mov ecx,0x6a9480`; 8 of the 15 sites of FUN_0040f830/004105b0/00411840/00415d10 pass the same immediate; FUN_004105b0's container is this+0x402f0.
-M223 FUN_005f5a11: 0 direct calls, 0 vtable slots, and the dword 0x5f5a11 occurs in the image only as the imm32 of the 3 installing stores (hits 0x5f48bc/0x5f4915/0x5f4a76 = stores 0x5f48b6/0x5f490f/0x5f4a70 + 6). The 3 fields have 4 bracket refs, ALL stores (3 installs + FUN_00406990's zero loop), 0 reads, 0 lea-address-takes, 0 indirect calls with a disp in 0x21c0..0x2260. Its body reads ds:0x9977f0, gates [h+0x2350] against 1 and -1, reads 0x21d0/0x229c/0x30a8, dispatches +0x8/+0xe0: a method of the MODAL object. The window IS live through its other members: FUN_005f1394@0x5f1e33 calls FUN_0060c436 with ecx = obj+0x21d0 and arg1 = [obj+0x2350]; FUN_0060c436 passes this+0xb14 to FUN_00607eca, which does `sub ecx,0xa94` before `call 0x5e774d` (0x60820b) -> container = this+0x80 = obj+0x2250.
-
-M224 FUN_00459bb0 (1722 B): 1 call site 0x45a755 (in FUN_0045a740, 56 B, 1 caller FUN_00580260), 0 slots. The 27 globals 0x9978ac..0x997914 are written by exactly 9 functions of 42 B (3 refs each), each called once and only from FUN_00459bb0 — M219's split CONFIRMED: 3 receive grid pointers, 6 receive (0,0,0). The grid = 0x774c38+0x2c*i (i=0..8): 24 pushes over 15 calls, per-entry counts [2,2,2,3,3,3,3,3,3]; its 99 dwords all read 0 and the block lies past the file image (ends 0x6ec8c0) = BSS. FUN_0041f450 (8250 B, 1 caller) references the 0x774xxx region 39 times and its 5 stores all go to [obj+0xb24]: 0x774c0c x4 (grid base - 0x2c) and 0x774a80 x1 (grid base - 0x18c = 9 entries); 9 other functions load [obj+0xb24].
-M225 FUN_005f90d7 (slot +0xa8 of exactly 0x671d94) dispatches 7x: [reg+0xb8] x2 on the link neighbours it unlinks (2 `mov [eax+0xa2c],edx` relinks, `mov [eax+0xa38],0x0`, `mov [eax+0xa3c],0xffffffff`), [reg+0x5c] then [reg+0x1c], [reg+0xf0], and [reg+0x2144] x2 — the max vtable slot over 188 vtables is 0x178, so +0x2144 is the panel's own last FIELD: 54 sites, 17 writer functions, 7 reader/caller functions.
-M226 FUN_005fb1a5 = row vtable 0x67194c slot +0x30 (4202 B, 1000 insns): 14 `add ecx,0x444` receiver switches to the CPane subobject, exactly 1 indirect call `call [edx+0x14]`, reads the groups as indexed arrays `[reg+reg*4+0xabc]`/`+0xac8` plus 0x98/0xa7c/0xa88/0xa8c, and calls the text/label emitters FUN_005dd09c x5 / FUN_005c153f x5 / FUN_005ca7c3 x4.
-OPEN: who dispatches the dialog's +0x4c (box, unchanged); whether the dialog's +0x3098 list is dead or filled through a field-held pointer (the live container in that block is obj+0x2250, a DIFFERENT member); who calls FUN_005f5a11; what the 0x774xxx grid holds and who reads it via [obj+0xb24]; the 17 writers of the panel's +0x2144 callback; s174e box state unverified; M181 still a LEAD.
+Older sessions: `docs/sessions/sessions-186-186.md` (1 sessions). Read it only when a question reaches back before session ## Session 187.
 
 ## Session 187 (2026-11-01, M227-M230, static; box re-verified, no box milestone)
 
@@ -553,3 +541,42 @@ B3 path is untouched. Invocation 1 FAILED 8/9 on gate G5 and that failure is the
   never be set), the gifts term, and the spending ledger (both 0 on an idle round).
 - Pitfall: a harness's own field-read WIDTH is not evidence of the field's width — check the file's
   own NUL padding, or a seam gate catches it 30 minutes later. No box time; terran.exe stayed down.
+
+## Session 204 (2026-11-02, M259-M261 ANALYSE, static) — the terrain record's +16..+43 band is the per-FACTION copy of its +8 mask; the ~140 KB map views are static .bss, not malloc'd; the 0x679f98 class's 15 unique slots and its two ctor screens are named
+
+`python3 scripts/m259_m261_census.py` -> `SUMMARY M259/M260/M261: 14/14 gates PASS` (rc=0, 3.3 s, ONE
+invocation, static image only -> `evidence/m259_m261_census.txt`, 30 lines). Invocation 1 was 12/14 and the
+two failures were CENSUS SCOPE, not the claims: the discriminator accepted any function that merely named
+`ds:0x92ae14`, so unrelated `[reg+idx*4+0xc]` hits were counted; it now requires the access's BASE register
+to be loaded from `ds:0x92ae14` or lea'd from such a register. No threshold or floor was moved.
+
+- **M259 the band**: record dwords 4..10 = `[terrain_base + 0xc + (row*0xb + fac)*4]` = dword 3+fac for
+  fac 1..7; faction 0 uses the +8 master mask (both refreshes guard `test ebx,ebx / je`). Writer set CLOSED
+  at 10 indexed stores — 0x4e153b, 0x4f0def, 0x53a8d9, 0x53a90c, 0x582fec, 0x583e1d, 0x5a3b95, 0x5a3d3f,
+  0x5a7afd, 0x5a86aa — plus FUN_0051c750's pointer-walk store 0x51ca52 (G5). Two whole-array refreshes copy
+  `[rec+8]` into slot fac over `ds:0x92a38c` records with `add eax,0x2c` (G1); the index register folds to
+  the 0x20bc per-faction stride (2095*4 = 8380) (G2); FUN_0051c750 (kelp/forest/mindworm growth) pairs a
+  record+0x10 cursor with the faction-block cursor [0x94f4ec,0x95da10) = 7*0x20bc and stores
+  `slot & ~0x20 | mask` (G3); slot-to-slot merges through the master mask appear once in FUN_005a7970 and in
+  BOTH directions in FUN_0053a820 (G4); FUN_004e14d0 takes its slot index from `[view+0x23bd4]`, inside the
+  field block the view ctor FUN_00518820 initialises — the VIEWED faction selects which slot is refreshed
+  (G6). Readers: 44 indexed sites in 25 functions incl. FUN_004e15c0 (NATPLACE) and FUN_00519b00 (display)
+  (G7). **RETRACTION**: M240's "a record is two 22-byte map columns" reading does not hold for bytes
+  16..43 — that half is this band, which is why the `.MP` census found 7 dwords equal in 8192/8192 planetx
+  records and equal to `+8` (`evidence/m240_terrain_repack.txt:17`).
+- **M260 the views**: `0x224b8` occurs ZERO times in the 3,067,904-B image — no immediate, no 4-byte LE
+  constant (G8). FUN_00580260 (1 caller FUN_00522850) zeroes entries 1..7 (`esi` 0x7cded0..0x7cdeec), stores
+  the STATIC address 0x8f79e0 into entry 0 at 0x5803e1 and runs the ctor FUN_00518820 once on it (its only
+  call site, 0x580406, `ecx = 0x8f79e0`) (G9). The ctor's own stores reach `this+0x23bec` = 146,412 B >
+  140,472 = the live stride, so the stride is not an object size (G10); no store in the image names
+  0x7cdec8..0x7cdee8 except 0x5803e1. The codec walks the 8 entries as POINTERS and clears `*(p+0x1dd74)`
+  for entries 1..7 on a resolution change (`shard_015.c:10822`, `:10842-10845`) (G11). OPEN: who writes
+  entries 1..7.
+- **M261 the class**: 88 slots / 2 installs, 15 slots differ from all three dialog-family siblings
+  0x6717cc/0x671d94/0x67164c (G12): +0x0 46-B dtor (calls FUN_0062d764), +0x8 52-B, +0x30 5143-B /
+  1139-insn / 27-callee / 0-direct-caller, +0x40..+0x54 six `ret 0x8` control methods (+0x40 dispatches
+  +0x4c), +0x60/+0x64/+0x68 three 15-B zero-callee stubs, +0xa8 21-B, +0xc4 27-B, +0x15c 283-B installer
+  (G13). Ctors: FUN_0062d630 <- FUN_0045a8b0(1)/FUN_005b3000(2)/FUN_00641f3c(3); FUN_0062d764 <-
+  FUN_00636b1e(15)/FUN_0063a770(3)/FUN_00456670(2)/FUN_00493a10(2)/FUN_0045a840(1)/FUN_0062ecc0(1);
+  FUN_00636b1e carries "Start a new session or..." (the session-chooser dialog), FUN_00493a10 "Gamma
+  Correction" (graphics options) (G14). No box time; terran.exe stayed down.

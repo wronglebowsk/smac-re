@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 203, 2026-11-02, **B4 DONE: the round economy is EXECUTABLE — `sim/base.py` + `sim/economy.py`, 9/9 on the idle trace**)
+# NEXT_PROMPT.md — footing for the next session (session 204, 2026-11-02, **M259-M261 DONE: the terrain +16..+43 band is the per-FACTION copy of the +8 mask; the ~140 KB map views are STATIC .bss, not malloc'd; the 0x679f98 class's 15 unique slots and its ctor screens are named**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -23,19 +23,14 @@ Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout -
 patches. **Batch size (s172/s178, s184: FIVE static milestones through ONE census script fits; box milestones
 go 1 per batch). The binding cap is doc headroom, not capability.**
 
-## BUILD TRACK — every 4th fire builds (added s187; full text moved VERBATIM to `docs/pick-archive.md` at s194)
+## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
-build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census
-claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`); ANALYSE
-⇒ pick from this file exactly as usual.
-
-**B3 DONE (s199)** 6/6, `matched=67/67` (VERBATIM: `docs/pick-archive.md` §s200). **B4 DONE (s203)** —
-`sim/base.py` + `sim/economy.py`; `python3 -m sim.selftest --replay evidence/m44d_idle.json` →
-`PASS B4: 9/9 gates` (rc=0, 1.3 s, one invocation, `evidence/b4_economy.txt:26`): the idle replay nets
-0 on all 12 rounds (our energy 15 flat) and the engine reproduces the game's own HUD triple (2,2,0)
-plus both aggregator detail arrays on the recorded M46 state; the base name field is 32 B, not 20.
-**Next rung B5 = units/movement.** Text: `NAMED.md` §B4, `SESSION_NOTES.md` §Session 203.
+build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
+census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`sim/base.py` +
+`sim/economy.py`; the base name field is 32 B, not 20; text `NAMED.md` §B4). **B3 DONE (s199)** 6/6 (§s200).
+**Next rung B5 = units/movement.**
 
 ## THE LEDGER
 
@@ -65,32 +60,35 @@ semantics in `NAMED.md`.
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s203 — M227-M237, **B1-B4**, M240-M258 (M241 FAIL 2/5, #180 open;
-  the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the
-  worth test's operands, the 12-array per-region family, the economy rung). Numbers VERBATIM:
-  `NAMED.md` per-id, §s196-§s203.
-- RESULT (s202): the worth test behind the 7/8 verdict byte is `cmp edx,ecx` at `0x5584b4` (`jle
-  0x5584e3` -> false) ANDed with leg2 `cmp eax,ecx` at `0x5584d8`, then OR'd with a 4-bit reason word
-  [ebp-0x54]. LHS = 2*((DWORD[block+0x94d810] - DWORD[block+0x94d818] + [ebp-0x60]) *
-  BYTE[block+region+0x94e5a8]); RHS = WORD[0x94eaa8 + 2*region] + WORD[0x94eaa8 + 2*region + 188*fac];
-  [ebp-0x60]'s live store is `0x558424` = 3 + (ds:0x985afc>75) + FUN_00531090(ds:0x985b30,0) + the
-  base-count/mode-bit/0x94eca8-byte adjustments + the 8-slot fold count. The per-region arrays are a
-  12-array family `0x94e4a8..0x94ee28` — every gap 0x80 (byte/region) or 0x100 (word/region), zero
-  DWORD accesses, 128 entries each (`cmp ecx,0x80`, `0x558b1c`); `0x94e7a8` is a WORD array (retracts
-  the s201 "flag bytes" row). `python3 scripts/m256_worth_operands.py` -> `SUMMARY PASS: 8/8` (static).
+- ANSWERED (do not re-pick): s187-s204 — M227-M237, **B1-B4**, M240-M261 (M241 FAIL 2/5, #180 open;
+  the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
+  test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
+  static map views, the 0x679f98 class). Numbers VERBATIM: `NAMED.md` per-id, §s196-§s204; the s202
+  worth-test block moved VERBATIM to `docs/pick-archive.md` §s204.
+- RESULT (s204): record bytes +16..+43 = dword 3+fac for FACTIONS 1..7 (faction 0 uses the +8 master
+  mask; both refreshes guard `test ebx,ebx / je`). Writers closed at 10 indexed stores (the list is in
+  `NAMED.md` §M259) plus FUN_0051c750's walk store 0x51ca52; two whole-array refreshes copy `[rec+8]`
+  into slot fac over `ds:0x92a38c` records; FUN_0053a820 merges slots both ways through the mask;
+  FUN_004e14d0 takes the slot from `[view+0x23bd4]`. The generator does NOT write the band — the
+  refresh loops re-derive it. `0x224b8` occurs 0 times in the image: view 0 is a static .bss object at
+  0x8f79e0, ctor FUN_00518820 runs once on it from FUN_00580260, which zeroes table entries 1..7; the
+  ctor's fields reach this+0x23bec > 0x224b8, so the stride is not an object size. 15 unique 0x679f98
+  slots named; its ctors belong to the session-chooser (FUN_00636b1e) and graphics-options (FUN_00493a10)
+  screens. `python3 scripts/m259_m261_census.py` -> `SUMMARY M259/M260/M261: 14/14 gates PASS` (3.3 s).
+  RETRACTS M240's "record = two 22-byte columns" for bytes 16..43.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
-  sites belong to other hierarchies — falsifier = a live vtable read at a click, box); what the 15
-  UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30, +0x40..+0x68) and which screen calls its ctors
-  (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c); WHO CALLS FUN_005be090 at the 13
-  [reg+4] sites and with what sizes, and which of the 3 loaders of ds:0x9965b8 fills the records; who
-  calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record +16..+43 are for, and who writes
-  them when a map is GENERATED** (new from M240/M250, static: `FUN_0058d120`/`FUN_0058d390`/
-  `FUN_0051c750`); who allocates the ~140 KB view objects (slots 1..7 are `0x224b8` apart, slot 0 at
-  `0x8f79e0`) and what sets/clears view `+0x1dd74`; **does `FUN_0057ecf0` also run on a LOAD** (new
-  from M255, box: bp the `FUN_005b2970` entry, load a save — the box is DOWN, cold relaunch >9 min);
-  **what the row stride 188 means** (new from M257: `esi = 2*region + 188*fac` and regions 94..127 pass
-  the next row — one live read of both indexings of `0x94eaa8` settles it; box).
+  sites belong to other hierarchies — falsifier = a live vtable read at a click, box); WHO CALLS
+  FUN_005be090 at the 13 [reg+4] sites and with what sizes, and which of the 3 loaders of ds:0x9965b8
+  fills the records; who calls FUN_005f3f5b (6102 B); **who writes view-table entries 1..7
+  (DAT_007cdec8..0x7cdee8) — NO store in the image names them and the codec only reads them as
+  pointers (new from M260; static lead: a loop whose cursor is set from 0x7cded0, else a live read of
+  the table on NEW GAME vs a loaded save)**; **does the LOAD path re-derive the per-faction band or
+  trust the file** (new from M259: the band is saved with the map; lead = the codec's map leg plus
+  FUN_004e14d0's refresh trigger, static); **does `FUN_0057ecf0` also run on a LOAD** (new from M255,
+  box: bp the `FUN_005b2970` entry, load a save — the box is DOWN, cold relaunch >9 min); **what the
+  row stride 188 means** (new from M257: `esi = 2*region + 188*fac` and regions 94..127 pass the next
+  row — one live read of both indexings of `0x94eaa8` settles it; box).
 ## LIVE FACTS / KIT
 
 - **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
