@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 201, 2026-11-01, **M253-M255: the region verdict codes are NAMED by their guards, and `FUN_0057ecf0` is the NEW GAME generator caller**)
+# NEXT_PROMPT.md — footing for the next session (session 203, 2026-11-02, **B4 DONE: the round economy is EXECUTABLE — `sim/base.py` + `sim/economy.py`, 9/9 on the idle trace**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -30,8 +30,12 @@ build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs 
 claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`); ANALYSE
 ⇒ pick from this file exactly as usual.
 
-**B3 DONE (s199)** — 6/6 gates, `matched=67/67`, one invocation. Full result text VERBATIM:
-`docs/pick-archive.md` §s200. Read `sim/turn.py`'s docstring before writing B4's check.
+**B3 DONE (s199)** 6/6, `matched=67/67` (VERBATIM: `docs/pick-archive.md` §s200). **B4 DONE (s203)** —
+`sim/base.py` + `sim/economy.py`; `python3 -m sim.selftest --replay evidence/m44d_idle.json` →
+`PASS B4: 9/9 gates` (rc=0, 1.3 s, one invocation, `evidence/b4_economy.txt:26`): the idle replay nets
+0 on all 12 rounds (our energy 15 flat) and the engine reproduces the game's own HUD triple (2,2,0)
+plus both aggregator detail arrays on the recorded M46 state; the base name field is 32 B, not 20.
+**Next rung B5 = units/movement.** Text: `NAMED.md` §B4, `SESSION_NOTES.md` §Session 203.
 
 ## THE LEDGER
 
@@ -61,12 +65,10 @@ semantics in `NAMED.md`.
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s202 — M227-M237, **B1**, **M240-M244** (M241 FAIL 2/5, #180 open),
-  **B2**, **M245-M249** (save-codec chain, tail legs, region-map stride, region label = record +3),
-  **B3** (turn engine), **M250-M252** (the generator, its ORDER, the per-faction region verdict array,
-  the coarse map's single consumer), **M253-M255** (the verdict codes NAMED by their guards, the contact
-  test `FUN_00531bf0`, `FUN_0057ecf0` = NEW GAME), **M256-M258** (the worth test's operands, the row
-  fold, the 12-array per-region family). Numbers VERBATIM: `NAMED.md` per-id, §s196-§s202.
+- ANSWERED (do not re-pick): s187-s203 — M227-M237, **B1-B4**, M240-M258 (M241 FAIL 2/5, #180 open;
+  the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the
+  worth test's operands, the 12-array per-region family, the economy rung). Numbers VERBATIM:
+  `NAMED.md` per-id, §s196-§s203.
 - RESULT (s202): the worth test behind the 7/8 verdict byte is `cmp edx,ecx` at `0x5584b4` (`jle
   0x5584e3` -> false) ANDed with leg2 `cmp eax,ecx` at `0x5584d8`, then OR'd with a 4-bit reason word
   [ebp-0x54]. LHS = 2*((DWORD[block+0x94d810] - DWORD[block+0x94d818] + [ebp-0x60]) *
@@ -76,8 +78,8 @@ semantics in `NAMED.md`.
   12-array family `0x94e4a8..0x94ee28` — every gap 0x80 (byte/region) or 0x100 (word/region), zero
   DWORD accesses, 128 entries each (`cmp ecx,0x80`, `0x558b1c`); `0x94e7a8` is a WORD array (retracts
   the s201 "flag bytes" row). `python3 scripts/m256_worth_operands.py` -> `SUMMARY PASS: 8/8` (static).
-- Pick from (ANALYSE fires; the next BUILD fire takes **B4** — economy — from `BUILD_SPINE.md`): WHO
-  dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
+- Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
+  WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); what the 15
   UNIQUE 0x679f98 slots do (+0x0, +0x8, +0x30, +0x40..+0x68) and which screen calls its ctors
   (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c); WHO CALLS FUN_005be090 at the 13

@@ -1,17 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-183-183.md` (1 sessions). Read it only when a question reaches back before session ## Session 184.
-
-## Session 184 (2026-11-02) — M217-M221 all PASS: the hotspot list is a 3-dword CONTAINER {array@+0, capacity@+4, count@+8} of 24-B items with an 8-member API; the dialog's list is a MEMBER allocated 10 items; the 9 row triples have THREE-store setters (M215's "one-store" RETRACTED); the +0x15c method installs the modal callback into three WRITE-ONLY fields; the 0x671d94 panel is 0x214c and its +0xa8 is a DETACH
-
-`python3 scripts/m217_m221_panel.py` -> `SUMMARY M217=PASS M218=PASS M219=PASS M220=PASS M221=PASS (31/31 gates)`, rc 0; `evidence/m217_m221_panel.txt` 11,571 B; zero box time. Invocations #1 22/31 + crash, #2 28/31, #3 29/31, #4 green: every failure was an INSTRUMENT-definition bug, no threshold or claim was changed — (a) the store census counted `[ebp-0xNN]` frame spills as field writes (FUN_005e75e5 read 4 stores, disps [-4,0,4,8]); (b) `txt.index()` took the FIRST textual match and `mov [ecx+0x8],eax` occurs twice in the adder (count++ and item+8); (c) `census()`'s store half tests whether the DEST carries the token — for a stored VALUE (`mov [eax+0x2210],0x5f5a11`) the token is the SOURCE, so 3 refs reported 0 stores; (d) index.csv DOES name the SEH unwind stubs (`Unwind@00661ef2`), so "in the index" does not exclude them (+0x3098 has 4 clear sites, 2 of them stubs); (e) x87 `fsub qword ptr [reg+edx*1+0x10]` reuses the 24-B index form and inflated the item-field reader set.
-
-M217 FUN_005e75e5 3 zero stores [0,4,8]; FUN_005e7678 `ret 0x4`, callees {0x5be090,0x5e760d}, `imul eax,eax,0x18`; FUN_005e774d `ret 0x18`, 7 stores [0,4,8,8,c,10,14], +0x14<-arg1 (gate), +0x10<-arg2 (payload), x=arg3, y=arg4, x1=x+arg5, y1=y+arg6, guard `cmp count,[+4]`/`jl` + `or eax,0xffffffff`; FUN_005e7917 publishes +0x14->arg3/+0x10->arg4; image-wide FUN_005e774d is the ONLY writer of +0x10/+0x14 (2 stores), readers 0x5e76be/861/8c7/917/9a3/a5f (all in 0x5e7300-0x5e7d00); FUN_005e78c7 removes by payload (32 sites) via FUN_005e77e7; FUN_005e7665 = 9 insns, callee 0x5e760d, 130 sites.
-M218 clear receivers member=47 / stack=81 / loaded=2 over 21 distinct member displacements 0x10..0x402f0; 21 alloc sites, 13 immediate capacities 0x1..0x100; 32 add sites member=26 / loaded=6, gate immediates {0,1..8,0x45}; the +0x3098 list is cleared at 0x405fb3 (FUN_00405f60) + 0x421eaa (FUN_00421da0) + 2 unwind stubs, allocated 10 items at 0x5eff25 (FUN_005ef957), reset at 0x5ee5fe (FUN_005ee350), scanned at 0x5f6ac5 (FUN_005f6aa3), and has 0 add-sites: it is filled through a register-passed list pointer (6 add-sites take the list from a loaded value; FUN_00403b00 is one such wrapper).
-M219 9 setters 42 B / 18 insns / 3 stores rel [0,4,8] / 1 site / 0 slots; 27 stores = 9 bare a3 + 18 `mov dword ptr ds:`; all 9 sites inside FUN_00459bb0 (1722 B, 450 insns, 1 site, 0 slots), each followed by `add esp,0xc`; 3 calls pass 0x774c38+0x2c*i (i 0..8, one entry each), 6 pass (0,0,0); both ranges above FILEMAP_END 0x6ed000; FUN_005fb1a5 = 0x67194c+0x30 reads the 0xae0..0xb48 groups on the 4-byte grid.
-M220 FUN_005f3f5b = 0x6717cc+0x15c (95 slots, 70 installs), `cmp [ebp-0xf4],0x9` + `jmp [ecx*4+0x5f5731]` (10 targets, all inside); the only 3 refs to 0x5f5a11 are its stores to +0x2210/+0x2224/+0x2234; those disps have 2/1/1 refs image-wide, 0 loads, and 0 indirect calls carry any displacement in 0x21c0..0x2260; FUN_00406990 = +0x15c of 4 vtables (396 installs) calls it twice (0x406c24, 0x406f26); FUN_005f5a11 has 0 direct calls and 0 slots.
-M221 0x671d94 = 87 slots / 275 installs, identical 74/87 to 0x6717cc, 63/87 to 0x67164c, 71/87 to the row 0x67194c; +0x4c = FUN_005f84ff (no click dispatcher), +0xa8 = FUN_005f90d7; ctor FUN_005f6b8c 605 B / 136 insns / 16 sites, callees {0x5faec0 x2, 0x5e3b80 x1}, 0x671d8c (3 slots, 268 installs) at +0x444, block stores 0xa14..0xaa0; size 0x214c uniform in FUN_00409e70 (3 panels) and FUN_004947c0 (4), highest ctor store 0x2148, row 2 ends 0x2144; FUN_005f90d7 stores 0xa38 x1 + 0xa2c x2, 0xa40 x0, 7 indirect calls, dispatches [edx+0xb8]; FUN_005f5759 stores 0xa40 x4, 0xa38/0xa2c x0, 3 indirect; FUN_00405ef0 embeds one panel at +0x3230 (site 0x405f29).
-OPEN: who dispatches the dialog's +0x4c (box falsifier, unchanged); who calls FUN_005f5a11 if its 3 fields are write-only; who fills the dialog's +0x3098 list (the register-passed adders, e.g. FUN_00403b00, and their callers); what FUN_00459bb0 is (1 callsite, 0 slots) and who reads the 9 triples' table; s174e box state unverified; M181 still a LEAD.
+Older sessions: `docs/sessions/sessions-184-184.md` (1 sessions). Read it only when a question reaches back before session ## Session 186.
 
 ## Session 186 (2026-11-01, M222-M226, static, zero box time)
 
@@ -522,3 +511,45 @@ region — B=97, 10, 6, 2, 79) or 0x100 (word per region — W=23, 22, 13 with 2
 WORD[0x950764+2*region] and BYTE[0x950664+region] stepped by 0x20bc, doubling per set bit of
 BYTE[block+0x94d44c]; its second row is 0x200 below (0x950564, itself a table base at 0x4f7a0a); both
 are .bss, so their extents are OPEN.
+
+## Session 203 (2026-11-02, **B4 BUILD** — the round economy is EXECUTABLE: `sim/base.py` + `sim/economy.py` reproduce the 12 idle rounds and the game's own HUD triple)
+
+`python3 -m sim.selftest --replay evidence/m44d_idle.json` → `PASS B4: 9/9 gates on m44d_idle.json`
+(rc=0, 1.3 s, ONE invocation → `evidence/b4_economy.txt`; the `:N` below are that file's lines).
+B1/B2/B3 re-ran green on the same tree (10/10, 7/7, 6/6): the new `--replay` dispatch keys on the
+trace's shape (a JSON object with a `rounds` key = an economy trace, JSONL = the turn trace), so the
+B3 path is untouched. Invocation 1 FAILED 8/9 on gate G5 and that failure is the finding below.
+
+- **Idle replay (G1-G3, `:17-19`).** m44d's 12 rounds are a PRE-FOUNDING state: our faction (3) owns
+  no base in any round — the trace's own `owners` map has no "3" key (`evidence/m44d_idle.json:138`) —
+  so gross = Σ base+0xfc = 0, upkeep = 0, net = 0, and `matched=12/12` states with every per-round
+  delta 0 against the recorded energy 15; the harness's own `deltas_per_round.energy3` = 0.0
+  (`evidence/m44d_idle.json:811`). The recorded economy-pane OCR agrees: on the 3/12 rounds where the
+  panel is legible, Gross Income / Total Costs / NET INCOME all read "0/turn"
+  (`evidence/m44d_idle.json:150`).
+- **The triple the GAME computed (G6-G7, `:22-23`).** On the recorded post-founding state the engine's
+  (gross, upkeep, net) == (2, 2, 0) == the game's own globals `0x745734`/`0x744f28`/`0x7457dc` on both
+  recorded rounds (`evidence/m46e_econ.json:56`), energy 19 → 19 == apply(net) with ledger 0, and both
+  aggregator detail arrays reproduce byte-for-byte: per-base upkeep 0x744f2c, 75 entries, nonzero only
+  at base 72 (`evidence/m46e_econ.json:102`) and the 39-wide item counts 0x745738 (`:61`).
+- **Where the money comes from (G8, `:24`).** Our base's completed-facility bitmap — the dword at
+  base+0x8c = 458, recorded live at `evidence/m46e_econ.json:16215` — decodes to ids {1,3,6,7,8};
+  `data/alpha.json` `#FACILITIES` column 3 (alpha.txt:590's upkeep field) at line id−1 gives
+  0,0,1,1,1 AND the names match (Headquarters, Recycling Tanks, Recreation Commons, Energy Bank,
+  Network Node); raw Σ 3, and with the recorded disabled list (item 8) 2 == the recorded 0x744f28.
+  G9 (`:25`): dropping the disabled list gives (2,3,−1), taking gross from +0x100 gives (0,2,−2), and
+  indexing alpha without the +1 gives (2,3,−1) — only the chosen model matches the recorded triple.
+- **CORRECTION (G4-G5, `:20-21`).** The base NAME FIELD IS NOT 20 BYTES: 3 of the 18 bases in every
+  shipped save ("Morgan Energy Monopoly", "U.N. Court of Justice", "Valley of the Faithful") carry
+  names up to 22 chars, and `scripts/m46_econ.py:106` reads `r[19:39]` — the harness truncates them,
+  which is why invocation 1's seam gate failed on records 7/8/17 of all 17 saves. The field is
+  NUL-terminated inside 32 B (sim/save.py's own window): 0/311 records lack the NUL, longest name 22.
+  G4 decodes the recorded 76-dword live read and reproduces 13/13 of the harness's own field values.
+- **OPEN (printed at `:14-17`, not graded).** alpha's upkeep column reproduces the five live-pinned
+  item costs but NOT the four later values M46 read from the live table: Fusion Lab alpha 3 vs live 4,
+  Quantum Lab 4 vs 3, Nanoreplicator 6 vs 4, Quantum Converter 5 vs 6 — the runtime item table's row
+  order is not alpha's past id ~8, so `sim/economy.upkeep_table` is ASSUMED beyond the pinned five.
+  Also ASSUMED: the bitmap's width (only the 4 bytes at +0x8c are a recorded read — ids 32..38 can
+  never be set), the gifts term, and the spending ledger (both 0 on an idle round).
+- Pitfall: a harness's own field-read WIDTH is not evidence of the field's width — check the file's
+  own NUL padding, or a seam gate catches it 30 minutes later. No box time; terran.exe stayed down.
