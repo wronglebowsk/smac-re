@@ -1,38 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-191-191.md` (1 sessions). Read it only when a question reaches back before session ## Session 193.
-
-## Session 193 (2026-11-01, M242 — the save WRITE function; static first, then ONE box lifecycle; S192/M241's notes live on the open PR #180)
-
-- **Static, zero box time** (`scripts/fn.py`, `scripts/name_global.py`, `scratch/m71/dis.py` windows on
-  `ghidra_out/shard_015.c`): `FUN_00597ce0` (363 B) IS the writer — `FUN_0063c610(path, ds:0x692fa0)`
-  open (return 1 at 0x597dcf), `FUN_00570640(s_TERRAN ds:0x692fa4)` magic, `FUN_0064c9a0(&local_c=0x56,
-  4,1)` version, `FUN_00596850(handle, 1)` body, 4-byte timeGetTime, `FUN_0064c730` fclose, and
-  `FUN_0064d710(path)` DELETES the file on any failure code. `FUN_00596850` is ONE codec both ways:
-  0x59686b stores param_2 to `DAT_00926a0c`, every leg is `cmp/je` → `call 0x64cc00` (read) else
-  `call 0x64c9a0` (write) — 30 write / 28 read sites, plus 28+28 swap siblings `0x596470`/`0x596540`
-  gated on `DAT_00985ae8 & 0x10000000`. The writer's 8 call sites: 0x521697 (turn-loop autosave, 10
-  insns after the "Writing save file" push at 0x521688), 0x52221e, 0x598c73 (UI Save browser),
-  0x59a121/0x59a166/0x59a1bc, 0x59a372, 0x59bf46.
-- **Acceptance** `sudo -n python3 scripts/m242_save_write.py` → `PASS M242: 5/5 gates`, rc 0, invocation
-  2 (invocation 1 filled every gate then died in `tally()`: the ENCODEC line had no address token —
-  fixed in 60a2afb, nothing weakened). `evidence/m242_save_write.txt` has both invocations. G1
-  host-statted saves A 242,799 B mtime +11.2 s / B 242,799 B +4.5 s, each inside its own window; G2 131
-  bps armed, zero insert warnings, TracerPid 0 after detach; G3 `ENT 597ce0 p=00bef174
-  path16='Z:\home\n100\rev'` ×1 reached through exactly one armed site, `0x598c73`; G4 codec entry
-  mode=1 swap=0, header leg `W 596883 dir=1 dst=0x985ab8 sz=796 n=1`, **23 hits at 23 of 30 write sites
-  vs 0 at 28 read sites, 0 swap** (M109 measured 23 of 28 read sites on a load — the same legs are
-  conditional both ways); G5 TERRAN + version 86 at file 8 + the live 796-B block verbatim at offset 12
-  + year 2153 mem==file, on BOTH saves.
-- **Corrections:** SAVE_FORMAT.md's "796 B at offset 0" → the block is at file offset **12** (8-byte
-  `TERRAN\0\x1a` + 4-byte version 0x56 precede it), so its read-order table is also the write-order
-  table. M241's premise is dead: the writer never touches 0x99aa38 — though `FUN_005985e0` does store
-  +1c/+20 (advisor-text substitution) on the UI route.
-- **Open:** which 7 write legs are dead and by which gate; the write-side sites OUTSIDE 0x596850 (M109:
-  93,159 B of a load is issued by 105 sites outside it); `FUN_0059a0c0`/`0x59a2b0`/`0x59bec0` unnamed.
-  #180 (M241) stays open, superseded by this answer. Box: one lifecycle, no relaunch, TracerPid 0.
-- **Pitfall:** a census parser must give EVERY logged line an address token — mine crashed in tally()
-  after the measurement was already complete, wasting an acceptance invocation.
+Older sessions: `docs/sessions/sessions-193-193.md` (1 sessions). Read it only when a question reaches back before session ## Session 194.
 
 ## Session 194 (2026-11-01, M243 — the 7 dead write legs of the save codec and their gates; static, zero box time)
 
@@ -541,3 +509,39 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   s208 RESULT block (1,274 B) VERBATIM to keep the cycle.
 - Not triggered: skill/SKILL.md 59,419 B (<69,000); evidence/ 28.3 MB (warn, trigger 28.5 not
   reached); no new evidence files this fire.
+
+## Session 210 (2026-11-02, ANALYSE, M269+M270+M271 through ONE instrument, PASS 10/10) — the virtual-base delta is image-wide (41 stores / 8 K / 31 functions); the 0x678e40 class is a 152,856-B stack object with ONE instance site; 32 vbtable descriptors close the K census
+
+- ONE script `scripts/m269_m271_census.py` (whole-image `.text` shadow + PE image + `ghidra_out/index.csv`;
+  no box, no `/proc`, no gdb) -> `SUMMARY M269/M270/M271: 10/10 gates PASS`; evidence
+  `evidence/m269_m271_census.txt`. Acceptance invocations used: 2 (the first printed 7/10 — three offsets I
+  had transcribed from a disassembly window into MY gate texts were wrong: the 0x614150 ctor is called at
+  +0x252ec not +0x24fec; M215's row ends at 0x247a0+0xb4c = 0x252ec; the dword 0x59c380 appears only at
+  0x678e40 because dw(0x678e3c) = 0x405350). No gate, floor or check was weakened.
+- M269: the geometric test (a store counts only if its address resolves to `field + [desc+4] - 4`) matches
+  41 delta stores in 31 functions at 8 distinct K: 0x18 x11, 0x1c x2, 0x48 x2, 0x8c x4, 0x188 x14,
+  0x21a6c x5, 0x22050 x1, 0x23d94 x2. G1/G2: the 5 K=0x21a6c functions ARE M267's 5 installers — the delta
+  detector and the install detector name the same 5. Same pass: 177 vptr installs made THROUGH a vbptr of 33
+  distinct tables; 9 secondary-view tables each have their primary 8 B above with the identical count;
+  biggest family 0x6713a0 (52 installs). 21 lineage-matched stores of a delta value are `sub reg,1`
+  arithmetic — reported, not gated.
+- M271: 32 of the 247 rdata immediates stored through a register are vbtables (dword[0] and dword[+4] both
+  |v| < 0x40000, neither a code pointer), 21 distinct [+4] offsets, and every K M269 found is one of them
+  (0x21a6c->0x675964, 0x23d94->0x678458, 0x22050->0x6763fc, 0x188->0x679de0, 0x8c->0x679c28/0x679da4,
+  0x48->0x67991c, 0x1c->0x679a98, 0x18->0x6713ac/0x6713f4/0x671408). [0x675964]=0,[+4]=0x21a6c is installed
+  only by FUN_00469650 and [0x678458+4]=0x23d94 only by FUN_0050aa60, and both installers carry a delta
+  store at their own K.
+- M270: 0x678e40 (secondary 0x678e38 at +0x2444) stored exactly once image-wide each, both inside
+  FUN_0059bec0 (0x59bf1c/0x59bf26). Slot 0 of each is its deleting-dtor wrapper (0x59c380 -> FUN_0059c1e0 ->
+  0x64bb70). Layout closes on itself: +0 the 0x5e3b80/0x5e3ced class, +0x2320 the 0x675964 class
+  (0x2320+0x22480 = 0x247a0), +0x247a0 M215's 0xb4c row (= +0x252ec, exactly where the 0x614150 ctor is
+  called AND where the dtor calls 0x6141c1), virtual base +0x23d8c = 0x2320+0x21a6c (destroyed via 0x5e3ced
+  in both, so it is the same type as the +0 object), size 0x25318 = the only 0x25318 immediate image-wide
+  (the alloca probe at 0x59bed1) = the span [ebp-0x25324, ebp-0xc). RETRACT part of M267: FUN_0059bec0 is
+  not a destructor (four ctor calls precede its 0x678e40 install; the same objects die at its tail) and its
+  0x67194c/0x671944 are M215's ROW at +0x247a0, never [this+0] — the installer of 0x67194c at [this+0] is
+  FUN_005faec0 (M215). Callers of FUN_0059bec0: FUN_0050fea0, FUN_00512b40, FUN_00516b80, FUN_0051e700.
+- Pitfall (mine, cost one acceptance): offsets read off a head/tail window and typed into a gate are not
+  evidence. Let the instrument print them (hex AND decimal) first, then write the sentence.
+- Box DOWN (`ps` shows no terran.exe), nothing owed (`grep -c 'box time owed' SESSION_CURSOR.md` = 0); M181
+  still unarmed (no box, no positive control). M241 (#180, 2/5) still open by design.
