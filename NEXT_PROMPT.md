@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 206, 2026-11-02, **M265-M266 DONE: the 7 view-table blocks are class-0x675964 objects — 201 × 608-B elements + a 2,580-B virtual subobject, 0x21a6c+0xa14 = 0x22480 exactly; FUN_00583c70 is statically unreachable (0 refs in .text operands AND 0 address-taken dwords in the whole image), one of an 8-function dead cluster**)
+# NEXT_PROMPT.md — footing for the next session (session 207, 2026-11-02, **B5 DONE: `sim/units.py` replays the recorded M27 arrow-key moves — one lattice step of the 0x6784a0 ring per press at 3 MP, 6 MP per unit per round, x wrapped by the width, y bounds-checked — 9/9 on `evidence/m27_solowrap*.log`; M265-M266 done, numbers `NAMED.md` §M265-§M266**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -28,12 +28,12 @@ binding cap is doc headroom, not capability.**
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
-ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json`, **B3 DONE (s199)** 6/6 — text `NAMED.md` §B4 + §s200.
-**Next rung B5 = units/movement.**
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`NAMED.md` §B4), **B5 DONE (s207)** 9/9 on the recorded M27 trace via `python3 -m sim.selftest --replay-m27` (`NAMED.md` §B5).
+**Next rung B6 = the headless run**: `sim/headless.py --sav <save> --turns 10 --dump sim_state.json`, exit 0, year per B3, two runs → identical sha256.
 
 ## THE LEDGER
 
-Merged M54A-M264 + B0-B4 (through #194); M265-M266 is this PR. UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M266 + B0-B4 (through #195); B5 is this PR. UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -58,33 +58,26 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s206 — M227-M237, **B1-B4**, M240-M266 (M241 FAIL 2/5, #180 open;
+- ANSWERED (do not re-pick): s187-s207 — M227-M237, **B1-B5**, M240-M266 (M241 FAIL 2/5, #180 open;
   the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
   test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
   view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class, what
   the 7 allocated blocks ARE, why FUN_00583c70 is unreferenced). Numbers VERBATIM: `NAMED.md` per-id,
   §s196-§s206; the s205 RESULT block moved VERBATIM to `docs/pick-archive.md` §s206 (+ traps 16-19 at
   §trim-s205). FUN_005f3f5b is NOT open — see M220.
-- RESULT (s206): **the 7 blocks are class-0x675964 objects** — ctor FUN_00469650 (7 call sites, one of
-  them the startup loop at 0x5803b2), `[ebp+0x8]` gating `mov [this+0],0x675964` (0x469681, the only
-  mention image-wide). [0] = a 2-dword class descriptor whose dword[+4] IS the base-subobject offset
-  (holds for 0x675964→0x21a6c, 0x6763fc→0x22050, 0x678458→0x23d94 — each matches the `add ecx,K` feeding
-  `call 0x5e3b80`, 53 callers); [4] = a lazily-freed pointer; **201 contiguous
-  608-B elements +0xc..+0x1dd6c** (4 at +0xc + 196 at +0x98c via 0x64bda0, element ctor/dtor
-  0x62514b/0x62516c, the 201st in place at +0x1db0c), ending 8 B before the +0x1dd74 the load-side
-  clears; +0x1ef54 = 4 × 2756-B elements (ctor 0x6251d0 → vtable 0x679e08); the subobject at +0x21a6c
-  gets the vptr pair 0x6725ac / 0x6725a4@+0x21eb0 (delta 0x444), a pair stored at 5 sites in 5 ctors.
-  **SIZE PROVEN**: FUN_005e3b80's stores top out at +0xa10 and 0x21a6c+0xa14 = 0x22480 = the allocation.
-  FUN_004412a0 dispatches through [desc+4] to slots +4/+8 of 0x6725ac (= FUN_005cdd0a/FUN_005cdf82), the
-  same two it calls directly on the static instance 0x8cc520; FUN_00479e90 frees [this+4] via 0x4017d0
-  then `this += [desc+4]` → 0x5e3d74. **M266**: 0x583c70 is in ZERO .text operands and an LE dword at
-  ZERO offsets of the whole file image; not fallthrough-entered (FUN_00583c20 rets at 0x583c6b + four
-  0x90 pad); 1 of 8 functions in 0x583000..0x584300 with n_callers==0, all 8 with zero address-taken
-  dwords; its 159-insn signature matches 0 other functions ≥40 insns; it is FUN_00583c20's terrain-record
-  sibling (globals ds:0x92a378/0x92a37c) — 0x583e1d can never execute.
-  `python3 scripts/m265_m266_census.py` -> `SUMMARY M265/M266: 12/12 gates PASS` (rc=0, 2.68 s; green on
-  inv 3, inv 1-2 failed on my own expectations). Numbers VERBATIM: `NAMED.md` §M265-§M266.
-- Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
+- RESULT (s206): the 7 view-table blocks are objects of the class whose descriptor is 0x675964
+  (201 × 608-B elements +0xc..+0x1dd6c + a 2,580-B virtual subobject at +0x21a6c, size proven to the
+  byte 0x21a6c+0xa14 = 0x22480); FUN_00583c70 is statically unreachable (0 refs in .text operands AND
+  0 address-taken dwords image-wide), 1 of an 8-function dead cluster. Numbers VERBATIM: `NAMED.md`
+  §M265-§M266; census `scripts/m265_m266_census.py` -> 12/12, `evidence/m265_m266_census.txt`.
+- RESULT (s207, BUILD): **the arrow-key step is executable** — `sim/units.py` +
+  `sim/selftest.py::run_m27_replay`, `python3 -m sim.selftest --replay-m27` -> **PASS B5: 9/9 gates**
+  (rc=0, green on inv 1, `evidence/b5_replay_m27.txt`): dir 1 = (+2,0) from the 0x6784a0 ring read at
+  `evidence/m248_region_values.txt:3`; STEP_MP 3 = alpha `#RULES` field 0 (FUN_005ac550 returns
+  `DAT_0092a278 * moves`), 6 MP = 2 moves, can-act = FUN_005acc00's `total-spent>0`; x wraps by the
+  width, y is bounded; 6/6 re-stamps of other units match the replay. OPEN: per-terrain move cost
+  (ASSUMED uniform 3), the bonus behind `moves = 2`, rec118's first step (outside the trace window).
+- Pick from (ANALYSE fires; the next BUILD fire takes **B6** — the headless run — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
   `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save —

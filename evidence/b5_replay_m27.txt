@@ -1,0 +1,12 @@
+  info rec118's logged press covers 2 tiles (41->45): one of its 2 steps is outside the committed trace window; the model lands it at (43, 11)
+  info ASSUMED: per-tile movement cost is uniform 3 (no per-terrain cost table decoded; alpha #TERRAIN is the terraform table) | moves = 2 for the recorded units (FUN_005ac550 returns scale*moves; alpha #CHASSIS Infantry Speed = 1, the second move's source is unnamed)
+  ok   trace-shape 4 presses idx=[119, 117, 118, 120] all dir=1, EXEC mode=3, own (-2,-2) stamp first
+  ok   destinations [(45, 11), (45, 11), (43, 11), (43, 11)] == turn_driver §M27 post-state [(45, 11), (45, 11), (43, 11), (43, 11)]
+  ok   dir1-delta (2, 0) from the trace-proven start [(117, 43, 11)] -> (45, 11) == recorded (45,11)
+  ok   ring-identity 8 dirs == the 0x6784a0 ring read at m248:3 shifted one index, == the 0x67850c ring at m248:2 minus (0,0), all 8 pairs preserve (x+y) parity
+  ok   mp-economy alpha #RULES[0]=3 == STEP_MP=3, MP_PER_TURN=6 == 2 moves == FUN_005ac550's scale*moves
+  ok   can-act-gate total-spent>0 admits steps at spent 0 and 3, refuses the third (spent stays 6, x stays 45)
+  ok   wrap-and-cell-view x wraps 79+2->1 and 0-2->78 on the 80-wide map, y=79+2 refused, 4 tile views agree between my (w/2)*y+(x>>1)+x&1 index, sim.map's cell_index and the packed 44-B record
+  ok   restamps-agree 6 re-stamps of other units all match the position the replay holds for them (mismatches [])
+  ok   displacement-from-(41,11) {117: 2, 118: 2, 119: 1, 120: 1} tiles -> 6 MP each, every one <= the 6-MP round budget, no off-axis move
+PASS B5: 9/9 gates on evidence/m27_solowrap.log + evidence/m27_solowrap2.log — one lattice step of (1, 2, 1, 0, -1, -2, -1, 0) per press at 3 MP, 6 MP per unit per round, x wrapped by the map width, y bounds-checked (no box time, no /proc, no gdb)
