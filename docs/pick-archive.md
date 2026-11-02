@@ -506,3 +506,25 @@ laws live in skill `references/instrument-laws.md`):
 - A degraded box cannot be rescued by poking. 0x985ac4 bit 0x200 SET (scorer m = 4); mask byte 0x985b10 = 0x08 ->
   ONLY fac3 human (a dword read there = 65288: mask the low byte). **The PANE decides where INSERT lands** (pass the
   index the pane shows: `*(int *)0x6a9480 + 0x3ff3c`).
+
+## §s200 overflow — moved VERBATIM out of NEXT_PROMPT.md at the M250 close (headroom)
+
+From THE PICK index, ANSWERED bullet:
+
+- ANSWERED (do not re-pick): s187-s199 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
+  **M242**, **M243**, **B2**, **M244**, **M245/M246/M247** (save-codec chain `FUN_00597ce0`→`FUN_00596850`,
+  the tail's legs, the region-map stride), **M248/M249** (the coarse region map = a per-region copy of
+  **terrain record +3 = the map's REGION LABEL**; the rule, the 19/19 recomputation and the single writer
+  `FUN_00582d00` are in `NAMED.md`) and **B3** (the turn engine — see BUILD TRACK above). Numbers
+  VERBATIM: `NAMED.md` per-id, `docs/pick-archive.md` §s196-§s198.
+
+From BUILD TRACK, the B3 result block:
+
+**B3 DONE (s199).** `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` -> `PASS B3: 6/6
+gates`, `matched=67/67` (one invocation, rc=0) -> `evidence/b3_turn_replay.txt`. `sim/turn.py` IS the
+engine: ascending walk over the 8 slots (our slot 3), **year++ on the 7→0 edge while `cur` is still 7**
+(witness row 22; other edges 0-22/66) and **`tf` cleared ONE STEP AFTER `cur_player` reaches
+3** (merge them: 5/66; M30's "never 3 while tf&2" retracted). 48 of 322,560 candidate (order × edge)
+models reproduce the trace, all 48 agreeing on those edges; OPEN: the press transition (unobservable) and
+the order of {4,5,6}. Parity is an **ordered subsequence** — the trace is a 0.2 s change-set sample
+(`turn_trace.py:59`); read `sim/turn.py`'s docstring before writing B4's check. Next rung: **B4 economy**.

@@ -30,14 +30,10 @@ build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs 
 claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`); ANALYSE
 ⇒ pick from this file exactly as usual.
 
-**B3 DONE (s199).** `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` -> `PASS B3: 6/6
-gates`, `matched=67/67` (one invocation, rc=0) -> `evidence/b3_turn_replay.txt`. `sim/turn.py` IS the
-engine: ascending walk over the 8 slots (our slot 3), **year++ on the 7→0 edge while `cur` is still 7**
-(witness row 22; other edges 0-22/66) and **`tf` cleared ONE STEP AFTER `cur_player` reaches
-3** (merge them: 5/66; M30's "never 3 while tf&2" retracted). 48 of 322,560 candidate (order × edge)
-models reproduce the trace, all 48 agreeing on those edges; OPEN: the press transition (unobservable) and
-the order of {4,5,6}. Parity is an **ordered subsequence** — the trace is a 0.2 s change-set sample
-(`turn_trace.py:59`); read `sim/turn.py`'s docstring before writing B4's check. Next rung: **B4 economy**.
+**B3 DONE (s199)** — 6/6 gates, `matched=67/67`, one invocation: `sim/turn.py` IS the turn engine
+(ascending 8-slot walk, our slot 3; year++ on the 7→0 edge; `tf` cleared one step after `cur` reaches 3).
+Full result text VERBATIM: `docs/pick-archive.md` §s200. Read `sim/turn.py`'s docstring before writing
+B4's check. Next rung: **B4 economy**.
 
 ## THE LEDGER
 
@@ -73,12 +69,9 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s199 — M227-M237, **B1**, **M240**, **M241** (FAIL 2/5, #180 open),
-  **M242**, **M243**, **B2**, **M244**, **M245/M246/M247** (save-codec chain `FUN_00597ce0`→`FUN_00596850`,
-  the tail's legs, the region-map stride), **M248/M249** (the coarse region map = a per-region copy of
-  **terrain record +3 = the map's REGION LABEL**; the rule, the 19/19 recomputation and the single writer
-  `FUN_00582d00` are in `NAMED.md`) and **B3** (the turn engine — see BUILD TRACK above). Numbers
-  VERBATIM: `NAMED.md` per-id, `docs/pick-archive.md` §s196-§s198.
+- ANSWERED (do not re-pick): s187-s199 — M227-M237, **B1**, **M240-M244** (M241 FAIL 2/5, #180 open),
+  **B2**, **M245-M249** (save-codec chain, tail legs, region-map stride, region label = record +3),
+  **B3** (turn engine). Numbers VERBATIM: `NAMED.md` per-id, `docs/pick-archive.md` §s196-§s200.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B4** — economy — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's
   +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies
