@@ -593,3 +593,20 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
     MUST carry `handle SIGUSR1 nostop noprint pass` (SIGUSR2/SIGPIPE too) and a ~400-`continue` tail. A bp on a function
     that serves the whole game (the four read wrappers) costs one ptrace stop per read: 25,957 stops starved the load
     driver to ZERO loads — filter by FILE* (`set $savefile` at the loader's entry).
+
+## §s206 move — the s205 RESULT block, moved VERBATIM from NEXT_PROMPT.md (footing headroom)
+
+- RESULT (s205): **the view-table entries 1..7 ARE allocated** — FUN_00580260's loop at 0x580392 walks esi
+  0x7cded0 → 0x7cdeec step 4 (7 iters): `push 0x22480 ; call 0x64bc20` → `push 1 ; mov ecx,eax ; call
+  0x469650` → the POINTER-ARITHMETIC store `mov [esi],eax` (0 only on the failure path). M260's "zeroes
+  entries 1..7" / "the ~140 KB views are not allocated" RETRACTED (0x224b8 = 0x22480 + 0x38, INFERRED).
+  **The LOAD trusts the file's band bytes**: none of the 8 writer functions (+ FUN_0051c750's walk store)
+  is in the depth-9 forward closure of the 6 load-path functions (276 functions) and none sits in a
+  vtable slot; FUN_00583c70 (writer 0x583e1d) has ZERO references image-wide. **FUN_005be090 is
+  operator-new** (→ 0x649e00 → 0x649e70 with the heap handle ds:0x99d5f8; the NULL path reports through
+  the global pointer ds:0x671320): 0 slots, 119 sites in 74 functions, and the footing's "13 [reg+4]
+  sites" are store-after-alloc (14 in 13 functions). ds:0x9965b8 is a LINEAR RECORD CURSOR (FUN_005dbb5f
+  bumps +0x2c and stamps [rec+8]=9; FUN_005dbbe6 rewinds −w*h and frees [rec+4] via FUN_0064a7f0;
+  FUN_005dbdc0 is the filler). `python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11
+  gates PASS` (rc=0, 3.7 s; inv 1 was 10/11 on a count copied from a truncated probe print, moved only
+  after an objdump corpus said 39/12). Gate-by-gate numbers VERBATIM: `NAMED.md` §M262-§M264.

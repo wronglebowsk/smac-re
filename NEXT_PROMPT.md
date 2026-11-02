@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 205, 2026-11-02, **M262-M264 DONE: the view-table entries 1..7 are ALLOCATED at startup (7 × 0x22480, stored through a cursor — M260 retracted); the LOAD never re-derives the per-faction band; FUN_005be090 is operator-new and ds:0x9965b8 is a linear record cursor**)
+# NEXT_PROMPT.md — footing for the next session (session 206, 2026-11-02, **M265-M266 DONE: the 7 view-table blocks are class-0x675964 objects — 201 × 608-B elements + a 2,580-B virtual subobject, 0x21a6c+0xa14 = 0x22480 exactly; FUN_00583c70 is statically unreachable (0 refs in .text operands AND 0 address-taken dwords in the whole image), one of an 8-function dead cluster**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -59,40 +59,49 @@ semantics in `NAMED.md`.
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s205 — M227-M237, **B1-B4**, M240-M264 (M241 FAIL 2/5, #180 open;
+- ANSWERED (do not re-pick): s187-s206 — M227-M237, **B1-B4**, M240-M266 (M241 FAIL 2/5, #180 open;
   the save-codec chain, the region generator + its ORDER, the verdict codes and their guards, the worth
   test's operands, the 12-array per-region family, the economy rung, the per-faction mask band, the
-  view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class).
-  Numbers VERBATIM: `NAMED.md` per-id, §s196-§s205; the s204 RESULT block moved VERBATIM to
-  `docs/pick-archive.md` §s205 (+ traps 16-19 at §trim-s205). FUN_005f3f5b is NOT open — see M220.
-- RESULT (s205): **the view-table entries 1..7 ARE allocated** — FUN_00580260's loop at 0x580392 walks esi
-  0x7cded0 → 0x7cdeec step 4 (7 iters): `push 0x22480 ; call 0x64bc20` → `push 1 ; mov ecx,eax ; call
-  0x469650` → the POINTER-ARITHMETIC store `mov [esi],eax` (0 only on the failure path). M260's "zeroes
-  entries 1..7" / "the ~140 KB views are not allocated" RETRACTED (0x224b8 = 0x22480 + 0x38, INFERRED).
-  **The LOAD trusts the file's band bytes**: none of the 8 writer functions (+ FUN_0051c750's walk store)
-  is in the depth-9 forward closure of the 6 load-path functions (276 functions) and none sits in a
-  vtable slot; FUN_00583c70 (writer 0x583e1d) has ZERO references image-wide. **FUN_005be090 is
-  operator-new** (→ 0x649e00 → 0x649e70 with the heap handle ds:0x99d5f8; the NULL path reports through
-  the global pointer ds:0x671320): 0 slots, 119 sites in 74 functions, and the footing's "13 [reg+4]
-  sites" are store-after-alloc (14 in 13 functions). ds:0x9965b8 is a LINEAR RECORD CURSOR (FUN_005dbb5f
-  bumps +0x2c and stamps [rec+8]=9; FUN_005dbbe6 rewinds −w*h and frees [rec+4] via FUN_0064a7f0;
-  FUN_005dbdc0 is the filler). `python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11
-  gates PASS` (rc=0, 3.7 s; inv 1 was 10/11 on a count copied from a truncated probe print, moved only
-  after an objdump corpus said 39/12). Gate-by-gate numbers VERBATIM: `NAMED.md` §M262-§M264.
+  view table + its startup allocation, the allocator and the record cursor, the 0x679f98 class, what
+  the 7 allocated blocks ARE, why FUN_00583c70 is unreferenced). Numbers VERBATIM: `NAMED.md` per-id,
+  §s196-§s206; the s205 RESULT block moved VERBATIM to `docs/pick-archive.md` §s206 (+ traps 16-19 at
+  §trim-s205). FUN_005f3f5b is NOT open — see M220.
+- RESULT (s206): **the 7 blocks are class-0x675964 objects** — ctor FUN_00469650, 7 call sites
+  {0x40a027, 0x468fc0, 0x48dc7a, 0x4cb5cf, 0x50aaae, 0x5803b2, 0x59befc}, `[ebp+0x8]` gating the install
+  `mov [this+0],0x675964` (0x469681, the only mention image-wide). [0] = a 2-dword class descriptor whose
+  dword[+4] IS the base-subobject offset (law holds for 0x675964→0x21a6c, 0x6763fc→0x22050,
+  0x678458→0x23d94, each matching the `add ecx,K`/`lea ecx,[reg+K]` feeding `call 0x5e3b80`, 53 callers);
+  [4] = a lazily-freed pointer; **201 contiguous 608-B elements +0xc..+0x1dd6c** (0x64bda0 constructs 4 at
+  +0xc and 196 at +0x98c, element ctor/dtor 0x62514b/0x62516c, the same element ctor then runs in place at
+  +0x1db0c) — ending 8 B before the +0x1dd74 the load-side clears; +0x1ef54 = 4 × 2756-B elements (ctor
+  0x6251d0 → vtable 0x679e08); the subobject at +0x21a6c has its vptr pair overwritten to 0x6725ac there
+  and 0x6725a4 at +0x21eb0 (delta 0x444) — a pair stored at 5 sites in 5 ctors {FUN_00421950, FUN_00469650,
+  FUN_00518980, FUN_0059bec0, FUN_0059c1e0}. **SIZE PROVEN**: FUN_005e3b80's stores top out at +0xa10 and
+  0x21a6c + 0xa14 = 0x22480 = the allocation. Dispatch: FUN_004412a0 reads [desc+4] and calls slots +4/+8
+  of 0x6725ac (= FUN_005cdd0a / FUN_005cdf82), the same two it calls directly on the static instance
+  0x8cc520; FUN_00479e90 frees [this+4] via 0x4017d0 then `this += [desc+4]` → 0x5e3d74. **M266**:
+  0x583c70 appears in ZERO .text operands and as an LE dword in ZERO offsets of the whole file image; not
+  fallthrough-entered (FUN_00583c20 rets at 0x583c6b + four 0x90 pad); 1 of 8 functions in
+  0x583000..0x584300 with n_callers==0, all 8 with zero address-taken dwords; its 159-insn mnemonic
+  signature matches 0 other functions ≥40 insns (not a linker duplicate); it is a terrain-record helper of
+  FUN_00583c20's family (callees {0x582000, 0x5b09b0, 0x625af1, 0x64a7f0}, globals ds:0x92a378/0x92a37c) —
+  0x583e1d can never execute. `python3 scripts/m265_m266_census.py` -> `SUMMARY M265/M266: 12/12 gates
+  PASS` (rc=0, 2.68 s; green on inv 3 — inv 1 a TypeError in my own push-order helper, inv 2 6/12 on five
+  of my own expectations, each fixed against the corpus's own print). Numbers VERBATIM: `NAMED.md`
+  §M265-§M266.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B5** — units/movement — from `BUILD_SPINE.md`):
   WHO dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); **does
   `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save —
   the box is DOWN, cold relaunch >9 min); **what the row stride 188 means** (new from M257: `esi =
   2*region + 188*fac`, regions 94..127 pass the next row — one live read of both indexings of `0x94eaa8`
-  settles it; box); **what the 7 allocated view blocks are FOR** (new from M262: entries 1..7 hold
-  0x22480-B blocks built by FUN_00469650, yet every indexed use only tests them for non-null and only
-  entry 0 is used as a field base (+0x1dd70/+0x1dd84/+0x53b4) — static lead: compare FUN_00469650's own
-  field writes with the static view ctor FUN_00518820's, and read the 12 entry-1 readers, esp.
-  FUN_004412a0 (8) and the teardown callee FUN_00479e90 (69 B)); **why FUN_00583c70 exists with ZERO
-  references** (new from M263: it allocates through FUN_00582000 and writes the band at 0x583e1d, but no
-  call, imm32 or vtable slot names it — static lead: the PE relocation table, and the target set of every
-  computed `call [reg]` whose register could hold it).
+  settles it; box); **what the 201 608-B elements ARE** (new from M265: they are 121,600 of the
+  140,416-B block, the element ctor 0x62514b only sets {dword0=3, dword1=0} and the dtor is 0x62516c —
+  cross-check the 4/196/201 counts against `data/alpha.json` row counts and find who walks +0xc..+0x1dd6c
+  with a 0x260 stride; static); **which variants share the 0x6725ac/0x6725a4 pair** (new from M265: 5 ctors
+  install it at different object offsets and FUN_0050aa60 calls the subobject ctor 0x5e3b80 TWICE
+  (+0x23d94 then +0x21a68) — read the 5 installers' descriptors + sizes and what the text after
+  0x675964+8 is for; static).
 ## LIVE FACTS / KIT
 
 - **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
