@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md — footing for the next session (session 200, 2026-11-01, **M250-M252: the region generator is named, its ORDER is pinned, and the coarse label map has ONE consumer**)
+# NEXT_PROMPT.md — footing for the next session (session 201, 2026-11-01, **M253-M255: the region verdict codes are NAMED by their guards, and `FUN_0057ecf0` is the NEW GAME generator caller**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -39,7 +39,7 @@ B4's check. Next rung: **B4 economy**.
 
 Merged: M54A-M123 (#39-#130, gaps: `docs/pick-archive.md`), M163-M200 (#138-#159), M201-M234 (#161-#173),
 M235-M237 (#176), B0 (#170), B1 (#178), M240 (#179), M242 (s193, 5/5), M243 (s194, 4/4), B2 (s195, 7/7),
-M244 (#185), M245-M247 (#186), M248/M249 (s198, 5/5), B3 (s199, 6/6), M250-M252 (s200, 7/7), s175
+M244 (#185), M245-M247 (#186), M248/M249 (s198, 5/5), B3 (s199, 6/6), M250-M252 (s200, 7/7), M253-M255 (s201, 8/8), s175
 cap triage (#153), docs #169/#174/#175/#177.
 UNMERGED: M83/M84 (-9999 = FUN_00496ad0's 'unset' return per M212; 0x4d00 post gated at 0x4193b2 on
 ds:0x920434 != 0, live 0), M86 (0x5a7e73 skips the band loop unless arg1 == 0x93325c/68/74), M101 (#108,
@@ -69,11 +69,17 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
 - **Where things live:** map/terrain footing is now `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) and FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (20 hottest
   displacements, M143-M162). Start there before re-deriving a field.
-- ANSWERED (do not re-pick): s187-s200 — M227-M237, **B1**, **M240-M244** (M241 FAIL 2/5, #180 open),
+- ANSWERED (do not re-pick): s187-s201 — M227-M237, **B1**, **M240-M244** (M241 FAIL 2/5, #180 open),
   **B2**, **M245-M249** (save-codec chain, tail legs, region-map stride, region label = record +3),
-  **B3** (turn engine), **M250/M251/M252** (the region generator and its ORDER, the per-faction region
-  CATEGORY array, the coarse map's single consumer). Numbers VERBATIM: `NAMED.md` per-id,
-  `docs/pick-archive.md` §s196-§s200.
+  **B3** (turn engine), **M250-M252** (the generator, its ORDER, the per-faction region verdict array,
+  the coarse map's single consumer), **M253-M255** (the verdict codes NAMED by their guards, the contact
+  test `FUN_00531bf0`, `FUN_0057ecf0` = NEW GAME). Numbers VERBATIM: `NAMED.md` per-id, §s196-§s200.
+- RESULT (s201): `DAT_0094eda8[region + fac*0x20bc]` is a four-state VERDICT code, written once per
+  upkeep pass: **8** = reserved id (`id & 0x3f` in {0,0x3f}) with score 0, region skipped; **7** = the
+  water band (always) or the worth-test true; **0** = no contact; **2** = another faction's units are in
+  contact with mine in that region (`FUN_00531bf0` walks the unit array over terrain records, matching
+  record byte +3 to the region, then asks `FUN_0058b1b0` for a route). Guards/pcs/counts V, names
+  INFERRED. `python3 scripts/m253_region_categories.py` -> `SUMMARY PASS: 8/8` (static, no box).
 - Pick from (ANALYSE fires; the next BUILD fire takes **B4** — economy — from `BUILD_SPINE.md`): WHO
   dispatches the dialog's +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]`
   sites belong to other hierarchies — falsifier = a live vtable read at a click, box); what the 15
@@ -81,13 +87,12 @@ open; M242 answered the same question from the right premise). Summaries: `pick-
   (FUN_0062d630 <- FUN_0045a8b0 / FUN_005b3000 / FUN_00641f3c); WHO CALLS FUN_005be090 at the 13
   [reg+4] sites and with what sizes, and which of the 3 loaders of ds:0x9965b8 fills the records; who
   calls FUN_005f3f5b (6102 B); **what the 7 mask copies at record +16..+43 are for, and who writes
-  them when a map is GENERATED** (new from M240, static — M250 now names the generation chain, so the
-  writers to look for are inside `FUN_0058d120`/`FUN_0058d390` and `FUN_0051c750`); who allocates the
-  ~140 KB view objects (slots 1..7 are `0x224b8` apart, slot 0 at `0x8f79e0`) and what sets/clears
-  view `+0x1dd74`; **what NAMES the region categories 0/2/7/8 at `DAT_0094eda8`** (new from M251: the
-  shape, the 2 writers and the 4 effects are pinned, the names are not — `FUN_0055f650`'s 24 refs and
-  `FUN_004f6030`'s 11 are where they would be read); **which of `FUN_005b2970`'s 4 callers is NEW
-  GAME** (new from M250, static: `FUN_004e10c0`, `FUN_004e11b0`, `FUN_0057c550`, `FUN_0057ecf0`).
+  them when a map is GENERATED** (new from M240/M250, static: `FUN_0058d120`/`FUN_0058d390`/
+  `FUN_0051c750`); who allocates the ~140 KB view objects (slots 1..7 are `0x224b8` apart, slot 0 at
+  `0x8f79e0`) and what sets/clears view `+0x1dd74`; **what the worth test's operands are** (new from
+  M253: `[0x94d810]-[0x94d818]`+`local_64` vs `[0x94eaa8][region]`+a faction field; the sibling
+  per-region arrays `0x94e4a8`/`0x94e628`/`0x94e7a8`/`0x94eaa8` are still unnamed); **does
+  `FUN_0057ecf0` also run on a LOAD** (new from M255, box: bp the `FUN_005b2970` entry, load a save).
 ## LIVE FACTS / KIT
 
 - **BOX**: s197 preflight PASS (14 invariants), terran.exe 319926 alive, TracerPid 0, not this session's

@@ -912,3 +912,31 @@ RETRACTS B2's `tail 10,800 = 256+152+10,144+28+220` and its `93,159 = 92,927 + 2
 | the search walks the coarse grid by its own dims (`DAT_0092ad9c` × `DAT_0092ada0`, 7 refs), keeps cells whose label == the candidate region, converts cell → terrain `x = cell*5`, scans neighbour footprints for land tiles, scores them | shard_014.c:3443-3556 | V |
 | the winner is gated by the terraform cost `FUN_004cc7b0` (2 calls in the stage) against the faction's budget, then issued as `FUN_0056d350(faction, 0x29, 2, x, y, -1)`; both `push 0x29` sites (`0x556a47`, `0x558ad9`) reach a `call 0x56d350` 3 insns later | G6 | V |
 | so the coarse map is the SPATIAL INDEX for "where is region R", not a minimap layer | G6/G7 + the 2-site census | V |
+## M253 (s201, PASS 8/8) — the four region verdict codes are named by the guard that writes each
+
+| claim | evidence | conf |
+|---|---|---|
+| `DAT_0094eda8[region + fac*0x20bc]` is a verdict code, not a category label: **8 = the reserved ids with nothing scored** — `0x557fdf` is reached only after `and eax,0x3f` + (`cmp eax,0x3f` or `test eax,eax` zero) + `test al,[..0x94e5a8]` zero, and is followed by `jmp 0x558b18` (the region loop tail: the region is skipped) | G4, `evidence/m253_region_categories.txt:4` | V |
+| **7 vs 8 = the worth test's boolean + 7**: `sete dl; add dl,0x7` -> `mov BYTE PTR [esi+edi*1+0x94eda8],dl` at `0x558516` | G4, `:4` | V |
+| **the water band always ends at 7**: `0x55856b` lies between `cmp edi,0x40` / `jl 0x558578` and `jmp 0x558b18` — id >= 0x40 stores 7 and the region is done (M251's "every water id ends at 7", now pinned to the band test) | G4, `:4` | V |
+| **0 = cleared-open** under `test BYTE PTR [ebp-0x40],0x2` (`0x558549`); **2 = contested** under `test [ebp-0x40],0x1` (`0x55855e`) — the 2-store comes AFTER the 0-store, so a single contact verdict wins | G4, `:4`; names from M254 | V (guards), INFERRED (names) |
+| consumer domain: 33 `cmp BYTE PTR [..],imm` and 21 `cmp <reg>,imm` right after a load test **exactly {2,7,8}**; 39 plain loads; 0 unclassified; nothing tests 0/1/3/4/5/6 and 1 is never written | G1/G2, `:1-2` | V |
+| effects re-pinned: `+1000` at `0x55863d`; `cmp al,0x7` at `0x5586f9`; the 8-arm size gate `cmp DWORD PTR [edx*4+0x989ce0],0x96` with `edx = region*7` (`lea [r*8]`+`sub` fold of the M250 stride-0x1c table, dword 0 = tile count) at `0x55870e` | G3, `:3` | V |
+
+## M254 (s201, PASS 8/8) — the two bits come from FUN_00531bf0: contact between two factions inside one region
+
+| claim | evidence | conf |
+|---|---|---|
+| the stage's accumulator `[ebp-0x40]` has exactly ONE computed write: `test ecx,ecx; mov eax,0x1; jne 0x558349; mov eax,0x2; or DWORD PTR [ebp-0x40],eax` — only {1,2} are ever OR'd in, only masks {1,2} are ever tested | G5, `evidence/m253_region_categories.txt:5` | V |
+| `FUN_00531bf0(facA, facB, region, mode)` (505 B, 10 call sites, 2 inside `FUN_00556690`) walks the unit array over terrain records at `DAT_0092ae14`, keeps a facA unit whose record byte +3 (the region label, M249) == the region, then seeks a facB unit in the same region and calls `FUN_0058b1b0` (route) / `FUN_0058cfc0`; returns 1 iff a route is found | G5, `:5` + shard_013 body | V (shape), INFERRED (route) |
+| so **bit 1 = contact -> 2 = CONTESTED (blocks the pick)**, **bit 2 = no contact -> 0 = OPEN (the +1000 candidate)** | G4+G5 pairing | INFERRED (named) |
+| `FUN_0055f650`'s only store promotes **8 -> 7** at `0x564ad7` under `cmp DWORD PTR [ebp-0x8c],0x8`, in the same window as `add WORD PTR [eax+0x94eaa8],0xfff6` (-10) and `or BYTE PTR [eax+0x94e7a8],0x9` — the auto-manager clears the not-worth verdict when it acts in the region | G4, `:4` | V (code), INFERRED (why) |
+
+## M255 (s201, PASS 8/8) — `FUN_0057ecf0` is the NEW GAME caller of the world generator
+
+| claim | evidence | conf |
+|---|---|---|
+| `FUN_005b2970` has exactly 4 call sites, one per caller: `0x4e1151`, `0x4e122b`, `0x57d2a0`, `0x57f1ec` | G6, `evidence/m253_region_categories.txt:6` | V |
+| gates: `FUN_0057c550`'s site is skipped by 2 branches targeting the return point (`je`/`jne 0x57d2a5`) on `ds:0x9264d8` (written only at `0x57e495`=1 and `0x57e900`=0, read only in `FUN_0057c550`/`FUN_0057e890`) and `bl & 2`; `FUN_0057ecf0`'s is ungated and preceded by 6 stores to the world-dimension globals `ds:0x92ad??`; `FUN_004e10c0` ORs `0x80` into `ds:0x985ae8` before its call, `FUN_004e11b0` ANDs `0x7f` | G6, `:6` | V |
+| modes from the literals: `FUN_0057ecf0` = {FACTIONS, WORLDSIZE, SCENARIO, INTRO} + 2 calls to the alpha-section opener `FUN_005ea431`; `FUN_0057c550` = {RULES, USERULES, RELOADFAC, DIFFICULTY, CUSTOMNAMES, FACTION} + 0 such calls; the `0x80` pair has NO literals; callers: `FUN_00512b40` (BASE/MAP CHECKSUMS, EDITINTERLUDE) + `FUN_00516b80` (MENUDETAIL, REALLYQUIT, TECHRANDOM) for the pair, `FUN_0057e890` (MAPMENU, maps\planet.mp) + `FUN_0057f740` (TOPMENU/SCENARIOMENU) for `57c550`, `FUN_00522850` (movies\virtualWorld.wve, opening) + `FUN_0057f740` for `57ecf0` | G7, `:7` | V |
+| **exactly ONE caller satisfies ungated + world-dim stores + alpha-section reads + scenario literals: `FUN_0057ecf0`** = new game (read #FACTIONS/#WORLDSIZE from alpha.txt, set the world size, generate). `FUN_0057c550` = the scenario/MAP-FILE load path; `FUN_004e10c0`/`FUN_004e11b0` = the menu/editor REGENERATE pair (accept vs retry-vote allowed) | G8, `:8` | V (discriminators), INFERRED (naming) |
