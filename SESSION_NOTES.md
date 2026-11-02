@@ -1,41 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-181-181.md` (1 sessions). Read it only when a question reaches back before session ## Session 182.
-
-## Session 182 (2026-11-02) — M209-M212 all PASS: who dispatches dialog slot +0xa8; the dialog stack = two parallel arrays (arg3 write-only); +0xe4 is a bool; FUN_00542ea0 wraps the pump; -9999 is FUN_00496ad0's sentinel
-
-Instrument `scripts/m209_m212_dispatch.py`: whole-image disasm + image bytes + a vtable model (bases = the imm32
-of `mov dword ptr [reg+disp],imm`, extent = code-pointer dwords capped at the next base -> 188 bases). Acceptance
-`python3 scripts/m209_m212_dispatch.py` -> `SUMMARY M209=PASS M210=PASS M211=PASS M212=PASS (18/18 gates)`, rc 0,
-FIRST acceptance invocation; 3 `--probe` runs fixed 6 expectation errors (457/7 install split, 3 not 4
-`[this+0x3c]` sites, INSTALLS displacement carries no `]`, read the guard off the call site's next 3 insns,
-`cmp eax,esi` is a REG compare, arg_of must start one insn before the call); no threshold weakened.
-`evidence/m209_m212_dispatch.txt` (5,859 B). Zero box time. Semantics: NAMED.md `## M209-M212`.
-
-- **M209** +0xa8 = 33 implementations over 188 vtables; exactly 3 map it to FUN_005f5759 (0x67164c 390 / 0x6717cc
-70 / 0x6728c0 4 installs, 70 ctor fns, 457 at `[ebp-disp]` — dialogs are stack locals). Dispatchers: FUN_005f6aa3
-(the family's own +0x4c, 5 vtables, 0 direct calls) via FUN_005e7917 (24-B list walk from `[obj+8]-1`, publishes
-item[+0x14]/item[+0x10], -1 on failure) and FUN_0043fee0 (+0xa8 of 0x6738e4, 0 direct calls) via ds:0x9977f0 (9
-refs, 2 stores, both inside the pump at 0x5f3d70/0x5f3e02). RETRACTED: FUN_0043a4e0 (+0x60 of 0x673498 ->
-FUN_004394e0) and the -0xa14 thunks (0x6723f4/0x672bfc/0x673444 installed at `[reg+0xa14]`) — 0 of 13 outer
-targets is FUN_005f5759. FUN_004bb900 = +0xa8 of 8 vtables, forwards to [this+0x3c], 0x14 if null. Args: 19
-immediates (5x -1, 1x -2) + 10 registers.
-- **M210** dialogs[] 0x992db8 6 refs (4 stores / 2 loads, 3 fns); arg3[] 0x992dc8 3 stores, 0 LOADS = write-only;
-current 0x9939c4 22/3, depth 0x9939c8 21/3, writers only FUN_005ce5bd + FUN_005ce6ff. +0xe4: 2 dispatch sites;
-dialog family = FUN_005f6056 `return ds:0x997770 == 0`, sibling = FUN_004060d0 `return 1`; ds:0x997770 3 refs = 2
-stores (0x5f3e6e = 0, 0x5f6081 = 1) + 1 read; the runner gates its arg2 callback on it (`test eax,eax; je
-0x5ce6f6`). M206's "+0xe4 = events" RETRACTED.
-- **M211** FUN_00542ea0 (1456 B, 1 caller = FUN_00546800 at 0x54eaeb) calls FUN_00405ef0 (0x542ecb) and the pump
-ONCE (0x54322b), returns its eax; table 0x54ef34 = 8 entries (9th dword 0x90909090), guard `add esp,0x8; cmp
-eax,0x7; ja 0x54ec82`; cases 0..7 -> FUN_005306b0 / FUN_00545c50 (1,2) / FUN_00626a17 (key 0x690fc0, stub
-0x530d70) / FUN_0053fce0 / FUN_00541bb0 / FUN_00542810 / ds:0x920700=0xc + ds:0x92077c=1 then FUN_00545c50. M207's
-"0 pump calls" is direct-only.
-- **M212** -9999 (0xffffd8f1) 14 sites / 10 fns (3 cmp, 11 mov): 0x4976ce init + 0x4976f9 read-back inside
-FUN_00496ad0, which has 1 caller (FUN_00417ee0 at 0x41860a `call 0x496ad0; mov edi,eax`) and its 2 tests read
-edi; 0 pump sites test -9999 and 0 of the 56 +0xa40 stores write it. Pump's 94 consumers: 49 mov / 22 test
-eax,eax / 4 cmp-imm (0x8 x2, 0x3, 0x1) / 6 cmp-reg / 5 pop / 3 push / 2 lea / 2 jmp / 1 dec; 1 tests -1 within 12
-insns.
-OPEN: s174e box state unverified; M181 still a LEAD (no positive control).
+Older sessions: `docs/sessions/sessions-182-182.md` (1 sessions). Read it only when a question reaches back before session ## Session 183.
 
 ## Session 183 (2026-11-02) — M213-M216 all PASS: point-in-rect hotspots; the dialog's +0x4c is a CLICK DISPATCHER over the list at this+0x3098; the 0xb4c row class and its label buffer; 0x6738e4 and the modal handle's readers
 
@@ -513,3 +478,15 @@ finds where a region IS; the per-faction category/score arrays say whether it wa
 **OPEN.** The names of categories 0/2/7/8 (only their effects are pinned); the internal order of the
 M249 {4,5,6} question and every earlier pick's OPEN item stand. `FUN_005b2970`'s 4 call sites are
 counted but not attributed to modes. No retraction.
+
+## Session 201 (2026-11-01, M253/M254/M255 ANALYSE — what the region verdict codes MEAN, and who calls the generator for a NEW GAME)
+
+Acceptance: `python3 scripts/m253_region_categories.py` -> `SUMMARY PASS: 8/8 gates on terran.exe (static image, no box)`, rc=0, 4.6 s, ONE invocation -> `evidence/m253_region_categories.txt` (2,249 B). Static only (objdump of the image + `ghidra_out`): no box, no `/proc`, no gdb. New instrument `scripts/m253_region_categories.py`, 8 gates.
+
+**M253 — the four values are verdict codes named by the guard that writes each.** G4 reads the guards from machine code: `0x557fdf` stores 8 only after `and eax,0x3f` + (`cmp eax,0x3f` or `test eax,eax` zero) + `test al,[..0x94e5a8]` zero, then `jmp 0x558b18` — the reserved-id/zero-score region is SKIPPED. `0x558516` stores `dl` produced by `sete dl; add dl,0x7` — 7 or 8 is the worth-test boolean + 7. `0x558549` stores 0 under `test BYTE PTR [ebp-0x40],0x2`; `0x55855e` stores 2 under `test [ebp-0x40],0x1` — the 2-store comes AFTER the 0-store, so contested beats open. `0x55856b` sits between `cmp edi,0x40`/`jl 0x558578` and `jmp 0x558b18`: the WATER band always ends at 7 and the region is done. G3 re-pins the effects to pcs: `+1000` at `0x55863d`, `cmp al,0x7` at `0x5586f9`, and the 8-arm size gate `cmp DWORD PTR [edx*4+0x989ce0],0x96` with `edx = region*7` (the M250 stride-0x1c table, dword 0 = tile count) at `0x55870e`. G2: 33 `cmp BYTE PTR [..],imm` and 21 `cmp <reg>,imm` right after a load test exactly {2,7,8}; 39 plain loads; nothing tests 0/1/3/4/5/6 directly — and 1 is never written by either writer.
+
+**M254 — what sets the two bits.** The accumulator `[ebp-0x40]` has exactly one computed write: `test ecx,ecx; mov eax,0x1; jne 0x558349; mov eax,0x2; or DWORD PTR [ebp-0x40],eax` — only {1,2} are ever OR'd in and only masks {1,2} are ever tested. `ecx` is the result of `FUN_00531bf0(facA, facB, region, mode)` (505 B, 10 call sites, 2 inside the stage): it walks the unit array over terrain records at `DAT_0092ae14`, keeps a facA unit whose record byte +3 (the region label, M249) equals the region, then looks for a facB unit in the same region and calls `FUN_0058b1b0` (route) / `FUN_0058cfc0`, returning 1 iff a route is found. So bit 1 = contact -> **2 = CONTESTED**; bit 2 = no contact -> **0 = OPEN** (the +1000 candidate). `FUN_0055f650`'s only store promotes 8 -> 7 (`0x564ad7`, guarded by `cmp DWORD PTR [ebp-0x8c],0x8`) in the same window as `add WORD PTR [eax+0x94eaa8],0xfff6` (-10) and `or BYTE PTR [eax+0x94e7a8],0x9`.
+
+**M255 — the NEW GAME caller.** `FUN_005b2970`'s four sites are `0x4e1151`, `0x4e122b`, `0x57d2a0`, `0x57f1ec`. Only `FUN_0057ecf0` is ungated AND writes 6 world-dimension globals (`ds:0x92ad??`) before the call AND reads alpha sections through `FUN_005ea431` (FACTIONS, WORLDSIZE) AND carries the {SCENARIO, INTRO} literals. `FUN_0057c550`'s call is skipped by 2 branches targeting the return point on `ds:0x9264d8` (written only at `0x57e495`=1 / `0x57e900`=0) and its literals are {RULES, USERULES, RELOADFAC, DIFFICULTY, CUSTOMNAMES} with 0 alpha-section calls; its other caller is `FUN_0057e890` = MAPMENU + maps\planet.mp. The set/clear-`0x80` pair `FUN_004e10c0`/`FUN_004e11b0` has NO literals and is called only by `FUN_00512b40` (CHECKSUMS/EDITINTERLUDE) and `FUN_00516b80` (MENUDETAIL/REALLYQUIT/TECHRANDOM).
+
+**No retraction.** OPEN: the four NAMES are INFERRED from guard + effect, not from a literal; the worth test's operands (`[0x94d810]-[0x94d818]` vs `[0x94eaa8][region]+…`) are unnamed; whether `FUN_0057ecf0` also runs on loading a saved game is untested (box falsifier: bp the driver entry, then load a save). M249's {4,5,6} item and every M248-and-earlier OPEN item stand. M181 stays a LEAD; nothing was owed and nothing was measured on the box this fire.
