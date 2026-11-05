@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing for the next session (session 211, 2026-11-05, **M272 DONE (box): FUN_0057ecf0 does NOT run on a LOAD - 0 events at the generator, its 4 call sites and all 4 caller entries in a sentinel-valid load window; the .SAV chain IS live there (opener 0x597ee0 at round=-39 -> fread wrapper 0x64cc00 dest 0x927590 ret 0x596edb INSIDE FUN_00596850); entry bps at the loaders NEVER fire - prove a chain by call-site RETs; 5/5 `scripts/m272_acceptance.py`; box UP; the yama-ancestry escape is DEAD - toggle ptrace_scope 0 around harness runs**)
+# NEXT_PROMPT.md - footing for the next session (session 212, 2026-11-05, **B6 DONE (build fire): R1 is DONE - `sim/headless.py` runs m54b_clean 10 turns headless, year 2150->2160 per the B3 model, two runs identical sha256 2efbc782e2075a26, `python3 -m sim.selftest --b6 <sav> <map> --turns 10` 6/6 `evidence/b6_headless.txt`; `NAMED.md` §B6; the ladder (B1..B6) is exhausted - a BUILD fire now needs a NEW rung written into `BUILD_SPINE.md` first)**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -28,8 +28,8 @@ binding cap is doc headroom, not capability.**
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
-ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`NAMED.md` §B4), **B5 DONE (s207)** 9/9 on the recorded M27 trace via `python3 -m sim.selftest --replay-m27` (`NAMED.md` §B5).
-**Next rung B6 = the headless run**: `sim/headless.py --sav <save> --turns 10 --dump sim_state.json`, exit 0, year per B3, two runs → identical sha256.
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`NAMED.md` §B4), **B5 DONE (s207)** 9/9 on the recorded M27 trace via `python3 -m sim.selftest --replay-m27` (`NAMED.md` §B5), **B6 DONE (s212)** = R1 DONE: headless run, `python3 -m sim.selftest --b6 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 10` 6/6 (`evidence/b6_headless.txt`, `NAMED.md` §B6).
+**B1-B6 ALL DONE - the ladder is exhausted.** A BUILD fire must first WRITE the next rung (B7 = R2's first slice: new game -> move a unit -> end turn, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
 
 ## THE LEDGER
 

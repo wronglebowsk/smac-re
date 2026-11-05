@@ -65,7 +65,10 @@ difference. Print per-round deltas; a non-zero net on an idle round is a FAIL, n
 `python3 -m sim.selftest --replay-m27` must replay the three recorded moves (117/118/120 off (41,11)) with the
 same 3 MP cost per tile from `alpha.json` `#TERRAIN` movement, and leave 6 MP/turn. Tolerance: exact integers.
 
-**B6 — the headless run.** `sim/headless.py`.
+**B6 — the headless run.** `sim/headless.py`. **DONE (s212)**: `python3 -m sim.headless --sav
+programs/saves/m54b_clean.SAV --map programs/maps/planet.MP --turns 10 --dump sim_state.json` -> exit 0,
+year 2150->2160, dump 8,455 B sha256 2efbc782e2075a26 (two runs identical); `python3 -m sim.selftest
+--b6 <sav> <map> --turns 10` -> PASS B6 6/6, `evidence/b6_headless.txt`. R1 DONE in `MILESTONES.md`.
 `python3 -m sim.headless --sav <save> --map programs/maps/planet.MP --turns 10 --dump sim_state.json` must exit 0,
 write a stable dump, increment the year per the B3 model, and be deterministic (two runs → identical sha256).
 This is R1 marked DONE in `MILESTONES.md`.
