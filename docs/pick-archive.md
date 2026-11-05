@@ -673,3 +673,7 @@ in `NAMED.md` §B5).
   +0x2320 the 0x675964 class, +0x247a0 row, +0x252ec; dtor body FUN_0059c1e0 via slot 0 = 0x59c380).
   RETRACT part of M267: FUN_0059bec0 is not a destructor, and 0x67194c is never installed at [this+0] there.
   Census `scripts/m269_m271_census.py` -> 10/10, `evidence/m269_m271_census.txt`; numbers `NAMED.md` §M269.
+
+## trim-s213 - the s211 RESULT block moved VERBATIM from NEXT_PROMPT.md (session 213, footing headroom)
+
+- RESULT (s211, M272, box): `FUN_0057ecf0` does NOT run on a LOAD. Sentinel-valid load window (ROUND poked -39 -> 50 read back, counts == the m104 image): 0 events at `FUN_005b2970`, its 4 call sites (0x4e1151/0x4e122b/0x57d2a0/0x57f1ec) and all 4 caller entries; the .SAV chain IS live - opener 0x597ee0 fires AT round=-39 (ret 0x5992f2), fread wrapper 0x64cc00 at round=50, dest 0x927590, ret 0x596edb INSIDE `FUN_00596850` (M106 in-place body loader). **Entry bps at 0x597ee0/0x596850 never fire - loaders are entered MID-BODY; prove a chain by call-site RETs, not entry hits.** Boot control 0x5791c0 x7. Gate `scripts/m272_acceptance.py` 5/5 offline over `evidence/m272w9.gdblog`; harness `scripts/m272_gen_load_watch.py`; `NAMED.md` §M272.

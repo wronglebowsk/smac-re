@@ -148,20 +148,19 @@ def replay_gates(lpath, sav_rel):
     gate("G5-scaled-indexing-identity", bool(nsc) and agree_sc,
          "%d SCALED events: printed row(=2*edi) == 2*s10 for ALL -> the scaled form's index "
          "register IS the region counter" % len(nsc))
-    pairs = {}
-    for e in sites:
-        pairs.setdefault((e["round"], e["s10"]), {})[e["kind"]] = e
-    checked, spills = 0, []
-    for key, pr in sorted(pairs.items()):
-        if "UNSCALED" in pr and "SCALED" in pr:
-            checked += 1
-            d = pr["UNSCALED"]["row"] - pr["SCALED"]["row"]
-            if d % ROW_STRIDE != 0:
-                spills.append((hex(pr["UNSCALED"]["row"]), pr["SCALED"]["row"], d % ROW_STRIDE))
-    gate("G6-fold-identity-paired", bool(sites) and checked > 0 and not spills,
-         "%d paired (round,s10) observations; (unscaled_row - scaled_row) mod 188 == 0 for all "
-         "-> the UNSCALED row carries the SAME 188*fac term; violations %s"
-         % (checked, spills[:3]))
+    nuns = [e for e in sites if e["kind"] == "UNSCALED"]
+    res_ok = all(e["row"] % 8380 == nuns[0]["row"] % 8380 for e in nuns)
+    delta_ok = all((b - a) % 8380 == 0 for a, b in zip([e["row"] for e in nuns],
+                                                        [e["row"] for e in nuns][1:]))
+    gate("G6-row-rides-the-faction-stride", bool(nuns) and res_ok and delta_ok,
+         "%d UNSCALED events: row mod 8380 = %s for ALL and every successive delta is a whole "
+         "FACTION stride (8380) - the row register is a per-faction table cursor; 8380 mod 188 "
+         "= 88 so the fold's 188 is NOT derived from the block stride (fixed 94-slot capacity)"
+         % (len(nuns), sorted({e["row"] % 8380 for e in nuns})))
+    nu, ns = len(nuns), len([e for e in sites if e["kind"] == "SCALED"])
+    print("  info: counts UNSCALED=%d SCALED=%d in one window (balanced); observed s10 stays 1 "
+          "while cp walks the faction phases - the full 1..count loop was NOT exercised in this "
+          "window (OPEN: how deep the region loop runs per phase, new pick)" % (nu, ns), flush=True)
     print("  info: UNSCALED rows mod 8380 = %s; successive deltas mod 8380 = %s"
           % (sorted({e["row"] % 8380 for e in sites if e["kind"] == "UNSCALED"})[:4],
              sorted({(b - a) % 8380 for a, b in zip(
@@ -244,12 +243,12 @@ def main():
     with open(os.path.join(SCRATCH, "%s_seq.jsonl" % a.tag), "w") as fh:
         for e in ev:
             fh.write(json.dumps(e) + "\n")
-    with open(os.path.join(EVID, "%s_proc.json" % a.tag), "w") as fh:
-        json.dump({"count_pre": ada4, "count_post": ada4_post, "ad9c": ad9c, "ada0": ada0,
-                   "year_pre": year0, "year_post": year1}, fh, sort_keys=True)
     with open("/proc/%d/mem" % pid, "rb", 0) as mm:
         year1 = struct.unpack("<H", M.rd(mm, G_YEAR, 2))[0]
         ada4_post = struct.unpack("<i", M.rd(mm, G_ADA4, 4))[0]
+    with open(os.path.join(EVID, "%s_proc.json" % a.tag), "w") as fh:
+        json.dump({"count_pre": ada4, "count_post": ada4_post, "ad9c": ad9c, "ada0": ada0,
+                   "year_pre": year0, "year_post": year1}, fh, sort_keys=True)
     tracer = subprocess.run(["grep", "-m1", "TracerPid", "/proc/%d/status" % pid],
                             capture_output=True, text=True).stdout.split()[-1]
 
@@ -278,20 +277,19 @@ def main():
     gate("G5-scaled-indexing-identity", bool(nsc) and agree_sc,
          "%d SCALED events: printed row(=2*edi) == 2*s10 for ALL -> the scaled form's index "
          "register IS the region counter" % len(nsc))
-    pairs = {}
-    for e in sites:
-        pairs.setdefault((e["round"], e["s10"]), {})[e["kind"]] = e
-    checked, spills = 0, []
-    for key, pr in sorted(pairs.items()):
-        if "UNSCALED" in pr and "SCALED" in pr:
-            checked += 1
-            d = pr["UNSCALED"]["row"] - pr["SCALED"]["row"]
-            if d % ROW_STRIDE != 0:
-                spills.append((hex(pr["UNSCALED"]["row"]), pr["SCALED"]["row"], d % ROW_STRIDE))
-    gate("G6-fold-identity-paired", bool(sites) and checked > 0 and not spills,
-         "%d paired (round,s10) observations; (unscaled_row - scaled_row) mod 188 == 0 for all "
-         "-> the UNSCALED row carries the SAME 188*fac term; violations %s"
-         % (checked, spills[:3]))
+    nuns = [e for e in sites if e["kind"] == "UNSCALED"]
+    res_ok = all(e["row"] % 8380 == nuns[0]["row"] % 8380 for e in nuns)
+    delta_ok = all((b - a) % 8380 == 0 for a, b in zip([e["row"] for e in nuns],
+                                                        [e["row"] for e in nuns][1:]))
+    gate("G6-row-rides-the-faction-stride", bool(nuns) and res_ok and delta_ok,
+         "%d UNSCALED events: row mod 8380 = %s for ALL and every successive delta is a whole "
+         "FACTION stride (8380) - the row register is a per-faction table cursor; 8380 mod 188 "
+         "= 88 so the fold's 188 is NOT derived from the block stride (fixed 94-slot capacity)"
+         % (len(nuns), sorted({e["row"] % 8380 for e in nuns})))
+    nu, ns = len(nuns), len([e for e in sites if e["kind"] == "SCALED"])
+    print("  info: counts UNSCALED=%d SCALED=%d in one window (balanced); observed s10 stays 1 "
+          "while cp walks the faction phases - the full 1..count loop was NOT exercised in this "
+          "window (OPEN: how deep the region loop runs per phase, new pick)" % (nu, ns), flush=True)
     print("  info: UNSCALED rows mod 8380 = %s; successive deltas mod 8380 = %s"
           % (sorted({e["row"] % 8380 for e in sites if e["kind"] == "UNSCALED"})[:4],
              sorted({(b - a) % 8380 for a, b in zip(

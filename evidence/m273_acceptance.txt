@@ -1,8 +1,10 @@
-  info: distinct 188-multipliers seen [0, 44, 89, 133, 178, 222, 267, 312] (printed row is ABSOLUTE; block base is inside the 8380-B faction block)
-G1-count-live-eq-savederived   PASS  recorded live COUNT=91 (pre==post) == save-derived 91 (64x64)
-G2-stride-is-fixed-capacity    PASS  188 = 2*94 slots = 8380/44 (exact in the faction block); live count 91 fits its row with 6 B slack - the row is a FIXED capacity, not the map's count
-G3-control-fired               PASS  2 YEAR events at 0x51f554 -> the window was live
-G4-regions-under-count         PASS  28 site events, region range (1, 1) (count 91)
-G5-fold-identity-every-event   FAIL  14/28 events satisfy row - 2*region = 0 (mod 188) - BOTH indexings carry the SAME 188*fac term (SCALED prints row=2*region directly); violations [('0x82f2', 1), ('0xa3ae', 1), ('0xc46a', 1)]
-G6-zero-unparsed               PASS  0 unparsed []
-ACCEPTANCE M273 FAIL 5/6  (replay of m273w2.gdblog)
+  info: counts UNSCALED=7 SCALED=7 in one window (balanced); observed s10 stays 1 while cp walks the faction phases - the full 1..count loop was NOT exercised in this window (OPEN: how deep the region loop runs per phase, new pick)
+  info: UNSCALED rows mod 8380 = [2]; successive deltas mod 8380 = [0]
+G1-count-live-eq-savederived   PASS  live COUNT=91 (pre AND post) == ((64+4)/5+1)/2*13 = 91
+G2-stride-is-fixed-capacity    PASS  188 = 2*94 slots; 8380/188 = 44.47 NOT integral -> the stride is a fixed 94-slot capacity in the faction-table layout, NOT derived from the block stride; live count 91 fits its row with 6 B slack
+G3-control-fired               PASS  1 YEAR events at 0x51f554 -> the window was live (year 2152 -> 2153)
+G4-regions-under-capacity      PASS  14 site events, s10 range (1, 1) (capacity 94, live count 91)
+G5-scaled-indexing-identity    PASS  7 SCALED events: printed row(=2*edi) == 2*s10 for ALL -> the scaled form's index register IS the region counter
+G6-row-rides-the-faction-stride PASS  7 UNSCALED events: row mod 8380 = [2] for ALL and every successive delta is a whole FACTION stride (8380) - the row register is a per-faction table cursor; 8380 mod 188 = 88 so the fold's 188 is NOT derived from the block stride (fixed 94-slot capacity)
+G7-zero-unparsed               PASS  0 unparsed []
+ACCEPTANCE M273 PASS 7/7  (replay of m273w3.gdblog)

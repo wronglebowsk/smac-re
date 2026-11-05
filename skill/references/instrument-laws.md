@@ -357,6 +357,18 @@ froze for 7 minutes with the load driver at 1 s CPU. That is the starvation shap
 - Bound the damage the same way a store census does: prefer "the sites this mechanism calls" (a filtered
   band, or a FILE\*-conditioned superset) over "everything in this address window".
 
+## Breakpoints must sit on instruction boundaries
+
+A bp at an address INSIDE an instruction (e.g. at store+1 of an 8-byte `mov cx,[edi*2+disp]`)
+replaces the first byte with INT3 and executes the REST of the encoding as garbage when the bp is
+consumed: s213 armed at 0x5584b1 (the second byte of the 0x5584aa 8-B load) and the game died with
+the Wine Dbgrc "terran.exe has encountered a serious problem" dialog mid-window - the crash dialog,
+not a gdb error, is the only witness, and `TracerPid` still reads 0 after detach. Before arming any
+bp at a computed "next insn" address, disassemble the LOAD itself and confirm the address starts an
+instruction (`objdump` shows the real boundary; a 6-B `mov ax,[edi+disp]` ends 6 later, an 8-B
+scaled form 8 later). Prefer the following instruction's own address from the disassembly listing,
+never `load_addr + 1`.
+
 ## Proving a read leg: destination content, not a size constant
 
 - **Check the documented size list before claiming a constant does not exist.** A grep for the byte count
@@ -638,6 +650,28 @@ A census that parses its own gdb log with `line.split()[1]` dies on a line that 
 acceptance invocation was spent. Bake the site address into every printf tag (`"ENCODEC %06x mode=%%d ..."
 % addr`), and keep the raw log on disk (`scratch/<tag>.gdblog`) so a crashed run's numbers can still be
 read out and the run re-issued without re-arming the box.
+
+## A chain is proved by call-site RETs; entry bps miss mid-body entries
+
+- **Zero events at a function's ENTRY does not mean the function never ran.** If a callee's own
+  instrumentation (a wrapper bp conditioned on an argument) reports a return address INSIDE that
+  function's range, the chain ran — execution entered mid-body (a tail-jump or a second entry the
+  disassembly hides). To prove or refute "X runs in this window", instrument X's CALL SITES (or the
+  hot wrapper's arguments), not X's entry; an entry-only zero is an instrument artifact, and pairing it
+  with a live control bp in the same window is what turns the zero into a result.
+- **Catch a hot function by CONDITIONING on its arguments, not by instrumenting its entry.** A read
+  wrapper called by 85 sites drowns any census armed unconditioned; `break *ADDR if *(int *)($esp+4)
+  == DEST` (arg0 via the cdecl frame, one slot lower at a call site than at the callee's entry) fires
+  exactly once per interesting call and the printout names the caller by `*(int *)$esp`. Verify the
+  emitted `.gdb` with `repr()` before attaching — a template token left unfilled in ONE block (e.g. a
+  shared `if @@COND@@` the other loops never substitute) makes every other bp a syntax casualty.
+- **A log-line parser must accept NEGATIVES in every numeric field.** A sentinel poke is negative by
+  design, and a digit-only `round=(\d+)` silently drops the one event carrying the answer — the harness
+  then reports fewer events than the log holds and a `zero-unparsed` gate is the only thing that shows
+  it. Use `(-?\d+)` (or `\S+` tokens) and assert parsed-count == grep-count of the tag.
+- **Partition a log into windows by the GAME STATE printed in each event (the sentinel/round value),
+  not by byte offsets into the log**: gdb's pipe can lag a flush across the boundary you recorded, and
+  offset partitioning then mis-assigns events to the wrong window while every other gate stays green.
 
 ## A CFG model of a codec must know x86 flag semantics (M243, s194)
 
