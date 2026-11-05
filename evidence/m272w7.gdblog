@@ -1,0 +1,42 @@
+[New LWP 3776661]
+[New LWP 3776660]
+[New LWP 3776659]
+[New LWP 3776658]
+[New LWP 3776657]
+[New LWP 3776656]
+[New LWP 3776655]
+[New LWP 3776654]
+[New LWP 3776653]
+0xf5956c2e in ?? ()
+Breakpoint 1 at 0x5b2970
+Breakpoint 2 at 0x57ecf0
+Breakpoint 3 at 0x57c550
+Breakpoint 4 at 0x4e10c0
+Breakpoint 5 at 0x4e11b0
+Breakpoint 6 at 0x4e1151
+Breakpoint 7 at 0x4e122b
+Breakpoint 8 at 0x57d2a0
+Breakpoint 9 at 0x57f1ec
+Breakpoint 10 at 0x5791c0
+Breakpoint 11 at 0x596850
+Breakpoint 12 at 0x597a70
+Breakpoint 13 at 0x598340
+ARMED 13 silent bps at 0x5b2970 0x57ecf0 0x57c550 0x4e10c0 0x4e11b0 0x4e1151 0x4e122b 0x57d2a0 0x57f1ec 0x5791c0 0x596850 0x597a70 0x598340
+[New LWP 3776674]
+[New LWP 3776676]
+[New LWP 3776677]
+[New LWP 3776678]
+[New LWP 3776679]
+[New LWP 3776680]
+[New LWP 3776681]
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+
+Thread 1 "terran.exe" received signal SIGUSR1, User defined signal 1.
+0xf5a7532c in __kernel_vsyscall ()
+[Inferior 1 (process 3776648) detached]

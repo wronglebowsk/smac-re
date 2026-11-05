@@ -40,8 +40,11 @@ SENT = -39
 GEN = 0x5b2970
 ENTRIES = [GEN, 0x57ecf0, 0x57c550, 0x4e10c0, 0x4e11b0]
 SITES = {0x57f1ec: 0x57ecf0, 0x57d2a0: 0x57c550, 0x4e1151: 0x4e10c0, 0x4e122b: 0x4e11b0}
-CTRL = {0x596850: "SAVE_STATE_LOADER", 0x597a70: "BLOCK_LOADER", 0x598340: "FILE_DISPATCH",
-        0x5791c0: "PROCESS_START_SETUP"}  # M105 names; NAMED.md rows 12-15
+CTRL = {0x597ee0: "SAV_OPENER", 0x597ce0: "SAV_CALLER", 0x596540: "RING3_SCRATCH_LOADER",
+        0x5791c0: "PROCESS_START_SETUP"}  # M105/M106 names
+# the fread wrapper is hot; condition it on the ONE destination M106 recorded for the save:
+# FUN_0064cc00(&DAT_00927590, 0x2ce0 /*8x1436 faction array*/, 1, handle)
+WRAP_COND = (0x64cc00, 0x927590)
 LIVE_IMG = [0, 6, 5, 4, 3, 4, 5, 3]  # m104w3: the loaded m54b_clean count image
 RB, RS = 0x927a9c, 1436
 LAUNCH = ("cd ~/reverse/smac/programs && WINEPREFIX=$HOME/.wine-smac32 DISPLAY=:99 "
@@ -54,7 +57,7 @@ set confirm off
 continue
 """
 
-BPU = r"""break *@@PC@@
+BPU = r"""break *@@PC@@ if @@COND@@
 commands
 silent
 printf "@@LINE@@\n"@@ARGS@@
@@ -77,7 +80,8 @@ def gdb_script():
         args = ["*(int *)$esp", RND, CPP]
         chk(line, args)
         pcs.append("%#x" % pc)
-        blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@LINE@@", line)
+        blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@COND@@", "1")
+                      .replace("@@LINE@@", line)
                       .replace("@@ARGS@@", "".join(", " + x for x in args)))
         n += 1
     for pc in sorted(SITES):
@@ -85,7 +89,8 @@ def gdb_script():
         args = ["*(int *)$esp", RND, CPP]
         chk(line, args)
         pcs.append("%#x" % pc)
-        blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@LINE@@", line)
+        blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@COND@@", "1")
+                      .replace("@@LINE@@", line)
                       .replace("@@ARGS@@", "".join(", " + x for x in args)))
         n += 1
     for pc in sorted(CTRL):
@@ -93,9 +98,19 @@ def gdb_script():
         args = ["*(int *)$esp", RND, CPP]
         chk(line, args)
         pcs.append("%#x" % pc)
-        blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@LINE@@", line)
+        blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@COND@@", "1")
+                      .replace("@@LINE@@", line)
                       .replace("@@ARGS@@", "".join(", " + x for x in args)))
         n += 1
+    wpc, wcond = WRAP_COND
+    line = "M272C CTRL pc=0x%x ret=0x%%x round=%%d cp=%%d" % wpc
+    args = ["*(int *)$esp", RND, CPP]
+    chk(line, args)
+    pcs.append("%#x" % wpc)
+    blocks.append(BPU.replace("@@PC@@", "%#x" % wpc).replace("@@COND@@", "*(int *)($esp+4) == %#x" % wcond)
+                  .replace("@@LINE@@", line)
+                  .replace("@@ARGS@@", "".join(", " + x for x in args)))
+    n += 1
     return (TMPL.replace("@@BLOCKS@@", "".join(blocks)).replace("@@NB@@", str(n))
             .replace("@@BPS@@", " ".join(pcs)))
 
@@ -306,7 +321,7 @@ def main():
     def gate(name, ok, detail):
         gates.append((name, bool(ok), detail))
 
-    gate("G1-13-bps-armed", "ARMED 13 silent bps" in text,
+    gate("G1-14-bps-armed", "ARMED 14 silent bps" in text,
          [ln for ln in text.splitlines() if ln.startswith("ARMED")][:1])
     bg = gen(boot)
     bctrl = [e for e in boot if e["kind"] == "CTRL"]
@@ -337,7 +352,7 @@ def main():
              "57c550 entry %d, block-loader CTRL %d"
              % (ans, len(q_ent), len(q_site), len(gen(load)),
                 len([e for e in ent(load) if e["pc"] == 0x57c550]),
-                len([e for e in lctrl if e["pc"] == 0x597a70])))
+                len([e for e in lctrl if e["pc"] == WRAP_COND[0]])))
     bad_callers = [e for e in gen(boot) + gen(load)
                    if not any(e["ret"] == s + il for s in SITES for il in (5, 6))]
     gate("G7-every-gen-hit-accounted-by-a-site", not bad_callers,
