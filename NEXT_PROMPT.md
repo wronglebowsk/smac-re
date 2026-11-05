@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing for the next session (session 213, 2026-11-05, **M273 DONE (box): the row stride 188 is a FIXED 94-slot capacity, NOT the block stride (8380 mod 188 = 88); live region count DAT_0092ada4 = 91 == save-derived, so NO row spill on 64x64 - the spill question MIGRATES to 80x80/128x128 (counts 128/338 > 94); the UNSCALED row register is a per-faction cursor advancing by whole 8380 strides (caller OPEN); 7/7 `scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog`; NEVER bp mid-instruction (s213 crash-boxed the game)**)
+# NEXT_PROMPT.md - footing for the next session (session 214, 2026-11-05, **M274 DONE (static): the region loop's ONLY bound is the constant 0x80 - NEVER clamped to the 94-slot row; big-map scaled overflow reads the sibling verdict array 0x94eba8 SILENTLY; the verdict 0x8-store + jmp skip both read sites (M273's sparsity explained); the row slot [ebp-0x18] has 15 writers -> 8380-cursor feeder = OPEN def-use pick; 6/6 `scripts/m274_rowcap_census.py`; the NEXT fire is BUILD B7 and must WRITE the rung first; NEVER objdump --start-address mid-inside an insn**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -58,14 +58,17 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s213 - M227-M237, **B1-B6**, M240-M273 (M241 FAIL 2/5, #180 open).
+- ANSWERED (do not re-pick): s187-s214 - M227-M237, **B1-B6**, M240-M274 (M241 FAIL 2/5, #180 open).
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
-  per-id §s196-§s213 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
+  per-id §s196-§s214 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
 - RESULT (s208) + RESULT (s210): VERBATIM now in `docs/pick-archive.md` §trim-s211 - the
   0x6725ac/0x6725a4 one-vtable pair + POD block verdict, and the IMAGE-WIDE virtual-base
   delta census (41 stores / 8 K / 31 fns, 177 installs / 33 vbtables) + the 0x678e40
   stack-local class with the M267 retraction. Numbers in `NAMED.md` §M267-§M271.- RESULT (s211, M272): VERBATIM now in `docs/pick-archive.md` §trim-s213 - FUN_0057ecf0 does NOT run on a LOAD + the live .SAV chain + the mid-body-entry law. `NAMED.md` §M272.
-- RESULT (s213, M273, box): the row stride 188 = 2×94 is a FIXED capacity in the faction-table layout (NOT derived from the 8380 block stride: 8380 mod 188 = 88); live DAT_0092ada4 = 91 (pre+post) == save-derived `((W+4)/5+1)/2×H` -> no spill reachable on 64×64; scaled-indexing identity live 7/7; the UNSCALED row register is a per-faction cursor (row mod 8380 = 2 const, deltas = whole 8380). OPEN follow-ups: 80x80/128x128 counts 128/338 > 94 (spill MIGRATES there - who clamps the 1..127 loop); the cursor's caller; region-loop depth per phase (observed s10=1 only). Gate `scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog` 7/7 (`evidence/m273_acceptance.txt`, `/proc` facts in `evidence/m273w3_proc.json`); `NAMED.md` §M273.
+- RESULT (s213, M273): VERBATIM now in `docs/pick-archive.md` §trim-s214 (8380 mod 188 = 108 corrects its 88). `NAMED.md` §M273.
+- RESULT (s214, M274, static): the region loop's ONLY bound is the constant 0x80 (0x558b1c) - NEVER clamped to the 94-slot row; big-map scaled overflow (regions 94..127, max 254 B) reads the SIBLING verdict array 0x94eba8 (gap 256) = silent wrong data; the verdict byte's 0x8-store 0x557fdf + jmp 0x558b18 skip BOTH read sites (explains M273's sparse events); the row slot [ebp-0x18] has 15 writers -> the 8380-cursor's feeder is an OPEN def-use pick. Census `scripts/m274_rowcap_census.py` 6/6 (`evidence/m274_census.txt`); `NAMED.md` §M274.
+
+
 - Pick from (ANALYSE fires; the next BUILD fire takes **B6** - the headless run - from `BUILD_SPINE.md`):
   BOX PICKS, box UP and loaded: WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213) - see RESULT (s213); its follow-ups (static, no box): the 80x80/128x128 region counts 128/338 EXCEED the 94-slot row - who clamps the loop, and the 188-row cursor's caller (advances by whole 8380 strides; the fold's 188*fac term = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213) - break at the disassembled next insn.
 

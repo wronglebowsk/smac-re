@@ -36,7 +36,10 @@ The defeat was invisible because the trace carried only the map-wide base count,
   beside it. The offline gate must assert the FULL answer — including a negative claim ("zero events at the
   watched sites") — and pin the window validity (the sentinel read-back, the control hit), or it certifies
   nothing. Quote its exact `file:line` ranges from the file as shipped: append to an evidence file and every
-  earlier citation silently drifts past EOF (the gate catches this, the notes do not).
+  earlier citation silently drifts past EOF (the gate catches this, the notes do not). Persist every live
+  `/proc` fact the replay needs (pre/post globals, window years) into a `<tag>_proc.json` sidecar WRITTEN BY
+  THE LIVE RUN, and have the replay read the sidecar — a replay that hardcodes the live numbers certifies
+  the transcript, not the measurement.
 - **Record index is not identity, and the unit array GROWS mid-run** — a base building a unit
   shifts every index after it, so an index carried across a turn (or read a fraction of a second
   after the order lands) can name a different unit's record. It also COMPACTS mid-turn — a queued MOVE
@@ -114,6 +117,15 @@ The defeat was invisible because the trace carried only the map-wide base count,
   is a breakpoint at the write site (entry of the enqueue, the index it computes, the value it
   stores) plus a hardware watch on the first element, which answers "sorted scan or append" and
   "where the odd value came from" in one run.
+- **A gate FAIL on a guessed identity is a finding about YOUR assertion — rewrite it as the weakest
+  invariant the evidence can bear, never as a pass on the hypothesis.** "row − 2·region ≡ 0 (mod stride)"
+  encoded a derivation nobody had proven; the honest gate is "the residue of (row − scaled_row) mod stride
+  is CONSTANT across all paired events, and successive deltas are whole faction strides" — the identity
+  then becomes the milestone's OPEN follow-up instead of a false green. Pair events only on keys the code
+  actually shares: two sites in one "straight-line block" can be reached by different legs (different
+  per-round counts in the same window prove it), so a pairing key of (round, index) silently compares
+  strangers. Also: a negative sentinel you poke into a global must be ALLOWED by your own parser regex
+  (`round=-39` failed `round=(\d+)`) — the instrument rejecting its own experiment marker reads as zero events.
 - **Read the structure PLUS ONE SLOT PAST ITS END, and treat the read model as fallible.** A write
   location is only interpretable if you can see where the array stops: SMAC's queue is 10 dwords
   (`base+0x50..+0x74`) and the dword after it is a different field that never moves, so an 8-slot

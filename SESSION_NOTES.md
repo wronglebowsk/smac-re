@@ -552,7 +552,7 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   **ACCEPTANCE M273 PASS 7/7** (`evidence/m273_acceptance.txt`; /proc facts in
   `evidence/m273w3_proc.json`, written by the live run - the replay never hardcodes them).
 - ANSWER: live count DAT_0092ada4 = 91 (pre AND post stable) == save-derived 91 for 64x64;
-  188 = 2*94 is a FIXED capacity (8380 mod 188 = 88 - NOT derived from the faction block stride);
+  188 = 2*94 is a FIXED capacity (8380 mod 188 = 108 - NOT derived from the faction block stride);
   91 < 94 so the M256 spill is UNREACHABLE on the live map. SCALED identity live 7/7
   (2*edi == region slot). UNSCALED row = per-faction cursor: row mod 8380 = 2 for all, deltas =
   whole 8380 strides. OPEN (new picks): 80x80/128x128 counts 128/338 EXCEED 94 (spill question
@@ -568,3 +568,23 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
 - My own gates were wrong twice before shipping (G2 asserted 188==2*count; G5 paired events by
   (round,s10) which the sites do not share) - the FAILs were instrument bugs, fixed by rewriting
   the assertion to what the evidence can bear, never by moving the floor.
+
+
+## Session 214 (2026-11-05, ANALYSE static, M274 PASS 6/6) - the 128-bound loop is NEVER clamped; big-map spills read the sibling verdict array silently
+- Picked the M273 follow-ups (static, no box): `scripts/m274_rowcap_census.py` ->
+  **SUMMARY M274: 6/6 gates PASS** (`evidence/m274_census.txt`), body 0x556690-0x559e9d, 4,235 insns
+  read from the aligned scratch/m574/text.txt cache (containment from ghidra_out/index.csv).
+- ANSWERS: (G1) the region loop has ONE bound, the constant `cmp ecx,0x80` at 0x558b1c - no clamp to
+  the 94-slot row anywhere; (G2) regions 94..127 SCALED (max 2*127=254 B) land INSIDE the sibling
+  verdict array 0x94eba8 (gap 256) -> on 80x80/128x128 maps the overflow is SILENT WRONG DATA;
+  (G4) a nonzero verdict byte stores 0x8 (0x557fdf) then jmps the loop tail (0x557fe7) - that skip,
+  not a shallow loop, is why M273 saw only sparse events; (G5) the verdict array has exactly 5 store
+  sites (0x8/dl=7-or-8/0x0/0x2/0x7).
+- CORRECTION (mine, from M273): "8380 mod 188 = 88" was an arithmetic slip - it is **108**; the
+  non-integrality conclusion is unaffected. Fixed in NAMED.md, NEXT_PROMPT.md, notes.
+- The fold re-derived from bytes: esi = 2*region + 188*(E+edi) - the multiplier is (E+edi), NOT a
+  bare faction index. The row slot [ebp-0x18] has 15 writers in the body -> the live cursor's origin
+  is a DEF-USE pick, not settled. New open picks: which writer feeds the UNSCALED read site; the
+  def-use of the 15 row-slot writers.
+- Method law: an objdump --start-address INSIDE an instruction silently misaligns the window
+  (invented .byte lines, poisoned a reachability walk) - use the aligned cache or the fn entry.
