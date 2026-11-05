@@ -140,6 +140,18 @@ HEAD still needs — filter-branch then drops it from the worktree too, so resto
 later commit does not resurrect the giant one. (2) Re-run the blob scan and confirm it is empty before
 re-submitting, otherwise the same hook rejects the push again.
 
+**Never merge a LOCAL docs/triage branch into a milestone branch before its PR is squash-merged.** The
+squash lands a different commit than the branch you merged, so the milestone branch carries the pre-squash
+history and the PR turns permanently CONFLICTING. Wait for the PR to merge, then `git merge origin/main`
+into the milestone branch. If already tangled, resolve by keeping the BRANCH's superset copy of the
+footing docs (it was written on top of the same triage), commit the merge, push, and the PR becomes
+mergeable again — confirm with `gh pr view <n> --json mergeable`.
+
+**After `milestone.py start <id>`, verify `git branch --show-current` actually moved.** On a dirty tree
+`start` can fail while the pipeline carries on, so the "branch" work lands on `main` — where the commit
+hook refuses and a chained command hides the whole failure. The safe sequence for a post-merge footing
+tweak: `git stash` the edit, branch, `git stash pop`, commit, submit.
+
 **A squash merge makes local `main` a liability if it carries any local-only commit.** `merge <n>` runs
 `gh pr merge --squash --delete-branch` (which LANDS the PR) and only THEN `git checkout main && git pull
 --ff-only`; a `main` holding a commit the squash folded in — a stray cursor or checkpoint commit — makes

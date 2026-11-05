@@ -1,0 +1,40 @@
+[New LWP 3820459]
+[New LWP 3820458]
+[New LWP 3820457]
+[New LWP 3820456]
+[New LWP 3820455]
+[New LWP 3820454]
+[New LWP 3820453]
+[New LWP 3820448]
+[New LWP 3820447]
+[New LWP 3820446]
+[New LWP 3820445]
+[New LWP 3820444]
+[New LWP 3820443]
+[New LWP 3820442]
+[New LWP 3820441]
+[New LWP 3820440]
+0xecd2d32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x558459
+Breakpoint 2 at 0x5584b2
+Breakpoint 3 at 0x51f554
+ARMED 3 silent bps
+M273S UNSCALED row=0x82f2 s10=1 s14=8 s18=33522 ecx=0x0 edx=0xa esi=0x82f0 w=41 round=52 cp=4
+M273S SCALED row=0x2 s10=1 s14=8 s18=33522 eax=0x29 edx=0x36 edi=0x1 w=112 round=52 cp=4
+M273S UNSCALED row=0xa3ae s10=1 s14=8 s18=41902 ecx=0x0 edx=0xa esi=0xa3ac w=27 round=52 cp=5
+M273S SCALED row=0x2 s10=1 s14=8 s18=41902 eax=0x1b edx=0x3c edi=0x1 w=112 round=52 cp=5
+M273S UNSCALED row=0xc46a s10=1 s14=8 s18=50282 ecx=0x0 edx=0xa esi=0xc468 w=75 round=52 cp=6
+M273S SCALED row=0x2 s10=1 s14=8 s18=50282 eax=0x4b edx=0x58 edi=0x1 w=112 round=52 cp=6
+M273S UNSCALED row=0xe526 s10=1 s14=8 s18=58662 ecx=0x0 edx=0xa esi=0xe524 w=7 round=52 cp=7
+M273S SCALED row=0x2 s10=1 s14=8 s18=58662 eax=0x7 edx=0x16 edi=0x1 w=112 round=52 cp=7
+M273W YEAR new=2153 round=53 cp=7
+M273S UNSCALED row=0x20be s10=1 s14=8 s18=8382 ecx=0x0 edx=0xb esi=0x20bc w=10 round=53 cp=1
+M273S SCALED row=0x2 s10=1 s14=8 s18=8382 eax=0xa edx=0x30 edi=0x1 w=112 round=53 cp=1
+M273S UNSCALED row=0x417a s10=1 s14=8 s18=16762 ecx=0x0 edx=0xa esi=0x4178 w=33 round=53 cp=2
+M273S SCALED row=0x2 s10=1 s14=8 s18=16762 eax=0x21 edx=0x48 edi=0x1 w=112 round=53 cp=2
+M273S UNSCALED row=0x6236 s10=1 s14=8 s18=25142 ecx=0x0 edx=0xa esi=0x6234 w=35 round=53 cp=3
+M273S SCALED row=0x2 s10=1 s14=8 s18=25142 eax=0x23 edx=0x14 edi=0x1 w=112 round=53 cp=3
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xecd2d32c in __kernel_vsyscall ()
+[Inferior 1 (process 3820435) detached]

@@ -104,7 +104,8 @@ To answer "is the loop working as intended", run its prompt in a real session ra
 
 "As intended" for THIS loop, in order: `track_mode.py`'s verdict is the one the fire acted on; the doc cap was
 checked before the pick; a branch plus a census-SKELETON commit exist before any probing; a write rejected for a
-missing `path` was retried as pure JSON instead of fragmented; the box debt was paid or named; and the close ended in
+missing `path` was re-emitted ONCE as pure JSON and, on a second identical refusal, abandoned for an
+`execute_code`-composed file instead of fragmented or retried again; the box debt was paid or named; and the close ended in
 a merged PR with `NEXT_PROMPT.md` under 15,300 B.
 
 **Answer state questions from live state, never from what you did earlier in the session.** "Should we resume the

@@ -115,6 +115,10 @@ Paul wants SMAC RE broken into **small pieces**: complete ONE milestone, write i
 file, append one dated line to `~/reverse/smac/SESSION_NOTES.md`, then STOP — ending
 after a single milestone is a success, not a shortfall.
 
+**On a chat platform (Telegram), chain tools SILENTLY**: every between-tool-call sentence is delivered as
+its own message, so a 40-call fire reads as 40 chat messages. The only prose is the final report;
+checkpoint commits need no narration. Depth: `references/session-discipline.md`.
+
 Exception: when he says **"keep going until you finish <chapter>"**, that overrides the
 stop-after-one rule. Work through that chapter's milestones, writing the doc + evidence
 after each, and report once at the end — including what is still open. Do not relabel a
@@ -143,7 +147,10 @@ milestone per merge and three acceptance invocations, not one question per step.
   `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
 - Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file` — one whole-doc call must fit the
   model's OUTPUT cap, so an oversized one truncates mid-JSON, the sanitizer drops it (`Unrepairable tool_call
-  arguments`), and every retry spends a full turn; in hard-wrapped docs anchor by
+  arguments`, or a `write_file`/`patch` refused as `missing required field 'path'` even though the path was sent),
+  and every retry spends a full turn — a second identical re-emission failing the same way means STOP retrying and
+  compose the file in an `execute_code` cell (`open(p,"w").write(src)`; stage big files as scratch chunks and `cat`
+  them together); in hard-wrapped docs anchor by
   regex `\s+` joins or by INDEX, and write in the SAME cell that measured the result.
 - Every always-loaded doc has its own cap and the tool prints them. When a cap binds a SECOND session, SPLIT:
   move the settled era into a topical archive, leave the RULES plus a pointer, re-run `budget`. A batch's DOC

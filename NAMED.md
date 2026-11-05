@@ -957,7 +957,7 @@ RETRACTS B2's `tail 10,800 = 256+152+10,144+28+220` and its `93,159 = 92,927 + 2
 | RHS = WORD[0x94eaa8 + 2*region] (`0x5584aa`, region = [ebp-0x10]) + WORD[0x94eaa8 + esi] (`0x558452`), summed by `add ecx,eax` at `0x5584b2` after `xor ecx,ecx` at `0x5584a0` (eax unwritten from `0x558452` to `0x5584b2`) | G4, `:8` | V |
 | esi = [ebp-0x18] = 2*region + 188*arg1: fold `0x558002`-`0x558026` (`add eax,edi; lea eax,[edi+eax*2]; shl eax,0x4; sub eax,edi; lea esi,[ecx+eax*2]; shl esi,1`), published `0x558038`; arg1 = the pushed faction (callers `0x52094f`, `0x59dd43`) | G4-G5, `:8-9` | V |
 | region loop = [ebp-0x10] init 1 (`0x557f9e`), `inc ecx; cmp ecx,0x80; jl 0x557fb8` (`0x558b1b`-`0x558b25`) -> 128 regions; 0x94eaa8 refs image-wide = 4 (inc `0x51df61` FUN_0051dcb0, -10 `0x564ab1` FUN_0055f650, the two reads here) | G4-G5, `:8-9` | V |
-| OPEN: 188-byte rows vs 2 bytes/region means regions 94..127 pass the next row (max offset 188*7 + 254 = 1570) — a stride conflict the image cannot settle; one live read of both indexings answers it | G5, `:9` | OPEN |
+| ~~OPEN: 188-byte rows vs 2 bytes/region means regions 94..127 pass the next row — a stride conflict the image cannot settle~~ **RESOLVED (M273, s213, live)**: the live region COUNT is 91 (== save-derived `((W+4)/5+1)/2×H`, pre AND post stable) < the 94-slot row, so on the live 64×64 map NO spill is reachable; 188 = 2×94 is a fixed capacity, NOT derived from the block stride (8380 mod 188 = 88, and the live row register advances by whole 8380 strides). The spill question migrates to 80×80/128×128 maps (counts 128/338 > 94) as a NEW pick, together with the row-cursor's caller context (the fold's per-faction term advances by half a block stride) and how deep the region loop runs per phase (observed s10=1 only) | G5, `:9` + `evidence/m273w3.gdblog`, `scripts/m273_rowstride_watch.py --replay` 7/7 | CLOSED (was OPEN) |
 
 **M258 (s202, same run G6-G8):** the per-region array family and the 8-slot fold's sources.
 
@@ -1129,3 +1129,14 @@ No alpha.json table has 196 or 201 rows (max 89 TECHNOLOGY). OPEN: what writes t
 | the dump is DETERMINISTIC: two runs -> identical bytes, sha256 2efbc782e2075a26... , 8,455 B | `python3 -m sim.selftest --b6 <sav> <map> --turns 10` -> `PASS B6: 6/6 gates`, `evidence/b6_headless.txt:6-12` | V |
 | economy runs for the 7 base-owning factions every round with the B4 floor (energy >= 0); initial faction energy = 0 is ASSUMED (no pinned .SAV read) and listed in the dump's `assumed` array | dump `schema smac-sim-state/1` | ASSUMED (declared) |
 | units re-charge 6 MP per round (0x51f730 REFRESH, M37) and never move - R1 has no AI; declared in `assumed` | same | ASSUMED (declared) |
+
+## M273 (s213, PASS 7/7) - the row stride 188 is a FIXED 94-slot capacity; no spill on the live map
+
+| fact | evidence | status |
+|---|---|---|
+| live region count DAT_0092ada4 = 91, stable pre AND post the window, == save-derived ((64+4)/5+1)/2×13 = 91; ad9c=ada0=13 | `evidence/m273w3_proc.json` (written by the live run), `evidence/m273w3.gdblog` window, gate G1 | V (live) |
+| 188 = 2×94 slots is a FIXED capacity: 8380/188 = 44.47 NOT integral (8380 mod 188 = 88) - the per-faction row is NOT derived from the faction block stride; the live count fits its row with 6 B slack, so the M256 "regions 94..127 spill" is UNREACHABLE on the 64×64 map | gate G2 + G6 (below) | V |
+| scaled-indexing identity: 7/7 SCALED events at 0x5584b2 have 2×edi == the loop slot [ebp-0x10] (=1) - the scaled form's index register IS the region counter | `evidence/m273w3.gdblog`, gate G5 | V (live) |
+| the UNSCALED row register is a per-faction TABLE CURSOR: row mod 8380 = 2 for all 7 events and every successive delta is a whole faction stride 8380 (it walks with cp=4,5,6,7,...); row-2 = k×8380, so the fold's 188×fac term advances by 44.5 block strides - the image cannot reduce it further without the cursor's caller (OPEN, new pick) | gate G6 | V (code+live), OPEN (caller) |
+| the full region loop was NOT exercised in the window: observed s10 stays 1 while cp walks phases (7+7 events, balanced); depth per phase OPEN (new pick) | gate G4 + info line | OPEN (recorded) |
+| acceptance is OFFLINE over the recorded window: `python3 scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog` -> `ACCEPTANCE M273 PASS 7/7` (`evidence/m273_acceptance.txt`); the /proc facts ship in `evidence/m273w3_proc.json` | same | V |
