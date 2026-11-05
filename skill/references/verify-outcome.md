@@ -30,6 +30,13 @@ The defeat was invisible because the trace carried only the map-wide base count,
   are already in the evidence log: read the log, fix the harness, and re-run the SAME shape on a fresh box
   state. Never read a piped acceptance's exit code as its verdict — `… | tail` masks the failure, so a
   Traceback in the captured output means FAIL even when every interesting line printed.
+- **When the ONLY failure of a live run is the parser, ship an OFFLINE gate over the recorded log and make
+  it the acceptance.** Re-parsing the shipped `evidence/*.gdblog` with the fixed parser is deterministic,
+  needs no box, and can be re-run by any future session; the live run's partial numbers belong in the notes
+  beside it. The offline gate must assert the FULL answer — including a negative claim ("zero events at the
+  watched sites") — and pin the window validity (the sentinel read-back, the control hit), or it certifies
+  nothing. Quote its exact `file:line` ranges from the file as shipped: append to an evidence file and every
+  earlier citation silently drifts past EOF (the gate catches this, the notes do not).
 - **Record index is not identity, and the unit array GROWS mid-run** — a base building a unit
   shifts every index after it, so an index carried across a turn (or read a fraction of a second
   after the order lands) can name a different unit's record. It also COMPACTS mid-turn — a queued MOVE
