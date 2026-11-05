@@ -40,7 +40,7 @@ rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-forma
 `ghidra-batch-export.md`, `terraforming-order-path.md`. `session-discipline.md` (budget, closing order, handoff procedure,
 and how to SHADOW-RUN the cron loop by hand and judge whether a fire behaved as intended). `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
 need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
-**Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move.
+**Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move. The same grep extends to the LIVE half: before re-instrumenting a site address, `grep -rn <hex-addr> scripts/ evidence/` — a prior census script often already encodes the derivation (and its evidence file already states the reading the new gate would otherwise guess wrong).
 The same rule kills NEGATIVE claims: before writing "no code uses constant X", grep the docs' size/offset lists for X AND its near neighbours — a documented 152-B leg is 156 minus a 4-byte field, so an exact-value grep for 156 supports a conclusion that is one subtraction wrong. Then confirm the candidate leg by reading its DESTINATION in `/proc` and comparing content, not by its size (`references/instrument-laws.md` §Proving a read leg).
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
@@ -150,7 +150,9 @@ milestone per merge and three acceptance invocations, not one question per step.
   arguments`, or a `write_file`/`patch` refused as `missing required field 'path'` even though the path was sent),
   and every retry spends a full turn — a second identical re-emission failing the same way means STOP retrying and
   compose the file in an `execute_code` cell (`open(p,"w").write(src)`; stage big files as scratch chunks and `cat`
-  them together); in hard-wrapped docs anchor by
+  them together — and when appending to an existing file, write the NEW chunk to a scratch path and concatenate:
+  feeding `read_file` output back into `write_file` is refused, the guard recognises its line-number-prefixed
+  display format as not real file content); in hard-wrapped docs anchor by
   regex `\s+` joins or by INDEX, and write in the SAME cell that measured the result.
 - Every always-loaded doc has its own cap and the tool prints them. When a cap binds a SECOND session, SPLIT:
   move the settled era into a topical archive, leave the RULES plus a pointer, re-run `budget`. A batch's DOC
@@ -231,7 +233,7 @@ need a field offset — do not re-derive one from pseudocode: Ghidra types some 
 pseudocode offset can be HALF or 4x the real byte offset.
 Unit-record type field: the u16 at `+10` (`+4` = flags) — settled from the accessor;
 the full story + the two generalizing rules are in `references/code-atlas.md`.
-Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
+Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then `gunzip -c … | sed -n 'A,Bp'`), or the unpacked aligned cache `scratch/m574/text.txt` (grep by address; parse by TAB fields). **Never `objdump -d --start-address` at an arbitrary address**: a start that lands INSIDE an instruction silently misaligns the whole window — objdump re-synchronizes mid-encoding, invents `.byte` lines, and poisons any reachability/def-use walk built on it (s214 lost two debug passes; the witness is a `.byte` line where a `jmp` should be). Disassemble from the function ENTRY (containment via index.csv) or read the cache.
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && strtonum($1)<=strtonum(A){n=$2;p=$1} END{print
 p,n}' ghidra_out/index.csv` (commas, no spaces; strtonum REQUIRED — bare `$1<=A` is a STRING compare, every row matches
 and you get the file's LAST function, not the owner); pseudocode `scripts/fn.py 0xADDR` (prints the index row as header).

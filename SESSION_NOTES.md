@@ -1,46 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-194-194.md` (1 sessions). Read it only when a question reaches back before session ## Session 195.
-
-## Session 195 (2026-11-01, B2 BUILD fire — `sim/save.py`: a .SAV loads into the state model)
-
-`python3 scripts/track_mode.py` -> `MODE=BUILD next_rung=B2` (no box time, no `/proc`, no gdb;
-`grep -c 'box time owed' SESSION_CURSOR.md` printed 0, so nothing was owed).
-
-**Acceptance** — `python3 -m sim.selftest --sav "programs/saves/auto/m242_probe_B.SAV"` ->
-`PASS B2: 7/7 gates` (one invocation, 1.5 s) -> `evidence/b2_save_walk.txt` (gate output + a
-per-save table of all 17 saves under `programs/saves`). B1 re-run unchanged: `PASS B1: 10/10`.
-
-**The .SAV layout, closed on the byte on 17/17 saves** (`closes=True`): 12 prefix | 796 state
-header | 4 own player (808) | 67,040 block A | 11,488 | 32 | 2,724 map header (dims u32 at
-79,372/79,376) | W*H*22 grid at 82,096 | **91-B** trailer at 172,208 | 16,000 | **u32 count at
-188,299** (176/192/208 = `DAT_00927538`) | 3,584 | 26,624 | 4,096 | **52·n units** | **304·m
-bases** | 256+152+10,144+28+220 = 10,800 = EOF.
-- The counts are IN the header — `0x985af0` = 72 units, `0x985af4` = 18 bases (file 68/72) — and
-  the shape scan finds exactly 72/18 on every save, so no 52/304 Diophantine solve is needed.
-- Faction count 8, three agreeing sources: 67,040/8,380 = 8 block-A records (the 8 "Template 1..8"
-  groups sit 8,380 B apart and 8·8,380 = 67,040 exactly), mask byte `0x985b11` = 0xff (popcount 8),
-  and 8 distinct record owners (0..7).
-- Base rec: x u16 +0, y u16 +2, name at +19. **rec+4 != rec+5 on 2 of 18** (Gaia's Landing 2/1,
-  U.N. Headquarters 2/7); +5 is the byte that matches the faction the NAME belongs to for all 7
-  home bases, so +5 = home/builder, +4 = OPEN (current owner after capture?).
-
-**CORRECTIONS.** (1) M110a's map offsets (79,364 / 82,088 / 172,200) are **8 B low**: at 82,088 no
-cell has +7 == 0xff and the terrain set degenerates to {0,1,2,3}; at 82,096 the land markers number
-1,426 and the terrain set is {0,1,2,8,9,10} — the set planet.MP gives at its own grid start.
-(2) `.MP`'s "map-header word 5 == land cells" does NOT hold in a save: word 5 = 2,048 = (W/2)·H,
-the record count. (3) M243's open item closes arithmetically: 93,159 = 92,927 (map block,
-`FUN_00582260`) + 220 (reader unnamed) + 12 (magic+version, `FUN_00597ce0`) — exact on 242,539 and
-on 242,799. (4) `decode_save.py --sections` RAISES on every 64×64 save (`no 52/304 split of a
-0-byte region`): its table is the 80×80 one, so `sim/save.py` is now the working reader.
-
-**Pitfall (cost one re-run).** A 52-B record whose +10 type >= 64 is a production-queue BAND (128/
-130/131/256/320-323 here), not a unit: its +0/+2 are not tile coords (m113map rec 12 = 3076/56832),
-so a coord check over the whole array rejects 18 of 67. Type-gate the coord test.
-
-**OPEN:** trailer-length formula (91 at 64×64, 128 at 80×80, 338 at 128×128); contents of the
-176/192/208-B count-prefixed block; who reads the 220-B block; which base byte is the CURRENT owner;
-what band records' +0/+2 are.
+Older sessions: `docs/sessions/sessions-195-195.md` (1 sessions). Read it only when a question reaches back before session ## Session 196.
 
 ## Session 196 (2026-11-01, M244 ANALYSE — save tail: the region-map formula, the count-prefixed
 block is the base-site event log, the tail's real legs)
@@ -527,7 +487,6 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   after launch, generator may precede it). New-game generation and save-load are DISJOINT paths -
   the B6 headless spine never regenerates on load.
 
-
 ## Session 212 (2026-11-05, BUILD fire, B6 PASS 6/6) - the headless run: R1 is DONE
 - `track_mode.py` said MODE=BUILD next_rung=B6; built it per `BUILD_SPINE.md` (no box time, no /proc, no gdb).
 - NEW `sim/headless.py`: loads a .SAV (sim/save) + .MP (sim/map) + alpha rules (sim/rules), presses the B3
@@ -544,7 +503,6 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
 - The ladder B1..B6 is EXHAUSTED: a BUILD fire must now write rung B7 (R2's first slice) into
   `BUILD_SPINE.md` before building. `MILESTONES.md` R1 -> DONE.
 
-
 ## Session 213 (2026-11-05, ANALYSE box pick, M273 PASS 7/7) - the row stride 188 is a fixed 94-slot capacity; no spill on the live map
 - Pick: "what the row stride 188 means" (M256 G5's OPEN row). `scripts/m273_rowstride_watch.py`
   (silent bps at BOTH 0x94eaa8 read sites + YEAR control 0x51f554 + live region-count reads).
@@ -552,7 +510,7 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   **ACCEPTANCE M273 PASS 7/7** (`evidence/m273_acceptance.txt`; /proc facts in
   `evidence/m273w3_proc.json`, written by the live run - the replay never hardcodes them).
 - ANSWER: live count DAT_0092ada4 = 91 (pre AND post stable) == save-derived 91 for 64x64;
-  188 = 2*94 is a FIXED capacity (8380 mod 188 = 88 - NOT derived from the faction block stride);
+  188 = 2*94 is a FIXED capacity (8380 mod 188 = 108 - NOT derived from the faction block stride);
   91 < 94 so the M256 spill is UNREACHABLE on the live map. SCALED identity live 7/7
   (2*edi == region slot). UNSCALED row = per-faction cursor: row mod 8380 = 2 for all, deltas =
   whole 8380 strides. OPEN (new picks): 80x80/128x128 counts 128/338 EXCEED 94 (spill question
@@ -568,3 +526,22 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
 - My own gates were wrong twice before shipping (G2 asserted 188==2*count; G5 paired events by
   (round,s10) which the sites do not share) - the FAILs were instrument bugs, fixed by rewriting
   the assertion to what the evidence can bear, never by moving the floor.
+
+## Session 214 (2026-11-05, ANALYSE static, M274 PASS 6/6) - the 128-bound loop is NEVER clamped; big-map spills read the sibling verdict array silently
+- Picked the M273 follow-ups (static, no box): `scripts/m274_rowcap_census.py` ->
+  **SUMMARY M274: 6/6 gates PASS** (`evidence/m274_census.txt`), body 0x556690-0x559e9d, 4,235 insns
+  read from the aligned scratch/m574/text.txt cache (containment from ghidra_out/index.csv).
+- ANSWERS: (G1) the region loop has ONE bound, the constant `cmp ecx,0x80` at 0x558b1c - no clamp to
+  the 94-slot row anywhere; (G2) regions 94..127 SCALED (max 2*127=254 B) land INSIDE the sibling
+  verdict array 0x94eba8 (gap 256) -> on 80x80/128x128 maps the overflow is SILENT WRONG DATA;
+  (G4) a nonzero verdict byte stores 0x8 (0x557fdf) then jmps the loop tail (0x557fe7) - that skip,
+  not a shallow loop, is why M273 saw only sparse events; (G5) the verdict array has exactly 5 store
+  sites (0x8/dl=7-or-8/0x0/0x2/0x7).
+- CORRECTION (mine, from M273): "8380 mod 188 = 88" was an arithmetic slip - it is **108**; the
+  non-integrality conclusion is unaffected. Fixed in NAMED.md, NEXT_PROMPT.md, notes.
+- The fold re-derived from bytes: esi = 2*region + 188*(E+edi) - the multiplier is (E+edi), NOT a
+  bare faction index. The row slot [ebp-0x18] has 15 writers in the body -> the live cursor's origin
+  is a DEF-USE pick, not settled. New open picks: which writer feeds the UNSCALED read site; the
+  def-use of the 15 row-slot writers.
+- Method law: an objdump --start-address INSIDE an instruction silently misaligns the window
+  (invented .byte lines, poisoned a reachability walk) - use the aligned cache or the fn entry.

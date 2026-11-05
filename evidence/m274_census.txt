@@ -1,0 +1,7 @@
+G1 PASS: region-loop bound sites: [('0x558b1c', 'ecx,0x80')] (ONE, the constant 128); capacity clamps (94/93/91): [] -> the loop is NEVER clamped to the 94-slot row
+G2 PASS: SCALED index max = 2*127 = 254 B past 0x94eaa8; the sibling array starts 256 B past it (0x94eba8) -> regions 94..127 read the sibling's [0..66] band, INSIDE the image: silent wrong data, not a crash
+G3 PASS: 15 stores to the row slot [ebp-0x18] in the body (fold 0x558038 among them: True) -> single-writer attribution of the UNSCALED row is UNSOUND; the live cursor advancing by whole 8380 strides is produced by one of the OTHER writers (def-use pick)
+G4 PASS: the 0x8-store ['0x557fdf'] is followed by the skip-jmp ['0x557fe7', '0x558573'] to the loop tail -> a region whose verdict byte is nonzero NEVER reaches either read site (explains M273's sparse events)
+G5 PASS: verdict-array 0x94eda8 store sites [('0x557fdf', '0x8'), ('0x558516', 'dl'), ('0x558549', '0x0'), ('0x55855e', '0x2'), ('0x55856b', '0x7')] (0x8=skip / dl=7-or-8 / 0x0 / 0x2 / 0x7)
+G6 PASS: fold re-derived from bytes: esi = 2*ecx + 188*(E+edi) - the 188-per-unit is CORRECT but the multiplier is (E+edi), NOT a bare faction index; with edi=2*fac and E=0 it equals M256's 188*fac. 8380 mod 188 = 108 -> the live cursor's whole-8380 steps CANNOT come from this fold with any 0..7 faction arg
+SUMMARY M274: 6/6 gates PASS (body 0x556690-0x559e9d, 4235 insns)
