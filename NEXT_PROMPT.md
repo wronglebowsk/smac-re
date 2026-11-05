@@ -61,22 +61,10 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 - ANSWERED (do not re-pick): s187-s210 - M227-M237, **B1-B5**, M240-M271 (M241 FAIL 2/5, #180 open).
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
   per-id §s196-§s210 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
-- RESULT (s208): VERBATIM now in `docs/pick-archive.md` §trim-s210 - the 0x6725ac/0x6725a4 pair is
-  ONE vtable (entry points 8 B apart, 5 installers, virtual-base delta `[vptr-4] = [desc+4] - 0x21a6c`)
-  and the 201 x 608 = 122,208-B block is POD, never indexed, never saved (14/14, `evidence/m267_m268_census.txt`).
-- RESULT (s210): the virtual-base delta is an IMAGE-WIDE mechanism, not one family - a geometric shadow (the
-  store lands exactly 4 below the virtual base its own field expression computes) finds **41 delta stores /
-  8 K / 31 functions** (K = 0x18, 0x1c, 0x48, 0x8c, 0x188, 0x21a6c, 0x22050, 0x23d94) and **177 vptr installs
-  through a vbptr of 33 tables**; 9 secondary-view tables each have their primary 8 B above with the
-  identical install count (the 9 pairs are tabulated in `NAMED.md` §M269) - so M267's pair is the rule, not
-  a curiosity. The 5 K=0x21a6c delta functions ARE the 5 installers (two independent detectors, same answer).
-  **32 of 247** rdata immediates stored through a register are vbtables (dword[0] and [+4] small signed,
-  neither a code pointer) and every K is one of their [+4] values (map in `NAMED.md` §M271). The 0x67194c/0x671944
-  "variant" is M215 s ROW at +0x247a0 inside a class whose vtable 0x678e40 (secondary 0x678e38 at +0x2444)
-  is installed EXACTLY ONCE image-wide, as a 0x25318-B stack local of FUN_0059bec0 (+0 the 0x5e3b80/0x5e3ced class,
-  +0x2320 the 0x675964 class, +0x247a0 row, +0x252ec; dtor body FUN_0059c1e0 via slot 0 = 0x59c380).
-  RETRACT part of M267: FUN_0059bec0 is not a destructor, and 0x67194c is never installed at [this+0] there.
-  Census `scripts/m269_m271_census.py` -> 10/10, `evidence/m269_m271_census.txt`; numbers `NAMED.md` §M269.
+- RESULT (s208) + RESULT (s210): VERBATIM now in `docs/pick-archive.md` §trim-s211 - the
+  0x6725ac/0x6725a4 one-vtable pair + POD block verdict, and the IMAGE-WIDE virtual-base
+  delta census (41 stores / 8 K / 31 fns, 177 installs / 33 vbtables) + the 0x678e40
+  stack-local class with the M267 retraction. Numbers in `NAMED.md` §M267-§M271.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B6** - the headless run - from `BUILD_SPINE.md`):
   ALL THREE ARE BOX PICKS and the box is DOWN (cold relaunch >9 min): WHO dispatches the dialog s +0x4c
   (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies -
