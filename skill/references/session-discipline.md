@@ -14,6 +14,9 @@ mid-sentence twice — the milestone was done and accepted, the paperwork never 
 - The window was DOUBLED to 524,288 tokens (`compression.threshold_tokens: 424,000`).
   Never quote a limit carried in from a prior session — read `~/.hermes/config.yaml`. A bigger window
   does NOT repair the compressor (same model, same cap); every rule here still holds.
+- On a chat platform (Telegram), every between-tool-call sentence is DELIVERED as its own message: a ~40-call
+  fire reads as 40 chat messages. Paul called that "vomit" (s211). Chain tools SILENTLY; the only prose is the
+  final report. This does NOT change the checkpoint-commit discipline - commits need no narration.
 - Budget by TOOL CALLS, not by feel: brief+accept_ready <= 6, milestone 6-30, **commit a
   checkpoint by ~15**, stop measuring at 30-40, close at 40-50.
 - **Size a batch by instrument, not by ambition.** 3 milestones is comfortable, 5 is the ceiling and only when they
