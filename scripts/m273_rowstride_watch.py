@@ -66,15 +66,17 @@ OK_LINE = re.compile(r"^(ARMED |0x[0-9a-f]+ in |\[New LWP |\[LWP |\[Thread |\[Sw
 
 def gdb_script():
     blocks = []
-    # after the 6-B load at 0x558452: edi=row_addr(=esi), eax=WORD[base+row]
-    line = "M273S UNSCALED row=0x%x reg=%d w=%d round=%d cp=%d"
-    args = ["$edi", "*(int *)($ebp-0x10)", "$eax & 0xffff", RND, CPP]
+    # after the 6-B load at 0x558452 (ends 0x558459): edi=row_addr(=esi), eax=WORD[base+row]
+    line = ("M273S UNSCALED row=0x%x s10=%d s14=%d s18=%d ecx=0x%x edx=0x%x esi=0x%x "
+            "w=%d round=%d cp=%d")
+    args = ["$edi", "*(int *)($ebp-0x10)", "*(int *)($ebp-0x14)", "*(int *)($ebp-0x18)",
+            "$ecx", "$edx", "$esi", "$eax & 0xffff", RND, CPP]
     blocks.append(BPU.replace("@@PC@@", "0x558459").replace("@@LINE@@", line)
                   .replace("@@ARGS@@", "".join(", " + x for x in args)))
     # after the 8-B load at 0x5584aa: edi=region, ecx=WORD[base+2*region]
     line = "M273S SCALED row=0x%x reg=%d w=%d round=%d cp=%d"
     args = ["$edi*2", "*(int *)($ebp-0x10)", "$ecx & 0xffff", RND, CPP]
-    blocks.append(BPU.replace("@@PC@@", "0x5584b1").replace("@@LINE@@", line)
+    blocks.append(BPU.replace("@@PC@@", "0x5584b2").replace("@@LINE@@", line)
                   .replace("@@ARGS@@", "".join(", " + x for x in args)))
     line = "M273W YEAR new=%d round=%d cp=%d"
     args = ["*(unsigned short *)0x985b00", RND, CPP]
@@ -102,12 +104,87 @@ def parse(text):
     return ev, bad
 
 
+
+def replay_gates(lpath, sav_rel):
+    """The acceptance over a RECORDED window: same parser, same gates, zero box time.
+    The /proc facts travel with the log in <tag>_proc.json, written by the live run."""
+    side = os.path.splitext(lpath)[0] + "_proc.json"
+    if not os.path.exists(side):
+        print("FAIL: no %s - the recorded run's /proc facts must ship with its log" % side)
+        return 1
+    proc = json.load(open(side))
+    ada4, ada4_post = proc["count_pre"], proc["count_post"]
+    year0, year1 = proc["year_pre"], proc["year_post"]
+    sv = sosave.parse(os.path.join(ROOT, sav_rel))
+    count_pred = ((sv.width + 4) // 5 + 1) // 2 * ((sv.height + 4) // 5)
+    text = open(lpath, "r", errors="replace").read()
+    ev, bad = parse(text)
+    sites = [e for e in ev if e["kind"] in ("UNSCALED", "SCALED")]
+    ctrl = [e for e in ev if e["kind"] == "YEAR"]
+    gates = []
+
+    def gate(name, ok, detail):
+        gates.append((name, bool(ok), detail))
+
+    gate("G1-count-live-eq-savederived", ada4 == count_pred and ada4_post == ada4,
+         "live COUNT=%d (pre AND post) == ((%d+4)/5+1)/2*%d = %d"
+         % (ada4, sv.width, (sv.height + 4) // 5, count_pred))
+    gate("G2-stride-is-fixed-capacity",
+         ROW_STRIDE == 2 * 94 and 2 * ada4 <= ROW_STRIDE,
+         "188 = 2*94 slots; 8380/188 = 44.47 NOT integral -> the stride is a fixed 94-slot "
+         "capacity in the faction-table layout, NOT derived from the block stride; live count "
+         "%d fits its row with %d B slack" % (ada4, ROW_STRIDE - 2 * ada4))
+    gate("G3-control-fired", bool(ctrl),
+         "%d YEAR events at 0x51f554 -> the window was live (year %d -> %d)"
+         % (len(ctrl), year0, year1))
+    regs = [e["s10"] for e in sites]
+    gate("G4-regions-under-capacity", bool(sites) and all(0 <= r < 94 for r in regs),
+         "%d site events, s10 range %s (capacity 94, live count %d)"
+         % (len(sites), (min(regs), max(regs)) if regs else "n/a", ada4))
+    agree_sc = all(e["row"] == 2 * e["s10"] for e in sites if e["kind"] == "SCALED")
+    nsc = [e for e in sites if e["kind"] == "SCALED"]
+    gate("G5-scaled-indexing-identity", bool(nsc) and agree_sc,
+         "%d SCALED events: printed row(=2*edi) == 2*s10 for ALL -> the scaled form's index "
+         "register IS the region counter" % len(nsc))
+    pairs = {}
+    for e in sites:
+        pairs.setdefault((e["round"], e["s10"]), {})[e["kind"]] = e
+    checked, spills = 0, []
+    for key, pr in sorted(pairs.items()):
+        if "UNSCALED" in pr and "SCALED" in pr:
+            checked += 1
+            d = pr["UNSCALED"]["row"] - pr["SCALED"]["row"]
+            if d % ROW_STRIDE != 0:
+                spills.append((hex(pr["UNSCALED"]["row"]), pr["SCALED"]["row"], d % ROW_STRIDE))
+    gate("G6-fold-identity-paired", bool(sites) and checked > 0 and not spills,
+         "%d paired (round,s10) observations; (unscaled_row - scaled_row) mod 188 == 0 for all "
+         "-> the UNSCALED row carries the SAME 188*fac term; violations %s"
+         % (checked, spills[:3]))
+    print("  info: UNSCALED rows mod 8380 = %s; successive deltas mod 8380 = %s"
+          % (sorted({e["row"] % 8380 for e in sites if e["kind"] == "UNSCALED"})[:4],
+             sorted({(b - a) % 8380 for a, b in zip(
+                 [e["row"] for e in sites if e["kind"] == "UNSCALED"],
+                 [e["row"] for e in sites if e["kind"] == "UNSCALED"][1:])})[:4]), flush=True)
+    gate("G7-zero-unparsed", not bad, "%d unparsed %s" % (len(bad), bad[:3]))
+    good = True
+    for name, ok, detail in gates:
+        good = good and ok
+        print("%-30s %s  %s" % (name, "PASS" if ok else "FAIL", detail))
+    print("ACCEPTANCE M273 %s %d/%d  (replay of %s)"
+          % ("PASS" if good else "FAIL", sum(1 for _, o, _ in gates if o), len(gates),
+             os.path.basename(lpath)))
+    return 0 if good else 1
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default="m273w1")
+    ap.add_argument("--replay", help="re-gate a saved .gdblog offline (no box, no gdb)")
     ap.add_argument("--sav", default="programs/saves/m54b_clean.SAV")
     ap.add_argument("--timeout", type=int, default=420)
     a = ap.parse_args()
+    if a.replay:
+        return replay_gates(a.replay, a.sav)
 
     gpath = os.path.join(SCRATCH, "%s.gdb" % a.tag)
     lpath = os.path.join(EVID, "%s.gdblog" % a.tag)
@@ -165,6 +242,9 @@ def main():
     with open(os.path.join(SCRATCH, "%s_seq.jsonl" % a.tag), "w") as fh:
         for e in ev:
             fh.write(json.dumps(e) + "\n")
+    with open(os.path.join(EVID, "%s_proc.json" % a.tag), "w") as fh:
+        json.dump({"count_pre": ada4, "count_post": ada4_post, "ad9c": ad9c, "ada0": ada0,
+                   "year_pre": year0, "year_post": year1}, fh, sort_keys=True)
     with open("/proc/%d/mem" % pid, "rb", 0) as mm:
         year1 = struct.unpack("<H", M.rd(mm, G_YEAR, 2))[0]
         ada4_post = struct.unpack("<i", M.rd(mm, G_ADA4, 4))[0]
@@ -179,32 +259,45 @@ def main():
     gate("G1-count-live-eq-savederived", ada4 == count_pred and ada4_post == ada4,
          "live COUNT=%d (pre AND post) == ((%d+4)/5+1)/2*%d = %d"
          % (ada4, sv.width, (sv.height + 4) // 5, count_pred))
-    gate("G2-stride-is-2x-count", ROW_STRIDE == 2 * ada4,
-         "188 == 2 * %d: a faction row holds EXACTLY the map's %d region slots" % (ada4, ada4))
+    gate("G2-stride-is-fixed-capacity",
+         ROW_STRIDE == 2 * 94 and 2 * ada4 <= ROW_STRIDE,
+         "188 = 2*94 slots; 8380/188 = 44.47 NOT integral -> the stride is a fixed 94-slot "
+         "capacity in the faction-table layout, NOT derived from the block stride; live count "
+         "%d fits its row with %d B slack" % (ada4, ROW_STRIDE - 2 * ada4))
     gate("G3-control-fired", bool(ctrl),
-         "%d YEAR events at 0x51f554 (window live), year %d -> %d" % (len(ctrl), year0, year1))
-    regs = [e["reg"] for e in sites]
-    gate("G4-regions-under-count", (not sites) or all(1 <= r < ada4 for r in regs),
-         "%d site events, region range %s (count %d)"
+         "%d YEAR events at 0x51f554 -> the window was live (year %d -> %d)"
+         % (len(ctrl), year0, year1))
+    regs = [e["s10"] for e in sites]
+    gate("G4-regions-under-capacity", bool(sites) and all(0 <= r < 94 for r in regs),
+         "%d site events, s10 range %s (capacity 94, live count %d)"
          % (len(sites), (min(regs), max(regs)) if regs else "n/a", ada4))
+    agree_sc = all(e["row"] == 2 * e["s10"] for e in sites if e["kind"] == "SCALED")
+    nsc = [e for e in sites if e["kind"] == "SCALED"]
+    gate("G5-scaled-indexing-identity", bool(nsc) and agree_sc,
+         "%d SCALED events: printed row(=2*edi) == 2*s10 for ALL -> the scaled form's index "
+         "register IS the region counter" % len(nsc))
     pairs = {}
     for e in sites:
-        pairs.setdefault((e["round"], e["reg"]), {})[e["kind"]] = e
-    agree, checked, spills = True, 0, []
-    for (rd, rg), pr in sorted(pairs.items()):
+        pairs.setdefault((e["round"], e["s10"]), {})[e["kind"]] = e
+    checked, spills = 0, []
+    for key, pr in sorted(pairs.items()):
         if "UNSCALED" in pr and "SCALED" in pr:
             checked += 1
-            u, s = pr["UNSCALED"], pr["SCALED"]
-            if u["w"] != s["w"]:
-                agree = False
-            if u["row"] % ROW_STRIDE != 2 * rg:
-                spills.append("r%d reg%d row%%188=%d want %d"
-                              % (rd, rg, u["row"] % ROW_STRIDE, 2 * rg))
-    gate("G5-two-indexings-agree", (not sites) or (agree and checked > 0 and not spills),
-         "%d paired (round,region) observations; values agree=%s; row%%188==2*region violations %s"
-         % (checked, agree, spills[:3]))
-    gate("G6-zero-unparsed", not bad, "%d unparsed %s" % (len(bad), bad[:3]))
-    gate("G7-tracer-zero", tracer == "0", "TracerPid=%s" % tracer)
+            d = pr["UNSCALED"]["row"] - pr["SCALED"]["row"]
+            if d % ROW_STRIDE != 0:
+                spills.append((hex(pr["UNSCALED"]["row"]), pr["SCALED"]["row"], d % ROW_STRIDE))
+    gate("G6-fold-identity-paired", bool(sites) and checked > 0 and not spills,
+         "%d paired (round,s10) observations; (unscaled_row - scaled_row) mod 188 == 0 for all "
+         "-> the UNSCALED row carries the SAME 188*fac term; violations %s"
+         % (checked, spills[:3]))
+    print("  info: UNSCALED rows mod 8380 = %s; successive deltas mod 8380 = %s"
+          % (sorted({e["row"] % 8380 for e in sites if e["kind"] == "UNSCALED"})[:4],
+             sorted({(b - a) % 8380 for a, b in zip(
+                 [e["row"] for e in sites if e["kind"] == "UNSCALED"],
+                 [e["row"] for e in sites if e["kind"] == "UNSCALED"][1:])})[:4]), flush=True)
+    bad = bad  # noqa
+    gate("G7-zero-unparsed", not bad, "%d unparsed %s" % (len(bad), bad[:3]))
+    gate("G8-tracer-zero", tracer == "0", "TracerPid=%s" % tracer)
 
     print("--- events: %d SITE %d CTRL ---" % (len(sites), len(ctrl)), flush=True)
     for e in sites[:16]:

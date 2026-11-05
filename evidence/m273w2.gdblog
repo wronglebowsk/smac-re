@@ -1,0 +1,55 @@
+[New LWP 3820459]
+[New LWP 3820458]
+[New LWP 3820457]
+[New LWP 3820456]
+[New LWP 3820455]
+[New LWP 3820454]
+[New LWP 3820453]
+[New LWP 3820448]
+[New LWP 3820447]
+[New LWP 3820446]
+[New LWP 3820445]
+[New LWP 3820444]
+[New LWP 3820443]
+[New LWP 3820442]
+[New LWP 3820441]
+[New LWP 3820440]
+0xecd2d32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x558459
+Breakpoint 2 at 0x5584b2
+Breakpoint 3 at 0x51f554
+ARMED 3 silent bps
+M273S UNSCALED row=0x82f2 reg=1 w=41 round=50 cp=4
+M273S SCALED row=0x2 reg=1 w=112 round=50 cp=4
+M273S UNSCALED row=0xa3ae reg=1 w=27 round=50 cp=5
+M273S SCALED row=0x2 reg=1 w=112 round=50 cp=5
+M273S UNSCALED row=0xc46a reg=1 w=75 round=50 cp=6
+M273S SCALED row=0x2 reg=1 w=112 round=50 cp=6
+M273S UNSCALED row=0xe526 reg=1 w=7 round=50 cp=7
+M273S SCALED row=0x2 reg=1 w=112 round=50 cp=7
+M273W YEAR new=2151 round=51 cp=7
+M273S UNSCALED row=0x20be reg=1 w=10 round=51 cp=1
+M273S SCALED row=0x2 reg=1 w=112 round=51 cp=1
+M273S UNSCALED row=0x417a reg=1 w=33 round=51 cp=2
+M273S SCALED row=0x2 reg=1 w=112 round=51 cp=2
+M273S UNSCALED row=0x6236 reg=1 w=36 round=51 cp=3
+M273S SCALED row=0x2 reg=1 w=112 round=51 cp=3
+M273S UNSCALED row=0x82f2 reg=1 w=41 round=51 cp=4
+M273S SCALED row=0x2 reg=1 w=112 round=51 cp=4
+M273S UNSCALED row=0xa3ae reg=1 w=27 round=51 cp=5
+M273S SCALED row=0x2 reg=1 w=112 round=51 cp=5
+M273S UNSCALED row=0xc46a reg=1 w=75 round=51 cp=6
+M273S SCALED row=0x2 reg=1 w=112 round=51 cp=6
+M273S UNSCALED row=0xe526 reg=1 w=7 round=51 cp=7
+M273S SCALED row=0x2 reg=1 w=112 round=51 cp=7
+M273W YEAR new=2152 round=52 cp=7
+M273S UNSCALED row=0x20be reg=1 w=10 round=52 cp=1
+M273S SCALED row=0x2 reg=1 w=112 round=52 cp=1
+M273S UNSCALED row=0x417a reg=1 w=33 round=52 cp=2
+M273S SCALED row=0x2 reg=1 w=112 round=52 cp=2
+M273S UNSCALED row=0x6236 reg=1 w=36 round=52 cp=3
+M273S SCALED row=0x2 reg=1 w=112 round=52 cp=3
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xecd2d32c in __kernel_vsyscall ()
+[Inferior 1 (process 3820435) detached]

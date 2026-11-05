@@ -1,0 +1,26 @@
+[New LWP 3780258]
+[New LWP 3780257]
+[New LWP 3780256]
+[New LWP 3780255]
+[New LWP 3780254]
+[New LWP 3780253]
+[New LWP 3780231]
+[New LWP 3780224]
+[New LWP 3780223]
+[New LWP 3780222]
+[New LWP 3780221]
+[New LWP 3780220]
+[New LWP 3780219]
+[New LWP 3780218]
+[New LWP 3780217]
+[New LWP 3780216]
+0xeeb9632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x558459
+Breakpoint 2 at 0x5584b1
+Breakpoint 3 at 0x51f554
+ARMED 3 silent bps
+M273S UNSCALED row=0x82f2 reg=1 w=41 round=50 cp=4
+
+Thread 1 "terran.exe" received signal SIGSEGV, Segmentation fault.
+0x005584aa in ?? ()
+[Inferior 1 (process 3780205) detached]
