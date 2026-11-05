@@ -115,8 +115,8 @@ def gdb_script():
             .replace("@@BPS@@", " ".join(pcs)))
 
 
-KV = re.compile(r"^(M272[ESC]) (ENT|SITE|CTRL)((?: [a-z][a-z0-9_]*=-?[0-9a-fx ]+?)+) round=(\d+) cp=(\d+)\s*$")
-OK_LINE = re.compile(r"^(ARMED |0x[0-9a-f]+ in |\[New LWP |\[Thread |\[Switching to |"
+KV = re.compile(r"^(M272[ESC]) (ENT|SITE|CTRL)((?: [a-z][a-z0-9_]*=-?\S+)+) round=(-?\d+) cp=(\d+)\s*$")
+OK_LINE = re.compile(r"^(ARMED |0x[0-9a-f]+ in |\[New LWP |\[LWP |\[Thread |\[Switching to |"
                      r"Thread \d+ |This is not |^\$[0-9]+ = |^Continue|^\^|warning:|"
                      r"Cannot breakpoint|\[Inferior \d+ |This GDB supports |\s+<https://|"
                      r"Enable debuginfod|Debuginfod has|To make this setting |"
@@ -303,8 +303,10 @@ def main():
         return c or "<unmapped>"
 
     off_arm = text.index("ARMED")
-    boot = [e for e in ev if off_arm <= e["_off"] < off_ready]
-    load = [e for e in ev if e["_off"] >= off_ready]
+    # the sentinel round (poked only at the ready point) is the game-state truth of which window
+    # an event belongs to; the offset split mis-assigns events written while the pipe was behind
+    boot = [e for e in ev if e["round"] == 0]
+    load = [e for e in ev if e["round"] != 0]
     ent = lambda ws: [e for e in ws if e["kind"] == "ENT"]
     site = lambda ws: [e for e in ws if e["kind"] == "SITE"]
     gen = lambda ws: [e for e in ent(ws) if e["pc"] == GEN]
@@ -321,8 +323,10 @@ def main():
     def gate(name, ok, detail):
         gates.append((name, bool(ok), detail))
 
-    gate("G1-14-bps-armed", "ARMED 14 silent bps" in text,
-         [ln for ln in text.splitlines() if ln.startswith("ARMED")][:1])
+    armed_ln = next((ln for ln in text.splitlines() if ln.startswith("ARMED")), "")
+    nbps = len(re.findall(r"0x[0-9a-f]+", armed_ln.split(" at ")[-1])) if " at " in armed_ln else 0
+    gate("G1-all-bps-armed", nbps == len(ENTRIES) + len(SITES) + len(CTRL) + 1,
+         "ARMED line names %d bps (design %d)" % (nbps, len(ENTRIES) + len(SITES) + len(CTRL) + 1))
     bg = gen(boot)
     bctrl = [e for e in boot if e["kind"] == "CTRL"]
     gate("G2-boot-window-events", bool(bg or bctrl),

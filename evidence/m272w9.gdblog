@@ -1,0 +1,58 @@
+[New LWP 3780228]
+[New LWP 3780227]
+[New LWP 3780226]
+[New LWP 3780225]
+[New LWP 3780224]
+[New LWP 3780223]
+[New LWP 3780222]
+[New LWP 3780221]
+[New LWP 3780220]
+[New LWP 3780219]
+[New LWP 3780218]
+[New LWP 3780217]
+[New LWP 3780216]
+[New LWP 3780215]
+[New LWP 3780214]
+0xeeb9632c in __kernel_vsyscall ()
+Breakpoint 1 at 0x5b2970
+Breakpoint 2 at 0x57ecf0
+Breakpoint 3 at 0x57c550
+Breakpoint 4 at 0x4e10c0
+Breakpoint 5 at 0x4e11b0
+Breakpoint 6 at 0x4e1151
+Breakpoint 7 at 0x4e122b
+Breakpoint 8 at 0x57d2a0
+Breakpoint 9 at 0x57f1ec
+Breakpoint 10 at 0x5791c0
+Breakpoint 11 at 0x596540
+Breakpoint 12 at 0x597ce0
+Breakpoint 13 at 0x597ee0
+Breakpoint 14 at 0x64cc00
+ARMED 14 silent bps at 0x5b2970 0x57ecf0 0x57c550 0x4e10c0 0x4e11b0 0x4e1151 0x4e122b 0x57d2a0 0x57f1ec 0x5791c0 0x596540 0x597ce0 0x597ee0 0x64cc00
+[LWP 3780226 exited]
+[LWP 3780225 exited]
+[LWP 3780228 exited]
+[LWP 3780227 exited]
+[LWP 3780215 exited]
+[LWP 3780214 exited]
+[New LWP 3780231]
+[New LWP 3780253]
+[New LWP 3780254]
+[New LWP 3780255]
+[New LWP 3780256]
+[New LWP 3780257]
+[New LWP 3780258]
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x5791c0 ret=0x579eaf round=0 cp=0
+M272C CTRL pc=0x597ee0 ret=0x5992f2 round=-39 cp=0
+M272C CTRL pc=0x64cc00 ret=0x596edb round=50 cp=3
+
+Thread 17 "wined3d_cs" received signal SIGINT, Interrupt.
+[Switching to LWP 3780231]
+0xeeb9632c in __kernel_vsyscall ()
+[Inferior 1 (process 3780205) detached]
