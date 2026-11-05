@@ -681,3 +681,7 @@ in `NAMED.md` §B5).
 ## trim-s214 - the s213 RESULT block moved VERBATIM from NEXT_PROMPT.md (session 214)
 
 - RESULT (s213, M273, box): the row stride 188 = 2×94 is a FIXED capacity in the faction-table layout (NOT derived from the 8380 block stride: 8380 mod 188 = 108); live DAT_0092ada4 = 91 (pre+post) == save-derived `((W+4)/5+1)/2×H` -> no spill reachable on 64×64; scaled-indexing identity live 7/7; the UNSCALED row register is a per-faction cursor (row mod 8380 = 2 const, deltas = whole 8380). OPEN follow-ups: 80x80/128x128 counts 128/338 > 94 (spill MIGRATES there - who clamps the 1..127 loop); the cursor's caller; region-loop depth per phase (observed s10=1 only). Gate `scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog` 7/7 (`evidence/m273_acceptance.txt`, `/proc` facts in `evidence/m273w3_proc.json`); `NAMED.md` §M273.
+
+## trim-s215 - the s214 RESULT block moved VERBATIM from NEXT_PROMPT.md (session 215)
+
+- RESULT (s214, M274, static): the region loop's ONLY bound is the constant 0x80 (0x558b1c) - NEVER clamped to the 94-slot row; big-map scaled overflow (regions 94..127, max 254 B) reads the SIBLING verdict array 0x94eba8 (gap 256) = silent wrong data; the verdict byte's 0x8-store 0x557fdf + jmp 0x558b18 skip BOTH read sites (explains M273's sparse events); the row slot [ebp-0x18] has 15 writers -> the 8380-cursor's feeder is an OPEN def-use pick. Census `scripts/m274_rowcap_census.py` 6/6 (`evidence/m274_census.txt`); `NAMED.md` §M274.

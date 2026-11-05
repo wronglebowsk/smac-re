@@ -545,3 +545,21 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   def-use of the 15 row-slot writers.
 - Method law: an objdump --start-address INSIDE an instruction silently misaligns the window
   (invented .byte lines, poisoned a reachability walk) - use the aligned cache or the fn entry.
+
+
+## Session 215 (2026-11-05, ANALYSE static, M275 PASS 8/8) - the read site has ONE reaching def (the fold) - and the live cursor contradicts the fold's arithmetic
+- Picked M274's def-use follow-up (static, no box): `scripts/m275_rowslot_defuse.py` ->
+  **SUMMARY M275: 8/8 gates PASS** (`evidence/m275_defuse.txt`). Sound CFG (0 indirect jumps,
+  4,235 insns); reaching defs of [ebp-0x18] at the read-site load 0x55844b = **{0x558038}** only.
+- CORRECTS M256's fold prose: re-decoded `mov eax,edi; shl eax,6; add eax,edi; lea esi,[ecx+eax*2];
+  shl esi,1` = **esi = 2*region + 130*edi**, edi = the function ARGUMENT (last writer 0x557fbb
+  `mov edi,[ebp+0x8]`). (188 = 2*94 is the table's row CAPACITY - a different quantity; M274's
+  "188*(E+edi)" was my own mis-multiply: 16*3-1 = 47, x2 = 94 per unit... the script's G6 shape
+  check now pins the exact insn sequence.)
+- THE FINDING: M273's live rows differ by whole 8380 strides, but **8380 mod 130 = 60 != 0** -
+  no integer arg yields them through this fold. Static and live are irreconcilable as modeled;
+  the missing writer is outside the visible displacement forms (G8: 14 block-band stores, zero
+  at the slot's absolute faces). Queued pick: hw-watchpoint the frame slot during the
+  auto-manager (watch reports pc = store + insn length).
+- Self-check win: my mental "8380 mod 130 = 100" was WRONG; the computed assert caught it (60).
+  Numbers come from the script, never from my arithmetic - the gate asserted before shipping.

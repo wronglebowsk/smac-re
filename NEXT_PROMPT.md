@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing for the next session (session 214, 2026-11-05, **M274 DONE (static): the region loop's ONLY bound is the constant 0x80 - NEVER clamped to the 94-slot row; big-map scaled overflow reads the sibling verdict array 0x94eba8 SILENTLY; the verdict 0x8-store + jmp skip both read sites (M273's sparsity explained); the row slot [ebp-0x18] has 15 writers -> 8380-cursor feeder = OPEN def-use pick; 6/6 `scripts/m274_rowcap_census.py`; the NEXT fire is BUILD B7 and must WRITE the rung first; NEVER objdump --start-address mid-inside an insn**)
+# NEXT_PROMPT.md - footing for the next session (session 215, 2026-11-05, **M275 DONE (static): the row slot's ONLY reaching def at the read site is the fold (esi = 2·region + 130·arg, arg = [ebp+0x8] - corrects M256's 188×fac), yet the live 8380-stride cursor needs 8380 mod 130 = 60 = 0 - STATIC vs LIVE CONTRADICTION, missing writer = queued box pick (hw-watchpoint [ebp-0x18] during the auto-manager); 8/8 `scripts/m275_rowslot_defuse.py`; the NEXT fire is BUILD B7 and must WRITE the rung first**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -58,15 +58,16 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s214 - M227-M237, **B1-B6**, M240-M274 (M241 FAIL 2/5, #180 open).
+- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open).
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
-  per-id §s196-§s214 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
+  per-id §s196-§s215 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
 - RESULT (s208) + RESULT (s210): VERBATIM now in `docs/pick-archive.md` §trim-s211 - the
   0x6725ac/0x6725a4 one-vtable pair + POD block verdict, and the IMAGE-WIDE virtual-base
   delta census (41 stores / 8 K / 31 fns, 177 installs / 33 vbtables) + the 0x678e40
   stack-local class with the M267 retraction. Numbers in `NAMED.md` §M267-§M271.- RESULT (s211, M272): VERBATIM now in `docs/pick-archive.md` §trim-s213 - FUN_0057ecf0 does NOT run on a LOAD + the live .SAV chain + the mid-body-entry law. `NAMED.md` §M272.
 - RESULT (s213, M273): VERBATIM now in `docs/pick-archive.md` §trim-s214 (8380 mod 188 = 108 corrects its 88). `NAMED.md` §M273.
-- RESULT (s214, M274, static): the region loop's ONLY bound is the constant 0x80 (0x558b1c) - NEVER clamped to the 94-slot row; big-map scaled overflow (regions 94..127, max 254 B) reads the SIBLING verdict array 0x94eba8 (gap 256) = silent wrong data; the verdict byte's 0x8-store 0x557fdf + jmp 0x558b18 skip BOTH read sites (explains M273's sparse events); the row slot [ebp-0x18] has 15 writers -> the 8380-cursor's feeder is an OPEN def-use pick. Census `scripts/m274_rowcap_census.py` 6/6 (`evidence/m274_census.txt`); `NAMED.md` §M274.
+- RESULT (s214, M274): VERBATIM now in `docs/pick-archive.md` §trim-s215. `NAMED.md` §M274.
+- RESULT (s215, M275, static): the UNSCALED read site's slot [ebp-0x18] has exactly ONE reaching def at 0x55844b - the fold 0x558038 - whose re-decoded arithmetic is **esi = 2·region + 130·arg** (arg = `[ebp+0x8]`; CORRECTS M256's 188×fac prose). But M273's live rows step by whole 8380 and **8380 mod 130 = 60 ≠ 0**: static and live are IRRECONCILABLE - the missing writer is an unmodeled alias/leg (G8: 14 block-band stores, none at the slot's faces). Queued box pick: hw-watchpoint the frame slot during the auto-manager. Census `scripts/m275_rowslot_defuse.py` 8/8 (`evidence/m275_defuse.txt`); `NAMED.md` §M275.
 
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B6** - the headless run - from `BUILD_SPINE.md`):

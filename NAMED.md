@@ -1137,7 +1137,7 @@ No alpha.json table has 196 or 201 rows (max 89 TECHNOLOGY). OPEN: what writes t
 | live region count DAT_0092ada4 = 91, stable pre AND post the window, == save-derived ((64+4)/5+1)/2×13 = 91; ad9c=ada0=13 | `evidence/m273w3_proc.json` (written by the live run), `evidence/m273w3.gdblog` window, gate G1 | V (live) |
 | 188 = 2×94 slots is a FIXED capacity: 8380/188 = 44.47 NOT integral (8380 mod 188 = 108) - the per-faction row is NOT derived from the faction block stride; the live count fits its row with 6 B slack, so the M256 "regions 94..127 spill" is UNREACHABLE on the 64×64 map | gate G2 + G6 (below) | V |
 | scaled-indexing identity: 7/7 SCALED events at 0x5584b2 have 2×edi == the loop slot [ebp-0x10] (=1) - the scaled form's index register IS the region counter | `evidence/m273w3.gdblog`, gate G5 | V (live) |
-| the UNSCALED row register is a per-faction TABLE CURSOR: row mod 8380 = 2 for all 7 events and every successive delta is a whole faction stride 8380 (it walks with cp=4,5,6,7,...); row-2 = k×8380, so the fold's 188×fac term advances by 44.5 block strides - the image cannot reduce it further without the cursor's caller (OPEN, new pick) | gate G6 | V (code+live), OPEN (caller) |
+| the UNSCALED row register is a per-faction TABLE CURSOR (LIVE): row mod 8380 = 2 for all 7 events, every successive delta a whole faction stride 8380, walking with cp=4,5,6,7,...; **M275 (s215) PROVED this contradicts the static fold** (row = 2·region + 130·arg, and 8380 mod 130 = 60 ≠ 0) -> the value at the read site is NOT produced by the fold as written; the writer is an unmodeled ALIAS/other-leg (OPEN, hw-watchpoint pick) | gate G6 + `scripts/m275_rowslot_defuse.py` G4/G7 | V (live), CONTRADICTED (static chain) |
 | the full region loop was NOT exercised in the window: observed s10 stays 1 while cp walks phases (7+7 events, balanced); depth per phase OPEN (new pick) | gate G4 + info line | OPEN (recorded) |
 | acceptance is OFFLINE over the recorded window: `python3 scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog` -> `ACCEPTANCE M273 PASS 7/7` (`evidence/m273_acceptance.txt`); the /proc facts ship in `evidence/m273w3_proc.json` | same | V |
 
@@ -1152,3 +1152,14 @@ No alpha.json table has 196 or 201 rows (max 89 TECHNOLOGY). OPEN: what writes t
 | the verdict array 0x94eda8 has exactly 5 store sites: 0x557fdf=0x8 (skip), 0x558516=dl (7-or-8), 0x558549=0x0, 0x55855e=0x2, 0x55856b=0x7 | G5 | V (bytes) |
 | the fold, RE-DERIVED from bytes (not prose): `add eax,edi; lea eax,[edi+eax*2]; shl 4; sub eax,edi; lea esi,[ecx+eax*2]; shl esi,1` = **esi = 2·region + 188·(E+edi)** - the 188-per-unit is real but the multiplier is (E+edi), not a bare faction index; 8380 mod 188 = **108** (corrects M273's 88 - arithmetic slip, the non-integrality conclusion stands) | G6 | V (bytes) |
 | method law (s214): an objdump `--start-address` that lands INSIDE an instruction silently misaligns the whole window (invents `.byte` lines, breaks reachability) - read windows from the aligned scratch/m574/text.txt cache or from the function ENTRY | this file's first run | V (instrument) |
+
+## M275 (s215, PASS 8/8) - the row slot's only reaching def at the read site IS the fold - and the live cursor CONTRADICTS the fold's arithmetic
+
+| fact | evidence | status |
+|---|---|---|
+| CFG of FUN_00556690 (4,235 insns) is sound: ZERO indirect jumps - reaching-defs is decidable statically | `scripts/m275_rowslot_defuse.py` G1, `evidence/m275_defuse.txt` | V (bytes) |
+| the slot [ebp-0x18]: 15 direct defs, 19 loads; at the read-site feeder load 0x55844b the **reaching-def set = {0x558038}** (the fold) - M274's "15 writers, unattributable" is narrowed to ONE on the CFG | G2-G4 | V (bytes) |
+| the fold's multiplier, re-decoded: `mov eax,edi; shl eax,6; add eax,edi` => **esi = 2·region + 130·edi**, and edi = the FUNCTION ARGUMENT (`mov edi,[ebp+0x8]`, last writer 0x557fbb) - M256's "188×fac" prose was wrong (188 = 2×94 is the TABLE row capacity, the fold's coefficient is 130) | G6-G7 | V (bytes), CORRECTS M256 |
+| **THE FINDING**: live rows (M273) differ by whole 8380 strides, but 8380 mod 130 = **60 ≠ 0** - no integer argument produces them through this fold. Static (fold-only reaching def) and live (8380-cursor) are IRRECONCILABLE as modeled | G7 + `evidence/m273w3.gdblog` rows | V (both sides), OPEN (the missing writer) |
+| alias census: 14 dword stores through a block base [reg+0x94dXXX] exist in the body; ZERO at the slot's absolute faces (0x94d6e8 / 0x92dcd0) - the missing writer is not a displacement form this class sees | G8 | V (bytes) |
+| resolution pick (queued): hw-watchpoint the FRAME SLOT while the auto-manager runs (a frame address is watchable; watch reports pc = store + insn length) | - | OPEN |

@@ -164,6 +164,19 @@ Then re-census the whole window `[base−slack, base+extent)` classified by oper
 only shows up under the folded name is still a writer. A store list built from one `DAT_` name is
 incomplete; a store list built from the window plus the shape filter is the census.
 
+## Reaching-defs on a function CFG (s215)
+
+For a frame slot or global read, "who writes it" is decidable STATICALLY when the function's
+CFG has no indirect jumps (check first: grep `jmp *` / `call *` register forms - FUN_00556690
+had zero). Build edges (literal jump targets + fallthrough; conditional jumps get BOTH), then
+for each def forward-walk to the use, refusing to cross another def: the surviving set is the
+reaching-def set. M275 used this to narrow 15 stores to ONE feeder of a read site - and then
+the LIVE values CONTRADICTED the sole feeder's arithmetic (8380 mod 130 = 60 != 0): a sound
+static answer plus live numbers that do not fit it IS the finding, and its arbiter is a hw
+watchpoint on the frame slot (watchable while the fn runs; pc = store + insn length).
+Assert every modulus/remainder in the script (`assert STEP_RES == 60`) - the author's mental
+arithmetic was wrong twice in two sessions (88 vs 108, 100 vs 60).
+
 ## 9. From a static census to a live enumeration (proving you caught EVERY writer)
 
 When the question is "is this the complete list of writers of field X, and in what order", the static
