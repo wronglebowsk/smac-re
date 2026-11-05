@@ -641,6 +641,40 @@ def run_m27_replay(results):
     print("  info ASSUMED: %s | %s" % sounits.ASSUMED)
 
 
+def run_b6(sav_path, map_path, turns, results):
+    """Rung B6: two in-process headless runs -> identical bytes, plus the run's own gates."""
+    import hashlib
+    import tempfile
+    from . import headless as sohead
+    if not (os.path.exists(sav_path) and os.path.exists(map_path)):
+        return fail("B6: missing input: %s / %s" % (sav_path, map_path))
+    sv1, eng1, st1, blob1 = sohead.simulate(sav_path, map_path, sohead.DEFAULT_RULES, turns)
+    sv2, eng2, st2, blob2 = sohead.simulate(sav_path, map_path, sohead.DEFAULT_RULES, turns)
+    for name, ok, detail in sohead.validate(sv1, eng1, st1, turns):
+        results.append((name + " " + detail, ok))
+    sha1 = hashlib.sha256(blob1.encode()).hexdigest()
+    sha2 = hashlib.sha256(blob2.encode()).hexdigest()
+    results.append(("two-runs-identical-sha256 %s (%d B)" % (sha1[:16], len(blob1)),
+                    sha1 == sha2))
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+        fh.write(blob1)
+        dpath = fh.name
+    rc = sohead.main(["--sav", sav_path, "--map", map_path, "--turns", str(turns),
+                      "--dump", dpath])
+    results.append(("command-exit-0 rc=%d" % rc, rc == 0))
+    os.unlink(dpath)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B6: %d/%d gates failed: %s" % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B6: %d/%d gates - headless run over %s: %d turns, year %d -> %d, "
+          "two runs sha256 %s (no box time, no /proc, no gdb)"
+          % (len(results), len(results), os.path.basename(sav_path), turns, sv1.year,
+             eng1.year, sha1[:16]))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -649,9 +683,14 @@ def main(argv=None):
     ap.add_argument("--replay")
     ap.add_argument("--replay-m27", action="store_true",
                     help="rung B5: replay evidence/m27_solowrap*.log through sim.units")
+    ap.add_argument("--b6", nargs="+", metavar=("SAV", "MAP"),
+                    help="rung B6: headless run twice, compare dump sha256 (turns via --turns)")
+    ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
     results = []
+    if args.b6:
+        return run_b6(args.b6[0], args.b6[1], args.turns, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

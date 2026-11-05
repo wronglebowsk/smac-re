@@ -1,0 +1,12 @@
+  ok   year-increments-per-B3  year 2150 -> 2160 over 10 presses (delta 10)
+  ok   ends-in-human-phase  final (cur, tf) = (3, 0), human = 3
+  ok   economy-every-round-per-faction  7 factions x 10 rounds
+  ok   energy-floor-zero  apply_round floors at 0 (0x5208f0 tail)
+PASS B6: headless run 10 turns, year 2150 -> 2160, dump /home/n100/.hermes/cache/scratch/tmpmajksk8c.json (8455 B, sha256 2efbc782e2075a26)
+  ok   year-increments-per-B3 year 2150 -> 2160 over 10 presses (delta 10)
+  ok   ends-in-human-phase final (cur, tf) = (3, 0), human = 3
+  ok   economy-every-round-per-faction 7 factions x 10 rounds
+  ok   energy-floor-zero apply_round floors at 0 (0x5208f0 tail)
+  ok   two-runs-identical-sha256 2efbc782e2075a26 (8455 B)
+  ok   command-exit-0 rc=0
+PASS B6: 6/6 gates - headless run over m54b_clean.SAV: 10 turns, year 2150 -> 2160, two runs sha256 2efbc782e2075a26 (no box time, no /proc, no gdb)
