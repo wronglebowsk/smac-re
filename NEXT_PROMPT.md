@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing for the next session (session 210, 2026-11-02, **M269-M271 DONE: the `[vptr-4] = [desc+4] - K` virtual-base delta is IMAGE-WIDE (41 stores / 8 K / 31 functions, 177 vptr installs through a vbptr of 33 tables, 9 primary+0x444-secondary pairs 8 B apart; 32 vbtable descriptors close the K census); the 0x67194c "variant" is M215 s row at +0x247a0 inside the 0x678e40 class, a 0x25318-B stack local of FUN_0059bec0 - 10/10 on `evidence/m269_m271_census.txt`; B5 done, numbers `NAMED.md` §B5**)
+# NEXT_PROMPT.md - footing for the next session (session 211, 2026-11-05, **M272 DONE (box): FUN_0057ecf0 does NOT run on a LOAD - 0 events at the generator, its 4 call sites and all 4 caller entries in a sentinel-valid load window; the .SAV chain IS live there (opener 0x597ee0 at round=-39 -> fread wrapper 0x64cc00 dest 0x927590 ret 0x596edb INSIDE FUN_00596850); entry bps at the loaders NEVER fire - prove a chain by call-site RETs; 5/5 `scripts/m272_acceptance.py`; box UP; the yama-ancestry escape is DEAD - toggle ptrace_scope 0 around harness runs**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -58,27 +58,20 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s210 - M227-M237, **B1-B5**, M240-M271 (M241 FAIL 2/5, #180 open).
+- ANSWERED (do not re-pick): s187-s211 - M227-M237, **B1-B5**, M240-M272 (M241 FAIL 2/5, #180 open).
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
-  per-id §s196-§s210 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
+  per-id §s196-§s211 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
 - RESULT (s208) + RESULT (s210): VERBATIM now in `docs/pick-archive.md` §trim-s211 - the
   0x6725ac/0x6725a4 one-vtable pair + POD block verdict, and the IMAGE-WIDE virtual-base
   delta census (41 stores / 8 K / 31 fns, 177 installs / 33 vbtables) + the 0x678e40
   stack-local class with the M267 retraction. Numbers in `NAMED.md` §M267-§M271.
+- RESULT (s211, M272, box): `FUN_0057ecf0` does NOT run on a LOAD. Sentinel-valid load window (ROUND poked -39 -> 50 read back, counts == the m104 image): 0 events at `FUN_005b2970`, its 4 call sites (0x4e1151/0x4e122b/0x57d2a0/0x57f1ec) and all 4 caller entries; the .SAV chain IS live - opener 0x597ee0 fires AT round=-39 (ret 0x5992f2), fread wrapper 0x64cc00 at round=50, dest 0x927590, ret 0x596edb INSIDE `FUN_00596850` (M106 in-place body loader). **Entry bps at 0x597ee0/0x596850 never fire - loaders are entered MID-BODY; prove a chain by call-site RETs, not entry hits.** Boot control 0x5791c0 x7. Gate `scripts/m272_acceptance.py` 5/5 offline over `evidence/m272w9.gdblog`; harness `scripts/m272_gen_load_watch.py`; `NAMED.md` §M272.
 - Pick from (ANALYSE fires; the next BUILD fire takes **B6** - the headless run - from `BUILD_SPINE.md`):
-  ALL THREE ARE BOX PICKS and the box is DOWN (cold relaunch >9 min): WHO dispatches the dialog s +0x4c
-  (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies -
-  falsifier = a live vtable read at a click); does `FUN_0057ecf0` also run on a LOAD (bp the `FUN_005b2970`
-  entry, load a save); what the row stride 188 means (`esi = 2*region + 188*fac`, regions 94..127 pass the
-  next row - one live read of both indexings of `0x94eaa8`). Both s209-queued STATIC picks are DONE, see
-  RESULT (s210): the virtual-base delta census and the 0x67194c/0x671944 class.
+  BOTH ARE BOX PICKS, box UP and loaded (m54b_clean r50): WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click); what the row stride 188 means (`esi = 2*region + 188*fac`, regions 94..127 pass the next row - one live read of both indexings of `0x94eaa8`). The LOAD pick is DONE - see RESULT (s211).
+
 ## LIVE FACTS / KIT
 
-- **BOX**: DOWN as of s202 (`ps` shows no terran.exe). Cold relaunch >9 min: `SMAC_SAVE='m54b_clean.SAV'
-  python3 scripts/m54a_load.py --relaunch` as a TRACKED background job; `sudo -n
-  python3 scripts/smac_preflight.py` (yama ptrace_scope=1 ⇒ `/proc/<pid>/mem` needs sudo) before arming.
-  Recipe, cold timing, the degraded-box poke facts and the state dumps VERBATIM: skill `references/wine-operations.md`,
-  `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
+- **BOX**: UP as of s211 (m54b_clean r50 loaded, TracerPid 0, gdb detached). Cold relaunch was ~6 s to title at s211 (the >9 min figure is stale). `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd even when your launcher is alive - the tracked-job ancestry escape is DEAD; wrap harness runs in `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'` and keep the harness itself uid 1000 (under sudo wine refuses the prefix).** Recipe + state dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
 
 ## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
 

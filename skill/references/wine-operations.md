@@ -407,8 +407,14 @@ is what separates the two classes.
 tool later killed leaves terran.exe parented to wineserver/explorer, so every later shell gets
 `PermissionError: [Errno 13] Permission denied: '/proc/<pid>/mem'` **even though `ps` shows the same
 uid and mode 0600** — and `smac_preflight.py` dies on line 56 with that traceback instead of reporting.
-Fix: read under `sudo -n` (CAP_SYS_PTRACE) — `sudo -n python3 scripts/smac_preflight.py` works — or
-relaunch from a tracked background job so the game stays a descendant of the session that will read it.
+Fix: read under `sudo -n` (CAP_SYS_PTRACE) — `sudo -n python3 scripts/smac_preflight.py` works.
+The "relaunch from a tracked background job so the game stays your descendant" escape is DEAD (s211):
+this wine reparents terran.exe to systemd (PPID 1889) even when the launching harness is ALIVE, so a
+same-uid harness gets EACCES seconds after its own LAUNCH. The working shape (s211, m272w5+): wrap the
+whole harness run in `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <harness>; \
+  sudo -n sh -c 'echo 1 > /proc/sys/kernel/yama/ptrace_scope'` — the harness itself stays uid 1000.
+Do NOT run the harness under sudo: wine refuses ("prefix is not owned by you") and the relaunch dies
+with "no terran.exe after relaunch". `capsh --add-ambient` is NOT in this host's libcap (prints help).
 Corollary: the relaunch is NOT ~35 s on a cold box. Measured s174: `m54a_load.py --relaunch` exceeded
 9 minutes after a day idle (wine prefix + CD path), so run it as a tracked background job and poll
 `pgrep -x terran.exe` rather than holding a 500 s foreground call — a SIGTERM at the tool timeout kills
