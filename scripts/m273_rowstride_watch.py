@@ -74,8 +74,10 @@ def gdb_script():
     blocks.append(BPU.replace("@@PC@@", "0x558459").replace("@@LINE@@", line)
                   .replace("@@ARGS@@", "".join(", " + x for x in args)))
     # after the 8-B load at 0x5584aa: edi=region, ecx=WORD[base+2*region]
-    line = "M273S SCALED row=0x%x reg=%d w=%d round=%d cp=%d"
-    args = ["$edi*2", "*(int *)($ebp-0x10)", "$ecx & 0xffff", RND, CPP]
+    line = ("M273S SCALED row=0x%x s10=%d s14=%d s18=%d eax=0x%x edx=0x%x edi=0x%x "
+            "w=%d round=%d cp=%d")
+    args = ["$edi*2", "*(int *)($ebp-0x10)", "*(int *)($ebp-0x14)", "*(int *)($ebp-0x18)",
+            "$eax", "$edx", "$edi", "$ecx & 0xffff", RND, CPP]
     blocks.append(BPU.replace("@@PC@@", "0x5584b2").replace("@@LINE@@", line)
                   .replace("@@ARGS@@", "".join(", " + x for x in args)))
     line = "M273W YEAR new=%d round=%d cp=%d"
