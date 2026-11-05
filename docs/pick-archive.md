@@ -653,3 +653,23 @@ in `NAMED.md` §B5).
   displacements are chance (3.65x uniform, none in a view-loading function) and the per-view codec
   FUN_00596620 saves only +0x1dd70..+0x1dda0. Census `scripts/m267_m268_census.py` -> 14/14,
   `evidence/m267_m268_census.txt`. s206's numbers: `NAMED.md` §M265-§M266, census 12/12.
+
+## trim-s211 - the s208 + s210 RESULT blocks moved VERBATIM from NEXT_PROMPT.md (session 211, footing headroom)
+
+- RESULT (s208): VERBATIM now in `docs/pick-archive.md` §trim-s210 - the 0x6725ac/0x6725a4 pair is
+  ONE vtable (entry points 8 B apart, 5 installers, virtual-base delta `[vptr-4] = [desc+4] - 0x21a6c`)
+  and the 201 x 608 = 122,208-B block is POD, never indexed, never saved (14/14, `evidence/m267_m268_census.txt`).
+
+- RESULT (s210): the virtual-base delta is an IMAGE-WIDE mechanism, not one family - a geometric shadow (the
+  store lands exactly 4 below the virtual base its own field expression computes) finds **41 delta stores /
+  8 K / 31 functions** (K = 0x18, 0x1c, 0x48, 0x8c, 0x188, 0x21a6c, 0x22050, 0x23d94) and **177 vptr installs
+  through a vbptr of 33 tables**; 9 secondary-view tables each have their primary 8 B above with the
+  identical install count (the 9 pairs are tabulated in `NAMED.md` §M269) - so M267's pair is the rule, not
+  a curiosity. The 5 K=0x21a6c delta functions ARE the 5 installers (two independent detectors, same answer).
+  **32 of 247** rdata immediates stored through a register are vbtables (dword[0] and [+4] small signed,
+  neither a code pointer) and every K is one of their [+4] values (map in `NAMED.md` §M271). The 0x67194c/0x671944
+  "variant" is M215 s ROW at +0x247a0 inside a class whose vtable 0x678e40 (secondary 0x678e38 at +0x2444)
+  is installed EXACTLY ONCE image-wide, as a 0x25318-B stack local of FUN_0059bec0 (+0 the 0x5e3b80/0x5e3ced class,
+  +0x2320 the 0x675964 class, +0x247a0 row, +0x252ec; dtor body FUN_0059c1e0 via slot 0 = 0x59c380).
+  RETRACT part of M267: FUN_0059bec0 is not a destructor, and 0x67194c is never installed at [this+0] there.
+  Census `scripts/m269_m271_census.py` -> 10/10, `evidence/m269_m271_census.txt`; numbers `NAMED.md` §M269.
