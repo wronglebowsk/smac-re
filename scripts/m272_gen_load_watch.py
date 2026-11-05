@@ -40,6 +40,8 @@ SENT = -39
 GEN = 0x5b2970
 ENTRIES = [GEN, 0x57ecf0, 0x57c550, 0x4e10c0, 0x4e11b0]
 SITES = {0x57f1ec: 0x57ecf0, 0x57d2a0: 0x57c550, 0x4e1151: 0x4e10c0, 0x4e122b: 0x4e11b0}
+CTRL = {0x596850: "SAVE_STATE_LOADER", 0x597a70: "BLOCK_LOADER", 0x598340: "FILE_DISPATCH",
+        0x5791c0: "PROCESS_START_SETUP"}  # M105 names; NAMED.md rows 12-15
 LIVE_IMG = [0, 6, 5, 4, 3, 4, 5, 3]  # m104w3: the loaded m54b_clean count image
 RB, RS = 0x927a9c, 1436
 LAUNCH = ("cd ~/reverse/smac/programs && WINEPREFIX=$HOME/.wine-smac32 DISPLAY=:99 "
@@ -86,11 +88,19 @@ def gdb_script():
         blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@LINE@@", line)
                       .replace("@@ARGS@@", "".join(", " + x for x in args)))
         n += 1
+    for pc in sorted(CTRL):
+        line = "M272C CTRL pc=0x%x ret=0x%%x round=%%d cp=%%d" % pc
+        args = ["*(int *)$esp", RND, CPP]
+        chk(line, args)
+        pcs.append("%#x" % pc)
+        blocks.append(BPU.replace("@@PC@@", "%#x" % pc).replace("@@LINE@@", line)
+                      .replace("@@ARGS@@", "".join(", " + x for x in args)))
+        n += 1
     return (TMPL.replace("@@BLOCKS@@", "".join(blocks)).replace("@@NB@@", str(n))
             .replace("@@BPS@@", " ".join(pcs)))
 
 
-KV = re.compile(r"^(M272[ES]) (ENT|SITE)((?: [a-z][a-z0-9_]*=-?[0-9a-fx ]+?)+) round=(\d+) cp=(\d+)\s*$")
+KV = re.compile(r"^(M272[ESC]) (ENT|SITE|CTRL)((?: [a-z][a-z0-9_]*=-?[0-9a-fx ]+?)+) round=(\d+) cp=(\d+)\s*$")
 OK_LINE = re.compile(r"^(ARMED |0x[0-9a-f]+ in |\[New LWP |\[Thread |\[Switching to |"
                      r"Thread \d+ |This is not |^\$[0-9]+ = |^Continue|^\^|warning:|"
                      r"Cannot breakpoint|\[Inferior \d+ |This GDB supports |\s+<https://|"
@@ -296,32 +306,41 @@ def main():
     def gate(name, ok, detail):
         gates.append((name, bool(ok), detail))
 
-    gate("G1-9-bps-armed", " ARMED 9 silent bps " in text,
+    gate("G1-13-bps-armed", "ARMED 13 silent bps" in text,
          [ln for ln in text.splitlines() if ln.startswith("ARMED")][:1])
     bg = gen(boot)
-    gate("G2-boot-control-generator-fired", bool(bg),
-         "%d GEN entry events in the STARTUP window: %s" % (len(bg), brief(bg)))
+    bctrl = [e for e in boot if e["kind"] == "CTRL"]
+    gate("G2-boot-window-events", bool(bg or bctrl),
+         "STARTUP: %d GEN %d CTRL %s" % (len(bg), len(bctrl), brief(bctrl)))
     boot_callers = sorted({name_of(e["ret"]) for e in bg})
     static4 = {"FUN_%06x" % s for s in SITES.values()}
-    gate("G3-boot-callers-are-the-static-4",
-         bool(bg) and all(c in static4 for c in boot_callers),
+    gate("G3-boot-gen-callers-are-the-static-4",
+         (not bg) or all(c in static4 for c in boot_callers),
          "ret callers %s" % boot_callers)
     load_sentinel_gone = rnd_post != SENT and rnd_post >= 50
     gate("G4-load-window-valid", load_sentinel_gone,
          "ROUND poked %d -> post-load %d (cp=%d): the load demonstrably ran"
          % (sent_rb, rnd_post, cp_post))
+    lctrl = [e for e in load if e["kind"] == "CTRL"]
+    gate("G5-load-control-bp-fired", bool(lctrl),
+         "%d CTRL events in the LOAD window (the bps are LIVE there): %s"
+         % (len(lctrl), brief(lctrl)))
     q_ent = [e for e in ent(load) if e["pc"] == 0x57ecf0]
     q_site = [e for e in site(load) if e["pc"] == 0x57f1ec]
-    if not load_sentinel_gone:
-        gate("G5-ANSWER-57ecf0-on-LOAD", False, "NEVER REACHED - inconclusive, not a NO")
+    window_ok = load_sentinel_gone and bool(lctrl)
+    if not window_ok:
+        gate("G6-ANSWER-57ecf0-on-LOAD", False, "NEVER REACHED - inconclusive, not a NO")
     else:
         ans = "YES-57ecf0-ran" if (q_ent or q_site) else "NO-57ecf0-did-not-run"
-        gate("G5-ANSWER-57ecf0-on-LOAD", True,
-             "%s; load window: 57ecf0 entry %d, its gen-call-site %d, GEN entry %d"
-             % (ans, len(q_ent), len(q_site), len(gen(load))))
+        gate("G6-ANSWER-57ecf0-on-LOAD", True,
+             "%s; load window: 57ecf0 entry %d, its gen-call-site %d, GEN entry %d, "
+             "57c550 entry %d, block-loader CTRL %d"
+             % (ans, len(q_ent), len(q_site), len(gen(load)),
+                len([e for e in ent(load) if e["pc"] == 0x57c550]),
+                len([e for e in lctrl if e["pc"] == 0x597a70])))
     bad_callers = [e for e in gen(boot) + gen(load)
                    if not any(e["ret"] == s + il for s in SITES for il in (5, 6))]
-    gate("G6-every-gen-hit-accounted-by-a-site", not bad_callers,
+    gate("G7-every-gen-hit-accounted-by-a-site", not bad_callers,
          "%d GEN entries %s; %d SITE events %s -> %s"
          % (len(gen(boot)) + len(gen(load)),
             sorted({"ret %s" % name_of(e["ret"]) for e in gen(boot) + gen(load)}),
@@ -332,14 +351,14 @@ def main():
                                            for e in bad_callers])))
     wrong = ["fac%d count=%d want %d" % (f, cnt_post[f], LIVE_IMG[f]) for f in range(8)
              if cnt_post[f] != LIVE_IMG[f]]
-    gate("G7-post-load-counts-eq-m104-image", not wrong, "; ".join(wrong) or str(cnt_post))
-    gate("G8-window-partition", off_ready > off_arm and all(e["_off"] >= off_arm for e in ev),
+    gate("G8-post-load-counts-eq-m104-image", not wrong, "; ".join(wrong) or str(cnt_post))
+    gate("G9-window-partition", off_ready > off_arm and all(e["_off"] >= off_arm for e in ev),
          "arm@%d ready@%d; STARTUP %s; LOAD %s" % (off_arm, off_ready, brief(boot), brief(load)))
-    gate("G9-zero-unparsed", not bad, "%d unparsed %s" % (len(bad), bad[:3]))
+    gate("G10-zero-unparsed", not bad, "%d unparsed %s" % (len(bad), bad[:3]))
     errl = [ln for ln in text.splitlines() if "Undefined" in ln or "Missing" in ln
             or "doesn\'t match" in ln]
-    gate("G10-no-gdb-errors", not errl, "%d error lines %s" % (len(errl), errl[:2]))
-    gate("G11-tracer-zero", tracer == "0", "TracerPid=%s" % tracer)
+    gate("G11-no-gdb-errors", not errl, "%d error lines %s" % (len(errl), errl[:2]))
+    gate("G12-tracer-zero", tracer == "0", "TracerPid=%s" % tracer)
 
     print("--- events: %d STARTUP %d LOAD ---" % (len(boot), len(load)), flush=True)
     good = True
@@ -350,8 +369,8 @@ def main():
           % ("PASS" if good else "FAIL", sum(1 for _, o, _ in gates if o), len(gates),
              a.tag, pid, a.save, rnd_pre, rnd_post))
     print("context: gdb log %s; gdb script %s" % (lpath, gpath))
-    if not load_sentinel_gone or not bg:
-        print("STATE: NEVER REACHED (no control or no valid load window) -> exit 4")
+    if not window_ok:
+        print("STATE: NEVER REACHED (no live control in a valid load window) -> exit 4")
         return 4
     return 0 if good else 1
 

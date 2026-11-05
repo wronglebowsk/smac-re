@@ -1,0 +1,31 @@
+[New LWP 3772259]
+[New LWP 3772258]
+[New LWP 3772257]
+[New LWP 3772256]
+[New LWP 3772255]
+[New LWP 3772254]
+[New LWP 3772248]
+[New LWP 3772242]
+[New LWP 3772241]
+[New LWP 3772240]
+[New LWP 3772239]
+[New LWP 3772238]
+[New LWP 3772237]
+[New LWP 3772236]
+[New LWP 3772235]
+[New LWP 3772234]
+0xf6e7f32c in __kernel_vsyscall ()
+Breakpoint 1 at 0x5b2970
+Breakpoint 2 at 0x57ecf0
+Breakpoint 3 at 0x57c550
+Breakpoint 4 at 0x4e10c0
+Breakpoint 5 at 0x4e11b0
+Breakpoint 6 at 0x4e1151
+Breakpoint 7 at 0x4e122b
+Breakpoint 8 at 0x57d2a0
+Breakpoint 9 at 0x57f1ec
+ARMED 9 silent bps at 0x5b2970 0x57ecf0 0x57c550 0x4e10c0 0x4e11b0 0x4e1151 0x4e122b 0x57d2a0 0x57f1ec
+
+Thread 1 "terran.exe" received signal SIGINT, Interrupt.
+0xf6e7f32c in __kernel_vsyscall ()
+[Inferior 1 (process 3772229) detached]
