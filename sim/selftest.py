@@ -675,6 +675,42 @@ def run_b6(sav_path, map_path, turns, results):
     return 0
 
 
+def run_b7(sav_path, map_path, turns, results):
+    """Rung B7: two in-process move-slice runs -> identical bytes, plus the slice's gates."""
+    import hashlib
+    import tempfile
+    from . import movesim as somv
+    if not (os.path.exists(sav_path) and os.path.exists(map_path)):
+        return fail("B7: missing input: %s / %s" % (sav_path, map_path))
+    sv1, mp1, eng1, us1, st1, blob1 = somv.simulate(sav_path, map_path, somv.DEFAULT_RULES,
+                                                    turns, 3)
+    sv2, mp2, eng2, us2, st2, blob2 = somv.simulate(sav_path, map_path, somv.DEFAULT_RULES,
+                                                    turns, 3)
+    for name, ok, detail in somv.validate(sv1, mp1, eng1, us1, st1, turns, 3):
+        results.append((name + " " + detail, ok))
+    sha1 = hashlib.sha256(blob1.encode()).hexdigest()
+    sha2 = hashlib.sha256(blob2.encode()).hexdigest()
+    results.append(("two-runs-identical-sha256 %s (%d B)" % (sha1[:16], len(blob1)),
+                    sha1 == sha2))
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+        fh.write(blob1)
+        dpath = fh.name
+    rc = somv.main(["--sav", sav_path, "--map", map_path, "--turns", str(turns),
+                    "--dump", dpath])
+    results.append(("command-exit-0 rc=%d" % rc, rc == 0))
+    os.unlink(dpath)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B7: %d/%d gates failed: %s" % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B7: %d/%d gates - the move slice over %s: %d units x %d turns x 3 presses, "
+          "year %d -> %d, two runs sha256 %s (no box time, no /proc, no gdb)"
+          % (len(results), len(results), os.path.basename(sav_path), sv1.n_units, turns,
+             sv1.year, eng1.year, sha1[:16]))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -685,12 +721,16 @@ def main(argv=None):
                     help="rung B5: replay evidence/m27_solowrap*.log through sim.units")
     ap.add_argument("--b6", nargs="+", metavar=("SAV", "MAP"),
                     help="rung B6: headless run twice, compare dump sha256 (turns via --turns)")
+    ap.add_argument("--b7", nargs="+", metavar=("SAV", "MAP"),
+                    help="rung B7: the move slice twice, compare dump sha256")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
     results = []
     if args.b6:
         return run_b6(args.b6[0], args.b6[1], args.turns, results)
+    if args.b7:
+        return run_b7(args.b7[0], args.b7[1], args.turns, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

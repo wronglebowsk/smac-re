@@ -685,3 +685,8 @@ in `NAMED.md` §B5).
 ## trim-s215 - the s214 RESULT block moved VERBATIM from NEXT_PROMPT.md (session 215)
 
 - RESULT (s214, M274, static): the region loop's ONLY bound is the constant 0x80 (0x558b1c) - NEVER clamped to the 94-slot row; big-map scaled overflow (regions 94..127, max 254 B) reads the SIBLING verdict array 0x94eba8 (gap 256) = silent wrong data; the verdict byte's 0x8-store 0x557fdf + jmp 0x558b18 skip BOTH read sites (explains M273's sparse events); the row slot [ebp-0x18] has 15 writers -> the 8380-cursor's feeder is an OPEN def-use pick. Census `scripts/m274_rowcap_census.py` 6/6 (`evidence/m274_census.txt`); `NAMED.md` §M274.
+
+## trim-s216 - the s213/s211 + s214/s213 RESULT pointer lines moved VERBATIM (session 216)
+
+- RESULT (s213, M273): VERBATIM now in `docs/pick-archive.md` §trim-s214 (8380 mod 188 = 108 corrects its 88). `NAMED.md` §M273.
+- RESULT (s214, M274): VERBATIM now in `docs/pick-archive.md` §trim-s215. `NAMED.md` §M274.

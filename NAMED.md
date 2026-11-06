@@ -1163,3 +1163,14 @@ No alpha.json table has 196 or 201 rows (max 89 TECHNOLOGY). OPEN: what writes t
 | **THE FINDING**: live rows (M273) differ by whole 8380 strides, but 8380 mod 130 = **60 ≠ 0** - no integer argument produces them through this fold. Static (fold-only reaching def) and live (8380-cursor) are IRRECONCILABLE as modeled | G7 + `evidence/m273w3.gdblog` rows | V (both sides), OPEN (the missing writer) |
 | alias census: 14 dword stores through a block base [reg+0x94dXXX] exist in the body; ZERO at the slot's absolute faces (0x94d6e8 / 0x92dcd0) - the missing writer is not a displacement form this class sees | G8 | V (bytes) |
 | resolution pick (queued): hw-watchpoint the FRAME SLOT while the auto-manager runs (a frame address is watchable; watch reports pc = store + insn length) | - | OPEN |
+
+## B7 (s216, PASS 6/6) - `sim/movesim.py`: the move slice - save-loaded units walk the recorded M27 gesture
+
+| fact | evidence | status |
+|---|---|---|
+| `python3 -m sim.movesim --sav programs/saves/m54b_clean.SAV --map programs/maps/planet.MP --turns 5 --dump sim_move_state.json` exits 0 | `evidence/b7_moveslice.txt:1-6` (the inner run via selftest) | V (runnable) |
+| 67 units built from the .SAV's own record array; 5 rounds x 3 east-presses each: **670 accepted / 335 refused** - every unit accepted exactly 2 (6 MP / 3 MP) then refused (FUN_005acc00 total-spent>0) with spent == 3*accepted | `evidence/b7_moveslice.txt:3-4` | V (parity vs the M27 economy) |
+| every accepted press moved by the trace's ring delta (+2,0) with x wrapped by the map width (80) | `evidence/b7_moveslice.txt:3` | V |
+| year 2150 -> 2155 == +1/press (B3), ends (cur,tf)=(3,0); economy identical to B6's per-faction round | `evidence/b7_moveslice.txt:1-2,5` | V |
+| deterministic: two runs -> byte-identical 67,790-B dump, sha256 3b62847494b252ad... | `evidence/b7_moveslice.txt:5` (`python3 -m sim.selftest --b7 ...` -> `PASS B7: 6/6 gates`) | V |
+| declared ASSUMED in the dump `smac-sim-move/1`: positions come from the save (load-restore not modeled - M106 kernel write); the gesture is applied to EVERY unit (the trace's 117-120 live in a different save); uniform 3 MP cost | dump `assumed` | ASSUMED (declared) |
