@@ -1,0 +1,12 @@
+  ok   year-increments-per-B3  year 2150 -> 2155 over 5 presses
+  ok   ends-in-human-phase  final (cur, tf) = (3, 0)
+  ok   press-delta-is-trace-east  670 accepted presses all moved by (+2,0) mod width 80
+  ok   budget-exhausts-at-2-presses  670 accepted / 335 refused presses; every unit accepted exactly 2 then refused (spent == 3*accepted)
+PASS B7: move slice 5 turns x 3 presses, units 67, year 2150 -> 2155, dump /home/n100/.hermes/cache/scratch/tmpuwk6v8zi.json (67790 B, sha256 3b62847494b252ad)
+  ok   year-increments-per-B3 year 2150 -> 2155 over 5 presses
+  ok   ends-in-human-phase final (cur, tf) = (3, 0)
+  ok   press-delta-is-trace-east 670 accepted presses all moved by (+2,0) mod width 80
+  ok   budget-exhausts-at-2-presses 670 accepted / 335 refused presses; every unit accepted exactly 2 then refused (spent == 3*accepted)
+  ok   two-runs-identical-sha256 3b62847494b252ad (67790 B)
+  ok   command-exit-0 rc=0
+PASS B7: 6/6 gates - the move slice over m54b_clean.SAV: 67 units x 5 turns x 3 presses, year 2150 -> 2155, two runs sha256 3b62847494b252ad (no box time, no /proc, no gdb)

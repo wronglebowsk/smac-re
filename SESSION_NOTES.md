@@ -527,3 +527,21 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   auto-manager (watch reports pc = store + insn length).
 - Self-check win: my mental "8380 mod 130 = 100" was WRONG; the computed assert caught it (60).
   Numbers come from the script, never from my arithmetic - the gate asserted before shipping.
+
+
+## Session 216 (2026-11-05, BUILD fire, B7 PASS 6/6) - the move slice: R2's move leg is now executable headless
+- `track_mode` said MODE=BUILD next_rung=B7 and the ladder was EXHAUSTED - so this fire first WROTE
+  the rung into `BUILD_SPINE.md` (move slice: save-loaded units + the M27 gesture + B3/B4/B5/B6
+  machinery; parity on GESTURE SEMANTICS because the trace's units 117-120 are not in m54b_clean's
+  67-unit array - stated in the rung and the dump, not hidden), then built it.
+- NEW `sim/movesim.py` (schema `smac-sim-move/1`). ACCEPTANCE: `python3 -m sim.selftest --b7
+  programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5` -> **PASS B7: 6/6 gates**
+  (`evidence/b7_moveslice.txt`): 67 units, 5 rounds x 3 east presses = **670 accepted / 335
+  refused**, every unit exhausts at 2 (6 MP / 3), all accepted deltas == the trace's (+2,0) with
+  x wrapped by 80; year 2150 -> 2155 per B3; two runs byte-identical (67,790 B, sha256
+  3b62847494b252ad). Direct run `python3 -m sim.movesim --sav ... --turns 5` exits 0, same sha.
+- ASSUMED (declared): save-LOAD position restore not modeled (kernel write, M106); gesture applied
+  to every unit; uniform 3 MP cost.
+- R2 in `MILESTONES.md` todo -> IN PROGRESS (move leg done; new-game + save-write legs todo).
+  Next BUILD rung B8: the save WRITE leg (produce a .SAV-shaped image from sim state) or the
+  new-game leg - the BUILD fire writes the rung first.

@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing for the next session (session 215, 2026-11-05, **M275 DONE (static): the row slot's ONLY reaching def at the read site is the fold (esi = 2·region + 130·arg, arg = [ebp+0x8] - corrects M256's 188×fac), yet the live 8380-stride cursor needs 8380 mod 130 = 60 = 0 - STATIC vs LIVE CONTRADICTION, missing writer = queued box pick (hw-watchpoint [ebp-0x18] during the auto-manager); 8/8 `scripts/m275_rowslot_defuse.py`; the NEXT fire is BUILD B7 and must WRITE the rung first**)
+# NEXT_PROMPT.md - footing for the next session (session 216, 2026-11-05, **B7 DONE (build fire; rung WRITTEN first): `sim/movesim.py` - the move slice, R2's move leg is executable headless; 67 save units x 5 turns x 3 east presses = 670 accepted/335 refused, deltas == the M27 trace's (+2,0) wrapped, year per B3, two runs sha256 3b62847494b252ad; `python3 -m sim.selftest --b7 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5` 6/6 `evidence/b7_moveslice.txt`; `NAMED.md` §B7; ladder now B1-B7, next BUILD fire WRITES B8 (save-write or new-game leg)**)
 
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
@@ -28,8 +28,8 @@ binding cap is doc headroom, not capability.**
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
-ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`NAMED.md` §B4), **B5 DONE (s207)** 9/9 on the recorded M27 trace via `python3 -m sim.selftest --replay-m27` (`NAMED.md` §B5), **B6 DONE (s212)** = R1 DONE: headless run, `python3 -m sim.selftest --b6 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 10` 6/6 (`evidence/b6_headless.txt`, `NAMED.md` §B6).
-**B1-B6 ALL DONE - the ladder is exhausted.** A BUILD fire must first WRITE the next rung (B7 = R2's first slice: new game -> move a unit -> end turn, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.json` (`NAMED.md` §B4), **B5 DONE (s207)** 9/9 on the recorded M27 trace via `python3 -m sim.selftest --replay-m27` (`NAMED.md` §B5), **B6 DONE (s212)** = R1 DONE: headless run, `python3 -m sim.selftest --b6 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 10` 6/6 (`evidence/b6_headless.txt`, `NAMED.md` §B6), **B7 DONE (s216)** = R2's move leg: `python3 -m sim.selftest --b7 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5` 6/6 (`evidence/b7_moveslice.txt`, `NAMED.md` §B7).
+**B1-B7 DONE.** A BUILD fire must first WRITE the next rung (B8 = R2's next leg: the save WRITE or the new-game path, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
 
 ## THE LEDGER
 
@@ -65,8 +65,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   0x6725ac/0x6725a4 one-vtable pair + POD block verdict, and the IMAGE-WIDE virtual-base
   delta census (41 stores / 8 K / 31 fns, 177 installs / 33 vbtables) + the 0x678e40
   stack-local class with the M267 retraction. Numbers in `NAMED.md` §M267-§M271.- RESULT (s211, M272): VERBATIM now in `docs/pick-archive.md` §trim-s213 - FUN_0057ecf0 does NOT run on a LOAD + the live .SAV chain + the mid-body-entry law. `NAMED.md` §M272.
-- RESULT (s213, M273): VERBATIM now in `docs/pick-archive.md` §trim-s214 (8380 mod 188 = 108 corrects its 88). `NAMED.md` §M273.
-- RESULT (s214, M274): VERBATIM now in `docs/pick-archive.md` §trim-s215. `NAMED.md` §M274.
+- RESULT (s211/s213): pointers VERBATIM in `docs/pick-archive.md` §trim-s216; numbers `NAMED.md` §M272-§M273.
+
 - RESULT (s215, M275, static): the UNSCALED read site's slot [ebp-0x18] has exactly ONE reaching def at 0x55844b - the fold 0x558038 - whose re-decoded arithmetic is **esi = 2·region + 130·arg** (arg = `[ebp+0x8]`; CORRECTS M256's 188×fac prose). But M273's live rows step by whole 8380 and **8380 mod 130 = 60 ≠ 0**: static and live are IRRECONCILABLE - the missing writer is an unmodeled alias/leg (G8: 14 block-band stores, none at the slot's faces). Queued box pick: hw-watchpoint the frame slot during the auto-manager. Census `scripts/m275_rowslot_defuse.py` 8/8 (`evidence/m275_defuse.txt`); `NAMED.md` §M275.
 
 

@@ -65,6 +65,19 @@ difference. Print per-round deltas; a non-zero net on an idle round is a FAIL, n
 `python3 -m sim.selftest --replay-m27` must replay the three recorded moves (117/118/120 off (41,11)) with the
 same 3 MP cost per tile from `alpha.json` `#TERRAIN` movement, and leave 6 MP/turn. Tolerance: exact integers.
 
+**B7 — the move slice (R2's first executable piece).** `sim/movesim.py`: load a .SAV, build
+`sim/units` records from the save's OWN unit array, press the recorded M27 gesture (dir=1 east, the
+trace's only direction) N times per unit, run the B3 turn engine, dump. The slice is R2's
+"move a unit" leg replayed on save-loaded state - the trace's unit indices (117-120) live in a
+different save's record array (m54b_clean has 67 units), so parity is on the GESTURE SEMANTICS,
+not on those indices (stated, not hidden).
+`python3 -m sim.selftest --b7 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5`
+must print PASS with: units built from the save's array (count + owner set from the records);
+every accepted east-press == the trace's (+2,0) delta at 3 MP; a third press REFUSED per unit
+(FUN_005acc00 total-spent>0) with spent frozen at 6; year delta == turns per B3; two runs ->
+identical sha256. Save-restore of unit positions is NOT simulated (no writer modeled) - ASSUMED,
+declared in the dump.
+
 **B6 — the headless run.** `sim/headless.py`. **DONE (s212)**: `python3 -m sim.headless --sav
 programs/saves/m54b_clean.SAV --map programs/maps/planet.MP --turns 10 --dump sim_state.json` -> exit 0,
 year 2150->2160, dump 8,455 B sha256 2efbc782e2075a26 (two runs identical); `python3 -m sim.selftest
