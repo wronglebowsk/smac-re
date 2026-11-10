@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s234, B12 CREATE leg 12/12: the produced unit record is modeled - gate->pay->append 52-B record at array end (x@0,y@2,type@10,owner@14,order@17=0)->pop, byte-for-byte parity vs the m56 trace;
+# NEXT_PROMPT.md - footing (s236, M290 founder-decision fit 9/9 merged #242:
 # family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
 # +0x12c/+0x60) both avoid the slot; 6 paths/creates measured, zero dispatch. Next: BUILD B12)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
@@ -33,7 +33,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9,
 
 ## THE LEDGER
 
-Merged M54A-M288 + B0-B12 (through #240); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M290 + B0-B12 (through #242); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 

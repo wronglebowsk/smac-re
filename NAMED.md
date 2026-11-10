@@ -1466,7 +1466,7 @@ savewriter.append_units= grows the array: only prefix byte [68] + the record
 change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
 `python3 -m sim.selftest --b12 <sav> <trace>`.
 
-## M290 (s236, ANALYSE 9/9, MERGED pending) - the hub's founding DECISION: own-tile-gated dispatch, founder args = pod record coords
+## M290 (s236, ANALYSE 9/9, MERGED #242) - the hub's founding DECISION: own-tile-gated dispatch, founder args = pod record coords
 
 - Dispatch (bytes): hub 0x563d3c cmp [ebp-0x44],8 (settle case); 0x563d46
   test esi,esi - esi = scan's chosen target offset; ZERO (own tile) ->
