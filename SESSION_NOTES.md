@@ -562,3 +562,48 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   (Rw+1)/2 asymmetry is a live edge on 64x64, unreachable bytes are the file's 0xCD slack).
   Next fire: BUILD (analyse_since_build=1) = B10, R2's new-game leg - write the rung into
   BUILD_SPINE.md FIRST, then build it (sim/, runnable acceptance, no box time).
+
+## Session 225 (2026-11-10, ANALYSE static, M282 PASS 7/7) - AI bases are founded by the SAME function as the player's: FUN_004e47d0, the only live count-incrementer; the sim has no founder because it has no action-dispatch leg
+- track_mode printed ANALYSE (analyse_since_build=1) -> NEW pick (B9 frontier): "who writes the
+  base array / founds AI bases (n_bases 18->26 over 40 turns)" - census pick, static-friendly.
+  ZERO box time; box untouched (terran.exe pid 3820435, TracerPid 0, state read via pgrep only).
+  `python3 scripts/m282_base_founder.py` -> **SUMMARY M282: 7/7 gates PASS**
+  (`evidence/m282_base_founder.txt`).
+- ANSWER: the base array is DAT_0095da10 (record stride 0x130 = 304 B = the .SAV 304-B stride),
+  count DAT_00985af4, cap 0x200 = 512 slots. **FUN_004e47d0(faction,x,y) is THE founder and the
+  ONLY live-game record creator**: guard `DAT_00985af4 < 0x200` (G1), `DAT_00985af4 = count+1`
+  @0x4e484a, new record at &DAT_0095da10 + old_count*0x130 (x short +0, y +2, faction bytes
+  +4/+5; G2), faction base counter DAT_0094e488[faction*0x82f] += 1 (0x82f*4 = 0x20bc = the
+  M280 faction-record stride - the founder is where per-faction base counts come from).
+  Exactly 3 callers (G3): FUN_004cca50 (the ONLY live vector), FUN_0059ce10 (sole caller
+  FUN_005a0fa0 = new-game/scenario placement), FUN_0059ec90 (faction-create; called by
+  FUN_005a0aa0, itself called by the AI mover FUN_00585720, the step executor FUN_00502cd0,
+  faction-energy FUN_005208f0, ...).
+- The LIVE entry splits into three same-founder legs (G5): player 'b' hotkey (FUN_00512450
+  case 0x62 -> FUN_004d1280 -> FUN_004cca50 -> founder), the in-game ACTION DISPATCHER
+  FUN_0052bce0 case **0x4408** -> FUN_004cca50 (the AI's founding rides this - the same
+  dispatcher that drains the unit-action queues FUN_005262e0/FUN_00526e10 and executes the
+  player's own move steps at case 0x4402), and the AI hub FUN_0055f650 -> FUN_004cca50
+  (shard_014; first-base placement for a faction). So there is NO separate AI founder: the
+  AI reaches the exact same FUN_004e47d0 through the same unit-action plumbing as the human.
+- Count-global census (G4): DAT_00985af4 has EXACTLY 12 writer sites / 11 functions - the
+  `+1` idiom exists ONLY in FUN_004e47d0 (0x4e484a) and in FUN_0059b830's scenario-table
+  rebuild loop (0x59b842/0x59b8c3, a load-time 0x200-entry array reconstruction, not live
+  play); the only decrement is 0x4e515d in FUN_004e4e10 (base destruction + compaction);
+  every other site stores 0 (init/reset families) - 0x52283f is a bare store whose exe
+  prelude `xor eax,eax; mov 0x985af0,eax; mov 0x985af4,eax` is verified from terran.exe
+  bytes (Ghidra text drops it). Cap consistency (G6): founder guard 0x200 AND loader loop
+  0x200 => 512 slots * 0x130 = 0x26000 bytes; the destruction compaction moves the LAST
+  record into the freed slot (the m46e "base array reorders during a watch" observation).
+- SIM GAP, now explained (G7): sim/ has no reference to the founder or case 0x4408; the B9
+  frontier line stays DECLARED (model const 18 vs recorded 18->26). The B3 engine replays
+  TURN-COMPLETE presses and never instantiates unit actions, so the founding leg that grows
+  n_bases in the real game simply does not exist in the model. A future BUILD rung can add a
+  minimal founder leg (colony-pod action -> new base record) if parity of n_bases is wanted.
+- ACCEPTANCE: `python3 scripts/m282_base_founder.py` -> `SUMMARY M282: 7/7 gates PASS`
+  (`evidence/m282_base_founder.txt`). Registry: NAMED.md M282.
+- OPEN (unchanged): box pick (dialog +0x4c dispatcher, box UP m54b_clean); the 64x64 odd-Rw
+  accessor stride quirk (M247's Rw>>1 vs (Rw+1)/2, live edge worth a census). New: which of
+  the three founder vectors (0x4408 dispatcher vs hub FUN_0055f650 vs the FUN_005a0aa0
+  chain) the recorded AI actually uses per founding event - a live-dispatch question, only
+  reachability is proven statically. Next fire: ANALYSE (analyse_since_build=2).
