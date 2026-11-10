@@ -1,51 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-214-215.md` (2 sessions). Read it only when a question reaches back before session ## Session 216.
-
-## Session 216 (2026-11-05, BUILD fire, B7 PASS 6/6) - the move slice: R2's move leg is now executable headless
-- `track_mode` said MODE=BUILD next_rung=B7 and the ladder was EXHAUSTED - so this fire first WROTE
-  the rung into `BUILD_SPINE.md` (move slice: save-loaded units + the M27 gesture + B3/B4/B5/B6
-  machinery; parity on GESTURE SEMANTICS because the trace's units 117-120 are not in m54b_clean's
-  67-unit array - stated in the rung and the dump, not hidden), then built it.
-- NEW `sim/movesim.py` (schema `smac-sim-move/1`). ACCEPTANCE: `python3 -m sim.selftest --b7
-  programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5` -> **PASS B7: 6/6 gates**
-  (`evidence/b7_moveslice.txt`): 67 units, 5 rounds x 3 east presses = **670 accepted / 335
-  refused**, every unit exhausts at 2 (6 MP / 3), all accepted deltas == the trace's (+2,0) with
-  x wrapped by 80; year 2150 -> 2155 per B3; two runs byte-identical (67,790 B, sha256
-  3b62847494b252ad). Direct run `python3 -m sim.movesim --sav ... --turns 5` exits 0, same sha.
-- ASSUMED (declared): save-LOAD position restore not modeled (kernel write, M106); gesture applied
-  to every unit; uniform 3 MP cost.
-- R2 in `MILESTONES.md` todo -> IN PROGRESS (move leg done; new-game + save-write legs todo).
-  Next BUILD rung B8: the save WRITE leg (produce a .SAV-shaped image from sim state) or the
-  new-game leg - the BUILD fire writes the rung first.
-
-## Session 217 (2026-11-10, ANALYSE static pick, M276 PASS 8/8) - the fold's coefficient IS the faction stride; M275's "irreconcilable" was a midpoint slice
-
-- PICK: M275's queued resolution - who writes the row slot [ebp-0x18] if the fold's `130*arg`
-  cannot make M273's live 8380-cursor? Answered STATICALLY, one census, ZERO box time.
-- FINDING: `scripts/m276_fold_stride.py` evaluates the chain 0x557ffd-0x558038 symbolically
-  (linear forms over two atoms; the 20-insn window writes neither): **esi = 8380*edi + 2*ecx**.
-  `mov eax,edi; shl 6; add eax,edi` (65) is only the first third - `lea eax,[edi+eax*2]` (131),
-  `shl eax,4; sub eax,edi` (2095), `lea esi,[ecx+eax*2]; shl esi,1` finish it. 2095 dwords x 4
-  = 8380 = the per-faction block stride the field atlas already records, so the auto-manager
-  indexes these arrays by faction block by construction.
-- LIVE FIT: M273's recorded UNSCALED rows replayed offline satisfy `slot = 2*s10 + 8380*cp`
-  for **7/7** events (cp = cur_player 1..7; deltas whole 8380, -50280 = -6*8380 at the
-  round-52->53 wrap). The rival published coefficients 130 and 188 fit **0/7** each - the
-  gate's discriminator.
-- INSTRUMENT: `m275_rowslot_defuse.py` G6 hand-wrote `2*(64+1)==130`. G6/G7/G8 now import this
-  evaluator, assert (8380,2,0), carry the correction in prose and mark the queued frame-slot
-  hw-watchpoint pick CLOSED UNRUNNED; m275 re-runs **8/8**.
-- ACCEPTANCE: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`
-  (`evidence/m276_fold.txt`, which also holds the m275 re-run). Registry: `NAMED.md` M276 plus
-  correction rows patched IN PLACE inside M274/M275 (not only here).
-- OPEN LEAD (new, from the bytes read for this census): the SCALED site 0x5584aa indexes
-  0x94eaa8 by `edi*2` with NO faction term while the UNSCALED 0x558452 indexes the same base by
-  the fold value WITH 8380*arg - whose row does each own, and does M274's "regions 94..127 spill
-  into the sibling verdict array 0x94eba8" survive for the unfactioned one? (static pick)
-- LAW -> skill `references/instrument-laws.md`: evaluate a multiplier chain. A hand-written
-  expression at a `lea`/`shl`/`sub` chain's midpoint published a coefficient 64x too small and
-  manufactured a static-vs-live contradiction that queued a box milestone.
+Older sessions: `docs/sessions/sessions-216-217.md` (2 sessions). Read it only when a question reaches back before session ## Session 218.
 
 ## Session 218 (2026-11-10, ANALYSE static, M277 PASS 6/6) - the two read sites of 0x94eaa8 own different rows; M274's spill landing is refuted by its own max
 - Picked the M276 NEW LEAD (static, zero box time): scaled 0x5584aa vs unscaled 0x558452.
@@ -716,3 +671,37 @@ Older sessions: `docs/sessions/sessions-214-215.md` (2 sessions). Read it only w
   unit id) and the per-turn walk vs the recorded founding turns (rise turns
   6,9,18,19,22,23); needs a unit-position census (box). Next: ANALYSE - the
   pod-movement leg.
+
+## Session 239 (2026-11-10, ANALYSE, M292 5/5, BOX census) - pod MOVEMENT settled: the hub vector runs per-unit (arg1 = unit index) and dispatches on the m291 RING ENTRY INDEX esi - 0 = found (MSG 0x2408 if human-owned), 1-8 = continue w/o order, >=9 = issue order b (0x62) at the wrapped ring tile (the WALK); 9 FOUNDs / 26 turns, 2 walked pods
+- track_mode ANALYSE -> the s238 pick. scripts/m292_pod_movement.py (static
+  G1-G3 byte gates + live gdb census + parse + verdict). ACCEPTANCE:
+  python3 scripts/m292_pod_movement.py --turns 26 -> PASS M292: 5/5
+  (evidence/m292_pod_movement.txt + m292_gdb_raw.log; 2nd invocation - run 1
+  at 12 turns scored 4/5 with only 1 FOUND, a window-length artifact not a
+  refutation; floors never weakened).
+- STATIC (bytes arbiter): hub 0x55f65c mov edi,[ebp+8] = unit index; 13u*4
+  fold 0x55f6b8-0x55f6bf -> record 0x933278+52u (x@+0 y@+2 owner@+14); own
+  flag = owner vs ds:0x91b5b4 (live value 3 = HUMAN fac). Exactly 2 call
+  sites image-wide: 0x50dd84 (FUN_0050d140), 0x56cf12 (FUN_0056cdf0).
+  Dispatch 0x563d46 test esi,esi (esi = ring entry): 0, not-own ->
+  0x563d82-86 push u, call FUN_004cca50 (FOUND); 0, own -> push 0x2408,
+  0x563d75 call FUN_00583fa0 (MSG); 1-8 -> 0x563e06 dec esi, no order;
+  >=9 -> tables 0x678990/0x67850c[esi] + own tile, wrap FUN_00469010,
+  0x563e3b call FUN_005560f0(u, 0x62, tile) = the walk order.
+- LIVE (m54b_clean t0 continued, 26 turns 2150->2188): HUB=2308 (ret
+  0x56cf17 x2282 per-unit + 0x50dd89 x26 once-round); DISP=29, st==8 on
+  every row, ownflag==(ownrec==3) 29/29 (52u+14 owner arithmetic live);
+  legs partition exactly: 9x esi=0 -> HUBFOUND, 9x esi 1-8, 11x esi>=9 ->
+  ISS; FOUND=9 ALL ret=0x4ccbe2, cnt 18->27, every one paired
+  same-segment with its HUBFOUND (x,y); WALK u=66 (53,47)->(53,49), u=60
+  (27,51)->(1,43). FOUND facs {1,2,5,6,7}; golden tiles (20,48)(63,51)
+  (1,43) reproduced; (27,29) taken by fac7 here (golden: fac1) - timelines
+  diverged once run 1 founded (12,48) at t6.
+- Box: pid 4087359 unchanged, TracerPid 0 pre/post, yama restored, no stale
+  gdb. Evidence +92 KB (raw log 91,561 B), budget re-measured at close.
+- OPEN (unchanged): 5a0aa0 bailing 3x; M247; M70 x2; 188-row cursor caller.
+  NEW OPEN: who gates hub VISITS (FUN_0056cdf0/FUN_0050d140 entry tests)
+  and the 0x56c6de continue-leg target. Next: ANALYSE - UNMODELED
+  0x94e5a8/0x94eca8 per-site gate tables + FUN_004e3c00 no-go (static
+  census + fit vs recorded sites); MSG-leg (human pod at best tile) never
+  observed live. Next BUILD fire = B14.

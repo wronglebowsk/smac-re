@@ -1,10 +1,9 @@
-M291 (s238 ANALYSE, 10/10, MERGED #246): hub found-scan = STRICT
-site-value argmax over the 25-ring (own tile, m2-diamond, m4-diamond;
-tables 0x67850c/0x678990 .rdata); score = FUN_0046e770 rec byte2 high
-nibble; owner byte3 gate REQUIRED (no-owngate loses fac1(27,29)); the
-(dist*10000)/(value+1) footing shape REFUTED (no 0x2710 in body).
-Acceptance: python3 scripts/m291_pod_scan.py (evidence/m291_pod_scan.txt).
-Box clean pid 4087359 TracerPid 0, untouched. Next: ANALYSE - pod
-MOVEMENT leg (which pod runs FUN_0055f650 + per-turn walk vs founding
-turns 6,9,18,19,22,23; VEC-hub entry census w/ unit index+pos, BOX
-run, hold-all-units law). Next BUILD fire = B14.
+M292 (s239 ANALYSE, 5/5, BOX census, PR open): pod MOVEMENT - hub
+FUN_0055f650 arg1 = unit index (record 0x933278+52u: x@+0 y@+2 owner@+14;
+own = owner==ds:0x91b5b4==3 HUMAN); live callers FUN_0056cdf0 (per-unit
+x2282) + FUN_0050d140 (once-round x26); dispatch on esi = m291 ring-entry:
+0=found (MSG 0x2408 human), 1-8 continue, >=9 issue order 0x62 at wrapped
+ring tile = WALK. 9 FOUND all hub-leg, 2 walked. ACC: m292_pod_movement.py
+--turns 26 (run1 12t 4/5, window artifact). Box 2188 cnt 27 TracerPid 0.
+Next: gate tables 0x94e5a8/0x94eca8 + FUN_004e3c00 no-go (static).
+BUILD next = B14.
