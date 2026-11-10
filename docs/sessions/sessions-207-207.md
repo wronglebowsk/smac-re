@@ -1,0 +1,16 @@
+# Session notes archive — sessions 207-207
+
+Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
+file readable in one context window. Same evidence file paths apply.
+
+## Session 207 (2026-11-02, B5 BUILD track, PASS 9/9) — `sim/units.py`: one arrow press = one lattice step of the 0x6784a0 ring at 3 MP, 6 MP per round, x wrapped, y bounded
+
+**Footing.** `scripts/track_mode.py` -> `MODE=BUILD analyse_since_build=3 next_rung=B5`; rung B5 is `BUILD_SPINE.md`'s units/movement step, acceptance `python3 -m sim.selftest --replay-m27`. No box time, no `/proc`, no gdb.
+
+**Acceptance.** `python3 -m sim.selftest --replay-m27` -> `PASS B5: 9/9 gates on evidence/m27_solowrap.log + evidence/m27_solowrap2.log`, rc=0, green on the FIRST invocation; console `evidence/b5_replay_m27.txt` (11 lines). The same commit re-ran the earlier rungs: B1 10/10, B2 7/7, B3 6/6, B4 9/9.
+
+**The model** (`sim/units.py`, `sim/selftest.py::run_m27_replay`), gates in order: (1) trace-shape — 1 press in log 1 and 3 in log 2, idx [119, 117, 118, 120], all dir=1, all EXEC mode=3, each move stamps its own unit (-2,-2) first; (2) the four destinations == `turn_driver.md` §M27 item 4's post-state (45, 45, 43, 43 at y=11); (3) the trace's only proven start — log 1 re-stamps rec117 at (43,11) inside another unit's move — plus my dir-1 delta (+2,0) predicts (45,11), log 2's recorded destination; (4) DIR_DX/DIR_DY are the ring read out of the image at 0x6784a0/0x6784c4 (`evidence/m248_region_values.txt:3`, ring-first) — the centre-first 0x67850c readout at `:2` is the same ring shifted one index and all 8 pairs preserve (x+y) parity, both checked against that file; (5) `STEP_MP = 3` is alpha `#RULES` field 0, the file's own number (FUN_005ac550 ends `return DAT_0092a278 * moves`, so the game's MP are a loaded scale times a move count) and `MP_PER_TURN = 6` = 2 moves; (6) can-act = FUN_005acc00's `total - spent > 0` — admits steps at spent 0 and 3, refuses the third: (43,11), (45,11), None with spent 3, 6, 6; (7) x wraps as FUN_00502c40 does (79+2 -> 1, 0-2 -> 78 on the 80-wide map), y is bounds-checked and never wrapped (y=79 with dir 3 refused), and my `(w/2)*y + (x>>1)` + `x&1` view reads the same 22 B as `sim/map.py`'s `cell_index` and as the packed 44-B record; (8) all 6 re-stamps of OTHER units in the logs equal the position the replay holds for them (117 at 43, 119 at 43, 122/123 at 41 twice) — the discriminating gate; (9) from the committed pre-state (41,11) (§M25/§M27: all 8 survivors stacked there) the destinations are 2, 2, 1, 1 steps = 6, 6, 3, 3 MP, each inside one round's 6-MP budget, none off-axis.
+
+**Finding, not a failure.** rec118's logged press covers 41->45 = 2 tiles, so one of its two steps lies outside the committed window (4 presses logged; §M27 item 1 documents a 5th, on 117); the model lands it at (43,11). §M27's post-state mpused (117/118 = 3, 119/120 = 6) is not a step count: consume-all 0x5acdb0 sets spent := total when a unit finishes acting, which is what 119/120 read.
+
+**ASSUMED, queued as picks:** per-tile cost uniform 3 (alpha `#TERRAIN` is the terraform-improvement table, not a movement-cost table); and the bonus behind FUN_005ac550 returning 6 for these units (alpha `#CHASSIS` lists Infantry Speed = 1).

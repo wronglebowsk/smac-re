@@ -1,18 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-206-206.md` (1 sessions). Read it only when a question reaches back before session ## Session 207.
-
-## Session 207 (2026-11-02, B5 BUILD track, PASS 9/9) — `sim/units.py`: one arrow press = one lattice step of the 0x6784a0 ring at 3 MP, 6 MP per round, x wrapped, y bounded
-
-**Footing.** `scripts/track_mode.py` -> `MODE=BUILD analyse_since_build=3 next_rung=B5`; rung B5 is `BUILD_SPINE.md`'s units/movement step, acceptance `python3 -m sim.selftest --replay-m27`. No box time, no `/proc`, no gdb.
-
-**Acceptance.** `python3 -m sim.selftest --replay-m27` -> `PASS B5: 9/9 gates on evidence/m27_solowrap.log + evidence/m27_solowrap2.log`, rc=0, green on the FIRST invocation; console `evidence/b5_replay_m27.txt` (11 lines). The same commit re-ran the earlier rungs: B1 10/10, B2 7/7, B3 6/6, B4 9/9.
-
-**The model** (`sim/units.py`, `sim/selftest.py::run_m27_replay`), gates in order: (1) trace-shape — 1 press in log 1 and 3 in log 2, idx [119, 117, 118, 120], all dir=1, all EXEC mode=3, each move stamps its own unit (-2,-2) first; (2) the four destinations == `turn_driver.md` §M27 item 4's post-state (45, 45, 43, 43 at y=11); (3) the trace's only proven start — log 1 re-stamps rec117 at (43,11) inside another unit's move — plus my dir-1 delta (+2,0) predicts (45,11), log 2's recorded destination; (4) DIR_DX/DIR_DY are the ring read out of the image at 0x6784a0/0x6784c4 (`evidence/m248_region_values.txt:3`, ring-first) — the centre-first 0x67850c readout at `:2` is the same ring shifted one index and all 8 pairs preserve (x+y) parity, both checked against that file; (5) `STEP_MP = 3` is alpha `#RULES` field 0, the file's own number (FUN_005ac550 ends `return DAT_0092a278 * moves`, so the game's MP are a loaded scale times a move count) and `MP_PER_TURN = 6` = 2 moves; (6) can-act = FUN_005acc00's `total - spent > 0` — admits steps at spent 0 and 3, refuses the third: (43,11), (45,11), None with spent 3, 6, 6; (7) x wraps as FUN_00502c40 does (79+2 -> 1, 0-2 -> 78 on the 80-wide map), y is bounds-checked and never wrapped (y=79 with dir 3 refused), and my `(w/2)*y + (x>>1)` + `x&1` view reads the same 22 B as `sim/map.py`'s `cell_index` and as the packed 44-B record; (8) all 6 re-stamps of OTHER units in the logs equal the position the replay holds for them (117 at 43, 119 at 43, 122/123 at 41 twice) — the discriminating gate; (9) from the committed pre-state (41,11) (§M25/§M27: all 8 survivors stacked there) the destinations are 2, 2, 1, 1 steps = 6, 6, 3, 3 MP, each inside one round's 6-MP budget, none off-axis.
-
-**Finding, not a failure.** rec118's logged press covers 41->45 = 2 tiles, so one of its two steps lies outside the committed window (4 presses logged; §M27 item 1 documents a 5th, on 117); the model lands it at (43,11). §M27's post-state mpused (117/118 = 3, 119/120 = 6) is not a step count: consume-all 0x5acdb0 sets spent := total when a unit finishes acting, which is what 119/120 read.
-
-**ASSUMED, queued as picks:** per-tile cost uniform 3 (alpha `#TERRAIN` is the terraform-improvement table, not a movement-cost table); and the bonus behind FUN_005ac550 returning 6 for these units (alpha `#CHASSIS` lists Infantry Speed = 1).
+Older sessions: `docs/sessions/sessions-207-207.md` (1 sessions). Read it only when a question reaches back before session ## Session 208.
 
 ## Session 208 (2026-11-02, ANALYSE, M267 + M268 both PASS) — the 0x6725ac/0x6725a4 pair is ONE vtable with two entry points, shared by 1 ctor + 4 destructors of 4 variants of the virtual base at [desc+4]; the 201 x 608 block is tag-initialized, never indexed, never saved
 
@@ -621,6 +609,7 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   predict which turns found/write. Next fire: BUILD (B12 - write the rung into BUILD_SPINE.md
   first: candidates are the cursor-vs-save write law, unit-growth from a completion, or R2's
   end-turn/save slice closure).
+
 ## Session 231 (2026-11-10, ANALYSE, M286 MEASURED-NEGATIVE w/ falsifier, static 5/5) - the REALLYQUIT message dialog IS family (live vptr 0x67164c at the click) but its clicks dispatch +0x4c through NONE of the 12 sites
 - track_mode ANALYSE -> the M285 frontier pick: remaining Script.txt dialog
   suspects were message OK/CANCEL, menu panes, REALLYQUIT.  The box was ALREADY
@@ -664,3 +653,40 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   click path.  Remaining: the MENU PANES (TOPMENU/MAPMENU) - if those are
   family and their clicks dispatch +0x4c, the dispatcher is named.  Next
   fire: ANALYSE.
+
+## Session 232 (2026-11-10, ANALYSE, M287 MEASURED-NEGATIVE w/ falsifier, static 5/5) - the in-game game MENU pane is NOT family (live vptr 0x67919c at the click); FOUR click paths now measured, zero +0x4c dispatch anywhere
+- track_mode ANALYSE -> the M286 frontier pick: the last click-path candidate,
+  the MENU PANE.  Static: the console bar (MENU button (61,369) -> GAME/HQ/
+  NETWORK/MAP/ACTION/TERRAFORM/SCENARIO/EDIT MAP/HELP) is CHROME - its
+  vocabulary appears in NO Script.txt pane (g4); the real menu is the popup
+  the GAME row raises (12 rows, vision-verified on the live frame).  Drive
+  (scripts/m287_menu_dispatch.py, arm = m286's 12 sites + FAM_SLOT 0x5f6aa3
+  entry + pump + wndproc LBUTTONDOWN): normalize to HUD -> click MENU ->
+  click GAME at (26,190) (GAME row does not OCR; NETWORK anchors y226, 18-px
+  stride - geometry from TWO independent frames) -> FALSIFIER READ -> click
+  ONE safe row (Preferences... at (172,350), vision coords; NEVER the y>=548
+  Resign/Start/Quit rows) -> falsifier read 2 -> Escape-loop recovery
+  (quit-prompt-safe: Escape on the bare HUD raised REALLYQUIT and the OLD
+  normalize mistook the HUD status bar through it for clean - fixed).
+- LIVE: bar raised (8 rows after MENU click), GAME clicked, popup OPEN
+  (vision-verified).  FALSIFIER: LIVE menu obj=0x03cbc0c8 vptr=0x0067919c
+  NOT FAMILY at the click (run 2 read DIALOG_CUR=0 - the pane is not even a
+  DIALOG_CUR-tracked dialog that run, consistent with chrome/drawn).  Row
+  click at Preferences -> same pane (no new dialog), vptr scan delta 0.
+  RESULTS: site bps 0/12 (both runs), family-slot hits NONE, entry 0.
+  STATE 4 measured-negative w/ falsifier.
+- SETTLE: the in-game game menu pane is ALSO not one of the 5 family classes
+  (the M285 chooser reading).  FOUR click paths now measured live with zero
+  +0x4c dispatch: M284 base display, M285 chooser, M286 REALLYQUIT (family,
+  inline row cb in pump), M287 menu pane.  The family +0x4c slot target
+  FUN_005f6aa3 has STILL never been observed entered from ANY live click.
+  +0x4c is NOT dispatched on any click path - next shape: Return-key path or
+  dialog CREATE-time (FUN_00405ef0).
+- ACCEPTANCE: python3 scripts/m287_menu_dispatch.py --static -> 5/5 PASS;
+  --live -> STATE 4 measured-negative w/ live-vptr falsifier, twice
+  (evidence/m287_menu_dispatch.txt).
+- OPEN: M282 G5 (founder vector); 64x64 odd-Rw stride quirk (M247);
+  negative-id table stride (M70); save-side cursor-vs-pending order (M70);
+  B12 rung for the next BUILD fire.  Next fire: ANALYSE (frontier: the
+  +0x4c dispatch question narrows to CREATE-time FUN_00405ef0 or the
+  Return-key path; M282 G5 box question also open).

@@ -1,0 +1,65 @@
+M287 in-game MENU-pane click path - measured-negative w/ falsifier (s232)
+The last click-path candidate of the M286 frontier: the in-game game menu
+raised by the console bar (MENU button (61,369) -> GAME row -> popup with 12
+rows: Switch To Simple Menus / Preferences... / ... / Save Game / Load Game /
+Resign / Start New Game / Quit).  Reuses M286's arm: 12 +0x4c sites +
+FUN_005f6aa3 entry + pump 0x5f1394 + wndproc 0x5d0c33 LBUTTONDOWN control.
+Falsifier = the live vptr of the raised menu PANE at the click.
+
+static (2026-11-10, python3 scripts/m287_menu_dispatch.py --static):
+PASS g1: 12 sites still read `call [reg+0x4c]` (none bad)
+PASS g2: all 5 family vtables +0x4c == 0x5f6aa3
+PASS g3: exactly 5 vtables hold +0x4c == 0x5f6aa3 (found 5)
+PASS g4: console-bar vocabulary (GAME/HQ/NETWORK/.../EDIT MAP/HELP) in NO
+        Script.txt pane (bar is chrome; false hits: none)
+PASS g5: Script.txt #TOPMENU pane has the title menu rows
+5/5 PASS.
+
+live, run 1 (primary, falsifier tracked DIALOG_CUR):
+family vptr scan BEFORE: {6755916: 7, 6756300: 0, 6760640: 0, 6773956: 2, 6780616: 1}
+PRE-ARM DIALOG_CUR=0x00000000
+normalize to HUD: seen=True esc=0 (box clean, no leftover panes)
+bar rows before MENU click: NONE
+bar rows after MENU click : 8 (GAME/HQ/NETWORK/MAP/ACTION/TERRAFORM/SCENARIO/EDIT MAP/HELP)
+click GAME at (26,190) (measured geometry, GAME row does not OCR; NETWORK anchor y226, 18px stride)
+LIVE at click : menu obj=0x03cbc0c8 vptr=0x0067919c NOT FAMILY
+(frame m287_menu: vision-verified popup OPEN, 12 rows x~170-455 y~325-595,
+ GAME highlighted; ground truth for 'the menu pane was live at the click')
+click SAFE row at (172,350) = Preferences... row (vision coordinates; the
+'safe-row' OCR matcher on the small popup text is unreliable, so the row
+position is the vision-measured geometry; NEVER rows = Resign/Start/Quit are
+y>=548)
+LIVE after row click: dialog obj=0x03cbc0c8 vptr=0x0067919c (same pane)
+family vptr scan AFTER  : delta all 0 (no family instance created/removed)
+recovery to HUD: seen=True esc=2
+site bps fired: 0 ; family-slot hits at: NONE
+ENTRY hits: 0 ; pump control hits: 0 ; wndproc LBUTTONDOWN controls: 0
+STATE 4: measured-negative - clicks delivered (bar raised, popup opened,
+closed on recovery), LIVE menu vptr NOT family at the click - family +0x4c
+dispatched through NONE of the 12 sites.
+
+live, run 2 (confirmation, 0/12 again, clean recovery):
+normalize to HUD esc=0; bar raised (8 rows); GAME clicked;
+LIVE at click: menu obj=0x00000000 (menu pane not a DIALOG_CUR-tracked
+dialog this run - consistent with a drawn/chrome pane);
+site bps fired: 0; ENTRY hits: 0; pump 0; wndproc 0;
+recovery to HUD esc=0 (no leftover quit prompt).
+STATE 4 again.
+
+SETTLE (combined with M284/M285/M286):
+FOUR click paths now measured live with zero +0x4c dispatch:
+  M284 base display (CPane, not family)
+  M285 production chooser (0x672298, not family)
+  M286 REALLYQUIT message dialog (0x67164c IS family at the click, pump ran,
+       pane closed - the row callback runs INLINE in the pump, not via +0x4c)
+  M287 in-game game menu pane (vptr 0x67919c, NOT family; 0/12, 0 entry)
+The family +0x4c slot (FUN_005f6aa3, the dialog row-click dispatcher) has
+NEVER been observed entered from any live click window.  +0x4c is NOT
+dispatched on ANY click path of the tested panes.  Next shape (frontier):
+the Return-key / keystroke path, or dialog CREATE-time (FUN_00405ef0).
+Open unchanged: M282 G5 (founder vector), the 64x64 odd-Rw stride quirk
+(M247), the negative-id table stride (M70), the save-side cursor-vs-pending
+store order (M70), B12 rung for the next BUILD fire.
+
+box at close (s232): year 2154, round 54, cur_player 3, n_bases 18,
+TracerPid 0, screen = HUD (menu closed by recovery; no leftover panes).

@@ -1,5 +1,5 @@
-# NEXT_PROMPT.md - footing (s231, M286 4-neg w/ falsifier: 0x67164c REALLYQUIT is family but +0x4c fires
-# nowhere on its click path; M284+M285+M286 = three paths measured, zero +0x4c dispatch. Next: ANALYSE)
+# NEXT_PROMPT.md - footing (s232, M287 4-neg w/ falsifier: in-game game MENU pane is NOT family (live
+# vptr 0x67919c at the click); FOUR paths measured (M284/M285/M286/M287), zero +0x4c dispatch. Next: ANALYSE)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -64,17 +64,17 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
   ANSWERED s228=M284, s229=M285 (chooser 0x672298 NOT family; 0/12 fired),
-  s231=M286 (0x67164c REALLYQUIT family at click, pump ran, 0/12, entry 0),
+  s231=M286 (REALLYQUIT family at click but 0/12, entry 0), s232=M287 (menu pane NOT family 0x67919c, 0/12 x2),
   s227=M283 (17/17), s225=M282 (built as B10).  BUILD s230=B11
   (13/13: the queue law, `NAMED.md` §B11). NEW (M282 frontier): WHICH
   founder vector the recorded AI used - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
-  BOX PICKS, box UP: (M286 frontier) REALLYQUIT ELIMINATED - it IS the message OK/CANCEL class
-  0x67164c (live vptr family at click, pump RAN 1, sites 0/12, entry 0; row cb is INLINE in the
-  pump, not +0x4c).  REMAINING: a MENU PANE (TOPMENU/MAPMENU, menu key m54g-era) - if family and a
-  row click dispatches +0x4c, the dispatcher is NAMED; drive ONE menu + row click with m286 --live
-  (arm + Escape-loop reusable); falsifier = family vptr at the click.  If silent too: +0x4c is NOT
-  on ANY click path - next = Return-key path or dialog CREATE-time (FUN_00405ef0). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
+  BOX PICKS, box UP: (M287) in-game game MENU PANE ELIMINATED - the bar is CHROME (in no
+  Script.txt pane); the GAME-row popup vptr read live 0x0067919c NOT FAMILY at the click
+  (vision-open; run 2 DIALOG_CUR=0), 0/12 sites x2, entry 0 -> not one of the 5 family classes.
+  FOUR click paths measured (M284 base, M285 chooser, M286 REALLYQUIT family-inline, M287 menu),
+  zero +0x4c dispatch: +0x4c is NOT on ANY click path.  NEXT: dialog CREATE-time (FUN_00405ef0
+  installs 0x67164c) or the Return-key path; M282 G5 (founder vector) still live. The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
 
 ## LIVE FACTS / KIT
 

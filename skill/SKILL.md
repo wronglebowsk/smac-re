@@ -667,12 +667,18 @@ Depth: `references/wine-operations.md`, `references/wine-headless-harness.md`
 
 ## Still open (leads)
 `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
-**Dialog-family +0x4c click dispatch (M284/M285/M286, s228-s231): THREE live paths now measured with zero
-+0x4c dispatch - base display (CPane), production chooser (0x672298, not family), and the REALLYQUIT message
+**Dialog-family +0x4c click dispatch (M284-M287, s228-s232): FOUR live click paths now measured with zero
++0x4c dispatch - base display (CPane, M284), production chooser (0x672298, not family, M285), the REALLYQUIT message
 dialog (0x67164c IS family: live vptr at the click, pump FUN_005f1394 ran, pane closed - the row callback is
-dispatched INLINE in the pump, NOT via the +0x4c slot). The +0x4c slot target FUN_005f6aa3 is the dialog
-row-click dispatcher (FUN_005e7917 row finder over 0x18-stride rows + [ecx+0xa8] row-cb dispatch) but has
-never been observed entered from a live click. Remaining: menu panes, Return-key path, or dialog CREATE-time.**
+dispatched INLINE in the pump, NOT via the +0x4c slot, M286), and the in-game game MENU pane (0x67919c NOT family
+at the click, popup vision-verified open, M287: the console bar GAME/HQ/NETWORK/... is CHROME - in NO Script.txt
+pane - and the GAME-row popup is not a family instance either). The +0x4c slot target FUN_005f6aa3 is the dialog
+row-click dispatcher (FUN_005e7917 row finder over 0x18-stride rows + [ecx+0xa8] row-cb dispatch) but has never
+been observed entered from a live click. +0x4c is NOT dispatched on ANY click path - the remaining shapes are
+dialog CREATE-time (FUN_00405ef0 installs 0x67164c) or the Return-key/keystroke path. In-game MENU drive recipe:
+the GAME row never OCRs (two frames measured GAME=(26,190) with NETWORK anchored y226, 18-px row stride);
+an open console bar inverts the MENU click to a close - close it before arming; Escape on the bare HUD after
+the menu raises REALLYQUIT (safe 'oops' row, M37).**
 **Band-flag gate — CLOSED, do not re-open** (bit 0x40 of the per-faction flag word is tested but has no setter and no
 save carries it): `scripts/m118_flag_never_set.py` re-proves it offline.
 
