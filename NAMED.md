@@ -1600,7 +1600,7 @@ WALK. Live 26-turn window (m54b_clean t0): FOUND=9 ALL via the hub leg
 HUBFOUND tile, 2 walked pods, own-flag law 29/29.
 Instrument: scripts/m292_pod_movement.py.
 
-## M293 (s240, CORRECTION) - three verified Greptile P1s fixed; two registry claims retracted
+## M293 (s240, CORRECTION, MERGED #250) - three verified Greptile P1s fixed; two registry claims retracted
 - D1 hub dispatch (the M290/B13 correction above; bytes re-derived from the
   disasm cache): msg block [0x563d4e,0x563d7d] entered ONLY by the esi==0 +
   flag!=0 fallthrough - no branch in .text targets it from outside
