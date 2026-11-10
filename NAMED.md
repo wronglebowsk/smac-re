@@ -1377,3 +1377,24 @@ chooser/menu path (untestable in this save: empty queue opens no chooser).
   push the family dispatcher to the remaining Script.txt dialog paths: the message
   OK/CANCEL dialog (FUN_005f1394's own class 0x67164c - its instances are the x7 live),
   menu panes, or the REALLYQUIT prompt.
+## B11 (s230, BUILD, production-queue mechanics leg - R2's "build" slice) 13/13
+- sim/queue.py: the M68-M72 queue law executable. INSERT = queue[pos]=item with pos = the
+  queue widget's cursor row (shift min(9,max(pending+1,cursor))..cursor+1 up one, store at the
+  ORIGINAL cursor, pending++ only when pending<9, enqueue tail parks cursor at rows+1, 0x4d00
+  zeroes it). Duplicate id refused. Negative slot = the TYPE's (195->-3, 196->-6 verbatim;
+  mapping rule OPEN). Head sentinel 0xffffffd9 = -39 (NOT -38). POP = ONE item, for k in
+  range(pending): slots[k]=slots[k+1], pending-=1 -> queue[pending] keeps its STALE id
+  (measured [2,193,192,0]->[193,192,192,0]). Affordability = the visitor's OWN edi at 0x4efa5e
+  (head 193 wants 27, price_of says 18).
+- PASS: python3 -m sim.selftest --b11 programs/saves/m54b_clean.SAV -> 13/13
+  (evidence/b11_queue_mechanics.txt; sha256 29753b325093c6e1). Replays the game's OWN
+  m69_cursor.jsonl (poked cursor 4, INSERT 0 -> [4,0], p4->5, stale 193->5, cursor 6),
+  m70_cursor_events.jsonl (rowclick 3->1; insert193@1 p1 cur2; insert192@2 p2 cur3; 0x4d00->0),
+  m71pop_seq/m71pop3_seq, m72gate4 (18 vs 27 BAILS x2) + m72gate5 (27 PAYS) - byte-for-byte.
+- RIVALS fail the same fit: shift-left-by-K -> [193,192,0..]; price_of 18 pays (game bails).
+- WRITE: queue_bytes() composes pending@0x4c + slots@0x50..0x77 into a 304-B base record;
+  savewriter lift patches exactly those dwords, tail byte-exact, decode_save re-reads
+  pending 1 head 988, section walk rc 0. B8/B9/B10 regressions green.
+- FRONTIER (declared): the M282 G5 found-event SCHEDULING (which turns found/write) is NOT
+  modeled - B11 replays recorded queue states only. OPEN: cursor-vs-pending store order on the
+  write side; negative-id table stride (-v)*48 vs *16 (M70).

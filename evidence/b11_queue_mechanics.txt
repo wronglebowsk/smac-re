@@ -1,0 +1,14 @@
+  ok   constants CAP 9 SENTINEL -39 pending@0x4c head@0x50
+  ok   empty queue head == -39 sentinel, pending 0
+  ok   m70 cursor law: rowclick(3)->1, insert193@1,p1,cur2, insert192@2,p2,cur3, 0x4d00->0
+  ok   m69 shift: pending 4->5, landing slot 4, stale 193 moved to 5, cursor_after 6
+  ok   negative type data: 195->-3, 196->-6 stored verbatim
+  ok   m71 POP law: [2,193,192] -> [193,192,192,0] pending 1 (stale tail kept)
+  ok   RIVAL shift-left-by-K gives a DIFFERENT read-back [193,192,0..] (fails the same fit)
+  ok   m72 affordability: storage 18 vs edi 27 BAILS twice, queue untouched
+  ok   m72 affordability: storage 27 PAYS + pops head, storage 0
+  ok   RIVAL price_of (18) pays at storage 18 (fails the same fit)
+  ok   written queue state: only dwords 0x4c/0x50..0x77 change in record 0 [226343, 226347, 226348], re-parse reads pending 1 head 988, tail byte-identical
+  ok   written image -> decode_save --sections rc 0 (section walk still green)
+  ok   command python3 -m sim.queue exit-0 + report (sha 29753b325093c6e1)
+PASS B11: 13/13 gates - the production-queue mechanics leg replays the game's OWN m69/m70/m71/m72 queue states byte-for-byte (cursor INSERT, stale-tail POP, visitor-cost affordability), both rivals miss, sha256 29753b325093c6e1 (no box time, no /proc, no gdb)

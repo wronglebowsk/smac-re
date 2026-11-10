@@ -1023,6 +1023,150 @@ def run_b10(sav_path, trace_path, results):
     return 0
 
 
+def run_b11(sav_path, results):
+    """Rung B11: the production-queue mechanics leg - the M68-M72 queue law
+    replayed against the game's OWN recorded queue states (m69/m70/m71/m72
+    evidence). No box, no /proc, no gdb."""
+    import hashlib
+    import json
+    import os as _os
+    import struct
+    import subprocess
+    import tempfile
+    from . import queue as soq
+    from . import save as sosave
+    from . import savewriter as sow
+    if not _os.path.exists(sav_path):
+        return fail("B11: missing input: %s" % sav_path)
+    sv = sosave.parse(sav_path)
+    # 1 constants of the law
+    results.append(("constants CAP 9 SENTINEL -39 pending@0x4c head@0x50",
+                    soq.CAP == 9 and soq.SENTINEL == -39 and soq.PENDING_OFF == 0x4c
+                    and soq.HEAD_OFF == 0x50 and soq.SLOT_STRIDE == 4))
+    q0 = soq.Queue()
+    results.append(("empty queue head == -39 sentinel, pending 0",
+                    q0.head() == soq.SENTINEL and q0.pending == 0))
+    # 2 the cursor law, pinned against the recorded m70 event states
+    m70 = soq.replay_m70()
+    results.append(("m70 cursor law: rowclick(3)->1, insert193@1,p1,cur2, "
+                    "insert192@2,p2,cur3, 0x4d00->0",
+                    m70 == [("rowclick", (1, 0)), ("insert193", (193, 1, 2)),
+                            ("insert192", (192, 2, 3)), ("clear", 0)]))
+    # 3 the m69 shift composition (cursor poked to 4, INSERT 0)
+    m69 = soq.replay_m69()
+    results.append(("m69 shift: pending 4->5, landing slot 4, stale 193 moved "
+                    "to 5, cursor_after 6",
+                    m69["pending"] == 5 and m69["cursor"] == 6
+                    and m69["slots"][:7] == [2, 192, 194, 1, 0, 193, 0]))
+    # 4 negative type store (recorded data, mapping OPEN)
+    qn = soq.Queue(pending=0)
+    qn.slots[0] = soq.NEG_TYPE[195]
+    results.append(("negative type data: 195->-3, 196->-6 stored verbatim",
+                    soq.NEG_TYPE == {195: -3, 196: -6}
+                    and qn.slots[0] == -3))
+    # 5 the POP law: one pop, stale tail kept (m71/m71p3 read-backs)
+    m71 = soq.replay_pop("m71pop_seq.jsonl", 9)
+    m71p = soq.replay_pop("m71pop3_seq.jsonl", 10)
+    results.append(("m71 POP law: [2,193,192] -> [193,192,192,0] pending 1 "
+                    "(stale tail kept)",
+                    m71["slots"][:4] == [193, 192, 192, 0] and m71["pending"] == 1
+                    and m71p["slots"][:4] == [193, 192, 192, 0]
+                    and m71p["pending"] == 1))
+    qk = soq.Queue(pending=2)
+    qk.slots = [2, 193, 192, 0, 0, 0, 0, 0, 0, 0]
+    qk.pop_once()
+    rival_k = [2, 193, 192, 0, 0, 0, 0, 0, 0, 0]
+    rival_k[:2] = rival_k[1:]
+    results.append(("RIVAL shift-left-by-K gives a DIFFERENT read-back "
+                    "[193,192,0..] (fails the same fit)",
+                    qk.slots != rival_k and qk.slots[:3] == [193, 192, 192]
+                    and rival_k[:3] == [193, 192, 0]))
+    # 6 the affordability gate (M72): bail at storage 18 (edi 27), pay at 27
+    with open(_os.path.join(soq.EVID, "m72gate4_seq.jsonl"), encoding="utf-8") as fh:
+        rows4 = [json.loads(ln) for ln in fh if ln.strip()]
+    with open(_os.path.join(soq.EVID, "m72gate5_seq.jsonl"), encoding="utf-8") as fh:
+        rows5 = [json.loads(ln) for ln in fh if ln.strip()]
+    st4, snap4, _ = soq.replay_m72("m72gate4_seq.jsonl")
+    st5, snap5, left5 = soq.replay_m72("m72gate5_seq.jsonl")
+    results.append(("m72 affordability: storage 18 vs edi 27 BAILS twice, "
+                    "queue untouched",
+                    st4 == [("bail", 18), ("bail", 18)]
+                    and snap4["slots"][:2] == [193, 192] and snap4["pending"] == 1))
+    results.append(("m72 affordability: storage 27 PAYS + pops head, storage 0",
+                    st5 == [("pay", 0, 193)] and left5 == 0 and snap5["pending"] == 0
+                    and snap5["slots"][0] == 192))
+    st4r, _, _ = soq.replay_m72("m72gate4_seq.jsonl", rival_cost=18)
+    results.append(("RIVAL price_of (18) pays at storage 18 (fails the same fit)",
+                    st4r[0][0] == "pay"))
+    # 7 a written queue state round-trips through savewriter, tail byte-exact
+    bo = sv.bases_off
+    rec0 = bytearray(sv.data[bo:bo + 304])
+    qw = soq.Queue(pending=1)
+    qw.slots = [988, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    soq.queue_bytes(qw, rec0)
+    img = bytearray(sow.build_image(sv))
+    img[bo + 0x4c:bo + 0x4c + 4] = rec0[0x4c:0x4c + 4]
+    for k in range(soq.SLOTS_IN_RECORD):
+        o = bo + soq.HEAD_OFF + soq.SLOT_STRIDE * k
+        img[o:o + 4] = rec0[o - bo:o - bo + 4]
+    tail_ok = len(img) == len(sv.data) and img[sv.tail_off:] == sv.data[sv.tail_off:]
+    diffs = [i for i in range(bo, bo + 304) if img[i] != sv.data[i]]
+    rp = sosave.Save("written", bytes(img))
+    b0 = rp.base(0)
+    raw0 = img[bo:bo + 304]
+    pend_w = struct.unpack("<i", raw0[0x4c:0x50])[0]
+    head_w = struct.unpack("<i", raw0[0x50:0x54])[0]
+    results.append(("written queue state: only dwords 0x4c/0x50..0x77 change in "
+                    "record 0 %s, re-parse reads pending %d head %d, tail "
+                    "byte-identical" % (diffs, pend_w, head_w),
+                    diff_ok(diffs, bo) and pend_w == 1 and head_w == 988 and tail_ok
+                    and b0["i"] == 0))
+    # 8 determinism + CLI + the section walk still green on the written image
+    blob = json.dumps([soq.replay_m70(), soq.replay_m69(),
+                       soq.replay_pop("m71pop_seq.jsonl", 9),
+                       soq.replay_m72("m72gate4_seq.jsonl"),
+                       soq.replay_m72("m72gate5_seq.jsonl")])
+    sha = hashlib.sha256(blob.encode()).hexdigest()
+    with tempfile.NamedTemporaryFile("wb", suffix=".SAV", delete=False) as fh:
+        fh.write(bytes(img)); tmp = fh.name
+    dr = subprocess.run([sys.executable, "scripts/decode_save.py", tmp,
+                         "--sections"], capture_output=True, text=True, cwd=REPO)
+    ok_walk = dr.returncode == 0 and "no 52/304 split" not in dr.stdout
+    _os.unlink(tmp)
+    results.append(("written image -> decode_save --sections rc 0 (section walk "
+                    "still green)",
+                    ok_walk))
+    with tempfile.NamedTemporaryFile("wb", suffix=".json", delete=False) as fh:
+        op = fh.name
+    rc = soq.main(["--sav", sav_path, "--out", op])
+    cli_ok = rc == 0 and _os.path.getsize(op) > 0
+    _os.unlink(op)
+    results.append(("command python3 -m sim.queue exit-0 + report (sha %s)"
+                    % sha[:16], cli_ok))
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B11: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B11: %d/%d gates - the production-queue mechanics leg replays "
+          "the game's OWN m69/m70/m71/m72 queue states byte-for-byte (cursor "
+          "INSERT, stale-tail POP, visitor-cost affordability), both rivals miss, "
+          "sha256 %s (no box time, no /proc, no gdb)"
+          % (len(results), len(results), sha[:16]))
+    return 0
+
+
+def diff_ok(diffs, bo):
+    """Only the pending dword (record-relative 0x4c) and the 10 slot dwords
+    (0x50..0x77) may differ inside a queue-patched 304-B record; diffs are
+    ABSOLUTE file offsets, so subtract the base-record offset first."""
+    rel = [d - bo for d in diffs]
+    return diffs != [] and all(
+        d in list(range(0x4c, 0x50)) + list(range(0x50, 0x50 + 40))
+        for d in rel)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1041,6 +1185,8 @@ def main(argv=None):
                     help="rung B9: the R3 golden-trace pairing (turn spine on the recorded trace)")
     ap.add_argument("--b10", nargs="+", metavar=("SAV", "TRACE"),
                     help="rung B10: funder/destroyer leg acceptance")
+    ap.add_argument("--b11", nargs="+", metavar="SAV",
+                    help="rung B11: the production-queue mechanics leg acceptance")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
@@ -1057,6 +1203,8 @@ def main(argv=None):
     if args.b10:
         tr = args.b10[1] if len(args.b10) > 1 else None
         return run_b10(args.b10[0], tr, results)
+    if args.b11:
+        return run_b11(args.b11[0], results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

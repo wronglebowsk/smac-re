@@ -1,14 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-205-205.md` (1 sessions). Read it only when a question reaches back before session ## Session 206.
-
-## Session 206 (2026-11-02, M265-M266 ANALYSE, static) — the 7 view-table blocks are objects of the class whose descriptor is 0x675964 (201 × 608-B elements + a 2,580-B virtual subobject, size proven to the byte); FUN_00583c70 is statically unreachable, one of an 8-function dead cluster
-
-`python3 scripts/m265_m266_census.py` -> `SUMMARY M265/M266: 12/12 gates PASS`, rc=0, 2.68 s, green on inv 3 (inv 1 died on a TypeError in my own push-order helper; inv 2 = 6/12) -> `evidence/m265_m266_census.txt` (13 lines). Instrument = the .text corpus `scratch/m574/text.txt` + the RAW PE image with the `objdump -h` section map + index.csv containment, ONE corpus pass. All six inv-2 failures were mine and every one was corrected against the corpus's own print, never by relaxing a check: hex arithmetic (0xc+200*0x260 = 0x1db0c, not 0x1da8c; 0x21a6c+0xa14 = 0x22480, not +0xa24), a "4 functions" glanced from a 5-line grep (it is 5), a helper that kept only the LAST of two offsets, objdump's destination-first `mov ebp,esp`, and a nested comprehension that returned an empty callee set.
-- **M265 — what the 7 blocks are**: FUN_00469650 has exactly 7 `call` sites {0x40a027 FUN_00409e70, 0x468fc0 FUN_00468fb0, 0x48dc7a FUN_0048dc20, 0x4cb5cf FUN_004cb570, 0x50aaae FUN_0050aa60, 0x5803b2 FUN_00580260, 0x59befc FUN_0059bec0} (G1); its `[ebp+0x8]` flag gates `mov [this+0],0x675964` at 0x469681 — the only mention of 0x675964 image-wide (G2) — so the sites that pass 0 keep their own descriptor. Body: three 0x64bda0 container constructs (+0xc, elem 0x260, x4; +0x98c, elem 0x260, x196; +0x1ef54, elem 0xabc, x4; element ctor/dtor pairs 0x62514b/0x62516c and 0x6251d0/0x625209) plus the same element ctor applied in place at +0x1db0c => **201 CONTIGUOUS 608-B elements +0xc..+0x1dd6c**, ending 8 B before the +0x1dd74 the load-side clears (G3); [this+4] is a lazily-freed pointer the ctor zeroes and FUN_00479e90 frees via 0x4017d0 (G7).
-- **M265 — the descriptor law (new)**: [obj+0] points to a 2-dword class descriptor whose +4 IS the base-subobject offset — 0x675964→0x21a6c, 0x6763fc→0x22050, 0x678458→0x23d94 — and in each installing function the `add ecx,K`/`lea ecx,[reg+K]` that feeds `call 0x5e3b80` (the 53-caller subobject ctor) uses exactly that K (G5). The view ctor then overwrites the subobject's vptr pair 0x6725ac@+0x21a6c and 0x6725a4@+0x21eb0 (delta 0x444, both vtable bases) — a pair stored at 5 sites in 5 ctors {FUN_00421950, FUN_00469650, FUN_00518980, FUN_0059bec0, FUN_0059c1e0} (G4). SIZE PROOF: FUN_005e3b80's own stores top out at +0xa10 and 0x21a6c + 0xa14 = 0x22480 = the allocation exactly (G6). Dispatch: FUN_004412a0 reads [desc+4] then calls slots +4/+8 of 0x6725ac (= FUN_005cdd0a / FUN_005cdf82), the same two it also calls directly on the static instance 0x8cc520 (G7).
-- **M266 — why FUN_00583c70 exists unreferenced**: its address appears in ZERO .text operands (rel32 targets print absolute, so that covers call/jmp/lea/push) and as an LE dword in ZERO offsets of the whole file image across all 8 sections (G8); it is not fallthrough-entered (FUN_00583c20 rets at 0x583c6b, four 0x90 pad bytes, then a real push ebp/mov ebp,esp prologue) (G9); 8 functions in 0x583000..0x584300 have n_callers==0 and ALL 8 have zero address-taken dwords — a dead cluster, not a unique anomaly (G10); its 159-insn mnemonic signature matches ZERO other functions >=40 insns, so it is not a linker-kept duplicate of a wired routine (G12); what it is: a terrain-record helper of FUN_00583c20's family — callees {0x582000, 0x5b09b0, 0x625af1, 0x64a7f0} and the same globals ds:0x92a378/0x92a37c that sibling's stride-0x2c walk uses (G11). So M263's band store 0x583e1d can never execute.
-- New skill law: an address-taken census needs BOTH halves — operand-grep of the corpus (rel32+imm32 in code) and a raw LE-dword scan of the file image (data pointers); rel32 call targets never appear as dwords, so neither half alone is a reference census. No box time; terran.exe stayed down; M181 not armed.
+Older sessions: `docs/sessions/sessions-206-206.md` (1 sessions). Read it only when a question reaches back before session ## Session 207.
 
 ## Session 207 (2026-11-02, B5 BUILD track, PASS 9/9) — `sim/units.py`: one arrow press = one lattice step of the 0x6784a0 ring at 3 MP, 6 MP per round, x wrapped, y bounded
 
@@ -599,3 +591,33 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   display (M284) NOR the production-chooser path (M285); candidate dialogs remaining =
   the message OK/CANCEL dialog (FUN_005f1394's own class: 0x67164c x7 live), the menu
   panes (TOPMENU/MAPMENU/SCENARIOMENU), the REALLYQUIT prompt.  Next fire: ANALYSE.
+
+## Session 230 (2026-11-10, BUILD, B11 queue-mechanics leg) 13/13 - the production-queue law replays the game's OWN m69/m70/m71/m72 queue states byte-for-byte; R2's "build" slice now executable
+- track_mode printed BUILD -> wrote rung B11 into BUILD_SPINE.md FIRST, then built it.
+  sim/queue.py: the M68-M72 queue law. INSERT obeys the widget CURSOR (queue[pos]=item,
+  pos = the widget's cursor row; shift runs min(9,max(pending+1,cursor)) DOWN to cursor+1,
+  store uses the ORIGINAL cursor, pending++ only when pending<9, enqueue tail parks the
+  cursor at rows+1, the 0x4d00 handler zeroes it). Duplicate id REFUSED (M68). Negative
+  slot value is the TYPE's (195->-3, 196->-6, stored VERBATIM; mapping rule OPEN). Head
+  sentinel = 0xffffffd9 (-39). POP pops ONE item, for k in range(pending): slots[k]=
+  slots[k+1], pending-=1 -> queue[pending] KEEPS its stale id (measured [2,193,192,0] ->
+  [193,192,192,0] = a duplicate no instruction wrote). Affordability = the visitor's OWN
+  cost product at 0x4efa5e, NOT price_of (head 193 wants 27).
+- ACCEPTANCE: python3 -m sim.selftest --b11 programs/saves/m54b_clean.SAV -> PASS 13/13
+  (evidence/b11_queue_mechanics.txt; sha256 29753b325093c6e1). Replays evidence/m69_cursor.jsonl
+  (poked cursor 4, INSERT 0 -> landing [4,0], pending 4->5, stale 193 moved to 5, cursor 6),
+  m70_cursor_events.jsonl (rowclick 3 -> cursor 1; insert 193@1 p1 cur2; insert 192@2 p2 cur3;
+  0x4d00 -> 0), m71pop_seq/m71pop3_seq ([193,192,192,0] p1), m72gate4 (storage 18 vs edi 27
+  BAILS x2, queue untouched) + m72gate5 (storage 27 PAYS, storage 0) - the game's OWN bytes.
+- RIVALS fail the same fit: shift-left-by-K gives [193,192,0..] (model [193,192,192]); price_of
+  18 pays at storage 18 (game bails). Written queue state (pending 1, head 988) composes into
+  record 0 via queue_bytes + savewriter: ONLY dwords 0x4c/0x50..0x77 change, re-parse reads
+  pending 1 head 988, tail byte-exact, decode_save --sections still rc 0. `python3 -m sim.queue
+  --sav <sav> --out <f>` exit 0. B8 10/10, B9 7/7, B10 18/18 regressions GREEN.
+- NEW: the queue's SAVE-RECORD offsets are now written+re-read (pending@0x4c, slots@0x50..0x77)
+  but only as compose/read-back; the cursor-vs-pending store-order interaction on the WRITE side
+  and the negative-id table stride (-v)*48 vs *16 stay OPEN (M70). The M282 G5 found-event
+  SCHEDULING frontier is DECLARED, not modeled: B11 replays recorded queue states, it does not
+  predict which turns found/write. Next fire: BUILD (B12 - write the rung into BUILD_SPINE.md
+  first: candidates are the cursor-vs-save write law, unit-growth from a completion, or R2's
+  end-turn/save slice closure).

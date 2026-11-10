@@ -182,3 +182,39 @@ the original (its 64x64 limitation is pre-existing, see s226 notes); (6) two run
 identical sha256 and `python3 -m sim.basefound --sav <sav> --trace <tr> --out <f>`
 exits 0; (7) a flooded 512-cap ledger writes with a byte-identical tail.
 No box time, no /proc, no gdb.
+
+**B11 - the production-queue mechanics leg (R2's "build" slice, next after B10's new-game leg).**
+`sim/queue.py`: the M68-M72 queue law as an executable model, parity-checked against the
+game's OWN recorded queue states. The law (settled, production-queue.md §M68-M72):
+INSERT is `queue[pos] = item` with `pos = *(int *)(0x6a9480 + 0x3ff5c)` = the queue
+widget's cursor row (M69); the widget's cursor has exactly three writers (M70):
+row click `0x40aae5` sets `cursor = min(clicked_row, [[base]+0x4c] + 1)`, the enqueue
+tail `0x417e3b` parks it at rows+1, and the `0x4d00` handler `0x4194b3` zeroes it -
+so a post-INSERT read-back reads 0, not rows+1. The shift runs from
+`min(9, max(pending+1, cursor))` down to `cursor+1`, the store uses the ORIGINAL
+cursor, `pending++` only when `pending < 9` (cap 9). A negative slot value is the
+TYPE's (196 -> -6, 195 -> -3, recordless ids); the head sentinel is `0xffffffd9`
+= -39 (M68, correcting the -38 notes). A completion's POP pops ONE item when the
+new head validates, and each iteration shifts only `0..pending-1` with pending
+shrinking - K shifts are NOT "shift-left-by-K" (index k is written pending-k times
+and `queue[pending]` keeps its STALE id: `[2,193,192,0] -> [193,192,192,0]`); the
+completion writes the cursor field ZERO times. Affordability on the visit is the
+visitor's OWN cost product at `0x4efa5e` (`cmp [base+0x40],edi`), NOT `price_of`
+(M72: head 193 wants 27 where price_of says 18).
+`python3 -m sim.selftest --b11 programs/saves/m54b_clean.SAV` must print PASS B11
+with: (1) the cursor law - an INSERT lands at the poked cursor (m69: poked 4, wrote
+at 4, cursor_after 6 = rows+1; m70: rowclick 3 -> cursor 1, insert at 1, tail 2,
+insert at 2, tail 3, 0x4d00 -> 0); (2) the shift composition reproduces the
+recorded slot arrays byte-for-byte at every armed event (evidence m69_cursor.jsonl,
+m70_cursor_events.jsonl); (3) the negative store (-3 for 195, -6 for 196) and the
+-39 sentinel; (4) the POP law - one completion pops one item, stale tail kept:
+replays of evidence m71pop_seq.jsonl/m71pop3_seq.jsonl end with `[193,192,192,0]`
+pending 1 exactly (the RIVAL shift-left-by-K gives a DIFFERENT read-back and must
+fail); (5) the affordability gate - a replay of m72gate4 (storage 18, edi 27)
+bails with queue untouched and m72gate5 (storage 27) pays + creates (the RIVAL
+using price_of 18 pays at storage 18 and must fail); (6) a written queue state
+round-trips through savewriter with a byte-exact tail (no box time, no /proc, no
+gdb); (7) two runs -> identical sha256 and `python3 -m sim.queue --sav <sav> --out
+<f>` exits 0 and writes the report. The new-game leg's frontier (the M282 G5
+found-event scheduling) is DECLARED, not modeled - B11 replays recorded queue
+states, it does not predict which turns found/write.
