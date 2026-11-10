@@ -559,3 +559,27 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   vector the recorded AI used per event stays the OPEN box question (M282 G5).
 - OPEN: box pick (dialog +0x4c dispatcher, box UP m54b_clean); the 64x64 odd-Rw accessor
   quirk; decode_save's 64x64 section walk. Next fire: ANALYSE (cadence reset by merged B10).
+## Session 227 (2026-11-10, ANALYSE, M283 PASS 17/17) - decode_save --sections walks 64x64 saves: the coarse-region-map length is ((W+4)/5+1)/2 * (H+4)/5 (91 B for 64x64, not 128)
+- track_mode printed ANALYSE -> picked the s226 OPEN lead (decode_save's hardcoded 80x80
+  map-trailer count offset fails rc=1 on every 64x64 save). Box untouched (zero box time).
+  `python3 scripts/m283_sections_64x64.py` -> **SUMMARY M283: 17/17 section gates, count 17/17,
+  formula True** (`evidence/m283_sections_64x64.txt`); acceptance on ONE real invocation.
+- BUG: walk()'s MAP branch hardcoded the coarse region map at 128 B (the 80x80 value). For a
+  64x64 save the region map is ((64+4)/5+1)/2 * (64+4)/5 = 7*13 = 91 B, so the walk read the
+  count-prefixed section 37 B early: count u32 became garbage (c=67108869), the record region
+  solved to 0 B -> "no 52/304 split of a 0-byte region", rc=1 on EVERY 64x64 save (m54b_clean
+  included; B8's sec() equality stayed green only because both sides failed identically).
+- FIX: walk() now derives the region length from the file's own dims (same formula as
+  sim/save.py region_len, shard_014.c:27263-27265): 128 for 80x80, 91 for 64x64, 338 for
+  128x128. Spans: 64x64 saves now walk to 21 sections that sum EXACTLY to the file byte; the
+  count u32 lands at 188,299 (the sim/save.py predicted constant) on all 17 saved 64x64 saves;
+  record splits agree with sim/save.py (m54b_clean 67x52 + 18x304 -> exact match of
+  units_off/bases_off 222,783/226,267).
+- B10's selftest gate had ENCODED the old limitation ("rc == rc; --sections fails on both") and
+  FAILed after the fix -> updated to assert the new behavior: rc 0 == rc 0 and the grown founded
+  image is seen with exactly ONE more 304-B record (67x52+19x304 vs 67x52+18x304). B10 re-PASS
+  18/18, B8 10/10, B9 7/7 regressions GREEN (checkpoint ef5edf6); test_loop.py and
+  test_save_diff.py (7/7) green.
+- OPEN (unchanged): box pick (dialog +0x4c dispatcher, box UP m54b_clean); M282 G5 (which
+  founder vector the recorded AI used per founding - box question); the 64x64 odd-Rw accessor
+  stride quirk. Next fire: ANALYSE (analyse_since_build=1).
