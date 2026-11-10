@@ -1398,3 +1398,18 @@ chooser/menu path (untestable in this save: empty queue opens no chooser).
 - FRONTIER (declared): the M282 G5 found-event SCHEDULING (which turns found/write) is NOT
   modeled - B11 replays recorded queue states only. OPEN: cursor-vs-pending store order on the
   write side; negative-id table stride (-v)*48 vs *16 (M70).
+
+## M286 (s231) REALLYQUIT message dialog IS family (0x67164c) but does NOT dispatch +0x4c on clicks (static 5/5, live STATE 4 measured-negative w/ falsifier)
+- The +0x4c slot (FUN_005f6aa3) is the dialog ROW-CLICK dispatcher
+  (76-B body: FUN_005e7917 row finder over 0x18-stride rows, idx/-1, then
+  (**(code **)(*ecx + 0xa8))(local_c)) - so a family dialog click SHOULD
+  enter one of the 12 sites with slot 0x5f6aa3.
+- Live: raised REALLYQUIT (Escape on bare HUD after closing base display),
+  read the dialog vptr AT the click: obj 0x014d7458 -> vptr 0x67164c FAMILY;
+  clicked the safe 'oops' row + OK; pump FUN_005f1394 ran (1), wndproc
+  LBUTTONDOWN 2, pane closed (DIALOG_CUR 0).  Sites 0/12, ENTRY 0.
+- Conclusion: the message OK/CANCEL class (0x67164c) click path dispatches
+  the row callback INLINE in the pump, NOT via the +0x4c slot.  M284+M285+
+  M286 = three live paths, zero observed +0x4c dispatch.
+- Evidence: evidence/m286_reallyquit_dispatch.txt; script
+  scripts/m286_reallyquit_dispatch.py (--static 5/5, --live STATE 4).

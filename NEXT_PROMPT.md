@@ -1,5 +1,5 @@
-# NEXT_PROMPT.md - footing (s230, B11 BUILD 13/13: the production-queue law replays the game's own
-# m69/m70/m71/m72 queue states byte-for-byte; R2's "build" slice is now executable. Next: BUILD***)
+# NEXT_PROMPT.md - footing (s231, M286 4-neg w/ falsifier: 0x67164c REALLYQUIT is family but +0x4c fires
+# nowhere on its click path; M284+M285+M286 = three paths measured, zero +0x4c dispatch. Next: ANALYSE)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -63,16 +63,18 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
 
 - Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
-  ANSWERED s228=M284, s229=M285 (chooser 0x672298 NOT family; INSERT landed; 0/12 fired;
-  live vptr = the falsifier), s227=M283 (17/17), s225=M282 (built as B10).  BUILD s230=B11
+  ANSWERED s228=M284, s229=M285 (chooser 0x672298 NOT family; 0/12 fired),
+  s231=M286 (0x67164c REALLYQUIT family at click, pump ran, 0/12, entry 0),
+  s227=M283 (17/17), s225=M282 (built as B10).  BUILD s230=B11
   (13/13: the queue law, `NAMED.md` §B11). NEW (M282 frontier): WHICH
   founder vector the recorded AI used - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
-  BOX PICKS, box UP and loaded: (M285 frontier) the family +0x4c dispatcher MUST ride a REMAINING
-  Script.txt dialog path - prime suspects: the message OK/CANCEL dialog (class 0x67164c, pump
-  FUN_005f1394; 7 live vptr occurrences when measured), a menu pane (TOPMENU/MAPMENU - open via the
-  menu key, m54g-era), or the REALLYQUIT prompt. Drive ONE open and click (OK bar/menu row) with
-  m285 --live armed; the falsifier = a family vptr read at the click. The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
+  BOX PICKS, box UP: (M286 frontier) REALLYQUIT ELIMINATED - it IS the message OK/CANCEL class
+  0x67164c (live vptr family at click, pump RAN 1, sites 0/12, entry 0; row cb is INLINE in the
+  pump, not +0x4c).  REMAINING: a MENU PANE (TOPMENU/MAPMENU, menu key m54g-era) - if family and a
+  row click dispatches +0x4c, the dispatcher is NAMED; drive ONE menu + row click with m286 --live
+  (arm + Escape-loop reusable); falsifier = family vptr at the click.  If silent too: +0x4c is NOT
+  on ANY click path - next = Return-key path or dialog CREATE-time (FUN_00405ef0). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
 
 ## LIVE FACTS / KIT
 
