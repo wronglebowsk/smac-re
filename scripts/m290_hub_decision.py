@@ -12,11 +12,21 @@ What the binary says (each claim is a byte-level assertion below):
   1. The hub's only founder-vector call is 0x563d86 -> FUN_004cca50,
      whose return target 0x4ccbe2 is exactly the FOUND ret= the live
      census recorded (m289 raw log).
-  2. The dispatch is GATED on the chosen target equaling the unit's OWN
-     tile (test esi,esi at 0x563d46 -> je 0x563d82): nonzero target goes
-     0x563d4e -> FUN_00583fa0(0x2408, "Auto-sending BUILD BASE message",
-     ...) and NEVER calls the founder.  So there is NO channel by which a
-     scanned candidate tile reaches the founder.
+  2. THE DISPATCH HAS TWO GATES (s240 correction; the old claim "nonzero
+     target goes 0x563d4e -> msg 0x2408" is RETRACTED).  test esi,esi at
+     0x563d46: the jne at 0x563d48 lands 0x563dfa - the DISTANT leg
+     (esi>=9: issue order 0x62 at the ring tile; 1-8: dec esi + continue)
+     which reaches NEITHER the founder NOR the message block.  Only
+     esi==0 falls through to 0x563d4e, which loads the SECOND gate
+     [ebp-0xa4]: je at 0x563d57 -> 0x563d82-86 calls the founder
+     FUN_004cca50; flag!=0 is the msg block 0x563d59-0x563d7d
+     (FUN_00583fa0(0x2408, "Auto-sending BUILD BASE message" s@0x691368,
+     pod unit), then jmp 0x56c925 - no founder).  [ebp-0xa4] has ONE
+     writer in the body: 0x55f6d6 = (ds:0x920434 != 0) AND (unit owner ==
+     ds:0x91b5b4).  So there is NO channel by which a scanned candidate
+     tile reaches the founder - the founding tile is always the pod's own
+     tile - but the msg-0x2408 leg belongs to the OWN-TILE + flag-set
+     case, NOT to the distant-target case.
   3. FUN_004cca50 calls the founder with (faction, x, y) READ FROM THE
      UNIT RECORD (prologue fold at 0x4cca57-0x4cca74 computes 52*u, the record
      base off 0x933278):
@@ -58,8 +68,13 @@ DISPATCH_WINDOW = [
     (0x563d40, "0f8502010000", r"jne\s+0x563e48"),
     (0x563d46, "85f6", r"test\s+esi,esi"),
     (0x563d48, "0f85ac000000", r"jne\s+0x563dfa"),
+    (0x563d4e, "8b855cffffff", r"mov\s+eax,DWORD PTR \[ebp-0xa4\]"),
+    (0x563d55, "85c0", r"test\s+eax,eax"),
+    (0x563d57, "7429", r"je\s+0x563d82"),
     (0x563d5e, "6868136900", r"push\s+0x691368"),
+    (0x563d70, "6808240000", r"push\s+0x2408"),
     (0x563d75, "e826020200", r"call\s+0x583fa0"),
+    (0x563d7d, "e9a38b0000", r"jmp\s+0x56c925"),
     (0x563d82, "8b4508", r"mov\s+eax,DWORD PTR \[ebp\+0x8\]"),
     (0x563d85, "50", r"push\s+eax"),
     (0x563d86, "e8c58cf6ff", r"call\s+0x4cca50"),
@@ -111,8 +126,9 @@ def check_static_gates(text, fn_body, results):
             good = good and re.match(want_re, got_m) is not None
         rows.append("  %08x: %s\t%-38s %s" % (addr, got_b, got_m, "OK" if good else "MISMATCH"))
         ok = ok and good
-    results.append(("G1 hub dispatch window (0x563d3c-0x563d8b): target-gate, remote-"
-                    "build branch, founder call - bytes+mnemonics", ok, "\n".join(rows)))
+    results.append(("G1 hub dispatch window (0x563d3c-0x563d8b): target-gate, second "
+                    "gate [ebp-0xa4], msg 0x2408 leg, founder call - bytes+mnemonics",
+                    ok, "\n".join(rows)))
 
     # G2: the founder-vector window: args read from the UNIT RECORD, call, return target.
     ok = True
@@ -141,17 +157,77 @@ def check_static_gates(text, fn_body, results):
                     "legality early bail in the body", ok,
                     "  guard at %s; pre-guard returns: none" % ("found" if guard else "NOT FOUND")))
 
-    # G4: the auto-send remote-build branch exists ONLY on the nonzero-target leg:
-    # push 0x2408 precedes the FUN_00583fa0 call, and no call to 0x4cca50 sits in
-    # that leg's range (0x563d4e..0x563d81).
-    leg = [a for (a, _b, _r) in DISPATCH_WINDOW if 0x563d4e <= a <= 0x563d81]
-    ok = all(a != 0x563d86 for a in leg)
-    _b2408, _m2408 = load_text_window(text, 0x563d70)
-    msg2408 = (_b2408 == "68082400 00".replace(" ", "")) and "0x2408" in (_m2408 or "")
-    ok = ok and msg2408
-    results.append(("G4 remote-build leg (0x563d4e-0x563d7d) carries msg 0x2408 and NO "
-                    "founder call - a distant target can NEVER found", ok,
-                    "  0x2408 push in leg: %s; founder call sites in leg: none" % msg2408))
+    # G4 (s240 CORRECTED): a REAL control-flow check.  The old gate sliced its own
+    # hardcoded DISPATCH_WINDOW table at 0x563d4e..0x563d81 and "observed" 0x563d86
+    # outside it - a check that could not fail (the founder leg starts at the
+    # je-target 0x563d82, one byte past the window end) - and it asserted a claim
+    # the same bytes REFUTE: 0x563d48 is `jne 0x563dfa`, so the DISTANT leg never
+    # enters 0x563d4e-0x563d7d at all.  Now parsed from the disassembly TEXT (real
+    # branch targets - the CFG, not the table):
+    #   (a) no branch anywhere in .text targets the msg-block interior
+    #       [0x563d4e, 0x563d7d] from outside it -> the msg block has exactly one
+    #       in-body entry: the flag!=0 fallthrough when esi==0;
+    #   (b) the dispatch branch table lands where claimed;
+    #   (c) [ebp-0xa4] has EXACTLY ONE writer in the hub body [0x55f650, 0x56cb23):
+    #       0x55f6d6, fed by the owner==ds:0x91b5b4 test under the ds:0x920434!=0
+    #       precondition (byte chain below) - the second gate is set once per call.
+    BODY_HI = 0x55f650 + 54483  # FUN_0055f650 ghidra body size (M291)
+    br_re = re.compile(r"^\s*([0-9a-f]{6,8}):\s+((?:[0-9a-f]{2} )+)\s+(\S+)\s+(.*)$")
+    tgt_re = re.compile(r"^0x([0-9a-f]+)$")
+    branch_hits, body_branches, writer_addrs = [], {}, []
+    for line in text.splitlines():
+        m4 = br_re.match(line)
+        if not m4:
+            continue
+        a4 = int(m4.group(1), 16)
+        mn, ops = m4.group(3), m4.group(4).strip()
+        t4m = tgt_re.match(ops)
+        if t4m and mn[0] == "j":
+            t4 = int(t4m.group(1), 16)
+            in_block = 0x563d4e <= a4 <= 0x563d7d
+            if 0x563d4e <= t4 <= 0x563d7d and not in_block:
+                branch_hits.append((a4, mn, t4))
+            if 0x55f650 <= a4 < BODY_HI:
+                body_branches[a4] = t4
+        if 0x55f650 <= a4 < BODY_HI and mn == "mov" and ops.startswith("DWORD PTR [ebp-0xa4]"):
+            writer_addrs.append(a4)
+    want_br = {0x563d40: 0x563e48, 0x563d48: 0x563dfa, 0x563d57: 0x563d82,
+               0x563d7d: 0x56c925, 0x563e04: 0x563e12,
+               0x55f6b6: 0x55f6d6, 0x55f6cf: 0x55f6d6}
+    br_ok = all(body_branches.get(a) == t for (a, t) in want_br.items())
+    chain = [(0x55f65f, "33db", chr(92).join(["xor", "s+ebx,ebx"])),
+             (0x55f6b0, "391d34049200", r"cmp" + chr(92) + "s+DWORD PTR ds:0x920434"),
+             (0x55f6b6, "741e", chr(92).join(["je", "s+0x55f6d6"])),
+             (0x55f6cf, "7505", chr(92).join(["jne", "s+0x55f6d6"])),
+             (0x55f6c0, "8b0db4b59100", r"mov" + chr(92) + "s+ecx,DWORD PTR ds:0x91b5b4"),
+             (0x55f6c6, "8a049586329300",
+              r"mov" + chr(92) + "s+al,BYTE PTR " + chr(92) + "[edx" + chr(92) + "*4"
+              + chr(92) + "+0x933286" + chr(92) + "]"),
+             (0x55f6cd, "3bc1", r"cmp" + chr(92) + "s+eax,ecx"),
+             (0x55f6d1, "bb01000000", r"mov" + chr(92) + "s+ebx,0x1"),
+             (0x55f6d6, "899d5cffffff",
+              r"mov" + chr(92) + "s+DWORD PTR " + chr(92) + "[ebp-0xa4" + chr(92) + "],ebx")]
+    chain_rows, chain_ok = [], True
+    for a4, wb, wr in chain:
+        gb, gm = load_text_window(text, a4)
+        good = (gb == wb) and gm is not None and re.match(wr, gm) is not None
+        chain_rows.append("  %08x: %s\t%-44s %s" % (a4, gb, gm, "OK" if good else "MISMATCH"))
+        chain_ok = chain_ok and good
+    ok = (not branch_hits) and br_ok and (writer_addrs == [0x55f6d6]) and chain_ok
+    results.append(("G4 control-flow (s240): msg block 0x563d4e-0x563d7d entered ONLY by "
+                    "the flag!=0 fallthrough (no external branch target); dispatch branches "
+                    "0x563d48->0x563dfa distant-leg / 0x563d57->0x563d82 founder-leg; "
+                    "[ebp-0xa4] single writer 0x55f6d6 with its owner/0x920434 chain", ok,
+                    "\n".join(["  external branch targets into msg block: %s"
+                                % (branch_hits or "none"),
+                                "  body branches PARSED: %s\n  body branches EXPECTED: %s" % (
+                                    {("0x%06x" % k): (("0x%06x" % body_branches[k])
+                                                      if k in body_branches else "MISSING")
+                                     for k in sorted(want_br)},
+                                    {("0x%06x" % k): ("0x%06x" % v)
+                                     for k, v in sorted(want_br.items())}),
+                                "  [ebp-0xa4] writers in body: %s" % ["0x%x" % a for a in writer_addrs]]
+                               + chain_rows)))
     return ok
 
 

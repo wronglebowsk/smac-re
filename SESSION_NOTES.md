@@ -1,26 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-216-217.md` (2 sessions). Read it only when a question reaches back before session ## Session 218.
-
-## Session 218 (2026-11-10, ANALYSE static, M277 PASS 6/6) - the two read sites of 0x94eaa8 own different rows; M274's spill landing is refuted by its own max
-- Picked the M276 NEW LEAD (static, zero box time): scaled 0x5584aa vs unscaled 0x558452.
-  `python3 scripts/m277_scaled_row_ownership.py` -> **SUMMARY M277: 6/6 gates PASS**
-  (`evidence/m277_scaled_row.txt`). Imports m276's evaluator; does NOT re-derive the fold.
-- ANSWERS: (G1) the two sites are fed by DIFFERENT frame slots - 0x55844b `edi=[ebp-0x18]`
-  (the fold) vs 0x5584a5 `edi=[ebp-0x10]` (the region counter). (G5 live replay 7/7:
-  2*edi stays in block 0 while s18 walks blocks 1..7 with cp.)
-  UNSCALED = block arg's row (arg = the faction function argument); SCALED = the image's
-  ONLY +0x94eaa8 referrer with no block term = the permanent **faction-0 (block 0) view**
-  of the same row array. (G6) the only two WRITERS image-wide (0x51df61 `inc`, 0x564ab1
-  `add -10`) both evaluate to eax = 8380*block + 2*slot, so the row is per-faction live data.
-- RETRACTION (M274 G2): claimed regions 94..127 read the sibling verdict array at 0x94eba8,
-  band [0..66] = offsets 256..322. The loop's body domain is 1..127 (G3: init 1, one in-loop
-  store 0x558b22, tail inc-then-cmp 0x80) so the last byte touched is +255 - **never the
-  sibling**. The spill is 68 B of rows 94..127 inside the row's OWN cell. Survives: G1
-  single bound, G4 verdict skip, G5 verdict stores (a different array, 0x94eda8).
-- OPEN: block 0 vs "no faction" - is block 0 the player/neutral slot or faction 0's real row?
-  (static: read the two writers' block index source). Also 0x94e8a8 is written by 0x51df3d
-  with the SAME fold shape - the row family is wider than 0x94eaa8.
+Older sessions: `docs/sessions/sessions-218-218.md` (1 sessions). Read it only when a question reaches back before session ## Session 219.
 
 ## Session 219 (2026-11-10, ANALYSE static, M278 PASS 7/7) - block 0 = the player-index-0 real row + the unowned fallback; neither neutral nor player slot
 - s218 pick (a) (static, ZERO box time): the two 0x94eaa8 writers' block-index source.
@@ -705,3 +685,37 @@ Older sessions: `docs/sessions/sessions-216-217.md` (2 sessions). Read it only w
   0x94e5a8/0x94eca8 per-site gate tables + FUN_004e3c00 no-go (static
   census + fit vs recorded sites); MSG-leg (human pod at best tile) never
   observed live. Next BUILD fire = B14.
+
+## Session 240 (2026-11-10, CORRECTION, M293) - the three verified Greptile P1s: "distant target -> msg 0x2408" (M290/B13) RETRACTED - msg leg = OWN-TILE + second gate [ebp-0xa4]; M284-M287 live SITE censuses INSTRUMENT-INVALID; sim/selftest run_save IndexError fixed. These were claimed facts, so they are retracted plainly, per AGENTS.md.
+- D1 (bytes; gate scripts/m290_hub_decision.py:160): 0x563d48 jne 0x563dfa
+  - the distant leg reaches NEITHER founder NOR msg; only esi==0 falls to
+  [ebp-0xa4] (single writer 0x55f6d6 = ds:0x920434!=0 AND owner==ds:0x91b5b4):
+  flag 0 -> founder 0x563d82-86 (FUN_004cca50, pod args); flag!=0 -> msg
+  0x2408 block 0x563d59-0x563d7d + jmp 0x56c925. Own-tile gating +
+  founder-args = pod record STAND. The old G4 sliced its OWN table at
+  0x563d4e..0x563d81 (founder je-target 0x563d82 abuts the end) - could
+  not fail; G4 now parses real branch targets. ACCEPTANCE: python3
+  scripts/m290_hub_decision.py programs/saves/m54b_clean.SAV
+  evidence/m289_gdb_raw.log evidence/trace_m289_20261110_071759.jsonl ->
+  PASS M290: 9/9 (evidence/m290_hub_decision.txt:33; 3 runs, 1-2 were my
+  instrument, floors never cut).
+- D1b read-only /proc probe (pid 4087359, TracerPid 0): ds:0x920434=0 ->
+  msg leg UNREACHABLE in solo: s239 "MSG never observed" was structural,
+  not inertia. OPEN: name ds:0x920434 (scenario/MP gate?).
+- D2 sim/hubfound.py:94: distant -> ("distant",) (was ("msg",0x2408));
+  own+flag -> msg; own -> found. ACCEPTANCE: python3 -m sim.selftest --b13
+  programs/saves/m54b_clean.SAV -> PASS B13: 12/12 (evidence/
+  b13_hubfound.txt:4).
+- D3 guard `if $reg >= 0x1000000` (m284/m285/m286/m287 dispatch arms)
+  excluded the five family vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/
+  0x6776c8 (image base 0x400000) - a real family dispatch printed NOTHING:
+  every "0 of 12 fired" in M284-M287 = instrument-silence, RETRACTED (CTRL
+  rows prove the windows ran). Guards now >= 0x400000; static halves stand;
+  re-armed census = open lead. No live re-run this fire (box kept clean).
+- D4 sim/selftest.py:177: walk returns (rows, notes), prints nothing -
+  buf...[-1] IndexError every run. ACCEPTANCE: python3 -m sim.selftest
+  --sav programs/saves/m54b_clean.SAV -> PASS B2: 7/7
+  (evidence/s240_b2_run.txt:2).
+- Docs: NAMED M290/B13/M292 fixed in place + INVALID banners M284-M288 +
+  ## M293; path:line cites per AGENTS.md:50. Next: gate tables
+  0x94e5a8/0x94eca8 + name ds:0x920434. BUILD = B14.

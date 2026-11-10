@@ -170,10 +170,14 @@ def run_save(target, results):
                     calc == TRACED_80))
 
     try:
-        buf = io.StringIO()
-        with contextlib.redirect_stdout(buf):
-            decode_save.walk(ref["data"])
-        ref_note = "decode_save --sections ran: %s" % buf.getvalue().strip().splitlines()[-1]
+        # s240 (M293) fix: decode_save.walk() RETURNS (rows, notes) and prints
+        # nothing - the old buf.getvalue()...splitlines()[-1] raised IndexError
+        # on every run (walk never writes to the redirected stdout; the except
+        # only caught SystemExit).  Use the returned rows/notes.
+        ref_rows, ref_notes = decode_save.walk(ref["data"])
+        ref_note = "decode_save.walk ran: %d sections, %d problems%s" % (
+            len(ref_rows), len(ref_notes),
+            "; last: %s" % ref_notes[-1] if ref_notes else "")
     except SystemExit as exc:
         ref_note = ("decode_save --sections RAISES on this file: %s" % exc)
     print("  info reference-walk    %s" % ref_note)
@@ -1336,8 +1340,9 @@ def run_b13(sav_path, log_path, trace_path, results):
         return fail("B13: %d/%d gates failed: %s" % (len(bad), len(results),
                                                      "; ".join(bad)))
     print("PASS B13: %d/%d gates - M290's founding dispatch is executable: "
-          "the own-tile gate sends every distant target to msg 0x2408 and "
-          "founds none, 7/7 founder args are pod-record tuples, the strict "
+          "the distant leg founds none AND sends no msg 0x2408 (s240: the "
+          "msg leg is the own-tile press WITH the second gate [ebp-0xa4]), "
+          "7/7 founder args are pod-record tuples, the strict "
           "ledger 18+7-2=23 peak 24 fits the jsonl curve, B10's placeholder "
           "and the ungated leg both fail the same fit, and the grown ledger "
           "writes and re-parses (no box time, no /proc, no gdb)"

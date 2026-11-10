@@ -176,7 +176,13 @@ def arm_gdb(path, pid, log):
     n = 3
     for pc, reg in SITES:
         body += ["b *0x%x" % pc, "commands %d" % n, "silent"]
-        body += ["if $%s >= 0x1000000" % reg,
+        # s240 (M293): the guard must admit IMAGE-range vtables (image base
+        # 0x400000, PE section table): the five dialog-family vtables
+        # 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8 ALL sit below
+        # 0x1000000, so the old guard printed NOTHING for a real family
+        # dispatch - every live "0 of 12 sites fired" in M284-M287 is
+        # instrument-invalid, not evidence of absence.
+        body += ["if $%s >= 0x400000" % reg,
                  "printf \"SITE @PC@ @SLOT@\\n\", $pc, *(int*)($%s+0x4c)" % reg,
                  "end"]
         body += ["continue", "end"]
