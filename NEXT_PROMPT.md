@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s236, M290 founder-decision fit 9/9 merged #242:
+# NEXT_PROMPT.md - footing (s237: B13 12/12; M290 fit #242, M289 #241:
 # family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
-# +0x12c/+0x60) both avoid the slot; 6 paths/creates measured, zero dispatch. B13 DONE (s237) 12/12: M290 dispatch now EXECUTABLE (sim/hubfound.py); Next: ANALYSE pod-walk)
+# +0x12c/+0x60) both avoid the slot; zero dispatch anywhere. B13 DONE (s237) 12/12: M290 dispatch now EXECUTABLE (sim/hubfound.py); Next: ANALYSE pod-walk)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -29,11 +29,11 @@ binding cap is doc headroom, not capability.**
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
 ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9, **B6 DONE (s212)** = R1 DONE (6/6), **B7 DONE (s216)** = R2's move leg (6/6) - commands per-id in `NAMED.md` §B4-§B7.
-**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B13 DONE (s237)** 12/12: `python3 -m sim.selftest --b13 <sav>` (`evidence/b13_hubfound.txt`, `NAMED.md` §B13) - M290's founder dispatch EXECUTABLE: own-tile gate (distant target = msg 0x2408, NEVER founds), founder args = the pod record, strict pre-cnt ledger replay 18+7-2=23 peak 24, both rivals fail the fit. **B1-B13 DONE.** A BUILD fire writes the next rung (B14, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md` first, then builds it; an ANALYSE fire picks from below.
+**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B13 DONE (s237)** 12/12: `python3 -m sim.selftest --b13 <sav>` (`evidence/b13_hubfound.txt`, `NAMED.md` §B13) - M290's founder dispatch EXECUTABLE: own-tile gate (distant target = msg 0x2408, NEVER founds), founder args = the pod record; strict ledger replay, rivals fail the fit. **B1-B13 DONE.** A BUILD fire writes the next rung (B14, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md` first, then builds it; an ANALYSE fire picks from below.
 
 ## THE LEDGER
 
-Merged M54A-M290 + B0-B13 (through #242 + B13's PR); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M290 + B0-B13 (through #242); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
