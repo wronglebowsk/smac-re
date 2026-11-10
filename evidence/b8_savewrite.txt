@@ -1,0 +1,12 @@
+wrote /tmp/tmp2ht9808e.SAV (242539 B, sha256 74d0f44ab9b9290b, identical=True)
+  ok   written map-header dims re-read 64x64 == model 64x64 (planet.MP parses 80x80)
+  ok   identity-roundtrip byte-exact on 242539 B
+  ok   decode_save sections+anchors identical
+  ok   mutation year 2150->2155 re-parses
+  ok   mutation diff confined to modeled bytes (1 diffs)
+  ok   move x->x+2 lands in exactly record 0's bytes [222783]==[222783]
+  ok   RIVAL pure-reemitter fails year mutation (carries 2150)
+  ok   RIVAL UNIT_LEN+4 fails identity (len 242807 vs 242539)
+  ok   two-runs-identical-sha256 74d0f44ab9b9290b (242539 B)
+  ok   command python3 -m sim.savewriter exit-0 + byte-exact rc=0
+PASS B8: 10/10 gates - save WRITE leg on m54b_clean.SAV: identity round-trip 242539 B, year 2150 -> 2155 written through the B3 engine, rivals fail the same fit, sha256 74d0f44ab9b9290b (no box time, no /proc, no gdb)

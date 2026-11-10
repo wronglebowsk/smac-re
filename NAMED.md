@@ -1216,3 +1216,19 @@ Acceptance: `python3 scripts/m278_block0_semantics.py` -> `SUMMARY M278: 7/7 gat
 | METHOD LAW -> skill `references/instrument-laws.md`: EVALUATE a multiplier chain, never slice it | this file | V (method) |
 
 Acceptance: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`; zero box time.
+
+## B8 (s220, PASS 10/10) - `sim/savewriter.py`: the save-WRITE leg - a .SAV recomposed from the state model
+- Identity round-trip: an unmutated `build_image(m54b_clean.SAV)` == the original 242,539 B
+  byte-for-byte; `scripts/decode_save.py --sections --anchors` prints the identical table for both.
+- MODELED bytes (composed from the model, never lifted): version word, n_units/n_bases,
+  year@84 (0x985B00), cur_player@800 (0x985DCC), turn_flags@60 bit 1 (0x985AE8; remaining bits
+  pass-through), own player@808 (DAT_0091b5b4), map dims @79,372, each unit record's x/y.
+  PASS-THROUGH (declared): block A/B, small table, 16,000 section, middles 3,584+26,624+4,096,
+  grid, coarse region map, tail incl. the trailer, un-modeled record bytes.
+- Mutation fit: 5 engine presses -> written year 2150->2155 re-parses; diff confined to modeled
+  spans (1 B); move x->x+2 lands exactly in record 0's x-bytes (222,783). Rivals fail the SAME
+  fit: the pure re-emitter (lift_all) passes identity but carries the OLD year; UNIT_LEN+4 fails
+  identity (242,807 B). Gate-shape lesson: cross-file map-dims equality is a false premise
+  (m54b_clean is a 64x64 save; planet.MP is 80x80) - the identity gate arbitrates dims.
+- Command: `python3 -m sim.selftest --b8 programs/saves/m54b_clean.SAV programs/maps/planet.MP
+  --turns 5` -> `PASS B8: 10/10 gates` (`evidence/b8_savewrite.txt`).
