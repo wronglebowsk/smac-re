@@ -1,0 +1,13 @@
+  ok   G1 constants: msg 0x2408, CAP 0x200, strides 52/304; the pod record composes via B12's create_record and reads back owner@14 x@0 y@2
+  ok   G2 record: 7 foundings (ret ['0x4ccbe2']) + 2 destroys; DESTROY rows strictly between F3/F4 and after F7
+  ok   G3 dispatch: the 7 pod records pressed at their OWN tiles return ('found',fac,x,y) == the recorded tuples (7/7)
+  ok   G4 own-tile gate: the 7 distant presses yield 0 foundings and 7/7 msg 0x2408 sends
+  ok   G5 RIVAL ungated dispatch founds AT THE TARGET on the distant leg: 7 invented tuples, 0/7 occur in the record (the record has ZERO distant-target foundings)
+  ok   G6 legality: all 7 recorded sites are LAND (cat 3-6, 44-B record view); cats [3, 3, 3, 3, 3, 3, 3]
+  ok   G7 occupancy: 0 of the 7 sites are already m54b_clean base tiles (save carries 18 bases)
+  ok   G8 ledger strict: all 9 rows' pre-cnt agree with the model replayed from the save's 18 records; endpoint 23 peak 24 (destroy slot ASSUMED last)
+  ok   G9 curve: jsonl ends 23 == model 23, peaks 24, all 30 samples inside the global envelope [16,25]
+  ok   G10 RIVAL B10 placeholder (row-major first-unoccupied + fewest-bases faction) reproduces 0/7 recorded tuples - the M290 refutation restated as a gate
+  ok   G11 written image: grown ledger +5 -> 23 records (survivors [(6, 20, 48), (6, 63, 51), (5, 27, 19), (7, 23, 33), (1, 27, 29)]; destroyed [(6, 12, 48), (6, 1, 43)] ABSENT); prefix diff [72]; originals and tail byte-identical; re-parses n_bases 23
+  ok   G12 determinism + CLI: python3 -m sim.hubfound exits 0 twice, report sha256 6dfbd810a1b6013f
+PASS B13: 12/12 gates - M290's founding dispatch is executable: the own-tile gate sends every distant target to msg 0x2408 and founds none, 7/7 founder args are pod-record tuples, the strict ledger 18+7-2=23 peak 24 fits the jsonl curve, B10's placeholder and the ungated leg both fail the same fit, and the grown ledger writes and re-parses (no box time, no /proc, no gdb)

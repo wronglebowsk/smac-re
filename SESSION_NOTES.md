@@ -1,30 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-212-212.md` (1 sessions). Read it only when a question reaches back before session ## Session 213.
-
-## Session 213 (2026-11-05, ANALYSE box pick, M273 PASS 7/7) - the row stride 188 is a fixed 94-slot capacity; no spill on the live map
-- Pick: "what the row stride 188 means" (M256 G5's OPEN row). `scripts/m273_rowstride_watch.py`
-  (silent bps at BOTH 0x94eaa8 read sites + YEAR control 0x51f554 + live region-count reads).
-- ACCEPTANCE: `python3 scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog` ->
-  **ACCEPTANCE M273 PASS 7/7** (`evidence/m273_acceptance.txt`; /proc facts in
-  `evidence/m273w3_proc.json`, written by the live run - the replay never hardcodes them).
-- ANSWER: live count DAT_0092ada4 = 91 (pre AND post stable) == save-derived 91 for 64x64;
-  188 = 2*94 is a FIXED capacity (8380 mod 188 = 108 - NOT derived from the faction block stride);
-  91 < 94 so the M256 spill is UNREACHABLE on the live map. SCALED identity live 7/7
-  (2*edi == region slot). UNSCALED row = per-faction cursor: row mod 8380 = 2 for all, deltas =
-  whole 8380 strides. OPEN (new picks): 80x80/128x128 counts 128/338 EXCEED 94 (spill question
-  migrates there); the fold's per-faction term advances by HALF a block stride (44.5); region-loop
-  depth per phase (observed s10=1 only).
-- Instrument law (cost one dead box, w1): a bp at 0x5584b1 = the SECOND BYTE of the 8-B load at
-  0x5584aa - INT3 mid-instruction corrupted the encoding and Wine Dbgrc crash-boxed terran.exe
-  (TracerPid reads 0 afterwards; only the on-screen dialog is the witness). Always break at the
-  disassembled NEXT-instruction address (0x5584b2), never load+1. Recorded in skill
-  references/instrument-laws.md.
-- Box: w1 window crash-boxed the game; relaunch was ~35 s (fast path holds); w3 driver m55_boundary
-  PASS one boundary (2152->2153) with 14 site events + control. Box left UP, TracerPid 0.
-- My own gates were wrong twice before shipping (G2 asserted 188==2*count; G5 paired events by
-  (round,s10) which the sites do not share) - the FAILs were instrument bugs, fixed by rewriting
-  the assertion to what the evidence can bear, never by moving the floor.
+Older sessions: `docs/sessions/sessions-213-213.md` (1 sessions). Read it only when a question reaches back before session ## Session 214.
 
 ## Session 214 (2026-11-05, ANALYSE static, M274 PASS 6/6) - the 128-bound loop is NEVER clamped; big-map spills read the sibling verdict array silently
 - Picked the M273 follow-ups (static, no box): `scripts/m274_rowcap_census.py` ->
@@ -721,3 +697,27 @@ Older sessions: `docs/sessions/sessions-212-212.md` (1 sessions). Read it only w
   law at 0x563c00-0x563d40, (dist*10000)/(value+1) shape) vs the recorded
   founding TURNS - the decision is now reduced to POD MOVEMENT.
   Next: ANALYSE - the pod-walk target rule.
+
+## Session 237 (2026-11-10, BUILD, B13 12/12) - M290's founder dispatch is EXECUTABLE: sim/hubfound.py - own-tile-gated (distant target = msg 0x2408, never founds), founder args = the POD's record fields, capacity-only guard; 7/7 recorded founding tuples replay exact, strict ledger 18+7-2=23 peak 24 vs the m289 curve, both rivals fail the same fit
+- track_mode BUILD (3 ANALYSE fires since B12) -> the rung went into
+  BUILD_SPINE.md FIRST (pod-driven founding-dispatch leg, replacing B10's
+  REFUTED (x,y) placeholder), then sim/hubfound.py + run_b13 in sim.selftest.
+- ACCEPTANCE: python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV
+  -> PASS B13: 12/12 (evidence/b13_hubfound.txt; 3rd invocation; runs 1-2
+  were instrument bugs - python3.14 argparse refuses a 3-tuple metavar with
+  nargs='+', and a 6-tuple event unpack - floors never weakened).
+- MEASURED: every one of the 9 recorded rows' PRE-op cnt agrees with the
+  ledger replay through B10's leg (destroy slot ASSUMED last, declared);
+  survivors (6,20,48)(6,63,51)(5,27,19)(7,23,33)(1,27,29), destroyed
+  (6,12,48) and (6,1,43) ABSENT from the final 23; written image: only the
+  bases-count dword (offset 72) differs in the prefix, originals + tail
+  byte-identical, re-parses n_bases 23; cat44 (44-B record view) puts all 7
+  sites on land (cat 3) and none on a base tile; G12 CLI two runs sha256
+  6dfbd810a1b6013f. RIVALS: ungated distant dispatch invents 7 tuples of
+  which 0 occur in the record; the B10 placeholder reproduces 0/7.
+- REGRESSION: B10 18/18 and B12 12/12 still green (basefound._tile marked
+  REFUTED, comment-only edit).
+- OPEN (unchanged): why the 5a0aa0 chain bailed 3x; M247; M70 x2. The pod
+  WALK stays the only unmodeled link between a pod and a founding.
+  Next: ANALYSE - the pod-walk target rule (the scan's score law at
+  0x563c00-0x563d40 vs the recorded founding TURNS).

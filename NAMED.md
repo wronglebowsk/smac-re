@@ -1506,3 +1506,22 @@ change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
   the independent re-walk python3 scripts/m289_accept.py -> PASS M289: 6/6.
 - BOX: m289_founder_vector.py restores yama to the PRE-toggle value (the box's
   working default is ptrace_scope=0; 1 blocks n100's own /proc/pid/mem reads).
+
+## B13 (s237, BUILD 12/12) - the pod-driven founding-dispatch leg: sim/hubfound.py turns the M290 law executable
+- `dispatch(pod_rec, target)`: OWN-TILE-GATED - target None or the pod's own
+  tile -> ("found", owner, x, y) read FROM THE POD RECORD (the live vector's
+  owner+14/y+10/x+8 loads are M290's byte facts, gated in
+  scripts/m290_hub_decision.py); distant target -> ("msg", 0x2408), NEVER
+  founds. Pods compose via B12's create_record, read back at the save-view
+  fields x@0 y@2 owner@14.
+- Parity = the M289 record: 7 FOUND (all ret 0x4ccbe2) + 2 DESTROY rows in
+  evidence/m289_gdb_raw.log; ALL 9 pre-op ledger cnts agree with the replay;
+  end 23 peak 24 == the trace_m289_20261110_071759.jsonl curve; legality in
+  the 44-B record view (all 7 land cat 3, none a base tile). RIVALS: ungated
+  distant dispatch invents 7 tuples, 0 in the record; B10 placeholder
+  reproduces 0/7. Written image: bases_override grows the ledger +5, prefix
+  diff is ONLY dword 72, tail byte-identical, re-parses n_bases 23. Destroy
+  slot ASSUMED last (rows carry cnt only). The pod WALK (score law
+  0x563c00-0x563d40) stays DECLARED - the next ANALYSE frontier.
+- Acceptance: `python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV`
+  -> PASS B13: 12/12 (`evidence/b13_hubfound.txt`).

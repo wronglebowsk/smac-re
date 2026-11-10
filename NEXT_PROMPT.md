@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s236, M290 founder-decision fit 9/9 merged #242:
+# NEXT_PROMPT.md - footing (s237: B13 12/12; M290 fit #242, M289 #241:
 # family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
-# +0x12c/+0x60) both avoid the slot; 6 paths/creates measured, zero dispatch. Next: BUILD B12)
+# +0x12c/+0x60) both avoid the slot; zero dispatch anywhere. Next: ANALYSE pod-walk)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -29,11 +29,11 @@ binding cap is doc headroom, not capability.**
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
 ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9, **B6 DONE (s212)** = R1 DONE (6/6), **B7 DONE (s216)** = R2's move leg (6/6) - commands per-id in `NAMED.md` §B4-§B7.
-**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B1-B12 DONE.** A BUILD fire writes the next rung (B13, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md` first, then builds it; an ANALYSE fire picks from below.
+**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B13 DONE (s237)** 12/12: `python3 -m sim.selftest --b13 <sav>` (`evidence/b13_hubfound.txt`, `NAMED.md` §B13) - M290's founder dispatch EXECUTABLE: own-tile gate (distant target = msg 0x2408, NEVER founds), founder args = the pod record; strict ledger replay, rivals fail the fit. **B1-B13 DONE.** A BUILD fire writes the next rung (B14, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md` first, then builds it; an ANALYSE fire picks from below.
 
 ## THE LEDGER
 
-Merged M54A-M290 + B0-B12 (through #242); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M290 + B0-B13 (through #242); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -57,12 +57,12 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): M227-M283, **B1-B11** (M241 FAIL 2/5, #180 open).  Enumerations:
+- ANSWERED (do not re-pick): M227-M283, **B1-B13** (M241 FAIL 2/5, #180 open).  Enumerations:
   `docs/pick-archive.md` §trim-s209; numbers `NAMED.md`; M267-M273 RESULT blocks in the archive.
   FUN_005f3f5b is NOT open - see M220.
 
-- Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
-  ANSWERED s227-M289, s234-B12, s236-M290 (M290 FIT DONE, 9/9: dispatch own-tile-gated 0x563d46 (distant target -> 0x2408 auto-build, NEVER founds); founder args = pod record owner@+14/y@+10/x@+8; legality = the scan alone; B10 tile rule REFUTED (ranks 542-1691/2146)).  NEW (s236 frontier): the POD-WALK target rule - the hub's scan score (0x563c00-0x563d40, (dist*10000)/(value+1) shape) and which pod/town the hub picks, fit vs the m289 founding TURNS; the found-tile choice is now reduced to pod MOVEMENT.  Trap (s236): the save 22-B column byte0 is NOT the live category - use the 44-B record view rec=(W/2)*y+(x>>1), byte0 cat 3-6=land.
+- Pick from (ANALYSE fires; the next BUILD fire writes rung **B14** into `BUILD_SPINE.md` FIRST, then builds it):
+  ANSWERED s227-M289, s234-B12, s236-M290, s237-B13 (M290 FIT DONE, 9/9: dispatch own-tile-gated 0x563d46 (distant target -> 0x2408 auto-build, NEVER founds); founder args = pod record owner@+14/y@+10/x@+8; legality = the scan alone; B10 tile rule REFUTED (ranks 542-1691/2146)).  NEW (s236 frontier): the POD-WALK target rule - the hub's scan score (0x563c00-0x563d40, (dist*10000)/(value+1) shape) and which pod/town the hub picks, fit vs the m289 founding TURNS; the found-tile choice is now reduced to pod MOVEMENT.  Trap (s236): the save 22-B column byte0 is NOT the live category - use the 44-B record view rec=(W/2)*y+(x>>1), byte0 cat 3-6=land.
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
   DIALOG +0x4c CLOSED (M284-M288): slot not on any click/key/create path; menu
   pane NOT family (0x67919c); full shape in NAMED M288. M282 G5 CLOSED (s235 hub,

@@ -1,8 +1,9 @@
-M290 (s236 ANALYSE 9/9, MERGED #242): hub founder-decision FITTED -
-dispatch is own-tile-gated (test esi,esi 0x563d46; distant target -> msg
-0x2408 auto-build, NEVER founds); founder args = unit-record owner@+14/
-y@+10/x@+8 (52u fold prologue 0x4cca57); capacity-only guard; 7/7 sites
-land(cat3-6,44-B rec view)+unoccupied; ledger 18+7-2=23 peak24; B10
-first-unoccupied rule REFUTED (ranks 542-1691 of 2146). Box: clean,
-pid 4087359 hud r0, TracerPid 0, untouched this session.
-Next: ANALYSE - pod-walk target rule (scan score 0x563c00-0x563d40).
+B13 (s237 BUILD, 12/12, PR pending): sim/hubfound.py makes M290's founder
+dispatch executable - own-tile-gated (distant target = msg 0x2408, never
+founds), founder args = pod-record fields, capacity-only guard; 7/7
+recorded tuples, strict ledger 18+7-2=23 peak 24 vs the m289 jsonl curve;
+B10's (x,y) placeholder now REFUTED in code too. Acceptance:
+python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV
+(evidence/b13_hubfound.txt). Box: clean pid 4087359, TracerPid 0,
+untouched. Next: ANALYSE - pod-walk target rule (scan score
+0x563c00-0x563d40 vs recorded founding TURNS).

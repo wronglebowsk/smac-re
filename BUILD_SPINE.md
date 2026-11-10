@@ -251,3 +251,45 @@ byte-identical, all originals byte-identical), the image re-parses with
 n_units 68 reading the new record's modeled fields; (5) two runs -> identical
 sha256 and `python3 -m sim.production --sav <sav> --trace <tr> --out <f>`
 exits 0 and writes the report. No box time, no /proc, no gdb.
+
+**B13 - the pod-driven founding-dispatch leg (R2's "AI founds a base" slice, next after
+B12's completion CREATE; replaces B10's REFUTED (x,y) placeholder).**
+`sim/hubfound.py`: the M290 founder-decision law executable: the hub's dispatch is
+OWN-TILE-GATED (a distant target takes the msg 0x2408 "Auto-sending BUILD BASE
+message" leg and can NEVER found), the founder's args are the POD's unit-record
+fields (live vector loads owner +14, y +10, x +8; the sim reads its own save-view
+record fields - there is NO channel from a scanned candidate tile to the founder),
+and the founder's guard is capacity-only (B10's Ledger leg). Parity ground truth is
+the M289 golden record - the first trace with REAL founding events:
+`evidence/m289_gdb_raw.log` (7 FOUND ret=0x4ccbe2 fac/x/y/cnt rows + 2 DESTROY cnt
+rows; cnt is the ledger count BEFORE the op) and the per-turn curve
+`evidence/trace_m289_20261110_071759.jsonl` (m54b_clean, 30 turns, 18 to 23). Site
+legality is judged in the 44-B RECORD view (M290 trap: the save's 22-B column byte0
+is NOT the live category): rec=(W/2)*y+(x>>1), off=grid_off+44*rec, cat=(byte>>5)%8,
+land=3..6. The pod WALK (which pod, which target - the scan's score law at
+0x563c00-0x563d40) is DECLARED, not modeled: the leg takes the pod+target press as
+input; the walk is the next ANALYSE frontier. The destroy slot is ASSUMED last (the
+log rows carry only cnt).
+`python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV` (defaults: the two
+m289 evidence files) must print PASS B13 with: (1) constants - msg 0x2408, CAP
+0x200, strides 52/304, and the pod record composes via B12's create_record and
+reads back through the save-view fields; (2) record - exactly 7 foundings (all
+ret=0x4ccbe2) + 2 destroys, the DESTROY rows strictly between F3/F4 and after F7;
+(3) dispatch leg - each recorded founding, pressed as its pod record at its own
+tile, returns ("found", fac, x, y) == the recorded tuple (7/7); (4) own-tile gate -
+the same 7 pods pressed at a DISTANT target yield ZERO foundings and 7 msg 0x2408;
+(5) the RIVAL ungated dispatch, founding at the TARGET on the distant leg, yields 7
+tuples of which ZERO occur in the record (it fails the same fit); (6)+(7) legality -
+all 7 recorded sites are land (cat 3-6, record view) AND none is already a base tile
+of m54b_clean; (8) strict ledger - replaying the 9 log rows through the B10 leg from
+the save's 18 records, every row's pre-cnt agrees with the model, endpoint 23, peak
+24; (9) curve - the jsonl curve ends 23 == the model endpoint, peaks 24, and every
+sample sits in the global envelope [18-2, 18+7]; (10) the RIVAL B10 placeholder
+(row-major first-unoccupied + fewest-bases faction) reproduces ZERO of the 7
+recorded tuples (the refutation restated as a gate); (11) written image - savewriter
+composes the grown ledger: the only prefix diff is the bases-count dword, the
+original 18 records are byte-identical, the 5 added records equal the surviving
+foundings' record_bytes (the 2 destroyed ones ABSENT), the tail is byte-identical,
+and the image re-parses with n_bases 23; (12) two runs -> identical sha256 and
+`python3 -m sim.hubfound --sav <sav> --out <f>` exits 0 and writes the report.
+No box time, no /proc, no gdb.
