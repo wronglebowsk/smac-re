@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s244 close: M294 = the B15 gate law LIVE-VERIFIED - every dispatch predicted
-# from printed rows (2129 visits / 260 accepts / 0 disagreements, evidence/m294_gate_rows.txt PASS); scan-
-# loop PRE-CHECKS + FUN_0051dcb0 caller/al SETS NAMED (## M294); tail-$esi law -> skill instrument-laws. B16.)
+# NEXT_PROMPT.md - footing (s245 close: B16 = the scan-loop HEAD PRE-CHECK CHAIN NAMED, PINNED and EXECUTABLE
+# (sim/precheck.py, `python3 -m sim.selftest --b16 <sav>` PASS 7/7, evidence/b16_precheck_chain.txt); the m294
+# rows' x=/y= are TRANSPOSED (reader law -> skill instrument-laws); only the no-go 0x4e3c00 stays open. B17.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
 §CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
 
@@ -25,22 +25,23 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B15 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B15: `python3 -m sim.selftest --b15 <sav>` +
-`evidence/b15_gate_tables.txt:1`). Next = **B16**.
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B16 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B16: `python3 -m sim.selftest --b16 <sav>` +
+`evidence/b16_precheck_chain.txt:1`). Next = **B17** (a build fire authors the rung in the branch - it is not
+yet in `BUILD_SPINE.md`; B14/B16 did the same).
 
 ## THE LEDGER
 
-Merged M54A-M294 + B0-B15 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
+Merged M54A-M294 + B0-B16 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
 1. **accept_ready.py** = readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
    base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm** (screen fixes in TRAPS).
-2. Writer/flag chain — silent bps or hw watchpoints + a prediction from live memory + a read-back:
-   the m94/m97/m100/m102/m103 + m92/m95/m98/m117 family (VERBATIM: `docs/pick-archive.md` §s244-trim)
-   — each prints pc+new+round+cp, names the writer by containment (ghidra_out/index.csv); `--predict`
-   = model table, no touch; flags via `--help` first.
+2. Writer/flag chain - silent bps or hw watchpoints + a live-memory prediction + a read-back: the
+   m94/m97/m100/m102/m103 + m92/m95/m98/m117 family (full text + the print/containment detail:
+   `docs/pick-archive.md` §s244-trim; each names the writer by containment in ghidra_out/index.csv,
+   `--predict` = model table with no touch; flags via `--help` first).
 3. Static-first kit (zero box time): `field_census.py` (a global's shape from its addressing form + index math),
    `name_global.py` (every reader/writer + containment), `m118_flag_never_set.py` (gate satisfiability: test sites, OR
    immediates, register bit ops, save-carry), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]` (objdump window;
@@ -51,23 +52,27 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): M227-M293 + B1-B15 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
+- ANSWERED (do not re-pick): M227-M294 + B1-B16 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS. FUN_005f3f5b NOT open (M220). DIALOG
   +0x4c CLOSED (M284-M288; live half INVALID s240): NAMED ## M284-M288. NEVER bp mid-instruction (s213 crash).
-- **THE PICK:** NAME THE SCAN-LOOP PRE-CHECK CHAIN (M294 lead): the 7 loop-head gates (0x5638a9-0x563cbf)
-  of FUN_0055f650, STATIC-FIRST, one per fire: (1) no-go `call 0x4e3c00(x,y,owner)>=0` (0x563963) - what does it test?
-  (2) [ebp-0x58] terrain-mask origin; (3) elevation band 0x563928/3e vs M249. OPEN kept: 0x582cc0 + the
-  value-indexed 0x51dfe2 addr; CHAIN-PICKS trio. M293 guards law + M294 tail-$esi law BIND every reuse.
+- **THE PICK (s245): the no-go `call 0x4e3c00(owner,X,Y)` (0x563963) - the LAST un-named leg of B16's chain.**
+  STATIC-FIRST: `scripts/fn.py 0x4e3c00` + `field_census.py`/`name_global.py` over its body, its globals and its
+  early returns; what makes it return >= 0 is the finding. The measurement that arbitrates it: **8482** (pod,slot)
+  tests pass all 6 modelled checks yet printed NO decision row (`BASE["conf"]` in sim/precheck.py) - a rule is
+  right when it predicts exactly that set (and leaves the 2128 accepted-pass + 0 bounds/elev/occ violations alone).
+  READER LAW FIRST: those rows' `x=`/`y=` are TRANSPOSED (B16) - use `sim.precheck.load_visits`/`recover_pod`, which
+  already apply it. If a live probe is wanted, re-derive scripts/m294_gate_row_census.py's guards (M293 law).
+  OPEN kept: 0x582cc0 side-effects + the value-indexed 0x51dfe2 cell addr (## M294); CHAIN-PICKS trio. M293 guards,
+  M294 tail-$esi and B16 transposition laws BIND every reuse.
 
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 UP (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
+- **BOX**: s244 state UP (s245 touched nothing) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
-  `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd — wrap harness runs in
-  `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'`,
-  keep the harness uid 1000 (sudo breaks the prefix).** Restore yama to the PRE value, never hardcode.
-  Recipe: wine-operations.md.
+   `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the
+   PRE value after every run, never hardcoded; the harness stays uid 1000 (sudo breaks the prefix) -
+   exact commands in skill `wine-operations.md`.**
 
 ## TRAPS — rules (FULL s241 text verbatim: `docs/pick-archive.md` §s242-traps; detail §trim-s205/§s198; laws: skill
 `instrument-laws.md` + `wine-pitfalls.md`)
@@ -109,18 +114,11 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
     FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
 15. A list cursor read BEFORE the seek is the PREVIOUS cursor (pump seeks at 0x497717 — print at 0x49771c).
     `milestone.py start` on a dirty tree: stash, start, pop (skill Git workflow).
-16-23. objdump prints UPPERCASE (`DWORD PTR`); whitelist gdb startup/exit chatter (`DEBUGINFOD_URLS=""`,
-    `^[Inferior `/debuginfod); ARM BEFORE ANY SCREEN (CDROM quiesces 4 min, advances only on driver input);
-    `gdb -batch` censuses need the SIGUSR1/SIGUSR2/SIGPIPE `handle ... nostop noprint pass` + ~400-`continue`
-    tails; a bp on a game-wide reader costs one ptrace stop per read; byte-field BIT OPS vs dword scans; a "stride
-    conflict" is ONE multiply read in two pieces; a global with ZERO writers is LOAD-TIME data; a VALUE SAMPLER is
-    NOT a STORE CENSUS (same-value store leaves no trace); a census PARSER is not a log.
-24. EVALUATE multiplier chains, never SLICE them (s215: a midpoint expression published 130 where the chain says 8380
-    and queued a phantom box pick). Symbolic linear-form eval over the window; fit vs the RECORDED live log; show the
-    rival coefficients FAIL the same fit (M276 G3/G6/G7).
-25. SCRIPT REUSE + REGISTRY (s219): slice a sibling's defs on `"\ndef main("` (a bare slice cuts mid-STRING and the
-    SyntaxError cites the OTHER file); exec'd names sit NESTED (`_ns["_ns"]["dst_regs"]`); anchor registry gates on the
-    FULL `## Mxxx` header (the bare token occurs as a cross-ref too); `bool()` regex clauses feeding a sum().
+16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245, s245, to hold the 12 k cap: objdump
+   prints UPPERCASE; gdb startup/exit chatter whitelist; ARM BEFORE ANY SCREEN; the SIGUSR1/
+   SIGPIPE `handle` + ~400-`continue` tails; a bp on a game-wide reader; byte-field BIT OPS vs
+   dword scans; a stride conflict is ONE multiply read twice; a zero-writer global is LOAD-TIME
+   data; a VALUE SAMPLER is NOT a STORE CENSUS; a census PARSER is not a log.)
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 
 Terse past ~35 calls: acceptance numbers verbatim, no new prose, no "double check" reads; closing is PART of the

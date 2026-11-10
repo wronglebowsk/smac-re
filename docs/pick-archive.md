@@ -773,3 +773,19 @@ puts a Match in res; sum() dies - `bool()` regex clauses.
    prints pc+new+round+cp, names the writer by containment (ghidra_out/index.csv); `--predict` = model table, no
    touch; flags via `--help` first.
 ```
+
+
+## trim-s245 (moved VERBATIM out of NEXT_PROMPT.md §TRAPS at s245 close)
+
+16-23. objdump prints UPPERCASE (`DWORD PTR`); whitelist gdb startup/exit chatter (`DEBUGINFOD_URLS=""`,
+    `^[Inferior `/debuginfod); ARM BEFORE ANY SCREEN (CDROM quiesces 4 min, advances only on driver input);
+    `gdb -batch` censuses need the SIGUSR1/SIGUSR2/SIGPIPE `handle ... nostop noprint pass` + ~400-`continue`
+    tails; a bp on a game-wide reader costs one ptrace stop per read; byte-field BIT OPS vs dword scans; a "stride
+    conflict" is ONE multiply read in two pieces; a global with ZERO writers is LOAD-TIME data; a VALUE SAMPLER is
+    NOT a STORE CENSUS (same-value store leaves no trace); a census PARSER is not a log.
+24. EVALUATE multiplier chains, never SLICE them (s215: a midpoint expression published 130 where the chain says 8380
+    and queued a phantom box pick). Symbolic linear-form eval over the window; fit vs the RECORDED live log; show the
+    rival coefficients FAIL the same fit (M276 G3/G6/G7).
+25. SCRIPT REUSE + REGISTRY (s219): slice a sibling's defs on `"\ndef main("` (a bare slice cuts mid-STRING and the
+    SyntaxError cites the OTHER file); exec'd names sit NESTED (`_ns["_ns"]["dst_regs"]`); anchor registry gates on the
+    FULL `## Mxxx` header (the bare token occurs as a cross-ref too); `bool()` regex clauses feeding a sum().

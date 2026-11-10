@@ -334,3 +334,28 @@ scan wraps X (0x469010) but BOUNDS-CHECKS Y (0x469060) - Y never wraps;
 (the fits passed without them, as in M291): the 0x94e5a8/0x94eca8 per-site
 gate tables, the 0x4e3c00 no-go, the rec+8 bit-0x1000 zero-leg and the lazy
 FUN_005aff90 value fallback. No box time, no /proc, no gdb, no game-binary load.
+
+**B16 - the pod-scan loop HEAD PRE-CHECK CHAIN made executable (R2's "which ring entries are even
+candidates" slice; written by s245 from B14's DECLARED list + M294's named gates - the rung was not
+yet in this file, so the build fire authored it, as B14 did).** `sim/precheck.py`: the 7 tests the
+loop applies per slot BEFORE the B15 price gate (byte pins in `PINS`, arbitrated against
+`evidence/b16_precheck_window.txt` written by `scripts/b16_pin_window.py` - objdump -M intel from the
+function entry, never from an arbitrary address): bounds (`call 0x469060` range-tests BOTH legs, X
+pre-wrapped by 0x469010 so only Y bites), class ((byte0&0xe0)<0x60 == [ebp-0x58]), byte8&0x20 needs
+cat<2, elevation band (byte5&0xc0)>0x40 needs cat<3, region (byte3 == [ebp-0x34] = the POD tile's
+byte3), occ (byte9&0x20), and the UNMODELED no-go `call 0x4e3c00(owner,X,Y)` (M294's (x,y,owner)
+order corrected). THEOREM, from 0x563812-0x563817: the scan is entered only when the unit type's
+required class ([ebp-0x40]==1) equals the POD tile's own water flag, so required class ==
+classflag(pod tile). Parity target = the per-visit SET of slots that printed a decision row
+(GDEEP or GACC) in `evidence/m294_gate_rows_raw.txt`, read through the B16 TRANSPOSITION LAW (`x=`
+is the Y leg, `y=` the X leg).
+`python3 -m sim.selftest --b16 programs/saves/m54b_clean.SAV` must print PASS B16 with: G1 all 31
+byte pins resolve; G2 pod recovery consistent on 1026/1026 decision-row visits and 201/201 against
+the DISP unit-record x/y (rivals: untransposed reading 638 and 0); G3 zero recorded decision slots
+violating bounds/elev/occ; G4 every modelled test excludes >=1 recorded skip slot (fail&skip 110 /
+5036 / 9311 / 3304 / 5880 / 389) with the never-sole-excluders (bounds, class) named; G5 one class
+flag and one region byte per visit (0 mixed of 1026); G6 the pinned confusion grid 2128 / 193 /
+8482 / 14847 plus the per-check and solo tables reproduced; G7 two runs byte-identical. DECLARED
+UNMODELED: the no-go (the 8484-pass-without-row population is its measurement - 8482 with the pinned
+baseline) and the save-vs-window per-tile drift (class fail&rec 106 / region 192, all-or-nothing per
+visit). No box time, no /proc, no gdb.
