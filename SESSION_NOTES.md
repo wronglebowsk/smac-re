@@ -1,14 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-204-204.md` (1 sessions). Read it only when a question reaches back before session ## Session 205.
-
-## Session 205 (2026-11-02, M262-M264 ANALYSE, static) — the view-table entries 1..7 ARE allocated (7 × 0x22480 at startup, through a cursor store); the LOAD path never re-derives the per-faction band; FUN_005be090 is operator-new and ds:0x9965b8 is a linear record cursor
-
-`python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11 gates PASS`, rc=0, 3.66 s, one green invocation -> `evidence/m262_m264_census.txt` (24 lines). Same instrument as M259-M261 (whole-image corpus 790,695 insns / 10,268 indexed functions + image-derived vtable map + index.csv containment, from `scripts/m235_m237_records.py`). Invocation 1 = 10/11: M262 G1 asserted 38 indexed mentions / 11 functions, copied from a TRUNCATED probe print; the census measured 39/12, so I regenerated `objdump -d -M intel --section=.text programs/terran.exe` (40.9 MB, scratch, deleted) and grepped it: 39 `*4+0x7cdecc` mentions, 0 indexed stores, exactly one `mov DWORD PTR ds:0x7cdeXX` store inside the band (0x5803e1) — only then moved the expected number. No threshold/floor/check weakened.
-- **M262 RETRACTS M260's "zeroes entries 1..7" and "the ~140 KB views are not allocated"**: FUN_00580260's loop is the writer — cursor `esi` 0x7cded0 → `cmp esi,0x7cdeec / jl`, step `add esi,4` = 7 iterations, body `push 0x22480 ; call 0x64bc20` (140,416 B each) → `push 1 ; mov ecx,eax ; call 0x469650` (515-B SEH ctor, does NOT call the view ctor 0x518820) → **`mov [esi],eax`**, the pointer-arithmetic shape no address-grep can see; 0 lands there only when the alloc fails, which is how M260 read it as a zero-fill (G2). 0x22480 is named exactly once image-wide, 0x224b8 zero times, 0x224b8 − 0x22480 = 0x38 (heap header, INFERRED) (G3). Of 35 address-of-band sites only 4 escape, all handing out `&DAT_007cdecc`; no lea'd `&table[i≥1]` cursor is stored through or pushed (G4). Entry 1 (0x7cded0) is read 32× in ≥12 functions; the load-side FUN_00597ee0 walks entries 2..7 with the same cursor shape clearing `*(entry+0x1dd74)` and calling FUN_00479e90(entry) (G5).
-- **M263**: writer set re-derives to M259's closed 8 functions / 10 indexed stores + FUN_0051c750's walk store (G6); the depth-9 forward call-closure of the 6 load-path functions (FUN_00596850/FUN_00597a70 — the only two that call map_load_arrays 0x582260 — plus their callers FUN_00597ce0/FUN_00597ee0/FUN_00598250/FUN_00598340) is 276 functions and meets that set in ZERO, and no band writer sits in any vtable slot, so indirect dispatch cannot reach them either: **the LOAD trusts the file's band bytes** (G7). FUN_00582260 has no band-shaped store and no call into the writer set; FUN_00583c70 (copy-in writer, 0x583e1d) has ZERO references in the image — no call, no imm32, no slot — so that store can never execute (G8).
-- **M264**: FUN_005be090 = 24 insns / 72 B, arg1 → FUN_00649e00 (29-B shim over FUN_00649e70 passing the heap handle ds:0x99d5f8); on NULL it reports through the GLOBAL function pointer ds:0x671320 with "FATAL ERROR" + "Windows has run out of virtual memory; the game will exit…" then `push 4 ; call 0x649c80`; 0 vtable slots, 119 direct sites in 74 functions (G9) — the footing's "13 [reg+4] sites" were store-after-alloc sites, not dispatch: 14 sites in 13 functions store the new pointer at [obj+4] within 8 insns (G10). ds:0x9965b8 is a LINEAR RECORD CURSOR (6 mentions = 3 read-modify-write pairs): FUN_005dbb5f stamps a blank record (10 dword zero stores + `mov byte ptr [ecx+0x8],0x9`) and bumps +0x2c; FUN_005dbbe6 gates [rec+0x28]==0 && [rec+4]!=0, rewinds by [rec+0x10]*[rec+0x14] and frees [rec+4] via FUN_0064a7f0 (19 B, 221 callers); FUN_005dbdc0 is the FILLER — allocates [rec+0x10]*[rec+0x14] bytes via FUN_005be090, stores at [rec+4], advances the cursor by the same product (G11).
-- Pitfall (recorded in the skill): a store census keyed on instructions that NAME an address cannot see `mov [cursor],value`; and reading `mov [esi],eax` as "a zero store" without asking where eax came from is what produced M260's wrong verdict. No box time; terran.exe stayed down; M181 not armed.
+Older sessions: `docs/sessions/sessions-205-205.md` (1 sessions). Read it only when a question reaches back before session ## Session 206.
 
 ## Session 206 (2026-11-02, M265-M266 ANALYSE, static) — the 7 view-table blocks are objects of the class whose descriptor is 0x675964 (201 × 608-B elements + a 2,580-B virtual subobject, size proven to the byte); FUN_00583c70 is statically unreachable, one of an 8-function dead cluster
 
@@ -546,7 +538,6 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   founder vector the recorded AI used per founding - box question); the 64x64 odd-Rw accessor
   stride quirk. Next fire: ANALYSE (analyse_since_build=1).
 
-
 ## Session 228 (2026-11-10, ANALYSE, M284 MEASURED-NEGATIVE) - the dialog family's +0x4c dispatch-form census is EXHAUSTIVE (12 sites, 0 load-then-call pairs, 0 direct calls, 5 vtables/466 installs) and the base-display click path does NOT dispatch it (live, wndproc-verified)
 - track_mode printed ANALYSE -> picked the box lead: WHO dispatches the dialog family's +0x4c
   (FUN_005f6aa3).  Script: scripts/m284_dialog_dispatch.py.
@@ -573,7 +564,6 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   the 64x64 odd-Rw accessor stride quirk.  NEW narrowing: the family +0x4c dispatcher must
   live on the Script.txt dialog (chooser/menu) path - open a real chooser (non-empty queue,
   m54g_prep + one turn per standing facts) and re-run the same instrument.  Next fire: ANALYSE.
-
 
 ## Session 229 (2026-11-10, ANALYSE, M285 MEASURED-NEGATIVE w/ falsifier, static 5/5) - a REAL Script.txt production chooser does NOT dispatch the family +0x4c either (live dialog at the click reads vptr 0x672298, non-family)
 - track_mode ANALYSE -> the M284 re-scope pick: open a real chooser (m54g_prep + one turn
