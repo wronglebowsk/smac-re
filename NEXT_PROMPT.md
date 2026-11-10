@@ -1,7 +1,7 @@
-# NEXT_PROMPT.md - footing (s225, M282 DONE (ANALYSE static, 7/7): AI bases are founded by the SAME
-# FUN_004e47d0 the player uses - the only live base-array creator; callers 4cca50 (live 'b'/dispatcher
-# 0x4408/AI hub 5f650), 59ce10, 59ec90; count writers=12 (+1 only 4e484a+59b830 load loop); sim lacks
-# the 0x4408 leg -> n_bases const. Next: ANALYSE (analyse_since_build=2); BUILD=B10***)
+# NEXT_PROMPT.md - footing (s226, B10 DONE (BUILD, 18/18): the M282 founder/destroyer leg is BUILT in
+# sim/basefound.py - the trace's own 8 events recover the recorded n_bases 18->26 on all 41 snapshots
+# and a founded save image round-trips (only the count dword differs); t23 -1 = a real destruction.
+# Next: ANALYSE; BUILD=B11 when due***)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -30,12 +30,12 @@ binding cap is doc headroom, not capability.**
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
-ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9 (`--replay-m27`), **B6 DONE (s212)** = R1 DONE (`--b6 <sav> <map> --turns 10`, 6/6), **B7 DONE (s216)** = R2's move leg (`--b7 <sav> <map> --turns 5`, 6/6) - commands + evidence per-id in `NAMED.md` §B4-§B7.
-**B8 DONE (s220)** = R2's save-WRITE leg: `python3 -m sim.selftest --b8 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** = R3's golden-trace pairing: `python3 -m sim.selftest --b9 programs/saves/m54b_clean.SAV` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B1-B9 DONE.** A BUILD fire must first WRITE the next rung (B10 = R2's new-game leg, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
+ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9, **B6 DONE (s212)** = R1 DONE (6/6), **B7 DONE (s216)** = R2's move leg (6/6) - commands per-id in `NAMED.md` §B4-§B7.
+**B8 DONE (s220)** = R2's save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** = R3's golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B1-B10 DONE.** A BUILD fire must first WRITE the next rung (B11, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
 
 ## THE LEDGER
 
-Merged M54A-M271 + B0-B5 (through #199); M276 #214, M277 #217, M278 #219, M279 #223, M280 #224, B8 #221, B9 #227, M281 (s224, 7/7), M282 (s225, 7/7). UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M271 + B0-B5 (through #199); M276 #214, M277 #217, M278 #219, M279 #223, M280 #224, B8 #221, B9 #227, M281 (s224, 7/7), M282 (s225, 7/7), B10 (s226, 18/18). UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -60,20 +60,19 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open), s217-219: M276-M278, s220: B8, s221: M279, s222: M280, s223: B9, s224: M281, s225: M282.
+- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open), s217-19: M276-M278, s220: B8, s221: M279, s222: M280, s223: B9, s224: M281, s225: M282, s226: B10.
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
   per-id §s196-§s215 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
-- RESULT (s208/s210), (s211, M272), (s211/s213) and (s213/s215) blocks moved VERBATIM to
-  `docs/pick-archive.md` (sections trim-s211, trim-s213, trim-s216, trim-s217); per-id numbers
-  in `NAMED.md` (M267-M273). Nothing here summarises them - open the archive section you need.
+- RESULT blocks s208/210, s211 (M272), s211/213, s213/215 VERBATIM in `docs/pick-archive.md`
+  (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B10** = R2's new-game leg - write the rung into `BUILD_SPINE.md` FIRST, then build it):
   ANSWERED s225=M282 (AI bases use the SAME founder FUN_004e47d0 as the player; callers 4cca50 live
-  via 'b'+dispatcher 0x4408+AI hub 5f650, 59ce10/59ec90 placement; +1 writers only 4e484a + 59b830
-  load loop; sim lacks the 0x4408 leg -> n_bases const). NEW (M282 frontier): WHICH founder vector
+  via 'b' + dispatcher 0x4408 + AI hub 5f650, 59ce10/59ec90 placement; +1 writers only 4e484a +
+  59b830 load loop; built as sim/basefound.py in B10). NEW (M282 frontier): WHICH founder vector
   the recorded AI used per founding - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
-  STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f, overflow uVar12+1=0x3f/0x7f; 338 is the coarse-map CELL count, not an id; region table 3584 B @stride 0x1c = 128 slots; M251 stands).
-  BOX PICKS, box UP and loaded: WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
+  STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
+  BOX PICKS, box UP and loaded: WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEW (s226): decode_save --sections hardcodes the 80x80 map-trailer count offset and fails rc=1 on all 64x64 saves (B8's sec-equality tolerated it) - a small fix for the count offset. NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
 
 ## LIVE FACTS / KIT
 
