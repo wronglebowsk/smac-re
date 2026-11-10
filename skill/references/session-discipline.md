@@ -221,3 +221,118 @@ flag (an earlier note here claimed otherwise), and never `pkill -f`/`pgrep|kill`
 matches.
 
 **A BUILD fire may have to AUTHOR its rung.** `track_mode.py` counts `B<n>` prefixes in merged history, so it can print `next_rung=B<n>` when BUILD_SPINE.md's ladder stops short (B14, s241): the spine records a rung only when a fire ships it. Then the build fire writes the rung text FIRST (from the last build's DECLARED frontier + the laws the intervening ANALYSE fires settled - the ladder is authored from settled census law, never from new decompile claims), appends it to BUILD_SPINE.md, and only then implements it; state the authoring in SESSION_NOTES so the numbering convention stays auditable.
+
+
+## s242 retirement: session discipline + budget/closing caps
+> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
+> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
+
+## Session discipline (this project is context-heavy)
+
+- `milestone.py start <id>` resets the working tree to main: any footing carried from an unmerged
+  branch (docs + scripts via `git checkout <branch> -- ...`) AND `SESSION_CURSOR.md` must be
+  re-written AFTER it, or the cursor reverts and a later write is refused as stale. The kickoff ritual
+  reads `NEXT_PROMPT.md` BEFORE `start`, but `start` swaps that file for MAIN's copy — when the previous
+  session's update sits unmerged on its branch, the pre-start text is NOT what you patch: re-read the
+  sections after start and anchor edits on the post-start copy.
+- A list cursor read BEFORE the seek is the PREVIOUS cursor: the chooser pump seeks with
+  `call 0x4026b0` (0x497717) and only then reads `[[c+0xc]+4]`; a node print at the pump entry
+  (0x497704) shows the old node, so a value-vs-node gate fails on the instrument, not the game.
+- **The save's 22-B COLUMN view is NOT the live tile record** (s236, M290 run 1): `sim/save.py
+  tile()[0]` mixes in the record's byte 22 and misreads the category (5/7 legal land sites read
+  cat 0 = water). The live byte-0 category (`& 0xe0`: cat 0-2 water, 3-6 land) lives at
+  `grid_off + 44*((W/2)*y + (x>>1))` — the FIRST half of the 44-B record. Any tile-legality fit
+  must use the record view or it "proves" the game founded on sea.
+
+Paul wants SMAC RE broken into **small pieces**: complete ONE milestone, write it to a
+file, append one dated line to `~/reverse/smac/SESSION_NOTES.md`, then STOP — ending
+after a single milestone is a success, not a shortfall.
+
+**On a chat platform (Telegram), chain tools SILENTLY**: every between-tool-call sentence is delivered as
+its own message, so a 40-call fire reads as 40 chat messages. The only prose is the final report;
+checkpoint commits need no narration. Depth: `references/session-discipline.md`.
+
+Exception: when he says **"keep going until you finish <chapter>"**, that overrides the
+stop-after-one rule. Work through that chapter's milestones, writing the doc + evidence
+after each, and report once at the end — including what is still open. Do not relabel a
+partial result as done to make the chapter look finished (see `MILESTONES.md` F2).
+
+**A bare "keep going" after a report is approval for the recommendation, not a request for more analysis.**
+When your report ends by naming the next step (merge PR N, spend the next acceptance, write the plan into the
+pick), the go-ahead means DO that step and report in one screen — including `milestone.py merge <n>` on a green
+PR. Re-asking or re-summarising costs a turn and reads as stalling; the discipline that still binds is one
+milestone per merge and three acceptance invocations, not one question per step.
+
+### Budget, closing order and doc caps — depth: `references/session-discipline.md`
+
+- Budget by TOOL CALLS: brief+accept <= 6, milestone 6-30, **checkpoint commit by ~15**, stop measuring at
+  30-40, close at 40-50. Cap ACCEPTANCE INVOCATIONS at three; the third failure IS the finding. The commit
+  number is measured, not ceremonial: on this loop a fire costs ~5-7 k tokens per call, so a "commit at ~25"
+  rule lands at ~167 k context with NOTHING committed (two fires in a row did exactly that and needed an
+  operator steer); branch + commit the census SKELETON before probing and the same fire saves at ~108 k.
+- Close order, every time: gate GREEN -> notes entry (`patch`) -> **checkpoint commit** -> `NEXT_PROMPT.md`
+  rewrite -> submit/PR. Never leave the commit until after the handoff docs.
+- `NEXT_PROMPT.md` <= 15,300 BYTES AT CLOSE — the unattended kickoff's cap-triage trigger. `evidence.py budget`
+  prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
+  used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate
+  only FAILs at 16,000, so a fire that closes at 15,4xx hands the NEXT fire a docs-only split: s175 and s179 were
+  both such splits. `test_loop.py` appends bytes in CI, so keep >100 B of headroom under whatever number you quote.
+  `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
+- Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file` — one whole-doc call must fit the
+  model's OUTPUT cap, so an oversized one truncates mid-JSON, the sanitizer drops it (`Unrepairable tool_call
+  arguments`, or a `write_file`/`patch` refused as `missing required field 'path'` even though the path was sent),
+  and every retry spends a full turn — a second identical re-emission failing the same way means STOP retrying and
+  compose the file in an `execute_code` cell (`open(p,"w").write(src)`; stage big files as scratch chunks and `cat`
+  them together — and when appending to an existing file, write the NEW chunk to a scratch path and concatenate:
+  feeding `read_file` output back into `write_file` is refused, the guard recognises its line-number-prefixed
+  display format as not real file content); in hard-wrapped docs anchor by
+  regex `\s+` joins or by INDEX, and write in the SAME cell that measured the result.
+- Every always-loaded doc has its own cap and the tool prints them. When a cap binds a SECOND session, SPLIT:
+  move the settled era into a topical archive, leave the RULES plus a pointer, re-run `budget`. A batch's DOC
+  cost is ~350-700 chars of `NEXT_PROMPT.md` per new milestone block, so measure headroom BEFORE choosing the
+  batch size — a green three-milestone batch can end a session 30 B from the cap.
+- Two sessions can share this repo: commit notes/NAMED/scripts EARLY, keep untracked deliverables outside the
+  worktree, and name the owner from the process table before arming a measurement.
+- Scheduling the loop to run unattended: copy `templates/cron-milestone-loop.md` — a cron prompt validated end to end
+  (takes the pick from `NEXT_PROMPT.md`, triages doc caps first as its own PR, proves ownership before arming, caps
+  the batch, merges only on a real PASS). Cadence, the "verify the fire" rules, and the READ-ONLY AUDIT for
+  answering "how is the loop doing" (ledger query, failure signatures, the output-cap death, mid-fire model
+  capture) ride with it.
+
+
+
+
+## s242 retirement: evidence budget + delegated decodes
+> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
+> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
+
+
+### Evidence budget and delegated decodes (both bite every milestone)
+
+`python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB and **FAILs the gate at 30 MB**, and a
+few trace logs and screenshots can eat the whole margin. Before closing a milestone: drop only files
+>100 KB whose basename appears in no `.md`/`.txt`/`.py` of the repo, with `git rm` (never plain `rm` —
+being in history is what makes deletion safe), and record every kept/dropped file plus size in
+`evidence/<id>_prune_manifest.tsv`. Test unreferenced-ness in ONE shell loop —
+`find evidence -size +150k -printf '%s %p\n' | while read sz p; do git grep -qF "$(basename "$p")"
+-- '*.md' '*.py' || echo "$sz $p"; done` — one tool call per candidate eats dozens. The MB figure
+recorded in `NEXT_PROMPT.md` goes stale during the session that writes it; measure with `budget`
+at close, never from the footing. `evidence/m53j_text.txt.gz` (~5.7 MB, the disassembly cache the
+method runs on) is PRUNED from the worktree when the gate nears 30 MB; it is git-kept — recover with
+`git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
+
+Measured margin: 29.3 MB / 858 files against the 30 MB FAIL, and `prune --dry-run` offered NOTHING (it drops
+only uncited images older than 7 days). A 40-turn trace is ~55 KB but one screenshot is 400 KB, and
+`check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs (delete those immediately); run
+`budget` BEFORE adding frames. When prune offers no victims, free room by gzipping a large *text* file no
+markdown cites (`grep -rn <basename> --include=*.md .` first — a cited path must stay readable at its path).
+- **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a **1.4 GB** trace and turned the gate RED *after* the milestone work was already done. Sleep the loop (2 ms is the sampling cadence the footing asks for anyway), and downsample before the first commit of the trace: keep the first sample, every sample where a watched field CHANGES, one heartbeat per second, and the last — 1.29M samples collapse to 68 lines / ~10 KB with the boundary sequence intact. `prune` offers no victims here: it drops only uncited images, and a cited trace must survive at its recorded path. A giant blob also stays in the branch's HISTORY once committed, so a later delete does not un-poison a push (see `references/git-workflow.md`).
+
+Delegating a static decode works well (a child can map a 1450-line function in minutes), but a child's
+claims are testimony, not evidence. Re-read from the cached disassembly: (1) every store site it cites,
+with its immediate; (2) the address arithmetic that lets the value reach the field — a store guarded to
+an index past the array is dead code, so check the guard before believing a value exists; (3) the
+function boundary (`zgrep` the `ret`) before accepting any "written in the caller, not the callee"
+attribution, which is where decodes drift. Write the audit to its own short note
+(`evidence/<id>_verify.md`) and label instruction-stream facts VERIFIED and branch semantics INFERRED.
+

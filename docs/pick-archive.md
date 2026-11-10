@@ -696,3 +696,69 @@ in `NAMED.md` §B5).
 - RESULT (s215, M275, static): the UNSCALED read site's slot [ebp-0x18] has exactly ONE reaching def at 0x55844b - the fold 0x558038 - whose re-decoded arithmetic is **esi = 2·region + 130·arg** (arg = `[ebp+0x8]`; CORRECTS M256's 188×fac prose). But M273's live rows step by whole 8380 and **8380 mod 130 = 60 ≠ 0**: static and live are IRRECONCILABLE - the missing writer is an unmodeled alias/leg (G8: 14 block-band stores, none at the slot's faces). Queued box pick: hw-watchpoint the frame slot during the auto-manager. Census `scripts/m275_rowslot_defuse.py` 8/8 (`evidence/m275_defuse.txt`); `NAMED.md` §M275.
 
 
+
+## s242-traps — the s241 footing's FULL trap text (VERBATIM; NEXT_PROMPT.md now
+carries the compressed rules and cites this section)
+
+## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
+
+1. A `fired=` list is the MODEL's prediction, not events; a no-event is evidence only once the bp is CONFIRMED to exist
+   there. Gates PREDICT from live memory then confirm with counters; a counter at a site that is BOTH a branch target
+   and a loop-completion fallthrough is NOT a leg proof (0x5a7f9f); a gate may only read a field the harness SETS.
+2. Check the instrument before believing a no-event: `if *$ecx==X` is a DEREFERENCE and silently never fires; a bp at a
+   return-site `mov eax,[ebp-0xc]` prints the OLD eax (break at the NEXT insn, 0x5aa24a); `lea edi,[eax+1]` makes edi
+   the MODULUS (read the arg, not $edi); ZERO CALLS can be the GAME — scan /proc for the vptr first.
+3. Register semantics live in the ENCODING: `[reg*4+disp]` vs `[reg+disp]` differ by the register's scaling, so a
+   condition testing one against the other can never fire; a read-modify-write through a COPIED register evades
+   store-shape greps — a hw watchpoint on the FIELD answers "who writes it".
+4-5. gdb printf/script laws — VERBATIM text moved to `docs/pick-archive.md` at s191 : no inferior strings; expressions go in printf ARGUMENTS and specs must match them (a
+   mismatch ABORTS the sourced script and DETACHES at the first hit); a manual call frame needs the RETADDR at
+   esp+0 and the arg at esp+4; gdb ABANDONS an inferior `call` once any bp hits inside it; ONE `\n` prints a
+   newline, TWO prints a literal one and the stream reads as ZERO events; a bp at the insn AFTER `call X` fires
+   AFTER the callee's events — group backward, and unwatched factions legitimately yield empty groups.
+6. A >90 s gdb census NEVER runs in the foreground (waits cap at 420 s; killing it leaves Wine hung): background + wait,
+   or `--rounds <= 4`. Faction upkeep runs in its OWN segment ~1 cycle after turn-end, so a 1-boundary window can close
+   mid-cycle — use `--boundaries >= 2`.
+7. Dialogs swallow every click and turn-end key while the HUD bar reads THROUGH them: Return clears a dialog, a
+   BUILD/base PANE needs Escape (bare-map Escape raises the quit prompt — never OK); normalize first
+   (`m78_mark_clear.normalize_screen()`), click from OCR word bboxes; `m44_idle` asserts TracerPid==0 — never a
+   driver under a census gdb (use m55_boundary). Verbatim: `docs/pick-archive.md`, s191 block.
+8. A PASS on a non-discriminating shape is no PASS: compute candidate predictions from the baseline first; refuse the
+   shape if they all agree. RE-RUN on a harness race, never edit the floor.
+9. base+0xd0 (`credit`) is RECOMPUTED EVERY ROUND (FUN_004e93f0 0x4e9557/0x4e957f = [+0xc0]-[+0xf0]-[+0xe0]) — a poke
+   there is undone next turn; gate on round movement and use the per-boundary storage poke 200.
+10. A hw watchpoint only REPORTS A VALUE CHANGE (an unchanged store logs NOTHING) AND reports `pc = store + INSTRUCTION
+    LENGTH` (0x5aaf67+10 = 0x5aaf71, 0x5aaf79+6 = 0x5aaf7f, 0x59f0c7+10 = 0x59f0d1) — gate on those, never on the store
+    address. Count stores with silent bps AT the store; keep the watchpoint as the "any other writer" check; whitelist
+    `[New LWP]`, `[Switching to LWP n]`, `Thread N "terran.exe" received signal SIGINT`.
+11. A silent bp at the pc a hw watchpoint REPORTS is EATEN by the watchpoint — put the read-back ONE instruction later
+    and read memory, not the register. A poke is evidence only if the CONSUMER reads it.
+12. A census can leave gdb ATTACHED after it prints its verdict: check `TracerPid` in /proc/<game>/status and kill the
+    stale gdb BY PID before calling the box clean.
+13. THE TURN DRIVER RETURNS WHILE THE AI UPKEEP IS STILL PLAYING: rc=0 does NOT mean the round's segments are done —
+    detach gdb before cur_player returns to the human or the last recomputes go UNLOGGED; wait for cp == human faction.
+14. The queue tail holds STALE ids (the shift reaches only `0..pending-1`): never read a queue by "first empty slot" or a
+    stale tail as proof an id IS queued; id 0 is Colony Pod AND the empty marker, the sentinel is -39, a negative
+    belongs to the TYPE (196 -> -6, 195 -> -3). PRODFLAG (0x4efe60) fires for EVERY record the pass walks (128/322/323/
+    194 = FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
+15. A list cursor read BEFORE the seek is the PREVIOUS cursor (the pump seeks at 0x497717 — print at 0x49771c).
+    `milestone.py start <id>` refuses a dirty tree and resets to main: stash, start, pop, THEN rewrite the cursor.
+16-19. objdump prints UPPERCASE (`DWORD PTR`, not `ptr [`); gdb startup/exit chatter must be whitelisted
+    (`DEBUGINFOD_URLS=""`, the `^[Inferior `/debuginfod lines); ARM BEFORE ANY SCREEN (the CDROM screen
+    quiesces 4 min but only advances on driver input); a `gdb -batch` census needs the SIGUSR1/SIGUSR2/
+    SIGPIPE `handle ... nostop noprint pass` tail + a ~400-`continue` tail, and a bp on a game-wide reader
+    costs one ptrace stop per read. VERBATIM text: `docs/pick-archive.md` §trim-s205.
+20-22. byte-field BIT OPS vs dword scans; a "stride conflict" is ONE multiply read in two pieces; a global
+    with ZERO writers is LOAD-TIME data — verbatim: `docs/pick-archive.md` §s198.
+23. A VALUE SAMPLER IS NOT A STORE CENSUS (a same-value store leaves no trace) and a census PARSER is not a
+    log — VERBATIM laws: skill `references/instrument-laws.md` (M241/M242, s192-s193).
+24. EVALUATE a multiplier chain, never SLICE it: a hand-written expression at the midpoint of a
+    `mov/shl/add/lea/sub` chain published a coefficient 64x wrong (s215's 130 where the chain says
+    8380) and manufactured a static-vs-live contradiction that queued a box pick. Symbolic
+    linear-form evaluation over the window, then fit it to the RECORDED live log AND show the rival
+    coefficients FAIL the same fit (M276 G3/G6/G7).
+
+25. SCRIPT REUSE + REGISTRY (s219): slice a sibling's defs with `"\ndef main("` - m277's own exec
+line carries the token inside a STRING, so a bare slice cuts mid-string (SyntaxError cites the OTHER file's lines); exec'd names sit NESTED at `_ns["_ns"]["dst_regs"]`. `## M277` occurs
+TWICE in NAMED.md (a cross-ref) - registry gates anchor the FULL header. `x and re.search(...)`
+puts a Match in res; sum() dies - `bool()` regex clauses.

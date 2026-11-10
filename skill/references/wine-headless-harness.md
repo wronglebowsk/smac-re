@@ -89,12 +89,12 @@ keys at whatever is really there).
 
 **The HUD's own message pane can impersonate another screen** (M54a, 2026-10-24). The news strip
 below the TURN COMPLETE row prints sentences that carry base-screen vocabulary — `nutrients` at
-(355,438) on `evidence/m54a/live_hud.png` — so the old frame-wide `any(w in t for w in BASE_WORDS)`
+(355,438) on `evidence/fixtures/live_hud.png` — so the old frame-wide `any(w in t for w in BASE_WORDS)`
 test read that plain HUD frame as `base`: TURN COMPLETE was never clicked and, with
 `--no-escape > --timeout`, the clearing Escape was forbidden, giving two STUCK runs with zero year
 hits. The test is positional now (`base_word_positions` + `in_msgpane`, `MSGPANE = (0,425,800,600)`):
 base words count only outside that strip, or while the HUD button row is absent — a real base screen
-has no TURN COMPLETE row at all (`evidence/m45a_post.png`: base words at y 16–45 and (279,273),
+has no TURN COMPLETE row at all (`evidence/fixtures/m45a_post.png`: base words at y 16–45 and (279,273),
 `btn=None`). Pin both sides without a game: `python3 scripts/test_classify.py` (6 fixtures, exit
 code) and the `m54a/live_hud.png` / `m45a_post.png` / `m25_t7.png` rows of `scripts/check_classes.py`.
 

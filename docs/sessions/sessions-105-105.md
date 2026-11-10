@@ -29,12 +29,12 @@ file readable in one context window. Same evidence file paths apply.
 `python3 scripts/m65_screen.py --samples 8 --save /tmp/m65a` on ONE unchanged screen (terran.exe
 alive, year 2161 round 61 `cur_player 3`, nothing clicked, no key pressed) printed
 `CLASSES SEEN {"unknown": 5, "hud": 3} of 8 samples`. In the saved records
-(`evidence/m65/before_8looks_samples.json`, frames `evidence/m65/sample_00_unknown.png:1`,
+(`evidence/m65/before_8looks_samples.json`, frames `evidence/fixtures/sample_00_unknown.png:1`,
 `sample_02_unknown.png:1`, `sample_04_unknown.png:1`, `sample_07_unknown.png:1` and the control
 `sample_05_hud.png:1`): `TURN@416 COMPLETE@416` in samples 1, 5, 6 ONLY, while
 `Mission@567 Year@567 2161@567` (+ the score row `1-1-1@581`, `Energy:@582`) is in all EIGHT.
-The bar fragments too, differently: `evidence/m25_t7.png` OCRs the whole row as
-`sisson@573 tear@573 zie@573` with NO year number, and `evidence/m54a/live_hud.png` as
+The bar fragments too, differently: `evidence/fixtures/m25_t7.png` OCRs the whole row as
+`sisson@573 tear@573 zie@573` with NO year number, and `evidence/fixtures/live_hud.png` as
 `[esston@572 2388@572` — so the signal is written against the fragments, not the clean words.
 
 ### The pin — `python3 scripts/test_hud_bar.py` -> `PASS 26/26 hud-bar cases`, exit 0

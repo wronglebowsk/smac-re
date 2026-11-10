@@ -28,33 +28,30 @@ in-repo under `skill/` — after editing the skill, refresh it there and push. G
 `git add -f` them.
 Decoder + iso renderer: `~/reverse/smac/cvr_decode.py` (validates 113/113).
 
-**This file is capped at 70,000 BYTES by the repo gate (`wc -c`, not a char count) and sits around 55 KB
-after the session-discipline split — it is safe to load whole, but every append spends headroom, so run
-`python3 scripts/evidence.py budget` before and after one.** Depth lives in `references/`; open the ONE file you need:
-`code-atlas.md` (record/field layouts, VA→function), `wine-operations.md` (driving, dialogs, watchpoints),
-`solo-round-boundary.md` (solo heartbeat model, auto-end timing, boundary diff accounting),
-`production-rebuild.md` (production-vector machine rules), `production-queue.md` (the build queue: gate,
-completion chain, and **the INSERT is not a sort** — it writes `queue[pos]=item` with
-`pos = *(int *)(0x6a9480 + 0x3ff5c)`, the QUEUE WIDGET's cursor row, so the plan-byte (`+42`) order
-M67 measured is the WIDGET'S LIST order, not an enqueue comparison; **who writes that cursor** (row
-click `0x40aae5` -> `min(row, [[0x8f0d60]+0x4c]+1)`, enqueue tail `0x417e3b` -> rows+1, the `0x4d00`
-handler `0x4194b3` -> 0; clamp against the WIDGET's row count, not the base's pending); **the
-completion's POP pops ONE item when the new head validates and left-shifts only `0..pending-1`
-— K shifts are not shift-left-by-K, `queue[pending]` stays stale, and the completion writes the
-cursor field ZERO times**; **the visit's OWN affordability test is `0x4efa5e` with `edi` = its cost
-product, NOT `price_of` — head 193 wanted 27 where `price_of` said 18 — and its bail is `0x4efa63`,
-instrument `scripts/m72_gate_watch.py`**), slots
-1..`pending` (never the head slot), the engine refusing a duplicate id, a recordless type stored as a
-NEGATIVE (-3/-6), the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, table
-reading, the live write-enumeration acceptance in §9, §10 (why a site never fires: its gates, the block's common exit, who sets the gate global), §13 (vtable model + who dispatches a slot) and §14 (census-parser traps: frame spills, token-in-source vs token-in-dest, `Unwind@` stubs, duplicate instruction text, x87 index forms)),
-`ptrace-level-probes.md` (strace raw args = read buffer POINTERS, soft-dirty/pagemap, maps before/after,
-one tracer per task, the candidate table for "who wrote these bytes with no store in my window"),
-`wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with cites),
-`screen-read.md` (why ONE OCR pass is not a screen read: the HUD's two rows, their measured read
-rates, what N looks mean), `git-workflow.md`, `wine-runnability.md`, `data-formats.md`,
-`ghidra-batch-export.md`, `terraforming-order-path.md`. `session-discipline.md` (budget, closing order, handoff procedure,
-and how to SHADOW-RUN the cron loop by hand and judge whether a fire behaved as intended). `grep -n '^## \|^- \*\*' SKILL.md` then `sed -n 'A,Bp'` the section you
-need. When adding depth, append to the right reference; only new cross-cutting pitfalls belong here.
+**This file warns at 55,000 BYTES and FAILS the repo gate at 70,000 (`wc -c` of `skill/SKILL.md`).** The
+always-loaded set (AGENTS.md + NEXT_PROMPT.md + this file) carries a 60 kB ritual target
+(`docs/EVIDENCE.md`), so keep this file near 44 KB or less — run `python3 scripts/evidence.py budget`
+before and after an append. Depth lives in `references/`; open the ONE file you need:
+`code-atlas.md` (record/field layouts, VA→function recipe, the PE section table, the census-script family),
+`wine-operations.md` (driving, dialogs, watchpoints), `wine-pitfalls.md` (the FULL s242-retired Wine/gdb
+pitfall set, verbatim), `instrument-laws.md` (the laws), `solo-round-boundary.md` (solo heartbeat model,
+auto-end timing, boundary diff accounting), `production-rebuild.md` (production-vector machine rules),
+`production-queue.md` (the build queue: gate `0x4efa5e` and its own affordability test, the completion
+chain, **the INSERT is not a sort**, POP pops ONE item and left-shifts only `0..pending-1`, the visit's
+cost product vs `price_of`, the cursor-field writers, slots 1..`pending`, the negative recordless types,
+the produced-unit freeze, mock-mem predictor tests), `static-store-census.md` (store census shapes, the
+live write-enumeration acceptance §9, why-a-site-never-fires §10, the vtable model §13, census-parser
+traps §14), `ptrace-level-probes.md` (strace raw args, soft-dirty/pagemap, one tracer per task, the
+.SAV chain), `wine-headless-harness.md` (turn automation), `open-leads.md` (unanswered questions with
+cites), `screen-read.md` (why ONE OCR pass is not a screen read), `verify-outcome.md`,
+`gdb-command-list.md`, `ui-chooser-state.md`, `git-workflow.md`, `wine-runnability.md`,
+`data-formats.md` (map/save containers + the CVR sibling), `cvr-format.md` (the .cvr TLV/voxel format
+core, retired to depth s242), `netcode.md` (the "jackal" netcode map), `ui-assets.md` (Script.txt,
+alpha.txt, PCX/FLIC, glsmac), `ghidra-batch-export.md`, `terraforming-order-path.md`,
+`session-discipline.md` (budget, closing order, handoff, shadow-running the cron loop, and the full
+s242-retired discipline/evidence text). `grep -n '^## \|^### ' SKILL.md` and the references, then
+`sed -n 'A,Bp'` the section you need. When adding depth, append to the right reference; only new
+cross-cutting pitfalls belong here.
 **Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move. The same grep extends to the LIVE half: before re-instrumenting a site address, `grep -rn <hex-addr> scripts/ evidence/` — a prior census script often already encodes the derivation (and its evidence file already states the reading the new gate would otherwise guess wrong).
 The same rule kills NEGATIVE claims: before writing "no code uses constant X", grep the docs' size/offset lists for X AND its near neighbours — a documented 152-B leg is 156 minus a 4-byte field, so an exact-value grep for 156 supports a conclusion that is one subtraction wrong. Then confirm the candidate leg by reading its DESTINATION in `/proc` and comparing content, not by its size (`references/instrument-laws.md` §Proving a read leg).
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
@@ -68,336 +65,197 @@ python3 cvr_decode.py --list Apsid.cvr                    # voxel/frame listing
 python3 cvr_decode.py --render programs/Drop.cvr          # -> Drop.render.png in cwd
 ```
 
-## Git workflow — `references/git-workflow.md`
-Never commit to `main`. `milestone.py start <ID>` branches from **`main`**, so a milestone you must
-build on that was never merged (an acceptance FAIL left it on its branch) has NONE of its scripts in
-the tree — branch from it instead (`git checkout -B milestone/<ID> milestone/<prev>`) and say so in the
-session entry, rather than discovering the missing instrument halfway through the run.
-`milestone.py start <ID>` refuses a dirty worktree: stash the `SESSION_CURSOR.md` write, start, then pop
-it onto the new branch — never commit a cursor write to `main` just to get the tree clean. That commit is also what breaks a
-landing — a squash merge plus any local `main` commit makes `merge <n>` abort its ff-only pull AFTER
-GitHub has already merged (recovery in `references/git-workflow.md`) — and `main` cannot be pushed at all
-(the pre-push hook refuses), so a post-merge cursor/footing tweak rides its own branch + PR. When the milestone you are re-running already has a branch, `start <ID>` refuses and leaves you on `main`:
-check that branch out and `ls scripts/<id>*` before concluding the instrument is missing.
-**Verify the named milestone is not already merged before starting it** — a kickoff prompt (re-pasted or
-cron-supplied) can lag the repo. `git log --oneline | grep -i <ID>` plus `grep -n '^## <ID>' NAMED.md`
-answers in one call; if both hit, the prompt's pick is stale, so run the milestone
-`SESSION_CURSOR.md`/`NEXT_PROMPT.md` names and state the swap in the report. Re-running merged work
-spends the tool-call budget and re-derives a settled answer.
-Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
-(must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
-**Create the PR with a JSON FILE, not an inline `curl -d`:** a body containing an apostrophe (`tail's`,
-`decompiler's`) closes the shell's single-quoted payload and the whole command fails to parse, so NOTHING in that
-block runs — including the `git push` before it — and the next attempt returns 422 `head invalid` rather than a body
-error. Build it with `json.dump({...}, open('/tmp/pr.json','w'))` and post with `curl --data @/tmp/pr.json`.
-**Merging several PRs in one session is queue-bound, not build-bound:** `gh pr checks` can sit `pending` for 2-4
-minutes with the job merely QUEUED, so poll with a ~200 s sleep instead of re-submitting; `milestone.py merge`
-correctly refuses while a check is pending, and a force-merge is never the answer.
-**A GREEN gate is not permission to merge.** The gate audits docs, evidence and the harness; it says
-nothing about whether the milestone's acceptance passed. If the acceptance printed FAIL, keep the
-checkpoint commits on the branch, submit nothing (or leave the PR unmerged), and report the FAIL with
-its numbers — a branch carrying a documented FAIL is the honest end state, and weakening a threshold
-to turn it green is the one thing that is never allowed.
-**A squash-merge TITLE outlives the finding inside it.** `milestone.py submit` titles the PR with the session
-headline, and a milestone often opens as "BLOCKED / not accepted" and only resolves later in the same branch —
-the merged title then contradicts the merged commits, and the next session reads the title first. When that
-happens, land a small docs PR that states the correction (cursor, ledger row, one line saying the title
-predates the result) instead of leaving two versions of the truth on `main`. The same rule covers a QUALIFICATION:
-when a later session narrows an earlier finding, patch that finding's own registry block (`NAMED.md`) in place — a
-retraction that lives only in `SESSION_NOTES.md` leaves the block future sessions grep still asserting the older,
-stronger claim, and the registry is what they read first.
-Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
-`NEXT_PROMPT.md` (<=15,300 BYTES at close — `evidence.py budget` prints `os.path.getsize`, exactly `wc -c`; a doc
-full of em-dashes and arrows is a few dozen CHARACTERS smaller than that number). `scratch/` is gitignored: scratch probes and one-off tools are
-NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
-tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, sync it with `~/reverse/smac/skill/` **by content, not mtime**: a `git checkout` resets the repo copy's mtimes and a merged PR can leave it holding a rule the live skill never got — the newer-mtime side is often the content-stale one, and a wholesale copy then silently reverts tracked findings while the gate's `skill sync` check still PASSes. Per file: `diff -rq` both dirs, `git checkout HEAD -- <path>` the repo side, re-apply only your new bullets, copy repo -> live
-Detail: `references/git-workflow.md` — the gate compares only `SKILL.md`, so an edited reference drifts
-silently; sync in the same session, before the closing commit.
+## Git workflow — full text: `references/git-workflow.md`
+Never commit to `main`. `milestone.py start <ID>` branches from **`main`** and resets the tree: a milestone
+you must build on that was never merged has NONE of its scripts in the tree — branch from it instead
+(`git checkout -B milestone/<ID> milestone/<prev>`) and say so in the session entry. `start` refuses a dirty
+worktree: stash the `SESSION_CURSOR.md` write, start, pop it onto the new branch — never commit a cursor write
+to `main` just to clean the tree. That commit also breaks a landing: a squash merge plus any local `main`
+commit makes `merge <n>` abort its ff-only pull AFTER GitHub merged (recovery in the reference); `main` cannot
+be pushed (pre-push hook), so post-merge tweaks ride their own branch + PR. When re-running a milestone whose
+branch exists, `start` refuses and leaves you on `main`: check the branch + `ls scripts/<id>*` before
+concluding the instrument is missing. **Verify the named milestone is not already merged before starting** —
+a kickoff prompt can lag the repo: `git log --oneline | grep -i <ID>` plus `grep -n '^## <ID>' NAMED.md`
+answers in one call; if both hit, run what `SESSION_CURSOR.md` names and state the swap.
+Cycle: `milestone.py start <ID>` → work → `gate.py --base main` GREEN → `submit --title …` → `gh pr checks` →
+`merge`. **Create the PR body with a JSON FILE, not inline `curl -d`** — an apostrophe closes the shell quote
+and the whole command (including the push) fails as 422 `head invalid`. **Merging several PRs in one session is
+queue-bound:** `gh pr checks` sits `pending` 2-4 min merely queued — poll with ~200 s sleeps;
+`milestone.py merge` refuses while pending; a force-merge is never the answer.
+**A GREEN gate is not permission to merge.** The gate audits docs/evidence/harness, not the acceptance. If the
+acceptance printed FAIL, keep the checkpoint commits on the branch, submit nothing (or leave the PR unmerged),
+and report the FAIL with numbers — weakening a threshold to go green is the one thing never allowed.
+**A squash-merge TITLE outlives the finding:** if the milestone opened "BLOCKED" and resolved later on the same
+branch, land a small docs PR stating the correction; when a later session narrows a finding, patch the
+finding's own `NAMED.md` block in place — a retraction only in `SESSION_NOTES.md` leaves the registry
+asserting the older, stronger claim.
+Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten `NEXT_PROMPT.md`
+(<= 12,000 BYTES at close — the budget warn; what `evidence.py budget` prints is `wc -c`). `scratch/` is
+gitignored: probes are not repo products; the tracked products are `scripts/`, `evidence/`, docs.
+**Skill sync is by CONTENT, not mtime:** a `git checkout` resets mtimes and a merged PR can leave one side
+holding a rule the other never got; the gate compares only `SKILL.md`, so an edited `references/` file drifts
+silently. Per file: `diff -rq skill/ ~/.hermes/skills/smac-cvr-format/`, reconcile by content, then
+`rsync -a skill/ ~/.hermes/skills/smac-cvr-format/` — in the same session, before the closing commit.
 
-## Session discipline (this project is context-heavy)
+## Session discipline (this project is context-heavy) — full text: `references/session-discipline.md`
 
-- `milestone.py start <id>` resets the working tree to main: any footing carried from an unmerged
-  branch (docs + scripts via `git checkout <branch> -- ...`) AND `SESSION_CURSOR.md` must be
-  re-written AFTER it, or the cursor reverts and a later write is refused as stale. The kickoff ritual
-  reads `NEXT_PROMPT.md` BEFORE `start`, but `start` swaps that file for MAIN's copy — when the previous
-  session's update sits unmerged on its branch, the pre-start text is NOT what you patch: re-read the
-  sections after start and anchor edits on the post-start copy.
-- A list cursor read BEFORE the seek is the PREVIOUS cursor: the chooser pump seeks with
-  `call 0x4026b0` (0x497717) and only then reads `[[c+0xc]+4]`; a node print at the pump entry
-  (0x497704) shows the old node, so a value-vs-node gate fails on the instrument, not the game.
-- **The save's 22-B COLUMN view is NOT the live tile record** (s236, M290 run 1): `sim/save.py
-  tile()[0]` mixes in the record's byte 22 and misreads the category (5/7 legal land sites read
-  cat 0 = water). The live byte-0 category (`& 0xe0`: cat 0-2 water, 3-6 land) lives at
-  `grid_off + 44*((W/2)*y + (x>>1))` — the FIRST half of the 44-B record. Any tile-legality fit
-  must use the record view or it "proves" the game founded on sea.
+- `milestone.py start <id>` resets to main: footing carried from an unmerged branch AND `SESSION_CURSOR.md`
+  must be re-written AFTER it, or the cursor reverts and a later write is refused as stale. `start` also swaps
+  `NEXT_PROMPT.md` for MAIN's copy — when the previous session's update sits unmerged, re-read the sections
+  AFTER start and anchor edits on that copy.
+- A list cursor read BEFORE the seek is the PREVIOUS cursor: the chooser pump seeks at `0x497717` and only then
+  reads `[[c+0xc]+4]`; print at `0x49771c`, not at the pump entry `0x497704`.
+- **The save's 22-B COLUMN view is NOT the live tile record** (s236, M290): `sim/save.py tile()[0]` mixes in
+  byte 22 and misreads the category. The live byte-0 category (`& 0xe0`: 0-2 water, 3-6 land) lives at
+  `grid_off + 44*((W/2)*y + (x>>1))` — the FIRST half of the 44-B record. Any tile-legality fit must use the
+  record view or it "proves" the game founded on sea.
 
-Paul wants SMAC RE broken into **small pieces**: complete ONE milestone, write it to a
-file, append one dated line to `~/reverse/smac/SESSION_NOTES.md`, then STOP — ending
-after a single milestone is a success, not a shortfall.
+Paul wants SMAC RE broken into **small pieces**: complete ONE milestone, write it to a file, append one dated
+line to `SESSION_NOTES.md`, then STOP — ending after a single milestone is a success, not a shortfall.
+Exception: a **"keep going until you finish <chapter>"** overrides the stop rule — work the chapter's
+milestones, doc + evidence each, report once, never relabel partial as done. A bare **"keep going"** after a
+report is approval for the recommendation (including `milestone.py merge <n>` on a green PR) — DO it, do not
+re-summarise.
+**On a chat platform (Telegram), chain tools SILENTLY**: every between-tool sentence arrives as its own message.
 
-**On a chat platform (Telegram), chain tools SILENTLY**: every between-tool-call sentence is delivered as
-its own message, so a 40-call fire reads as 40 chat messages. The only prose is the final report;
-checkpoint commits need no narration. Depth: `references/session-discipline.md`.
-
-Exception: when he says **"keep going until you finish <chapter>"**, that overrides the
-stop-after-one rule. Work through that chapter's milestones, writing the doc + evidence
-after each, and report once at the end — including what is still open. Do not relabel a
-partial result as done to make the chapter look finished (see `MILESTONES.md` F2).
-
-**A bare "keep going" after a report is approval for the recommendation, not a request for more analysis.**
-When your report ends by naming the next step (merge PR N, spend the next acceptance, write the plan into the
-pick), the go-ahead means DO that step and report in one screen — including `milestone.py merge <n>` on a green
-PR. Re-asking or re-summarising costs a turn and reads as stalling; the discipline that still binds is one
-milestone per merge and three acceptance invocations, not one question per step.
-
-### Budget, closing order and doc caps — depth: `references/session-discipline.md`
-
+### Budget and closing order
 - Budget by TOOL CALLS: brief+accept <= 6, milestone 6-30, **checkpoint commit by ~15**, stop measuring at
-  30-40, close at 40-50. Cap ACCEPTANCE INVOCATIONS at three; the third failure IS the finding. The commit
-  number is measured, not ceremonial: on this loop a fire costs ~5-7 k tokens per call, so a "commit at ~25"
-  rule lands at ~167 k context with NOTHING committed (two fires in a row did exactly that and needed an
-  operator steer); branch + commit the census SKELETON before probing and the same fire saves at ~108 k.
-- Close order, every time: gate GREEN -> notes entry (`patch`) -> **checkpoint commit** -> `NEXT_PROMPT.md`
-  rewrite -> submit/PR. Never leave the commit until after the handoff docs.
-- `NEXT_PROMPT.md` <= 15,300 BYTES AT CLOSE — the unattended kickoff's cap-triage trigger. `evidence.py budget`
-  prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
-  used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate
-  only FAILs at 16,000, so a fire that closes at 15,4xx hands the NEXT fire a docs-only split: s175 and s179 were
-  both such splits. `test_loop.py` appends bytes in CI, so keep >100 B of headroom under whatever number you quote.
-  `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
-- Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file` — one whole-doc call must fit the
-  model's OUTPUT cap, so an oversized one truncates mid-JSON, the sanitizer drops it (`Unrepairable tool_call
-  arguments`, or a `write_file`/`patch` refused as `missing required field 'path'` even though the path was sent),
-  and every retry spends a full turn — a second identical re-emission failing the same way means STOP retrying and
-  compose the file in an `execute_code` cell (`open(p,"w").write(src)`; stage big files as scratch chunks and `cat`
-  them together — and when appending to an existing file, write the NEW chunk to a scratch path and concatenate:
-  feeding `read_file` output back into `write_file` is refused, the guard recognises its line-number-prefixed
-  display format as not real file content); in hard-wrapped docs anchor by
-  regex `\s+` joins or by INDEX, and write in the SAME cell that measured the result.
-- Every always-loaded doc has its own cap and the tool prints them. When a cap binds a SECOND session, SPLIT:
-  move the settled era into a topical archive, leave the RULES plus a pointer, re-run `budget`. A batch's DOC
-  cost is ~350-700 chars of `NEXT_PROMPT.md` per new milestone block, so measure headroom BEFORE choosing the
-  batch size — a green three-milestone batch can end a session 30 B from the cap.
+  30-40, close at 40-50. A fire costs ~5-7 k tokens/call, so "commit at 25" lands at ~167 k with nothing
+  committed — branch + commit the SKELETON before probing (measured: 108 k vs 167 k). Cap ACCEPTANCE
+  INVOCATIONS at three; the third failure IS the finding.
+- Close order, every time: cursor -> gate GREEN -> notes entry (`patch`) -> **checkpoint commit** ->
+  `NEXT_PROMPT.md` -> submit/PR. Never leave the commit until after the handoff docs.
+- `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (the budget warn; the gate FAILs at 16,000, and closing past the
+  warn hands the NEXT fire a docs-only split). `test_loop.py` appends bytes in CI: keep >100 B of headroom
+  under whatever number you quote. `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
+- Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file` — one whole-doc call must fit
+  the model's OUTPUT cap, or it truncates mid-JSON and the sanitizer drops it (`missing required field
+  'path'`); every retry spends a turn. Two identical re-emissions failing = STOP and compose the file in an
+  `execute_code` cell (`open(p,"w").write(src)`; stage big files as scratch chunks and `cat` them together;
+  when appending, write the NEW chunk to a scratch path and concatenate — feeding `read_file` output back
+  into `write_file` is refused, the guard reads its line-number prefixes as not real content). Anchor in
+  hard-wrapped docs by regex `\s+` joins or by INDEX.
+- Every always-loaded doc has its own cap and `budget` prints them. **When a cap binds a SECOND session,
+  SPLIT**: move settled depth VERBATIM into a topical reference, leave the RULES plus a pointer, re-run
+  `budget`. A batch's DOC cost is ~350-700 bytes of `NEXT_PROMPT.md` per new milestone block — measure
+  headroom BEFORE choosing batch size.
 - Two sessions can share this repo: commit notes/NAMED/scripts EARLY, keep untracked deliverables outside the
   worktree, and name the owner from the process table before arming a measurement.
-- Scheduling the loop to run unattended: copy `templates/cron-milestone-loop.md` — a cron prompt validated end to end
-  (takes the pick from `NEXT_PROMPT.md`, triages doc caps first as its own PR, proves ownership before arming, caps
-  the batch, merges only on a real PASS). Cadence, the "verify the fire" rules, and the READ-ONLY AUDIT for
-  answering "how is the loop doing" (ledger query, failure signatures, the output-cap death, mid-fire model
-  capture) ride with it.
+- Unattended loop scheduling: `templates/cron-milestone-loop.md` (validated kickoff: takes the pick from
+  `NEXT_PROMPT.md`, triages doc caps first, proves ownership, caps the batch, merges only on a real PASS).
 
+### Verify the OUTCOME, not the mechanism — full text: `references/verify-outcome.md`
+- A gate that counts the harness's own work passes a run that LOST the game. Compute candidate predictions from
+  the baseline first; refuse a shape where your model and the null agree on every candidate; read the effect
+  back from memory/state.
+- **Every number the prose quotes must be COMPUTED by the gate that ships with it**, derived from the SAME
+  parser that produces the claim after any parser fix (a caps-blind grep counted 28 where the parser counted
+  33; a draft's "12 scratch tests" became 17). Put the number in the assertion FIRST (print the table,
+  `assert len(...) == N`), write the sentence from the printed table, never from draft prose.
+- **Never assert an exact sorted list or exact count over a whole-function window**: a duplicate of the same
+  idiom further down satisfies any set check and breaks equality; assert on the first N or between two known
+  addresses, and PRINT the table. **A "makes no calls / has no writer / never fires" claim needs the WHOLE
+  function body** — a `POS[a]:POS[b]` slice asserted "zero calls" for a function making ten.
+- One instrument is a LEAD, never a finding: pair it with one that can fail DIFFERENTLY (a byte sum vs a
+  poke-and-scan); assert the state the run leaves behind (`TracerPid`, counts, armed count), not the exit
+  code; pre-register the falsifier.
+- **Exit codes are claims — encode the four states and PRINT which applies**: 0 = measured (taken or not);
+  4 = the site was never reached (inconclusive, not a gate result); 5 = driver wedged / no orders
+  (NO MEASUREMENT — never file it as evidence the gate is inert); 8 = box left dirty (`TracerPid != 0`).
+  A wedge and a negative result are different facts; conflating them is the stale-gdb-success failure class.
 
-### Verify the OUTCOME, not the mechanism
-
-Depth: `references/verify-outcome.md` — a gate that counts the harness's own work passes a run that lost the
-game (a 40-turn `PASS` with zero bases); compute candidate predictions from the baseline before the run, refuse a
-shape where your model and the null agree on every candidate, and read the effect back from memory/state.
-**Every number the prose quotes must be COMPUTED by the gate that ships with it.** A finding that says "7 of
-9 sites pass size 0x41" needs the script to count that and FAIL otherwise: a gate measuring something
-adjacent to the sentence stays green while the doc drifts, and the correction then costs its own PR. Put the
-number into the assertion FIRST (print the table, `assert len(...) == N`), then write the sentence from the
-printed table — never from the draft prose.
-**And derive that number from the SAME parser that produces the claim, after any fix to that parser.** A hand
-census or a second tool yields a gate that FAILs on correct evidence: a caps-blind grep counted 28 stores where the
-parser counts 33, and a draft's "12 scratch tests" became 17 once the parser's byte-op shift was fixed — both times
-the parser was right and the number was the draft's. **Never assert an exact sorted list or exact count over a
-whole-function window**: a duplicate of the same idiom further down a 5 KB body satisfies any set check and breaks
-an equality check (a second `shl eax,0x4` did), so assert on the first N or on the window between two known
-addresses and PRINT the whole table so an excess is visible. **A "makes no calls / has no writer / never fires"
-claim needs the WHOLE function body** — a `POS[a]:POS[a]+N` slice is how "zero calls" was asserted for a function
-that makes ten, one of them the emitter carrying the finding.
-**Publishing rule (§Publishing rule): one instrument is a lead, never a finding** — pair it with one that can fail
-DIFFERENTLY (a byte sum vs a poke-and-scan, a log vs a live read-back), assert the state the run leaves behind
-(`TracerPid`, counts, armed count) rather than its exit code, and pre-register the falsifier.
-**An exit code is a claim, so make it mean what its reader will assume.** A harness that exits non-zero for a
-NEGATIVE result (`the site was reached and never taken`) makes its own finding read as a broken run and costs the
-next session a debugging pass on a green answer. Encode the four states explicitly and PRINT which applies:
-**0 = measured** (taken or not), **4 = the site was never reached** (inconclusive, not a gate result), **5 = the
-driver wedged / produced no orders (NO MEASUREMENT — never file it as evidence the gate is inert)**, **8 = the box
-was left dirty** (`TracerPid != 0`). A wedge and a negative result are different facts; conflating them is the same
-failure class as a stale-gdb "success".
-
-### Evidence budget and delegated decodes (both bite every milestone)
-
-`python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB and **FAILs the gate at 30 MB**, and a
-few trace logs and screenshots can eat the whole margin. Before closing a milestone: drop only files
->100 KB whose basename appears in no `.md`/`.txt`/`.py` of the repo, with `git rm` (never plain `rm` —
-being in history is what makes deletion safe), and record every kept/dropped file plus size in
-`evidence/<id>_prune_manifest.tsv`. Test unreferenced-ness in ONE shell loop —
-`find evidence -size +150k -printf '%s %p\n' | while read sz p; do git grep -qF "$(basename "$p")"
--- '*.md' '*.py' || echo "$sz $p"; done` — one tool call per candidate eats dozens. The MB figure
-recorded in `NEXT_PROMPT.md` goes stale during the session that writes it; measure with `budget`
-at close, never from the footing. `evidence/m53j_text.txt.gz` (~5.7 MB, the disassembly cache the
-method runs on) is PRUNED from the worktree when the gate nears 30 MB; it is git-kept — recover with
-`git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
-
-Measured margin: 29.3 MB / 858 files against the 30 MB FAIL, and `prune --dry-run` offered NOTHING (it drops
-only uncited images older than 7 days). A 40-turn trace is ~55 KB but one screenshot is 400 KB, and
-`check_classes.py` writes a `_3x.png` sibling next to every frame it OCRs (delete those immediately); run
-`budget` BEFORE adding frames. When prune offers no victims, free room by gzipping a large *text* file no
-markdown cites (`grep -rn <basename> --include=*.md .` first — a cited path must stay readable at its path).
-- **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a **1.4 GB** trace and turned the gate RED *after* the milestone work was already done. Sleep the loop (2 ms is the sampling cadence the footing asks for anyway), and downsample before the first commit of the trace: keep the first sample, every sample where a watched field CHANGES, one heartbeat per second, and the last — 1.29M samples collapse to 68 lines / ~10 KB with the boundary sequence intact. `prune` offers no victims here: it drops only uncited images, and a cited trace must survive at its recorded path. A giant blob also stays in the branch's HISTORY once committed, so a later delete does not un-poison a push (see `references/git-workflow.md`).
-
-Delegating a static decode works well (a child can map a 1450-line function in minutes), but a child's
-claims are testimony, not evidence. Re-read from the cached disassembly: (1) every store site it cites,
-with its immediate; (2) the address arithmetic that lets the value reach the field — a store guarded to
-an index past the array is dead code, so check the guard before believing a value exists; (3) the
-function boundary (`zgrep` the `ret`) before accepting any "written in the caller, not the callee"
-attribution, which is where decodes drift. Write the audit to its own short note
-(`evidence/<id>_verify.md`) and label instruction-stream facts VERIFIED and branch semantics INFERRED.
+### Evidence lifecycle — the rules live in `docs/EVIDENCE.md`
+`python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB, FAILs the gate at 30 MB. Text is never
+pruned; an IMAGE stays hot only while the HOT WINDOW cites it — the newest 8 `## Session` sections of
+`SESSION_NOTES.md` plus the live footing files (`NEXT_PROMPT.md`, `AGENTS.md`, `SESSION_CURSOR.md`) — or it is
+younger than `--keep-days`; lookup/history docs (NAMED.md, pick-archive, named archives, docs/sessions/,
+skill references) explain old findings but do NOT hold an image hot: its bytes stay in git and
+`evidence.py log` gives the commit. Test-fixture images (named by `scripts/test_*.py`/`sim/`) live in
+`evidence/fixtures/`, which `budget` does not count and `prune` never touches. `prune --apply` moves the rest
+to git-only, recorded path/sha256/bytes/commit in `.prune_log.jsonl`.
+- **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A
+  `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a
+  **1.4 GB** trace and turned the gate RED *after* the milestone work was already done. Sleep the loop (2 ms
+  is the sampling cadence the footing asks for anyway), and downsample before the first commit: keep the first
+  sample, every sample where a watched field CHANGES, one heartbeat per second, and the last — 1.29M samples
+  collapse to 68 lines / ~10 KB with the boundary sequence intact. A giant blob also stays in the branch's
+  HISTORY once committed, so a later delete does not un-poison a push (see `references/git-workflow.md`).
+- The full-disassembly cache `evidence/m53j_text.txt.gz` (~5.7 MB, what the zgrep method runs on) is PRUNED
+  from the worktree when the gate nears 30 MB; it is git-kept — recover with
+  `git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
+- **Delegated decodes: a child's claims are TESTIMONY, not evidence.** A child can map a 1450-line function in
+  minutes; re-read from the cached disassembly: (1) every store site it cites, with its immediate; (2) the
+  address arithmetic that lets the value REACH the field — a store guarded to an index past the array is dead
+  code, so check the guard before believing the value exists; (3) the function boundary (`zgrep` the `ret`)
+  before accepting any "written in the caller, not the callee" attribution, where decodes drift. Write the
+  audit to `evidence/<id>_verify.md`; label instruction-stream facts VERIFIED and branch semantics INFERRED.
 
 ## Code atlas — read `references/code-atlas.md` before opening Ghidra
-The address/field atlas (base-record offsets, terrain record formula, faction + unit records, the global
-map, pointer-type scale traps, VA→function recipe) lives in `references/code-atlas.md`. Open it when you
+The atlas (base-record offsets, terrain formula, faction + unit records, the global map, pointer-type scale
+traps, VA→function recipe, the census-script family list, the PE section table) lives there. Open it when you
 need a field offset — do not re-derive one from pseudocode: Ghidra types some DATs `short*`/`int*`, so a
-pseudocode offset can be HALF or 4x the real byte offset.
-Unit-record type field: the u16 at `+10` (`+4` = flags) — settled from the accessor;
-the full story + the two generalizing rules are in `references/code-atlas.md`.
-Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then `gunzip -c … | sed -n 'A,Bp'`), or the unpacked aligned cache `scratch/m574/text.txt` (grep by address; parse by TAB fields). **Never `objdump -d --start-address` at an arbitrary address**: a start that lands INSIDE an instruction silently misaligns the whole window — objdump re-synchronizes mid-encoding, invents `.byte` lines, and poisons any reachability/def-use walk built on it (s214 lost two debug passes; the witness is a `.byte` line where a `jmp` should be). Disassemble from the function ENTRY (containment via index.csv) or read the cache.
-`gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && strtonum($1)<=strtonum(A){n=$2;p=$1} END{print
-p,n}' ghidra_out/index.csv` (commas, no spaces; strtonum REQUIRED — bare `$1<=A` is a STRING compare, every row matches
-and you get the file's LAST function, not the owner; the same trap has a second face — `awk -v lo=0x55df20`
-is a STRING, awk parses hex ONLY inside program code, so pass boundaries as literals in the program); pseudocode `scripts/fn.py 0xADDR` (prints the index row as header).
-Parse objdump by TAB fields (bytes sit between address and mnemonic); require `^[0-9a-f]{6,8}:\t` before int(x,16) — details in `references/code-atlas.md`.
+pseudocode offset can be HALF or 4x the real byte offset. Unit-record type field: the u16 at `+10`
+(`+4` = flags) — the full story + the two generalizing rules are in the reference.
+Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
+`gunzip -c … | sed -n 'A,Bp'`), or the unpacked aligned cache `scratch/m574/text.txt` (grep by address; parse
+by TAB fields). **Never `objdump -d --start-address` at an arbitrary address**: a start landing INSIDE an
+instruction silently misaligns the whole window — objdump re-synchronizes mid-encoding, invents `.byte` lines,
+and poisons any reachability/def-use walk built on it (the witness is a `.byte` line where a `jmp` should be).
+Disassemble from the function ENTRY (containment via index.csv) or read the cache. Parse objdump by TAB fields;
+require `^[0-9a-f]{6,8}:\t` before int(x,16).
+Owner of a VA: `awk -v A=0x… -F, 'NR>1 && strtonum($1)<=strtonum(A){n=$2;p=$1} END{print p,n}'
+ghidra_out/index.csv` (commas, no spaces; strtonum REQUIRED — bare `$1<=A` is a STRING compare and you get the
+file's LAST function; `awk -v lo=0x55df20` is also a STRING — awk parses hex only inside program code, pass
+boundaries as literals in the program); pseudocode `scripts/fn.py 0xADDR`.
 Two static instruments answer "what IS this field" with no box time: `scripts/name_global.py <addr> [--disp]`
-(every referencing instruction, its containing function, and whether it reads, writes or tests — use it before
-naming a global from the one reader that mattered) and `scripts/field_census.py [stride|bit5|readonly|copy|dual]`
-(the five shape checks: stride unanimity over all sites, a gate's index provenance, a zero-writer proof, a
-copy-vs-array discrimination, and dual addressing forms for one address).
-**The census family, one shape per script** — reach for these before writing a new probe: `field_census.py` (a
-displacement's shape), `name_global.py` (every reader/writer of a global, with containment),
-`m118_flag_never_set.py` (is a gate satisfiable AT ALL: test sites, OR immediates, register-level bit ops, and whether
-any SAVE carries the bit), `m124_state_and_memo.py` (a state code named from the strings printed around its writers; a
-memo-invalidation store), `m127_m129_fields.py` (one field's two addressing encodings, a pre/post-call pair, a guard
-that CONSUMES a flag), `m130_m132_chooser.py` (a switch read straight out of the PE jump table), `m133_m142_census.py`
-(ten globals in one pass: refs, writes, stored values, containment), `m163_m165_structs.py` (an init-time value, plus
-struct-vs-neighbours proved by base-register reuse), `m166_m168_roles.py` (what a rank is compared against, a candidate
-struct's writer SETS, a derived cache), `m169_m171_aggregate.py` (a table that is TOTALLED rather than flagged, the
-aggregator around it, and a struct written from ONE byte), `m282_base_founder.py` (a CREATOR census:
-who writes a record array/count - classify every writer site of the count global by its owning body's
-shard text, verify bare stores the decompiler text drops via exe bytes, and census the founder's callers
-while SKIPPING the definition-signature line or it self-reports as a caller). Ten census questions through one script is a
-legit batch; ten that each need their own harness is ten batches. The per-faction FIELD ATLAS is generated, never
-hand-written: `scripts/m143_m162_atlas.py` -> `docs/field-atlas-faction.md` (top-20 `+0x94dXXX` displacements by
-reference count, with refs/writes/consts/tests/functions) — regenerate it instead of re-censusing a field, and read its
-`in NAMED?` dash as "genuinely unnamed", not as a gap to be filled by a guess.
-**Script-reuse + registry-gate traps (s219, cost 4 fix-cycles)**: to exec a sibling script's defs, slice on `"\ndef main("`, never `"def main("` — a script that reuses another by exec CARRIES the token inside a string literal, so the bare slice cuts mid-string and the SyntaxError cites line numbers in the OTHER file; exec'd names sit NESTED (`_ns["_ns"]["dst_regs"]`) because the exec line rebinds `_ns`. In `NAMED.md` a bare `## Mxxx` header token occurs as a cross-reference too — registry gates must anchor the FULL header line. And `gate(n, a and re.search(...))` appends a Match to `res` and `sum(res)` crashes — `bool()` every regex clause.
-**Three structural laws this family settled** (depth: `references/instrument-laws.md`): (1) a decompiler's `arr[i*N]`
-is an ELEMENT index — multiply by the element width before calling it a stride, because `param_1*0x167` was 359
-dwords = 1436 BYTES, the stride the record block already had; (2) a `switch` is found by its TABLE, not by the
-address range you expect — scan every `jmp DWORD PTR [reg*4+imm]` for the ones behind a bound check on the same
-register, since this dispatch sits in the CONSUMER of a helper and keys on that helper's return; (3) count a record
-field in BOTH encodings (`[reg+0x2a]` literal AND the folded `[reg*4+abs]` where the register already holds
-`index*stride`), because a literal-only grep reported "zero readers" for a field that has 369.
-**Three more laws, all about how a field is SHAPED by its readers and writers:** (4) degree asymmetry is evidence — a
-displacement with hundreds of readers and ONE writer is an init-time value (a rank/order), so read that single writer
-and its loop instead of sampling readers; (5) a candidate struct is proved by (function, base-register) reuse —
-several pairs addressing SEVERAL of the offsets off one register — and its parts are then separated by writer SETS,
-because equal write COUNTS hide the split (a header dword with its own writers plus a payload quad written together
-by a different shared set); (6) read the writer's SOURCE before naming members: `setne`/`shr`/`and` chains mean the
-fields are booleans of ONE source bitfield (one byte expanded into four dwords, a tristate header, and an `or` into a
-DIFFERENT word as a side-effect), and a displacement with many writes but almost no tests is a recomputed CACHE,
-never state a gate may read.
-- **A chain-eval window must START at the fold seeds** (the first writer of the base/derived register), not mid-chain:
-s221's M279 G6 opened at `lea ecx,[edi+edx*2]` with edi/edx as FREE atoms and "published" an index idiom
-"(30,64,0)" that was pure truncation — the seeds `mov edx,edi; shl edx,6; add edx,edi` (edx = 65*edi) sat just
-outside the window, and seed-inclusive evaluation flips the same chain to the standard (8380,2,0) block fold
-(M280 G4 computes the substitution). A "different index idiom" claim needs the window widened, not a new family.
-The chooser/dispatch state family (dispatch table, list seek, state+mode pair, the counters around it) is mapped in
-`references/ui-chooser-state.md` — read it before re-deriving any of it.
+(every reader/writer of a global + containment — use it BEFORE naming a global from the one reader that
+mattered) and `scripts/field_census.py [stride|bit5|readonly|copy|dual]` (the five shape checks). The full
+census family (one shape per script — ten census questions through one script is a legit batch; ten that each
+need their own harness is ten batches) and the per-faction atlas generator (`m143_m162_atlas.py` ->
+`docs/field-atlas-faction.md`, regenerate instead of re-censusing; read its `in NAMED?` dash as "genuinely
+unnamed") are listed in `references/code-atlas.md`. Script-reuse + registry-gate traps: `NEXT_PROMPT.md`
+TRAP 25. The six structural field laws (element-index multiply before "stride"; a switch is its jump TABLE
+behind a bound check, not an address range; count a field in BOTH encodings; degree asymmetry names init-time
+values; (function, base-register) reuse proves a struct, writer SETS split its parts; read the writer's SOURCE
+before naming members — `setne`/`shr`/`and` chains mean booleans of ONE bitfield, and a many-write/no-test
+displacement is a recomputed CACHE no gate may read) are VERBATIM in `references/instrument-laws.md`
+(§s242-retired structural laws) — same for the chain-eval window law (start at the FOLD SEEDS, never
+mid-chain: a window opened past the seeds published an index idiom that was pure truncation). The
+chooser/dispatch state family is mapped in `references/ui-chooser-state.md` — read it before re-deriving.
 
-## terran.exe PE layout (verified 2026-10-20 via section table + byte reads)
+## terran.exe PE layout — full table: `references/code-atlas.md`
+Image base 0x400000; `.text` VA **0x401000–0x671000 with raw bytes present** (prologues verified); `.data`
+vsize 0x316284 but rawsize 0x20000 ⇒ data above VA ≈0x6a9000 is BSS, no file bytes. Consequences: (1) **all
+game CODE is in the file** — Ghidra's decompile of any `FUN_` is authoritative and breakpoints at those VAs
+fire; (2) only *data* reads above ≈0x6a9000 need a runtime snapshot (`gdb -batch -ex 'dump binary memory …'`);
+(3) `_SELFMOD` is a 0x415d-byte patch area, not an unpacker — the old "analyzed image ≠ file image" note was
+an RVA/VA mix-up.
 
-Image base 0x400000. Sections (RVA): `.text` 0x1000 + vsize 0x26f3f4 ⇒ VA **0x401000–0x671000 with
-raw bytes present** (`55 8b ec` prologues verified at 0x520e70, 0x51e700, 0x5d0c33 WNDPROC, 0x62ad73
-FLIC, 0x6309aa DP-init); `.data` RVA 0x289000 vsize 0x316284 but **rawsize only 0x20000** ⇒ data above
-VA ≈0x6a9000 (`DAT_0091f6c4`, `DAT_00985b10`, `DAT_0099d020`, …) is uninitialized/BSS at runtime and has
-**no bytes in the file**; then unnamed/UVA_DATA/_SELFMOD/.rsrc/.reloc, last section ends RVA 0x5e4000
-(VA 0x9e4000).
+## Map + save container formats — canonical: `MAP_FORMAT.md`, `SAVE_FORMAT.md`; depth `references/data-formats.md`
+The `.MP` size formula, the `.SAV` section list (strides 52 B / 304 B), the byte-exact anchors, the
+read-wrapper caller trace and the zeros-fraction pitfall are all there. **The last 156 B of every save is a
+fixed TRAILER, not game data** — the final 152 B are identical across nine saves, only the trailing dword
+varies and its offset moves with file size, so no hard-coded leg can index it; its reader is the 6-site
+per-entity loop restoring rows into heap records (stride `0x224B8`), proved by POKING markers, never by a byte
+sum. **Any file-vs-memory diff goes through `scripts/save_diff.py`, never an ad-hoc window**: the mapping
+constant `k = dest - off` is PER REGION, so a window straddling a section boundary manufactures hundreds of
+fake "diffs"; the script refuses a range crossing a known boundary and names it (`scripts/test_save_diff.py`
+PASS 7/7 is the guard). Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
+`FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by `FUN_00582260`);
+the .SAV chain's two read paths (kernel in-place vs ring-3 scratch): `references/ptrace-level-probes.md`.
 
-Consequences — this **corrects the earlier "self-modifying, analyzed image ≠ file image" note, which
-mixed RVA with VA**: (1) **all game CODE is in the file**; Ghidra's decompile of any `FUN_` (including
-0x5dxxxx–0x66xxxx) is authoritative, and runtime breakpoints at those VAs fire (M7/M8 proved it); (2)
-only *data* reads above ≈0x6a9000 need a runtime snapshot (`gdb -batch -ex 'dump binary memory …'`);
-(3) `_SELFMOD` is a 0x415d-byte section — a small patch area, not a whole-image unpacker, so there is no
-"import of the wrong image" problem.
+## Format core (.cvr) — FULL SPEC: `references/cvr-format.md`
+TLV chunks `u32 LE tag + u32 LE size incl. header`, outer `0x00525643` "CVR\0", palette group 6914 B, material
+12292 B; VOXEL blob header 42 B, voxels 3 B with the 5-bit dir delta (0x1A STOP; the STOP-coded last voxel is
+real) and the 11-bit normal code; regions end with 5 zero pad bytes; the single- vs multi-header count quirk;
+chunk parse addresses loader 0x614acb / top loop 0x6446e0 / per-object 0x644f80 — voxel semantics are
+wiki + corpus verified, NOT exe-verified. Decoder `cvr_decode.py` validates 113/113.
 
-## Map + save container formats
-
-Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical and the depth lives in
-`references/data-formats.md` — the `.MP` size formula, the `.SAV` section list with its two record strides
-(52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
-zeros-fraction pitfall. **The last 156 B of every save is a fixed TRAILER, not game data** — the final
-152 B are identical across nine saves, only the trailing dword varies, and its offset moves with the file
-size, so no hard-coded leg can index it; Its reader is the **6-site per-entity loop** that restores each row into per-entity heap records
-(stride `0x224B8`), proved by POKING a marker into the rows and finding it in memory — never by a byte sum
-(`references/data-formats.md` §`.SAV` trailer; `references/instrument-laws.md` §Identify bytes). The offset->
-memory map itself is anchored the same way: `scripts/m113_save_map.py` plants markers at known offsets and
-reports where each lands — 1:1 inside a section, a JUMP at a boundary (`references/instrument-laws.md`
-§Extract a LAYOUT with anchors, `references/data-formats.md` §anchors).
-**Any file-vs-memory diff goes through `scripts/save_diff.py`**, never an ad-hoc window: the mapping constant `k
-= dest - off` is PER REGION, so a window that straddles a section boundary and is diffed with one region's `k`
-manufactures hundreds of "diffs" that look exactly like rewriting. `save_diff.py` derives the regions from the
-anchors, refuses a range crossing a known boundary (67,852 / 82,088 / 172,200 / 172,291 / 222,783) and names the
-boundary it refused on; `scripts/test_save_diff.py` is the PASS 7/7 guard. Done properly the restore is 1:1 for
-every byte of block A, block B, the map header body and the grid — divergences are only a few leading bytes and
-two dwords in the 52-B records, so a "rewritten section" finding needs the guard's agreement first.
-Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
-`FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
-`FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
-`references/ptrace-level-probes.md` §The .SAV chain.
-
-## Format core (verified; details in FINDINGS.md)
-
-- TLV chunks `u32 LE tag + u32 LE size incl. header`; outer tag `0x00525643`
-  ("CVR\0"), size == file size. Children: 0x01000000 version float (10.0/10.1 —
-  NOT a scale), 0x02000000 .MAX scene name, 0x03000000 palette group
-  (0x01010000 name, 0x01020000 palette data 6914 B = u8 first + u8 last +
-  256×RGB24 + 24×256 shade table, 0x01030000 material 12292 B = 4-byte header +
-  24×256 u16 R5G5B5), 0x04000000 scene group (0x4010000 name, 0x4020000 object
-  count, 0x4030000 frame count, 0x4040000 per object).
-- Object: 0x4040100 name, 0x4040200→0x4040201 VOXEL blob, 0x4040300 animation
-  (0x4040301 frame flags 1B/frame, 0x4040302 float32 locations **Z,X,Y**,
-  0x4040303 3×3 float32 matrices) — animation-only files exist (Asas.cvr).
-- VOXEL blob: VOXEL_HEADER 42 B (flags, size, units-per-pixel float, next, end,
-  int16 ZXY scale/position/rotation-center, count). flags&1 = header chain at
-  h+next; flags&2 = JUMP_HEADERs (32/36 B, run starts at position+offset).
-  Voxels = 3 B: (dir<<3|normal_hi), normal_lo, color index; dir = 5-bit delta
-  over 27 steps, 0x1A STOP (STOP-coded last voxel is real); normal = 11-bit
-  angle code `((dir&7)<<8|lo)+88`, a1=88−n%89, a2=n/89 → unit vector.
-  Regions end with 5 zero pad bytes. Count quirk: single-header jumps
-  Σjc=count+groups, multi-header jumps Σjc=count.
-- Chunk parse addresses in terran.exe: loader 0x614acb, top loop 0x6446e0,
-  per-object 0x644f80, blob stored opaquely by 0x645170. Voxel semantics are
-  wiki (alphacentauri2.info/wiki/Caviar) + corpus verified, not exe-verified.
-
-## Multiplayer netcode (mapped — details in FINDINGS.md)
-
-- Internal netcode codename **"jackal"** (debug strings `jackal` +
-  `NET_SENDTIMEDOUT`, title "Message from the Net Underworld").
-- DirectPlay via COM-style init `FUN_006309aa` (GUID {9d460580-a822-11cf-…}
-  @0x67bcf0); DP object global **`DAT_0099d020`**, vtable +0x14 GetMessages,
-  +0x68 SendData, +0x28 CreatePlayer. DPLAYX IAT slots have zero Ghidra xrefs.
-- Packet: 12-B header (u8 DP flags, u32 seq, payload u16 type @+0, sender
-  u32 @+2); builder `FUN_00584010` → router `FUN_0052a260` (type&0x4000=
-  guaranteed broadcast, &0x8000=directed, 0x2000=server-originated) →
-  `Net::send FUN_00635407` (16×0x58 slot table @this+0x150, seq
-  this+0xe0, adaptive ack/timeout). Anti-replay gate `FUN_00639787`.
-- Receive: thread `FUN_00638d5c` → `FUN_00638ddd` (GetMessages + gate +
-  queue `FUN_0063af12` + PostThreadMessage 0x402) → main drains
-  `FUN_005262e0` (in-game queues)/`FUN_00526e10` (synch queues 0x80–0x8d)
-  via `FUN_0052a720`+`FUN_006361ff` → dispatcher **`FUN_0052bce0`**.
-- Diplomatic types 0x2440–0x244e = DOUBLE CROSS/TREATY ON/OFF/SET/AGENDA
-  ×3/ENERGY/TRADE MAPS/CEDE/WITHDRAWAL/TECH/LOAN, one wrapper each
-  FUN_00530640–0x530c40 (asm-verified). AI hub `FUN_00546800` (34 send
-  sites). Turn sync: client LOCK(0x2210)/DONE TURN(0x8301) → server
-  EXEC DONE/NEXT TURN via 0x1240/0x1501/0x4301/0x4303.
-- File-name traps in ~/reverse/smac: `treaty.pseudocode.txt` = FUN_00546800
-  (not 54d5f4); `killfaction.pseudocode.txt` = FUN_0047c0e0 (UI pane);
-  FUN_0047e846 has no callers/pointers — KILLFACTION is a voice-clip token,
-  not a message type. UPPER_CASE tokens 0x68b000–0x691600 are sound/voice
-  clip names, not protocol opcodes.
-
+## Multiplayer netcode — mapped, secondary: full notes `references/netcode.md`
+Codename **"jackal"**; DirectPlay via `FUN_006309aa`, DP object `DAT_0099d020`; packet = 12-B header, builder
+`FUN_00584010` → router `FUN_0052a260` → dispatcher **`FUN_0052bce0`**; diplomatic types 0x2440-0x244e; turn
+sync LOCK 0x2210 / DONE TURN 0x8301. File-name traps (treaty/killfaction pseudocode mislabels, the
+UPPER_CASE band 0x68b000-0x691600 = voice-clip tokens, NOT opcodes) — read it before touching any of that.
 ## Goal (Paul's priority)
 
 Play SMAC **single-player with working AI** on modern hardware **and recreate
@@ -407,291 +265,165 @@ mapped but secondary. UI groundwork: CPane/CWidget pane builders (e.g.
 scenario files, voice/sound clip token strings 0x68b000–0x691600, UI widget-name
 strings (TOUR1*, SOCTOUR*, DRONETOUR*).
 
-## UI / asset pipeline
 
-- **Script.txt IS the UI**: `programs/Script.txt` declaratively defines
-  1,357 dialog panes (`parse_script.py` → `script_parsed.json`). Grammar:
-  `#NAME` pane start (UPPER id), `#xs` width, `#x/#y`, `#caption`,
-  `#button`, `#itemlist`, `#listbox`, `#wave N` sound, `^`/`^^` newline/
-  center, `{}` bold `[]` italic, `$NAME123` substitution, `$<n:a:b>` gender.
-  Menu trees (TOPMENU/MAPMENU/MULTIMENU/SCENARIOMENU/setup chain/RULES/
-  SCENRULES/victory/editor/intro) verified. Spec: `~/reverse/smac/UI_MAP.md`.
-- **alpha.txt = the rules file the exe loads** ("reads the rules of the game from this
-  file"): 45 `#SECTION`s / 650 comma-separated records (`#RULES`, `#TERRAIN`, `#TECHNOLOGY`,
-  `#CHASSIS`, `#WEAPONS`, `#UNITS`, `#FACILITIES`, `#SOC*`, `#DIFF`, `#FACTIONS`…). Parse it
-  (`scripts/parse_alpha.py` → `data/alpha.json`, section map in `ALPHA_RULES.md`) rather than
-  RE-ing balance constants. Field names are recoverable from the trailing `;` comments for only
-  4/45 sections — `#CHASSIS`/`#UNITS` etc. are bare data, so their semantics must come from the
-  exe's parser, not from guesswork.
-- **`maps/*.MP` = the map format** — now fully decoded, see "Map + save container formats"
-  above and `~/reverse/smac/MAP_FORMAT.md`. (This bullet used to claim the loader was
-  `FUN_00597a70` and that the 796-byte header's offsets were unresolved; both were wrong —
-  that function is the save path and the map header is a 2,724-byte struct at offset 15.)
-  `FUN_00598340` is still the magic/version dispatcher.
-- **PCX**: SMAC variant starts `0A 05 01 08`; Pillow 12 decodes all 378
-  correctly (`assets.py pcx programs png`; sheets in `sheets/`). Hand RLE
-  decoder unsolved; glsmac hits same wall (SDL_image + procedural fixes).
-- **FLIC format cracked** (not standard Autodesk): 128-B header u16
-  words: w2=0xAF12, W=u16@+8, H=u16@+10 (monument.flc 1024×768 ✓),
-  w6=8; frame chain @128 = `u32 LE size` + u16 0xF1FA + u16 subchunk
-  count, sizes tile to EOF (turn.flc 1081+18×196+16=4473 ✓). Exe:
-  loader FUN_0062ad73, dispatch FUN_0062bdeb (chunk=u32 size+u16 type;
-  F1FA=container recurse; types 4/0xb/0xc/0x12 no-op stubs incl. the
-  772-B color table; 7=16-bit small-brun FUN_0062b68e; 0xf=8-bit brun
-  FUN_0062b3da: per row u8 width then s8 packets (>=1 literal, <0 RLE
-  w/ next byte, +ref variant); 0x10=raw rows FUN_0062bc1d; 0xd=clear;
-  delta table flag|2: 7→FUN_0062c36f (copies unchanged runs from prev
-  buffer @this+0x4ac when run color == transparency)). Decoder scripts
-  `flc_decode*.py`; type-7 RLE word color semantics + per-object ref/trans
-  still being pinned. See UI_MAP.md.
-- **glsmac** (afwbkbc/glsmac, cloned at `~/reverse/smac/glsmac`): working
-  SDL2/GL SMAC reimplementation; hardcodes UI (does NOT parse Script.txt);
-  resource enum names master atlases (palette/interface 750×900/icons/
-  units/console_x/moon1-3/S{s}L{l}C{c}/arialn.ttf). Useful reference.
+## UI / asset pipeline — full notes: `references/ui-assets.md`
+- **Script.txt IS the UI**: `programs/Script.txt` declares 1,357 dialog panes (`parse_script.py` ->
+  `script_parsed.json`); grammar + menu-tree verification in the reference; spec `UI_MAP.md`.
+- **alpha.txt is the rules file the exe loads** — 45 `#SECTION`s / 650 records: parse it
+  (`scripts/parse_alpha.py` -> `data/alpha.json`, `ALPHA_RULES.md`) rather than RE-ing balance constants;
+  field names recover from trailing `;` comments for only 4/45 sections, so bare sections' semantics come from
+  the exe's parser, not guesswork.
+- **PCX** SMAC variant (`0A 05 01 08`) decodes with Pillow 12; **FLIC** format is cracked (128-B header, frame
+  chain 0xF1FA, the exe's loader FUN_0062ad73 / dispatch FUN_0062bdeb, decoder scripts) — full byte-level
+  detail, the glsmac comparison and the still-open type-7 RLE pinning live in `references/ui-assets.md`.
 
-## Running under Wine — top pitfalls (depth: `references/wine-operations.md`)
-- **Preflight is one command, and it comes FIRST:** `python3 scripts/smac_preflight.py` (read-only,
-  exit 1 on any FAIL) checks the authoritative address table, `terran.exe` alive with `TracerPid: 0`
-  and no stray gdb, and prints OUR bases BY NAME with index/coords/pending/head/minerals/income plus
-  the unit decode, /tmp room and the evidence budget. `SMAC_PID=<pid>` overrides the pgrep; it is also
-  the negative test. Window is 10485761 (800x600). `xwd` needs **`-display :99`** (`DISPLAY=:0` captures blank). `scripts/session_brief.py` and `accept_ready.py` print `BLOCKED: terran.exe not running` (exit 1) when the
-box is down — read that as "relaunch first". A `CalledProcessError` traceback from either means the checkout
-predates the pid guard (`M.find_pid()` unguarded): fix it there, do not fresh-load blind. It reads the LIVE box, so it runs for
-MINUTES: request `timeout 400` (or background it) instead of the default, and read a timeout as slow, not as hung.
-- **X input focus is a precondition — but `getactivewindow` is a RED HERRING on this display.**
-  `xdotool getactivewindow` ALWAYS fails on :99 (no WM supports `_NET_ACTIVE_WINDOW`; it errors
-  "claims not to support" even when focus is perfect). The authoritative check is
-  `xdotool getwindowfocus getwindowname` == "Sid Meier's Alpha Centauri", and
-  `xdotool windowfocus 10485761` works WITHOUT a WM (windowactivate is the WM-needing verb; s136
-  misread this and lost a session). Prove keys land cheaply before blaming the box: one Escape on an
-  open base pane flips classify base->hud. A box CAN still swallow turn-end input with focus fine:
-  at the s135 state (2150 r50) XTEST Return AND a click on the measured TURN COMPLETE center both
-  did nothing (no confirm dialog, round unchanged) — the repair is a fresh save load
-  (`SMAC_SAVE=... scripts/m54a_load.py --relaunch`), which restored the boundary immediately.
-  `scripts/m44_idle.py` is NOT a driver under gdb: it asserts `TracerPid == 0` at entry (census gdb
-  IS the tracer) and its `--rounds 1` snapshot condition `y > last_year - 1 and not rounds` counts
-  the CURRENT turn as a completed round, so it exits rc=0 in 0 s having done nothing — use
-  `scripts/m55_boundary.py` (no tracer assert, windowfocuses itself) as the boundary driver.
-  Corollary for acceptances: any milestone whose PASS needs a boundary must gate on a live year/round
-  DELTA read from /proc/pid/mem first, or it will "prove" its sites unreachable from a box that
-  could not run them at all.
-- **Vision-tool coordinates are SCALE-SHIFTED on 800x600 frames; click targets must come from OCR
-  word bboxes or pixel scans.** s137: vision put the TURN COMPLETE bar at y~471 (real y 405-427, OCR
-  bbox center 675,416); the click at the vision coord hit the recenter box (y~484) and only scrolled
-  the map — it looked like "clicks land but the engine ignores the button".
-- **"Do you really want to quit?" is the killer dialog.** Escape returns to "Oops, no, wait!"; never
-  click OK (the next OK exits the game and the process vanishes silently). Its banner IS the game title,
-  so a classifier can mistake it for the title screen — this is also why the driver's own Escape press
-  pops it mid-drive.
-- **`scripts/smac_play.py` has no `--mode stop`.** Args: `--turns --timeout --no-escape --verbose
-  --order --unit --turns-after --tag --no-verify --key-only` plus the M54c in-loop order flags
-  `--orders-per-turn N` (default 2), `--order-budget S` (default 35), `--no-orders`. Ordering is
-  ON inside the unattended loop now: each player turn pokes the selection slot, fires one hotkey,
-  services the pane, and verifies `unit+17` moved into the byte set that key may produce — an
-  order counts only as that memory delta, never as a screenshot. `--no-escape N` = "press no Escape during
-  the first N seconds" — set N above `--timeout`. Bound a backgrounded driver with shell `timeout`.
-  Launch a long run through the agent's tracked background mode (`exec python3 scripts/smac_play.py
-  … > /tmp/<tag>.log 2>&1`), never `nohup … &` — nor ANY `&`-backgrounded chain, `cmd && other &` included — in a foreground call:
-the wrapper is refused there (re-send the whole thing through the tracked background mode), and
-  a shell that backgrounds and exits hides the driver's own pid — find it with `pgrep -f smac_play.py`
-  and `kill <pid>`. Never signal by name (`pkill -f`/`pgrep|kill` matches your own argv).
-- **A PROPOSAL vote pane stalls the AI phase.** `YEA: 2  NAY: 3` is the TALLY, not a key hint. Bars in
-  TRUE window coords: YEA (310,495) / NAY (398,495) / ABSTAIN (485,495), single OK (393,495); click only
-  after `xdotool windowfocus <win>`; OK >= 1.2 s after selecting. Capture with `xwd -display :99 -root
-  -silent`, 2x ffmpeg upscale, tesseract (>=4 chars, region-constrained).
-- **A round advancing while you watch is AUTO-END, not progress, and a walk frozen on an AI faction is
-  a modal event dialog, not a livelock.** With all units HELD the engine closes our turn on its own in
-  1–2 s; `cur_player == ours` is a window, not a state. Heartbeat model and dismissal cadence:
-  `references/solo-round-boundary.md`.
-- **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** So
-  HOLD every record (`+17` = 2, poked with TracerPid 0 and read back) BEFORE arming a multi-boundary
-  watch: held units flip a round in 1-2 s, an unheld box sits parked on our turn for the whole budget.
-  A produced unit arrives order 0, the cursor parks on it, and Return every 2 s for 150 s changes nothing
-  (`cur_player` ours, `turn_flags` 0, year unmoved). ONE `h` on the cursor unit (→ HOLD) closes the turn
-  at once, and that `h` needs orders mode `0x91b5b8` = 1 — at 0 every order key is a silent no-op
-  (the base-display recipe turns it off, so restore it), which looks exactly like a wedged turn.
-  And a popup whose default row is not OK does not close on Return — Return CYCLES its options
-  (Operations Director defaults to "Zoom to Base Control"); click its OK instead. The end-turn
-  confirm ("SOME OF OUR UNITS HAVE NOT YET MOVED … do you really want to end the turn now?") takes
-  NO Return at all: click its YES row and then the OK bar ~26 px below, 1.2 s apart
-  (`smac_play.answer_confirm`); a driver that only presses Return sits on it with the year frozen
-  until its whole budget is gone. When the year stops moving, take ONE frame and `classify` it
-  (it returns `confirm`) before pressing anything else. Cadence, coords, and the queue/gate rules:
-  `references/production-queue.md` — including why an arrival round predicted from ROUND-START fields
-  is not exact (the visit recomputes `+0xd0`, so the same snapshot produced no arrival and then an
-  arrival one round later), and the store-sequence accounting that replaces it.
-- **A stalled round can be a LIVELOCK, not a modal:** run `python3 scripts/m53q_livelock.py` (census of
-  the `unit+48`/`unit+50` chains; `--fix` repairs). Signature: `turn_flags` bit 1 set + a hot main thread
-  + byte-identical screenshots.
-- **A turn that never advances can also be a CLASSIFIER miss, with no modal visible.** OCR here is
-  unreliable in both directions: a clean HUD reads `unknown` when the TURN COMPLETE row fails to
-  render legibly — measured 2026-10-26: 8 freezes of ONE unchanged HUD put `complete` in the button
-  row 3 of 8 times while the HUD's bottom status bar (`Mission Year` + the faction score row +
-  `Energy:`, y 548-592) read 8 of 8, and the bar fragments differently (`sisson tear zie`,
-  `esston 2388`) — which is why `accept_ready.py` re-freezes up to 4 times and believes the BAR
-  twice rather than trusting one pass (`smac_play.hud_status_bar`, `accept_ready.verdict`,
-  `references/screen-read.md`, `scripts/test_hud_bar.py`) — and with the production line drawn in the message box even the chrome
-  (MENU/COMMLINK) goes illegible, so the clean-HUD oracle is MEMORY, not the chrome read:
-  `cur_player == player`, `turn_flags & 2` clear, and no bar drawn at y 145-200. Peek one frame
-  before running any Escape-on-`unknown` clearing loop — at a garbled-but-clean HUD it raises the
-  quit prompt), and an advisor dialog
-  reads `hud` when too few of its words land in the dialog band (its caption is the tell: a word of
-  6+ characters, or two of 4+, at y 90-118 means something is drawn OVER the HUD). Both idle the
-  loop silently: with `--no-escape` the first burns the whole turn budget doing nothing, and in the
-  second every TURN COMPLETE click lands BEHIND the modal. Diagnose by reading the state, not the
-  class: our phase + `turn_flags` clear + year unmoved = nothing is answering the modal.
-- **Label a printed register from the encoding, and read entry arguments from `$esp`, not `$ebp`.** A
-  breakpoint on a function's FIRST instruction sits before `push ebp; mov ebp,esp`, so `$ebp` is still
-  the CALLER's frame: take the arguments from `*(int *)($esp + 4)`, `*(int *)($esp + 8)`, … and the
-  caller from `*(int *)$esp` — the return-address field is the cheapest way to learn a function's caller
-  set in the same window. Before printing any register as an index or offset, read the prologue for
-  `mov reg,[ebp+8]`-style argument loads and check for a reassignment on the path that reaches the site:
-  a callee-saved register holding arg 1 for the whole body is a PARAMETER (faction, owner, mode), not a
-  cursor, and a ledger that calls it an index poisons later milestones. Print the raw value AND its
-  derived forms (`$ebx`, `$ebx / 52`, `$ebx % 52`) so a mislabel is visible in the log, not discovered
-  weeks later in a document.
-- **Watchpoints:** x86 gives 4 hardware slots (an 8-byte window needs 8-alignment = 2 slots); pair with
-  the 10 Hz poller `scripts/m53m_poll.py`; they fire on VALUE CHANGE, so a same-value rewrite is
-  invisible. **Never watch a field the display reads constantly** (`base+0x40` mineral storage): the
-  inferior crawls (a round per ~45 s, year apparently frozen) — break on the STORE sites instead and
-  condition each on the address the store's OWN encoding computes — `[reg*4+disp]` means the register holds
-`(index*stride)/4` and `[reg+disp]` means it holds the byte address, so a condition comparing the register
-against the bare index never fires (`references/static-store-census.md` §9.3). At a store site the register side-values
-  are not evidence (`$ecx` printed a base INDEX where d0 was expected): read the fields from the baked
-  base address. **A bp on a LOAD prints the register's PREVIOUS value; a bp on a skipped loop's body
-  never fires (a zero there is the gate); round-mutated values cannot come from a round-start
-  snapshot** — `references/instrument-laws.md` §Where a breakpoint prints the wrong thing. Do **not** single-step for the after value — `si` inside a breakpoint commands list makes
-  `gdb -batch` stop after the step and DETACH, ending the watch after one hit; for a plain
-  `mov [reg+disp],src` the store's own source operand IS the value the field takes, and the sleeping
-  `/proc/pid/mem` sampler is what proves it. A hardware watch reports `$pc` PAST the writing
-  instruction — the store is the instruction BEFORE the reported address (a hit at `0x417e08` named the
-  store at `0x417e04`), so disassemble BACKWARDS from a watch hit before hunting a store site. And when
-  the field that governs the behaviour is a UI cursor/selection, POKE it and prove the write lands at
-  the poked value: `queue[2]` for a cursor poked to 2 while the sort rule predicted slot 1 turned a
-  confounded click observation into a controlled experiment (and refuse the shape when the poked value
-  and the rival prediction agree). **A printf ERROR inside a breakpoint's commands block ABORTS the
-  whole `gdb -batch` script and detaches the inferior mid-window**: the log truncates at the first hit
-  while the turn driver keeps exiting 0, so an aborted window reads as a clean zero-event run.
-  **A MEMORY WRITE in a command list fails the same way** — `set {int}ADDR = 1` and
-  `set var *(int *)ADDR = 1` both raise `Left operand of assignment is not an lvalue` and detach at the
-  FIRST hit; gdb reports the file's LAST sourced line (the trailing `continue`), so the line number names
-  nothing useful and the message looks like a syntax problem in a script that armed fine. Signature of
-  the whole class: an ARMED line + one `Breakpoint N at` per bp + `Error in sourced command file` + zero
-  events, while the driver still exits 0 and its own writes land because the detach resumed the inferior.
-  **So put the poke in Python, not in the breakpoint**: `fd = os.open('/proc/<pid>/mem', os.O_RDWR)` then
-  `os.pwrite(fd, (1).to_bytes(4, 'little'), ADDR)` succeeds WHILE gdb is attached (a 50 ms thread held a
-  gate global for a whole driver window: 632 writes, 0 errors, every printf-only bp logged). Keep the
-  command lists print-only and let a thread hold the forced value; restore it after the window.
-  **Guard every ARMED-time deref**: the selected-base pointer `ds:0x8f0d60` reads 0 until a pane is
-  opened, so `*(int *)($b + 0x4c)` in the arming printf faults on address 0x4c and kills the batch
-  before the first event — print `$b` alone or branch on `$b != 0`, and make a `/proc` reader return -1
-  on `OSError` (an unmapped page raises EIO, not 0) so a bad pointer cannot abort the harness. gdb's
-  printf reads an inferior pointer as a HOST address, so `%.20s` fed `*(char *)(rec+0)` errors
-  ("Cannot access memory"); bp printfs emit NUMBERS derived from registers only (raw reg, reg/stride,
-  reg%stride, `*(short *)(...)` values), never inferior strings, gate every pointer deref behind
-`if $reg != 0 … end` (a null deref faults exactly like a string one and detaches the same way), and
-substitute expressions as printf ARGUMENTS — an expression pasted into the
-format string prints ITSELF and the log then parses as zero events (`references/static-store-census.md`
-§9 point 10) — use `x/s` outside a commands block
-  when a name is genuinely wanted. **A `dump binary memory` in a command list is the same class of killer:**
-a non-literal target (`%s`, a convenience variable), an ARITHMETIC address range, or a
-`python … read_memory … end` block each abort the sourced script at the first hit — the run logs `ARMED`
-+ one `Breakpoint N at` per bp + ZERO events while the round keeps advancing, indistinguishable from "the
-mechanism never ran". Bake the dump target as a literal absolute path (substitute with `str.replace()` on
-a unique token), give the range two LITERAL addresses, and note convenience-variable arithmetic is 32-bit
-SIGNED — an `end - start` inside gdb underflows and poisons every offset derived from it, so compute
-lengths/offsets in Python and bake them as hex; one dump file per RUN with an `off=` field in the log
-beats a per-hit filename (a second dump to the same path overwrites the first); **`append binary
-memory` is what makes a per-hit series work** — plus loop-entry-vs-branch-target, the scan-window rule
-and the snapshot-cadence law: `references/gdb-command-list.md`.
-- **A hardware watchpoint cannot see a KERNEL write**: Linux installs a user DR breakpoint with the
-  exclude-kernel bit, so bytes landing via `copy_to_user` inside a `read()` change with zero events —
-  that is what a "silent census" means when a file read's destination IS the watched region. The fix is
-  a different LAYER, not a re-armed watchpoint: strace `-e raw=` (prints the read's BUFFER POINTER) +
-  `clear_refs=4`/pagemap soft-dirty + maps before/after; strace and gdb cannot both ptrace one task.
-  Table, invocation and parsing laws:
-  `references/ptrace-level-probes.md`.
-Never build the gdb command list by running a Python `%`-format over
-it: the template is full of `%d`/`%x` printf conversions and Python eats the first ones as its own
-arguments, silently rewriting the breakpoints. Bake addresses and constants as literals, or substitute
-with `str.replace()` on a uniquely-marked token, and diff the emitted `scratch/<tag>.gdb` before attaching. Bake addresses as literals, `stdbuf -o0`, drain gdb's pipe,
-  and drive + snapshot in ONE backgrounded job (`scripts/m53n_drive.py` is the template). A **zero-event log is an instrument verdict until proven
-otherwise**: arm one control breakpoint whose hit is guaranteed in the window and require its rows, and
-read back BEFORE attaching that the watched event can even happen (queue head is the armed id,
-`pending >= 1`, storage above what the gate can demand) — an unusable window is not a negative result
-(`references/static-store-census.md` §9.8–9). **A whole subsystem path can be gated on another
-subsystem's state**: with every base's production queue empty the research upkeep never runs, so a scorer
-census logs zero events across boundaries while the round advances — satisfy the printed readiness FIX
-before calling the sites unreachable, and echo the precondition in the harness's output so "gate unmet" is
-distinguishable from "mechanism refuted".
-- **A leg census gates on PREDICTIONS, not on hits.** Compute each site's expected hit count from live
-  memory first (gate globals, args off `$esp`, the table values the branch loads), print the
-  predictions, gate on agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`).
-  Demanding a hit at a site the TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg
-  map, never the floor. Tie every hit to a boundary (round/year at the hit); a window count is not a
-  cadence.
-**Before blaming a breakpoint for a zero, resolve the SITE's containment and its function's caller
-count** from `ghidra_out/index.csv` — one read splits "unreachable BY DESIGN" from "UNTAKEN BRANCH". **To name who writes a field, use a hardware watchpoint on the address PLUS a
-control watchpoint on an address you know changes** — a mnemonic grep misses stores made through
-pointer-form `lea`; the static half of the same trap is to **classify each store by how its SOURCE register was
-computed** — scan back for `or`/`and`/`lea` on that register before writing "assigned, never bit-set". Twenty-three
-of twenty-seven memory-form `mov [reg+0x94d448],reg` stores were the write half of a register-level bit RMW, so the
-field IS bit-set and only the four whole-value assignments (one a `lea`) can deliver an untouched bit: a store-shape
-census sees the operand, never the provenance. **A gdb census >90 s goes through `terminal(background=true)` + `process_manage
-wait` loops: the foreground caps at 420 s and killing a census mid-run leaves Wine hung (round frozen
-after detach too) — recover via `m54a_load --relaunch`. Pair store-readback probes by EVENT ORDER
-(RB follows ST); a {addr: last-mem} dict mis-pairs an address re-written later in the window; and
-**detach only after the window is really over** — the turn driver returns rc=0 while other factions'
-upkeep is still executing, so the last stores happen after the detach and log NOTHING, which FAILs a
-read-back gate on the instrument while every other gate is green
-(`references/instrument-laws.md`).**
-`references/instrument-laws.md` carries the header order, the containment recipe, DictReader trap,
-the watchpoint laws, the value-census laws, the printf-escape law, the event-grouping law, and the bit-leg
-census / per-site argument-tuple parse rules.
+## Running under Wine — hot rules (the FULL retired set, verbatim: `references/wine-pitfalls.md`;
+driving/dialog state machines: `references/wine-operations.md`)
+- **Preflight FIRST, one command:** `python3 scripts/smac_preflight.py` (read-only, exit 1 on FAIL) checks the
+  address table, `terran.exe` alive with `TracerPid: 0`, no stray gdb, OUR bases by name with
+  index/coords/pending/head/minerals/income + unit decode, /tmp room, evidence budget. `SMAC_PID=` overrides
+  pgrep. Window id 10485761 (800x600); `xwd` needs **`-display :99`**. `session_brief.py`/`accept_ready.py`
+  printing `BLOCKED: terran.exe not running` means relaunch; it reads the LIVE box so it runs MINUTES —
+  request `timeout 400` and read a timeout as slow, not hung.
+- **Focus:** `xdotool getactivewindow` ALWAYS fails on :99 (no WM; red herring — s136 lost a session on it).
+  The check is `xdotool getwindowfocus getwindowname` == the game title; `xdotool windowfocus 10485761` works
+  WITHOUT a WM. Proof keys land: one Escape on an open base pane flips classify base->hud. If the box swallows
+  turn-end input with focus fine (s135: Return AND a click on TURN COMPLETE did nothing), the repair is a
+  fresh save load (`m54a_load.py --relaunch`).
+- `scripts/m44_idle.py` asserts `TracerPid == 0` and its `--rounds 1` condition counts the CURRENT turn —
+  exits rc=0 in 0 s doing nothing; use `scripts/m55_boundary.py` as the boundary driver. Any acceptance that
+  needs a boundary must gate on a live year/round DELTA read from /proc/pid/mem first, or it "proves" its
+  sites unreachable from a box that could not run them.
+- **Vision-tool coordinates are SCALE-SHIFTED on 800x600 frames; click targets come from OCR word bboxes or
+  pixel scans** (s137: vision's y~471 hit the recenter box, not the bar at y 405-427).
+- **"Do you really want to quit?" is the killer dialog:** Escape = "Oops, no, wait!"; never click OK (the
+  next OK exits and the process vanishes silently); its banner IS the game title, so it reads as the title
+  screen — and the driver's own Escape press can pop it mid-drive.
+- `scripts/smac_play.py`: no `--mode stop`; ordering is ON in the loop (each turn pokes the selection slot,
+  fires one hotkey, services the pane, verifies `unit+17` moved into the byte set that key produces — an
+  order counts as that memory DELTA, never a screenshot). `--no-escape N` = press no Escape for N seconds: set
+  N above `--timeout`. Launch long runs in tracked background mode, **never `nohup … &` nor ANY `&`-backgrounded
+  chain in a foreground call**; find stray pids with `pgrep -f smac_play.py` then `kill <pid>` — never signal
+  by name (pkill -f matches your own argv).
+- **A PROPOSAL vote pane stalls the AI phase.** `YEA: 2  NAY: 3` is the TALLY, not a key hint. True-window bars:
+  YEA (310,495) / NAY (398,495) / ABSTAIN (485,495) / OK (393,495); `windowfocus` first, OK >= 1.2 s after
+  selecting; capture `xwd -display :99 -root -silent` + 2x upscale + tesseract, region-constrained.
+- **A round advancing while you watch is AUTO-END, not progress; a walk frozen on an AI faction is a MODAL
+  dialog, not a livelock.** With all units HELD the engine closes our turn in 1-2 s; `cur_player == ours` is a
+  window, not a state (heartbeat model: `references/solo-round-boundary.md`).
+- **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** HOLD every
+  record (`+17` = 2, poked at TracerPid 0, read back) BEFORE arming a multi-boundary watch. The produced unit
+  parks the cursor at order 0 and Return for 150 s changes nothing: ONE `h` closes the turn — and `h` needs
+  orders mode `0x91b5b8` = 1 (at 0 every order key is a silent no-op that looks exactly like a wedge). A popup
+  whose default row is not OK does not close on Return (Return CYCLES options) — click OK. The end-turn confirm
+  ("SOME OF OUR UNITS HAVE NOT YET MOVED…") takes NO Return: click YES then the OK ~26 px below, 1.2 s apart
+  (`smac_play.answer_confirm`). When the year stops: take ONE frame and `classify` it (returns `confirm`)
+  before pressing anything else. Cadence/coords/queue rules: `references/production-queue.md` — including why
+  an arrival round predicted from ROUND-START fields is not exact (the visit recomputes `+0xd0`).
+- **A stalled round can be a LIVELOCK:** `python3 scripts/m53q_livelock.py` (census of `unit+48`/`unit+50`
+  chains, `--fix` repairs). Signature: `turn_flags` bit 1 + hot main thread + byte-identical screenshots.
+- **A turn that never advances can be a CLASSIFIER miss with no modal visible.** OCR is unreliable both ways:
+  a clean HUD reads `unknown` when the TURN COMPLETE row garbles (measured: `complete` in the button row 3/8
+  passes while the bottom status bar read 8/8) — which is why `accept_ready.py` re-freezes up to 4 times and
+  believes the BAR twice (`smac_play.hud_status_bar`, `test_hud_bar.py`); with the production line drawn in the
+  message box even the chrome goes illegible, so the clean-HUD oracle is MEMORY: `cur_player == player`,
+  `turn_flags & 2` clear, no bar at y 145-200. An advisor dialog reads `hud` when too few words land in the
+  dialog band (caption tell: a word of 6+ chars or two of 4+ at y 90-118 = something drawn OVER the HUD). Peek
+  one frame before any Escape-on-`unknown` clearing loop (a garbled-but-clean HUD raises the quit prompt).
+- **Label a printed register from the ENCODING; entry args come from `$esp`, not `$ebp`** (a bp at the first
+  instruction sits before the prologue, so `$ebp` is the CALLER's frame: args at `*(int *)($esp+4)`, caller at
+  `*(int *)$esp` — the return-address field is the cheapest caller census). Check the prologue for
+  `mov reg,[ebp+8]`-style loads + reassignments: a callee-saved register holding arg 1 for the whole body is a
+  PARAMETER, not a cursor. Print raw AND derived forms (`$ebx`, `$ebx/52`, `$ebx%52`) so a mislabel is visible
+  in the log. (Full text: `references/wine-pitfalls.md`.)
+- **Watchpoints:** x86 gives 4 hw slots (an 8-byte window needs 8-alignment = 2 slots); they fire on VALUE
+  CHANGE, so a same-value rewrite is invisible — count stores with silent bps AT the store and keep the
+  watchpoint as the "any other writer" check. **Never watch a field the display reads constantly**
+  (`base+0x40`): the inferior crawls — break on the STORE sites instead and condition each on the address the
+  store's OWN encoding computes (`[reg*4+disp]` holds `(index*stride)/4`, `[reg+disp]` the byte address —
+  comparing the register against the bare index never fires; §9.3 of `static-store-census.md`). Side-values at
+  a store site are not evidence. **A bp on a LOAD prints the register's PREVIOUS value; a bp on a skipped loop
+  body never fires (a zero there is the gate); round-mutated values cannot come from a round-start snapshot.**
+  **Do not `si` for the after value** — `si` inside a commands list makes `gdb -batch` stop and DETACH after one
+  hit; for `mov [reg+disp],src` the source operand IS the value, and the sleeping /proc sampler proves it. A
+  hw watch reports `$pc` PAST the writing instruction — disassemble BACKWARDS from a hit. When the governing
+  field is a UI cursor/selection, POKE it and prove the write lands (and refuse the shape when the poked value
+  and the rival prediction agree).
+- **The gdb command-list killer class (all of it aborts the sourced script at the FIRST hit and detaches — the
+  log reads as a clean zero-event run while the turn driver exits 0):** a printf ERROR in a commands block (so:
+  no inferior strings — `%.20s` of an inferior pointer errors; expressions go in printf ARGUMENTS, specs must
+  match; a format-pasted expression prints ITSELF and the stream parses as zero events); a MEMORY WRITE in a
+  commands list (`set {int}ADDR = 1` is "not an lvalue") — **put pokes in Python: `os.pwrite(fd, ...)` on
+  `/proc/<pid>/mem` succeeds while gdb is attached** — keep command lists print-only; an UNGUARDED ARMED-time
+  deref (`ds:0x8f0d60` reads 0 until a pane opens — `if $reg != 0 … end` or print the register alone; a /proc
+  reader must return -1 on OSError, EIO not 0); a `dump binary memory` with a non-literal target, arithmetic
+  range, or `python … end` block — bake literal paths + literal addresses, remember gdb convenience-variable
+  arithmetic is 32-bit SIGNED (compute lengths in Python), one dump per run with an `off=` field, and
+  **`append binary memory` is what makes a per-hit series work** (full rules: `references/gdb-command-list.md`).
+- **Never build the gdb command list with Python `%`-format** — the template is full of `%d`/`%x` and Python
+  eats the first ones, silently rewriting the breakpoints. Bake literals or `str.replace()` a unique token, and
+  diff the emitted `scratch/<tag>.gdb` before attaching. Use `stdbuf -o0`, drain gdb's pipe, drive + snapshot in
+  ONE backgrounded job (`scripts/m53n_drive.py` is the template).
+- **A zero-event log is an INSTRUMENT verdict until proven otherwise:** arm one control breakpoint whose hit is
+  guaranteed in the window and require its rows; read back BEFORE attaching that the watched event can even
+  happen (queue head is the armed id, `pending >= 1`, storage above the gate's demand) — an unusable window is
+  not a negative result. **A whole subsystem path can be gated on another subsystem's state** (empty queues ⇒
+  research upkeep never runs); satisfy the printed readiness FIX and echo the precondition in the harness's own
+  output so "gate unmet" reads different from "mechanism refuted".
+- **A hardware watchpoint cannot see a KERNEL write** (user DR breaks carry the exclude-kernel bit; bytes
+  landing via `copy_to_user` inside a `read()` change with zero events — that is what a "silent census" means
+  when a file read's destination IS the watched region). The fix is a different LAYER: strace `-e raw=` (prints
+  the read's BUFFER POINTER) + `clear_refs=4`/pagemap soft-dirty + maps before/after; strace and gdb cannot both
+  ptrace one task — `references/ptrace-level-probes.md`.
+- **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
+  first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
+  agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
+  TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor. Tie every hit to
+  a boundary; a window count is not a cadence. **Before blaming a breakpoint for a zero, resolve the SITE's
+  containment and its function's caller count** from `ghidra_out/index.csv` — one read splits "unreachable BY
+  DESIGN" from "UNTAKEN BRANCH".
+- **To name who writes a field: hw watchpoint on the address PLUS a control watchpoint on an address you know
+  changes** — a mnemonic grep misses stores through pointer-form `lea`; and **classify each store by how its
+  SOURCE register was computed** (scan back for `or`/`and`/`lea`): 23 of 27 memory-form stores to one field
+  were the write half of a register-level bit RMW, so the field IS bit-set and only whole-value assignments can
+  deliver an untouched bit — a store-shape census sees the operand, never the provenance.
+- **A gdb census >90 s goes through tracked background + wait loops: the foreground caps at 420 s and killing a
+  census mid-run leaves Wine hung** (round frozen after detach too — recover via `m54a_load --relaunch`). Pair
+  store-readback probes by EVENT ORDER (RB follows ST) — a {addr: last-mem} dict mis-pairs an address rewritten
+  later. **Detach only after the window is really over:** the turn driver returns rc=0 while other factions'
+  upkeep still executes, so the last stores land after the detach and log NOTHING (`instrument-laws.md`). A
+  census can also leave gdb ATTACHED after printing its verdict: check `TracerPid` and kill the stale gdb BY
+  PID before calling the box clean.
+- **Vtable targets: check for a live INSTANCE first** — scan writable `/proc/<pid>/mem` regions for the class's
+  vptr; a class with no live instance logs zero hits at every method, whatever the window (recipes:
+  `references/code-atlas.md`).
+- **The readiness oracle's printed FIX can stay unsatisfied:** `credit` = `base+0xd0` is RECOMPUTED EVERY ROUND
+  by FUN_004e93f0 (`[+0xc0]-[+0xf0]-[+0xe0]`; the "init-only" claim is RETRACTED) and holds 0 when upkeep
+  exceeds income — the reload chain will not clear it. That line blocks only the PAY-SITE family (their gates
+  need storage >= price: use the per-boundary storage poke); rebuild/upkeep censuses run green at credit 0.
+- **A clean reload does NOT carry records created live in a previous session** — yesterday's census is fiction
+  after a reload: re-census the watched slots from `/proc/pid/mem` in the SAME invocation that arms the harness,
+  and assert armed == len(designed watch list), not a fixed floor (arming fewer watchpoints than the design
+  silently drops half the slots). **Check the save can HOST the experiment before reloading for it:**
+  `m54b_clean.SAV` loads at 2150 r50 (University Base only, credit 0); the chooser candidate array is
+  ERA-DEPENDENT (after `m54g_prep` + one turn the INSERT lands even at minerals 0 / credit 0), and the FIRST
+  enqueue right after a turn-end can transiently print `item 2 not in candidate array []` — retry once before
+  blaming the save; reloading to clear a stray modal costs the later state AND the experiment — clear the modal
+  itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
+**Read `references/static-store-census.md` §9 before hand-writing a watcher script** — condition arithmetic,
+log format and scorer gates are solved there (uppercase-`PTR` greps, pointer-form stores, operand width);
+§1–§3 carry the traps that make the STATIC half complete. `references/instrument-laws.md` carries the header
+order, the containment recipe, the DictReader trap, the watchpoint laws, the value-census laws, the
+printf-escape law, the event-grouping law and the bit-leg census / per-site argument-tuple parse rules.
+Depth: `references/wine-operations.md`, `references/wine-headless-harness.md` (turn automation, OCR/dialog
+state machine), `references/wine-runnability.md` (what runs at all).
 
-When the target is reached only through a vtable or handler table, the pre-arm check is whether an
-INSTANCE of its class exists at all: scan the writable `/proc/<pid>/mem` regions for the class's vptr
-value — a class with no live instance logs zero hits at every method, whatever the window (recipes:
-`references/code-atlas.md`).
-Two more pre-arm checks, both cheap, both fatal if skipped:
-- **The readiness oracle can print a FIX that stays unsatisfied after you run it.** `credit` is
-  `base+0xd0`, RECOMPUTED EVERY ROUND by FUN_004e93f0 (M97: `[+0xc0] - [+0xf0] - [+0xe0]`; the
-  "init-only, turns never raise it" claim is RETRACTED) — it holds 0 when upkeep exceeds income, so the
-  reload chain restores a runnable box but will not clear the credit-0 line. That line blocks only the
-  PAY-SITE family (their gates need storage >= price — take the per-boundary storage poke above the
-  price); rebuild/upkeep censuses run green at credit 0 (M100/M102 did). Check the state a printed FIX
-  demands is actually reachable before looping it.
-- **A clean reload does NOT carry records created live in a previous session** — a prior run's new
-  unit/type records are live state that no save holds, so yesterday's census is fiction after a
-  reload. Re-census the watched slots from `/proc/pid/mem` in the same invocation that arms the
-  harness, and make the harness assert armed == len(designed watch list) rather than a fixed floor:
-  arming fewer watchpoints than the design list silently drops half the slots from the window. **Check the save can HOST the experiment before you reload it**: `m54b_clean.SAV` loads at 2150 r50 — University Base only, `credit` 0, and the chooser candidate array is ERA-DEPENDENT: after `m54g_prep` + one turn the INSERT lands even at minerals 0 / credit 0, but the FIRST enqueue attempt right after a turn-end can transiently print `item 2 not in candidate array []` — retry it once before blaming the save; reloading to clear a stray modal costs the later state (2163 r63, candidates `[192,195,194,193,2,0,1,196]`) AND the experiment. Clear the modal itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
-The
-  census→live-enumeration method (filter the store census by call-graph reachability, condition each
-  breakpoint on the address the store's own encoding computes, scale included, accept by replaying the stores against the sampler) is
-  `references/static-store-census.md` §9; §1–§3 carry the traps that make the STATIC half of it complete —
-**Read §9 before hand-writing a watcher script** — condition arithmetic, log format and scorer gates are
-solved there (uppercase-`PTR` greps, pointer-form stores, operand width).
-Depth: `references/wine-operations.md`, `references/wine-headless-harness.md`
-(turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
-
-## Still open (leads)
-`references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
-**Dialog-family +0x4c dispatch question CLOSED (M284-M288, s228-s233): the family +0x4c slot (FUN_005f6aa3,
-the dialog row-click dispatcher: FUN_005e7917 row finder over 0x18-stride rows + [ecx+0xa8] row-cb dispatch) is
-reachable ONLY through a live family +0x4c dispatch and NO reachable path takes it. Four live click paths
-(M284 base CPane, M285 chooser 0x672298 not family, M286 REALLYQUIT 0x67164c IS family - row cb INLINE in the
-pump FUN_005f1394, M287 menu pane 0x67919c not family, console bar GAME/HQ/... is CHROME) plus M288's static
-closure: FUN_005f6aa3 has 0 direct callers, its only 5 refs are the family vtables' +0x4c entries; dialog
-CREATE-time (466 family-vptr install sites in 72 fns, install-owner ∩ site-owner = ∅; ctor FUN_00405ef0 +
-callees FUN_005ee350/FUN_005f6b8c clean) and the Return-key path (WM_KEYDOWN 0x100 -> FUN_005d1576 -> vtable
-+0x12c = 0x5d629d hotkey dispatcher -> FUN_005cf43a -> vtable +0x60; WM_CHAR -> 0x5d15d5; WM_SYSKEYDOWN ->
-0x5d1601; pump clean) contain NO +0x4c call dispatch (one data load 0x5d632d feeds FUN_00631070 hotkey-
-table+0x4c, not a dispatch). M288 evidence: scripts/m288_create_key_dispatch.py. In-game MENU drive recipe:
-the GAME row never OCRs (two frames measured GAME=(26,190) with NETWORK anchored y226, 18-px row stride);
-an open console bar inverts the MENU click to a close - close it before arming; Escape on the bare HUD after
-the menu raises REALLYQUIT (safe 'oops' row, M37).**
-**Band-flag gate — CLOSED, do not re-open** (bit 0x40 of the per-faction flag word is tested but has no setter and no
-save carries it): `scripts/m118_flag_never_set.py` re-proves it offline.
-
-
+## Still open (leads) — `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree
+- **Dialog-family +0x4c dispatch CLOSED (M284-M288, s228-s233): do not re-open.** The slot (FUN_005f6aa3, the
+  row-click dispatcher: FUN_005e7917 finder over 0x18-stride rows + [ecx+0xa8] dispatch) is reachable ONLY
+  through a live family +0x4c dispatch and NO reachable path takes it — four live click paths + create-time +
+  Return/WM_CHAR/WM_SYSKEYDOWN closure. Full registry blocks with every address: `NAMED.md` ## M284-M288; the
+  in-game MENU drive recipe (the GAME row never OCRs; an open console bar INVERTS the MENU click; Escape on the
+  bare HUD after the menu raises REALLYQUIT — safe 'oops' row, M37) is there too.
+- **Band-flag gate CLOSED, do not re-open:** bit 0x40 of the per-faction flag word is tested but has no setter
+  and no save carries it — `scripts/m118_flag_never_set.py` re-proves it offline.

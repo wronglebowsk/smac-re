@@ -37,7 +37,7 @@ file readable in one context window. Same evidence file paths apply.
 ## Session 77 (2026-10-24) — M54a: **THE HUD NO LONGER TRICKS THE CLASSIFIER, THE DRIVER ANSWERS THE PANES — THE 40-TURN RUN IS STILL OPEN (→ M54b)**
 - **The bug, fixed and pinned.** `classify()` returned `base` for ANY frame whose OCR text held a
   BASE_WORD, and the HUD's own message pane prints news lines that do: `nutrients` at (355,438)
-  with TURN COMPLETE at (628,419) on `evidence/m54a/live_hud.png` (the session-75 stall position,
+  with TURN COMPLETE at (628,419) on `evidence/fixtures/live_hud.png` (the session-75 stall position,
   captured first this session). The test is positional now — `base_word_positions` +
   `in_msgpane`, `MSGPANE = (0,425,800,600)`: base words count only outside that strip, or while
   the HUD button row is absent (a real base screen has no TURN COMPLETE row: `m45a_post.png`,
@@ -49,11 +49,11 @@ file readable in one context window. Same evidence file paths apply.
   "was `base` / was `title`" claims come from.
 - **Three screen classes the driver had wrong.** (1) `quit-prompt`: the "Do you really want to
   quit?" dialog wears the game title as its banner, so `title` fired on it and a 40-turn run
-  STOPPED at turn 13 refusing to answer it (`evidence/m54a/quit_prompt.png`; m37_screen0.png and
+  STOPPED at turn 13 refusing to answer it (`evidence/fixtures/quit_prompt.png`; m37_screen0.png and
   m15_title_now.png are the same dialog, not title screens). Escape = "Oops, no, wait!" is the
   safe answer; OK exits. (2) `help`: the HELP browser (FACTION PROFILES/CONCEPTS) contains base
   words, ignores Escape entirely, and closes only on its EXIT bar (BACK (275,344), EXIT (525,344)
-  on `evidence/m54a/live_now2.png`). (3) the battle **Replay** screen ("Replay: 2415" + a Close bar
+  on `evidence/fixtures/live_now2.png`). (3) the battle **Replay** screen ("Replay: 2415" + a Close bar
   at (400,587), `evidence/m54a/movie_stuck.png`) OCRs to 5 words → `movie` → the driver waited;
   now a `movie`/`unknown` frame with a bar at y ≥ 560 gets clicked.
 - **Bar geometry: a horizontal RUN does not work on this build.** The push-bars are DITHERED —

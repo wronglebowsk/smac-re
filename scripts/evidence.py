@@ -41,6 +41,10 @@ ALWAYS_LOADED = ("AGENTS.md", "NEXT_PROMPT.md", "skill/SKILL.md")
 LOOKUP_ONLY = ("NAMED.md", "SESSION_NOTES.md")
 EVIDENCE_MB = (20, 30)   # warn, fail
 SINGLE_FILE_MB = (1, 4)
+HOT_SECTIONS = 8         # newest N `## Session` sections of SESSION_NOTES.md hold an image hot
+FOOTING_DOCS = ("NEXT_PROMPT.md", "AGENTS.md", "SESSION_CURSOR.md")
+FIXTURES = os.path.join(EVID, "fixtures")
+FIXTURE_CODE_GLOBS = ("scripts", "sim")   # a name a .py here mentions is a test fixture, not stale
 
 CITE_RE = re.compile(r"^([A-Za-z0-9_./-]+?):(\d+)(?:-(\d+))?$")
 
@@ -71,6 +75,44 @@ def load_cites():
 
 def is_cited(name, pats):
     return any(p.match(name) for p in pats)
+
+
+def _pats_from(text):
+    return [re.compile(r"^(?:.*/)?" + m.group(0).replace("*", ".*") + r"$")
+            for m in re.finditer(r"[A-Za-z0-9_.*-]+\.(?:png|log|gdb|txt|jsonl|json|csv)", text)]
+
+
+def hot_window_text():
+    """The docs a CURRENT session may read for live footing (docs/EVIDENCE.md, image retention, s242):
+    the newest HOT_SECTIONS `## Session` sections of SESSION_NOTES.md + the footing files.
+    Lookup/history docs (NAMED.md, pick-archive, named archives, docs/sessions/, skill references)
+    explain OLD findings and do not hold an image hot."""
+    chunks = []
+    p = os.path.join(ROOT, "SESSION_NOTES.md")
+    if os.path.isfile(p):
+        text = open(p, encoding="utf-8", errors="ignore").read()
+        marks = [m.start() for m in re.finditer(r"^## Session\b", text, re.M)]
+        if marks:
+            text = text[marks[-HOT_SECTIONS] if len(marks) > HOT_SECTIONS else marks[0]:]
+        chunks.append(text)
+    for name in FOOTING_DOCS:
+        p = os.path.join(ROOT, name)
+        if os.path.isfile(p):
+            chunks.append(open(p, encoding="utf-8", errors="ignore").read())
+    return "\n".join(chunks)
+
+
+def fixture_pats():
+    """Evidence file names named as inputs by TEST/runner code (scripts/test_*.py, sim/*.py) -
+    those are fixtures, never prune victims. Deliberately NOT all of scripts/: a driver .py that
+    names the path where it ONCE wrote a screenshot is not a reader and must not hold it hot."""
+    code = ""
+    for sub in FIXTURE_CODE_GLOBS:
+        for d, _, fs in os.walk(os.path.join(ROOT, sub)):
+            for f in fs:
+                if f.endswith(".py") and (sub == "sim" or f.startswith("test_")):
+                    code += open(os.path.join(d, f), encoding="utf-8", errors="ignore").read()
+    return _pats_from(code), code
 
 
 def human(n):
@@ -110,18 +152,22 @@ def cmd_budget(_args):
     print()
 
     ev_size = sum(os.path.getsize(os.path.join(d, f))
-                  for d, _, fs in os.walk(EVID) for f in fs)
-    files = sum(len(fs) for _, _, fs in os.walk(EVID))
-    imgs = [os.path.join(d, f) for d, _, fs in os.walk(EVID) for f in fs if f.endswith(".png")]
+                  for d, _, fs in os.walk(EVID) if FIXTURES not in d for f in fs)
+    files = sum(len(fs) for d, _, fs in os.walk(EVID) if FIXTURES not in d)
+    imgs = [os.path.join(d, f) for d, _, fs in os.walk(EVID) if FIXTURES not in d for f in fs if f.endswith(".png")]
     img_size = sum(os.path.getsize(p) for p in imgs)
+    fx = [os.path.join(d, f) for d, _, fs in os.walk(EVID) if FIXTURES in d for f in fs if f.endswith(".png")]
+    fx_n = len(fx)
+    fx_mb = sum(os.path.getsize(p) for p in fx) / 1e6
     warn_mb, fail_mb = EVIDENCE_MB
     status = "FAIL" if ev_size > fail_mb * 1e6 else ("warn" if ev_size > warn_mb * 1e6 else "ok")
     if status == "FAIL":
         bad += 1
-    print(f"evidence/: {human(ev_size)} in {files} files ({len(imgs)} images, {human(img_size)})"
+    print(f"evidence/: {human(ev_size)} in {files} files ({len(imgs)} images, {human(img_size)};"
+          f" +{fx_n} fixtures in evidence/fixtures/, {fx_mb:.1f} MB, uncounted by design)"
           f"  budget {warn_mb}/{fail_mb} MB  [{status}]")
     biggest = sorted(((os.path.getsize(os.path.join(d, f)), os.path.join(d, f))
-                      for d, _, fs in os.walk(EVID) for f in fs), reverse=True)[:5]
+                      for d, _, fs in os.walk(EVID) if FIXTURES not in d for f in fs), reverse=True)[:5]
     if biggest and biggest[0][0] > SINGLE_FILE_MB[0] * 1e6:
         print("  largest: " + ", ".join(f"{rel(p)} {human(s)}" for s, p in biggest[:3]))
         print("  → digest or prune these; read them with `evidence.py show`")
@@ -138,7 +184,9 @@ def resolve(cite):
         end = int(end) if end else start
     else:
         name, start, end = cite, 1, 0
-    for cand in (os.path.join(ROOT, name), os.path.join(EVID, name), os.path.join(ROOT, "evidence", name)):
+    for cand in (os.path.join(ROOT, name), os.path.join(EVID, name), os.path.join(ROOT, "evidence", name),
+                 # s242: fixtures moved flat under evidence/fixtures/ (docs/EVIDENCE.md)
+                 os.path.join(FIXTURES, os.path.basename(name))):
         if os.path.isfile(cand):
             return cand, start, end
     raise SystemExit(f"{name}: not in the working tree (pruned?). Check `evidence.py log`, or "
@@ -199,18 +247,25 @@ def sha256(path):
 
 
 def cmd_prune(args):
-    pats = load_cites()
+    # s242: image retention is the HOT-WINDOW cite rule (docs/EVIDENCE.md). load_cites() (every .md in
+    # the repo) kept every screenshot any old session ever mentioned hot forever - prune found ONE
+    # victim against a ~9 MB overshoot. An image is hot only while the hot window cites it, it is
+    # still inside the keep-days grace window, or test/runner code names it (fixture).
+    pats = _pats_from(hot_window_text())
+    _, code = fixture_pats()
     now = time.time()
     keep_days = args.keep_days
     victims, kept = [], 0
     for dirpath, _, files in os.walk(EVID):
+        if FIXTURES in dirpath:
+            continue  # fixtures are code-retained and uncounted by budget; prune never touches them
         for fn in files:
             p = os.path.join(dirpath, fn)
             if p == PRUNE_LOG or "digests" in p:
                 continue
             if not fn.endswith(".png"):
                 continue  # text evidence is cheap; never prune it
-            if is_cited(fn, pats):
+            if is_cited(fn, pats) or fn in code:  # code-name match mirrors cmd_audit: paths sit in strings
                 kept += 1
                 continue
             if now - os.path.getmtime(p) < keep_days * 86400:
@@ -218,8 +273,8 @@ def cmd_prune(args):
                 continue
             victims.append(p)
     total = sum(os.path.getsize(p) for p in victims)
-    print(f"cited/young images kept: {kept}")
-    print(f"uncited images older than {keep_days}d: {len(victims)} ({human(total)})")
+    print(f"hot-cited/fixture/young images kept: {kept}")
+    print(f"images outside the hot window older than {keep_days}d: {len(victims)} ({human(total)})")
     for p in victims[:10]:
         print(f"  - {rel(p)}")
     if len(victims) > 10:
@@ -257,6 +312,8 @@ def cmd_audit(args):
                 code += open(os.path.join(d, f), encoding="utf-8", errors="ignore").read()
     rows = []
     for dirpath, _, files in os.walk(EVID):
+        if FIXTURES in dirpath:
+            continue  # fixtures are code-retained and uncounted; audit answers "what does nothing cite"
         for fn in files:
             p = os.path.join(dirpath, fn)
             if p == PRUNE_LOG or "digests" in p:

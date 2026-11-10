@@ -27,9 +27,9 @@ designed on the fragments actually seen, not on clean words:
 
 | frame | what the bar OCRs to | what fires |
 |---|---|---|
-| `evidence/m25_t7.png` | `sisson@573 tear@573 zie@573`, `Energy:@582`, no year number | `ssion` fragment + `Year`-as-`tear` + `energy` |
-| `evidence/m54a/live_hud.png` | `[esston@572`, `2388@572` | `sston` fragment + the 4-digit year number |
-| `evidence/m37_recovered.png` | `Mission@567 Year@567 2275@567 Energy:@582` | clean |
+| `evidence/fixtures/m25_t7.png` | `sisson@573 tear@573 zie@573`, `Energy:@582`, no year number | `ssion` fragment + `Year`-as-`tear` + `energy` |
+| `evidence/fixtures/live_hud.png` | `[esston@572`, `2388@572` | `sston` fragment + the 4-digit year number |
+| `evidence/fixtures/m37_recovered.png` | `Mission@567 Year@567 2275@567 Energy:@582` | clean |
 | `evidence/m65/sample_0[0,2,4,7]_unknown.png` | `Mission Year 2161` (+ `||Il)||Mission`) | clean, while the button row is garbage |
 
 Predicate (`hud_status_bar`, returns its components so a caller can print WHY): >= 3 tokens

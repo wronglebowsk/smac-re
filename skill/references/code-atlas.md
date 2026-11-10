@@ -612,3 +612,91 @@ the 0x530d45-0x530df0 gap — no index row contains them, `fnof()` answers "?" a
 loses them, so grep the gap by address. Return domain {0, -1, [this+0x290], pass-through}: 0
 `mov eax,imm` in 11,207 bytes, 5 `xor eax,eax`, 2 `or eax,0xffffffff`, and `mov eax,ds:0x698d0c` whose
 dword IS 0xffffffff (the image has exactly 1 reader of that dword and it is here).
+
+
+## s242 retirement: code-atlas family + structural laws
+> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
+> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
+
+## Code atlas — read `references/code-atlas.md` before opening Ghidra
+The address/field atlas (base-record offsets, terrain record formula, faction + unit records, the global
+map, pointer-type scale traps, VA→function recipe) lives in `references/code-atlas.md`. Open it when you
+need a field offset — do not re-derive one from pseudocode: Ghidra types some DATs `short*`/`int*`, so a
+pseudocode offset can be HALF or 4x the real byte offset.
+Unit-record type field: the u16 at `+10` (`+4` = flags) — settled from the accessor;
+the full story + the two generalizing rules are in `references/code-atlas.md`.
+Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then `gunzip -c … | sed -n 'A,Bp'`), or the unpacked aligned cache `scratch/m574/text.txt` (grep by address; parse by TAB fields). **Never `objdump -d --start-address` at an arbitrary address**: a start that lands INSIDE an instruction silently misaligns the whole window — objdump re-synchronizes mid-encoding, invents `.byte` lines, and poisons any reachability/def-use walk built on it (s214 lost two debug passes; the witness is a `.byte` line where a `jmp` should be). Disassemble from the function ENTRY (containment via index.csv) or read the cache.
+`gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && strtonum($1)<=strtonum(A){n=$2;p=$1} END{print
+p,n}' ghidra_out/index.csv` (commas, no spaces; strtonum REQUIRED — bare `$1<=A` is a STRING compare, every row matches
+and you get the file's LAST function, not the owner; the same trap has a second face — `awk -v lo=0x55df20`
+is a STRING, awk parses hex ONLY inside program code, so pass boundaries as literals in the program); pseudocode `scripts/fn.py 0xADDR` (prints the index row as header).
+Parse objdump by TAB fields (bytes sit between address and mnemonic); require `^[0-9a-f]{6,8}:\t` before int(x,16) — details in `references/code-atlas.md`.
+Two static instruments answer "what IS this field" with no box time: `scripts/name_global.py <addr> [--disp]`
+(every referencing instruction, its containing function, and whether it reads, writes or tests — use it before
+naming a global from the one reader that mattered) and `scripts/field_census.py [stride|bit5|readonly|copy|dual]`
+(the five shape checks: stride unanimity over all sites, a gate's index provenance, a zero-writer proof, a
+copy-vs-array discrimination, and dual addressing forms for one address).
+**The census family, one shape per script** — reach for these before writing a new probe: `field_census.py` (a
+displacement's shape), `name_global.py` (every reader/writer of a global, with containment),
+`m118_flag_never_set.py` (is a gate satisfiable AT ALL: test sites, OR immediates, register-level bit ops, and whether
+any SAVE carries the bit), `m124_state_and_memo.py` (a state code named from the strings printed around its writers; a
+memo-invalidation store), `m127_m129_fields.py` (one field's two addressing encodings, a pre/post-call pair, a guard
+that CONSUMES a flag), `m130_m132_chooser.py` (a switch read straight out of the PE jump table), `m133_m142_census.py`
+(ten globals in one pass: refs, writes, stored values, containment), `m163_m165_structs.py` (an init-time value, plus
+struct-vs-neighbours proved by base-register reuse), `m166_m168_roles.py` (what a rank is compared against, a candidate
+struct's writer SETS, a derived cache), `m169_m171_aggregate.py` (a table that is TOTALLED rather than flagged, the
+aggregator around it, and a struct written from ONE byte), `m282_base_founder.py` (a CREATOR census:
+who writes a record array/count - classify every writer site of the count global by its owning body's
+shard text, verify bare stores the decompiler text drops via exe bytes, and census the founder's callers
+while SKIPPING the definition-signature line or it self-reports as a caller). Ten census questions through one script is a
+legit batch; ten that each need their own harness is ten batches. The per-faction FIELD ATLAS is generated, never
+hand-written: `scripts/m143_m162_atlas.py` -> `docs/field-atlas-faction.md` (top-20 `+0x94dXXX` displacements by
+reference count, with refs/writes/consts/tests/functions) — regenerate it instead of re-censusing a field, and read its
+`in NAMED?` dash as "genuinely unnamed", not as a gap to be filled by a guess.
+**Script-reuse + registry-gate traps (s219, cost 4 fix-cycles)**: to exec a sibling script's defs, slice on `"\ndef main("`, never `"def main("` — a script that reuses another by exec CARRIES the token inside a string literal, so the bare slice cuts mid-string and the SyntaxError cites line numbers in the OTHER file; exec'd names sit NESTED (`_ns["_ns"]["dst_regs"]`) because the exec line rebinds `_ns`. In `NAMED.md` a bare `## Mxxx` header token occurs as a cross-reference too — registry gates must anchor the FULL header line. And `gate(n, a and re.search(...))` appends a Match to `res` and `sum(res)` crashes — `bool()` every regex clause.
+**Three structural laws this family settled** (depth: `references/instrument-laws.md`): (1) a decompiler's `arr[i*N]`
+is an ELEMENT index — multiply by the element width before calling it a stride, because `param_1*0x167` was 359
+dwords = 1436 BYTES, the stride the record block already had; (2) a `switch` is found by its TABLE, not by the
+address range you expect — scan every `jmp DWORD PTR [reg*4+imm]` for the ones behind a bound check on the same
+register, since this dispatch sits in the CONSUMER of a helper and keys on that helper's return; (3) count a record
+field in BOTH encodings (`[reg+0x2a]` literal AND the folded `[reg*4+abs]` where the register already holds
+`index*stride`), because a literal-only grep reported "zero readers" for a field that has 369.
+**Three more laws, all about how a field is SHAPED by its readers and writers:** (4) degree asymmetry is evidence — a
+displacement with hundreds of readers and ONE writer is an init-time value (a rank/order), so read that single writer
+and its loop instead of sampling readers; (5) a candidate struct is proved by (function, base-register) reuse —
+several pairs addressing SEVERAL of the offsets off one register — and its parts are then separated by writer SETS,
+because equal write COUNTS hide the split (a header dword with its own writers plus a payload quad written together
+by a different shared set); (6) read the writer's SOURCE before naming members: `setne`/`shr`/`and` chains mean the
+fields are booleans of ONE source bitfield (one byte expanded into four dwords, a tristate header, and an `or` into a
+DIFFERENT word as a side-effect), and a displacement with many writes but almost no tests is a recomputed CACHE,
+never state a gate may read.
+- **A chain-eval window must START at the fold seeds** (the first writer of the base/derived register), not mid-chain:
+s221's M279 G6 opened at `lea ecx,[edi+edx*2]` with edi/edx as FREE atoms and "published" an index idiom
+"(30,64,0)" that was pure truncation — the seeds `mov edx,edi; shl edx,6; add edx,edi` (edx = 65*edi) sat just
+outside the window, and seed-inclusive evaluation flips the same chain to the standard (8380,2,0) block fold
+(M280 G4 computes the substitution). A "different index idiom" claim needs the window widened, not a new family.
+The chooser/dispatch state family (dispatch table, list seek, state+mode pair, the counters around it) is mapped in
+`references/ui-chooser-state.md` — read it before re-deriving any of it.
+
+
+
+## s242 retirement: terran.exe PE layout
+> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
+> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
+
+## terran.exe PE layout (verified 2026-10-20 via section table + byte reads)
+
+Image base 0x400000. Sections (RVA): `.text` 0x1000 + vsize 0x26f3f4 ⇒ VA **0x401000–0x671000 with
+raw bytes present** (`55 8b ec` prologues verified at 0x520e70, 0x51e700, 0x5d0c33 WNDPROC, 0x62ad73
+FLIC, 0x6309aa DP-init); `.data` RVA 0x289000 vsize 0x316284 but **rawsize only 0x20000** ⇒ data above
+VA ≈0x6a9000 (`DAT_0091f6c4`, `DAT_00985b10`, `DAT_0099d020`, …) is uninitialized/BSS at runtime and has
+**no bytes in the file**; then unnamed/UVA_DATA/_SELFMOD/.rsrc/.reloc, last section ends RVA 0x5e4000
+(VA 0x9e4000).
+
+Consequences — this **corrects the earlier "self-modifying, analyzed image ≠ file image" note, which
+mixed RVA with VA**: (1) **all game CODE is in the file**; Ghidra's decompile of any `FUN_` (including
+0x5dxxxx–0x66xxxx) is authoritative, and runtime breakpoints at those VAs fire (M7/M8 proved it); (2)
+only *data* reads above ≈0x6a9000 need a runtime snapshot (`gdb -batch -ex 'dump binary memory …'`);
+(3) `_SELFMOD` is a 0x415d-byte section — a small patch area, not a whole-image unpacker, so there is no
+"import of the wrong image" problem.
+

@@ -125,7 +125,7 @@ DIRECTOR "Investigate pod beacon?" pane wearing HUD chrome classified `hud` and 
 trace_m54h3 (the driver clicked TURN COMPLETE behind it every 6 s) — `modal_caption` guard
 added; the next run cleared it in one press (`hud-with-caption: 1` in the m54h4 action log) and
 all 6 turns advanced. Classifier gates: `test_classify.py` -> `PASS 17/17` (was 16/16; the new
-frame is the two-row chooser, `evidence/m54h/chooser_g60b.png`), `check_classes.py` ->
+frame is the two-row chooser, `evidence/fixtures/chooser_g60b.png`), `check_classes.py` ->
 `frames: 17 failures: 0`, `_3x.png` siblings deleted.
 
 **Open.** (1) What the leg array actually holds, and whether the loop can be made to read the
