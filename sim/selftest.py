@@ -1360,6 +1360,36 @@ def diff_ok(diffs, bo):
         for d in rel)
 
 
+def run_b14(sav_path, log_path, golden_path, ring_path, results):
+    """Rung B14: the hub founding scan (M291) + esi dispatch/walk legs
+    (M292/M293) fitted through sim.podscan against the recorded m289
+    golden and the m292 live census. No box."""
+    import os as _os
+    from . import podscan as sps
+    for p in (sav_path, log_path, golden_path, ring_path):
+        if not _os.path.exists(p):
+            return fail("B14: missing input: %s" % p)
+    sps.acceptance(sav_path, results, log_path=log_path,
+                   golden_path=golden_path, ring_path=ring_path)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B14: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print(("PASS B14: %d/%d gates - M291 ring scan + M292 esi dispatch "
+           "and walk legs are executable: literals match the recorded "
+           "ring dump, 7/7 m289 foundings self-argmax (no-owner-gate "
+           "loses exactly fac1 (27,29), B10 placeholder 0/7), the 29 "
+           "m292 DISP rows partition 9 found / 9 continue / 11 walk / "
+           "0 msg with ISS pairing, walk target-X reproduces 11/11 ISS "
+           "rows (table-swap rival 0/11), the ledger is count-strict "
+           "19->27, and the msg gate is solo-inert by law "
+           "(no box time, no /proc, no gdb)")
+          % (len(results), len(results)))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1384,6 +1414,8 @@ def main(argv=None):
                     help="rung B12: the completion CREATE leg acceptance")
     ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
                     help="rung B13: the pod-driven founding dispatch leg acceptance")
+    ap.add_argument("--b14", nargs="+", metavar="SAV",
+                    help="rung B14: hub scan + walk dispatch leg acceptance")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
@@ -1417,6 +1449,17 @@ def main(argv=None):
             tr = os.path.join(REPO, "evidence",
                               "trace_m289_20261110_071759.jsonl")
         return run_b13(args.b13[0], lg, tr, results)
+    if args.b14:
+        lg = args.b14[1] if len(args.b14) > 1 else None
+        gd = args.b14[2] if len(args.b14) > 2 else None
+        rg = args.b14[3] if len(args.b14) > 3 else None
+        if lg is None:
+            lg = os.path.join(REPO, "evidence", "m292_gdb_raw.log")
+        if gd is None:
+            gd = os.path.join(REPO, "evidence", "m289_gdb_raw.log")
+        if rg is None:
+            rg = os.path.join(REPO, "evidence", "b14_ring_table.txt")
+        return run_b14(args.b14[0], lg, gd, rg, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

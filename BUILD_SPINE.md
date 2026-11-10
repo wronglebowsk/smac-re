@@ -293,3 +293,44 @@ foundings' record_bytes (the 2 destroyed ones ABSENT), the tail is byte-identica
 and the image re-parses with n_bases 23; (12) two runs -> identical sha256 and
 `python3 -m sim.hubfound --sav <sav> --out <f>` exits 0 and writes the report.
 No box time, no /proc, no gdb.
+
+**B14 - the hub scan + walk dispatch made executable (R2's "AI pod chooses and
+walks" slice, next after B13's founding dispatch; written by this fire from
+B13's DECLARED frontier plus M291/M292's laws - track_mode counts rung numbers
+from merged history, so a build fire whose rung is not yet in the spine authors
+it).** `sim/podscan.py`: M291's scan law executable - a STRICT site-value
+argmax (score = rec byte2 high nibble) over the literal 25-entry ring table
+(transcribed from the recorded file-image dump `evidence/b14_ring_table.txt`,
+written by `scripts/b14_ring_dump.py`; sim/ never loads terran.exe),
+eligibility = cat-flag equality + rec byte3 owner-equality + rec+9 bit 0x20
+clear + unoccupied, ties keep the closer entry - plus M292's dispatch table
+keyed on the ring ENTRY INDEX esi: 0 -> founder, or msg 0x2408 under s240's
+msg_gate(global != 0 AND owner == human); 1..8 -> continue, NO order; >=9 ->
+WALK: issue order 0x62 at the wrapped ring tile (walk_target, FUN_00469010
+semantics). ACCEPTANCE `python3 -m sim.selftest --b14 programs/saves/m54b_clean.SAV`
+prints PASS B14 with: (1) ring literals == the recorded dump + center/diamond/
+ascending laws; (2) the 7 recorded m289 foundings ALL self-argmax through the
+sim scan (grown occupancy, 44-B record view) 7/7; (3) rivals fail the same fit
+(no owner-gate loses exactly fac1 (27,29); B10 row-major placeholder 0/7);
+(4) the m292 census shape (29 DISP / 11 ISS / 9 HUBFOUND / 9 FOUND / 0 MSG,
+st==8 on every row, own == (ownrec == curfac) 29/29); (5) the dispatch legs
+partition the DISP rows 9 found / 9 continue / 11 walk / 0 msg AND pair every
+ISS with its immediately-preceding DISP (same u, same esi, esi>=9) and every
+HUBFOUND with an esi==0 DISP on the same tile, every FOUND with the
+immediately-preceding HUBFOUND tile; (6) walk-target X == (pod_x + dx[esi])
+mod W on 11/11 ISS rows (the instrument printf's the X field only at 0x563e3b -
+the target-Y law is static-gated, DECLARED); (7) the table-swap rival (the dy
+table read into the X slot) reproduces 0 of 11; (8) the census-window ledger
+is count-strict 19->27 over its 10 op rows, endpoint == the recorded POST
+count; (9) the msg-gate case table + solo inertness (ds:0x920434=0 AND every
+row own=0 - structural per s240); (10) the SELECTION itself, brute-forced
+on a fixed sample - scan_esi == max-value/lowest-index argmax everywhere,
+and the sample provably discriminates (200 tiles where first-better and
+argmax differ; added because Greptile P1 caught a first-better bug the
+founding fit could not see, the fit only ever checks esi==0), and the
+scan wraps X (0x469010) but BOUNDS-CHECKS Y (0x469060) - Y never wraps;
+(11) two runs -> identical sha256 and
+`python3 -m sim.podscan --sav <sav> --out <f>` exits 0. DECLARED UNMODELED
+(the fits passed without them, as in M291): the 0x94e5a8/0x94eca8 per-site
+gate tables, the 0x4e3c00 no-go, the rec+8 bit-0x1000 zero-leg and the lazy
+FUN_005aff90 value fallback. No box time, no /proc, no gdb, no game-binary load.

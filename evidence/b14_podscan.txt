@@ -1,0 +1,23 @@
+  PASS G1 ring literals == recorded dump + diamond laws  | 25 entries, center(0,0), m2/m4 diamonds exact, ascending
+  PASS G2 m289 golden self-argmax via sim scan  | 7/7
+  PASS G2b argmax property vs brute force + discriminating sample  | scan==brute-force on sample; 200 tiles discriminate first-better from argmax
+  PASS G3 rivals fail the fit  | no-owngate 6/7 loses['fac1(27,29)'] | B10-placeholder 0/7
+  PASS G4 census shape (29 DISP/11 ISS/9 HUBFOUND/9 FOUND/0 MSG)  | rows DISP=29 ISS=11 HUB=9 FOUND=9 MSG=0 st==8 True own-law True
+  PASS G5 dispatch legs partition + pair the live rows  | model {'found': 9, 'continue': 9, 'walk': 11, 'msg': 0} vs recorded ISS=11 HUB=9 FOUND=9
+  PASS G6 walk target-X == wrapped ring sum (11 rows)  | 11/11
+  PASS G7 table-swap rival fails the fit  | rival reproduces 0 of 11
+  PASS G8 m292 ledger count-strict 19->27  | start 19 ops 10 end 27 (POST 27)
+  PASS G9 msg-gate law + solo inertness  | ds:0x920434=0 -> inert on all 29 rows; leg table complete
+  PASS G10 module run twice, identical sha256  | 7d77a026292448aa,7d77a026292448aa
+  ok   G1 ring literals == recorded dump + diamond laws
+  ok   G2 m289 golden self-argmax via sim scan
+  ok   G2b argmax property vs brute force + discriminating sample
+  ok   G3 rivals fail the fit
+  ok   G4 census shape (29 DISP/11 ISS/9 HUBFOUND/9 FOUND/0 MSG)
+  ok   G5 dispatch legs partition + pair the live rows
+  ok   G6 walk target-X == wrapped ring sum (11 rows)
+  ok   G7 table-swap rival fails the fit
+  ok   G8 m292 ledger count-strict 19->27
+  ok   G9 msg-gate law + solo inertness
+  ok   G10 module run twice, identical sha256
+PASS B14: 11/11 gates - M291 ring scan + M292 esi dispatch and walk legs are executable: literals match the recorded ring dump, 7/7 m289 foundings self-argmax (no-owner-gate loses exactly fac1 (27,29), B10 placeholder 0/7), the 29 m292 DISP rows partition 9 found / 9 continue / 11 walk / 0 msg with ISS pairing, walk target-X reproduces 11/11 ISS rows (table-swap rival 0/11), the ledger is count-strict 19->27, and the msg gate is solo-inert by law (no box time, no /proc, no gdb)

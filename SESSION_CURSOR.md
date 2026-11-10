@@ -1,7 +1,6 @@
-M293 (s240 CORRECTION, MERGED #250): hub msg-0x2408 leg = OWN-TILE + gate [ebp-0xa4]
-(0x55f6d6: ds:0x920434!=0 AND owner==ds:0x91b5b4); RETRACTED "distant ->
-0x2408" (distant = 0x563dfa walk/continue). Live probe 0x920434=0 -> msg
-inert solo. M284-M287 live censuses INSTRUMENT-INVALID (guard ate image
-vtables; fixed >=0x400000) - static closure stands. selftest run_save
-fixed. ACC: m290 9/9, b13 12/12, b2 7/7. Box 2188 cnt 27 TracerPid 0.
-Next: gate tables 0x94e5a8/0x94eca8 + name 0x920434. BUILD next = B14.
+B14 (s241 BUILD, PASS 11/11 post-Greptile): sim/podscan.py = the M291 ring scan (literals
+vs the recorded dump evidence/b14_ring_table.txt) + the M292 esi dispatch /
+walk legs (target-X reproduces 11/11 ISS rows). ACC: python3 -m sim.selftest
+--b14 programs/saves/m54b_clean.SAV (evidence/b14_podscan.txt:23). Rung was
+ABSENT from BUILD_SPINE.md - authored it this fire. Box untouched.
+Next: ANALYSE gate tables 0x94e5a8/0x94eca8 + name ds:0x920434. BUILD = B15.

@@ -1632,3 +1632,25 @@ Instrument: scripts/m292_pod_movement.py.
   python3 -m sim.selftest --sav programs/saves/m54b_clean.SAV -> PASS
   B2: 7/7 (evidence/s240_b2_run.txt:2 "21 sections, 0 problems").
 - Cites per AGENTS.md:50 (path:line) added to every claim touched here.
+
+## B14 (s241, BUILD 10/10) - the hub scan + walk dispatch EXECUTABLE: sim/podscan.py
+Ring tables as literals RING_DX/RING_DY (25 entries; provenance
+evidence/b14_ring_table.txt, the file-image dump of .rdata 0x67850c dx /
+0x678990 dy via scripts/b14_ring_dump.py; sim/ never loads the exe). Order
+facts: 0=(0,0); 1-8 the m2 diamond (1,-1)(2,0)(1,1)(0,2)(-1,1)(-2,0)(-1,-1)
+(0,-2); 9-24 the m4 diamond ascending, 21=(4,0) 22=(-4,0) 23=(0,4) 24=(0,-4).
+scan_esi = M291 strict site-value argmax (score = rec byte2 high nibble;
+eligibility cat-flag equality + byte3 owner-equality + rec+9 bit 0x20 clear +
+unoccupied; ties keep the closer); a site is self-argmax iff scan_esi == 0.
+dispatch_leg: esi 0 -> founder, or msg 0x2408 under msg_gate(global!=0 AND
+owner==human) (s240); 1..8 continue (no order); 9..24 walk (order 0x62 at
+walk_target = pod tile + ring entry, map-wrapped). The live ISS tile= field
+records the target X ONLY. ACCEPTANCE: python3 -m sim.selftest --b14
+programs/saves/m54b_clean.SAV -> PASS B14: 11/11 (evidence/b14_podscan.txt:23).
+s241 review round (both P1s CONFIRMED by bytes, fixed): the scan keeps
+best VAL [ebp-0x24]/best INDEX [ebp-0x84] with strict updates (full
+argmax, no first-better shortcut); candidates are X-WRAPPED (0x469010,
+call 0x5638b9) but Y BOUNDS-CHECKED (0x469060, call 0x5638d2) - Y never
+wraps; the ISS tile arg is the wrapped X only. DECLARED UNMODELED: 0x94e5a8/0x94eca8 tables, the
+0x4e3c00 no-go, the rec+8 bit-0x1000 zero-leg / FUN_005aff90 lazy value,
+the ISS target-Y field.
