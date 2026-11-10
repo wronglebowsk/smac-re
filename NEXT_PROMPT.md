@@ -1,7 +1,6 @@
-# NEXT_PROMPT.md - footing (s227, M283 DONE (ANALYSE, 17/17): decode_save --sections now walks
-# 64x64 saves - the coarse-region-map length is dims-derived ((W+4)/5+1)/2*(H+4)/5 = 91 B, not the
-# hardcoded 80x80 128; table sums to the file byte on all 17 saves and the count u32 sits at 188,299.
-# Next: ANALYSE; BUILD=B11 when due***)
+# NEXT_PROMPT.md - footing (s228, M284 MEASURED-NEGATIVE: family +0x4c dispatch forms exhaustive -
+# 12 call [reg+0x4c] sites, 0 load-then-call, 0 direct; wndproc-verified clicks on the base display
+# dispatched it through NO site - CPane, not Script.txt. Next: ANALYSE***)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -17,8 +16,7 @@ finished by ~150k tokens is not finished at all.** Counted in TOOL CALLS:
 - JSON only: no XML tags inside tool arguments. Writes over ~4 KB drift and are rejected as a missing `path` — expect one
   retry, then re-emit the same content as pure JSON (do NOT fragment into many tiny writes). Branch + skeleton commit
   BEFORE probing; s189 measured the skeleton landing at 108k context instead of 167k.
-- **30-40** STOP MEASURING: an acceptance that is not green IS the finding — write the blocker and the failing number,
-  merge nothing, close.
+- **30-40** STOP MEASURING: an ungreen acceptance IS the finding — write the blocker and failing number, merge nothing.
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.
 
 Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
@@ -35,15 +33,14 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9,
 
 ## THE LEDGER
 
-Merged M54A-M271 + B0-B5 (through #199); M276 #214, M277 #217, M278 #219, M279 #223, M280 #224, B8 #221, B9 #227, M281 (s224, 7/7), M282 (s225, 7/7), B10 #231 (s226, 18/18), M283 (s227, 17/17). UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M283 + B0-B10 (through #232); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
 1. **accept_ready.py** is the readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
-   base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it immediately before you arm** (screen fixes live
-   in TRAPS).
+   base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm** (screen fixes in TRAPS).
 2. Writer/flag chain — silent bps or hw watchpoints + a prediction from live memory + a read-back:
    `m94_table_watch.py` (4 hw watchpoints on any 4 dwords), `m97_credit_watch.py`, `m100_mult_watch.py`,
    `m102_rebuild_at_hit.py`, `m103_d_rebuild.py`, `m92_tail_census.py`, `m95_pay_sites.py`, `m98_advance_budget.py`, `m117_gate_take.py`; each
@@ -67,6 +64,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B10** = R2's new-game leg - write the rung into `BUILD_SPINE.md` FIRST, then build it):
+  ANSWERED s228=M284 (family +0x4c dispatch forms EXHAUSTIVE - 12 sites, 0 load-then-call,
+  0 direct; live clicks dispatch it through NONE - Script.txt chooser/menu path, unopened here).
   ANSWERED s227=M283 (decode_save --sections: the 64x64 crash was the hardcoded 80x80
   coarse-region-map length - now dims-derived, 17/17). ANSWERED s225=M282 (AI bases use the SAME
   founder FUN_004e47d0 as the player; callers 4cca50 live via 'b' + dispatcher 0x4408 + AI hub
@@ -74,7 +73,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   sim/basefound.py in B10). NEW (M282 frontier): WHICH founder vector
   the recorded AI used per founding - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
-  BOX PICKS, box UP and loaded: WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
+  BOX PICKS, box UP and loaded: (M284 re-scoped) the family +0x4c dispatcher on the Script.txt
+  chooser/menu path - open a real chooser (m54g_prep + one turn) and re-run m284 --live. all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
 
 ## LIVE FACTS / KIT
 

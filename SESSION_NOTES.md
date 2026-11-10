@@ -545,3 +545,31 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
 - OPEN (unchanged): box pick (dialog +0x4c dispatcher, box UP m54b_clean); M282 G5 (which
   founder vector the recorded AI used per founding - box question); the 64x64 odd-Rw accessor
   stride quirk. Next fire: ANALYSE (analyse_since_build=1).
+
+
+## Session 228 (2026-11-10, ANALYSE, M284 MEASURED-NEGATIVE) - the dialog family's +0x4c dispatch-form census is EXHAUSTIVE (12 sites, 0 load-then-call pairs, 0 direct calls, 5 vtables/466 installs) and the base-display click path does NOT dispatch it (live, wndproc-verified)
+- track_mode printed ANALYSE -> picked the box lead: WHO dispatches the dialog family's +0x4c
+  (FUN_005f6aa3).  Script: scripts/m284_dialog_dispatch.py.
+- STATIC (--static, evidence/m284_dialog_dispatch.txt): the 12 single-insn `call [reg+0x4c]`
+  sites are the COMPLETE dispatch-form set - a whole-image census found ZERO load-then-call
+  pairs (`mov r,[r+0x4c]; call r` within 40 insns of the same function) and ZERO direct
+  `call 0x5f6aa3`; FUN_005f6aa3 is +0x4c of exactly the same 5 vtables (466 installs) M214
+  measured (method ported verbatim from m213_m216_hotspot.py).  Gates 4/4 PASS.
+- LIVE (--live, scratch/m284.log): armed all 12 sites + FUN_005f6aa3 entry + a WNDPROC
+  (0x5d0c33) WM_LBUTTONDOWN control, drove real xdotool clicks on the m54b_clean base display
+  (b-then-clicks on the base screen).  Control fired 3x (clicks DID land in the window);
+  the dialog pump FUN_005f1394 NEVER ran; zero of the 12 sites fired; FUN_005f6aa3 never
+  entered.  STATE 4 measured-negative: the base display's click path does not dispatch the
+  5-vtable family +0x4c through ANY of the 12 sites.
+- WHY (settled context): the base display is a CPane screen, NOT one of the 5 family vtables
+  (0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8 - those are Script.txt dialog classes); the
+  modal pump 0x5f1394 stays silent on it, and its clicks route through the CPane/world
+  handlers, not the dialog-family hotspot dispatcher.  The family +0x4c dispatcher is a
+  SCRIPT.TXT-dialog-path question (chooser/menus), which this save's empty-queue state never
+  opened.
+- ACCEPTANCE: python3 scripts/m284_dialog_dispatch.py --static -> 4/4 PASS; live STATE 4
+  measured-negative with the wndproc control fired 3x (evidence = scratch/m284.log rows).
+- OPEN (unchanged): M282 G5 (which founder vector the recorded AI used per founding - box);
+  the 64x64 odd-Rw accessor stride quirk.  NEW narrowing: the family +0x4c dispatcher must
+  live on the Script.txt dialog (chooser/menu) path - open a real chooser (non-empty queue,
+  m54g_prep + one turn per standing facts) and re-run the same instrument.  Next fire: ANALYSE.

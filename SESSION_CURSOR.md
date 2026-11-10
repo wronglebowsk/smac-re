@@ -1,1 +1,4 @@
-B10 (s226 BUILD) | python3 -m sim.selftest --b10 programs/saves/m54b_clean.SAV -> PASS 18/18 (evidence/b10_basefound.txt). sim/basefound.py = M282 founder FUN_004e47d0 (guard <0x200; append 304-B rec x+0 y+2 fac+4/5; count+1) + destroyer (count-1, compaction). Trace's 8 events (t8+1 t9+1 t17+1 t22+2 t23-1 t27+1 t32+2 t34+1) around B3 presses recover recorded 18->26 on all 41 snaps; no-leg keeps 18 (rival). savewriter composes grown ledger; tail byte-exact; re-parses 19. Box untouched. Next: ANALYSE.
+M284 (s228 ANALYSE, MEASURED-NEGATIVE, static 4/4): the dialog family +0x4c dispatch
+forms are exhaustive (12 call [reg+0x4c] sites, 0 load-then-call, 0 direct, 5 vtables/466
+installs); base-display clicks (wndproc control fired) dispatch it through NO site - CPane
+screen, not Script.txt dialog. Next: ANALYSE. Box clean, TracerPid 0.
