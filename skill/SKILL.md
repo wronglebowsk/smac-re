@@ -243,7 +243,8 @@ the full story + the two generalizing rules are in `references/code-atlas.md`.
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then `gunzip -c … | sed -n 'A,Bp'`), or the unpacked aligned cache `scratch/m574/text.txt` (grep by address; parse by TAB fields). **Never `objdump -d --start-address` at an arbitrary address**: a start that lands INSIDE an instruction silently misaligns the whole window — objdump re-synchronizes mid-encoding, invents `.byte` lines, and poisons any reachability/def-use walk built on it (s214 lost two debug passes; the witness is a `.byte` line where a `jmp` should be). Disassemble from the function ENTRY (containment via index.csv) or read the cache.
 `gunzip -c … | sed -n 'A,Bp'`); owner of a VA `awk -v A=0x… -F, 'NR>1 && strtonum($1)<=strtonum(A){n=$2;p=$1} END{print
 p,n}' ghidra_out/index.csv` (commas, no spaces; strtonum REQUIRED — bare `$1<=A` is a STRING compare, every row matches
-and you get the file's LAST function, not the owner); pseudocode `scripts/fn.py 0xADDR` (prints the index row as header).
+and you get the file's LAST function, not the owner; the same trap has a second face — `awk -v lo=0x55df20`
+is a STRING, awk parses hex ONLY inside program code, so pass boundaries as literals in the program); pseudocode `scripts/fn.py 0xADDR` (prints the index row as header).
 Parse objdump by TAB fields (bytes sit between address and mnemonic); require `^[0-9a-f]{6,8}:\t` before int(x,16) — details in `references/code-atlas.md`.
 Two static instruments answer "what IS this field" with no box time: `scripts/name_global.py <addr> [--disp]`
 (every referencing instruction, its containing function, and whether it reads, writes or tests — use it before
