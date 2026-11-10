@@ -1,0 +1,22 @@
+G1 PASS: writer1 fold (reused evaluator, FUN_0051dcb0): eax = (8380, 2, 0) = 8380*b + 2*s; store 0x51df3d `inc WORD PTR [eax+0x94e8a8]` and store 0x51df61 `inc WORD PTR [eax+0x94eaa8]` read the SAME eax (intervening eax writers: 0) - e8a8 is the same per-block WORD row as eaa8, written by the same fold
+G2 PASS: stores: e8a8 @0x51df3d UNCONDITIONAL (no branch fold->store); eaa8 @0x51df61 behind {test cl,0x18 je 0x51df77} + {[edi+5]&0xc0 cmp 0x80 jge} + {test [edi+8],0x20 jne}; eba8 @0x51df70 behind those PLUS {test ch,0x10 je} - branches between first and last store: [('0x51df49', 'je', '0x51df77'), ('0x51df59', 'jge', '0x51df77'), ('0x51df5f', 'jne', '0x51df77'), ('0x51df6e', 'je', '0x51df77')] - a nested counter family: all-tiles / filtered / subset
+G3 PASS: image-wide referrers of +0x94e8a8: ['0x45c088', '0x51df3d'] (writer + ONE reader); reader 0x45c088: `imul eax,eax,0x20bc` (0x20bc = 8380 = the block stride) then `mov dx,WORD PTR [eax+ecx*2+0x94e8a8]` - WORD read at 8380*[ebp-0x34] + 2*[ebp-0x64]: the per-block fold form, rival 'block-0-only read' needs no 8380 term and is refuted by the imul
+G4 PASS: entry fold 0x556699-0x5566bc (eval, atoms eax=ecx=edx=arg): edx = (8380, 0, 0) = 8380*arg, stored `mov DWORD PTR [ebp-0xc],edx` -> [ebp-0xc] = the block base; the BYTE-lane loads `mov esi,DWORD PTR [ebp-0xc]` / `mov edi,DWORD PTR [ebp-0x10]` feed 0x94e5a8/0x94eca8/0x94eda8 at [ebp-0xc] + region*1: byte arrays index block*8380 + region, NOT the 2*region word form
+    family census:
+      0x94e4a8 sites=23 widths={'WORD': 23} first=0x4f7e85 mov
+      0x94e5a8 sites=99 widths={'BYTE': 97, 'none': 2} first=0x4e4867 mov
+      0x94e628 sites=10 widths={'BYTE': 10} first=0x4f856a mov
+      0x94e6a8 sites=23 widths={'WORD': 22, 'none': 1} first=0x532665 mov
+      0x94e7a8 sites=28 widths={'BYTE': 14, 'WORD': 13, 'none': 1} first=0x4f94a4 test
+      0x94e8a8 sites=2 widths={'WORD': 2} first=0x45c088 mov
+      0x94e9a8 sites=2 widths={'WORD': 2} first=0x568038 mov
+      0x94eaa8 sites=4 widths={'WORD': 4} first=0x51df61 inc
+      0x94eba8 sites=5 widths={'WORD': 5} first=0x51df70 inc
+      0x94eca8 sites=8 widths={'BYTE': 6, 'none': 2} first=0x50e4fb mov
+      0x94ed28 sites=3 widths={'BYTE': 2, 'none': 1} first=0x4f946d mov
+      0x94eda8 sites=79 widths={'BYTE': 79} first=0x47046b mov
+      0x94ee28 sites=17 widths={'WORD': 15, 'none': 2} first=0x470c69 movsx
+G5 PASS: census: 13 bases 0x94e4a8..0x94ee28, gaps ['0x100', '0x80', '0x80', '0x100', '0x100', '0x100', '0x100', '0x100', '0x100', '0x80', '0x80', '0x80'] all in {0x80,0x100}; pure-WORD bases ['0x94e4a8', '0x94e6a8', '0x94e8a8', '0x94e9a8', '0x94eaa8', '0x94eba8', '0x94ee28'] (fold 2*region, 0x100 cell), pure-BYTE bases ['0x94e5a8', '0x94e628', '0x94eca8', '0x94ed28', '0x94eda8'] (region*1, 0x80 cell); e7a8 has BOTH widths ({'BYTE': 14, 'WORD': 13, 'none': 1}) = WORD array with byte sub-accesses - M256's '0x94e7a8 is WORD' stands
+G6 PASS: e9a8: 2 sites, writers [] (ZERO stores image-wide), readers ['0x568038', '0x5a9fd5']; reader 0x568038 chain evaluates to edx = (30, 64, 0) which is NOT 8380*b+2*s - read-only array, different index idiom (OPEN lead, not forced into the fold family)
+G7 PASS: registry: NAMED.md carries ## M279 (s221) (True); containment FUN_0051dcb0/FUN_0045a920
+SUMMARY M279: 7/7 gates PASS
