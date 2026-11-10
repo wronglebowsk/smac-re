@@ -1,7 +1,6 @@
-# NEXT_PROMPT.md - footing (s228, M284 MEASURED-NEGATIVE: the family +0x4c dispatch forms are
-# exhaustive - 12 call [reg+0x4c] sites, 0 load-then-call pairs, 0 direct, 5 vtables/466 installs; a
-# live wndproc-verified click window on the base display dispatched it through NO site (CPane, not
-# Script.txt). Next: ANALYSE; BUILD=B11 when due***)
+# NEXT_PROMPT.md - footing (s228, M284 MEASURED-NEGATIVE: family +0x4c dispatch forms exhaustive -
+# 12 call [reg+0x4c] sites, 0 load-then-call, 0 direct; wndproc-verified clicks on the base display
+# dispatched it through NO site - CPane, not Script.txt. Next: ANALYSE***)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -67,9 +66,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B10** = R2's new-game leg - write the rung into `BUILD_SPINE.md` FIRST, then build it):
-  ANSWERED s228=M284 (family +0x4c dispatch forms EXHAUSTIVE: 12 call [reg+0x4c] sites, 0
-  load-then-call, 0 direct; live base-display clicks (wndproc control, 3 sent) dispatched it
-  through NONE - the dispatcher sits on the Script.txt chooser/menu path, unopened here).
+  ANSWERED s228=M284 (family +0x4c dispatch forms EXHAUSTIVE - 12 sites, 0 load-then-call,
+  0 direct; live clicks dispatch it through NONE - Script.txt chooser/menu path, unopened here).
   ANSWERED s227=M283 (decode_save --sections: the 64x64 crash was the hardcoded 80x80
   coarse-region-map length - now dims-derived, 17/17). ANSWERED s225=M282 (AI bases use the SAME
   founder FUN_004e47d0 as the player; callers 4cca50 live via 'b' + dispatcher 0x4408 + AI hub
