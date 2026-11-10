@@ -11,7 +11,10 @@ Sid Meier's Alpha Centauri (1999) `terran.exe` + `programs/*.cvr` live in
 session starts on.** When the session host is another box (e.g. the gateway), do not hunt for
 `~/reverse/smac` locally: drive the repo over SSH - `/home/paul/smacsh` pipes a script into
 `cd ~/reverse/smac && bash -l` (write the remote command as ONE heredoc; a multi-line wrapper call
-only forwards its first line), and scp helper scripts to `scratch/` there to run them. The live
+only forwards its first line), and scp helper scripts to `scratch/` there to run them. **scp must
+target `<n100-user>@<lan-ip>`** (the `n100` ssh alias resolves to a tailscale IP that times out;
+smacsh itself uses the LAN IP over the persistent ControlPath - `~/.ssh/config` `Host n100` vs the
+LAN entry). The live
 skill copy sits on the session host while the tracked copy is `skill/` in the repo, so a skill
 edit must land on both in the same session.
 **Versioned at `github.com/wronglebowsk/smac-re` (private)**; a copy of this skill is tracked
