@@ -32,10 +32,13 @@ PASS G3 founder guard is CAPACITY ONLY (DAT_00985af4 < 0x200); no tile-legality 
   guard at found; pre-guard returns: none
 PASS G4 control-flow (s240): msg block 0x563d4e-0x563d7d entered ONLY by the flag!=0 fallthrough (no external branch target); dispatch branches 0x563d48->0x563dfa distant-leg / 0x563d57->0x563d82 founder-leg; [ebp-0xa4] single writer 0x55f6d6 with its owner/0x920434 chain
   external branch targets into msg block: none
-  body branches PARSED: {'0x563d40': '0x563e48', '0x563d48': '0x563dfa', '0x563d57': '0x563d82', '0x563d7d': '0x56c925', '0x563e04': '0x563e12'}
-  body branches EXPECTED: {'0x563d40': '0x563e48', '0x563d48': '0x563dfa', '0x563d57': '0x563d82', '0x563d7d': '0x56c925', '0x563e04': '0x563e12'}
+  body branches PARSED: {'0x55f6b6': '0x55f6d6', '0x55f6cf': '0x55f6d6', '0x563d40': '0x563e48', '0x563d48': '0x563dfa', '0x563d57': '0x563d82', '0x563d7d': '0x56c925', '0x563e04': '0x563e12'}
+  body branches EXPECTED: {'0x55f6b6': '0x55f6d6', '0x55f6cf': '0x55f6d6', '0x563d40': '0x563e48', '0x563d48': '0x563dfa', '0x563d57': '0x563d82', '0x563d7d': '0x56c925', '0x563e04': '0x563e12'}
   [ebp-0xa4] writers in body: ['0x55f6d6']
+  0055f65f: 33db	xor    ebx,ebx                               OK
   0055f6b0: 391d34049200	cmp    DWORD PTR ds:0x920434,ebx             OK
+  0055f6b6: 741e	je     0x55f6d6                              OK
+  0055f6cf: 7505	jne    0x55f6d6                              OK
   0055f6c0: 8b0db4b59100	mov    ecx,DWORD PTR ds:0x91b5b4             OK
   0055f6c6: 8a049586329300	mov    al,BYTE PTR [edx*4+0x933286]          OK
   0055f6cd: 3bc1	cmp    eax,ecx                               OK

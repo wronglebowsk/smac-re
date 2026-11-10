@@ -1340,8 +1340,9 @@ def run_b13(sav_path, log_path, trace_path, results):
         return fail("B13: %d/%d gates failed: %s" % (len(bad), len(results),
                                                      "; ".join(bad)))
     print("PASS B13: %d/%d gates - M290's founding dispatch is executable: "
-          "the own-tile gate sends every distant target to msg 0x2408 and "
-          "founds none, 7/7 founder args are pod-record tuples, the strict "
+          "the distant leg founds none AND sends no msg 0x2408 (s240: the "
+          "msg leg is the own-tile press WITH the second gate [ebp-0xa4]), "
+          "7/7 founder args are pod-record tuples, the strict "
           "ledger 18+7-2=23 peak 24 fits the jsonl curve, B10's placeholder "
           "and the ungated leg both fail the same fit, and the grown ledger "
           "writes and re-parses (no box time, no /proc, no gdb)"

@@ -192,14 +192,21 @@ def check_static_gates(text, fn_body, results):
         if 0x55f650 <= a4 < BODY_HI and mn == "mov" and ops.startswith("DWORD PTR [ebp-0xa4]"):
             writer_addrs.append(a4)
     want_br = {0x563d40: 0x563e48, 0x563d48: 0x563dfa, 0x563d57: 0x563d82,
-               0x563d7d: 0x56c925, 0x563e04: 0x563e12}
+               0x563d7d: 0x56c925, 0x563e04: 0x563e12,
+               0x55f6b6: 0x55f6d6, 0x55f6cf: 0x55f6d6}
     br_ok = all(body_branches.get(a) == t for (a, t) in want_br.items())
-    chain = [(0x55f6b0, "391d34049200", r"cmp\s+DWORD PTR ds:0x920434"),
-             (0x55f6c0, "8b0db4b59100", r"mov\s+ecx,DWORD PTR ds:0x91b5b4"),
-             (0x55f6c6, "8a049586329300", r"mov\s+al,BYTE PTR \[edx\*4\+0x933286\]"),
-             (0x55f6cd, "3bc1", r"cmp\s+eax,ecx"),
-             (0x55f6d1, "bb01000000", r"mov\s+ebx,0x1"),
-             (0x55f6d6, "899d5cffffff", r"mov\s+DWORD PTR \[ebp-0xa4\],ebx")]
+    chain = [(0x55f65f, "33db", chr(92).join(["xor", "s+ebx,ebx"])),
+             (0x55f6b0, "391d34049200", r"cmp" + chr(92) + "s+DWORD PTR ds:0x920434"),
+             (0x55f6b6, "741e", chr(92).join(["je", "s+0x55f6d6"])),
+             (0x55f6cf, "7505", chr(92).join(["jne", "s+0x55f6d6"])),
+             (0x55f6c0, "8b0db4b59100", r"mov" + chr(92) + "s+ecx,DWORD PTR ds:0x91b5b4"),
+             (0x55f6c6, "8a049586329300",
+              r"mov" + chr(92) + "s+al,BYTE PTR " + chr(92) + "[edx" + chr(92) + "*4"
+              + chr(92) + "+0x933286" + chr(92) + "]"),
+             (0x55f6cd, "3bc1", r"cmp" + chr(92) + "s+eax,ecx"),
+             (0x55f6d1, "bb01000000", r"mov" + chr(92) + "s+ebx,0x1"),
+             (0x55f6d6, "899d5cffffff",
+              r"mov" + chr(92) + "s+DWORD PTR " + chr(92) + "[ebp-0xa4" + chr(92) + "],ebx")]
     chain_rows, chain_ok = [], True
     for a4, wb, wr in chain:
         gb, gm = load_text_window(text, a4)

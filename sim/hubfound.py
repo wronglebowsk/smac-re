@@ -248,11 +248,14 @@ def acceptance(sav_path, log_path, trace_path, results):
     # press when the second gate [ebp-0xa4] is set.
     dist = [dispatch(p, FAR_TARGET) for p in pods]
     flagged = [dispatch(p, None, True) for p in pods]
+    dist_flagged = [dispatch(p, FAR_TARGET, True) for p in pods]
     results.append(("G4 dispatch legs: the 7 distant presses yield 0 foundings and 0 "
-                    "0x2408 sends (all 'distant'); own-tile presses WITH the second gate "
-                    "send %d/7 msg 0x2408 and found NOTHING"
+                    "0x2408 sends (all 'distant'), distant presses WITH the second gate "
+                    "flag also stay 'distant' (the flag cannot found or msg there); "
+                    "own-tile presses WITH the gate send %d/7 msg 0x2408 and found NOTHING"
                     % sum(1 for m in flagged if m == ("msg", MSG_AUTO_BUILD)),
                     sum(1 for m in dist if m[0] in ("found", "msg")) == 0
+                    and all(m == ("distant",) for m in dist_flagged)
                     and all(m == ("msg", MSG_AUTO_BUILD) for m in flagged)))
 
     # G5 RIVAL ungated dispatch at the target fails the same fit
