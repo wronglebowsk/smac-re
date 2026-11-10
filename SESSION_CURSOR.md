@@ -1,17 +1,6 @@
-B16 | scan-loop head pre-check chain NAMED+EXECUTABLE: `python3 -m sim.selftest --b16 programs/saves/m54b_clean.SAV` -> PASS B16 7/7 (evidence/b16_precheck_chain.txt) | merged? NO (branch milestone/b16) | next: 0x4e3c00 no-go (the 8482 pass-static-no-row population) or the 0x51dfe2 cell addr / 0x582cc0 side-effects
+M295 | 0x4e3c00 no-go NAMED + pinned + MEASURED (rule INERT here; the 8482 = the value<=best skip at 0x563c09-0x563c11) | merged? NO (branch milestone/m295-nogo, PR open) | next: the value>best argmax leg FUN_0046e770 (0x563c02 call)
 
-## chain status (s245 close)
+## chain status (s246 close)
 
-- PR #258 (`milestone/b16`, B16) is OPEN, gate CI GREEN (`gate` pass 12s),
-  Greptile Review PENDING at close-out. This fire hit its tool-iteration cap in
-  the audit, so the MERGE RULE's review read did NOT happen and NOTHING was
-  merged by it.
-- s246's first actions, in order: (1) `gh pr checks 258` until Greptile is not
-  pending, then `gh api repos/wronglebowsk/smac-re/pulls/258/comments`; fix every
-  P1 or dismiss it in the PR body with one sentence; (2) fix the `load_visits`
-  transpose audit finding (SESSION_NOTES Session 245 §245c) and re-run
-  `python3 -m sim.selftest --b16 programs/saves/m54b_clean.SAV` (expect 7/7);
-  (3) `python3 scripts/milestone.py merge 258`; (4) regenerate this cursor and
-  the chain-status section (merged: B0-M294 + B16).
-- If #258 is already merged when you read this, re-run the `--b16` selftest to
-  confirm 7/7 on main before moving on.
+- #258 (B16) MERGED at 9567ec1 after the Greptile round (P1 relabel + P2 stride-144 + P2 pin-count; all in the PR body disposition).
+- s246: track_mode said ANALYSE (analyse_since_build=0 after the B16 merge); s247: `python3 scripts/track_mode.py` again.

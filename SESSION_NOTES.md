@@ -714,3 +714,46 @@ Older sessions: `docs/sessions/sessions-220-225.md` (6 sessions). Read it only w
 - Chain step B ran FIRST per the operator amendment (s246 scheduled before the
   review wait), so this fire submits the audit as a record instead of shipping an
   unverified re-fit.
+
+## Session 246 (2026-11-10, s246)
+
+### 246a. #258 (B16) closed per the MERGE RULE and merged (main 9567ec1)
+
+Greptile posted 1 P1 + 2 P2 at 22:20; dispositions (full text in the PR body):
+- P1 ACCEPTED: the 8482 pass-6-no-row cells are also the value-vs-best skip
+  (0x563c09-0x563c11 after the chain, before GDEEP 0x563c3d). Relabeled
+  sim/precheck.py (NOTE + UNMODELED), NAMED.md, NEXT_PROMPT.md; bytes pinned by
+  extending evidence/b16_precheck_window.txt to 0x563bf0-0x563c60 (284 insns).
+- P2 stride: BYTE[0x92ae81 + 144*BYTE[0x98adac + 52*type]] (lea*9 then shl4,
+  0x55f757/0x55f75c) - fixed in precheck.py:37, NAMED.md, SESSION_NOTES.md:671.
+- P2 report: report_text counts matched pins now; chain evidence regenerated
+  (`python3 -m sim.precheck --out evidence/b16_precheck_chain.txt`).
+- s245c self-audit REFUTED, no code change: DISP prints unit-record fields
+  0x933278/0x93327a (true X,Y); law orientation 201/201 vs them, the audit's
+  untransposed orientation 0/201 (BASE rival_disp_ok) - G2 tests the pair the
+  law names; the proposed re-key would install the rival the gate rejects.
+`python3 -m sim.selftest --b16 programs/saves/m54b_clean.SAV` PASS 7/7; merged
+via `python3 scripts/milestone.py merge 258` (Greptile registered no check run on
+the new head inside the 10-min cap - operator amendment 2).
+
+### 246b. M295 - the 0x4e3c00(owner,X,Y) no-go NAMED, pinned, MEASURED INERT
+
+fn.py + dis: FUN_004e3c00 = territory_nogo, calling FUN_004e3b50 =
+owner_of_tile_visible: tile7 = signed BYTE[44-B tileview+7] (B16's view/form,
+0x4e3b53-0x4e3b76), visible if BYTE[0x985ae8] bit 0x80 or pair-flagword
+bits 3+31 (0x94d448 = M143 faction block, [owner*2095+tile7]*4). c00 blocks
+(returns non-negative) iff tile7 >= 1, tile7 differs from the pod owner, the
+human-mask BYTE[0x985b10] (NAMED M96; masked 0xff at 0x4e3c34) has the pod or
+tile bit, and the flagword bit 4 is CLEAR (alliance). The return value is
+FUN_004e37f0's (nearest-base sweep writing DAT_008f0d34 = M294's dist;
+sentinel 9999). MEASURED `python3 scripts/m295_nogo_fit.py` (evidence
+m295_nogo_fit.txt): over the m294 window the full rule rejects 0 recorded
+slots and 0 pass-6-no-row cells (697 owner-known visits; 329 visits with
+unresolvable u above the 67-record units array); t7 dist of the 8482:
+255:2490, 4:2058, 6:1822, 5:1190, 2:872, 1:45, 3:4, 7:1; human_mask 0x8,
+feature_bits 0x0 - the visibility leg kills every candidate (never-met
+factions). Rivals collide with recorded slots: foreign-only 1045, +mask 124,
++not-ally 91. THE 8482 = THE VALUE<=BEST ARGMAX SKIP (0x563c09-0x563c11) -
+the next leg. Window scripts/m295_nogo_window.py -> evidence/
+m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
+(the last three inside FUN_0055f650) - lead.

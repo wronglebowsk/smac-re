@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s245 close: B16 = the scan-loop HEAD PRE-CHECK CHAIN NAMED, PINNED and EXECUTABLE
-# (sim/precheck.py, `python3 -m sim.selftest --b16 <sav>` PASS 7/7, evidence/b16_precheck_chain.txt); the m294
-# rows' x=/y= are TRANSPOSED (reader law -> skill instrument-laws); only the no-go 0x4e3c00 stays open. B17.)
+# NEXT_PROMPT.md - footing (s246 close: B16 MERGED (main 9567ec1, #258 + Greptile round); M295 = the
+# 0x4e3c00 no-go NAMED, pinned, MEASURED INERT on the m294 window (evidence/m295_nogo_fit.txt) - the 8482
+# pass-6-no-row cells are the value<=best skip (0x563c09-0x563c11). Next pick: the argmax leg.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
 §CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
 
@@ -31,7 +31,7 @@ yet in `BUILD_SPINE.md`; B14/B16 did the same).
 
 ## THE LEDGER
 
-Merged M54A-M294 + B0-B16 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
+Merged M54A-M295 + B0-B16 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -52,16 +52,17 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): M227-M294 + B1-B16 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
+- ANSWERED (do not re-pick): M227-M295 + B1-B16 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS. FUN_005f3f5b NOT open (M220). DIALOG
   +0x4c CLOSED (M284-M288; live half INVALID s240): NAMED ## M284-M288. NEVER bp mid-instruction (s213 crash).
-- **THE PICK (s245): the no-go `call 0x4e3c00(owner,X,Y)` (0x563963) - the LAST un-named leg of B16's chain.**
-  STATIC-FIRST: `scripts/fn.py 0x4e3c00` + `field_census.py`/`name_global.py` over its body, its globals and its
-  early returns; what makes it return >= 0 is the finding. The measurement that arbitrates it: **8482** (pod,slot) pass all 6 modelled checks yet print NO decision row
-  (`BASE["conf"]`). S246 fix (Greptile #258 P1): that is the MISSING-ROW population = no-go rejects UNION the
-  value>best skip `jle 0x563cb3` (0x563c0f-0x563c11, pinned in the window 0x563bf0-0x563c60); a no-go rule must
-  predict a SUBSET of it (2128 accepted-pass + 0 bounds/elev/occ violations untouched); exact fit needs the
-  value>best path modelled jointly.
+- **THE PICK (s246): the value-vs-best ARGMAX leg - the last un-named decision producer in B16's loop.**
+  M295 measured the 0x4e3c00 no-go INERT on the m294 window (`scripts/m295_nogo_fit.py`), so the 8482
+  pass-6-no-row cells are the value<=best skip `jle 0x563cb3` (0x563c09-0x563c11). STATIC-FIRST on
+  `call 0x46e770` (0x563c02, the slot VALUE), [ebp-0x24] best (init 0, store 0x563caa - see podscan
+  scan_esi), and the bypass `jge 0x563ca7` at 0x563c38 (value >= 2*(8-DAT_008f0d34): GACC, NO GDEEP row). The fit target: a value>best model must reproduce the val/best columns of the 2321 recorded GDEEP/GACC rows
+  AND leave the 2128 accepted-pass + 0 bounds/elev/occ violations alone (Greptile #258 P1; 0x563c0f-0x563c11
+  pinned in the b16 window 0x563bf0-0x563c60). GROW tail val/best read ONLY under a same-slot decision row
+  (M294 tail-$esi law).
   READER LAW FIRST: those rows' `x=`/`y=` are TRANSPOSED (B16) - use `sim.precheck.load_visits`/`recover_pod`, which
   already apply it. If a live probe is wanted, re-derive scripts/m294_gate_row_census.py's guards (M293 law).
   OPEN kept: 0x582cc0 side-effects + the value-indexed 0x51dfe2 cell addr (## M294); CHAIN-PICKS trio. M293 guards,
@@ -69,7 +70,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245 touched nothing) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
+- **BOX**: s244 state UP (s245+s246 touched nothing) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
    `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the
