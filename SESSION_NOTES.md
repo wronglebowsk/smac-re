@@ -529,3 +529,27 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   chain ending in a re.Match poisons sum(res) - bool() every regex clause before gate().
 - OPEN: static picks (b) row-family layout (0x94e8a8/0x94e5a8/0x94e7a8) and (c) who reads regions
   >=128; box pick (dialog +0x4c dispatcher) unchanged. `python3 scripts/track_mode.py` next fire.
+## Session 220 (2026-11-10, BUILD fire, B8 PASS 10/10) - the save-WRITE leg: a .SAV recomposed byte-exact from the state model
+- track_mode printed BUILD -> rung B8 written into `BUILD_SPINE.md` FIRST (R2's save-WRITE leg
+  chosen over the new-game leg: no recorded initial-state trace exists to parity-check against,
+  and grading rule 2 forbids inventing expected values). ZERO box time; the box was never touched.
+- `sim/savewriter.py`: `build_image(sv)` recomposes the container from the `sim.save` layout
+  constants with the modeled classes composed from the model (version, counts, year@84,
+  cur_player@800 via the M242 block identity, turn_flags@60 bit 1, own player@808, map dims,
+  unit-record x/y) and declared pass-through bodies (blocks A/B, small table, 16,000 section,
+  middles, grid, region map, tail/trailer, un-modeled record bytes).
+- ACCEPTANCE: `python3 -m sim.selftest --b8 programs/saves/m54b_clean.SAV programs/maps/planet.MP
+  --turns 5` -> **PASS B8: 10/10 gates** (`evidence/b8_savewrite.txt`). Numbers: identity
+  round-trip byte-exact on 242,539 B; `decode_save.py --sections --anchors` tables identical;
+  B3-pressed year 2150->2155 re-parses with the diff confined to modeled bytes (1 B, year low
+  byte); move lands exactly in record 0's x-bytes at offset 222,783; RIVALS FAIL: pure re-emitter
+  carries the old year, UNIT_LEN+4 breaks identity (242,807 B); two runs sha256 74d0f44ab9b9290b;
+  `python3 -m sim.savewriter` exits 0.
+- INVOCATION 1 FAILED ON THE GATE, not the writer: a cross-file map-dims equality vs planet.MP was
+  a false premise - m54b_clean is a 64x64-map save while planet.MP is the 80x80 family (same
+  pairing B6/B7 used; the .MP carries the rules, not the dims). Invocation 2 replaced it with a
+  dims re-read against the save's own bytes; identity arbitrates the layout constants regardless.
+- OPEN: R2 legs left: the new-game leg (needs the init-state rules - a census pick) and minimal
+  UI; then R3 golden-trace parity. Static ANALYSE picks unchanged: (b) row-family layout
+  0x94e8a8/0x94e5a8/0x94e7a8, (c) who reads regions >=128; box pick (dialog +0x4c dispatcher)
+  unchanged. Next: `python3 scripts/track_mode.py` (3 ANALYSE fires, then B9).

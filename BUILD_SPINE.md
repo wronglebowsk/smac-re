@@ -133,4 +133,5 @@ No box time, no /proc, no gdb.
 | C4 research, C5 combat, C6 AI | todo; the data tables are decoded, the rules are the census work |
 | U1/U2 UI | todo; asset decoders exist (`cvr_decode.py`, `flc_decode*.py`, rendered frames in repo root) |
 | R1 | **this track** — B1..B6 |
-| R2/R3 | need R1 first |
+| R2 | IN PROGRESS - B8 save-WRITE leg DONE (s220); new-game leg todo |
+| R3 | needs the R2 legs; golden-trace parity |
