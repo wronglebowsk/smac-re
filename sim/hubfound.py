@@ -4,12 +4,19 @@ REFUTED in sim/basefound (rung B10 kept it only for its curve acceptance).
 
 M290 (merged #242; byte gates scripts/m290_hub_decision.py) settled the hub's
 founding decision:
-  * DISPATCH IS OWN-TILE-GATED: at 0x563d46 the hub tests the scan's chosen
-    target offset (esi).  ZERO (the pod is on its own tile) -> call the
-    founder vector FUN_004cca50 (census FOUND ret 0x4ccbe2); NONZERO -> the
-    leg pushes msg 0x2408 ("Auto-sending BUILD BASE message") with NO founder
-    call - a distant target can NEVER found.  There is NO channel from a
-    scanned candidate tile to the founder.
+  * DISPATCH IS OWN-TILE-GATED WITH A SECOND GATE (s240 correction): at
+    0x563d46 the hub tests the scan's chosen ring entry (esi); NONZERO ->
+    the distant leg 0x563dfa reaches NEITHER the founder NOR the message.
+    Only esi==0 (pod on its own tile) falls through to the second gate
+    [ebp-0xa4] (loaded 0x563d4e; set once at 0x55f6d6 as
+    (ds:0x920434 != 0) AND (owner == ds:0x91b5b4)): ZERO -> call the
+    founder vector FUN_004cca50 (census FOUND ret 0x4ccbe2); NONZERO ->
+    push msg 0x2408 ("Auto-sending BUILD BASE message") with NO founder
+    call, jmp 0x56c925.  The old claim "distant target -> msg 0x2408,
+    NEVER founds" is RETRACTED in its msg half (a distant target can NEVER
+    found - the distant leg carries no founder call - AND it never sends
+    0x2408).  There is NO channel from a scanned candidate tile to the
+    founder.
   * The vector prologue loads the founder's args from the POD's own unit
     record (52*u fold): owner cl=[+14], y eax=s16[+10], x edi=s16[+8].  So
     the founding tile IS the pod's tile.  This leg models that LAW by taking
@@ -62,7 +69,7 @@ DEFAULT_LOG = os.path.join(ROOT, "evidence", "m289_gdb_raw.log")
 DEFAULT_TRACE = os.path.join(ROOT, "evidence",
                              "trace_m289_20261110_071759.jsonl")
 
-MSG_AUTO_BUILD = 0x2408      # the distant-target message (M290 G1/G4)
+MSG_AUTO_BUILD = 0x2408      # own-tile + second-gate-set msg (M290 G1/G4, s240)
 CAP = sobf.CAP               # 0x200 - the founder's ONLY guard (M290 G3)
 UNIT_X, UNIT_Y, UNIT_OWNER = 0, 2, 14   # save-view fields (sim/save.py unit())
 FAR_TARGET = (3, 3)          # the gate's distant press: no recorded site is here
@@ -84,16 +91,22 @@ def pod_fields(rec):
             "owner": rec[UNIT_OWNER]}
 
 
-def dispatch(rec, target):
-    """M290's own-tile-gated founding dispatch.
+def dispatch(rec, target, auto_build_flag=False):
+    """M290's founding dispatch - s240-corrected to the real CFG.
     target: None      -> the scan chose the pod's OWN tile (esi == 0);
             (tx, ty)  -> a distant target (esi != 0).
-    Returns ("found", fac, x, y) (the founder call, args = the pod record)
-    or ("msg", MSG_AUTO_BUILD) - with NO founding on that leg, ever."""
+    auto_build_flag:  the second gate [ebp-0xa4] - (ds:0x920434 != 0) AND
+            (owner == ds:0x91b5b4); set once per call at 0x55f6d6.
+    Returns ("found", fac, x, y) only for own tile AND flag False (the
+    founder call, args = the pod record); ("msg", MSG_AUTO_BUILD) only for
+    own tile AND flag True; ("distant",) otherwise - the distant leg
+    (0x563dfa: walk/continue) founds NOTHING and sends NO msg, ever."""
     f = pod_fields(rec)
-    if target is None or (int(target[0]), int(target[1])) == (f["x"], f["y"]):
-        return ("found", f["owner"], f["x"], f["y"])
-    return ("msg", MSG_AUTO_BUILD)
+    if target is not None and (int(target[0]), int(target[1])) != (f["x"], f["y"]):
+        return ("distant",)
+    if auto_build_flag:
+        return ("msg", MSG_AUTO_BUILD)
+    return ("found", f["owner"], f["x"], f["y"])
 
 
 def dispatch_ungated(rec, target):
@@ -174,15 +187,17 @@ def run_fit(sav_path, log_path, trace_path):
     pods = [pod_record(f[2], f[3], f[4]) for f in founds]
     own = [dispatch(p, None) for p in pods]
     dist = [dispatch(p, FAR_TARGET) for p in pods]
+    flagged = [dispatch(p, None, True) for p in pods]
     led = sobf.from_save(sv)
     strict_ok, peak, steps = replay(led, ev)
     report = {"foundings": [(f[2], f[3], f[4]) for f in founds],
               "pre_cnt_strict": strict_ok,
               "endpoint": len(led), "peak": peak,
               "own_tile_hits": sum(1 for g in own if g[0] == "found"),
+              "own_flagged_msgs": sum(1 for g in flagged
+                                      if g == ("msg", MSG_AUTO_BUILD)),
               "distant_foundings": sum(1 for g in dist if g[0] == "found"),
-              "distant_msgs": sum(1 for g in dist
-                                  if g == ("msg", MSG_AUTO_BUILD)),
+              "distant_msgs": sum(1 for g in dist if g[0] == "msg"),
               "final_records": [(r["fac"], r["x"], r["y"])
                                 for r in led.records]}
     return sv, led, report
@@ -227,13 +242,18 @@ def acceptance(sav_path, log_path, trace_path, results):
                     "return ('found',fac,x,y) == the recorded tuples (%d/7)" % hit,
                     hit == 7))
 
-    # G4 own-tile gate: distant presses found NOTHING, send msg 0x2408
+    # G4 dispatch legs (s240-corrected CFG): distant presses found NOTHING and send
+    # NO msg (the old "distant -> msg 0x2408" claim is RETRACTED: jne 0x563d48
+    # lands 0x563dfa, outside the msg block); msg 0x2408 belongs to the OWN-TILE
+    # press when the second gate [ebp-0xa4] is set.
     dist = [dispatch(p, FAR_TARGET) for p in pods]
-    results.append(("G4 own-tile gate: the 7 distant presses yield 0 foundings and "
-                    "%d/7 msg 0x2408 sends" % sum(1 for m in dist
-                                                  if m == ("msg", MSG_AUTO_BUILD)),
-                    sum(1 for m in dist if m[0] == "found") == 0
-                    and all(m == ("msg", MSG_AUTO_BUILD) for m in dist)))
+    flagged = [dispatch(p, None, True) for p in pods]
+    results.append(("G4 dispatch legs: the 7 distant presses yield 0 foundings and 0 "
+                    "0x2408 sends (all 'distant'); own-tile presses WITH the second gate "
+                    "send %d/7 msg 0x2408 and found NOTHING"
+                    % sum(1 for m in flagged if m == ("msg", MSG_AUTO_BUILD)),
+                    sum(1 for m in dist if m[0] in ("found", "msg")) == 0
+                    and all(m == ("msg", MSG_AUTO_BUILD) for m in flagged)))
 
     # G5 RIVAL ungated dispatch at the target fails the same fit
     rg = [dispatch_ungated(p, FAR_TARGET) for p in pods]

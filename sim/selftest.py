@@ -170,10 +170,14 @@ def run_save(target, results):
                     calc == TRACED_80))
 
     try:
-        buf = io.StringIO()
-        with contextlib.redirect_stdout(buf):
-            decode_save.walk(ref["data"])
-        ref_note = "decode_save --sections ran: %s" % buf.getvalue().strip().splitlines()[-1]
+        # s240 (M293) fix: decode_save.walk() RETURNS (rows, notes) and prints
+        # nothing - the old buf.getvalue()...splitlines()[-1] raised IndexError
+        # on every run (walk never writes to the redirected stdout; the except
+        # only caught SystemExit).  Use the returned rows/notes.
+        ref_rows, ref_notes = decode_save.walk(ref["data"])
+        ref_note = "decode_save.walk ran: %d sections, %d problems%s" % (
+            len(ref_rows), len(ref_notes),
+            "; last: %s" % ref_notes[-1] if ref_notes else "")
     except SystemExit as exc:
         ref_note = ("decode_save --sections RAISES on this file: %s" % exc)
     print("  info reference-walk    %s" % ref_note)

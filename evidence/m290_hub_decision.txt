@@ -1,11 +1,16 @@
 M290 fit: hub founder decision vs the m289 record
-PASS G1 hub dispatch window (0x563d3c-0x563d8b): target-gate, remote-build branch, founder call - bytes+mnemonics
+PASS G1 hub dispatch window (0x563d3c-0x563d8b): target-gate, second gate [ebp-0xa4], msg 0x2408 leg, founder call - bytes+mnemonics
   00563d3c: 837dbc08	cmp    DWORD PTR [ebp-0x44],0x8        OK
   00563d40: 0f8502010000	jne    0x563e48                        OK
   00563d46: 85f6	test   esi,esi                         OK
   00563d48: 0f85ac000000	jne    0x563dfa                        OK
+  00563d4e: 8b855cffffff	mov    eax,DWORD PTR [ebp-0xa4]        OK
+  00563d55: 85c0	test   eax,eax                         OK
+  00563d57: 7429	je     0x563d82                        OK
   00563d5e: 6868136900	push   0x691368                        OK
+  00563d70: 6808240000	push   0x2408                          OK
   00563d75: e826020200	call   0x583fa0                        OK
+  00563d7d: e9a38b0000	jmp    0x56c925                        OK
   00563d82: 8b4508	mov    eax,DWORD PTR [ebp+0x8]         OK
   00563d85: 50	push   eax                             OK
   00563d86: e8c58cf6ff	call   0x4cca50                        OK
@@ -25,8 +30,17 @@ PASS G2 vector window: prologue fold 52*u + record loads (+14 owner, +10 y, +8 x
   004ccbe2: 8bf8	mov    edi,eax                         OK
 PASS G3 founder guard is CAPACITY ONLY (DAT_00985af4 < 0x200); no tile-legality early bail in the body
   guard at found; pre-guard returns: none
-PASS G4 remote-build leg (0x563d4e-0x563d7d) carries msg 0x2408 and NO founder call - a distant target can NEVER found
-  0x2408 push in leg: True; founder call sites in leg: none
+PASS G4 control-flow (s240): msg block 0x563d4e-0x563d7d entered ONLY by the flag!=0 fallthrough (no external branch target); dispatch branches 0x563d48->0x563dfa distant-leg / 0x563d57->0x563d82 founder-leg; [ebp-0xa4] single writer 0x55f6d6 with its owner/0x920434 chain
+  external branch targets into msg block: none
+  body branches PARSED: {'0x563d40': '0x563e48', '0x563d48': '0x563dfa', '0x563d57': '0x563d82', '0x563d7d': '0x56c925', '0x563e04': '0x563e12'}
+  body branches EXPECTED: {'0x563d40': '0x563e48', '0x563d48': '0x563dfa', '0x563d57': '0x563d82', '0x563d7d': '0x56c925', '0x563e04': '0x563e12'}
+  [ebp-0xa4] writers in body: ['0x55f6d6']
+  0055f6b0: 391d34049200	cmp    DWORD PTR ds:0x920434,ebx             OK
+  0055f6c0: 8b0db4b59100	mov    ecx,DWORD PTR ds:0x91b5b4             OK
+  0055f6c6: 8a049586329300	mov    al,BYTE PTR [edx*4+0x933286]          OK
+  0055f6cd: 3bc1	cmp    eax,ecx                               OK
+  0055f6d1: bb01000000	mov    ebx,0x1                               OK
+  0055f6d6: 899d5cffffff	mov    DWORD PTR [ebp-0xa4],ebx              OK
 PASS G5 record: 7 foundings all via ret=0x4ccbe2 (the G2 leg) + 2 destroys
   fac=6 (20,48) cnt=18
   fac=6 (63,51) cnt=19
