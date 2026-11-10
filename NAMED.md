@@ -1352,6 +1352,13 @@ Acceptance: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`;
   --sections fails on both") was updated to require rc 0 == rc 0 plus the grown image showing
   exactly one more 304-B record (67x52+19x304 vs 67x52+18x304); B8/B9/B10 regressions green.
 ## M284
+- **LIVE HALF INSTRUMENT-INVALID (s240/M293):** the SITE guard
+  `if $reg >= 0x1000000` excluded every image-range vtable (the five family
+  vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8 are all < 0x1000000),
+  so a real family dispatch printed NOTHING: the live 0-fired rows here are
+  instrument-silence, RETRACTED as evidence (static claims stand; guard now
+  >= 0x400000; a re-armed census is an open lead).
+
 M284 (s228, ANALYSE, MEASURED-NEGATIVE static 4/4): WHO dispatches the dialog family's +0x4c
 (FUN_005f6aa3, 5 vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8, 466 installs, 0 direct
 calls - M214).  The 12 image-wide `call [reg+0x4c]` sites are the EXHAUSTIVE dispatch-form set:
@@ -1364,6 +1371,13 @@ chooser/menu path (untestable in this save: empty queue opens no chooser).
 
 
 ## M285 (s229, MEASURED-NEGATIVE w/ falsifier, static 5/5) - the REAL Script.txt production chooser is class 0x672298 (NOT family) and its clicks dispatch +0x4c through none of the 12 sites; the family +0x4c dispatcher lives on other dialogs (OK/CANCEL 0x67164c x7 live, menus, REALLYQUIT)
+- **LIVE HALF INSTRUMENT-INVALID (s240/M293):** the SITE guard
+  `if $reg >= 0x1000000` excluded every image-range vtable (the five family
+  vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8 are all < 0x1000000),
+  so a real family dispatch printed NOTHING: the live 0-fired rows here are
+  instrument-silence, RETRACTED as evidence (static claims stand; guard now
+  >= 0x400000; a re-armed census is an open lead).
+
 - evidence/m285_chooser_dispatch.txt; scripts/m285_chooser_dispatch.py (--static 5/5, --live STATE 4).
 - New settled fact: the production item chooser's class vptr 0x672298 (M53g) has
   +0x4c = 0x404ed0 (return-0 stub), +0xa8 = 0x496950 (the M53g bar switch) - it is a
@@ -1400,6 +1414,13 @@ chooser/menu path (untestable in this save: empty queue opens no chooser).
   write side; negative-id table stride (-v)*48 vs *16 (M70).
 
 ## M286 (s231) REALLYQUIT message dialog IS family (0x67164c) but does NOT dispatch +0x4c on clicks (static 5/5, live STATE 4 measured-negative w/ falsifier)
+- **LIVE HALF INSTRUMENT-INVALID (s240/M293):** the SITE guard
+  `if $reg >= 0x1000000` excluded every image-range vtable (the five family
+  vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8 are all < 0x1000000),
+  so a real family dispatch printed NOTHING: the live 0-fired rows here are
+  instrument-silence, RETRACTED as evidence (static claims stand; guard now
+  >= 0x400000; a re-armed census is an open lead).
+
 - The +0x4c slot (FUN_005f6aa3) is the dialog ROW-CLICK dispatcher
   (76-B body: FUN_005e7917 row finder over 0x18-stride rows, idx/-1, then
   (**(code **)(*ecx + 0xa8))(local_c)) - so a family dialog click SHOULD
@@ -1415,6 +1436,13 @@ chooser/menu path (untestable in this save: empty queue opens no chooser).
   scripts/m286_reallyquit_dispatch.py (--static 5/5, --live STATE 4).
 
 ## M287 (s232) in-game game MENU pane is NOT family - FOUR click paths measured, zero +0x4c dispatch (static 5/5, live STATE 4 measured-negative w/ falsifier)
+- **LIVE HALF INSTRUMENT-INVALID (s240/M293):** the SITE guard
+  `if $reg >= 0x1000000` excluded every image-range vtable (the five family
+  vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8 are all < 0x1000000),
+  so a real family dispatch printed NOTHING: the live 0-fired rows here are
+  instrument-silence, RETRACTED as evidence (static claims stand; guard now
+  >= 0x400000; a re-armed census is an open lead).
+
 The last click-path candidate of M286: the in-game game menu (MENU button
 (61,369) -> console bar -> GAME row -> 12-row popup: Switch To Simple Menus /
 Preferences... / ... / Save Game / Load Game / Resign / Start New Game / Quit).
@@ -1433,7 +1461,7 @@ display), M285 (chooser) and M286 (REALLYQUIT IS family but its row cb is
 INLINE in the pump): +0x4c is NOT dispatched on ANY click path - the next
 shape is dialog CREATE-time (FUN_00405ef0) or the Return-key path.
 
-## M288 (s233, static 5/5, merged PR pending submit) - +0x4c CLOSED: neither dialog CREATE-time nor the Return-key path dispatches the family +0x4c slot; FUN_005f6aa3 is reachable only through a live family +0x4c dispatch, and NO reachable path takes it
+## M288 (s233, static 5/5, merged PR pending submit) - +0x4c CLOSED (s240: stands on STATIC evidence alone - the four live click-path legs M284-M287 are instrument-invalid); neither dialog CREATE-time nor the Return-key path dispatches the family +0x4c slot; FUN_005f6aa3 is reachable only through a live family +0x4c dispatch, and NO reachable path takes it
 - FUN_005f6aa3 (the family +0x4c slot target = dialog row-click dispatcher:
   FUN_005e7917 row finder + [ecx+0xa8] row-cb): ZERO direct callers image-
   wide; its only 5 data refs are the 5 family vtables' +0x4c entries
@@ -1468,18 +1496,27 @@ change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
 
 ## M290 (s236, ANALYSE 9/9, MERGED #242) - the hub's founding DECISION: own-tile-gated dispatch, founder args = pod record coords
 
-- Dispatch (bytes): hub 0x563d3c cmp [ebp-0x44],8 (settle case); 0x563d46
-  test esi,esi - esi = scan's chosen target offset; ZERO (own tile) ->
-  0x563d86 call FUN_004cca50 (ret 0x4ccbe2 = the census FOUND ret);
-  NONZERO -> 0x563d4e-0x563d7d push 0x2408 + call FUN_00583fa0
-  ("Auto-sending BUILD BASE message", s 0x691368), NO founder call.
-  There is NO channel from a scanned candidate tile to the founder.
+- Dispatch (bytes; s240 CORRECTED per M293 - the claim "NONZERO -> msg
+  0x2408" is RETRACTED): hub 0x563d3c cmp [ebp-0x44],8 (settle case);
+  0x563d46 test esi,esi (esi = scan's ring entry). NONZERO -> 0x563d48 jne
+  0x563dfa: the DISTANT leg (esi>=9 walk order 0x62 at ring tile; 1-8 dec
+  + continue) - NO founder AND NO msg. Only esi==0 (own tile) falls
+  through to the SECOND gate [ebp-0xa4] (read 0x563d4e; set once at
+  0x55f6d6 = (ds:0x920434 != 0) AND (owner == ds:0x91b5b4); live solo
+  probe ds:0x920434=0 -> msg leg inert in solo): je 0x563d57 (flag==0) ->
+  0x563d82-86 call FUN_004cca50 (ret 0x4ccbe2 = census FOUND ret);
+  flag!=0 -> msg block 0x563d59-0x563d7d push 0x2408 + call FUN_00583fa0
+  ("Auto-sending BUILD BASE message", s 0x691368, pod unit) + jmp 0x56c925,
+  no founder. Own-tile gating + "NO channel from a scanned candidate tile
+  to the founder" STAND (scripts/m290_hub_decision.py:160 real CFG gate;
+  evidence/m290_hub_decision.txt:33).
 - Vector (bytes): FUN_004cca50 prologue 0x4cca57-0x4cca74 folds 52*u;
   loads cl=[+14] owner, eax=s16[+10] y, edi=s16[+8] x; 0x4ccbda-dc push
   y/x/owner -> 0x4ccbdd call FUN_004e47d0.  FOUNDER GUARD = capacity only
   (DAT_00985af4 < 0x200).  => founding tile = pod tile; legality is the
   hub's scan alone.
-- Fit (scripts/m290_hub_decision.py, evidence/m290_hub_decision.txt):
+- Fit (scripts/m290_hub_decision.py, evidence/m290_hub_decision.txt; s240
+  re-run PASS 9/9 with the corrected G4):
   PASS M290: 9/9 - 7/7 sites land (cat 3-6, 44-B record view) + new;
   ledger 18+7-2=23 peak 24 = jsonl curve; B10 first-unoccupied REFUTED
   (ranks 542-1691/2146).  Trap: save 22-B column byte 0 is NOT the live
@@ -1508,12 +1545,14 @@ change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
   working default is ptrace_scope=0; 1 blocks n100's own /proc/pid/mem reads).
 
 ## B13 (s237, BUILD 12/12) - the pod-driven founding-dispatch leg: sim/hubfound.py turns the M290 law executable
-- `dispatch(pod_rec, target)`: OWN-TILE-GATED - target None or the pod's own
-  tile -> ("found", owner, x, y) read FROM THE POD RECORD (the live vector's
-  owner+14/y+10/x+8 loads are M290's byte facts, gated in
-  scripts/m290_hub_decision.py); distant target -> ("msg", 0x2408), NEVER
-  founds. Pods compose via B12's create_record, read back at the save-view
-  fields x@0 y@2 owner@14.
+- `dispatch(pod_rec, target, auto_build_flag=False)` (s240-corrected legs,
+  sim/hubfound.py:94): distant target -> ("distant",) - the 0x563dfa leg,
+  NEVER founds AND NEVER msgs (the old "distant -> msg 0x2408" claim is
+  RETRACTED per M293); own tile + flag True -> ("msg", 0x2408); own tile +
+  flag False -> ("found", owner, x, y) read FROM THE POD RECORD (the live
+  vector's owner+14/y+10/x+8 loads are M290's byte facts, gated in
+  scripts/m290_hub_decision.py). Pods compose via B12's create_record, read
+  back at the save-view fields x@0 y@2 owner@14.
 - Parity = the M289 record: 7 FOUND (all ret 0x4ccbe2) + 2 DESTROY rows in
   evidence/m289_gdb_raw.log; ALL 9 pre-op ledger cnts agree with the replay;
   end 23 peak 24 == the trace_m289_20261110_071759.jsonl curve; legality in
@@ -1548,9 +1587,11 @@ Exactly two callers image-wide: 0x50dd84 in FUN_0050d140 (live: 26 rows =
 once per round, negative-form args) and 0x56cf12 in FUN_0056cdf0 (live:
 2282 rows = per-unit). The founding dispatch at 0x563d46 keys on esi = the
 M291 RING ENTRY INDEX (0-24): esi==0 not-own -> 0x563d82-86 push u, call
-FUN_004cca50 (FOUND leg - founds where the pod stands); esi==0 own ->
-push 0x2408 / call FUN_00583fa0 (MSG leg = the "Auto-sending BUILD BASE
-message" to the human; 0 live rows with our side inert); 1<=esi<9 ->
+FUN_004cca50 (FOUND leg - founds where the pod stands); esi==0 + second
+gate [ebp-0xa4] set -> push 0x2408 / call FUN_00583fa0 (MSG leg - s240:
+the gate is (ds:0x920434!=0 AND owner==ds:0x91b5b4), NOT own-ness alone;
+live 0x920434=0 -> msg leg INERT in solo, so "0 live rows" is structural,
+not our-side-inert); 1<=esi<9 ->
 dec esi at 0x563e06, continue, NO order; esi>=9 -> ring tables
 0x678990[esi]/0x67850c[esi] + own tile, wrap FUN_00469010, then 0x563e3b
 FUN_005560f0(u, 0x62, tile) = issue order b at the ring tile = the pod
@@ -1558,3 +1599,36 @@ WALK. Live 26-turn window (m54b_clean t0): FOUND=9 ALL via the hub leg
 (ret 0x4ccbe2), cnt 18->27, every FOUND paired same-segment with its
 HUBFOUND tile, 2 walked pods, own-flag law 29/29.
 Instrument: scripts/m292_pod_movement.py.
+
+## M293 (s240, CORRECTION) - three verified Greptile P1s fixed; two registry claims retracted
+- D1 hub dispatch (the M290/B13 correction above; bytes re-derived from the
+  disasm cache): msg block [0x563d4e,0x563d7d] entered ONLY by the esi==0 +
+  flag!=0 fallthrough - no branch in .text targets it from outside
+  (scripts/m290_hub_decision.py:160, G4 = real CFG parse: branch table
+  0x563d40->0x563e48, 0x563d48->0x563dfa, 0x563d57->0x563d82,
+  0x563d7d->0x56c925, 0x563e04->0x563e12; [ebp-0xa4] single writer
+  0x55f6d6, producer chain 0x55f6b0/0x55f6c0/0x55f6c6/0x55f6cd/0x55f6d1
+  bytes asserted). The OLD G4 sliced its own address table at
+  0x563d4e..0x563d81 - vacuous (the founder je-target 0x563d82 abuts the
+  end). ACCEPTANCE: python3 scripts/m290_hub_decision.py
+  programs/saves/m54b_clean.SAV evidence/m289_gdb_raw.log
+  evidence/trace_m289_20261110_071759.jsonl -> PASS M290: 9/9
+  (evidence/m290_hub_decision.txt:33). 3 runs; runs 1-2 were the
+  instrument (byte transcription; in-block skip), floors never cut.
+- D1b read-only /proc probe (pid 4087359, TracerPid 0): ds:0x920434=0,
+  ds:0x91b5b4=3, ds:0x9208f8=0 -> the msg leg is UNREACHABLE in this solo
+  save; name of 0x920434 OPEN (scenario/multiplayer gate?).
+- D2 sim/hubfound.py:94 legs (distant/msg/found): ACCEPTANCE
+  python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV -> PASS
+  B13: 12/12 (evidence/b13_hubfound.txt:4).
+- D3 guards >=0x1000000 -> >=0x400000 in m284_dialog_dispatch.py:246,
+  m285_chooser_dispatch.py:185, m286_reallyquit_dispatch.py:181,
+  m287_menu_dispatch.py:279; M284-M287 live claims now carry INVALID
+  banners in their blocks. Static closure (0 direct callers of
+  FUN_005f6aa3, create/key-path containment) UNAFFECTED.
+- D4 sim/selftest.py:177 (run_save): walk() returns (rows, notes) and
+  prints nothing - the old redirect+splitlines()[-1] raised IndexError
+  every run (the except caught only SystemExit). ACCEPTANCE
+  python3 -m sim.selftest --sav programs/saves/m54b_clean.SAV -> PASS
+  B2: 7/7 (evidence/s240_b2_run.txt:2 "21 sections, 0 problems").
+- Cites per AGENTS.md:50 (path:line) added to every claim touched here.

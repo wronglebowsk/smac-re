@@ -1,6 +1,7 @@
-# NEXT_PROMPT.md - footing (s239 close: M292 5/5 #248; M291 #246, B13 #244:
-# M292: POD MOVEMENT = hub arg1 unit index; esi ring-entry dispatch (0=found/MSG,
-# 1-8 continue, >=9 issue order 0x62 at ring tile = WALK). Next: gate tables. B14.)
+# NEXT_PROMPT.md - footing (s240 close: M293 CORRECTION - msg-0x2408 attribution
+# RETRACTED (msg = own-tile + gate [ebp-0xa4], live 0x920434=0 -> inert solo;
+# distant leg = 0x563dfa walk/continue); M284-M287 live censuses INVALID; B2
+# fixed. Next: gate tables + name 0x920434. BUILD = B14.)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -29,11 +30,11 @@ binding cap is doc headroom, not capability.**
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
 ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9, **B6 DONE (s212)** = R1 DONE (6/6), **B7 DONE (s216)** = R2's move leg (6/6) - commands per-id in `NAMED.md` §B4-§B7.
-**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B13 DONE (s237)** 12/12: `python3 -m sim.selftest --b13 <sav>` (`evidence/b13_hubfound.txt`, `NAMED.md` §B13) - M290's founder dispatch EXECUTABLE: own-tile gate (distant target = msg 0x2408, NEVER founds), founder args = the pod record; strict ledger replay, rivals fail the fit. **B1-B13 DONE.** 
+**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B13 DONE (s237)** 12/12: `python3 -m sim.selftest --b13 <sav>` (`evidence/b13_hubfound.txt`, `NAMED.md` §B13) - M290's founder dispatch EXECUTABLE: own-tile gate (distant leg NEVER founds nor sends 0x2408 (s240: msg = own-tile + gate [ebp-0xa4])), founder args = the pod record; strict ledger replay, rivals fail the fit. **B1-B13 DONE.** 
 
 ## THE LEDGER
 
-Merged M54A-M292 + B0-B13 (through #248); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M293 + B0-B13 (through #248 + s240 PR); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -58,13 +59,17 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
 - ANSWERED (do not re-pick): M227-M283, **B1-B13** (M241 FAIL 2/5, #180 open).  Enumerations:
-  `docs/pick-archive.md` §trim-s209; numbers `NAMED.md`; M267-M273 RESULT blocks in the archive.
-  FUN_005f3f5b is NOT open - see M220.
+  `docs/pick-archive.md` §trim-s209; numbers `NAMED.md`.
+  FUN_005f3f5b NOT open (M220).
 
 - Pick from (ANALYSE fires; next BUILD = B14):
-  ANSWERED s227-M289, s234-B12, s236-M290, s237-B13 (M290 fit 9/9: dispatch own-tile-gated, founder args = pod record; B10 tile rule REFUTED - NAMED M290).  ANSWERED s238=M291 (10/10; ring + value laws in NAMED.md). ANSWERED s239=M292 (5/5, 26-turn BOX; law NAMED.md): hub arg1 = unit index (own flag owner==3 HUMAN); callers FUN_0056cdf0 (per-unit) + FUN_0050d140 (once-round); esi ring-entry dispatch: 0=found (MSG 0x2408 human), 1-8=continue, >=9=FUN_005560f0(u,0x62,ring tile)=WALK order; 9 FOUND all hub-leg, 2 walked; golden tiles (20,48)(63,51)(1,43) reproduced. NEW pick (s239): UNMODELED 0x94e5a8/0x94eca8 per-site gate tables + FUN_004e3c00 no-go (STATIC census + fit vs recorded sites; the fits passed WITHOUT modeling them). Also open: who gates hub visits (both callers entry tests); the 0x56c6de continue-leg target.
+  ANSWERED s227-M289, s234-B12, s236-M290, s237-B13 (own-tile-gated dispatch + SECOND gate [ebp-0xa4] - NAMED M290/M293).  ANSWERED s238=M291 (10/10; ring + value laws in NAMED.md). ANSWERED s239=M292 (5/5, 26-turn BOX; law NAMED.md): law + s240 correction in NAMED M292/M293 (msg 0x2408 leg = own-tile + [ebp-0xa4], NOT distant; live 0x920434=0 -> msg inert). NEW pick (s239): UNMODELED 0x94e5a8/0x94eca8 per-site gate tables + FUN_004e3c00 no-go (STATIC census + fit vs recorded sites; the fits passed WITHOUT modeling them). Also open: who gates hub visits (both callers entry tests); the 0x56c6de continue-leg target; name ds:0x920434 (msg-leg gate, =0 solo, s240 probe).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128; 338 = coarse-map CELL count; NAMED).
-  DIALOG +0x4c CLOSED (M284-M288): slot not on any click/key/create path; menu
+  - s240=M293 CORRECTION: hub msg-0x2408 = own-tile + gate [ebp-0xa4] (distant
+  leg = 0x563dfa, no msg no found); M284-M287 LIVE numbers instrument-
+  invalid (guards fixed >=0x400000) - re-arm before ANY reuse; selftest B2
+  7/7 again. Full law: NAMED M290/M293.
+DIALOG +0x4c CLOSED (M284-M288; live half INVALID s240, static stands): slot not on any click/key/create path; menu
   pane NOT family (0x67919c); full shape in NAMED M288. M282 G5 CLOSED (s235 hub,
   s236 fit). 188-row cursor caller OPEN; NEVER bp mid-instruction (s213 crash).
 
@@ -83,8 +88,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 3. Register semantics live in the ENCODING: `[reg*4+disp]` vs `[reg+disp]` differ by the register's scaling, so a
    condition testing one against the other can never fire; a read-modify-write through a COPIED register evades
    store-shape greps — a hw watchpoint on the FIELD answers "who writes it".
-4-5. gdb printf/script laws — VERBATIM text moved to `docs/pick-archive.md` at s191 (also in the skill's
-   instrument-laws.md): no inferior strings; expressions go in printf ARGUMENTS and specs must match them (a
+4-5. gdb printf/script laws — VERBATIM text moved to `docs/pick-archive.md` at s191 : no inferior strings; expressions go in printf ARGUMENTS and specs must match them (a
    mismatch ABORTS the sourced script and DETACHES at the first hit); a manual call frame needs the RETADDR at
    esp+0 and the arg at esp+4; gdb ABANDONS an inferior `call` once any bp hits inside it; ONE `\n` prints a
    newline, TWO prints a literal one and the stream reads as ZERO events; a bp at the insn AFTER `call X` fires
