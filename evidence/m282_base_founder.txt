@@ -1,0 +1,8 @@
+G1 PASS: FUN_004e47d0 guard `DAT_00985af4 < 0x200`=True, increment `count=count+1`=True
+G2 PASS: record@old*0x130 (x) x+0 (True) y+2 (True) faction+4/+5 (True) faction-counter+0x82f (True)
+G3 PASS: callers ['FUN_004cca50', 'FUN_0059ce10', 'FUN_0059ec90'] == ['FUN_004cca50', 'FUN_0059ce10', 'FUN_0059ec90']; call-site count 3
+G4 PASS: sites=12; +1 idiom only in ['FUN_004e47d0', 'FUN_0059b830'] (sites ['FUN_004e47d0', 'FUN_0059b830']); dec=['4e515d']; zero-class ok=True, xor-prelude=True
+G5 PASS: dispatcher 4408->4cca50=True; hotkey 0x62->4d1280=True; 4d1280->4cca50=True; AI hub 5f650->4cca50=True
+G6 PASS: founder cap 0x200=True; loader loop 0x200=True; record advance 0x98 shorts (0x130 B)=True
+G7 PASS: sim founder refs=[]; extra +1 funcs=[]; B9 frontier declared=True
+SUMMARY M282: 7/7 gates PASS
