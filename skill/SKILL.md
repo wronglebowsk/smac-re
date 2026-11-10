@@ -11,7 +11,12 @@ Sid Meier's Alpha Centauri (1999) `terran.exe` + `programs/*.cvr` live in
 session starts on.** When the session host is another box (e.g. the gateway), do not hunt for
 `~/reverse/smac` locally: drive the repo over SSH - `/home/paul/smacsh` pipes a script into
 `cd ~/reverse/smac && bash -l` (write the remote command as ONE heredoc; a multi-line wrapper call
-only forwards its first line), and scp helper scripts to `scratch/` there to run them. **scp must
+only forwards its first line), and scp helper scripts to `scratch/` there to run them. **A python
+file AUTHORED through a smacsh heredoc must be backslash-free: the transport unescapes backslash
+sequences inside heredoc content, so a byte literal lands on disk as RAW bytes (the file still
+compiles, then compares wrong)** - ship scripts with `bytes([0x.., ...])` lists and no backslash
+regex classes; an `&` anywhere in the heredoc (even in a comment) is also refused (s238, 5 runs of
+pure instrument bugs). **scp must
 target `<n100-user>@<lan-ip>`** (the `n100` ssh alias resolves to a tailscale IP that times out;
 smacsh itself uses the LAN IP over the persistent ControlPath - `~/.ssh/config` `Host n100` vs the
 LAN entry). The live

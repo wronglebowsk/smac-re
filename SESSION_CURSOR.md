@@ -1,9 +1,10 @@
-B13 (s237 BUILD, 12/12, MERGED #244): sim/hubfound.py makes M290's founder
-dispatch executable - own-tile-gated (distant target = msg 0x2408, never
-founds), founder args = pod-record fields, capacity-only guard; 7/7
-recorded tuples, strict ledger 18+7-2=23 peak 24 vs the m289 jsonl curve;
-B10's (x,y) placeholder now REFUTED in code too. Acceptance:
-python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV
-(evidence/b13_hubfound.txt). Box: clean pid 4087359, TracerPid 0,
-untouched. Next: ANALYSE - pod-walk target rule (scan score
-0x563c00-0x563d40 vs recorded founding TURNS).
+M291 (s238 ANALYSE, 10/10, branch milestone/m291): the hub found-
+scan law is a STRICT site-value argmax over the 25-entry even-
+manhattan ring (own tile, m2-diamond, m4-diamond; tables 0x67850c/
+0x678990, file .rdata); score = FUN_0046e770 = rec byte2 high nibble;
+the rec byte3 owner-equality gate is REQUIRED by the record (no-
+owngate rival loses exactly fac1(27,29)); the footing's (dist*10000)/
+(value+1) shape is REFUTED (no 0x2710 in the 54483-B body). Acceptance:
+python3 scripts/m291_pod_scan.py -> evidence/m291_pod_scan.txt.
+Box untouched, clean pid 4087359. Next: pod movement (which pod,
+which turn - live unit leg).

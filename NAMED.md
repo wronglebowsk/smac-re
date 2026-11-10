@@ -1525,3 +1525,17 @@ change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
   0x563c00-0x563d40) stays DECLARED - the next ANALYSE frontier.
 - Acceptance: `python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV`
   -> PASS B13: 12/12 (`evidence/b13_hubfound.txt`).
+
+## M291 - the hub founding SCAN law (s238, 10/10, no box)
+FUN_0055f650 scan body 0x5638a9-0x563cb3: candidate ring = tables 0x67850c(dx)/
+0x678990(dy), 25 dwords (.rdata): idx0 own tile, 1-8 manhattan-2 diamond, 9-24
+manhattan-4, ascending. Eligibility: (byte0 top-3-bits < 3) == [ebp-0x58],
+rec byte3 == [ebp-0x34], rec+9 bit 0x20 clear (+ 0x4e3c00 no-go, 0x56391d-57
+sub-gates). Score FUN_0046e770 = rec byte2 high nibble (sar 4; 0 when rec+8 bit
+0x1000; lazy FUN_005aff90 when 0). Selection: STRICT max (cmp esi,eax, jle
+0x563cb3); ties keep the closer entry. DAT_008f0d34 = nearest-location distance
+(FUN_004e3620: 9999 sentinel, 152-B list stride, max(dx,dy)-((dx+dy)/2-min+1)/2
+map-wrapped); value >= 2*(8-that) bypasses gates 0x94e5a8/0x94eca8. The footing
+(dist*10000)/(value+1) REFUTED: no 0x2710 in the 54,483-B body. Fit: scripts/
+m291_pod_scan.py - 7/7 recorded sites self-argmax, no-owngate 6/7 (loses fac1
+(27,29)), B10 placeholder 0/7, null 0.307 (p 2.6e-4).
