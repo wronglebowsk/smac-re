@@ -132,10 +132,15 @@ def walk(d):
         elif size == "MAP":
             w, h = struct.unpack_from("<II", d, off)
             grid = w * h * 22
+            # The map trailer IS the coarse region map FUN_00582000 allocates:
+            # ((W+4)/5 + 1)/2 * (H+4)/5 bytes (shard_014.c:27263-27265) - 128 for 80x80,
+            # 91 for 64x64, 338 for 128x128. Hardcoding 128 misaligned every 64x64 save
+            # (the next count u32 then read garbage -> "no 52/304 split of a 0-byte region").
+            region = (((w + 4) // 5 + 1) // 2) * ((h + 4) // 5)
             rows.append((off, 2724, f"map header struct ({w}x{h})", dest))
             rows.append((off + 2724, grid, "map grid (W*H*22)", dest))
-            rows.append((off + 2724 + grid, 128, "map trailer", dest))
-            off += 2724 + grid + 128
+            rows.append((off + 2724 + grid, region, "coarse region map", dest))
+            off += 2724 + grid + region
         elif size == "COUNT":
             c = struct.unpack_from("<I", d, off)[0]
             rows.append((off, 4, "u32 count prefix", dest))

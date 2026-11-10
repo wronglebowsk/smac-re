@@ -175,8 +175,7 @@ def run_save(target, results):
             decode_save.walk(ref["data"])
         ref_note = "decode_save --sections ran: %s" % buf.getvalue().strip().splitlines()[-1]
     except SystemExit as exc:
-        ref_note = ("decode_save --sections RAISES on this file: %s (its section table is the "
-                    "80x80 one - the record region solves to 0 B on a 64x64 save)" % exc)
+        ref_note = ("decode_save --sections RAISES on this file: %s" % exc)
     print("  info reference-walk    %s" % ref_note)
     return None
 
@@ -969,15 +968,24 @@ def run_b10(sav_path, trace_path, results):
                              cwd=REPO)
         def _norm(s):
             return s[s.find("  year"):]          # strip path/size/version header lines
-        same_view = (dr.returncode == dr0.returncode
-                     and _norm(dr.stdout.replace(wpath, "<F>"))
-                     == _norm(dr0.stdout.replace(sav_path, "<F>")))
-        results.append(("decode_save's 64x64 walk sees the grown image exactly "
-                        "like the original (rc %d == rc %d; the walk hardcodes "
-                        "the 80x80 map-trailer count offset and pre-splits on "
-                        "64x64 saves, so --sections fails on both - B8's sec "
-                        "equality still holds)" % (dr.returncode, dr0.returncode),
-                        same_view))
+        def _recs(s):
+            import re as _re
+            m52 = _re.search(r"52-byte records x (\d+)", s)
+            m304 = _re.search(r"304-byte records x (\d+)", s)
+            return (int(m52.group(1)) if m52 else None,
+                    int(m304.group(1)) if m304 else None)
+        ok_rc = (dr.returncode == 0 and dr0.returncode == 0
+                 and "no 52/304 split" not in dr.stdout + dr0.stdout)
+        # the fixed walk (M283) computes the coarse-region-map length from the
+        # file's own dims, so a 64x64 save walks cleanly; the grown image must
+        # then be seen with exactly ONE more 304-byte record than the original
+        # (the founded base), not "identical to the original because both fail"
+        grew = _recs(dr.stdout) == (67, 19) and _recs(dr0.stdout) == (67, 18)
+        results.append(("decode_save's 64x64 walk re-parses the grown image: rc "
+                        "%d == rc %d == 0 and record split 67x52 + 19x304 vs "
+                        "67x52 + 18x304 (the pre-fix walk failed both with a "
+                        "0-byte record region)" % (dr.returncode, dr0.returncode),
+                        ok_rc and grew))
     finally:
         _os.unlink(wpath)
     # 6 determinism + the module CLI

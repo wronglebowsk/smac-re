@@ -1,0 +1,21 @@
+M283: decode_save --sections on 64x64 saves
+   PASS Alpha Centauri Autosave 1.SAV 64x64 region=91 sum=242799
+   PASS Alpha Centauri Autosave 10.SAV 64x64 region=91 sum=242927
+   PASS Alpha Centauri Autosave 2.SAV 64x64 region=91 sum=242799
+   PASS Alpha Centauri Autosave 20.SAV 64x64 region=91 sum=243691 [1 notes]
+   PASS Alpha Centauri Autosave 3.SAV 64x64 region=91 sum=242591
+   PASS Alpha Centauri Autosave 30.SAV 64x64 region=91 sum=243483 [1 notes]
+   PASS Alpha Centauri Autosave 4.SAV 64x64 region=91 sum=242799
+   PASS Alpha Centauri Autosave 5.SAV 64x64 region=91 sum=242747
+   PASS m241_probe.SAV 64x64 region=91 sum=242799
+   PASS m241_probe_A.SAV 64x64 region=91 sum=242799
+   PASS m241_probe_B.SAV 64x64 region=91 sum=242799
+   PASS m242_probe_A.SAV 64x64 region=91 sum=242799
+   PASS m242_probe_B.SAV 64x64 region=91 sum=242799
+   PASS m112auto1.SAV 64x64 region=91 sum=242927
+   PASS m112poke.SAV 64x64 region=91 sum=242539
+   PASS m113map.SAV 64x64 region=91 sum=242539
+   PASS m54b_clean.SAV 64x64 region=91 sum=242539
+   count u32 @188,299 in the walk table: 17/17
+   region_len formula 80x80->128, 128x128->338: PASS
+SUMMARY M283: 17/17 section gates, count 17/17, formula True
