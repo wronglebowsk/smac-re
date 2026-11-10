@@ -512,3 +512,30 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   place (OBSERVED -> V (bytes), cites M280).
 - OPEN: static pick (c) who reads regions >=128 (loop bound 0x80 vs counts to 338); box
   pick (dialog +0x4c dispatch) unchanged. Chain: exactly one pending smac-re job = s223.
+
+## Session 223 (2026-11-10, BUILD fire, B9 PASS 7/7) - R3's golden-trace pairing: the original exe's own 40-turn m54b_clean.SAV run pairs 41/41 snapshots through the B3 engine
+- track_mode printed BUILD (analyse_since_build=4) -> B9 rung written into `BUILD_SPINE.md` FIRST (chose
+  R3's golden-trace pairing over R2's new-game leg: exactly the "no recorded initial-state trace" problem
+  B8 already flagged - the new-game leg has nothing to parity against, and grading rule 2 forbids inventing
+  expected values. What R3 needs exists: evidence/trace_m54b40b_20261024_212833.jsonl is the ORIGINAL
+  terran.exe running m54b_clean.SAV itself, 40 TURN-COMPLETE presses, per-turn state_before/state_after
+  snapshots of (year, cur_player, turn_flags, n_bases); the sibling m54b40 wedged at 30 rows).
+- `sim/parity.py`: load the save, press the B3 engine the trace's OWN 40 turns, pair every recorded
+  snapshot against the emitted state sequence as an ordered subsequence - zero tolerance on the recorded
+  side (the m30 law). Gates: trace shape (40 consecutive rows), pair-chain (before(0)==save start,
+  before(t)==after(t-1) all 40), snapshots-covered (41/41, 0 missing), year-before == 2150+turn all 40,
+  BOTH RIVALS FAIL (reversed-order walk and year_after=0 edge each miss the (2190,7,2) year-fire witness
+  - the same snapshot pins the walk direction AND the year edge), frontier-declared, two-runs sha256.
+- ACCEPTANCE: `python3 -m sim.selftest --b9 programs/saves/m54b_clean.SAV` -> **PASS B9: 7/7 gates**
+  (`evidence/b9_golden_parity.txt`); `python3 -m sim.parity --sav programs/saves/m54b_clean.SAV
+  --out /tmp/b9_report.json` -> exit 0, report blob sha256 5af9cb48f597a0b7. Final engine state
+  (3, 0, 2190) = the human phase after 40 presses, matching the recorded last year 2190.
+- FINDING (declared, not a gate input): n_bases. The sim has no AI base-founder, so the model holds the
+  save's constant 18 while the recorded game grows to 26 (delta +8 over 40 turns). Frontier recorded in
+  the report + evidence; open as a census pick (who writes the base array / founds AI bases).
+- Trap dodged: the first subsequence prototype double-counted boundary states (before(t)==after(t-1)
+  appeared at 80 keys) - the paired sequence is before(0) + the 40 afters, 41 distinct states. tf masked
+  to bit 0x2 (recorded turn 39 reads 0x100002 - the engine models only TF_CYCLE). One gate em-dash'd at
+  the sanity pass - cleaned before commit.
+- OPEN: static pick (c) who reads regions >=128; box pick (dialog +0x4c dispatcher) unchanged; new:
+  the AI base-founder census (n_bases 18->26). Chain: exactly one pending smac-re job = s224.
