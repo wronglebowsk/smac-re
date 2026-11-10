@@ -573,3 +573,39 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   the 64x64 odd-Rw accessor stride quirk.  NEW narrowing: the family +0x4c dispatcher must
   live on the Script.txt dialog (chooser/menu) path - open a real chooser (non-empty queue,
   m54g_prep + one turn per standing facts) and re-run the same instrument.  Next fire: ANALYSE.
+
+
+## Session 229 (2026-11-10, ANALYSE, M285 MEASURED-NEGATIVE w/ falsifier, static 5/5) - a REAL Script.txt production chooser does NOT dispatch the family +0x4c either (live dialog at the click reads vptr 0x672298, non-family)
+- track_mode ANALYSE -> the M284 re-scope pick: open a real chooser (m54g_prep + one turn
+  per standing facts) and re-run the +0x4c instrument live, falsifier = a live vtable read
+  at the click. scripts/m285_chooser_dispatch.py.
+- STATIC (--static, evidence/m285_chooser_dispatch.txt): 5/5 gates. g1 the 12 sites still
+  read `call [reg+0x4c]`; g2 all 5 family vtables' +0x4c == 0x5f6aa3; g3 whole-image scan
+  finds EXACTLY 5 vtables holding +0x4c==0x5f6aa3 (the family is closed); g4 NEW: the
+  production chooser class 0x672298 (M53g live vptr) +0x4c = 0x404ed0 stub, NOT family;
+  g5 FUN_00405ef0 (dialog ctor) body contains the 0x67164c store (dialogs ARE family).
+- LIVE (--live): m54g_prep --unit 0 (rec0 -> type 0 colonist at (29,42)) then one boundary
+  (2153->2154, m55_boundary PASS) -> candidate array 67 items [192,194,193,2,0,1,...] per
+  standing facts. Armed all 12 sites + FUN_005f6aa3 entry + pump 0x5f1394 + wndproc
+  0x5d0c33 WM_LBUTTONDOWN control. Opened the base display (b), ROW1 click opened the
+  production item chooser, clicked cell k=2 (382,60), INSERT bar (497,343), OK bar
+  (285,343). READ-BACK: base0 pending 0->1, slots [0,193,0,0,0,0] - the INSERT LANDED,
+  the clicks really drove the chooser's own handlers at minerals 0 / credit 0.
+- LIVE vptr reads at the click (the falsifier): DIALOG_CUR (0x9939c4) = 0x6a9e9c = the
+  chooser sub-object, its vptr = 0x672298 - the chooser class, NOT any of the 5 family
+  vtables (+0x4c is the return-0 stub 0x404ed0, so its clicks CANNOT dispatch 0x5f6aa3).
+  Family vptr occurrences in writable memory were LIVE the whole window (0x67164c x7,
+  0x675cc4 x2, 0x6776c8 x1) - so the zero is not a dead-class artifact; those instances
+  live on OTHER paths (message OK/CANCEL dialogs, menu panes).
+- RESULTS: site bps fired 0/12, family-slot hits NONE, ENTRY hits 0, pump control 0,
+  wndproc LBUTTONDOWN controls 6. STATE 4 measured-negative: clicks delivered + chooser
+  functioned, but the family +0x4c is dispatched through NONE of the 12 sites on this
+  path - the production chooser is a DIFFERENT (0x672298) class, exactly as M284's
+  base-display negative predicted the re-scope would find.
+- ACCEPTANCE: static 5/5 PASS; live STATE 4 measured-negative with the live-vptr
+  falsifier + INSERT read-back (pending 0->1 item 193) - one real invocation.
+- OPEN (unchanged): M282 G5 (which founder vector the recorded AI used - box); the 64x64
+  odd-Rw accessor stride quirk.  NARROWED: the family +0x4c dispatcher is NOT on the base
+  display (M284) NOR the production-chooser path (M285); candidate dialogs remaining =
+  the message OK/CANCEL dialog (FUN_005f1394's own class: 0x67164c x7 live), the menu
+  panes (TOPMENU/MAPMENU/SCENARIOMENU), the REALLYQUIT prompt.  Next fire: ANALYSE.
