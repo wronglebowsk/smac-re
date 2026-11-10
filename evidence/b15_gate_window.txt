@@ -1,0 +1,213 @@
+# B15 recorded gate windows - authority for sim/gatetables.py
+# produced by scripts/b15_gate_window.py from scratch/m574/text.txt
+# terran.exe sha256=b7c9fc751b7f1ac43a2a592cda4b0ea80929d114c3619862e935ee8328dc9818 size=3067904
+## prologue msg-gate 0x55f6b0-0x55f6dc
+  55f6b0:	39 1d 34 04 92 00    	cmp    DWORD PTR ds:0x920434,ebx
+  55f6b6:	74 1e                	je     0x55f6d6
+  55f6b8:	8d 0c 7f             	lea    ecx,[edi+edi*2]
+  55f6bb:	33 c0                	xor    eax,eax
+  55f6bd:	8d 14 8f             	lea    edx,[edi+ecx*4]
+  55f6c0:	8b 0d b4 b5 91 00    	mov    ecx,DWORD PTR ds:0x91b5b4
+  55f6c6:	8a 04 95 86 32 93 00 	mov    al,BYTE PTR [edx*4+0x933286]
+  55f6cd:	3b c1                	cmp    eax,ecx
+  55f6cf:	75 05                	jne    0x55f6d6
+  55f6d1:	bb 01 00 00 00       	mov    ebx,0x1
+  55f6d6:	89 9d 5c ff ff ff    	mov    DWORD PTR [ebp-0xa4],ebx
+  55f6dc:	e8 2c a7 08 00       	call   0x5e9e0d
+## prologue case 0x55f730-0x55f750
+  55f730:	c1 e1 02             	shl    ecx,0x2
+  55f733:	0f bf b6 7a 32 93 00 	movsx  esi,WORD PTR [esi+0x93327a]
+  55f73a:	8a 99 b2 ad 98 00    	mov    bl,BYTE PTR [ecx+0x98adb2]
+  55f740:	89 75 ec             	mov    DWORD PTR [ebp-0x14],esi
+  55f743:	8b c3                	mov    eax,ebx
+  55f745:	25 ff 00 00 00       	and    eax,0xff
+  55f74a:	89 45 bc             	mov    DWORD PTR [ebp-0x44],eax
+  55f74d:	33 c0                	xor    eax,eax
+  55f74f:	8a 81 ac ad 98 00    	mov    al,BYTE PTR [ecx+0x98adac]
+## prologue region/block/verdict 0x55f79f-0x55f820
+  55f79f:	8a 46 03             	mov    al,BYTE PTR [esi+0x3]
+  55f7a2:	8b 55 f0             	mov    edx,DWORD PTR [ebp-0x10]
+  55f7a5:	89 45 cc             	mov    DWORD PTR [ebp-0x34],eax
+  55f7a8:	8b 82 7c 32 93 00    	mov    eax,DWORD PTR [edx+0x93327c]
+  55f7ae:	33 d2                	xor    edx,edx
+  55f7b0:	25 00 00 06 00       	and    eax,0x60000
+  55f7b5:	3d 00 00 04 00       	cmp    eax,0x40000
+  55f7ba:	0f 94 c2             	sete   dl
+  55f7bd:	89 95 68 ff ff ff    	mov    DWORD PTR [ebp-0x98],edx
+  55f7c3:	33 d2                	xor    edx,edx
+  55f7c5:	3d 00 00 06 00       	cmp    eax,0x60000
+  55f7ca:	8b 45 bc             	mov    eax,DWORD PTR [ebp-0x44]
+  55f7cd:	0f 94 c2             	sete   dl
+  55f7d0:	83 f8 03             	cmp    eax,0x3
+  55f7d3:	89 95 60 ff ff ff    	mov    DWORD PTR [ebp-0xa0],edx
+  55f7d9:	75 12                	jne    0x55f7ed
+  55f7db:	8b 81 a8 ad 98 00    	mov    eax,DWORD PTR [ecx+0x98ada8]
+  55f7e1:	c7 45 c4 01 00 00 00 	mov    DWORD PTR [ebp-0x3c],0x1
+  55f7e8:	f6 c4 08             	test   ah,0x8
+  55f7eb:	75 07                	jne    0x55f7f4
+  55f7ed:	c7 45 c4 00 00 00 00 	mov    DWORD PTR [ebp-0x3c],0x0
+  55f7f4:	8b 75 f4             	mov    esi,DWORD PTR [ebp-0xc]
+  55f7f7:	33 d2                	xor    edx,edx
+  55f7f9:	8b c6                	mov    eax,esi
+  55f7fb:	c1 e0 06             	shl    eax,0x6
+  55f7fe:	03 c6                	add    eax,esi
+  55f800:	8d 3c 46             	lea    edi,[esi+eax*2]
+  55f803:	8b 45 cc             	mov    eax,DWORD PTR [ebp-0x34]
+  55f806:	c1 e7 04             	shl    edi,0x4
+  55f809:	2b fe                	sub    edi,esi
+  55f80b:	c1 e7 02             	shl    edi,0x2
+  55f80e:	89 7d b8             	mov    DWORD PTR [ebp-0x48],edi
+  55f811:	8a 94 07 a8 ed 94 00 	mov    dl,BYTE PTR [edi+eax*1+0x94eda8]
+  55f818:	8b 45 f0             	mov    eax,DWORD PTR [ebp-0x10]
+  55f81b:	89 95 74 ff ff ff    	mov    DWORD PTR [ebp-0x8c],edx
+## scan gate window 0x563bf7-0x563cbf
+  563bf7:	8b 5d cc             	mov    ebx,DWORD PTR [ebp-0x34]
+  563bfa:	8b 45 f8             	mov    eax,DWORD PTR [ebp-0x8]
+  563bfd:	8b 4d fc             	mov    ecx,DWORD PTR [ebp-0x4]
+  563c00:	50                   	push   eax
+  563c01:	51                   	push   ecx
+  563c02:	e8 69 ab f0 ff       	call   0x46e770
+  563c07:	8b f0                	mov    esi,eax
+  563c09:	8b 45 dc             	mov    eax,DWORD PTR [ebp-0x24]
+  563c0c:	83 c4 08             	add    esp,0x8
+  563c0f:	3b f0                	cmp    esi,eax
+  563c11:	0f 8e 9c 00 00 00    	jle    0x563cb3
+  563c17:	8b 55 f8             	mov    edx,DWORD PTR [ebp-0x8]
+  563c1a:	8b 45 fc             	mov    eax,DWORD PTR [ebp-0x4]
+  563c1d:	52                   	push   edx
+  563c1e:	50                   	push   eax
+  563c1f:	e8 fc f9 f7 ff       	call   0x4e3620
+  563c24:	8b 3d 34 0d 8f 00    	mov    edi,DWORD PTR ds:0x8f0d34
+  563c2a:	b9 08 00 00 00       	mov    ecx,0x8
+  563c2f:	2b cf                	sub    ecx,edi
+  563c31:	83 c4 08             	add    esp,0x8
+  563c34:	d1 e1                	shl    ecx,1
+  563c36:	3b f1                	cmp    esi,ecx
+  563c38:	7d 6d                	jge    0x563ca7
+  563c3a:	8b 7d b8             	mov    edi,DWORD PTR [ebp-0x48]
+  563c3d:	8a 94 1f a8 e5 94 00 	mov    dl,BYTE PTR [edi+ebx*1+0x94e5a8]
+  563c44:	84 d2                	test   dl,dl
+  563c46:	74 5f                	je     0x563ca7
+  563c48:	83 bf 88 e4 94 00 02 	cmp    DWORD PTR [edi+0x94e488],0x2
+  563c4f:	7c 56                	jl     0x563ca7
+  563c51:	8b 85 74 ff ff ff    	mov    eax,DWORD PTR [ebp-0x8c]
+  563c57:	33 c9                	xor    ecx,ecx
+  563c59:	8a 8c 1f a8 ec 94 00 	mov    cl,BYTE PTR [edi+ebx*1+0x94eca8]
+  563c60:	83 e8 08             	sub    eax,0x8
+  563c63:	f7 d8                	neg    eax
+  563c65:	1b c0                	sbb    eax,eax
+  563c67:	83 e0 03             	and    eax,0x3
+  563c6a:	40                   	inc    eax
+  563c6b:	3b c8                	cmp    ecx,eax
+  563c6d:	7e 02                	jle    0x563c71
+  563c6f:	8b c1                	mov    eax,ecx
+  563c71:	3b f0                	cmp    esi,eax
+  563c73:	7d 32                	jge    0x563ca7
+  563c75:	83 7d bc 08          	cmp    DWORD PTR [ebp-0x44],0x8
+  563c79:	75 38                	jne    0x563cb3
+  563c7b:	8b 45 f0             	mov    eax,DWORD PTR [ebp-0x10]
+  563c7e:	80 b8 89 32 93 00 18 	cmp    BYTE PTR [eax+0x933289],0x18
+  563c85:	74 2c                	je     0x563cb3
+  563c87:	8d 0c dd 00 00 00 00 	lea    ecx,[ebx*8+0x0]
+  563c8e:	81 e2 ff 00 00 00    	and    edx,0xff
+  563c94:	2b cb                	sub    ecx,ebx
+  563c96:	42                   	inc    edx
+  563c97:	8b 04 8d e4 9c 98 00 	mov    eax,DWORD PTR [ecx*4+0x989ce4]
+  563c9e:	8d 14 52             	lea    edx,[edx+edx*2]
+  563ca1:	d1 e2                	shl    edx,1
+  563ca3:	3b c2                	cmp    eax,edx
+  563ca5:	7d 0c                	jge    0x563cb3
+  563ca7:	8b 45 d4             	mov    eax,DWORD PTR [ebp-0x2c]
+  563caa:	89 75 dc             	mov    DWORD PTR [ebp-0x24],esi
+  563cad:	89 85 7c ff ff ff    	mov    DWORD PTR [ebp-0x84],eax
+  563cb3:	8b 45 d4             	mov    eax,DWORD PTR [ebp-0x2c]
+  563cb6:	40                   	inc    eax
+  563cb7:	83 f8 19             	cmp    eax,0x19
+  563cba:	89 45 d4             	mov    DWORD PTR [ebp-0x2c],eax
+  563cbd:	0f 8c e6 fb ff ff    	jl     0x5638a9
+## writer FUN_0051dcb0 zero sweep 0x51dcb0-0x51dcea
+  51dcb0:	55                   	push   ebp
+  51dcb1:	8b ec                	mov    ebp,esp
+  51dcb3:	83 ec 1c             	sub    esp,0x1c
+  51dcb6:	56                   	push   esi
+  51dcb7:	57                   	push   edi
+  51dcb8:	ba a8 ec 94 00       	mov    edx,0x94eca8
+  51dcbd:	33 f6                	xor    esi,esi
+  51dcbf:	33 c9                	xor    ecx,ecx
+  51dcc1:	8d 82 00 fc ff ff    	lea    eax,[edx-0x400]
+  51dcc7:	66 89 b0 00 02 00 00 	mov    WORD PTR [eax+0x200],si
+  51dcce:	66 89 30             	mov    WORD PTR [eax],si
+  51dcd1:	66 89 b0 00 01 00 00 	mov    WORD PTR [eax+0x100],si
+  51dcd8:	66 89 b0 00 03 00 00 	mov    WORD PTR [eax+0x300],si
+  51dcdf:	c6 84 0a 80 00 00 00 	mov    BYTE PTR [edx+ecx*1+0x80],0x0
+  51dce6:	00 
+  51dce7:	c6 04 0a 00          	mov    BYTE PTR [edx+ecx*1],0x0
+## writer FUN_0051dcb0 lea-copy store 0x51df35-0x51dffa
+  51df36:	2b c3                	sub    eax,ebx
+  51df38:	8d 04 41             	lea    eax,[ecx+eax*2]
+  51df3b:	d1 e0                	shl    eax,1
+  51df3d:	66 ff 80 a8 e8 94 00 	inc    WORD PTR [eax+0x94e8a8]
+  51df44:	8a 0f                	mov    cl,BYTE PTR [edi]
+  51df46:	f6 c1 18             	test   cl,0x18
+  51df49:	74 2c                	je     0x51df77
+  51df4b:	33 d2                	xor    edx,edx
+  51df4d:	8a 57 05             	mov    dl,BYTE PTR [edi+0x5]
+  51df50:	83 e2 c0             	and    edx,0xffffffc0
+  51df53:	81 fa 80 00 00 00    	cmp    edx,0x80
+  51df59:	7d 1c                	jge    0x51df77
+  51df5b:	f6 47 08 20          	test   BYTE PTR [edi+0x8],0x20
+  51df5f:	75 16                	jne    0x51df77
+  51df61:	66 ff 80 a8 ea 94 00 	inc    WORD PTR [eax+0x94eaa8]
+  51df68:	8b 4f 08             	mov    ecx,DWORD PTR [edi+0x8]
+  51df6b:	f6 c5 10             	test   ch,0x10
+  51df6e:	74 07                	je     0x51df77
+  51df70:	66 ff 80 a8 eb 94 00 	inc    WORD PTR [eax+0x94eba8]
+  51df77:	8b 47 08             	mov    eax,DWORD PTR [edi+0x8]
+  51df7a:	f6 c4 10             	test   ah,0x10
+  51df7d:	74 04                	je     0x51df83
+  51df7f:	33 ff                	xor    edi,edi
+  51df81:	eb 29                	jmp    0x51dfac
+  51df83:	33 c0                	xor    eax,eax
+  51df85:	8a 47 02             	mov    al,BYTE PTR [edi+0x2]
+  51df88:	8b f8                	mov    edi,eax
+  51df8a:	c1 ef 04             	shr    edi,0x4
+  51df8d:	75 1d                	jne    0x51dfac
+  51df8f:	8b 75 f8             	mov    esi,DWORD PTR [ebp-0x8]
+  51df92:	8b 4d f0             	mov    ecx,DWORD PTR [ebp-0x10]
+  51df95:	56                   	push   esi
+  51df96:	51                   	push   ecx
+  51df97:	e8 f4 1f 09 00       	call   0x5aff90
+  51df9c:	8b 55 f0             	mov    edx,DWORD PTR [ebp-0x10]
+  51df9f:	8b f8                	mov    edi,eax
+  51dfa1:	57                   	push   edi
+  51dfa2:	56                   	push   esi
+  51dfa3:	52                   	push   edx
+  51dfa4:	e8 17 4d 06 00       	call   0x582cc0
+  51dfa9:	83 c4 14             	add    esp,0x14
+  51dfac:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+  51dfaf:	8b c8                	mov    ecx,eax
+  51dfb1:	8d 34 c5 00 00 00 00 	lea    esi,[eax*8+0x0]
+  51dfb8:	2b f1                	sub    esi,ecx
+  51dfba:	c1 e6 02             	shl    esi,0x2
+  51dfbd:	8b 86 e8 9c 98 00    	mov    eax,DWORD PTR [esi+0x989ce8]
+  51dfc3:	3b f8                	cmp    edi,eax
+  51dfc5:	7e 02                	jle    0x51dfc9
+  51dfc7:	8b c7                	mov    eax,edi
+  51dfc9:	85 db                	test   ebx,ebx
+  51dfcb:	89 86 e8 9c 98 00    	mov    DWORD PTR [esi+0x989ce8],eax
+  51dfd1:	74 22                	je     0x51dff5
+  51dfd3:	8b d3                	mov    edx,ebx
+  51dfd5:	c1 e2 06             	shl    edx,0x6
+  51dfd8:	03 d3                	add    edx,ebx
+  51dfda:	8d 04 53             	lea    eax,[ebx+edx*2]
+  51dfdd:	c1 e0 04             	shl    eax,0x4
+  51dfe0:	2b c3                	sub    eax,ebx
+  51dfe2:	8d 8c 81 a8 ec 94 00 	lea    ecx,[ecx+eax*4+0x94eca8]
+  51dfe9:	33 c0                	xor    eax,eax
+  51dfeb:	8a 01                	mov    al,BYTE PTR [ecx]
+  51dfed:	3b f8                	cmp    edi,eax
+  51dfef:	7e 02                	jle    0x51dff3
+  51dff1:	8b c7                	mov    eax,edi
+  51dff3:	88 01                	mov    BYTE PTR [ecx],al
+  51dff5:	8b 4d f8             	mov    ecx,DWORD PTR [ebp-0x8]
+  51dff8:	8b 7d f0             	mov    edi,DWORD PTR [ebp-0x10]

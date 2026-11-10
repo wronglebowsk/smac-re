@@ -767,3 +767,14 @@ The rule, in the shape that makes it self-checking:
   the gating local), and print PARSED vs EXPECTED tables - a detail line that
   prints the EXPECTED table self-confirms (M293 had the parse bug and the
   lying print in the same first cut).
+
+## Byte-interpreter grading law (B15, s243)
+
+When a decoded law is a straight-line/branching instruction window, ship TWO implementations in sim/:
+a closed form AND a pc-keyed interpreter that executes the RECORDED objdump text (evidence window file,
+one pin per pc, regex-pinned operands - a recorded line that mismatches its pin FAILS the rung). Grade
+the closed form against the interpreter over an exhaustive core grid + seeded randoms; rivals (folded
+constants flipped, max->min, branch inverted) must each disagree. B15 caught two closed-form-only bugs
+this way: a register-carry bug (edx at 0x563c8e carried the dl stored 48 insns earlier -> the tiles
+ceiling is 6*(site_score+1), NOT 6*(ring_idx+1)) and a bool-vs-raw field read (byte == 0x18, not truthy).
+Event-parity alone cannot see either shape (trap-8's non-discriminating PASS, closed form edition).

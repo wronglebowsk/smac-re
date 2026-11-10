@@ -1,0 +1,1109 @@
+0x920434 — 634 referencing instructions
+
+FUN_00546800  (40 refs, 0 writes)
+   T 546887  cmp    DWORD PTR ds:0x920434,ebx
+   R 546c53  mov    eax,ds:0x920434
+   R 546dce  mov    eax,ds:0x920434
+   R 546e15  mov    eax,ds:0x920434
+   R 546f1e  mov    eax,ds:0x920434
+   R 54708a  mov    eax,ds:0x920434
+   R 5472d5  mov    eax,ds:0x920434
+   R 547319  mov    eax,ds:0x920434
+   R 547380  mov    eax,ds:0x920434
+   R 5473dd  mov    eax,ds:0x920434
+   R 54798c  mov    eax,ds:0x920434
+   R 547a17  mov    ecx,DWORD PTR ds:0x920434
+   R 547a5e  mov    eax,ds:0x920434
+   R 547aa7  mov    ecx,DWORD PTR ds:0x920434
+   R 547b5e  mov    eax,ds:0x920434
+   R 547b9a  mov    eax,ds:0x920434
+   R 547e4b  mov    eax,ds:0x920434
+   R 547e87  mov    ecx,DWORD PTR ds:0x920434
+   R 547f27  mov    eax,ds:0x920434
+   R 547f61  mov    eax,ds:0x920434
+   R 5484ed  mov    eax,ds:0x920434
+   R 548529  mov    eax,ds:0x920434
+   R 5485d7  mov    eax,ds:0x920434
+   R 548613  mov    eax,ds:0x920434
+   R 548654  mov    ecx,DWORD PTR ds:0x920434
+   R 5487d1  mov    eax,ds:0x920434
+   R 548945  mov    ecx,DWORD PTR ds:0x920434
+   R 54899c  mov    eax,ds:0x920434
+   R 5489d9  mov    eax,ds:0x920434
+   R 548a18  mov    ecx,DWORD PTR ds:0x920434
+   R 548a65  mov    ecx,DWORD PTR ds:0x920434
+   R 548d53  mov    ecx,DWORD PTR ds:0x920434
+   R 548de9  mov    eax,ds:0x920434
+   R 548e28  mov    eax,ds:0x920434
+   R 548e69  mov    ecx,DWORD PTR ds:0x920434
+   R 548eb4  mov    ecx,DWORD PTR ds:0x920434
+   R 549c22  mov    eax,ds:0x920434
+   R 54c7ce  mov    eax,ds:0x920434
+   R 54d03d  mov    eax,ds:0x920434
+   R 54ead2  mov    eax,ds:0x920434
+
+FUN_00502cd0  (18 refs, 0 writes)
+   R 503276  mov    eax,ds:0x920434
+   R 503312  mov    eax,ds:0x920434
+   R 503517  mov    eax,ds:0x920434
+   R 5039e4  mov    eax,ds:0x920434
+   R 503a38  mov    edx,DWORD PTR ds:0x920434
+   R 503bc5  mov    eax,ds:0x920434
+   R 5048cd  mov    eax,ds:0x920434
+   R 504a58  mov    eax,ds:0x920434
+   R 504d58  mov    ecx,DWORD PTR ds:0x920434
+   R 5055a2  mov    eax,ds:0x920434
+   R 50562c  mov    eax,ds:0x920434
+   R 5057b8  mov    eax,ds:0x920434
+   R 5058b6  mov    eax,ds:0x920434
+   R 5059a5  mov    eax,ds:0x920434
+   R 505af8  mov    ecx,DWORD PTR ds:0x920434
+   T 505f61  cmp    DWORD PTR ds:0x920434,edi
+   R 5060cb  mov    eax,ds:0x920434
+   T 506ac6  cmp    DWORD PTR ds:0x920434,edi
+
+FUN_00512b40  (18 refs, 2 writes)
+   R 512e27  mov    eax,ds:0x920434
+   T 513644  cmp    DWORD PTR ds:0x920434,ebx
+   T 513859  cmp    DWORD PTR ds:0x920434,ebx
+   R 51386e  mov    ecx,DWORD PTR ds:0x920434
+   R 513885  mov    ecx,DWORD PTR ds:0x920434
+   T 515208  cmp    DWORD PTR ds:0x920434,ebx
+   T 51550d  cmp    DWORD PTR ds:0x920434,ebx
+   T 5155a8  cmp    DWORD PTR ds:0x920434,ebx
+   T 5155f5  cmp    DWORD PTR ds:0x920434,ebx
+   T 515998  cmp    DWORD PTR ds:0x920434,ebx
+   T 5159e5  cmp    DWORD PTR ds:0x920434,ebx
+   W 515ad8  mov    DWORD PTR ds:0x920434,ebx
+   T 515baf  cmp    DWORD PTR ds:0x920434,ebx
+   T 515bcf  cmp    DWORD PTR ds:0x920434,ebx
+   T 515e27  cmp    DWORD PTR ds:0x920434,ebx
+   T 515e8d  cmp    DWORD PTR ds:0x920434,ebx
+   T 515ebe  cmp    DWORD PTR ds:0x920434,ebx
+   W 515fb1  mov    DWORD PTR ds:0x920434,ebx
+
+FUN_00585720  (17 refs, 0 writes)
+   R 585f7d  mov    eax,ds:0x920434
+   R 5861bc  mov    ecx,DWORD PTR ds:0x920434
+   R 5861e6  mov    eax,ds:0x920434
+   R 58670b  mov    eax,ds:0x920434
+   R 586e97  mov    eax,ds:0x920434
+   R 586eae  mov    eax,ds:0x920434
+   R 587246  mov    eax,ds:0x920434
+   R 58735a  mov    eax,ds:0x920434
+   R 5873c1  mov    eax,ds:0x920434
+   R 5876cc  mov    eax,ds:0x920434
+   R 5877ad  mov    eax,ds:0x920434
+   R 588873  mov    eax,ds:0x920434
+   R 589635  mov    eax,ds:0x920434
+   R 5899f5  mov    eax,ds:0x920434
+   R 58a6da  mov    eax,ds:0x920434
+   R 58ac87  mov    eax,ds:0x920434
+   R 58ad28  mov    eax,ds:0x920434
+
+FUN_00519b00  (15 refs, 0 writes)
+   R 51aa0e  mov    eax,ds:0x920434
+   R 51aa53  mov    eax,ds:0x920434
+   R 51aa83  mov    eax,ds:0x920434
+   R 51ab4e  mov    eax,ds:0x920434
+   R 51ab93  mov    eax,ds:0x920434
+   R 51b03b  mov    eax,ds:0x920434
+   R 51b0d6  mov    eax,ds:0x920434
+   R 51ba80  mov    eax,ds:0x920434
+   R 51bb16  mov    eax,ds:0x920434
+   R 51bd81  mov    eax,ds:0x920434
+   R 51be02  mov    eax,ds:0x920434
+   R 51c341  mov    eax,ds:0x920434
+   R 51c3d0  mov    eax,ds:0x920434
+   R 51c601  mov    eax,ds:0x920434
+   R 51c687  mov    eax,ds:0x920434
+
+FUN_0053cb20  (14 refs, 0 writes)
+   R 53d23a  mov    eax,ds:0x920434
+   R 53d338  mov    eax,ds:0x920434
+   R 53dacd  mov    eax,ds:0x920434
+   R 53db2c  mov    eax,ds:0x920434
+   R 53db86  mov    eax,ds:0x920434
+   R 53dbd4  mov    eax,ds:0x920434
+   R 53ddc2  mov    eax,ds:0x920434
+   R 53dfc4  mov    eax,ds:0x920434
+   R 53e000  mov    eax,ds:0x920434
+   R 53e1ba  mov    eax,ds:0x920434
+   R 53e218  mov    eax,ds:0x920434
+   R 53e298  mov    eax,ds:0x920434
+   R 53e2f7  mov    eax,ds:0x920434
+   R 53e330  mov    eax,ds:0x920434
+
+FUN_00538040  (13 refs, 0 writes)
+   R 538226  mov    eax,ds:0x920434
+   R 53851a  mov    eax,ds:0x920434
+   R 538628  mov    eax,ds:0x920434
+   R 538cfa  mov    eax,ds:0x920434
+   R 538d77  mov    eax,ds:0x920434
+   R 538db3  mov    eax,ds:0x920434
+   R 538e0b  mov    eax,ds:0x920434
+   R 538e58  mov    eax,ds:0x920434
+   R 539898  mov    eax,ds:0x920434
+   R 5399b8  mov    eax,ds:0x920434
+   R 539b61  mov    eax,ds:0x920434
+   R 539ddf  mov    eax,ds:0x920434
+   R 539e28  mov    eax,ds:0x920434
+
+FUN_00540390  (12 refs, 0 writes)
+   R 540455  mov    eax,ds:0x920434
+   R 540a0c  mov    ecx,DWORD PTR ds:0x920434
+   R 540bb9  mov    ecx,DWORD PTR ds:0x920434
+   R 540cac  mov    eax,ds:0x920434
+   R 540db4  mov    eax,ds:0x920434
+   R 540ea6  mov    eax,ds:0x920434
+   R 540fc6  mov    eax,ds:0x920434
+   R 541150  mov    ecx,DWORD PTR ds:0x920434
+   R 5411d0  mov    eax,ds:0x920434
+   R 541251  mov    eax,ds:0x920434
+   R 5413f0  mov    eax,ds:0x920434
+   R 541518  mov    eax,ds:0x920434
+
+FUN_0053a9c0  (11 refs, 0 writes)
+   R 53a9fc  mov    eax,ds:0x920434
+   R 53ab21  mov    eax,ds:0x920434
+   R 53ac42  mov    eax,ds:0x920434
+   R 53ae7c  mov    eax,ds:0x920434
+   R 53b277  mov    edx,DWORD PTR ds:0x920434
+   R 53b510  mov    eax,ds:0x920434
+   R 53b571  mov    eax,ds:0x920434
+   R 53b746  mov    ecx,DWORD PTR ds:0x920434
+   R 53ba94  mov    eax,ds:0x920434
+   R 53bac8  mov    eax,ds:0x920434
+   R 53bb04  mov    eax,ds:0x920434
+
+?  (10 refs, 2 writes)
+   R 4cff70  mov    eax,ds:0x920434
+   R 50a510  mov    eax,ds:0x920434
+   R 50fd30  mov    eax,ds:0x920434
+   T 50fd7f  cmp    DWORD PTR ds:0x920434,esi
+   W 50fe70  mov    DWORD PTR ds:0x920434,esi
+   R 510070  mov    eax,ds:0x920434
+   T 5100a5  cmp    DWORD PTR ds:0x920434,esi
+   W 510196  mov    DWORD PTR ds:0x920434,esi
+   R 530d70  mov    eax,ds:0x920434
+   R 530db0  mov    eax,ds:0x920434
+
+FUN_00529090  (10 refs, 0 writes)
+   R 529096  mov    eax,ds:0x920434
+   R 5292f9  mov    eax,ds:0x920434
+   T 52936a  cmp    DWORD PTR ds:0x920434,edi
+   R 5294d6  mov    eax,ds:0x920434
+   T 529547  cmp    DWORD PTR ds:0x920434,ebx
+   R 529647  mov    eax,ds:0x920434
+   T 5296b9  cmp    DWORD PTR ds:0x920434,ebx
+   T 52974a  cmp    DWORD PTR ds:0x920434,ebx
+   R 5297a6  mov    eax,ds:0x920434
+   R 5299d8  mov    eax,ds:0x920434
+
+FUN_0053e7d0  (10 refs, 0 writes)
+   R 53ea61  mov    eax,ds:0x920434
+   R 53ebea  mov    eax,ds:0x920434
+   R 53eca9  mov    eax,ds:0x920434
+   R 53ef88  mov    eax,ds:0x920434
+   R 53f039  mov    eax,ds:0x920434
+   R 53f07a  mov    ecx,DWORD PTR ds:0x920434
+   R 53f46d  mov    eax,ds:0x920434
+   R 53f5bf  mov    eax,ds:0x920434
+   R 53f6bf  mov    eax,ds:0x920434
+   R 53f78a  mov    eax,ds:0x920434
+
+FUN_00516b80  (9 refs, 2 writes)
+   R 516c57  mov    eax,ds:0x920434
+   T 516e83  cmp    DWORD PTR ds:0x920434,edi
+   T 516ee7  cmp    DWORD PTR ds:0x920434,edi
+   T 516f14  cmp    DWORD PTR ds:0x920434,edi
+   W 516f30  mov    DWORD PTR ds:0x920434,edi
+   T 516f6b  cmp    DWORD PTR ds:0x920434,edi
+   T 516fb8  cmp    DWORD PTR ds:0x920434,edi
+   W 516fd4  mov    DWORD PTR ds:0x920434,edi
+   R 517f3f  mov    eax,ds:0x920434
+
+FUN_0056df40  (9 refs, 0 writes)
+   R 56dfc7  mov    ecx,DWORD PTR ds:0x920434
+   R 56e2d6  mov    eax,ds:0x920434
+   R 56e376  mov    eax,ds:0x920434
+   R 56ebac  mov    eax,ds:0x920434
+   R 56f121  mov    eax,ds:0x920434
+   R 56f272  mov    eax,ds:0x920434
+   R 56f6a2  mov    eax,ds:0x920434
+   R 56f838  mov    eax,ds:0x920434
+   R 56fcfd  mov    eax,ds:0x920434
+
+FUN_0059ec90  (9 refs, 1 writes)
+   R 59f078  mov    eax,ds:0x920434
+   R 5a00bb  mov    eax,ds:0x920434
+   R 5a01c4  mov    eax,ds:0x920434
+   R 5a0229  mov    eax,ds:0x920434
+   R 5a02a1  mov    ecx,DWORD PTR ds:0x920434
+   R 5a076f  mov    eax,ds:0x920434
+   R 5a0816  mov    eax,ds:0x920434
+   R 5a08b7  mov    eax,ds:0x920434
+   W 5a09ad  mov    DWORD PTR ds:0x920434,esi
+
+FUN_005a7970  (9 refs, 0 writes)
+   R 5a7ce3  mov    ecx,DWORD PTR ds:0x920434
+   R 5a7f4a  mov    ecx,DWORD PTR ds:0x920434
+   R 5a7fc7  mov    ecx,DWORD PTR ds:0x920434
+   R 5a7ff6  mov    eax,ds:0x920434
+   R 5a830f  mov    eax,ds:0x920434
+   R 5a83bf  mov    eax,ds:0x920434
+   R 5a841b  mov    eax,ds:0x920434
+   R 5a8551  mov    ecx,DWORD PTR ds:0x920434
+   R 5a8596  mov    eax,ds:0x920434
+
+FUN_004ce710  (8 refs, 0 writes)
+   R 4ce716  mov    eax,ds:0x920434
+   R 4ce7d5  mov    eax,ds:0x920434
+   R 4ce90e  mov    eax,ds:0x920434
+   R 4ce9fe  mov    eax,ds:0x920434
+   R 4cea86  mov    eax,ds:0x920434
+   R 4ceb3a  mov    ecx,DWORD PTR ds:0x920434
+   R 4ceb99  mov    ecx,DWORD PTR ds:0x920434
+   R 4cebb8  mov    eax,ds:0x920434
+
+FUN_00417ee0  (7 refs, 0 writes)
+   R 417f7a  mov    eax,ds:0x920434
+   R 4184f9  mov    eax,ds:0x920434
+   R 41866e  mov    eax,ds:0x920434
+   R 418c02  mov    eax,ds:0x920434
+   R 418d11  mov    eax,ds:0x920434
+   R 418db1  mov    eax,ds:0x920434
+   R 4193b2  mov    eax,ds:0x920434
+
+FUN_00535c60  (7 refs, 0 writes)
+   R 535fde  mov    eax,ds:0x920434
+   R 536bfa  mov    eax,ds:0x920434
+   R 536c74  mov    eax,ds:0x920434
+   R 536cc3  mov    eax,ds:0x920434
+   R 536d12  mov    eax,ds:0x920434
+   R 536d61  mov    eax,ds:0x920434
+   R 536dd6  mov    eax,ds:0x920434
+
+FUN_005010d0  (6 refs, 0 writes)
+   R 501add  mov    eax,ds:0x920434
+   R 501cd7  mov    eax,ds:0x920434
+   R 501cfa  mov    ecx,DWORD PTR ds:0x920434
+   R 501e1b  mov    eax,ds:0x920434
+   R 501e6f  mov    eax,ds:0x920434
+   R 501f22  mov    eax,ds:0x920434
+
+FUN_00529a40  (6 refs, 0 writes)
+   R 529a43  mov    eax,ds:0x920434
+   R 529bc8  mov    eax,ds:0x920434
+   T 529c43  cmp    DWORD PTR ds:0x920434,edi
+   R 529cc0  mov    eax,ds:0x920434
+   R 529daa  mov    eax,ds:0x920434
+   R 529e11  mov    eax,ds:0x920434
+
+FUN_005375e0  (6 refs, 0 writes)
+   T 537740  cmp    DWORD PTR ds:0x920434,0x0
+   R 537b5f  mov    eax,ds:0x920434
+   R 537bc6  mov    eax,ds:0x920434
+   R 537c09  mov    eax,ds:0x920434
+   R 537f74  mov    eax,ds:0x920434
+   R 537fbd  mov    eax,ds:0x920434
+
+FUN_00543c50  (6 refs, 0 writes)
+   R 543f23  mov    ecx,DWORD PTR ds:0x920434
+   R 543f72  mov    ecx,DWORD PTR ds:0x920434
+   R 544262  mov    eax,ds:0x920434
+   R 54429c  mov    ecx,DWORD PTR ds:0x920434
+   R 5443d4  mov    edx,DWORD PTR ds:0x920434
+   R 54442f  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_004261a0  (5 refs, 0 writes)
+   T 42621d  cmp    DWORD PTR ds:0x920434,0x0
+   T 4262bf  cmp    DWORD PTR ds:0x920434,0x0
+   T 426420  cmp    DWORD PTR ds:0x920434,0x0
+   T 426479  cmp    DWORD PTR ds:0x920434,0x0
+   T 4264a7  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00464bb0  (5 refs, 0 writes)
+   R 464c7a  mov    ecx,DWORD PTR ds:0x920434
+   T 464f21  cmp    DWORD PTR ds:0x920434,0x0
+   R 465213  mov    eax,ds:0x920434
+   R 465227  mov    ecx,DWORD PTR ds:0x920434
+   T 465267  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004654e0  (5 refs, 0 writes)
+   R 4657e0  mov    ecx,DWORD PTR ds:0x920434
+   R 4657f6  mov    edx,DWORD PTR ds:0x920434
+   T 465832  cmp    DWORD PTR ds:0x920434,0x0
+   R 4659b9  mov    eax,ds:0x920434
+   T 465a2c  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00481e90  (5 refs, 0 writes)
+   T 481ee0  cmp    DWORD PTR ds:0x920434,0x0
+   T 481f79  cmp    DWORD PTR ds:0x920434,0x0
+   T 4820c8  cmp    DWORD PTR ds:0x920434,0x0
+   T 48212c  cmp    DWORD PTR ds:0x920434,0x0
+   T 4822de  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004824e0  (5 refs, 0 writes)
+   T 482516  cmp    DWORD PTR ds:0x920434,0x0
+   T 482563  cmp    DWORD PTR ds:0x920434,0x0
+   T 482640  cmp    DWORD PTR ds:0x920434,0x0
+   T 482693  cmp    DWORD PTR ds:0x920434,0x0
+   T 482749  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00482780  (5 refs, 0 writes)
+   T 4827b6  cmp    DWORD PTR ds:0x920434,0x0
+   T 48292f  cmp    DWORD PTR ds:0x920434,0x0
+   T 482983  cmp    DWORD PTR ds:0x920434,0x0
+   T 4829b7  cmp    DWORD PTR ds:0x920434,0x0
+   T 482b3d  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_0048f100  (5 refs, 0 writes)
+   T 48f22d  cmp    DWORD PTR ds:0x920434,0x0
+   T 48f3a7  cmp    DWORD PTR ds:0x920434,0x0
+   T 48f415  cmp    DWORD PTR ds:0x920434,0x0
+   T 48f4c6  cmp    DWORD PTR ds:0x920434,0x0
+   T 48f4d9  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004d1280  (5 refs, 0 writes)
+   R 4d171b  mov    eax,ds:0x920434
+   R 4d1c08  mov    eax,ds:0x920434
+   R 4d1ce1  mov    eax,ds:0x920434
+   R 4d1df1  mov    eax,ds:0x920434
+   R 4d1e5f  mov    eax,ds:0x920434
+
+FUN_004ef6d0  (5 refs, 0 writes)
+   R 4efd78  mov    eax,ds:0x920434
+   R 4efda7  mov    edx,DWORD PTR ds:0x920434
+   R 4f05a5  mov    eax,ds:0x920434
+   R 4f1597  mov    eax,ds:0x920434
+   R 4f15b9  mov    eax,ds:0x920434
+
+FUN_00572800  (5 refs, 0 writes)
+   R 572fa8  mov    eax,ds:0x920434
+   R 573590  mov    eax,ds:0x920434
+   R 5735e2  mov    eax,ds:0x920434
+   R 57381f  mov    eax,ds:0x920434
+   R 573866  mov    eax,ds:0x920434
+
+FUN_0041eb40  (4 refs, 0 writes)
+   R 41eb63  mov    eax,ds:0x920434
+   R 41ec31  mov    eax,ds:0x920434
+   R 41ecfa  mov    eax,ds:0x920434
+   R 41edaa  mov    eax,ds:0x920434
+
+FUN_004811d0  (4 refs, 0 writes)
+   T 481223  cmp    DWORD PTR ds:0x920434,0x0
+   T 48127c  cmp    DWORD PTR ds:0x920434,0x0
+   T 4812ef  cmp    DWORD PTR ds:0x920434,0x0
+   T 48142d  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00507ef0  (4 refs, 0 writes)
+   R 508586  mov    eax,ds:0x920434
+   R 508633  mov    eax,ds:0x920434
+   R 508808  mov    ecx,DWORD PTR ds:0x920434
+   R 509116  mov    eax,ds:0x920434
+
+FUN_0050ef60  (4 refs, 0 writes)
+   T 50f04b  cmp    DWORD PTR ds:0x920434,edi
+   R 50f209  mov    eax,ds:0x920434
+   R 50f29f  mov    eax,ds:0x920434
+   T 50f369  cmp    DWORD PTR ds:0x920434,edi
+
+FUN_0050f420  (4 refs, 0 writes)
+   T 50f61f  cmp    DWORD PTR ds:0x920434,edi
+   R 50f920  mov    ecx,DWORD PTR ds:0x920434
+   T 50face  cmp    DWORD PTR ds:0x920434,edi
+   T 50fb3c  cmp    DWORD PTR ds:0x920434,edi
+
+FUN_00529e70  (4 refs, 0 writes)
+   R 529e76  mov    eax,ds:0x920434
+   T 529f02  cmp    DWORD PTR ds:0x920434,ebx
+   R 52a026  mov    eax,ds:0x920434
+   R 52a12d  mov    eax,ds:0x920434
+
+FUN_0053bb90  (4 refs, 0 writes)
+   R 53c434  mov    eax,ds:0x920434
+   R 53c5ff  mov    ecx,DWORD PTR ds:0x920434
+   R 53c8d0  mov    eax,ds:0x920434
+   R 53c90c  mov    eax,ds:0x920434
+
+FUN_0053fce0  (4 refs, 0 writes)
+   R 53fd66  mov    eax,ds:0x920434
+   R 53fec5  mov    eax,ds:0x920434
+   R 540133  mov    eax,ds:0x920434
+   R 540213  mov    eax,ds:0x920434
+
+FUN_0056cdf0  (4 refs, 0 writes)
+   R 56ce16  mov    eax,ds:0x920434
+   R 56cf4c  mov    eax,ds:0x920434
+   R 56cfd2  mov    eax,ds:0x920434
+   R 56d037  mov    eax,ds:0x920434
+
+FUN_0057c550  (4 refs, 0 writes)
+   R 57c996  mov    eax,ds:0x920434
+   R 57d21e  mov    eax,ds:0x920434
+   R 57d2c0  mov    eax,ds:0x920434
+   R 57d2d0  mov    eax,ds:0x920434
+
+FUN_0058fa40  (4 refs, 0 writes)
+   R 5907b4  mov    eax,ds:0x920434
+   R 590ff9  mov    eax,ds:0x920434
+   R 594e82  mov    eax,ds:0x920434
+   R 59503f  mov    eax,ds:0x920434
+
+FUN_00419c30  (3 refs, 0 writes)
+   R 419c8e  mov    eax,ds:0x920434
+   R 41a26f  mov    eax,ds:0x920434
+   R 41a530  mov    eax,ds:0x920434
+
+FUN_004282d0  (3 refs, 0 writes)
+   T 428cde  cmp    DWORD PTR ds:0x920434,0x0
+   T 429146  cmp    DWORD PTR ds:0x920434,0x0
+   T 4291cf  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004627f0  (3 refs, 0 writes)
+   T 4628a4  cmp    DWORD PTR ds:0x920434,0x0
+   T 4628d0  cmp    DWORD PTR ds:0x920434,0x0
+   T 46292e  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004d3f70  (3 refs, 0 writes)
+   R 4d3f8c  mov    eax,ds:0x920434
+   R 4d431b  mov    eax,ds:0x920434
+   R 4d43f0  mov    eax,ds:0x920434
+
+FUN_0050c2e0  (3 refs, 0 writes)
+   R 50c34e  mov    esi,DWORD PTR ds:0x920434
+   R 50c36b  mov    eax,ds:0x920434
+   R 50c511  mov    eax,ds:0x920434
+
+FUN_0050fea0  (3 refs, 1 writes)
+   T 50feb5  cmp    DWORD PTR ds:0x920434,esi
+   T 50ff05  cmp    DWORD PTR ds:0x920434,esi
+   W 50fff5  mov    DWORD PTR ds:0x920434,esi
+
+FUN_0051e700  (3 refs, 1 writes)
+   R 51f12c  mov    eax,ds:0x920434
+   R 51f169  mov    eax,ds:0x920434
+   W 51f267  mov    DWORD PTR ds:0x920434,esi
+
+FUN_00522850  (3 refs, 2 writes)
+   W 52289d  mov    DWORD PTR ds:0x920434,esi
+   W 522993  mov    DWORD PTR ds:0x920434,esi
+   R 5229fc  mov    eax,ds:0x920434
+
+FUN_00523b20  (3 refs, 0 writes)
+   T 523ce0  cmp    DWORD PTR ds:0x920434,ebx
+   R 52403c  mov    eax,ds:0x920434
+   R 52412d  mov    eax,ds:0x920434
+
+FUN_00524340  (3 refs, 0 writes)
+   T 524414  cmp    DWORD PTR ds:0x920434,edi
+   T 524675  cmp    DWORD PTR ds:0x920434,edi
+   R 524fce  mov    eax,ds:0x920434
+
+FUN_00528760  (3 refs, 0 writes)
+   R 528780  mov    eax,ds:0x920434
+   R 5287b3  mov    eax,ds:0x920434
+   R 5288dd  mov    eax,ds:0x920434
+
+FUN_00533e70  (3 refs, 0 writes)
+   R 533e73  mov    eax,ds:0x920434
+   R 534024  mov    eax,ds:0x920434
+   R 5340cf  mov    eax,ds:0x920434
+
+FUN_00542810  (3 refs, 0 writes)
+   R 542c13  mov    eax,ds:0x920434
+   R 542c58  mov    eax,ds:0x920434
+   R 542d54  mov    eax,ds:0x920434
+
+FUN_005551e0  (3 refs, 0 writes)
+   R 5555b6  mov    eax,ds:0x920434
+   R 55564b  mov    eax,ds:0x920434
+   R 555ba0  mov    eax,ds:0x920434
+
+FUN_0056d960  (3 refs, 0 writes)
+   R 56d998  mov    ecx,DWORD PTR ds:0x920434
+   R 56da7e  mov    eax,ds:0x920434
+   R 56dadc  mov    eax,ds:0x920434
+
+FUN_0057ecf0  (3 refs, 2 writes)
+   W 57ed04  mov    DWORD PTR ds:0x920434,ebx
+   R 57f14f  mov    eax,ds:0x920434
+   W 57f651  mov    DWORD PTR ds:0x920434,esi
+
+FUN_005a0fa0  (3 refs, 0 writes)
+   T 5a0ff7  cmp    DWORD PTR ds:0x920434,esi
+   R 5a10d2  mov    eax,ds:0x920434
+   R 5a1430  mov    eax,ds:0x920434
+
+FUN_0040a990  (2 refs, 0 writes)
+   R 40b237  mov    eax,ds:0x920434
+   R 40b5d7  mov    eax,ds:0x920434
+
+FUN_004170e0  (2 refs, 0 writes)
+   T 417159  cmp    DWORD PTR ds:0x920434,edi
+   R 4173b4  mov    eax,ds:0x920434
+
+FUN_004175b0  (2 refs, 0 writes)
+   T 417629  cmp    DWORD PTR ds:0x920434,edi
+   R 417bf4  mov    eax,ds:0x920434
+
+FUN_0041b110  (2 refs, 0 writes)
+   R 41b136  mov    eax,ds:0x920434
+   R 41b263  mov    edx,DWORD PTR ds:0x920434
+
+FUN_0041c040  (2 refs, 0 writes)
+   R 41c058  mov    eax,ds:0x920434
+   R 41c0bc  mov    eax,ds:0x920434
+
+FUN_0041c2f0  (2 refs, 0 writes)
+   R 41c316  mov    eax,ds:0x920434
+   R 41c45b  mov    eax,ds:0x920434
+
+FUN_00463dd0  (2 refs, 0 writes)
+   R 463e9a  mov    edx,DWORD PTR ds:0x920434
+   T 4640bb  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00464570  (2 refs, 0 writes)
+   T 4645e9  cmp    DWORD PTR ds:0x920434,0x0
+   T 464645  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00467a00  (2 refs, 0 writes)
+   T 467a4c  cmp    DWORD PTR ds:0x920434,0x0
+   T 467cb6  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004725a0  (2 refs, 0 writes)
+   T 47260c  cmp    DWORD PTR ds:0x920434,0x0
+   T 47264b  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004748b0  (2 refs, 0 writes)
+   T 474b7c  cmp    DWORD PTR ds:0x920434,0x0
+   T 475938  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004798a0  (2 refs, 0 writes)
+   T 479994  cmp    DWORD PTR ds:0x920434,0x0
+   T 479c2f  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00482bd0  (2 refs, 0 writes)
+   T 482eac  cmp    DWORD PTR ds:0x920434,0x0
+   T 4830f2  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00483470  (2 refs, 0 writes)
+   T 4834de  cmp    DWORD PTR ds:0x920434,0x0
+   T 4834fa  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_0048b9a0  (2 refs, 0 writes)
+   T 48ba37  cmp    DWORD PTR ds:0x920434,esi
+   T 48bc43  cmp    DWORD PTR ds:0x920434,esi
+
+FUN_004ce4a0  (2 refs, 0 writes)
+   R 4ce4a4  mov    esi,DWORD PTR ds:0x920434
+   R 4ce504  mov    esi,DWORD PTR ds:0x920434
+
+FUN_004cffa0  (2 refs, 0 writes)
+   R 4d0004  mov    eax,ds:0x920434
+   R 4d00e7  mov    eax,ds:0x920434
+
+FUN_004d3bf0  (2 refs, 0 writes)
+   R 4d3c6f  mov    ecx,DWORD PTR ds:0x920434
+   R 4d3e46  mov    eax,ds:0x920434
+
+FUN_004d44d0  (2 refs, 0 writes)
+   R 4d5849  mov    eax,ds:0x920434
+   R 4d5bdf  mov    eax,ds:0x920434
+
+FUN_004d6100  (2 refs, 0 writes)
+   R 4d693f  mov    eax,ds:0x920434
+   R 4d699b  mov    eax,ds:0x920434
+
+FUN_00507d30  (2 refs, 0 writes)
+   R 507d4c  mov    eax,ds:0x920434
+   R 507d9b  mov    eax,ds:0x920434
+
+FUN_0050cab0  (2 refs, 0 writes)
+   R 50cab4  mov    eax,ds:0x920434
+   T 50cbdb  cmp    DWORD PTR ds:0x920434,ebx
+
+FUN_00511530  (2 refs, 0 writes)
+   R 51161e  mov    eax,ds:0x920434
+   R 5116a9  mov    eax,ds:0x920434
+
+FUN_00528c10  (2 refs, 0 writes)
+   R 528c16  mov    eax,ds:0x920434
+   T 528d28  cmp    DWORD PTR ds:0x920434,ebx
+
+FUN_005316b0  (2 refs, 0 writes)
+   R 531820  mov    eax,ds:0x920434
+   R 531885  mov    eax,ds:0x920434
+
+FUN_005339e0  (2 refs, 0 writes)
+   R 533c06  mov    eax,ds:0x920434
+   R 533c3c  mov    eax,ds:0x920434
+
+FUN_00534180  (2 refs, 0 writes)
+   R 534186  mov    eax,ds:0x920434
+   R 534405  mov    eax,ds:0x920434
+
+FUN_005346b0  (2 refs, 0 writes)
+   R 53484d  mov    edx,DWORD PTR ds:0x920434
+   R 534cb9  mov    eax,ds:0x920434
+
+FUN_00535700  (2 refs, 0 writes)
+   R 5357c1  mov    eax,ds:0x920434
+   R 5358c9  mov    eax,ds:0x920434
+
+FUN_00535940  (2 refs, 0 writes)
+   R 535a72  mov    eax,ds:0x920434
+   R 535a86  mov    eax,ds:0x920434
+
+FUN_00537180  (2 refs, 0 writes)
+   R 5374e5  mov    eax,ds:0x920434
+   R 537558  mov    eax,ds:0x920434
+
+FUN_00542ea0  (2 refs, 0 writes)
+   R 5430df  mov    eax,ds:0x920434
+   R 543121  mov    eax,ds:0x920434
+
+FUN_00544530  (2 refs, 0 writes)
+   T 544a4c  cmp    DWORD PTR ds:0x920434,ebx
+   T 545652  cmp    DWORD PTR ds:0x920434,ebx
+
+FUN_00545c50  (2 refs, 0 writes)
+   R 5460d7  mov    edx,DWORD PTR ds:0x920434
+   R 54618f  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_0054ef60  (2 refs, 0 writes)
+   R 54f084  mov    eax,ds:0x920434
+   R 54f1a3  mov    eax,ds:0x920434
+
+FUN_0054f1d0  (2 refs, 0 writes)
+   T 54f237  cmp    DWORD PTR ds:0x920434,ebx
+   R 54f388  mov    eax,ds:0x920434
+
+FUN_00550350  (2 refs, 0 writes)
+   R 550730  mov    eax,ds:0x920434
+   R 55077e  mov    edi,DWORD PTR ds:0x920434
+
+FUN_00597ce0  (2 refs, 0 writes)
+   R 597cfd  mov    ecx,DWORD PTR ds:0x920434
+   R 597d10  mov    eax,ds:0x920434
+
+FUN_00597ee0  (2 refs, 0 writes)
+   T 59800a  cmp    DWORD PTR ds:0x920434,ebx
+   R 5981d3  mov    eax,ds:0x920434
+
+FUN_005985e0  (2 refs, 1 writes)
+   R 598cbe  mov    eax,ds:0x920434
+   W 598db9  mov    DWORD PTR ds:0x920434,ebx
+
+FUN_005aa880  (2 refs, 0 writes)
+   R 5aa883  mov    eax,ds:0x920434
+   R 5aa9cc  mov    eax,ds:0x920434
+
+FUN_005aaa20  (2 refs, 0 writes)
+   R 5aaa63  mov    eax,ds:0x920434
+   R 5aab2a  mov    eax,ds:0x920434
+
+FUN_005abb40  (2 refs, 0 writes)
+   R 5abb52  mov    eax,ds:0x920434
+   R 5abd2b  mov    eax,ds:0x920434
+
+FUN_004042c0  (1 refs, 0 writes)
+   T 404365  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00404550  (1 refs, 0 writes)
+   T 4046a1  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_0040b960  (1 refs, 0 writes)
+   R 40b996  mov    eax,ds:0x920434
+
+FUN_0040c010  (1 refs, 0 writes)
+   R 40c075  mov    eax,ds:0x920434
+
+FUN_0040c8d0  (1 refs, 0 writes)
+   R 40c926  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_0040d7a0  (1 refs, 0 writes)
+   R 40d8f4  mov    eax,ds:0x920434
+
+FUN_00416dd0  (1 refs, 0 writes)
+   R 416df6  mov    eax,ds:0x920434
+
+FUN_00416e50  (1 refs, 0 writes)
+   R 416e8c  mov    eax,ds:0x920434
+
+FUN_0041a8f0  (1 refs, 0 writes)
+   R 41a91f  mov    eax,ds:0x920434
+
+FUN_0041b780  (1 refs, 0 writes)
+   R 41b7cf  mov    eax,ds:0x920434
+
+FUN_0041bca0  (1 refs, 0 writes)
+   R 41bcea  mov    eax,ds:0x920434
+
+FUN_0041bf60  (1 refs, 0 writes)
+   R 41bfc0  mov    eax,ds:0x920434
+
+FUN_0041e160  (1 refs, 0 writes)
+   R 41e18b  mov    eax,ds:0x920434
+
+FUN_0041ea50  (1 refs, 0 writes)
+   R 41eabc  mov    eax,ds:0x920434
+
+FUN_0041ef60  (1 refs, 0 writes)
+   R 41efd9  mov    eax,ds:0x920434
+
+FUN_00425be0  (1 refs, 0 writes)
+   T 425fd7  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00426010  (1 refs, 0 writes)
+   T 426145  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004266c0  (1 refs, 0 writes)
+   T 426989  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00426dc0  (1 refs, 0 writes)
+   T 426e43  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00426f40  (1 refs, 0 writes)
+   T 427249  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00429950  (1 refs, 0 writes)
+   T 429a9e  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00438ad0  (1 refs, 0 writes)
+   T 43924c  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004394e0  (1 refs, 0 writes)
+   T 4398ce  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00442320  (1 refs, 0 writes)
+   T 44240d  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00444940  (1 refs, 0 writes)
+   T 44564b  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_0046ebd0  (1 refs, 0 writes)
+   T 46eedb  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004783c0  (1 refs, 0 writes)
+   T 478456  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_0047a450  (1 refs, 0 writes)
+   T 47a45c  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_0047f390  (1 refs, 0 writes)
+   R 47f393  mov    eax,ds:0x920434
+
+FUN_00480b00  (1 refs, 0 writes)
+   T 480bd8  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00480ce0  (1 refs, 0 writes)
+   T 480edf  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00482430  (1 refs, 0 writes)
+   T 482472  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00488e10  (1 refs, 0 writes)
+   R 488e13  mov    eax,ds:0x920434
+
+FUN_004894c0  (1 refs, 0 writes)
+   R 4898fb  mov    eax,ds:0x920434
+
+FUN_0048f6b0  (1 refs, 0 writes)
+   T 48f6b9  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_0048f7b0  (1 refs, 0 writes)
+   T 48f7b9  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_00498c20  (1 refs, 0 writes)
+   R 498c23  mov    eax,ds:0x920434
+
+FUN_00498c80  (1 refs, 0 writes)
+   R 498cc9  mov    eax,ds:0x920434
+
+FUN_004a4560  (1 refs, 0 writes)
+   T 4a4695  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004c16c0  (1 refs, 0 writes)
+   T 4c1c2a  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004c2be0  (1 refs, 0 writes)
+   T 4c2be9  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004c2c40  (1 refs, 0 writes)
+   T 4c2c49  cmp    DWORD PTR ds:0x920434,0x0
+
+FUN_004cce50  (1 refs, 0 writes)
+   R 4cd87b  mov    eax,ds:0x920434
+
+FUN_004cf4c0  (1 refs, 0 writes)
+   R 4cff34  mov    eax,ds:0x920434
+
+FUN_004d3950  (1 refs, 0 writes)
+   R 4d3b78  mov    eax,ds:0x920434
+
+FUN_004d3ea0  (1 refs, 0 writes)
+   R 4d3ed8  mov    eax,ds:0x920434
+
+FUN_004d6b90  (1 refs, 0 writes)
+   R 4d6d2f  mov    eax,ds:0x920434
+
+FUN_004d6fb0  (1 refs, 0 writes)
+   R 4d871e  mov    eax,ds:0x920434
+
+FUN_004d9e60  (1 refs, 0 writes)
+   R 4d9e60  mov    eax,ds:0x920434
+
+FUN_004e40a0  (1 refs, 0 writes)
+   R 4e40c7  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_004e47d0  (1 refs, 0 writes)
+   R 4e4ab9  mov    eax,ds:0x920434
+
+FUN_004e5ae0  (1 refs, 0 writes)
+   R 4e5d10  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_004eeea0  (1 refs, 0 writes)
+   R 4ef29a  mov    eax,ds:0x920434
+
+FUN_004f4a50  (1 refs, 0 writes)
+   R 4f5148  mov    eax,ds:0x920434
+
+FUN_004f5a70  (1 refs, 0 writes)
+   R 4f5c1c  mov    eax,ds:0x920434
+
+FUN_004f6030  (1 refs, 0 writes)
+   R 4f9d1f  mov    eax,ds:0x920434
+
+FUN_004fdaf0  (1 refs, 0 writes)
+   R 4fdbb4  mov    eax,ds:0x920434
+
+FUN_005076d0  (1 refs, 0 writes)
+   R 5076d6  mov    eax,ds:0x920434
+
+FUN_0050a040  (1 refs, 0 writes)
+   R 50a0c4  mov    eax,ds:0x920434
+
+FUN_0050cd90  (1 refs, 0 writes)
+   R 50cdab  mov    eax,ds:0x920434
+
+FUN_0050d140  (1 refs, 0 writes)
+   R 50d16a  mov    eax,ds:0x920434
+
+FUN_0050f390  (1 refs, 0 writes)
+   T 50f3dd  cmp    DWORD PTR ds:0x920434,edi
+
+FUN_00510a40  (1 refs, 0 writes)
+   R 510a43  mov    eax,ds:0x920434
+
+FUN_00510bd0  (1 refs, 0 writes)
+   R 510bff  mov    eax,ds:0x920434
+
+FUN_00511720  (1 refs, 0 writes)
+   R 5117ed  mov    eax,ds:0x920434
+
+FUN_00511c90  (1 refs, 0 writes)
+   R 511cf4  mov    eax,ds:0x920434
+
+FUN_005122e0  (1 refs, 0 writes)
+   R 5122fc  mov    eax,ds:0x920434
+
+FUN_00512450  (1 refs, 0 writes)
+   R 512453  mov    eax,ds:0x920434
+
+FUN_00516ad0  (1 refs, 0 writes)
+   R 516ae1  mov    eax,ds:0x920434
+
+FUN_00519a20  (1 refs, 0 writes)
+   R 519a20  mov    eax,ds:0x920434
+
+FUN_00519ae0  (1 refs, 0 writes)
+   R 519ae0  mov    eax,ds:0x920434
+
+FUN_0051d3f0  (1 refs, 0 writes)
+   R 51d41e  mov    eax,ds:0x920434
+
+FUN_005208f0  (1 refs, 0 writes)
+   T 520bde  cmp    DWORD PTR ds:0x920434,esi
+
+FUN_00522240  (1 refs, 1 writes)
+   W 52280c  mov    DWORD PTR ds:0x920434,ebx
+
+FUN_00522b70  (1 refs, 0 writes)
+   R 522ef3  mov    eax,ds:0x920434
+
+FUN_005241c0  (1 refs, 0 writes)
+   R 5242c4  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_005255e0  (1 refs, 0 writes)
+   R 5255e0  mov    eax,ds:0x920434
+
+FUN_005259c0  (1 refs, 0 writes)
+   R 5259d1  mov    eax,ds:0x920434
+
+FUN_00527de0  (1 refs, 0 writes)
+   R 527de6  mov    eax,ds:0x920434
+
+FUN_00527f40  (1 refs, 0 writes)
+   R 527f40  mov    eax,ds:0x920434
+
+FUN_00527f70  (1 refs, 0 writes)
+   R 527f79  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_00528240  (1 refs, 0 writes)
+   R 528244  mov    eax,ds:0x920434
+
+FUN_005283c0  (1 refs, 0 writes)
+   R 5283c6  mov    eax,ds:0x920434
+
+FUN_00528610  (1 refs, 0 writes)
+   R 528610  mov    eax,ds:0x920434
+
+FUN_00528660  (1 refs, 0 writes)
+   R 528684  mov    eax,ds:0x920434
+
+FUN_00528930  (1 refs, 0 writes)
+   R 528933  mov    eax,ds:0x920434
+
+FUN_00528a00  (1 refs, 0 writes)
+   R 528a00  mov    eax,ds:0x920434
+
+FUN_00528a60  (1 refs, 0 writes)
+   R 528a66  mov    eax,ds:0x920434
+
+FUN_00528d90  (1 refs, 0 writes)
+   R 528d96  mov    eax,ds:0x920434
+
+FUN_00528ed0  (1 refs, 0 writes)
+   R 528ed6  mov    eax,ds:0x920434
+
+FUN_0052a260  (1 refs, 0 writes)
+   R 52a263  mov    eax,ds:0x920434
+
+FUN_0052a720  (1 refs, 0 writes)
+   R 52a729  mov    eax,ds:0x920434
+
+FUN_00530640  (1 refs, 0 writes)
+   R 530643  mov    eax,ds:0x920434
+
+FUN_005306b0  (1 refs, 0 writes)
+   R 5306b3  mov    eax,ds:0x920434
+
+FUN_00530720  (1 refs, 0 writes)
+   R 530723  mov    eax,ds:0x920434
+
+FUN_00530790  (1 refs, 0 writes)
+   R 530793  mov    eax,ds:0x920434
+
+FUN_00530800  (1 refs, 0 writes)
+   R 530803  mov    eax,ds:0x920434
+
+FUN_00530870  (1 refs, 0 writes)
+   R 530873  mov    eax,ds:0x920434
+
+FUN_005308e0  (1 refs, 0 writes)
+   R 5308e3  mov    eax,ds:0x920434
+
+FUN_005309a0  (1 refs, 0 writes)
+   R 5309a3  mov    eax,ds:0x920434
+
+FUN_00530a10  (1 refs, 0 writes)
+   R 530a13  mov    eax,ds:0x920434
+
+FUN_00530a80  (1 refs, 0 writes)
+   R 530a83  mov    eax,ds:0x920434
+
+FUN_00530af0  (1 refs, 0 writes)
+   R 530af3  mov    eax,ds:0x920434
+
+FUN_00530b60  (1 refs, 0 writes)
+   R 530b63  mov    eax,ds:0x920434
+
+FUN_00530bd0  (1 refs, 0 writes)
+   R 530bd3  mov    eax,ds:0x920434
+
+FUN_00530c40  (1 refs, 0 writes)
+   R 530c43  mov    eax,ds:0x920434
+
+FUN_00531df0  (1 refs, 0 writes)
+   R 5329b0  mov    eax,ds:0x920434
+
+FUN_005344c0  (1 refs, 0 writes)
+   R 5344c3  mov    eax,ds:0x920434
+
+FUN_00535610  (1 refs, 0 writes)
+   R 53562d  mov    eax,ds:0x920434
+
+FUN_0053ca00  (1 refs, 0 writes)
+   R 53cab6  mov    eax,ds:0x920434
+
+FUN_00541bb0  (1 refs, 0 writes)
+   R 541d3d  mov    eax,ds:0x920434
+
+FUN_0054f790  (1 refs, 0 writes)
+   R 54fbca  mov    eax,ds:0x920434
+
+FUN_005525d0  (1 refs, 0 writes)
+   R 55263f  mov    eax,ds:0x920434
+
+FUN_0055bd90  (1 refs, 0 writes)
+   R 55c216  mov    eax,ds:0x920434
+
+FUN_0055c920  (1 refs, 0 writes)
+   R 55cf35  mov    eax,ds:0x920434
+
+FUN_0055f650  (1 refs, 0 writes)
+   T 55f6b0  cmp    DWORD PTR ds:0x920434,ebx
+
+FUN_00573a90  (1 refs, 0 writes)
+   R 5740cf  mov    eax,ds:0x920434
+
+FUN_0057e890  (1 refs, 0 writes)
+   R 57e98e  mov    eax,ds:0x920434
+
+FUN_005800a0  (1 refs, 0 writes)
+   R 58014a  mov    esi,DWORD PTR ds:0x920434
+
+FUN_005823c0  (1 refs, 0 writes)
+   R 5825c6  mov    eax,ds:0x920434
+
+FUN_005837c0  (1 refs, 0 writes)
+   R 5837c3  mov    eax,ds:0x920434
+
+FUN_0058b1b0  (1 refs, 0 writes)
+   R 58b51d  mov    eax,ds:0x920434
+
+FUN_00599020  (1 refs, 0 writes)
+   R 5992f4  mov    eax,ds:0x920434
+
+FUN_005999a0  (1 refs, 0 writes)
+   R 599c38  mov    eax,ds:0x920434
+
+FUN_005a0aa0  (1 refs, 0 writes)
+   R 5a0d4c  mov    ecx,DWORD PTR ds:0x920434
+
+FUN_005a1950  (1 refs, 0 writes)
+   R 5a1a17  mov    eax,ds:0x920434
+
+FUN_005a2930  (1 refs, 0 writes)
+   R 5a2980  mov    eax,ds:0x920434
+
+FUN_005a3470  (1 refs, 0 writes)
+   R 5a3476  mov    eax,ds:0x920434
+
+FUN_005a5c00  (1 refs, 0 writes)
+   R 5a5c15  mov    eax,ds:0x920434
+
+FUN_005a5cd0  (1 refs, 0 writes)
+   T 5a5d2f  cmp    DWORD PTR ds:0x920434,edi
+
+FUN_005aadf0  (1 refs, 0 writes)
+   R 5aaed1  mov    eax,ds:0x920434
+
+FUN_005ab130  (1 refs, 0 writes)
+   R 5ab1e3  mov    eax,ds:0x920434
+
+FUN_005b2e00  (1 refs, 0 writes)
+   R 5b2f22  mov    esi,DWORD PTR ds:0x920434

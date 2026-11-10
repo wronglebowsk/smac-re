@@ -1,7 +1,7 @@
-# NEXT_PROMPT.md - footing (s242 close: CONTEXT-HYGIENE MERGED - SKILL.md 40.6 kB, always-loaded 57.3 kB,
-# evidence 17 MB: image retention = HOT-WINDOW cite rule + test fixtures in evidence/fixtures/ (uncounted;
-# docs/EVIDENCE.md); retired depth VERBATIM in skill/references. No findings; M293 retractions stand.
-# Next: gate tables 0x94e5a8/0x94eca8 + name ds:0x920434. BUILD = B15.)
+# NEXT_PROMPT.md - footing (s243 close: B15 = gate tables NAMED + pod-scan price gate executable vs
+# RECORDED BYTES (sim/gatetables.py 7/7, zero box; names/law/cites NAMED ## B15: site_score 0x94e5a8,
+# site_gate 0x94eca8, published_window_id ds:0x920434). Law: grade closed forms against BYTE INTERPRETERS
+# of recorded windows, not only events. Next: pod-walk census RE-ARMED printing the gate rows. BUILD = B16.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
 §CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
 
@@ -26,13 +26,12 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B14 DONE**
-(B14 = s241 11/11: `python3 -m sim.selftest --b14 <sav>`, `evidence/b14_podscan.txt:23`; per-rung cmds: `NAMED.md`
-§CHAIN-BUILDS). Next = **B15**.
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B15 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B15: `python3 -m sim.selftest --b15 <sav>` +
+`evidence/b15_gate_tables.txt:1`). Next = **B16**.
 
 ## THE LEDGER
 
-Merged M54A-M293 + B0-B14 (through #252) + hygiene #254; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
+Merged M54A-M293 + B0-B15 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -54,13 +53,13 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): M227-M293 + B1-B14 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
+- ANSWERED (do not re-pick): M227-M293 + B1-B15 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS. FUN_005f3f5b NOT open (M220). DIALOG
   +0x4c CLOSED (M284-M288; live half INVALID s240): NAMED ## M284-M288. NEVER bp mid-instruction (s213 crash).
-- **THE PICK:** UNMODELED per-site gate tables `0x94e5a8`/`0x94eca8` + FUN_004e3c00 no-go (STATIC census + fit vs
-  recorded sites — the fits passed WITHOUT modeling them); name `ds:0x920434` (msg-leg gate, =0 solo, s240 probe).
-  Pod-walk census (M292 walk legs; M293: live censuses INSTRUMENT-INVALID, guards fixed >=0x400000 — re-arm before
-  ANY reuse) = the box follow-on.
+- **THE PICK:** pod-walk census RE-ARMED printing the B15 gate rows: at every ISS/HUBFOUND/FOUND print
+  `[blk+0x94e5a8+region]`, `[blk+0x94eca8+region]`, verdict, `[blk+0x94e488]`, region, case (the 3
+  row-dependent winners = primary targets, `evidence/b15_gate_tables.txt` G5). M293 guards law binds.
+  OPEN: FUN_004e3c00 no-go; the FUN_0051dcb0 al-source.
 
 ## LIVE FACTS / KIT
 
