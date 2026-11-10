@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s233, M288 static 5/5: +0x4c CLOSED - FUN_005f6aa3 reachable only via a live
+# NEXT_PROMPT.md - footing (s234, B12 CREATE leg 12/12: the produced unit record is modeled - gate->pay->append 52-B record at array end (x@0,y@2,type@10,owner@14,order@17=0)->pop, byte-for-byte parity vs the m56 trace;
 # family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
 # +0x12c/+0x60) both avoid the slot; 6 paths/creates measured, zero dispatch. Next: BUILD B12)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
@@ -29,11 +29,11 @@ binding cap is doc headroom, not capability.**
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
 ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9, **B6 DONE (s212)** = R1 DONE (6/6), **B7 DONE (s216)** = R2's move leg (6/6) - commands per-id in `NAMED.md` §B4-§B7.
-**B8 DONE (s220)** = R2's save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** = R3's golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B1-B11 DONE.** A BUILD fire must first WRITE the next rung (B12, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
+**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B1-B12 DONE.** A BUILD fire writes the next rung (B13, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md` first, then builds it; an ANALYSE fire picks from below.
 
 ## THE LEDGER
 
-Merged M54A-M283 + B0-B10 (through #232); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M288 + B0-B12 (through #240); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -62,22 +62,17 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   FUN_005f3f5b is NOT open - see M220.
 
 - Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
-  ANSWERED s227-M288 (B11, M283-M288; M288 closed +0x4c).  BUILD s230=B11
+  ANSWERED s227-M288 + s234-B12 (B11, M283-M288, B12; M288 closed +0x4c).  BUILD s234=B12
   (13/13: the queue law, `NAMED.md` §B11). NEW (M282 frontier): WHICH
   founder vector the recorded AI used - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
   BOX PICKS, box UP: M287 (last live pick) ELIMINATED the menu pane (bar is CHROME,
-  GAME-row popup vptr 0x0067919c NOT FAMILY live, 0/12 x2).  M288 (s233, STATIC-ONLY no box):
-  +0x4c CLOSED - FUN_005f6aa3 has ZERO direct callers, its only 5 refs are the family vtables'
-  +0x4c entries; CREATE-time (466 vptr installs in 72 fns, install-owner INTERSECT site-owner
-  = empty; ctor FUN_00405ef0 + FUN_005ee350/FUN_005f6b8c clean) and the Return-key path
-  (WM_KEYDOWN 0x100 -> FUN_005d1576 -> vtable +0x12c = 0x5d629d hotkey dispatcher ->
-  FUN_005cf43a -> vtable +0x60; WM_CHAR -> 0x5d15d5; WM_SYSKEYDOWN -> 0x5d1601; pump 0x5f1394
-  clean) contain NO +0x4c CALL dispatch (the one data load 0x5d632d feeds FUN_00631070's
-  hotkey-table+0x4c, not a dispatch).  The row callback lives INLINE in the pump (M286).
-  +0x4c is not on ANY click/key/create path.  NEXT: M282 G5 (founder vector, live box
-  question) open for a later ANALYSE. 188-row cursor's caller OPEN (8380 strides); NEVER bp
-  mid-instruction (store+1 of an 8-B load crash-boxed the game, s213).
+  GAME-row popup vptr 0x0067919c NOT FAMILY live, 0/12 x2).  M288 (s233, no box): +0x4c CLOSED - FUN_005f6aa3 has 0 direct callers (its 5 refs =
+  the family vtables' +0x4c entries), CREATE-time (466 installs/72 owners, install ∩ site =
+  ∅; ctor FUN_00405ef0 + callees clean) and the Return-key path (0x100->+0x12c->0x60,
+  0x102, 0x104, pump 0x5f1394) contain NO +0x4c CALL dispatch; row cb INLINE in the pump.
+  +0x4c not on ANY click/key/create path. M282 G5 (founder vector, live box) open. 188-row
+  cursor's caller OPEN; NEVER bp mid-instruction (s213 crash).
 
 ## LIVE FACTS / KIT
 
