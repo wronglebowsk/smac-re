@@ -153,7 +153,8 @@ continue
 # the reused leg sites). Source of truth = the file image of terran.exe.
 PINS294 = [
     (0x563bf7, "8b5dcc", "loop gate head: mov ebx,[ebp-0x34] (slot_region)"),
-    (0x563c0f, "0f8e9c000000", "argmax: jle 0x563cb3 (value<=best skip)"),
+    (0x563c0f, "3bf0", "argmax: cmp esi,eax (value vs best)"),
+    (0x563c11, "0f8e9c000000", "argmax: jle 0x563cb3 (value<=best skip)"),
     (0x563c24, "8b3d340d8f00", "mov edi,ds:0x8f0d34 (nearest_dist)"),
     (0x563c38, "7d6d", "bypass: jge 0x563ca7 (accept WITHOUT the mult load)"),
     (0x563c3d, "8a941fa8e59400", "GDEEP: mov dl,BYTE[edi+ebx+0x94e5a8] (site_score)"),
@@ -194,11 +195,10 @@ def static_gates294():
         if got != hexs:
             ok = False
             bad.append("  BAD %#x want %s got %s ; %s" % (va, hexs, got, note))
-    # fold arithmetic re-check: (65*o)*2 -> <<4 -> -o -> <<2 == 8380*o  (identity, not authority)
+    # fold arithmetic re-check (identity only; the pins above are the authority):
+    # eax=o<<6; eax+=o (65o); edi=o+eax*2 (131o); edi<<=4 (2096o); edi-=o (2095o);
+    # edi<<=2 (8380o).
     o = 3
-    f = ((((o << 6) + o) * 2 + o) * 16 - o) * 4  # NOT the fold - see pins below
-    # The fold per dis: eax=o<<6; eax+=o (65o); edi=o+eax*2 (131o); edi<<=4 (2096o);
-    # edi-=o (2095o); edi<<=2 (8380o). Re-derive from the ACTUAL ops:
     eax = (o << 6) + o
     edi = o + eax * 2
     edi = (edi << 4) - o
