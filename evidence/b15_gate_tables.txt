@@ -1,0 +1,16 @@
+B15 gate-tables acceptance - command: python3 -m sim.selftest --b15 programs/saves/m54b_clean.SAV
+  PASS G1 shipped literals == recorded window; table-swap rival 0  | 73 pins verified, swap-matches 0, missing none
+  PASS G2 census re-check (99-ref site_score; 7-ref/0-store site_gate; 15 writers of 0x920434)  | site_score refs=99 scan 22/0; site_gate refs=7 scan 4/0; W(0x920434)=15 pcs==M125
+  PASS G3 closed form == recorded-byte interpreter (14520 cases)  | mismatches 0
+  PASS G4 rivals fail the byte fit (each disagrees with the interpreter)  | min() gate 236 | mult!=0 accept 2851 | tiles ceiling fixed-6 146 | verdict-fold flipped 81
+  PASS G5 recorded winners modelled (branch split; rows listed for the box census)  | events 27, bypass-accepted 24, row-dependent 3, errors 0 | m292found(22,14)v1,d3; m292walk(18,2)v7,d2; m292found(18,2)v7,d2
+  PASS G6 gated-scan == podscan.scan_esi (permissive + full deep-leg rows)  | 7/7 golden pod tiles, both row regimes
+  PASS G7 determinism + recorded-window digest pinned  | window sha256 c1b3712b6be6f5d3
+  ok   G1 shipped literals == recorded window; table-swap rival 0
+  ok   G2 census re-check (99-ref site_score; 7-ref/0-store site_gate; 15 writers of 0x920434)
+  ok   G3 closed form == recorded-byte interpreter (14520 cases)
+  ok   G4 rivals fail the byte fit (each disagrees with the interpreter)
+  ok   G5 recorded winners modelled (branch split; rows listed for the box census)
+  ok   G6 gated-scan == podscan.scan_esi (permissive + full deep-leg rows)
+  ok   G7 determinism + recorded-window digest pinned
+PASS B15: 7/7 gates - the per-site gate tables are named and the pod-scan price gate is executable: 73 shipped pins match the recorded objdump window (table-swap rival 0), the closed form agrees with a recorded-byte interpreter on the full decision grid and 4 rivals each disagree with the bytes, and every recorded dispatch winner is modelled (bypass vs row-dependent split listed for the box follow-up) (no box time, no /proc, no gdb)

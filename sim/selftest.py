@@ -1390,6 +1390,30 @@ def run_b14(sav_path, log_path, golden_path, ring_path, results):
     return 0
 
 
+
+def run_b15(sav_path, results):
+    """Rung B15: the per-site gate tables 0x94e5a8/0x94eca8 NAMED and the
+    pod-scan price gate executable vs the RECORDED byte window (sim.gatetables).
+    No box, no /proc, no gdb."""
+    from . import gatetables as gt
+    if not os.path.exists(sav_path):
+        return fail("B15: missing save %s" % sav_path)
+    gt.acceptance(sav_path, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B15: %d/%d gates failed: %s" % (len(bad), len(results), "; ".join(bad)))
+    print(("PASS B15: %d/%d gates - the per-site gate tables are named and the "
+           "pod-scan price gate is executable: 73 shipped pins match the recorded "
+           "objdump window (table-swap rival 0), the closed form agrees with a "
+           "recorded-byte interpreter on the full decision grid and 4 rivals each "
+           "disagree with the bytes, and every recorded dispatch winner is "
+           "modelled (bypass vs row-dependent split listed for the box follow-up) "
+           "(no box time, no /proc, no gdb)")
+          % (len(results), len(results)))
+    return 0
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1412,6 +1436,9 @@ def main(argv=None):
                     help="rung B11: the production-queue mechanics leg acceptance")
     ap.add_argument("--b12", nargs="+", metavar=("SAV", "TRACE"),
                     help="rung B12: the completion CREATE leg acceptance")
+    ap.add_argument("--b15", nargs="*", metavar="SAV",
+                    help="rung B15: the 0x94e5a8/0x94eca8 gate tables + pod-scan "
+                         "price gate vs the recorded bytes")
     ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
                     help="rung B13: the pod-driven founding dispatch leg acceptance")
     ap.add_argument("--b14", nargs="+", metavar="SAV",
@@ -1449,6 +1476,9 @@ def main(argv=None):
             tr = os.path.join(REPO, "evidence",
                               "trace_m289_20261110_071759.jsonl")
         return run_b13(args.b13[0], lg, tr, results)
+    if args.b15 is not None:
+        sav = args.b15[0] if args.b15 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b15(sav, results)
     if args.b14:
         lg = args.b14[1] if len(args.b14) > 1 else None
         gd = args.b14[2] if len(args.b14) > 2 else None
