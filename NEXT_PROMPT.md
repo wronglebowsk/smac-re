@@ -1,6 +1,6 @@
 # NEXT_PROMPT.md - footing (s233, M288 static 5/5: +0x4c CLOSED - FUN_005f6aa3 reachable only via a live
 # family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
-# +0x12c/+0x60) both avoid the slot; 6 paths/creates measured, zero dispatch. Next: ANALYSE)
+# +0x12c/+0x60) both avoid the slot; 6 paths/creates measured, zero dispatch. Next: BUILD B12)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -76,8 +76,8 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   clean) contain NO +0x4c CALL dispatch (the one data load 0x5d632d feeds FUN_00631070's
   hotkey-table+0x4c, not a dispatch).  The row callback lives INLINE in the pump (M286).
   +0x4c is not on ANY click/key/create path.  NEXT: M282 G5 (founder vector, live box
-  question) or the next frontier the ledger names. 188-row cursor's caller OPEN (8380 strides);
-  NEVER bp mid-instruction (store+1 of an 8-B load crash-boxed the game, s213).
+  question) open for a later ANALYSE. 188-row cursor's caller OPEN (8380 strides); NEVER bp
+  mid-instruction (store+1 of an 8-B load crash-boxed the game, s213).
 
 ## LIVE FACTS / KIT
 
