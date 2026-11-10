@@ -1,0 +1,20 @@
+G1 PASS: containment: stores 0x51df61/0x564ab1 sit in FUN_0051dcb0/FUN_0055f650 with their folds; both folds re-evaluate (m276/m277 evaluator, not re-derived) to eax = 8380*(block atom) + 2*slot: (8380, 2, 0) and (8380, 2, 0)
+      ebx writer 0x51dd5a: lea ebx,[ecx*2+0x950a64]
+      ebx writer 0x51dd92: add ebx,0x20bc
+      ebx writer 0x51ddbd: or ebx,0xffffffff
+      ebx writer 0x51ddea: or ebx,0xffffffff
+      ebx writer 0x51ddf5: xor ebx,ebx
+      ebx writer 0x51ddff: mov bl,BYTE PTR [eax+0x95da14]
+      ebx writer 0x51defa: or ebx,0xffffffff
+      ebx writer 0x51df24: xor ebx,ebx
+G2 PASS: writer1 ebx census (up to 0x51df61): 8 writers: 2 are 0x950a64 region-array POINTERS (0x51dd5a lea + 0x51dd92 add 0x20bc, the 0x51dd61 loop that incs a DIFFERENT WORD array, off the block-index path); 3 sentinel `or ebx,-1`; 1 `xor ebx,ebx` zero-extend before the OWNER-BYTE load `mov bl,BYTE PTR [eax+0x95da14]` (0x95da14 = base table 0x95da10 + 4), 1 clamp `xor ebx,ebx` at 0x51df24 guarded by the ONLY ebx test in the run-up (0x51df1d) whose jge TARGETS THE FOLD 0x51df26 - both legs (byte>=0 and clamped -1) flow into the store: ebx at the fold is {owner byte} U {0}
+G3 PASS: FUN_004e37f0 walks the base table (mov ebx,0x95da14; add ebx,0x130; count ds:0x985af4; writes distance to ds:0x8f0d34; returns the record index [ebp-0x4]) - so writer1's byte is base+4, which M43 named from 167/167 live: `+4 ... equal the OWNER PLAYER INDEX`, `There is no separate faction-ID namespace`, and NAMED records `bases (304m at 0x95da10)`: the block index is a PLAYER INDEX, 0..7
+G4 PASS: writer2: [ebp-0xc] stores image-wide in the hub = ['0x55f71d'] ONLY; its value: 13*arg then <<2 = 52*arg (unit stride), `mov al,BYTE PTR [esi+0x933286]` = 0x933278+14 = the UNIT OWNER byte (docs: `52n at 0x933278`, `unit+14 (owner)`), masked `and eax,0xff`; the entry cross-checks it against ds:0x91b5b4 (current player, docs); both fold branches re-load esi from [ebp-0xc] (0x564a18/0x564a93) - the hub's block index is the acting unit's OWNER
+G5 PASS: the zero-init sweep walks 0x94eca8 -> 0x95f288 by 0x20bc = 8 whole faction-stride blocks (8380 == the fold's 8380), and the per-block min/max loop at 0x51e107-0x51e117 walks esi 0..7 by 0x20bc - the row family has EXACTLY 8 blocks: indices 0..7, no ninth neutral block (rival '7 factions + 1 neutral column separate from faction 0' needs index 8 or a skip; neither exists)
+      ebx-guarded branch 0x51de2e <- guard 0x51de2c cmp ecx,ebx | arg 0x51ded8
+      ebx-guarded branch 0x51df03 <- guard 0x51df01 cmp ebx,ecx | arg 0x51df1d
+      ebx-guarded branch 0x51df22 <- guard 0x51df1d test ebx,ebx | arg 0x51df26
+G6 PASS: DISCRIMINATOR (guard-attributed branch census, FUN_0051dcb0 entry..store): exactly 3 conditional branches are guarded by an ebx test/cmp: 0x51de2e (scan-loop owner match) and 0x51df03 (owner-change detection) RE-ENTER the clamp path, 0x51df22 `jge` targets THE FOLD 0x51df26 itself - no ebx-conditional branch skips the store (rival 'block 0 is neutral: a guard or a +1 bias skips/shifts index 0' finds NEITHER in the bytes; the 0x94eaa8 store's own guards at 0x51df49/51df59/0x51df5f key on tile type/mineral/occupancy bytes, not on the block index); ours predicts byte==0 stores block 0 directly and -1 clamps INTO it. And the human was NOT block 0: M43's recorded box has us at `cur=3` with player 0 owning 199 tiles - block 0 is not the player slot either
+      registry check: M278-block=True owner-clause=True clamp-clause=True refine-clause=True (blk 1964 B)
+G7 PASS: registry: NAMED.md ## M278 names the block index (owner player index + clamp) and the ## M277 block carries the M278 REFINEMENT line (1964 chars)
+SUMMARY M278: 7/7 gates PASS

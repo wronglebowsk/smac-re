@@ -1184,9 +1184,23 @@ No alpha.json table has 196 or 201 rows (max 89 TECHNOLOGY). OPEN: what writes t
 | the sibling verdict array 0x94eba8 starts +256 past 0x94eaa8 (= slot index 128), so regions 94..127 land in +188..+255 = 68 B of rows 94..127 INSIDE the row's own cell, NEVER the sibling: **M274 G2's "reads the sibling's [0..66] band" is refuted** (that band is offsets 256..322, unreachable) - M274's own printed max 254 < 256 | G4 | V, CORRECTS M274 G2 |
 | live replay, 7/7 recorded SCALED events: 2*edi in [2,2] = block 0 for all while s18 = 2*s10+8380*cp walks blocks 1..7 with cp=1..7 - rival "scaled carries 8380*cp" refuted 7/7 | G5, `evidence/m273w3.gdblog` | V (live log, offline) |
 | image-wide referrer census of +0x94eaa8 = exactly 4 sites (0x51df61, 0x558452, 0x5584aa, 0x564ab1); the ONLY two WRITERS (`inc WORD`, `add WORD,0xfff6`) both evaluate to eax = 8380*block + 2*slot -> per-faction-block live row, and the auto-manager's scaled read is the only block-free accessor = permanent faction-0 view | G6 (m276 evaluator reused) | V (bytes) |
-| OPEN: is block 0 the neutral/player slot or faction 0's real row (read the writers' block-index source)? Also 0x94e8a8 (0x51df3d) shares the same fold shape - the row family is wider than 0x94eaa8 | this file | OPEN |
+| M278 REFINEMENT (s219): the permanent faction-0 view above is the **player-index-0 row** - the writers' block atoms are owner-player bytes (base+4 / unit+14, M43 identity) - AND it doubles as the landing cell for FUN_0051dcb0's unowned-tile clamp (-1 sentinel -> block 0, sign-test at 0x51df1d); it is NOT a neutral slot and NOT the player's slot (the recorded human is index 3). 0x94e8a8 (0x51df3d) still shares the same fold shape - the row family is wider than 0x94eaa8 (still OPEN) | `scripts/m278_block0_semantics.py` G1-G6, `evidence/m278_block0.txt` | V, block-0 question CLOSED by M278 |
 
 Acceptance: `python3 scripts/m277_scaled_row_ownership.py` -> `SUMMARY M277: 6/6 gates PASS`; zero box time.
+
+## M278 (s219, PASS 7/7) - block 0 is the player-index-0 real row AND the unowned fallback; no neutral/player slot
+
+| fact | evidence | status |
+|---|---|---|
+| writer1 block index (inc 0x51df61, FUN_0051dcb0): ebx = BYTE[0x95da14+304*i], i returned by FUN_004e37f0 (base-table walk: `mov ebx,0x95da14`, `add ebx,0x130`, count ds:0x985af4, distance global ds:0x8f0d34, returns the record index) = base+4 = **owner player index** (M43 identity, 167/167 live); ebx-writer census up to the store = exactly 6 (3 sentinel `or ebx,-1`, zero-extend `xor`, owner-byte load, clamp `xor`) | `scripts/m278_block0_semantics.py` G2-G3, `evidence/m278_block0.txt` | V (bytes) |
+| no qualifying base -> ebx=-1 and the clamp `xor ebx,ebx` (0x51df24) lands it in BLOCK 0 immediately before the fold; the only ebx-conditional branches in the function re-enter the clamp/fold (guard-attributed census), none skips the store at ebx==0 | G2, G6 | V (bytes) |
+| writer2 block index (add -10 0x564ab1, FUN_0055f650 AI hub): esi=[ebp-0xc] with ONE store (0x55f71d) = BYTE[52*arg+0x933286] = the acting unit's **owner** (unit array 0x933278, owner @+14), `and eax,0xff`; entry cross-checks it vs ds:0x91b5b4 (current player) | G4 | V (bytes) |
+| domain: the zero-init sweep 0x94eca8->0x95f288 steps 0x20bc exactly 8 times and the per-block min/max loop walks esi 0..7 - the row family is EXACTLY 8 player-indexed blocks (fold stride 8380 = the step); no ninth neutral block, no +1 bias; the human is not block 0 by definition (M43: human cur=3; player 0 = destroyed-but-visited faction owning 199 tiles; "no separate faction-ID namespace") | G5-G6 + M43 recorded live | V (bytes), V (recorded) |
+
+ANSWER (s218 pick (a)): block 0 = player/faction-index-0's REAL row, DOUBLED as the
+unowned-verdict fallback via writer1's clamp - not a dedicated neutral column, not a player slot.
+
+Acceptance: `python3 scripts/m278_block0_semantics.py` -> `SUMMARY M278: 7/7 gates PASS`; zero box time.
 
 ## M276 (s217, PASS 8/8) - the fold's coefficient IS the faction stride: row slot = 2·region + 8380·arg
 
