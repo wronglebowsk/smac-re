@@ -1,0 +1,9 @@
+G1 PASS: land clamp 0x3e=True water clamp 0x7e=True overflow=uVar12+1=True border 0x5f-formula=True -> largest assignable id = max(0x3e,0x7e)+1 = 0x7f (127) < 0x80
+G2 PASS: 0x556737 edi,0x80 owner=FUN_00556690; 0x558b1c ecx,0x80 owner=FUN_00556690 -> loop covers ids 0..127 = whole id space
+G3 PASS: alloc-expr; alloc-arg; file-io; file-io ; other-shard refs=0 -> the 338 is alloc/clear/file-io ONLY, never a loop bound
+G4 PASS: accessor-index(x>>1 + (Rw>>1)*y) len-triad=[91, 128, 338] -> 338 bytes = (((W+4)/5)+1)/2 * (H+4)/5 = CELL count, not ids
+G5 PASS: planet.MP 80x80 max=0x7f ge128=0; planetx.MP 128x128 max=0x48 ge128=0; m112auto1.SAV 64x64 max=0x46 ge128=0; m112poke.SAV 64x64 max=0x46 ge128=0; m113map.SAV 64x64 max=0x46 ge128=0; m54b_clean.SAV 64x64 max=0x46 ge128=0
+G6 PASS: section=3584 / stride 0x1c = 128.0000 rows -> table is 128 slots
+G7 PASS: cmp-vs-0x152=0 scale-*0x152=0 cmp-vs-DAT_0092ada4=0 -> no loop in the image is bounded by the 338 cell count
+
+SUMMARY M281: 7/7 gates PASS

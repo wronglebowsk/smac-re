@@ -539,3 +539,38 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   the sanity pass - cleaned before commit.
 - OPEN: static pick (c) who reads regions >=128; box pick (dialog +0x4c dispatcher) unchanged; new:
   the AI base-founder census (n_bases 18->26). Chain: exactly one pending smac-re job = s224.
+
+## Session 224 (2026-11-10, ANALYSE static, M281 PASS 7/7) - nobody reads region ids >=128 because the generator caps the id space at 0x7f; the 338 is the coarse-map CELL count, not an id space
+- track_mode printed ANALYSE (analyse_since_build=0) -> static pick (c): "the loop bound 0x80 never
+  reaches regions >=128 while counts go to 338 - what reads region 128+?". ZERO box time; box not
+  touched (terran.exe pid 3820435, no gdb, state read via pgrep only).
+  `python3 scripts/m281_region_id_cap.py` -> **SUMMARY M281: 7/7 gates PASS**
+  (`evidence/m281_region_id_cap.txt`).
+- ANSWER: NOTHING reads a region id >=128 because such an id CANNOT EXIST. The region generator
+  FUN_0058d390 uses two band counters (shard_015.c): land ids 1..0x3e (clamp uVar12=0x3e), water ids
+  0x41..0x7e (clamp uVar12=0x7e), and when a band fills, the smallest region is relocated to the
+  overflow slot uVar12+1 = 0x3f/0x7f (G1: clamps + `uVar12 + 1` idiom + the 0x5f border formula all
+  in the body). Largest assignable id = 0x7f (127) < 0x80, so the `cmp e?x,0x80` loops at 0x556737/
+  0x558b1c (both FUN_00556690) cover the WHOLE id space on every map size - M251's "128 entries =
+  the whole id space" STANDS.
+- The "338" that seeded the pick is the COARSE MAP's byte count, ((W+4)/5+1)/2 * (H+4)/5 = 91/128/338
+  for 64/80/128 (G4, triad computed from the accesses FUN_00582340/2360 `(x>>1) + (Rw>>1)*y`), i.e.
+  the number of coarse CELLS, not region ids. The count global DAT_0092ada4 has exactly 4 refs and
+  they are alloc (x2) + file-write + file-read in shard_014 (G3), and an image-wide scan finds NO
+  cmp against 0x152 (338), NO *0x152 scale, NO cmp against DAT_0092ada4 (G7) - no loop in the image
+  is bounded by the cell count. The per-region table DAT_00989ce0 save section is 3584 B at stride
+  0x1c = EXACTLY 128 rows (G6), consistent with a 128-slot id space. Tile-label census over 2 maps +
+  4 saves: max labels 0x7f (planet.MP's border band!), 0x48 (planetx), 0x46 (saves); zero labels
+  >= 0x80 in any file (G5).
+- ACCEPTANCE: `python3 scripts/m281_region_id_cap.py` -> `SUMMARY M281: 7/7 gates PASS`
+  (`evidence/m281_region_id_cap.txt`). Registry: NAMED.md M281.
+- Corrections to prior footing: the s213-era "region counts 128/338 EXCEED the 94-slot row" framing
+  conflated the coarse-map CELL count with the region ID space; M274's answer (the loop is never
+  clamped, bound is constant 0x80) plus M281's (the id space itself is capped below 0x80) together
+  fully close the row-cap question - the scaled-read overflow M274 measured (regions 94..127 read
+  the sibling array) is the ONLY big-map artifact, and it is the 0x80 loop walking ids that DO exist.
+- OPEN: static pick (c) CLOSED. Remaining: box pick (dialog +0x4c dispatcher), the AI base-founder
+  census (B9 frontier, n_bases 18->26), the 64x64 odd-Rw accessor stride quirk (M247's Rw>>1 vs
+  (Rw+1)/2 asymmetry is a live edge on 64x64, unreachable bytes are the file's 0xCD slack).
+  Next fire: BUILD (analyse_since_build=1) = B10, R2's new-game leg - write the rung into
+  BUILD_SPINE.md FIRST, then build it (sim/, runnable acceptance, no box time).
