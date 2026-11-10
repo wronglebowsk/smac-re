@@ -3,6 +3,6 @@ t7 byte distribution over ALL pass6-no-row cells (incl no-owner visits):
   [(1, 45), (2, 872), (3, 4), (4, 2058), (5, 1190), (6, 1822), (7, 1), (255, 2490)]
 R1 rejects: {'pass6no': 2928, 'fail6no': 4089, 'rec': 1045}
 R2 rejects: {'fail6no': 351, 'pass6no': 259, 'rec': 124}
-R3 rejects: {'fail6no': 283, 'pass6no': 231, 'rec': 91}
+R3 rejects: {'fail6no': 346, 'pass6no': 259, 'rec': 119}
 R4 rejects: {}
 verdict: R1-R3 (rivals) cap recorded decision slots by the counts above - FAIL; R4 (full rule) is the named predicate.

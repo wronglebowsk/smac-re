@@ -3,7 +3,8 @@
 
 FUN_004e3c00(owner,X,Y): FUN_004e3b50 reads tile7 = (signed) BYTE[44-B tileview+7]
 (the territory-owner faction, same view as B16, 0x4e3b53-0x4e3b76); invisible to
-`owner` unless (flagword & 0x8000008) == 0x8000008 or BYTE[0x985ae8] bit 0x80.
+`owner` unless (flagword & 0x08000008) == 0x08000008 (bits 3 and 27) or BYTE[0x985ae8]
+bit 0x80.
 No-go (returns >= 0) iff tile7 >= 1 AND tile7 != owner AND (human-mask
 BYTE[0x985b10] has the owner bit OR the tile7 bit) AND the faction-pair flag
 word [owner*2095 + tile7] at 0x94d448 (M143) has bit4 CLEAR; the non-negative
@@ -32,7 +33,9 @@ def main(sav_path, raw_path):
     feat, mask = sav.feature_bits, sav.human_mask
 
     def flagword(fac, other):
-        o = sosave.BLOCK_A_OFF + fac * sosave.BLOCK_A_REC + 4 * other
+        # block base 0x94d430 (disasm constant, 170 uses, e.g. [edx+0x94d430] at
+        # 0x429ab9); the pair-flagword array lives at 0x94d448 = block + 0x18.
+        o = sosave.BLOCK_A_OFF + fac * sosave.BLOCK_A_REC + 0x18 + 4 * other
         return struct.unpack_from("<I", sav.data, o)[0]
 
     ownrec, cur = {}, None
@@ -80,7 +83,7 @@ def main(sav_path, raw_path):
             r2 = r1 and m2
             fw = flagword(po, t7) if 0 <= po < 8 and 0 <= t7 < 8 else 0
             r3 = r2 and not bit(fw, 4)
-            r4 = r3 and (bit(feat, 7) or (bit(fw, 3) and bit(fw, 31)))
+            r4 = r3 and (bit(feat, 7) or (bit(fw, 3) and bit(fw, 27)))
             for nm, ok in (("R1", r1), ("R2", r2), ("R3", r3), ("R4", r4)):
                 if ok:
                     cells[(nm, kind)] += 1
