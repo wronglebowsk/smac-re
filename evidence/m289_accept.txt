@@ -1,0 +1,19 @@
+M289 acceptance - re-walk of scratch/m289_gdb_raw.log
+PRE count=18 | events: ctrl=1627 vec=10 found=7
+per-vector: {'hub': 7}
+accounting: expected=23 box_end=23
+   1  vec=hub        ret=0x4ccbe2 fac=6 x=20 y=48 cnt=18
+   2  vec=hub        ret=0x4ccbe2 fac=6 x=63 y=51 cnt=19
+   3  vec=hub        ret=0x4ccbe2 fac=6 x=12 y=48 cnt=20
+   4  vec=hub        ret=0x4ccbe2 fac=5 x=27 y=19 cnt=20
+   5  vec=hub        ret=0x4ccbe2 fac=7 x=23 y=33 cnt=21
+   6  vec=hub        ret=0x4ccbe2 fac=1 x=27 y=29 cnt=22
+   7  vec=hub        ret=0x4ccbe2 fac=6 x=1 y=43 cnt=23
+
+g1 PASS: ctrl rows=1627
+g2 PASS: unparsed rows=0
+g3 PASS: vec_counts={'hub': 7}
+g4 PASS: acct_bad=0 expected=23 box=23 late=0
+g5 PASS: found=7 unpaired=0
+g6 FAIL: tracer=0 yama=False cnt_box=23
+FAIL M289

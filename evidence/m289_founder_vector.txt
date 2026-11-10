@@ -1,0 +1,16 @@
+M289 founder-vector census (session 235) - 30-turn window on m54b_clean.SAV
+PRE : count=18 year=2150 cur=3
+POST: count=23 year=2180 cur=3 tracer=0 yama=1
+control: 1627 sweep rows | driver rc=0 | unpaired VEC=0
+accounting: ok (expected=23 box_end=23 late=0)
+founder hits: 7
+per-vector: {'hub': 7}
+   1  vec=hub        ret=0x4ccbe2 fac=6 x=20 y=48 cnt=18
+   2  vec=hub        ret=0x4ccbe2 fac=6 x=63 y=51 cnt=19
+   3  vec=hub        ret=0x4ccbe2 fac=6 x=12 y=48 cnt=20
+   4  vec=hub        ret=0x4ccbe2 fac=5 x=27 y=19 cnt=20
+   5  vec=hub        ret=0x4ccbe2 fac=7 x=23 y=33 cnt=21
+   6  vec=hub        ret=0x4ccbe2 fac=1 x=27 y=29 cnt=22
+   7  vec=hub        ret=0x4ccbe2 fac=6 x=1 y=43 cnt=23
+
+VERDICT: MEASURED
