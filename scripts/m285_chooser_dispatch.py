@@ -139,7 +139,7 @@ def static():
         except ValueError: continue
         toks.append((pc, re.sub(r"\s+", " ", f[2].strip().lower())))
     tmap = dict(toks)
-    bad = [hex(pc) for pc, _ in SITES if "call dword ptr [reg+0x4c]" not in tmap.get(pc, "")]
+    bad = [hex(pc) for pc, _ in SITES if not re.search(r"call dword ptr \[e[a-z]+\+0x4c\]", tmap.get(pc, ""))]
     G(not bad, "g1: 12 sites still read `call [reg+0x4c]` (%s)" % ("none bad" if not bad else " ".join(bad)))
     # g2: every family vtable's +0x4c IS the family slot
     G(all(dw(v + 0x4c) == FAM_SLOT for v in FAMILY),
@@ -227,7 +227,10 @@ def live():
     time.sleep(1.0)
     # message popup OK (message box y 440-560 x 10-300)
     click((285, 553)); click((285, 553))
-    click(ROW1_XY)                 # open the production item chooser
+    time.sleep(0.6)
+    print("after b+pops: pane base idx = %d (base 0), pending=%d" % (
+        i32(f, PANE_BASE_IDX), base_rec(f, 0)["pending"]), flush=True)
+    click(ROW1_XY)                 # open the production item chooser (m57: row click opens)
     time.sleep(1.0)
     # falsifier READ 1: owning dialog + chooser sub-object vtables at click time
     dcur = u32(f, DIALOG_CUR)
@@ -236,12 +239,12 @@ def live():
     print("LIVE at chooser: dialog obj=0x%08x vptr=0x%08x%s, chooser sub vptr=0x%08x%s" % (
         dcur, dv, " FAMILY" if dv in FAMILY else ("0x%x" % dv), chooser_vptr,
         " FAMILY" if chooser_vptr in FAMILY else ""), flush=True)
-    # click a chooser cell (cell 3 = Scout Patrol per m57 default) then INSERT then OK
-    key("Escape"); time.sleep(0.4)   # close any nested pane first (safe on panes)
-    click(ROW1_XY)
-    click((380, 260))   # chooser grid cell (m57: cx=128+127*(k%5), cy=60+100*(k//5)) k=2
-    click(INSERT_XY)
-    click(OK_XY)
+    # cell 2 (= candidate[2]=193, the m57 default row) then INSERT bar then OK bar;
+    # INSERT lands even at minerals 0 / credit 0 after the prep+turn (standing facts)
+    click((382, 60))     # chooser grid cell k=2 (cx=128+127*2, cy=60)
+    click(INSERT_XY)     # INSERT bar (497,343) - exercises the dialog family's click path
+    time.sleep(0.8)
+    click(OK_XY)         # OK bar (285,343)
     time.sleep(0.5)
     # falsifier READ 2: dialog vptr still live after the edits
     dcur2 = u32(f, DIALOG_CUR)
