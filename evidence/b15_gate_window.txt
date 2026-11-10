@@ -1,6 +1,7 @@
 # B15 recorded gate windows - authority for sim/gatetables.py
 # produced by scripts/b15_gate_window.py from scratch/m574/text.txt
 # terran.exe sha256=b7c9fc751b7f1ac43a2a592cda4b0ea80929d114c3619862e935ee8328dc9818 size=3067904
+# all 204 instruction lines byte-verified against terran.exe at VA->file delta -0x400000
 ## prologue msg-gate 0x55f6b0-0x55f6dc
   55f6b0:	39 1d 34 04 92 00    	cmp    DWORD PTR ds:0x920434,ebx
   55f6b6:	74 1e                	je     0x55f6d6

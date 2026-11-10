@@ -801,4 +801,14 @@ Older sessions: `docs/sessions/sessions-219-219.md` (1 sessions). Read it only w
   FUN_0051dcb0 uncensused; the 0x94e5a8 readers in FUN_004f6030 (15 refs) / FUN_0050d140 0x50e4fb
   and the 0x564xxx-0x56c8xx band inside FUN_0055f650 uncensused; live table rows for the 3
   row-dependent winners -> the re-armed pod-walk census prints them (guard re-derivation law M293).
+- GREPTILE ROUND 1 (#256, 2 P1 + 4 P2, ALL FIXED pre-merge): scan_esi_gated put UNIT_BASE in the
+  [ebp-0x10] slot while the interpreter adds the absolute 0x933289 (double base - G6's permissive
+  rows never reached that leg; a deep-leg row regime now walks FULL chain incl. unit+tiles before
+  accept); scan_esi_gated silently needed acceptance() to pre-load the window (now lazy-loads
+  evidence/b15_gate_window.txt); FAM_STRIDE published 0x8380 where the fold is DECIMAL 8380 =
+  0x20BC; site_score blk-offset wording (0x94d448+0x1160, M92 view +0x120 from 0x94e488); the
+  window recorder hashed terran.exe but trusted the text cache (now every window line's bytes are
+  verified against the exe at the single anchor-derived VA->file delta -0x400000, ambiguous or
+  missing -> refuse); G7's len==64 hash tautology replaced by a pinned digest (window sha256 now
+  c1b3712b6be6f5d3). Re-run after fixes: PASS B15 7/7, 14,520-case grid green.
   Next: ANALYSE/box (pod-walk census re-arm); next BUILD = B16.

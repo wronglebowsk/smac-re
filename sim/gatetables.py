@@ -8,8 +8,9 @@ memory model; `price_gate()` is the closed form. selftest --b15 pins them
 against each other over a decision grid and fails rivals that do not agree.
 
 Named here (cite lines in NAMED.md ## B15):
-  0x94e5a8  site_score  byte[blk + region + 0x94e5a8], blk = fac*8380
-                        (blk+0x120 of the 0x94d448 block family, M258 G8)
+  0x94e5a8  site_score  byte[blk + region + 0x94e5a8], blk = fac*8380 (=0x20bc)
+                        (block base 0x94d448 + 0x1160; M92's divisor-block view
+                        puts it at 0x94e488 + 0x120)
                         writer: FUN_00556690 (M94: 0x556721/0x556b5a); 5 stores
   0x94eca8  site_gate   byte[blk + region + 0x94eca8] (blk+0x1860)
                         NO direct store image-wide; the only writer is
@@ -42,8 +43,8 @@ Gate law (every branch name is what the interpreter reports from the bytes):
 import re
 
 MASK = 0xFFFFFFFF
-FAM_STRIDE = 0x8380          # per-faction block 8380 (M258 G8 / M257 fold)
-SITE_SCORE = 0x94E5A8        # site_score byte x 128 (blk+0x120)
+FAM_STRIDE = 0x20BC          # per-faction block stride = DECIMAL 8380 = 0x20BC (M258 G8 / M257 fold)
+SITE_SCORE = 0x94E5A8        # site_score byte x 128 (block base 0x94d448 + 0x1160; M92 divisor-block view = 0x94e488 + 0x120)
 SITE_GATE = 0x94ECA8         # site_gate byte x 128 (blk+0x1860)
 SITE_VERDICT = 0x94EDA8      # region verdict byte (M253)
 BLOCK_BASECOUNT = 0x94E488   # dword: the faction's base count (M94)
@@ -476,10 +477,12 @@ def scan_esi_gated(g, x, y, occ, rowfn, own_gate=True):
     0x563caa-0x563cad). rowfn(i, nx, ny) -> dict(value, dist, mult,
     base_count, verdict, gate, case, unit24, tiles) for candidate i."""
     from sim import podscan as _ps
+    if not scan_esi_gated.window:
+        scan_esi_gated.window = load_window(
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                         "evidence", "b15_gate_window.txt"))
     cf, ob = g.catflag(x, y), g.own3(x, y)
     region = g.rb(x, y)[3]
-    for pc, pat, _ in GATE_PINS:
-        pass  # pins are re-checked by interpret_gate itself
     class _S:
         pass
     st = _S()
@@ -505,7 +508,7 @@ def scan_esi_gated(g, x, y, occ, rowfn, own_gate=True):
         st.slots[-0x8], st.slots[-0x4], st.slots[-0x2c] = nx, ny, i
         st.slots[-0x48], st.slots[-0x8c] = blk, rows["verdict"]
         st.slots[-0x44] = rows["case"]
-        st.slots[-0x10] = UNIT_BASE  # +52u is folded in by the caller model
+        st.slots[-0x10] = 0  # raw 52*u record offset (u=0 model); the interpreter adds 0x933289
         st.mem = {
             (blk + 0x94E5A8 + region) & MASK: rows["mult"],
             (blk + 0x94E488) & MASK: rows["base_count"],
@@ -715,23 +718,35 @@ def acceptance(sav_path, results, win_path=DEF_WIN, ng5=DEF_NG5, ngc=DEF_NGC,
         return {"block": 0x20bc * 2, "mult": 0, "base_count": 19,
                 "verdict": 7, "gate": 0, "case": 8, "unit24": 0,
                 "tiles": 999, "dist": 9999}
+    # Deep-leg rows: every candidate walks the FULL chain (no bypass,
+    # mult!=0, base_count>=2, value<thr, case==8, unit byte != 0x18, tiles
+    # under the 6*(mult+1) ceiling) -> accept via case8open. Greptile P1 (s243
+    # review): the permissive pass never reaches those legs - this one must.
+    def deep_legs(i, nx, ny, _g=g):
+        return {"block": 0x20bc * 2, "mult": 1, "base_count": 19,
+                "verdict": 7, "gate": 200, "case": 8, "unit24": 0,
+                "tiles": 0, "dist": 0}  # dist 0 -> bypass needs 16 (max val 15): never
     tiles_ok = 0
     tiles_all = 0
     for (fac, x, y, cnt) in sps.golden_founds(golden_path):
         ref = sps.scan_esi(g, x, y, bases)
         got = scan_esi_gated(g, x, y, bases, permissive)
+        got2 = scan_esi_gated(g, x, y, bases, deep_legs)
         tiles_all += 1
-        if got == ref:
+        if got == ref and got2 == ref:
             tiles_ok += 1
-    gate("G6 gated-scan == podscan.scan_esi under permissive rows (byte legs agree)",
+    gate("G6 gated-scan == podscan.scan_esi (permissive + full deep-leg rows)",
          tiles_ok == tiles_all and tiles_all == 7,
-         "%d/%d golden pod tiles" % (tiles_ok, tiles_all))
+         "%d/%d golden pod tiles, both row regimes" % (tiles_ok, tiles_all))
 
     h1 = hashlib.sha256(open(win_path, "rb").read()).hexdigest()
     r1 = hashlib.sha256(repr([price_gate(*v) for v in grid[:200]]).encode()).hexdigest()
     r2 = hashlib.sha256(repr([price_gate(*v) for v in grid[:200]]).encode()).hexdigest()
-    gate("G7 determinism + recorded-window hash", r1 == r2 and len(h1) == 64,
-         "window sha256 %s" % h1[:16])
+    # Pinned digest: the recorded window is byte-exact data from terran.exe;
+    # a changed digest means changed authority and MUST fail the rung.
+    WINDOW_SHA = "c1b3712b6be6f5d3d9307776a0eb949d2156576341bcaf307b8529bbb64209b2"
+    gate("G7 determinism + recorded-window digest pinned", r1 == r2 and h1 == WINDOW_SHA,
+         "window sha256 %s%s" % (h1[:16], "" if h1 == WINDOW_SHA else " != pinned " + WINDOW_SHA[:16]))
 
 
 def main(argv=None):
