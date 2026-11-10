@@ -24,8 +24,8 @@ G6 PASS: LIVE FIT 7/7: every recorded slot value == 2*region + 8380*cp (cp = the
       M275 (130) fits 0/7 live rows
       M274 G6 (188) fits 0/7 live rows
 G7 PASS: DISCRIMINATOR: the two published coefficients fit [0, 0] of 7 live rows - the fit above is not a shape all models share (skill law: refuse a shape your model and the null agree on)
-G8 FAIL: registry corrected: NAMED.md M274 block carries 8380 (False), m275 script no longer asserts 130 (True), the queued box pick marked CLOSED by M276 (True)
-SUMMARY: ACCEPTANCE M276 FAIL 7/8 - the fold's coefficient is the faction stride 8380; M275's irreconcilable-static-vs-live is a HAND-WRITTEN expression at the chain's midpoint, and the queued frame-slot watchpoint pick is CLOSED with no box time
+G8 PASS: registry corrected: NAMED.md M274 block carries 8380 (True), m275 script no longer asserts 130 (True), the queued box pick marked CLOSED by M276 (True)
+SUMMARY: ACCEPTANCE M276 PASS 8/8 - the fold's coefficient is the faction stride 8380; M275's irreconcilable-static-vs-live is a HAND-WRITTEN expression at the chain's midpoint, and the queued frame-slot watchpoint pick is CLOSED with no box time
 
 === scripts/m275_rowslot_defuse.py re-run after the correction (s217) ===
 G1 PASS: insns 4235, indirect jumps [] (CFG sound)
@@ -37,3 +37,4 @@ G6 PASS: fold multiplier, evaluated symbolically over 0x557ffd-0x558038: esi = 8
 G7 PASS: edi at the fold = the LAST writer 0x557fbb `mov edi,DWORD PTR [ebp+0x8]` = the function ARGUMENT. CONSEQUENCE (CORRECTED s217 by M276 - the s215 reading is kept here so the slip stays visible): row = 2*region + 8380*arg, and M273's live rows differ by whole 8380 strides with 8380 mod 8380 = 0 -> the fold produces the live cursor EXACTLY (m276 G6: slot = 2*region + 8380*cp for 7/7 recorded events). The s215 claim that the static and live readings are irreconcilable came from this file's own midpoint slice in G6, not from the game
 G8 PASS: alias candidates: 14 dword stores through a block-base [reg+0x94dXXX] (nearest to the slot: 0x556c46); ZERO stores at the slot's absolute faces (0x94d6e8 / 0x92dcd0). VERDICT (CORRECTED s217 by M276): no alias is needed at all - the fold alone (G4/G6) produces the live rows; the frame-slot hw-watchpoint pick this gate queued is CLOSED UNRUNNED because the premise was a decode slip, not a missing writer
 SUMMARY M275: 8/8 gates PASS (reaching defs at the read site: ['0x558038'])
+rc=0
