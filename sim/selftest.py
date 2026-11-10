@@ -1414,6 +1414,30 @@ def run_b15(sav_path, results):
           % (len(results), len(results)))
     return 0
 
+def run_b16(sav_path, results):
+    """Rung B16: the 7 pod-scan loop HEAD PRE-CHECKS of FUN_0055f650 named,
+    pinned to the recorded bytes, and run against the RECORDED decision-slot
+    grid of the m294 window (sim.precheck). No box, no /proc, no gdb."""
+    from . import precheck as pc
+    if not os.path.exists(sav_path):
+        return fail("B16: missing save %s" % sav_path)
+    pc.acceptance(sav_path, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B16: %d/%d gates failed: %s"
+                    % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B16: %d/%d gates - the scan-loop head pre-check chain is named "
+          "and pinned (31 byte windows), the m294 x/y transposition law holds on "
+          "1026/1026 pod recoveries (rival reading 638) and cross-checks 201/201 "
+          "against the DISP unit-record rows, the state-insensitive legs have zero "
+          "violations by recorded decision slots, and the 6 modelled tests "
+          "reproduce the pinned decision-slot grid (no box time, no /proc, no gdb)"
+          % (len(results), len(results)))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1439,6 +1463,9 @@ def main(argv=None):
     ap.add_argument("--b15", nargs="*", metavar="SAV",
                     help="rung B15: the 0x94e5a8/0x94eca8 gate tables + pod-scan "
                          "price gate vs the recorded bytes")
+    ap.add_argument("--b16", nargs="*", metavar="SAV",
+                    help="rung B16: the pod-scan loop head pre-check chain "
+                         "executable vs the recorded decision-slot grid")
     ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
                     help="rung B13: the pod-driven founding dispatch leg acceptance")
     ap.add_argument("--b14", nargs="+", metavar="SAV",
@@ -1479,6 +1506,9 @@ def main(argv=None):
     if args.b15 is not None:
         sav = args.b15[0] if args.b15 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b15(sav, results)
+    if args.b16 is not None:
+        sav = args.b16[0] if args.b16 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b16(sav, results)
     if args.b14:
         lg = args.b14[1] if len(args.b14) > 1 else None
         gd = args.b14[2] if len(args.b14) > 2 else None

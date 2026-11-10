@@ -1,0 +1,33 @@
+B16 pod-scan loop-head PRE-CHECK CHAIN (FUN_0055f650 0x5638a9-0x563cbd)
+save m54b_clean.SAV 64x64 year 2150; recorded window m294_gate_rows_raw.txt
+chain pins matched 31/31 against the 284-instruction window file b16_precheck_window.txt
+transposition law: pods recovered 1026 (rival reading 638); DISP cross-check 201/201
+rival DISP cross-check: 0/198
+confusion (decision-slot, passes all 6 modelled checks) -> count
+  False False -> 14847
+  False True -> 8482
+  True False -> 193
+  True True -> 2128
+per-check pass&rec / fail&rec / pass&skip / fail&skip / solo-excludes
+  bounds    [2321, 0, 23219, 110] solo=0
+  class     [2215, 106, 18293, 5036] solo=0
+  b8_bit20  [2320, 1, 14018, 9311] solo=5775
+  elev      [2321, 0, 20025, 3304] solo=2181
+  region    [2129, 192, 17449, 5880] solo=185
+  occ       [2321, 0, 22940, 389] solo=212
+class flag mixed across a visit's decision rows: 0 visits; region: 0
+pod-flag theorem vs the save: class agrees 920 disagrees 106; region agrees 834 disagrees 192
+class-drift attribution: all-decision-slots 106, some 0
+pod-flag cross-tab (flag inferred from the rows vs the save pod tile): class AND region 106, class only 0, region only 86
+violations of a SOUND check by a recorded decision slot (must be 0):
+  bounds    0
+  elev      0
+  occ       0
+  ex class     pod=(16,26) slot=23 tile=(16,30) rec=[97, 65, 36, 1, 17, 0, 0, 4, 0, 0] pcls=1 preg=65
+  ex class     pod=(16,26) slot=23 tile=(16,30) rec=[97, 65, 36, 1, 17, 0, 0, 4, 0, 0] pcls=1 preg=65
+  ex b8_bit20  pod=(60,58) slot=0 tile=(60,58) rec=[136, 85, 6, 1, 65, 0, 0, 6, 160, 0] pcls=0 preg=1
+  ex region    pod=(16,26) slot=23 tile=(16,30) rec=[97, 65, 36, 1, 17, 0, 0, 4, 0, 0] pcls=1 preg=65
+  ex region    pod=(16,26) slot=23 tile=(16,30) rec=[97, 65, 36, 1, 17, 0, 0, 4, 0, 0] pcls=1 preg=65
+DECLARED UNMODELED: 0x4e3c00(owner,x,y) no-go (the pass-all-statics-but-no-row population), and the per-tile state drift between the graded save and the
+  recorded window (y2188+24): region byte3 / occ byte9 of a live tile move under
+  settlement, which is what the fail&rec counts of class and region measure.

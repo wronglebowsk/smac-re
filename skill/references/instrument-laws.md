@@ -790,3 +790,28 @@ Event-parity alone cannot see either shape (trap-8's non-discriminating PASS, cl
   from a slot/memory at a pc only the decision path reaches. The model fixed in
   m294 replays only same-slot decision rows (each carries its exact incoming
   best); the tail rows then serve as WIN/best accounting + DISP cross-check.
+
+## A print's field label is not the register's meaning (B16, s245)
+
+A printf that labels two locals `x=`/`y=` states a claim, not a fact: the labels are the
+author's guess. Settle them from the ADDRESSING that consumes the pair, in the same function:
+in `FUN_0055f650` the tile-record pointer is `ds:0x92ae14 + 44*(ds:0x692184*[ebp-0x8] +
+([ebp-0x4]>>1))` (prologue 0x55f768-0x55f77e, loop head 0x5638e2-0x563904) and the record
+view is `(W/2)*Y + X/2`, so **[ebp-0x8] is Y and [ebp-0x4] is X** - independently confirmed,
+because [ebp-0x4] is the value the map-width wrap helper `0x469010` returns. The m294
+instrument printed `x=[ebp-0x8] y=[ebp-0x4]`: transposed. Read under the corrected law, pod
+recovery from a visit's decision rows is consistent for 1026/1026 visits and agrees with the
+DISP rows (which print the pod straight from the unit record, `0x933278/0x93327a`) 201/201;
+under the printed labels only 638 visits recover a pod and 0 DISP rows agree. Two laws:
+(1) name a printed register pair from the formula that consumes it, and print which side is
+which; (2) a second, independently-sourced field is the cheap refuter - here it was already
+in the same log. A verdict computed only from slot/value fields (M294's) survives the
+mislabel; anything that reads positions off such rows must re-derive it.
+
+## Verify a 2D table per entry, not only where a fit selects (B16)
+
+`sim/podscan.RING_DX/RING_DY` was right all along, but only provable once the log's fields
+were corrected: check a ring/offset table against recorded (tile - centre) pairs for EVERY
+entry, not only the entries a downstream fit happens to select - the founding fit only ever
+exercised `esi==0`, the centre, where all deltas are 0, so it could never see a swap, a sign
+error or a transposed pair in the other 24 entries.
