@@ -7,13 +7,13 @@ description: "Use for SMAC .cvr Caviar voxel decode/render or SMAC RE."
 
 Sid Meier's Alpha Centauri (1999) `terran.exe` + `programs/*.cvr` live in
 `~/reverse/smac/` (durable). Full writeup: `~/reverse/smac/FINDINGS.md`.
-**The repo AND the Wine box live on n100 (192.168.1.79, user `n100`), not on whatever host a session
-starts on.** When the session host is another machine (e.g. the gateway 12900hk / 192.168.1.95),
-do NOT hunt for `~/reverse/smac` locally: drive the repo over SSH - `/home/paul/smacsh` pipes a script
-into `cd ~/reverse/smac && bash -l` (write the remote command as ONE heredoc; a multi-line wrapper call
-only forwards its first line), and scp helper scripts to `scratch/` there to run them. The live skill
-copy sits on the session host while the tracked copy is `skill/` in the repo, so a skill edit must land
-on both in the same session.
+**The repo AND the Wine box live on the `n100` machine (LAN user `n100`), NOT on whatever host a
+session starts on.** When the session host is another box (e.g. the gateway), do not hunt for
+`~/reverse/smac` locally: drive the repo over SSH - `/home/paul/smacsh` pipes a script into
+`cd ~/reverse/smac && bash -l` (write the remote command as ONE heredoc; a multi-line wrapper call
+only forwards its first line), and scp helper scripts to `scratch/` there to run them. The live
+skill copy sits on the session host while the tracked copy is `skill/` in the repo, so a skill
+edit must land on both in the same session.
 **Versioned at `github.com/wronglebowsk/smac-re` (private)**; a copy of this skill is tracked
 in-repo under `skill/` — after editing the skill, refresh it there and push. Game binaries,
 `programs/`, `smac.iso`, `glsmac/` and regenerable Ghidra/FLIC output are gitignored: never
