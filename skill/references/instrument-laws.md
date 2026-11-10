@@ -747,3 +747,23 @@ The rule, in the shape that makes it self-checking:
 - A "different index idiom" claim requires the window WIDENED to the atom's first
   writer, not a new family. Substitute the excluded seed into the free-atom result
   (a + 65b = 4190, x2 = 8380) as the falsifier - computed, never asserted.
+
+## Census-guard range and vacuous-window laws (M293, s240)
+- A register guard in a bp condition must admit the range the EVIDENCE says the
+  value lives in. Vtable/global pointers sit in the IMAGE (terran.exe base
+  0x400000; family vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8), heap
+  objects above 0x1000000. The dispatch-census guard `if $reg >= 0x1000000`
+  (M284-M287) therefore silenced exactly the classes under study: a real family
+  dispatch printed NOTHING and every "0 of N sites fired" became
+  instrument-silence, not absence (a CTRL pump row proves the window ran, NOT
+  that the family leg could print). Before arming, compute the bound from the
+  value table's own addresses; arm one row that MUST print for the class.
+- A window that "proves X absent inside" must CONTAIN X's leg: slicing a
+  hardcoded address table at 0x563d4e..0x563d81 to prove "no founder call" was
+  vacuous - the founder call sits at 0x563d86 on the leg entered by je-target
+  0x563d82, one address past the end, and the same table already recorded the
+  true jne target 0x563dfa that the prose contradicted. Assert control flow
+  instead: parse real branch targets over the whole body (and the writer set of
+  the gating local), and print PARSED vs EXPECTED tables - a detail line that
+  prints the EXPECTED table self-confirms (M293 had the parse bug and the
+  lying print in the same first cut).
