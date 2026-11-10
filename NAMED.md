@@ -1646,7 +1646,11 @@ dispatch_leg: esi 0 -> founder, or msg 0x2408 under msg_gate(global!=0 AND
 owner==human) (s240); 1..8 continue (no order); 9..24 walk (order 0x62 at
 walk_target = pod tile + ring entry, map-wrapped). The live ISS tile= field
 records the target X ONLY. ACCEPTANCE: python3 -m sim.selftest --b14
-programs/saves/m54b_clean.SAV -> PASS B14: 10/10 (evidence/
-b14_podscan.txt:21). DECLARED UNMODELED: 0x94e5a8/0x94eca8 tables, the
+programs/saves/m54b_clean.SAV -> PASS B14: 11/11 (evidence/b14_podscan.txt:23).
+s241 review round (both P1s CONFIRMED by bytes, fixed): the scan keeps
+best VAL [ebp-0x24]/best INDEX [ebp-0x84] with strict updates (full
+argmax, no first-better shortcut); candidates are X-WRAPPED (0x469010,
+call 0x5638b9) but Y BOUNDS-CHECKED (0x469060, call 0x5638d2) - Y never
+wraps; the ISS tile arg is the wrapped X only. DECLARED UNMODELED: 0x94e5a8/0x94eca8 tables, the
 0x4e3c00 no-go, the rec+8 bit-0x1000 zero-leg / FUN_005aff90 lazy value,
 the ISS target-Y field.

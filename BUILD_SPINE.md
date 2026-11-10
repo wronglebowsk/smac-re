@@ -323,7 +323,13 @@ the target-Y law is static-gated, DECLARED); (7) the table-swap rival (the dy
 table read into the X slot) reproduces 0 of 11; (8) the census-window ledger
 is count-strict 19->27 over its 10 op rows, endpoint == the recorded POST
 count; (9) the msg-gate case table + solo inertness (ds:0x920434=0 AND every
-row own=0 - structural per s240); (10) two runs -> identical sha256 and
+row own=0 - structural per s240); (10) the SELECTION itself, brute-forced
+on a fixed sample - scan_esi == max-value/lowest-index argmax everywhere,
+and the sample provably discriminates (200 tiles where first-better and
+argmax differ; added because Greptile P1 caught a first-better bug the
+founding fit could not see, the fit only ever checks esi==0), and the
+scan wraps X (0x469010) but BOUNDS-CHECKS Y (0x469060) - Y never wraps;
+(11) two runs -> identical sha256 and
 `python3 -m sim.podscan --sav <sav> --out <f>` exits 0. DECLARED UNMODELED
 (the fits passed without them, as in M291): the 0x94e5a8/0x94eca8 per-site
 gate tables, the 0x4e3c00 no-go, the rec+8 bit-0x1000 zero-leg and the lazy

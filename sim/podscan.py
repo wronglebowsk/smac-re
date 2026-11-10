@@ -26,6 +26,10 @@ only:
     table partitions them 9 found / 9 continue / 11 walk / 0 msg, every ISS
     row's recorded target-X equals walk_target(x, esi)[0] (11/11), and the
     table-swap rival reproduces 0 of 11.
+  * the SELECTION property (s241 review): scan_esi equals a brute-forced
+    argmax on a fixed sample, whose tiles provably discriminate argmax from
+    a first-better rule; scan candidates are X-wrapped (0x469010) but Y are
+    bounds-checked (0x469060) - Y never wraps.
 
 DECLARED UNMODELED (the fits passed without them, exactly as in M291): the
 0x94e5a8/0x94eca8 per-site gate tables (bypassed when value >= 2*(8-nearest)),
@@ -111,14 +115,24 @@ class Grid:
 
 def scan_esi(g, x, y, occ, own_gate=True):
     """M291's selection executable: the ring ENTRY INDEX of the STRICT
-    site-value argmax over the eligible entries, ties keeping the closer
-    entry (first index). Returns None if the pod's OWN tile is blocked.
+    site-value argmax over ALL eligible entries, ties keeping the closer
+    entry. The loop keeps the best VALUE in [ebp-0x24] (init 0) and the best
+    INDEX in [ebp-0x84], updating only on strictly greater (0x563c0f cmp +
+    0x563c11 jle + 0x563caa store), and 0x563cc3/0x563d0a BAIL on
+    best_val==0 or best_idx<0 - so returns None when the game never reaches
+    the dispatch, and NO first-better shortcut (s241 Greptile P1#1: the
+    game is a full argmax, not first-better).
+    X is map-WRAPPED (single-arg wrap helper 0x469010, call at 0x5638b9);
+    Y is NEVER wrapped - the raw sum goes to the validity helper 0x469060
+    (call at 0x5638d2), whose zero return skips the entry (s241 Greptile
+    P1#2, bytes scratch/m574/text.txt 0x5638af-0x5638dc).
     A site is self-argmax exactly when this returns 0."""
-    if g.blocked(x, y):
-        return None
-    v, cf, ob = g.val(x, y), g.catflag(x, y), g.own3(x, y)
-    for i in range(1, 25):
-        nx, ny = (x + RING_DX[i]) % g.W, (y + RING_DY[i]) % g.H
+    cf, ob = g.catflag(x, y), g.own3(x, y)
+    best_val, best_i = 0, None
+    for i in range(25):
+        nx, ny = (x + RING_DX[i]) % g.W, y + RING_DY[i]
+        if not (0 <= ny < g.H):
+            continue
         if g.catflag(nx, ny) != cf:
             continue
         if own_gate and g.own3(nx, ny) != ob:
@@ -127,9 +141,10 @@ def scan_esi(g, x, y, occ, own_gate=True):
             continue
         if (nx, ny) in occ:
             continue
-        if g.val(nx, ny) > v:
-            return i
-    return 0
+        v = g.val(nx, ny)
+        if v > best_val:
+            best_val, best_i = v, i
+    return best_i
 
 
 def msg_gate(global_flag, owner, human_fac):
@@ -237,6 +252,42 @@ def acceptance(sav_path, results, log_path=DEF_LOG, golden_path=DEF_GOLDEN,
     gate("G2 m289 golden self-argmax via sim scan",
          len(hits) == 7 and len(golden) == 7, "%d/7" % len(hits))
 
+    # G2b: the SELECTION itself, brute-forced (s241 Greptile P1#1: the
+    # founding tests only ever saw esi==0, so a first-better bug would
+    # pass them). Over a fixed sample of save tiles: scan_esi must equal
+    # an independently computed max-value/lowest-index argmax over the
+    # eligible positive entries, and the sample MUST contain discriminating
+    # tiles - >0 where two better candidates carry different values, so a
+    # first-better rule and the argmax differ there.
+    n_multi, g2b = 0, True
+    for yy in range(0, g.H, 3):
+        for xx in range(0, g.W, 2):
+            cf, ob, v0 = g.catflag(xx, yy), g.own3(xx, yy), g.val(xx, yy)
+            cands = []
+            for i in range(25):
+                nx, ny = (xx + RING_DX[i]) % g.W, yy + RING_DY[i]
+                if not (0 <= ny < g.H):
+                    continue
+                if g.catflag(nx, ny) != cf or g.own3(nx, ny) != ob:
+                    continue
+                if g.blocked(nx, ny) or (nx, ny) in bases:
+                    continue
+                cands.append((i, g.val(nx, ny)))
+            pos = [(i, v) for (i, v) in cands if v > 0]
+            want = None
+            if pos:
+                mv = max(v for (_, v) in pos)
+                want = min(i for (i, v) in pos if v == mv)
+            if scan_esi(g, xx, yy, bases) != want:
+                g2b = False
+            better = [v for (_, v) in cands if v > v0]
+            if len(better) >= 2 and max(better) != better[0]:
+                n_multi += 1
+    gate("G2b argmax property vs brute force + discriminating sample",
+         g2b and n_multi > 0,
+         "scan==brute-force on sample; %d tiles discriminate "
+         "first-better from argmax" % n_multi)
+
     # G3: the rivals FAIL THE SAME FIT (M291 G7): dropping the rec byte3
     # owner gate loses exactly fac1 (27,29); B10's row-major first-unoccupied
     # placeholder reproduces 0 of 7.
@@ -291,31 +342,31 @@ def acceptance(sav_path, results, log_path=DEF_LOG, golden_path=DEF_GOLDEN,
     # is ever followed by an ISS or HUBFOUND for its u.
     legs = {"found": 0, "continue": 0, "walk": 0, "msg": 0}
     last_disp = {}
+    prev_ev = None
     g5 = True
     for t, d in ev:
         if t == "DISP":
-            u = int(d["u"])
             legs[dispatch_leg(int(d["esi"]), False)[0]] += 1
-            last_disp[u] = d
+            last_disp[int(d["u"])] = d
         elif t == "ISS":
             u = int(d["u"])
             pd = last_disp.get(u)
             if (pd is None or int(pd["esi"]) != int(d["esi"]) or
                     dispatch_leg(int(d["esi"]), False)[0] != "walk"):
                 g5 = False
+            last_disp[u] = None  # CONSUME: an outcome may pair once (P2)
         elif t == "HUBFOUND":
             u = int(d["u"])
             pd = last_disp.get(u)
             if (pd is None or int(pd["esi"]) != 0 or
                     int(pd["x"]) != int(d["x"]) or int(pd["y"]) != int(d["y"])):
                 g5 = False
-    prev_hub = None
-    for t, d in ev:
-        if t == "HUBFOUND":
-            prev_hub = (int(d["x"]), int(d["y"]))
+            last_disp[u] = None  # CONSUME
         elif t == "FOUND":
-            if prev_hub != (int(d["x"]), int(d["y"])):
+            if (prev_ev is None or prev_ev[0] != "HUBFOUND" or
+                    prev_ev[1]["x"] != d["x"] or prev_ev[1]["y"] != d["y"]):
                 g5 = False
+        prev_ev = (t, d)
     g5 = (g5 and legs["found"] == 9 and legs["continue"] == 9 and
           legs["walk"] == 11 and legs["msg"] == 0)
     gate("G5 dispatch legs partition + pair the live rows", g5,
@@ -402,19 +453,25 @@ def acceptance(sav_path, results, log_path=DEF_LOG, golden_path=DEF_GOLDEN,
          "ds:0x920434=0 -> inert on all 29 rows; leg table complete")
 
     # G10: the module is runnable and deterministic: two `python3 -m
-    # sim.podscan` runs write byte-identical reports and exit 0.
+    # sim.podscan` runs write byte-identical reports and exit 0. Reports go
+    # to a unique temp dir, never beside the input save (s241 Greptile P2).
+    import shutil
+    import tempfile
     outs = []
     rc0 = True
-    for k in (0, 1):
-        fp = os.path.join(os.path.dirname(sav_path), ".b14_det%d" % k)
-        r = subprocess.run([sys.executable, "-m", "sim.podscan",
-                            "--sav", os.path.relpath(sav_path, ROOT),
-                            "--out", fp], cwd=ROOT,
-                           capture_output=True, text=True)
-        rc0 = rc0 and r.returncode == 0
-        if os.path.exists(fp):
-            outs.append(hashlib.sha256(open(fp, "rb").read()).hexdigest()[:16])
-            os.remove(fp)
+    tmpd = tempfile.mkdtemp(prefix="b14det")
+    try:
+        for k in (0, 1):
+            fp = os.path.join(tmpd, "det%d.txt" % k)
+            r = subprocess.run([sys.executable, "-m", "sim.podscan",
+                                "--sav", os.path.relpath(sav_path, ROOT),
+                                "--out", fp], cwd=ROOT,
+                               capture_output=True, text=True)
+            rc0 = rc0 and r.returncode == 0
+            if os.path.exists(fp):
+                outs.append(hashlib.sha256(open(fp, "rb").read()).hexdigest()[:16])
+    finally:
+        shutil.rmtree(tmpd, ignore_errors=True)
     gate("G10 module run twice, identical sha256",
          rc0 and len(outs) == 2 and outs[0] == outs[1], ",".join(outs))
 

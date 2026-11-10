@@ -713,9 +713,21 @@ Older sessions: `docs/sessions/sessions-219-219.md` (1 sessions). Read it only w
   23=(0,+4) 24=(0,-4); the ISS log tile= field is the target X ONLY (the bp
   at 0x563e3b printfs eax) - target-Y is static-gated law, DECLARED.
 - ACCEPTANCE: python3 -m sim.selftest --b14 programs/saves/m54b_clean.SAV ->
-  PASS B14: 10/10 (evidence/b14_podscan.txt:21). Invocation 3 - runs 1-2 died
-  on MY instrument (a stray code block; KeyError u on FOUND/DESTROY rows),
-  floors never touched.
+  PASS B14: 11/11 (evidence/b14_podscan.txt:23). The recorded file is from
+  the post-review invocation (invocation 3; 1-2 died on MY instrument -
+  a stray code block; KeyError u on FOUND/DESTROY rows - floors never
+  touched).
+- GREPTILE round 1 on #252: 2 P1s + 3 P2s, all resolved pre-merge. P1#1
+  CONFIRMED (scan_esi returned FIRST-better, the loop is a full argmax:
+  best [ebp-0x24]/[ebp-0x84], strict update 0x563c0f-0x563caa) - fixed
+  + new G2b (brute-forced argmax on a fixed sample; 200 sample tiles
+  discriminate first-better from argmax, so the gate would have caught
+  the bug). P1#2 CONFIRMED (the fit never exercised Y-out-of-range; the
+  loop head wraps X via 0x469010 and bounds-checks Y via 0x469060 - Y
+  NEVER wraps; scratch/m574/text.txt 0x5638af-0x5638dc) - fixed.
+  P2s: G5 pairing now CONSUMES its DISP row and pairs FOUND with the
+  IMMEDIATE HUBFOUND; G10 reports move to a unique tempdir; the split
+  NAMED cite joined. Gates 10 -> 11, PASS 11/11.
 - Parity numbers: m289 golden 7/7 self-argmax via the sim scan; rivals fail
   the SAME fit (no-owner-gate 6/7 loses exactly fac1(27,29); B10 row-major
   placeholder 0/7); m292 29 DISP rows partition 9 found / 9 continue / 11
