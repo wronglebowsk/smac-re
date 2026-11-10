@@ -1,5 +1,6 @@
-# NEXT_PROMPT.md - footing (s232, M287 4-neg w/ falsifier: in-game game MENU pane is NOT family (live
-# vptr 0x67919c at the click); FOUR paths measured (M284/M285/M286/M287), zero +0x4c dispatch. Next: ANALYSE)
+# NEXT_PROMPT.md - footing (s233, M288 static 5/5: +0x4c CLOSED - FUN_005f6aa3 reachable only via a live
+# family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
+# +0x12c/+0x60) both avoid the slot; 6 paths/creates measured, zero dispatch. Next: ANALYSE)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -56,25 +57,27 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open), s217-19: M276-M278, s220: B8, s221: M279, s222: M280, s223: B9, s224: M281, s225: M282, s226: B10, s227: M283.
-  Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
-  per-id §s196-§s215 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
-- RESULT blocks s208/210, s211 (M272), s211/213, s213/215 VERBATIM in `docs/pick-archive.md`
-  (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
+- ANSWERED (do not re-pick): M227-M283, **B1-B11** (M241 FAIL 2/5, #180 open).  Enumerations:
+  `docs/pick-archive.md` §trim-s209; numbers `NAMED.md`; M267-M273 RESULT blocks in the archive.
+  FUN_005f3f5b is NOT open - see M220.
 
 - Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
-  ANSWERED s228=M284, s229=M285 (chooser 0x672298 NOT family; 0/12 fired),
-  s231=M286 (REALLYQUIT family at click but 0/12, entry 0), s232=M287 (menu pane NOT family 0x67919c, 0/12 x2),
-  s227=M283 (17/17), s225=M282 (built as B10).  BUILD s230=B11
+  ANSWERED s227-M288 (B11, M283-M288; M288 closed +0x4c).  BUILD s230=B11
   (13/13: the queue law, `NAMED.md` §B11). NEW (M282 frontier): WHICH
   founder vector the recorded AI used - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
-  BOX PICKS, box UP: (M287) in-game game MENU PANE ELIMINATED - the bar is CHROME (in no
-  Script.txt pane); the GAME-row popup vptr read live 0x0067919c NOT FAMILY at the click
-  (vision-open; run 2 DIALOG_CUR=0), 0/12 sites x2, entry 0 -> not one of the 5 family classes.
-  FOUR click paths measured (M284 base, M285 chooser, M286 REALLYQUIT family-inline, M287 menu),
-  zero +0x4c dispatch: +0x4c is NOT on ANY click path.  NEXT: dialog CREATE-time (FUN_00405ef0
-  installs 0x67164c) or the Return-key path; M282 G5 (founder vector) still live. The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
+  BOX PICKS, box UP: M287 (last live pick) ELIMINATED the menu pane (bar is CHROME,
+  GAME-row popup vptr 0x0067919c NOT FAMILY live, 0/12 x2).  M288 (s233, STATIC-ONLY no box):
+  +0x4c CLOSED - FUN_005f6aa3 has ZERO direct callers, its only 5 refs are the family vtables'
+  +0x4c entries; CREATE-time (466 vptr installs in 72 fns, install-owner INTERSECT site-owner
+  = empty; ctor FUN_00405ef0 + FUN_005ee350/FUN_005f6b8c clean) and the Return-key path
+  (WM_KEYDOWN 0x100 -> FUN_005d1576 -> vtable +0x12c = 0x5d629d hotkey dispatcher ->
+  FUN_005cf43a -> vtable +0x60; WM_CHAR -> 0x5d15d5; WM_SYSKEYDOWN -> 0x5d1601; pump 0x5f1394
+  clean) contain NO +0x4c CALL dispatch (the one data load 0x5d632d feeds FUN_00631070's
+  hotkey-table+0x4c, not a dispatch).  The row callback lives INLINE in the pump (M286).
+  +0x4c is not on ANY click/key/create path.  NEXT: M282 G5 (founder vector, live box
+  question) or the next frontier the ledger names. 188-row cursor's caller OPEN (8380 strides);
+  NEVER bp mid-instruction (store+1 of an 8-B load crash-boxed the game, s213).
 
 ## LIVE FACTS / KIT
 

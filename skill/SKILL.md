@@ -667,15 +667,17 @@ Depth: `references/wine-operations.md`, `references/wine-headless-harness.md`
 
 ## Still open (leads)
 `references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
-**Dialog-family +0x4c click dispatch (M284-M287, s228-s232): FOUR live click paths now measured with zero
-+0x4c dispatch - base display (CPane, M284), production chooser (0x672298, not family, M285), the REALLYQUIT message
-dialog (0x67164c IS family: live vptr at the click, pump FUN_005f1394 ran, pane closed - the row callback is
-dispatched INLINE in the pump, NOT via the +0x4c slot, M286), and the in-game game MENU pane (0x67919c NOT family
-at the click, popup vision-verified open, M287: the console bar GAME/HQ/NETWORK/... is CHROME - in NO Script.txt
-pane - and the GAME-row popup is not a family instance either). The +0x4c slot target FUN_005f6aa3 is the dialog
-row-click dispatcher (FUN_005e7917 row finder over 0x18-stride rows + [ecx+0xa8] row-cb dispatch) but has never
-been observed entered from a live click. +0x4c is NOT dispatched on ANY click path - the remaining shapes are
-dialog CREATE-time (FUN_00405ef0 installs 0x67164c) or the Return-key/keystroke path. In-game MENU drive recipe:
+**Dialog-family +0x4c dispatch question CLOSED (M284-M288, s228-s233): the family +0x4c slot (FUN_005f6aa3,
+the dialog row-click dispatcher: FUN_005e7917 row finder over 0x18-stride rows + [ecx+0xa8] row-cb dispatch) is
+reachable ONLY through a live family +0x4c dispatch and NO reachable path takes it. Four live click paths
+(M284 base CPane, M285 chooser 0x672298 not family, M286 REALLYQUIT 0x67164c IS family - row cb INLINE in the
+pump FUN_005f1394, M287 menu pane 0x67919c not family, console bar GAME/HQ/... is CHROME) plus M288's static
+closure: FUN_005f6aa3 has 0 direct callers, its only 5 refs are the family vtables' +0x4c entries; dialog
+CREATE-time (466 family-vptr install sites in 72 fns, install-owner ∩ site-owner = ∅; ctor FUN_00405ef0 +
+callees FUN_005ee350/FUN_005f6b8c clean) and the Return-key path (WM_KEYDOWN 0x100 -> FUN_005d1576 -> vtable
++0x12c = 0x5d629d hotkey dispatcher -> FUN_005cf43a -> vtable +0x60; WM_CHAR -> 0x5d15d5; WM_SYSKEYDOWN ->
+0x5d1601; pump clean) contain NO +0x4c call dispatch (one data load 0x5d632d feeds FUN_00631070 hotkey-
+table+0x4c, not a dispatch). M288 evidence: scripts/m288_create_key_dispatch.py. In-game MENU drive recipe:
 the GAME row never OCRs (two frames measured GAME=(26,190) with NETWORK anchored y226, 18-px row stride);
 an open console bar inverts the MENU click to a close - close it before arming; Escape on the bare HUD after
 the menu raises REALLYQUIT (safe 'oops' row, M37).**
