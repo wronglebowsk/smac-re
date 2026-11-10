@@ -1,48 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-201-201.md` (1 sessions). Read it only when a question reaches back before session ## Session 202.
-
-## Session 202 (2026-11-02, M256/M257/M258 ANALYSE — the worth test's operands, and the per-region array family)
-
-Static fire: `ps` showed no terran.exe, so M255's box falsifier (does `FUN_0057ecf0` run on a LOAD) was
-not taken. Acceptance: `python3 scripts/m256_worth_operands.py` -> `SUMMARY PASS: 8/8 gates on terran.exe
-(static image, no box)`, rc=0, 8.2 s, ONE invocation -> evidence/m256_worth_operands.txt (8,441 B, 144
-lines). Two earlier invocations failed on the INSTRUMENT, not the claim: objdump pads the opcode column
-to 21 chars and prints at most SEVEN bytes, so a `{1,6}` byte-field quantifier eats the padding, the
-optional mnemonic group matches empty and 7 of 13 pinned pcs read as "missing" (the skill's "six opcode
-bytes" is a print cap, not a constant — live skill fixed); and 0x950564 is past the file image
-(terran.exe = 3,067,904 B, so the image ends at VA 0x6ed000) — a .bss table's row count is not statically
-readable.
-
-**M256 — the worth test behind the 7/8 verdict byte.** `cmp edx,ecx` at 0x5584b4, `jle 0x5584e3` ->
-boolean 0; the fall-through leg2 is `cmp eax,ecx` at 0x5584d8 (`jge` -> 0, else `mov ecx,0x1`); the legs
-are ANDed and OR'd at 0x5584eb with the 4-bit reason word [ebp-0x54], and `test eax,eax` at
-0x5584fe/0x558509 is the ZF that `sete dl` (0x55850e) consumes -> `add edx,0x7` -> the M253 store
-0x558516. LHS = 2 * ((DWORD[block+0x94d810] - DWORD[block+0x94d818] + [ebp-0x60]) * [ebp-0x3c])
-(0x55848f/0x558495/0x55849b/0x55849e/0x5584a2/0x5584a8); [ebp-0x3c] = BYTE[block+region+0x94e5a8], the
-M94 multiplier (0x558053 -> 0x55805d); [ebp-0x60] has 4 stores in FUN_00556690 (0x558010 reset,
-0x5580b9 fold accumulate, 0x558424, 0x558905) and the live one is 0x558424 = 3 + (ds:0x985afc > 75) +
-FUN_00531090(ds:0x985b30, 0), adjusted by ([block+0x94e488] > 4 ? -((ds:0x985ae8>>7)&2) : 0) and by
-(BYTE[block+region+0x94eca8] < 4), plus the fold's nonzero count [ebp-0x68]. Reason-word bits: bit3 =
-bit3 of WORD[0x94e7a8+row], bit2 = multiplier >= 0x14, bit1 = WORD[0x94eaa8+row] - WORD[0x94eba8+row]
-< 4, bit0 = multiplier nonzero with the 0x94eca8 byte < 2 (assembled 0x55842d-0x55848c).
-
-**M257 — the RHS operand.** WORD[0x94eaa8 + 2*region] (0x5584aa, region = [ebp-0x10]) plus
-WORD[0x94eaa8 + esi] (0x558452), summed at 0x5584b2; esi = [ebp-0x18] = 2*region + 188*arg1 (fold
-0x558002-0x558026, published 0x558038; arg1 = the pushed faction, callers 0x52094f and 0x59dd43). Region
-loop: [ebp-0x10] init 1 (0x557f9e), `inc ecx; cmp ecx,0x80; jl 0x557fb8` (0x558b1b-0x558b25) = 128
-regions. 0x94eaa8 refs image-wide = 4 (inc 0x51df61 FUN_0051dcb0; -10 0x564ab1 FUN_0055f650; the two
-reads here). OPEN: 188-byte rows vs 2 bytes/region — regions 94..127 pass the next row (max offset
-188*7 + 254 = 1570); one live read of both indexings settles it.
-
-**M258 — the family.** 0x94e4a8, 0x94e5a8, 0x94e628, 0x94e6a8, 0x94e7a8, 0x94e8a8, 0x94e9a8, 0x94eaa8,
-0x94eba8, 0x94eca8, 0x94ed28, 0x94eda8 (end 0x94ee28): 12 per-region arrays, every gap 0x80 (byte per
-region — B=97, 10, 6, 2, 79) or 0x100 (word per region — W=23, 22, 13 with 28 refs to the +1 high byte,
-2, 2, 4, 5), ZERO DWORD accesses anywhere, 128 entries each. RETRACTS the s201 NAMED row calling
-0x94e7a8 "flag bytes": it is a per-region WORD array. The 8-slot fold (0x558075-0x5583ac) walks
-WORD[0x950764+2*region] and BYTE[0x950664+region] stepped by 0x20bc, doubling per set bit of
-BYTE[block+0x94d44c]; its second row is 0x200 below (0x950564, itself a table base at 0x4f7a0a); both
-are .bss, so their extents are OPEN.
+Older sessions: `docs/sessions/sessions-202-202.md` (1 sessions). Read it only when a question reaches back before session ## Session 203.
 
 ## Session 203 (2026-11-02, **B4 BUILD** — the round economy is EXECUTABLE: `sim/base.py` + `sim/economy.py` reproduce the 12 idle rounds and the game's own HUD triple)
 
@@ -562,3 +520,48 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   (Rw+1)/2 asymmetry is a live edge on 64x64, unreachable bytes are the file's 0xCD slack).
   Next fire: BUILD (analyse_since_build=1) = B10, R2's new-game leg - write the rung into
   BUILD_SPINE.md FIRST, then build it (sim/, runnable acceptance, no box time).
+
+## Session 225 (2026-11-10, ANALYSE static, M282 PASS 7/7) - AI bases are founded by the SAME function as the player's: FUN_004e47d0, the only live count-incrementer; the sim has no founder because it has no action-dispatch leg
+- track_mode printed ANALYSE (analyse_since_build=1) -> NEW pick (B9 frontier): "who writes the
+  base array / founds AI bases (n_bases 18->26 over 40 turns)" - census pick, static-friendly.
+  ZERO box time; box untouched (terran.exe pid 3820435, TracerPid 0, state read via pgrep only).
+  `python3 scripts/m282_base_founder.py` -> **SUMMARY M282: 7/7 gates PASS**
+  (`evidence/m282_base_founder.txt`).
+- ANSWER: the base array is DAT_0095da10 (record stride 0x130 = 304 B = the .SAV 304-B stride),
+  count DAT_00985af4, cap 0x200 = 512 slots. **FUN_004e47d0(faction,x,y) is THE founder and the
+  ONLY live-game record creator**: guard `DAT_00985af4 < 0x200` (G1), `DAT_00985af4 = count+1`
+  @0x4e484a, new record at &DAT_0095da10 + old_count*0x130 (x short +0, y +2, faction bytes
+  +4/+5; G2), faction base counter DAT_0094e488[faction*0x82f] += 1 (0x82f*4 = 0x20bc = the
+  M280 faction-record stride - the founder is where per-faction base counts come from).
+  Exactly 3 callers (G3): FUN_004cca50 (the ONLY live vector), FUN_0059ce10 (sole caller
+  FUN_005a0fa0 = new-game/scenario placement), FUN_0059ec90 (faction-create; called by
+  FUN_005a0aa0, itself called by the AI mover FUN_00585720, the step executor FUN_00502cd0,
+  faction-energy FUN_005208f0, ...).
+- The LIVE entry splits into three same-founder legs (G5): player 'b' hotkey (FUN_00512450
+  case 0x62 -> FUN_004d1280 -> FUN_004cca50 -> founder), the in-game ACTION DISPATCHER
+  FUN_0052bce0 case **0x4408** -> FUN_004cca50 (the AI's founding rides this - the same
+  dispatcher that drains the unit-action queues FUN_005262e0/FUN_00526e10 and executes the
+  player's own move steps at case 0x4402), and the AI hub FUN_0055f650 -> FUN_004cca50
+  (shard_014; first-base placement for a faction). So there is NO separate AI founder: the
+  AI reaches the exact same FUN_004e47d0 through the same unit-action plumbing as the human.
+- Count-global census (G4): DAT_00985af4 has EXACTLY 12 writer sites / 11 functions - the
+  `+1` idiom exists ONLY in FUN_004e47d0 (0x4e484a) and in FUN_0059b830's scenario-table
+  rebuild loop (0x59b842/0x59b8c3, a load-time 0x200-entry array reconstruction, not live
+  play); the only decrement is 0x4e515d in FUN_004e4e10 (base destruction + compaction);
+  every other site stores 0 (init/reset families) - 0x52283f is a bare store whose exe
+  prelude `xor eax,eax; mov 0x985af0,eax; mov 0x985af4,eax` is verified from terran.exe
+  bytes (Ghidra text drops it). Cap consistency (G6): founder guard 0x200 AND loader loop
+  0x200 => 512 slots * 0x130 = 0x26000 bytes; the destruction compaction moves the LAST
+  record into the freed slot (the m46e "base array reorders during a watch" observation).
+- SIM GAP, now explained (G7): sim/ has no reference to the founder or case 0x4408; the B9
+  frontier line stays DECLARED (model const 18 vs recorded 18->26). The B3 engine replays
+  TURN-COMPLETE presses and never instantiates unit actions, so the founding leg that grows
+  n_bases in the real game simply does not exist in the model. A future BUILD rung can add a
+  minimal founder leg (colony-pod action -> new base record) if parity of n_bases is wanted.
+- ACCEPTANCE: `python3 scripts/m282_base_founder.py` -> `SUMMARY M282: 7/7 gates PASS`
+  (`evidence/m282_base_founder.txt`). Registry: NAMED.md M282.
+- OPEN (unchanged): box pick (dialog +0x4c dispatcher, box UP m54b_clean); the 64x64 odd-Rw
+  accessor stride quirk (M247's Rw>>1 vs (Rw+1)/2, live edge worth a census). New: which of
+  the three founder vectors (0x4408 dispatcher vs hub FUN_0055f650 vs the FUN_005a0aa0
+  chain) the recorded AI actually uses per founding event - a live-dispatch question, only
+  reachability is proven statically. Next fire: ANALYSE (analyse_since_build=2).

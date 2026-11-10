@@ -1297,3 +1297,23 @@ Acceptance: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`;
   delta is the finding (census pick), not a gate input.
 - Command: `python3 -m sim.selftest --b9 programs/saves/m54b_clean.SAV` -> `PASS B9: 7/7 gates`
   (`evidence/b9_golden_parity.txt`); `python3 -m sim.parity` CLI exit 0.
+
+## M282 (s225, 7/7 static) - AI bases are founded by the SAME function as the player's; FUN_004e47d0 is the only live base-array creator
+- BASE ARRAY = DAT_0095da10, record stride 0x130 (304 B, = the .SAV 304-B stride), count
+  DAT_00985af4, cap 0x200 (512 slots). FOUNDER = FUN_004e47d0(faction,x,y): guard
+  `count < 0x200`, `count = count + 1` @0x4e484a, writes new record at
+  &DAT_0095da10 + old*0x130 (x short +0, y +2, faction bytes +4/+5), faction base counter
+  DAT_0094e488[faction*0x82f] += 1 (0x82f*4 = 0x20bc = faction-record stride, M280).
+- CALLERS (exactly 3): FUN_004cca50 (LIVE: player 'b' hotkey case 0x62 -> FUN_004d1280;
+  action dispatcher FUN_0052bce0 case 0x4408; AI hub FUN_0055f650), FUN_0059ce10 (new-game
+  placement, sole caller FUN_005a0fa0), FUN_0059ec90 (faction-create, via FUN_005a0aa0
+  called by AI mover FUN_00585720 / step exec FUN_00502cd0 / energy FUN_005208f0).
+- COUNT WRITERS = 12 sites / 11 funcs: +1 idiom ONLY in the founder (0x4e484a) and the
+  load-time scenario-table rebuild FUN_0059b830 (0x59b842/0x59b8c3); -1 ONLY 0x4e515d
+  (FUN_004e4e10 destroy+compact, moves LAST record into freed slot = m46e reorder); all
+  other sites store 0 (0x52283f prelude `xor eax,eax` verified from exe bytes).
+- B9 FRONTIER EXPLAINED: sim has no founder and no case-0x4408 leg -> n_bases stays const
+  at the save's 18 while the real game grows to 26. Models replay TURN-COMPLETE presses
+  only; a colony-pod founding leg does not exist in B3.
+- ACCEPTANCE: `python3 scripts/m282_base_founder.py` -> SUMMARY M282: 7/7 gates PASS
+  (evidence/m282_base_founder.txt).
