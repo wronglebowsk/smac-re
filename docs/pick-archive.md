@@ -690,3 +690,9 @@ in `NAMED.md` §B5).
 
 - RESULT (s213, M273): VERBATIM now in `docs/pick-archive.md` §trim-s214 (8380 mod 188 = 108 corrects its 88). `NAMED.md` §M273.
 - RESULT (s214, M274): VERBATIM now in `docs/pick-archive.md` §trim-s215. `NAMED.md` §M274.
+
+## trim-s217 (RESULT block moved VERBATIM from NEXT_PROMPT.md at the s217 close)
+
+- RESULT (s215, M275, static): the UNSCALED read site's slot [ebp-0x18] has exactly ONE reaching def at 0x55844b - the fold 0x558038 - whose re-decoded arithmetic is **esi = 2·region + 130·arg** (arg = `[ebp+0x8]`; CORRECTS M256's 188×fac prose). But M273's live rows step by whole 8380 and **8380 mod 130 = 60 ≠ 0**: static and live are IRRECONCILABLE - the missing writer is an unmodeled alias/leg (G8: 14 block-band stores, none at the slot's faces). Queued box pick: hw-watchpoint the frame slot during the auto-manager. Census `scripts/m275_rowslot_defuse.py` 8/8 (`evidence/m275_defuse.txt`); `NAMED.md` §M275.
+
+

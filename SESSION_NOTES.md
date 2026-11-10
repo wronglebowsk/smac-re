@@ -1,45 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-196-196.md` (1 sessions). Read it only when a question reaches back before session ## Session 197.
-
-## Session 197 (2026-11-01, M245/M246/M247 ANALYSE — the tail's last three legs)
-
-`sudo -n python3 scripts/m245_tail_legs_census.py` -> `PASS M245: 5/5 gates` (rc=0; 3rd invocation:
-the 1st was 4/5 because G2 demanded that EXACTLY ONE save match the live 216 B — the box refuted the
-premise, 7/17 match because those saves come from one session without scrolling; the byte-for-byte
-equality is unchanged, the gate now asks for >=1 match and NOT all 17) -> evidence/m245_tail_legs.txt.
-`sudo -n python3 scripts/smac_preflight.py` -> PASS 14 invariants. Box: /proc reads only, terran.exe
-319926 TracerPid 0, no gdb.
-
-- M245 the 216-B leg (EOF-228..EOF-12) = 9 map-view objects x 6 fields. Codec loop
-  (shard_015.c:10807-10822): `puVar18 = &DAT_007cdecc; do FUN_00596620(*puVar18,..) while ((int)
-  puVar18 < 0x7cdeec); FUN_00596620(&DAT_008cda4c,..)` = 8 heap pointers (live 0x8f79e0, then
-  0x3b5f4e8… spaced 0x224b8) + 1 inline object. Fields (FUN_00596620's order): +0x1dd78 view id
-  (rows 0..7 = 0..7 on 17/17 saves, inline row = 1), +0x1dd74 active flag (set FUN_00469860
-  shard_008.c:5894; cleared by the codec's load leg shard_015.c:10845 when the [800,387] pair changes
-  and by 4 invalidators), +0x1dd70 bit flags (tested shard_008.c:8983/9033/9076/9318), +0x1dd98 = -6
-  while DAT_0091c18c < 1000 (5892), +0x1dd9c/+0x1dda0 centre tile (init W/2,H/2 5895-5898; set by
-  FUN_004739a0 :10117-10124). The window bounds +0x1ddcc..0x1ddc8 and origins +0x1dda4/+0x1dda8 are
-  DERIVED from the centre by FUN_00469860:5949-6017 and read by the click hit test FUN_00422060
-  (shard_001.c:14164-14183). Live read-back == 7/17 saves' 216 B byte for byte (10 differ); live
-  DAT_0091c188/c18c = 387/800 = the 8-B leg; Autosave 1 rows 0-1 centre (28,42) = University Base.
-- M246 the final 4 B = `local_8 = timeGetTime()` (FUN_00597ce0 body line 15) written by
-  `FUN_0064c9a0(&local_8,4,1,iVar2)` (line 44) AFTER `FUN_00596850(iVar2,1)` (line 42); the codec
-  never reads it. Δ(dword) vs Δ(mtime) ≤ 2.5 s on 5/5 same-session pairs (Autosave 2→1 31 s /
-  30,989 ms; m241_probe_A→B 16 s / 16,785 ms); 0x15c79939 sits on 3 files 486,979 s apart and
-  0x2db1b939 on 2 files 71,224 s apart -> stamped at save CREATION, not at file write.
-- M247 DAT_0092ae18 has 6 referencing functions; the only element accessors FUN_00582340/2360 index
-  `(param_1>>1) + DAT_0092ae18 + (DAT_0092ad9c>>1)*param_2` (shard_014.c:27392/27401) and `(Rw+1)/2`
-  appears once image-wide (the length, 27266). The builder FUN_0058ce00 (shard_015.c:4707-4747) walks
-  y < Rh, x = (y&1) step 2 < Rw, so its write set is exactly bytes 0..78 at 64x64 (Rw=Rh=13): slack =
-  Rh-1 when Rw is odd, else 0. The 12 slack bytes are `0xcd` in 17/17 saves (none in 0..78); both .MP
-  files have even Rw -> slack 0, no 0xcd.
-- OPEN: what the region byte VALUES mean (the builder takes terrain record +3 of the first of 9
-  sampled tiles whose +1 & 0xe0 > 0x5f, else 0 — shard_015.c:4716-4741; 0x3f/0x01/0x00/0x10 seen);
-  who allocates the ~140 KB view objects; the 7 mask copies at record +16..+43 still stand.
-- PITFALL: a byte-for-byte live-vs-file match gate must state what it discriminates. "Exactly one
-  file matches" is a premise about the STATE, not about the claim; unchanged state across saves
-  breaks it. Require >=1 match AND some files differ.
+Older sessions: `docs/sessions/sessions-197-197.md` (1 sessions). Read it only when a question reaches back before session ## Session 198.
 
 ## Session 198 (2026-11-01, M248/M249 ANALYSE — the region map's byte VALUES, and terrain record +3)
 
@@ -528,7 +489,6 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
 - Self-check win: my mental "8380 mod 130 = 100" was WRONG; the computed assert caught it (60).
   Numbers come from the script, never from my arithmetic - the gate asserted before shipping.
 
-
 ## Session 216 (2026-11-05, BUILD fire, B7 PASS 6/6) - the move slice: R2's move leg is now executable headless
 - `track_mode` said MODE=BUILD next_rung=B7 and the ladder was EXHAUSTED - so this fire first WROTE
   the rung into `BUILD_SPINE.md` (move slice: save-loaded units + the M27 gesture + B3/B4/B5/B6
@@ -545,3 +505,31 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
 - R2 in `MILESTONES.md` todo -> IN PROGRESS (move leg done; new-game + save-write legs todo).
   Next BUILD rung B8: the save WRITE leg (produce a .SAV-shaped image from sim state) or the
   new-game leg - the BUILD fire writes the rung first.
+
+## Session 217 (2026-11-10, ANALYSE static pick, M276 PASS 8/8) - the fold's coefficient IS the faction stride; M275's "irreconcilable" was a midpoint slice
+
+- PICK: M275's queued resolution - who writes the row slot [ebp-0x18] if the fold's `130*arg`
+  cannot make M273's live 8380-cursor? Answered STATICALLY, one census, ZERO box time.
+- FINDING: `scripts/m276_fold_stride.py` evaluates the chain 0x557ffd-0x558038 symbolically
+  (linear forms over two atoms; the 20-insn window writes neither): **esi = 8380*edi + 2*ecx**.
+  `mov eax,edi; shl 6; add eax,edi` (65) is only the first third - `lea eax,[edi+eax*2]` (131),
+  `shl eax,4; sub eax,edi` (2095), `lea esi,[ecx+eax*2]; shl esi,1` finish it. 2095 dwords x 4
+  = 8380 = the per-faction block stride the field atlas already records, so the auto-manager
+  indexes these arrays by faction block by construction.
+- LIVE FIT: M273's recorded UNSCALED rows replayed offline satisfy `slot = 2*s10 + 8380*cp`
+  for **7/7** events (cp = cur_player 1..7; deltas whole 8380, -50280 = -6*8380 at the
+  round-52->53 wrap). The rival published coefficients 130 and 188 fit **0/7** each - the
+  gate's discriminator.
+- INSTRUMENT: `m275_rowslot_defuse.py` G6 hand-wrote `2*(64+1)==130`. G6/G7/G8 now import this
+  evaluator, assert (8380,2,0), carry the correction in prose and mark the queued frame-slot
+  hw-watchpoint pick CLOSED UNRUNNED; m275 re-runs **8/8**.
+- ACCEPTANCE: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`
+  (`evidence/m276_fold.txt`, which also holds the m275 re-run). Registry: `NAMED.md` M276 plus
+  correction rows patched IN PLACE inside M274/M275 (not only here).
+- OPEN LEAD (new, from the bytes read for this census): the SCALED site 0x5584aa indexes
+  0x94eaa8 by `edi*2` with NO faction term while the UNSCALED 0x558452 indexes the same base by
+  the fold value WITH 8380*arg - whose row does each own, and does M274's "regions 94..127 spill
+  into the sibling verdict array 0x94eba8" survive for the unfactioned one? (static pick)
+- LAW -> skill `references/instrument-laws.md`: evaluate a multiplier chain. A hand-written
+  expression at a `lea`/`shl`/`sub` chain's midpoint published a coefficient 64x too small and
+  manufactured a static-vs-live contradiction that queued a box milestone.

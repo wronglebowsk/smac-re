@@ -61,16 +61,11 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 - ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open).
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
   per-id §s196-§s215 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
-- RESULT (s208) + RESULT (s210): VERBATIM now in `docs/pick-archive.md` §trim-s211 - the
-  0x6725ac/0x6725a4 one-vtable pair + POD block verdict, and the IMAGE-WIDE virtual-base
-  delta census (41 stores / 8 K / 31 fns, 177 installs / 33 vbtables) + the 0x678e40
-  stack-local class with the M267 retraction. Numbers in `NAMED.md` §M267-§M271.- RESULT (s211, M272): VERBATIM now in `docs/pick-archive.md` §trim-s213 - FUN_0057ecf0 does NOT run on a LOAD + the live .SAV chain + the mid-body-entry law. `NAMED.md` §M272.
-- RESULT (s211/s213): pointers VERBATIM in `docs/pick-archive.md` §trim-s216; numbers `NAMED.md` §M272-§M273.
+- RESULT (s208/s210), (s211, M272), (s211/s213) and (s213/s215) blocks moved VERBATIM to
+  `docs/pick-archive.md` (sections trim-s211, trim-s213, trim-s216, trim-s217); per-id numbers
+  in `NAMED.md` (M267-M273). Nothing here summarises them - open the archive section you need.
 
-- RESULT (s215, M275, static): the UNSCALED read site's slot [ebp-0x18] has exactly ONE reaching def at 0x55844b - the fold 0x558038 - whose re-decoded arithmetic is **esi = 2·region + 130·arg** (arg = `[ebp+0x8]`; CORRECTS M256's 188×fac prose). But M273's live rows step by whole 8380 and **8380 mod 130 = 60 ≠ 0**: static and live are IRRECONCILABLE - the missing writer is an unmodeled alias/leg (G8: 14 block-band stores, none at the slot's faces). Queued box pick: hw-watchpoint the frame slot during the auto-manager. Census `scripts/m275_rowslot_defuse.py` 8/8 (`evidence/m275_defuse.txt`); `NAMED.md` §M275.
-
-
-- Pick from (ANALYSE fires; the next BUILD fire takes **B6** - the headless run - from `BUILD_SPINE.md`):
+- Pick from (ANALYSE fires; the next BUILD fire takes **B8** - write the rung into `BUILD_SPINE.md` FIRST (R2's save-WRITE leg or the new-game leg), then build it):
   BOX PICKS, box UP and loaded: WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213) - see RESULT (s213); its follow-ups (static, no box): the 80x80/128x128 region counts 128/338 EXCEED the 94-slot row - who clamps the loop, and the 188-row cursor's caller (advances by whole 8380 strides; the fold's 188*fac term = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213) - break at the disassembled next insn.
 
 ## LIVE FACTS / KIT
@@ -130,6 +125,11 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
     with ZERO writers is LOAD-TIME data — verbatim: `docs/pick-archive.md` §s198.
 23. A VALUE SAMPLER IS NOT A STORE CENSUS (a same-value store leaves no trace) and a census PARSER is not a
     log — VERBATIM laws: skill `references/instrument-laws.md` (M241/M242, s192-s193).
+24. EVALUATE a multiplier chain, never SLICE it: a hand-written expression at the midpoint of a
+    `mov/shl/add/lea/sub` chain published a coefficient 64x wrong (s215's 130 where the chain says
+    8380) and manufactured a static-vs-live contradiction that queued a box pick. Symbolic
+    linear-form evaluation over the window, then fit it to the RECORDED live log AND show the rival
+    coefficients FAIL the same fit (M276 G3/G6/G7).
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 

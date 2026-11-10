@@ -703,3 +703,35 @@ interpretation: pruning shrinks the reachable set, which makes more constants pr
 more. And attribute a gate to a dead leg by removing ONE edge at a time from the full CFG — if the
 leg stops being reachable, that edge is a necessary gate; re-running the whole interpreter per edge
 is 200× the cost for the same answer.
+
+## EVALUATE a multiplier chain; never SLICE it (M276, s217)
+
+A compiler expands a constant multiply as a `mov/shl/add/lea/sub` chain, and a chain read up to its
+first `add` is not the multiply. s215's `m275_rowslot_defuse.py` G6 hand-wrote `2*(64+1)==130` from
+`mov eax,edi; shl eax,0x6; add eax,edi` and stopped there, while the window continues
+`lea eax,[edi+eax*2]` (131), `shl eax,4; sub eax,edi` (2095), `lea esi,[ecx+eax*2]; shl esi,1` — the
+coefficient is **8380**, 64× larger, and it is the per-faction block stride the field atlas already
+records. From the wrong 130 that session published "static and live are IRRECONCILABLE
+(8380 mod 130 = 60)" and queued a hardware-watchpoint box pick; M276 closed it UNRUNNED with no box
+time because the live rows had always fit the corrected form.
+
+The rule, in the shape that makes it self-checking:
+
+- Do not transcribe arithmetic into a gate's prose or into a Python expression. **Evaluate** the
+  window: every register carries a linear form `(coef_atom1, coef_atom2, const) mod 2**32`; implement
+  only the opcodes the window uses (`mov reg,reg|imm`, `shl`, `add`, `sub`, `lea` over a sum of
+  terms) and clobber to UNKNOWN on any memory load, partial-register write or unimplemented opcode.
+- Assert the atoms are WRITTEN ZERO times inside the window — otherwise the form is not exact — and
+  print the per-instruction state, so a mis-parse is visible in the log rather than in a document.
+- Identify each atom by its last writer BEFORE the window (`mov edi,[ebp+0x8]` = a parameter, not an
+  index). The register-semantics law applies to the INPUTS of a derivation, not only to a
+  breakpoint's printf.
+- Then fit the derived form to a **recorded** live log offline, and fit the rival published
+  coefficients to the same rows: 7/7 versus 0/7 is the discriminator (a fit every model passes proves
+  nothing). The log you need is usually already in `evidence/`.
+- Corollary for "who writes this field" puzzles: a static-vs-live contradiction is more often a
+  decode slip on one side than an unmodeled alias. Re-derive BOTH sides from bytes and from the
+  recorded log before arming a watchpoint for a "missing writer".
+- When a gate turns out to assert a wrong number, fix the ASSERTION (import the evaluator so the two
+  files cannot drift again), keep the superseded claim visible in the prose as the slip, and re-run
+  the superseded instrument so it ships green with its own correction.
