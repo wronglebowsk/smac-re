@@ -23,7 +23,7 @@ recorded 18-to-26 growth recoverable, with the -1 at turn 23 running through the
 destroyer (recorded events: t8 +1, t9 +1, t17 +1, t22 +2, t23 -1, t27 +1, t32 +2,
 t34 +1).  Faction and coordinates for each founding are ASSUMED (fewest-bases AI
 faction, first unoccupied in-bounds tile): the trace records n_bases only, and the
-live-dispatch question (which founder vector) stays open for a box pick.
+and the dispatch question was later CLOSED by M289/M290 (merged #241/#242: the HUB vector, own-tile-gated, founder args = the pod record); these two rules remain placeholders inside this rung - the executable law is sim/hubfound.py (rung B13).
 
 No /proc, no gdb, no Wine.  Deterministic: two runs give identical report sha256.
 """
@@ -115,7 +115,11 @@ def _ai_faction(led, human):
 
 
 def _tile(led, w, h):
-    """ASSUMED: the first in-bounds tile no base occupies (row-major)."""
+    """ASSUMED placeholder: the first in-bounds tile no base occupies
+    (row-major).  M290 REFUTED this as the real rule (the recorded foundings
+    rank 542-1691 of 2146 unoccupied land tiles in this order; the founding
+    tile is the POD's tile - see sim/hubfound.py, rung B13).  Kept so rung
+    B10's recorded curve acceptance stays reproducible."""
     occ = {(r["x"], r["y"]) for r in led.records}
     for x in range(1, w - 1):
         for y in range(1, h - 1):

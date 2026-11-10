@@ -1319,6 +1319,32 @@ def run_b12(sav_path, trace_path, results):
     return 0
 
 
+def run_b13(sav_path, log_path, trace_path, results):
+    """Rung B13: the pod-driven founding-dispatch leg (M290's law) fitted
+    against the M289 golden record - own-tile gate, pod-record founder args,
+    strict ledger replay, rivals, written image, determinism. No box."""
+    import os as _os
+    from . import hubfound as soh
+    for p in (sav_path, log_path, trace_path):
+        if not _os.path.exists(p):
+            return fail("B13: missing input: %s" % p)
+    soh.acceptance(sav_path, log_path, trace_path, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B13: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B13: %d/%d gates - M290's founding dispatch is executable: "
+          "the own-tile gate sends every distant target to msg 0x2408 and "
+          "founds none, 7/7 founder args are pod-record tuples, the strict "
+          "ledger 18+7-2=23 peak 24 fits the jsonl curve, B10's placeholder "
+          "and the ungated leg both fail the same fit, and the grown ledger "
+          "writes and re-parses (no box time, no /proc, no gdb)"
+          % (len(results), len(results)))
+    return 0
+
+
 def diff_ok(diffs, bo):
     """Only the pending dword (record-relative 0x4c) and the 10 slot dwords
     (0x50..0x77) may differ inside a queue-patched 304-B record; diffs are
@@ -1351,6 +1377,8 @@ def main(argv=None):
                     help="rung B11: the production-queue mechanics leg acceptance")
     ap.add_argument("--b12", nargs="+", metavar=("SAV", "TRACE"),
                     help="rung B12: the completion CREATE leg acceptance")
+    ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
+                    help="rung B13: the pod-driven founding dispatch leg acceptance")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
@@ -1375,6 +1403,15 @@ def main(argv=None):
             tr = os.path.join(REPO, "evidence",
                               "trace_m56_build_20261026_145157.jsonl")
         return run_b12(args.b12[0], tr, results)
+    if args.b13:
+        lg = args.b13[1] if len(args.b13) > 1 else None
+        tr = args.b13[2] if len(args.b13) > 2 else None
+        if lg is None:
+            lg = os.path.join(REPO, "evidence", "m289_gdb_raw.log")
+        if tr is None:
+            tr = os.path.join(REPO, "evidence",
+                              "trace_m289_20261110_071759.jsonl")
+        return run_b13(args.b13[0], lg, tr, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)
