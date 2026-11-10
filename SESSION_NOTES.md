@@ -698,3 +698,19 @@ Older sessions: `docs/sessions/sessions-220-225.md` (6 sessions). Read it only w
 - Box untouched (still s244: y2212 cnt30, TracerPid 0). Next pick: the 0x4e3c00 no-go (the
   8482-slot population is its measurement), or the OPEN 0x51dfe2 cell addr / 0x582cc0
   side-effects; the CHAIN-PICKS trio stays open.
+
+### 245c. Close-out audit trail (post-submit, same fire)
+
+- Audit finding on my own module, NOT yet fixed (context cap hit at close-out):
+  `sim.precheck.load_visits` keys the (pod,slot) set by `d["y"]`, i.e. the
+  TRANSPOSED leg - the same register-vs-label trap the B16 law it documents warns
+  about, so the law-fit compares recovery against a transposed target. The map
+  stays 1:1, so the sizes the confusion grid grades (25650 tests, the 8482/2128
+  cells) are unaffected either way; what the fit's 1026/1026 agreement PROVES is
+  looser than intended. Suggested fix for the next fire: key by `d["x"]` (the Y
+  leg stays in the tuple's first slot per the docstring's own convention) - and
+  only after showing the law still fits (recover_pod's ring-sum is symmetric, so
+  both orderings can recover the pod; the point is to test the pair the law names).
+- Chain step B ran FIRST per the operator amendment (s246 scheduled before the
+  review wait), so this fire submits the audit as a record instead of shipping an
+  unverified re-fit.
