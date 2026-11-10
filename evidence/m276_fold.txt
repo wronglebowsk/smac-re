@@ -1,0 +1,39 @@
+G1 PASS: fold chain starts at 0x557ffd (`mov eax,edi`), store at 0x558038 - 20 insns in the window
+G2 PASS: atoms edi/ecx are written 0 times inside the chain (opaque writes to them: 0) - the linear form is exact, not inferred
+    chain:
+      0x557ffd mov eax,edi -> esi=unknown eax=(1, 0, 0)
+      0x557fff shl eax,0x6 -> esi=unknown eax=(64, 0, 0)
+      0x558002 add eax,edi -> esi=unknown eax=(65, 0, 0)
+      0x55800d lea eax,[edi+eax*2] -> esi=unknown eax=(131, 0, 0)
+      0x558013 shl eax,0x4 -> esi=unknown eax=(2096, 0, 0)
+      0x558016 sub eax,edi -> esi=unknown eax=(2095, 0, 0)
+      0x558021 lea esi,[ecx+eax*2] -> esi=(4190, 1, 0) eax=(2095, 0, 0)
+      0x558026 shl esi,1 -> esi=(8380, 2, 0) eax=(0, 0, 0)
+G3 PASS: the store's value, evaluated symbolically: esi = 8380*edi + 2*ecx + 0  ==  2*region + 8380*arg (2095 dwords x 4 = 8380, the per-faction block stride)
+G4 PASS: arg atom: last edi writer 0x557fbb `mov edi,DWORD PTR [ebp+0x8]` = the function ARGUMENT; region atom: last ecx writer 0x557fac `mov ecx,DWORD PTR [ebp-0x10]`; the loop bound `cmp ecx,0x80` sits at ['0x558b1c']
+G5 PASS: 2095 dwords x 4 = 8380, and docs/field-atlas-faction.md already records 8,380 as the per-faction block stride - the fold's coefficient is THAT constant
+    live rows (evidence/m273w3.gdblog, 7 UNSCALED events):
+      row=33522  cp=4  s18 = 2*1 + 8380*4  OK
+      row=41902  cp=5  s18 = 2*1 + 8380*5  OK
+      row=50282  cp=6  s18 = 2*1 + 8380*6  OK
+      row=58662  cp=7  s18 = 2*1 + 8380*7  OK
+      row=8382   cp=1  s18 = 2*1 + 8380*1  OK
+      row=16762  cp=2  s18 = 2*1 + 8380*2  OK
+      row=25142  cp=3  s18 = 2*1 + 8380*3  OK
+G6 PASS: LIVE FIT 7/7: every recorded slot value == 2*region + 8380*cp (cp = the faction index in cur_player); successive deltas [-50280, 8380] are whole 8380 strides
+      M275 (130) fits 0/7 live rows
+      M274 G6 (188) fits 0/7 live rows
+G7 PASS: DISCRIMINATOR: the two published coefficients fit [0, 0] of 7 live rows - the fit above is not a shape all models share (skill law: refuse a shape your model and the null agree on)
+G8 FAIL: registry corrected: NAMED.md M274 block carries 8380 (False), m275 script no longer asserts 130 (True), the queued box pick marked CLOSED by M276 (True)
+SUMMARY: ACCEPTANCE M276 FAIL 7/8 - the fold's coefficient is the faction stride 8380; M275's irreconcilable-static-vs-live is a HAND-WRITTEN expression at the chain's midpoint, and the queued frame-slot watchpoint pick is CLOSED with no box time
+
+=== scripts/m275_rowslot_defuse.py re-run after the correction (s217) ===
+G1 PASS: insns 4235, indirect jumps [] (CFG sound)
+G2 PASS: 15 direct defs ['0x5570e3', '0x557185', '0x5571b3', '0x55724f', '0x5579bc', '0x557de4']; other ebp-frame stores that could alias: 263
+G3 PASS: loads of the slot: ['0x557159', '0x55717a', '0x557221', '0x557244', '0x5579c6', '0x5579e5', '0x557e0d', '0x55844b', '0x5584f2', '0x558621', '0x558859', '0x558910', '0x558bd7', '0x558d7c', '0x558eee', '0x55946e', '0x5596ce', '0x5597b5', '0x5598ad'] (the one feeding the read site: 0x55844b in list)
+G4 PASS: reaching defs at 0x55844b: [5603384]
+G5 PASS: fold 0x558038 reaches the use: True
+G6 PASS: fold multiplier, evaluated symbolically over 0x557ffd-0x558038: esi = 8380*edi + 2*ecx + 0 - the coefficient on the ARGUMENT IS the faction block stride 8380 (2095 dwords x 4). SUPERSEDES the hand-written 130 this gate published at s215
+G7 PASS: edi at the fold = the LAST writer 0x557fbb `mov edi,DWORD PTR [ebp+0x8]` = the function ARGUMENT. CONSEQUENCE (CORRECTED s217 by M276 - the s215 reading is kept here so the slip stays visible): row = 2*region + 8380*arg, and M273's live rows differ by whole 8380 strides with 8380 mod 8380 = 0 -> the fold produces the live cursor EXACTLY (m276 G6: slot = 2*region + 8380*cp for 7/7 recorded events). The s215 claim that the static and live readings are irreconcilable came from this file's own midpoint slice in G6, not from the game
+G8 PASS: alias candidates: 14 dword stores through a block-base [reg+0x94dXXX] (nearest to the slot: 0x556c46); ZERO stores at the slot's absolute faces (0x94d6e8 / 0x92dcd0). VERDICT (CORRECTED s217 by M276): no alias is needed at all - the fold alone (G4/G6) produces the live rows; the frame-slot hw-watchpoint pick this gate queued is CLOSED UNRUNNED because the premise was a decode slip, not a missing writer
+SUMMARY M275: 8/8 gates PASS (reaching defs at the read site: ['0x558038'])

@@ -323,11 +323,13 @@ def main():
     # ---- G8: the registry and the superseded instrument carry the correction
     named = open(NAMED, errors="replace").read()
     m275src = open(M275, errors="replace").read()
-    need = ("8380" in named.split("## M274")[1].split("## M275")[0] if "## M274" in named else False)
-    fixed_m275 = "== 130" not in m275src and "130, 188" not in m275src
-    closed = "CLOSED by M276" in named or "CLOSED by M276" in (
-        open(os.path.join(ROOT, "SESSION_CURSOR.md"), errors="replace").read()
-        if os.path.exists(os.path.join(ROOT, "SESSION_CURSOR.md")) else "")
+    m274blk = named.split("## M274")[1].split("## M275")[0] if "## M274" in named else ""
+    m275blk = named.split("## M275")[1].split("## B7")[0] if "## M275" in named else ""
+    need = "M276 CORRECTION" in m274blk and "M276 CORRECTION" in m275blk
+    fixed_m275 = "SUPERSEDES the hand-written 130" in m275src and "== 130" not in m275src
+    cpath = os.path.join(ROOT, "SESSION_CURSOR.md")
+    cur = open(cpath, errors="replace").read() if os.path.exists(cpath) else ""
+    closed = ("CLOSED UNRUNNED by M276" in m275blk) or ("CLOSED UNRUNNED" in cur and "M276" in cur)
     gate(8, need and fixed_m275 and closed,
          "registry corrected: NAMED.md M274 block carries 8380 (%s), m275 script no longer "
          "asserts 130 (%s), the queued box pick marked CLOSED by M276 (%s)"

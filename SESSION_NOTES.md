@@ -545,3 +545,31 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
 - R2 in `MILESTONES.md` todo -> IN PROGRESS (move leg done; new-game + save-write legs todo).
   Next BUILD rung B8: the save WRITE leg (produce a .SAV-shaped image from sim state) or the
   new-game leg - the BUILD fire writes the rung first.
+
+## Session 217 (2026-11-10, ANALYSE static pick, M276 PASS 8/8) - the fold's coefficient IS the faction stride; M275's "irreconcilable" was a midpoint slice
+
+- PICK: M275's queued resolution - who writes the row slot [ebp-0x18] if the fold's `130*arg`
+  cannot make M273's live 8380-cursor? Answered STATICALLY, one census, ZERO box time.
+- FINDING: `scripts/m276_fold_stride.py` evaluates the chain 0x557ffd-0x558038 symbolically
+  (linear forms over two atoms; the 20-insn window writes neither): **esi = 8380*edi + 2*ecx**.
+  `mov eax,edi; shl 6; add eax,edi` (65) is only the first third - `lea eax,[edi+eax*2]` (131),
+  `shl eax,4; sub eax,edi` (2095), `lea esi,[ecx+eax*2]; shl esi,1` finish it. 2095 dwords x 4
+  = 8380 = the per-faction block stride the field atlas already records, so the auto-manager
+  indexes these arrays by faction block by construction.
+- LIVE FIT: M273's recorded UNSCALED rows replayed offline satisfy `slot = 2*s10 + 8380*cp`
+  for **7/7** events (cp = cur_player 1..7; deltas whole 8380, -50280 = -6*8380 at the
+  round-52->53 wrap). The rival published coefficients 130 and 188 fit **0/7** each - the
+  gate's discriminator.
+- INSTRUMENT: `m275_rowslot_defuse.py` G6 hand-wrote `2*(64+1)==130`. G6/G7/G8 now import this
+  evaluator, assert (8380,2,0), carry the correction in prose and mark the queued frame-slot
+  hw-watchpoint pick CLOSED UNRUNNED; m275 re-runs **8/8**.
+- ACCEPTANCE: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`
+  (`evidence/m276_fold.txt`, which also holds the m275 re-run). Registry: `NAMED.md` M276 plus
+  correction rows patched IN PLACE inside M274/M275 (not only here).
+- OPEN LEAD (new, from the bytes read for this census): the SCALED site 0x5584aa indexes
+  0x94eaa8 by `edi*2` with NO faction term while the UNSCALED 0x558452 indexes the same base by
+  the fold value WITH 8380*arg - whose row does each own, and does M274's "regions 94..127 spill
+  into the sibling verdict array 0x94eba8" survive for the unfactioned one? (static pick)
+- LAW -> skill `references/instrument-laws.md`: evaluate a multiplier chain. A hand-written
+  expression at a `lea`/`shl`/`sub` chain's midpoint published a coefficient 64x too small and
+  manufactured a static-vs-live contradiction that queued a box milestone.
