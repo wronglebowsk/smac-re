@@ -1,7 +1,7 @@
 {
- "pid": 3820435,
+ "pid": 267191,
  "state_before": {
-  "year": 2153,
+  "year": 2150,
   "year_start": 2100,
   "year_limit": 2600,
   "turn_no": 0,
@@ -9,11 +9,11 @@
   "player_mask": 65288,
   "cur_player": 3,
   "mode_flags": 0,
-  "turn_flags": 2,
+  "turn_flags": 0,
   "sema_done": 0,
   "sema_mp": 0,
   "n_bases": 18,
-  "pid": 3820435,
+  "pid": 267191,
   "bases_ours": 1,
   "units_ours": 6
  },
@@ -53,7 +53,7 @@
   "type": 0,
   "order": 0,
   "mpused": 0,
-  "flags": 0
+  "flags": 67108864
  },
  "gate_after": [],
  "cls_after": 8,
@@ -63,5 +63,5 @@
    42
   ]
  ],
- "energy": 75
+ "energy": 69
 }
