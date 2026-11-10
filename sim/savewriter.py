@@ -52,14 +52,18 @@ def modeled_spans():
 
 
 def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
-                lift_all=False):
+                lift_all=False, bases_override=None, orig_n_bases=None):
     """Recompose the container. Defaults are the model values read from the loaded image,
     so an unmutated build is the identity map iff every layout constant is right.
     lift_all=True builds the rival 'pure re-emitter' (composes regions, lifts every byte);
     unit_len= is the rival with a perturbed record stride."""
     d = sv.data
     ulen = so.UNIT_LEN if unit_len is None else unit_len
-    n_units, n_bases = sv.n_units, sv.n_bases
+    n_units = sv.n_units
+    if bases_override is not None:
+        n_bases = len(bases_override)
+    else:
+        n_bases = sv.n_bases
     year = sv.year if year is None else year
     cur = _u32(d, OFF_CUR) if cur is None else cur
     tf = _u32(d, OFF_TF) if tf is None else tf
@@ -106,9 +110,30 @@ def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
                 x, y = struct.pack("<H", moves[i][0]), struct.pack("<H", moves[i][1])
             rec[0:4] = x + y
         out += rec
-    # base array (pass-through bodies today), tail to EOF
-    out += d[sv.bases_off:sv.bases_off + so.BASE_LEN * n_bases]
-    out += d[sv.bases_off + so.BASE_LEN * n_bases:]
+    # base array: pass-through bodies unless bases_override is given (rung B10).
+    # A grown ledger composes new 304-B records (x u16 +0, y u16 +2, faction +4/+5,
+    # M282) and re-anchors the tail after the ORIGINAL count, so a founded image is
+    # the original file with exactly BASE_LEN * grown records added.
+    if bases_override is None:
+        out += d[sv.bases_off:sv.bases_off + so.BASE_LEN * n_bases]
+        out += d[sv.bases_off + so.BASE_LEN * n_bases:]
+    else:
+        orec = sv.n_bases if orig_n_bases is None else orig_n_bases
+        if len(bases_override) < orec:
+            raise ValueError("bases_override shorter than orig count %d" % orec)
+        for i in range(len(bases_override)):
+            if i < orec:
+                rec = bytearray(d[sv.bases_off + so.BASE_LEN * i:
+                                   sv.bases_off + so.BASE_LEN * (i + 1)])
+            else:
+                rec = bytearray(so.BASE_LEN)
+            b = bases_override[i]
+            struct.pack_into("<H", rec, 0, int(b["x"]) % 0x10000)
+            struct.pack_into("<H", rec, 2, int(b["y"]) % 0x10000)
+            rec[4] = b["own4"] % 256
+            rec[5] = b["fac"] % 256
+            out += rec
+        out += d[sv.bases_off + so.BASE_LEN * orec:]
     return bytes(out)
 
 

@@ -156,3 +156,29 @@ exits 0 and writes the report. No box time, no /proc, no gdb.
 | R1 | **this track** — B1..B6 |
 | R2 | IN PROGRESS - B8 save-WRITE leg DONE (s220); new-game leg todo |
 | R3 | needs the R2 legs; golden-trace parity |
+
+**B10 - the base-founder/destroyer leg (R2's new-game leg, first executable piece).**
+`sim/basefound.py`: the M282 base-array ledger - founder FUN_004e47d0(faction,x,y)
+(guard count less than 0x200; append a 304-B record at array start + old_count*0x130,
+x u16 +0, y u16 +2, faction bytes +4/+5; count = count + 1) and destroyer FUN_004e4e10
+(count-1 with COMPACTION - the LAST record moves into the freed slot, the m46e
+"base array reorders during a watch" law) - plus the golden-curve pairing that presses
+the B3 engine the recorded trace's own turn count and applies the trace's OWN per-turn
+n_bases delta through the leg (the gate derives the 8 events from the rows: t8 +1,
+t9 +1, t17 +1, t22 +2, t23 -1 (a real destruction), t27 +1, t32 +2, t34 +1).
+`python3 -m sim.selftest --b10 programs/saves/m54b_clean.SAV` must print PASS B10 with:
+(1) founder law - a founding appends one 304-B record at the END, count +1, own4/fac
+bytes = the faction, x/y in-bounds, the 0x200 guard refuses a 513th founding;
+(2) destroyer compaction - destroying slot k moves the LAST record into k (record
+equality), count -1; (3) golden n_bases curve - the recorded 18->26 is recovered on
+every one of the trace's 41 snapshots; B9's no-leg shape keeps 18 and the
+all-events-on-turn-0 shape diverges at t0 - both rivals fail the same fit;
+(4) a WRITTEN founded image - savewriter composes the grown ledger (records above the
+original count compose as zero + x/y/faction; records below stay byte-identical), the
+only prefix byte that changes is the bases-count dword, the tail is byte-identical,
+and the image re-parses (n_bases 19; the zero-named record is invisible to the shape
+scan - found 18, declared); (5) decode_save's walk sees the grown image exactly like
+the original (its 64x64 limitation is pre-existing, see s226 notes); (6) two runs ->
+identical sha256 and `python3 -m sim.basefound --sav <sav> --trace <tr> --out <f>`
+exits 0; (7) a flooded 512-cap ledger writes with a byte-identical tail.
+No box time, no /proc, no gdb.

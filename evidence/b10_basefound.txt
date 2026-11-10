@@ -1,0 +1,20 @@
+events {8: 1, 9: 1, 17: 1, 22: 2, 23: -1, 27: 1, 32: 2, 34: 1} | final recorded 26 model 26 | year 2190 | sha256 d8ce1f17ca265d1c
+  ok   constants CAP 0x200 BASE_LEN 304 offsets 0/2/4
+  ok   found() appends 304-B record x@0 y@2 fac@4/5 rest zero
+  ok   destroy(1) compacts LAST into slot 1 (count-1)
+  ok   destroy out-of-range refused
+  ok   0x200 guard refuses the 513th founding, count stays 512
+  ok   events derived from the trace (t8 +1 t9 +1 t17 +1 t22 +2 t23 -1 t27 +1 t32 +2 t34 +1)
+  ok   all 40 snapshots agree on n_bases (model 26, recorded 26)
+  ok   year pairing through B3 unchanged (2190)
+  ok   RIVAL no-leg (B9 shape) keeps 18, 32 snapshots diverge
+  ok   RIVAL all-events-on-turn-0 diverges at t0 (model 26 vs recorded 18)
+  ok   B9 pairing still green on the same trace (0 missing)
+  ok   founded image == original + one 304-B record (only the bases-count dword changes in the prefix [72], record bytes and tail byte-identical)
+  ok   override path with no growth is byte-exact identity
+  ok   written image re-parses (n_bases 19, record 18 x/y/own4/fac read back, shape-found 18 declared)
+  ok   decode_save's 64x64 walk sees the grown image exactly like the original (rc 1 == rc 1; the walk hardcodes the 80x80 map-trailer count offset and pre-splits on 64x64 saves, so --sections fails on both - B8's sec equality still holds)
+  ok   two-runs-identical-sha256 d8ce1f17ca265d1c
+  ok   command python3 -m sim.basefound exit-0 + report rc=0
+  ok   flooded 512-cap image grows by 494 records, tail byte-identical
+PASS B10: 18/18 gates - the M282 founder/destroyer leg: record semantics, compaction, the 0x200 guard, the recorded 18-to-26 n_bases curve (40/41 snapshots), a written founded image with a byte-exact tail, flooded to the cap, sha256 d8ce1f17ca265d1c (no box time, no /proc, no gdb)

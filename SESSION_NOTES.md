@@ -1,48 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-202-202.md` (1 sessions). Read it only when a question reaches back before session ## Session 203.
-
-## Session 203 (2026-11-02, **B4 BUILD** — the round economy is EXECUTABLE: `sim/base.py` + `sim/economy.py` reproduce the 12 idle rounds and the game's own HUD triple)
-
-`python3 -m sim.selftest --replay evidence/m44d_idle.json` → `PASS B4: 9/9 gates on m44d_idle.json`
-(rc=0, 1.3 s, ONE invocation → `evidence/b4_economy.txt`; the `:N` below are that file's lines).
-B1/B2/B3 re-ran green on the same tree (10/10, 7/7, 6/6): the new `--replay` dispatch keys on the
-trace's shape (a JSON object with a `rounds` key = an economy trace, JSONL = the turn trace), so the
-B3 path is untouched. Invocation 1 FAILED 8/9 on gate G5 and that failure is the finding below.
-
-- **Idle replay (G1-G3, `:17-19`).** m44d's 12 rounds are a PRE-FOUNDING state: our faction (3) owns
-  no base in any round — the trace's own `owners` map has no "3" key (`evidence/m44d_idle.json:138`) —
-  so gross = Σ base+0xfc = 0, upkeep = 0, net = 0, and `matched=12/12` states with every per-round
-  delta 0 against the recorded energy 15; the harness's own `deltas_per_round.energy3` = 0.0
-  (`evidence/m44d_idle.json:811`). The recorded economy-pane OCR agrees: on the 3/12 rounds where the
-  panel is legible, Gross Income / Total Costs / NET INCOME all read "0/turn"
-  (`evidence/m44d_idle.json:150`).
-- **The triple the GAME computed (G6-G7, `:22-23`).** On the recorded post-founding state the engine's
-  (gross, upkeep, net) == (2, 2, 0) == the game's own globals `0x745734`/`0x744f28`/`0x7457dc` on both
-  recorded rounds (`evidence/m46e_econ.json:56`), energy 19 → 19 == apply(net) with ledger 0, and both
-  aggregator detail arrays reproduce byte-for-byte: per-base upkeep 0x744f2c, 75 entries, nonzero only
-  at base 72 (`evidence/m46e_econ.json:102`) and the 39-wide item counts 0x745738 (`:61`).
-- **Where the money comes from (G8, `:24`).** Our base's completed-facility bitmap — the dword at
-  base+0x8c = 458, recorded live at `evidence/m46e_econ.json:16215` — decodes to ids {1,3,6,7,8};
-  `data/alpha.json` `#FACILITIES` column 3 (alpha.txt:590's upkeep field) at line id−1 gives
-  0,0,1,1,1 AND the names match (Headquarters, Recycling Tanks, Recreation Commons, Energy Bank,
-  Network Node); raw Σ 3, and with the recorded disabled list (item 8) 2 == the recorded 0x744f28.
-  G9 (`:25`): dropping the disabled list gives (2,3,−1), taking gross from +0x100 gives (0,2,−2), and
-  indexing alpha without the +1 gives (2,3,−1) — only the chosen model matches the recorded triple.
-- **CORRECTION (G4-G5, `:20-21`).** The base NAME FIELD IS NOT 20 BYTES: 3 of the 18 bases in every
-  shipped save ("Morgan Energy Monopoly", "U.N. Court of Justice", "Valley of the Faithful") carry
-  names up to 22 chars, and `scripts/m46_econ.py:106` reads `r[19:39]` — the harness truncates them,
-  which is why invocation 1's seam gate failed on records 7/8/17 of all 17 saves. The field is
-  NUL-terminated inside 32 B (sim/save.py's own window): 0/311 records lack the NUL, longest name 22.
-  G4 decodes the recorded 76-dword live read and reproduces 13/13 of the harness's own field values.
-- **OPEN (printed at `:14-17`, not graded).** alpha's upkeep column reproduces the five live-pinned
-  item costs but NOT the four later values M46 read from the live table: Fusion Lab alpha 3 vs live 4,
-  Quantum Lab 4 vs 3, Nanoreplicator 6 vs 4, Quantum Converter 5 vs 6 — the runtime item table's row
-  order is not alpha's past id ~8, so `sim/economy.upkeep_table` is ASSUMED beyond the pinned five.
-  Also ASSUMED: the bitmap's width (only the 4 bytes at +0x8c are a recorded read — ids 32..38 can
-  never be set), the gifts term, and the spending ledger (both 0 on an idle round).
-- Pitfall: a harness's own field-read WIDTH is not evidence of the field's width — check the file's
-  own NUL padding, or a seam gate catches it 30 minutes later. No box time; terran.exe stayed down.
+Older sessions: `docs/sessions/sessions-203-203.md` (1 sessions). Read it only when a question reaches back before session ## Session 204.
 
 ## Session 204 (2026-11-02, M259-M261 ANALYSE, static) — the terrain record's +16..+43 band is the per-FACTION copy of its +8 mask; the ~140 KB map views are static .bss, not malloc'd; the 0x679f98 class's 15 unique slots and its two ctor screens are named
 
@@ -565,3 +523,39 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   the three founder vectors (0x4408 dispatcher vs hub FUN_0055f650 vs the FUN_005a0aa0
   chain) the recorded AI actually uses per founding event - a live-dispatch question, only
   reachability is proven statically. Next fire: ANALYSE (analyse_since_build=2).
+
+## Session 226 (2026-11-10, BUILD, B10 PASS 18/18) - the M282 founder/destroyer leg is BUILT: sim/basefound.py recovers the recorded 18->26 n_bases curve and a founded save image round-trips
+- track_mode printed BUILD (analyse_since_build=3, next_rung=B10) -> wrote the B10 rung into
+  BUILD_SPINE.md FIRST, then built it. ZERO box time; box untouched (pgrep only, per kickoff).
+  `python3 -m sim.selftest --b10 programs/saves/m54b_clean.SAV` -> **PASS B10: 18/18 gates**
+  (`evidence/b10_basefound.txt`); B8 10/10 and B9 7/7 regressions GREEN after the savewriter
+  change (checkpoint fa4b0a7).
+- BUILT: `sim/basefound.py` (Ledger = founder FUN_004e47d0 + destroyer FUN_004e4e10 +
+  events-from-trace pairing; CLI --sav --trace --out) and a savewriter grown-ledger path
+  (`bases_override`/`orig_n_bases`): records below the original count stay byte-identical,
+  new records compose as zero + x/y/faction, the tail re-anchors after the ORIGINAL count,
+  and the modeled header writes the GROWN count - the only prefix byte that changes.
+- THE LEG: founder (M282: guard count<0x200, append at old_count*0x130, x u16 +0, y +2,
+  faction +4/+5, count+1) and destroyer (count-1 @4e515d + COMPACTION: LAST record into the
+  freed slot). The pairing presses the B3 engine the trace's own 40 turns and applies the
+  trace's OWN 8 derived deltas (t8 +1, t9 +1, t17 +1, t22 +2, t23 -1, t27 +1, t32 +2, t34 +1)
+  through the leg: recorded 18->26 recovered on ALL 40 turn snapshots (the B9 declared
+  frontier is now MODELED), and the t23 -1 runs through the DESTROYER - the recorded run
+  really destroyed a base (23->22) mid-window.
+- LAWS proven: the 0x200 guard refuses a 513th founding; destroy(k) moves the LAST record
+  into k (record equality - the m46e "array reorders" law as code); write-through of a
+  founded image is byte-exact except the bases-count dword; the image re-parses (n_bases 19,
+  record 18 read back; its zero name makes it shape-invisible: found 18, DECLARED - the real
+  game names bases later); a flooded 512-cap image keeps its tail byte-identical;
+  determinism (sha256 d8ce1f17).
+- RIVALS: no-leg (B9) shape keeps 18 -> 32 divergences; all-events-on-turn-0 diverges at t0;
+  both fail the same curve.
+- FOUND (pre-existing, NEW OPEN): decode_save --sections hardcodes the 80x80 map-trailer
+  count offset and FAILS rc=1 on every 64x64 save ("no 52/304 split of a 0-byte region" -
+  on m54b_clean itself); B8's sec() equality never noticed because both sides fail
+  identically. Small follow-up: read the count at the 64x64-correct offset.
+- ASSUMED (declared in the dump): founding FACTION (fewest-bases AI faction) and COORDS
+  (first unoccupied in-bounds tile) - the golden trace records n_bases only; which founder
+  vector the recorded AI used per event stays the OPEN box question (M282 G5).
+- OPEN: box pick (dialog +0x4c dispatcher, box UP m54b_clean); the 64x64 odd-Rw accessor
+  quirk; decode_save's 64x64 section walk. Next fire: ANALYSE (cadence reset by merged B10).
