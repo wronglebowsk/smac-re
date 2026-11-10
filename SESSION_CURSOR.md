@@ -1,1 +1,1 @@
-M294 | gate law predicts every dispatch from printed rows - MERGED #257 (main ab8d4b0) | merged? YES | next: s245 pre-check chain or B16
+B16 | scan-loop head pre-check chain NAMED+EXECUTABLE: `python3 -m sim.selftest --b16 programs/saves/m54b_clean.SAV` -> PASS B16 7/7 (evidence/b16_precheck_chain.txt) | merged? NO (branch milestone/b16) | next: 0x4e3c00 no-go (the 8482 pass-static-no-row population) or the 0x51dfe2 cell addr / 0x582cc0 side-effects
