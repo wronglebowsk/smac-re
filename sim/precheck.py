@@ -4,7 +4,7 @@
 FUN_0055f650 scan loop 0x5638a9-0x563cbd: every slot runs the tests below
 BEFORE the B15 price gate; a failing test jumps straight to the loop tail
 0x563cb3, so the slot prints a GROW row with tail garbage ($esi = slot/x, the
-M294 tail law) and NEVER a decision (GDEEP/GACC) row. Parity target: which
+M294 tail law) and NEVER a decision (GDEEP/GACC) row. NOTE (s246, Greptile #258 P1): passing the whole chain is NOT sufficient to print a row - the value-vs-best skip `cmp esi,eax / jle 0x563cb3` at 0x563c09-0x563c11 runs after the pre-checks and before GDEEP at 0x563c3d (the accept-bypass `jge 0x563ca7` at 0x563c38 prints GACC instead), so pass-and-no-row (BASE 8482) is the UNION of no-go rejects and value<=best skips, never the no-go reject set alone. Parity target: which
 slots of each recorded hub visit printed a decision row at all
 (evidence/m294_gate_rows_raw.txt, m294 window: m54b_clean lineage y2188+24).
 
@@ -34,7 +34,8 @@ THE [ebp-0x58] / [ebp-0x34] ORIGIN (the pick's questions 2 and 3):
   podx = x16 @0x933278+52u stored [ebp-0x18] at 0x55f72d, pody = x16 @0x93327a+52u
   stored [ebp-0x14] at 0x55f740. ds:0x692184 is the RECORD-ROW multiplier (W/2 for
   the 44-B record view) and the >>1 side is X - so [ebp-0x4] = X, [ebp-0x8] = Y.
-  [ebp-0x40] = BYTE[0x92ae81 + 16*BYTE[0x98adac + 52*type]] (0x55f74f-0x55f765):
+  [ebp-0x40] = BYTE[0x92ae81 + 144*BYTE[0x98adac + 52*type]] (0x55f74f-0x55f765:
+  the lookup byte scaled by 9 (lea edi,[eax+eax*8]) then 16 (shl edi,4) - stride 0x90):
   the unit TYPE's required-class byte.  [ebp-0x74] = the POD tile's own water flag
   (0x55f783-0x55f79c).  [ebp-0x34] = BYTE[tileview(pod)+3], the POD region, stored
   once at 0x55f7a5 and never written again before the loop -> the gate's region IS
@@ -48,7 +49,7 @@ scripts/m294_gate_row_census.py:76/89 labels the two legs TRANSPOSED - `x=` is
 *(int*)($ebp-0x8) (the Y leg, the multiplied side) and `y=` is *(int*)($ebp-0x4)
 (the X leg, the >>1 side). Read a GDEEP/GACC tile as (x=row.y, y=row.x).
 
-UNMODELED / DECLARED: 0x4e3c00's no-go predicate; the per-slot state drift
+UNMODELED / DECLARED: 0x4e3c00's no-go predicate; the value>best skip at 0x563c11 (the other no-row producer, see NOTE); the per-slot state drift
 between the graded save (y2150) and the recorded window (y2188+24).
 """
 import collections
@@ -296,8 +297,10 @@ def report_text(sav_path, raw=DEF_RAW, win=DEF_WIN):
     ap("save %s %dx%d year %d; recorded window %s" %
        (os.path.basename(sav_path), sv.width, sv.height, sv.year,
         os.path.basename(raw)))
+    matched = sum(1 for pc, want, _ in PINS
+                  if b["pins"].get(pc) == " ".join(want.split()))
     ap("chain pins matched %d/%d against the %d-instruction window file %s" %
-       (len(PINS), len(PINS), len(b["pins"]), os.path.basename(win)))
+       (matched, len(PINS), len(b["pins"]), os.path.basename(win)))
     ap("transposition law: pods recovered %d (rival reading %d); DISP cross-check %d/%d"
        % (a["pods"], b["rival"]["pods"], a["disp_ok"], a["disp"]))
     ap("rival DISP cross-check: %d/%d" % (b["rival"]["disp_ok"], b["rival"]["disp"]))

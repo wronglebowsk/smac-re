@@ -668,7 +668,7 @@ Older sessions: `docs/sessions/sessions-220-225.md` (6 sessions). Read it only w
   occ byte9&0x20, no-go `call 0x4e3c00(owner,X,Y)` >= 0 (M294's (x,y,owner) order corrected
   in NAMED: the pushes at 0x56395d-0x563962 put owner first).
 - The pick's three questions: (2) [ebp-0x58] is written at 0x563814 as ([ebp-0x40]==1),
-  [ebp-0x40] = the unit TYPE's required-class byte BYTE[0x92ae81+16*BYTE[0x98adac+52*type]];
+  [ebp-0x40] = the unit TYPE's required-class byte BYTE[0x92ae81+144*BYTE[0x98adac+52*type]] (144 = lea*9 then shl4; stride corrected s246 per Greptile #258);
   the `cmp ecx,eax / jne 0x563f18` at 0x563812-0x563817 gates the WHOLE scan on its equality
   with the POD tile's own water flag [ebp-0x74] (0x55f783-0x55f79c) - THEOREM the sim uses:
   required class == classflag(pod tile). (3) the elevation band is the top two bits of

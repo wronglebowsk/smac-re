@@ -9,6 +9,8 @@ ranges the B16 pin gate reads are filtered out of that aligned stream:
                      class, pod tileview (the record formula), pod region
   0x5637d0-0x563990  the loop prelude (the [ebp-0x58]/[ebp-0x74] class gate)
                      and the 7 loop-head pre-checks
+  0x563bf0-0x563c60  the decision-emit tail: value-vs-best skip 0x563c0f-0x563c11,
+                     GDEEP at 0x563c3d, the accept-bypass jge 0x563c38
 
 Writes evidence/b16_precheck_window.txt: 'PC<TAB>mnemonic' lines.
 """
@@ -21,12 +23,13 @@ EXE = os.path.join(REPO, "terran.exe")
 OUT = os.path.join(REPO, "evidence", "b16_precheck_window.txt")
 LO, HI = 0x55f650, 0x55f7c0
 LO2, HI2 = 0x5637d0, 0x563990
+LO3, HI3 = 0x563bf0, 0x563c60
 LINE = re.compile(r"^\s+([0-9a-f]{6,8}):\t([0-9a-f ]{2,23})\t(.*)$")
 
 
 def main():
     r = subprocess.run(["objdump", "-d", "-M", "intel", "--start-address=0x55f650",
-                        "--stop-address=0x563990", EXE],
+                        "--stop-address=0x563c60", EXE],
                        capture_output=True, text=True)
     if r.returncode:
         raise SystemExit("objdump failed: " + r.stderr[:200])
@@ -36,11 +39,11 @@ def main():
         if not m:
             continue
         pc = int(m.group(1), 16)
-        if LO <= pc <= HI or LO2 <= pc <= HI2:
+        if LO <= pc <= HI or LO2 <= pc <= HI2 or LO3 <= pc <= HI3:
             rows.append((pc, " ".join(m.group(3).split())))
     with open(OUT, "w") as f:
         f.write("# B16 pin window: FUN_0055f650 prologue 0x55f650-0x55f7c0 and\n")
-        f.write("# the scan-loop pre-check chain 0x5637d0-0x563990 (terran.exe .text,\n")
+        f.write("# the scan-loop pre-check chain 0x5637d0-0x563990 and the decision-emit tail 0x563bf0-0x563c60 (value-vs-best skip 0x563c0f-0x563c11; terran.exe .text,\n")
         f.write("# objdump from the function entry). Format: PC<TAB>mnemonic\n")
         for pc, t in rows:
             f.write("%08x\t%s\n" % (pc, t))

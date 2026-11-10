@@ -57,9 +57,11 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   +0x4c CLOSED (M284-M288; live half INVALID s240): NAMED ## M284-M288. NEVER bp mid-instruction (s213 crash).
 - **THE PICK (s245): the no-go `call 0x4e3c00(owner,X,Y)` (0x563963) - the LAST un-named leg of B16's chain.**
   STATIC-FIRST: `scripts/fn.py 0x4e3c00` + `field_census.py`/`name_global.py` over its body, its globals and its
-  early returns; what makes it return >= 0 is the finding. The measurement that arbitrates it: **8482** (pod,slot)
-  tests pass all 6 modelled checks yet printed NO decision row (`BASE["conf"]` in sim/precheck.py) - a rule is
-  right when it predicts exactly that set (and leaves the 2128 accepted-pass + 0 bounds/elev/occ violations alone).
+  early returns; what makes it return >= 0 is the finding. The measurement that arbitrates it: **8482** (pod,slot) pass all 6 modelled checks yet print NO decision row
+  (`BASE["conf"]`). S246 fix (Greptile #258 P1): that is the MISSING-ROW population = no-go rejects UNION the
+  value>best skip `jle 0x563cb3` (0x563c0f-0x563c11, pinned in the window 0x563bf0-0x563c60); a no-go rule must
+  predict a SUBSET of it (2128 accepted-pass + 0 bounds/elev/occ violations untouched); exact fit needs the
+  value>best path modelled jointly.
   READER LAW FIRST: those rows' `x=`/`y=` are TRANSPOSED (B16) - use `sim.precheck.load_visits`/`recover_pod`, which
   already apply it. If a live probe is wanted, re-derive scripts/m294_gate_row_census.py's guards (M293 law).
   OPEN kept: 0x582cc0 side-effects + the value-indexed 0x51dfe2 cell addr (## M294); CHAIN-PICKS trio. M293 guards,

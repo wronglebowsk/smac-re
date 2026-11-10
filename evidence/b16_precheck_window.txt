@@ -1,5 +1,5 @@
 # B16 pin window: FUN_0055f650 prologue 0x55f650-0x55f7c0 and
-# the scan-loop pre-check chain 0x5637d0-0x563990 (terran.exe .text,
+# the scan-loop pre-check chain 0x5637d0-0x563990 and the decision-emit tail 0x563bf0-0x563c60 (value-vs-best skip 0x563c0f-0x563c11; terran.exe .text,
 # objdump from the function entry). Format: PC<TAB>mnemonic
 0055f650	push ebp
 0055f651	mov ebp,esp
@@ -251,3 +251,37 @@
 00563988	shl edx,0x4
 0056398b	sub edx,esi
 0056398d	lea esi,[ebx+edx*2]
+00563990	shl esi,1
+00563bf1	jl 0x563af3
+00563bf7	mov ebx,DWORD PTR [ebp-0x34]
+00563bfa	mov eax,DWORD PTR [ebp-0x8]
+00563bfd	mov ecx,DWORD PTR [ebp-0x4]
+00563c00	push eax
+00563c01	push ecx
+00563c02	call 0x46e770
+00563c07	mov esi,eax
+00563c09	mov eax,DWORD PTR [ebp-0x24]
+00563c0c	add esp,0x8
+00563c0f	cmp esi,eax
+00563c11	jle 0x563cb3
+00563c17	mov edx,DWORD PTR [ebp-0x8]
+00563c1a	mov eax,DWORD PTR [ebp-0x4]
+00563c1d	push edx
+00563c1e	push eax
+00563c1f	call 0x4e3620
+00563c24	mov edi,DWORD PTR ds:0x8f0d34
+00563c2a	mov ecx,0x8
+00563c2f	sub ecx,edi
+00563c31	add esp,0x8
+00563c34	shl ecx,1
+00563c36	cmp esi,ecx
+00563c38	jge 0x563ca7
+00563c3a	mov edi,DWORD PTR [ebp-0x48]
+00563c3d	mov dl,BYTE PTR [edi+ebx*1+0x94e5a8]
+00563c44	test dl,dl
+00563c46	je 0x563ca7
+00563c48	cmp DWORD PTR [edi+0x94e488],0x2
+00563c4f	jl 0x563ca7
+00563c51	mov eax,DWORD PTR [ebp-0x8c]
+00563c57	xor ecx,ecx
+00563c59	mov cl,BYTE PTR [edi+ebx*1+0x94eca8]
