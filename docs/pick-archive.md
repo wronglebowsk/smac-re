@@ -762,3 +762,14 @@ carries the compressed rules and cites this section)
 line carries the token inside a STRING, so a bare slice cuts mid-string (SyntaxError cites the OTHER file's lines); exec'd names sit NESTED at `_ns["_ns"]["dst_regs"]`. `## M277` occurs
 TWICE in NAMED.md (a cross-ref) - registry gates anchor the FULL header. `x and re.search(...)`
 puts a Match in res; sum() dies - `bool()` regex clauses.
+
+
+## s244-trim (VERBATIM from NEXT_PROMPT §INSTRUMENTS 2)
+
+```
+2. Writer/flag chain — silent bps or hw watchpoints + a prediction from live memory + a read-back: `m94_table_watch.py`
+   (4 hw watchpoints on any 4 dwords), `m97_credit_watch.py`, `m100_mult_watch.py`, `m102_rebuild_at_hit.py`,
+   `m103_d_rebuild.py`, `m92_tail_census.py`, `m95_pay_sites.py`, `m98_advance_budget.py`, `m117_gate_take.py` — each
+   prints pc+new+round+cp, names the writer by containment (ghidra_out/index.csv); `--predict` = model table, no
+   touch; flags via `--help` first.
+```

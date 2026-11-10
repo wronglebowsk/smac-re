@@ -778,3 +778,15 @@ constants flipped, max->min, branch inverted) must each disagree. B15 caught two
 this way: a register-carry bug (edx at 0x563c8e carried the dl stored 48 insns earlier -> the tiles
 ceiling is 6*(site_score+1), NOT 6*(ring_idx+1)) and a bool-vs-raw field read (byte == 0x18, not truthy).
 Event-parity alone cannot see either shape (trap-8's non-discriminating PASS, closed form edition).
+
+## Loop-tail register attribution law (M294, s244)
+- A shared loop tail reads whatever the LAST writer left: if the loop head has
+  eligibility pre-checks that jump straight to the tail, a register that is "the
+  value" on the gate path is the slot counter / an x-coord on the skip paths.
+  M294's GROW@0x563cb3 printed $esi="value" for every slot: 30,149 slots chained
+  garbage (a slot index that exceeds best looks like a missing GDEEP row). Rule:
+  register reads at a shared tail are valid ONLY for the flow paths that reach it
+  through the pc you instrumented - cross-validate per-path, or print the value
+  from a slot/memory at a pc only the decision path reaches. The model fixed in
+  m294 replays only same-slot decision rows (each carries its exact incoming
+  best); the tail rows then serve as WIN/best accounting + DISP cross-check.

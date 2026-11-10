@@ -1,7 +1,6 @@
-# NEXT_PROMPT.md - footing (s243 close: B15 = gate tables NAMED + pod-scan price gate executable vs
-# RECORDED BYTES (sim/gatetables.py 7/7, zero box; names/law/cites NAMED ## B15: site_score 0x94e5a8,
-# site_gate 0x94eca8, published_window_id ds:0x920434). Law: grade closed forms against BYTE INTERPRETERS
-# of recorded windows, not only events. Next: pod-walk census RE-ARMED printing the gate rows. BUILD = B16.)
+# NEXT_PROMPT.md - footing (s244 close: M294 = the B15 gate law LIVE-VERIFIED - every dispatch predicted
+# from printed rows (2129 visits / 260 accepts / 0 disagreements, evidence/m294_gate_rows.txt PASS); scan-
+# loop PRE-CHECKS + FUN_0051dcb0 caller/al SETS NAMED (## M294); tail-$esi law -> skill instrument-laws. B16.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
 §CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
 
@@ -17,7 +16,7 @@ finished by ~150k tokens is not finished at all.** Counted in TOOL CALLS:
 - **30-40** STOP MEASURING: an ungreen acceptance IS the finding — write blocker + number, merge nothing.
 - **40-50** closing order, TERSE (see CLOSING ORDER; the caps there bind).
 
-Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes appends/patches.
+Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes patch/append.
 **Batch: 5 static milestones per census script, 1 box milestone per batch — doc headroom, not capability, is the cap.** Caps (BYTES, what `budget` prints): NEXT_PROMPT warn 12,000/fail 16,000 — CLOSE at <= 12,000; SKILL.md
 warn 55,000 (keep near 44 k, always-loaded under the 60 k ritual); SESSION_NOTES warn 110 k. Split rule: settled text
 VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budget`.
@@ -31,18 +30,17 @@ box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick
 
 ## THE LEDGER
 
-Merged M54A-M293 + B0-B15 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
+Merged M54A-M294 + B0-B15 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
 1. **accept_ready.py** = readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
    base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm** (screen fixes in TRAPS).
-2. Writer/flag chain — silent bps or hw watchpoints + a prediction from live memory + a read-back: `m94_table_watch.py`
-   (4 hw watchpoints on any 4 dwords), `m97_credit_watch.py`, `m100_mult_watch.py`, `m102_rebuild_at_hit.py`,
-   `m103_d_rebuild.py`, `m92_tail_census.py`, `m95_pay_sites.py`, `m98_advance_budget.py`, `m117_gate_take.py` — each
-   prints pc+new+round+cp, names the writer by containment (ghidra_out/index.csv); `--predict` = model table, no
-   touch; flags via `--help` first.
+2. Writer/flag chain — silent bps or hw watchpoints + a prediction from live memory + a read-back:
+   the m94/m97/m100/m102/m103 + m92/m95/m98/m117 family (VERBATIM: `docs/pick-archive.md` §s244-trim)
+   — each prints pc+new+round+cp, names the writer by containment (ghidra_out/index.csv); `--predict`
+   = model table, no touch; flags via `--help` first.
 3. Static-first kit (zero box time): `field_census.py` (a global's shape from its addressing form + index math),
    `name_global.py` (every reader/writer + containment), `m118_flag_never_set.py` (gate satisfiability: test sites, OR
    immediates, register bit ops, save-carry), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]` (objdump window;
@@ -56,17 +54,20 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 - ANSWERED (do not re-pick): M227-M293 + B1-B15 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS. FUN_005f3f5b NOT open (M220). DIALOG
   +0x4c CLOSED (M284-M288; live half INVALID s240): NAMED ## M284-M288. NEVER bp mid-instruction (s213 crash).
-- **THE PICK:** pod-walk census RE-ARMED printing the B15 gate rows: at every ISS/HUBFOUND/FOUND print
-  `[blk+0x94e5a8+region]`, `[blk+0x94eca8+region]`, verdict, `[blk+0x94e488]`, region, case (the 3
-  row-dependent winners = primary targets, `evidence/b15_gate_tables.txt` G5). M293 guards law binds.
-  OPEN: FUN_004e3c00 no-go; the FUN_0051dcb0 al-source.
+- **THE PICK:** NAME THE SCAN-LOOP PRE-CHECK CHAIN (M294 lead): the 7 loop-head gates (0x5638a9-0x563cbf)
+  of FUN_0055f650, STATIC-FIRST, one per fire: (1) no-go `call 0x4e3c00(x,y,owner)>=0` (0x563963) - what does it test?
+  (2) [ebp-0x58] terrain-mask origin; (3) elevation band 0x563928/3e vs M249. OPEN kept: 0x582cc0 + the
+  value-indexed 0x51dfe2 addr; CHAIN-PICKS trio. M293 guards law + M294 tail-$esi law BIND every reuse.
 
 ## LIVE FACTS / KIT
 
-- **BOX**: s241 state UP (m54b_clean at 2188, cnt 27, TracerPid 0, gdb detached; no reload) — RE-CHECK with
-  `accept_ready.py` first. `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd — wrap harness
-  runs in `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'`, keep
-  the harness uid 1000 (sudo breaks the prefix).** Recipe: wine-operations.md + pick-archive §s198/§s199.
+- **BOX**: s244 UP (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
+  RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
+  run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
+  `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd — wrap harness runs in
+  `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'`,
+  keep the harness uid 1000 (sudo breaks the prefix).** Restore yama to the PRE value, never hardcode.
+  Recipe: wine-operations.md.
 
 ## TRAPS — rules (FULL s241 text verbatim: `docs/pick-archive.md` §s242-traps; detail §trim-s205/§s198; laws: skill
 `instrument-laws.md` + `wine-pitfalls.md`)

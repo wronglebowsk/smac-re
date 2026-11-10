@@ -1,0 +1,11 @@
+M294 run-1 (old model) record. The full run-1 report file (evidence/m294_gate_rows_run1_oldmodel.txt)
+was overwritten by the remodel rerun via os.rename BEFORE any git commit - trail gap, recorded here.
+Run-1 numbers (verbatim from the session log):
+  state y2188/3 cnt=26 -> y2212, CTRL=1857 years=25 (G4 PASS), guardfail=0 (G7 PASS),
+  hygiene yama-restored=True TracerPid=0 (G8 PASS).
+  G5 FAIL: 2129/2129 visits disagreed; 30,149 "val>best but NO GDEEP/GACC" notes;
+  ZERO direction-of-law failures (no law-SKIP-but-GACC, no law-ACCEPT-but-no-GACC).
+Diagnosis (static, dis 0x5638a9-0x563bf7): the loop head carries 7 eligibility pre-checks
+that jump straight to the 0x563cb3 tail; there $esi = slot counter (0x5638a9) or x (0x5638e7),
+NOT the gate value - the old replay chained that garbage as value. Model fixed in
+scripts/m294_gate_row_census.py (decision rows carry exact incoming best); selftest 3/3.
