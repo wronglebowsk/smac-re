@@ -1,0 +1,29 @@
+CALLERS of 0x51dcb0: 11 e8-call sites
+  0x41dc7e in FUN_0041d480 (0x41d480)
+  0x4e145e in FUN_004e13f0 (0x4e13f0)
+  0x4e4dc8 in FUN_004e47d0 (0x4e47d0)
+  0x4e5540 in FUN_004e4e10 (0x4e4e10)
+  0x4f3e08 in UNKNOWN('FUN_004f34b0', 5190832) (0x4f34b0)
+  0x508b48 in FUN_00507ef0 (0x507ef0)
+  0x51f71e in FUN_0051f320 (0x51f320)
+  0x543bc6 in FUN_005437d0 (0x5437d0)
+  0x59b8ce in FUN_0059b830 (0x59b830)
+  0x59dd3a in FUN_0059ce10 (0x59ce10)
+  0x5b09f6 in FUN_005b09b0 (0x5b09b0)
+
+AL-CHAIN (gdb-free, objdump window 0x51df60-0x51dff8):
+  51df77:	8b 47 08             	mov    eax,DWORD PTR [edi+0x8]
+  51df83:	33 c0                	xor    eax,eax
+  51df85:	8a 47 02             	mov    al,BYTE PTR [edi+0x2]
+  51df97:	e8 f4 1f 09 00       	call   0x5aff90
+  51dfa4:	e8 17 4d 06 00       	call   0x582cc0
+  51dfac:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+  51dfbd:	8b 86 e8 9c 98 00    	mov    eax,DWORD PTR [esi+0x989ce8]
+  51dfc7:	8b c7                	mov    eax,edi
+  51dfda:	8d 04 53             	lea    eax,[ebx+edx*2]
+  51dfdd:	c1 e0 04             	shl    eax,0x4
+  51dfe0:	2b c3                	sub    eax,ebx
+  51dfe2:	8d 8c 81 a8 ec 94 00 	lea    ecx,[ecx+eax*4+0x94eca8]
+  51dfe9:	33 c0                	xor    eax,eax
+  51dfeb:	8a 01                	mov    al,BYTE PTR [ecx]
+  51dff1:	8b c7                	mov    eax,edi

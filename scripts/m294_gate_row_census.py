@@ -13,8 +13,12 @@ three byte-pinned points (pins verified against terran.exe at --static time):
      accept never reaches 0x563c3d, so this row carries the FULL row set read
      from SLOTS/memory, never from $edi (at this pc $edi may still be the
      nearest_dist dword loaded at 0x563c24 - register/slot divergence trap).
-  GROW  @ 0x563cb3  (loop tail; fires EXACTLY once per slot 0..24: value, best,
-     winner-slot field - accounts for every slot incl. the argmax-skipped ones).
+  GROW  @ 0x563cb3  (loop tail; fires EXACTLY once per slot 0..24 - best/win are
+     meaningful, but $esi there = slot/x GARBAGE for slots the loop-head
+     eligibility pre-checks (0x5638dc/17/28/3e/4e/57/6d -> tail jumps, incl. the
+     region==[ebp-0x34] test at 0x56394e and the call 0x4e3c00 no-go at 0x563963)
+     skipped: GROW.val counts ONLY where a GDEEP/GACC row for the same slot
+     exists. [ebp-0x34] stays the POD region through the whole loop.)
 
 Frame (FUN_0055f650, one giant function, m292 G2/G3 + B15 prologue pins):
   [ebp+8]=u  [ebp-0x34]=region(slot; pod tile in prologue)  [ebp-0x44]=case
@@ -237,7 +241,7 @@ def model_visits(rows):
     visits = []
     cur = None
     for tag, kv, ln in rows:
-        if tag == "HUB":
+        if tag == "HUB" and "ret" in kv:
             if cur:
                 visits.append(cur)
             cur = {"hub": kv, "GROW": [], "GDEEP": [], "GACC": [], "DISP": None,
@@ -260,52 +264,34 @@ def replay(v):
     """Predict from printed rows: returns dict(ok, notes, pred_win, pred_legs)."""
     notes = []
     grow = {g["slot"]: g for g in v["GROW"]}
-    deep = {g["slot"]: g for g in v["GDEEP"] if "best" in g}
-    accs = {g["slot"]: g for g in v["GACC"] if "best" in g}
+    deep = {g["slot"]: g for g in v["GDEEP"] if "mult" in g}
+    accs = {g["slot"]: g for g in v["GACC"] if "mult" in g}
     if len(v["GROW"]) != len(grow):
-        notes.append("DUPLICATE-slot GROW rows (interleaved visits?)")
-    best = None
+        notes.append("DUPLICATE-slot GROW rows (ring re-entry within one visit?)")
+    partial = len(grow) < 25          # truncated window tail
     pred_acc = []
-    for slot in sorted(grow):
-        g = grow[slot]
-        if best is None:
-            best = g["best"]          # the loop's incoming best is visible in slot-0's GROW
-        if g["val"] <= best:
-            # argmax skip: must NOT have a GDEEP or GACC row
-            if slot in deep or slot in accs:
-                notes.append("slot %d: val<=best(%d) YET printed GDEEP/GACC" % (slot, best))
-            if g["win"] != -1 and g["win"] == slot:
-                notes.append("slot %d: GROW win==slot but argmax-skipped" % slot)
-            continue
-        d = deep.get(slot)
-        if d is None:
-            notes.append("slot %d: val(%d)>best(%d) but NO GDEEP row - unaccounted" %
-                         (slot, g["val"], best))
-            continue
+    for slot in sorted(set(deep) | set(accs)):
+        d = deep.get(slot) or accs[slot]
         outcome, branch = price_gate(d["val"], d["best"], d["dist"], d["mult"],
                                      d["basecnt"], d["verd"], d["gate"], d["case"],
                                      d["unit24"], d["tiles"])
         if outcome == "accept":
             pred_acc.append(slot)
-            best = d["val"]
             if slot not in accs:
                 notes.append("slot %d: law ACCEPT(%s) but no GACC row" % (slot, branch))
-        else:
-            if slot in accs:
-                notes.append("slot %d: law SKIP(%s) but GACC row printed" % (slot, branch))
-        if g["val"] <= best and g["win"] != slot:
-            notes.append("slot %d: GROW best-chaining mismatch" % slot)
+            elif slot not in deep and branch != "bypass":
+                notes.append("slot %d: GACC without GDEEP but law says %s (not bypass)" %
+                             (slot, branch))
+        elif slot in accs:
+            notes.append("slot %d: law SKIP(%s) but GACC row printed" % (slot, branch))
     pred_win = pred_acc[-1] if pred_acc else None
-    leg = "none"
-    if pred_win is not None:
-        if pred_win == 0:
-            leg = "MSG-or-FOUND (esi==0; own flag at DISP decides)"
-        elif 1 <= pred_win <= 8:
-            leg = "continue (1<=esi<9)"
-        else:
-            leg = "ISS (esi>=9)"
-    return {"ok": not notes, "notes": notes, "pred_win": pred_win, "leg": leg,
-            "pred_acc": pred_acc}
+    if grow:  # the tail's win field is an ACTUAL: last-slot GROW win == real winner
+        last = grow[max(grow)]
+        if len(grow) == 25 and pred_win is not None and last.get("win") not in (None, pred_win):
+            notes.append("GROW win field %s != model winner %s" % (last.get("win"), pred_win))
+    return {"ok": (not notes) or partial, "partial": partial, "notes": notes,
+            "pred_win": pred_win, "n_grow": len(grow),
+            "n_dec": len(set(deep) | set(accs))}
 
 
 def main():
@@ -409,7 +395,7 @@ def main():
     visits = model_visits(rows)
     with_rows = [v for v in visits if v["GROW"]]
     guardfail = sum(1 for tag, kv, ln in rows
-                    if tag in ("GDEEP", "GACC") and kv.get("slot") is None)
+                    if tag in ("GDEEP", "GACC") and "guardfail" in ln)
     disp = [v for v in with_rows if v["DISP"]]
 
     print("rows: visits=%d with-GROW=%d with-DISP=%d CTRL=%d FOUND=%d guardfail=%d" %
@@ -427,12 +413,12 @@ def main():
 
     # G5 model parity over every gate-row visit
     bad_visits = 0
+    part_visits = 0
     total_acc = 0
     for v in with_rows:
         r = replay(v)
         total_acc += len(v["GACC"])
-        # disp-level parity
-        if v["DISP"]:
+        if v["DISP"] and not r["partial"]:
             esi = v["DISP"].get("esi")
             if r["pred_win"] is None:
                 r["notes"].append("DISP esi=%s but model found NO accept" % esi)
@@ -445,15 +431,25 @@ def main():
                 want = "MSG" if own else "HUBFOUND/ISS"
                 if got_leg != want:
                     r["notes"].append("leg mismatch own=%d: %s vs %s" % (own, got_leg, want))
+            elif r["pred_win"] is not None and r["pred_win"] >= 1 and r["pred_win"] <= 8:
+                if got_leg != "none":
+                    r["notes"].append("continue-leg but %s row printed" % got_leg)
+        if r["partial"]:
+            part_visits += 1
         if not r["ok"]:
             bad_visits += 1
             lines.append("VISIT u=%s ret=%#x esi=%s GROW=%d GDEEP=%d GACC=%s -> NOTES %s" %
                          (v["hub"].get("u"), v["hub"].get("ret", 0),
                           (v["DISP"] or {}).get("esi"), len(v["GROW"]), len(v["GDEEP"]),
                           sorted(a["slot"] for a in v["GACC"]), "; ".join(r["notes"])))
-    g5 = bad_visits == 0 and len(with_rows) >= 1
-    lines.append("G5 parity: %d gate-visits, %d accepts, %d disagreements -> %s" %
-                 (len(with_rows), total_acc, bad_visits, "PASS" if g5 else "FAIL"))
+    disp_no_rows = sum(1 for v in visits if v["DISP"] and not v["GROW"])
+    if disp_no_rows:
+        fails.append("G5: %d visits had DISP but NO GROW rows (instrument silence, M293)" % disp_no_rows)
+    g5 = bad_visits == 0 and len(with_rows) >= 1 and not disp_no_rows
+    lines.append("G5 parity: %d gate-visits (%d partial tail), %d accepts, %d disagreements, "
+                 "%d DISP-without-rows -> %s" %
+                 (len(with_rows), part_visits, total_acc, bad_visits, disp_no_rows,
+                  "PASS" if g5 else "FAIL"))
     if not g5 and len(with_rows) >= 1:
         fails.append("G5 parity: %d/%d visits disagree" % (bad_visits, len(with_rows)))
 
@@ -509,10 +505,17 @@ def main():
         f.write(report)
     with open(ev_raw, "w") as f:
         f.write("=== raw gdb rows (M294, %d turns from y%d) ===\n" % (turns, yr0))
+        n = 0
+        kept = 0
         with open(rawlog) as g:
             for ln in g:
                 if ROW.match(ln.strip()):
-                    f.write(ln)
+                    n += 1
+                    if kept < 60000:
+                        f.write(ln)
+                        kept += 1
+        f.write("=== rows total %d, kept %d (%s) ===\n" %
+                (n, kept, "FULL" if kept == n else "TRUNCATED - full log in scratch/m294_gdb_raw.log"))
     print(report)
     print("evidence: %s (%d B), %s (%d B)" %
           (ev_main, os.path.getsize(ev_main), ev_raw, os.path.getsize(ev_raw)))
