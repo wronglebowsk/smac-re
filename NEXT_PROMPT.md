@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s241 close: B14 10/10 - hub scan + walk
-# DISPATCH EXECUTABLE (sim/podscan.py; ring literals vs recorded dump
-# evidence/b14_ring_table.txt; ISS tile= is the target X only). M293
+# NEXT_PROMPT.md - footing (s241 close: B14 11/11 MERGED #252 - scan+walk
+# EXECUTABLE (sim/podscan.py, post-Greptile: full argmax, X wraps Y not;
+# ring literals vs recorded dump evidence/b14_ring_table.txt). M293
 # retractions stand. Next: gate tables + name 0x920434. BUILD = B15.)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
