@@ -546,3 +546,26 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   with the SAME shape (15*X + 32*Y fold base) that are NOT the (8380,2,0) row
   fold; what walks them. Static pick (c) (who reads regions >=128) and the box
   pick (dialog +0x4c dispatcher) unchanged.
+
+## Session 222 (2026-11-10, ANALYSE static, M280 PASS 7/7) - the e9a8 readers RIDE the block fold; M279 G6's "(30,64,0)" was a mid-chain window artifact
+- Footing collision resolved: the s222 kickoff said "M279 committed NOTHING" - STALE. The
+  s221 fire recovered after composing it: M279 committed a497fbf, PR #223, MERGED 05:06:52Z
+  (commit 9067fc8). The repo decided: M279 was already merged; track_mode printed ANALYSE,
+  and the repo's live pick was the s221 G6 open lead - the e9a8 reader chains. That became
+  M280 (verified not-merged before start).
+- ANSWER: e9a8 is NOT a "different index idiom". BOTH readers evaluate to the per-block
+  WORD fold 8380*block + 2*region:
+  - 0x568038 (FUN_0055f650, AI hub): edi = [ebp-0xc] = OWNER byte (sole writer 0x55f71d,
+    BYTE[52*edi+0x933286] = unit+14 owner, M278). Chain: mov edx,edi; shl edx,6; add edx,edi
+    = 65*edi; lea ecx,[edi+edx*2] = 131*edi; shl 4 = 2096*edi; sub = 2095*edi; lea
+    edx,[eax+ecx*2] = eax + 4190*edi; load [edx*2+0x94e9a8] -> 8380*block + 2*region.
+  - 0x5a9fd5 (FUN_005a90a0): edi = [ebp+0xc] (arg) = block; edx = region loop counter
+    (mov edx,1 @0x5a9f85; inc @0x5a9fe6; back-edge @0x5a9fed); ecx = edx + 4190*edi -> same.
+  - G4 COMPUTES the artifact: M279's window [0x56802b,0x568035) with FREE atoms gives
+    edx = (30,64,0); substituting the excluded seed (edx := 65*edi) yields 4190*edi = the
+    same 8380 stride. M279 G6 opened its window INSIDE the chain, after the fold seeds.
+- ACCEPTANCE: `python3 scripts/m280_e9a8_fold.py` -> `SUMMARY M280: 7/7 gates PASS`
+  (`evidence/m280_e9a8_fold.txt`). Registry: NAMED.md M280; M279's e9a8 row patched in
+  place (OBSERVED -> V (bytes), cites M280).
+- OPEN: static pick (c) who reads regions >=128 (loop bound 0x80 vs counts to 338); box
+  pick (dialog +0x4c dispatch) unchanged. Chain: exactly one pending smac-re job = s223.

@@ -735,3 +735,15 @@ The rule, in the shape that makes it self-checking:
 - When a gate turns out to assert a wrong number, fix the ASSERTION (import the evaluator so the two
   files cannot drift again), keep the superseded claim visible in the prose as the slip, and re-run
   the superseded instrument so it ships green with its own correction.
+
+## Chain-eval window laws (M280, s222)
+
+- A chain_eval window must START at the fold seeds (the first writer of the
+  base/derived register). M279 G6 opened at `lea ecx,[edi+edx*2]` with edi/edx as
+  FREE atoms -> "published" (30,64,0) as a new index idiom. The seeds `mov
+  edx,edi; shl edx,6; add edx,edi` (edx = 65*edi) sat just outside the window;
+  seed-inclusive eval of the SAME chain gives eax + 4190*edi, and the [reg*2+disp]
+  load doubles to 8380*block + 2*region - the standard WORD fold (M280 G2/G3/G4).
+- A "different index idiom" claim requires the window WIDENED to the atom's first
+  writer, not a new family. Substitute the excluded seed into the free-atom result
+  (a + 65b = 4190, x2 = 8380) as the falsifier - computed, never asserted.
