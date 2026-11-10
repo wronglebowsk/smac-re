@@ -220,7 +220,7 @@ def static_gates294():
 
 ROW = re.compile(r"^(HUB|DISP|MSG|HUBFOUND|ISS|FOUND|DESTROY|CTRL|GDEEP|GACC|GROW)\b")
 
-KV = re.compile(r"(\w+)=(-?\d+|0x[0-9a-f]+)")
+KV = re.compile(r"(\w+)=(-?0x[0-9a-f]+|-?\d+)")
 
 
 def parse_rows(path):
@@ -425,15 +425,20 @@ def main():
             elif esi != r["pred_win"]:
                 r["notes"].append("esi mismatch: model %s vs DISP %s" % (r["pred_win"], esi))
             own = v["DISP"].get("own")
-            got_leg = ("MSG" if v["MSG"] else "HUBFOUND/ISS" if (v["HUBFOUND"] or v["ISS"])
-                       else "none")
             if r["pred_win"] == 0:
-                want = "MSG" if own else "HUBFOUND/ISS"
-                if got_leg != want:
-                    r["notes"].append("leg mismatch own=%d: %s vs %s" % (own, got_leg, want))
-            elif r["pred_win"] is not None and r["pred_win"] >= 1 and r["pred_win"] <= 8:
-                if got_leg != "none":
-                    r["notes"].append("continue-leg but %s row printed" % got_leg)
+                want_leg = "MSG" if own else "HUBFOUND"
+            elif r["pred_win"] is not None and 1 <= r["pred_win"] <= 8:
+                want_leg = "none"
+            elif r["pred_win"] is not None:
+                want_leg = "ISS"
+            else:
+                want_leg = None
+            act_leg = ("MSG" if v["MSG"] else "HUBFOUND" if v["HUBFOUND"]
+                       else "ISS" if v["ISS"] else "none")
+            if want_leg is not None and act_leg != want_leg:
+                r["notes"].append("leg mismatch: want %s got %s (own=%d)" %
+                                   (want_leg, act_leg, own))
+        r["ok"] = r["partial"] or not r["notes"]   # POST-append recompute (Greptile P1)
         if r["partial"]:
             part_visits += 1
         if not r["ok"]:

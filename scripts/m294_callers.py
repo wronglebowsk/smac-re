@@ -5,8 +5,9 @@
     which shipped the caller-law pattern), each caller VA resolved to its
     containing function via ghidra_out/index.csv;
 (2) every write to eax/ax/al inside the window 0x51df60..0x51dff3 (the al chain
-    feeding `mov BYTE PTR [ecx],al` at 0x51dff3), plus the two inferior calls
-    whose eax feeds edi (0x5aff90 @0x51df97, 0x582cc0 @0x51dfa4).
+    feeding `mov BYTE PTR [ecx],al` at 0x51dff3). edi = BYTE[rec+2]>>4 (0x51df85) when
+    nonzero, ELSE the call 0x5aff90 result (0x51df9f); call 0x582cc0 @0x51dfa4 CONSUMES
+    edi as arg and its RETURN IS DISCARDED (eax reloaded at 0x51dfac).
 Static only - zero box contact.
 """
 import os
