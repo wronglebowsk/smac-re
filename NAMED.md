@@ -1452,3 +1452,16 @@ shape is dialog CREATE-time (FUN_00405ef0) or the Return-key path.
 - Key-chain slots dispatch +0x12c/+0x60; the row callback lives INLINE in the
   pump (M286).  Closing the M284-M287 series: +0x4c never dispatches on any
   click, key or create path.  Acceptance: STATIC PASS 5/5 (one invocation).
+## B12
+COMPLETION CREATE LEG (s234, BUILD, 12/12, MERGED #240): `sim/production.py` - the
+M56/M59/M61 completion law executable: GATE storage+income >= price (income add
+inside the visit) -> PAY storage -= price -> CREATE a NEW 52-B unit record
+APPENDED at units_off + n_units*52 (x@0 u16, y@2 u16, flag@4 u32=0, type@10 u16
+= queue head, owner@14 u8 = base faction, order@17 u8 = 0, nlegs@18 u8 = 0; rest
+declared unmodeled) -> POP one (B11 law, stale tail). Parity vs the ORIGINAL
+game's own m56 trace (trace_m56_build_20261026_145157.jsonl): +1 (29,42,2,3,0)
+at r0 only, record at idx n_units-1, storage 8+1-9=0 + queue [2,2,2,2,0] pend 0
+== recorded r1; rivals (wrong tile, order 2, no income term) all fail.
+savewriter.append_units= grows the array: only prefix byte [68] + the record
+change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
+`python3 -m sim.selftest --b12 <sav> <trace>`.
