@@ -1,4 +1,4 @@
-M292 (s239 ANALYSE, 5/5, BOX census, PR open): pod MOVEMENT - hub
+M292 (s239 ANALYSE, 5/5, BOX census, MERGED #248): pod MOVEMENT - hub
 FUN_0055f650 arg1 = unit index (record 0x933278+52u: x@+0 y@+2 owner@+14;
 own = owner==ds:0x91b5b4==3 HUMAN); live callers FUN_0056cdf0 (per-unit
 x2282) + FUN_0050d140 (once-round x26); dispatch on esi = m291 ring-entry:
