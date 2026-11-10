@@ -1,4 +1,1 @@
-M284 (s228 ANALYSE, MEASURED-NEGATIVE, static 4/4): the dialog family +0x4c dispatch
-forms are exhaustive (12 call [reg+0x4c] sites, 0 load-then-call, 0 direct, 5 vtables/466
-installs); base-display clicks (wndproc control fired) dispatch it through NO site - CPane
-screen, not Script.txt dialog. Next: ANALYSE. Box clean, TracerPid 0.
+M285 (s229 ANALYSE, MEASURED-NEGATIVE w/ falsifier, static 5/5): opened a REAL production chooser (m54g_prep + one turn, candidate array 67, INSERT landed item 193) - live dialog vptr at the click = 0x672298 (chooser class, NOT family, +0x4c=0x404ed0 stub); 0 of 12 sites fired, FUN_005f6aa3 never entered, pump 0x5f1394 never ran, 6 wndproc controls. Family vptr occurrences live (0x67164c x7). Next: ANALYSE. Box clean, TracerPid 0.

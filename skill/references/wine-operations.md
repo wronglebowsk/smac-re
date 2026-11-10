@@ -154,7 +154,9 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   DELETE 556-636, CANCEL 659-705 at y 336-352 (labels drawn inside the bars, fill RGB 103,91,181 —
   pixel (160,343) is the instant chooser-open test; 2x OCR cannot read the labels). **M53g corrected
   the handler**: the bar switch is `FUN_00496950` = **vtable+0xa8** of the chooser class (live vptr
-  0x672298), jump table 0x496a9a indexes `param+2`; cases 0=HELP(gate)→1, 2=(gate)→7, 5=INSERT(gate)→5,
+  0x672298; M285: +0x4c of 0x672298 is the return-0 stub 0x404ed0, so the production chooser is NOT
+  a family dialog and its clicks CANNOT dispatch the family +0x4c 0x5f6aa3 by construction),
+  jump table 0x496a9a indexes `param+2`; cases 0=HELP(gate)→1, 2=(gate)→7, 5=INSERT(gate)→5,
   **7→7 UNGATED**, −1=OK→0, −2=CANCEL→0+guard−1; gate = `cmp [this+0xa774],-1; je 0x496a91`, and
   **0x496a91 is the shared epilogue return — mode-storing paths reach it too (BAR_IGNORED there is NOT
   a refusal)**; **one handler run per click** (press; release dispatches nothing). `[sub+0xa774]`

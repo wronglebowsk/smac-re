@@ -1,0 +1,23 @@
+M285 static 5/5 + live measured-negative (falsifier = live vtable read at click)
+======================================================================
+PASS g1: 12 sites still read `call [reg+0x4c]` (none bad)
+PASS g2: all 5 family vtables +0x4c == 0x5f6aa3
+PASS g3: exactly 5 vtables hold +0x4c == 0x5f6aa3 (whole-image scan found 5)
+PASS g4: chooser class 0x672298 +0x4c = 0x404ed0 (stub, NOT family)
+PASS g5: FUN_00405ef0 body contains the 0x67164c store (dialog ctor installs family vptr)
+
+LIVE RUN (--live, 2026-11-10 03:59 UTC, m54g_prep --unit 0 + m55_boundary 2153->2154 first):
+pre base0: {'i': 0, 'name': 'University Base', 'x': 28, 'y': 42, 'fac': 3, 'pending': 0, 'head': 0, 'minerals': 0}
+family vptr occurrences in writable mem BEFORE (by vptr): 0x67164c:7 0x6717cc:0 0x6728c0:0 0x675cc4:2 0x6776c8:1 (chooser class 0x672298:1)
+pokes in; cursor (28,42); 'b' opened base display (pane base idx 0, pending 0)
+ROW1 click opened the production item chooser; candidate array count 67 [192,194,193,2,0,1,195,196,197,198,199,200,...]
+LIVE at chooser: dialog obj=0x006a9e9c vptr=0x00672298 (chooser class 0x672298, NOT family, +0x4c=0x404ed0 stub)
+cell k=2 (382,60) + INSERT bar (497,343) + OK bar (285,343) clicks
+READ-BACK: base0 pending 0 -> 1, head 0, slots [0, 193, 0, 0, 0, 0]  (INSERT LANDED, item 193 = candidate[2])
+site bps fired: 0 (of 12 armed at 0x4b83f3..0x63cfa4); family-slot hits at: NONE
+ENTRY hits: 0 (FUN_005f6aa3 never entered)
+pump control hits: 0 (dialog pump 0x5f1394 never ran)
+wndproc LBUTTONDOWN controls: 6 (clicks DELIVERED to the window)
+STATE 4 measured-negative: 6 clicks delivered, chooser open + INSERT landed, live dialog
+vptr 0x672298 read at the click (NOT family) - the family +0x4c dispatched through NONE
+of the 12 sites; TracerPid 0 after detach.

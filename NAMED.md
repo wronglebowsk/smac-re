@@ -1361,3 +1361,19 @@ display (wndproc 0x5d0c33 WM_LBUTTONDOWN control fired 3x) dispatched +0x4c of N
 sites, FUN_005f6aa3 never entered, modal pump 0x5f1394 never ran - the base display is a CPane
 screen, not a Script.txt dialog class; the family dispatcher must sit on the Script.txt
 chooser/menu path (untestable in this save: empty queue opens no chooser).
+
+
+## M285 (s229, MEASURED-NEGATIVE w/ falsifier, static 5/5) - the REAL Script.txt production chooser is class 0x672298 (NOT family) and its clicks dispatch +0x4c through none of the 12 sites; the family +0x4c dispatcher lives on other dialogs (OK/CANCEL 0x67164c x7 live, menus, REALLYQUIT)
+- evidence/m285_chooser_dispatch.txt; scripts/m285_chooser_dispatch.py (--static 5/5, --live STATE 4).
+- New settled fact: the production item chooser's class vptr 0x672298 (M53g) has
+  +0x4c = 0x404ed0 (return-0 stub), +0xa8 = 0x496950 (the M53g bar switch) - it is a
+  distinct dialog class, NOT one of the 5 family vtables, so its bar/cell clicks cannot
+  dispatch the family +0x4c by construction.
+- Live: chooser opened for real (INSERT landed item 193 at minerals 0/credit 0), the
+  click-time dialog object was 0x6a9e9c with vptr 0x672298, family vptr occurrences
+  live (0x67164c x7), yet 0/12 sites fired, FUN_005f6aa3 never entered, pump 0x5f1394
+  never ran - with 6 wndproc-delivered clicks. STATE 4 measured-negative.
+- Consequence: M284's "base display is CPane" + M285's "production chooser is 0x672298"
+  push the family dispatcher to the remaining Script.txt dialog paths: the message
+  OK/CANCEL dialog (FUN_005f1394's own class 0x67164c - its instances are the x7 live),
+  menu panes, or the REALLYQUIT prompt.

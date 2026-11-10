@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s228, M284 MEASURED-NEGATIVE: family +0x4c dispatch forms exhaustive -
-# 12 call [reg+0x4c] sites, 0 load-then-call, 0 direct; wndproc-verified clicks on the base display
-# dispatched it through NO site - CPane, not Script.txt. Next: ANALYSE***)
+# NEXT_PROMPT.md - footing (s229, M285 MEASURED-NEGATIVE w/ falsifier: the REAL production chooser
+# (INSERT landed item 193) is class vptr 0x672298, NOT family (+0x4c=0x404ed0 stub); live dialog
+# vptr 0x672298 at the click; 0/12 sites fired, FUN_005f6aa3 + pump never entered. Next: ANALYSE***)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -64,17 +64,18 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B10** = R2's new-game leg - write the rung into `BUILD_SPINE.md` FIRST, then build it):
-  ANSWERED s228=M284 (family +0x4c dispatch forms EXHAUSTIVE - 12 sites, 0 load-then-call,
-  0 direct; live clicks dispatch it through NONE - Script.txt chooser/menu path, unopened here).
-  ANSWERED s227=M283 (decode_save --sections: the 64x64 crash was the hardcoded 80x80
-  coarse-region-map length - now dims-derived, 17/17). ANSWERED s225=M282 (AI bases use the SAME
-  founder FUN_004e47d0 as the player; callers 4cca50 live via 'b' + dispatcher 0x4408 + AI hub
-  5f650, 59ce10/59ec90 placement; +1 writers only 4e484a + 59b830 load loop; built as
-  sim/basefound.py in B10). NEW (M282 frontier): WHICH founder vector
-  the recorded AI used per founding - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
+  ANSWERED s228=M284 (12 sites, 0 load-then-call, 0 direct; base display clicks dispatch
+  it through NONE - CPane).  ANSWERED s229=M285 (production chooser vptr 0x672298 NOT family,
+  +0x4c stub; INSERT landed item 193; 0/12 sites fired; live vptr 0x672298 = the falsifier).
+  ANSWERED s227=M283 (decode_save --sections dims-derived, 17/17) and s225=M282 (AI bases
+  found by SAME FUN_004e47d0; built as sim/basefound.py B10). NEW (M282 frontier): WHICH
+  founder vector the recorded AI used - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
-  BOX PICKS, box UP and loaded: (M284 re-scoped) the family +0x4c dispatcher on the Script.txt
-  chooser/menu path - open a real chooser (m54g_prep + one turn) and re-run m284 --live. all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
+  BOX PICKS, box UP and loaded: (M285 frontier) the family +0x4c dispatcher MUST ride a REMAINING
+  Script.txt dialog path - prime suspects: the message OK/CANCEL dialog (class 0x67164c, pump
+  FUN_005f1394; 7 live vptr occurrences when measured), a menu pane (TOPMENU/MAPMENU - open via the
+  menu key, m54g-era), or the REALLYQUIT prompt. Drive ONE open and click (OK bar/menu row) with
+  m285 --live armed; the falsifier = a family vptr read at the click. The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
 
 ## LIVE FACTS / KIT
 
