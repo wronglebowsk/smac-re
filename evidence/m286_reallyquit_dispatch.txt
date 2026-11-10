@@ -1,0 +1,26 @@
+M286 REALLYQUIT message-dialog click path - measured-negative w/ falsifier (s231)
+static:
+PASS g1: 12 sites still read `call [reg+0x4c]` (none bad)
+PASS g2: all 5 family vtables +0x4c == 0x5f6aa3
+PASS g3: exactly 5 vtables hold +0x4c == 0x5f6aa3 (whole-image scan found 5)
+PASS g4: FUN_005f6aa3 = dialog row-click dispatcher (finder call 0x5e7917=True, +0xa8 row-cb dispatch=True)
+PASS g5: Script.txt #REALLYQUIT pane has both rows (safe 'oops' + quit row)
+live:
+family vptr scan BEFORE: {6755916: 7, 6756300: 0, 6760640: 0, 6773956: 2, 6780616: 1}
+PRE-ARM DIALOG_CUR=0x00000000 vptr=0x-0000001
+REALLYQUIT raised (oops row at (173, 261))
+LIVE at click: dialog obj=0x014d7458 vptr=0x0067164c FAMILY
+OCR after oops click: oops still up = True
+OCR after follow-up: REALLYQUIT pane gone = True
+LIVE after clicks: dialog obj=0x00000000 vptr=0x-0000001
+site bps fired: 0; family-slot hits at: NONE
+ENTRY hits: 0
+pump control hits: 1; wndproc LBUTTONDOWN controls: 2
+STATE 4: measured-negative - 2 clicks delivered, pump ran (1), LIVE dialog vptr family at the click  - family +0x4c dispatched through NONE of the 12 sites
+log tail (SITES/ENTRY/CTRL rows):
+CTRL pump
+CTRL wndproc-lbttdown msg=00000201
+CTRL wndproc-lbttdown msg=00000201
+box after:
+State:	R (running)
+TracerPid:	0

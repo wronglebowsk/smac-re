@@ -621,3 +621,46 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   predict which turns found/write. Next fire: BUILD (B12 - write the rung into BUILD_SPINE.md
   first: candidates are the cursor-vs-save write law, unit-growth from a completion, or R2's
   end-turn/save slice closure).
+## Session 231 (2026-11-10, ANALYSE, M286 MEASURED-NEGATIVE w/ falsifier, static 5/5) - the REALLYQUIT message dialog IS family (live vptr 0x67164c at the click) but its clicks dispatch +0x4c through NONE of the 12 sites
+- track_mode ANALYSE -> the M285 frontier pick: remaining Script.txt dialog
+  suspects were message OK/CANCEL, menu panes, REALLYQUIT.  The box was ALREADY
+  on the REALLYQUIT prompt (s229's closing Escape nudged... actually the brief
+  read 'quit-prompt' but DIALOG_CUR=0; base display was open instead - the
+  classifier misread).  Drive: Escape closes the base display (safe, M285),
+  next Escape raises REALLYQUIT (M36), find 'oops' row by OCR, click it ONLY.
+  scripts/m286_reallyquit_dispatch.py (arm = m285's 12 sites + FAM_SLOT entry
+  0x5f6aa3 + pump 0x5f1394 + wndproc 0x5d0c33 LBUTTONDOWN control).
+- STATIC (--static, evidence/m286_reallyquit_dispatch.txt): 5/5 gates. g1 the
+  12 sites still read `call [reg+0x4c]`; g2 all 5 family vtables +0x4c ==
+  0x5f6aa3; g3 image-wide scan finds EXACTLY 5 such vtables; g4 NEW: the slot
+  target FUN_005f6aa3 is the dialog ROW-CLICK dispatcher - its 76-B body calls
+  FUN_005e7917 (row finder over 0x18-stride rows, idx/-1) and on hit dispatches
+  (**(code **)(*ecx + 0xa8))(local_c): family +0x4c IS the click->row-callback
+  route of a Script.txt dialog; g5 Script.txt #REALLYQUIT pane has both rows
+  (safe 'oops' + quit row).
+- LIVE (--live): base display open (DIALOG_CUR=0).  Escape -> closes base
+  display; Escape -> REALLYQUIT raised ('oops' row at (173,261)).  FALSIFIER
+  READ at the click: dialog obj 0x014d7458 vptr 0x0067164c = FAMILY (the
+  message OK/CANCEL class, 7 live instances in the pre-scan).  Clicked the
+  safe 'oops' row + follow-up OK 47 px below (M37): pane closed (DIALOG_CUR
+  back to 0, OCR 'pane gone').  PUMP RAN (1 hit), wndproc LBUTTONDOWN 2.
+- RESULTS: site bps fired 0/12, family-slot hits NONE, FUN_005f6aa3 ENTRY 0.
+  STATE 4 measured-negative WITH the falsifier satisfied: a live family dialog
+  (0x67164c) at the click, its pump genuinely running, clicks delivered, pane
+  closed - and +0x4c dispatched through NONE of the 12 sites.
+- SETTLE: the message OK/CANCEL dialog class (0x67164c) does NOT dispatch
+  family +0x4c on its click path - the click-to-row route must be inline in
+  the pump, not via the +0x4c slot.  Combined with M284 (base display) and
+  M285 (production chooser), THREE live dialog-ish paths now measured family
+  or not-family with zero +0x4c dispatch.  The +0x4c slot (FUN_005f6aa3) has
+  still never been observed dispatched from ANY live click window.
+- ACCEPTANCE: python3 scripts/m286_reallyquit_dispatch.py --static -> 5/5
+  PASS; live STATE 4 measured-negative with the live-vptr falsifier + pump
+  control + pane-closed readback (one real invocation).
+- OPEN (narrowed): M282 G5 (founder vector - box); the 64x64 odd-Rw stride
+  quirk; the save-side cursor-vs-pending write order (M70); B12 rung pending.
+  NEW narrowing: of the M285 frontier's three remaining dialog candidates,
+  REALLYQUIT (== message OK/CANCEL class 0x67164c) is now ELIMINATED on the
+  click path.  Remaining: the MENU PANES (TOPMENU/MAPMENU) - if those are
+  family and their clicks dispatch +0x4c, the dispatcher is named.  Next
+  fire: ANALYSE.
