@@ -282,6 +282,11 @@ by a different shared set); (6) read the writer's SOURCE before naming members: 
 fields are booleans of ONE source bitfield (one byte expanded into four dwords, a tristate header, and an `or` into a
 DIFFERENT word as a side-effect), and a displacement with many writes but almost no tests is a recomputed CACHE,
 never state a gate may read.
+- **A chain-eval window must START at the fold seeds** (the first writer of the base/derived register), not mid-chain:
+s221's M279 G6 opened at `lea ecx,[edi+edx*2]` with edi/edx as FREE atoms and "published" an index idiom
+"(30,64,0)" that was pure truncation — the seeds `mov edx,edi; shl edx,6; add edx,edi` (edx = 65*edi) sat just
+outside the window, and seed-inclusive evaluation flips the same chain to the standard (8380,2,0) block fold
+(M280 G4 computes the substitution). A "different index idiom" claim needs the window widened, not a new family.
 The chooser/dispatch state family (dispatch table, list seek, state+mode pair, the counters around it) is mapped in
 `references/ui-chooser-state.md` — read it before re-deriving any of it.
 

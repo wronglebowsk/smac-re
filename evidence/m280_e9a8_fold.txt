@@ -1,0 +1,8 @@
+G1 PASS: e9a8 census: 2 sites ['0x568038', '0x5a9fd5'], writers [] (ZERO stores - read-only row stands)
+G2 PASS: reader 0x568038 chain WITH seeds: edi=[ebp-0xc] (edi,DWORD PTR [ebp-0xc] / edx,edi / edx,0x6 / edx,edi) -> edx = (4190, 1, 0); load cx,WORD PTR [edx*2+0x94e9a8] -> byte index = 8380*block + 2*region = (8380,2,0): THE per-block WORD fold
+G3 PASS: reader 0x5a9fd5: edi=[ebp+0xc] (arg, edi,DWORD PTR [ebp+0xc]); edx = loop counter (edx,0x1, edx @0x5a9fe6, back-edge 0x5a9f8f @0x5a9fed); ecx = (4190, 1, 0); load ax,WORD PTR [ecx*2+0x94e9a8] -> byte index = 8380*block + 2*region - same fold, region side walked by the loop
+G4 PASS: M279 G6 artifact: mid-chain window [0x56802b,0x568035) with edi/edx as FREE atoms gives edx = (30, 64, 0) (the published '(30,64,0)'); substituting the excluded seed edx := 65*edi yields byte index coef (8380, 0, 0) - the SAME 8380 block stride, so '(30,64,0)' was the truncated-window form, computed
+G5 PASS: provenance(reader1 block): [ebp-0xc] sole writer in FUN_0055f650 = [(5633821, 'mov', 'DWORD PTR [ebp-0xc],eax')]; its value = BYTE[52*edi+0x933286] = unit+14 OWNER (13*4=52, ecx,[edi+edi*2] / edx,[edi+ecx*4] / al,BYTE PTR [edx*4+0x933286] / al,BYTE PTR [esi+0x933286]) - e9a8 read keyed on the OWNER block like the M278 writers
+G6 PASS: containment: 0x568038 -> FUN_0055f650, 0x5a9fd5 -> FUN_005a90a0, 0x55f71d -> FUN_0055f650 (AI hub + a per-block walker reading OWNER/arg-keyed rows)
+G7 PASS: registry: NAMED.md carries ## M280 (s222) (True); M279's e9a8 row cites M280 (True) - the retraction lives in the registry
+SUMMARY M280: 7/7 gates PASS
