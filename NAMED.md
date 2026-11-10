@@ -1269,3 +1269,17 @@ Acceptance: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`;
   (m54b_clean is a 64x64 save; planet.MP is 80x80) - the identity gate arbitrates dims.
 - Command: `python3 -m sim.selftest --b8 programs/saves/m54b_clean.SAV programs/maps/planet.MP
   --turns 5` -> `PASS B8: 10/10 gates` (`evidence/b8_savewrite.txt`).
+
+## B9 (s223, BUILD, golden-trace pairing - R3's first piece) 7/7
+- The golden trace evidence/trace_m54b40b_20261024_212833.jsonl is the ORIGINAL terran.exe on the SAME
+  save the sim loads (m54b_clean.SAV, 2150, our 3): 40 presses, one row per turn, state_before/after of
+  (year, cur_player, turn_flags, n_bases). sim/parity.py presses the B3 engine that many turns and pairs
+  every recorded snapshot as an ordered subsequence of the emission (m30 law: recorded rows may not be
+  skipped, model rows may be extra). 41/41 snapshots covered, 0 missing; before(0)==save start,
+  before(t)==after(t-1); year_before==2150+turn all 40.
+- RIVALS: swapped order and year_after=0 each miss the (2190,7,2) witness (recorded turn 39: year fired
+  while cur is still 7) - one snapshot pins both the walk order and the year edge.
+- FRONTIER: n_bases model const 18 vs recorded 18->26 (delta +8) - the sim has no AI base-founder; the
+  delta is the finding (census pick), not a gate input.
+- Command: `python3 -m sim.selftest --b9 programs/saves/m54b_clean.SAV` -> `PASS B9: 7/7 gates`
+  (`evidence/b9_golden_parity.txt`); `python3 -m sim.parity` CLI exit 0.

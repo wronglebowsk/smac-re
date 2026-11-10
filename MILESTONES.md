@@ -34,7 +34,7 @@ the remainder is written down before the session ends. Context is the scarce res
 | U2 | Assets render offline | todo | PCX/CVR/FLIC decoded into PNG/Frames by one script |
 | R1 | Headless sim skeleton | **DONE (B6, s212)** | `python3 -m sim.headless --sav <save> --map programs/maps/planet.MP --turns 10 --dump sim_state.json` -> exit 0, year 2150->2160 per the B3 model, two runs identical sha256 2efbc782e2075a26; `python3 -m sim.selftest --b6 ...` 6/6 (`evidence/b6_headless.txt`) |
 | R2 | Playable vertical slice | todo | new game → move a unit → end turn → save |
-| R3 | Golden-trace parity | todo | our sim matches original traces N turns |
+| R3 | Golden-trace parity | **IN PROGRESS - B9 pairing DONE (s223)** | our sim matches original traces N turns |
 
 Legacy gates G1–G4 in `ROADMAP.md` still hold; this file is the operational breakdown of them.
 
