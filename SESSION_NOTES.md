@@ -761,3 +761,9 @@ Older sessions: `docs/sessions/sessions-219-219.md` (1 sessions). Read it only w
   fixtures; 8 sim rungs re-run green (--b6 6/6 --b7 6/6 --b8 10/10 --b9 7/7 --b10 18/18 --b11 13/13
   --b13 12/12 --b14 11/11; sim/ untouched, --b12 needs a trace arg); NAMED.md now 233,100 B (fail 250 k) -
   a named-archive split is a future fire, not this one.
+- GREPTILE ROUND 1 (2 P1 + 1 P2, ALL FIXED pre-merge): scripts/check_classes.py still opened old
+  paths and SKIPPED missing frames silently -> resolves evidence/fixtures/ now and a missing frame
+  FAILS; long-dead m15_hud/m15_mainmenu/m15_autolist rows dropped; m15_stuck_screen.png restored from
+  git (4fd8ebe^) into fixtures; evidence.py treats check_classes.py as fixture code.
+  accept_ready.py + session_brief.py counted ALL of evidence/ against the 29 MB floor -> both share
+  `evidence.evidence_mb()` (fixtures uncounted). SKILL retired-structural-laws pointer -> code-atlas.md.

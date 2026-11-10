@@ -103,16 +103,26 @@ def hot_window_text():
 
 
 def fixture_pats():
-    """Evidence file names named as inputs by TEST/runner code (scripts/test_*.py, sim/*.py) -
+    """Evidence file names named as inputs by TEST/regression code (scripts/test_*.py,
+    scripts/check_classes.py, sim/*.py) - those are fixtures (s242: Greptile caught that the
+    classifier regression reader was missed).
     those are fixtures, never prune victims. Deliberately NOT all of scripts/: a driver .py that
     names the path where it ONCE wrote a screenshot is not a reader and must not hold it hot."""
     code = ""
     for sub in FIXTURE_CODE_GLOBS:
         for d, _, fs in os.walk(os.path.join(ROOT, sub)):
             for f in fs:
-                if f.endswith(".py") and (sub == "sim" or f.startswith("test_")):
+                if f.endswith(".py") and (sub == "sim" or f.startswith("test_")
+                                          or f == "check_classes.py"):
                     code += open(os.path.join(d, f), encoding="utf-8", errors="ignore").read()
     return _pats_from(code), code
+
+
+def evidence_mb():
+    """Counted evidence size, shared by budget/accept_ready/session_brief (s242, Greptile P1):
+    test fixtures under evidence/fixtures/ are UNCOUNTED headroom (docs/EVIDENCE.md)."""
+    return sum(os.path.getsize(os.path.join(d, f))
+               for d, _, fs in os.walk(EVID) if FIXTURES not in d for f in fs) / 1e6
 
 
 def human(n):

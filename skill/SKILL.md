@@ -170,7 +170,7 @@ pruned; an IMAGE stays hot only while the HOT WINDOW cites it — the newest 8 `
 `SESSION_NOTES.md` plus the live footing files (`NEXT_PROMPT.md`, `AGENTS.md`, `SESSION_CURSOR.md`) — or it is
 younger than `--keep-days`; lookup/history docs (NAMED.md, pick-archive, named archives, docs/sessions/,
 skill references) explain old findings but do NOT hold an image hot: its bytes stay in git and
-`evidence.py log` gives the commit. Test-fixture images (named by `scripts/test_*.py`/`sim/`) live in
+`evidence.py log` gives the commit. Test-fixture images (named by `scripts/test_*.py`/`scripts/check_classes.py`/`sim/`) live in
 `evidence/fixtures/`, which `budget` does not count and `prune` never touches. `prune --apply` moves the rest
 to git-only, recorded path/sha256/bytes/commit in `.prune_log.jsonl`.
 - **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A
@@ -218,8 +218,8 @@ TRAP 25. The six structural field laws (element-index multiply before "stride"; 
 behind a bound check, not an address range; count a field in BOTH encodings; degree asymmetry names init-time
 values; (function, base-register) reuse proves a struct, writer SETS split its parts; read the writer's SOURCE
 before naming members — `setne`/`shr`/`and` chains mean booleans of ONE bitfield, and a many-write/no-test
-displacement is a recomputed CACHE no gate may read) are VERBATIM in `references/instrument-laws.md`
-(§s242-retired structural laws) — same for the chain-eval window law (start at the FOLD SEEDS, never
+displacement is a recomputed CACHE no gate may read) are VERBATIM in `references/code-atlas.md`
+(§s242 retirement: code-atlas family + structural laws) — same for the chain-eval window law (start at the FOLD SEEDS, never
 mid-chain: a window opened past the seeds published an index idiom that was pure truncation). The
 chooser/dispatch state family is mapped in `references/ui-chooser-state.md` — read it before re-deriving.
 

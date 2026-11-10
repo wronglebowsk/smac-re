@@ -53,7 +53,7 @@ the `budget` figure and call it bytes (s179: NEXT_PROMPT.md 14,018 B = 13,954 ch
   and a retired session's screenshot belongs in git, not in the working tree.
 - **Grace floors, both ways.** An image captured within `--keep-days` (default 7) stays hot before
   any citation exists — the notes that cite it may not be written yet. And an image named as an
-  input by `scripts/test_*.py` or `sim/` is a TEST FIXTURE: fixtures live in `evidence/fixtures/`
+  input by `scripts/test_*.py`, `scripts/check_classes.py` or `sim/` is a TEST FIXTURE: fixtures live in `evidence/fixtures/`
   (flat, basenames unique), a directory that `budget` does not count and `prune` never touches;
   the one-time move (s242) is recoverable via `git log --follow`. `evidence.py show` resolves a
   fixture at either its old or its new path.
