@@ -1,6 +1,5 @@
-# NEXT_PROMPT.md - footing (s229, M285 MEASURED-NEGATIVE w/ falsifier: the REAL production chooser
-# (INSERT landed item 193) is class vptr 0x672298, NOT family (+0x4c=0x404ed0 stub); live dialog
-# vptr 0x672298 at the click; 0/12 sites fired, FUN_005f6aa3 + pump never entered. Next: ANALYSE***)
+# NEXT_PROMPT.md - footing (s230, B11 BUILD 13/13: the production-queue law replays the game's own
+# m69/m70/m71/m72 queue states byte-for-byte; R2's "build" slice is now executable. Next: BUILD***)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -29,7 +28,7 @@ binding cap is doc headroom, not capability.**
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
 ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9, **B6 DONE (s212)** = R1 DONE (6/6), **B7 DONE (s216)** = R2's move leg (6/6) - commands per-id in `NAMED.md` §B4-§B7.
-**B8 DONE (s220)** = R2's save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** = R3's golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B1-B10 DONE.** A BUILD fire must first WRITE the next rung (B11, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
+**B8 DONE (s220)** = R2's save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** = R3's golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B1-B11 DONE.** A BUILD fire must first WRITE the next rung (B12, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md`, then build it; an ANALYSE fire picks from below.
 
 ## THE LEDGER
 
@@ -63,12 +62,10 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 - RESULT blocks s208/210, s211 (M272), s211/213, s213/215 VERBATIM in `docs/pick-archive.md`
   (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
 
-- Pick from (ANALYSE fires; the next BUILD fire takes **B10** = R2's new-game leg - write the rung into `BUILD_SPINE.md` FIRST, then build it):
-  ANSWERED s228=M284 (12 sites, 0 load-then-call, 0 direct; base display clicks dispatch
-  it through NONE - CPane).  ANSWERED s229=M285 (production chooser vptr 0x672298 NOT family,
-  +0x4c stub; INSERT landed item 193; 0/12 sites fired; live vptr 0x672298 = the falsifier).
-  ANSWERED s227=M283 (decode_save --sections dims-derived, 17/17) and s225=M282 (AI bases
-  found by SAME FUN_004e47d0; built as sim/basefound.py B10). NEW (M282 frontier): WHICH
+- Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
+  ANSWERED s228=M284, s229=M285 (chooser 0x672298 NOT family; INSERT landed; 0/12 fired;
+  live vptr = the falsifier), s227=M283 (17/17), s225=M282 (built as B10).  BUILD s230=B11
+  (13/13: the queue law, `NAMED.md` §B11). NEW (M282 frontier): WHICH
   founder vector the recorded AI used - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
   BOX PICKS, box UP and loaded: (M285 frontier) the family +0x4c dispatcher MUST ride a REMAINING

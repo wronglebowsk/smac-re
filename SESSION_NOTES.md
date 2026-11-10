@@ -599,3 +599,33 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   display (M284) NOR the production-chooser path (M285); candidate dialogs remaining =
   the message OK/CANCEL dialog (FUN_005f1394's own class: 0x67164c x7 live), the menu
   panes (TOPMENU/MAPMENU/SCENARIOMENU), the REALLYQUIT prompt.  Next fire: ANALYSE.
+
+## Session 230 (2026-11-10, BUILD, B11 queue-mechanics leg) 13/13 - the production-queue law replays the game's OWN m69/m70/m71/m72 queue states byte-for-byte; R2's "build" slice now executable
+- track_mode printed BUILD -> wrote rung B11 into BUILD_SPINE.md FIRST, then built it.
+  sim/queue.py: the M68-M72 queue law. INSERT obeys the widget CURSOR (queue[pos]=item,
+  pos = the widget's cursor row; shift runs min(9,max(pending+1,cursor)) DOWN to cursor+1,
+  store uses the ORIGINAL cursor, pending++ only when pending<9, enqueue tail parks the
+  cursor at rows+1, the 0x4d00 handler zeroes it). Duplicate id REFUSED (M68). Negative
+  slot value is the TYPE's (195->-3, 196->-6, stored VERBATIM; mapping rule OPEN). Head
+  sentinel = 0xffffffd9 (-39). POP pops ONE item, for k in range(pending): slots[k]=
+  slots[k+1], pending-=1 -> queue[pending] KEEPS its stale id (measured [2,193,192,0] ->
+  [193,192,192,0] = a duplicate no instruction wrote). Affordability = the visitor's OWN
+  cost product at 0x4efa5e, NOT price_of (head 193 wants 27).
+- ACCEPTANCE: python3 -m sim.selftest --b11 programs/saves/m54b_clean.SAV -> PASS 13/13
+  (evidence/b11_queue_mechanics.txt; sha256 29753b325093c6e1). Replays evidence/m69_cursor.jsonl
+  (poked cursor 4, INSERT 0 -> landing [4,0], pending 4->5, stale 193 moved to 5, cursor 6),
+  m70_cursor_events.jsonl (rowclick 3 -> cursor 1; insert 193@1 p1 cur2; insert 192@2 p2 cur3;
+  0x4d00 -> 0), m71pop_seq/m71pop3_seq ([193,192,192,0] p1), m72gate4 (storage 18 vs edi 27
+  BAILS x2, queue untouched) + m72gate5 (storage 27 PAYS, storage 0) - the game's OWN bytes.
+- RIVALS fail the same fit: shift-left-by-K gives [193,192,0..] (model [193,192,192]); price_of
+  18 pays at storage 18 (game bails). Written queue state (pending 1, head 988) composes into
+  record 0 via queue_bytes + savewriter: ONLY dwords 0x4c/0x50..0x77 change, re-parse reads
+  pending 1 head 988, tail byte-exact, decode_save --sections still rc 0. `python3 -m sim.queue
+  --sav <sav> --out <f>` exit 0. B8 10/10, B9 7/7, B10 18/18 regressions GREEN.
+- NEW: the queue's SAVE-RECORD offsets are now written+re-read (pending@0x4c, slots@0x50..0x77)
+  but only as compose/read-back; the cursor-vs-pending store-order interaction on the WRITE side
+  and the negative-id table stride (-v)*48 vs *16 stay OPEN (M70). The M282 G5 found-event
+  SCHEDULING frontier is DECLARED, not modeled: B11 replays recorded queue states, it does not
+  predict which turns found/write. Next fire: BUILD (B12 - write the rung into BUILD_SPINE.md
+  first: candidates are the cursor-vs-save write law, unit-growth from a completion, or R2's
+  end-turn/save slice closure).
