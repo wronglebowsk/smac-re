@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s237: B13 12/12 #244; M290 fit #242, M289 #241:
-# family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
-# +0x12c/+0x60) both avoid the slot; zero dispatch anywhere. Next: ANALYSE pod-walk)
+# NEXT_PROMPT.md - footing (s238: M291 10/10 pod-scan law; B13 #244, M290 #242:
+# M291: found-scan = strict site-value argmax over the 25-ring; the (dist*10000)/(value+1)
+# footing shape REFUTED (no 0x2710). Next: ANALYSE pod MOVEMENT.)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -29,11 +29,11 @@ binding cap is doc headroom, not capability.**
 build that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a
 census claim; no box time, no `/proc`, no gdb; the box-debt pre-step does NOT apply; title commit+PR `B<n>`);
 ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9, **B6 DONE (s212)** = R1 DONE (6/6), **B7 DONE (s216)** = R2's move leg (6/6) - commands per-id in `NAMED.md` §B4-§B7.
-**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`, `NAMED.md` §B11) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B13 DONE (s237)** 12/12: `python3 -m sim.selftest --b13 <sav>` (`evidence/b13_hubfound.txt`, `NAMED.md` §B13) - M290's founder dispatch EXECUTABLE: own-tile gate (distant target = msg 0x2408, NEVER founds), founder args = the pod record; strict ledger replay, rivals fail the fit. **B1-B13 DONE.** A BUILD fire writes the next rung (B14, per `MILESTONES.md` chapter R) into `BUILD_SPINE.md` first, then builds it; an ANALYSE fire picks from below.
+**B8 DONE (s220)** save-WRITE leg: `python3 -m sim.selftest --b8 <sav> <map> --turns 5` 10/10 (`evidence/b8_savewrite.txt`, `NAMED.md` §B8). **B9 DONE (s223)** golden-trace pairing: `python3 -m sim.selftest --b9 <sav>` 7/7 (`evidence/b9_golden_parity.txt`, `NAMED.md` §B9). **B10 DONE (s226)** 18/18: `python3 -m sim.selftest --b10 <sav>` (`evidence/b10_basefound.txt`, `NAMED.md` §B10). **B11 DONE (s230)** 13/13: `python3 -m sim.selftest --b11 <sav>` (`evidence/b11_queue_mechanics.txt`) - the M68-M72 queue law, replayed against the game's own states. **B12 DONE (s234)** 12/12: `python3 -m sim.selftest --b12 <sav> <trace>` (`evidence/b12_production.txt`, `NAMED.md` §B12) - completion CREATE: gate->pay->52-B record (29,42,2,3,order0) at array end->pop vs the game's OWN m56 trace, 3 rivals miss, grown image re-parses. **B13 DONE (s237)** 12/12: `python3 -m sim.selftest --b13 <sav>` (`evidence/b13_hubfound.txt`, `NAMED.md` §B13) - M290's founder dispatch EXECUTABLE: own-tile gate (distant target = msg 0x2408, NEVER founds), founder args = the pod record; strict ledger replay, rivals fail the fit. **B1-B13 DONE.** 
 
 ## THE LEDGER
 
-Merged M54A-M290 + B0-B13 (through #244); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M291 + B0-B13 (through this session's PR); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -61,16 +61,16 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   `docs/pick-archive.md` §trim-s209; numbers `NAMED.md`; M267-M273 RESULT blocks in the archive.
   FUN_005f3f5b is NOT open - see M220.
 
-- Pick from (ANALYSE fires; the next BUILD fire writes rung **B14** into `BUILD_SPINE.md` FIRST, then builds it):
-  ANSWERED s227-M289, s234-B12, s236-M290, s237-B13 (M290 FIT DONE, 9/9: dispatch own-tile-gated 0x563d46 (distant target -> 0x2408 auto-build, NEVER founds); founder args = pod record owner@+14/y@+10/x@+8; legality = the scan alone; B10 tile rule REFUTED (ranks 542-1691/2146)).  NEW (s236 frontier): the POD-WALK target rule - the hub's scan score (0x563c00-0x563d40, (dist*10000)/(value+1) shape) and which pod/town the hub picks, fit vs the m289 founding TURNS; the found-tile choice is now reduced to pod MOVEMENT.  Trap (s236): the save 22-B column byte0 is NOT the live category - use the 44-B record view rec=(W/2)*y+(x>>1), byte0 cat 3-6=land.
-  STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
+- Pick from (ANALYSE fires; next BUILD = B14):
+  ANSWERED s227-M289, s234-B12, s236-M290, s237-B13 (M290 fit 9/9: dispatch own-tile-gated, founder args = pod record; B10 tile rule REFUTED - NAMED M290).  ANSWERED s238=M291 (10/10; law NAMED.md): scan = STRICT site-value argmax over the 25-ring (0x67850c/0x678990 .rdata; value = FUN_0046e770 rec byte2 high nibble; rec byte3 owner-equality REQUIRED - no-owngate loses exactly fac1(27,29)); the (dist*10000)/(value+1) footing shape REFUTED (no 0x2710). NEW pick (s238): POD MOVEMENT - which pod runs the hub vector (callers of FUN_0055f650 + unit id) and its walk vs the founding turns (rises 6,9,18,19,22,23) - BOX: VEC-hub entry census printing unit index + pos. UNMODELED (fit passed without): 0x94e5a8/0x94eca8 tables + 0x4e3c00 no-go.  Trap (s236): save 22-B column byte0 is NOT the live category - use the 44-B record view rec=(W/2)*y+(x>>1), byte0 cat 3-6=land.
+  STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128; 338 = coarse-map CELL count; NAMED).
   DIALOG +0x4c CLOSED (M284-M288): slot not on any click/key/create path; menu
   pane NOT family (0x67919c); full shape in NAMED M288. M282 G5 CLOSED (s235 hub,
-  s236 fit). 188-row cursor's caller OPEN; NEVER bp mid-instruction (s213 crash).
+  s236 fit). 188-row cursor caller OPEN; NEVER bp mid-instruction (s213 crash).
 
 ## LIVE FACTS / KIT
 
-- **BOX**: UP as of s211 (m54b_clean r50 loaded, TracerPid 0, gdb detached). Cold relaunch was ~6 s to title at s211 (the >9 min figure is stale). `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd even when your launcher is alive - the tracked-job ancestry escape is DEAD; wrap harness runs in `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'` and keep the harness itself uid 1000 (under sudo wine refuses the prefix).** Recipe + state dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
+- **BOX**: UP as of s211 (m54b_clean r50 loaded, TracerPid 0, gdb detached). Cold relaunch ~6 s to title (s211). `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd even when your launcher is alive - the tracked-job ancestry escape is DEAD; wrap harness runs in `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'` and keep the harness itself uid 1000 (under sudo wine refuses the prefix).** Recipe + state dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
 
 ## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
 
