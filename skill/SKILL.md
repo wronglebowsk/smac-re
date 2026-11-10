@@ -120,6 +120,11 @@ silently; sync in the same session, before the closing commit.
 - A list cursor read BEFORE the seek is the PREVIOUS cursor: the chooser pump seeks with
   `call 0x4026b0` (0x497717) and only then reads `[[c+0xc]+4]`; a node print at the pump entry
   (0x497704) shows the old node, so a value-vs-node gate fails on the instrument, not the game.
+- **The save's 22-B COLUMN view is NOT the live tile record** (s236, M290 run 1): `sim/save.py
+  tile()[0]` mixes in the record's byte 22 and misreads the category (5/7 legal land sites read
+  cat 0 = water). The live byte-0 category (`& 0xe0`: cat 0-2 water, 3-6 land) lives at
+  `grid_off + 44*((W/2)*y + (x>>1))` — the FIRST half of the 44-B record. Any tile-legality fit
+  must use the record view or it "proves" the game founded on sea.
 
 Paul wants SMAC RE broken into **small pieces**: complete ONE milestone, write it to a
 file, append one dated line to `~/reverse/smac/SESSION_NOTES.md`, then STOP — ending

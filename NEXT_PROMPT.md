@@ -62,16 +62,11 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   FUN_005f3f5b is NOT open - see M220.
 
 - Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
-  ANSWERED s227-M288 + s234-B12 (B11, M283-M288, B12; M288 closed +0x4c) + s235-M289 (LIVE 7/7: hub FUN_0055f650->4cca50->4e47d0; v4408 + 5a0aa0 chain complete 0; count 18->23 exact).  BUILD s234=B12
-  (13/13: the queue law, `NAMED.md` §B11). NEW (s235 frontier): fit the AI hub's FOUNDING DECISION to trace_m289_20261110_071759.jsonl (7 real fac/x/y) vs B10's assumed rule - static+model, no box.
+  ANSWERED s227-M289, s234-B12, s236-M290 (M290 FIT DONE, 9/9: dispatch own-tile-gated 0x563d46 (distant target -> 0x2408 auto-build, NEVER founds); founder args = pod record owner@+14/y@+10/x@+8; legality = the scan alone; B10 tile rule REFUTED (ranks 542-1691/2146)).  NEW (s236 frontier): the POD-WALK target rule - the hub's scan score (0x563c00-0x563d40, (dist*10000)/(value+1) shape) and which pod/town the hub picks, fit vs the m289 founding TURNS; the found-tile choice is now reduced to pod MOVEMENT.  Trap (s236): the save 22-B column byte0 is NOT the live category - use the 44-B record view rec=(W/2)*y+(x>>1), byte0 cat 3-6=land.
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
-  BOX PICKS, box UP: M287 (last live pick) ELIMINATED the menu pane (bar is CHROME,
-  GAME-row popup vptr 0x0067919c NOT FAMILY live, 0/12 x2).  M288 (s233, no box): +0x4c CLOSED - FUN_005f6aa3 has 0 direct callers (its 5 refs =
-  the family vtables' +0x4c entries), CREATE-time (466 installs/72 owners, install ∩ site =
-  ∅; ctor FUN_00405ef0 + callees clean) and the Return-key path (0x100->+0x12c->0x60,
-  0x102, 0x104, pump 0x5f1394) contain NO +0x4c CALL dispatch; row cb INLINE in the pump.
-  +0x4c not on ANY click/key/create path. M282 G5 CLOSED (s235 live: hub). 188-row
-  cursor's caller OPEN; NEVER bp mid-instruction (s213 crash).
+  DIALOG +0x4c CLOSED (M284-M288): slot not on any click/key/create path; menu
+  pane NOT family (0x67919c); full shape in NAMED M288. M282 G5 CLOSED (s235 hub,
+  s236 fit). 188-row cursor's caller OPEN; NEVER bp mid-instruction (s213 crash).
 
 ## LIVE FACTS / KIT
 
