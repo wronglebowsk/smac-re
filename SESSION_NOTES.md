@@ -741,3 +741,23 @@ Older sessions: `docs/sessions/sessions-219-219.md` (1 sessions). Read it only w
   FUN_004e3c00 no-go (now named in the rung text as DECLARED); name
   ds:0x920434; re-arm the M284-M287 live census (guards fixed); 188-row
   cursor caller. Next: ANALYSE (gate tables / 0x920434); next BUILD = B15.
+
+## Session 242 (2026-11-10, CONTEXT-HYGIENE fire, PASS - no research findings) - always-loaded 84,743 -> 56,169 B; evidence 28.8 -> 17.1 MB via HOT-WINDOW cite retention
+
+- ACCEPTANCE (`python3 scripts/evidence.py budget` at close): always-loaded 56,169 B vs the 60 k ritual ✓;
+  skill/SKILL.md 65,962 -> 40,625 B (warn 55 k); NEXT_PROMPT.md 15,190 -> 11,953 B (warn 12 k);
+  evidence/ 28.8 -> 17.1 MB (warn 20): the old prune rule found 1 victim against a 9 MB overshoot.
+- THE RULE (docs/EVIDENCE.md "Pruning rules", implemented in scripts/evidence.py): an IMAGE stays hot only
+  while the HOT WINDOW cites it - newest 8 `## Session` sections + NEXT_PROMPT/AGENTS/cursor - or it is
+  younger than --keep-days, or scripts/test_*.py/sim/ names it (TEST FIXTURE). pick-archive/NAMED/references
+  no longer hold images hot (one mention in the full notes history used to keep a screenshot hot forever).
+- THE NUMBERS: 58 images/11.8 MB -> 1 hot (164 kB) + 31 pruned to git-only 6.8 MB via `prune --apply`
+  (.prune_log.jsonl 190 -> 221 rows) + 26 fixtures `git mv`'d to `evidence/fixtures/` (4.9 MB, uncounted).
+- NOTHING DELETED WITHOUT A TRAIL: SKILL depth VERBATIM -> skill/references (new wine-pitfalls/netcode/
+  ui-assets/cvr-format.md; 8 existing refs appended); NEXT_PROMPT build+pick ledgers -> NAMED
+  §CHAIN-BUILDS/§CHAIN-PICKS; the s241 FULL trap text -> docs/pick-archive.md §s242-traps. Fixture path
+  rewrites landed in the 2 test scripts + 12 md files (`git mv` keeps `git log --follow`).
+- VERIFIED: `scripts/test_classify.py` PASS 17/17 and `scripts/test_hud_bar.py` PASS 26/26 on the moved
+  fixtures; 8 sim rungs re-run green (--b6 6/6 --b7 6/6 --b8 10/10 --b9 7/7 --b10 18/18 --b11 13/13
+  --b13 12/12 --b14 11/11; sim/ untouched, --b12 needs a trace arg); NAMED.md now 233,100 B (fail 250 k) -
+  a named-archive split is a future fire, not this one.
