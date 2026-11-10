@@ -710,6 +710,110 @@ def run_b7(sav_path, map_path, turns, results):
              sv1.year, eng1.year, sha1[:16]))
     return 0
 
+def run_b8(sav_path, map_path, turns, results):
+    """Rung B8: the save-WRITE leg - identity round-trip, decoder re-read, mutation lands,
+    rivals fail the same fit, determinism + CLI. No box, no /proc, no gdb."""
+    import hashlib
+    import os as _os
+    import subprocess
+    import tempfile
+    import struct
+    from . import savewriter as sow
+    from . import save as sosave
+    from . import turn as soturn
+    from . import map as somap
+    if not (_os.path.exists(sav_path) and _os.path.exists(map_path)):
+        return fail("B8: missing input: %s / %s" % (sav_path, map_path))
+    sv = sosave.parse(sav_path)
+    mp = somap.parse(map_path)
+    img = sow.build_image(sv)
+    # the SAV's own map-header dims are modeled and arbitrated by the identity gate below;
+    # the shipped .MP is the OTHER size family (m54b_clean is 64x64, planet.MP is 80x80 -
+    # the B6/B7 pairing uses the .MP for terrain rules, not dims), so cross-file dims
+    # equality would be a false premise. What must hold: the written image carries the
+    # model's dims back at the map-header struct, and both files parsed independently.
+    dims2 = struct.unpack_from("<II", img, sosave.MAP_HDR_OFF)
+    results.append(("written map-header dims re-read %dx%d == model %dx%d (%s parses %dx%d)"
+                    % (dims2[0], dims2[1], sv.width, sv.height, _os.path.basename(map_path),
+                       mp.width, mp.height),
+                    dims2 == (sv.width, sv.height)
+                    and sv.width * sv.height * sosave.CELL_LEN == sv.grid_len))
+    results.append(("identity-roundtrip byte-exact on %d B" % len(sv.data), img == sv.data))
+    # the repo's own decoder re-reads the written image
+    with tempfile.NamedTemporaryFile("wb", suffix=".SAV", delete=False) as fh:
+        fh.write(img)
+        wpath = fh.name
+    try:
+        def sec(pth):
+            r = subprocess.run([sys.executable, "scripts/decode_save.py", pth,
+                                "--sections", "--anchors"],
+                               capture_output=True, text=True, cwd=REPO)
+            return r.stdout.replace(pth, "<F>") if r.returncode == 0 else "rc=%d" % r.returncode
+        results.append(("decode_save sections+anchors identical", sec(sav_path) == sec(wpath)))
+    finally:
+        _os.unlink(wpath)
+    # mutation: press the B3 engine `turns` times and write the model out
+    eng = soturn.Engine(sv.year, human=sv.own_player)
+    for _ in range(turns):
+        eng.press()
+    img2 = sow.build_image(sv, year=eng.year, cur=eng.cur, tf=eng.tf)
+    rep = sosave.Save("written", img2)
+    results.append(("mutation year %d->%d re-parses" % (sv.year, eng.year),
+                    rep.year == eng.year and rep.n_units == sv.n_units
+                    and rep.n_bases == sv.n_bases))
+    out_of_model = sow.modeled_diff_check(sv.data, img2)
+    # x/y of the moved unit records are modeled too: add their spans
+    dset = sow.diff_offsets(sv.data, img2)
+    xspans = set()
+    for i in range(sv.n_units):
+        o = sv.units_off + sosave.UNIT_LEN * i
+        xspans |= {o, o + 1, o + 2, o + 3}
+    unmodeled = [i for i in out_of_model if i not in xspans]
+    results.append(("mutation diff confined to modeled bytes (%d diffs)" % len(dset),
+                    not unmodeled and sow._u32(img2, sow.OFF_CUR) == eng.cur))
+    # a single unit move lands in exactly its two x-bytes
+    u0 = sv.units[0]
+    img3 = sow.build_image(sv, moves={0: (u0["x"] + 2, u0["y"])})
+    d3 = sow.diff_offsets(sv.data, img3)
+    o0 = sv.units_off
+    import struct as _st
+    x2 = u0["x"] + 2
+    expected3 = {o0 + k for k in range(2)
+                 if u0["x"].to_bytes(2, "little")[k] != x2.to_bytes(2, "little")[k]}
+    results.append(("move x->x+2 lands in exactly record 0's bytes %s==%s"
+                    % (sorted(d3), sorted(expected3)), d3 == expected3))
+    # rival 1: the pure re-emitter passes identity but FAILS the year mutation
+    rival = sow.build_image(sv, year=eng.year, cur=eng.cur, tf=eng.tf, lift_all=True)
+    results.append(("RIVAL pure-reemitter fails year mutation (carries %d)"
+                    % sosave.Save("r", rival).year,
+                    rival == sv.data and sosave.Save("r", rival).year != eng.year))
+    # rival 2: a writer with UNIT_LEN perturbed by 4 FAILS the identity
+    rival2 = sow.build_image(sv, unit_len=sosave.UNIT_LEN + 4)
+    results.append(("RIVAL UNIT_LEN+4 fails identity (len %d vs %d)"
+                    % (len(rival2), len(sv.data)), rival2 != sv.data))
+    # determinism + the module CLI
+    sha = [hashlib.sha256(sow.build_image(sv)).hexdigest() for _ in range(2)]
+    results.append(("two-runs-identical-sha256 %s (%d B)" % (sha[0][:16], len(img)),
+                    sha[0] == sha[1] and img == sv.data))
+    with tempfile.NamedTemporaryFile("wb", suffix=".SAV", delete=False) as fh:
+        cpath = fh.name
+    rc = sow.main(["--sav", sav_path, "--out", cpath])
+    cli_ok = rc == 0 and open(cpath, "rb").read() == sv.data
+    _os.unlink(cpath)
+    results.append(("command python3 -m sim.savewriter exit-0 + byte-exact rc=%d" % rc, cli_ok))
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B8: %d/%d gates failed: %s" % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B8: %d/%d gates - save WRITE leg on %s: identity round-trip %d B, year %d -> "
+          "%d written through the B3 engine, rivals fail the same fit, sha256 %s (no box time, "
+          "no /proc, no gdb)" % (len(results), len(results), _os.path.basename(sav_path),
+                                 len(sv.data), sv.year, eng.year, sha[0][:16]))
+    return 0
+
+
+
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
@@ -723,6 +827,8 @@ def main(argv=None):
                     help="rung B6: headless run twice, compare dump sha256 (turns via --turns)")
     ap.add_argument("--b7", nargs="+", metavar=("SAV", "MAP"),
                     help="rung B7: the move slice twice, compare dump sha256")
+    ap.add_argument("--b8", nargs="+", metavar=("SAV", "MAP"),
+                    help="rung B8: the save WRITE leg (identity, mutation, rivals)")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
@@ -731,6 +837,8 @@ def main(argv=None):
         return run_b6(args.b6[0], args.b6[1], args.turns, results)
     if args.b7:
         return run_b7(args.b7[0], args.b7[1], args.turns, results)
+    if args.b8:
+        return run_b8(args.b8[0], args.b8[1], args.turns, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

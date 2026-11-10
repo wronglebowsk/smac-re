@@ -86,6 +86,29 @@ year 2150->2160, dump 8,455 B sha256 2efbc782e2075a26 (two runs identical); `pyt
 write a stable dump, increment the year per the B3 model, and be deterministic (two runs → identical sha256).
 This is R1 marked DONE in `MILESTONES.md`.
 
+**B8 - the save WRITE (R2's save leg, first executable piece).** `sim/savewriter.py`: recompose
+a `.SAV` container image from the parsed `sim.save` state model. Every layout constant is
+recomputed by the writer (imported from `sim.save` but independently applied: prefix 12 | state
+header 796 | own player 4 | block A 67,040 | block B 11,488 | small 32 | map header 2,724 | grid
+W*H*22 | region map ((W+4)/5 rule) | 16,000 | u32 count + bytes | 3,584+26,624+4,096 | units 52n |
+bases 304m | tail-to-EOF). Each byte is MODELED - composed from the model (version, counts,
+year@84, cur_player@800 (0x985DCC via the M242 block identity), turn_flags@60 (bit 1 only; the rest
+of the dword is declared pass-through), own player@808, map dims, each unit record's x/y) - or a
+DECLARED PASS-THROUGH (block A/B, small table, the 16,000 section, middles, tail/trailer, the grid,
+the region map, and the un-modeled bytes inside modeled records). The new-game leg was NOT chosen:
+no recorded initial-state trace exists to parity-check against, and the spine forbids inventing
+expected values.
+`python3 -m sim.selftest --b8 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5`
+must print PASS with: (1) identity round-trip - an unmutated written image == the original file,
+byte-for-byte (the layout constants arbitrated on the real bytes); (2) `scripts/decode_save.py
+--sections --anchors` on the written image prints the same section table as on the original;
+(3) mutation - the B3 engine pressed N times, the written file re-parses with year == year+N and
+every differing byte inside a MODELED span taking exactly the model value; a move of one unit's x
+lands in exactly that record's two x-bytes; (4) the RIVALS FAIL THE SAME FIT - a pure re-emitter
+(lift everything) fails the year mutation, a writer with UNIT_LEN perturbed by 4 fails the identity;
+(5) two runs -> identical sha256, and `python3 -m sim.savewriter --sav <sav> --out <f>` exits 0.
+No box time, no /proc, no gdb.
+
 ## Grading rules for a build fire
 
 1. **Runnable or it did not happen.** The acceptance is the command's output, not a description of the code.
