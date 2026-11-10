@@ -52,7 +52,9 @@ OWNER1, OWNER2 = 0x95DA14, 0x933286
 # reuse m277's evaluator plumbing WITHOUT running its main() (skill law: do not re-derive)
 _src = open(M277).read()
 _ns = {"__file__": M277}
-exec(_src[:_src.index("def main(")], _ns)
+# marker is "\ndef main(" NOT "def main(": m277's own source carries the bare string
+# inside ITS exec line (line 37), and str.index finds THAT first, slicing mid-literal.
+exec(_src[:_src.index("\ndef main(")], _ns)
 load, neuter, chain_eval = _ns["load"], _ns["neuter"], _ns["chain_eval"]
 
 
@@ -82,10 +84,8 @@ def main():
         print("G%d %s: %s" % (n, "PASS" if ok else "FAIL", text))
 
     own = owners()
-    ins1 = dict((a, (op, ar)) for a, op, ar in load(FUN1, FUN1 + FUN1_SZ + 1))
-    ins2 = {}
-    for a, op, ar in load(FUN2, FUN2 + FUN2_SZ + 1):
-        ins2[a] = (op, ar)
+    ins1 = load(FUN1, FUN1 + FUN1_SZ + 1)[1]   # load() returns (ins_list, addr_dict)
+    ins2 = load(FUN2, FUN2 + FUN2_SZ + 1)[1]
 
     # ---- G1 containment + both folds re-evaluate to (8380, 2, 0) with the BLOCK atom
     cont = (own(STORE1) == own(FOLD1) == "FUN_0051dcb0"
@@ -103,7 +103,9 @@ def main():
          "+ 2*slot: %s and %s" % (hex(STORE1), hex(STORE2), f1, f2))
 
     # ---- G2 writer1: the COMPLETE ebx-writer census up to the store; the clamp sequence
-    dst = _ns["dst_regs"]
+    # dst_regs lives in the INNER namespace: m277's exec line rebinds _ns to the
+    # dict built from m276's slice, and chain_eval/neuter resolve it the same way.
+    dst = _ns["_ns"]["dst_regs"]
     ebxw = [a for a in sorted(ins1) if a <= STORE1 and "ebx" in [x for x in dst(*ins1[a]) if x]]
     cens = {hex(a): "%s %s" % ins1[a] for a in ebxw}
     for k in sorted(cens):
@@ -114,10 +116,12 @@ def main():
              and ins1[0x51DF26] == ("mov", "edx,ebx"))
     sentinel = sum(1 for a in ebxw if ins1[a] == ("or", "ebx,0xffffffff"))
     load_owner = ins1[0x51ddff] == ("mov", "bl,BYTE PTR [eax+0x95da14]")
-    gate(2, set(map(hex, ebxw)) == {"0x51ddbd", "0x51ddea", "0x51ddf5", "0x51ddff",
-                                    "0x51defa", "0x51df24"} and clamp and sentinel == 3
-         and load_owner,
-         "writer1 ebx census (up to %#x): %d writers - 3 sentinel `or ebx,-1`, 1 `xor ebx,ebx` "
+    gate(2, set(map(hex, ebxw)) == {"0x51dd5a", "0x51dd92", "0x51ddbd", "0x51ddea",
+                                    "0x51ddf5", "0x51ddff", "0x51defa", "0x51df24"}
+         and clamp and sentinel == 3 and load_owner,
+         "writer1 ebx census (up to %#x): %d writers: 2 are 0x950a64 region-array POINTERS "
+         "(0x51dd5a lea + 0x51dd92 add 0x20bc, the 0x51dd61 loop that incs a DIFFERENT "
+         "WORD array, off the block-index path); 3 sentinel `or ebx,-1`; 1 `xor ebx,ebx` "
          "zero-extend before the OWNER-BYTE load `%s %s` (0x95da14 = base table 0x95da10 + 4), "
          "1 clamp `xor ebx,ebx` at 0x51df24 guarded by the ONLY ebx test in the run-up "
          "(0x51df1d) whose jge TARGETS THE FOLD 0x51df26 - both legs (byte>=0 and clamped -1) "
@@ -125,9 +129,8 @@ def main():
          % (STORE1, len(ebxw), *ins1[0x51ddff]))
 
     # ---- G3 the selector IS the base-table walk and the docs already named the byte
-    sel = dict((a, (op, ar)) for a, op, ar in load(0x4e37f0, 0x4e3830))
-    sel_bytes = load(0x4e37f0, 0x4e3990)
-    sel_all = dict((a, (op, ar)) for a, op, ar in sel_bytes)
+    sel = load(0x4e37f0, 0x4e3830)[1]
+    sel_all = load(0x4e37f0, 0x4e3990)[1]
     walk = (sel.get(0x4e3822) == ("mov", "ebx,0x95da14")
             and sel.get(0x4e3807) == ("mov", "ecx,DWORD PTR ds:0x985af4")
             and any(v == ("add", "ebx,0x130") for v in sel_all.values())
@@ -163,9 +166,9 @@ def main():
     docu = ("52n at 0x933278" in namedf and "owner @+14" in turnf
             and "unit+14 (owner)" in turnf)
     tl = flat(TL) + namedf
-    cur = re.search(r"0x91b5b4[^\n]{0,60}?current (player|faction)", tl) or \
-           re.search(r"current player[^\n]{0,40}?0x91b5b4", tl) or \
-           ("0x91b5b4` current faction" in namedf)
+    cur = bool(re.search(r"0x91b5b4[^\n]{0,60}?current (player|faction)", tl)
+               or re.search(r"current player[^\n]{0,40}?0x91b5b4", tl)
+               or ("0x91b5b4` current faction" in namedf))
     gate(4, st_c == [0x55f71d] and chain and xchk and reloads and off and docu and cur,
          "writer2: [ebp-0xc] stores image-wide in the hub = %s ONLY; its value: 13*arg then "
          "<<2 = 52*arg (unit stride), `mov al,BYTE PTR [esi+0x933286]` = 0x933278+14 = the "
@@ -190,30 +193,48 @@ def main():
          "neutral block (rival '7 factions + 1 neutral column separate from faction 0' needs "
          "index 8 or a skip; neither exists)" % (SWEEP_LO, SWEEP_HI, S0, nblocks, S0))
 
-    # ---- G6 discriminator: the neutral-skip model's required branch is ABSENT; ours present
-    ev_tests = [a for a in sorted(ins1) if FOLD1 - 0x200 <= a <= STORE1
-                and ins1[a][0] in ("test", "cmp") and "ebx" in ins1[a][1]]
-    ev_jumps = [a for a in sorted(ins1) if ev_tests and ev_tests[-1] <= a <= STORE1
-                and ins1[a][0].startswith("j") and ins1[a][1] != "0"
-                and int(ins1[a][1], 0) != 0]
-    jumps = {hex(a): (ins1[a][0], ins1[a][1]) for a in ev_jumps}
+    # ---- G6 discriminator: attribute every conditional branch to ITS guard instruction
+    lin = [a for a in sorted(ins1) if FUN1 <= a <= STORE1]
+    lastflag, guarded = None, {}
+    for a in lin:
+        op, ar = ins1[a]
+        if op in ("test", "cmp"):
+            lastflag = (a, "%s %s" % (op, ar))
+        elif op.startswith("j") and lastflag:
+            guarded[hex(a)] = (lastflag, ar)
+    ebx_guarded = {k: v for k, v in guarded.items() if "ebx" in v[0][1]}
+    for k in sorted(ebx_guarded):
+        print("      ebx-guarded branch %s <- guard %#x %s | arg %s"
+              % (k, ebx_guarded[k][0][0], ebx_guarded[k][0][1], ebx_guarded[k][1]))
+    def tgt(a):
+        return int(ebx_guarded[a][1].split(",")[-1].strip(), 0)
+    keys = {"0x51de2e", "0x51df03", "0x51df22"}
+    reenter = all(tgt(k) <= FOLD1 for k in ebx_guarded) and tgt("0x51df22") == FOLD1
     human3 = "cur=3 our turn" in turnf and "owns 199 tiles" in turnf
-    gate(6, ev_tests == [0x51df1d] and jumps == {"0x51df22": ("jge", "0x51df26")}
-         and human3,
-         "DISCRIMINATOR: between the owner-byte load and the store the ONLY ebx test is "
-         "0x51df1d `test ebx,ebx` and its only branch is `jge 0x51df26` = the fold itself - "
-         "no branch skips the store when ebx==0 (the rival 'block 0 is special/neutral, "
-         "faction rows start at 1' model REQUIRES such a guard or a +1 bias and the bytes show "
-         "neither); ours predicts byte==0 stores block 0 directly and -1 clamps INTO it. And "
-         "the human was NOT block 0: the recorded box (M43) had us at `cur=3` with player 0 "
-         "owning 199 tiles - block 0 is not the player slot either")
+    gate(6, set(ebx_guarded) == keys and reenter and human3,
+         "DISCRIMINATOR (guard-attributed branch census, FUN_0051dcb0 entry..store): exactly 3 "
+         "conditional branches are guarded by an ebx test/cmp: 0x51de2e (scan-loop owner match) "
+         "and 0x51df03 (owner-change detection) RE-ENTER the clamp path, 0x51df22 `jge` targets "
+         "THE FOLD %#x itself - no ebx-conditional branch skips the store (rival 'block 0 is "
+         "neutral: a guard or a +1 bias skips/shifts index 0' finds NEITHER in the bytes; the "
+         "0x94eaa8 store's own guards at 0x51df49/51df59/0x51df5f key on tile type/mineral/occupancy bytes, not on "
+         "the block index); ours predicts byte==0 stores block 0 directly and -1 clamps INTO "
+         "it. And the human was NOT block 0: M43's recorded box has us at `cur=3` with player 0 "
+         "owning 199 tiles - block 0 is not the player slot either" % FOLD1)
 
     # ---- G7 registry: NAMED carries M278 and the M277 block carries the refinement
     named = open(NAMED, errors="replace").read()
-    blk = named.split("## M278")[1].split("## B")[0] if "## M278" in named else ""
-    m277blk = named.split("## M277")[1].split("## M278")[0] if "## M277" in named else ""
-    gate(7, "owner player index" in blk and "clamp" in blk.lower()
-         and "M278 REFINEMENT" in m277blk,
+    # ANCHOR ON THE FULL HEADER LINE: the bare token "## M277" also occurs as a
+    # cross-reference earlier in NAMED.md (split()[1] grabbed that segment once here)
+    m78 = re.search(r"## M278 \(s219.*?\n## ", named, re.S)
+    m77 = re.search(r"## M277 \(s218.*?(?=## M278 \(s219)", named, re.S)
+    blk = m78.group(0) if m78 else ""
+    m277blk = m77.group(0) if m77 else ""
+    c1, c2, c3 = ("owner player index" in blk, "clamp" in blk.lower(),
+                  "M278 REFINEMENT" in m277blk)
+    print("      registry check: M278-block=%s owner-clause=%s clamp-clause=%s refine-clause=%s "
+          "(blk %d B)" % ("## M278" in named, c1, c2, c3, len(blk)))
+    gate(7, c1 and c2 and c3,
          "registry: NAMED.md ## M278 names the block index (owner player index + clamp) and "
          "the ## M277 block carries the M278 REFINEMENT line (%d chars)" % len(blk))
 
