@@ -721,3 +721,27 @@ Older sessions: `docs/sessions/sessions-212-212.md` (1 sessions). Read it only w
   law at 0x563c00-0x563d40, (dist*10000)/(value+1) shape) vs the recorded
   founding TURNS - the decision is now reduced to POD MOVEMENT.
   Next: ANALYSE - the pod-walk target rule.
+
+## Session 237 (2026-11-10, BUILD, B13 12/12) - M290's founder dispatch is EXECUTABLE: sim/hubfound.py - own-tile-gated (distant target = msg 0x2408, never founds), founder args = the POD's record fields, capacity-only guard; 7/7 recorded founding tuples replay exact, strict ledger 18+7-2=23 peak 24 vs the m289 curve, both rivals fail the same fit
+- track_mode BUILD (3 ANALYSE fires since B12) -> the rung went into
+  BUILD_SPINE.md FIRST (pod-driven founding-dispatch leg, replacing B10's
+  REFUTED (x,y) placeholder), then sim/hubfound.py + run_b13 in sim.selftest.
+- ACCEPTANCE: python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV
+  -> PASS B13: 12/12 (evidence/b13_hubfound.txt; 3rd invocation; runs 1-2
+  were instrument bugs - python3.14 argparse refuses a 3-tuple metavar with
+  nargs='+', and a 6-tuple event unpack - floors never weakened).
+- MEASURED: every one of the 9 recorded rows' PRE-op cnt agrees with the
+  ledger replay through B10's leg (destroy slot ASSUMED last, declared);
+  survivors (6,20,48)(6,63,51)(5,27,19)(7,23,33)(1,27,29), destroyed
+  (6,12,48) and (6,1,43) ABSENT from the final 23; written image: only the
+  bases-count dword (offset 72) differs in the prefix, originals + tail
+  byte-identical, re-parses n_bases 23; cat44 (44-B record view) puts all 7
+  sites on land (cat 3) and none on a base tile; G12 CLI two runs sha256
+  6dfbd810a1b6013f. RIVALS: ungated distant dispatch invents 7 tuples of
+  which 0 occur in the record; the B10 placeholder reproduces 0/7.
+- REGRESSION: B10 18/18 and B12 12/12 still green (basefound._tile marked
+  REFUTED, comment-only edit).
+- OPEN (unchanged): why the 5a0aa0 chain bailed 3x; M247; M70 x2. The pod
+  WALK stays the only unmodeled link between a pod and a founding.
+  Next: ANALYSE - the pod-walk target rule (the scan's score law at
+  0x563c00-0x563d40 vs the recorded founding TURNS).
