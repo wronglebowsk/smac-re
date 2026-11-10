@@ -1,0 +1,132 @@
+# M295 no-go chain: FUN_004e3b50 (owner_of_tile_visible) +
+# FUN_004e3c00 (territory_nogo) 0x4e3b50-0x4e3c76 (terran.exe .text,
+# objdump from the 0x4e3b50 entry). Format: PC<TAB>mnemonic
+004e3b50	push ebp
+004e3b51	mov ebp,esp
+004e3b53	mov eax,ds:0x692184
+004e3b58	mov edx,DWORD PTR [ebp+0x10]
+004e3b5b	imul eax,edx
+004e3b5e	push ebx
+004e3b5f	push esi
+004e3b60	push edi
+004e3b61	mov edi,DWORD PTR [ebp+0xc]
+004e3b64	mov ecx,edi
+004e3b66	sar ecx,1
+004e3b68	add eax,ecx
+004e3b6a	lea ecx,[eax+eax*4]
+004e3b6d	lea eax,[eax+ecx*2]
+004e3b70	mov ecx,DWORD PTR ds:0x92ae14
+004e3b76	movsx esi,BYTE PTR [ecx+eax*4+0x7]
+004e3b7b	lea ecx,[ecx+eax*4]
+004e3b7e	test esi,esi
+004e3b80	jg 0x4e3b8a
+004e3b82	pop edi
+004e3b83	pop esi
+004e3b84	or eax,0xffffffff
+004e3b87	pop ebx
+004e3b88	pop ebp
+004e3b89	ret
+004e3b8a	mov eax,DWORD PTR [ebp+0x8]
+004e3b8d	cmp esi,eax
+004e3b8f	je 0x4e3bf7
+004e3b91	mov ebx,DWORD PTR [ebp+0x18]
+004e3b94	test ebx,ebx
+004e3b96	jne 0x4e3bd6
+004e3b98	test BYTE PTR ds:0x985ae8,0x80
+004e3b9f	jne 0x4e3bd6
+004e3ba1	mov ebx,eax
+004e3ba3	shl ebx,0x6
+004e3ba6	add ebx,eax
+004e3ba8	lea ebx,[eax+ebx*2]
+004e3bab	shl ebx,0x4
+004e3bae	sub ebx,eax
+004e3bb0	add ebx,esi
+004e3bb2	mov eax,DWORD PTR [ebx*4+0x94d448]
+004e3bb9	and eax,0x8000008
+004e3bbe	cmp eax,0x8000008
+004e3bc3	je 0x4e3bcd
+004e3bc5	pop edi
+004e3bc6	pop esi
+004e3bc7	or eax,0xffffffff
+004e3bca	pop ebx
+004e3bcb	pop ebp
+004e3bcc	ret
+004e3bcd	mov ebx,DWORD PTR [ebp+0x14]
+004e3bd0	test ebx,ebx
+004e3bd2	je 0x4e3bf5
+004e3bd4	jmp 0x4e3bdd
+004e3bd6	mov ebx,DWORD PTR [ebp+0x14]
+004e3bd9	test ebx,ebx
+004e3bdb	je 0x4e3bf5
+004e3bdd	xor eax,eax
+004e3bdf	push 0xffffffff
+004e3be1	mov al,BYTE PTR [ecx+0x3]
+004e3be4	push 0xffffffff
+004e3be6	push eax
+004e3be7	push 0xffffffff
+004e3be9	push edx
+004e3bea	push edi
+004e3beb	call 0x4e37f0
+004e3bf0	add esp,0x18
+004e3bf3	mov DWORD PTR [ebx],eax
+004e3bf5	mov eax,esi
+004e3bf7	pop edi
+004e3bf8	pop esi
+004e3bf9	pop ebx
+004e3bfa	pop ebp
+004e3bfb	ret
+004e3bfc	nop
+004e3bfd	nop
+004e3bfe	nop
+004e3bff	nop
+004e3c00	push ebp
+004e3c01	mov ebp,esp
+004e3c03	mov ecx,DWORD PTR [ebp+0x10]
+004e3c06	mov edx,DWORD PTR [ebp+0xc]
+004e3c09	push esi
+004e3c0a	mov esi,DWORD PTR [ebp+0x8]
+004e3c0d	push edi
+004e3c0e	lea eax,[ebp+0x10]
+004e3c11	push 0x0
+004e3c13	push eax
+004e3c14	push ecx
+004e3c15	push edx
+004e3c16	push esi
+004e3c17	call 0x4e3b50
+004e3c1c	add esp,0x14
+004e3c1f	test eax,eax
+004e3c21	jl 0x4e3c6f
+004e3c23	cmp esi,eax
+004e3c25	je 0x4e3c6f
+004e3c27	mov edx,DWORD PTR ds:0x985b10
+004e3c2d	mov edi,0x1
+004e3c32	mov ecx,esi
+004e3c34	and edx,0xff
+004e3c3a	shl edi,cl
+004e3c3c	test edx,edi
+004e3c3e	jne 0x4e3c4d
+004e3c40	mov edi,0x1
+004e3c45	mov ecx,eax
+004e3c47	shl edi,cl
+004e3c49	test edx,edi
+004e3c4b	je 0x4e3c6f
+004e3c4d	mov ecx,esi
+004e3c4f	shl ecx,0x6
+004e3c52	add ecx,esi
+004e3c54	lea edx,[esi+ecx*2]
+004e3c57	shl edx,0x4
+004e3c5a	sub edx,esi
+004e3c5c	add edx,eax
+004e3c5e	test BYTE PTR [edx*4+0x94d448],0x10
+004e3c66	jne 0x4e3c6f
+004e3c68	mov eax,DWORD PTR [ebp+0x10]
+004e3c6b	pop edi
+004e3c6c	pop esi
+004e3c6d	pop ebp
+004e3c6e	ret
+004e3c6f	pop edi
+004e3c70	or eax,0xffffffff
+004e3c73	pop esi
+004e3c74	pop ebp
+004e3c75	ret
+004e3c76	nop

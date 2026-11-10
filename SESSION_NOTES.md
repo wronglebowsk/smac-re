@@ -1,42 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-220-225.md` (6 sessions). Read it only when a question reaches back before session ## Session 226.
-
-## Session 226 (2026-11-10, BUILD, B10 PASS 18/18) - the M282 founder/destroyer leg is BUILT: sim/basefound.py recovers the recorded 18->26 n_bases curve and a founded save image round-trips
-- track_mode printed BUILD (analyse_since_build=3, next_rung=B10) -> wrote the B10 rung into
-  BUILD_SPINE.md FIRST, then built it. ZERO box time; box untouched (pgrep only, per kickoff).
-  `python3 -m sim.selftest --b10 programs/saves/m54b_clean.SAV` -> **PASS B10: 18/18 gates**
-  (`evidence/b10_basefound.txt`); B8 10/10 and B9 7/7 regressions GREEN after the savewriter
-  change (checkpoint fa4b0a7).
-- BUILT: `sim/basefound.py` (Ledger = founder FUN_004e47d0 + destroyer FUN_004e4e10 +
-  events-from-trace pairing; CLI --sav --trace --out) and a savewriter grown-ledger path
-  (`bases_override`/`orig_n_bases`): records below the original count stay byte-identical,
-  new records compose as zero + x/y/faction, the tail re-anchors after the ORIGINAL count,
-  and the modeled header writes the GROWN count - the only prefix byte that changes.
-- THE LEG: founder (M282: guard count<0x200, append at old_count*0x130, x u16 +0, y +2,
-  faction +4/+5, count+1) and destroyer (count-1 @4e515d + COMPACTION: LAST record into the
-  freed slot). The pairing presses the B3 engine the trace's own 40 turns and applies the
-  trace's OWN 8 derived deltas (t8 +1, t9 +1, t17 +1, t22 +2, t23 -1, t27 +1, t32 +2, t34 +1)
-  through the leg: recorded 18->26 recovered on ALL 40 turn snapshots (the B9 declared
-  frontier is now MODELED), and the t23 -1 runs through the DESTROYER - the recorded run
-  really destroyed a base (23->22) mid-window.
-- LAWS proven: the 0x200 guard refuses a 513th founding; destroy(k) moves the LAST record
-  into k (record equality - the m46e "array reorders" law as code); write-through of a
-  founded image is byte-exact except the bases-count dword; the image re-parses (n_bases 19,
-  record 18 read back; its zero name makes it shape-invisible: found 18, DECLARED - the real
-  game names bases later); a flooded 512-cap image keeps its tail byte-identical;
-  determinism (sha256 d8ce1f17).
-- RIVALS: no-leg (B9) shape keeps 18 -> 32 divergences; all-events-on-turn-0 diverges at t0;
-  both fail the same curve.
-- FOUND (pre-existing, NEW OPEN): decode_save --sections hardcodes the 80x80 map-trailer
-  count offset and FAILS rc=1 on every 64x64 save ("no 52/304 split of a 0-byte region" -
-  on m54b_clean itself); B8's sec() equality never noticed because both sides fail
-  identically. Small follow-up: read the count at the 64x64-correct offset.
-- ASSUMED (declared in the dump): founding FACTION (fewest-bases AI faction) and COORDS
-  (first unoccupied in-bounds tile) - the golden trace records n_bases only; which founder
-  vector the recorded AI used per event stays the OPEN box question (M282 G5).
-- OPEN: box pick (dialog +0x4c dispatcher, box UP m54b_clean); the 64x64 odd-Rw accessor
-  quirk; decode_save's 64x64 section walk. Next fire: ANALYSE (cadence reset by merged B10).
+Older sessions: `docs/sessions/sessions-226-226.md` (1 sessions). Read it only when a question reaches back before session ## Session 227.
 
 ## Session 227 (2026-11-10, ANALYSE, M283 PASS 17/17) - decode_save --sections walks 64x64 saves: the coarse-region-map length is ((W+4)/5+1)/2 * (H+4)/5 (91 B for 64x64, not 128)
 - track_mode printed ANALYSE -> picked the s226 OPEN lead (decode_save's hardcoded 80x80
@@ -714,3 +678,67 @@ Older sessions: `docs/sessions/sessions-220-225.md` (6 sessions). Read it only w
 - Chain step B ran FIRST per the operator amendment (s246 scheduled before the
   review wait), so this fire submits the audit as a record instead of shipping an
   unverified re-fit.
+
+## Session 246 (2026-11-10, s246)
+
+### 246a. #258 (B16) closed per the MERGE RULE and merged (main 9567ec1)
+
+Greptile posted 1 P1 + 2 P2 at 22:20; dispositions (full text in the PR body):
+- P1 ACCEPTED: the 8482 pass-6-no-row cells are also the value-vs-best skip
+  (0x563c09-0x563c11 after the chain, before GDEEP 0x563c3d). Relabeled
+  sim/precheck.py (NOTE + UNMODELED), NAMED.md, NEXT_PROMPT.md; bytes pinned by
+  extending evidence/b16_precheck_window.txt to 0x563bf0-0x563c60 (284 insns).
+- P2 stride: BYTE[0x92ae81 + 144*BYTE[0x98adac + 52*type]] (lea*9 then shl4,
+  0x55f757/0x55f75c) - fixed in precheck.py:37, NAMED.md, SESSION_NOTES.md:671.
+- P2 report: report_text counts matched pins now; chain evidence regenerated
+  (`python3 -m sim.precheck --out evidence/b16_precheck_chain.txt`).
+- s245c self-audit REFUTED, no code change: DISP prints unit-record fields
+  0x933278/0x93327a (true X,Y); law orientation 201/201 vs them, the audit's
+  untransposed orientation 0/201 (BASE rival_disp_ok) - G2 tests the pair the
+  law names; the proposed re-key would install the rival the gate rejects.
+`python3 -m sim.selftest --b16 programs/saves/m54b_clean.SAV` PASS 7/7; merged
+via `python3 scripts/milestone.py merge 258` (Greptile registered no check run on
+the new head inside the 10-min cap - operator amendment 2).
+
+### 246b. M295 - the 0x4e3c00(owner,X,Y) no-go NAMED, pinned, MEASURED INERT
+
+fn.py + dis: FUN_004e3c00 = territory_nogo, calling FUN_004e3b50 =
+owner_of_tile_visible: tile7 = signed BYTE[44-B tileview+7] (B16's view/form,
+0x4e3b53-0x4e3b76; movsx at evidence/m295_nogo_window.txt:19), visible if
+BYTE[0x985ae8] bit 0x80 or pair-flagword bits 3+27 (immediate 0x08000008,
+window :45,:46). pair array base = per-faction block 0x94d430 (disasm constant,
+170 uses, e.g. [edx+0x94d430] at 0x429ab9) + 0x18 = 0x94d448 (M143 folded
+[owner*2095+tile7]*4). c00 blocks
+(returns non-negative) iff tile7 >= 1, tile7 differs from the pod owner, the
+human-mask BYTE[0x985b10] (NAMED M96; masked 0xff at 0x4e3c34) has the pod or
+tile bit, and the flagword bit 4 is CLEAR (alliance, window :120). The return value is
+FUN_004e37f0's (nearest-base sweep writing DAT_008f0d34 = M294's dist;
+sentinel 9999). MEASURED `python3 scripts/m295_nogo_fit.py` (evidence
+m295_nogo_fit.txt): over the m294 window the full rule rejects 0 recorded
+slots and 0 pass-6-no-row cells (697 owner-known visits; 329 visits with
+unresolvable u above the 67-record units array); t7 dist of the 8482:
+255:2490, 4:2058, 6:1822, 5:1190, 2:872, 1:45, 3:4, 7:1; human_mask 0x8,
+feature_bits 0x0. Rivals collide with recorded slots: foreign-only 1045,
++mask 124, +not-ally 119. Within the graded subset R4 rejects nothing, so the
+8482 are BEST EXPLAINED as the VALUE<=BEST ARGMAX SKIP (0x563c09-0x563c11) -
+the next leg. NOT CLOSED (Greptile P1c): grading covers the 697 owner-known
+visits vs the y2150 save (window is y2188+); live-flag-matched inputs are the
+only closer. Cites: window :19,:45,:46,:104,:120,:122;
+fit evidence/m295_nogo_fit.txt:4-8. Window scripts/m295_nogo_window.py -> evidence/
+m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
+(the last three inside FUN_0055f650) - lead.
+
+### 246c. Greptile round 2 on #259 (3 P1 + 1 P2), dispositions
+
+- P1 "wrong flags" ACCEPTED: block A record base is 0x94d430 (170 disasm uses;
+  0x94d104 appears 0 times - the atlas headline phrasing is a fix-lead), so the
+  pair-flagwords sit at saved block+0x18. Script fixed, evidence regenerated:
+  R3 collisions 91 -> 119; R4 still 0 rejects.
+- P1 "wrong bit" ACCEPTED: the recorded immediate is 0x08000008 = bits 3+27
+  (not 31); the 0xff-masked human-mask read is at 0x4e3c34 (window :104).
+  Model + all descriptions corrected.
+- P1 "partial results" ACCEPTED: INERT claim softened everywhere to "0 rejects
+  in the graded owner-known subset vs the older save"; live no-go stays OPEN
+  and s247's pick carries that.
+- P2 (path:line cites) ACCEPTED: window/fit line cites added to 246b and the
+  NAMED ## M295 rows.
