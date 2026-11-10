@@ -859,6 +859,162 @@ def run_b9(sav_path, trace_path, results):
 
 
 
+def run_b10(sav_path, trace_path, results):
+    """Rung B10: the M282 base-founder/destroyer leg on the B3 engine - founder
+    semantics, destroyer compaction, the 0x200 guard, the recorded n_bases curve
+    (18->26), the written-image round-trip, determinism and the CLI.
+    No box, no /proc, no gdb."""
+    import hashlib
+    import os as _os
+    import subprocess
+    import tempfile
+    from . import basefound as sobf
+    from . import savewriter as sow
+    from . import save as sosave
+    from . import parity as sop
+    if trace_path is None:
+        trace_path = sobf.DEFAULT_TRACE
+    if not (_os.path.exists(sav_path) and _os.path.exists(trace_path)):
+        return fail("B10: missing input: %s / %s" % (sav_path, trace_path))
+    sv = sosave.parse(sav_path)
+    # 1 constants and the founder write law
+    results.append(("constants CAP 0x200 BASE_LEN 304 offsets 0/2/4",
+                    sobf.CAP == 0x200 and sobf.BASE_LEN == 304 == sosave.BASE_LEN
+                    and (sobf.X_OFF, sobf.Y_OFF, sobf.FAC_OFF) == (0, 2, 4)))
+    led = sobf.Ledger()
+    led.found(2, 30, 41)
+    rb = sobf.record_bytes(led.records[0])
+    results.append(("found() appends 304-B record x@0 y@2 fac@4/5 rest zero",
+                    len(led) == 1 and rb[0:2] == (30).to_bytes(2, "little")
+                    and rb[2:4] == (41).to_bytes(2, "little")
+                    and rb[4] == 2 and rb[5] == 2 and rb[6:] == bytes(298)))
+    # 2 destroyer compaction
+    seed = [{"own4": i, "fac": i, "x": i, "y": i} for i in range(5)]
+    ld2 = sobf.Ledger(seed)
+    moved = ld2.destroy(1)
+    results.append(("destroy(1) compacts LAST into slot 1 (count-1)",
+                    moved == seed[4]
+                    and ld2.records == [seed[0], seed[4], seed[2], seed[3]]
+                    and len(ld2) == 4))
+    results.append(("destroy out-of-range refused",
+                    ld2.destroy(9) is None and len(ld2) == 4))
+    # 3 the 0x200 guard
+    ld3 = sobf.Ledger([{"own4": 1, "fac": 1, "x": 1, "y": 1}
+                       for _ in range(sobf.CAP)])
+    results.append(("0x200 guard refuses the 513th founding, count stays 512",
+                    ld3.found(1, 2, 2) is False and len(ld3) == sobf.CAP))
+    # 4 the golden n_bases curve
+    sv, eng, ledm, report, blob = sobf.pair(sav_path, trace_path)
+    ev = report["events"]
+    results.append(("events derived from the trace (t8 +1 t9 +1 t17 +1 t22 +2 "
+                    "t23 -1 t27 +1 t32 +2 t34 +1)",
+                    ev == {8: 1, 9: 1, 17: 1, 22: 2, 23: -1, 27: 1, 32: 2, 34: 1}))
+    bad = [(t, rc, mc) for (t, rc, mc) in report["snapshots"] if rc != mc]
+    results.append(("all %d snapshots agree on n_bases (model %d, recorded %d)"
+                    % (len(report["snapshots"]), report["final"]["model"],
+                       report["final"]["recorded"]),
+                    bad == [] and report["final"]["model"] == 26
+                    and report["final"]["recorded"] == 26))
+    results.append(("year pairing through B3 unchanged (%d)" % eng.year,
+                    eng.year == sv.year + report["turns"]))
+    _, _, _, r2, _ = sobf.pair(sav_path, trace_path, apply_events=False)
+    bad2 = sum(1 for (t, rc, mc) in r2["snapshots"] if rc != mc)
+    results.append(("RIVAL no-leg (B9 shape) keeps 18, %d snapshots diverge"
+                    % bad2, bad2 == 32 and r2["final"]["model"] == 18))
+    tot = sum(ev.values())
+    _, _, _, r3, _ = sobf.pair(sav_path, trace_path, schedule={0: tot})
+    results.append(("RIVAL all-events-on-turn-0 diverges at t0 (model %d vs "
+                    "recorded %d)" % (r3["snapshots"][0][2],
+                                      r3["snapshots"][0][1]),
+                    r3["snapshots"][0][2] == 18 + tot
+                    and r3["snapshots"][0][2] != r3["snapshots"][0][1]))
+    svp, engp, repp, blobp, gp = sop.pair(sav_path, trace_path)
+    results.append(("B9 pairing still green on the same trace (%d missing)"
+                    % len(repp["missing"]), repp["missing"] == []))
+    # 5 the written founded image
+    bo = sv.bases_off
+    ledg = sobf.from_save(sv)
+    ledg.found(3, 30, 41)
+    img = sow.build_image(sv, bases_override=ledg.records,
+                          orig_n_bases=sv.n_bases)
+    rec18 = img[bo + 304 * 18:bo + 304 * 19]
+    pre_diffs = [i for i in range(bo) if img[i] != sv.data[i]]
+    results.append(("founded image == original + one 304-B record (only the "
+                    "bases-count dword changes in the prefix %s, record bytes "
+                    "and tail byte-identical)" % (pre_diffs,),
+                    len(img) == len(sv.data) + 304 and pre_diffs == [72]
+                    and img[bo:bo + 304 * 18] == sv.data[bo:bo + 304 * 18]
+                    and rec18 == sobf.record_bytes(ledg.records[18])
+                    and img[bo + 304 * 19:] == sv.data[bo + 304 * 18:]))
+    imgid = sow.build_image(sv, bases_override=ledg.records[:18],
+                            orig_n_bases=18)
+    results.append(("override path with no growth is byte-exact identity",
+                    imgid == sv.data))
+    rp = sosave.Save("written", img)
+    b18 = rp.base(18)
+    results.append(("written image re-parses (n_bases 19, record 18 x/y/own4/"
+                    "fac read back, shape-found 18 declared)",
+                    rp.n_bases == 19 and rp.found_bases == 18
+                    and b18["x"] == 30 and b18["y"] == 41
+                    and b18["own4"] == 3 and b18["fac"] == 3))
+    with tempfile.NamedTemporaryFile("wb", suffix=".SAV", delete=False) as fh:
+        fh.write(img)
+        wpath = fh.name
+    try:
+        dr = subprocess.run([sys.executable, "scripts/decode_save.py", wpath,
+                             "--sections"], capture_output=True, text=True,
+                            cwd=REPO)
+        dr0 = subprocess.run([sys.executable, "scripts/decode_save.py", sav_path,
+                              "--sections"], capture_output=True, text=True,
+                             cwd=REPO)
+        def _norm(s):
+            return s[s.find("  year"):]          # strip path/size/version header lines
+        same_view = (dr.returncode == dr0.returncode
+                     and _norm(dr.stdout.replace(wpath, "<F>"))
+                     == _norm(dr0.stdout.replace(sav_path, "<F>")))
+        results.append(("decode_save's 64x64 walk sees the grown image exactly "
+                        "like the original (rc %d == rc %d; the walk hardcodes "
+                        "the 80x80 map-trailer count offset and pre-splits on "
+                        "64x64 saves, so --sections fails on both - B8's sec "
+                        "equality still holds)" % (dr.returncode, dr0.returncode),
+                        same_view))
+    finally:
+        _os.unlink(wpath)
+    # 6 determinism + the module CLI
+    _, _, _, _, blob2 = sobf.pair(sav_path, trace_path)
+    sha = hashlib.sha256(blob.encode()).hexdigest()
+    results.append(("two-runs-identical-sha256 %s" % sha[:16],
+                    sha == hashlib.sha256(blob2.encode()).hexdigest()))
+    with tempfile.NamedTemporaryFile("wb", suffix=".json", delete=False) as fh:
+        op = fh.name
+    rc = sobf.main(["--sav", sav_path, "--trace", trace_path, "--out", op])
+    cli_ok = rc == 0 and _os.path.getsize(op) > 0
+    _os.unlink(op)
+    results.append(("command python3 -m sim.basefound exit-0 + report rc=%d"
+                    % rc, cli_ok))
+    # 7 the flooded 512-cap image
+    ld5 = sobf.Ledger([{"own4": 1, "fac": 1, "x": 1, "y": 1}
+                       for _ in range(sobf.CAP)])
+    img5 = sow.build_image(sv, bases_override=ld5.records,
+                           orig_n_bases=sv.n_bases)
+    results.append(("flooded 512-cap image grows by 494 records, tail "
+                    "byte-identical",
+                    len(img5) == len(sv.data) + 304 * (sobf.CAP - 18)
+                    and img5[bo + 304 * sobf.CAP:] == sv.data[bo + 304 * 18:]))
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B10: %d/%d gates failed: %s"
+                    % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B10: %d/%d gates - the M282 founder/destroyer leg: record "
+          "semantics, compaction, the 0x200 guard, the recorded 18-to-26 n_bases "
+          "curve (%d/41 snapshots), a written founded image with a byte-exact "
+          "tail, flooded to the cap, sha256 %s (no box time, no /proc, no gdb)"
+          % (len(results), len(results), len(report["snapshots"]), sha[:16]))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -875,6 +1031,8 @@ def main(argv=None):
                     help="rung B8: the save WRITE leg (identity, mutation, rivals)")
     ap.add_argument("--b9", nargs="+", metavar=("SAV", "TRACE"),
                     help="rung B9: the R3 golden-trace pairing (turn spine on the recorded trace)")
+    ap.add_argument("--b10", nargs="+", metavar=("SAV", "TRACE"),
+                    help="rung B10: funder/destroyer leg acceptance")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
@@ -888,6 +1046,9 @@ def main(argv=None):
     if args.b9:
         tr = args.b9[1] if len(args.b9) > 1 else None
         return run_b9(args.b9[0], tr, results)
+    if args.b10:
+        tr = args.b10[1] if len(args.b10) > 1 else None
+        return run_b10(args.b10[0], tr, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

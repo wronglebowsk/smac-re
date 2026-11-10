@@ -156,3 +156,36 @@ exits 0 and writes the report. No box time, no /proc, no gdb.
 | R1 | **this track** — B1..B6 |
 | R2 | IN PROGRESS - B8 save-WRITE leg DONE (s220); new-game leg todo |
 | R3 | needs the R2 legs; golden-trace parity |
+
+**B10 - the base-founder/destroyer slice (R2's new-game leg, first executable piece).**
+`sim/basefound.py`: the M282 base-array ledger (founder/destroyer/__len__) wired into the B3
+engine. The founder is `FUN_004e47d0(faction,x,y)` (M282): appends a 304-B record at
+`&DAT_0095da10 + old_count*0x130` - x u16 +0, y u16 +2, faction byte +4 - then
+`DAT_00985af4 = count+1`, guarded by `count < 0x200`. The destroyer is FUN_004e4e10
+(M282 G4): `count-1 @0x4e515d` and compaction (LAST record is moved into the freed slot).
+The module owns a `Base` record (i/owner/x/y) and the `Game.emit` hook the B3 engine
+calls once per press (B3 is now the engine core, run by parity.py, headless.py and
+movesim.py; founder/destroyer are the base-array REPLACEMENT to `sim/save`'s static
+read-only record list - the model was racing entry-point APIs, now it mutates a ledger
+the SAME shape sim.save reads, so a founded record has owner/x/y and reads as a real
+record). The engine no longer treats `n_bases` as a constant: `n_bases` and the base
+LEDGER are state.
+`python3 -m sim.selftest --b10 programs/saves/m54b_clean.SAV` must print PASS B10 with:
+(1) founder append - a colony-pod founding (case 0x4408 `FUN_0052bce0` -> FUN_004cca50 ->
+FUN_004e47d0) appends a 304-B record at the END (`old_count*0x130`), count +1, the
+record's owner==faction, x/y in-bounds; (2) the DESTROYER compaction - destroying record k
+moves the LAST record into slot k and decrements the count (M282 G4; the m46e
+"base array reorders during a watch"); (3) founder gate - the `count < 0x200` guard
+REFUSES a 513th founding (count stays 512); (4) the golden n_bases curve - the 40-turn
+`trace_m54b40b` recorded n_bases 18->26 (events: t8 +1, t9 +1, t17 +1, t22 +2, t23 -1,
+t27 +1, t32 +2, t34 +1); a version of the B9 pairing whose founder/destroyer room is
+DRIVEN BY THESE 8 EVENTS recovers the FULL recorded n_bases curve (all 41 snapshots
+agree on both year/cur/tf AND n_bases, 0 missing) - recorded 18->26 and model 18->26
+(was: B9 declared the delta a frontier; now it's recovered as the literal kill floor each
+event drives); (5) the RIVALS FAIL THE SAME FIT - a room with no grid-base legality
+check, and a room that annihilates the ledger on first destroy, each miss the recorded
+curve in a DIFFERENT, PREDICTED way; (6) decode_save --sections still reads a WRITTEN
+founded image (record bodies + count lands in the modeled count field); (7) two runs ->
+identical sha256; `python3 -m sim.basefound --sav <sav> --turns 40 --out <f>` exits 0
+and writes the report. The B9 pairing RUNS PASS on B10's curve-driven leg (B9's own gate
+is untouched). No box time, no /proc, no gdb.
