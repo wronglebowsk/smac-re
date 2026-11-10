@@ -517,3 +517,32 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   UI; then R3 golden-trace parity. Static ANALYSE picks unchanged: (b) row-family layout
   0x94e8a8/0x94e5a8/0x94e7a8, (c) who reads regions >=128; box pick (dialog +0x4c dispatcher)
   unchanged. Next: `python3 scripts/track_mode.py` (3 ANALYSE fires, then B9).
+## Session 221 (2026-11-10, ANALYSE static, M279 PASS 7/7) - the row-family layout: e8a8 rides the same fold as eaa8 (nested counter family), byte arrays index block*8380+region, e9a8 is read-only
+- track_mode printed ANALYSE (analyse_since_build=0) -> pick (b): the row FAMILY
+  layout (0x94e8a8 written 0x51df3d by the same fold + the e5a8/e7a8 arrays,
+  whole per-block layout image-wide). ZERO box time; the box was not touched.
+  `python3 scripts/m279_row_family_layout.py` -> **SUMMARY M279: 7/7 gates PASS**
+  (`evidence/m279_row_family.txt`). Reuses the m276 evaluator via the m277 slice.
+- ANSWERS: (G1) e8a8's ONLY writer 0x51df3d (FUN_0051dcb0) is reached through the
+  SAME fold chain as the eaa8 store - eax = 8380*b + 2*s at both, eax untouched
+  between them (0 intervening writers). (G2) the three stores are a NESTED counter
+  family: e8a8 UNCONDITIONAL (every walked tile), eaa8 behind {cl&0x18==0} +
+  {[edi+5]&0xc0<0x80} + {[edi+8]&0x20==0}, eba8 behind those PLUS {ch&0x10} - 4
+  branches 0x51df49/59/5f/6e all target 0x51df77. (G3) e8a8's ONLY reader
+  0x45c088 (FUN_0045a920) computes 8380*[ebp-0x34] + 2*[ebp-0x64] via
+  `imul eax,eax,0x20bc` - the per-block fold form, rival "block-0-only read"
+  refuted (no 8380 term needed there). (G4) the FUN_00556690 ENTRY fold
+  (0x556699-0x5566bc) evaluates to edx = 8380*arg and is stored to [ebp-0xc] -
+  the BYTE-lane base: e5a8/e628/eca8/ed28/eda8 index block*8380 + region*1, NOT
+  the 2*region word form. (G5) image-wide census: 13 bases 0x94e4a8..0x94ee28,
+  12 gaps all in {0x80,0x100}; 7 pure-WORD bases (e4a8,e6a8,e8a8,e9a8,eaa8,eba8,
+  ee28), 5 pure-BYTE (e5a8,e628,eca8,ed28,eda8), e7a8 mixed 14B/13W = WORD with
+  byte sub-accesses (M256's "e7a8 is WORD" stands). (G6) e9a8: 2 sites, ZERO
+  writers, both readers; 0x568038's chain evaluates to (30,64,0) NOT (8380,2,0) -
+  read-only, different index idiom (OPEN lead, not forced into the fold family).
+- ACCEPTANCE: `python3 scripts/m279_row_family_layout.py` -> `SUMMARY M279: 7/7
+  gates PASS` (`evidence/m279_row_family.txt`). Registry: NAMED.md M279.
+- OPEN LEAD (new, from G6): e9a8's readers 0x568038/0x5a9fd5 - two more chains
+  with the SAME shape (15*X + 32*Y fold base) that are NOT the (8380,2,0) row
+  fold; what walks them. Static pick (c) (who reads regions >=128) and the box
+  pick (dialog +0x4c dispatcher) unchanged.

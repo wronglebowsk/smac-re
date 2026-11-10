@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing for the next session (session 220, 2026-11-10, **B8 DONE (build fire): `sim/savewriter.py` - a .SAV recomposed from the state model; identity round-trip byte-exact on m54b_clean.SAV (242,539 B), year+move mutations land in modeled bytes only, rival writers FAIL the same fit - `python3 -m sim.selftest --b8 programs/saves/m54b_clean.SAV programs/maps/planet.MP --turns 5` PASS 10/10 (evidence/b8_savewrite.txt). Next BUILD fire = B9***)
+# NEXT_PROMPT.md - footing for the next session (session 221, 2026-11-10, **M279 DONE (ANALYSE static, zero box time): `python3 scripts/m279_row_family_layout.py` -> SUMMARY M279: 7/7 gates PASS (evidence/m279_row_family.txt) - the row-family layout: e8a8 rides the same fold as eaa8 (nested counter family: e8a8 unconditional / eaa8 gated / eba8 subset), byte arrays index block*8380+region, e9a8 read-only with 2 reader chains NOT the row fold. Next fires: ANALYSE pick (c) or the e9a8-lead; BUILD after 2 more ANALYSE fires = B9***)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -32,7 +32,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9 
 
 ## THE LEDGER
 
-Merged M54A-M271 + B0-B5 (through #199); M276 #214, M277 #217, M278 #219, B8 #<n>. UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M271 + B0-B5 (through #199); M276 #214, M277 #217, M278 #219, M279 #<n>, B8 #221. UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -57,7 +57,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open), s217-219: M276-M278, s220: B8.
+- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open), s217-219: M276-M278, s220: B8, s221: M279.
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
   per-id §s196-§s215 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
 - RESULT (s208/s210), (s211, M272), (s211/s213) and (s213/s215) blocks moved VERBATIM to
@@ -65,7 +65,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   in `NAMED.md` (M267-M273). Nothing here summarises them - open the archive section you need.
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B9** - write the rung into `BUILD_SPINE.md` FIRST (R2's new-game leg or R3's golden-trace pairing), then build it):
-  STATIC PICKS (no box time): (b) the row FAMILY: 0x94e8a8 (written 0x51df3d by the same fold) + the 0x94e5a8/0x94e7a8 byte arrays - map the whole per-block layout (census the fold-shaped chains image-wide); (c) 128x128 maps: the loop bound 0x80 never reaches regions >=128 while counts go to 338 - what reads region 128+ (another loop? another function?). (a) ANSWERED s219=M278.
+  STATIC PICKS (no box time): (c) 128x128 maps: the loop bound 0x80 never reaches regions >=128 while counts go to 338 - what reads region 128+ (another loop? another function?); NEW LEAD (s221 G6): e9a8's readers 0x568038/0x5a9fd5 - two chains with the same 15*X+32*Y shape evaluating to (30,64,0), NOT the (8380,2,0) row fold - what walks them. (a) ANSWERED s219=M278; (b) ANSWERED s221=M279 (row-family layout, NAMED M279).
   BOX PICKS, box UP and loaded: WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213) - see RESULT (s213); its follow-ups (static, no box): the 80x80/128x128 region counts 128/338 EXCEED the 94-slot row - who clamps the loop, and the 188-row cursor's caller (advances by whole 8380 strides; the fold's 188*fac term = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213) - break at the disassembled next insn.
 
 ## LIVE FACTS / KIT
