@@ -1539,3 +1539,22 @@ map-wrapped); value >= 2*(8-that) bypasses gates 0x94e5a8/0x94eca8. The footing
 (dist*10000)/(value+1) REFUTED: no 0x2710 in the 54,483-B body. Fit: scripts/
 m291_pod_scan.py - 7/7 recorded sites self-argmax, no-owngate 6/7 (loses fac1
 (27,29)), B10 placeholder 0/7, null 0.307 (p 2.6e-4).
+
+## M292 (s239, 5/5, BOX) - the POD MOVEMENT law
+Hub vector FUN_0055f650 arg1 = UNIT INDEX (negative args normalize -u-1);
+52-B unit record at 0x933278+52u (x u16@+0, y u16@+2, owner byte@+14);
+"own" flag = owner == ds:0x91b5b4, live value 3 = the HUMAN faction.
+Exactly two callers image-wide: 0x50dd84 in FUN_0050d140 (live: 26 rows =
+once per round, negative-form args) and 0x56cf12 in FUN_0056cdf0 (live:
+2282 rows = per-unit). The founding dispatch at 0x563d46 keys on esi = the
+M291 RING ENTRY INDEX (0-24): esi==0 not-own -> 0x563d82-86 push u, call
+FUN_004cca50 (FOUND leg - founds where the pod stands); esi==0 own ->
+push 0x2408 / call FUN_00583fa0 (MSG leg = the "Auto-sending BUILD BASE
+message" to the human; 0 live rows with our side inert); 1<=esi<9 ->
+dec esi at 0x563e06, continue, NO order; esi>=9 -> ring tables
+0x678990[esi]/0x67850c[esi] + own tile, wrap FUN_00469010, then 0x563e3b
+FUN_005560f0(u, 0x62, tile) = issue order b at the ring tile = the pod
+WALK. Live 26-turn window (m54b_clean t0): FOUND=9 ALL via the hub leg
+(ret 0x4ccbe2), cnt 18->27, every FOUND paired same-segment with its
+HUBFOUND tile, 2 walked pods, own-flag law 29/29.
+Instrument: scripts/m292_pod_movement.py.

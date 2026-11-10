@@ -1,0 +1,3846 @@
+CTRL yr=2162 cur=4 cnt=19
+CTRL yr=2162 cur=4 cnt=19
+CTRL yr=2162 cur=4 cnt=19
+CTRL yr=2162 cur=4 cnt=19
+CTRL yr=2162 cur=4 cnt=19
+CTRL yr=2162 cur=4 cnt=19
+HUB u=16 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+CTRL yr=2162 cur=5 cnt=19
+CTRL yr=2162 cur=5 cnt=19
+CTRL yr=2162 cur=5 cnt=19
+CTRL yr=2162 cur=5 cnt=19
+CTRL yr=2162 cur=5 cnt=19
+CTRL yr=2162 cur=5 cnt=19
+CTRL yr=2162 cur=5 cnt=19
+HUB u=59 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=1 ret=0x56cf17
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+CTRL yr=2162 cur=6 cnt=19
+HUB u=61 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+DISP u=54 esi=0 st=8 own=0 ownrec=6 curfac=3 x=20 y=48
+HUBFOUND u=54 x=20 y=48
+FOUND ret=0x4ccbe2 fac=6 x=20 y=48 cnt=19
+CTRL yr=2162 cur=6 cnt=20
+HUB u=52 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+DISP u=46 esi=0 st=8 own=0 ownrec=6 curfac=3 x=63 y=51
+HUBFOUND u=46 x=63 y=51
+FOUND ret=0x4ccbe2 fac=6 x=63 y=51 cnt=20
+CTRL yr=2162 cur=6 cnt=21
+HUB u=44 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+CTRL yr=2162 cur=7 cnt=21
+CTRL yr=2162 cur=7 cnt=21
+HUB u=36 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+CTRL yr=2163 cur=1 cnt=21
+CTRL yr=2163 cur=1 cnt=21
+HUB u=56 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=2 cnt=21
+HUB u=60 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+CTRL yr=2163 cur=2 cnt=21
+HUB u=37 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=5 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+CTRL yr=2163 cur=2 cnt=21
+CTRL yr=2163 cur=3 cnt=21
+CTRL yr=2163 cur=3 cnt=21
+HUB u=-1 ret=0x50dd89
+CTRL yr=2163 cur=4 cnt=21
+CTRL yr=2163 cur=4 cnt=21
+CTRL yr=2163 cur=4 cnt=21
+CTRL yr=2163 cur=4 cnt=21
+CTRL yr=2163 cur=4 cnt=21
+CTRL yr=2163 cur=4 cnt=21
+CTRL yr=2163 cur=4 cnt=21
+HUB u=59 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+CTRL yr=2163 cur=5 cnt=21
+HUB u=53 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+CTRL yr=2163 cur=6 cnt=21
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+CTRL yr=2163 cur=7 cnt=21
+CTRL yr=2163 cur=7 cnt=21
+HUB u=35 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2164 cur=1 cnt=21
+CTRL yr=2164 cur=1 cnt=21
+HUB u=54 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+CTRL yr=2164 cur=2 cnt=21
+HUB u=58 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+CTRL yr=2164 cur=2 cnt=21
+HUB u=44 ret=0x56cf17
+CTRL yr=2164 cur=3 cnt=21
+CTRL yr=2164 cur=3 cnt=21
+HUB u=-1 ret=0x50dd89
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+CTRL yr=2164 cur=4 cnt=21
+HUB u=59 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2164 cur=5 cnt=21
+CTRL yr=2164 cur=5 cnt=21
+CTRL yr=2164 cur=5 cnt=21
+CTRL yr=2164 cur=5 cnt=21
+CTRL yr=2164 cur=5 cnt=21
+HUB u=53 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+CTRL yr=2164 cur=6 cnt=21
+HUB u=64 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+CTRL yr=2164 cur=7 cnt=21
+CTRL yr=2164 cur=7 cnt=21
+HUB u=35 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2165 cur=1 cnt=21
+CTRL yr=2165 cur=1 cnt=21
+HUB u=54 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+CTRL yr=2165 cur=2 cnt=21
+HUB u=64 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+CTRL yr=2165 cur=3 cnt=21
+CTRL yr=2165 cur=3 cnt=21
+HUB u=-1 ret=0x50dd89
+CTRL yr=2165 cur=4 cnt=21
+CTRL yr=2165 cur=4 cnt=21
+CTRL yr=2165 cur=4 cnt=21
+CTRL yr=2165 cur=4 cnt=21
+CTRL yr=2165 cur=4 cnt=21
+CTRL yr=2165 cur=4 cnt=21
+HUB u=58 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2165 cur=5 cnt=21
+CTRL yr=2165 cur=5 cnt=21
+CTRL yr=2165 cur=5 cnt=21
+CTRL yr=2165 cur=5 cnt=21
+CTRL yr=2165 cur=5 cnt=21
+CTRL yr=2165 cur=5 cnt=21
+HUB u=65 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+CTRL yr=2165 cur=6 cnt=21
+HUB u=66 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+CTRL yr=2165 cur=7 cnt=21
+CTRL yr=2165 cur=7 cnt=21
+HUB u=34 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+CTRL yr=2166 cur=0 cnt=21
+HUB u=59 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2166 cur=1 cnt=21
+CTRL yr=2166 cur=1 cnt=21
+CTRL yr=2166 cur=1 cnt=21
+HUB u=53 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+CTRL yr=2166 cur=2 cnt=21
+HUB u=63 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+CTRL yr=2166 cur=3 cnt=21
+CTRL yr=2166 cur=3 cnt=21
+HUB u=-1 ret=0x50dd89
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+CTRL yr=2166 cur=4 cnt=21
+HUB u=67 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2166 cur=5 cnt=21
+CTRL yr=2166 cur=5 cnt=21
+CTRL yr=2166 cur=5 cnt=21
+CTRL yr=2166 cur=5 cnt=21
+CTRL yr=2166 cur=5 cnt=21
+HUB u=64 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+CTRL yr=2166 cur=6 cnt=21
+HUB u=68 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+CTRL yr=2166 cur=7 cnt=21
+CTRL yr=2166 cur=7 cnt=21
+HUB u=33 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2167 cur=1 cnt=21
+CTRL yr=2167 cur=1 cnt=21
+HUB u=52 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+CTRL yr=2167 cur=2 cnt=21
+HUB u=59 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+CTRL yr=2167 cur=3 cnt=21
+CTRL yr=2167 cur=3 cnt=21
+HUB u=-1 ret=0x50dd89
+CTRL yr=2167 cur=4 cnt=21
+CTRL yr=2167 cur=4 cnt=21
+CTRL yr=2167 cur=4 cnt=21
+CTRL yr=2167 cur=4 cnt=21
+CTRL yr=2167 cur=4 cnt=21
+CTRL yr=2167 cur=4 cnt=21
+HUB u=61 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2167 cur=5 cnt=21
+CTRL yr=2167 cur=5 cnt=21
+CTRL yr=2167 cur=5 cnt=21
+CTRL yr=2167 cur=5 cnt=21
+CTRL yr=2167 cur=5 cnt=21
+HUB u=58 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+CTRL yr=2167 cur=6 cnt=21
+HUB u=63 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+CTRL yr=2167 cur=7 cnt=21
+CTRL yr=2167 cur=7 cnt=21
+HUB u=32 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2168 cur=1 cnt=21
+CTRL yr=2168 cur=1 cnt=21
+HUB u=49 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+CTRL yr=2168 cur=2 cnt=21
+HUB u=57 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+CTRL yr=2168 cur=3 cnt=21
+CTRL yr=2168 cur=3 cnt=21
+HUB u=-1 ret=0x50dd89
+CTRL yr=2168 cur=4 cnt=21
+CTRL yr=2168 cur=4 cnt=21
+CTRL yr=2168 cur=4 cnt=21
+CTRL yr=2168 cur=4 cnt=21
+CTRL yr=2168 cur=4 cnt=21
+CTRL yr=2168 cur=4 cnt=21
+HUB u=61 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2168 cur=5 cnt=21
+CTRL yr=2168 cur=5 cnt=21
+CTRL yr=2168 cur=5 cnt=21
+CTRL yr=2168 cur=5 cnt=21
+CTRL yr=2168 cur=5 cnt=21
+HUB u=58 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+CTRL yr=2168 cur=6 cnt=21
+HUB u=63 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+DISP u=62 esi=21 st=8 own=0 ownrec=6 curfac=3 x=25 y=51
+ISS u=62 esi=21 tile=29
+HUB u=45 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+CTRL yr=2168 cur=7 cnt=21
+CTRL yr=2168 cur=7 cnt=21
+HUB u=32 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2169 cur=1 cnt=21
+CTRL yr=2169 cur=1 cnt=21
+HUB u=49 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+CTRL yr=2169 cur=2 cnt=21
+HUB u=68 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+CTRL yr=2169 cur=2 cnt=21
+HUB u=47 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+DESTROY cnt=21
+HUB u=16 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+CTRL yr=2169 cur=3 cnt=20
+CTRL yr=2169 cur=3 cnt=20
+HUB u=-1 ret=0x50dd89
+CTRL yr=2169 cur=4 cnt=20
+CTRL yr=2169 cur=4 cnt=20
+CTRL yr=2169 cur=4 cnt=20
+CTRL yr=2169 cur=4 cnt=20
+CTRL yr=2169 cur=4 cnt=20
+CTRL yr=2169 cur=4 cnt=20
+HUB u=59 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2169 cur=5 cnt=20
+CTRL yr=2169 cur=5 cnt=20
+CTRL yr=2169 cur=5 cnt=20
+HUB u=48 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+CTRL yr=2169 cur=6 cnt=20
+HUB u=61 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+DISP u=60 esi=2 st=8 own=0 ownrec=6 curfac=3 x=27 y=51
+HUB u=45 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+CTRL yr=2169 cur=7 cnt=20
+CTRL yr=2169 cur=7 cnt=20
+HUB u=32 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2170 cur=1 cnt=20
+CTRL yr=2170 cur=1 cnt=20
+CTRL yr=2170 cur=1 cnt=20
+HUB u=46 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+CTRL yr=2170 cur=2 cnt=20
+HUB u=66 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+CTRL yr=2170 cur=2 cnt=20
+HUB u=46 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=4 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+CTRL yr=2170 cur=3 cnt=20
+CTRL yr=2170 cur=3 cnt=20
+HUB u=-1 ret=0x50dd89
+CTRL yr=2170 cur=4 cnt=20
+CTRL yr=2170 cur=4 cnt=20
+CTRL yr=2170 cur=4 cnt=20
+CTRL yr=2170 cur=4 cnt=20
+CTRL yr=2170 cur=4 cnt=20
+CTRL yr=2170 cur=4 cnt=20
+CTRL yr=2170 cur=4 cnt=20
+HUB u=58 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2170 cur=5 cnt=20
+CTRL yr=2170 cur=5 cnt=20
+CTRL yr=2170 cur=5 cnt=20
+CTRL yr=2170 cur=5 cnt=20
+HUB u=67 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+CTRL yr=2170 cur=6 cnt=20
+HUB u=59 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+CTRL yr=2170 cur=7 cnt=20
+CTRL yr=2170 cur=7 cnt=20
+CTRL yr=2170 cur=7 cnt=20
+CTRL yr=2170 cur=7 cnt=20
+HUB u=31 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+CTRL yr=2171 cur=1 cnt=20
+CTRL yr=2171 cur=1 cnt=20
+CTRL yr=2171 cur=1 cnt=20
+HUB u=29 ret=0x56cf17
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+CTRL yr=2171 cur=2 cnt=20
+HUB u=64 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+CTRL yr=2171 cur=2 cnt=20
+HUB u=44 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+CTRL yr=2171 cur=2 cnt=20
+HUB u=60 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=5 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+CTRL yr=2171 cur=3 cnt=20
+CTRL yr=2171 cur=3 cnt=20
+HUB u=-1 ret=0x50dd89
+CTRL yr=2171 cur=3 cnt=20
+CTRL yr=2171 cur=4 cnt=20
+CTRL yr=2171 cur=4 cnt=20
+CTRL yr=2171 cur=4 cnt=20
+CTRL yr=2171 cur=4 cnt=20
+CTRL yr=2171 cur=4 cnt=20
+CTRL yr=2171 cur=4 cnt=20
+HUB u=56 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2171 cur=5 cnt=20
+CTRL yr=2171 cur=5 cnt=20
+CTRL yr=2171 cur=5 cnt=20
+HUB u=66 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+CTRL yr=2171 cur=6 cnt=20
+HUB u=58 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+CTRL yr=2171 cur=7 cnt=20
+CTRL yr=2171 cur=7 cnt=20
+CTRL yr=2171 cur=7 cnt=20
+CTRL yr=2171 cur=7 cnt=20
+HUB u=30 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+DISP u=71 esi=23 st=8 own=0 ownrec=1 curfac=3 x=53 y=45
+ISS u=71 esi=23 tile=53
+HUB u=70 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+DISP u=69 esi=23 st=8 own=0 ownrec=1 curfac=3 x=53 y=45
+ISS u=69 esi=23 tile=53
+HUB u=76 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+CTRL yr=2172 cur=2 cnt=20
+HUB u=60 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+CTRL yr=2172 cur=2 cnt=20
+HUB u=61 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+CTRL yr=2172 cur=2 cnt=20
+HUB u=14 ret=0x56cf17
+HUB u=5 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+CTRL yr=2172 cur=2 cnt=20
+HUB u=33 ret=0x56cf17
+CTRL yr=2172 cur=3 cnt=20
+CTRL yr=2172 cur=3 cnt=20
+HUB u=-1 ret=0x50dd89
+CTRL yr=2172 cur=4 cnt=20
+CTRL yr=2172 cur=4 cnt=20
+CTRL yr=2172 cur=4 cnt=20
+CTRL yr=2172 cur=4 cnt=20
+CTRL yr=2172 cur=4 cnt=20
+CTRL yr=2172 cur=4 cnt=20
+HUB u=51 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+CTRL yr=2172 cur=5 cnt=20
+CTRL yr=2172 cur=5 cnt=20
+CTRL yr=2172 cur=5 cnt=20
+HUB u=60 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+CTRL yr=2172 cur=6 cnt=20
+HUB u=53 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+CTRL yr=2172 cur=7 cnt=20
+CTRL yr=2172 cur=7 cnt=20
+CTRL yr=2172 cur=7 cnt=20
+CTRL yr=2172 cur=7 cnt=20
+HUB u=78 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+DISP u=66 esi=4 st=8 own=0 ownrec=1 curfac=3 x=53 y=47
+HUB u=65 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+DISP u=64 esi=4 st=8 own=0 ownrec=1 curfac=3 x=53 y=47
+HUB u=71 ret=0x56cf17
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+CTRL yr=2173 cur=2 cnt=20
+HUB u=55 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+CTRL yr=2173 cur=2 cnt=20
+HUB u=57 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=5 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+CTRL yr=2173 cur=2 cnt=20
+HUB u=52 ret=0x56cf17
+CTRL yr=2173 cur=3 cnt=20
+CTRL yr=2173 cur=3 cnt=20
+HUB u=-1 ret=0x50dd89
+CTRL yr=2173 cur=3 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+CTRL yr=2173 cur=4 cnt=20
+HUB u=49 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+CTRL yr=2173 cur=5 cnt=20
+CTRL yr=2173 cur=5 cnt=20
+CTRL yr=2173 cur=5 cnt=20
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+CTRL yr=2173 cur=6 cnt=20
+HUB u=51 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+DISP u=77 esi=0 st=8 own=0 ownrec=7 curfac=3 x=27 y=29
+HUBFOUND u=77 x=27 y=29
+FOUND ret=0x4ccbe2 fac=7 x=27 y=29 cnt=20
+CTRL yr=2173 cur=7 cnt=21
+HUB u=76 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+DISP u=66 esi=0 st=8 own=0 ownrec=1 curfac=3 x=53 y=49
+HUBFOUND u=66 x=53 y=49
+FOUND ret=0x4ccbe2 fac=1 x=53 y=49 cnt=21
+CTRL yr=2174 cur=1 cnt=22
+HUB u=65 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+DISP u=64 esi=23 st=8 own=0 ownrec=1 curfac=3 x=53 y=49
+ISS u=64 esi=23 tile=53
+HUB u=67 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+CTRL yr=2174 cur=2 cnt=22
+HUB u=55 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=5 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2174 cur=3 cnt=22
+CTRL yr=2174 cur=3 cnt=22
+HUB u=-1 ret=0x50dd89
+CTRL yr=2174 cur=4 cnt=22
+CTRL yr=2174 cur=4 cnt=22
+CTRL yr=2174 cur=4 cnt=22
+CTRL yr=2174 cur=4 cnt=22
+CTRL yr=2174 cur=4 cnt=22
+CTRL yr=2174 cur=4 cnt=22
+HUB u=49 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+CTRL yr=2174 cur=5 cnt=22
+CTRL yr=2174 cur=5 cnt=22
+HUB u=58 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+CTRL yr=2174 cur=6 cnt=22
+HUB u=51 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+CTRL yr=2174 cur=7 cnt=22
+CTRL yr=2174 cur=7 cnt=22
+CTRL yr=2174 cur=7 cnt=22
+CTRL yr=2174 cur=7 cnt=22
+HUB u=83 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+CTRL yr=2175 cur=1 cnt=22
+CTRL yr=2175 cur=1 cnt=22
+CTRL yr=2175 cur=1 cnt=22
+HUB u=81 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+DISP u=64 esi=18 st=8 own=0 ownrec=1 curfac=3 x=53 y=51
+ISS u=64 esi=18 tile=50
+HUB u=70 ret=0x56cf17
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+CTRL yr=2175 cur=2 cnt=22
+HUB u=55 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=5 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2175 cur=3 cnt=22
+CTRL yr=2175 cur=3 cnt=22
+HUB u=-1 ret=0x50dd89
+CTRL yr=2175 cur=3 cnt=22
+CTRL yr=2175 cur=4 cnt=22
+CTRL yr=2175 cur=4 cnt=22
+CTRL yr=2175 cur=4 cnt=22
+CTRL yr=2175 cur=4 cnt=22
+CTRL yr=2175 cur=4 cnt=22
+CTRL yr=2175 cur=4 cnt=22
+HUB u=47 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+CTRL yr=2175 cur=5 cnt=22
+CTRL yr=2175 cur=5 cnt=22
+HUB u=37 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+CTRL yr=2175 cur=6 cnt=22
+HUB u=49 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+CTRL yr=2175 cur=7 cnt=22
+CTRL yr=2175 cur=7 cnt=22
+HUB u=79 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+CTRL yr=2176 cur=1 cnt=22
+CTRL yr=2176 cur=1 cnt=22
+CTRL yr=2176 cur=1 cnt=22
+HUB u=78 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+CTRL yr=2176 cur=2 cnt=22
+HUB u=82 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2176 cur=3 cnt=22
+CTRL yr=2176 cur=3 cnt=22
+HUB u=-1 ret=0x50dd89
+CTRL yr=2176 cur=3 cnt=22
+CTRL yr=2176 cur=4 cnt=22
+CTRL yr=2176 cur=4 cnt=22
+CTRL yr=2176 cur=4 cnt=22
+CTRL yr=2176 cur=4 cnt=22
+CTRL yr=2176 cur=4 cnt=22
+CTRL yr=2176 cur=4 cnt=22
+HUB u=46 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+CTRL yr=2176 cur=5 cnt=22
+CTRL yr=2176 cur=5 cnt=22
+CTRL yr=2176 cur=5 cnt=22
+HUB u=36 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+CTRL yr=2176 cur=6 cnt=22
+HUB u=48 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+CTRL yr=2176 cur=7 cnt=22
+CTRL yr=2176 cur=7 cnt=22
+HUB u=78 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+CTRL yr=2177 cur=0 cnt=22
+HUB u=40 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+CTRL yr=2177 cur=1 cnt=22
+CTRL yr=2177 cur=1 cnt=22
+HUB u=76 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+DISP u=60 esi=6 st=8 own=0 ownrec=1 curfac=3 x=49 y=51
+HUB u=64 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+CTRL yr=2177 cur=2 cnt=22
+HUB u=83 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2177 cur=3 cnt=22
+CTRL yr=2177 cur=3 cnt=22
+HUB u=-1 ret=0x50dd89
+CTRL yr=2177 cur=3 cnt=22
+CTRL yr=2177 cur=4 cnt=22
+CTRL yr=2177 cur=4 cnt=22
+CTRL yr=2177 cur=4 cnt=22
+CTRL yr=2177 cur=4 cnt=22
+CTRL yr=2177 cur=4 cnt=22
+CTRL yr=2177 cur=4 cnt=22
+HUB u=46 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+CTRL yr=2177 cur=5 cnt=22
+CTRL yr=2177 cur=5 cnt=22
+HUB u=36 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+CTRL yr=2177 cur=6 cnt=22
+HUB u=48 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+CTRL yr=2177 cur=7 cnt=22
+CTRL yr=2177 cur=7 cnt=22
+HUB u=77 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+CTRL yr=2178 cur=1 cnt=22
+CTRL yr=2178 cur=1 cnt=22
+HUB u=65 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+DISP u=59 esi=0 st=8 own=0 ownrec=1 curfac=3 x=47 y=51
+HUBFOUND u=59 x=47 y=51
+FOUND ret=0x4ccbe2 fac=1 x=47 y=51 cnt=22
+CTRL yr=2178 cur=1 cnt=23
+HUB u=62 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+CTRL yr=2178 cur=2 cnt=23
+HUB u=85 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+CTRL yr=2178 cur=2 cnt=23
+HUB u=11 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2178 cur=3 cnt=23
+CTRL yr=2178 cur=3 cnt=23
+HUB u=-1 ret=0x50dd89
+CTRL yr=2178 cur=4 cnt=23
+CTRL yr=2178 cur=4 cnt=23
+CTRL yr=2178 cur=4 cnt=23
+CTRL yr=2178 cur=4 cnt=23
+CTRL yr=2178 cur=4 cnt=23
+CTRL yr=2178 cur=4 cnt=23
+CTRL yr=2178 cur=4 cnt=23
+HUB u=44 ret=0x56cf17
+HUB u=9 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+CTRL yr=2178 cur=5 cnt=23
+CTRL yr=2178 cur=5 cnt=23
+CTRL yr=2178 cur=5 cnt=23
+HUB u=34 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=6 ret=0x56cf17
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+CTRL yr=2178 cur=6 cnt=23
+HUB u=46 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+CTRL yr=2178 cur=7 cnt=23
+CTRL yr=2178 cur=7 cnt=23
+HUB u=74 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+CTRL yr=2179 cur=1 cnt=23
+CTRL yr=2179 cur=1 cnt=23
+CTRL yr=2179 cur=1 cnt=23
+CTRL yr=2179 cur=1 cnt=23
+CTRL yr=2179 cur=1 cnt=23
+CTRL yr=2179 cur=1 cnt=23
+HUB u=63 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=2 cnt=23
+HUB u=82 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+CTRL yr=2179 cur=2 cnt=23
+HUB u=22 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+CTRL yr=2179 cur=2 cnt=23
+CTRL yr=2179 cur=3 cnt=23
+CTRL yr=2179 cur=3 cnt=23
+HUB u=-1 ret=0x50dd89
+CTRL yr=2179 cur=4 cnt=23
+CTRL yr=2179 cur=4 cnt=23
+CTRL yr=2179 cur=4 cnt=23
+CTRL yr=2179 cur=4 cnt=23
+CTRL yr=2179 cur=4 cnt=23
+CTRL yr=2179 cur=4 cnt=23
+HUB u=42 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+CTRL yr=2179 cur=5 cnt=23
+CTRL yr=2179 cur=5 cnt=23
+CTRL yr=2179 cur=5 cnt=23
+CTRL yr=2179 cur=5 cnt=23
+CTRL yr=2179 cur=5 cnt=23
+HUB u=84 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+CTRL yr=2179 cur=6 cnt=23
+HUB u=44 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+DISP u=62 esi=22 st=8 own=0 ownrec=6 curfac=3 x=5 y=43
+ISS u=62 esi=22 tile=1
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+CTRL yr=2179 cur=7 cnt=23
+CTRL yr=2179 cur=7 cnt=23
+HUB u=71 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+CTRL yr=2180 cur=0 cnt=23
+HUB u=82 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+CTRL yr=2180 cur=1 cnt=23
+CTRL yr=2180 cur=1 cnt=23
+CTRL yr=2180 cur=1 cnt=23
+CTRL yr=2180 cur=1 cnt=23
+CTRL yr=2180 cur=1 cnt=23
+CTRL yr=2180 cur=1 cnt=23
+HUB u=59 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+CTRL yr=2180 cur=2 cnt=23
+HUB u=79 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2180 cur=2 cnt=23
+HUB u=21 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+CTRL yr=2180 cur=2 cnt=23
+HUB u=24 ret=0x56cf17
+CTRL yr=2180 cur=3 cnt=23
+CTRL yr=2180 cur=3 cnt=23
+HUB u=-1 ret=0x50dd89
+CTRL yr=2180 cur=3 cnt=23
+CTRL yr=2180 cur=4 cnt=23
+CTRL yr=2180 cur=4 cnt=23
+CTRL yr=2180 cur=4 cnt=23
+CTRL yr=2180 cur=4 cnt=23
+CTRL yr=2180 cur=4 cnt=23
+CTRL yr=2180 cur=4 cnt=23
+HUB u=40 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+DISP u=86 esi=0 st=8 own=0 ownrec=5 curfac=3 x=22 y=14
+HUBFOUND u=86 x=22 y=14
+FOUND ret=0x4ccbe2 fac=5 x=22 y=14 cnt=23
+CTRL yr=2180 cur=5 cnt=24
+HUB u=85 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+CTRL yr=2180 cur=6 cnt=24
+HUB u=42 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=91 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+DISP u=60 esi=6 st=8 own=0 ownrec=6 curfac=3 x=3 y=43
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+CTRL yr=2180 cur=7 cnt=24
+CTRL yr=2180 cur=7 cnt=24
+HUB u=69 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+CTRL yr=2181 cur=1 cnt=24
+CTRL yr=2181 cur=1 cnt=24
+CTRL yr=2181 cur=1 cnt=24
+CTRL yr=2181 cur=1 cnt=24
+HUB u=58 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+CTRL yr=2181 cur=2 cnt=24
+HUB u=92 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2181 cur=3 cnt=24
+CTRL yr=2181 cur=3 cnt=24
+HUB u=-1 ret=0x50dd89
+CTRL yr=2181 cur=4 cnt=24
+CTRL yr=2181 cur=4 cnt=24
+CTRL yr=2181 cur=4 cnt=24
+CTRL yr=2181 cur=4 cnt=24
+CTRL yr=2181 cur=4 cnt=24
+CTRL yr=2181 cur=4 cnt=24
+HUB u=40 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+CTRL yr=2181 cur=5 cnt=24
+CTRL yr=2181 cur=5 cnt=24
+CTRL yr=2181 cur=5 cnt=24
+HUB u=88 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+CTRL yr=2181 cur=6 cnt=24
+HUB u=42 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=91 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+DISP u=60 esi=0 st=8 own=0 ownrec=6 curfac=3 x=1 y=43
+HUBFOUND u=60 x=1 y=43
+FOUND ret=0x4ccbe2 fac=6 x=1 y=43 cnt=24
+CTRL yr=2181 cur=6 cnt=25
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+CTRL yr=2181 cur=7 cnt=25
+CTRL yr=2181 cur=7 cnt=25
+HUB u=68 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+CTRL yr=2182 cur=1 cnt=25
+CTRL yr=2182 cur=1 cnt=25
+CTRL yr=2182 cur=1 cnt=25
+CTRL yr=2182 cur=1 cnt=25
+CTRL yr=2182 cur=1 cnt=25
+CTRL yr=2182 cur=1 cnt=25
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+CTRL yr=2182 cur=2 cnt=25
+HUB u=89 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=91 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2182 cur=3 cnt=25
+CTRL yr=2182 cur=3 cnt=25
+HUB u=-1 ret=0x50dd89
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+CTRL yr=2182 cur=4 cnt=25
+HUB u=39 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+CTRL yr=2182 cur=5 cnt=25
+CTRL yr=2182 cur=5 cnt=25
+CTRL yr=2182 cur=5 cnt=25
+HUB u=85 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+CTRL yr=2182 cur=6 cnt=25
+HUB u=41 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+DISP u=86 esi=22 st=8 own=0 ownrec=6 curfac=3 x=62 y=58
+ISS u=86 esi=22 tile=58
+HUB u=77 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+CTRL yr=2182 cur=7 cnt=25
+CTRL yr=2182 cur=7 cnt=25
+CTRL yr=2182 cur=7 cnt=25
+HUB u=94 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=94 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+HUB u=95 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+CTRL yr=2183 cur=1 cnt=25
+CTRL yr=2183 cur=1 cnt=25
+CTRL yr=2183 cur=1 cnt=25
+CTRL yr=2183 cur=1 cnt=25
+CTRL yr=2183 cur=1 cnt=25
+CTRL yr=2183 cur=1 cnt=25
+CTRL yr=2183 cur=1 cnt=25
+HUB u=65 ret=0x56cf17
+HUB u=96 ret=0x56cf17
+HUB u=95 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+CTRL yr=2183 cur=2 cnt=25
+HUB u=88 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=12 ret=0x56cf17
+HUB u=97 ret=0x56cf17
+HUB u=96 ret=0x56cf17
+HUB u=96 ret=0x56cf17
+HUB u=96 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2183 cur=3 cnt=25
+CTRL yr=2183 cur=3 cnt=25
+HUB u=-1 ret=0x50dd89
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+CTRL yr=2183 cur=4 cnt=25
+HUB u=38 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+CTRL yr=2183 cur=5 cnt=25
+CTRL yr=2183 cur=5 cnt=25
+CTRL yr=2183 cur=5 cnt=25
+HUB u=84 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+CTRL yr=2183 cur=6 cnt=25
+HUB u=40 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+CTRL yr=2183 cur=7 cnt=25
+CTRL yr=2183 cur=7 cnt=25
+HUB u=93 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=91 ret=0x56cf17
+CTRL yr=2184 cur=1 cnt=25
+CTRL yr=2184 cur=1 cnt=25
+CTRL yr=2184 cur=1 cnt=25
+CTRL yr=2184 cur=1 cnt=25
+HUB u=64 ret=0x56cf17
+HUB u=94 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+CTRL yr=2184 cur=2 cnt=25
+HUB u=87 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=95 ret=0x56cf17
+HUB u=94 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2184 cur=3 cnt=25
+CTRL yr=2184 cur=3 cnt=25
+HUB u=-1 ret=0x50dd89
+CTRL yr=2184 cur=4 cnt=25
+CTRL yr=2184 cur=4 cnt=25
+CTRL yr=2184 cur=4 cnt=25
+CTRL yr=2184 cur=4 cnt=25
+CTRL yr=2184 cur=4 cnt=25
+CTRL yr=2184 cur=4 cnt=25
+CTRL yr=2184 cur=4 cnt=25
+HUB u=37 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+CTRL yr=2184 cur=5 cnt=25
+CTRL yr=2184 cur=5 cnt=25
+CTRL yr=2184 cur=5 cnt=25
+HUB u=83 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+CTRL yr=2184 cur=6 cnt=25
+HUB u=96 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+DISP u=84 esi=11 st=8 own=0 ownrec=6 curfac=3 x=60 y=56
+ISS u=84 esi=11 tile=58
+HUB u=75 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+CTRL yr=2184 cur=7 cnt=25
+CTRL yr=2184 cur=7 cnt=25
+HUB u=91 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=91 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+CTRL yr=2185 cur=1 cnt=25
+CTRL yr=2185 cur=1 cnt=25
+CTRL yr=2185 cur=1 cnt=25
+CTRL yr=2185 cur=1 cnt=25
+CTRL yr=2185 cur=1 cnt=25
+HUB u=63 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+CTRL yr=2185 cur=2 cnt=25
+HUB u=86 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=36 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=94 ret=0x56cf17
+DISP u=94 esi=9 st=8 own=0 ownrec=2 curfac=3 x=16 y=4
+ISS u=94 esi=9 tile=18
+HUB u=93 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2185 cur=3 cnt=25
+CTRL yr=2185 cur=3 cnt=25
+HUB u=-1 ret=0x50dd89
+CTRL yr=2185 cur=4 cnt=25
+CTRL yr=2185 cur=4 cnt=25
+CTRL yr=2185 cur=4 cnt=25
+CTRL yr=2185 cur=4 cnt=25
+CTRL yr=2185 cur=4 cnt=25
+CTRL yr=2185 cur=4 cnt=25
+HUB u=37 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+CTRL yr=2185 cur=5 cnt=25
+CTRL yr=2185 cur=5 cnt=25
+CTRL yr=2185 cur=5 cnt=25
+HUB u=82 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=81 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+CTRL yr=2185 cur=6 cnt=25
+HUB u=95 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+HUB u=62 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+DISP u=83 esi=5 st=8 own=0 ownrec=6 curfac=3 x=59 y=57
+HUB u=74 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=60 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+CTRL yr=2185 cur=7 cnt=25
+CTRL yr=2185 cur=7 cnt=25
+HUB u=89 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=58 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2186 cur=1 cnt=25
+CTRL yr=2186 cur=1 cnt=25
+CTRL yr=2186 cur=1 cnt=25
+CTRL yr=2186 cur=1 cnt=25
+HUB u=62 ret=0x56cf17
+HUB u=91 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+CTRL yr=2186 cur=2 cnt=25
+HUB u=96 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=97 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+DISP u=93 esi=1 st=8 own=0 ownrec=2 curfac=3 x=17 y=3
+HUB u=92 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2186 cur=3 cnt=25
+CTRL yr=2186 cur=3 cnt=25
+HUB u=-1 ret=0x50dd89
+CTRL yr=2186 cur=4 cnt=25
+CTRL yr=2186 cur=4 cnt=25
+CTRL yr=2186 cur=4 cnt=25
+CTRL yr=2186 cur=4 cnt=25
+CTRL yr=2186 cur=4 cnt=25
+CTRL yr=2186 cur=4 cnt=25
+CTRL yr=2186 cur=4 cnt=25
+HUB u=36 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+CTRL yr=2186 cur=5 cnt=25
+CTRL yr=2186 cur=5 cnt=25
+CTRL yr=2186 cur=5 cnt=25
+CTRL yr=2186 cur=5 cnt=25
+HUB u=81 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+CTRL yr=2186 cur=6 cnt=25
+HUB u=94 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=99 ret=0x56cf17
+HUB u=98 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=95 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+DISP u=82 esi=0 st=8 own=0 ownrec=6 curfac=3 x=58 y=58
+HUBFOUND u=82 x=58 y=58
+FOUND ret=0x4ccbe2 fac=6 x=58 y=58 cnt=25
+CTRL yr=2186 cur=6 cnt=26
+HUB u=73 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+DISP u=69 esi=20 st=8 own=0 ownrec=6 curfac=3 x=7 y=49
+ISS u=69 esi=20 tile=6
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+CTRL yr=2186 cur=7 cnt=26
+CTRL yr=2186 cur=7 cnt=26
+HUB u=88 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+DISP u=55 esi=13 st=8 own=0 ownrec=7 curfac=3 x=28 y=26
+ISS u=55 esi=13 tile=29
+HUB u=88 ret=0x56cf17
+HUB u=99 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2187 cur=1 cnt=26
+CTRL yr=2187 cur=1 cnt=26
+CTRL yr=2187 cur=1 cnt=26
+CTRL yr=2187 cur=1 cnt=26
+HUB u=62 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+CTRL yr=2187 cur=2 cnt=26
+HUB u=95 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=99 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=96 ret=0x56cf17
+HUB u=92 ret=0x56cf17
+DISP u=92 esi=0 st=8 own=0 ownrec=2 curfac=3 x=18 y=2
+HUBFOUND u=92 x=18 y=2
+FOUND ret=0x4ccbe2 fac=2 x=18 y=2 cnt=26
+CTRL yr=2187 cur=2 cnt=27
+HUB u=91 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2187 cur=3 cnt=27
+CTRL yr=2187 cur=3 cnt=27
+HUB u=-1 ret=0x50dd89
+CTRL yr=2187 cur=4 cnt=27
+CTRL yr=2187 cur=4 cnt=27
+CTRL yr=2187 cur=4 cnt=27
+CTRL yr=2187 cur=4 cnt=27
+CTRL yr=2187 cur=4 cnt=27
+CTRL yr=2187 cur=4 cnt=27
+CTRL yr=2187 cur=4 cnt=27
+HUB u=36 ret=0x56cf17
+HUB u=8 ret=0x56cf17
+HUB u=2 ret=0x56cf17
+HUB u=24 ret=0x56cf17
+HUB u=16 ret=0x56cf17
+HUB u=14 ret=0x56cf17
+CTRL yr=2187 cur=5 cnt=27
+CTRL yr=2187 cur=5 cnt=27
+CTRL yr=2187 cur=5 cnt=27
+CTRL yr=2187 cur=5 cnt=27
+CTRL yr=2187 cur=5 cnt=27
+HUB u=81 ret=0x56cf17
+HUB u=78 ret=0x56cf17
+HUB u=80 ret=0x56cf17
+HUB u=99 ret=0x56cf17
+HUB u=79 ret=0x56cf17
+HUB u=77 ret=0x56cf17
+HUB u=76 ret=0x56cf17
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+CTRL yr=2187 cur=6 cnt=27
+HUB u=92 ret=0x56cf17
+HUB u=38 ret=0x56cf17
+HUB u=34 ret=0x56cf17
+HUB u=32 ret=0x56cf17
+HUB u=31 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+HUB u=97 ret=0x56cf17
+HUB u=96 ret=0x56cf17
+HUB u=83 ret=0x56cf17
+HUB u=68 ret=0x56cf17
+HUB u=61 ret=0x56cf17
+HUB u=93 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=82 ret=0x56cf17
+HUB u=73 ret=0x56cf17
+HUB u=69 ret=0x56cf17
+DISP u=69 esi=7 st=8 own=0 ownrec=6 curfac=3 x=7 y=47
+HUB u=60 ret=0x56cf17
+HUB u=59 ret=0x56cf17
+HUB u=46 ret=0x56cf17
+HUB u=45 ret=0x56cf17
+HUB u=41 ret=0x56cf17
+HUB u=37 ret=0x56cf17
+HUB u=26 ret=0x56cf17
+HUB u=25 ret=0x56cf17
+HUB u=21 ret=0x56cf17
+HUB u=18 ret=0x56cf17
+HUB u=17 ret=0x56cf17
+HUB u=15 ret=0x56cf17
+HUB u=13 ret=0x56cf17
+HUB u=47 ret=0x56cf17
+HUB u=43 ret=0x56cf17
+HUB u=40 ret=0x56cf17
+HUB u=85 ret=0x56cf17
+HUB u=28 ret=0x56cf17
+CTRL yr=2187 cur=7 cnt=27
+CTRL yr=2187 cur=7 cnt=27
+HUB u=88 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=88 ret=0x56cf17
+HUB u=63 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=57 ret=0x56cf17
+HUB u=56 ret=0x56cf17
+HUB u=55 ret=0x56cf17
+DISP u=55 esi=1 st=8 own=0 ownrec=7 curfac=3 x=28 y=24
+HUB u=88 ret=0x56cf17
+HUB u=101 ret=0x56cf17
+HUB u=100 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=87 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=74 ret=0x56cf17
+HUB u=30 ret=0x56cf17
+HUB u=23 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+HUB u=22 ret=0x56cf17
+CTRL yr=2188 cur=1 cnt=27
+CTRL yr=2188 cur=1 cnt=27
+CTRL yr=2188 cur=1 cnt=27
+CTRL yr=2188 cur=1 cnt=27
+HUB u=62 ret=0x56cf17
+HUB u=89 ret=0x56cf17
+HUB u=70 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+HUB u=52 ret=0x56cf17
+HUB u=51 ret=0x56cf17
+HUB u=50 ret=0x56cf17
+HUB u=90 ret=0x56cf17
+HUB u=53 ret=0x56cf17
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+CTRL yr=2188 cur=2 cnt=27
+HUB u=94 ret=0x56cf17
+HUB u=84 ret=0x56cf17
+HUB u=71 ret=0x56cf17
+HUB u=67 ret=0x56cf17
+HUB u=66 ret=0x56cf17
+HUB u=64 ret=0x56cf17
+HUB u=42 ret=0x56cf17
+HUB u=33 ret=0x56cf17
+HUB u=29 ret=0x56cf17
+HUB u=20 ret=0x56cf17
+HUB u=11 ret=0x56cf17
+HUB u=7 ret=0x56cf17
+HUB u=100 ret=0x56cf17
+HUB u=98 ret=0x56cf17
+HUB u=75 ret=0x56cf17
+HUB u=72 ret=0x56cf17
+HUB u=65 ret=0x56cf17
+HUB u=54 ret=0x56cf17
+HUB u=49 ret=0x56cf17
+HUB u=48 ret=0x56cf17
+HUB u=44 ret=0x56cf17
+HUB u=35 ret=0x56cf17
+HUB u=27 ret=0x56cf17
+HUB u=19 ret=0x56cf17
+HUB u=95 ret=0x56cf17
+HUB u=91 ret=0x56cf17
+HUB u=86 ret=0x56cf17
+HUB u=39 ret=0x56cf17
+HUB u=10 ret=0x56cf17
+HUB u=3 ret=0x56cf17
+CTRL yr=2188 cur=3 cnt=27
+CTRL yr=2188 cur=3 cnt=27
+HUB u=-1 ret=0x50dd89

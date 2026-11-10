@@ -1,0 +1,11 @@
+M292 POD MOVEMENT census (session 239) - 26-turn window, m54b_clean t0
+PRE count=19 year=2162 | POST count=27 year=2188 TracerPid=0 drv rc=0
+rows HUB=2308 DISP=29 MSG=0 HUBFOUND=9 ISS=11 FOUND=9 CTRL=1479
+esi histogram [(0, 9), (1, 2), (2, 1), (4, 2), (5, 1), (6, 2), (7, 1), (9, 1), (11, 1), (13, 1), (18, 1), (20, 1), (21, 1), (22, 2), (23, 3)]
+walked [(66, (53, 47), (53, 49)), (60, (27, 51), (1, 43))]
+G1-G3 static               PASS
+G4 caller law              PASS
+G5 ring-index + flag laws  PASS
+G6 walk                    PASS
+G7 spread                  PASS
+PASS M292: 5/5

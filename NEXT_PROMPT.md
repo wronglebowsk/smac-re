@@ -1,6 +1,6 @@
-# NEXT_PROMPT.md - footing (s238 close: M291 10/10 #246; B13 #244, M290 #242:
-# M291: found-scan = strict site-value argmax over the 25-ring; the (dist*10000)/(value+1)
-# footing shape REFUTED (no 0x2710). Next: ANALYSE pod MOVEMENT.)
+# NEXT_PROMPT.md - footing (s239 close: M292 5/5 #248; M291 #246, B13 #244:
+# M292: POD MOVEMENT = hub arg1 unit index; esi ring-entry dispatch (0=found/MSG,
+# 1-8 continue, >=9 issue order 0x62 at ring tile = WALK). Next: gate tables. B14.)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -33,7 +33,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9,
 
 ## THE LEDGER
 
-Merged M54A-M291 + B0-B13 (through #246); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M292 + B0-B13 (through #248); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -62,7 +62,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   FUN_005f3f5b is NOT open - see M220.
 
 - Pick from (ANALYSE fires; next BUILD = B14):
-  ANSWERED s227-M289, s234-B12, s236-M290, s237-B13 (M290 fit 9/9: dispatch own-tile-gated, founder args = pod record; B10 tile rule REFUTED - NAMED M290).  ANSWERED s238=M291 (10/10; law NAMED.md): scan = STRICT site-value argmax over the 25-ring (0x67850c/0x678990 .rdata; value = FUN_0046e770 rec byte2 high nibble; rec byte3 owner-equality REQUIRED - no-owngate loses exactly fac1(27,29)); the (dist*10000)/(value+1) footing shape REFUTED (no 0x2710). NEW pick (s238): POD MOVEMENT - which pod runs the hub vector (callers of FUN_0055f650 + unit id) and its walk vs the founding turns (rises 6,9,18,19,22,23) - BOX: VEC-hub entry census printing unit index + pos. UNMODELED (fit passed without): 0x94e5a8/0x94eca8 tables + 0x4e3c00 no-go.  Trap (s236): save 22-B column byte0 is NOT the live category - use the 44-B record view rec=(W/2)*y+(x>>1), byte0 cat 3-6=land.
+  ANSWERED s227-M289, s234-B12, s236-M290, s237-B13 (M290 fit 9/9: dispatch own-tile-gated, founder args = pod record; B10 tile rule REFUTED - NAMED M290).  ANSWERED s238=M291 (10/10; ring + value laws in NAMED.md). ANSWERED s239=M292 (5/5, 26-turn BOX; law NAMED.md): hub arg1 = unit index (own flag owner==3 HUMAN); callers FUN_0056cdf0 (per-unit) + FUN_0050d140 (once-round); esi ring-entry dispatch: 0=found (MSG 0x2408 human), 1-8=continue, >=9=FUN_005560f0(u,0x62,ring tile)=WALK order; 9 FOUND all hub-leg, 2 walked; golden tiles (20,48)(63,51)(1,43) reproduced. NEW pick (s239): UNMODELED 0x94e5a8/0x94eca8 per-site gate tables + FUN_004e3c00 no-go (STATIC census + fit vs recorded sites; the fits passed WITHOUT modeling them). Also open: who gates hub visits (both callers entry tests); the 0x56c6de continue-leg target.
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128; 338 = coarse-map CELL count; NAMED).
   DIALOG +0x4c CLOSED (M284-M288): slot not on any click/key/create path; menu
   pane NOT family (0x67919c); full shape in NAMED M288. M282 G5 CLOSED (s235 hub,
@@ -70,7 +70,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 ## LIVE FACTS / KIT
 
-- **BOX**: UP as of s211 (m54b_clean r50 loaded, TracerPid 0, gdb detached). Cold relaunch ~6 s to title (s211). `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd even when your launcher is alive - the tracked-job ancestry escape is DEAD; wrap harness runs in `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'` and keep the harness itself uid 1000 (under sudo wine refuses the prefix).** Recipe + state dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
+- **BOX**: UP as of s239 (m54b_clean LIVE-ADVANCED to 2188, cnt 27, TracerPid 0, gdb detached; no reload needed) Cold relaunch ~6 s to title (s211). `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): wine reparents terran.exe to systemd even when your launcher is alive - the tracked-job ancestry escape is DEAD; wrap harness runs in `sudo -n sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope' && <run>; sudo -n sh -c 'echo 1 > ...'` and keep the harness itself uid 1000 (under sudo wine refuses the prefix).** Recipe + state dumps VERBATIM: skill `references/wine-operations.md`, `docs/pick-archive.md` §s198 + §s199 + §trim-s202.
 
 ## TRAPS — the rules (full text: `docs/pick-archive.md`, laws: skill instrument-laws.md)
 
