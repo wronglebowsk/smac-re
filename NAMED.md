@@ -1432,3 +1432,23 @@ been observed entered from any live click.  Combined with M284 (base
 display), M285 (chooser) and M286 (REALLYQUIT IS family but its row cb is
 INLINE in the pump): +0x4c is NOT dispatched on ANY click path - the next
 shape is dialog CREATE-time (FUN_00405ef0) or the Return-key path.
+
+## M288 (s233, static 5/5, merged PR pending submit) - +0x4c CLOSED: neither dialog CREATE-time nor the Return-key path dispatches the family +0x4c slot; FUN_005f6aa3 is reachable only through a live family +0x4c dispatch, and NO reachable path takes it
+- FUN_005f6aa3 (the family +0x4c slot target = dialog row-click dispatcher:
+  FUN_005e7917 row finder + [ecx+0xa8] row-cb): ZERO direct callers image-
+  wide; its only 5 data refs are the 5 family vtables' +0x4c entries
+  (FAMILY[i]+0x4c = 0x671698/0x671818/0x67290c/0x675d10/0x677714).
+- CREATE-time: 466 family-vptr install sites in 72 owner functions; install-
+  owner set INTERSECT site-owner set EMPTY.  The 0x67164c installer
+  FUN_00405ef0 and its callees FUN_005ee350/FUN_005f6b8c contain no +0x4c
+  call and no 0x5f6aa3 ref.  A vptr install never dispatches the slot.
+- Return-key: WM_KEYDOWN(0x100) -> FUN_005d1576 -> vtable +0x12c (all 5
+  family vtables = 0x5d629d hotkey dispatcher) -> FUN_005cf43a -> vtable
+  +0x60; WM_CHAR -> FUN_005d15d5; WM_SYSKEYDOWN -> FUN_005d1601; pump
+  FUN_005f1394 (INLINE row cb, M286).  NONE of the six contains a +0x4c CALL
+  dispatch (M284 forms; the one data load 0x5d632d `mov eax,[edx+0x4c]`
+  feeds FUN_00631070(hotkey-table+0x4c) - a hotkey binding read, not a
+  dispatch).  Family +0x12c==0x5d629d all 5.
+- Key-chain slots dispatch +0x12c/+0x60; the row callback lives INLINE in the
+  pump (M286).  Closing the M284-M287 series: +0x4c never dispatches on any
+  click, key or create path.  Acceptance: STATIC PASS 5/5 (one invocation).

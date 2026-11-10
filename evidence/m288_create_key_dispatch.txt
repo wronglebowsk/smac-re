@@ -1,0 +1,19 @@
+M288 static census
+g1 12 call [reg+0x4c] sites unchanged: True
+g2 0 direct call 0x5f6aa3 (dc=0); 5 refs = family +0x4c slots: True
+   refs: ['0x671698', '0x671818', '0x67290c', '0x675d10', '0x677714']  want: ['0x671698', '0x671818', '0x67290c', '0x675d10', '0x677714']
+g3 family-vptr installs=466 owners=72, overlap=[], ctor-bodies=[('FUN_00405ef0', 0), ('FUN_005ee350', 0), ('FUN_005f6b8c', 0)]: True
+g4 key chain + pump clean=['FUN_005d1576/0', 'FUN_005d629d/0', 'FUN_005cf43a/0', 'FUN_005d15d5/0', 'FUN_005d1601/0', 'FUN_005f1394/0'], family +0x12c==0x5d629d=True: True
+g5 site-owner direct callers avoid installer/key/ctor paths: True
+   FUN_004b83d0 <- ['FUN_004c6530']
+   FUN_004ba2b0 <- []
+   FUN_004c6d90 <- ['FUN_00404fb0', 'FUN_004c6530', 'FUN_004c6e40']
+   FUN_005b7890 <- ['FUN_005b3e70']
+   FUN_005cee32 <- ['FUN_005d65bb']
+   FUN_005d9aba <- []
+   FUN_005d9b97 <- []
+   FUN_005fa7f5 <- ['FUN_005fc20f']
+   FUN_005facc2 <- ['FUN_005faae5', 'FUN_005faca2']
+   FUN_005ffb02 <- []
+   FUN_0063cf7d <- ['FUN_006302ac', 'FUN_0063cbb0', 'FUN_0063cc31']
+STATIC PASS (5/5)
