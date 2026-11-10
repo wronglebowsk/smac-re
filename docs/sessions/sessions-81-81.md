@@ -25,7 +25,7 @@ file readable in one context window. Same evidence file paths apply.
   order bytes**. New class `dest-chooser` + `answer_dest_chooser` (click the MERGED OK row
   centre (497,162): the two fill segments centred (474,162)/(521,162) are ONE bar split by
   the "OK" label — the same rule as the communication's OK bar). Pinned in
-  `test_classify.py` and `check_classes.py` against `evidence/m54d/m54d_move_afterg.png` and
+  `test_classify.py` and `check_classes.py` against `evidence/fixtures/m54d_move_afterg.png` and
   `synth_chooser.png` BEFORE the driver used it.
 - **THE SCENE PANEL FROZE TWO RUNS AS `movie`.** A full-screen Secret-Project artwork panel
   has a red CLOSE bar bottom-right (fill (94,10,9)/(73,9,8), y 579-599, x 596-799); OCR reads
@@ -34,7 +34,7 @@ file readable in one context window. Same evidence file paths apply.
   (tags `m54d40`, `m54d40b`; their traces pruned at the end of the session for the evidence
   budget, the third run's is kept) sat with the year frozen. New class `artwork-close` + `close_bar(png)` (colour test on the
   bottom-right strip; the bar's red is told from the terrain's red by the GREEN channel,
-  g<30 vs ~50); fixture `evidence/m54d/peek_stuck.png`, pinned in both test files.
+  g<30 vs ~50); fixture `evidence/fixtures/peek_stuck.png`, pinned in both test files.
 - **THE WALK MACHINERY, AND WHERE IT STOPS.** `order_step_in_loop` now fires `g` FIRST (a
   Former that gets `f` first lands a terraform byte and `landed` stops the plan — that is how
   M54c ordered 31 units and moved none) and skips it for a unit standing on one of our bases

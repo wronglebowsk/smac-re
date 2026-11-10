@@ -197,3 +197,38 @@ that can fail DIFFERENTLY agree, and the harness states the state it left behind
   block that made it and add one line saying which part died and what replaced it. Appending a correction
   below a still-standing wrong sentence leaves the next session reading whichever it hits first — and a
   merged PR title is the first thing anyone reads.
+
+
+## s242 retirement: verify-the-outcome laws
+> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
+> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
+
+### Verify the OUTCOME, not the mechanism
+
+Depth: `references/verify-outcome.md` — a gate that counts the harness's own work passes a run that lost the
+game (a 40-turn `PASS` with zero bases); compute candidate predictions from the baseline before the run, refuse a
+shape where your model and the null agree on every candidate, and read the effect back from memory/state.
+**Every number the prose quotes must be COMPUTED by the gate that ships with it.** A finding that says "7 of
+9 sites pass size 0x41" needs the script to count that and FAIL otherwise: a gate measuring something
+adjacent to the sentence stays green while the doc drifts, and the correction then costs its own PR. Put the
+number into the assertion FIRST (print the table, `assert len(...) == N`), then write the sentence from the
+printed table — never from the draft prose.
+**And derive that number from the SAME parser that produces the claim, after any fix to that parser.** A hand
+census or a second tool yields a gate that FAILs on correct evidence: a caps-blind grep counted 28 stores where the
+parser counts 33, and a draft's "12 scratch tests" became 17 once the parser's byte-op shift was fixed — both times
+the parser was right and the number was the draft's. **Never assert an exact sorted list or exact count over a
+whole-function window**: a duplicate of the same idiom further down a 5 KB body satisfies any set check and breaks
+an equality check (a second `shl eax,0x4` did), so assert on the first N or on the window between two known
+addresses and PRINT the whole table so an excess is visible. **A "makes no calls / has no writer / never fires"
+claim needs the WHOLE function body** — a `POS[a]:POS[a]+N` slice is how "zero calls" was asserted for a function
+that makes ten, one of them the emitter carrying the finding.
+**Publishing rule (§Publishing rule): one instrument is a lead, never a finding** — pair it with one that can fail
+DIFFERENTLY (a byte sum vs a poke-and-scan, a log vs a live read-back), assert the state the run leaves behind
+(`TracerPid`, counts, armed count) rather than its exit code, and pre-register the falsifier.
+**An exit code is a claim, so make it mean what its reader will assume.** A harness that exits non-zero for a
+NEGATIVE result (`the site was reached and never taken`) makes its own finding read as a broken run and costs the
+next session a debugging pass on a green answer. Encode the four states explicitly and PRINT which applies:
+**0 = measured** (taken or not), **4 = the site was never reached** (inconclusive, not a gate result), **5 = the
+driver wedged / produced no orders (NO MEASUREMENT — never file it as evidence the gate is inert)**, **8 = the box
+was left dirty** (`TracerPid != 0`). A wedge and a negative result are different facts; conflating them is the same
+failure class as a stale-gdb "success".

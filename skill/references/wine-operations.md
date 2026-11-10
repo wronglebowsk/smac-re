@@ -328,7 +328,7 @@ bytes 24/28 are engine-internal) before guessing what a small-int gate in sweep 
   Shift+arrow per ORDERS.md §4 `0x19` has ever been logged as a keyboard move order.
 - **A faction COMMUNICATION is its own screen class (`comm`)** (session 80, turn 35 of
 `evidence/trace_m54c40b_20261024_222039.jsonl`): banner "BELIEVERS - SEETHING", a QUOTED demand,
-its own OK bar at y 347 (`evidence/m54c/comm_pane.png`). The HUD console row (DATALINKS 333,560 /
+its own OK bar at y 347 (`evidence/fixtures/comm_pane.png`). The HUD console row (DATALINKS 333,560 /
 PROFILE 467,560 / HQINFO 619,560) is still drawn under it and is NOT a close bar — clicking it
 opens the profiles browser, whose EXIT lands back on the same communication, and M54b's
 bottom-bar rule did exactly that 38 times: 735 s with the year stuck. Answer it at the MIDPOINT

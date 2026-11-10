@@ -245,9 +245,8 @@ def main():
         return 1
     budget = a.budget
     if budget is None:
-        ev = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "evidence")
-        budget = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(ev)
-                     for f in fs) / 1e6
+        import evidence as E  # s242: shared rule - fixtures under evidence/fixtures/ uncounted
+        budget = E.evidence_mb()
     orphans = len([f for f in os.listdir(os.path.join(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))), "evidence")) if "_3x" in f])
 

@@ -4,7 +4,7 @@
 The bug this pins (VERIFIED session 75): classify() returned `base` for ANY frame whose
 OCR text contained a BASE_WORD, and the HUD's OWN message pane prints news lines that do
 ("...is not on = producing enough nutrients to meet its..." at (355,438) on
-evidence/m54a/live_hud.png). Every frame of that position read `base`, the clearing
+evidence/fixtures/live_hud.png). Every frame of that position read `base`, the clearing
 Escape was forbidden by --no-escape > --timeout, and two runs stalled with zero hits.
 
 The two assertions the milestone asks for, in one file: a HUD whose message pane is
@@ -27,63 +27,63 @@ sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import smac_play as sp  # noqa: E402
 
 CASES = [
-    ("evidence/m54a/live_hud.png", "hud",
+    ("evidence/fixtures/live_hud.png", "hud",
      "M54a bug frame: HUD + message-pane news containing 'nutrients' (355,438), "
      "TURN COMPLETE at (628,419)"),
-    ("evidence/m45a_post.png", "base",
+    ("evidence/fixtures/m45a_post.png", "base",
      "real base screen (session 42, NAMED.md:329): top menu EXPLORE/DISCOVER/GOVERNOR/"
      "BUILD/CONQUER + tabs, no TURN COMPLETE row at all"),
-    ("evidence/m25_t7.png", "hud", "plain HUD, TURN COMPLETE at (697,416), no base words"),
-    ("evidence/m15_boot.png", "cdrom", "boot nag wears the game title in its caption"),
-    ("evidence/m15_loaded_words.png", "loaded-game",
+    ("evidence/fixtures/m25_t7.png", "hud", "plain HUD, TURN COMPLETE at (697,416), no base words"),
+    ("evidence/fixtures/m15_boot.png", "cdrom", "boot nag wears the game title in its caption"),
+    ("evidence/fixtures/m15_loaded_words.png", "loaded-game",
      "LOAD confirm drawn over the title art (the screen session 20b lost the game on)"),
-    ("evidence/m37_screen0.png", "quit-prompt",
+    ("evidence/fixtures/m37_screen0.png", "quit-prompt",
      "NOT the title screen: this session-37 frame is the quit dialog over the HUD (OCR "
      "says 'do you really want to quit?' + 'oops no wait!'). The old classifier called it "
      "`title` because its banner IS the game title, and a run stopped on it"),
-    ("evidence/m15_title_now.png", "quit-prompt", "the same trap, frame from session 15"),
-    ("evidence/m54a/quit_prompt.png", "quit-prompt",
+    ("evidence/fixtures/m15_title_now.png", "quit-prompt", "the same trap, frame from session 15"),
+    ("evidence/fixtures/quit_prompt.png", "quit-prompt",
      "the quit dialog at 2398; Escape selects 'Oops, no, wait!' and the round goes on "
      "(trace_m54a40c turn 13 died before this class existed)"),
-    ("evidence/m37_recovered.png", "hud", "the HUD after a quit dialog was answered away"),
-    ("evidence/m54a/live_now2.png", "help",
+    ("evidence/fixtures/m37_recovered.png", "hud", "the HUD after a quit dialog was answered away"),
+    ("evidence/fixtures/live_now2.png", "help",
      "the HELP browser (FACTION PROFILES): profile text contains base words, and Escape is "
      "ignored by it — only its EXIT bar closes it (a stray vote-row click opened it and the "
      "round stalled twice)"),
-    ("evidence/m54c/comm_pane.png", "comm",
+    ("evidence/fixtures/comm_pane.png", "comm",
      "M54c: a faction COMMUNICATION — 'BELIEVERS - SEETHING' banner + a QUOTED demand + "
      "its own OK bar at y 347. It used to classify `unknown`, so the bottom-bar rule "
      "clicked the console DATALINKS bar (333,560) 38 times in a row and turn 35 of "
      "trace_m54c40b burned 735 s with the year stuck at 2185"),
-    ("evidence/m54d/m54d_move_afterg.png", "dest-chooser",
+    ("evidence/fixtures/m54d_move_afterg.png", "dest-chooser",
      "M54d: the `g` (\"Move to\") chooser — SELECT DESTINATION caption at y 102, a base row "
      "with 'Distance: 0' at y 132, its OWN OK/CANCEL bar row at y 162. It used to classify "
      "`hud` (only 5 words land in the dialog band, so the dialog test misses it) while it "
      "swallowed every keypress: 10 keys fired at a selected unit, zero order bytes, "
      "evidence/m54d/probe_unit0.json"),
-    ("evidence/m54d/synth_chooser.png", "dest-chooser",
+    ("evidence/fixtures/synth_chooser.png", "dest-chooser",
      "M54d: the same chooser over a unit standing OFF its base — same caption, same bar row, "
      "and the row it lists is still 'University Base Distance: 0' because the pane reports "
      "the CURSOR's distance, not the unit's"),
-    ("evidence/m54d/peek_stuck.png", "artwork-close",
+    ("evidence/fixtures/peek_stuck.png", "artwork-close",
      "M54d: a full-screen scene panel (Secret-Project artwork) with its own red CLOSE bar at "
      "the bottom-right (fill (94,10,9)/(73,9,8), y 579-599, x 596-799). OCR reads 7 tokens "
      "off the whole frame, so it fell through to `movie`, whose only answer is Escape — and "
      "Escape is gated by --no-escape, so the year sat frozen for two runs"),
-    ("evidence/m54e/chooser_live.png", "dest-chooser",
+    ("evidence/fixtures/chooser_live.png", "dest-chooser",
      "M54e: the `g` chooser exactly as the LIVE loop sees it — the HUD news pane and the "
      "Mission Year row are still drawn under it, and the unit standing off its base is in "
      "the frame. Session 81's run classified its live chooser frame `unknown` "
      "(trace_m54d40c turn 0) even though the saved frames read `dest-chooser`, so this is "
      "the frame the driver's answer path is pinned against"),
-    ("evidence/m54g/newbase_pane.png", "name-pane",
+    ("evidence/fixtures/newbase_pane.png", "name-pane",
      "M54g: NEWBASE — the colonist founding's name-entry pane (`b` on a class-8 unit on a "
      "legal tile): caption 'ENTER A NAME FOR YOUR NEW BASE.' at y 102, the generated name "
      "'Korolev Center' in the field at y 135, and the HUD's TURN COMPLETE row STILL drawn "
      "underneath, which made classify() answer `hud` while the modal ate the keypress. "
      "Return accepts the name; the base record exists 0.1 s later "
      "(evidence/m54g/probe_found1.json)"),
-    ("evidence/m54h/chooser_g60b.png", "dest-chooser",
+    ("evidence/fixtures/chooser_g60b.png", "dest-chooser",
      "M54h: the `g` chooser with TWO destinations — the unit is garrisoned on Korolev "
      "Center (29,42) and the pane lists Korolev Center at y 132 AND University Base at "
      "y 151, with its five-button row pushed down to y 181 (Sort: Name / Sort: Size / "

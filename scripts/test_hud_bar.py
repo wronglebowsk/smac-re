@@ -39,54 +39,54 @@ import smac_play as sp                    # noqa: E402
 # (frame, must fire?, must classify-as?, why)
 FRAMES = [
     # ---- the HUD: the signal must fire on every one of these ----
-    ("evidence/m54a/live_hud.png", True, "hud",
+    ("evidence/fixtures/live_hud.png", True, "hud",
      "M54a bug frame. Button row reads, and the bar fires on the FRAGMENTS: `[esston` "
      "(mission) + `2388` (the year number). Energy: is NOT in this frame's bar."),
-    ("evidence/m25_t7.png", True, "hud",
+    ("evidence/fixtures/m25_t7.png", True, "hud",
      "Plain HUD, session 25. The whole status row fragments to `sisson tear zie` with no "
      "year number at all — it passes on the `Mission` fragment, the `Year`-as-`tear` "
      "fragment and `Energy:` at y 582."),
-    ("evidence/m37_recovered.png", True, "hud",
+    ("evidence/fixtures/m37_recovered.png", True, "hud",
      "The HUD after a quit dialog was answered away: `Mission Year 2275` reads cleanly."),
-    ("evidence/m65/sample_00_unknown.png", True, "unknown",
+    ("evidence/fixtures/sample_00_unknown.png", True, "unknown",
      "LIVE flake frame: classify() == 'unknown' on the plain HUD (year 2161, Korolev "
      "Center queued). The bar reads `Mission Year 2161` — this is the frame the fix is for."),
-    ("evidence/m65/sample_02_unknown.png", True, "unknown",
+    ("evidence/fixtures/sample_02_unknown.png", True, "unknown",
      "Same screen, same freeze loop: 'unknown' with the bar intact (`Mission` garbled to "
      "`||Il)||Mission`, year number clean)."),
-    ("evidence/m65/sample_04_unknown.png", True, "unknown",
+    ("evidence/fixtures/sample_04_unknown.png", True, "unknown",
      "Same screen: 'unknown', the bar's only tokens are the score row and `Mission Year 2161`."),
-    ("evidence/m65/sample_07_unknown.png", True, "unknown",
+    ("evidence/fixtures/sample_07_unknown.png", True, "unknown",
      "Same screen: 'unknown' with almost nothing in the button row (`W)@446 Econ:@449`); "
      "the bar still carries Mission/Year/2161."),
-    ("evidence/m65/sample_05_hud.png", True, "hud",
+    ("evidence/fixtures/sample_05_hud.png", True, "hud",
      "The control: the same screen read 'hud' (TURN/COMPLETE at y 416) and the bar fires too."),
     # ---- no HUD behind these: the signal must NOT fire ----
-    ("evidence/m45a_post.png", False, "base",
+    ("evidence/fixtures/m45a_post.png", False, "base",
      "A real base screen: 4 tokens land in the bar band and none of them is Mission, Year, "
      "a year number or Energy."),
-    ("evidence/m15_boot.png", False, "cdrom", "The boot nag: nothing at all in the bar band."),
-    ("evidence/m15_loaded_words.png", False, "loaded-game",
+    ("evidence/fixtures/m15_boot.png", False, "cdrom", "The boot nag: nothing at all in the bar band."),
+    ("evidence/fixtures/m15_loaded_words.png", False, "loaded-game",
      "LOAD confirm over the title art: 14 tokens in the band, none of them Mission/Year/"
      "year-number/Energy — the title art's own text."),
-    ("evidence/m54a/live_now2.png", False, "help",
+    ("evidence/fixtures/live_now2.png", False, "help",
      "The HELP browser (faction profiles, 234 tokens): profile prose must not fake a HUD."),
-    ("evidence/m54c/comm_pane.png", False, "comm",
+    ("evidence/fixtures/comm_pane.png", False, "comm",
      "A faction COMMUNICATION pane: its own OK bar at y 347, no HUD status bar."),
-    ("evidence/m54d/peek_stuck.png", False, "artwork-close",
+    ("evidence/fixtures/peek_stuck.png", False, "artwork-close",
      "Full-screen Secret-Project artwork with its own red CLOSE bar: 10 tokens in the whole "
      "frame."),
     # ---- modals drawn OVER a still-drawn HUD: firing is fine ONLY because the name wins ----
-    ("evidence/m37_screen0.png", None, "quit-prompt",
+    ("evidence/fixtures/m37_screen0.png", None, "quit-prompt",
      "The quit dialog over the HUD: the bar IS still drawn (Mission Year 2275), so the "
      "signal fires; what saves it is that is_quit_prompt() names the frame first."),
-    ("evidence/m54e/chooser_live.png", None, "dest-chooser",
+    ("evidence/fixtures/chooser_live.png", None, "dest-chooser",
      "The `g` chooser over the HUD (Mission Year row drawn under it, per M54e) — named "
      "first, so the bar never gets a vote."),
-    ("evidence/m54g/newbase_pane.png", None, "name-pane",
+    ("evidence/fixtures/newbase_pane.png", None, "name-pane",
      "NEWBASE name entry over a still-drawn HUD: M54g's own lesson is that the HUD chrome "
      "under a pane is a trap; is_name_pane() must name it."),
-    ("evidence/m54h/chooser_g60b.png", None, "dest-chooser",
+    ("evidence/fixtures/chooser_g60b.png", None, "dest-chooser",
      "Two-destination chooser over the HUD — same shape, named first."),
 ]
 

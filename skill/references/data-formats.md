@@ -187,3 +187,34 @@ run on the anchors and counts, not on that probe (`m113_save_map.py` accepts rc 
 refuses 60+ markers on purpose: that many pokes mutilate counts and pointers and the load stops meaning anything. This is the only
 instrument that has held on this file: a read census over-ran its own file (+468, +144) and a subset-sum over the
 legs admits 181,769 exact decompositions, while an anchor is an exact (offset, address) pair.
+
+
+## s242 retirement: map + save container notes
+> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
+> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
+
+## Map + save container formats
+
+Fully decoded: the repo docs (`MAP_FORMAT.md`, `SAVE_FORMAT.md`) are canonical and the depth lives in
+`references/data-formats.md` — the `.MP` size formula, the `.SAV` section list with its two record strides
+(52 B / 304 B), the byte-exact anchors, the read-wrapper caller trace that cracked both, and the
+zeros-fraction pitfall. **The last 156 B of every save is a fixed TRAILER, not game data** — the final
+152 B are identical across nine saves, only the trailing dword varies, and its offset moves with the file
+size, so no hard-coded leg can index it; Its reader is the **6-site per-entity loop** that restores each row into per-entity heap records
+(stride `0x224B8`), proved by POKING a marker into the rows and finding it in memory — never by a byte sum
+(`references/data-formats.md` §`.SAV` trailer; `references/instrument-laws.md` §Identify bytes). The offset->
+memory map itself is anchored the same way: `scripts/m113_save_map.py` plants markers at known offsets and
+reports where each lands — 1:1 inside a section, a JUMP at a boundary (`references/instrument-laws.md`
+§Extract a LAYOUT with anchors, `references/data-formats.md` §anchors).
+**Any file-vs-memory diff goes through `scripts/save_diff.py`**, never an ad-hoc window: the mapping constant `k
+= dest - off` is PER REGION, so a window that straddles a section boundary and is diffed with one region's `k`
+manufactures hundreds of "diffs" that look exactly like rewriting. `save_diff.py` derives the regions from the
+anchors, refuses a range crossing a known boundary (67,852 / 82,088 / 172,200 / 172,291 / 222,783) and names the
+boundary it refused on; `scripts/test_save_diff.py` is the PASS 7/7 guard. Done properly the restore is 1:1 for
+every byte of block A, block B, the map header body and the grid — divergences are only a few leading bytes and
+two dwords in the 52-B records, so a "rewritten section" finding needs the guard's agreement first.
+Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
+`FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by
+`FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
+`references/ptrace-level-probes.md` §The .SAV chain.
+

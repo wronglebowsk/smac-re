@@ -283,7 +283,7 @@ executing. Measured on this build with `scripts/m54e_probe.py` (pid 484088, base
 * On a legal tile the handler raises **#NEWBASE** — "ENTER A NAME FOR YOUR NEW BASE." at y 102,
   the generated name already in the field at y 135, and the HUD's TURN COMPLETE row still drawn
   underneath, so the frame reads `hud` unless the caption band is tested: that is the
-  `name-pane` class (frame `evidence/m54g/newbase_pane.png`). **Return accepts the generated
+  `name-pane` class (frame `evidence/fixtures/newbase_pane.png`). **Return accepts the generated
   name; the base record exists 0.1 s later** (`evidence/m54g/probe_found1.json`).
 * **The founding writes NO order byte and CONSUMES the unit** — the record list compacts (the
   founding record read x4,y4,type320 immediately after). Its oracle is the BASE ARRAY
@@ -299,7 +299,7 @@ executing. Measured on this build with `scripts/m54e_probe.py` (pid 484088, base
 
 ## 9. The `g` chooser's ROWS, and what a walk's evidence has to be (M54h, session 85, 2026-10-25)
 
-**Geometry** (`evidence/m54h/chooser_g60b.png` — a unit garrisoned on Korolev Center (29,42)
+**Geometry** (`evidence/fixtures/chooser_g60b.png` — a unit garrisoned on Korolev Center (29,42)
 while we own two bases; `scripts/m54h_probe.py` produced it):
 
 * Caption `SELECT DESTINATION` at y 102. The destination rows are **full-width periwinkle

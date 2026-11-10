@@ -36,7 +36,7 @@ file readable in one context window. Same evidence file paths apply.
   the real neighbour (bx-2, by) and converts one of them (`+10` type 2->1 = class 9, order,
   `+40` and the legs cleared). Everything the run then claims is the game's own: the keypress,
   the chooser, the byte, the route and the walk.
-- **THE LIVE CHOOSER FRAME IS PINNED.** `evidence/m54e/chooser_live.png` — the chooser with the
+- **THE LIVE CHOOSER FRAME IS PINNED.** `evidence/fixtures/chooser_live.png` — the chooser with the
   HUD news pane and the Mission Year row still drawn under it, the frame session 81 classified
   `unknown` — went into `scripts/test_classify.py` AND `scripts/check_classes.py` before the
   driver used it: `PASS 15/15 screen classifications`, `frames: 15 failures: 0`.

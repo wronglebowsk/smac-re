@@ -81,7 +81,7 @@ file readable in one context window. Same evidence file paths apply.
   inside the order step the prompt is answered with Escape, never Return, because Return there is
   "Yes, that's an order, mister!" and the process is gone. (3) A faction **COMMUNICATION**
   ("BELIEVERS - SEETHING" + a quoted demand + its own OK bar at y 347,
-  `evidence/m54c/comm_pane.png`) classified `unknown`, so M54b's bottom-bar rule clicked the
+  `evidence/fixtures/comm_pane.png`) classified `unknown`, so M54b's bottom-bar rule clicked the
   CONSOLE `DATALINKS` bar (333,560) 38 times in a row, each click opening the profiles browser
   and each EXIT click (525,344) landing back on the same communication: turn 35 of
   `evidence/trace_m54c40b_20261024_222039.jsonl` burned **735.2 s with the year stuck at 2185**.

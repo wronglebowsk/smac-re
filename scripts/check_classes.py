@@ -6,7 +6,8 @@ prove a new screen class fires on the frame that motivated it AND that the old c
 still classify their own frames the same way.
 
 Usage: python3 scripts/check_classes.py [frame.png=expected ...]
-Default frames are the M14 evidence set in evidence/.
+Default frames are the M14/M54 classifier regression set (evidence/ + evidence/fixtures/;
+s242: a missing frame is a FAILURE, never a silent skip).
 """
 import os, sys
 
@@ -18,12 +19,10 @@ EVID = os.path.join(ROOT, "evidence")
 
 DEFAULT = [
     # the frame,            expected class,  why this frame exists
+    # s242: m15_hud/m15_mainmenu/m15_autolist rows removed (those frames died before this fire).
     ("m15_boot.png",            "cdrom",       "CD-ROM nag (title in its caption) — was `title`"),
     ("m15_loaded_words.png",    "loaded-game", "LOAD confirm pane over title art — was `unknown`"),
-    ("m15_hud.png",             "hud",         "live HUD after answering that pane"),
     ("m15_stuck_screen.png",    "dialog",      "OPERATIONS DIRECTOR WITH ARTWORK — was `hud`"),
-    ("m15_mainmenu.png",        "unknown",     "main menu: unchanged, still unknown (not clickable)"),
-    ("m15_autolist.png",        "unknown",     "LOAD file browser: unchanged"),
     ("m54a/live_hud.png",       "hud",         "M54a: HUD whose message pane prints 'nutrients' (355,438) — was `base`, so TURN COMPLETE was never clicked"),
     ("m45a_post.png",           "base",        "real base screen: MENU/tabs, no TURN COMPLETE row — must STAY base (Escape, never click)"),
     ("m25_t7.png",              "hud",         "plain HUD, TURN COMPLETE at (697,416)"),
@@ -48,9 +47,12 @@ def main():
     P.WIN = "0"          # ocr/freeze need no window for a saved png
     bad = 0
     for name, want, note in frames:
-        png = name if os.path.exists(name) else os.path.join(EVID, name)
-        if not os.path.exists(png):
-            print(f"SKIP  {name} (no such file)")
+        png = next((p for p in (name, os.path.join(EVID, name),
+                                os.path.join(EVID, "fixtures", os.path.basename(name)))
+                    if os.path.exists(p)), None)
+        if png is None:  # s242: a missing regression frame FAILS the check (Greptile P1)
+            print(f"FAIL  {name} (no such file - moved to evidence/fixtures/? pruned? evidence.py log)")
+            bad += 1
             continue
         words = P.ocr(png)
         got = P.classify(words, P.region_colors(png), png)

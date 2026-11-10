@@ -131,7 +131,7 @@ copies `base[piVar21].x/y` into the leg arrays `+20`(x, 4 shorts)/`+28`(y), `-1`
   tile it raises NEWBASE — caption "ENTER A NAME FOR YOUR NEW BASE." at y 102 with the
   generated name already in the field and the HUD's TURN COMPLETE row still drawn under it,
   so classify() says `hud` unless the caption is tested (`name-pane` class, frame
-  `evidence/m54g/newbase_pane.png`). **Return accepts the generated name; the base record
+  `evidence/fixtures/newbase_pane.png`). **Return accepts the generated name; the base record
   exists 0.1 s later.** The founding writes NO order byte and CONSUMES the unit — the record
   list compacts, so a record index is not an id.
 * **Founding tile gates** (`founding_gate()` in `scripts/smac_play.py` mirrors them live):

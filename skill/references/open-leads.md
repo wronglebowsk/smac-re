@@ -124,3 +124,29 @@ input makes it return +9999 — live it returns 2; read the 24 KB buffer `[ebp-0
 `[ebx+0x3ff5c]`, and map which FUN_00417ee0 dispatch case an INSERT vs a completion takes. The
 bit-7 clear at 0x577ca8 has still never been seen live (3 runs).
 
+
+
+## s242 retirement: closed-ledger notes from still-open
+> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
+> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
+
+## Still open (leads)
+`references/open-leads.md`; `NEXT_PROMPT.md` wins if they disagree.
+**Dialog-family +0x4c dispatch question CLOSED (M284-M288, s228-s233): the family +0x4c slot (FUN_005f6aa3,
+the dialog row-click dispatcher: FUN_005e7917 row finder over 0x18-stride rows + [ecx+0xa8] row-cb dispatch) is
+reachable ONLY through a live family +0x4c dispatch and NO reachable path takes it. Four live click paths
+(M284 base CPane, M285 chooser 0x672298 not family, M286 REALLYQUIT 0x67164c IS family - row cb INLINE in the
+pump FUN_005f1394, M287 menu pane 0x67919c not family, console bar GAME/HQ/... is CHROME) plus M288's static
+closure: FUN_005f6aa3 has 0 direct callers, its only 5 refs are the family vtables' +0x4c entries; dialog
+CREATE-time (466 family-vptr install sites in 72 fns, install-owner ∩ site-owner = ∅; ctor FUN_00405ef0 +
+callees FUN_005ee350/FUN_005f6b8c clean) and the Return-key path (WM_KEYDOWN 0x100 -> FUN_005d1576 -> vtable
++0x12c = 0x5d629d hotkey dispatcher -> FUN_005cf43a -> vtable +0x60; WM_CHAR -> 0x5d15d5; WM_SYSKEYDOWN ->
+0x5d1601; pump clean) contain NO +0x4c call dispatch (one data load 0x5d632d feeds FUN_00631070 hotkey-
+table+0x4c, not a dispatch). M288 evidence: scripts/m288_create_key_dispatch.py. In-game MENU drive recipe:
+the GAME row never OCRs (two frames measured GAME=(26,190) with NETWORK anchored y226, 18-px row stride);
+an open console bar inverts the MENU click to a close - close it before arming; Escape on the bare HUD after
+the menu raises REALLYQUIT (safe 'oops' row, M37).**
+**Band-flag gate — CLOSED, do not re-open** (bit 0x40 of the per-faction flag word is tested but has no setter and no
+save carries it): `scripts/m118_flag_never_set.py` re-proves it offline.
+
+

@@ -156,7 +156,7 @@ python3 scripts/smac_play.py --turns 20 --timeout 60                   # soak
 Falsification test from session 20b, run against a fresh boot + `Autosave 30` (year 2180):
 **load the save, print `classify()`'s verdict before the driver touches anything.**
 Verdict = `unknown` ⇒ the 20b explanation (mis-classification, not a Wine crash) is confirmed,
-and the frame itself says why — `evidence/m15_loaded_words.png`:
+and the frame itself says why — `evidence/fixtures/m15_loaded_words.png`:
 
 ```
 LOAD confirm pane, drawn OVER the still-visible title art:
@@ -206,7 +206,7 @@ found yet; candidate: the u16 near +34 that goes `(f<<8)|f' → (0<<8)|f'` after
 **Escape is destructive in-game too, not just at the title.** After 2185 the driver met a dark
 screen, escaped after its 20 s grace, and got `Do you really want to quit?` (rows *Oops, no,
 wait!* / *Yes, that's an order, mister!*, OK bar y~305) drawn over the live HUD at 2185/Energy 170
-(`evidence/m15_title_now.png`). The `title` class refused to click and stopped the run — the game
+(`evidence/fixtures/m15_title_now.png`). The `title` class refused to click and stopped the run — the game
 survived; clicking `400,305` (OK with "Oops, no, wait!" already selected) returned to a clean HUD
 (`turn_flags 0`, `cur_player 3`).
 
@@ -1825,7 +1825,7 @@ multi-round runner), `scripts/m37_recover.py`. Evidence: `m37a_*`, `m37b_*`, `m3
   `service_pane` had **no branch for kind `base`** (not confirm, not dialog/unknown) so
   `m45b_idle` spun 15 minutes on 1 round until killed. Patched: `kind == "base"` → one Escape
   (M26 rule) in both `m44_idle.service_pane` and `m45_base.py`'s post-create loop.
-* **What the new base is (H, live screenshot `evidence/m45a_post.png`):** facilities list
+* **What the new base is (H, live screenshot `evidence/fixtures/m45a_post.png`):** facilities list
   Headquarters, Recycling Tank, Recreation Commons, Energy Bank, Network Node (the pod's
   starting kit); RESOURCE tab readout **NUTRIENTS 009-010 = −001 (SHORTFALL, panel says
   "Hunger!"), MINERALS 007-000 = +007, ENERGY 003-000 = +003**, INTAKE−CONSUMPTION = SHORTFALL;
