@@ -1,18 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-200-200.md` (1 sessions). Read it only when a question reaches back before session ## Session 201.
-
-## Session 201 (2026-11-01, M253/M254/M255 ANALYSE — what the region verdict codes MEAN, and who calls the generator for a NEW GAME)
-
-Acceptance: `python3 scripts/m253_region_categories.py` -> `SUMMARY PASS: 8/8 gates on terran.exe (static image, no box)`, rc=0, 4.6 s, ONE invocation -> `evidence/m253_region_categories.txt` (2,249 B). Static only (objdump of the image + `ghidra_out`): no box, no `/proc`, no gdb. New instrument `scripts/m253_region_categories.py`, 8 gates.
-
-**M253 — the four values are verdict codes named by the guard that writes each.** G4 reads the guards from machine code: `0x557fdf` stores 8 only after `and eax,0x3f` + (`cmp eax,0x3f` or `test eax,eax` zero) + `test al,[..0x94e5a8]` zero, then `jmp 0x558b18` — the reserved-id/zero-score region is SKIPPED. `0x558516` stores `dl` produced by `sete dl; add dl,0x7` — 7 or 8 is the worth-test boolean + 7. `0x558549` stores 0 under `test BYTE PTR [ebp-0x40],0x2`; `0x55855e` stores 2 under `test [ebp-0x40],0x1` — the 2-store comes AFTER the 0-store, so contested beats open. `0x55856b` sits between `cmp edi,0x40`/`jl 0x558578` and `jmp 0x558b18`: the WATER band always ends at 7 and the region is done. G3 re-pins the effects to pcs: `+1000` at `0x55863d`, `cmp al,0x7` at `0x5586f9`, and the 8-arm size gate `cmp DWORD PTR [edx*4+0x989ce0],0x96` with `edx = region*7` (the M250 stride-0x1c table, dword 0 = tile count) at `0x55870e`. G2: 33 `cmp BYTE PTR [..],imm` and 21 `cmp <reg>,imm` right after a load test exactly {2,7,8}; 39 plain loads; nothing tests 0/1/3/4/5/6 directly — and 1 is never written by either writer.
-
-**M254 — what sets the two bits.** The accumulator `[ebp-0x40]` has exactly one computed write: `test ecx,ecx; mov eax,0x1; jne 0x558349; mov eax,0x2; or DWORD PTR [ebp-0x40],eax` — only {1,2} are ever OR'd in and only masks {1,2} are ever tested. `ecx` is the result of `FUN_00531bf0(facA, facB, region, mode)` (505 B, 10 call sites, 2 inside the stage): it walks the unit array over terrain records at `DAT_0092ae14`, keeps a facA unit whose record byte +3 (the region label, M249) equals the region, then looks for a facB unit in the same region and calls `FUN_0058b1b0` (route) / `FUN_0058cfc0`, returning 1 iff a route is found. So bit 1 = contact -> **2 = CONTESTED**; bit 2 = no contact -> **0 = OPEN** (the +1000 candidate). `FUN_0055f650`'s only store promotes 8 -> 7 (`0x564ad7`, guarded by `cmp DWORD PTR [ebp-0x8c],0x8`) in the same window as `add WORD PTR [eax+0x94eaa8],0xfff6` (-10) and `or BYTE PTR [eax+0x94e7a8],0x9`.
-
-**M255 — the NEW GAME caller.** `FUN_005b2970`'s four sites are `0x4e1151`, `0x4e122b`, `0x57d2a0`, `0x57f1ec`. Only `FUN_0057ecf0` is ungated AND writes 6 world-dimension globals (`ds:0x92ad??`) before the call AND reads alpha sections through `FUN_005ea431` (FACTIONS, WORLDSIZE) AND carries the {SCENARIO, INTRO} literals. `FUN_0057c550`'s call is skipped by 2 branches targeting the return point on `ds:0x9264d8` (written only at `0x57e495`=1 / `0x57e900`=0) and its literals are {RULES, USERULES, RELOADFAC, DIFFICULTY, CUSTOMNAMES} with 0 alpha-section calls; its other caller is `FUN_0057e890` = MAPMENU + maps\planet.mp. The set/clear-`0x80` pair `FUN_004e10c0`/`FUN_004e11b0` has NO literals and is called only by `FUN_00512b40` (CHECKSUMS/EDITINTERLUDE) and `FUN_00516b80` (MENUDETAIL/REALLYQUIT/TECHRANDOM).
-
-**No retraction.** OPEN: the four NAMES are INFERRED from guard + effect, not from a literal; the worth test's operands (`[0x94d810]-[0x94d818]` vs `[0x94eaa8][region]+…`) are unnamed; whether `FUN_0057ecf0` also runs on loading a saved game is untested (box falsifier: bp the driver entry, then load a save). M249's {4,5,6} item and every M248-and-earlier OPEN item stand. M181 stays a LEAD; nothing was owed and nothing was measured on the box this fire.
+Older sessions: `docs/sessions/sessions-201-201.md` (1 sessions). Read it only when a question reaches back before session ## Session 202.
 
 ## Session 202 (2026-11-02, M256/M257/M258 ANALYSE — the worth test's operands, and the per-region array family)
 
@@ -539,3 +527,38 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   the sanity pass - cleaned before commit.
 - OPEN: static pick (c) who reads regions >=128; box pick (dialog +0x4c dispatcher) unchanged; new:
   the AI base-founder census (n_bases 18->26). Chain: exactly one pending smac-re job = s224.
+
+## Session 224 (2026-11-10, ANALYSE static, M281 PASS 7/7) - nobody reads region ids >=128 because the generator caps the id space at 0x7f; the 338 is the coarse-map CELL count, not an id space
+- track_mode printed ANALYSE (analyse_since_build=0) -> static pick (c): "the loop bound 0x80 never
+  reaches regions >=128 while counts go to 338 - what reads region 128+?". ZERO box time; box not
+  touched (terran.exe pid 3820435, no gdb, state read via pgrep only).
+  `python3 scripts/m281_region_id_cap.py` -> **SUMMARY M281: 7/7 gates PASS**
+  (`evidence/m281_region_id_cap.txt`).
+- ANSWER: NOTHING reads a region id >=128 because such an id CANNOT EXIST. The region generator
+  FUN_0058d390 uses two band counters (shard_015.c): land ids 1..0x3e (clamp uVar12=0x3e), water ids
+  0x41..0x7e (clamp uVar12=0x7e), and when a band fills, the smallest region is relocated to the
+  overflow slot uVar12+1 = 0x3f/0x7f (G1: clamps + `uVar12 + 1` idiom + the 0x5f border formula all
+  in the body). Largest assignable id = 0x7f (127) < 0x80, so the `cmp e?x,0x80` loops at 0x556737/
+  0x558b1c (both FUN_00556690) cover the WHOLE id space on every map size - M251's "128 entries =
+  the whole id space" STANDS.
+- The "338" that seeded the pick is the COARSE MAP's byte count, ((W+4)/5+1)/2 * (H+4)/5 = 91/128/338
+  for 64/80/128 (G4, triad computed from the accesses FUN_00582340/2360 `(x>>1) + (Rw>>1)*y`), i.e.
+  the number of coarse CELLS, not region ids. The count global DAT_0092ada4 has exactly 4 refs and
+  they are alloc (x2) + file-write + file-read in shard_014 (G3), and an image-wide scan finds NO
+  cmp against 0x152 (338), NO *0x152 scale, NO cmp against DAT_0092ada4 (G7) - no loop in the image
+  is bounded by the cell count. The per-region table DAT_00989ce0 save section is 3584 B at stride
+  0x1c = EXACTLY 128 rows (G6), consistent with a 128-slot id space. Tile-label census over 2 maps +
+  4 saves: max labels 0x7f (planet.MP's border band!), 0x48 (planetx), 0x46 (saves); zero labels
+  >= 0x80 in any file (G5).
+- ACCEPTANCE: `python3 scripts/m281_region_id_cap.py` -> `SUMMARY M281: 7/7 gates PASS`
+  (`evidence/m281_region_id_cap.txt`). Registry: NAMED.md M281.
+- Corrections to prior footing: the s213-era "region counts 128/338 EXCEED the 94-slot row" framing
+  conflated the coarse-map CELL count with the region ID space; M274's answer (the loop is never
+  clamped, bound is constant 0x80) plus M281's (the id space itself is capped below 0x80) together
+  fully close the row-cap question - the scaled-read overflow M274 measured (regions 94..127 read
+  the sibling array) is the ONLY big-map artifact, and it is the 0x80 loop walking ids that DO exist.
+- OPEN: static pick (c) CLOSED. Remaining: box pick (dialog +0x4c dispatcher), the AI base-founder
+  census (B9 frontier, n_bases 18->26), the 64x64 odd-Rw accessor stride quirk (M247's Rw>>1 vs
+  (Rw+1)/2 asymmetry is a live edge on 64x64, unreachable bytes are the file's 0xCD slack).
+  Next fire: BUILD (analyse_since_build=1) = B10, R2's new-game leg - write the rung into
+  BUILD_SPINE.md FIRST, then build it (sim/, runnable acceptance, no box time).
