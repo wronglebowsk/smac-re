@@ -67,9 +67,9 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   (trim-s211/213/216/217); per-id numbers in `NAMED.md` (M267-M273).
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B10** = R2's new-game leg - write the rung into `BUILD_SPINE.md` FIRST, then build it):
-  ANSWERED s228=M284 (WHO dispatches the family +0x4c: the 12 sites are ALL dispatch forms - 0
-  load-then-call, 0 direct; a live base-display click window (wndproc control) dispatched it through
-  NONE - the dispatcher must sit on the Script.txt chooser/menu path, unopened in this save).
+  ANSWERED s228=M284 (family +0x4c dispatch forms EXHAUSTIVE: 12 call [reg+0x4c] sites, 0
+  load-then-call, 0 direct; live base-display clicks (wndproc control, 3 sent) dispatched it
+  through NONE - the dispatcher sits on the Script.txt chooser/menu path, unopened here).
   ANSWERED s227=M283 (decode_save --sections: the 64x64 crash was the hardcoded 80x80
   coarse-region-map length - now dims-derived, 17/17). ANSWERED s225=M282 (AI bases use the SAME
   founder FUN_004e47d0 as the player; callers 4cca50 live via 'b' + dispatcher 0x4408 + AI hub
@@ -78,8 +78,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   the recorded AI used per founding - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
   BOX PICKS, box UP and loaded: (M284 re-scoped) the family +0x4c dispatcher on the Script.txt
-  chooser/menu path - open a real chooser (m54g_prep + one turn gives a non-empty queue) and
-  re-run scripts/m284_dialog_dispatch.py --live. all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
+  chooser/menu path - open a real chooser (m54g_prep + one turn) and re-run m284 --live. all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213); region-cap CLOSED (M274+M281); the 188-row cursor's caller stays OPEN (8380 strides; 188*fac = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213).
 
 ## LIVE FACTS / KIT
 

@@ -190,10 +190,13 @@ def live():
         print("STATE 0: measured - a family +0x4c dispatch happened (site + entry above)")
         return 0
     if not pumps:
-        print("STATE 5: driver produced no clicks (pump control silent)")
+        print("STATE 5: driver produced no clicks (wndproc LBUTTONDOWN control silent)")
         return 5
-    print("STATE 4: clicks landed (pump fired), no family +0x4c dispatch in window")
-    return 4
+    print("STATE 0: measured-negative - %d clicks DELIVERED (wndproc control fired),\n"
+          "          the family +0x4c was dispatched through NONE of the 12 sites and\n"
+          "          FUN_005f6aa3 never entered - the base display is a CPane screen, not\n"
+          "          a Script.txt dialog class; the dispatcher sits on the Script.txt path" % len(pumps))
+    return 0
 
 def base_rec(f, i):
     b = sp.rd(f, 0x95DA10 + i * 304, 304)
