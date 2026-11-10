@@ -1,6 +1,6 @@
 # NEXT_PROMPT.md - footing (s237: B13 12/12; M290 fit #242, M289 #241:
 # family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
-# +0x12c/+0x60) both avoid the slot; zero dispatch anywhere. B13 DONE (s237) 12/12: M290 dispatch now EXECUTABLE (sim/hubfound.py); Next: ANALYSE pod-walk)
+# +0x12c/+0x60) both avoid the slot; zero dispatch anywhere. Next: ANALYSE pod-walk)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
