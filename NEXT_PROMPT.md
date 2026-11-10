@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s240 close: M293 CORRECTION - msg-0x2408 attribution
+# NEXT_PROMPT.md - footing (s240 close: M293 9/9+12/12+7/7 #250 - msg-0x2408
 # RETRACTED (msg = own-tile + gate [ebp-0xa4], live 0x920434=0 -> inert solo;
 # distant leg = 0x563dfa walk/continue); M284-M287 live censuses INVALID; B2
 # fixed. Next: gate tables + name 0x920434. BUILD = B14.)
@@ -34,7 +34,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9,
 
 ## THE LEDGER
 
-Merged M54A-M293 + B0-B13 (through #248 + s240 PR); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M293 + B0-B13 (through #250); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 

@@ -1,4 +1,4 @@
-M293 (s240 CORRECTION): hub msg-0x2408 leg = OWN-TILE + gate [ebp-0xa4]
+M293 (s240 CORRECTION, MERGED #250): hub msg-0x2408 leg = OWN-TILE + gate [ebp-0xa4]
 (0x55f6d6: ds:0x920434!=0 AND owner==ds:0x91b5b4); RETRACTED "distant ->
 0x2408" (distant = 0x563dfa walk/continue). Live probe 0x920434=0 -> msg
 inert solo. M284-M287 live censuses INSTRUMENT-INVALID (guard ate image
