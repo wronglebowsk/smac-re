@@ -1351,3 +1351,13 @@ Acceptance: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`;
   (`evidence/m283_sections_64x64.txt`). B10's gate that encoded the OLD failure ("rc == rc;
   --sections fails on both") was updated to require rc 0 == rc 0 plus the grown image showing
   exactly one more 304-B record (67x52+19x304 vs 67x52+18x304); B8/B9/B10 regressions green.
+## M284
+M284 (s228, ANALYSE, MEASURED-NEGATIVE static 4/4): WHO dispatches the dialog family's +0x4c
+(FUN_005f6aa3, 5 vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8, 466 installs, 0 direct
+calls - M214).  The 12 image-wide `call [reg+0x4c]` sites are the EXHAUSTIVE dispatch-form set:
+whole-image load-then-call census = 0 pairs, direct = 0 (scripts/m284_dialog_dispatch.py
+--static, evidence/m284_dialog_dispatch.txt).  LIVE: 3 real clicks on the m54b_clean base
+display (wndproc 0x5d0c33 WM_LBUTTONDOWN control fired 3x) dispatched +0x4c of NONE of the 12
+sites, FUN_005f6aa3 never entered, modal pump 0x5f1394 never ran - the base display is a CPane
+screen, not a Script.txt dialog class; the family dispatcher must sit on the Script.txt
+chooser/menu path (untestable in this save: empty queue opens no chooser).
