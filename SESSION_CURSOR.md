@@ -1,4 +1,4 @@
-B13 (s237 BUILD, 12/12, PR pending): sim/hubfound.py makes M290's founder
+B13 (s237 BUILD, 12/12, MERGED #244): sim/hubfound.py makes M290's founder
 dispatch executable - own-tile-gated (distant target = msg 0x2408, never
 founds), founder args = pod-record fields, capacity-only guard; 7/7
 recorded tuples, strict ledger 18+7-2=23 peak 24 vs the m289 jsonl curve;

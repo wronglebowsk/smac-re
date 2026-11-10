@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s237: B13 12/12; M290 fit #242, M289 #241:
+# NEXT_PROMPT.md - footing (s237: B13 12/12 #244; M290 fit #242, M289 #241:
 # family +0x4c dispatch; CREATE-time (466 installs/72 owners, ctor clean) AND the Return-key path (key chain
 # +0x12c/+0x60) both avoid the slot; zero dispatch anywhere. Next: ANALYSE pod-walk)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
@@ -33,7 +33,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9, **B5 DONE (s207)** 9/9,
 
 ## THE LEDGER
 
-Merged M54A-M290 + B0-B13 (through #242); UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M290 + B0-B13 (through #244); UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
