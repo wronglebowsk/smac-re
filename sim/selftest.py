@@ -814,6 +814,50 @@ def run_b8(sav_path, map_path, turns, results):
 
 
 
+def run_b9(sav_path, trace_path, results):
+    """Rung B9: the R3 golden-trace pairing - press the B3 engine the recorded
+    trace's OWN turn count and pair every recorded snapshot (before(0)+40 after)
+    against the emitted sequence. No box, no /proc, no gdb."""
+    import os as _os
+    from . import parity as sop
+    if trace_path is None:
+        trace_path = sop.DEFAULT_TRACE
+    if not (_os.path.exists(sav_path) and _os.path.exists(trace_path)):
+        return fail("B9: missing input: %s / %s" % (sav_path, trace_path))
+    p1 = sop.pair(sav_path, trace_path)
+    _, _, _, blob2, _ = sop.pair(sav_path, trace_path)
+    sv, eng, report, blob, g = p1
+    # two independent parses -> identical blob (determinism inside the harness)
+    import hashlib
+    sha = hashlib.sha256(blob.encode()).hexdigest()
+    results.append(("trace-shape-40-turn-rows + pair-chain (before(0)==save start,"
+                    " before(t)==after(t-1) all 40)", g["trace-shape"] and g["pair-chain"]))
+    for k in ("snapshots-covered", "year-before", "rival-reversed",
+              "rival-year-edge", "frontier-declared"):
+        results.append((k, g[k]))
+    results.append(("two-runs-identical-sha256 %s" % sha[:16],
+                    sha == hashlib.sha256(blob2.encode()).hexdigest()
+                    and report["missing"] == []))
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    print("  info frontier n_bases model=%d recorded=%d->%d delta=%d (not modeled)"
+          % (report["frontier_n_bases"]["model_const"],
+             report["frontier_n_bases"]["recorded_first"],
+             report["frontier_n_bases"]["recorded_last"],
+             report["frontier_n_bases"]["delta"]))
+    if bad:
+        return fail("B9: %d/%d gates failed: %s"
+                    % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B9: %d/%d gates - %d-turn golden trace pairs %d/%d snapshots on %s, "
+          "final %s, both rivals miss, sha256 %s (no box time, no /proc, no gdb)"
+          % (len(results), len(results), report["turns"],
+             report["snapshots"] - len(report["missing"]), report["snapshots"],
+             _os.path.basename(sav_path), list(eng.state()), sha[:16]))
+    return 0
+
+
+
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
@@ -829,6 +873,8 @@ def main(argv=None):
                     help="rung B7: the move slice twice, compare dump sha256")
     ap.add_argument("--b8", nargs="+", metavar=("SAV", "MAP"),
                     help="rung B8: the save WRITE leg (identity, mutation, rivals)")
+    ap.add_argument("--b9", nargs="+", metavar=("SAV", "TRACE"),
+                    help="rung B9: the R3 golden-trace pairing (turn spine on the recorded trace)")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
@@ -839,6 +885,9 @@ def main(argv=None):
         return run_b7(args.b7[0], args.b7[1], args.turns, results)
     if args.b8:
         return run_b8(args.b8[0], args.b8[1], args.turns, results)
+    if args.b9:
+        tr = args.b9[1] if len(args.b9) > 1 else None
+        return run_b9(args.b9[0], tr, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

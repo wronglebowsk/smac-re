@@ -1,0 +1,9 @@
+  ok   trace-shape-40-turn-rows + pair-chain (before(0)==save start, before(t)==after(t-1) all 40)
+  ok   snapshots-covered
+  ok   year-before
+  ok   rival-reversed
+  ok   rival-year-edge
+  ok   frontier-declared
+  ok   two-runs-identical-sha256 5af9cb48f597a0b7
+  info frontier n_bases model=18 recorded=18->26 delta=8 (not modeled)
+PASS B9: 7/7 gates - 40-turn golden trace pairs 41/41 snapshots on m54b_clean.SAV, final [3, 0, 2190], both rivals miss, sha256 5af9cb48f597a0b7 (no box time, no /proc, no gdb)

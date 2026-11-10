@@ -109,7 +109,28 @@ lands in exactly that record's two x-bytes; (4) the RIVALS FAIL THE SAME FIT - a
 (5) two runs -> identical sha256, and `python3 -m sim.savewriter --sav <sav> --out <f>` exits 0.
 No box time, no /proc, no gdb.
 
+**B9 - the golden-trace pairing (R3's first executable piece).** `sim/parity.py`:
+load a .SAV, press the B3 engine the recorded trace's OWN turn count, and require every
+recorded per-turn snapshot to appear in the engine's emitted state sequence IN ORDER
+(the m30 law: recorded rows may not be skipped, model rows may be extra). Golden trace:
+evidence/trace_m54b40b_20261024_212833.jsonl - the ORIGINAL terran.exe's own 40-turn
+run on programs/saves/m54b_clean.SAV (per-turn state_before/state_after snapshots of
+year / cur_player / turn_flags / n_bases; the sibling m54b40 wedged at 30 rows, m54b40b
+carries NO wedge field). The pair chain: before(0) == the save's (year, own, 0) and
+before(t) == after(t-1) for every t; year_before == save year + turn on every row.
+`python3 -m sim.selftest --b9 programs/saves/m54b_clean.SAV evidence/trace_m54b40b_20261024_212833.jsonl`
+must print PASS B9 with: the 40 turn rows consecutive in order; the before/after chain
+holds; all 41 recorded snapshots (before(0) + 40 after) found in the emission, 0
+missing; year_before == 2150+turn on all 40; the RIVALS FAIL THE SAME FIT (a
+reversed-order walk and a year_after=0 edge each miss the (2190,7,2) year-fire witness
+- the same snapshot pins both the walk direction and the year edge); the n_bases
+frontier is MEASURED and DECLARED (model constant = the save's count, recorded grows to
+26: the sim has no AI base-founder - that delta is the finding, not a gate input); two
+runs -> identical sha256; `python3 -m sim.parity --sav <sav> --trace <tr> --out <f>`
+exits 0 and writes the report. No box time, no /proc, no gdb.
+
 ## Grading rules for a build fire
+
 
 1. **Runnable or it did not happen.** The acceptance is the command's output, not a description of the code.
 2. **Parity beats prose.** Every rung compares against a recorded trace or a decoder's own numbers. Do not
