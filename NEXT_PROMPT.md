@@ -62,16 +62,15 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   FUN_005f3f5b is NOT open - see M220.
 
 - Pick from (ANALYSE fires; the next BUILD fire writes rung **B12** into `BUILD_SPINE.md` FIRST, then builds it):
-  ANSWERED s227-M288 + s234-B12 (B11, M283-M288, B12; M288 closed +0x4c).  BUILD s234=B12
-  (13/13: the queue law, `NAMED.md` §B11). NEW (M282 frontier): WHICH
-  founder vector the recorded AI used - 0x4408 vs 5f650 vs the 5a0aa0 chain (live question).
+  ANSWERED s227-M288 + s234-B12 (B11, M283-M288, B12; M288 closed +0x4c) + s235-M289 (LIVE 7/7: hub FUN_0055f650->4cca50->4e47d0; v4408 + 5a0aa0 chain complete 0; count 18->23 exact).  BUILD s234=B12
+  (13/13: the queue law, `NAMED.md` §B11). NEW (s235 frontier): fit the AI hub's FOUNDING DECISION to trace_m289_20261110_071759.jsonl (7 real fac/x/y) vs B10's assumed rule - static+model, no box.
   STATIC PICKS (no box time): (c) ANSWERED s224=M281 (no region id >=128: generator bands cap at 0x7f; 338 = the coarse-map CELL count; region table 3584 B @0x1c = 128 slots; M251 stands).
   BOX PICKS, box UP: M287 (last live pick) ELIMINATED the menu pane (bar is CHROME,
   GAME-row popup vptr 0x0067919c NOT FAMILY live, 0/12 x2).  M288 (s233, no box): +0x4c CLOSED - FUN_005f6aa3 has 0 direct callers (its 5 refs =
   the family vtables' +0x4c entries), CREATE-time (466 installs/72 owners, install ∩ site =
   ∅; ctor FUN_00405ef0 + callees clean) and the Return-key path (0x100->+0x12c->0x60,
   0x102, 0x104, pump 0x5f1394) contain NO +0x4c CALL dispatch; row cb INLINE in the pump.
-  +0x4c not on ANY click/key/create path. M282 G5 (founder vector, live box) open. 188-row
+  +0x4c not on ANY click/key/create path. M282 G5 CLOSED (s235 live: hub). 188-row
   cursor's caller OPEN; NEVER bp mid-instruction (s213 crash).
 
 ## LIVE FACTS / KIT

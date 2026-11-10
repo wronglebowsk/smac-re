@@ -154,7 +154,9 @@ PICKUNIT picker via map click; calibrate clicks via the HUD tile-info panel OCR,
   DELETE 556-636, CANCEL 659-705 at y 336-352 (labels drawn inside the bars, fill RGB 103,91,181 —
   pixel (160,343) is the instant chooser-open test; 2x OCR cannot read the labels). **M53g corrected
   the handler**: the bar switch is `FUN_00496950` = **vtable+0xa8** of the chooser class (live vptr
-  0x672298), jump table 0x496a9a indexes `param+2`; cases 0=HELP(gate)→1, 2=(gate)→7, 5=INSERT(gate)→5,
+  0x672298; M285: +0x4c of 0x672298 is the return-0 stub 0x404ed0, so the production chooser is NOT
+  a family dialog and its clicks CANNOT dispatch the family +0x4c 0x5f6aa3 by construction),
+  jump table 0x496a9a indexes `param+2`; cases 0=HELP(gate)→1, 2=(gate)→7, 5=INSERT(gate)→5,
   **7→7 UNGATED**, −1=OK→0, −2=CANCEL→0+guard−1; gate = `cmp [this+0xa774],-1; je 0x496a91`, and
   **0x496a91 is the shared epilogue return — mode-storing paths reach it too (BAR_IGNORED there is NOT
   a refusal)**; **one handler run per click** (press; release dispatches nothing). `[sub+0xa774]`
@@ -419,3 +421,21 @@ Corollary: the relaunch is NOT ~35 s on a cold box. Measured s174: `m54a_load.py
 9 minutes after a day idle (wine prefix + CD path), so run it as a tracked background job and poll
 `pgrep -x terran.exe` rather than holding a 500 s foreground call — a SIGTERM at the tool timeout kills
 the driver but leaves the game half-loaded, which is exactly how you lose ptrace access.
+- **Restore yama to the PRE-TOGGLE value, never hardcode 1 (s235).** On THIS box the n100 session
+  tools (`smac_state.py`, `accept_ready.py`, any census pre-read) open `/proc/<pid>/mem` WITHOUT sudo,
+  and those reads only work at `ptrace_scope=0` (at 1 they EACCES even for a fresh, same-uid, dumped
+  process). The recovery was `sudo -n sh -c 'echo 0 > ...'`, after which every tool came back. A census
+  that restores to 1 leaves the NEXT session BLOCKED until someone toggles it again — capture the value
+  before the toggle and restore that (`scripts/m289_founder_vector.py` does).
+- **Root-owned stale `/tmp/acceptready*` frames make the readiness oracle read GHOSTS (s235).** A
+  preflight/earlier run leaves `/tmp/acceptready.png/.xwd/_3x.png` owned by root; n100's `freeze()`
+  then fails to overwrite them, `sh()` swallows the error, and `accept_ready.py` keeps OCR-ing the
+  OLD frame — a byte-identical quit-prompt/dialog text across MANY runs that survives every dismissal
+  (the ghost "swallows" the keys that actually worked). Tell: the OCR text NEVER changes between runs.
+  Fix: `sudo -n chown n100:n100 /tmp/acceptready.png /tmp/acceptready.xwd /tmp/acceptready_3x.png`
+  (a rm there trips the delete guard; chown does not).
+- **Quit-prompt dismissal that always lands (s235): click the "Oops, no, wait!" row then the OK bar**
+  (~(400,268) then ~(400,319) measured on the 800x600 frame; row bars found by scanning y 140-520 for
+  >120-px bright/blue runs — bands 268/290/319 = Oops/Yes/OK). Escape does close it, but a SECOND
+  Escape on the now-clean HUD re-raises it, and Return cycles the rows (one extra Return can land on
+  "Yes"). Click Oops + OK is the deterministic sequence; never click OK with Yes selected.

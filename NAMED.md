@@ -1465,3 +1465,25 @@ at r0 only, record at idx n_units-1, storage 8+1-9=0 + queue [2,2,2,2,0] pend 0
 savewriter.append_units= grows the array: only prefix byte [68] + the record
 change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
 `python3 -m sim.selftest --b12 <sav> <trace>`.
+
+## M289 (s235, LIVE 7/7, PASS 6/6, MERGED #241) - the recorded AI founds through the AI HUB: FUN_0055f650 -> FUN_004cca50 -> founder FUN_004e47d0; the 0x4408 action-dispatch leg and the 5a0aa0 faction-create chain complete ZERO foundings in the same window
+- One silent bp per vector at the call site UNIQUE to it: hotkey 0x4d1d9c
+  (FUN_004d1280), v4408 0x52e0cc (FUN_0052bce0 case 0x4408), hub 0x563d86
+  (FUN_0055f650), chain 0x5a0b39 (FUN_005a0aa0 -> FUN_0059ec90), place
+  0x5a123e/0x5a1277 (FUN_005a0fa0); founder entry 0x4e47d0 (ret addr on stack
+  = 0x4ccbe2 via CC50 / 0x5a01fd via EC90 / 0x59d899 via 59ce10).
+- RESULT (30-turn m54b_clean window, --no-orders, year 2150->2180): 7 founder
+  hits, EVERY one vec=hub; fac 6x4/5/7/1 at (20,48)(63,51)(12,48)(27,19)(23,33)
+  (27,29)(1,43); count 18->23 with 2 destroys, every FOUND/DESTROY printed
+  count == the expected walk (late=0); 1627 control sweep rows.
+- The chain (5a0aa0) was ENTERED 3x but its EC90 path completed no founding
+  (bailed inside) - reachable-but-inert in this window; v4408 and the player
+  hotkey: 0 entries.  M282's G5 static thesis (AI rides the 0x4408 dispatch
+  leg) is REFUTED live; the founder's live caller is the hub's DIRECT call.
+- SIM IMPACT: basefound.py (B10) assumed faction/coords; the m289 trace
+  (evidence/trace_m289_20261110_071759.jsonl) now gives 7 REAL (fac,x,y)
+  foundings to fit a hub-decision rule against.
+- ACCEPTANCE: python3 scripts/m289_founder_vector.py 30 (rc 0, MEASURED) and
+  the independent re-walk python3 scripts/m289_accept.py -> PASS M289: 6/6.
+- BOX: m289_founder_vector.py restores yama to the PRE-toggle value (the box's
+  working default is ptrace_scope=0; 1 blocks n100's own /proc/pid/mem reads).
