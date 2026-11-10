@@ -664,3 +664,40 @@ FUN_00597ce0 at 0x59bf46 and destructs it in the same frame.
   click path.  Remaining: the MENU PANES (TOPMENU/MAPMENU) - if those are
   family and their clicks dispatch +0x4c, the dispatcher is named.  Next
   fire: ANALYSE.
+
+## Session 232 (2026-11-10, ANALYSE, M287 MEASURED-NEGATIVE w/ falsifier, static 5/5) - the in-game game MENU pane is NOT family (live vptr 0x67919c at the click); FOUR click paths now measured, zero +0x4c dispatch anywhere
+- track_mode ANALYSE -> the M286 frontier pick: the last click-path candidate,
+  the MENU PANE.  Static: the console bar (MENU button (61,369) -> GAME/HQ/
+  NETWORK/MAP/ACTION/TERRAFORM/SCENARIO/EDIT MAP/HELP) is CHROME - its
+  vocabulary appears in NO Script.txt pane (g4); the real menu is the popup
+  the GAME row raises (12 rows, vision-verified on the live frame).  Drive
+  (scripts/m287_menu_dispatch.py, arm = m286's 12 sites + FAM_SLOT 0x5f6aa3
+  entry + pump + wndproc LBUTTONDOWN): normalize to HUD -> click MENU ->
+  click GAME at (26,190) (GAME row does not OCR; NETWORK anchors y226, 18-px
+  stride - geometry from TWO independent frames) -> FALSIFIER READ -> click
+  ONE safe row (Preferences... at (172,350), vision coords; NEVER the y>=548
+  Resign/Start/Quit rows) -> falsifier read 2 -> Escape-loop recovery
+  (quit-prompt-safe: Escape on the bare HUD raised REALLYQUIT and the OLD
+  normalize mistook the HUD status bar through it for clean - fixed).
+- LIVE: bar raised (8 rows after MENU click), GAME clicked, popup OPEN
+  (vision-verified).  FALSIFIER: LIVE menu obj=0x03cbc0c8 vptr=0x0067919c
+  NOT FAMILY at the click (run 2 read DIALOG_CUR=0 - the pane is not even a
+  DIALOG_CUR-tracked dialog that run, consistent with chrome/drawn).  Row
+  click at Preferences -> same pane (no new dialog), vptr scan delta 0.
+  RESULTS: site bps 0/12 (both runs), family-slot hits NONE, entry 0.
+  STATE 4 measured-negative w/ falsifier.
+- SETTLE: the in-game game menu pane is ALSO not one of the 5 family classes
+  (the M285 chooser reading).  FOUR click paths now measured live with zero
+  +0x4c dispatch: M284 base display, M285 chooser, M286 REALLYQUIT (family,
+  inline row cb in pump), M287 menu pane.  The family +0x4c slot target
+  FUN_005f6aa3 has STILL never been observed entered from ANY live click.
+  +0x4c is NOT dispatched on any click path - next shape: Return-key path or
+  dialog CREATE-time (FUN_00405ef0).
+- ACCEPTANCE: python3 scripts/m287_menu_dispatch.py --static -> 5/5 PASS;
+  --live -> STATE 4 measured-negative w/ live-vptr falsifier, twice
+  (evidence/m287_menu_dispatch.txt).
+- OPEN: M282 G5 (founder vector); 64x64 odd-Rw stride quirk (M247);
+  negative-id table stride (M70); save-side cursor-vs-pending order (M70);
+  B12 rung for the next BUILD fire.  Next fire: ANALYSE (frontier: the
+  +0x4c dispatch question narrows to CREATE-time FUN_00405ef0 or the
+  Return-key path; M282 G5 box question also open).
