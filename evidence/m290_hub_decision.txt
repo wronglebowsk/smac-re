@@ -1,0 +1,53 @@
+M290 fit: hub founder decision vs the m289 record
+PASS G1 hub dispatch window (0x563d3c-0x563d8b): target-gate, remote-build branch, founder call - bytes+mnemonics
+  00563d3c: 837dbc08	cmp    DWORD PTR [ebp-0x44],0x8        OK
+  00563d40: 0f8502010000	jne    0x563e48                        OK
+  00563d46: 85f6	test   esi,esi                         OK
+  00563d48: 0f85ac000000	jne    0x563dfa                        OK
+  00563d5e: 6868136900	push   0x691368                        OK
+  00563d75: e826020200	call   0x583fa0                        OK
+  00563d82: 8b4508	mov    eax,DWORD PTR [ebp+0x8]         OK
+  00563d85: 50	push   eax                             OK
+  00563d86: e8c58cf6ff	call   0x4cca50                        OK
+  00563d8b: 8b4db8	mov    ecx,DWORD PTR [ebp-0x48]        OK
+PASS G2 vector window: prologue fold 52*u + record loads (+14 owner, +10 y, +8 x) + push y/x/owner + call 0x4e47d0; ret 0x4ccbe2 = census FOUND ret
+  004cca57: 8b5d08	mov    ebx,DWORD PTR [ebp+0x8]         OK
+  004cca5d: 8d045b	lea    eax,[ebx+ebx*2]                 OK
+  004cca61: 8d1c83	lea    ebx,[ebx+eax*4]                 OK
+  004cca64: c1e302	shl    ebx,0x2                         OK
+  004cca67: 8a8b86329300	mov    cl,BYTE PTR [ebx+0x933286]      OK
+  004cca6d: 0fbf837a329300	movsx  eax,WORD PTR [ebx+0x93327a]     OK
+  004cca74: 0fbfbb78329300	movsx  edi,WORD PTR [ebx+0x933278]     OK
+  004ccbda: 52	push   edx                             OK
+  004ccbdb: 57	push   edi                             OK
+  004ccbdc: 56	push   esi                             OK
+  004ccbdd: e8ee7b0100	call   0x4e47d0                        OK
+  004ccbe2: 8bf8	mov    edi,eax                         OK
+PASS G3 founder guard is CAPACITY ONLY (DAT_00985af4 < 0x200); no tile-legality early bail in the body
+  guard at found; pre-guard returns: none
+PASS G4 remote-build leg (0x563d4e-0x563d7d) carries msg 0x2408 and NO founder call - a distant target can NEVER found
+  0x2408 push in leg: True; founder call sites in leg: none
+PASS G5 record: 7 foundings all via ret=0x4ccbe2 (the G2 leg) + 2 destroys
+  fac=6 (20,48) cnt=18
+  fac=6 (63,51) cnt=19
+  fac=6 (12,48) cnt=20
+  fac=5 (27,19) cnt=20
+  fac=7 (23,33) cnt=21
+  fac=1 (27,29) cnt=22
+  fac=6 (1,43) cnt=23
+PASS G6 all 7 recorded sites are LAND tiles (cat 3-6, MAP_FORMAT rule)
+  (20,48) fac=6 cat=3 OK
+  (63,51) fac=6 cat=3 OK
+  (12,48) fac=6 cat=3 OK
+  (27,19) fac=5 cat=3 OK
+  (23,33) fac=7 cat=3 OK
+  (27,29) fac=1 cat=3 OK
+  (1,43) fac=6 cat=3 OK
+PASS G7 no recorded site is already a base tile in m54b_clean (founds are NEW tiles)
+  collisions: none
+PASS G8 curve/ledger consistency: peak 24 (before the late destroy), endpoint replay 18+7-2=23=23, envelope 16..25 holds, destroy rows interleave founds as s235 logged (18,19,20 D 20,21,22,23,23,23,24 D 23)
+  curve first/last 18/23 max=24 rows_found=[326, 470, 567, 928, 1000, 1193, 1250] rows_destroy=[589, 1650] bad=none
+PASS G9 B10 rival REFUTED: first-unoccupied row-major would settle the first 40 scan tiles; recorded mean rank 1202 of 2146, min 542
+  ranks: [1518, 1691, 1516, 542, 998, 866, 1281]
+9/9 gates
+PASS M290: 9/9

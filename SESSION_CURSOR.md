@@ -1,9 +1,8 @@
-M289 (s235 ANALYSE 6/6, MERGED #241): LIVE founder-vector census -
-the AI founds via the HUB (FUN_0055f650->FUN_004cca50->FUN_004e47d0):
-7/7 foundings on a 30-turn m54b_clean window, v4408=0, 5a0aa0 chain
-entered 3x/0 completed; count 18->23 (-2 destroys) accounting exact;
-M282's 0x4408 thesis REFUTED live.  New golden trace
-evidence/trace_m289_20261110_071759.jsonl (faction/x/y per founding).
-Box: clean hud r0, TracerPid 0; yama ptrace_scope=0 is the box default
-(n100 /proc readers need it).  Next: ANALYSE - fit the hub founder
-decision to the m289 trace vs B10's assumed rule.
+M290 (s236 ANALYSE 9/9, UNMERGED->PR): hub founder-decision FITTED -
+dispatch is own-tile-gated (test esi,esi 0x563d46; distant target -> msg
+0x2408 auto-build, NEVER founds); founder args = unit-record owner@+14/
+y@+10/x@+8 (52u fold prologue 0x4cca57); capacity-only guard; 7/7 sites
+land(cat3-6,44-B rec view)+unoccupied; ledger 18+7-2=23 peak24; B10
+first-unoccupied rule REFUTED (ranks 542-1691 of 2146). Box: clean,
+pid 4087359 hud r0, TracerPid 0, untouched this session.
+Next: ANALYSE - pod-walk target choice vs the recorded founding times.

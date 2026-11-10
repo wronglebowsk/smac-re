@@ -1466,6 +1466,25 @@ savewriter.append_units= grows the array: only prefix byte [68] + the record
 change; grown image re-parses n_units 68, written_sha256 259bd5ab.  Command:
 `python3 -m sim.selftest --b12 <sav> <trace>`.
 
+## M290 (s236, ANALYSE 9/9, MERGED pending) - the hub's founding DECISION: own-tile-gated dispatch, founder args = pod record coords
+
+- Dispatch (bytes): hub 0x563d3c cmp [ebp-0x44],8 (settle case); 0x563d46
+  test esi,esi - esi = scan's chosen target offset; ZERO (own tile) ->
+  0x563d86 call FUN_004cca50 (ret 0x4ccbe2 = the census FOUND ret);
+  NONZERO -> 0x563d4e-0x563d7d push 0x2408 + call FUN_00583fa0
+  ("Auto-sending BUILD BASE message", s 0x691368), NO founder call.
+  There is NO channel from a scanned candidate tile to the founder.
+- Vector (bytes): FUN_004cca50 prologue 0x4cca57-0x4cca74 folds 52*u;
+  loads cl=[+14] owner, eax=s16[+10] y, edi=s16[+8] x; 0x4ccbda-dc push
+  y/x/owner -> 0x4ccbdd call FUN_004e47d0.  FOUNDER GUARD = capacity only
+  (DAT_00985af4 < 0x200).  => founding tile = pod tile; legality is the
+  hub's scan alone.
+- Fit (scripts/m290_hub_decision.py, evidence/m290_hub_decision.txt):
+  PASS M290: 9/9 - 7/7 sites land (cat 3-6, 44-B record view) + new;
+  ledger 18+7-2=23 peak 24 = jsonl curve; B10 first-unoccupied REFUTED
+  (ranks 542-1691/2146).  Trap: save 22-B column byte 0 is NOT the live
+  category; use record view rec=(W/2)*y+(x>>1)*44 at grid_off.
+
 ## M289 (s235, LIVE 7/7, PASS 6/6, MERGED #241) - the recorded AI founds through the AI HUB: FUN_0055f650 -> FUN_004cca50 -> founder FUN_004e47d0; the 0x4408 action-dispatch leg and the 5a0aa0 faction-create chain complete ZERO foundings in the same window
 - One silent bp per vector at the call site UNIQUE to it: hotkey 0x4d1d9c
   (FUN_004d1280), v4408 0x52e0cc (FUN_0052bce0 case 0x4408), hub 0x563d86
