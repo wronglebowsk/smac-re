@@ -263,7 +263,10 @@ that CONSUMES a flag), `m130_m132_chooser.py` (a switch read straight out of the
 (ten globals in one pass: refs, writes, stored values, containment), `m163_m165_structs.py` (an init-time value, plus
 struct-vs-neighbours proved by base-register reuse), `m166_m168_roles.py` (what a rank is compared against, a candidate
 struct's writer SETS, a derived cache), `m169_m171_aggregate.py` (a table that is TOTALLED rather than flagged, the
-aggregator around it, and a struct written from ONE byte). Ten census questions through one script is a
+aggregator around it, and a struct written from ONE byte), `m282_base_founder.py` (a CREATOR census:
+who writes a record array/count - classify every writer site of the count global by its owning body's
+shard text, verify bare stores the decompiler text drops via exe bytes, and census the founder's callers
+while SKIPPING the definition-signature line or it self-reports as a caller). Ten census questions through one script is a
 legit batch; ten that each need their own harness is ten batches. The per-faction FIELD ATLAS is generated, never
 hand-written: `scripts/m143_m162_atlas.py` -> `docs/field-atlas-faction.md` (top-20 `+0x94dXXX` displacements by
 reference count, with refs/writes/consts/tests/functions) — regenerate it instead of re-censusing a field, and read its
