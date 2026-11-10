@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing for the next session (session 218, 2026-11-10, **M277 DONE (static, zero box time): `scripts/m277_scaled_row_ownership.py` 6/6 gates PASS (`evidence/m277_scaled_row.txt`) - the two 0x94eaa8 read sites own DIFFERENT rows (unscaled = fold slot [ebp-0x18] = block arg's row; scaled 0x5584aa = [ebp-0x10]*2 = the image's ONLY block-free referrer = permanent faction-0/block-0 view; live 7/7: 2*edi stays in block 0 while s18 walks blocks 1..7), AND M274 G2's spill landing RETRACTED (loop domain 1..127 -> max byte +255, sibling starts +256: regions 94..127 read 68 B of rows 94..127 inside the row's OWN cell; the 0x80-bound and 0x94eda8 store censes STAND; both row WRITERS 0x51df61/0x564ab1 fold to 8380*block+2*slot = per-faction live data)**)
+# NEXT_PROMPT.md - footing for the next session (session 219, 2026-11-10, **M278 DONE (static): `scripts/m278_block0_semantics.py` 7/7 gates PASS (`evidence/m278_block0.txt`) - both 0x94eaa8 WRITERS' block atoms are OWNER-PLAYER bytes (base+4 0x95da14 via FUN_004e37f0's base-table walk, -1->0 CLAMP 0x51df1d-24: block 0 = player-index-0 REAL row + the unowned fallback - not neutral, not the player slot; AI hub esi = unit+14 owner of the acting unit; 8 blocks by arithmetic; G6: guard-attributed branch census, no ebx-guarded skip)***)
 Structure: RULES + live footing. Overflow on disk: `docs/pick-archive.md` (narrative + blocks moved
 VERBATIM — read only the section picked), `NAMED.md` (semantics), skill `references/instrument-laws.md`
 (laws).
@@ -32,7 +32,7 @@ ANALYSE ⇒ pick from this file. **B4 DONE (s203)** 9/9 on `evidence/m44d_idle.j
 
 ## THE LEDGER
 
-Merged M54A-M271 + B0-B5 (through #199); M276 merged #214, M277 #<n>. UNMERGED M83/M84, M86, M101, M103, M109
+Merged M54A-M271 + B0-B5 (through #199); M276 #214, M277 #217, M278 #<n>. UNMERGED M83/M84, M86, M101, M103, M109
 and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATIM:
 `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
@@ -57,7 +57,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 
 - **Where things live:** map/terrain footing is `MAP_FORMAT.md` (44-B record table + the loader/allocator
   family) + FOOTING.md's terrain line; faction fields are `docs/field-atlas-faction.md` (M143-M162).
-- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open), s217-218: M276-M277.
+- ANSWERED (do not re-pick): s187-s215 - M227-M237, **B1-B6**, M240-M275 (M241 FAIL 2/5, #180 open), s217-219: M276-M278.
   Full topic enumeration VERBATIM: `docs/pick-archive.md` §trim-s209; numbers VERBATIM: `NAMED.md`
   per-id §s196-§s215 (+ archive §s206, §trim-s205, §trim-s210). FUN_005f3f5b is NOT open - see M220.
 - RESULT (s208/s210), (s211, M272), (s211/s213) and (s213/s215) blocks moved VERBATIM to
@@ -65,7 +65,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
   in `NAMED.md` (M267-M273). Nothing here summarises them - open the archive section you need.
 
 - Pick from (ANALYSE fires; the next BUILD fire takes **B8** - write the rung into `BUILD_SPINE.md` FIRST (R2's save-WRITE leg or the new-game leg), then build it):
-  STATIC PICKS (no box time): (a) is block 0 the neutral/player slot or faction 0's REAL row - read the writers' block-index source (FUN_0051dcb0 @0x51dcb0 region / FUN_0055f650 @0x55f650); (b) the row FAMILY: 0x94e8a8 (written 0x51df3d by the same fold) + the 0x94e5a8/0x94e7a8 byte arrays - map the whole per-block layout (census the fold-shaped chains image-wide); (c) 128x128 maps: the loop bound 0x80 never reaches regions >=128 while counts go to 338 - what reads region 128+ (another loop? another function?).
+  STATIC PICKS (no box time): (b) the row FAMILY: 0x94e8a8 (written 0x51df3d by the same fold) + the 0x94e5a8/0x94e7a8 byte arrays - map the whole per-block layout (census the fold-shaped chains image-wide); (c) 128x128 maps: the loop bound 0x80 never reaches regions >=128 while counts go to 338 - what reads region 128+ (another loop? another function?). (a) ANSWERED s219=M278.
   BOX PICKS, box UP and loaded: WHO dispatches the dialog s +0x4c (466 installs, 0 direct calls, all 12 image-wide `call [reg+0x4c]` sites belong to other hierarchies - falsifier = a live vtable read at a click). The row-stride-188 pick is DONE (s213) - see RESULT (s213); its follow-ups (static, no box): the 80x80/128x128 region counts 128/338 EXCEED the 94-slot row - who clamps the loop, and the 188-row cursor's caller (advances by whole 8380 strides; the fold's 188*fac term = 44.5 block strides). NEVER bp mid-instruction: a bp at store+1 of an 8-B load crash-boxed the game (s213) - break at the disassembled next insn.
 
 ## LIVE FACTS / KIT
@@ -130,6 +130,11 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
     8380) and manufactured a static-vs-live contradiction that queued a box pick. Symbolic
     linear-form evaluation over the window, then fit it to the RECORDED live log AND show the rival
     coefficients FAIL the same fit (M276 G3/G6/G7).
+
+25. SCRIPT REUSE + REGISTRY (s219): slice a sibling's defs with `"\ndef main("` - m277's own exec
+line carries the token inside a STRING, so a bare slice cuts mid-string (SyntaxError cites the OTHER file's lines); exec'd names sit NESTED at `_ns["_ns"]["dst_regs"]`. `## M277` occurs
+TWICE in NAMED.md (a cross-ref) - registry gates anchor the FULL header. `x and re.search(...)`
+puts a Match in res; sum() dies - `bool()` regex clauses.
 
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 

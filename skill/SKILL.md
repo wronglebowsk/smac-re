@@ -265,6 +265,7 @@ legit batch; ten that each need their own harness is ten batches. The per-factio
 hand-written: `scripts/m143_m162_atlas.py` -> `docs/field-atlas-faction.md` (top-20 `+0x94dXXX` displacements by
 reference count, with refs/writes/consts/tests/functions) — regenerate it instead of re-censusing a field, and read its
 `in NAMED?` dash as "genuinely unnamed", not as a gap to be filled by a guess.
+**Script-reuse + registry-gate traps (s219, cost 4 fix-cycles)**: to exec a sibling script's defs, slice on `"\ndef main("`, never `"def main("` — a script that reuses another by exec CARRIES the token inside a string literal, so the bare slice cuts mid-string and the SyntaxError cites line numbers in the OTHER file; exec'd names sit NESTED (`_ns["_ns"]["dst_regs"]`) because the exec line rebinds `_ns`. In `NAMED.md` a bare `## Mxxx` header token occurs as a cross-reference too — registry gates must anchor the FULL header line. And `gate(n, a and re.search(...))` appends a Match to `res` and `sum(res)` crashes — `bool()` every regex clause.
 **Three structural laws this family settled** (depth: `references/instrument-laws.md`): (1) a decompiler's `arr[i*N]`
 is an ELEMENT index — multiply by the element width before calling it a stride, because `param_1*0x167` was 359
 dwords = 1436 BYTES, the stride the record block already had; (2) a `switch` is found by its TABLE, not by the
