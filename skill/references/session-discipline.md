@@ -219,3 +219,5 @@ append in its own call, then read back the tail of BOTH files. An
 <pid>` for the orphan and kill that exact pid — this checkout's `smac_play.py` has **no `--mode stop`**
 flag (an earlier note here claimed otherwise), and never `pkill -f`/`pgrep|kill` by name: your own argv
 matches.
+
+**A BUILD fire may have to AUTHOR its rung.** `track_mode.py` counts `B<n>` prefixes in merged history, so it can print `next_rung=B<n>` when BUILD_SPINE.md's ladder stops short (B14, s241): the spine records a rung only when a fire ships it. Then the build fire writes the rung text FIRST (from the last build's DECLARED frontier + the laws the intervening ANALYSE fires settled - the ladder is authored from settled census law, never from new decompile claims), appends it to BUILD_SPINE.md, and only then implements it; state the authoring in SESSION_NOTES so the numbering convention stays auditable.

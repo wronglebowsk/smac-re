@@ -719,3 +719,36 @@ Older sessions: `docs/sessions/sessions-218-218.md` (1 sessions). Read it only w
 - Docs: NAMED M290/B13/M292 fixed in place + INVALID banners M284-M288 +
   ## M293; path:line cites per AGENTS.md:50. Next: gate tables
   0x94e5a8/0x94eca8 + name ds:0x920434. BUILD = B14.
+
+## Session 241 (2026-11-10, BUILD, B14 10/10, no box) - the M291 hub SCAN + M292 esi-dispatch/WALK are ONE executable leg (sim/podscan.py); the rung was missing from the spine, so this build fire authored B14 first
+- track_mode printed BUILD/next_rung=B14 but the BUILD_SPINE.md ladder ended at
+  B13: the fire AUTHORED the B14 rung (from B13's DECLARED walk frontier +
+  M291/M292's settled laws), appended it to the spine, then executed it.
+- sim/podscan.py: RING_DX/DY 25-entry literals vs the recorded file-image dump
+  evidence/b14_ring_table.txt (scripts/b14_ring_dump.py reads .rdata
+  0x67850c dx / 0x678990 dy from the PE; the sim never loads the binary);
+  scan_esi = M291 strict site-value argmax (score rec byte2 high nibble;
+  eligibility cat-flag equality + byte3 owner-equality + rec+9 bit 0x20 clear
+  + unoccupied; ties keep the closer entry; self-argmax iff esi==0);
+  dispatch_leg: esi 0 -> found, or msg 0x2408 under msg_gate(global!=0 AND
+  owner==human) (s240); 1..8 continue; 9..24 walk (order 0x62 at the WRAPPED
+  ring tile). New recorded fact: table order, esi 21=(+4,0) 22=(-4,0)
+  23=(0,+4) 24=(0,-4); the ISS log tile= field is the target X ONLY (the bp
+  at 0x563e3b printfs eax) - target-Y is static-gated law, DECLARED.
+- ACCEPTANCE: python3 -m sim.selftest --b14 programs/saves/m54b_clean.SAV ->
+  PASS B14: 10/10 (evidence/b14_podscan.txt:21). Invocation 3 - runs 1-2 died
+  on MY instrument (a stray code block; KeyError u on FOUND/DESTROY rows),
+  floors never touched.
+- Parity numbers: m289 golden 7/7 self-argmax via the sim scan; rivals fail
+  the SAME fit (no-owner-gate 6/7 loses exactly fac1(27,29); B10 row-major
+  placeholder 0/7); m292 29 DISP rows partition 9 found / 9 continue / 11
+  walk / 0 msg with ISS/HUBFOUND/FOUND adjacency all paired; walk target-X
+  11/11 (table-swap rival 0/11); census ledger count-strict 19->27 (POST 27
+  per evidence/m292_pod_movement.txt:2); msg law case table + solo inertness
+  (ds:0x920434=0 AND every row own=0 -> structural).
+- Box: ZERO contact (build fire). Evidence +~11 KB (ring dump 700 B,
+  acceptance 2.4 KB); budget re-measured at close.
+- OPEN (unchanged): UNMODELED 0x94e5a8/0x94eca8 per-site gate tables +
+  FUN_004e3c00 no-go (now named in the rung text as DECLARED); name
+  ds:0x920434; re-arm the M284-M287 live census (guards fixed); 188-row
+  cursor caller. Next: ANALYSE (gate tables / 0x920434); next BUILD = B15.
