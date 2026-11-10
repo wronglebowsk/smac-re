@@ -129,6 +129,9 @@ def live():
         print("STATE 8: box dirty (TracerPid=%d)" % tp); return 8
     b0 = base_rec(f, 0)
     print("pre base0: x=%d y=%d name=%s" % (b0["x"], b0["y"], b0["name"]), flush=True)
+    if not (1 < b0["x"] < 200 and 1 < b0["y"] < 200):
+        print("STATE 4: base tile out of range, cannot open its display; x=%d y=%d" % (b0["x"], b0["y"]))
+        return 4
     # the three enabling pokes (m57 recipe) on OUR base 0
     w = u32(f, 0x7CDECC)
     sp.wr(f, w + 0x1DD9C, struct.pack("<i", b0["x"])); sp.wr(f, w + 0x1DDA0, struct.pack("<i", b0["y"]))
@@ -136,38 +139,60 @@ def live():
     sp.wr(f, 0x91B5F0 + ci * 4, struct.pack("<i", b0["x"])); sp.wr(f, 0x91B670 + ci * 4, struct.pack("<i", b0["y"]))
     sp.wr(f, 0x91B5BC, struct.pack("<i", -1)); sp.wr(f, 0x91B5B8, struct.pack("<i", 0))
     print("pokes in", flush=True)
-    gdb = os.path.join(ROOT, "scratch/m284.gdb")
-    arm_gdb(gdb, pid)
+    gdb_script = os.path.join(ROOT, "scratch/m284.gdb")
+    LOG = os.path.join(ROOT, "scratch/m284.log")
+    if os.path.exists(LOG): os.remove(LOG)
+    arm_gdb(gdb_script, pid, LOG)
+    gdb = subprocess.Popen(["gdb", "-batch", "-x", gdb_script],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    time.sleep(2.0)          # let gdb attach + arm
     win = sp.find_window()
     sp.focus()
-    key("b")               # open base display on our base
+    print("focus ok", flush=True)
+    key("b")                 # ensure base display open on our base
     time.sleep(1.0)
-    click((185, 437))      # ROW1 -> chooser row
+    # the message popup's OK button (message box at y 440-560 x 10-300)
+    click((285, 553))
     time.sleep(0.7)
-    click((128 + 127 * 2, 60 + 100 * 0))   # a chooser cell (col 2, row 0)
+    click((285, 553))
     time.sleep(0.7)
+    click((400, 20))         # topbar BUILD tab
+    time.sleep(0.6)
     key("Escape")
-    time.sleep(0.5)
-    detach_pid(pid)
-    log = os.path.join(ROOT, "scratch/m284.log")
-    rows = [l for l in open(log, errors="replace")]
-    hits = [l.strip().split("|") for l in rows if l.startswith("S")]
-    entries = [l.strip().split("|") for l in rows if l.startswith("E")]
-    sites = [int(x[1], 16) for x in hits if len(x) > 2 and int(x[3], 16) == 0x5f6aa3]
-    print("site bps fired: %d, slots==0x5f6aa3 at: %s" % (len(hits), [hex(x) for x in sites]))
-    print("FUN_005f6aa3 ENTRY hits: %d" % len(entries))
-    for e in entries[:8]: print("   %s" % e)
-    pump = [l for l in rows if "P|" in l]
-    print("pump control hits: %d" % len(pump))
-    if sites:
-        for s in sites:
-            print("DISPATCHER SITE: %06x" % s)
-        print("STATE 0: measured - the family +0x4c dispatcher site is named above")
+    time.sleep(0.6)
+    gdb.send_signal(2)          # SIGINT gdb -> it detaches (m53n stop recipe)
+    try:
+        gdb.wait(6)
+    except subprocess.TimeoutExpired:
+        detach_pid(pid)
+        gdb.wait(6)
+    st = open("/proc/%d/status" % pid).read()
+    if "State:\tT (stopped)" in st:
+        subprocess.run(["kill", "-CONT", str(pid)], check=False)
+    pp2 = open("/proc/%d/status" % pid).read()
+    tp2 = int(re.search(r"TracerPid:\s+(\d+)", pp2).group(1))
+    rows = [l for l in open(LOG, errors="replace")] if os.path.exists(LOG) else []
+    sites_hit = [l for l in rows if l.startswith("SITE")]
+    slots = [(int(l.split()[1], 16), int(l.split()[2], 16)) for l in sites_hit if len(l.split()) >= 3]
+    fam = [(pc, sl) for pc, sl in slots if sl == 0x5f6aa3]
+    entries = [l for l in rows if l.startswith("ENTRY")]
+    pumps = [l for l in rows if "CTRL" in l]
+    print("site bps fired: %d, family-slot (%s) at: %s" % (
+        len(sites_hit), "0x5f6aa3", " ".join("%06x" % pc for pc, _ in fam)))
+    print("ENTRY hits: %d" % len(entries))
+    for e in entries[:10]: print("   %s" % " ".join(e.split()))
+    print("pump control hits: %d" % len(pumps))
+    if fam:
+        print("DISPATCHER SITE(S): %s" % " ".join("%06x" % pc for pc, _ in fam))
+    if tp2:
+        print("STATE 8: box left dirty (TracerPid=%d)" % tp2); return 8
+    if fam or entries:
+        print("STATE 0: measured - a family +0x4c dispatch happened (site + entry above)")
         return 0
-    if not pump:
+    if not pumps:
         print("STATE 5: driver produced no clicks (pump control silent)")
         return 5
-    print("STATE 4: clicks landed, no family +0x4c dispatch in window")
+    print("STATE 4: clicks landed (pump fired), no family +0x4c dispatch in window")
     return 4
 
 def base_rec(f, i):
@@ -176,53 +201,53 @@ def base_rec(f, i):
                 name=b[19:59].split(b"\0")[0].decode("latin-1", "replace"))
 
 def u32(f, a): return struct.unpack("<I", sp.rd(f, a, 4))[0]
+XENV = {**os.environ, "DISPLAY": ":99"}
 def click(xy):
-    subprocess.run(["xdotool", "mousemove", str(xy[0]), str(xy[1])], check=False)
-    subprocess.run(["xdotool", "click", "1"], check=False)
+    subprocess.run(["xdotool", "mousemove", str(xy[0]), str(xy[1])], env=XENV, check=False)
+    subprocess.run(["xdotool", "click", "1"], env=XENV, check=False)
     time.sleep(0.4)
 def key(k):
-    subprocess.run(["xdotool", "key", "--clearmodifiers", k], check=False)
+    subprocess.run(["xdotool", "key", "--clearmodifiers", k], env=XENV, check=False)
     time.sleep(0.5)
 
-def arm_gdb(path, pid):
-    slots = "4b83f3 4ba2e3 4c6da9 5b7cec 5b7dc4 5ceec2 5d9b8e 5d9bae 5fa9df 5faddc 5ffb3b 63cfa4"
-    body = []
-    body.append("set pagination off")
-    body.append("set confirm off")
-    body.append("handle SIGUSR1 nostop noprint pass")
-    body.append("handle SIGUSR2 nostop noprint pass")
-    body.append("handle SIGPIPE nostop noprint pass")
-    body.append("attach %d" % pid)
-    body.append("set log file /home/n100/reverse/smac/scratch/m284.log")
-    body.append("set logging on")
-    # control: the dialog pump entry (fires whenever a dialog frame runs)
-    body.append("b *0x5f1394")
-    body.append("commands 1")
-    body.append("silent")
-    body.append("printf \"P|pump\\n\"")
-    body.append("continue")
-    body.append("end")
-    n = 2
-    for s in slots.split():
-        pc = int(s, 16)
-        body.append("b *0x%x" % pc)
-        body.append("commands %d" % n)
-        body.append("silent")
-        body.append("if *(int*)($esp+4) != 0")
-        body.append("set $obj = *(int*)($esp+4)")
-        body.append("end")
-        body.append("printf \"S|%%08x|obj=%%08x|slot=%%08x\\n\", $pc, $obj, *(int*)($obj+0x4c)")
-        body.append("continue")
-        body.append("end")
+def arm_gdb(path, pid, log):
+    slots = [
+        (0x4b83f3, "edx"), (0x4ba2e3, "edx"), (0x4c6da9, "ecx"),
+        (0x5b7cec, "edx"), (0x5b7dc4, "edx"), (0x5ceec2, "edx"),
+        (0x5d9b8e, "eax"), (0x5d9bae, "eax"),
+        (0x5fa9df, "edx"), (0x5faddc, "edx"),
+        (0x5ffb3b, "eax"), (0x63cfa4, "eax"),
+    ]
+    body = ["set pagination off", "set confirm off",
+            "handle SIGUSR1 nostop noprint pass",
+            "handle SIGUSR2 nostop noprint pass",
+            "handle SIGPIPE nostop noprint pass",
+            "attach %d" % pid,
+            "set logging file %s" % log, "set logging overwrite on", "set logging on"]
+    body += ["b *0x5d0c33", "commands 1", "silent",
+             "if *(int*)($esp+8) == 0x201",
+             "printf \"CTRL wndproc-lbttdown msg=%08x\\n\", *(int*)($esp+8)",
+             "end",
+             "continue", "end"]
+    body += ["b *0x5f1394", "commands 2", "silent", "printf \"CTRL pump\\n\"",
+             "continue", "end"]
+    n = 3
+    for pc, reg in slots:
+        body += ["b *0x%x" % pc, "commands %d" % n, "silent"]
+        body += ["if $%s >= 0x1000000" % reg,
+                 "printf \"SITE @PC@ @SLOT@\\n\", $pc, *(int*)($%s+0x4c)" % reg,
+                 "end"]
+        body += ["continue", "end"]
         n += 1
-    # FUN_005f6aa3 entry
-    body.append("b *0x5f6aa3")
-    body.append("commands %d" % n)
-    body.append("silent")
-    body.append("printf \"E|entry|ret=%%08x|this=%%08x\\n\", *(int*)$esp, $ecx")
-    body.append("continue")
-    body.append("end")
-    open(path, "w").write("\n".join(body))
+    body += ["b *0x5f6aa3", "commands %d" % n, "silent",
+             "printf \"ENTRY retaddr=@PC@ ecx=@CX@\\n\", *(int*)$esp, $ecx",
+             "continue", "end"]
+    # m53n-style tail: ONE continue resumes; the command blocks' own continues keep the
+    # window open; gdb runs in the background and is SIGINTed by the driver afterwards.
+    body += ["continue"]
+    txt = "\n".join(body)
+    txt = txt.replace("@PC@", "%08x").replace("@SLOT@", "%08x").replace("@CX@", "%08x")
+    open(path, "w").write(txt)
 
 def detach_pid(pid):
     # leave the box clean: kill this gdb by pid (never by name)

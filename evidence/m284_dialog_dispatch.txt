@@ -1,0 +1,17 @@
+call [reg+0x4c] sites: 12
+   4b83f3 in FUN_004b83d0: call dword ptr [edx+0x4c]
+   4ba2e3 in FUN_004ba2b0: call dword ptr [edx+0x4c]
+   4c6da9 in FUN_004c6d90: call dword ptr [ecx+0x4c]
+   5b7cec in FUN_005b7890: call dword ptr [edx+0x4c]
+   5b7dc4 in FUN_005b7890: call dword ptr [edx+0x4c]
+   5ceec2 in FUN_005cee32: call dword ptr [edx+0x4c]
+   5d9b8e in FUN_005d9aba: call dword ptr [eax+0x4c]
+   5d9bae in FUN_005d9b97: call dword ptr [eax+0x4c]
+   5fa9df in FUN_005fa7f5: call dword ptr [edx+0x4c]
+   5faddc in FUN_005facc2: call dword ptr [edx+0x4c]
+   5ffb3b in FUN_005ffb02: call dword ptr [eax+0x4c]
+   63cfa4 in FUN_0063cf7d: call dword ptr [eax+0x4c]
+load-then-call +0x4c pairs: 0
+direct call 0x5f6aa3: 0
+family vtables with +0x4c==0x5f6aa3: ['0x67164c', '0x6717cc', '0x6728c0', '0x675cc4', '0x6776c8'] (466 installs)
+STATIC PASS
