@@ -16,8 +16,7 @@ finished by ~150k tokens is not finished at all.** Counted in TOOL CALLS:
 - JSON only: no XML tags inside tool arguments. Writes over ~4 KB drift and are rejected as a missing `path` — expect one
   retry, then re-emit the same content as pure JSON (do NOT fragment into many tiny writes). Branch + skeleton commit
   BEFORE probing; s189 measured the skeleton landing at 108k context instead of 167k.
-- **30-40** STOP MEASURING: an acceptance that is not green IS the finding — write the blocker and the failing number,
-  merge nothing, close.
+- **30-40** STOP MEASURING: an ungreen acceptance IS the finding — write the blocker and failing number, merge nothing.
 - **40-50** closing order, TERSE: notes <= 2 KB, NAMED block <= 1 KB, this file patched BY SECTION, never rewritten.
 
 Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes are appends or small
@@ -41,8 +40,7 @@ and **M241 (#180, 2/5, PR open)**. Full list with PR numbers and reasons VERBATI
 ## THE INSTRUMENTS (run FIRST)
 
 1. **accept_ready.py** is the readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
-   base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it immediately before you arm** (screen fixes live
-   in TRAPS).
+   base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm** (screen fixes in TRAPS).
 2. Writer/flag chain — silent bps or hw watchpoints + a prediction from live memory + a read-back:
    `m94_table_watch.py` (4 hw watchpoints on any 4 dwords), `m97_credit_watch.py`, `m100_mult_watch.py`,
    `m102_rebuild_at_hit.py`, `m103_d_rebuild.py`, `m92_tail_census.py`, `m95_pay_sites.py`, `m98_advance_budget.py`, `m117_gate_take.py`; each
