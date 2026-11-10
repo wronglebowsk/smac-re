@@ -1157,6 +1157,168 @@ def run_b11(sav_path, results):
     return 0
 
 
+def run_b12(sav_path, trace_path, results):
+    """Rung B12: the completion CREATE leg - gate(0x4efa5e: storage+income >=
+    price) -> pay -> CREATE (a NEW 52-B unit record APPENDED at the array end,
+    order 0 on the base tile, fields x@0 u16, y@2 u16, flag@4 u32=0,
+    type@10 u16=head, owner@14 u8=fac, order@17 u8=0, nlegs@18 u8=0) -> POP
+    (B11 law: one item, stale tail), replayed against the game's OWN recorded
+    m56 boundaries (trace_m56_build_20261026_145157.jsonl: the original
+    terran.exe's 10-round run on Korolev Center (29,42) head 2). No box, no
+    /proc, no gdb."""
+    import hashlib
+    import json
+    import os as _os
+    import struct
+    import subprocess
+    import tempfile
+    from . import production as sop
+    from . import queue as soq
+    from . import save as sosave
+    if not _os.path.exists(sav_path):
+        return fail("B12: missing sav: %s" % sav_path)
+    if not _os.path.exists(trace_path):
+        return fail("B12: missing trace: %s" % trace_path)
+    # 1 constants of the law
+    results.append(("law constants: UNIT_LEN 52, ORDER_NEW 0, created spans "
+                    "(x@0,y@2,type@10,owner@14,order@17)",
+                    sosave.UNIT_LEN == 52 and sop.ORDER_NEW == 0
+                    and sop.UNIT_TYPE == 10 and sop.UNIT_OWNER == 14
+                    and sop.UNIT_ORDER == 17))
+    rec = sop.create_record(29, 42, 2, 3)
+    results.append(("create_record(29,42,2,3): len 52, x/y/type/owner/order "
+                    "== 29,42,2,3,0",
+                    len(rec) == 52
+                    and struct.unpack_from("<H", rec, 0)[0] == 29
+                    and struct.unpack_from("<H", rec, 2)[0] == 42
+                    and struct.unpack_from("<H", rec, 10)[0] == 2
+                    and rec[14] == 3 and rec[17] == 0))
+    # 2 the golden replay: r0 creates exactly (29,42,2,3,0), nothing else
+    rounds, created_by, recorded_by, _ = sop.replay(trace_path)
+    created_tuples = [t for r in created_by for t in created_by[r]]
+    results.append(("r0 replay: model creates EXACTLY {(29,42,2,3,0)} and "
+                    "r1..r9 create nothing",
+                    created_by.get(0) == {(29, 42, 2, 3, 0)}
+                    and all(created_by.get(r) == set() for r in range(1, 10))))
+    r0_rec = recorded_by[0].get((29, 42, 2, 3, 0), 0)
+    later = [recorded_by[r].get((29, 42, 2, 3, 0), 0) for r in range(1, 10)]
+    results.append(("recorded r0 net unit-array delta holds +1 (29,42,2,3,0) "
+                    "and none later",
+                    r0_rec == 1 and sum(later) == 0))
+    # 3 the created record occupies the array's LAST slot of the r0-after
+    # snapshot (append law: new record at index n_units-1)
+    rows = sop.trace_rows(trace_path)
+    aft0 = None
+    for row in rows:
+        if row.get("event") == "round_after" and row.get("r") == 0:
+            aft0 = row["snap"]
+    last = None
+    for u in aft0["units"]:
+        if (u["x"], u["y"], u["type"], u["owner"], u["order"]) == (29, 42, 2, 3, 0):
+            last = u
+    results.append(("created record sits at the array END of r0-after "
+                    "(idx %s == n_units-1 == %d)"
+                    % (last and last["idx"], aft0["globals"]["n_units"] - 1),
+                    last is not None
+                    and last["idx"] == aft0["globals"]["n_units"] - 1))
+    # 4 the pay + pop: Korolev r0 storage 8 income 1 price 9 -> storage 0,
+    # queue [2,2,2,2,0,..] pending 0 == the recorded r1 round_before
+    r1_before = None
+    for row in rows:
+        if row.get("event") == "round_before" and row.get("r") == 1:
+            r1_before = row
+    b17 = None
+    for p in r1_before["predictions"]:
+        if p.get("base") == 17:
+            b17 = p
+    _, _, _, model_after = sop.replay(trace_path, gate_base=17)
+    ma0 = model_after[0]
+    results.append(("pay+pop: storage 8+1-9 = 0 and queue [2,2,2,2,0,..] "
+                    "pending 0 reproduce the recorded r1 round_before "
+                    "(minerals %d, queue %s, pending %d)"
+                    % (b17["minerals"], b17["queue"][:5], b17["pending"]),
+                    ma0 is not None and ma0["storage_after"] == 0
+                    and ma0["pend_after"] == 0
+                    and ma0["slots_after"][:5] == [2, 2, 2, 2, 0]
+                    and b17["minerals"] == 0
+                    and b17["queue"][:5] == [2, 2, 2, 2, 0]
+                    and b17["pending"] == 0))
+    # 5 RIVALS FAIL THE SAME FIT
+    _, wr_created, _, _ = sop.replay(trace_path, tile=(28, 42))
+    results.append(("RIVAL wrong tile (28,42): created tuple NOT in the "
+                    "recorded r0 delta",
+                    (28, 42, 2, 3, 0) in wr_created.get(0, set())
+                    and recorded_by[0].get((28, 42, 2, 3, 0), 0) == 0))
+    _, o2_created, _, _ = sop.replay(trace_path, new_order=2)
+    results.append(("RIVAL order 2: created (29,42,2,3,2), recorded r0 "
+                    "arrival is order 0",
+                    (29, 42, 2, 3, 2) in o2_created.get(0, set())
+                    and recorded_by[0].get((29, 42, 2, 3, 2), 0) == 0
+                    and r0_rec == 1))
+    _, noinc_created, _, _ = sop.replay(trace_path, income_term=False)
+    results.append(("RIVAL gate without the income term: 8 < 9 bails r0 "
+                    "against a recorded arrival",
+                    noinc_created.get(0) == set() and r0_rec == 1))
+    # 6 the WRITTEN image: compose the grown unit array onto the save
+    img, n_units = sop.compose_grown(sav_path, 29, 42, 2, 3)
+    sv = sosave.parse(sav_path)
+    uo = sv.units_off
+    n = sv.n_units
+    pre_diffs = [i for i in range(uo) if i < min(len(img), len(sv.data))
+                 and img[i] != sv.data[i]]
+    orig_ok = img[uo:uo + 52 * n] == sv.data[uo:uo + 52 * n]
+    app_ok = img[uo + 52 * n:uo + 52 * (n + 1)] == sop.create_record(29, 42, 2, 3)
+    tail_ok = img[uo + 52 * (n + 1):] == sv.data[uo + 52 * n:]
+    rp = sosave.Save("written", bytes(img))
+    last = rp.units[-1]
+    results.append(("written image: len +52, only the units-count dword low "
+                    "byte changes in the prefix (%s), originals "
+                    "byte-identical, appended record exact, bases+tail "
+                    "byte-identical after the shift, re-parse reads n_units "
+                    "68 with (29,42,2,3) at the end"
+                    % (pre_diffs,),
+                    len(img) == len(sv.data) + 52 and pre_diffs == [68]
+                    and orig_ok and app_ok and tail_ok
+                    and rp.n_units == 68 and rp.closes
+                    and (last["x"], last["y"], last["type"],
+                         last["owner"]) == (29, 42, 2, 3)))
+    with tempfile.NamedTemporaryFile("wb", suffix=".SAV", delete=False) as fh:
+        fh.write(img)
+        tmp = fh.name
+    dr = subprocess.run([sys.executable, "scripts/decode_save.py", tmp,
+                         "--sections"], capture_output=True, text=True, cwd=REPO)
+    ok_walk = dr.returncode == 0 and "no 52/304 split" not in dr.stdout
+    _os.unlink(tmp)
+    results.append(("written image -> decode_save --sections rc 0 (section "
+                    "walk still green)", ok_walk))
+    # 7 determinism + CLI
+    blob = json.dumps([{str(k): sorted(v) for k, v in created_by.items()},
+                       {str(k): {str(kk): vv for kk, vv in v.items()}
+                        for k, v in recorded_by.items()},
+                       [sop.create_record(29, 42, 2, 3).hex()]])
+    sha = hashlib.sha256(blob.encode()).hexdigest()
+    with tempfile.NamedTemporaryFile("wb", suffix=".json", delete=False) as fh:
+        op = fh.name
+    rc = sop.main(["--sav", sav_path, "--trace", trace_path, "--out", op])
+    cli_ok = rc == 0 and _os.path.getsize(op) > 0
+    _os.unlink(op)
+    results.append(("command python3 -m sim.production exit-0 + report "
+                    "(sha %s)" % sha[:16], cli_ok))
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B12: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B12: %d/%d gates - the completion CREATE leg replays the "
+          "game's OWN m56 boundaries: gate(8+1>=9) -> pay to 0 -> one new "
+          "52-B record (29,42,2,3,order 0) at the array end -> pop, the "
+          "rivals all miss, the grown image re-parses, sha256 %s "
+          "(no box time, no /proc, no gdb)"
+          % (len(results), len(results), sha[:16]))
+    return 0
+
+
 def diff_ok(diffs, bo):
     """Only the pending dword (record-relative 0x4c) and the 10 slot dwords
     (0x50..0x77) may differ inside a queue-patched 304-B record; diffs are
@@ -1187,6 +1349,8 @@ def main(argv=None):
                     help="rung B10: funder/destroyer leg acceptance")
     ap.add_argument("--b11", nargs="+", metavar="SAV",
                     help="rung B11: the production-queue mechanics leg acceptance")
+    ap.add_argument("--b12", nargs="+", metavar=("SAV", "TRACE"),
+                    help="rung B12: the completion CREATE leg acceptance")
     ap.add_argument("--turns", type=int, default=10)
     args = ap.parse_args(argv)
 
@@ -1205,6 +1369,12 @@ def main(argv=None):
         return run_b10(args.b10[0], tr, results)
     if args.b11:
         return run_b11(args.b11[0], results)
+    if args.b12:
+        tr = args.b12[1] if len(args.b12) > 1 else None
+        if tr is None:
+            tr = os.path.join(REPO, "evidence",
+                              "trace_m56_build_20261026_145157.jsonl")
+        return run_b12(args.b12[0], tr, results)
     if args.replay_m27:
         from . import units as su_b5
         run_m27_replay(results)

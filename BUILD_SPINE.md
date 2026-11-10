@@ -218,3 +218,36 @@ gdb); (7) two runs -> identical sha256 and `python3 -m sim.queue --sav <sav> --o
 <f>` exits 0 and writes the report. The new-game leg's frontier (the M282 G5
 found-event scheduling) is DECLARED, not modeled - B11 replays recorded queue
 states, it does not predict which turns found/write.
+
+**B12 - the completion CREATE leg (R2's "build lands a unit" slice, next after B11's queue mechanics).**
+`sim/production.py`: the M56/M59/M61 completion law as an executable model - when
+the visit's gate passes, in the measured order the game RUNS (PAY -> CREATE ->
+POP, production-queue.md): (1) GATE storage + income >= price (M56: the add is
+inside the same visit; `price` = the recorded per-base price, `edi`, never a
+recomputed `price_of`); (2) PAY storage = storage + income - price; (3) CREATE
+a NEW 52-B unit record APPENDED at the end of the unit array (unit array at
+`units_off`, stride UNIT_LEN, count n_units): x/y = the base tile's x/y,
+flag(+4 u32) = 0, type(+10 u16) = the queue head id, owner(+14 u8) = the base
+faction, order(+17 u8) = 0, nlegs(+18 u8) = 0 - a produced unit arrives order
+0 ON its base tile (M56 accounting law); the record's other bytes are
+DECLARED unmodeled (compose as zero + the named fields, test the re-parse);
+(4) POP exactly one via B11's law (slots shift pending times, stale tail
+kept). The recorded same-array acceptance: `python3 -m sim.selftest --b12
+programs/saves/m54b_clean.SAV evidence/trace_m56_build_20261026_145157.jsonl`
+must print PASS B12 with: (1) R0 replay - applying the model to the trace's
+round_before r0 (base 17 Korolev (29,42) head 2 pending 1 storage 8 income 1
+price 9) yields storage 0 AND exactly one new (29,42,2,3,order 0) record at
+the array END (new-slot index == n_units-1) and pending 0, matching the
+recorded round_after r0 net delta {+1 (29,42,2,3,0)} by (x,y,type,owner,order)
+AND the recorded r1 round_before queue [2,2,2,2,0..] pending 0; (2) R1..R9
+no-arrive - the gate fails (pending 0 / storage+income < price) on all nine
+later boundaries and the recorded after-snapshots contain no (29,42,2,3,0)
+arrival (M56's own verdict: net 1 in r0, none after); (3) the RIVALS FAIL THE
+SAME FIT - a create at the WRONG tile (28,42) or with order 2 (the idle
+order) or WITHOUT the income term (gate 8 >= 9 bails r0) each contradict a
+recorded tuple; (4) a WRITTEN image - savewriter composes the grown unit
+array: only the units-count dword and the ONE new 52-B record differ (tail
+byte-identical, all originals byte-identical), the image re-parses with
+n_units 68 reading the new record's modeled fields; (5) two runs -> identical
+sha256 and `python3 -m sim.production --sav <sav> --trace <tr> --out <f>`
+exits 0 and writes the report. No box time, no /proc, no gdb.

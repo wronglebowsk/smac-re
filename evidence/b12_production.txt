@@ -1,0 +1,13 @@
+  ok   law constants: UNIT_LEN 52, ORDER_NEW 0, created spans (x@0,y@2,type@10,owner@14,order@17)
+  ok   create_record(29,42,2,3): len 52, x/y/type/owner/order == 29,42,2,3,0
+  ok   r0 replay: model creates EXACTLY {(29,42,2,3,0)} and r1..r9 create nothing
+  ok   recorded r0 net unit-array delta holds +1 (29,42,2,3,0) and none later
+  ok   created record sits at the array END of r0-after (idx 67 == n_units-1 == 67)
+  ok   pay+pop: storage 8+1-9 = 0 and queue [2,2,2,2,0,..] pending 0 reproduce the recorded r1 round_before (minerals 0, queue [2, 2, 2, 2, 0], pending 0)
+  ok   RIVAL wrong tile (28,42): created tuple NOT in the recorded r0 delta
+  ok   RIVAL order 2: created (29,42,2,3,2), recorded r0 arrival is order 0
+  ok   RIVAL gate without the income term: 8 < 9 bails r0 against a recorded arrival
+  ok   written image: len +52, only the units-count dword low byte changes in the prefix ([68]), originals byte-identical, appended record exact, bases+tail byte-identical after the shift, re-parse reads n_units 68 with (29,42,2,3) at the end
+  ok   written image -> decode_save --sections rc 0 (section walk still green)
+  ok   command python3 -m sim.production exit-0 + report (sha 5bf1a1c8a20f636f)
+PASS B12: 12/12 gates - the completion CREATE leg replays the game's OWN m56 boundaries: gate(8+1>=9) -> pay to 0 -> one new 52-B record (29,42,2,3,order 0) at the array end -> pop, the rivals all miss, the grown image re-parses, sha256 5bf1a1c8a20f636f (no box time, no /proc, no gdb)

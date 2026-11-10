@@ -52,14 +52,18 @@ def modeled_spans():
 
 
 def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
-                lift_all=False, bases_override=None, orig_n_bases=None):
+                lift_all=False, bases_override=None, orig_n_bases=None,
+                append_units=None):
     """Recompose the container. Defaults are the model values read from the loaded image,
     so an unmutated build is the identity map iff every layout constant is right.
     lift_all=True builds the rival 'pure re-emitter' (composes regions, lifts every byte);
-    unit_len= is the rival with a perturbed record stride."""
+    unit_len= is the rival with a perturbed record stride.
+    append_units= grows the unit array by the given complete 52-B records (rung
+    B12's written-image leg: only the units-count dword + the new records may
+    differ from the original)."""
     d = sv.data
     ulen = so.UNIT_LEN if unit_len is None else unit_len
-    n_units = sv.n_units
+    n_units = sv.n_units + (len(append_units) if append_units else 0)
     if bases_override is not None:
         n_bases = len(bases_override)
     else:
@@ -100,9 +104,13 @@ def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
     mid = 3584 + 26624 + 4096
     m0 = sv.count_off + 4 + sv.count_len
     out += d[m0:m0 + mid]
-    # unit array: lift each record, patch the modeled x/y from the model (+ moves)
+    # unit array: lift each record, patch the modeled x/y from the model (+ moves),
+    # then append any grown records (rung B12) verbatim after the originals
     uoff = sv.units_off
     for i in range(n_units):
+        if append_units and i >= sv.n_units:
+            out += append_units[i - sv.n_units]
+            continue
         rec = bytearray(d[uoff + ulen * i:uoff + ulen * (i + 1)])
         if not lift_all:
             x, y = rec[0:2], rec[2:4]
