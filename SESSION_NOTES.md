@@ -772,3 +772,32 @@ m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
   FLAG-MATCHED CENSUS (M295 P1c + this) is the shared closer - LEAD.
 - s245/s246 facts held; kickoff M295 re-run first: R4-empty table verbatim
   (evidence/m295_nogo_fit.txt). NEXT_PROMPT regenerated (s247 close).
+
+## Session 248 (s248, B17, 2026-11-11)
+
+- BUILD FIRE (track_mode printed MODE=BUILD next_rung=B17). The rung was not in
+  BUILD_SPINE.md, so this fire AUTHORS it (B14/B16 precedent): **B17 - the
+  pod-scan loop DECISION CORE made executable**. `sim/scanleg.py` COMPOSES the
+  M296 best/argmax chain (best_init law + accept store 0x563caa + winner),
+  B15's price_gate (sim.gatetables) and B16's grid law (sim.precheck, read
+  TRANSPOSED) into ONE slot-strict replay of the m294 gate-row window.
+- ACCEPTANCE `python3 -m sim.selftest --b17` -> evidence/b17_scanleg_chain.txt:1
+  **PASS B17: 10/10**: G1 pins 1026 visits / 2321 decision slots / 25650 GROW /
+  260 accepts / 61 bypass (m296 S0 + NAMED ## M294); G2 best_init: save+law ==
+  machine on 1023/1023 gradeable scans, 3 DECLARED-live inits = u=45 (machine 5
+  vs save-dest -1, the S7b stale-dest class, value leg OPEN) + 2 save-invisible
+  m2b dests; buckets plain 1023 / val-bad 1 / lazy 2; case-8 leg 1/1; G3+G4 the
+  GROW BEST *and WIN* columns both replay 25650/25650 (the win replay is NEW -
+  M296 pinned best only); G5 accepts 260/260 predicted from the REPLAYED best
+  (bypass 61 + legs value 4 / bases 192 / mult0 2 / case8open 1), 0 GDEEP rows
+  at/over the 2*(8-dist) cap; G6 predicted winner == DISP esi 201/201 (0 drift
+  skips); G7 save-view val-law 1931/2321 (lazy 1; 0 tie rows; 0x1000-zero tests
+  pool-side only, 1083); G8 pool 6048/8482 explained (5721 ties), 2434 DECLARED
+  residue; G9 rivals fail the SAME grid (>=-argmax 5721 tie cells; frozen-best
+  diverges 1713/25650; no-bypass +61 GDEEP; no-init-law 24 slots in u=45); G10
+  two module runs byte-identical (sha256 pinned in the evidence).
+- Kickoff per the fire's shape: M296 re-run FIRST -> **PASS M296: 9/9** verbatim
+  (re-run, not re-derived); #180 (M241) re-checked: zero inline comments/reviews,
+  still 2/5 gates = no real PASS to merge on, stays open unchanged.
+- NO box time (build track: no /proc, no gdb). The live-map flag-matched census
+  is UNTOUCHED - it stays s249's pick (THE PICK in NEXT_PROMPT, regenerated).

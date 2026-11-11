@@ -359,3 +359,23 @@ flag and one region byte per visit (0 mixed of 1026); G6 the pinned confusion gr
 UNMODELED: the no-go (the 8484-pass-without-row population is its measurement - 8482 with the pinned
 baseline) and the save-vs-window per-tile drift (class fail&rec 106 / region 192, all-or-nothing per
 visit). No box time, no /proc, no gdb.
+
+**B17 - the pod-scan loop DECISION CORE made executable (R2's "the pod picks its
+slot" slice; written by s248 from M296's FITTED argmax chain + B15/B16 - the rung
+was not yet in this file, so the build fire authored it, as B14/B16 did).**
+`sim/scanleg.py`: the chain composed into ONE slot-strict replay - model
+best_init (M296 law 0x563836-9f: 0 unless case-8 + order-0x18 move-to-base
+beyond wrapped-diff 2, then value(save-view dest tile)-1; save-invisible dest
+values and machine-nonzero inits are the DECLARED-live input class) + per-slot
+gt.price_gate over the RECORDED machine val/dist/gate bytes + the accept store
+(0x563caa) moving best AND winner + the 25-slot trajectory, over the m294 grid
+through sim.precheck (B16 transposition law).
+`python3 -m sim.selftest --b17 programs/saves/m54b_clean.SAV` must print PASS
+B17 10/10 with: G1 pins 1026/2321/25650/260/61; G2 init law 1023/1023 gradeable
++ 3 DECLARED-live, S7b buckets, case-8 leg 1/1; G3+G4 the GROW best AND win
+columns replay 25650/25650; G5 accepts 260/260 from the replayed best (bypass
+61, gate-legs 199), 0 GDEEP at/over the 2*(8-dist) cap; G6 winner == DISP esi
+201/201; G7 save-view val-law 1931/2321 (lazy 1, ties 0, 0x1000 pool-side 1083);
+G8 pool 6048/8482 explained, 2434 DECLARED; G9 rivals fail the same grid
+(>=-argmax 5721 ties, frozen-best 1713, no-bypass +61, no-init-law 24); G10 two
+runs byte-identical. No box time, no /proc, no gdb.

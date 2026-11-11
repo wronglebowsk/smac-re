@@ -1456,7 +1456,7 @@ def run_b17(sav_path, results):
         fd, out = _tf.mkstemp(suffix=".txt")
         os.close(fd)
         rc = _sp.call([sys.executable, "-m", "sim.scanleg", "--sav", sav_path,
-                       "--out", out], cwd=REPO)
+                       "--out", out], cwd=REPO, stdout=_sp.DEVNULL)
         with open(out, "rb") as f:
             digs.append((rc, _hl.sha256(f.read()).hexdigest()))
         os.unlink(out)

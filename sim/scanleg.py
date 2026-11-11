@@ -151,7 +151,10 @@ def _save_dest(sav, g, W, H, u):
 
 def _law_init(sav, g, W, H, u, case_row, px, py):
     """the save+law best_init PREDICTION (model input): 0 unless case-8 +
-    order 0x18 + wrapped-diff>2 + a save-gradeable dest -> value(dest)-1."""
+    order 0x18 + wrapped-diff>2; then value(save-view dest)-1 - or None when
+    the save-view dest value is 0 (lazy nibble or byte9-bit4 zeroed): the live
+    dest value is then UNSEEABLE from the y2150 save (the M296 S7b class), so
+    the replay takes the machine-recorded init as a DECLARED input."""
     if case_row != 8:
         return 0
     order, dx, dy, drec = _save_dest(sav, g, W, H, u)
@@ -162,8 +165,8 @@ def _law_init(sav, g, W, H, u, case_row, px, py):
     if wd <= 2:
         return 0
     sc, z = score_nib(drec)
-    if sc == 0 and not z:
-        return 0     # lazy dest: live value unknown from the save
+    if sc == 0:
+        return None  # save-view 0: live value ungradeable (lazy OR 0x1000-zero)
     return sc - 1
 
 
@@ -244,9 +247,14 @@ def report(sav_path, raw_path):
         first = v["deep"].get(dec[0]) or v["acc"][dec[0]]
         law_init = _law_init(sav, g, W, H, v["u"], first["case"], px, py)
         m_init = first["best"]
-        # The machine nonzero init is the ONE declared live-read input (u=45,
-        # save-stale dest - M296 S7b); everywhere else the model init binds.
-        replay_init = m_init if m_init != 0 else law_init
+        # DECLARED-live init class (M296 S7b, both directions): a save-view
+        # dest value of 0 (lazy nibble / 0x1000-zero) is ungradeable, AND any
+        # nonzero MACHINE init means the override fired live on an order the
+        # y2150 save no longer reflects - the machine column is the input.
+        if law_init is None or m_init != 0:
+            replay_init = m_init
+        else:
+            replay_init = law_init
         graded.append((vi, v, (px, py), pcls, preg,
                        "AGREED" if ok else "DRIFT", dec, replay_init, law_init))
 
@@ -255,7 +263,8 @@ def report(sav_path, raw_path):
     nacc = sum(len(gr[1]["acc"]) for gr in graded)
     nbyp = sum(1 for gr in graded
                for s in gr[1]["acc"] if s not in gr[1]["deep"])
-    model_hit = sum(1 for gr in graded if gr[7] == gr[8])
+    model_hit = sum(1 for gr in graded if gr[8] is not None and gr[7] == gr[8])
+    declared = sum(1 for gr in graded if gr[8] is None or gr[7] != gr[8])
     gate("G1_coverage_pins",
          nvis == PIN_VISITS and ndec == PIN_DEC_ROWS
          and 25 * nvis == PIN_GROW_SLOTS and nacc == PIN_ACCEPTS
@@ -272,11 +281,13 @@ def report(sav_path, raw_path):
          and bk["m2b_val_bad"] == 1 and bk["m2b_lazy_dest"] == 2
          and bk["m2b_gate_le2"] == 0 and bk["m2b_zero_drift"] == 0
          and bk["drift_pending"] == 0 and bk["plain_zero_ok"] == 1023
-         and model_hit == PIN_VISITS,
-         "save+law init == machine init on %d/%d scans; case-8 leg 1/1; buckets "
-         "%s; the lone nonzero init (u=45, machine 5) mismatches the SAVE dest "
-         "leg (-1): DECLARED save-stale live class, value leg OPEN (samples %s)"
-         % (model_hit, PIN_VISITS, dict(bk), samples[:2]))
+         and model_hit == PIN_VISITS - 3 and declared == 3,
+         "save+law init == machine init on %d/%d gradeable scans (3 DECLARED-"
+         "live: the u=45 nonzero init + 2 save-invisible m2b dests); case-8 leg "
+         "1/1; buckets %s; the lone nonzero init (u=45, machine 5) mismatches "
+         "the SAVE dest leg (-1): DECLARED save-stale live class, value leg "
+         "OPEN (samples %s)"
+         % (model_hit, PIN_VISITS - 3, dict(bk), samples[:2]))
 
     # ---- G3/G4 best & win trajectories over every graded GROW slot -----------
     best_ok = win_ok = ntot = 0
