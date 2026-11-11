@@ -1,0 +1,13 @@
+
+2026-11-11T03:32:13Z ---- s249 PREDICT phase (scripts/s249_livecensus.py) ----
+PRE-READ PREDICTIONS (computed BEFORE any /proc read):
+ P1 witness: bounds 0x92a378=64 0x92a37c=64, rowmult 0x692184=32, tileview base = dword[0x92ae14] (pointer interp); >=85% of tested tiles keep live byte0/byte3 == save (the map is the same map)
+ P2 box state unchanged since s244: year 2212, cnt 30, TracerPid 0, yama 0 recorded/restored
+ P3 rows: every one of the 2321 decision rows is match (val==live nibble, bit4 clear) or lazy (live nibble 0, bit4 clear, val>0 - the FUN_005aff90 class) or drift-ATTESTED (on a 230-row/9-tile machine-multival set, M296 S3b); lazy predicted <= 8 (save-side 1); bit4-zeroed printed rows predicted 0
+ P4 pool closure: all 2434 unexplained cells classify as live val<=rb (tie/lt), live no-go R4, or live static pre-check fail -> unexplained_under_live == 0
+ P5 u=45: live byte2>>4 at (19,6) == 6 AND byte9 bit4 clear (machine init 5 == value-1), OR live +20/+28 moved from save-dest (19,6), OR live +17 != 0x18 (order changed)
+ P6 rivals on the live grid: R1 collisions >= 500 (save-side 1045), R2 >= 50 (124), R3 >= 50 (119) RECORDED slots each; ge-argmax: >= 2000 live-tie pool cells still printed NO row; R4-live recorded-slot collisions predicted 0
+ P7 no-go answer (M295 P1c): R4-live rejects INSIDE the 8482-cell pool >= 0 (a small number; save-side was 0) and the 2434 need NOT be no-go-dominated (val<=rb under live is the predicted majority class)
+ gates so far:
+ S0_guards_293            PASS  M293 guards law: m292.static_gates True + m294.static_gates294 True re-derived against the shipped terran.exe image (zero box time)
+ S1_baseline_grid         PASS  B17 grid reproduces on the shipped raw+save: visits 1026/1026 rows 2321/2321 pool 8482/8482 (tie 5721/5721 unexpl 2434/2434 lt 327) save-val law 1931/2321 accepts 260/260
