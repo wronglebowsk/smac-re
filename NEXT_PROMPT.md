@@ -2,8 +2,7 @@
 sim/sitegate.py PASS 10/10 (evidence/b18_sitegate.txt:11): M298 EXECUTABLE -
 the lazy-nibble cache read path + the 0x582cc0 nibble-split write-back (an OVERWRITE, not
 an accumulator: the live nibble moves BOTH ways, 182 down / 31 up), the BYTE[rec+3] site
-byte / BYTE[rec+7] owner block (-1 -> clamp 0 SKIPS the cell store; no record carries a
-legitimate owner 0) and BOTH tables MAX by DECODED cmp/jle polarity; the cache machine over
+byte / BYTE[rec+7] owner block (-1 -> 0 SKIPS the cell store; no record has owner 0) and BOTH tables MAX by DECODED cmp/jle polarity; the cache machine over
 2321 rows = 2288 hits / 1 lazy wb / 32 adopted, live lazy class 0 (== M297 S3).
 s251 landed M298 (#263). B1-B18 DONE.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
@@ -31,8 +30,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B18 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B18:
-`python3 -m sim.selftest --b18 <sav>` + `evidence/b18_sitegate.txt:11`). The next build
-rung is **B19**, unauthored - its BUILD fire writes it (the B14/B16/B17/B18 pattern).
+`python3 -m sim.selftest --b18 <sav>` + `evidence/b18_sitegate.txt:11`). Next build rung **B19**, unauthored - its fire writes it (B14/B16/B17/B18).
 Track_mode FIRST, every fire.
 
 ## THE LEDGER
@@ -57,19 +55,17 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
-  pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing was wrong, lead to fix it there).
+  pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing wrong - lead to fix).
 - **THE PICK (s253): ANALYSE from the shortlist** (track_mode FIRST; if it prints
   MODE=BUILD the rung is **B19**, unauthored, `BUILD_SPINE.md` pattern).
   ANSWERED: M227-M298 + B1-B18 (M241 FAIL 2/5, #180; pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live half INVALID
   s240); NEVER bp mid-instruction (s213).
-  OPEN shortlist (hub-visit gating, 0x56c6de continue-leg, 188-row cursor caller; B18 leads: a /proc dump of 0x989ce8/0x94eca8 grades the MAX funnel absolutely, ebx's
+  OPEN shortlist (hub-visit gating, 0x56c6de continue-leg, 188-row cursor caller; B18 leads: a /proc dump of 0x989ce8/0x94eca8 grades the MAX funnel, ebx's
   walked table 0x51de2c-0x51df1d, the slot [+4] counter's 0x5832b0 gate):
-  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND: GDEEP/GACC x=/y= TRANSPOSED (use
-  load_visits/recover_pod); tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7);
+  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND: GDEEP/GACC TRANSPOSED (load_visits/recover_pod); tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7);
   M293 guards re-derive; end-window /proc snapshot = LAST-TURN witness (bit4 flips
   val-invisible) - skill `instrument-laws.md` §LIVE-SNAPSHOT; NEW (B18): BYTE[rec+2] HIGH
-  nibble is a lazy CACHE the game OVERWRITES via 0x582cc0 (it changes between record
-  walks; sticky until a live mutation re-grades the tile); the 0x989ce8 slot and 0x94eca8
+  nibble is a lazy CACHE the game OVERWRITES via 0x582cc0 (it moves between walks; sticky until a live mutation re-grades the tile); the 0x989ce8 slot and 0x94eca8
   cell stores are BOTH MAX; site = BYTE[rec+3], block = BYTE[rec+7].
 ## LIVE FACTS / KIT
 
