@@ -22,7 +22,7 @@ whose value >= value(the base it heads to); every other visit starts best=0.
 [ebp-0x24] then updates ONLY at the accept store 0x563caa.
 
 FUN_0046e770(X,Y) = rec byte2 HIGH nibble (0 when dword[rec+8] bit 0x1000 -
-byte8 bit 4; lazy FUN_005aff90 when the nibble is 0 - then FUN_00582cc0 is
+byte9 bit 4; lazy FUN_005aff90 when the nibble is 0 - then FUN_00582cc0 is
 called and its return discarded). M291 named the rule; this script FITS it
 against the 2321 recorded GDEEP/GACC rows (evidence/m294_gate_rows_raw.txt;
 B16 transposition law applied via sim.precheck.load_visits/recover_pod).
@@ -136,6 +136,7 @@ def main():
     tile_live = collections.defaultdict(list)  # (x,y) -> [(vi, val, slot|(-1 rec))]
     s1_bad = []
     s2_bad = []
+    tie_rows = []
     s7_bad = []
     s7 = [0, 0]                     # GROW best-col ok, total
     s7b = collections.Counter()
@@ -242,6 +243,8 @@ def main():
                 tile_live[(tx, ty)].append((i, rv, -1))
                 if not rv > rbs:
                     s1_bad.append((i, s, rv, rbs))
+                if rv == rbs:
+                    tie_rows.append((i, s, rv))
                 if rbs != rb:
                     s2_bad.append((i, s, rbs, rb))
                 if sc == rv:
@@ -290,6 +293,11 @@ def main():
     rows_all = tot(s3["AGREED"]) + tot(s3["DRIFT"])
     pool_all = sum(pool[c][k] for c in pool for k in pool[c])
     print("visits graded %d | rows %d | pool %d" % (nvis_ok, rows_all, pool_all))
+    gate("S0_coverage_pinned_baseline",
+         nvis_ok == 1026 and rows_all == 2321 and s7[1] == 25650 and pool_all == 8482,
+         "graded visits %d==1026 rows %d==2321 GROW slots %d==25650 pool %d==8482 "
+         "(BASE pins from sim/precheck.py - a truncated trace cannot shrink the fit)"
+         % (nvis_ok, rows_all, s7[1], pool_all))
     gate("S1_strict_entry", not s1_bad,
          "%d/%d decision rows val>best; bad %s" % (rows_all - len(s1_bad), rows_all, s1_bad[:3]))
     gate("S2_best_law", not s2_bad,
@@ -323,14 +331,15 @@ def main():
          "live byte2 mutates mid-campaign; the static y2150 save CANNOT cover every row"
          % (len(amb), len(tile_live),
             [(t, sorted(set(v for (_, v, k) in tile_live[t] if k == -1))) for t in amb[:3]]))
-    gate("S5b_ge_accept_collides_ties", 0 < sum(pool[c]["expl_tie"] for c in pool),
-         "%d pool cells sit at val==best EXACTLY - under value>=best they "
-         "would have printed decision rows; the recorded rows show they did NOT -> strict "
-         "jle 0x563cb3 confirmed"
-         % sum(pool[c]["expl_tie"] for c in pool))
+    gate("S5b_strict_no_tie_rows", not tie_rows,
+         "0 of %d recorded decision rows has val==best (machine columns) - under "
+         "value>=best ties were ACCEPTABLE semantics; none was ever observed, matching "
+         "the `jle 0x563cb3` disasm leg. Static tie CANDIDATES (save-score==recorded "
+         "best, nogo unverified - corroboration only, NOT the refutation): %d pool cells"
+         % (rows_all, sum(pool[c2]["expl_tie"] for c2 in pool)))
     # REPORTED COVERAGE (the finding, not a gate): static save vs the live-mutated grid
     print("REPORT S3 val-law coverage: AGREED %d/%d DRIFT %d/%d rows match save byte2 "
-          "nibble(+0x1000-zero) | byte8bit4&nib>0 pool+row tests %d | lazy-fallback rows %d"
+          "nibble(+0x1000-zero) | byte9bit4&nib>0 pool+row tests %d | lazy-fallback rows %d"
           % (s3["AGREED"][0], tot(s3["AGREED"]), s3["DRIFT"][0], tot(s3["DRIFT"]),
              bit1000, lazy_rows))
     ag = pool["AGREED"]
@@ -346,11 +355,23 @@ def main():
     line = "PASS M296: %d/%d" % (npass, len(RES)) if npass == len(RES) else \
            "FAIL M296: %d/%d" % (npass, len(RES))
     print(line)
+    rep3 = ("REPORT S3 AGREED %d/%d DRIFT %d/%d | byte9bit4&nib>0 tests %d | lazy %d"
+            % (s3["AGREED"][0], tot(s3["AGREED"]), s3["DRIFT"][0], tot(s3["DRIFT"]),
+               bit1000, lazy_rows))
+    rep4 = ("REPORT S4 pool AGREED expl %d (tie %d) unexpl %d | DRIFT expl %d (tie %d) "
+            "unexpl %d | total %d"
+            % (ag["expl"] + ag["expl_tie"], ag["expl_tie"], ag["unexpl"],
+               pool["DRIFT"]["expl"] + pool["DRIFT"]["expl_tie"],
+               pool["DRIFT"]["expl_tie"], pool["DRIFT"]["unexpl"], pool_all))
+    rep4b = ("REPORT S4b live-override pool grading: expl %d unexpl %d unknown-tile %d"
+             % (live_grade["live_expl"], live_grade["live_unexpl"],
+                live_grade["live_unknown"]))
     with open(EVID, "w") as f:
         f.write("scripts/m296_argmax_fit.py on %s vs %s\n"
                 % (os.path.basename(DEF_SAV), os.path.basename(DEF_RAW)))
         for n, ok, d in RES:
             f.write("%s %s %s\n" % (n, "PASS" if ok else "FAIL", d))
+        f.write(rep3 + "\n" + rep4 + "\n" + rep4b + "\n")
         f.write(line + "\n")
     return 0 if npass == len(RES) else 1
 
