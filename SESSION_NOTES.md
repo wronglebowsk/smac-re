@@ -803,3 +803,26 @@ m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
   still 2/5 gates = no real PASS to merge on, stays open unchanged.
 - NO box time (build track: no /proc, no gdb). The live-map flag-matched census
   is UNTOUCHED - it stays s249's pick (THE PICK in NEXT_PROMPT, regenerated).
+
+## Session 249 (s249-m297): M297 - the LIVE-MAP flag-matched census
+Open-PR sweep first: B17 re-ran green on main - `python3 -m sim.selftest --b17` ->
+evidence/b17_scanleg_chain.txt:1 "PASS B17: 10/10 gates ...". #180 (M241)
+re-confirmed the documented-FAIL milestone (2/5 gates, zero review activity since
+2026-11-01) - left open, gates NOT weakened. #105 = docs badge, not a milestone.
+CENSUS (scripts/s249_livecensus.py --predict then --live; accept_ready.py BLOCKED
+on the structural credit-0 (documented, walk/scan kinds run anyway), preflight PASS;
+ONE read-only /proc pass, zero gdb, TracerPid 0->0, yama 0 recorded/restored
+unchanged, year 2212 cnt 30 pinned before AND after, starttime identical):
+tileview base = dword[0x92ae14]=0x40a5cd0, 44 B x 2048 recs dumped
+(evidence/s249_live_map.bin), rowmul 32 = W/2, bounds 64/64, byte0/byte3
+identity 2100/2321 (90.5%). RESULT: the 8482-cell pool under LIVE bytes closes to
+UNEXPLAINED 0 (tie 7518 / lt 287 / live-static-fail 677 / no-go 0); the 2434
+residue = tie_live 2146 + lt 35 + static-fail 253. M295 P1c: no-go R4 on LIVE
+flags rejects 0/8482 AND 0/2321 - INERT, explains none of the residue. Rivals
+fail the live grid: R1 1538 / R2 42 / R3 42 recorded collisions, ge-argmax 7518
+ties printed no row. u=45 CLOSED on the dest-moved branch: live unit-45 order
++17=0x00, dest(9,47), owner 6 vs save 0x18/(19,6). S3 strict live row law =
+documented FAIL finding: 2102/2321 exact, lazy 0, drift-after-grading 219
+(bit4-flips 134 + nibble 85; 201 machine-attested, 18 unattested) - an
+end-of-window snapshot grades only the LAST turn's rows. scripts/s249_attestation.py
+re-derives the scorecard + taxonomy from shipped evidence (idempotent block).

@@ -1,8 +1,10 @@
-# NEXT_PROMPT.md - footing (s248 close: B17 BUILD = pod-scan loop DECISION CORE made
-executable (sim/scanleg.py; `python3 -m sim.selftest --b17` -> evidence/b17_scanleg_chain.txt:1
-**PASS B17: 10/10**: best_init 990/1026 + 36 m2b-decl (u=45 value leg OPEN), GROW best+win
-25650/25650, accepts 260/260 (61 bypass), winner==DISP esi 201/201; pool 6048/8482, 2434 live
-residue UNCHANGED; M296 re-ran PASS 9/9. Next: THE PICK below.)
+# NEXT_PROMPT.md - footing (s249 close: M297 LIVE-MAP flag-matched census landed -
+M296 residue CLOSED (8482 pool under live bytes: tie 7518/lt 287/live-static-fail 677/
+no-go 0/UNEXPLAINED 0; the 2434 = tie 2146+lt 35+fail 253), M295 P1c CLOSED (no-go R4
+rejects 0/8482 pool AND 0/2321 recorded on live flags - INERT), u=45 CLOSED (live dest
+(9,47)+order 0x00 moved vs save (19,6)/0x18), strict live row law 2102/2321 = RECORDED
+FINDING (drift-after-grading 219: bit4-flips 134 val-invisibly + nibble 85, 201 machine-
+attested; lazy live 0). B17 re-verified PASS 10/10. Next: THE PICK below.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
 §CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
 
@@ -29,11 +31,11 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B17 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B17: `python3 -m sim.selftest --b17 <sav>` +
 `evidence/b17_scanleg_chain.txt:1`). Next = **B18**, unauthored - its BUILD fire
-writes it (B14/B16/B17); s249-s251 are ANALYSE. Track_mode FIRST.
+writes it (B14/B16/B17); s250-s251 are ANALYSE, s252 = B18 BUILD fire. Track_mode FIRST.
 
 ## THE LEDGER
 
-Merged M54A-M296 + B0-B17 (through s248) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
+Merged M54A-M297 + B0-B17 (through s249) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - re-confirmed documented-FAIL s249, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -57,24 +59,28 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 - ANSWERED (do not re-pick): M227-M295 + B1-B16 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS. FUN_005f3f5b NOT open (M220). DIALOG
   +0x4c CLOSED (M284-M288; live half INVALID s240): NAMED ## M284-M288. NEVER bp mid-instruction (s213 crash).
-- **THE PICK (s249): the LIVE-MAP flag-matched census that closes BOTH open
-  questions at once** - M295 P1c (does the 0x4e3c00 no-go reject anything on LIVE
-  flags?) and the M296 residue (2434 pool cells unexplained statically + the u=45
-  init value-leg sighting): read the live map byte2/byte9 + flagwords ONCE
-  (read-only /proc, NO gdb, M293 D1b precedent; box s244-state y2212; preflight and
-  ptrace law bind), then re-grade the
-  recorded 2321 rows + 8482 pool under LIVE values: every row must keep val>best,
-  B17 must not regress; 0x1000 = byte9 bit4 (M296) binds. Re-derive the
-  m294 census guards first (M293 law).
-  ANSWERED (do not re-pick): the argmax leg + best-init chain + 0x1000=byte9
-  bit4 fix (M296) + composition B17 (no re-fit); M227-M296 + B1-B17. OPEN statics (small): 0x582cc0 side-effects
-  + the value-indexed 0x51dfe2 cell addr (## M294); CHAIN-PICKS trio (hub-visit
-  gating, 0x56c6de continue-leg, 188-row cursor caller).
+- **THE PICK (s250): the SMALL STATICS pair** (zero box; was step 2 of the s249 kickoff):
+  (a) 0x582cc0 side-effects in FUN_0051dcb0 - its return is DISCARDED (eax reloaded at
+  0x51dfac), but does the callee mutate edi (the BYTE[rec+2]>>4 / lazy-0x5aff90 value that
+  feeds the 0x51dff3 `max` and the cell index) or the cell itself?
+  (b) the 0x51dfe2 cell addr `0x94eca8+[ebp-0xc]+4*min(edi,[esi+0x989ce8])`: what writes
+  [ebp-0xc] in FUN_0051dcb0 callers (site/region id?) - 11 e8-callers named (## M294).
+  Kit: `fn.py 0x582cc0` / `0x51dcb0`, scratch/m71/dis.py windows, index.csv containment;
+  acceptance = byte-pinned NAMED rows. DO NOT re-run the live-map census: box unchanged
+  (2212/30) and the end-window snapshot grades only the last turn (M297 S3 finding).
+  ANSWERED (do not re-pick): M227-M297 + B1-B17 (M241 FAIL 2/5, #180 open; the s249
+  live-map pick landed as M297 - old pick text VERBATIM in `docs/pick-archive.md` §s250-trim).
+  FUN_005f3f5b NOT open (M220). DIALOG +0x4c CLOSED (M284-M288; live half INVALID s240).
+  NEVER bp mid-instruction (s213 crash). OPEN shortlist (hub-visit gating, 0x56c6de
+  continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS.
   READER LAWS bind: GDEEP/GACC x=/y= TRANSPOSED (use load_visits/recover_pod);
-  tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7); M293 guards re-derive.
+  tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7); M293 guards re-derive;
+  NEW (M297): an end-window /proc snapshot is a LAST-TURN witness (byte9 bit4 flips are
+  val-invisible) - skill `references/instrument-laws.md` §LIVE-SNAPSHOT.
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s248 touched nothing) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
+- **BOX**: s244 state UP (s245..s249 touched nothing: s249 was ONE read-only /proc
+  census pass, year/cnt identical before AND after) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
    `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the

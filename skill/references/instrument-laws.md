@@ -815,3 +815,15 @@ were corrected: check a ring/offset table against recorded (tile - centre) pairs
 entry, not only the entries a downstream fit happens to select - the founding fit only ever
 exercised `esi==0`, the centre, where all deltas are 0, so it could never see a swap, a sign
 error or a transposed pair in the other 24 entries.
+
+## LIVE-SNAPSHOT grading law (M297, s249)
+- An end-of-window read-only /proc snapshot grades ONLY the last turn's rows:
+  over a 24-turn window 219/2321 rows (9.4%) had byte2/byte9 mutated after their
+  own grading. Per-tile val-timelines UNDER-attest mutation: byte9 bit4
+  (0x1000) flips are val-invisible while val stays >0 (flips 134 vs nibble 85).
+  A live census that must grade every row needs per-turn reads, or an
+  exact-match + machine-attested-drift grid.
+- Live flag kit (same pass, no gdb): pair flagword = 0x94d448 + 4*(fac*2095+other)
+  (block 0x94d430+8380*fac); pod owner = BYTE[0x933278+52u+14]; unit move-to-base
+  order +17 (0x18) / dest u16 +20,+28; human mask BYTE[0x985b10]; vis
+  BYTE[0x985ae8]; tileview = dword[0x92ae14] + 44*(dword[0x692184]*Y + X>>1).
