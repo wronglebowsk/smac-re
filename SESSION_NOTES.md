@@ -803,3 +803,56 @@ m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
   still 2/5 gates = no real PASS to merge on, stays open unchanged.
 - NO box time (build track: no /proc, no gdb). The live-map flag-matched census
   is UNTOUCHED - it stays s249's pick (THE PICK in NEXT_PROMPT, regenerated).
+
+## Session 249 (s249-m297): M297 - the LIVE-MAP flag-matched census
+Open-PR sweep first: B17 re-ran green on main - `python3 -m sim.selftest --b17` ->
+evidence/b17_scanleg_chain.txt:1 "PASS B17: 10/10 gates ...". #180 (M241)
+re-confirmed the documented-FAIL milestone (2/5 gates, zero review activity since
+2026-11-01) - left open, gates NOT weakened. #105 = docs badge, not a milestone.
+CENSUS (scripts/s249_livecensus.py --predict then --live; accept_ready.py BLOCKED
+on the structural credit-0 (documented, walk/scan kinds run anyway), preflight PASS;
+ONE read-only /proc pass, zero gdb, TracerPid 0->0, yama 0 recorded/restored
+unchanged, year 2212 cnt 30 pinned before AND after, starttime identical):
+tileview base = dword[0x92ae14]=0x40a5cd0, 44 B x 2048 recs dumped
+(evidence/s249_live_map.bin), rowmul 32 = W/2, bounds 64/64, byte0/byte3
+identity 2100/2321 (90.5%). RESULT: the 8482-cell pool under LIVE bytes closes to
+UNEXPLAINED 0 (tie 7518 / lt 287 / live-static-fail 677 / no-go 0); the 2434
+residue = tie_live 2146 + lt 35 + static-fail 253. M295 P1c: no-go R4 on LIVE
+flags rejects 0/8482 AND 0/2321 - INERT, explains none of the residue. Rivals
+fail the live grid: R1 1538 / R2 42 / R3 42 recorded collisions, ge-argmax 7518
+ties printed no row. u=45 CLOSED on the dest-moved branch: live unit-45 order
++17=0x00, dest(9,47), owner 6 vs save 0x18/(19,6). S3 strict live row law =
+documented FAIL finding: 2102/2321 exact, lazy 0, drift-after-grading 219
+(bit4-flips 134 + nibble 85; 201 machine-attested, 18 unattested) - an
+end-of-window snapshot grades only the LAST turn's rows. scripts/s249_attestation.py
+re-derives the scorecard + taxonomy from shipped evidence (idempotent block).
+
+## Session 250 (2026-11-11, zero box time) - #262 finished: attestation v2 + all PR reviews disposed, MERGED
+
+s249 died mid-close-out before running scripts/s249_attestation.py, leaving
+PR #262 (M297 LIVE-MAP census) open with two unread reviews (Greptile 1xP1
+snapshot-vs-history + 4xP2; hermes-review 4xP1 + 2xP2). Dispositions, all in
+the PR body: (1) hermes P1 starttime bug CONFIRMED - /proc/PID/stat split on
+") " leaves idx 0 = state letter, starttime = idx 19; fixed in
+scripts/s249_livecensus.py (S0/S8 + attestation A6 amendment: the hygiene
+claim stands WITHOUT the token - pins 2212/3 + TracerPid 0->0 + map identity
+2100/2321). (2) hermes P1 S7 gate(True) CONFIRMED - now asserts independent
+recounts of both no-go counters + owner coverage + t7-dist == 8482. (3) hermes
+P1 S3 attestation CONFIRMED - drift_taxonomy(): a miss is attested ONLY by a
+machine grading event LATER on the same tile (the 97-row/9-tile multival set
+was a lower bound; bit4 flips are val-invisible). (4) hermes P1 owner-silent
+CONFIRMED in code (row_no_owner/pool_no_owner counted + gated) but machine-
+CLEAN on the shipped run: all 115 visit units in [0,2500), owners loaded for
+exactly that set. (5) Greptile P1 caveat made explicit in addendum A5 + NAMED
+rows + PR body: every live verdict is END-WINDOW - a tie NOW != a tie at the
+skip. (6) Greptile/hermes P2s: attestation v2 DERIVES the A1 scorecard from
+the shipped gate lines - now prints P6 PARTIAL-MISS (R2 42/R3 42 vs predicted
+>=50 floors, save-side 124/119, live mask 0x8 shrinks mask-gated collisions);
+the hermes P2#1 "P4 printed 0" claim was WRONG (shipped line shows 2434; its
+dead `if False` line removed anyway). `python3 scripts/s249_attestation.py`
+once: **A0 shipped-verify PASS 25/25** - every bin-derivable number on the
+shipped gate lines reproduces exactly under the fixed instruments (2102/0/
+134/85, 201 attested/18 unattested, 7518/287/677/0/0, t7-dist, identity
+2100/2321, (19,6) 0x5/0x10/value 0, tie ROWS 0, owner coverage). Census gate
+state unchanged: FAIL M297 1/7, S3 = the documented finding (floor NOT
+weakened). Merged #262 after the MERGE-RULE wait. Next: s251 small statics.

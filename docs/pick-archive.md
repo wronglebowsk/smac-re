@@ -789,3 +789,19 @@ puts a Match in res; sum() dies - `bool()` regex clauses.
 25. SCRIPT REUSE + REGISTRY (s219): slice a sibling's defs on `"\ndef main("` (a bare slice cuts mid-STRING and the
     SyntaxError cites the OTHER file); exec'd names sit NESTED (`_ns["_ns"]["dst_regs"]`); anchor registry gates on the
     FULL `## Mxxx` header (the bare token occurs as a cross-ref too); `bool()` regex clauses feeding a sum().
+## §s250-trim — the s249 pick (ANSWERED by M297, s249; kept VERBATIM per the split rule)
+- **THE PICK (s249): the LIVE-MAP flag-matched census that closes BOTH open
+  questions at once** - M295 P1c (does the 0x4e3c00 no-go reject anything on LIVE
+  flags?) and the M296 residue (2434 pool cells unexplained statically + the u=45
+  init value-leg sighting): read the live map byte2/byte9 + flagwords ONCE
+  (read-only /proc, NO gdb, M293 D1b precedent; box s244-state y2212; preflight and
+  ptrace law bind), then re-grade the
+  recorded 2321 rows + 8482 pool under LIVE values: every row must keep val>best,
+  B17 must not regress; 0x1000 = byte9 bit4 (M296) binds. Re-derive the
+  m294 census guards first (M293 law).
+  ANSWERED (do not re-pick): the argmax leg + best-init chain + 0x1000=byte9
+  bit4 fix (M296) + composition B17 (no re-fit); M227-M296 + B1-B17. OPEN statics (small): 0x582cc0 side-effects
+  + the value-indexed 0x51dfe2 cell addr (## M294); CHAIN-PICKS trio (hub-visit
+  gating, 0x56c6de continue-leg, 188-row cursor caller).
+  READER LAWS bind: GDEEP/GACC x=/y= TRANSPOSED (use load_visits/recover_pod);
+  tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7); M293 guards re-derive.
