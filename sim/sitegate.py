@@ -643,6 +643,10 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
     last_write = {}
     min_t = {}
     site_max = collections.defaultdict(lambda: -1)
+    cell_exp = {}          # the expected (block, site) MAX, from the record set
+    cell_min_exp = {}
+    cell_blkless_exp = {}   # rival key: the owner block ignored
+    zero_owner_rows = 0
     for (vi, u, s, e) in rows:
         X, Y = e["y"], e["x"]
         r = g.rb(X, Y)
@@ -652,26 +656,52 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
         last_write[site] = e["val"]
         min_t[site] = min(min_t.get(site, e["val"]), e["val"])
         site_max[site] = max(site_max[site], e["val"])
+        if blk == 0:
+            zero_owner_rows += 1
+            continue                    # the pinned skip: no cell write at all
+        cell_exp[(blk, site)] = max(cell_exp.get((blk, site), -1), e["val"])
+        cell_min_exp[(blk, site)] = min(
+            cell_min_exp.get((blk, site), e["val"]), e["val"])
+        cell_blkless_exp[site] = max(cell_blkless_exp.get(site, -1), e["val"])
     slot_final_ok = all(sg.slot[k] == site_max[k] for k in sg.slot)
     diverge_last = sum(1 for k in sg.slot if sg.slot[k] != last_write[k])
     diverge_min = sum(1 for k in sg.slot if sg.slot[k] != min_t[k])
+    # the CELL table is GRADED, not just counted (Greptile #264 P2): exact key
+    # set, exact per-(block,site) MAX, no entry for the skipped block 0 - and
+    # the MIN / block-blind rivals must actually disagree (a vacuous check is
+    # no check, and two identical wrong runs would pass determinism)
+    cell_n_diverge = (len(set(sg.cell) ^ set(cell_exp)) +
+                      sum(1 for k in set(sg.cell) & set(cell_exp)
+                          if sg.cell[k] != cell_exp[k]))
+    cell_div_min = sum(1 for k in sg.cell
+                       if sg.cell[k] != cell_min_exp.get(k, -2))
+    cell_div_blk = sum(1 for k in sg.cell
+                       if sg.cell[k] != cell_blkless_exp.get(k[1], -2))
     gate("G8_max_store_funnel",
          (sg.rows == PIN_DEC_ROWS and sg.cell_skips == PIN_SAVE_SKIP_ROWS and
-          slot_final_ok and diverge_last > 0 and diverge_min > 0),
+          zero_owner_rows == PIN_SAVE_SKIP_ROWS and slot_final_ok and
+          cell_n_diverge == 0 and not any(b == 0 for (b, _) in sg.cell) and
+          len(sg.cell) == len(cell_exp) and diverge_last > 0 and
+          diverge_min > 0 and cell_div_min > 0 and cell_div_blk > 0),
          "%d walk steps through the tables: slot entries %d (sites %s), cell "
          "entries %d over %d owner blocks, %d steps SKIPPED the cell store "
-         "(anchor %d); every stored value is monotone non-decreasing and each "
-         "slot ends at the MAX over its recorded rows (%s) - the law the pins "
-         "decode; the model's choice of law is DISCRIMINATING on this record "
-         "set: a last-write store would end %d slot(s) elsewhere and a min "
-         "store %d; slot+cell digest %s. DECLARED: neither table's CONTENTS are "
-         "in any recorded artifact - the absolute grade is a read-only /proc "
-         "window over 0x989ce8 / 0x94eca8 (LEAD), and the [+4] visit counter is "
-         "UNMODELED (its ++ is gated on call 0x5832b0, no recorded input)"
+         "(anchor %d; %d rows carried the -1 owner byte -> clamp 0, the two "
+         "agree, and NO cell entry exists for block 0); every stored value is "
+         "monotone non-decreasing, each SLOT ends at the recorded MAX (%s) and "
+         "every CELL (block, site) equals the recorded per-pair MAX EXACTLY - "
+         "key set and values, %d disagreements. The model's law CHOICE is "
+         "DISCRIMINATING on this record set: last-write ends %d slot(s) "
+         "elsewhere, a MIN store %d slot(s) and %d cell(s), and a cell key "
+         "without the owner block %d cell(s); slot+cell digest %s. DECLARED: "
+         "neither table's LIVE contents are in any recorded artifact - the "
+         "absolute grade is a read-only /proc window over 0x989ce8/0x94eca8 "
+         "(LEAD) - and the [+4] visit counter is UNMODELED (its ++ is gated on "
+         "call 0x5832b0, no recorded input)"
          % (sg.rows, len(sg.slot), sorted(sg.slot), len(sg.cell),
             len(set(b for (b, _) in sg.cell)), sg.cell_skips,
-            PIN_SAVE_SKIP_ROWS, slot_final_ok, diverge_last, diverge_min,
-            sg.digest()))
+            PIN_SAVE_SKIP_ROWS, zero_owner_rows, slot_final_ok,
+            cell_n_diverge, diverge_last, diverge_min, cell_div_min,
+            cell_div_blk, sg.digest()))
 
     # ---- G9 the rivals, consolidated ------------------------------------
     riv = [

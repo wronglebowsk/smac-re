@@ -804,9 +804,12 @@ MAX stores (the unconditional 28-B slot at 0x989ce8 and the owner-block cell at
   1026/1026 single-site visits; the -1 owner sentinel on 277 rows == the cell-store skip
   class, and 0 records of 4096 carry a legitimate 0 owner; the 22-B column-byte0 site
   rival diverges on 2321/2321; the pinned inner walk covers exactly one 32-record row.
-- G8 the MAX funnel: 2 slot entries, 5 cell entries over 5 owner blocks, 277 skips, all
-  tables monotone and each slot ending at the recorded MAX; last-write rival diverges on
-  1 slot, min rival on 1 (digest 888f5366f04c74b1). CONTENTS DECLARED unrecorded.
+- G8 the MAX funnel: 2 slot entries, 5 cell entries over 5 owner blocks, 277 cell-store
+  skips == the 277 owner(-1) rows and NO block-0 entry; all tables monotone, every slot AND
+  every (block,site) cell equal to the recorded per-pair MAX with 0 disagreements (the
+  Greptile #264 P2 fix - the cells are GRADED now, not just counted); last-write rival
+  diverges 1 slot, min 1 slot + 5 cells, owner-block-blind key 4 cells (digest
+  888f5366f04c74b1). The tables' LIVE contents stay DECLARED unrecorded.
 - G9 the 10 rivals refuted by recorded numbers; G10 two module runs identical sha256
   c8461c349d9c0365.
 DECLARED UNMODELED: the 0x5aff90 value body, the slot's [+4] visit counter (its ++ is
