@@ -1,7 +1,9 @@
-M298 | acceptance: byte-pinned NAMED rows, numbers verbatim in evidence - ACHIEVED:
-0x582cc0 = lazy-nibble cache WRITE-BACK (BYTE[rec+2] high nibble = the 0x5aff90 value;
-edi survives the call; discarded eax = rec base); [ebp-0xc] = BYTE[rec+3] site byte,
-sole store 0x51dd57 (11-callers REFUTED); M294 cell-addr phrasing FIXED (slot store = max ->
-28B 0x989ce8; addr = 0x94eca8+8380*ebx+site; ebx==0 skips cell store) | MERGED #263 at s251
-(Greptile r1 4xP2 fixed in-branch; r2 SILENT, gate-green merge) | next: s252 = B18 BUILD fire per NEXT_PROMPT;
-open lead: NAMED.md archive split (248 kB)
+B18 | acceptance: runnable + parity vs a RECORDED trace + green gate (never a
+census claim) - ACHIEVED: sim/sitegate.py PASS 10/10 (evidence/b18_sitegate.txt:11):
+62/62 M298 pins with the laws DECODED from the bytes (nibble-split write-back, edi survives,
+BOTH stores MAX by cmp/jle polarity, 28-B slot stride + its +4 counter, sole [ebp-0xc]
+store = BYTE[rec+3]); cache machine over 2321 rows = 2288 hits / 1 lazy wb / 32 adopted,
+end-state == the s249 dump on 86/101, live lazy class 0; 277 owner(-1) cell skips, 0
+legitimate owner 0 | MERGED #NNN at s252 | next: s253 ANALYSE (track_mode FIRST; B19 =
+the next build) | leads: a /proc dump of 0x989ce8/0x94eca8, ebx's walked table, the
+[+4] counter's 0x5832b0 gate
