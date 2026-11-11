@@ -1,8 +1,7 @@
-M297 | acceptance: named rows with numbers verbatim OR the failing number as
-the finding - ACHIEVED: pool UNEXPLAINED 0/8482 (residue CLOSED), no-go R4
-INERT on live flags 0/8482+0/2321, u=45 DEST-MOVED, S3 strict live row law
-2102/2321 = documented FAIL finding (drift 219); s250 closed the PR: 4 hermes
-P1 + Greptile P1 + 6 P2 disposed, A0 shipped-verify 25/25, A1 P6 PARTIAL-MISS |
-merged: PR #262 | next: s251 SMALL STATICS pair (0x582cc0 side-effects +
-0x51dfe2 [ebp-0xc]) per NEXT_PROMPT THE PICK; s252 = B18 BUILD fire; also
-open lead: NAMED.md archive split (248 kB warn)
+M298 | acceptance: byte-pinned NAMED rows, numbers verbatim in evidence - ACHIEVED:
+0x582cc0 = lazy-nibble cache WRITE-BACK (BYTE[rec+2] high nibble = the 0x5aff90 value;
+edi survives the call; discarded eax = rec base); [ebp-0xc] = BYTE[rec+3] site byte,
+sole store 0x51dd57 (11-callers REFUTED); M294 cell-addr phrasing FIXED (slot store = max ->
+28B 0x989ce8; addr = 0x94eca8+8380*ebx+site; ebx==0 skips cell store) | merged: PR
+pending (Greptile-wait per MERGE RULE) | next: s252 = B18 BUILD fire per NEXT_PROMPT;
+open lead: NAMED.md archive split (248 kB)

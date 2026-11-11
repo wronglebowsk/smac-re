@@ -1,0 +1,170 @@
+== M298 (s251) STATIC pair - FUN_0051dcb0 semantics: 0x582cc0 side-effects + [ebp-0xc] writer. Zero box; objdump windows via scratch/m71/dis.py; full body dump scratch/s251_fn51dcb0.txt (386 insns).
+-- fn.py headers (ghidra_out containment, shards) --
+# addr=0x00582cc0,name=FUN_00582cc0,size_bytes=54,n_insns=19,n_callers=11,n_callees=0,n_strings=0,ok=1,chars=259,shard=014
+# addr=0x0051dcb0,name=FUN_0051dcb0,size_bytes=1191,n_insns=386,n_callers=11,n_callees=7,n_strings=0,ok=1,chars=7127,shard=013
+# addr=0x005aff90,name=FUN_005aff90,size_bytes=1442,n_insns=525,n_callers=10,n_callees=2,n_strings=0,ok=1,chars=6547,shard=015
+
+== A. FUN_00582cc0 FULL BODY (20 lines): push/pop ebp only + eax/ecx/edx clobbered; NO write to edi/esi/ebx; return eax = rec base pointer (0x582ce6 lea) == the DISCARDED return.
+20 lines 0x582cc0-0x582cf6
+  582cc0:	55                   	push   ebp
+  582cc1:	8b ec                	mov    ebp,esp
+  582cc3:	a1 84 21 69 00       	mov    eax,ds:0x692184
+  582cc8:	8b 4d 08             	mov    ecx,DWORD PTR [ebp+0x8]
+  582ccb:	0f af 45 0c          	imul   eax,DWORD PTR [ebp+0xc]
+  582ccf:	d1 f9                	sar    ecx,1
+  582cd1:	03 c1                	add    eax,ecx
+  582cd3:	8b 0d 14 ae 92 00    	mov    ecx,DWORD PTR ds:0x92ae14
+  582cd9:	8d 14 80             	lea    edx,[eax+eax*4]
+  582cdc:	8d 04 50             	lea    eax,[eax+edx*2]
+  582cdf:	8a 54 81 02          	mov    dl,BYTE PTR [ecx+eax*4+0x2]
+  582ce3:	80 e2 0f             	and    dl,0xf
+  582ce6:	8d 04 81             	lea    eax,[ecx+eax*4]
+  582ce9:	8a 4d 10             	mov    cl,BYTE PTR [ebp+0x10]
+  582cec:	c0 e1 04             	shl    cl,0x4
+  582cef:	0a d1                	or     dl,cl
+  582cf1:	88 50 02             	mov    BYTE PTR [eax+0x2],dl
+  582cf4:	5d                   	pop    ebp
+  582cf5:	c3                   	ret
+  582cf6:	90                   	nop
+-- A. addressing: rec = [0x92ae14] + 0x2c*(imul [0x692184]*param_2 + sar(param_1,1)); 0x582ce3 and dl,0xf keeps LOW nibble; 0x582ce9-ef cl=[ebp+0x10] (param_3) <<4 | dl; 0x582cf1 store BYTE[rec+2] = HIGH-nibble write-back of param_3.
+
+== B. caller lazy path (0x51df83-0x51dff3): edi = BYTE[rec+2]>>4 (0x51df85-8a, jne cached); ELSE call 0x5aff90, edi=result at 0x51df9f, edi pushed as param_3 (0x51dfa1) to 0x582cc0; NO edi reload after the call - edi feeds min 0x51dfc3-7 and max 0x51dfee-f1; 0x51dfac reloads only eax.
+42 lines 0x51df83-0x51dff4
+  51df83:	33 c0                	xor    eax,eax
+  51df85:	8a 47 02             	mov    al,BYTE PTR [edi+0x2]
+  51df88:	8b f8                	mov    edi,eax
+  51df8a:	c1 ef 04             	shr    edi,0x4
+  51df8d:	75 1d                	jne    0x51dfac
+  51df8f:	8b 75 f8             	mov    esi,DWORD PTR [ebp-0x8]
+  51df92:	8b 4d f0             	mov    ecx,DWORD PTR [ebp-0x10]
+  51df95:	56                   	push   esi
+  51df96:	51                   	push   ecx
+  51df97:	e8 f4 1f 09 00       	call   0x5aff90
+  51df9c:	8b 55 f0             	mov    edx,DWORD PTR [ebp-0x10]
+  51df9f:	8b f8                	mov    edi,eax
+  51dfa1:	57                   	push   edi
+  51dfa2:	56                   	push   esi
+  51dfa3:	52                   	push   edx
+  51dfa4:	e8 17 4d 06 00       	call   0x582cc0
+  51dfa9:	83 c4 14             	add    esp,0x14
+  51dfac:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+  51dfaf:	8b c8                	mov    ecx,eax
+  51dfb1:	8d 34 c5 00 00 00 00 	lea    esi,[eax*8+0x0]
+  51dfb8:	2b f1                	sub    esi,ecx
+  51dfba:	c1 e6 02             	shl    esi,0x2
+  51dfbd:	8b 86 e8 9c 98 00    	mov    eax,DWORD PTR [esi+0x989ce8]
+  51dfc3:	3b f8                	cmp    edi,eax
+  51dfc5:	7e 02                	jle    0x51dfc9
+  51dfc7:	8b c7                	mov    eax,edi
+  51dfc9:	85 db                	test   ebx,ebx
+  51dfcb:	89 86 e8 9c 98 00    	mov    DWORD PTR [esi+0x989ce8],eax
+  51dfd1:	74 22                	je     0x51dff5
+  51dfd3:	8b d3                	mov    edx,ebx
+  51dfd5:	c1 e2 06             	shl    edx,0x6
+  51dfd8:	03 d3                	add    edx,ebx
+  51dfda:	8d 04 53             	lea    eax,[ebx+edx*2]
+  51dfdd:	c1 e0 04             	shl    eax,0x4
+  51dfe0:	2b c3                	sub    eax,ebx
+  51dfe2:	8d 8c 81 a8 ec 94 00 	lea    ecx,[ecx+eax*4+0x94eca8]
+  51dfe9:	33 c0                	xor    eax,eax
+  51dfeb:	8a 01                	mov    al,BYTE PTR [ecx]
+  51dfed:	3b f8                	cmp    edi,eax
+  51dfef:	7e 02                	jle    0x51dff3
+  51dff1:	8b c7                	mov    eax,edi
+  51dff3:	88 01                	mov    BYTE PTR [ecx],al
+
+== C. frame is OWN: callers cannot reach below-ebp slots; function is void/0-args (fn.py header above).
+6 lines 0x51dcb0-0x51dcba
+  51dcb0:	55                   	push   ebp
+  51dcb1:	8b ec                	mov    ebp,esp
+  51dcb3:	83 ec 1c             	sub    esp,0x1c
+  51dcb6:	56                   	push   esi
+  51dcb7:	57                   	push   edi
+  51dcb8:	ba a8 ec 94 00       	mov    edx,0x94eca8
+-- C. ALL [ebp-0xc] refs in the 386-insn body (grep of full dump scratch/s251_fn51dcb0.txt) - EXACTLY ONE store (0x51dd57); rest loads.
+  51dd57:	89 4d f4             	mov    DWORD PTR [ebp-0xc],ecx
+  51dd9f:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+  51df28:	8b 4d f4             	mov    ecx,DWORD PTR [ebp-0xc]
+  51dfac:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+  51e021:	8b 4d f4             	mov    ecx,DWORD PTR [ebp-0xc]
+  51e0cc:	8b 55 f4             	mov    edx,DWORD PTR [ebp-0xc]
+-- C. sole writer: ecx zeroed 0x51dd48, cl = BYTE[rec+3] 0x51dd4f, store 0x51dd57 (before first load 0x51dd9f - no uninit read).
+6 lines 0x51dd48-0x51dd5b
+  51dd48:	33 c9                	xor    ecx,ecx
+  51dd4a:	be 01 00 00 00       	mov    esi,0x1
+  51dd4f:	8a 4f 03             	mov    cl,BYTE PTR [edi+0x3]
+  51dd52:	b8 ec f4 94 00       	mov    eax,0x94f4ec
+  51dd57:	89 4d f4             	mov    DWORD PTR [ebp-0xc],ecx
+  51dd5a:	8d 1c 4d 64 0a 95 00 	lea    ebx,[ecx*2+0x950a64]
+-- C. record cursor: base [0x92ae14] 0x51dd1e; advance +0x2c 0x51e128, reload edi 0x51e133; loop test 0x51e12e-35.
+9 lines 0x51e11d-0x51e136
+  51e11d:	8b 75 fc             	mov    esi,DWORD PTR [ebp-0x4]
+  51e120:	a1 78 a3 92 00       	mov    eax,ds:0x92a378
+  51e125:	83 c7 02             	add    edi,0x2
+  51e128:	83 c6 2c             	add    esi,0x2c
+  51e12b:	89 7d f0             	mov    DWORD PTR [ebp-0x10],edi
+  51e12e:	3b f8                	cmp    edi,eax
+  51e130:	89 75 fc             	mov    DWORD PTR [ebp-0x4],esi
+  51e133:	8b fe                	mov    edi,esi
+  51e135:	0f 8c 0d fc ff ff    	jl     0x51dd48
+
+== D. cell addr vs min-slot (M294 phrasing FIX): esi = 28*[ebp-0xc] via (x*8-x)<<2 at 0x51dfb1-ba; min(edi, slot) stored 0x51dfcb to [esi+0x989ce8]; addr 0x51dfe2 = [ebp-0xc] + 4*(2095*ebx) + 0x94eca8 (2095*ebx via 65x/131x/<<4/-x 0x51dfd3-e0; 4*2095 = 8380 = M297 faction-block stride); cell byte = max(edi, old) 0x51dfeb-f3.
+43 lines 0x51dfaf-0x51e02c
+  51dfaf:	8b c8                	mov    ecx,eax
+  51dfb1:	8d 34 c5 00 00 00 00 	lea    esi,[eax*8+0x0]
+  51dfb8:	2b f1                	sub    esi,ecx
+  51dfba:	c1 e6 02             	shl    esi,0x2
+  51dfbd:	8b 86 e8 9c 98 00    	mov    eax,DWORD PTR [esi+0x989ce8]
+  51dfc3:	3b f8                	cmp    edi,eax
+  51dfc5:	7e 02                	jle    0x51dfc9
+  51dfc7:	8b c7                	mov    eax,edi
+  51dfc9:	85 db                	test   ebx,ebx
+  51dfcb:	89 86 e8 9c 98 00    	mov    DWORD PTR [esi+0x989ce8],eax
+  51dfd1:	74 22                	je     0x51dff5
+  51dfd3:	8b d3                	mov    edx,ebx
+  51dfd5:	c1 e2 06             	shl    edx,0x6
+  51dfd8:	03 d3                	add    edx,ebx
+  51dfda:	8d 04 53             	lea    eax,[ebx+edx*2]
+  51dfdd:	c1 e0 04             	shl    eax,0x4
+  51dfe0:	2b c3                	sub    eax,ebx
+  51dfe2:	8d 8c 81 a8 ec 94 00 	lea    ecx,[ecx+eax*4+0x94eca8]
+  51dfe9:	33 c0                	xor    eax,eax
+  51dfeb:	8a 01                	mov    al,BYTE PTR [ecx]
+  51dfed:	3b f8                	cmp    edi,eax
+  51dfef:	7e 02                	jle    0x51dff3
+  51dff1:	8b c7                	mov    eax,edi
+  51dff3:	88 01                	mov    BYTE PTR [ecx],al
+  51dff5:	8b 4d f8             	mov    ecx,DWORD PTR [ebp-0x8]
+  51dff8:	8b 7d f0             	mov    edi,DWORD PTR [ebp-0x10]
+  51dffb:	51                   	push   ecx
+  51dffc:	57                   	push   edi
+  51dffd:	e8 ae 52 06 00       	call   0x5832b0
+  51e002:	83 c4 08             	add    esp,0x8
+  51e005:	85 c0                	test   eax,eax
+  51e007:	0f 84 10 01 00 00    	je     0x51e11d
+  51e00d:	8b 8e ec 9c 98 00    	mov    ecx,DWORD PTR [esi+0x989cec]
+  51e013:	8b d3                	mov    edx,ebx
+  51e015:	c1 e2 06             	shl    edx,0x6
+  51e018:	03 d3                	add    edx,ebx
+  51e01a:	41                   	inc    ecx
+  51e01b:	89 8e ec 9c 98 00    	mov    DWORD PTR [esi+0x989cec],ecx
+  51e021:	8b 4d f4             	mov    ecx,DWORD PTR [ebp-0xc]
+  51e024:	8d 04 53             	lea    eax,[ebx+edx*2]
+  51e027:	c1 e0 04             	shl    eax,0x4
+  51e02a:	2b c3                	sub    eax,ebx
+  51e02c:	8a 94 81 28 ed 94 00 	mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
+-- D. ebx provenance: xor 0x51ddf5 / or -1 sentinels 0x51ddbd+ddea; -1 clamped to 0 at 0x51df22-24; ebx==0 skips the cell store (test/je 0x51dfd1-d3; NOTE the min store at 0x51dfcb still happens).
+5 lines 0x51df1d-0x51df27
+  51df1d:	85 db                	test   ebx,ebx
+  51df1f:	88 5f 07             	mov    BYTE PTR [edi+0x7],bl
+  51df22:	7d 02                	jge    0x51df26
+  51df24:	33 db                	xor    ebx,ebx
+  51df26:	8b d3                	mov    edx,ebx
+
+== CORRECTIONS (s251 in-branch, Greptile PR#263 round-1; instruction windows above are verbatim truth) ==
+C1. The 0x51dfcb slot store is a MAX, not min: `mov eax,[esi+0x989ce8]` (old), `cmp edi,eax`, `jle 0x51dfc9`
+    keeps the OLD slot when edi<=old, else `mov eax,edi` -> store max(edi, old-slot). The 'min' prose in the
+    B/D banners (inherited from M294's phrasing) is RETRACTED: both the 0x989ce8 slot store and the 0x94eca8
+    cell store (0x51dfeb-f3) are MAX ops.
+C2. rec2 uses the VALUES of the two globals (loaded first): rec2 = [0x92ae14] + 0x2c*([0x692184]*param_2 +
+    sar(param_1,1)); loads at 0x582cc3 (mov eax,ds:0x692184) and 0x582cd3 (mov ecx,ds:0x92ae14).

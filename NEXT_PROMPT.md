@@ -1,9 +1,8 @@
-# NEXT_PROMPT.md - footing (s249 close: M297 LIVE-MAP flag-matched census landed -
-M296 residue CLOSED (2434 = tie 2146+lt 35+live-static-fail 253, 0 unexplained),
-M295 P1c CLOSED (no-go R4 rejects 0/8482 pool AND 0/2321 recorded on live flags -
-INERT), u=45 CLOSED (live dest (9,47)+order 0x00 moved vs save (19,6)/0x18), strict
-live row law 2102/2321 = RECORDED FINDING (post-grading drift 219: bit4-flips 134
-val-invisible + nibble 85, 201 machine-attested; lazy 0). B17 re-verified PASS 10/10.)
+# NEXT_PROMPT.md - footing (s251 close: M298 SMALL STATICS pair landed (zero box) -
+0x582cc0 = lazy-nibble CACHE WRITE-BACK into BYTE[rec+2] high nibble, edi survives
+the call (discarded eax = rec base); [ebp-0xc] = BYTE[rec+3] site byte, sole store
+0x51dd57 - 11-callers REFUTED; M294 cell-addr phrasing FIXED (slot store = max ->
+28B slot 0x989ce8; addr = 0x94eca8+8380*ebx+site). s250 landed M297 (NAMED §M297). B17 10/10.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -30,12 +29,12 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B17 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B17: `python3 -m sim.selftest --b17 <sav>` +
 `evidence/b17_scanleg_chain.txt:1`). Next = **B18**, unauthored - its BUILD fire
-writes it (B14/B16/B17); s250-s251 are ANALYSE, s252 = B18 BUILD fire. Track_mode FIRST.
+writes it (B14/B16/B17); s251 ANALYSE landed M298; s252 = B18 BUILD fire. Track_mode FIRST.
 
 ## THE LEDGER
 
-Merged M54A-M297 + B0-B17 (through s250) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
-Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
+Merged M54A-M298 + B0-B17 (through s251) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
@@ -55,16 +54,13 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
   pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing was wrong, lead to fix it there).
-- **THE PICK (s251): the SMALL STATICS pair** (zero box; step 2 of the s249
-  kickoff; #262 closed s250):
-  (a) 0x582cc0 in FUN_0051dcb0: return DISCARDED (eax reload 0x51dfac) - does the callee
-  mutate edi (BYTE[rec+2]>>4 / lazy-0x5aff90 value feeding the 0x51dff3 max + cell index)?
-  (b) the 0x51dfe2 cell addr `0x94eca8+[ebp-0xc]+4*min(edi,[esi+0x989ce8])`: what writes
-  [ebp-0xc] in FUN_0051dcb0 callers (site/region id?) - 11 e8-callers (## M294).
-  Kit: fn.py 0x582cc0/0x51dcb0, scratch/m71/dis.py, index.csv containment; acceptance =
-  byte-pinned NAMED rows. NO live census re-run (box 2212/30; snapshot = last-turn
-  witness, M297 S3).
-  ANSWERED: M227-M297 + B1-B17 (M241 FAIL 2/5, #180; s249 pick:
+- **THE PICK (s252): B18 BUILD fire** (track_mode says so - run it FIRST). B18 is
+  UNAUTHORED: its BUILD fire writes it from BUILD_SPINE.md (B14/B16/B17 pattern) -
+  runnable acceptance in sim/, parity vs a recorded trace, never a census claim, no
+  box. s251 landed M298 (SMALL STATICS pair CLOSED - 0x582cc0 = lazy cache write-back,
+  [ebp-0xc] = BYTE[rec+3]; NAMED §M298). Hygiene: NAMED split DONE at s251
+  (docs/named-archive-m89-m221.md, gate now green at ~176 kB).
+  ANSWERED: M227-M298 + B1-B17 (M241 FAIL 2/5, #180; s249 pick:
   pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live
   half INVALID s240); NEVER bp mid-instruction (s213). OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS.
@@ -74,7 +70,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   - skill `instrument-laws.md` §LIVE-SNAPSHOT.
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s249: s249 one read-only /proc pass, state identical)
+- **BOX**: s244 state UP (s245..s251: s249 read-only /proc pass; s251 ZERO box - state identical)
   (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).

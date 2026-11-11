@@ -169,6 +169,11 @@ def _note_sources():
     archive = os.path.join(ROOT, "docs", "sessions")
     if os.path.isdir(archive):
         out += [os.path.join(archive, f) for f in sorted(os.listdir(archive)) if f.endswith(".md")]
+    # s251 (M298 Greptile P2): named archives moved out of NAMED.md - keep them findable
+    docs = os.path.join(ROOT, "docs")
+    if os.path.isdir(docs):
+        out += [os.path.join(docs, f) for f in sorted(os.listdir(docs))
+                if f.startswith("named-archive") and f.endswith(".md")]
     return [x for x in out if os.path.isfile(x)]
 
 
