@@ -1,8 +1,8 @@
 # NEXT_PROMPT.md - footing (s251 close: M298 SMALL STATICS pair landed (zero box) -
 0x582cc0 = lazy-nibble CACHE WRITE-BACK into BYTE[rec+2] high nibble, edi survives
 the call (discarded eax = rec base); [ebp-0xc] = BYTE[rec+3] site byte, sole store
-0x51dd57 - 11-callers REFUTED; M294 cell-addr phrasing FIXED (min -> 28B slot
-0x989ce8; addr = 0x94eca8+8380*ebx+site). s250 landed M297 (NAMED §M297). B17 10/10.)
+0x51dd57 - 11-callers REFUTED; M294 cell-addr phrasing FIXED (slot store = max ->
+28B slot 0x989ce8; addr = 0x94eca8+8380*ebx+site). s250 landed M297 (NAMED §M297). B17 10/10.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 

@@ -160,3 +160,11 @@
   51df22:	7d 02                	jge    0x51df26
   51df24:	33 db                	xor    ebx,ebx
   51df26:	8b d3                	mov    edx,ebx
+
+== CORRECTIONS (s251 in-branch, Greptile PR#263 round-1; instruction windows above are verbatim truth) ==
+C1. The 0x51dfcb slot store is a MAX, not min: `mov eax,[esi+0x989ce8]` (old), `cmp edi,eax`, `jle 0x51dfc9`
+    keeps the OLD slot when edi<=old, else `mov eax,edi` -> store max(edi, old-slot). The 'min' prose in the
+    B/D banners (inherited from M294's phrasing) is RETRACTED: both the 0x989ce8 slot store and the 0x94eca8
+    cell store (0x51dfeb-f3) are MAX ops.
+C2. rec2 uses the VALUES of the two globals (loaded first): rec2 = [0x92ae14] + 0x2c*([0x692184]*param_2 +
+    sar(param_1,1)); loads at 0x582cc3 (mov eax,ds:0x692184) and 0x582cd3 (mov ecx,ds:0x92ae14).
