@@ -11,3 +11,35 @@ PRE-READ PREDICTIONS (computed BEFORE any /proc read):
  gates so far:
  S0_guards_293            PASS  M293 guards law: m292.static_gates True + m294.static_gates294 True re-derived against the shipped terran.exe image (zero box time)
  S1_baseline_grid         PASS  B17 grid reproduces on the shipped raw+save: visits 1026/1026 rows 2321/2321 pool 8482/8482 (tie 5721/5721 unexpl 2434/2434 lt 327) save-val law 1931/2321 accepts 260/260
+
+2026-11-11T03:32:35Z ---- s249 LIVE phase ----
+S_LIVE_READ              FAIL  live read failed: TypeError("unsupported operand type(s) for >>: 'tuple' and 'int'")
+FAIL M297: 1/1 gates FAILED: S_LIVE_READ
+
+2026-11-11T03:33:02Z ---- s249 LIVE phase ----
+S3_row_val_law_live      FAIL  recorded val>best 2321/2321; val==LIVE byte2-nibble(+0x1000 byte9bit4 zeroing) 2102, lazy FUN_005aff90 class 0 (predicted <= 8), drift-after-grading misses 219 (bit4 134, nibble 85) ALL on the 97-row machine-multival attested set (M296 S3b: tiles 9 with 2+ recorded vals); detail [('B4', 24, 60, 21, (5, 43), 2, 16), ('DRIFT', 27, 34, 0, (4, 50), 5, 3), ('DRIFT', 27, 34, 10, (6, 52), 2, 1), ('B4', 27, 34, 14, (7, 49), 2, 20)]
+S4_pool_closure_live     PASS  pool 8482/8482 under LIVE values: no-go R4-live rejects 0 | live val<rb 287 | tie 7518 | live static pre-check fail (class/region/occ mutated) 677 | UNEXPLAINED 0 []
+S5_u45_value_leg         PASS  live unit-45 record: order+17=0x0 dest(+20,+28)=(9,47) owner+14=6 | live (19,6) record byte2=0x5 byte9=0x10 -> live value 0: branchA (value(19,6)==6 -> init 5==machine) False | branchB (dest moved from (19,6)) True | branchC (order left 0x18) True
+S6_rivals_fail_live      PASS  R1 foreign-only rejects 1538 RECORDED slots | R2 +mask 42 | R3 +not-ally 42 (each rejects a slot that actually printed -> refuted; save-side M295: 1045/124/119) | R4 full rule recorded-slot collisions 0 (predicted 0) | ge-argmax rival: 7518 live-tie pool cells printed NO row (predicted >= 2000; save-side 5721)
+S7_nogo_live_answer      PASS  M295 P1c ANSWERED on live flags: R4-live rejects 0 inside the 8482-cell pool and 0 inside the 2321 recorded slots; t7-live pool distribution over pass6-no-row cells [(-1, 636), (1, 490), (2, 1638), (3, 4), (4, 1293), (5, 1235), (6, 2797), (7, 389)] | human_mask live 0x8 vis live 0x0 nonzero flagwords 36/64
+S2_live_witness          PASS  dword[0x92ae14]=0x40a5cd0 -> base dword[0x92ae14] pointer (pod-tile witness 32/32); live bounds 64/64 mult 32 (save 64x64); full-array witness over the 2321 tested tiles: byte0+byte3 unchanged 2100/2321 (90.5%, predicted >=85%); map dump 2048 recs x 44 B -> evidence/s249_live_map.bin
+S8_hygiene_state         PASS  read-only /proc pass, NO gdb ever exec'd: TracerPid 0->0, yama 0 recorded/restored-unchanged, starttime R==R, year=2212 cur=3 cnt=30 (== s244 pins 2212/30) before AND after the read
+FAIL M297: 1/7 gates FAILED: S3_row_val_law_live
+
+---- s249 ADDENDUM (s249_attestation.py; idempotent block) ----
+A1 prediction scorecard (PREDICT phase vs LIVE pass + addendum):
+ P1 witness PASS: dword[0x92ae14]=0x40a5cd0 pointer, bounds 64/64, mult 32, byte0+byte3 identity 2100/2321 = 90.5% (>=85% predicted)
+ P2 box state PASS: year 2212 cur 3 cnt 30 pinned before AND after; TracerPid 0->0; yama 0 unchanged; starttime identical; zero gdb
+ P3 row law FAIL AS THE FINDING: lazy 0 (predicted <=8) but the exception class is drift-after-grading 219 rows, NOT lazy
+ P4 pool closure PASS: UNEXPLAINED-under-live 0/8482 (predicted 0)
+ P5 u=45 PASS branchB+branchC (both moved; branchA false): live unit record order+17=0x00 dest(9,47) owner 6 vs save-dest (19,6) order 0x18; live (19,6) tile byte2=0x5 byte9=0x10 live value 0
+ P6 rivals PASS: R1 1538 / R2 42 / R3 42 recorded-slot collisions; ge-argmax 7518 live-tie pool cells printed NO row (>=2000 predicted); R4-live recorded-slot collisions 0
+ P7 no-go PASS: R4-live rejects 0/8482 pool, 0/2321 recorded -> the 0x4e3c00 no-go rejects NOTHING on LIVE flags (M295 P1c closed INERT, and it explains 0 of the 2434)
+ P8 (S3 strict form) FAIL: 2102/2321 exact-live - see A2
+A2 miss taxonomy over the 2321 rows (S3): 2102 exact-match, 0 lazy, 219 miss = [(('bit4', 'changed-attested'), 1), (('bit4', 'flip-attested'), 116), (('bit4', 'unattested'), 17), (('nibble', 'change-attested'), 84), (('nibble', 'unattested'), 1)]
+   attested by a LATER machine grading event 201, UNATTESTED 18 (sum 219 of 2321; all misses are post-grading byte2/byte9 mutations - the 0x1000 bit4-flip class 134 rows is the dominant drift vector, NOT the lazy FUN_005aff90 class)
+   the 9 machine-multival tiles (M296 S3b) are a LOWER BOUND on mutation: a bit4 flip is val-INVISIBLE while val stays >0, so val-timelines cannot attest the bit4 class - S3b was the wrong attestation instrument
+A3 the 2434 save-unexplained pool cells under LIVE values: [('lt_live', 35), ('static_fail_live', 253), ('tie_live', 2146)] (sum 2434/2434) - the residue CLOSES: 0 unexplained; tie_live is the dominant class (live byte2 drift lands values back ON the incoming best), no-go contributes 0
+   whole-pool live picture (8482): tie 7518 | lt 287 | static-fail 677 | no-go 0 | UNEXPLAINED 0 (S4 verbatim) - live tie 7518 vs static 5721: the live mutations CREATE 1797 new strict-rule skips
+A4 strict-entry law stands: recorded val>best 2321/2321 (S3 line 1); 0 tie ROWS among 2321 (M296 S5b holds on live too: the 7518 live ties are all in the printed-NO population)
+---- s249 ADDENDUM END ----

@@ -303,7 +303,7 @@ def run_live():
     visg = m.u8(VIS_GL)
 
     # witness: pointer vs static-array interpretation over 32 pod tiles
-    pts = [(pr[2], pr[3]) for pr in graded][:32]
+    pts = [pr[2] for pr in graded][:32]
 
     def interp(base):
         buf = None
@@ -548,6 +548,8 @@ def finalize():
         try:
             pid = run_live()
         except Exception as ex:                       # blocker = finding
+            import traceback
+            traceback.print_exc()
             gate("S_LIVE_READ", False, "live read failed: %r" % (ex,))
             pid = -1
         for n, o, d in RES:
