@@ -56,7 +56,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
   pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing was wrong, lead to fix it there).
 - **THE PICK (s251): the SMALL STATICS pair** (zero box; step 2 of the s249
-  kickoff; s250 merged #262 - attestation v2, A0 verify 25/25):
+  kickoff; #262 closed s250):
   (a) 0x582cc0 in FUN_0051dcb0: return DISCARDED (eax reload 0x51dfac) - does the callee
   mutate edi (BYTE[rec+2]>>4 / lazy-0x5aff90 value feeding the 0x51dff3 max + cell index)?
   (b) the 0x51dfe2 cell addr `0x94eca8+[ebp-0xc]+4*min(edi,[esi+0x989ce8])`: what writes
@@ -64,7 +64,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   Kit: fn.py 0x582cc0/0x51dcb0, scratch/m71/dis.py, index.csv containment; acceptance =
   byte-pinned NAMED rows. NO live census re-run (box 2212/30; snapshot = last-turn
   witness, M297 S3).
-  ANSWERED: M227-M297 + B1-B17 (M241 FAIL 2/5, #180; s249 pick text in
+  ANSWERED: M227-M297 + B1-B17 (M241 FAIL 2/5, #180; s249 pick:
   pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live
   half INVALID s240); NEVER bp mid-instruction (s213). OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS.
