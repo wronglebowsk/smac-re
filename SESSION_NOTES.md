@@ -811,7 +811,7 @@ MAX stores (the unconditional 28-B slot at 0x989ce8 and the owner-block cell at
   diverges 1 slot, min 1 slot + 5 cells, owner-block-blind key 4 cells (digest
   888f5366f04c74b1). The tables' LIVE contents stay DECLARED unrecorded.
 - G9 the 10 rivals refuted by recorded numbers; G10 two module runs identical sha256
-  c8461c349d9c0365.
+  461714e03cc72a32.
 DECLARED UNMODELED: the 0x5aff90 value body, the slot's [+4] visit counter (its ++ is
 gated on call 0x5832b0), ebx's walked-table provenance beyond the owner-byte reading, the
 live 0x989ce8/0x94eca8 contents (a read-only /proc window: LEAD), and every M297 A5
