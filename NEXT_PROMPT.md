@@ -4,8 +4,8 @@ M295 P1c CLOSED (no-go R4 rejects 0/8482 pool AND 0/2321 recorded on live flags 
 INERT), u=45 CLOSED (live dest (9,47)+order 0x00 moved vs save (19,6)/0x18), strict
 live row law 2102/2321 = RECORDED FINDING (post-grading drift 219: bit4-flips 134
 val-invisible + nibble 85, 201 machine-attested; lazy 0). B17 re-verified PASS 10/10.)
-Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
-§CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
+Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
+(§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -42,9 +42,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 1. **accept_ready.py** = readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
    base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm** (screen fixes in TRAPS).
 2. Writer/flag chain - silent bps or hw watchpoints + a live-memory prediction + a read-back: the
-   m94/m97/m100/m102/m103 + m92/m95/m98/m117 family (full text + the print/containment detail:
-   `docs/pick-archive.md` §s244-trim; each names the writer by containment in ghidra_out/index.csv,
-   `--predict` = model table with no touch; flags via `--help` first).
+   m94/m97/m100/m102/m103 + m92/m95/m98/m117 family (full text: pick-archive §s244-trim; writer
+   named by containment in ghidra_out/index.csv; `--predict` = model table, no touch).
 3. Static-first kit (zero box time): `field_census.py` (a global's shape from its addressing form + index math),
    `name_global.py` (every reader/writer + containment), `m118_flag_never_set.py` (gate satisfiability: test sites, OR
    immediates, register bit ops, save-carry), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]` (objdump window;
@@ -61,8 +60,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   mutate edi (BYTE[rec+2]>>4 / lazy-0x5aff90 value feeding the 0x51dff3 max + cell index)?
   (b) the 0x51dfe2 cell addr `0x94eca8+[ebp-0xc]+4*min(edi,[esi+0x989ce8])`: what writes
   [ebp-0xc] in FUN_0051dcb0 callers (site/region id?) - 11 e8-callers named (## M294).
-  Kit: `fn.py 0x582cc0` / `0x51dcb0`, scratch/m71/dis.py windows, index.csv containment;
-  acceptance = byte-pinned NAMED rows. DO NOT re-run the live-map census (box unchanged
+  Kit: fn.py 0x582cc0/0x51dcb0, scratch/m71/dis.py, index.csv containment; acceptance =
+  byte-pinned NAMED rows. DO NOT re-run the live-map census (box unchanged
   2212/30; snapshot = last-turn witness, M297 S3).
   ANSWERED: M227-M297 + B1-B17 (M241 FAIL 2/5, #180; s249 pick text VERBATIM in
   pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live
@@ -74,8 +73,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   - skill `instrument-laws.md` §LIVE-SNAPSHOT.
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s249 touched nothing: s249 was ONE read-only /proc
-  census pass, year/cnt identical before AND after) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
+- **BOX**: s244 state UP (s245..s249: s249 ONE read-only /proc census pass, yr/cnt
+  identical before AND after) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
    `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the
