@@ -1478,6 +1478,50 @@ def run_b17(sav_path, results):
     return 0
 
 
+
+def run_b18(sav_path, results):
+    """Rung B18: the site-gate VALUE SOURCE + MAX STORES (M298: the lazy-nibble
+    cache, the 0x582cc0 write-back, the BYTE[rec+3] site byte, the slot/cell MAX
+    stores) composed in sim/sitegate.py and replayed over the recorded m294
+    gate-row window and the recorded s249 end-window record dump. No box, no
+    /proc, no gdb."""
+    import hashlib as _hl
+    import subprocess as _sp
+    import tempfile as _tf
+    if not os.path.exists(sav_path):
+        return fail("B18: missing save %s" % sav_path)
+    from . import sitegate
+    ok = sitegate.acceptance(sav_path, results)
+    # G10: two independent module runs must emit identical report bytes
+    digs = []
+    for _ in range(2):
+        fd, out = _tf.mkstemp(suffix=".txt")
+        os.close(fd)
+        rc = _sp.call([sys.executable, "-m", "sim.sitegate", "--sav", sav_path,
+                       "--out", out], cwd=REPO, stdout=_sp.DEVNULL)
+        with open(out, "rb") as f:
+            digs.append((rc, _hl.sha256(f.read()).hexdigest()))
+        os.unlink(out)
+    det = digs[0][0] == 0 and digs[0] == digs[1]
+    results.append(("G10_two_run_determinism", det))
+    print("%-27s %s  module CLI twice: (rc,sha256) %s %s%s"
+          % ("G10_two_run_determinism", "PASS" if det else "FAIL",
+             (digs[0][0], digs[0][1][:16]), (digs[1][0], digs[1][1][:16]),
+             "" if digs[0][1] == digs[1][1] else " MISMATCH"))
+    bad = [n for n, o in results if not o]
+    if bad:
+        return fail("B18: %d/%d gates failed: %s"
+                    % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B18: %d/%d gates - the site-gate value source (the lazy-nibble "
+          "cache read path, the 0x582cc0 nibble-split write-back, the BYTE[rec+3] "
+          "site index and the unconditional slot MAX / owner-block cell MAX stores) "
+          "replays the recorded m294 decision rows and the recorded s249 end-window "
+          "record dump, with the table CONTENTS and the 0x5aff90 body DECLARED "
+          "(no box time, no /proc, no gdb)"
+          % (len(results), len(results)))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1509,6 +1553,10 @@ def main(argv=None):
     ap.add_argument("--b17", nargs="*", metavar="SAV",
                     help="rung B17: the pod-scan loop decision core (best chain "
                          "+ price gate + winner) on the recorded gate-row grid")
+    ap.add_argument("--b18", nargs="*", metavar="SAV",
+                    help="rung B18: the site-gate value source (nibble cache, "
+                         "write-back, site byte, MAX stores) vs the recorded "
+                         "m294 rows and the s249 live-record dump")
     ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
                     help="rung B13: the pod-driven founding dispatch leg acceptance")
     ap.add_argument("--b14", nargs="+", metavar="SAV",
@@ -1555,6 +1603,9 @@ def main(argv=None):
     if args.b17 is not None:
         sav = args.b17[0] if args.b17 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b17(sav, results)
+    if args.b18 is not None:
+        sav = args.b18[0] if args.b18 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b18(sav, results)
     if args.b14:
         lg = args.b14[1] if len(args.b14) > 1 else None
         gd = args.b14[2] if len(args.b14) > 2 else None

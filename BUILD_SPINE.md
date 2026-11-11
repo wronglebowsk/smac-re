@@ -379,3 +379,55 @@ columns replay 25650/25650; G5 accepts 260/260 from the replayed best (bypass
 G8 pool 6048/8482 explained, 2434 DECLARED; G9 rivals fail the same grid
 (>=-argmax 5721 ties, frozen-best 1713, no-bypass +61, no-init-law 24); G10 two
 runs byte-identical. No box time, no /proc, no gdb.
+**B18 - the site-gate VALUE SOURCE + MAX STORES made executable (R2's "who caches
+a site value and where does it land" slice; written by s252 from M298's CLOSED
+FUN_0051dcb0 semantics on top of B17's decision core - the rung was not yet in this
+file, so the build fire authored it, as B14/B16/B17 did).** `sim/sitegate.py`: the
+three M298 laws executable. (1) the LAZY-NIBBLE CACHE: `edi = BYTE[rec+2]>>4` when
+nonzero ELSE the 525-insn FUN_005aff90 result (the recorded machine val column is the
+DECLARED input, as in B15/B17) - the pinned branch at 0x51df8d (`jne 0x51dfac`) runs
+the lazy call AND the write-back ONLY on a zero nibble; FUN_00582cc0 writes back
+`BYTE[rec2+2] = (old&0x0F)|(edi<<4)`, a 4-bit HIGH-nibble overwrite that PRESERVES the
+low nibble, on the SAME record byte the pod-scan score getter reads
+(rec2 = [0x92ae14] + 0x2c*([0x692184]*Y + sar(X,1))). (2) the SITE BYTE: the store
+index `[ebp-0xc]` = zero-extended `BYTE[rec+3]` (sole store 0x51dd57, own frame - the
+11 e8-callers REFUTED). (3) the TWO MAX STORES: slot `[0x989ce8 + 28*site] = max(edi,
+old)` (UNCONDITIONAL) and cell `[0x94eca8 + 8380*block + site] = max(edi, old)`,
+SKIPPED when `block == 0` after the -1 sentinel clamp - `block` = `BYTE[rec+7]`, the
+record's owner byte (8380 = the recorded 8-block owner fold; site_gate = block 0x94d448
++ 0x1860, B15). PINS = the 62 instruction windows transcribed from
+`evidence/s251_statics_fn51dcb0.txt`, and the LAWS are DECODED from the pinned bytes by
+the shipped decoder (the nibble split; no edi/esi/ebx named anywhere in the 19-insn
+callee, so edi SURVIVES; both store chains MAX by the `cmp edi,eax` / `jle L` / `mov
+eax,edi` / store form with the jump landing over the take and no branch between L and
+the store - a MIN store would need `jge`; no cmp/test/branch at all inside 0x582cc0, so
+the cache is an overwrite NOT an accumulator; the `(site*8-site)<<2` = 28 B stride and
+its +4 counter field, which the RETRACTED 4x-value phrasing would alias onto the next
+slot). Parity targets: the recorded m294 window rows (B17's loader, B16's transposition
+law) + the recorded s249 end-window live-record dump.
+`python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` must print PASS B18 10/10
+with: G1 62/62 pins + the 10 decoded laws; G2 the write-back target == the score byte on
+4096/4096 tiles + the exhaustive 256x32 nibble law (the cache is 4 bits - an edi>15
+truncates); G3 the cache state machine over 2321 rows / 101 tiles - 2288 cached-path
+hits / 1 lazy write-back / 32 adopted live mutations, tiles re-valued inside the window
+9 (RECORDED M296 S3b) carrying 230 rows (RECORDED), replayed end-state nibble == the dump
+on 86/101 tiles (the 15 = the declared A5 post-grading drift); G4 the save-seeded read
+path 1931 match / 1 lazy / 389 mutation (RECORDED 1931 and 1); G5 the s249 snapshot 2102
+match / 134 bit4 / 85 nibble / **0 lazy** (RECORDED M297 S3 verbatim - the cache law's own
+observable: a recorded nonzero val never meets a zeroed nibble) + the write-back signature
+177 records high-nibble-changed, 103 of them low-nibble-preserved; G6 the nibble moves BOTH
+ways (182 down / 31 up) so it is an overwrite, not an accumulator, and the low-nibble getter
+rival matches only 76 rows; G7 site = BYTE[rec+3] {1: 2253, 9: 68} with max site under the
+128-entry region bound, 1026/1026 single-site visits, the -1 owner sentinel on 277 rows ==
+the cell-store skip class, 0 records with a legitimate 0 owner (so the skip class IS exactly
+the unowned tiles), rival "site = the 22-B column byte0" diverging 2321/2321, and the pinned
+inner walk (x += 2 to ds:0x92a378) covering exactly one 32-record row; G8 the MAX funnel over
+2321 walk steps - 2 slot entries, 5 cell entries over 5 owner blocks, 277 cell-store skips,
+every table monotone and each slot ending at the recorded MAX, the last-write rival diverging
+on 1 slot and the min rival on 1 (the table CONTENTS are DECLARED unrecorded - a read-only
+/proc window over 0x989ce8/0x94eca8 grades them absolutely: LEAD); G9 the 10 rivals refuted
+by recorded numbers; G10 two runs byte-identical + `python3 -m sim.sitegate --sav <sav> --out
+<f>` exits 0. DECLARED UNMODELED: the FUN_005aff90 value body, the slot `[+4]` visit counter
+(its ++ is gated on call 0x5832b0), ebx's walked-table provenance beyond the owner-byte reading
+(M298 LEAD), the live table contents, and every M297 A5 end-window caveat. No box time, no
+/proc, no gdb.
