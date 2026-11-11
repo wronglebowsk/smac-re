@@ -1,0 +1,74 @@
+M296 init-leg + accept-store windows (FUN_0055f650, terran.exe .text)
+== window 0x563820-0x5638aa ==
+  563820:	75 14                	jne    0x563836
+  563822:	8b 4d ec             	mov    ecx,DWORD PTR [ebp-0x14]
+  563825:	8b 55 e8             	mov    edx,DWORD PTR [ebp-0x18]
+  563828:	6a 01                	push   0x1
+  56382a:	51                   	push   ecx
+  56382b:	52                   	push   edx
+  56382c:	56                   	push   esi
+  56382d:	57                   	push   edi
+  56382e:	e8 4d 9f 00 00       	call   0x56d780
+  563833:	83 c4 14             	add    esp,0x14
+  563836:	83 fe 08             	cmp    esi,0x8
+  563839:	c7 45 dc 00 00 00 00 	mov    DWORD PTR [ebp-0x24],0x0
+  563840:	75 60                	jne    0x5638a2
+  563842:	8b 5d f0             	mov    ebx,DWORD PTR [ebp-0x10]
+  563845:	80 bb 89 32 93 00 18 	cmp    BYTE PTR [ebx+0x933289],0x18
+  56384c:	75 54                	jne    0x5638a2
+  56384e:	0f bf 83 94 32 93 00 	movsx  eax,WORD PTR [ebx+0x933294]
+  563855:	8b 4d ec             	mov    ecx,DWORD PTR [ebp-0x14]
+  563858:	8b 7d e8             	mov    edi,DWORD PTR [ebp-0x18]
+  56385b:	0f bf b3 8c 32 93 00 	movsx  esi,WORD PTR [ebx+0x93328c]
+  563862:	2b c8                	sub    ecx,eax
+  563864:	51                   	push   ecx
+  563865:	e8 06 80 0e 00       	call   0x64b870
+  56386a:	83 c4 04             	add    esp,0x4
+  56386d:	50                   	push   eax
+  56386e:	56                   	push   esi
+  56386f:	57                   	push   edi
+  563870:	e8 cb ac f0 ff       	call   0x46e540
+  563875:	83 c4 08             	add    esp,0x8
+  563878:	50                   	push   eax
+  563879:	e8 22 ad f0 ff       	call   0x46e5a0
+  56387e:	83 c4 08             	add    esp,0x8
+  563881:	83 f8 02             	cmp    eax,0x2
+  563884:	7e 1c                	jle    0x5638a2
+  563886:	0f bf 93 94 32 93 00 	movsx  edx,WORD PTR [ebx+0x933294]
+  56388d:	0f bf 83 8c 32 93 00 	movsx  eax,WORD PTR [ebx+0x93328c]
+  563894:	52                   	push   edx
+  563895:	50                   	push   eax
+  563896:	e8 d5 ae f0 ff       	call   0x46e770
+  56389b:	83 c4 08             	add    esp,0x8
+  56389e:	48                   	dec    eax
+  56389f:	89 45 dc             	mov    DWORD PTR [ebp-0x24],eax
+  5638a2:	c7 45 d4 00 00 00 00 	mov    DWORD PTR [ebp-0x2c],0x0
+  5638a9:	8b                   	.byte 0x8b
+== window 0x563c96-0x563cc4 ==
+  563c96:	42                   	inc    edx
+  563c97:	8b 04 8d e4 9c 98 00 	mov    eax,DWORD PTR [ecx*4+0x989ce4]
+  563c9e:	8d 14 52             	lea    edx,[edx+edx*2]
+  563ca1:	d1 e2                	shl    edx,1
+  563ca3:	3b c2                	cmp    eax,edx
+  563ca5:	7d 0c                	jge    0x563cb3
+  563ca7:	8b 45 d4             	mov    eax,DWORD PTR [ebp-0x2c]
+  563caa:	89 75 dc             	mov    DWORD PTR [ebp-0x24],esi
+  563cad:	89 85 7c ff ff ff    	mov    DWORD PTR [ebp-0x84],eax
+  563cb3:	8b 45 d4             	mov    eax,DWORD PTR [ebp-0x2c]
+  563cb6:	40                   	inc    eax
+  563cb7:	83 f8 19             	cmp    eax,0x19
+  563cba:	89 45 d4             	mov    DWORD PTR [ebp-0x2c],eax
+  563cbd:	0f 8c e6 fb ff ff    	jl     0x5638a9
+  563cc3:	8b                   	.byte 0x8b
+PIN 0x563836 cmp    esi,0x8
+PIN 0x563839 mov    DWORD PTR [ebp-0x24],0x0
+PIN 0x563845 cmp    BYTE PTR [ebx+0x933289],0x18
+PIN 0x56384e movsx  eax,WORD PTR [ebx+0x933294]
+PIN 0x56385b movsx  esi,WORD PTR [ebx+0x93328c]
+PIN 0x563886 movsx  edx,WORD PTR [ebx+0x933294]
+PIN 0x56388d movsx  eax,WORD PTR [ebx+0x93328c]
+PIN 0x563896 call   0x46e770
+PIN 0x56389f mov    DWORD PTR [ebp-0x24],eax
+PIN 0x563caa mov    DWORD PTR [ebp-0x24],esi
+PIN 0x563cbd jl     0x5638a9
+all pins asserted: 1

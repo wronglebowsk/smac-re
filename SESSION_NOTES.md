@@ -742,3 +742,33 @@ m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
   and s247's pick carries that.
 - P2 (path:line cites) ACCEPTED: window/fit line cites added to 246b and the
   NAMED ## M295 rows.
+
+## Session 247 (s247, M296, 2026-11-11)
+
+- M296 THE ARGMAX LEG FITTED, all-static (no box touched): `python3 scripts/
+  m296_argmax_fit.py` -> evidence/m296_argmax_fit.txt: **PASS M296: 9/9** over (Greptile #260 round 1: 4 P2s - evidence now saves the REPORT lines, S0 coverage pins 1026/2321/25650/8482, byte9 labels, tie-claim softened below)
+  1026 visits / 2321 GDEEP-GACC rows / the 8482 pool. Byte windows: evidence/
+  m296_init_window.txt (scripts/m296_init_window.py, 11 pins OK).
+- BYTE FACTS: (1) `and eax,0x1000` at 0x46e792 tests dword[rec+8] bit 0x1000 =
+  BYTE9 bit4 (NOT byte8 - the M295-era shorthand is corrected here); 1083
+  in-window tests, all pool-side (never a row). (2) [ebp-0x24] is zeroed
+  unconditionally at 0x563839 EVERY scan; the ONLY override is case==8
+  (`cmp esi,8` 0x563836) + order-0x18 (`cmp BYTE[unit+17],0x18` 0x563845 - the
+  move-to-base order, NAMED 0x4d3770/0x4d6fb0, +20/+28 = base tile) +
+  wrapped-diff gate>2 (0x46e540/0x46e5a0): best_init = value(base tile)-1
+  (0x563896-9f). A move-to-base pod accepts candidates >= its base tile's value;
+  every other visit starts best=0.
+- FIT: S1 val>best 2321/2321; S2 best == max(best_init, prior GACC vals)
+  2321/2321; S7 GROW best column replays 25650/25650 slots; S7b case-8 leg 1/1
+  nonzero-init, value leg 0 save-gradeable hits (the lone move-to-base init
+  u=45 best=5 carries a save-STALE dest: (19,6) byte2=0x05+0x1000 bit, not a
+  save base - live closer); S5 rivals miss the val column (low 105, cat 98,
+  full/b8hi 0 vs nib 1931/2321); S5b: 0 of 2321 rows has val==best (>= never observed; 5721 static tie candidates corroborate, nogo-unverified); S6
+  bypass 61/61 + 0 GDEEP rows at/over the 2*(8-dist) cap. S3 static val
+  coverage 1739/2129 AGREED + 192/192 DRIFT; 390 mismatches = LIVE byte2
+  mutation (9 tiles carry 2+ machine-attested vals). Pool: 6048/8482
+  static-explained as val<=best skips (5721 ties, 904 of the explained via the
+  0x1000 zero); 2434 unexplained = mutation/no-go/live class - THE LIVE
+  FLAG-MATCHED CENSUS (M295 P1c + this) is the shared closer - LEAD.
+- s245/s246 facts held; kickoff M295 re-run first: R4-empty table verbatim
+  (evidence/m295_nogo_fit.txt). NEXT_PROMPT regenerated (s247 close).
