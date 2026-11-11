@@ -1,6 +1,5 @@
-M295 | 0x4e3c00 no-go NAMED + pinned + MEASURED (rule INERT here; the 8482 = the value<=best skip at 0x563c09-0x563c11) | merged? NO (branch milestone/m295-nogo, PR open) | next: the value>best argmax leg FUN_0046e770 (0x563c02 call)
-
-## chain status (s246 close)
-
-- #258 (B16) MERGED at 9567ec1 after the Greptile round (P1 relabel + P2 stride-144 + P2 pin-count; all in the PR body disposition).
-- s246: track_mode said ANALYSE (analyse_since_build=0 after the B16 merge); s247: `python3 scripts/track_mode.py` again.
+M296 | argmax leg FITTED (scripts/m296_argmax_fit.py PASS 8/8): strict val>best
+2321/2321; best_init chain 0x563836-9f = 0 UNLESS case-8 + order-0x18 move-to-base
+(best=value(base tile)-1); GROW best replay 25650/25650; 8482 pool: 6048 static-
+explained (5721 ties refute >=), 2434 await live-map closer; 0x1000 leg = BYTE9 bit4
+| merged? PR open -> merge after Greptile cap | next: s248 per NEXT_PROMPT (B17 due-check)

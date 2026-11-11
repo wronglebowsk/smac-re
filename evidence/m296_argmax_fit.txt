@@ -1,0 +1,10 @@
+scripts/m296_argmax_fit.py on m54b_clean.SAV vs m294_gate_rows_raw.txt
+S1_strict_entry PASS 2321/2321 decision rows val>best; bad []
+S2_best_law PASS 2321/2321 rows best==max(best_init,prior accepts); bad []
+S6_bypass_law PASS bypass-accepts val>=2*(8-dist): 61/61 | GDEEP rows at/over cap 0
+S7_best_traj_GROW PASS GROW best column replays from best_init + accepts (t<=s): 25650/25650 slots; bad []
+S7b_best_init_law PASS case-8 gate leg (0x563836): every nonzero best_init is a case-8 visit (1/1, bad 0); zero-init all consistent (plain 1023) | dest-value leg (0x563886-9f): GRADEABLE-from-save observations: hit 0 mismatch 1 lazy 2 gate<=2 0 drift 0 - nonzero-init visits and their save reads in samples; each case-8 nonzero init whose save dest tile still equals the live tile must hit; save-stale dests are the drift-pending class | samples [('VAL', 37, 45, (12, 52), (19, 6), 5, -1)]
+S5_rival_val_separation PASS b8hi val 0/2321 | cat val 98/2321 | full val 0/2321 | low val 105/2321 vs nib 1931/2321 - every rival misses the val column
+S3b_live_val_mutation_attested PASS 9 tiles w/ 2+ machine-attested live vals (of 101 seen), e.g. [((4, 50), [3, 5]), ((6, 52), [1, 2]), ((7, 49), [1, 2])] -> the live byte2 mutates mid-campaign; the static y2150 save CANNOT cover every row
+S5b_ge_accept_collides_ties PASS 5721 pool cells sit at val==best EXACTLY - under value>=best they would have printed decision rows; the recorded rows show they did NOT -> strict jle 0x563cb3 confirmed
+PASS M296: 8/8

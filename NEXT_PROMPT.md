@@ -1,7 +1,4 @@
-# NEXT_PROMPT.md - footing (s246 close: B16 MERGED (main 9567ec1, #258 + Greptile round); M295 = the
-# 0x4e3c00 no-go NAMED + pinned; 0 rejects in the graded owner-known subset (m295_nogo_fit.txt, live
-# OPEN per P1c) - the 8482 best explained by the value<=best skip 0x563c09-0x563c11.
-# Next pick: the argmax leg.)
+# NEXT_PROMPT.md - footing (s247 close: M296 = the value-vs-best ARGMAX leg FITTED (scripts/m296_argmax_fit.py PASS 8/8, evidence/m296_argmax_fit.txt; best-init law 0x563836-9f NAMED: best=0 unless case-8 + order-0x18 move-to-base, then value(base tile)-1; 6048/8482 static-explained skips, 5721 ties refute >=). 8482 NOT closed: 2434 live-mutation residue + M295 P1c share the live-map census closer. Next pick: THE PICK below.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
 §CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
 
@@ -28,11 +25,11 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B16 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B16: `python3 -m sim.selftest --b16 <sav>` +
 `evidence/b16_precheck_chain.txt:1`). Next = **B17** (a build fire authors the rung in the branch - it is not
-yet in `BUILD_SPINE.md`; B14/B16 did the same).
+yet in `BUILD_SPINE.md`; B14/B16 did the same). Track_mode FIRST.
 
 ## THE LEDGER
 
-Merged M54A-M295 + B0-B16 (through this fire) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
+Merged M54A-M296 + B0-B16 (through s247) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -56,18 +53,21 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 - ANSWERED (do not re-pick): M227-M295 + B1-B16 (M241 FAIL 2/5, #180 open); OPEN shortlist (hub-visit gating,
   0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS. FUN_005f3f5b NOT open (M220). DIALOG
   +0x4c CLOSED (M284-M288; live half INVALID s240): NAMED ## M284-M288. NEVER bp mid-instruction (s213 crash).
-- **THE PICK (s246): the value-vs-best ARGMAX leg - the last un-named decision producer in B16's loop.**
-  M295: the 0x4e3c00 no-go rejects 0 in the graded owner-known subset (`scripts/m295_nogo_fit.py`, P1c
-  OPEN), so the 8482 are best explained by the value<=best skip (0x563c09-0x563c11). STATIC-FIRST on
-  `call 0x46e770` (0x563c02, the slot VALUE), [ebp-0x24] best (init 0, store 0x563caa - see podscan
-  scan_esi), and the bypass `jge 0x563ca7` at 0x563c38 (value >= 2*(8-DAT_008f0d34): GACC, NO GDEEP row). The fit target: a value>best model must reproduce the val/best columns of the 2321 recorded GDEEP/GACC rows
-  AND leave the 2128 accepted-pass + 0 bounds/elev/occ violations alone (Greptile #258 P1; pinned in the b16 window 0x563bf0-0x563c60). GROW tail val/best read ONLY under a same-slot decision row
-  (M294 tail-$esi law).
-  READER LAW FIRST: those rows' `x=`/`y=` are TRANSPOSED (B16) - use `sim.precheck.load_visits`/`recover_pod`, which
-  already apply it. If a live probe is wanted, re-derive scripts/m294_gate_row_census.py's guards (M293 law).
-  OPEN kept: 0x582cc0 side-effects + the value-indexed 0x51dfe2 cell addr (## M294); CHAIN-PICKS trio. M293 guards,
-  M294 tail-$esi and B16 transposition laws BIND every reuse.
-
+- **THE PICK (s247): the LIVE-MAP flag-matched census that closes BOTH open
+  questions at once** - M295 P1c (does the 0x4e3c00 no-go reject anything on LIVE
+  flags?) and the M296 residue (2434 pool cells unexplained statically + the u=45
+  init value-leg sighting): read the live map byte2/byte9 + flagwords ONCE
+  (read-only /proc, NO gdb, M293 D1b precedent; box s244-state y2212 = window END,
+  re-check accept_ready + preflight + ptrace law), then re-grade the
+  recorded 2321 rows + 8482 pool under LIVE values: every row must keep val>best and
+  S1-S7 must not regress; 0x1000 = byte9 bit4 (M296) binds. Re-derive the
+  m294 census guards first (M293 law).
+  ANSWERED (do not re-pick): the argmax leg + best-init chain + the 0x1000=byte9
+  bit4 fix (M296); M227-M296 + B1-B16. OPEN statics (small): 0x582cc0 side-effects
+  + the value-indexed 0x51dfe2 cell addr (## M294); CHAIN-PICKS trio (hub-visit
+  gating, 0x56c6de continue-leg, 188-row cursor caller).
+  READER LAWS bind: GDEEP/GACC x=/y= TRANSPOSED (use load_visits/recover_pod);
+  tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7); M293 guards re-derive.
 ## LIVE FACTS / KIT
 
 - **BOX**: s244 state UP (s245+s246 touched nothing) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
