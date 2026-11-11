@@ -34,7 +34,7 @@ writes it (B14/B16/B17); s251 ANALYSE landed M298; s252 = B18 BUILD fire. Track_
 ## THE LEDGER
 
 Merged M54A-M298 + B0-B17 (through s251) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
-Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
+Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
@@ -58,8 +58,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   UNAUTHORED: its BUILD fire writes it from BUILD_SPINE.md (B14/B16/B17 pattern) -
   runnable acceptance in sim/, parity vs a recorded trace, never a census claim, no
   box. s251 landed M298 (SMALL STATICS pair CLOSED - 0x582cc0 = lazy cache write-back,
-  [ebp-0xc] = BYTE[rec+3]; NAMED §M298). Hygiene lead ONLY if B18 lands early:
-  NAMED.md archive split (248 kB).
+  [ebp-0xc] = BYTE[rec+3]; NAMED §M298). Hygiene: NAMED split DONE at s251
+  (docs/named-archive-m89-m221.md, gate now green at ~176 kB).
   ANSWERED: M227-M298 + B1-B17 (M241 FAIL 2/5, #180; s249 pick:
   pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live
   half INVALID s240); NEVER bp mid-instruction (s213). OPEN shortlist (hub-visit gating,
