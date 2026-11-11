@@ -1,8 +1,4 @@
-# NEXT_PROMPT.md - footing (s251 close: M298 SMALL STATICS pair landed (zero box) -
-0x582cc0 = lazy-nibble CACHE WRITE-BACK into BYTE[rec+2] high nibble, edi survives
-the call (discarded eax = rec base); [ebp-0xc] = BYTE[rec+3] site byte, sole store
-0x51dd57 - 11-callers REFUTED; M294 cell-addr phrasing FIXED (slot store = max ->
-28B slot 0x989ce8; addr = 0x94eca8+8380*ebx+site). s250 landed M297 (NAMED §M297). B17 10/10.)
+# NEXT_PROMPT.md - footing (s253 close: B18 CLOSED - #264 merged, zero box. sim/sitegate.py PASS 10/10 (evidence/b18_sitegate.txt:11): M298 EXECUTABLE + the review round absorbed (10 P1 + 2 P2 fixed IN-BRANCH: G1/G2 laws DECODED from the pinned bytes by fold decoders - 44-B record fold, 28-B slot stride, 8380*block + UNSCALED-site cell fold, both MAX with the old-load zext graded; G3 lazy-path classifier honest (2288/0/1/32 of 2321); dword[rec+8] bit 0x1000 == byte9 bit4 PROVEN 8192/8192; owner family GRADED - full detail NAMED B18 + SESSION_NOTES 253). s251 landed M298 (#263). B1-B18 DONE.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -27,13 +23,13 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B17 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B17: `python3 -m sim.selftest --b17 <sav>` +
-`evidence/b17_scanleg_chain.txt:1`). Next = **B18**, unauthored - its BUILD fire
-writes it (B14/B16/B17); s251 ANALYSE landed M298; s252 = B18 BUILD fire. Track_mode FIRST.
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B18 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B18:
+`python3 -m sim.selftest --b18 <sav>` + `evidence/b18_sitegate.txt:11`). Next build rung **B19**, unauthored - its fire writes it (B14/B16/B17/B18).
+Track_mode FIRST, every fire.
 
 ## THE LEDGER
 
-Merged M54A-M298 + B0-B17 (through s251) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M298 + B0-B18 (through s253) + hygiene #254/#255/#263/#264; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -53,24 +49,21 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
-  pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing was wrong, lead to fix it there).
-- **THE PICK (s252): B18 BUILD fire** (track_mode says so - run it FIRST). B18 is
-  UNAUTHORED: its BUILD fire writes it from BUILD_SPINE.md (B14/B16/B17 pattern) -
-  runnable acceptance in sim/, parity vs a recorded trace, never a census claim, no
-  box. s251 landed M298 (SMALL STATICS pair CLOSED - 0x582cc0 = lazy cache write-back,
-  [ebp-0xc] = BYTE[rec+3]; NAMED §M298). Hygiene: NAMED split DONE at s251
-  (docs/named-archive-m89-m221.md, gate now green at ~176 kB).
-  ANSWERED: M227-M298 + B1-B17 (M241 FAIL 2/5, #180; s249 pick:
-  pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live
-  half INVALID s240); NEVER bp mid-instruction (s213). OPEN shortlist (hub-visit gating,
-  0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS.
-  READER LAWS bind: GDEEP/GACC x=/y= TRANSPOSED (use load_visits/recover_pod);
-  tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7); M293 guards re-derive;
-  NEW (M297): end-window /proc snapshot = LAST-TURN witness (bit4 flips val-invisible)
-  - skill `instrument-laws.md` §LIVE-SNAPSHOT.
+  pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing wrong - lead to fix).
+- **THE PICK (s254): ANALYSE from the shortlist** (track_mode FIRST; if it prints
+  MODE=BUILD the rung is **B19**, unauthored, `BUILD_SPINE.md` pattern).
+  ANSWERED: M227-M298 + B1-B18 (M241 FAIL 2/5, #180; pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live half INVALID
+  s240); NEVER bp mid-instruction (s213).
+  OPEN shortlist (hub-visit gating, 0x56c6de continue-leg, 188-row cursor caller; B18 leads: a /proc dump of 0x989ce8/0x94eca8 grades the MAX funnel, ebx's
+  walked table 0x51de2c-0x51df1d, the slot [+4] counter's 0x5832b0 gate):
+  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND: GDEEP/GACC TRANSPOSED (load_visits/recover_pod); tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7);
+  M293 guards re-derive; end-window /proc snapshot = LAST-TURN witness (bit4 flips
+  val-invisible) - skill `instrument-laws.md` §LIVE-SNAPSHOT; NEW (B18): BYTE[rec+2] HIGH
+  nibble is a lazy CACHE the game OVERWRITES via 0x582cc0 (it moves between walks; sticky until a live mutation re-grades the tile); the 0x989ce8 slot and 0x94eca8
+  cell stores are BOTH MAX; site = BYTE[rec+3], block = BYTE[rec+7].
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s251: s249 read-only /proc pass; s251 ZERO box - state identical)
+- **BOX**: s244 state UP (s245..s253: s249 read-only /proc pass only; s250-s253 ZERO box - state identical)
   (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
