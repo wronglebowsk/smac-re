@@ -1,10 +1,9 @@
 # NEXT_PROMPT.md - footing (s249 close: M297 LIVE-MAP flag-matched census landed -
-M296 residue CLOSED (8482 pool under live bytes: UNEXPLAINED 0; the 2434 = tie 2146
-+lt 35+live-static-fail 253), M295 P1c CLOSED (no-go R4 rejects 0/8482 pool AND
-0/2321 recorded on live flags - INERT), u=45 CLOSED (live dest (9,47)+order 0x00 moved
-vs save (19,6)/0x18), strict live row law 2102/2321 = RECORDED FINDING (post-grading
-drift 219: bit4-flips 134 val-invisible + nibble 85, 201 machine-attested; lazy 0).
-B17 re-verified PASS 10/10. Next: THE PICK below.)
+M296 residue CLOSED (2434 = tie 2146+lt 35+live-static-fail 253, 0 unexplained),
+M295 P1c CLOSED (no-go R4 rejects 0/8482 pool AND 0/2321 recorded on live flags -
+INERT), u=45 CLOSED (live dest (9,47)+order 0x00 moved vs save (19,6)/0x18), strict
+live row law 2102/2321 = RECORDED FINDING (post-grading drift 219: bit4-flips 134
+val-invisible + nibble 85, 201 machine-attested; lazy 0). B17 re-verified PASS 10/10.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/
 §CHAIN-PICKS - grep only), skill `references/instrument-laws.md`.
 
@@ -57,20 +56,18 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
   pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing was wrong, lead to fix it there).
-- **THE PICK (s250): the SMALL STATICS pair** (zero box; was step 2 of the s249 kickoff):
-  (a) 0x582cc0 side-effects in FUN_0051dcb0 - its return is DISCARDED (eax reloaded at
-  0x51dfac), but does the callee mutate edi (the BYTE[rec+2]>>4 / lazy-0x5aff90 value that
-  feeds the 0x51dff3 `max` and the cell index) or the cell itself?
+- **THE PICK (s250): the SMALL STATICS pair** (zero box; step 2 of the s249 kickoff):
+  (a) 0x582cc0 in FUN_0051dcb0: return DISCARDED (eax reload 0x51dfac) - does the callee
+  mutate edi (BYTE[rec+2]>>4 / lazy-0x5aff90 value feeding the 0x51dff3 max + cell index)?
   (b) the 0x51dfe2 cell addr `0x94eca8+[ebp-0xc]+4*min(edi,[esi+0x989ce8])`: what writes
   [ebp-0xc] in FUN_0051dcb0 callers (site/region id?) - 11 e8-callers named (## M294).
   Kit: `fn.py 0x582cc0` / `0x51dcb0`, scratch/m71/dis.py windows, index.csv containment;
   acceptance = byte-pinned NAMED rows. DO NOT re-run the live-map census (box unchanged
   2212/30; snapshot = last-turn witness, M297 S3).
-  ANSWERED (do not re-pick): M227-M297 + B1-B17 (M241 FAIL 2/5, #180 open; the s249
-  live-map pick landed as M297 - old pick text VERBATIM in `docs/pick-archive.md` §s250-trim).
-  FUN_005f3f5b NOT open (M220). DIALOG +0x4c CLOSED (M284-M288; live half INVALID s240).
-  NEVER bp mid-instruction (s213 crash). OPEN shortlist (hub-visit gating, 0x56c6de
-  continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS.
+  ANSWERED: M227-M297 + B1-B17 (M241 FAIL 2/5, #180; s249 pick text VERBATIM in
+  pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live
+  half INVALID s240); NEVER bp mid-instruction (s213). OPEN shortlist (hub-visit gating,
+  0x56c6de continue-leg, 188-row cursor caller): `NAMED.md` §CHAIN-PICKS.
   READER LAWS bind: GDEEP/GACC x=/y= TRANSPOSED (use load_visits/recover_pod);
   tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7); M293 guards re-derive;
   NEW (M297): end-window /proc snapshot = LAST-TURN witness (bit4 flips val-invisible)
