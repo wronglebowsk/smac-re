@@ -61,8 +61,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   (b) the 0x51dfe2 cell addr `0x94eca8+[ebp-0xc]+4*min(edi,[esi+0x989ce8])`: what writes
   [ebp-0xc] in FUN_0051dcb0 callers (site/region id?) - 11 e8-callers named (## M294).
   Kit: fn.py 0x582cc0/0x51dcb0, scratch/m71/dis.py, index.csv containment; acceptance =
-  byte-pinned NAMED rows. DO NOT re-run the live-map census (box unchanged
-  2212/30; snapshot = last-turn witness, M297 S3).
+  byte-pinned NAMED rows. NO live census re-run (box 2212/30; snapshot = last-turn
+  witness, M297 S3).
   ANSWERED: M227-M297 + B1-B17 (M241 FAIL 2/5, #180; s249 pick text VERBATIM in
   pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live
   half INVALID s240); NEVER bp mid-instruction (s213). OPEN shortlist (hub-visit gating,
@@ -73,8 +73,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   - skill `instrument-laws.md` §LIVE-SNAPSHOT.
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s249: s249 ONE read-only /proc census pass, yr/cnt
-  identical before AND after) (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
+- **BOX**: s244 state UP (s245..s249: s249 one read-only /proc pass, state identical)
+  (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
    `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the
