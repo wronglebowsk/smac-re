@@ -27,19 +27,22 @@ S8_hygiene_state         PASS  read-only /proc pass, NO gdb ever exec'd: TracerP
 FAIL M297: 1/7 gates FAILED: S3_row_val_law_live
 
 ---- s249 ADDENDUM (s249_attestation.py; idempotent block) ----
-A1 prediction scorecard (PREDICT phase vs LIVE pass + addendum):
- P1 witness PASS: dword[0x92ae14]=0x40a5cd0 pointer, bounds 64/64, mult 32, byte0+byte3 identity 2100/2321 = 90.5% (>=85% predicted)
- P2 box state PASS: year 2212 cur 3 cnt 30 pinned before AND after; TracerPid 0->0; yama 0 unchanged; starttime identical; zero gdb
- P3 row law FAIL AS THE FINDING: lazy 0 (predicted <=8) but the exception class is drift-after-grading 219 rows, NOT lazy
- P4 pool closure PASS: UNEXPLAINED-under-live 0/8482 (predicted 0)
- P5 u=45 PASS branchB+branchC (both moved; branchA false): live unit record order+17=0x00 dest(9,47) owner 6 vs save-dest (19,6) order 0x18; live (19,6) tile byte2=0x5 byte9=0x10 live value 0
- P6 rivals PASS: R1 1538 / R2 42 / R3 42 recorded-slot collisions; ge-argmax 7518 live-tie pool cells printed NO row (>=2000 predicted); R4-live recorded-slot collisions 0
- P7 no-go PASS: R4-live rejects 0/8482 pool, 0/2321 recorded -> the 0x4e3c00 no-go rejects NOTHING on LIVE flags (M295 P1c closed INERT, and it explains 0 of the 2434)
- P8 (S3 strict form) FAIL: 2102/2321 exact-live - see A2
+A0 shipped-verify PASS: 25/25 bin-derivable numbers on the shipped gate lines reproduce EXACTLY under the FIXED instruments (later-event attestation drift_taxonomy, owner-coverage, recount consistency); MEASURED-ONLY inputs not dumped (cannot re-check offline): R1/R2/R3 collision counts 1538/42/42, u-45 unit-record branches, the S8 starttime token, flagwords 36/64. Owner coverage machine-proves the PR #262 P1#4 concern CLEAN on the shipped run: all 115 visit units in [0,2500), every row/pool unit a visit unit, owners loaded for exactly that set - owners.get() could not miss, the R4-live 0/0 is not a silent-filter artifact
+A1 prediction scorecard (DERIVED from shipped gate lines + this recomputation; was hardcoded in v1 - fixed per review):
+ P1 PASS witness: bounds 64/64 mult 32, identity byte0+byte3 2100/2321 = 90.5% (predicted >=85%)
+ P2 PASS box state: year 2212 cur 3 cnt 30 pinned (s244 pins 2212/30), TracerPid 0->0, zero gdb (S8) - but the shipped starttime token was the state letter, see A6
+ P3 FAIL row law (predicted every row match/lazy/drift-attested, lazy <= 8, bit4-zeroed printed 0): lazy 0 (<= 8 OK) but bit4-zeroed printed 134 != 0 and 18 misses unattested - FAIL AS THE FINDING (S3, documented)
+ P4 PASS pool closure: UNEXPLAINED-under-live 0/8482 (predicted 0); the pre-read line printed the CORRECT 2434 (hermes P2#1 - its dead `if False` line was removed; output unaffected)
+ P5 PASS u=45: branchA False / branchB True / branchC True; live (19,6) byte2=0x5 byte9=0x10 live value 0 (bin-recomputed) - CLOSED on the dest-moved branch
+ P6 PARTIAL-MISS rivals on the live grid: R1 1538 (pred >=500 PASS), R2 42 (pred >=50 FAIL), R3 42 (pred >=50 FAIL), ge-argmax 7518 live ties (pred >=2000 PASS), R4-live recorded 0 (pred 0 PASS) - the R2/R3 floors came from the save-side 124/119 and the live mask 0x8 (single faction bit) shrinks mask-gated collisions; the rivals are STILL refuted (1538/42/42 >= 1 collision each, S6 PASS); P6 is NOT a clean PASS, missed: ['R2>=50', 'R3>=50']
+ P7 PASS no-go answer (M295 P1c): R4-live rejects 0/0 pool/recorded (predicted a small >=0 number; measured 0 -> INERT, explains 0 of the 2434); residue NOT no-go-dominated (tie_live 2146 dominant class)
+ P8 FAIL strict form: exact-live 2102/2321 - FAIL, see A2
 A2 miss taxonomy over the 2321 rows (S3): 2102 exact-match, 0 lazy, 219 miss = [(('bit4', 'changed-attested'), 1), (('bit4', 'flip-attested'), 116), (('bit4', 'unattested'), 17), (('nibble', 'change-attested'), 84), (('nibble', 'unattested'), 1)]
    attested by a LATER machine grading event 201, UNATTESTED 18 (sum 219 of 2321; all misses are post-grading byte2/byte9 mutations - the 0x1000 bit4-flip class 134 rows is the dominant drift vector, NOT the lazy FUN_005aff90 class)
-   the 9 machine-multival tiles (M296 S3b) are a LOWER BOUND on mutation: a bit4 flip is val-INVISIBLE while val stays >0, so val-timelines cannot attest the bit4 class - S3b was the wrong attestation instrument
+   the 9 machine-multival tiles (M296 S3b: 230 rows, 97 of these misses) are a LOWER BOUND retired as the attestation instrument (s250 P1 fix): a bit4 flip is val-INVISIBLE while val stays >0, so val-timelines cannot attest the bit4 class
 A3 the 2434 save-unexplained pool cells under LIVE values: [('lt_live', 35), ('static_fail_live', 253), ('tie_live', 2146)] (sum 2434/2434) - the residue CLOSES: 0 unexplained; tie_live is the dominant class (live byte2 drift lands values back ON the incoming best), no-go contributes 0
-   whole-pool live picture (8482): tie 7518 | lt 287 | static-fail 677 | no-go 0 | UNEXPLAINED 0 (S4 verbatim) - live tie 7518 vs static 5721: the live mutations CREATE 1797 new strict-rule skips
-A4 strict-entry law stands: recorded val>best 2321/2321 (S3 line 1); 0 tie ROWS among 2321 (M296 S5b holds on live too: the 7518 live ties are all in the printed-NO population)
+   whole-pool live picture (8482): tie 7518 | lt 287 | static-fail 677 | no-go 0 | UNEXPLAINED 0 (S4 verbatim, bin-recomputed) - live tie 7518 vs static 5721: the live mutations CREATE 1797 new strict-rule skips
+A4 strict-entry law stands: recorded val>best 2321/2321 (S3 line 1); tie ROWS among 2321 = 0 (M296 S5b holds: the 7518 live ties are all in the printed-NO population)
+A5 CAVEAT (PR #262 Greptile P1, made explicit): every live-value verdict above (A3 closure, P6 rival refutations, P7 INERT) is an END-WINDOW comparison against the final-turn snapshot - a tie NOW does NOT prove the cell tied at the turn its row was skipped, and an INERT no-go NOW does not prove INERT at each earlier turn (mask 0x8/flagwords/vis mutate between turns). The residue is CLOSED only up to post-grading drift: the machine attests 201/219 row drifts, 18 unattested, bit4 flips val-invisible, so attested counts are lower bounds on WHEN. Per-turn historical closure needs mid-window snapshots - LEAD, box frozen at 2212/30.
+A6 HYGIENE AMENDMENT (PR #262 hermes P1, fixed in code at s250): the shipped S8 line's 'starttime R==R' token is the process STATE letter, not starttime - after split(') ') idx 0 is state (field 3), starttime is field 22 = idx 19; scripts/s249_livecensus.py now reads idx 19. The hygiene claim stands WITHOUT the token: TracerPid 0->0, yama recorded/restored unchanged, year 2212 cur 3 cnt 30 pinned equal before AND after, and map identity byte0+byte3 2100/2321 vs the save - a restart inside the read window moves year/cnt or the dump.
 ---- s249 ADDENDUM END ----

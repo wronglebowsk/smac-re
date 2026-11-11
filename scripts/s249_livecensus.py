@@ -194,6 +194,75 @@ def live_val(r):
     return (0 if z else r[2] // 16), z
 
 
+def drift_taxonomy(rows, lg):
+    """S3 row classification under live bytes + per-miss ATTESTATION - single
+    source of truth for the census gate AND the shipped attestation (s250,
+    PR #262 P1 fix: a drift miss is attested ONLY by a machine grading event
+    on the SAME tile AFTER the row; the M296 S3b multival-tile set is retired
+    as the instrument - it accepts an EARLIER regrade and is a lower bound).
+    A bit4 (0x1000) miss is attested by ANY later grading on the tile (a
+    printed val>0 means bit4 was clear then - it is set now, so it flipped
+    in between; a later grading at the SAME val is the strongest form,
+    flip-attested). A nibble miss needs a later grading at a DIFFERENT val."""
+    tile_hist = collections.defaultdict(list)
+    for (vi, u, pod, s, (tx, ty), e, sc, rb, r) in rows:
+        tile_hist[(tx, ty)].append((vi, e["val"]))
+    for k in tile_hist:
+        tile_hist[k].sort()
+    cls = collections.Counter()
+    att = collections.Counter()
+    strict = 0
+    detail = []
+    for (vi, u, pod, s, (tx, ty), e, sc, rb, sr) in rows:
+        r = lg.rb(tx, ty)
+        lv, z = live_val(r)
+        val = e["val"]
+        strict += 1 if val > e["best"] else 0
+        if lv == val and not z:
+            cls["match"] += 1
+            continue
+        if z:
+            cls["bit4_zeroed"] += 1
+            if len(detail) < 8:
+                detail.append(("B4", vi, u, s, (tx, ty), val, r[9]))
+        elif lv == 0:
+            cls["lazy"] += 1
+            if len(detail) < 8:
+                detail.append(("LAZY", vi, u, s, (tx, ty), val, lv))
+            continue                      # the FUN_005aff90 exception class
+        else:
+            cls["nibble_drift"] += 1
+            if len(detail) < 8:
+                detail.append(("DRIFT", vi, u, s, (tx, ty), val, lv))
+        later = [v for (v2, v) in tile_hist[(tx, ty)] if v2 > vi]
+        if z:
+            att["bit4-" + ("flip-attested" if val in later else
+                           "changed-attested" if later else "unattested")] += 1
+        else:
+            att["nibble-" + ("change-attested" if any(v != val for v in later)
+                             else "same-later-regraded" if later
+                             else "unattested")] += 1
+    tilevals = collections.defaultdict(set)
+    for (vi, u, pod, s, (tx, ty), e, sc, rb, r) in rows:
+        tilevals[(tx, ty)].add(e["val"])
+    multi = set(t for t, vs in tilevals.items() if len(vs) >= 2)
+    on_multi = sum(1 for x in rows if x[4] in multi)
+    miss_on_multi = 0
+    for (vi, u, pod, s, (tx, ty), e, sc, rb, sr) in rows:
+        if (tx, ty) not in multi:
+            continue
+        lv, z = live_val(lg.rb(tx, ty))
+        okm = (lv == e["val"] and not z) or (lv == 0 and not z)
+        if not okm:
+            miss_on_multi += 1
+    unatt = sum(n for k, n in att.items() if k.endswith("unattested"))
+    miss = cls["bit4_zeroed"] + cls["nibble_drift"]
+    return {"cls": cls, "att": att, "strict": strict, "detail": detail,
+            "multi": multi, "on_multi": on_multi, "miss": miss,
+            "miss_on_multi": miss_on_multi, "unatt": unatt,
+            "attested_late": miss - unatt}
+
+
 # ------------------------------------------------------------------- phases
 def stamp():
     return datetime.datetime.now(datetime.timezone.utc).strftime(
@@ -214,8 +283,6 @@ def write_predict():
              "re-derived against the shipped terran.exe image (zero box time)"
              % (ok1, ok2))
         graded, rows, pool, sv = grade_grid(sav, g, W, H)
-        unexpl = sum(1 for p in pool
-                     if live_val(p[8])[0] > p[7]) if False else 0
         tie = lt = unexpl = 0
         for p in pool:
             sc, _z = sl.score_nib(p[8])
@@ -290,7 +357,10 @@ def run_live():
     y0 = yama()
     m = Mem(pid)
     st0 = open("/proc/%d/stat" % pid).read().split(") ")[1].split()
-    start0 = st0[0]                      # starttime: same-process proof
+    # after the ") " split idx 0 is the process STATE letter (field 3);
+    # starttime is field 22 = idx 19. s249 recorded idx 0 by mistake - fixed
+    # at s250 (PR #262 P1); the shipped S8 line carries the mislabelled pair.
+    start0 = st0[19]                     # starttime: same-process proof
 
     yr = m.u32(YR)
     cnt = m.u32(CNT)
@@ -375,75 +445,44 @@ def run_live():
         return not bit(fw.get((owner, t7), 0), 4)
 
     # ---------------- rows under live ----------------
-    cls_rows = collections.Counter()
-    r1c = r2c = r3c = r4c = 0
-    strict = 0
-    row_detail = []
+    tax = drift_taxonomy(rows, lg)
+    cls_rows, att, strict, row_detail = (tax["cls"], tax["att"], tax["strict"],
+                                         tax["detail"])
+    r1c = r2c = r3c = r4c = row_no_owner = 0
     for (vi, u, pod, s, (tx, ty), e, sc, rb, sr) in rows:
         r = lg.rb(tx, ty)
-        lv, z = live_val(r)
-        val = e["val"]
-        strict += 1 if val > e["best"] else 0
-        if lv == val and not z:
-            cls_rows["match"] += 1
-        elif z:
-            cls_rows["bit4_zeroed"] += 1
-            if len(row_detail) < 8:
-                row_detail.append(("B4", vi, u, s, (tx, ty), val, r[9]))
-        elif lv == 0:
-            cls_rows["lazy"] += 1
-            if len(row_detail) < 8:
-                row_detail.append(("LAZY", vi, u, s, (tx, ty), val, r[2]))
-        else:
-            tilevals = None
-            cls_rows["nibble_drift"] += 1
-            if len(row_detail) < 8:
-                row_detail.append(("DRIFT", vi, u, s, (tx, ty), val, lv))
         po = owners.get(u)
-        if po is not None:
-            r1c += 1 if rival(po, r, 1) else 0
-            r2c += 1 if rival(po, r, 2) else 0
-            r3c += 1 if rival(po, r, 3) else 0
-            ng, _t7 = nogo4(po, r)
-            r4c += 1 if ng else 0
-    # machine-attested drift allowance for the row law
-    tilevals = collections.defaultdict(set)
-    for (vi, u, pod, s, (tx, ty), e, sc, rb, sr) in rows:
-        tilevals[(tx, ty)].add(e["val"])
-    multi = set(t for t, vs in tilevals.items() if len(vs) >= 2)
-    attested = sum(1 for (vi, u, pod, s, (tx, ty), e, sc, rb, sr) in rows
-                   if (tx, ty) in multi and (cls_rows and e["val"] in
-                                             tilevals[(tx, ty)]))
-    # drift-attested misses: misses on multival tiles whose recorded val set
-    # proves the tile's machine value CHANGED inside the window
-    miss_class = 0
-    for (vi, u, pod, s, (tx, ty), e, sc, rb, sr) in rows:
-        r = lg.rb(tx, ty)
-        lv, z = live_val(r)
-        okm = (lv == e["val"] and not z) or (lv == 0 and not z)
-        if not okm and (tx, ty) in multi:
-            miss_class += 1
+        if po is None:                    # s250 P1 fix: never a silent skip
+            row_no_owner += 1
+            continue
+        r1c += 1 if rival(po, r, 1) else 0
+        r2c += 1 if rival(po, r, 2) else 0
+        r3c += 1 if rival(po, r, 3) else 0
+        ng, _t7 = nogo4(po, r)
+        r4c += 1 if ng else 0
     lazy_attested_ok = (cls_rows["match"] + cls_rows["lazy"] +
                         cls_rows["bit4_zeroed"] + cls_rows["nibble_drift"]) == 2321
-    covered = cls_rows["match"] + cls_rows["lazy"]
     resid = cls_rows["bit4_zeroed"] + cls_rows["nibble_drift"]
     gate("S3_row_val_law_live",
-         strict == 2321 and lazy_attested_ok and resid <= miss_class and
-         cls_rows["lazy"] <= 8 and cls_rows["bit4_zeroed"] <= miss_class,
+         strict == 2321 and lazy_attested_ok and
+         tax["unatt"] == 0 and cls_rows["lazy"] <= 8,
          "recorded val>best %d/2321; val==LIVE byte2-nibble(+0x1000 byte9bit4 "
          "zeroing) %d, lazy FUN_005aff90 class %d (predicted <= 8), "
-         "drift-after-grading misses %d (bit4 %d, nibble %d) ALL on the %d-row "
-         "machine-multival attested set (M296 S3b: tiles %d with 2+ recorded "
-         "vals); detail %s"
+         "drift-after-grading misses %d (bit4 %d, nibble %d): %d ATTESTED by a "
+         "machine grading event LATER on the same tile, %d unattested (s250 "
+         "instrument fix, PR #262 P1: the 230-row/9-tile machine-multival set "
+         "is retired as a lower bound - %d of these misses sit on it); detail %s"
          % (strict, cls_rows["match"], cls_rows["lazy"], resid,
-            cls_rows["bit4_zeroed"], cls_rows["nibble_drift"], miss_class,
-            len(multi), row_detail[:4]))
+            cls_rows["bit4_zeroed"], cls_rows["nibble_drift"],
+            tax["attested_late"], tax["unatt"], tax["miss_on_multi"],
+            row_detail[:4]))
 
     # ---------------- pool under live ----------------
     bucket = collections.Counter()
     unex = []
     ties_live = 0
     nogo_pool = 0
+    pool_no_owner = 0
     for (vi, u, pod, pcls, preg, s, (tx, ty), rb, sr) in pool:
         r = lg.rb(tx, ty)
         # live static chain on the live pod flags (B16 chain, live view)
@@ -451,8 +490,10 @@ def run_live():
         pcls_l, preg_l = pc.classflag(pl[0]), pl[3]
         c, _t, _r = pc.prechecks(lg, W, H, pod[0], pod[1], pcls_l, preg_l, s)
         po = owners.get(u)
-        ng = False
-        if po is not None:
+        if po is None:                    # s250 P1 fix: never silent
+            pool_no_owner += 1
+            ng = False
+        else:
             ng, _t7 = nogo4(po, r)
         if ng:
             bucket["nogo_live"] += 1
@@ -495,21 +536,42 @@ def run_live():
 
     # ---------------- rivals on the live grid ----------------
     gate("S6_rivals_fail_live",
-         r1c >= 1 and r2c >= 1 and r3c >= 1 and ties_live >= 1 and r4c == 0,
-         "R1 foreign-only rejects %d RECORDED slots | R2 +mask %d | R3 "
+         r1c >= 1 and r2c >= 1 and r3c >= 1 and ties_live >= 1 and r4c == 0 and
+         row_no_owner == 0 and pool_no_owner == 0,
+         "owner coverage COMPLETE: 0 of the 2321 rows and 0 of the 8482 pool "
+         "cells had a missing owner unit (s250 P1 fix: a missing owner used to "
+         "silently skip the R4-live counter) | R1 foreign-only rejects %d "
+         "RECORDED slots | R2 +mask %d | R3 "
          "+not-ally %d (each rejects a slot that actually printed -> refuted; "
          "save-side M295: 1045/124/119) | R4 full rule recorded-slot collisions "
          "%d (predicted 0) | ge-argmax rival: %d live-tie pool cells printed NO "
          "row (predicted >= 2000; save-side 5721)"
          % (r1c, r2c, r3c, r4c, ties_live))
-    gate("S7_nogo_live_answer", True,
+    t7dist = collections.Counter(
+        signed(lg.rb(p[6][0], p[6][1])[7]) for p in pool)
+    # s250 (PR #262 P1): S7 used to be gate(True) - a PASS that cannot fail.
+    # It now asserts the ANSWER was computed over complete, mutually
+    # consistent inputs: independent recounts of both reported no-go counts
+    # must agree with the buckets, owner coverage must be complete, flagwords
+    # loaded, and the t7 distribution must cover the whole pool.
+    r4_pool_recount = sum(
+        1 for p in pool if owners.get(p[1]) is not None and
+        nogo4(owners[p[1]], lg.rb(p[6][0], p[6][1]))[0])
+    r4_row_recount = sum(
+        1 for (vi, u, pod, s, (tx, ty), e, sc, rb, sr) in rows
+        if owners.get(u) is not None and nogo4(owners[u], lg.rb(tx, ty))[0])
+    gate("S7_nogo_live_answer",
+         nogo_pool == r4_pool_recount and r4c == r4_row_recount and
+         row_no_owner == 0 and pool_no_owner == 0 and len(fw) > 0 and
+         sum(t7dist.values()) == len(pool) == 8482,
          "M295 P1c ANSWERED on live flags: R4-live rejects %d inside the "
-         "8482-cell pool and %d inside the 2321 recorded slots; t7-live pool "
+         "8482-cell pool and %d inside the 2321 recorded slots (independent "
+         "recounts %d/%d agree); t7-live pool "
          "distribution over pass6-no-row cells %s | human_mask live %#x vis "
          "live %#x nonzero flagwords %d/%d"
-         % (nogo_pool, r4c, repr(sorted(collections.Counter(
-             signed(lg.rb(p[6][0], p[6][1])[7]) for p in pool).items())),
-          mask, visg, sum(1 for v in fw.values() if v), len(fw)))
+         % (nogo_pool, r4c, r4_pool_recount, r4_row_recount,
+            repr(sorted(t7dist.items())),
+            mask, visg, sum(1 for v in fw.values() if v), len(fw)))
 
     # ---------------- hygiene + witness ----------------
     tr1 = tracer_pid(pid)
@@ -533,12 +595,14 @@ def run_live():
          % (rec_ptr, which, int(w0 * len(pts)), bx, by, mult, W, H, ident,
             totp, 100.0 * ident / totp, nrec, os.path.relpath(BIN, ROOT)))
     gate("S8_hygiene_state", tr0 == 0 and tr1 == 0 and y0 == y1 and
-         start0 == st1[0] and yr == PIN_YEAR and cnt == PIN_CNT and
+         start0 == st1[19] and yr == PIN_YEAR and cnt == PIN_CNT and
          yr2 == yr and cnt2 == cnt,
          "read-only /proc pass, NO gdb ever exec'd: TracerPid %d->%d, yama %s "
-         "recorded/restored-unchanged, starttime %s==%s, year=%d cur=%d cnt=%d "
+         "recorded/restored-unchanged, starttime %s==%s (field 22, idx 19 - "
+         "s249 shipped line records the STATE letter instead, see attestation "
+         "A6), year=%d cur=%d cnt=%d "
          "(== s244 pins %d/30) before AND after the read"
-         % (tr0, tr1, y0, start0, st1[0], yr, cur, cnt, PIN_YEAR))
+         % (tr0, tr1, y0, start0, st1[19], yr, cur, cnt, PIN_YEAR))
     return pid
 
 
