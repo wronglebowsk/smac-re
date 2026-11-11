@@ -1,10 +1,4 @@
-# NEXT_PROMPT.md - footing (s252 close: B18 BUILD landed, zero box -
-sim/sitegate.py PASS 10/10 (evidence/b18_sitegate.txt:11): M298 EXECUTABLE -
-the lazy-nibble cache read path + the 0x582cc0 nibble-split write-back (an OVERWRITE, not
-an accumulator: the live nibble moves BOTH ways, 182 down / 31 up), the BYTE[rec+3] site
-byte / BYTE[rec+7] owner block (-1 -> 0 SKIPS the cell store; no record has owner 0) and BOTH tables MAX by DECODED cmp/jle polarity; the cache machine over
-2321 rows = 2288 hits / 1 lazy wb / 32 adopted, live lazy class 0 (== M297 S3).
-s251 landed M298 (#263). B1-B18 DONE.)
+# NEXT_PROMPT.md - footing (s253 close: B18 CLOSED - #264 merged, zero box. sim/sitegate.py PASS 10/10 (evidence/b18_sitegate.txt:11): M298 EXECUTABLE + the review round absorbed (10 P1 + 2 P2 fixed IN-BRANCH: G1/G2 laws DECODED from the pinned bytes by fold decoders - 44-B record fold, 28-B slot stride, 8380*block + UNSCALED-site cell fold, both MAX with the old-load zext graded; G3 lazy-path classifier honest (2288/0/1/32 of 2321); dword[rec+8] bit 0x1000 == byte9 bit4 PROVEN 8192/8192; owner family GRADED - full detail NAMED B18 + SESSION_NOTES 253). s251 landed M298 (#263). B1-B18 DONE.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -35,7 +29,7 @@ Track_mode FIRST, every fire.
 
 ## THE LEDGER
 
-Merged M54A-M298 + B0-B18 (through s252) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M298 + B0-B18 (through s253) + hygiene #254/#255/#263/#264; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -56,7 +50,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
   pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing wrong - lead to fix).
-- **THE PICK (s253): ANALYSE from the shortlist** (track_mode FIRST; if it prints
+- **THE PICK (s254): ANALYSE from the shortlist** (track_mode FIRST; if it prints
   MODE=BUILD the rung is **B19**, unauthored, `BUILD_SPINE.md` pattern).
   ANSWERED: M227-M298 + B1-B18 (M241 FAIL 2/5, #180; pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live half INVALID
   s240); NEVER bp mid-instruction (s213).
@@ -69,7 +63,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   cell stores are BOTH MAX; site = BYTE[rec+3], block = BYTE[rec+7].
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s252: s249 read-only /proc pass only; s250-s252 ZERO box - state identical)
+- **BOX**: s244 state UP (s245..s253: s249 read-only /proc pass only; s250-s253 ZERO box - state identical)
   (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).

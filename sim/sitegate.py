@@ -40,7 +40,9 @@ evidence/b17_scanleg_chain.txt:1 G1), save-view val law 1931/2321 + lazy 1
 (evidence/s249_live_census.txt S3).
 FIRST-MEASUREMENT ANCHORS (this fire, reproducible from the shipped artifacts
 above; they lock the model, they are not prior claims): the cache state
-machine's per-row classes 2288 cached-path hits / 1 lazy write-back / 32
+machine's per-row classes 2288 cached-path hits / 0 cached-zero/val-zero lazy
+resolutions (the pinned 0x51df8d branch takes the lazy path for ANY zero
+nibble - the zero/zero class is EMPTY on this window) / 1 lazy write-back / 32
 adopted live mutations (== 2321 rows) and the 86 of 101 tiles whose replayed
 end-state nibble still matches the dump, the drift-direction
 split 182 down / 31 up, the low-nibble getter rival's 76-row match, the graded
@@ -114,6 +116,7 @@ PIN_LO_PRESERVED = 103
 # the two shipped artifacts): the per-row class of the walk and the share of
 # tiles whose replayed end-state nibble still matches the s249 dump.
 PIN_CACHE_HIT = 2288
+PIN_CACHE_LAZY_ZERO = 0
 PIN_CACHE_LAZY = 1
 PIN_CACHE_ADOPT = 32
 PIN_END_AGREE = 86
@@ -136,7 +139,11 @@ def write_back(b2, edi):
 
 def score_getter(r):
     """0x46e770 (M296/B17): val = BYTE[rec+2] high nibble, zeroed when
-    dword[rec+8] bit 0x1000 == byte9 bit4. Returns (val, zeroed)."""
+    dword[rec+8] bit 0x1000 == byte9 bit4 - THE SAME PHYSICAL BIT: the dword
+    at rec+8 spans rec+8..rec+11, so bit 0x1000 (bit 12 of the dword) is bit 4
+    of its byte 1, which IS rec+9; the byte9 test below is the pinned
+    condition verbatim, and G5 proves the identity on every record (review
+    #264 P1). Returns (val, zeroed)."""
     z = (r[9] & 0x10) != 0
     return (0 if z else (r[2] & 0xF0) >> 4), z
 
@@ -225,6 +232,72 @@ def npat(p):
     return " ".join(p.split())
 
 
+# --- fold decoders (Greptile #264 P1: the stride/address laws are READ OUT OF
+# the pinned instructions, never restated as arithmetic identities) ----------
+def decode_record_fold(ins, a_fold5, a_fold11, a_mem):
+    """fold the pinned record-index lea chain and the record byte access into
+    (stride, byte_disp). Every coefficient is parsed out of the pinned text, so
+    a different lea form or displacement changes the answer (or yields None)."""
+    m1 = re.match(npat(r"lea +edx,\[eax\+eax\*(\d+)\]"), ins.get(a_fold5, ""))
+    m2 = re.match(npat(r"lea +eax,\[eax\+edx\*(\d+)\]"), ins.get(a_fold11, ""))
+    mm = re.match(npat(r"mov +(dl|ecx|al),BYTE PTR "
+                       r"\[ecx\+eax\*(\d+)\+(0x[0-9a-f]+)\]"), ins.get(a_mem, ""))
+    if not (m1 and m2 and mm):
+        return None, None
+    c = 1 + int(m1.group(1))                  # edx = (1 + k1) * idx
+    c = 1 + c * int(m2.group(1))              # eax = idx + k2 * edx
+    return c * int(mm.group(2)), int(mm.group(3), 16)
+
+
+def decode_slot_stride(ins, a_mov, a_lea, a_sub, a_shl):
+    """the pinned slot-offset chain (mov ecx,eax / lea esi,[eax*8] / sub esi,ecx
+    / shl esi,N): the mov proves eax and ecx carry the SAME index, so the chain
+    is (8-1)<<N. Returns the stride decoded from the bytes."""
+    if not re.match(npat(r"mov +ecx,eax"), ins.get(a_mov, "")):
+        return None
+    m1 = re.match(npat(r"lea +esi,\[eax\*(\d+)(\+0x0)?\]"), ins.get(a_lea, ""))
+    if not re.match(npat(r"sub +esi,ecx"), ins.get(a_sub, "")):
+        return None
+    m3 = re.match(npat(r"shl +esi,0x([0-9a-f]+)"), ins.get(a_shl, ""))
+    if not (m1 and m3):
+        return None
+    return (int(m1.group(1)) - 1) << int(m3.group(1), 16)
+
+
+def decode_displacements(ins, a_store, a_cnt):
+    """the two memory operands that share the esi slot offset: returns
+    (table_base, counter_field_offset) read out of the pinned text."""
+    m1 = re.search(npat(r"\[esi\+(0x[0-9a-f]+)\]"), ins.get(a_store, ""))
+    m2 = re.search(npat(r"\[esi\+(0x[0-9a-f]+)\]"), ins.get(a_cnt, ""))
+    if not (m1 and m2):
+        return None, None
+    b1, b2 = int(m1.group(1), 16), int(m2.group(1), 16)
+    return min(b1, b2), abs(b1 - b2)
+
+
+def decode_cell_fold(ins, a_shl, a_add, a_lea, a_shl4, a_sub, a_addr):
+    """fold the pinned owner-block chain and the final address lea into
+    (block_bytes, table_base, site_coefficient) - all parsed from the bytes, so
+    whether the site byte enters scaled or unscaled is answered BY THE PIN."""
+    m1 = re.match(npat(r"shl +edx,0x([0-9a-f]+)"), ins.get(a_shl, ""))
+    if not re.match(npat(r"add +edx,ebx"), ins.get(a_add, "")):
+        return None, None, None
+    m3 = re.match(npat(r"lea +eax,\[ebx\+edx\*(\d+)\]"), ins.get(a_lea, ""))
+    m4 = re.match(npat(r"shl +eax,0x([0-9a-f]+)"), ins.get(a_shl4, ""))
+    if not re.match(npat(r"sub +eax,ebx"), ins.get(a_sub, "")):
+        return None, None, None
+    m6 = re.match(npat(r"lea +ecx,\[(\w+)\+(\w+)\*(\d+)\+(0x[0-9a-f]+)\]"),
+                  ins.get(a_addr, ""))
+    if not (m1 and m3 and m4 and m6):
+        return None, None, None
+    c = (1 << int(m1.group(1), 16)) + 1               # edx = (2^k + 1) * ebx
+    c = 1 + c * int(m3.group(1))                      # eax = ebx + k * edx
+    c = (c << int(m4.group(1), 16)) - 1               # eax = 2^k * eax - ebx
+    if m6.group(1) != "ecx" or m6.group(2) != "eax" or int(m6.group(3)) != 4:
+        return None, None, None    # the scaled term must be eax, by exactly 4
+    return c * 4, int(m6.group(4), 16), 1   # the site byte (ecx) enters as +1
+
+
 # (label, addr, regex against the printed instruction text)
 PINS = (
     # A: FUN_00582cc0 - the whole 19-insn write-back body
@@ -256,6 +329,7 @@ PINS = (
     ("rd_push_edi", 0x51DFA1, r"push   edi"),
     ("rd_wb_call", 0x51DFA4, r"call   0x582cc0"),
     ("rd_eax_reloaded", 0x51DFAC, r"mov    eax,DWORD PTR \[ebp-0xc\]"),
+    ("rd_ecx_is_site", 0x51DFAF, r"mov    ecx,eax"),
     # C: [ebp-0xc] - own frame, sole store from BYTE[rec+3]
     ("frame_own", 0x51DCB3, r"sub    esp,0x1c"),
     ("site_xor_ecx", 0x51DD48, r"xor    ecx,ecx"),
@@ -278,6 +352,7 @@ PINS = (
     ("cell_shl4", 0x51DFDD, r"shl    eax,0x4"),
     ("cell_sub_ebx", 0x51DFE0, r"sub    eax,ebx"),
     ("cell_addr_lea", 0x51DFE2, r"lea    ecx,\[ecx\+eax\*4\+0x94eca8\]"),
+    ("cell_xor_eax", 0x51DFE9, r"xor    eax,eax"),
     ("cell_load_old", 0x51DFEB, r"mov    al,BYTE PTR \[ecx\]"),
     ("cell_cmp", 0x51DFED, r"cmp    edi,eax"),
     ("cell_jle", 0x51DFEF, r"jle    0x51dff3"),
@@ -298,12 +373,37 @@ PINS = (
 )
 
 
-def decode_max_polarity(ins, cmp_addr, jle_addr, take_addr, store_addr):
+def decode_max_polarity(ins, cmp_addr, jle_addr, take_addr, store_addr,
+                        old_load_addr, old_width):
     """True when the pinned chain is `cmp edi,OLD` / `jle L` / `mov eax,edi` at
     take_addr / the store at store_addr with the jump landing AT or AFTER the
     take and AT OR BEFORE the store: the edi <= old path jumps over the take, so
-    the value stored is max(edi, old). A MIN store would need `jge` here."""
+    the value stored is max(edi, old). A MIN store would need `jge` here.
+    The cmp's OLD operand is graded too (Greptile #264 P1 - a byte MAX claimed
+    from `cmp edi,eax` is only real if eax provably carries the zero-extended
+    old byte, not a stale dword): old_width 1 requires the load pair
+    `xor eax,eax` / `mov al,BYTE PTR [ecx]` IMMEDIATELY before the cmp and the
+    BYTE store `mov BYTE PTR [ecx],al`; old_width 4 requires the full dword load
+    `mov eax,DWORD PTR [esi+...]` immediately before the cmp and the matching
+    DWORD store."""
     if not re.match(npat(r"cmp    edi,eax$"), ins.get(cmp_addr, "")):
+        return False
+    if old_width == 1:
+        if not re.match(npat(r"xor    eax,eax$"),
+                        ins.get(old_load_addr - 2, "")):
+            return False
+        if not re.match(npat(r"mov    al,BYTE PTR \[ecx\]$"),
+                        ins.get(old_load_addr, "")):
+            return False
+        if old_load_addr + 2 != cmp_addr:
+            return False
+    elif old_width == 4:
+        if not re.match(npat(r"mov    eax,DWORD PTR \[esi\+0x[0-9a-f]+\]$"),
+                        ins.get(old_load_addr, "")):
+            return False
+        if old_load_addr + 6 != cmp_addr:
+            return False
+    else:
         return False
     m = re.match(npat(r"jle    0x([0-9a-f]+)$"), ins.get(jle_addr, ""))
     if not m:
@@ -313,9 +413,14 @@ def decode_max_polarity(ins, cmp_addr, jle_addr, take_addr, store_addr):
         return False
     if not re.match(npat(r"mov    eax,edi$"), ins.get(take_addr, "")):
         return False
-    st = ins.get(store_addr, "")
-    if not re.match(r"mov +(DWORD PTR |BYTE PTR )?\[", st):
-        return False
+    if old_width == 1:
+        if not re.match(npat(r"mov    BYTE PTR \[ecx\],al$"),
+                        ins.get(store_addr, "")):
+            return False
+    else:
+        if not re.match(npat(r"mov    DWORD PTR \[esi\+0x[0-9a-f]+\],eax$"),
+                        ins.get(store_addr, "")):
+            return False
     # nothing between the landing pad and the store may branch away
     for a in sorted(x for x in ins if land <= x < store_addr):
         if re.match(r"(j[a-z]+|loop|call|ret)( |$)", ins[a]):
@@ -342,9 +447,9 @@ def g1_pins(ins):
             re.search(npat(r"mov    BYTE PTR \[eax\+0x2\],dl"), body)),
         "callee_clobbers": callee_saved,
         "slot_max": decode_max_polarity(ins, 0x51DFC3, 0x51DFC5, 0x51DFC7,
-                                        0x51DFCB),
+                                        0x51DFCB, 0x51DFBD, 4),
         "cell_max": decode_max_polarity(ins, 0x51DFED, 0x51DFEF, 0x51DFF1,
-                                        0x51DFF3),
+                                        0x51DFF3, 0x51DFEB, 1),
         "wb_plain_overwrite": not any(
             re.match(r"cmp |test |j", ins.get(a, ""))
             for a in range(0x582CC0, 0x582CF6)),
@@ -356,16 +461,27 @@ def g1_pins(ins):
                      ins.get(0x51DD4F, "")) and
             re.match(npat(r"mov    DWORD PTR \[ebp-0xc\],ecx"),
                      ins.get(0x51DD57, ""))),
-        "stride_28": (((8 - 1) * 4) == SLOT_STRIDE),
-        "counter_inside_slot": (SLOT_FIELD_CNT + 4 <= SLOT_STRIDE),
-        "stride_4_aliases": all(4 * k + SLOT_FIELD_CNT == 4 * (k + 1)
-                                for k in range(REGION_BOUND)),
+        "rec_fold": decode_record_fold(ins, 0x582CD9, 0x582CDC, 0x582CDF),
+        "slot_stride_dec": decode_slot_stride(ins, 0x51DFAF, 0x51DFB1,
+                                              0x51DFB8, 0x51DFBA),
+        "slot_fields": decode_displacements(ins, 0x51DFCB, 0x51E00D),
+        "cell_fold": decode_cell_fold(ins, 0x51DFD5, 0x51DFD8, 0x51DFDA,
+                                      0x51DFDD, 0x51DFE0, 0x51DFE2),
+        # Greptile #264 P2: the sole [ebp-0xc] store is a FULL-WINDOW SCAN of
+        # every shipped instruction, not the three pinned ones - any OTHER
+        # write to the slot anywhere in the dump fails the count.
+        "sole_ebpC_stores": sorted(a for a in ins if re.match(
+            npat(r"mov +(BYTE|WORD|DWORD) ?PTR \[ebp-0xc\],"), ins[a])),
     }
     ok = (not bad and laws["nibble_split"] and not laws["callee_clobbers"]
           and laws["slot_max"] and laws["cell_max"]
           and laws["wb_plain_overwrite"] and laws["slot_store_before_branch"]
-          and laws["site_from_byte3_sole_store"] and laws["stride_28"]
-          and laws["counter_inside_slot"] and laws["stride_4_aliases"])
+          and laws["site_from_byte3_sole_store"]
+          and laws["rec_fold"] == (REC_LEN, 2)
+          and laws["slot_stride_dec"] == SLOT_STRIDE
+          and laws["slot_fields"] == (SLOT_BASE, SLOT_FIELD_CNT)
+          and laws["cell_fold"] == (CELL_STRIDE, CELL_BASE, 1)
+          and laws["sole_ebpC_stores"] == [0x51DD57])
     return ok, len(PINS) - len(bad), laws, bad
 
 
@@ -410,6 +526,10 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
     ins = load_window(win_path)
     rows = graded_rows(sl.load_visits(raw_path))
     lbuf = open(bin_path, "rb").read()
+    # Greptile #264 P1: validate the shipped live dump BEFORE anything indexes
+    # record bytes through it - a missing/truncated dump must FAIL the gates
+    # that read it, not crash the acceptance path with an IndexError.
+    live_len_ok = len(lbuf) == REC_LEN * PIN_LIVE_RECS
     lg = LiveGrid(lbuf, W // 2)
 
     R = []
@@ -421,48 +541,101 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
     ok1, npin, laws, bad1 = g1_pins(ins)
     gate("G1_pins_and_decoded_laws",
          ok1 and npin == len(PINS),
-         "%d/%d pinned instructions resolve in %s; decoded from the bytes: the "
-         "write-back is a NIBBLE-SPLIT overwrite %s; the callee touches no "
-         "edi/esi/ebx (edi SURVIVES) %s; slot store MAX %s; cell store MAX %s; "
-         "no cmp/test/branch inside 0x582cc0 (a plain overwrite, not an "
-         "accumulator) %s; the slot store precedes the ebx test %s; [ebp-0xc] "
-         "has ONE store, from BYTE[rec+3] %s; stride 28 from (site*8-site)<<2 "
-         "%s; the +4 counter fits inside the 28-B slot %s; the RETRACTED 4x "
-         "indexing aliases slot k's counter onto slot k+1's value dword (so it "
-         "cannot be the stride) %s%s"
+         "%d/%d pinned instructions resolve in %s; laws READ OUT OF THE BYTES, "
+         "not asserted: write-back is a NIBBLE-SPLIT overwrite %s; the callee "
+         "touches no edi/esi/ebx (edi SURVIVES) %s; slot store MAX %s (cmp/jle "
+         "polarity, old via the full-dword load 0x51dfbd); cell store MAX %s "
+         "(same polarity AND the pinned 0x51dfe9 `xor eax,eax` + 0x51dfeb "
+         "`mov al,[ecx]` zero-extension IMMEDIATELY before the cmp - no stale "
+         "eax upper bits); the callee's own lea fold decodes to stride %s byte "
+         "%s == the 44-B record law (0x582cd9-df, parsed from the pinned "
+         "text); the slot stride DECODES to %s from the pinned chain (mov "
+         "ecx,eax 0x51dfaf proves the same index; (8-1)<<2); the two "
+         "[esi+disp] operands read the table base %s and counter field +%s "
+         "(0x51dfcb/0x51e00d); the cell fold decodes to block-stride %s, base "
+         "%s, site coefficient %s - the pinned `lea ecx,[ecx+eax*4+0x94eca8]` "
+         "scales the BLOCK fold by 4 and adds the site byte UNSCALED (ecx), "
+         "exactly cell_addr(); the RETRACTED 4*value indexing contradicts the "
+         "decoded 28-B stride and the in-slot +4 counter; [ebp-0xc] FULL-"
+         "WINDOW SCAN finds exactly %d store, at %s, from BYTE[rec+3], own "
+         "frame; no cmp/test/branch inside 0x582cc0 (a plain overwrite, not an "
+         "accumulator) %s; the slot store precedes the ebx test %s%s"
          % (npin, len(PINS), os.path.basename(win_path),
             laws["nibble_split"], laws["callee_clobbers"], laws["slot_max"],
-            laws["cell_max"], laws["wb_plain_overwrite"],
-            laws["slot_store_before_branch"], laws["site_from_byte3_sole_store"],
-            laws["stride_28"], laws["counter_inside_slot"],
-            laws["stride_4_aliases"],
+            laws["cell_max"],
+            laws["rec_fold"][0] if laws["rec_fold"][0] is not None else -1,
+            laws["rec_fold"][1] if laws["rec_fold"][1] is not None else -1,
+            laws["slot_stride_dec"],
+            ("0x%x" % laws["slot_fields"][0]) if laws["slot_fields"][0]
+            else None,
+            laws["slot_fields"][1], laws["cell_fold"][0],
+            ("0x%x" % laws["cell_fold"][1]) if laws["cell_fold"][1] else None,
+            laws["cell_fold"][2], len(laws["sole_ebpC_stores"]),
+            ["0x%x" % a for a in laws["sole_ebpC_stores"]],
+            laws["wb_plain_overwrite"], laws["slot_store_before_branch"],
             "" if not bad1 else " BAD " + "; ".join(bad1[:3])))
 
     # ---- G2 the cached byte IS the score byte ----------------------------
-    bad2 = 0
+    # Greptile #264 P1 x2: NOTHING here compares a model formula with itself.
+    # (a) the callee's OWN lea/imul fold is decoded to (44, 2) by G1 - the
+    #     stride and the byte field come from the pinned TEXT;
+    # (b) the write-back target byte is graded byte-for-byte against the
+    #     INDEPENDENTLY shipped podscan Grid.rb record view (sim/podscan.py,
+    #     authored for M291, not this file) and against pc.Grid.val's getter
+    #     (the same high nibble the score law reads);
+    # (c) write_back() is graded against a SYMBOLIC RUN of the four pinned
+    #     ops (mask and shift parsed from their texts), not against itself.
+    m_and = re.match(npat(r"and    dl,0x([0-9a-f]+)$"), ins.get(0x582CE3, ""))
+    m_shl = re.match(npat(r"shl    cl,0x([0-9a-f]+)$"), ins.get(0x582CEC, ""))
+    m_or = bool(re.match(npat(r"or     dl,cl$"), ins.get(0x582CEF, "")))
+    m_st = re.match(npat(r"mov    BYTE PTR \[eax\+0x([0-9a-f]+)\],dl$"),
+                    ins.get(0x582CF1, ""))
+    pin_ops_ok = bool(m_and and m_shl and m_or and m_st)
+    mask = int(m_and.group(1), 16) if m_and else None
+    shft = int(m_shl.group(1), 16) if m_shl else None
+    fielddisp = int(m_st.group(1), 16) if m_st else None
+    bad2 = bad2v = 0
     for t in range(W * H):
         x, y = t % W, t // W
-        if rec2_off(x, y, W // 2) != REC_LEN * ((W // 2) * y + (x >> 1)) + 2:
+        if sav.data[sav.grid_off + rec2_off(x, y, W // 2)] != g.rb(x, y)[2]:
             bad2 += 1
+        if g.val(x, y) != cached_edi(g.rb(x, y)):
+            bad2v += 1
     n_id = n_trunc = 0
-    for old in range(256):
-        for edi in range(32):
-            nb = write_back(old, edi)
-            if ((nb & 0x0F) == (old & 0x0F) and
-                    ((nb & 0xF0) >> 4) == (edi & 0x0F)):
-                n_id += 1
-            if edi > 15:
-                n_trunc += 1
+    if pin_ops_ok:
+        for old in range(256):
+            for edi in range(32):
+                dl = old & mask                    # and dl,MASK
+                cl = (edi << shft) & 0xFF          # shl cl,S
+                dl = (dl | cl) & 0xFF              # or  dl,cl
+                if fielddisp == 2 and write_back(old, edi) == dl:
+                    n_id += 1
+                if edi > 15:
+                    n_trunc += 1
     gate("G2_cache_byte_is_score_byte",
-         not bad2 and n_id == 256 * 32 and n_trunc == 256 * 16,
-         "the write-back target rec2+2 == the tileview record's byte2 on %d/%d "
-         "tiles (row mult %d = W/2; the two globals 0x692184 / 0x92ae14 the "
-         "callee loads ARE the tileview formula's own); the nibble law holds "
-         "exhaustively over 256 old bytes x 32 edi values (low nibble preserved "
-         "AND high nibble == edi mod 16): %d/%d combos - and the cache field is "
-         "4 bits, so an edi above 15 is TRUNCATED by the pinned shl/or (%d "
-         "combos; no recorded val reaches it)"
-         % (W * H - bad2, W * H, W // 2, n_id, 256 * 32, n_trunc))
+         (pin_ops_ok and mask == 0x0F and shft == 4 and fielddisp == 2 and
+          laws["rec_fold"] == (REC_LEN, 2) and not bad2 and not bad2v and
+          n_id == 256 * 32 and n_trunc == 256 * 16),
+         "the callee's pinned lea fold (0x582cd9-df) DECODES to a %d-B stride "
+         "at byte field +%d, and its store 0x582cf1 is [eax+%d] off the same "
+         "record base (0x582ce6 lea) - so the write-back target is byte2 of "
+         "the 44-B record by the PIN; graded against the independently shipped "
+         "podscan Grid.rb view: rec2_off lands on that byte for %d/%d tiles, "
+         "and pc.Grid.val (M291's score getter) reads the SAME high nibble on "
+         "%d/%d (row mult %d = W/2 is recorded); the nibble law is graded "
+         "against a symbolic run of the four pinned ops (and dl,0x%x / shl "
+         "cl,0x%x / or dl,cl / mov BYTE[eax+0x%x],dl - operands parsed from "
+         "the pinned text): %d/%d combos of 256 old bytes x 32 edi values "
+         "agree, so the cache field is 4 bits and an edi above 15 is TRUNCATED "
+         "by the pinned shl/or (%d combos; no recorded val reaches it)"
+         % (laws["rec_fold"][0] if laws["rec_fold"][0] is not None else -1,
+            laws["rec_fold"][1] if laws["rec_fold"][1] is not None else -1,
+            fielddisp if fielddisp is not None else -1,
+            W * H - bad2, W * H, W * H - bad2v, W * H, W // 2,
+            mask if mask is not None else -1,
+            shft if shft is not None else -1,
+            fielddisp if fielddisp is not None else -1,
+            n_id, 256 * 32, n_trunc))
 
     # ---- G3 the sticky cache over the recorded walk ----------------------
     tile_seen = collections.OrderedDict()
@@ -484,36 +657,47 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
         b2 = g.rb(X, Y)[2]
         for (vi, val) in vs:
             edi = (b2 & 0xF0) >> 4
-            if edi == val:
-                cl3["hit"] += 1                        # the cached path 0x51df8d
-            elif edi == 0:
-                cl3["lazy_wb"] += 1                    # 0x5aff90 then 0x582cc0
+            if edi == 0:
+                # 0x51df8d: a ZERO high nibble ALWAYS takes the lazy path -
+                # even when the recorded val is ALSO zero the pinned code
+                # runs the 0x5aff90 call and the 0x582cc0 write-back (which
+                # re-stores 0). Counting such a row as a cached hit would
+                # model the wrong control flow (review #264 P1).
+                cl3["lazy_zero" if val == 0 else "lazy_wb"] += 1
                 b2 = write_back(b2, val)
+            elif edi == val:
+                cl3["hit"] += 1                        # the cached path
             else:
                 cl3["adopt_mutate"] += 1               # live map recompute
                 b2 = write_back(b2, val)
-        end_agree += 1 if ((lg.rb(X, Y)[2] & 0xF0) >> 4) == ((b2 & 0xF0) >> 4) \
-            else 0
+        if live_len_ok:
+            end_agree += 1 if ((lg.rb(X, Y)[2] & 0xF0) >> 4) == \
+                ((b2 & 0xF0) >> 4) else 0
     n_agree = end_agree
     gate("G3_sticky_cache_replay",
-         (len(rows) == PIN_DEC_ROWS and tiles == PIN_TILES and
+         (live_len_ok and len(rows) == PIN_DEC_ROWS and tiles == PIN_TILES and
           len(multi) == PIN_MULTI_TILES and multi_rows == PIN_MULTI_ROWS and
-          cl3["hit"] == PIN_CACHE_HIT and cl3["lazy_wb"] == PIN_CACHE_LAZY and
+          cl3["hit"] == PIN_CACHE_HIT and
+          cl3["lazy_zero"] == PIN_CACHE_LAZY_ZERO and
+          cl3["lazy_wb"] == PIN_CACHE_LAZY and
           cl3["adopt_mutate"] == PIN_CACHE_ADOPT and
-          cl3["hit"] + cl3["lazy_wb"] + cl3["adopt_mutate"] == len(rows) and
+          cl3["hit"] + cl3["lazy_zero"] + cl3["lazy_wb"] +
+          cl3["adopt_mutate"] == len(rows) and
           n_agree == PIN_END_AGREE),
          "%d rows over %d tiles replayed through the cache STATE machine (the "
-         "pinned 0x51df8d branch: the lazy call and the 0x582cc0 write-back run "
-         "ONLY on a zero nibble): %d cached-path hits, %d lazy+write-back "
+         "pinned 0x51df8d branch: ANY zero nibble takes the lazy call + the "
+         "0x582cc0 write-back, whatever the val): %d cached-path hits, %d "
+         "zero-nibble/zero-val lazy resolutions (the lazy path runs, the "
+         "write-back re-stores 0 - NOT counted as hits), %d lazy+write-back "
          "resolutions, %d adopted live mutations == %d rows. Tiles whose value "
          "changed more than once inside the window %d (RECORDED M296 S3b %d) "
          "carrying %d rows (RECORDED %d) - the sticky law: a record keeps its "
          "cached value until a live map mutation forces a recompute. The "
          "replayed end-state nibble equals the s249 end-window snapshot's on "
          "%d/%d tiles (anchor %d): the cache law survives to the dump%s"
-         % (len(rows), tiles, cl3["hit"], cl3["lazy_wb"], cl3["adopt_mutate"],
-            len(rows), len(multi), PIN_MULTI_TILES, multi_rows, PIN_MULTI_ROWS,
-            n_agree, tiles, PIN_END_AGREE,
+         % (len(rows), tiles, cl3["hit"], cl3["lazy_zero"], cl3["lazy_wb"],
+            cl3["adopt_mutate"], len(rows), len(multi), PIN_MULTI_TILES,
+            multi_rows, PIN_MULTI_ROWS, n_agree, tiles, PIN_END_AGREE,
             " (the %d divergences are the declared post-grading drift, A5)"
             % (tiles - n_agree) if n_agree < tiles else ""))
 
@@ -534,51 +718,74 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
                       sum(cl4.values()), PIN_DEC_ROWS))
 
     # ---- G5 the snapshot: the cache is never undone ----------------------
+    # Review #264 P1: the dump length is validated (live_len_ok) BEFORE any
+    # gate indexes it - a bad dump FAILS instead of crashing; and the
+    # documented 0x46e770 zero-condition is PROVEN: "dword[rec+8] bit 0x1000"
+    # and "byte9 bit4" are the SAME physical bit (the dword at rec+8 spans
+    # bytes rec+8..rec+11, so its bit 0x1000 = bit 4 of ITS byte 1 = rec+9
+    # bit 4), so score_getter's byte9 test is the pinned condition, not a
+    # weakening of it - checked exhaustively below on every record of both.
     cl5 = collections.Counter()
-    for (vi, u, s, e) in rows:
-        lv, z = score_getter(lg.rb(e["y"], e["x"]))
-        if lv == e["val"] and not z:
-            cl5["match"] += 1
-        elif z:
-            cl5["bit4"] += 1
-        elif lv == 0:
-            cl5["lazy"] += 1
-        else:
-            cl5["nibble"] += 1
+    dw_ok = n_dw = 0
     hi_ch = lo_pres = 0
-    for y in range(H):
-        for x in range(0, W, 2):
-            a, b = g.rb(x, y), lg.rb(x, y)
-            if (a[2] & 0xF0) != (b[2] & 0xF0):
-                hi_ch += 1
-                if (a[2] & 0x0F) == (b[2] & 0x0F):
-                    lo_pres += 1
+    if live_len_ok:
+        for (vi, u, s, e) in rows:
+            lv, z = score_getter(lg.rb(e["y"], e["x"]))
+            if lv == e["val"] and not z:
+                cl5["match"] += 1
+            elif z:
+                cl5["bit4"] += 1
+            elif lv == 0:
+                cl5["lazy"] += 1
+            else:
+                cl5["nibble"] += 1
+        for y in range(H):
+            for x in range(0, W, 2):
+                for gr in (g, lg):
+                    r = gr.rb(x, y)
+                    n_dw += 1
+                    if ((int.from_bytes(r[8:12], "little") & 0x1000) !=
+                            0) == ((r[9] & 0x10) != 0):
+                        dw_ok += 1
+        for y in range(H):
+            for x in range(0, W, 2):
+                a, b = g.rb(x, y), lg.rb(x, y)
+                if (a[2] & 0xF0) != (b[2] & 0xF0):
+                    hi_ch += 1
+                    if (a[2] & 0x0F) == (b[2] & 0x0F):
+                        lo_pres += 1
     gate("G5_live_snapshot_no_clears",
-         (cl5["match"] == PIN_LIVE_MATCH and cl5["bit4"] == PIN_LIVE_BIT4 and
+         (live_len_ok and cl5["match"] == PIN_LIVE_MATCH and
+          cl5["bit4"] == PIN_LIVE_BIT4 and
           cl5["nibble"] == PIN_LIVE_NIBBLE and cl5["lazy"] == PIN_LIVE_LAZY and
-          len(lbuf) == REC_LEN * PIN_LIVE_RECS and hi_ch == PIN_HI_CHANGED and
-          lo_pres == PIN_LO_PRESERVED),
-         "%d records x %d B graded (RECORDED M297 S3 verbatim): match %d, "
-         "bit4-zeroed %d, nibble-drift %d, and the cache law's own observable "
-         "lazy %d (RECORDED %d) - no recorded nonzero val ever meets a zeroed "
-         "nibble in the snapshot: the write-back is never undone on a graded "
-         "tile; the write-back signature over the whole map: high nibble "
-         "changed on %d records (anchor %d), of which %d kept the LOW nibble "
-         "intact (anchor %d) - the pinned nibble-split, not a whole-byte store"
-         % (len(lbuf) // REC_LEN, REC_LEN, cl5["match"], cl5["bit4"],
-            cl5["nibble"], cl5["lazy"], PIN_LIVE_LAZY, hi_ch, PIN_HI_CHANGED,
-            lo_pres, PIN_LO_PRESERVED))
+          hi_ch == PIN_HI_CHANGED and lo_pres == PIN_LO_PRESERVED and
+          dw_ok == n_dw and n_dw == 2 * PIN_LIVE_RECS),
+         "%d records x %d B graded (dump length validated FIRST: %s) "
+         "(RECORDED M297 S3 verbatim): match %d, bit4-zeroed %d, nibble-drift "
+         "%d, and the cache law's own observable lazy %d (RECORDED %d) - no "
+         "recorded nonzero val ever meets a zeroed nibble in the snapshot: the "
+         "write-back is never undone on a graded tile; the write-back "
+         "signature over the whole map: high nibble changed on %d records "
+         "(anchor %d), of which %d kept the LOW nibble intact (anchor %d) - "
+         "the pinned nibble-split, not a whole-byte store; the 0x46e770 "
+         "getter's 'dword[rec+8] bit 0x1000' and 'byte9 bit4' are the SAME "
+         "physical bit on %d/%d record dwords in both views, so "
+         "score_getter's byte9 test is exactly the pinned zero-condition"
+         % (len(lbuf) // REC_LEN, REC_LEN, live_len_ok, cl5["match"],
+            cl5["bit4"], cl5["nibble"], cl5["lazy"], PIN_LIVE_LAZY,
+            hi_ch, PIN_HI_CHANGED, lo_pres, PIN_LO_PRESERVED, dw_ok, n_dw))
 
     # ---- G6 the cache is an overwrite, not an accumulator ---------------
     dn = up = lo_eq = 0
-    for (vi, u, s, e) in rows:
-        r = lg.rb(e["y"], e["x"])
-        hi = (r[2] & 0xF0) >> 4
-        dn += 1 if hi < e["val"] else 0
-        up += 1 if hi > e["val"] else 0
-        lo_eq += 1 if (r[2] & 0x0F) == e["val"] else 0
+    if live_len_ok:
+        for (vi, u, s, e) in rows:
+            r = lg.rb(e["y"], e["x"])
+            hi = (r[2] & 0xF0) >> 4
+            dn += 1 if hi < e["val"] else 0
+            up += 1 if hi > e["val"] else 0
+            lo_eq += 1 if (r[2] & 0x0F) == e["val"] else 0
     gate("G6_overwrite_not_accumulator",
-         (dn == PIN_DOWN_DRIFT and up == PIN_UP_DRIFT and
+         (live_len_ok and dn == PIN_DOWN_DRIFT and up == PIN_UP_DRIFT and
           lo_eq == PIN_LO_GETTER_ROWS),
          "the nibble moves BOTH ways against the recorded val: %d rows have the "
          "live high nibble BELOW the val (anchor %d) and %d ABOVE it (anchor "
@@ -594,20 +801,32 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
     sites_hist = collections.Counter()
     per_visit = collections.defaultdict(set)
     neg_one_save = 0
+    owner_hist = collections.Counter()
     for (vi, u, s, e) in rows:
         X, Y = e["y"], e["x"]
         r = g.rb(X, Y)
         sites_hist[site_of(r)] += 1
         per_visit[vi].add(site_of(r))
+        blk, raw = block_of(r)
+        owner_hist[raw] += 1
         if block_of(r)[1] == -1:
             neg_one_save += 1
     mixed = sum(1 for k in per_visit if len(per_visit[k]) != 1)
     nvis = len(per_visit)
     max_site = max(sites_hist)
+    # Review #264 P1: the EIGHT-BLOCK OWNER FAMILY is GRADED, not asserted in
+    # prose: every graded raw owner is the -1 sentinel or inside 1..CELL_BLOCKS
+    # (so no clamped block ever leaves the family either), and the distinct
+    # non-sentinel owners number at most CELL_BLOCKS.
+    owner_fam_ok = (
+        all(isinstance(k, int) and (k == -1 or 1 <= k <= CELL_BLOCKS)
+            for k in owner_hist) and
+        len([k for k in owner_hist if isinstance(k, int) and k > 0])
+        <= CELL_BLOCKS)
     zero_owner = 0
     for y in range(H):
         for x in range(0, W, 2):
-            for gr in (g, lg):
+            for gr in ((g, lg) if live_len_ok else (g,)):
                 zero_owner += 1 if gr.rb(x, y)[7] == 0 else 0
     col_div = 0
     for (vi, u, s, e) in rows:
@@ -616,9 +835,9 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
             != site_of(g.rb(X, Y)) else 0
     walk_row = 32                        # ds:0x92a378 = 64 bounds / step 2
     gate("G7_site_byte_and_block",
-         (dict(sites_hist) == PIN_SITE_ROWS and max_site < REGION_BOUND and
-          mixed == 0 and nvis == PIN_VISITS and
-          neg_one_save == PIN_SAVE_SKIP_ROWS and
+         (live_len_ok and dict(sites_hist) == PIN_SITE_ROWS and
+          max_site < REGION_BOUND and mixed == 0 and nvis == PIN_VISITS and
+          neg_one_save == PIN_SAVE_SKIP_ROWS and owner_fam_ok and
           zero_owner == PIN_ZERO_OWNER_RECS and col_div == PIN_COL_DIVERGE and
           walk_row * REC_LEN * H == len(lbuf)),
          "site = BYTE[rec+3]: the graded rows carry %s (anchor %s), max site "
@@ -627,7 +846,9 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
          "sentinel (anchor %d) so the clamp sends them to block 0 and the CELL "
          "store is SKIPPED while the slot store stands, and a legitimate 0 "
          "owner appears in %d records of %d in either view (anchor %d) - the "
-         "skip class IS exactly the unowned tiles; the ring-index rival for ebx "
+         "skip class IS exactly the unowned tiles; the OWNER FAMILY is GRADED: "
+         "every graded raw owner is the -1 sentinel or inside 1..%d "
+         "(observed owners %s), so the ring-index rival for ebx "
          "would reach block %d+, past the recorded %d-block family; rival 'site "
          "= the save 22-B column byte0' diverges on %d/%d rows (anchor %d); the "
          "pinned inner walk (x += 2 up to ds:0x92a378) steps %d records of 0x2c "
@@ -635,8 +856,9 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
          % (dict(sorted(sites_hist.items())), PIN_SITE_ROWS, max_site,
             REGION_BOUND, nvis - mixed, nvis, neg_one_save, PIN_SAVE_SKIP_ROWS,
             zero_owner, 2 * PIN_LIVE_RECS, PIN_ZERO_OWNER_RECS, CELL_BLOCKS,
-            CELL_BLOCKS, col_div, PIN_DEC_ROWS, PIN_COL_DIVERGE, walk_row,
-            PIN_LIVE_RECS))
+            dict(sorted((k, v) for (k, v) in owner_hist.items())),
+            CELL_BLOCKS, CELL_BLOCKS, col_div, PIN_DEC_ROWS, PIN_COL_DIVERGE,
+            walk_row, PIN_LIVE_RECS))
 
     # ---- G8 the MAX-store funnel ----------------------------------------
     sg = SiteGate()
@@ -681,12 +903,14 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
          (sg.rows == PIN_DEC_ROWS and sg.cell_skips == PIN_SAVE_SKIP_ROWS and
           zero_owner_rows == PIN_SAVE_SKIP_ROWS and slot_final_ok and
           cell_n_diverge == 0 and not any(b == 0 for (b, _) in sg.cell) and
+          all(0 < b <= CELL_BLOCKS for (b, _) in sg.cell) and
           len(sg.cell) == len(cell_exp) and diverge_last > 0 and
           diverge_min > 0 and cell_div_min > 0 and cell_div_blk > 0),
          "%d walk steps through the tables: slot entries %d (sites %s), cell "
          "entries %d over %d owner blocks, %d steps SKIPPED the cell store "
          "(anchor %d; %d rows carried the -1 owner byte -> clamp 0, the two "
-         "agree, and NO cell entry exists for block 0); every stored value is "
+         "agree, NO cell entry exists for block 0, and every cell block sits "
+         "in 1..%d per G7's graded owner family); every stored value is "
          "monotone non-decreasing, each SLOT ends at the recorded MAX (%s) and "
          "every CELL (block, site) equals the recorded per-pair MAX EXACTLY - "
          "key set and values, %d disagreements. The model's law CHOICE is "
@@ -699,7 +923,7 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
          "call 0x5832b0, no recorded input)"
          % (sg.rows, len(sg.slot), sorted(sg.slot), len(sg.cell),
             len(set(b for (b, _) in sg.cell)), sg.cell_skips,
-            PIN_SAVE_SKIP_ROWS, zero_owner_rows, slot_final_ok,
+            PIN_SAVE_SKIP_ROWS, zero_owner_rows, CELL_BLOCKS, slot_final_ok,
             cell_n_diverge, diverge_last, diverge_min, cell_div_min,
             cell_div_blk, sg.digest()))
 
@@ -737,10 +961,14 @@ def report(sav_path, raw_path=DEF_RAW, bin_path=DEF_BIN, win_path=DEF_WIN):
 
 
 def acceptance(sav_path, results, raw=DEF_RAW, bin_path=DEF_BIN, win=DEF_WIN):
-    for name, ok, detail in report(sav_path, raw, bin_path, win):
+    """Run the B18 gate set. The verdict grades ONLY this rung's gates -
+    NOT the caller's accumulated list (review #264 P1: all(results) would let
+    other rungs' booleans leak into the B18 claim)."""
+    res = report(sav_path, raw, bin_path, win)
+    for name, ok, detail in res:
         results.append((name, ok))
         print("%-27s %s  %s" % (name, "PASS" if ok else "FAIL", detail))
-    return all(ok for (_, ok) in results)
+    return all(ok for (_, ok, _) in res)
 
 
 def main(argv=None):

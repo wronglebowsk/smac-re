@@ -817,3 +817,29 @@ gated on call 0x5832b0), ebx's walked-table provenance beyond the owner-byte rea
 live 0x989ce8/0x94eca8 contents (a read-only /proc window: LEAD), and every M297 A5
 caveat. Box untouched (s244 state; zero /proc, zero gdb). NAMED.md gains the B18 block;
 BUILD_SPINE.md now carries the B18 rung.
+
+## Session 253 (2026-11-11, STATIC, zero box) - B18 #264 CLOSED: the review round (10 P1 + 2 P2) fixed IN-BRANCH, MERGED #264
+- s252 died mid-close-out; its kickoff claimed no outstanding P1s - WRONG: 10 P1 +
+  2 P2 inline comments sat on head 522cdc8. Every finding run to ground against the
+  pinned windows; all fixed IN-BRANCH (or dismissed WITH a shipped proof, below).
+- The unfinished script = scratch/sitegate.py = shipped sim/sitegate.py + four FOLD
+  DECODERS, DEFINED BUT NEVER WIRED. Wired: G1 DECODES the record fold -> (44-B
+  stride, byte +2), slot stride 28 from the chain 0x51dfaf-ba, base 0x989ce8 +
+  counter +4 off the [esi+disp] operands (0x51dfcb/0x51e00d), cell fold -> 8380*block
+  + 0x94eca8 with the site byte UNSCALED (the pinned lea scales the BLOCK term by 4;
+  ecx==site via newly pinned mov ecx,eax 0x51dfaf) - arithmetic identities REPLACED
+  by byte-read laws. PINS 62 -> 64.
+- decode_max_polarity GRADES old loads: slot = full-DWORD 0x51dfbd; cell = newly
+  pinned `xor eax,eax` 0x51dfe9 + `mov al,[ecx]` 0x51dfeb IMMEDIATELY before the cmp.
+  G2 nibble law = SYMBOLIC run of the four pinned ops (mask/shift parsed from their
+  texts) == write_back 8192/8192; rec2_off byte-graded vs the INDEPENDENTLY shipped
+  podscan Grid.rb view 4096/4096 (+ Grid.val getter 4096/4096).
+- G3 classifier: a ZERO nibble takes the lazy path WHATEVER the val (new lazy_zero
+  class) - EMPTY here: 2288/0/1/32, counts unchanged, control flow honest. G5/G6 run
+  only AFTER the live-dump length is validated (FAIL, not IndexError). G5 PROVES
+  "dword[rec+8] bit 0x1000 == byte9 bit4" on 8192/8192 dwords - that P1 was WRONG
+  (same physical bit). G7 GRADES the eight-block owner family ({-1} u 1..8, <=8
+  distinct); G8 enforces cell blocks 1..8. acceptance() all() over ITS OWN gates.
+- ACCEPTANCE: `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> **PASS
+  B18: 10/10** (evidence/b18_sitegate.txt regenerated); `python3 scripts/gate.py
+  --base main` -> GATE GREEN (0 warnings). Box: ZERO.
