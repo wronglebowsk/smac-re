@@ -783,12 +783,14 @@ m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
   TRANSPOSED) into ONE slot-strict replay of the m294 gate-row window.
 - ACCEPTANCE `python3 -m sim.selftest --b17` -> evidence/b17_scanleg_chain.txt:1
   **PASS B17: 10/10**: G1 pins 1026 visits / 2321 decision slots / 25650 GROW /
-  260 accepts / 61 bypass (m296 S0 + NAMED ## M294); G2 best_init: save+law ==
-  machine on 1023/1023 gradeable scans, 3 DECLARED-live inits = u=45 (machine 5
-  vs save-dest -1, the S7b stale-dest class, value leg OPEN) + 2 save-invisible
-  m2b dests; buckets plain 1023 / val-bad 1 / lazy 2; case-8 leg 1/1; G3+G4 the
+  260 accepts / 61 bypass (m296 S0 + NAMED ## M294); G2 best_init law-vs-machine
+  990/1026 (the zero-leg needs NO unit record; 362 scans name post-save units -
+  bucketed not_in_save, never graded as saved state); m2b class 36 = 3 save-
+  recorded (u=45 machine-5 vs save-dest -1 = the S7b stale-dest class, value leg
+  OPEN; 2 save-invisible dests) + 33 unit-not-in-save; case-8 leg 1/1; G3+G4 the
   GROW BEST *and WIN* columns both replay 25650/25650 (the win replay is NEW -
-  M296 pinned best only); G5 accepts 260/260 predicted from the REPLAYED best
+  M296 pinned best only) AND the M296-S2 incoming-best law re-checks all 2321
+  decision rows against the REPLAYED best; G5 accepts 260/260 predicted from the REPLAYED best
   (bypass 61 + legs value 4 / bases 192 / mult0 2 / case8open 1), 0 GDEEP rows
   at/over the 2*(8-dist) cap; G6 predicted winner == DISP esi 201/201 (0 drift
   skips); G7 save-view val-law 1931/2321 (lazy 1; 0 tie rows; 0x1000-zero tests

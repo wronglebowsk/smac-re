@@ -1,6 +1,6 @@
 # NEXT_PROMPT.md - footing (s248 close: B17 BUILD = pod-scan loop DECISION CORE made
 executable (sim/scanleg.py; `python3 -m sim.selftest --b17` -> evidence/b17_scanleg_chain.txt:1
-**PASS B17: 10/10**: best_init 1023/1023 + 3 DECLARED-live (u=45 value leg OPEN), GROW best+win
+**PASS B17: 10/10**: best_init 990/1026 + 36 m2b-decl (u=45 value leg OPEN), GROW best+win
 25650/25650, accepts 260/260 (61 bypass), winner==DISP esi 201/201; pool 6048/8482, 2434 live
 residue UNCHANGED; M296 re-ran PASS 9/9. Next: THE PICK below.)
 Overflow: `docs/pick-archive.md` (VERBATIM blocks - read only the picked section), `NAMED.md` (§CHAIN-BUILDS/

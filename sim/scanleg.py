@@ -140,7 +140,12 @@ def _agree(v, g, W):
 
 
 def _save_dest(sav, g, W, H, u):
-    """the unit's move-to-base dest record + order byte, from the save array."""
+    """the unit's move-to-base dest record + order byte, from the save array.
+    Units founded AFTER the y2150 save have NO save record (the trace names
+    u >= len(sav.units)): return (None, 0, 0, None) - unrelated bytes must
+    never be graded as unit state (Greptile #261 P2)."""
+    if not (0 <= u < len(sav.units)):
+        return None, 0, 0, None
     o = sav.units_off + sosave.UNIT_LEN * u
     order = sav.data[o + 17]
     dx = struct.unpack_from("<H", sav.data, o + 20)[0]
@@ -158,6 +163,8 @@ def _law_init(sav, g, W, H, u, case_row, px, py):
     if case_row != 8:
         return 0
     order, dx, dy, drec = _save_dest(sav, g, W, H, u)
+    if order is None:
+        return None  # unit founded after the save: the law cannot grade it
     if order != 0x18 or drec is None:
         return 0
     wd = max(min(abs(dx - px), W - abs(dx - px)),
@@ -193,6 +200,18 @@ def _init_buckets(sav, g, W, H, vis):
             m_calc = sc - 1
         if m_init != 0:
             bk["nonzero_init"] += 1
+            if not (0 <= v["u"] < len(sav.units)):
+                # unit founded after the save: case leg still gradeable from
+                # the recorded case column; the VALUE leg has no save record
+                if first["case"] != 8:
+                    bk["gate8_bad"] += 1
+                    samples.append(("CASE8", vi, v["u"], (px, py), (dx, dy),
+                                    m_init, first["case"]))
+                else:
+                    bk["drift_pending"] += 1
+                    samples.append(("UNGRA", vi, v["u"], (px, py), (dx, dy),
+                                    m_init, None))
+                continue
             if first["case"] != 8:
                 bk["gate8_bad"] += 1
                 samples.append(("CASE8", vi, v["u"], (px, py), (dx, dy), m_init,
@@ -207,6 +226,8 @@ def _init_buckets(sav, g, W, H, vis):
                 bk["m2b_val_bad"] += 1
                 samples.append(("VAL", vi, v["u"], (px, py), (dx, dy), m_init,
                                 m_calc))
+        elif not (0 <= v["u"] < len(sav.units)):
+            bk["not_in_save"] += 1
         elif first["case"] == 8 and order == 0x18 and drec is not None:
             wd = max(min(abs(dx - px), W - abs(dx - px)),
                      min(abs(dy - py), H - abs(dy - py)))
@@ -280,18 +301,25 @@ def report(sav_path, raw_path):
          bk["gate8_bad"] == 0 and bk["nonzero_init"] == 1
          and bk["m2b_val_bad"] == 1 and bk["m2b_lazy_dest"] == 2
          and bk["m2b_gate_le2"] == 0 and bk["m2b_zero_drift"] == 0
-         and bk["drift_pending"] == 0 and bk["plain_zero_ok"] == 1023
-         and model_hit == PIN_VISITS - 3 and declared == 3,
-         "save+law init == machine init on %d/%d gradeable scans (3 DECLARED-"
-         "live: the u=45 nonzero init + 2 save-invisible m2b dests); case-8 leg "
-         "1/1; buckets %s; the lone nonzero init (u=45, machine 5) mismatches "
-         "the SAVE dest leg (-1): DECLARED save-stale live class, value leg "
-         "OPEN (samples %s)"
-         % (model_hit, PIN_VISITS - 3, dict(bk), samples[:2]))
+         and bk["drift_pending"] == 0
+         and bk["plain_zero_ok"] + bk.get("not_in_save", 0) == 1023
+         and bk.get("not_in_save", 0) == 362
+         and model_hit == 990 and declared == 36
+         and model_hit + declared == PIN_VISITS,
+         "law-vs-machine on %d/%d scans (the zero-leg `cmp esi,8` needs NO unit "
+         "record - 329 of these units postdate the save); the %d case-8 scans are "
+         "the m2b gradeability class: 3 save-recorded (u=45 VAL-mismatch machine-5 "
+         "vs save-dest -1 = DECLARED save-stale, value leg OPEN; 2 save-invisible "
+         "m2b dests) + 33 whose unit postdates the save (machine init 0 for all -> "
+         "DECLARED input); not_in_save scans total 362; case-8 leg 1/1; buckets "
+         "%s; samples %s"
+         % (model_hit, model_hit + declared, 36,
+            dict(bk), samples[:2]))
 
     # ---- G3/G4 best & win trajectories over every graded GROW slot -----------
     best_ok = win_ok = ntot = 0
-    b_bad, w_bad = [], []
+    b_bad, w_bad, s2_bad = [], [], []
+    s2_tot = 0
     replays = []
     for vi, v, pod, pcls, preg, cls, dec, init, law_init in graded:
         events = {s: (v["deep"].get(s) or v["acc"][s])
@@ -309,9 +337,18 @@ def report(sav_path, raw_path):
                 win_ok += 1
             elif len(w_bad) < 6:
                 w_bad.append((vi, v["u"], s, rw, traj[s][1]))
-    gate("G3_best_traj_GROW", best_ok == ntot and not b_bad,
-         "replayed best == recorded GROW best on %d/%d slots; bad %s"
-         % (best_ok, ntot, b_bad[:4]))
+        # M296 S2 law on the REPLAYED best: every decision row's INCOMING best
+        # (recorded column) == the replayed best BEFORE its slot (t<s class).
+        for s, e in events.items():
+            s2_tot += 1
+            want = init if s == 0 else traj[s - 1][0]
+            if e["best"] != want and len(s2_bad) < 6:
+                s2_bad.append((vi, v["u"], s, e["best"], want))
+    gate("G3_best_traj_GROW", best_ok == ntot and not b_bad and not s2_bad,
+         "replayed best == recorded GROW best on %d/%d slots AND the M296-S2 "
+         "incoming-best check (recorded row best == replayed best-before-slot) "
+         "holds on %d/%d decision rows; bad %s %s"
+         % (best_ok, ntot, s2_tot - len(s2_bad), s2_tot, b_bad[:4], s2_bad[:4]))
     gate("G4_win_traj_GROW", win_ok == ntot and not w_bad,
          "replayed winner-so-far == recorded GROW win on %d/%d slots; bad %s"
          % (win_ok, ntot, w_bad[:4]))
@@ -344,6 +381,7 @@ def report(sav_path, raw_path):
             {k: n for k, n in branches.items() if k != "bypass"}, deep_ge_cap))
 
     # ---- G6 winner == DISP esi (the row the dispatch consumes) ----------------
+    disp_total = sum(1 for v in vis if v["disp"] is not None)
     dw_ok = dw_tot = dw_no = 0
     d_bad = []
     for vi, v, pod, fwin, cls in replays:
@@ -356,11 +394,12 @@ def report(sav_path, raw_path):
             dw_ok += 1
         elif len(d_bad) < 6:
             d_bad.append((v["u"], fwin, v["disp"][2]))
-    gate("G6_winner_vs_DISP", dw_tot > 0 and dw_ok == dw_tot - dw_no and not d_bad,
-         "predicted winner == DISP esi on %d/%d graded visits with a DISP row "
-         "(%d skipped: DISP tile != recovered pod, B16 drift class); %d DISP rows "
-         "window-wide (pin %d); bad %s"
-         % (dw_ok, dw_tot, dw_no, PIN_DISPT, PIN_DISPT, d_bad[:4]))
+    gate("G6_winner_vs_DISP", disp_total == PIN_DISPT and dw_tot == PIN_DISPT
+         and dw_no == 0 and dw_ok == dw_tot and not d_bad,
+         "DISP rows window-wide MEASURED %d (pin %d); all %d fall inside graded "
+         "visits, predicted winner == DISP esi on %d/%d (%d skipped: DISP tile "
+         "!= recovered pod, B16 drift class); bad %s"
+         % (disp_total, PIN_DISPT, dw_tot, dw_ok, dw_tot, dw_no, d_bad[:4]))
 
     # ---- G7 val law from the SAVE view + strictness floor ----------------------
     s3 = {"AGREED": [0, 0], "DRIFT": [0, 0]}
