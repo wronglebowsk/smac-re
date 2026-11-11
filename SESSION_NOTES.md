@@ -856,3 +856,32 @@ shipped gate lines reproduces exactly under the fixed instruments (2102/0/
 2100/2321, (19,6) 0x5/0x10/value 0, tie ROWS 0, owner coverage). Census gate
 state unchanged: FAIL M297 1/7, S3 = the documented finding (floor NOT
 weakened). Merged #262 after the MERGE-RULE wait. Next: s251 small statics.
+
+
+## Session 251 (2026-11-11, STATIC, zero box) - M298 SMALL STATICS pair CLOSED
+
+No /proc, no gdb, no box contact (s244 state untouched since s249's read-only pass).
+Milestone: the two holes M294 left OPEN in FUN_0051dcb0 (sole site_gate writer).
+
+- (a) 0x582cc0 body pinned (19 insns): push/pop ebp + eax/ecx/edx only, ZERO
+  edi/esi/ebx writes => edi (0x5aff90 return, copied 0x51df9f) SURVIVES the call into
+  min 0x51dfc3 and max 0x51dfee-51dff3 (no reload); 0x51dfac reloads eax over only the
+  DISCARDED return (rec base, lea 0x582ce6). Effect = CACHE WRITE-BACK: BYTE[rec2+2] =
+  (old&0x0F)|(param_3<<4), rec2 = 0x92ae14+0x2c*(0x692184*param_2+sar(param_1,1)) -
+  the same +2 high nibble the cached-path test 0x51df85 reads: next walk skips
+  0x5aff90 (525 insns).
+- (b) [ebp-0xc] caller hypothesis REFUTED: own frame (0x51dcb1 mov ebp,esp; 0x51dcb3
+  sub esp,0x1c), void/0-args; EXACTLY ONE store in 386 insns: 0x51dd57
+  mov [ebp-0xc],ecx = zero-extended BYTE[rec+3] (xor ecx 0x51dd48; mov cl,[edi+3]
+  0x51dd4f); record cursor base [0x92ae14] 0x51dd1e, +0x2c at 0x51e128/0x51e133; the
+  other 5 refs (0x51dd9f/df28/dfac/e021/e0cc) loads; store precedes first load.
+  Site/region index is record byte +3, not caller-supplied.
+- FINDING (phrasing fix): M294's `cell addr = 0x94eca8+[ebp-0xc]+4*min(...)` wrong -
+  min(edi,slot) STORED 0x51dfcb to the 28B/site slot [28*[ebp-0xc]+0x989ce8] (esi via
+  (x*8-x)<<2 0x51dfb1-ba); addr 0x51dfe2 = 0x94eca8+4*(2095*ebx)+[ebp-0xc] (0x51dfd3-e0
+  65x/131x/<<4/-x; 4*2095 = 8380 = M297 faction block stride); cell = max(edi,old)
+  0x51dfeb-f3; ebx = scan idx (xor 0x51ddf5; -1 clamp 0x51df22-24); ebx==0 skips the
+  cell store (test/je 0x51dfd1), min store survives. ebx's walked table
+  (0x51de2c-0x51df1d) = recorded LEAD, not chased.
+Evidence: evidence/s251_statics_fn51dcb0.txt (162 lines verbatim); dump
+scratch/s251_fn51dcb0.txt. NAMED M298 block + line-1711 status closed. Gate GREEN.
