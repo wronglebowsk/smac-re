@@ -1,5 +1,7 @@
 # SMAC Reverse Engineering
 
+[![Featured on Made with REA](https://madewithrea.com/badges/featured.svg)](https://madewithrea.com/builds/smac-reverse-engineering-hermes-agent-rea-recover-alpha-centauri-game)
+
 Static + dynamic reverse engineering of Sid Meier's Alpha Centauri (`terran.exe`, 32-bit PE,
 run under Wine) to recover exact game rules: production, minerals/energy economy, growth,
 unit orders, map format, UI behavior.
