@@ -34,7 +34,7 @@ writes it (B14/B16/B17); s250-s251 are ANALYSE, s252 = B18 BUILD fire. Track_mod
 
 ## THE LEDGER
 
-Merged M54A-M297 + B0-B17 (through s249) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - re-confirmed documented-FAIL s249, gates stand)**.
+Merged M54A-M297 + B0-B17 (through s249) + hygiene #254/#255; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -59,7 +59,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   (a) 0x582cc0 in FUN_0051dcb0: return DISCARDED (eax reload 0x51dfac) - does the callee
   mutate edi (BYTE[rec+2]>>4 / lazy-0x5aff90 value feeding the 0x51dff3 max + cell index)?
   (b) the 0x51dfe2 cell addr `0x94eca8+[ebp-0xc]+4*min(edi,[esi+0x989ce8])`: what writes
-  [ebp-0xc] in FUN_0051dcb0 callers (site/region id?) - 11 e8-callers named (## M294).
+  [ebp-0xc] in FUN_0051dcb0 callers (site/region id?) - 11 e8-callers (## M294).
   Kit: fn.py 0x582cc0/0x51dcb0, scratch/m71/dis.py, index.csv containment; acceptance =
   byte-pinned NAMED rows. NO live census re-run (box 2212/30; snapshot = last-turn
   witness, M297 S3).
