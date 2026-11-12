@@ -883,5 +883,5 @@ BUILD_SPINE.md now carries the B18 rung.
   36/36, 13/13 constants cross-tool; G7 the s249 2048-record dump MEETS the inputs:
   rung1-close 481, occ 16, bits26/27 12, rung3-open 5, class>=0x60 1087. DECLARED:
   counter VALUES + 0x92a380/0x692210/0x69220c VALUES never recorded.
-- ACCEPTANCE: `python3 scripts/gate.py --base main` -> GREEN on this branch; merge #PRTOP
+- ACCEPTANCE: `python3 scripts/gate.py --base main` -> GREEN on this branch; merge #265
   per the MERGE RULE (Greptile cap 10 min). Box: ZERO.
