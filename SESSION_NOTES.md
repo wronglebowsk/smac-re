@@ -843,3 +843,8 @@ BUILD_SPINE.md now carries the B18 rung.
 - ACCEPTANCE: `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> **PASS
   B18: 10/10** (evidence/b18_sitegate.txt regenerated); `python3 scripts/gate.py
   --base main` -> GATE GREEN (0 warnings). Box: ZERO.
+
+- LANDING: #264 squashed to main as 487f0b4 at 23:52:47Z (owner account; the own
+  `gh pr merge` found it already merged and verified main). GREPTILE SILENT on head
+  6ce43b5 (no check run, no new comment within the capped wait). Chain: s254
+  scheduled at 23:47:57Z (one-shot, deliver local, the 7-tool allowlist).

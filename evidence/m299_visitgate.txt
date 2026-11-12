@@ -1,0 +1,183 @@
+== M299 (s254) STATIC - the slot [+4] visit counter gate FUN_005832b0. Zero box; objdump
+   windows via scratch/m574/text.txt (same dump as evidence/s251_statics_fn51dcb0.txt).
+
+== W1. FUN_0051dcb0 slot/counter tail 0x51dfac-0x51e02c (esi fold, MAX stores, call gate, inc):
+44 lines 0x51dfac-0x51e02c
+  51dfac:	8b 45 f4              	mov    eax,DWORD PTR [ebp-0xc]
+  51dfaf:	8b c8                 	mov    ecx,eax
+  51dfb1:	8d 34 c5 00 00 00 00  	lea    esi,[eax*8+0x0]
+  51dfb8:	2b f1                 	sub    esi,ecx
+  51dfba:	c1 e6 02              	shl    esi,0x2
+  51dfbd:	8b 86 e8 9c 98 00     	mov    eax,DWORD PTR [esi+0x989ce8]
+  51dfc3:	3b f8                 	cmp    edi,eax
+  51dfc5:	7e 02                 	jle    0x51dfc9
+  51dfc7:	8b c7                 	mov    eax,edi
+  51dfc9:	85 db                 	test   ebx,ebx
+  51dfcb:	89 86 e8 9c 98 00     	mov    DWORD PTR [esi+0x989ce8],eax
+  51dfd1:	74 22                 	je     0x51dff5
+  51dfd3:	8b d3                 	mov    edx,ebx
+  51dfd5:	c1 e2 06              	shl    edx,0x6
+  51dfd8:	03 d3                 	add    edx,ebx
+  51dfda:	8d 04 53              	lea    eax,[ebx+edx*2]
+  51dfdd:	c1 e0 04              	shl    eax,0x4
+  51dfe0:	2b c3                 	sub    eax,ebx
+  51dfe2:	8d 8c 81 a8 ec 94 00  	lea    ecx,[ecx+eax*4+0x94eca8]
+  51dfe9:	33 c0                 	xor    eax,eax
+  51dfeb:	8a 01                 	mov    al,BYTE PTR [ecx]
+  51dfed:	3b f8                 	cmp    edi,eax
+  51dfef:	7e 02                 	jle    0x51dff3
+  51dff1:	8b c7                 	mov    eax,edi
+  51dff3:	88 01                 	mov    BYTE PTR [ecx],al
+  51dff5:	8b 4d f8              	mov    ecx,DWORD PTR [ebp-0x8]
+  51dff8:	8b 7d f0              	mov    edi,DWORD PTR [ebp-0x10]
+  51dffb:	51                    	push   ecx
+  51dffc:	57                    	push   edi
+  51dffd:	e8 ae 52 06 00        	call   0x5832b0
+  51e002:	83 c4 08              	add    esp,0x8
+  51e005:	85 c0                 	test   eax,eax
+  51e007:	0f 84 10 01 00 00     	je     0x51e11d
+  51e00d:	8b 8e ec 9c 98 00     	mov    ecx,DWORD PTR [esi+0x989cec]
+  51e013:	8b d3                 	mov    edx,ebx
+  51e015:	c1 e2 06              	shl    edx,0x6
+  51e018:	03 d3                 	add    edx,ebx
+  51e01a:	41                    	inc    ecx
+  51e01b:	89 8e ec 9c 98 00     	mov    DWORD PTR [esi+0x989cec],ecx
+  51e021:	8b 4d f4              	mov    ecx,DWORD PTR [ebp-0xc]
+  51e024:	8d 04 53              	lea    eax,[ebx+edx*2]
+  51e027:	c1 e0 04              	shl    eax,0x4
+  51e02a:	2b c3                 	sub    eax,ebx
+  51e02c:	8a 94 81 28 ed 94 00  	mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
+
+== W2. FUN_005832b0 FULL BODY 0x5832b0-0x5833b7 (fold + ladder + parity):
+114 lines 0x5832b0-0x5833b7
+  5832b0:	55                    	push   ebp
+  5832b1:	8b ec                 	mov    ebp,esp
+  5832b3:	a1 84 21 69 00        	mov    eax,ds:0x692184
+  5832b8:	8b 4d 0c              	mov    ecx,DWORD PTR [ebp+0xc]
+  5832bb:	0f af c1              	imul   eax,ecx
+  5832be:	53                    	push   ebx
+  5832bf:	56                    	push   esi
+  5832c0:	8b 75 08              	mov    esi,DWORD PTR [ebp+0x8]
+  5832c3:	57                    	push   edi
+  5832c4:	8b d6                 	mov    edx,esi
+  5832c6:	d1 fa                 	sar    edx,1
+  5832c8:	03 c2                 	add    eax,edx
+  5832ca:	8d 14 80              	lea    edx,[eax+eax*4]
+  5832cd:	8d 04 50              	lea    eax,[eax+edx*2]
+  5832d0:	8b 15 14 ae 92 00     	mov    edx,DWORD PTR ds:0x92ae14
+  5832d6:	8d 14 82              	lea    edx,[edx+eax*4]
+  5832d9:	8b 42 08              	mov    eax,DWORD PTR [edx+0x8]
+  5832dc:	a9 00 20 10 00        	test   eax,0x102000
+  5832e1:	74 07                 	je     0x5832ea
+  5832e3:	5f                    	pop    edi
+  5832e4:	5e                    	pop    esi
+  5832e5:	33 c0                 	xor    eax,eax
+  5832e7:	5b                    	pop    ebx
+  5832e8:	5d                    	pop    ebp
+  5832e9:	c3                    	ret
+  5832ea:	f7 05 c4 5a 98 00 00  	test   DWORD PTR ds:0x985ac4,0x2000
+  5832f4:	74 11                 	je     0x583307
+  5832f6:	25 00 00 00 0c        	and    eax,0xc000000
+  5832fb:	5f                    	pop    edi
+  5832fc:	f7 d8                 	neg    eax
+  5832fe:	1b c0                 	sbb    eax,eax
+  583300:	5e                    	pop    esi
+  583301:	83 e0 02              	and    eax,0x2
+  583304:	5b                    	pop    ebx
+  583305:	5d                    	pop    ebp
+  583306:	c3                    	ret
+  583307:	a9 00 00 00 10        	test   eax,0x10000000
+  58330c:	74 0a                 	je     0x583318
+  58330e:	5f                    	pop    edi
+  58330f:	5e                    	pop    esi
+  583310:	b8 01 00 00 00        	mov    eax,0x1
+  583315:	5b                    	pop    ebx
+  583316:	5d                    	pop    ebp
+  583317:	c3                    	ret
+  583318:	8b 3d 80 a3 92 00     	mov    edi,DWORD PTR ds:0x92a380
+  58331e:	85 ff                 	test   edi,edi
+  583320:	75 07                 	jne    0x583329
+  583322:	5f                    	pop    edi
+  583323:	5e                    	pop    esi
+  583324:	33 c0                 	xor    eax,eax
+  583326:	5b                    	pop    ebx
+  583327:	5d                    	pop    ebp
+  583328:	c3                    	ret
+  583329:	33 c0                 	xor    eax,eax
+  58332b:	03 ce                 	add    ecx,esi
+  58332d:	8a 02                 	mov    al,BYTE PTR [edx]
+  58332f:	d1 f9                 	sar    ecx,1
+  583331:	24 e0                 	and    al,0xe0
+  583333:	2b f1                 	sub    esi,ecx
+  583335:	83 f8 60              	cmp    eax,0x60
+  583338:	7c 38                 	jl     0x583372
+  58333a:	8b c6                 	mov    eax,esi
+  58333c:	c1 f8 02              	sar    eax,0x2
+  58333f:	8d 14 40              	lea    edx,[eax+eax*2]
+  583342:	8b c1                 	mov    eax,ecx
+  583344:	c1 f8 02              	sar    eax,0x2
+  583347:	8b d8                 	mov    ebx,eax
+  583349:	f7 db                 	neg    ebx
+  58334b:	c1 e3 02              	shl    ebx,0x2
+  58334e:	2b d8                 	sub    ebx,eax
+  583350:	8b c6                 	mov    eax,esi
+  583352:	2b da                 	sub    ebx,edx
+  583354:	8b d1                 	mov    edx,ecx
+  583356:	83 e0 03              	and    eax,0x3
+  583359:	83 e2 03              	and    edx,0x3
+  58335c:	03 df                 	add    ebx,edi
+  58335e:	83 e3 0f              	and    ebx,0xf
+  583361:	8d 04 82              	lea    eax,[edx+eax*4]
+  583364:	3b c3                 	cmp    eax,ebx
+  583366:	75 0a                 	jne    0x583372
+  583368:	5f                    	pop    edi
+  583369:	5e                    	pop    esi
+  58336a:	b8 02 00 00 00        	mov    eax,0x2
+  58336f:	5b                    	pop    ebx
+  583370:	5d                    	pop    ebp
+  583371:	c3                    	ret
+  583372:	8b c1                 	mov    eax,ecx
+  583374:	83 e1 03              	and    ecx,0x3
+  583377:	99                    	cdq
+  583378:	83 e2 03              	and    edx,0x3
+  58337b:	03 c2                 	add    eax,edx
+  58337d:	8b d8                 	mov    ebx,eax
+  58337f:	8b c6                 	mov    eax,esi
+  583381:	99                    	cdq
+  583382:	83 e2 03              	and    edx,0x3
+  583385:	83 e6 03              	and    esi,0x3
+  583388:	c1 fb 02              	sar    ebx,0x2
+  58338b:	0f af 1d 10 22 69 00  	imul   ebx,DWORD PTR ds:0x692210
+  583392:	03 c2                 	add    eax,edx
+  583394:	03 fb                 	add    edi,ebx
+  583396:	c1 f8 02              	sar    eax,0x2
+  583399:	0f af 05 0c 22 69 00  	imul   eax,DWORD PTR ds:0x69220c
+  5833a0:	8d 54 38 08           	lea    edx,[eax+edi*1+0x8]
+  5833a4:	8d 04 b1              	lea    eax,[ecx+esi*4]
+  5833a7:	83 e2 1f              	and    edx,0x1f
+  5833aa:	33 c9                 	xor    ecx,ecx
+  5833ac:	3b c2                 	cmp    eax,edx
+  5833ae:	5f                    	pop    edi
+  5833af:	0f 94 c1              	sete   cl
+  5833b2:	5e                    	pop    esi
+  5833b3:	8b c1                 	mov    eax,ecx
+  5833b5:	5b                    	pop    ebx
+  5833b6:	5d                    	pop    ebp
+  5833b7:	c3                    	ret
+G1_pins_resolve                    PASS  46/46 pins match; misses=none
+G2_args_are_the_pinned_xy_pair     PASS  3 call sites (0x5aff90/0x582cc0/0x5832b0) pass slot1=[ebp-0x10] slot2=[ebp-0x8]; the pair is the (x,y) the pinned C2 fold feeds into tile_record_array
+G3_record_fold_decodes_to_44B      PASS  fold==44*(W2*y+x>>1) on 4096/4096 random (x,y,W2,base) incl. negative x (sar); shared globals ds:0x692184/ds:0x92ae14 with the pinned C2 fold of 0x582cc0 (c2_window=True)
+G4_gated_inc_store_identity        PASS  esi fold 28*site on 2048/2048; writes-to-esi between slot pin and counter store: none; block [0x51e00d-0x51e01b] has 1 inc + 1 store; je 0x51e11d (0x51e007) skips it whole; 0x989cec == 0x989ce8+4 on the SAME pinned esi (L1)
+G5_ladder_purity_saves             FAIL  masks rung1=0x102000 rung2flag=0x2000 rung2sel=0xc000000 rung3=0x10000000; dword[rec+8] mask 0x102000 == [(9, 5), (10, 4)] (byte9 bit5 = the B16 occ bit, NAMED:1099 row found=True); memory stores in the callee: 0; ebx/esi/edi pops precede all 6 rets (esi survives the call, L3)
+G6_lattice_and_cross_tool          FAIL  branch A: exactly 1 hit per 16 lattice classes for all 36 (H,D) x 16 rand (32/32); ghidra-vs-objdump constants 7/13 (missing=['0x92a380', '0x692184', '0x92ae14', '0x692210', '0x69220c', '0x985ac4']) - fn.py rc=0
+G7_recorded_inputs_meet_ladder     PASS  2048 x 44-B records (digest 093d10a868da55b2): rung1-close 481 (occ-bit alone 16), byte10 bits26/27 set 12, rung3-open 5, class>=0x60 (branch-A domain) 1087 - the ladder meets real recorded bits
+
+-- 0x92a380 VALUE WITNESS (only address mentions exist; no recorded value): --
+/home/n100/reverse/smac/evidence/m53s_dump1/meta.json:76:  "wind": "0x92a380",
+/home/n100/reverse/smac/evidence/m53o_mem/meta.json:76:  "wind": "0x92a380",
+/home/n100/reverse/smac/evidence/m265_m266_census.txt:11:PASS G11 | FUN_00583c70 callees ['0x582000', '0x5b09b0', '0x625af1', '0x64a7f0']; globals ['0x692184', '0x926780', '0x926784', '0x926788', '0x92a378', '0x92a37c', '0x92a380', '0x92a384', '0x92a388', '0x92a38c', '0x92a398', '0x92ae14']; sibling FUN_00583c20 (1 caller, stride-0x2c record walk=True) globals ['0x92a378', '0x92a37c', '0x92ae14']
+
+-- 0x94ed28 read AFTER the counter (region array NAMED:371, LEAD): --
+  0x51e02c: mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
+
+FAIL M299: 2 gate(s): ['G5_ladder_purity_saves', 'G6_lattice_and_cross_tool']
