@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s254 close: #264 MERGED (487f0b4; on-head selftest PASS 10/10 + gate GREEN; GREPTILE SILENT noted in body) + M299 CLOSED (#PRTOP: the slot [+4] counter++ is gated by the PURE FUN_005832b0 lattice predicate - full laws + numbers in SESSION_CURSOR.md, NAMED.md section M299, `evidence/m299_visitgate.txt:167-183`). s254 collided with a live predecessor (see ISOLATION bullet + NOTES 254). B1-B18 DONE.)
+# NEXT_PROMPT.md - footing (s254 close: #264 MERGED (487f0b4; on-head selftest PASS 10/10 + gate GREEN; GREPTILE SILENT noted in body) + M299 CLOSED (#PRTOP: the slot [+4] counter++ is gated by the PURE FUN_005832b0 lattice predicate - laws + numbers in SESSION_CURSOR.md, NAMED.md section M299, `evidence/m299_visitgate.txt:167-183`). s254 collided with a live predecessor (see ISOLATION bullet + NOTES 254). B1-B18 DONE.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -51,11 +51,11 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
   pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing wrong - lead to fix).
 - **ISOLATION (s254)**: successor ALWAYS "in 12m"; at fire start check `ps`
-  for a live sibling 'bash -l' + `gh pr list` + `git status`; if live, `git
+  for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage
-  explicit paths. The s253 collision + its add-A sweep (51b9c4b, main now
-  0ff59c7) is RESOLVED: the WIP lands via #PRTOP with gate + docs.
+  explicit paths. The s253 add-A sweep (51b9c4b, main now
+  0ff59c7) lands via #PRTOP (gate + docs included).
 - **THE PICK (s255): ANALYSE from the shortlist** (track_mode FIRST, expect
   MODE=ANALYSE next_rung=B19 unauthored; collision check FIRST per ISOLATION).
   ANSWERED: M227-M299 + B1-B18 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
