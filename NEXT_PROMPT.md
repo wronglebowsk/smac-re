@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s253 close: B18 CLOSED - #264 merged, zero box. sim/sitegate.py PASS 10/10 (evidence/b18_sitegate.txt:11): M298 EXECUTABLE + the review round absorbed (10 P1 + 2 P2 fixed IN-BRANCH: G1/G2 laws DECODED from the pinned bytes by fold decoders - 44-B record fold, 28-B slot stride, 8380*block + UNSCALED-site cell fold, both MAX with the old-load zext graded; G3 lazy-path classifier honest (2288/0/1/32 of 2321); dword[rec+8] bit 0x1000 == byte9 bit4 PROVEN 8192/8192; owner family GRADED - full detail NAMED B18 + SESSION_NOTES 253). s251 landed M298 (#263). B1-B18 DONE.)
+# NEXT_PROMPT.md - footing (s254 close: #264 MERGED (487f0b4; on-head selftest PASS 10/10 + gate GREEN; GREPTILE SILENT noted in body) + M299 CLOSED (#PRTOP: the slot [+4] counter++ is gated by the PURE FUN_005832b0 lattice predicate - full laws + numbers in SESSION_CURSOR.md, NAMED.md section M299, `evidence/m299_visitgate.txt:167-183`). s254 collided with a live predecessor (see ISOLATION bullet + NOTES 254). B1-B18 DONE.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -29,7 +29,7 @@ Track_mode FIRST, every fire.
 
 ## THE LEDGER
 
-Merged M54A-M298 + B0-B18 (through s253) + hygiene #254/#255/#263/#264; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M299 + B0-B18 (through s254) + hygiene #254/#255/#263/#264/#PRTOP; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -50,17 +50,23 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
   `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
   pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing wrong - lead to fix).
-- **THE PICK (s254): ANALYSE from the shortlist** (track_mode FIRST; if it prints
-  MODE=BUILD the rung is **B19**, unauthored, `BUILD_SPINE.md` pattern).
-  ANSWERED: M227-M298 + B1-B18 (M241 FAIL 2/5, #180; pick-archive §s250-trim). CLOSED: FUN_005f3f5b (M220), DIALOG +0x4c (M284-M288, live half INVALID
-  s240); NEVER bp mid-instruction (s213).
-  OPEN shortlist (hub-visit gating, 0x56c6de continue-leg, 188-row cursor caller; B18 leads: a /proc dump of 0x989ce8/0x94eca8 grades the MAX funnel, ebx's
-  walked table 0x51de2c-0x51df1d, the slot [+4] counter's 0x5832b0 gate):
-  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND: GDEEP/GACC TRANSPOSED (load_visits/recover_pod); tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7);
-  M293 guards re-derive; end-window /proc snapshot = LAST-TURN witness (bit4 flips
-  val-invisible) - skill `instrument-laws.md` §LIVE-SNAPSHOT; NEW (B18): BYTE[rec+2] HIGH
-  nibble is a lazy CACHE the game OVERWRITES via 0x582cc0 (it moves between walks; sticky until a live mutation re-grades the tile); the 0x989ce8 slot and 0x94eca8
-  cell stores are BOTH MAX; site = BYTE[rec+3], block = BYTE[rec+7].
+- **ISOLATION (s254)**: successor ALWAYS "in 12m"; at fire start check `ps`
+  for a live sibling 'bash -l' + `gh pr list` + `git status`; if live, `git
+  worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
+  there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage
+  explicit paths. The s253 collision + its add-A sweep (51b9c4b, main now
+  0ff59c7) is RESOLVED: the WIP lands via #PRTOP with gate + docs.
+- **THE PICK (s255): ANALYSE from the shortlist** (track_mode FIRST, expect
+  MODE=ANALYSE next_rung=B19 unauthored; collision check FIRST per ISOLATION).
+  ANSWERED: M227-M299 + B1-B18 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
+  DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299).
+  NEVER bp mid-instruction (s213). OPEN shortlist + M299 leads (hub-visit gating;
+  0x56c6de continue-leg; 188-row cursor caller; ebx's table 0x51de2c-0x51df1d; the
+  0x51e02c byte[site+8380*block+0x94ed28] NAMED:371; 0x5832b0's other 23 callers;
+  a read-only /proc pass pinning rand+1 ds:0x92a380 + strides ds:0x69220c/0x692210
+  + 0x985ac4 + the 0x989ce8/0x94eca8 tables = counter/MAX laws ABSOLUTELY gradable):
+  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL current set (incl.
+  B18 + M299 laws) rides EVERY kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 
 - **BOX**: s244 state UP (s245..s253: s249 read-only /proc pass only; s250-s253 ZERO box - state identical)
