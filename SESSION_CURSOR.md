@@ -1,8 +1,9 @@
-B18 | runnable + parity vs a RECORDED trace + green gate - ACHIEVED:
-sim/sitegate.py PASS 10/10 (evidence/b18_sitegate.txt:11): 64/64 pins, laws READ
-OUT OF THE BYTES (fold decoders: 44B rec fold, 28B slot stride, 8380*block +
-UNSCALED-site cell fold, both MAX + old-load zext graded, sole [ebp-0xc] store =
-BYTE[rec+3] by FULL-WINDOW scan); cache machine 2288 hits / 0 zero-lazy / 1 wb /
-32 adopted of 2321, end-state == s249 86/101, live lazy 0, 277 owner(-1) skips |
-MERGED #264 at s253 | next: s254 ANALYSE (track_mode FIRST) | leads:
-0x989ce8/0x94eca8 /proc, ebx's table
+M299 | decode + ship a gate script with cited windows - ACHIEVED:
+m299_visitgate.py PASS 7/7 (evidence/m299_visitgate.txt:183):
+the slot[site].counter++ (0x989ce8+4, 28*site esi) runs ONLY when
+FUN_005832b0(x,y)!=0 (je 0x51e11d skips the lone inc/store; esi kept);
+0x5832b0 PURE: 44-B tile_record ladder (occ 0x102000, flag 0x985ac4-2000,
+0xc000000, 0x10000000, rand+1==0 ds:0x92a380) + parity (h&3)+4*(d&3);
+s249 grade 481/16/12/5/1087 | MERGED #265 | next: s255 ANALYSE
+(collision check, track_mode) | leads: 0x51e02c 0x94ed28 byte,
+0x5832b0's 23 other callers, /proc 0x989ce8/0x94eca8, seed
