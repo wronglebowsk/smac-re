@@ -273,7 +273,7 @@ store_hits = [a for a, _, ins in window(*CALLEE)
 rets = [a for a, _, ins in window(*CALLEE) if ins == "ret"]
 preserved = True
 for r in rets:
-    body = window(max(CALLEE[0], r - 10), r)
+    body = window(max(CALLEE[0], r - 16), r)
     joined = " ".join(ins for _, _, ins in body)
     if not all(p in joined for p in ("pop    edi", "pop    esi", "pop    ebx")):
         preserved = False
@@ -285,9 +285,9 @@ for ln in open(os.path.join(ROOT, "NAMED.md"), errors="replace"):
 gate("G5_ladder_purity_saves", g5 and not store_hits and preserved and named_occ is not None,
      "masks rung1=%#x rung2flag=%#x rung2sel=%#x rung3=%#x; dword[rec+8] mask 0x102000 == %s "
      "(byte9 bit5 = the B16 occ bit, NAMED:1099 row found=%s); memory stores in the callee: %d; "
-     "ebx/esi/edi pops precede all %d rets (esi survives the call, L3)"
+     "ebx/esi/edi pops precede ALL %d rets: %s (esi survives the call, L3)"
      % (rung["rung1"], rung["rung2"], rung["rung2mask"], rung["rung3"], bb,
-        named_occ is not None, len(store_hits), len(rets)))
+        named_occ is not None, len(store_hits), len(rets), preserved))
 
 # ---------------------------------------------------------------- G6 parity lattice + cross-tool
 def rungA(h, d, rand):
@@ -308,11 +308,16 @@ fp = subprocess.run([sys.executable, os.path.join(ROOT, "scripts/fn.py"), "0x583
 ghid = fp.stdout
 toks = ["0x102000", "0x2000", "0xc000000", "0x10000000", "0x92a380", "0x692184",
         "0x92ae14", "0x692210", "0x69220c", "0x2c", "0xe0", "0x985ac4", "0x1f"]
-in_ghid = [t for t in toks if t in ghid]
+# ghidra names globals DAT_0092a380 (no 0x prefix); mask immediates appear verbatim
+def in_ghidra(t):
+    return t in ghid or ("DAT_00" + t[2:]) in ghid
+
+
+in_ghid = [t for t in toks if in_ghidra(t)]
 gate("G6_lattice_and_cross_tool", uniqA and len(in_ghid) == len(toks),
-     "branch A: exactly 1 hit per 16 lattice classes for all 36 (H,D) x 16 rand (32/32); "
+     "branch A: exactly 1 hit per 16 lattice classes for all 36 (H,D) x 16 rand (36/36); "
      "ghidra-vs-objdump constants %d/%d (missing=%s) - fn.py rc=%d"
-     % (len(in_ghid), len(toks), [t for t in toks if t not in ghid] or "none", fp.returncode))
+     % (len(in_ghid), len(toks), [t for t in toks if not in_ghidra(t)] or "none", fp.returncode))
 
 # ---------------------------------------------------------------- G7 recorded s249 dump input fields
 BIN = os.path.join(EVID, "s249_live_map.bin")

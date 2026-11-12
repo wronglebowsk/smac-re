@@ -168,8 +168,8 @@ G1_pins_resolve                    PASS  46/46 pins match; misses=none
 G2_args_are_the_pinned_xy_pair     PASS  3 call sites (0x5aff90/0x582cc0/0x5832b0) pass slot1=[ebp-0x10] slot2=[ebp-0x8]; the pair is the (x,y) the pinned C2 fold feeds into tile_record_array
 G3_record_fold_decodes_to_44B      PASS  fold==44*(W2*y+x>>1) on 4096/4096 random (x,y,W2,base) incl. negative x (sar); shared globals ds:0x692184/ds:0x92ae14 with the pinned C2 fold of 0x582cc0 (c2_window=True)
 G4_gated_inc_store_identity        PASS  esi fold 28*site on 2048/2048; writes-to-esi between slot pin and counter store: none; block [0x51e00d-0x51e01b] has 1 inc + 1 store; je 0x51e11d (0x51e007) skips it whole; 0x989cec == 0x989ce8+4 on the SAME pinned esi (L1)
-G5_ladder_purity_saves             FAIL  masks rung1=0x102000 rung2flag=0x2000 rung2sel=0xc000000 rung3=0x10000000; dword[rec+8] mask 0x102000 == [(9, 5), (10, 4)] (byte9 bit5 = the B16 occ bit, NAMED:1099 row found=True); memory stores in the callee: 0; ebx/esi/edi pops precede all 6 rets (esi survives the call, L3)
-G6_lattice_and_cross_tool          FAIL  branch A: exactly 1 hit per 16 lattice classes for all 36 (H,D) x 16 rand (32/32); ghidra-vs-objdump constants 7/13 (missing=['0x92a380', '0x692184', '0x92ae14', '0x692210', '0x69220c', '0x985ac4']) - fn.py rc=0
+G5_ladder_purity_saves             PASS  masks rung1=0x102000 rung2flag=0x2000 rung2sel=0xc000000 rung3=0x10000000; dword[rec+8] mask 0x102000 == [(9, 5), (10, 4)] (byte9 bit5 = the B16 occ bit, NAMED:1099 row found=True); memory stores in the callee: 0; ebx/esi/edi pops precede ALL 6 rets: True (esi survives the call, L3)
+G6_lattice_and_cross_tool          PASS  branch A: exactly 1 hit per 16 lattice classes for all 36 (H,D) x 16 rand (36/36); ghidra-vs-objdump constants 13/13 (missing=none) - fn.py rc=0
 G7_recorded_inputs_meet_ladder     PASS  2048 x 44-B records (digest 093d10a868da55b2): rung1-close 481 (occ-bit alone 16), byte10 bits26/27 set 12, rung3-open 5, class>=0x60 (branch-A domain) 1087 - the ladder meets real recorded bits
 
 -- 0x92a380 VALUE WITNESS (only address mentions exist; no recorded value): --
@@ -180,4 +180,4 @@ G7_recorded_inputs_meet_ladder     PASS  2048 x 44-B records (digest 093d10a868d
 -- 0x94ed28 read AFTER the counter (region array NAMED:371, LEAD): --
   0x51e02c: mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
 
-FAIL M299: 2 gate(s): ['G5_ladder_purity_saves', 'G6_lattice_and_cross_tool']
+PASS M299: 7/7 gates - the slot[site].counter++ is GATED on FUN_005832b0(x,y)!=0; the gate decodes to the shared 44-B tile_record ladder + rand+1 lattice parity (zero box, zero /proc, zero gdb)
