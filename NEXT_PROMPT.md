@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s258 close: M302 SUBMITTED (branch milestone/m302, PR open - NOT merged per kickoff) - B19's DECLARED-UNMODELED list is PINNED by the read-only /proc pass `scripts/m302_livepins.py` (every value + the 128-slot dump in `NAMED.md` §M302 / `evidence/m302_livepins.txt`): flag2000=False CONFIRMED live, rand+1=9661 (residue 13), strides 61/11; the pinned replay COLLAPSES B19's brackets - the 1099 undecided branchA rows -> 38 CERTAIN-accept (37 eax=2 + the FIRST non-structural eax=1, branchB) / 1061 CERTAIN-refuse / 0 undecided; rung1's 1222 unchanged. PASS M302 10/10 (A1-A10 table-then-assert; box untouched). THE NEXT FIRE LANDS THIS PR FIRST (AGENTS.md step 2 + the MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #269 (B19) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B19 + M54A-M301 MERGED.)
+# NEXT_PROMPT.md - footing (s259 close: M303 SUBMITTED (branch milestone/m303, PR open - NOT merged per kickoff) - B19's `the 0x51e02c 0x94ed28 post-read downstream` lead CLOSED by the static census `scripts/m303_downstream.py` (`evidence/m303_downstream.txt`): 0x51e02c is the LOAD HALF of a byte RMW ++ (lea 0x51e033 SAME SIB+disp / inc dl / store 0x51e03e; dl then DEAD; je 0x51e040 tests ebx, not the byte) of the per-block visit-CNT byte array 0x94ed28 = 0x94eca8+0x80 - 8 blocks x 8380-B records, 128 x {MAX@+0, CNT@+128}, zeroed per call at 0x51dcb8-0x51dd03 - the BYTE twin keyed by (block,site) of the DWORD slot table 0x989ce8 keyed by site; addr = site + 8380*block + 0x94ed28, the fold 65->131->2095->*4 shadow-verified and 8380 == the init's own block step (stride derived TWICE); B18-28 REFUTED for this expression (the esi fold 0x51dfb1-ba in-window feeds the DWORD twin); family = 11 literal mentions, all consumers cmp/test, no byte feeds the DWORD MAX, no store outside FUN_0051dcb0; name_global --disp "0 writes" is the register-after-lea blind spot. PASS M303 10/10 (A1-A10; byte-identical reruns; zero box). track_mode: s259 ran ANALYSE after B19+#270 merged - a merge does NOT flip the immediate fire; trust track_mode. LAND THIS PR FIRST (MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #270 (M302) + #269 (B19) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B19 + M54A-M302 MERGED.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -27,11 +27,11 @@ box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick
 `evidence/b19_visitcounter.txt:20`). Next build rung **B20**, UNAUTHORED - its fire writes it (B14/B16/B17/B18/B19
 did). Candidates from the landed frontiers: the FUN_005aff90 value body as a rung (B15/B17/B18 all DECLARED it;
 M302 pinned the slot MAX it feeds), or
-the 0x51e02c 0x94ed28 region-read leg. Track_mode FIRST, every fire - and LAND the M302 PR before starting B20.
+the FUN_0051dcb0 per-tile pass itself as a rung (M303: it zeroes-then-rebuilds BOTH counter tables per call). Track_mode FIRST, every fire - and LAND the M303 PR before starting B20.
 
 ## THE LEDGER
 
-Merged M54A-M301 + B0-B19 (through s257) + hygiene #254/#255/#263/#264/#265/#267/#268/#269; UNMERGED M83/M84, M86, M101, M103, M109, **M302 (this fire, PR open - LAND IT FIRST)** and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M302 + B0-B19 (through s258) + hygiene #254/#255/#263/#264/#265/#267/#268/#269/#270; UNMERGED M83/M84, M86, M101, M103, M109, **M303 (this fire, PR open - LAND IT FIRST)** and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -58,41 +58,39 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage
   explicit paths (the s253 sweep landed via #265; the s254 collision lessons:
   schedule "in 12m", collision-check + worktree FIRST).
-- **THE PICK (s259): LAND THE M302 PR, then track_mode decides**
-  (collision check FIRST per ISOLATION). If M302 is merged by your start,
-  track_mode says next_rung=B20 BUILD - the
-  rung is UNAUTHORED, write it from the B19/B18/M302 DECLARED frontiers.
-  ANSWERED: M227-M302 + B1-B19 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
-  DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299)
-  AND the counter ITSELF as an executable (B19) AND the four live VALUES + the
-  slot-table CONTENTS PINNED read-only (M302 - read §B19 + §M302 BEFORE
-  re-deriving the ladder: every constant decodes from the windows embedded in
-  m299_visitgate.txt; the live side is PINNED - do not re-dump the four scalars
-  without a reason); 0x5832b0's callers
-  (M300 - see §M300 BEFORE re-censusing anything of it); ebx's
-  "table 0x51de2c-0x51df1d" (M301 REFUTED - it is CODE: a base_array walk +
-  its exit block; gates NOTHING of the 0x51dffd decision. Read §M301 BEFORE
-  re-opening it; the 4 table-falsifiers are the s256 NEW LAW in SESSION_NOTES).
-  NEVER bp mid-instruction (s213). OPEN shortlist + M300/M301/B19 leads (hub-visit gating;
-  0x56c6de continue-leg INSIDE FUN_0055f650, the 7-site predicate caller; which loop
-  chooses among those 7 sites; readers of the stored predicate slots [ebp-0x7c]/
-  [ebp-0x1c]; sibling 0x5831a0 fed (x,y) right after the predicate; 188-row cursor
-  caller; whose record the walk's exit block tests as BYTE[edi+0x7] (edi = [ebp-0x4],
-  sole pre-range writer 0x51dd28) + what its tile-class/distance legs MEAN; the
-  0x51e02c byte[site+8380*block+0x94ed28]
-  NAMED:371 + **the 0x94eca8 CELL dump - the last never-dumped table half (the
-  M302 pass pinned the 0x989ce8 slot side only; `scripts/m302_livepins.py` is
-  the read-only template)**; is the slot table save-carried or load-rebuilt
-  (M302 OPEN: MAX/CNT NONZERO at an idle y2150 load; nonzero CNT sites
-  [1,6,9,13,16,63,65,70]); the eax=1 leg now has ONE model-decided row (M302
-  branchB) and STILL no live gdb witness (B19 G9 - a longer window may supply
-  one): `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL
-  current set (incl. B18/B19/M299/M302 laws) rides EVERY kickoff + skill
+- **THE PICK (s260): LAND THE M303 PR, then track_mode decides**
+  (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: s259 ran
+  ANALYSE although B19+#270 had merged - a merge does NOT flip the immediate
+  fire; next_rung B20 stays queued (BUILD candidates: FUN_005aff90 body, or the
+  FUN_0051dcb0 per-tile pass). ANSWERED: M227-M303 + B1-B19 (M241 FAIL 2/5 #180).
+  CLOSED - read the named NAMED § BEFORE re-opening: FUN_005f3f5b (M220); DIALOG
+  +0x4c (M284-M288, live half INVALID s240); slot [+4] GATE (M299); the counter
+  as executable (B19); the four live VALUES + slot-table CONTENTS pinned - the
+  live side is PINNED, no re-dump of the four scalars without a reason (M302);
+  the 0x51e02c post-counter read + the WHOLE 0x94eca8/0x94ed28 byte family
+  (M303); 0x5832b0's callers (M300); ebx's "table 0x51de2c-0x51df1d" (M301
+  REFUTED - code not a table; the 4 table-falsifiers are the s256 NEW LAW in
+  SESSION_NOTES). NEVER bp mid-instruction (s213). OPEN shortlist: the
+  0x56c6de continue-leg inside FUN_0055f650 + which loop chooses among its 7
+  predicate sites; readers of [ebp-0x7c]/[ebp-0x1c]; sibling 0x5831a0 fed (x,y)
+  right after the predicate; 188-row cursor caller; whose record BYTE[edi+0x7]
+  is + the walk's tile-class/distance legs' MEANING; FUN_0051dcb0's IDENTITY
+  (the per-tile pass that zeroes-then-rebuilds BOTH counter tables; outer loop =
+  tile records stride 0x2c vs ds:0x92a378/0x92a37c - callers + cadence); the
+  sibling fields of the 8380-B block record (byte field 0x950664, word 0x94e8a8
+  ++'d pre-predicate, dword 0x94f4ec + word 0x950a64 preamble - all INDEXED by
+  M303, semantics OPEN); FUN_0056d480/0056d630 + ds:0x985b10/0x985aec
+  identities; the 0x94eca8 DUMP (M303 says WHICH bytes: MAX@+8380k /
+  CNT@+8380k+128, 8 blocks = 2048 B; m302_livepins.py is the read-only
+  template); save-carried vs rebuild for BOTH tables (M302 OPEN + the byte
+  family same question); the eax=1 leg: ONE model-decided row (M302 branchB),
+  still NO live gdb witness (B19 G9): `NAMED.md` §CHAIN-PICKS. READER LAWS
+  still BIND (incl. B18/B19/M299/M302/M303): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 
-- **BOX**: state UP, MEASURED s258 (s258 did ONE read-only /proc pass, year/round
-  unchanged; s245..s257 ZERO box) (m54b_clean at y2150 r50, TracerPid 0, yama=0;
+- **BOX**: state UP, last box touch MEASURED s258 (ONE read-only /proc pass;
+  s245..s257 + s259 ZERO box) (m54b_clean at y2150 r50, TracerPid 0, yama=0;
   pid via `pgrep -x terran.exe`, NEVER hardcoded) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).

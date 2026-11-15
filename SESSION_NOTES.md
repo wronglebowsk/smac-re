@@ -750,3 +750,44 @@ BUILD_SPINE.md now carries the B18 rung.
   B18's site id - per-site splits must go through sgt.site_of(rec); the first
   run printed 25 "sites" (a mislabel caught only by pairing against B18's
   {1,9} anchor).
+
+## Session 259 (2026-11-15, ANALYSE, zero box) - M303: the 0x51e02c "post-counter read" is the LOAD HALF of a byte CNT++ on the per-block twin of the slot table
+- ACCEPTANCE `python3 scripts/m303_downstream.py` -> PASS M303 10/10,
+  evidence/m303_downstream.txt (S0-S9 tables, then A1..A10; two runs byte-identical).
+- MODE: track_mode printed ANALYSE (analyse_since_build=1, next_rung B20) although
+  the s258 NEXT_PROMPT pick claimed a merge flips the next fire to BUILD -
+  track_mode is authoritative (the kickoff itself said so); B20 stays queued.
+- THE ANSWER: 0x51e02c is not a read-for-a-test - it is load++store
+  (0x51e02c mov dl / 0x51e033 lea eax,[SAME SIB+disp] / 0x51e03a inc dl /
+  0x51e03e mov [eax],dl), entered on the SAME `je 0x51e007` fall-through as the
+  dword CNT++ (M299), inside FUN_0051dcb0 (the per-map-tile pass: outer loop
+  advances tile records by 0x2c at 0x51e128). Byte addr = site + 8380*block +
+  0x94ed28 - shadow-fold 65=64+1 -> 131=1+2*65 -> 2095=131*16-1 -> *4; the two
+  6-insn folds (0x51dfd3/0x51e013) are BYTE-IDENTICAL (rematerialized across the
+  0x51dffd call). The table: 0x94ed28 = 0x94eca8+0x80, the per-block visit-CNT
+  byte array, twin of the MAX byte array at 0x94eca8: 8 blocks x 8380-B records
+  (init 0x51dcb8-0x51dd03: byte fields [edx+site] and [edx+site+0x80] zeroed,
+  edx steps 0x20bc to 0x95f288 - the SAME 8380 the fold computes, derived twice),
+  128 entries x 1 B - the BYTE twin keyed by (block,site) of the DWORD slot
+  table 0x989ce8 keyed by site. B18-28-B REFUTED for THIS expression:
+  (site*8-site)<<2=28*site is the esi fold 0x51dfb1-ba three insns earlier
+  (SIB 8d 34 c5 vs 8d 04 53), feeding the DWORD twin; multipliers 28 and 8380
+  coexist in one window.
+- CONSUMER CENSUS: 11 literal mentions = the whole corpus (A1); MAX field: 6
+  external readers (FUN_0050d140/FUN_00556690/FUN_0055f650x4) + the in-window
+  max-store 0x51dff3 (gated ebx!=0 by je 0x51dff5); CNT field: ONE external
+  reader FUN_004f6030 0x4f946d -> test al,al/jne (a visited? gate). ALL
+  external consumers terminate in cmp/test (A7); NO family byte feeds the DWORD
+  0x989ce8 (both MAX stores take the walk candidate edi; loaded bytes appear
+  only in the cmp); NO store to family/twin outside FUN_0051dcb0 (A8: 6 init
+  zeros + 5 update sites incl. the sibling `inc WORD[0x94e8a8]` @0x51df3d -
+  same 8380 block phase, width 2, scale *2: proof the *4 at 0x51e02c is
+  multiplier placement, not entry width). The post-store branch 0x51e040 `je`
+  tests `test ebx,ebx` flags, never the byte; dl dead after 0x51e03e.
+  name_global.py 0x94ed28 --disp says "0 writes" - correct about LITERAL writes
+  only; the 0x51e03e store is register-after-lea pointer form (A10) - the
+  two-instrument disagreement is the finding's teeth.
+- PITFALL: byte-reg->dword-reg naming must be a lookup table, NOT `reg[0]+"ax"`
+  (that yields "aax"): three S6 rows printed "no consumer" until fixed - the
+  A7 assert (every reader finds a consumer) is what caught it, i.e. the
+  table-then-assert shape earns its keep.
