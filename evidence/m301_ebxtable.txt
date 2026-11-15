@@ -1,0 +1,199 @@
+== S0: containment (ghidra_out/index.csv - NEVER objdump at an arbitrary addr) ==
+   0x51de2c   -> FUN_0051dcb0   inside=True
+   0x51df1d   -> FUN_0051dcb0   inside=True
+   0x51de27   -> FUN_0051dcb0   inside=True
+   0x51dffd   -> FUN_0051dcb0   inside=True
+   0x51e01b   -> FUN_0051dcb0   inside=True
+   FUN_0051dcb0 entry 0x51dcb0  size 1191 B  Ghidra n_insns 386  dump insns in window 386
+A0 PASS: the lead's endpoints 0x51de2c/0x51df1d, the walk head 0x51de27 and the M299 gate chain are all contained in FUN_0051dcb0; instruction count over the function window (386) == Ghidra's n_insns (386) - objdump dump and Ghidra, two toolchains, agree the span is decoded instruction stream with no data island
+
+== S1: the range 0x51de2c-0x51df1d VERBATIM (81 insns, span 0xf3 = 243 B) ==
+   0x51de2c   3b cb              cmp ecx,ebx
+   0x51de2e   0f 84 a4 00 00 00  je 0x51ded8
+   0x51de34   0f bf 30           movsx esi,WORD PTR [eax]
+   0x51de37   0f bf 48 fe        movsx ecx,WORD PTR [eax-0x2]
+   0x51de3b   8b c6              mov eax,esi
+   0x51de3d   8b d1              mov edx,ecx
+   0x51de3f   0f af 05 84 21 69 00 imul eax,DWORD PTR ds:0x692184
+   0x51de46   d1 fa              sar edx,1
+   0x51de48   8b 3d 14 ae 92 00  mov edi,DWORD PTR ds:0x92ae14
+   0x51de4e   03 c2              add eax,edx
+   0x51de50   8d 14 80           lea edx,[eax+eax*4]
+   0x51de53   8d 04 50           lea eax,[eax+edx*2]
+   0x51de56   33 d2              xor edx,edx
+   0x51de58   8a 14 87           mov dl,BYTE PTR [edi+eax*4]
+   0x51de5b   83 e2 e0           and edx,0xffffffe0
+   0x51de5e   83 fa 60           cmp edx,0x60
+   0x51de61   7c 6f              jl 0x51ded2
+   0x51de63   2b 4d f0           sub ecx,DWORD PTR [ebp-0x10]
+   0x51de66   51                 push ecx
+   0x51de67   e8 04 da 12 00     call 0x64b870
+   0x51de6c   8a 0d 94 a3 92 00  mov cl,BYTE PTR ds:0x92a394
+   0x51de72   83 c4 04           add esp,0x4
+   0x51de75   f6 c1 01           test cl,0x1
+   0x51de78   75 12              jne 0x51de8c
+   0x51de7a   3b 05 84 21 69 00  cmp eax,DWORD PTR ds:0x692184
+   0x51de80   7e 0a              jle 0x51de8c
+   0x51de82   8b 3d 78 a3 92 00  mov edi,DWORD PTR ds:0x92a378
+   0x51de88   2b f8              sub edi,eax
+   0x51de8a   eb 02              jmp 0x51de8e
+   0x51de8c   8b f8              mov edi,eax
+   0x51de8e   2b 75 f8           sub esi,DWORD PTR [ebp-0x8]
+   0x51de91   56                 push esi
+   0x51de92   e8 d9 d9 12 00     call 0x64b870
+   0x51de97   57                 push edi
+   0x51de98   89 45 e4           mov DWORD PTR [ebp-0x1c],eax
+   0x51de9b   e8 d0 d9 12 00     call 0x64b870
+   0x51dea0   8b f0              mov esi,eax
+   0x51dea2   8b 45 e4           mov eax,DWORD PTR [ebp-0x1c]
+   0x51dea5   50                 push eax
+   0x51dea6   e8 c5 d9 12 00     call 0x64b870
+   0x51deab   83 c4 0c           add esp,0xc
+   0x51deae   3b f0              cmp esi,eax
+   0x51deb0   8b ce              mov ecx,esi
+   0x51deb2   7f 02              jg 0x51deb6
+   0x51deb4   8b c8              mov ecx,eax
+   0x51deb6   3b f0              cmp esi,eax
+   0x51deb8   8b d6              mov edx,esi
+   0x51deba   7c 02              jl 0x51debe
+   0x51debc   8b d0              mov edx,eax
+   0x51debe   03 f0              add esi,eax
+   0x51dec0   a1 34 0d 8f 00     mov eax,ds:0x8f0d34
+   0x51dec5   d1 fe              sar esi,1
+   0x51dec7   2b f2              sub esi,edx
+   0x51dec9   46                 inc esi
+   0x51deca   d1 fe              sar esi,1
+   0x51decc   2b ce              sub ecx,esi
+   0x51dece   3b c8              cmp ecx,eax
+   0x51ded0   7e 25              jle 0x51def7
+   0x51ded2   8b 45 ec           mov eax,DWORD PTR [ebp-0x14]
+   0x51ded5   8b 7d fc           mov edi,DWORD PTR [ebp-0x4]
+   0x51ded8   8b 4d e8           mov ecx,DWORD PTR [ebp-0x18]
+   0x51dedb   8b 15 f4 5a 98 00  mov edx,DWORD PTR ds:0x985af4
+   0x51dee1   41                 inc ecx
+   0x51dee2   05 30 01 00 00     add eax,0x130
+   0x51dee7   3b ca              cmp ecx,edx
+   0x51dee9   89 4d e8           mov DWORD PTR [ebp-0x18],ecx
+   0x51deec   89 45 ec           mov DWORD PTR [ebp-0x14],eax
+   0x51deef   0f 8c 32 ff ff ff  jl 0x51de27
+   0x51def5   eb 06              jmp 0x51defd
+   0x51def7   8b 7d fc           mov edi,DWORD PTR [ebp-0x4]
+   0x51defa   83 cb ff           or ebx,0xffffffff
+   0x51defd   0f be 4f 07        movsx ecx,BYTE PTR [edi+0x7]
+   0x51df01   3b d9              cmp ebx,ecx
+   0x51df03   74 18              je 0x51df1d
+   0x51df05   8b 4f 0c           mov ecx,DWORD PTR [edi+0xc]
+   0x51df08   81 c9 00 00 40 00  or ecx,0x400000
+   0x51df0e   89 4f 0c           mov DWORD PTR [edi+0xc],ecx
+   0x51df11   a1 dc fe 8e 00     mov eax,ds:0x8efedc
+   0x51df16   0c 01              or al,0x1
+   0x51df18   a3 dc fe 8e 00     mov ds:0x8efedc,eax
+   0x51df1d   85 db              test ebx,ebx
+   raw bytes: 3bcb0f84a40000000fbf300fbf48fe8bc68bd10faf0584216900d1fa8b3d14ae920003c28d14808d045033d28a148783e2e083fa607c6f2b4df051e804da12008a0d94a3920083c404f6c10175123b05842169007e0a8b3d78a392002bf8eb028bf82b75f856e8d9d91200578945e4e8d0d912008bf08b45e450e8c5d9120083c40c3bf08bce7f028bc83bf08bd67c028bd003f0a1340d8f00d1fe2bf246d1fe2bce3bc87e258b45ec8b7dfc8b4de88b15f45a98004105300100003bca894de88945ec0f8c32ffffffeb068b7dfc83cbff0fbe4f073bd974188b4f0c81c900004000894f0ca1dcfe8e000c01a3dcfe8e0085db
+   sum(encoding bytes) 243 == span 243: True; max gap 0
+   back edge: 0x51deef `jl 0x51de27` -> head 0x51de27  => WALK = 0x51de27-0x51def4 (68 insns); EXIT BLOCK = 0x51def5-0x51df1d (13 insns)
+A1 PASS: the 243 B range tiles GAP-FREE from its own encoding bytes (81 insns, every gap 0) and contains exactly 1 back edge (0x51deef -> 0x51de27): the range is 68 instructions of a single loop plus 13 instructions of its straight-line exit block - a data table cannot tile a byte span as a legal instruction stream that Ghidra also placed inside FUN_0051dcb0
+
+== S2: entry census under four competing models ==
+   dword entries: 60 slots of 4 B fit in 243 B, 3 bytes left over -> the span is not a uniform array of dwords
+   instructions in the range: 81 (68 walk + 13 exit block)
+   dwords at 4-B-aligned offsets in the range resolving into .text (401000-671000): 0 []
+   dwords at ANY offset in the range resolving into .text: 0 []
+   call instructions INSIDE the range: 4 -> ['0x51de67', '0x51de92', '0x51de9b', '0x51dea6'] (callee FUN_0064b870)
+   branches with a direct target inside the range: 11
+A2 PASS: ZERO entries: 60 4-B-aligned dword slots with 3 B left over, and not one dword in the range - aligned or at any byte offset - resolves to a VA inside .text, which is what a jump/dispatch body or a pointer table must contain; the raw values are instruction encodings (S1 prints all 81), 4 of them being CALLs to FUN_0064b870 - data does not call
+
+== S3: nature (a table is ADDRESSED; a loop is fallen into and back-edged) ==
+   indirect (memory-form) jmp/call anywhere in FUN_0051dcb0: 0 []
+   mentions of any address in [0x51de2c,0x51df1f) as an operand: 8 edges inside the walk, 2 inside the exit block, 4 from OUTSIDE the range, 0 NON-BRANCH (lea/mov/push = would mean data)
+       OUTSIDE edge 0x51ddc0   -> 0x51defd    jmp 0x51defd   (BYPASSES the walk)
+       OUTSIDE edge 0x51dded   -> 0x51defd    jmp 0x51defd   (BYPASSES the walk)
+       OUTSIDE edge 0x51de05   -> 0x51defd    je 0x51defd   (BYPASSES the walk)
+       OUTSIDE edge 0x51de19   -> 0x51defd    jle 0x51defd   (BYPASSES the walk)
+       in-range edge 0x51def5   -> 0x51defd    jmp 0x51defd   (the walk's normal fall-out / the exit block's own skip)
+       in-range edge 0x51df03   -> 0x51df1d    je 0x51df1d   (the walk's normal fall-out / the exit block's own skip)
+A3 PASS: ZERO indirect jmp/call anywhere in FUN_0051dcb0 (so no dispatch table is read by this function at all), ZERO lea/mov/push of any range address image-wide, and ZERO external branch landing inside the walk - the 4 external edges (['0x51ddc0', '0x51dded', '0x51de05', '0x51de19']) all target the EXIT BLOCK 0x51defd, i.e. they SKIP the walk. Sole entry to the walk body is fall-through from 0x51de29 plus the one back edge: control-flow structure, not an addressable table
+
+== S4: the array the walk reads (already NAMED: base_array, NAMED.md:74) ==
+   WORD[eax] (row+2 = y) read at ['0x51de34']
+   WORD[eax-0x2] (row+0 = x) read at ['0x51de37']
+   BYTE[eax+0x2] (row+4 = flag/owner) read at ['0x51de29']
+   BYTE[edi+0x7] (exit block; edi = [ebp-0x4]) read at ['0x51defd']
+   cursor init: ['0x51de1f'] `['mov eax,0x95da12']` = base_array 0x95da10 + 2
+   cursor spill/reload [ebp-0x14]: ['0x51de24 `mov DWORD PTR [ebp-0x14],eax`', '0x51ded2 `mov eax,DWORD PTR [ebp-0x14]`', '0x51deec `mov DWORD PTR [ebp-0x14],eax`']
+   row stride: ['0x51dee2'] `['add eax,0x130']` = 304 B
+   trip counter [ebp-0x18] refs in the walk region: ['0x51de10 `mov DWORD PTR [ebp-0x18],0x0`', '0x51ded8 `mov ecx,DWORD PTR [ebp-0x18]`', '0x51dee9 `mov DWORD PTR [ebp-0x18],ecx`']
+   [ebp-0x18] is REUSED later in the function at ['0x51e08e', '0x51e107', '0x51e114'] (outside this walk)
+   bound global ds:0x985af4 (row count): ['0x51de0b `mov eax,ds:0x985af4`', '0x51dedb `mov edx,DWORD PTR ds:0x985af4`']
+   44-B tile-record view inside the walk body (`44*(ds:0x692184*Y + X>>1)` at ds:0x92ae14; B16 law NAMED:967): ['0x51de3f `imul eax,DWORD PTR ds:0x692184`', '0x51de48 `mov edi,DWORD PTR ds:0x92ae14`', '0x51de7a `cmp eax,DWORD PTR ds:0x692184`']
+   distance global ds:0x8f0d34 used at ['0x51dec0'] (`['mov eax,ds:0x8f0d34']`)
+A4 PASS: the range walks base_array @0x95da10: cursor 0x95da12 = base+2 (`mov eax,0x95da12` 0x51de1f, spilled/reloaded through [ebp-0x14]), rows advance `add eax,0x130` = 304 B at 0x51dee2, the trip counter is [ebp-0x18] (zeroed 0x51de10, inc 0x51dee1, stored 0x51dee9) bounded by the BSS row count ds:0x985af4 (test 0x51de17 `jle` skips the walk whole, cmp 0x51dee7 drives the back edge), and the body reads row fields x(+0)/y(+2)/flag(+4) plus the 44-B tile record view, compares a distance against ds:0x8f0d34, and its exit block compares the walk's verdict ebx against BYTE PTR [edi+0x7] (edi = [ebp-0x4]) - the lead's "table" is this named runtime array, whose row count is NOT a static constant
+
+== S5: index provenance (who computes the value the walk compares) ==
+   0x51ddf2   lea edx,[eax+eax*8]
+       -> eax = 1*i    edx = 9*i
+   0x51ddf7   lea eax,[eax+edx*2]
+       -> eax = 19*i    edx = 9*i
+   0x51ddfa   shl eax,0x4
+       -> eax = 304*i    edx = 9*i
+   every call of FUN_004e37f0 in FUN_0051dcb0: ['0x51ddb1', '0x51e0d7'] (the walk's index comes from 0x51ddb1; 0x51e0d7 is a later leg of the function)
+   i = FUN_004e37f0's return: call 0x51ddb1; 0x51ddb9 `test eax,eax`; 0x51ddbb `jge 0x51ddc5`; 0x51ddbd `or ebx,0xffffffff`; 0x51ddc0 `jmp 0x51defd`
+   ebx = BYTE[304*i + 0x95da14] at ['0x51ddff']: ['mov bl,BYTE PTR [eax+0x95da14]']
+   ebx WRITERS up to the range end (6): ['0x51dd5a `lea ebx,[ecx*2+0x950a64]`', '0x51dd92 `add ebx,0x20bc`', '0x51ddbd `or ebx,0xffffffff`', '0x51ddea `or ebx,0xffffffff`', '0x51ddf5 `xor ebx,ebx`', '0x51defa `or ebx,0xffffffff`']
+   the exit block's record operand: edi = [ebp-0x4]; the ONLY writer below the range is 0x51dd28 `mov DWORD PTR [ebp-0x4],edi`; its 3 producers:
+       0x51dd1e   mov edi,DWORD PTR ds:0x92ae14
+       0x51dd24   xor ecx,ecx
+       0x51dd26   cmp eax,esi
+   OPEN: whose record [edi+0x7] is (a 44-B tile record or a base row) - undecided here
+A5 PASS: the walk's compared value is ebx = BYTE[304*i + 0x95da14] (0x51ddff), and the scale chain 0x51ddf2/0x51ddf7/0x51ddfa evaluates to 304*i = exactly the row size 304; i is FUN_004e37f0's return (call 0x51ddb1; `test eax,eax` 0x51ddb9 / `jge` 0x51ddbb; on a negative return 0x51ddbd `or ebx,0xffffffff` and 0x51ddc0 jumps straight to the walk's exit block, skipping the walk). Registry agreement: NAMED.md carries `ebx = BYTE[0x95da14+304*i]` and `base_array ... 37 x 304 B` (NAMED.md:74, :468 - M43/M278: base+4 = owner player index). So the INDEX is a base record's owner byte, not a table subscript, and the walk's own index is its trip counter [ebp-0x18]
+
+== S6: (d) does the range gate or label the 0x51dffd decision? ==
+   every ebx mention from the range end (0x51df1f) through the counter store 0x51e01b (12):
+   0x51df24   xor ebx,ebx
+   0x51df26   mov edx,ebx
+   0x51df2e   add edx,ebx
+   0x51df30   lea eax,[ebx+edx*2]
+   0x51df36   sub eax,ebx
+   0x51dfc9   test ebx,ebx
+   0x51dfd3   mov edx,ebx
+   0x51dfd8   add edx,ebx
+   0x51dfda   lea eax,[ebx+edx*2]
+   0x51dfe0   sub eax,ebx
+   0x51e013   mov edx,ebx
+   0x51e018   add edx,ebx
+   edges from OUTSIDE the range landing on the exit block 0x51defd (i.e. skipping the walk whole): 4
+     0x51ddc0   jmp 0x51defd                 the selector returned negative (0x51ddb1 call, 0x51ddb9 `test`, 0x51ddbb `jge`)
+     0x51dded   jmp 0x51defd                 ds:0x8f0d34 failed the check at 0x51dde2 `cmp`/0x51dde8 `jl`
+     0x51de05   je 0x51defd                  guarded by 0x51ddfd `test ecx,ecx` (ecx built before the walk)
+     0x51de19   jle 0x51defd                 row count ds:0x985af4 <= 0 (0x51de0b load, 0x51de17 `test eax,eax`)
+   branches between the range exit (0x51df1f) and the call 0x51dffd: 11; legs landing PAST the call: 0
+   0x51df22   jge 0x51df26                   -> 0x51df26    rejoins before the call
+   0x51df49   je 0x51df77                    -> 0x51df77    rejoins before the call
+   0x51df59   jge 0x51df77                   -> 0x51df77    rejoins before the call
+   0x51df5f   jne 0x51df77                   -> 0x51df77    rejoins before the call
+   0x51df6e   je 0x51df77                    -> 0x51df77    rejoins before the call
+   0x51df7d   je 0x51df83                    -> 0x51df83    rejoins before the call
+   0x51df81   jmp 0x51dfac                   -> 0x51dfac    rejoins before the call
+   0x51df8d   jne 0x51dfac                   -> 0x51dfac    rejoins before the call
+   0x51dfc5   jle 0x51dfc9                   -> 0x51dfc9    rejoins before the call
+   0x51dfd1   je 0x51dff5                    -> 0x51dff5    rejoins before the call
+   0x51dfef   jle 0x51dff3                   -> 0x51dff3    rejoins before the call
+   ebx==0 leg: 0x51dfd1 `je 0x51dff5` -> 0x51dff5 = the block immediately BEFORE the call (0x51dff5): it skips the slot-cell stores 0x51dfd3-0x51dff3 and still executes the call
+   gate bytes: 0x51dffd `call 0x5832b0` | 0x51e005 `test eax,eax` | 0x51e007 `je 0x51e11d` | 0x51e01a `inc ecx` | 0x51e01b `mov DWORD PTR [esi+0x989cec],ecx`
+   every eax mention after the call (to 0x51e035): ['0x51e005 `test eax,eax`', '0x51e024 `lea eax,[ebx+edx*2]`', '0x51e027 `shl eax,0x4`', '0x51e02a `sub eax,ebx`', '0x51e02c `mov dl,BYTE PTR [ecx+eax*4+0x94ed28]`', '0x51e033 `lea eax,[ecx+eax*4+0x94ed28]`']
+   backward branches from after the call into the range: 0 []
+A6 PASS: the range neither gates nor LABELS the decision - it is an UPSTREAM PRODUCER of ebx and the call is flow-unconditional: 4 edges bypass the walk whole and land on the exit block, which falls through to 0x51dff5/0x51dffd; of the 11 branches between the range exit and the call, ZERO land past the call (the only ebx-driven branch, 0x51dfd1, targets the pre-call block 0x51dff5); the ebx the walk produces gates only the cell stores (0x51dfc9 `test ebx,ebx` / 0x51dfd1) and feeds the POST-STORE byte read 0x51e02c, never the counter address (esi is the 28-B slot fold of [ebp-0xc], M299); and FUN_005832b0's eax is born at 0x51dffd, is consumed by exactly one instruction (0x51e005 `test eax,eax`), is overwritten at 0x51e024 before any loop, and has ZERO backward edges into the range - the predicate's return value cannot reach it
+
+== S7: the same 243 B read out of the PE file image (VA->file via the section table) ==
+   programs/terran.exe: image base 0x400000, section .text (vaddr 0x1000 vsize 0x26f3f4 raw 0x1000 size 0x270000)
+   0x51de2c -> file offset 0x11de2c, 243 B read; identical to the dump's encodings: True
+   first 24 B: 3b cb 0f 84 a4 00 00 00 0f bf 30 0f bf 48 fe 8b c6 8b d1 0f af 05 84 21 ; last 8 B: 01 a3 dc fe 8e 00 85 db
+A7 PASS: the 243 B of the range read straight out of the PE image (.text, file 0x11de2c) are BYTE-IDENTICAL to the dump's encodings, and the section is .text (the code section, VA 0x400000+0x1000): the range's raw values are the executable bytes of the shipping file, not a runtime patch and not a dump artifact
+
+== ROLLUP (negative result: the lead is refuted) ==
+  (a) entries: ZERO data entries. 243 B span, 60 4-B dword slots + 3 leftover, no dword resolving into .text; the span is 81 instructions (68 walk + 13 exit block) printed VERBATIM in S1
+  (b) nature: EXECUTABLE CODE, not code addresses / pointers / masks / offsets - the body of a walk over base_array 0x95da10 (row 304 B, count ds:0x985af4, BSS); (INFERRED shape) it filters each row's tile by class via the 44-B tile-record view (0x51de5b-0x51de61) and compares a distance to ds:0x8f0d34 (0x51dece-0x51ded0)
+  (c) indexing: base reg = eax (cursor 0x95da12 = base+2; spill [ebp-0x14]); walk index = trip counter [ebp-0x18] vs ds:0x985af4; the value the walk compares, ebx = BYTE[304*i + 0x95da14], produced at 0x51ddff from i = FUN_004e37f0's return (0x51ddb1)
+  (d) verdict: the range gates NOTHING that the 0x51dffd decision or the [+4] counter write depends on (both its bypass legs and its normal fall-through reach the call), and FUN_005832b0's eax does NOT reach it (defined after it, single consumer `test eax,eax`, no backward edge)
+
+8/8 assertions hold

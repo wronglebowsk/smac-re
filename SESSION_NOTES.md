@@ -1,46 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-234-234.md` (1 sessions). Read it only when a question reaches back before session ## Session 235.
-
-## Session 235 (2026-11-10, ANALYSE, M289 LIVE 7/7, box time) - which founder vector the recorded AI used: the AI HUB FUN_0055f650 -> FUN_004cca50 -> founder FUN_004e47d0; 7/7 live foundings on a 30-turn m54b_clean window, the 0x4408 action-dispatch leg 0, the 5a0aa0 chain entered 3x but completed 0; count 18->23 exact with 2 destroys; MERGED #241
-- track_mode ANALYSE -> the M282 G5 frontier (NEXT_PROMPT pick): which founder
-  vector the recorded AI used - 0x4408 vs 0x5f650 vs the 5a0aa0 chain.  Live-box
-  milestone (the one open live question).  scripts/m289_founder_vector.py arms
-  ONE silent breakpoint PER VECTOR at the call site unique to it (image-wide
-  proof: exactly 3 call sites load FUN_004cca50, 3 load FUN_0059ec90) + the
-  founder entry (ret/fac/x/y/live count) + the destroyer -1 store (0x4e515d) +
-  the sweep-entry control (0x4e8d60); drives the clean save with the AI for 30
-  turns (smac_play --no-orders so OUR side stays inert), then detaches and
-  classifies every founder hit by the vector site that fired just before it.
-- MEASURED: 7/7 founder hits ALL vec=hub (ret 0x4ccbe2 via FUN_004cca50, caller
-  site 0x563d86 inside FUN_0055f650); fac 6,6,6,5,7,1,6 at (20,48)(63,51)(12,48)
-  (27,19)(23,33)(27,29)(1,43); 3 "VEC chain" entries (FUN_005a0aa0->59ec90) with
-  ZERO completed foundings (the faction-create path bailed each time - open
-  why); 0 v4408, 0 hotkey.  Count accounting strict: 18,19,20 (+3) DESTROY
-  (21), 20,21,22,23 (+4) DESTROY (24) -> box end 23, late=0.  Control: 1627
-  sweep rows; driver rc 0; yama toggled and verified restored.
-- REFUTES M282's static thesis ("reached live via the 0x4408 action-dispatch
-  leg"): the 0x4408 path EXISTS (G5 static) but the live AI never took it in
-  this window - it calls the founder through the hub's DIRECT call.
-- ACCEPTANCE 1: python3 scripts/m289_founder_vector.py 30 -> rc 0, VERDICT
-  MEASURED (evidence/m289_founder_vector.txt + scratch/m289_gdb_raw.log copied
-  to evidence/m289_gdb_raw.log).  ACCEPTANCE 2 (independent re-walk of the raw
-  log): python3 scripts/m289_accept.py -> PASS M289: 6/6 - founder vector(s):
-  {'hub': 7} (evidence/m289_accept.txt).
-- BONUS: the census produced a NEW golden trace evidence/trace_m289_20261110_
-  071759.jsonl (30 turns, year 2150->2180, n_bases 18->23) - the first trace
-  carrying 7 REAL founding (faction,x,y) events for the sim to fit.
-- BOX HYGIENE (two NEW traps, both fixed in-session): (a) yama ptrace_scope=1
-  blocks n100's own /proc/pid/mem reads (smac_state/accept_ready EACCES) - the
-  box's working default is 0 and the census must restore the PRE-toggle value,
-  not hardcode 1; (b) root-owned /tmp/acceptready* frames (left by an earlier
-  sudo run) make accept_ready's freeze fail silently and it classifies a STALE
-  frame (byte-identical quit-prompt ghost) - chown them back to n100.  Also:
-  the reallyquit dialog dismisses via click Oops row (400,268) then OK (~319),
-  Escape/Return alone looped.
-- OPEN: why the 5a0aa0 chain bailed 3x; the hub's founding DECISION rule (which
-  pod/tile/faction) vs B10's assumed first-unoccupied; M247; M70 x2.  Next:
-  ANALYSE - fit the hub founder decision to the m289 trace.
+Older sessions: `docs/sessions/sessions-235-235.md` (1 sessions). Read it only when a question reaches back before session ## Session 236.
 
 ## Session 236 (2026-11-10, ANALYSE, M290 9/9, no box time) - the hub's FOUNDING DECISION fitted to the m289 record: the dispatch is OWN-TILE-GATED (a distant target takes the 0x2408 auto-build message and can NEVER found); founder args are the POD RECORD's owner@+14/y@+10/x@+8, so the tile choice is entirely the pod's walk; B10's first-unoccupied rule REFUTED (recorded ranks 542-1691 of 2146)
 - track_mode ANALYSE -> the s235 frontier pick: fit the hub founder decision
@@ -758,3 +718,45 @@ BUILD_SPINE.md now carries the B18 rung.
   are the witness, class strings only labels. (rk-vs-t regex-anchor bug caught 3
   phantom value-arith classes before submit - windows audit clean after.)
 - Box: ZERO (s244 state untouched). NEXT_PROMPT rewritten for s256.
+
+## Session 256 (2026-11-15, STATIC, zero box) - M301: the lead "ebx's table 0x51de2c-0x51df1d" is REFUTED - it is a base_array walk, not a table
+- THE PICK from the M294 lead list. `python3 scripts/m301_ebxtable.py` -> **PASS M301: 8/8**
+  (every quoted number computed+asserted there; `evidence/m301_ebxtable.txt`, 199 ln).
+- (a) ENTRIES: ZERO. The range is 0xf3 = 243 B (ends on the last byte of `test ebx,ebx`
+  0x51df1d): 60 4-B dword slots + 3 B leftover, and 0 dwords - aligned or at any byte offset -
+  resolve to a VA inside .text; the span tiles GAP-FREE as 81 instructions = 68 of ONE loop
+  (0x51de27-0x51deef, sole back edge `jl 0x51de27`) + 13 of its straight-line exit block, and
+  contains 4 `call 0x64b870`. (`m301_ebxtable.txt:95-104`)
+- (b) NATURE: executable CODE - not code addresses, pointers, masks or offsets. 243 B read
+  straight out of the PE file image (programs/terran.exe, .text, file off 0x11de2c) are
+  BYTE-IDENTICAL to the dump; Ghidra n_insns 386 == the dump's instruction count over the
+  function window; 0 indirect jmp/call in all of FUN_0051dcb0; 0 lea/mov/push of any range
+  address image-wide; the 4 external edges into the range all target its EXIT BLOCK
+  (0x51de05, 0x51de19, 0x51ddc0, 0x51dded -> 0x51defd), none enters the walk. (A3 :115, A7 :191)
+- (c) INDEXING: it walks the NAMED base_array 0x95da10 (NAMED.md:74). Base register eax =
+  cursor, `mov eax,0x95da12` 0x51de1f = base+2 (row y field), spill/reload [ebp-0x14]; stride
+  `add eax,0x130` 0x51dee2 = 304 B = that record size; index = trip counter [ebp-0x18] (0 at
+  0x51de10, inc 0x51dee1) bounded by the BSS row count ds:0x985af4 (`test`/`jle` 0x51de17-19
+  skip the walk whole, `cmp` 0x51dee7 drives the back edge). The value compared against the
+  row's flag byte, ebx = BYTE[304*i + 0x95da14] (0x51ddff) with i = FUN_004e37f0's return
+  (call 0x51ddb1): the scale chain 0x51ddf2/0x51ddf7/0x51ddfa evaluates to exactly 304*i. (A4/A5)
+- (d) VERDICT: the range is UPSTREAM of 0x51dffd and gates NOTHING the [+4] write depends on.
+  Of the 11 branches between the range exit and the call, ZERO land past the call - the
+  ebx==0 leg `je 0x51dff5` 0x51dfd1 targets the PRE-CALL block, so the call and `test eax,eax`
+  run on every leg, bypassed-walk included. ebx's only post-range consumers are the cell
+  stores (0x51dfc9 `test ebx,ebx` / 0x51dfd3-0x51dff3) and the POST-STORE byte read 0x51e02c;
+  the counter address is esi, the 28-B fold of [ebp-0xc] (M299), never ebx. FUN_005832b0's eax
+  has exactly ONE consumer (`test eax,eax` 0x51e005), is overwritten at 0x51e024, and there are
+  0 backward edges from after the call into the range - the predicate's return CANNOT reach it.
+- RETRACTION: the "ebx's walked table (0x51de2c-0x51df1d) recorded as a LEAD" phrasing at
+  NAMED.md:1009 (M294) is wrong - patched in place, and the resolution registered as ## M301.
+- NEW STATIC LAW: before censusing "address X-Y is a table", run 4 falsifiers: (1) does the
+  span tile gap-free as instructions from its OWN encoding bytes; (2) does any dword in it
+  (aligned and byte-offset) resolve into .text; (3) is any address in it the operand of a
+  NON-BRANCH instruction image-wide; (4) does the containing function contain an indirect
+  jmp/call at all. 243 B of hand-read disassembly reads like a table until (1) runs.
+- OPEN: whose record the exit block's BYTE[edi+0x7] belongs to (edi = [ebp-0x4], sole
+  pre-range writer 0x51dd28); the walk's semantic predicate (a tile-class test on the 44-B
+  tile view 0x51de5b-0x51de61 + a distance compare vs ds:0x8f0d34 0x51dece-0x51ded0, then 3
+  `or ebx,-1` sentinels) - shape VERIFIED, meaning INFERRED.
+- Box: ZERO (s244 state untouched). NEXT_PROMPT rewritten for s257.

@@ -789,6 +789,28 @@ puts a Match in res; sum() dies - `bool()` regex clauses.
 25. SCRIPT REUSE + REGISTRY (s219): slice a sibling's defs on `"\ndef main("` (a bare slice cuts mid-STRING and the
     SyntaxError cites the OTHER file); exec'd names sit NESTED (`_ns["_ns"]["dst_regs"]`); anchor registry gates on the
     FULL `## Mxxx` header (the bare token occurs as a cross-ref too); `bool()` regex clauses feeding a sum().
+## trim-s256 (moved VERBATIM out of NEXT_PROMPT.md §TRAPS at s256 close, to hold the 12 k cap)
+
+4-5. gdb printf/script laws: no inferior strings; expressions go in printf ARGUMENTS with matching specs (a mismatch
+   ABORTS the sourced script and DETACHES at the first hit); a manual call frame needs the RETADDR at esp+0 and the arg
+   at esp+4; gdb ABANDONS an inferior `call` once any bp hits inside it; ONE `\n` prints a newline, TWO reads as ZERO
+   events; a bp at the insn AFTER `call X` fires AFTER the callee's events — group backward; unwatched factions
+   legitimately yield empty groups.
+6. A >90 s gdb census NEVER runs in the foreground (waits cap 420 s; killing it leaves Wine hung): background + wait,
+   or `--rounds <= 4`. Faction upkeep runs in its OWN segment ~1 cycle after turn-end — use `--boundaries >= 2`.
+7. Dialogs swallow every click/turn-end key while the HUD bar reads THROUGH them: Return clears a dialog, a BUILD/base
+   PANE needs Escape (bare-map Escape raises the quit prompt — never OK); normalize first
+   (`m78_mark_clear.normalize_screen()`), click from OCR bboxes; `m44_idle` asserts TracerPid==0 — use m55_boundary.
+8. A PASS on a non-discriminating shape is no PASS: compute candidate predictions from the baseline first; refuse the
+   shape if they all agree. RE-RUN on a harness race, never edit the floor.
+9. base+0xd0 (`credit`) is RECOMPUTED EVERY ROUND (FUN_004e93f0 0x4e9557/0x4e957f = [+0xc0]-[+0xf0]-[+0xe0]) — a poke
+   there is undone next turn; gate on round movement, use the per-boundary storage poke 200.
+10. A hw watchpoint REPORTS ONLY A VALUE CHANGE AND `pc = store + INSTRUCTION LENGTH` — gate on those, never the store
+    address; silent bps AT the store count stores, the watchpoint is the "any other writer" check; whitelist
+    `[New LWP]`/`[Switching to LWP n]`/SIGINT chatter (skill Wine Watchpoints + instrument-laws).
+11. A silent bp at the pc a hw watchpoint REPORTS is EATEN by it — put the read-back ONE instruction later and read
+    memory, not the register. A poke is evidence only if the CONSUMER reads it.
+
 ## §s250-trim — the s249 pick (ANSWERED by M297, s249; kept VERBATIM per the split rule)
 - **THE PICK (s249): the LIVE-MAP flag-matched census that closes BOTH open
   questions at once** - M295 P1c (does the 0x4e3c00 no-go reject anything on LIVE

@@ -530,6 +530,28 @@ chooser's own address range (0x5a6xxx-0x5aaxxx): 9 of 319 tables matched, none t
 `jmp DWORD PTR [reg*4+imm]` sites for the ones behind a bound check on the SAME register in the previous ~6
 instructions, then read the table out of the PE to map every case; do not filter by the address range you expect.
 
+## "Address X-Y is a table" needs 4 falsifiers before any entry census (s256, M301)
+
+A byte range quoted as a table (M294's "ebx's walked table 0x51de2c-0x51df1d") can be pure
+CODE - 243 B that reads like 60 dwords was the body of a base_array walk. Run all four and
+print every number (`scripts/m301_ebxtable.py` A0-A7 is the template):
+1. Does the span tile GAP-FREE as instructions, measured from its OWN encoding bytes (sum of
+   lengths == span, every gap 0)? Contiguity from the BYTES, not the addresses - a misaligned
+   objdump window invents instructions and would still satisfy an address-only check.
+2. Does ANY dword in the span - at 4-B-aligned offsets AND at every byte offset - resolve to a
+   VA inside .text? A jump/pointer table must; 0 hits means the values are not addresses.
+3. Is any address in the span the operand of a NON-BRANCH instruction (mov/lea/push)
+   image-wide? A table is ADDRESSED; if every mention is a branch target it is control flow.
+   Count indirect (memory-form) jmp/call in the containing function too: 0 means nothing there
+   dispatches, so no jump table can be read by that function.
+4. Cross-check the image: read the same span out of the PE file (VA -> file offset via the
+   section table) and require byte-equality with the dump - kills "the dump came from a patched
+   or live image" with zero box time; and Ghidra's `n_insns` for the function vs the dump's
+   instruction count over the window kills a toolchain disagreement.
+Then derive the loop's extent from its OWN back edge, not from the quoted endpoints: a quoted
+range usually spans a loop PLUS part of its exit block, its "index" is the trip counter, and
+the value the loop compares was produced elsewhere in the function.
+
 ## A decompiler's `arr[i*N]` is an ELEMENT index - multiply by the width before calling it a stride (s171, M137)
 
 Ghidra printed `(&DAT_00927590)[param_1 * 0x167]` and it is tempting to name 0x167 (359) the record stride. The
