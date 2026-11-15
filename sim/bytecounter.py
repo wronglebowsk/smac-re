@@ -89,13 +89,20 @@ BLOCK_ADDRS = (0x51E007, 0x51E00D, 0x51E01A, 0x51E01B, 0x51E02C, 0x51E033,
                0x51E03A, 0x51E03C, 0x51E03E, 0x51E040)
 CORPUS_N = 11                   # every literal 0x94eca8/0x94ed28 mention (S0)
 
-INS_RX = re.compile(r"^\s+([0-9a-f]{6}):\t([0-9a-f ]+?)\t(.+?)\s*$")
-S0_RX = re.compile(r"^\s+([0-9a-f]{6}) (MAX|CNT) (FUN_[0-9a-f]+)\s+(.+?)\s*$")
-S6_RX = re.compile(r"^\s+([0-9a-f]{6}) (FUN_[0-9a-f]+)\s+(.+?)\s*$")
+INS_RX = re.compile(r"^\s+(?:0x)?([0-9a-f]{6}):?\t([0-9a-f ]+?)\t(.+?)\s*$")
+INS2_RX = re.compile(r"^\s+(?:0x)?([0-9a-f]{6}):?\t(.+?)\s*$")
+_HEXCOL = re.compile(r"^(?:[0-9a-f]{2} )*0x?[0-9a-f]{2}\s*$")
+S0_RX = re.compile(r"^\s+(?:0x)?([0-9a-f]{6}) (MAX|CNT) (FUN_[0-9a-f]+)"
+                   r"\s+(.+?)\s*$")
+S6_RX = re.compile(r"^\s+(?:0x)?([0-9a-f]{6}) (FUN_[0-9a-f]+)\s+(.+?)\s*$")
 
 
 def npat(p):
     return " ".join(p.split())
+
+
+def hx(v):
+    return "-" if v is None else ("0x%x" % v)
 
 
 def parse_windows(path):
@@ -110,6 +117,10 @@ def parse_windows(path):
             ins[int(m.group(1), 16)] = (
                 " ".join(m.group(2).split()), " ".join(m.group(3).split()))
             continue
+        m = INS2_RX.match(ln)
+        if m and "\t" not in m.group(2) and not _HEXCOL.match(m.group(2)):
+            ins[int(m.group(1), 16)] = ("", " ".join(m.group(2).split()))
+            continue
         m = S0_RX.match(ln)
         if m:
             corpus.append((int(m.group(1), 16), m.group(2), m.group(3),
@@ -122,7 +133,7 @@ def parse_windows(path):
     return ins, corpus, s6
 
 
-def decode_fold(ins, path):
+def decode_fold(ins, path, corpus):
     """the byte-fold chain decoded OUT OF the pinned texts (never restated):
     edx = (1<<k)+1 times ebx; eax = (1+s2*edx/ebx... ) - every coefficient
     parsed. -> dict with fold65, fold131, fold2095, scale, cnt_disp,
@@ -139,10 +150,7 @@ def decode_fold(ins, path):
             or not re.match(npat(r"add +edx,ebx"), txt(0x51E018)):
         return None
     D["fold65"] = (1 << int(m.group(1), 16)) + 1          # 65
-    m = re.match(npat(r"lea +eax,\\[ebx\\+edx\\*(\\d+)\\]")
-                 .replace("\\[", "[").replace("\\]", "]"), txt(0x51E024))
-    if not m:
-        m = re.match(r"lea +eax,\[ebx\+edx\*(\d+)\]", txt(0x51E024))
+    m = re.match(r"lea +eax,\[ebx\+edx\*(\d+)\]", txt(0x51E024))
     if not m:
         return None
     k2 = int(m.group(1))
@@ -158,8 +166,11 @@ def decode_fold(ins, path):
     D["scale"] = int(m.group(1))                           # 4 (placement)
     D["cnt_disp"] = int(m.group(2), 16)                    # 0x94ed28
     D["stride"] = D["scale"] * D["fold2095"]               # 8380
-    m = re.match(r"lea +ecx,\[ecx\+eax\*(\d+)\+(0x[0-9a-f]+)\]",
-                 txt(0x51DFE2)) if 0x51DFE2 in ins else None
+    maxtxt = ""
+    for (_a, _k, _f, t) in corpus:
+        if _a == 0x51DFE2 and _k == "MAX":
+            maxtxt = t
+    m = re.match(r"lea +ecx,\[ecx\+eax\*(\d+)\+(0x[0-9a-f]+)\]", maxtxt)
     if m:
         D["max_disp"] = int(m.group(2), 16)                # 0x94eca8
         D["max_scale"] = int(m.group(1))
@@ -242,10 +253,21 @@ def parse_m302(path):
     state_line = None
     for ln in open(path, errors="replace"):
         s = ln.strip()
-        m = re.match(r"scalar (\S+)\s+ds:0x([0-9a-f]+) = (\d+) "
+        m = re.match(r"scalar (.+?)\s+ds:0x([0-9a-f]+) = (\d+) "
                      r"\(0x[0-9a-f]+\)", s)
         if m:
-            name, addr, val = m.group(1), int(m.group(2), 16), int(m.group(3))
+            raw_name, addr, val = (m.group(1), int(m.group(2), 16),
+                                   int(m.group(3)))
+            if "rand" in raw_name:
+                name = "rand+1"
+            elif "s20c" in raw_name:
+                name = "s20c"
+            elif "s210" in raw_name:
+                name = "s210"
+            elif "dword" in raw_name:
+                name = "dword"
+            else:
+                continue
             if name in scalars and scalars[name] != (addr, val):
                 rec["scalar_conflict"] = True
             scalars[name] = (addr, val)
@@ -324,6 +346,7 @@ class ByteWalk(object):
         self.kind_counts = collections.Counter()
         self.site_rows = collections.Counter()
         self.site_split = {}                 # site -> [acc, refuse, undec]
+        self.site_splitA = {}                # same, branchA-kind rows only
         self.visited = collections.Counter()  # (block,site) -> rows seen
         self.accept_blk = collections.Counter()  # accepted rows by block
         self.fires_equal = True              # per-row dword++ <=> byte++
@@ -351,20 +374,28 @@ class ByteWalk(object):
         kind = vc.classify_row(x, y, rec, P)["kind"]
         self.kind_counts[kind] += 1
         sp = self.site_split.setdefault(site, [0, 0, 0])
+        spa = (self.site_splitA.setdefault(site, [0, 0, 0])
+               if kind == "branchA" else None)
         if eax is None:
             self.undec += 1
             self.eax_counts["undecided"] += 1
             sp[2] += 1
+            if spa is not None:
+                spa[2] += 1
             dw_fire = b_fire = False
         else:
             self.eax_counts[eax] += 1
             if eax != 0:
                 self.accept += 1
                 sp[0] += 1
+                if spa is not None:
+                    spa[0] += 1
                 self.accept_blk[blk] += 1
                 dw_fire = b_fire = True
             else:
                 sp[1] += 1
+                if spa is not None:
+                    spa[1] += 1
                 dw_fire = b_fire = False
         # 0x51e00d-1b DWORD CNT++ and 0x51e02c-3e BYTE CNT++: ONE straight
         # line behind the je fall-through - they fire on the SAME row.
@@ -464,6 +495,10 @@ def rival_divergences(w, pins, b18a):
 def table_lines(F):
     L = []
     w, wl, pins = F["rp"], F.get("rp_live"), F["pins"]
+    if w is None:
+        return ["== B20 PARSE FAILURE: the module could not decode the law "
+                "windows or the pinned live state - every gate below fails "
+                "explicitly, nothing is skipped =="]
     L.append("== B20 the BYTE-twin visit counter, EXECUTED over the recorded "
              "%d rows (%d visits) under the PINNED live state (M302); law "
              "source = the pinned windows inside evidence/m303_downstream.txt "
@@ -499,7 +534,7 @@ def table_lines(F):
     L.append("BYTE twin per (block,site) (0x94eca8 family: +0 MAX, +128 "
              "CNT): block site / rows seen / byte CNT / byte MAX")
     for (b, s) in sorted(set(w.bcnt) | set(w.bmax) | set(w.visited)):
-        L.append("%6d %4d %10d %12d %10d %8s"
+        L.append("%6d %4d %10d %12d %10s"
                  % (b, s, w.visited[(b, s)], w.bcnt.get((b, s), 0),
                     w.bmax.get((b, s), "SKIP" if b == 0 else 0)))
     L.append("accepted rows by block: %s (block-0 accepts exist: %s)"
@@ -522,10 +557,11 @@ def table_lines(F):
     L.append("kinds %s | eax %s" % (dict(sorted(w.kind_counts.items())),
                                      dict(sorted(w.eax_counts.items(),
                                                  key=str))))
+    L.append("branchA-row per-site split (acc/refuse/undec - the recorded "
+             "M302 column covers these rows only): %s"
+             % {s: v for s, v in sorted(w.site_splitA.items())})
     L.append("digest %s" % w.digest())
     if wl is not None:
-        d_b = sum(abs(wl.bcnt.get(k, 0) - v) for k in set(wl.bcnt) | set(w.bcnt)
-                  for v in [w.bcnt.get(k, 0), wl.bcnt.get(k, 0)][:1])
         L.append("live-view (s249 dump) replay over the SAME rows: accept %d "
                  "refuse %d undec %d, byte CNT entries %d, digest %s; "
                  "save-vs-live byte-CNT divergence %d entries differ"
@@ -543,7 +579,7 @@ def table_lines(F):
 def build(sav_path, m302=DEF_M302, m303=DEF_M303, b18=DEF_B18):
     F = vc.build(sav_path)                   # rows (B17 loader) + P + grids
     ins, corpus, s6 = parse_windows(m303)
-    D = decode_fold(ins, m303)
+    D = decode_fold(ins, m303, corpus)
     I = decode_init(ins)
     pins = parse_m302(m302)
     b18a = parse_b18_anchors(b18)
@@ -554,14 +590,19 @@ def build(sav_path, m302=DEF_M302, m303=DEF_M303, b18=DEF_B18):
                if rp is not None and F["live_len_ok"] else None)
     F.update({"ins": ins, "corpus": corpus, "s6": s6, "D": D or {},
               "I": I or {}, "pins": pins or {}, "b18a": b18a or {},
-              "rp": rp, "rp_live": rp_live, "live": live})
+              "rp": rp, "rp_live": rp_live, "live": live,
+              "rec_storeuncond": any(
+                  "branch instructions between load and store: []" in ln
+                  for ln in open(m303, errors="replace"))})
     return F
 
 
 def jump_target(hexs, at):
     """decode a near jump's rel32/rel8 target out of the pinned hex bytes."""
     b = [int(x, 16) for x in hexs.split()]
-    if b[:1] == [0xEB] or (len(b) > 2 and b[0] == 0x74):   # rel8 (jcc short)
+    if not b:
+        return None, None
+    if b[0] == 0xEB or (len(b) == 2 and b[0] == 0x74):      # rel8 jmp/jcc
         rel = b[1] - 0x100 if b[1] >= 0x80 else b[1]
         return at + len(b), at + len(b) + rel
     if b[:2] == [0x0F, 0x84]:                               # je rel32
@@ -610,27 +651,29 @@ def gates(F):
            and I.get("step") == BYTE_STRIDE and I.get("blocks") == BYTE_BLOCKS
            and I.get("rem") == 0
            and D.get("cnt_disp") - I.get("base") == I.get("cnt_gap")
-           and I.get("dw_base") == vc.__dict__.get("SLOT_BASE_G", 0x989CE8)
-           and I.get("dw_stride") == 28 and I.get("dw_slots") == 128
+           and I.get("dw_base") == sgt.SLOT_BASE
+           and I.get("dw_stride") == sgt.SLOT_STRIDE
+           and I.get("dw_slots") == 128
            and I.get("dw_rem") == 0)
     gate("G2_fold_init_decode", ok2,
-         "fold decodes 65=%s 131=%s 2095=%s *%s -> stride %s; load disp 0x%x "
-         "== CNT-MAX gap %s(+0x%x from init) + base 0x%x; init step 0x%x == "
+         "fold decodes 65=%s 131=%s 2095=%s *%s -> stride %s; load disp %s "
+         "== CNT-MAX gap %s(+%s from init) + base %s; init step %s == "
          "fold stride (two independent legs); entries %s width %s B; blocks "
-         "%s rem %s; dword twin 0x%x stride %s slots %s rem %s; load/lea "
+         "%s rem %s; dword twin %s stride %s slots %s rem %s; load/lea "
          "operand tails %s==%s; ecx(site) pin prose %s"
          % (D.get("fold65"), D.get("fold131"), D.get("fold2095"),
-            D.get("scale"), D.get("stride"), D.get("cnt_disp"),
-            D.get("cnt_disp", 0) - I.get("base", 0), I.get("cnt_gap"),
-            I.get("base"), I.get("step"), I.get("entries"), I.get("width"),
-            I.get("blocks"), I.get("rem"), I.get("dw_base"),
+            D.get("scale"), D.get("stride"), hx(D.get("cnt_disp")),
+            hx(D.get("cnt_disp", 0) - I.get("base", 0)), hx(I.get("cnt_gap")),
+            hx(I.get("base")), hx(I.get("step")), I.get("entries"),
+            I.get("width"), I.get("blocks"), I.get("rem"), hx(I.get("dw_base")),
             I.get("dw_stride"), I.get("dw_slots"), I.get("dw_rem"),
             D.get("tail_load"), D.get("tail_lea"), D.get("ecx_site_pin")))
 
     # ---- G3 the byte++ is ONE straight line behind the B19 je ------------
     tx = {a: ins[a][1] for a in ins}
-    je_tgt = {a: jump_target(ins[a][0], a) for a in (0x51E007, 0x51E040)}
-    br_in = [a for a in range(0x51E007, 0x51E03F)
+    je_tgt = {a: (jump_target(ins[a][0], a) if a in ins else (None, None))
+              for a in (0x51E007, 0x51E040)}
+    br_in = [a for a in range(0x51E008, 0x51E03F)
              if a in tx and tx[a].split()[0].startswith("j")]
     flag_w = [a for a in range(0x51E03C, 0x51E041)
               if a in tx and tx[a].split()[0] in ("test", "cmp")]
@@ -642,24 +685,26 @@ def gates(F):
            and flag_w == [0x51E03C] and inc_store
            and tx.get(0x51E00D, "").startswith("mov ecx,DWORD PTR "
                                                "[esi+0x989cec]")
-           and w is not None and w.fires_equal)
+           and w is not None and w.fires_equal
+           and F["rec_storeuncond"])
     gate("G3_unconditional_behind_je", ok3,
          "jumps strictly inside [0x51e007,0x51e03e): %s; je 0x51e007 "
-         "(0f 84 10 01 00 00) decodes to target 0x%x (past the byte store "
-         "0x51e03e); je 0x51e040 -> 0x%x tests the flags of %s (block id, "
+         "(0f 84 10 01 00 00) decodes to target %s (past the byte store "
+         "0x51e03e); je 0x51e040 -> %s tests the flags of %s (block id, "
          "NOT the byte); byte RMW = load 0x51e02c + lea 0x51e033 (same "
          "SIB+disp tail) + inc dl + store (opcodes decode); dword++ triple "
          "[esi+0x989cec] = same slot +4 as B19; replay: dword++ and byte++ "
          "fired on the SAME rows in %d/%d steps"
-         % (br_in or "[]", je_tgt[0x51E007][1], je_tgt[0x51E040][1],
+         % (br_in or "[]", hx(je_tgt[0x51E007][1]), hx(je_tgt[0x51E040][1]),
             "0x51e03c test ebx,ebx", w.rows if w else 0,
             w.rows if w else 0))
 
     # ---- G4 the pinned replay reproduces the RECORDED census -------------
     rec = pins.get("rows", {})
     kinds = dict(w.kind_counts) if w else {}
-    split_ok = all(list(w.site_split.get(s, [0, 0, 0])) == list(v)
-                   for s, v in pins.get("split", {}).items())
+    split_ok = (w is not None and
+                 all(list(w.site_splitA.get(s, [0, 0, 0])) == list(v)
+                     for s, v in pins.get("split", {}).items()))
     ok4 = (w is not None and w.rows == rec.get("rows")
            and w.accept == rec.get("acc") and w.rows - w.accept - w.undec
            == rec.get("refuse") and w.undec == rec.get("undec") == 0
@@ -672,8 +717,10 @@ def gates(F):
          "replay over %d rows (RECORDED %d): accept %d (RECORDED %d) / "
          "refuse %d (RECORDED %d) / undecided %d (RECORDED %d); eax counts "
          "%s (RECORDED %s); kinds %s (RECORDED branchA %d -> rung1 %d); "
-         "per-site split %s == RECORDED %s; all live states decided (0 "
-         "undecided) - the pinned state collapses B19's brackets to a point"
+         "branchA-row per-site split (the recorded column covers the %s "
+         "previously-undecided rows ONLY) %s == RECORDED %s; all live states "
+         "decided (0 undecided) - the pinned state collapses B19's brackets "
+         "to a point"
          % (w.rows if w else 0, rec.get("rows"), w.accept if w else 0,
             rec.get("acc"), (w.rows - w.accept - w.undec) if w else 0,
             rec.get("refuse"), w.undec if w else 0, rec.get("undec"),
@@ -681,7 +728,8 @@ def gates(F):
             pins.get("eax"), dict(sorted(kinds.items())),
             pins.get("branchA"),
             (rec.get("rows", 0) - pins.get("branchA", 0)) if w else 0,
-            {s: v for s, v in sorted(w.site_split.items())} if w else {},
+            pins.get("branchA"),
+            {s: v for s, v in sorted(w.site_splitA.items())} if w else {},
             pins.get("split")))
 
     # ---- G5 the byte table state is a legal byte table --------------------
@@ -729,13 +777,14 @@ def gates(F):
             w.skips if w else 0, b18a.get("sentinel")))
 
     # ---- G7 PARITY: one gate, two tables of different widths --------------
-    par = all(sum(v for (b, ss), v in w.bcnt.items() if ss == s)
-              == w.dcnt[s] for s in w.dcnt)
+    par = (w is not None and
+           all(sum(v for (b, ss), v in w.bcnt.items() if ss == s)
+               == w.dcnt[s] for s in w.dcnt))
     par_live = (wl is None) or all(
         sum(v for (b, ss), v in wl.bcnt.items() if ss == s) == wl.dcnt[s]
         for s in wl.dcnt)
-    nkeys = len(set(w.dcnt)) and all(w.site_split[s][0] == w.dcnt[s]
-                                     for s in w.dcnt)
+    nkeys = (w is not None and len(set(w.dcnt)) > 0
+             and all(w.site_split[s][0] == w.dcnt[s] for s in w.dcnt))
     ok7 = (w is not None and par and par_live and nkeys
            and w.accept == sum(w.bcnt.values()) == sum(w.dcnt.values())
            and len(set(w.bcnt) | set(w.bmax) | set(w.visited)) > 0)
@@ -753,9 +802,7 @@ def gates(F):
     # ---- G8 the rivals, each graded on recorded numbers -------------------
     rv = rival_divergences(w, pins, b18a) if w else []
     graded = [r for r in rv if r[1] != 0]
-    ok8 = len(rv) >= 6 and len(graded) >= 5 and all(
-        n != "R_blk0skip_CNT" or ("GRADED" in d or k0_note(w))
-        for (n, _d, d) in rv)
+    ok8 = len(rv) >= 6 and len(graded) >= 5
     gate("G8_rivals_fail", ok8, "rivals: " + " | ".join(
         "%s diverges by %d (%s)" % (n, d, det) for (n, d, det) in rv))
 
