@@ -1,0 +1,177 @@
+== M303: the post-counter read at 0x51e02c - index algebra and downstream consumer
+== inputs: scratch/m574/text.txt (full .text dump, 150k+ insns) + ghidra_out/index.csv;
+== zero box / zero /proc / zero gdb.  B19 lead CLOSED: `evidence/b19_visitcounter.txt:14`
+
+-- S0. every literal mention of 0x94eca8 / 0x94ed28 in the full .text dump --
+  0x4f946d CNT FUN_004f6030    mov    al,BYTE PTR [ecx+edx*1+0x94ed28]
+  0x50e4fb MAX FUN_0050d140    mov    al,BYTE PTR [ecx+edi*4+0x94eca8]
+  0x51dcb8 MAX FUN_0051dcb0    mov    edx,0x94eca8
+  0x51dfe2 MAX FUN_0051dcb0    lea    ecx,[ecx+eax*4+0x94eca8]
+  0x51e02c CNT FUN_0051dcb0    mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
+  0x51e033 CNT FUN_0051dcb0    lea    eax,[ecx+eax*4+0x94ed28]
+  0x5583c0 MAX FUN_00556690    mov    bl,BYTE PTR [esi+edi*1+0x94eca8]
+  0x563c59 MAX FUN_0055f650    mov    cl,BYTE PTR [edi+ebx*1+0x94eca8]
+  0x5642b4 MAX FUN_0055f650    mov    al,BYTE PTR [eax+esi*1+0x94eca8]
+  0x5646e6 MAX FUN_0055f650    mov    dl,BYTE PTR [esi+edi*1+0x94eca8]
+  0x56b818 MAX FUN_0055f650    mov    al,BYTE PTR [edi+ecx*1+0x94eca8]
+
+-- S1. index algebra: CNT fold 0x51e013..0x51e02a and its byte-identical MAX-side copy 0x51dfd3..0x51dfe0 --
+  0x51e013	8b d3                	mov    edx,ebx
+  0x51e015	c1 e2 06             	shl    edx,0x6
+  0x51e018	03 d3                	add    edx,ebx
+  0x51e024	8d 04 53             	lea    eax,[ebx+edx*2]
+  0x51e027	c1 e0 04             	shl    eax,0x4
+  0x51e02a	2b c3                	sub    eax,ebx
+  0x51e02c	8a 94 81 28 ed 94 00 	mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
+  shadow(ebx=1): edx = 65*ebx -> eax = 2095 (first copy) / 2095 (second copy)
+  load form: [ecx + eax*4 + 0x94ed28] -> byte addr = site + 8380 * block (scale 4 x 2095)
+  multiplier arithmetic: 65 = 64+1 | 131 = 1+2*65 | 2095 = 131*16-1 | 8380 = 2095*4 = 0x20bc
+  the two 6-insn folds are BYTE-IDENTICAL encodings: True (compiler rematerialized across the call at 0x51dffd; ebx survives it)
+  sibling 0x51df3d `inc WORD PTR [eax+0x94e8a8]`: shadow(ebx=1,site=1) eax = 8382 = 2*(site + 4190*block) -> WORD array, row stride 8380 B = 8380: SAME 8380-B block phase, entry width 2, scale *2 = width
+  -> the *4 scale at 0x51e02c is NOT element width: byte array indexed in dword units (8380/4 = 2095), scale 4 chosen so 2095 fits lea/shl/sub
+
+-- S2. rival R1: 'the 0x51e024-2a expression IS the 28-B stride (site*8-site)<<2' --
+  0x51dfac	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+  0x51dfaf	8b c8                	mov    ecx,eax
+  0x51dfb1	8d 34 c5 00 00 00 00 	lea    esi,[eax*8+0x0]
+  0x51dfb8	2b f1                	sub    esi,ecx
+  0x51dfba	c1 e6 02             	shl    esi,0x2
+  0x51dfbd	8b 86 e8 9c 98 00    	mov    eax,DWORD PTR [esi+0x989ce8]
+  0x51dfcb	89 86 e8 9c 98 00    	mov    DWORD PTR [esi+0x989ce8],eax
+  shadow(site=1): law esi = 28 * site -> feeds DWORD [esi+0x989ce8] / [esi+0x989cec] (the dword slot table, M299/M302)
+  encodings: law lea SIB-scale-8 `8d 34 c5 00 00 00 00` vs byte-fold `8d 04 53`; law `shl esi,2` `c1 e6 02` vs byte-fold `shl eax,4` `c1 e0 04` + load scale *4
+  law K = 28 on esi/site | byte-fold K = 8380 on eax/block -> equal? False | R1 FAILS
+
+-- S3. producers of the three fold inputs (same function, from the dump) --
+  [ebp-0xc] (=site) in-function writers: ['0x51dd57']
+    0x51dd4f mov    cl,BYTE PTR [edi+0x3]   (cl <- tile byte 3; ecx zeroed at 0x51dd48)
+    0x51dd57 mov    DWORD PTR [ebp-0xc],ecx
+  0x51dfac mov    eax,DWORD PTR [ebp-0xc] and 0x51e021 mov    ecx,DWORD PTR [ebp-0xc] both read it -> same value pins esi (S2) AND the byte-fold base ecx (NOT the counter)
+  block: 0x51ddff mov    bl,BYTE PTR [eax+0x95da14]
+    index fold 0x51ddf2-fa shadow(i=1): eax = 304 * i == 0x130 = the base_array row stride M301 pinned (global 0x95da10 = NAMED base_array)
+    sentinels: 0x51ddea or     ebx,0xffffffff | 0x51ddbd or     ebx,0xffffffff | cell store 0x51df1f mov    BYTE PTR [edi+0x7],bl | clamp 0x51df22 jge    0x51df26 -> 0x51df24 xor    ebx,ebx
+    => ebx into the fold is >= 0 always (clamp before 0x51dfd3); live upper bound UNKNOWN
+  edx: 0x51e013 mov    edx,ebx -> a DERIVED COPY of ebx, not a coordinate
+  (x,y are elsewhere: 0x51dff5 mov    ecx,DWORD PTR [ebp-0x8] / 0x51dff8 mov    edi,DWORD PTR [ebp-0x10] pushed to the predicate at 0x51dffd - never touch the fold)
+
+-- S4. per-call init 0x51dcb8-0x51dd17: the record geometry, derived twice --
+  0x51dcb8	mov    edx,0x94eca8
+  0x51dcbd	xor    esi,esi
+  0x51dcbf	xor    ecx,ecx
+  0x51dcc1	lea    eax,[edx-0x400]
+  0x51dcc7	mov    WORD PTR [eax+0x200],si
+  0x51dcce	mov    WORD PTR [eax],si
+  0x51dcd1	mov    WORD PTR [eax+0x100],si
+  0x51dcd8	mov    WORD PTR [eax+0x300],si
+  0x51dcdf	mov    BYTE PTR [edx+ecx*1+0x80],0x0
+  0x51dce7	mov    BYTE PTR [edx+ecx*1],0x0
+  0x51dceb	inc    ecx
+  0x51dcec	add    eax,0x2
+  0x51dcef	cmp    ecx,0x80
+  0x51dcf5	jl     0x51dcc7
+  0x51dcf7	add    edx,0x20bc
+  0x51dcfd	cmp    edx,0x95f288
+  0x51dd03	jl     0x51dcbd
+  0x51dd05	mov    eax,0x989ce8
+  0x51dd0a	mov    DWORD PTR [eax+0x4],esi
+  0x51dd0d	mov    DWORD PTR [eax],esi
+  0x51dd0f	add    eax,0x1c
+  0x51dd12	cmp    eax,0x98aae8
+  0x51dd17	jl     0x51dd0a
+  byte family: rows from 0x94eca8 step 0x20bc until 0x95f288 -> blocks = 8 (rem 0)
+  CNT-MAX field gap: 0x94ed28-0x94eca8 = 128 (matches the +0x80 in `mov BYTE PTR [edx+ecx*1+0x80],0x0`)
+  inner loop bound cmp ecx,0x80 -> 128 ENTRIES per field, store opcodes `c6` = mov BYTE, ecx by 1 -> ENTRY WIDTH 1 B
+  dword twin: 0x989ce8..0x98aae8 stride 0x1c -> slots = 128 (rem 0); stores DWORD [eax],[eax+4] = {MAX, CNT}
+  stride cross-derivation: init step 8380 == fold K 8380? True (two independent instrument legs)
+
+-- S5. 0x51e02c is the LOAD HALF of a byte RMW ++ (same predicate-gated block) --
+  0x51e007	0f 84 10 01 00 00    	je     0x51e11d
+  0x51e00d	8b 8e ec 9c 98 00    	mov    ecx,DWORD PTR [esi+0x989cec]
+  0x51e01a	41                   	inc    ecx
+  0x51e01b	89 8e ec 9c 98 00    	mov    DWORD PTR [esi+0x989cec],ecx
+  0x51e02c	8a 94 81 28 ed 94 00 	mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
+  0x51e033	8d 84 81 28 ed 94 00 	lea    eax,[ecx+eax*4+0x94ed28]
+  0x51e03a	fe c2                	inc    dl
+  0x51e03c	85 db                	test   ebx,ebx
+  0x51e03e	88 10                	mov    BYTE PTR [eax],dl
+  0x51e040	74 41                	je     0x51e083
+  operand tails (SIB+disp32, after opcode+modrm): 0x51e02c ['81', '28', 'ed', '94', '00'] vs 0x51e033 ['81', '28', 'ed', '94', '00'] -> SAME address expression? True
+  and vs the MAX-side lea 0x51dfe2 ['81', 'a8', 'ec', '94', '00'] -> same SIB 81 (scale 4, base ecx, index eax*4)
+  branch instructions between load and store: [] -> store unconditional
+  flag-writers in [0x51e03c..0x51e040]: [('0x51e03c', 'test')] -> 0x51e040 `je` tests `test ebx,ebx` flags, NOT the byte
+  every dl/edx mention 0x51e03a-0x51e06c: [('0x51e03a', 'inc    dl'), ('0x51e03e', 'mov    BYTE PTR [eax],dl'), ('0x51e06c', 'mov    edx,DWORD PTR [ebp-0x8]')]
+  -> the incremented byte's ONLY consumers are the inc + the store; edx is then reloaded from [ebp-0x8] (y) for the call: dl is DEAD after 0x51e03e
+
+-- S6. every family reader and the first instruction that consumes the loaded value --
+  0x51dfe2 FUN_0051dcb0    lea    ecx,[ecx+eax*4+0x94eca8]
+           -> 0x51dfeb [memory-read] mov    al,BYTE PTR [ecx]
+  0x50e4fb FUN_0050d140    mov    al,BYTE PTR [ecx+edi*4+0x94eca8]
+           -> 0x50e502 [cmp/test] cmp    esi,eax
+  0x5583c0 FUN_00556690    mov    bl,BYTE PTR [esi+edi*1+0x94eca8]
+           -> 0x5583ec [cmp/test] cmp    bl,0x4
+  0x563c59 FUN_0055f650    mov    cl,BYTE PTR [edi+ebx*1+0x94eca8]
+           -> 0x563c6b [cmp/test] cmp    ecx,eax
+  0x5642b4 FUN_0055f650    mov    al,BYTE PTR [eax+esi*1+0x94eca8]
+           -> 0x5642bb [cmp/test] cmp    al,0x8
+  0x5646e6 FUN_0055f650    mov    dl,BYTE PTR [esi+edi*1+0x94eca8]
+           -> 0x5646ed [cmp/test] cmp    eax,edx
+  0x56b818 FUN_0055f650    mov    al,BYTE PTR [edi+ecx*1+0x94eca8]
+           -> 0x56b81f [cmp/test] test   al,al
+  0x4f946d FUN_004f6030    mov    al,BYTE PTR [ecx+edx*1+0x94ed28]
+           -> 0x4f9474 [cmp/test] test   al,al
+
+-- S6b. every store to the byte family, the dword twin, and the WORD sibling --
+  0x51dcc7 mov    WORD PTR [eax+0x200],si
+  0x51dcce mov    WORD PTR [eax],si
+  0x51dcd1 mov    WORD PTR [eax+0x100],si
+  0x51dcd8 mov    WORD PTR [eax+0x300],si
+  0x51dcdf mov    BYTE PTR [edx+ecx*1+0x80],0x0
+  0x51dce7 mov    BYTE PTR [edx+ecx*1],0x0
+  0x51dd0d mov    DWORD PTR [eax],esi
+  0x51df3d inc    WORD PTR [eax+0x94e8a8]
+  0x51dfcb mov    DWORD PTR [esi+0x989ce8],eax
+  0x51dff3 mov    BYTE PTR [ecx],al
+  0x51e01b mov    DWORD PTR [esi+0x989cec],ecx
+  0x51e03e mov    BYTE PTR [eax],dl
+  -> all 12 stores inside FUN_0051dcb0; init-zero 6; per-tile updates ['0x51df3d', '0x51dfcb', '0x51dff3', '0x51e01b', '0x51e03e'] all present: True
+
+-- S7. post-store dispatch (branching on block, not on the byte) --
+  0x51e076 call   0x56d480  -> FUN_0056d480 (n_callers=12)
+  0x51e0c0 call   0x56d630  -> FUN_0056d630 (n_callers=3)
+  0x51e0d7 call   0x4e37f0  -> FUN_004e37f0 (n_callers=25)
+  0x51e0ff call   0x56d480  -> FUN_0056d480 (n_callers=12)
+  mask 0x51e042-49: mov    eax,0x1 / mov    ecx,ebx / shl    eax,cl -> 1<<block
+  gates both legs: test   BYTE PTR [ecx+0x4],al | test   BYTE PTR ds:0x985b10,al | cmp    DWORD PTR ds:0x985aec,0x3 (tile flag byte +4 bit block, ds:0x985b10, ds:0x985aec>3)
+  ebx==0 leg walks the 8 block rows of the byte field @0x950664: lea    ecx,[ecx+0x950664] / advance add    ecx,0x20bc / bound cmp    esi,0x8
+  ebx!=0 leg: call   0x56d480 -> FUN_0056d480(block,3,1,x,y); ebx==0 leg per-row: call 0x56d630(block,3,x,y) + row finder 0x4e37f0 then FUN_0056d480(block,3,1,x,y)
+
+-- S8. the disp-census blind spot (skill: register-after-lea stores evade store greps) --
+  scripts/name_global.py 0x94ed28 --disp classifies the 3 literal mentions as READS, writes = 0; it is correct about LITERAL writes only:
+  literal-disp writes to 0x94ed28 anywhere in .text: 0
+  actual writer: 0x51e03e `mov    BYTE PTR [eax],dl` through 0x51e033 `lea    eax,[ecx+eax*4+0x94ed28]` (lea) + the init store `[edx+ecx*1+0x80]` through 0x51dcb8 `mov edx,0x94eca8` - two pointer forms; the RMW store exists and the disp census cannot see it
+
+-- S9. DECLARED UNKNOWN (not settled by this census) --
+  1. live VALUES of the byte CNT/MAX fields and the 8 block bytes (no /proc in this fire; M302 pinned only the dword twin 0x989ce8).
+  2. the live upper bound of the block byte (BYTE[304*i+0x95da14]): the fold and the 8-row init imply block < 8, but no static bound-check on the byte is in the window (only the -1 sentinel clamp).
+  3. field identity inside one 8380-B record: offsets 0(MAX B) 128(CNT B) 256..1023(word fields zeroed by init) and siblings reached by stride 8380 (dword @+3140 witness 0x94f4ec, word @+8636 witness 0x950a64, byte @+7612 witness 0x950664, word @+0 witness 0x94e8a8) - widths witnessed, semantics NOT named here.
+  4. semantics of FUN_0056d480 / FUN_0056d630 / ds:0x985b10 / ds:0x985aec (printed call+gates; no decode done) - the byte++ itself NEVER gates them.
+  5. save-carry vs rebuild of the BYTE family: the per-call init at function entry zeroes it, so at least after this function runs the values are rebuilt, but whether a save round-trips them is OUTSIDE this window (M302's twin-table OPEN persists).
+
+-- R. rival models evaluated against the printed tables --
+  R1 'the 0x51e024-2a chain is B18's 28-B law': law K=28 vs fold K=8380 -> FAIL (True), different registers (esi vs eax) and encodings (S1/S2).
+  R2 'edx and ebx are two coordinates (x,y)': edx produced by `mov edx,ebx` 0x51e013 (shadow 65=1*ebx) and x,y are the [ebp-0x10]/[ebp-0x8] pushes at 0x51dffd - FAIL.
+  R3 '0x51e02c is a pure read that gates the je 0x51e040': je tests flags of `test ebx,ebx` 0x51e03c (only flag-writer before it); the byte is stored back at 0x51e03e; dl dead after -> FAIL.
+  R4 'the *4 scale means a dword table, entry width 4': the sibling word array uses scale *2 at width 2 with the SAME stride 8380; init stores are `mov BYTE` by +1 and all 11 corpus readers are BYTE PTR -> entry width 1 B, *4 is multiplier placement (8380/4 = 2095 index units) -> FAIL.
+
+===================
+A1_corpus      PASS
+A2_fold        PASS
+A3_rival28     PASS
+A4_producers   PASS
+A5_geometry    PASS
+A6_rmw         PASS
+A7_consumers   PASS
+A8_stores      PASS
+A9_dispatch    PASS
+A10_ptrform    PASS
+RESULT         PASS M303: 10/10 (zero box, zero /proc, zero gdb)
