@@ -9,7 +9,7 @@ S0b how each hub site consumes the predicate result eax (M300 classes recomputed
    0x56b77c: test/je truth-branch
    0x56c5f4: test/je truth-branch
 PASS  A1 recomputed site set EQUALS M300's table (7 sites); containment FUN_0055f650 0x55f650+0xd4d3; window insns 16845
-S1 CFG: 1108 blocks, 1444 edges, 24 dominance-verified natural loops, 139 BACKWARD BRANCHES (relaxed):
+S1 CFG: 3017 blocks, 5249 edges, 104 dominance-verified natural loops, 139 BACKWARD BRANCHES (relaxed):
      back edge 0x55fc39 jl 0x55faf0 @ header 0x55faf0
      back edge 0x55fd20 jge 0x55fd0c @ header 0x55fd0c
      back edge 0x55fd68 jge 0x55fd33 @ header 0x55fd33
@@ -158,29 +158,38 @@ S1b per-site LOOP membership, RELAXED (site address in [header, tail]):
    site 0x56b77c: 1 loops: 0x56c6a0->0x56b061
    site 0x56c5f4: 3 loops: 0x56c660->0x56c4f9; 0x56c670->0x56c46c; 0x56c6a0->0x56b061
 S1c sites-per-loop table (relaxed): 0x5649c1->0x564371:2; 0x5649d3->0x564361:2; 0x56c6a0->0x56b061:2; 0x564304->0x564246:1; 0x5645f2->0x56452e:1; 0x56527b->0x5651a7:1; 0x568871->0x5684a2:1; 0x5688a3->0x56847d:1; 0x56c660->0x56c4f9:1; 0x56c670->0x56c46c:1
-S1d MAX sites inside ONE loop (relaxed) = 2; strict natural-loop max = 1
+S1d MAX sites inside ONE loop (relaxed) = 2; strict natural-loop max = 2
 S2 per-site ARRIVAL GUARDS: every CFG pred edge of the call's block - a jcc pred's flag-setter + decider operand + in-block producer is the TEST SURROUNDING the call; a jmp pred is an unconditional arrival whose guard lives upstream (chain printed):
-   site 0x56429c block [0x564246,0x5642af] preds:
-     [lea] 0x564240 lea edi,[ecx+0x94f2e0]
-   site 0x56444b block [0x564443,0x56447e] preds:
+   site 0x56429c block [0x56429a,0x5642a6] preds:
+     [jcc] 0x564298 jne 0x5642b1 | flag-setter 0x564292 cmp eax,0x3 | decider eax | producer 0x56428e mov eax,DWORD PTR [ebp-0x44]
+   site 0x56444b block [0x564443,0x564455] preds:
+     [jcc] 0x56442c jne 0x564443 | flag-setter 0x56442a test eax,eax | decider eax | producer 0x564419 mov eax,DWORD PTR [ebp-0x8]
      [jcc] 0x564441 jne 0x5644a8 | flag-setter 0x56443f test dl,al | decider dl | producer 0x564437 mov dl,BYTE PTR [ebp-0x64]
-   site 0x5645d9 block [0x5645d0,0x5645e8] preds:
-   site 0x5651e3 block [0x5651a7,0x56521a] preds:
-     [xor] 0x5651a5 xor ebx,ebx
-     [jcc] 0x56527b jl 0x5651a7 | flag-setter 0x565276 cmp eax,ecx | decider eax | producer 0x565272 inc eax
+   site 0x5645d9 block [0x5645d0,0x5645e3] preds:
+     [jcc] 0x5645ad je 0x5645d0 | flag-setter 0x5645ab test eax,eax | decider eax | producer 0x56459d mov eax,DWORD PTR [ebp-0xc]
+   site 0x5651e3 block [0x5651db,0x5651ed] preds:
+     [jcc] 0x5651d5 je 0x56526c | flag-setter 0x5651d3 test eax,eax | decider eax | producer 0x5651ad mov eax,DWORD PTR [ebp-0x18]
    site 0x568567 block [0x56855f,0x568575] preds:
-   site 0x56b77c block [0x56b774,0x56b7ab] preds:
+     [jcc] 0x568559 jne 0x56855f | flag-setter 0x568557 test eax,eax | decider eax | producer 0x568546 mov eax,DWORD PTR [ebp-0x8]
+   site 0x56b77c block [0x56b774,0x56b786] preds:
+     [jcc] 0x56b709 je 0x56b774 | flag-setter 0x56b707 test eax,eax | decider eax | producer 0x56b704 mov eax,DWORD PTR [ebp-0x74]
+     [jcc] 0x56b710 jne 0x56b774 | flag-setter 0x56b70e test eax,eax | decider eax | producer 0x56b70b mov eax,DWORD PTR [ebp-0x40]
+     [jcc] 0x56b717 je 0x56b774 | flag-setter 0x56b715 test eax,eax | decider eax | producer 0x56b712 mov eax,DWORD PTR [ebp-0x6c]
      [mov] 0x56b771 mov DWORD PTR [ebp-0x1c],esi
-   site 0x56c5f4 block [0x56c5f2,0x56c60a] preds:
+   site 0x56c5f4 block [0x56c5f2,0x56c5fe] preds:
+     [jcc] 0x56c599 jne 0x56c5f2 | flag-setter 0x56c597 test eax,eax | decider eax | producer 0x56c589 mov eax,DWORD PTR [ebp-0xc]
+     [jcc] 0x56c5ae jne 0x56c5f2 | flag-setter 0x56c5a4 cmp eax,0x1 | decider eax | producer 0x56c5a1 mov eax,DWORD PTR [ebp-0x40]
+     [jcc] 0x56c5d7 jl 0x56c5f2 | flag-setter 0x56c5d4 cmp ecx,0x60 | decider ecx | producer 0x56c5d1 and ecx,0xffffffe0
+     [jcc] 0x56c5ea jne 0x56c5f2 | flag-setter 0x56c5e8 test cl,cl | decider cl | producer 0x56c5e1 mov cl,BYTE PTR [edx+eax*1+0x94e5a8]
      [mov] 0x56c5ef mov DWORD PTR [ebp-0x1c],ebx
 S2b strict dominator guard chains (jcc terminators on every must-pass block):
-   site 0x56429c (1 must-pass legs): 0x564214
-   site 0x56444b (1 must-pass legs): 0x564441
-   site 0x5645d9 (0 must-pass legs): 
-   site 0x5651e3 (4 must-pass legs): 0x565078 -> 0x565106 -> 0x56511d -> 0x56514b
-   site 0x568567 (0 must-pass legs): 
-   site 0x56b77c (1 must-pass legs): 0x56b6af
-   site 0x56c5f4 (3 must-pass legs): 0x56c409 -> 0x56c42f -> 0x56c4ec
+   site 0x56429c (37 must-pass legs): 0x55f691 -> 0x55f6b6 -> 0x55f6f5 -> 0x55f7d9 -> 0x55f82e -> 0x55f858 -> 0x55f909 -> 0x55f945 -> 0x55f973 -> 0x55f9d8 -> 0x55f9ee -> 0x55fa40 -> 0x55fa59 -> 0x55fc6c -> 0x55fdd2 -> 0x55fe1d -> 0x55fe31 -> 0x55fe59 -> 0x5609df -> 0x560ada -> 0x560cff -> 0x560d26 -> 0x560db6 -> 0x5617c3 -> 0x561f84 -> 0x562478 -> 0x562e59 -> 0x562e62 -> 0x5632da -> 0x5637e9 -> 0x56420d -> 0x564221 -> 0x56422a -> 0x56424d -> 0x564258 -> 0x564289 -> 0x564298
+   site 0x56444b (44 must-pass legs): 0x55f691 -> 0x55f6b6 -> 0x55f6f5 -> 0x55f7d9 -> 0x55f82e -> 0x55f858 -> 0x55f909 -> 0x55f945 -> 0x55f973 -> 0x55f9d8 -> 0x55f9ee -> 0x55fa40 -> 0x55fa59 -> 0x55fc6c -> 0x55fdd2 -> 0x55fe1d -> 0x55fe31 -> 0x55fe59 -> 0x5609df -> 0x560ada -> 0x560cff -> 0x560d26 -> 0x560db6 -> 0x5617c3 -> 0x561f84 -> 0x562478 -> 0x562e59 -> 0x562e62 -> 0x5632da -> 0x5637e9 -> 0x56420d -> 0x564221 -> 0x56422a -> 0x56424d -> 0x564304 -> 0x564321 -> 0x564356 -> 0x56436b -> 0x56437d -> 0x5643ae -> 0x5643d2 -> 0x5643f3 -> 0x5643fe -> 0x56442c
+   site 0x5645d9 (53 must-pass legs): 0x55f691 -> 0x55f6b6 -> 0x55f6f5 -> 0x55f7d9 -> 0x55f82e -> 0x55f858 -> 0x55f909 -> 0x55f945 -> 0x55f973 -> 0x55f9d8 -> 0x55f9ee -> 0x55fa40 -> 0x55fa59 -> 0x55fc6c -> 0x55fdd2 -> 0x55fe1d -> 0x55fe31 -> 0x55fe59 -> 0x5609df -> 0x560ada -> 0x560cff -> 0x560d26 -> 0x560db6 -> 0x5617c3 -> 0x561f84 -> 0x562478 -> 0x562e59 -> 0x562e62 -> 0x5632da -> 0x5637e9 -> 0x56420d -> 0x564221 -> 0x56422a -> 0x56424d -> 0x564304 -> 0x564321 -> 0x564356 -> 0x56436b -> 0x56437d -> 0x5643ae -> 0x5643d2 -> 0x5643f3 -> 0x5643fe -> 0x5644d4 -> 0x5644e0 -> 0x5644ee -> 0x5644fe -> 0x56450c -> 0x564523 -> 0x564558 -> 0x564583 -> 0x564597 -> 0x5645ad
+   site 0x5651e3 (45 must-pass legs): 0x55f691 -> 0x55f6b6 -> 0x55f6f5 -> 0x55f7d9 -> 0x55f82e -> 0x55f858 -> 0x55f909 -> 0x55f945 -> 0x55f973 -> 0x55f9d8 -> 0x55f9ee -> 0x55fa40 -> 0x55fa59 -> 0x55fc6c -> 0x55fdd2 -> 0x55fe1d -> 0x55fe31 -> 0x55fe59 -> 0x5609df -> 0x560ada -> 0x560cff -> 0x560d26 -> 0x560db6 -> 0x5617c3 -> 0x561f84 -> 0x562478 -> 0x562e59 -> 0x562e62 -> 0x5632da -> 0x5637e9 -> 0x564b9c -> 0x564d05 -> 0x564e09 -> 0x564f92 -> 0x564ff6 -> 0x564fff -> 0x56500a -> 0x565065 -> 0x565073 -> 0x5650da -> 0x565117 -> 0x56512a -> 0x565171 -> 0x56519f -> 0x5651d5
+   site 0x568567 (18 must-pass legs): 0x55f691 -> 0x55f6b6 -> 0x55f6f5 -> 0x55f7d9 -> 0x55f82e -> 0x55f858 -> 0x55f909 -> 0x55f945 -> 0x55f973 -> 0x55f9d8 -> 0x568450 -> 0x568460 -> 0x568487 -> 0x56849c -> 0x5684d3 -> 0x568504 -> 0x568521 -> 0x568559
+   site 0x56b77c (12 must-pass legs): 0x56b0a7 -> 0x56b0b1 -> 0x56b14e -> 0x56b1fb -> 0x56b2e1 -> 0x56b419 -> 0x56b46e -> 0x56b502 -> 0x56b5ab -> 0x56b610 -> 0x56b6c0 -> 0x56b709
+   site 0x56c5f4 (10 must-pass legs): 0x56bc9f -> 0x56c3ff -> 0x56c414 -> 0x56c420 -> 0x56c43d -> 0x56c4a8 -> 0x56c4b4 -> 0x56c526 -> 0x56c539 -> 0x56c599
 S3 the leg insn 0x56c6de mov esi,DWORD PTR [ebp-0x10]: block head = True; it lies inside block [0x56c6de,0x56c6de]:
      0x56c6de	mov esi,DWORD PTR [ebp-0x10]   <== LEG
    CFG predecessors of the leg block: 0x55fc5b jmp 0x56c6de; 0x561d8d jmp 0x56c6de; 0x563e0d jmp 0x56c6de; 0x566419 jmp 0x56c6de; 0x56678b jmp 0x56c6de; 0x56832b jmp 0x56c6de; 0x569952 jmp 0x56c6de; 0x56c6d7 mov BYTE PTR [edx+0x9332a3],0x78
@@ -200,10 +209,32 @@ S4 [ebp-0x2c]: 85 accesses; 33 writers ['0x55faed', '0x55fc36', '0x56014c', '0x5
 S4 [ebp-0x4c]: 59 accesses; 20 writers ['0x56046c', '0x560564', '0x5619b0', '0x5622d3', '0x562a17', '0x562c4c', '0x564319', '0x565e96', '0x566823', '0x566828', '0x56857b', '0x56860c', '0x5688f6', '0x568c9b', '0x568ca9', '0x5697ae', '0x5698d4', '0x569e53', '0x56c465', '0x56c66d']; on leg dom-path []; inside nest 0x56b061..0x56c6a0 ['0x56c465', '0x56c66d']
 S4 [ebp-0x70]: 39 accesses; 15 writers ['0x55f6a2', '0x55f6ad', '0x56588b', '0x565af0', '0x565e86', '0x566c49', '0x566e63', '0x567994', '0x567add', '0x568110', '0x568236', '0x5688ea', '0x568ad9', '0x56b05e', '0x56c69d']; on leg dom-path []; inside nest 0x56b061..0x56c6a0 ['0x56c69d']
 S4 [ebp-0x44]: 62 accesses; 3 writers ['0x55f74a', '0x565513', '0x565547']; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
-S5 0x4cf907 in FUN_004cf4c0 (0x4cf4c0+0xaac): call 0x5832b0 -> NO frame-store found; accesses of FUN_004cf4c0's ?: 1; first reader NONE
-S5 0x5858fa in FUN_00585720 (0x585720+0x570b): call 0x5832b0 -> NO frame-store found; accesses of FUN_00585720's ?: 1; first reader NONE
-S6 counters: nearest cmp feeding the tail jcc, walked back <=14 insns:
-   tail 0x56c6a0 jl 0x56b061 | cmp 0x56c69a cmp eax,0x9 | counter eax bound 0x9 | 0x56c696 mov eax,DWORD PTR [ebp-0x70]; 0x56c699 inc eax; 0x56c69d mov DWORD PTR [ebp-0x70],eax
-   tail 0x56c670 jl 0x56c46c | cmp 0x56c66a cmp eax,0x8 | counter eax bound 0x8 | 0x56c666 mov eax,DWORD PTR [ebp-0x4c]; 0x56c669 inc eax; 0x56c66d mov DWORD PTR [ebp-0x4c],eax
-   tail 0x56c660 jl 0x56c4f9 | cmp 0x56c65a cmp eax,0x20 | counter eax bound 0x20 | 0x56c654 mov eax,DWORD PTR [ebp-0x54]; 0x56c657 add eax,0x4; 0x56c65d mov DWORD PTR [ebp-0x54],eax
+S5 0x4cf907 in FUN_004cf4c0 (0x4cf4c0+0xaac): call 0x5832b0 -> 0x4cf920 mov DWORD PTR [ebp-0x1c],eax; accesses of FUN_004cf4c0's DWORD PTR [ebp-0x1c]: 3 = 2 stores ['0x4cf8ae', '0x4cf920'] + 1 READS [('0x4cfef2', 'mov eax,DWORD PTR [ebp-0x1c]')]
+S5 0x5858fa in FUN_00585720 (0x585720+0x570b): call 0x5832b0 -> 0x5858ff mov DWORD PTR [ebp-0x7c],eax; accesses of FUN_00585720's DWORD PTR [ebp-0x7c]: 3 = 2 stores ['0x5858ff', '0x5890e7'] + 1 READS [('0x589fe5', 'mov eax,DWORD PTR [ebp-0x7c]')]
+S5b case ladder [ebp-0x44] in the hub window: 31 cmp's: 0x55fe99:0x9; 0x560aac:0x9; 0x560e19:0x2; 0x560e23:0x3; 0x560eb3:0x1; 0x56172e:0x2; 0x561f80:0xb; 0x563c75:0x8; 0x563d3c:0x8; 0x563f18:0x8; 0x5641f9:0x3; 0x56424a:DWORD PTR [ebp-0x44]; 0x564992:0x8; 0x5649d9:0x3; 0x564adf:0x8; 0x56587e:0x2; 0x568056:0x3; 0x568435:0x3; 0x56a4a7:0x6; 0x56ae6d:0xb; 0x56aeb1:0xb; 0x56b0bd:0x2; 0x56b27b:0xb; 0x56b3cc:0x2; 0x56b4fe:0xc; 0x56b6c2:0x2; 0x56b788:0x7; 0x56bdf9:0xb; 0x56c1bc:0x1; 0x56c324:0xb; 0x56c60d:0x8
+S6 counters DERIVED at every loop tail that covers a site (10 tails):
+   tail 0x564304 jne 0x564246 | cmp 0x5642ea cmp eax,esi | counter eax bound esi | 0x5642f1 inc eax; 0x5642f2 mov DWORD PTR [ebp-0x58],eax; 0x5642f7 mov eax,DWORD PTR [ebp-0x58]
    tail 0x5645f2 jl 0x56452e | cmp 0x5645ef cmp ebx,0x54 | counter ebx bound 0x54 | 0x5645ec add ebx,0x4
+   tail 0x5649c1 jl 0x564371 | cmp 0x5649bc cmp ecx,eax | counter ecx bound eax | 0x5649ae mov ecx,DWORD PTR [ebp-0x4]; 0x5649b9 add ecx,0x2; 0x5649be mov DWORD PTR [ebp-0x4],ecx
+   tail 0x5649d3 jl 0x564361 | cmp 0x5649ce cmp esi,ecx | counter esi bound ecx | 0x5649b1 mov esi,DWORD PTR [ebp-0x8]; 0x5649cd inc esi; 0x5649d0 mov DWORD PTR [ebp-0x8],esi
+   tail 0x56527b jl 0x5651a7 | cmp 0x565276 cmp eax,ecx | counter eax bound ecx | 0x56526c mov eax,DWORD PTR [ebp-0x2c]; 0x565272 inc eax; 0x565278 mov DWORD PTR [ebp-0x2c],eax
+   tail 0x568871 jl 0x5684a2 | cmp 0x56886f cmp eax,edx | counter eax bound edx | 0x568861 mov eax,DWORD PTR [ebp-0x2c]; 0x568864 inc eax; 0x56886c mov DWORD PTR [ebp-0x2c],eax
+   tail 0x5688a3 jl 0x56847d | cmp 0x56889d cmp eax,0x9 | counter eax bound 0x9 | 0x568893 mov eax,DWORD PTR [ebp-0x30]; 0x568899 inc eax; 0x5688a0 mov DWORD PTR [ebp-0x30],eax
+   tail 0x56c660 jl 0x56c4f9 | cmp 0x56c65a cmp eax,0x20 | counter eax bound 0x20 | 0x56c654 mov eax,DWORD PTR [ebp-0x54]; 0x56c657 add eax,0x4; 0x56c65d mov DWORD PTR [ebp-0x54],eax
+   tail 0x56c670 jl 0x56c46c | cmp 0x56c66a cmp eax,0x8 | counter eax bound 0x8 | 0x56c666 mov eax,DWORD PTR [ebp-0x4c]; 0x56c669 inc eax; 0x56c66d mov DWORD PTR [ebp-0x4c],eax
+   tail 0x56c6a0 jl 0x56b061 | cmp 0x56c69a cmp eax,0x9 | counter eax bound 0x9 | 0x56c696 mov eax,DWORD PTR [ebp-0x70]; 0x56c699 inc eax; 0x56c69d mov DWORD PTR [ebp-0x70],eax
+
+== acceptance ==
+PASS  A2 every site block has >=1 printed arrival-guard row ({'0x56429c': 1, '0x56444b': 2, '0x5645d9': 1, '0x5651e3': 1, '0x568567': 1, '0x56b77c': 4, '0x56c5f4': 5} preds each)
+PASS  A3 every one of the 7 sites has an ADJACENT jcc guard with a resolved flag-setter + decider + producer row (7/7)
+PASS  A4 RIVAL 'ONE loop walks all 7 sites' FAILS: max sites in ONE loop span = 2 (table S1c), so no single loop chooses all seven
+PASS  A5 RIVAL '7 separate straight paths, ZERO loops' FAILS: 7 of 7 sites sit inside loop spans (only 0 outside any) - the chooser is a case dispatch on [ebp-0x44] whose relevant arms THEMSELVES loop
+PASS  A6 the settle-nest loop is real (back edge jl 0x56c6a0 -> header 0x56b061) and contains BOTH late sites 0x56b77c + 0x56c5f4
+PASS  A7 loop counters DERIVED at all three key tails: nest [ebp-0x70] bound 0x9 (9 outer legs), direction [ebp-0x4c] bound 0x8 (8 direction legs), table walk ebx bound 0x54 (84 B / 4 = 21 entries)
+PASS  A8 the leg 0x56c6de IS a block head (0x56c6de..0x56c6de) - 'which branch reaches it' is an EDGE question, answered by A9
+PASS  A9 the leg block enters from 8 preds: 7 UNCONDITIONAL jmps (the seven arms' continue legs) + 1 fall-through; skip lengths printed in S3
+PASS  A10 NO hub site stores the predicate eax to a frame slot (0/7 STORED-class; classes {'test/je truth-branch': 6, 'other': 1}) - the M300 'stored predicate slots' are OTHER functions' frames
+PASS  A11 hot-slot census pinned: [ebp-0x1c] 126 accesses / 79 writers (43 nest-local), [ebp-0x7c] 25 accesses / 8 writers / 0 inside the nest; ZERO writers dominate the leg for either slot (0, 0)
+PASS  A12 the two predicate-STORE slots resolve in their own frames, EACH WITH EXACTLY ONE READER: 0x4cf907 stores DWORD PTR [ebp-0x1c] in FUN_004cf4c0 (reads ['0x4cfef2 mov eax,DWORD PTR [ebp-0x1c]']); 0x5858fa stores DWORD PTR [ebp-0x7c] in FUN_00585720 (reads ['0x589fe5 mov eax,DWORD PTR [ebp-0x7c]']) - M300's 'readers of the stored predicate slots' lead CLOSED: one reader each, both plain loads
+
+PASS M304: 12/12 (static; zero box, zero /proc, zero gdb)

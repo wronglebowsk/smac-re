@@ -190,11 +190,14 @@ for a in WIN:
             targets.add(t)
 heads = set(WIN[:1]) | (targets & set(WIN))
 blocks = []
+prev_term = False
 for a in WIN:
-    if a in heads or not blocks:
+    if a in heads or not blocks or prev_term:
         blocks.append([a, a])
     else:
         blocks[-1][1] = a
+    # a block ENDS at its terminator (jcc/jmp/ret), not only before a head
+    prev_term = INS[a][1] in ("ret", "jmp") or INS[a][1] in JCC_SET
 BIDX = {s: i for i, (s, e) in enumerate(blocks)}
 NB = len(blocks)
 addr2blk = {}
@@ -332,6 +335,9 @@ for a in SITES:
     out(f"   site {a:#x} block [{blocks[b][0]:#x},{blocks[b][1]:#x}] preds:")
     for t, kind, s, fs, fss, op, prs in rows:
         extra = f" | flag-setter {fs:#x} {fss} | decider {op} | producer {prs}" if fs is not None else ""
+        nxt = WIN[POS[t] + 1]
+        if kind == "jcc" and jcc_target(t) == nxt:
+            extra += "  [VACUOUS: jump-to-next artifact, the chooser is upstream]"
         out(f"     [{kind}] {t:#x} {s}{extra}")
 # dominator chains (shared-upstream tests) as the secondary view
 out("S2b strict dominator guard chains (jcc terminators on every must-pass block):")
@@ -385,23 +391,33 @@ for sa in (0x4CF907, 0x5858FA):
     w2 = win_of(e2)
     i2 = w2.index(sa)
     st = None
-    for x in w2[i2 + 1:i2 + 6]:
+    for x in w2[i2 + 1:i2 + 9]:
         ops = INS[x][0]
-        if INS[x][1] == "mov" and ops.endswith(", eax") and ops.split(",")[0].rstrip().endswith("]"):
+        if INS[x][1] == "mov" and ops.replace(" ", "").endswith(",eax") \
+                and ops.split(",")[0].rstrip().endswith("]"):
             st = x
             break
     slot2 = INS[st][0].split(",")[0].strip() if st is not None else "?"
-    rd = [a for a in w2 if slot2 in INS[a][0] and a != st]
-    first = min(rd) if rd else None
-    OWN[sa] = (f2, slot2, len(rd), first, st)
-    out(f"S5 {sa:#x} in {f2} ({e2:#x}+{sz2:#x}): {txt(sa)} -> "
-        + (f"{st:#x} {txt(st)}" if st else "NO frame-store found")
-        + f"; accesses of {f2}'s {slot2}: {1 + len(rd)}; first reader "
-        + (f"{first:#x} {txt(first)}" if first else "NONE"))
+    acc2 = [a for a in w2 if slot2 in INS[a][0]]
+    stores = [a for a in acc2 if INS[a][1] in ("mov", "add", "sub", "inc", "dec")
+              and slot2 in INS[a][0].split(",")[0]]
+    reads = [a for a in acc2 if a not in stores]
+    OWN[sa] = (f2, slot2, reads, stores)
+    out(f"S5 {sa:#x} in {f2} ({e2:#x}+{sz2:#x}): {txt(sa)} -> {st:#x} {txt(st)}; "
+        f"accesses of {f2}'s {slot2}: {len(acc2)} = {len(stores)} stores "
+        f"{[hex(a) for a in stores]} + {len(reads)} READS "
+        + (f"{[(hex(a), txt(a)) for a in reads]}" if reads else "NONE - the stored "
+           "predicate value is never read in this frame (dead slot)"))
+
+# the case ladder: every `cmp [ebp-0x44], imm` in the hub window
+lad = [(a, INS[a][0].split(",")[1].strip()) for a in WIN
+       if INS[a][1] == "cmp" and "[ebp-0x44]" in INS[a][0]]
+out(f"S5b case ladder [ebp-0x44] in the hub window: {len(lad)} cmp's: "
+    + "; ".join(f"{a:#x}:{v}" for a, v in lad))
 
 # ---- S6 loop counters DERIVED from each back-edge tail (cmp op then its feeder) --
-TAILS = [0x56C6A0, 0x56C670, 0x56C660, 0x5645F2, 0x5642B0]
-out("S6 counters: nearest cmp feeding the tail jcc, walked back <=14 insns:")
+TAILS = sorted({t for (t, h), k in COVERED.items()})
+out(f"S6 counters DERIVED at every loop tail that covers a site ({len(TAILS)} tails):")
 CNT_ROWS = {}
 for t in TAILS:
     i = POS[t]
@@ -470,12 +486,15 @@ gate(SLOTS["[ebp-0x1c]"][0] == 126 and len(SLOTS["[ebp-0x1c]"][1]) == 79
      f"writers / {len(SLOTS['[ebp-0x7c]'][3])} inside the nest; ZERO writers dominate the "
      f"leg for either slot ({len(SLOTS['[ebp-0x1c]'][2])}, {len(SLOTS['[ebp-0x7c]'][2])})")
 gate(OWN[0x4CF907][0] == "FUN_004cf4c0" and OWN[0x5858FA][0] == "FUN_00585720"
-     and OWN[0x5858FA][1] == "DWORD PTR [ebp-0x7c]",
-     f"A12 the two predicate-STORE slots resolve in their own frames: 0x4cf907 in "
-     f"{OWN[0x4CF907][0]} stores {OWN[0x4CF907][1]} ({OWN[0x4CF907][2]} further accesses), "
-     f"0x5858fa in {OWN[0x5858FA][0]} stores {OWN[0x5858FA][1]} ({OWN[0x5858FA][2]} "
-     f"further accesses, first reader "
-     f"{hex(OWN[0x5858FA][3]) if OWN[0x5858FA][3] else 'NONE'})")
+     and OWN[0x5858FA][1] == "DWORD PTR [ebp-0x7c]"
+     and len(OWN[0x4CF907][2]) == 1 and len(OWN[0x5858FA][2]) == 1
+     and len(OWN[0x4CF907][3]) == 2 and len(OWN[0x5858FA][3]) == 2,
+     f"A12 the two predicate-STORE slots resolve in their own frames, EACH WITH EXACTLY "
+     f"ONE READER: 0x4cf907 stores {OWN[0x4CF907][1]} in {OWN[0x4CF907][0]} "
+     f"(reads {['%s %s' % (hex(a), txt(a)) for a in OWN[0x4CF907][2]]}); 0x5858fa stores "
+     f"{OWN[0x5858FA][1]} in {OWN[0x5858FA][0]} "
+     f"(reads {['%s %s' % (hex(a), txt(a)) for a in OWN[0x5858FA][2]]}) - M300's 'readers of the "
+     f"stored predicate slots' lead CLOSED: one reader each, both plain loads")
 
 n_ok = sum(1 for ok, _ in OUT if ok)
 out(f"\n{'PASS M304: %d/%d' % (n_ok, len(OUT)) if n_ok == len(OUT) else 'FAIL M304: %d/%d' % (n_ok, len(OUT))}"
