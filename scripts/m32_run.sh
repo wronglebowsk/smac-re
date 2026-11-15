@@ -4,7 +4,7 @@
 # Pitfalls honored: gdb PID captured (never pkill -f), read log only after kill -TERM,
 # kill -CONT the inferior afterwards.
 set -u
-cd /home/user/reverse/smac
+cd /home/paul/reverse/smac
 PID=$(pgrep -x terran.exe | head -1)
 [ -z "$PID" ] && { echo "no terran.exe"; exit 1; }
 LOG=${LOG:-evidence/m32_keys.log}

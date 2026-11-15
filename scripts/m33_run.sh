@@ -5,7 +5,7 @@
 # after kill -TERM gdb, kill -CONT the inferior afterwards, tracer held => driver runs
 # --no-verify and all state reads happen outside the attach window.
 set -u
-cd /home/user/reverse/smac
+cd /home/paul/reverse/smac
 PID=$(pgrep -x terran.exe | head -1)
 [ -z "$PID" ] && { echo "no terran.exe"; exit 1; }
 ORDER=${ORDER:-r}

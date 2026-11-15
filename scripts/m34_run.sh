@@ -11,7 +11,7 @@
 # command); log read only after kill -TERM gdb; kill -CONT the inferior afterwards;
 # all state reads outside the attach window.
 set -u
-cd /home/user/reverse/smac
+cd /home/paul/reverse/smac
 PID=$(pgrep -x terran.exe | head -1)
 [ -z "$PID" ] && { echo "no terran.exe"; exit 1; }
 grep -q 'TracerPid:[[:space:]]*0' /proc/$PID/status || { echo "tracer attached — abort"; exit 1; }

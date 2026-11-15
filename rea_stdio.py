@@ -13,9 +13,9 @@ Usage (inside the Hermes execute_code kernel):
 import json, os, subprocess, sys, threading, time
 
 REA_VERSION = "6.7.0"
-NODE_BIN = "/home/user/.hermes/tools/node-26.7.0-linux-x64/bin"
-NPX = "/home/user/.hermes/tools/npm-12.0.2-linux-x64/bin/npx"
-GHIDRA = "/home/user/tools/ghidra_12.1.4_PUBLIC"
+NODE_BIN = "/home/paul/.hermes/tools/node-26.12.1-linux-x64/bin"
+NPX = "/home/paul/.hermes/tools/npm-12.0.2-linux-x64/bin/npx"
+GHIDRA = "/home/paul/tools/ghidra_12.1.4_PUBLIC"
 
 _proc = None
 _lock = threading.Lock()
@@ -23,7 +23,7 @@ _next_id = 0
 _stderr_path = None
 
 
-def start(log_path="/home/user/reverse/smac/rea_stdio.log"):
+def start(log_path="/home/paul/reverse/smac/rea_stdio.log"):
     global _proc, _stderr_path
     if _proc and _proc.poll() is None:
         return True
@@ -31,12 +31,12 @@ def start(log_path="/home/user/reverse/smac/rea_stdio.log"):
     env["PATH"] = NODE_BIN + ":/usr/bin:/bin:" + env.get("PATH", "")
     env["GHIDRA_INSTALL_DIR"] = GHIDRA
     env["REA_GHIDRA_STARTUP_TIMEOUT_MS"] = "900000"
-    env["REA_PWNTOOLS_PYTHON"] = "/home/user/.hermes/venvs/rea-pwntools/bin/python"
+    env["REA_PWNTOOLS_PYTHON"] = "/home/paul/.hermes/venvs/rea-pwntools/bin/python"
     _stderr_path = log_path
     _proc = subprocess.Popen(
         [NPX, "-y", f"rea-agents@{REA_VERSION}", "mcp"],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-        stderr=open(log_path, "ab"), env=env, cwd="/home/user/reverse/smac",
+        stderr=open(log_path, "ab"), env=env, cwd="/home/paul/reverse/smac",
     )
     init = call("initialize", {
         "protocolVersion": "2024-11-05",

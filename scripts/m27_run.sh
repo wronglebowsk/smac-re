@@ -1,7 +1,7 @@
 #!/bin/bash
 # M27: arm the solo-wrapper breakpoints, press arrow keys, then stop gdb and flush its log.
 set -u
-cd /home/user/reverse/smac
+cd /home/paul/reverse/smac
 PID=$(pgrep -x terran.exe | head -1)
 [ -z "$PID" ] && { echo "no terran.exe"; exit 1; }
 LOG=${1:-evidence/m27_solowrap2.log}
