@@ -1,41 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-231-233.md` (3 sessions). Read it only when a question reaches back before session ## Session 234.
-
-## Session 234 (2026-11-10, BUILD, B12 CREATE leg 12/12, no box time) - the completion's produced unit RECORD: gate(8+1>=9) -> pay to 0 -> one new 52-B record (29,42,type2,owner3,order 0) appended at the array END -> pop, replayed against the game's OWN recorded m56 boundaries byte-for-byte; MERGED #240
-- track_mode BUILD -> rung B12 written into BUILD_SPINE.md FIRST (per chapter R),
-  then built.  sim/production.py: the M56/M59/M61 completion law - GATE (storage
-  + income >= price, the income add inside the same visit), PAY (storage -= 
-  price), CREATE (a NEW 52-B unit record appended at units_off + n_units*52:
-  x@0 u16, y@2 u16, flag@4 u32=0, type@10 u16 = the queue head, owner@14 u8 =
-  the base faction, order@17 u8 = 0, nlegs@18 u8 = 0; the rest declared
-  unmodeled, composed as zero), POP (B11 law: one item, stale tail).  The
-  rung was written first: the CREATE leg is the piece B11 deliberately left
-  out (B11 stops at pay+pop; the unit record itself was never composed).
-- ACCEPTANCE: python3 -m sim.selftest --b12 programs/saves/m54b_clean.SAV
-  evidence/trace_m56_build_20261026_145157.jsonl -> PASS B12 12/12
-  (evidence/b12_production.txt).  The trace is the ORIGINAL terran.exe's own
-  10-boundary run on Korolev Center (29,42) head 2: the model reproduces
-  exactly +1 (29,42,2,3,order 0) at r0 (the recorded net unit-array delta,
-  and the record's idx == n_units-1, the append law) and zero later
-  (r1..r9, gate fails: pending 0 / storage+income < price).  Pay+pop: the
-  model's post-visit storage 0 + queue [2,2,2,2,0,..] pending 0 == the
-  recorded r1 round_before.  Three rivals fail the same fit: wrong tile
-  (28,42), order 2 (the idle order - the r0 arrival is order 0, M56's "a
-  produced unit arrives order 0 on its base tile"), and a gate without the
-  income term (8 < 9 bails r0 against a recorded arrival).  Written image:
-  savewriter append_units= (the B10 founded-image shape, for units) - only
-  the units-count dword ([68]) plus the one 52-B record differ, originals
-  byte-identical, bases+tail byte-identical after the 52-B shift, re-parse
-  reads n_units 68 with the new record at the end, decode_save --sections
-  green; two runs -> identical written_sha256 259bd5ab8fcc6e88; the CLI
-  python3 -m sim.production --sav <sav> --trace <tr> --out <f> exits 0.
-- SETTLE: B1-B12 done.  R2's "build lands a unit" slice is now executable
-  end-to-end: queue (B11) -> completion create (B12) -> save write (B8).
-- OPEN (unchanged): M282 G5 (which founder vector the recorded AI used -
-  live box question); 64x64 odd-Rw accessor stride quirk (M247); negative-id
-  table stride (M70); save-side cursor-vs-pending order (M70).  Next fire:
-  ANALYSE - the pick NEXT_PROMPT names (M282 G5 or the frontier).
+Older sessions: `docs/sessions/sessions-234-234.md` (1 sessions). Read it only when a question reaches back before session ## Session 235.
 
 ## Session 235 (2026-11-10, ANALYSE, M289 LIVE 7/7, box time) - which founder vector the recorded AI used: the AI HUB FUN_0055f650 -> FUN_004cca50 -> founder FUN_004e47d0; 7/7 live foundings on a 30-turn m54b_clean window, the 0x4408 action-dispatch leg 0, the 5a0aa0 chain entered 3x but completed 0; count 18->23 exact with 2 destroys; MERGED #241
 - track_mode ANALYSE -> the M282 G5 frontier (NEXT_PROMPT pick): which founder
@@ -763,3 +728,33 @@ BUILD_SPINE.md now carries the B18 rung.
   counter VALUES + 0x92a380/0x692210/0x69220c VALUES never recorded.
 - ACCEPTANCE: `python3 scripts/gate.py --base main` -> GREEN on this branch; merge #265
   per the MERGE RULE (Greptile cap 10 min). Box: ZERO.
+
+## Session 255 (2026-11-15, STATIC, zero box) - M300: the 24 callers of FUN_005832b0 censused; only 0x51dffd gates the [+4] write
+- THE PICK from the M299 lead list. `python3 scripts/m300_callers.py` -> **PASS M300:
+  12/12** (every quoted number computed+asserted there; `evidence/m300_callers.txt`).
+- S1: 24 call sites in scratch/m574/text.txt == Ghidra index.csv n_callers (two
+  instruments); 0x5832b0 NEVER appears outside a call rel32 -> no indirect/vtable use.
+  24 sites span 13 caller functions (biggest FUN_0055f650: 7 sites, and the OPEN
+  0x56c6de continue-leg lead lives INSIDE it).
+- Gates supplied: 21/24 truth-branch (test eax,eax + je/jne; 0x50e216 also pushes the
+  raw value as an arg - leg-ambiguous); 2 store the raw value to a frame slot (0x4cf907
+  ->[ebp-0x1c], 0x5858fa ->[ebp-0x7c]); 1 converts sign to a 0x200 mask bit (0x568567
+  mov ebx,eax; neg; sbb; and 0x200).
+- Counter-writer uniqueness: whole-dump mentions of 0x989cec live ONLY in FUN_0051dcb0
+  (5 lines; lone STORE = M299's 0x51e01b); the only other slot-base materialization is
+  0x51dd05 `mov eax,0x989ce8` - same function. No caller function outside FUN_0051dcb0
+  writes [+4] unless a pointer were passed in. DECLARED: pointer-passthrough +
+  non-literal addressing out of static scope (the live "any other writer" watchpoint
+  check remains OPEN).
+- Reach to FUN_0051dcb0 (reverse BFS over DIRECT call edges; 11 direct sites in the
+  writer): exactly 1 site (0x51dffd) feeds the counter gate; 1 (0x59ddf4, FUN_0059ce10
+  M94 walker) reaches it DIRECTLY;  15 sites / 7 fns reach transitively (depth 2-8:
+  FUN_0055f650x7@d3, FUN_00585720x3@d2, FUN_0050d140x2@d4, FUN_004c40e0, FUN_004cf4c0,
+  FUN_0051c750, FUN_0059e2c0); 6 sites CANNOT-REACH: FUN_0046a610, FUN_004e63b0 (M53q
+  scan-pool rebuild), FUN_0058b1b0x3, FUN_005aff90 (B18 value body - sibling consumer
+  of the same (x,y) fold, NOT nested in the counter path).
+- NEW STATIC LAW: a straight-line post-call classifier must DIE at the next `call`
+  (caller-saved eax) and treat conditional branches as both-legs; the raw S3w windows
+  are the witness, class strings only labels. (rk-vs-t regex-anchor bug caught 3
+  phantom value-arith classes before submit - windows audit clean after.)
+- Box: ZERO (s244 state untouched). NEXT_PROMPT rewritten for s256.

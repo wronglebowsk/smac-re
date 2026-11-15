@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s254 close: #264 MERGED (487f0b4; on-head selftest PASS 10/10 + gate GREEN; GREPTILE SILENT noted in body) + M299 CLOSED (#265: the slot [+4] counter++ is gated by the PURE FUN_005832b0 lattice predicate - laws + numbers in SESSION_CURSOR.md, NAMED.md section M299, `evidence/m299_visitgate.txt:167-183`). s254 collided with a live predecessor (see ISOLATION bullet + NOTES 254). B1-B18 DONE.)
+# NEXT_PROMPT.md - footing (s255 close: M300 SUBMITTED (branch milestone/m300): the census of FUN_005832b0's 24 callers / 13 functions - ONLY 0x51dffd gates the slot [+4] write; 6 sites CANNOT-REACH; tables + 12/12 asserts in `evidence/m300_callers.txt`, registry `NAMED.md` §M300. #265 (M299) MERGED (9bc49ad); pre-existing open PRs #180/#105 are NOT this chain. B1-B18 DONE.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -54,19 +54,23 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage
-  explicit paths. The s253 add-A sweep (51b9c4b, main now
-  0ff59c7) lands via #265 (gate + docs included).
-- **THE PICK (s255): ANALYSE from the shortlist** (track_mode FIRST, expect
+  explicit paths (the s253 sweep landed via #265; the s254 collision lessons:
+  schedule "in 12m", collision-check + worktree FIRST).
+- **THE PICK (s256): ANALYSE from the shortlist** (track_mode FIRST, expect
   MODE=ANALYSE next_rung=B19 unauthored; collision check FIRST per ISOLATION).
-  ANSWERED: M227-M299 + B1-B18 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
-  DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299).
-  NEVER bp mid-instruction (s213). OPEN shortlist + M299 leads (hub-visit gating;
-  0x56c6de continue-leg; 188-row cursor caller; ebx's table 0x51de2c-0x51df1d; the
-  0x51e02c byte[site+8380*block+0x94ed28] NAMED:371; 0x5832b0's other 23 callers;
-  a read-only /proc pass pinning rand+1 ds:0x92a380 + strides ds:0x69220c/0x692210
-  + 0x985ac4 + the 0x989ce8/0x94eca8 tables = counter/MAX laws ABSOLUTELY gradable):
-  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL current set (incl.
-  B18 + M299 laws) rides EVERY kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
+  ANSWERED: M227-M300 + B1-B18 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
+  DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299);
+  0x5832b0's callers (M300 - see §M300 BEFORE re-censusing anything of it).
+  NEVER bp mid-instruction (s213). OPEN shortlist + M300 leads (hub-visit gating;
+  0x56c6de continue-leg INSIDE FUN_0055f650, the 7-site predicate caller; which loop
+  chooses among those 7 sites; readers of the stored predicate slots [ebp-0x7c]/
+  [ebp-0x1c]; sibling 0x5831a0 fed (x,y) right after the predicate; 188-row cursor
+  caller; ebx's table 0x51de2c-0x51df1d; the 0x51e02c byte[site+8380*block+0x94ed28]
+  NAMED:371; a read-only /proc pass pinning rand+1 ds:0x92a380 + strides
+  ds:0x69220c/0x692210 + 0x985ac4 + the 0x989ce8/0x94eca8 tables = counter/MAX laws
+  ABSOLUTELY gradable): `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL
+  current set (incl. B18 + M299 laws) rides EVERY kickoff + skill `instrument-laws.md`
+  + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 
 - **BOX**: s244 state UP (s245..s253: s249 read-only /proc pass only; s250-s253 ZERO box - state identical)
