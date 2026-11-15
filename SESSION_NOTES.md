@@ -1,40 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-239-239.md` (1 sessions). Read it only when a question reaches back before session ## Session 240.
-
-## Session 240 (2026-11-10, CORRECTION, M293) - the three verified Greptile P1s: "distant target -> msg 0x2408" (M290/B13) RETRACTED - msg leg = OWN-TILE + second gate [ebp-0xa4]; M284-M287 live SITE censuses INSTRUMENT-INVALID; sim/selftest run_save IndexError fixed. These were claimed facts, so they are retracted plainly, per AGENTS.md.
-- D1 (bytes; gate scripts/m290_hub_decision.py:160): 0x563d48 jne 0x563dfa
-  - the distant leg reaches NEITHER founder NOR msg; only esi==0 falls to
-  [ebp-0xa4] (single writer 0x55f6d6 = ds:0x920434!=0 AND owner==ds:0x91b5b4):
-  flag 0 -> founder 0x563d82-86 (FUN_004cca50, pod args); flag!=0 -> msg
-  0x2408 block 0x563d59-0x563d7d + jmp 0x56c925. Own-tile gating +
-  founder-args = pod record STAND. The old G4 sliced its OWN table at
-  0x563d4e..0x563d81 (founder je-target 0x563d82 abuts the end) - could
-  not fail; G4 now parses real branch targets. ACCEPTANCE: python3
-  scripts/m290_hub_decision.py programs/saves/m54b_clean.SAV
-  evidence/m289_gdb_raw.log evidence/trace_m289_20261110_071759.jsonl ->
-  PASS M290: 9/9 (evidence/m290_hub_decision.txt:33; 3 runs, 1-2 were my
-  instrument, floors never cut).
-- D1b read-only /proc probe (pid 4087359, TracerPid 0): ds:0x920434=0 ->
-  msg leg UNREACHABLE in solo: s239 "MSG never observed" was structural,
-  not inertia. OPEN: name ds:0x920434 (scenario/MP gate?).
-- D2 sim/hubfound.py:94: distant -> ("distant",) (was ("msg",0x2408));
-  own+flag -> msg; own -> found. ACCEPTANCE: python3 -m sim.selftest --b13
-  programs/saves/m54b_clean.SAV -> PASS B13: 12/12 (evidence/
-  b13_hubfound.txt:4).
-- D3 guard `if $reg >= 0x1000000` (m284/m285/m286/m287 dispatch arms)
-  excluded the five family vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/
-  0x6776c8 (image base 0x400000) - a real family dispatch printed NOTHING:
-  every "0 of 12 fired" in M284-M287 = instrument-silence, RETRACTED (CTRL
-  rows prove the windows ran). Guards now >= 0x400000; static halves stand;
-  re-armed census = open lead. No live re-run this fire (box kept clean).
-- D4 sim/selftest.py:177: walk returns (rows, notes), prints nothing -
-  buf...[-1] IndexError every run. ACCEPTANCE: python3 -m sim.selftest
-  --sav programs/saves/m54b_clean.SAV -> PASS B2: 7/7
-  (evidence/s240_b2_run.txt:2).
-- Docs: NAMED M290/B13/M292 fixed in place + INVALID banners M284-M288 +
-  ## M293; path:line cites per AGENTS.md:50. Next: gate tables
-  0x94e5a8/0x94eca8 + name ds:0x920434. BUILD = B14.
+Older sessions: `docs/sessions/sessions-240-240.md` (1 sessions). Read it only when a question reaches back before session ## Session 241.
 
 ## Session 241 (2026-11-10, BUILD, B14 10/10, no box) - the M291 hub SCAN + M292 esi-dispatch/WALK are ONE executable leg (sim/podscan.py); the rung was missing from the spine, so this build fire authored B14 first
 - track_mode printed BUILD/next_rung=B14 but the BUILD_SPINE.md ladder ended at
@@ -757,3 +723,13 @@ BUILD_SPINE.md now carries the B18 rung.
   (that yields "aax"): three S6 rows printed "no consumer" until fixed - the
   A7 assert (every reader finds a consumer) is what caught it, i.e. the
   table-then-assert shape earns its keep.
+
+## Session 260 (2026-11-15, ANALYSE, zero box) - M304: the seven FUN_0055f650 predicate sites are chosen by the [ebp-0x44] CASE LADDER + per-arm loops; 0x56c6de is the hub's COMMON EXIT (7 jmps); M300's predicate frame slots are FOREIGN frames
+
+- `python3 scripts/track_mode.py` -> MODE=ANALYSE (analyse_since_build=2, next_rung=B20); M303 merged as #271.
+- `python3 scripts/m304_chooser.py` -> **PASS M304: 12/12** (A1-A12; two runs byte-identical; zero box/proc/gdb) -> `evidence/m304_chooser.txt`. CFG of the entry-window [0x55f650,0x56cb23) (index.csv size 0xd4d3; Ghidra n_insns 16822 vs 16845 parsed): 3017 blocks, 5249 edges, 104 dominance-verified loops, 139 backward branches; the 7 sites recomputed == M300's table.
+- Guards (closest pred jcc <- flag-setter <- decider <- producer, S2): 0x56429c `jne 0x5642b1`<-`cmp eax,3`<-`mov eax,[ebp-0x44]` (the CASE selector == 3); 0x56444b `jne 0x5644a8`<-`test dl,al`<-`mov dl,[ebp-0x64]` (+ arrival jne 0x56442c); 0x5645d9 ENTERED via `je 0x5645d0`<-`test eax,eax`<-`mov eax,[ebp-0xc]`; 0x5651e3 `je 0x56526c`<-`test eax,eax`<-`mov eax,[ebp-0x18]`; 0x568567 its ONLY pred is a **VACUOUS jne 0x56855f (target==next insn - jump-to-next artifact)** - unguarded on arrival, the chooser is the 18-leg upstream chain; 0x56b77c OR-arrivals: 3 jccs (`je`[ebp-0x74]==0, `jne`[ebp-0x40]!=0, `je`[ebp-0x6c]==0) + fall-through; 0x56c5f4 OR-arrivals: 4 jccs (`jne`[ebp-0xc]!=0, `jne`[ebp-0x40]!=1, `jl` class&~0x1f vs 0x60, `jne` BYTE[..+0x94e5a8] score-byte set) + fall-through.
+- Loop-vs-paths: max sites in ONE loop span = 2 -> rival "ONE loop walks all 7" FAILS; all 7/7 inside loop spans -> rival "7 straight paths, ZERO loops" FAILS. Truth: a case ladder (31 `cmp [ebp-0x44],imm` in-window; slot writers 3, prologue producer 0x55f74a = type-record plan byte M127/B15) AND per-arm loops: X/Y grid walks ([ebp-0x4] +2, [ebp-0x8] +1, tails 0x5649c1/0x5649d3), 21-entry table walk (ebx +4 vs 0x54, tail 0x5645f2), [ebp-0x2c] walk (tail 0x56527b), [ebp-0x30] vs 9 (tail 0x5688a3), and the settle nest [ebp-0x70] vs 9 (0x56b061..0x56c6a0, tails 0x56c6a0; sites 6+7) x direction [ebp-0x4c] vs 8 (0x56c46c..0x56c670) x [ebp-0x54] vs 0x20 32-entry (0x56c4f9..0x56c660, site 7). B18's BRANCH-POLARITY law (evidence/b18_sitegate.txt G1) is the instrument law instantiated: leg semantics decode from branch landing, never address adjacency.
+- The 0x56c6de leg: a block HEAD with **8 preds = 7 unconditional `jmp 0x56c6de`** (0x55fc5b, 0x561d8d, 0x563e0d, 0x566419, 0x56678b, 0x56832b, 0x569952 - each skipping 3669..16060 insns of the arms below it) + fall-through 0x56c6d7 (after BYTE[unit+0x2b]=0x78). The leg reads esi=[ebp-0x10], edi=[ebp-0x84] (best-direction; ZERO writers dominate it), `jge 0x56c966` = act, else clear unit flag bit 0x10000 (0x93327c and 0xfffeffff) + order byte 0x933289=0 -> `jmp 0x56cafa`; back edges 0x56c75b/0x56c76c/0x56c7a6 re-enter via 0x56c6d4 - it is the hub arms' COMMON EXIT + unit cleanup, not a per-predicate continue.
+- CORRECTION to the M300 lead framing: NO hub site stores predicate eax to a frame slot (0/7 STORED-class; 6 truth-branch + 1 into-ebx sign->0x200 mask). In the hub frame [ebp-0x1c] is hot shared scratch (126 accesses / 79 writers / 43 nest-local, 0 dominating the leg) and [ebp-0x7c] is NEVER written inside the settle nest (25 accesses / 8 writers / 0 nest-local / 0 dominating) - at the leg it holds a STALE other-arm value. The M300 predicate-STORE slots are FOREIGN frames: FUN_004cf4c0 stores its [ebp-0x1c] at 0x4cf920 (21 B past the call) and FUN_00585720 stores its [ebp-0x7c] at 0x5858ff - each with EXACTLY ONE true reader (0x4cfef2, 0x589fe5, both `mov r32,[slot]`) - the M300 "readers of the stored predicate slots" lead is CLOSED.
+- Instrument laws (NEW, skill code-atlas): (1) the scratch/m574/text.txt cache TRUNCATES long encoding-byte columns at 20 chars - never compute insn lengths from the byte column; (2) a CFG split must END blocks at every jcc/jmp/ret, not only before branch targets - the first M304 census printed 0 back edges because of target-only splitting; (3) some jcc are jump-to-next VACUOUS artifacts (target == next insn => no skip-leg; e.g. 0x568559) - mark them before calling them guards.

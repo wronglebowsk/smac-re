@@ -700,3 +700,22 @@ only *data* reads above ≈0x6a9000 need a runtime snapshot (`gdb -batch -ex 'du
 (3) `_SELFMOD` is a 0x415d-byte section — a small patch area, not a whole-image unpacker, so there is no
 "import of the wrong image" problem.
 
+## Static-CFG pitfalls (M304, s260)
+
+Three traps that made a hub census print 0 back edges until fixed:
+1. **The m574 full-.text cache TRUNCATES the encoding-bytes column at 20 chars** -
+   insns longer than ~6 bytes show fewer byte pairs than their length. Never derive
+   instruction lengths/gap-tiling from that column; tile-ability claims need the PE
+   file bytes (programs/terran.exe, file off = VA - 0x400000).
+2. **A basic block ENDS at every jcc/jmp/ret, not only before a branch target.** A
+   splitter that splits at targets only lets a block swallow its own conditional
+   terminators, so the terminator never becomes an edge and EVERY natural loop with a
+   mid-loop entry disappears (dominance on a truncated graph lies).
+3. **Some jcc are VACUOUS jump-to-next artifacts** (target == the next instruction:
+   e.g. `jne 0x568559` at 0x568559 whose fall-through IS 0x56855f): they carry no
+   skip-leg, so the "guard" they appear to supply is upstream. Detect
+   `target == next_addr` before calling an adjacent branch a gate.
+
+Companion law (M304 S5): to find who READS a frame slot, split accesses into
+stores-first-operand vs true reads - a "first access" census that counts the slot's
+other STORES as readers mislabels dead slots as live.
