@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s255 close: M300 SUBMITTED (branch milestone/m300): the census of FUN_005832b0's 24 callers / 13 functions - ONLY 0x51dffd gates the slot [+4] write; 6 sites CANNOT-REACH; tables + 12/12 asserts in `evidence/m300_callers.txt`, registry `NAMED.md` §M300. #265 (M299) MERGED (9bc49ad); pre-existing open PRs #180/#105 are NOT this chain. B1-B18 DONE.)
+# NEXT_PROMPT.md - footing (s256 close: M301 SUBMITTED (branch milestone/m301) - the lead "ebx's table 0x51de2c-0x51df1d" is REFUTED: 243 B of CODE (81 insns = a base_array walk + its exit block), NOT a table; it gates nothing of the 0x51dffd decision and FUN_005832b0's eax cannot reach it. 8/8 asserts + PE-image byte check in `evidence/m301_ebxtable.txt`, registry `NAMED.md` §M301 (the M294 "table" phrasing retracted in place). #267 (M300) MERGED (cdaa5ff); pre-existing open PRs #180/#105 are NOT this chain. B1-B18 DONE.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -56,16 +56,22 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage
   explicit paths (the s253 sweep landed via #265; the s254 collision lessons:
   schedule "in 12m", collision-check + worktree FIRST).
-- **THE PICK (s256): ANALYSE from the shortlist** (track_mode FIRST, expect
+- **THE PICK (s257): ANALYSE from the shortlist** (track_mode FIRST, expect
   MODE=ANALYSE next_rung=B19 unauthored; collision check FIRST per ISOLATION).
-  ANSWERED: M227-M300 + B1-B18 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
+  ANSWERED: M227-M301 + B1-B18 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
   DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299);
-  0x5832b0's callers (M300 - see §M300 BEFORE re-censusing anything of it).
-  NEVER bp mid-instruction (s213). OPEN shortlist + M300 leads (hub-visit gating;
+  0x5832b0's callers (M300 - see §M300 BEFORE re-censusing anything of it); ebx's
+  "table 0x51de2c-0x51df1d" (M301 REFUTED - it is 243 B of CODE: the base_array
+  0x95da10 walk (304-B rows, count ds:0x985af4) + its exit block. Gates NOTHING of
+  the 0x51dffd decision; the predicate's eax cannot reach it. Read §M301 BEFORE
+  re-opening it; the 4 table-falsifiers are the s256 NEW LAW in SESSION_NOTES).
+  NEVER bp mid-instruction (s213). OPEN shortlist + M300/M301 leads (hub-visit gating;
   0x56c6de continue-leg INSIDE FUN_0055f650, the 7-site predicate caller; which loop
   chooses among those 7 sites; readers of the stored predicate slots [ebp-0x7c]/
   [ebp-0x1c]; sibling 0x5831a0 fed (x,y) right after the predicate; 188-row cursor
-  caller; ebx's table 0x51de2c-0x51df1d; the 0x51e02c byte[site+8380*block+0x94ed28]
+  caller; whose record the walk's exit block tests as BYTE[edi+0x7] (edi = [ebp-0x4],
+  sole pre-range writer 0x51dd28) + what its tile-class/distance legs MEAN; the
+  0x51e02c byte[site+8380*block+0x94ed28]
   NAMED:371; a read-only /proc pass pinning rand+1 ds:0x92a380 + strides
   ds:0x69220c/0x692210 + 0x985ac4 + the 0x989ce8/0x94eca8 tables = counter/MAX laws
   ABSOLUTELY gradable): `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL
@@ -93,25 +99,12 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 3. Register semantics live in the ENCODING: `[reg*4+disp]` vs `[reg+disp]` differ by scaling — a condition testing one
    against the other never fires; a RMW through a COPIED register evades store-shape greps — a hw watchpoint on the
    FIELD answers "who writes it".
-4-5. gdb printf/script laws: no inferior strings; expressions go in printf ARGUMENTS with matching specs (a mismatch
-   ABORTS the sourced script and DETACHES at the first hit); a manual call frame needs the RETADDR at esp+0 and the arg
-   at esp+4; gdb ABANDONS an inferior `call` once any bp hits inside it; ONE `\n` prints a newline, TWO reads as ZERO
-   events; a bp at the insn AFTER `call X` fires AFTER the callee's events — group backward; unwatched factions
-   legitimately yield empty groups.
-6. A >90 s gdb census NEVER runs in the foreground (waits cap 420 s; killing it leaves Wine hung): background + wait,
-   or `--rounds <= 4`. Faction upkeep runs in its OWN segment ~1 cycle after turn-end — use `--boundaries >= 2`.
-7. Dialogs swallow every click/turn-end key while the HUD bar reads THROUGH them: Return clears a dialog, a BUILD/base
-   PANE needs Escape (bare-map Escape raises the quit prompt — never OK); normalize first
-   (`m78_mark_clear.normalize_screen()`), click from OCR bboxes; `m44_idle` asserts TracerPid==0 — use m55_boundary.
-8. A PASS on a non-discriminating shape is no PASS: compute candidate predictions from the baseline first; refuse the
-   shape if they all agree. RE-RUN on a harness race, never edit the floor.
-9. base+0xd0 (`credit`) is RECOMPUTED EVERY ROUND (FUN_004e93f0 0x4e9557/0x4e957f = [+0xc0]-[+0xf0]-[+0xe0]) — a poke
-   there is undone next turn; gate on round movement, use the per-boundary storage poke 200.
-10. A hw watchpoint REPORTS ONLY A VALUE CHANGE AND `pc = store + INSTRUCTION LENGTH` — gate on those, never the store
-    address; silent bps AT the store count stores, the watchpoint is the "any other writer" check; whitelist
-    `[New LWP]`/`[Switching to LWP n]`/SIGINT chatter (skill Wine Watchpoints + instrument-laws).
-11. A silent bp at the pc a hw watchpoint REPORTS is EATEN by it — put the read-back ONE instruction later and read
-    memory, not the register. A poke is evidence only if the CONSUMER reads it.
+4-11. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s256, s256, to hold the 12 k cap: gdb
+   printf/script laws + the manual-call-frame and ONE-vs-TWO-`\n` rules; a >90 s census is
+   never foreground; dialogs swallow keys while the HUD bar reads THROUGH them; a PASS on a
+   non-discriminating shape is no PASS; `credit` is recomputed every round; a hw watchpoint
+   REPORTS only a VALUE CHANGE with pc past the store; a silent bp AT that reported pc is
+   EATEN - read memory one insn later.)
 12-13. Both gdb-detach laws (skill Wine core): a census can leave gdb ATTACHED — check `TracerPid`,
     kill the stale gdb BY PID before calling the box clean; the TURN DRIVER returns rc=0 WHILE AI UPKEEP PLAYS —
     detach only after cp == human faction returns or the last recomputes go UNLOGGED.
