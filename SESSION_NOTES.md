@@ -1,43 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-235-235.md` (1 sessions). Read it only when a question reaches back before session ## Session 236.
-
-## Session 236 (2026-11-10, ANALYSE, M290 9/9, no box time) - the hub's FOUNDING DECISION fitted to the m289 record: the dispatch is OWN-TILE-GATED (a distant target takes the 0x2408 auto-build message and can NEVER found); founder args are the POD RECORD's owner@+14/y@+10/x@+8, so the tile choice is entirely the pod's walk; B10's first-unoccupied rule REFUTED (recorded ranks 542-1691 of 2146)
-- track_mode ANALYSE -> the s235 frontier pick: fit the hub founder decision
-  to the m289 record, static+model, no box.  scripts/m290_hub_decision.py,
-  9 byte-level/fit gates.  ACCEPTANCE: python3 scripts/m290_hub_decision.py
-  programs/saves/m54b_clean.SAV evidence/m289_gdb_raw.log
-  evidence/trace_m289_20261110_071759.jsonl -> PASS M290: 9/9 (3rd
-  invocation; runs 1-2 were instrument bugs, floors never weakened).
-- MEASURED (bytes are the arbiter): hub dispatch 0x563d3c-0x563d8b - cmp
-  [ebp-0x44],8 (settle case), test esi,esi / jne 0x563dfa: esi = the scan's
-  CHOSEN target offset, ZERO = the unit's own tile -> 0x563d86 call
-  FUN_004cca50; nonzero -> 0x563d4e leg push 0x2408 + call FUN_00583fa0
-  ("Auto-sending BUILD BASE message") and NO founder call.  Vector
-  prologue 0x4cca57-0x4cca74 folds 52*u then loads cl=owner[+14],
-  eax=y[+10], edi=x[+8]; 0x4ccbda-dc push edx/edi/esi, 0x4ccbdd call
-  founder - the FOUND ret=0x4ccbe2 of all 7 recorded foundings.  Founder
-  FUN_004e47d0: capacity guard ONLY (count<0x200), no tile-legality bail.
-- FIT to the 7 sites: ALL land (cat 3-6 via the 44-B RECORD view:
-  rec=(W/2)*y+(x>>1), byte 0 of the record's first half) AND none already
-  a base tile; ledger FOUND cnt=18,19,20,20,21,22,23 + 2 DESTROY rows
-  (between F3/F4 and after F7) replay to endpoint 23 with peak 24,
-  matching the jsonl per-turn curve (same-turn found+destroy nets are
-  invisible per-turn - the M289 +3->20 accounting).
-- RIVAL REFUTED: sim/basefound.py:118 "ASSUMED: first in-bounds tile no
-  base occupies (row-major)" - the recorded sites rank 542-1691 of 2146
-  unoccupied-land tiles in that order (mean 1202): B10's TILE rule explains
-  NO real founding's coords (its record/curve machinery stays valid; only
-  the (x,y) choice was a placeholder).
-- NEW TRAP (fired on run 1): the save's 22-B COLUMN view (sim/save.py
-  tile()[0]) does NOT reproduce the live byte-0 category - 5/7 legal sites
-  misread cat 0.  Read the 44-B record view instead (record =
-  grid_off + 44*((W/2)*y + (x>>1)), byte 0 = the live category).
-- OPEN (unchanged): why the 5a0aa0 chain bailed 3x; M247; M70 x2.  NEW
-  OPEN: which pod the hub picks and the walk TARGET (the scan's score
-  law at 0x563c00-0x563d40, (dist*10000)/(value+1) shape) vs the recorded
-  founding TURNS - the decision is now reduced to POD MOVEMENT.
-  Next: ANALYSE - the pod-walk target rule.
+Older sessions: `docs/sessions/sessions-236-236.md` (1 sessions). Read it only when a question reaches back before session ## Session 237.
 
 ## Session 237 (2026-11-10, BUILD, B13 12/12) - M290's founder dispatch is EXECUTABLE: sim/hubfound.py - own-tile-gated (distant target = msg 0x2408, never founds), founder args = the POD's record fields, capacity-only guard; 7/7 recorded founding tuples replay exact, strict ledger 18+7-2=23 peak 24 vs the m289 curve, both rivals fail the same fit
 - track_mode BUILD (3 ANALYSE fires since B12) -> the rung went into
@@ -760,3 +723,53 @@ BUILD_SPINE.md now carries the B18 rung.
   tile view 0x51de5b-0x51de61 + a distance compare vs ds:0x8f0d34 0x51dece-0x51ded0, then 3
   `or ebx,-1` sentinels) - shape VERIFIED, meaning INFERRED.
 - Box: ZERO (s244 state untouched). NEXT_PROMPT rewritten for s257.
+
+## Session 257 (2026-11-15, BUILD B19 10/10, zero box) - the slot [+4] visit counter made EXECUTABLE (sim/visitcounter.py); the rung was UNAUTHORED, this fire wrote it (as B14/B16/B17/B18)
+- track_mode BUILD next_rung=B19 -> the rung B18 DECLARED ("the slot [+4] visit
+  counter, its ++ gated on call 0x5832b0"), now that M299 (the gate body),
+  M300 (the 24 callers) and M301 (the ebx deflection) have landed. ACCEPTANCE:
+  `python3 -m sim.selftest --b19 programs/saves/m54b_clean.SAV` -> PASS B19
+  10/10, output evidence/b19_visitcounter.txt (table first, then gates; two
+  runs byte-identical, report sha256 e161b2f9...).
+- HOW IT'S ANCHORED (skill law: constants read out of the bytes, instruments
+  that fail differently): the model PARSSES the pinned W1 (44 lines
+  0x51dfac-0x51e02c) / W2 (114 lines 0x5832b0-0x5833b7) windows out of
+  evidence/m299_visitgate.txt ITSELF and decodes every constant from the
+  instruction texts (rung masks, the ds:0x985ac4/0x92a380/0x69220c/0x692210
+  globals, the lattice coefs -5/-3 as neg/shl/sub and lea[+*2]/sub chains, the
+  counter operand [esi+0x989cec] == the MAX operand +4, the 28-B slot stride as
+  (8-1)<<2); adjacency is by ORDERED INSTRUCTIONS, not addr+1 arithmetic
+  (instruction lengths differ - the addr+k scan initially missed the sub
+  ebx,edx leg). Branch A runs as TWO implementations (the decoded chain vs
+  M299's closed rungA) that must agree (0/76960 disagreements) AND reproduce
+  the RECORDED 36/36 lattice theorem; the recorded census 481/16/12/5/1087 +
+  dump digest 093d10a868da55b2 re-grade through the model's OWN rung readers.
+- MEASURED (this fire's anchors, RECORDED population cited): over the 2321
+  recorded decision rows (B17 loader + B16 transposition + B18 site_of law,
+  sites {1:2253, 9:68} == B18's RECORDED anchor - the counter table and the
+  MAX table are the SAME 28-B slots, +4 vs +0): 1222 rows CERTAINLY REFUSE
+  (rung1 mask hit - no live state can increment), 0 CERTAINLY ACCEPT (the
+  class is pass1 & bits26/27 & bit28: EMPTY in the dump AND in the rows), the
+  remaining 1099 are UNDECIDED-but-possible and ALL are branch-A domain
+  (census {'branchA':1099,'rung1':1222}); under the DECLARED baseline
+  Live(flag2000=False, rand=1): 20 accepts (all eax=2 branch-A parity hits),
+  1079 undecided (parity misses falling to the never-recorded branch-B stride
+  lattice). The eax=1 return is STRUCTURAL ONLY in this window: 0 graded rows
+  and (with sel clear, flag-clear leg) 5 dump records reach the rung3 leg -
+  no 'only-2-accepts' rival is gradeable on the rows (DECLARED, G9).
+  Save-vs-live record views diverge on 4008 counter-table field deltas over
+  the same rows (the B16/B18 drift law, counted not smoothed).
+- RETRACTED/CORRECTED: none of prior claims - B18's DECLARED list entry for
+  the counter is now CLOSED (module executable); its live-VALUES entry stays
+  OPEN and SHARPENS: the next read-only /proc pass that dumps ds:0x92a380,
+  ds:0x69220c, ds:0x692210, ds:0x985ac4 + the 0x989ce8/0x94eca8 tables grades
+  every B19 number ABSOLUTELY (the LEAD already in NEXT_PROMPT).
+- PITFALLS: (1) a rung whose rivals need a POPULATION that the recorded window
+  leaves EMPTY must say so (G9's eax=1 note) - do not grade a rival on zero
+  witnesses; (2) evidence-file-embedded disassembly is a first-class PIN
+  SOURCE: parse it, and keep the window edge honest (M301's 6th eax mention
+  0x51e033 lies PAST W1's end 0x51e02c - compare inside-the-window lists,
+  say so); (3) sim/selftest acceptance paths must not double-print a verdict -
+  the module CLI owns its PASS line, the rung's PASS line belongs to
+  sim.selftest (it adds G10).
+- Box: ZERO. NEXT_PROMPT rewritten for s258.

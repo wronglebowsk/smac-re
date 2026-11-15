@@ -1,9 +1,8 @@
-M301 | m301_ebxtable.py PASS 8/8 (evidence/m301_ebxtable.txt, A0-A7)
-| the 0x51de2c-0x51df1d lead is REFUTED: 243 B / 81 insns = a base_array walk
-| (0x95da10, 304-B rows, count ds:0x985af4) + its exit block. NOT a table.
-| it gates nothing of the 0x51dffd decision; FUN_005832b0's eax cannot reach it
-| state: branch milestone/m301, gate then submit, DO NOT merge (kickoff)
-| next s257: track_mode FIRST; ANALYSE pick (M300 leads in NAMED §M300 + M301
-| OPEN rows in §M301: FUN_0055f650 7-site loop, stored-predicate slot readers,
-| sibling 0x5831a0, [edi+7] owner, the walk's predicate, read-only /proc pin pass)
-| collision check FIRST per ISOLATION
+B19 | sim.selftest --b19 programs/saves/m54b_clean.SAV PASS 10/10
+| (evidence/b19_visitcounter.txt:20, G8:17 G9:18) - slot [+4] counter
+| EXECUTABLE: gated inc iff FUN_005832b0(x,y)!=0; 2321 rows: 1222 refuse /
+| 0 CERTAIN / 1099 POSSIBLE; baseline 20 eax=2 + 1079 undecided (4 live
+| VALUES + counter CONTENTS DECLARED). state: branch milestone/b19, gate
+| then submit, DO NOT merge (kickoff). next s258: LAND B19 PR, then ANALYSE
+| pick; ONE /proc pass (0x92a380, 0x69220c/0x692210, 0x985ac4, 0x989ce8
+| 28x128, 0x94eca8) grades every bracket absolutely. Collision check FIRST.
