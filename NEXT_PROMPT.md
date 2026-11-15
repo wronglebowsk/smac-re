@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s259 close: M303 SUBMITTED (branch milestone/m303, PR open - NOT merged per kickoff) - B19's `the 0x51e02c 0x94ed28 post-read downstream` lead CLOSED by the static census `scripts/m303_downstream.py` (`evidence/m303_downstream.txt`): 0x51e02c is the LOAD HALF of a byte RMW ++ (lea 0x51e033 SAME SIB+disp / inc dl / store 0x51e03e; dl then DEAD; je 0x51e040 tests ebx, not the byte) of the per-block visit-CNT byte array 0x94ed28 = 0x94eca8+0x80 - 8 blocks x 8380-B records, 128 x {MAX@+0, CNT@+128}, zeroed per call at 0x51dcb8-0x51dd03 - the BYTE twin keyed by (block,site) of the DWORD slot table 0x989ce8 keyed by site; addr = site + 8380*block + 0x94ed28, the fold 65->131->2095->*4 shadow-verified and 8380 == the init's own block step (stride derived TWICE); B18-28 REFUTED for this expression (the esi fold 0x51dfb1-ba in-window feeds the DWORD twin); family = 11 literal mentions, all consumers cmp/test, no byte feeds the DWORD MAX, no store outside FUN_0051dcb0; name_global --disp "0 writes" is the register-after-lea blind spot. PASS M303 10/10 (A1-A10; byte-identical reruns; zero box). track_mode: s259 ran ANALYSE after B19+#270 merged - a merge does NOT flip the immediate fire; trust track_mode. LAND THIS PR FIRST (MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #270 (M302) + #269 (B19) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B19 + M54A-M302 MERGED.)
+# NEXT_PROMPT.md - footing (s259 close: M303 SUBMITTED (branch milestone/m303, PR open - NOT merged per kickoff) - B19's `the 0x51e02c 0x94ed28 post-read downstream` lead CLOSED by the static census `scripts/m303_downstream.py` (`evidence/m303_downstream.txt`): 0x51e02c is the LOAD HALF of a byte RMW ++ (lea 0x51e033 SAME SIB+disp / inc dl / store 0x51e03e; dl then DEAD; je 0x51e040 tests ebx, not the byte) of the per-block visit-CNT byte array 0x94ed28 = 0x94eca8+0x80 - 8 blocks x 8380-B records, 128 x {MAX@+0, CNT@+128}, zeroed per call at 0x51dcb8-0x51dd03 - the BYTE twin keyed by (block,site) of the DWORD slot table 0x989ce8 keyed by site; addr = site + 8380*block + 0x94ed28, the fold 65->131->2095->*4 shadow-verified and 8380 == the init's own block step (stride derived TWICE); B18-28 REFUTED for this expression (the esi fold 0x51dfb1-ba in-window feeds the DWORD twin); family = 11 literal mentions, all consumers cmp/test, no byte feeds the DWORD MAX, no store outside FUN_0051dcb0; name_global --disp "0 writes" is the register-after-lea blind spot. PASS M303 10/10 (A1-A10; byte-identical reruns; zero box). LAND THIS PR FIRST (MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #270 (M302) + #269 (B19) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B19 + M54A-M302 MERGED.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -80,11 +80,11 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   sibling fields of the 8380-B block record (byte field 0x950664, word 0x94e8a8
   ++'d pre-predicate, dword 0x94f4ec + word 0x950a64 preamble - all INDEXED by
   M303, semantics OPEN); FUN_0056d480/0056d630 + ds:0x985b10/0x985aec
-  identities; the 0x94eca8 DUMP (M303 says WHICH bytes: MAX@+8380k /
-  CNT@+8380k+128, 8 blocks = 2048 B; m302_livepins.py is the read-only
-  template); save-carried vs rebuild for BOTH tables (M302 OPEN + the byte
-  family same question); the eax=1 leg: ONE model-decided row (M302 branchB),
-  still NO live gdb witness (B19 G9): `NAMED.md` §CHAIN-PICKS. READER LAWS
+  identities; the 0x94eca8 byte-table DUMP (2048 B: MAX@+8380k, CNT@+8380k+128,
+  8 blocks; m302_livepins.py template); save-carried vs rebuild for BOTH tables
+  (M302 OPEN + the byte family same question); the eax=1 leg: ONE model-decided
+  row (M302 branchB), still NO live gdb witness (B19 G9): `NAMED.md`
+  §CHAIN-PICKS. READER LAWS
   still BIND (incl. B18/B19/M299/M302/M303): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
