@@ -1,61 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-236-236.md` (1 sessions). Read it only when a question reaches back before session ## Session 237.
-
-## Session 237 (2026-11-10, BUILD, B13 12/12) - M290's founder dispatch is EXECUTABLE: sim/hubfound.py - own-tile-gated (distant target = msg 0x2408, never founds), founder args = the POD's record fields, capacity-only guard; 7/7 recorded founding tuples replay exact, strict ledger 18+7-2=23 peak 24 vs the m289 curve, both rivals fail the same fit
-- track_mode BUILD (3 ANALYSE fires since B12) -> the rung went into
-  BUILD_SPINE.md FIRST (pod-driven founding-dispatch leg, replacing B10's
-  REFUTED (x,y) placeholder), then sim/hubfound.py + run_b13 in sim.selftest.
-- ACCEPTANCE: python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV
-  -> PASS B13: 12/12 (evidence/b13_hubfound.txt; 3rd invocation; runs 1-2
-  were instrument bugs - python3.14 argparse refuses a 3-tuple metavar with
-  nargs='+', and a 6-tuple event unpack - floors never weakened).
-- MEASURED: every one of the 9 recorded rows' PRE-op cnt agrees with the
-  ledger replay through B10's leg (destroy slot ASSUMED last, declared);
-  survivors (6,20,48)(6,63,51)(5,27,19)(7,23,33)(1,27,29), destroyed
-  (6,12,48) and (6,1,43) ABSENT from the final 23; written image: only the
-  bases-count dword (offset 72) differs in the prefix, originals + tail
-  byte-identical, re-parses n_bases 23; cat44 (44-B record view) puts all 7
-  sites on land (cat 3) and none on a base tile; G12 CLI two runs sha256
-  6dfbd810a1b6013f. RIVALS: ungated distant dispatch invents 7 tuples of
-  which 0 occur in the record; the B10 placeholder reproduces 0/7.
-- REGRESSION: B10 18/18 and B12 12/12 still green (basefound._tile marked
-  REFUTED, comment-only edit).
-- OPEN (unchanged): why the 5a0aa0 chain bailed 3x; M247; M70 x2. The pod
-  WALK stays the only unmodeled link between a pod and a founding.
-  Next: ANALYSE - the pod-walk target rule (the scan's score law at
-  0x563c00-0x563d40 vs the recorded founding TURNS).
-
-## Session 238 (2026-11-10, ANALYSE, M291 10/10, no box time) - the hub's founding SCAN is a STRICT site-value argmax over a 25-entry even-manhattan ring, NOT a (dist*10000)/(value+1) score (that immediate is absent from the 54,483-B body); the record falsifies dropping the owner byte3 gate
-- track_mode ANALYSE -> the s237 pick: the pod-walk target rule, static+model.
-  scripts/m291_pod_scan.py, 10 gates. ACCEPTANCE: python3 scripts/m291_pod_scan.py
-  -> PASS M291: 10/10 (evidence/m291_pod_scan.txt; 6th invocation - runs 1-5 were
-  all instrument bugs of mine, floors never weakened: three x86 encoding mis-
-  transcriptions (imm8-vs-imm32 for cmp eax,0x19; ModRM for cmp esi,[ebp-0x24])
-  plus the heredoc transport that unescapes backslashes INSIDE heredoc content
-  (byte literals landed on disk as raw bytes; the shipped script uses bytes([...])
-  lists and no backslash classes, and an & even in a comment is refused by the wrapper).
-- MEASURED (bytes from the terran.exe file image): ring tables 0x67850c/0x678990
-  (.rdata, 25 dwords): entry 0 = own tile, 1-8 = the manhattan-2 diamond, 9-24 =
-  manhattan-4, ascending; wrap 0x469010/0x469060. Value = FUN_0046e770: and-eax-
-  0x1000 -> 0, else mov dl,[rec+2] + sar 4 (lazy FUN_005aff90 when the cache is 0).
-  Strict max: cmp esi,eax then jle 0x563cb3 (ties keep the closer ring entry);
-  best-store 0x563caa. Nearest-location distance FUN_004e3620 (9999 sentinel
-  0x4e3631, store DAT_008f0d34 0x4e36f5, 152-B-stride location list, map-wrapped
-  max-min octant formula); value >= 2*(8-DAT_008f0d34) bypasses the per-site
-  0x94e5a8/0x94eca8 gates.
-- FIT vs the 7 recorded tuples: 7/7 self-argmax over their own ring (grown
-  occupancy, 44-B record view); the no-owngate variant loses EXACTLY fac1 (27,29)
-  (byte3 14 vs a rival - owner-equality is required by the record); B10 first-
-  unoccupied 0/7; seeded null self-argmax rate 27/88 = 0.307, binom p(7/7|null) 2.6e-4.
-- Box: only the recon pass did a READ-ONLY /proc ring-table probe; the acceptance
-  reads the .rdata file image. pid 4087359 untouched, TracerPid 0.
-- OPEN (unchanged): the 5a0aa0 chain bailing 3x; M247; M70 x2. UNMODELED: the
-  0x94e5a8/0x94eca8 gate tables and the 0x4e3c00 no-go (the 7/7 fit passed without
-  modeling them). NEW frontier: POD MOVEMENT - which pod (callers of FUN_0055f650,
-  unit id) and the per-turn walk vs the recorded founding turns (rise turns
-  6,9,18,19,22,23); needs a unit-position census (box). Next: ANALYSE - the
-  pod-movement leg.
+Older sessions: `docs/sessions/sessions-237-238.md` (2 sessions). Read it only when a question reaches back before session ## Session 239.
 
 ## Session 239 (2026-11-10, ANALYSE, M292 5/5, BOX census) - pod MOVEMENT settled: the hub vector runs per-unit (arg1 = unit index) and dispatches on the m291 RING ENTRY INDEX esi - 0 = found (MSG 0x2408 if human-owned), 1-8 = continue w/o order, >=9 = issue order b (0x62) at the wrapped ring tile (the WALK); 9 FOUNDs / 26 turns, 2 walked pods
 - track_mode ANALYSE -> the s238 pick. scripts/m292_pod_movement.py (static
@@ -773,3 +718,35 @@ BUILD_SPINE.md now carries the B18 rung.
   the module CLI owns its PASS line, the rung's PASS line belongs to
   sim.selftest (it adds G10).
 - Box: ZERO. NEXT_PROMPT rewritten for s258.
+
+## Session 258 (2026-11-15, BOX-READ read-only /proc) - M302: B19's declared-unmodeled live values pinned; the 1099 undecided branchA rows collapse to 38 accept / 1061 refuse
+- ACCEPTANCE `python3 scripts/m302_livepins.py` -> PASS M302 10/10,
+  evidence/m302_livepins.txt (table first, then A1..A10; verdict :170). READ-
+  ONLY on the box throughout: os.pread on /proc/501182/mem (pid from pgrep -x
+  terran.exe), no pwrite/gdb/poke/relaunch; TracerPid printed 0 at start AND
+  end; year 2150 + round 50 unchanged across the pass (A10); an unmapped read
+  reports UNKNOWN (self-tested via the 0x1000 sentinel, A2), never 0.
+- PINNED (y2150, m54b_clean): ds:0x92a380 (rand+1) = 9661 (0x25bd; & 0xf = 13),
+  ds:0x69220c = 61, ds:0x692210 = 11, ds:0x985ac4 = 0x1a0e so bit 0x2000 is
+  CLEAR - flag2000=False, B19's declared baseline bit-state CONFIRMED live.
+  Slot region 0x989ce8+28*site: 128/128 slots readable (3584 B, no UNKNOWNs);
+  the recorded sites: site 1 MAX 15 / counter 40, site 9 MAX 3 / counter 2;
+  nonzero MAX sites [1,3,4,5,6,7,9,10,13,14,15,16,65,66,69,70], nonzero CNT
+  [1,6,9,13,16,63,65,70]. The table is NONZERO at a freshly-loaded idle box ->
+  carried by the save or rebuilt at load (OPEN); CNT>MAX occurs at [1,63,65] -
+  no landed law relates the two fields (MAX is fed by the 4-bit nibble cache
+  or the UNMODELED FUN_005aff90 body), so counter<=MAX is PRINTED, never
+  asserted; the two-pass read never decreased any field (MAX store + ++ are
+  the only writers, B18 G8 + B19 - A5).
+- REPLAY (shipped sim.visitcounter rows/P/grid + the pinned Live): 2321 rows ->
+  CERTAIN-accept 38 / CERTAIN-refuse 2283 / still-undecided 0. The 1099
+  previously-undecided branchA rows: 38 CERTAIN-accept / 1061 CERTAIN-refuse /
+  0 undecided (A8), per-B18-site {1:(38,993), 9:(0,68)} == B18's anchor rows.
+  Legs: 37 branchA-hit (eax=2, live residue 13) + 1 branchB (eax=1 - the FIRST
+  non-structural eax=1 decision row; B19 had 0 witnesses) + 1062 branchB-refuse;
+  all 1222 rung1 rows still refuse (A6); eax in {0,1,2} (A7). B19's 20
+  baseline accepts (rand==1) ALL flip - the 38 live accepts are a different row set.
+- PITFALL: the `s` field of the m294 graded_rows tuple is the LOG SLOT key, NOT
+  B18's site id - per-site splits must go through sgt.site_of(rec); the first
+  run printed 25 "sites" (a mislabel caught only by pairing against B18's
+  {1,9} anchor).
