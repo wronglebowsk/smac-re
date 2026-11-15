@@ -1,0 +1,39 @@
+== B20 the BYTE-twin visit counter, EXECUTED over the recorded 2321 rows (1026 visits) under the PINNED live state (M302); law source = the pinned windows inside evidence/m303_downstream.txt ==
+pinned live state (parsed from m302_livepins.txt): flag2000=False rand=9661 s20c=61 s210=11
+byte family: MAX base 0x94eca8, CNT base 0x94ed28 (= +0x80), entry width 1 B, 128 entries/field, block stride 8380, 8 blocks (init remainder 0) - index = site + 8380*block + base
+index law: 65=65*block (fold leg 1) -> 2095=2095*block (fold leg 2) -> stride 8380 = 4*2095 (load scale placement); init step 0x20bc independently decodes to 8380 (two legs, one law)
+dword twin (B19): base 0x989ce8 stride 28 slots 128 (rem 0) - the SAME accepted fall-through feeds both counters
+
+DWORD twin per site (0x989ce8+28*site: +0 MAX, +4 CNT): rows / accept / refuse / undec / dword CNT / dword MAX
+       1   2253       38     2215      0         38       10
+       9     68        0       68      0          0        1
+
+BYTE twin per (block,site) (0x94eca8 family: +0 MAX, +128 CNT): block site / rows seen / byte CNT / byte MAX
+     0    1        209            1       SKIP
+     0    9         68            0       SKIP
+     2    1         81            0          4
+     3    1         36           17          7
+     4    1        769            0          3
+     5    1        247            0          2
+     6    1        911           20          6
+accepted rows by block: {0: 1, 3: 17, 6: 20} (block-0 accepts exist: True)
+byte MAX table entries 5 over blocks [2, 3, 4, 5, 6]; byte CNT entries 3; cell-store skips 277
+
+PARITY per site: SUM_blocks byte CNT == dword CNT?
+site   1: dword CNT  38 == sum over blocks {0: 1, 3: 17, 6: 20} ->  38 : OK
+kinds {'branchA': 1099, 'rung1': 1222} | eax {0: 2283, 1: 1, 2: 37}
+branchA-row per-site split (acc/refuse/undec - the recorded M302 column covers these rows only): {1: [38, 993, 0], 9: [0, 68, 0]}
+digest 780a1730d40a1d73
+live-view (s249 dump) replay over the SAME rows: accept 7 refuse 2314 undec 0, byte CNT entries 1, digest 3172f5685b9f3b6d; save-vs-live byte-CNT divergence 3 entries differ
+
+G1_windows_parse             PASS  windows: fold 7/7 rival 7/7 init 23/23 block 10/10 insns (missing -); S0 corpus 11 mentions = MAX 8 / CNT 3 (RECORDED 11/8/3)
+G2_fold_init_decode          PASS  fold decodes 65=65 131=131 2095=2095 *4 -> stride 8380; load disp 0x94ed28 == CNT-MAX gap 0x80(+0x80 from init) + base 0x94eca8; init step 0x20bc == fold stride (two independent legs); entries 128 width 1 B; blocks 8 rem 0; dword twin 0x989ce8 stride 28 slots 128 rem 0; load/lea operand tails ['28', 'ed', '94', '00']==['28', 'ed', '94', '00']; ecx(site) pin prose True
+G3_unconditional_behind_je   PASS  jumps strictly inside [0x51e007,0x51e03e): []; je 0x51e007 (0f 84 10 01 00 00) decodes to target 0x51e11d (past the byte store 0x51e03e); je 0x51e040 -> 0x51e083 tests the flags of 0x51e03c test ebx,ebx (block id, NOT the byte); byte RMW = load 0x51e02c + lea 0x51e033 (same SIB+disp tail) + inc dl + store (opcodes decode); dword++ triple [esi+0x989cec] = same slot +4 as B19; replay: dword++ and byte++ fired on the SAME rows in 2321/2321 steps
+G4_pinned_replay             PASS  replay over 2321 rows (RECORDED 2321): accept 38 (RECORDED 38) / refuse 2283 (RECORDED 2283) / undecided 0 (RECORDED 0); eax counts {0: 2283, 1: 1, 2: 37} (RECORDED {0: 2283, 1: 1, 2: 37}); kinds {'branchA': 1099, 'rung1': 1222} (RECORDED branchA 1099 -> rung1 1222); branchA-row per-site split (the recorded column covers the 1099 previously-undecided rows ONLY) {1: [38, 993, 0], 9: [0, 68, 0]} == RECORDED {1: (38, 993, 0), 9: (0, 68, 0)}; all live states decided (0 undecided) - the pinned state collapses B19's brackets to a point
+G5_byte_table_legal          PASS  every byte value in [0,255] (violations []); no wrap witness (max byte MAX 7, max byte CNT 20 - both under 256, so the byte table never wrapped in this window); 5 byte MAX entries, none on block 0 (0 would alias); every byte CNT/MAX key is a visited (block,site) key; digest 780a1730d40a1d73
+G6_max_funnel_matches_B18    PASS  the byte-MAX funnel in THIS module == sim.sitegate.SiteGate replay byte-for-byte (slot {1: 10, 9: 1}, cell {(2, 1): 4, (3, 1): 7, (4, 1): 3, (5, 1): 2, (6, 1): 6}, skips 277, rows 2321); RECORDED B18 G8/G7: slot entries 2, cell entries 5 over 5 owner blocks, 277 skips == 277 sentinel rows - the byte MAX table is the same five cells B18 graded, now next to its CNT twin
+G7_dw_byte_parity            PASS  SAME accepted-visit set feeds both: 38 accepted rows -> 38 dword increments over sites [1] AND 38 byte increments over [(0, 1), (3, 1), (6, 1)] (block,site) keys; per site sum_blocks(byte CNT) == dword CNT on all 1 sites (live view too: OK); the byte table refines the dword table without moving a single visit
+G8_rivals_fail               PASS  rivals: R_ungated diverges by 2283 (ungated totals 2321 rows vs recorded pinned accept 38) | R_eax2_only diverges by 1 (eax==2 totals 37 vs recorded accept 38 (recorded eax counts {0: 2283, 1: 1, 2: 37} - the eax==1 leg is a REAL row here)) | R_28law_index diverges by 2 (rival address site+28*block differs from the law address on 2/2 byte-table keys (fold K=8380 vs law K=28)) | R_blk0skip_CNT diverges by 1 (accepted rows on block 0 = 1 (dropped under the rival -> 37 vs recorded 38); GRADED on recorded numbers) | R_ungated_MAX diverges by 2 (rival cell entries 7 vs RECORDED 5 over 5 owner blocks; 277 block-0 rows would enter the MAX table under the rival) | R_pureread diverges by 38 (rival byte increments total 0 vs recorded accept 38; the pinned window carries the store 0x51e03e `mov BYTE PTR [eax],dl` (opcode 88 10) between the inc and the je)
+G9_anchors_consistent        PASS  m302 recorded table is coherent: 38+2283+0==2321 rows; eax {0: 2283, 1: 1, 2: 37} sums to rows, eax0==refuse, eax1+eax2==accept; the site split sums to the 1099 branchA rows; b18 skips==sentinel==277; the parsed live state 'flag2000=False rand=9661 s20c=61 s210=11' == the model's own 'flag2000=False rand=9661 s20c=61 s210=11'; S0 corpus 11
+
+PASS B20: 9/9 gates - the BYTE-twin visit counter is EXECUTABLE: the pinned-window law 0x94ed28+8380*block+site (entry 1 B, 128/field, 8 blocks) ++'d by the same gated fall-through that B19's dword counter rides, replayed over 2321 recorded rows under the M302 pinned state -> 38 accepts -> 38 dword CNT / 38 byte CNT with per-site parity; the byte MAX skips block 0 while the byte CNT does not; live byte CONTENTS, the block upper bound and the settle-nest meaning stayed DECLARED UNMODELED
