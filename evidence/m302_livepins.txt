@@ -1,14 +1,23 @@
-== M302 the read-only /proc pass over B19's declared-unmodeled values (READ ONLY: pread on /proc/501182/mem, no pwrite/gdb/poke) ==
-provenance: 2026-11-15 20:08:30 UTC ; pid 501182 (pgrep -x terran.exe) ; TracerPid(start)=0 ; loaded save m54b_clean (kickoff + smac_preflight PASS); replay save file programs/saves/m54b_clean.SAV
+== M302 the read-only /proc pass over B19's declared-unmodeled values (READ ONLY: pread on /proc/538485/mem, no pwrite/gdb/poke) ==
+provenance: 2026-11-15 20:56:34 UTC ; pid 538485 (pgrep -x terran.exe) ; TracerPid(start)=0 ; replay save programs/saves/m54b_clean.SAV (242539 B, sha256 74d0f44ab9b9290b) ; smac_preflight is OPERATOR-SUPPLIED for this run (not invoked here); this script checks only what it can: pid alive, TracerPid, year/round readable
 read addresses: scalars 0x92a380, 0x69220c, 0x692210, 0x985ac4 ; slot region 0x989ce8..0x98aae7 (128 slots x 28 B) ; globals year 0x985b00 round 0x985afc
-== pass 1 (before replay): pid 501182 ==
+== pass 1 (before replay): pid 538485 ==
   scalar rand+1       ds:0x92a380 = 9661 (0x000025bd)        Live.rand   (rung4: ==0 -> refuse; branchA +rand)
   scalar stride s20c  ds:0x69220c = 61 (0x0000003d)          Live.s20c   (branchB rhs: trunc4(d)*s20c)
   scalar stride s210  ds:0x692210 = 11 (0x0000000b)          Live.s210   (branchB rhs: trunc4(h)*s210)
   scalar flag dword   ds:0x985ac4 = 6670 (0x00001a0e)        Live.flag2000 = (dword & 0x2000) != 0 (rung2)
   provenance globals: year 2150 (0x00000866)  round 50 (0x00000032)
 
-== pass 2 (after replay): pid 501182 ==
+== replay: the 2321 recorded rows through the shipped B19 gate with the PINNED live values ==
+pinned live state: flag2000=False rand=9661 s20c=61 s210=11
+pinned replay over 2321 rows: CERTAIN-accept 38 / CERTAIN-refuse 2283 / still-undecided 0
+of the 1099 previously-undecided (branchA) rows: CERTAIN-accept 38 / CERTAIN-refuse 1061 / still-undecided 0
+per-B18-site split of the 1099 (accept/refuse/undecided): {1: (38, 993, 0), 9: (0, 68, 0)}
+pinned decision legs (kind, gate path) -> rows: {('branchA', 'branchA-hit'): 37, ('branchA', 'branchB'): 1062, ('rung1', 'rung1'): 1222} | pinned eax counts 0/1/2: {0: 2283, 1: 1, 2: 37}
+B19's 20 baseline eax=2 accepts (rand==1 residue hits): 0 kept under live rand pinned (live rand & 0xf = 13 vs baseline 1), 20 flipped
+observed counter-vs-MAX (NO landed law relates them - printed, never asserted): sites with CNT>MAX [1, 63, 65]
+
+== pass 2 (after replay): pid 538485 ==
   scalar rand+1       ds:0x92a380 = 9661 (0x000025bd)        Live.rand   (rung4: ==0 -> refuse; branchA +rand)
   scalar stride s20c  ds:0x69220c = 61 (0x0000003d)          Live.s20c   (branchB rhs: trunc4(d)*s20c)
   scalar stride s210  ds:0x692210 = 11 (0x0000000b)          Live.s210   (branchB rhs: trunc4(h)*s210)
@@ -146,25 +155,17 @@ slot table 0x989ce8 + 28*site, 128 entries (MAX +0, counter +4):
   127          0          0   0 0 0 0 0                                | readable
 nonzero per pass1: MAX sites [1, 3, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 65, 66, 69, 70] ; CNT sites [1, 6, 9, 13, 16, 63, 65, 70]
 
-== replay: the 2321 recorded rows through the shipped B19 gate with the PINNED live values ==
-pinned live state: flag2000=False rand=9661 s20c=61 s210=11
-pinned replay over 2321 rows: CERTAIN-accept 38 / CERTAIN-refuse 2283 / still-undecided 0
-of the 1099 previously-undecided (branchA) rows: CERTAIN-accept 38 / CERTAIN-refuse 1061 / still-undecided 0
-per-B18-site split of the 1099 (accept/refuse/undecided): {1: (38, 993, 0), 9: (0, 68, 0)}
-pinned decision legs (kind, gate path) -> rows: {('branchA', 'branchA-hit'): 37, ('branchA', 'branchB'): 1062, ('rung1', 'rung1'): 1222} | pinned eax counts 0/1/2: {0: 2283, 1: 1, 2: 37}
-B19's 20 baseline eax=2 accepts (rand==1 residue hits): 0 kept under live rand pinned (live rand & 0xf = 13 vs baseline 1), 20 flipped
-observed counter-vs-MAX (NO landed law relates them - printed, never asserted): sites with CNT>MAX [1, 63, 65]
 TracerPid(end) = 0
 
 A1_tracer_clean_start          PASS  TracerPid(start) == 0 (box rule: no tracer while we read)
 A2_unknown_never_zero          PASS  sentinel 0x1000 -> UNKNOWN(unmapped) (an unmapped read reports UNKNOWN, never 0)
-A3_reads_mapped_first          PASS  902 of 902 read dwords inside /proc/501182/maps regions before the pread
+A3_reads_mapped_first          PASS  902 of 902 read dwords inside /proc/538485/maps regions before the pread
 A4_region_128_slots            PASS  128/128 slots fully readable (B18 REGION_BOUND 128, evidence/b18_sitegate.txt:7); the RECORDED sites 1 (rows 2253) and 9 (rows 68) readable: [True, True]
-A5_store_law_monotonicity      PASS  MAX/CNT across pass1->pass2 never decrease (B18 G8 max-store polarity + B19 counter ++: the ONLY writers); violations []
 A9_baseline_anchors_reproduce  PASS  sim.visitcounter.build on disk reproduces B19's anchors: rows 2321 (RECORDED 2321), kinds {'branchA': 1099, 'rung1': 1222} (RECORDED {'branchA':1099,'rung1':1222}) - the pinned replay extends the SAME rows/P/grid
+A5_store_law_monotonicity      PASS  MAX/CNT across pass1->pass2 never decrease (B18 G8 max-store polarity + B19 counter ++: the ONLY writers); violations []
 A6_rung1_still_refuses         PASS  of the 1222 rung1 rows, 0 accept under the PINNED live state (law: none ever may - B19 G5)
 A7_ret_values                  PASS  pinned gate calls returned eax in [0, 1, 2] subset-of {0,1,2} (B19 G1 ret set)
-A8_branchA_decides             PASS  1099 branchA rows: 38 CERTAIN-accept + 1061 CERTAIN-refuse + 0 undecided == 1099, undecided==0 iff all four scalars pinned (pinned=True)
-A10_box_left_running           PASS  pid 501182 alive and unchanged, TracerPid(end)=0, year 2150 (0x00000866)->2150 (0x00000866), round 50 (0x00000032)->50 (0x00000032) (no turn advance, no writes, game left running)
+A8_branchA_decides             PASS  1099 branchA rows: 38 CERTAIN-accept + 1061 CERTAIN-refuse + 0 undecided == 1099; pinned=True, scalars UNKNOWN [] (A8 requires a MEASURED state: pinned not None AND every scalar readable AND undecided==0)
+A10_box_left_running           PASS  pid 538485 alive and unchanged, TracerPid(end)=0, year 2150 (0x00000866)->2150 (0x00000866), round 50 (0x00000032)->50 (0x00000032) (no turn advance, no writes, game left running)
 
 PASS M302: 10/10 assertions - the four scalars + the 128-slot MAX/CNT table pinned read-only from live memory; of B19's 1099 undecided branchA rows 38 became CERTAIN-accept and 1061 CERTAIN-refuse under the pinned live state

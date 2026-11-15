@@ -128,6 +128,9 @@ class Reader(object):
             b = os.pread(self.fd, 4, addr)
         except OSError as e:
             return None, "err:%s" % e.errno
+        if len(b) != 4:
+            # A short pread is NOT a value: never let a partial read look measured.
+            return None, "short:%d" % len(b)
         return int.from_bytes(b, "little"), "ok"
 
     def slot(self, addr):
@@ -213,10 +216,24 @@ def main():
     emit("== M302 the read-only /proc pass over B19's declared-unmodeled "
          "values (READ ONLY: pread on /proc/%d/mem, no pwrite/gdb/poke) =="
          % pid)
+    # Provenance is COMPUTED, not asserted: hash the save we replay and say plainly that
+    # preflight is operator-supplied (Greptile P2 2026-11-15 - this line used to claim
+    # "smac_preflight PASS" for a check the script never runs).
+    sav_path = args.sav
+    try:
+        with open(sav_path, "rb") as fh:
+            import hashlib
+            sav_hash = hashlib.sha256(fh.read()).hexdigest()
+        sav_desc = "%s (%d B, sha256 %s)" % (os.path.relpath(sav_path, REPO),
+                                             os.path.getsize(sav_path),
+                                             sav_hash[:16])
+    except OSError as e:
+        sav_desc = "%s UNREADABLE (%s)" % (os.path.relpath(sav_path, REPO), e.errno)
     emit("provenance: %s ; pid %d (pgrep -x terran.exe) ; TracerPid(start)=%d ; "
-         "loaded save m54b_clean (kickoff + smac_preflight PASS); replay save "
-         "file %s" % (time.strftime("%Y-%m-%d %H:%M:%S %Z"), pid, tp0,
-                      os.path.relpath(args.sav, REPO)))
+         "replay save %s ; smac_preflight is OPERATOR-SUPPLIED for this run (not "
+         "invoked here); this script checks only what it can: pid alive, TracerPid, "
+         "year/round readable"
+         % (time.strftime("%Y-%m-%d %H:%M:%S %Z"), pid, tp0, sav_desc))
     emit("read addresses: scalars %s ; slot region 0x%x..0x%x (%d slots x %d B) ; "
          "globals year 0x%x round 0x%x"
          % (", ".join("0x%x" % s[1] for s in SCALARS), SLOT_BASE,
@@ -258,14 +275,6 @@ def main():
       % (len(full), REGION_BOUND, [s in full for s in (1, 9)]))
 
     emit("")
-    p2 = dump_pass(rd, "2 (after replay)")
-    bad_mono = slot_table({"p1": p1, "p2": p2}, "p1", "p2")
-    emit("")
-
-    # A5 monotonicity of the only two pinned writers over the read window
-    asn("A5_store_law_monotonicity", not bad_mono,
-      "MAX/CNT across pass1->pass2 never decrease (B18 G8 max-store polarity + "
-      "B19 counter ++: the ONLY writers); violations %s" % (bad_mono[:4],))
 
     # ---- the replay: B19's shipped model + the PINNED live state
     emit("== replay: the 2321 recorded rows through the shipped B19 gate with "
@@ -359,6 +368,18 @@ def main():
             and p1["slots"][s][0][0] is not None
             and p1["slots"][s][0][1] > p1["slots"][s][0][0]])
 
+    emit("")
+    # Pass 2 is taken HERE, after the replay loop, so "after replay" means what it says
+    # (Greptile P2 2026-11-15: it used to run before vc.build and the loop).
+    p2 = dump_pass(rd, "2 (after replay)")
+    bad_mono = slot_table({"p1": p1, "p2": p2}, "p1", "p2")
+    emit("")
+
+    # A5 monotonicity of the only two pinned writers over the read window
+    asn("A5_store_law_monotonicity", not bad_mono,
+      "MAX/CNT across pass1->pass2 never decrease (B18 G8 max-store polarity + "
+      "B19 counter ++: the ONLY writers); violations %s" % (bad_mono[:4],))
+
     # A6 rung1 stays refused under live values (B19 G5 law)
     asn("A6_rung1_still_refuses", rung1_accepts == 0,
       "of the 1222 rung1 rows, %d accept under the PINNED live state (law: none "
@@ -367,12 +388,19 @@ def main():
     asn("A7_ret_values", retvals <= {0, 1, 2},
       "pinned gate calls returned eax in %s subset-of {0,1,2} (B19 G1 ret set)"
       % sorted(retvals))
-    # A8 the 1099 decide under the pinned state
-    asn("A8_branchA_decides", n_acc_1099 + n_ref_1099 + n_und_1099 == 1099
-      and (pinned is None or n_und_1099 == 0),
-      "1099 branchA rows: %d CERTAIN-accept + %d CERTAIN-refuse + %d undecided "
-      "== 1099, undecided==0 iff all four scalars pinned (pinned=%s)"
-      % (n_acc_1099, n_ref_1099, n_und_1099, pinned is not None))
+    # A8 the 1099 decide under the pinned state - and only if the state was MEASURED.
+    # Greptile P1 (2026-11-15): the old form `(pinned is None or ...)` passed when every
+    # scalar read failed, so a run that measured nothing still went green. A gate that
+    # cannot fail on an unmeasured state is not a gate.
+    scalars_missing = [name for (name, _addr, _why) in SCALARS
+                       if p1["scalars"].get(name) is None]
+    asn("A8_branchA_decides",
+        pinned is not None and not scalars_missing
+        and n_acc_1099 + n_ref_1099 + n_und_1099 == 1099 and n_und_1099 == 0,
+        "1099 branchA rows: %d CERTAIN-accept + %d CERTAIN-refuse + %d undecided "
+        "== 1099; pinned=%s, scalars UNKNOWN %s (A8 requires a MEASURED state: "
+        "pinned not None AND every scalar readable AND undecided==0)"
+        % (n_acc_1099, n_ref_1099, n_und_1099, pinned is not None, scalars_missing))
 
     rd.close()
 
