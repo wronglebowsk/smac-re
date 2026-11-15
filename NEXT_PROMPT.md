@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s257 close: B19 SUBMITTED (branch milestone/b19, PR open - NOT merged per kickoff) - the slot [+4] visit counter is EXECUTABLE (`sim/visitcounter.py`): the gated inc [0x989ce8+28*site+4]++ iff FUN_005832b0(x,y)!=0, the full 4-rung ladder ported from the pinned windows embedded IN evidence/m299_visitgate.txt, replayed over the 2321 recorded rows: 1222 CERTAIN-refuse / 0 CERTAIN-accept / 1099 POSSIBLE (branch-A 1099 / rung1 1222; baseline 20 eax=2 accepts, 1079 undecided on the never-recorded branch-B strides); the M300 24-caller + M301 eax-witness censuses re-grade from the SAME bytes. PASS B19 10/10, table-then-asserts, two runs byte-identical, `evidence/b19_visitcounter.txt`, registry `NAMED.md` §B19. THE NEXT FIRE LANDS THIS PR FIRST (AGENTS.md step 2: read diff + SESSION_NOTES section, gate green, `milestone.py merge` - track_mode counts rungs from MERGED history, so until merged next_rung stays B19). #267 (M300) + #268 (M301) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B18 MERGED.)
+# NEXT_PROMPT.md - footing (s258 close: M302 SUBMITTED (branch milestone/m302, PR open - NOT merged per kickoff) - B19's DECLARED-UNMODELED list is now PINNED by the ONE read-only /proc pass (`scripts/m302_livepins.py`): live y2150 m54b_clean ds:0x92a380 rand+1=9661 (&0xf=13), ds:0x69220c=61, ds:0x692210=11, ds:0x985ac4=0x1a0e (bit 0x2000 CLEAR - flag2000=False, B19's baseline bit CONFIRMED live); 128/128 slots of 0x989ce8+28*site readable (site 1 MAX 15 CNT 40, site 9 MAX 3 CNT 2; CNT>MAX at [1,63,65] - no landed cross-field law exists, printed not asserted; the table is NONZERO at an idle load -> carried or load-rebuilt, OPEN). THE PINNED REPLAY COLLAPSES B19's BRACKETS: of the 1099 undecided branchA rows 38 CERTAIN-accept (37 eax=2 branchA hits at live residue 13; 1 eax=1 branchB - FIRST non-structural eax=1 row, STILL no live witness) / 1061 CERTAIN-refuse / 0 undecided; rung1's 1222 unchanged; B19's 20 baseline (rand=1) accepts ALL flip. PASS M302 10/10 (A1-A10 table-then-assert; TracerPid 0 both sides; year/round unchanged - box untouched), `evidence/m302_livepins.txt`, registry `NAMED.md` §M302. THE NEXT FIRE LANDS THIS PR FIRST (AGENTS.md step 2 + the MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #269 (B19) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B19 + M54A-M301 MERGED.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -23,15 +23,15 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B18 MERGED, B19
-SUBMITTED (this fire)** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B19: `python3 -m sim.selftest --b19 <sav>` +
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B19 MERGED** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B19: `python3 -m sim.selftest --b19 <sav>` +
 `evidence/b19_visitcounter.txt:20`). Next build rung **B20**, UNAUTHORED - its fire writes it (B14/B16/B17/B18/B19
-did). Candidates from the landed frontiers: the FUN_005aff90 value body as a rung (B15/B17/B18 all DECLARED it), or
-the 0x51e02c 0x94ed28 region-read leg. Track_mode FIRST, every fire - and LAND the B19 PR before starting B20.
+did). Candidates from the landed frontiers: the FUN_005aff90 value body as a rung (B15/B17/B18 all DECLARED it;
+M302 pinned the slot MAX it feeds), or
+the 0x51e02c 0x94ed28 region-read leg. Track_mode FIRST, every fire - and LAND the M302 PR before starting B20.
 
 ## THE LEDGER
 
-Merged M54A-M301 + B0-B18 (through s256) + hygiene #254/#255/#263/#264/#265/#267/#268; UNMERGED M83/M84, M86, M101, M103, M109, **B19 (this fire, PR open - LAND IT FIRST)** and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M301 + B0-B19 (through s257) + hygiene #254/#255/#263/#264/#265/#267/#268/#269; UNMERGED M83/M84, M86, M101, M103, M109, **M302 (this fire, PR open - LAND IT FIRST)** and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -58,15 +58,17 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage
   explicit paths (the s253 sweep landed via #265; the s254 collision lessons:
   schedule "in 12m", collision-check + worktree FIRST).
-- **THE PICK (s258): LAND THE B19 PR, then ANALYSE from the shortlist**
-  (track_mode FIRST; collision check FIRST per ISOLATION). If B19 is already
-  merged by the time you start, track_mode may say next_rung=B20 BUILD - the
-  rung is UNAUTHORED, write it from the B19/B18 DECLARED frontiers.
-  ANSWERED: M227-M301 + B1-B19 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
+- **THE PICK (s259): LAND THE M302 PR, then track_mode decides**
+  (collision check FIRST per ISOLATION). If M302 is merged by your start,
+  track_mode says next_rung=B20 BUILD - the
+  rung is UNAUTHORED, write it from the B19/B18/M302 DECLARED frontiers.
+  ANSWERED: M227-M302 + B1-B19 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
   DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299)
-  AND the counter ITSELF as an executable (B19 - read §B19 BEFORE re-deriving the
-  ladder: every constant decodes from the windows embedded in m299_visitgate.txt;
-  the ONLY gap is the four live VALUES + table CONTENTS); 0x5832b0's callers
+  AND the counter ITSELF as an executable (B19) AND the four live VALUES + the
+  slot-table CONTENTS PINNED read-only (M302 - read §B19 + §M302 BEFORE
+  re-deriving the ladder: every constant decodes from the windows embedded in
+  m299_visitgate.txt; the live side is PINNED - do not re-dump the four scalars
+  without a reason); 0x5832b0's callers
   (M300 - see §M300 BEFORE re-censusing anything of it); ebx's
   "table 0x51de2c-0x51df1d" (M301 REFUTED - it is 243 B of CODE: the base_array
   0x95da10 walk (304-B rows, count ds:0x985af4) + its exit block. Gates NOTHING of
@@ -79,19 +81,20 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   caller; whose record the walk's exit block tests as BYTE[edi+0x7] (edi = [ebp-0x4],
   sole pre-range writer 0x51dd28) + what its tile-class/distance legs MEAN; the
   0x51e02c byte[site+8380*block+0x94ed28]
-  NAMED:371; **the ONE read-only /proc pass that grades B19 ABSOLUTELY: dump
-  ds:0x92a380 (rand+1) + strides ds:0x69220c/0x692210 + ds:0x985ac4 dword + the
-  0x989ce8 slot table (28 B x 128: MAX +0 AND counter +4) + the 0x94eca8 cell
-  bytes - every CERTAIN/POSSIBLE bracket collapses to a point, and the live
-  flag bit decides the 0-certain-accept finding**; the eax=1 leg has 0 witnesses
-  in the recorded rows (B19 G9 - a longer/better-paired window may supply one):
-  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL
-  current set (incl. B18 + B19 + M299 laws) rides EVERY kickoff + skill `instrument-laws.md`
-  + §CHAIN-PICKS.
+  NAMED:371 + **the 0x94eca8 CELL dump - the last never-dumped table half (the
+  M302 pass pinned the 0x989ce8 slot side only; `scripts/m302_livepins.py` is
+  the read-only template)**; is the slot table save-carried or load-rebuilt
+  (M302 OPEN: MAX/CNT NONZERO at an idle y2150 load; nonzero CNT sites
+  [1,6,9,13,16,63,65,70]); the eax=1 leg now has ONE model-decided row (M302
+  branchB) and STILL no live gdb witness (B19 G9 - a longer window may supply
+  one): `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL
+  current set (incl. B18/B19/M299/M302 laws) rides EVERY kickoff + skill
+  `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s257: s249 read-only /proc pass only; s250-s257 ZERO box - state identical)
-  (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
+- **BOX**: state UP, MEASURED s258 (s258 did ONE read-only /proc pass, year/round
+  unchanged; s245..s257 ZERO box) (m54b_clean at y2150 r50, TracerPid 0, yama=0;
+  pid via `pgrep -x terran.exe`, NEVER hardcoded) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
    `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the

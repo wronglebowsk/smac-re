@@ -773,3 +773,35 @@ BUILD_SPINE.md now carries the B18 rung.
   the module CLI owns its PASS line, the rung's PASS line belongs to
   sim.selftest (it adds G10).
 - Box: ZERO. NEXT_PROMPT rewritten for s258.
+
+## Session 258 (2026-11-15, BOX-READ read-only /proc) - M302: B19's declared-unmodeled live values pinned; the 1099 undecided branchA rows collapse to 38 accept / 1061 refuse
+- ACCEPTANCE `python3 scripts/m302_livepins.py` -> PASS M302 10/10,
+  evidence/m302_livepins.txt (table first, then A1..A10; verdict :170). READ-
+  ONLY on the box throughout: os.pread on /proc/501182/mem (pid from pgrep -x
+  terran.exe), no pwrite/gdb/poke/relaunch; TracerPid printed 0 at start AND
+  end; year 2150 + round 50 unchanged across the pass (A10); an unmapped read
+  reports UNKNOWN (self-tested via the 0x1000 sentinel, A2), never 0.
+- PINNED (y2150, m54b_clean): ds:0x92a380 (rand+1) = 9661 (0x25bd; & 0xf = 13),
+  ds:0x69220c = 61, ds:0x692210 = 11, ds:0x985ac4 = 0x1a0e so bit 0x2000 is
+  CLEAR - flag2000=False, B19's declared baseline bit-state CONFIRMED live.
+  Slot region 0x989ce8+28*site: 128/128 slots readable (3584 B, no UNKNOWNs);
+  the recorded sites: site 1 MAX 15 / counter 40, site 9 MAX 3 / counter 2;
+  nonzero MAX sites [1,3,4,5,6,7,9,10,13,14,15,16,65,66,69,70], nonzero CNT
+  [1,6,9,13,16,63,65,70]. The table is NONZERO at a freshly-loaded idle box ->
+  carried by the save or rebuilt at load (OPEN); CNT>MAX occurs at [1,63,65] -
+  no landed law relates the two fields (MAX is fed by the 4-bit nibble cache
+  or the UNMODELED FUN_005aff90 body), so counter<=MAX is PRINTED, never
+  asserted; the two-pass read never decreased any field (MAX store + ++ are
+  the only writers, B18 G8 + B19 - A5).
+- REPLAY (shipped sim.visitcounter rows/P/grid + the pinned Live): 2321 rows ->
+  CERTAIN-accept 38 / CERTAIN-refuse 2283 / still-undecided 0. The 1099
+  previously-undecided branchA rows: 38 CERTAIN-accept / 1061 CERTAIN-refuse /
+  0 undecided (A8), per-B18-site {1:(38,993), 9:(0,68)} == B18's anchor rows.
+  Legs: 37 branchA-hit (eax=2, live residue 13) + 1 branchB (eax=1 - the FIRST
+  non-structural eax=1 decision row; B19 had 0 witnesses) + 1062 branchB-refuse;
+  all 1222 rung1 rows still refuse (A6); eax in {0,1,2} (A7). B19's 20
+  baseline accepts (rand==1) ALL flip - the 38 live accepts are a different row set.
+- PITFALL: the `s` field of the m294 graded_rows tuple is the LOG SLOT key, NOT
+  B18's site id - per-site splits must go through sgt.site_of(rec); the first
+  run printed 25 "sites" (a mislabel caught only by pairing against B18's
+  {1,9} anchor).
