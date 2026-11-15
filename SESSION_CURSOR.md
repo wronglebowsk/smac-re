@@ -1,1 +1,1 @@
-M304 | python3 scripts/m304_chooser.py -> PASS M304 12/12 (evidence/m304_chooser.txt) | PR: not yet submitted | next: docs + gate + submit, do NOT merge
+B20 | python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV -> PASS B20 10/10 (evidence/b20_bytecounter.txt:39) | PR: submitting now by s261, do NOT merge | next: gate --base main GREEN then milestone.py submit --title "B20: the byte-twin visit counter made executable"

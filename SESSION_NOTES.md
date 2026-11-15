@@ -1,77 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-240-240.md` (1 sessions). Read it only when a question reaches back before session ## Session 241.
-
-## Session 241 (2026-11-10, BUILD, B14 10/10, no box) - the M291 hub SCAN + M292 esi-dispatch/WALK are ONE executable leg (sim/podscan.py); the rung was missing from the spine, so this build fire authored B14 first
-- track_mode printed BUILD/next_rung=B14 but the BUILD_SPINE.md ladder ended at
-  B13: the fire AUTHORED the B14 rung (from B13's DECLARED walk frontier +
-  M291/M292's settled laws), appended it to the spine, then executed it.
-- sim/podscan.py: RING_DX/DY 25-entry literals vs the recorded file-image dump
-  evidence/b14_ring_table.txt (scripts/b14_ring_dump.py reads .rdata
-  0x67850c dx / 0x678990 dy from the PE; the sim never loads the binary);
-  scan_esi = M291 strict site-value argmax (score rec byte2 high nibble;
-  eligibility cat-flag equality + byte3 owner-equality + rec+9 bit 0x20 clear
-  + unoccupied; ties keep the closer entry; self-argmax iff esi==0);
-  dispatch_leg: esi 0 -> found, or msg 0x2408 under msg_gate(global!=0 AND
-  owner==human) (s240); 1..8 continue; 9..24 walk (order 0x62 at the WRAPPED
-  ring tile). New recorded fact: table order, esi 21=(+4,0) 22=(-4,0)
-  23=(0,+4) 24=(0,-4); the ISS log tile= field is the target X ONLY (the bp
-  at 0x563e3b printfs eax) - target-Y is static-gated law, DECLARED.
-- ACCEPTANCE: python3 -m sim.selftest --b14 programs/saves/m54b_clean.SAV ->
-  PASS B14: 11/11 (evidence/b14_podscan.txt:23). The recorded file is from
-  the post-review invocation (invocation 3; 1-2 died on MY instrument -
-  a stray code block; KeyError u on FOUND/DESTROY rows - floors never
-  touched).
-- GREPTILE round 1 on #252: 2 P1s + 3 P2s, all resolved pre-merge. P1#1
-  CONFIRMED (scan_esi returned FIRST-better, the loop is a full argmax:
-  best [ebp-0x24]/[ebp-0x84], strict update 0x563c0f-0x563caa) - fixed
-  + new G2b (brute-forced argmax on a fixed sample; 200 sample tiles
-  discriminate first-better from argmax, so the gate would have caught
-  the bug). P1#2 CONFIRMED (the fit never exercised Y-out-of-range; the
-  loop head wraps X via 0x469010 and bounds-checks Y via 0x469060 - Y
-  NEVER wraps; scratch/m574/text.txt 0x5638af-0x5638dc) - fixed.
-  P2s: G5 pairing now CONSUMES its DISP row and pairs FOUND with the
-  IMMEDIATE HUBFOUND; G10 reports move to a unique tempdir; the split
-  NAMED cite joined. Gates 10 -> 11, PASS 11/11.
-- Parity numbers: m289 golden 7/7 self-argmax via the sim scan; rivals fail
-  the SAME fit (no-owner-gate 6/7 loses exactly fac1(27,29); B10 row-major
-  placeholder 0/7); m292 29 DISP rows partition 9 found / 9 continue / 11
-  walk / 0 msg with ISS/HUBFOUND/FOUND adjacency all paired; walk target-X
-  11/11 (table-swap rival 0/11); census ledger count-strict 19->27 (POST 27
-  per evidence/m292_pod_movement.txt:2); msg law case table + solo inertness
-  (ds:0x920434=0 AND every row own=0 -> structural).
-- Box: ZERO contact (build fire). Evidence +~11 KB (ring dump 700 B,
-  acceptance 2.4 KB); budget re-measured at close.
-- OPEN (unchanged): UNMODELED 0x94e5a8/0x94eca8 per-site gate tables +
-  FUN_004e3c00 no-go (now named in the rung text as DECLARED); name
-  ds:0x920434; re-arm the M284-M287 live census (guards fixed); 188-row
-  cursor caller. Next: ANALYSE (gate tables / 0x920434); next BUILD = B15.
-
-## Session 242 (2026-11-10, CONTEXT-HYGIENE fire, PASS - no research findings) - always-loaded 84,743 -> 56,169 B; evidence 28.8 -> 17.1 MB via HOT-WINDOW cite retention
-
-- ACCEPTANCE (`python3 scripts/evidence.py budget` at close): always-loaded 56,169 B vs the 60 k ritual ✓;
-  skill/SKILL.md 65,962 -> 40,625 B (warn 55 k); NEXT_PROMPT.md 15,190 -> 11,953 B (warn 12 k);
-  evidence/ 28.8 -> 17.1 MB (warn 20): the old prune rule found 1 victim against a 9 MB overshoot.
-- THE RULE (docs/EVIDENCE.md "Pruning rules", implemented in scripts/evidence.py): an IMAGE stays hot only
-  while the HOT WINDOW cites it - newest 8 `## Session` sections + NEXT_PROMPT/AGENTS/cursor - or it is
-  younger than --keep-days, or scripts/test_*.py/sim/ names it (TEST FIXTURE). pick-archive/NAMED/references
-  no longer hold images hot (one mention in the full notes history used to keep a screenshot hot forever).
-- THE NUMBERS: 58 images/11.8 MB -> 1 hot (164 kB) + 31 pruned to git-only 6.8 MB via `prune --apply`
-  (.prune_log.jsonl 190 -> 221 rows) + 26 fixtures `git mv`'d to `evidence/fixtures/` (4.9 MB, uncounted).
-- NOTHING DELETED WITHOUT A TRAIL: SKILL depth VERBATIM -> skill/references (new wine-pitfalls/netcode/
-  ui-assets/cvr-format.md; 8 existing refs appended); NEXT_PROMPT build+pick ledgers -> NAMED
-  §CHAIN-BUILDS/§CHAIN-PICKS; the s241 FULL trap text -> docs/pick-archive.md §s242-traps. Fixture path
-  rewrites landed in the 2 test scripts + 12 md files (`git mv` keeps `git log --follow`).
-- VERIFIED: `scripts/test_classify.py` PASS 17/17 and `scripts/test_hud_bar.py` PASS 26/26 on the moved
-  fixtures; 8 sim rungs re-run green (--b6 6/6 --b7 6/6 --b8 10/10 --b9 7/7 --b10 18/18 --b11 13/13
-  --b13 12/12 --b14 11/11; sim/ untouched, --b12 needs a trace arg); NAMED.md now 233,100 B (fail 250 k) -
-  a named-archive split is a future fire, not this one.
-- GREPTILE ROUND 1 (2 P1 + 1 P2, ALL FIXED pre-merge): scripts/check_classes.py still opened old
-  paths and SKIPPED missing frames silently -> resolves evidence/fixtures/ now and a missing frame
-  FAILS; long-dead m15_hud/m15_mainmenu/m15_autolist rows dropped; m15_stuck_screen.png restored from
-  git (4fd8ebe^) into fixtures; evidence.py treats check_classes.py as fixture code.
-  accept_ready.py + session_brief.py counted ALL of evidence/ against the 29 MB floor -> both share
-  `evidence.evidence_mb()` (fixtures uncounted). SKILL retired-structural-laws pointer -> code-atlas.md.
+Older sessions: `docs/sessions/sessions-241-242.md` (2 sessions). Read it only when a question reaches back before session ## Session 243.
 
 ## Session 243 (2026-11-10, BUILD B15, PASS 7/7, zero box contact) - gate tables 0x94e5a8/0x94eca8 NAMED; pod-scan price gate EXECUTABLE (sim/gatetables.py)
 
@@ -733,3 +662,12 @@ BUILD_SPINE.md now carries the B18 rung.
 - The 0x56c6de leg: a block HEAD with **8 preds = 7 unconditional `jmp 0x56c6de`** (0x55fc5b, 0x561d8d, 0x563e0d, 0x566419, 0x56678b, 0x56832b, 0x569952 - each skipping 3669..16060 insns of the arms below it) + fall-through 0x56c6d7 (after BYTE[unit+0x2b]=0x78). The leg reads esi=[ebp-0x10], edi=[ebp-0x84] (best-direction; ZERO writers dominate it), `jge 0x56c966` = act, else clear unit flag bit 0x10000 (0x93327c and 0xfffeffff) + order byte 0x933289=0 -> `jmp 0x56cafa`; back edges 0x56c75b/0x56c76c/0x56c7a6 re-enter via 0x56c6d4 - it is the hub arms' COMMON EXIT + unit cleanup, not a per-predicate continue.
 - CORRECTION to the M300 lead framing: NO hub site stores predicate eax to a frame slot (0/7 STORED-class; 6 truth-branch + 1 into-ebx sign->0x200 mask). In the hub frame [ebp-0x1c] is hot shared scratch (126 accesses / 79 writers / 43 nest-local, 0 dominating the leg) and [ebp-0x7c] is NEVER written inside the settle nest (25 accesses / 8 writers / 0 nest-local / 0 dominating) - at the leg it holds a STALE other-arm value. The M300 predicate-STORE slots are FOREIGN frames: FUN_004cf4c0 stores its [ebp-0x1c] at 0x4cf920 (21 B past the call) and FUN_00585720 stores its [ebp-0x7c] at 0x5858ff - each with EXACTLY ONE true reader (0x4cfef2, 0x589fe5, both `mov r32,[slot]`) - the M300 "readers of the stored predicate slots" lead is CLOSED.
 - Instrument laws (NEW, skill code-atlas): (1) the scratch/m574/text.txt cache TRUNCATES long encoding-byte columns at 20 chars - never compute insn lengths from the byte column; (2) a CFG split must END blocks at every jcc/jmp/ret, not only before branch targets - the first M304 census printed 0 back edges because of target-only splitting; (3) some jcc are jump-to-next VACUOUS artifacts (target == next insn => no skip-leg; e.g. 0x568559) - mark them before calling them guards.
+
+## Session 261 (2026-11-15, BUILD B20 10/10, zero box) - the BYTE-twin visit counter made EXECUTABLE (sim/bytecounter.py); the rung was UNAUTHORED, this fire wrote it (as B14/B16/B17/B18/B19)
+- `python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV` -> **PASS B20: 10/10** (G1-G10; two selftest runs byte-identical, module report sha 156aaa4cac5a916b, module CLI twice sha eea4a6406ffa272c; zero box/proc/gdb) -> `evidence/b20_bytecounter.txt` (verdict :39, parity :35, pinned census :32, B18 funnel match :34).
+- The M303 byte law is now EXECUTED: index = site + 8380*block + 0x94ed28, {MAX@+0,CNT@+128}, width 1 B, 128 entries/field, 8 blocks - every constant DECODED from the instruction windows embedded in evidence/m303_downstream.txt (fold 65->131->2095, *4 placement == init add edx,0x20bc, stride derived twice; init cmp ecx,0x80; (0x95f288-0x94eca8)/8380 = 8 rem 0; dword twin 0x989ce8 stride 0x1c slots 128). The byte `++` rides the SAME gated fall-through as B19's dword `++`: ZERO jumps inside [0x51e007,0x51e03e), je 0x51e007 rel32 decodes from its pinned hex to 0x51e11d (past the store), and je 0x51e040 tests the flags of `test ebx,ebx` 0x51e03c, not the byte.
+- PARITY (the rung's point): under the M302 pinned state (parsed from evidence, flag2000=False rand=9661 s20c=61 s210=11) the 2321 recorded rows give 38 accepts -> 38 dword increments over sites [1] AND 38 byte increments over (block,site) keys {(0,1):1,(3,1):17,(6,1):20}; per-site sum_blocks(byte CNT) == dword CNT on BOTH record views; the accepted-row set is identical row-for-row (fires_equal 2321/2321).
+- MEASURED facts this window: exactly ONE accepted visit is on block 0 (byte CNT lands, byte MAX never can - B18's cell skip stays 277 == the sentinel rows); byte values stay under 256 (no wrap: max byte MAX 7, max byte CNT 20); live-view (s249) replay accepts 7 vs save-view 38 -> byte-CNT tables diverge on 3 entries (COUNTED, declared - same record drift as B18/B19); byte MAX cells {(2,1):4,(3,1):7,(4,1):3,(5,1):2,(6,1):6} == B18's SiteGate funnel byte-for-byte AND vs B18's own recorded numbers parsed from b18_sitegate.txt (5 cells/5 blocks/277 skips).
+- 6 rivals all refuted on recorded numbers: ungated ++ (2321 vs 38), ++ on eax==2 only (1 - the eax=1 leg IS a graded row here), 28-law byte index (2/2 keys), CNT riding the MAX block-gate (1 - the accepted block-0 row exists), MAX ungated (7 vs 5 cells), pure-read (38 vs 0). Anchor-coherence gate G9: the parsed m302/b18 recorded tables sum-check AND the parsed live-state string == the model's own.
+- PITFALLS (new): (1) evidence-file instruction windows are NOT all objdump-verbatim: m303 uses 0x-prefixed addresses, NO colon after the address, and the S4 init window has NO hex-byte column - a parser copied from m299's shape silently matches ZERO instructions; assert the pinned-address COUNT, not just "parsed something". (2) a recorded per-site split column may cover a SUBPOPULATION: m302's {1:(38,993,0)} is the 1099 branchA rows ONLY - comparing it against per-site counts over all 2321 rows (2215 refuses) gives a bogus FAIL; read what population a recorded column covers before grading against it.
+- DECLARED UNMODELED (in the module docstring + spine block): live byte-table CONTENTS; live block upper bound (<8 implied, graded rows carry only -1 or 1..8); the per-call zero-rebuild CADENCE of FUN_0051dcb0 (window-level accumulation model, as B18/B19); the post-store dispatch/settle nest (M303 S7, M304's OPEN meaning); save-carry vs rebuild of the byte family; sibling fields of the 8380-B record. No retractions; M303's laws all re-used unchanged.

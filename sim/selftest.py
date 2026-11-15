@@ -1568,6 +1568,56 @@ def run_b19(sav_path, results):
     return 0
 
 
+def run_b20(sav_path, results):
+    """Rung B20: the BYTE-twin visit counter made executable (M303's byte ++
+    law on 0x94ed28+8380*block+site, the same gated fall-through as B19's
+    dword ++, the pinned live state from M302) composed in sim/bytecounter.py
+    and replayed over the recorded m294 decision rows through BOTH record
+    views, with the live byte-table CONTENTS, the block upper bound and the
+    settle-nest meaning DECLARED UNMODELED. No box, no /proc, no gdb."""
+    import hashlib as _hl
+    import subprocess as _sp
+    import tempfile as _tf
+    if not os.path.exists(sav_path):
+        return fail("B20: missing save %s" % sav_path)
+    from . import bytecounter
+    ok = bytecounter.acceptance(sav_path, results)
+    # G10: two independent module runs must emit identical report bytes
+    digs = []
+    for _ in range(2):
+        fd, out = _tf.mkstemp(suffix=".txt")
+        os.close(fd)
+        rc = _sp.call([sys.executable, "-m", "sim.bytecounter", "--sav",
+                       sav_path, "--out", out], cwd=REPO,
+                      stdout=_sp.DEVNULL)
+        with open(out, "rb") as f:
+            digs.append((rc, _hl.sha256(f.read()).hexdigest()))
+        os.unlink(out)
+    det = digs[0][0] == 0 and digs[0] == digs[1]
+    results.append(("G10_two_run_determinism", det))
+    print("%-27s %s  module CLI twice: (rc,sha256) %s %s%s"
+          % ("G10_two_run_determinism", "PASS" if det else "FAIL",
+             (digs[0][0], digs[0][1][:16]), (digs[1][0], digs[1][1][:16]),
+             "" if digs[0][1] == digs[1][1] else " MISMATCH"))
+    bad = [n for n, o in results if not o]
+    if bad:
+        return fail("B20: %d/%d gates failed: %s"
+                    % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B20: %d/%d gates - the BYTE-twin visit counter is EXECUTABLE: "
+          "the M303 byte law (index site+8380*block, entry 1 B, MAX/CNT "
+          "twins at +0/+128, 8 blocks) is replayed over the recorded rows "
+          "under the M302 pinned live state, the byte ++ rides the SAME gated "
+          "fall-through as B19's dword ++ (parity: per-site sum of byte CNT "
+          "== dword CNT, same accepted-visit set), the byte MAX keeps B18's "
+          "block-0 skip while the byte CNT does not, graded against numbers "
+          "PARSED from m302_livepins.txt and b18_sitegate.txt, with the live "
+          "byte CONTENTS, the block upper bound, the rebuild cadence and the "
+          "dispatch/settle-nest meaning DECLARED UNMODELED "
+          "(no box time, no /proc, no gdb)"
+          % (len(results), len(results)))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1607,6 +1657,10 @@ def main(argv=None):
                     help="rung B19: the slot [+4] visit counter executed "
                          "(gated inc law + FUN_005832b0 ladder) vs the M299/"
                          "M300/M301 recorded evidence and the m294 rows")
+    ap.add_argument("--b20", nargs="*", metavar="SAV",
+                    help="rung B20: the byte-twin visit counter executed "
+                         "(M303 byte law + M302 pinned state) vs the recorded "
+                         "m302/b18 numbers and the m294 rows")
     ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
                     help="rung B13: the pod-driven founding dispatch leg acceptance")
     ap.add_argument("--b14", nargs="+", metavar="SAV",
@@ -1659,6 +1713,9 @@ def main(argv=None):
     if args.b19 is not None:
         sav = args.b19[0] if args.b19 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b19(sav, results)
+    if args.b20 is not None:
+        sav = args.b20[0] if args.b20 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b20(sav, results)
     if args.b14:
         lg = args.b14[1] if len(args.b14) > 1 else None
         gd = args.b14[2] if len(args.b14) > 2 else None

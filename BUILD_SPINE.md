@@ -484,3 +484,56 @@ table itself (the B18 LEAD, now covering +0 AND +4); the 0x51e02c post-counter r
 runtime (replay over RECORDED rows, as B17/B18); which of the 17 REACHES callers actually run;
 and the save-vs-window record drift (both views replayed, 4008 field deltas COUNTED not
 smoothed). No box time, no /proc, no gdb, no game-binary load.
+
+**B20 - the BYTE-twin visit counter made executable (R2's "one gate, two table
+widths" slice; written by s261 from M303's byte-family census + M302's pinned state +
+B19's gate law - the rung was not yet in this file, so the build fire authored it, as
+B14/B16/B17/B18/B19 did).** `sim/bytecounter.py`: the M303 byte law executable. The
+post-counter read 0x51e02c is the LOAD HALF of an in-place BYTE `++` (lea 0x51e033 SAME
+SIB+disp tail, `inc dl` 0x51e03a, store 0x51e03e, ZERO branches in between, the `je
+0x51e040` AFTER the store tests `test ebx,ebx` flags not the byte) on the per-block BYTE
+twin 0x94ed28 = 0x94eca8+0x80 {MAX@+0, CNT@+128}, entry width 1 B, 128 entries/field,
+8 blocks x 8380 B (fold 65->131->2095 *4 and init `add edx,0x20bc` - the stride derived
+TWICE; every constant decoded from the instruction windows embedded in
+`evidence/m303_downstream.txt`, the module parses its own evidence file as instruction
+source, as B19 does for m299). The `++` rides the SAME gated fall-through as B19's dword
+`++` (past `je 0x51e007`), so per visit the byte table and the dword table increment on
+IDENTICAL rows; the asymmetry is on the MAX side: the byte MAX store (0x51dfe2-dff3)
+keeps B18's `test ebx,ebx` block-0 skip while the byte CNT does NOT. The live state is
+the PINNED one parsed from `evidence/m302_livepins.txt` (flag2000=False rand=9661
+s20c=61 s210=11), the rows are the recorded 2321 m294 decision rows (B17 loader + B16
+transposition + B18 site/block laws), and EVERY replay census is graded against numbers
+PARSED from the recorded evidence text (m302_livepins.txt + b18_sitegate.txt) - parsed,
+re-derived, asserted equal; the anchor tables' internal coherence is itself a gate.
+`python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV` must print PASS B20 10/10
+(evidence/b20_bytecounter.txt, table THEN gates): G1 the pinned windows parse (fold 7/7,
+rival-28 law 7/7, init 23/23, RMW block 10/10 insns; S0 corpus 11 = MAX 8 / CNT 3, all
+RECORDED); G2 every constant decoded from the BYTES (65/131/2095, scale 4, stride 8380
+== init step, CNT-MAX gap 0x80 == init +0x80, 128 entries width 1, 8 blocks rem 0, dword
+twin 0x989ce8 stride 28 slots 128, load/lea operand tails identical); G3 the byte++ is
+ONE straight line behind the B19 je (zero jumps in the interior, je 0x51e007 rel32
+DECODES from its hex to 0x51e11d past the store, the store-unconditional claim parsed
+from the recorded full-dump line); G4 the pinned replay reproduces M302's recorded
+census exactly (38 accept / 2283 refuse / 0 undecided, eax {0:2283, 1:1, 2:37}, kinds
+branchA 1099 -> rung1 1222, branchA-only per-site split {1:[38,993,0], 9:[0,68,0]});
+G5 the byte table is a legal byte table (all values <256, no wrap witness, MAX never on
+block 0); G6 the byte-MAX funnel == B18's SiteGate replay byte-for-byte AND B18's own
+recorded numbers (2 slots, 5 cells over 5 blocks, 277 skips == 277 sentinels); G7 THE
+POINT: one accepted-visit set feeds both widths - 38 accepts -> 38 dword increments over
+sites [1] AND 38 byte increments over [(0,1),(3,1),(6,1)], per-site
+sum_blocks(byte CNT) == dword CNT (both record views); G8 the six rivals each refuted on
+recorded numbers (ungated 2283 / eax==2-only 1 - the eax=1 leg is a REAL row here /
+28-law index 2/2 keys / CNT-rides-the-MAX-gate 1 - one accepted block-0 row exists /
+MAX-un-gated 7-vs-5 cells / pure-read 38); G9 the parsed recorded tables are internally
+coherent (sums, the parsed live state == the model's own state string); G10 two runs
+byte-identical + `python3 -m sim.bytecounter --sav <sav> --out <f>` exits 0. DECLARED
+UNMODELED: the live CONTENTS of the byte MAX/CNT tables (M302 pinned the dword twin
+only); the live upper bound of the block byte (fold+init imply <8, no static bound-check;
+graded rows carry only -1 or 1..8 - B18 G7); the per-call zero-rebuild CADENCE
+(FUN_0051dcb0 zeroes BOTH families at entry - the replay is the window-level accumulation
+model, as B18/B19; the function's callers/cadence stay OPEN); the post-store dispatch and
+the settle nest (1<<block gates, FUN_0056d480/0056d630, ds:0x985b10/0x985aec, the
+byte-field @0x950664 8-row walk - M303 S7/S9, M304's OPEN settle-nest MEANING - the byte
+++ never gates them); save-carry vs rebuild of the byte family; the sibling fields of the
+8380-B record; the save-vs-live record drift (BOTH views replayed, 3 diverging byte-CNT
+entries COUNTED not smoothed). No box time, no /proc, no gdb, no game-binary load.
