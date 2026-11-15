@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s258 close: M302 SUBMITTED (branch milestone/m302, PR open - NOT merged per kickoff) - B19's DECLARED-UNMODELED list is now PINNED by the ONE read-only /proc pass (`scripts/m302_livepins.py`): live y2150 m54b_clean ds:0x92a380 rand+1=9661 (&0xf=13), ds:0x69220c=61, ds:0x692210=11, ds:0x985ac4=0x1a0e (bit 0x2000 CLEAR - flag2000=False, B19's baseline bit CONFIRMED live); 128/128 slots of 0x989ce8+28*site readable (site 1 MAX 15 CNT 40, site 9 MAX 3 CNT 2; CNT>MAX at [1,63,65] - no landed cross-field law exists, printed not asserted; the table is NONZERO at an idle load -> carried or load-rebuilt, OPEN). THE PINNED REPLAY COLLAPSES B19's BRACKETS: of the 1099 undecided branchA rows 38 CERTAIN-accept (37 eax=2 branchA hits at live residue 13; 1 eax=1 branchB - FIRST non-structural eax=1 row, STILL no live witness) / 1061 CERTAIN-refuse / 0 undecided; rung1's 1222 unchanged; B19's 20 baseline (rand=1) accepts ALL flip. PASS M302 10/10 (A1-A10 table-then-assert; TracerPid 0 both sides; year/round unchanged - box untouched), `evidence/m302_livepins.txt`, registry `NAMED.md` §M302. THE NEXT FIRE LANDS THIS PR FIRST (AGENTS.md step 2 + the MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #269 (B19) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B19 + M54A-M301 MERGED.)
+# NEXT_PROMPT.md - footing (s258 close: M302 SUBMITTED (branch milestone/m302, PR open - NOT merged per kickoff) - B19's DECLARED-UNMODELED list is PINNED by the read-only /proc pass `scripts/m302_livepins.py` (every value + the 128-slot dump in `NAMED.md` §M302 / `evidence/m302_livepins.txt`): flag2000=False CONFIRMED live, rand+1=9661 (residue 13), strides 61/11; the pinned replay COLLAPSES B19's brackets - the 1099 undecided branchA rows -> 38 CERTAIN-accept (37 eax=2 + the FIRST non-structural eax=1, branchB) / 1061 CERTAIN-refuse / 0 undecided; rung1's 1222 unchanged. PASS M302 10/10 (A1-A10 table-then-assert; box untouched). THE NEXT FIRE LANDS THIS PR FIRST (AGENTS.md step 2 + the MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #269 (B19) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B19 + M54A-M301 MERGED.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -50,8 +50,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 ## THE PICK — index (detail: `docs/pick-archive.md`, `NAMED.md` §CHAIN-PICKS)
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING.md's terrain line; faction fields =
-  `docs/field-atlas-faction.md` (M143-M162; pair-flagword addr fixed by M297: block 0x94d430+8380*fac,
-  pair word at +0x18 + 4*(fac*2095+other) - the atlas 0x94d104 phrasing wrong - lead to fix).
+  `docs/field-atlas-faction.md` (M143-M162; the atlas 0x94d104 phrasing is WRONG - M297 fixed the
+  pair-flagword addressing, read §M297 before using the atlas line).
 - **ISOLATION (s254)**: successor ALWAYS "in 12m"; at fire start check `ps`
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
@@ -70,9 +70,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   m299_visitgate.txt; the live side is PINNED - do not re-dump the four scalars
   without a reason); 0x5832b0's callers
   (M300 - see §M300 BEFORE re-censusing anything of it); ebx's
-  "table 0x51de2c-0x51df1d" (M301 REFUTED - it is 243 B of CODE: the base_array
-  0x95da10 walk (304-B rows, count ds:0x985af4) + its exit block. Gates NOTHING of
-  the 0x51dffd decision; the predicate's eax cannot reach it. Read §M301 BEFORE
+  "table 0x51de2c-0x51df1d" (M301 REFUTED - it is CODE: a base_array walk +
+  its exit block; gates NOTHING of the 0x51dffd decision. Read §M301 BEFORE
   re-opening it; the 4 table-falsifiers are the s256 NEW LAW in SESSION_NOTES).
   NEVER bp mid-instruction (s213). OPEN shortlist + M300/M301/B19 leads (hub-visit gating;
   0x56c6de continue-leg INSIDE FUN_0055f650, the 7-site predicate caller; which loop
@@ -104,21 +103,14 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 ## TRAPS — rules (FULL s241 text verbatim: `docs/pick-archive.md` §s242-traps; detail §trim-s205/§s198; laws: skill
 `instrument-laws.md` + `wine-pitfalls.md`)
 
-1. A `fired=` list is the MODEL's prediction, not events; a no-event is evidence only once the bp is CONFIRMED to
-   exist there. Gates PREDICT from live memory, then confirm with counters; a counter at a site that is BOTH branch
-   target and loop-completion fallthrough is NOT a leg proof (0x5a7f9f); a gate may only read a field the harness SETS.
-2. Check the instrument before believing a no-event: `if *$ecx==X` DEREFERENCES and silently never fires; a bp at a
-   return-site `mov eax,[ebp-0xc]` prints the OLD eax (break at the NEXT insn, 0x5aa24a); `lea edi,[eax+1]` makes edi
-   the MODULUS (read the arg); ZERO CALLS can be the GAME — scan /proc for the vptr first.
-3. Register semantics live in the ENCODING: `[reg*4+disp]` vs `[reg+disp]` differ by scaling — a condition testing one
-   against the other never fires; a RMW through a COPIED register evades store-shape greps — a hw watchpoint on the
-   FIELD answers "who writes it".
-4-11. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s256, s256, to hold the 12 k cap: gdb
-   printf/script laws + the manual-call-frame and ONE-vs-TWO-`\n` rules; a >90 s census is
-   never foreground; dialogs swallow keys while the HUD bar reads THROUGH them; a PASS on a
-   non-discriminating shape is no PASS; `credit` is recomputed every round; a hw watchpoint
-   REPORTS only a VALUE CHANGE with pc past the store; a silent bp AT that reported pc is
-   EATEN - read memory one insn later.)
+1. A `fired=` list is the MODEL's prediction, not events; a no-event is evidence only once the bp is CONFIRMED
+   to exist there; a gate may only read a field the harness SETS. (FULL: pick-archive §s242-traps)
+2. Check the instrument before believing a no-event: deref-conditions silently never fire; a return-site bp
+   prints the OLD eax; ZERO CALLS can be the GAME - scan /proc for the vptr first. (FULL: §s242-traps)
+3. Register semantics live in the ENCODING (scaled vs byte addressing never compare equal; an RMW through a
+   COPIED register evades store-shape greps - a hw watchpoint on the FIELD answers "who writes it"). (FULL: §s242-traps)
+4-11. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s256: gdb printf/script + call-frame rules; a >90 s
+   census is never foreground; a PASS on a non-discriminating shape is no PASS; hw-watchpoint read-back rules.)
 12-13. Both gdb-detach laws (skill Wine core): a census can leave gdb ATTACHED — check `TracerPid`,
     kill the stale gdb BY PID before calling the box clean; the TURN DRIVER returns rc=0 WHILE AI UPKEEP PLAYS —
     detach only after cp == human faction returns or the last recomputes go UNLOGGED.
@@ -128,11 +120,9 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
     FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
 15. A list cursor read BEFORE the seek is the PREVIOUS cursor (pump seeks at 0x497717 — print at 0x49771c).
     `milestone.py start` on a dirty tree: stash, start, pop (skill Git workflow).
-16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245, s245, to hold the 12 k cap: objdump
-   prints UPPERCASE; gdb startup/exit chatter whitelist; ARM BEFORE ANY SCREEN; the SIGUSR1/
-   SIGPIPE `handle` + ~400-`continue` tails; a bp on a game-wide reader; byte-field BIT OPS vs
-   dword scans; a stride conflict is ONE multiply read twice; a zero-writer global is LOAD-TIME
-   data; a VALUE SAMPLER is NOT a STORE CENSUS; a census PARSER is not a log.)
+16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245: objdump prints UPPERCASE; ARM BEFORE ANY
+   SCREEN; the SIGUSR1/SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT
+   a STORE CENSUS.)
 ## CLOSING ORDER (exactly — the kickoff carries the same list)
 
 Terse past ~35 calls: acceptance numbers verbatim, no new prose, no "double check" reads; closing is PART of the
