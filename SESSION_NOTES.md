@@ -1,40 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-237-238.md` (2 sessions). Read it only when a question reaches back before session ## Session 239.
-
-## Session 239 (2026-11-10, ANALYSE, M292 5/5, BOX census) - pod MOVEMENT settled: the hub vector runs per-unit (arg1 = unit index) and dispatches on the m291 RING ENTRY INDEX esi - 0 = found (MSG 0x2408 if human-owned), 1-8 = continue w/o order, >=9 = issue order b (0x62) at the wrapped ring tile (the WALK); 9 FOUNDs / 26 turns, 2 walked pods
-- track_mode ANALYSE -> the s238 pick. scripts/m292_pod_movement.py (static
-  G1-G3 byte gates + live gdb census + parse + verdict). ACCEPTANCE:
-  python3 scripts/m292_pod_movement.py --turns 26 -> PASS M292: 5/5
-  (evidence/m292_pod_movement.txt + m292_gdb_raw.log; 2nd invocation - run 1
-  at 12 turns scored 4/5 with only 1 FOUND, a window-length artifact not a
-  refutation; floors never weakened).
-- STATIC (bytes arbiter): hub 0x55f65c mov edi,[ebp+8] = unit index; 13u*4
-  fold 0x55f6b8-0x55f6bf -> record 0x933278+52u (x@+0 y@+2 owner@+14); own
-  flag = owner vs ds:0x91b5b4 (live value 3 = HUMAN fac). Exactly 2 call
-  sites image-wide: 0x50dd84 (FUN_0050d140), 0x56cf12 (FUN_0056cdf0).
-  Dispatch 0x563d46 test esi,esi (esi = ring entry): 0, not-own ->
-  0x563d82-86 push u, call FUN_004cca50 (FOUND); 0, own -> push 0x2408,
-  0x563d75 call FUN_00583fa0 (MSG); 1-8 -> 0x563e06 dec esi, no order;
-  >=9 -> tables 0x678990/0x67850c[esi] + own tile, wrap FUN_00469010,
-  0x563e3b call FUN_005560f0(u, 0x62, tile) = the walk order.
-- LIVE (m54b_clean t0 continued, 26 turns 2150->2188): HUB=2308 (ret
-  0x56cf17 x2282 per-unit + 0x50dd89 x26 once-round); DISP=29, st==8 on
-  every row, ownflag==(ownrec==3) 29/29 (52u+14 owner arithmetic live);
-  legs partition exactly: 9x esi=0 -> HUBFOUND, 9x esi 1-8, 11x esi>=9 ->
-  ISS; FOUND=9 ALL ret=0x4ccbe2, cnt 18->27, every one paired
-  same-segment with its HUBFOUND (x,y); WALK u=66 (53,47)->(53,49), u=60
-  (27,51)->(1,43). FOUND facs {1,2,5,6,7}; golden tiles (20,48)(63,51)
-  (1,43) reproduced; (27,29) taken by fac7 here (golden: fac1) - timelines
-  diverged once run 1 founded (12,48) at t6.
-- Box: pid 4087359 unchanged, TracerPid 0 pre/post, yama restored, no stale
-  gdb. Evidence +92 KB (raw log 91,561 B), budget re-measured at close.
-- OPEN (unchanged): 5a0aa0 bailing 3x; M247; M70 x2; 188-row cursor caller.
-  NEW OPEN: who gates hub VISITS (FUN_0056cdf0/FUN_0050d140 entry tests)
-  and the 0x56c6de continue-leg target. Next: ANALYSE - UNMODELED
-  0x94e5a8/0x94eca8 per-site gate tables + FUN_004e3c00 no-go (static
-  census + fit vs recorded sites); MSG-leg (human pod at best tile) never
-  observed live. Next BUILD fire = B14.
+Older sessions: `docs/sessions/sessions-239-239.md` (1 sessions). Read it only when a question reaches back before session ## Session 240.
 
 ## Session 240 (2026-11-10, CORRECTION, M293) - the three verified Greptile P1s: "distant target -> msg 0x2408" (M290/B13) RETRACTED - msg leg = OWN-TILE + second gate [ebp-0xa4]; M284-M287 live SITE censuses INSTRUMENT-INVALID; sim/selftest run_save IndexError fixed. These were claimed facts, so they are retracted plainly, per AGENTS.md.
 - D1 (bytes; gate scripts/m290_hub_decision.py:160): 0x563d48 jne 0x563dfa
@@ -750,3 +716,44 @@ BUILD_SPINE.md now carries the B18 rung.
   B18's site id - per-site splits must go through sgt.site_of(rec); the first
   run printed 25 "sites" (a mislabel caught only by pairing against B18's
   {1,9} anchor).
+
+## Session 259 (2026-11-15, ANALYSE, zero box) - M303: the 0x51e02c "post-counter read" is the LOAD HALF of a byte CNT++ on the per-block twin of the slot table
+- ACCEPTANCE `python3 scripts/m303_downstream.py` -> PASS M303 10/10,
+  evidence/m303_downstream.txt (S0-S9 tables, then A1..A10; two runs byte-identical).
+- MODE: track_mode printed ANALYSE (analyse_since_build=1, next_rung B20) although
+  the s258 NEXT_PROMPT pick claimed a merge flips the next fire to BUILD -
+  track_mode is authoritative (the kickoff itself said so); B20 stays queued.
+- THE ANSWER: 0x51e02c is not a read-for-a-test - it is load++store
+  (0x51e02c mov dl / 0x51e033 lea eax,[SAME SIB+disp] / 0x51e03a inc dl /
+  0x51e03e mov [eax],dl), entered on the SAME `je 0x51e007` fall-through as the
+  dword CNT++ (M299), inside FUN_0051dcb0 (the per-map-tile pass: outer loop
+  advances tile records by 0x2c at 0x51e128). Byte addr = site + 8380*block +
+  0x94ed28 - shadow-fold 65=64+1 -> 131=1+2*65 -> 2095=131*16-1 -> *4; the two
+  6-insn folds (0x51dfd3/0x51e013) are BYTE-IDENTICAL (rematerialized across the
+  0x51dffd call). The table: 0x94ed28 = 0x94eca8+0x80, the per-block visit-CNT
+  byte array, twin of the MAX byte array at 0x94eca8: 8 blocks x 8380-B records
+  (init 0x51dcb8-0x51dd03: byte fields [edx+site] and [edx+site+0x80] zeroed,
+  edx steps 0x20bc to 0x95f288 - the SAME 8380 the fold computes, derived twice),
+  128 entries x 1 B - the BYTE twin keyed by (block,site) of the DWORD slot
+  table 0x989ce8 keyed by site. B18-28-B REFUTED for THIS expression:
+  (site*8-site)<<2=28*site is the esi fold 0x51dfb1-ba three insns earlier
+  (SIB 8d 34 c5 vs 8d 04 53), feeding the DWORD twin; multipliers 28 and 8380
+  coexist in one window.
+- CONSUMER CENSUS: 11 literal mentions = the whole corpus (A1); MAX field: 6
+  external readers (FUN_0050d140/FUN_00556690/FUN_0055f650x4) + the in-window
+  max-store 0x51dff3 (gated ebx!=0 by je 0x51dff5); CNT field: ONE external
+  reader FUN_004f6030 0x4f946d -> test al,al/jne (a visited? gate). ALL
+  external consumers terminate in cmp/test (A7); NO family byte feeds the DWORD
+  0x989ce8 (both MAX stores take the walk candidate edi; loaded bytes appear
+  only in the cmp); NO store to family/twin outside FUN_0051dcb0 (A8: 6 init
+  zeros + 5 update sites incl. the sibling `inc WORD[0x94e8a8]` @0x51df3d -
+  same 8380 block phase, width 2, scale *2: proof the *4 at 0x51e02c is
+  multiplier placement, not entry width). The post-store branch 0x51e040 `je`
+  tests `test ebx,ebx` flags, never the byte; dl dead after 0x51e03e.
+  name_global.py 0x94ed28 --disp says "0 writes" - correct about LITERAL writes
+  only; the 0x51e03e store is register-after-lea pointer form (A10) - the
+  two-instrument disagreement is the finding's teeth.
+- PITFALL: byte-reg->dword-reg naming must be a lookup table, NOT `reg[0]+"ax"`
+  (that yields "aax"): three S6 rows printed "no consumer" until fixed - the
+  A7 assert (every reader finds a consumer) is what caught it, i.e. the
+  table-then-assert shape earns its keep.
