@@ -1,0 +1,521 @@
+M300 (s255) STATIC - census of the callers of FUN_005832b0. Zero box, zero gdb.
+dump scratch/m574/text.txt: 781429 instruction records; index.csv: 10284 functions.
+
+== S1: `call 0x5832b0` in the dump: 24; Ghidra index.csv n_callers: 24; mentions NOT a direct call: 0 ==
+
+== S2/S3: per-site table (containment via index.csv; class = the gate the caller supplies;
+    reach = can the CONTAINING function's path reach FUN_0051dcb0, owner of the [+4] write) ==
+call@VA     function          class                        reach               eax consumption
+0x46df16    FUN_0046a610      truth-branch                 CANNOT-REACH        test @0x46df1e; je     0x46df59
+0x4c4901    FUN_004c40e0      truth-branch                 REACHES(depth-4)    test @0x4c4909; jne    0x4c494c
+0x4cf907    FUN_004cf4c0      stored-to-memory             REACHES(depth-2)    mov    DWORD PTR [ebp-0x1c],eax @0x4cf920
+0x4e6461    FUN_004e63b0      truth-branch                 CANNOT-REACH        test @0x4e646f; je     0x4e64cf
+0x50e216    FUN_0050d140      truth-branch+pushed-as-arg   REACHES(depth-4)    test @0x50e21e; jne    0x50e279; push   eax @0x50e222
+0x50e936    FUN_0050d140      truth-branch                 REACHES(depth-4)    test @0x50e93e; je     0x50e98d
+0x51d0ae    FUN_0051c750      truth-branch                 REACHES(depth-8)    test @0x51d0b6; jne    0x51d119
+0x51dffd    FUN_0051dcb0      truth-branch|THE-COUNTER-GATE IN-WRITER           test @0x51e005; je     0x51e11d
+0x56429c    FUN_0055f650      truth-branch                 REACHES(depth-3)    test @0x5642a4; je     0x5642f7
+0x56444b    FUN_0055f650      truth-branch                 REACHES(depth-3)    test @0x564453; je     0x5644a8
+0x5645d9    FUN_0055f650      truth-branch                 REACHES(depth-3)    test @0x5645e1; je     0x5645ec
+0x5651e3    FUN_0055f650      truth-branch                 REACHES(depth-3)    test @0x5651eb; je     0x56526c
+0x568567    FUN_0055f650      into-ebx                     REACHES(depth-3)    mov    ebx,eax @0x56856c
+0x56b77c    FUN_0055f650      truth-branch                 REACHES(depth-3)    test @0x56b784; je     0x56b7b4
+0x56c5f4    FUN_0055f650      truth-branch                 REACHES(depth-3)    test @0x56c5fc; je     0x56c60d
+0x5858fa    FUN_00585720      stored-to-memory             REACHES(depth-2)    mov    DWORD PTR [ebp-0x7c],eax @0x5858ff
+0x5862aa    FUN_00585720      truth-branch                 REACHES(depth-2)    test @0x5862b2; jne    0x586070
+0x58838a    FUN_00585720      truth-branch                 REACHES(depth-2)    test @0x588392; je     0x5883c3
+0x58b7ba    FUN_0058b1b0      truth-branch                 CANNOT-REACH        test @0x58b7c2; jne    0x58c02d
+0x58b99f    FUN_0058b1b0      truth-branch                 CANNOT-REACH        test @0x58b9a7; je     0x58b9b8
+0x58c32b    FUN_0058b1b0      truth-branch                 CANNOT-REACH        test @0x58c333; je     0x58c340
+0x59ddf4    FUN_0059ce10      truth-branch                 REACHES(direct-call) test @0x59ddff; je     0x59de2b
+0x59e7f9    FUN_0059e2c0      truth-branch                 REACHES(depth-8)    test @0x59e801; je     0x59e830
+0x5b02c3    FUN_005aff90      truth-branch                 CANNOT-REACH        test @0x5b02cb; je     0x5b02d2
+
+== S3w: raw post-call windows (call + following insns to jmp/ret, cap 16) ==
+0x46df16 in FUN_0046a610:
+   0x46df16	call   0x5832b0
+   0x46df1b	add    esp,0x8
+   0x46df1e	test   eax,eax
+   0x46df20	je     0x46df59
+   0x46df22	mov    ecx,DWORD PTR [ebp+0x2c]
+   0x46df25	push   ecx
+   0x46df26	mov    edx,DWORD PTR [ebp+0x28]
+   0x46df29	push   edx
+   0x46df2a	mov    eax,DWORD PTR [ebp+0x8]
+   0x46df2d	push   eax
+   0x46df2e	mov    eax,DWORD PTR [ebp+0x20]
+   0x46df31	imul   eax,eax,0x7
+   0x46df34	mov    ecx,DWORD PTR [ebp+0x24]
+   0x46df37	imul   ecx,ecx,0x5
+   0x46df3a	add    eax,ecx
+   0x46df3c	cdq
+   0x46df3d	mov    ecx,0x3
+0x4c4901 in FUN_004c40e0:
+   0x4c4901	call   0x5832b0
+   0x4c4906	add    esp,0x8
+   0x4c4909	test   eax,eax
+   0x4c490b	jne    0x4c494c
+   0x4c490d	push   0x0
+   0x4c490f	mov    eax,DWORD PTR [ebp-0x14]
+   0x4c4912	push   eax
+   0x4c4913	mov    ecx,DWORD PTR [ebp-0x10]
+   0x4c4916	push   ecx
+   0x4c4917	call   0x5831a0
+   0x4c491c	add    esp,0xc
+   0x4c491f	test   eax,eax
+   0x4c4921	jne    0x4c494c
+   0x4c4923	mov    edx,DWORD PTR [ebp-0x14]
+   0x4c4926	push   edx
+   0x4c4927	mov    eax,DWORD PTR [ebp-0x10]
+   0x4c492a	push   eax
+0x4cf907 in FUN_004cf4c0:
+   0x4cf907	call   0x5832b0
+   0x4cf90c	mov    edx,DWORD PTR ds:0x91b5b4
+   0x4cf912	mov    ecx,DWORD PTR [ebp+0x14]
+   0x4cf915	mov    ebx,DWORD PTR ds:0x92ae14
+   0x4cf91b	add    esp,0x8
+   0x4cf91e	cmp    ecx,edx
+   0x4cf920	mov    DWORD PTR [ebp-0x1c],eax
+   0x4cf923	je     0x4cf9bc
+   0x4cf929	mov    eax,ds:0x692184
+   0x4cf92e	mov    edi,DWORD PTR [ebp-0x4]
+   0x4cf931	imul   eax,esi
+   0x4cf934	add    eax,edi
+   0x4cf936	lea    esi,[eax+eax*4]
+   0x4cf939	lea    eax,[eax+esi*2]
+   0x4cf93c	test   BYTE PTR [ebx+eax*4+0x8],0x3
+   0x4cf941	lea    eax,[ebx+eax*4]
+   0x4cf944	je     0x4cf951
+0x4e6461 in FUN_004e63b0:
+   0x4e6461	call   0x5832b0
+   0x4e6466	mov    edx,DWORD PTR ds:0x692184
+   0x4e646c	add    esp,0x8
+   0x4e646f	test   eax,eax
+   0x4e6471	je     0x4e64cf
+   0x4e6473	mov    eax,edx
+   0x4e6475	mov    ecx,edi
+   0x4e6477	imul   eax,ebx
+   0x4e647a	sar    ecx,1
+   0x4e647c	mov    esi,DWORD PTR ds:0x92ae14
+   0x4e6482	add    eax,ecx
+   0x4e6484	lea    ecx,[eax+eax*4]
+   0x4e6487	lea    eax,[eax+ecx*2]
+   0x4e648a	xor    ecx,ecx
+   0x4e648c	mov    cl,BYTE PTR [esi+eax*4]
+   0x4e648f	and    ecx,0xffffffe0
+   0x4e6492	cmp    ecx,0x60
+0x50e216 in FUN_0050d140:
+   0x50e216	call   0x5832b0
+   0x50e21b	add    esp,0x8
+   0x50e21e	test   eax,eax
+   0x50e220	jne    0x50e279
+   0x50e222	push   eax
+   0x50e223	push   edi
+   0x50e224	push   esi
+   0x50e225	call   0x5831a0
+   0x50e22a	add    esp,0xc
+   0x50e22d	dec    eax
+   0x50e22e	je     0x50e264
+   0x50e230	dec    eax
+   0x50e231	je     0x50e24d
+   0x50e233	dec    eax
+   0x50e234	jne    0x50e279
+   0x50e236	push   0x80000
+   0x50e23b	call   0x4c2be0
+0x50e936 in FUN_0050d140:
+   0x50e936	call   0x5832b0
+   0x50e93b	add    esp,0x8
+   0x50e93e	test   eax,eax
+   0x50e940	je     0x50e98d
+   0x50e942	mov    eax,ds:0x692184
+   0x50e947	mov    ecx,esi
+   0x50e949	imul   eax,edi
+   0x50e94c	sar    ecx,1
+   0x50e94e	add    eax,ecx
+   0x50e950	xor    ecx,ecx
+   0x50e952	mov    ebx,DWORD PTR [ebp-0x18]
+   0x50e955	lea    edx,[eax+eax*4]
+   0x50e958	lea    eax,[eax+edx*2]
+   0x50e95b	mov    edx,DWORD PTR ds:0x92ae14
+   0x50e961	mov    cl,BYTE PTR [edx+eax*4]
+   0x50e964	xor    eax,eax
+   0x50e966	and    ecx,0xffffffe0
+0x51d0ae in FUN_0051c750:
+   0x51d0ae	call   0x5832b0
+   0x51d0b3	add    esp,0x8
+   0x51d0b6	test   eax,eax
+   0x51d0b8	jne    0x51d119
+   0x51d0ba	mov    eax,DWORD PTR [ebp-0xc]
+   0x51d0bd	push   eax
+   0x51d0be	push   ebx
+   0x51d0bf	push   0x0
+   0x51d0c1	push   0x8
+   0x51d0c3	call   0x5ab650
+   0x51d0c8	add    esp,0x10
+   0x51d0cb	test   eax,eax
+   0x51d0cd	jl     0x51d119
+   0x51d0cf	lea    ecx,[eax+eax*2]
+   0x51d0d2	xor    edx,edx
+   0x51d0d4	lea    eax,[eax+ecx*4]
+   0x51d0d7	mov    ecx,DWORD PTR ds:0x91b5b4
+0x51dffd in FUN_0051dcb0:
+   0x51dffd	call   0x5832b0
+   0x51e002	add    esp,0x8
+   0x51e005	test   eax,eax
+   0x51e007	je     0x51e11d
+   0x51e00d	mov    ecx,DWORD PTR [esi+0x989cec]
+   0x51e013	mov    edx,ebx
+   0x51e015	shl    edx,0x6
+   0x51e018	add    edx,ebx
+   0x51e01a	inc    ecx
+   0x51e01b	mov    DWORD PTR [esi+0x989cec],ecx
+   0x51e021	mov    ecx,DWORD PTR [ebp-0xc]
+   0x51e024	lea    eax,[ebx+edx*2]
+   0x51e027	shl    eax,0x4
+   0x51e02a	sub    eax,ebx
+   0x51e02c	mov    dl,BYTE PTR [ecx+eax*4+0x94ed28]
+   0x51e033	lea    eax,[ecx+eax*4+0x94ed28]
+   0x51e03a	inc    dl
+0x56429c in FUN_0055f650:
+   0x56429c	call   0x5832b0
+   0x5642a1	add    esp,0x8
+   0x5642a4	test   eax,eax
+   0x5642a6	je     0x5642f7
+   0x5642a8	mov    eax,DWORD PTR [ebp-0x58]
+   0x5642ab	inc    eax
+   0x5642ac	mov    DWORD PTR [ebp-0x58],eax
+   0x5642af	jmp    0x5642fa
+0x56444b in FUN_0055f650:
+   0x56444b	call   0x5832b0
+   0x564450	add    esp,0x8
+   0x564453	test   eax,eax
+   0x564455	je     0x5644a8
+   0x564457	mov    edx,DWORD PTR [ebp-0x8]
+   0x56445a	mov    eax,DWORD PTR [ebp-0x4]
+   0x56445d	push   edx
+   0x56445e	push   eax
+   0x56445f	call   0x4e3620
+   0x564464	add    esp,0x8
+   0x564467	test   eax,eax
+   0x564469	jl     0x564480
+   0x56446b	lea    ecx,[eax+eax*8]
+   0x56446e	lea    edx,[eax+ecx*2]
+   0x564471	xor    eax,eax
+   0x564473	shl    edx,0x4
+   0x564476	mov    al,BYTE PTR [edx+0x95da14]
+0x5645d9 in FUN_0055f650:
+   0x5645d9	call   0x5832b0
+   0x5645de	add    esp,0x8
+   0x5645e1	test   eax,eax
+   0x5645e3	je     0x5645ec
+   0x5645e5	mov    eax,DWORD PTR [ebp-0x1c]
+   0x5645e8	inc    eax
+   0x5645e9	mov    DWORD PTR [ebp-0x1c],eax
+   0x5645ec	add    ebx,0x4
+   0x5645ef	cmp    ebx,0x54
+   0x5645f2	jl     0x56452e
+   0x5645f8	mov    eax,DWORD PTR [ebp-0x1c]
+   0x5645fb	cmp    eax,0x21
+   0x5645fe	jl     0x56462e
+   0x564600	cmp    eax,0x28
+   0x564603	jl     0x56460c
+   0x564605	mov    eax,0x3
+   0x56460a	jmp    0x564617
+0x5651e3 in FUN_0055f650:
+   0x5651e3	call   0x5832b0
+   0x5651e8	add    esp,0x8
+   0x5651eb	test   eax,eax
+   0x5651ed	je     0x56526c
+   0x5651ef	mov    edx,DWORD PTR [ebp-0xc]
+   0x5651f2	mov    eax,DWORD PTR [ebp-0x8]
+   0x5651f5	mov    ecx,DWORD PTR [ebp-0x4]
+   0x5651f8	push   edx
+   0x5651f9	push   eax
+   0x5651fa	push   ecx
+   0x5651fb	call   0x46e8e0
+   0x565200	add    esp,0xc
+   0x565203	test   eax,eax
+   0x565205	jne    0x56521c
+   0x565207	cmp    DWORD PTR ds:0x985aec,0x3
+   0x56520e	jle    0x56526c
+   0x565210	mov    dl,BYTE PTR [ebp-0x64]
+0x568567 in FUN_0055f650:
+   0x568567	call   0x5832b0
+   0x56856c	mov    ebx,eax
+   0x56856e	add    esp,0x8
+   0x568571	neg    ebx
+   0x568573	sbb    ebx,ebx
+   0x568575	and    ebx,0x200
+   0x56857b	mov    DWORD PTR [ebp-0x4c],0x0
+   0x568582	mov    edx,DWORD PTR [ebp-0x2c]
+   0x568585	mov    ecx,DWORD PTR [ebp-0x4]
+   0x568588	add    ecx,DWORD PTR [edx*4+0x67850c]
+   0x56858f	push   ecx
+   0x568590	call   0x469010
+   0x568595	mov    edi,DWORD PTR [ebp-0x8]
+   0x568598	mov    esi,eax
+   0x56859a	mov    eax,DWORD PTR [ebp-0x2c]
+   0x56859d	add    edi,DWORD PTR [eax*4+0x678990]
+   0x5685a4	push   edi
+0x56b77c in FUN_0055f650:
+   0x56b77c	call   0x5832b0
+   0x56b781	add    esp,0x8
+   0x56b784	test   eax,eax
+   0x56b786	je     0x56b7b4
+   0x56b788	cmp    DWORD PTR [ebp-0x44],0x7
+   0x56b78c	jne    0x56b7ae
+   0x56b78e	mov    edx,DWORD PTR [ebp+0x8]
+   0x56b791	push   0xffffffff
+   0x56b793	push   0xffffffff
+   0x56b795	push   0xffffffff
+   0x56b797	push   0x1
+   0x56b799	push   edx
+   0x56b79a	call   0x5a6330
+   0x56b79f	add    esp,0x14
+   0x56b7a2	cmp    eax,0x1
+   0x56b7a5	jg     0x56c696
+   0x56b7ab	mov    esi,DWORD PTR [ebp-0x1c]
+0x56c5f4 in FUN_0055f650:
+   0x56c5f4	call   0x5832b0
+   0x56c5f9	add    esp,0x8
+   0x56c5fc	test   eax,eax
+   0x56c5fe	je     0x56c60d
+   0x56c600	mov    ecx,DWORD PTR [ebp-0xb0]
+   0x56c606	lea    ebx,[ebx+ecx*2+0x2]
+   0x56c60a	mov    DWORD PTR [ebp-0x1c],ebx
+   0x56c60d	cmp    DWORD PTR [ebp-0x44],0x8
+   0x56c611	jne    0x56c654
+   0x56c613	mov    edx,DWORD PTR [ebp-0xc]
+   0x56c616	push   0x0
+   0x56c618	push   0x0
+   0x56c61a	push   esi
+   0x56c61b	push   edi
+   0x56c61c	push   edx
+   0x56c61d	call   0x4e3b50
+   0x56c622	add    esp,0x14
+0x5858fa in FUN_00585720:
+   0x5858fa	call   0x5832b0
+   0x5858ff	mov    DWORD PTR [ebp-0x7c],eax
+   0x585902	mov    edi,DWORD PTR [ebp+0x8]
+   0x585905	mov    eax,0x1
+   0x58590a	mov    ecx,ebx
+   0x58590c	add    esp,0x8
+   0x58590f	shl    eax,cl
+   0x585911	mov    DWORD PTR [ebp-0x30],eax
+   0x585914	lea    edx,[edi+edi*2]
+   0x585917	mov    DWORD PTR [ebp-0x34],0x0
+   0x58591e	lea    edi,[edi+edx*4]
+   0x585921	shl    edi,0x2
+   0x585924	mov    DWORD PTR [ebp-0x18],edi
+   0x585927	mov    eax,DWORD PTR [edi+0x93327c]
+   0x58592d	test   ah,0x42
+   0x585930	je     0x585939
+   0x585932	mov    DWORD PTR [ebp-0x34],0x1
+0x5862aa in FUN_00585720:
+   0x5862aa	call   0x5832b0
+   0x5862af	add    esp,0x8
+   0x5862b2	test   eax,eax
+   0x5862b4	jne    0x586070
+   0x5862ba	test   DWORD PTR ds:0x985ac4,0x200000
+   0x5862c4	jne    0x586070
+   0x5862ca	push   edi
+   0x5862cb	push   esi
+   0x5862cc	call   0x4e3620
+   0x5862d1	mov    eax,ds:0x8f0d34
+   0x5862d6	add    esp,0x8
+   0x5862d9	cmp    eax,0x1
+   0x5862dc	jle    0x586070
+   0x5862e2	test   eax,eax
+   0x5862e4	jl     0x5862f2
+   0x5862e6	cmp    eax,0x20
+   0x5862e9	jle    0x5862f4
+0x58838a in FUN_00585720:
+   0x58838a	call   0x5832b0
+   0x58838f	add    esp,0x8
+   0x588392	test   eax,eax
+   0x588394	je     0x5883c3
+   0x588396	mov    edx,DWORD PTR ds:0x693b68
+   0x58839c	push   0x0
+   0x58839e	push   0x6925cc
+   0x5883a3	push   0x0
+   0x5883a5	push   0x6925dc
+   0x5883aa	push   edx
+   0x5883ab	call   0x48ee00
+   0x5883b0	add    esp,0x14
+   0x5883b3	test   eax,eax
+   0x5883b5	je     0x5883c3
+   0x5883b7	mov    BYTE PTR [esi+0x933289],0x0
+   0x5883be	jmp    0x58a748
+0x58b7ba in FUN_0058b1b0:
+   0x58b7ba	call   0x5832b0
+   0x58b7bf	add    esp,0x8
+   0x58b7c2	test   eax,eax
+   0x58b7c4	jne    0x58c02d
+   0x58b7ca	mov    eax,DWORD PTR [ebp+0x1c]
+   0x58b7cd	test   eax,eax
+   0x58b7cf	jl     0x58b883
+   0x58b7d5	mov    ebx,DWORD PTR ds:0x92a394
+   0x58b7db	and    ebx,0x1
+   0x58b7de	xor    esi,esi
+   0x58b7e0	mov    eax,DWORD PTR [esi+0x6784a0]
+   0x58b7e6	mov    edx,DWORD PTR [ebp-0x14]
+   0x58b7e9	add    eax,edx
+   0x58b7eb	test   ebx,ebx
+   0x58b7ed	jne    0x58b80a
+   0x58b7ef	test   eax,eax
+   0x58b7f1	jge    0x58b7fe
+0x58b99f in FUN_0058b1b0:
+   0x58b99f	call   0x5832b0
+   0x58b9a4	add    esp,0x8
+   0x58b9a7	test   eax,eax
+   0x58b9a9	je     0x58b9b8
+   0x58b9ab	mov    eax,ds:0x92a278
+   0x58b9b0	mov    ecx,DWORD PTR [ebp-0x8]
+   0x58b9b3	add    ecx,eax
+   0x58b9b5	mov    DWORD PTR [ebp-0x8],ecx
+   0x58b9b8	test   bl,0x10
+   0x58b9bb	je     0x58b9ff
+   0x58b9bd	mov    eax,edi
+   0x58b9bf	mov    edx,DWORD PTR [ebp-0x28]
+   0x58b9c2	imul   eax,DWORD PTR ds:0x692184
+   0x58b9c9	add    eax,edx
+   0x58b9cb	lea    ecx,[eax+eax*4]
+   0x58b9ce	lea    edx,[eax+ecx*2]
+   0x58b9d1	mov    eax,ds:0x92ae14
+0x58c32b in FUN_0058b1b0:
+   0x58c32b	call   0x5832b0
+   0x58c330	add    esp,0x8
+   0x58c333	test   eax,eax
+   0x58c335	je     0x58c340
+   0x58c337	add    esi,DWORD PTR ds:0x92a278
+   0x58c33d	mov    DWORD PTR [ebp-0x4],esi
+   0x58c340	mov    eax,DWORD PTR [ebp+0x1c]
+   0x58c343	test   eax,eax
+   0x58c345	jl     0x58c814
+   0x58c34b	mov    eax,DWORD PTR [ebp+0x20]
+   0x58c34e	test   ah,0x2
+   0x58c351	jne    0x58c814
+   0x58c357	mov    eax,ds:0x692184
+   0x58c35c	mov    ecx,DWORD PTR ds:0x92ae14
+   0x58c362	imul   eax,DWORD PTR [ebp-0xc]
+   0x58c366	add    eax,edi
+   0x58c368	lea    edx,[eax+eax*4]
+0x59ddf4 in FUN_0059ce10:
+   0x59ddf4	call   0x5832b0
+   0x59ddf9	mov    ebx,DWORD PTR [ebp-0x44]
+   0x59ddfc	add    esp,0x8
+   0x59ddff	test   eax,eax
+   0x59de01	je     0x59de2b
+   0x59de03	cmp    ebx,0x54
+   0x59de06	jge    0x59de2b
+   0x59de08	mov    edx,DWORD PTR ds:0x692184
+   0x59de0e	mov    eax,ds:0x92ae14
+   0x59de13	imul   edx,esi
+   0x59de16	add    edx,edi
+   0x59de18	imul   edx,edx,0x2c
+   0x59de1b	mov    ecx,DWORD PTR [edx+eax*1+0x8]
+   0x59de1f	lea    eax,[edx+eax*1+0x8]
+   0x59de23	or     ecx,0x100400
+   0x59de29	mov    DWORD PTR [eax],ecx
+   0x59de2b	mov    edx,DWORD PTR ds:0x92a378
+0x59e7f9 in FUN_0059e2c0:
+   0x59e7f9	call   0x5832b0
+   0x59e7fe	add    esp,0x8
+   0x59e801	test   eax,eax
+   0x59e803	je     0x59e830
+   0x59e805	mov    eax,ds:0x692184
+   0x59e80a	mov    ecx,esi
+   0x59e80c	imul   eax,edi
+   0x59e80f	sar    ecx,1
+   0x59e811	add    eax,ecx
+   0x59e813	mov    ecx,DWORD PTR ds:0x92ae14
+   0x59e819	lea    edx,[eax+eax*4]
+   0x59e81c	lea    eax,[eax+edx*2]
+   0x59e81f	test   DWORD PTR [ecx+eax*4+0x8],0xc000000
+   0x59e827	jne    0x59e830
+   0x59e829	mov    eax,DWORD PTR [ebp-0x8]
+   0x59e82c	dec    DWORD PTR [ebp+eax*1-0x60]
+   0x59e830	mov    ecx,DWORD PTR [ebp-0x20]
+0x5b02c3 in FUN_005aff90:
+   0x5b02c3	call   0x5832b0
+   0x5b02c8	add    esp,0x8
+   0x5b02cb	test   eax,eax
+   0x5b02cd	je     0x5b02d2
+   0x5b02cf	inc    DWORD PTR [ebp-0x4]
+   0x5b02d2	mov    edx,DWORD PTR [ebp-0x3c]
+   0x5b02d5	mov    eax,0x0
+   0x5b02da	mov    cl,BYTE PTR [edx]
+   0x5b02dc	shr    ecx,0x3
+   0x5b02df	and    ecx,0x3
+   0x5b02e2	setl   al
+   0x5b02e5	mov    esi,ecx
+   0x5b02e7	mov    ecx,DWORD PTR [ebp-0x30]
+   0x5b02ea	dec    eax
+   0x5b02eb	and    eax,esi
+   0x5b02ed	add    ecx,eax
+   0x5b02ef	mov    eax,ds:0x692184
+
+== S4: every dump line mentioning 0x989ce8 / 0x989cec (slot stride 28B at 0x989ce8, counter at base+4) ==
+   0x51dd05    FUN_0051dcb0      load   mov    eax,0x989ce8
+   0x51dfbd    FUN_0051dcb0      load   mov    eax,DWORD PTR [esi+0x989ce8]
+   0x51dfcb    FUN_0051dcb0      STORE  mov    DWORD PTR [esi+0x989ce8],eax
+   0x51e00d    FUN_0051dcb0      load   mov    ecx,DWORD PTR [esi+0x989cec]
+   0x51e01b    FUN_0051dcb0      STORE  mov    DWORD PTR [esi+0x989cec],ecx
+   writes (STORE-role) to 0x989cec: ['0x51e01b']; functions mentioning 0x989cec: ['FUN_0051dcb0']
+
+== S5: the write gate (M299 L1 re-pinned; je target must skip the store) ==
+   0x51e005	test   eax,eax
+   0x51e007	je     0x51e11d
+   0x51e01a	inc    ecx
+   0x51e01b	mov    DWORD PTR [esi+0x989cec],ecx
+   je target 0x51e11d past store 0x51e01b: True
+
+== S6: reverse-BFS over the DIRECT-call graph from FUN_0051dcb0 (the write's owner); indirect (register/memory) calls NOT in the graph ==
+   direct call sites of 0x51dcb0: 11
+     0x41dc7e in FUN_0041d480
+     0x4e145e in FUN_004e13f0
+     0x4e4dc8 in FUN_004e47d0
+     0x4e5540 in FUN_004e4e10
+     0x4f3e08 in FUN_004f34b0
+     0x508b48 in FUN_00507ef0
+     0x51f71e in FUN_0051f320
+     0x543bc6 in FUN_005437d0
+     0x59b8ce in FUN_0059b830
+     0x59dd3a in FUN_0059ce10
+     0x5b09f6 in FUN_005b09b0
+   distinct caller functions of the predicate: 13; min call-depth to FUN_0051dcb0: {'FUN_0046a610': 'NO', 'FUN_004c40e0': 4, 'FUN_004cf4c0': 2, 'FUN_004e63b0': 'NO', 'FUN_0050d140': 4, 'FUN_0051c750': 8, 'FUN_0051dcb0': 0, 'FUN_0055f650': 3, 'FUN_00585720': 2, 'FUN_0058b1b0': 'NO', 'FUN_0059ce10': 1, 'FUN_0059e2c0': 8, 'FUN_005aff90': 'NO'}
+
+== S7: per-caller-function rollup ==
+function          nsit  reach class         site classes
+FUN_0046a610      1     CANNOT-REACH        ['truth-branch']
+FUN_004c40e0      1     REACHES(depth-4)    ['truth-branch']
+FUN_004cf4c0      1     REACHES(depth-2)    ['stored-to-memory']
+FUN_004e63b0      1     CANNOT-REACH        ['truth-branch']
+FUN_0050d140      2     REACHES(depth-4)    ['truth-branch', 'truth-branch+pushed-as-arg']
+FUN_0051c750      1     REACHES(depth-8)    ['truth-branch']
+FUN_0051dcb0      1     IN-WRITER           ['truth-branch|THE-COUNTER-GATE']
+FUN_0055f650      7     REACHES(depth-3)    ['into-ebx', 'truth-branch']
+FUN_00585720      3     REACHES(depth-2)    ['stored-to-memory', 'truth-branch']
+FUN_0058b1b0      3     CANNOT-REACH        ['truth-branch']
+FUN_0059ce10      1     REACHES(direct-call) ['truth-branch']
+FUN_0059e2c0      1     REACHES(depth-8)    ['truth-branch']
+FUN_005aff90      1     CANNOT-REACH        ['truth-branch']
+
+== ASSERTIONS ==
+  S1 sites == Ghidra n_callers == 24                         PASS 24 sites / 24 ghidra
+  S1 predicate address pointer never taken (0 non-call mentions) PASS found 0
+  S2 all sites contained in index.csv functions              PASS 0 uncontained
+  S2 distinct caller functions == 13 (24 sites)              PASS 13 fns / 24 sites
+  S2 exactly one site IN-WRITER (the 0x51dffd gate) and 6 sites CANNOT-REACH PASS {'CANNOT-REACH': 6, 'REACHES(depth-4)': 3, 'REACHES(depth-2)': 4, 'REACHES(depth-8)': 2, 'IN-WRITER': 1, 'REACHES(depth-3)': 7, 'REACHES(direct-call)': 1}
+  S4 lone 0x989cec writer == 0x51e01b                        PASS ['0x51e01b']
+  S4 0x989cec touched only by FUN_0051dcb0                   PASS ['FUN_0051dcb0']
+  S5 je skips the store whole                                PASS 0x51e11d
+  S5 gate insns are test/je/inc/store                        PASS test   eax,eax|je     0x51e11d|inc    ecx|mov    DWORD PTR [esi+0x989cec],ecx
+  S2 exactly one DIRECT-gate site (0x51dffd)                 PASS ['0x51dffd']
+  S3 every site got a class; tallies cover every site        PASS 24/24
+  S3 gate census: 21 truth-branch / 2 stored-to-memory / 1 into-ebx PASS {'truth-branch': 19, 'stored-to-memory': 2, 'truth-branch+pushed-as-arg': 1, 'truth-branch|THE-COUNTER-GATE': 1, 'into-ebx': 1}
+
+class tally: {'truth-branch': 19, 'stored-to-memory': 2, 'truth-branch+pushed-as-arg': 1, 'truth-branch|THE-COUNTER-GATE': 1, 'into-ebx': 1}
+reach tally: {'CANNOT-REACH': 6, 'REACHES(depth-4)': 3, 'REACHES(depth-2)': 4, 'REACHES(depth-8)': 2, 'IN-WRITER': 1, 'REACHES(depth-3)': 7, 'REACHES(direct-call)': 1}
+
+PASS M300: 12/12 gates
