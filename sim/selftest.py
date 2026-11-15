@@ -1522,6 +1522,52 @@ def run_b18(sav_path, results):
     return 0
 
 
+def run_b19(sav_path, results):
+    """Rung B19: the slot [+4] visit counter made executable (M299's gated
+    inc law + FUN_005832b0's ladder, M300's 24-caller census, M301's ebx
+    deflection) composed in sim/visitcounter.py and replayed over the recorded
+    m294 decision rows and the recorded s249 record dump, with the live VALUES
+    (rand+1, strides, 0x985ac4 bit) and the counter CONTENTS DECLARED. No box,
+    no /proc, no gdb."""
+    import hashlib as _hl
+    import subprocess as _sp
+    import tempfile as _tf
+    if not os.path.exists(sav_path):
+        return fail("B19: missing save %s" % sav_path)
+    from . import visitcounter
+    ok = visitcounter.acceptance(sav_path, results)
+    # G10: two independent module runs must emit identical report bytes
+    digs = []
+    for _ in range(2):
+        fd, out = _tf.mkstemp(suffix=".txt")
+        os.close(fd)
+        rc = _sp.call([sys.executable, "-m", "sim.visitcounter", "--sav",
+                       sav_path, "--out", out], cwd=REPO,
+                      stdout=_sp.DEVNULL)
+        with open(out, "rb") as f:
+            digs.append((rc, _hl.sha256(f.read()).hexdigest()))
+        os.unlink(out)
+    det = digs[0][0] == 0 and digs[0] == digs[1]
+    results.append(("G10_two_run_determinism", det))
+    print("%-27s %s  module CLI twice: (rc,sha256) %s %s%s"
+          % ("G10_two_run_determinism", "PASS" if det else "FAIL",
+             (digs[0][0], digs[0][1][:16]), (digs[1][0], digs[1][1][:16]),
+             "" if digs[0][1] == digs[1][1] else " MISMATCH"))
+    bad = [n for n, o in results if not o]
+    if bad:
+        return fail("B19: %d/%d gates failed: %s"
+                    % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B19: %d/%d gates - the slot [+4] visit counter is EXECUTABLE: "
+          "for every recorded FUN_0051dcb0 visit the gated call FUN_005832b0 "
+          "(44-B ladder, flag/rung3/branch-A lattice/branch-B classes) decides "
+          "inc/no-inc over the counter table 0x989ce8+28*site+4, graded against "
+          "the M299 recorded census, the M300 caller census and the M301 "
+          "structure, with the live VALUES and the table CONTENTS DECLARED "
+          "UNMODELED (no box time, no /proc, no gdb)"
+          % (len(results), len(results)))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1557,6 +1603,10 @@ def main(argv=None):
                     help="rung B18: the site-gate value source (nibble cache, "
                          "write-back, site byte, MAX stores) vs the recorded "
                          "m294 rows and the s249 live-record dump")
+    ap.add_argument("--b19", nargs="*", metavar="SAV",
+                    help="rung B19: the slot [+4] visit counter executed "
+                         "(gated inc law + FUN_005832b0 ladder) vs the M299/"
+                         "M300/M301 recorded evidence and the m294 rows")
     ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
                     help="rung B13: the pod-driven founding dispatch leg acceptance")
     ap.add_argument("--b14", nargs="+", metavar="SAV",
@@ -1606,6 +1656,9 @@ def main(argv=None):
     if args.b18 is not None:
         sav = args.b18[0] if args.b18 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b18(sav, results)
+    if args.b19 is not None:
+        sav = args.b19[0] if args.b19 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b19(sav, results)
     if args.b14:
         lg = args.b14[1] if len(args.b14) > 1 else None
         gd = args.b14[2] if len(args.b14) > 2 else None
