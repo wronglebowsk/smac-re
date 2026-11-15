@@ -1,0 +1,50 @@
+WINDOW FUN_0055f650 entry 0x55f650 size 0xd4d3 (index.csv containment) -> 16845 insns parsed over [0x55f650,0x56cb23); Ghidra n_insns 16822
+S0 `call 0x5832b0` sites recomputed in the window: 7: 0x56429c, 0x56444b, 0x5645d9, 0x5651e3, 0x568567, 0x56b77c, 0x56c5f4
+S0b how each hub site consumes the predicate result eax (M300 classes recomputed):
+   0x56429c: test/je truth-branch
+   0x56444b: test/je truth-branch
+   0x5645d9: test/je truth-branch
+   0x5651e3: test/je truth-branch
+   0x568567: other
+   0x56b77c: test/je truth-branch
+   0x56c5f4: test/je truth-branch
+PASS  A1 recomputed site set EQUALS M300's table (7 sites); containment FUN_0055f650 0x55f650+0xd4d3; window insns 16845
+S1 CFG: 154 blocks, 153 edges, 0 back edges = natural loops; unresolved/indirect jump tails: 0 []
+S1b per-site NATURAL-LOOP membership (loop named by back-edge tail @ header):
+   site 0x56429c: 0 loops: NONE
+   site 0x56444b: 0 loops: NONE
+   site 0x5645d9: 0 loops: NONE
+   site 0x5651e3: 0 loops: NONE
+   site 0x568567: 0 loops: NONE
+   site 0x56b77c: 0 loops: NONE
+   site 0x56c5f4: 0 loops: NONE
+S1c sites-per-loop table: 
+S1d MAX sites inside ONE natural loop = 0
+S2 guard chain = conditional terminators of every DOMINATOR block on the entry->site path; the call executes only if EVERY leg's outcome holds:
+   site 0x56429c: 0 guarding legs | NO cmp/test in idom block
+   site 0x56444b: 0 guarding legs | NO cmp/test in idom block
+   site 0x5645d9: 0 guarding legs | NO cmp/test in idom block
+   site 0x5651e3: 0 guarding legs | NO cmp/test in idom block
+   site 0x568567: 0 guarding legs | NO cmp/test in idom block
+   site 0x56b77c: 0 guarding legs | NO cmp/test in idom block
+   site 0x56c5f4: 0 guarding legs | NO cmp/test in idom block
+S2b full guard chains (guard-tail addresses, entry->site order):
+   site 0x56429c: 
+   site 0x56444b: 
+   site 0x5645d9: 
+   site 0x5651e3: 
+   site 0x568567: 
+   site 0x56b77c: 
+   site 0x56c5f4: 
+S3 the leg insn 0x56c6de mov esi,DWORD PTR [ebp-0x10] lies INSIDE block [0x56c6de,0x56c6de]:
+     0x56c6de	mov esi,DWORD PTR [ebp-0x10]   <== LEG
+   CFG predecessors of the leg block: 0x56c6d7 mov BYTE PTR [edx+0x9332a3],0x78
+S4 [ebp-0x1c]: 126 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x7c]: 25 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x28]: 97 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x84]: 22 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x9c]: 14 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x2c]: 85 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x4c]: 59 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x70]: 39 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
+S4 [ebp-0x44]: 62 accesses; 0 writers []; on leg dom-path []; inside nest 0x56b061..0x56c6a0 []
