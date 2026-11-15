@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s260 close: M304 SUBMITTED (branch milestone/m304, PR open - NOT merged per kickoff) - the M300 trio CLOSED by `scripts/m304_chooser.py` (`evidence/m304_chooser.txt`): FUN_0055f650's 7 predicate sites are chosen by the [ebp-0x44] CASE LADDER (31 cmp's; producer 0x55f74a = plan byte) + per-arm loops (max 2 sites/loop; 7/7 in loops - both rivals FAIL); only 0x56429c is directly case-gated (==3); 0x568567's only pred is a VACUOUS jump-to-next jne (chooser upstream); 0x56b77c/0x56c5f4 OR-arrive; 0x56c6de = block head, 8 preds (7 arm `jmp`s + 1 fall-through) = the hub COMMON EXIT ([ebp-0x84] best-direction -> act 0x56c966 else unit cleanup -> 0x56cafa); CORRECTION: the 'predicate frame slots' are FOREIGN frames - FUN_004cf4c0's [ebp-0x1c] (store 0x4cf920, reader 0x4cfef2) and FUN_00585720's [ebp-0x7c] (store 0x5858ff, reader 0x589fe5). PASS M304 12/12 (zero box). LAND THIS PR FIRST (MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). #271 (M303) + #270 (M302) + #269 (B19) MERGED; pre-existing #180/#105 NOT this chain. B1-B19 + M54A-M303 MERGED.)
+# NEXT_PROMPT.md - footing (s261 close: B20 SUBMITTED (branch milestone/b20, PR open - NOT merged per kickoff) - B20 by `sim/bytecounter.py` (`evidence/b20_bytecounter.txt`): the BYTE-twin visit counter made EXECUTABLE - the M303 byte law (index site+8380*block+0x94ed28, {MAX@+0,CNT@+128}, 1 B x 128 x 8 blocks, stride derived twice) decoded from the evidence-embedded windows and replayed under the M302 pinned state over the 2321 recorded rows; PARITY: the same accepted fall-through feeds both widths - 38 pinned accepts = 38 dword CNT == sum_blocks byte CNT per site, both record views; byte MAX keeps B18's block-0 skip (277) while byte CNT does NOT (exactly 1 accepted block-0 row); 6 rivals refuted on recorded numbers; anchors graded via numbers PARSED from the evidence text. PASS B20 10/10 (zero box, 2 runs identical). LAND THIS PR FIRST (MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). M304/#272 + #271 (M303) + #270 (M302) + #269 (B19) MERGED; pre-existing #180/#105 NOT this chain. B1-B19 + M54A-M304 MERGED.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -23,15 +23,17 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B19 MERGED** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B19: `python3 -m sim.selftest --b19 <sav>` +
-`evidence/b19_visitcounter.txt:20`). Next build rung **B20**, UNAUTHORED - its fire writes it (B14/B16/B17/B18/B19
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B19 MERGED + B20
+PR OPEN (land first)** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B20: `python3 -m sim.selftest --b20 <sav>` +
+`evidence/b20_bytecounter.txt:39`). Next build rung **B21**, UNAUTHORED - its fire writes it (B14/B16/B17/B18/B19/B20
 did). Candidates: the FUN_005aff90 value body as a rung (B15/B17/B18 DECLARED it; M302
-pinned its slot MAX), or the FUN_0051dcb0 per-tile pass (M303 zeroes-then-rebuilds
-BOTH counter tables per call). Track_mode FIRST, every fire - and LAND the M304 PR before starting B20.
+pinned its slot MAX), or the pod-scan PRECHECK chain end-to-end (B15+B16+B17
+composed - all pieces already executable). Track_mode FIRST,
+every fire - and LAND the B20 PR before starting B21.
 
 ## THE LEDGER
 
-Merged M54A-M303 + B0-B19 (through s259) + hygiene #254-#270; UNMERGED M83/M84, M86, M101, M103, M109, **M304 (this fire, PR open - LAND IT FIRST)** and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M304 + B0-B19 (through s260) + B20 PR OPEN (this fire) + hygiene #254-#272; UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -57,12 +59,13 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (s261): LAND THE M304 PR, then track_mode decides**
+- **THE PICK (s262): LAND THE B20 PR, then track_mode decides**
   (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: a merge does
-  NOT flip the immediate fire (s259/s260); next_rung B20 stays queued. ANSWERED: M227-M304 + B1-B19 (M241 FAIL 2/5 #180).
+  NOT flip the immediate fire (s259/s260); next_rung B21 stays queued. ANSWERED: M227-M304 + B1-B20 (M241 FAIL 2/5 #180).
   CLOSED - read the named NAMED § BEFORE re-opening: FUN_005f3f5b (M220); DIALOG
   +0x4c (M284-M288, live half INVALID s240); slot [+4] GATE (M299); the counter
-  as executable (B19); the four live VALUES + slot-table CONTENTS pinned - the
+  as executable (B19); the BYTE twin as executable + its PARITY vs the dword twin
+  (B20); the four live VALUES + slot-table CONTENTS pinned - the
   live side is PINNED, no re-dump of the four scalars without a reason (M302);
   the 0x51e02c post-counter read + the WHOLE 0x94eca8/0x94ed28 byte family
   (M303); the 7-site chooser + the 0x56c6de leg (8-pred COMMON EXIT) + the
@@ -85,7 +88,7 @@ collision-check + worktree FIRST).
   (M302 OPEN + the byte family same question); the eax=1 leg: ONE model-decided
   row (M302 branchB), still NO live gdb witness (B19 G9): `NAMED.md`
   §CHAIN-PICKS. READER LAWS
-  still BIND (incl. B18/B19/M299/M302/M303/M304): every kickoff + skill
+still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 
