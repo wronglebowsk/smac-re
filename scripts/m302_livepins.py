@@ -61,6 +61,7 @@ if REPO not in sys.path:
     sys.path.insert(0, REPO)
 
 from sim import visitcounter as vc  # noqa: E402  (the shipped B19 model)
+from sim import sitegate as sgt     # noqa: E402  (B18's site_of law)
 
 DEF_OUT = os.path.join(REPO, "evidence", "m302_livepins.txt")
 
@@ -202,7 +203,7 @@ def main():
     ap = argparse.ArgumentParser(prog="m302_livepins")
     ap.add_argument("--out", default=DEF_OUT)
     ap.add_argument("--sav", default=vc.DEF_SAV)
-    a = ap.parse_args()
+    args = ap.parse_args()
 
     pids = find_pids()
     assert len(pids) == 1, "expected exactly one terran.exe, got %r" % (pids,)
@@ -215,7 +216,7 @@ def main():
     emit("provenance: %s ; pid %d (pgrep -x terran.exe) ; TracerPid(start)=%d ; "
          "loaded save m54b_clean (kickoff + smac_preflight PASS); replay save "
          "file %s" % (time.strftime("%Y-%m-%d %H:%M:%S %Z"), pid, tp0,
-                      os.path.relpath(a.sav, REPO)))
+                      os.path.relpath(args.sav, REPO)))
     emit("read addresses: scalars %s ; slot region 0x%x..0x%x (%d slots x %d B) ; "
          "globals year 0x%x round 0x%x"
          % (", ".join("0x%x" % s[1] for s in SCALARS), SLOT_BASE,
@@ -224,19 +225,19 @@ def main():
 
     A = []
 
-    def a(name, ok, detail):
+    def asn(name, ok, detail):
         A.append((name, bool(ok), detail))
 
     rd = Reader(pid)
     p1 = dump_pass(rd, "1 (before replay)")
 
     # A1 TracerPid 0 at start
-    a("A1_tracer_clean_start", tp0 == 0,
+    asn("A1_tracer_clean_start", tp0 == 0,
       "TracerPid(start) == %d (box rule: no tracer while we read)" % tp0)
 
     # A2 the UNKNOWN path is real: sentinel read cannot yield a value
     sv, shov = rd.dword(SENTINEL)
-    a("A2_unknown_never_zero", sv is None and shov in ("unmapped", "err:14",
+    asn("A2_unknown_never_zero", sv is None and shov in ("unmapped", "err:14",
                                                        "err:22"),
       "sentinel 0x%x -> %s (an unmapped read reports UNKNOWN, never 0)"
       % (SENTINEL, label(sv, shov)))
@@ -245,13 +246,13 @@ def main():
     want = [addr for _n, addr, _w in SCALARS] + [YEAR_G, ROUND_G]
     want += list(range(SLOT_BASE, SLOT_BASE + SLOT_STRIDE * REGION_BOUND, 4))
     unmapped = ["0x%x" % x for x in want if not mapped(rd.iv, x, 4)]
-    a("A3_reads_mapped_first", not unmapped,
+    asn("A3_reads_mapped_first", not unmapped,
       "%d of %d read dwords inside /proc/%d/maps regions before the pread"
       % (len(want) - len(unmapped), len(want), pid))
 
     # A4 the region decodes to 128 slots and the RECORDED sites {1,9} read
     full = [s for s in range(REGION_BOUND) if p1["slots"][s][1]]
-    a("A4_region_128_slots", len(full) == REGION_BOUND and 1 in full and 9 in full,
+    asn("A4_region_128_slots", len(full) == REGION_BOUND and 1 in full and 9 in full,
       "%d/%d slots fully readable (B18 REGION_BOUND 128, evidence/b18_sitegate.txt:7); "
       "the RECORDED sites 1 (rows 2253) and 9 (rows 68) readable: %s"
       % (len(full), REGION_BOUND, [s in full for s in (1, 9)]))
@@ -262,19 +263,19 @@ def main():
     emit("")
 
     # A5 monotonicity of the only two pinned writers over the read window
-    a("A5_store_law_monotonicity", not bad_mono,
+    asn("A5_store_law_monotonicity", not bad_mono,
       "MAX/CNT across pass1->pass2 never decrease (B18 G8 max-store polarity + "
       "B19 counter ++: the ONLY writers); violations %s" % (bad_mono[:4],))
 
     # ---- the replay: B19's shipped model + the PINNED live state
     emit("== replay: the 2321 recorded rows through the shipped B19 gate with "
          "the PINNED live values ==")
-    F = vc.build(a.sav)
+    F = vc.build(args.sav)
     rows, P, g = F["rows"], F["P"], F["g"]
     kinds = dict(sorted(F["cnt_save"].kinds.items()))
     base_kinds_ok = (len(rows) == 2321 and kinds.get("branchA") == 1099
                      and kinds.get("rung1") == 1222)
-    a("A9_baseline_anchors_reproduce", base_kinds_ok,
+    asn("A9_baseline_anchors_reproduce", base_kinds_ok,
       "sim.visitcounter.build on disk reproduces B19's anchors: rows %d (RECORDED "
       "2321), kinds %s (RECORDED {'branchA':1099,'rung1':1222}) - the pinned "
       "replay extends the SAME rows/P/grid" % (len(rows), kinds))
@@ -291,35 +292,40 @@ def main():
                                     "INCOMPLETE (a scalar UNKNOWN - undecided "
                                     "rows stay undecided, never smoothed)"))
 
-    cnt = collections_accept = collections_refuse = 0
     acc_by_site, ref_by_site, und_by_site = {}, {}, {}
+    legs = {}
+    eax_pinned = {0: 0, 1: 0, 2: 0}
     n_acc = n_ref = n_und = 0
     n_acc_1099 = n_ref_1099 = n_und_1099 = 0
     rung1_accepts = 0
     retvals = set()
     base20_kept = base20_flipped = 0
-    for (vi, u, s, e) in rows:
+    for (vi, u, slot, e) in rows:
         X, Y = e["y"], e["x"]                    # B16 transposition law
         rec = g.rb(X, Y)
+        site = sgt.site_of(rec)                  # B18 site law (row `s` is the
+                                                 # m294 LOG SLOT, not the site)
         k = vc.classify_row(X, Y, rec, P)
         e0, _p0 = vc.gate_exec(X, Y, rec, vc.BASELINE, P)
-        e1, p1leg = vc.gate_exec(X, Y, rec, pinned, P) if pinned else (None,
-                                                                       "not-pinned")
+        e1, leg1 = vc.gate_exec(X, Y, rec, pinned, P) if pinned else (None,
+                                                                      "not-pinned")
         if e1 is not None:
             retvals.add(e1)
+            eax_pinned[e1] += 1
+        legs[(k["kind"], leg1)] = legs.get((k["kind"], leg1), 0) + 1
         if k["kind"] == "rung1":
             if e1 not in (0, None):
                 rung1_accepts += 1
         if k["kind"] == "branchA":
             if e1 in (1, 2):
                 n_acc_1099 += 1
-                acc_by_site[s] = acc_by_site.get(s, 0) + 1
+                acc_by_site[site] = acc_by_site.get(site, 0) + 1
             elif e1 == 0:
                 n_ref_1099 += 1
-                ref_by_site[s] = ref_by_site.get(s, 0) + 1
+                ref_by_site[site] = ref_by_site.get(site, 0) + 1
             else:
                 n_und_1099 += 1
-                und_by_site[s] = und_by_site.get(s, 0) + 1
+                und_by_site[site] = und_by_site.get(site, 0) + 1
             if e0 in (1, 2):                     # B19's 20 baseline accepts
                 if e1 in (1, 2):
                     base20_kept += 1
@@ -336,13 +342,16 @@ def main():
     emit("of the 1099 previously-undecided (branchA) rows: CERTAIN-accept %d / "
          "CERTAIN-refuse %d / still-undecided %d"
          % (n_acc_1099, n_ref_1099, n_und_1099))
-    emit("per-site split of the 1099 (accept/refuse/undecided): %s"
+    emit("per-B18-site split of the 1099 (accept/refuse/undecided): %s"
          % {s: (acc_by_site.get(s, 0), ref_by_site.get(s, 0),
                 und_by_site.get(s, 0)) for s in sorted(
                     set(acc_by_site) | set(ref_by_site) | set(und_by_site))})
+    emit("pinned decision legs (kind, gate path) -> rows: %s | pinned eax counts "
+         "0/1/2: %s" % (dict(sorted(legs.items())), eax_pinned))
     emit("B19's 20 baseline eax=2 accepts (rand==1 residue hits): %d kept under "
-         "live rand %s, %d flipped"
-         % (base20_kept, "pinned" if pinned else "UNPINNED", base20_flipped))
+         "live rand %s (live rand & 0xf = %d vs baseline 1), %d flipped"
+         % (base20_kept, "pinned" if pinned else "UNPINNED",
+            (vrand[0] & 0xF) if vrand[1] == "ok" else -1, base20_flipped))
     emit("observed counter-vs-MAX (NO landed law relates them - printed, never "
          "asserted): sites with CNT>MAX %s"
          % [s for s in range(REGION_BOUND)
@@ -351,15 +360,15 @@ def main():
             and p1["slots"][s][0][1] > p1["slots"][s][0][0]])
 
     # A6 rung1 stays refused under live values (B19 G5 law)
-    a("A6_rung1_still_refuses", rung1_accepts == 0,
+    asn("A6_rung1_still_refuses", rung1_accepts == 0,
       "of the 1222 rung1 rows, %d accept under the PINNED live state (law: none "
       "ever may - B19 G5)" % rung1_accepts)
     # A7 outputs stay in the static ret set
-    a("A7_ret_values", retvals <= {0, 1, 2},
+    asn("A7_ret_values", retvals <= {0, 1, 2},
       "pinned gate calls returned eax in %s subset-of {0,1,2} (B19 G1 ret set)"
       % sorted(retvals))
     # A8 the 1099 decide under the pinned state
-    a("A8_branchA_decides", n_acc_1099 + n_ref_1099 + n_und_1099 == 1099
+    asn("A8_branchA_decides", n_acc_1099 + n_ref_1099 + n_und_1099 == 1099
       and (pinned is None or n_und_1099 == 0),
       "1099 branchA rows: %d CERTAIN-accept + %d CERTAIN-refuse + %d undecided "
       "== 1099, undecided==0 iff all four scalars pinned (pinned=%s)"
@@ -376,7 +385,7 @@ def main():
     rd2.close()
     same_state = (pids_after == [pid] and tp1 == 0
                   and y2 == p1["year"] and r2 == p1["round"])
-    a("A10_box_left_running", same_state,
+    asn("A10_box_left_running", same_state,
       "pid %d alive and unchanged, TracerPid(end)=%d, year %s->%s, round %s->%s "
       "(no turn advance, no writes, game left running)"
       % (pid, tp1, label(*p1["year"]), label(*y2), label(*p1["round"]),
@@ -396,13 +405,12 @@ def main():
                                 len(A), n_acc_1099, n_ref_1099))
     for name, ok, _d in A:
         assert ok, name + " FAILED - see the printed table above"
-    with open(a.out, "w") as fobj:
+    with open(args.out, "w") as fobj:
         fobj.write("\n".join(L) + "\n")
-    emit("evidence written: %s" % os.path.relpath(a.out, REPO))
+    emit("evidence written: %s" % os.path.relpath(args.out, REPO))
     return 0 if not nbad else 1
 
 
-import collections  # noqa: E402  (kept late to mirror the header order rule)
 
 if __name__ == "__main__":
     sys.exit(main())
