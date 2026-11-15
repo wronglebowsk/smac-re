@@ -431,3 +431,56 @@ by recorded numbers; G10 two runs byte-identical + `python3 -m sim.sitegate --sa
 (its ++ is gated on call 0x5832b0), ebx's walked-table provenance beyond the owner-byte reading
 (M298 LEAD), the live table contents, and every M297 A5 end-window caveat. No box time, no
 /proc, no gdb.
+
+**B19 - the slot `[+4]` visit counter made executable (R2's "which sites get visited and how
+often" slice; written by s257 from B18's DECLARED list + M299/M300/M301's landed laws - the rung
+was not yet in this file, so the build fire authored it, as B14/B16/B17/B18 did).**
+`sim/visitcounter.py`: the M299 counter law executable. (1) THE GATED INC: after the B18 MAX
+stores, FUN_0051dcb0's tail block 0x51e00d-0x51e01b does `ecx=[esi+0x989cec]; ecx++;
+[esi+0x989cec]=ecx` - the [+4] field of the SAME 28-B slot (0x989cec == 0x989ce8+4, the SAME
+pinned esi = 28*site) - SKIPPED WHOLE when `call 0x5832b0` at 0x51dffd returns 0 (test/je
+0x51e005/07, je target 0x51e11d past the store, no branch into the block's interior).
+(2) THE LADDER (FUN_005832b0 over the shared 44-B fold): rung1 `dword[rec+8]&0x102000` -> 0;
+rung2 `ds:0x985ac4&0x2000` set -> `(dword&0xc000000)?2:0`; rung3 `dword&0x10000000` -> 1;
+rung4 `ds:0x92a380`(rand+1)==0 -> 0, else the lattice: branch A `(BYTE[rec+0]&0xe0)>=0x60`
+accepts iff `(h&3)+4*(d&3)==(-5*sar(h,2)-3*sar(d,2)+rand)&0xf` for h=sar(x+y,1), d=x-h
+(-> 2); branch B accepts iff `(h&3)+4*(d&3)==(rand+8+trunc4(h)*ds:0x692210+trunc4(d)*
+ds:0x69220c)&0x1f` (-> 1), trunc4 = the pinned div-by-4-truncated-toward-zero. EVERY model
+constant is READ OUT OF the pinned W1/W2 windows INSIDE evidence/m299_visitgate.txt (the module
+parses the evidence file as its instruction source); the branch-A lattice runs as TWO
+implementations (pin-decoded chain vs the recorded closed form) that must agree. (3) THE LIVE
+STATE: `Live(flag2000, rand, s20c, s210)` - all four UNRECORDED (None = the game's real value is
+unknown), so the counter reports THREE columns per site: CERTAIN (accepts in EVERY live state =
+pass1 & bits26/27 & bit28), the DECLARED baseline `Live(flag2000=False, rand=1)` column, and
+POSSIBLE (accepts in SOME live state - every pass1 row, since flag/rand/strides can each be
+made to accept). Parity targets: the recorded m294 decision rows (B17 loader + B16 transposition
++ B18 site law) through BOTH record views (save and s249 live), the M299 G7 census, the M300 S2
+table, and the M301 A6 witness - all re-derived, not re-asserted.
+`python3 -m sim.selftest --b19 programs/saves/m54b_clean.SAV` must print PASS B19 10/10
+(evidence/b19_visitcounter.txt, table THEN gates): G1 44+114 pinned instructions parse and
+every constant decodes (rung masks, globals, coefs -5/-3, counter field +4, stride 28, 6 rets,
+0 callee stores, pops-before-every-ret, eax=1 legs flag-clear-only); G2 fold 44*(W2*y+sar(x,1))
+4096/4096 random incl. negative x (RECORDED 4096/4096) and 28*site 2048/2048 (RECORDED); G3 the
+s249 dump digest 093d10a868da55b2 + the RECORDED rung census 481/16/12/5/1087 through the
+model's OWN readers; G4 the 36 (H,D) x 16 lattice theorem (RECORDED 36/36) + the two branch-A
+implementations agree on 76960 draws; G5 outputs stay in {0,1,2} over 2048 records x 32 sampled
+live states, the CERTAIN class never refuses under ANY flag state, the flag-set+sel-clear leg
+refuses all 1565 such records (pinned neg/sbb/and-2 polarity); G6 the 24-row M300 table
+re-parsed: 21/2/1 classes, 17/1/6 reach, the SINGLE IN-WRITER row agrees with the W1 bytes
+line-for-line; G7 the M301 A6 eax-witness EQUALS the list re-derived from the W1 bytes (window-
+bounded), 0 backward edges, je 0x51dff5 lands BEFORE the call; G8 the 2321-row replay: per-site
+rows {1:2253, 9:68} == B18's RECORDED site anchor, census {'branchA':1099,'rung1':1222}
+partitions exactly, 1222 CERTAIN-refuse / 0 CERTAIN-accept / 1099 POSSIBLE, baseline 20 accepts
+(all eax=2) / 1079 undecided; G9 the four rivals (ungated / MAX-field-alias / je-jumps-only-
+the-load / ebx-gates-the-call) each refuted on recorded numbers, with the eax=1 return DECLARED
+structural-only in this window (0 graded rows reach it); G10 two runs byte-identical (report
+sha256 e161b2f9... committed as evidence/b19_visitcounter.txt) + `python3 -m sim.visitcounter
+--sav <sav> --out <f>` exits 0. DECLARED UNMODELED: the live VALUES ds:0x92a380 (rand+1),
+ds:0x69220c/0x692210 (branch-B strides) and the ds:0x985ac4 bit-0x2000 (address witnesses
+only, m299_visitgate.txt:175-178 - the NEXT /proc window that grades the counts ABSOLUTELY
+dumps exactly these four + the 0x989ce8/0x94eca8 tables); the live CONTENTS of the counter
+table itself (the B18 LEAD, now covering +0 AND +4); the 0x51e02c post-counter region read
+0x94ed28 (NAMED:371) and everything downstream; which loop drives FUN_0051dcb0 visits at
+runtime (replay over RECORDED rows, as B17/B18); which of the 17 REACHES callers actually run;
+and the save-vs-window record drift (both views replayed, 4008 field deltas COUNTED not
+smoothed). No box time, no /proc, no gdb, no game-binary load.

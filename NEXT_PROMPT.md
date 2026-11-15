@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s256 close: M301 SUBMITTED (branch milestone/m301) - the lead "ebx's table 0x51de2c-0x51df1d" is REFUTED: 243 B of CODE (81 insns = a base_array walk + its exit block), NOT a table; it gates nothing of the 0x51dffd decision and FUN_005832b0's eax cannot reach it. 8/8 asserts + PE-image byte check in `evidence/m301_ebxtable.txt`, registry `NAMED.md` §M301 (the M294 "table" phrasing retracted in place). #267 (M300) MERGED (cdaa5ff); pre-existing open PRs #180/#105 are NOT this chain. B1-B18 DONE.)
+# NEXT_PROMPT.md - footing (s257 close: B19 SUBMITTED (branch milestone/b19, PR open - NOT merged per kickoff) - the slot [+4] visit counter is EXECUTABLE (`sim/visitcounter.py`): the gated inc [0x989ce8+28*site+4]++ iff FUN_005832b0(x,y)!=0, the full 4-rung ladder ported from the pinned windows embedded IN evidence/m299_visitgate.txt, replayed over the 2321 recorded rows: 1222 CERTAIN-refuse / 0 CERTAIN-accept / 1099 POSSIBLE (branch-A 1099 / rung1 1222; baseline 20 eax=2 accepts, 1079 undecided on the never-recorded branch-B strides); the M300 24-caller + M301 eax-witness censuses re-grade from the SAME bytes. PASS B19 10/10, table-then-asserts, two runs byte-identical, `evidence/b19_visitcounter.txt`, registry `NAMED.md` §B19. THE NEXT FIRE LANDS THIS PR FIRST (AGENTS.md step 2: read diff + SESSION_NOTES section, gate green, `milestone.py merge` - track_mode counts rungs from MERGED history, so until merged next_rung stays B19). #267 (M300) + #268 (M301) MERGED; pre-existing open PRs #180/#105 are NOT this chain. B1-B18 MERGED.)
 Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -23,13 +23,15 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B18 DONE** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B18:
-`python3 -m sim.selftest --b18 <sav>` + `evidence/b18_sitegate.txt:11`). Next build rung **B19**, unauthored - its fire writes it (B14/B16/B17/B18).
-Track_mode FIRST, every fire.
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B18 MERGED, B19
+SUBMITTED (this fire)** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B19: `python3 -m sim.selftest --b19 <sav>` +
+`evidence/b19_visitcounter.txt:20`). Next build rung **B20**, UNAUTHORED - its fire writes it (B14/B16/B17/B18/B19
+did). Candidates from the landed frontiers: the FUN_005aff90 value body as a rung (B15/B17/B18 all DECLARED it), or
+the 0x51e02c 0x94ed28 region-read leg. Track_mode FIRST, every fire - and LAND the B19 PR before starting B20.
 
 ## THE LEDGER
 
-Merged M54A-M299 + B0-B18 (through s254) + hygiene #254/#255/#263/#264/#265; UNMERGED M83/M84, M86, M101, M103, M109 and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M301 + B0-B18 (through s256) + hygiene #254/#255/#263/#264/#265/#267/#268; UNMERGED M83/M84, M86, M101, M103, M109, **B19 (this fire, PR open - LAND IT FIRST)** and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -56,30 +58,39 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage
   explicit paths (the s253 sweep landed via #265; the s254 collision lessons:
   schedule "in 12m", collision-check + worktree FIRST).
-- **THE PICK (s257): ANALYSE from the shortlist** (track_mode FIRST, expect
-  MODE=ANALYSE next_rung=B19 unauthored; collision check FIRST per ISOLATION).
-  ANSWERED: M227-M301 + B1-B18 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
-  DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299);
-  0x5832b0's callers (M300 - see §M300 BEFORE re-censusing anything of it); ebx's
+- **THE PICK (s258): LAND THE B19 PR, then ANALYSE from the shortlist**
+  (track_mode FIRST; collision check FIRST per ISOLATION). If B19 is already
+  merged by the time you start, track_mode may say next_rung=B20 BUILD - the
+  rung is UNAUTHORED, write it from the B19/B18 DECLARED frontiers.
+  ANSWERED: M227-M301 + B1-B19 (M241 FAIL 2/5 #180). CLOSED: FUN_005f3f5b (M220);
+  DIALOG +0x4c (M284-M288, live half INVALID s240); slot [+4] counter GATE (M299)
+  AND the counter ITSELF as an executable (B19 - read §B19 BEFORE re-deriving the
+  ladder: every constant decodes from the windows embedded in m299_visitgate.txt;
+  the ONLY gap is the four live VALUES + table CONTENTS); 0x5832b0's callers
+  (M300 - see §M300 BEFORE re-censusing anything of it); ebx's
   "table 0x51de2c-0x51df1d" (M301 REFUTED - it is 243 B of CODE: the base_array
   0x95da10 walk (304-B rows, count ds:0x985af4) + its exit block. Gates NOTHING of
   the 0x51dffd decision; the predicate's eax cannot reach it. Read §M301 BEFORE
   re-opening it; the 4 table-falsifiers are the s256 NEW LAW in SESSION_NOTES).
-  NEVER bp mid-instruction (s213). OPEN shortlist + M300/M301 leads (hub-visit gating;
+  NEVER bp mid-instruction (s213). OPEN shortlist + M300/M301/B19 leads (hub-visit gating;
   0x56c6de continue-leg INSIDE FUN_0055f650, the 7-site predicate caller; which loop
   chooses among those 7 sites; readers of the stored predicate slots [ebp-0x7c]/
   [ebp-0x1c]; sibling 0x5831a0 fed (x,y) right after the predicate; 188-row cursor
   caller; whose record the walk's exit block tests as BYTE[edi+0x7] (edi = [ebp-0x4],
   sole pre-range writer 0x51dd28) + what its tile-class/distance legs MEAN; the
   0x51e02c byte[site+8380*block+0x94ed28]
-  NAMED:371; a read-only /proc pass pinning rand+1 ds:0x92a380 + strides
-  ds:0x69220c/0x692210 + 0x985ac4 + the 0x989ce8/0x94eca8 tables = counter/MAX laws
-  ABSOLUTELY gradable): `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL
-  current set (incl. B18 + M299 laws) rides EVERY kickoff + skill `instrument-laws.md`
+  NAMED:371; **the ONE read-only /proc pass that grades B19 ABSOLUTELY: dump
+  ds:0x92a380 (rand+1) + strides ds:0x69220c/0x692210 + ds:0x985ac4 dword + the
+  0x989ce8 slot table (28 B x 128: MAX +0 AND counter +4) + the 0x94eca8 cell
+  bytes - every CERTAIN/POSSIBLE bracket collapses to a point, and the live
+  flag bit decides the 0-certain-accept finding**; the eax=1 leg has 0 witnesses
+  in the recorded rows (B19 G9 - a longer/better-paired window may supply one):
+  `NAMED.md` §CHAIN-PICKS. READER LAWS still BIND - the FULL
+  current set (incl. B18 + B19 + M299 laws) rides EVERY kickoff + skill `instrument-laws.md`
   + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 
-- **BOX**: s244 state UP (s245..s253: s249 read-only /proc pass only; s250-s253 ZERO box - state identical)
+- **BOX**: s244 state UP (s245..s257: s249 read-only /proc pass only; s250-s257 ZERO box - state identical)
   (m54b_clean at y2212, cnt 30, TracerPid 0, yama=0; not t0) —
   RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
   run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).

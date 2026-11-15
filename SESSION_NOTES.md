@@ -760,3 +760,53 @@ BUILD_SPINE.md now carries the B18 rung.
   tile view 0x51de5b-0x51de61 + a distance compare vs ds:0x8f0d34 0x51dece-0x51ded0, then 3
   `or ebx,-1` sentinels) - shape VERIFIED, meaning INFERRED.
 - Box: ZERO (s244 state untouched). NEXT_PROMPT rewritten for s257.
+
+## Session 257 (2026-11-15, BUILD B19 10/10, zero box) - the slot [+4] visit counter made EXECUTABLE (sim/visitcounter.py); the rung was UNAUTHORED, this fire wrote it (as B14/B16/B17/B18)
+- track_mode BUILD next_rung=B19 -> the rung B18 DECLARED ("the slot [+4] visit
+  counter, its ++ gated on call 0x5832b0"), now that M299 (the gate body),
+  M300 (the 24 callers) and M301 (the ebx deflection) have landed. ACCEPTANCE:
+  `python3 -m sim.selftest --b19 programs/saves/m54b_clean.SAV` -> PASS B19
+  10/10, output evidence/b19_visitcounter.txt (table first, then gates; two
+  runs byte-identical, report sha256 e161b2f9...).
+- HOW IT'S ANCHORED (skill law: constants read out of the bytes, instruments
+  that fail differently): the model PARSSES the pinned W1 (44 lines
+  0x51dfac-0x51e02c) / W2 (114 lines 0x5832b0-0x5833b7) windows out of
+  evidence/m299_visitgate.txt ITSELF and decodes every constant from the
+  instruction texts (rung masks, the ds:0x985ac4/0x92a380/0x69220c/0x692210
+  globals, the lattice coefs -5/-3 as neg/shl/sub and lea[+*2]/sub chains, the
+  counter operand [esi+0x989cec] == the MAX operand +4, the 28-B slot stride as
+  (8-1)<<2); adjacency is by ORDERED INSTRUCTIONS, not addr+1 arithmetic
+  (instruction lengths differ - the addr+k scan initially missed the sub
+  ebx,edx leg). Branch A runs as TWO implementations (the decoded chain vs
+  M299's closed rungA) that must agree (0/76960 disagreements) AND reproduce
+  the RECORDED 36/36 lattice theorem; the recorded census 481/16/12/5/1087 +
+  dump digest 093d10a868da55b2 re-grade through the model's OWN rung readers.
+- MEASURED (this fire's anchors, RECORDED population cited): over the 2321
+  recorded decision rows (B17 loader + B16 transposition + B18 site_of law,
+  sites {1:2253, 9:68} == B18's RECORDED anchor - the counter table and the
+  MAX table are the SAME 28-B slots, +4 vs +0): 1222 rows CERTAINLY REFUSE
+  (rung1 mask hit - no live state can increment), 0 CERTAINLY ACCEPT (the
+  class is pass1 & bits26/27 & bit28: EMPTY in the dump AND in the rows), the
+  remaining 1099 are UNDECIDED-but-possible and ALL are branch-A domain
+  (census {'branchA':1099,'rung1':1222}); under the DECLARED baseline
+  Live(flag2000=False, rand=1): 20 accepts (all eax=2 branch-A parity hits),
+  1079 undecided (parity misses falling to the never-recorded branch-B stride
+  lattice). The eax=1 return is STRUCTURAL ONLY in this window: 0 graded rows
+  and (with sel clear, flag-clear leg) 5 dump records reach the rung3 leg -
+  no 'only-2-accepts' rival is gradeable on the rows (DECLARED, G9).
+  Save-vs-live record views diverge on 4008 counter-table field deltas over
+  the same rows (the B16/B18 drift law, counted not smoothed).
+- RETRACTED/CORRECTED: none of prior claims - B18's DECLARED list entry for
+  the counter is now CLOSED (module executable); its live-VALUES entry stays
+  OPEN and SHARPENS: the next read-only /proc pass that dumps ds:0x92a380,
+  ds:0x69220c, ds:0x692210, ds:0x985ac4 + the 0x989ce8/0x94eca8 tables grades
+  every B19 number ABSOLUTELY (the LEAD already in NEXT_PROMPT).
+- PITFALLS: (1) a rung whose rivals need a POPULATION that the recorded window
+  leaves EMPTY must say so (G9's eax=1 note) - do not grade a rival on zero
+  witnesses; (2) evidence-file-embedded disassembly is a first-class PIN
+  SOURCE: parse it, and keep the window edge honest (M301's 6th eax mention
+  0x51e033 lies PAST W1's end 0x51e02c - compare inside-the-window lists,
+  say so); (3) sim/selftest acceptance paths must not double-print a verdict -
+  the module CLI owns its PASS line, the rung's PASS line belongs to
+  sim.selftest (it adds G10).
+- Box: ZERO. NEXT_PROMPT rewritten for s258.
