@@ -1,1 +1,1 @@
-B20 | python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV -> PASS B20 10/10 (evidence/b20_bytecounter.txt:39) | PR: submitting now by s261, do NOT merge | next: gate --base main GREEN then milestone.py submit --title "B20: the byte-twin visit counter made executable"
+H262 | docs-only split, acceptance = wc -c NEXT_PROMPT.md <= 12,000 + gate GREEN (11,999 -> 10,833 B) | PR: submitting now by s262, do NOT merge | next: B20 #273 already MERGED (119b691); next fire picks from the OPEN shortlist (track_mode=ANALYSE, B21 queued)

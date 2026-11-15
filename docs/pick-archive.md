@@ -827,3 +827,12 @@ puts a Match in res; sum() dies - `bool()` regex clauses.
   gating, 0x56c6de continue-leg, 188-row cursor caller).
   READER LAWS bind: GDEEP/GACC x=/y= TRANSPOSED (use load_visits/recover_pod);
   tail-$esi VAL garbage (GROW BEST is meaningful, M296 S7); M293 guards re-derive.
+
+## trim-s262 - traps 14-15, moved VERBATIM out of NEXT_PROMPT.md (H262, footing headroom)
+
+14. The queue tail holds STALE ids (shift reaches only `0..pending-1`): never treat "first empty slot" or a
+    stale tail as proof an id IS queued; id 0 = Colony Pod AND the empty marker, sentinel -39; negatives belong to
+    the TYPE (196 -> -6, 195 -> -3). PRODFLAG (0x4efe60) fires for EVERY record the pass walks (128/322/323/194 =
+    FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
+15. A list cursor read BEFORE the seek is the PREVIOUS cursor (pump seeks at 0x497717 — print at 0x49771c).
+    `milestone.py start` on a dirty tree: stash, start, pop (skill Git workflow).

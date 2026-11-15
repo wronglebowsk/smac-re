@@ -1,5 +1,6 @@
-# NEXT_PROMPT.md - footing (s261 close: B20 SUBMITTED (branch milestone/b20, PR open - NOT merged per kickoff) - B20 by `sim/bytecounter.py` (`evidence/b20_bytecounter.txt`): the BYTE-twin visit counter made EXECUTABLE - the M303 byte law (index site+8380*block+0x94ed28, {MAX@+0,CNT@+128}, 1 B x 128 x 8 blocks, stride derived twice) decoded from the evidence-embedded windows and replayed under the M302 pinned state over the 2321 recorded rows; PARITY: the same accepted fall-through feeds both widths - 38 pinned accepts = 38 dword CNT == sum_blocks byte CNT per site, both record views; byte MAX keeps B18's block-0 skip (277) while byte CNT does NOT (exactly 1 accepted block-0 row); 6 rivals refuted on recorded numbers; anchors graded via numbers PARSED from the evidence text. PASS B20 10/10 (zero box, 2 runs identical). LAND THIS PR FIRST (MERGE RULE: gate green + Greptile reviewed, then `milestone.py merge`). M304/#272 + #271 (M303) + #270 (M302) + #269 (B19) MERGED; pre-existing #180/#105 NOT this chain. B1-B19 + M54A-M304 MERGED.)
-Overflow: pick-archive (VERBATIM blocks - read only the picked section), NAMED.md
+# NEXT_PROMPT.md - footing (s262 close: H262 DOCS SPLIT - no findings changed; the settled s261 count/byte-counter-era header + the full CLOSED enumeration + traps 14-15 moved VERBATIM to
+`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: B20 #273 MERGED (main 119b691); B1-B20 + M54A-M304 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
+Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
@@ -23,17 +24,15 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B19 MERGED + B20
-PR OPEN (land first)** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B20: `python3 -m sim.selftest --b20 <sav>` +
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B20 MERGED** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B20 acceptance: `python3 -m sim.selftest --b20 <sav>` +
 `evidence/b20_bytecounter.txt:39`). Next build rung **B21**, UNAUTHORED - its fire writes it (B14/B16/B17/B18/B19/B20
 did). Candidates: the FUN_005aff90 value body as a rung (B15/B17/B18 DECLARED it; M302
 pinned its slot MAX), or the pod-scan PRECHECK chain end-to-end (B15+B16+B17
-composed - all pieces already executable). Track_mode FIRST,
-every fire - and LAND the B20 PR before starting B21.
+composed - all pieces already executable). Track_mode FIRST, every fire.
 
 ## THE LEDGER
 
-Merged M54A-M304 + B0-B19 (through s260) + B20 PR OPEN (this fire) + hygiene #254-#272; UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M304 + B0-B20 (through s261) + hygiene #254-#272; UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -59,19 +58,14 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (s262): LAND THE B20 PR, then track_mode decides**
-  (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: a merge does
+- **THE PICK (post-H262): B20 LANDED (#273) - pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: a merge does
   NOT flip the immediate fire (s259/s260); next_rung B21 stays queued. ANSWERED: M227-M304 + B1-B20 (M241 FAIL 2/5 #180).
-  CLOSED - read the named NAMED § BEFORE re-opening: FUN_005f3f5b (M220); DIALOG
-  +0x4c (M284-M288, live half INVALID s240); slot [+4] GATE (M299); the counter
-  as executable (B19); the BYTE twin as executable + its PARITY vs the dword twin
-  (B20); the four live VALUES + slot-table CONTENTS pinned - the
-  live side is PINNED, no re-dump of the four scalars without a reason (M302);
-  the 0x51e02c post-counter read + the WHOLE 0x94eca8/0x94ed28 byte family
-  (M303); the 7-site chooser + the 0x56c6de leg (8-pred COMMON EXIT) + the
-  [ebp-0x7c]/[ebp-0x1c] readers (M304; read NAMED ## M304 before touching the hub CFG); 0x5832b0's callers (M300); ebx's "table 0x51de2c-0x51df1d" (M301
-  REFUTED - code not a table; the 4 table-falsifiers are the s256 NEW LAW in
-  SESSION_NOTES). NEVER bp mid-instruction (s213). OPEN shortlist: the hub settle-nest
+  CLOSED (era text VERBATIM: `docs/nextprompt-archive-m299-b20.md` §closed-era) - read the named NAMED §
+  (## <ID>) BEFORE RE-OPENING: M220; DIALOG +0x4c M284-M288 (live half INVALID s240); slot [+4] GATE M299; the
+  counter as executable B19; the BYTE twin + PARITY B20; the four live VALUES + CONTENTS pinned M302 (no re-dump
+  of the four scalars without a reason); 0x51e02c + the byte family M303; the 7-site chooser + 0x56c6de leg +
+  readers M304 (read ## M304 before touching the hub CFG); 0x5832b0 callers M300; ebx table REFUTED M301 (the 4
+  table-falsifiers = the s256 NEW LAW). NEVER bp mid-instruction (s213). OPEN shortlist: the hub settle-nest
   MEANING (9x8x32 = [ebp-0x70]/[ebp-0x4c]/[ebp-0x54]; the [ebp-0x84] best-
   direction at 0x56c966; the arms' case VALUES vs the 31-cmp ladder); arm-case
   of sites 0x56444b/0x5645d9/0x5651e3/0x568567 (INFERRED, not pinned); hub
@@ -115,12 +109,10 @@ still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
 12-13. Both gdb-detach laws (skill Wine core): a census can leave gdb ATTACHED — check `TracerPid`,
     kill the stale gdb BY PID before calling the box clean; the TURN DRIVER returns rc=0 WHILE AI UPKEEP PLAYS —
     detach only after cp == human faction returns or the last recomputes go UNLOGGED.
-14. The queue tail holds STALE ids (shift reaches only `0..pending-1`): never treat "first empty slot" or a
-    stale tail as proof an id IS queued; id 0 = Colony Pod AND the empty marker, sentinel -39; negatives belong to
-    the TYPE (196 -> -6, 195 -> -3). PRODFLAG (0x4efe60) fires for EVERY record the pass walks (128/322/323/194 =
-    FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
-15. A list cursor read BEFORE the seek is the PREVIOUS cursor (pump seeks at 0x497717 — print at 0x49771c).
-    `milestone.py start` on a dirty tree: stash, start, pop (skill Git workflow).
+14-15. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s262: queue-tail STALE ids + id-0 sentinel +
+   negatives-belong-to-TYPE; PRODFLAG 0x4efe60 fires for EVERY record walked (FACTION BANDS) - attribute the
+   sweep by its own predecessor; list cursor read BEFORE the seek = PREVIOUS cursor; dirty-tree
+   `milestone.py start` = stash, start, pop.)
 16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245: objdump prints UPPERCASE; ARM BEFORE ANY
    SCREEN; the SIGUSR1/SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT
    a STORE CENSUS.)
