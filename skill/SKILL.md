@@ -7,21 +7,23 @@ description: "Use for SMAC .cvr Caviar voxel decode/render or SMAC RE."
 
 Sid Meier's Alpha Centauri (1999) `terran.exe` + `programs/*.cvr` live in
 `~/reverse/smac/` (durable). Full writeup: `~/reverse/smac/FINDINGS.md`.
-**The repo AND the Wine box live on the `n100` machine (LAN user `n100`), NOT on whatever host a
-session starts on.** When the session host is another box (e.g. the gateway), do not hunt for
-`~/reverse/smac` locally: drive the repo over SSH - `/home/paul/smacsh` pipes a script into
-`cd ~/reverse/smac && bash -l` (write the remote command as ONE heredoc; a multi-line wrapper call
-only forwards its first line), and scp helper scripts to `scratch/` there to run them. **A python
-file AUTHORED through a smacsh heredoc must be backslash-free: the transport unescapes backslash
-sequences inside heredoc content, so a byte literal lands on disk as RAW bytes (the file still
-compiles, then compares wrong)** - ship scripts with `bytes([0x.., ...])` lists and no backslash
-regex classes; an `&` anywhere in the heredoc (even in a comment) is also refused (s238, 5 runs of
-pure instrument bugs). **scp must
-target `<n100-user>@<lan-ip>`** (the `n100` ssh alias resolves to a tailscale IP that times out;
-smacsh itself uses the LAN IP over the persistent ControlPath - `~/.ssh/config` `Host n100` vs the
-LAN entry). The live
-skill copy sits on the session host while the tracked copy is `skill/` in the repo, so a skill
-edit must land on both in the same session.
+**The repo AND the Wine box are LOCAL as of 2026-11-15.** Both moved off `n100` onto the gateway
+host: repo `/home/paul/reverse/smac`, Ghidra `~/tools/ghidra_12.1.4_PUBLIC` (JDK 21), Wine
+`~/tools/wine-10.20-staging-tkg-x86` + prefix `~/.wine-smac32`. Wine 32-bit needs the i386
+multiarch libs (`libc6/libgl1/libasound2/libgnutls30t64/libgcrypt20/libpulse0/libfreetype6` all
+`:i386`); the wine-11 amd64-wow64 build CANNOT open the win32 prefix. Everything runs in-process —
+no SSH, no `smacsh`. Two things the move taught: a stale `git worktree` entry pointing at the old
+host makes `milestone.py merge` fail to delete its branch **after GitHub has already merged**
+(`cannot delete branch 'milestone/…' used by worktree at '/home/n100/…'`) — `git worktree prune`
+first; and every script path that hardcoded `/home/user/…` (no machine ever had it) had to be
+repointed, so grep `home/user` before assuming a helper still runs. The n100 tree is kept only as
+a cold rollback; **legacy `smacsh` discipline, if you drive it: a python file AUTHORED through the
+smacsh heredoc must be backslash-free** (the transport unescapes backslash sequences, so a byte
+literal lands as RAW bytes — the file still compiles, then compares wrong; ship `bytes([0x.., ...])`
+lists, no backslash regex classes, and no `&` anywhere in the heredoc), **and scp must target
+`<n100-user>@<lan-ip>`** (the `n100` ssh alias resolves to a tailscale IP that times out).
+The live skill copy sits on the session host while the tracked copy is `skill/` in the repo, so a
+skill edit must land on both in the same session.
 **Versioned at `github.com/wronglebowsk/smac-re` (private)**; a copy of this skill is tracked
 in-repo under `skill/` — after editing the skill, refresh it there and push. Game binaries,
 `programs/`, `smac.iso`, `glsmac/` and regenerable Ghidra/FLIC output are gitignored: never

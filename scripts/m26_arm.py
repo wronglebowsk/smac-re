@@ -96,7 +96,7 @@ def main():
     sel = struct.unpack("<I", f.read(4))[0]
     base = 0x933278 + sel * 52
     script = GDB.format(b16=hex(base + 16), b20=hex(base + 20), b28=hex(base + 28))
-    open("/home/user/reverse/smac/evidence/m26_live.gdb", "w").write(script)
+    open("/home/paul/reverse/smac/evidence/m26_live.gdb", "w").write(script)
     print(f"sel={sel} base={hex(base)}")
     print("gdb -batch -nx -x evidence/m26_live.gdb -p " + str(pid))
 

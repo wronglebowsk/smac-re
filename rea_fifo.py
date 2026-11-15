@@ -14,20 +14,20 @@ The server (and its loaded Ghidra program) survives across script invocations.
 """
 import json, os, subprocess, sys, time
 
-DIR = '/home/user/reverse/smac/.rea'
+DIR = '/home/paul/reverse/smac/.rea'
 FIFO = DIR + '/in.fifo'
 OUT = DIR + '/out.txt'
 ERR = DIR + '/err.txt'
 OFFSET = DIR + '/out.offset'
-NPX = "/home/user/.hermes/tools/npm-12.0.2-linux-x64/bin/npx"
-NODE_BIN = "/home/user/.hermes/tools/node-26.7.0-linux-x64/bin"
-GHIDRA = "/home/user/tools/ghidra_12.1.4_PUBLIC"
-EXE = "/home/user/reverse/smac/terran.exe"
+NPX = "/home/paul/.hermes/tools/npm-12.0.2-linux-x64/bin/npx"
+NODE_BIN = "/home/paul/.hermes/tools/node-26.12.1-linux-x64/bin"
+GHIDRA = "/home/paul/tools/ghidra_12.1.4_PUBLIC"
+EXE = "/home/paul/reverse/smac/terran.exe"
 ENV = dict(os.environ,
            PATH=NODE_BIN + ":/usr/bin:/bin:" + os.environ.get("PATH", ""),
            GHIDRA_INSTALL_DIR=GHIDRA,
            REA_GHIDRA_STARTUP_TIMEOUT_MS="900000",
-           REA_PWNTOOLS_PYTHON="/home/user/.hermes/venvs/rea-pwntools/bin/python")
+           REA_PWNTOOLS_PYTHON="/home/paul/.hermes/venvs/rea-pwntools/bin/python")
 
 _rid = 0
 
@@ -82,7 +82,7 @@ def start_server():
     p = subprocess.Popen(
         ["setsid", "bash", "-c",
          f"{NPX} -y rea-agents@6.7.0 mcp < {FIFO} >> {OUT} 2>> {ERR} & echo $! > {DIR}/server.pid; wait"],
-        cwd="/home/user/reverse/smac", env=ENV,
+        cwd="/home/paul/reverse/smac", env=ENV,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     t0 = time.time()
     while not os.path.exists(DIR + '/server.pid') and time.time() - t0 < 20:
