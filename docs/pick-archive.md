@@ -872,3 +872,24 @@ the hub settle-nest
   the 0x94eca8 byte-table DUMP (2048 B, m302_livepins.py template) + save-carry vs rebuild for
   BOTH tables AND the SITE list (M302/M303/M308, same question); the eax=1 leg: ONE model-decided
   row (M302 branchB), still NO live gdb witness (B19 G9).
+
+## §trim-s270 (a) CLOSED enumeration + OPEN one-liner, VERBATIM from NEXT_PROMPT.md at the s270 cap split
+
+```
+  CLOSED (era text VERBATIM: `docs/nextprompt-archive-m299-b20.md` §closed-era) - read the named NAMED §
+  (## <ID>) BEFORE RE-OPENING: M220; DIALOG +0x4c M284-M288 (live half INVALID s240); slot [+4] GATE M299; the
+  counter as executable B19; the BYTE twin + PARITY B20; the four live VALUES + CONTENTS pinned M302 (no re-dump
+  of the four scalars without a reason); 0x51e02c + the byte family M303; the 7-site chooser + 0x56c6de leg +
+  readers M304 (read ## M304 before touching the hub CFG); the 0x4f35e0 export hole (bounds+fold-entry+absorption)
+  M306 (read ## M306 BEFORE re-opening anything about this address); the 21-pair even-parity
+  neighborhood tables (0x67850c/0x678990) + triad args (rec_idx,bit_idx) + _rand 2-gates-1-draw
+  M307 (read ## M307); 0x5832b0 callers M300; ebx table REFUTED M301 (the 4
+  table-falsifiers = the s256 NEW LAW).  the CURVE-vs-OP law B21 (a delta-derived event schedule
+  is LOSSY - hides net-zero (+1,-1) pairs; read ## B21 + the B10 row); the SITE-list pair + both
+  global shapes M308 (0x56d480 = insert-or-max, evict score 1000 free / 20-prio, 25 x 0x10 in the
+  8380-B record at 0x94f2d8; 0x56d630 = pure probe; 0x985aec = an enum cmp-only in 1..4 mirroring
+  0x92bde8; 0x985b10 = ONE byte bit-mask, 0 array forms - read ## M308 + the M303 rows). NEVER bp
+  mid-instruction (s213). OPEN shortlist (the hub settle-nest MEANING, the arm-case sites, the un-named hub slots,
+  the 8380-B record's sibling FIELDS, the 0x94eca8 dump, save-carry vs rebuild, the eax=1 leg) is
+  VERBATIM at `docs/pick-archive.md` §trim-s269 (b) — grep it there, do not re-derive it.
+```

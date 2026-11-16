@@ -62,22 +62,10 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 collision-check + worktree FIRST).
 - **THE PICK (post-M308 review round, s269): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). M308 is CLOSED — merged in #281 with its review round (Greptile's 4 P2s fixed + mutation-tested). track_mode is AUTHORITATIVE: a merge does
   NOT flip the immediate fire (s259/s260); next_rung B22 stays queued. ANSWERED: M227-M308 + B1-B21 (M241 FAIL 2/5 #180).
-  CLOSED (era text VERBATIM: `docs/nextprompt-archive-m299-b20.md` §closed-era) - read the named NAMED §
-  (## <ID>) BEFORE RE-OPENING: M220; DIALOG +0x4c M284-M288 (live half INVALID s240); slot [+4] GATE M299; the
-  counter as executable B19; the BYTE twin + PARITY B20; the four live VALUES + CONTENTS pinned M302 (no re-dump
-  of the four scalars without a reason); 0x51e02c + the byte family M303; the 7-site chooser + 0x56c6de leg +
-  readers M304 (read ## M304 before touching the hub CFG); the 0x4f35e0 export hole (bounds+fold-entry+absorption)
-  M306 (read ## M306 BEFORE re-opening anything about this address); the 21-pair even-parity
-  neighborhood tables (0x67850c/0x678990) + triad args (rec_idx,bit_idx) + _rand 2-gates-1-draw
-  M307 (read ## M307); 0x5832b0 callers M300; ebx table REFUTED M301 (the 4
-  table-falsifiers = the s256 NEW LAW).  the CURVE-vs-OP law B21 (a delta-derived event schedule
-  is LOSSY - hides net-zero (+1,-1) pairs; read ## B21 + the B10 row); the SITE-list pair + both
-  global shapes M308 (0x56d480 = insert-or-max, evict score 1000 free / 20-prio, 25 x 0x10 in the
-  8380-B record at 0x94f2d8; 0x56d630 = pure probe; 0x985aec = an enum cmp-only in 1..4 mirroring
-  0x92bde8; 0x985b10 = ONE byte bit-mask, 0 array forms - read ## M308 + the M303 rows). NEVER bp
-  mid-instruction (s213). OPEN shortlist (the hub settle-nest MEANING, the arm-case sites, the un-named hub slots,
-  the 8380-B record's sibling FIELDS, the 0x94eca8 dump, save-carry vs rebuild, the eax=1 leg) is
-  VERBATIM at `docs/pick-archive.md` §trim-s269 (b) — grep it there, do not re-derive it.
+  CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
+  settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
+  `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
+  NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
   **NEXT PICK (s268 close): FUN_0056d350 (299 B, 50 callers, 1 string) = the sink every SITE-list
   insert AND the FUN_0056d690 rebuild broadcast into (args (block,kind,prio,x,y,-1) - name it and
   say what the -1 6th arg selects); THEN the 75-entry sibling at 0x94ee28 (same 8380-B record, and it ENDS where the SITE list starts: 0x94ee28+75*0x10 == 0x94f2d8, so 75+25 = 100 entries/record - A13 `:293`;
