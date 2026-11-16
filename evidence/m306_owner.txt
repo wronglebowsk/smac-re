@@ -69,7 +69,7 @@ A5  OK  : A5 boundary from code: 15 insns after the ret@0x4f4050 (ret=1B), all n
 A6  OK  : A6 6 nops 0x4f35da..0x4f35df close FUN_004f34b0 and align the entry 0x4f35e0
 A7  OK  : A7 ret census=3, all reachable; exactly 3 epilogues (pop ebx/esi/edi + mov esp,ebp each)
 A8  OK  : A8 the FUN_0051dcb0 call site 0x4f3e08 is reachable inside this CFG (True)
-A9  OK  : A9 call 0x4f3e08 has NO branch predecessor (preds=0) — unconditional once its loop exits
+A9  OK  : A9 call 0x4f3e08 has NO branch predecessor (preds=0) — a fall-through from the loop exit, NOT a branch target (it is still not reached on every invocation: see A23)
 A10 OK  : A10 dump-wide `call 0x4f35e0` = 0 (zero direct callers)
 A11 OK  : A11 dump-wide refs to 0x4f35e0 = exactly one jmp @0x4f4133 (jmp/jcc=1 other=0)
 A12 OK  : A12 that jmp sits INSIDE the modelled neighbour [FUN_004f4060 @0x4f4060+3058]; the entry is reached by an in-body tail-jump edge
@@ -81,12 +81,13 @@ A17 OK  : RIVAL1 FAILS 'the whole gap [0x4f35da,0x4f4060) is one function body':
 control CFG from 0x4f4060 confined to its own span: 121 insns, 1 rets; edges LEAVING the span downward: [('0x4f4133', '0x4f35e0')] (region insns among them: 1)
 A18 OK  : RIVAL2 FAILS 'region and 0x4f4060 are ONE contiguous body (no real boundary)': the region is self-contained — own prologue, 3 rets, 15 nop pad, ZERO CFG edges from the region into the neighbour span (out-edges=0); the connection is exactly 1 one-way fold edge(s) [('0x4f4133', '0x4f35e0')] — two complete functions joined by one tail-jump
 A19 OK  : RIVAL3 FAILS 'multiple jump-table/branch entries': calls=0 jcc-targets=0 jmp-targets=1 (total 1)
-A20 OK  : RIVAL4 FAILS 'the 0x4f3e08 call carries its own guard predicate': branch preds=0; the only gate is the enclosing loop's jl
+A20 OK  : RIVAL4 FAILS 'the 0x4f3e08 call carries its own guard predicate': branch preds=0 — no branch DIRECTLY targets it. It does NOT follow that the call runs on every invocation: 3 ret(s) are reachable without executing it (A23)
 A21 OK  : A17 ABSORPTION: the region's code is DECOMPILED inside the neighbour's body — triad(FUN_005a2ae0;FUN_0051dcb0)=True, '< 0x54' loop-exit=1, DAT_00985af0=5, DAT_00985af4=4
 A22 OK  : RIVAL5 FAILS 'the 0x4f4133 jmp is dead code / never followed': its target's code is present in the neighbour's decompiled body (triad=True) — Ghidra followed the edge and FOLDED the target, which is why no separate function was ever created
+A23 OK  : A23 the call is NOT executed on every invocation: 3 of 3 ret(s) are reachable WITHOUT running 0x4f3e08 ['0x4f36b9', '0x4f38ef', '0x4f4050']
 == UNKNOWN ==
 U1 exact semantics of the body (23 callees / 36 sites, _rand x3, script-string args at 0x4f4042): only the census is settled; no per-branch meaning claimed.
 U2 whether the entry executes in the live game: ZERO box time; static reachability via the 0x4f4133 fold-edge only.
 U3 the meaning of the 0x54 (21-iteration) cap and the FUN_005a2ae0 args [ebp-0x14]/[ebp-0x4].
 U4 Ghidra's exact folding rule (tail-jump absorption into the containing function when the target has no symbol): INFERRED from A17+A11+A15, not re-derived by re-running Ghidra.
-== M306 acceptance: 22/22 OK ==
+== M306 acceptance: 23/23 OK ==

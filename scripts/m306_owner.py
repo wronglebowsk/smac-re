@@ -328,7 +328,34 @@ def main():
         sum(1 for a in reach if ins[a].startswith("pop    edi")) == 3 and
         sum(1 for a in reach if ins[a].startswith("mov    esp,ebp")) == 3)
     chk("A8 the FUN_0051dcb0 call site 0x%x is reachable inside this CFG (%s)" % (CB, CB in reach), CB in reach)
-    chk("A9 call 0x%x has NO branch predecessor (preds=%d) — unconditional once its loop exits" % (CB, len(preds)),
+    # P1 (Greptile s264): preds==0 proves only that no branch TARGETS the call. Whether it RUNS on every
+    # invocation is a different question - walk the CFG with the call as a WALL and count the rets that
+    # can be reached without executing it. (Measured: 3/3 - early exits skip the counter rebuild.)
+    def _succ(a):
+        t = ins[a].strip()
+        m = re.match(r"^(j\w+)\s+(?:0x)?([0-9a-f]{4,8})$", t)
+        if m:
+            o = [int(m.group(2), 16)]
+            if not t.startswith("jmp"):
+                o.append(addrs[idx_all[a] + 1])
+            return [x for x in o if FN <= x < NEIGHBOR]
+        if t.startswith("ret"):
+            return []
+        n = idx_all[a] + 1
+        return [addrs[n]] if n < len(addrs) and FN <= addrs[n] < NEIGHBOR else []
+
+    rets_before, wall_seen, stack = set(), set(), [FN]
+    while stack:
+        a = stack.pop()
+        if a in wall_seen or a == CB:
+            continue
+        wall_seen.add(a)
+        if ins[a].strip().startswith("ret"):
+            rets_before.add(a)
+            continue
+        stack.extend(x for x in _succ(a) if x not in wall_seen)
+    chk("A9 call 0x%x has NO branch predecessor (preds=%d) — a fall-through from the loop exit, "
+        "NOT a branch target (it is still not reached on every invocation: see A23)" % (CB, len(preds)),
         len(preds) == 0)
     chk("A10 dump-wide `call 0x%x` = %d (zero direct callers)" % (FN, len(call_sites)), len(call_sites) == 0)
     chk("A11 dump-wide refs to 0x%x = exactly one jmp @0x%x (jmp/jcc=%d other=%d)" %
@@ -370,8 +397,10 @@ def main():
         not any(a >= NEIGHBOR for a in reach) and len(fold_edges) == 1 and fold_edges[0] == (JMP_SITE, FN))
     chk("RIVAL3 FAILS 'multiple jump-table/branch entries': calls=%d jcc-targets=%d jmp-targets=%d (total 1)" %
         (len(call_sites), len(jmp_sites) - 1, 1), len(call_sites) == 0 and len(jmp_sites) == 1 and not other)
-    chk("RIVAL4 FAILS 'the 0x%x call carries its own guard predicate': branch preds=%d; the only gate is the "
-        "enclosing loop's jl" % (CB, len(preds)), len(preds) == 0)
+    chk("RIVAL4 FAILS 'the 0x%x call carries its own guard predicate': branch preds=%d — no branch "
+        "DIRECTLY targets it. It does NOT follow that the call runs on every invocation: %d ret(s) are "
+        "reachable without executing it (A23)" % (CB, len(preds), len(rets_before)),
+        len(preds) == 0)
     chk("A17 ABSORPTION: the region's code is DECOMPILED inside the neighbour's body — "
         "triad(FUN_005a2ae0;FUN_0051dcb0)=%s, '< 0x54' loop-exit=%d, DAT_00985af0=%d, DAT_00985af4=%d"
         % (bool(triad), fp_54, fp_af0, fp_af4),
@@ -379,6 +408,9 @@ def main():
     chk("RIVAL5 FAILS 'the 0x4f4133 jmp is dead code / never followed': its target's code is present in the "
         "neighbour's decompiled body (triad=%s) — Ghidra followed the edge and FOLDED the target, which is "
         "why no separate function was ever created" % bool(triad), bool(triad))
+    chk("A23 the call is NOT executed on every invocation: %d of %d ret(s) are reachable WITHOUT running "
+        "0x%x %s" % (len(rets_before), len(ret_sites), CB, [hex(x) for x in sorted(rets_before)]),
+        len(rets_before) > 0 and set(ret_sites) <= set(rets_before))
 
     out.p("== UNKNOWN ==")
     out.p("U1 exact semantics of the body (23 callees / 36 sites, _rand x3, script-string args at "
