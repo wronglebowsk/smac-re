@@ -5,11 +5,11 @@ M307 folded body 0x4f35e0..0x4f4051  (objdump insns=846; M306 settled these boun
   branch preds of loop head 0x4f3c0a (inside span): ['0x4f3df2']
   tail@0x4f3df2: add    eax,0x4 | cmp    eax,0x54 | mov    DWORD PTR [ebp-0xc],eax | jl     0x4f3c0a
   index var: head reads mov    edx,DWORD PTR [ebp-0xc] ; zero-store @0x4f3bf1: mov    DWORD PTR [ebp-0xc],0x0
-  iterations per entry = ceil((0x54-0)/4) = 21 ; 0x54 % 4 = 0 ; idx values 0..80 step 4
+  parsed: inc=4 cap=0x54 jl->0x4f3c0a ; iterations = ceil((cap-0)/inc) = 21 ; cap % inc = 0 ; idx values 0..80 step 4
   branch targets landing strictly between zero-store and head: []
   T_x reads in loop @['0x4f3c10']: ['mov    eax,DWORD PTR [edx+0x67850c]']
   T_y reads in loop @['0x4f3c3a']: ['mov    eax,DWORD PTR [eax+0x678990]']
-  tile-stride chain: [(5192843, 'lea    edx,[eax+eax*4]'), (5192846, 'lea    eax,[eax+edx*2]'), (5192851, 'lea    eax,[ecx+eax*4]')]  (=> 44*(x + 2*5x)=44x over mov ecx,mov    ecx,DWORD PTR ds:0x92ae14)
+  tile-stride chain: [('0x4f3c8b', 'lea    edx,[eax+eax*4]'), ('0x4f3c8e', 'lea    eax,[eax+edx*2]'), ('0x4f3c93', 'lea    eax,[ecx+eax*4]')] -> PARSED (1+4)=5 -> (1+2*5)=11 -> *4 = 44 over mov    ecx,DWORD PTR ds:0x92ae14
   row-walk stride-0x34 over 0x933282 (count ds:0x985af0): {'base lea': ['0x4f3cba'], 'step': ['0x4f3dd3'], 'count': ['0x4f3ca2', '0x4f3e0d', '0x4f3e26']}
 
 [S3] offset tables: T_x VA 0x67850c -> .rdata off 0x27850c ; T_y VA 0x678990 -> .rdata off 0x278990
@@ -29,6 +29,12 @@ M307 folded body 0x4f35e0..0x4f4051  (objdump insns=846; M306 settled these boun
 
 [S4] triad and FUN_005a2ae0 args:
   calls to 0x5a2ae0 in span: ['0x4f3e00']
+    0x4f3dfb: mov    edx,DWORD PTR [ebp-0x14]
+    0x4f3dfe: push   ecx
+    0x4f3dff: push   edx
+    0x4f3e00: call   0x5a2ae0
+    0x4f3e05: add    esp,0x8
+    0x4f3e08: call   0x51dcb0
   callee FUN_005a2ae0 [0x5a2ae0,+254): stack slots referenced: ['[ebp+0x8]', '[ebp+0xc]'] (only +0x8/+0xc = 2 int args)
   arg1 scaling chain: [('0x5a2aec', 'lea    ecx,[eax+eax*8]'), ('0x5a2af5', 'shl    eax,0x4'), ('0x5a2b5d', 'lea    ebx,[eax+eax*4]')]  -> 304*arg1 + 0x95da10 (record stride 304 = 0x130)
   coordinate reads from the RECORD, not the args: [('0x5a2b15', 'movsx  edi,WORD PTR [eax+0x95da12]'), ('0x5a2b1c', 'movsx  ecx,WORD PTR [eax+0x95da10]')]
@@ -38,7 +44,7 @@ M307 folded body 0x4f35e0..0x4f4051  (objdump insns=846; M306 settled these boun
   [ebp-0x14] stores: [('0x4f3902', 'mov    DWORD PTR [ebp-0x14],0x0'), ('0x4f3a06', 'mov    DWORD PTR [ebp-0x14],ecx')] | address-of (out-param): [('0x4f37f8', 'lea    ecx,[ebp-0x14]')]
   [ebp-0x4] value source: mov    ecx,DWORD PTR ds:0x8f0d60 / mov    al,BYTE PTR [ecx+0x4] / mov    eax,DWORD PTR [ecx+0x30] (ecx=ds:0x8f0d60)
   callee FUN_00507410 (17 insns): ['push   ebp', 'mov    ebp,esp', 'mov    ecx,DWORD PTR [ebp+0x8]', 'mov    eax,ecx', 'and    ecx,0x7', 'cdq', 'and    edx,0x7', 'add    eax,edx', 'mov    edx,DWORD PTR [ebp+0xc]', 'sar    eax,0x3', 'mov    DWORD PTR [edx],eax', 'mov    eax,0x1', 'shl    eax,cl', 'mov    ecx,DWORD PTR [ebp+0x10]', 'mov    DWORD PTR [ecx],eax', 'pop    ebp', 'ret']
-    -> out1 = (n + sign-extend(n mod 8))>>3 = n//8 ; out2 = 1<<(n&7)  [div-8 slot->(qword,bit)]
+    -> out1 = (n + (n>>31 & 7))>>3 : n/8 ROUNDED TOWARD ZERO (n=-1 -> 0, unlike //); out2 = 1<<(n&7)  [div-8 slot->(qword,bit)]
 
 [S5] _rand@0x64c6f0 sites in span (index.csv name=_rand):
   site 0x4f36df: idiv   edi | moduli-setup [] | consumed: GATE (remainder only tested -> early exit)
@@ -52,9 +58,9 @@ M307 folded body 0x4f35e0..0x4f4051  (objdump insns=846; M306 settled these boun
   [OK] A1 span re-parses to 846 insns ending ret@0x4f4050 (M306 bounds hold)
   [OK] A2 cap is the immediate 0x54 exactly ONCE in span (1)
   [OK] A3 loop head preds inside span = {jl@0x4f3df2} only (['0x4f3df2'])
-  [OK] A4 index [ebp-0xc] zeroed per entry @0x4f3bf1 (mov    DWORD PTR [ebp-0xc],0x0) and no branch target lands between it and the head ([]) -> exactly 21 passes/call
+  [OK] A4 index [ebp-0xc] zeroed per entry @0x4f3bf1 (mov    DWORD PTR [ebp-0xc],0x0), back-edge jl parsed target=0x4f3c0a, tail ops parsed inc=4 cap=0x54 -> 21 passes/call, and no branch target lands between the zero-store and the head ([])
   [OK] A5 loop body indexes T_x once (1) and T_y once (1) via [idx+disp] dwords
-  [OK] A6 tile conversion inside loop = 44-byte stride over ds:0x92ae14 (chain 5x->11x->44x) ['0x4f3c8b', '0x4f3c8e', '0x4f3c93']
+  [OK] A6 tile conversion inside loop: the 3 lea scale factors PARSE to (1+4)=5,(1+2*5)=11,*4=44 over ds:0x92ae14 — stride asserted from operands, not addresses
   [OK] A7 row-walk inside loop: base 0x933282, step sub esi,0x34, count ds:0x985af0 all present
   [OK] A8 tables live in file-backed .rdata/.rdata (NOT BSS) -> on-disk constants
   [OK] A9 21 pairs are DISTINCT and equal the even-parity Cheb3 box minus (+-3,+-3) (21 elems)

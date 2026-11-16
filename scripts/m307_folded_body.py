@@ -15,7 +15,7 @@ those three things, computed from the raw objdump dump + terran.exe bytes:
      minus {(+-3,+-3)}  ->  25-4 = 21, D4-symmetric, ordered center/ring/corners/far;
   S4 the triad @0x4f3e00: FUN_005a2ae0(arg1=[ebp-0x14] = RECORD INDEX into 304-B slots
      at 0x95da10, arg2=[ebp-0x4] = BYTE[ds:0x8f0d60+4] bit position) then FUN_0051dcb0;
-     and FUN_00507410 proven to be the div-8 decomposition (n//8, 1<<(n&7));
+     and FUN_00507410 proven to be the div-8 decomposition (n/8 rounded toward ZERO, 1<<(n&7));
   S5 the three _rand@0x64c6f0 sites: TWO probability gates (remainders tested+jne, moduli
      [8380*idx+0x94d690]+7 and 3) + ONE value draw (rand%39 kept in esi).
 
@@ -128,13 +128,20 @@ def main():
     back = [a for a in targets.get(LOOP_HEAD, []) if FN <= a < FN_END]
     out.p("  branch preds of loop head 0x%x (inside span): %s" % (LOOP_HEAD, [hex(a) for a in back]))
     tl = span.index(LOOP_TAIL)
-    out.p("  tail@0x%x: %s | %s | %s | %s"
-          % (LOOP_TAIL, ins[span[tl - 3]], ins[span[tl - 2]], ins[span[tl - 1]], ins[LOOP_TAIL]))
+    i_add, i_cmp, i_mov, i_jl = (ins[span[tl - 3]], ins[span[tl - 2]], ins[span[tl - 1]], ins[LOOP_TAIL])
+    out.p("  tail@0x%x: %s | %s | %s | %s" % (LOOP_TAIL, i_add, i_cmp, i_mov, i_jl))
+    # the assertable values are PARSED from these mnemonics, never hardcoded (Greptile #279 P2)
+    inc_m = re.match(r"^add    eax,0x([0-9a-f]+)$", i_add)
+    cap_m = re.match(r"^cmp    eax,0x([0-9a-f]+)$", i_cmp)
+    jl_m = JCC_RX.match(i_jl)
+    inc = int(inc_m.group(1), 16) if inc_m else -1
+    cap = int(cap_m.group(1), 16) if cap_m else -1
+    jlt = int(jl_m.group(2), 16) if jl_m else -1
     out.p("  index var: head reads %s ; zero-store @0x%x: %s"
           % (ins[LOOP_HEAD], IDX_ZERO, ins[IDX_ZERO]))
-    n4 = (0x54 - 0 + 3) // 4
-    out.p("  iterations per entry = ceil((0x54-0)/4) = %d ; 0x54 %% 4 = %d ; idx values 0..%d step 4"
-          % (n4, 0x54 % 4, (n4 - 1) * 4))
+    n4 = (cap - 0 + inc - 1) // inc if inc > 0 else -1
+    out.p("  parsed: inc=%d cap=0x%x jl->0x%x ; iterations = ceil((cap-0)/inc) = %d ; cap %% inc = %d ; idx values 0..%d step %d"
+          % (inc, cap, jlt, n4, cap % inc if inc > 0 else -1, (n4 - 1) * inc, inc))
     gap_targets = sorted(t for t in targets
                          if IDX_ZERO + 1 < t < LOOP_HEAD or (LOOP_HEAD < t <= IDX_ZERO))
     out.p("  branch targets landing strictly between zero-store and head: %s" % [hex(t) for t in gap_targets])
@@ -144,8 +151,21 @@ def main():
     out.p("  T_x reads in loop @%s: %s" % ([hex(a) for a in tx_reads], [ins[a] for a in tx_reads]))
     out.p("  T_y reads in loop @%s: %s" % ([hex(a) for a in ty_reads], [ins[a] for a in ty_reads]))
     stride_chain = [(a, ins[a]) for a in span if a in (0x4F3C8B, 0x4F3C8E, 0x4F3C93)]
-    out.p("  tile-stride chain: %s  (=> %d*(x + 2*5x)=44x over mov ecx,%s)"
-          % (stride_chain, TILE_STRIDE, ins[0x4F3C82]))
+    # PARSE the scale factors out of the three leas (Greptile #279 P2: don't assert addresses)
+    s1 = re.match(r"^lea    edx,\[eax\+eax\*(\d)\]$", stride_chain[0][1]) if len(stride_chain) > 0 else None
+    s2 = re.match(r"^lea    eax,\[eax\+edx\*(\d)\]$", stride_chain[1][1]) if len(stride_chain) > 1 else None
+    s3 = re.match(r"^lea    eax,\[ecx\+eax\*(\d)\]$", stride_chain[2][1]) if len(stride_chain) > 2 else None
+    if s1 and s2 and s3:
+        m1 = 1 + int(s1.group(1))                      # edx = x + x*s1
+        m2 = 1 + int(s2.group(1)) * m1                 # eax = x + edx*s2
+        stride_parsed = m2 * int(s3.group(1))          # eax = base + eax*s3
+        out.p("  tile-stride chain: %s -> PARSED (1+%d)=%d -> (1+%d*%d)=%d -> *%d = %d over %s"
+              % ([(hex(a), t) for a, t in stride_chain], int(s1.group(1)), m1,
+                 int(s2.group(1)), m1, m2, int(s3.group(1)), stride_parsed, ins[0x4F3C82]))
+    else:
+        stride_parsed = -1
+        out.p("  tile-stride chain: %s -> PARSE FAILED (chain shape changed)"
+              % [(hex(a), t) for a, t in stride_chain])
     rowwalk = {"base lea": [(a, ins[a]) for a in span if "0x933282" in ins[a]],
                "step": [(a, ins[a]) for a in span if re.match(r"^sub    esi,0x34$", ins[a])],
                "count": [(a, ins[a]) for a in span if re.search(r"ds:0x985af0", ins[a])]}
@@ -206,7 +226,7 @@ def main():
                  and int(CALL_RX.match(ins[a]).group(1), 16) == A2AE0]
     t0 = tri_calls[0]
     out.p("  calls to 0x%x in span: %s" % (A2AE0, [hex(a) for a in tri_calls]))
-    for a in span[idx[t0] - 3: idx[t0] + 3]:
+    for a in addrs[idx[t0] - 3: idx[t0] + 3]:
         out.p("    %s: %s" % (hex(a), ins[a]))
     callee_span = [a for a in addrs if A2AE0 <= a < A2AE0 + 254]
     arg_slots = sorted({int(m.group(1), 16) for a in callee_span for m in [EBP_RX.search(ins[a])] if m})
@@ -240,7 +260,7 @@ def main():
 
     div8_span = [a for a in addrs if DIV8 <= a < DIV8 + 39]
     out.p("  callee %s (%d insns): %s" % (names.get(DIV8), len(div8_span), [ins[a] for a in div8_span]))
-    out.p("    -> out1 = (n + sign-extend(n mod 8))>>3 = n//8 ; out2 = 1<<(n&7)  [div-8 slot->(qword,bit)]")
+    out.p("    -> out1 = (n + (n>>31 & 7))>>3 : n/8 ROUNDED TOWARD ZERO (n=-1 -> 0, unlike //); out2 = 1<<(n&7)  [div-8 slot->(qword,bit)]")
 
     # S5 the three _rand sites
     out.p("\n[S5] _rand@0x%x sites in span (index.csv name=%s):" % (RAND, names.get(RAND)))
@@ -270,15 +290,19 @@ def main():
         len(cap_cmp) == 1)
     chk("A3 loop head preds inside span = {jl@0x4f3df2} only (%s)" % [hex(a) for a in back],
         back == [LOOP_TAIL])
-    chk("A4 index [ebp-0xc] zeroed per entry @0x4f3bf1 (%s) and no branch target lands between "
-        "it and the head (%s) -> exactly 21 passes/call" % (ins[IDX_ZERO], [hex(t) for t in gap_targets]),
+    chk("A4 index [ebp-0xc] zeroed per entry @0x4f3bf1 (%s), back-edge jl parsed target=0x%x, "
+        "tail ops parsed inc=%d cap=0x%x -> %d passes/call, and no branch target lands between the "
+        "zero-store and the head (%s)"
+        % (ins[IDX_ZERO], jlt, inc, cap, n4, [hex(t) for t in gap_targets]),
         ins[IDX_ZERO].startswith("mov    DWORD PTR [ebp-0xc],0x0") and not gap_targets and
-        n4 == 21 and 0x54 % 4 == 0)
+        inc_m and cap_m and jl_m and inc == 4 and cap == 0x54 and jlt == LOOP_HEAD and n4 == 21)
     chk("A5 loop body indexes T_x once (%d) and T_y once (%d) via [idx+disp] dwords"
         % (len(tx_reads), len(ty_reads)), len(tx_reads) == 1 and len(ty_reads) == 1)
-    chk("A6 tile conversion inside loop = 44-byte stride over ds:0x92ae14 (chain 5x->11x->44x) %s"
-        % [hex(a) for a, _ in stride_chain],
-        len(stride_chain) == 3 and TILE_STRIDE == 44)
+    chk("A6 tile conversion inside loop: the 3 lea scale factors PARSE to (1+%d)=%d,(1+%d*%d)=%d,*%d=%d "
+        "over ds:0x92ae14 — stride asserted from operands, not addresses"
+        % ((int(s1.group(1)), m1, int(s2.group(1)), m1, m2, int(s3.group(1)), stride_parsed)
+           if (s1 and s2 and s3) else (-1, -1, -1, -1, -1, -1, -1)),
+        bool(s1 and s2 and s3) and stride_parsed == TILE_STRIDE == 44)
     chk("A7 row-walk inside loop: base 0x933282, step sub esi,0x34, count ds:0x985af0 all present",
         rowwalk["base lea"] and rowwalk["step"] and rowwalk["count"])
     chk("A8 tables live in file-backed %s/%s (NOT BSS) -> on-disk constants" % (secx, secy),
