@@ -1,1 +1,1 @@
-H264 | correction line for #277 squash title | docs PR, merge on green | next: track_mode=ANALYSE, B21 queued
+M307 | python3 scripts/m307_folded_body.py (20/20 OK, exit 0; rerun stdout == evidence diff 0) | PR open, merge pending gate+Greptile | next: ANALYSE shortlist (FUN_0056d480/0056d630 + ds:0x985b10/0x985aec identities — M307 adds 3 read-sites of 0x985b10); B21 queued; pre-existing #180/#105 NOT this chain

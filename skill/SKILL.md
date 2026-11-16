@@ -84,13 +84,24 @@ Cycle: `milestone.py start <ID>` → work → `gate.py --base main` GREEN → `s
 and the whole command (including the push) fails as 422 `head invalid`. **Merging several PRs in one session is
 queue-bound:** `gh pr checks` sits `pending` 2-4 min merely queued — poll with ~200 s sleeps;
 `milestone.py merge` refuses while pending; a force-merge is never the answer.
+**Triage every Greptile finding; a re-push does NOT buy another review** (one review per PR, on OPEN). Read the
+inline findings with `gh api repos/<owner>/<repo>/pulls/<n>/comments --jq '.[] | "\(.path):\(.line) \(.body)"'`,
+fix or dismiss each, and answer all of them in ONE `gh pr comment --body-file` (apostrophes: use the file, never
+inline `-b`). The recurring P1 on this repo is a gate that passes on an UNMEASURED state — check every
+assertion for "can this FAIL on a real input?" before submitting, and prefer retracting the claim to
+re-wording it when the reviewer is right. A docs-only follow-up PR coming back with zero findings is the
+cheapest proof the fix actually landed.
+**`gh pr edit` is unusable on this repo** (it dies on a GraphQL `projectCards`/Projects-classic deprecation):
+patch the title through REST instead — `gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -f title="..."`.
 **A GREEN gate is not permission to merge.** The gate audits docs/evidence/harness, not the acceptance. If the
 acceptance printed FAIL, keep the checkpoint commits on the branch, submit nothing (or leave the PR unmerged),
 and report the FAIL with numbers — weakening a threshold to go green is the one thing never allowed.
 **A squash-merge TITLE outlives the finding:** if the milestone opened "BLOCKED" and resolved later on the same
 branch, land a small docs PR stating the correction; when a later session narrows a finding, patch the
 finding's own `NAMED.md` block in place — a retraction only in `SESSION_NOTES.md` leaves the registry
-asserting the older, stronger claim.
+asserting the older, stronger claim. **A delegated fire will "flag it in the PR" instead of editing the older
+block**, so the parent does the in-place patch BEFORE merging (and re-reads the child's claimed retraction of a
+prior finding against the shard/exe itself — the registry, not the PR comment, is what the next fire greps).
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten `NEXT_PROMPT.md`
 (<= 12,000 BYTES at close — the budget warn; what `evidence.py budget` prints is `wc -c`). `scratch/` is
 gitignored: probes are not repo products; the tracked products are `scripts/`, `evidence/`, docs.
@@ -145,6 +156,12 @@ re-summarise.
   worktree, and name the owner from the process table before arming a measurement.
 - Unattended loop scheduling: `templates/cron-milestone-loop.md` (validated kickoff: takes the pick from
   `NEXT_PROMPT.md`, triages doc caps first, proves ownership, caps the batch, merges only on a real PASS).
+  **Driving ONE fire by hand:** put the kickoff in a FILE and run `hermes chat --provider qwen125b -m <served-id>
+  --query-file <path>` backgrounded with `persist_on_release=True` — a `delegate_task` child dies with the
+  session, this one does not. The kickoff must itself demand persistence (branch + commit the skeleton early,
+  rewrite `SESSION_CURSOR.md` <=600 B as it goes), so a kill at any moment leaves a resumable branch instead of
+  lost context; then the PARENT verifies before merging (re-run the script, diff the evidence, read the gate
+  for scope) — never trust the child's summary line.
 
 ### Verify the OUTCOME, not the mechanism — full text: `references/verify-outcome.md`
 - A gate that counts the harness's own work passes a run that LOST the game. Compute candidate predictions from
@@ -172,6 +189,11 @@ re-summarise.
   the loop then appends until the box runs out of RAM. The same shape hides a one-group-off regex
   (`JCC_RX` captures the MNEMONIC as group 1 and the TARGET as group 2; assuming group 1 yields a
   `ValueError: invalid literal for int()` that only fires at the first backward jump).
+- **Re-verify a delegated script by capturing stdout to a TEMP file, never `diff <(python3 scripts/<id>.py) evidence/<id>.txt`.**
+  The script writes its own evidence file, so the process substitution truncates the target before `diff` reads
+  it: a perfectly good run reports as `1,92d0` (the ENTIRE output "missing") and reads exactly like an empty
+  evidence file. The only valid form is `python3 -u scripts/<id>.py > /tmp/x.out && diff /tmp/x.out
+  evidence/<id>.txt`; run it twice and require 0 lines both times (before and after review fixes).
 
 ### Evidence lifecycle — the rules live in `docs/EVIDENCE.md`
 `python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB, FAILs the gate at 30 MB. Text is never

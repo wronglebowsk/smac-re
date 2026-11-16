@@ -1,70 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-245-245.md` (1 sessions). Read it only when a question reaches back before session ## Session 246.
-
-## Session 246 (2026-11-10, s246)
-
-### 246a. #258 (B16) closed per the MERGE RULE and merged (main 9567ec1)
-
-Greptile posted 1 P1 + 2 P2 at 22:20; dispositions (full text in the PR body):
-- P1 ACCEPTED: the 8482 pass-6-no-row cells are also the value-vs-best skip
-  (0x563c09-0x563c11 after the chain, before GDEEP 0x563c3d). Relabeled
-  sim/precheck.py (NOTE + UNMODELED), NAMED.md, NEXT_PROMPT.md; bytes pinned by
-  extending evidence/b16_precheck_window.txt to 0x563bf0-0x563c60 (284 insns).
-- P2 stride: BYTE[0x92ae81 + 144*BYTE[0x98adac + 52*type]] (lea*9 then shl4,
-  0x55f757/0x55f75c) - fixed in precheck.py:37, NAMED.md, SESSION_NOTES.md:671.
-- P2 report: report_text counts matched pins now; chain evidence regenerated
-  (`python3 -m sim.precheck --out evidence/b16_precheck_chain.txt`).
-- s245c self-audit REFUTED, no code change: DISP prints unit-record fields
-  0x933278/0x93327a (true X,Y); law orientation 201/201 vs them, the audit's
-  untransposed orientation 0/201 (BASE rival_disp_ok) - G2 tests the pair the
-  law names; the proposed re-key would install the rival the gate rejects.
-`python3 -m sim.selftest --b16 programs/saves/m54b_clean.SAV` PASS 7/7; merged
-via `python3 scripts/milestone.py merge 258` (Greptile registered no check run on
-the new head inside the 10-min cap - operator amendment 2).
-
-### 246b. M295 - the 0x4e3c00(owner,X,Y) no-go NAMED, pinned, MEASURED INERT
-
-fn.py + dis: FUN_004e3c00 = territory_nogo, calling FUN_004e3b50 =
-owner_of_tile_visible: tile7 = signed BYTE[44-B tileview+7] (B16's view/form,
-0x4e3b53-0x4e3b76; movsx at evidence/m295_nogo_window.txt:19), visible if
-BYTE[0x985ae8] bit 0x80 or pair-flagword bits 3+27 (immediate 0x08000008,
-window :45,:46). pair array base = per-faction block 0x94d430 (disasm constant,
-170 uses, e.g. [edx+0x94d430] at 0x429ab9) + 0x18 = 0x94d448 (M143 folded
-[owner*2095+tile7]*4). c00 blocks
-(returns non-negative) iff tile7 >= 1, tile7 differs from the pod owner, the
-human-mask BYTE[0x985b10] (NAMED M96; masked 0xff at 0x4e3c34) has the pod or
-tile bit, and the flagword bit 4 is CLEAR (alliance, window :120). The return value is
-FUN_004e37f0's (nearest-base sweep writing DAT_008f0d34 = M294's dist;
-sentinel 9999). MEASURED `python3 scripts/m295_nogo_fit.py` (evidence
-m295_nogo_fit.txt): over the m294 window the full rule rejects 0 recorded
-slots and 0 pass-6-no-row cells (697 owner-known visits; 329 visits with
-unresolvable u above the 67-record units array); t7 dist of the 8482:
-255:2490, 4:2058, 6:1822, 5:1190, 2:872, 1:45, 3:4, 7:1; human_mask 0x8,
-feature_bits 0x0. Rivals collide with recorded slots: foreign-only 1045,
-+mask 124, +not-ally 119. Within the graded subset R4 rejects nothing, so the
-8482 are BEST EXPLAINED as the VALUE<=BEST ARGMAX SKIP (0x563c09-0x563c11) -
-the next leg. NOT CLOSED (Greptile P1c): grading covers the 697 owner-known
-visits vs the y2150 save (window is y2188+); live-flag-matched inputs are the
-only closer. Cites: window :19,:45,:46,:104,:120,:122;
-fit evidence/m295_nogo_fit.txt:4-8. Window scripts/m295_nogo_window.py -> evidence/
-m295_nogo_window.txt (129 insns). Callers 0x5597ea, 0x563963/0x5643e9/0x5647a1
-(the last three inside FUN_0055f650) - lead.
-
-### 246c. Greptile round 2 on #259 (3 P1 + 1 P2), dispositions
-
-- P1 "wrong flags" ACCEPTED: block A record base is 0x94d430 (170 disasm uses;
-  0x94d104 appears 0 times - the atlas headline phrasing is a fix-lead), so the
-  pair-flagwords sit at saved block+0x18. Script fixed, evidence regenerated:
-  R3 collisions 91 -> 119; R4 still 0 rejects.
-- P1 "wrong bit" ACCEPTED: the recorded immediate is 0x08000008 = bits 3+27
-  (not 31); the 0xff-masked human-mask read is at 0x4e3c34 (window :104).
-  Model + all descriptions corrected.
-- P1 "partial results" ACCEPTED: INERT claim softened everywhere to "0 rejects
-  in the graded owner-known subset vs the older save"; live no-go stays OPEN
-  and s247's pick carries that.
-- P2 (path:line cites) ACCEPTED: window/fit line cites added to 246b and the
-  NAMED ## M295 rows.
+Older sessions: `docs/sessions/sessions-246-246.md` (1 sessions). Read it only when a question reaches back before session ## Session 247.
 
 ## Session 247 (s247, M296, 2026-11-11)
 
@@ -578,3 +514,16 @@ BUILD_SPINE.md now carries the B18 rung.
 ## Session 265 (2026-11-16, HYGIENE H264, zero box)
 - docs-only: the correction line above. No findings changed, no script touched.
 - STATE: M306 #277 MERGED (main f9fca53); B1-B20 + M54A-M306 MERGED; #180/#105 pre-existing and untouched.
+
+## Session 266 (2026-11-16, ANALYSE, zero box) - M307: the folded body's 21x loop walks two 21-pair EVEN-PARITY neighborhood tables; the triad's FUN_005a2ae0 takes (record-index, faction-bit-index); _rand x3 = 2 probability gates + 1 rand%39 draw
+
+- PICK (NEXT_PROMPT OPEN shortlist, collision-checked): "the folded body's MEANING - the 21x(0x54) loop cap + FUN_005a2ae0 args + _rand x3". M306 had settled bounds/entry only.
+- ACCEPTANCE `python3 scripts/m307_folded_body.py` -> **20/20 OK**, exit 0; evidence/m307_folded_body.txt 8,115 B; rerun diff stdout-vs-evidence = 0 lines. Zero box, zero /proc, zero gdb.
+- (a) THE 21x LOOP @0x4f3c0a: cap is the immediate `cmp eax,0x54` (exactly 1 in span), index [ebp-0xc] zeroed EVERY entry at 0x4f3bf1 (no branch target lands between), sole back-edge jl -> 21 passes/call (`ceil(84/4)=21`, idx 0..80 step 4). It indexes two dword tables T_x=0x67850c / T_y=0x678990 (1 read each in loop). Tile conversion inside the loop = 44-B stride over ds:0x92ae14 (lea chain 5x/11x/44x @0x4f3c8b/8e/93); inner row-walk stride 0x34 over 0x933282, count ds:0x985af0.
+- (b) THE TABLES, read from terran.exe .rdata (VA->off 0x27850c/0x278990, file-backed not BSS): the 21 (dx,dy) pairs = **{even-parity (dx+dy)%2==0, |dx|,|dy|<=3} minus the 4 (+-3,+-3) corners** (set equality A9), D4-closed under negate+swap (A10), ordered center(0,0) -> 8-ring {(1,-1),(2,0),(1,1),(0,2),(-1,1),(-2,0),(-1,-1),(0,-2)} -> 4 corners (+-2,+-2) -> 8 far {(1,-3),(3,-1),(3,1),(1,3),(-1,3),(-3,1),(-3,-1),(-1,-3)} (A11). NOT a Moore 3x3/5x5 neighborhood (RIVAL-2 fails: no (+-1,0)/(0,+-1)).
+- (c) TRIAD @0x4f3e00..0x4f3e08 `call FUN_005a2ae0 / add esp,8 / call FUN_0051dcb0`: callee reads ONLY [ebp+0x8]/[ebp+0xc] (2 int args). arg1=[ebp-0x14] = RECORD INDEX (callee scales *304 into 0x95da10 slots; the coords are read from WORD[rec+0/+2] and those are what get bounds-checked vs ds:0x92a378/7c); its producers in the body: imm 0 @0x4f3902, walk-counter @0x4f3a06, FUN_00507410 out-param @0x4f37f8 - never a coordinate (A14/A15). arg2=[ebp-0x4] = BYTE[ds:0x8f0d60+4], single store @0x4f3604 - used by callee as a BIT position (`shl dl,cl`). FUN_00507410 (17 insns) PROVEN = div-8 decomposition (out1=n//8, out2=1<<(n&7)) (A16). Dump-wide triad shape holds at exactly 3 of 11 FUN_0051dcb0 sites: 0x4f3e08/0x508b48/0x543bc6 (A20, re-confirms M305).
+- (d) _rand@0x64c6f0 x3 sites = {0x4f36df, 0x4f3750, 0x4f379f} (A17): TWO probability GATES (remainder tested+jne to epilogue 0x4f404a; moduli = dynamic `idiv edi`, edi=[8380*idx+0x94d690]+7, and `idiv 3`) + ONE VALUE draw (rand%39 kept in esi, consumed via the (1,0x22] range gate and FUN_00507410) (A18/A19). RIVAL "all three are data draws" FAILS.
+- HONEST NOTE: my first pass claimed 22 iterations from `(0x54-0)/4+1` - off-by-one; the printed `ceil((0x54-0)/4)=21` + table length 21 is the checked number. A gate that can't fail on an unmeasured state is a defect - both the 22 and the rival checks now bind.
+- UNKNOWN (stated, not closed): U1 branch-A/B per-branch semantics (the two seed producers for [ebp-0x1c]/[ebp-0x18]: {0x4f3771,0x4f3833-loop,0x4f3863=1<<[ebp-0x4]} vs {0x4f3a48/54 = WORD[ds:0x8f0d60+0/+2]}); U2 what the 52-B row-walk records ARE; U3 the function's game-level identity (name kept INFERRED); U4 live execution (zero box).
+- RETRACTION: none. M306's NAMED UNKNOWN row ("0x54-cap meaning; FUN_005a2ae0 args") is now answered - patched in place.
+- GREPTILE TRIAGE (PR #279, 3 P2s, NO P1s — ALL THREE CORRECT, ALL FIXED, none dismissed): (i) A4/A6 asserted constants/addresses, not operands — a cap 0x54->0x58 or inc 4->8 would still have PASSED; now inc/cap/jl-target and the three lea scale factors are PARSED from the mnemonics. The re-gate immediately caught a real bug in MY parse formula ((1+2*4)*4=36 vs the true 5->11->44) that the old address-check could never see. (ii) the triad window printed NOTHING — I sliced the 846-entry `span` with a whole-dump index (out of range); fixed to `addrs`, evidence now prints the pushes at :33-34. (iii) "n//8" was wrong for negative n — the code is (n + (n>>31&7))>>3, truncation TOWARD ZERO (-1 -> 0); wording fixed in script+evidence+registry. Post-fix ACCEPTANCE `python3 -u scripts/m307_folded_body.py`: **20/20 OK**, exit 0, evidence 8,489 B, rerun diff 0 (twice).
