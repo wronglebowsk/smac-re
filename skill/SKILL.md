@@ -165,6 +165,13 @@ re-summarise.
   4 = the site was never reached (inconclusive, not a gate result); 5 = driver wedged / no orders
   (NO MEASUREMENT — never file it as evidence the gate is inert); 8 = box left dirty (`TracerPid != 0`).
   A wedge and a negative result are different facts; conflating them is the stale-gdb-success failure class.
+- **A script that prints NOTHING and dies on `-15` is a HANG, not a missing instrument.** The signature is a
+  0-byte evidence file plus an empty stdout capture: `timeout N` sends SIGTERM and block-buffered `print`
+  dies with it, so the run reads as "crashed with no output". Run `python3 -u` with stderr teed to a file,
+  and look first for an unadvanced loop cursor — `while x < W:` with no `x += stride` is the real case, and
+  the loop then appends until the box runs out of RAM. The same shape hides a one-group-off regex
+  (`JCC_RX` captures the MNEMONIC as group 1 and the TARGET as group 2; assuming group 1 yields a
+  `ValueError: invalid literal for int()` that only fires at the first backward jump).
 
 ### Evidence lifecycle — the rules live in `docs/EVIDENCE.md`
 `python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB, FAILs the gate at 30 MB. Text is never
