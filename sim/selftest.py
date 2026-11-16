@@ -1618,6 +1618,39 @@ def run_b20(sav_path, results):
     return 0
 
 
+def run_b21(sav_path, log_path, trace_path, results):
+    """Rung B21: the recorded m289 run executed as ONE state object (B3 presses +
+    the B13/B10 founder-destroyer ledger driven by the op-level log), written back
+    through the B8 savewriter with BOTH year and the bases count modeled, RELOADED
+    with sim.save and RESUMED - (write then press) == (press 31, then write)
+    byte-for-byte.  The rung also MEASURES that the per-turn curve is strictly
+    coarser than the op log (7 vs 9 ops).  No box, no /proc, no gdb."""
+    import os as _os
+    from . import composedrun as socr
+    for p in (sav_path, log_path, trace_path):
+        if not _os.path.exists(p):
+            return fail("B21: missing input: %s" % p)
+    socr.acceptance(sav_path, log_path, trace_path, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B21: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B21: %d/%d gates - the recorded m289 run IS ONE EXECUTED STATE "
+          "OBJECT: 30 B3 presses (year law 30/30, trace self-chain 29/29, the "
+          "engine supplies all 31 recorded (cur,tf,year) samples in order) plus "
+          "the 9-op founder/destroyer ledger (closed walk 9/9, curve 30/30, "
+          "endpoint 23 peak 24, grown slots == the 5 surviving foundings); the "
+          "written .SAV grows by 1520 B with ONLY the year and bases-count bytes "
+          "changed in the header, reloads (year 2180, 23 records), and RESUMES "
+          "byte-identically to 31 presses on the original; the curve/op pairing "
+          "(sum|delta| 7 < 9 ops, K=11 placements, curve-only schedule 7/9 op "
+          "fidelity) is measured on both schedules, with 4 rivals failing the "
+          "same fit (no box time, no /proc, no gdb)" % (len(results), len(results)))
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.selftest")
     ap.add_argument("--map", action="append", default=[], help="a .MP file (repeatable)")
@@ -1661,6 +1694,10 @@ def main(argv=None):
                     help="rung B20: the byte-twin visit counter executed "
                          "(M303 byte law + M302 pinned state) vs the recorded "
                          "m302/b18 numbers and the m294 rows")
+    ap.add_argument("--b21", nargs="*", metavar="SAV",
+                    help="rung B21: the m289 run as ONE composed state object "
+                         "(turn presses + founder/destroyer ledger), written, "
+                         "reloaded and RESUMED byte-identically")
     ap.add_argument("--b13", nargs="+", metavar=("SAV", "[LOG TRACE]"),
                     help="rung B13: the pod-driven founding dispatch leg acceptance")
     ap.add_argument("--b14", nargs="+", metavar="SAV",
@@ -1716,6 +1753,13 @@ def main(argv=None):
     if args.b20 is not None:
         sav = args.b20[0] if args.b20 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b20(sav, results)
+    if args.b21 is not None:
+        sav = args.b21[0] if args.b21 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        lg = args.b21[1] if len(args.b21) > 1 else os.path.join(
+            REPO, "evidence", "m289_gdb_raw.log")
+        tr = args.b21[2] if len(args.b21) > 2 else os.path.join(
+            REPO, "evidence", "trace_m289_20261110_071759.jsonl")
+        return run_b21(sav, lg, tr, results)
     if args.b14:
         lg = args.b14[1] if len(args.b14) > 1 else None
         gd = args.b14[2] if len(args.b14) > 2 else None
