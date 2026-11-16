@@ -384,6 +384,11 @@ driving/dialog state machines: `references/wine-operations.md`)
   when a file read's destination IS the watched region). The fix is a different LAYER: strace `-e raw=` (prints
   the read's BUFFER POINTER) + `clear_refs=4`/pagemap soft-dirty + maps before/after; strace and gdb cannot both
   ptrace one task — `references/ptrace-level-probes.md`.
+- **A "no branch targets this call" result is NOT "the call is unconditional".** `preds == 0` at a call site proves
+  only that no branch lands on it; whether it RUNS on every invocation is a separate measurement. Walk the CFG
+  with the call as a WALL (refuse to expand it) and count the `ret`s still reachable: if any, early exits skip the
+  call and a rival claiming "the only gate is the enclosing loop's `jl`" must FAIL. Closing a guard question on
+  `preds == 0` alone is the vacuous-gate class and has now cost two review rounds (M305 A14, M306 RIVAL4).
 - **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
   first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
   agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the

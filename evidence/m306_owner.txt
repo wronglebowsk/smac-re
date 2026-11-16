@@ -1,0 +1,93 @@
+M306 owner 0x4f35e0 — dump insns=781429 index functions=10284
+prologue @0x4f35e0: push   ebp | @0x4f35e1 mov    ebp,esp | @0x4f35e3 sub    esp,0x34
+CFG from entry: reachable=846 insns  span=[0x4f35e0..0x4f4050]  rets=3  back-edges=12  forward-edges=[('0x4f360c', '0x4f365d'), ('0x4f3633', '0x4f364e'), ('0x4f363a', '0x4f364e'), ('0x4f364c', '0x4f3671'), ('0x4f3683', '0x4f404a'), ('0x4f368b', '0x4f36ba'), ('0x4f369d', '0x4f404a'), ('0x4f36dd', '0x4f36ef'), ('0x4f36e9', '0x4f404a'), ('0x4f3728', '0x4f404a'), ('0x4f3735', '0x4f404a'), ('0x4f3744', '0x4f404a'), ('0x4f374e', '0x4f376a'), ('0x4f375f', '0x4f404a'), ('0x4f37bf', '0x4f37e2'), ('0x4f37cb', '0x4f37d1'), ('0x4f37cf', '0x4f37db'), ('0x4f37d9', '0x4f37e2'), ('0x4f37e5', '0x4f3833'), ('0x4f37f3', '0x4f3833'), ('0x4f382a', '0x4f3833'), ('0x4f3831', '0x4f3882'), ('0x4f384c', '0x4f404a'), ('0x4f3866', '0x4f404a'), ('0x4f3878', '0x4f38f0'), ('0x4f387d', '0x4f3a18'), ('0x4f3a1a', '0x4f404a'), ('0x4f3a2e', '0x4f3a41'), ('0x4f3a3b', '0x4f404a'), ('0x4f3a5e', '0x4f3a66'), ('0x4f3ac9', '0x4f3af2'), ('0x4f3ad8', '0x4f3ae1'), ('0x4f3b4e', '0x4f3bec'), ('0x4f3b5d', '0x4f3bb7'), ('0x4f3b6f', '0x4f3bb7'), ('0x4f3ba8', '0x4f3bac'), ('0x4f3baf', '0x4f3bb7'), ('0x4f3bd2', '0x4f3bec'), ('0x4f3c21', '0x4f3c32'), ('0x4f3c25', '0x4f3c2c'), ('0x4f3c2a', '0x4f3c34'), ('0x4f3c45', '0x4f3de6'), ('0x4f3c54', '0x4f3de6'), ('0x4f3c5c', '0x4f3de6'), ('0x4f3c64', '0x4f3de6'), ('0x4f3caa', '0x4f3de0'), ('0x4f3cc7', '0x4f3dd0'), ('0x4f3cd4', '0x4f3dd0'), ('0x4f3ce1', '0x4f3cf0'), ('0x4f3ceb', '0x4f3dcd'), ('0x4f3e17', '0x4f3e53'), ('0x4f3e2c', '0x4f3e4b'), ('0x4f3e38', '0x4f3e4b'), ('0x4f3e40', '0x4f3e4b'), ('0x4f3e65', '0x4f3ed5'), ('0x4f3e71', '0x4f3ec1'), ('0x4f3e78', '0x4f3e86'), ('0x4f3e7d', '0x4f3e8b'), ('0x4f3e84', '0x4f3e8b'), ('0x4f3ef2', '0x4f3f68'), ('0x4f3f01', '0x4f3f51'), ('0x4f3f08', '0x4f3f16'), ('0x4f3f0d', '0x4f3f1b'), ('0x4f3f14', '0x4f3f1b'), ('0x4f3fa9', '0x4f3fda'), ('0x4f3fad', '0x4f3fda'), ('0x4f3fc7', '0x4f3fda'), ('0x4f3fd8', '0x4f404a'), ('0x4f4027', '0x4f402d'), ('0x4f402b', '0x4f404a'), ('0x4f3cf3', '0x4f3dd0'), ('0x4f3cfd', '0x4f3dd0'), ('0x4f3d1a', '0x4f3d69'), ('0x4f3d64', '0x4f3d69'), ('0x4f3db5', '0x4f3dbb'), ('0x4f3dbf', '0x4f3dc5'), ('0x4f3c2e', '0x4f3c32'), ('0x4f3909', '0x4f404a'), ('0x4f3922', '0x4f39f1'), ('0x4f3951', '0x4f3965'), ('0x4f3959', '0x4f3965'), ('0x4f3963', '0x4f3967'), ('0x4f398b', '0x4f398f'), ('0x4f3993', '0x4f3997'), ('0x4f39c2', '0x4f39c6'), ('0x4f39c9', '0x4f39d3'), ('0x4f39d6', '0x4f39dd'), ('0x4f39e0', '0x4f39ec'), ('0x4f3650', '0x4f365d'), ('0x4f3657', '0x4f365d'), ('0x4f365b', '0x4f3662')]  indirect-jmp=0
+padding after last ret: 15 insns (15 nop) 0x4f4051..0x4f405f
+padding before entry:   6 insns (6 nop) 0x4f35da..0x4f35df
+tail: pop    esi | pop    ebx | mov    esp,ebp | pop    ebp | ret
+epilogue census in span: leave=0 pop esi=3 pop ebx=3 pop edi=3 'mov esp,ebp'=3 ret=3
+largest unreachable gap inside span: none <=16B
+callee census (23 distinct callees, 36 call sites):
+  -> FUN_00507410 (0x507410) x6  @ 0x4f36ff 0x4f37fe 0x4f3896 0x4f3b85 0x4f3e9a 0x4f3f2a
+  -> FUN_0064b870 (0x64b870) x4  @ 0x4f3940 0x4f396b 0x4f3974 0x4f397f
+  -> _rand (0x64c6f0) x3  @ 0x4f36df 0x4f3750 0x4f379f
+  -> FUN_0048f100 (0x48f100) x2  @ 0x4f3671 0x4f38e1
+  -> FUN_00582c80 (0x582c80) x2  @ 0x4f3d8d 0x4f3f71
+  -> FUN_00626634 (0x626634) x2  @ 0x4f4006 0x4f4018
+  -> FUN_004737e0 (0x4737e0) x1  @ 0x4f361e
+  -> FUN_004738f0 (0x4738f0) x1  @ 0x4f3ff1
+  -> FUN_004739a0 (0x4739a0) x1  @ 0x4f3fea
+  -> FUN_0048ee00 (0x48ee00) x1  @ 0x4f4042
+  -> FUN_004e5ae0 (0x4e5ae0) x1  @ 0x4f36ab
+  -> FUN_004e78e0 (0x4e78e0) x1  @ 0x4f3f8a
+  -> FUN_004e8d60 (0x4e8d60) x1  @ 0x4f3f85
+  -> FUN_004e92c0 (0x4e92c0) x1  @ 0x4f3f8f
+  -> FUN_004e93f0 (0x4e93f0) x1  @ 0x4f3f94
+  -> FUN_004eaa10 (0x4eaa10) x1  @ 0x4f3f99
+  -> FUN_0051dcb0 (0x51dcb0) x1  @ 0x4f3e08
+  -> FUN_00573a90 (0x573a90) x1  @ 0x4f3d5a
+  -> FUN_00582d80 (0x582d80) x1  @ 0x4f3c6f
+  -> FUN_0059c150 (0x59c150) x1  @ 0x4f3b33
+  -> FUN_005a2ae0 (0x5a2ae0) x1  @ 0x4f3e00
+  -> FUN_005abd90 (0x5abd90) x1  @ 0x4f3e43
+  -> FUN_006265a2 (0x6265a2) x1  @ 0x4f38cc
+ds: global refs (16 distinct): 0x68cbb0 x11 0x68cbb4 x1 0x692184 x2 0x693b68 x1 0x7cdecc x1 0x8f0d60 x17 0x91b5b4 x1 0x92a378 x3 0x92a37c x1 0x92a394 x2 0x92ae14 x1 0x985ae8 x1 0x985af0 x3 0x985af4 x4 0x985afc x1 0x985b10 x3
+the FUN_0051dcb0 call 0x4f3e08, preceding 5 insns:
+  0x4f3dfb: mov    edx,DWORD PTR [ebp-0x14]
+  0x4f3dfe: push   ecx
+  0x4f3dff: push   edx
+  0x4f3e00: call   0x5a2ae0
+  0x4f3e05: add    esp,0x8
+  0x4f3e08: call   0x51dcb0
+branch predecessors of 0x4f3e08: NONE (fall-through only)
+loop back-edges: [('0x4f37d7', '0x4f37c7'), ('0x4f383c', '0x4f379f'), ('0x4f3a70', '0x4f3a5c'), ('0x4f3af0', '0x4f3ad1'), ('0x4f3bcb', '0x4f3b57'), ('0x4f3dda', '0x4f3cc1'), ('0x4f3df2', '0x4f3c0a'), ('0x4f3e51', '0x4f3e26'), ('0x4f3ed3', '0x4f3e6d'), ('0x4f3f66', '0x4f3efd'), ('0x4f3a0c', '0x4f3916'), ('0x4f3885', '0x4f3842')]
+loop-exit predicate (0x4f3de0..0x4f3df2):
+  0x4f3de0: mov    ecx,DWORD PTR ds:0x92a378
+  0x4f3de6: mov    eax,DWORD PTR [ebp-0xc]
+  0x4f3de9: add    eax,0x4
+  0x4f3dec: cmp    eax,0x54
+  0x4f3def: mov    DWORD PTR [ebp-0xc],eax
+  0x4f3df2: jl     0x4f3c0a
+dump-wide xref census for 0x4f35e0: call=0 jmp/jcc-targets=1 other=0
+  ref @0x4f4133 in FUN_004f4060 @0x4f4060+3058 : jmp    0x4f35e0
+branch predecessors of jmp-site 0x4f4133: []
+terran.exe stored-LE-dword scan: 0x4f35e0 hits=0 [] | control-fn 0x4f4060 hits=0 [] | positive controls: {'s_baseobl_sm_pcx@0x68d180': 1, 's_DRONEREVOLT@0x68d190': 1, 'PTR_s_SCRIPT@0x693b68': 162}
+jmp-site 0x4f4133 sits in FUN_004f4060 @0x4f4060+3058 ; direct callers of 0x4f4060: [('0x4f5be9', 'FUN_004f5a70 @0x4f5a70+1324')]
+shard_012 FUN_004f4060 body 20379 chars; FUN_004f3xx names inside it: NONE
+region fingerprint INSIDE the neighbour body: triad(FUN_005a2ae0;FUN_0051dcb0)=True '< 0x54'=1 DAT_00985af0=5 DAT_00985af4=4
+triad at body-line 388:
+                  }
+                  local_10 = local_10 + 1;
+                } while ((int)local_10 < 0x54);
+                FUN_005a2ae0(local_18,local_8);
+                FUN_0051dcb0();
+export-wide mentions of '4f35e0' across all shards: 0 ; index rows in (0x4f35da,0x4f4060): 0
+A1  OK  : A1 entry 0x4f35e0 = push ebp; mov ebp,esp; sub esp,0x34
+A2  OK  : A2 CFG reaches 846 insns; last reachable = ret @0x4f4050
+A3  OK  : A3 no forward CFG edge leaves [0x4f35e0,0x4f4060): [('0x4f360c', '0x4f365d'), ('0x4f3633', '0x4f364e'), ('0x4f363a', '0x4f364e'), ('0x4f364c', '0x4f3671'), ('0x4f3683', '0x4f404a'), ('0x4f368b', '0x4f36ba'), ('0x4f369d', '0x4f404a'), ('0x4f36dd', '0x4f36ef'), ('0x4f36e9', '0x4f404a'), ('0x4f3728', '0x4f404a'), ('0x4f3735', '0x4f404a'), ('0x4f3744', '0x4f404a'), ('0x4f374e', '0x4f376a'), ('0x4f375f', '0x4f404a'), ('0x4f37bf', '0x4f37e2'), ('0x4f37cb', '0x4f37d1'), ('0x4f37cf', '0x4f37db'), ('0x4f37d9', '0x4f37e2'), ('0x4f37e5', '0x4f3833'), ('0x4f37f3', '0x4f3833'), ('0x4f382a', '0x4f3833'), ('0x4f3831', '0x4f3882'), ('0x4f384c', '0x4f404a'), ('0x4f3866', '0x4f404a'), ('0x4f3878', '0x4f38f0'), ('0x4f387d', '0x4f3a18'), ('0x4f3a1a', '0x4f404a'), ('0x4f3a2e', '0x4f3a41'), ('0x4f3a3b', '0x4f404a'), ('0x4f3a5e', '0x4f3a66'), ('0x4f3ac9', '0x4f3af2'), ('0x4f3ad8', '0x4f3ae1'), ('0x4f3b4e', '0x4f3bec'), ('0x4f3b5d', '0x4f3bb7'), ('0x4f3b6f', '0x4f3bb7'), ('0x4f3ba8', '0x4f3bac'), ('0x4f3baf', '0x4f3bb7'), ('0x4f3bd2', '0x4f3bec'), ('0x4f3c21', '0x4f3c32'), ('0x4f3c25', '0x4f3c2c'), ('0x4f3c2a', '0x4f3c34'), ('0x4f3c45', '0x4f3de6'), ('0x4f3c54', '0x4f3de6'), ('0x4f3c5c', '0x4f3de6'), ('0x4f3c64', '0x4f3de6'), ('0x4f3caa', '0x4f3de0'), ('0x4f3cc7', '0x4f3dd0'), ('0x4f3cd4', '0x4f3dd0'), ('0x4f3ce1', '0x4f3cf0'), ('0x4f3ceb', '0x4f3dcd'), ('0x4f3e17', '0x4f3e53'), ('0x4f3e2c', '0x4f3e4b'), ('0x4f3e38', '0x4f3e4b'), ('0x4f3e40', '0x4f3e4b'), ('0x4f3e65', '0x4f3ed5'), ('0x4f3e71', '0x4f3ec1'), ('0x4f3e78', '0x4f3e86'), ('0x4f3e7d', '0x4f3e8b'), ('0x4f3e84', '0x4f3e8b'), ('0x4f3ef2', '0x4f3f68'), ('0x4f3f01', '0x4f3f51'), ('0x4f3f08', '0x4f3f16'), ('0x4f3f0d', '0x4f3f1b'), ('0x4f3f14', '0x4f3f1b'), ('0x4f3fa9', '0x4f3fda'), ('0x4f3fad', '0x4f3fda'), ('0x4f3fc7', '0x4f3fda'), ('0x4f3fd8', '0x4f404a'), ('0x4f4027', '0x4f402d'), ('0x4f402b', '0x4f404a'), ('0x4f3cf3', '0x4f3dd0'), ('0x4f3cfd', '0x4f3dd0'), ('0x4f3d1a', '0x4f3d69'), ('0x4f3d64', '0x4f3d69'), ('0x4f3db5', '0x4f3dbb'), ('0x4f3dbf', '0x4f3dc5'), ('0x4f3c2e', '0x4f3c32'), ('0x4f3909', '0x4f404a'), ('0x4f3922', '0x4f39f1'), ('0x4f3951', '0x4f3965'), ('0x4f3959', '0x4f3965'), ('0x4f3963', '0x4f3967'), ('0x4f398b', '0x4f398f'), ('0x4f3993', '0x4f3997'), ('0x4f39c2', '0x4f39c6'), ('0x4f39c9', '0x4f39d3'), ('0x4f39d6', '0x4f39dd'), ('0x4f39e0', '0x4f39ec'), ('0x4f3650', '0x4f365d'), ('0x4f3657', '0x4f365d'), ('0x4f365b', '0x4f3662')]
+A4  OK  : A4 contiguous body: 0 unreached >16B gaps inside span; min reachable = 0x4f35e0
+A5  OK  : A5 boundary from code: 15 insns after the ret@0x4f4050 (ret=1B), all nop, ending 0x4f405f, then prologue at 0x4f4060
+A6  OK  : A6 6 nops 0x4f35da..0x4f35df close FUN_004f34b0 and align the entry 0x4f35e0
+A7  OK  : A7 ret census=3, all reachable; exactly 3 epilogues (pop ebx/esi/edi + mov esp,ebp each)
+A8  OK  : A8 the FUN_0051dcb0 call site 0x4f3e08 is reachable inside this CFG (True)
+A9  OK  : A9 call 0x4f3e08 has NO branch predecessor (preds=0) — a fall-through from the loop exit, NOT a branch target (it is still not reached on every invocation: see A23)
+A10 OK  : A10 dump-wide `call 0x4f35e0` = 0 (zero direct callers)
+A11 OK  : A11 dump-wide refs to 0x4f35e0 = exactly one jmp @0x4f4133 (jmp/jcc=1 other=0)
+A12 OK  : A12 that jmp sits INSIDE the modelled neighbour [FUN_004f4060 @0x4f4060+3058]; the entry is reached by an in-body tail-jump edge
+A13 OK  : A13 stored-LE-dword scan (live: 164 stored string-VA control hits {'s_baseobl_sm_pcx@0x68d180': 1, 's_DRONEREVOLT@0x68d190': 1, 'PTR_s_SCRIPT@0x693b68': 162}): 0x4f35e0 hits=0, 0x4f4060 hits=0 — no static stored-pointer entry for either
+A14 OK  : A14 neighbour body calls no FUN_004f35xx ([]) — the gap is NOT inlined into it
+A15 OK  : A15 export mentions '4f35e0' 0 times across all shards; index rows inside the gap = 0
+A16 OK  : A16 index.csv has no function start in (0x4f35da, 0x4f4060) — the gap is a single owner
+A17 OK  : RIVAL1 FAILS 'the whole gap [0x4f35da,0x4f4060) is one function body': 6 aligner nops + a fresh push-ebp/mov-esp/sub-esp prologue at 0x4f35e0 split it, and the CFG from 0x4f35e0 ends at ret 0x4f4050, never at 0x4f35da-style exits
+control CFG from 0x4f4060 confined to its own span: 121 insns, 1 rets; edges LEAVING the span downward: [('0x4f4133', '0x4f35e0')] (region insns among them: 1)
+A18 OK  : RIVAL2 FAILS 'region and 0x4f4060 are ONE contiguous body (no real boundary)': the region is self-contained — own prologue, 3 rets, 15 nop pad, ZERO CFG edges from the region into the neighbour span (out-edges=0); the connection is exactly 1 one-way fold edge(s) [('0x4f4133', '0x4f35e0')] — two complete functions joined by one tail-jump
+A19 OK  : RIVAL3 FAILS 'multiple jump-table/branch entries': calls=0 jcc-targets=0 jmp-targets=1 (total 1)
+A20 OK  : RIVAL4 FAILS 'the 0x4f3e08 call carries its own guard predicate': branch preds=0 — no branch DIRECTLY targets it. It does NOT follow that the call runs on every invocation: 3 ret(s) are reachable without executing it (A23)
+A21 OK  : A17 ABSORPTION: the region's code is DECOMPILED inside the neighbour's body — triad(FUN_005a2ae0;FUN_0051dcb0)=True, '< 0x54' loop-exit=1, DAT_00985af0=5, DAT_00985af4=4
+A22 OK  : RIVAL5 FAILS 'the 0x4f4133 jmp is dead code / never followed': its target's code is present in the neighbour's decompiled body (triad=True) — Ghidra followed the edge and FOLDED the target, which is why no separate function was ever created
+A23 OK  : A23 the call is NOT executed on every invocation: 3 of 3 ret(s) are reachable WITHOUT running 0x4f3e08 ['0x4f36b9', '0x4f38ef', '0x4f4050']
+== UNKNOWN ==
+U1 exact semantics of the body (23 callees / 36 sites, _rand x3, script-string args at 0x4f4042): only the census is settled; no per-branch meaning claimed.
+U2 whether the entry executes in the live game: ZERO box time; static reachability via the 0x4f4133 fold-edge only.
+U3 the meaning of the 0x54 (21-iteration) cap and the FUN_005a2ae0 args [ebp-0x14]/[ebp-0x4].
+U4 Ghidra's exact folding rule (tail-jump absorption into the containing function when the target has no symbol): INFERRED from A17+A11+A15, not re-derived by re-running Ghidra.
+== M306 acceptance: 23/23 OK ==

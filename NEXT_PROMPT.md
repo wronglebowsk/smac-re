@@ -1,5 +1,5 @@
 # NEXT_PROMPT.md - footing (s262 close: H262 DOCS SPLIT - no findings changed; the settled s261 count/byte-counter-era header + the full CLOSED enumeration + traps 14-15 moved VERBATIM to
-`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: B20 #273 MERGED (main 119b691); B1-B20 + M54A-M304 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
+`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M305 MERGED (#275) + M306 UNMERGED (open PR, main dc8efa6 base); B1-B20 + M54A-M305 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section), NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
 
@@ -32,7 +32,7 @@ composed - all pieces already executable). Track_mode FIRST, every fire.
 
 ## THE LEDGER
 
-Merged M54A-M304 + B0-B20 (through s261) + hygiene #254-#272; UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M305 + B0-B20 (through s263) + hygiene #254-#272; M306 OPEN as PR. UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -59,12 +59,13 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
 - **THE PICK (post-H262): B20 LANDED (#273) - pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: a merge does
-  NOT flip the immediate fire (s259/s260); next_rung B21 stays queued. ANSWERED: M227-M304 + B1-B20 (M241 FAIL 2/5 #180).
+  NOT flip the immediate fire (s259/s260); next_rung B21 stays queued. ANSWERED: M227-M306 + B1-B20 (M241 FAIL 2/5 #180).
   CLOSED (era text VERBATIM: `docs/nextprompt-archive-m299-b20.md` §closed-era) - read the named NAMED §
   (## <ID>) BEFORE RE-OPENING: M220; DIALOG +0x4c M284-M288 (live half INVALID s240); slot [+4] GATE M299; the
   counter as executable B19; the BYTE twin + PARITY B20; the four live VALUES + CONTENTS pinned M302 (no re-dump
   of the four scalars without a reason); 0x51e02c + the byte family M303; the 7-site chooser + 0x56c6de leg +
-  readers M304 (read ## M304 before touching the hub CFG); 0x5832b0 callers M300; ebx table REFUTED M301 (the 4
+  readers M304 (read ## M304 before touching the hub CFG); the 0x4f35e0 export hole (bounds+fold-entry+absorption)
+  M306 (read ## M306 BEFORE re-opening anything about this address); 0x5832b0 callers M300; ebx table REFUTED M301 (the 4
   table-falsifiers = the s256 NEW LAW). NEVER bp mid-instruction (s213). OPEN shortlist: the hub settle-nest
   MEANING (9x8x32 = [ebp-0x70]/[ebp-0x4c]/[ebp-0x54]; the [ebp-0x84] best-
   direction at 0x56c966; the arms' case VALUES vs the 31-cmp ladder); arm-case
@@ -72,8 +73,11 @@ collision-check + worktree FIRST).
   slots [ebp-0x18]/[ebp-0x40]/[ebp-0x64]/[ebp-0x6c]/[ebp-0x74]/[ebp-0x2c]/
   [ebp-0x30]/[ebp-0x54] un-named; sibling 0x5831a0 fed (x,y) after the predicate; 188-row cursor caller; whose record BYTE[edi+0x7]
   is + the walk's tile-class/distance legs' MEANING; FUN_0051dcb0's REBUILD-BODY
-  MEANING (WHO is settled M305: 11 single-site callers, 1 of 11 loop-enclosed, 0x51f71e =
-  round%4==1, export hole at 0x4f35e0 — what the 8 blocks/128 slots CARRY is open); the
+  MEANING (WHO  is settled M305: 11 single-site callers, 1 loop-enclosed, 0x51f71e =
+  round%4==1); the 0x4f35e0 owner ANSWERED M306 (a real 2673-B function [0x4f35e0,0x4f4051), entered ONLY
+  by the fold-jmp 0x4f4133 in FUN_004f4060, Ghidra FOLDED it - read ## M306; what the 8 blocks/128 slots
+  CARRY stays open); the folded body's MEANING - the 21x(0x54) loop cap + FUN_005a2ae0 args + _rand x3
+  (M306 settled bounds/entry only); the
   sibling fields of the 8380-B block record (byte field 0x950664, word 0x94e8a8
   ++'d pre-predicate, dword 0x94f4ec + word 0x950a64 preamble - all INDEXED by
   M303, semantics OPEN); FUN_0056d480/0056d630 + ds:0x985b10/0x985aec

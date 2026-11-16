@@ -1,1 +1,1 @@
-H263 | skill-only: the "silent script = hang not missing instrument" lesson | docs PR, merge on green | next: track_mode=ANALYSE, B21 queued
+M306 | acceptance: python3 -u scripts/m306_owner.py -> 22/22 OK exit 0 (rerun diff 0) | GREEN, committed | close docs: SESSION_NOTES, NAMED, NEXT_PROMPT, gate, submit (leave UNMERGED)
