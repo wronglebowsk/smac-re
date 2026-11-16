@@ -1,7 +1,7 @@
-# NEXT_PROMPT.md - footing (s269 close: M308 MERGED with its review round - Greptile #281's 4 P2s
+# NEXT_PROMPT.md - footing (s271 close: M309 MERGED; the cap split #282 landed first - Greptile #281's 4 P2s
 fixed and every repaired gate proven load-bearing by a MUTATION harness; historical
 header + CLOSED enumeration + traps 14-15 VERBATIM at
-`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M308 MERGED (PR #281); B1-B21 + M54A-M308 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
+`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M309 MERGED; B1-B21 + M54A-M309 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -35,7 +35,7 @@ end-to-end (B15+B16+B17 with save-only inputs). Track_mode FIRST, every fire.
 
 ## THE LEDGER
 
-Merged M54A-M308 + B0-B21 (through s268) + hygiene #254-#280. UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M309 + B0-B21 (through s271) + hygiene #254-#280. UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -60,18 +60,24 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (post-M308 review round, s269): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). M308 is CLOSED — merged in #281 with its review round (Greptile's 4 P2s fixed + mutation-tested). track_mode is AUTHORITATIVE: a merge does
-  NOT flip the immediate fire (s259/s260); next_rung B22 stays queued. ANSWERED: M227-M308 + B1-B21 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). M308 is CLOSED — merged in #281 with its review round (Greptile's 4 P2s fixed + mutation-tested). track_mode is AUTHORITATIVE: a merge does
+  NOT flip the immediate fire (s259/s260); next_rung B22 stays queued. ANSWERED: M227-M309 + B1-B21 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  **NEXT PICK (s268 close): FUN_0056d350 (299 B, 50 callers, 1 string) = the sink every SITE-list
-  insert AND the FUN_0056d690 rebuild broadcast into (args (block,kind,prio,x,y,-1) - name it and
-  say what the -1 6th arg selects); THEN the 75-entry sibling at 0x94ee28 (same 8380-B record, and it ENDS where the SITE list starts: 0x94ee28+75*0x10 == 0x94f2d8, so 75+25 = 100 entries/record - A13 `:293`;
-  stride 0x10, its +2 short sign-flipped / its +0 set -1 by FUN_0056d690) - identity + the -1
-  sentinel's writer (M308 U2: nothing among the 17 refs to the site window writes +0 = -1).**
-  READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
+  **CLOSED (s271): FUN_0056d350 = the GOAL-list insert-or-max (the read ## M309 row first), and the
+  75-entry sibling at 0x94ee28 IS that GOAL list (same 16-B layout, +0C owner; the -1 6th arg is the
+  UNBOUND-OWNER sentinel, one writer + one reader in all of .text).**
+  **NEXT PICK (s271 close): FUN_00470b90 (1020 B, 5 callers, 9 callees) = the routine that stores
+  0xffff into a GOAL entry's +0 short at 0x470d5c (M308 U2's -1 sentinel, for the GOAL list) - name
+  it and say what invalidates an entry (it looks the entry up by comparing a +0 short, then writes
+  0xffff, then re-reads it: 0x470d3c/5c/75); THEN the two sinks the owner field points at:
+  (i) **ds:0x68cbb0** - .data, 340 refs, exactly 6 stores, all inside 0x4e3000-0x4f6000 (the hub
+  band), 5 GOAL-insert sites pass it as the owner; (ii) the **304-B-stride table at 0x95da40**
+  (96 refs) whose bit 0x20 the single +0C reader tests - census the bit, do not guess the stride.
+  (the still-open list lives in NAMED ## M308 / ## M309, not here).**
+    READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 

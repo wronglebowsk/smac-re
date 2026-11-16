@@ -1,0 +1,24 @@
+baseline: 54 checks, 0 red, rc 0
+
+[MUTATIONS: each must redden its named checks]
+   OK   M1  arg6 is taken as the LAST push found instead of the FIRST of the group
+        must redden ['A32', 'A33'] -> actually red: ['A32', 'A33']
+   OK   M2  the block-window census narrows to the first 16 bytes, so it measures 
+        must redden ['A37'] -> actually red: ['A37']
+   OK   M3  the read/write decision looks at operand slot 1 instead of slot 0     
+        must redden ['A36', 'A37', 'A43'] -> actually red: ['A36', 'A37', 'A43']
+   OK   M4  the affine engine stops recognising the callee's first argument, so th
+        must redden ['A3', 'A4'] -> actually red: ['A3', 'A4', 'RIVALS-R8']
+   OK   M5  a loop is any jcc whose operand is an immediate, forward ones included
+        must redden ['A10'] -> actually red: ['A10']
+   OK   M6  the +0C reader's multiplier chain loses its seed (no coefficient can b
+        must redden ['A38'] -> actually red: ['A38', 'RIVALS-R1']
+   OK   M7  a DIRECT `ds:` store stops counting as a write (M308 P2a's defect) - 6
+        must redden ['A42'] -> actually red: ['A42']
+   OK   M8  the found-path store census runs past the found path's ret into the in
+        must redden ['A13'] -> actually red: ['A13', 'RIVALS-R5']
+   OK   M9  vacuity: an empty disassembly table (nothing can be measured at all)  
+        must redden ['(instrument crashed)'] -> actually red: ['(instrument crashed)']
+
+9/9 mutations reddened their target checks
+RESULT: PASS M309 gates are load-bearing
