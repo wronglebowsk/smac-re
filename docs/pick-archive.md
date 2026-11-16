@@ -836,3 +836,39 @@ puts a Match in res; sum() dies - `bool()` regex clauses.
     FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
 15. A list cursor read BEFORE the seek is the PREVIOUS cursor (pump seeks at 0x497717 — print at 0x49771c).
     `milestone.py start` on a dirty tree: stash, start, pop (skill Git workflow).
+
+## trim-s268 — traps 12-13, moved VERBATIM out of NEXT_PROMPT.md (M308, footing headroom)
+
+12-13. Both gdb-detach laws (skill Wine core): a census can leave gdb ATTACHED — check `TracerPid`,
+    kill the stale gdb BY PID before calling the box clean; the TURN DRIVER returns rc=0 WHILE AI UPKEEP PLAYS —
+    detach only after cp == human faction returns or the last recomputes go UNLOGGED.
+- (also from §INSTRUMENTS 4, s268) Self-documenting instruments: `m66_insert_slot.py`, `m57_ui_enqueue.py`, `m65_screen.py --samples 8`.
+
+## §trim-s269 (a) CLOSING ORDER, VERBATIM from NEXT_PROMPT.md at the s269 close
+
+Terse past ~35 calls: acceptance numbers verbatim, no new prose, no "double check" reads; closing is PART of the
+milestone. 0 `SESSION_CURSOR.md` (<=600 B: id | acceptance | merged? | next) BEFORE the rest. 1 `## Session <N>`
+APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers WITH the command). 2 the `<ID>` block to `NAMED.md` (<=1 KB). 3 this
+file patched BY SECTION to <= 12,000 B (`budget`'s warn; past it the next fire starts as a docs split). 4
+`diff -rq skill/ ~/.hermes/skills/smac-cvr-format/`, reconcile, `rsync -a skill/ ~/.hermes/skills/smac-cvr-format/`
+(content-identical; gate checks SKILL.md only). 5 `git add -A && git commit -m '<ID>: checkpoint'` then
+`python3 scripts/gate.py --base main` GREEN. 6 submit/merge ONLY on a real PASS — and per the MERGE RULE only after
+the Greptile review on the head commit finished (`gh pr checks` until nothing pending), its inline comments read, and
+every P1 fixed or dismissed in the PR body in one sentence.
+
+## §trim-s269 (b) THE OPEN SHORTLIST detail, VERBATIM from NEXT_PROMPT.md at the s269 close
+
+the hub settle-nest
+  MEANING (9x8x32 = [ebp-0x70]/[ebp-0x4c]/[ebp-0x54]; the [ebp-0x84] best-
+  direction at 0x56c966; the arms' case VALUES vs the 31-cmp ladder); arm-case
+  of sites 0x56444b/0x5645d9/0x5651e3/0x568567 (INFERRED, not pinned); hub
+  slots [ebp-0x18]/[ebp-0x40]/[ebp-0x64]/[ebp-0x6c]/[ebp-0x74]/[ebp-0x2c]/
+  [ebp-0x30]/[ebp-0x54] un-named; sibling 0x5831a0 fed (x,y) after the predicate; 188-row cursor caller; whose record BYTE[edi+0x7]
+  is + the walk's tile-class/distance legs' MEANING; FUN_0051dcb0's REBUILD-BODY
+  MEANING (WHO  is settled M305: 11 single-site callers, 1 loop-enclosed, 0x51f71e =
+  round%4==1);  branch-A/B seed semantics + the 52-B row-walk record identity (still open
+  from the 0x4f35e0 body, M306+M307); the sibling fields of the 8380-B block record (byte
+  0x950664, word 0x94e8a8, dword 0x94f4ec + word 0x950a64 - INDEXED by M303, semantics OPEN);
+  the 0x94eca8 byte-table DUMP (2048 B, m302_livepins.py template) + save-carry vs rebuild for
+  BOTH tables AND the SITE list (M302/M303/M308, same question); the eax=1 leg: ONE model-decided
+  row (M302 branchB), still NO live gdb witness (B19 G9).

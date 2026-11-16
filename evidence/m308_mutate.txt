@@ -1,0 +1,22 @@
+baseline: 36 checks, 0 red, table sha 764f2ae6c8e92939
+
+[MUTATIONS: each must redden its named checks]
+   OK   M1  P2a: the classifier cannot see a direct `ds:` operand (the debug-flag re
+        must redden ['A4', 'A4b'] -> actually red: ['A4', 'A4b']
+   OK   M2  the classifier sees the direct global but FILES it inside the site windo
+        must redden ['A4', 'A4b', 'A5'] -> actually red: ['A4', 'A4b', 'A5']
+   OK   M3  P2b: a loop is any jcc, forward ones included, so the back-edge definiti
+        must redden ['A12'] -> actually red: ['A12']
+   OK   M4  P2c: the max law stops comparing the jg's TARGET with the instruction af
+        must redden ['A9'] -> actually red: ['A9']
+   OK   M5  P2c: the eviction strictness is read as `jl` instead of `jle` (a tie wou
+        must redden ['A10'] -> actually red: ['A10']
+   OK   M6  the tie rule stops checking that the jle target is one past BOTH update 
+        must redden ['A10'] -> actually red: ['A10']
+   OK   M7  A11 scans the wrong run for stores on the taken path (the found path, wh
+        must redden ['A11'] -> actually red: ['A11']
+   OK   M8  P2d: the def-walk is replaced by the old proximity rule (whatever global
+        must redden ['A27', 'A28', 'A28b', 'A28c'] -> actually red: ['A27', 'A28', 'A28b', 'A28c']
+
+8/8 mutations reddened their target checks
+RESULT: PASS M308 gates are load-bearing
