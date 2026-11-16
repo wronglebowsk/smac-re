@@ -1,1 +1,1 @@
-M305 | `python3 scripts/m305_identity.py` -> 17/17 OK exit 0, evidence rerun-identical | PR open, NOT merged | next: track_mode=ANALYSE, B21 queued; M305's identity pick ANSWERED, next fire takes another §THE PICK line
+M305 | `python3 scripts/m305_identity.py` -> 19/19 OK exit 0, evidence rerun-identical | PR #275 open, NOT merged | next: track_mode=ANALYSE, B21 queued; M305's identity pick ANSWERED, next fire takes another §THE PICK line

@@ -80,6 +80,7 @@ S0 subject: FUN_0051dcb0 @ 0x51dcb0 size=1191 n_callers(index.csv)=11 n_insns=38
   A7 the walk visits every tile record exactly once        OK  visits=2048 recs=2048 unique=2048
   A8 the cursor algebra IS the documented record fold      OK  mismatches=0 (fold from NAMED.md:1025: base+0x2c*(mult*y + x>>1))
   A9 walk bounds are the two map globals (W then H)        OK  rows=0x92a37c cols=0x92a378
+  A18 the decode's cursor step IS the 44-B record stride (byte offsets gapless) OK  rec_stride=0x2c rec_size=0x2c distinct byte offsets=2048 span=0x16000
 
 == S3 caller census: every direct call site, containment, loop membership, guard chain
   index.csv n_callers=11 ; direct call sites in the dump=11 ; non-call mentions of the address=0 []
@@ -111,36 +112,43 @@ S0 subject: FUN_0051dcb0 @ 0x51dcb0 size=1191 n_callers(index.csv)=11 n_insns=38
             loop-enclosing js: NONE
             guard chain: void FUN_0059b830(void)
   0x59dd3a  in FUN_0059ce10   (0x59ce10+5292) callers_of_that=1 shard=015 hdr_ok=True
-            loop-enclosing js: NONE
+            loop-enclosing js: 0x59e2a6->0x59ce92
             guard chain: /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */void FUN_0059ce10(void)
   0x5b09f6  in FUN_005b09b0   (0x5b09b0+171) callers_of_that=21 shard=015 hdr_ok=True
             loop-enclosing js: NONE
             guard chain: void FUN_005b09b0(void) > ef40(); FUN_005af140(); FUN_005ae880(); FUN_005af440(); FUN_0058d390(); FUN_005b0540(); if (DAT_0099180c == 0)
   distinct containing functions=11  multiplicity={'FUN_0041d480': 1, 'FUN_004e13f0': 1, 'FUN_004e47d0': 1, 'FUN_004e4e10': 1, 'FUN_004f34b0': 1, 'FUN_00507ef0': 1, 'FUN_0051f320': 1, 'FUN_005437d0': 1, 'FUN_0059b830': 1, 'FUN_0059ce10': 1, 'FUN_005b09b0': 1}
-  sites enclosed by a backward jump in their own function=0/11
+  sites enclosed by a backward jump in their own function=1/11
   conditional at the call (preceding jcc jumps PAST it): 2 ['0x51f71e <- jne    0x51f723', '0x5b09f6 <- jne    0x5b09fb']
+  sites whose DECOMPILED guard chain is conditional: 5 ['0x41dc7e', '0x4e4dc8', '0x508b48', '0x51f71e', '0x5b09f6']
   triad 'call 0x5a2ae0 / add esp,8 / call 0x51dcb0': 3 ['0x4f3e08', '0x508b48', '0x543bc6']
   gated on the ROUND counter (ds:0x985afc & 3): 1 ['0x51f71e']
-  gate predicate as encoded: (round & 3) == bl ; bl written 1 time(s) in FUN_0051f320 ['0x51f32b']
+  gate predicate as encoded: (round & 3) == bl ; ALL ebx/bx/bl writes in FUN_0051f320=2 ['0x51f32b mov    ebx,0x1', '0x51f5a2 pop    ebx  [EXIT PATH: ret follows]']
+  ebx writes that can REACH the gate=1 -> ['mov    ebx,0x1'] (bl is 1 there)
+  gate branch: ['0x51f71c jne    0x51f723'] -> call executes when (round & 3) == bl (jcc skips PAST the call)
+  absolute pointer 0x0051dcb0 as a stored dword in terran.exe: 0 occurrence(s) []
   owners covered by the export: 10/11 ; uncovered: ["0x4f3e08 outside FUN_004f34b0(0x4f34b0+298) -> prologue-only owner ['0x4f35e0'] span [0x4f35e0,0x4f4060)"]
   A10 the dump's call census equals index.csv n_callers    OK  dump=11 index=11
-  A11 no indirect entry: the address appears in no operand OK  non-call mentions=0
+  A11 no indirect entry: the VA is stored nowhere in the image OK  stored-dword occurrences=0 (call rel32 never stores the VA)
   A12 11 distinct owners, each calling it exactly once     OK  distinct=11 max_multiplicity=1
   A13 RIVAL 'one hub caller invokes the pass repeatedly' FAILS OK  max calls per owner=1
-  A14 RIVAL 'the cadence is a caller looping the pass' FAILS OK  loop-enclosed sites=0/11
-  A15 one caller gates on the round counter mod 4          OK  round-gated=1 bl_writes=1
+  A14 loop-enclosure scan finds the ONE site inside a caller loop (P1 fix) OK  loop-enclosed=1/11 ['0x59dd3a FUN_0059ce10']
+  A15 the round gate is a real predicate: bl==1 on a path that reaches the gate OK  round-gated=1 ebx writes reaching the gate=1 branch_skips_call=True
   A16 three callers share the 0x5a2ae0 triad               OK  triad=3
   A17 the export owns 10 of 11 call sites (1 hole, named by prologue) OK  uncovered=1 prologues_in_gap=1
+  A19 the 'unconditional' count excludes decompiled-conditional sites OK  gated_at_call=2 decompiled_conditional=5 of 11
 
 == S4 CADENCE (stated on the callers' own state, not on a screenshot)
-  the pass runs once per CALLER INVOCATION (11 owners x 1 site, 0 loop-enclosed).
-  phase: FUN_0051f320 calls it only when (round & 3) == 1 -> once every 4 rounds; 9/11 sites are unconditional.
+  baseline: 11 owners x 1 call site each, so one call per caller INVOCATION in 10 of 11.
+  EXCEPTION (P1 fix, measured): 0x59dd3a in FUN_0059ce10 IS inside a loop (back-jump 0x59e2a6 -> 0x59ce92) -> that caller re-runs the pass once per iteration.
+  phase: FUN_0051f320 calls it only when (round & 3) == 1 -> once every 4 rounds; 5/11 sites sit under a decompiled conditional, 6 are top-level in their function.
   the row-table builder runs FIRST: at 0x59b8ce the immediately preceding loop stores ds:0x985af4 (row count) each iteration, then falls into the call.
   production-independent: no call site is gated on credit/minerals (the A-class gates are the round counter and ds:0x99180c).
+  RIVAL 'no caller loops the pass' FAILS on the printed numbers (1 loop-enclosed).
 
 == UNKNOWN (stated, not closed)
   U1 the 0x4f35e0 owner has NO decompiled body in the export -> its guard/preds are unmodelled (containment inferred from the prologue alone).
   U2 what the 8 byte blocks and 128 dword slots MEAN per block/slot is M302/M303 scope; this milestone only proves who zeroes and rebuilds them.
   U3 whether any of the 11 callers runs per TURN was not measured live here (zero box). The static cadence bound is: one call per invocation, one invocation per round mod 4 in FUN_0051f320.
 
-== ACCEPTANCE: 17/17 checks OK
+== ACCEPTANCE: 19/19 checks OK

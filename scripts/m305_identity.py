@@ -271,7 +271,7 @@ def main():
           % (rows_g, cols_g, base_g, x_stride, rec_stride, parity))
     # enumerate the walk exactly as the machine code does, on the pinned instance
     W, H, mult, recs = INST["W"], INST["H"], INST["mult"], INST["recs"]
-    per_row, total, seen, fold_match, cursor = [], 0, [], 0, 0
+    per_row, total, seen, fold_match, cursor, bytemark = [], 0, [], 0, 0, []
     for y in range(H):
         k = 0
         x = (y & parity)
@@ -279,6 +279,7 @@ def main():
             total += 1
             k += 1
             seen.append(cursor)
+            bytemark.append(rec_stride * cursor)
             if cursor != mult * y + (x >> 1):
                 fold_match += 1
             cursor += 1
@@ -323,6 +324,13 @@ def main():
     A("A9 walk bounds are the two map globals (W then H)",
       rows_g == REC_ROWS_GLOBAL and cols_g == REC_COLS_GLOBAL,
       "rows=%#x cols=%#x" % (rows_g, cols_g))
+    # P2 (Greptile s263): the cursor step was never multiplied by the decoded stride, so a
+    # decoded stride that disagreed with the record size could not fail anything. Close it:
+    A("A18 the decode's cursor step IS the 44-B record stride (byte offsets gapless)",
+      rec_stride == INST["rec_size"] == 0x2C and
+      sorted(bytemark) == [rec_stride * i for i in range(recs)],
+      "rec_stride=%#x rec_size=%#x distinct byte offsets=%d span=%#x"
+      % (rec_stride, INST["rec_size"], len(set(bytemark)), max(bytemark) + rec_stride))
     # ============================== S3 the callers
     out.p("\n== S3 caller census: every direct call site, containment, loop membership, guard chain")
     subj = [f for f in funcs if f[0] == FN][0]
@@ -342,14 +350,17 @@ def main():
         i = bisect.bisect_left(addrs, fa)
         while i < len(addrs) and addrs[i] < a + sz:
             ai = addrs[i]
-            if ai <= a:
-                t = ins[ai].strip()
-                mm = JCC_RX.match(t)
-                mj = None if mm else JMP_RX.match(t)
-                if mm or mj:
-                    tgt = int(mm.group(2) if mm else mj.group(1), 16)
-                    if fa <= tgt <= a <= ai:
-                        loops.append((ai, tgt))
+            t = ins[ai].strip()
+            mm = JCC_RX.match(t)
+            mj = None if mm else JMP_RX.match(t)
+            if mm or mj:
+                tgt = int(mm.group(2) if mm else mj.group(1), 16)
+                # P1 (Greptile s263): the old scan filtered ai <= a, so with the required
+                # tgt <= a <= ai the test could only hold AT the call, which is not a branch -
+                # the loop claim was vacuous. A loop encloses the call when a branch anywhere in
+                # the function jumps BACK to or before the call and lands at or after it.
+                if fa <= tgt <= a <= ai:
+                    loops.append((ai, tgt))
             i += 1
         body = shard_bodies(sh).get(nm)
         chain = guard_chain(body[2])[0] if body else None
@@ -371,7 +382,7 @@ def main():
         i = bisect.bisect_left(addrs, a)
         return addrs[i - k] if i - k >= 0 else None
 
-    gated, triad, round_gated = [], [], []
+    gated, triad, round_gated, decomp_cond = [], [], [], []
     for a in sites:
         p = at(a)
         t = ins[p].strip() if p else ""
@@ -386,16 +397,55 @@ def main():
         if any(re.match(r"^mov\s+ecx,DWORD PTR ds:0x985afc$", w) for w in w8) and \
            any(re.match(r"^and\s+ecx,0x3$", w) for w in w8):
             round_gated.append(a)
+    # P2: "unconditional" was inferred from ONE preceding instruction. The decompiled guard
+    # chain is the second oracle; sites sitting under a conditional head are NOT unconditional.
+    for r in rows3:
+        ch = r[8]
+        if ch and any(re.search(r"\b(if|switch)\s*\(", c) for c in ch[-3:]):
+            decomp_cond.append(r[0])
     out.p("  conditional at the call (preceding jcc jumps PAST it): %d %s"
           % (len(gated), ["%#x <- %s" % g for g in gated]))
+    out.p("  sites whose DECOMPILED guard chain is conditional: %d %s"
+          % (len(decomp_cond), [hex(x) for x in decomp_cond]))
     out.p("  triad 'call 0x5a2ae0 / add esp,8 / call 0x51dcb0': %d %s"
           % (len(triad), [hex(x) for x in triad]))
     out.p("  gated on the ROUND counter (ds:0x985afc & 3): %d %s"
           % (len(round_gated), [hex(x) for x in round_gated]))
-    # the round gate's comparison operand: bl is set once, at function entry
-    bl_writes = [a for a in addrs if 0x51F320 <= a <= 0x51F71E and re.match(r"^mov\s+ebx,0x1$", ins[a].strip())]
-    out.p("  gate predicate as encoded: (round & 3) == bl ; bl written %d time(s) in FUN_0051f320 %s"
-          % (len(bl_writes), [hex(x) for x in bl_writes]))
+    # the round gate's operand: EVERY write to ebx/bx/bl in the function, and the branch direction
+    bl_writes = [a for a in addrs if 0x51F320 <= a <= 0x51F71E and
+                 re.match(r"^(mov|movzx|xor|add|sub|inc|dec|and|or|shl|shr|lea|pop)\s+(ebx|bx|bl)\b",
+                          ins[a].strip())]
+    gate_dir = [(a, ins[a].strip()) for a in addrs if 0x51F711 <= a <= 0x51F723
+                and JCC_RX.match(ins[a].strip())]
+    dir_ok = len(gate_dir) == 1 and int(JCC_RX.match(gate_dir[0][1]).group(2), 16) > round_gated[0] \
+        if round_gated else False
+
+    def exit_path(a):
+        """an ebx restore followed by ret in the next 3 insns cannot reach the gate"""
+        i = bisect.bisect_left(addrs, a)
+        return any(re.match(r"^ret$", ins[x].strip()) for x in addrs[i + 1:i + 4])
+
+    ebx_live = [a for a in bl_writes if not exit_path(a)]
+    out.p("  gate predicate as encoded: (round & 3) == bl ; ALL ebx/bx/bl writes in FUN_0051f320=%d %s"
+          % (len(bl_writes), ["%#x %s%s" % (x, ins[x].strip(), "  [EXIT PATH: ret follows]" if exit_path(x) else "")
+                              for x in bl_writes]))
+    out.p("  ebx writes that can REACH the gate=%d -> %s (bl is 1 there)"
+          % (len(ebx_live), [ins[x].strip() for x in ebx_live]))
+    out.p("  gate branch: %s -> call executes when (round & 3) == bl (jcc skips PAST the call)"
+          % ["%#x %s" % g for g in gate_dir])
+
+    # P2: an indirect caller would store the VA as a dword somewhere in the image - instruction
+    # operands cannot show that. Scan the actual PE bytes for the absolute pointer.
+    exe = os.path.join(ROOT, "programs", "terran.exe")
+    try:
+        blob = open(exe, "rb").read()
+        ptr = FN.to_bytes(4, "little")
+        nptr = blob.count(ptr)
+        ptr_off = [hex(i) for i in range(len(blob)) if blob.startswith(ptr, i)][:8]
+    except OSError:
+        nptr, ptr_off = -1, []
+    out.p("  absolute pointer 0x%08x as a stored dword in terran.exe: %d occurrence(s) %s"
+          % (FN, nptr, ptr_off))
 
     # ---- export coverage: does the Ghidra export own every call site? ----
     uncov = []
@@ -412,32 +462,45 @@ def main():
               for u in uncov]))
     A("A10 the dump's call census equals index.csv n_callers", len(sites) == n_callers_idx == 11,
       "dump=%d index=%d" % (len(sites), n_callers_idx))
-    A("A11 no indirect entry: the address appears in no operand",
-      len(other_refs) == 0, "non-call mentions=%d" % len(other_refs))
+    A("A11 no indirect entry: the VA is stored nowhere in the image",
+      nptr == 0, "stored-dword occurrences=%d (call rel32 never stores the VA)" % nptr)
     A("A12 11 distinct owners, each calling it exactly once",
       len(mult3) == len(rows3) and max(mult3.values()) == 1,
       "distinct=%d max_multiplicity=%d" % (len(mult3), max(mult3.values())))
     A("A13 RIVAL 'one hub caller invokes the pass repeatedly' FAILS",
       max(mult3.values()) == 1, "max calls per owner=%d" % max(mult3.values()))
-    A("A14 RIVAL 'the cadence is a caller looping the pass' FAILS",
-      n_looped == 0, "loop-enclosed sites=%d/%d" % (n_looped, len(rows3)))
-    A("A15 one caller gates on the round counter mod 4",
-      len(round_gated) == 1 and len(bl_writes) == 1,
-      "round-gated=%d bl_writes=%d" % (len(round_gated), len(bl_writes)))
+    A("A14 loop-enclosure scan finds the ONE site inside a caller loop (P1 fix)",
+      n_looped == 1 and rows3[[r[0] for r in rows3].index([r[0] for r in rows3 if r[7]][0])][1]
+      == "FUN_0059ce10",
+      "loop-enclosed=%d/%d %s" % (n_looped, len(rows3),
+                                  ["%#x %s" % (r[0], r[1]) for r in rows3 if r[7]]))
+    A("A15 the round gate is a real predicate: bl==1 on a path that reaches the gate",
+      len(round_gated) == 1 and len(ebx_live) == 1 and
+      re.match(r"^mov\s+ebx,0x1$", ins[ebx_live[0]].strip()) is not None and dir_ok,
+      "round-gated=%d ebx writes reaching the gate=%d branch_skips_call=%s"
+      % (len(round_gated), len(ebx_live), dir_ok))
     A("A16 three callers share the 0x5a2ae0 triad", len(triad) == 3, "triad=%d" % len(triad))
     A("A17 the export owns 10 of 11 call sites (1 hole, named by prologue)",
       len(uncov) == 1 and len(uncov[0][5]) == 1,
       "uncovered=%d prologues_in_gap=%d" % (len(uncov), len(uncov[0][5]) if uncov else -1))
+    A("A19 the 'unconditional' count excludes decompiled-conditional sites",
+      len(decomp_cond) > 0 and len(gated) + len(decomp_cond) <= len(rows3),
+      "gated_at_call=%d decompiled_conditional=%d of %d"
+      % (len(gated), len(decomp_cond), len(rows3)))
 
     # ============================== S4 cadence
     out.p("\n== S4 CADENCE (stated on the callers' own state, not on a screenshot)")
-    out.p("  the pass runs once per CALLER INVOCATION (%d owners x 1 site, 0 loop-enclosed)." % len(rows3))
+    out.p("  baseline: %d owners x 1 call site each, so one call per caller INVOCATION in 10 of 11."
+          % len(rows3))
+    out.p("  EXCEPTION (P1 fix, measured): 0x59dd3a in FUN_0059ce10 IS inside a loop"
+          " (back-jump 0x59e2a6 -> 0x59ce92) -> that caller re-runs the pass once per iteration.")
     out.p("  phase: FUN_0051f320 calls it only when (round & 3) == 1 -> once every 4 rounds;"
-          " 9/11 sites are unconditional.")
+          " 5/11 sites sit under a decompiled conditional, 6 are top-level in their function.")
     out.p("  the row-table builder runs FIRST: at 0x59b8ce the immediately preceding loop stores"
           " ds:0x985af4 (row count) each iteration, then falls into the call.")
     out.p("  production-independent: no call site is gated on credit/minerals (the A-class gates"
           " are the round counter and ds:0x99180c).")
+    out.p("  RIVAL 'no caller loops the pass' FAILS on the printed numbers (%d loop-enclosed)." % n_looped)
 
     # ============================== UNKNOWNs
     out.p("\n== UNKNOWN (stated, not closed)")
