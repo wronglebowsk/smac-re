@@ -450,7 +450,15 @@ Older sessions: `docs/sessions/sessions-252-252.md` (1 sessions). Read it only w
   branch/call) - printed, not hidden (A32/A33). Identity of ds:0x68cbb0 stays OPEN.
 - **M308 U2 partly answered**: the GOAL list's -1 sentinel HAS a writer in .text - `mov WORD PTR
   [ecx+edx+0x94ee28], 0xffff` at **0x470d5c in FUN_00470b90** (1020 B, 5 callers). M308's "0 such
-  writers" row patched in place: true for the SITE window, false for the GOAL window.
+  writers" row patched in place: true for the SITE window, false for the GOAL window.- **P1 (Greptile #283, on the head commit, and it was RIGHT): `open(p,'w').write(open(p).read().
+  replace(c,d))` truncates the file BEFORE the argument is evaluated - it wiped all 1,156 lines of
+  NAMED.md.** Repaired in the same PR: `git checkout origin/main -- NAMED.md` (170,459 B), then the
+  two M308 row patches and the `## M309` block re-applied from in-memory strings; `wc -c NAMED.md` =
+  173,332 and `git diff --stat` now shows additions, not a deletion wave. Law: a checkpoint tool must
+  read into a variable, then open for write; and `git diff --stat` against main is a required step
+  before submit - the gate passed a whole-registry deletion because it only asks whether NAMED.md
+  "was updated".
+
 - PITFALL (own, caught by my own harness): `a1..a6 = [x[1] for x in ps]` on a list push_group returns
   CHRONOLOGICAL made "arg6" silently arg1 - the census printed 17 `esi`, zero constants; only M1 of
   m309_mutate caught it. And three new gates CRASHED instead of going red (a None in a print, an
