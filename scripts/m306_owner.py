@@ -101,17 +101,17 @@ def succ(addrs, idx, a):
     return addrs[i + 1] if i is not None and i + 1 < len(addrs) else None
 
 
-def cfg_walk(ins, addrs, start, cap=40000, limit=None):
-    """Reachable instruction set from `start` over the linear decode. Returns
-    (reach, ret_sites, loop_backs, forward_edges, indirect_sites). `limit` caps the
-    exploration address (for bounded control walks)."""
+def cfg_walk(ins, addrs, start, cap=40000, limit=None, lo=None):
+    """Reachable instruction set from `start` over the linear decode, optionally confined to
+    [lo, limit). Branch/JMP edges crossing the bounds are recorded but NOT followed.
+    Returns (reach, ret_sites, loop_backs, forward_edges, indirect_sites)."""
     idx = {a: i for i, a in enumerate(addrs)}
     reach, ret_sites, loop_backs, forward, indirect = set(), [], [], [], []
     frontier = [start]
     while frontier:
         pc = frontier.pop()
         while pc is not None and pc not in reach and len(reach) <= cap:
-            if limit is not None and pc >= limit:
+            if (limit is not None and pc >= limit) or (lo is not None and pc < lo):
                 break
             reach.add(pc)
             t = ins.get(pc)
@@ -130,7 +130,8 @@ def cfg_walk(ins, addrs, start, cap=40000, limit=None):
             if mj:
                 tgt = int(mj.group(1), 16)
                 (loop_backs if tgt <= pc else forward).append((pc, tgt))
-                frontier.append(tgt)
+                if not _oob(tgt, lo, limit):
+                    frontier.append(tgt)
                 break
             mjcc = JCC_RX.match(t)
             if mjcc:
@@ -139,7 +140,8 @@ def cfg_walk(ins, addrs, start, cap=40000, limit=None):
                     loop_backs.append((pc, tgt))
                 else:
                     forward.append((pc, tgt))
-                frontier.append(tgt)
+                if not _oob(tgt, lo, limit):
+                    frontier.append(tgt)
                 pc = succ(addrs, idx, pc)
                 continue
             if op0 == "jmp":
@@ -147,6 +149,10 @@ def cfg_walk(ins, addrs, start, cap=40000, limit=None):
                 break
             pc = succ(addrs, idx, pc)
     return reach, ret_sites, loop_backs, forward, indirect
+
+
+def _oob(t, lo, limit):
+    return (limit is not None and t >= limit) or (lo is not None and t < lo)
 
 
 def scan_le(blob, addr):
@@ -254,9 +260,9 @@ def main():
           (FN, len(call_sites), len(jmp_sites), len(other)))
     for a, t in [(a, ins[a]) for a in jmp_sites] + other:
         out.p("  ref @0x%x in %s : %s" % (a, "; ".join(owner_of(funcs, a)) or "outside any index fn", t))
-    jp = [(a, ins[a]) for a in addrs if abs(a - JMP_SITE) < 0x60 and
-          ((JMP_RX.match(ins[a]) and int(JMP_RX.match(ins[a]).group(1), 16) == JMP_SITE) or
-           (JCC_RX.match(ins[a]) and int(JCC_RX.match(ins[a]).group(2), 16) == JMP_SITE))]
+    jp = [(a, ins[a]) for a in addrs
+          if (JMP_RX.match(ins[a]) and int(JMP_RX.match(ins[a]).group(1), 16) == JMP_SITE)
+          or (JCC_RX.match(ins[a]) and int(JCC_RX.match(ins[a]).group(2), 16) == JMP_SITE)]
     out.p("branch predecessors of jmp-site 0x%x: %s" % (JMP_SITE, [(hex(a), t) for a, t in jp]))
     blob = open(EXE, "rb").read()
     hits, hits2 = scan_le(blob, FN), scan_le(blob, NEIGHBOR)
@@ -344,11 +350,17 @@ def main():
         "push-ebp/mov-esp/sub-esp prologue at 0x%x split it, and the CFG from 0x4f35e0 ends at ret 0x%x, "
         "never at 0x4f35da-style exits" % (len(pad_before_nop), FN, end_ret),
         len(pad_before_nop) == 6 and rs[-1] == end_ret)
-    reach2, ret2, _, fwd2, _ = cfg_walk(ins, addrs, NEIGHBOR, limit=NEIGHBOR + 3058)
-    fold_edges = [(a, b) for a, b in fwd2 if b < NEIGHBOR]
-    out.p("control CFG from 0x%x: %d insns in own span; edges LEAVING its span downward: %s "
-          "(reaching 0x%x: %s)" % (NEIGHBOR, len(reach2 - reach), [(hex(a), hex(b)) for a, b in fold_edges],
-                                   FN, FN in reach2))
+    reach2, ret2, lb2, fwd2, _ = cfg_walk(ins, addrs, NEIGHBOR, limit=NEIGHBOR + 3058, lo=NEIGHBOR)
+    fold_edges = []
+    for a in reach2:
+        mj, mc_ = JMP_RX.match(ins[a]), JCC_RX.match(ins[a])
+        tgt = int(mj.group(1), 16) if mj else (int(mc_.group(2), 16) if mc_ else None)
+        if tgt is not None and tgt < NEIGHBOR:
+            fold_edges.append((a, tgt))
+    out.p("control CFG from 0x%x confined to its own span: %d insns, %d rets; edges LEAVING the span "
+          "downward: %s (region insns among them: %d)" %
+          (NEIGHBOR, len(reach2), len(ret2), [(hex(a), hex(b)) for a, b in fold_edges],
+           sum(1 for _, b in fold_edges if FN <= b <= end_ret)))
     out_edge_ct = sum(1 for a in reach if a in idx_all and (succ(addrs, idx_all, a) or 0) >= NEIGHBOR)
     chk("RIVAL2 FAILS 'region and 0x%x are ONE contiguous body (no real boundary)': the region is "
         "self-contained — own prologue, 3 rets, 15 nop pad, ZERO CFG edges from the region "
