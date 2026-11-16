@@ -537,3 +537,45 @@ byte-field @0x950664 8-row walk - M303 S7/S9, M304's OPEN settle-nest MEANING - 
 ++ never gates them); save-carry vs rebuild of the byte family; the sibling fields of the
 8380-B record; the save-vs-live record drift (BOTH views replayed, 3 diverging byte-CNT
 entries COUNTED not smoothed). No box time, no /proc, no gdb, no game-binary load.
+
+**B21 - the m289 run as ONE composed state object, written, reloaded and RESUMED
+(R2's "the legs run together and the save survives the round trip" slice; written by
+s267 from B3+B8+B10+B13 - the rung was not yet in this file, so the build fire
+authored it, as B14/B16/B17/B18/B19/B20 did).** `sim/composedrun.py`: ONE state
+object - the save's base ledger + the B3 turn engine - pressed once per recorded m289
+turn, with the recorded op stream (`evidence/m289_gdb_raw.log`: 7 FOUND + 2 DESTROY,
+`cnt` = the ledger count BEFORE the op) applied BETWEEN presses by a DP that
+enumerates every placement of the 9 ops into the 30 turn intervals that reproduces the
+recorded `n_bases` curve (K = 11 feasible; the run takes the lexicographically earliest,
+a declared tie-break). **THE RUNG'S MEASUREMENT: the per-turn curve is strictly coarser
+than the op log** - a curve-matching schedule needs only `sum|delta|` = 7 ops, so exactly
+one turn hides a net-zero (+1,-1) pair; the curve-only schedule still matches the curve
+30/30 but hits only 7 of the 9 recorded (kind, pre-count) rows, the model schedule 9/9.
+Then the B8 writer composes BOTH modeled header fields at once (year@84 2150->2180 AND
+the bases-count dword 18->23) plus 5 grown 304-B records; `sim.save` RE-PARSES the image;
+and the NEW leg presses the reloaded state once more, requiring
+(write-then-press) == (press-31-times-then-write) BYTE-FOR-BYTE.
+`python3 -m sim.selftest --b21 programs/saves/m54b_clean.SAV` must print PASS B21 12/12
+with: G1 anchors re-derived (save year == trace year_before(0), save n_bases == trace
+start, the op chain a closed walk 9/9); G2 the turn law (year_before == save_year+turn
+30/30; the trace self-chains on 29/29 boundaries for year AND n_bases; the engine
+emission supplies all 31 distinct recorded (cur,tf,year) samples IN ORDER - adjacent
+samples of one state collapse because the recorder's after(t) IS its before(t+1));
+G3 curve 30/30, endpoint 23, peak 24; G4 the coarseness measurement (7 < 9, K = 11);
+G5 op fidelity 9/9 vs the rival's 7/9; G6 the 5 grown slots == the surviving recorded
+foundings and neither destroyed site is a base any more; G7 the image grows by exactly
+1520 B = 5 x 304 with the tail after the grown array byte-identical (10,800 B); G8 the
+header diff is 2 bytes, at the bases dword and the year word, both inside modeled spans;
+G9 the reload (year 2180, 23 records, record-for-record equality, and the SAVED cur_player /
+modeled turn_flags bit / year read back equal to the model's - the resume engine is built from
+the FIELDS IN THE IMAGE, never from the model); G10 the RESUME commutation (the resumed image ==
+the 31-press image byte-for-byte; img->img2 differs in the 1 changed year byte); G11 five rivals
+fail the same fit (no-leg 6/30, all-ops-at-end 7/30, curve-only 30/30 curve but 7/9 ops,
+FIFO-destroy keeps a destroyed tile, and a writer that leaves cur_player in an AI slot is
+REFUSED a press by the resume leg - the proof the leg can see a broken turn-field write); G12 two
+runs -> identical table text and identical written-image sha256. DECLARED UNMODELED: on
+WHICH turn each op really fired (the curve admits 11 placements, the log carries no turn
+stamp - the earliest is a tie-break, not a measurement); the destroy slot (last, as B13);
+everything a founding does to economy/research/units (the run tracks year, cur/tf and the
+ledger only); the recorder's mid-cycle sampling law (used as recorded, not modeled).
+No box time, no /proc, no gdb, no game-binary load.
