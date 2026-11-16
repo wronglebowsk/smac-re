@@ -1,0 +1,92 @@
+B21 composedrun  save=m54b_clean.SAV  trace=trace_m289_20261110_071759.jsonl  log=m289_gdb_raw.log
+recorded: 30 turn rows; 9 ops (7 found + 2 destroy)
+save: year 2150 n_bases 18 n_units 67 own_player 3 size 242539 B map 64x64
+trace start: year 2150 n_bases 18 cur 3 tf 0
+
+== op chain (log order; the log's cnt is the ledger count BEFORE the op) ==
+  i kind     fac   x   y   rec_pre  model_pre  model_post  ok
+  0 found      6  20  48       18         18          19   ok
+  1 found      6  63  51       19         19          20   ok
+  2 found      6  12  48       20         20          21   ok
+  3 destroy None None None       21         21          20   ok
+  4 found      5  27  19       20         20          21   ok
+  5 found      7  23  33       21         21          22   ok
+  6 found      1  27  29       22         22          23   ok
+  7 found      6   1  43       23         23          24   ok
+  8 destroy None None None       24         24          23   ok
+closed walk (every rec_pre == model_pre AND every op lands): 9/9
+
+== the run: ops in the interval, then the B3 press (log schedule, lexicographically earliest feasible placement) ==
+  t  nb_rec_b nb_rec_a  nb_model  ops_in_interval  match   year_rec_b  year_model
+  0        18        18         18                 0      ok        2150        2150
+  1        18        18         18                 0      ok        2151        2151
+  2        18        18         18                 0      ok        2152        2152
+  3        18        18         18                 0      ok        2153        2153
+  4        18        18         18                 0      ok        2154        2154
+  5        18        18         18                 0      ok        2155        2155
+  6        18        19         19                 1      ok        2156        2156
+  7        19        19         19                 0      ok        2157        2157
+  8        19        19         19                 0      ok        2158        2158
+  9        19        20         20                 1      ok        2159        2159
+ 10        20        20         20                 0      ok        2160        2160
+ 11        20        20         20                 0      ok        2161        2161
+ 12        20        20         20                 0      ok        2162        2162
+ 13        20        20         20                 0      ok        2163        2163
+ 14        20        20         20                 0      ok        2164        2164
+ 15        20        20         20                 0      ok        2165        2165
+ 16        20        20         20                 0      ok        2166        2166
+ 17        20        20         20                 0      ok        2167        2167
+ 18        20        21         21                 1      ok        2168        2168
+ 19        21        22         22                 3      ok        2169        2169
+ 20        22        22         22                 0      ok        2170        2170
+ 21        22        22         22                 0      ok        2171        2171
+ 22        22        23         23                 1      ok        2172        2172
+ 23        23        24         24                 1      ok        2173        2173
+ 24        24        24         24                 0      ok        2174        2174
+ 25        24        24         24                 0      ok        2175        2175
+ 26        24        24         24                 0      ok        2176        2176
+ 27        24        24         24                 0      ok        2177        2177
+ 28        24        24         24                 0      ok        2178        2178
+ 29        24        23         23                 1      ok        2179        2179
+curve match 30/30 | year_before == save_year+turn AND year_after == +1: 30/30
+intervals carrying >1 op: 1 (max 3) | feasible placement count K = 11
+curve-minimal op count sum|delta| = 7  <  recorded ops 9  (the curve hides 2 op(s), a net-zero (+1,-1) pair)
+engine emission 331 states; recorded (cur,tf,year) samples 31 after collapsing adjacent duplicates; matched IN ORDER 31/31 (turns with a miss [])
+trace self-chain on 29 turn boundaries: year 29/29, n_bases 29/29, (cur,tf) 29/29 - the recorder's after-sample of turn t IS its before-sample of turn t+1, so 31 samples are distinct (a few are taken mid-cycle)
+
+== the ledger after the run ==
+endpoint 23 (recorded after(29) 23) | peak 24 | save-carried 18 | cap 512
+grown slots 5 (fac,x,y): [(6, 20, 48), (6, 63, 51), (5, 27, 19), (7, 23, 33), (1, 27, 29)]
+recorded foundings 7; surviving under destroy-last 5; the 2 sites the destroys removed [(6, 12, 48), (6, 1, 43)] - still a base tile in the model? [False, False]
+
+== the written image, the reload and the RESUME ==
+orig 242539 B -> written 244059 B (grew 1520 B == 5 records x 304 B: True)
+written year@84 = 2180 (recorded after(29).year 2180) | bases dword@72 = 23 (recorded 23) | n_units 67 (unchanged: True)
+header diffs below bases_off(226267): 2 byte(s) at [72, 84]; inside modeled spans 2/2
+tail after the grown array == tail after the original array: True (10800 B)
+RELOAD from the written image: year 2180 n_bases 23 records 23; records == model records: True
+RESUME: reload + 1 press -> year 2181; img2 == img3 (31 presses on the original, then write): True
+img -> img2 differing bytes: 1 at [84] (the year word is 84,85)
+
+== rivals, graded on the SAME recorded numbers ==
+R1 no founder leg at all: curve 6/30, endpoint 18 (recorded 23)
+R2 all 9 ops in the last interval: curve 7/30
+R3 curve-only schedule (7 ops, K=1): curve 30/30 but recorded op (kind,pre-cnt) fidelity 7/9  [model schedule: 9/9]
+R4 destroy drops the FIRST founded record (FIFO) instead of compacting the LAST: grown slots [(6, 1, 43), (6, 63, 51), (5, 27, 19), (7, 23, 33), (1, 27, 29)] == model's? False (endpoint still 23)
+R5 lift_all writer (count dwords pass-through): re-parses bases 18 (recorded 23) year 2150
+R6 year pass-through: writes year 2150 (the resumed run needs 2181), so the reload/resume leg breaks: True
+
+table sha256 5a38f68cc97b9cc5 | written-image sha256 791a0d54c8fd7a0c
+  ok   G1 anchors recomputed, not asserted: save year 2150 == trace year_before(0); save n_bases 18 == trace n_bases(0); op chain closed walk 9/9
+  ok   G2 turn law on the recorded rows: year_before == save_year+turn AND year_after == +1 on 30/30; the trace self-chains on 29/29 boundaries for year and 29/29 for n_bases; the emission supplies 31/31 recorded (cur,tf,year) samples IN ORDER
+  ok   G3 the log-driven schedule reproduces the recorded n_bases curve 30/30; ledger endpoint 23 == recorded 23; peak 24
+  ok   G4 the curve is STRICTLY COARSER than the op log: sum|delta| = 7 ops suffices to match it but the log carries 9; feasible placements K=11 > 1
+  ok   G5 op fidelity: the log schedule hits 9/9 recorded (kind,pre-cnt) rows; the curve-only schedule 7/9
+  ok   G6 grown slots == the surviving recorded foundings [(6, 20, 48), (6, 63, 51), (5, 27, 19), (7, 23, 33), (1, 27, 29)]; the 2 destroyed sites are NOT bases any more (present-flags [False, False])
+  ok   G7 the image grew by exactly 1520 B == 5 x 304 and the tail after the grown array is byte-identical
+  ok   G8 header diffs 2 byte(s) all inside modeled spans; year dword 2180 == recorded after(29).year; bases dword 23 == recorded 23
+  ok   G9 RELOAD: the image re-parses (year 2180 n_bases 23) and its 23 records equal the model's 23
+  ok   G10 RESUME COMMUTES: write-then-press == press-31-then-write byte-for-byte (True); the img->img2 diff is 1 byte(s) at [84] (the year word)
+  ok   G11 rivals fail the same fit: no-leg curve 6/30, all-ops-at-end 7/30, curve-only 30/30 curve but 7/9 ops, FIFO-destroy reproduces the grown slots: False
+  ok   G12 two runs: report text sha256 identical and written-image sha256 identical (5a38f68cc97b9cc5)
+PASS B21: 12/12 gates - the recorded m289 run IS ONE EXECUTED STATE OBJECT: 30 B3 presses (year law 30/30, trace self-chain 29/29, the engine supplies all 31 recorded (cur,tf,year) samples in order) plus the 9-op founder/destroyer ledger (closed walk 9/9, curve 30/30, endpoint 23 peak 24, grown slots == the 5 surviving foundings); the written .SAV grows by 1520 B with ONLY the year and bases-count bytes changed in the header, reloads (year 2180, 23 records), and RESUMES byte-identically to 31 presses on the original; the curve/op pairing (sum|delta| 7 < 9 ops, K=11 placements, curve-only schedule 7/9 op fidelity) is measured on both schedules, with 4 rivals failing the same fit (no box time, no /proc, no gdb)
