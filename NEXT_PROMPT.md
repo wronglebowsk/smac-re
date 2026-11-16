@@ -71,9 +71,9 @@ collision-check + worktree FIRST).
   of sites 0x56444b/0x5645d9/0x5651e3/0x568567 (INFERRED, not pinned); hub
   slots [ebp-0x18]/[ebp-0x40]/[ebp-0x64]/[ebp-0x6c]/[ebp-0x74]/[ebp-0x2c]/
   [ebp-0x30]/[ebp-0x54] un-named; sibling 0x5831a0 fed (x,y) after the predicate; 188-row cursor caller; whose record BYTE[edi+0x7]
-  is + the walk's tile-class/distance legs' MEANING; FUN_0051dcb0's IDENTITY
-  (the per-tile pass that zeroes-then-rebuilds BOTH counter tables; outer loop =
-  tile records stride 0x2c vs ds:0x92a378/0x92a37c - callers + cadence); the
+  is + the walk's tile-class/distance legs' MEANING; FUN_0051dcb0's REBUILD-BODY
+  MEANING (WHO is settled M305: 11 one-shot callers, none looped, 0x51f71e =
+  round%4==1, export hole at 0x4f35e0 — what the 8 blocks/128 slots CARRY is open); the
   sibling fields of the 8380-B block record (byte field 0x950664, word 0x94e8a8
   ++'d pre-predicate, dword 0x94f4ec + word 0x950a64 preamble - all INDEXED by
   M303, semantics OPEN); FUN_0056d480/0056d630 + ds:0x985b10/0x985aec

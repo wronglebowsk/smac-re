@@ -1,0 +1,146 @@
+M305 FUN_0051dcb0 - identity, callers, cadence   (STATIC: zero box, zero /proc, zero gdb)
+inputs: /home/paul/reverse/smac/scratch/m574/text.txt (781429 insn records), /home/paul/reverse/smac/ghidra_out/index.csv (10284 functions)
+S0 subject: FUN_0051dcb0 @ 0x51dcb0 size=1191 n_callers(index.csv)=11 n_insns=386 body_insns_in_window=386
+
+== S1 zero-build window 0x51dcb8 - 0x51dd17 (verbatim)
+  0x51dcb8  mov    edx,0x94eca8                       
+  0x51dcbd  xor    esi,esi                            
+  0x51dcbf  xor    ecx,ecx                            
+  0x51dcc1  lea    eax,[edx-0x400]                    
+  0x51dcc7  mov    WORD PTR [eax+0x200],si            
+  0x51dcce  mov    WORD PTR [eax],si                  
+  0x51dcd1  mov    WORD PTR [eax+0x100],si            
+  0x51dcd8  mov    WORD PTR [eax+0x300],si            
+  0x51dcdf  mov    BYTE PTR [edx+ecx*1+0x80],0x0      
+  0x51dce7  mov    BYTE PTR [edx+ecx*1],0x0           
+  0x51dceb  inc    ecx                                
+  0x51dcec  add    eax,0x2                            
+  0x51dcef  cmp    ecx,0x80                           
+  0x51dcf5  jl     0x51dcc7                           
+  0x51dcf7  add    edx,0x20bc                         
+  0x51dcfd  cmp    edx,0x95f288                       
+  0x51dd03  jl     0x51dcbd                           
+  0x51dd05  mov    eax,0x989ce8                       
+  0x51dd0a  mov    DWORD PTR [eax+0x4],esi            
+  0x51dd0d  mov    DWORD PTR [eax],esi                
+  0x51dd0f  add    eax,0x1c                           
+  0x51dd12  cmp    eax,0x98aae8                       
+  0x51dd17  jl     0x51dd0a                           
+  byte family: base=0x94eca8 entries/field=128 blk_stride=8380 blocks=8 (remainder 0) terminator=0x95f288
+  per-block zeroed fields: WORD disps ['0x0', '0x100', '0x200', '0x300'] (step 2) -> ['0x94e8a8', '0x94e9a8', '0x94eaa8', '0x94eba8'] ; BYTE disps ['0x0', '0x80'] -> ['0x94eca8', '0x94ed28']
+  dword family: base=0x989ce8 zeroed disps ['0x0', '0x4'] slot_stride=28 slots=128 (remainder 0) terminator=0x98aae8
+  RIVALS (byte-family block stride): span=0x105e0
+    rival B: stride 256 (4 word arrays only) span/0x100 = 261 remainder 224   <== NOT A DIVISOR, FAILS
+    rival C: stride 1024 (one page per block) span/0x400 = 65 remainder 480   <== NOT A DIVISOR, FAILS
+    the decoded stride                       span/0x20bc = 8 remainder 0
+  A1 byte CNT base = byte MAX base + 0x80                  OK  0x94eca8 + 0x80 = 0x94ed28
+  A2 dword CNT = dword MAX + 4                             OK  0x989ce8 + 0x4 = 0x989cec
+  A3 8 blocks divide the span exactly                      OK  blocks=8 rem=0
+  A4 128 slots x 28 B divide the span exactly              OK  slots=128 rem=0
+  A5 the zero window covers BOTH counter tables            OK  dword ['0x0', '0x4'] byte ['0x0', '0x80']
+  A6 rival strides fail on the printed span                OK  
+
+== S2 the walk: bounds, cursor stride, parity (verbatim tail block)
+  0x51dd19  mov    eax,ds:0x92a37c                    
+  0x51dd1e  mov    edi,DWORD PTR ds:0x92ae14          
+  0x51dd24  xor    ecx,ecx                            
+  0x51dd26  cmp    eax,esi                            
+  0x51dd28  mov    DWORD PTR [ebp-0x4],edi            
+  0x51dd2b  mov    DWORD PTR [ebp-0x8],ecx            
+  0x51dd2e  jle    0x51e151                           
+  0x51dd34  mov    eax,ds:0x92a378                    
+  0x51dd39  push   ebx                                
+  0x51dd3a  and    ecx,0x1                            
+  0x51dd3d  cmp    ecx,eax                            
+  0x51dd3f  mov    DWORD PTR [ebp-0x10],ecx           
+  0x51dd42  jge    0x51e13b                           
+  0x51e11d  mov    esi,DWORD PTR [ebp-0x4]            
+  0x51e120  mov    eax,ds:0x92a378                    
+  0x51e125  add    edi,0x2                            
+  0x51e128  add    esi,0x2c                           
+  0x51e12b  mov    DWORD PTR [ebp-0x10],edi           
+  0x51e12e  cmp    edi,eax                            
+  0x51e130  mov    DWORD PTR [ebp-0x4],esi            
+  0x51e133  mov    edi,esi                            
+  0x51e135  jl     0x51dd48                           
+  0x51e13b  mov    ecx,DWORD PTR [ebp-0x8]            
+  0x51e13e  mov    edx,DWORD PTR ds:0x92a37c          
+  0x51e144  inc    ecx                                
+  0x51e145  cmp    ecx,edx                            
+  0x51e147  mov    DWORD PTR [ebp-0x8],ecx            
+  0x51e14a  jl     0x51dd3a                           
+  decoded: rows_global=0x92a37c cols_global=0x92a378 rec_array_global=0x92ae14 x_stride=2 rec_cursor_stride=0x2c parity_mask=1
+  pinned instance {'W': 64, 'H': 64, 'mult': 32, 'recs': 2048, 'rec_size': 44}
+  visits/row=uniform 32 (min 32 max 32)  TOTAL record visits=2048  array length=2048
+  cursor ends at record 2048; cursor==mult*y+(x>>1) mismatches = 0 ; records visited once = 2048/2048 (dupes 0)
+    RIVAL1 x-stride 1 (whole row per pass)         visits=4064   fold-mismatches=4063    <== FAILS on the printed numbers
+    RIVAL2 outer bound 1 (one row per call)        visits=32     fold-mismatches=0       <== FAILS on the printed numbers
+    RIVAL3 cursor reset to base each row           visits=2048   fold-mismatches=2016    <== FAILS on the printed numbers
+    AS DECODED (x+=2, parity start, shared cursor) visits=2048   fold-mismatches=0    
+  A7 the walk visits every tile record exactly once        OK  visits=2048 recs=2048 unique=2048
+  A8 the cursor algebra IS the documented record fold      OK  mismatches=0 (fold from NAMED.md:1025: base+0x2c*(mult*y + x>>1))
+  A9 walk bounds are the two map globals (W then H)        OK  rows=0x92a37c cols=0x92a378
+
+== S3 caller census: every direct call site, containment, loop membership, guard chain
+  index.csv n_callers=11 ; direct call sites in the dump=11 ; non-call mentions of the address=0 []
+  0x41dc7e  in FUN_0041d480   (0x41d480+3237) callers_of_that=2 shard=001 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: void FUN_0041d480(void) > switch(aiStack_540[iVar3 * 5]) >  ****)0x0; pcStack_28 = (char *)0x41dc30; ppppuVar8 = (undefined4 ****)FUN_005f1394(); if (0 < (int)ppppuVar8)
+  0x4e145e  in FUN_004e13f0   (0x4e13f0+127) callers_of_that=1 shard=012 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: void FUN_004e13f0(void)
+  0x4e4dc8  in FUN_004e47d0   (0x4e47d0+1600) callers_of_that=3 shard=012 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: int FUN_004e47d0(uint param_1,int *param_2,int param_3) > *puVar11; bool bVar12; uint local_c; int local_8; iVar2 = param_3; piVar3 = param_2; if (DAT_00985af4 < 0x200)
+  0x4e5540  in FUN_004e4e10   (0x4e4e10+1864) callers_of_that=15 shard=012 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: void FUN_004e4e10(int param_1)
+  0x4f3e08  in FUN_004f34b0   (0x4f34b0+298) callers_of_that=1 shard=012 hdr_ok=False
+            loop-enclosing js: NONE
+            guard chain: NOT FOUND IN SHARD
+  0x508b48  in FUN_00507ef0   (0x507ef0+5306) callers_of_that=3 shard=012 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: ith '_' overlap smaller symbols at the same address */void FUN_00507ef0(int param_1,uint param_2,uint param_3) > else if (-1 < param_1)
+  0x51f71e  in FUN_0051f320   (0x51f320+1036) callers_of_that=2 shard=013 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: void FUN_0051f320(void) > if (((byte)DAT_00985afc & 3) == 1)
+  0x543bc6  in FUN_005437d0   (0x5437d0+1141) callers_of_that=8 shard=013 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: void FUN_005437d0(int param_1,uint param_2)
+  0x59b8ce  in FUN_0059b830   (0x59b830+167) callers_of_that=2 shard=015 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: void FUN_0059b830(void)
+  0x59dd3a  in FUN_0059ce10   (0x59ce10+5292) callers_of_that=1 shard=015 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */void FUN_0059ce10(void)
+  0x5b09f6  in FUN_005b09b0   (0x5b09b0+171) callers_of_that=21 shard=015 hdr_ok=True
+            loop-enclosing js: NONE
+            guard chain: void FUN_005b09b0(void) > ef40(); FUN_005af140(); FUN_005ae880(); FUN_005af440(); FUN_0058d390(); FUN_005b0540(); if (DAT_0099180c == 0)
+  distinct containing functions=11  multiplicity={'FUN_0041d480': 1, 'FUN_004e13f0': 1, 'FUN_004e47d0': 1, 'FUN_004e4e10': 1, 'FUN_004f34b0': 1, 'FUN_00507ef0': 1, 'FUN_0051f320': 1, 'FUN_005437d0': 1, 'FUN_0059b830': 1, 'FUN_0059ce10': 1, 'FUN_005b09b0': 1}
+  sites enclosed by a backward jump in their own function=0/11
+  conditional at the call (preceding jcc jumps PAST it): 2 ['0x51f71e <- jne    0x51f723', '0x5b09f6 <- jne    0x5b09fb']
+  triad 'call 0x5a2ae0 / add esp,8 / call 0x51dcb0': 3 ['0x4f3e08', '0x508b48', '0x543bc6']
+  gated on the ROUND counter (ds:0x985afc & 3): 1 ['0x51f71e']
+  gate predicate as encoded: (round & 3) == bl ; bl written 1 time(s) in FUN_0051f320 ['0x51f32b']
+  owners covered by the export: 10/11 ; uncovered: ["0x4f3e08 outside FUN_004f34b0(0x4f34b0+298) -> prologue-only owner ['0x4f35e0'] span [0x4f35e0,0x4f4060)"]
+  A10 the dump's call census equals index.csv n_callers    OK  dump=11 index=11
+  A11 no indirect entry: the address appears in no operand OK  non-call mentions=0
+  A12 11 distinct owners, each calling it exactly once     OK  distinct=11 max_multiplicity=1
+  A13 RIVAL 'one hub caller invokes the pass repeatedly' FAILS OK  max calls per owner=1
+  A14 RIVAL 'the cadence is a caller looping the pass' FAILS OK  loop-enclosed sites=0/11
+  A15 one caller gates on the round counter mod 4          OK  round-gated=1 bl_writes=1
+  A16 three callers share the 0x5a2ae0 triad               OK  triad=3
+  A17 the export owns 10 of 11 call sites (1 hole, named by prologue) OK  uncovered=1 prologues_in_gap=1
+
+== S4 CADENCE (stated on the callers' own state, not on a screenshot)
+  the pass runs once per CALLER INVOCATION (11 owners x 1 site, 0 loop-enclosed).
+  phase: FUN_0051f320 calls it only when (round & 3) == 1 -> once every 4 rounds; 9/11 sites are unconditional.
+  the row-table builder runs FIRST: at 0x59b8ce the immediately preceding loop stores ds:0x985af4 (row count) each iteration, then falls into the call.
+  production-independent: no call site is gated on credit/minerals (the A-class gates are the round counter and ds:0x99180c).
+
+== UNKNOWN (stated, not closed)
+  U1 the 0x4f35e0 owner has NO decompiled body in the export -> its guard/preds are unmodelled (containment inferred from the prologue alone).
+  U2 what the 8 byte blocks and 128 dword slots MEAN per block/slot is M302/M303 scope; this milestone only proves who zeroes and rebuilds them.
+  U3 whether any of the 11 callers runs per TURN was not measured live here (zero box). The static cadence bound is: one call per invocation, one invocation per round mod 4 in FUN_0051f320.
+
+== ACCEPTANCE: 17/17 checks OK

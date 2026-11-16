@@ -1,1 +1,1 @@
-H262 | docs-only split, acceptance = wc -c NEXT_PROMPT.md <= 12,000 + gate GREEN (11,999 -> 10,833 B) | PR: submitting now by s262, do NOT merge | next: B20 #273 already MERGED (119b691); next fire picks from the OPEN shortlist (track_mode=ANALYSE, B21 queued)
+M305 | `python3 scripts/m305_identity.py` -> 17/17 OK exit 0, evidence rerun-identical | PR open, NOT merged | next: track_mode=ANALYSE, B21 queued; M305's identity pick ANSWERED, next fire takes another §THE PICK line

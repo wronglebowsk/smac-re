@@ -323,8 +323,139 @@ def main():
     A("A9 walk bounds are the two map globals (W then H)",
       rows_g == REC_ROWS_GLOBAL and cols_g == REC_COLS_GLOBAL,
       "rows=%#x cols=%#x" % (rows_g, cols_g))
+    # ============================== S3 the callers
+    out.p("\n== S3 caller census: every direct call site, containment, loop membership, guard chain")
+    subj = [f for f in funcs if f[0] == FN][0]
+    n_callers_idx = subj[3]
+    sites = []
+    for a in addrs:
+        m = CALL_RX.match(ins[a].strip())
+        if m and int(m.group(1), 16) == FN:
+            sites.append(a)
+    other_refs = [a for a in addrs if a not in sites and re.search(r"\b51dcb0\b", ins[a])]
+    out.p("  index.csv n_callers=%d ; direct call sites in the dump=%d ; non-call mentions of the "
+          "address=%d %s" % (n_callers_idx, len(sites), len(other_refs), [hex(x) for x in other_refs]))
+    rows3 = []
+    for a in sites:
+        nm, fa, sz, nc, sh, ok = contain(funcs, faddrs, a)
+        loops = []
+        i = bisect.bisect_left(addrs, fa)
+        while i < len(addrs) and addrs[i] < a + sz:
+            ai = addrs[i]
+            if ai <= a:
+                t = ins[ai].strip()
+                mm = JCC_RX.match(t)
+                mj = None if mm else JMP_RX.match(t)
+                if mm or mj:
+                    tgt = int(mm.group(2) if mm else mj.group(1), 16)
+                    if fa <= tgt <= a <= ai:
+                        loops.append((ai, tgt))
+            i += 1
+        body = shard_bodies(sh).get(nm)
+        chain = guard_chain(body[2])[0] if body else None
+        rows3.append((a, nm, fa, sz, nc, sh, ok, loops, chain))
+        out.p("  %#08x  in %-14s (%#x+%d) callers_of_that=%d shard=%s hdr_ok=%s"
+              % (a, nm, fa, sz, nc, sh, ok))
+        out.p("            loop-enclosing js: %s" %
+              (", ".join("%#x->%#x" % x for x in loops) if loops else "NONE"))
+        out.p("            guard chain: %s" %
+              (" > ".join(chain[-4:]) if chain else "NOT FOUND IN SHARD"))
+    mult3 = collections.Counter(r[1] for r in rows3)
+    out.p("  distinct containing functions=%d  multiplicity=%s"
+          % (len(mult3), dict(mult3)))
+    n_looped = sum(1 for r in rows3 if r[7])
+    out.p("  sites enclosed by a backward jump in their own function=%d/%d" % (n_looped, len(rows3)))
+
+    # ---- guard shapes, each classified from the ENCODING (never from the decompiler prose) ----
+    def at(a, k=1):
+        i = bisect.bisect_left(addrs, a)
+        return addrs[i - k] if i - k >= 0 else None
+
+    gated, triad, round_gated = [], [], []
+    for a in sites:
+        p = at(a)
+        t = ins[p].strip() if p else ""
+        gj = JCC_RX.match(t)
+        if gj and int(gj.group(2), 16) > a:
+            gated.append((a, t))
+        i = bisect.bisect_left(addrs, a)
+        win = [ins[x].strip() for x in addrs[i - 4:i]]
+        if any(re.match(r"^call\s+0x5a2ae0$", w) for w in win):
+            triad.append(a)
+        w8 = [ins[x].strip() for x in addrs[max(0, i - 8):i]]
+        if any(re.match(r"^mov\s+ecx,DWORD PTR ds:0x985afc$", w) for w in w8) and \
+           any(re.match(r"^and\s+ecx,0x3$", w) for w in w8):
+            round_gated.append(a)
+    out.p("  conditional at the call (preceding jcc jumps PAST it): %d %s"
+          % (len(gated), ["%#x <- %s" % g for g in gated]))
+    out.p("  triad 'call 0x5a2ae0 / add esp,8 / call 0x51dcb0': %d %s"
+          % (len(triad), [hex(x) for x in triad]))
+    out.p("  gated on the ROUND counter (ds:0x985afc & 3): %d %s"
+          % (len(round_gated), [hex(x) for x in round_gated]))
+    # the round gate's comparison operand: bl is set once, at function entry
+    bl_writes = [a for a in addrs if 0x51F320 <= a <= 0x51F71E and re.match(r"^mov\s+ebx,0x1$", ins[a].strip())]
+    out.p("  gate predicate as encoded: (round & 3) == bl ; bl written %d time(s) in FUN_0051f320 %s"
+          % (len(bl_writes), [hex(x) for x in bl_writes]))
+
+    # ---- export coverage: does the Ghidra export own every call site? ----
+    uncov = []
+    for r in rows3:
+        if not r[6]:
+            a, nm, fa, sz = r[0], r[1], r[2], r[3]
+            nxt = [f[0] for f in funcs if f[0] > fa][0]
+            pro = [x for x in addrs if fa + sz <= x < nxt and re.match(r"^push\s+ebp$", ins[x].strip())]
+            uncov.append((a, nm, fa, sz, nxt, pro))
+    out.p("  owners covered by the export: %d/%d ; uncovered: %s"
+          % (len(rows3) - len(uncov), len(rows3),
+             ["%#x outside %s(%#x+%d) -> prologue-only owner %s span [%#x,%#x)"
+              % (u[0], u[1], u[2], u[3], [hex(p) for p in u[5]], u[5][0] if u[5] else 0, u[4])
+              for u in uncov]))
+    A("A10 the dump's call census equals index.csv n_callers", len(sites) == n_callers_idx == 11,
+      "dump=%d index=%d" % (len(sites), n_callers_idx))
+    A("A11 no indirect entry: the address appears in no operand",
+      len(other_refs) == 0, "non-call mentions=%d" % len(other_refs))
+    A("A12 11 distinct owners, each calling it exactly once",
+      len(mult3) == len(rows3) and max(mult3.values()) == 1,
+      "distinct=%d max_multiplicity=%d" % (len(mult3), max(mult3.values())))
+    A("A13 RIVAL 'one hub caller invokes the pass repeatedly' FAILS",
+      max(mult3.values()) == 1, "max calls per owner=%d" % max(mult3.values()))
+    A("A14 RIVAL 'the cadence is a caller looping the pass' FAILS",
+      n_looped == 0, "loop-enclosed sites=%d/%d" % (n_looped, len(rows3)))
+    A("A15 one caller gates on the round counter mod 4",
+      len(round_gated) == 1 and len(bl_writes) == 1,
+      "round-gated=%d bl_writes=%d" % (len(round_gated), len(bl_writes)))
+    A("A16 three callers share the 0x5a2ae0 triad", len(triad) == 3, "triad=%d" % len(triad))
+    A("A17 the export owns 10 of 11 call sites (1 hole, named by prologue)",
+      len(uncov) == 1 and len(uncov[0][5]) == 1,
+      "uncovered=%d prologues_in_gap=%d" % (len(uncov), len(uncov[0][5]) if uncov else -1))
+
+    # ============================== S4 cadence
+    out.p("\n== S4 CADENCE (stated on the callers' own state, not on a screenshot)")
+    out.p("  the pass runs once per CALLER INVOCATION (%d owners x 1 site, 0 loop-enclosed)." % len(rows3))
+    out.p("  phase: FUN_0051f320 calls it only when (round & 3) == 1 -> once every 4 rounds;"
+          " 9/11 sites are unconditional.")
+    out.p("  the row-table builder runs FIRST: at 0x59b8ce the immediately preceding loop stores"
+          " ds:0x985af4 (row count) each iteration, then falls into the call.")
+    out.p("  production-independent: no call site is gated on credit/minerals (the A-class gates"
+          " are the round counter and ds:0x99180c).")
+
+    # ============================== UNKNOWNs
+    out.p("\n== UNKNOWN (stated, not closed)")
+    out.p("  U1 the 0x4f35e0 owner has NO decompiled body in the export -> its guard/preds are"
+          " unmodelled (containment inferred from the prologue alone).")
+    out.p("  U2 what the 8 byte blocks and 128 dword slots MEAN per block/slot is M302/M303 scope;"
+          " this milestone only proves who zeroes and rebuilds them.")
+    out.p("  U3 whether any of the 11 callers runs per TURN was not measured live here (zero box)."
+          " The static cadence bound is: one call per invocation, one invocation per round mod 4"
+          " in FUN_0051f320.")
+
+    nok = sum(1 for c in checks if c[1])
+    out.p("\n== ACCEPTANCE: %d/%d checks OK" % (nok, len(checks)))
+    for n, c, d in checks:
+        if not c:
+            out.p("  FAIL %s  %s" % (n, d))
     out.close()
-    return 0
+    return 0 if nok == len(checks) else 1
 
 
 if __name__ == "__main__":
