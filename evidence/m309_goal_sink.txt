@@ -1,0 +1,280 @@
+M309 static instrument: .text insns 781379, functions 10284, window 0x56d350-0x56d47b
+
+[S1] scope
+  index.csv: 0x0056d350,FUN_0056d350,299,109,50,1,1,1,1905,014
+  index row fields: {'addr': '0x0056d350', 'name': 'FUN_0056d350', 'size_bytes': '299', 'n_insns': '109', 'n_callers': '50', 'n_callees': '1', 'n_strings': '1', 'ok': '1', 'chars': '1905', 'shard': '014'}
+  A1    OK  2 rets, last at 0x56d47a (the function ends there; 0x56d47b is padding)
+  A2    OK  size_bytes 299 == span
+
+[S2] param_1 -> record byte offset (affine chain, never the C text)
+  0x56d386: mov ecx,DWORD PTR [ebp+0x8]
+  0x56d389: xor eax,eax
+  0x56d38b: mov edx,ecx
+  0x56d38d: shl edx,0x6
+  0x56d390: add edx,ecx
+  0x56d392: lea edx,[ecx+edx*2]
+  0x56d395: shl edx,0x4
+  0x56d398: sub edx,ecx
+  0x56d39a: shl edx,0x2
+  0x56d39d: lea ecx,[edx+0x94ee30]
+  chain value of edx as (coef_of_p1, const) = (8380, 0)
+  A3    OK  coefficient == 0x20bc == 8380 bytes/record -> p1 is a RECORD INDEX (R8 fails)
+  lea ecx,[edx+0x94ee30] -> (coef_of_p1, disp) = (8380, 9760304)
+  A4    OK  the walk starts at record_base+8 (entry0's +8 slot)
+
+[S3] insert-path stores: field from the DISPLACEMENT, param from a backward walk
+  0x56d44b: DWORD PTR [eax+0x94ee2c],ecx           field +0x4  d  src=ecx param slot [ebp+0x14]
+  0x56d455: DWORD PTR [eax+0x94ee30],edx           field +0x8  d  src=edx param slot [ebp+0x18]
+  0x56d45f: WORD PTR [eax+0x94ee28],cx             field +0x0  w  src=cx  param slot [ebp+0xc]
+  0x56d469: WORD PTR [eax+0x94ee2a],dx             field +0x2  w  src=dx  param slot [ebp+0x10]
+  0x56d470: DWORD PTR [eax+0x94ee34],ecx           field +0xC  d  src=ecx param slot [ebp+0x1c]
+  (field,width,param-slot) set = [(0, 'w', 12), (2, 'w', 16), (4, 'd', 20), (8, 'd', 24), (12, 'd', 28)]
+  A5    OK  5 stores cover +0/+2/+4/+8/+0C with the 6 params in order (p2,p3,p4,p5,p6)
+  A6    OK  the +0C (owner) store is exactly ONE instruction, 0x56d470, taking [ebp+0x1c] = p6
+
+[S4] probe (is the entry already present?)
+  0x56d3a3: cmp DWORD PTR [ecx-0x4],esi
+  0x56d3a6: jne 0x56d3b5
+  0x56d3a8: cmp DWORD PTR [ecx],edi
+  0x56d3aa: jne 0x56d3b5
+  0x56d3ac: movsx ebx,WORD PTR [ecx-0x8]
+  0x56d3b0: cmp ebx,DWORD PTR [ebp+0xc]
+  0x56d3b3: je 0x56d404
+  A7    OK  entry+4 vs p4 (reg esi) and entry+8 vs p5 (reg edi) - the pair the probe matches on
+  A8    OK  entry+0 is compared as a SIGNED WORD against p2 ([ebp+0xc])
+  A9    OK  the found-path branch is `je 0x56d404` (target asserted, not mnemonic)
+
+[S5] back-edges and bounds
+  back-edge 0x56d3bc: jl   0x56d3a3  (cmp before it: cmp eax,0x4b)
+  back-edge 0x56d439: jl   0x56d3cc  (cmp before it: cmp edi,0x4b)
+  A10   OK  exactly 2 loops, targets 0x56d3a3 / 0x56d3cc
+  bound insns: ['0x56d3b9: cmp eax,0x4b', '0x56d436: cmp edi,0x4b']
+  A11   OK  both loops bound at 0x4b = 75 entries (R3/R4 fail on this number)
+  `add ecx,0x10` at ['0x56d3b6', '0x56d433']
+  A12   OK  both walks step 0x10 = 16 bytes/entry
+  immediate inventory of the whole function (unfiltered): [1, 2, 4, 6, 8, 12, 16, 20, 24, 28, 75, 100, 1000, 5440656, 5690246, 5690275, 5690293, 5690316, 5690333, 5690372, 5690394, 5690402, 5690408, 5690418, 5690486, 6764624, 6886652, 9760296, 9760298, 9760300, 9760304, 9760308, 9984744, 4294967295]
+
+[S6] found path (0x56d404): what does a duplicate do?
+  0x56d404: shl eax,0x4
+  0x56d407: lea ecx,[eax+edx*1+0x94ee2a]
+  0x56d40e: mov edx,DWORD PTR [ebp+0x10]
+  0x56d411: movsx eax,WORD PTR [ecx]
+  0x56d414: cmp eax,edx
+  0x56d416: jg 0x56d41a
+  0x56d418: mov eax,edx
+  0x56d41a: pop edi
+  0x56d41b: pop esi
+  0x56d41c: mov WORD PTR [ecx],ax
+  0x56d41f: pop ebx
+  0x56d420: pop ebp
+  0x56d421: ret 
+  stores on the found path: ['0x56d41c: mov WORD PTR [ecx],ax']
+  A13   OK  exactly ONE store, a WORD -> the owner dword at +0C is NOT refreshed (R5 fails)
+  A14   OK  max(): cmp old,p3 / `jg 0x56d41a` keeps the old / else mov eax,p3 / store the WORD at +2
+  A15   OK  the found path rets at 0x56d421 without reaching the insert block
+
+[S7] eviction law (the do-loop at 0x56d3cc)
+  0x56d3cc: mov ax,WORD PTR [ecx-0x2]
+  0x56d3d0: test ax,ax
+  0x56d3d3: jl 0x56d3dd
+  0x56d3d5: movsx ebx,WORD PTR [ecx]
+  0x56d3d8: cmp ebx,DWORD PTR [ebp+0x10]
+  0x56d3db: jge 0x56d432
+  0x56d3dd: xor ebx,ebx
+  0x56d3df: test ax,ax
+  A16   OK  a NEGATIVE +0 short (the empty sentinel) is a candidate -> `jl 0x56d3dd`
+  A17   OK  a non-empty entry is skipped when prio >= p3 -> `jge 0x56d432` (the next entry)
+  A18   OK  score 1000 for an empty slot via xor/setge/dec/and 0x3e8, exactly 5 insns, no branch
+  A19   OK  prio+100 when prio <= 0, else 0x14-prio (20-prio)
+  A20   OK  strictly-greater wins (ties keep the FIRST index): `jle 0x56d432` on the best-score cmp
+  A21   OK  no candidate -> `test esi,esi` / `jl 0x56d476` skips the insert block entirely
+  stores in the epilogue 0x56d476-0x56d47a: 0 ; in the insert block: 5
+  A22   OK  the no-candidate epilogue is store-free over exactly the 5 insert stores
+  A23   OK  the eviction scan starts best-index = 0 and best-score sentinel esi = -1 (so `test esi,esi;jl` really means 'no candidate')
+
+[S8] the (p4^p5) parity guard + the debug flag
+  0x56d35c: mov eax,esi
+  0x56d35e: xor eax,edi
+  0x56d360: test al,0x1
+  0x56d362: je 0x56d386
+  0x56d364: mov eax,ds:0x985ae8
+  0x56d369: test ah,0x10
+  0x56d36c: je 0x56d386
+  0x56d36e: mov ecx,DWORD PTR [ebp+0xc]
+  0x56d371: push ecx
+  0x56d372: push edi
+  0x56d373: push esi
+  0x56d374: push 0x673850
+  0x56d379: push 0x6914fc
+  0x56d37e: call 0x530490
+  0x56d383: add esp,0x14
+  A24   OK  guard operand identity: esi=p4 and edi=p5 are XORed, then `test al,0x1`
+  direct ds: accesses in the function: ['0x56d364: mov eax,ds:0x985ae8']
+  A25   OK  the ONLY out-of-frame memory is a DIRECT read of ds:0x985ae8, masked `test ah,0x10` = bit 12
+  A26   OK  both je targets are 0x56d386 = the instruction after the call cleanup, and no ret lies between -> the guard cannot suppress the insert (R6 fails)
+  A27   OK  the assert pushes 0x6914fc and calls 0x530490 (the report/format sink)
+
+[S9] the two debug strings, read from the PE bytes
+  0x6914fc -> 'Bad GOAL'   (pushed at 0x56d379 by FUN_0056d350)
+  0x691508 -> 'Bad SITE'   (pushed by FUN_0056d480 at ['0x56d4aa'])
+  A28   OK  the binary names the two lists adjacently in one string pool: Bad GOAL here, Bad SITE in the 25-entry insert (R7 fails)
+
+[S10] one record, two sub-lists
+  0x94ee28 + 75*0x10 = 0x94f2d8 ; FUN_0056d480's list base = 0x94f2d8
+  A29   OK  GOAL entries 0..74 then SITE entries 75..99 of the SAME 8380-byte record -> 100 x 16-B entries, no overflow (R4 fails)
+  SITE record end = 0x94f468 (0x94f2d8 + 25*0x10); record window = [0x94ee28, 0x94f468)
+  A30   OK  the two sub-lists tile 100 entries exactly
+
+[S11] caller census (every `call 0x56d350` in .text)
+  site      caller           arg1      arg2      arg5      arg6     
+  0x4ce2dd  FUN_004cdc70     reg edi   const 0x0 reg ecx   const 0xffffffff
+  0x4e64a3  FUN_004e63b0     reg esi   const 0x3 reg ebx   const 0xffffffff
+  0x4e64b1  FUN_004e63b0     reg esi   const 0x2 reg ebx   const 0xffffffff
+  0x4e64bf  FUN_004e63b0     reg esi   const 0x0 reg ebx   const 0xffffffff
+  0x4ebe65  FUN_004eb6f0     reg ecx   const 0x9 reg ecx   reg eax  
+  0x4ec5a1  FUN_004ebef0     reg esi   const 0x19 reg eax   reg edx  
+  0x4eda13  FUN_004ebef0     reg edi   const 0x9 reg esi   reg edx  
+  0x4edc90  FUN_004ebef0     reg esi   const 0x29 reg ecx   reg eax  
+  0x4ee1b8  FUN_004ebef0     reg esi   const 0x29 reg edx   reg ecx  
+  0x50443e  FUN_00502cd0     reg edi   const 0x10 reg ecx   const 0xffffffff
+  0x504452  FUN_00502cd0     reg edi   const 0x0 reg eax   const 0xffffffff
+  0x504a45  FUN_00502cd0     reg edx   const 0x10 reg eax   const 0xffffffff
+  0x556820  FUN_00556690     reg eax   const 0x2 reg ebx   const 0xffffffff
+  0x556831  FUN_00556690     reg ecx   const 0x3 reg ebx   const 0xffffffff
+  0x55698e  FUN_00556690     reg edx   const 0x0 reg ebx   const 0xffffffff
+  0x556a4a  FUN_00556690     reg edi   const 0x29 reg eax   const 0xffffffff
+  0x556aed  FUN_00556690     reg ecx   const 0x2 reg ebx   const 0xffffffff
+  0x556e79  FUN_00556690     reg edx   const 0x6 reg ecx   const 0xffffffff
+  0x558adc  FUN_00556690     reg edx   const 0x29 reg ebx   const 0xffffffff
+  0x55a327  FUN_0055a1a0     reg esi   const 0x8 reg ecx   const 0xffffffff
+  0x55a345  FUN_0055a1a0     reg esi   const 0x2 reg eax   const 0xffffffff
+  0x55a35b  FUN_0055a1a0     reg esi   const 0x0 reg ebx   const 0xffffffff
+  0x55a36b  FUN_0055a1a0     reg esi   const 0xb reg ebx   const 0xffffffff
+  0x55a38a  FUN_0055a1a0     reg esi   const 0x3 reg edx   const 0xffffffff
+  0x56143b  FUN_0055f650     reg ecx   const 0x9 reg edx   const 0xffffffff
+  0x563280  FUN_0055f650     reg ecx   const 0x6 reg edx   const 0xffffffff
+  0x5656d9  FUN_0055f650     UNATTRIBUTED (pushes=3, blocked_by_branch_or_call=True)
+  0x565759  FUN_0055f650     reg esi   const 0x2 reg ecx   const 0xffffffff
+  0x56ad21  FUN_0055f650     reg ecx   const 0x7 reg ecx   const 0xffffffff
+  0x56d590  FUN_0056d480     reg eax   reg edx   reg edx   const 0xffffffff
+  0x56d6f8  FUN_0056d690     reg edi   reg edx   reg ecx   const 0xffffffff
+  0x58a649  FUN_00585720     reg eax   const 0x6 reg eax   const 0xffffffff
+  0x5a4106  FUN_005a3470     UNATTRIBUTED (pushes=2, blocked_by_branch_or_call=True)
+  0x5a4114  FUN_005a3470     reg esi   const 0x2 reg ebx   const 0xffffffff
+  0x5a4121  FUN_005a3470     UNATTRIBUTED (pushes=2, blocked_by_branch_or_call=True)
+  0x5a4417  FUN_005a3470     reg eax   const 0x0 reg edi   const 0xffffffff
+  0x5a442d  FUN_005a3470     reg eax   const 0x2 reg edi   const 0xffffffff
+  0x5a4999  FUN_005a3470     reg ebx   const 0x6 reg eax   const 0xffffffff
+  0x5a49c4  FUN_005a3470     reg ebx   const 0x0 reg eax   const 0xffffffff
+  0x5a4a2d  FUN_005a3470     reg esi   const 0x2 reg ebx   const 0xffffffff
+  0x5a4a3e  FUN_005a3470     reg esi   const 0x0 reg ebx   const 0xffffffff
+  0x5a4a4f  FUN_005a3470     reg esi   const 0x3 reg ebx   const 0xffffffff
+  0x5a4de0  FUN_005a3470     UNATTRIBUTED (pushes=5, blocked_by_branch_or_call=True)
+  0x5a4dee  FUN_005a3470     reg esi   const 0x2 reg edi   const 0xffffffff
+  0x5a4e05  FUN_005a3470     UNATTRIBUTED (pushes=5, blocked_by_branch_or_call=True)
+  0x5a5269  FUN_005a3470     reg ecx   const 0x6 reg edx   const 0xffffffff
+  0x5a54f2  FUN_005a3470     reg ebx   const 0x6 reg edx   const 0xffffffff
+  0x5a581a  FUN_005a3470     reg ebx   const 0x0 reg edi   const 0xffffffff
+  0x5a5828  FUN_005a3470     reg ebx   const 0x2 reg edi   const 0xffffffff
+  0x5a5836  FUN_005a3470     reg ebx   const 0x3 reg edi   const 0xffffffff
+  sites 50 | attributed 45 | unattributed 5
+  arg6 distribution: [('const 0xffffffff', 40), ('reg eax', 2), ('reg edx', 2), ('reg ecx', 1)]
+  non-constant arg6 -> def-walk source(s):
+    0x4ebe65  reg=eax  srcs=['0x68cbb0']
+    0x4ec5a1  reg=edx  srcs=['0x68cbb0']
+    0x4eda13  reg=edx  srcs=['0x68cbb0']
+    0x4edc90  reg=eax  srcs=['0x68cbb0']
+    0x4ee1b8  reg=ecx  srcs=['0x68cbb0']
+  sites whose arg6 walks back to ds:0x68cbb0: 5 -> ['0x4ebe65', '0x4ec5a1', '0x4eda13', '0x4edc90', '0x4ee1b8']
+  A31   OK  50 call sites in the dump == index.csv n_callers=50
+  A32   OK  of 50 sites: 40 push the constant -1, 5 push a register, 5 are DECLARED unattributed (their push group crosses a branch/call) -> not a uniform constant (R10 fails)
+  A33   OK  ALL 5 register sites provably LOAD ds:0x68cbb0 into arg6 (def-walk closed, not proximity)
+  A34   OK  both in-family sites are in the census (0x56d590 in FUN_0056d480, 0x56d6f8 in FUN_0056d690)
+  in-family sites (mirror + rebuild): [('0x56d590', 'FUN_0056d480'), ('0x56d6f8', 'FUN_0056d690')]
+  A35   OK  both the SITE->GOAL mirror and the rebuild broadcast pass arg6 = -1 (unbound owner)
+
+[S12] every memory operand naming an address inside the 100-entry block [0x94ee28, 0x94f468) - all of .text, unfiltered
+  GOAL   field +0x0  w : writes 2, reads 13
+  GOAL   field +0x2  w : writes 1, reads 7
+  GOAL   field +0x4  d : writes 1, reads 15
+  GOAL   field +0x8  d : writes 1, reads 15
+  GOAL   field +0xC  d : writes 1, reads 1
+  SITE   field +0x0  w : writes 1, reads 1
+  SITE   field +0x2  w : writes 1, reads 1
+  SITE   field +0x4  d : writes 1, reads 1
+  SITE   field +0x8  d : writes 1, reads 1
+  TOTAL field accesses 65 | bare-address immediates (not counted): 0 []
+  GOAL +0C writes: [('0x56d470', 'DWORD PTR [eax+0x94ee34],ecx')]
+  GOAL +0C reads: [('0x559b3e', 'eax,DWORD PTR [edi+0x94ee34]')]
+  GOAL +0 (kind/sentinel SHORT) writers: [('0x470d5c', 'FUN_00470b90', 'WORD PTR [ecx+edx*1+0x94ee28],0xffff'), ('0x56d45f', 'FUN_0056d350', 'WORD PTR [eax+0x94ee28],cx')]
+  A43   OK  the GOAL +0 short has EXACTLY 2 writers in .text: 0x470d5c (in FUN_00470b90) and the insert's own 0x56d45f
+  sentinel store: `mov WORD PTR [ecx+edx*1+0x94ee28],0xffff` ; independent 0x20bc derivations in FUN_00470b90: [('0x470c23', 'ecx,ecx,0x20bc'), ('0x470c40', 'ecx,ecx,0x20bc'), ('0x470c5d', 'ecx,ecx,0x20bc'), ('0x470c7a', 'ecx,ecx,0x20bc'), ('0x470c9a', 'ecx,ecx,0x20bc'), ('0x470cdf', 'eax,eax,0x20bc'), ('0x470cfc', 'eax,eax,0x20bc'), ('0x470d19', 'eax,eax,0x20bc'), ('0x470d30', 'eax,eax,0x20bc'), ('0x470d50', 'ecx,ecx,0x20bc'), ('0x470d69', 'eax,eax,0x20bc'), ('0x470de9', 'eax,eax,0x20bc'), ('0x470eba', 'edx,edx,0x20bc'), ('0x470ed5', 'edx,edx,0x20bc'), ('0x470ef1', 'edx,edx,0x20bc')]
+  A44   OK  0x470d5c stores the 16-bit immediate 0xffff = the -1 FREE-SLOT SENTINEL (M308 U2's writer, for the GOAL list), and its address uses `imul r,r,0x20bc` - the record stride derived a SECOND time, outside FUN_0056d350
+  A36   OK  the owner dword has EXACTLY 1 writer (0x56d470, inside FUN_0056d350) and 1 reader (0x559b3e) among ALL 65 block-window memory operands in .text (R9 fails)
+  A37   OK  the census map is EXACT (writes,reads) per (window,field,width), 65 accesses over both sub-lists - a filter or a polarity defect changes these 9 numbers
+
+[S13] the single reader of +0C (0x559b3e, in FUN_00556690)
+  0x559b30: cmp WORD PTR [edi+0x94ee28],0x9
+  0x559b38: jne 0x559cc6
+  0x559b3e: mov eax,DWORD PTR [edi+0x94ee34]
+  0x559b44: test eax,eax
+  0x559b46: mov DWORD PTR [ebp-0x28],eax
+  0x559b49: jl 0x559b74
+  0x559b4b: lea ecx,[eax+eax*8]
+  0x559b4e: lea edx,[eax+ecx*2]
+  0x559b51: shl edx,0x4
+  0x559b54: test BYTE PTR [edx+0x95da40],0x20
+  0x559b5b: je 0x559b74
+  0x559b5d: mov ecx,DWORD PTR [ebp-0x8]
+  0x559b60: movsx edx,WORD PTR [ecx+0x9332a6]
+  0x559b67: cmp edx,eax
+  0x559b69: je 0x559b74
+  0x559b6b: mov ecx,DWORD PTR [ebp-0x3c]
+  0x559b6e: lea ecx,[ecx+ecx*2]
+  0x559b71: mov DWORD PTR [ebp-0x3c],ecx
+  0x559b74: mov ecx,DWORD PTR ds:0x985af0
+    -> after lea: ecx = (9, 0) * (owner)
+    -> after lea: edx = (19, 0) * (owner)
+    -> after shl: edx = (304, 0) * (owner)
+  A38   OK  the owner is scaled by 304 (9x -> 19x -> <<4) -> a 304-byte-stride table (R1/R2 fail: not a coordinate, not a priority)
+  A39   OK  the reader is SIGNED and guarded: `test eax,eax` / `jl 0x559b74` -> a NEGATIVE owner (the -1) is NEVER used as an index
+  uses of the scaled index: [('0x559b54', 'test BYTE PTR [edx+0x95da40],0x20')]
+  A40   OK  exactly one use: `test BYTE PTR [edx+0x95da40],0x20` -> the owner selects a RECORD in the 304-B table at 0x95da40 and reads its bit 0x20
+  A41   OK  the read is gated on the SAME entry's +0 short == 9 (a kind value), so the owner field is consulted only for entries of that kind
+
+[S14] ds:0x68cbb0, the global 5 arg6 sites load
+  refs 340 | writers 6 | readers 334
+    0x4077ac: mov    edx,DWORD PTR ds:0x68cbb0          read
+    0x40ab17: mov    ecx,DWORD PTR ds:0x68cbb0          read
+    0x40ab94: mov    eax,ds:0x68cbb0                    read
+    0x40ae7b: mov    edx,DWORD PTR ds:0x68cbb0          read
+    0x40af3a: mov    edx,DWORD PTR ds:0x68cbb0          read
+    0x40af5b: mov    eax,ds:0x68cbb0                    read
+    0x40b09e: mov    ecx,DWORD PTR ds:0x68cbb0          read
+    0x40b0bc: mov    edx,DWORD PTR ds:0x68cbb0          read
+    0x40b269: mov    ecx,DWORD PTR ds:0x68cbb0          read
+    0x40b284: mov    edx,DWORD PTR ds:0x68cbb0          read
+    0x40b35e: mov    eax,ds:0x68cbb0                    read
+    0x40b43e: mov    edx,DWORD PTR ds:0x68cbb0          read
+  inc/dec-style writers: 0 ; writers in FUN_004eb6f0/FUN_004ebef0: ['FUN_004e3470', 'FUN_004e47d0', 'FUN_004ef6d0', 'FUN_004f5a70']
+  writer addresses: ['0x4e3476', '0x4e4dd0', '0x4efe8e', '0x4f21e0', '0x4f5a7c', '0x4f5c36'] ; band [0x4e3476, 0x4f5c3b]
+  A42   OK  ds:0x68cbb0 is a .data global: 340 refs, EXACTLY 6 stores, all inside 0x4e3000-0x4f6000 (the hub band) -> arg6 is a live value, not a literal, at those 5 sites
+
+[R] rivals, decided by the numbers above
+  the +0C store takes param slot 0x1c ; the +2 (priority) store takes slot 0x10
+  R1 arg6 is a coordinate                        REFUTED
+  R2 -1 is a priority value                      REFUTED
+  R3 the GOAL list IS the 25-entry SITE list     REFUTED
+  R4 the GOAL list overflows into SITE           REFUTED
+  R5 a duplicate refreshes the owner             REFUTED
+  R6 the parity guard can suppress the insert    REFUTED
+  R7 one debug name for both lists               REFUTED
+  R8 param_1 is a byte offset                    REFUTED
+  R9 +0C is write-only                           REFUTED
+  R10 every caller passes -1                     REFUTED
+
+[checks]
+
+54/54 checks OK
+table sha 844b5ad1a49b3aac
+RESULT: PASS M309 FUN_0056d350 = the GOAL-list insert of the block record

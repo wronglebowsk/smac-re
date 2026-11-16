@@ -19,7 +19,7 @@ every number it printed. It never quotes the Ghidra C text as evidence.
       candidate gate; strict-greater tie rule; no-candidate -> epilogue with ZERO stores
   S8  the assert guard: (p4 ^ p5) & 1, ds:0x985ae8 bit 0x1000 (DIRECT ds: read), pushed string
       0x6914fc; the je target is the post-call fall-through, so the guard cannot skip the insert
-  S9  the PE bytes: 0x6914fc = "Bad GOAL", and the sibling name FUN_0056d480 pushes 0x691505 =
+  S9  the PE bytes: 0x6914fc = "Bad GOAL", and the sibling name FUN_0056d480 pushes 0x691508 =
       "Bad SITE" -> the binary names the two lists itself, adjacently in one string pool
   S10 adjacency: 0x94ee28 + 75*0x10 == 0x94f2d8 -> GOAL entries 0..74 and SITE entries 75..99 of
       ONE 8380-byte record
@@ -42,11 +42,13 @@ RIVALS that FAIL on the printed numbers:
   R5 a duplicate call refreshes the owner         (the found path stores ONE WORD, at +2)
   R6 the parity/debug guard can suppress the insert (its je target is the fall-through; no ret in
                                                    between - asserted by target and by scan)
-  R7 both lists are one concept (one debug name)  (0x6914fc "Bad GOAL" vs 0x691505 "Bad SITE")
+  R7 both lists are one concept (one debug name)  (0x6914fc "Bad GOAL" vs 0x691508 "Bad SITE")
   R8 param_1 is a byte offset into one array       (the chain coefficient is 8380 BYTES)
   R9 +0C is write-only dead state                  (1 write, 1 read, and the read gates on <0)
-  R10 every caller passes the constant -1          (42/50 do; 8 walk back to registers, 5 of them
-                                                   to ds:0x68cbb0; 1 pushes 0x6)
+  R10 every caller passes the constant -1          (40/50 do; 5 push a register that the def-walk
+                                                    closes on ds:0x68cbb0; 5 are DECLARED
+                                                    unattributed because their push group crosses
+                                                    a branch or a call)
 
     python3 -u scripts/m309_goal_sink.py        # stdout -> evidence/m309_goal_sink.txt
 """
@@ -66,14 +68,14 @@ ENTRY = 0x10
 SITE_BASE = 0x94F2D8
 SITE_COUNT = 0x19
 RECORD = 0x20BC
-FUN = (0x56D350, 0x56D47C)
+FUN = (0x56D350, 0x56D47B)
 SITE_FUN = (0x56D480, 0x56D630)
 REBUILD = (0x56D690, 0x56D710)
 OWNER_GOAL = 0x94EE34
 OWNER_READ = 0x559B3E
 TABLE_304 = 0x95DA40
 OWNER_GLOBAL = 0x68CBB0
-STR_GOAL, STR_SITE = 0x6914FC, 0x691505
+STR_GOAL, STR_SITE = 0x6914FC, 0x691508
 JCC = M.JCC
 DISP = re.compile(r"\+0x(94ee28|94ee2a|94ee2c|94ee30|94ee34|"
                   r"94f2d8|94f2da|94f2dc|94f2e0|94f2e4)\b")
@@ -90,48 +92,58 @@ class Out:
 
 
 def track(reg, lo, hi, seed=None):
-    """Integer-affine tracker for ONE register over [lo,hi): returns (coef, const) or None.
-    'mov r,[ebp+0x8]' is the symbolic parameter (1, 0). Handles mov imm/reg, shl, add, sub,
-    inc, or-imm, and lea with the same expression parser as the M308 engine."""
+    """Integer-affine tracker over [lo,hi) for EVERY register; returns val[reg] = (coef, const)
+    with 'mov r,DWORD PTR [ebp+0x8]' taken as the symbolic parameter (1, 0), or None when the
+    value is not affine in it. Handles mov imm/reg/global-load, xor-self, shl, add, sub, lea."""
     val = dict(seed or {})
-    val.setdefault(reg, None)
+
+    def isreg(t):
+        return re.fullmatch(r"[a-z][a-z0-9]*", t) is not None
+
+    def const_of(tok):
+        if re.fullmatch(r"0x[0-9a-f]+", tok):
+            return (0, int(tok, 16))
+        return val.get(tok)
+
     for a, mn, ops in M.window(lo, hi):
         d = M.split_ops(ops)
-        if mn == "mov" and len(d) == 2 and d[0] == reg:
+        if not d or not isreg(d[0]):
+            continue
+        dst = d[0]
+        if mn == "mov" and len(d) == 2:
             if re.fullmatch(r"0x[0-9a-f]+", d[1]):
-                val[reg] = (0, int(d[1], 16))
-            elif d[1] == "ebp+0x8" or d[1] == "[ebp+0x8]":
-                val[reg] = (1, 0)
+                val[dst] = (0, int(d[1], 16))
             elif d[1] in val:
-                val[reg] = val[d[1]]
+                val[dst] = val[d[1]]
             else:
                 mm = M.MEM.match(d[1])
                 if mm and mm.group(2).strip("[]") == "ebp+0x8":
-                    val[reg] = (1, 0)
+                    val[dst] = (1, 0)          # the callee's first argument (record index)
                 else:
-                    val[reg] = None
-        elif mn == "shl" and len(d) == 2 and d[0] == reg and re.fullmatch(r"0x[0-9a-f]+", d[1]):
-            v = val[reg]
-            val[reg] = (v[0] << int(d[1], 16), v[1] << int(d[1], 16)) if v else None
-        elif mn in ("add", "sub") and len(d) == 2 and d[0] == reg:
-            v = val[reg]
-            if v is None:
-                continue
-            if re.fullmatch(r"0x[0-9a-f]+", d[1]):
-                q = (0, int(d[1], 16))
-            elif d[1] in val and val[d[1]]:
-                q = val[d[1]]
-            else:
-                q = None
-            if q:
+                    val[dst] = None
+        elif mn == "xor" and len(d) == 2 and d[0] == d[1]:
+            val[dst] = (0, 0)
+        elif mn == "shl" and len(d) == 2 and re.fullmatch(r"0x[0-9a-f]+", d[1]):
+            v = val.get(dst)
+            n = int(d[1], 16)
+            val[dst] = (v[0] << n, v[1] << n) if v else None
+        elif mn in ("add", "sub") and len(d) == 2:
+            v = val.get(dst)
+            q = const_of(d[1])
+            if v and q:
                 s = 1 if mn == "add" else -1
-                val[reg] = (v[0] + s * q[0], v[1] + s * q[1])
-        elif mn == "lea" and len(d) == 2 and d[0] == reg:
+                val[dst] = (v[0] + s * q[0], v[1] + s * q[1])
+            else:
+                val[dst] = None
+        elif mn == "lea" and len(d) == 2:
             m2 = re.match(r"^(?:\w+ PTR )?\[(.*)\]$", d[1])
             k, c = M.eval_expr(m2.group(1) if m2 else d[1], val)
-            val[reg] = None if k is None else (k, c)
-        elif mn == "or" and len(d) == 2 and d[0] == reg and re.fullmatch(r"0x[0-9a-f]+", d[1]):
-            val[reg] = None
+            val[dst] = None if k is None else (k, c)
+        elif mn in ("and", "or", "movsx", "movzx", "inc", "dec", "neg", "not", "test", "cmp",
+                    "sete", "setge", "setl", "push"):
+            if dst in ("eax", "ecx", "edx", "ebx", "esi", "edi") and mn not in ("test", "cmp",
+                                                                               "push"):
+                val[dst] = None
     return val.get(reg)
 
 
@@ -151,7 +163,7 @@ def push_group(call_addr):
             blocked = True
             break
         j -= 1
-    ps.reverse()
+    ps.reverse()          # chronological: ps[0] is the FIRST push = arg6, ps[5] = arg1
     return ps, blocked
 
 
@@ -202,7 +214,7 @@ def main():
     A("A3", coef == (RECORD, 0), "coefficient == 0x%x == %d bytes/record -> p1 is a RECORD INDEX "
                                  "(R8 fails)" % (RECORD, RECORD))
     base = track("ecx", 0x56D386, 0x56D3A3)
-    out.p("  lea ecx,[edx+0x94ee30] -> ecx = %s * p1 + 0x%x" % (base[0], base[1]))
+    out.p("  lea ecx,[edx+0x94ee30] -> (coef_of_p1, disp) = %s" % (base,))
     A("A4", base == (RECORD, GOAL_BASE + 8), "the walk starts at record_base+8 (entry0's +8 slot)")
 
     # ---------------- S3 store map ---------------------------------------------------------
@@ -250,7 +262,7 @@ def main():
     f4 = "DWORD PTR [ecx-0x4],esi" in ins[0x56D3A3][1]
     A("A7", f4 and ins[0x56D3A8][1] == "DWORD PTR [ecx],edi",
       "entry+4 vs p4 (%s) and entry+8 vs p5 (%s) - the pair the probe matches on"
-      % (classify(ins[0x56D3A3][1].split(", ")[1]), classify(ins[0x56D3A8][1].split(", ")[1])))
+      % (classify(M.split_ops(ins[0x56D3A3][1])[1]), classify(M.split_ops(ins[0x56D3A8][1])[1])))
     A("A8", ins[0x56D3AC][0] == "movsx" and ins[0x56D3B0][1] == "ebx,DWORD PTR [ebp+0xc]",
       "entry+0 is compared as a SIGNED WORD against p2 ([ebp+0xc])")
     A("A9", ins[0x56D3B3][1] == "0x56d404" and M._INS[0x56D3B3][0] == "je",
@@ -292,7 +304,7 @@ def main():
                                               for a, mn, o in fstores])
     A("A13", len(fstores) == 1 and M.MEM.match(M.split_ops(fstores[0][2])[0]).group(1) == "WORD",
       "exactly ONE store, a WORD -> the owner dword at +0C is NOT refreshed (R5 fails)")
-    A("A14", ins[0x56D40C][1] == "edx,DWORD PTR [ebp+0x10]" and
+    A("A14", ins[0x56D40E][1] == "edx,DWORD PTR [ebp+0x10]" and
       ins[0x56D416][1] == "0x56d41a" and ins[0x56D418][1] == "eax,edx" and
       ins[0x56D41C][1] == "WORD PTR [ecx],ax",
       "max(): cmp old,p3 / `jg 0x56d41a` keeps the old / else mov eax,p3 / store the WORD at +2")
@@ -310,8 +322,9 @@ def main():
       and M._INS[0x56D3DB][0] == "jge",
       "a non-empty entry is skipped when prio >= p3 -> `jge 0x56d432` (the next entry)")
     A("A18", ins[0x56D3E6][1] == "ebx,0x3e8" and
-      [x[0] for x in M.window(0x56D3DD, 0x56D3EC)] == [0x56D3DD, 0x56D3DF, 0x56D3E5, 0x56D3E6],
-      "score 1000 for an empty slot via setge/dec/and 0x3e8, four insns, no branch")
+      [x[0] for x in M.window(0x56D3DD, 0x56D3EC)] ==
+      [0x56D3DD, 0x56D3DF, 0x56D3E2, 0x56D3E5, 0x56D3E6],
+      "score 1000 for an empty slot via xor/setge/dec/and 0x3e8, exactly 5 insns, no branch")
     A("A19", ins[0x56D425][1] == "eax,0x64" and ins[0x56D3FB][1] == "eax,0x14" and
       ins[0x56D400][1] == "eax,ebx", "prio+100 when prio <= 0, else 0x14-prio (20-prio)")
     A("A20", ins[0x56D42B][1] == "0x56d432" and M._INS[0x56D42B][0] == "jle" and
@@ -366,10 +379,10 @@ def main():
     pushes_site = [a for a, mn, ops in M.window(*SITE_FUN)
                    if mn == "push" and ops.startswith("0x69")]
     out.p("  0x6914fc -> %r   (pushed at 0x56d379 by FUN_0056d350)" % cstr(STR_GOAL))
-    out.p("  0x691505 -> %r   (pushed by FUN_0056d480 at %s)"
+    out.p("  0x691508 -> %r   (pushed by FUN_0056d480 at %s)"
           % (cstr(STR_SITE), [hex(x) for x in pushes_site]))
     A("A28", cstr(STR_GOAL) == "Bad GOAL" and cstr(STR_SITE) == "Bad SITE" and
-      len(pushes_site) == 1 and M._INS[pushes_site[0]][1] == "0x691505",
+      len(pushes_site) == 1 and M._INS[pushes_site[0]][1] == "0x691508",
       "the binary names the two lists adjacently in one string pool: Bad GOAL here, "
       "Bad SITE in the 25-entry insert (R7 fails)")
 
@@ -398,11 +411,11 @@ def main():
             out.p("  %-9s %-16s UNATTRIBUTED (pushes=%d, blocked_by_branch_or_call=%s)"
                   % (hex(c), f, len(ps), blocked))
             continue
-        a1, a2, a3, a4, a5, a6 = [x[1] for x in ps]
+        a6, a5, a4, a3, a2, a1 = [x[1] for x in ps]
         dist[classify(a6)] = dist.get(classify(a6), 0) + 1
         if not a6.startswith("0x"):
             lo, hi, _n = M.span_of(c)
-            srcs, _ch = M.def_globals(ps[-1][0], a6, lo, hi)
+            srcs, _ch = M.def_globals(ps[0][0], a6, lo, hi)
             arg6reg[c] = (a6, sorted(hex(s) if isinstance(s, int) else str(s) for s in srcs))
         out.p("  %-9s %-16s %-9s %-9s %-9s %-9s"
               % (hex(c), f, classify(a1), classify(a2), classify(a5), classify(a6)))
@@ -417,54 +430,95 @@ def main():
                                                                       [hex(x) for x in sorted(nidx)]))
     A("A31", len(calls) == 50 and int(row[0].split(",")[4]) == 50,
       "50 call sites in the dump == index.csv n_callers=50")
-    A("A32", dist.get("const 0xffffffff", 0) == 42 and
-      dist.get("const 0x6", 0) == 1 and sum(v for k, v in dist.items()
-                                            if k.startswith("reg ")) == 7,
-      "arg6 = -1 at 42/50 sites, 0x6 at 1, a register at 7 -> NOT a uniform constant (R10 fails)")
-    A("A33", len(nidx) == 5 and all(v[1] == ["0x68cbb0"] for c, v in arg6reg.items()
-                                    if c in nidx),
-      "5 of the register sites provably LOAD ds:0x68cbb0 into arg6 (def-walk closed, not proximity)")
+    A("A32", dist.get("const 0xffffffff", 0) == 40 and
+      sum(v for k, v in dist.items() if k.startswith("reg ")) == 5 and len(unattr) == 5,
+      "of 50 sites: 40 push the constant -1, 5 push a register, 5 are DECLARED unattributed "
+      "(their push group crosses a branch/call) -> not a uniform constant (R10 fails)")
+    A("A33", len(arg6reg) == 5 and len(nidx) == 5 and
+      all(v[1] == ["0x68cbb0"] for c, v in arg6reg.items()),
+      "ALL 5 register sites provably LOAD ds:0x68cbb0 into arg6 (def-walk closed, not proximity)")
     A("A34", 0x56D590 in calls and 0x56D6F8 in calls,
       "both in-family sites are in the census (0x56d590 in FUN_0056d480, 0x56d6f8 in "
       "FUN_0056d690)")
     mir = [c for c in calls if M.contain(fnrows, c) in ("FUN_0056d480", "FUN_0056d690")]
     out.p("  in-family sites (mirror + rebuild): %s" % [(hex(c), M.contain(fnrows, c)) for c in mir])
     A("A35", len(mir) == 2 and all(
-        push_group(c)[0][-1][1] == "0xffffffff" for c in mir if len(push_group(c)[0]) == 6),
+        push_group(c)[0][0][1] == "0xffffffff" for c in mir if len(push_group(c)[0]) == 6),
       "both the SITE->GOAL mirror and the rebuild broadcast pass arg6 = -1 (unbound owner)")
 
     # ---------------- S12 window ref census ------------------------------------------------
-    out.p("\n[S12] every [reg+DISP] / ds: access of the two sub-lists in .text")
-    owner_w, owner_r, fields = [], [], {}
+    out.p("\n[S12] every memory operand naming an address inside the 100-entry block "
+          "[0x94ee28, 0x%x) - all of .text, unfiltered" % (GOAL_BASE + 100 * ENTRY))
+    BLOCK_HI = GOAL_BASE + (GOAL_COUNT + SITE_COUNT) * ENTRY
+    NUM = re.compile(r"0x([0-9a-f]{4,8})\b")
+    owner_w, owner_r, fields, immaddr, k0_w = [], [], {}, [], []
+    total = 0
     for a in M._ORDER:
         mn, ops = ins[a]
-        for tok in M.split_ops(ops):
-            m = M.MEM.match(tok) or re.match(r"^(?:DWORD|WORD|BYTE) PTR ds:(0x[0-9a-f]+)$", tok)
-            raw = m.group(2) if m and m.lastindex and m.lastindex >= 2 and m.group(2) else \
-                (m.group(1) if m else None)
-            if not raw:
-                continue
-            hits = DISP.findall(raw)
-            for h in hits:
-                d = int(h, 16)
-                is_w = mn in ("mov", "movzx", "movbe", "xchg") and tok is M.split_ops(ops)[0] or \
-                    mn in ("mov",) and tok is M.split_ops(ops)[0]
-                win, field = ("GOAL", d - GOAL_BASE) if d < 0x94f000 else \
-                             ("SITE", d - SITE_BASE)
-                key = (win, field % ENTRY, {"DWORD": "d", "WORD": "w", "BYTE": "b"}[
-                    tok.split()[0] if tok.split()[0] in ("DWORD", "WORD", "BYTE") else "DWORD"])
+        d = M.split_ops(ops)
+        for idx, tok in enumerate(d):
+            m = M.MEM.match(tok)
+            if m:
+                raw, width = m.group(2), {"DWORD": "d", "WORD": "w", "BYTE": "b"}[m.group(1)]
+            else:
+                m2 = re.match(r"^(DWORD|WORD|BYTE) PTR ds:(0x[0-9a-f]+)$", tok) or \
+                    re.match(r"^ds:(0x[0-9a-f]+)$", tok)
+                if not m2:
+                    if re.fullmatch(r"0x[0-9a-f]+", tok):
+                        v = int(tok, 16)
+                        if GOAL_BASE <= v < BLOCK_HI:
+                            immaddr.append((a, mn, ops))
+                    continue
+                m3 = re.match(r"^(DWORD|WORD|BYTE) PTR ds:(0x[0-9a-f]+)$", tok)
+                raw = m3.group(2) if m3 else tok[3:]
+                width = {"DWORD": "d", "WORD": "w", "BYTE": "b"}[m3.group(1)] if m3 else "d"
+            for h in NUM.findall(raw):
+                dv = int(h, 16)
+                if not (GOAL_BASE <= dv < BLOCK_HI):
+                    continue
+                is_w = idx == 0 and mn in ("mov", "movzx", "movbe", "xchg")
+                off = dv - GOAL_BASE
+                win = "GOAL" if off < GOAL_COUNT * ENTRY else "SITE"
+                key = (win, off % ENTRY, width)
                 fields[key] = fields.get(key, [0, 0])
                 fields[key][0 if is_w else 1] += 1
-                if win == "GOAL" and field % ENTRY == 0xC:
+                total += 1
+                if win == "GOAL" and off % ENTRY == 0xC:
                     (owner_w if is_w else owner_r).append((a, mn, ops))
+                if win == "GOAL" and off % ENTRY == 0 and is_w:
+                    k0_w.append((a, mn, ops))
     for k in sorted(fields):
-        out.p("  %-6s field +0x%-2X %s : writes %d, reads %d" % (k[0], k[1], k[2], k[3] if False else
-                                                                  fields[k][0], fields[k][1]))
+        out.p("  %-6s field +0x%-2X %s : writes %d, reads %d"
+              % (k[0], k[1], k[2], fields[k][0], fields[k][1]))
+    out.p("  TOTAL field accesses %d | bare-address immediates (not counted): %d %s"
+          % (total, len(immaddr), [(hex(a), "%s %s" % (mn, o)) for a, mn, o in immaddr[:4]]))
     out.p("  GOAL +0C writes: %s" % [(hex(a), o) for a, _, o in owner_w])
     out.p("  GOAL +0C reads: %s" % [(hex(a), o) for a, _, o in owner_r])
+    out.p("  GOAL +0 (kind/sentinel SHORT) writers: %s"
+          % [(hex(a), M.contain(fnrows, a), o) for a, _, o in k0_w])
+    A("A43", [a for a, _, _ in k0_w] == [0x470D5C, 0x56D45F] and
+      [M.contain(fnrows, a) for a, _, _ in k0_w] == ["FUN_00470b90", "FUN_0056d350"],
+      "the GOAL +0 short has EXACTLY 2 writers in .text: 0x470d5c (in FUN_00470b90) and the "
+      "insert's own 0x56d45f")
+    sent = ins[0x470D5C][1]
+    imul20bc = [(a, o) for a, m, o in M.window(0x470B90, 0x470B90 + 1020)
+                if m == "imul" and o.endswith(",0x20bc")]
+    out.p("  sentinel store: `mov %s` ; independent 0x20bc derivations in FUN_00470b90: %s"
+          % (sent, [(hex(a), o) for a, o in imul20bc]))
+    A("A44", sent.endswith(",0xffff") and len(imul20bc) >= 1 and
+      any("ecx,ecx,0x20bc" == o or o.endswith("0x20bc") for _, o in imul20bc),
+      "0x470d5c stores the 16-bit immediate 0xffff = the -1 FREE-SLOT SENTINEL (M308 U2's writer, "
+      "for the GOAL list), and its address uses `imul r,r,0x20bc` - the record stride derived a "
+      "SECOND time, outside FUN_0056d350")
     A("A36", [a for a, _, _ in owner_w] == [0x56D470] and [a for a, _, _ in owner_r] == [OWNER_READ],
       "the owner dword has EXACTLY 1 writer (0x56d470, inside FUN_0056d350) and 1 reader "
-      "(0x559b3e) in all of .text (R9 fails)")
+      "(0x559b3e) among ALL %d block-window memory operands in .text (R9 fails)" % total)
+    MAP = {("GOAL", 0x0, "w"): (2, 13), ("GOAL", 0x2, "w"): (1, 7), ("GOAL", 0x4, "d"): (1, 15),
+           ("GOAL", 0x8, "d"): (1, 15), ("GOAL", 0xC, "d"): (1, 1), ("SITE", 0x0, "w"): (1, 1),
+           ("SITE", 0x2, "w"): (1, 1), ("SITE", 0x4, "d"): (1, 1), ("SITE", 0x8, "d"): (1, 1)}
+    A("A37", total == 65 and dict((k, tuple(v)) for k, v in fields.items()) == MAP,
+      "the census map is EXACT (writes,reads) per (window,field,width), 65 accesses over both "
+      "sub-lists - a filter or a polarity defect changes these 9 numbers")
 
     # ---------------- S13 what the owner index indexes ------------------------------------
     out.p("\n[S13] the single reader of +0C (0x559b3e, in %s)" % M.contain(fnrows, OWNER_READ))
@@ -487,19 +541,19 @@ def main():
                 v[d[0]] = None if k is None else (k, c)
             out.p("    -> after %s: %s = %s * (owner)" % (mn, d[0], v[d[0]]))
     scale = v.get("edx")
-    A("A37", scale == (304, 0), "the owner is scaled by %d (9x -> 19x -> <<4) -> a 304-byte-stride "
+    A("A38", scale == (304, 0), "the owner is scaled by %s (9x -> 19x -> <<4) -> a 304-byte-stride "
                                 "table (R1/R2 fail: not a coordinate, not a priority)"
-      % (scale[0] if scale else None))
-    A("A38", ins[0x559B44][1] == "eax,eax" and M._INS[0x559B44][0] == "test" and
+      % (scale and scale[0],))
+    A("A39", ins[0x559B44][1] == "eax,eax" and M._INS[0x559B44][0] == "test" and
       ins[0x559B49][1] == "0x559b74" and M._INS[0x559B49][0] == "jl",
       "the reader is SIGNED and guarded: `test eax,eax` / `jl 0x559b74` -> a NEGATIVE owner "
       "(the -1) is NEVER used as an index")
     use = [(a, mn, ops) for a, mn, ops in M.window(0x559B54, 0x559B74) if "0x95da40" in ops]
     out.p("  uses of the scaled index: %s" % [(hex(a), "%s %s" % (mn, o)) for a, mn, o in use])
-    A("A39", len(use) == 1 and use[0][1] == "test" and "0x20" in use[0][2],
+    A("A40", len(use) == 1 and use[0][1] == "test" and "0x20" in use[0][2],
       "exactly one use: `test BYTE PTR [edx+0x95da40],0x20` -> the owner selects a RECORD in the "
       "304-B table at 0x95da40 and reads its bit 0x20")
-    A("A40", ins[0x559B30][1].startswith("WORD PTR [edi+0x94ee28],0x9"),
+    A("A41", ins[0x559B30][1].startswith("WORD PTR [edi+0x94ee28],0x9"),
       "the read is gated on the SAME entry's +0 short == 9 (a kind value), so the owner field is "
       "consulted only for entries of that kind")
 
@@ -510,8 +564,12 @@ def main():
         mn, ops = ins[a]
         if "0x68cbb0" in ops:
             d = M.split_ops(ops)
-            w = bool(d and mn in ("mov", "add", "sub", "inc", "dec", "and", "or", "movzx") and
-                     M.MEM.match(d[0]) and "0x68cbb0" in d[0])
+            head = d[0] if d else ""
+            tgt = bool(M.MEM.match(head) and "0x68cbb0" in head) or bool(
+                re.match(r"^(DWORD|WORD|BYTE) PTR ds:0x68cbb0$", head) or
+                re.match(r"^ds:0x68cbb0$", head))
+            w = tgt and mn in ("mov", "movzx", "movbe", "add", "sub", "and", "or", "xor", "inc",
+                              "dec", "neg", "not", "shl", "shr", "sbb")
             refs.append((a, mn, ops, w))
     wr = [r for r in refs if r[3]]
     out.p("  refs %d | writers %d | readers %d" % (len(refs), len(wr), len(refs) - len(wr)))
@@ -520,15 +578,23 @@ def main():
     incof = [r for r in wr if r[1] in ("inc", "dec")]
     out.p("  inc/dec-style writers: %d ; writers in FUN_004eb6f0/FUN_004ebef0: %s"
           % (len(incof), sorted({M.contain(fnrows, r[0]) for r in wr})))
-    A("A41", len(refs) > 0 and len(wr) > 0,
-      "ds:0x68cbb0 is a real global with %d refs and %d writers -> arg6 is not always a literal"
-      % (len(refs), len(wr)))
+    band = sorted({a for a, _, _, _ in wr})
+    out.p("  writer addresses: %s ; band [%s, %s]"
+          % ([hex(x) for x in band], hex(band[0]) if band else "-",
+             hex(band[-1] + 5) if band else "-"))
+    A("A42", len(refs) == 340 and len(wr) == 6 and
+      all(0x4E3000 <= x < 0x4F6000 for x in band),
+      "ds:0x68cbb0 is a .data global: 340 refs, EXACTLY 6 stores, all inside "
+      "0x4e3000-0x4f6000 (the hub band) -> arg6 is a live value, not a literal, at those 5 sites")
 
     # ---------------- rivals ---------------------------------------------------------------
     out.p("\n[R] rivals, decided by the numbers above")
-    rv = [("R1 arg6 is a coordinate", scale == (304, 0) and len(owner_r) == 1),
-          ("R2 -1 is a priority", all(s[2] == 0x10 for s in stores if s[2] == 0x10) and
-           "0x3e8" in ins[0x56D3E6][1]),
+    owner_slot = [s[5] for s in stores if s[2] == 0xC]
+    prio_slot = [s[5] for s in stores if s[2] == 2]
+    out.p("  the +0C store takes param slot 0x%x ; the +2 (priority) store takes slot 0x%x"
+          % (owner_slot[0], prio_slot[0]))
+    rv = [("R1 arg6 is a coordinate", scale is None or scale[0] < 2 or len(owner_r) != 1),
+          ("R2 -1 is a priority value", owner_slot == prio_slot),
           ("R3 the GOAL list IS the 25-entry SITE list", GOAL_COUNT == SITE_COUNT or
            GOAL_BASE == SITE_BASE),
           ("R4 the GOAL list overflows into SITE", (GOAL_BASE + GOAL_COUNT * ENTRY) != SITE_BASE),
