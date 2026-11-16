@@ -1102,3 +1102,13 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | EXPORT HOLE: site 0x4f3e08 is outside its index.csv owner FUN_004f34b0(+298 -> 0x4f35da); the sole prologue in the gap is 0x4f35e0, an UNEXPORTED function spanning [0x4f35e0,0x4f4060) with no body -> index.csv is not a total function map | `evidence/m305_identity.txt:130`, A17 @`:138` | V (coverage), owner body UNKNOWN |
 | ACCEPTANCE `python3 scripts/m305_identity.py` -> **19/19 OK**, exit 0; rerun diff = 0 lines. Zero box, zero /proc, zero gdb | `evidence/m305_identity.txt:154` | V |
 | DECLARED UNKNOWN: U1 0x4f35e0 owner guards/preds; U2 per-block/per-slot MEANING (M302/M303 scope); U3 live per-turn cadence (zero box) | `evidence/m305_identity.txt` §UNKNOWN | lead |
+
+## M306 (s264, STATIC, zero box) - 0x4f35e0 = a real 2673-B function absorbed by tail-jump folding; the export's "hole" is an index.csv size/containment lie
+| claim | evidence | conf |
+|---|---|---|
+| BOUNDS: [0x4f35e0, 0x4f4051) — fresh prologue after 6 aligner nops; CFG 846 insns contiguous; 3 rets / 3 pop-triple epilogues, last ret 0x4f4050 + 15 nops; ZERO CFG edges leave the span | `evidence/m306_owner.txt:9-13` A1-A7 | V |
+| IDENTITY: per-object routine on ds:0x8f0d60; 23 callees/36 sites (_rand x3, FUN_00507410 x6); the FUN_0051dcb0 call 0x4f3e08 is UNCONDITIONAL fall-through after a 21-iter loop (`cmp eax,0x54; jl 0x4f3c0a`) + the M305 triad | `evidence/m306_owner.txt:31-52` A8-A9 | V (static); semantics OPEN |
+| ENTRY: zero direct calls, zero stored-dword pointers (scan live via 164 control hits); single entry = backward jmp 0x4f4133 from inside FUN_004f4060, reachable by fall-through (no branch preds -> live edge) | A10-A13 @`evidence/m306_owner.txt` | V |
+| WHY MISSED: Ghidra folded the region into FUN_004f4060's body (triad at body-line 388, `< 0x54`, DAT_00985af0 x5, rand x3) while index.csv size=3058 stops at 0x4f4c52 — code modelled, function never created, index row never sized | `evidence/m306_owner.txt:53-58` A14-A17 | V (absorption); folding rule INFERRED |
+| ACCEPTANCE `python3 scripts/m306_owner.py` -> **22/22 OK**, exit 0; rerun diff 0 | `evidence/m306_owner.txt:92` | V |
+| UNKNOWN: live execution of the entry (zero box); 0x54-cap meaning; FUN_005a2ae0 args; body per-branch semantics; Ghidra's exact fold rule | `evidence/m306_owner.txt:87-91` | lead |
