@@ -1,0 +1,81 @@
+M307 folded body 0x4f35e0..0x4f4051  (objdump insns=846; M306 settled these bounds)
+
+[S2] 21x loop:
+  cap cmp eax,0x54 sites in span: ['0x4f3dec']
+  branch preds of loop head 0x4f3c0a (inside span): ['0x4f3df2']
+  tail@0x4f3df2: add    eax,0x4 | cmp    eax,0x54 | mov    DWORD PTR [ebp-0xc],eax | jl     0x4f3c0a
+  index var: head reads mov    edx,DWORD PTR [ebp-0xc] ; zero-store @0x4f3bf1: mov    DWORD PTR [ebp-0xc],0x0
+  iterations per entry = ceil((0x54-0)/4) = 21 ; 0x54 % 4 = 0 ; idx values 0..80 step 4
+  branch targets landing strictly between zero-store and head: []
+  T_x reads in loop @['0x4f3c10']: ['mov    eax,DWORD PTR [edx+0x67850c]']
+  T_y reads in loop @['0x4f3c3a']: ['mov    eax,DWORD PTR [eax+0x678990]']
+  tile-stride chain: [(5192843, 'lea    edx,[eax+eax*4]'), (5192846, 'lea    eax,[eax+edx*2]'), (5192851, 'lea    eax,[ecx+eax*4]')]  (=> 44*(x + 2*5x)=44x over mov ecx,mov    ecx,DWORD PTR ds:0x92ae14)
+  row-walk stride-0x34 over 0x933282 (count ds:0x985af0): {'base lea': ['0x4f3cba'], 'step': ['0x4f3dd3'], 'count': ['0x4f3ca2', '0x4f3e0d', '0x4f3e26']}
+
+[S3] offset tables: T_x VA 0x67850c -> .rdata off 0x27850c ; T_y VA 0x678990 -> .rdata off 0x278990
+  i   dx   dy   | i   dx   dy   | i   dx   dy  
+  0   0    0     1   1    -1    2   2    0   
+  3   1    1     4   0    2     5   -1   1   
+  6   -2   0     7   -1   -1    8   0    -2  
+  9   2    -2    10  2    2     11  -2   2   
+  12  -2   -2    13  1    -3    14  3    -1  
+  15  3    1     16  1    3     17  -1   3   
+  18  -3   1     19  -3   -1    20  -1   -3  
+  distinct=21  equals even-parity Cheb3-box minus (+-3,+-3) (21 elems): True
+  D4 closed (negate+swap): True ; first=(0,0): True
+  i1..8 ring: [(1, -1), (2, 0), (1, 1), (0, 2), (-1, 1), (-2, 0), (-1, -1), (0, -2)]
+  i9..12 corners: [(2, -2), (2, 2), (-2, 2), (-2, -2)]
+  i13..20 far: [(1, -3), (3, -1), (3, 1), (1, 3), (-1, 3), (-3, 1), (-3, -1), (-1, -3)]
+
+[S4] triad and FUN_005a2ae0 args:
+  calls to 0x5a2ae0 in span: ['0x4f3e00']
+  callee FUN_005a2ae0 [0x5a2ae0,+254): stack slots referenced: ['[ebp+0x8]', '[ebp+0xc]'] (only +0x8/+0xc = 2 int args)
+  arg1 scaling chain: [('0x5a2aec', 'lea    ecx,[eax+eax*8]'), ('0x5a2af5', 'shl    eax,0x4'), ('0x5a2b5d', 'lea    ebx,[eax+eax*4]')]  -> 304*arg1 + 0x95da10 (record stride 304 = 0x130)
+  coordinate reads from the RECORD, not the args: [('0x5a2b15', 'movsx  edi,WORD PTR [eax+0x95da12]'), ('0x5a2b1c', 'movsx  ecx,WORD PTR [eax+0x95da10]')]
+  bounds cmps in callee (against the RECORD's WORDs): [('0x5a2b2e', 'cmp    edi,DWORD PTR ds:0x92a37c'), ('0x5a2b42', 'cmp    ecx,DWORD PTR ds:0x92a378')]
+  push sites before the triad call: [('0x4f3dfe', 'push   ecx'), ('0x4f3dff', 'push   edx')]
+  [ebp-0x4] stores: [('0x4f3604', 'mov    DWORD PTR [ebp-0x4],edi')] | address-of: []
+  [ebp-0x14] stores: [('0x4f3902', 'mov    DWORD PTR [ebp-0x14],0x0'), ('0x4f3a06', 'mov    DWORD PTR [ebp-0x14],ecx')] | address-of (out-param): [('0x4f37f8', 'lea    ecx,[ebp-0x14]')]
+  [ebp-0x4] value source: mov    ecx,DWORD PTR ds:0x8f0d60 / mov    al,BYTE PTR [ecx+0x4] / mov    eax,DWORD PTR [ecx+0x30] (ecx=ds:0x8f0d60)
+  callee FUN_00507410 (17 insns): ['push   ebp', 'mov    ebp,esp', 'mov    ecx,DWORD PTR [ebp+0x8]', 'mov    eax,ecx', 'and    ecx,0x7', 'cdq', 'and    edx,0x7', 'add    eax,edx', 'mov    edx,DWORD PTR [ebp+0xc]', 'sar    eax,0x3', 'mov    DWORD PTR [edx],eax', 'mov    eax,0x1', 'shl    eax,cl', 'mov    ecx,DWORD PTR [ebp+0x10]', 'mov    DWORD PTR [ecx],eax', 'pop    ebp', 'ret']
+    -> out1 = (n + sign-extend(n mod 8))>>3 = n//8 ; out2 = 1<<(n&7)  [div-8 slot->(qword,bit)]
+
+[S5] _rand@0x64c6f0 sites in span (index.csv name=_rand):
+  site 0x4f36df: idiv   edi | moduli-setup [] | consumed: GATE (remainder only tested -> early exit)
+      after: 0x4f36e4: cdq ; 0x4f36e5: idiv   edi ; 0x4f36e7: test   edx,edx ; 0x4f36e9: jne    0x4f404a ; 0x4f36ef: mov    edi,DWORD PTR ds:0x68cbb0 ; 0x4f36f5: lea    eax,[ebp-0x20]
+  site 0x4f3750: idiv   ecx | moduli-setup ['mov    ecx,0x3'] | consumed: GATE (remainder only tested -> early exit)
+      after: 0x4f3755: cdq ; 0x4f3756: mov    ecx,0x3 ; 0x4f375b: idiv   ecx ; 0x4f375d: test   edx,edx ; 0x4f375f: jne    0x4f404a ; 0x4f3765: mov    eax,ds:0x8f0d60
+  site 0x4f379f: idiv   ecx | moduli-setup ['mov    ecx,0x27', 'mov    ecx,DWORD PTR [ebx+0x927a9c]'] | consumed: VALUE (kept in esi)
+      after: 0x4f37a4: cdq ; 0x4f37a5: mov    ecx,0x27 ; 0x4f37aa: mov    DWORD PTR [ebp-0x18],0x1 ; 0x4f37b1: idiv   ecx ; 0x4f37b3: mov    ecx,DWORD PTR [ebx+0x927a9c] ; 0x4f37b9: xor    eax,eax
+
+--- ASSERTS ---
+  [OK] A1 span re-parses to 846 insns ending ret@0x4f4050 (M306 bounds hold)
+  [OK] A2 cap is the immediate 0x54 exactly ONCE in span (1)
+  [OK] A3 loop head preds inside span = {jl@0x4f3df2} only (['0x4f3df2'])
+  [OK] A4 index [ebp-0xc] zeroed per entry @0x4f3bf1 (mov    DWORD PTR [ebp-0xc],0x0) and no branch target lands between it and the head ([]) -> exactly 21 passes/call
+  [OK] A5 loop body indexes T_x once (1) and T_y once (1) via [idx+disp] dwords
+  [OK] A6 tile conversion inside loop = 44-byte stride over ds:0x92ae14 (chain 5x->11x->44x) ['0x4f3c8b', '0x4f3c8e', '0x4f3c93']
+  [OK] A7 row-walk inside loop: base 0x933282, step sub esi,0x34, count ds:0x985af0 all present
+  [OK] A8 tables live in file-backed .rdata/.rdata (NOT BSS) -> on-disk constants
+  [OK] A9 21 pairs are DISTINCT and equal the even-parity Cheb3 box minus (+-3,+-3) (21 elems)
+  [OK] A10 set closed under (dx,dy)->(-dx,-dy) and (dx,dy)->(dy,dx); pair0=(0,0)
+  [OK] A11 ordering: i1..8 all in {|d|<=2}\{(0,0)} ring; i9..12 = (+-2,+-2); i13..20 all have a 3
+  [OK] A12 exactly one 0x5a2ae0 call in span @0x4f3e00, then add esp,8, then call 0x51dcb0 (triad)
+  [OK] A13 callee reads ONLY [ebp+0x8],[ebp+0xc] ([8, 12]) -> exactly 2 int args
+  [OK] A14 callee scales arg1 by 304 into 0x95da10 slots; coords come from WORD[rec+0]/[+2] and THOSE are bounds-checked vs ds:0x92a378/7c (2 rec reads, 2 bounds cmps)
+  [OK] A15 triad arg stores: [ebp-0x4] written ONCE from BYTE[ds:0x8f0d60+4]; [ebp-0x14] stores = {imm 0, walk-counter} + one address-of (out of FUN_00507410) -> no coordinate ever stored
+  [OK] A16 FUN_00507410 is the div-8 decomposition: and 7 / sar 3 / shl eax,cl present, stores *edx,*ecx, 17 insns
+  [OK] A17 exactly THREE _rand sites in span: ['0x4f36df', '0x4f3750', '0x4f379f']
+  [OK] A18 consumers: exactly 2 GATEs (test edx,edx + jne) + 1 VALUE (mov esi,edx): 2+1 ['GATE (remainder only tested -> early exit)', 'GATE (remainder only tested -> early exit)', 'VALUE (kept in esi)']
+  [OK] A19 moduli: site0 dynamic (idiv edi, edi=[8380*idx+0x94d690]+7), site1 3, site2 0x27(39)
+
+  dump-wide: 11 call 0x51dcb0 sites, 3 immediately preceded by the 0x5a2ae0 triad ['0x4f3e08', '0x508b48', '0x543bc6']
+  [OK] A20 triad pattern (call 0x5a2ae0/add esp,8/call 0x51dcb0) holds at 3 of 11 rebuild sites
+
+--- RIVALS (scored against the printed numbers above) ---
+RIVAL-1 'the loop cap tracks a record/row-count global (ds:0x985af4 / ds:0x985af0)': would need a memory cmp operand and a per-entry non-reset index. Printed: cap cmp operand is the immediate 0x54 (True), index re-zeroed to 0 at 0x4f3bf1 every entry (A4). -> FAILS
+RIVAL-2 'the 21 offsets are a Moore 3x3 or 5x5 neighborhood': printed set has NO (+-1,0)/(0,+-1) (not Moore-3: subset False) and OMITS (+-3,+-3)-class corners (not Moore-5: not superset False); exact shape = even-parity Chebyshev-3 box minus the 4 (3,3)-class corners (A9). -> FAILS
+RIVAL-3 'FUN_005a2ae0 arg1 is a tile (x,y) coordinate': printed callee NEVER bounds-checks arg1 vs the map dims; it multiplies arg1 by 304 to select a RECORD and reads the coordinate WORDs from the record, bounds-checking THOSE (A14); producers of [ebp-0x14] are a counter and a div-8 out-param, never a coordinate (A15). -> FAILS (bad-bounds check False)
+RIVAL-4 'all three _rand results are data draws': 2 of 3 remainders are consumed ONLY by test edx,edx + jne early-exit (probability gates, one with dynamic modulus [8380*idx+0x94d690]+7); only 1 is kept (esi, rand%39). Printed consumers (A18/A19): 2 gate + 1 value. -> FAILS
+
+20/20 checks OK
