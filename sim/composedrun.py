@@ -251,11 +251,17 @@ def pipeline(sav_path, log_path, trace_path, do_print=True):
     # The recorder samples BOTH sides of a turn boundary, so adjacent identical
     # samples collapse (the m30 "model rows may be extra" law, applied to a
     # two-sampling-point-per-turn recorder).
-    rec_rows = []
+    # Each retained sample carries the turns it belongs to (a collapsed boundary
+    # sample belongs to TWO), so a miss names the turn it came from, not an index.
+    rec_rows, rec_owner = [], []
     for r in rows:
-        for st in ((r["cur_b"], r["tf_b"], r["yb"]), (r["cur_a"], r["tf_a"], r["ya"])):
-            if not rec_rows or rec_rows[-1] != st:
-                rec_rows.append(st)
+        for kind, st in (("before", (r["cur_b"], r["tf_b"], r["yb"])),
+                         ("after", (r["cur_a"], r["tf_a"], r["ya"]))):
+            if rec_rows and rec_rows[-1] == st:
+                rec_owner[-1] += "+t%d.%s" % (r["turn"], kind)
+                continue
+            rec_rows.append(st)
+            rec_owner.append("t%d.%s" % (r["turn"], kind))
     matched, missing, _consumed = soturn.match(run["emission"], rec_rows)
     # the trace's own internal chain: before(t) == after(t-1)
     chain_year = sum(1 for i in range(1, T)
@@ -266,9 +272,9 @@ def pipeline(sav_path, log_path, trace_path, do_print=True):
                     if (rows[i]["cur_b"], rows[i]["tf_b"])
                     == (rows[i - 1]["cur_a"], rows[i - 1]["tf_a"]))
     W("engine emission %d states; recorded (cur,tf,year) samples %d after "
-      "collapsing adjacent duplicates; matched IN ORDER %d/%d (turns with a miss "
-      "%s)" % (len(run["emission"]), len(rec_rows), matched, len(rec_rows),
-               sorted({i // 2 for i in missing})))
+      "collapsing adjacent duplicates; matched IN ORDER %d/%d (samples that "
+      "missed: %s)" % (len(run["emission"]), len(rec_rows), matched, len(rec_rows),
+                       [rec_owner[i] for i in missing]))
     W("trace self-chain on 29 turn boundaries: year %d/29, n_bases %d/29, "
       "(cur,tf) %d/29 - the recorder's after-sample of turn t IS its before-sample "
       "of turn t+1, so %d samples are distinct (a few are taken mid-cycle)"
@@ -289,15 +295,26 @@ def pipeline(sav_path, log_path, trace_path, do_print=True):
     W("")
     W("== the written image, the reload and the RESUME ==")
     img = image_of(sv, led, eng)
-    tmpd = tempfile.mkdtemp(prefix="b21_")
-    p_img = os.path.join(tmpd, "b21_written.SAV")
-    with open(p_img, "wb") as fh:
-        fh.write(img)
-    sv2 = sosave.parse(p_img)
+    with tempfile.TemporaryDirectory(prefix="b21_") as tmpd:
+        p_img = os.path.join(tmpd, "b21_written.SAV")
+        with open(p_img, "wb") as fh:
+            fh.write(img)
+        sv2 = sosave.parse(p_img)   # the bytes stay in memory after the tmpdir goes
     led2 = sobf.from_save(sv2)
-    eng2 = soturn.Engine(sv2.year, human=sv2.own_player, cur=soturn.HUMAN, tf=0)
-    eng2.press()
-    img2 = image_of(sv2, led2, eng2)
+    # THE RESUMED ENGINE IS BUILT ONLY FROM FIELDS READ BACK OUT OF THE IMAGE -
+    # cur_player, the modeled turn_flags bit and the year - never from the model.
+    saved_cur = _u32(img, sow.OFF_CUR)
+    saved_tf = _u32(img, sow.OFF_TF) & sow.TF_MODEL_BIT
+    fields_back = (saved_cur == eng.cur and saved_tf == (eng.tf & sow.TF_MODEL_BIT)
+                   and sv2.year == eng.year)
+    try:
+        eng2 = soturn.Engine(sv2.year, human=sv2.own_player, cur=saved_cur,
+                             tf=saved_tf)
+        eng2.press()
+        img2 = image_of(sv2, led2, eng2)
+        resume_err = None
+    except ValueError as exc:      # a saved state that is not a human phase
+        eng2, img2, resume_err = None, None, exc.args[0].split(".")[0]
     run3 = press_run(sv, ops, earliest)
     run3["eng"].press()
     img3 = image_of(sv, run3["led"], run3["eng"])
@@ -323,12 +340,22 @@ def pipeline(sav_path, log_path, trace_path, do_print=True):
       % (img[tail_new:] == sv.data[tail_old:], len(sv.data) - tail_old))
     reload_eq = ([dict(r) for r in led2.records] == [dict(r) for r in led.records])
     W("RELOAD from the written image: year %d n_bases %d records %d; records == "
-      "model records: %s" % (sv2.year, sv2.n_bases, len(led2), reload_eq))
-    resume_diff = sorted(sow.diff_offsets(img, img2))
-    W("RESUME: reload + 1 press -> year %d; img2 == img3 (31 presses on the "
-      "original, then write): %s" % (eng2.year, img2 == img3))
-    W("img -> img2 differing bytes: %d at %s (the year word is %d,%d)"
-      % (len(resume_diff), resume_diff, G_YEAR_FILE, G_YEAR_FILE + 1))
+      "model records: %s; the SAVED cur %d / tf-bit %d / year %d equal the model's "
+      "cur %d / tf-bit %d / year %d: %s"
+      % (sv2.year, sv2.n_bases, len(led2), reload_eq, saved_cur, saved_tf, sv2.year,
+         eng.cur, eng.tf & sow.TF_MODEL_BIT, eng.year, fields_back))
+    if img2 is None:
+        W("RESUME REFUSED from the saved state: %s" % resume_err)
+        resume_diff, commute = [], False
+    else:
+        assert eng2 is not None      # the resume only reaches here if the press ran
+        resume_diff = sorted(sow.diff_offsets(img, img2))
+        commute = img2 == img3
+        W("RESUME (the engine is built ONLY from the saved cur/tf/year): reload + 1 "
+          "press -> year %d; img2 == img3 (31 presses on the original, then write): "
+          "%s" % (eng2.year, commute))
+        W("img -> img2 differing bytes: %d at %s (the year word is %d,%d)"
+          % (len(resume_diff), resume_diff, G_YEAR_FILE, G_YEAR_FILE + 1))
     W("")
     W("== rivals, graded on the SAME recorded numbers ==")
     noleg = press_run(sv, [], [0] * T)
@@ -374,10 +401,27 @@ def pipeline(sav_path, log_path, trace_path, do_print=True):
               G_YEAR_FILE)))
     img6 = sow.build_image(sv, year=sv.year, cur=eng.cur, tf=eng.tf,
                            bases_override=led.records)
-    W("R6 year pass-through: writes year %d (the resumed run needs %d), so the "
-      "reload/resume leg breaks: %s"
-      % (_u16(img6, G_YEAR_FILE), eng2.year,
+    W("R6 year pass-through: writes year %d (a resumed run needs %d), so the "
+      "reload leg breaks: %s"
+      % (_u16(img6, G_YEAR_FILE), eng.year + 1,
          _u16(img6, G_YEAR_FILE) != sv2.year))
+    # R7: a writer that leaves cur_player in an AI slot.  The resumed engine is
+    # built from the SAVED fields, so this must be REFUSED - the proof that the
+    # resume leg can actually see a broken turn-field write.
+    r7_cur = (eng.cur + 1) % soturn.SLOTS
+    img7 = sow.build_image(sv, year=eng.year, cur=r7_cur, tf=eng.tf,
+                           bases_override=led.records)
+    try:
+        soturn.Engine(_u16(img7, G_YEAR_FILE), human=sv.own_player,
+                      cur=_u32(img7, sow.OFF_CUR),
+                      tf=_u32(img7, sow.OFF_TF) & sow.TF_MODEL_BIT).press()
+        r7 = "press ACCEPTED - the resume leg has no teeth"
+        r7_refused = False
+    except ValueError as exc:
+        r7 = "press REFUSED: %s" % exc.args[0].split(".")[0]
+        r7_refused = True
+    W("R7 writer leaves cur_player=%d (an AI slot) in the image: a resume from the "
+      "saved fields -> %s" % (r7_cur, r7))
     W("")
     table = "\n".join(out) + "\n"
     digest = hashlib.sha256(table.encode()).hexdigest()
@@ -402,7 +446,9 @@ def pipeline(sav_path, log_path, trace_path, do_print=True):
             and bool(head_diffs),
             "growth_ok": grew == (len(led) - sv.n_bases) * sosave.BASE_LEN,
             "tail_ok": img[tail_new:] == sv.data[tail_old:],
-            "reload_eq": reload_eq, "commute": img2 == img3,
+            "reload_eq": reload_eq, "commute": commute, "fields_back": fields_back,
+            "r7_refused": r7_refused, "saved_cur": saved_cur,
+            "saved_tf": saved_tf, "resume_err": resume_err,
             "resume_diff": resume_diff, "year_written": _u16(img, G_YEAR_FILE),
             "bases_written": _u32(img, G_BASES_FILE), "last": last,
             "peak": run["peak"], "table": table, "digest": digest,
@@ -479,21 +525,27 @@ def acceptance(sav_path, log_path, trace_path, results, tables=None):
           f["bases_written"], last["nb_a"]),
        f["all_modeled"] and f["year_written"] == last["ya"]
        and f["bases_written"] == last["nb_a"]))
-    a(("G9 RELOAD: the image re-parses (year %d n_bases %d) and its %d records "
-       "equal the model's %d" % (f["sv2"].year, f["sv2"].n_bases,
-                                 len(f["led2"]), len(led)),
-       f["reload_eq"] and f["sv2"].n_bases == len(led) == last["nb_a"]))
-    a(("G10 RESUME COMMUTES: write-then-press == press-31-then-write byte-for-byte "
-       "(%s); the img->img2 diff is %d byte(s) at %s (the year word)"
+    a(("G9 RELOAD: the image re-parses (year %d n_bases %d), its %d records equal "
+       "the model's %d, and the SAVED cur %d / tf-bit %d / year %d equal the "
+       "model's (the resume input is read back, not assumed)"
+       % (f["sv2"].year, f["sv2"].n_bases, len(f["led2"]), len(led),
+          f["saved_cur"], f["saved_tf"], f["sv2"].year),
+       f["reload_eq"] and f["sv2"].n_bases == len(led) == last["nb_a"]
+       and f["fields_back"]))
+    a(("G10 RESUME COMMUTES (engine built from the SAVED cur/tf/year): "
+       "write-then-press == press-31-then-write byte-for-byte (%s); the img->img2 "
+       "diff is %d byte(s) at %s (the year word only)"
        % (f["commute"], len(f["resume_diff"]), f["resume_diff"][:6]),
        f["commute"] and f["resume_diff"]
        and all(o in (G_YEAR_FILE, G_YEAR_FILE + 1) for o in f["resume_diff"])))
     a(("G11 rivals fail the same fit: no-leg curve %d/%d, all-ops-at-end %d/%d, "
        "curve-only %d/%d curve but %d/%d ops, FIFO-destroy reproduces the grown "
-       "slots: %s" % (f["noleg"], f["T"], f["batch"], f["T"], f["crun"], f["T"],
-                      f["hits_rival"], f["n_ops"], f["fifo_same"]),
+       "slots: %s, corrupted saved cur_player refused by the resume: %s"
+       % (f["noleg"], f["T"], f["batch"], f["T"], f["crun"], f["T"],
+          f["hits_rival"], f["n_ops"], f["fifo_same"], f["r7_refused"]),
        f["noleg"] < f["T"] and f["batch"] < f["T"] and f["crun"] == f["T"]
-       and f["hits_rival"] < f["n_ops"] and not f["fifo_same"]))
+       and f["hits_rival"] < f["n_ops"] and not f["fifo_same"]
+       and f["r7_refused"]))
     g = pipeline(sav_path, log_path, trace_path, do_print=False)
     a(("G12 two runs: report text sha256 identical and written-image sha256 "
        "identical (%s)" % f["digest"][:16],

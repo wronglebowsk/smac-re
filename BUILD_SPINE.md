@@ -566,10 +566,13 @@ G5 op fidelity 9/9 vs the rival's 7/9; G6 the 5 grown slots == the surviving rec
 foundings and neither destroyed site is a base any more; G7 the image grows by exactly
 1520 B = 5 x 304 with the tail after the grown array byte-identical (10,800 B); G8 the
 header diff is 2 bytes, at the bases dword and the year word, both inside modeled spans;
-G9 the reload (year 2180, 23 records, record-for-record equality); G10 the RESUME
-commutation (the resumed image == the 31-press image byte-for-byte; img->img2 differs in
-the 1 changed year byte); G11 four rivals fail the same fit (no-leg 6/30, all-ops-at-end
-7/30, curve-only 30/30 curve but 7/9 ops, FIFO-destroy keeps a destroyed tile); G12 two
+G9 the reload (year 2180, 23 records, record-for-record equality, and the SAVED cur_player /
+modeled turn_flags bit / year read back equal to the model's - the resume engine is built from
+the FIELDS IN THE IMAGE, never from the model); G10 the RESUME commutation (the resumed image ==
+the 31-press image byte-for-byte; img->img2 differs in the 1 changed year byte); G11 five rivals
+fail the same fit (no-leg 6/30, all-ops-at-end 7/30, curve-only 30/30 curve but 7/9 ops,
+FIFO-destroy keeps a destroyed tile, and a writer that leaves cur_player in an AI slot is
+REFUSED a press by the resume leg - the proof the leg can see a broken turn-field write); G12 two
 runs -> identical table text and identical written-image sha256. DECLARED UNMODELED: on
 WHICH turn each op really fired (the curve admits 11 placements, the log carries no turn
 stamp - the earliest is a tie-break, not a measurement); the destroy slot (last, as B13);

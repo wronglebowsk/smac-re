@@ -51,7 +51,7 @@ closed walk (every rec_pre == model_pre AND every op lands): 9/9
 curve match 30/30 | year_before == save_year+turn AND year_after == +1: 30/30
 intervals carrying >1 op: 1 (max 3) | feasible placement count K = 11
 curve-minimal op count sum|delta| = 7  <  recorded ops 9  (the curve hides 2 op(s), a net-zero (+1,-1) pair)
-engine emission 331 states; recorded (cur,tf,year) samples 31 after collapsing adjacent duplicates; matched IN ORDER 31/31 (turns with a miss [])
+engine emission 331 states; recorded (cur,tf,year) samples 31 after collapsing adjacent duplicates; matched IN ORDER 31/31 (samples that missed: [])
 trace self-chain on 29 turn boundaries: year 29/29, n_bases 29/29, (cur,tf) 29/29 - the recorder's after-sample of turn t IS its before-sample of turn t+1, so 31 samples are distinct (a few are taken mid-cycle)
 
 == the ledger after the run ==
@@ -64,8 +64,8 @@ orig 242539 B -> written 244059 B (grew 1520 B == 5 records x 304 B: True)
 written year@84 = 2180 (recorded after(29).year 2180) | bases dword@72 = 23 (recorded 23) | n_units 67 (unchanged: True)
 header diffs below bases_off(226267): 2 byte(s) at [72, 84]; inside modeled spans 2/2
 tail after the grown array == tail after the original array: True (10800 B)
-RELOAD from the written image: year 2180 n_bases 23 records 23; records == model records: True
-RESUME: reload + 1 press -> year 2181; img2 == img3 (31 presses on the original, then write): True
+RELOAD from the written image: year 2180 n_bases 23 records 23; records == model records: True; the SAVED cur 3 / tf-bit 0 / year 2180 equal the model's cur 3 / tf-bit 0 / year 2180: True
+RESUME (the engine is built ONLY from the saved cur/tf/year): reload + 1 press -> year 2181; img2 == img3 (31 presses on the original, then write): True
 img -> img2 differing bytes: 1 at [84] (the year word is 84,85)
 
 == rivals, graded on the SAME recorded numbers ==
@@ -74,9 +74,10 @@ R2 all 9 ops in the last interval: curve 7/30
 R3 curve-only schedule (7 ops, K=1): curve 30/30 but recorded op (kind,pre-cnt) fidelity 7/9  [model schedule: 9/9]
 R4 destroy drops the FIRST founded record (FIFO) instead of compacting the LAST: grown slots [(6, 1, 43), (6, 63, 51), (5, 27, 19), (7, 23, 33), (1, 27, 29)] == model's? False (endpoint still 23)
 R5 lift_all writer (count dwords pass-through): re-parses bases 18 (recorded 23) year 2150
-R6 year pass-through: writes year 2150 (the resumed run needs 2181), so the reload/resume leg breaks: True
+R6 year pass-through: writes year 2150 (a resumed run needs 2181), so the reload leg breaks: True
+R7 writer leaves cur_player=4 (an AI slot) in the image: a resume from the saved fields -> press REFUSED: press() is only legal in the human phase (cur==3, tf==0); state is (4, 0, 2180)
 
-table sha256 5a38f68cc97b9cc5 | written-image sha256 791a0d54c8fd7a0c
+table sha256 e877d7e1ca986dbb | written-image sha256 791a0d54c8fd7a0c
   ok   G1 anchors recomputed, not asserted: save year 2150 == trace year_before(0); save n_bases 18 == trace n_bases(0); op chain closed walk 9/9
   ok   G2 turn law on the recorded rows: year_before == save_year+turn AND year_after == +1 on 30/30; the trace self-chains on 29/29 boundaries for year and 29/29 for n_bases; the emission supplies 31/31 recorded (cur,tf,year) samples IN ORDER
   ok   G3 the log-driven schedule reproduces the recorded n_bases curve 30/30; ledger endpoint 23 == recorded 23; peak 24
@@ -85,8 +86,8 @@ table sha256 5a38f68cc97b9cc5 | written-image sha256 791a0d54c8fd7a0c
   ok   G6 grown slots == the surviving recorded foundings [(6, 20, 48), (6, 63, 51), (5, 27, 19), (7, 23, 33), (1, 27, 29)]; the 2 destroyed sites are NOT bases any more (present-flags [False, False])
   ok   G7 the image grew by exactly 1520 B == 5 x 304 and the tail after the grown array is byte-identical
   ok   G8 header diffs 2 byte(s) all inside modeled spans; year dword 2180 == recorded after(29).year; bases dword 23 == recorded 23
-  ok   G9 RELOAD: the image re-parses (year 2180 n_bases 23) and its 23 records equal the model's 23
-  ok   G10 RESUME COMMUTES: write-then-press == press-31-then-write byte-for-byte (True); the img->img2 diff is 1 byte(s) at [84] (the year word)
-  ok   G11 rivals fail the same fit: no-leg curve 6/30, all-ops-at-end 7/30, curve-only 30/30 curve but 7/9 ops, FIFO-destroy reproduces the grown slots: False
-  ok   G12 two runs: report text sha256 identical and written-image sha256 identical (5a38f68cc97b9cc5)
+  ok   G9 RELOAD: the image re-parses (year 2180 n_bases 23), its 23 records equal the model's 23, and the SAVED cur 3 / tf-bit 0 / year 2180 equal the model's (the resume input is read back, not assumed)
+  ok   G10 RESUME COMMUTES (engine built from the SAVED cur/tf/year): write-then-press == press-31-then-write byte-for-byte (True); the img->img2 diff is 1 byte(s) at [84] (the year word only)
+  ok   G11 rivals fail the same fit: no-leg curve 6/30, all-ops-at-end 7/30, curve-only 30/30 curve but 7/9 ops, FIFO-destroy reproduces the grown slots: False, corrupted saved cur_player refused by the resume: True
+  ok   G12 two runs: report text sha256 identical and written-image sha256 identical (e877d7e1ca986dbb)
 PASS B21: 12/12 gates - the recorded m289 run IS ONE EXECUTED STATE OBJECT: 30 B3 presses (year law 30/30, trace self-chain 29/29, the engine supplies all 31 recorded (cur,tf,year) samples in order) plus the 9-op founder/destroyer ledger (closed walk 9/9, curve 30/30, endpoint 23 peak 24, grown slots == the 5 surviving foundings); the written .SAV grows by 1520 B with ONLY the year and bases-count bytes changed in the header, reloads (year 2180, 23 records), and RESUMES byte-identically to 31 presses on the original; the curve/op pairing (sum|delta| 7 < 9 ops, K=11 placements, curve-only schedule 7/9 op fidelity) is measured on both schedules, with 4 rivals failing the same fit (no box time, no /proc, no gdb)

@@ -1643,11 +1643,12 @@ def run_b21(sav_path, log_path, trace_path, results):
           "the 9-op founder/destroyer ledger (closed walk 9/9, curve 30/30, "
           "endpoint 23 peak 24, grown slots == the 5 surviving foundings); the "
           "written .SAV grows by 1520 B with ONLY the year and bases-count bytes "
-          "changed in the header, reloads (year 2180, 23 records), and RESUMES "
-          "byte-identically to 31 presses on the original; the curve/op pairing "
-          "(sum|delta| 7 < 9 ops, K=11 placements, curve-only schedule 7/9 op "
-          "fidelity) is measured on both schedules, with 4 rivals failing the "
-          "same fit (no box time, no /proc, no gdb)" % (len(results), len(results)))
+          "changed in the header, reloads (year 2180, 23 records, saved cur/tf "
+          "read back), and RESUMES from THOSE SAVED FIELDS byte-identically to 31 "
+          "presses on the original; the curve/op pairing (sum|delta| 7 < 9 ops, "
+          "K=11 placements, curve-only schedule 7/9 op fidelity) is measured on "
+          "both schedules, with 5 rivals failing the same fit (no box time, no "
+          "/proc, no gdb)" % (len(results), len(results)))
     return 0
 
 

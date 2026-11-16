@@ -27,7 +27,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B20 MERGED + B21
 OPEN as a PR** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
-`evidence/b21_composedrun.txt:92`). Next build rung **B22**, UNAUTHORED - its fire writes it (B14-B21 did).
+`evidence/b21_composedrun.txt:93`). Next build rung **B22**, UNAUTHORED - its fire writes it (B14-B21 did).
 Candidates: (i) the B21 composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
 the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
 end-to-end (B15+B16+B17 with save-only inputs); (iii) FUN_005aff90's value body (1 recorded lazy
