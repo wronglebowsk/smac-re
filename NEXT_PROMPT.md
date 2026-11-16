@@ -1,7 +1,7 @@
-# NEXT_PROMPT.md - footing (s268 close: M308 answered the SITE-list pair + the two global
-identities; historical
+# NEXT_PROMPT.md - footing (s269 close: M308 MERGED with its review round - Greptile #281's 4 P2s
+fixed and every repaired gate proven load-bearing by a MUTATION harness; historical
 header + CLOSED enumeration + traps 14-15 VERBATIM at
-`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: B21 MERGED (main 808c3c0) + M308 in this PR; B1-B21 + M54A-M307 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
+`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M308 MERGED (PR #281); B1-B21 + M54A-M308 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -60,7 +60,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (post-M308): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: a merge does
+- **THE PICK (post-M308 review round, s269): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). M308 is CLOSED — merged in #281 with its review round (Greptile's 4 P2s fixed + mutation-tested). track_mode is AUTHORITATIVE: a merge does
   NOT flip the immediate fire (s259/s260); next_rung B22 stays queued. ANSWERED: M227-M308 + B1-B21 (M241 FAIL 2/5 #180).
   CLOSED (era text VERBATIM: `docs/nextprompt-archive-m299-b20.md` §closed-era) - read the named NAMED §
   (## <ID>) BEFORE RE-OPENING: M220; DIALOG +0x4c M284-M288 (live half INVALID s240); slot [+4] GATE M299; the
@@ -75,23 +75,12 @@ collision-check + worktree FIRST).
   global shapes M308 (0x56d480 = insert-or-max, evict score 1000 free / 20-prio, 25 x 0x10 in the
   8380-B record at 0x94f2d8; 0x56d630 = pure probe; 0x985aec = an enum cmp-only in 1..4 mirroring
   0x92bde8; 0x985b10 = ONE byte bit-mask, 0 array forms - read ## M308 + the M303 rows). NEVER bp
-  mid-instruction (s213). OPEN shortlist: the hub settle-nest
-  MEANING (9x8x32 = [ebp-0x70]/[ebp-0x4c]/[ebp-0x54]; the [ebp-0x84] best-
-  direction at 0x56c966; the arms' case VALUES vs the 31-cmp ladder); arm-case
-  of sites 0x56444b/0x5645d9/0x5651e3/0x568567 (INFERRED, not pinned); hub
-  slots [ebp-0x18]/[ebp-0x40]/[ebp-0x64]/[ebp-0x6c]/[ebp-0x74]/[ebp-0x2c]/
-  [ebp-0x30]/[ebp-0x54] un-named; sibling 0x5831a0 fed (x,y) after the predicate; 188-row cursor caller; whose record BYTE[edi+0x7]
-  is + the walk's tile-class/distance legs' MEANING; FUN_0051dcb0's REBUILD-BODY
-  MEANING (WHO  is settled M305: 11 single-site callers, 1 loop-enclosed, 0x51f71e =
-  round%4==1);  branch-A/B seed semantics + the 52-B row-walk record identity (still open
-  from the 0x4f35e0 body, M306+M307); the sibling fields of the 8380-B block record (byte
-  0x950664, word 0x94e8a8, dword 0x94f4ec + word 0x950a64 - INDEXED by M303, semantics OPEN);
-  the 0x94eca8 byte-table DUMP (2048 B, m302_livepins.py template) + save-carry vs rebuild for
-  BOTH tables AND the SITE list (M302/M303/M308, same question); the eax=1 leg: ONE model-decided
-  row (M302 branchB), still NO live gdb witness (B19 G9).
+  mid-instruction (s213). OPEN shortlist (the hub settle-nest MEANING, the arm-case sites, the un-named hub slots,
+  the 8380-B record's sibling FIELDS, the 0x94eca8 dump, save-carry vs rebuild, the eax=1 leg) is
+  VERBATIM at `docs/pick-archive.md` §trim-s269 (b) — grep it there, do not re-derive it.
   **NEXT PICK (s268 close): FUN_0056d350 (299 B, 50 callers, 1 string) = the sink every SITE-list
   insert AND the FUN_0056d690 rebuild broadcast into (args (block,kind,prio,x,y,-1) - name it and
-  say what the -1 6th arg selects); THEN the 75-entry sibling at 0x94ee28 (same 8380-B record,
+  say what the -1 6th arg selects); THEN the 75-entry sibling at 0x94ee28 (same 8380-B record, and it ENDS where the SITE list starts: 0x94ee28+75*0x10 == 0x94f2d8, so 75+25 = 100 entries/record - A13 `:293`;
   stride 0x10, its +2 short sign-flipped / its +0 set -1 by FUN_0056d690) - identity + the -1
   sentinel's writer (M308 U2: nothing among the 17 refs to the site window writes +0 = -1).**
   READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
@@ -127,14 +116,22 @@ collision-check + worktree FIRST).
 16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245: objdump prints UPPERCASE; ARM BEFORE ANY
    SCREEN; the SIGUSR1/SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT
    a STORE CENSUS.)
-## CLOSING ORDER (exactly — the kickoff carries the same list)
-
-Terse past ~35 calls: acceptance numbers verbatim, no new prose, no "double check" reads; closing is PART of the
-milestone. 0 `SESSION_CURSOR.md` (<=600 B: id | acceptance | merged? | next) BEFORE the rest. 1 `## Session <N>`
-APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers WITH the command). 2 the `<ID>` block to `NAMED.md` (<=1 KB). 3 this
-file patched BY SECTION to <= 12,000 B (`budget`'s warn; past it the next fire starts as a docs split). 4
-`diff -rq skill/ ~/.hermes/skills/smac-cvr-format/`, reconcile, `rsync -a skill/ ~/.hermes/skills/smac-cvr-format/`
-(content-identical; gate checks SKILL.md only). 5 `git add -A && git commit -m '<ID>: checkpoint'` then
-`python3 scripts/gate.py --base main` GREEN. 6 submit/merge ONLY on a real PASS — and per the MERGE RULE only after
-the Greptile review on the head commit finished (`gh pr checks` until nothing pending), its inline comments read, and
-every P1 fixed or dismissed in the PR body in one sentence.
+24. **A PASSING ASSERTION IS NOT A GATE (s269, Greptile #281 on M308).** All 4 P2s were one defect -
+   an assert that can pass on an UNMEASURED state (a classifier blind to `mov eax,ds:G`; bounds
+   pre-filtered by the expected constants; a rule tested by mnemonic presence; attribution by instruction
+   proximity) - and **3 of the sub-conditions I wrote to FIX them were THEMSELVES decorative**. Law: after
+   repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`: copy the instrument, re-create each
+   defect by anchor->replacement, exit non-zero unless EVERY mutation reddens its named gate). Mutate a
+   MEASURED FACT so it is false on the real bytes (a branch target off-by-one), never a dict ENTRY the assert
+   reads as a whole. Keep mutation ids out of the A-number namespace (M1..M8 vs A1..A36). Reference:
+   `scripts/m308_mutate.py` -> `8/8 mutations reddened their target checks`.
+## CLOSING ORDER (exactly — the kickoff carries the same list, and the full 7-step text lives
+VERBATIM at `docs/pick-archive.md` §trim-s269). Order: 1 `SESSION_CURSOR.md` (<=600 B) BEFORE the
+rest, in case of compression. 2 `## Session <N+1>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers
+WITH the command that produced them). 3 the `<ID>` block in `NAMED.md` (<=1 KB) + patch IN PLACE any
+earlier block this round qualifies. 4 `NEXT_PROMPT.md` patched BY SECTION to <=12,000 B (budget's
+warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`diff -rq skill/
+~/.hermes/skills/smac-cvr-format/` then `rsync`). 6 `git add <explicit paths>` + commit, then
+`python3 scripts/gate.py --base main` GREEN. 7 submit/merge ONLY on a real PASS with the Greptile
+review on the head commit finished and every P2 triaged in the PR body (fix or one-sentence
+dismissal).

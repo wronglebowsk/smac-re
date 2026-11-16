@@ -87,18 +87,28 @@ M308 static instrument: .text insns parsed 781379, functions 10284
    480 field +0x8  d W x1 e.g. mov@0x56d55b
    480 'other' (not stack, not site window): 0 []
    480 unresolved (base not tracked): 0 []
+   480 DIRECT-GLOBAL accesses (not bracketed, still memory): 1 ['0x985ae8']
    630 field +0x0  w R x1 e.g. movsx@0x56d664
    630 field +0x4  d R x1 e.g. cmp@0x56d65a
    630 field +0x8  d R x1 e.g. cmp@0x56d65f
    630 'other' (not stack, not site window): 0 []
    630 unresolved (base not tracked): 0 []
+   630 DIRECT-GLOBAL accesses (not bracketed, still memory): 0 []
    site READ map   480=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]  630=[(0, 'w'), (4, 'd'), (8, 'd')]
    site WRITE map  480=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]  630=[]
 
-[S3] loop bounds/steps in the family (immediates actually compared against a counter)
-   0x56d480   cmp-bounds=[25] steps=[16] counter-inits=[]
-   0x56d630   cmp-bounds=[25] steps=[16] counter-inits=[]
-   0x56d690   cmp-bounds=[] steps=[16] counter-inits=[25, 75]
+[S3] loop inventory from BACK-EDGES (a jcc whose target is at or below itself inside the function); bounds/steps are every immediate inside the body, NOT pre-filtered
+   0x56d480   2 back-edge(s) | EVERY immediate in the function: ['0x1', '0x2', '0x4', '0x6', '0x10', '0x14', '0x18', '0x19', '0x3e8', '0x530490', '0x56d350', '0x56d4b7', '0x56d4d4', '0x56d4ea', '0x56d501', '0x56d512', '0x56d52c', '0x56d536', '0x56d598', '0x56d59f', '0x56d5ba', '0x673850', '0x691508', '0xffffffff']
+                | cmp-immediates=['0x19'] add/sub-immediates=['0x10', '0x14', '0x18'] (non-stack)=['0x10']
+      head 0x56d4d4 <- jl   tail 0x56d4f1 body=11 insns  trip-cmp=0x19 bounds-in-body=['0x19'] steps-in-body=['0x10'] counters=['eax'] counter-init=[]
+      head 0x56d501 <- jl   tail 0x56d53d body=23 insns  trip-cmp=0x19 bounds-in-body=['0x19'] steps-in-body=['0x10'] counters=['eax', 'edi'] counter-init=[]
+   0x56d630   1 back-edge(s) | EVERY immediate in the function: ['0x1', '0x4', '0x6', '0x10', '0x19', '0x56d65a', '0x56d66b', '0x56d67b']
+                | cmp-immediates=['0x19'] add/sub-immediates=['0x10'] (non-stack)=['0x10']
+      head 0x56d65a <- jl   tail 0x56d672 body=11 insns  trip-cmp=0x19 bounds-in-body=['0x19'] steps-in-body=['0x10'] counters=['ecx'] counter-init=[]
+   0x56d690   2 back-edge(s) | EVERY immediate in the function: ['0x2', '0x4', '0x6', '0x10', '0x18', '0x19', '0x4b', '0xffff', '0x56d350', '0x56d6b6', '0x56d6c6', '0x56d6cb', '0x56d6dc', '0x56d700', '0xffffffff']
+                | cmp-immediates=[] add/sub-immediates=['0x10', '0x18'] (non-stack)=['0x10']
+      head 0x56d6b6 <- jne  tail 0x56d6cf body=10 insns  trip-cmp=None bounds-in-body=[] steps-in-body=['0x10'] counters=['esi'] counter-init=['0x4b']
+      head 0x56d6dc <- jne  tail 0x56d704 body=18 insns  trip-cmp=None bounds-in-body=[] steps-in-body=['0x10', '0x18'] counters=['ebx'] counter-init=['0x19']
 
 [S4] store census
    FUN_0056d480: 7 stores
@@ -115,49 +125,54 @@ M308 static instrument: .text insns parsed 781379, functions 10284
       0x56d6c8 mov WORD PTR [ecx],ax
    FUN_0056d630 epilogue ops that set eax: ['xor eax,eax', 'mov eax,0x1']
 
-[S5] found-path block 0x56d59f-0x56d5c3
-   0x56d59f	shl    eax,0x4
-   0x56d5a2	mov    edx,DWORD PTR [ebp+0x10]
-   0x56d5a5	lea    ecx,[eax+ebx*1+0x94f2da]
-   0x56d5ac	movsx  eax,WORD PTR [eax+ebx*1+0x94f2da]
-   0x56d5b4	cmp    eax,edx
-   0x56d5b6	jg     0x56d5ba
-   0x56d5b8	mov    eax,edx
-   0x56d5ba	pop    edi
-   0x56d5bb	pop    esi
-   0x56d5bc	mov    WORD PTR [ecx],ax
-   0x56d5bf	pop    ebx
-   0x56d5c0	mov    esp,ebp
-   0x56d5c2	pop    ebp
-   0x56d5c3	ret    
+[S5] found-path block 0x56d59f-0x56d5c3, decomposed as a RULE (operands + targets)
+   read                     0x56d5ac eax,WORD PTR [eax+ebx*1+0x94f2da]
+   cmp                      0x56d5b4 eax,edx
+   jcc                      jg 0x56d5ba @0x56d5b6
+   fallback                 mov eax,edx @0x56d5b8
+   store                    0x56d5bc WORD PTR [ecx],ax
+   read_field_off           2
+   cmp_lhs_is_the_signed_read True
+   jcc_is_jg                True
+   jg_target_is_just_past_fallback True
+   store_is_cmp_lhs_low_half True
+   cmp_lhs_producer         movsx WORD PTR [eax+ebx*1+0x94f2da]
+   cmp_rhs_producer         mov DWORD PTR [ebp+0x10]
+   cmp_rhs_is_the_prio_argument True
 
-[S6] eviction block 0x56d4fb-0x56d541
-   0x56d4fb	lea    edx,[ebx+0x94f2da]
-   0x56d501	mov    si,WORD PTR [edx-0x2]
-   0x56d505	test   si,si
-   0x56d508	jl     0x56d512
-   0x56d50a	movsx  eax,WORD PTR [edx]
-   0x56d50d	cmp    eax,DWORD PTR [ebp+0x10]
-   0x56d510	jge    0x56d536
-   0x56d512	xor    eax,eax
-   0x56d514	test   si,si
-   0x56d517	setge  al
-   0x56d51a	dec    eax
-   0x56d51b	and    eax,0x3e8
-   0x56d520	jne    0x56d52c
-   0x56d522	movsx  esi,WORD PTR [edx]
-   0x56d525	mov    eax,0x14
-   0x56d52a	sub    eax,esi
-   0x56d52c	cmp    eax,DWORD PTR [ebp-0x4]
-   0x56d52f	jle    0x56d536
-   0x56d531	mov    DWORD PTR [ebp-0x4],eax
-   0x56d534	mov    ecx,edi
-   0x56d536	inc    edi
-   0x56d537	add    edx,0x10
-   0x56d53a	cmp    edi,0x19
-   0x56d53d	jl     0x56d501
-   0x56d53f	test   ecx,ecx
-   0x56d541	jl     0x56d598
+[S6] eviction block 0x56d4fb-0x56d541, decomposed as RULES
+   1000_is_and_on_the_setge_dec_reg   True
+   1000_select_chain                  test si,si / xor eax,eax / test si,si / setge al / dec eax / and eax,0x3e8 / test ecx,ecx
+   20_and_sub_share_one_reg           True
+   already_beaten_slot_jumps_to_increment True
+   free_slot_jl_skips_the_prio_cmp    True
+   free_slot_score_skips_20minus      True
+   kind_read                          mov si,WORD PTR [edx-0x2] @0x56d501
+   kind_read_field_off                0
+   loop_ptr                           lea edx,[ebx+0x94f2da] @0x56d4fb -> record base +0x2
+   prio_cmp_lhs_def                   movsx WORD PTR [edx]
+   prio_cmp_lhs_is_signed_prio_field  True
+   prio_read                          movsx eax,WORD PTR [edx] @0x56d50a
+   prio_read_field_off                2
+   prio_score_20_minus                eax,0x14 ; eax,esi
+   setge_is_fed_by_the_kind_test      True
+   strict_is_jle_not_jl               True
+   strict_jcc                         jle 0x56d536 @0x56d52f
+   sub20_subtrahend_def               movsx WORD PTR [edx]
+   sub20_subtrahend_is_signed_prio_field True
+   subtrahend_is_the_signed_prio      False
+   tie_skips_both_updates             True
+   updates_between_jle_and_target     ['0x56d531', '0x56d534']
+
+[S6b] no-candidate path
+   epilogue_to_ret          ['pop ', 'pop ', 'pop ', 'mov ', 'pop ', 'ret ']
+   insert_stores_skipped    ['0x56d551', '0x56d55b', '0x56d561', '0x56d56b']
+   jl                       jl 0x56d598 @0x56d541
+   jl_target                5690776
+   stores_on_the_taken_path []
+   target_insn              pop edi
+   test                     test ecx,ecx @0x56d53f
+   every site store in FUN_0056d480: ['0x56d551', '0x56d55b', '0x56d561', '0x56d56b', '0x56d5bc']
 
 [S7] parity/debug guard head
    0x56d480	push   ebp
@@ -230,55 +245,53 @@ M308 static instrument: .text insns parsed 781379, functions 10284
 [S10] ds:0x985aec census
    refs=68 forms=[('mov', 44), ('cmp', 24)]
    array-form=0 direct ds: refs=68 writers=4 cmp-immediates=['0x1', '0x2', '0x3', '0x4']
-   W 0x4ddcf1	mov    ds:0x985aec,eax
-       ctx 0x4ddce6	mov    DWORD PTR fs:0x0,ecx
-       ctx 0x4ddced	mov    esp,ebp
-       ctx 0x4ddcef	pop    ebp
-       ctx 0x4ddcf0	ret    
-       ctx 0x4ddcf1	mov    ds:0x985aec,eax
-       ctx 0x4ddcf6	mov    ecx,0x94d438
-   W 0x57c5af	mov    ds:0x985aec,eax
-       ctx 0x57c59c	je     0x57c5bf
-       ctx 0x57c59e	mov    eax,ds:0x92bde8
-       ctx 0x57c5a3	mov    ecx,DWORD PTR ds:0x92bf08
-       ctx 0x57c5a9	mov    esi,DWORD PTR ds:0x92bdec
-       ctx 0x57c5af	mov    ds:0x985aec,eax
-       ctx 0x57c5b4	mov    DWORD PTR ds:0x985ac4,ecx
-   W 0x57c7b5	mov    ds:0x985aec,eax
-       ctx 0x57c7a2	call   0x406720
-       ctx 0x57c7a7	mov    BYTE PTR [ebp-0x4],0x7
-       ctx 0x57c7ab	jmp    0x57c8df
-       ctx 0x57c7b0	mov    ds:0x92bde8,eax
-       ctx 0x57c7b5	mov    ds:0x985aec,eax
-       ctx 0x57c7ba	cmp    ebx,0x2
-   W 0x57f006	mov    ds:0x985aec,eax
-       ctx 0x57efed	jle    0x57ef33
-       ctx 0x57eff3	movsx  eax,BYTE PTR ds:0x8f0c11
-       ctx 0x57effa	mov    edi,DWORD PTR ds:0x8f0c20
-       ctx 0x57f000	mov    ecx,DWORD PTR ds:0x8f0c1c
-       ctx 0x57f006	mov    ds:0x985aec,eax
-       ctx 0x57f00b	mov    eax,edi
-   writer producers (a 0x92bde8 / 0x8f0c11 reference within 10 insns before):
-      0x4ddcf1 {'92bde8': False, '8f0c11': False}
-      0x57c5af {'92bde8': True, '8f0c11': False}
-      0x57c7b5 {'92bde8': True, '8f0c11': False}
-      0x57f006 {'92bde8': False, '8f0c11': True}
+
+[S10b] the 4 writers of ds:0x985aec, attributed by BACKWARD DEF-WALK (not proximity)
+        Greptile #281 P2d: the previous version accepted any 0x92bde8/0x8f0c11 token
+        within 10 instructions, which an intervening write to the value register would
+        not have broken. proximity_ok is kept in the table ONLY to show it disagrees.
+   W 0x4ddcf1 mov    ds:0x985aec,eax          | UNRESOLVED in-function (chain=['kill'], previous dumped insn is `ret` -> the value arrives from outside this walk)
+       walked 0x4ddcf0 ret    
+       walked 0x4ddcef pop    ebp
+       walked 0x4ddced mov    esp,ebp
+       walked 0x4ddce6 mov    DWORD PTR fs:0x0,ecx
+       walked 0x4ddce3 mov    ecx,DWORD PTR [ebp-0xc]
+       (proximity would credit these ds-globals in the window: ['0x985aec'])
+   W 0x57c5af mov    ds:0x985aec,eax          | DEF-WALK: loads ds:0x92bde8 (['0x92bde8']) crossing 3 insn
+       walked 0x57c5a9 mov    esi,DWORD PTR ds:0x92bdec
+       walked 0x57c5a3 mov    ecx,DWORD PTR ds:0x92bf08
+       walked 0x57c59e mov    eax,ds:0x92bde8
+       (proximity would credit these ds-globals in the window: ['0x92bde8', '0x92bdec', '0x92bf08', '0x985ac4', '0x985aec'])
+   W 0x57c7b5 mov    ds:0x985aec,eax          | DEF-WALK: co-store, the same eax is stored to ds:0x92bde8 at 0x57c7b0 with no write to eax in between
+       walked 0x57c7b0 mov    ds:0x92bde8,eax
+       walked 0x57c7ab jmp    0x57c8df
+       walked 0x57c7a7 mov    BYTE PTR [ebp-0x4],0x7
+       walked 0x57c7a2 call   0x406720
+       walked 0x57c7a2 call   0x406720
+       (proximity would credit these ds-globals in the window: ['0x92bde8', '0x985aec'])
+   W 0x57f006 mov    ds:0x985aec,eax          | DEF-WALK: loads ds:0x8f0c11 (the setup byte) crossing 3 insn
+       walked 0x57f000 mov    ecx,DWORD PTR ds:0x8f0c1c
+       walked 0x57effa mov    edi,DWORD PTR ds:0x8f0c20
+       walked 0x57eff3 movsx  eax,BYTE PTR ds:0x8f0c11
+       (proximity would credit these ds-globals in the window: ['0x8f0c11', '0x8f0c1c', '0x8f0c20', '0x985aec'])
 
 [CHECKS]
    OK   A1 FUN_0056d480 block stride == 8380 (from the encoding)  | got 8380
    OK   A2 FUN_0056d630 block stride == 8380 (from the encoding)  | got 8380
    OK   A3 RIVAL R5 (stride = 0x82f = 2095 bytes, as the C text reads) FAILS  | strides=8380/8380
-   OK   A4 the two functions touch NO memory outside the stack frame and the site window (the detail prints how many window accesses were classified, so the classifier is not blind)  | other=[] nsites=18
+   OK   A4 the two functions' ONLY out-of-frame, out-of-window memory is one named global READ (ds:0x985ae8, the debug flag the parity guard tests): the classifier now sees direct `ds:` operands, so an unclassified access lands in other/unresolved and this FAILS  | other=[] unresolved=[] globals=['0x985ae8'] global_stores=[] nsites=18
+   OK   A4b the classifier is not blind: it classifies >0 stack, >0 site AND the 1 direct-global access in FUN_0056d480, i.e. all three kinds are non-empty in the same run  | stack480=15 site480=15 globals480=['0x985ae8']
    OK   A5 FUN_0056d480 site READ map == {+0w,+2w,+4d,+8d}  | map=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]
    OK   A5b FUN_0056d630 site READ map == {+0w,+4d,+8d} (the probe ignores the +2 priority)  | map=[(0, 'w'), (4, 'd'), (8, 'd')]
    OK   A6 FUN_0056d630 is a PURE PROBE (0 stores) while the same regex counts 5+ stores in the inserter (so a blind regex cannot pass this)  | stores 630=0 480=7
    OK   A7 FUN_0056d630 returns only 0/1 (xor eax,eax | mov eax,0x1 in the epilogue)  | ['xor eax,eax', 'mov eax,0x1']
    OK   A8 FUN_0056d480 site WRITE map == {+0w,+2w,+4d,+8d} (all four fields on insert)  | map=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]
-   OK   A9 found path is a max() on +2 (movsx + cmp + jg + fallback mov eax,edx + WORD store)  | ops=['cmp', 'jg', 'lea', 'mov', 'movsx', 'pop', 'ret', 'shl']
-   OK   A10 eviction law: empty-slot score 1000 (and 0x3e8) and 20-priority (mov eax,0x14 / sub) with a STRICT jle (ties keep the first index)  | 3e8=True 0x14=True
-   OK   A11 no-candidate path returns WITHOUT inserting (test ecx,ecx / jl to the epilogue)
-   OK   A12 RIVAL R8 (the list grows past 25) FAILS: 480/630 have ONLY bound 0x19 and step 0x10  | loops={'0x56d480': ([25], [16], []), '0x56d630': ([25], [16], []), '0x56d690': ([], [16], [25, 75])}
-   OK   A13 RIVAL R9 (the 75-entry sibling IS the site list) FAILS: 0x4b=75 appears only in 0x56d690, and 0x56d690 carries TWO counters {25,75} -> two distinct lists  | counters={'0x56d480': [25], '0x56d630': [25], '0x56d690': [25, 75]}
+   OK   A9 the found path is a max() on the +2 field AS A RULE: the +2 short is read sign-extended, that register is the cmp's LHS, the jcc is a jg whose TARGET is the instruction immediately after the `mov lhs,rhs` fallback (so the fallback runs only when old<=new), and the store back is a WORD of the cmp's own register to that same +2 address  | field=+2 jg=jg 0x56d5ba @0x56d5b6 target_past_fallback=mov eax,edx @0x56d5b8 store=0x56d5bc WORD PTR [ecx],ax/True lhs_def=movsx WORD PTR [eax+ebx*1+0x94f2da] rhs_def=mov DWORD PTR [ebp+0x10]
+   OK   A10 the eviction law AS A RULE: the free-slot test is on the +0 short, its 1000 comes from an `and r,0x3e8` on the SAME register the setge/dec wrote, the other arm is `mov r,0x14` + `sub r,prio` with prio read signed from +2, the already-beaten slot jumps to the loop increment, and the best-so-far guard is a STRICT jle whose target is one past BOTH update stores (so a tie keeps the first index)  | kind=+0 prio=+2 strict=jle 0x56d536 @0x56d52f updates=['0x56d531', '0x56d534'] defs=movsx WORD PTR [edx]/movsx WORD PTR [edx]
+   OK   A11 the no-candidate path RETURNS WITHOUT INSERTING as a rule: test ecx,ecx then a jl onto the epilogue head (pop edi); the taken path runs pop  pop  pop  mov  pop  ret  with ZERO stores, and the jump passes over all 4 insert stores (0x56d551,0x56d55b,0x56d561,0x56d56b). A jl to anywhere else, or an epilogue that stores, FAILS.  | target=0x56d598 epi=['pop ', 'pop ', 'pop ', 'mov ', 'pop ', 'ret '] stores_on_path=[] skipped=['0x56d551', '0x56d55b', '0x56d561', '0x56d56b']
+   OK   A12 RIVAL R8 (the site list grows past 25) FAILS on an UNFILTERED inventory: the back-edges detected in 480/630 (2/1) carry ONLY bound 0x19 and step 0x10, AND the complete immediate inventory of both functions (printed in S3, nothing pre-filtered) contains no cmp bound above 0x19 and never mentions 0x4b=75  | edges=2/1 bounds=['0x19'] steps=['0x10'] cmp_imms=['0x19'] 75-in-480=False 75-in-630=False
+   OK   A13 RIVAL R9 (the 75-entry sibling IS the site list) FAILS: FUN_0056d690 walks TWO loops with DIFFERENT counter inits [25, 75], its leas address ['0x94ee2a', '0x94f2dc'], and 75 appears nowhere in 480/630; the 75-entry band ends exactly where the site list starts (0x94ee28 + 75*0x10 == 0x94f2d8 -> adjacent arrays inside one block record, not one array)  | counters={'0x56d480': [25], '0x56d630': [25], '0x56d690': [25, 75]} leas=['0x94ee2a', '0x94f2dc'] adjacency=True
+   OK   A32 the S3 inventory is genuinely UNFILTERED (the P2b repair): FUN_0056d480's complete immediate set contains 22 values the old `,0x(19|4b)$`/`,0x10$` regexes discarded (0x1,0x2,0x4,0x6,0x14,0x18,0x3e8,0x530490,0x56d350,0x56d4b7,0x56d4d4,0x56d4ea,0x56d501,0x56d512,0x56d52c,0x56d536,0x56d598,0x56d59f,0x56d5ba,0x673850,0x691508,0xffffffff), so an unexpected bound or step would have shown up in the same table  | inventory=['0x1', '0x2', '0x4', '0x6', '0x10', '0x14', '0x18', '0x19', '0x3e8', '0x530490', '0x56d350', '0x56d4b7', '0x56d4d4', '0x56d4ea', '0x56d501', '0x56d512', '0x56d52c', '0x56d536', '0x56d598', '0x56d59f', '0x56d5ba', '0x673850', '0x691508', '0xffffffff']
    OK   A14 parity guard exists: (x^y) then test al,0x1 and a second test on ds:0x985ae8 bit 0x10
    OK   A15 RIVAL R7 (the guard can suppress the insert) FAILS: both guard je land on the body head 0x56d4b7; no ret in the guard  | [('0x56d493', '0x56d4b7'), ('0x56d49d', '0x56d4b7')]
    OK   A16 the guard's first push resolves to the string 'Bad SITE' in the binary, and the second push 0x673850 is file-backed  | str='Bad SITE' sec=.rdata
@@ -294,10 +307,12 @@ M308 static instrument: .text insns parsed 781379, functions 10284
    OK   A24 the rebuild walks 412-B records at 0x91e494 and takes the BIT INDEX from BYTE[rec]
    OK   A25 RIVAL R4 (ds:0x985aec is a counter) FAILS: 0 arithmetic among its 68 refs  | forms=['cmp', 'mov']
    OK   A26 ds:0x985aec is an ENUM: every immediate it is compared with is in {1,2,3,4}  | cmps=['0x1', '0x2', '0x3', '0x4']
-   OK   A27 ds:0x985aec has exactly 4 writers and 2 provably mirror ds:0x92bde8  | writers=4 mirrors=['0x57c5af', '0x57c7b5']
-   OK   A28 a 3rd writer is fed by the setup byte ds:0x8f0c11 (movsx within 10 insns)  | setup-linked=['0x57f006']
+   OK   A27 ds:0x985aec has exactly 4 writers and 2 are attributed to ds:0x92bde8 by a BACKWARD DEF-WALK, one in LOAD form (the producer of the stored register is `mov reg,ds:0x92bde8`) and one in CO-STORE form (the same register had just been stored to ds:0x92bde8 with no write to that register between) - an intervening write would break the walk, so proximity alone cannot satisfy this  | writers=4 mirror={'0x57c5af': "DEF-WALK: loads ds:0x92bde8 (['0x92bde8']) cro", '0x57c7b5': 'DEF-WALK: co-store, the same eax is stored to '}
+   OK   A28 a 3rd writer's value is provably the setup byte: the def-walk of the stored register closes on `movsx reg,BYTE PTR ds:0x8f0c11` (a load, not an adjacency)  | setup=['0x57f006'] chain=3
+   OK   A28b RIVAL R11 (the new def-walk is just the old proximity test renamed) FAILS: every writer closed by the walk resolves to ONE numeric global address, and for every such writer the 10-instruction window names strictly MORE candidates - under the old rule the source is the literal token 'proximity', not a global, so this goes red  | closed=['0x57c5af', '0x57f006'] srcs_vs_window={'0x57c5af': (['9616872'], ['0x92bde8', '0x92bdec', '0x92bf08', '0x985ac4', '0x985aec']), '0x57f006': (['9374737'], ['0x8f0c11', '0x8f0c1c', '0x8f0c20', '0x985aec'])}
+   OK   A28c the 4th writer stays DECLARED UNKNOWN, not silently mirror-attributed: the in-function walk cannot close its chain (the value arrives from outside the walk)  | unattributed=['0x4ddcf1']
    OK   A29 ds:0x985aec is scalar too (0 indexed accesses)  | indexed=0
 
-32/32 checks OK
-table sha e1eea559176600e0
+36/36 checks OK
+table sha 764f2ae6c8e92939
 RESULT: PASS M308 site-list identities
