@@ -836,3 +836,10 @@ puts a Match in res; sum() dies - `bool()` regex clauses.
     FACTION BANDS) — attribute the sweep by its own predecessor; the gate visit arrives a boundary AFTER the sweep.
 15. A list cursor read BEFORE the seek is the PREVIOUS cursor (pump seeks at 0x497717 — print at 0x49771c).
     `milestone.py start` on a dirty tree: stash, start, pop (skill Git workflow).
+
+## trim-s268 — traps 12-13, moved VERBATIM out of NEXT_PROMPT.md (M308, footing headroom)
+
+12-13. Both gdb-detach laws (skill Wine core): a census can leave gdb ATTACHED — check `TracerPid`,
+    kill the stale gdb BY PID before calling the box clean; the TURN DRIVER returns rc=0 WHILE AI UPKEEP PLAYS —
+    detach only after cp == human faction returns or the last recomputes go UNLOGGED.
+- (also from §INSTRUMENTS 4, s268) Self-documenting instruments: `m66_insert_slot.py`, `m57_ui_enqueue.py`, `m65_screen.py --samples 8`.

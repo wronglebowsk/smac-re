@@ -26,7 +26,8 @@ RIVALS that FAIL on the printed numbers: R1 0x985b10 is a per-faction ARRAY; R2 
 accumulator; R3 its bits are set by read-modify-write on the global; R4 0x985aec is a counter;
 R5 the site-record stride is 0x82f = 2095 BYTES (what the decompiled C literally says);
 R6 the two functions are insert/probe twins (both write); R7 the parity guard can suppress the
-insert; R8 the site list grows past 25; R9 the 75-entry sibling is the same list.
+insert; R8 the site list grows past 25; R9 the 75-entry sibling is the same list; R10 the +0
+"kind" is the constant 3 that the M303 dispatch passes.
 
     python3 scripts/m308_site_list.py        # stdout -> evidence/m308_site_list.txt
 """
@@ -302,8 +303,8 @@ def main():
     out.p("\n[S4] store census")
     st = {}
     for nm, lo, hi in (("480", *FUN_480), ("630", *FUN_630), ("690", *FUN_690)):
-        rows = ["%s %s" % (hex(a), o) for a, m, o in window(lo, hi)
-                if re.match(r"^mov\s+(DWORD|WORD|BYTE) PTR \[", o)]
+        rows = ["%s %s %s" % (hex(a), m, o) for a, m, o in window(lo, hi)
+                if m == "mov" and re.match(r"^(DWORD|WORD|BYTE) PTR \[", o)]
         st[nm] = rows
         out.p("   FUN_0056d%s: %d stores" % (nm, len(rows)))
         for r in rows:
@@ -358,13 +359,10 @@ def main():
                     break
                 a = _ORDER[i]
                 mn, o = ins[a]
-                if mn == "call":
-                    break
-                if mn == "push":
-                    push.append(o)
-                elif mn == "add" and o.startswith("esp,"):
-                    break
-                if len(push) >= 6:
+                if mn != "push":
+                    break          # only the contiguous push run is the argument list
+                push.append(o)
+                if len(push) >= 8:
                     break
             rows.append((hex(s), contain(fnrows, s), len(push), list(reversed(push))))
         calls[tgt] = rows
@@ -437,14 +435,19 @@ def main():
        s630 == RECORD_STRIDE, "got %s" % s630)
     ok("A3 RIVAL R5 (stride = 0x82f = 2095 bytes, as the C text reads) FAILS",
        s480 not in (None, 0x82F) and s630 not in (None, 0x82F), "strides=%s/%s" % (s480, s630))
-    ok("A4 the two functions touch NO memory outside the stack frame and the site window",
-       not others, "other=%s" % others[:4])
+    nsites = sum(1 for *_x, kind, _s in acc480 + acc630 if kind == "site")
+    ok("A4 the two functions touch NO memory outside the stack frame and the site window "
+       "(the detail prints how many window accesses were classified, so the classifier is "
+       "not blind)",
+       not others and nsites >= 15, "other=%s nsites=%d" % (others[:4], nsites))
     ok("A5 FUN_0056d480 site READ map == {+0w,+2w,+4d,+8d}",
        readmap("480") == {(0, "w"), (2, "w"), (4, "d"), (8, "d")}, "map=%s" % sorted(readmap("480")))
     ok("A5b FUN_0056d630 site READ map == {+0w,+4d,+8d} (the probe ignores the +2 priority)",
        readmap("630") == {(0, "w"), (4, "d"), (8, "d")}, "map=%s" % sorted(readmap("630")))
-    ok("A6 FUN_0056d630 is a PURE PROBE (0 stores in its 41 insns)",
-       len(st["630"]) == 0, "stores=%d" % len(st["630"]))
+    ok("A6 FUN_0056d630 is a PURE PROBE (0 stores) while the same regex counts 5+ stores in "
+       "the inserter (so a blind regex cannot pass this)",
+       len(st["630"]) == 0 and len(st["480"]) >= 4,
+       "stores 630=%d 480=%d" % (len(st["630"]), len(st["480"])))
     ok("A7 FUN_0056d630 returns only 0/1 (xor eax,eax | mov eax,0x1 in the epilogue)",
        rets630 and all(r in ("mov eax,0x1", "xor eax,eax") for r in rets630), "%s" % rets630)
     ok("A8 FUN_0056d480 site WRITE map == {+0w,+2w,+4d,+8d} (all four fields on insert)",
@@ -466,12 +469,12 @@ def main():
        loops["0x56d480"][0] == [0x19] and loops["0x56d630"][0] == [0x19]
        and loops["0x56d480"][1] == [0x10] and loops["0x56d630"][1] == [0x10],
        "loops=%s" % loops)
-    ok("A13 RIVAL R9 (the 75-entry sibling is the same list) FAILS: 0x56d690 counts 0x4b=75 "
-       "entries; 480/630 never mention 0x4b",
-       loops["0x56d690"][2] == [0x4b] and 0x4b not in loops["0x56d480"][2]
-       and 0x4b not in loops["0x56d630"][2],
-       "690=%s 480=%s 630=%s" % (loops["0x56d690"][2], loops["0x56d480"][2],
-                                 loops["0x56d630"][2]))
+    fam = {nm: set(loops[nm][0]) | set(loops[nm][2]) for nm in loops}
+    ok("A13 RIVAL R9 (the 75-entry sibling IS the site list) FAILS: 0x4b=75 appears only in "
+       "0x56d690, and 0x56d690 carries TWO counters {25,75} -> two distinct lists",
+       0x4b in fam["0x56d690"] and 0x4b not in fam["0x56d480"] and 0x4b not in fam["0x56d630"]
+       and fam["0x56d690"] == {0x19, 0x4b},
+       "counters=%s" % {k: sorted(v) for k, v in fam.items()})
     je_lines = [(hex(a), o) for a, m, o in guard[:16] if m == "je"]
     ok("A14 parity guard exists: (x^y) then test al,0x1 and a second test on ds:0x985ae8 bit 0x10",
        any(m == "xor" for _, m, _ in guard)
@@ -493,14 +496,27 @@ def main():
     kind3p = [r[0] for r in calls[0x56D630] if "0x3" in r[3]]
     ok("A18 callers pass the literal kind=3 (and prio=1 for the inserter)",
        len(kind3) >= 1 and len(kind3p) >= 1, "inserter=%s probe=%s" % (kind3, kind3p))
-    ok("A18b every call site pushes exactly the parameter count (5 for 480, 4 for 630)",
-       all(r[2] == 5 for r in calls[0x56D480]) and all(r[2] == 4 for r in calls[0x56D630]),
+    # a complete contiguous push run == the whole argument list (printed order is argN..arg1)
+    full480 = [r for r in calls[0x56D480] if r[2] == 5]
+    full630 = [r for r in calls[0x56D630] if r[2] == 4]
+    ok("A18b 10 of 12 inserter sites show the full contiguous 5-push run and all 3 probe sites "
+       "the 4-push run (2 sites split their pushes; printed as-is, not assumed)",
+       len(full480) == 10 and len(full630) == 3,
        "pushes=%s / %s" % ([r[2] for r in calls[0x56D480]], [r[2] for r in calls[0x56D630]]))
+    kinds480 = sorted({r[3][3] for r in full480 if r[3][3].startswith("0x")})
+    kinds630 = sorted({r[3][2] for r in full630 if r[3][2].startswith("0x")})
+    ok("A18c RIVAL R10 (the +0 'kind' is the constant 3 that the M303 dispatch passes) FAILS: "
+       "the complete inserter sites and the probe sites each carry several distinct kind "
+       "constants (printed in the detail)",
+       len(kinds480) >= 3 and len(kinds630) >= 2,
+       "kinds480=%s kinds630=%s" % (kinds480, kinds630))
     ok("A19 RIVAL R1 (ds:0x985b10 is an ARRAY) FAILS: 0 indexed accesses among %d refs"
        % len(r10), len(i10) == 0 and len(r10) > 200, "indexed=%d" % len(i10))
-    ok("A20 RIVAL R2 (it is an accumulator) FAILS: no add/sub/inc/dec on the byte itself",
-       not any(m in ("add", "sub", "inc", "dec") and "ds:0x985b10" in o for _, m, o in r10),
-       "forms=%s" % sorted(f10))
+    ok("A20 RIVAL R2 (it is an accumulator) FAILS: no add/sub/inc/dec on the byte itself, over "
+       "%d references" % len(r10),
+       len(r10) > 200
+       and not any(m in ("add", "sub", "inc", "dec") and "ds:0x985b10" in o for _, m, o in r10),
+       "refs=%d forms=%s" % (len(r10), sorted(f10)))
     ok("A21 RIVAL R3 (its bits are set by read-modify-write on the global) FAILS: 0 or/and on "
        "the byte, and exactly 12 whole-byte stores",
        not any(m in ("or", "and", "xor") and "ds:0x985b10" in o for _, m, o in r10)
@@ -520,8 +536,9 @@ def main():
        and any("0x91e494" in o for _, m, o in reb)
        and any(m == "movsx" and "BYTE PTR [eax]" in o for _, m, o in reb), "")
     ok("A25 RIVAL R4 (ds:0x985aec is a counter) FAILS: 0 arithmetic among its %d refs" % len(rec),
-       not any(m in ("add", "sub", "inc", "dec", "neg", "not", "xor", "or", "and")
-               and "ds:0x985aec" in o for _, m, o in rec), "forms=%s" % sorted(fec))
+       len(rec) >= 60
+       and not any(m in ("add", "sub", "inc", "dec", "neg", "not", "xor", "or", "and")
+                   and "ds:0x985aec" in o for _, m, o in rec), "forms=%s" % sorted(fec))
     ok("A26 ds:0x985aec is an ENUM: every immediate it is compared with is in {1,2,3,4}",
        cec and set(cec) <= {1, 2, 3, 4}, "cmps=%s" % [hex(x) for x in cec])
     nm = [k for k in sorted(mirror) if mirror[k]["92bde8"]]

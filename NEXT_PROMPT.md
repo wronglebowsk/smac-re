@@ -1,8 +1,9 @@
-# NEXT_PROMPT.md - footing (s267 close: B21 BUILD authored + landed the composed-run leg; historical
+# NEXT_PROMPT.md - footing (s268 close: M308 answered the SITE-list pair + the two global
+identities; historical
 header + CLOSED enumeration + traps 14-15 VERBATIM at
-`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M307 MERGED (#279, main 76360be) + B21 UNMERGED (open PR, main 76360be base); B1-B20 + M54A-M307 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
-Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section), NAMED.md
-(§CHAIN-BUILDS/§CHAIN-PICKS - grep only), skill instrument-laws.md.
+`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: B21 MERGED (main 808c3c0) + M308 in this PR; B1-B21 + M54A-M307 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
+Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
+(§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -25,17 +26,16 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B20 MERGED + B21
-OPEN as a PR** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
+(per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
 `evidence/b21_composedrun.txt:93`). Next build rung **B22**, UNAUTHORED - its fire writes it (B14-B21 did).
 Candidates: (i) the B21 composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
 the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
-end-to-end (B15+B16+B17 with save-only inputs); (iii) FUN_005aff90's value body (1 recorded lazy
-row only - weak parity). Track_mode FIRST, every fire.
+end-to-end (B15+B16+B17 with save-only inputs). Track_mode FIRST, every fire.
 
 ## THE LEDGER
 
-Merged M54A-M307 + B0-B20 (through s266) + hygiene #254-#279; B21 OPEN as a PR. UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M308 + B0-B21 (through s268) + hygiene #254-#280. UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -49,7 +49,6 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
    `name_global.py` (every reader/writer + containment), `m118_flag_never_set.py` (gate satisfiability: test sites, OR
    immediates, register bit ops, save-carry), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]` (objdump window;
    import as a module), `evidence.py audit|budget|prune|log`.
-4. Self-documenting: `m66_insert_slot.py`, `m57_ui_enqueue.py`, `m65_screen.py --samples 8`.
 
 ## THE PICK — index (detail: `docs/pick-archive.md`, `NAMED.md` §CHAIN-PICKS)
 
@@ -61,8 +60,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (post-M307): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: a merge does
-  NOT flip the immediate fire (s259/s260); next_rung B22 stays queued. ANSWERED: M227-M307 + B1-B21 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M308): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE: a merge does
+  NOT flip the immediate fire (s259/s260); next_rung B22 stays queued. ANSWERED: M227-M308 + B1-B21 (M241 FAIL 2/5 #180).
   CLOSED (era text VERBATIM: `docs/nextprompt-archive-m299-b20.md` §closed-era) - read the named NAMED §
   (## <ID>) BEFORE RE-OPENING: M220; DIALOG +0x4c M284-M288 (live half INVALID s240); slot [+4] GATE M299; the
   counter as executable B19; the BYTE twin + PARITY B20; the four live VALUES + CONTENTS pinned M302 (no re-dump
@@ -71,9 +70,12 @@ collision-check + worktree FIRST).
   M306 (read ## M306 BEFORE re-opening anything about this address); the 21-pair even-parity
   neighborhood tables (0x67850c/0x678990) + triad args (rec_idx,bit_idx) + _rand 2-gates-1-draw
   M307 (read ## M307); 0x5832b0 callers M300; ebx table REFUTED M301 (the 4
-  table-falsifiers = the s256 NEW LAW). the CURVE-vs-OP law B21 (a delta-derived event schedule
-  is LOSSY - hides net-zero (+1,-1) pairs; read ## B21 + the B10 row). NEVER bp mid-instruction
-  (s213). OPEN shortlist: the hub settle-nest
+  table-falsifiers = the s256 NEW LAW).  the CURVE-vs-OP law B21 (a delta-derived event schedule
+  is LOSSY - hides net-zero (+1,-1) pairs; read ## B21 + the B10 row); the SITE-list pair + both
+  global shapes M308 (0x56d480 = insert-or-max, evict score 1000 free / 20-prio, 25 x 0x10 in the
+  8380-B record at 0x94f2d8; 0x56d630 = pure probe; 0x985aec = an enum cmp-only in 1..4 mirroring
+  0x92bde8; 0x985b10 = ONE byte bit-mask, 0 array forms - read ## M308 + the M303 rows). NEVER bp
+  mid-instruction (s213). OPEN shortlist: the hub settle-nest
   MEANING (9x8x32 = [ebp-0x70]/[ebp-0x4c]/[ebp-0x54]; the [ebp-0x84] best-
   direction at 0x56c966; the arms' case VALUES vs the 31-cmp ladder); arm-case
   of sites 0x56444b/0x5645d9/0x5651e3/0x568567 (INFERRED, not pinned); hub
@@ -81,18 +83,18 @@ collision-check + worktree FIRST).
   [ebp-0x30]/[ebp-0x54] un-named; sibling 0x5831a0 fed (x,y) after the predicate; 188-row cursor caller; whose record BYTE[edi+0x7]
   is + the walk's tile-class/distance legs' MEANING; FUN_0051dcb0's REBUILD-BODY
   MEANING (WHO  is settled M305: 11 single-site callers, 1 loop-enclosed, 0x51f71e =
-  round%4==1);  (the 0x4f35e0 owner: M306 + M307, CLOSED above) still OPEN from that body:
-  branch-A/B seed semantics + the 52-B row-walk record identity; the
-  sibling fields of the 8380-B block record (byte field 0x950664, word 0x94e8a8
-  ++'d pre-predicate, dword 0x94f4ec + word 0x950a64 preamble - all INDEXED by
-  M303,  semantics OPEN); **NEXT PICK (s266 close): FUN_0056d480/0056d630 + ds:0x985b10/0x985aec
-  identities (M307 logged 3 read-sites of ds:0x985b10 as a per-faction bit-mask gate @0x4f368d/
-  0x4f3855/0x4f3a20 - start there)**; the 0x94eca8 byte-table DUMP (2048 B;
-  m302_livepins.py template); save-carried vs rebuild for BOTH tables
-  (M302 OPEN + the byte family same question); the eax=1 leg: ONE model-decided
-  row (M302 branchB), still NO live gdb witness (B19 G9): `NAMED.md`
-  §CHAIN-PICKS. READER LAWS
-still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
+  round%4==1);  branch-A/B seed semantics + the 52-B row-walk record identity (still open
+  from the 0x4f35e0 body, M306+M307); the sibling fields of the 8380-B block record (byte
+  0x950664, word 0x94e8a8, dword 0x94f4ec + word 0x950a64 - INDEXED by M303, semantics OPEN);
+  the 0x94eca8 byte-table DUMP (2048 B, m302_livepins.py template) + save-carry vs rebuild for
+  BOTH tables AND the SITE list (M302/M303/M308, same question); the eax=1 leg: ONE model-decided
+  row (M302 branchB), still NO live gdb witness (B19 G9).
+  **NEXT PICK (s268 close): FUN_0056d350 (299 B, 50 callers, 1 string) = the sink every SITE-list
+  insert AND the FUN_0056d690 rebuild broadcast into (args (block,kind,prio,x,y,-1) - name it and
+  say what the -1 6th arg selects); THEN the 75-entry sibling at 0x94ee28 (same 8380-B record,
+  stride 0x10, its +2 short sign-flipped / its +0 set -1 by FUN_0056d690) - identity + the -1
+  sentinel's writer (M308 U2: nothing among the 17 refs to the site window writes +0 = -1).**
+  READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
 
@@ -116,9 +118,8 @@ still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
    COPIED register evades store-shape greps - a hw watchpoint on the FIELD answers "who writes it"). (FULL: §s242-traps)
 4-11. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s256: gdb printf/script + call-frame rules; a >90 s
    census is never foreground; a PASS on a non-discriminating shape is no PASS; hw-watchpoint read-back rules.)
-12-13. Both gdb-detach laws (skill Wine core): a census can leave gdb ATTACHED — check `TracerPid`,
-    kill the stale gdb BY PID before calling the box clean; the TURN DRIVER returns rc=0 WHILE AI UPKEEP PLAYS —
-    detach only after cp == human faction returns or the last recomputes go UNLOGGED.
+12-13. Both gdb-detach laws (a census can leave gdb ATTACHED; the turn driver returns rc=0 while AI
+    upkeep plays). FULL VERBATIM: `docs/pick-archive.md` §trim-s268.
 14-15. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s262: queue-tail STALE ids + id-0 sentinel +
    negatives-belong-to-TYPE; PRODFLAG 0x4efe60 fires for EVERY record walked (FACTION BANDS) - attribute the
    sweep by its own predecessor; list cursor read BEFORE the seek = PREVIOUS cursor; dirty-tree

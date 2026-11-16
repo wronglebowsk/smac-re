@@ -1,0 +1,303 @@
+M308 static instrument: .text insns parsed 781379, functions 10284
+
+[S1] block-offset chain (symbolic; B = the function's first argument)
+   0x56d480 5690496	push   ebp
+   0x56d480 5690497	mov    ebp,esp
+   0x56d480 5690499	push   ecx
+   0x56d480 5690500	push   ebx
+   0x56d480 5690501	push   esi
+   0x56d480 5690502	mov    esi,DWORD PTR [ebp+0x14]
+   0x56d480 5690505	push   edi
+   0x56d480 5690506	mov    edi,DWORD PTR [ebp+0x18]
+   0x56d480 5690509	mov    eax,esi
+   0x56d480 5690511	xor    eax,edi
+   0x56d480 5690513	test   al,0x1
+   0x56d480 5690515	je     0x56d4b7
+   0x56d480 5690517	mov    eax,ds:0x985ae8
+   0x56d480 5690522	test   ah,0x10
+   0x56d480 5690525	je     0x56d4b7
+   0x56d480 5690527	mov    ecx,DWORD PTR [ebp+0xc]
+   0x56d480 5690530	push   ecx
+   0x56d480 5690531	push   edi
+   0x56d480 5690532	push   esi
+   0x56d480 5690533	push   0x673850
+   0x56d480 5690538	push   0x691508
+   0x56d480 5690543	call   0x530490
+   0x56d480 5690548	add    esp,0x14
+   0x56d480 5690551	mov    ecx,DWORD PTR [ebp+0x8]
+   0x56d480 5690554	xor    eax,eax
+   0x56d480 5690556	mov    edx,ecx
+   0x56d480 5690558	shl    edx,0x6
+   0x56d480 5690561	add    edx,ecx
+   0x56d480 5690563	lea    ebx,[ecx+edx*2]
+   0x56d480 5690566	shl    ebx,0x4
+   0x56d480 5690569	sub    ebx,ecx
+   0x56d480 5690571	shl    ebx,0x2
+   0x56d480 5690574	lea    ecx,[ebx+0x94f2e0]
+   -> 
+   0x56d630 5690928	push   ebp
+   0x56d630 5690929	mov    ebp,esp
+   0x56d630 5690931	mov    eax,DWORD PTR [ebp+0x8]
+   0x56d630 5690934	push   ebx
+   0x56d630 5690935	mov    ecx,eax
+   0x56d630 5690937	push   esi
+   0x56d630 5690938	shl    ecx,0x6
+   0x56d630 5690941	add    ecx,eax
+   0x56d630 5690943	mov    esi,DWORD PTR [ebp+0x10]
+   0x56d630 5690946	push   edi
+   0x56d630 5690947	mov    edi,DWORD PTR [ebp+0xc]
+   0x56d630 5690950	lea    edx,[eax+ecx*2]
+   0x56d630 5690953	shl    edx,0x4
+   0x56d630 5690956	sub    edx,eax
+   0x56d630 5690958	xor    ecx,ecx
+   0x56d630 5690960	lea    eax,[edx*4+0x94f2d8]
+   0x56d630 5690967	mov    edx,DWORD PTR [ebp+0x14]
+   0x56d630 5690970	cmp    DWORD PTR [eax+0x4],esi
+   0x56d630 5690973	jne    0x56d66b
+   0x56d630 5690975	cmp    DWORD PTR [eax+0x8],edx
+   0x56d630 5690978	jne    0x56d66b
+   0x56d630 5690980	movsx  ebx,WORD PTR [eax]
+   0x56d630 5690983	cmp    ebx,edi
+   0x56d630 5690985	je     0x56d67b
+   0x56d630 5690987	inc    ecx
+   0x56d630 5690988	add    eax,0x10
+   0x56d630 5690991	cmp    ecx,0x19
+   0x56d630 5690994	jl     0x56d65a
+   0x56d630 5690996	pop    edi
+   0x56d630 5690997	pop    esi
+   0x56d630 5690998	xor    eax,eax
+   0x56d630 5691000	pop    ebx
+   0x56d630 5691001	pop    ebp
+   0x56d630 5691002	ret    
+   0x56d630 5691003	pop    edi
+   0x56d630 5691004	pop    esi
+   0x56d630 5691005	mov    eax,0x1
+   -> 
+   stride(FUN_0056d480)=8380   stride(FUN_0056d630)=8380
+   (Ghidra C prints `param_1 * 0x82f` in ELEMENT units: 0x82f * 4 = 8380)
+
+[S2] memory accesses of the two functions, normalized to record base 0x94f2d8
+   480 field +0x0  w R x3 e.g. movsx@0x56d4dd
+   480 field +0x0  w W x1 e.g. mov@0x56d561
+   480 field +0x2  w R x3 e.g. movsx@0x56d50a
+   480 field +0x2  w W x2 e.g. mov@0x56d56b
+   480 field +0x4  d R x2 e.g. cmp@0x56d4d4
+   480 field +0x4  d W x1 e.g. mov@0x56d551
+   480 field +0x8  d R x2 e.g. cmp@0x56d4d9
+   480 field +0x8  d W x1 e.g. mov@0x56d55b
+   480 'other' (not stack, not site window): 0 []
+   480 unresolved (base not tracked): 0 []
+   630 field +0x0  w R x1 e.g. movsx@0x56d664
+   630 field +0x4  d R x1 e.g. cmp@0x56d65a
+   630 field +0x8  d R x1 e.g. cmp@0x56d65f
+   630 'other' (not stack, not site window): 0 []
+   630 unresolved (base not tracked): 0 []
+   site READ map   480=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]  630=[(0, 'w'), (4, 'd'), (8, 'd')]
+   site WRITE map  480=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]  630=[]
+
+[S3] loop bounds/steps in the family (immediates actually compared against a counter)
+   0x56d480   cmp-bounds=[25] steps=[16] counter-inits=[]
+   0x56d630   cmp-bounds=[25] steps=[16] counter-inits=[]
+   0x56d690   cmp-bounds=[] steps=[16] counter-inits=[25, 75]
+
+[S4] store census
+   FUN_0056d480: 7 stores
+      0x56d4f8 mov DWORD PTR [ebp-0x4],edi
+      0x56d531 mov DWORD PTR [ebp-0x4],eax
+      0x56d551 mov DWORD PTR [eax+0x94f2dc],ecx
+      0x56d55b mov DWORD PTR [eax+0x94f2e0],edx
+      0x56d561 mov WORD PTR [eax+0x94f2d8],cx
+      0x56d56b mov WORD PTR [eax+0x94f2da],cx
+      0x56d5bc mov WORD PTR [ecx],ax
+   FUN_0056d630: 0 stores
+   FUN_0056d690: 2 stores
+      0x56d6be mov WORD PTR [ecx-0x2],0xffff
+      0x56d6c8 mov WORD PTR [ecx],ax
+   FUN_0056d630 epilogue ops that set eax: ['xor eax,eax', 'mov eax,0x1']
+
+[S5] found-path block 0x56d59f-0x56d5c3
+   0x56d59f	shl    eax,0x4
+   0x56d5a2	mov    edx,DWORD PTR [ebp+0x10]
+   0x56d5a5	lea    ecx,[eax+ebx*1+0x94f2da]
+   0x56d5ac	movsx  eax,WORD PTR [eax+ebx*1+0x94f2da]
+   0x56d5b4	cmp    eax,edx
+   0x56d5b6	jg     0x56d5ba
+   0x56d5b8	mov    eax,edx
+   0x56d5ba	pop    edi
+   0x56d5bb	pop    esi
+   0x56d5bc	mov    WORD PTR [ecx],ax
+   0x56d5bf	pop    ebx
+   0x56d5c0	mov    esp,ebp
+   0x56d5c2	pop    ebp
+   0x56d5c3	ret    
+
+[S6] eviction block 0x56d4fb-0x56d541
+   0x56d4fb	lea    edx,[ebx+0x94f2da]
+   0x56d501	mov    si,WORD PTR [edx-0x2]
+   0x56d505	test   si,si
+   0x56d508	jl     0x56d512
+   0x56d50a	movsx  eax,WORD PTR [edx]
+   0x56d50d	cmp    eax,DWORD PTR [ebp+0x10]
+   0x56d510	jge    0x56d536
+   0x56d512	xor    eax,eax
+   0x56d514	test   si,si
+   0x56d517	setge  al
+   0x56d51a	dec    eax
+   0x56d51b	and    eax,0x3e8
+   0x56d520	jne    0x56d52c
+   0x56d522	movsx  esi,WORD PTR [edx]
+   0x56d525	mov    eax,0x14
+   0x56d52a	sub    eax,esi
+   0x56d52c	cmp    eax,DWORD PTR [ebp-0x4]
+   0x56d52f	jle    0x56d536
+   0x56d531	mov    DWORD PTR [ebp-0x4],eax
+   0x56d534	mov    ecx,edi
+   0x56d536	inc    edi
+   0x56d537	add    edx,0x10
+   0x56d53a	cmp    edi,0x19
+   0x56d53d	jl     0x56d501
+   0x56d53f	test   ecx,ecx
+   0x56d541	jl     0x56d598
+
+[S7] parity/debug guard head
+   0x56d480	push   ebp
+   0x56d481	mov    ebp,esp
+   0x56d483	push   ecx
+   0x56d484	push   ebx
+   0x56d485	push   esi
+   0x56d486	mov    esi,DWORD PTR [ebp+0x14]
+   0x56d489	push   edi
+   0x56d48a	mov    edi,DWORD PTR [ebp+0x18]
+   0x56d48d	mov    eax,esi
+   0x56d48f	xor    eax,edi
+   0x56d491	test   al,0x1
+   0x56d493	je     0x56d4b7
+   0x56d495	mov    eax,ds:0x985ae8
+   0x56d49a	test   ah,0x10
+   0x691508 [.data off 0x291508] = 'Bad SITE'
+   0x673850 [.rdata off 0x273850] = '' raw16=b'\x00\x00\x00\x00DESIGNAUTO\x00\x00'
+
+[S8] caller census (immediates walked back over the push sequence)
+   0x56d480 -> FUN_0051dcb0 site 0x51e076 pushes=5 ['edx', 'edi', '0x1', '0x3', 'ebx']
+   0x56d480 -> FUN_0051dcb0 site 0x51e0ff pushes=5 ['ebx', 'edi', '0x1', '0x3', 'esi']
+   0x56d480 -> FUN_0055f650 site 0x563f10 pushes=5 ['edx', 'eax', 'ecx', '0x8', 'ebx']
+   0x56d480 -> FUN_0055f650 site 0x5644a0 pushes=4 ['edx', 'eax', '0x3', 'esi']
+   0x56d480 -> FUN_0055f650 site 0x564626 pushes=2 ['0x3', 'eax']
+   0x56d480 -> FUN_0055f650 site 0x564975 pushes=5 ['ecx', 'edx', '0x2', '0x8', 'esi']
+   0x56d480 -> FUN_0055f650 site 0x564a22 pushes=5 ['eax', 'ecx', '0x2', '0x3', 'esi']
+   0x56d480 -> FUN_0055f650 site 0x564a89 pushes=5 ['ecx', 'edx', '0x3', '0x8', 'esi']
+   0x56d480 -> FUN_0056d900 site 0x56d93f pushes=5 ['edi', 'edx', '0x2', '0x0', 'esi']
+   0x56d480 -> FUN_0056d960 site 0x56dc01 pushes=5 ['edi', 'ebx', '0x2', '0x0', 'esi']
+   0x56d480 -> FUN_0056d960 site 0x56dcc0 pushes=5 ['edi', 'ebx', '0x2', '0x0', 'esi']
+   0x56d480 -> FUN_0056d960 site 0x56de2c pushes=5 ['edi', 'ebx', '0x2', '0x0', 'esi']
+   0x56d630 -> FUN_0051dcb0 site 0x51e0c0 pushes=4 ['ebx', 'edi', '0x3', 'esi']
+   0x56d630 -> FUN_0055f650 site 0x56458d pushes=4 ['esi', 'edi', '0x3', 'edx']
+   0x56d630 -> FUN_0055f650 site 0x5647f0 pushes=4 ['esi', 'edi', '0x8', 'ecx']
+
+[S9] ds:0x985b10 census
+   refs=544 forms=[('mov', 445), ('test', 96), ('push', 2), ('add', 1)]
+   array-form (indexed) accesses=0 []   direct ds: refs=541   byte writers=12
+      W 0x4df82e	mov    BYTE PTR ds:0x985b10,cl
+      W 0x4df9a3	mov    BYTE PTR ds:0x985b10,dl
+      W 0x4df9ab	mov    BYTE PTR ds:0x985b10,bl
+      W 0x4e08ca	mov    BYTE PTR ds:0x985b10,dl
+      W 0x512bf6	mov    BYTE PTR ds:0x985b10,0x10
+      W 0x512c0e	mov    BYTE PTR ds:0x985b10,bl
+      W 0x525eed	mov    BYTE PTR ds:0x985b10,cl
+      W 0x57d219	mov    ds:0x985b10,al
+      W 0x57f051	mov    BYTE PTR ds:0x985b10,bl
+      W 0x57f071	mov    BYTE PTR ds:0x985b10,bl
+      W 0x57f2da	mov    BYTE PTR ds:0x985b10,dl
+      W 0x57f2f8	mov    BYTE PTR ds:0x985b10,dl
+   the rebuild writer, 0x57f040-0x57f075:
+   0x57f044	test   eax,eax
+   0x57f046	je     0x57f21f
+   0x57f04c	xor    bl,bl
+   0x57f04e	cmp    edx,0x1
+   0x57f051	mov    BYTE PTR ds:0x985b10,bl
+   0x57f057	jl     0x57f077
+   0x57f059	mov    eax,0x91e494
+   0x57f05e	mov    esi,edx
+   0x57f060	movsx  ecx,BYTE PTR [eax]
+   0x57f063	mov    dl,0x1
+   0x57f065	add    eax,0x19c
+   0x57f06a	shl    dl,cl
+   0x57f06c	or     bl,dl
+   0x57f06e	dec    esi
+   0x57f06f	jne    0x57f060
+   0x57f071	mov    BYTE PTR ds:0x985b10,bl
+
+[S10] ds:0x985aec census
+   refs=68 forms=[('mov', 44), ('cmp', 24)]
+   array-form=0 direct ds: refs=68 writers=4 cmp-immediates=['0x1', '0x2', '0x3', '0x4']
+   W 0x4ddcf1	mov    ds:0x985aec,eax
+       ctx 0x4ddce6	mov    DWORD PTR fs:0x0,ecx
+       ctx 0x4ddced	mov    esp,ebp
+       ctx 0x4ddcef	pop    ebp
+       ctx 0x4ddcf0	ret    
+       ctx 0x4ddcf1	mov    ds:0x985aec,eax
+       ctx 0x4ddcf6	mov    ecx,0x94d438
+   W 0x57c5af	mov    ds:0x985aec,eax
+       ctx 0x57c59c	je     0x57c5bf
+       ctx 0x57c59e	mov    eax,ds:0x92bde8
+       ctx 0x57c5a3	mov    ecx,DWORD PTR ds:0x92bf08
+       ctx 0x57c5a9	mov    esi,DWORD PTR ds:0x92bdec
+       ctx 0x57c5af	mov    ds:0x985aec,eax
+       ctx 0x57c5b4	mov    DWORD PTR ds:0x985ac4,ecx
+   W 0x57c7b5	mov    ds:0x985aec,eax
+       ctx 0x57c7a2	call   0x406720
+       ctx 0x57c7a7	mov    BYTE PTR [ebp-0x4],0x7
+       ctx 0x57c7ab	jmp    0x57c8df
+       ctx 0x57c7b0	mov    ds:0x92bde8,eax
+       ctx 0x57c7b5	mov    ds:0x985aec,eax
+       ctx 0x57c7ba	cmp    ebx,0x2
+   W 0x57f006	mov    ds:0x985aec,eax
+       ctx 0x57efed	jle    0x57ef33
+       ctx 0x57eff3	movsx  eax,BYTE PTR ds:0x8f0c11
+       ctx 0x57effa	mov    edi,DWORD PTR ds:0x8f0c20
+       ctx 0x57f000	mov    ecx,DWORD PTR ds:0x8f0c1c
+       ctx 0x57f006	mov    ds:0x985aec,eax
+       ctx 0x57f00b	mov    eax,edi
+   writer producers (a 0x92bde8 / 0x8f0c11 reference within 10 insns before):
+      0x4ddcf1 {'92bde8': False, '8f0c11': False}
+      0x57c5af {'92bde8': True, '8f0c11': False}
+      0x57c7b5 {'92bde8': True, '8f0c11': False}
+      0x57f006 {'92bde8': False, '8f0c11': True}
+
+[CHECKS]
+   OK   A1 FUN_0056d480 block stride == 8380 (from the encoding)  | got 8380
+   OK   A2 FUN_0056d630 block stride == 8380 (from the encoding)  | got 8380
+   OK   A3 RIVAL R5 (stride = 0x82f = 2095 bytes, as the C text reads) FAILS  | strides=8380/8380
+   OK   A4 the two functions touch NO memory outside the stack frame and the site window (the detail prints how many window accesses were classified, so the classifier is not blind)  | other=[] nsites=18
+   OK   A5 FUN_0056d480 site READ map == {+0w,+2w,+4d,+8d}  | map=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]
+   OK   A5b FUN_0056d630 site READ map == {+0w,+4d,+8d} (the probe ignores the +2 priority)  | map=[(0, 'w'), (4, 'd'), (8, 'd')]
+   OK   A6 FUN_0056d630 is a PURE PROBE (0 stores) while the same regex counts 5+ stores in the inserter (so a blind regex cannot pass this)  | stores 630=0 480=7
+   OK   A7 FUN_0056d630 returns only 0/1 (xor eax,eax | mov eax,0x1 in the epilogue)  | ['xor eax,eax', 'mov eax,0x1']
+   OK   A8 FUN_0056d480 site WRITE map == {+0w,+2w,+4d,+8d} (all four fields on insert)  | map=[(0, 'w'), (2, 'w'), (4, 'd'), (8, 'd')]
+   OK   A9 found path is a max() on +2 (movsx + cmp + jg + fallback mov eax,edx + WORD store)  | ops=['cmp', 'jg', 'lea', 'mov', 'movsx', 'pop', 'ret', 'shl']
+   OK   A10 eviction law: empty-slot score 1000 (and 0x3e8) and 20-priority (mov eax,0x14 / sub) with a STRICT jle (ties keep the first index)  | 3e8=True 0x14=True
+   OK   A11 no-candidate path returns WITHOUT inserting (test ecx,ecx / jl to the epilogue)
+   OK   A12 RIVAL R8 (the list grows past 25) FAILS: 480/630 have ONLY bound 0x19 and step 0x10  | loops={'0x56d480': ([25], [16], []), '0x56d630': ([25], [16], []), '0x56d690': ([], [16], [25, 75])}
+   OK   A13 RIVAL R9 (the 75-entry sibling IS the site list) FAILS: 0x4b=75 appears only in 0x56d690, and 0x56d690 carries TWO counters {25,75} -> two distinct lists  | counters={'0x56d480': [25], '0x56d630': [25], '0x56d690': [25, 75]}
+   OK   A14 parity guard exists: (x^y) then test al,0x1 and a second test on ds:0x985ae8 bit 0x10
+   OK   A15 RIVAL R7 (the guard can suppress the insert) FAILS: both guard je land on the body head 0x56d4b7; no ret in the guard  | [('0x56d493', '0x56d4b7'), ('0x56d49d', '0x56d4b7')]
+   OK   A16 the guard's first push resolves to the string 'Bad SITE' in the binary, and the second push 0x673850 is file-backed  | str='Bad SITE' sec=.rdata
+   OK   A17 12 + 3 call sites, every one attributed to a function  | counts=12/3
+   OK   A18 callers pass the literal kind=3 (and prio=1 for the inserter)  | inserter=['0x51e076', '0x51e0ff'] probe=['0x51e0c0', '0x56458d']
+   OK   A18b 10 of 12 inserter sites show the full contiguous 5-push run and all 3 probe sites the 4-push run (2 sites split their pushes; printed as-is, not assumed)  | pushes=[5, 5, 5, 4, 2, 5, 5, 5, 5, 5, 5, 5] / [4, 4, 4]
+   OK   A18c RIVAL R10 (the +0 'kind' is the constant 3 that the M303 dispatch passes) FAILS: the complete inserter sites and the probe sites each carry several distinct kind constants (printed in the detail)  | kinds480=['0x0', '0x3', '0x8'] kinds630=['0x3', '0x8']
+   OK   A19 RIVAL R1 (ds:0x985b10 is an ARRAY) FAILS: 0 indexed accesses among 544 refs  | indexed=0
+   OK   A20 RIVAL R2 (it is an accumulator) FAILS: no add/sub/inc/dec on the byte itself, over 544 references  | refs=544 forms=['add', 'mov', 'push', 'test']
+   OK   A21 RIVAL R3 (its bits are set by read-modify-write on the global) FAILS: 0 or/and on the byte, and exactly 12 whole-byte stores  | writers=12
+   OK   A22 ds:0x985b10 is used as a BIT MASK: >= 90 'test BYTE ds:0x985b10, <reg8>' sites  | tests=95
+   OK   A23 the rebuild law at 0x57f051-0x57f071: store the accumulator twice, and the loop body is movsx idx / mov dl,1 / shl dl,cl / or bl,dl  | ops=['add', 'cmp', 'dec', 'je', 'jl', 'jne', 'mov', 'movsx', 'or', 'shl', 'test', 'xor']
+   OK   A24 the rebuild walks 412-B records at 0x91e494 and takes the BIT INDEX from BYTE[rec]
+   OK   A25 RIVAL R4 (ds:0x985aec is a counter) FAILS: 0 arithmetic among its 68 refs  | forms=['cmp', 'mov']
+   OK   A26 ds:0x985aec is an ENUM: every immediate it is compared with is in {1,2,3,4}  | cmps=['0x1', '0x2', '0x3', '0x4']
+   OK   A27 ds:0x985aec has exactly 4 writers and 2 provably mirror ds:0x92bde8  | writers=4 mirrors=['0x57c5af', '0x57c7b5']
+   OK   A28 a 3rd writer is fed by the setup byte ds:0x8f0c11 (movsx within 10 insns)  | setup-linked=['0x57f006']
+   OK   A29 ds:0x985aec is scalar too (0 indexed accesses)  | indexed=0
+
+32/32 checks OK
+table sha e1eea559176600e0
+RESULT: PASS M308 site-list identities
