@@ -1618,6 +1618,32 @@ def run_b20(sav_path, results):
     return 0
 
 
+def run_b22(sav_path, log_path, trace_path, results):
+    """Rung B22: both save record arrays grow in ONE writer call, and the B12 CREATE
+    leg is fed by the RELOADED base record (the save's INBOUND half).  All claims are
+    the module's - sim/composedgrowth.py authors them and this hook only relays them,
+    so --b22 and `python3 -m sim.composedgrowth` can never print different text.
+    No box, no /proc, no gdb."""
+    import os as _os
+    from . import composedgrowth as socg
+    for p in (sav_path, log_path, trace_path):
+        if not _os.path.exists(p):
+            return fail("B22: missing input: %s" % p)
+    socg.acceptance(sav_path, log_path, trace_path, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B22: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B22: %d/%d gates - the save's TWO record arrays grow in ONE writer "
+          "call and the CREATE leg demonstrably reads its tile and faction out of the "
+          "RELOADED image's base record, so a base written by the B8 writer can feed a "
+          "later leg's ARGUMENTS (no box time, no /proc, no gdb)"
+          % (len(results), len(results)))
+    return 0
+
+
 def run_b21(sav_path, log_path, trace_path, results):
     """Rung B21: the recorded m289 run executed as ONE state object (B3 presses +
     the B13/B10 founder-destroyer ledger driven by the op-level log), written back
@@ -1695,6 +1721,10 @@ def main(argv=None):
                     help="rung B20: the byte-twin visit counter executed "
                          "(M303 byte law + M302 pinned state) vs the recorded "
                          "m302/b18 numbers and the m294 rows")
+    ap.add_argument("--b22", nargs="*", metavar="SAV",
+                    help="rung B22: both record arrays grown in ONE write, the CREATE "
+                         "leg fed by the reloaded base record "
+                         "(defaults: <SAV> <m289 log> <m289 trace>)")
     ap.add_argument("--b21", nargs="*", metavar="SAV",
                     help="rung B21: the m289 run as ONE composed state object "
                          "(turn presses + founder/destroyer ledger), written, "
@@ -1754,6 +1784,13 @@ def main(argv=None):
     if args.b20 is not None:
         sav = args.b20[0] if args.b20 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b20(sav, results)
+    if args.b22 is not None:
+        sav = args.b22[0] if args.b22 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        lg = args.b22[1] if len(args.b22) > 1 else os.path.join(
+            REPO, "evidence", "m289_gdb_raw.log")
+        tr = args.b22[2] if len(args.b22) > 2 else os.path.join(
+            REPO, "evidence", "trace_m289_20261110_071759.jsonl")
+        return run_b22(sav, lg, tr, results)
     if args.b21 is not None:
         sav = args.b21[0] if args.b21 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         lg = args.b21[1] if len(args.b21) > 1 else os.path.join(
