@@ -4,6 +4,9 @@
 
 Header: `addr,name,size_bytes,n_insns,n_callers,n_callees,n_strings,ok,chars,shard`. Containment =
 `addr <= site < addr + size_bytes`. Print the resolved row so a wrong lookup cannot impersonate a finding.
+Addresses in the file are `0x` + 8 zero-padded lowercase hex: `grep ',00470b90$'` (unpadded) and a bare numeric
+lookup both return nothing and read as "the function is not in the index". Grep the NAME column (`FUN_00470b90`)
+for an exact row, or the padded address `0x00470b90`.
 
 - A site inside a function with ONE call site, where the docs/strings name a mode you are not in (e.g.
   the multiplayer stage driver FUN_00521070), is unreachable BY DESIGN — no re-run will ever log it.
@@ -849,3 +852,34 @@ error or a transposed pair in the other 24 entries.
   (block 0x94d430+8380*fac); pod owner = BYTE[0x933278+52u+14]; unit move-to-base
   order +17 (0x18) / dest u16 +20,+28; human mask BYTE[0x985b10]; vis
   BYTE[0x985ae8]; tileview = dword[0x92ae14] + 44*(dword[0x692184]*Y + X>>1).
+
+## Static text-cache parse traps (the negative-claim killers)
+
+A static milestone's whole evidence base is the disassembly cache, so these traps produce findings that are
+purely the instrument's:
+
+- **Never hand-parse the cache to settle a fact about it.** Lines are `addr:\tBYTES\tMNEMONIC OPS` and the BYTES
+  column is VARIABLE width (it is the encoding, 1-10 bytes), so on a short-encoding line (`movsx`/`movzx`)
+  `line.split(None, 1)` of the text after the colon yields an EMPTY mnemonic with a leading space in what you think
+  are the operands. A scan written that way reports the instruction as ABSENT and the accusation lands on the
+  shared parser (`parse_text`), which is correct. Query the engine's own instruction map, or print
+  `ascii(operands)` for the disputed address, BEFORE writing any "the engine drops X" claim — and re-check with
+  the coverage guard (parsed count == `index.csv` `n_insns` for that span); it catches a dropped instruction in
+  either direction and costs one line in every instrument that counts instructions.
+- **Match an immediate by VALUE, never by text suffix.** A 16-byte entry stride is emitted `shl reg,0x4` (and
+  `imul reg,0x20bc` for a 0x20bc-byte stride), so filtering text with `endswith("0x10")` for a 16-B step matches
+  unrelated `push 0x10`s and misses every real fold site, which "proves" the stride idiom is absent. Compute the
+  value you expect, then list every mnemonic/immediate pair that realizes it (`shl n`, `imul imm`, lea chains)
+  and gate on the printed table.
+- **A gate that survives its own mutation because a sibling conjunct already forced the same verdict is a harness
+  bug, not a finding.** Replace that mutation with one that flips a MEASURED fact (broaden the regex that
+  CLASSIFIES the sites, so the set-equality assertion is what breaks) rather than an operator already implied by
+  the rest of the check. And assert every mutation anchor exists in the CURRENT instrument source
+  (`src.count(anchor) >= 1`) before launching the sweep: an anchor invalidated by an earlier edit reports as a
+  non-load-bearing gate and burns a full run; anchor the mutation inside the assertion's own comparison text,
+  never at a module constant that several checks share (the shared constant reddens whichever assertion runs
+  first, and the gate you meant to test never moves).
+- **A mutation sweep is minutes long; dry-run it.** Import the harness with `importlib`, run the anchor-count
+  precheck, then apply ONE mutant and require it to redden its target — before launching N mutants. Verify the
+  anchors after the last edit to the instrument, from a FRESH import: a live kernel that imported the module
+  earlier validates the old mutation list.

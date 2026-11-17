@@ -153,7 +153,9 @@ def main():
     gate_reads = [a for a, m_, o_ in win(FUN_LO, 0x470BB3) if "0x1dd70" in o_]
     and2000 = [a for a, m_, o_ in win(FUN_LO, FUN_HI) if m_ == "and" and o_.endswith("0x2000")]
     A("A4", len(and2000) == 1 and and2000[0] == 0x470BA5 and
-      ops(0x470B9F) == "ecx,DWORD PTR [eax+0x1dd70]" and ops(0x470BAD) == "0x470f83",
+      ins[0x470BA5][1] == "ecx,%#x" % GATE_BIT and
+      ins[0x470B9F][1] == "ecx,DWORD PTR [eax+%#x]" % VIEW_FLAGS and
+      ops(0x470BAD) == "0x470f83",
       "the ONLY +0x1dd70 test in the window is bit 0x2000 at 0x470ba5; je -> 0x470f83 the "
       "epilogue: without the bit the routine does NOTHING (R2) [field = the view bit-flags, "
       "M228-M245 archive row]")
@@ -207,6 +209,12 @@ def main():
         out.p("  fold index loads from %s: %d at %s" % (slot, len(seq), seq))
     A("A8", len(fold_uses["[ebp-0xc]"]) == 13 and len(fold_uses["[ebp-0x10]"]) == 5 and
       len(set(fold_uses["[ebp-0xc]"]) & set(fold_uses["[ebp-0x10]"])) == 0 and
+      fold_uses["[ebp-0xc]"].count("0x470d36") == 0 and
+      set(fold_uses["[ebp-0xc]"]) <= set(
+          ["0x470c0d", "0x470c29", "0x470c46", "0x470c63", "0x470c80", "0x470ca0",
+           "0x470d1f", "0x470d56", "0x470d6f", "0x470def", "0x470ec0", "0x470edb",
+           "0x470ef7"]) and
+      all(x.startswith("0x470") for x in fold_uses["[ebp-0xc]"]) and
       set(fold_uses["[ebp-0x10]"]) == {"0x470cbf", "0x470cd2", "0x470ce5", "0x470d02",
                                        "0x470d36"} and
       offs == [0, 2, 4, 8] and
@@ -287,7 +295,8 @@ def main():
                           for d in defs)) for _, _, defs in site_rows]
     A("A12", len(site_rows) == 5 and all(len(g) == 2 for _, g, _ in site_rows) and
       all("??" not in " ".join(d) for _, _, d in site_rows) and
-      s5[2] == ["ecx<-mov ecx,DWORD PTR [ebp-0x18]", "eax<-mov eax,DWORD PTR [ebp-0x1c]"] and
+      sorted(re.findall(r"\[ebp-0x[0-9a-f]+\]", " ".join(s5[2]))) ==
+      sorted(["[ebp-0x18]", "[ebp-0x1c]"]) and len(s5[2]) == 2 and
       pairs[1] == pairs[2] == pairs[3] == ("[ebp-0x10]", "[ebp-0x14]") and
       pairs[0] == ("[ebp+0x8]", "[ebp+0xc]"),
       "every site forwards EXACTLY 2 register pushes (the ecx=this load sits outside the "

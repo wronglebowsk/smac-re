@@ -2,7 +2,12 @@
 
 Copy the fenced block into `cronjob_manage(action='update'|'create', prompt=...)` and set `skills=[]` (the prompt is self-contained — a
 preloaded 55 KB skill costs ~16 k tokens of re-prefill on every fire, so the prompt names the ONE reference to load instead),
-`workdir='/home/n100/reverse/smac'`, `continuity: true`, `deliver: 'origin'`. For an EXISTING job, `update` the
+`workdir='/home/paul/reverse/smac'` (the repo AND the Wine box moved off n100 onto the gateway host — any prompt or
+workdir still naming `/home/n100/...` is stale), `enabled_toolsets=['terminal','file']` (canonical names: the toolset
+is `file`, NOT `files` — a wrong name silently narrows what the fire can touch), `continuity: true`, `deliver: 'origin'`.
+Leave the job UNPINNED so it fires on `model.default` from `~/.hermes/config.yaml` (currently the local
+`qwen3.8-flash-next-iq3_xxs`, provider `qwen125b`); confirm that with `grep -A3 '^model:'
+~/.hermes/config.yaml` rather than assuming, and pin only when the user asks. For an EXISTING job, `update` the
 prompt/schedule/skills first and `resume` last — do not create a near-duplicate.
 
 **Never bake a milestone id into the prompt.** A cron prompt is re-read long after it was written; the pick lives in
@@ -82,6 +87,14 @@ than correctness. State the trade-off when asked for "faster" instead of silentl
 produces roughly one fire per hour. Judge throughput from the `executions` timestamps, never from the schedule
 string, and compare landings-per-fire (not fired-per-hour) when deciding whether the loop is healthy.
 
+**Recurring tick vs a self-scheduling chain.** A chain (each fire creates the next job, N min after it ends) buys
+exact spacing and cannot overlap — but it dies permanently the first time a fire fails before reaching its
+"schedule the successor" step, and every fire mints a new `job_id` so `executions.db` fragments into dozens of ids.
+A recurring job on one id self-heals (the next tick retries) at the cost of an occasional overlapping tick, which
+the fire's own ownership check converts into a skipped fire rather than corrupted state. For an unattended loop on a
+local model that occasionally 400s, prefer the recurring tick; if the user wants the chain, add a cheap watchdog that
+re-arms when no fire has landed in a few hours, or the loop stops silently.
+
 ## Verifying a fire
 
 `Result: ok` in the completion block means the job process exited 0, not that a milestone passed. Re-run the
@@ -89,6 +102,12 @@ instrument it shipped (one invocation must print `SUMMARY ... =PASS`), read its 
 and run `evidence.py budget` to see whether the doc surgery landed. A fire that qualified an earlier finding must
 have patched that finding's registry block — if the qualification lives only in `SESSION_NOTES.md`, land the small
 docs PR yourself.
+
+**Before saying a fire ignored its review findings, read the PR's commit list** — `gh pr view <n> --json commits
+--jq '.commits[] | "\(.oid[0:7]) \(.messageHeadline)"'`. A fire that triages Greptile findings does it in a LATER
+COMMIT on the same branch, with no PR comment and no reply thread; the inline findings still sit there unanswered and
+the code is already fixed. Judging from the comments alone reports "merged over N unaddressed findings" when the
+inverse is true. Read the comments for the CLAIM, the commits for the REPAIR.
 
 ## Auditing the loop (fires you did not run)
 
@@ -114,6 +133,16 @@ Read in this order, cheapest first:
 7. Box idleness: `/proc/<terran pid>/status` (`TracerPid: 0`) plus that pid's elapsed time. Several consecutive
    static-only fires is a loop that has drifted off live proof — say so and name the lead that needs box time; an
    absence claim with no positive control is still a lead, not a finding.
+
+**Two traps that manufacture false alarm in an audit:**
+
+- **The three sources are in DIFFERENT timezones.** `~/.hermes/logs/agent.log` stamps are UTC; `git log
+  --date=format:` and the `executions` ledger print the host's local zone (UTC-5 here). Mixing them invents a
+  multi-hour "silence" at the end of the ledger and attributes the wrong model to the wrong fire. Convert to one
+  zone before drawing any conclusion about a gap or a rate — and check `date` first, not after.
+- **A stalled-looking loop is usually the schedule working as designed.** Interval jobs space themselves from the
+  END of a fire, so "every 90m" with a 35-minute fire yields a tick roughly every 2 h. Prove the loop live by
+  `next_run_at` being in the FUTURE and the newest ledger row being `completed`; only then look for a fault.
 
 Report shape (one screen, no narration): what landed since the last report with ids + commit, the rate
 (milestones/batch, landings/hour, and how many fires were spent per landing), the last failure with its MECHANISM

@@ -56,6 +56,12 @@ s242-retired discipline/evidence text). `grep -n '^## \|^### ' SKILL.md` and the
 cross-cutting pitfalls belong here.
 **Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move. The same grep extends to the LIVE half: before re-instrumenting a site address, `grep -rn <hex-addr> scripts/ evidence/` — a prior census script often already encodes the derivation (and its evidence file already states the reading the new gate would otherwise guess wrong).
 The same rule kills NEGATIVE claims: before writing "no code uses constant X", grep the docs' size/offset lists for X AND its near neighbours — a documented 152-B leg is 156 minus a 4-byte field, so an exact-value grep for 156 supports a conclusion that is one subtraction wrong. Then confirm the candidate leg by reading its DESTINATION in `/proc` and comparing content, not by its size (`references/instrument-laws.md` §Proving a read leg).
+**For a static fire, import the shared engine instead of writing a second one**: `scripts/m308_site_list.py` exports
+`parse_text` (the whole `.text` cache → instruction map, already validated against `index.csv` `n_insns`),
+`load_spans`, `load_index`, `pe_sections`, `va2off`, `window`. Hand-rolling either a cache line-split or a PE
+offset map produces phantom findings (a "missing instruction" the engine has; one-character tokens read as asset
+names), and matching an immediate by TEXT suffix misses the encoding's actual form —
+`references/instrument-laws.md` §Static text-cache parse traps.
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
 RE. Five spines (boot, solo turn, unit orders/combat, research/tech, save/load) drive Phases 1–2.
@@ -135,7 +141,11 @@ re-summarise.
 - Budget by TOOL CALLS: brief+accept <= 6, milestone 6-30, **checkpoint commit by ~15**, stop measuring at
   30-40, close at 40-50. A fire costs ~5-7 k tokens/call, so "commit at 25" lands at ~167 k with nothing
   committed — branch + commit the SKELETON before probing (measured: 108 k vs 167 k). Cap ACCEPTANCE
-  INVOCATIONS at three; the third failure IS the finding.
+  INVOCATIONS at three; the third failure IS the finding. **A static instrument iterates the same way**: debug a
+  RED gate by `exec`-ing its source up to the driver and recomputing THAT ONE condition (recipe:
+  `references/code-atlas.md`), never by re-running the whole script — a run of six full re-runs plus three
+  anchor-fix rounds on the mutation sweep is exactly how a fire hits the iteration ceiling with `NAMED.md`,
+  `SESSION_NOTES.md` and the cursor still uncommitted, which costs the next fire its footing.
 - Close order, every time: cursor -> gate GREEN -> notes entry (`patch`) -> **checkpoint commit** ->
   `NEXT_PROMPT.md` -> submit/PR. Never leave the commit until after the handoff docs.
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (the budget warn; the gate FAILs at 16,000, and closing past the
@@ -229,7 +239,16 @@ pseudocode offset can be HALF or 4x the real byte offset. Unit-record type field
 (`+4` = flags) — the full story + the two generalizing rules are in the reference.
 Fast handles: full `.text` disassembly `evidence/m53j_text.txt.gz` (GZIP — `zgrep -n '  4e78e9:'` then
 `gunzip -c … | sed -n 'A,Bp'`), or the unpacked aligned cache `scratch/m574/text.txt` (grep by address; parse
-by TAB fields). **Never `objdump -d --start-address` at an arbitrary address**: a start landing INSIDE an
+by TAB fields). **A hand-rolled field-split on that cache invents MISSING instructions (s272, cost ~8 iterations):**
+the bytes column is space-padded and its width varies by encoding, so a `movsx` line's remainder
+starts with a SPACE — `line.split(None,1)` parses the mnemonic as `''` and the operand as `movsx`,
+and the instruction then "isn't there" for every filter. Read operands through the repo engine
+(`scripts/m308_site_list.py:parse_text`, which M309/M310 both pass) and never accuse a shared parser
+from a probe: print `ascii(operands)` (or compare `n_insns` from `ghidra_out/index.csv` against your
+parsed count in the window — that assertion is the cheap guard, ship it as a gate) before concluding
+an instruction is absent. Same paragraph kills the "shl 0x10 vs shl 0x4" class: the 16-B entry step is
+`shl r,0x4`, so an `endswith("0x10")` filter silently returns zero sites.
+**Never `objdump -d --start-address` at an arbitrary address**: a start landing INSIDE an
 instruction silently misaligns the whole window — objdump re-synchronizes mid-encoding, invents `.byte` lines,
 and poisons any reachability/def-use walk built on it (the witness is a `.byte` line where a `jmp` should be).
 Disassemble from the function ENTRY (containment via index.csv) or read the cache. Parse objdump by TAB fields;
@@ -411,6 +430,15 @@ driving/dialog state machines: `references/wine-operations.md`)
   with the call as a WALL (refuse to expand it) and count the `ret`s still reachable: if any, early exits skip the
   call and a rival claiming "the only gate is the enclosing loop's `jl`" must FAIL. Closing a guard question on
   `preds == 0` alone is the vacuous-gate class and has now cost two review rounds (M305 A14, M306 RIVAL4).
+- **Prove each gate is LOAD-BEARING by mutating the claim.** Ship `scripts/<id>_mutate.py`: re-introduce the defect
+  the assertion exists to catch (a wrong immediate, a dropped term, a swapped operand, a filter deleted) and require
+  that ONE specific check go red — then print N/N mutations reddened. A check that stays green under its own
+  mutation is decorative, and prose that survives review can still be decoration: three sub-conditions written
+  specifically to answer a reviewer were themselves unloadbearing, and only the mutation harness found it. This is
+  the cheap cure for the project's dominant defect (an assertion that can pass on an unmeasured state). Write the
+  harness BEFORE the closing docs — the closing order's first steps (rewrite `SESSION_CURSOR.md`, append the notes
+  line) outrank further evidence when the budget runs low, because the next fire reads the cursor, not this branch.
+  Anchor/dry-run mechanics for the sweep: `references/instrument-laws.md` §Static text-cache parse traps.
 - **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
   first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
   agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
