@@ -1,0 +1,58 @@
+M311 ds:0x68cbb0 census - the CURRENT-RECORD INDEX and its derived record POINTER
+static only: objdump text cache + index.csv (no box time, no /proc, no gdb)
+
+TABLE 1  stores to ds:0x68cbb0 (site, containing function from index.csv, source reg)
+  0x004EFE8E  FUN_004ef6d0   esi     mov       DWORD PTR ds:0x68cbb0,esi
+  0x004F21E0  FUN_004ef6d0   edi     mov       DWORD PTR ds:0x68cbb0,edi
+  0x004F5A7C  FUN_004f5a70   ebx     mov       DWORD PTR ds:0x68cbb0,ebx
+  0x004F5C36  FUN_004f5a70   ebx     mov       DWORD PTR ds:0x68cbb0,ebx
+  0x004E3476  FUN_004e3470   eax     mov       ds:0x68cbb0,eax
+  0x004E4DD0  FUN_004e47d0   esi     mov       DWORD PTR ds:0x68cbb0,esi
+  total stores: 6 ; distinct functions: 4
+
+TABLE 2  stores to ds:0x8f0d60, paired to their nearest PRECEDING ds:0x68cbb0 store
+  ptr 0x004E348A  FUN_004e3470   src edx    idx store 0x4e3476  +20 B
+  ptr 0x004E4DD6  FUN_004e47d0   src ecx    idx store 0x4e4dd0  +6 B
+  ptr 0x004EFEA2  FUN_004ef6d0   src ecx    idx store 0x4efe8e  +20 B
+  ptr 0x004F21F9  FUN_004ef6d0   src ecx    idx store 0x4f21e0  +25 B
+  ptr 0x004F5A93  FUN_004f5a70   src ecx    idx store 0x4f5a7c  +23 B
+  ptr 0x004F5C3C  FUN_004f5a70   src eax    idx store 0x4f5c36  +6 B
+  index stores 6 / pointer stores 6 -> unpaired index stores: none
+
+TABLE 3  the index->pointer fold, per site (must be n*19*16 + 0x95da10 = n*304)
+  0x004E3476 FUN_004e3470   folds=1  base-add=['0x95da10']
+  0x004EFE8E FUN_004ef6d0   folds=1  base-add=['0x95da10']
+  0x004F5A7C FUN_004f5a70   folds=1  base-add=none
+  pure arithmetic: (n + (n+n*8)*2) << 4  ->  n=0:0 n=1:304 n=2:608  stride=304 (record length 304)
+  REC_BASE 9820688 + 304*0 = 9820688 ; the deferred pick named the table at 0x95da40 = 9820736 (+48)
+
+TABLE 4  every reference to ds:0x68cbb0 in the .text cache, by kind
+  writes 6 / tests (cmp|test) 16 / reads 318 / total 340
+  the 6 writes:
+    0x004E3476 mov       ds:0x68cbb0,eax
+    0x004E4DD0 mov       DWORD PTR ds:0x68cbb0,esi
+    0x004EFE8E mov       DWORD PTR ds:0x68cbb0,esi
+    0x004F21E0 mov       DWORD PTR ds:0x68cbb0,edi
+    0x004F5A7C mov       DWORD PTR ds:0x68cbb0,ebx
+    0x004F5C36 mov       DWORD PTR ds:0x68cbb0,ebx
+  the tests (first 8 of 16):
+    0x0040CED9 cmp       edx,DWORD PTR ds:0x68cbb0
+    0x0040E0CB cmp       ebx,DWORD PTR ds:0x68cbb0
+    0x0040E274 cmp       ecx,DWORD PTR ds:0x68cbb0
+    0x00419419 cmp       ecx,DWORD PTR ds:0x68cbb0
+    0x0041D2F6 cmp       ecx,DWORD PTR ds:0x68cbb0
+    0x004EB336 cmp       eax,DWORD PTR ds:0x68cbb0
+    0x004EB39A cmp       edx,DWORD PTR ds:0x68cbb0
+    0x004EB411 cmp       eax,DWORD PTR ds:0x68cbb0
+  ds:0x8f0d60: 929 references, 6 stores
+
+  ok   A1 EXACTLY 6 stores to ds:0x68cbb0, all of them `mov DWORD PTR ds:..,reg`, living in 4 distinct functions (FUN_004e3470, FUN_004e47d0, FUN_004ef6d0, FUN_004f5a70) - the census's own count of 340 referencing instructions is the denominator
+  ok   A2 THE PAIRING IS 1:1: ds:0x8f0d60 has EXACTLY 6 stores, every one 6-25 B after exactly one of the 6 index stores and every index store has one (unpaired: none), across the same 4 functions (FUN_004e3470, FUN_004e47d0, FUN_004ef6d0, FUN_004f5a70) - the engine NEVER moves the index without refreshing the pointer in the same instruction window, which is what makes the pair one field with two representations rather than two independent globals
+  ok   A3 the stride law, in the encoding's own words: 3 of the 6 store sites carry a complete ((n + (n+n*8)*2) << 4) fold, each one EXACTLY at the pinned triplet [0x4e3476 <- 0x4e347b + 0x4e347e + 0x4e3481; 0x4efe8e <- 0x4efe88 + 0x4efe94 + 0x4efe97; 0x4f5a7c <- 0x4f5a82 + 0x4f5a87 + 0x4f5a8a], and all 3 reference the array base 0x95da10 within their window [0x4e3476: 0x004E3484 add; 0x4efe8e: 0x004EFE9A add; 0x4f5a7c: 0x004F5A8D lea]; the arithmetic gives n=1:304, n=2:608 - stride 304 = the 304-B record length, so the index counts 304-B entities
+  ok   A4 THE TWO DEFERRED PICKS ARE ONE OBJECT: the pointer is 0x95da10 + 304n, and the table pick (b) named - 0x95da40 - is that base + 48, i.e. field +48 of the SAME record. Pinned by the instruction that says so: 0x004F5AAB in FUN_004f5a70 `mov edx,DWORD PTR [eax+0x95da40]` reads element+48 off the very register the fold produced; 0x95da10 appears in 310 instructions and 0x95da40 in 96 across .text
+  ok   A5 the full-cache split is 6 writes / 16 tests / 318 reads = 340 references (matches the census's 340) - the field IS tested (0x0040CED9 cmp edx,DWORD PTR ds:0x68cbb0), so a 'read-only cursor' or 'never compared' claim would be FALSE and is not made
+  ok   A6 the setter FUN_004e3470 is 34 B / 11 instructions with 57 recorded callers: it stores the argument to the index, folds it, and stores the result to the pointer - so 57 call sites move the selection through ONE 11-insn leg
+  ok   A7 NOT AN INVARIANT, MEASURED: the adjacent dword ds:0x68cbb4 is stored 22 times - far more than the index's 6 - and only 3 of those stores fall in an index-store window. So it is a SEPARATE field in the same selection block, not a shadow of the index: the pairing claim is made for the pointer (A2) and explicitly REFUSED for this dword, whose extra 19 writers are not explained here
+
+census digest dd0ddccb5a1bcad4
+PASS M311: 7/7 gates - ds:0x68cbb0 is the CURRENT-RECORD INDEX of the 304-B entity array at 0x95da10 (the object the deferred pick called 'the 0x95da40 table' is the same array at +48), ds:0x8f0d60 is its derived record POINTER, the two are written together at every selection change, and 57 callers move the selection through the 11-insn setter FUN_004e3470 (no box time, no /proc, no gdb)

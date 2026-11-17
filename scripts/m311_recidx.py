@@ -239,23 +239,31 @@ def main():
                  len({f for _, f, _, _, _ in pairs}),
                  ", ".join(sorted({f for _, f, _, _, _ in pairs}))), a2))
 
+    FOLD_TRIPLETS = {0x4e3476: (0x4e347b, 0x4e347e, 0x4e3481),
+                     0x4efe8e: (0x4efe88, 0x4efe94, 0x4efe97),
+                     0x4f5a7c: (0x4f5a82, 0x4f5a87, 0x4f5a8a)}
+    pinned = [h for st in folds for h in folds[st]]
+    triplets_ok = all(folds[st] and FOLD_TRIPLETS[st] in folds[st] for st in FOLD_TRIPLETS)
     base_refs = {st: [(a, mn, op) for a, mn, op in win(ins, order, st - 24, st + 34)
                       if "0x%x" % REC_BASE in op] for st in folds}
     complete = [st for st in folds if folds[st]]
-    a3 = (stride == REC_LEN and len(complete) == 3
+    a3 = (triplets_ok and len(pinned) == 3
+          and stride == REC_LEN and len(complete) == 3
           and all(base_refs[st] for st in folds)
           and all(owner(rows, a) in {f for _, f, _ in IDX_STORES}
                   for st in folds for a, _, _ in base_refs[st])
           and all(ins[pa][1].endswith(",ecx") or ins[pa][1].endswith(",eax") or
                   ins[pa][1].endswith(",edx") for pa, _, _, _, _ in pairs))
+    tri_s = "; ".join("0x%x <- %s" % (st, " + ".join("0x%x" % x for x in FOLD_TRIPLETS[st]))
+                      for st in sorted(FOLD_TRIPLETS))
+    base_s = "; ".join("0x%x: %s" % (st, ", ".join("0x%08X %s" % (a_, mn_) for a_, mn_, _ in base_refs[st]))
+                       for st in sorted(folds))
     W.append(("A3 the stride law, in the encoding's own words: %d of the 6 store sites carry a "
-              "complete ((n + (n+n*8)*2) << 4) fold and all %d reference the array base 0x%x "
-              "within their window (%s); the arithmetic gives n=1:%d, n=2:%d - stride %d = the "
-              "%d-B record length, so the index counts 304-B entities"
-              % (len(complete), len(folds), REC_BASE,
-                 ", ".join("0x%x:%s" % (st, ",".join("%08X %s" % (a, mn)
-                                                      for a, mn, _ in base_refs[st]))
-                           for st in sorted(folds)),
+              "complete ((n + (n+n*8)*2) << 4) fold, each one EXACTLY at the pinned triplet "
+              "[%s], and all %d reference the array base 0x%x within their window [%s]; the "
+              "arithmetic gives n=1:%d, n=2:%d - stride %d = the %d-B record length, so the "
+              "index counts 304-B entities"
+              % (len(complete), tri_s, len(folds), REC_BASE, base_s,
                  fold_val(1), fold_val(2), stride, REC_LEN), a3))
 
     n48 = 0x95da40 - REC_BASE
