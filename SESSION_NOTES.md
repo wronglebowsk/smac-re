@@ -471,3 +471,9 @@ Older sessions: `docs/sessions/sessions-255-255.md` (1 sessions). Read it only w
     shipped corrected code with stale docs. Anchors that span wrapped prose must be matched by line
     number or single unique line, and a commit that follows a failed patch step is a FAILED step, not a
     clean one.
+- LANDED: #286 merged as `3f645e1`; cursor handoff #287 merged as `138182c`. `track_mode.py` then reads
+  `MODE=ANALYSE analyse_since_build=0 last_build=B22 next_rung=B23` - the flip lands on the fire right after
+  a build merge, so the handoff must be written AFTER merging (my first cursor draft told the next fire to
+  author B23, which is wrong: B23 is queued behind an ANALYSE fire). Law added to the loop template.
+  Final B22 numbers to quote: **12/12 gates**, written image sha256 `f7d90eb77ca7abac`, five-band layout
+  3484 + 52 + 5472 + 1520 + 10800 B, header diff 3 B (`0x44`, `0x48`, `0x54`).

@@ -180,7 +180,11 @@ already built its client); repo edits are not.
 A loop that only ever analyses is a loop that never ships: after 226 milestones `sim/` was still empty, so every
 acceptance described `terran.exe` rather than a game that runs. The fix is a cadence, not a second job —
 `scripts/track_mode.py` derives `MODE=BUILD|ANALYSE` (and `next_rung=B<n>`) from merged history: 3 analyse
-milestones between build fires, keyed on the `B<n>` / `M<n>` commit prefixes. On MODE=BUILD the fire takes the
+milestones between build fires, keyed on the `B<n>` / `M<n>` commit prefixes. **The flip lands on the
+fire immediately AFTER a build merge** (s273: merging B22 turned the very next reading into
+`MODE=ANALYSE analyse_since_build=0 last_build=B22 next_rung=B23`), so a cursor written *during* a build
+fire that tells the next fire to "author B23 next" is wrong the moment the PR merges - re-run
+`track_mode.py` AFTER the merge and before writing the handoff. On MODE=BUILD the fire takes the
 next rung of `BUILD_SPINE.md` instead of a census pick; the other fires analyse exactly as before.
 
 Derive the mode from git, never from a counter file — a counter drifts, gets half-written, or is dropped by a
