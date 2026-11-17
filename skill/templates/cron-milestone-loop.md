@@ -59,6 +59,11 @@ CLOSE (exact order, then stop)
 7. `python3 scripts/milestone.py submit --title "..."`, poll `gh pr checks <n>` (~200 s), then `python3
    scripts/milestone.py merge <n>` — merge ONLY on a real acceptance PASS; on a FAIL leave the PR unmerged and say
    why.
+8. AFTER the merge, re-run `python3 scripts/track_mode.py`. If a build just landed it flips to
+   `MODE=ANALYSE`, so the cursor's "author B<n+1> next" line from step 1 is now WRONG: rewrite just that line
+   (`SESSION_CURSOR.md`, still <=600 B: the ANALYSE pick + `next_rung=B<n+1> QUEUED`), then land it as a
+   docs-only follow-up PR (`main` rejects direct pushes) — `git checkout -b docs/<id>-cursor-handoff`, commit
+   ONLY the cursor, `gh pr create -B main`, wait for gate + Greptile, `python3 scripts/milestone.py merge <n>`.
 
 REPORT one screen: what changed, the acceptance numbers with the command that produced them, what is open
 (including anything unverified), the next pick. No narration. If you did nothing, say so in two lines.

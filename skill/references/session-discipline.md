@@ -141,7 +141,14 @@ finished milestone on a dirty branch. Order the ending, every time:
 4. `NEXT_PROMPT.md` rewrite, then `wc -c NEXT_PROMPT.md`
 5. submit/PR, then stop
 
-Never leave the commit until after the handoff docs. The prompt rewrite is the single largest generation
+Never leave the commit until after the handoff docs.
+- **A docs-patch step and its commit never ride in one chained command.** A multi-line `old_string` on a hard-wrapped
+  doc (or one that a `milestone.py submit` prune re-wrapped underneath you) raises or no-ops, and the chained
+  `git add -A && git commit` still runs — shipping corrected code beside stale prose, invisible in `git log` and only
+  noticed when the next fire greps the registry. Sequence: run the patch script alone, assert the NEW phrase is present
+  in the file, `git status --porcelain`, THEN stage and commit. Same for any script editing several docs: one aborting
+  `assert` between them makes the commit half-true.
+- The prompt rewrite is the single largest generation of a turn
 of a turn and its tool-call arguments re-enter the prompt, so an overflow there strands everything on a
 dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the whole milestone uncommitted.
 
