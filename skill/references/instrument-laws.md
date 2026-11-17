@@ -930,3 +930,20 @@ purely the instrument's:
 - **Count what you diff, not what should differ.** B22 predicted a 4-byte header diff ("one per modeled
   field"); the measured diff is 3 (`0x44`, `0x48`, `0x54`) because cur/tf already hold the recorded values.
   Assert the exact offset LIST, not a cardinal derived from a model of the fields.
+
+## Decorative-condition audit (s274, M311)
+- **`sorted(xs) == sorted(set(xs))` is a tautology, not a check.** M311's store-census gate carried one as its
+  third sub-condition; it can never fail. The falsifiable form is *claim vs. independent derivation*: compare the
+  function names transcribed into the script against `containment(owner(rows, addr))` computed from `index.csv`.
+- **Any number that appears in gate prose must be READ from the artifact, not typed in the `%` tuple.** A6 printed
+  "57 recorded callers" from a literal while the gate never touched `n_callers`; MU11 (assert 58) was inert until
+  the gate began reading `n_callers` from `index.csv` and printing that value. Same trap as the hard-coded
+  `N_IDX_REFS = 340` — a constant copied from another tool's output is decoration unless the gate recomputes the
+  quantity and requires equality.
+- **A transcription list is a CLAIM, and a gate that ignores it cannot catch a mis-transcription.** M311 carries
+  `IDX_STORES`/`PTR_STORES` transcribed from `name_global.py`; the first draft derived the pairing from the cache
+  alone, so MU2 (delete a store from the list) left A2 green. Require `sorted(transcribed) == sorted(cache-derived)`
+  and the mis-count this fire actually made (5 pointer stores instead of 6, because the census print scrolled past
+  one) reddens the gate instead of shipping in the prose.
+- **Census output is scrolled past, not skimmed.** Pipe the census to a file and count with `grep -c` before
+  transcribing any list from it; an eyeballed list of 5 was wrong by one and the error survived three rounds.
