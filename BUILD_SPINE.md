@@ -594,46 +594,47 @@ fields -> a later leg's args); B21 proved only the OUTBOUND half (the model's fi
 survive into the image), and B12 proved CREATE's bytes in memory but never read its
 input out of a container.
 `python3 -m sim.selftest --b22 programs/saves/m54b_clean.SAV` must print PASS B22
-11/11 (authored once, in `sim/composedgrowth.py`, which `--b22` only relays - so the
-two entry points cannot print different text) with: **G1** B21's own pipeline
-re-derives green (curve 30/30, op fidelity 9/9, 5 grown 304-B records, reload equal),
-because this rung builds ON B21, not beside it; **G2** the B21 image alone re-parses
-(`n_bases` 23 == the model's, `n_units` 67 unchanged, year 2180) AND the shape
-locator's own verdict is measured rather than assumed: it CONFIRMS ONLY the 18 named
-bases, so the 5 founded records are locatable by COUNT, never by SHAPE (they carry
-M282's empty name span and `sim/save._base_ok` wants `[ -~]{3,30}\x00` at +19);
-**G3** the unit record is composed from fields read OUT OF THE IMAGE (base[22] at
-(27,29) fac 1, queue head 2 VERBATIM per B11/M68) and is byte-equal to B12's own
-`soprod.create_record` for those same fields - same producer, no re-implementation;
-**G4** the ONE write grows BOTH arrays (+1572 B = 5x304 + 52, against B21's
-bases-only +1520 B) and fidelity is measured BAND BY BAND at the MEASURED layout
-`[unit originals][the ONE new unit][base originals][the grown bases][tail]` =
-3484 + 52 + 5472 + 1520 + 10800 B, each band byte-equal to its source. (The first
-version of this rung asserted "everything from `units_off` to EOF is the original
-lifted by one amount" - FALSE: the writer emits originals then grown records and
-re-anchors the tail after them, so only the tail lifts by the full 1572 B and the
-base originals lift by 52); **G5** the two location methods DISAGREE on the B21 image
-by exactly the unit growth (header counts 226319 vs the shape scan's 226267) and
-re-converge on the doubly-grown image - reported, not smoothed; **G6** byte->field
-round-trip on the base array: all 18 original records byte-identical, all 5 grown
-records byte-equal to the founder's own `basefound.record_bytes`, each grown record's
-parsed (x, y, own4) equal to the model's founding tuple; **G7** the header diff is
-EXACTLY 3 bytes (`0x44` units dword -> 68, `0x48` bases dword -> 23, `0x54` year word
--> 2180), all inside modeled spans - MEASURED: asserting 4 "one per modeled field" is
-decoration, since cur/tf already hold their recorded values in this save; **G8** the
-doubly-grown image re-parses (n_units 67->68, n_bases 23): the 67 original unit
-records byte-identical, the new record AT THE ARRAY END, `units_off` unmoved /
-`bases_off` +52 B / tail +1572 B, and its parsed x/y/type/owner equal the base tile
-read from the FIRST reload - the image -> field -> record -> image chain is closed;
-**G9** THE FALSIFIER: corrupt that base record's tile IN THE IMAGE (1447,1448) and
-recompose from the reloaded record - the created unit FOLLOWS THE IMAGE, so the leg
-demonstrably reads container bytes and not the model; **G10** rivals fail the same
-fit: growing ONLY the unit array re-derives n_bases 18 and loses the 5 grown records
-(242591 B, not 244111); the idle order-2 record is NOT the produced record; a
-perturbed unit stride mis-places the tail (244245 B != 244111); **G11** a second
-independent `compute()` reproduces the written image sha256 byte-for-byte and the same
-ten substantive verdicts (the comparison deliberately excludes G11's own verdict,
-which is False inside the guarded second invocation by construction).
+12/12 (authored once, in `sim/composedgrowth.py`, which `--b22` only relays - so the two
+entry points cannot print different text) with: **G1** B21's own pipeline re-derives green
+(curve 30/30, op fidelity 9/9, 5 grown 304-B records, reload equal), because this rung
+builds ON B21, not beside it; **G2** the B21 image alone re-parses (`n_bases` 23 == the
+model's, `n_units` 67 unchanged, year 2180) AND the shape locator's own verdict is measured
+rather than assumed: it CONFIRMS ONLY the 18 named bases of the 23, because M282's founders
+write an EMPTY name span and `sim/save._base_ok` wants `[ -~]{3,30}\x00` at +19; **G3** the
+unit record comes from ONE shared producer `record_from_image(image, idx, head)` reading the
+image's base[22] (at (27,29) fac 1, queue head 2 VERBATIM per B11/M68) and is byte-equal to
+B12's own `soprod.create_record` for those fields - same producer, no re-implementation;
+**G4** the ONE write grows BOTH arrays (+1572 B = 5x304 + 52, against B21's bases-only
++1520 B) and fidelity is measured BAND BY BAND at the MEASURED layout `[unit originals
+3484][the ONE new unit 52][base originals 5472][the grown bases 1520][tail 10800]` B, each
+band byte-equal to its own source (the first draft asserted "units_off..EOF == original
+lifted by one amount" - FALSE: only the tail lifts by 1572, the base originals lift by 52);
+**G5** count and shape AGREE on all three containers (`bases_pred == bases_off`, `closes`
+True on orig/B21/B22; the base array moves +52 B, the unit anchor does not) - this gate
+carries an explicit RETRACTION of the "the two methods DISAGREE by the unit growth" claim,
+which was the run's arithmetic (a 68-unit count read against a 67-unit image), not the
+file's geometry (Greptile P1 on #286); **G6** byte->field round-trip on the base array: all
+18 original records byte-identical, all 5 grown records byte-equal to the founder's own
+`basefound.record_bytes`, each grown record's parsed (x, y, own4) == the model's tuple;
+**G7** the header diff is EXACTLY 3 bytes (`0x44` -> 68, `0x48` -> 23, `0x54` -> 2180), all
+inside modeled spans - MEASURED: asserting 4 "one per modeled field" is decoration, since
+cur/tf already hold their recorded values in this save; **G8** the doubly-grown image
+re-parses (n_units 67->68, n_bases 23): the 67 original unit records byte-identical, the new
+record AT THE ARRAY END, `units_off` unmoved / `bases_off` +52 B / tail +1572 B, parsed
+x/y/type/owner == the base tile read from the first reload; **G9** THE FALSIFIER, through
+that SAME shared producer and corrupting BOTH claimed input sources - tile AND faction IN
+THE IMAGE (1447,1448, fac 5A) - asserting the created unit CARRIES the corrupted bytes
+(x/y span, owner byte), not merely that it differs; **G10** rivals fail the same fit (grow
+only the unit array so the grown bases are lost; the idle order-2 record is not the produced
+record; a perturbed unit stride mis-places the tail); **G11** a second independent
+`compute()` reproduces the written image sha256 byte-for-byte and the same eleven substantive
+verdicts (deliberately excluding G11's own verdict, which is False inside the guarded second
+invocation by construction); **G12** THE MUTATION EXPERIMENT, run in-process every time:
+rebinding `record_from_image` to read the MODEL instead of the image makes G9's record
+collapse back onto G3's (the model's own 27,29 fac 1) while the real leg on the SAME
+corrupted image carries the bad bytes - so the falsifier is load-bearing, not a tautology;
+G3 is DECLARED blind to that mutation because in this fixture the model tuple EQUALS the
+container tuple.
 DECLARED UNMODELED: WHICH base actually ran the completion (the m289 run tracks only
 year/cur/tf/ledger, the recorded B12 build happened in a different save - so the
 base is CHOSEN as the last surviving founding and the choice is a fixture, not a

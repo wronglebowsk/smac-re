@@ -59,6 +59,15 @@ def _rec_bytes(sv, kind, i):
     return sv.data[off + stride * i: off + stride * (i + 1)]
 
 
+def record_from_image(im, idx, head):
+    """THE image->record leg (B12's producer). Both G3 and G9 call this on the record
+    they want, so a mutation that swaps the SOURCE from container fields to the model's
+    reddens both - the falsifier cannot be satisfied by a second, independent call site.
+    Every field it reads is read OUT OF THE PARSED IMAGE (`im`), never from a model."""
+    b = im.base(idx)
+    return soprod.create_record(b["x"], b["y"], head, b["own4"])
+
+
 def compute(sav_path, log_path, trace_path, second_run=True):
     """Run the rung and return every measured number (print-free)."""
     r = socrun.pipeline(sav_path, log_path, trace_path, do_print=False)
@@ -82,7 +91,7 @@ def compute(sav_path, log_path, trace_path, second_run=True):
     b1 = sv1.base(idx)                            # READ FROM THE CONTAINER
     fac, tx, ty = b1["own4"], b1["x"], b1["y"]
     head = 2                                      # a queue head id, VERBATIM per B11/M68
-    rec = soprod.create_record(tx, ty, head, fac)
+    rec = record_from_image(sv1, idx, head)       # THE image->record leg (shared with G9)
     g2 = (sv1.n_bases == len(led.records) == 23 and sv1.n_units == sv.n_units
           and sv1.year == r["year_written"] and sv1.found_units == sv1.n_units
           and sv1.found_bases == sv.n_bases
@@ -137,19 +146,25 @@ def compute(sav_path, log_path, trace_path, second_run=True):
                  ", ".join("%s %s" % (nm, "ok" if ok else "MISMATCH")
                            for nm, ok, ln in bands)), g4))
 
-    # G5 - the save is located TWO ways and they DISAGREE by exactly one unit record on
-    # the B21 image (measured, reported, not smoothed): its header counts put the base
-    # array at units_off + 52*68, the shape scan anchors it at the originals' own spot.
-    count_pos = sv.units_off + U * (sv.n_units + 1)
-    g5 = (count_pos - sv1.bases_off == GROW_UNITS and sv1.bases_off == sv.bases_off
-          and parse_bytes(img2).bases_off == count_pos)
-    W.append(("G5 the two location methods DISAGREE on the B21 image by exactly the "
-              "unit growth: its header counts put the base array at %d, the shape scan "
-              "anchors it at %d (the originals' own spot %d); on the doubly-grown image "
-              "the scan lands on the count position %d - so for a container that grew "
-              "only one array, count and shape must not be trusted together"
-              % (count_pos, sv1.bases_off, sv.bases_off, parse_bytes(img2).bases_off),
-             g5))
+    # G5 - RETRACTION, kept in the code where it was made. This gate's first version
+    # claimed the header counts and the shape scan "DISAGREE on the B21 image by exactly
+    # the unit growth". That was MY ARITHMETIC ERROR, not a measured fact: I derived the
+    # count position as units_off + 52*(n_units+1) and compared it to a DIFFERENT
+    # container's scan anchor. sim/save's own law is bases_pred = units_pred + 52*n_units
+    # (and units_off is DERIVED back from the scan), so measured the same way on the same
+    # image, count and shape AGREE byte-for-byte on all three containers - `closes` True.
+    # What the shape scan really fails to do is CONFIRM the grown records (G2: 18 of 23),
+    # which costs it nothing here because units_off comes from bases_off, not the reverse.
+    agree = (sv.bases_pred == sv.bases_off and sv1.bases_pred == sv1.bases_off
+             and sv2.bases_pred == sv2.bases_off and sv.closes and sv1.closes
+             and sv2.closes and sv2.bases_off - sv1.bases_off == GROW_UNITS
+             and sv2.units_off == sv1.units_off)
+    W.append(("G5 count and shape AGREE on every container (bases_pred == bases_off on "
+              "orig/B21/B22, `closes` True on all three; the base array moves +%d B and "
+              "the unit anchor does not move) - the earlier claim of a %d-B DISAGREEMENT "
+              "was this run's arithmetic, not the file's geometry; the shape scan's real "
+              "limitation is the %d-of-%d under-confirm in G2"
+              % (GROW_UNITS, GROW_UNITS, sv1.found_bases, sv1.n_bases), agree))
 
     # G6 - byte -> field on the base array
     orig_match = all(_rec_bytes(sv1, "base", i) == _rec_bytes(sv, "base", i)
@@ -203,21 +218,30 @@ def compute(sav_path, log_path, trace_path, second_run=True):
               % (sv.n_units, sv2.n_units, sv2.n_bases, sv.n_units, GROW_UNITS,
                  GROW_TOTAL), g7))
 
-    # G9 - falsifier: corrupt the base tile IN THE IMAGE; the record follows the image
-    BAD = 0x5A7
+    # G9 - falsifier, through the SAME producer as G3, and corrupting BOTH claimed input
+    # sources (tile AND faction). Asserting only "the composed record differs" would stay
+    # green if the leg read the model instead of the image - the discriminating assertion
+    # is that the record CARRIES the corrupted bytes.
+    BAD_X, BAD_Y, BAD_F = 0x5A7, 0x5A8, 0x5A
     blob = bytearray(img2)
-    struct.pack_into("<HH", blob, sv2.bases_off + sosave.BASE_LEN * idx, BAD, BAD + 1)
+    boff = sv2.bases_off + sosave.BASE_LEN * idx
+    struct.pack_into("<HH", blob, boff, BAD_X, BAD_Y)
+    blob[boff + 4] = BAD_F                      # the founder's faction byte (own4)
     sv3 = parse_bytes(bytes(blob))
-    b3 = sv3.base(idx)
-    rec_bad = soprod.create_record(b3["x"], b3["y"], head, b3["own4"])
-    g8 = (b3["x"] == BAD and _rec_bytes(sv3, "base", idx) !=
-          _rec_bytes(sv2, "base", idx) and rec_bad != rec and
-          soprod.create_record(b3["x"], b3["y"], head, b3["own4"])[
-              soprod.UNIT_X:soprod.UNIT_Y + 2] == struct.pack("<HH", BAD, BAD + 1))
-    W.append(("G9 FALSIFIER: corrupting that base record's tile IN THE IMAGE (%d,%d) and "
-              "re-composing from the reloaded record MOVES the created unit to the "
-              "corrupted tile (record differs from G3's at the x/y span) - the leg reads "
-              "CONTAINER bytes, not the model" % (BAD, BAD + 1), g8))
+    rec_bad = record_from_image(sv3, idx, head)  # <-- the one shared leg, corrupted input
+    xyspan = slice(soprod.UNIT_X, soprod.UNIT_Y + 2)
+    carries = (rec_bad[xyspan] == struct.pack("<HH", BAD_X, BAD_Y)
+               and rec_bad[soprod.UNIT_OWNER] == BAD_F
+               and rec_bad != rec
+               and (sv3.base(idx)["own4"] != sv2.base(idx)["own4"]))
+    g8 = (sv3.base(idx)["x"] == BAD_X and sv3.base(idx)["y"] == BAD_Y
+          and _rec_bytes(sv3, "base", idx) != _rec_bytes(sv2, "base", idx) and carries)
+    W.append(("G9 FALSIFIER (same producer as G3): corrupting that base record's tile "
+              "AND faction IN THE IMAGE (%d,%d, fac %02X) and recomposing through "
+              "record_from_image makes the created unit CARRY the corrupted bytes (x/y "
+              "span == %s, owner == %02X) and differ from G3's record - the leg reads "
+              "CONTAINER bytes, not the model"
+              % (BAD_X, BAD_Y, BAD_F, struct.pack("<HH", BAD_X, BAD_Y).hex(), BAD_F), g8))
 
     # G10 - rivals fail the same fit
     img_noBases = sow.build_image(sv, year=r["eng"].year, cur=r["eng"].cur,
@@ -236,23 +260,58 @@ def compute(sav_path, log_path, trace_path, second_run=True):
               % (sv_noB.n_bases, n_new, len(img_noBases), len(img2), len(stride54),
                  len(img2)), g9))
 
-    aux = {"img2_sha": hashlib.sha256(img2).hexdigest(),
-           "n_units_new": sv2.n_units, "n_bases": sv2.n_bases, "img2": img2,
-           "n_grown": n_new}
-    digest = hashlib.sha256(("|".join([str(ok) for _, ok in W] + [aux["img2_sha"],
-                                       "%d" % sv2.n_units, "%d" % sv2.n_bases])
-                             ).encode()).hexdigest()
-    aux["digest"] = digest
+    # G12 - THE MUTATION EXPERIMENT, run in-process every time: rebind the ONE shared
+    # leg so it composes the record from the MODEL's fields (the bug this falsifier is
+    # supposed to catch, and the one the pre-review version could not see - it read a
+    # second, independent call site). The SIGNATURE of the bug is exact and is what this
+    # gate asserts: under the mutant the leg CANNOT see the corruption, so it reproduces
+    # the model's own tile/faction byte-for-byte (i.e. G9's record would collapse back to
+    # G3's), while the real leg on the same corrupted image carries the bad bytes.
+    # G3 is DECLARED non-discriminating on purpose: in this fixture the model's tuple
+    # EQUALS the container's, so byte-equality with create_record cannot tell the two
+    # sources apart. Saying so is the honest framing - G9, not G3, is the container leg.
+    real_leg = globals()["record_from_image"]
+    def _model_leg(im, i, h):
+        m = led.records[-1]
+        return soprod.create_record(m["x"], m["y"], h, m["own4"])
+    globals()["record_from_image"] = _model_leg
+    try:
+        try:
+            rec_mut = record_from_image(sv3, idx, head)
+        except Exception:                          # a leg that cannot run = red
+            rec_mut = None
+    finally:
+        globals()["record_from_image"] = real_leg
+    MODEL_BYTES = struct.pack("<HH", tx, ty)       # the tile the MODEL still holds
+    g12 = (rec_mut is not None and rec_mut == rec
+           and rec_mut[soprod.UNIT_X:soprod.UNIT_Y + 2] == MODEL_BYTES
+           and rec_mut[soprod.UNIT_OWNER] == fac
+           and rec_bad[soprod.UNIT_X:soprod.UNIT_Y + 2] != MODEL_BYTES)
+    W.append(("G12 MUTATION EXPERIMENT: rebinding record_from_image to read the MODEL "
+              "instead of the image makes G9's record collapse back onto G3's - the "
+              "model's own tile/faction (%d,%d fac %d) byte-for-byte - while the real "
+              "leg on the SAME corrupted image carries (%d,%d fac %02X); so the "
+              "falsifier is load-bearing, not a tautology. G3 is DECLARED blind to this "
+              "mutation (model tuple == container tuple in this fixture), which is why "
+              "G9, not G3, proves the input is container bytes"
+              % (tx, ty, fac, BAD_X, BAD_Y, BAD_F), g12))
 
     # G11 - determinism: a second independent compute() reproduces BOTH the written
     # image bytes and the digest. (A rung that cannot be re-run to the same answer has
     # not been measured twice, it has been asserted once.)
+    aux = {"img2_sha": hashlib.sha256(img2).hexdigest(),
+           "n_units_new": sv2.n_units, "n_bases": sv2.n_bases, "img2": img2,
+           "n_grown": n_new}
+    aux["digest"] = hashlib.sha256(
+        ("|".join([str(ok) for _, ok in W] + [aux["img2_sha"],
+                                              "%d" % sv2.n_units, "%d" % sv2.n_bases])
+         ).encode()).hexdigest()
     W2, aux2 = (compute(sav_path, log_path, trace_path, second_run=False)
                 if second_run else (W, aux))
-    # The comparison is over the TEN substantive verdicts, not over W's own tail: G11's
+    # The comparison is over the ELEVEN substantive verdicts, not over W's own tail: G11's
     # verdict is False inside the second (second_run=False) invocation BY CONSTRUCTION,
     # so comparing full verdict lists would compare an artefact of the guard, not a fact.
-    g11 = (second_run and [ok for _, ok in W2][:10] == [ok for _, ok in W][:10]
+    g11 = (second_run and [ok for _, ok in W2][:11] == [ok for _, ok in W][:11]
            and aux2["img2_sha"] == aux["img2_sha"])
     W.append(("G11 a SECOND run reproduces the written image byte-for-byte (sha256 %s) "
               "and the same gate verdicts, so the whole rung is deterministic"
