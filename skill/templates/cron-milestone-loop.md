@@ -59,6 +59,11 @@ CLOSE (exact order, then stop)
 7. `python3 scripts/milestone.py submit --title "..."`, poll `gh pr checks <n>` (~200 s), then `python3
    scripts/milestone.py merge <n>` — merge ONLY on a real acceptance PASS; on a FAIL leave the PR unmerged and say
    why.
+8. AFTER the merge, re-run `python3 scripts/track_mode.py`. If a build just landed it flips to
+   `MODE=ANALYSE`, so the cursor's "author B<n+1> next" line from step 1 is now WRONG: rewrite just that line
+   (`SESSION_CURSOR.md`, still <=600 B: the ANALYSE pick + `next_rung=B<n+1> QUEUED`), then land it as a
+   docs-only follow-up PR (`main` rejects direct pushes) — `git checkout -b docs/<id>-cursor-handoff`, commit
+   ONLY the cursor, `gh pr create -B main`, wait for gate + Greptile, `python3 scripts/milestone.py merge <n>`.
 
 REPORT one screen: what changed, the acceptance numbers with the command that produced them, what is open
 (including anything unverified), the next pick. No narration. If you did nothing, say so in two lines.
@@ -180,7 +185,11 @@ already built its client); repo edits are not.
 A loop that only ever analyses is a loop that never ships: after 226 milestones `sim/` was still empty, so every
 acceptance described `terran.exe` rather than a game that runs. The fix is a cadence, not a second job —
 `scripts/track_mode.py` derives `MODE=BUILD|ANALYSE` (and `next_rung=B<n>`) from merged history: 3 analyse
-milestones between build fires, keyed on the `B<n>` / `M<n>` commit prefixes. On MODE=BUILD the fire takes the
+milestones between build fires, keyed on the `B<n>` / `M<n>` commit prefixes. **The flip lands on the
+fire immediately AFTER a build merge** (s273: merging B22 turned the very next reading into
+`MODE=ANALYSE analyse_since_build=0 last_build=B22 next_rung=B23`), so a cursor written *during* a build
+fire that tells the next fire to "author B23 next" is wrong the moment the PR merges - re-run
+`track_mode.py` AFTER the merge and before writing the handoff. On MODE=BUILD the fire takes the
 next rung of `BUILD_SPINE.md` instead of a census pick; the other fires analyse exactly as before.
 
 Derive the mode from git, never from a counter file — a counter drifts, gets half-written, or is dropped by a
