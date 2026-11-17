@@ -62,7 +62,10 @@ commit in `git log` that is not yours — do not read that as history having bee
 `--message` becomes the commit message `submit` lands (it rewrites your checkpoint commit's message).
 **When the PR is already open, `--title` is silently ignored** — the title stays whatever the first
 submit gave it, so a resubmit after a FAIL→PASS flip lands a green head under a stale verdict title:
-fix it yourself with `gh pr edit <n> --title` before merging.
+fix it yourself BEFORE merging — and on this repo `gh pr edit` does not work (it dies on the GraphQL
+`projectCards` / Projects-classic deprecation), so patch the title over REST:
+`gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -f title="..."`, then echo `.title` from the same call to
+confirm it took (a merged PR title is what the next session greps in `git log` and in `gh pr view`).
 
 **If `gh pr create` (or `submit`) dies with `GraphQL: Something went wrong`, open the PR over REST instead of
 re-running submit in a loop.** The branch is already pushed, so only the PR object is missing:
@@ -165,6 +168,22 @@ scripts/index.py build`; a hard reset also rewrites `SESSION_CURSOR.md` on disk,
 rewriting). Prevention is the rule that counts: keep `main` free of local commits so the
 pull fast-forwards. Because the squash's parent is the previous `main` tip, ANY local `main` commit
 is guaranteed divergence, not a race.
+
+**Never chain `git reset --hard` onto the end of the merge/pull line that detected the divergence — run it
+as its own command, after `git branch --show-current`.** The ff-only abort usually arrives while HEAD is
+still on the branch you just merged from, not on `main`, so the chained reset silently discards a commit
+that exists only locally. The sequence: (1) `git log --oneline -2` to record the stray tip; (2) prove the
+squash already folded its content in (`git show <stray> --stat` + `git cherry origin/main <branch>`); (3)
+`git branch --show-current`, `git checkout main`, THEN `git reset --hard origin/main` in a separate call;
+(4) if the stray held anything the squash did not, `git branch keep/<label> <old-tip>` first, or re-land it
+as its own docs PR. A chained `git checkout -q main && git pull --ff-only && git reset --hard origin/main`
+reads as one tidy recovery and is the way to lose work.
+
+**Never declare a discarded stray lost before checking what the next branch was forked FROM.** A subsequent
+`milestone.py start <id>` can create its branch from the WORKTREE's HEAD rather than from `main`, so the stray
+commit silently becomes the new branch's base and its content survives as the PR's diff — the good outcome.
+Verify with `git log --oneline -2` on the new branch, or `git merge-base --is-ancestor <stray> HEAD`, before
+re-authoring the change; re-writing it produces a duplicate commit you then have to explain in the PR body.
 
 **`main` cannot be pushed at all.** The repo's pre-push hook refuses with `refusing to push to main /
 main only moves by squash-merge of a pull request`, so commit-to-main is caught at the push, not only at

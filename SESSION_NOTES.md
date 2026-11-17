@@ -445,3 +445,28 @@ Older sessions: `docs/sessions/sessions-253-254.md` (2 sessions). Read it only w
   `==`->`<=` mutation because the 13/5 counts + 0-overlap already carried the law - the harness found
   it, so it was replaced by a mutation that flips a measured fact (broadening the fold-classifier
   regex), which reddens A8.
+
+## Session 273 (2026-11-17, BUILD, zero box) - B22: both save record arrays grown in ONE writer call, CREATE leg fed by the RELOADED base record
+- THE PICK from `track_mode.py` (`MODE=BUILD next_rung=B22`); B22 was UNAUTHORED (no rung in
+  `BUILD_SPINE.md`, no NAMED row, no commit) so this fire authored it, the way B14-B21 did.
+- MEASURED, three claims of mine were FALSE before the bytes answered:
+  1. the rung text asserted "the region `units_off`..EOF is the original lifted by ONE amount" -
+     wrong: `savewriter.build_image` emits originals then grown bases and re-anchors the tail there,
+     so only the tail lifts by the full 1572 B and the base originals lift by 52. The gate now
+     compares FIVE bands (`unit originals 3484 | the ONE new unit 52 | base originals 5472 |
+     the grown bases 1520 | tail 10800`), each against its own source.
+  2. `r["new_recs"]` are 3-byte `(fac,x,y)` tuples, not 304-B records - a gate comparing them to
+     image bytes could never pass. `basefound.record_bytes(led.records[-5+k])` is the right object.
+  3. the header diff is 3 bytes, not 4 ("one per modeled field" was decoration; cur/tf already
+     hold their recorded values in this save).
+- FOUND: `sim/save`'s shape locator CONFIRMS ONLY THE 18 NAMED bases of the grown container -
+  M282's founders write an empty name span and `_base_ok` wants `[ -~]{3,30}\x00` at +19. A grown
+  base is locatable by COUNT, never by SHAPE, and on a container that grew only ONE array the
+  count position and the shape anchor DISAGREE by exactly that growth (226319 vs 226267).
+- ACCEPTANCE: `python3 -m sim.selftest --b22 programs/saves/m54b_clean.SAV` -> **PASS B22: 11/11**;
+  `python3 -u -m sim.composedgrowth` prints the same 11 labels; two runs byte-identical
+  (digest a7ec6d38ba67cbe9, image sha256 f7d90eb77ca7abac); evidence file == fresh rerun.
+- SELF-FOUND DEFECT, kept visible: `sim/composedgrowth.py` carried a STALE `acceptance()` draft
+  BELOW the good one (truncating labels to 64 chars, printing the report itself, recomputing a
+  third time). Python let the later `def` win, so `--b22` silently ran the shadowed version and
+  the PASS line still read 11/11 - a green result from the wrong code path. Duplicate deleted.
