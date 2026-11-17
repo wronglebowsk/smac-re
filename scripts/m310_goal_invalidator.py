@@ -226,15 +226,53 @@ def main():
       "ONLY from [ebp-0x10] (5 sites, the set is printed) - 0 overlap (R3/R5-class)")
     A("A9", not any("+0x94f2" in o_ for _, _, o_ in win(FUN_LO, FUN_HI)),
       "the SITE list window 0x94f2d8 is never referenced in this function (R8)")
-    hit = [(hex(a), mn(a), ops(a)) for a in (0x470C69, 0x470C71, 0x470C73, 0x470C77, 0x470C86,
-                                             0x470C8E, 0x470C90, 0x470C97, 0x470CA6, 0x470CAE,
-                                             0x470CB0)]
-    for h in hit:
-        out.p("  hit-chain %s: %s %s" % tuple(h))
-    A("A10", ops(0x470C73) == "0x470c77" and ops(0x470CB0) == "0x470d86",
-      "hit predicate in encoding order: p1==entry+4 -> p2==entry+8 -> kind>=0 (jge skips neg, "
-      "so the -1 free-slot is skipped) -> prio!=0 (jne skips zero) -> prio<0 selects the "
-      "duplicate path 0x470cb6, prio>0 jumps straight to 0x470d86 (log only, no store) (R3)")
+    HIT_CHAIN = [
+        (0x470C2F, "mov",  "eax,DWORD PTR [ebp+0x8]"),
+        (0x470C32, "cmp",  "eax,DWORD PTR [ecx+edx*1+0x94ee2c]"),
+        (0x470C39, "je",   "0x470c3d"),
+        (0x470C3B, "jmp",  "0x470c0d"),
+        (0x470C4C, "mov",  "eax,DWORD PTR [ebp+0xc]"),
+        (0x470C4F, "cmp",  "eax,DWORD PTR [ecx+edx*1+0x94ee30]"),
+        (0x470C56, "je",   "0x470c5a"),
+        (0x470C58, "jmp",  "0x470c0d"),
+        (0x470C69, "movsx", "eax,WORD PTR [ecx+edx*1+0x94ee28]"),
+        (0x470C71, "test", "eax,eax"),
+        (0x470C73, "jge",  "0x470c77"),
+        (0x470C75, "jmp",  "0x470c0d"),
+        (0x470C86, "movsx", "eax,WORD PTR [ecx+edx*1+0x94ee2a]"),
+        (0x470C8E, "test", "eax,eax"),
+        (0x470C90, "jne",  "0x470c97"),
+        (0x470C92, "jmp",  "0x470c0d"),
+        (0x470CA6, "movsx", "eax,WORD PTR [ecx+edx*1+0x94ee2a]"),
+        (0x470CAE, "test", "eax,eax"),
+        (0x470CB0, "jge",  "0x470d86")]
+    bad = [(hex(a), "%s %s" % (mn(a), ops(a)), "%s %s" % (mm, oo))
+           for a, mm, oo in HIT_CHAIN if not (mn(a) == mm and ops(a) == oo)]
+    for a, mm, oo in HIT_CHAIN:
+        out.p("  hit-chain %-10s %-8s %-40s%s" % (hex(a), mn(a), ops(a),
+              "" if (mn(a), ops(a)) == (mm, oo) else "   <<< MISMATCH (want %s %s)" % (mm, oo)))
+    A("A10", not bad and len(HIT_CHAIN) == 19,
+      "the hit test asserted INSTRUCTION BY INSTRUCTION (mnemonic AND operand string of all 15), "
+      "printed above, not by two branch targets: p2 == entry+4 (`mov` arg / `cmp` / `je`-continue "
+      "+ `jmp`-next-entry), kind >= 0 via `movsx` + `test eax,eax` + `jge` (a SIGNED read, so the "
+      "-1 free slot falls to `jmp 0x470c0d`; note this is test/jge, NOT `cmp kind,-1`), prio != 0 "
+      "via `test` + `je`-next-entry, then the SIGN test `movsx`+`test`+`jge 0x470d86` so prio>0 "
+      "goes STRAIGHT to the log (no store) and only prio<0 falls through to 0x470cb6, the "
+      "duplicate-scan init (`mov DWORD PTR [ebp-0x10],0x0`) (R3)")
+    reject_sites = [a for a, mm, oo in HIT_CHAIN if mm == "jmp" and oo == "0x470c0d"]
+    A("A24", reject_sites == [0x470C3B, 0x470C58, 0x470C75, 0x470C92] and
+      all(mn(a) == "jmp" and ops(a) == "0x470c0d" for a in reject_sites) and
+      len(reject_sites) == 4 and
+      (mn(0x470C0D), ops(0x470C0D)) == ("mov", "eax,DWORD PTR [ebp-0xc]") and
+      (mn(0x470CB6), ops(0x470CB6)) == ("mov", "DWORD PTR [ebp-0x10],0x0") and
+      0x470C0D < min(reject_sites) < max(reject_sites) < 0x470CB6,
+      "the branch SKELETON is pinned separately from the conditions (A10): EXACTLY four rejecting "
+      "edges exist in the hit test - p1 (0x470c3b), p2 (0x470c58), kind<0 (0x470c75), prio==0 "
+      "(0x470c92) - every one of them is `jmp 0x470c0d`, the address that re-reads and advances "
+      "the OUTER index [ebp-0xc], and the prio<0 fall-through is 0x470cb6, the inner-index init "
+      "(the duplicate scan), NOT the log tail. Retargeting any single reject edge (M14 moves the "
+      "prio!=0 one into the log) fails the exact list here")
+
 
     # ---------------- S5 argument provenance from the callers ------------------------------
     out.p("\n[S5] what the two int args are, from the callers' encodings")
@@ -336,8 +374,9 @@ def main():
       "(the OUTER index i) and eax = movsx of entry.+0 through the fold seeded [ebp-0x10] (the "
       "INNER index j), cmp edx,eax / je reaches the 0xffff store - the store fold at 0x470d56 "
       "re-seeds [ebp-0xc], so the WRITE hits entry i, not j; i != j is enforced at 0x470cd5; "
-      "the outer scan exits to 0x470f7e (the block-loop increment), NOT into the log tail; the "
-      "Ghidra C text mis-parses the kind pair as i==i (the encoding is the arbiter)")
+      "the outer scan exits to 0x470f7e (the block-loop increment), NOT into the log tail. "
+      "Ghidra's C agrees with this reading (`local_10` vs `local_14` in the comparison), so it is "
+      "CORROBORATION, not a refutation - the encoding remains the primary evidence")
     A("A15", len(re_read) == 1 and re_read[0] == 0x470D75 and mn(0x470D7D) == "test" and
       mn(0x470D7F) == "jge" and ops(0x470D7F) == "0x470d86" and ops(0x470D81) == "0x470c0d",
       "the store is followed by a RE-READ (movsx) of entry i +0, test/jge: negative (the 0xffff "
@@ -388,8 +427,11 @@ def main():
       wide[0][0] == 0x470EB7 and sorted(wide[0][1]) == sorted([1, 4, 5, 7] + list(range(10, 41))),
       "the byte table indexes into EXACTLY 8 dword targets (all values < 8); 7 kinds get their "
       "own block (0,2,3,6,8,9,41) and ONE block 0x470eb7 - which is also the ja-out default - "
-      "serves the other 35 kinds (1,4,5,7,10..40); the Ghidra case list (0,2,3,6,8,9,0x29) is "
-      "REFUTED by the table bytes (encoding is the arbiter)")
+            "serves the other 35 kinds (1,4,5,7,10..40). THIS AGREES with Ghidra's case list "
+      "(0,2,3,6,8,9,0x29) - 0x29 IS 41 - so the C collapses nothing here; what only the BYTES "
+      "show is the STRUCTURE: 42 selector values share 8 handler blocks, 35 of them (plus the "
+      "ja default) sharing one that pushes no token at all")
+
     A("A18", mn(0x470DFD) == "mov" and ops(0x470DFD) == "DWORD PTR [ebp-0x30],edx" and
       mn(0x470E00) == "cmp" and ops(0x470E00) == "DWORD PTR [ebp-0x30],0x29" and
       mn(0x470E04) == "ja" and ops(0x470E04) == "0x470eb7" and

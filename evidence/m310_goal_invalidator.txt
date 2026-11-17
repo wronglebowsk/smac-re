@@ -38,18 +38,27 @@ M310 static instrument: .text insns 781379, window 0x470b90-0x470f8c
   fold index loads from [ebp-0x10]: 5 at ['0x470cbf', '0x470cd2', '0x470ce5', '0x470d02', '0x470d36']
   A8    OK  only +0/+2/+4/+8 touched (NEVER the +0C owner); the (p1,p2) pair is compared EXACTLY 2x each (outer predicate + duplicate scan); TWO DISJOINT index variables: the outer scan/sentinel/tail seed their folds from [ebp-0xc] (13 sites) and the duplicate scan ONLY from [ebp-0x10] (5 sites, the set is printed) - 0 overlap (R3/R5-class)
   A9    OK  the SITE list window 0x94f2d8 is never referenced in this function (R8)
-  hit-chain 0x470c69: movsx eax,WORD PTR [ecx+edx*1+0x94ee28]
-  hit-chain 0x470c71: test eax,eax
-  hit-chain 0x470c73: jge 0x470c77
-  hit-chain 0x470c77: mov ecx,DWORD PTR [ebp-0x8]
-  hit-chain 0x470c86: movsx eax,WORD PTR [ecx+edx*1+0x94ee2a]
-  hit-chain 0x470c8e: test eax,eax
-  hit-chain 0x470c90: jne 0x470c97
-  hit-chain 0x470c97: mov ecx,DWORD PTR [ebp-0x8]
-  hit-chain 0x470ca6: movsx eax,WORD PTR [ecx+edx*1+0x94ee2a]
-  hit-chain 0x470cae: test eax,eax
-  hit-chain 0x470cb0: jge 0x470d86
-  A10   OK  hit predicate in encoding order: p1==entry+4 -> p2==entry+8 -> kind>=0 (jge skips neg, so the -1 free-slot is skipped) -> prio!=0 (jne skips zero) -> prio<0 selects the duplicate path 0x470cb6, prio>0 jumps straight to 0x470d86 (log only, no store) (R3)
+  hit-chain 0x470c2f   mov      eax,DWORD PTR [ebp+0x8]                 
+  hit-chain 0x470c32   cmp      eax,DWORD PTR [ecx+edx*1+0x94ee2c]      
+  hit-chain 0x470c39   je       0x470c3d                                
+  hit-chain 0x470c3b   jmp      0x470c0d                                
+  hit-chain 0x470c4c   mov      eax,DWORD PTR [ebp+0xc]                 
+  hit-chain 0x470c4f   cmp      eax,DWORD PTR [ecx+edx*1+0x94ee30]      
+  hit-chain 0x470c56   je       0x470c5a                                
+  hit-chain 0x470c58   jmp      0x470c0d                                
+  hit-chain 0x470c69   movsx    eax,WORD PTR [ecx+edx*1+0x94ee28]       
+  hit-chain 0x470c71   test     eax,eax                                 
+  hit-chain 0x470c73   jge      0x470c77                                
+  hit-chain 0x470c75   jmp      0x470c0d                                
+  hit-chain 0x470c86   movsx    eax,WORD PTR [ecx+edx*1+0x94ee2a]       
+  hit-chain 0x470c8e   test     eax,eax                                 
+  hit-chain 0x470c90   jne      0x470c97                                
+  hit-chain 0x470c92   jmp      0x470c0d                                
+  hit-chain 0x470ca6   movsx    eax,WORD PTR [ecx+edx*1+0x94ee2a]       
+  hit-chain 0x470cae   test     eax,eax                                 
+  hit-chain 0x470cb0   jge      0x470d86                                
+  A10   OK  the hit test asserted INSTRUCTION BY INSTRUCTION (mnemonic AND operand string of all 15), printed above, not by two branch targets: p2 == entry+4 (`mov` arg / `cmp` / `je`-continue + `jmp`-next-entry), kind >= 0 via `movsx` + `test eax,eax` + `jge` (a SIGNED read, so the -1 free slot falls to `jmp 0x470c0d`; note this is test/jge, NOT `cmp kind,-1`), prio != 0 via `test` + `je`-next-entry, then the SIGN test `movsx`+`test`+`jge 0x470d86` so prio>0 goes STRAIGHT to the log (no store) and only prio<0 falls through to 0x470cb6, the duplicate-scan init (`mov DWORD PTR [ebp-0x10],0x0`) (R3)
+  A24   OK  the branch SKELETON is pinned separately from the conditions (A10): EXACTLY four rejecting edges exist in the hit test - p1 (0x470c3b), p2 (0x470c58), kind<0 (0x470c75), prio==0 (0x470c92) - every one of them is `jmp 0x470c0d`, the address that re-reads and advances the OUTER index [ebp-0xc], and the prio<0 fall-through is 0x470cb6, the inner-index init (the duplicate scan), NOT the log tail. Retargeting any single reject edge (M14 moves the prio!=0 one into the log) fails the exact list here
 
 [S5] what the two int args are, from the callers' encodings
   the 4 pushes before the unpacker call 0x470bc6: [('0x470bb6', 'edx'), ('0x470bba', 'eax'), ('0x470bbe', 'ecx'), ('0x470bc2', 'edx')]
@@ -86,7 +95,7 @@ M310 static instrument: .text insns 781379, window 0x470b90-0x470f8c
   0x470d7f: jge 0x470d86
   0x470d81: jmp 0x470c0d
   A13   OK  exactly ONE WORD store to the +0 kind in the window, and it is 0xffff (R1: not a prio clear; +2 has no store)
-  A14   OK  the compared kind pair: edx = movsx of entry.+0 through the fold seeded [ebp-0xc] (the OUTER index i) and eax = movsx of entry.+0 through the fold seeded [ebp-0x10] (the INNER index j), cmp edx,eax / je reaches the 0xffff store - the store fold at 0x470d56 re-seeds [ebp-0xc], so the WRITE hits entry i, not j; i != j is enforced at 0x470cd5; the outer scan exits to 0x470f7e (the block-loop increment), NOT into the log tail; the Ghidra C text mis-parses the kind pair as i==i (the encoding is the arbiter)
+  A14   OK  the compared kind pair: edx = movsx of entry.+0 through the fold seeded [ebp-0xc] (the OUTER index i) and eax = movsx of entry.+0 through the fold seeded [ebp-0x10] (the INNER index j), cmp edx,eax / je reaches the 0xffff store - the store fold at 0x470d56 re-seeds [ebp-0xc], so the WRITE hits entry i, not j; i != j is enforced at 0x470cd5; the outer scan exits to 0x470f7e (the block-loop increment), NOT into the log tail. Ghidra's C agrees with this reading (`local_10` vs `local_14` in the comparison), so it is CORROBORATION, not a refutation - the encoding remains the primary evidence
   A15   OK  the store is followed by a RE-READ (movsx) of entry i +0, test/jge: negative (the 0xffff we just wrote, or already set by another block iteration) -> jmp back to the block-filter head 0x470c0d; only a still-non-negative entry reaches the log tail (R4)
   A16   OK  0 writes to the argument slots [ebp+8]/[ebp+c] before the tail (R5)
 
@@ -103,7 +112,7 @@ M310 static instrument: .text insns 781379, window 0x470b90-0x470f8c
   kinds [41]             -> 0x470e8d push ['0x674db8'] code ['DWORD PTR [ebp-0x1c],0xff']
   kinds [3]              -> 0x470ea3 push ['0x675974'] code ['DWORD PTR [ebp-0x1c],0xfd']
   kinds 1..40 (35 kinds) -> 0x470eb7 push [] code []
-  A17   OK  the byte table indexes into EXACTLY 8 dword targets (all values < 8); 7 kinds get their own block (0,2,3,6,8,9,41) and ONE block 0x470eb7 - which is also the ja-out default - serves the other 35 kinds (1,4,5,7,10..40); the Ghidra case list (0,2,3,6,8,9,0x29) is REFUTED by the table bytes (encoding is the arbiter)
+  A17   OK  the byte table indexes into EXACTLY 8 dword targets (all values < 8); 7 kinds get their own block (0,2,3,6,8,9,41) and ONE block 0x470eb7 - which is also the ja-out default - serves the other 35 kinds (1,4,5,7,10..40). THIS AGREES with Ghidra's case list (0,2,3,6,8,9,0x29) - 0x29 IS 41 - so the C collapses nothing here; what only the BYTES show is the STRUCTURE: 42 selector values share 8 handler blocks, 35 of them (plus the ja default) sharing one that pushes no token at all
   A18   OK  cmp kind,0x29 / ja 0x470eb7 + byte table @0x470fac -> jmp dword[eax*4+0x470f8c]: kind -1 (0xffff) is UNSIGNED-above 0x29 -> an invalidated entry NEVER logs a label (R6); 0x470eb7 is BOTH the tail and the out-of-range/default block
 
 [S8] the per-kind tokens appended after the block/priority text (PE .rdata)
@@ -155,6 +164,6 @@ M310 static instrument: .text insns 781379, window 0x470b90-0x470f8c
 
 [checks]
 
-32/32 checks OK
-table sha 801740e655c01d1a
+33/33 checks OK
+table sha 5ce370d77366a949
 RESULT: PASS M310 FUN_00470b90 = the debug-gated GOAL duplicate-invalidator + labelled log line of the view object

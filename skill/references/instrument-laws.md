@@ -883,3 +883,20 @@ purely the instrument's:
   precheck, then apply ONE mutant and require it to redden its target — before launching N mutants. Verify the
   anchors after the last edit to the instrument, from a FRESH import: a live kernel that imported the module
   earlier validates the old mutation list.
+- **Score a mutation harness honestly: run the UNMUTATED instrument first and require rc==0, and refuse any
+  mutant whose output contains a traceback.** `rc==1` is not evidence of a caught defect — a Python exception
+  also exits 1, and the instrument prints its RED lines before dying, so a crashing mutant credits itself; if a
+  target check is already red, its mutant earns credit for nothing (Greptile P2 x2, s272). The mutant must exit
+  1, print the named gate RED, print the failure SUMMARY line, and print no traceback. Check the summary in
+  stdout AND stderr: instruments often print the PASS line to stdout and `RESULT: FAIL` to stderr, so a
+  stdout-only search silently scores every mutant WEAK.
+- **A gate whose assertion text names a multi-instruction predicate must pin every instruction, not two branch
+  targets** (s272: A10 claimed the whole hit test while asserting `ops(0x470C73)`/`ops(0x470CB0)`; flipping the
+  prio==0 `jne` to `jle` changed nothing it read). Transcribe a `(addr, mnemonic, operand-string)` table from an
+  ACTUAL dump — never from memory, or the table itself is fictional — then mutate by REWRITING THE ENGINE'S
+  PARSED INSTRUCTION (`M._INS[addr] = (...)`) immediately before the gate's comparison, not by editing a literal
+  the assertion happens to read (which is what let the first three such mutants pass with rc=0). Pin the branch
+  SKELETON in a second gate (the exact list of reject edges and their common target) so a retargeted `jmp`
+  reddens something the conditions cannot see. Watch indentation when the mutation injects a line: an anchor that
+  starts mid-line loses the indent and the mutant dies on `IndentationError` — correctly scored WEAK, but it cost
+  a whole sweep.

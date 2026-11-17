@@ -417,10 +417,20 @@ Older sessions: `docs/sessions/sessions-253-254.md` (2 sessions). Read it only w
   appends + `FUN_004237f0(|prio|)` (one `neg`) -> `FUN_004081b0(ds:0x997120, buf)`; block name under
   the 0x80 flag clears `BYTE ds:0x997121`. `kind == -1` is unsigned->0x29-above, so an invalidated
   entry NEVER logs.
-- **Ghidra's switch case list (0,2,3,6,8,9,0x29) is REFUTED by the table bytes** (A17): the dword
-  table @0x470f8c holds exactly 8 targets and the 42-byte index table @0x470fac maps kinds
-  **0,2,3,6,8,9,41** to token blocks and **1,4,5,7,10..40** onto the same block 0x470eb7 that the
-  `ja` default uses. Tokens are ONE .rdata CHAR ('a','d','f','c','n','s','^').
+- The kind->token map is a TWO-TABLE jump: the dword table @0x470f8c holds exactly 8 targets and
+  the 42-BYTE index table @0x470fac maps kinds **0,2,3,6,8,9,41** to token blocks and
+  **1,4,5,7,10..40** onto the same block 0x470eb7 that the `ja` default uses; tokens are ONE .rdata
+  CHAR (0->'a', 2->'d', 3->'s', 6->'n', 8->'c', 9->'f', 41->'^').
+- RETRACTION x2 (both MY overclaims, both caught by Greptile on #284, neither is a win over Ghidra):
+  (1) "Ghidra's case list (0,2,3,6,8,9,0x29) is REFUTED" is FALSE - 0x29 IS 41, so the list AGREES
+  with the bytes; the bytes add the STRUCTURE (42 selectors -> 8 handlers, 35 sharing the default
+  that pushes nothing), they do not contradict the C. (2) "the C mis-parses the kind pair as i==i"
+  is FALSE - I had not re-read the C; it says `local_10` vs `local_14`, exactly my law. Lesson:
+  **never claim a refutation of a tool you can read - re-read it first; agreement is corroboration,
+  and manufacturing a win is worse than having none.** The A10 gate itself was also weak in the same
+  way Greptile says: it asserted two branch TARGETS while naming a whole predicate; it now pins
+  mnemonic AND operand of all 19 instructions in the hit chain plus the branch skeleton (A24), and
+  M12/M13/M14 mutate the engine's PARSED INSTRUCTION (not a literal) to prove it.
 - Args: 5 call sites in one class cluster (FUN_00470fe0 x4, FUN_004715d0 x3, FUN_00471fd0 x1);
   0x4724bd forwards the 2 output slots of the 29-caller view unpacker FUN_0046a1b0; sites 2/3/4 the
   same `[ebp-0x10],[ebp-0x14]` loop pair; **0 global reads for the compared pair** (A12).

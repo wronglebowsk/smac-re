@@ -175,7 +175,14 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   function's span after its `ret`, where objdump renders them as instructions, so decode from PE bytes via the
   engine's `pe_sections`/`va2off` and assert the structure you claim (target-set size, index range, which group the
   `ja` default joins). A table byte that contradicts Ghidra's `case` list means the C collapsed shared targets —
-  the bytes win, and the case list is not evidence.
+  the bytes win, and the case list is not evidence. **But check for agreement BEFORE claiming the
+  contradiction**: when the guard is `cmp sel,0x29` and your byte table's last token kind is 41, those are
+  the SAME number — a radix slip manufactures a "refutation" of a tool that was right (s272, M310: I asserted
+  "Ghidra's case list (0,2,3,6,8,9,0x29) is REFUTED" and it was in fact an exact match, caught by Greptile).
+  Same failure mode one step later: I claimed the C "mis-parses the kind pair as `i==i`" without re-reading it;
+  it said `local_10` vs `local_14`, i.e. my own law. **Never cite a decompiler's text as wrong from memory —
+  dump the shard/C for that exact expression in the same session. Agreement is corroboration and is worth
+  reporting; a manufactured win costs a review round and distrusts the rest of the milestone.**
 - **Re-read the instructions a "dead code" claim rests on — yours or a child's.** `test`/`cmp` set FLAGS
   only, so a `test eax,ecx` followed by `mov [ebp-0x54],eax` stores eax UNCHANGED (the operand, e.g. `1<<j`),
   NOT the comparison result; reading the store as the result manufactures a false "this block never

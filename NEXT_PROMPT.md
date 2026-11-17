@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s272 close: M310 GREEN (32/32 + 11/11 mutations) awaiting submit; M309 is
+# NEXT_PROMPT.md - footing (s272 close: M310 GREEN (33/33 gates, 14/14 mutations post-Greptile); M309 is
 MERGED (#283); historical header + CLOSED enumeration + traps 14-15 VERBATIM at
 `docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M309 MERGED; B1-B21 + M54A-M309 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
@@ -67,7 +67,9 @@ collision-check + worktree FIRST).
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
   **CLOSED (s272): FUN_00470b90 = the view object's DEBUG-GATED (this+0x1dd70 bit 0x2000) GOAL
   duplicate-invalidator + one-char-token logger; it owns the GOAL kind<->token map, and Ghidra's
-  switch case list for it is REFUTED by the table bytes. Read ## M310 before re-opening.**
+  42-selector/8-handler structure lives ONLY in the table bytes (the case LIST agrees with them -
+  0x29 is 41 - so do not re-litigate that; my two overclaims are retracted in Session 272). Read
+  ## M310 before re-opening.**
   **NEXT PICK (s272 close), in order: (i) the two sinks M309 left - **ds:0x68cbb0** (.data, 340
   refs, exactly 6 stores, all inside 0x4e3000-0x4f6000, passed as the owner arg at 5 GOAL-insert
   sites) and the **304-B-stride table at 0x95da40** (96 refs) whose bit 0x20 the single +0C reader

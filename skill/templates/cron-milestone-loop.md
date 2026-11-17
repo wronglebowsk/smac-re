@@ -15,7 +15,7 @@ prompt/schedule/skills first and `resume` last — do not create a near-duplicat
 (three static, one box) rather than a list of ids.
 
 ```
-You are the unattended SMAC RE loop for /home/n100/reverse/smac (Ghidra exports + a Python driver that plays Sid
+You are the unattended SMAC RE loop for /home/paul/reverse/smac (Ghidra exports + a Python driver that plays Sid
 Meier's Alpha Centauri under Wine). Work in that directory. Do ONE batch of at most THREE milestones, close it out
 properly, then STOP and report. Never take a milestone id from memory: NEXT_PROMPT.md decides.
 
