@@ -221,7 +221,10 @@ def main():
     dists = [d for *_, d in pairs if d is not None]
     unpaired_idx = [i for i in idx_wsites if not any(i < p <= i + 32 for p in ptr_wsites)]
     unpaired_ptr = [p for p in ptr_wsites if not any(p - 32 <= i < p for i in idx_wsites)]
-    a2 = (len(pairs) == 6 and len(ptr_wsites) == 6 and len(idx_wsites) == 6
+    a2 = (sorted(a for a, _, _ in PTR_STORES) == ptr_wsites
+          and sorted(a for a, _, _ in IDX_STORES) == idx_wsites
+          and all(owner(rows, a) == f for a, f, _ in PTR_STORES)
+          and len(pairs) == 6 and len(ptr_wsites) == 6 and len(idx_wsites) == 6
           and len(dists) == 6 and all(d is not None for _, _, _, _, d in pairs)
           and min(dists) == 6 and max(dists) == 25
           and not unpaired_idx and not unpaired_ptr
@@ -282,14 +285,20 @@ def main():
               % (len(kinds["W"]), len(kinds["T"]), len(kinds["R"]), len(idx_refs),
                  N_IDX_REFS, "0x%08X %s %s" % tuple(sorted(kinds["T"])[0])), a5))
 
+    n_setter, i_setter, c_setter = next(
+        (sz, ni, nc) for a, nm, sz, ni, nc in [
+            (int(r["addr"], 16), r["name"], int(r["size_bytes"]), int(r["n_insns"]),
+             int(r["n_callers"])) for r in __import__("csv").DictReader(open(M.INDEX))]
+        if nm == "FUN_004e3470")
     a6 = (owner(rows, SETTER) == "FUN_004e3470" and len(setter_body) == 11
           and setter_f and ins[0x4e348a][0].startswith("mov")
           and ("0x%x" % PTR) in ins[0x4e348a][1]
+          and n_setter == 34 and i_setter == 11 and c_setter == 57
           and next(sz for a, nm, sz, _ in rows if nm == "FUN_004e3470") == 34)
     W.append(("A6 the setter FUN_004e3470 is %d B / %d instructions with %d recorded callers: "
               "it stores the argument to the index, folds it, and stores the result to the "
               "pointer - so 57 call sites move the selection through ONE 11-insn leg"
-              % (34, len(setter_body), 57), a6))
+              % (n_setter, len(setter_body), c_setter), a6))
 
     last_stores = [(a, mn, op) for a, mn, op in refs_of(ins, LAST)
                    if mn.startswith("mov")
