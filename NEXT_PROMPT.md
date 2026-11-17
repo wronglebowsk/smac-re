@@ -1,6 +1,5 @@
-# NEXT_PROMPT.md - footing (s271 close: M309 MERGED; the cap split #282 landed first - Greptile #281's 4 P2s
-fixed and every repaired gate proven load-bearing by a MUTATION harness; historical
-header + CLOSED enumeration + traps 14-15 VERBATIM at
+# NEXT_PROMPT.md - footing (s272 close: M310 GREEN (33/33 gates, 14/14 mutations post-Greptile); M309 is
+MERGED (#283); historical header + CLOSED enumeration + traps 14-15 VERBATIM at
 `docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M309 MERGED; B1-B21 + M54A-M309 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
@@ -66,17 +65,20 @@ collision-check + worktree FIRST).
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  **CLOSED (s271): FUN_0056d350 = the GOAL-list insert-or-max (the read ## M309 row first), and the
-  75-entry sibling at 0x94ee28 IS that GOAL list (same 16-B layout, +0C owner; the -1 6th arg is the
-  UNBOUND-OWNER sentinel, one writer + one reader in all of .text).**
-  **NEXT PICK (s271 close): FUN_00470b90 (1020 B, 5 callers, 9 callees) = the routine that stores
-  0xffff into a GOAL entry's +0 short at 0x470d5c (M308 U2's -1 sentinel, for the GOAL list) - name
-  it and say what invalidates an entry (it looks the entry up by comparing a +0 short, then writes
-  0xffff, then re-reads it: 0x470d3c/5c/75); THEN the two sinks the owner field points at:
-  (i) **ds:0x68cbb0** - .data, 340 refs, exactly 6 stores, all inside 0x4e3000-0x4f6000 (the hub
-  band), 5 GOAL-insert sites pass it as the owner; (ii) the **304-B-stride table at 0x95da40**
-  (96 refs) whose bit 0x20 the single +0C reader tests - census the bit, do not guess the stride.
-  (the still-open list lives in NAMED ## M308 / ## M309, not here).**
+  **CLOSED (s272): FUN_00470b90 = the view object's DEBUG-GATED (this+0x1dd70 bit 0x2000) GOAL
+  duplicate-invalidator + one-char-token logger; it owns the GOAL kind<->token map, and Ghidra's
+  42-selector/8-handler structure lives ONLY in the table bytes (the case LIST agrees with them -
+  0x29 is 41 - so do not re-litigate that; my two overclaims are retracted in Session 272). Read
+  ## M310 before re-opening.**
+  **NEXT PICK (s272 close), in order: (i) the two sinks M309 left - **ds:0x68cbb0** (.data, 340
+  refs, exactly 6 stores, all inside 0x4e3000-0x4f6000, passed as the owner arg at 5 GOAL-insert
+  sites) and the **304-B-stride table at 0x95da40** (96 refs) whose bit 0x20 the single +0C reader
+  tests - census the bit, do not guess the stride; (ii) WHO fires the check: FUN_00470fe0 (180 B,
+  4 callers incl. FUN_004715d0), FUN_004715d0 (1086 B, 1 caller 0x4725e9), FUN_00471fd0 (1338 B,
+  5 callers in FUN_00472810) all forward a coordinate pair into FUN_00470b90 under tile-legality
+  gates (FUN_00469060 test / FUN_00422060 != 0) - name the event; (iii) still open from M310: the
+  game meaning of a GOAL, the one-char tokens, and WHY a GOAL priority can be NEGATIVE (the only
+  invalidation trigger). The open list lives in NAMED ## M310 / ## M309, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT

@@ -1,0 +1,169 @@
+M310 static instrument: .text insns 781379, window 0x470b90-0x470f8c
+
+[S1] scope
+  index.csv: 0x00470b90,FUN_00470b90,1020,274,5,9,0,1,3573,008
+  rets: ['0x470f89'] ; pop-edi epilogue head: ['0x470f83'] ; last insn: 0x470f89 ('ret', '0x8')
+  A1    OK  exactly 1 ret, at 0x470f89 (0x470f83 is the single epilogue the 3 ies jump to)
+  A2    OK  size 1020 == span and n_insns 274 == insns the engine parser sees in the window (the parser-coverage guard against my own probe bugs)
+  A3    OK  ret 0x8 (2 stack args) + ecx stowed at [ebp-4] -> thiscall(int,int)
+
+[S2] entry gate (the caller's own field, not a global)
+  0x470b9f: mov ecx,DWORD PTR [eax+0x1dd70]
+  0x470ba5: and ecx,0x2000
+  0x470bab: test ecx,ecx
+  0x470bad: je 0x470f83
+  A4    OK  the ONLY +0x1dd70 test in the window is bit 0x2000 at 0x470ba5; je -> 0x470f83 the epilogue: without the bit the routine does NOTHING (R2) [field = the view bit-flags, M228-M245 archive row]
+
+[S3] outer loop over the block index, filtered
+  0x470bcb: mov DWORD PTR [ebp-0x8],0x1
+  0x470bdd: cmp DWORD PTR [ebp-0x8],0x8
+  0x470be1: jge 0x470f83
+  0x470be7: mov ecx,DWORD PTR ds:0x985ae8
+  0x470bed: and ecx,0x80
+  0x470bf5: jne 0x470c04
+  0x470bf7: mov edx,DWORD PTR [ebp-0x8]
+  0x470bfa: cmp edx,DWORD PTR ds:0x91b5b4
+  0x470c00: je 0x470c04
+  0x470c02: jmp 0x470bd4
+  A5    OK  blocks start at 1 (0 skipped) and end below 8; jge-out to the epilogue
+  A6    OK  ds:0x985ae8 & 0x80 tested exactly twice (the block filter 0x470be7 + the name sink guard 0x470db3); the block filter passes iff debug-bit set OR block == ds:0x91b5b4 [the current player, M42]
+
+[S4] the 75-entry scans: layout + hit predicate (displacements, not the C text)
+  cmp 0x4b sites: ['0x470c16', '0x470cc8'] | shl 0x10 sites: 15 | imul 0x20bc: 15 | other imul: []
+  entry offsets touched: ['0x0', '0x2', '0x4', '0x8']
+  cmps: [('0x470c32', 'eax,DWORD PTR [ecx+edx*1+0x94ee2c]'), ('0x470c4f', 'eax,DWORD PTR [ecx+edx*1+0x94ee30]'), ('0x470cee', 'edx,DWORD PTR [eax+ecx*1+0x94ee2c]'), ('0x470d0b', 'edx,DWORD PTR [eax+ecx*1+0x94ee30]')]
+  movsx reads (entry+0 / +2): 10
+  A7    OK  two 75-bound scans (cmp 0x4b at 0x470c16 outer / 0x470cc8 inner) over 16-B entries (15 x shl 0x4 (x16 B = the 0x10 entry step) == 15 x imul 0x20bc (x8380 B = the record step), 1:1 folds, M309 GOAL layout)
+  fold index loads from [ebp-0xc]: 13 at ['0x470c0d', '0x470c29', '0x470c46', '0x470c63', '0x470c80', '0x470ca0', '0x470d1f', '0x470d56', '0x470d6f', '0x470def', '0x470ec0', '0x470edb', '0x470ef7']
+  fold index loads from [ebp-0x10]: 5 at ['0x470cbf', '0x470cd2', '0x470ce5', '0x470d02', '0x470d36']
+  A8    OK  only +0/+2/+4/+8 touched (NEVER the +0C owner); the (p1,p2) pair is compared EXACTLY 2x each (outer predicate + duplicate scan); TWO DISJOINT index variables: the outer scan/sentinel/tail seed their folds from [ebp-0xc] (13 sites) and the duplicate scan ONLY from [ebp-0x10] (5 sites, the set is printed) - 0 overlap (R3/R5-class)
+  A9    OK  the SITE list window 0x94f2d8 is never referenced in this function (R8)
+  hit-chain 0x470c2f   mov      eax,DWORD PTR [ebp+0x8]                 
+  hit-chain 0x470c32   cmp      eax,DWORD PTR [ecx+edx*1+0x94ee2c]      
+  hit-chain 0x470c39   je       0x470c3d                                
+  hit-chain 0x470c3b   jmp      0x470c0d                                
+  hit-chain 0x470c4c   mov      eax,DWORD PTR [ebp+0xc]                 
+  hit-chain 0x470c4f   cmp      eax,DWORD PTR [ecx+edx*1+0x94ee30]      
+  hit-chain 0x470c56   je       0x470c5a                                
+  hit-chain 0x470c58   jmp      0x470c0d                                
+  hit-chain 0x470c69   movsx    eax,WORD PTR [ecx+edx*1+0x94ee28]       
+  hit-chain 0x470c71   test     eax,eax                                 
+  hit-chain 0x470c73   jge      0x470c77                                
+  hit-chain 0x470c75   jmp      0x470c0d                                
+  hit-chain 0x470c86   movsx    eax,WORD PTR [ecx+edx*1+0x94ee2a]       
+  hit-chain 0x470c8e   test     eax,eax                                 
+  hit-chain 0x470c90   jne      0x470c97                                
+  hit-chain 0x470c92   jmp      0x470c0d                                
+  hit-chain 0x470ca6   movsx    eax,WORD PTR [ecx+edx*1+0x94ee2a]       
+  hit-chain 0x470cae   test     eax,eax                                 
+  hit-chain 0x470cb0   jge      0x470d86                                
+  A10   OK  the hit test asserted INSTRUCTION BY INSTRUCTION (mnemonic AND operand string of all 15), printed above, not by two branch targets: p2 == entry+4 (`mov` arg / `cmp` / `je`-continue + `jmp`-next-entry), kind >= 0 via `movsx` + `test eax,eax` + `jge` (a SIGNED read, so the -1 free slot falls to `jmp 0x470c0d`; note this is test/jge, NOT `cmp kind,-1`), prio != 0 via `test` + `je`-next-entry, then the SIGN test `movsx`+`test`+`jge 0x470d86` so prio>0 goes STRAIGHT to the log (no store) and only prio<0 falls through to 0x470cb6, the duplicate-scan init (`mov DWORD PTR [ebp-0x10],0x0`) (R3)
+  A24   OK  the branch SKELETON is pinned separately from the conditions (A10): EXACTLY four rejecting edges exist in the hit test - p1 (0x470c3b), p2 (0x470c58), kind<0 (0x470c75), prio==0 (0x470c92) - every one of them is `jmp 0x470c0d`, the address that re-reads and advances the OUTER index [ebp-0xc], and the prio<0 fall-through is 0x470cb6, the inner-index init (the duplicate scan), NOT the log tail. Retargeting any single reject edge (M14 moves the prio!=0 one into the log) fails the exact list here
+
+[S5] what the two int args are, from the callers' encodings
+  the 4 pushes before the unpacker call 0x470bc6: [('0x470bb6', 'edx'), ('0x470bba', 'eax'), ('0x470bbe', 'ecx'), ('0x470bc2', 'edx')]
+  the lea (address-of) instructions: [('0x470bb3', 'lea', 'edx,[ebp-0x18]'), ('0x470bb7', 'lea', 'eax,[ebp-0x14]')]
+  writes to [ebp-0x14]/[ebp-0x18] between the unpack call and their use: []
+  the two output slots consumed at the formatter: loads [('0x470d9a', 'ecx,DWORD PTR [ebp-0x18]'), ('0x470d9e', 'edx,DWORD PTR [ebp-0x14]')] pushes [('0x470d9d', 'ecx'), ('0x470da1', 'edx')]
+  A11   OK  FUN_0046a1b0 is called (0x470bc6, ecx=this) with its 2 INPUTS = this routine's own p2 [ebp+0xc] then p1 [ebp+8], and its 2 OUTPUT POINTERS = &[ebp-0x18], &[ebp-0x14] (lea pushes, order printed); those slots are NEVER written by any mov in the window (only by the callee through the pointers) and are consumed again ONLY at 0x470d9a/9e (the log formatter) - so the GOAL +4/+8 pair the routine compares is (p1,p2) re-expressed in the derived (wrapped/row-adjusted) coordinate space
+  0x471086 push group (newest first): [('0x471082', 'edx'), ('0x47107e', 'ecx')]   reg defs: ['edx<-mov edx,DWORD PTR [ebp+0x8]', 'ecx<-mov ecx,DWORD PTR [ebp+0xc]']
+  0x471884 push group (newest first): [('0x471880', 'eax'), ('0x47187c', 'edx')]   reg defs: ['eax<-mov eax,DWORD PTR [ebp-0x10]', 'edx<-mov edx,DWORD PTR [ebp-0x14]']
+  0x4718ba push group (newest first): [('0x4718b6', 'edx'), ('0x4718b2', 'ecx')]   reg defs: ['edx<-mov edx,DWORD PTR [ebp-0x10]', 'ecx<-mov ecx,DWORD PTR [ebp-0x14]']
+  0x4719c7 push group (newest first): [('0x4719c3', 'eax'), ('0x4719bf', 'edx')]   reg defs: ['eax<-mov eax,DWORD PTR [ebp-0x10]', 'edx<-mov edx,DWORD PTR [ebp-0x14]']
+  0x4724bd push group (newest first): [('0x4724b9', 'ecx'), ('0x4724b5', 'eax')]   reg defs: ['ecx<-mov ecx,DWORD PTR [ebp-0x18]', 'eax<-mov eax,DWORD PTR [ebp-0x1c]']
+  A12   OK  every site forwards EXACTLY 2 register pushes (the ecx=this load sits outside the group); every forwarded register's defining load is printed and closed on a stack slot: sites 2/3/4 read the SAME slot pair [ebp-0x10],[ebp-0x14] (their x,y loop variables), site 1 re-forwards the caller's own incoming pair, and site 5 reads the unpacker's output slots [ebp-0x18]/[ebp-0x1c] - NO site reads a global for the pair the GOAL +4/+8 compare against (R5)
+
+[S6] the duplicate-kind law + sentinel store + re-read (instruction by instruction)
+  0x470cb6: mov DWORD PTR [ebp-0x10],0x0
+  0x470cc8: cmp DWORD PTR [ebp-0x10],0x4b
+  0x470ccc: jge 0x470d66
+  0x470cd2: mov edx,DWORD PTR [ebp-0x10]
+  0x470cd5: cmp edx,DWORD PTR [ebp-0xc]
+  0x470cd8: jne 0x470cdc
+  0x470cda: jmp 0x470cbf
+  0x470cee: cmp edx,DWORD PTR [eax+ecx*1+0x94ee2c]
+  0x470d0b: cmp edx,DWORD PTR [eax+ecx*1+0x94ee30]
+  0x470d25: movsx edx,WORD PTR [eax+ecx*1+0x94ee28]
+  0x470d3c: movsx eax,WORD PTR [eax+ecx*1+0x94ee28]
+  0x470d44: cmp edx,eax
+  0x470d46: je 0x470d4d
+  0x470d48: jmp 0x470cbf
+  0x470d5c: mov WORD PTR [ecx+edx*1+0x94ee28],0xffff
+  0x470d66: mov eax,DWORD PTR [ebp-0x8]
+  0x470d75: movsx edx,WORD PTR [eax+ecx*1+0x94ee28]
+  0x470d7d: test edx,edx
+  0x470d7f: jge 0x470d86
+  0x470d81: jmp 0x470c0d
+  A13   OK  exactly ONE WORD store to the +0 kind in the window, and it is 0xffff (R1: not a prio clear; +2 has no store)
+  A14   OK  the compared kind pair: edx = movsx of entry.+0 through the fold seeded [ebp-0xc] (the OUTER index i) and eax = movsx of entry.+0 through the fold seeded [ebp-0x10] (the INNER index j), cmp edx,eax / je reaches the 0xffff store - the store fold at 0x470d56 re-seeds [ebp-0xc], so the WRITE hits entry i, not j; i != j is enforced at 0x470cd5; the outer scan exits to 0x470f7e (the block-loop increment), NOT into the log tail. Ghidra's C agrees with this reading (`local_10` vs `local_14` in the comparison), so it is CORROBORATION, not a refutation - the encoding remains the primary evidence
+  A15   OK  the store is followed by a RE-READ (movsx) of entry i +0, test/jge: negative (the 0xffff we just wrote, or already set by another block iteration) -> jmp back to the block-filter head 0x470c0d; only a still-non-negative entry reaches the log tail (R4)
+  A16   OK  0 writes to the argument slots [ebp+8]/[ebp+c] before the tail (R5)
+
+[S7] the kind switch: 8-entry dword table + 42-entry BYTE index table, from raw PE
+  (objdump misassembles both regions as instructions; this parse reads the bytes)
+  A16b  OK  the switch selector is the RE-READ of entry i +0 KIND (0x470df5), stored to [ebp-0x30], not the +2 priority
+  dword table @0x470f8c: ['0x470e1c', '0x470e35', '0x470ea3', '0x470e77', '0x470e61', '0x470e4b', '0x470e8d', '0x470eb7']
+  byte  table @0x470fac: [0, 7, 1, 2, 7, 7, 3, 7, 4, 5, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6]
+  kinds [0]              -> 0x470e1c push ['0x675988'] code ['DWORD PTR [ebp-0x1c],0xf9']
+  kinds [2]              -> 0x470e35 push ['0x675984'] code ['DWORD PTR [ebp-0x1c],0xfb']
+  kinds [9]              -> 0x470e4b push ['0x675980'] code ['DWORD PTR [ebp-0x1c],0xfa']
+  kinds [8]              -> 0x470e61 push ['0x67597c'] code ['DWORD PTR [ebp-0x1c],0xfe']
+  kinds [6]              -> 0x470e77 push ['0x675978'] code ['DWORD PTR [ebp-0x1c],0xfc']
+  kinds [41]             -> 0x470e8d push ['0x674db8'] code ['DWORD PTR [ebp-0x1c],0xff']
+  kinds [3]              -> 0x470ea3 push ['0x675974'] code ['DWORD PTR [ebp-0x1c],0xfd']
+  kinds 1..40 (35 kinds) -> 0x470eb7 push [] code []
+  A17   OK  the byte table indexes into EXACTLY 8 dword targets (all values < 8); 7 kinds get their own block (0,2,3,6,8,9,41) and ONE block 0x470eb7 - which is also the ja-out default - serves the other 35 kinds (1,4,5,7,10..40). THIS AGREES with Ghidra's case list (0,2,3,6,8,9,0x29) - 0x29 IS 41 - so the C collapses nothing here; what only the BYTES show is the STRUCTURE: 42 selector values share 8 handler blocks, 35 of them (plus the ja default) sharing one that pushes no token at all
+  A18   OK  cmp kind,0x29 / ja 0x470eb7 + byte table @0x470fac -> jmp dword[eax*4+0x470f8c]: kind -1 (0xffff) is UNSIGNED-above 0x29 -> an invalidated entry NEVER logs a label (R6); 0x470eb7 is BOTH the tail and the out-of-range/default block
+
+[S8] the per-kind tokens appended after the block/priority text (PE .rdata)
+  kind 0   -> 0x675988 'a'
+  kind 2   -> 0x675984 'd'
+  kind 3   -> 0x675974 's'
+  kind 6   -> 0x675978 'n'
+  kind 8   -> 0x67597c 'c'
+  kind 9   -> 0x675980 'f'
+  kind 41  -> 0x674db8 '^'
+  A19   OK  7 kinds (0,2,3,6,8,9,41) append a ONE-CHARACTER .rdata token; kinds 1,4,5,7,10..40 and the out-of-range default reach 0x470eb7 which pushes NOTHING - the log line carries no token for them (the tokens are chars, not names: the earlier 'asset string' reading is DECLARED UNMODELED here - the adjacent pool entries 'REALLYOVER', 'DESTNO', 'DESTTRI2' belong to other code)
+
+[S9] the tail: build-string -> append x2 -> vtable -> global buffer
+  0x470da6 call 0x403a40
+  0x470dae call 0x407520
+  0x470dc7 call 0x423c20
+  0x470dd0 call 0x405220
+  0x470e21 call 0x405220
+  0x470e3a call 0x405220
+  0x470e50 call 0x405220
+  0x470e66 call 0x405220
+  0x470e7c call 0x405220
+  0x470e92 call 0x405220
+  0x470ea8 call 0x405220
+  0x470f0e call 0x4237f0
+  0x470f32 call 0x5c17d1
+  0x470f59 call 0x5c176e
+  0x470f79 call 0x4081b0
+  A20   OK  tail call sequence from the encoding: unpacker, formatter, terminator, then (debug) name+append, 8x label-append, prio-append, two string vtable calls, buffer flush
+  A21   OK  the log line = FUN_00403a40(buf, unpacked pair, this+0x1ddb4, this+0x1ddb8) then the ABSOLUTE priority via neg-if-negative -> FUN_004237f0 append -> FUN_004081b0 appends the built line to the global buffer ds:0x997120; the block NAME (FUN_00423c20) is appended only under debug flag 0x985ae8&0x80, which also clears BYTE ds:0x997121 (a dirty flag)
+
+[S10] uniqueness inside the window
+  stores into the GOAL window: [('0x470d5c', 'WORD PTR [ecx+edx*1+0x94ee28],0xffff')]
+  A22   OK  the sentinel at 0x470d5c is the ONLY GOAL-window store in the function (R1/R3)
+
+[S11] callees
+  9 distinct targets: ['0x403a40', '0x405220', '0x407520', '0x4081b0', '0x4237f0', '0x423c20', '0x46a1b0', '0x5c176e', '0x5c17d1']
+  A23   OK  9 callee targets == index.csv n_callees
+
+[rivals]
+  R1 the 0xffff store clears a priority          REFUTED
+  R2 it runs during normal play                  REFUTED
+  R3 every matching entry is invalidated         REFUTED
+  R4 the post-store read is another store        REFUTED
+  R5 the args are rewritten mid-scan             REFUTED
+  R6 kind -1 logs a label                        REFUTED
+  R7 the unpacker belongs to this routine        REFUTED
+  R8 the scans also walk the SITE list           REFUTED
+
+[checks]
+
+33/33 checks OK
+table sha 5ce370d77366a949
+RESULT: PASS M310 FUN_00470b90 = the debug-gated GOAL duplicate-invalidator + labelled log line of the view object

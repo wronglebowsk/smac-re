@@ -132,6 +132,11 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   (`ds:0x99aa38` is the staging dword all of them pack; `FUN_00518c50` is its set/clear-bit helper, arg1 = bit
   index). Before calling such a name a FILE tag, grep the save/scenario files for it: these do NOT appear as
   ASCII in a `.SAV`, which stores numeric tags, so label them the exe's name table.
+- **Print `repr(bytes)` before naming anything decoded out of the image.** One call settles the base: decode latin1
+  AND utf-16le and let the byte form choose. This exe's debug/label pool is SINGLE ASCII characters sitting next to
+  unrelated table bytes, so a utf-16 read of a null-padded one-char token invented multi-character words that looked
+  like asset names and survived into prose until the raw bytes were re-read. Same for any claimed string table:
+  a table whose entries are one character each is a token pool, not names.
 - **When a multi-gate census script FAILs, find WHICH gate failed before editing anything.** Do not re-run the
   whole script on a hunch: `exec` its source up to the driver loop in a probe namespace
   (`ns = {"__name__": "probe", "__file__": <path>}`, cutting the text at the `only = (sys.argv…` line) and
@@ -161,6 +166,23 @@ python3 scripts/parse_alpha.py            # programs/alpha.txt -> data/alpha.jso
   (`add idx,7` / `cmp idx,6` / `ja`), each target mapped to its body first. A hand-decoded table that
   silently drops one entry yields a mapping that is shifted, self-consistent and wrong — it looks exactly
   like "the case labels are off by one", and only the raw dump (or live data) falsifies it.
+  **A switch here is TWO adjacent tables**: a BYTE index array (length = the `cmp` bound + 1, one entry per selector
+  value) pointing into a shorter DWORD target array (length = the number of DISTINCT blocks). The bound sizes the BYTE
+  table, never the dword one — unpacking `bound+1` dwords reads past the targets into the byte table and yields
+  self-consistent garbage; and two table regions read as one is the shape that makes an index table look like
+  mis-aligned targets. Selectors whose byte entries repeat a target are NOT "missing cases": several values share a
+  handler (the default usually shares the widest block, which then carries no label). Both tables sit INSIDE the
+  function's span after its `ret`, where objdump renders them as instructions, so decode from PE bytes via the
+  engine's `pe_sections`/`va2off` and assert the structure you claim (target-set size, index range, which group the
+  `ja` default joins). A table byte that contradicts Ghidra's `case` list means the C collapsed shared targets —
+  the bytes win, and the case list is not evidence. **But check for agreement BEFORE claiming the
+  contradiction**: when the guard is `cmp sel,0x29` and your byte table's last token kind is 41, those are
+  the SAME number — a radix slip manufactures a "refutation" of a tool that was right (s272, M310: I asserted
+  "Ghidra's case list (0,2,3,6,8,9,0x29) is REFUTED" and it was in fact an exact match, caught by Greptile).
+  Same failure mode one step later: I claimed the C "mis-parses the kind pair as `i==i`" without re-reading it;
+  it said `local_10` vs `local_14`, i.e. my own law. **Never cite a decompiler's text as wrong from memory —
+  dump the shard/C for that exact expression in the same session. Agreement is corroboration and is worth
+  reporting; a manufactured win costs a review round and distrusts the rest of the milestone.**
 - **Re-read the instructions a "dead code" claim rests on — yours or a child's.** `test`/`cmp` set FLAGS
   only, so a `test eax,ecx` followed by `mov [ebp-0x54],eax` stores eax UNCHANGED (the operand, e.g. `1<<j`),
   NOT the comparison result; reading the store as the result manufactures a false "this block never
@@ -636,8 +658,12 @@ Two static instruments answer "what IS this field" with no box time: `scripts/na
 naming a global from the one reader that mattered) and `scripts/field_census.py [stride|bit5|readonly|copy|dual]`
 (the five shape checks: stride unanimity over all sites, a gate's index provenance, a zero-writer proof, a
 copy-vs-array discrimination, and dual addressing forms for one address).
-**The census family, one shape per script** — reach for these before writing a new probe: `field_census.py` (a
-displacement's shape), `name_global.py` (every reader/writer of a global, with containment),
+**The census family, one shape per script** — reach for these before writing a new probe. Every static script in the
+family imports the shared engine `scripts/m308_site_list.py` — `parse_text()` (whole `.text` cache → instruction map +
+execution order; its count is already validated against `index.csv` `n_insns`), `load_spans`, `load_index`,
+`pe_sections`, `va2off`, `window`, `EXE`, `ROOT`. Import it rather than hand-writing a disassembly split or a second
+PE reader: a hand-rolled probe invented a "missing instruction", accused `parse_text` of dropping it, and cost an
+hour. Then the shapes: `field_census.py` (a displacement's shape), `name_global.py` (every reader/writer of a global, with containment),
 `m118_flag_never_set.py` (is a gate satisfiable AT ALL: test sites, OR immediates, register-level bit ops, and whether
 any SAVE carries the bit), `m124_state_and_memo.py` (a state code named from the strings printed around its writers; a
 memo-invalidation store), `m127_m129_fields.py` (one field's two addressing encodings, a pre/post-call pair, a guard

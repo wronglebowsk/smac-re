@@ -1,0 +1,18 @@
+M0 unmutated instrument                                    baseline green rc=0
+M1 block-loop bound set (block 0 admitted)                 OK  rc=1 reddened=A5
+M2 entry-scan bound 0x4b -> 0x19 (SITE bound)              OK  rc=1 reddened=A7
+M3 outer-scan exit target (-> the log tail)                OK  rc=1 reddened=A14
+M4 kind-pair fold seeds swapped (one index for both kinds) OK  rc=1 reddened=A14
+M5b store-target fold re-seeded from the INNER index (writes j, not i) OK  rc=1 reddened=A14
+M6 gate bit 0x2000 -> 0x80 (gates on the wrong flag)       OK  rc=1 reddened=A4,RIVALS-R2
+M7 default-table entries 7 -> 0 (unvalidated byte index)   OK  rc=1 reddened=A17,A19,RIVALS-R6
+M8 argument order read reversed (arg1 became arg2 - the m309 bug) OK  rc=1 reddened=A11
+M9 inner-sites counted as outer (one index variable for both scans) OK  rc=1 reddened=A8
+M11 sentinel value read wrong (0xffff -> 0x0000)           OK  rc=1 reddened=A13
+M10 forwarded slots changed (the site-5 unpacked-pair law) OK  rc=1 reddened=A12
+M12 prio==0 test flipped to jle (zero-prio entries reach the duplicate path) OK  rc=1 reddened=A10
+M13 free-slot skip flipped to jle (kind=-1 admitted)       OK  rc=1 reddened=A10
+M14 reject edge retargeted into the log tail (skeleton, not condition) OK  rc=1 reddened=A10,A24
+
+14/14 mutations reddened their target checks
+RESULT: PASS M310 gates are load-bearing
