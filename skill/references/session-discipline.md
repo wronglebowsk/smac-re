@@ -112,6 +112,18 @@ a merged PR with `NEXT_PROMPT.md` under 15,300 B.
 cron?" is answered by `jobs.json` (`state`, `enabled`, `next_run_at`) plus the newest `executions` row — a job resumed
 an hour ago is still running, and offering to resume it reads as not having looked.
 
+**Answer meta-questions about the transcript itself by querying the message store, not by searching its text.**
+"How many times was context compressed?", "how many calls did this session run?" are exact rows in
+`~/.hermes/state.db`: table `messages` (`id, session_id, role, content, tool_name, timestamp`) and table `sessions`
+(columns include `message_count`, `tool_call_count`, `rewind_count`, `compression_fallback_streak`,
+`compression_ineffective_count`, `parent_session_id`). `session_search` cannot answer them: it returns matches from
+OTHER sessions, and once such a result is pasted into this transcript its summary text is stored as a message HERE,
+so a later substring search counts that echo as an event. Disambiguate by position —
+`select id, role, tool_name, instr(content, '<marker>') from messages where session_id=? and content like '%<marker>%'`
+— offset 1 under a user/assistant role is a real event, a large offset under a `tool` role is a quote of one. Then
+separate a genuine failure streak from a healthy session by the sessions-row counters rather than by the count of
+summaries, and identify the session first (`sessions.id` starts with its creation timestamp).
+
 Keep every tool result small:
 grep the **`ghidra_out/` corpus** or the saved `*.pseudocode.txt` / `*.json` dumps in
 `~/reverse/smac/` instead of re-dumping; page Ghidra facets in small slices; reuse saved
@@ -336,3 +348,15 @@ function boundary (`zgrep` the `ret`) before accepting any "written in the calle
 attribution, which is where decodes drift. Write the audit to its own short note
 (`evidence/<id>_verify.md`) and label instruction-stream facts VERIFIED and branch semantics INFERRED.
 
+
+## Two-entry-point rule (s273, B22)
+- A rung's gate TEXT must have ONE author. The module composes the `(label, ok)` pairs; the
+  `sim/selftest.py --bNN` hook only relays and summarises them, so the two entry points can never print
+  different claims. A hook that re-derives or reformats the labels is a second source of truth.
+- **After adding a function to a module, grep the module for other `def`s of the same name.** Python lets
+  the later definition win: B22's `composedgrowth.py` carried a stale `acceptance()` draft below the good
+  one that truncated labels to 64 chars, printed the report itself and recomputed a third time — `--b22`
+  silently ran the shadowed copy and still reported `PASS B22: 11/11`. Green output from the wrong code
+  path is the worst failure mode this repo has, because nothing downstream complains.
+- A duplicate-definition check belongs in the same breath as `ast.parse`: `names=[n.name for n in
+  ast.parse(src).body if isinstance(n,ast.FunctionDef)]; assert names.count(f)==1`.

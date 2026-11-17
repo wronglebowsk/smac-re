@@ -62,7 +62,10 @@ commit in `git log` that is not yours — do not read that as history having bee
 `--message` becomes the commit message `submit` lands (it rewrites your checkpoint commit's message).
 **When the PR is already open, `--title` is silently ignored** — the title stays whatever the first
 submit gave it, so a resubmit after a FAIL→PASS flip lands a green head under a stale verdict title:
-fix it yourself with `gh pr edit <n> --title` before merging.
+fix it yourself BEFORE merging — and on this repo `gh pr edit` does not work (it dies on the GraphQL
+`projectCards` / Projects-classic deprecation), so patch the title over REST:
+`gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -f title="..."`, then echo `.title` from the same call to
+confirm it took (a merged PR title is what the next session greps in `git log` and in `gh pr view`).
 
 **If `gh pr create` (or `submit`) dies with `GraphQL: Something went wrong`, open the PR over REST instead of
 re-running submit in a loop.** The branch is already pushed, so only the PR object is missing:
@@ -166,123 +169,20 @@ rewriting). Prevention is the rule that counts: keep `main` free of local commit
 pull fast-forwards. Because the squash's parent is the previous `main` tip, ANY local `main` commit
 is guaranteed divergence, not a race.
 
-**`main` cannot be pushed at all.** The repo's pre-push hook refuses with `refusing to push to main /
-main only moves by squash-merge of a pull request`, so commit-to-main is caught at the push, not only at
-`milestone.py`. Do not take the printed `--no-verify` override. A post-merge footing tweak (the
-`SESSION_CURSOR.md` line that records `MERGED <n> | next pick`) therefore needs its own branch and PR:
-`git checkout -b milestone/<id>cursor` from main, commit, `milestone.py submit --title …`,
-`gh pr checks <n>`, `milestone.py merge <n>` — a docs-only PR passes the gate (no SESSION_NOTES/NEXT_PROMPT
-change is a WARN, not a FAIL). Leave the content COMMITTED before the first push: pushing an empty branch
-(one that equals `main`) and creating the PR afterwards returns 422 `Validation Failed` — there is no diff
-to review — and the dangling remote branch must be deleted. Order: write -> commit -> push -> create. Keep the cursor itself to `id | acceptance | merged? | next command`: a cursor that carries the finding text blows the 600 B cap, and every rewrite of the too-long file is another call — name the artefact that holds the detail (`NAMED.md <ID>`, `evidence/<id>_….txt`) instead of quoting it. Leaving it uncommitted instead transfers the cost to the next session,
-whose `milestone.py start` refuses the dirty tree; the cheapest option is to write the cursor line BEFORE
-the milestone's own commit and let it say what the closing steps are.
+**Never chain `git reset --hard` onto the end of the merge/pull line that detected the divergence — run it
+as its own command, after `git branch --show-current`.** The ff-only abort usually arrives while HEAD is
+still on the branch you just merged from, not on `main`, so the chained reset silently discards a commit
+that exists only locally. The sequence: (1) `git log --oneline -2` to record the stray tip; (2) prove the
+squash already folded its content in (`git show <stray> --stat` + `git cherry origin/main <branch>`); (3)
+`git branch --show-current`, `git checkout main`, THEN `git reset --hard origin/main` in a separate call;
+(4) if the stray held anything the squash did not, `git branch keep/<label> <old-tip>` first, or re-land it
+as its own docs PR. A chained `git checkout -q main && git pull --ff-only && git reset --hard origin/main`
+reads as one tidy recovery and is the way to lose work.
 
-**A close written but never committed is the next session's first job, not new work.** When `git status` shows a prior session's closing set uncommitted (a new `SESSION_NOTES.md` section, `NAMED.md` rows, a `NEXT_PROMPT.md` edit, an acceptance's `evidence/*.gdblog`), the milestone is DONE — adopt that close: finish the remaining closing steps (sync the skill, commit, `gate --base main`) and do NOT re-run the acceptance: a second invocation of a one-shot live acceptance confounds or supersedes the recorded verdict, and `milestone.py start` refuses the dirty tree anyway. When a sibling session commits the same close WHILE you are editing it (its commit lands between your reads — `git log` timestamps move mid-turn, the write tool names the sibling), do not re-apply your edits: `git diff HEAD` and commit only the residual delta on top, and never duplicate the sibling's `submit` — one submit per milestone; verify with `gh pr view <n> --json state,headRefOid` before opening another PR.
-
-**A backlog of never-green PRs is CLOSED, not left open.** When a lineage's question has since been
-answered by a later milestone — its verdict recorded in the ledger and the detail in
-`docs/pick-archive.md` — close the superseded PRs with `gh pr close <n> --comment "…"` naming where
-the finding now lives. Closing is reversible and keeps the branch on origin (the diffs stay
-recoverable), while `gh pr list` stops reporting a backlog that every report otherwise has to
-explain; a ledger's `(#NNN)` reference keeps resolving after the close. Never close a PR from an
-OUTSIDE contributor: that one goes to Paul as a question, because accepting or declining it is his
-call, not the loop's.
-
-A session that finds an open PR lands it instead of starting new work. Branch protection is
-unavailable (GitHub Pro needed for private repos), so `merge` is the enforcement point — never
-merge by hand in the web UI without a green `gate` check. After editing this live skill, sync `SKILL.md` **and** `references/`
-with `~/reverse/smac/skill/` and commit: the gate compares only `SKILL.md`, so an edited reference drifts
-silently. **Resolve that drift by CONTENT, never by mtime and never by a wholesale copy:** every `git checkout`
-(a `milestone.py start`, a `merge`, a hard reset) rewrites the repo copy's mtimes to the checkout time, and a
-merged PR can leave the repo copy holding a rule the live skill never received — so the newer-mtime side is
-often the content-stale side, and copying it over the other silently reverts tracked findings while the gate's
-`skill sync` check still PASSes. Go file by file: `diff -rq` the two dirs; for each differing file restore the
-repo side with `git checkout HEAD -- <path>` (git history, not mtime, is the arbiter of what the repo copy is
-supposed to contain), re-apply only your own new bullets into it, then copy that file repo -> live so both
-sides match byte for byte; finish with `diff -rq` (must be clean) and `git diff --stat HEAD -- skill/` (must
-show only your intended additions). If `python3 scripts/evidence.py budget` reports `skill/SKILL.md … FAIL`
-(70,000 BYTES — see the budget gotcha above), compress PROSE inside that file until it passes — never raise the
-limit; and when it sits within ~50 B of the cap, put the new rule in the reference file SKILL.md already points
-at instead of into SKILL.md. Protocol detail: `~/reverse/smac/AGENTS.md` and `docs/WORKFLOW.md`.
-
-## Sibling ownership (a cron dispatch colliding with a live session)
-
-**A cron-dispatched sibling is invisible to those greps**: its shells are children of the gateway process and its
-tracked background run shows only as `/bin/bash -lic …` (systemd unit `hermes-worker-proc_<proc-id>.scope`), so read
-the files that NAME the owner — `~/.hermes/processes.json` (one record per tracked background run: `command`, `pid`,
-`owner_task_id`, `session_key`, `parent_session_id`; an `owner_task_id` of the form `cron:<job>:<exec>` that is not
-your session key means the harness running right now is the sibling's) and `~/.hermes/cron/executions.db` (`select
-id,job_id,status,started_at,progress_at,pid from executions order by started_at desc limit 5` — `running` with
-`progress_at` inside the last minute or two is alive and working NOW). A mtime on `scripts/<harness>.py` or on
-`SESSION_CURSOR.md` newer than the last commit is the same verdict, and the game's Wine pid changing under you means
-the sibling already relaunched the box. `SESSION_CURSOR.md` records what a session BELIEVED was in flight and is
-written by whoever touched it last, so it goes stale in both directions — a finished run still marked RUNNING, or the
-next run queued for the sibling while the cursor names yours — so trust the owner files over the cursor, and do not
-overwrite a cursor another session wrote.
-
-**When another session owns the box mid-acceptance, the collision report IS the deliverable**: spend ZERO acceptance
-invocations, skip the readiness oracle's printed FIX (an enqueue/pane poke lands on THEIR box and confounds their
-run), touch no shared doc, commit nothing, and quote the command that produced the ownership verdict. In that state
-`gate.py --base main` reads RED on `milestone checkpoint: not updated: SESSION_NOTES.md, NEXT_PROMPT.md` plus
-`skill sync` — that is the sibling's unwritten closing order, not a defect to repair by writing their docs for them.
-
-When a sibling owns a mid-run acceptance, serialize — a bounded foreground wait loop on
-`pgrep -f '<instrument> --tag <tag>'` — then contribute a **box-free** delta (bytes only, no gdb, no poke) instead of
-a second measurement, and push it onto the SIBLING's branch: its open PR picks the new commit up, so never submit a
-second PR for one branch. Re-derive the target text from the live file (a terminal `awk NR`/`grep -n` printing only
-the matched window) or do the edits in an `execute_code` cell that opens the file fresh, edits by line index and
-prints only the byte delta — that route also keeps the file out of context. If the sibling committed the whole close
-while you were editing, commit only your residual delta and do not re-submit or re-run the acceptance.
-
-
-## s242 retirement: the git-workflow rules section
-> Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
-> `skill/SKILL.md` carries the rules and points here. Nothing in this block was edited.
-
-## Git workflow — `references/git-workflow.md`
-Never commit to `main`. `milestone.py start <ID>` branches from **`main`**, so a milestone you must
-build on that was never merged (an acceptance FAIL left it on its branch) has NONE of its scripts in
-the tree — branch from it instead (`git checkout -B milestone/<ID> milestone/<prev>`) and say so in the
-session entry, rather than discovering the missing instrument halfway through the run.
-`milestone.py start <ID>` refuses a dirty worktree: stash the `SESSION_CURSOR.md` write, start, then pop
-it onto the new branch — never commit a cursor write to `main` just to get the tree clean. That commit is also what breaks a
-landing — a squash merge plus any local `main` commit makes `merge <n>` abort its ff-only pull AFTER
-GitHub has already merged (recovery in `references/git-workflow.md`) — and `main` cannot be pushed at all
-(the pre-push hook refuses), so a post-merge cursor/footing tweak rides its own branch + PR. When the milestone you are re-running already has a branch, `start <ID>` refuses and leaves you on `main`:
-check that branch out and `ls scripts/<id>*` before concluding the instrument is missing.
-**Verify the named milestone is not already merged before starting it** — a kickoff prompt (re-pasted or
-cron-supplied) can lag the repo. `git log --oneline | grep -i <ID>` plus `grep -n '^## <ID>' NAMED.md`
-answers in one call; if both hit, the prompt's pick is stale, so run the milestone
-`SESSION_CURSOR.md`/`NEXT_PROMPT.md` names and state the swap in the report. Re-running merged work
-spends the tool-call budget and re-derives a settled answer.
-Cycle: `python3 scripts/milestone.py start <ID>` → work → `gate.py --base main`
-(must be GREEN) → `submit --title …` (commit + push + PR) → `gh pr checks <n>` → `merge <n>`.
-**Create the PR with a JSON FILE, not an inline `curl -d`:** a body containing an apostrophe (`tail's`,
-`decompiler's`) closes the shell's single-quoted payload and the whole command fails to parse, so NOTHING in that
-block runs — including the `git push` before it — and the next attempt returns 422 `head invalid` rather than a body
-error. Build it with `json.dump({...}, open('/tmp/pr.json','w'))` and post with `curl --data @/tmp/pr.json`.
-**Merging several PRs in one session is queue-bound, not build-bound:** `gh pr checks` can sit `pending` for 2-4
-minutes with the job merely QUEUED, so poll with a ~200 s sleep instead of re-submitting; `milestone.py merge`
-correctly refuses while a check is pending, and a force-merge is never the answer.
-**A GREEN gate is not permission to merge.** The gate audits docs, evidence and the harness; it says
-nothing about whether the milestone's acceptance passed. If the acceptance printed FAIL, keep the
-checkpoint commits on the branch, submit nothing (or leave the PR unmerged), and report the FAIL with
-its numbers — a branch carrying a documented FAIL is the honest end state, and weakening a threshold
-to turn it green is the one thing that is never allowed.
-**A squash-merge TITLE outlives the finding inside it.** `milestone.py submit` titles the PR with the session
-headline, and a milestone often opens as "BLOCKED / not accepted" and only resolves later in the same branch —
-the merged title then contradicts the merged commits, and the next session reads the title first. When that
-happens, land a small docs PR that states the correction (cursor, ledger row, one line saying the title
-predates the result) instead of leaving two versions of the truth on `main`. The same rule covers a QUALIFICATION:
-when a later session narrows an earlier finding, patch that finding's own registry block (`NAMED.md`) in place — a
-retraction that lives only in `SESSION_NOTES.md` leaves the block future sessions grep still asserting the older,
-stronger claim, and the registry is what they read first.
-Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten
-`NEXT_PROMPT.md` (<=15,300 BYTES at close — `evidence.py budget` prints `os.path.getsize`, exactly `wc -c`; a doc
-full of em-dashes and arrows is a few dozen CHARACTERS smaller than that number). `scratch/` is gitignored: scratch probes and one-off tools are
-NOT repo products — a checkpoint commit after scratch-only work correctly commits nothing; the
-tracked products are `scripts/`, `evidence/`, and the docs. After editing the LIVE skill, sync it with `~/reverse/smac/skill/` **by content, not mtime**: a `git checkout` resets the repo copy's mtimes and a merged PR can leave it holding a rule the live skill never got — the newer-mtime side is often the content-stale one, and a wholesale copy then silently reverts tracked findings while the gate's `skill sync` check still PASSes. Per file: `diff -rq` both dirs, `git checkout HEAD -- <path>` the repo side, re-apply only your new bullets, copy repo -> live
-Detail: `references/git-workflow.md` — the gate compares only `SKILL.md`, so an edited reference drifts
-silently; sync in the same session, before the closing commit.
-
+**Never assert what happened to a discarded stray commit - in either direction - until the history is
+queried.** `milestone.py start <id>` does `git checkout main`, `git pull --ff-only`, THEN `git checkout -b`,
+so it branches from `main` and can NEVER carry a stray tip forward (s273: I wrote that it "can", and
+Greptile caught it). The only law is the query: `git log --oneline -2`, `git cat-file -e <sha>`, and
+`git merge-base --is-ancestor <sha> HEAD` (its exit code, not your memory, is the answer). Prove preservation
+before claiming it, and prove loss before re-authoring - re-writing a change whose commit still exists makes a
+duplicate you then have to explain in the PR body.

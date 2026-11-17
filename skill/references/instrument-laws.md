@@ -900,3 +900,33 @@ purely the instrument's:
   reddens something the conditions cannot see. Watch indentation when the mutation injects a line: an anchor that
   starts mid-line loses the indent and the mutant dies on `IndentationError` — correctly scored WEAK, but it cost
   a whole sweep.
+
+## Growth/geometry laws (s273, B22)
+- **For a container that grew, never assert a single lift/shift amount — pin a BAND MAP.** B22's first
+  gate claimed "everything from `units_off` to EOF is the original lifted by +1572 B" and was FALSE: the
+  writer emits originals, then grown records, then re-anchors the tail, so the tail lifts 1572 B while the
+  base originals lift only 52. Measure the layout (`u_end`, `u_end_n`, `b_end_n`, `tail_src`) from the
+  writer's own slice arithmetic, then emit `[(band_name, bytes-equal-to-source, length)]` and require all
+  bands; the printed failure names the band instead of "the region differs".
+- **A claim about what a locator does is a claim about bytes - and it must be measured on ONE image at a
+  time.** `sim/save`'s shape scan confirms only 18 of a grown container's 23 bases (the founded records have
+  M282's empty name span and `_base_ok` wants `[ -~]{3,30}\x00` at +19), so assert the UNDER-FIND explicitly
+  (`n_bases - found_bases == n_grown`). But DO NOT manufacture a count-vs-shape disagreement: B22 first
+  claimed the header counts and the scan "disagree by exactly the unit growth", derived by applying image A's
+  count arithmetic (`units_off + 52*(n_units+1)`) to image B's scan anchor. `sim/save` derives `units_off`
+  FROM `bases_off`, so on each image measured by its own law (`bases_pred = units_pred + 52*n_units`) count
+  and shape agree byte-for-byte and `closes` is True on every container. Any comparison of two location
+  methods must name the same image on both sides.
+- **A falsifier that recomputes its own expectation is a tautology.** B22's G9 originally re-read the
+  corrupted image at its own call site, so a regression that made the real leg read the MODEL would still
+  pass (Greptile P2). Fix: ONE shared producer (`record_from_image(image, idx, head)`) called by both the
+  positive and the corrupted case, corrupt EVERY claimed input source (B22 now perturbs tile AND faction,
+  not just coordinates), and assert the output CARRIES the perturbation, not merely that it differs.
+- **Prove the falsifier discriminates, inside the gate.** B22's G12 rebinds the shared leg to read the model
+  for the duration of one call (restore it in `finally`), then asserts the mutant's SIGNATURE: the record
+  collapses back onto the uncorrupted expectation while the real leg carries the bad bytes. Declare in the
+  same gate which other gates are BLIND to that mutation and why (B22's G3 cannot see it - the fixture's
+  model tuple equals the container tuple).
+- **Count what you diff, not what should differ.** B22 predicted a 4-byte header diff ("one per modeled
+  field"); the measured diff is 3 (`0x44`, `0x48`, `0x54`) because cur/tf already hold the recorded values.
+  Assert the exact offset LIST, not a cardinal derived from a model of the fields.

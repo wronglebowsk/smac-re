@@ -1,6 +1,4 @@
-# NEXT_PROMPT.md - footing (s272 close: M310 GREEN (33/33 gates, 14/14 mutations post-Greptile); M309 is
-MERGED (#283); historical header + CLOSED enumeration + traps 14-15 VERBATIM at
-`docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: M309 MERGED; B1-B21 + M54A-M309 MERGED (§THE LEDGER); pre-existing #180/#105 NOT this chain.)
+# NEXT_PROMPT.md - footing (s273: B22 GREEN post-Greptile 12/12 on `milestone/b22` (#286: my count/shape claim was my own arithmetic and is RETRACTED in-gate; G12 runs the mutation experiment in-process so the falsifier is proven load-bearing); M310 is MERGED (#284); B21 + M309 CLOSED earlier; historical header + CLOSED enumeration + traps 14-15 VERBATIM at `docs/nextprompt-archive-m299-b20.md` (closed era) and `docs/pick-archive.md` §trim-s262 (traps). STATE: B1-B22 + M54A-M310 done (B22 pending merge of #286); pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -27,7 +25,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
-`evidence/b21_composedrun.txt:93`). Next build rung **B22**, UNAUTHORED - its fire writes it (B14-B21 did).
+`evidence/b21_composedrun.txt:93`). Build rung **B22** AUTHORED AND GREEN this fire on `milestone/b22` (12/12, `evidence/b22_composedgrowth.txt`) - MERGE IT, then cursor-handoff and author **B23** (next in BUILD_SPINE.md's R2 plan: the queue's PER-TURN progress composed into the same written container, B11's law exercised through the writer, not in memory).
 Candidates: (i) the B21 composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
 the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
 end-to-end (B15+B16+B17 with save-only inputs). Track_mode FIRST, every fire.

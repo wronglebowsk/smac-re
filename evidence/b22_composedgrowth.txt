@@ -1,0 +1,20 @@
+B22 composedgrowth - rung: both save record arrays grown in ONE write, the CREATE leg fed by the RELOADED base record
+sav=m54b_clean.SAV log=m289_gdb_raw.log trace=trace_m289_20261110_071759.jsonl
+no box time, no /proc, no gdb, no game-binary load
+
+  ok   G1 B21's composed run re-derives green on this input (curve 30/30, op fidelity 9/9, 5 grown 304-B records, reload equal), so B22 builds ON it
+  ok   G2 the B21 image re-parses: n_bases 23 (== the model's 23), n_units 67 unchanged, year 2180 - and the shape scan CONFIRMS ONLY 18 of them, recovering exactly the 18 original bases: the 5 founded records fail _base_ok (M282's empty name span), so a grown base is locatable by COUNT, never by SHAPE
+  ok   G3 the unit record is composed from fields read OUT OF THE IMAGE (base[22] at (27,29) fac 1, queue head 2) and is byte-equal to B12's own create_record for the same fields (52 B, no re-implementation)
+  ok   G4 both arrays grew in ONE call (+1572 B = 5x304 + 52; B21's bases-only image grew +1520 B) and every band of the measured layout reproduces its source byte-for-byte: unit originals 3484 B, the ONE new unit 52 B, base originals 5472 B, the grown bases 1520 B, the tail 10800 B
+  ok   G5 count and shape AGREE on every container (bases_pred == bases_off on orig/B21/B22, `closes` True on all three; the base array moves +52 B and the unit anchor does not move) - the earlier claim of a 52-B DISAGREEMENT was this run's arithmetic, not the file's geometry; the shape scan's real limitation is the 18-of-23 under-confirm in G2
+  ok   G6 byte->field round-trip on the base array: all 18 ORIGINAL records byte-identical, all 5 GROWN records byte-equal to the founder's own record bytes (M282: x u16 +0, y u16 +2, faction +4/+5, rest zero), and each grown record's parsed (x, y, own4) equal the model's founding tuple
+  ok   G7 the header diff is EXACTLY the 3 bytes ['0x44', '0x48', '0x54']: the units dword (now 68), the bases dword (now 23) and the year word (now 2180), every one inside a modeled span - no other byte before the unit array moved
+  ok   G8 the doubly-grown image re-parses (n_units 67 -> 68, n_bases 23): the 67 original unit records byte-identical, the new record AT THE ARRAY END, units_off unmoved / bases_off +52 B / tail +1572 B, and its parsed x/y/type/owner equal the base tile read from the FIRST reload - the image->field->record->image chain is closed
+  ok   G9 FALSIFIER (same producer as G3): corrupting that base record's tile AND faction IN THE IMAGE (1447,1448, fac 5A) and recomposing through record_from_image makes the created unit CARRY the corrupted bytes (x/y span == a705a805, owner == 5A) and differ from G3's record - the leg reads CONTAINER bytes, not the model
+  ok   G10 rivals fail the same fit: growing ONLY the unit array re-derives n_bases 18 and loses the 5 grown records (image 242591 B, not 244111); the idle order-2 record is NOT the produced record; and the perturbed unit stride mis-places the tail (len 244245 != 244111)
+  ok   G12 MUTATION EXPERIMENT: rebinding record_from_image to read the MODEL instead of the image makes G9's record collapse back onto G3's - the model's own tile/faction (27,29 fac 1) byte-for-byte - while the real leg on the SAME corrupted image carries (1447,1448 fac 5A); so the falsifier is load-bearing, not a tautology. G3 is DECLARED blind to this mutation (model tuple == container tuple in this fixture), which is why G9, not G3, proves the input is container bytes
+  ok   G11 a SECOND run reproduces the written image byte-for-byte (sha256 f7d90eb77ca7abac) and the same gate verdicts, so the whole rung is deterministic
+
+written doubly-grown image sha256 f7d90eb77ca7abac
+report digest 06dd4ac599fd044c
+PASS B22: 12/12 gates - the save's TWO record arrays grow in ONE writer call (image +1572 B = 5x304 + 52, header diff 3 B) and the B12 CREATE leg demonstrably takes its tile and faction from the RELOADED image's base record (corrupting that record in the image moves the created unit), so a base written by the B8 writer can feed a later leg's ARGUMENTS - the inbound half of the round-trip (no box time, no /proc, no gdb)

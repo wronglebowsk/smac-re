@@ -1,36 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-253-254.md` (2 sessions). Read it only when a question reaches back before session ## Session 255.
-
-## Session 255 (2026-11-15, STATIC, zero box) - M300: the 24 callers of FUN_005832b0 censused; only 0x51dffd gates the [+4] write
-- THE PICK from the M299 lead list. `python3 scripts/m300_callers.py` -> **PASS M300:
-  12/12** (every quoted number computed+asserted there; `evidence/m300_callers.txt`).
-- S1: 24 call sites in scratch/m574/text.txt == Ghidra index.csv n_callers (two
-  instruments); 0x5832b0 NEVER appears outside a call rel32 -> no indirect/vtable use.
-  24 sites span 13 caller functions (biggest FUN_0055f650: 7 sites, and the OPEN
-  0x56c6de continue-leg lead lives INSIDE it).
-- Gates supplied: 21/24 truth-branch (test eax,eax + je/jne; 0x50e216 also pushes the
-  raw value as an arg - leg-ambiguous); 2 store the raw value to a frame slot (0x4cf907
-  ->[ebp-0x1c], 0x5858fa ->[ebp-0x7c]); 1 converts sign to a 0x200 mask bit (0x568567
-  mov ebx,eax; neg; sbb; and 0x200).
-- Counter-writer uniqueness: whole-dump mentions of 0x989cec live ONLY in FUN_0051dcb0
-  (5 lines; lone STORE = M299's 0x51e01b); the only other slot-base materialization is
-  0x51dd05 `mov eax,0x989ce8` - same function. No caller function outside FUN_0051dcb0
-  writes [+4] unless a pointer were passed in. DECLARED: pointer-passthrough +
-  non-literal addressing out of static scope (the live "any other writer" watchpoint
-  check remains OPEN).
-- Reach to FUN_0051dcb0 (reverse BFS over DIRECT call edges; 11 direct sites in the
-  writer): exactly 1 site (0x51dffd) feeds the counter gate; 1 (0x59ddf4, FUN_0059ce10
-  M94 walker) reaches it DIRECTLY;  15 sites / 7 fns reach transitively (depth 2-8:
-  FUN_0055f650x7@d3, FUN_00585720x3@d2, FUN_0050d140x2@d4, FUN_004c40e0, FUN_004cf4c0,
-  FUN_0051c750, FUN_0059e2c0); 6 sites CANNOT-REACH: FUN_0046a610, FUN_004e63b0 (M53q
-  scan-pool rebuild), FUN_0058b1b0x3, FUN_005aff90 (B18 value body - sibling consumer
-  of the same (x,y) fold, NOT nested in the counter path).
-- NEW STATIC LAW: a straight-line post-call classifier must DIE at the next `call`
-  (caller-saved eax) and treat conditional branches as both-legs; the raw S3w windows
-  are the witness, class strings only labels. (rk-vs-t regex-anchor bug caught 3
-  phantom value-arith classes before submit - windows audit clean after.)
-- Box: ZERO (s244 state untouched). NEXT_PROMPT rewritten for s256.
+Older sessions: `docs/sessions/sessions-255-255.md` (1 sessions). Read it only when a question reaches back before session ## Session 256.
 
 ## Session 256 (2026-11-15, STATIC, zero box) - M301: the lead "ebx's table 0x51de2c-0x51df1d" is REFUTED - it is a base_array walk, not a table
 - THE PICK from the M294 lead list. `python3 scripts/m301_ebxtable.py` -> **PASS M301: 8/8**
@@ -445,3 +415,59 @@ Older sessions: `docs/sessions/sessions-253-254.md` (2 sessions). Read it only w
   `==`->`<=` mutation because the 13/5 counts + 0-overlap already carried the law - the harness found
   it, so it was replaced by a mutation that flips a measured fact (broadening the fold-classifier
   regex), which reddens A8.
+
+## Session 273 (2026-11-17, BUILD, zero box) - B22: both save record arrays grown in ONE writer call, CREATE leg fed by the RELOADED base record
+- THE PICK from `track_mode.py` (`MODE=BUILD next_rung=B22`); B22 was UNAUTHORED (no rung in
+  `BUILD_SPINE.md`, no NAMED row, no commit) so this fire authored it, the way B14-B21 did.
+- MEASURED, three claims of mine were FALSE before the bytes answered:
+  1. the rung text asserted "the region `units_off`..EOF is the original lifted by ONE amount" -
+     wrong: `savewriter.build_image` emits originals then grown bases and re-anchors the tail there,
+     so only the tail lifts by the full 1572 B and the base originals lift by 52. The gate now
+     compares FIVE bands (`unit originals 3484 | the ONE new unit 52 | base originals 5472 |
+     the grown bases 1520 | tail 10800`), each against its own source.
+  2. `r["new_recs"]` are 3-byte `(fac,x,y)` tuples, not 304-B records - a gate comparing them to
+     image bytes could never pass. `basefound.record_bytes(led.records[-5+k])` is the right object.
+  3. the header diff is 3 bytes, not 4 ("one per modeled field" was decoration; cur/tf already
+     hold their recorded values in this save;
+  4. and the loudest one, caught by GREPTILE (P1 on #286) rather than by my own gates: the G5 claim that
+     the header counts and the shape scan "DISAGREE by exactly the unit growth". It came from applying
+     image A's count arithmetic (`units_off + 52*(n_units+1)`) to image B's scan anchor. `sim/save`
+     derives `units_off` FROM `bases_off`, so measured per-image (`bases_pred = units_pred + 52*n_units`)
+     the two methods AGREE byte-for-byte and `closes` is True on orig/B21/B22. The gate now carries its
+     own retraction in its printed text instead of the false claim.
+- FOUND: `sim/save`'s shape locator CONFIRMS ONLY THE 18 NAMED bases of the grown container -
+  M282's founders write an empty name span and `_base_ok` wants `[ -~]{3,30}\x00` at +19. A grown
+  base is locatable by COUNT, never by SHAPE, and on a container that grew only ONE array the
+  count position and the shape anchor DISAGREE by exactly that growth (226319 vs 226267).
+- ACCEPTANCE: `python3 -m sim.selftest --b22 programs/saves/m54b_clean.SAV` -> **PASS B22: 11/11**;
+  `python3 -u -m sim.composedgrowth` prints the same 11 labels; two runs byte-identical
+  (digest a7ec6d38ba67cbe9, image sha256 f7d90eb77ca7abac); evidence file == fresh rerun.
+- SELF-FOUND DEFECT, kept visible: `sim/composedgrowth.py` carried a STALE `acceptance()` draft
+  BELOW the good one (truncating labels to 64 chars, printing the report itself, recomputing a
+  third time). Python let the later `def` win, so `--b22` silently ran the shadowed version and
+  the PASS line still read 11/11 - a green result from the wrong code path. Duplicate deleted.
+
+- POST-REVIEW on #286 (1 P1 + 3 P2; all four accepted, none argued with):
+  * G5 retracted as above (the P1). It is a repeat of s272's lesson in a new costume: a comparison built
+    from two different objects, asserted as a property of one.
+  * G9's falsifier (P2) re-read the corrupted image at its OWN call site, so a regression that made the
+    real leg read the MODEL stayed green. Now: ONE shared producer `record_from_image(image, idx, head)`
+    used by both the clean and the corrupted case; the perturbation covers tile AND faction; the gate
+    asserts the created unit CARRIES the bad bytes (x/y span + owner byte), not merely that it differs.
+  * NEW G12 (P2, my design) runs the MUTATION EXPERIMENT in-process every run: rebind the shared leg to
+    read the model, restore in `finally`, and assert the mutant's SIGNATURE - G9's record collapses back
+    onto G3's (the model's own (27,29) fac 1) while the real leg carries (1447,1448) fac 5A. G3 is
+    DECLARED blind to it (the fixture's model tuple equals the container tuple), so the honest framing
+    replaced a gate that could not fail. Acceptance is now **PASS B22: 12/12**, two runs byte-identical
+    (report digest 06dd4ac599fd0..., written image sha256 f7d90eb77ca7abac unchanged).
+  * NAMED citations (P2) were one line off after the evidence regenerated; the block was rewritten and a
+    resolver now checks every cited line actually contains the gate label its row names - CITATIONS_RESOLVED.
+  * A skill law I wrote THIS fire was false too: I claimed `milestone.py start` can branch from the
+    worktree's stray tip. `cmd_start` does `git checkout main` + `git pull --ff-only` and only THEN
+    `git checkout -b`, so it never can. Law rewritten: never assert a stray commit's fate either way
+    without `git merge-base --is-ancestor` (its exit code, not my memory).
+  * Process slip worth keeping: my docs-patch script aborted on a stale multi-line anchor (the `submit`
+    step had re-wrapped SESSION_NOTES.md), and `git add -A && git commit` ran anyway - so commit b2b357d
+    shipped corrected code with stale docs. Anchors that span wrapped prose must be matched by line
+    number or single unique line, and a commit that follows a failed patch step is a FAILED step, not a
+    clean one.

@@ -60,7 +60,8 @@ The same rule kills NEGATIVE claims: before writing "no code uses constant X", g
 `parse_text` (the whole `.text` cache → instruction map, already validated against `index.csv` `n_insns`),
 `load_spans`, `load_index`, `pe_sections`, `va2off`, `window`. Hand-rolling either a cache line-split or a PE
 offset map produces phantom findings (a "missing instruction" the engine has; one-character tokens read as asset
-names), and matching an immediate by TEXT suffix misses the encoding's actual form —
+names), and a mid-line `split` misparses `movsx`/`movzx` (its bytes column is one field narrower, so the
+remainder starts with a space and the mnemonic parses as empty) —
 `references/instrument-laws.md` §Static text-cache parse traps.
 Master plan / exit gates (G1–G4) / phase list: **`~/reverse/smac/ROADMAP.md`** — read it before picking
 a milestone. Phase 0 = harness + state reader + full Ghidra export + coverage ledger; do it before more
@@ -145,7 +146,10 @@ re-summarise.
   RED gate by `exec`-ing its source up to the driver and recomputing THAT ONE condition (recipe:
   `references/code-atlas.md`), never by re-running the whole script — a run of six full re-runs plus three
   anchor-fix rounds on the mutation sweep is exactly how a fire hits the iteration ceiling with `NAMED.md`,
-  `SESSION_NOTES.md` and the cursor still uncommitted, which costs the next fire its footing.
+  `SESSION_NOTES.md` and the cursor still uncommitted, which costs the next fire its footing. In the
+  persistent `execute_code` kernel that costs double: one aliased name (`subprocess = [...]`) poisons every
+  later cell, and a module imported before an edit keeps validating the OLD mutation list — re-import +
+  `importlib.reload`, or run the step through `terminal` instead of fighting the kernel.
 - Close order, every time: cursor -> gate GREEN -> notes entry (`patch`) -> **checkpoint commit** ->
   `NEXT_PROMPT.md` -> submit/PR. Never leave the commit until after the handoff docs.
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (the budget warn; the gate FAILs at 16,000, and closing past the
@@ -243,11 +247,10 @@ by TAB fields). **A hand-rolled field-split on that cache invents MISSING instru
 the bytes column is space-padded and its width varies by encoding, so a `movsx` line's remainder
 starts with a SPACE — `line.split(None,1)` parses the mnemonic as `''` and the operand as `movsx`,
 and the instruction then "isn't there" for every filter. Read operands through the repo engine
-(`scripts/m308_site_list.py:parse_text`, which M309/M310 both pass) and never accuse a shared parser
-from a probe: print `ascii(operands)` (or compare `n_insns` from `ghidra_out/index.csv` against your
-parsed count in the window — that assertion is the cheap guard, ship it as a gate) before concluding
-an instruction is absent. Same paragraph kills the "shl 0x10 vs shl 0x4" class: the 16-B entry step is
-`shl r,0x4`, so an `endswith("0x10")` filter silently returns zero sites.
+(`scripts/m308_site_list.py:parse_text`) and never accuse a shared parser from a probe: print `ascii(operands)`
+before concluding an instruction is absent (a filter matching an immediate by TEXT suffix misses the encoding's
+actual form — `shl r,0x4` is the 16-B entry step, so `endswith("0x10")` silently returns zero sites), and ship
+`n_insns` from `ghidra_out/index.csv` vs your parsed count in the window as a coverage gate.
 **Never `objdump -d --start-address` at an arbitrary address**: a start landing INSIDE an
 instruction silently misaligns the whole window — objdump re-synchronizes mid-encoding, invents `.byte` lines,
 and poisons any reachability/def-use walk built on it (the witness is a `.byte` line where a `jmp` should be).
@@ -438,7 +441,14 @@ driving/dialog state machines: `references/wine-operations.md`)
   the cheap cure for the project's dominant defect (an assertion that can pass on an unmeasured state). Write the
   harness BEFORE the closing docs — the closing order's first steps (rewrite `SESSION_CURSOR.md`, append the notes
   line) outrank further evidence when the budget runs low, because the next fire reads the cursor, not this branch.
-  Anchor/dry-run mechanics for the sweep: `references/instrument-laws.md` §Static text-cache parse traps.
+  **A gate whose prose names a multi-instruction predicate needs a mutation that corrupts the ENGINE'S PARSED
+  INSTRUCTION** (`M._INS[addr] = (...)` injected just before the gate's comparison), not one that edits a literal
+  the assertion happens to read: a mutant flipping `jne`→`jle` passes untouched when the gate only compares branch
+  TARGET strings, and it reports as rc=0/passing rather than as a red gate. Ship the harness with a
+  baseline-green precondition (run the unmutated instrument first and refuse to score anything unless it exits 0)
+  and reject any mutant whose output carries a traceback — rc==1 is also what an uncaught exception returns, and
+  RED lines print before the death, so a crashing mutant otherwise credits itself. Full mechanics:
+  `references/instrument-laws.md` (mutation-harness scoring) and §Static text-cache parse traps.
 - **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
   first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
   agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
