@@ -70,19 +70,12 @@ collision-check + worktree FIRST).
   is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
   startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
   Full law NAMED ## M313.
-  CLOSED (s282/283): pick (i'') = M314 MERGED as #299 (main e638772; 18/18 + 27/27 mutants,
-  digest cf54a7ca907344c6; squash title's "20/20" is the pre-review harness - NAMED governs): FUN_004c5d60 = token-keyed tour/dialog dispatcher (31 instr sites, 28 tokens);
-  family = 4 coordinate wrappers + 4 tour drivers + 3 result handlers (0x444 = M269 secondary delta,
-  NOT a menu id). CURSOR/NAMED lead "FUN_004d3f70 calls 15 band members" REFUTED by bytes: exactly
-  1 (FUN_0050cab0 x2); pumpB calls FUN_004d3f70 DIRECT at 0x517858 (6th off-band callee, NAMED
-  ## M313 pump row corrected). Law: a pump-callee census by thunk/hub SITES undercounts direct
-  band-member calls - census callees from the callee side.
-  OPEN PICKS after M315, in order: (iii) still open from M310: game meaning of a GOAL, the
-  one-char tokens, WHY a GOAL priority can be NEGATIVE; (iv) NAME the selection-REFRESH PAIR
+  OPEN PICKS after M316, in order: (iii') the engine FUN_00556690 (14.3 kB: what it DECIDES; its
+  callers FUN_005208f0/FUN_0059ce10); (iv) NAME the selection-REFRESH PAIR
   (call 0x4e8d60 + call 0x4e78e0) - M315 proved the pair is the memo's reaction but neither
   callee is in NAMED; (v) the 8 memo sites with NO local dedup guard - census their callers and
   ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
-  Lists live in NAMED ## M310 / ## M312 / ## M313 / ## M314 / ## M315, not here.**
+  Lists live in NAMED ## M310 / ## M313 / ## M314 / ## M315 / ## M316, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT

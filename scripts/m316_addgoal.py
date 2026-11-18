@@ -25,7 +25,8 @@ def load_ins():
             chunk = chunk.strip()
             if not chunk: continue
             addr, rest = chunk.split("|", 1)
-            mn, ops = rest.split(" ", 1)
+            mn, _, ops = rest.partition(" ")
+            ops = ops.strip()
             a = int(addr, 16)
             if a not in ins:
                 raise SystemExit("M316_PATCH address not in .text cache: %s" % addr)
@@ -200,7 +201,8 @@ imm_kinds = sorted(set(k for _, _, k, _ in siteinfo if k is not None))
 ck("A6_sites_exactly50", len(sites) == 50 and
    len(set(o for _, o, _, _ in siteinfo)) == 12,
    "sites=%d owners=%d" % (len(sites), len(set(o for _, o, _, _ in siteinfo))))
-ck("A6b_site_owner_digest", True,
+SITE_DIGEST = "8ace40ec97032541"  # measured; the 50 (site, owner, kind, prio) tuples
+ck("A6b_site_owner_digest", hashlib.sha256(repr(siteinfo).encode()).hexdigest()[:16] == SITE_DIGEST,
    "digest=" + hashlib.sha256(repr(siteinfo).encode()).hexdigest()[:16])
 ck("A6c_immediate_kinds_constructed",
    imm_kinds == [0, 2, 3, 6, 7, 8, 9, 11, 16, 25, 41],
