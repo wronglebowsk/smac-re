@@ -502,3 +502,19 @@ Older sessions: `docs/sessions/sessions-255-255.md` (1 sessions). Read it only w
   summary searched in stdout+stderr. First score **9/11** - MU2 was a dead anchor (a comment I had added moved
   the literal) and MU4 (relaxing the matcher's scan order) was genuinely WEAK. Fixed by adding a distance-cap
   mutant and a shift-width mutant and by PINNING the three fold triplets in A3 so attribution is falsifiable.
+- FINAL ROUND (same session): instrument now **8/8 gates** (gate **A8** added: the matcher's per-site output is
+  pinned as exact triplets, so a mis-transcribed address reddens it - MU4), digest `625cd5877271cd85`, and the
+  harness scores **11/11 load-bearing** with the baseline-green precondition (`python3 -u scripts/m311_mutate.py`).
+- NEW FINDING from A8: **5 of the 6 selection sites recompute `REC_BASE + 304n`; `0x4f5c36` does not** - it
+  re-stores a SAVED pointer read from `[ebp-0x8]` at `0x4f5c33`. One selection path caches the record pointer.
+- RETRACTED IN GATE A8 (my prose again, this time caught by a mutant that could not fail): the matcher's
+  register-discipline and 24-B proximity clauses are **NOT load-bearing on this binary** - a register-blind
+  matcher returns byte-identical results at all 6 sites across windows -24/+32, -24/+90, -24/+144 B. The
+  "proximity" effect is purely the analysis window (at -24/+144 B the 0x4e3476 window also contains the next
+  function's fold at 0x4e34cc). Claiming a mechanism is load-bearing without a mutant that can see it is the
+  same decoration this repo has now punished four times.
+- HARNESS HYGIENE, two more failure modes fixed: a mutant whose anchor drifts after a refactor silently
+  becomes a NO-OP or a KeyError crash (`MATCH_TRUTH` looked up a deleted store site) - so gates must degrade
+  with `.get(st, 0)` and report a wrong COUNT, never crash; and every anchor must be re-read from the current
+  source, never quoted from memory.
+

@@ -264,9 +264,16 @@ def main():
     # reported for information; the gate does not require all three sites to be complete.)
     FOLD_TRIPLETS = {0x4e3476: (0x4e347b, 0x4e347e, 0x4e3481),
                      0x4efe8e: (0x4efe88, 0x4efe94, 0x4efe97),
-                     0x4f5a7c: (0x4f5a82, 0x4f5a87, 0x4f5a8a)}
+                     0x4f5a7c: (0x4f5a82, 0x4f5a87, 0x4f5a8a),
+                     0x4e4dd0: (0x4e4e1e, 0x4e4e21, 0x4e4e24),
+                     0x4f21e0: (0x4f21dd, 0x4f21e6, 0x4f21ee)}
     i347e = ins[0x4e347e]
     i4e81 = ins[0x4e3481]
+    # Every fold the matcher finds must equal the transcribed triplet EXACTLY (a
+    # mis-transcribed address reddens this: MU4), and the transcription must cover exactly
+    # the sites that fold - not the three I first chose to look at.
+    triplet_exact = (set(FOLD_TRIPLETS) == set(FOLD_SITES)
+                     and all(folds.get(st, []) == [FOLD_TRIPLETS[st]] for st in FOLD_TRIPLETS))
     pinned_end = (i347e == ("lea", "edx,[eax+ecx*2]")
                   and i4e81 == ("shl", "edx,0x4")
                   and ins[0x4efe97] == ("shl", "ecx,0x4")
@@ -275,7 +282,7 @@ def main():
     # every set empty; the claim that survives is the weaker, true one: the base is named in
     # the same instruction window as the fold)
     base_close = all(base_refs[st] for st in FOLD_SITES) and len(FOLD_SITES) == 5
-    a3 = (pinned_end and base_close and stride == REC_LEN
+    a3 = (pinned_end and triplet_exact and base_close and stride == REC_LEN
           and len(FOLD_SITES) == 5 and NONFOLD_SITES == [0x4f5c36]
           and all(all(("0x%x" % REC_BASE) in op_ for _, _, op_ in base_refs[st])
                   for st in FOLD_SITES))
@@ -313,8 +320,12 @@ def main():
                                  # (fold at 0x4e34cc, 86 B past the store) - proximity does that
     matched = {st: len(folds[st]) for st in folds}
     wide = {st: fold_chain(win(ins, order, st - 24, st + WIDE_W)) for st in WIDE_TRUTH}
-    nfold = {st: len(folds[st]) for st in MATCH_TRUTH}
+    # `.get(st, 0)` so a MISSING store site degrades to "no fold found" and the gate reddens,
+    # instead of crashing the instrument with a KeyError (a traceback is not a measurement -
+    # the mutation harness rightly refuses to score it).
+    nfold = {st: len(folds.get(st, [])) for st in MATCH_TRUTH}
     a8 = (all(matched.get(st, 0) == MATCH_TRUTH[st] for st in (0x4e3476, 0x4efe8e, 0x4f5a7c))
+          and triplet_exact
           and all(len(wide[st]) == WIDE_TRUTH[st] for st in WIDE_TRUTH)
           and all(nfold[st] == MATCH_TRUTH[st] for st in MATCH_TRUTH)
           and len(folds) == len(IDX_STORES) == 6

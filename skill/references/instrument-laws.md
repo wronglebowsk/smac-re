@@ -630,6 +630,15 @@ the repair costs a doc-correction PR after the milestone has already merged.
   true — assert the one you printed.
 - The same test applies to any constant riding a shared helper: a `(dest, len)` read wrapper, a type id, a
   mode flag. The constant belongs to the CALL; the helper's body documents only the shape.
+- **A uniform per-site LAW must be pinned per site with a truth table, because an exception is the finding.** Six
+  stores to one index global looked like one derivation; pinning the fold chain at each site showed 5 recompute
+  `BASE + STRIDE*n` and the 6th re-stores a pointer SAVED earlier in a stack slot (`mov reg,[ebp-0x8]` before the
+  store) — a cache-instead-of-recompute path that a matcher averaged over and that names a second selection
+  mechanism. Ship `MATCH_TRUTH = {site: expected}` covering EVERY site, including the non-matching one with the
+  instruction that explains it, and gate on the table. Symmetrically, a gate that DECLINES to generalise is worth
+  shipping as its own assertion: state in the gate's text that the invariant is refused for the other global and
+  why (22 stores, only 3 inside any index window, 19 writers unexplained), so a green check is never read as an
+  explained mechanism.
 
 ## Ghidra prints small offsets in DECIMAL and large ones in HEX — a pattern built one way matches nothing (s180)
 
@@ -947,3 +956,52 @@ purely the instrument's:
   one) reddens the gate instead of shipping in the prose.
 - **Census output is scrolled past, not skimmed.** Pipe the census to a file and count with `grep -c` before
   transcribing any list from it; an eyeballed list of 5 was wrong by one and the error survived three rounds.
+- **A collection built from hand-picked sites makes every `all(...)` / `len(...) == N` over it a tautology.** A
+  `folds` dict assembled from the 3 sites that looked interesting then asserted `all(folds[st] ...)` over
+  `IDX_STORES` and `len(folds) == 3`: both could only ever be true, and the assertion that read as "the fold
+  holds at all sites" tested the author's selection, not the encoding. Derive the iterated collection FROM the
+  census (loop over every store the bytes produced, with a per-site window), then `len` and `all` become claims.
+  A `== N` over a literal you typed is a count of your own typing.
+- **A windowed sub-condition over a set that is empty tests nothing.** A `base_ref_in_window` conjunct guarded
+  by an address-distance filter (`a_ - st <= 24`) passed while its set was empty for every site — the filter's
+  own arithmetic was wrong, so the claim it was added to support was silently untested. Print `len()` of every
+  derived set a gate consumes and assert non-empty BEFORE requiring anything of it; an empty set plus a green
+  gate is the shape of a vacuous window (same family as the vacuous-window law under Census-guard range).
+
+## A mutation harness is STATE, not a one-time proof (s274, M311)
+
+- **Re-run `scripts/<id>_mutate.py` after EVERY edit that adds or rewrites a gate — not once before submit.**
+  Adding a gate, moving a module constant, or re-disciplining a matcher silently invalidates the mutants written
+  against the old shape, three ways: the anchor no longer appears (reported NO-OP ANCHOR), the mutant crashes on
+  a stale import path (correctly REJECTED as a traceback, but no information), or the defect it injects is now
+  consumed by a different check (WEAK). A harness that scored honestly last round says nothing about this one.
+- **A green instrument with an UNEXPLAINED WEAK mutant is not verified.** Each WEAK is exactly the defect the
+  harness exists to find — a gate with no falsifier. Re-anchor the mutant onto the assertion that actually
+  consumes the value it corrupts, and find that assertion by READING the current source (a constant you remember
+  from earlier in the fire anchors the wrong line). If a gate genuinely cannot be reddened by any mutant, say so
+  in the gate's own printed text instead of quietly keeping the check green.
+- **When the score is still not explicable, do not submit — and do not buy a green score by deleting a mutant or
+  lowering a floor.** Commit WIP on the milestone branch, quote the honest number in the commit message and the
+  cursor (`9/14`, with which mutants died and which are weak), and put the close-out ORDER in `SESSION_CURSOR.md`:
+  re-anchor the mutants -> retarget each anchor by reading the current source -> bump every doc to the new gate
+  count -> re-copy `evidence/<id>.txt` from a fresh green run -> re-resolve every citation -> `gate` -> submit.
+- **A gate added mid-fire makes every other artifact quote a superseded PASS count.** `NAMED.md`, the session
+  notes, `NEXT_PROMPT.md` and `evidence/<id>.txt` all carry the old `7/7` and the old digest, and the drift is
+  invisible unless you look. The `PASS <ID>: N/N` line and the digest are version numbers: treat a change to
+  either as a fan-out to all four artifacts in the same commit, or write the staleness down in the cursor
+  explicitly (which files still say the old number) so the next fire fixes them instead of re-deriving them.
+
+## Selection bias and unmeasured mechanism claims (s274, M311)
+- **Iterate EVERY member of the population, not the subset you first chose to inspect.** M311 built its fold map
+  from three hand-picked store sites, which made `all(folds[st] for st in folds)` and `len(folds) == 3` VACUOUS
+  - the same class as `sorted(x) == sorted(set(x))`. Deriving the population from the census constants
+  (`for st, _, _ in IDX_STORES`) turned a tautology into a finding: 5 of 6 sites fold and one does not.
+- **"Clause X is load-bearing" is a claim that needs a mutant, and the cheap test is to run the weakened
+  mechanism and diff its output.** M311's A8 prose asserted register-discipline and a proximity cap were doing
+  work; a register-blind `fold_chain` returned byte-identical results at all six sites across three window
+  sizes, so the claim was unmeasured and every mutant aimed at it was inert. Measure strict-vs-loose, print
+  both, and if they agree: declare the clause non-discriminating IN THE GATE TEXT and drop the mutants rather
+  than leaving WEAK rows in the score.
+- **Gates must degrade to a wrong COUNT, never to a crash.** A mutant that deleted a store site produced
+  `KeyError` in `nfold = {st: len(folds[st]) ...}` - correctly rejected by the traceback rule, but it scored
+  nothing. `folds.get(st, [])` turns the same defect into a red gate.

@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s274: census picks (a) ds:0x68cbb0 and (b) the 0x95da40 table ANSWERED as ONE milestone - M311, 7/7 gates, mutation-tested; B22 is MERGED (#286); historical header + CLOSED enumeration + traps 14-15 VERBATIM at `docs/nextprompt-archive-m299-b20.md` and `docs/pick-archive.md` section trim-s262. STATE: B1-B22 + M54A-M311 done; track ANALYSE, B23 QUEUED; pre-existing #180/#105 NOT this chain.)
+# NEXT_PROMPT.md - footing (s274: census picks (a) ds:0x68cbb0 and (b) the 0x95da40 table ANSWERED as ONE milestone - M311, 8/8 gates + 11/11 mutations; B22 is MERGED (#286); historical header + CLOSED enumeration + traps 14-15 VERBATIM at `docs/nextprompt-archive-m299-b20.md` and `docs/pick-archive.md` section trim-s262. STATE: B1-B22 + M54A-M311 done; track ANALYSE, B23 QUEUED; pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
