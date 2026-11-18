@@ -1,0 +1,26 @@
+baseline green
+OK   MU1_band_lo -> A3a_band_hub_owners
+OK   MU2_band_hi -> A3b_band_thunk_owners
+OK   MU3_drop_site -> A1_thunk_callers_exact
+OK   MU4_drop_hub_site -> A2b_hub_sites_exact
+OK   MU5_pumpA_inb_swap -> A4a_pumpA_callees_split
+OK   MU6_pumpA_off_swap -> A4a_pumpA_callees_split
+OK   MU7_pumpB_inb_swap -> A4b_pumpB_callees_split
+OK   MU8_pumpA_callers -> A4c_pumpA_callers
+OK   MU9_mapclick_swap -> A4e_mapclick_mesh_callees
+OK   MU10_hubsite_swap -> A4f_pumps_contain_hub_sites
+OK   MU11_door_entry -> A5a_run_entries_by_address
+OK   MU12_4c_entry -> A5a_run_entries_by_address
+OK   MU13_run_digest -> A5b_run_extent_digest
+OK   MU14_run_extent -> A5b_run_extent_digest
+OK   MU15_cmd_bound -> A6a_switch_heads
+OK   MU16_map_addr -> A6a_switch_heads
+OK   MU17_T1_swap -> A6b_cmd_jump_targets
+OK   MU18_T2_default -> A6c_vk_jump_targets
+OK   MU19_T3_swap -> A6d_letter_jump_targets
+OK   MU20_layout -> A6e_table_map_layout
+OK   MU21_hits_expect -> A7a_pumpB_entry_refcount
+OK   MU22_push_instr -> A7b_push_site_verified
+OK   MU23_init_owner -> A7b_push_site_verified
+== M313 mutate: 23/23 ==
+RC=0

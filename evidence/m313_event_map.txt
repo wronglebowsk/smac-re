@@ -1,0 +1,23 @@
+OK   A1_thunk_callers_exact: 15 sites
+OK   A2a_hub_owner_set_exact: 28 owners
+OK   A2b_hub_sites_exact: 53 sites pinned
+OK   A3a_band_hub_owners: 20 of 28 hub owners in band
+OK   A3b_band_thunk_owners: 9 distinct thunk owners in band
+OK   A3c_offband_hub_owners: 8 off-band
+OK   A4a_pumpA_callees_split: pumpA mesh callees 8 in-band + 4 off-band (off: FUN_004736e0,FUN_004738f0,FUN_004739a0,FUN_004e10c0)
+OK   A4b_pumpB_callees_split: pumpB mesh callees 5 in-band + 5 off-band
+OK   A4c_pumpA_callers: callers: run-method + dialog-fam
+OK   A4d_pumpB_callers: single caller
+OK   A4e_mapclick_mesh_callees: M28-named map_click_handler(FUN_00476580): 4 in-band + 1 off-band
+OK   A4f_pumps_contain_hub_sites: pumpA 7 + pumpB 6 hub sites (7+6)
+OK   A5a_run_entries_by_address: 0x6724a8->FUN_0041bda0 (pumpA door, zero call/jmp refs); 0x67290c->FUN_005f6aa3 (= FAMILY table +0x4c per NAMED ## M288)
+OK   A5b_run_extent_digest: run [0x672290,0x672a34) = 490 .text pointers, digest f2e2c9dfae9ba011 (spans multiple tables; no class identity claimed)
+OK   A6a_switch_heads: 12 head instrs: pumpA two-stage byte-map+jump (keys 0..0x39 / 0..0x5c); pumpB letter stage lea code-'Q', bound <=0xc
+OK   A6b_cmd_jump_targets: pumpA cmd jump = 8 targets from byte map, default 0x512c19
+OK   A6c_vk_jump_targets: pumpA VK jump = 4 targets, default 0x51322f (codes incl. RETURN 0x0d, ESC 0x1b, PgUp 0x21, PgDn 0x22, LEFT 0x25, RIGHT 0x27)
+OK   A6d_letter_jump_targets: pumpB letter = 13 slots ('Q'+i, i<=0xc), default 0x517110
+OK   A6e_table_map_layout: cmd: 8-jump then 58-key byte map fits [0x5165ec,0x516628); VK: 4-jump then 93-key map fits [0x516638,0x516698); letter: bound+1 == 13 slots
+OK   A7a_pumpB_entry_refcount: call/jmp refs=0 (numeric); stored u32 file-wide=['0x51892e'] (imm32 of the push at 0x51892d)
+OK   A7b_push_site_verified: instr@0x51892d == push imm32 (opcode checked); owner FUN_00518820 <- init FUN_00580260
+digest 5e14170de426d127
+== M313: 21/21 ==
