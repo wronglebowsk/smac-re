@@ -218,3 +218,15 @@ Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00582260`); the .SAV chain and its two read paths (kernel in-place vs ring-3 scratch) are
 `references/ptrace-level-probes.md` §The .SAV chain.
 
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+**The last 156 B of every save is a
+fixed TRAILER, not game data** — the final 152 B are identical across nine saves, only the trailing dword
+varies and its offset moves with file size, so no hard-coded leg can index it; its reader is the 6-site
+per-entity loop restoring rows into heap records (stride `0x224B8`), proved by POKING markers, never by a byte
+sum. **Any file-vs-memory diff goes through `scripts/save_diff.py`, never an ad-hoc window**: the mapping
+constant `k = dest - off` is PER REGION, so a window straddling a section boundary manufactures hundreds of
+fake "diffs"; the script refuses a range crossing a known boundary and names it (`scripts/test_save_diff.py`
+PASS 7/7 is the guard).

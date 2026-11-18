@@ -232,3 +232,47 @@ next session a debugging pass on a green answer. Encode the four states explicit
 driver wedged / produced no orders (NO MEASUREMENT — never file it as evidence the gate is inert)**, **8 = the box
 was left dirty** (`TracerPid != 0`). A wedge and a negative result are different facts; conflating them is the same
 failure class as a stale-gdb "success".
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- A gate that counts the harness's own work passes a run that LOST the game. Compute candidate predictions from
+  the baseline first; refuse a shape where your model and the null agree on every candidate; read the effect
+  back from memory/state.
+- **Every number the prose quotes must be COMPUTED by the gate that ships with it**, derived from the SAME
+  parser that produces the claim after any parser fix (a caps-blind grep counted 28 where the parser counted
+  33; a draft's "12 scratch tests" became 17). Put the number in the assertion FIRST (print the table,
+  `assert len(...) == N`), write the sentence from the printed table, never from draft prose.
+- **Never assert an exact sorted list or exact count over a whole-function window**: a duplicate of the same
+  idiom further down satisfies any set check and breaks equality; assert on the first N or between two known
+  addresses, and PRINT the table. **A "makes no calls / has no writer / never fires" claim needs the WHOLE
+  function body** — a `POS[a]:POS[b]` slice asserted "zero calls" for a function making ten.
+- One instrument is a LEAD, never a finding: pair it with one that can fail DIFFERENTLY (a byte sum vs a
+  poke-and-scan); assert the state the run leaves behind (`TracerPid`, counts, armed count), not the exit
+  code; pre-register the falsifier.
+- **Exit codes are claims — encode the four states and PRINT which applies**: 0 = measured (taken or not);
+  4 = the site was never reached (inconclusive, not a gate result); 5 = driver wedged / no orders
+  (NO MEASUREMENT — never file it as evidence the gate is inert); 8 = box left dirty (`TracerPid != 0`).
+  A wedge and a negative result are different facts; conflating them is the stale-gdb-success failure class.
+- **A script that prints NOTHING and dies on `-15` is a HANG, not a missing instrument.** The signature is a
+  0-byte evidence file plus an empty stdout capture: `timeout N` sends SIGTERM and block-buffered `print`
+  dies with it, so the run reads as "crashed with no output". Run `python3 -u` with stderr teed to a file,
+  and look first for an unadvanced loop cursor — `while x < W:` with no `x += stride` is the real case, and
+  the loop then appends until the box runs out of RAM. The same shape hides a one-group-off regex
+  (`JCC_RX` captures the MNEMONIC as group 1 and the TARGET as group 2; assuming group 1 yields a
+  `ValueError: invalid literal for int()` that only fires at the first backward jump).
+- **Re-verify a delegated script by capturing stdout to a TEMP file, never `diff <(python3 scripts/<id>.py) evidence/<id>.txt`.**
+  The script writes its own evidence file, so the process substitution truncates the target before `diff` reads
+  it: a perfectly good run reports as `1,92d0` (the ENTIRE output "missing") and reads exactly like an empty
+  evidence file. The only valid form is `python3 -u scripts/<id>.py > /tmp/x.out && diff /tmp/x.out
+  evidence/<id>.txt`; run it twice and require 0 lines both times (before and after review fixes).
+
+- **A rival whose failure mode is "it crashed" or "it produced nothing" is not evidence.** Before counting a
+  rival as refuted, (1) message-match the crash against the DECLARED law (`except AssertionError: rivals[x] = True`
+  is a gate that passes on an unmeasured state - a foreign bug or a missing fixture scores as a failed rival), and
+  (2) show the SAME construction SUCCEEDS when the claimed cause is removed. B24 shipped six rivals; two
+  (`frozenargs`, `locate`) failed identically with the corrupting input WITHHELD, so neither "fail" said anything
+  about its law, and both looked green. Retire such a rival and GATE the retirement (assert the degenerate leg
+  still completes 0 arrivals), so it re-opens as a RED gate if it ever starts working; the law itself is then
+  carried by a mutant that switches the engine's own decision (`mode=locate` as the fold's law: clean leg
+  completes, poisoned leg dies).

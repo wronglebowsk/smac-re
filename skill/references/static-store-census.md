@@ -507,3 +507,12 @@ other mode, and the run then reads like an instrument failure when it is already
   delta between the runtime subobject offset (`[class descriptor]+4`) and the compile-time constant K
   the body was compiled against; every ctor/dtor of every variant recomputes it (`sub reg,K` /
   `lea reg,[eax-K]`) within ~14 insns of installing the pair. Ghidra renders the store as `+ -4)`.
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **To name who writes a field: hw watchpoint on the address PLUS a control watchpoint on an address you know
+  changes** — a mnemonic grep misses stores through pointer-form `lea`; and **classify each store by how its
+  SOURCE register was computed** (scan back for `or`/`and`/`lea`): 23 of 27 memory-form stores to one field
+  were the write half of a register-level bit RMW, so the field IS bit-set and only whole-value assignments can
+  deliver an untouched bit — a store-shape census sees the operand, never the provenance.

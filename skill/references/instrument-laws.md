@@ -1085,3 +1085,66 @@ purely the instrument's:
   often fires before the named pin).
 
 
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **Three #294 (M313) decoration classes - all reviewer-found, all silent:** (1) an inline `#` comment placed
+  after the FIRST term of a multi-line parenthesized boolean swallows the rest of that physical line - the
+  push-opcode check vanished with zero trace; never trail-comment inside a condition, split into its own gate.
+  (2) target parsing must be `re.fullmatch(r"0x[0-9a-f]+", t)` before `int(...,16)`: far-calls print as
+  `call 0x43:0x955e0043` and a `startswith("0x")` filter CRASHES on them; and case-matter - comparing
+  "0x5186B0" against the lowercase cache makes any zero-reference census decorative by construction.
+  (3) a "vtable" found by walking .text-pointers to a stop may cross MULTIPLE class tables (the run from
+  0x672290 contains the chooser FAMILY table, base 0x6728c0) - pin pointers BY ADDRESS, cite the ledger for
+  each table's identity, and the word "slot" is banned unless a ledger entry or a constructor vptr-store
+  establishes the table's base (search for `mov [reg],imm` of the base as an immediate in .text to find one).
+
+- **Answer "WHAT IS THIS FIELD" by a STRUCTURAL partition, not by counting writers** (`m315_bb4_census.py`,
+  pick (ii), `ds:0x68cbb4`). Census every store/read/cmp; def-walk each store's value source inside its own
+  function; then classify stores by WHAT FOLLOWS the store (for a memo: a fixed two-call pair within 16 B) and
+  assert the two classes are EXACT COMPLEMENTS of each other - "12 of 22 stores are followed by the pair, 10 are
+  the -1 sentinel, and the 10 are exactly the sentinel-valued ones" is a claim that can be false, which "22 stores
+  exist" is not. Carry the rival it kills and the number that kills it (a store fed from a NEIGHBOURING index
+  would survive the pair law, so the def-walk census, not the pair law, refutes "second cursor"). (Post-#301
+  correction: the pair reach is MEASURED 5..17 B, not "16 B" - a bound quoted in prose must be the bound the
+  gate pins, re-checked after review-round measurements move it.)
+
+- **Three decoration classes found by review on #301 (all reviewer-caught, all silent on real bytes):**
+  (1) a PROVENANCE classifier that keys on OPERAND TEXT ALONE is decoration - `add r,ds:IDX` reads like a load
+  of the index and `lea r,[ebp+0x8]` looks like a stack load; set the class from MOVING INSTRUCTION + SOURCE
+  OPERAND, and prove it with a mutant that REWRITES the instruction, not the expected count. (2) A def-walk that
+  bounds itself by a function span looked up by name silently becomes UNBOUNDED when that name resolves to
+  nothing (`(0,0)` spans) - bound by the measured span when claimed, by an explicit instruction cap when not,
+  and pin how many stores needed the cap (a coverage number worth reporting in its own right). (3) A window pin
+  that checks a LISTED SUBSET of addresses does not pin the window: a change to an instruction BETWEEN the
+  listed ones (the record-address fold sat exactly there) survives. Pin the COMPLETE ordered sequence between
+  the bounds, including its length, and make the bound inclusive of the last instruction.
+
+- **Two mutants can both be "green" and still be wrong**: a weaker variant of a CHECK (`det = A and B and C` ->
+  `det = A and B`) can only ever pass, so it reddens nothing - a WEAKENING is not a mutation; mutate the DATA
+  (corrupt the second run's table after `compute()`, a field no gate DETAIL prints) so only the digest catches it.
+  And an over-broad mutant (removing a rival's whole channel instead of only the poison) makes the rival fail for
+  a different reason and reads as a NO-OP - re-measure the declared set after EVERY review round, since retiring
+  a rival silently drops gates from other mutants' declared sets.
+
+- **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
+  first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
+  agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
+  TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor. Tie every hit to
+  a boundary; a window count is not a cadence. **Before blaming a breakpoint for a zero, resolve the SITE's
+  containment and its function's caller count** from `ghidra_out/index.csv` — one read splits "unreachable BY
+  DESIGN" from "UNTAKEN BRANCH".
+
+- **A zero-event log is an INSTRUMENT verdict until proven otherwise:** arm one control breakpoint whose hit is
+  guaranteed in the window and require its rows; read back BEFORE attaching that the watched event can even
+  happen (queue head is the armed id, `pending >= 1`, storage above the gate's demand) — an unusable window is
+  not a negative result. **A whole subsystem path can be gated on another subsystem's state** (empty queues ⇒
+  research upkeep never runs); satisfy the printed readiness FIX and echo the precondition in the harness's own
+  output so "gate unmet" reads different from "mechanism refuted".
+
+- **A "no branch targets this call" result is NOT "the call is unconditional".** `preds == 0` at a call site proves
+  only that no branch lands on it; whether it RUNS on every invocation is a separate measurement. Walk the CFG
+  with the call as a WALL (refuse to expand it) and count the `ret`s still reachable: if any, early exits skip the
+  call and a rival claiming "the only gate is the enclosing loop's `jl`" must FAIL. Closing a guard question on
+  `preds == 0` alone is the vacuous-gate class and has now cost two review rounds (M305 A14, M306 RIVAL4).
