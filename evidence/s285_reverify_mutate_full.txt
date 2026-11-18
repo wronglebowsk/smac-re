@@ -1,0 +1,32 @@
+baseline green: digest 3976ca97eedc1e19
+OK   MU1_census_drop reddened exactly A1
+OK   MU2_census_read reddened exactly A1
+OK   MU3_sent_count reddened exactly A2
+OK   MU4_sent_or reddened exactly A2
+OK   MU5_kind_count reddened exactly A2b
+OK   MU5b_slot_ops reddened exactly A2b
+OK   MU6_pair_const reddened exactly A3/A4/A9
+OK   MU7_memo_count reddened exactly A3
+OK   MU8_partition_blind reddened exactly A3
+OK   MU9_dist_pin reddened exactly A3
+OK   MU10_absence_claim reddened exactly A3
+OK   MU11_guard_site reddened exactly A4
+OK   MU12_unguarded reddened exactly A4
+OK   MU13_fwd_window reddened exactly A5
+OK   MU14_closure reddened exactly A5
+OK   MU15_idx_list reddened exactly A5
+OK   MU16_fold_expect reddened exactly A6
+OK   MU17_je_w4 reddened exactly A6
+OK   MU18_init_pair reddened exactly A7
+OK   MU19_unclaimed reddened exactly A10
+OK   MU20_rival_blind reddened exactly A9
+OK   MU21_pair_reach reddened exactly A3/A4/A9
+OK   PC1_add_is_not_read [0x4f3f76|add ecx,DWORD PTR ds:0x68cbb0] reddened exactly A2/A2b/A6/A9
+OK   PC2_lea_is_not_load [0x4e4dbc|lea esi,DWORD PTR [ebp+0x8]] reddened exactly A2/A2b/A9
+OK   PC3_cmp_wrong_side [0x4eb6bf|cmp DWORD PTR ds:0x68cbb4,edx] reddened exactly A4/A6
+OK   PC4_second_callee_gone [0x4efeb5|call 0xdead00] reddened exactly A3/A4/A9
+OK   PC5_fold_corrupt [0x4efe94|lea ecx,[esi+ecx*3]] reddened exactly A6
+OK   PC6_index_store_gone [0x4efe8e|nop] reddened exactly A5/A6
+OK   PC7_clear_gains_pair [0x416e6a|call 0x4e8d60] reddened exactly A3/A4/A9
+== M315-mutate: 29/29 mutations reddened exactly their declared gate sets (22 expectation + 7 code) ==
+RC=0
