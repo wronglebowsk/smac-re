@@ -909,3 +909,17 @@ the hub settle-nest
   gates (FUN_00469060 test / FUN_00422060 != 0) - name the event; (iii) still open from M310: the
   game meaning of a GOAL, the one-char tokens, and WHY a GOAL priority can be NEGATIVE (the only
   invalidation trigger). The open list lives in NAMED ## M310 / ## M309, not here.**
+
+## §trim-s278 (VERBATIM moves from NEXT_PROMPT, s278)
+
+  **OPEN PICKS after M312, in order: (i') NAME the events: which UI handlers reach
+  FUN_004736a0's 15 call sites and FUN_00472810's 53 sites / 28 owners (the ds:0x7cdecc fan-out
+  is ALREADY settled - M262 view table, do not re-derive); (ii) ds:0x68cbb4's 19 writers outside an index-store window (22 stores, 3
+  in-window; M311 refused the pairing); (iii) still open from M310: game meaning of a GOAL,
+  the one-char tokens, WHY a GOAL priority can be NEGATIVE. Lists live in NAMED,
+  ## M310 / ## M312, not here.**
+  **CLOSED (s276): who fires the selection check - TWO trunks (cursor-tile sweep via
+  004736a0->004727c0->004725a0->004715d0; view fan-out 00473760 over the M262 view table ds:0x7cdecc[0..7] plus
+  view-move 00473d00 kind=2); the hub 00472810 arms pass (block,flag) NOT coords; all 4
+  forwarder sites push arg4=0 so fe0's invalidator tail never executes (M310 site-1 RETRACTED).
+  Full law in NAMED ## M310 + ## M312 - do not re-open.**

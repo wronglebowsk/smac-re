@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s277 close-out: M312 MERGED (#292) - who fires the selection check, M310 site-1 RETRACTED, review round #292 fixed all 3 P2s; B22 MERGED (#286); historical header + CLOSED enumeration + traps 14-15 VERBATIM at `docs/nextprompt-archive-m299-b20.md` and `docs/pick-archive.md` section trim-s262. STATE: B1-B22 + M54A-M312 done; track ANALYSE, B23 QUEUED; pre-existing #180/#105 NOT this chain.)
+# NEXT_PROMPT.md - footing (M312 MERGED #292 + review round; B22 MERGED #286; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B22 + M54A-M312 done; track ANALYSE, B23 QUEUED; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -66,17 +66,15 @@ collision-check + worktree FIRST).
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  **CLOSED (s276): who fires the selection check - TWO trunks (cursor-tile sweep via
-  004736a0->004727c0->004725a0->004715d0; view fan-out 00473760 over the M262 view table ds:0x7cdecc[0..7] plus
-  view-move 00473d00 kind=2); the hub 00472810 arms pass (block,flag) NOT coords; all 4
-  forwarder sites push arg4=0 so fe0's invalidator tail never executes (M310 site-1 RETRACTED).
-  Full law in NAMED ## M310 + ## M312 - do not re-open.**
-  **OPEN PICKS after M312, in order: (i') NAME the events: which UI handlers reach
-  FUN_004736a0's 15 call sites and FUN_00472810's 53 sites / 28 owners (the ds:0x7cdecc fan-out
-  is ALREADY settled - M262 view table, do not re-derive); (ii) ds:0x68cbb4's 19 writers outside an index-store window (22 stores, 3
-  in-window; M311 refused the pairing); (iii) still open from M310: game meaning of a GOAL,
-  the one-char tokens, WHY a GOAL priority can be NEGATIVE. Lists live in NAMED,
-  ## M310 / ## M312, not here.**
+  **CLOSED (s278): pick (i') NAME THE EVENTS - ONE interaction band
+  [0x50bb20,0x5175b4) carries 20 of 28 hub owners + 9 thunk owners; pumps 00512b40 (menu IDs
+  0x30041-0x3007a + nav VKs, via vtable 0x672290 slot 134) and 00516b80 (Q-Z order keys, startup
+  callback 0x51892d) call INTO it; map_click_handler (M28) reaches it directly. Full law NAMED ## M313.
+  OPEN PICKS after M313, in order: (i'') what ARE FUN_004d3f70 (calls 15 band members) and the
+  FUN_004c5d60 dialog-family thunks (0x4c2e90-0x4c3760); (ii) ds:0x68cbb4's 19 writers outside an
+  index-store window (22 stores, 3 in-window; M311 refused the pairing); (iii) still open from
+  M310: game meaning of a GOAL, the one-char tokens, WHY a GOAL priority can be NEGATIVE.
+  Lists live in NAMED ## M310 / ## M312 / ## M313, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT

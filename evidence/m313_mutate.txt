@@ -1,0 +1,22 @@
+baseline green
+OK   MU1_band_lo -> A3a_band_hub_owners
+OK   MU2_band_hi -> A3b_band_thunk_owners
+OK   MU3_drop_site -> A1_thunk_callers_exact
+OK   MU4_pumpA_swap -> A4a_pumpA_band_callees
+OK   MU5_pumpB_swap -> A4b_pumpB_band_callees
+OK   MU6_pumpA_callers -> A4c_pumpA_callers
+OK   MU7_mapclick_swap -> A4e_mapclick_band_callees
+OK   MU8_hubsite_swap -> A4f_pumps_contain_hub_sites
+OK   MU9_slot415 -> A5a_vtable_slots
+OK   MU10_slot0 -> A5a_vtable_slots
+OK   MU11_vdigest -> A5b_vtable_digest
+OK   MU12_tab_base -> A6a_pumpA_tables
+OK   MU13_drop_tab -> A6a_pumpA_tables
+OK   MU14_tabB_swap -> A6b_pumpB_tables
+OK   MU15_cmd_sz -> A6c_command_table_size
+OK   MU16_vk_sz -> A6d_vk_table_size
+OK   MU17_letter_sz -> A6e_letter_table_size
+OK   MU18_hits_expect -> A7_pumpB_entry_callback_registration
+OK   MU19_init_owner -> A7_pumpB_entry_callback_registration
+== M313 mutate: 19/19 ==
+RC=0
