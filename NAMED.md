@@ -1283,17 +1283,18 @@ Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de
 Acceptance `python3 -u scripts/m314_tour_family.py` -> **18/18**, digest cf54a7ca907344c6, x2 identical; `scripts/m314_mutate.py` -> **27/27** (MERGED as #299, main e638772; the squash title's "20/20" is the pre-review harness - this line governs).
 REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k=full check name vs detail=short keys -> every lookup empty) -> now hashes name+verdict+detail; A4b pump check was decorative (`parse_text` keeps mnemonic separate, so the `^push 0x..$` regex on ops matched nothing -> `all([])` true) -> bare-operand push census + pumpA x3 / pumpB x1 call-site counts pinned; A3 claimed a `je` it never read -> now entry-relative pins (cmp +0x9/+0x9/+0x29, je +0xD/+0xD/+0x2D, je-target = add-10, mov = add-3); A3b inferred abs() from neg/sub COUNTS -> 11-instruction sequence pinned with jl/jmp targets; A6b de-duplicated owners so a 6th call in a listed fn stayed green -> 5 call-site addresses pinned; token row said 26 quoted where evidence said 24 quoted + 2 named + 5 forwarded -> A1b now pins the exact 24+2+5 breakdown (the 2 unexplained entries were `param_1`/`param_2` forwards). New mutants MU2b/MU5/MU5b/MU5c/MU5d/MU7j/MU9*/MU15b/MU18* cover each repaired fact.
 
-## M317 (s288, STATIC, zero box; 15/15+1 NO-OP) - pick (iii') ANSWERED: FUN_00556690(faction) = per-faction AI STRATEGY PASS: decides goals-at-bases, region-state flips, inline unit orders, goal cancels
+## M317 (s288, STATIC, zero box; 22/22+1 NO-OP post-review) - pick (iii') ANSWERED: FUN_00556690(faction) = per-faction AI STRATEGY PASS: decides goals-at-bases/units, region-state flips, inline unit orders, goal cancels
 
 | claim | evidence | conf |
 |---|---|---|
-| CONTEXT: 1 arg=faction; callers 0x52094f (upkeep FUN_005208f0: 005551e0->ENGINE->005a1ad0, 985ae8-gated) + 0x59dd43 (walker loop [59ce92,59e2a6]) | C5 | V |
-| ISSUE: 7 AddGoal, owner=-1 x7, block=faction (6/7 direct [ebp+8]); d2@556820(p2)+556aed(p4), s3@556831(p2), a0@55698e(p local), n6@556e79(p [94d430+blk*8380]), ^41@556a4a+558adc(p2, base+2c/2e, cost gate 4cc7b0 first); a/d/s coords=base+0/+2 | C4 | V |
-| CANCEL: remover c8@559809 (p1,p2 from band+4/+8); knockout@559e8e arg=faction; 56d890@5597a5 (1 local arg) | C4 | V |
-| SHAPE: 605 jcc (18 global-fed), 44 back-edges, 1 ret, 0 indirect; walks base 130 x5 / block 20bc x2 / goal 10 x1 / region bound 128 @558b1c; abs x20 | C3/C6/C1 | V |
-| OUTPUTS: 358 stores = 239 stack + 2 direct (8f0d34 distance) + 104 global-disp (40 arrays: eda8 M250 pin, e5a8/e628, e7a8/a9 flags, unit+11=18/+14/+1c target/+2b=30/31/+4 bits 10/20/40000000, counter banks, pair 94d820/824, base flags 95da40) + 13 struct | C2 | V |
-| ACCEPT: `m317_engine_decides.py` twice-equal digest 59d5f31055175665; `m317_mutate.py` 15/15+1 NO-OP digest fb6a6a9bfdb10d55 | evidence/m317_*.txt | V |
-| OPEN: kind game-words a/d/s/n/c (consumer side); 30/31 mission bytes; 692184; multi-base pick fold | - | lead |
+| CONTEXT: 1 arg=faction; callers 0x52094f (upkeep FUN_005208f0: 005551e0->ENGINE->005a1ad0, 985ae8 bits 1/8 gate, edi=param unclobbered) + 0x59dd43 (walker jl 59e2a6->59ce92) | C5 (`evidence/m317_engine_decides.txt:198-201`) | V |
+| ISSUE: 7 AddGoal, owner=-1 x7, block=faction (6/7 direct [ebp+8]); d2@556820(p2)+556aed(p4), s3@556831(p2), a0@55698e(p local) at base x/y (+0/+2); n6@556e79 at UNIT x/y (933278/+2), prio=2+2*bit19[94d430+blk*8380]; ^41@556a4a+558adc(p2, base+2c/2e, cost gate 4cc7b0 first) | C4 (`:136-196`, n6 decode `:172-178`) | V |
+| CANCEL: remover c8@559809 (p1,p2 from band+4/+8); knockout@559e8e arg=faction; 56d890@5597a5 (1 local arg) | C4 (`:179-196`) | V |
+| SHAPE: 605 jcc (18 global-fed), 44 back-edges, 1 ret, 0 indirect; walks base 130 x5 / block 20bc x2 / goal 10 x1 / region bound 128 @558b1c; abs x20 | C1/C3/C6 (`:15-58,122-134,203-218`) | V |
+| OUTPUTS: 358 stores = 239 stack + 2 direct (8f0d34 distance) + 104 global-disp (40 arrays: eda8 M250 FULL-insn pin, e5a8/e628, e7a8/a9 flags, unit+11=18/+14/+1c target/+2b=30/31/+4 bits 10/20/40000000, counter banks, pair 94d820/824, base flags 95da40) + 13 struct | C2 (`:60-120`) | V |
+| ACCEPT: `m317_engine_decides.py` twice-equal digest 5263767ee3bf4bba (`:223`); `m317_mutate.py` 22/22+1 NO-OP digest a0729996723078a4 (`evidence/m317_mutate.txt:26`) | as cited | V |
+| REVIEW #309 (5 P2 accepted): per-push arg trace + clobber-stop (old trace mis-decoded n6's p2/prio); M250 full-insn pin; C5 measured not constant-compare; per-pid harness copy + finally; path:line cites. MU17-MU23 gate the fixes | `evidence/m317_mutate.txt:17-25` | V |
+| OPEN: kind game-words a/d/s/n/c (consumer side); 30/31 mission bytes; 692184 (map-width candidate, INFERRED from the y*W+x/2 tile fold @5567ce-5567e4); multi-base pick fold | - | lead |
 
 ## M316 (s286, STATIC, zero box) - pick (iii) OPEN-ANSWERED: `FUN_0056d350` is `AddGoal(block, kind, prio, p1, p2, owner)` - the GOAL list is a per-faction 75x16 B record array at 0x94ee28+block*0x20bc with an insert-or-max-prio law, an eviction score that makes NEGATIVE priority = evict-first, and every debugged GOAL writer named
 

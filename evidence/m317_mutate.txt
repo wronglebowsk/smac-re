@@ -15,5 +15,12 @@ MU13  RED      want=RED                    OK
 MU14  RED      want=RED                    OK
 MU15  RED      want=RED                    OK
 MU16  GREEN    want=GREEN (declared NO-OP) OK
+MU17  RED      want=RED                    OK
+MU18  RED      want=RED                    OK
+MU19  RED      want=RED                    OK
+MU20  RED      want=RED                    OK
+MU21  RED      want=RED                    OK
+MU22  RED      want=RED                    OK
+MU23  RED      want=RED                    OK
 
-== M317 mutate: 15/15 scored + 1 declared NO-OP, digest fb6a6a9bfdb10d55 ==
+== M317 mutate: 22/22 scored + 1 declared NO-OP, digest a0729996723078a4 ==

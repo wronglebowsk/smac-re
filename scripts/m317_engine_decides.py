@@ -174,16 +174,19 @@ def main():
     print("-- struct-field / bare-pointer stores (heap-record writes; def-walk territory) --")
     for a, mn, ops in buckets.get("struct-field", []):
         print("  0x%x: %s %s" % (a, mn, ops))
-    # M250 G5 pin: the 5 region-map store sites and their value operands
-    # (objdump prints immediates in hex: 0x8, not 8)
-    M250_SITES = {0x557FDF: "0x8", 0x558516: "dl", 0x558549: "0x0", 0x55855E: "0x2", 0x55856B: "0x7"}
-    smap = {a: (mn, ops) for a, mn, ops, k in stores}
-    for a, val in M250_SITES.items():
-        assert a in smap, "M250 store site 0x%x missing from census" % a
-        mn, ops = smap[a]
-        src = M.split_ops(ops)[1] if len(M.split_ops(ops)) > 1 else ""
-        assert src == val, "M250 site 0x%x value drift: %r != %r" % (a, src, val)
-    print("C2 PASS (M250 five-site pin intact; totals pinned after first clean run)")
+    # M250 G5 pin: the 5 region-map store sites, FULL instruction (mnemonic +
+    # destination + source - a source-only pin let a mov->and or a destination
+    # swap pass; Greptile #309 P2). objdump prints immediates in hex.
+    M250_FULL = {
+        0x557FDF: ("mov", "BYTE PTR [ebx+ecx*1+0x94eda8],0x8"),
+        0x558516: ("mov", "BYTE PTR [esi+edi*1+0x94eda8],dl"),
+        0x558549: ("mov", "BYTE PTR [esi+edi*1+0x94eda8],0x0"),
+        0x55855E: ("mov", "BYTE PTR [esi+edi*1+0x94eda8],0x2"),
+        0x55856B: ("mov", "BYTE PTR [esi+edi*1+0x94eda8],0x7"),
+    }
+    for a, want in M250_FULL.items():
+        assert ins[a] == want, "M250 site 0x%x full-insn drift: %r != %r" % (a, ins[a], want)
+    print("C2 PASS (M250 five-site FULL-insn pin intact; totals pinned after first clean run)")
 
     print("\n== C3 decision inputs: what feeds the 605 conditional branches ==")
     FLAG_MNS = {"cmp", "test", "add", "sub", "and", "or", "xor", "inc", "dec", "neg",
@@ -224,25 +227,41 @@ def main():
     pos = {a: i for i, (a, mn, ops) in enumerate(win)}
 
     def push_args(i, n=6):
+        """(push_addr, operand) pairs in push order - each value is traced
+        from its OWN push position (Greptile #309 P2: a register pushed and
+        then reloaded for a later arg must not borrow the later source)."""
         args, j = [], i - 1
         while j >= 0 and len(args) < n:
             pa, pmn, pops = win[j]
             if pmn in ("call", "ret"):
                 break
             if pmn == "push":
-                args.append(pops)
+                args.append((pa, pops))
             j -= 1
         return list(reversed(args))
 
+    WRITER_MNS = {"mov", "lea", "movsx", "movzx", "pop", "add", "sub", "and", "or",
+                  "xor", "inc", "dec", "neg", "not", "shl", "shr", "sar", "imul",
+                  "mul", "xchg", "lodsb", "lodsw", "lodsd"}
+    LOAD_MNS = {"mov", "lea", "movsx", "movzx", "pop"}
+
     def reg_source(i, reg):
+        """Backward def-walk from position i (the push itself). STOPS at the
+        first write of reg: a load returns its source, an arithmetic write
+        returns <computed> - skipping clobbers invented stale sources."""
         j = i - 1
         while j >= 0:
             pa, pmn, pops = win[j]
             if pmn in ("call", "ret"):
                 return "<crosses-call>"
-            d = M.split_ops(pops)[0] if pops else ""
-            if pmn in ("mov", "lea", "movsx", "movzx", "pop") and d == reg:
-                return "%s %s @0x%x" % (pmn, pops, pa)
+            parts = M.split_ops(pops)
+            d = parts[0] if parts else ""
+            writes = d == reg or (pmn == "xchg" and len(parts) > 1 and parts[1] == reg) \
+                or (pmn == "mul" and reg in ("eax", "edx"))
+            if writes and pmn in WRITER_MNS:
+                if pmn in LOAD_MNS:
+                    return "%s %s @0x%x" % (pmn, pops, pa)
+                return "<computed: %s %s @0x%x>" % (pmn, pops, pa)
             j -= 1
         return "<entry>"
 
@@ -250,11 +269,11 @@ def main():
         t = call_target(ins[a][1])
         args = push_args(pos[a])
         print("  0x%x -> %s : %d pushes" % (a, M.contain(idx, t), len(args)))
-        for k, arg in enumerate(args):
+        for k, (pa, arg) in enumerate(args):
             extra = ""
             if not HEXTOK.fullmatch(arg) and arg in ("eax", "ebx", "ecx", "edx", "esi", "edi", "ebp"):
-                extra = "   <- " + reg_source(pos[a], arg)
-            print("    arg%d = %s%s" % (k + 1, arg, extra))
+                extra = "   <- " + reg_source(pos[pa], arg)
+            print("    arg%d = %s (push @0x%x)%s" % (k + 1, arg, pa, extra))
     KIND_AT = {0x556820: "0x2", 0x556831: "0x3", 0x55698E: "0x0", 0x556A4A: "0x29",
                0x556AED: "0x2", 0x556E79: "0x6", 0x558ADC: "0x29"}
     n_faction_direct = 0
@@ -263,44 +282,77 @@ def main():
         args = push_args(pos[a])
         if t == 0x56D350:
             assert len(args) == 6, "AddGoal site 0x%x: %d pushes != 6" % (a, len(args))
-            assert args[0] == "0xffffffff", "owner != -1 at 0x%x" % a
-            assert args[4] == KIND_AT[a], "kind drift at 0x%x: %s" % (a, args[4])
-            src6 = reg_source(pos[a], args[5]) if args[5] in ("eax", "ebx", "ecx", "edx", "esi", "edi") else ""
+            assert args[0][1] == "0xffffffff", "owner != -1 at 0x%x" % a
+            assert args[4][1] == KIND_AT[a], "kind drift at 0x%x: %s" % (a, args[4][1])
+            blk = args[5][1]
+            src6 = reg_source(pos[args[5][0]], blk) if blk in ("eax", "ebx", "ecx", "edx", "esi", "edi") else ""
             if "[ebp+0x8]" in src6:
                 n_faction_direct += 1
     assert n_faction_direct >= 6, "block arg not traceably the faction param at >=6 sites"
+
+    def src_of(site, pushaddr, reg):
+        return reg_source(pos[pushaddr], reg)
+
     # coordinate sources: base x/y at +0/+2; terraform pair at +0x2c/+0x2e
-    assert "0x95da10" in reg_source(pos[0x556820], "edi") and "0x95da12" in reg_source(pos[0x556820], "ebx")
-    assert "0x95da3c" in reg_source(pos[0x556A4A], "ecx") and "0x95da3e" in reg_source(pos[0x556A4A], "eax")
+    assert "0x95da10" in src_of(0x556820, 0x556813, "edi"), "base-x source drift at 0x556820"
+    assert "0x95da12" in src_of(0x556820, 0x556812, "ebx"), "base-y source drift at 0x556820"
+    targs = push_args(pos[0x556A4A])
+    tsrc = {reg: reg_source(pos[pa], reg) for pa, reg in targs if reg in ("eax", "ecx")}
+    assert any("0x95da3c" in s for s in tsrc.values()), "terraform p1 source drift"
+    assert any("0x95da3e" in s for s in tsrc.values()), "terraform p2 source drift"
+    # site 0x556e79: the pushes INTERLEAVE with loads - pin the exact push
+    # sequence, the prio fold (bit 19 of [94d430+blk*8380] -> prio 2 or 4),
+    # and that p2's ecx is the PRE-load value (load 0x556e5b is AFTER the push).
+    assert push_args(pos[0x556E79]) == [
+        (0x556E58, "0xffffffff"), (0x556E5A, "ecx"), (0x556E61, "edx"),
+        (0x556E75, "ecx"), (0x556E76, "0x6"), (0x556E78, "edx")], \
+        "push sequence drift at 0x556e79"
+    for fa, want in {0x556E62: ("and", "ecx,0x80000"), 0x556E6B: ("neg", "ecx"),
+                     0x556E6D: ("sbb", "ecx,ecx"), 0x556E6F: ("and", "ecx,0x2"),
+                     0x556E72: ("add", "ecx,0x2")}.items():
+        assert ins[fa] == want, "prio fold drift at 0x%x" % fa
+    p2src = reg_source(pos[0x556E5A], "ecx")
+    assert "0x94d430" not in p2src, "p2 borrowed the POST-push load (per-push trace broken)"
+    assert reg_source(pos[0x556E75], "ecx").startswith("<computed"), "prio not computed"
     # remover: kind 8, (p1,p2) read back from the goal band itself
     rargs = push_args(pos[0x559809])
-    assert len(rargs) == 5 and rargs[3] == "0x8"
-    assert "0x94ee30" in reg_source(pos[0x559809], rargs[1])
-    assert "0x94ee2c" in reg_source(pos[0x559809], rargs[2])
+    assert len(rargs) == 5 and rargs[3][1] == "0x8"
+    assert "0x94ee30" in reg_source(pos[rargs[1][0]], rargs[1][1])
+    assert "0x94ee2c" in reg_source(pos[rargs[2][0]], rargs[2][1])
     # knockout: single arg = the faction param
     kargs = push_args(pos[0x559E8E])
-    assert len(kargs) == 1 and "[ebp+0x8]" in reg_source(pos[0x559E8E], kargs[0])
+    assert len(kargs) == 1 and "[ebp+0x8]" in reg_source(pos[kargs[0][0]], kargs[0][1])
     assert len([a for a in issue_sites if call_target(ins[a][1]) == 0x56D350]) == 7
     assert 0x559E8E in issue_sites and 0x559809 in issue_sites  # knockout + remover (M310/M316)
-    print("C4 PASS (kinds {0,2,3,6,41} pinned per site; owner=-1 x7; remover kind 8; knockout=faction)")
+    print("C4 PASS (kinds {0,2,3,6,41} pinned per site; owner=-1 x7; n6 prio=2+2*bit19; remover kind 8; knockout=faction)")
 
-    print("\n== C5 caller context ==")
-    # caller B: the engine call 0x59dd43 sits in the M305-pinned per-player loop
-    assert 0x59CE92 <= 0x59DD43 <= 0x59E2A6, "engine call outside the M305 walker loop"
-    print("caller B FUN_0059ce10: call 0x59dd43 inside loop [0x59ce92,0x59e2a6] (M305 P1 pin)")
-    # caller A: FUN_005208f0 is 785 B / 223 insns - print its call's push args + enclosing span
+    print("\n== C5 caller context (MEASURED, not constant-compare; #309 P2) ==")
+    # caller B: the loop endpoints are READ from the bytes, then containment
+    assert ins[0x59E2A6] == ("jl", "0x59ce92"), "caller B loop back-edge drift"
+    assert ins[0x59CE92][0] == "mov", "caller B loop head drift"
+    assert 0x59CE92 <= 0x59DD43 <= 0x59E2A6, "engine call outside the measured walker loop"
+    print("caller B FUN_0059ce10: jl @0x59e2a6 -> 0x59ce92; call 0x59dd43 inside")
+    # caller A: upkeep order, faction arg, and the debug-flag gate, all pinned
     ar = rows[0x5208F0]
     alo, ahi = 0x5208F0, 0x5208F0 + int(ar["size_bytes"])
     awin = [(a, ins[a][0], ins[a][1]) for a in order if alo <= a < ahi]
-    ai = next(i for i, (a, mn, ops) in enumerate(awin) if a == 0x52094F)
-    print("caller A FUN_005208f0 (%s B, %d insns): pushes before the engine call:"
+    assert ins[0x520944] == ("call", "0x5551e0"), "caller A upkeep order drift (pre)"
+    assert ins[0x52094F] == ("call", "0x556690"), "caller A engine call drift"
+    assert ins[0x520964] == ("call", "0x5a1ad0"), "caller A upkeep order drift (post)"
+    assert ins[0x52094E] == ("push", "edi"), "caller A faction push drift"
+    assert ins[0x5208F6] == ("mov", "edi,DWORD PTR [ebp+0x8]"), "caller A edi != param"
+    edi_writes = [a for a, mn, ops in awin
+                  if 0x5208F6 < a < 0x52094E and M.split_ops(ops)
+                  and M.split_ops(ops)[0] == "edi" and mn in WRITER_MNS]
+    assert not edi_writes, "edi clobbered between param load and engine push: %r" % edi_writes
+    assert ins[0x520927] == ("mov", "al,ds:0x985ae8"), "flag gate load drift"
+    assert ins[0x52092C] == ("test", "al,0x1"), "flag gate bit1 drift"
+    assert ins[0x52092E] == ("je", "0x520938"), "flag gate je1 drift"
+    assert ins[0x520930] == ("test", "al,0x8"), "flag gate bit8 drift"
+    assert ins[0x520932] == ("je", "0x520ad4"), "flag gate skip drift"
+    print("caller A FUN_005208f0 (%s B, %d insns): 005551e0 -> ENGINE -> 005a1ad0; edi=param; 985ae8 bits 1/8 gate"
           % (ar["size_bytes"], len(awin)))
-    j = ai - 1
-    while j >= 0 and awin[j][1] not in ("call", "ret"):
-        if awin[j][1] == "push":
-            print("    push %s @0x%x" % (awin[j][2], awin[j][0]))
-        j -= 1
-    print("C5 PASS (caller A context read; loop pin asserted)")
+    print("C5 PASS (all caller facts read from bytes)")
 
     print("\n== C6 loop inventory: back-edges + walk strides ==")
     back = []
