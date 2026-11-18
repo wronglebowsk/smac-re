@@ -1618,6 +1618,26 @@ def run_b20(sav_path, results):
     return 0
 
 
+def run_b24(sav_path, results):
+    """Rung B24: the queue leg visiting a base FOUNDED BY THE FOUNDER LEG in the
+    written container - op stream applied to the image's base array, fold
+    reading the visited record at its POST-COMPACTION position BY TILE.
+    All claims are the module's - sim/composedlive.py authors them."""
+    import os as _os
+    from . import composedlive as socl
+    if not _os.path.exists(sav_path):
+        return fail("B24: missing input: %s" % sav_path)
+    socl.acceptance(sav_path, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B24: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B24: %d/%d gates" % (len(results), len(results)))
+    return 0
+
+
 def run_b23(sav_path, trace_path, results):
     """Rung B23: the queue's PER-TURN progress composed through the WRITER - the
     B11/B12 laws run over 10 recorded boundaries with every visit's inputs read
@@ -1749,6 +1769,10 @@ def main(argv=None):
                     help="rung B20: the byte-twin visit counter executed "
                          "(M303 byte law + M302 pinned state) vs the recorded "
                          "m302/b18 numbers and the m294 rows")
+    ap.add_argument("--b24", nargs="*", metavar="SAV",
+                    help="rung B24: the queue leg visiting a base the founder "
+                         "leg wrote into the container during the run "
+                         "(defaults: <SAV>)")
     ap.add_argument("--b23", nargs="*", metavar="SAV",
                     help="rung B23: the queue's per-turn progress composed "
                          "through the writer, parity vs the recorded m56 "
@@ -1816,6 +1840,9 @@ def main(argv=None):
     if args.b20 is not None:
         sav = args.b20[0] if args.b20 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b20(sav, results)
+    if args.b24 is not None:
+        sav = args.b24[0] if args.b24 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b24(sav, results)
     if args.b23 is not None:
         sav = args.b23[0] if args.b23 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         tr = args.b23[1] if len(args.b23) > 1 else os.path.join(

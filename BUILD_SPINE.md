@@ -685,3 +685,52 @@ read from the trace's after-samples as recorded data, M57/M58) and the price
 (never gate a verdict in this fixture: f30&2 is never set in any sample); the
 founding's economy/research beyond the visited base; which base ran the completion
 is REAL here (the traced one). No box time, no /proc, no gdb, no game-binary load.
+
+**B24 - the queue leg visiting a base the FOUNDER LEG wrote into the container
+during the run (the B22/B23 interface made executable; s287 authored this rung
+from main, as B14-B23 did).** B22 proved the CREATE leg reads a tile that was
+ALREADY in the save; B23 folded a queue on a record the model SEEDED (a declared
+fixture). Neither folds a queue on a record WRITTEN INTO THE IMAGE by another
+composition leg during the same run, and neither has ever made the founder's
+compaction move a fold's visit target. `sim/composedlive.py`: B21's log-driven
+op stream and turn schedule (evidence/m289_gdb_raw.log: 7 FOUND + 2 DESTROY)
+applied to the BASE ARRAY IN THE IMAGE - FOUND appends M282's record bytes
+through the writer (B22's grow), DESTROY applies the last-into-freed-slot
+compaction (M282) - and at every later boundary the B23 fold engine reads its
+queue inputs from the RELOADED image at the visited record's POST-COMPACTION
+position, locating it BY TILE, never by index. The visited base is a founded
+one (fac=1 (27,29), op6 of the log, ordered BEFORE op8 DESTROY in log order),
+seeded with B23's queue law; its completion arrives as a 52-B unit through the
+same writer. `python3 -m sim.selftest --b24 programs/saves/m54b_clean.SAV` must
+print PASS B24 10/10 (authored once in `sim/composedlive.py`, `--b24` only
+relays, so the two entry points cannot print different text) with:
+**G1** B23's own replay stays green in-process (12/12) - the composition reuses
+the fold engine, it does not fork it; **G2** op fidelity: the 9 applied ops hit
+9/9 recorded (kind,pre-cnt) rows, and at EVERY op boundary the IMAGE's parsed
+`n_bases` equals the ledger count (the array grew/shrank through the writer);
+**G3** the founded record in the image == `basefound.record_bytes` verbatim,
+reloaded tile/owner/own4 correct, array +304 B; **G4** the DESTROY compaction in
+the image: `n_bases` -1, the former LAST record now byte-identical at the freed
+slot, the visited record's index MOVED - measured, and the fold finds it BY TILE
+at the new index; **G5** the queue fold on the founded record's bytes: verdicts
+derived by the B11/B12 law, container==model at every boundary after the found,
+queue spans written back and re-parsed equal; **G6** the arrival record is the
+array's LAST 52 B and carries the FOUNDED tile/owner READ FROM THE IMAGE, its
+position at the unfounded position (B12's law); **G7** THE FALSIFIER: poison the
+founded record's tile bytes IN THE IMAGE ONLY, after the FOUND and across the
+compaction - the fold re-reads through the moved position and the arrival CARRIES
+the corrupted tile, while the model-fed fold is BLIND to the same corruption;
+**G8** rivals fail the same fit (model-fed fold; fold frozen at the
+pre-destroy index; founder that grows only the model; FIFO destroy victim);
+**G9** determinism: two runs identical FULL tables - labels, verdicts AND detail
+strings - plus identical final-image sha256; **G10** every modeled span of the
+final image is explained: the band layout (unit originals / arrivals / base
+originals / grown bases / tail) is MEASURED band by band, never asserted from
+B22's numbers.
+DECLARED UNMODELED: the queue content seeded on the founded record (the log
+records fac/x/y/cnt only - the seed is a DECLARED fixture, the LAW is B11/B12's,
+exactly as B23 declared its Korolev seed); price/income and the visit-time d0
+as in B23 (the recorded laws, not recomputed); the founded base's economy,
+research and garrison; WHICH base the game would really found is not claimed -
+the schedule is the recorded log's, not a model of the AI. No box time, no
+/proc, no gdb, no game-binary load.
