@@ -40,6 +40,7 @@ them. NO /proc, NO gdb, NO Wine, NO game-binary load.
 import argparse
 import hashlib
 import os
+import re
 import struct
 import sys
 
@@ -681,25 +682,38 @@ def compute(sav_path, log_path, trace_path, b23_line):
     rivals["unfounded"] = unf["visits"] == [] and \
         unf["oprows"][-1]["img_n"] == sv.n_bases and \
         unf["oprows"][-1]["led_n"] == 23
-    # REVIEW #307 P2 asked whether the locate rival's failure came from its own
-    # law or from the passthrough channel. MEASURED: with the channel removed
-    # the rival COMPLETES 3 ARRIVALS (locate=PASS, G8 red) - the channel is what
-    # shows it the poisoned container, and the image poison now reaches this
-    # mode at all. So the answer is the review's own criterion: with the read
-    # SOURCE identical to the rung's, the only difference left is WHERE the fold
-    # looks for the record, and that difference is decisive - the tile walk
-    # raises "not located" and the record cannot be addressed. The mode of
-    # failure is printed in the gate detail, not hidden behind "arrivals<3".
+    # s287 parent, MEASURED: the `mode="locate"` rival is DEGENERATE at this
+    # rung's granularity - a second `frozenargs`. With the image poison
+    # WITHHELD it STILL completes 0 arrivals and bails at every visit (probe:
+    # visits t22-t29, idx resolved to 22 correctly, pen pinned at 4, all bail),
+    # because that construction's own write re-composes the record and its pay
+    # check never fires; with the poison ON it dies "tile (27, 29) not located".
+    # A rival that cannot complete anything cannot fail for the CLAIMED reason,
+    # so its "fail" is not evidence and it is RETIRED from the verdict set the
+    # way `frontinsert` and `frozenargs` were. The tile law is carried by MU8
+    # (the fold's OWN addressing law switched to tile), which runs the clean leg
+    # to completion and dies on the poisoned one. The retirement is gated: if
+    # the clean leg ever completes an arrival, G8 goes RED and the rival must be
+    # re-enabled as a real one.
     loc_note = "?"
     try:
-        lr = run(sv, ops, earliest, mode="locate", poison=True)
-        loc_note = "ran, arrivals=%d" % len(lr["arrivals"])
-        rivals["locate"] = len(lr["arrivals"]) < 3
+        lr_c = run(sv, ops, earliest, mode="locate", poison=False)
+        lr_p = run(sv, ops, earliest, mode="locate", poison=True)
+        loc_note = ("retired DEGENERATE (clean arrivals=%d; poisoned %d)"
+                    % (len(lr_c["arrivals"]), len(lr_p["arrivals"])))
+        loc_retired_ok = len(lr_c["arrivals"]) == 0
     except AssertionError as e:
-        loc_note = "cannot address the record (%s)" % str(e)[:46]
-        rivals["locate"] = True
-    g("G8 five rivals fail the same fit (sixth, frozenargs, measured DEGENERATE)",
-      all(rivals.values()),
+        # The declared failure mode is the TILE LAW, message-matched: any other
+        # assertion is a DEFECT, not a rival result (the branch used to score
+        # `True` on ANY AssertionError - a gate passing on an unmeasured state).
+        msg = str(e)
+        matched = re.search(r"tile \(\d+, \d+\) not located", msg) is not None
+        loc_note = ("retired DEGENERATE (clean arrivals=0; poisoned: %s)%s"
+                    % (msg[:46], "" if matched else " [UNDECLARED crash]"))
+        loc_retired_ok = matched
+    g("G8 four rivals fail the same fit (frozenargs + locate retired as "
+      "measured DEGENERATE)",
+      all(rivals.values()) and loc_retired_ok,
       " ".join("%s=%s" % (kk2, "fail" if vv else "PASS")
                for kk2, vv in rivals.items()) + " | " + frozen_note
       + " | nopop arrivals=%d pending %s vs clean %s | locate: %s"

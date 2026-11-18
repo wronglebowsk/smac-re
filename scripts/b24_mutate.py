@@ -81,16 +81,20 @@ MUTANTS = [
     ("MU4", "earlier arrivals are dropped from the next write (no prior_units)",
      CL, '''            prior_units=arrivals, start_img=img,''',
      '''            prior_units=None, start_img=img,''',
-     {"G4", "G5", "G6", "G7", "G8"}),
+     {"G4", "G5", "G6", "G7"}),
     # MU4's set is MEASURED, and it is wide because the arrival list is load-
-    # bearing five ways: with no prior_units the fold re-writes only its own
+    # bearing four ways: with no prior_units the fold re-writes only its own
     # window's units, so G6 loses arrivals 2/3 (n_units 67->68, not 70), G5's
     # arrival table diverges from the model fold, G7's "arrival 3 is the image's
-    # last unit record" and the storage-poison verdict shift both move, G4's
-    # per-turn unit count moves, and G8's locate rival stops failing for the
-    # claimed reason. An undeclared extra red is a dependency the author did not
-    # know about; a missing red is a decorative assert - so the SET is what is
-    # asserted, not just non-emptiness.
+    # last unit record" and the storage-poison verdict shift both move, and G4's
+    # per-turn unit count moves. G8 was in this set BEFORE review #307 and is not
+    # any more: the frozenargs rival that compared against the true run's
+    # arrival list was measured DEGENERATE and retired, and the locate rival is
+    # now judged on its own tile-law message, so neither reading depends on the
+    # prior-units channel - measured 4/9 red on the post-review head, and the
+    # set is the measurement. An undeclared extra red is a dependency the author
+    # did not know about; a missing red is a decorative assert - so the SET is
+    # what is asserted, not just non-emptiness.
     ("MU5", "the storage-poison probe is disabled (read-back half decoration)",
      CL, '''        if (mode == "container" and st_poison and img is not None and seeding and
                 visit_no is not None and visit_no == ST_POISON_VISIT):''',
@@ -98,19 +102,14 @@ MUTANTS = [
                 and seeding and visit_no is not None
                 and visit_no == ST_POISON_VISIT):''',
      {"G7"}),
-    ("MU6", "the locate rival does not read the container (its own write "
-     "re-composes the record and wipes the poison before the tile walk)", CL,
-     '''CONTAINER_READING_MODES = ("container", "frozenargs", "locate")''',
-     '''CONTAINER_READING_MODES = ("container", "frozenargs")''',
-     {"G8"}),
-    # MU6 is the mutant that review #307's suggestion would have created. The
-    # review asked to drop the engine's passthrough channel from the locate
-    # rival to "isolate its law"; measured, the rival then COMPLETED 3 ARRIVALS
-    # and G8 went red at PASS, i.e. the rival had stopped failing. Reverting the
-    # channel but keeping the container-feed made the real dependency visible:
-    # what the locate rival fails on is the CONTAINER'S BYTES reaching it (the
-    # poisoned tile), and this mutant removes exactly that - so the rival stops
-    # failing and only G8 reddens.
+    # MU6 ("the locate rival reads the container but is not shown the poison")
+    # was MEASURED a NO-OP and then RETIRED with its rival: with the poison
+    # withheld the locate rival still bails at every visit and completes 0
+    # arrivals, so G8 stays green whether or not the poison reaches it - the
+    # rival is degenerate (see sim/composedlive.py's G8 note and SESSION_NOTES
+    # s287). The tile law is carried by MU8, which switches the fold's OWN
+    # addressing law to tile: clean leg completes, poisoned leg dies. A mutant
+    # with no gate to redden is not a test, so it goes with the rival.
     ("MU6b", "the nopop rival pops NORMALLY (a correct queue must not pass)",
      CL, '''    np_ = run(sv, ops, earliest, mode="nopop", poison=False)''',
      '''    np_ = run(sv, ops, earliest, mode="container", poison=False)''',
@@ -163,10 +162,24 @@ MUTANTS = [
     # MU10) and the final-image sha. A declared no-op teaches the next reader
     # which half of a compound condition is decoration; an undeclared one hides
     # it. Re-measure this if the two runs ever disagree on a detail string.
-    ("MU10", "G9 drops the MEASUREMENT digest (per-visit tables unchecked)", CL,
-     '''    det = (sha2 == sha and rows2 == rows and d2 == d1)''',
-     '''    det = (sha2 == sha and rows2 == rows)''',
+    ("MU10", "the SECOND run's per-visit table is corrupted (mirror field), so "
+     "G9 must notice via the measurement digest alone", CL,
+     '''    rows2, sha2, clean2, pois2, mem2, _ = compute(sav_path, log_path, trace_path,
+                                                  line)''',
+     '''    rows2, sha2, clean2, pois2, mem2, _ = compute(sav_path, log_path, trace_path,
+                                                  line)
+    clean2["visits"][1]["span_after"]["mirror"] ^= 1''',
      {"G9"}),
+    # MU10 was a WEAKENING (`det = ... and rows2 == rows`), and a weakening is
+    # not a mutation test: deleting a term from a conjunction can only make the
+    # gate MORE likely to pass, so it can never redden - measured 0/9 red, a
+    # NO-OP by construction (skill: instrument-laws, mutation must be FALSE on
+    # the real bytes). Re-shaped to corrupt the DATA instead: the second run's
+    # visit 1 `mirror` is flipped AFTER compute(), a per-visit field no gate
+    # DETAIL prints and which the final image sha does not cover, so rows and
+    # sha still agree and ONLY the digest over the per-visit tables can catch
+    # it. Measured red: G9 alone - which is what makes the digest load-bearing
+    # rather than decorative.
 ]
 
 

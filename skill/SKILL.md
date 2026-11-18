@@ -435,6 +435,21 @@ driving/dialog state machines: `references/wine-operations.md`)
   with the call as a WALL (refuse to expand it) and count the `ret`s still reachable: if any, early exits skip the
   call and a rival claiming "the only gate is the enclosing loop's `jl`" must FAIL. Closing a guard question on
   `preds == 0` alone is the vacuous-gate class and has now cost two review rounds (M305 A14, M306 RIVAL4).
+- **A rival whose failure mode is "it crashed" or "it produced nothing" is not evidence.** Before counting a
+  rival as refuted, (1) message-match the crash against the DECLARED law (`except AssertionError: rivals[x] = True`
+  is a gate that passes on an unmeasured state - a foreign bug or a missing fixture scores as a failed rival), and
+  (2) show the SAME construction SUCCEEDS when the claimed cause is removed. B24 shipped six rivals; two
+  (`frozenargs`, `locate`) failed identically with the corrupting input WITHHELD, so neither "fail" said anything
+  about its law, and both looked green. Retire such a rival and GATE the retirement (assert the degenerate leg
+  still completes 0 arrivals), so it re-opens as a RED gate if it ever starts working; the law itself is then
+  carried by a mutant that switches the engine's own decision (`mode=locate` as the fold's law: clean leg
+  completes, poisoned leg dies).
+- **Two mutants can both be "green" and still be wrong**: a weaker variant of a CHECK (`det = A and B and C` ->
+  `det = A and B`) can only ever pass, so it reddens nothing - a WEAKENING is not a mutation; mutate the DATA
+  (corrupt the second run's table after `compute()`, a field no gate DETAIL prints) so only the digest catches it.
+  And an over-broad mutant (removing a rival's whole channel instead of only the poison) makes the rival fail for
+  a different reason and reads as a NO-OP - re-measure the declared set after EVERY review round, since retiring
+  a rival silently drops gates from other mutants' declared sets.
 - **Prove each gate is LOAD-BEARING by mutating the claim.** Ship `scripts/<id>_mutate.py`: re-introduce the defect
   the assertion exists to catch (a wrong immediate, a dropped term, a swapped operand, a filter deleted) and require
   that ONE specific check go red — then print N/N mutations reddened. A check that stays green under its own

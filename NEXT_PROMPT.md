@@ -22,27 +22,26 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 ## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
-that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
+that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS). Next build **B25, queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at
-B24, so B25's rung text must be written BEFORE any probing (one milestone = the spine section + the instrument).
-OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
+B24, so B25's rung text must be written BEFORE probing (one milestone = spine section + instrument).
+OLD picks (a)(b) = M311 (#289, digest 625cd5877271cd85); (c) retracted by M312's A4.
 
-B24 MERGED (NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **8/8** (7 exact
-gate-sets + 1 declared crash). RETRACTED at the spine: the turn-29 compaction does NOT move the addressed slot (stable
-at 22 for all 8 visits). NEW LAW: the composed run addresses its record BY LEDGER POSITION; tile-addressing cannot
-even RUN once the container tile is poisoned (`tile (27, 29) not located`). HARNESS LAW (s287): a declared gate-set
-must be MEASURED, never authored (MU3/MU4/MU7 were all wrong first pass); a mutant reddening NOTHING is a NO-OP and
-fails the harness; `pos=False` in `composedturn.fold` is NOT tile-addressing of B24's record (it falls back to
-`_find_kor`, rung B23's Korolev locator).
+B24 MERGED (NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **9/9 scored + 1
+declared NO-OP** (MU9 labels-only = decoration). RETRACTED at the spine: the turn-29 compaction does NOT move the
+addressed slot (stable at 22 for all 8 visits). NEW LAW: the run addresses its record BY LEDGER POSITION;
+tile-addressing cannot RUN once the container tile is poisoned (`tile (27, 29) not located`). HARNESS LAWS (s287):
+declared gate-sets are MEASURED, not authored; a mutant reddening NOTHING is a NO-OP and fails; dropping a conjunct
+can't redden - mutate DATA; a rival that fails by crashing or returning nothing is NOT evidence until the crash is
+message-matched AND the construction succeeds without the cause (B24 had two degenerate rivals:
+frontinsert, locate - retired, G8 gates the retirement). `pos=False` in `composedturn.fold` is NOT tile-addressing.
 
-M316 MERGED as #305: 18/18 + 32/32, digest dcc6ce82fc98aec4; 5 P2 ALL accepted; the review's window-scope P2
-BROKE THE SITE-TWIN LAW (0x94f2d8 = same 5-field/16 B shape; REMOVER 0056d780 = goal-cancel; INITIALIZER
-0056d710 fills both arrays). NAMED ## M316 governs.
-M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29 (22 expectation + 7 CODE mutants via
-M315_PATCH), digest 3976ca97eedc1e19; 6 P2 ALL accepted at review head 754b4fa6; the
-caller-guard claim DOWNGRADED to OPEN; pair reach 16 B -> 17 B; blind re-verify records
-`evidence/s285_reverify_*` (#304). NAMED ## M315 governs.
+M316 MERGED as #305: 18/18 + 32/32, digest dcc6ce82fc98aec4; 5 P2 accepted; its window-scope P2 BROKE THE
+SITE-TWIN LAW (0x94f2d8 same 5-field/16 B shape; REMOVER 0056d780; INITIALIZER 0056d710). NAMED ## M316.
+M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29, digest 3976ca97eedc1e19; 6 P2 at head 754b4fa6;
+caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/s285_reverify_*`
+(#304). NAMED ## M315.
 
 ## THE LEDGER
 
