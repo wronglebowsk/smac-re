@@ -1052,3 +1052,17 @@ purely the instrument's:
   tuple with `str(tuple)`, so `tile (27, 29)` carries a space). The finding rides on the split: the clean leg
   still runs, the corrupted leg cannot even address the record.
 
+## Argument-push decode law (M317, #309 review)
+- Trace each pushed register from its OWN push position, never from the call site: a register pushed and then
+  reloaded for a LATER argument makes the call-site walk borrow the post-push load for BOTH args. At the goal
+  engine's n-goal site (0x556e79) the p2 push precedes the ecx reload, so p2 is the PRE-load value (a unit
+  coordinate) and the prio is a computed fold, not the loaded dword - the call-site trace invented both.
+- The backward def-walk STOPS at the first write of the register: a load (mov/lea/movsx/movzx/pop) returns its
+  source; an arithmetic write (add/and/neg/sbb/...) returns <computed> - skipping clobbers returns a stale
+  source. When pushes interleave with loads, pin the exact (push_addr, operand) sequence plus a NEGATIVE pin
+  that the earlier push's source does not contain the later load's address; mutate a between-push clobber to
+  prove the pin bites.
+- A caller-context gate that compares three constants (loop_lo <= site <= loop_hi) is decoration: READ the
+  back-edge instruction and its target from the bytes first, then assert containment; pin the argument's def
+  chain (param load -> push) with a no-clobber scan of the interval, and the enclosing flag-gate chain.
+
