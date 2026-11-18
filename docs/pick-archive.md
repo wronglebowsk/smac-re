@@ -893,3 +893,19 @@ the hub settle-nest
   the 8380-B record's sibling FIELDS, the 0x94eca8 dump, save-carry vs rebuild, the eax=1 leg) is
   VERBATIM at `docs/pick-archive.md` §trim-s269 (b) — grep it there, do not re-derive it.
 ```
+
+## §trim-s276 (a) CLOSED (s272) paragraph + the s275 OPEN-PICKS block, VERBATIM from NEXT_PROMPT.md at the s276 close
+
+  **CLOSED (s272): FUN_00470b90 = the view object's DEBUG-GATED (this+0x1dd70 bit 0x2000) GOAL
+  duplicate-invalidator + one-char-token logger; it owns the GOAL kind<->token map, and Ghidra's
+  42-selector/8-handler structure lives ONLY in the table bytes (the case LIST agrees with them -
+  0x29 is 41 - so do not re-litigate that; my two overclaims are retracted in Session 272). Read
+  ## M310 before re-opening.**
+
+  **OPEN PICKS after M311, in order: (i) WHO fires the selection check - FUN_00470fe0 (180 B, 4 callers
+  incl. FUN_004715d0), FUN_004715d0 (1086 B, 1 caller at 0x4725e9), FUN_00471fd0 (1338 B, 5 callers in
+  FUN_00472810): all three forward a coordinate pair into FUN_00470b90,; the pair's identity is UNVERIFIED; (ii) ds:0x68cbb4's 19 writers that fall OUTSIDE an index-store window
+  (22 stores, 3 in-window; M311 refused to pair it with the index, so what it is stays open).
+  gates (FUN_00469060 test / FUN_00422060 != 0) - name the event; (iii) still open from M310: the
+  game meaning of a GOAL, the one-char tokens, and WHY a GOAL priority can be NEGATIVE (the only
+  invalidation trigger). The open list lives in NAMED ## M310 / ## M309, not here.**

@@ -1,0 +1,26 @@
+== M312 mutation harness ==
+baseline: green (rc=0)
+MU1_span                               reds A1_spans
+MU2_dropped_direct_site                reds A2_calls_470b90
+MU3_swap_callee_order                  reds A3a_fe0_callee_order
+MU4_fe0_arg_slot_written               reds A3b_fe0_argpair_never_written
+MU5_tail_guard_je_retarget             reds A4a_fe0_tail_guard
+MU6_forwarder_pushes_1                 reds A4b_all4_forwarders_pass_literal0
+MU7_x_store_missing                    reds A5a_slot_store_sets
+MU8_y_minus3_gone                      reds A5b_y_two_laws_all4
+MU21_y_delta_gone                      reds A5b_y_two_laws_all4
+MU22_x_store_not_result                reds A5f_every_x_store_is_a_469010_result
+MU9_bitmask_changed                    reds A5d_0x2000_pregate_skips_all3_direct_sites
+MU10_422060_gate_retarget              reds A5e_loop_site_gated_on_FUN_00422060_nonzero
+MU11_block_table_wrong                 reds A6a_block_law
+MU12_setl_dropped                      reds A6b_sweep_call_args
+MU13_cursor_list_wrong                 reds A7a_thunk_encoding
+MU14_fanout_bound                      reds A8a_fanout_law
+MU20_this_pointer_law                  reds A8a_fanout_law
+MU15_direct_store_filter_blind         reds A8b_entry0_store_and_zero_indexed_stores
+MU23_indexed_store_mnemonic_blind      reds A8b_entry0_store_and_zero_indexed_stores
+MU16_hub_arm_address_off_by_one        reds A9a_hub_arms_full_window
+MU24_hub_mask_nulled                   reds A9a_hub_arms_full_window
+MU25_hub_setl_nulled                   reds A9a_hub_arms_full_window
+MU17_hub_owner_count                   reds A9b_hub_53_sites_28_owners
+23/23 mutations reddened their target checks

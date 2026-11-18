@@ -1,9 +1,7 @@
-M311 MERGED (#289, main 17e3e2e): 8/8 gates, 15/15 mutations, digest 625cd5877271cd85, evidence
-= green run, 18 citations resolved. track_mode: MODE=ANALYSE analyse_since_build=1 last_build=B22
-next_rung=B23 - so the NEXT FIRE ANALYSES, it does NOT author B23. OPEN PICKS (in NEXT_PROMPT, in
-order): (i) WHO fires the selection check - FUN_00470fe0 / FUN_004715d0 / FUN_00471fd0, all three
-forward a coordinate pair into FUN_00470b90, the pair's identity UNVERIFIED; (ii) ds:0x68cbb4's 19
-writers outside an index window. UNPROVEN CARRIED FROM M311: which entity the index addresses at
-runtime (zero box time), record +48's semantics, whether the saved pointer at [ebp-0x8] behind
-0x4f5c36 is the general shape of pointer-consuming sites. Re-read track_mode.py after any merge
-before writing this cursor's next line.
+s276 cont.: M312 review round DONE on #292 (3 Greptile P2s all fixed at the
+second head; ONE PR comment answers them). Now 27/27 digest 8751c5af18c5a8f8
+(x2 identical), mutate 23/23. Fixes: A9a literal 16-insn windows x5 arms;
+A8b scope = entry zero only + zero indexed band stores (M262 owns 1..7, do
+NOT re-derive); fan-out 0..7 bound exclusive; A5f every x-store = 469010
+result. NEXT: gate, push, poll CI ~200s, milestone.py merge 292, then
+s275-style docs follow-up PR (merged cursor + LANDED line + new ## Session).
