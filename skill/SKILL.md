@@ -176,6 +176,8 @@ re-summarise.
   rewrite `SESSION_CURSOR.md` <=600 B as it goes), so a kill at any moment leaves a resumable branch instead of
   lost context; then the PARENT verifies before merging (re-run the script, diff the evidence, read the gate
   for scope) — never trust the child's summary line.
+- **A cron fire's `ok` is a SESSION status, not a CLOSE-OUT status** - a fire can be green on its acceptance and
+  still owe the harness/evidence/notes/PR. Full text: `references/session-discipline.md` §taking over a cut-off fire.
 
 ### Verify the OUTCOME, not the mechanism — full text: `references/verify-outcome.md`
 - A gate that counts the harness's own work passes a run that LOST the game. Compute candidate predictions from
@@ -449,8 +451,11 @@ driving/dialog state machines: `references/wine-operations.md`)
   and reject any mutant whose output carries a traceback — rc==1 is also what an uncaught exception returns, and
   RED lines print before the death, so a crashing mutant otherwise credits itself. **The harness is state: re-run it
   after every edit that adds or rewrites a gate (anchors die and mutants go WEAK when constants move), and an
-  unexplained WEAK blocks submission — commit WIP with the honest score rather than deleting a mutant.** Full
-  mechanics: `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE) and
+  unexplained WEAK blocks submission — commit WIP with the honest score rather than deleting a mutant.** Four
+  outcomes must be classified, and a mutant reddening NOTHING is a NO-OP that fails the harness; the only legal
+  CRASH is a DECLARED one matched on message text. Full mechanics:
+  `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE, §A mutation harness
+  must CLASSIFY its four outcomes) and
   §Static text-cache parse traps.
 - **Three #294 (M313) decoration classes - all reviewer-found, all silent:** (1) an inline `#` comment placed
   after the FIRST term of a multi-line parenthesized boolean swallows the rest of that physical line - the
@@ -481,7 +486,10 @@ driving/dialog state machines: `references/wine-operations.md`)
   gate pins, re-checked after review-round measurements move it.)
 - **Concurrent fires can takeover mid-flight (s285):** isolation is verified at fire START, but a fixer fire can
   finish, post the review reply, merge the PR and merge its close-out while a verifier fire is still re-running
-  acceptance. Detect via new commits appearing under a read file / clean status with foreign commits; never fight
+  acceptance. Detect via new commits appearing under a read file / clean status with foreign commits, and note a
+  completion notice can arrive while the worker's FINAL sweep still writes: temp modules appearing/renaming/
+  vanishing between two `git status` reads (or a harness line printed half-way) is churn from a live worker —
+  re-read the branch state only after the process is gone (`pgrep`); never fight
   it - re-apply YOUR delta on a fresh branch off origin/main (content re-application, not cherry-pick, when the
   base history diverged) and keep the blind re-runs as INDEPENDENT VERIFICATION with committed records
   (`evidence/sN_reverify_*.txt` cited by path:line - prose claims of reruns without saved records are findings).

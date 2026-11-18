@@ -36,10 +36,9 @@ must be MEASURED, never authored (MU3/MU4/MU7 were all wrong first pass); a muta
 fails the harness; `pos=False` in `composedturn.fold` is NOT tile-addressing of B24's record (it falls back to
 `_find_kor`, rung B23's Korolev locator).
 
-M316 MERGED as #305 (main see git log): 18/18 + 32/32, digest dcc6ce82fc98aec4;
-5 P2 ALL accepted; the review's window-scope P2 BROKE THE SITE-TWIN LAW (0x94f2d8 = same
-5-field/16 B record shape; REMOVER 0056d780 12 sites = goal-cancel; INITIALIZER 0056d710
-fills both arrays). NAMED ## M316 governs.
+M316 MERGED as #305: 18/18 + 32/32, digest dcc6ce82fc98aec4; 5 P2 ALL accepted; the review's window-scope P2
+BROKE THE SITE-TWIN LAW (0x94f2d8 = same 5-field/16 B shape; REMOVER 0056d780 = goal-cancel; INITIALIZER
+0056d710 fills both arrays). NAMED ## M316 governs.
 M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29 (22 expectation + 7 CODE mutants via
 M315_PATCH), digest 3976ca97eedc1e19; 6 P2 ALL accepted at review head 754b4fa6; the
 caller-guard claim DOWNGRADED to OPEN; pair reach 16 B -> 17 B; blind re-verify records

@@ -1028,3 +1028,27 @@ purely the instrument's:
   reviewer cited the evidence line. Grep the artifact for the NEW words after editing prose inside a format string,
   and regenerate evidence from the green run before quoting it.
 
+## A mutation harness must CLASSIFY its four outcomes (s287, B24)
+
+- A sweep relaunches a FULL acceptance per mutant (~60-100 s each): it exceeds foreground caps, and a kill
+  mid-sweep loses the scored mutants. Run it backgrounded with notify, or subset with `--only MU1,MU2`; a
+  `--tag SUFFIX` names the temp module so subset runs cannot clobber each other (then `--tag` must not depend
+  on `--only`-only variables - B24 had a latent NameError there).
+- `--list` prints the table for free and catches two dead shapes without a single run: an ANCHOR that is no
+  longer unique after a code edit, and a mutant left with an EMPTY declared gate set - always BAD by
+  construction, since a mutant reddening nothing never passes, so it is a placeholder the author never filled.
+- FOUR outcomes, three of them legal only if declared. (1) measured gate-set == declared -> OK. (2) measured
+  set differs -> BAD: the declared set was AUTHORED, not measured (B24 first pass: MU3 declared {G3,G7} but
+  only G7 reddens; MU4 and MU7 reddened 5 and 4 gates where 2 were declared - a wide set is fine when the
+  mutated value is genuinely load-bearing, and the why belongs in-file next to the mutant). (3) reddens
+  NOTHING -> NO-OP, BAD: the mutation is false on a code path nothing asserts (B24's first MU2 anchor disabled
+  the fold's read-side seed copy - harmless, because the driver's per-turn write already re-composed the record
+  from the container's bytes; the write-side anchor is the one that bites). (4) CRASH -> BAD by default, since
+  a dead mutant cannot score gates; the ONLY legal crash is a DECLARED one, matched on message text.
+- Declared-crash lesson (B24 MU8): `pos=False` looked like "address my record by tile" but the engine fell back
+  to a DIFFERENT rung's locator and died on a tile absent from the save - a crash that says nothing about the
+  claim. Find the code path that actually implements the rival law (here `mode="locate"` ->
+  `_find_tile(im, tile_at())`), then declare the crash it really raises, regex-matched (the engine formats a
+  tuple with `str(tuple)`, so `tile (27, 29)` carries a space). The finding rides on the split: the clean leg
+  still runs, the corrupted leg cannot even address the record.
+

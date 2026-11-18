@@ -367,3 +367,16 @@ attribution, which is where decodes drift. Write the audit to its own short note
   path is the worst failure mode this repo has, because nothing downstream complains.
 - A duplicate-definition check belongs in the same breath as `ast.parse`: `names=[n.name for n in
   ast.parse(src).body if isinstance(n,ast.FunctionDef)]; assert names.count(f)==1`.
+
+## Taking over a cut-off fire (s287, B24)
+
+- **A cron fire's `ok` status is a SESSION status, not a CLOSE-OUT status.** A fire can exit ok with the
+  milestone unfinished: branch commits present, acceptance green, but the harness left UNTRACKED and no
+  evidence/PR/notes/cursor write. Before reporting done or taking over, read the repo's end state —
+  `git status -sb` + `gh pr list --state open` + the top `## Session` + the cursor.
+- To finish it, stay on the fire's branch and re-run ITS acceptance (a green already-earned run is re-confirmed,
+  never re-derived), then apply the normal closing order; **commit the untracked harness first** so a second
+  cut-off cannot lose it. B24 ran twice this way: fire 1 left the instrument green and the harness untracked;
+  fire 2 committed the harness, then discovered its declared gate sets were authored rather than measured - and
+  the re-run of the fire-1 acceptance, byte-identical to the committed evidence, is what made that distinction
+  safe to publish.
