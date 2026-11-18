@@ -112,7 +112,7 @@ wantrel = {0x56d41c: (2, "WORD", "ax"),
  0x56d765: (4, "DWORD", "ecx"), 0x56d768: (12, "DWORD", "ecx")}
 ck("A11_band_relative_writes_exactly13", REL == wantrel,
    "rel-stores=%d offsets=%s kill-0xffff@%s max-update@0x56d41c" %
-   (len(REL), sorted({hex(d) for d, _, _ in REL.values()}), "0x56d6be" in REL))
+   (len(REL), sorted({hex(d) for d, _, _ in REL.values()}), REL.get(0x56d6be) == (0, "WORD", "0xffff")))
 got = {a: (d, sz, src) for a, d, sz, src in stores}
 ck("A1_band_absolute_writes_exactly6",
    len(stores) == 6 and got == want,

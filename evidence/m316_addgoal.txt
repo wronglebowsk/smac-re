@@ -1,4 +1,4 @@
-OK   A11_band_relative_writes_exactly13  rel-stores=13 offsets=['0x0', '0x2', '0x4', '0x8', '0xc'] kill-0xffff@False max-update@0x56d41c
+OK   A11_band_relative_writes_exactly13  rel-stores=13 offsets=['0x0', '0x2', '0x4', '0x8', '0xc'] kill-0xffff@True max-update@0x56d41c
 OK   A1_band_absolute_writes_exactly6  stores=6 addrs=['0x470d5c', '0x56d44b', '0x56d455', '0x56d45f', '0x56d469', '0x56d470']
 OK   A2_record_layout  offset->size {'0x0': 'WORD', '0x2': 'WORD', '0x4': 'DWORD', '0x8': 'DWORD', '0xc': 'DWORD'}
 OK   A2b_entry16B_fold_via_shl_and_lea  shl-0x4=['0x56d395', '0x56d404', '0x56d442'] lea-band=['0x56d39d', '0x56d3c6', '0x56d407']
