@@ -291,6 +291,11 @@ milestone per merge and three acceptance invocations, not one question per step.
   operator steer); branch + commit the census SKELETON before probing and the same fire saves at ~108 k.
 - Close order, every time: gate GREEN -> notes entry (`patch`) -> **checkpoint commit** -> `NEXT_PROMPT.md`
   rewrite -> submit/PR. Never leave the commit until after the handoff docs.
+- **Every VERIFIED row in the NAMED block names the mutation that reddens it** (s290 law; #309/#311 reviews:
+  6 of 8 findings were claims no gate read). The mutation harness proves gates BITE; only a claim->mutant audit
+  proves they COVER. A row with no mutant is INFERRED/OPEN until pinned + mutated. Tracers/classifiers also get
+  an ALGORITHM mutant (a between-push reload for a def-walk tracer): instruction/data mutants cannot catch a
+  wrong trace position. Depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law.
 - `NEXT_PROMPT.md` <= 15,300 BYTES AT CLOSE — the unattended kickoff's cap-triage trigger. `evidence.py budget`
   prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
   used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate
