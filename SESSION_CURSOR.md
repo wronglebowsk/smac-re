@@ -1,9 +1,9 @@
-M315 MERGED (#301, main 0ad96af): pick (ii) CLOSED - ds:0x68cbb4 is the
-REFRESH MEMO of the selection pair `call 0x4e8d60`+`call 0x4e78e0`
-(reach 5..17 B; 12 memo vs 10 clears). Law: NAMED ## M315 + notes s284/5.
-10/10 gates, digest 3976ca97eedc1e19, 29/29 mutants; Greptile round 1:
-6 P2 ALL accepted (caller-guard claim OPEN - pick (v)).
-track_mode: MODE=ANALYSE, analyse_since_build=2, next_rung=B24.
-NEXT FIRE = pick (iii) GOAL game-meaning / one-char tokens / negative
-priority; (iv) NAME the refresh pair; (v) who guards the 8 unguarded
-memo sites. Fires MANUAL (cron paused 2026-11-18).
+M316 SUBMITTED (milestone/m316): pick (iii) CLOSED - the GOAL list is
+per-faction 75x16 B records @0x94ee28+block*0x20bc (kind WORD -1=free,
+prio WORD, p1/p2, owner). FUN_0056d350 = AddGoal(blk,kind,prio,p1,p2,
+owner): dup triple -> max-prio only; else evict by score free1000/
+100+prio/20-prio max-wins (negative prio = evict-first tombstone).
+17/17 gates, digest c57879ca49a65314, 31 mutants pending.
+Write-set: 6 absolute + 13 relative stores (2nd kill 0x56d6be!).
+Law NAMED ## M316. Next: (iii') engine FUN_00556690 decisions /
+(iv) name the refresh pair / (v) the 8 unguarded memo sites.

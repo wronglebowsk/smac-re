@@ -936,3 +936,19 @@ end-to-end (B15+B16+B17 with save-only inputs).
   (ii) CLOSED by M315: ds:0x68cbb4 = the REFRESH MEMO (22 stores = 10 -1 clears + 12 memo
   updates; 8 fed by ds:0x68cbb0, 4 by a caller slot; M311's window was FORWARD 0..+32 B).
 ```
+
+### §trim-s286 (M316 fire; VERBATIM from NEXT_PROMPT.md picks block)
+
+```
+  CLOSED (s282/283): pick (i'') = M314 MERGED as #299 (main e638772; 18/18 + 27/27 mutants,
+  digest cf54a7ca907344c6; squash title's "20/20" is the pre-review harness - NAMED governs): FUN_004c5d60 = token-keyed tour/dialog dispatcher (31 instr sites, 28 tokens);
+  family = 4 coordinate wrappers + 4 tour drivers + 3 result handlers (0x444 = M269 secondary delta,
+  NOT a menu id). CURSOR/NAMED lead "FUN_004d3f70 calls 15 band members" REFUTED by bytes: exactly
+  1 (FUN_0050cab0 x2); pumpB calls FUN_004d3f70 DIRECT at 0x517858 (6th off-band callee, NAMED
+  ## M313 pump row corrected). Law: a pump-callee census by thunk/hub SITES undercounts direct
+  band-member calls - census callees from the callee side.
+  CLOSED (s286): pick (iii) = M316 FUN_0056d350=AddGoal(block,kind,prio,p1,p2,owner); 75x16B
+  records @0x94ee28+block*0x20bc; insert-or-max law; eviction score free1000/100+prio/20-prio
+  (negative prio = evict-first tombstone); all 7 tokened kinds produced; 50 sites/12 owners.
+  Tokens' game words + engine FUN_00556690 decisions stay OPEN (NAMED ## M316).
+```
