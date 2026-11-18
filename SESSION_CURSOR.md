@@ -6,5 +6,5 @@ full-row determinism). Writer regression green (B8 10/10,
 B12/B21/B22 12/12). Queue per-turn progress (st+0x40/mirror
 +0x98/pen+0x4c/slots+0x50) round-trips the B8 writer every
 boundary of trace 145157; r0 arrival same write; writer gained
-identity/raw/queue keys. NEXT: gh pr checks GREEN -> merge 297
+keys. NEXT: gh pr checks GREEN -> merge 297
 -> close-out (NEXT_PROMPT: B24 QUEUED, next fires ANALYSE).
