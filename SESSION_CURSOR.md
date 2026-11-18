@@ -1,9 +1,9 @@
-M311 GREEN, NOT SUBMITTED. Branch milestone/m311, commit 445cf02. ACCEPT:
-`python3 -u scripts/m311_recidx.py` -> PASS M311: 7/7, two runs identical, digest dd0ddccb5a1bcad4.
-FINDING: 0x68cbb0 = CURRENT-RECORD INDEX of the 304-B array at 0x95da10; 0x8f0d60 its derived
-POINTER (6 stores each, paired 1:1 at +6..25 B). Picks (a) AND (b) are ONE object: 0x95da40 =
-0x95da10+48 (pinned by 0x4f5aab). Setter FUN_004e3470 = 34B/11 insns/57 callers.
-OPEN: scripts/m311_mutate.py (11 mutants) running in background proc_cb6fa7552e98 — READ ITS
-OUTPUT before quoting N/N in docs (5/8 was pre-fix). THEN close order: gate -> Session 274 ->
-commit -> NAMED M311 -> NEXT_PROMPT (retire picks a AND b) -> submit -> read every Greptile
-inline -> merge. Docs NOT yet written. Zero box time.
+M311 WIP, branch milestone/m311, NOT submitted. Instrument now 8/8 green
+(`python3 -u scripts/m311_recidx.py`, digest 625cd5877271cd85) - but docs still say 7/7 (NAMED,
+Session 274) and evidence/m311_recidx.txt is the 7-gate run. The mutation harness is STALE:
+9/14 (MU3+MU5 crash -> correctly rejected; MU4/MU13/MU14 weak). NEXT FIRE in order: (1) re-anchor
+MU3/MU5 to the moved constants and re-scope MU4/MU13/MU14 onto gate A8, which pins fold_chain per
+site (MATCH_TRUTH: 5 of 6 index stores fold; 0x4f5c36 reuses the SAVED pointer from [ebp-0x8] via
+0x4f5c33); (2) retarget every harness anchor by READING the current source, not from memory;
+(3) update NAMED + notes to 8/8, copy the green run to evidence, re-resolve all citations;
+(4) only then gate -> submit -> read every Greptile inline -> merge. Zero box time.

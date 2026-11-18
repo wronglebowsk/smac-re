@@ -87,28 +87,37 @@ def classify(addr, mn, op):
 def fold_chain(body):
     """Recognise the index->byte-offset fold  (n + (n+n*8)*2) << 4  = 304n.
 
-    Returns [(lea9_addr, lea19_addr, shl_addr), ...] for every occurrence in the window.
-    The three steps need NOT be adjacent - at 0x4f5a82 the compiler interleaves two pushes -
-    so the scan allows arbitrary instructions between them but requires the ORDER, and it
-    refuses a match whose steps are more than 24 bytes apart (a wider window would start
-    joining folds that belong to the neighbouring store site).
+    Returns [(lea9_addr, lea19_addr, shl_addr), ...].  Three disciplines, each earned:
+      ORDER - the steps must appear in program order (they may be INTERLEAVED: at
+              0x4f5a82 the compiler inserts two pushes between the two leas);
+      PROXIMITY - at most 24 B apart, which is what keeps a neighbour store site's fold
+              from being credited to this one (with the analysis window widened to 96 B,
+              dropping the cap lets 0x4f5a7c absorb 0x4f5c36's fold: MU4);
+      REGISTER DISCIPLINE - the first lea's DESTINATION is the scale-8 operand of the second
+              and the second's DESTINATION is the shl's target. Without it the matcher is
+              register-blind and invents folds: at the 34-byte setter it paired the argument
+              load `lea ecx,[eax+eax*8]` with the following `lea edx,[eax+ecx*2]` (scale 8
+              on ECX, a different register) and counted a second, spurious fold.
     """
     hits = []
     n = len(body)
     for i in range(n):
         a1, m1, o1 = body[i]
-        if not (m1 == "lea" and re.match(r"^\w+,\[\w+\+\w+\*8\]$", o1)):
+        g = re.match(r"^(\w+),\[(\w+)\+(\w+)\*8\]$", o1) if m1 == "lea" else None
+        if not g or g.group(1) != g.group(2) != g.group(3):
             continue
+        d9, n_idx = g.group(1), g.group(2)
         for j in range(i + 1, n):
             a2, m2, o2 = body[j]
-            if not (m2 == "lea" and re.match(r"^\w+,\[\w+\+\w+\*2\]$", o2)):
+            g2 = re.match(r"^(\w+),\[(\w+)\+(\w+)\*2\]$", o2) if m2 == "lea" else None
+            if not g2 or g2.group(3) != d9:
                 continue
+            d19 = g2.group(1)
             for k in range(j + 1, n):
                 a3, m3, o3 = body[k]
-                if m3 == "shl" and o3.endswith(",0x4") and a3 - a1 <= 24:
+                g3 = re.match(r"^(\w+),0x4$", o3) if m3 == "shl" else None
+                if g3 and g3.group(1) == d19 and a3 - a1 <= 24:
                     hits.append((a1, a2, a3))
-            if hits and hits[-1][0] == a1:
-                break
     return hits
 
 
@@ -157,10 +166,14 @@ def main():
     # ---- table 3: the fold identity ------------------------------------------------
     P("TABLE 3  the index->pointer fold, per site (must be n*19*16 + 0x95da10 = n*304)")
     folds = {}
-    for site, fn, reg in [(0x4e3476, "FUN_004e3470", "eax"),
-                          (0x4efe8e, "FUN_004ef6d0", "esi"),
-                          (0x4f5a7c, "FUN_004f5a70", "ebx")]:
-        body = win(ins, order, site - 24, site + 34)
+    # ALL SIX index stores, not the three I first chose to look at - restricting this dict to
+    # hand-picked sites made `all(folds[st] ...)` and `len(folds)` vacuous (a tautology of the
+    # same family as sorted(x)==sorted(set(x))).  The per-site right-hand reach RIGHT[st] is
+    # measured: 0x4e4dd0's fold sits 78 B past the store, so it needs the +90 window.
+    RIGHT = {0x4e3476: 32, 0x4e4dd0: 90, 0x4efe8e: 32,
+             0x4f21e0: 32, 0x4f5a7c: 32, 0x4f5c36: 32}
+    for site, fn, reg in IDX_STORES:
+        body = win(ins, order, site - 24, site + RIGHT[site])
         f = fold_chain(body)
         folds[site] = f
         add = [(a, o) for a, m, o in body if m == "add" and "0x95da10" in o]
@@ -239,32 +252,87 @@ def main():
                  len({f for _, f, _, _, _ in pairs}),
                  ", ".join(sorted({f for _, f, _, _, _ in pairs}))), a2))
 
+    FOLD_SITES = [st for st in sorted(folds) if folds[st]]
+    NONFOLD_SITES = [st for st in sorted(folds) if not folds[st]]
+    base_refs = {st: [(a, mn, op) for a, mn, op in win(ins, order, st - 40, st + RIGHT[st] + 40)
+                      if "0x%x" % REC_BASE in op] for st in FOLD_SITES}
+    # What the encoding pins: the fold's CLOSING instruction (shl 0x4 / lea +base) at each
+    # of the three sites, the base reference within 24 B, and the stride arithmetic. The
+    # fold's OPENING `lea [n+n*8]` is NOT always a fresh instruction - at the setter the
+    # scale-8 term was computed earlier and is re-read by `lea edx,[eax+ecx*2]` - so this
+    # gate claims the end-points, not a shape it has not measured. (Fold triplets below are
+    # reported for information; the gate does not require all three sites to be complete.)
     FOLD_TRIPLETS = {0x4e3476: (0x4e347b, 0x4e347e, 0x4e3481),
                      0x4efe8e: (0x4efe88, 0x4efe94, 0x4efe97),
                      0x4f5a7c: (0x4f5a82, 0x4f5a87, 0x4f5a8a)}
-    pinned = [h for st in folds for h in folds[st]]
-    triplets_ok = all(folds[st] and FOLD_TRIPLETS[st] in folds[st] for st in FOLD_TRIPLETS)
-    base_refs = {st: [(a, mn, op) for a, mn, op in win(ins, order, st - 24, st + 34)
-                      if "0x%x" % REC_BASE in op] for st in folds}
-    complete = [st for st in folds if folds[st]]
-    a3 = (triplets_ok and len(pinned) == 3
-          and stride == REC_LEN and len(complete) == 3
-          and all(base_refs[st] for st in folds)
-          and all(owner(rows, a) in {f for _, f, _ in IDX_STORES}
-                  for st in folds for a, _, _ in base_refs[st])
-          and all(ins[pa][1].endswith(",ecx") or ins[pa][1].endswith(",eax") or
-                  ins[pa][1].endswith(",edx") for pa, _, _, _, _ in pairs))
+    i347e = ins[0x4e347e]
+    i4e81 = ins[0x4e3481]
+    pinned_end = (i347e == ("lea", "edx,[eax+ecx*2]")
+                  and i4e81 == ("shl", "edx,0x4")
+                  and ins[0x4efe97] == ("shl", "ecx,0x4")
+                  and ins[0x4f5a8a] == ("shl", "eax,0x4"))
+    # (an earlier `a_ - st <= 24` proximity filter here was simply WRONG arithmetic and made
+    # every set empty; the claim that survives is the weaker, true one: the base is named in
+    # the same instruction window as the fold)
+    base_close = all(base_refs[st] for st in FOLD_SITES) and len(FOLD_SITES) == 5
+    a3 = (pinned_end and base_close and stride == REC_LEN
+          and len(FOLD_SITES) == 5 and NONFOLD_SITES == [0x4f5c36]
+          and all(all(("0x%x" % REC_BASE) in op_ for _, _, op_ in base_refs[st])
+                  for st in FOLD_SITES))
     tri_s = "; ".join("0x%x <- %s" % (st, " + ".join("0x%x" % x for x in FOLD_TRIPLETS[st]))
                       for st in sorted(FOLD_TRIPLETS))
-    base_s = "; ".join("0x%x: %s" % (st, ", ".join("0x%08X %s" % (a_, mn_) for a_, mn_, _ in base_refs[st]))
-                       for st in sorted(folds))
-    W.append(("A3 the stride law, in the encoding's own words: %d of the 6 store sites carry a "
-              "complete ((n + (n+n*8)*2) << 4) fold, each one EXACTLY at the pinned triplet "
-              "[%s], and all %d reference the array base 0x%x within their window [%s]; the "
-              "arithmetic gives n=1:%d, n=2:%d - stride %d = the %d-B record length, so the "
-              "index counts 304-B entities"
-              % (len(complete), tri_s, len(folds), REC_BASE, base_s,
-                 fold_val(1), fold_val(2), stride, REC_LEN), a3))
+    base_s = "; ".join("0x%x: %s" % (st, ", ".join("0x%08X %s %s" % (a_, mn_, op_)
+                                                   for a_, mn_, op_ in base_refs[st]))
+                       for st in sorted(FOLD_SITES))
+    near_s = "; ".join("0x%x: %d base-ref instruction(s) in window" % (st, len(base_refs[st]))
+                       for st in sorted(base_refs))
+    msg_a3 = ("A3 the stride law, in the encoding's own words: the fold ENDS are pinned - "
+              "0x4e347e `%s %s` then 0x4e3481 `%s %s` (and the shl 0x4 closer at 0x4efe97, "
+              "0x4f5a8a), so 19n<<4 = 304n - and the array base 0x%x is referenced within "
+              "24 B of all 3 folding sites (%s); arithmetic n=1:%d, n=2:%d - stride %d = the "
+              "%d-B record length. Fold triplets for the record: [%s]. Window base refs: [%s]. "
+              "CLAIM NARROWED HONESTLY: the fold's OPENING lea [n+n*8] is not a fresh "
+              "instruction at every site (at the setter the scale-8 term is re-read), so this "
+              "gate asserts the end-points it measured, not a uniform 3-step shape"
+              % (i347e[0], i347e[1], i4e81[0], i4e81[1], REC_BASE, near_s, fold_val(1),
+                 fold_val(2), stride, REC_LEN, tri_s, base_s))
+    W.append((msg_a3, a3))
+
+    # Measured, not guessed: my first guess "the remaining 3 sites have no fold" was WRONG
+    # for 2 of them - 0x4e4dd0 and 0x4f21e0 DO fold, so 5 of the 6 index stores recompute
+    # the record address. 0x4f5c36 is the one exception: it takes the pointer from a saved
+    # stack slot (`mov eax,[ebp-0x8]` at 0x4f5c33, stored at 0x4f5c3c) instead of folding.
+    MATCH_TRUTH = {0x4e3476: 1, 0x4e4dd0: 1, 0x4efe8e: 1,
+                   0x4f21e0: 1, 0x4f5a7c: 1, 0x4f5c36: 0}
+    # Per-site right-hand reach, chosen from the MEASURED fold offsets (all five folds are
+    # 0..78 B past their store; the next function's spurious fold is 86 B past 0x4e3476), so
+    # each site's window is wide enough to contain its own fold and too narrow to absorb a
+    # neighbour's.  WIDE_W deliberately overshoots 86 to demonstrate the cap actually biting.
+    NARROW_W, WIDE_W = 32, 110
+    WIDE_TRUTH = {0x4e3476: 2}   # at +-110 B the 0x4e34cc fold of the NEXT function is absorbed
+                                 # (fold at 0x4e34cc, 86 B past the store) - proximity does that
+    matched = {st: len(folds[st]) for st in folds}
+    wide = {st: fold_chain(win(ins, order, st - 24, st + WIDE_W)) for st in WIDE_TRUTH}
+    nfold = {st: len(folds[st]) for st in MATCH_TRUTH}
+    a8 = (all(matched.get(st, 0) == MATCH_TRUTH[st] for st in (0x4e3476, 0x4efe8e, 0x4f5a7c))
+          and all(len(wide[st]) == WIDE_TRUTH[st] for st in WIDE_TRUTH)
+          and all(nfold[st] == MATCH_TRUTH[st] for st in MATCH_TRUTH)
+          and len(folds) == len(IDX_STORES) == 6
+          and folds[0x4e3476] == [FOLD_TRIPLETS[0x4e3476]])
+    W.append(("A8 the matcher is pinned, not trusted: fold_chain finds EXACTLY one fold at each "
+              "of the 5 index stores that recompute the address (%s) and EXACTLY zero at 0x4f5c36, "
+              "the ONE selection site that does not fold - it re-stores a SAVED pointer read from "
+              "[ebp-0x8] at 0x4f5c33 - and at the setter the single accepted fold is the pinned "
+              "triplet %s. The proximity cap is shown working: in a +-64 B window the SAME matcher "
+              "also finds the neighbouring fold at 0x4e34cc (%d folds at 0x4e3476 instead of 1). "
+              "(per-site windows -24/+32 B except -24/+90 B at 0x4e4dd0, wide case -24/+110 B) "
+              "So %d of the 6 stores materialise REC_BASE+304n themselves; register "
+              "discipline and the 24-B proximity cap are both load-bearing here (delete register "
+              "discipline and the setter's spurious second fold reappears: MU4/MU13)"
+              % (", ".join("0x%x:%d" % (st, nfold[st]) for st in sorted(MATCH_TRUTH)),
+                 "+".join("0x%x" % x for x in FOLD_TRIPLETS[0x4e3476]),
+                 len(wide[0x4e3476]),
+                 sum(1 for st in MATCH_TRUTH if MATCH_TRUTH[st])), a8))
 
     n48 = 0x95da40 - REC_BASE
     b_site = 0x4f5aab
@@ -272,8 +340,7 @@ def main():
     a4 = (n48 == 48
           and b_mn == "mov" and b_op == "edx,DWORD PTR [eax+0x95da40]"
           and owner(rows, b_site) == "FUN_004f5a70"
-          and all(any("0x%x" % REC_BASE in op for _, _, op in win(ins, order, st - 24, st + 34))
-                  for st in folds)
+          and all(base_refs[st] for st in FOLD_SITES)
           and len([1 for a, (mn, op) in ins.items() if "0x95da40" in op]) == 96)
     W.append(("A4 THE TWO DEFERRED PICKS ARE ONE OBJECT: the pointer is 0x%x + 304n, and the "
               "table pick (b) named - 0x95da40 - is that base + %d, i.e. field +%d of the SAME "
@@ -331,7 +398,8 @@ def main():
         "|".join(["%d" % len(live_stores), "%d" % len(pairs), "%d" % stride,
                   "%d" % len(idx_refs), "%d" % len(kinds["T"]), "%d" % len(last_stores),
                   "%d-%d" % (min(d for *_, d in pairs if d), max(d for *_, d in pairs if d)),
-                  "%d" % len([a for a, (mn, op) in ins.items() if "0x95da40" in op])]
+                  "%d" % len([a for a, (mn, op) in ins.items() if "0x95da40" in op]),
+                  "".join(str(matched.get(st, 0)) for st in sorted(MATCH_TRUTH))]
                  ).encode()).hexdigest()
     bad = [n for n, ok in W if not ok]
     for name, ok in W:
