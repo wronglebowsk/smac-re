@@ -78,10 +78,14 @@ collision-check + worktree FIRST).
   1 (FUN_0050cab0 x2); pumpB calls FUN_004d3f70 DIRECT at 0x517858 (6th off-band callee, NAMED
   ## M313 pump row corrected). Law: a pump-callee census by thunk/hub SITES undercounts direct
   band-member calls - census callees from the callee side.
-  OPEN PICKS after M314, in order: (ii) ds:0x68cbb4's 19 writers outside an index-store window
-  (22 stores, 3 in-window; M311 refused the pairing); (iii) still open from M310: game meaning of
-  a GOAL, the one-char tokens, WHY a GOAL priority can be NEGATIVE.
-  Lists live in NAMED ## M310 / ## M312 / ## M313 / ## M314, not here.**
+  OPEN PICKS after M315, in order: (iii) still open from M310: game meaning of a GOAL, the
+  one-char tokens, WHY a GOAL priority can be NEGATIVE; (iv) NAME the selection-REFRESH PAIR
+  (call 0x4e8d60 + call 0x4e78e0) - M315 proved the pair is the memo's reaction but neither
+  callee is in NAMED; (v) the 8 memo sites with NO local dedup guard - census their callers and
+  ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
+  (ii) CLOSED by M315: ds:0x68cbb4 = the REFRESH MEMO (22 stores = 10 -1 clears + 12 memo
+  updates; 8 fed by ds:0x68cbb0, 4 by a caller slot; M311's window was FORWARD 0..+32 B).
+  Lists live in NAMED ## M310 / ## M312 / ## M313 / ## M314 / ## M315, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT

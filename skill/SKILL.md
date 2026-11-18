@@ -470,6 +470,40 @@ driving/dialog state machines: `references/wine-operations.md`)
   ADDRESSES. (3) A digest is evidence only if it hashes name+verdict+detail; hashing the check NAMES, or
   keying a `detail` dict by short ids while the digest loop iterates full check names, lets two different
   measurement sets share one digest - and only mutations can catch that, so mutate the numbers, not the labels.
+- **Answer "WHAT IS THIS FIELD" by a STRUCTURAL partition, not by counting writers** (`m315_bb4_census.py`,
+  pick (ii), `ds:0x68cbb4`). Census every store/read/cmp; def-walk each store's value source inside its own
+  function; then classify stores by WHAT FOLLOWS the store (for a memo: a fixed two-call pair within 16 B) and
+  assert the two classes are EXACT COMPLEMENTS of each other - "12 of 22 stores are followed by the pair, 10 are
+  the -1 sentinel, and the 10 are exactly the sentinel-valued ones" is a claim that can be false, which "22 stores
+  exist" is not. Carry the rival it kills and the number that kills it (a store fed from a NEIGHBOURING index
+  would survive the pair law, so the def-walk census, not the pair law, refutes "second cursor").
+- **When a gate's fact feeds several gates, the mutation harness must declare a SET of expected reds, not one.**
+  Changing the refresh pair's callee, or tightening its 16-byte reach, reddens A3+A4+A9 at once - the memo set
+  feeds all three. Demanding exactly-one red pushed me to retarget two mutants into WEAKENINGS (`==` -> `>=`),
+  which then stayed GREEN: a weakening is not a mutation test, a mutation must be FALSE on the real bytes.
+  Require `set(fails) == declared_set`: extra reds = an undeclared dependency, missing reds = decoration.
+- **To close a number a PREVIOUS milestone cited, read that instrument's source for its DEFINITION before
+  re-deriving one.** M311 wrote "only 3 of 22 stores fall inside an index-store window"; my first draft asserted
+  its window was unspecified and that my +-32 B reading "coincidentally" matched - `m311_recidx.py:449` shows
+  `0 <= a - b <= 32`, a FORWARD window, same 3 sites. Recomputing the closure on MY window gave arithmetic that
+  the print contradicted (claimed 9 memo sites outside, measured 7). Quote the window with its reach in the claim.
+- **Three decoration classes found by review on #301 (all reviewer-caught, all silent on real bytes):**
+  (1) a PROVENANCE classifier that keys on OPERAND TEXT ALONE is decoration - `add r,ds:IDX` reads like a load
+  of the index and `lea r,[ebp+0x8]` looks like a stack load; set the class from MOVING INSTRUCTION + SOURCE
+  OPERAND, and prove it with a mutant that REWRITES the instruction, not the expected count. (2) A def-walk that
+  bounds itself by a function span looked up by name silently becomes UNBOUNDED when that name resolves to
+  nothing (`(0,0)` spans) - bound by the measured span when claimed, by an explicit instruction cap when not,
+  and pin how many stores needed the cap (a coverage number worth reporting in its own right). (3) A window pin
+  that checks a LISTED SUBSET of addresses does not pin the window: a change to an instruction BETWEEN the
+  listed ones (the record-address fold sat exactly there) survives. Pin the COMPLETE ordered sequence between
+  the bounds, including its length, and make the bound inclusive of the last instruction.
+- **Give the mutation harness a second family that edits the CODE.** Every expectation mutant rewrites a literal
+  in the instrument, so an instrument that never really looks at the bytes passes them all. Add env-driven
+  disassembly patches (`M315_PATCH="addr|mn ops;..."` applied to the parsed cache before measurement) and a few
+  mutants that corrupt real instructions - a load turned into arithmetic, a guard cmp against an unrelated
+  register, the second callee of a call pair deleted, a fold coefficient changed. Declare each one's gate SET
+  (they legitimately span gates), and reject vacuous ones: if the patch target does not exist, that is a green
+  lie. The census instrument prints `patches applied: n/m` for exactly this check.
 - **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
   first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
   agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
