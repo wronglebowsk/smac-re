@@ -84,8 +84,37 @@ for a in ADDRS:
 want = {0x56d44b: (4, "DWORD", "ecx"), 0x56d455: (8, "DWORD", "edx"),
         0x56d45f: (0, "WORD", "cx"),   0x56d469: (2, "WORD", "dx"),
         0x56d470: (12, "DWORD", "ecx"), 0x470d5c: (0, "WORD", "0xffff")}
+# relative stores: lea reg,[...+0x94eeXX]; then mov <size> PTR [reg(+/-d)],v  -> eff offset
+def rel_stores(lo, hi):
+    out = {}; lea = {}
+    for a in range(lo, hi):
+        if a not in INS: continue
+        mn, o = INS[a]
+        if mn == "lea":
+            m = re.match(r"(\w+),\s*\[(.*?)0x94ee([0-9a-f]{2})\]", o)
+            if m: lea[m.group(1)] = int(m.group(3), 16) - 0x28
+        if mn == "mov":
+            for r, base in lea.items():
+                mm = re.match(r"(WORD|DWORD|BYTE) PTR \[%s\s*(?:([+-])\s*(0x[0-9a-f]+))?\]" % re.escape(r), o)
+                if mm:
+                    sign = -1 if mm.group(2) == "-" else 1
+                    off = int(mm.group(3), 16) if mm.group(3) else 0
+                    out[a] = (base + sign * off, mm.group(1), o.split(",", 1)[1].strip())
+    return out
+REL = {}
+for _lo, _hi in [(AG_LO, 0x56d47c), (0x56d690, 0x56d710), (0x56d710, 0x56d780)]:
+    REL.update(rel_stores(_lo, _hi))
+wantrel = {0x56d41c: (2, "WORD", "ax"),
+ 0x56d6be: (0, "WORD", "0xffff"), 0x56d6c8: (2, "WORD", "ax"),
+ 0x56d73a: (0, "WORD", "di"), 0x56d73e: (2, "WORD", "cx"), 0x56d741: (8, "DWORD", "ecx"),
+ 0x56d744: (4, "DWORD", "ecx"), 0x56d747: (12, "DWORD", "ecx"),
+ 0x56d75b: (0, "WORD", "di"), 0x56d75f: (2, "WORD", "cx"), 0x56d762: (8, "DWORD", "ecx"),
+ 0x56d765: (4, "DWORD", "ecx"), 0x56d768: (12, "DWORD", "ecx")}
+ck("A11_band_relative_writes_exactly13", REL == wantrel,
+   "rel-stores=%d offsets=%s kill-0xffff@%s max-update@0x56d41c" %
+   (len(REL), sorted({hex(d) for d, _, _ in REL.values()}), "0x56d6be" in REL))
 got = {a: (d, sz, src) for a, d, sz, src in stores}
-ck("A1_band_direct_writes_exactly6",
+ck("A1_band_absolute_writes_exactly6",
    len(stores) == 6 and got == want,
    "stores=%d addrs=%s" % (len(stores), sorted(hex(a) for a in got)))
 
@@ -196,7 +225,7 @@ dbgtest = [a for a, m_, o_ in window(AG_LO, AG_HI) if m_ == "test" and o_.endswi
 gbl = [a for a, m_, o_ in window(AG_LO, AG_HI) if "0x985ae8" in o_]
 par = [(a, INS[a]) for a in (0x56d35e, 0x56d360) if a in INS]
 ck("A7_bad_goal_assertion",
-   len(refs) == 1 and sbytes == b"Bad GOAL\x00\x00\x00\x00Bad SITE"
+   len(refs) == 1 and sbytes[:20] == b"Bad GOAL\x00\x00\x00\x00Bad SITE"
    and dbgtest == [0x56d369] and len(gbl) == 1,
    "ref@%s bytes=%r dbgbit test-ah-0x10@%s global-load-sites=%s" %
    (hex(refs[0]) if refs else "-", sbytes[:8], [hex(a) for a in dbgtest], [hex(a) for a in gbl]))
@@ -206,6 +235,7 @@ ck("A7b_parity_predicate_shape",
 
 # ---------- A8: the four accessors (kind/prio readers) ----------
 acc = {"FUN_0056d5d0": (0, 15), "FUN_0056d690": (2, 1), "FUN_0056d710": (2, 1), "FUN_0056d780": (0, 12)}
+# 0056d690 + 0056d710 are MUTATORS (kill/prio + force-set); 0056d5d0/0056d780 are READERS (no band store)
 accgot = {}
 for nm, (off, _nc) in acc.items():
     lo, hi = fspan(nm)
@@ -229,7 +259,7 @@ tok_live = sorted(k for k in TOK if k in imm_kinds)
 tok_regonly = sorted(k for k in TOK if k not in imm_kinds)
 nontok_constructed = sorted(k for k in imm_kinds if k not in TOK)
 ck("A10_token_kinds_constructed",
-   tok_live == [0, 2, 6, 8, 9, 41] and nontok_constructed == [7, 11, 16, 25] and tok_regonly == [],
+   tok_live == [0, 2, 3, 6, 8, 9, 41] and nontok_constructed == [7, 11, 16, 25] and tok_regonly == [],
    "token+immediate=%s token-without-immediate=%s constructed-untokened=%s"
    % (tok_live, tok_regonly, nontok_constructed))
 
@@ -239,8 +269,9 @@ det = {
     "A3": repr([hex(a) for a, _ in bounds]),
     "A4": repr(sorted((t[0], t[1]) for t in sc)) + repr(dbgtest) + repr(gbl),
     "A5": repr(TRIPLE) + repr(INS[0x56d407]) + repr(INS[0x56d436]),
+    "A11": repr(sorted(REL.items())),
     "A6": repr(siteinfo),
-    "A7": repr(sbytes) + repr(and1000),
+    "A7": repr(sbytes) + repr(dbgtest) + repr(gbl) + repr(par),
     "A8": repr(accgot),
     "A9": repr(dict(offs)) + repr(engcall),
     "A10": repr((imm_kinds, tok_live, nontok_constructed)),

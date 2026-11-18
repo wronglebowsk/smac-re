@@ -1,0 +1,19 @@
+OK   A11_band_relative_writes_exactly13  rel-stores=13 offsets=['0x0', '0x2', '0x4', '0x8', '0xc'] kill-0xffff@False max-update@0x56d41c
+OK   A1_band_absolute_writes_exactly6  stores=6 addrs=['0x470d5c', '0x56d44b', '0x56d455', '0x56d45f', '0x56d469', '0x56d470']
+OK   A2_record_layout  offset->size {'0x0': 'WORD', '0x2': 'WORD', '0x4': 'DWORD', '0x8': 'DWORD', '0xc': 'DWORD'}
+OK   A2b_entry16B_fold_via_shl_and_lea  shl-0x4=['0x56d395', '0x56d404', '0x56d442'] lea-band=['0x56d39d', '0x56d3c6', '0x56d407']
+OK   A3_all_goal_list_bounds_are_75  cmp-0x4b sites ['0x470c16', '0x470cc8', '0x56d3b9', '0x56d436']
+OK   A4_eviction_score_constants  [('base20', '0x56d3fb'), ('free1000', '0x56d3e6'), ('plus100', '0x56d425')]
+OK   A4b_candidate_gate_shape  movsx=5 reg-cmps=9
+OK   A5_duplicate_triple_and_16B_stride  triple pinned; dup-hit je->max-tail lea prio ecx,[eax+edx*1+0x94ee2a]
+OK   A5b_max_tail_and_eviction_backedge  evict-bound ('cmp', 'edi,0x4b'); jl in 0x56d439
+OK   A6_sites_exactly50  sites=50 owners=12
+OK   A6b_site_owner_digest  digest=8ace40ec97032541
+OK   A6c_immediate_kinds_constructed  imm-kinds=[0, 2, 3, 6, 7, 8, 9, 11, 16, 25, 41] (reg-kinds=2 sites)
+OK   A7_bad_goal_assertion  ref@0x56d379 bytes=b'Bad GOAL' dbgbit test-ah-0x10@['0x56d369'] global-load-sites=['0x56d364']
+OK   A7b_parity_predicate_shape  xor@0x56d35e=('xor', 'eax,edi') test@0x56d360=('test', 'al,0x1')
+OK   A8_accessor_family  {'FUN_0056d5d0': (['0x0'], 15), 'FUN_0056d690': (['0x2'], 1), 'FUN_0056d710': (['0x2'], 1), 'FUN_0056d780': (['0x0'], 12)}
+OK   A9_engine_band_access_shape  offsets={'0x0': 8, '0x2': 2, '0x4': 12, '0x8': 12, '0xc': 1} callers=['0x52094f', '0x59dd43'] (owners ['FUN_005208f0', 'FUN_0059ce10'])
+OK   A10_token_kinds_constructed  token+immediate=[0, 2, 3, 6, 8, 9, 41] token-without-immediate=[] constructed-untokened=[7, 11, 16, 25]
+== M316: 17/17 ==
+digest c57879ca49a65314
