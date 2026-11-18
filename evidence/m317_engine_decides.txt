@@ -1,0 +1,223 @@
+== G1 baseline: containment / size / instruction coverage ==
+index row: addr=0x556690 name=FUN_00556690 size=14349 n_insns=4235 n_callers=2 n_callees=41 shard=014
+parsed window [0x556690,0x559e9d): 4235 insns, first=push ebp last=ret 
+G1 PASS
+
+== G2 control flow: indirect jmp/call census (M275 re-pin) ==
+indirect jmp/call: 0   ret sites: 1   conditional branches: 605
+G2 PASS
+
+== G3 caller census: every direct call to the engine in .text ==
+  call site 0x52094f in FUN_005208f0
+  call site 0x59dd43 in FUN_0059ce10
+G3 PASS
+
+== C1 action vocabulary: every call site inside the engine ==
+112 call sites -> 41 distinct callees
+  0x4cc7b0 FUN_004cc7b0     x2  @ 0x556a0f 0x558ab3
+  0x4d20f0 FUN_004d20f0     x1  @ 0x556f6a
+  0x4e34f0 FUN_004e34f0     x5  @ 0x5574d4 0x557d1e 0x55963f 0x559838 0x559e1f
+  0x4e3620 FUN_004e3620     x1  @ 0x5569ce
+  0x4e3700 FUN_004e3700     x2  @ 0x558da1 0x558ef4
+  0x4e37f0 FUN_004e37f0     x1  @ 0x558d8b
+  0x4e3b50 FUN_004e3b50     x1  @ 0x559cdc
+  0x4e3c00 FUN_004e3c00     x1  @ 0x5597ea
+  0x4e4620 FUN_004e4620     x3  @ 0x556b6f 0x557f17 0x558c77
+  0x4e5ae0 FUN_004e5ae0     x2  @ 0x556c09 0x559e65
+  0x4e5e10 FUN_004e5e10     x1  @ 0x558b10
+  0x4fdab0 FUN_004fdab0     x2  @ 0x556d7d 0x55795b
+  0x507410 FUN_00507410     x2  @ 0x556885 0x5568ca
+  0x507440 FUN_00507440     x1  @ 0x557e00
+  0x531090 FUN_00531090     x1  @ 0x5583c8
+  0x531bf0 FUN_00531bf0     x2  @ 0x5581be 0x5581d8
+  0x551e50 FUN_00551e50     x2  @ 0x55835b 0x55836a
+  0x556150 FUN_00556150     x3  @ 0x5574f7 0x557500 0x559657
+  0x5563f0 FUN_005563f0     x1  @ 0x556c34
+  0x56d350 FUN_0056d350     x7  @ 0x556820 0x556831 0x55698e 0x556a4a 0x556aed 0x556e79 0x558adc
+  0x56d690 FUN_0056d690     x1  @ 0x559e8e
+  0x56d780 FUN_0056d780     x1  @ 0x559809
+  0x56d890 FUN_0056d890     x1  @ 0x5597a5
+  0x570670 FUN_00570670     x2  @ 0x5579af 0x558fb8
+  0x5706c0 FUN_005706c0     x2  @ 0x55798d 0x558f9c
+  0x570710 FUN_00570710     x3  @ 0x556d3b 0x557152 0x557161
+  0x570770 FUN_00570770     x2  @ 0x55721c 0x55722b
+  0x582340 FUN_00582340     x2  @ 0x55878a 0x558812
+  0x582cc0 FUN_00582cc0     x1  @ 0x559ab4
+  0x59a3e0 FUN_0059a3e0     x1  @ 0x556967
+  0x5a5c00 FUN_005a5c00     x2  @ 0x556aa8 0x557d92
+  0x5a6330 FUN_005a6330     x17 @ 0x556abb 0x556ad5 0x55704d 0x557315 0x55740f 0x557548 0x557db3 0x557e65 0x557e9d 0x557eb3 0x557ec6 0x55933b 0x559558 0x559602 0x559612 0x55964f 0x559b16
+  0x5ab130 FUN_005ab130     x4  @ 0x556aa2 0x55753f 0x557d8c 0x559af9
+  0x5ab420 FUN_005ab420     x1  @ 0x557425
+  0x5abb40 FUN_005abb40     x2  @ 0x55747d 0x557498
+  0x5abd90 FUN_005abd90     x2  @ 0x557276 0x55737a
+  0x5ac0a0 FUN_005ac0a0     x1  @ 0x5579bf
+  0x5ac860 FUN_005ac860     x3  @ 0x55793c 0x55794c 0x559560
+  0x5aff90 FUN_005aff90     x1  @ 0x559aa9
+  0x5b2e00 FUN_005b2e00     x2  @ 0x5570a5 0x557361
+  0x64b870 FUN_0064b870     x20 @ 0x5576e7 0x557711 0x557719 0x557721 0x558d0e 0x558d39 0x558d42 0x558d4d 0x558f15 0x558f40 0x558f49 0x558f54 0x559852 0x55987f 0x559887 0x55988f 0x559be8 0x559c13 0x559c1c 0x559c27
+C1 PASS
+
+== C2 output vocabulary: memory-store census inside the engine ==
+total memory stores: 358  (stack-local 239 / direct-global 2 / global-displacement 104 / struct-field 13)
+-- direct-global stores (address : instruction) --
+  0x558d72: mov ds:0x8f0d34,eax
+  0x558db2: mov ds:0x8f0d34,eax
+-- global-displacement histogram (the output-array vocabulary) --
+  0x93327c x7  @ 0x557398 0x55755c 0x557ae4 0x557c23 0x5591a7 0x559385 0x559e0d
+  0x933280 x1  @ 0x556f2e
+  0x933281 x1  @ 0x5575d5
+  0x933287 x1  @ 0x556f26
+  0x933289 x3  @ 0x5573bc 0x559500 0x559db5
+  0x93328c x2  @ 0x55950e 0x559dd4
+  0x933294 x2  @ 0x559515 0x559ddb
+  0x93329d x2  @ 0x55953a 0x559df9
+  0x9332a3 x2  @ 0x559507 0x559dc1
+  0x9332a6 x1  @ 0x55779f
+  0x94d430 x3  @ 0x557f2c 0x557f3d 0x558e2d
+  0x94d820 x3  @ 0x557f86 0x5585c8 0x558e0c
+  0x94d824 x3  @ 0x557f80 0x5585c0 0x558e12
+  0x94dc6c x3  @ 0x556c59 0x556cf6 0x557b89
+  0x94dc70 x2  @ 0x556c52 0x556d09
+  0x94dc74 x2  @ 0x556c4c 0x556d4d
+  0x94dc7c x2  @ 0x556c46 0x556d89
+  0x94dc84 x2  @ 0x556741 0x556f1b
+  0x94de84 x2  @ 0x556749 0x556b12
+  0x94e484 x2  @ 0x5566c9 0x5578b7
+  0x94e488 x2  @ 0x5566cf 0x556a87
+  0x94e48c x2  @ 0x5566d5 0x5579ea
+  0x94e490 x2  @ 0x5566db 0x557a19
+  0x94e494 x2  @ 0x5566e1 0x556a9c
+  0x94e498 x3  @ 0x5566e7 0x5577bb 0x557b26
+  0x94e49c x2  @ 0x5566ed 0x557967
+  0x94e4a0 x5  @ 0x5566f3 0x557aae 0x557f92 0x5585d4 0x558ff2
+  0x94e4a4 x6  @ 0x5566fc 0x557abe 0x557ad3 0x557f8c 0x5585ce 0x559002
+  0x94e4a8 x1  @ 0x5578e7
+  0x94e5a8 x2  @ 0x556719 0x556b53
+  0x94e628 x3  @ 0x557fc0 0x559261 0x55937e
+  0x94e6a8 x1  @ 0x557a36
+  0x94e7a8 x7  @ 0x556b90 0x5577f8 0x55780b 0x5580d6 0x5580ed 0x5584f7 0x558502
+  0x94e7a9 x6  @ 0x557839 0x557895 0x558226 0x55826d 0x558306 0x55852a
+  0x94eda8 x5  @ 0x557fdf 0x558516 0x558549 0x55855e 0x55856b
+  0x94f4b4 x2  @ 0x556c67 0x557903
+  0x94f4b8 x2  @ 0x556c5f 0x557916
+  0x95da19 x1  @ 0x556a75
+  0x95da40 x3  @ 0x556a63 0x5575ba 0x559e55
+  0x95da44 x1  @ 0x556bb0
+-- struct-field / bare-pointer stores (heap-record writes; def-walk territory) --
+  0x55670f: mov WORD PTR [eax-0x300],si
+  0x556725: mov WORD PTR [eax-0x100],si
+  0x55672f: and WORD PTR [eax],cx
+  0x5575eb: mov DWORD PTR [eax],edx
+  0x55779a: mov DWORD PTR [eax],esi
+  0x5577c8: mov DWORD PTR [edi],esi
+  0x557cad: or BYTE PTR [ecx-0x1],0x8
+  0x557cd5: mov DWORD PTR [eax],edi
+  0x557cd7: mov DWORD PTR [esi],0x0
+  0x557f75: mov DWORD PTR [ecx],eax
+  0x5585b2: mov DWORD PTR [ecx],eax
+  0x558fef: mov DWORD PTR [esi+0x2],edx
+  0x559099: mov BYTE PTR [eax],0x32
+C2 PASS (M250 five-site FULL-insn pin intact; totals pinned after first clean run)
+
+== C3 decision inputs: what feeds the 605 conditional branches ==
+classified: global 18 / stack-local 26 / reg-imm 561 / unattributed 0 (population 605)
+-- globals tested, by branch count (the decision-input vocabulary) --
+  ds:0x692184 x5
+  ds:0x92a37c x4
+  ds:0x92a378 x2
+  ds:0x985af0 x2
+  ds:0x91b5b4 x1
+  ds:0x92ada0 x1
+  ds:0x985ab8 x1
+  ds:0x985af4 x1
+  ds:0x985b10 x1
+C3 PASS (population pinned; per-global counts pinned after first clean run)
+
+== C4 decision OUTPUTS: argument decode at the goal-issue / cancel sites ==
+  0x556820 -> FUN_0056d350 : 6 pushes
+    arg1 = 0xffffffff (push @0x556810)
+    arg2 = ebx (push @0x556812)   <- movsx ebx,WORD PTR [esi+0x95da12] @0x55677b
+    arg3 = edi (push @0x556813)   <- movsx edi,WORD PTR [esi+0x95da10] @0x556774
+    arg4 = 0x2 (push @0x556814)
+    arg5 = 0x2 (push @0x556816)
+    arg6 = eax (push @0x556818)   <- mov eax,DWORD PTR [ebp+0x8] @0x55680d
+  0x556831 -> FUN_0056d350 : 6 pushes
+    arg1 = 0xffffffff (push @0x556828)
+    arg2 = ebx (push @0x55682a)   <- <crosses-call>
+    arg3 = edi (push @0x55682b)   <- <crosses-call>
+    arg4 = 0x2 (push @0x55682c)
+    arg5 = 0x3 (push @0x55682e)
+    arg6 = ecx (push @0x556830)   <- mov ecx,DWORD PTR [ebp+0x8] @0x556825
+  0x55698e -> FUN_0056d350 : 6 pushes
+    arg1 = 0xffffffff (push @0x556986)
+    arg2 = ebx (push @0x556988)   <- <crosses-call>
+    arg3 = edi (push @0x556989)   <- <crosses-call>
+    arg4 = ecx (push @0x55698a)   <- mov ecx,DWORD PTR [ebp-0x4] @0x556980
+    arg5 = 0x0 (push @0x55698b)
+    arg6 = edx (push @0x55698d)   <- mov edx,DWORD PTR [ebp+0x8] @0x556983
+  0x556a4a -> FUN_0056d350 : 6 pushes
+    arg1 = 0xffffffff (push @0x556a41)
+    arg2 = eax (push @0x556a43)   <- movsx eax,WORD PTR [esi+0x95da3e] @0x556a33
+    arg3 = ecx (push @0x556a44)   <- movsx ecx,WORD PTR [esi+0x95da3c] @0x556a3a
+    arg4 = 0x2 (push @0x556a45)
+    arg5 = 0x29 (push @0x556a47)
+    arg6 = edi (push @0x556a49)   <- <crosses-call>
+  0x556aed -> FUN_0056d350 : 6 pushes
+    arg1 = 0xffffffff (push @0x556ae4)
+    arg2 = ebx (push @0x556ae6)   <- <crosses-call>
+    arg3 = edi (push @0x556ae7)   <- <crosses-call>
+    arg4 = 0x4 (push @0x556ae8)
+    arg5 = 0x2 (push @0x556aea)
+    arg6 = ecx (push @0x556aec)   <- mov ecx,DWORD PTR [ebp+0x8] @0x556ae1
+  0x556e79 -> FUN_0056d350 : 6 pushes
+    arg1 = 0xffffffff (push @0x556e58)
+    arg2 = ecx (push @0x556e5a)   <- movsx ecx,WORD PTR [eax+0x93327a] @0x556dcc
+    arg3 = edx (push @0x556e61)   <- movsx edx,WORD PTR [eax+0x933278] @0x556dd3
+    arg4 = ecx (push @0x556e75)   <- <computed: add ecx,0x2 @0x556e72>
+    arg5 = 0x6 (push @0x556e76)
+    arg6 = edx (push @0x556e78)   <- mov edx,DWORD PTR [ebp+0x8] @0x556e68
+  0x558adc -> FUN_0056d350 : 6 pushes
+    arg1 = 0xffffffff (push @0x558ad3)
+    arg2 = ebx (push @0x558ad5)   <- <crosses-call>
+    arg3 = edi (push @0x558ad6)   <- <crosses-call>
+    arg4 = 0x2 (push @0x558ad7)
+    arg5 = 0x29 (push @0x558ad9)
+    arg6 = edx (push @0x558adb)   <- mov edx,DWORD PTR [ebp+0x8] @0x558ad0
+  0x5597a5 -> FUN_0056d890 : 1 pushes
+    arg1 = eax (push @0x5597a4)   <- mov eax,DWORD PTR [ebp-0x4] @0x5597a1
+  0x559809 -> FUN_0056d780 : 5 pushes
+    arg1 = 0x0 (push @0x559802)
+    arg2 = edx (push @0x559804)   <- mov edx,DWORD PTR [edi+0x94ee30] @0x5597f6
+    arg3 = eax (push @0x559805)   <- mov eax,DWORD PTR [edi+0x94ee2c] @0x5597fc
+    arg4 = 0x8 (push @0x559806)
+    arg5 = esi (push @0x559808)   <- <crosses-call>
+  0x559e8e -> FUN_0056d690 : 1 pushes
+    arg1 = edx (push @0x559e8d)   <- mov edx,DWORD PTR [ebp+0x8] @0x559e8a
+C4 PASS (kinds {0,2,3,6,41} pinned per site; owner=-1 x7; n6 prio=2+2*bit19; remover kind 8; knockout=faction)
+
+== C5 caller context (MEASURED, not constant-compare; #309 P2) ==
+caller B FUN_0059ce10: jl @0x59e2a6 -> 0x59ce92; call 0x59dd43 inside
+caller A FUN_005208f0 (785 B, 223 insns): 005551e0 -> ENGINE -> 005a1ad0; edi=param; 985ae8 bits 1/8 gate
+C5 PASS (all caller facts read from bytes)
+
+== C6 loop inventory: back-edges + walk strides ==
+back-edges: 44
+  add reg,0x10 x1 @ 0x5580d3
+  add reg,0x130 x5 @ 0x556bc0 0x556c17 0x557763 0x5582fa 0x558dd6
+  add reg,0x2 x6 @ 0x556733 0x556e72 0x558840 0x558a1d 0x558a68 0x559296
+  add reg,0x20bc x2 @ 0x557b69 0x558bcc
+  add reg,0x34 x8 @ 0x557180 0x55724a 0x557c03 0x557ce0 0x557f77 0x5585b4 0x55903c 0x559c8a
+  add reg,0x3e8 x1 @ 0x55863d
+  add reg,0x4 x6 @ 0x556b1c 0x558390 0x558999 0x5589f2 0x559471 0x559a20
+  add reg,0x5 x1 @ 0x558a8f
+  add reg,0x6 x1 @ 0x5579c9
+  add reg,0x7 x1 @ 0x558511
+  add reg,0x80000 x1 @ 0x557623
+  add reg,0x98adb4 x2 @ 0x5570ef 0x5571b9
+  add reg,0xa x1 @ 0x558a6b
+C6 PASS (44 back-edges; base 0x130 x5 / block 0x20bc x2 / goal 0x10 x1; region bound 0x80)
+
+== PIN: measured totals (asserted, not prose) ==
+PIN PASS: 358 stores (239/2/104/13), 40 output displacements, 605 branches (18/26/561), 112 call sites
+
+M317 CENSUS GREEN: G1-G3 + C1-C6 + PIN (decision map in evidence header)

@@ -1,0 +1,26 @@
+baseline: GREEN (precondition)
+MU1   RED      want=RED                    OK
+MU2   RED      want=RED                    OK
+MU3   RED      want=RED                    OK
+MU4   RED      want=RED                    OK
+MU5   RED      want=RED                    OK
+MU6   RED      want=RED                    OK
+MU7   RED      want=RED                    OK
+MU8   RED      want=RED                    OK
+MU9   RED      want=RED                    OK
+MU10  RED      want=RED                    OK
+MU11  RED      want=RED                    OK
+MU12  RED      want=RED                    OK
+MU13  RED      want=RED                    OK
+MU14  RED      want=RED                    OK
+MU15  RED      want=RED                    OK
+MU16  GREEN    want=GREEN (declared NO-OP) OK
+MU17  RED      want=RED                    OK
+MU18  RED      want=RED                    OK
+MU19  RED      want=RED                    OK
+MU20  RED      want=RED                    OK
+MU21  RED      want=RED                    OK
+MU22  RED      want=RED                    OK
+MU23  RED      want=RED                    OK
+
+== M317 mutate: 22/22 scored + 1 declared NO-OP, digest a0729996723078a4 ==

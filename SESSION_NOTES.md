@@ -1,61 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-269-269.md` (1 sessions). Read it only when a question reaches back before session ## Session 270.
-
-## Session 270 (2026-11-16, docs cap split, zero box)
-
-- NEXT_PROMPT.md was **11,922 B — 78 B from the 12,000 B warn cap**, so the CAP SPLIT ran BEFORE any
-  milestone, per protocol. Moved the §THE PICK **CLOSED enumeration** (M220 .. M308, each with the
-  NAMED section to read before re-opening it, and what it settled) + the OPEN-shortlist one-liner
-  **VERBATIM** to docs/pick-archive.md §trim-s270. The move is byte-exact by construction: one python
-  step sliced lines[64:80] (1,614 B), appended that exact string to pick-archive and wrote the file
-  with the 4-line pointer in its place. Result: wc -c NEXT_PROMPT.md = **10,694 B** (1,306 B
-  headroom), evidence.py budget -> ok.
-- Nothing retracted, no claim moved: zero measurements in this PR, so NAMED.md is untouched and the
-  gate warns "address registry: NAMED.md untouched (fine if no addresses changed)".
-- PITFALL (own): scripts/gate.py refuses a docs-only PR with "[FAIL] milestone checkpoint:
-  SESSION_NOTES.md has no new '## Session' section" — a cap split needs its own session section; the
-  milestone that follows closes as Session 271.
-- PITFALL (own): shell-quoting a markdown body inside printf breaks on backticks/parens. Append docs
-  through a quoted heredoc into python, never through printf.
-
-## Session 271 (2026-11-16, ANALYSE M309 + a cap split, zero box)
-
-- Cap split first, its own PR #282 MERGED: NEXT_PROMPT.md was 11,922 B (78 B from the 12,000 warn
-  cap); the CLOSED enumeration moved VERBATIM to pick-archive §trim-s270 -> 10,694 B.
-- **M309 closes the s268 pick.** FUN_0056d350 (299 B, 50 callers) = **the GOAL-list insert-or-max**
-  of the same 8380-B block record whose SITE list M308 named. `python3 -u scripts/m309_goal_sink.py`
-  -> **54/54 checks OK**, exit 0, `RESULT: PASS ...` (evidence/m309_goal_sink.txt:278,280, 17,473 B);
-  re-run stdout vs committed evidence: diff **0 lines**. `python3 -u scripts/m309_mutate.py` ->
-  **9/9 mutations reddened their target checks**.
-- The name is the binary's own: 0x56d350's parity guard pushes **0x6914fc = "Bad GOAL"**; FUN_0056d480
-  pushes **0x691508 = "Bad SITE"** - 12 B apart in one .data pool (A28). Entry = {+0 short kind, +2
-  short prio, +4 d, +8 d, +0C d owner} (A5); both walks bound **0x4b = 75** (A11); stride 8380
-  re-derived (A3) plus a **second independent** `imul r,r,0x20bc` at 0x470d50, outside the function.
-- **The -1 6th arg** = the entry's +0C owner. Among ALL **65** .text operands naming an address inside
-  the 100-entry block, +0C has **1 writer (0x56d470) and 1 reader (0x559b3e)** (A36). The reader is
-  signed, `test eax,eax / jl 0x559b74`, scaled 9x -> 19x -> <<4 = **x304** onto **0x95da40**, used as
-  `test BYTE [edx+0x95da40],0x20` (A38-A40), gated on the same entry's +0 == 9 (A41). **-1 selects
-  nothing - it is the unbound-owner sentinel**, and a duplicate call never refreshes it (found path
-  stores ONE WORD, A13).
-- Callers: 40/50 push 0xffffffff; 5 push a register the def-walk closes on **ds:0x68cbb0** (340 refs,
-  exactly 6 stores, all 0x4e3000-0x4f6000, A42); **5 DECLARED unattributed** (push group crosses a
-  branch/call) - printed, not hidden (A32/A33). Identity of ds:0x68cbb0 stays OPEN.
-- **M308 U2 partly answered**: the GOAL list's -1 sentinel HAS a writer in .text - `mov WORD PTR
-  [ecx+edx+0x94ee28], 0xffff` at **0x470d5c in FUN_00470b90** (1020 B, 5 callers). M308's "0 such
-  writers" row patched in place: true for the SITE window, false for the GOAL window.- **P1 (Greptile #283, on the head commit, and it was RIGHT): `open(p,'w').write(open(p).read().
-  replace(c,d))` truncates the file BEFORE the argument is evaluated - it wiped all 1,156 lines of
-  NAMED.md.** Repaired in the same PR: `git checkout origin/main -- NAMED.md` (170,459 B), then the
-  two M308 row patches and the `## M309` block re-applied from in-memory strings; `wc -c NAMED.md` =
-  173,332 and `git diff --stat` now shows additions, not a deletion wave. Law: a checkpoint tool must
-  read into a variable, then open for write; and `git diff --stat` against main is a required step
-  before submit - the gate passed a whole-registry deletion because it only asks whether NAMED.md
-  "was updated".
-
-- PITFALL (own, caught by my own harness): `a1..a6 = [x[1] for x in ps]` on a list push_group returns
-  CHRONOLOGICAL made "arg6" silently arg1 - the census printed 17 `esi`, zero constants; only M1 of
-  m309_mutate caught it. And three new gates CRASHED instead of going red (a None in a print, an
-  empty `band[0]`, list-vs-tuple dict compare): **a gate that dies is not a gate either.**
+Older sessions: `docs/sessions/sessions-270-271.md` (2 sessions). Read it only when a question reaches back before session ## Session 272.
 
 ## Session 272 (2026-11-17, ANALYSE M310, zero box)
 
@@ -363,6 +308,17 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 - Two mutants were re-shaped from measurement, not authored: MU10 was a WEAKENING (`det = sha2==sha and rows2==rows`, i.e. deleting a term from a conjunction - can only ever pass, measured 0/9 red) and is now a DATA mutation (the SECOND run's visit-1 `span_after.mirror` flipped after `compute()`, a field no gate DETAIL prints and the image sha does not cover, so only the digest can catch it -> G9 alone); MU6 targeted the retired locate rival and went with it. MU4's set narrowed to the measured {G4,G5,G6,G7} - G8 dropped out when the two degenerate rivals left the verdict set.
 - Final acceptance at this head: `python3 -u -m sim.selftest --b24` -> `PASS B24: 9/9 gates`, `EXIT=0`, two runs byte-identical, stdout == `evidence/b24_selftest.txt` (G8 row now reads "four rivals ... frozenargs + locate retired as measured DEGENERATE"); `python3 -u scripts/b24_mutate.py` -> `== 9/9 mutants matched their declared effect (+1 declared NO-OP, not scored: MU9) ==`, `MUTATE_EXIT=0`, 0 BAD (`evidence/b24_mutate.txt:13-14`).
 - LESSON (worth the next fire's time): a rival whose failure mode is "it crashed" or "it produced nothing" is not evidence until the crash is message-matched and the same construction is shown to SUCCEED when the claimed cause is removed. Two of B24's six rivals were degenerate, and both looked green.
+
 ## Session 287-merged (2026-11-18, #307 merged - post-merge docs correction)
 
 - MERGED #307 -> main af38858 (s287 parent close-out). Track flipped MODE=ANALYSE (analyse_since_build=0, last_build=B24); BUILD_SPINE ends at B24, so B25's rung text must be AUTHORED before any build fire. Merge-head acceptance unchanged from the branch: instrument 9/9, harness 9/9 scored + 1 declared NO-OP. Cursor + NEXT_PROMPT corrected from the pre-merge "ready to merge" state in the same PR.
+
+## Session 288 (2026-11-18, M317 - desktop-session takeover, model qwen4-max:free; cron fire 9139a9ad cancelled pre-skeleton, loop job left paused)
+
+- Pick (iii') ANSWERED: `FUN_00556690(faction)` = the per-faction AI STRATEGY PASS. Issues 7 AddGoals (kinds a/d/s at base coords, n at a UNIT's coords with prio 2+2*bit19 of [94d430+blk*8380], ^ at the base's terraform tile +0x2c/+0x2e behind cost gate FUN_004cc7b0), flips region states (eda8 {0,2,7,8}, M250 five-site pin intact), orders units INLINE (unit+0x11=0x18 + target words +0x14/+0x1c = the issue_order(0x18) footprint, NAMED.md:104), cancels kind-8 goals by (p1,p2) read back from the band + a faction-wide knockout. Callers: upkeep chain 0x52094f (FUN_005208f0, between 005551e0 and 005a1ad0) + walker loop 0x59dd43 (jl 0x59e2a6->0x59ce92).
+- Numbers (all gated): 4235 insns / 605 jcc (18 global-fed: 0x692184 x5, 0x92a37c x4, 0x92a378 x2, 0x985af0 x2, five x1) / 44 back-edges / 112 call sites / 41 callees / 358 stores (239 stack, 2 direct ds:0x8f0d34, 104 global-disp across 40 arrays, 13 struct). Walks: base 0x130 x5, block 0x20bc x2, goal 0x10 x1, region bound 128 @0x558b1c. abs() x20 in 5 clusters of 4 = distance scoring.
+- Acceptance (post-review head): `python3 -u scripts/m317_engine_decides.py` -> G1-G3 + C1-C6 + PIN, twice byte-identical, digest 5263767ee3bf4bba (`evidence/m317_engine_decides.txt:223`); `python3 -u scripts/m317_mutate.py` -> 22/22 scored + 1 declared NO-OP (MU16 prologue reg), digest a0729996723078a4 (`evidence/m317_mutate.txt:26`).
+- REVIEW ROUND #309 (5 P2, ALL accepted): (1) arg sources now traced from EACH push's own position with clobber-stop - the old call-site trace mis-decoded 0x556e79 (p2's ecx is the PRE-load value = unit y; prio is the computed fold, not the stored dword); (2) M250 pin now FULL instruction (mn+dst+src); (3) C5 caller facts measured from bytes (upkeep order, edi=param unclobbered, 985ae8 bits 1/8 gate, walker back-edge) - the constant-compare loop assert is gone; (4) harness mutation copy per-pid + finally cleanup; (5) all citations now path:line. New mutants MU17-MU23 gate each fix (`evidence/m317_mutate.txt:17-25`).
+- Takeover mechanics: fire cancelled via cronjob_manage (execution row 'cancelled', pid verified gone); the milestone/m317 branch it created was reused (at main tip, zero commits); #180 documented-FAIL left standing per the ledger.
+- LESSONS: objdump prints immediates hex (0x8 not 8) - pin the parser's format, not the registry's prose (first C2 run died on it); a forward-rewritten back-edge reddens the COUNT gate before the named pin - declare the FIRST red, not the intended one (MU15 CRASH->RED fix).
+- OPEN: game-word of kinds a/d/s/n/c (consumer-side census, M310 lead); the 0x30/0x31 mission bytes; ds:0x692184 identity; the multi-base pick fold.
