@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M313 MERGED #294 (2 P1+7 P2 all accepted); B22 #286; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M313 done; track: B24 QUEUED (ANALYSE first - track_mode authoritative); #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (M314 MERGED #299 (5 P2 all accepted); M313 #294; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M314 done; track: B24 QUEUED (ANALYSE first - track_mode authoritative); #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -25,7 +25,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
-`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE last_build=B23` after every build merge, so the fire after B23 ANALYSES. OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
+`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **QUEUED, NOT NEXT** (track_mode flips to ANALYSE after every build merge). OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
 M313 MERGED as #294
 (main eaf7d54): 21/21 + 23/23, digest 5e14170de426d127; 2 P1 + 7 P2 ALL accepted at review
 head (Session 278). Merge-title says 'vtable slot 134' - superseded, NAMED ## M313 governs.
@@ -71,8 +71,8 @@ collision-check + worktree FIRST).
   is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
   startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
   Full law NAMED ## M313.
-  CLOSED (s282): pick (i'') = M314 (PR from milestone/m314; 18/18 + 27/27 mutants, digest
-  cf54a7ca907344c6): FUN_004c5d60 = token-keyed tour/dialog dispatcher (31 instr sites, 28 tokens);
+  CLOSED (s282/283): pick (i'') = M314 MERGED as #299 (main e638772; 18/18 + 27/27 mutants,
+  digest cf54a7ca907344c6; squash title's "20/20" is the pre-review harness - NAMED governs): FUN_004c5d60 = token-keyed tour/dialog dispatcher (31 instr sites, 28 tokens);
   family = 4 coordinate wrappers + 4 tour drivers + 3 result handlers (0x444 = M269 secondary delta,
   NOT a menu id). CURSOR/NAMED lead "FUN_004d3f70 calls 15 band members" REFUTED by bytes: exactly
   1 (FUN_0050cab0 x2); pumpB calls FUN_004d3f70 DIRECT at 0x517858 (6th off-band callee, NAMED
