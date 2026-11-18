@@ -952,3 +952,6 @@ end-to-end (B15+B16+B17 with save-only inputs).
   (negative prio = evict-first tombstone); all 7 tokened kinds produced; 50 sites/12 owners.
   Tokens' game words + engine FUN_00556690 decisions stay OPEN (NAMED ## M316).
 ```
+
+s288 trim (moved VERBATIM from NEXT_PROMPT): OLD picks (a)(b) = M311 (#289, digest 625cd5877271cd85); (c) retracted by M312's A4.
+s288: the engine FUN_00556690 decisions question is ANSWERED (NAMED ## M317); tokens' game words stay OPEN.

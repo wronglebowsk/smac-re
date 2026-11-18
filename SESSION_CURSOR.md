@@ -1,8 +1,8 @@
-M317 IN PROGRESS (s288): desktop takeover (qwen4-max:free); cron fire 9139a9ad
-cancelled 15:25 pre-skeleton, loop paused. Branch milestone/m317 @ d79882f=main.
-Pick (iii'): what goal ENGINE FUN_00556690 DECIDES (14349 B, 4235 insns,
-41 callees; callers 0x52094f/FUN_005208f0 + 0x59dd43/FUN_0059ce10). STATIC
-zero-box. Prior: NAMED M250/M252/M274/M275/M276/M310 blocks; grep first.
-Cache scratch/m574/text.txt (m53j gz pruned). #180 documented-FAIL stands.
-Next: m317_engine_decides.py censuses (calls, stores, branches) + caller
-context, gates + mutation harness.
+M317 CENSUS GREEN (s288, desktop takeover qwen4-max:free; cron fire cancelled,
+loop paused). Pick (iii') ANSWERED: FUN_00556690(faction) = per-faction AI
+strategy pass - 7 AddGoals at base coords (kinds a/d/s/n/^), region flips
+eda8 {0,2,7,8}, inline unit orders (+0x11=0x18), kind-8 cancel + knockout.
+Acceptance: scripts/m317_engine_decides.py twice-equal 59d5f31055175665;
+m317_mutate.py 15/15+1 NO-OP fb6a6a9bfdb10d55. Docs written; NEXT: gate ->
+submit -> review triage -> merge. Then pick (iv) refresh-pair naming.
+#180 documented-FAIL stands. B25 spine NOT authored.

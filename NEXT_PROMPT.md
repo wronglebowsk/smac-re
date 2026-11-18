@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M316 done; track: flips ANALYSE at this merge - pick (iii') next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M317 done; track ANALYSE (since B24) - pick (iv) next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -26,8 +26,6 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS). Next build **B25, queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at
 B24, so B25's rung text must be written BEFORE probing (one milestone = spine section + instrument).
-OLD picks (a)(b) = M311 (#289, digest 625cd5877271cd85); (c) retracted by M312's A4.
-
 B24 MERGED as #307 (main af38858; NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **9/9 scored + 1
 declared NO-OP** (MU9 labels-only = decoration). RETRACTED at the spine: the turn-29 compaction does NOT move the
 addressed slot (stable at 22 for all 8 visits). NEW LAW: the run addresses its record BY LEDGER POSITION;
@@ -70,7 +68,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M316 + B1-B24 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M317 + B1-B24 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
@@ -80,8 +78,9 @@ collision-check + worktree FIRST).
   is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
   startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
   Full law NAMED ## M313.
-  OPEN PICKS after M316, in order: (iii') the engine FUN_00556690 (14.3 kB: what it DECIDES; its
-  callers FUN_005208f0/FUN_0059ce10); (iv) NAME the selection-REFRESH PAIR
+  CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass: goals at bases, region
+  flips, inline unit orders, kind-8 cancel + knockout. Full law NAMED ## M317.
+  OPEN PICKS after M317, in order: (iv) NAME the selection-REFRESH PAIR
   (call 0x4e8d60 + call 0x4e78e0) - M315 proved the pair is the memo's reaction but neither
   callee is in NAMED; (v) the 8 memo sites with NO local dedup guard - census their callers and
   ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
