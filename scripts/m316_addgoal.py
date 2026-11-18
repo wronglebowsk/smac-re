@@ -168,7 +168,6 @@ ck("A4_eviction_score_constants",
    "%s" % sorted((t[0], hex(t[1])) for t in sc))
 # candidate gate: free-or-lower-prio: sign test on kind + cmp prio<new
 sign = [(a, o) for a, m_, o in window(AG_LO, AG_HI) if m_ in ("test", "cmp")]
-kind_neg = [a for a, o in sign if any(re.search(r"(js|jl|sgn)", x or "") for x in [""])]
 ck("A4b_candidate_gate_shape",
    len([1 for a, m_, o in window(AG_LO, AG_HI) if m_ == "movsx"]) == 5 and
    len([1 for a, o in sign if re.fullmatch(r"\w+,\w+", o)]) == 9,
