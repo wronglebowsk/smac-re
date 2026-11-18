@@ -71,8 +71,8 @@ collision-check + worktree FIRST).
   is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
   startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
   Full law NAMED ## M313.
-  CLOSED (s282): pick (i'') = M314 (PR from milestone/m314; 18/18 + 20/20 mutants, digest
-  4c9aa4eb4279b70b): FUN_004c5d60 = token-keyed tour/dialog dispatcher (31 instr sites, 28 tokens);
+  CLOSED (s282): pick (i'') = M314 (PR from milestone/m314; 18/18 + 27/27 mutants, digest
+  cf54a7ca907344c6): FUN_004c5d60 = token-keyed tour/dialog dispatcher (31 instr sites, 28 tokens);
   family = 4 coordinate wrappers + 4 tour drivers + 3 result handlers (0x444 = M269 secondary delta,
   NOT a menu id). CURSOR/NAMED lead "FUN_004d3f70 calls 15 band members" REFUTED by bytes: exactly
   1 (FUN_0050cab0 x2); pumpB calls FUN_004d3f70 DIRECT at 0x517858 (6th off-band callee, NAMED

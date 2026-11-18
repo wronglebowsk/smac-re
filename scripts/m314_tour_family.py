@@ -114,13 +114,16 @@ def main():
     toks = {}
     for t in tokens:
         toks[t] = toks.get(t, 0) + 1
-    named = [t for t in toks if t.startswith("s_")]
-    quoted = [t for t in toks if t.startswith('"')]
-    detail["A1b"] = "calls=%d distinct=%d quoted=%d s_=%s" % (
-        len(tokens), len(toks), len(quoted), sorted(named))
-    ck("A1b dispatcher token-keyed: 30 sites, distinct tokens, 2 named s_ strings",
-       len(tokens) == 31 and len(toks) >= 25 and sorted(named) ==
-       ["s_BASECONTROL_00689a18", "s_DRONERIOTS_00689a24"], detail["A1b"])
+    named = sorted({t for t in toks if t.startswith("s_")})
+    quoted = sorted({t for t in toks if t.startswith('"')})
+    forwarded = sorted({t for t in toks
+                        if t not in named and t not in quoted})
+    detail["A1b"] = "calls=%d distinct=%d quoted=%d s_=%s forwarded=%s" % (
+        len(tokens), len(toks), len(quoted), named, forwarded)
+    ck("A1b dispatcher token-keyed: 31 calls = EXACTLY 24 quoted + 2 named s_ + 5 forwarded params",
+       len(tokens) == 31 and len(toks) == 31 - 3 and len(quoted) == 24 and
+       named == ["s_BASECONTROL_00689a18", "s_DRONERIOTS_00689a24"] and
+       forwarded == ["param_1", "param_2"], detail["A1b"])
 
     # ---- A2: the 4 wrapper thunks, pinned producer + view-derived this ----
     W = {0x4C2E90: 0x4C3F90, 0x4C2F00: 0x4C3F20,
@@ -153,21 +156,50 @@ def main():
     add444 = 0
     rows3 = []
     for t, tgt in T.items():
-        win = E.window(t, t + fsize[t])
-        has = lambda pred: any(pred(mn, ops) for _, mn, ops in win)
-        okm = has(lambda m, o: m == "cmp" and o == "DWORD PTR [ebp+0xc],0x0") and \
-              has(lambda m, o: m == "add" and o == "eax,0x444") and \
-              any(m == "call" and int(o.split()[0], 16) == tgt for _, m, o in win)
-        add444 += sum(1 for _, m, o in win if m == "add" and o == "eax,0x444")
-        rows3.append("%s:%s" % (hex(t), hex(tgt)))
-        ck("A3 result-thunk %s shape(cmp0/je/add444/call %s) holds" % (hex(t), hex(tgt)),
-           okm, "; ".join(rows3))
+        win = {a: (mn, ops.strip()) for a, mn, ops in E.window(t, t + fsize[t])}
+        cmp_a = [a for a, (m, o) in win.items()
+                 if m == "cmp" and o == "DWORD PTR [ebp+0xc],0x0"]
+        add_a = [a for a, (m, o) in win.items() if m == "add" and o == "eax,0x444"]
+        # the je whose TARGET block contains the delta arithmetic (je itself sits before cmp)
+        je_a = [a for a, (m, o) in win.items()
+                if m == "je" and cmp_a and add_a and
+                0 < int(o, 16) - add_a[0] <= 15]
+        # ENTRY-RELATIVE pins: cmp and je at fixed offsets from the handler entry
+        JE_OFF = {0x4C5C40: 0xD, 0x4C5CA0: 0xD, 0x4C5CF0: 0x2D}  # je position (not its target)
+        CMP_OFF = {0x4C5C40: 0x9, 0x4C5CA0: 0x9, 0x4C5CF0: 0x29}
+        offs_ok = (je_a and cmp_a and je_a[0] - t == JE_OFF[t] and
+                   cmp_a[0] - t == CMP_OFF[t])
+        mov_a = [a for a, (m, o) in win.items()
+                 if m == "mov" and o == "eax,DWORD PTR [ebp+0xc]"]
+        call_a = [a for a, (m, o) in win.items()
+                  if m in ("call", "jmp") and o.split()[0].startswith("0x") and
+                  int(o.split()[0], 16) == tgt]
+        # the delta block on the bytes: cmp,je -> (je taken) mov eax,[+0xc]; add eax,0x444
+        okm = (offs_ok and len(cmp_a) == 1 and len(add_a) == 1 and len(je_a) == 1 and
+               len(mov_a) >= 1 and mov_a[0] == add_a[0] - 3 and
+               int(win[je_a[0]][1], 16) - add_a[0] == 10 and len(call_a) >= 1)
+        add444 += len(add_a)
+        rows3.append("%s:cmp@%s je->%s add@%s call@%s" %
+                     (hex(t), hex(cmp_a[0]) if cmp_a else "X",
+                      win[je_a[0]][1] if je_a else "X",
+                      hex(add_a[0]) if add_a else "X",
+                      hex(call_a[0]) if call_a else "X"))
+        ck("A3 result-thunk %s pinned cmp/je-target/mov/add444/call %s on the bytes"
+           % (hex(t), hex(tgt)), okm, "; ".join(rows3))
     # 0x4c5cf0 computes abs(c+2) in the bytes, NOT -(c+2) unconditionally
-    w2 = [(mn, ops) for _, mn, ops in E.window(0x4C5CF0, 0x4C5CF0 + fsize[0x4C5CF0])]
-    negs = sum(1 for m, o in w2 if m == "neg")
-    subs = sum(1 for m, o in w2 if m == "sub")
-    ck("A3b 0x4c5cf0 abs(c+2): neg exactly 1 + a sub branch (bytes; Ghidra -(c+2) understates)",
-       negs == 1 and subs >= 1, "neg=%d sub=%d" % (negs, subs))
+    PIN = [(0x4C5CFC, "add", "eax,0x2"), (0x4C5CFF, "test", "eax,eax"),
+           (0x4C5D01, "jl", "0x4c5d0e"), (0x4C5D03, "mov", "ecx,DWORD PTR [ebp+0x10]"),
+           (0x4C5D06, "add", "ecx,0x2"), (0x4C5D09, "mov", "DWORD PTR [ebp-0x4],ecx"),
+           (0x4C5D0C, "jmp", "0x4c5d19"), (0x4C5D0E, "mov", "edx,DWORD PTR [ebp+0x10]"),
+           (0x4C5D11, "add", "edx,0x2"), (0x4C5D14, "neg", "edx"),
+           (0x4C5D16, "mov", "DWORD PTR [ebp-0x4],edx")]
+    win2 = {a: (mn, ops.strip()) for a, mn, ops in
+            E.window(0x4C5CF0, 0x4C5CF0 + fsize[0x4C5CF0])}
+    bad2 = [(hex(a), exp, win2.get(a)) for a, mexp, exp in PIN
+            if win2.get(a, ("", ""))[0] != mexp or win2.get(a, ("", ""))[1] != exp]
+    ck("A3b 0x4c5cf0 abs(c+2): 11-instruction sequence pinned to the byte (branches included; Ghidra -(c+2) understates)",
+       not bad2,
+       "pinned=%d mismatches=%s" % (len(PIN), bad2))
     ck("A3c add eax,0x444 present once per thunk (3 total) - M269 secondary delta, not a menu id",
        add444 == 3, "count=%d" % add444)
 
@@ -194,12 +226,17 @@ def main():
                              for k, v in sorted(pushes.items()))
     ck("A4 each result thunk address-taken via push exactly twice (pre+post paint legs)",
        exact2, detail["A4"])
+    # push-immediates: mnemonic held separately from ops (parse_text) - match the BARE operand
+    push_hex = {a: int(o.strip()[2:], 16) for a, (m, o) in ins.items()
+                if m == "push" and re.match(r"^0x[0-9a-f]+$", o.strip())}
     pumpA = sorted(call_sites(0x512B40))
-    ck("A4b pumps reached by direct call only (no image-wide push of pumpA exists)",
-       all(0x512B40 != int(re.match(r"^push\s+0x([0-9a-f]+)$", o).group(1), 16)
-           for a, (m, o) in ins.items() if m == "push"
-           and re.match(r"^push\s+0x", o)) and pumpA,
-       "pumpA call sites=%d" % len(pumpA))
+    pumpB = sorted(call_sites(0x516B80))
+    no_pushA = sorted(hex(a) for a, v in push_hex.items() if v == 0x512B40)
+    no_pushB = sorted(hex(a) for a, v in push_hex.items() if v == 0x516B80)
+    ck("A4b pumps have NO push-immediate of their address; reached by call only (pumpA x3, pumpB x1)",
+       no_pushA == [] and no_pushB == [] and len(pumpA) == 3 and len(pumpB) == 1,
+       "pushA=%s pushB=%s pumpA_sites=%s pumpB_sites=%s" %
+       (no_pushA, no_pushB, [hex(x) for x in pumpA], [hex(x) for x in pumpB]))
 
     # ---- A5: pumpB callee census - the CORRECTION --------------------------
     pb_lo, pb_hi = 0x516B80, 0x516B80 + fsize[0x516B80]
@@ -239,7 +276,8 @@ def main():
                                           sorted({t for _, t in off})))
     ac = sorted(call_sites(0x4D3F70))
     aco = sorted({hex(contain(a)) for a in ac})
-    ck("A6b activate_at_tile called at exactly 5 instr sites in {4748b0,476580,511960,512450,516b80}",
+    ck("A6b activate_at_tile: EXACTLY 5 instr sites at pinned addresses in the 5 listed owners",
+       [hex(x) for x in ac] == ["0x475d57", "0x477222", "0x511a3e", "0x5124e3", "0x517858"] and
        aco == ["0x4748b0", "0x476580", "0x511960", "0x512450", "0x516b80"],
        "sites=%s owners=%s" % ([hex(x) for x in ac], aco))
     # its 4 debug-token strings read real ASCII at the pinned .data addresses
@@ -264,8 +302,8 @@ def main():
        "n=%d sample=%s" % (len(usesda12), baseoff[:2]))
 
     digest = hashlib.sha256(
-        "|".join("%s=%s" % (k, detail.get(k, "")) for k in sorted(checks and
-                 [c[0] for c in checks])).encode()).hexdigest()[:16]
+        "|".join("%s=%s=%s" % (nm, "PASS" if ok else "FAIL", det)
+                 for nm, ok, det in checks).encode()).hexdigest()[:16]
     fails = [c[0] for c in checks if not c[1]]
     print("== M314: %d/%d ==  digest %s" %
           (len(checks) - len(fails), len(checks), digest))

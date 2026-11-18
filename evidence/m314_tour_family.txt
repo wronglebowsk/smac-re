@@ -1,19 +1,19 @@
 OK   A1 dispatcher 31 instr call sites, all imm32-pinned in PE bytes: 31?=31 pinned=31 first=0x41b950 last=0x4c64e3
-OK   A1b dispatcher token-keyed: 30 sites, distinct tokens, 2 named s_ strings: calls=31 distinct=28 quoted=24 s_=['s_BASECONTROL_00689a18', 's_DRONERIOTS_00689a24']
+OK   A1b dispatcher token-keyed: 31 calls = EXACTLY 24 quoted + 2 named s_ + 5 forwarded params: calls=31 distinct=28 quoted=24 s_=['s_BASECONTROL_00689a18', 's_DRONERIOTS_00689a24'] forwarded=['param_1', 'param_2']
 OK   A2 four wrappers: exactly one pinned-producer call + one dispatcher call each: 0x4c2e90->p@0x4c2eab+d@0x4c2ef2; 0x4c2f00->p@0x4c2f1b+d@0x4c2f62; 0x4c2f70->p@0x4c2f8b+d@0x4c2fd2; 0x4c2fe0->p@0x4c2ffb+d@0x4c3042
 OK   A2b wrapper this-formula = DAT_007cdecc + [0][+4] in all 4 wrappers: occurrences=4
-OK   A3 result-thunk 0x4c5c40 shape(cmp0/je/add444/call 0x4c1220) holds: 0x4c5c40:0x4c1220
-OK   A3 result-thunk 0x4c5ca0 shape(cmp0/je/add444/call 0x54f790) holds: 0x4c5c40:0x4c1220; 0x4c5ca0:0x54f790
-OK   A3 result-thunk 0x4c5cf0 shape(cmp0/je/add444/call 0x5510f0) holds: 0x4c5c40:0x4c1220; 0x4c5ca0:0x54f790; 0x4c5cf0:0x5510f0
-OK   A3b 0x4c5cf0 abs(c+2): neg exactly 1 + a sub branch (bytes; Ghidra -(c+2) understates): neg=1 sub=1
+OK   A3 result-thunk 0x4c5c40 pinned cmp/je-target/mov/add444/call 0x4c1220 on the bytes: 0x4c5c40:cmp@0x4c5c49 je->0x4c5c5c add@0x4c5c52 call@0x4c5c8c
+OK   A3 result-thunk 0x4c5ca0 pinned cmp/je-target/mov/add444/call 0x54f790 on the bytes: 0x4c5c40:cmp@0x4c5c49 je->0x4c5c5c add@0x4c5c52 call@0x4c5c8c; 0x4c5ca0:cmp@0x4c5ca9 je->0x4c5cbc add@0x4c5cb2 call@0x4c5cd9
+OK   A3 result-thunk 0x4c5cf0 pinned cmp/je-target/mov/add444/call 0x5510f0 on the bytes: 0x4c5c40:cmp@0x4c5c49 je->0x4c5c5c add@0x4c5c52 call@0x4c5c8c; 0x4c5ca0:cmp@0x4c5ca9 je->0x4c5cbc add@0x4c5cb2 call@0x4c5cd9; 0x4c5cf0:cmp@0x4c5d19 je->0x4c5d2c add@0x4c5d22 call@0x4c5d47
+OK   A3b 0x4c5cf0 abs(c+2): 11-instruction sequence pinned to the byte (branches included; Ghidra -(c+2) understates): pinned=11 mismatches=[]
 OK   A3c add eax,0x444 present once per thunk (3 total) - M269 secondary delta, not a menu id: count=3
 OK   A4 each result thunk address-taken via push exactly twice (pre+post paint legs): 0x4c5c40@0x4c5f9d,0x4c627d; 0x4c5ca0@0x4c5f45,0x4c621f; 0x4c5cf0@0x4c5f71,0x4c6252
-OK   A4b pumps reached by direct call only (no image-wide push of pumpA exists): pumpA call sites=3
+OK   A4b pumps have NO push-immediate of their address; reached by call only (pumpA x3, pumpB x1): pushA=[] pushB=[] pumpA_sites=['0x41bdb0', '0x4c62f5', '0x518e63'] pumpB_sites=['0x5186bc']
 OK   A5 pumpB calls FUN_004d3f70 DIRECT at 0x517858 (outside band) - corrects M313 list: pumpB call targets=251 inband owners=21 inband=['0x50c170', '0x50cab0', '0x50fea0', '0x5101d0', '0x5101e0', '0x5101f0', '0x510200', '0x510210', '0x510220', '0x5102f0', '0x5103b0', '0x510730', '0x510a40', '0x510bd0', '0x511240', '0x511530', '0x511720', '0x511840', '0x511c90', '0x511ed0', '0x5122e0']
 OK   A5b every M313-cited off-band pumpB callee really is one, + FUN_004d3f70 is a 6th: missing=[] inband_owners=21
 OK   A5c pumpA FUN_00512b40 does NOT call FUN_004d3f70 (the correction is pumpB-only): pumpA callee fns=175
 OK   A6 activate_at_tile: ONE band member (FUN_0050cab0, thunk owner) at 2 sites; 14 off-band (lead's 15 REFUTED): inband=['0x4d443a', '0x4d44ad'] off=39 offsites=['0x4737e0', '0x483470', '0x48ef80', '0x48f8b0', '0x4bda50', '0x4cce50', '0x528930', '0x528a00', '0x528d90', '0x584350', '0x58f0d0', '0x5a6330', '0x5ab130', '0x5acab0', '0x5acc00', '0x5accd0', '0x5ace00', '0x626581', '0x626634', '0x6266e6', '0x62732a', '0x64b9e0']
-OK   A6b activate_at_tile called at exactly 5 instr sites in {4748b0,476580,511960,512450,516b80}: sites=['0x475d57', '0x477222', '0x511a3e', '0x5124e3', '0x517858'] owners=['0x4748b0', '0x476580', '0x511960', '0x512450', '0x516b80']
+OK   A6b activate_at_tile: EXACTLY 5 instr sites at pinned addresses in the 5 listed owners: sites=['0x475d57', '0x477222', '0x511a3e', '0x5124e3', '0x517858'] owners=['0x4748b0', '0x476580', '0x511960', '0x512450', '0x516b80']
 OK   A6c activate_at_tile logs 4 tokens via FUN_0062732a: strings real at .data: {'0x68c200': 'Console ACTIVATE', '0x68c238': 'VEH ORDERS', '0x68c260': 'Activate AWAKEN', '0x68c278': 'Activate AWAKENING'}
 OK   A7 0x5510f0 reads the 0x95da12 array via reg+disp (reg = rec*0x130-2, M311 stride INFERRED): n=2 sample=[('0x55167e', 'movsx', 'eax,WORD PTR [ecx+0x95da12]')]
-== M314: 18/18 ==  digest 4c9aa4eb4279b70b
+== M314: 18/18 ==  digest cf54a7ca907344c6
