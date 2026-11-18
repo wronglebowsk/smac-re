@@ -29,7 +29,8 @@ box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick
 
 M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29 (22 expectation + 7 CODE mutants via
 M315_PATCH), digest 3976ca97eedc1e19; 6 P2 ALL accepted at review head 754b4fa6; the
-caller-guard claim DOWNGRADED to OPEN; pair reach 16 B -> 17 B. NAMED ## M315 governs.
+caller-guard claim DOWNGRADED to OPEN; pair reach 16 B -> 17 B; blind re-verify records
+`evidence/s285_reverify_*` (#304). NAMED ## M315 governs.
 
 ## THE LEDGER
 
