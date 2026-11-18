@@ -630,6 +630,15 @@ the repair costs a doc-correction PR after the milestone has already merged.
   true — assert the one you printed.
 - The same test applies to any constant riding a shared helper: a `(dest, len)` read wrapper, a type id, a
   mode flag. The constant belongs to the CALL; the helper's body documents only the shape.
+- **A uniform per-site LAW must be pinned per site with a truth table, because an exception is the finding.** Six
+  stores to one index global looked like one derivation; pinning the fold chain at each site showed 5 recompute
+  `BASE + STRIDE*n` and the 6th re-stores a pointer SAVED earlier in a stack slot (`mov reg,[ebp-0x8]` before the
+  store) — a cache-instead-of-recompute path that a matcher averaged over and that names a second selection
+  mechanism. Ship `MATCH_TRUTH = {site: expected}` covering EVERY site, including the non-matching one with the
+  instruction that explains it, and gate on the table. Symmetrically, a gate that DECLINES to generalise is worth
+  shipping as its own assertion: state in the gate's text that the invariant is refused for the other global and
+  why (22 stores, only 3 inside any index window, 19 writers unexplained), so a green check is never read as an
+  explained mechanism.
 
 ## Ghidra prints small offsets in DECIMAL and large ones in HEX — a pattern built one way matches nothing (s180)
 
@@ -930,3 +939,92 @@ purely the instrument's:
 - **Count what you diff, not what should differ.** B22 predicted a 4-byte header diff ("one per modeled
   field"); the measured diff is 3 (`0x44`, `0x48`, `0x54`) because cur/tf already hold the recorded values.
   Assert the exact offset LIST, not a cardinal derived from a model of the fields.
+
+## Decorative-condition audit (s274, M311)
+- **`sorted(xs) == sorted(set(xs))` checks UNIQUENESS only - it is not the check you meant.** M311's
+  store-census gate carried one as its third sub-condition. It is not a tautology (duplicates make it fail), but
+  passing it says nothing about whether the list is COMPLETE or whether it agrees with an independent source, so
+  it never reddens for the defect you are guarding against. The falsifiable form is *claim vs. independent
+  derivation*: compare the function names transcribed into the script against `containment(owner(rows, addr))`
+  computed from `index.csv`. Audit every sub-condition for which of the three it is: proves-the-claim,
+  rejects-duplicates (fine, but label it), or vacuous.
+- **Any number that appears in gate prose must be READ from the artifact, not typed in the `%` tuple.** A6 printed
+  "57 recorded callers" from a literal while the gate never touched `n_callers`; MU11 (assert 58) was inert until
+  the gate began reading `n_callers` from `index.csv` and printing that value. Same trap as the hard-coded
+  `N_IDX_REFS = 340` — a constant copied from another tool's output is decoration unless the gate recomputes the
+  quantity and requires equality.
+- **A transcription list is a CLAIM, and a gate that ignores it cannot catch a mis-transcription.** M311 carries
+  `IDX_STORES`/`PTR_STORES` transcribed from `name_global.py`; the first draft derived the pairing from the cache
+  alone, so MU2 (delete a store from the list) left A2 green. Require `sorted(transcribed) == sorted(cache-derived)`
+  and the mis-count this fire actually made (5 pointer stores instead of 6, because the census print scrolled past
+  one) reddens the gate instead of shipping in the prose.
+- **Census output is scrolled past, not skimmed.** Pipe the census to a file and count with `grep -c` before
+  transcribing any list from it; an eyeballed list of 5 was wrong by one and the error survived three rounds.
+- **A collection built from hand-picked sites makes every `all(...)` / `len(...) == N` over it a tautology.** A
+  `folds` dict assembled from the 3 sites that looked interesting then asserted `all(folds[st] ...)` over
+  `IDX_STORES` and `len(folds) == 3`: both could only ever be true, and the assertion that read as "the fold
+  holds at all sites" tested the author's selection, not the encoding. Derive the iterated collection FROM the
+  census (loop over every store the bytes produced, with a per-site window), then `len` and `all` become claims.
+  A `== N` over a literal you typed is a count of your own typing.
+- **A windowed sub-condition over a set that is empty tests nothing.** A `base_ref_in_window` conjunct guarded
+  by an address-distance filter (`a_ - st <= 24`) passed while its set was empty for every site — the filter's
+  own arithmetic was wrong, so the claim it was added to support was silently untested. Print `len()` of every
+  derived set a gate consumes and assert non-empty BEFORE requiring anything of it; an empty set plus a green
+  gate is the shape of a vacuous window (same family as the vacuous-window law under Census-guard range).
+
+## A mutation harness is STATE, not a one-time proof (s274, M311)
+
+- **Re-run `scripts/<id>_mutate.py` after EVERY edit that adds or rewrites a gate — not once before submit.**
+  Adding a gate, moving a module constant, or re-disciplining a matcher silently invalidates the mutants written
+  against the old shape, three ways: the anchor no longer appears (reported NO-OP ANCHOR), the mutant crashes on
+  a stale import path (correctly REJECTED as a traceback, but no information), or the defect it injects is now
+  consumed by a different check (WEAK). A harness that scored honestly last round says nothing about this one.
+- **A green instrument with an UNEXPLAINED WEAK mutant is not verified.** Each WEAK is exactly the defect the
+  harness exists to find — a gate with no falsifier. Re-anchor the mutant onto the assertion that actually
+  consumes the value it corrupts, and find that assertion by READING the current source (a constant you remember
+  from earlier in the fire anchors the wrong line). If a gate genuinely cannot be reddened by any mutant, say so
+  in the gate's own printed text instead of quietly keeping the check green.
+- **When the score is still not explicable, do not submit — and do not buy a green score by deleting a mutant or
+  lowering a floor.** Commit WIP on the milestone branch, quote the honest number in the commit message and the
+  cursor (`9/14`, with which mutants died and which are weak), and put the close-out ORDER in `SESSION_CURSOR.md`:
+  re-anchor the mutants -> retarget each anchor by reading the current source -> bump every doc to the new gate
+  count -> re-copy `evidence/<id>.txt` from a fresh green run -> re-resolve every citation -> `gate` -> submit.
+- **A gate added mid-fire makes every other artifact quote a superseded PASS count.** `NAMED.md`, the session
+  notes, `NEXT_PROMPT.md` and `evidence/<id>.txt` all carry the old `7/7` and the old digest, and the drift is
+  invisible unless you look. The `PASS <ID>: N/N` line and the digest are version numbers: treat a change to
+  either as a fan-out to all four artifacts in the same commit, or write the staleness down in the cursor
+  explicitly (which files still say the old number) so the next fire fixes them instead of re-deriving them.
+
+## Selection bias and unmeasured mechanism claims (s274, M311)
+- **Iterate EVERY member of the population, not the subset you first chose to inspect.** M311 built its fold map
+  from three hand-picked store sites, which made `all(folds[st] for st in folds)` and `len(folds) == 3` VACUOUS
+  - worse than a uniqueness-only check like `sorted(x) == sorted(set(x))`, which at least rejects duplicates.
+  Deriving the population from the census constants
+  (`for st, _, _ in IDX_STORES`) turned a tautology into a finding: 5 of 6 sites fold and one does not.
+- **"Clause X is load-bearing" is a claim that needs a mutant, and the cheap test is to run the weakened
+  mechanism and diff its output.** M311's A8 prose asserted register-discipline and a proximity cap were doing
+  work; a register-blind `fold_chain` returned byte-identical results at all six sites across three window
+  sizes, so the claim was unmeasured and every mutant aimed at it was inert. Measure strict-vs-loose, print
+  both, and if they agree: declare the clause non-discriminating IN THE GATE TEXT and drop the mutants rather
+  than leaving WEAK rows in the score.
+- **Gates must degrade to a wrong COUNT, never to a crash.** A mutant that deleted a store site produced
+  `KeyError` in `nfold = {st: len(folds[st]) ...}` - correctly rejected by the traceback rule, but it scored
+  nothing. `folds.get(st, [])` turns the same defect into a red gate.
+
+## Auditing a matcher clause instead of asserting it (s274, M311, PR #289 review)
+- **"Clause X is load-bearing" must be a measurement inside the gate: run the weakened matcher on the same input
+  and assert its output DIFFERS.** If it doesn't differ, say so in the gate text (`DECLARED INERT ... no mutant is
+  aimed at them`) and delete the mutants - never leave a WEAK row that implies a defect in the gate.
+  M311 asserted register-discipline twice without ever running the comparison; the audit showed both it and a
+  proximity cap were inert, and the only real discriminator was the analysis window's right-hand reach.
+- **When a reviewer asks for a stricter rule, implement the minimal SOUND version, not the first literal reading.**
+  "Require the index register in both steps" is unsound here: the compiler re-loads the value into a different
+  register (`0x4e3476 mov ds:0x68cbb0,eax` then `0x4e347e lea edx,[eax+ecx*2]`), and demanding the first step's
+  DESTINATION equal its operands broke all six sites - the shape is `lea d,[n+n*8]`, OPERANDS equal, destination
+  free. If the strict version needs data-flow you haven't built, ship the weaker honest claim and print what is
+  UNPROVEN rather than silently over-tightening or silently dropping the concern.
+- **Verify a retraction landed.** M311's A8 retraction used a `str.replace` anchor that spanned a `%`-format break
+  mid-literal, so it no-opped and the shipped evidence kept printing the retracted claim - caught only because a
+  reviewer cited the evidence line. Grep the artifact for the NEW words after editing prose inside a format string,
+  and regenerate evidence from the green run before quoting it.
+

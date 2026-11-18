@@ -447,8 +447,11 @@ driving/dialog state machines: `references/wine-operations.md`)
   TARGET strings, and it reports as rc=0/passing rather than as a red gate. Ship the harness with a
   baseline-green precondition (run the unmutated instrument first and refuse to score anything unless it exits 0)
   and reject any mutant whose output carries a traceback — rc==1 is also what an uncaught exception returns, and
-  RED lines print before the death, so a crashing mutant otherwise credits itself. Full mechanics:
-  `references/instrument-laws.md` (mutation-harness scoring) and §Static text-cache parse traps.
+  RED lines print before the death, so a crashing mutant otherwise credits itself. **The harness is state: re-run it
+  after every edit that adds or rewrites a gate (anchors die and mutants go WEAK when constants move), and an
+  unexplained WEAK blocks submission — commit WIP with the honest score rather than deleting a mutant.** Full
+  mechanics: `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE) and
+  §Static text-cache parse traps.
 - **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
   first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
   agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
