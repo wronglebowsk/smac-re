@@ -1194,6 +1194,24 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | RIVALS FAIL THE SAME FIT: growing ONLY the unit array re-derives n_bases 18 and loses the 5 grown records (242591 B != 244111); the idle order-2 record is NOT the produced record; a perturbed unit stride mis-places the tail (244245 B != 244111) | `evidence/b22_composedgrowth.txt:14` | V |
 | ACCEPTANCE `python3 -m sim.selftest --b22 programs/saves/m54b_clean.SAV` -> **PASS B22: 12/12**, exit 0; `python3 -u -m sim.composedgrowth` prints the SAME 12 labels (`--b22` only relays the module's claims); two runs byte-identical (report digest, written image sha256 f7d90eb77ca7abac) | `evidence/b22_composedgrowth.txt:15-20` | V |
 | UNMODELED (declared): WHICH base really ran the completion (the m289 trace tracks only year/cur/tf/ledger; the base is CHOSEN as the last surviving founding - a fixture); the created record's unmodeled bytes (zero + named fields, as B12); the founding's economy/research/units and the queue's per-turn progress | - | lead |
+## B23 (s280, BUILD 11/11, zero box) - the production queue's PER-TURN progress round-trips through the writer at every recorded boundary, and a corruption that lands ONLY in the container changes the fold's LATER verdicts (sim/composedturn.py)
+
+| Claim | Evidence | V |
+|---|---|---|
+| Seed (the trace's r0-before Korolev record as a GROWN 19th base) + all 18 originals round-trip the writer; queue spans equal | `evidence/b23_composedturn.txt:1` | V |
+| Every boundary's visit inputs are READ FROM THE IMAGE (st/pen/slots == recorded round_before spans, 10 boundaries) and every result WRITTEN BACK | `evidence/b23_composedturn.txt:2` | V |
+| Verdicts pay r0 only (p,b x9); storage+mirror parity vs recorded afters 10/10+10/10; slot parity 100/100 dwords with the stale [2,2,2,2] tail kept | lines 3-5 | V |
+| M58 pop visibility: container shows popped pending at the NEXT before-sample; 9/9 after-parities elsewhere | line 6 | V |
+| r0 arrival = LAST unit record, byte-equal to B22's image-fed producer (n_units 67->68); image grew exactly 304+52 B; the writer REFUSES 9- and 11-slot queue lists (an 11th would write +0x78 past the queue - Greptile P2 on #297) | lines 7-8 | V |
+| CREATION SOURCE is the container: tile+owner poisoned in the SEED BYTES at r0 land in the created record (1447,1448,0x5a); a frozen-args variant (args pinned to seed-open values) FAILS the same fit (Greptile P2 on #297) | line 11 | V |
+| 5 rivals fail the same fit (noadd, price10, nopop, zerotail, nomirror) - each reddens its own law's gate | line 9 | V |
+| FALSIFIER: st:=20 poisoned in IMAGE BYTES at r1 only -> container fold pays at r1 AND r2 (poison persisted through the written image), model-fed fold blind -> container consumption is load-bearing | line 10 | V |
+| Two runs -> identical FULL table (labels+verdicts+DETAILS, Greptile P2 on #297) + image sha256 e685d297e3d246eb; acceptance `python3 -m sim.selftest --b23 programs/saves/m54b_clean.SAV` PASS 12/12 | line 12 | V |
+| savewriter gained identity/raw/queue override keys (backward-compat; B8-B12/B21-B22 calls unaffected - their relays green) | `sim/savewriter.py` | V |
+
+UNMODELED (declared): visit-time d0 (+0xd0) and price = recorded data as inputs
+(M57/M58/M72 law); recorder pop-visibility law used as recorded; +0x30/+0xd0
+container spans not claimed (f30&2 never set in any sample).
 ## M311 (s274, STATIC, zero box; mutation-tested 15/15) - ds:0x68cbb0 is the CURRENT-RECORD INDEX of the 304-B entity array; ds:0x8f0d60 is its derived record POINTER, written in lockstep
 | claim | evidence | conf |
 |---|---|---|

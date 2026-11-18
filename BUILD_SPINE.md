@@ -642,3 +642,46 @@ measurement); the created record's unmodeled bytes (zero + the named fields, as
 B12); the founding's economy/research/units and the queue's per-turn progress
 (the queue law is B11's, exercised in memory, not composed here); no box time, no
 /proc, no gdb, no game-binary load.
+
+**B23 - the queue's PER-TURN progress composed through the WRITER (B11's law in
+the written container, not in memory; s280 authored this rung from main, as
+B14-B22 did).** `sim/composedturn.py`: the game's own 10-boundary Korolev Center
+run (`evidence/trace_m56_build_20261026_145157.jsonl`, head 2, price 9) folds
+through a .SAV-shaped image: at EVERY boundary the visit's inputs (storage +0x40,
+mirror +0x98, pending +0x4c, the ten slot dwords +0x50, tile/owner) are read out
+of the RELOADED image by `sim.save.parse`, the B12 visit law runs (ADD gated
+`d0>0 && head!=-39 && !(f30&2)`, gate `storage+add >= price`, PAY, CREATE via
+B22's image-fed producer, one B11 pop with the stale tail kept), and the result
+is written BACK through `sim.savewriter` - the r0 arrival grows the unit array
+by the SAME write path (B12's append). `sim/savewriter.build_image` gains three
+backward-compatible `bases_override` keys: `identity` (emit the original
+verbatim), `raw` (a recorded seed record - Korolev enters as a GROWN 19th base
+slot seeded with the trace's r0-before record, a DECLARED fixture), and `queue`
+(the modeled span pack: st/pen/slots always, mirror/d0 optional).
+`python3 -m sim.selftest --b23 programs/saves/m54b_clean.SAV` must print
+PASS B23 12/12 (authored once in `sim/composedturn.py`, `--b23` only relays) with:
+**G1** the seed + 18 originals round-trip the writer (spans equal, n_bases 18->19);
+**G2** every boundary's CONTAINER read == the recorded round_before st/pen/slots;
+**G3** verdicts pay-at-r0-only (p,b,b,b,b,b,b,b,b,b); **G4** storage+mirror parity
+vs the recorded round_afters 10/10 each; **G5** slot parity 100/100 dwords (the
+stale [2,2,2,2,...] tail survives every boundary, untouched); **G6** the M58 pop
+visibility law (9/9 after-parities + the popped pending visible at the NEXT
+before-sample); **G7** the arrival is the array's LAST record, byte-equal to
+`soprod.create_record` fed tile/owner read from the IMAGE, n_units 67->68;
+**G8** the image grew by exactly 304+52 B, unit originals + tail byte-identical, and the writer REFUSES queue slot-lists of length 9 or 11 (an 11th slot would write +0x78, past the queue, clobbering later fields - Greptile P2 on #297);
+**G9** five rivals FAIL the same fit (noadd / price10 each lose the recorded r0
+arrival; nopop leaves pending 1 against a recorded 0; zerotail drops the stale
+ids; nomirror leaves mirror 8 against a recorded 0); **G10** THE FALSIFIER: poison
+st:=20 at ONE boundary IN THE IMAGE BYTES ONLY - the container fold re-reads it
+and pays twice more (3 arrivals, verdicts p,p,p,...) because the poisoned value
+persists in the written image, while the model-fed fold is BLIND to the same
+corruption (1 arrival, recorded table) - load-bearing in both directions;
+**G11** THE CREATION SOURCE IS THE CONTAINER (Greptile P2 on #297): tile AND owner poisoned in the seed record BYTES at r0 (1447,1448, owner 0x5a) - the created unit CARRIES the corrupted bytes (locate BY POSITION, not coords, so the poisoned tile cannot hide the record), while a frozen-args rival (creation arguments pinned to the seed-open values - indistinguishable on the uncorrupted run, which is exactly the reviewer's point) FAILS the same fit;
+**G12** two runs -> identical FULL table - labels, verdicts AND detail strings (a label/verdict-only comparison was itself a Greptile P2: details carry measured values) + written-image sha256 e685d297e3d246eb.
+DECLARED UNMODELED: the visit-time d0 (+0xd0, the game's per-visit recompute -
+read from the trace's after-samples as recorded data, M57/M58) and the price
+(recorded 9, never a recomputed price_of, M72); the recorder's pop-visibility law
+(USED as recorded, per M58); f30 (+0x30) bit evolution and +0xd0 in the container
+(never gate a verdict in this fixture: f30&2 is never set in any sample); the
+founding's economy/research beyond the visited base; which base ran the completion
+is REAL here (the traced one). No box time, no /proc, no gdb, no game-binary load.
