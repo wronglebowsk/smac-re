@@ -26,9 +26,10 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
 `evidence/b21_composedrun.txt:93`). Build rung **B22 MERGED** (#286, `3f645e1`; 12/12 gates, `evidence/b22_composedgrowth.txt`) - and B23 is now **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE analyse_since_build=0 last_build=B22` after every build merge, so the fire after B22 ANALYSES. ANALYSE PICKS still open, in order of value: (a) `ds:0x68cbb0` - `.data`, 340 xrefs, exactly 6 stores, all in `0x4e3000-0x4f6000`; (b) the 304-B table at `0x95da40` bit `0x20`; (c) `FUN_00470fe0` / `004715d0` / `00471fd0` (M310's neighbours). B23 = the queue's PER-TURN progress composed through the WRITER (B11's law in the written container, not in memory) - build it when track_mode says BUILD again.
-Answered by M311: census pick (a) ds:0x68cbb0 = the CURRENT-RECORD INDEX of the 304-B array at 0x95da10, and (b) the 0x95da40 table = that SAME array at +48 - one milestone. Next ANALYSE picks: (c) FUN_00470fe0 / FUN_004715d0 / FUN_00471fd0, then ds:0x68cbb4's 19 unexplained writers. Build candidates: (i) B21's composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
+LANDED as #289 (main 17e3e2e): 8/8 gates, 15/15 mutants, digest 625cd5877271cd85.
+M311 ANSWERED census picks (a)+(b) as ONE object (see NAMED's M311 block); OPEN PICKS below. Build candidates: (i) B21's composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
 the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
-end-to-end (B15+B16+B17 with save-only inputs). Track_mode FIRST, every fire.
+end-to-end (B15+B16+B17 with save-only inputs).
 
 ## THE LEDGER
 
@@ -68,12 +69,10 @@ collision-check + worktree FIRST).
   42-selector/8-handler structure lives ONLY in the table bytes (the case LIST agrees with them -
   0x29 is 41 - so do not re-litigate that; my two overclaims are retracted in Session 272). Read
   ## M310 before re-opening.**
-  **NEXT PICK (s272 close), in order: (i) the two sinks M309 left - **ds:0x68cbb0** (.data, 340
-  refs, exactly 6 stores, all inside 0x4e3000-0x4f6000, passed as the owner arg at 5 GOAL-insert
-  sites) and the **304-B-stride table at 0x95da40** (96 refs) whose bit 0x20 the single +0C reader
-  tests - census the bit, do not guess the stride; (ii) WHO fires the check: FUN_00470fe0 (180 B,
-  4 callers incl. FUN_004715d0), FUN_004715d0 (1086 B, 1 caller 0x4725e9), FUN_00471fd0 (1338 B,
-  5 callers in FUN_00472810) all forward a coordinate pair into FUN_00470b90 under tile-legality
+  **OPEN PICKS after M311, in order: (i) WHO fires the selection check - FUN_00470fe0 (180 B, 4 callers
+  incl. FUN_004715d0), FUN_004715d0 (1086 B, 1 caller at 0x4725e9), FUN_00471fd0 (1338 B, 5 callers in
+  FUN_00472810): all three forward a coordinate pair into FUN_00470b90,; the pair's identity is UNVERIFIED; (ii) ds:0x68cbb4's 19 writers that fall OUTSIDE an index-store window
+  (22 stores, 3 in-window; M311 refused to pair it with the index, so what it is stays open).
   gates (FUN_00469060 test / FUN_00422060 != 0) - name the event; (iii) still open from M310: the
   game meaning of a GOAL, the one-char tokens, and WHY a GOAL priority can be NEGATIVE (the only
   invalidation trigger). The open list lives in NAMED ## M310 / ## M309, not here.**
