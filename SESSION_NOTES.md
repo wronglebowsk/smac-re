@@ -322,3 +322,7 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 - Takeover mechanics: fire cancelled via cronjob_manage (execution row 'cancelled', pid verified gone); the milestone/m317 branch it created was reused (at main tip, zero commits); #180 documented-FAIL left standing per the ledger.
 - LESSONS: objdump prints immediates hex (0x8 not 8) - pin the parser's format, not the registry's prose (first C2 run died on it); a forward-rewritten back-edge reddens the COUNT gate before the named pin - declare the FIRST red, not the intended one (MU15 CRASH->RED fix).
 - OPEN: game-word of kinds a/d/s/n/c (consumer-side census, M310 lead); the 0x30/0x31 mission bytes; ds:0x692184 identity; the multi-base pick fold.
+## Session 288-merged (2026-11-18, #309 merged - post-merge skill sync)
+
+- MERGED #309 -> main 3a2da59. M317 acceptance at the merge head: census twice byte-identical digest 5263767ee3bf4bba (`evidence/m317_engine_decides.txt:223`), harness 22/22 scored + 1 declared NO-OP digest a0729996723078a4 (`evidence/m317_mutate.txt:26`); all 5 review P2s fixed pre-merge (per-push arg trace + clobber-stop, M250 full-insn pin, measured C5 caller gates, per-pid harness copy, path:line cites). Track: MODE=ANALYSE, analyse_since_build=1.
+- Skill sync: `references/instrument-laws.md` gains the argument-push decode law (per-push trace, clobber-stop, measured caller gates) in BOTH copies (live + `skill/`); SKILL.md unchanged. The squash title's "goals-at-bases a/d/s/n/^" is pre-review phrasing - n is at UNIT coords; NAMED ## M317 governs.
