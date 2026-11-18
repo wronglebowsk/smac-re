@@ -1,0 +1,60 @@
+== G1 baseline: containment / size / instruction coverage ==
+index row: addr=0x556690 name=FUN_00556690 size=14349 n_insns=4235 n_callers=2 n_callees=41 shard=014
+parsed window [0x556690,0x559e9d): 4235 insns, first=push ebp last=ret 
+G1 PASS
+
+== G2 control flow: indirect jmp/call census (M275 re-pin) ==
+indirect jmp/call: 0   ret sites: 1   conditional branches: 605
+G2 PASS
+
+== G3 caller census: every direct call to the engine in .text ==
+  call site 0x52094f in FUN_005208f0
+  call site 0x59dd43 in FUN_0059ce10
+G3 PASS
+
+== C1 action vocabulary: every call site inside the engine ==
+112 call sites -> 41 distinct callees
+  0x4cc7b0 FUN_004cc7b0     x2  @ 0x556a0f 0x558ab3
+  0x4d20f0 FUN_004d20f0     x1  @ 0x556f6a
+  0x4e34f0 FUN_004e34f0     x5  @ 0x5574d4 0x557d1e 0x55963f 0x559838 0x559e1f
+  0x4e3620 FUN_004e3620     x1  @ 0x5569ce
+  0x4e3700 FUN_004e3700     x2  @ 0x558da1 0x558ef4
+  0x4e37f0 FUN_004e37f0     x1  @ 0x558d8b
+  0x4e3b50 FUN_004e3b50     x1  @ 0x559cdc
+  0x4e3c00 FUN_004e3c00     x1  @ 0x5597ea
+  0x4e4620 FUN_004e4620     x3  @ 0x556b6f 0x557f17 0x558c77
+  0x4e5ae0 FUN_004e5ae0     x2  @ 0x556c09 0x559e65
+  0x4e5e10 FUN_004e5e10     x1  @ 0x558b10
+  0x4fdab0 FUN_004fdab0     x2  @ 0x556d7d 0x55795b
+  0x507410 FUN_00507410     x2  @ 0x556885 0x5568ca
+  0x507440 FUN_00507440     x1  @ 0x557e00
+  0x531090 FUN_00531090     x1  @ 0x5583c8
+  0x531bf0 FUN_00531bf0     x2  @ 0x5581be 0x5581d8
+  0x551e50 FUN_00551e50     x2  @ 0x55835b 0x55836a
+  0x556150 FUN_00556150     x3  @ 0x5574f7 0x557500 0x559657
+  0x5563f0 FUN_005563f0     x1  @ 0x556c34
+  0x56d350 FUN_0056d350     x7  @ 0x556820 0x556831 0x55698e 0x556a4a 0x556aed 0x556e79 0x558adc
+  0x56d690 FUN_0056d690     x1  @ 0x559e8e
+  0x56d780 FUN_0056d780     x1  @ 0x559809
+  0x56d890 FUN_0056d890     x1  @ 0x5597a5
+  0x570670 FUN_00570670     x2  @ 0x5579af 0x558fb8
+  0x5706c0 FUN_005706c0     x2  @ 0x55798d 0x558f9c
+  0x570710 FUN_00570710     x3  @ 0x556d3b 0x557152 0x557161
+  0x570770 FUN_00570770     x2  @ 0x55721c 0x55722b
+  0x582340 FUN_00582340     x2  @ 0x55878a 0x558812
+  0x582cc0 FUN_00582cc0     x1  @ 0x559ab4
+  0x59a3e0 FUN_0059a3e0     x1  @ 0x556967
+  0x5a5c00 FUN_005a5c00     x2  @ 0x556aa8 0x557d92
+  0x5a6330 FUN_005a6330     x17 @ 0x556abb 0x556ad5 0x55704d 0x557315 0x55740f 0x557548 0x557db3 0x557e65 0x557e9d 0x557eb3 0x557ec6 0x55933b 0x559558 0x559602 0x559612 0x55964f 0x559b16
+  0x5ab130 FUN_005ab130     x4  @ 0x556aa2 0x55753f 0x557d8c 0x559af9
+  0x5ab420 FUN_005ab420     x1  @ 0x557425
+  0x5abb40 FUN_005abb40     x2  @ 0x55747d 0x557498
+  0x5abd90 FUN_005abd90     x2  @ 0x557276 0x55737a
+  0x5ac0a0 FUN_005ac0a0     x1  @ 0x5579bf
+  0x5ac860 FUN_005ac860     x3  @ 0x55793c 0x55794c 0x559560
+  0x5aff90 FUN_005aff90     x1  @ 0x559aa9
+  0x5b2e00 FUN_005b2e00     x2  @ 0x5570a5 0x557361
+  0x64b870 FUN_0064b870     x20 @ 0x5576e7 0x557711 0x557719 0x557721 0x558d0e 0x558d39 0x558d42 0x558d4d 0x558f15 0x558f40 0x558f49 0x558f54 0x559852 0x55987f 0x559887 0x55988f 0x559be8 0x559c13 0x559c1c 0x559c27
+C1 PASS
+
+SKELETON GREEN: G1-G3 + C1 (store/decision/caller-context censuses next)

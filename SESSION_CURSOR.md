@@ -1,8 +1,8 @@
-B24 MERGED #307 (main af38858), s287. Track flipped: MODE=ANALYSE
-(analyse_since_build=0, last_build=B24). Acceptance at merge:
-`python3 -u -m sim.selftest --b24` -> PASS B24: 9/9 (stdout ==
-evidence/b24_selftest.txt); `python3 -u scripts/b24_mutate.py` -> 9/9 scored
-+1 declared NO-OP (MU9), exit 0. Review #307: 5 P2 all fixed/re-measured;
-locate + frozenargs rivals RETIRED as DEGENERATE (G8 gates the retirement),
-MU10 reshaped to a DATA mutation. NEXT: ANALYSE pick (iii') FUN_00556690 (or
-(iv)/(v)); B25 spine NOT authored. #180/#105 pre-existing, unmerged.
+M317 IN PROGRESS (s288): desktop takeover (qwen4-max:free); cron fire 9139a9ad
+cancelled 15:25 pre-skeleton, loop paused. Branch milestone/m317 @ d79882f=main.
+Pick (iii'): what goal ENGINE FUN_00556690 DECIDES (14349 B, 4235 insns,
+41 callees; callers 0x52094f/FUN_005208f0 + 0x59dd43/FUN_0059ce10). STATIC
+zero-box. Prior: NAMED M250/M252/M274/M275/M276/M310 blocks; grep first.
+Cache scratch/m574/text.txt (m53j gz pruned). #180 documented-FAIL stands.
+Next: m317_engine_decides.py censuses (calls, stores, branches) + caller
+context, gates + mutation harness.
