@@ -177,7 +177,19 @@ def main():
         m = re.match(r"^0x([0-9a-f]+)$", ops.strip()) if mn == "push" else None
         if m and int(m.group(1), 16) in T:
             pushes.setdefault(int(m.group(1), 16), []).append(a)
-    exact2 = all(len(v) == 2 for v in pushes.values()) and len(pushes) == 3
+    # all 6 pushes live INSIDE the dispatcher (its pre-paint and post-paint legs)
+    own = {hex(contain(a2)) for v in pushes.values() for a2 in v}
+    legA = sorted(hex(a2) for v in pushes.values() for a2 in v if a2 < 0x4C6000)
+    legB = sorted(hex(a2) for v in pushes.values() for a2 in v if a2 >= 0x4C6000)
+    def order(ls):
+        out = []
+        for x in sorted(ls, key=lambda z: int(z, 16)):
+            v = int(x, 16)
+            out.append((x, next(k for k, vv in pushes.items() if v in vv)))
+        return out
+    exact2 = (all(len(v) == 2 for v in pushes.values()) and len(pushes) == 3 and
+              own == {"0x4c5d60"} and len(legA) == 3 and len(legB) == 3 and
+              [t for _, t in order(legA)] == [t for _, t in order(legB)])
     detail["A4"] = "; ".join("%s@%s" % (hex(k), ",".join(hex(x) for x in v))
                              for k, v in sorted(pushes.items()))
     ck("A4 each result thunk address-taken via push exactly twice (pre+post paint legs)",
