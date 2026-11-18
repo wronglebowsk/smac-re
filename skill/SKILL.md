@@ -452,6 +452,16 @@ driving/dialog state machines: `references/wine-operations.md`)
   unexplained WEAK blocks submission — commit WIP with the honest score rather than deleting a mutant.** Full
   mechanics: `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE) and
   §Static text-cache parse traps.
+- **Three #294 (M313) decoration classes - all reviewer-found, all silent:** (1) an inline `#` comment placed
+  after the FIRST term of a multi-line parenthesized boolean swallows the rest of that physical line - the
+  push-opcode check vanished with zero trace; never trail-comment inside a condition, split into its own gate.
+  (2) target parsing must be `re.fullmatch(r"0x[0-9a-f]+", t)` before `int(...,16)`: far-calls print as
+  `call 0x43:0x955e0043` and a `startswith("0x")` filter CRASHES on them; and case-matter - comparing
+  "0x5186B0" against the lowercase cache makes any zero-reference census decorative by construction.
+  (3) a "vtable" found by walking .text-pointers to a stop may cross MULTIPLE class tables (the run from
+  0x672290 contains the chooser FAMILY table, base 0x6728c0) - pin pointers BY ADDRESS, cite the ledger for
+  each table's identity, and the word "slot" is banned unless a ledger entry or a constructor vptr-store
+  establishes the table's base (search for `mov [reg],imm` of the base as an immediate in .text to find one).
 - **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
   first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
   agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
