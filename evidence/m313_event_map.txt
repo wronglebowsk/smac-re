@@ -1,0 +1,21 @@
+OK   A1_thunk_callers_exact: 15 sites
+OK   A2_hub_owner_set_exact: 28 owners, 53 sites
+OK   A3a_band_hub_owners: 20 of 28 hub owners in band
+OK   A3b_band_thunk_owners: 9 distinct thunk owners in band
+OK   A3c_offband_hub_owners: 8 off-band
+OK   A4a_pumpA_band_callees: pumpA(FUN_00512b40)->12 band members
+OK   A4b_pumpB_band_callees: pumpB(FUN_00516b80)->10 band members
+OK   A4c_pumpA_callers: callers: vtable-method + dialog-fam
+OK   A4d_pumpB_callers: single caller
+OK   A4e_mapclick_band_callees: M28-named map_click_handler(FUN_00476580)->5
+OK   A4f_pumps_contain_hub_sites: pumpA 7 + pumpB 6 hub sites (7+6)
+OK   A5a_vtable_slots: vtable@0x672290 slots=490 slot134=FUN_0041bda0 slot415=FUN_005f6aa3
+OK   A5b_vtable_digest: digest f2e2c9dfae9ba011
+OK   A6a_pumpA_tables: pumpA: 17 table-jmps
+OK   A6b_pumpB_tables: pumpB: 11 table-jmps
+OK   A6c_command_table_size: menu/toolbar-ID switch table = 23 slots (0x30041 base + Ghidra C)
+OK   A6d_vk_table_size: navigation-VK switch table = 28 slots
+OK   A6e_letter_table_size: letter-key 'Q'..'Z'+ switch table = 13 slots
+OK   A7_pumpB_entry_callback_registration: call/jmp=0 stored=[5343534]@0x51892d(owner FUN_00518820<-FUN_00580260)
+digest 3fee30fcd74735ad
+== M313: 19/19 ==
