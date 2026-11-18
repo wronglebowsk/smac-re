@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M314 MERGED #299 (5 P2 all accepted); M313 #294; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M314 done; track: B24 QUEUED (ANALYSE first - track_mode authoritative); #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (M315 MERGED #301 (6 P2 all accepted); M314 #299; M313 #294; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M315 done; track: B24 QUEUED (ANALYSE first - track_mode authoritative); #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -26,12 +26,10 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
 `evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **QUEUED, NOT NEXT** (track_mode flips to ANALYSE after every build merge). OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
-M313 MERGED as #294
-(main eaf7d54): 21/21 + 23/23, digest 5e14170de426d127; 2 P1 + 7 P2 ALL accepted at review
-head (Session 278). Merge-title says 'vtable slot 134' - superseded, NAMED ## M313 governs.
-M311 ANSWERED census picks (a)+(b) as ONE object (see NAMED's M311 block); OPEN PICKS below. Build candidates: (i) B21's composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
-the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
-end-to-end (B15+B16+B17 with save-only inputs).
+
+M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29 (22 expectation + 7 CODE mutants via
+M315_PATCH), digest 3976ca97eedc1e19; 6 P2 ALL accepted at review head 754b4fa6; the
+caller-guard claim DOWNGRADED to OPEN; pair reach 16 B -> 17 B. NAMED ## M315 governs.
 
 ## THE LEDGER
 
@@ -83,8 +81,6 @@ collision-check + worktree FIRST).
   (call 0x4e8d60 + call 0x4e78e0) - M315 proved the pair is the memo's reaction but neither
   callee is in NAMED; (v) the 8 memo sites with NO local dedup guard - census their callers and
   ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
-  (ii) CLOSED by M315: ds:0x68cbb4 = the REFRESH MEMO (22 stores = 10 -1 clears + 12 memo
-  updates; 8 fed by ds:0x68cbb0, 4 by a caller slot; M311's window was FORWARD 0..+32 B).
   Lists live in NAMED ## M310 / ## M312 / ## M313 / ## M314 / ## M315, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.

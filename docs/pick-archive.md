@@ -923,3 +923,16 @@ the hub settle-nest
   view-move 00473d00 kind=2); the hub 00472810 arms pass (block,flag) NOT coords; all 4
   forwarder sites push arg4=0 so fe0's invalidator tail never executes (M310 site-1 RETRACTED).
   Full law in NAMED ## M310 + ## M312 - do not re-open.**
+
+### §trim-s285 (s285 close-out; VERBATIM from NEXT_PROMPT.md header area)
+
+```
+M313 MERGED as #294
+(main eaf7d54): 21/21 + 23/23, digest 5e14170de426d127; 2 P1 + 7 P2 ALL accepted at review
+head (Session 278). Merge-title says 'vtable slot 134' - superseded, NAMED ## M313 governs.
+M311 ANSWERED census picks (a)+(b) as ONE object (see NAMED's M311 block); OPEN PICKS below. Build candidates: (i) B21's composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
+the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
+end-to-end (B15+B16+B17 with save-only inputs).
+  (ii) CLOSED by M315: ds:0x68cbb4 = the REFRESH MEMO (22 stores = 10 -1 clears + 12 memo
+  updates; 8 fed by ds:0x68cbb0, 4 by a caller slot; M311's window was FORWARD 0..+32 B).
+```
