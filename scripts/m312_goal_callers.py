@@ -138,12 +138,16 @@ def main():
     ck("A5a_slot_store_sets", st10 == [0x471669, 0x4716AE, 0x4717C0, 0x471859, 0x471898, 0x47198B]
        and st14 == [0x471672, 0x471793, 0x471862, 0x47195E],
        "x-slot %d + y-slot %d stores" % (len(st10), len(st14)))
-    ck("A5b_y_minus_3_law",
-       at(0x47185C, "mov", "edx,DWORD PTR [ebp+0xc]") and
-       at(0x47185F, "sub", "edx,0x3") and at(0x471862, "mov", "DWORD PTR [ebp-0x14],edx") and
-       at(0x47166C, "mov", "ecx,DWORD PTR [ebp+0xc]") and
-       at(0x47166F, "sub", "ecx,0x3") and at(0x471672, "mov", "DWORD PTR [ebp-0x14],ecx"),
-       "y = arg_y - 3 (two sites); loop site adds [ebp-0xc] at 0x47195E")
+    ys = [(0x47166C, "mov", "ecx,DWORD PTR [ebp+0xc]"), (0x47166F, "sub", "ecx,0x3"),
+          (0x471672, "mov", "DWORD PTR [ebp-0x14],ecx"),
+          (0x47185C, "mov", "edx,DWORD PTR [ebp+0xc]"), (0x47185F, "sub", "edx,0x3"),
+          (0x471862, "mov", "DWORD PTR [ebp-0x14],edx"),
+          (0x47178D, "mov", "ecx,DWORD PTR [ebp+0xc]"), (0x471790, "add", "ecx,DWORD PTR [ebp-0xc]"),
+          (0x471793, "mov", "DWORD PTR [ebp-0x14],ecx"),
+          (0x471958, "mov", "edx,DWORD PTR [ebp+0xc]"), (0x47195B, "add", "edx,DWORD PTR [ebp-0xc]"),
+          (0x47195E, "mov", "DWORD PTR [ebp-0x14],edx")]
+    ck("A5b_y_two_laws_all4", all(at(*t) for t in ys),
+       "ALL FOUR y-slot stores: y = arg_y - 3 (direct sites + fwd 1/2) or arg_y + [ebp-0xc] (fwd 3 + loop)")
     ck("A5c_x_clamp_law",
        at(0x47165A, "mov", "eax,DWORD PTR [ebp+0x8]") and at(0x47165D, "sub", "eax,0x1") and
        at(0x471661, "call", "0x469010") and at(0x471669, "mov", "DWORD PTR [ebp-0x10],eax") and
@@ -161,6 +165,11 @@ def main():
        at(0x4719B8, "jne", "0x4719bc") and at(0x4719BA, "jmp", "0x47196b"),
        "loop candidate fires only when 422060(this,x,y,0) != 0")
 
+    xs = [0x471669, 0x4716AE, 0x4717C0, 0x471859, 0x471898, 0x47198B]
+    ck("A5f_every_x_store_is_a_469010_result",
+       all(ins[a] == ("mov", "DWORD PTR [ebp-0x10],eax") and
+           ins[a - 8] == ("call", "0x469010") for a in xs),
+       "all 6 x-slot stores are `mov [ebp-0x10],eax` exactly 8 B after a call to FUN_00469010")
     # ---- A6 FUN_004725a0: the block law, in the same encoding as M310's filter
     ck("A6a_block_law",
        at(0x4725AC, "mov", "eax,ds:0x985ae8") and at(0x4725B1, "and", "eax,0x80") and
@@ -198,31 +207,137 @@ def main():
 
     # ---- A8 FUN_00473760: fan-out over the view-instance table ds:0x7cdecc
     ck("A8a_fanout_law",
-       at(0x473769, "mov", "DWORD PTR [ebp-0x4],0x0") and at(0x47377B, "cmp", "DWORD PTR [ebp-0x4],0x8") and
-       at(0x47377F, "jge", "0x4737cc") and at(0x473784, "cmp", "DWORD PTR [ecx*4+0x7cdecc],0x0") and
-       at(0x4737A0, "cmp", "DWORD PTR [eax+0x1dd74],0x0") and at(0x4737C5, "call", "0x4725a0"),
-       "i in 0..8; skip null; i != 0 also requires element+0x1dd74 == 0; element IS the this-pointer")
+       at(0x473769, "mov", "DWORD PTR [ebp-0x4],0x0") and
+       at(0x473770, "jmp", "0x47377b") and
+       at(0x47377B, "cmp", "DWORD PTR [ebp-0x4],0x8") and
+       at(0x47377F, "jge", "0x4737cc") and
+       at(0x473784, "cmp", "DWORD PTR [ecx*4+0x7cdecc],0x0") and
+       at(0x47378C, "jne", "0x473790") and
+       at(0x473790, "cmp", "DWORD PTR [ebp-0x4],0x0") and
+       at(0x473794, "je", "0x4737ab") and
+       at(0x4737A0, "cmp", "DWORD PTR [eax+0x1dd74],0x0") and
+       at(0x4737A7, "jne", "0x4737ab") and
+       at(0x4737A9, "jmp", "0x473772") and
+       at(0x4737BE, "mov", "ecx,DWORD PTR [edx*4+0x7cdecc]") and
+       at(0x4737C5, "call", "0x4725a0"),
+       "8 entries (0..7; bound 8 EXCLUSIVE - the first cmp/jge precedes the body and the "
+       "increment is on the back-edge); null-skip; i != 0 also requires element+0x1dd74 == 0; "
+       "the element is loaded into ecx = the this-pointer of the call")
     stores_tbl = sorted(a for a, (b, ops) in ins.items()
                         if b == "mov" and firstop(ops) == "DWORD PTR ds:0x7cdecc")
-    ck("A8b_view_table_single_store", stores_tbl == [0x5803E1]
-       and ins[0x5803E1][1] == "DWORD PTR ds:0x7cdecc,0x8f79e0",
-       "exactly 1 store cache-wide (in %s): the slots point at one static array" % owner(0x5803E1))
-
-    # ---- A9 the hub's 5 arms each re-compute the block law and hand 00471fd0
-    # (block, param_1 < 0) - NOT a coordinate pair.
-    arms = {0x473388: (0x47334C, 0x473368), 0x4733F8: (0x4733BD, 0x4733D9),
-            0x473467: (0x47342D, 0x473447), 0x4734F8: (0x4734BE, 0x4734D8),
-            0x4735A4: (0x47356A, 0x473584)}
+    idx_st = sorted(a for a, (b, ops) in ins.items()
+                    if b == "mov" and firstop(ops).endswith("*4+0x7cdecc]"))
+    idx_ref = sum(1 for _, (_, ops) in ins.items() if "*4+0x7cdecc]" in ops)
+    ck("A8b_entry0_store_and_zero_indexed_stores",
+       stores_tbl == [0x5803E1] and idx_st == [] and
+       ins[0x5803E1][1] == "DWORD PTR ds:0x7cdecc,0x8f79e0" and idx_ref > 0,
+       "entry ZERO's only direct store is 0x5803E1 (in %s) <- 0x8f79e0 = the static MAIN VIEW "
+       "(M262); 0 indexed stores name the band (%d band refs are all reads/cmps); entries 1..7 "
+       "arrive via the pointer-arithmetic `mov [esi],eax` at 0x5803BB - M262 settled this" % (owner(0x5803E1), idx_ref))
+    
+    # ---- A9 the hub's 5 arms each compute the block law AND the param<0 flag
+    # in an identical 16-instruction window; pin EVERY instruction (literals
+    # generated from the real bytes, not hand-transcribed).
+    ARM_WINDOWS = {
+        0x473388: [
+            (0x47334C, "mov", "ecx,DWORD PTR ds:0x985ae8"),
+            (0x473352, "and", "ecx,0x80"),
+            (0x473358, "test", "ecx,ecx"),
+            (0x47335A, "je", "0x473368"),
+            (0x47335C, "mov", "DWORD PTR [ebp-0xdc],0xffffffff"),
+            (0x473366, "jmp", "0x473374"),
+            (0x473368, "mov", "edx,DWORD PTR ds:0x91b5b4"),
+            (0x47336E, "mov", "DWORD PTR [ebp-0xdc],edx"),
+            (0x473374, "xor", "eax,eax"),
+            (0x473376, "cmp", "DWORD PTR [ebp+0x8],0x0"),
+            (0x47337A, "setl", "al"),
+            (0x47337D, "push", "eax"),
+            (0x47337E, "mov", "ecx,DWORD PTR [ebp-0xdc]"),
+            (0x473384, "push", "ecx"),
+            (0x473385, "mov", "ecx,DWORD PTR [ebp-0x4]"),
+            (0x473388, "call", "0x471fd0"),
+        ],
+        0x4733F8: [
+            (0x4733BD, "mov", "edx,DWORD PTR ds:0x985ae8"),
+            (0x4733C3, "and", "edx,0x80"),
+            (0x4733C9, "test", "edx,edx"),
+            (0x4733CB, "je", "0x4733d9"),
+            (0x4733CD, "mov", "DWORD PTR [ebp-0xe0],0xffffffff"),
+            (0x4733D7, "jmp", "0x4733e4"),
+            (0x4733D9, "mov", "eax,ds:0x91b5b4"),
+            (0x4733DE, "mov", "DWORD PTR [ebp-0xe0],eax"),
+            (0x4733E4, "xor", "ecx,ecx"),
+            (0x4733E6, "cmp", "DWORD PTR [ebp+0x8],0x0"),
+            (0x4733EA, "setl", "cl"),
+            (0x4733ED, "push", "ecx"),
+            (0x4733EE, "mov", "edx,DWORD PTR [ebp-0xe0]"),
+            (0x4733F4, "push", "edx"),
+            (0x4733F5, "mov", "ecx,DWORD PTR [ebp-0x4]"),
+            (0x4733F8, "call", "0x471fd0"),
+        ],
+        0x473467: [
+            (0x47342D, "mov", "eax,ds:0x985ae8"),
+            (0x473432, "and", "eax,0x80"),
+            (0x473437, "test", "eax,eax"),
+            (0x473439, "je", "0x473447"),
+            (0x47343B, "mov", "DWORD PTR [ebp-0xe4],0xffffffff"),
+            (0x473445, "jmp", "0x473453"),
+            (0x473447, "mov", "ecx,DWORD PTR ds:0x91b5b4"),
+            (0x47344D, "mov", "DWORD PTR [ebp-0xe4],ecx"),
+            (0x473453, "xor", "edx,edx"),
+            (0x473455, "cmp", "DWORD PTR [ebp+0x8],0x0"),
+            (0x473459, "setl", "dl"),
+            (0x47345C, "push", "edx"),
+            (0x47345D, "mov", "eax,DWORD PTR [ebp-0xe4]"),
+            (0x473463, "push", "eax"),
+            (0x473464, "mov", "ecx,DWORD PTR [ebp-0x4]"),
+            (0x473467, "call", "0x471fd0"),
+        ],
+        0x4734F8: [
+            (0x4734BE, "mov", "eax,ds:0x985ae8"),
+            (0x4734C3, "and", "eax,0x80"),
+            (0x4734C8, "test", "eax,eax"),
+            (0x4734CA, "je", "0x4734d8"),
+            (0x4734CC, "mov", "DWORD PTR [ebp-0xe8],0xffffffff"),
+            (0x4734D6, "jmp", "0x4734e4"),
+            (0x4734D8, "mov", "ecx,DWORD PTR ds:0x91b5b4"),
+            (0x4734DE, "mov", "DWORD PTR [ebp-0xe8],ecx"),
+            (0x4734E4, "xor", "edx,edx"),
+            (0x4734E6, "cmp", "DWORD PTR [ebp+0x8],0x0"),
+            (0x4734EA, "setl", "dl"),
+            (0x4734ED, "push", "edx"),
+            (0x4734EE, "mov", "eax,DWORD PTR [ebp-0xe8]"),
+            (0x4734F4, "push", "eax"),
+            (0x4734F5, "mov", "ecx,DWORD PTR [ebp-0x4]"),
+            (0x4734F8, "call", "0x471fd0"),
+        ],
+        0x4735A4: [
+            (0x47356A, "mov", "eax,ds:0x985ae8"),
+            (0x47356F, "and", "eax,0x80"),
+            (0x473574, "test", "eax,eax"),
+            (0x473576, "je", "0x473584"),
+            (0x473578, "mov", "DWORD PTR [ebp-0xec],0xffffffff"),
+            (0x473582, "jmp", "0x473590"),
+            (0x473584, "mov", "ecx,DWORD PTR ds:0x91b5b4"),
+            (0x47358A, "mov", "DWORD PTR [ebp-0xec],ecx"),
+            (0x473590, "xor", "edx,edx"),
+            (0x473592, "cmp", "DWORD PTR [ebp+0x8],0x0"),
+            (0x473596, "setl", "dl"),
+            (0x473599, "push", "edx"),
+            (0x47359A, "mov", "eax,DWORD PTR [ebp-0xec]"),
+            (0x4735A0, "push", "eax"),
+            (0x4735A1, "mov", "ecx,DWORD PTR [ebp-0x4]"),
+            (0x4735A4, "call", "0x471fd0"),
+        ],
+    }
     bad = []
-    for s, (g, c) in sorted(arms.items()):
-        if not (ins.get(g, ("", ""))[1].startswith(("eax,ds:0x985ae8", "ecx,DWORD PTR ds:0x985ae8",
-                                                    "edx,DWORD PTR ds:0x985ae8"))
-                and ins.get(c, ("", ""))[1].endswith("ds:0x91b5b4")
-                and ins[s][1] == "0x471fd0"):
-            bad.append(hex(s))
-    ck("A9a_hub_arms_block_not_coords", not bad,
-       "5 arms at %s compute (ds:0x985ae8&0x80)?-1:ds:0x91b5b4 inline"
-       % [hex(s) for s in sorted(arms)])
+    for call, window in sorted(ARM_WINDOWS.items()):
+        for a, b, ops in window:
+            if not at(a, b, ops):
+                bad.append((hex(call), hex(a), b, ops, ins.get(a)))
+    ck("A9a_hub_arms_full_window", not bad,
+       "5 arms x 16 pinned instructions: block law (ds:0x985ae8&0x80)?-1:ds:0x91b5b4, "
+       "flag setl(param_1<0), pushed (flag, block), then call 00471fd0 - NOT coords")
     n281 = len(calls_to(F_281))
     grp = collections.Counter(owner(a) for a in calls_to(F_281))
     ck("A9b_hub_53_sites_28_owners", n281 == 53 and len(grp) == 28,

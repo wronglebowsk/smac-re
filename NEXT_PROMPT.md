@@ -27,7 +27,7 @@ box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
 `evidence/b21_composedrun.txt:93`). Build rung **B22 MERGED** (#286, `3f645e1`; 12/12 gates, `evidence/b22_composedgrowth.txt`) - and B23 is now **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE analyse_since_build=0 last_build=B22` after every build merge, so the fire after B22 ANALYSES. ANALYSE PICKS still open, in order of value: (a) `ds:0x68cbb0` - `.data`, 340 xrefs, exactly 6 stores, all in `0x4e3000-0x4f6000`; (b) the 304-B table at `0x95da40` bit `0x20`; (c) `FUN_00470fe0` / `004715d0` / `00471fd0` (M310's neighbours). B23 = the queue's PER-TURN progress composed through the WRITER (B11's law in the written container, not in memory) - build it when track_mode says BUILD again.
 LANDED as #289 (main 17e3e2e): 8/8 gates, 15/15 mutants, digest 625cd5877271cd85. M312 submitted,
-OPEN (branch milestone/m312): 26/26 gates, 17/17 mutants, digest e25f77bb08585dfe.
+OPEN (branch milestone/m312): 27/27 gates, 23/23 mutants, digest 8751c5af18c5a8f8 (post-review head).
 M311 ANSWERED census picks (a)+(b) as ONE object (see NAMED's M311 block); OPEN PICKS below. Build candidates: (i) B21's composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
 the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
 end-to-end (B15+B16+B17 with save-only inputs).
@@ -66,14 +66,13 @@ collision-check + worktree FIRST).
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
   **CLOSED (s276): who fires the selection check - TWO trunks (cursor-tile sweep via
-  004736a0->004727c0->004725a0->004715d0; view fan-out 00473760 over ds:0x7cdecc[0..8] plus
+  004736a0->004727c0->004725a0->004715d0; view fan-out 00473760 over the M262 view table ds:0x7cdecc[0..7] plus
   view-move 00473d00 kind=2); the hub 00472810 arms pass (block,flag) NOT coords; all 4
   forwarder sites push arg4=0 so fe0's invalidator tail never executes (M310 site-1 RETRACTED).
   Full law in NAMED ## M310 + ## M312 - do not re-open.**
   **OPEN PICKS after M312, in order: (i') NAME the events: which UI handlers reach
-  FUN_004736a0's 15 call sites and FUN_00472810's 53 sites / 28 owners; what the
-  ds:0x7cdecc elements ARE (view instances? only +0x1dd70/4 match the view shape) and who
-  fills them; (ii) ds:0x68cbb4's 19 writers outside an index-store window (22 stores, 3
+  FUN_004736a0's 15 call sites and FUN_00472810's 53 sites / 28 owners (the ds:0x7cdecc fan-out
+  is ALREADY settled - M262 view table, do not re-derive); (ii) ds:0x68cbb4's 19 writers outside an index-store window (22 stores, 3
   in-window; M311 refused the pairing); (iii) still open from M310: game meaning of a GOAL,
   the one-char tokens, WHY a GOAL priority can be NEGATIVE. Lists live in NAMED,
   ## M310 / ## M312, not here.**

@@ -11,18 +11,19 @@ OK   A3d_fe0_pair_is_own_args: tail pushes load the function's own arg slots
 OK   A4a_fe0_tail_guard: cmp arg4; je epilogue (skips the only call to 470b90 in fe0)
 OK   A4b_all4_forwarders_pass_literal0: []
 OK   A5a_slot_store_sets: x-slot 6 + y-slot 4 stores
-OK   A5b_y_minus_3_law: y = arg_y - 3 (two sites); loop site adds [ebp-0xc] at 0x47195E
+OK   A5b_y_two_laws_all4: ALL FOUR y-slot stores: y = arg_y - 3 (direct sites + fwd 1/2) or arg_y + [ebp-0xc] (fwd 3 + loop)
 OK   A5c_x_clamp_law: x in {arg_x-1, arg_x+1} clamped through FUN_00469010
 OK   A5d_0x2000_pregate_skips_all3_direct_sites: je 0x4719d3 lands past every direct call site (0x471884/8ba/9c7)
 OK   A5e_loop_site_gated_on_FUN_00422060_nonzero: loop candidate fires only when 422060(this,x,y,0) != 0
+OK   A5f_every_x_store_is_a_469010_result: all 6 x-slot stores are `mov [ebp-0x10],eax` exactly 8 B after a call to FUN_00469010
 OK   A6a_block_law: block = (ds:0x985ae8 & 0x80) ? -1 : ds:0x91b5b4 (M310's filter, same law)
 OK   A6b_sweep_call_args: 5th arg = setl(kind < 0), 4th = block
 OK   A6c_cursor_recheck_same_pair_law: assert-gate reads cursor_x_list[idx], cursor_y_list[idx] before FUN_00422060
 OK   A7a_thunk_encoding: (x,y) = cursor_x_list[cursor], cursor_y_list[cursor]; kind=2
 OK   A7b_thunk_single_call_and_15_callers: 15 dump-wide call sites of 004736a0; 2 of 004727c0 (004736a0 + FUN_005010d0)
-OK   A8a_fanout_law: i in 0..8; skip null; i != 0 also requires element+0x1dd74 == 0; element IS the this-pointer
-OK   A8b_view_table_single_store: exactly 1 store cache-wide (in FUN_00580260): the slots point at one static array
-OK   A9a_hub_arms_block_not_coords: 5 arms at ['0x473388', '0x4733f8', '0x473467', '0x4734f8', '0x4735a4'] compute (ds:0x985ae8&0x80)?-1:ds:0x91b5b4 inline
+OK   A8a_fanout_law: 8 entries (0..7; bound 8 EXCLUSIVE - the first cmp/jge precedes the body and the increment is on the back-edge); null-skip; i != 0 also requires element+0x1dd74 == 0; the element is loaded into ecx = the this-pointer of the call
+OK   A8b_entry0_store_and_zero_indexed_stores: entry ZERO's only direct store is 0x5803E1 (in FUN_00580260) <- 0x8f79e0 = the static MAIN VIEW (M262); 0 indexed stores name the band (39 band refs are all reads/cmps); entries 1..7 arrive via the pointer-arithmetic `mov [esi],eax` at 0x5803BB - M262 settled this
+OK   A9a_hub_arms_full_window: 5 arms x 16 pinned instructions: block law (ds:0x985ae8&0x80)?-1:ds:0x91b5b4, flag setl(param_1<0), pushed (flag, block), then call 00471fd0 - NOT coords
 OK   A9b_hub_53_sites_28_owners: 53 call sites in 28 functions (view/refresh families; naming them = follow-up pick)
-digest e25f77bb08585dfe
-== M312: 26/26 ==
+digest 8751c5af18c5a8f8
+== M312: 27/27 ==
