@@ -78,10 +78,8 @@ collision-check + worktree FIRST).
   is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
   startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
   Full law NAMED ## M313.
-  CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass: goals at bases, region
-  flips, inline unit orders, kind-8 cancel + knockout. Full law NAMED ## M317.
-  CLOSED (s289): pick (iv) pair = FUN_004e8d60 unit-support census + FUN_004e78e0 pane refresh;
-  void(void), selection-driven; kind dispatcher 4e75f0. NAMED ## M318.
+  CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass. NAMED ## M317.
+  CLOSED (s289): pick (iv) pair = 4e8d60 unit-support census + 4e78e0 pane refresh. NAMED ## M318.
   OPEN PICK after M318: (v) the 8 memo sites with NO local dedup guard - census their callers and
   ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
   Lists live in NAMED ## M310 / ## M313 / ## M314 / ## M315 / ## M316, not here.**
@@ -131,7 +129,8 @@ collision-check + worktree FIRST).
 VERBATIM at `docs/pick-archive.md` §trim-s269). Order: 1 `SESSION_CURSOR.md` (<=600 B) BEFORE the
 rest, in case of compression. 2 `## Session <N+1>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers
 WITH the command that produced them). 3 the `<ID>` block in `NAMED.md` (<=1 KB) + patch IN PLACE any
-earlier block this round qualifies. 4 `NEXT_PROMPT.md` patched BY SECTION to <=12,000 B (budget's
+earlier block this round qualifies; every VERIFIED row names the mutation that reddens it
+(no mutant = INFERRED/OPEN, or pin it + mutate it before submit). 4 `NEXT_PROMPT.md` patched BY SECTION to <=12,000 B (budget's
 warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`diff -rq skill/
 ~/.hermes/skills/smac-cvr-format/` then `rsync`). 6 `git add <explicit paths>` + commit, then
 `python3 scripts/gate.py --base main` GREEN. 7 submit/merge ONLY on a real PASS with the Greptile

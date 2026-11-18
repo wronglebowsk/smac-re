@@ -856,6 +856,10 @@ file patched BY SECTION to <= 12,000 B (`budget`'s warn; past it the next fire s
 the Greptile review on the head commit finished (`gh pr checks` until nothing pending), its inline comments read, and
 every P1 fixed or dismissed in the PR body in one sentence.
 
+s290 process law: step 2's NAMED block now requires every VERIFIED row to name the mutation that
+reddens it; a claim no mutant can redden is INFERRED/OPEN or gets a pin + mutant before submit. The live
+NEXT_PROMPT.md text governs; the block above is the s269 snapshot.
+
 ## §trim-s269 (b) THE OPEN SHORTLIST detail, VERBATIM from NEXT_PROMPT.md at the s269 close
 
 the hub settle-nest

@@ -45,6 +45,8 @@ THE WORK
   next to the command, merge nothing, close.
 - Verify the OUTCOME, not the mechanism: re-read the value from memory or from the static image. If the prose and
   the instrument disagree, fix BOTH.
+- Mutate the ALGORITHM, not just the bytes: a tracer/classifier gets a mutant exercising its logic (e.g. a reload
+  between two pushes of the same register) - instruction/data mutants cannot catch a wrong trace position.
 - Keep every tool result small; patch docs, never read_file-then-write_file over 10 KB; commit a checkpoint by ~25
   tool calls.
 
@@ -52,6 +54,8 @@ CLOSE (exact order, then stop)
 1. SESSION_CURSOR.md (<=600 B): id | acceptance | merged? | next command.
 2. `## Session <N+1>` appended to SESSION_NOTES.md (<=2 KB, numbers WITH the command).
 3. One <=1 KB NAMED.md block per milestone id, and patch IN PLACE any earlier block you just qualified.
+   Every VERIFIED row names the mutation that reddens it - a claim no mutant can redden is INFERRED/OPEN,
+   or gets a pin + mutant before submit (the harness proves gates bite; only this audit proves they COVER).
 4. NEXT_PROMPT.md patched BY SECTION (<=15,500 chars): retire the picks you answered, add ONE result line, and
    pair every addition with a deletion.
 5. Sync the skill by content (`diff -rq` the live dir and skill/, then re-apply only your new bullets).

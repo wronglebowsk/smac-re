@@ -1066,3 +1066,22 @@ purely the instrument's:
   back-edge instruction and its target from the bytes first, then assert containment; pin the argument's def
   chain (param load -> push) with a no-clobber scan of the interval, and the enclosing flag-gate chain.
 
+## Algorithm mutants + the coverage law (s290, #309/#311 reviews)
+- The mutation harness proves every gate BITES; it cannot see claims you never pinned. Greptile reads the
+  prose<->code correspondence - the complementary axis. 6 of the 8 findings across M317/M311 were one class:
+  a VERIFIED claim no gate read (source-only region pin, constant-compare caller check, unpinned filter/clamp
+  conditions, reach measured to the wrong call, a digest the instrument never computed). LAW: every VERIFIED row
+  in the NAMED block names the mutation that reddens it; a claim with no mutant is INFERRED/OPEN, or gets a pin
+  + mutant BEFORE submit. Check it mechanically at close: grep the new block's V rows against the harness ids.
+- Mutate the ALGORITHM, not just the bytes. Instruction/data mutants cannot catch a tracer that walks from the
+  wrong position: M317's call-site def-walk borrowed post-push reloads and INVENTED a decode (p2's source and a
+  computed prio), and every byte-mutant stayed green because the bytes were fine. The fix's gate is a mutant
+  that exercises the logic - a clobber between a load and its push (MU23), a reload between two pushes of the
+  same register, or a synthetic fixture with a known answer. Any instrument with a tracer/classifier/def-walk
+  ships at least one such mutant.
+- A boundary claim needs a boundary mutant: M318's 17 B reach was measured to the FIRST call (accepting 22 B to
+  the second); the corrected gate's mutant tightens the reach by 1 (17->16) and must redden exactly the site
+  whose store->second distance IS 17. Declare the FIRST gate that reddens, not the intended one (a count gate
+  often fires before the named pin).
+
+
