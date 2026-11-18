@@ -1,19 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-261-261.md` (1 sessions). Read it only when a question reaches back before session ## Session 262.
-
-## Session 262 (2026-11-15, HYGIENE H262, zero box) - NEXT_PROMPT.md docs-only split: the settled count/byte-counter era relocated
-
-- WHY: NEXT_PROMPT.md sat at 11,999 B (1 B under the 12,000 warn; CLOSING ORDER step 3 - "past it the next fire starts as a docs split"). Doctrine: a cap that binds a SECOND session gets a docs-only split as its own PR.
-- MOVED VERBATIM (3 blocks, byte-identity verified - each block asserted `in` the archive and `not in` the new footing, per-block wc -c printed):
-  1. the s261-close header line (1,048 B) -> NEW `docs/nextprompt-archive-m299-b20.md` §s261-header;
-  2. the full CLOSED enumeration of the count/byte-counter era (816 B, M220..M301/B19/B20/M302-M304) -> same file §closed-era;
-  3. TRAPS 14-15 (646 B) -> `docs/pick-archive.md` §trim-s262 (the s245/s256 pattern for settled trap text).
-- LEFT IN PLACE: the RULE + POINTER for each moved block (CLOSED re-open gate w/ per-id NAMED cites + era-archive pointer; traps 14-15 one-liners); §THE PICK (OPEN shortlist untouched), §BUDGET, §BUILD TRACK, §THE LEDGER, §INSTRUMENTS, §LIVE FACTS, §CLOSING ORDER, all standing rules. Nothing binding dropped.
-- BEFORE/AFTER: NEXT_PROMPT.md 11,999 -> 10,833 B (`wc -c NEXT_PROMPT.md`); SESSION_NOTES 57,878 B (under its 110 k warn - NOT split this fire); docs/nextprompt-archive-m299-b20.md created 2,874 B; pick-archive 74,846 -> 75,561 B.
-- STATE (NOT findings): #273 (B20) MERGED into main 119b691 (mergedAt 2026-11-15T22:26:50Z, `gh pr view 273 --json state`) - the footing's "PR open / LAND THIS PR FIRST" markers were stale and now read LANDED; the archived header keeps the s261 bytes untouched with a dated correction note above them.
-- NO finding retracted, re-worded or re-derived; NO script or instrument touched. skill/ untouched (diff -rq clean, gate's SKILL.md check holds by non-touch).
-- HONEST NOTE: 10,833 is under the 12,000 CLOSE cap but above the 9,500 ASPIRE target; the remaining settled material (TRAPS 1-3 + BUILD TRACK full text) already lives verbatim in pick-archive with pointers, so a further squeeze would mean dropping live rule text - not allowed this fire. Next fire may fold §LIVE FACTS' box-debt history (s245..s260 tally) the same way.
+Older sessions: `docs/sessions/sessions-262-262.md` (1 sessions). Read it only when a question reaches back before session ## Session 263.
 
 ## Session 263 (2026-11-15, ANALYSE, zero box) - M305: FUN_0051dcb0 IDENTIFIED as the zero-rebuild owner; 11 single-site callers (1 loop-enclosed), a round-mod-4 gate
 
@@ -397,11 +384,13 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 - Harness bugs found+fixed during the run (recorded so the next fire doesn't re-hit them): mutant temp files must live under scripts/ (the acceptance script derives REPO from __file__ - root temp broke EXE path); FAIL-name regex must strip the trailing colon (`^FAIL (\S+?):`); MU2's expected-red gate was mine wrong, not the gate's - widening HI to 0x5175C0 correctly reddens A3b (the band-thunk-owners census), NOT A3a (both pumps already in the hub list); retargeted, full green run above.
 - NEXT: track_mode after merge will read analyse_since_build=3 (B23 stays queued). Open: FUN_004c5d60's dialog-family callers (0x4c2e90-0x4c3760 thunks) + FUN_004d3f70's 15 band-member calls (largest driver); (ii) ds:0x68cbb4 writers; (iii) GOAL game-meaning.
 - REVIEW ROUND #294 (2 P1 + 7 P2, ALL accepted; single PR comment): (1) vtable over-claim - the run from 0x672290 spans MULTIPLE tables (0x67290c = FAMILY +0x4c, base 0x6728c0, already in ## M288 - I re-derived instead of citing, AGAIN); claim narrowed to entries-at-addresses, "slot" retired. (2) "band members" quietly included off-band functions - callee lists now split in-band/off-band exact (8+4 / 5+5 / 4+1). (3) A6c-e were decorative subtractions - the REAL switch shape is pumpA two-stage (byte map 0x5165ec/0x516638 + 8/4-slot jumps) and pumpB one-stage (lea -0x51, cmp 0xc, 13 slots); heads+targets pinned from PE bytes; the byte-map layout law replaced the bogus 23/28/13 slot counts. (4) A7 compared "0x5186B0" against LOWERCASE ops (decorative zero - and the numeric rewrite crashed on a far-call operand `0x43:0x...`, now regex-guarded - latent everywhere direct_callees ran). (5) my inline '#' comment SWALLOWED the push-opcode check onto the same physical line - A7b is now its own gate. (6) 53 hub sites pinned exactly (A2b). (7) digest now hashes detail strings not booleans -> new digest 5e14170de426d127. (8) 0x25/0x27 mislabeled END/HOME (are LEFT/RIGHT). (9) session header undated per AGENTS.md. Harness: 23 mutants, 21/21 gates, all green (MU22 initially CRASHED via a KeyError - crash-rejected per law, retargeted to a value-tuple mutation).
+
 ## Session 279 (2026-11-18, close-out: M313 MERGED as #294, docs cursor)
 - `milestone.py merge 294` verdict GREEN (gate pass 12 s on the review head), main = `eaf7d54`. No re-review arrived after the review-round head was pushed - recorded honestly as "none", not as a pass.
 - KNOWN STALE TEXT on main: the squash merge title reads "pumpA via widget-vtable slot 134" - superseded by NAMED ## M313 + this note's s278 review round (entries-at-addresses only, multi-table run). GitHub titles are immutable here; the docs carry the law.
 - `track_mode.py`: MODE=BUILD analyse_since_build=3 last_build=B22 next_rung=B23 -> NEXT FIRE BUILDS B23 from BUILD_SPINE.md (per-turn progress composed through the WRITER; B11's law in the written container, runnable acceptance, parity vs recorded trace, no box).
 - Budgets after this close-out: SESSION_NOTES ~63 KB, NEXT_PROMPT <= 12 KB (see footer).
+
 ## Session 280 (2026-11-18, B23 BUILD, zero box) - the queue's per-turn progress composed through the writer
 - track_mode MODE=BUILD (since_build=3); `milestone.py start B23` from main; this fire AUTHORED the rung into BUILD_SPINE.md (as B14-B22 did).
 - `sim/composedturn.py`: the 10-boundary Korolev run of `evidence/trace_m56_build_20261026_145157.jsonl` folds through the WRITER - each boundary re-parses the image (st+0x40, mirror+0x98, pen+0x4c, slots+0x50, tile/owner), runs the B12 visit law, writes the span back; r0 arrival grows the unit array by the same call. `sim/savewriter.py` gained identity/raw/queue override keys (backward-compat).
