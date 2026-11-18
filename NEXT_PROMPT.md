@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M317 done; track ANALYSE (since B24) - pick (iv) next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M318 done; track ANALYSE (since B24) - pick (v) next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -68,7 +68,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M317 + B1-B24 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M318 + B1-B24 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
@@ -80,9 +80,9 @@ collision-check + worktree FIRST).
   Full law NAMED ## M313.
   CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass: goals at bases, region
   flips, inline unit orders, kind-8 cancel + knockout. Full law NAMED ## M317.
-  OPEN PICKS after M317, in order: (iv) NAME the selection-REFRESH PAIR
-  (call 0x4e8d60 + call 0x4e78e0) - M315 proved the pair is the memo's reaction but neither
-  callee is in NAMED; (v) the 8 memo sites with NO local dedup guard - census their callers and
+  CLOSED (s289): pick (iv) refresh pair = FUN_004e8d60 unit-support census + FUN_004e78e0 pane
+  refresh (void(void), current-selection driven; shared kind dispatcher 4e75f0). NAMED ## M318.
+  OPEN PICK after M318: (v) the 8 memo sites with NO local dedup guard - census their callers and
   ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
   Lists live in NAMED ## M310 / ## M313 / ## M314 / ## M315 / ## M316, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill

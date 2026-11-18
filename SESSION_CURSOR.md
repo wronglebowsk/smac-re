@@ -1,7 +1,7 @@
-M318 IN PROGRESS (s289, desktop qwen4-max:free, loop paused). Pick (iv):
-NAME the selection-REFRESH PAIR - FUN_004e8d60 (1331 B/408 insns/4 callees)
-+ FUN_004e78e0 (5237 B/1589 insns/9 callees), called back-to-back from the
-SAME 12 sites in 7 fns (= M315's 12 memo sites; ds:0x68cbb4 = the index the
-pair already ran for). STATIC zero-box. Prior: NAMED ## M315/M311; REFRESH
-in scripts/m315_bb4_census.py:31 are TARGETS, not sites. Next: skeleton
-m318_refresh_pair.py -> pseudocode + callee/store censuses + arg decode.
+M318 CENSUS GREEN (s289, desktop qwen4-max:free, loop paused). Pick (iv)
+ANSWERED: refresh pair = FUN_004e8d60 unit-support census + FUN_004e78e0
+pane refresh (both void(void), read current selection; 12 back-to-back
+pairs = M315 memo sites; shared kind dispatcher 4e75f0). Acceptance:
+m318_refresh_pair.py twice-equal 9750109f8328b740; m318_mutate.py 12/12+1
+NO-OP 6c1f6852f2a338b7. NEXT: gate -> submit -> review -> merge; then (v)
+the 8 unguarded memo sites. B25 spine NOT authored. #180 FAIL stands.
