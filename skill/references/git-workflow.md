@@ -186,3 +186,12 @@ Greptile caught it). The only law is the query: `git log --oneline -2`, `git cat
 `git merge-base --is-ancestor <sha> HEAD` (its exit code, not your memory, is the answer). Prove preservation
 before claiming it, and prove loss before re-authoring - re-writing a change whose commit still exists makes a
 duplicate you then have to explain in the PR body.
+
+## The checkpoint gate compares header IDENTITIES, not section counts (s275, PR #290)
+`check_checkpoint` passes when `set(session_sections(HEAD)) - set(session_sections(base))` is non-empty, so
+appending bullets to the current `## Session N` section does **not** satisfy it. A follow-up PR that edits both
+`SESSION_NOTES.md` and `NEXT_PROMPT.md` (cursor handoffs, review-round close-outs) therefore FAILS with
+"no new '## Session' section" unless it opens `## Session N+1`. Do that rather than back-dating the previous
+session's entry or reaching for `gate.py --docs-only` (which `milestone.py submit` does not forward anyway).
+Keep the new section's first line explicit about *why* it exists ("same working chain as Session N; the fire hit
+its iteration cap mid-milestone") so a later reader does not think the fire did two unrelated things.
