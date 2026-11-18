@@ -476,7 +476,19 @@ driving/dialog state machines: `references/wine-operations.md`)
   assert the two classes are EXACT COMPLEMENTS of each other - "12 of 22 stores are followed by the pair, 10 are
   the -1 sentinel, and the 10 are exactly the sentinel-valued ones" is a claim that can be false, which "22 stores
   exist" is not. Carry the rival it kills and the number that kills it (a store fed from a NEIGHBOURING index
-  would survive the pair law, so the def-walk census, not the pair law, refutes "second cursor").
+  would survive the pair law, so the def-walk census, not the pair law, refutes "second cursor"). (Post-#301
+  correction: the pair reach is MEASURED 5..17 B, not "16 B" - a bound quoted in prose must be the bound the
+  gate pins, re-checked after review-round measurements move it.)
+- **Concurrent fires can takeover mid-flight (s285):** isolation is verified at fire START, but a fixer fire can
+  finish, post the review reply, merge the PR and merge its close-out while a verifier fire is still re-running
+  acceptance. Detect via new commits appearing under a read file / clean status with foreign commits; never fight
+  it - re-apply YOUR delta on a fresh branch off origin/main (content re-application, not cherry-pick, when the
+  base history diverged) and keep the blind re-runs as INDEPENDENT VERIFICATION with committed records
+  (`evidence/sN_reverify_*.txt` cited by path:line - prose claims of reruns without saved records are findings).
+- **A review poll that prints only comment COUNTS is not a poll (s285, #303):** a docs PR merged on `comments=2`
+  without reading the bodies = two untriaged P2s merged (missing evidence citations; a recorded 601 B vs actual
+  594 B size claim). Before ANY merge - docs PRs included - print the comment BODIES (or explicitly record zero)
+  and triage each; also re-`fetch`+status immediately before each doc write, not only at fire start.
 - **When a gate's fact feeds several gates, the mutation harness must declare a SET of expected reds, not one.**
   Changing the refresh pair's callee, or tightening its 16-byte reach, reddens A3+A4+A9 at once - the memo set
   feeds all three. Demanding exactly-one red pushed me to retarget two mutants into WEAKENINGS (`==` -> `>=`),
