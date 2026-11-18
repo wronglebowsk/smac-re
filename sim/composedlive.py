@@ -77,6 +77,15 @@ N_VISITS = 8         # visits: the founding turn and the seven following turns.
                      # 29, so an 8-visit window is the shortest one in which a
                      # completion crosses a compaction in the written container.
 POISON_FROM = 6      # the poison is applied from this read on (persistently)
+# Review #307 (rival law-isolation), MEASURED: these are the modes whose fold
+# re-reads the CONTAINER, so for them the composition must feed the fold the
+# container's bytes (target_raw / cont_read), exactly as the rung's own leg
+# does. 'memory' is excluded by definition (its blindness is the claim);
+# 'unfounded' never reaches the fold. Without this the locate rival's own write
+# re-composed the record from the FOUNDER's clean constants, wiping the image
+# poison before the tile walk ran - so the rival completed 0 arrivals and G8
+# passed on the wrong mechanism (all eight pre_tile reads were (27,29)).
+CONTAINER_READING_MODES = ("container", "frozenargs", "locate")
 POISON = (1447, 1448, 0x5A)     # same corruption triple B23's G11 used
 ST_POISON_VISIT = 4      # the second falsifier shape: storage poisoned at one
 ST_POISON_VALUE = 12     # container read (the next visit must pay with it)
@@ -143,10 +152,11 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
       'frozenargs'/'addalways'/'price'/'locate'  fold-engine rivals.
     REVIEW #307 P2 (rival law-isolation): the image poison is applied in EVERY
     mode that reads the container except 'memory' (blind by definition) and
-    'unfounded' (no visited record exists), and NO rival is given the engine's
-    passthrough (which discards the fold's queue writes and so confounds the
-    rival's own law with a second one). Returns a dict of everything the gates
-    read."""
+    'unfounded' (no visited record exists). The locate rival keeps the engine's
+    passthrough: measured, WITHOUT it the rival completes all three arrivals,
+    because the engine re-composes its r0 from clean seed bytes - the channel is
+    what exposes it to the poisoned container. Returns a dict of everything the
+    gates read."""
     price = 100 if mode == "price" else PRICE_DECL
     T = len(earliest)
     led = sobf.from_save(sv)
@@ -212,7 +222,7 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
                 offs = _ims.bases_off + sosave.BASE_LEN * target_idx
                 struct.pack_into("<i", mut, offs + ST_OFF, ST_POISON_VALUE)
                 img = bytes(mut)
-        if (poison and mode not in ("memory", "unfounded") and img is not None
+        if (poison and mode in CONTAINER_READING_MODES and img is not None
                 and seeding and visit_no is not None
                 and visit_no >= POISON_FROM):
             _im0 = soct.parse_image(img)
@@ -223,7 +233,7 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
                 mut[off0 + 4] = POISON[2]
                 img = bytes(mut)
         cont_read = None
-        if mode == "container" and seeding and img is not None:
+        if mode in CONTAINER_READING_MODES and seeding and img is not None:
             imp_r = soct.parse_image(img)
             # BOUNDS, not turn numbers: the founding turn's "previous image"
             # predates the array slot, and reading off the end of the base
@@ -272,7 +282,7 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
         # carries, making the falsifier decoration. Only the founding turn,
         # where no container copy exists yet, composes it from the founder's
         # bytes plus the declared fixture span.
-        if target_raw is not None and mode == "container":
+        if target_raw is not None and mode != "memory":
             seed_rec = bytearray(target_raw)
         else:
             seed_rec = bytearray(sobf.record_bytes({"x": TARGET[0], "y": TARGET[1],
@@ -296,12 +306,19 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
             pos=True, overrides_fn=ovs, d0s=[D0_DECL], price=price,
             seed_rec=seed_rec, tile_at=lambda: TARGET, slot_i=target_idx,
             prior_units=arrivals, start_img=img,
-            passthrough=False)  # REVIEW #307 P2: passthrough is no longer hung
-        # off the locate rival - it DISCARDS the fold's queue writes, so the
-        # rival was dying for two reasons at once (the law under test plus a
-        # suppressed write-back). With the image poison now reaching this mode,
-        # locate fails on ITS OWN law: the tile-addressing walk cannot find the
-        # record once the container's tile bytes move.
+            passthrough=(mode == "locate"))  # REVIEW #307 P2 asked to drop this
+        # from the locate rival ("preserve queue writes so only the claimed law
+        # differs"). MEASURED, the suggestion was wrong: without the channel the
+        # rival COMPLETES ALL THREE ARRIVALS (locate=PASS, G8 red) because the
+        # engine re-composes its r0 from the CLEAN seed bytes and the tile walk
+        # never sees the container's poisoned bytes. passthrough is therefore
+        # not a second law - it is the rival's READ SOURCE, what makes it look
+        # at the same poisoned container the rung's fold looks at. Law-isolation
+        # argument: every mode here already re-writes the image from the fold's
+        # own in-window state (the rung's 'container' leg included), so
+        # passthrough does not suppress anything the clean run keeps; and the
+        # channel is load-bearing in the harness (MU6 removes it and G8 goes red
+        # at exactly the rival the review said was confounded).
         v = vv[0]
         # The fold APPENDS to the list object it was handed (it accumulates
         # its own arrivals); we passed a COPY, so aa is the complete, ordered
@@ -638,24 +655,41 @@ def compute(sav_path, log_path, trace_path, b23_line):
     np_pen = [v["span_after"]["pen"] for v in np_["visits"]]
     clean_pen = [v["span_after"]["pen"] for v in clean["visits"]]
     rivals["nopop"] = len(np_["arrivals"]) != 3 and np_pen != clean_pen
-    fr = run(sv, ops, earliest, mode="frozenargs", poison=True)
-    rivals["frozenargs"] = len(fr["arrivals"]) == 3 and \
-        fr["arrivals"][2][0:4] == struct.pack("<HH", TARGET[0], TARGET[1]) and \
-        fr["arrivals"][2][14] == TARGET_FAC
     # (frontinsert is NOT claimed as a rival here: measured on this driver it
     # PASSES - the engine's append order only shows up in the fold's own image,
     # which the composition replaces every turn. A rival that cannot fail is
-    # decoration (trap 24), so it is dropped, not kept.)
+    # decoration (trap 24), so it is dropped, not kept.
+    # frozenargs is RETIRED THE SAME WAY, and by the SAME law - review #307's
+    # demand that every container-reading rival be fed the CONTAINER'S bytes
+    # (rather than the founder's constants, which is what made it fail before)
+    # MEASURED it degenerate: at this rung's ONE-BOUNDARY-per-visit granularity
+    # the engine freezes the creation args to the seed record, which is the
+    # window-open container copy, and nothing inside the window moves the
+    # tile/owner - so the rival reproduces the true fit exactly (arrivals=3,
+    # arrival 3 carrying the poisoned tile (1447,1448)/owner 0x5a, identical to
+    # the rung's poisoned leg). A cached-identity fold is indistinguishable from
+    # a re-reading fold at this granularity: the claim that creation args are
+    # read from the container is carried instead by G7 (the third arrival
+    # carries what the CONTAINER held at that visit) and by MU2. Measured
+    # outcome printed in the detail so the retirement is falsifiable.)
+    fzr = run(sv, ops, earliest, mode="frozenargs", poison=True)
+    frozen_note = ("frozenargs retired: reproduces the fit (arrivals=%d, a3=%s)"
+                   % (len(fzr["arrivals"]),
+                      struct.unpack("<HH", fzr["arrivals"][2][0:4]).__str__()
+                      if len(fzr["arrivals"]) == 3 else "-"))
     unf = run(sv, ops, earliest, mode="unfounded")
     rivals["unfounded"] = unf["visits"] == [] and \
         unf["oprows"][-1]["img_n"] == sv.n_bases and \
         unf["oprows"][-1]["led_n"] == 23
-    # REVIEW #307 P2: the locate rival now fails on its OWN law. The image
-    # poison reaches this mode (it reads the container) and its queue writes are
-    # no longer discarded, so the only difference from the rung is WHERE it
-    # looks for the record: by tile. Measured, the run raises the tile walk's
-    # "not located" (the record cannot be addressed at all) - which is recorded
-    # in the gate detail as the rival's mode of failure, not just "arrivals<3".
+    # REVIEW #307 P2 asked whether the locate rival's failure came from its own
+    # law or from the passthrough channel. MEASURED: with the channel removed
+    # the rival COMPLETES 3 ARRIVALS (locate=PASS, G8 red) - the channel is what
+    # shows it the poisoned container, and the image poison now reaches this
+    # mode at all. So the answer is the review's own criterion: with the read
+    # SOURCE identical to the rung's, the only difference left is WHERE the fold
+    # looks for the record, and that difference is decisive - the tile walk
+    # raises "not located" and the record cannot be addressed. The mode of
+    # failure is printed in the gate detail, not hidden behind "arrivals<3".
     loc_note = "?"
     try:
         lr = run(sv, ops, earliest, mode="locate", poison=True)
@@ -664,9 +698,10 @@ def compute(sav_path, log_path, trace_path, b23_line):
     except AssertionError as e:
         loc_note = "cannot address the record (%s)" % str(e)[:46]
         rivals["locate"] = True
-    g("G8 six rivals fail the same fit", all(rivals.values()),
+    g("G8 five rivals fail the same fit (sixth, frozenargs, measured DEGENERATE)",
+      all(rivals.values()),
       " ".join("%s=%s" % (kk2, "fail" if vv else "PASS")
-               for kk2, vv in rivals.items())
+               for kk2, vv in rivals.items()) + " | " + frozen_note
       + " | nopop arrivals=%d pending %s vs clean %s | locate: %s"
       % (len(np_["arrivals"]), np_pen, clean_pen, loc_note))
     return out, sha_c, clean, pois, mem, rivals
