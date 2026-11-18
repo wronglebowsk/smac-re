@@ -1,68 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-272-272.md` (1 sessions). Read it only when a question reaches back before session ## Session 273.
-
-## Session 273 (2026-11-17, BUILD, zero box) - B22: both save record arrays grown in ONE writer call, CREATE leg fed by the RELOADED base record
-- THE PICK from `track_mode.py` (`MODE=BUILD next_rung=B22`); B22 was UNAUTHORED (no rung in
-  `BUILD_SPINE.md`, no NAMED row, no commit) so this fire authored it, the way B14-B21 did.
-- MEASURED, three claims of mine were FALSE before the bytes answered:
-  1. the rung text asserted "the region `units_off`..EOF is the original lifted by ONE amount" -
-     wrong: `savewriter.build_image` emits originals then grown bases and re-anchors the tail there,
-     so only the tail lifts by the full 1572 B and the base originals lift by 52. The gate now
-     compares FIVE bands (`unit originals 3484 | the ONE new unit 52 | base originals 5472 |
-     the grown bases 1520 | tail 10800`), each against its own source.
-  2. `r["new_recs"]` are 3-byte `(fac,x,y)` tuples, not 304-B records - a gate comparing them to
-     image bytes could never pass. `basefound.record_bytes(led.records[-5+k])` is the right object.
-  3. the header diff is 3 bytes, not 4 ("one per modeled field" was decoration; cur/tf already
-     hold their recorded values in this save;
-  4. and the loudest one, caught by GREPTILE (P1 on #286) rather than by my own gates: the G5 claim that
-     the header counts and the shape scan "DISAGREE by exactly the unit growth". It came from applying
-     image A's count arithmetic (`units_off + 52*(n_units+1)`) to image B's scan anchor. `sim/save`
-     derives `units_off` FROM `bases_off`, so measured per-image (`bases_pred = units_pred + 52*n_units`)
-     the two methods AGREE byte-for-byte and `closes` is True on orig/B21/B22. The gate now carries its
-     own retraction in its printed text instead of the false claim.
-- FOUND: `sim/save`'s shape locator CONFIRMS ONLY THE 18 NAMED bases of the grown container -
-  M282's founders write an empty name span and `_base_ok` wants `[ -~]{3,30}\x00` at +19. A grown
-  base is locatable by COUNT, never by SHAPE, and on a container that grew only ONE array the
-  count position and the shape anchor DISAGREE by exactly that growth (226319 vs 226267).
-- ACCEPTANCE: `python3 -m sim.selftest --b22 programs/saves/m54b_clean.SAV` -> **PASS B22: 11/11**;
-  `python3 -u -m sim.composedgrowth` prints the same 11 labels; two runs byte-identical
-  (digest a7ec6d38ba67cbe9, image sha256 f7d90eb77ca7abac); evidence file == fresh rerun.
-- SELF-FOUND DEFECT, kept visible: `sim/composedgrowth.py` carried a STALE `acceptance()` draft
-  BELOW the good one (truncating labels to 64 chars, printing the report itself, recomputing a
-  third time). Python let the later `def` win, so `--b22` silently ran the shadowed version and
-  the PASS line still read 11/11 - a green result from the wrong code path. Duplicate deleted.
-
-- POST-REVIEW on #286 (1 P1 + 3 P2; all four accepted, none argued with):
-  * G5 retracted as above (the P1). It is a repeat of s272's lesson in a new costume: a comparison built
-    from two different objects, asserted as a property of one.
-  * G9's falsifier (P2) re-read the corrupted image at its OWN call site, so a regression that made the
-    real leg read the MODEL stayed green. Now: ONE shared producer `record_from_image(image, idx, head)`
-    used by both the clean and the corrupted case; the perturbation covers tile AND faction; the gate
-    asserts the created unit CARRIES the bad bytes (x/y span + owner byte), not merely that it differs.
-  * NEW G12 (P2, my design) runs the MUTATION EXPERIMENT in-process every run: rebind the shared leg to
-    read the model, restore in `finally`, and assert the mutant's SIGNATURE - G9's record collapses back
-    onto G3's (the model's own (27,29) fac 1) while the real leg carries (1447,1448) fac 5A. G3 is
-    DECLARED blind to it (the fixture's model tuple equals the container tuple), so the honest framing
-    replaced a gate that could not fail. Acceptance is now **PASS B22: 12/12**, two runs byte-identical
-    (report digest 06dd4ac599fd0..., written image sha256 f7d90eb77ca7abac unchanged).
-  * NAMED citations (P2) were one line off after the evidence regenerated; the block was rewritten and a
-    resolver now checks every cited line actually contains the gate label its row names - CITATIONS_RESOLVED.
-  * A skill law I wrote THIS fire was false too: I claimed `milestone.py start` can branch from the
-    worktree's stray tip. `cmd_start` does `git checkout main` + `git pull --ff-only` and only THEN
-    `git checkout -b`, so it never can. Law rewritten: never assert a stray commit's fate either way
-    without `git merge-base --is-ancestor` (its exit code, not my memory).
-  * Process slip worth keeping: my docs-patch script aborted on a stale multi-line anchor (the `submit`
-    step had re-wrapped SESSION_NOTES.md), and `git add -A && git commit` ran anyway - so commit b2b357d
-    shipped corrected code with stale docs. Anchors that span wrapped prose must be matched by line
-    number or single unique line, and a commit that follows a failed patch step is a FAILED step, not a
-    clean one.
-- LANDED: #286 merged as `3f645e1`; cursor handoff #287 merged as `138182c`. `track_mode.py` then reads
-  `MODE=ANALYSE analyse_since_build=0 last_build=B22 next_rung=B23` - the flip lands on the fire right after
-  a build merge, so the handoff must be written AFTER merging (my first cursor draft told the next fire to
-  author B23, which is wrong: B23 is queued behind an ANALYSE fire). Law added to the loop template.
-  Final B22 numbers to quote: **12/12 gates**, written image sha256 `f7d90eb77ca7abac`, five-band layout
-  3484 + 52 + 5472 + 1520 + 10800 B, header diff 3 B (`0x44`, `0x48`, `0x54`).
+Older sessions: `docs/sessions/sessions-273-273.md` (1 sessions). Read it only when a question reaches back before session ## Session 274.
 
 ## Session 274 (2026-11-17, STATIC, zero box) - M311: ds:0x68cbb0 is the CURRENT-RECORD INDEX; ds:0x8f0d60 its derived 304-B record pointer
 - THE PICK from the s273 handoff, list item (a) `ds:0x68cbb0` (340 xrefs, exactly 6 stores). **It swallowed
@@ -277,6 +215,7 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 
 - MERGED #309 -> main 3a2da59. M317 acceptance at the merge head: census twice byte-identical digest 5263767ee3bf4bba (`evidence/m317_engine_decides.txt:223`), harness 22/22 scored + 1 declared NO-OP digest a0729996723078a4 (`evidence/m317_mutate.txt:26`); all 5 review P2s fixed pre-merge (per-push arg trace + clobber-stop, M250 full-insn pin, measured C5 caller gates, per-pid harness copy, path:line cites). Track: MODE=ANALYSE, analyse_since_build=1.
 - Skill sync: `references/instrument-laws.md` gains the argument-push decode law (per-push trace, clobber-stop, measured caller gates) in BOTH copies (live + `skill/`); SKILL.md unchanged. The squash title's "goals-at-bases a/d/s/n/^" is pre-review phrasing - n is at UNIT coords; NAMED ## M317 governs.
+
 ## Session 289 (2026-11-18, M318 - desktop session, qwen4-max:free, loop paused)
 
 - Pick (iv) ANSWERED: the selection-refresh pair = `FUN_004e8d60` = selected-base UNIT-SUPPORT CENSUS, then `FUN_004e78e0` = selected-base PANE REFRESH. Both `void(void)` (shard_012.c signatures, C5): they read the CURRENT selection (ds:0x68cbb0 index + ds:0x8f0d60 derived pointer, M311), no passed index. 12 back-to-back call pairs (gap 5) in 7 owners = exactly M315's 12 memo sites, each within 17 B of a ds:0x68cbb4 store (G2/G3).
@@ -287,6 +226,7 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 - REVIEW ROUND #311 (3 P2, ALL accepted): (1) condition pins added - the home-base cmp eax,edi + je, the 94d684 support-limit clamp chain (cmp 7 / mov 7 / count-vs-table cmp), and the dispatcher's ja-default + jump table read from the PE .text bytes (0x4e7664 -> 4e7602/4e761e/4e763a/4e7656); (2) G3 reach now measures store->SECOND call (M315's 17 B was to the second callee; the old first-call check accepted 22) - worst measured = 17, boundary mutant MU14 (reach 16) reddens; (3) the digest is now computed and PRINTED by the instrument over name+verdict+detail rows (the old citation was an external sha256 of the file, not a measured-results digest). MU14-MU18 gate the fixes (`evidence/m318_mutate.txt:15-20`).
 - LESSONS: the pick's "call 0x4e8d60" notation names the CALLEE (M315's REFRESH tuple holds targets) - probing the address as a call site reads the prologue and dies on int('ebp'). Unit stride here is 52 B (0x34); the skill's unit_set_position i*0x1a is WORD units (the pointer-scale trap).
 - OPEN: the three kinds' game words (resource-triad candidate, INFERRED); unit+0x26 semantics; the 52-B array at 98ada8 indexed by unit+0xa; the pane+3 clamp byte.
+
 ## Session 289-merged (2026-11-18, #311 merged - post-merge cursor correction)
 
 - MERGED #311 -> main 241b9d6. M318 acceptance at the merge head: census twice byte-identical with PRINTED digest 2e81643277e3a23b (`evidence/m318_refresh_pair.txt:100`), harness 17/17 scored + 1 declared NO-OP digest 39e6ce9f2334fe87 (`evidence/m318_mutate.txt:21`); all 3 review P2s fixed pre-merge (condition pins incl. the PE jump-table bytes, store->SECOND-call reach, instrument-printed digest). Track: MODE=ANALYSE, analyse_since_build=2; the 4th fire builds B25, whose spine text is NOT authored. Cursor corrected from the pre-merge "push review fixes" state; NEXT_PROMPT already named pick (v).
