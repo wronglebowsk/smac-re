@@ -130,16 +130,37 @@ def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
         if len(bases_override) < orec:
             raise ValueError("bases_override shorter than orig count %d" % orec)
         for i in range(len(bases_override)):
+            b = bases_override[i]
+            if b.get("identity"):          # rung B23: emit the original verbatim
+                out += d[sv.bases_off + so.BASE_LEN * i:
+                         sv.bases_off + so.BASE_LEN * (i + 1)]
+                continue
             if i < orec:
                 rec = bytearray(d[sv.bases_off + so.BASE_LEN * i:
                                    sv.bases_off + so.BASE_LEN * (i + 1)])
+            elif b.get("raw") is not None:  # rung B23: a recorded seed record
+                raw = bytes(b["raw"])
+                if len(raw) != so.BASE_LEN:
+                    raise ValueError("raw seed must be %d B, got %d"
+                                     % (so.BASE_LEN, len(raw)))
+                rec = bytearray(raw)
             else:
                 rec = bytearray(so.BASE_LEN)
-            b = bases_override[i]
             struct.pack_into("<H", rec, 0, int(b["x"]) % 0x10000)
             struct.pack_into("<H", rec, 2, int(b["y"]) % 0x10000)
             rec[4] = b["own4"] % 256
             rec[5] = b["fac"] % 256
+            q = b.get("queue")             # rung B23: the modeled queue span
+            if q is not None:
+                if q.get("st") is not None:
+                    struct.pack_into("<i", rec, 0x40, int(q["st"]))
+                struct.pack_into("<i", rec, 0x4c, int(q["pen"]))
+                for k, v in enumerate(q["slots"]):
+                    struct.pack_into("<i", rec, 0x50 + 4 * k, int(v))
+                if q.get("mirror") is not None:
+                    struct.pack_into("<i", rec, 0x98, int(q["mirror"]))
+                if q.get("d0") is not None:
+                    struct.pack_into("<i", rec, 0xd0, int(q["d0"]))
             out += rec
         out += d[sv.bases_off + so.BASE_LEN * orec:]
     return bytes(out)

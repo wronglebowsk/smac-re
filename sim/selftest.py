@@ -1618,6 +1618,34 @@ def run_b20(sav_path, results):
     return 0
 
 
+def run_b23(sav_path, trace_path, results):
+    """Rung B23: the queue's PER-TURN progress composed through the WRITER - the
+    B11/B12 laws run over 10 recorded boundaries with every visit's inputs read
+    out of the RELOADED image and every result written back through the writer,
+    the arrival grown through the same call.  All claims are the module's -
+    sim/composedturn.py authors them and this hook only relays them.
+    No box, no /proc, no gdb."""
+    import os as _os
+    from . import composedturn as soct
+    for pth in (sav_path, trace_path):
+        if not _os.path.exists(pth):
+            return fail("B23: missing input: %s" % pth)
+    soct.acceptance(sav_path, trace_path, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B23: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B23: %d/%d gates - the production queue's per-turn progress "
+          "(storage+mirror+pending+10 slots) round-trips through the B8 writer "
+          "at every recorded boundary, the r0 arrival is grown by the same write, "
+          "and a corruption that lands only in the container changes the fold's "
+          "later verdicts (no box time, no /proc, no gdb)"
+          % (len(results), len(results)))
+    return 0
+
+
 def run_b22(sav_path, log_path, trace_path, results):
     """Rung B22: both save record arrays grow in ONE writer call, and the B12 CREATE
     leg is fed by the RELOADED base record (the save's INBOUND half).  All claims are
@@ -1721,6 +1749,10 @@ def main(argv=None):
                     help="rung B20: the byte-twin visit counter executed "
                          "(M303 byte law + M302 pinned state) vs the recorded "
                          "m302/b18 numbers and the m294 rows")
+    ap.add_argument("--b23", nargs="*", metavar="SAV",
+                    help="rung B23: the queue's per-turn progress composed "
+                         "through the writer, parity vs the recorded m56 "
+                         "10-boundary run (defaults: <SAV> <trace_m56_145157>)")
     ap.add_argument("--b22", nargs="*", metavar="SAV",
                     help="rung B22: both record arrays grown in ONE write, the CREATE "
                          "leg fed by the reloaded base record "
@@ -1784,6 +1816,11 @@ def main(argv=None):
     if args.b20 is not None:
         sav = args.b20[0] if args.b20 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b20(sav, results)
+    if args.b23 is not None:
+        sav = args.b23[0] if args.b23 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        tr = args.b23[1] if len(args.b23) > 1 else os.path.join(
+            REPO, "evidence", "trace_m56_build_20261026_145157.jsonl")
+        return run_b23(sav, tr, results)
     if args.b22 is not None:
         sav = args.b22[0] if args.b22 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         lg = args.b22[1] if len(args.b22) > 1 else os.path.join(
