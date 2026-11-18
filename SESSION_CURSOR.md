@@ -1,4 +1,4 @@
-M315 SUBMITTED on milestone/m315 (pick (ii) CLOSED): ds:0x68cbb4 = the
+M315 SUBMITTED as #301 on milestone/m315 (pick (ii) CLOSED): ds:0x68cbb4 = the
 REFRESH MEMO of call 0x4e8d60 + call 0x4e78e0 (22 stores partition exactly
 into 10 -1-sentinel clears + 12 memo updates, 8 fed by ds:0x68cbb0, 4 by a
 caller slot; local dedup guard at only 4/12). 9/9 gates, digest
