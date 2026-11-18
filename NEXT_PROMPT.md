@@ -67,9 +67,10 @@ collision-check + worktree FIRST).
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
   **CLOSED (s278): pick (i') NAME THE EVENTS - ONE interaction band
-  [0x50bb20,0x5175b4) carries 20 of 28 hub owners + 9 thunk owners; pumps 00512b40 (menu IDs
-  0x30041-0x3007a + nav VKs, via vtable 0x672290 slot 134) and 00516b80 (Q-Z order keys, startup
-  callback 0x51892d) call INTO it; map_click_handler (M28) reaches it directly. Full law NAMED ## M313.
+  [0x50bb20,0x5175b4) carries 20 of 28 hub owners + 9 thunk owners; pumps 00512b40 (menu-ID + nav-VK two-stage switches; its door FUN_0041bda0
+  is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
+  startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
+  Full law NAMED ## M313.
   OPEN PICKS after M313, in order: (i'') what ARE FUN_004d3f70 (calls 15 band members) and the
   FUN_004c5d60 dialog-family thunks (0x4c2e90-0x4c3760); (ii) ds:0x68cbb4's 19 writers outside an
   index-store window (22 stores, 3 in-window; M311 refused the pairing); (iii) still open from
