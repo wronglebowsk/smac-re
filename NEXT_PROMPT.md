@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (s276: open pick (i) WHO fires the selection check ANSWERED as M312 - 26/26 gates + 17/17 mutants, M310 site-1 RETRACTED; B22 MERGED (#286); historical header + CLOSED enumeration + traps 14-15 VERBATIM at `docs/nextprompt-archive-m299-b20.md` and `docs/pick-archive.md` section trim-s262. STATE: B1-B22 + M54A-M312 done; track ANALYSE, B23 QUEUED; pre-existing #180/#105 NOT this chain.)
+# NEXT_PROMPT.md - footing (s277 close-out: M312 MERGED (#292) - who fires the selection check, M310 site-1 RETRACTED, review round #292 fixed all 3 P2s; B22 MERGED (#286); historical header + CLOSED enumeration + traps 14-15 VERBATIM at `docs/nextprompt-archive-m299-b20.md` and `docs/pick-archive.md` section trim-s262. STATE: B1-B22 + M54A-M312 done; track ANALYSE, B23 QUEUED; pre-existing #180/#105 NOT this chain.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -26,8 +26,9 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
 `evidence/b21_composedrun.txt:93`). Build rung **B22 MERGED** (#286, `3f645e1`; 12/12 gates, `evidence/b22_composedgrowth.txt`) - and B23 is now **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE analyse_since_build=0 last_build=B22` after every build merge, so the fire after B22 ANALYSES. ANALYSE PICKS still open, in order of value: (a) `ds:0x68cbb0` - `.data`, 340 xrefs, exactly 6 stores, all in `0x4e3000-0x4f6000`; (b) the 304-B table at `0x95da40` bit `0x20`; (c) `FUN_00470fe0` / `004715d0` / `00471fd0` (M310's neighbours). B23 = the queue's PER-TURN progress composed through the WRITER (B11's law in the written container, not in memory) - build it when track_mode says BUILD again.
-LANDED as #289 (main 17e3e2e): 8/8 gates, 15/15 mutants, digest 625cd5877271cd85. M312 submitted,
-OPEN (branch milestone/m312): 27/27 gates, 23/23 mutants, digest 8751c5af18c5a8f8 (post-review head).
+LANDED as #289 (main 17e3e2e): 8/8 gates, 15/15 mutants, digest 625cd5877271cd85. M312 MERGED
+as #292 (main ec63d7a): 27/27, 23/23, digest 8751c5af18c5a8f8; 3 P2s fixed at
+review head (Session 277).
 M311 ANSWERED census picks (a)+(b) as ONE object (see NAMED's M311 block); OPEN PICKS below. Build candidates: (i) B21's composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
 the unit array while the ledger grows - B21 proved year+counts compose together); (ii) the pod-scan PRECHECK chain
 end-to-end (B15+B16+B17 with save-only inputs).
