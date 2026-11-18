@@ -1,7 +1,7 @@
-M317 MERGED #309 (main 3a2da59), s288. MODE=ANALYSE (analyse_since_build=1,
-last_build=B24). Acceptance at merge: census twice-equal 5263767ee3bf4bba;
-harness 22/22+1 NO-OP a0729996723078a4; 5 P2 fixed pre-merge. NEXT: pick (iv)
-NAME the selection-REFRESH PAIR (call 0x4e8d60 + call 0x4e78e0; M315 proved
-the pair is the memo's reaction, neither callee in NAMED); or (v) the 8
-unguarded memo sites. B25 spine NOT authored. #180 documented-FAIL stands.
-Loop job paused; desktop session (qwen4-max:free) owns the work.
+M318 IN PROGRESS (s289, desktop qwen4-max:free, loop paused). Pick (iv):
+NAME the selection-REFRESH PAIR - FUN_004e8d60 (1331 B/408 insns/4 callees)
++ FUN_004e78e0 (5237 B/1589 insns/9 callees), called back-to-back from the
+SAME 12 sites in 7 fns (= M315's 12 memo sites; ds:0x68cbb4 = the index the
+pair already ran for). STATIC zero-box. Prior: NAMED ## M315/M311; REFRESH
+in scripts/m315_bb4_census.py:31 are TARGETS, not sites. Next: skeleton
+m318_refresh_pair.py -> pseudocode + callee/store censuses + arg decode.
