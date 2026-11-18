@@ -118,3 +118,23 @@ A `gdb -batch` script has two failure modes that both leave the harness looking 
   `TracerPid` before any next step and `kill -TERM` the stale gdb BY PID: gdb detaches on SIGTERM, restoring
   the patched `int3`s, and the loaded game survives with its counters unchanged. Never SIGKILL it — that
   leaves the `int3`s in memory.
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **The gdb command-list killer class (all of it aborts the sourced script at the FIRST hit and detaches — the
+  log reads as a clean zero-event run while the turn driver exits 0):** a printf ERROR in a commands block (so:
+  no inferior strings — `%.20s` of an inferior pointer errors; expressions go in printf ARGUMENTS, specs must
+  match; a format-pasted expression prints ITSELF and the stream parses as zero events); a MEMORY WRITE in a
+  commands list (`set {int}ADDR = 1` is "not an lvalue") — **put pokes in Python: `os.pwrite(fd, ...)` on
+  `/proc/<pid>/mem` succeeds while gdb is attached** — keep command lists print-only; an UNGUARDED ARMED-time
+  deref (`ds:0x8f0d60` reads 0 until a pane opens — `if $reg != 0 … end` or print the register alone; a /proc
+  reader must return -1 on OSError, EIO not 0); a `dump binary memory` with a non-literal target, arithmetic
+  range, or `python … end` block — bake literal paths + literal addresses, remember gdb convenience-variable
+  arithmetic is 32-bit SIGNED (compute lengths in Python), one dump per run with an `off=` field, and
+  **`append binary memory` is what makes a per-hit series work** (full rules: `references/gdb-command-list.md`).
+
+- **Never build the gdb command list with Python `%`-format** — the template is full of `%d`/`%x` and Python
+  eats the first ones, silently rewriting the breakpoints. Bake literals or `str.replace()` a unique token, and
+  diff the emitted `scratch/<tag>.gdb` before attaching. Use `stdbuf -o0`, drain gdb's pipe, drive + snapshot in
+  ONE backgrounded job (`scripts/m53n_drive.py` is the template).

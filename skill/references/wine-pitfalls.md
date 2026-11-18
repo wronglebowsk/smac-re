@@ -229,3 +229,27 @@ solved there (uppercase-`PTR` greps, pointer-form stores, operand width).
 Depth: `references/wine-operations.md`, `references/wine-headless-harness.md`
 (turn automation, OCR/dialog state machine), `references/wine-runnability.md` (what runs at all).
 
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **Watchpoints:** x86 gives 4 hw slots (an 8-byte window needs 8-alignment = 2 slots); they fire on VALUE
+  CHANGE, so a same-value rewrite is invisible — count stores with silent bps AT the store and keep the
+  watchpoint as the "any other writer" check. **Never watch a field the display reads constantly**
+  (`base+0x40`): the inferior crawls — break on the STORE sites instead and condition each on the address the
+  store's OWN encoding computes (`[reg*4+disp]` holds `(index*stride)/4`, `[reg+disp]` the byte address —
+  comparing the register against the bare index never fires; §9.3 of `static-store-census.md`). Side-values at
+  a store site are not evidence. **A bp on a LOAD prints the register's PREVIOUS value; a bp on a skipped loop
+  body never fires (a zero there is the gate); round-mutated values cannot come from a round-start snapshot.**
+  **Do not `si` for the after value** — `si` inside a commands list makes `gdb -batch` stop and DETACH after one
+  hit; for `mov [reg+disp],src` the source operand IS the value, and the sleeping /proc sampler proves it. A
+  hw watch reports `$pc` PAST the writing instruction — disassemble BACKWARDS from a hit. When the governing
+  field is a UI cursor/selection, POKE it and prove the write lands (and refuse the shape when the poked value
+  and the rival prediction agree).
+
+- **Label a printed register from the ENCODING; entry args come from `$esp`, not `$ebp`** (a bp at the first
+  instruction sits before the prologue, so `$ebp` is the CALLER's frame: args at `*(int *)($esp+4)`, caller at
+  `*(int *)$esp` — the return-address field is the cheapest caller census). Check the prologue for
+  `mov reg,[ebp+8]`-style loads + reassignments: a callee-saved register holding arg 1 for the whole body is a
+  PARAMETER, not a cursor. Print raw AND derived forms (`$ebx`, `$ebx/52`, `$ebx%52`) so a mislabel is visible
+  in the log. (Full text: `references/wine-pitfalls.md`.)

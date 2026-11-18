@@ -182,36 +182,7 @@ re-summarise.
   still owe the harness/evidence/notes/PR. Full text: `references/session-discipline.md` §taking over a cut-off fire.
 
 ### Verify the OUTCOME, not the mechanism — full text: `references/verify-outcome.md`
-- A gate that counts the harness's own work passes a run that LOST the game. Compute candidate predictions from
-  the baseline first; refuse a shape where your model and the null agree on every candidate; read the effect
-  back from memory/state.
-- **Every number the prose quotes must be COMPUTED by the gate that ships with it**, derived from the SAME
-  parser that produces the claim after any parser fix (a caps-blind grep counted 28 where the parser counted
-  33; a draft's "12 scratch tests" became 17). Put the number in the assertion FIRST (print the table,
-  `assert len(...) == N`), write the sentence from the printed table, never from draft prose.
-- **Never assert an exact sorted list or exact count over a whole-function window**: a duplicate of the same
-  idiom further down satisfies any set check and breaks equality; assert on the first N or between two known
-  addresses, and PRINT the table. **A "makes no calls / has no writer / never fires" claim needs the WHOLE
-  function body** — a `POS[a]:POS[b]` slice asserted "zero calls" for a function making ten.
-- One instrument is a LEAD, never a finding: pair it with one that can fail DIFFERENTLY (a byte sum vs a
-  poke-and-scan); assert the state the run leaves behind (`TracerPid`, counts, armed count), not the exit
-  code; pre-register the falsifier.
-- **Exit codes are claims — encode the four states and PRINT which applies**: 0 = measured (taken or not);
-  4 = the site was never reached (inconclusive, not a gate result); 5 = driver wedged / no orders
-  (NO MEASUREMENT — never file it as evidence the gate is inert); 8 = box left dirty (`TracerPid != 0`).
-  A wedge and a negative result are different facts; conflating them is the stale-gdb-success failure class.
-- **A script that prints NOTHING and dies on `-15` is a HANG, not a missing instrument.** The signature is a
-  0-byte evidence file plus an empty stdout capture: `timeout N` sends SIGTERM and block-buffered `print`
-  dies with it, so the run reads as "crashed with no output". Run `python3 -u` with stderr teed to a file,
-  and look first for an unadvanced loop cursor — `while x < W:` with no `x += stride` is the real case, and
-  the loop then appends until the box runs out of RAM. The same shape hides a one-group-off regex
-  (`JCC_RX` captures the MNEMONIC as group 1 and the TARGET as group 2; assuming group 1 yields a
-  `ValueError: invalid literal for int()` that only fires at the first backward jump).
-- **Re-verify a delegated script by capturing stdout to a TEMP file, never `diff <(python3 scripts/<id>.py) evidence/<id>.txt`.**
-  The script writes its own evidence file, so the process substitution truncates the target before `diff` reads
-  it: a perfectly good run reports as `1,92d0` (the ENTIRE output "missing") and reads exactly like an empty
-  evidence file. The only valid form is `python3 -u scripts/<id>.py > /tmp/x.out && diff /tmp/x.out
-  evidence/<id>.txt`; run it twice and require 0 lines both times (before and after review fixes).
+- Verify the OUTCOME, not the mechanism: compute rival predictions from the baseline, read the effect back from memory/state, encode the four exit states (0 measured / 4 never reached / 5 wedged / 8 dirty), and re-verify delegated scripts via a TEMP capture (never process-substitution diff against the script's own output file). Full bullet set VERBATIM: `references/verify-outcome.md` §s290 retirement.
 
 ### Evidence lifecycle — the rules live in `docs/EVIDENCE.md`
 `python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB, FAILs the gate at 30 MB. Text is never
@@ -222,22 +193,7 @@ skill references) explain old findings but do NOT hold an image hot: its bytes s
 `evidence.py log` gives the commit. Test-fixture images (named by `scripts/test_*.py`/`scripts/check_classes.py`/`sim/`) live in
 `evidence/fixtures/`, which `budget` does not count and `prune` never touches. `prune --apply` moves the rest
 to git-only, recorded path/sha256/bytes/commit in `.prune_log.jsonl`.
-- **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A
-  `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a
-  **1.4 GB** trace and turned the gate RED *after* the milestone work was already done. Sleep the loop (2 ms
-  is the sampling cadence the footing asks for anyway), and downsample before the first commit: keep the first
-  sample, every sample where a watched field CHANGES, one heartbeat per second, and the last — 1.29M samples
-  collapse to 68 lines / ~10 KB with the boundary sequence intact. A giant blob also stays in the branch's
-  HISTORY once committed, so a later delete does not un-poison a push (see `references/git-workflow.md`).
-- The full-disassembly cache `evidence/m53j_text.txt.gz` (~5.7 MB, what the zgrep method runs on) is PRUNED
-  from the worktree when the gate nears 30 MB; it is git-kept — recover with
-  `git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
-- **Delegated decodes: a child's claims are TESTIMONY, not evidence.** A child can map a 1450-line function in
-  minutes; re-read from the cached disassembly: (1) every store site it cites, with its immediate; (2) the
-  address arithmetic that lets the value REACH the field — a store guarded to an index past the array is dead
-  code, so check the guard before believing the value exists; (3) the function boundary (`zgrep` the `ret`)
-  before accepting any "written in the caller, not the callee" attribution, where decodes drift. Write the
-  audit to `evidence/<id>_verify.md`; label instruction-stream facts VERIFIED and branch semantics INFERRED.
+- Evidence lifecycle depth (sleep + downsample memory samplers BEFORE the first commit; recover the pruned `m53j_text.txt.gz` via `git show 733322c6:evidence/m53j_text.txt.gz`; delegated decodes are TESTIMONY - re-read store sites, address arithmetic and function boundaries from the cache): VERBATIM in `references/session-discipline.md` §s290 retirement.
 
 ## Code atlas — read `references/code-atlas.md` before opening Ghidra
 The atlas (base-record offsets, terrain formula, faction + unit records, the global map, pointer-type scale
@@ -290,14 +246,7 @@ an RVA/VA mix-up.
 
 ## Map + save container formats — canonical: `MAP_FORMAT.md`, `SAVE_FORMAT.md`; depth `references/data-formats.md`
 The `.MP` size formula, the `.SAV` section list (strides 52 B / 304 B), the byte-exact anchors, the
-read-wrapper caller trace and the zeros-fraction pitfall are all there. **The last 156 B of every save is a
-fixed TRAILER, not game data** — the final 152 B are identical across nine saves, only the trailing dword
-varies and its offset moves with file size, so no hard-coded leg can index it; its reader is the 6-site
-per-entity loop restoring rows into heap records (stride `0x224B8`), proved by POKING markers, never by a byte
-sum. **Any file-vs-memory diff goes through `scripts/save_diff.py`, never an ad-hoc window**: the mapping
-constant `k = dest - off` is PER REGION, so a window straddling a section boundary manufactures hundreds of
-fake "diffs"; the script refuses a range crossing a known boundary and names it (`scripts/test_save_diff.py`
-PASS 7/7 is the guard). Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
+read-wrapper caller trace and the zeros-fraction pitfall are all there. The save TRAILER law (last 156 B fixed, 152 identical across saves, the 6-site per-entity restore loop at stride 0x224B8 proved by POKING markers), the PER-REGION save_diff mapping law, and the .SAV chain's two read paths: VERBATIM in `references/data-formats.md` §s290 retirement. **Any file-vs-memory diff goes through `scripts/save_diff.py`, never an ad-hoc window** (it refuses ranges crossing a known boundary). Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by `FUN_00582260`);
 the .SAV chain's two read paths (kernel in-place vs ring-3 scratch): `references/ptrace-level-probes.md`.
 
@@ -342,116 +291,32 @@ driving/dialog state machines: `references/wine-operations.md`)
   pgrep. Window id 10485761 (800x600); `xwd` needs **`-display :99`**. `session_brief.py`/`accept_ready.py`
   printing `BLOCKED: terran.exe not running` means relaunch; it reads the LIVE box so it runs MINUTES —
   request `timeout 400` and read a timeout as slow, not hung.
-- **Focus:** `xdotool getactivewindow` ALWAYS fails on :99 (no WM; red herring — s136 lost a session on it).
-  The check is `xdotool getwindowfocus getwindowname` == the game title; `xdotool windowfocus 10485761` works
-  WITHOUT a WM. Proof keys land: one Escape on an open base pane flips classify base->hud. If the box swallows
-  turn-end input with focus fine (s135: Return AND a click on TURN COMPLETE did nothing), the repair is a
-  fresh save load (`m54a_load.py --relaunch`).
+- Focus on :99: getactivewindow ALWAYS fails (no WM - red herring); check getwindowfocus getwindowname == the game title; windowfocus 10485761 works WITHOUT a WM; swallowed turn-end input with focus fine = a fresh save load (m54a_load --relaunch). Full text: `references/wine-operations.md` §s290 retirement.
 - `scripts/m44_idle.py` asserts `TracerPid == 0` and its `--rounds 1` condition counts the CURRENT turn —
   exits rc=0 in 0 s doing nothing; use `scripts/m55_boundary.py` as the boundary driver. Any acceptance that
   needs a boundary must gate on a live year/round DELTA read from /proc/pid/mem first, or it "proves" its
   sites unreachable from a box that could not run them.
 - **Vision-tool coordinates are SCALE-SHIFTED on 800x600 frames; click targets come from OCR word bboxes or
   pixel scans** (s137: vision's y~471 hit the recenter box, not the bar at y 405-427).
-- **"Do you really want to quit?" is the killer dialog:** Escape = "Oops, no, wait!"; never click OK (the
-  next OK exits and the process vanishes silently); its banner IS the game title, so it reads as the title
-  screen — and the driver's own Escape press can pop it mid-drive.
-- `scripts/smac_play.py`: no `--mode stop`; ordering is ON in the loop (each turn pokes the selection slot,
-  fires one hotkey, services the pane, verifies `unit+17` moved into the byte set that key produces — an
-  order counts as that memory DELTA, never a screenshot). `--no-escape N` = press no Escape for N seconds: set
-  N above `--timeout`. Launch long runs in tracked background mode, **never `nohup … &` nor ANY `&`-backgrounded
-  chain in a foreground call**; find stray pids with `pgrep -f smac_play.py` then `kill <pid>` — never signal
-  by name (pkill -f matches your own argv).
-- **A PROPOSAL vote pane stalls the AI phase.** `YEA: 2  NAY: 3` is the TALLY, not a key hint. True-window bars:
-  YEA (310,495) / NAY (398,495) / ABSTAIN (485,495) / OK (393,495); `windowfocus` first, OK >= 1.2 s after
-  selecting; capture `xwd -display :99 -root -silent` + 2x upscale + tesseract, region-constrained.
+- The quit dialog is the killer: Escape = "Oops, no, wait!"; NEVER click OK (the next OK exits and the process vanishes silently); its banner IS the game title, so it reads as the title screen. Full text: `references/wine-operations.md` §s290 retirement.
+- scripts/smac_play.py: no --mode stop; ordering is ON in the loop (an order counts as the unit+17 memory DELTA, never a screenshot); --no-escape N above --timeout; long runs in tracked background, never &-chains; kill stray pids by PID, never by name. Full text: `references/wine-headless-harness.md` §s290 retirement.
+- A PROPOSAL vote pane stalls the AI phase: the YEA/NAY numbers are the TALLY, not key hints; click the true-window bars (coords + cadence VERBATIM in `references/wine-operations.md` §s290 retirement), windowfocus first, OK >= 1.2 s after selecting.
 - **A round advancing while you watch is AUTO-END, not progress; a walk frozen on an AI faction is a MODAL
   dialog, not a livelock.** With all units HELD the engine closes our turn in 1-2 s; `cur_player == ours` is a
   window, not a state (heartbeat model: `references/solo-round-boundary.md`).
-- **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** HOLD every
-  record (`+17` = 2, poked at TracerPid 0, read back) BEFORE arming a multi-boundary watch. The produced unit
-  parks the cursor at order 0 and Return for 150 s changes nothing: ONE `h` closes the turn — and `h` needs
-  orders mode `0x91b5b8` = 1 (at 0 every order key is a silent no-op that looks exactly like a wedge). A popup
-  whose default row is not OK does not close on Return (Return CYCLES options) — click OK. The end-turn confirm
-  ("SOME OF OUR UNITS HAVE NOT YET MOVED…") takes NO Return: click YES then the OK ~26 px below, 1.2 s apart
-  (`smac_play.answer_confirm`). When the year stops: take ONE frame and `classify` it (returns `confirm`)
-  before pressing anything else. Cadence/coords/queue rules: `references/production-queue.md` — including why
-  an arrival round predicted from ROUND-START fields is not exact (the visit recomputes `+0xd0`).
+- Auto-end does NOT fire while any unit is actionable - and a unit built at the boundary IS: HOLD every record (+17=2, poked at TracerPid 0, read back) before a multi-boundary watch; ONE `h` closes the turn (orders mode 0x91b5b8 must be 1); the end-turn confirm takes clicks, not Return. Cadence/coords/queue rules: `references/production-queue.md`; full text: `references/wine-operations.md` §s290 retirement.
 - **A stalled round can be a LIVELOCK:** `python3 scripts/m53q_livelock.py` (census of `unit+48`/`unit+50`
   chains, `--fix` repairs). Signature: `turn_flags` bit 1 + hot main thread + byte-identical screenshots.
-- **A turn that never advances can be a CLASSIFIER miss with no modal visible.** OCR is unreliable both ways:
-  a clean HUD reads `unknown` when the TURN COMPLETE row garbles (measured: `complete` in the button row 3/8
-  passes while the bottom status bar read 8/8) — which is why `accept_ready.py` re-freezes up to 4 times and
-  believes the BAR twice (`smac_play.hud_status_bar`, `test_hud_bar.py`); with the production line drawn in the
-  message box even the chrome goes illegible, so the clean-HUD oracle is MEMORY: `cur_player == player`,
-  `turn_flags & 2` clear, no bar at y 145-200. An advisor dialog reads `hud` when too few words land in the
-  dialog band (caption tell: a word of 6+ chars or two of 4+ at y 90-118 = something drawn OVER the HUD). Peek
-  one frame before any Escape-on-`unknown` clearing loop (a garbled-but-clean HUD raises the quit prompt).
-- **Label a printed register from the ENCODING; entry args come from `$esp`, not `$ebp`** (a bp at the first
-  instruction sits before the prologue, so `$ebp` is the CALLER's frame: args at `*(int *)($esp+4)`, caller at
-  `*(int *)$esp` — the return-address field is the cheapest caller census). Check the prologue for
-  `mov reg,[ebp+8]`-style loads + reassignments: a callee-saved register holding arg 1 for the whole body is a
-  PARAMETER, not a cursor. Print raw AND derived forms (`$ebx`, `$ebx/52`, `$ebx%52`) so a mislabel is visible
-  in the log. (Full text: `references/wine-pitfalls.md`.)
-- **Watchpoints:** x86 gives 4 hw slots (an 8-byte window needs 8-alignment = 2 slots); they fire on VALUE
-  CHANGE, so a same-value rewrite is invisible — count stores with silent bps AT the store and keep the
-  watchpoint as the "any other writer" check. **Never watch a field the display reads constantly**
-  (`base+0x40`): the inferior crawls — break on the STORE sites instead and condition each on the address the
-  store's OWN encoding computes (`[reg*4+disp]` holds `(index*stride)/4`, `[reg+disp]` the byte address —
-  comparing the register against the bare index never fires; §9.3 of `static-store-census.md`). Side-values at
-  a store site are not evidence. **A bp on a LOAD prints the register's PREVIOUS value; a bp on a skipped loop
-  body never fires (a zero there is the gate); round-mutated values cannot come from a round-start snapshot.**
-  **Do not `si` for the after value** — `si` inside a commands list makes `gdb -batch` stop and DETACH after one
-  hit; for `mov [reg+disp],src` the source operand IS the value, and the sleeping /proc sampler proves it. A
-  hw watch reports `$pc` PAST the writing instruction — disassemble BACKWARDS from a hit. When the governing
-  field is a UI cursor/selection, POKE it and prove the write lands (and refuse the shape when the poked value
-  and the rival prediction agree).
-- **The gdb command-list killer class (all of it aborts the sourced script at the FIRST hit and detaches — the
-  log reads as a clean zero-event run while the turn driver exits 0):** a printf ERROR in a commands block (so:
-  no inferior strings — `%.20s` of an inferior pointer errors; expressions go in printf ARGUMENTS, specs must
-  match; a format-pasted expression prints ITSELF and the stream parses as zero events); a MEMORY WRITE in a
-  commands list (`set {int}ADDR = 1` is "not an lvalue") — **put pokes in Python: `os.pwrite(fd, ...)` on
-  `/proc/<pid>/mem` succeeds while gdb is attached** — keep command lists print-only; an UNGUARDED ARMED-time
-  deref (`ds:0x8f0d60` reads 0 until a pane opens — `if $reg != 0 … end` or print the register alone; a /proc
-  reader must return -1 on OSError, EIO not 0); a `dump binary memory` with a non-literal target, arithmetic
-  range, or `python … end` block — bake literal paths + literal addresses, remember gdb convenience-variable
-  arithmetic is 32-bit SIGNED (compute lengths in Python), one dump per run with an `off=` field, and
-  **`append binary memory` is what makes a per-hit series work** (full rules: `references/gdb-command-list.md`).
-- **Never build the gdb command list with Python `%`-format** — the template is full of `%d`/`%x` and Python
-  eats the first ones, silently rewriting the breakpoints. Bake literals or `str.replace()` a unique token, and
-  diff the emitted `scratch/<tag>.gdb` before attaching. Use `stdbuf -o0`, drain gdb's pipe, drive + snapshot in
-  ONE backgrounded job (`scripts/m53n_drive.py` is the template).
-- **A zero-event log is an INSTRUMENT verdict until proven otherwise:** arm one control breakpoint whose hit is
-  guaranteed in the window and require its rows; read back BEFORE attaching that the watched event can even
-  happen (queue head is the armed id, `pending >= 1`, storage above the gate's demand) — an unusable window is
-  not a negative result. **A whole subsystem path can be gated on another subsystem's state** (empty queues ⇒
-  research upkeep never runs); satisfy the printed readiness FIX and echo the precondition in the harness's own
-  output so "gate unmet" reads different from "mechanism refuted".
-- **A hardware watchpoint cannot see a KERNEL write** (user DR breaks carry the exclude-kernel bit; bytes
-  landing via `copy_to_user` inside a `read()` change with zero events — that is what a "silent census" means
-  when a file read's destination IS the watched region). The fix is a different LAYER: strace `-e raw=` (prints
-  the read's BUFFER POINTER) + `clear_refs=4`/pagemap soft-dirty + maps before/after; strace and gdb cannot both
-  ptrace one task — `references/ptrace-level-probes.md`.
-- **A "no branch targets this call" result is NOT "the call is unconditional".** `preds == 0` at a call site proves
-  only that no branch lands on it; whether it RUNS on every invocation is a separate measurement. Walk the CFG
-  with the call as a WALL (refuse to expand it) and count the `ret`s still reachable: if any, early exits skip the
-  call and a rival claiming "the only gate is the enclosing loop's `jl`" must FAIL. Closing a guard question on
-  `preds == 0` alone is the vacuous-gate class and has now cost two review rounds (M305 A14, M306 RIVAL4).
-- **A rival whose failure mode is "it crashed" or "it produced nothing" is not evidence.** Before counting a
-  rival as refuted, (1) message-match the crash against the DECLARED law (`except AssertionError: rivals[x] = True`
-  is a gate that passes on an unmeasured state - a foreign bug or a missing fixture scores as a failed rival), and
-  (2) show the SAME construction SUCCEEDS when the claimed cause is removed. B24 shipped six rivals; two
-  (`frozenargs`, `locate`) failed identically with the corrupting input WITHHELD, so neither "fail" said anything
-  about its law, and both looked green. Retire such a rival and GATE the retirement (assert the degenerate leg
-  still completes 0 arrivals), so it re-opens as a RED gate if it ever starts working; the law itself is then
-  carried by a mutant that switches the engine's own decision (`mode=locate` as the fold's law: clean leg
-  completes, poisoned leg dies).
-- **Two mutants can both be "green" and still be wrong**: a weaker variant of a CHECK (`det = A and B and C` ->
-  `det = A and B`) can only ever pass, so it reddens nothing - a WEAKENING is not a mutation; mutate the DATA
-  (corrupt the second run's table after `compute()`, a field no gate DETAIL prints) so only the digest catches it.
-  And an over-broad mutant (removing a rival's whole channel instead of only the poison) makes the rival fail for
-  a different reason and reads as a NO-OP - re-measure the declared set after EVERY review round, since retiring
-  a rival silently drops gates from other mutants' declared sets.
+- A turn that never advances can be a CLASSIFIER miss with no modal visible: OCR is unreliable both ways - the clean-HUD oracle is MEMORY (cur_player == player, turn_flags & 2 clear, no bar at y 145-200); accept_ready re-freezes and believes the BAR twice; peek one frame before any Escape-on-unknown loop. Full text: `references/screen-read.md` §s290 retirement.
+- Label printed registers from the ENCODING; entry args come from `$esp`, not `$ebp`; a callee-saved reg holding arg 1 is a PARAMETER; print raw AND derived forms. Full text: `references/wine-pitfalls.md` §s290 retirement.
+- Watchpoints: 4 hw slots, fire on VALUE CHANGE (break on STORE sites for same-value rewrites), never watch a display-read field, condition on the store's OWN encoding, pokes in Python not command lists, no `si` in commands. Full rules VERBATIM: `references/wine-pitfalls.md` §s290 retirement + `references/static-store-census.md` §9.
+- The gdb command-list killer class (printf errors, memory writes, unguarded ARMED-time derefs, non-literal dumps - each aborts the sourced script at the FIRST hit and detaches, reading as a clean zero-event run): VERBATIM in `references/gdb-command-list.md` §s290 retirement. Command lists stay print-only.
+- Never build the gdb command list with Python %-format (the template's %d/%x get eaten, silently rewriting breakpoints): bake literals or str.replace a unique token, diff the emitted scratch/<tag>.gdb before attaching, use stdbuf -o0, drain the pipe, drive + snapshot in ONE backgrounded job. Full text: `references/gdb-command-list.md` (§s290 retirement).
+- A zero-event log is an INSTRUMENT verdict until proven otherwise: arm a control breakpoint whose hit is guaranteed, read back the watched event's preconditions BEFORE attaching, and echo the readiness FIX in the harness output ("gate unmet" != "mechanism refuted"). Full text: `references/instrument-laws.md` §s290 retirement.
+- A hardware watchpoint cannot see a KERNEL write (copy_to_user lands bytes with zero events): change LAYER - strace `-e raw=` + soft-dirty/pagemap + maps; strace and gdb cannot both ptrace one task. Recipes: `references/ptrace-level-probes.md` (§s290 retirement).
+- "No branch targets this call" != "the call is unconditional": walk the CFG with the call as a WALL and count reachable `ret`s; preds==0 alone is the vacuous-gate class. Full text: `references/instrument-laws.md` §s290 retirement.
+- A rival that fails by crashing or producing nothing is NOT evidence until the crash is message-matched against the DECLARED law AND the same construction succeeds with the cause removed; retire degenerate rivals and GATE the retirement. Full text + B24's two degenerates: `references/verify-outcome.md` §s290 retirement.
+- A WEAKENING is not a mutation (a dropped conjunct can only pass); mutate DATA so only the digest catches it; an over-broad mutant reads as a NO-OP - re-measure the declared set after EVERY review round. Full text: `references/instrument-laws.md` §s290 retirement.
 - **Prove each gate is LOAD-BEARING by mutating the claim.** Ship `scripts/<id>_mutate.py`: re-introduce the defect
   the assertion exists to catch (a wrong immediate, a dropped term, a swapped operand, a filter deleted) and require
   that ONE specific check go red — then print N/N mutations reddened. A check that stays green under its own
@@ -474,16 +339,7 @@ driving/dialog state machines: `references/wine-operations.md`)
   `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE, §A mutation harness
   must CLASSIFY its four outcomes) and
   §Static text-cache parse traps.
-- **Three #294 (M313) decoration classes - all reviewer-found, all silent:** (1) an inline `#` comment placed
-  after the FIRST term of a multi-line parenthesized boolean swallows the rest of that physical line - the
-  push-opcode check vanished with zero trace; never trail-comment inside a condition, split into its own gate.
-  (2) target parsing must be `re.fullmatch(r"0x[0-9a-f]+", t)` before `int(...,16)`: far-calls print as
-  `call 0x43:0x955e0043` and a `startswith("0x")` filter CRASHES on them; and case-matter - comparing
-  "0x5186B0" against the lowercase cache makes any zero-reference census decorative by construction.
-  (3) a "vtable" found by walking .text-pointers to a stop may cross MULTIPLE class tables (the run from
-  0x672290 contains the chooser FAMILY table, base 0x6728c0) - pin pointers BY ADDRESS, cite the ledger for
-  each table's identity, and the word "slot" is banned unless a ledger entry or a constructor vptr-store
-  establishes the table's base (search for `mov [reg],imm` of the base as an immediate in .text to find one).
+- Decoration classes #294/#299 (inline-comment swallow, target fullmatch + case, multi-table vptr runs; mnemonic/operand split, de-duplicated owners, labels-only digests): VERBATIM in `references/instrument-laws.md` §s290 retirement. A gate that passes on an UNMEASURED state is the project's dominant defect.
 - **Three more decoration classes, reviewer-found on #299:** (1) a disassembly cache that stores MNEMONIC and
   OPERAND in separate fields makes a regex like `^push 0x..$` applied to the operand match NOTHING, so
   `all(cond for ...)` passes over an empty set - match the bare operand (`^0x[0-9a-f]+$`) and print the size of
@@ -492,15 +348,7 @@ driving/dialog state machines: `references/wine-operations.md`)
   ADDRESSES. (3) A digest is evidence only if it hashes name+verdict+detail; hashing the check NAMES, or
   keying a `detail` dict by short ids while the digest loop iterates full check names, lets two different
   measurement sets share one digest - and only mutations can catch that, so mutate the numbers, not the labels.
-- **Answer "WHAT IS THIS FIELD" by a STRUCTURAL partition, not by counting writers** (`m315_bb4_census.py`,
-  pick (ii), `ds:0x68cbb4`). Census every store/read/cmp; def-walk each store's value source inside its own
-  function; then classify stores by WHAT FOLLOWS the store (for a memo: a fixed two-call pair within 16 B) and
-  assert the two classes are EXACT COMPLEMENTS of each other - "12 of 22 stores are followed by the pair, 10 are
-  the -1 sentinel, and the 10 are exactly the sentinel-valued ones" is a claim that can be false, which "22 stores
-  exist" is not. Carry the rival it kills and the number that kills it (a store fed from a NEIGHBOURING index
-  would survive the pair law, so the def-walk census, not the pair law, refutes "second cursor"). (Post-#301
-  correction: the pair reach is MEASURED 5..17 B, not "16 B" - a bound quoted in prose must be the bound the
-  gate pins, re-checked after review-round measurements move it.)
+- Answer "what is this field" by a STRUCTURAL partition (store/read/cmp census + def-walk + exact-complement classes), not by counting writers; carry the rival it kills. Full text + the measured 5..17 B pair-reach correction: `references/instrument-laws.md` §s290 retirement.
 - **Concurrent fires can takeover mid-flight (s285):** isolation is verified at fire START, but a fixer fire can
   finish, post the review reply, merge the PR and merge its close-out while a verifier fire is still re-running
   acceptance. Detect via new commits appearing under a read file / clean status with foreign commits, and note a
@@ -524,16 +372,7 @@ driving/dialog state machines: `references/wine-operations.md`)
   its window was unspecified and that my +-32 B reading "coincidentally" matched - `m311_recidx.py:449` shows
   `0 <= a - b <= 32`, a FORWARD window, same 3 sites. Recomputing the closure on MY window gave arithmetic that
   the print contradicted (claimed 9 memo sites outside, measured 7). Quote the window with its reach in the claim.
-- **Three decoration classes found by review on #301 (all reviewer-caught, all silent on real bytes):**
-  (1) a PROVENANCE classifier that keys on OPERAND TEXT ALONE is decoration - `add r,ds:IDX` reads like a load
-  of the index and `lea r,[ebp+0x8]` looks like a stack load; set the class from MOVING INSTRUCTION + SOURCE
-  OPERAND, and prove it with a mutant that REWRITES the instruction, not the expected count. (2) A def-walk that
-  bounds itself by a function span looked up by name silently becomes UNBOUNDED when that name resolves to
-  nothing (`(0,0)` spans) - bound by the measured span when claimed, by an explicit instruction cap when not,
-  and pin how many stores needed the cap (a coverage number worth reporting in its own right). (3) A window pin
-  that checks a LISTED SUBSET of addresses does not pin the window: a change to an instruction BETWEEN the
-  listed ones (the record-address fold sat exactly there) survives. Pin the COMPLETE ordered sequence between
-  the bounds, including its length, and make the bound inclusive of the last instruction.
+- Decoration classes #301 (operand-text provenance, name-resolved spans going unbounded, subset window pins): VERBATIM in `references/instrument-laws.md` §s290 retirement. Classify by MOVING INSTRUCTION + SOURCE; bound def-walks explicitly; pin the COMPLETE ordered sequence.
 - **Give the mutation harness a second family that edits the CODE.** Every expectation mutant rewrites a literal
   in the instrument, so an instrument that never really looks at the bytes passes them all. Add env-driven
   disassembly patches (`M315_PATCH="addr|mn ops;..."` applied to the parsed cache before measurement) and a few
@@ -541,41 +380,12 @@ driving/dialog state machines: `references/wine-operations.md`)
   register, the second callee of a call pair deleted, a fold coefficient changed. Declare each one's gate SET
   (they legitimately span gates), and reject vacuous ones: if the patch target does not exist, that is a green
   lie. The census instrument prints `patches applied: n/m` for exactly this check.
-- **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
-  first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
-  agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the
-  TAKEN leg cannot reach FAILs the milestone, not the game — fix the leg map, never the floor. Tie every hit to
-  a boundary; a window count is not a cadence. **Before blaming a breakpoint for a zero, resolve the SITE's
-  containment and its function's caller count** from `ghidra_out/index.csv` — one read splits "unreachable BY
-  DESIGN" from "UNTAKEN BRANCH".
-- **To name who writes a field: hw watchpoint on the address PLUS a control watchpoint on an address you know
-  changes** — a mnemonic grep misses stores through pointer-form `lea`; and **classify each store by how its
-  SOURCE register was computed** (scan back for `or`/`and`/`lea`): 23 of 27 memory-form stores to one field
-  were the write half of a register-level bit RMW, so the field IS bit-set and only whole-value assignments can
-  deliver an untouched bit — a store-shape census sees the operand, never the provenance.
-- **A gdb census >90 s goes through tracked background + wait loops: the foreground caps at 420 s and killing a
-  census mid-run leaves Wine hung** (round frozen after detach too — recover via `m54a_load --relaunch`). Pair
-  store-readback probes by EVENT ORDER (RB follows ST) — a {addr: last-mem} dict mis-pairs an address rewritten
-  later. **Detach only after the window is really over:** the turn driver returns rc=0 while other factions'
-  upkeep still executes, so the last stores land after the detach and log NOTHING (`instrument-laws.md`). A
-  census can also leave gdb ATTACHED after printing its verdict: check `TracerPid` and kill the stale gdb BY
-  PID before calling the box clean.
-- **Vtable targets: check for a live INSTANCE first** — scan writable `/proc/<pid>/mem` regions for the class's
-  vptr; a class with no live instance logs zero hits at every method, whatever the window (recipes:
-  `references/code-atlas.md`).
-- **The readiness oracle's printed FIX can stay unsatisfied:** `credit` = `base+0xd0` is RECOMPUTED EVERY ROUND
-  by FUN_004e93f0 (`[+0xc0]-[+0xf0]-[+0xe0]`; the "init-only" claim is RETRACTED) and holds 0 when upkeep
-  exceeds income — the reload chain will not clear it. That line blocks only the PAY-SITE family (their gates
-  need storage >= price: use the per-boundary storage poke); rebuild/upkeep censuses run green at credit 0.
-- **A clean reload does NOT carry records created live in a previous session** — yesterday's census is fiction
-  after a reload: re-census the watched slots from `/proc/pid/mem` in the SAME invocation that arms the harness,
-  and assert armed == len(designed watch list), not a fixed floor (arming fewer watchpoints than the design
-  silently drops half the slots). **Check the save can HOST the experiment before reloading for it:**
-  `m54b_clean.SAV` loads at 2150 r50 (University Base only, credit 0); the chooser candidate array is
-  ERA-DEPENDENT (after `m54g_prep` + one turn the INSERT lands even at minerals 0 / credit 0), and the FIRST
-  enqueue right after a turn-end can transiently print `item 2 not in candidate array []` — retry once before
-  blaming the save; reloading to clear a stray modal costs the later state AND the experiment — clear the modal
-  itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
+- A leg census gates on PREDICTIONS computed from live memory, not on hits; tie every hit to a boundary; resolve the site's containment + caller count before blaming a breakpoint for a zero. Full text: `references/instrument-laws.md` §s290 retirement.
+- To name a field's writer: hw watchpoint on the address PLUS a control watchpoint on a known-changing address; classify each store by how its SOURCE register was computed (register-level bit RMW vs whole-value assignment). Full text: `references/static-store-census.md` §s290 retirement.
+- A gdb census >90 s goes through tracked background + wait loops (foreground caps at 420 s; killing mid-run hangs Wine - recover via m54a_load --relaunch); pair store-readback probes by EVENT ORDER; detach only after the window is really over; check TracerPid and kill stale gdb BY PID. Full text: `references/wine-operations.md` §s290 retirement.
+- Vtable targets: check for a live INSTANCE first - scan writable /proc regions for the class's vptr; a class with no live instance logs zero hits at every method, whatever the window. Recipes: `references/code-atlas.md` (§s290 retirement).
+- The readiness oracle's printed FIX can stay unsatisfied: `credit` (base+0xd0) is RECOMPUTED EVERY ROUND by FUN_004e93f0 and holds 0 when upkeep exceeds income - the reload chain will not clear it; it blocks only the PAY-SITE family (use the per-boundary storage poke). Full text: `references/production-queue.md` (§s290 retirement).
+- A clean reload does NOT carry records created live in a previous session: re-census watched slots from /proc in the SAME invocation that arms the harness (armed == len(designed), not a floor); check the save can HOST the experiment before reloading; clear a stray modal itself - reloading costs the state AND the experiment. Full text: `references/wine-operations.md` §s290 retirement.
 **Read `references/static-store-census.md` §9 before hand-writing a watcher script** — condition arithmetic,
 log format and scorer gates are solved there (uppercase-`PTR` greps, pointer-form stores, operand width);
 §1–§3 carry the traps that make the STATIC half complete. `references/instrument-laws.md` carries the header

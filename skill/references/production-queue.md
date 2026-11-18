@@ -786,3 +786,11 @@ pend=3 head=2, SENT 4 events with edi=[2] (never 9999), BRANCH/ENTRY/CLEAR 0, pe
 1->0, census bit7 [324,325,386,449] -> [324,325,385,387,449] with no CLEAR event; gates G1/G3/G4/G5/
 G7 False. `evidence/m83cw2.gdblog`.
 
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **The readiness oracle's printed FIX can stay unsatisfied:** `credit` = `base+0xd0` is RECOMPUTED EVERY ROUND
+  by FUN_004e93f0 (`[+0xc0]-[+0xf0]-[+0xe0]`; the "init-only" claim is RETRACTED) and holds 0 when upkeep
+  exceeds income — the reload chain will not clear it. That line blocks only the PAY-SITE family (their gates
+  need storage >= price: use the per-boundary storage poke); rebuild/upkeep censuses run green at credit 0.

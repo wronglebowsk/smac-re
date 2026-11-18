@@ -90,3 +90,12 @@ stores into the destination in ring 3 (byte-order fixup) — the two paths diffe
 can see the write at all. LIVE (M106, m106r7 PASS 15/15): the in-place path is what runs — `read(0x5,
 0x927c84, 0x2000) = 0x2000` inside the fd-run that carries the save to EOF, and a DR breakpoint CANNOT see a
 kernel `copy_to_user` write (Linux installs the user DR breakpoint with the exclude-kernel bit).
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **A hardware watchpoint cannot see a KERNEL write** (user DR breaks carry the exclude-kernel bit; bytes
+  landing via `copy_to_user` inside a `read()` change with zero events — that is what a "silent census" means
+  when a file read's destination IS the watched region). The fix is a different LAYER: strace `-e raw=` (prints
+  the read's BUFFER POINTER) + `clear_refs=4`/pagemap soft-dirty + maps before/after; strace and gdb cannot both
+  ptrace one task — `references/ptrace-level-probes.md`.

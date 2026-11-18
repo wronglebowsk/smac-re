@@ -439,3 +439,48 @@ the driver but leaves the game half-loaded, which is exactly how you lose ptrace
   >120-px bright/blue runs — bands 268/290/319 = Oops/Yes/OK). Escape does close it, but a SECOND
   Escape on the now-clean HUD re-raises it, and Return cycles the rows (one extra Return can land on
   "Yes"). Click Oops + OK is the deterministic sequence; never click OK with Yes selected.
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **A gdb census >90 s goes through tracked background + wait loops: the foreground caps at 420 s and killing a
+  census mid-run leaves Wine hung** (round frozen after detach too — recover via `m54a_load --relaunch`). Pair
+  store-readback probes by EVENT ORDER (RB follows ST) — a {addr: last-mem} dict mis-pairs an address rewritten
+  later. **Detach only after the window is really over:** the turn driver returns rc=0 while other factions'
+  upkeep still executes, so the last stores land after the detach and log NOTHING (`instrument-laws.md`). A
+  census can also leave gdb ATTACHED after printing its verdict: check `TracerPid` and kill the stale gdb BY
+  PID before calling the box clean.
+
+- **A clean reload does NOT carry records created live in a previous session** — yesterday's census is fiction
+  after a reload: re-census the watched slots from `/proc/pid/mem` in the SAME invocation that arms the harness,
+  and assert armed == len(designed watch list), not a fixed floor (arming fewer watchpoints than the design
+  silently drops half the slots). **Check the save can HOST the experiment before reloading for it:**
+  `m54b_clean.SAV` loads at 2150 r50 (University Base only, credit 0); the chooser candidate array is
+  ERA-DEPENDENT (after `m54g_prep` + one turn the INSERT lands even at minerals 0 / credit 0), and the FIRST
+  enqueue right after a turn-end can transiently print `item 2 not in candidate array []` — retry once before
+  blaming the save; reloading to clear a stray modal costs the later state AND the experiment — clear the modal
+  itself; gate any reload on `accept_ready.py` READY plus a non-empty candidate array.
+
+- **Auto-end does NOT fire while any unit is actionable — and a unit built at the boundary is.** HOLD every
+  record (`+17` = 2, poked at TracerPid 0, read back) BEFORE arming a multi-boundary watch. The produced unit
+  parks the cursor at order 0 and Return for 150 s changes nothing: ONE `h` closes the turn — and `h` needs
+  orders mode `0x91b5b8` = 1 (at 0 every order key is a silent no-op that looks exactly like a wedge). A popup
+  whose default row is not OK does not close on Return (Return CYCLES options) — click OK. The end-turn confirm
+  ("SOME OF OUR UNITS HAVE NOT YET MOVED…") takes NO Return: click YES then the OK ~26 px below, 1.2 s apart
+  (`smac_play.answer_confirm`). When the year stops: take ONE frame and `classify` it (returns `confirm`)
+  before pressing anything else. Cadence/coords/queue rules: `references/production-queue.md` — including why
+  an arrival round predicted from ROUND-START fields is not exact (the visit recomputes `+0xd0`).
+
+- **A PROPOSAL vote pane stalls the AI phase.** `YEA: 2  NAY: 3` is the TALLY, not a key hint. True-window bars:
+  YEA (310,495) / NAY (398,495) / ABSTAIN (485,495) / OK (393,495); `windowfocus` first, OK >= 1.2 s after
+  selecting; capture `xwd -display :99 -root -silent` + 2x upscale + tesseract, region-constrained.
+
+- **"Do you really want to quit?" is the killer dialog:** Escape = "Oops, no, wait!"; never click OK (the
+  next OK exits and the process vanishes silently); its banner IS the game title, so it reads as the title
+  screen — and the driver's own Escape press can pop it mid-drive.
+
+- **Focus:** `xdotool getactivewindow` ALWAYS fails on :99 (no WM; red herring — s136 lost a session on it).
+  The check is `xdotool getwindowfocus getwindowname` == the game title; `xdotool windowfocus 10485761` works
+  WITHOUT a WM. Proof keys land: one Escape on an open base pane flips classify base->hud. If the box swallows
+  turn-end input with focus fine (s135: Return AND a click on TURN COMPLETE did nothing), the repair is a
+  fresh save load (`m54a_load.py --relaunch`).

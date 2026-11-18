@@ -278,3 +278,13 @@ Unlike watchpoints it survives the compaction; unlike a position diff it catches
   lands on ONE line and a line-based parser silently sees a single event — no error and an empty-looking log: the rows are
   there, concatenated, and a line-based parser reports one event (or none) instead of all of them.
 
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- `scripts/smac_play.py`: no `--mode stop`; ordering is ON in the loop (each turn pokes the selection slot,
+  fires one hotkey, services the pane, verifies `unit+17` moved into the byte set that key produces — an
+  order counts as that memory DELTA, never a screenshot). `--no-escape N` = press no Escape for N seconds: set
+  N above `--timeout`. Launch long runs in tracked background mode, **never `nohup … &` nor ANY `&`-backgrounded
+  chain in a foreground call**; find stray pids with `pgrep -f smac_play.py` then `kill <pid>` — never signal
+  by name (pkill -f matches your own argv).

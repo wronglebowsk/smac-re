@@ -745,3 +745,10 @@ Three traps that made a hub census print 0 back edges until fixed:
 Companion law (M304 S5): to find who READS a frame slot, split accesses into
 stores-first-operand vs true reads - a "first access" census that counts the slot's
 other STORES as readers mislabels dead slots as live.
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **Vtable targets: check for a live INSTANCE first** — scan writable `/proc/<pid>/mem` regions for the class's
+  vptr; a class with no live instance logs zero hits at every method, whatever the window (recipes:
+  `references/code-atlas.md`).

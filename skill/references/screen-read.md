@@ -103,3 +103,15 @@ The corollary matters for OCR work: at 800x600 the tesseract route found essenti
 scaled 3x strip of the bottom 120 px of a live HUD (one stray token), so a silent OCR pass on a small
 window is NOT evidence of an empty screen. Prefer the memory oracle (`cur_player`, `turn_flags`, year) for
 state questions and keep OCR for named panes with known text bands.
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **A turn that never advances can be a CLASSIFIER miss with no modal visible.** OCR is unreliable both ways:
+  a clean HUD reads `unknown` when the TURN COMPLETE row garbles (measured: `complete` in the button row 3/8
+  passes while the bottom status bar read 8/8) — which is why `accept_ready.py` re-freezes up to 4 times and
+  believes the BAR twice (`smac_play.hud_status_bar`, `test_hud_bar.py`); with the production line drawn in the
+  message box even the chrome goes illegible, so the clean-HUD oracle is MEMORY: `cur_player == player`,
+  `turn_flags & 2` clear, no bar at y 145-200. An advisor dialog reads `hud` when too few words land in the
+  dialog band (caption tell: a word of 6+ chars or two of 4+ at y 90-118 = something drawn OVER the HUD). Peek
+  one frame before any Escape-on-`unknown` clearing loop (a garbled-but-clean HUD raises the quit prompt).

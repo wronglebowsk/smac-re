@@ -385,3 +385,23 @@ attribution, which is where decodes drift. Write the audit to its own short note
   fire 2 committed the harness, then discovered its declared gate sets were authored rather than measured - and
   the re-run of the fire-1 acceptance, byte-identical to the committed evidence, is what made that distinction
   safe to publish.
+
+
+## s290 retirement from SKILL.md (VERBATIM)
+
+- **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A
+  `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a
+  **1.4 GB** trace and turned the gate RED *after* the milestone work was already done. Sleep the loop (2 ms
+  is the sampling cadence the footing asks for anyway), and downsample before the first commit: keep the first
+  sample, every sample where a watched field CHANGES, one heartbeat per second, and the last — 1.29M samples
+  collapse to 68 lines / ~10 KB with the boundary sequence intact. A giant blob also stays in the branch's
+  HISTORY once committed, so a later delete does not un-poison a push (see `references/git-workflow.md`).
+- The full-disassembly cache `evidence/m53j_text.txt.gz` (~5.7 MB, what the zgrep method runs on) is PRUNED
+  from the worktree when the gate nears 30 MB; it is git-kept — recover with
+  `git show 733322c6:evidence/m53j_text.txt.gz > evidence/m53j_text.txt.gz` (repo root) before zgrep.
+- **Delegated decodes: a child's claims are TESTIMONY, not evidence.** A child can map a 1450-line function in
+  minutes; re-read from the cached disassembly: (1) every store site it cites, with its immediate; (2) the
+  address arithmetic that lets the value REACH the field — a store guarded to an index past the array is dead
+  code, so check the guard before believing the value exists; (3) the function boundary (`zgrep` the `ret`)
+  before accepting any "written in the caller, not the callee" attribution, where decodes drift. Write the
+  audit to `evidence/<id>_verify.md`; label instruction-stream facts VERIFIED and branch semantics INFERRED.
