@@ -659,7 +659,7 @@ verbatim), `raw` (a recorded seed record - Korolev enters as a GROWN 19th base
 slot seeded with the trace's r0-before record, a DECLARED fixture), and `queue`
 (the modeled span pack: st/pen/slots always, mirror/d0 optional).
 `python3 -m sim.selftest --b23 programs/saves/m54b_clean.SAV` must print
-PASS B23 11/11 (authored once in `sim/composedturn.py`, `--b23` only relays) with:
+PASS B23 12/12 (authored once in `sim/composedturn.py`, `--b23` only relays) with:
 **G1** the seed + 18 originals round-trip the writer (spans equal, n_bases 18->19);
 **G2** every boundary's CONTAINER read == the recorded round_before st/pen/slots;
 **G3** verdicts pay-at-r0-only (p,b,b,b,b,b,b,b,b,b); **G4** storage+mirror parity
@@ -668,7 +668,7 @@ stale [2,2,2,2,...] tail survives every boundary, untouched); **G6** the M58 pop
 visibility law (9/9 after-parities + the popped pending visible at the NEXT
 before-sample); **G7** the arrival is the array's LAST record, byte-equal to
 `soprod.create_record` fed tile/owner read from the IMAGE, n_units 67->68;
-**G8** the image grew by exactly 304+52 B, unit originals + tail byte-identical;
+**G8** the image grew by exactly 304+52 B, unit originals + tail byte-identical, and the writer REFUSES queue slot-lists of length 9 or 11 (an 11th slot would write +0x78, past the queue, clobbering later fields - Greptile P2 on #297);
 **G9** five rivals FAIL the same fit (noadd / price10 each lose the recorded r0
 arrival; nopop leaves pending 1 against a recorded 0; zerotail drops the stale
 ids; nomirror leaves mirror 8 against a recorded 0); **G10** THE FALSIFIER: poison
@@ -676,7 +676,8 @@ st:=20 at ONE boundary IN THE IMAGE BYTES ONLY - the container fold re-reads it
 and pays twice more (3 arrivals, verdicts p,p,p,...) because the poisoned value
 persists in the written image, while the model-fed fold is BLIND to the same
 corruption (1 arrival, recorded table) - load-bearing in both directions;
-**G11** two runs -> identical table + written-image sha256 e685d297e3d246eb.
+**G11** THE CREATION SOURCE IS THE CONTAINER (Greptile P2 on #297): tile AND owner poisoned in the seed record BYTES at r0 (1447,1448, owner 0x5a) - the created unit CARRIES the corrupted bytes (locate BY POSITION, not coords, so the poisoned tile cannot hide the record), while a frozen-args rival (creation arguments pinned to the seed-open values - indistinguishable on the uncorrupted run, which is exactly the reviewer's point) FAILS the same fit;
+**G12** two runs -> identical FULL table - labels, verdicts AND detail strings (a label/verdict-only comparison was itself a Greptile P2: details carry measured values) + written-image sha256 e685d297e3d246eb.
 DECLARED UNMODELED: the visit-time d0 (+0xd0, the game's per-visit recompute -
 read from the trace's after-samples as recorded data, M57/M58) and the price
 (recorded 9, never a recomputed price_of, M72); the recorder's pop-visibility law

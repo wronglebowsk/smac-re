@@ -152,6 +152,10 @@ def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
             rec[5] = b["fac"] % 256
             q = b.get("queue")             # rung B23: the modeled queue span
             if q is not None:
+                if len(q["slots"]) != 10:  # rung B23 (Greptile P2 #297): an
+                    raise ValueError(      # 11th slot would write +0x78 and
+                        "queue slots must be exactly 10 dwords, got %d"
+                        % len(q["slots"])) # clobber fields past the queue
                 if q.get("st") is not None:
                     struct.pack_into("<i", rec, 0x40, int(q["st"]))
                 struct.pack_into("<i", rec, 0x4c, int(q["pen"]))

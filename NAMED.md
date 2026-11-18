@@ -1202,10 +1202,11 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | Every boundary's visit inputs are READ FROM THE IMAGE (st/pen/slots == recorded round_before spans, 10 boundaries) and every result WRITTEN BACK | `evidence/b23_composedturn.txt:2` | V |
 | Verdicts pay r0 only (p,b x9); storage+mirror parity vs recorded afters 10/10+10/10; slot parity 100/100 dwords with the stale [2,2,2,2] tail kept | lines 3-5 | V |
 | M58 pop visibility: container shows popped pending at the NEXT before-sample; 9/9 after-parities elsewhere | line 6 | V |
-| r0 arrival = LAST unit record, byte-equal to B22's image-fed producer (n_units 67->68); image grew exactly 304+52 B | lines 7-8 | V |
+| r0 arrival = LAST unit record, byte-equal to B22's image-fed producer (n_units 67->68); image grew exactly 304+52 B; the writer REFUSES 9- and 11-slot queue lists (an 11th would write +0x78 past the queue - Greptile P2 on #297) | lines 7-8 | V |
+| CREATION SOURCE is the container: tile+owner poisoned in the SEED BYTES at r0 land in the created record (1447,1448,0x5a); a frozen-args variant (args pinned to seed-open values) FAILS the same fit (Greptile P2 on #297) | line 11 | V |
 | 5 rivals fail the same fit (noadd, price10, nopop, zerotail, nomirror) - each reddens its own law's gate | line 9 | V |
 | FALSIFIER: st:=20 poisoned in IMAGE BYTES at r1 only -> container fold pays at r1 AND r2 (poison persisted through the written image), model-fed fold blind -> container consumption is load-bearing | line 10 | V |
-| Two runs -> identical table + image sha256 e685d297e3d246eb; acceptance `python3 -m sim.selftest --b23 programs/saves/m54b_clean.SAV` PASS 11/11 | line 11 | V |
+| Two runs -> identical FULL table (labels+verdicts+DETAILS, Greptile P2 on #297) + image sha256 e685d297e3d246eb; acceptance `python3 -m sim.selftest --b23 programs/saves/m54b_clean.SAV` PASS 12/12 | line 12 | V |
 | savewriter gained identity/raw/queue override keys (backward-compat; B8-B12/B21-B22 calls unaffected - their relays green) | `sim/savewriter.py` | V |
 
 UNMODELED (declared): visit-time d0 (+0xd0) and price = recorded data as inputs

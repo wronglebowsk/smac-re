@@ -105,13 +105,15 @@ def read_state(im, idx):
     return q, sp["st"], sp["mirror"], sp["f30"], b
 
 
-def fold(sv, bounds, mode="container", corrupt=None):
+def fold(sv, bounds, mode="container", corrupt=None, pos=False):
     """Run the 10 boundaries. mode: 'container' = re-parse the image every turn;
     'memory' = rival that never re-reads the container (carries model state);
     'noadd' / 'price10' / 'nopop' / 'zerotail' / 'nomirror' / 'frontinsert' =
     rivals that mutate ONE law each. corrupt(r, rec_bytes)->rec_bytes is the
     falsifier hook, applied to the IMAGE bytes between turns (never to model
     state), so only a fold that READS the container can see it.
+    pos=True locates the grown slot BY POSITION (needed when the falsifier
+    corrupts the tile itself, so a coord lookup must not be the locator).
     Returns (verdicts, images, arrivals, final_img)."""
     bounds_n = len(bounds)
     # seed: the grown Korolev slot carries the trace's r0 round_before record
@@ -145,11 +147,21 @@ def fold(sv, bounds, mode="container", corrupt=None):
                  "y": struct.unpack_from("<H", seed_rec, 2)[0],
                  "own4": seed_rec[4]}
         else:
-            img0 = img_prev if img_prev is not None else sow.build_image(
-                sv, bases_override=_all_overrides(sv, kor_i, seed_rec, {}, appended))
+            if img_prev is None:
+                seed0 = bytearray(seed_rec)
+                if corrupt:                 # r0 container: poison the SEED bytes
+                    seed0 = corrupt(0, seed0)
+                img0 = sow.build_image(sv, bases_override=_all_overrides(
+                    sv, kor_i, seed0, {}, appended))
+            else:
+                img0 = img_prev
             im = parse_image(img0)
-            idx = _find_kor(im)
+            idx = kor_i if pos else _find_kor(im)
             q, st, mirror, f30, b = read_state(im, idx)
+            if mode == "frozenargs":        # rival: creation args frozen to seed-open
+                b = {"x": struct.unpack_from("<H", seed_rec, 0)[0],
+                     "y": struct.unpack_from("<H", seed_rec, 2)[0],
+                     "own4": seed_rec[4]}
         d0_v = spans_of(bounds[r]["after"])["d0"]     # recorded visit-time d0
         price = PRICE_RECORDED if mode != "price10" else 10
         # ---- the visit, B12's law (gate storage+d0 >= price; PAY; CREATE;
@@ -332,8 +344,17 @@ def compute(sav_path, trace_path, falsify=True):
     tail_ident = (img[len(img) - (len(sv.data) - sv.bases_off -
                                   sosave.BASE_LEN * sv.n_bases):] ==
                   sv.data[sv.bases_off + sosave.BASE_LEN * sv.n_bases:])
-    g("G8 grew exactly 304+52 B; unit originals + tail byte-identical",
-      grew and units_ident and tail_ident)
+    refus = []
+    for bad in (9, 11):
+        try:
+            sow.build_image(sv, bases_override=_all_overrides(
+                sv, sv.n_bases, bounds[0]["before"],
+                {"st": 0, "pen": 0, "slots": [0] * bad, "mirror": 0}, []))
+        except ValueError:
+            refus.append(bad)
+    g("G8 grew exactly 304+52 B; originals + tail identical; writer refuses 9/11-slot lists",
+      grew and units_ident and tail_ident and refus == [9, 11],
+      "refused %s" % refus)
 
     # G9 rivals FAIL the same fit (each is the full fold, one law mutated).
     rivals = {}
@@ -378,11 +399,34 @@ def compute(sav_path, trace_path, falsify=True):
         vvm, iim, aam, finm = fold(sv, bounds, mode="memory", corrupt=corrupt20)
         fm = [v["verdict"] for v in vvm] == ["pay"] + ["bail"] * 9 and len(aam) == 1
     g("G10 corruption lands only through the container (falsifier bites)",
-      (not falsify) or (gv and fm),
-      "" if falsify else "skipped (guarded second invocation)" if False else
-      "container saw it: %s; model-blind fold blind: %s" % (gv, fm) if falsify else "")
+      (not falsify) or (gv and fm), "")
 
-    # G11 determinism: a second independent compute reproduces image sha256 + table.
+    # G11 THE CREATION SOURCE IS THE CONTAINER (Greptile P2 on #297): poison
+    # tile+owner in the SEED CONTAINER BYTES at r0 - the created unit must
+    # CARRY the corrupted bytes (1447,1448,owner 0x5a); the frozenargs rival
+    # (creation args pinned to the seed-open values) FAILS the same fit.
+    def corrupt_tile(r, rec):
+        if r == 0:
+            struct.pack_into("<H", rec, 0, 1447)
+            struct.pack_into("<H", rec, 2, 1448)
+            rec[4] = 0x5a
+        return rec
+    aa_p, fin_p = None, None
+    _, _, aa_p, fin_p = fold(sv, bounds, corrupt=corrupt_tile, pos=True)
+    imp = parse_image(fin_p)
+    up = imp.unit(imp.n_units - 1)
+    carried = ((up["x"], up["y"], up["owner"]) == (1447, 1448, 0x5A)
+               and len(aa_p) == 1)
+    vvm2, _, aa_f, fin_f = fold(sv, bounds, mode="frozenargs",
+                                corrupt=corrupt_tile, pos=True)
+    imf2 = parse_image(fin_f)
+    upf = imf2.unit(imf2.n_units - 1)
+    frozen_bad = (upf["x"], upf["y"], upf["owner"]) != (1447, 1448, 0x5A) \
+        and (upf["x"], upf["y"], upf["owner"]) == (KOR[0], KOR[1], bounds[0]["before"][4])
+    g("G11 corrupted tile/owner land in the created record; frozen-args rival fails",
+      carried and frozen_bad,
+      "carried=%s frozen-rival-fails=%s" % (carried, frozen_bad))
+    # G12 determinism: a second independent compute reproduces image sha256 + table.
     return out, hashlib.sha256(img).hexdigest(), img
 
 
@@ -398,9 +442,8 @@ def run_all(sav_path, trace_path):
     without the falsifier half) and append G11. Returns rows (label, ok, detail)."""
     out, sha, _ = compute(sav_path, trace_path)
     out2, sha2, _ = compute(sav_path, trace_path, falsify=False)
-    det = (sha2 == sha and [(l, o) for l, o, _ in out2] ==
-           [(l, o) for l, o, _ in out])
-    return out + [("G11 two runs -> identical table + image sha %s" % sha[:16],
+    det = (sha2 == sha and out2 == out)   # FULL rows: label, verdict AND detail
+    return out + [("G12 two runs -> identical FULL table + image sha %s" % sha[:16],
                    det, "")]
 
 

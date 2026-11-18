@@ -5,8 +5,9 @@ G4 storage + mirror parity vs recorded afters (10/10)      OK  st mismatches 0, 
 G5 slot-array parity 100/100 dwords (stale tail kept)      OK  
 G6 pending visibility (9/9 afters + pop visible next before) OK  afters 9/9, popped-then-visible True
 G7 arrival at array END from image fields, n_units 67->68  OK  
-G8 grew exactly 304+52 B; unit originals + tail byte-identical OK  
+G8 grew exactly 304+52 B; originals + tail identical; writer refuses 9/11-slot lists OK  refused [9, 11]
 G9 five rivals fail the same fit                           OK  noadd=fail price10=fail nopop=fail zerotail=fail nomirror=fail
 G10 corruption lands only through the container (falsifier bites) OK  
-G11 two runs -> identical table + image sha e685d297e3d246eb OK  
+G11 corrupted tile/owner land in the created record; frozen-args rival fails OK  carried=True frozen-rival-fails=True
+G12 two runs -> identical FULL table + image sha e685d297e3d246eb OK  
 == B23: PASS ==
