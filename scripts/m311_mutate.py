@@ -50,6 +50,18 @@ MUTS = [
      '    if mn.startswith("mov") and ("ds:0x%x" % IDX) in head and False:'),
     ("MU11", "the setter's recorded caller count is asserted as 58 (index.csv says 57)",
      "A6", "and c_setter == 57", "and c_setter == 58"),
+    ("MU12", "the fold's *8 scale factor is really *7: the stride stops being 304",
+     "A3", 'g = re.match(r"^(\\w+),\\[(\\w+)\\+(\\w+)\\*8\\]$", o1) if m1 == "lea" else None',
+     'g = re.match(r"^(\\w+),\\[(\\w+)\\+(\\w+)\\*7\\]$", o1) if m1 == "lea" else None'),
+    ("MU13", "the fold's *2 scale factor is really *3",
+     "A3", 'g2 = re.match(r"^(\\w+),\\[(\\w+)\\+(\\w+)\\*2\\]$", o2) if m2 == "lea" else None',
+     'g2 = re.match(r"^(\\w+),\\[(\\w+)\\+(\\w+)\\*3\\]$", o2) if m2 == "lea" else None'),
+    ("MU14", "the closing shift is not <<4: the element stops being 304 B",
+     "A3", 'g3 = re.match(r"^(\\w+),0x4$", o3) if m3 == "shl" else None',
+     'g3 = re.match(r"^(\\w+),0x5$", o3) if m3 == "shl" else None'),
+    ("MU15", "the analysis window is too tight and LOSES a fold: 0x4e4dd0's site drops to 0",
+     "A8", "    RIGHT = {0x4e3476: 32, 0x4e4dd0: 90, 0x4efe8e: 32,",
+     "    RIGHT = {0x4e3476: 32, 0x4e4dd0: 32, 0x4efe8e: 32,"),
 ]
 
 

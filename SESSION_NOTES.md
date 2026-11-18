@@ -401,7 +401,9 @@ Older sessions: `docs/sessions/sessions-256-257.md` (2 sessions). Read it only w
      A2 now requires `sorted(transcribed) == sorted(cache-derived)`, and MU2 (delete one) reddens it;
   2. bad arithmetic - I first wrote the fold as n*9*16 = 144n; it is (n+(n+n*8)*2)<<4 = 304n;
   3. a fold matcher that required adjacency the compiler does not provide (pushes interleave at `0x4f5a85`);
-  4. a gate sub-condition of the form `sorted(xs) == sorted(set(xs))` - a tautology that can never fail -
+  4. a gate sub-condition of the form `sorted(xs) == sorted(set(xs))` - I called that a tautology that can
+     never fail; **review P2 on PR #289 corrected me** - it does reject duplicates, but it proves only
+     uniqueness, never completeness or agreement with an independent source, so it guarded nothing here;
      replaced with claim-vs-containment; and MU11 proved the sibling defect: "57 callers" sat in the prose while
      the gate never read `n_callers`, so asserting 58 was inert until the gate read `index.csv`;
   5. a splice of mine deleted its own definition block and a `%`-format argument list drifted out of order -
@@ -425,3 +427,23 @@ Older sessions: `docs/sessions/sessions-256-257.md` (2 sessions). Read it only w
   becomes a NO-OP or a KeyError crash (`MATCH_TRUTH` looked up a deleted store site) - so gates must degrade
   with `.get(st, 0)` and report a wrong COUNT, never crash; and every anchor must be re-read from the current
   source, never quoted from memory.
+- PR #289 GREPTILE, 3 P2s, ALL ACCEPTED, and one of them exposed that my *previous* fix was fake:
+  1. **`fold_chain` accepted chains that do not compute 304n** - a chained `a != b != c` is not
+     pairwise-disequality, and the first step never required its two operands to be the same register.
+  2. My skill/notes said `sorted(xs) == sorted(set(xs))` "can never fail" - WRONG: it rejects duplicates.
+     Corrected everywhere to "proves uniqueness only, never completeness or agreement with a source".
+  3. **My A8 retraction had never been written.** The `str.replace` anchor spanned a `%`-format break in the
+     middle of the literal, so it silently no-opped and the shipped evidence still printed the false claim
+     ("both load-bearing"). Anchor edits on a contiguous literal, then VERIFY by grepping the artifact for the
+     new words - a retraction that didn't land is worse than none, because it makes the doc look cleaned.
+- THEN THE AUDIT ITSELF REDDENED, TWICE, ON MY OWN NEW CLAIMS. With the operand clause and the proximity cap
+  switched OFF, `fold_chain` returns byte-identical results at all 6 sites over four window sizes: both clauses
+  are INERT. And my first response to P2#1 - demanding the second `lea`'s base register equal the register that
+  stored to the index - is FALSE at the setter and broke all six sites (the shape is `lea d,[n+n*8]`: OPERANDS
+  equal, DESTINATION free). A8 now asserts the audit's actual content: only the window's right-hand reach is
+  load-bearing (0x4e4dd0: 0 folds at -24/+32 B, 1 at -24/+90 B), the two inert clauses are declared inert with no
+  mutants aimed at them, and the index operand's VALUE is declared UNPROVEN (register names are only a proxy for
+  value identity without intervening-write tracking - which I declined to write).
+- FINAL: **8/8 gates, 15/15 mutations load-bearing**, digest 625cd5877271cd85 (unchanged through every rewrite -
+  the claims moved, the binary did not).
+

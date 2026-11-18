@@ -941,9 +941,13 @@ purely the instrument's:
   Assert the exact offset LIST, not a cardinal derived from a model of the fields.
 
 ## Decorative-condition audit (s274, M311)
-- **`sorted(xs) == sorted(set(xs))` is a tautology, not a check.** M311's store-census gate carried one as its
-  third sub-condition; it can never fail. The falsifiable form is *claim vs. independent derivation*: compare the
-  function names transcribed into the script against `containment(owner(rows, addr))` computed from `index.csv`.
+- **`sorted(xs) == sorted(set(xs))` checks UNIQUENESS only - it is not the check you meant.** M311's
+  store-census gate carried one as its third sub-condition. It is not a tautology (duplicates make it fail), but
+  passing it says nothing about whether the list is COMPLETE or whether it agrees with an independent source, so
+  it never reddens for the defect you are guarding against. The falsifiable form is *claim vs. independent
+  derivation*: compare the function names transcribed into the script against `containment(owner(rows, addr))`
+  computed from `index.csv`. Audit every sub-condition for which of the three it is: proves-the-claim,
+  rejects-duplicates (fine, but label it), or vacuous.
 - **Any number that appears in gate prose must be READ from the artifact, not typed in the `%` tuple.** A6 printed
   "57 recorded callers" from a literal while the gate never touched `n_callers`; MU11 (assert 58) was inert until
   the gate began reading `n_callers` from `index.csv` and printing that value. Same trap as the hard-coded
@@ -994,7 +998,8 @@ purely the instrument's:
 ## Selection bias and unmeasured mechanism claims (s274, M311)
 - **Iterate EVERY member of the population, not the subset you first chose to inspect.** M311 built its fold map
   from three hand-picked store sites, which made `all(folds[st] for st in folds)` and `len(folds) == 3` VACUOUS
-  - the same class as `sorted(x) == sorted(set(x))`. Deriving the population from the census constants
+  - worse than a uniqueness-only check like `sorted(x) == sorted(set(x))`, which at least rejects duplicates.
+  Deriving the population from the census constants
   (`for st, _, _ in IDX_STORES`) turned a tautology into a finding: 5 of 6 sites fold and one does not.
 - **"Clause X is load-bearing" is a claim that needs a mutant, and the cheap test is to run the weakened
   mechanism and diff its output.** M311's A8 prose asserted register-discipline and a proximity cap were doing
@@ -1005,3 +1010,21 @@ purely the instrument's:
 - **Gates must degrade to a wrong COUNT, never to a crash.** A mutant that deleted a store site produced
   `KeyError` in `nfold = {st: len(folds[st]) ...}` - correctly rejected by the traceback rule, but it scored
   nothing. `folds.get(st, [])` turns the same defect into a red gate.
+
+## Auditing a matcher clause instead of asserting it (s274, M311, PR #289 review)
+- **"Clause X is load-bearing" must be a measurement inside the gate: run the weakened matcher on the same input
+  and assert its output DIFFERS.** If it doesn't differ, say so in the gate text (`DECLARED INERT ... no mutant is
+  aimed at them`) and delete the mutants - never leave a WEAK row that implies a defect in the gate.
+  M311 asserted register-discipline twice without ever running the comparison; the audit showed both it and a
+  proximity cap were inert, and the only real discriminator was the analysis window's right-hand reach.
+- **When a reviewer asks for a stricter rule, implement the minimal SOUND version, not the first literal reading.**
+  "Require the index register in both steps" is unsound here: the compiler re-loads the value into a different
+  register (`0x4e3476 mov ds:0x68cbb0,eax` then `0x4e347e lea edx,[eax+ecx*2]`), and demanding the first step's
+  DESTINATION equal its operands broke all six sites - the shape is `lea d,[n+n*8]`, OPERANDS equal, destination
+  free. If the strict version needs data-flow you haven't built, ship the weaker honest claim and print what is
+  UNPROVEN rather than silently over-tightening or silently dropping the concern.
+- **Verify a retraction landed.** M311's A8 retraction used a `str.replace` anchor that spanned a `%`-format break
+  mid-literal, so it no-opped and the shipped evidence kept printing the retracted claim - caught only because a
+  reviewer cited the evidence line. Grep the artifact for the NEW words after editing prose inside a format string,
+  and regenerate evidence from the green run before quoting it.
+

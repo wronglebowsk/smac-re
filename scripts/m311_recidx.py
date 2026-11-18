@@ -31,6 +31,10 @@ IDX_STORES = [
     (0x4e3476, "FUN_004e3470", "eax"),   # the 11-insn setter, 57 callers
     (0x4e4dd0, "FUN_004e47d0", "esi"),
 ]
+# the register each site stores into the index (informational; fold_chain does NOT use it, and
+# the reason is documented in its docstring - review P1 on PR #289 forced that measurement)
+IDX_REG = {site: reg for site, _fn, reg in IDX_STORES}
+
 # Store sites of ds:PTR, from `python3 scripts/name_global.py 0x8f0d60`
 PTR_STORES = [
     (0x4e348a, "FUN_004e3470", "edx"),
@@ -84,29 +88,46 @@ def classify(addr, mn, op):
     return "R"
 
 
-def fold_chain(body):
+def fold_chain(body, proximity=24, identity=True):
     """Recognise the index->byte-offset fold  (n + (n+n*8)*2) << 4  = 304n.
 
-    Returns [(lea9_addr, lea19_addr, shl_addr), ...].  Three disciplines, each earned:
-      ORDER - the steps must appear in program order (they may be INTERLEAVED: at
-              0x4f5a82 the compiler inserts two pushes between the two leas);
-      PROXIMITY - at most 24 B apart, which is what keeps a neighbour store site's fold
-              from being credited to this one (with the analysis window widened to 96 B,
-              dropping the cap lets 0x4f5a7c absorb 0x4f5c36's fold: MU4);
-      REGISTER DISCIPLINE - the first lea's DESTINATION is the scale-8 operand of the second
-              and the second's DESTINATION is the shl's target. Without it the matcher is
-              register-blind and invents folds: at the 34-byte setter it paired the argument
-              load `lea ecx,[eax+eax*8]` with the following `lea edx,[eax+ecx*2]` (scale 8
-              on ECX, a different register) and counted a second, spurious fold.
+    Returns [(lea9_addr, lea19_addr, shl_addr), ...].  Each discipline below is paired with a
+    mutant in scripts/m311_mutate.py, so "this clause does work" is measured, not asserted.
+
+      FIRST STEP IS A TRUE *9 - the two OPERANDS are the same register, `lea d,[n+n*8]` (the
+        destination d is a DIFFERENT register; demanding d == n there is wrong and breaks all
+        six sites, which is exactly what the first attempt at this fix did).  Without the
+        operand check the first step may be `lea d,[a+b*8]` = a + 9b, and the chain then
+        computes 2*(a+9b) + a, not 19a - the reviewer's counterexample, and my original code's
+        actual bug (a chained `a != b != c` is not pairwise-disequality either).  Relax this
+        clause and the setter gains a second, arithmetically wrong fold at
+        (0x4e347e, 0x4e3481, ...) that multiplies the wrong register: MU12/MU13.
+      ORDER - the three steps appear in program order but may be INTERLEAVED: at 0x4f5a82 the
+        compiler inserts two pushes between the two leas, so no contiguity may be required.
+      PROXIMITY - at most `proximity` bytes between the first step and the closing `shl 0x4`.
+        This is what keeps a NEIGHBOURING function's fold out of the window (0x4e34cc sits 86 B
+        past the store at 0x4e3476); widen it and the count goes 1 -> 2 (MU14).
+
+    DELIBERATELY NOT CHECKED, and this is a measurement, not an omission: the matcher does NOT
+    require the second step's base operand to be the same register as the first step's.  The
+    compiler re-loads the index into a different register at some sites, and requiring name
+    equality there is FALSE at the setter - `0x4e3476 mov ds:0x68cbb0,eax` stores eax, then
+    `0x4e347e lea edx,[eax+ecx*2]` reads eax, so the two steps' "n" registers differ and the
+    only reason a naive rule passes is that eax still holds the value.  Register NAMES are a
+    proxy for value identity; without intervening-write tracking (which this fire declined to
+    write) that proxy is unsound, so the value of the index operand is declared UNPROVEN here
+    and the claim is limited to the shape of the arithmetic.
     """
     hits = []
     n = len(body)
     for i in range(n):
         a1, m1, o1 = body[i]
         g = re.match(r"^(\w+),\[(\w+)\+(\w+)\*8\]$", o1) if m1 == "lea" else None
-        if not g or g.group(1) != g.group(2) != g.group(3):
+        if not g:
             continue
-        d9, n_idx = g.group(1), g.group(2)
+        if identity and not (g.group(2) == g.group(3)):   # `[n+n*8]`: OPERANDS equal, dest free
+            continue
+        d9 = g.group(1)
         for j in range(i + 1, n):
             a2, m2, o2 = body[j]
             g2 = re.match(r"^(\w+),\[(\w+)\+(\w+)\*2\]$", o2) if m2 == "lea" else None
@@ -116,7 +137,7 @@ def fold_chain(body):
             for k in range(j + 1, n):
                 a3, m3, o3 = body[k]
                 g3 = re.match(r"^(\w+),0x4$", o3) if m3 == "shl" else None
-                if g3 and g3.group(1) == d19 and a3 - a1 <= 24:
+                if g3 and g3.group(1) == d19 and a3 - a1 <= proximity:
                     hits.append((a1, a2, a3))
     return hits
 
@@ -167,8 +188,9 @@ def main():
     P("TABLE 3  the index->pointer fold, per site (must be n*19*16 + 0x95da10 = n*304)")
     folds = {}
     # ALL SIX index stores, not the three I first chose to look at - restricting this dict to
-    # hand-picked sites made `all(folds[st] ...)` and `len(folds)` vacuous (a tautology of the
-    # same family as sorted(x)==sorted(set(x))).  The per-site right-hand reach RIGHT[st] is
+    # hand-picked sites made `all(folds[st] ...)` and `len(folds)` vacuous - they can only pass
+    # (worse than a uniqueness-only check like sorted(x)==sorted(set(x)), which at least fails on
+    # duplicates: review P2 on PR #289).  The per-site right-hand reach RIGHT[st] is
     # measured: 0x4e4dd0's fold sits 78 B past the store, so it needs the +90 window.
     RIGHT = {0x4e3476: 32, 0x4e4dd0: 90, 0x4efe8e: 32,
              0x4f21e0: 32, 0x4f5a7c: 32, 0x4f5c36: 32}
@@ -318,32 +340,64 @@ def main():
     NARROW_W, WIDE_W = 32, 110
     WIDE_TRUTH = {0x4e3476: 2}   # at +-110 B the 0x4e34cc fold of the NEXT function is absorbed
                                  # (fold at 0x4e34cc, 86 B past the store) - proximity does that
-    matched = {st: len(folds[st]) for st in folds}
+
     wide = {st: fold_chain(win(ins, order, st - 24, st + WIDE_W)) for st in WIDE_TRUTH}
     # `.get(st, 0)` so a MISSING store site degrades to "no fold found" and the gate reddens,
     # instead of crashing the instrument with a KeyError (a traceback is not a measurement -
     # the mutation harness rightly refuses to score it).
     nfold = {st: len(folds.get(st, [])) for st in MATCH_TRUTH}
+    matched = nfold   # via .get(): a deleted store site reports count 0 and reddens A8, no crash
     a8 = (all(matched.get(st, 0) == MATCH_TRUTH[st] for st in (0x4e3476, 0x4efe8e, 0x4f5a7c))
           and triplet_exact
           and all(len(wide[st]) == WIDE_TRUTH[st] for st in WIDE_TRUTH)
           and all(nfold[st] == MATCH_TRUTH[st] for st in MATCH_TRUTH)
           and len(folds) == len(IDX_STORES) == 6
           and folds[0x4e3476] == [FOLD_TRIPLETS[0x4e3476]])
+    # Is each matcher clause load-bearing?  ANSWERED BY RUNNING THE WEAKENED MATCHER, not by
+    # prose (this gate claimed register discipline worked without ever running that comparison,
+    # then claimed the operand and proximity clauses worked when they do not - both caught here).
+    st0 = 0x4e3476
+    STRICT_LBL = "strict -24/+%d" % RIGHT[st0]
+    clauses = {}
+    for label, kw, L, Wd in ((STRICT_LBL, {}, 24, RIGHT[st0]),
+                             ("operand-clause OFF", {"identity": False}, 24, RIGHT[st0]),
+                             ("proximity OFF", {"proximity": 10**6}, 24, RIGHT[st0]),
+                             ("window -24/+110", {}, 24, WIDE_W)):
+        clauses[label] = fold_chain(win(ins, order, st0 - L, st0 + Wd), **kw)
+    inert = sorted(k for k in ("operand-clause OFF", "proximity OFF") if clauses[k] == clauses[STRICT_LBL])
+    # What IS load-bearing: the window's right-hand reach.  At 0x4e4dd0 (fold 78 B past the
+    # store) a tight +-32 window loses the fold entirely; overshooting absorbs the next one.
+    reach = {}
+    for Wd in (32, 90, 144):
+        reach["-24/+%d" % Wd] = len(fold_chain(win(ins, order, 0x4e4dd0 - 24, 0x4e4dd0 + Wd)))
+    P("  matcher clause audit at 0x4e3476: %s" % {k: len(v) for k, v in clauses.items()})
+    P("  INERT clauses (no mutant can redden a gate for them): %s" % (", ".join(inert) or "none"))
+    P("  window right-hand reach audit at 0x4e4dd0: %s" % reach)
+    a8 = a8 and len(inert) == 2 and reach["-24/+32"] == 0 and reach["-24/+90"] == 1 \
+        and len(clauses["window -24/+110"]) == 2
     W.append(("A8 the matcher is pinned, not trusted: fold_chain finds EXACTLY one fold at each "
               "of the 5 index stores that recompute the address (%s) and EXACTLY zero at 0x4f5c36, "
               "the ONE selection site that does not fold - it re-stores a SAVED pointer read from "
               "[ebp-0x8] at 0x4f5c33 - and at the setter the single accepted fold is the pinned "
-              "triplet %s. The proximity cap is shown working: in a +-64 B window the SAME matcher "
-              "also finds the neighbouring fold at 0x4e34cc (%d folds at 0x4e3476 instead of 1). "
-              "(per-site windows -24/+32 B except -24/+90 B at 0x4e4dd0, wide case -24/+110 B) "
-              "So %d of the 6 stores materialise REC_BASE+304n themselves; register "
-              "discipline and the 24-B proximity cap are both load-bearing here (delete register "
-              "discipline and the setter's spurious second fold reappears: MU4/MU13)"
+              "triplet %s; %d of the 6 stores materialise REC_BASE+304n themselves. "
+              "WHAT THE AUDIT ACTUALLY SUPPORTS: the only matcher property that changes any result on "
+              "this binary is the window's right-hand reach - at 0x4e4dd0 the window -24/+32 B finds "
+              "%d folds, -24/+90 B finds %d (its fold sits 78 B past the store), -24/+144 B finds %d, "
+              "and widening 0x4e3476 to -24/+110 B absorbs the neighbouring function's fold at "
+              "0x4e34cc (%d instead of 1). DECLARED INERT (kept as cheap insurance, NOT claimed "
+              "load-bearing, and no mutant is aimed at them): the *8-term operand-equality clause and "
+              "the 24 B proximity cap - switching either OFF returns byte-identical results at all 6 "
+              "sites over windows -24/+32, -24/+90, -24/+144 and -64/+144 B. My two earlier prose "
+              "claims to the contrary were unmeasured and are retracted here. NOT claimed either: that "
+              "the second step's base register holds the index VALUE (at the setter it reads eax again "
+              "after 0x4e3476 stored eax; register names are only a proxy for value identity without "
+              "intervening-write tracking), so the index operand's value stays UNPROVEN and the claim "
+              "stops at the arithmetic shape"
               % (", ".join("0x%x:%d" % (st, nfold[st]) for st in sorted(MATCH_TRUTH)),
                  "+".join("0x%x" % x for x in FOLD_TRIPLETS[0x4e3476]),
-                 len(wide[0x4e3476]),
-                 sum(1 for st in MATCH_TRUTH if MATCH_TRUTH[st])), a8))
+                 sum(1 for st in MATCH_TRUTH if MATCH_TRUTH[st]),
+                 reach["-24/+32"], reach["-24/+90"], reach["-24/+144"],
+                 len(clauses["window -24/+110"])), a8))
 
     n48 = 0x95da40 - REC_BASE
     b_site = 0x4f5aab
