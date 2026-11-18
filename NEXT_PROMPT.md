@@ -80,8 +80,8 @@ collision-check + worktree FIRST).
   Full law NAMED ## M313.
   CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass: goals at bases, region
   flips, inline unit orders, kind-8 cancel + knockout. Full law NAMED ## M317.
-  CLOSED (s289): pick (iv) refresh pair = FUN_004e8d60 unit-support census + FUN_004e78e0 pane
-  refresh (void(void), current-selection driven; shared kind dispatcher 4e75f0). NAMED ## M318.
+  CLOSED (s289): pick (iv) pair = FUN_004e8d60 unit-support census + FUN_004e78e0 pane refresh;
+  void(void), selection-driven; kind dispatcher 4e75f0. NAMED ## M318.
   OPEN PICK after M318: (v) the 8 memo sites with NO local dedup guard - census their callers and
   ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
   Lists live in NAMED ## M310 / ## M313 / ## M314 / ## M315 / ## M316, not here.**
