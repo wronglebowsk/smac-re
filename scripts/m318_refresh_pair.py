@@ -82,21 +82,28 @@ def main():
     print("\n== G3 memo-store reach: a ds:0x68cbb4 store precedes each pair ==")
     pos = {a: i for i, a in enumerate(order)}
     found = []
-    for a in sa:
+    maxd = 0
+    for a, b in zip(sa, sb):
         i = pos[a]
         store = None
         for j in range(i - 1, max(i - 12, -1), -1):
             pa = order[j]
-            if a - pa > PAIR_REACH:
+            if b - pa > PAIR_REACH:
                 break
             mn, ops = ins[pa]
             if mn == "mov" and MEMO in M.split_ops(ops)[0]:
                 store = pa
                 break
         found.append(store)
-        print("  pair @0x%x: memo store %s" % (a, "0x%x" % store if store else "NONE"))
+        # M315's 17 B reach is store -> SECOND callee (#311 P2: measuring to
+        # the first call accepted up to 22 B). Gap is pinned 5 by G2.
+        d = b - store if store else -1
+        maxd = max(maxd, d)
+        print("  pair @0x%x: memo store %s (->first %d, ->second %d)"
+              % (a, "0x%x" % store if store else "NONE", a - store if store else -1, d))
     assert all(s is not None for s in found), "memo store missing before a pair site"
-    print("G3 PASS (all 12 pairs follow a memo store within %d B)" % PAIR_REACH)
+    assert maxd <= PAIR_REACH
+    print("G3 PASS (all 12 pairs follow a memo store; worst store->second = %d B <= %d)" % (maxd, PAIR_REACH))
 
     print("\n== C1 callee census: the pair's action vocabulary ==")
 
@@ -144,6 +151,22 @@ def main():
     for a, want in PINS_A.items():
         print("  0x%x: %s %s" % (a, ins[a][0], ins[a][1]))
         assert ins[a] == want, "A structure drift at 0x%x" % a
+    # the CONDITIONS that make the loads a filter / a capacity check (#311 P2)
+    PINS_A2 = {
+        0x4E8E34: ("cmp", "eax,edi"),                          # home-base == selection
+        0x4E8E3A: ("je", "0x4e8e8e"),                          # match -> process
+        0x4E9094: ("mov", "edi,DWORD PTR [ecx*4+0x94d684]"),   # faction support limit
+        0x4E90A0: ("jl", "0x4e90ae"),                          # lower clamp branch
+        0x4E90A2: ("cmp", "eax,0x7"),                          # upper clamp bound
+        0x4E90A5: ("jle", "0x4e90b0"),
+        0x4E90A7: ("mov", "eax,0x7"),                          # clamp to 7
+        0x4E90B6: ("cmp", "ecx,DWORD PTR [ebp+eax*4-0x30]"),   # count vs local_34[clamp]
+        0x4E90BA: ("jle", "0x4e90e6"),                         # under capacity -> no flag
+        0x4E90C4: ("cmp", "edi,0xfffffffc"),                   # limit <= -4 branch
+    }
+    for a, want in PINS_A2.items():
+        print("  0x%x: %s %s" % (a, ins[a][0], ins[a][1]))
+        assert ins[a] == want, "A condition drift at 0x%x" % a
     astore = [(a, ins[a][1]) for a in order if A <= a < A + 1331
               and ins[a][0] == "mov" and ins[a][1].startswith("ds:0x")]
     A_BANK = {0x4E8D74: "ds:0x8f0c6c,eax", 0x4E8D7B: "ds:0x8f0c70,eax",
@@ -184,8 +207,20 @@ def main():
     print("  dispatcher calls: %s" % " ".join("0x%x->0x%x" % (a, t) for a, t in sorted(dcalls.items())))
     assert dcalls == {0x4E7614: 0x4E6960, 0x4E7630: 0x4E6D40, 0x4E764C: 0x4E7070}, "dispatcher call map drift"
     assert ins[0x4E75F6] == ("cmp", "eax,0x3"), "dispatcher bound drift"
+    # the switch IS its jump table behind the bound check (code-atlas law):
+    # pin the bound branch, the indirect form, and the table BYTES from the PE
+    assert ins[0x4E75F9] == ("ja", "0x4e7660"), "dispatcher bound branch drift"
+    assert ins[0x4E75FB] == ("jmp", "DWORD PTR [eax*4+0x4e7664]"), "dispatcher jump form drift"
+    import struct
+    blob = open(os.path.join(M.ROOT, "terran.exe"), "rb").read()
+    _, secs = M.pe_sections(blob)
+    off, secname = M.va2off(secs, 0x4E7664)
+    assert off is not None, "jump table not in file bytes"
+    table = struct.unpack_from("<4I", blob, off)
+    print("  jump table @0x4e7664 (%s): %s" % (secname, " ".join("0x%x" % t for t in table)))
+    assert table == (0x4E7602, 0x4E761E, 0x4E763A, 0x4E7656), "dispatcher table drift"
     assert ins[0x4E7656] == ("mov", "DWORD PTR ds:0x8f0cc8,0x0"), "case-3 effect drift"
-    print("C4 PASS (same triad + case-3 zero as A's inline switch: one kind law, two call shapes)")
+    print("C4 PASS (bound cmp 3 + ja default + jump table -> same triad + case-3 zero as A's inline switch)")
 
     print("\n== C5 signatures: both pair members are void(void) ==")
     shard = open(os.path.join(M.ROOT, "ghidra_out", "shard_012.c")).read()
@@ -197,6 +232,20 @@ def main():
     print("\n== PIN ==")
     assert len(ca) == 4 and len(cb) == 24 and len(astore) == 6, "PIN totals drift"
     print("PIN PASS: A 4 calls / 6 bank stores; B 24 calls / 9 callees / 15 sel-loads / 5 flag-reads")
+    import hashlib
+    rows = [
+        ("G1", "PASS", "A:1331/408 B:5237/1589"),
+        ("G2", "PASS", "12 pairs gap5 owners7"),
+        ("G3", "PASS", "max store->second %d" % maxd),
+        ("C1", "PASS", repr(sorted(dict(ca).items())) + repr(sorted(mult.items()))),
+        ("C2", "PASS", repr(sorted(PINS_A.items())) + repr(sorted(PINS_A2.items())) + repr(sorted(astore))),
+        ("C3", "PASS", repr(sorted(PINS_B.items())) + " sel15 flag5"),
+        ("C4", "PASS", repr(sorted(dcalls.items())) + repr(table)),
+        ("C5", "PASS", "void(void) x2"),
+        ("PIN", "PASS", "4/24/6"),
+    ]
+    digest = hashlib.sha256("".join("%s|%s|%s\n" % r for r in rows).encode()).hexdigest()[:16]
+    print("== digest: %s ==" % digest)
     print("\nM318 CENSUS GREEN: G1-G3 + C1-C5 + PIN")
     print("NAMES (structure V, game nouns INFERRED): FUN_004e8d60 = selected-base UNIT-SUPPORT")
     print("CENSUS (per-kind yield totals, over-capacity + foreign-tile unit flags, summary bank);")

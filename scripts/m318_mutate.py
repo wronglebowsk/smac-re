@@ -34,6 +34,13 @@ MUTANTS = [
     ("MU11", "code", "0x4e7656|mov DWORD PTR ds:0x8f0cc8,0x1", None, "case-3 effect drift"),
     ("MU12", "code", "0x4e799b|mov ecx,DWORD PTR [eax*4+0x94dc38]", None, "B structure drift at 0x4e799b"),
     ("MU13", "noop", "0x4e8d60|push ebx", None, None),
+    # review round #311: condition pins + second-call reach + printed digest
+    ("MU14", "exp", "PAIR_REACH = 17", "PAIR_REACH = 16", "memo store missing before a pair site"),
+    ("MU15", "code", "0x4e90a2|cmp eax,0x8", None, "A condition drift at 0x4e90a2"),
+    ("MU16", "code", "0x4e8e3a|je 0x4e8e90", None, "A condition drift at 0x4e8e3a"),
+    ("MU17", "code", "0x4e75f9|ja 0x4e7661", None, "dispatcher bound branch drift"),
+    ("MU18", "exp", "assert table == (0x4E7602, 0x4E761E, 0x4E763A, 0x4E7656)",
+     "assert table == (0x4E7603, 0x4E761E, 0x4E763A, 0x4E7656)", "dispatcher table drift"),
 ]
 
 

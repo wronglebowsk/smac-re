@@ -20,19 +20,19 @@ sites: 12 x FUN_004e8d60, 12 x FUN_004e78e0
 G2 PASS (12 back-to-back pairs, 7 distinct owners)
 
 == G3 memo-store reach: a ds:0x68cbb4 store precedes each pair ==
-  pair @0x4e4de2: memo store 0x4e4ddc
-  pair @0x4eb6cc: memo store 0x4eb6c7
-  pair @0x4ee6cf: memo store 0x4ee6c9
-  pair @0x4ee889: memo store 0x4ee883
-  pair @0x4efeb0: memo store 0x4efeaa
-  pair @0x4f2207: memo store 0x4f2201
-  pair @0x4f3f85: memo store 0x4f3f7f
-  pair @0x4f44ad: memo store 0x4f44a8
-  pair @0x4f4563: memo store 0x4f455d
-  pair @0x4f5ac3: memo store 0x4f5ab7
-  pair @0x4f5b37: memo store 0x4f5b32
-  pair @0x4f5c50: memo store 0x4f5c4a
-G3 PASS (all 12 pairs follow a memo store within 17 B)
+  pair @0x4e4de2: memo store 0x4e4ddc (->first 6, ->second 11)
+  pair @0x4eb6cc: memo store 0x4eb6c7 (->first 5, ->second 10)
+  pair @0x4ee6cf: memo store 0x4ee6c9 (->first 6, ->second 11)
+  pair @0x4ee889: memo store 0x4ee883 (->first 6, ->second 11)
+  pair @0x4efeb0: memo store 0x4efeaa (->first 6, ->second 11)
+  pair @0x4f2207: memo store 0x4f2201 (->first 6, ->second 11)
+  pair @0x4f3f85: memo store 0x4f3f7f (->first 6, ->second 11)
+  pair @0x4f44ad: memo store 0x4f44a8 (->first 5, ->second 10)
+  pair @0x4f4563: memo store 0x4f455d (->first 6, ->second 11)
+  pair @0x4f5ac3: memo store 0x4f5ab7 (->first 12, ->second 17)
+  pair @0x4f5b37: memo store 0x4f5b32 (->first 5, ->second 10)
+  pair @0x4f5c50: memo store 0x4f5c4a (->first 6, ->second 11)
+G3 PASS (all 12 pairs follow a memo store; worst store->second = 17 B <= 17)
 
 == C1 callee census: the pair's action vocabulary ==
 A (FUN_004e8d60): 4 call sites
@@ -61,6 +61,16 @@ C1 PASS (A: tile-owner + yield triad; B: rebuild-first, dispatcher x7, region bi
   0x4e90d8: or edx,0x10
   0x4e9260: or eax,0x400000
   0x4e926c: or eax,0x200000
+  0x4e8e34: cmp eax,edi
+  0x4e8e3a: je 0x4e8e8e
+  0x4e9094: mov edi,DWORD PTR [ecx*4+0x94d684]
+  0x4e90a0: jl 0x4e90ae
+  0x4e90a2: cmp eax,0x7
+  0x4e90a5: jle 0x4e90b0
+  0x4e90a7: mov eax,0x7
+  0x4e90b6: cmp ecx,DWORD PTR [ebp+eax*4-0x30]
+  0x4e90ba: jle 0x4e90e6
+  0x4e90c4: cmp edi,0xfffffffc
   A direct-global stores: 6 (summary bank 8f0c2c..8f0cc8)
 C2 PASS (52-B unit walk, count 985af0, home-base filter 68cbb0, flag masks, 6-store bank)
 
@@ -77,7 +87,8 @@ C3 PASS (rows from 94dc34, 15 selection reads, 5 base-flag reads, 8f0c68 countdo
 
 == C4 the shared kind law: dispatcher FUN_004e75f0 ==
   dispatcher calls: 0x4e7614->0x4e6960 0x4e7630->0x4e6d40 0x4e764c->0x4e7070
-C4 PASS (same triad + case-3 zero as A's inline switch: one kind law, two call shapes)
+  jump table @0x4e7664 (.text): 0x4e7602 0x4e761e 0x4e763a 0x4e7656
+C4 PASS (bound cmp 3 + ja default + jump table -> same triad + case-3 zero as A's inline switch)
 
 == C5 signatures: both pair members are void(void) ==
   void FUN_004e8d60(void)
@@ -86,6 +97,7 @@ C5 PASS (no arguments: the pair reads the CURRENT selection, not a passed index)
 
 == PIN ==
 PIN PASS: A 4 calls / 6 bank stores; B 24 calls / 9 callees / 15 sel-loads / 5 flag-reads
+== digest: 2e81643277e3a23b ==
 
 M318 CENSUS GREEN: G1-G3 + C1-C5 + PIN
 NAMES (structure V, game nouns INFERRED): FUN_004e8d60 = selected-base UNIT-SUPPORT
