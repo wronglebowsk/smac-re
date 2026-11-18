@@ -141,7 +141,12 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
       'memory'     the fold fed from model state, never re-reading a container;
       'unfounded'  rival: the founder ops grow the model but NEVER the image;
       'frozenargs'/'addalways'/'price'/'locate'  fold-engine rivals.
-    Returns a dict of everything the gates read."""
+    REVIEW #307 P2 (rival law-isolation): the image poison is applied in EVERY
+    mode that reads the container except 'memory' (blind by definition) and
+    'unfounded' (no visited record exists), and NO rival is given the engine's
+    passthrough (which discards the fold's queue writes and so confounds the
+    rival's own law with a second one). Returns a dict of everything the gates
+    read."""
     price = 100 if mode == "price" else PRICE_DECL
     T = len(earliest)
     led = sobf.from_save(sv)
@@ -186,6 +191,15 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
         # see it. (Ordering, learned the hard way: applying it after the turn's
         # write would land it one boundary late and the falsifier would be
         # decoration.)
+        # REVIEW #307 P2: the poison is applied to EVERY mode that reads the
+        # container, not just 'container'. It was gated on mode=="container"
+        # while two rivals were CALLED with poison=True - so `frozenargs`
+        # received clean bytes a correct fold would also produce, and the
+        # tile-locating `locate` rival died for a reason unrelated to its own
+        # law. Excluded are only the two modes that must stay blind by
+        # definition: 'memory' (never re-reads the container - the whole point
+        # of the blindness claim) and 'unfounded' (the founder never writes the
+        # array at all, so there is no visited record to poison).
         # Second falsifier shape: an INCOME/STORAGE corruption. It proves the
         # read-back loop (the container's st is the next visit's input), which
         # the tile/owner corruption alone cannot - that one only moves the
@@ -198,8 +212,9 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
                 offs = _ims.bases_off + sosave.BASE_LEN * target_idx
                 struct.pack_into("<i", mut, offs + ST_OFF, ST_POISON_VALUE)
                 img = bytes(mut)
-        if (mode == "container" and poison and img is not None and seeding and
-                visit_no is not None and visit_no >= POISON_FROM):
+        if (poison and mode not in ("memory", "unfounded") and img is not None
+                and seeding and visit_no is not None
+                and visit_no >= POISON_FROM):
             _im0 = soct.parse_image(img)
             if target_idx < _im0.n_bases:
                 mut = bytearray(img)
@@ -281,7 +296,12 @@ def run(sv, ops, earliest, mode="container", poison=True, st_poison=False):
             pos=True, overrides_fn=ovs, d0s=[D0_DECL], price=price,
             seed_rec=seed_rec, tile_at=lambda: TARGET, slot_i=target_idx,
             prior_units=arrivals, start_img=img,
-            passthrough=(mode == "locate"))
+            passthrough=False)  # REVIEW #307 P2: passthrough is no longer hung
+        # off the locate rival - it DISCARDS the fold's queue writes, so the
+        # rival was dying for two reasons at once (the law under test plus a
+        # suppressed write-back). With the image poison now reaching this mode,
+        # locate fails on ITS OWN law: the tile-addressing walk cannot find the
+        # record once the container's tile bytes move.
         v = vv[0]
         # The fold APPENDS to the list object it was handed (it accumulates
         # its own arrivals); we passed a COPY, so aa is the complete, ordered
@@ -560,9 +580,18 @@ def compute(sav_path, log_path, trace_path, b23_line):
     st_pos_pois = [v["t"] for v in stp["visits"] if v["made"]]
     st_diverge = (st_verdicts != [v["verdict"] for v in clean["visits"]] and
                   st_pos_pois != st_pos_clean and
-                  all(v["span_after"]["st"] == m["span_after"]["st"]
+                  # REVIEW #307 P2: this filter read the RUN TURN (`t` is 22..29)
+                  # against a VISIT INDEX (4), so it selected no rows and all()
+                  # passed on an empty list - a decorative half-condition. It now
+                  # filters by visit index and compares every promised span
+                  # field, not just storage.
+                  all((v["span_after"]["st"], v["span_after"]["pen"],
+                       v["span_after"]["slots"], v["span_after"]["mirror"])
+                      == (m["span_after"]["st"], m["span_after"]["pen"],
+                          m["span_after"]["slots"], m["span_after"]["mirror"])
                       for v, m in zip(stp["visits"], clean["visits"])
-                      if v["t"] < ST_POISON_VISIT))
+                      if v["visit"] < ST_POISON_VISIT) and
+                  any(v["visit"] >= ST_POISON_VISIT for v in stp["visits"]))
     verdicts_same = [v["verdict"] for v in pv] == [v["verdict"] for v in mv]
     want3p = soprod.create_record(POISON[0], POISON[1], SEED_SLOTS[2], POISON[2])
     third_in_img = (fin.data[fin.units_off + sosave.UNIT_LEN * (sv.n_units + 2):
@@ -599,9 +628,16 @@ def compute(sav_path, log_path, trace_path, b23_line):
     na = run(sv, ops, earliest, mode="noadd", poison=False)
     rivals["noadd"] = len(na["arrivals"]) == 0
     np_ = run(sv, ops, earliest, mode="nopop", poison=False)
-    rivals["nopop"] = len(np_["arrivals"]) != 3 or \
-        [v["span_after"]["pen"] for v in np_["visits"]] == \
-        [v["span_after"]["pen"] for v in clean["visits"]]
+    # REVIEW #307 P2: the old form ORed two half-conditions, so a rival that
+    # accidentally popped NORMALLY (3 arrivals AND a pending sequence identical
+    # to the clean run) still scored as a failed rival. Both halves are now
+    # REQUIRED to be false for a clean queue: arrivals must not be 3, and the
+    # pending sequence must actually DIFFER. (Repaired by mutation, not by
+    # reading: MU6b restores normal popping in the engine's nopop branch and
+    # reddens G8 - see scripts/b24_mutate.py.)
+    np_pen = [v["span_after"]["pen"] for v in np_["visits"]]
+    clean_pen = [v["span_after"]["pen"] for v in clean["visits"]]
+    rivals["nopop"] = len(np_["arrivals"]) != 3 and np_pen != clean_pen
     fr = run(sv, ops, earliest, mode="frozenargs", poison=True)
     rivals["frozenargs"] = len(fr["arrivals"]) == 3 and \
         fr["arrivals"][2][0:4] == struct.pack("<HH", TARGET[0], TARGET[1]) and \
@@ -614,41 +650,80 @@ def compute(sav_path, log_path, trace_path, b23_line):
     rivals["unfounded"] = unf["visits"] == [] and \
         unf["oprows"][-1]["img_n"] == sv.n_bases and \
         unf["oprows"][-1]["led_n"] == 23
+    # REVIEW #307 P2: the locate rival now fails on its OWN law. The image
+    # poison reaches this mode (it reads the container) and its queue writes are
+    # no longer discarded, so the only difference from the rung is WHERE it
+    # looks for the record: by tile. Measured, the run raises the tile walk's
+    # "not located" (the record cannot be addressed at all) - which is recorded
+    # in the gate detail as the rival's mode of failure, not just "arrivals<3".
+    loc_note = "?"
     try:
         lr = run(sv, ops, earliest, mode="locate", poison=True)
+        loc_note = "ran, arrivals=%d" % len(lr["arrivals"])
         rivals["locate"] = len(lr["arrivals"]) < 3
-    except AssertionError:
+    except AssertionError as e:
+        loc_note = "cannot address the record (%s)" % str(e)[:46]
         rivals["locate"] = True
-    g("G8 five rivals fail the same fit", all(rivals.values()),
+    g("G8 six rivals fail the same fit", all(rivals.values()),
       " ".join("%s=%s" % (kk2, "fail" if vv else "PASS")
-               for kk2, vv in rivals.items()))
+               for kk2, vv in rivals.items())
+      + " | nopop arrivals=%d pending %s vs clean %s | locate: %s"
+      % (len(np_["arrivals"]), np_pen, clean_pen, loc_note))
     return out, sha_c, clean, pois, mem, rivals
 
 
-def b23_replay():
-    """Run rung B23's own acceptance in-process, with B23's OWN inputs (the m56
-    queue trace - not this rung's m289 trace); return its summary line."""
+def b23_replay(sav_path):
+    """Run rung B23's own acceptance IN-PROCESS. The SAVE is the caller's (the
+    fixture both rungs share); the TRACE is always B23's own m56 queue trace -
+    this gate proves the ENGINE was reused, not forked, so it must not inherit
+    this rung's m289 trace. REVIEW #307 P2: it used to hardcode
+    composedlive.DEFAULT_SAV, so a caller pointing --sav elsewhere ran B23's
+    replay against a file it never chose. Returns its summary line."""
     res = []
-    soct.acceptance(DEFAULT_SAV, soct.DEFAULT_TRACE, res)
+    soct.acceptance(sav_path, soct.DEFAULT_TRACE, res)
     bad = [n for n, ok in res if not ok]
     line = "PASS B23 %d/%d" % (len(res) - len(bad), len(res)) if not bad else \
         "FAIL B23 %d bad: %s" % (len(bad), bad[0][:60])
     return line, res
 
 
+def measure_digest(rows, clean, pois, mem):
+    """MD5 over the MEASUREMENTS (gate detail strings + every per-visit row of
+    all three legs), never over labels alone - a digest of labels passes twice
+    while all the numbers move (skill: mutation-harness scoring)."""
+    h = hashlib.md5()
+    for lbl, ok, dt in rows:
+        h.update(("%s|%s|%s\n" % (lbl.split(" - ")[0], ok, dt)).encode())
+    for leg in (clean["visits"], pois["visits"], mem["visits"]):
+        for v in leg:
+            h.update(repr(sorted((k, str(x)) for k, x in v.items()
+                                  if k != "final_img")).encode())
+    for key in ("arrivals", "marrivals"):
+        h.update(repr([bytes(a).hex() for a in clean.get(key, [])]).encode())
+    return h.hexdigest()[:16]
+
+
 def run_all(sav_path, log_path=None, trace_path=None):
     log_path = log_path or DEFAULT_LOG
     trace_path = trace_path or DEFAULT_TRACE
-    line, _ = b23_replay()
+    line, _ = b23_replay(sav_path)
     rows, sha, clean, pois, mem, rivals = compute(sav_path, log_path, trace_path,
                                                   line)
-    rows2, sha2, _, _, _, _ = compute(sav_path, log_path, trace_path, line)
-    det = (sha2 == sha and
-           [(l, o) for l, o, _ in rows2] == [(l, o) for l, o, _ in rows])
+    d1 = measure_digest(rows, clean, pois, mem)
+    rows2, sha2, clean2, pois2, mem2, _ = compute(sav_path, log_path, trace_path,
+                                                  line)
+    d2 = measure_digest(rows2, clean2, pois2, mem2)
+    # REVIEW #307 P2: this compared LABELS + verdicts + the final image only, so
+    # a second run whose details and intermediate tables moved while its final
+    # bytes happened to match would still have passed. It now compares the FULL
+    # rows (labels, verdicts AND details) plus a digest over every per-visit
+    # row of all three legs - the tables the spine actually promises.
+    det = (sha2 == sha and rows2 == rows and d2 == d1)
     rows = rows + [
-        ("G9 two runs -> identical FULL table (labels + verdicts) + clean image sha %s"
-         % sha[:16], det,
-         "table equal=%s sha equal=%s" % (det, sha2 == sha))]
+        ("G9 two runs -> identical FULL table (labels + verdicts + DETAILS + "
+         "all three per-visit tables) + clean image sha %s" % sha[:16], det,
+         "table equal=%s digest %s==%s sha equal=%s" % (rows2 == rows, d1, d2,
+                                                        sha2 == sha))]
     return rows, sha, clean, pois, mem
 
 
@@ -713,11 +788,23 @@ def acceptance(sav_path, results, log_path=None, trace_path=None):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.composedlive")
-    ap.add_argument("--sav", default=DEFAULT_SAV)
+    ap.add_argument("--sav", default=DEFAULT_SAV,
+                    help="the fixture both rungs share; it is ALSO handed to "
+                         "the in-process rung B23 replay (review #307 P2)")
     ap.add_argument("--log", default=DEFAULT_LOG)
     ap.add_argument("--trace", default=DEFAULT_TRACE)
+    ap.add_argument("--b23-trace", default=soct.DEFAULT_TRACE,
+                    help="rung B23's OWN trace (never this rung's --trace)")
     ap.add_argument("--out", help="write the report here")
     a = ap.parse_args(argv)
+    # REVIEW #307 P2: a caller who moved a fixture failed deep inside B23's
+    # replay with an OSError instead of a one-line answer.
+    for what, path in (("save", a.sav), ("log", a.log), ("trace", a.trace),
+                       ("b23 trace", a.b23_trace)):
+        if not os.path.exists(path):
+            sys.stderr.write("missing %s fixture: %s\n" % (what, path))
+            return 2
+    soct.DEFAULT_TRACE = a.b23_trace
     lines, allok = report_lines(a.sav, a.log, a.trace)
     txt = "\n".join(lines) + "\n"
     sys.stdout.write(txt)

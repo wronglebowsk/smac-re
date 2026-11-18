@@ -242,12 +242,14 @@ def fold(sv, bounds, mode="container", corrupt=None, pos=False,
         del mirror  # parity table reads the written image, below
         img = sow.build_image(sv, bases_override=ovf(
             sv, kor_i, seed_rec, qspan, appended), append_units=appended)
-        if passthrough:            # B24's locate rival: the fold must keep
-            img = img0             # reading the CALLER's image - re-composing
-                                   # it would restore the model's clean bytes
-                                   # and hide the very corruption under test
-                                   # (measured: the rival PASSED, i.e. was
-                                   # decoration, until this was fixed)
+        if passthrough:            # engine option, UNUSED since review #307: B24
+            img = img0             # dropped it from its locate rival because it
+                                   # discards the fold's queue writes, so the
+                                   # rival failed for two reasons at once. The
+                                   # locate rival is now isolated to its own
+                                   # law (tile-addressing) and still fails, on
+                                   # the tile walk. Kept for the falsifier-hook
+                                   # shape it documents.
         images.append(img)
         verdicts.append({"r": r, "verdict": verdict, "made": made is not None,
                          "st_after": st, "pen_after": q.pending})
