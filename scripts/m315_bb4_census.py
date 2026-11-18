@@ -223,17 +223,29 @@ def main():
        [x for x, _, _, _ in guarded] == [0x4EB6C7, 0x4EFEAA, 0x4F2201, 0x4F5C4A] and
        len(unguarded) == 8, measured["A4"])
 
-    # A5 lockstep with the index, with the operand regex FIXED (M311's 6 stores)
+    # A5 lockstep with the index, with the operand regex FIXED (M311's 6 stores), and
+    # M311's refusal REPRODUCED from its own window definition rather than re-derived.
     idx = [a for a in order if ins[a][0] == "mov" and
            re.match(r"(DWORD PTR )?ds:0x68cbb0,", ins[a][1].strip())]
-    win32 = [a for a in stores if any(abs(a - b) <= 32 for b in idx)]
+    # M311's window, reproduced from its own source (m311_recidx.py:449-450):
+    # FORWARD 0..+32 B from an index store. Widening it is the only way to reach 5.
+    fwd32 = [a for a in stores if any(0 <= a - b <= 32 for b in idx)]
     inwin = [a for a in stores if any(abs(a - b) <= WIN for b in idx)]
-    measured["A5"] = ("index_stores=%d %s; bb4<=32B=%d %s; bb4<=96B=%d %s" %
-                      (len(idx), [hex(x) for x in idx], len(win32),
-                       [hex(x) for x in win32], len(inwin), [hex(x) for x in inwin]))
-    ck("A5 M311's 6 index stores reproduce (regex now operand-bared, both mov forms); the window is 5/22 at +-96 B and 3/22 at +-32 B - M311's unwindowed '3' is the 32-B reading, pairing still REFUSED",
-       len(idx) == 6 and idx == [0x4E3476, 0x4E4DD0, 0x4EFE8E, 0x4F21E0, 0x4F5A7C, 0x4F5C36] and
-       len(win32) == 3 and len(inwin) == 5, measured["A5"])
+    inwin = [a for a in stores if any(abs(a - b) <= WIN for b in idx)]
+    # M311's refusal was stated on ITS window, so the closure is computed there too:
+    # its "19 writers unexplained" = the 22 stores minus the 3 in the forward window.
+    out_fwd = [a for a in stores if a not in fwd32]
+    closure = sorted((set(out_fwd) & set(sent_direct)) | (set(out_fwd) & set(sent_or)))
+    measured["A5"] = ("index_stores=%d %s; fwd+32=%d %s; outside+32=%d of which "
+                      "sentinel=%d memo=%d; +-96=%d %s" %
+                      (len(idx), [hex(x) for x in idx], len(fwd32), [hex(x) for x in fwd32],
+                       len(out_fwd), len(closure), len(out_fwd) - len(closure),
+                       len(inwin), [hex(x) for x in inwin]))
+    ck("A5 M311's 6 index stores + its forward 0..+32 B window reproduce EXACTLY (3 lockstep sites, both mov forms); its '19 writers unexplained' closes as 10 sentinel clears + 9 memo updates away from the index store; widening to +-96 B only adds 2 more memo sites (5/22)",
+       idx == [0x4E3476, 0x4E4DD0, 0x4EFE8E, 0x4F21E0, 0x4F5A7C, 0x4F5C36] and
+       fwd32 == [0x4E4DDC, 0x4EFEAA, 0x4F5C4A] and len(inwin) == 5 and
+       len(out_fwd) == 19 and len(closure) == 10 and len(out_fwd) - len(closure) == 9,
+       measured["A5"])
 
     # A6 the decisive windows, byte-pinned
     def pin(lo, hi, want):

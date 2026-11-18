@@ -1,0 +1,21 @@
+baseline green: digest c2b025b32280d82b
+OK   MU1_census_drop reddened exactly A1
+OK   MU2_census_read reddened exactly A1
+OK   MU3_sent_count reddened exactly A2
+OK   MU4_sent_or reddened exactly A2
+OK   MU5_idx_reads reddened exactly A2b
+OK   MU6_pair_const reddened exactly A3/A4/A9
+OK   MU7_memo_count reddened exactly A3
+OK   MU8_partition_blind reddened exactly A3
+OK   MU9_guard_site reddened exactly A4
+OK   MU10_unguarded reddened exactly A4
+OK   MU11_fwd_window reddened exactly A5
+OK   MU12b_closure reddened exactly A5
+OK   MU12_win96 reddened exactly A5
+OK   MU13_pin_cmp reddened exactly A6
+OK   MU14_pin_je reddened exactly A6
+OK   MU15_init_pair reddened exactly A7
+OK   MU16_rival_blind reddened exactly A9
+OK   MU17_identity reddened exactly A9
+OK   MU18_pair_reach reddened exactly A3/A4/A9
+== M315-mutate: 19/19 mutations reddened exactly their declared gates ==
