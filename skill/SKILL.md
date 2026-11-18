@@ -462,6 +462,14 @@ driving/dialog state machines: `references/wine-operations.md`)
   0x672290 contains the chooser FAMILY table, base 0x6728c0) - pin pointers BY ADDRESS, cite the ledger for
   each table's identity, and the word "slot" is banned unless a ledger entry or a constructor vptr-store
   establishes the table's base (search for `mov [reg],imm` of the base as an immediate in .text to find one).
+- **Three more decoration classes, reviewer-found on #299:** (1) a disassembly cache that stores MNEMONIC and
+  OPERAND in separate fields makes a regex like `^push 0x..$` applied to the operand match NOTHING, so
+  `all(cond for ...)` passes over an empty set - match the bare operand (`^0x[0-9a-f]+$`) and print the size of
+  the scanned census so an empty population is visible. (2) A count claim ("exactly N sites") that compares
+  DE-DUPLICATED OWNERS stays green when an (N+1)-th site lands inside an already-listed owner - pin the site
+  ADDRESSES. (3) A digest is evidence only if it hashes name+verdict+detail; hashing the check NAMES, or
+  keying a `detail` dict by short ids while the digest loop iterates full check names, lets two different
+  measurement sets share one digest - and only mutations can catch that, so mutate the numbers, not the labels.
 - **A leg census gates on PREDICTIONS, not on hits:** compute each site's expected hit count from live memory
   first (gate globals, args off `$esp`, the table values the branch loads), print the predictions, gate on
   agreement with the counters (`m86_helper_legs.py`, `m87_aaa20_trigger.py`). Demanding a hit at a site the

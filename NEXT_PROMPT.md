@@ -25,8 +25,8 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
-`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE last_build=B23` after every build merge, so the fire after B23 ANALYSES. ANALYSE PICKS still open, in order of value: (a) `ds:0x68cbb0` - `.data`, 340 xrefs, exactly 6 stores, all in `0x4e3000-0x4f6000`; (b) the 304-B table at `0x95da40` bit `0x20`; (c) `FUN_00470fe0` / `004715d0` / `00471fd0` (M310's neighbours).
-LANDED as #289 (main 17e3e2e): 8/8 gates, 15/15 mutants, digest 625cd5877271cd85. M313 MERGED as #294
+`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE last_build=B23` after every build merge, so the fire after B23 ANALYSES. OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
+M313 MERGED as #294
 (main eaf7d54): 21/21 + 23/23, digest 5e14170de426d127; 2 P1 + 7 P2 ALL accepted at review
 head (Session 278). Merge-title says 'vtable slot 134' - superseded, NAMED ## M313 governs.
 M311 ANSWERED census picks (a)+(b) as ONE object (see NAMED's M311 block); OPEN PICKS below. Build candidates: (i) B21's composed run + the B12 production leg in ONE written image (recorded m56 arrival grows
@@ -71,11 +71,17 @@ collision-check + worktree FIRST).
   is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
   startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
   Full law NAMED ## M313.
-  OPEN PICKS after M313, in order: (i'') what ARE FUN_004d3f70 (calls 15 band members) and the
-  FUN_004c5d60 dialog-family thunks (0x4c2e90-0x4c3760); (ii) ds:0x68cbb4's 19 writers outside an
-  index-store window (22 stores, 3 in-window; M311 refused the pairing); (iii) still open from
-  M310: game meaning of a GOAL, the one-char tokens, WHY a GOAL priority can be NEGATIVE.
-  Lists live in NAMED ## M310 / ## M312 / ## M313, not here.**
+  CLOSED (s282): pick (i'') = M314 (PR from milestone/m314; 18/18 + 27/27 mutants, digest
+  cf54a7ca907344c6): FUN_004c5d60 = token-keyed tour/dialog dispatcher (31 instr sites, 28 tokens);
+  family = 4 coordinate wrappers + 4 tour drivers + 3 result handlers (0x444 = M269 secondary delta,
+  NOT a menu id). CURSOR/NAMED lead "FUN_004d3f70 calls 15 band members" REFUTED by bytes: exactly
+  1 (FUN_0050cab0 x2); pumpB calls FUN_004d3f70 DIRECT at 0x517858 (6th off-band callee, NAMED
+  ## M313 pump row corrected). Law: a pump-callee census by thunk/hub SITES undercounts direct
+  band-member calls - census callees from the callee side.
+  OPEN PICKS after M314, in order: (ii) ds:0x68cbb4's 19 writers outside an index-store window
+  (22 stores, 3 in-window; M311 refused the pairing); (iii) still open from M310: game meaning of
+  a GOAL, the one-char tokens, WHY a GOAL priority can be NEGATIVE.
+  Lists live in NAMED ## M310 / ## M312 / ## M313 / ## M314, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT
