@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M316 MERGED #305 (5 P2 all accepted); M315 #301; M314 #299; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M316 done; track: B24 QUEUED (ANALYSE first - track_mode authoritative); #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (M316 MERGED #305 (5 P2 all accepted); M315 #301; M314 #299; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M316 done; track: B24 IS NEXT (track_mode flipped to BUILD at the M316 merge - 3 analyses since B23; the OPEN picks wait until after the build); #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -25,7 +25,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
-`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **QUEUED, NOT NEXT** (track_mode flips to ANALYSE after every build merge). OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
+`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **BUILD-NEXT as of s286** (M314/M315/M316 landed since B23; track_mode flips to ANALYSE only after the NEXT build merge). OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
 
 M316 MERGED as #305 (main see git log): 18/18 + 32/32, digest dcc6ce82fc98aec4;
 5 P2 ALL accepted; the review's window-scope P2 BROKE THE SITE-TWIN LAW (0x94f2d8 = same
