@@ -1,0 +1,61 @@
+-- 22 stores --
+   0x40dc2a FUN_0040d7a0   mov DWORD PTR ds:0x68cbb4,0xffffffff
+   0x40dd7c FUN_0040d7a0   mov DWORD PTR ds:0x68cbb4,0xffffffff
+   0x416e60 FUN_00416e50   mov DWORD PTR ds:0x68cbb4,0xffffffff
+   0x41b7a7 FUN_0041b780   mov DWORD PTR ds:0x68cbb4,ebx
+   0x41bcbd FUN_0041bca0   mov DWORD PTR ds:0x68cbb4,0xffffffff
+   0x4e4ddc FUN_004e47d0   mov DWORD PTR ds:0x68cbb4,esi
+   0x4e5165 FUN_004e4e10   mov DWORD PTR ds:0x68cbb4,0xffffffff
+   0x4eb6c7 FUN_004eb6b0   mov ds:0x68cbb4,eax
+   0x4ee6c9 FUN_004ee410   mov DWORD PTR ds:0x68cbb4,ecx
+   0x4ee883 FUN_004ee410   mov DWORD PTR ds:0x68cbb4,edx
+   0x4efeaa FUN_004ef6d0   mov DWORD PTR ds:0x68cbb4,esi
+   0x4f2201 FUN_004ef6d0   mov DWORD PTR ds:0x68cbb4,edi
+   0x4f3f7f UNRANGED:FUN_004f34b0 mov DWORD PTR ds:0x68cbb4,ecx
+   0x4f44a8 FUN_004f41f0   mov ds:0x68cbb4,eax
+   0x4f455d FUN_004f41f0   mov DWORD PTR ds:0x68cbb4,edx
+   0x4f5ab7 FUN_004f5a70   mov DWORD PTR ds:0x68cbb4,ebx
+   0x4f5b32 FUN_004f5a70   mov ds:0x68cbb4,eax
+   0x4f5c4a FUN_004f5a70   mov DWORD PTR ds:0x68cbb4,ebx
+   0x4f5ea3 FUN_004f5a70   mov DWORD PTR ds:0x68cbb4,0xffffffff
+   0x598032 FUN_00597ee0   mov DWORD PTR ds:0x68cbb4,0xffffffff
+   0x5984b4 FUN_00598340   mov DWORD PTR ds:0x68cbb4,edx
+   0x5ab757 FUN_005ab650   mov DWORD PTR ds:0x68cbb4,0xffffffff
+-- 5 reads / 1 tests --
+   0x4e5155 FUN_004e4e10   mov eax,ds:0x68cbb4
+   0x4efe83 FUN_004ef6d0   mov eax,ds:0x68cbb4
+   0x4f21e9 FUN_004ef6d0   mov eax,ds:0x68cbb4
+   0x4f5c41 FUN_004f5a70   mov eax,ds:0x68cbb4
+   0x5ab74d FUN_005ab650   mov ecx,DWORD PTR ds:0x68cbb4
+   0x4eb6bf FUN_004eb6b0   cmp DWORD PTR ds:0x68cbb4,eax
+OK   A1 census pinned to the byte: 22 stores / 5 reads / 1 cmp (28 refs): stores=22 reads=5 tests=1 total=28
+-- sentinel stores (direct): ['0x40dc2a', '0x40dd7c', '0x416e60', '0x41bcbd', '0x4e5165', '0x4f5ea3', '0x598032', '0x5ab757']
+-- producer kinds --
+   0x41b7a7 FUN_0041b780   imm--1-via-or          or ebx,0xffffffff @0x41b78a
+   0x4e4ddc FUN_004e47d0   stack-slot             mov esi,DWORD PTR [ebp+0x8] @0x4e4dbc
+   0x4eb6c7 FUN_004eb6b0   reads-index            mov eax,ds:0x68cbb0 @0x4eb6b8
+   0x4ee6c9 FUN_004ee410   reads-index            mov ecx,DWORD PTR ds:0x68cbb0 @0x4ee6c3
+   0x4ee883 FUN_004ee410   reads-index            mov edx,DWORD PTR ds:0x68cbb0 @0x4ee87d
+   0x4efeaa FUN_004ef6d0   reads-index            mov esi,DWORD PTR ds:0x68cbb0 @0x4efe74
+   0x4f2201 FUN_004ef6d0   stack-slot             mov edi,DWORD PTR [ebp-0x18] @0x4f21c0
+   0x4f3f7f UNRANGED:FUN_004f34b0 reads-index            mov ecx,DWORD PTR ds:0x68cbb0 @0x4f3f76
+   0x4f44a8 FUN_004f41f0   reads-index            mov eax,ds:0x68cbb0 @0x4f44a3
+   0x4f455d FUN_004f41f0   reads-index            mov edx,DWORD PTR ds:0x68cbb0 @0x4f4557
+   0x4f5ab7 FUN_004f5a70   stack-slot             mov ebx,DWORD PTR [ebp+0x8] @0x4f5a77
+   0x4f5b32 FUN_004f5a70   reads-index            mov eax,ds:0x68cbb0 @0x4f5b27
+   0x4f5c4a FUN_004f5a70   stack-slot             mov ebx,DWORD PTR [ebp+0x8] @0x4f5a77
+   0x5984b4 FUN_00598340   imm--1-via-or          or edx,0xffffffff @0x598469
+OK   A2 the only value ever stored is the -1 sentinel (8 direct + 2 via `or r,0xffffffff`): sentinel_direct=8 sentinel_via_or=['0x41b7a7', '0x5984b4'] kinds={'imm--1-via-or': 2, 'reads-index': 8, 'stack-slot': 4}
+OK   A2b every register store's value def-walks to the CURRENT INDEX or a stack slot (never arithmetic): reads-index=8 stack-slot=4
+-- memo updates (refresh pair within 16 B): ['0x4e4ddc', '0x4eb6c7', '0x4ee6c9', '0x4ee883', '0x4efeaa', '0x4f2201', '0x4f3f7f', '0x4f44a8', '0x4f455d', '0x4f5ab7', '0x4f5b32', '0x4f5c4a']
+-- clears (no pair): ['0x40dc2a', '0x40dd7c', '0x416e60', '0x41b7a7', '0x41bcbd', '0x4e5165', '0x4f5ea3', '0x598032', '0x5984b4', '0x5ab757']
+OK   A3 LAW: the 22 stores partition EXACTLY into 12 memo updates followed by call 0x4e8d60+call 0x4e78e0 and 10 sentinel clears: memo=12 clear=10 pair=['0x4e8d60', '0x4e78e0']
+OK   A4 a LOCAL dedup guard (cmp of bb4 or of its loaded copy, + je PAST the store) sits at exactly 4 of the 12 memo sites; the other 8 refresh unconditionally: guarded=4 [('0x4eb6c7', '0x4eb6bf', 'direct', '0x4eb6c5'), ('0x4efeaa', '0x4efea0', 'via-eax', '0x4efea8'), ('0x4f2201', '0x4f21f7', 'via-eax', '0x4f21ff'), ('0x4f5c4a', '0x4f5c46', 'via-eax', '0x4f5c48')] unguarded=8 ['0x4e4ddc', '0x4ee6c9', '0x4ee883', '0x4f3f7f', '0x4f44a8', '0x4f455d', '0x4f5ab7', '0x4f5b32']
+OK   A5 M311's 6 index stores reproduce (regex now operand-bared, both mov forms); the window is 5/22 at +-96 B and 3/22 at +-32 B - M311's unwindowed '3' is the 32-B reading, pairing still REFUSED: index_stores=6 ['0x4e3476', '0x4e4dd0', '0x4efe8e', '0x4f21e0', '0x4f5a7c', '0x4f5c36']; bb4<=32B=3 ['0x4e4ddc', '0x4efeaa', '0x4f5c4a']; bb4<=96B=5 ['0x4e4ddc', '0x4efeaa', '0x4f2201', '0x4f5ab7', '0x4f5c4a']
+OK   A6 both decisive windows pinned instruction-for-instruction (index store, fold, cmp bb4,new, je-skip, memo store, refresh calls): window1_bad=[] window2_bad=[]
+OK   A7 the image carries BOTH dwords initialised to -1 (the 'nothing memoised yet' state): init bb0=0xffffffff bb4=0xffffffff
+-- A9 stores whose producer reads a neighbouring candidate index: 0 []
+OK   A9 rival 'bb4 is a second cursor fed from elsewhere' dies on the def-walk: every memo value = the current index or a caller slot: kinds{imm--1-via-or=2,reads-index=8,stack-slot=4} foreign_index_stores=0 non_index_or_sentinel=0
+census digest -
+== M315: 9/9 ==
+digest 4e61ca2f8d8653d1
