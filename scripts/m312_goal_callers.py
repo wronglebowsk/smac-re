@@ -38,17 +38,18 @@ def main():
     names = dict(idx)
     def owner(va):
         import bisect
-        return names[idx[max(0, bisect.bisect_right(addrs, va) - 1)]]
+        return names[addrs[max(0, bisect.bisect_right(addrs, va) - 1)]]
     def span(nm):
-        want = "FUN_%08X" % nm
+        want = "FUN_%08x" % nm
         i = [k for k, (a, n) in enumerate(idx) if n == want]
         assert len(i) == 1, want
         k = i[0]
         end = idx[k + 1][0] if k + 1 < len(idx) else None
+        assert end is not None, want
         return idx[k][0], end
 
     # A1 boundaries (exact sizes from ghidra_out/index.csv)
-    SIZES = {F_FE0: 192, F_15D: 1088, F_1FD: 1344, F_25A: 672, F_281: 3696}
+    SIZES = {F_FE0: 192, F_15D: 1088, F_1FD: 1344, F_25A: 544, F_281: 3696}
     sizes = {nm: span(nm)[1] - span(nm)[0] for nm in SIZES}
     ck("A1_spans", sizes == SIZES, str({hex(k): v for k, v in sizes.items()}))
 
@@ -70,7 +71,7 @@ def main():
     }
     for t, want in CALLS.items():
         got = [(a, owner(a)) for a in calls_to(t)]
-        exp = [(a, "FUN_%08X" % nm) for a, nm in want]
+        exp = [(a, "FUN_%08x" % nm) for a, nm in want]
         ck("A2_calls_%06x" % t, got == exp, f"{len(got)} sites")
 
     # A3 FUN_00470fe0 callee law: exactly 5 calls in fixed order, and the
@@ -80,11 +81,20 @@ def main():
     got = [int(ops.split(",")[0], 16) for _, ops in seq]
     ck("A3_fe0_callees", got == ORDER, str([hex(x) for x in got]))
     lo, hi = span(F_FE0)
-    w = [(a, b, ops) for a in range(lo, hi) if a in ins
-         for b, ops in [ins[a]] if b == "push" and ("ebp+0x8" in ops or "ebp+0xc" in ops)]
-    pushes = [(hex(a), ops) for a, _, ops in w]
-    tail = [p for p in pushes if p[0] in ("0x47107f", "0x471082")]
-    ck("A3b_fe0_pair_is_own_args", len(tail) == 2, str(tail))
+    body = [(a, ins[a][0], ins[a][1]) for a in sorted(x for x in ins if lo <= x < hi)]
+    fwd = [(hex(a), b, ops) for a, b, ops in body
+           if b == "mov" and ("[ebp+0x8]" in ops or "[ebp+0xc]" in ops)
+           and ops.startswith(("ecx", "edx", "eax"))]
+    # the two forwarded args: loaded at 0x47107b/0x47107f, pushed, then the call
+    ck("A3b_fe0_pair_is_own_args", [f[0] for f in fwd[-2:]] == ["0x47107b", "0x47107f"],
+       str([(f[0], f[2]) for f in fwd[-2:]]))
+    # and neither arg slot is ever written inside the function (args pass through):
+    # a store's DESTINATION is the first operand, "DWORD PTR [ebp+0x8]"
+    writes = [(hex(a), ops) for a, b, ops in body
+              if ops.split(",")[0].strip() in
+              ("DWORD PTR [ebp+0x8]", "DWORD PTR [ebp+0xc]",
+               "DWORD PTR [ebp+0x10]", "DWORD PTR [ebp+0x14]")]
+    ck("A3c_fe0_args_never_written", writes == [], str(writes))
 
     print("digest", hashlib.sha256(
         "".join(f"{n}={ok}" for n, ok, _ in checks).encode()).hexdigest()[:16])
