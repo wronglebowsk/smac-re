@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M313 MERGED #294 (2 P1+7 P2 all accepted); B22 #286; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B22 + M54A-M313 done; track BUILD-NEXT: B23 (analyse_since_build=3); #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (M313 MERGED #294 (2 P1+7 P2 all accepted); B22 #286; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M313 done; track: B24 QUEUED (ANALYSE first - track_mode authoritative); #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -25,7 +25,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
-`evidence/b21_composedrun.txt:93`). Build rung **B22 MERGED** (#286, `3f645e1`; 12/12 gates, `evidence/b22_composedgrowth.txt`) - and B23 is now **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE analyse_since_build=0 last_build=B22` after every build merge, so the fire after B22 ANALYSES. ANALYSE PICKS still open, in order of value: (a) `ds:0x68cbb0` - `.data`, 340 xrefs, exactly 6 stores, all in `0x4e3000-0x4f6000`; (b) the 304-B table at `0x95da40` bit `0x20`; (c) `FUN_00470fe0` / `004715d0` / `00471fd0` (M310's neighbours). B23 = the queue's PER-TURN progress composed through the WRITER (B11's law in the written container, not in memory) - build it when track_mode says BUILD again.
+`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 built s280 (11/11, `sim/composedturn.py`, `evidence/b23_composedturn.txt`) awaiting merge; next build B24 **QUEUED, NOT NEXT**: `track_mode.py` flips to `MODE=ANALYSE last_build=B23` after every build merge, so the fire after B23 ANALYSES. ANALYSE PICKS still open, in order of value: (a) `ds:0x68cbb0` - `.data`, 340 xrefs, exactly 6 stores, all in `0x4e3000-0x4f6000`; (b) the 304-B table at `0x95da40` bit `0x20`; (c) `FUN_00470fe0` / `004715d0` / `00471fd0` (M310's neighbours).
 LANDED as #289 (main 17e3e2e): 8/8 gates, 15/15 mutants, digest 625cd5877271cd85. M313 MERGED as #294
 (main eaf7d54): 21/21 + 23/23, digest 5e14170de426d127; 2 P1 + 7 P2 ALL accepted at review
 head (Session 278). Merge-title says 'vtable slot 134' - superseded, NAMED ## M313 governs.
