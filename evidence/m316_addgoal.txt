@@ -1,4 +1,5 @@
-OK   A11_band_relative_writes_exactly13  rel-stores=13 offsets=['0x0', '0x2', '0x4', '0x8', '0xc'] kill-0xffff@True max-update@0x56d41c
+OK   A11_band_relative_writes_exactly9  rel-stores=9 offsets=['0x0', '0x2', '0x4', '0x8', '0xc'] kill-0xffff sites(0x56d6be,0x56d860)=True max-update@0x56d41c
+OK   A11b_SITE_array_companion_law_exactly7  site rel-stores=7: initializer 0056d710 fills all 75 SITE records (0x56d75b-68, same 5-field shape at 0x94f2d8) and the REMOVER 0056d780 kills the SITE twin (0x56d82e kind -1, 0x56d833 prio 0) alongside the GOAL kill at 0x56d860
 OK   A1_band_absolute_writes_exactly6  stores=6 addrs=['0x470d5c', '0x56d44b', '0x56d455', '0x56d45f', '0x56d469', '0x56d470']
 OK   A2_record_layout  offset->size {'0x0': 'WORD', '0x2': 'WORD', '0x4': 'DWORD', '0x8': 'DWORD', '0xc': 'DWORD'}
 OK   A2b_entry16B_fold_via_shl_and_lea  shl-0x4=['0x56d395', '0x56d404', '0x56d442'] lea-band=['0x56d39d', '0x56d3c6', '0x56d407']
@@ -15,5 +16,5 @@ OK   A7b_parity_predicate_shape  xor@0x56d35e=('xor', 'eax,edi') test@0x56d360=(
 OK   A8_accessor_family  {'FUN_0056d5d0': (['0x0'], 15), 'FUN_0056d690': (['0x2'], 1), 'FUN_0056d710': (['0x2'], 1), 'FUN_0056d780': (['0x0'], 12)}
 OK   A9_engine_band_access_shape  offsets={'0x0': 8, '0x2': 2, '0x4': 12, '0x8': 12, '0xc': 1} callers=['0x52094f', '0x59dd43'] (owners ['FUN_005208f0', 'FUN_0059ce10'])
 OK   A10_token_kinds_constructed  token+immediate=[0, 2, 3, 6, 8, 9, 41] token-without-immediate=[] constructed-untokened=[7, 11, 16, 25]
-== M316: 17/17 ==
-digest c57879ca49a65314
+== M316: 18/18 ==
+digest dcc6ce82fc98aec4

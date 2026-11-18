@@ -85,35 +85,53 @@ for a in ADDRS:
 want = {0x56d44b: (4, "DWORD", "ecx"), 0x56d455: (8, "DWORD", "edx"),
         0x56d45f: (0, "WORD", "cx"),   0x56d469: (2, "WORD", "dx"),
         0x56d470: (12, "DWORD", "ecx"), 0x470d5c: (0, "WORD", "0xffff")}
-# relative stores: lea reg,[...+0x94eeXX]; then mov <size> PTR [reg(+/-d)],v  -> eff offset
-def rel_stores(lo, hi):
+# relative stores: per function, lea reg,[...+0x94eeXX] -> reg carries band eff base;
+# INVALIDATE the association on ANY later instruction touching reg (dest or operand)
+def rel_stores(lo, hi, anchor):
+    # lea reg,[...+anchor+d] arms reg as a cursor on the array at `anchor`;
+    # any later instruction that can WRITE reg disarms it (no cross-array ghosts).
     out = {}; lea = {}
+    abase = anchor & 0xffffff
     for a in range(lo, hi):
         if a not in INS: continue
         mn, o = INS[a]
         if mn == "lea":
-            m = re.match(r"(\w+),\s*\[(.*?)0x94ee([0-9a-f]{2})\]", o)
-            if m: lea[m.group(1)] = int(m.group(3), 16) - 0x28
+            m = re.match(r"(\w+),\s*\[(.*?)(0x94[ef][0-9a-f]{3})\]", o)
+            if m and int(m.group(3), 16) - (int(m.group(3), 16) & 0x7f) == abase - (abase & 0x7f):
+                lea[m.group(1)] = int(m.group(3), 16) - anchor
+            continue
+        dest = o.split(",")[0].strip()
+        for r in list(lea):
+            touches = re.search(r"\b%s\b" % r, o) is not None
+            writes = dest == r or dest.startswith(r + " ") or dest.startswith("[" + r) \
+                     or (mn in ("add", "sub", "inc", "dec", "shl", "shr", "and", "or", "xor", "not", "neg", "rep", "pop", "push", "call") and touches)
+            if touches and writes: lea.pop(r, None)
         if mn == "mov":
             for r, base in lea.items():
                 mm = re.match(r"(WORD|DWORD|BYTE) PTR \[%s\s*(?:([+-])\s*(0x[0-9a-f]+))?\]" % re.escape(r), o)
                 if mm:
-                    sign = -1 if mm.group(2) == "-" else 1
                     off = int(mm.group(3), 16) if mm.group(3) else 0
-                    out[a] = (base + sign * off, mm.group(1), o.split(",", 1)[1].strip())
+                    out[a] = (base + (off if mm.group(2) != "-" else -off), mm.group(1), o.split(",", 1)[1].strip())
     return out
-REL = {}
-for _lo, _hi in [(AG_LO, 0x56d47c), (0x56d690, 0x56d710), (0x56d710, 0x56d780)]:
-    REL.update(rel_stores(_lo, _hi))
+LEA_OWNERS = ["FUN_0055f650", "FUN_0056d350", "FUN_0056d5d0", "FUN_0056d690", "FUN_0056d710", "FUN_0056d780"]
+REL = {}; REL_SITE = {}
+for _nm in LEA_OWNERS:
+    _lo, _hi = fspan(_nm); REL.update(rel_stores(_lo, _hi, 0x94ee28)); REL_SITE.update(rel_stores(_lo, _hi, 0x94f2d8))
 wantrel = {0x56d41c: (2, "WORD", "ax"),
  0x56d6be: (0, "WORD", "0xffff"), 0x56d6c8: (2, "WORD", "ax"),
  0x56d73a: (0, "WORD", "di"), 0x56d73e: (2, "WORD", "cx"), 0x56d741: (8, "DWORD", "ecx"),
  0x56d744: (4, "DWORD", "ecx"), 0x56d747: (12, "DWORD", "ecx"),
- 0x56d75b: (0, "WORD", "di"), 0x56d75f: (2, "WORD", "cx"), 0x56d762: (8, "DWORD", "ecx"),
- 0x56d765: (4, "DWORD", "ecx"), 0x56d768: (12, "DWORD", "ecx")}
-ck("A11_band_relative_writes_exactly13", REL == wantrel,
-   "rel-stores=%d offsets=%s kill-0xffff@%s max-update@0x56d41c" %
-   (len(REL), sorted({hex(d) for d, _, _ in REL.values()}), REL.get(0x56d6be) == (0, "WORD", "0xffff")))
+ 0x56d860: (0, "WORD", "0xffff")}
+wantrel_site = {0x56d75b: (0, "WORD", "di"), 0x56d75f: (2, "WORD", "cx"), 0x56d762: (8, "DWORD", "ecx"),
+                0x56d765: (4, "DWORD", "ecx"), 0x56d768: (12, "DWORD", "ecx"),
+                0x56d82e: (0, "WORD", "0xffff"), 0x56d833: (2, "WORD", "0x0")}
+ck("A11_band_relative_writes_exactly9", REL == wantrel,
+   "rel-stores=%d offsets=%s kill-0xffff sites(0x56d6be,0x56d860)=%s max-update@0x56d41c" %
+   (len(REL), sorted({hex(d) for d, _, _ in REL.values()}),
+    REL.get(0x56d6be) == (0, "WORD", "0xffff") and REL.get(0x56d860) == (0, "WORD", "0xffff")))
+ck("A11b_SITE_array_companion_law_exactly7", REL_SITE == wantrel_site,
+   "site rel-stores=%d: initializer 0056d710 fills all 75 SITE records (0x56d75b-68, same 5-field shape at 0x94f2d8)"
+   " and the REMOVER 0056d780 kills the SITE twin (0x56d82e kind -1, 0x56d833 prio 0) alongside the GOAL kill at 0x56d860" % len(REL_SITE))
 got = {a: (d, sz, src) for a, d, sz, src in stores}
 ck("A1_band_absolute_writes_exactly6",
    len(stores) == 6 and got == want,
@@ -152,8 +170,8 @@ ck("A4_eviction_score_constants",
 sign = [(a, o) for a, m_, o in window(AG_LO, AG_HI) if m_ in ("test", "cmp")]
 kind_neg = [a for a, o in sign if any(re.search(r"(js|jl|sgn)", x or "") for x in [""])]
 ck("A4b_candidate_gate_shape",
-   len([1 for a, m_, o in window(AG_LO, AG_HI) if m_ == "movsx"]) >= 3 and
-   len([1 for a, o in sign if re.fullmatch(r"\w+,\w+", o)]) >= 2,
+   len([1 for a, m_, o in window(AG_LO, AG_HI) if m_ == "movsx"]) == 5 and
+   len([1 for a, o in sign if re.fullmatch(r"\w+,\w+", o)]) == 9,
    "movsx=%d reg-cmps=%d" % (len([1 for a, m_, o in window(AG_LO, AG_HI) if m_ == "movsx"]),
                              len([1 for a, o in sign if re.fullmatch(r"\w+,\w+", o)])))
 
@@ -186,7 +204,7 @@ def pushwalk(si_addr):
             else: pushed.append(None)
         elif mn == "mov":
             m = re.fullmatch(r"(\w+),\s*(-?0x[0-9a-f]+)", o)
-            if m: regimm[m.group(1)] = int(m.group(2), 16)
+            if m: regimm.setdefault(m.group(1), int(m.group(2), 16))
         i -= 1
     pushed.reverse()
     return pushed
@@ -271,7 +289,7 @@ det = {
     "A3": repr([hex(a) for a, _ in bounds]),
     "A4": repr(sorted((t[0], t[1]) for t in sc)) + repr(dbgtest) + repr(gbl),
     "A5": repr(TRIPLE) + repr(INS[0x56d407]) + repr(INS[0x56d436]),
-    "A11": repr(sorted(REL.items())),
+    "A11": repr(sorted(REL.items())) + repr(sorted(REL_SITE.items())),
     "A6": repr(siteinfo),
     "A7": repr(sbytes) + repr(dbgtest) + repr(gbl) + repr(par),
     "A8": repr(accgot),

@@ -40,9 +40,9 @@ MUTS = [
  ("MU17_token_live3", "tok_live == [0, 2, 3, 6, 8, 9, 41]", "tok_live == [0, 2, 6, 8, 9, 41]",
     ["A10_token_kinds_constructed"]),
  ("MU18_rel_kill_dropped", '0x56d6be: (0, "WORD", "0xffff"), 0x56d6c8', '0x56d6c8',
-    ["A11_band_relative_writes_exactly13"]),
+    ["A11_band_relative_writes_exactly9"]),
  ("MU19_rel_addr_typo", "wantrel = {0x56d41c: (2, \"WORD\", \"ax\")", "wantrel = {0x56d41d: (2, \"WORD\", \"ax\")",
-    ["A11_band_relative_writes_exactly13"]),
+    ["A11_band_relative_writes_exactly9"]),
 ]
 # code mutants: (name, patch, expected gates) - patch the ENGINE'S INSTRUCTIONS, not the instrument
 CODE = [
@@ -59,8 +59,9 @@ CODE = [
  ("PC09_killstore_to_prio", "0x470d5c|mov WORD PTR [ecx+edx*1+0x94ee2a],0xffff",
    ["A1_band_absolute_writes_exactly6"]),
  ("PC10_site_removed", "0x4ce2dd|nop", ["A6_sites_exactly50", "A6b_site_owner_digest"]),
- ("PC11_setter_field2_gone", "0x56d75f|mov WORD PTR [eax+0x20],cx", ["A11_band_relative_writes_exactly13"]),
- ("PC12_kill_store_gone", "0x56d6be|nop", ["A11_band_relative_writes_exactly13"]),
+ ("PC11_site_fill_clobbered", "0x56d75f|mov WORD PTR [eax+0x20],cx", ["A11b_SITE_array_companion_law_exactly7"]),
+ ("PC13_site_kill_gone", "0x56d82e|nop", ["A11b_SITE_array_companion_law_exactly7"]),
+ ("PC12_kill_store_gone", "0x56d6be|nop", ["A11_band_relative_writes_exactly9"]),
 ]
 
 def run(text, patch=None):
