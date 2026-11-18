@@ -176,6 +176,8 @@ re-summarise.
   rewrite `SESSION_CURSOR.md` <=600 B as it goes), so a kill at any moment leaves a resumable branch instead of
   lost context; then the PARENT verifies before merging (re-run the script, diff the evidence, read the gate
   for scope) — never trust the child's summary line.
+- **A cron fire's `ok` is a SESSION status, not a CLOSE-OUT status** - a fire can be green on its acceptance and
+  still owe the harness/evidence/notes/PR. Full text: `references/session-discipline.md` §taking over a cut-off fire.
 
 ### Verify the OUTCOME, not the mechanism — full text: `references/verify-outcome.md`
 - A gate that counts the harness's own work passes a run that LOST the game. Compute candidate predictions from
@@ -433,6 +435,21 @@ driving/dialog state machines: `references/wine-operations.md`)
   with the call as a WALL (refuse to expand it) and count the `ret`s still reachable: if any, early exits skip the
   call and a rival claiming "the only gate is the enclosing loop's `jl`" must FAIL. Closing a guard question on
   `preds == 0` alone is the vacuous-gate class and has now cost two review rounds (M305 A14, M306 RIVAL4).
+- **A rival whose failure mode is "it crashed" or "it produced nothing" is not evidence.** Before counting a
+  rival as refuted, (1) message-match the crash against the DECLARED law (`except AssertionError: rivals[x] = True`
+  is a gate that passes on an unmeasured state - a foreign bug or a missing fixture scores as a failed rival), and
+  (2) show the SAME construction SUCCEEDS when the claimed cause is removed. B24 shipped six rivals; two
+  (`frozenargs`, `locate`) failed identically with the corrupting input WITHHELD, so neither "fail" said anything
+  about its law, and both looked green. Retire such a rival and GATE the retirement (assert the degenerate leg
+  still completes 0 arrivals), so it re-opens as a RED gate if it ever starts working; the law itself is then
+  carried by a mutant that switches the engine's own decision (`mode=locate` as the fold's law: clean leg
+  completes, poisoned leg dies).
+- **Two mutants can both be "green" and still be wrong**: a weaker variant of a CHECK (`det = A and B and C` ->
+  `det = A and B`) can only ever pass, so it reddens nothing - a WEAKENING is not a mutation; mutate the DATA
+  (corrupt the second run's table after `compute()`, a field no gate DETAIL prints) so only the digest catches it.
+  And an over-broad mutant (removing a rival's whole channel instead of only the poison) makes the rival fail for
+  a different reason and reads as a NO-OP - re-measure the declared set after EVERY review round, since retiring
+  a rival silently drops gates from other mutants' declared sets.
 - **Prove each gate is LOAD-BEARING by mutating the claim.** Ship `scripts/<id>_mutate.py`: re-introduce the defect
   the assertion exists to catch (a wrong immediate, a dropped term, a swapped operand, a filter deleted) and require
   that ONE specific check go red — then print N/N mutations reddened. A check that stays green under its own
@@ -449,8 +466,11 @@ driving/dialog state machines: `references/wine-operations.md`)
   and reject any mutant whose output carries a traceback — rc==1 is also what an uncaught exception returns, and
   RED lines print before the death, so a crashing mutant otherwise credits itself. **The harness is state: re-run it
   after every edit that adds or rewrites a gate (anchors die and mutants go WEAK when constants move), and an
-  unexplained WEAK blocks submission — commit WIP with the honest score rather than deleting a mutant.** Full
-  mechanics: `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE) and
+  unexplained WEAK blocks submission — commit WIP with the honest score rather than deleting a mutant.** Four
+  outcomes must be classified, and a mutant reddening NOTHING is a NO-OP that fails the harness; the only legal
+  CRASH is a DECLARED one matched on message text. Full mechanics:
+  `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE, §A mutation harness
+  must CLASSIFY its four outcomes) and
   §Static text-cache parse traps.
 - **Three #294 (M313) decoration classes - all reviewer-found, all silent:** (1) an inline `#` comment placed
   after the FIRST term of a multi-line parenthesized boolean swallows the rest of that physical line - the
@@ -481,7 +501,10 @@ driving/dialog state machines: `references/wine-operations.md`)
   gate pins, re-checked after review-round measurements move it.)
 - **Concurrent fires can takeover mid-flight (s285):** isolation is verified at fire START, but a fixer fire can
   finish, post the review reply, merge the PR and merge its close-out while a verifier fire is still re-running
-  acceptance. Detect via new commits appearing under a read file / clean status with foreign commits; never fight
+  acceptance. Detect via new commits appearing under a read file / clean status with foreign commits, and note a
+  completion notice can arrive while the worker's FINAL sweep still writes: temp modules appearing/renaming/
+  vanishing between two `git status` reads (or a harness line printed half-way) is churn from a live worker —
+  re-read the branch state only after the process is gone (`pgrep`); never fight
   it - re-apply YOUR delta on a fresh branch off origin/main (content re-application, not cherry-pick, when the
   base history diverged) and keep the blind re-runs as INDEPENDENT VERIFICATION with committed records
   (`evidence/sN_reverify_*.txt` cited by path:line - prose claims of reruns without saved records are findings).

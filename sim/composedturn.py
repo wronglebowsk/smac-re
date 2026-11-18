@@ -105,24 +105,51 @@ def read_state(im, idx):
     return q, sp["st"], sp["mirror"], sp["f30"], b
 
 
-def fold(sv, bounds, mode="container", corrupt=None, pos=False):
+def fold(sv, bounds, mode="container", corrupt=None, pos=False,
+         overrides_fn=None, d0s=None, price=None, seed_rec=None, tile_at=None,
+         slot_i=None, prior_units=None, start_img=None, passthrough=False):
     """Run the 10 boundaries. mode: 'container' = re-parse the image every turn;
     'memory' = rival that never re-reads the container (carries model state);
     'noadd' / 'price10' / 'nopop' / 'zerotail' / 'nomirror' / 'frontinsert' =
-    rivals that mutate ONE law each. corrupt(r, rec_bytes)->rec_bytes is the
+    rivals that mutate ONE law each; 'addalways' / 'price' / 'locate' = the
+    rivals rung B24 drives (sim/composedlive.py): the ADD gate dropped, an
+    explicit price, and a tile-locator used against a corrupted tile.
+    corrupt(r, rec_bytes)->rec_bytes is the
     falsifier hook, applied to the IMAGE bytes between turns (never to model
     state), so only a fold that READS the container can see it.
     pos=True locates the grown slot BY POSITION (needed when the falsifier
     corrupts the tile itself, so a coord lookup must not be the locator).
+    B24 hooks (defaults keep this module's OWN rung B23 claims byte-identical):
+    overrides_fn(records)->bases_override list (the writer input every turn;
+    B23 keeps _all_overrides), d0s = per-boundary visit-time d0 (default: read
+    from the trace's after-samples), price = the price law's value (default
+    PRICE_RECORDED), seed_rec = the seed record bytes (default: the trace's r0
+    before-sample - B24 seeds a FOUNDER's 304-B record instead).
     Returns (verdicts, images, arrivals, final_img)."""
     bounds_n = len(bounds)
-    # seed: the grown Korolev slot carries the trace's r0 round_before record
-    # VERBATIM (a declared seed: the game state this run observed, re-hosted in
-    # the container - parity is then demanded of the 10-turn EVOLUTION).
-    seed_rec = bytearray(bounds[0]["before"])
+    seed_rec = bytearray(bounds[0]["before"]) if seed_rec is None else \
+        bytearray(seed_rec)
+    ovf = _all_overrides if overrides_fn is None else overrides_fn
+    d0_at = (lambda r: spans_of(bounds[r]["after"])["d0"]) if d0s is None \
+        else (lambda r: d0s[r])
+    price_v = PRICE_RECORDED if price is None else price
+    # B24 hook: the array slot the positioned fold addresses. Default = the
+    # LAST grown slot (rung B23's shape). B24's visited record is grown MID-
+    # ARRAY (a later logged op appends after it, and the last-slot destroy
+    # removes THAT one), so it must name its own slot - "by position" cannot
+    # silently mean "by last".
+    # seed: the grown slot carries the seed record VERBATIM (a declared seed:
+    # B23 uses the trace's r0 round_before record re-hosted in the container;
+    # B24 uses the founder leg's own 304-B record bytes) - parity is then
+    # demanded of the run's EVOLUTION, not of the seed.
     kor_i = sv.n_bases  # grown slot index (locate by coords in the image anyway)
+    slot_at = kor_i if slot_i is None else slot_i
     overrides = []      # only the Korolev slot is overridden per turn
-    appended = []
+    # B24 hook: arrivals already grown by EARLIER windows of the same run. The
+    # fold accumulates them and re-writes them on every turn's image, so a
+    # window-per-visit driver keeps the whole unit array instead of only its
+    # own window's arrivals (default [] == rung B23's single-window behavior).
+    appended = list(prior_units) if prior_units else []
     images = []
     verdicts = []
     qmem = None         # 'memory' rival carries a model Queue instead
@@ -132,7 +159,7 @@ def fold(sv, bounds, mode="container", corrupt=None, pos=False):
         img_prev = images[-1] if images else None
         if corrupt and img_prev is not None:
             im_c = parse_image(img_prev)
-            off = im_c.bases_off + sosave.BASE_LEN * kor_i
+            off = im_c.bases_off + sosave.BASE_LEN * slot_at
             mut = bytearray(img_prev)
             newrec = corrupt(r, bytearray(mut[off:off + sosave.BASE_LEN]))
             mut[off:off + sosave.BASE_LEN] = newrec
@@ -151,24 +178,38 @@ def fold(sv, bounds, mode="container", corrupt=None, pos=False):
                 seed0 = bytearray(seed_rec)
                 if corrupt:                 # r0 container: poison the SEED bytes
                     seed0 = corrupt(0, seed0)
-                img0 = sow.build_image(sv, bases_override=_all_overrides(
-                    sv, kor_i, seed0, {}, appended))
+                # B24 hook: the caller may hand in the image as it now stands
+                # (its own composition's last write) instead of letting this
+                # engine recompose it - the fold then READS those bytes.
+                img0 = (start_img if start_img is not None else
+                        sow.build_image(sv, bases_override=ovf(
+                            sv, kor_i, seed0, {}, appended)))
             else:
                 img0 = img_prev
             im = parse_image(img0)
-            idx = kor_i if pos else _find_kor(im)
+            if mode == "locate":            # rival (B24): locate BY TILE, even
+                if tile_at is None:         # after the tile is corrupted. A
+                    raise AssertionError(   # locate rival without a locator is
+                        "locate rival needs tile_at")  # a defect, not a verdict
+                idx = _find_tile(im, tile_at())
+            else:
+                idx = slot_at if pos else _find_kor(im)
             q, st, mirror, f30, b = read_state(im, idx)
             if mode == "frozenargs":        # rival: creation args frozen to seed-open
                 b = {"x": struct.unpack_from("<H", seed_rec, 0)[0],
                      "y": struct.unpack_from("<H", seed_rec, 2)[0],
                      "own4": seed_rec[4]}
-        d0_v = spans_of(bounds[r]["after"])["d0"]     # recorded visit-time d0
-        price = PRICE_RECORDED if mode != "price10" else 10
+        d0_v = d0_at(r)                     # visit-time d0 (recorded / declared)
+        price = price_v if mode != "price10" else 10
+        if mode == "price":                 # rival (B24): a different price law
+            price = price_v
         # ---- the visit, B12's law (gate storage+d0 >= price; PAY; CREATE;
         # ---- POP via B11). The income ADD is gated d0>0, head != sentinel,
         # ---- !(f30 & 2) (M57-2). rivals switch ONE term each:
         add = 0 if mode == "noadd" or not (
             d0_v > 0 and q.head() != soq.SENTINEL and not (f30 & 2)) else d0_v
+        if mode == "addalways":             # rival (B24): the ADD gate dropped
+            add = d0_v
         if mode == "nopop":
             q0 = soq.Queue(slots=list(q.slots), pending=q.pending)  # local copy
             made = None
@@ -199,8 +240,16 @@ def fold(sv, bounds, mode="container", corrupt=None, pos=False):
                  "mirror": st if mode != "nomirror" else mirror,
                  "d0": None}
         del mirror  # parity table reads the written image, below
-        img = sow.build_image(sv, bases_override=_all_overrides(
+        img = sow.build_image(sv, bases_override=ovf(
             sv, kor_i, seed_rec, qspan, appended), append_units=appended)
+        if passthrough:            # B24's locate rival: the fold must keep
+            img = img0             # reading the CALLER's image - re-composing
+                                   # it would restore the model's clean bytes
+                                   # and hide the very corruption under test.
+                                   # Re-confirmed by review #307: removing this
+                                   # channel makes the locate rival COMPLETE 3
+                                   # arrivals (measured, G8 went red) - it is a
+                                   # READ SOURCE, not a second law.
         images.append(img)
         verdicts.append({"r": r, "verdict": verdict, "made": made is not None,
                          "st_after": st, "pen_after": q.pending})
@@ -215,6 +264,16 @@ def _find_kor(im):
         if (bb["x"], bb["y"]) == KOR:
             return i
     raise AssertionError("Korolev (29,42) not located in the image")
+
+
+def _find_tile(im, tile):
+    """B24 hook: the same locate-by-TILE law for an arbitrary tile (the rival
+    that keeps using it after the tile itself has been corrupted)."""
+    for i in range(im.n_bases):
+        bb = im.base(i)
+        if (bb["x"], bb["y"]) == tile:
+            return i
+    raise AssertionError("tile %s not located in the image" % (tile,))
 
 
 def _all_overrides(sv, kor_i, seed_rec, qspan, appended):

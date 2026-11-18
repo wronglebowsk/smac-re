@@ -1,58 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-268-268.md` (1 sessions). Read it only when a question reaches back before session ## Session 269.
-
-## Session 269 (2026-11-16, ANALYSE M308 review round, zero box) - PR #281's four P2s were all correct; the repaired gates are now MEASURED load-bearing (8/8 mutations redden their checks, 36/36), and the 75-entry sibling is adjacent to the site list, not an overflow of it
-
-- WHAT THIS FIRE IS: the review round of the PR #281 that s268 left unmerged because Greptile found
-  4 P2s of one shape - an assertion that could PASS ON AN UNMEASURED STATE. All four fixed, none by
-  weakening a check.
-- ACCEPTANCE: `python3 -u scripts/m308_site_list.py` -> **36/36 checks OK, exit 0**, `evidence/
-  m308_site_list.txt:316,318` (22,680 B); rerun stdout-vs-evidence `diff` = **0 lines**. Second
-  acceptance `python3 -u scripts/m308_mutate.py` -> **`8/8 mutations reddened their target checks`,
-  `RESULT: PASS M308 gates are load-bearing`**, `evidence/m308_mutate.txt`.
-- P2a (classifier blind to `mov eax,ds:0x985ae8`): the operand classifier now matches direct
-  `ds:`/`fs:` forms as well as bracketed ones. A4 RE-TRACKORED to the honest claim - the only
-  out-of-frame, out-of-window memory in the pair is ONE named global READ, `ds:0x985ae8`, 0 stores
-  to it (`:90,96`; 480 direct-globals=['0x985ae8'], 630=[]); A4b asserts stack, site AND global all
-  classify non-empty in the same run, so a blind classifier cannot pass.
-- P2b (bounds pre-filtered to the expected 0x19/0x4b/0x10): S3 is now BACK-EDGE detection (a jcc
-  whose target is at or below itself) + an UNFILTERED immediate inventory of each function
-  (`:100-111`). A12 fails unless 480/630 have exactly 2/1 back-edges with bound {0x19}, step {0x10}
-  AND no cmp bound above 0x19 anywhere AND 0x4b absent from the whole inventory; A32 records that
-  21 of 480's immediates (`0x3e8, 0x14, 0x18, 0x673850, 0xffffffff`...) are ones the old regexes
-  DISCARDED, which is the proof the scan is really unfiltered.
-- P2c (mnemonic presence in place of the rule): A9/A10/A11 read operands + BRANCH TARGETS. A9: the
-  +2 short is movsx'd, that register is the cmp's LHS, the `jg` target == the instruction AFTER the
-  `mov lhs,rhs` fallback (that is what makes it a max), the store-back is a WORD of the cmp's own
-  register, and the cmp's RHS def-walks to `DWORD PTR [ebp+0x10]` (`:128-141`). A10: 1000 is an
-  `and r,0x3e8` on the register the setge/dec wrote (the setge fed by the same-kind test), the free
-  slot's `jl` skips the priority cmp, the 1000 arm's `jne` skips the `20-prio` sub, the strict guard
-  is `jle` and its target is ONE PAST BOTH update stores (a tie therefore keeps the first index),
-  and both priority operands def-walk to `movsx WORD PTR` of the same field (`:143-165`). A11: the
-  `jl` lands on a store-free epilogue run and passes over exactly the 4 insert stores
-  0x56d551/5b/61/6b (`:167-169`).
-- P2d (mirror proved by instruction proximity): a real backward def-walk (`def_producer`/
-  `def_globals`, sub-register aliases resolved: AL counts as EAX) over the stored register, bounded
-  by the function span from ghidra_out/index.csv. 0x57c5af LOADS ds:0x92bde8 (3 instructions
-  walked), 0x57c7b5 is a CO-STORE (the same eax stored to ds:0x92bde8 at 0x57c7b0, no write to eax
-  between), 0x57f006 closes on `movsx eax,BYTE PTR ds:0x8f0c11` (`:260,265,275`), and 0x4ddcf1 is
-  now DECLARED unattributed - the walk hits a call and the previous dumped insn is a `ret`, so the
-  value arrives from outside the walk (`:253`, A28c). A28b is the anti-disguise gate: a walk-closed
-  writer must resolve to ONE numeric global and the 10-insn window must name STRICTLY MORE
-  candidates for every such writer.
-- NEW FACT (was a RIVAL, now arithmetic): the 75-entry sibling at 0x94ee28 ends EXACTLY where the
-  25-entry site list begins - 0x94ee28 + 75*0x10 == 0x94f2d8 - so the two are adjacent arrays of one
-  8380-B block record (100 x 16 B), not one list overflowing (A13, `:293`). 690's two leas
-  (0x94ee2a, 0x94f2dc) and its counter inits {25,75} are printed at `:108-111`.
-- RETRACTION: NAMED ## M308's "2 provably mirror ds:0x92bde8" row said provably on proximity
-  evidence; the proof is now the def-walk, and 1 of the 4 writers is provably NOT attributable in
-  function. Row re-grounded in place, evidence cites refreshed to the new line numbers.
-- PITFALL (own, found by the harness): 3 of my NEW sub-conditions were themselves decorative -
-  mutating them reddened nothing, because I mutated a dict ENTRY that the assert then read as a
-  whole. The fix was to mutate a MEASURED fact so it is false on the real bytes (e.g. compare the
-  jg target off-by-one), which is what `m308_mutate.py` does. Keep mutation ids OUTSIDE the
-  instrument's A-numbers (M1..M8 vs A1..A36) or the check-name parser confuses them.
+Older sessions: `docs/sessions/sessions-269-269.md` (1 sessions). Read it only when a question reaches back before session ## Session 270.
 
 ## Session 270 (2026-11-16, docs cap split, zero box)
 
@@ -396,3 +344,22 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 ## Session 286-cont (2026-11-18, #306: close-out of #305)
 
 - M316 merged (main c2ca6d7) -> docs close-out lands here: footing/STATE update + 4-line M316 summary in NEXT_PROMPT (11,492 B), cursor 578 B pointing at the FLIPPED track (MODE=BUILD, next_rung=B24 - the merge made analyse_since_build=3). Post-merge dead-code sweep (kind_neg) verified output byte-identical before merging #305.
+
+## Session 287 (2026-11-18, B24 close-out: the mutation harness made honest)
+
+- Inherited (fire s287 was cut before close-out): instrument GREEN - `python3 -u -m sim.selftest --b24` -> `PASS B24: 9/9 gates`, exit 0, and its stdout is byte-identical to the committed `evidence/b24_selftest.txt` (re-diffed THIS fire, 18:31 UTC). B24's claims themselves are unchanged here; what broke was the HARNESS.
+- DECLARED != MEASURED, four of eight mutants. Measured reddened sets (harness run 18:19 UTC, `evidence/b24_mutate.txt:3-10`): MU1 {G3,G7} (as authored), MU3 {G7} (authored {G3,G7} - the span read-back moves only G7, because the span is the weak channel, see below), MU4 {G4,G5,G6,G7,G8} and MU7 {G5,G6,G7,G8} (both WIDER than authored: the arrival list and the addressed slot are load-bearing in five/four gates, not two). MU4/MU7 re-declared to the measured sets, each with its why in-file. A mutant that reddens NOTHING is classified NO-OP and fails the harness.
+- MU8 was NOT a gate defect, it was a wrong mutant: `pos=False` is not "address this rung's record by tile". The engine then falls back to `_find_kor` (rung B23's Korolev locator) and dies `AssertionError: Korolev (29,42) not located in the image` - a tile absent from this save, saying nothing about B24. The real tile law is `mode="locate"` (`idx = _find_tile(im, tile_at())`, sim/composedturn.py:194). With that mutation the UNCORRUPTED leg runs to completion (tile (27,29) sits exactly at position 22, so tile- and position-addressing AGREE on a clean run - the two laws cannot be separated there) and the poisoned leg dies `AssertionError: tile (27, 29) not located in the image`. Declared as EXPECTED_CRASH, regex-matched on that message (the engine formats the tile with `str(tuple)`, so the text carries a space: `tile (27, 29)`, measured); any other crash still fails.
+- Harness classifications now: measured gate-set == declared (OK) | declared crash, message-matched (OK) | reddens nothing (BAD, NO-OP) | crash with foreign message (BAD, defect). Also fixed a latent `--tag`-without-`--only` NameError.
+- Acceptance, final: `python3 -u scripts/b24_mutate.py` -> `== 8/8 mutations matched their declared effect ==`, `MUTATE_EXIT=0`, 0 BAD (`evidence/b24_mutate.txt:11-12`); determinism checked by re-running MU1-MU4 concurrently with `--tag` (temp modules are tagged) - same four sets, same OK.
+- In-situ regression for B23 at this head: `sim/composedlive.py` has not changed since the 27f68b5 green run, and G1 replays rung B23's own acceptance in-process 12/12 with B23's own m56 trace (row 1 of `evidence/b24_selftest.txt`).
+
+## Session 287-review (2026-11-18, #307: the Greptile round, and the harness's own decorative halves)
+
+- Greptile #307: 5 P2, all ACCEPTED and fixed at head (39d1cfc, cfa826c, 5f29168) - image poison now reaches EVERY container-reading mode but never the blind ones; the nopop rival needs BOTH halves false (a rival that pops normally must not pass); G7's pre-poison filter compared a VISIT INDEX (4) against a RUN TURN (22..29) so `all()` passed over an EMPTY list - it now filters by visit and compares all four span fields; G9 compares FULL rows + a measurement digest over all three per-visit tables (labels-only is MU9's declared NO-OP); `b23_replay` takes the caller's save (it hardcoded DEFAULT_SAV) and main gained `--b23-trace`.
+- The fire then MEASURED its own harness and found two halves that could pass on an unmeasured state (both fixed here, not by the fire):
+  1. `except AssertionError: rivals["locate"] = True` scored ANY crash as "the rival failed" - a foreign bug, a missing fixture or a different rival shape all counted. Now message-matched on the declared law (`tile (\d+, \d+) not located`); anything else is a DEFECT and reddens G8.
+  2. The `mode="locate"` rival is DEGENERATE - a second `frozenargs`. With the image poison WITHHELD it still bails at every visit and completes 0 arrivals (probe: `idx` resolves to 22 correctly, pen pinned at 4, t22-t29 all `bail`); with the poison ON it dies "tile (27, 29) not located". A rival that cannot complete anything cannot fail for the CLAIMED reason, so it is RETIRED from G8's verdict set (four rivals remain) and the retirement is GATED: `loc_retired_ok = clean arrivals == 0`, so if the clean leg ever completes, G8 goes RED and the rival must be re-enabled. The TILE LAW is carried by MU8 (the fold's own addressing law switched to tile: clean leg completes, poisoned leg dies).
+- Two mutants were re-shaped from measurement, not authored: MU10 was a WEAKENING (`det = sha2==sha and rows2==rows`, i.e. deleting a term from a conjunction - can only ever pass, measured 0/9 red) and is now a DATA mutation (the SECOND run's visit-1 `span_after.mirror` flipped after `compute()`, a field no gate DETAIL prints and the image sha does not cover, so only the digest can catch it -> G9 alone); MU6 targeted the retired locate rival and went with it. MU4's set narrowed to the measured {G4,G5,G6,G7} - G8 dropped out when the two degenerate rivals left the verdict set.
+- Final acceptance at this head: `python3 -u -m sim.selftest --b24` -> `PASS B24: 9/9 gates`, `EXIT=0`, two runs byte-identical, stdout == `evidence/b24_selftest.txt` (G8 row now reads "four rivals ... frozenargs + locate retired as measured DEGENERATE"); `python3 -u scripts/b24_mutate.py` -> `== 9/9 mutants matched their declared effect (+1 declared NO-OP, not scored: MU9) ==`, `MUTATE_EXIT=0`, 0 BAD (`evidence/b24_mutate.txt:13-14`).
+- LESSON (worth the next fire's time): a rival whose failure mode is "it crashed" or "it produced nothing" is not evidence until the crash is message-matched and the same construction is shown to SUCCEED when the claimed cause is removed. Two of B24's six rivals were degenerate, and both looked green.

@@ -685,3 +685,69 @@ read from the trace's after-samples as recorded data, M57/M58) and the price
 (never gate a verdict in this fixture: f30&2 is never set in any sample); the
 founding's economy/research beyond the visited base; which base ran the completion
 is REAL here (the traced one). No box time, no /proc, no gdb, no game-binary load.
+
+**B24 - the queue leg visiting a base the FOUNDER LEG wrote into the container
+during the run (the B22/B23 interface made executable; s287 authored this rung
+from main, as B14-B23 did).** B22 proved the CREATE leg reads a tile that was
+ALREADY in the save; B23 folded a queue on a record the model SEEDED (a declared
+fixture). Neither folds a queue on a record WRITTEN INTO THE IMAGE by another
+composition leg during the same run. `sim/composedlive.py`: B21's log-driven op
+stream and turn schedule (evidence/m289_gdb_raw.log: 7 FOUND + 2 DESTROY) applied
+to the BASE ARRAY IN THE IMAGE - FOUND appends M282's record bytes through the
+writer (B22's grow), DESTROY applies the last-into-freed-slot compaction (M282) -
+and at every later boundary the B23 fold engine reads its queue inputs from the
+RELOADED image at the visited record's **position by ledger index**, never by
+tile: the falsifier corrupts the visited record's tile/owner **in the image only**
+and a tile lookup could not find the corrupted record at all. The visited base is
+a founded one (fac=1 (27,29), op6 of the log, ordered BEFORE the last DESTROY in
+log order), seeded with B23's queue law; its completions arrive as 52-B units
+through the same writer. `python3 -u -m sim.selftest --b24` must print
+`PASS B24: 9/9 gates` (authored once in `sim/composedlive.py`, `--b24` only
+relays, so the two entry points cannot print different text) with:
+**G1** B23's own replay stays green in-process (12/12) - the composition reuses
+the fold engine, it does not fork it; **G2** op fidelity: the 9 applied ops hit
+9/9 recorded (kind,pre-cnt) rows, and at EVERY turn of the run the IMAGE's parsed
+`n_bases` equals the ledger count (the array grew/shrank through the writer);
+**G3** every grown record in the image == `basefound.record_bytes` verbatim, and
+the VISITED record carries the fold's last-written queue span plus (under the
+falsifier) the corrupted identity bytes; final `n_bases` == ledger, size delta ==
+grew*304 + arrivals*52; **G4** the DESTROY compaction runs IN THE IMAGE: the victim
+is always the array's LAST slot (measured slots 20 and 23, never the visited 22),
+the image size at each destroy turn equals the applied-ledger size (and the
+skipped-destroy ledger would leave 304/608 B more), the visited record's index is
+STABLE across both compactions, and its queue span survives the t=29 shrink;
+**G5** the queue fold on the founded record's bytes: container == model at every
+visit boundary while uncorrupted (verdicts, spans, arrivals); **G6** each arrival
+is the units array's LAST 52 B and carries the tile/owner **read FROM THE IMAGE**,
+its head slot from the image's own span, `n_units` 67 -> 70; **G7** THE FALSIFIER,
+two shapes: (a) poison the founded record's tile/owner IN THE IMAGE ONLY from visit
+6 - the fold re-reads through the POSITION and the THIRD arrival CARRIES the
+corrupted tile/owner (and the image's own 3rd unit record agrees), the image's
+first two unit records stay clean, while the model-fed fold is BLIND to the same
+corruption; the queue SPANS and verdicts are DECLARED equal under this shape (the
+poison never touches +0x40/+0x4c/+0x50, so claiming divergence there would be
+decoration); (b) poison the record's storage in the image at one read - the
+VERDICT TABLE moves and a completion shifts turns, while every visit before the
+poison is byte-identical: the read-back loop, measured; **G8** five rivals fail the
+same fit (price 100; no arrivals appended; head not popped; arrival identity frozen
+at the founding turn's constants; no founding at all; tile lookup instead of
+position); **G9** determinism: two runs identical FULL tables - labels, verdicts
+AND the per-turn/per-visit rows - plus identical final-image sha256.
+`scripts/b24_mutate.py` re-creates eight defects by anchor->replacement in a fresh
+subprocess and exits non-zero unless each reddens EXACTLY its declared gate set.
+DECLARED UNMODELED: the queue content seeded on the founded record (the log
+records fac/x/y/cnt only - the seed is a DECLARED fixture, the LAW is B11/B12's,
+exactly as B23 declared its Korolev seed); price/income and the visit-time d0 as
+in B23 (the recorded laws, not recomputed); the founded base's economy, research
+and garrison; WHICH base the game would really found is not claimed - the schedule
+is the recorded log's, not a model of the AI. RETRACTED at the first measurement,
+before any gate was written: the draft's claim that the turn-29 compaction MOVES
+the slot the fold's visits address. It does not - the compaction removes the
+array's LAST slot, which sits after the target (index 22), and the last logged
+DESTROY lands at t=29, one turn after the last visit; the slot is stable for all 8
+visits (G4). What the window does show is two-sided and load-bearing: the
+container's queue SPAN is a weak channel (read back every turn it comes out
+byte-identical to the model's chain, so a falsifier cannot bite there), while the
+record's IDENTITY bytes are the channel that carries - they reach a new unit record
+only if the fold reads them from the container. No box time, no /proc, no gdb, no
+game-binary load.

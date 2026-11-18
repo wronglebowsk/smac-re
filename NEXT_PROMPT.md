@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M316 MERGED #305 (5 P2 all accepted); M315 #301; M314 #299; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B23 + M54A-M316 done; track: B24 IS NEXT (track_mode flipped to BUILD at the M316 merge - 3 analyses since B23; the OPEN picks wait until after the build); #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M316 done; track: flips ANALYSE at this merge - pick (iii') next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -22,19 +22,26 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 ## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
-that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a census claim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B21 MERGED**
-(per-rung cmds: `NAMED.md` §CHAIN-BUILDS; B21 acceptance `python3 -m sim.selftest --b21 <sav>` +
-`evidence/b21_composedrun.txt:93`). BUILDS **B1-B22 MERGED**; B23 MERGED as #297 (main 77a170d): 12/12 + falsifiers G10/G11 + 5 rivals, 3 P2 ALL accepted at review head (s280); next build B24 **BUILD-NEXT as of s286** (M314/M315/M316 landed since B23; track_mode flips to ANALYSE only after the NEXT build merge). OLD picks (a)(b) answered by M311 (#289, 8/8, digest 625cd5877271cd85); (c) retracted by M312's A4.
+that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED**
+(per-rung cmds: `NAMED.md` §CHAIN-BUILDS). Next build **B25, queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at
+B24, so B25's rung text must be written BEFORE probing (one milestone = spine section + instrument).
+OLD picks (a)(b) = M311 (#289, digest 625cd5877271cd85); (c) retracted by M312's A4.
 
-M316 MERGED as #305 (main see git log): 18/18 + 32/32, digest dcc6ce82fc98aec4;
-5 P2 ALL accepted; the review's window-scope P2 BROKE THE SITE-TWIN LAW (0x94f2d8 = same
-5-field/16 B record shape; REMOVER 0056d780 12 sites = goal-cancel; INITIALIZER 0056d710
-fills both arrays). NAMED ## M316 governs.
-M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29 (22 expectation + 7 CODE mutants via
-M315_PATCH), digest 3976ca97eedc1e19; 6 P2 ALL accepted at review head 754b4fa6; the
-caller-guard claim DOWNGRADED to OPEN; pair reach 16 B -> 17 B; blind re-verify records
-`evidence/s285_reverify_*` (#304). NAMED ## M315 governs.
+B24 MERGED (NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **9/9 scored + 1
+declared NO-OP** (MU9 labels-only = decoration). RETRACTED at the spine: the turn-29 compaction does NOT move the
+addressed slot (stable at 22 for all 8 visits). NEW LAW: the run addresses its record BY LEDGER POSITION;
+tile-addressing cannot RUN once the container tile is poisoned (`tile (27, 29) not located`). HARNESS LAWS (s287):
+declared gate-sets are MEASURED, not authored; a mutant reddening NOTHING is a NO-OP and fails; dropping a conjunct
+can't redden - mutate DATA; a rival that fails by crashing or returning nothing is NOT evidence until the crash is
+message-matched AND the construction succeeds without the cause (B24 had two degenerate rivals:
+frontinsert, locate - retired, G8 gates the retirement). `pos=False` in `composedturn.fold` is NOT tile-addressing.
+
+M316 MERGED as #305: 18/18 + 32/32, digest dcc6ce82fc98aec4; 5 P2 accepted; its window-scope P2 BROKE THE
+SITE-TWIN LAW (0x94f2d8 same 5-field/16 B shape; REMOVER 0056d780; INITIALIZER 0056d710). NAMED ## M316.
+M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29, digest 3976ca97eedc1e19; 6 P2 at head 754b4fa6;
+caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/s285_reverify_*`
+(#304). NAMED ## M315.
 
 ## THE LEDGER
 
@@ -63,8 +70,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). M308 is CLOSED — merged in #281 with its review round (Greptile's 4 P2s fixed + mutation-tested). track_mode is AUTHORITATIVE: a merge does
-  NOT flip the immediate fire (s259/s260); next_rung B22 stays queued. ANSWERED: M227-M309 + B1-B21 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M316 + B1-B24 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
