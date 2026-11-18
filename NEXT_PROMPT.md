@@ -28,7 +28,7 @@ box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick
 B24, so B25's rung text must be written BEFORE probing (one milestone = spine section + instrument).
 OLD picks (a)(b) = M311 (#289, digest 625cd5877271cd85); (c) retracted by M312's A4.
 
-B24 MERGED (NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **9/9 scored + 1
+B24 MERGED as #307 (main af38858; NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **9/9 scored + 1
 declared NO-OP** (MU9 labels-only = decoration). RETRACTED at the spine: the turn-29 compaction does NOT move the
 addressed slot (stable at 22 for all 8 visits). NEW LAW: the run addresses its record BY LEDGER POSITION;
 tile-addressing cannot RUN once the container tile is poisoned (`tile (27, 29) not located`). HARNESS LAWS (s287):
