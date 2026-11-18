@@ -10,12 +10,12 @@ dependency, missing reds are a decorative assert.
 
 One shape is declared apart from the gate sets: EXPECTED_CRASH. Measured (see
 the table this file prints): a fold that addresses the visited record BY TILE
-does not answer the fit wrongly - it cannot answer at all. Once the container's
-tile bytes for that slot are poisoned, the locate-by-tile walk raises
-"tile (27,29) not located" out of the driver's own locate-rival leg and the run
-dies. That is a finding about the addressing law, not a harness defect, so it is
-DECLARED and matched on message text. Every other crash is still a defect and
-fails the harness.
+does not answer the fit wrongly - it cannot answer at all. With the tile law
+(`mode="locate"`, the engine looks the record's own tile up in the image at
+every boundary) the uncorrupted leg runs and the poisoned leg raises
+"tile (27,29) not located in the image" out of the driver. That is a finding
+about the addressing law, not a harness defect, so it is DECLARED and matched
+on message text. Every other crash is still a defect and fails the harness.
 
 Each mutant is a text patch of sim/composedlive.py, written as a sibling module
 inside sim/ and executed in a FRESH subprocess (no module cache), relayed
@@ -28,7 +28,9 @@ import sys
 import time
 
 EXPECTED_CRASH = "CRASH"
-CRASH_MARK = "tile (27,29) not located"
+# Whitespace-flexible: the engine formats the tile with str(tuple), so the
+# message reads "tile (27, 29) not located" with a space (measured).
+CRASH_MARK = r"tile\s*\(\s*27\s*,\s*29\s*\)\s+not\s+located"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SIM = os.path.join(REPO, "sim")
@@ -102,21 +104,27 @@ MUTANTS = [
     # fold breaks, G6's n_units law reads the wrong container, G7 loses the
     # poison carry (it lands on a clean record the gates never inspect), and
     # G8's locate/frozenargs rivals stop failing for the reason claimed.
-    ("MU8", "the fold locates by tile instead of by position", CL,
-     '''            pos=True, overrides_fn=ovs, d0s=[D0_DECL], price=price,''',
-     '''            pos=False, overrides_fn=ovs, d0s=[D0_DECL], price=price,''',
+    ("MU8", "the fold ADDRESSES its record by tile (mode=locate as its law)", CL,
+     '''            sv, bnds, mode=mode,
+            pos=True, overrides_fn=ovs, d0s=[D0_DECL], price=price,''',
+     '''            sv, bnds, mode="locate",
+            pos=True, overrides_fn=ovs, d0s=[D0_DECL], price=price,''',
      EXPECTED_CRASH),
-    # MU8 is the EXPECTED_CRASH shape, and the crash IS the finding: with
-    # pos=False the fold addresses the visited record by looking its TILE up in
-    # the image. Visits 0-5 still agree (the tile is still (27,29) at position
-    # 22, so tile-lookup finds exactly the slot pos=True names) - which is
-    # itself measured, and is why tile-vs-position cannot be settled on an
-    # uncorrupted run. From the poisoned visit on the tile is (1447,1448) and
-    # the walk raises "tile (27,29) not located in the image" out of the
-    # driver's own locate-rival leg: the record cannot be addressed by tile at
-    # all, so no verdict, span or arrival is ever produced for it. The harness
-    # matches the message text, not just "something died" - a crash with any
-    # other message is still a defect.
+    # MU8 is the EXPECTED_CRASH shape, and the crash IS the finding. NOTE what
+    # "address by tile" means HERE, measured: `pos=False` is NOT it - the engine
+    # then falls back to _find_kor, rung B23's Korolev locator, and dies with
+    # "Korolev (29,42) not located" (that tile is not in this save at all),
+    # saying nothing about B24's record. The tile law is mode="locate"
+    # (`idx = _find_tile(im, tile_at())`, composedturn.py:194): the fold looks
+    # its OWN record's tile up in the image every boundary instead of naming a
+    # slot. Measured with this mutant: the unpoisoned leg runs (the tile is
+    # (27,29) at position 22, exactly the slot pos=True names - so tile-vs-
+    # position cannot be settled on an uncorrupted run), and the poisoned leg
+    # dies raising "tile (27,29) not located in the image": once the container's
+    # tile bytes for that slot are rewritten, a tile-addressing fold cannot
+    # address the record at all - no verdict, span or arrival is ever produced
+    # for it. The harness matches the message text, not just "something died" -
+    # a crash with any other message is still a defect.
 ]
 
 
@@ -189,7 +197,8 @@ def main():
     for mid, desc, path, anchor, repl, declared in todo:
         gates, info = run_mutant(mid, path, anchor, repl, tag)
         if declared == EXPECTED_CRASH:
-            ok = gates is None and "CRASH:" in info and CRASH_MARK in info
+            ok = (gates is None and "CRASH:" in info and
+                  re.search(CRASH_MARK, info) is not None)
             if ok:
                 info = info + " [declared: tile-addressing cannot run]"
         else:
@@ -197,11 +206,12 @@ def main():
                 info = info + " [NO-OP: reddened nothing]"
             ok = gates is not None and gates == declared and bool(gates)
         want = declared if isinstance(declared, set) else EXPECTED_CRASH
-        got = ",".join(sorted(gates)) if gates else \
-            (info.split(":", 1)[1].strip()[:18] if gates is None else "-")
-        print("%-6s %-62s declared=%-18s measured=%-18s %s  (%s)"
-              % (mid, desc[:62], ",".join(sorted(want)) if isinstance(want, set)
-                 else want, got, "OK" if ok else "BAD", info))
+        got = (",".join(sorted(gates)) if gates else
+               ("CRASH " + info.split("CRASH:", 1)[1].strip()
+                if gates is None and "CRASH:" in info else "-"))
+        print("%-6s %-46s declared=%-18s measured=%-44s %s  (%s)"
+              % (mid, desc[:46], ",".join(sorted(want)) if isinstance(want, set)
+                 else want, got[:44], "OK" if ok else "BAD", info))
         if not ok:
             fails.append(mid)
     print("== %d/%d mutations matched their declared effect =="
