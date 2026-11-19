@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M319 done; track ANALYSE (since B24) - pick (vi) next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M319 done; track ANALYSE (since B24) - pick (vi) next; the next BUILD is B25, spine text NOT authored; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -68,7 +68,7 @@ collision-check + worktree FIRST).
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  CLOSED (s293): pick (v) = M319 - the guard is NOT hoisted. Memo has 6 read/test instrs
+  CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted. 6 read/test
   image-wide in 5 funcs, readers(5) subset writers(15); the 8 unguarded sites have 4 nameable
   owners + 8 direct callers, 0/9 CFG arrivals memo-tested, and the only memo-reading caller
   (FUN_004f5a70) is itself an owner, so its read is its OWN guard; G7 is the classifier's
