@@ -290,6 +290,16 @@ def gate(name, ok, detail):
     GATES.append((name, bool(ok), detail))
 
 # G1: codec leg census - the three carry legs + blockA converting siblings
+# PUSH_PINS: the push-run POSITIONS are pinned too, not just the resolved values
+# (a value-only check would accept the same immediates pushed from anywhere).
+PUSH_PINS = {
+    0x596866: ("push", "0x31c"),
+    0x59687c: ("push", "0x985ab8"),
+    0x596a7e: ("push", "0x105e0"),
+    0x596a83: ("push", "0x94d430"),
+    0x596ec3: ("push", "0x2ce0"),
+    0x596ec8: ("push", "0x927590"),
+}
 hl, ha, hf = leg(0x59688a), leg(0x596a91), leg(0x596ed6)
 sibA = [s for s in SIBS if s[0] in (0x596a6b, 0x596a72)]
 g1 = (hl == (0x59688a, "R", HDRBASE, 0x31c, 1, None)
@@ -300,10 +310,12 @@ g1 = (hl == (0x59688a, "R", HDRBASE, 0x31c, 1, None)
       and leg(0x596ecf) == (0x596ecf, "W", FAC1436, 0x2ce0, 1, None)
       and len(sibA) == 2
       and all(s[2] == BLKBASE and s[3] == 0x105e0 for s in sibA)
-      and {s[1] for s in sibA} == {0x596470, 0x596540})
+      and {s[1] for s in sibA} == {0x596470, 0x596540}
+      and pin_ok(PUSH_PINS))
 gate("G1", g1, "header R/W=59688a/596883 dst=985ab8 sz=31c; blockA R/W=596a91/596a8a "
      "dst=94d430 sz=105e0 +siblings 596a6b/596a72 same args; faction R/W=596ed6/596ecf "
-     "dst=927590 sz=2ce0; legs R=%d W=%d sib=%d" % (
+     "dst=927590 sz=2ce0; pushpins=%s; legs R=%d W=%d sib=%d" % (
+         pin_ok(PUSH_PINS),
          sum(1 for l in LEGS if l[1] == "R"), sum(1 for l in LEGS if l[1] == "W"), len(SIBS)))
 # G2: ROUND+YEAR carried by the header leg, and by NO OTHER immediate-dest read leg
 g2 = (COV["ROUND"] == [0x59688a] and COV["YEAR"] == [0x59688a]

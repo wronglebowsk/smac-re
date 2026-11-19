@@ -1287,13 +1287,13 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 
 | claim | evidence | conf |
 |---|---|---|
-| hdr R/W 59688a/596883 dst 985ab8 sz 31c; ROUND=blob+44 YEAR=+48; sole imm carrier | G1/G2 `evidence/m324_save_carry.txt:82-83,63` | V MU1/MU2/MU3/MU10/MU11 |
+| hdr R/W 59688a/596883 dst 985ab8 sz 31c; ROUND=blob+44 YEAR=+48; sole carrier | G1/G2 `evidence/m324_save_carry.txt:82-83,63` | V MU1/MU2/MU3/MU10/MU11 |
 | block+220 8/8: 596a91->94d430 sz 105e0=8*20bc; fac1436 596ed6->927590 sz 2ce0 | G1/G3 `:82,84` | V MU4/MU4b/MU5 |
 | prefix12; @50=50 @54=2150 @44=67 @48=18 @310=9; sha==M302 save | G5 `:86` | V MU8/MU9 |
 | g999fa4 W={442642,626fd7}; fold [this+a24]*20bc+[94d650] MAX-gated; not carried; 0 callers/0 AT | G4 `:85,70-78` | V MU6/MU14/MU16 |
 | closure 440, 0 writers; 4e0350 callers {514ecf,517e3a} absent; mode=0; header first; M272 -39->50 | G6/G7 `:87-88,79` | V MU7/MU12/MU13/MU15/MU17 |
 | R1/R2 DEAD | G8 `:89-91` | V MU1/MU2/MU3/MU7/MU8/MU17 |
-| ACCEPT 8/8 b21bf8413f94e43b x2 (`:92`,`_rerun.txt:92`); 19/19+1 f8e16fde85c1ea18 (`m324_mutate.txt:21`) | cited | V |
+| ACCEPT 8/8 digest 2cc5fd43ef7ac29f x2 (`:92`,`_rerun.txt:92`); 19/19+1 f8e16fde85c1ea18 (`m324_mutate.txt:21`) | cited | V |
 | OPEN: g999fa4/64c360; block+220 noun; feed arrival; byte-swap | - | lead |
 
 ## M323 (s295-chain2, STATIC, 13/13, 31/31+1) - ds:0x985afc=ROUND counter; year=round+2100

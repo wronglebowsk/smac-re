@@ -79,7 +79,7 @@ T4 g999fa4 refs=11 writers=['0x442642', '0x626fd7'] feedcallers=[] feedAT=[]
 T5 closure: 440 fns from seeds ['0x596850', '0x597ee0']; writers-in=[]; 4e0350 callers=['0x514ecf', '0x517e3a']
 T6 order: firstwrap=0x596883 ebxdefs-body=[] m272 opener=[(5870322, -39, 0)] fac=[(5861083, 50, 3)] wfam=[]
 T7 m302 cross: sha=74d0f44ab9b9290b size=242539 yearround=(2150, 50)
-G1 PASS header R/W=59688a/596883 dst=985ab8 sz=31c; blockA R/W=596a91/596a8a dst=94d430 sz=105e0 +siblings 596a6b/596a72 same args; faction R/W=596ed6/596ecf dst=927590 sz=2ce0; legs R=30 W=30 sib=56
+G1 PASS header R/W=59688a/596883 dst=985ab8 sz=31c; blockA R/W=596a91/596a8a dst=94d430 sz=105e0 +siblings 596a6b/596a72 same args; faction R/W=596ed6/596ecf dst=927590 sz=2ce0; pushpins=True; legs R=30 W=30 sib=56
 G2 PASS COV ROUND=['0x59688a'] YEAR=['0x59688a'] img-wide=['0x59688a'] blob+44/+48
 G3 PASS 8/8 block+220 legs=[(5859985,)] fac1436=['0x596ed6'] 105e0=8*20bc 2ce0=8*1436
 G4 PASS writers=['0x442642', '0x626fd7'] refs=11 fold8pins=True w2pins=True 94d650-94d430=220 COV=[] feedcallers=0 feedAT=0
@@ -89,4 +89,4 @@ G7 PASS firstwrap=0x596883 mode:xor@597efb+jne@597f05+noebxdef=True verleg@597f5
 G8 PASS R1 RE-DERIVE dead=True R2 REBUILD dead=True
 R1 RE-DERIVE-FROM-YEAR (load calls FUN_004e0350): DEAD - 4e0350 callers are the 2 tour pumps, closure writers=[], file round@0x50=50, header leg first
 R2 NEW-GAME-REBUILD (load calls FUN_005a0fa0/59ce10): DEAD - 5a0fa0 not in closure, its store is const-0 via esi (M323), m272 writer-family events=0
-== M324: 8/8 == digest b21bf8413f94e43b
+== M324: 8/8 == digest 2cc5fd43ef7ac29f

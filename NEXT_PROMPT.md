@@ -133,4 +133,4 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
 M323: NAMED ## M323; VERBATIM §trim-s297 (a).
-M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; rederive DEAD (closure 440, writers 0). 8/8 b21bf8413f94e43b (m324_save_carry.txt:92); 19/19+1. NAMED ## M324.
+M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; rederive DEAD (closure 440, writers 0). 8/8 2cc5fd43ef7ac29f (m324_save_carry.txt:92); 19/19+1. NAMED ## M324.
