@@ -1154,3 +1154,12 @@ B25/B26 (MERGED) ACCEPT anchors + digests, harness sets, the LOADED-container la
 M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
 M323: NAMED ## M323; VERBATIM §trim-s299 (a).
 M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; rederive DEAD (closure 440, writers 0). 8/8 700b4133f62bd714 (m324_save_carry.txt:100); 28/28+1. MERGED #326->0c3b5d9. NAMED ## M324.
+
+
+## §trim-s300-chain1 (b) the two CLOSED + MERGED pick rows of §THE PICK (pick (v) = M319 / #317, pick (vi) = M321 / #324), VERBATIM from NEXT_PROMPT.md at the PR #328 merge of main (rotated so the file stays under the 12,000 B warn cap; sha1 b0e7c1d2614f2312 of the block below, byte-exact). `NAMED ## M319` / `## M321` govern.
+
+  CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted; its 5-line
+  closure block moved VERBATIM to `docs/pick-archive.md` §trim-s295 (a). `NAMED ## M319` governs.
+  CLOSED + MERGED (pick (vi) = M321): `NAMED ## M321` governs (#324 hardened at review:
+  7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2); its OPEN-pick text sits
+  at §trim-s297 and its CLOSED block moved VERBATIM to §trim-s299 (c).

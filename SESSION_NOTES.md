@@ -382,6 +382,15 @@ Older sessions: `docs/sessions/sessions-283-285.md` (4 sessions). Read it only w
   +10 queue-band records) and **(viii)** (name FUN_0041a8f0) open; **B27 rung text is NOT
   AUTHORED** (one milestone = spine section + instrument). #180 (M241, 2/5) stands.
 
+## Session 299-chain2 (2026-11-19, M325 CLOSED, STATIC: block+0x220 = per-faction ENERGY)
+
+- wt-chain2 @ milestone/m325 (main 251fe13). ANSWER: ENERGY balance. "EDITORENERGY" (PE 68c938) handler FUN_004e0260: field <- g999fa4 @4e0336 (register-address store; forward lea-seed scan catches 20 such W). Turnfn FUN_0051f320: 16 stores/0 stringops/0 block-region -> R1 DEAD. Save vals [10,28,112,69,229,60,102,37] @0x32c+k*20bc+220 (decode_save.walk; codec leg-walk 0x10d0 WRONG: conditional legs) <2100 -> R2 year-copy DEAD.
+- RETRACTION: M324 feed "MAX" -> MIN, DERIVED from cmp/jle-skip geometry (review P1-1). g999fa4 = cheat-chain value: 626f19 match (5f0583, je 626f75) -> 99a01c -> 64c460 -> 626fd7 ("parsed number" INFERRED). EDITORYEAR (68c948): 4e0350 round=max(1,g999fa4-2100) = cheat year-set. Pumps 512b40/516b80 = cheat dispatch (thiscall lea ecx,[esi-0x23d94]).
+- Census: 234 disp hits (54W/180R) + 30 seeds -> 20 regW/7 regR = 74 sites/34 owners; 45 proven/29 UNPROVEN decl. Pins: caps 9999999/999999999/99999, -1000@5085c0, reset0@59eef3, per-base +1@5207ff, pct@5207d9, VOTEFORME xfer@4295fe/628, upkeep@520a09, +224 settle@520b1c/b30.
+- REVIEW #329: 2P1+8P2, 10/10 accepted: MIN hardcoded->derived+MU25; ENERGY row gated via G5 handler relation (same-fn/gate-call/jne/src-load; MU26/27); P/U totals gated (reviewer's 40/34 miscount: 16 regW proven, 45/29 stands); 29/29+1 notation; itoa pins MU28; seed-count+BLKCONST-target pins MU29; LIFO-sound pop pairing upgraded 4 sites (MU30=old algo); call-crossings enumerated T9 (4497 events/118 sites/12 proven writers); S4 strengthened.
+- ACCEPT `python3 -u scripts/m325_block220_census.py` -> **8/8** a623181d7fb68263 (`evidence/m325_block220_census.txt:297-298`) x2 identical. HARNESS **30/30 (29+1 NO-OP)** 97c193e12593c95e (`m325_mutate.txt:33-35`) x2; selftest 4/4 (`_selftest.txt:6`). Digest history 12e8c53d->7b1f0a2b (L2b pins)->a623181d (review).
+- OPEN: +224/+300 nouns; MIN consumers; 920774; 519b00 dbl/quarter; feed vtable (.rdata 673b60=&FUN_00442320, 0 text refs).
+
 ## Session 300 (2026-11-19, PR #328 review remediation, zero box)
 
 B26's PR came back with 10 findings, and the prior fire had left `sim/composedsave.py` **edited
@@ -434,3 +443,6 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - OPEN, not swept green: `found_units` 69 -> 0 in the two post-boundary rounds while
   `n_units_img` stays 70/71; and why the exposed smuggler carries the poisoned owner once, not
   twice. NEXT: **B27 rung text UNAUTHORED**; picks (vii)/(viii). #180 (M241, 2/5) stands.
+## Session 300-chain2 (2026-11-19, M325 MERGED, post-merge note; docs-only, zero box)
+
+- MERGED #329 squash **fb6e6c4**. Review 2P1+8P2 10/10 accepted in one reply; post-review 8/8 a623181d7fb68263 x2 + at-head identical; harness 30/30 (29+1) 97c193e12593c95e; CI 13 s CLEAN; main did not move (no rebase). Squash title "24/24+1" = PRE-review harness; NAMED ## M325 ACCEPT governs. Note: docs/m325-merged; pr329 .json sidecar folded in.
