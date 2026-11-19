@@ -394,6 +394,20 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
   (a)-(d) from the earlier one-shots are in `docs/pick-archive.md` too. `evidence.py budget`
   ran CLEAN this fire (exit 0, RC 0) - s298's exit-127 did not reproduce; evidence/ 21.0 MB
   [warn] of 30 MB.
-- NEXT: `track_mode.py` will say MODE=ANALYSE until B26 merges; picks **(vii)** (the 25-of-67
+- REBASE onto chain 2's M324 merge (main cd6f2f5 -> 251fe13) hit THREE doc conflicts, all
+  append-vs-append, all resolved keeping BOTH chains' sections - and one real collision worth
+  recording: **both chains invented `docs/pick-archive.md` §trim-s299 (a) within the same
+  hour**, chain 2's = the M323 result one-liner, mine = the B26 footer sentence, and my (b)
+  re-archived the same M323 line. MEASURED (`scripts/b26_rebase_fix.py`): my (b)'s M323 line is
+  423 B, sha1 **01eed48690e17856**, present VERBATIM inside chain 2's (a) -> so my (b) carried
+  nothing new and was DELETED, chain 2's (a) kept, my (a) re-lettered **(b)**, and the one
+  NEXT_PROMPT pointer naming it fixed. NEXT_PROMPT 12,827 -> **11,745 B** at head. Session order
+  in SESSION_NOTES now runs 296-chain2 / 297-chain2 / 299 (both chains' notes kept).
+- OPEN: whether the container's non-carry set is ONLY the MP budget (one config measured); the
+  in-progress turn state beyond it; whether the game models the grown 304-B/52-B blocks
+  "wholesale"; `found_units` collapses 69 -> 0 in the two post-boundary rounds of the POISONED
+  run (`evidence/b26_selftest.txt:9-10`, n_units_img still 70/71) - printed, not explained,
+  not gated; and B25's 25-of-67 band-record exemption still UNNAMED (pick (vii)).
+- NEXT: `track_mode.py` says MODE=BUILD until B26 lands on main; picks **(vii)** (the 25-of-67
   +10 queue-band records) and **(viii)** (name FUN_0041a8f0) open; **B27 rung text is NOT
   AUTHORED** (one milestone = spine section + instrument). #180 (M241, 2/5) stands.
