@@ -12,7 +12,7 @@
    0x4f5b32 FUN_004f5a70     pair=(5, 10) guard=-
    0x4f5c4a FUN_004f5a70     pair=(6, 11) guard=via-copy jcc 0x4f5c48->0x4f5c69 cmp 0x4f5c46
    stores=22 memo=12 clears=10  guarded=['0x4eb6c7', '0x4efeaa', '0x4f2201', '0x4f5c4a']  unguarded=['0x4e4ddc', '0x4ee6c9', '0x4ee883', '0x4f3f7f', '0x4f44a8', '0x4f455d', '0x4f5ab7', '0x4f5b32']
-OK   G1 M315's inputs re-measure identically: 22 stores, the 12 pair-fed memo sites, and an INDEPENDENT guard rule reproduces exactly the 4-guarded / 8-unguarded split: stores=22 memo=12 guarded=4 unguarded=8
+OK   G1 M315's inputs re-measure identically: 22 stores, the 12 pair-fed memo sites, and a guard rule DERIVED HERE reproduces the 4/8 split (via-copy arm is an over-approx): stores=22 memo=12 guarded=4 unguarded=8
 -- T2 every instruction that READS/TESTS the memo (image-wide): 6 --
    0x4e5155 FUN_004e4e10     mov eax,ds:0x68cbb4
    0x4eb6bf FUN_004eb6b0     cmp DWORD PTR ds:0x68cbb4,eax

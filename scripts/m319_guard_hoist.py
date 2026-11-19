@@ -209,7 +209,7 @@ def main():
     print("   stores=%d memo=%d clears=%d  guarded=%s  unguarded=%s"
           % (len(stores), len(memo), len(clears), [hex(x) for x in G], [hex(x) for x in U]))
     ck("G1 M315's inputs re-measure identically: 22 stores, the 12 pair-fed memo sites, "
-       "and an INDEPENDENT guard rule reproduces exactly the 4-guarded / 8-unguarded split",
+       "and a guard rule DERIVED HERE reproduces the 4/8 split (via-copy arm is an over-approx)",
        len(stores) == 22 and sorted(memo) == sorted(M315_MEMO12) and G == sorted(M315_GUARDED)
        and len(U) == 8, "stores=%d memo=%d guarded=%d unguarded=%d" % (len(stores), len(memo), len(G), len(U)))
 
