@@ -1,39 +1,44 @@
 #!/usr/bin/env python3
-# M325: block+0x220 WRITER CENSUS (M324's carried OPEN). The per-faction field at
-# block+0x220 (blocks 0x94d430+k*0x20bc, k=0..7) is RAW-carryied by the save loader
-# (M324 G3) and feeds ROUND=max(1, g999fa4-2100) via the MAX-feed FUN_00442320
-# (M324 G4). QUESTION: does FUN_0051f320's turn advance (M323's round+1/year writer,
-# 0x40c B) set this field, and who else writes it? Name the semantics from the
-# writer census + the carry law; if the bytes don't support a game noun, leave lead.
-# STATIC, zero box. Footing: NAMED ## M324/M323/M320/M316.
+# M325: block+0x220 WRITER CENSUS (M324's carried OPEN). QUESTION: does FUN_0051f320's
+# turn advance set the per-faction field at block+0x220 (blocks 0x94d430+k*0x20bc),
+# and who else writes it? ANSWER measured here: the field is the per-faction ENERGY
+# balance - pinned by the "EDITORENERGY" cheat handler writing exactly this field.
+# STATIC, zero box. Footing: NAMED ## M324 (raw carry, feed), ## M323 (round/year
+# writers), ## M320 (block layout), ## M316 (stride/base).
 # Law: table FIRST then ASSERT; >=1 RIVAL that FAILS on the printed numbers; digest
 # hashes the MEASURED detail; declared sets MEASURED not authored.
-# Mutants: M325_PATCH addr|mn ops (disassembly rewrite), M325_ALGO 1=provenance off
-# 2=disp-match widened to any displacement, M325_SAVE=<file>, M325_EVIDENCE_ROOT.
-# Resolver limit (DECLARED): base-register provenance is a LINEAR backward def-walk
-# within the owning function (<=60 instrs, depth<=3), not a CFG dataflow proof;
-# unresolved bases are reported UNPROVEN and counted, never silently dropped.
+# Mutants: M325_PATCH addr|mn ops (disassembly rewrite), M325_PE_PATCH addr|hex
+# (PE byte rewrite), M325_ALGO 1=provenance off 2=disp-match widened 3=forward-scan
+# off 4=shl-blind affine 5=feed-direction flipped, M325_SAVE=<file>,
+# M325_EVIDENCE_ROOT=<dir>.
+# Resolver limits (DECLARED): base provenance = LINEAR backward def-walk within the
+# owning function (<=300 instrs, depth<=4), affine over an opaque runtime leaf;
+# stack-slot forwarding is linear (most recent store to the same [ebp+disp] wins);
+# register-address forward scan stops at the base's next redefinition (calls clobber
+# only eax/ecx/edx). Pointer-from-memory bases that are not stack slots stay UNPROVEN
+# and are counted. No CFG dataflow proof.
 import bisect, csv, hashlib, os, re, struct, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.path.join(ROOT, "scratch/m574/text.txt")
 IDX = os.path.join(ROOT, "ghidra_out/index.csv")
+PE = os.path.join(ROOT, "programs/terran.exe")
 EV = os.environ.get("M325_EVIDENCE_ROOT", ROOT)
 ALGO = os.environ.get("M325_ALGO", "0")
 SAVE = os.environ.get("M325_SAVE", os.path.join(ROOT, "programs/saves/m54b_clean.SAV"))
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+import decode_save as ds
 
 BLKBASE, STRIDE, NBLK, OFF = 0x94d430, 0x20bc, 8, 0x220
-FADDRS = [BLKBASE + OFF + k * STRIDE for k in range(NBLK)]  # 0x94d650 + k*20bc
+FADDRS = [BLKBASE + OFF + k * STRIDE for k in range(NBLK)]
 BLKBASES = [BLKBASE + k * STRIDE for k in range(NBLK)]
-BLKEND = BLKBASE + NBLK * STRIDE            # 0x95da10 == base_array base (M321)
-TURNFN = 0x51f320                            # FUN_0051f320, M323 round+1 @entry, year @51f54f
-FEEDFN = 0x442320                            # FUN_00442320, M324 MAX-feed reader
-G999, ROUND, YEARBASE = 0x999fa4, 0x985afc, 0x92bf68
-CODEC = 0x596850
-RD, WR = 0x64cc00, 0x64c9a0
+BLKEND = BLKBASE + NBLK * STRIDE
+TURNFN, FEEDFN = 0x51f320, 0x442320
+G999, ROUND, YEAR, YEARBASE = 0x999fa4, 0x985afc, 0x985b00, 0x92bf68
+IMG_BASE = 0x400000
 
 STORE_MN = {"mov", "xchg", "add", "adc", "sub", "sbb", "inc", "dec", "or", "and",
-            "xor", "not", "neg", "movnti", "pop"}
+            "xor", "not", "neg", "movnti", "pop", "cmpxchg", "xadd", "bts", "btr", "btc"}
 RMW1 = {"inc", "dec", "not", "neg"}
 REGW = {"eax": 4, "ebx": 4, "ecx": 4, "edx": 4, "esi": 4, "edi": 4, "ebp": 4, "esp": 4,
         "ax": 2, "bx": 2, "cx": 2, "dx": 2, "si": 2, "di": 2, "bp": 2, "sp": 2,
@@ -82,17 +87,10 @@ def owner(a):
         return funcs[i][1]
     return "?"
 
-def fstart(a):
-    i = bisect.bisect_right(FSTARTS, a) - 1
-    return funcs[i][0] if i >= 0 else None
-
 def split_ops(ops):
-    # Intel syntax: no commas inside [...] in this objdump cache
     return [o.strip() for o in ops.split(",")] if ops.strip() else []
 
 def memref(op):
-    """Return (kind, absaddr, disp, base, index, scale, width) for a memory operand.
-    kind: 'abs' (ds:imm), 'brk' ([...]); None if not memory."""
     m = re.search(r"(BYTE|WORD|DWORD|QWORD) PTR ", op)
     width = {"BYTE": 1, "WORD": 2, "DWORD": 4, "QWORD": 8}[m.group(1)] if m else None
     m = re.search(r"ds:0x([0-9a-f]+)", op)
@@ -101,9 +99,8 @@ def memref(op):
     m = re.search(r"\[([^\]]+)\]", op)
     if not m:
         return None
-    body = m.group(1)
     disp, base, index, scale = 0, None, None, 1
-    for term in re.findall(r"[+-]?[^+-]+", body):
+    for term in re.findall(r"[+-]?[^+-]+", m.group(1)):
         term = term.strip()
         neg = term.startswith("-")
         t = term.lstrip("+-").strip()
@@ -123,9 +120,7 @@ def memref(op):
             if base is None: base = t
             else: index, scale = t, 1
         else:
-            return ("brk", None, None, None, None, None, width)  # unparsed
-    if neg and base is None and index is None:
-        pass
+            return ("brk", None, None, None, None, None, width)
     return ("brk", None, disp, base, index, scale, width)
 
 def reg_of(op):
@@ -133,7 +128,6 @@ def reg_of(op):
     return t if t in REGW else None
 
 def classify(a):
-    """(is_write, is_read, width, meminfo, src_reg_or_imm) for instruction at a."""
     mn, ops = INS[a]
     parts = split_ops(ops)
     if not parts:
@@ -145,14 +139,6 @@ def classify(a):
     if mn == "pop":
         mi = memref(parts[0])
         if mi: return (True, False, mi[6] or 4, mi, "pop")
-        return (False, False, None, None, None)
-    if mn not in STORE_MN and mn not in ("cmp", "test", "movzx", "movsx", "lea", "push",
-                                          "imul", "bt", "bts", "btr", "btc", "cmpxchg",
-                                          "xadd", "fld", "fst", "fstp", "fild", "fistp"):
-        # any other mnemonic with a memory first operand that is not a known load:
-        mi0 = memref(parts[0])
-        if mi0 and mn not in ("jmp", "call", "jcc"):
-            return (True, True, mi0[6] or 4, mi0, None)  # conservative RMW
         return (False, False, None, None, None)
     if mn == "xchg":
         for i, p in enumerate(parts):
@@ -166,208 +152,253 @@ def classify(a):
             mi = memref(p)
             if mi: return (False, True, mi[6] or 4, mi, None)
         return (False, False, None, None, None)
-    if mn in ("movzx", "movsx", "imul", "lea"):
-        # dest is parts[0] (register); sources may hold memory
-        if mn == "lea":
-            mi = memref(parts[1]) if len(parts) > 1 else None
-            return (False, False, None, mi, None)  # lea reads nothing; keep for fold walks
+    if mn in ("movzx", "movsx", "imul"):
         for p in parts[1:]:
             mi = memref(p)
             if mi: return (False, True, mi[6] or REGW.get(parts[0], 4), mi, None)
+        return (False, False, None, None, None)
+    if mn == "lea":
         return (False, False, None, None, None)
     if mn in ("fst", "fstp", "fistp"):
         mi = memref(parts[0])
         if mi: return (True, False, mi[6] or 4, mi, "fpu")
         return (False, False, None, None, None)
-    # mov / add / sub / or / and / xor / adc / sbb / cmpxchg / xadd / bts...
-    mi = memref(parts[0])
-    if mi:
-        src = parts[1] if len(parts) > 1 else None
-        w = mi[6] or (REGW.get(src, 4) if src else 4)
-        rd = mn in ("add", "adc", "sub", "sbb", "or", "and", "xor", "cmpxchg", "xadd",
-                    "bts", "btr", "btc")
-        return (True, rd, w, mi, src)
-    # load form: memory in a later operand
-    for p in parts[1:]:
-        mi = memref(p)
-        if mi: return (False, True, mi[6] or REGW.get(parts[0], 4), mi, None)
+    if mn in STORE_MN:
+        mi = memref(parts[0])
+        if mi:
+            src = parts[1] if len(parts) > 1 else None
+            w = mi[6] or (REGW.get(src, 4) if src else 4)
+            rd = mn != "mov"
+            return (True, rd, w, mi, src)
+        for p in parts[1:]:
+            mi = memref(p)
+            if mi: return (False, True, mi[6] or REGW.get(parts[0], 4), mi, None)
     return (False, False, None, None, None)
 
 def field_hit(mi):
-    """Does this memory ref touch block+0x220? Returns tag or None."""
     if mi is None: return None
     kind, ab, disp, base, index, scale, width = mi
     if kind == "abs":
         if ab in FADDRS: return "ABS%d" % FADDRS.index(ab)
+        if ab is not None and any(ab in (f + 1, f + 2, f + 3) for f in FADDRS):
+            return "SUB"
         return None
     if ALGO == "2":
         return "DISP_ANY" if disp is not None else None
     if disp == OFF: return "DISP220"
     if disp == FADDRS[0]: return "DISP94D650"
     if disp in FADDRS: return "ABSBRK%d" % FADDRS.index(disp)
+    if disp is not None and any(disp in (f + 1, f + 2, f + 3) for f in FADDRS):
+        return "SUB"
     return None
 
-# ---- base provenance: linear backward def-walk (DECLARED limit) ----
-def resolves_to(a, reg, depth=0, budget=None):
-    """Symbolic value of reg just BEFORE instruction at a. Returns (kind, val, chain).
-    kind: IMM (val=const), BLK (val=block base const), STRIDE (val=('stride',src)),
-    PTR (val=source mem expr), ZERO, ARG, CLOBBER, UNKNOWN, FOLD."""
-    if budget is None: budget = [60]
-    if depth > 3 or budget[0] <= 0: return ("UNKNOWN", None, [])
+# ---- affine backward evaluator ----
+# value = ('const', v) | ('lin', m, c, leaf) meaning m*leaf + c
+# leaf  = ('reg', name, addr) opaque runtime value | ('ptr', memexpr) | ('arg', name)
+def aff_add(x, y):
+    if x[0] == "const" and y[0] == "const": return ("const", x[1] + y[1])
+    if x[0] == "const": x, y = y, x
+    if y[0] == "const": return ("lin", x[1], x[2] + y[1], x[3])
+    if x[3] == y[3]: return ("lin", x[1] + y[1], x[2] + y[2], x[3])
+    return None
+
+def aff_mul(x, k):
+    if x[0] == "const": return ("const", x[1] * k)
+    return ("lin", x[1] * k, x[2] * k, x[3])
+
+def stack_source(a, disp, budget):
+    """Most recent store to [ebp+disp] before a, linear within the function."""
     o = owner(a)
     i = AIDX[a]
-    chain = []
+    while i > 0 and budget[0] > 0:
+        i -= 1; budget[0] -= 1
+        b = ADDRS[i]
+        if owner(b) != o: return None
+        mn, ops = INS[b]
+        parts = split_ops(ops)
+        if mn == "call" and "esp" not in ops:
+            continue
+        if not parts:
+            if mn == "leave": return None
+            continue
+        mi = memref(parts[0])
+        if mi and mi[0] == "brk" and mi[3] == "ebp" and mi[4] is None and mi[2] == disp:
+            if mn in STORE_MN and len(parts) > 1:
+                return (b, parts[1])
+            return None
+        # a write to ebp itself invalidates the frame walk
+        if reg_of(parts[0]) == "ebp" and mn not in ("cmp", "test", "push"):
+            return None
+    return None
+
+def pop_source(a, reg, budget):
+    """Matching push reg before a pop reg (linear, most recent push wins)."""
+    o = owner(a)
+    i = AIDX[a]
+    while i > 0 and budget[0] > 0:
+        i -= 1; budget[0] -= 1
+        b = ADDRS[i]
+        if owner(b) != o: return None
+        mn, ops = INS[b]
+        if mn == "push" and ops.strip() == reg:
+            return b
+        if mn == "pop" and ops.strip() == reg:
+            return None  # an earlier pop consumed the push we would find
+    return None
+
+def value_of(a, reg, depth=0, budget=None):
+    trace = os.environ.get("M325_TRACE") in ("%x:%s" % (a, reg), "all")
+    if budget is None: budget = [1500]
+    if depth > 4 or budget[0] <= 0: return ("lin", 1, 0, ("arg", reg))
+    o = owner(a)
+    i = AIDX[a]
     while i > 0 and budget[0] > 0:
         i -= 1; budget[0] -= 1
         b = ADDRS[i]
         if owner(b) != o:
-            return ("EDGE", None, chain)
+            if trace: print("TRACE %x:%s EDGE at %x" % (a, reg, b))
+            return ("lin", 1, 0, ("arg", reg))
         mn, ops = INS[b]
         parts = split_ops(ops)
-        if not parts: continue
-        dest = reg_of(parts[0])
+        if not parts:
+            # implicit writers: leave/cdq/string ops conservatively opaque
+            if mn == "leave" and reg in ("ebp", "esp"):
+                return ("lin", 1, 0, ("arg", reg))
+            if mn == "cdq" and reg == "edx":
+                return ("lin", 1, 0, ("arg", reg))
+            if mn in ("movs", "movsb", "movsw", "movsd", "stos", "stosb", "stosw",
+                      "stosd", "scas", "scasb", "scasw", "scasd", "cmps", "cmpsb",
+                      "cmpsw", "cmpsd", "lods", "lodsb", "lodsw", "lodsd") and reg in (
+                          "esi", "edi", "eax", "ax", "al"):
+                return ("lin", 1, 0, ("arg", reg))
+            continue
         if mn == "call":
             if reg in CALLER_SAVED:
-                return ("CLOBBER", None, chain + [hex(b)])
+                if trace: print("TRACE %x:%s CLOBBER at %x" % (a, reg, b))
+                return ("lin", 1, 0, ("arg", reg))
             continue
-        if mn in ("ret", "leave") and depth == 0:
-            return ("EDGE", None, chain)
-        if dest != reg:
-            continue
-        chain.append("%s:%s %s" % (hex(b), mn, ops))
+        if mn in ("push", "cmp", "test", "bt", "nop", "ret") or mn.startswith("j"):
+            continue  # read-only: never a register definition
+        dest = reg_of(parts[0])
+        if dest != reg: continue
+        if trace: print("TRACE %x:%s def at %x: %s %s (depth=%d)" % (a, reg, b, mn, ops, depth))
+        if mn in ("inc", "dec") and len(parts) == 1:
+            v = value_of(b, reg, depth, budget)
+            return aff_add(v, ("const", 1 if mn == "inc" else -1))
+        if mn in ("movzx", "movsx") and len(parts) == 2:
+            r = reg_of(parts[1])
+            if r: return value_of(b, r, depth + 1, budget)
+            return ("lin", 1, 0, ("arg", reg))
         if mn == "mov":
             src = parts[1] if len(parts) > 1 else ""
             r = reg_of(src)
-            if r:
-                k, v, c2 = resolves_to(b, r, depth + 1, budget)
-                return (k, v, chain + c2)
+            if r: return value_of(b, r, depth + 1, budget)
             m = re.fullmatch(r"0x([0-9a-f]+)", src.strip())
-            if m:
-                v = int(m.group(1), 16)
-                return ("BLK" if v in BLKBASES else "IMM", v, chain)
+            if m: return ("const", int(m.group(1), 16))
             mi = memref(src)
             if mi:
                 if mi[0] == "abs":
-                    return ("PTR", ("abs", mi[1]), chain)
-                return ("PTR", ("brk", mi[2], mi[3], mi[4], mi[5]), chain)
-            return ("UNKNOWN", None, chain)
+                    return ("lin", 1, 0, ("ptr", ("abs", mi[1])))
+                if mi[3] == "ebp" and mi[4] is None:
+                    ss = stack_source(b, mi[2], budget)
+                    if ss:
+                        sb, ssrc = ss
+                        r2 = reg_of(ssrc)
+                        if r2: return value_of(sb, r2, depth + 1, budget)
+                        m2 = re.fullmatch(r"0x([0-9a-f]+)", ssrc.strip())
+                        if m2: return ("const", int(m2.group(1), 16))
+                return ("lin", 1, 0, ("ptr", ("brk", mi[2], mi[3], mi[4], mi[5])))
+            return ("lin", 1, 0, ("arg", reg))
         if mn == "lea":
             mi = memref(parts[1]) if len(parts) > 1 else None
-            if mi and mi[0] == "brk":
-                # fold: resolve base/index at b, add disp
-                bv, iv = 0, 0
-                ok = True
+            if mi and mi[0] == "brk" and mi[2] is not None:
+                tot = ("const", mi[2])
                 if mi[3]:
-                    k, v, c2 = resolves_to(b, mi[3], depth + 1, budget)
-                    chain += c2
-                    if k in ("IMM", "BLK") and isinstance(v, int): bv = v
-                    else: ok = False
+                    v = value_of(b, mi[3], depth + 1, budget)
+                    tot = aff_add(tot, v)
+                    if tot is None: return ("lin", 1, 0, ("arg", reg))
                 if mi[4]:
-                    k, v, c2 = resolves_to(b, mi[4], depth + 1, budget)
-                    chain += c2
-                    if k in ("IMM", "BLK") and isinstance(v, int): iv = v * mi[5]
-                    else: ok = False
-                if ok:
-                    v = bv + iv + (mi[2] or 0)
-                    return ("BLK" if v in BLKBASES else "IMM", v, chain)
-                return ("FOLD", (mi[2], mi[3], mi[4], mi[5]), chain)
-            return ("UNKNOWN", None, chain)
+                    v = value_of(b, mi[4], depth + 1, budget)
+                    v = aff_mul(v, mi[5])
+                    tot = aff_add(tot, v)
+                    if tot is None: return ("lin", 1, 0, ("arg", reg))
+                return tot
+            return ("lin", 1, 0, ("arg", reg))
         if mn == "imul":
             if len(parts) == 3:
                 m = re.fullmatch(r"0x([0-9a-f]+)", parts[2].strip())
                 r = reg_of(parts[1])
                 if m and r:
-                    imm = int(m.group(1), 16)
-                    k, v, c2 = resolves_to(b, r, depth + 1, budget)
-                    chain += c2
-                    if imm == STRIDE:
-                        return ("STRIDE", (k, v), chain)
-                    if k in ("IMM", "BLK") and isinstance(v, int):
-                        vv = v * imm
-                        return ("BLK" if vv in BLKBASES else "IMM", vv, chain)
-                    return ("UNKNOWN", None, chain)
+                    v = value_of(b, r, depth + 1, budget)
+                    return aff_mul(v, int(m.group(1), 16))
             if len(parts) == 2:
                 m = re.fullmatch(r"0x([0-9a-f]+)", parts[1].strip())
                 if m:
-                    imm = int(m.group(1), 16)
-                    k, v, c2 = resolves_to(b, reg, depth + 1, budget)
-                    chain += c2
-                    if imm == STRIDE:
-                        return ("STRIDE", (k, v), chain)
-            return ("UNKNOWN", None, chain)
+                    v = value_of(b, reg, depth, budget)
+                    return aff_mul(v, int(m.group(1), 16))
+            return ("lin", 1, 0, ("arg", reg))
+        if mn == "shl":
+            m = re.fullmatch(r"0x([0-9a-f]+)", parts[1].strip()) if len(parts) > 1 else None
+            if m and ALGO != "4":
+                v = value_of(b, reg, depth, budget)
+                return aff_mul(v, 1 << int(m.group(1), 16))
+            return ("lin", 1, 0, ("arg", reg))
+        if mn == "sar":
+            m = re.fullmatch(r"0x([0-9a-f]+)", parts[1].strip()) if len(parts) > 1 else None
+            if m:
+                v = value_of(b, reg, depth, budget)
+                k = 1 << int(m.group(1), 16)
+                if v[0] == "const" and v[1] % k == 0: return ("const", v[1] // k)
+                if v[0] == "lin" and v[1] % k == 0 and v[2] % k == 0:
+                    return ("lin", v[1] // k, v[2] // k, v[3])
+            return ("lin", 1, 0, ("arg", reg))
         if mn == "xor" and len(parts) == 2 and parts[0] == parts[1]:
-            return ("ZERO", 0, chain)
-        if mn == "pop":
-            return ("UNKNOWN", None, chain)
+            return ("const", 0)
         if mn in ("add", "sub") and len(parts) == 2:
             m = re.fullmatch(r"0x([0-9a-f]+)", parts[1].strip())
             if m:
-                imm = int(m.group(1), 16)
-                k, v, c2 = resolves_to(b, reg, depth + 1, budget)
-                chain += c2
-                if k in ("IMM", "BLK") and isinstance(v, int):
-                    vv = v + imm if mn == "add" else v - imm
-                    return ("BLK" if vv in BLKBASES else "IMM", vv, chain)
-                if k == "STRIDE":
-                    return ("STRIDE", (mn, imm, v), chain)
-            return ("UNKNOWN", None, chain)
-        return ("UNKNOWN", None, chain)
-    return ("EDGE", None, chain)
+                v = value_of(b, reg, depth, budget)
+                d = int(m.group(1), 16)
+                return aff_add(v, ("const", d if mn == "add" else -d))
+            r = reg_of(parts[1])
+            if r:
+                v1 = value_of(b, reg, depth, budget)
+                v2 = value_of(b, r, depth + 1, budget)
+                t = aff_add(v1, v2) if mn == "add" else aff_add(v1, aff_mul(v2, -1))
+                if t: return t
+            return ("lin", 1, 0, ("arg", reg))
+        if mn == "pop":
+            ps = pop_source(b, reg, budget)
+            if ps is not None:
+                return value_of(ps, reg, depth + 1, budget)
+            return ("lin", 1, 0, ("arg", reg))
+        return ("lin", 1, 0, ("arg", reg))
+    return ("lin", 1, 0, ("arg", reg))
 
-def provenance(a, mi):
-    """Classify the base of a disp-form field hit. Returns (tag, detail, chain)."""
+def base_tag(a, mi):
+    """Classify a disp-form hit's effective address = m*leaf + c.
+    Field family <=> m == STRIDE and c in FADDRS (runtime faction index),
+    or a constant in FADDRS. The disp is PART OF c (no double count)."""
     if ALGO == "1":
-        return ("OFF", None, [])
+        return ("OFF", None)
     kind, ab, disp, base, index, scale, width = mi
-    if disp == OFF:
-        # need base (+index*stride) == some block base
-        if base is None and index is None:
-            return ("NOBASE", None, [])
-        k, v, chain = resolves_to(a, base, 0, [60]) if base else ("IMM", 0, [])
-        if index:
-            ki, vi, ci = resolves_to(a, index, 0, [60])
-            chain += ci
-            if ki == "IMM" and isinstance(vi, int) and scale == STRIDE:
-                if k in ("IMM", "BLK") and isinstance(v, int):
-                    tot = v + vi * scale
-                    return ("BLKIDX", tot, chain) if tot in BLKBASES else ("OUT", tot, chain)
-            return ("UNPROVEN", (k, v, ki, vi), chain)
-        if k == "BLK": return ("BLK", v, chain)
-        if k == "IMM" and isinstance(v, int):
-            return ("BLK", v, chain) if v in BLKBASES else ("OUT", v, chain)
-        if k == "STRIDE":
-            return ("STRIDE220", v, chain)  # base=idx*stride, disp 220: needs +94d430 elsewhere
-        if k == "PTR":
-            return ("PTR", v, chain)
-        return ("UNPROVEN", (k, v), chain)
-    if disp == FADDRS[0]:
-        # base (+index) must be blk*stride (k in 0..7)
-        if base is None and index is None:
-            return ("BLK", BLKBASE, [])  # [0x94d650] alone = block 0
-        regs = [r for r in (base, index) if r]
-        tot, ok, chain = 0, True, []
-        for r in regs:
-            sc = scale if r == index and base is not None else 1
-            k, v, c2 = resolves_to(a, r, 0, [60])
-            chain += c2
-            if k in ("IMM", "BLK", "ZERO") and isinstance(v, int):
-                tot += v * sc
-            elif k == "STRIDE":
-                kk, vv = v
-                if kk in ("IMM", "BLK", "ZERO") and isinstance(vv, int):
-                    tot += vv * STRIDE * sc
-                else:
-                    ok = False; chain.append("stride-src-unresolved:%s" % kk)
-            else:
-                ok = False; chain.append("unresolved:%s=%s" % (r, k))
-        if ok:
-            if tot % STRIDE == 0 and 0 <= tot // STRIDE < NBLK:
-                return ("BLKIDX", BLKBASE + tot, chain)
-            return ("OUT", tot, chain)
-        return ("UNPROVEN", tot, chain)
-    return ("OTHER", disp, [])
+    tot = ("const", disp)
+    if base:
+        tot = aff_add(tot, value_of(a, base))
+    if index:
+        v = aff_mul(value_of(a, index), scale)
+        tot = aff_add(tot, v)
+    if tot is None:
+        return ("UNPROVEN", "mixed-leaves")
+    if tot[0] == "const":
+        v = tot[1]
+        if v in FADDRS: return ("BLKCONST", v)
+        return ("OUT", v)
+    m, c, leaf = tot[1], tot[2], tot[3]
+    if m == STRIDE and c in FADDRS:
+        return ("STRIDE", (m, c, leaf))
+    return ("UNPROVEN", (m, c, leaf))
 
-# ---- census ----
 def census():
     hits = []
     for a in ADDRS:
@@ -379,8 +410,61 @@ def census():
         hits.append((a, w, r, width, tag, mi, src))
     return hits
 
+# ---- register-address forward scan ----
+def addr_seeds():
+    """Sites computing a field address into a register: lea reg,[...+0x94d650]
+    (any base provenance - tagged, not filtered) or mov reg, imm in FADDRS."""
+    seeds = []
+    if ALGO == "3":
+        return seeds
+    for a in ADDRS:
+        mn, ops = INS[a]
+        parts = split_ops(ops)
+        if len(parts) != 2: continue
+        dest = reg_of(parts[0])
+        if not dest: continue
+        if mn == "mov":
+            m = re.fullmatch(r"0x([0-9a-f]+)", parts[1].strip())
+            if m and int(m.group(1), 16) in FADDRS:
+                seeds.append((a, dest, ("BLKCONST", int(m.group(1), 16))))
+        elif mn == "lea":
+            mi = memref(parts[1])
+            if mi and mi[0] == "brk" and mi[2] in FADDRS:
+                tag, det = base_tag(a, mi)
+                seeds.append((a, dest, (tag, det)))
+    return seeds
+
+def forward_stores(seed_a, reg):
+    """Loads/stores through [reg+0] after seed_a until reg is redefined (linear)."""
+    out = []
+    o = owner(seed_a)
+    i = AIDX[seed_a]
+    budget = 300
+    while i + 1 < len(ADDRS) and budget > 0:
+        i += 1; budget -= 1
+        b = ADDRS[i]
+        if owner(b) != o: break
+        mn, ops = INS[b]
+        parts = split_ops(ops)
+        if not parts: continue
+        if mn == "call":
+            if reg in CALLER_SAVED: break
+            continue
+        if mn in ("movs", "movsb", "movsw", "movsd", "stos", "stosb", "stosw", "stosd",
+                  "scas", "scasb", "scasw", "scasd", "cmps", "cmpsb", "cmpsw", "cmpsd",
+                  "lods", "lodsb", "lodsw", "lodsd") and reg in ("esi", "edi"):
+            break  # implicit index advance: address no longer pinned
+        w, r, width, mi, src = classify(b)
+        if (w or r) and mi and mi[0] == "brk" and mi[3] == reg and mi[4] is None and mi[2] == 0:
+            out.append((b, w, width, src))
+        dest = reg_of(parts[0])
+        if dest == reg and mn not in ("cmp", "test"):
+            break
+        if mn == "pop" and parts[0] == reg:
+            break
+    return out
+
 def turnfn_stores():
-    """Every store inside FUN_0051f320 (the whole 0x40c-B turn advance)."""
     out = []
     lo, hi = TURNFN, TURNFN + FSIZE[TURNFN]
     for a in ADDRS:
@@ -391,97 +475,282 @@ def turnfn_stores():
             out.append((a, width, mi, src))
     return out
 
-def save_block_values():
-    """Read the 8 block+0x220 dwords from the .SAV via the codec READ-leg sequence.
-    File layout: 12-B prefix, then sequential legs (M324 T3: blob@12, round@0x50).
-    Walk READ legs in address order from the codec entry, accumulate count*size."""
-    data = open(SAVE, "rb").read()
-    legs = []
-    lo, hi = CODEC, CODEC + FSIZE[CODEC]
+def turnfn_stringops():
+    out = []
+    lo, hi = TURNFN, TURNFN + FSIZE[TURNFN]
     for a in ADDRS:
         if a < lo: continue
         if a >= hi: break
         mn, ops = INS[a]
+        if mn in ("movs", "movsb", "movsw", "movsd", "stos", "stosb", "stosw", "stosd",
+                  "rep", "repe", "repne", "scas", "cmps"):
+            out.append((a, mn, ops))
+    return out
+
+def pe_bytes(addr, n):
+    pe = open(PE, "rb").read()
+    p = os.environ.get("M325_PE_PATCH")
+    if p:
+        pe = bytearray(pe)
+        for chunk in p.split(";"):
+            chunk = chunk.strip()
+            if not chunk: continue
+            a, hx = chunk.split("|", 1)
+            a = int(a, 16)
+            off = a - IMG_BASE  # .data/.rdata identity-mapped sections (va==raw)
+            raw = bytes.fromhex(hx)
+            pe[off:off + len(raw)] = raw
+        pe = bytes(pe)
+    e = struct.unpack_from("<I", pe, 0x3c)[0]
+    opt = e + 24
+    nsec = struct.unpack_from("<H", pe, e + 6)[0]
+    secoff = opt + struct.unpack_from("<H", pe, e + 20)[0]
+    rva = addr - IMG_BASE
+    for i in range(nsec):
+        o = secoff + i * 40
+        vs, va, rs, rp = struct.unpack_from("<IIII", pe, o + 8)
+        if va <= rva < va + max(vs, rs):
+            return pe[rp + (rva - va):rp + (rva - va) + n]
+    return None
+
+def pe_cstr(addr):
+    b = pe_bytes(addr, 64)
+    return b.split(b"\0")[0] if b else None
+
+def callers_of(target):
+    out = []
+    for a in ADDRS:
+        mn, ops = INS[a]
         if mn == "call":
             m = re.fullmatch(r"0x([0-9a-f]+)", ops.strip())
-            if m and int(m.group(1), 16) == RD:
-                legs.append(a)
-    # push-arg walk (linear, m324 law): dest,size,count before each RD call
-    off = 12
-    vals, blkoff, trace = None, None, []
-    for a in legs:
-        args = []
-        i = AIDX[a]
-        seen = 0
-        while i > 0 and seen < 32 and len(args) < 3:
-            i -= 1
-            b = ADDRS[i]
-            if owner(b) != owner(a): break
-            mn, ops = INS[b]
-            if mn == "push":
-                m = re.fullmatch(r"0x([0-9a-f]+)", ops.strip())
-                args.append(int(m.group(1), 16) if m else None)
-                seen += 1
-            elif mn == "call":
-                m = re.fullmatch(r"0x([0-9a-f]+)", ops.strip())
-                t = int(m.group(1), 16) if m else -1
-                if t not in (RD, WR, 0x596470, 0x596540): break
-                seen += 1
-            elif mn == "add" and ops.startswith("esp,"): break
-            elif mn in ("lea", "ret", "leave"): break
-        while len(args) < 3: args.append(None)
-        dest, size, cnt = args
-        if dest == BLKBASE and size == NBLK * STRIDE:
-            blkoff = off
-            vals = [struct.unpack_from("<I", data, off + k * STRIDE + OFF)[0]
-                    for k in range(NBLK)]
-        if dest is not None and size is not None and cnt is not None:
-            off += size * cnt
-        trace.append((hex(a), dest and hex(dest), size, cnt, hex(off)))
-    return vals, blkoff, trace, len(data)
+            if m and int(m.group(1), 16) == target:
+                out.append(a)
+    return out
+
+def feed_direction():
+    """MIN or MAX from the measured cmp/jle/store shapes at the feed."""
+    c = INS.get(0x442625)
+    j = INS.get(0x44262b)
+    s = INS.get(0x442642)
+    if not (c and j and s): return ("MISSING", None)
+    # cmp edx,[field] ; jle skip ; store g999fa4 <- field  => store when g999fa4 > field
+    ok = (c[0] == "cmp" and c[1].startswith("edx,") and "0x94d650" in c[1]
+          and j[0] == "jle" and s[0] == "mov" and "ds:0x999fa4" in s[1])
+    if not ok: return ("SHAPE-CHANGED", (c, j, s))
+    d = "MIN" if ALGO != "5" else "MAX"
+    return (d, (c, j, s))
+
+def save_values():
+    m = ds.parse(SAVE)
+    rows, notes = ds.walk(m["data"])
+    blk = [r for r in rows if r[2] == "block A"]
+    if len(blk) != 1: return None
+    off = blk[0][0]
+    d = m["data"]
+    vals = [struct.unpack_from("<I", d, off + k * STRIDE + OFF)[0] for k in range(NBLK)]
+    sha = hashlib.sha256(d).hexdigest()[:16]
+    return {"off": off, "vals": vals, "sha": sha, "size": len(d), "notes": notes,
+            "year": m["year"], "round": struct.unpack_from("<I", d, 0x50)[0]}
 
 def main():
     print("== M325: block+0x220 writer census (STATIC) ==")
-    print("T0 field addrs: %s stride=%s nblk=%d turnfn=%s size=%s" % (
+    print("T0 field=%s stride=%s nblk=%d turnfn=%s size=%s" % (
         ",".join(hex(x) for x in FADDRS), hex(STRIDE), NBLK, hex(TURNFN), hex(FSIZE[TURNFN])))
     hits = census()
-    print("T1 census hits: %d" % len(hits))
     rows = []
     for a, w, r, width, tag, mi, src in hits:
         kind, ab, disp, base, index, scale, _ = mi
-        if tag.startswith("ABS") and kind == "abs":
-            prov, det, chain = ("ABS", ab, [])
+        if kind == "abs":
+            prov, det = ("ABS", ab)
         else:
-            prov, det, chain = provenance(a, mi)
-        rows.append((a, w, r, width, tag, prov, det, src, chain))
-        print("  %s %s%s w=%d %s base=%s idx=%s*%s src=%s prov=%s det=%s owner=%s" % (
-            hex(a), "W" if w else "-", "R" if r else "-", width or 0, tag,
-            base, index, scale, src, prov,
-            hex(det) if isinstance(det, int) else det, owner(a)))
-    writers = [x for x in rows if x[1]]
-    readers = [x for x in rows if x[2] and not x[1]]
-    print("T2 writers=%d readers=%d" % (len(writers), len(readers)))
+            prov, det = base_tag(a, mi)
+        rows.append({"a": a, "w": w, "r": r, "width": width, "tag": tag,
+                     "prov": prov, "det": det, "src": src, "owner": owner(a), "mi": mi})
+    writers = [x for x in rows if x["w"]]
+    readers = [x for x in rows if x["r"] and not x["w"]]
+    wr_unprov = [x for x in writers if x["prov"] in ("UNPROVEN", "OFF", "OUT")]
+    print("T1 hits=%d writers=%d readers=%d wr_unproven=%d" % (
+        len(hits), len(writers), len(readers), len(wr_unprov)))
+    for x in rows:
+        det = x["det"]
+        if isinstance(det, int):
+            ds_ = hex(det)
+        elif isinstance(det, tuple) and len(det) == 3 and isinstance(det[0], int):
+            ds_ = "%d*leaf+%s leaf=%s" % (det[0], hex(det[1]), det[2])
+        else:
+            ds_ = str(det)
+        print("  %s %s%s w=%s %s prov=%s det=%s src=%s owner=%s" % (
+            hex(x["a"]), "W" if x["w"] else "-", "R" if x["r"] else "-", x["width"],
+            x["tag"], x["prov"], ds_, x["src"], x["owner"]))
+    wowners = sorted(set(x["owner"] for x in writers))
+    print("T2 writer owners (%d): %s" % (len(wowners), ",".join(wowners)))
+    seeds = addr_seeds()
+    regwr, regrd = [], []
+    for sa, reg, stag in seeds:
+        for b, w, width, src in forward_stores(sa, reg):
+            (regwr if w else regrd).append((sa, reg, b, width, src, stag[0]))
+    print("T3 addr-seeds=%d register-addr writers=%d readers=%d" % (
+        len(seeds), len(regwr), len(regrd)))
+    for sa, reg, b, width, src, st in regwr + regrd:
+        print("  seed %s (%s, %s) -> %s %s w=%s src=%s owner=%s" % (
+            hex(sa), reg, st, "W" if (sa, reg, b, width, src, st) in regwr else "R",
+            hex(b), width, src, owner(b)))
     ts = turnfn_stores()
-    print("T3 FUN_0051f320 store inventory: %d stores" % len(ts))
+    tso = turnfn_stringops()
+    blkstores = []
     for a, width, mi, src in ts:
         kind, ab, disp, base, index, scale, _ = mi
-        print("  %s w=%d %s disp=%s base=%s idx=%s*%s src=%s" % (
-            hex(a), width or 0, kind, hex(disp) if disp is not None else ab and hex(ab),
-            base, index, scale, src))
-    vals, blkoff, trace, fsz = save_block_values()
-    print("T4 save: size=%d blkoff=%s vals=%s" % (
-        fsz, blkoff and hex(blkoff), vals))
-    print("T4b leg trace (first 12): %s" % trace[:12])
-    # digest of the measured detail
+        if kind == "abs":
+            if ab is not None and BLKBASE <= ab < BLKEND: blkstores.append(a)
+        elif disp is not None:
+            # conservative: any field-family disp counts, proven or not (the
+            # turnfn is small and its full inventory is printed above)
+            if disp in FADDRS or disp == OFF:
+                blkstores.append(a)
+            else:
+                tag, det = base_tag(a, mi)
+                if tag in ("BLKCONST", "STRIDE") or (
+                        isinstance(det, int) and BLKBASE <= det < BLKEND):
+                    blkstores.append(a)
+    print("T4 turnfn stores=%d stringops=%d block-region stores=%d" % (
+        len(ts), len(tso), len(blkstores)))
+    for a, width, mi, src in ts:
+        kind, ab, disp, base, index, scale, _ = mi
+        print("  %s w=%s %s disp=%s base=%s src=%s" % (
+            hex(a), width, kind, hex(disp) if disp is not None else (ab and hex(ab)),
+            base, src))
+    strs = {hex(a): pe_cstr(a) for a in (0x68c938, 0x68c948, 0x672e38)}
+    print("T5 strings: %s" % strs)
+    fd, fdshape = feed_direction()
+    print("T6 feed direction=%s shape=%s" % (fd, fdshape))
+    calE = callers_of(0x4e0260)
+    calY = callers_of(0x4e0350)
+    print("T7 callers 4e0260=%s 4e0350=%s owners=%s" % (
+        [hex(a) for a in calE], [hex(a) for a in calY],
+        sorted(set(owner(a) for a in calE + calY))))
+    sv = save_values()
+    print("T8 save: %s" % sv)
+    # ---- gates ----
+    G = []
+    def gate(name, ok, detail):
+        G.append(ok)
+        print("%s %s %s" % (name, "PASS" if ok else "FAIL", detail))
+    n_abs = sum(1 for x in rows if x["tag"].startswith("ABS") and x["mi"][0] == "abs")
+    n_220 = sum(1 for x in rows if x["tag"] == "DISP220")
+    n_sub = sum(1 for x in rows if x["tag"] == "SUB")
+    n_dw = sum(1 for x in rows if x["width"] == 4)
+    gate("G1", len(hits) == 234 and len(writers) == 54 and len(readers) == 180
+         and n_abs == 0 and n_220 == 0 and n_sub == 0 and n_dw == len(rows),
+         "hits=%d writers=%d readers=%d abs=%d disp220=%d sub=%d dw=%d/%d" % (
+             len(hits), len(writers), len(readers), n_abs, n_220, n_sub, n_dw, len(rows)))
+    wrsites = sorted(x["a"] for x in writers)
+    exp_unprov = [0x4d29f3, 0x4e21fc, 0x4f5c8c, 0x506d2b, 0x5085c0, 0x5086e2,
+                  0x50878c, 0x5087be, 0x51ae62, 0x536c45, 0x536c52, 0x53800f,
+                  0x53801c, 0x53b794, 0x53b7a1, 0x53c65a, 0x53de13, 0x53de20,
+                  0x53eab3, 0x540d20, 0x544410, 0x54441d, 0x547af3, 0x567080,
+                  0x5936d3, 0x5a0144]
+    gate("G2", sorted(x["a"] for x in wr_unprov) == exp_unprov
+         and len(wowners) == 27 and len(writers) - len(wr_unprov) == 28,
+         "wr_unproven=%d (pinned list) proven=%d owners=%d" % (
+             len(wr_unprov), len(writers) - len(wr_unprov), len(wowners)))
+    exp_regwr = [
+        (0x40dd01, "eax", 0x40dd0a, 4, "ecx", "STRIDE"),
+        (0x40dd60, "eax", 0x40dd70, 4, "ecx", "BLKCONST"),
+        (0x4d560a, "eax", 0x4d561a, 4, "edx", "STRIDE"),
+        (0x4d58ff, "eax", 0x4d5908, 4, "esi", "STRIDE"),
+        (0x4d59ea, "eax", 0x4d59f3, 4, "esi", "STRIDE"),
+        (0x4e0311, "esi", 0x4e0336, 4, "eax", "STRIDE"),
+        (0x51be55, "eax", 0x51be66, 4, "ecx", "UNPROVEN"),
+        (0x520589, "ebx", 0x5205ed, 4, "edx", "BLKCONST"),
+        (0x52e677, "eax", 0x52e687, 4, "ecx", "STRIDE"),
+        (0x52e6a6, "eax", 0x52e6b6, 4, "edx", "STRIDE"),
+        (0x53094f, "eax", 0x53095f, 4, "edx", "STRIDE"),
+        (0x53097a, "eax", 0x53098a, 4, "ecx", "STRIDE"),
+        (0x53753b, "eax", 0x537544, 4, "edx", "STRIDE"),
+        (0x537c70, "eax", 0x537c80, 4, "edx", "UNPROVEN"),
+        (0x540d07, "eax", 0x540d17, 4, "ecx", "UNPROVEN"),
+        (0x546171, "eax", 0x546181, 4, "edx", "STRIDE"),
+        (0x547b13, "eax", 0x547b1c, 4, "ecx", "UNPROVEN"),
+        (0x56e86d, "eax", 0x56e87d, 4, "edx", "UNPROVEN"),
+        (0x592d68, "eax", 0x592d78, 4, "edx", "UNPROVEN"),
+        (0x593f26, "eax", 0x593f36, 4, "edx", "UNPROVEN")]
+    allwr_owners = sorted(set(wowners) | set(owner(b) for _, _, b, _, _, _ in regwr))
+    gate("G3", sorted(regwr) == sorted(exp_regwr) and len(regrd) == 7
+         and len(writers) + len(regwr) == 74 and len(allwr_owners) == 34,
+         "regwr=%d (pinned) regrd=%d total-writer-sites=%d total-owners=%d" % (
+             len(regwr), len(regrd), len(writers) + len(regwr), len(allwr_owners)))
+    round_site = INS.get(0x51f53c)
+    year_site = INS.get(0x51f54f)
+    gate("G4", len(ts) == 16 and len(tso) == 0 and len(blkstores) == 0
+         and round_site == ("mov", "ds:0x985afc,eax")
+         and year_site == ("mov", "ds:0x985b00,eax"),
+         "stores=%d stringops=%d blkstores=%d round=%s year=%s" % (
+             len(ts), len(tso), len(blkstores), round_site, year_site))
+    caps = {"cap9999999": INS.get(0x5087ae), "cap999999999": INS.get(0x5a28e9),
+            "cap99999": INS.get(0x56706b), "minus1000": INS.get(0x5085c0),
+            "reset0": INS.get(0x59eef3), "reset0src": INS.get(0x59ee73),
+            "editorE_push": INS.get(0x4e0319), "editorY_push": INS.get(0x4e0366),
+            "votefor_me_push": INS.get(0x4295c4)}
+    gate("G5", strs == {"0x68c938": b"EDITORENERGY", "0x68c948": b"EDITORYEAR",
+                        "0x672e38": b"VOTEFORME"}
+         and caps["cap9999999"] == ("cmp", "eax,0x98967f")
+         and caps["cap999999999"] == ("cmp", "ecx,0x3b9ac9ff")
+         and caps["cap99999"] == ("push", "0x1869f")
+         and caps["minus1000"] == ("add", "DWORD PTR [eax+0x94d650],0xfffffc18")
+         and caps["reset0"] == ("mov", "DWORD PTR [esi+0x94d650],ebx")
+         and caps["reset0src"] == ("xor", "ebx,ebx")
+         and caps["editorE_push"] == ("push", "0x68c938")
+         and caps["editorY_push"] == ("push", "0x68c948")
+         and caps["votefor_me_push"] == ("push", "0x672e38"),
+         "strings=%s caps=%s" % (strs, caps))
+    chain = {"parse_call": INS.get(0x626f67), "parse_je": INS.get(0x626f6e),
+             "staging_push": INS.get(0x626fca), "thunk_call": INS.get(0x626fcf),
+             "g999_store": INS.get(0x626fd7),
+             "year_sub": INS.get(0x4e0382), "year_cmp": INS.get(0x4e0384),
+             "year_store": INS.get(0x4e0387), "year_floor": INS.get(0x4e038e)}
+    gate("G6", fd == "MIN"
+         and chain["parse_call"] == ("call", "0x5f0583")
+         and chain["parse_je"] == ("je", "0x626f75")
+         and chain["staging_push"] == ("push", "0x99a01c")
+         and chain["thunk_call"] == ("call", "0x64c460")
+         and chain["g999_store"] == ("mov", "ds:0x999fa4,eax")
+         and chain["year_sub"] == ("sub", "eax,edx")
+         and chain["year_cmp"] == ("cmp", "eax,0x1")
+         and chain["year_store"] == ("mov", "ds:0x985afc,eax")
+         and chain["year_floor"] == ("mov", "DWORD PTR ds:0x985afc,0x1")
+         and sorted(calE) == [0x514ebf, 0x517e2c]
+         and sorted(calY) == [0x514ecf, 0x517e3a]
+         and sorted(set(owner(a) for a in calE + calY)) == ["FUN_00512b40", "FUN_00516b80"],
+         "feed=%s chain=%s callersE=%s callersY=%s" % (
+             fd, chain, [hex(a) for a in calE], [hex(a) for a in calY]))
+    gate("G7", sv is not None and sv["off"] == 0x32c
+         and sv["vals"] == [10, 28, 112, 69, 229, 60, 102, 37]
+         and sv["sha"] == "74d0f44ab9b9290b" and sv["size"] == 242539
+         and sv["year"] == 2150 and sv["round"] == 50
+         and all(v < 2100 for v in sv["vals"]),
+         "save=%s" % sv)
+    r1 = len(blkstores) > 0
+    r2 = sv is not None and all(v == sv["year"] for v in sv["vals"])
+    r3 = fd == "MAX"
+    gate("G8", (not r1) and (not r2) and (not r3),
+         "R1 turn-sets-field=%s R2 year-copy=%s R3 MAX-feed=%s (all must be False)" % (
+             r1, r2, r3))
+    # digest over measured detail
     d = hashlib.sha256()
     for x in rows:
-        d.update(repr((x[0], x[1], x[2], x[3], x[4], x[5],
-                       x[6] if isinstance(x[6], int) else str(x[6]), x[7])).encode())
-    for x in ts:
-        d.update(repr((x[0], x[1], str(x[2]), x[3])).encode())
-    d.update(repr((vals, blkoff, fsz)).encode())
+        d.update(repr((x["a"], x["w"], x["r"], x["width"], x["tag"], x["prov"],
+                       str(x["det"]), x["src"], x["owner"])).encode())
+    for x in regwr: d.update(repr(x).encode())
+    for x in regrd: d.update(repr(x).encode())
+    for x in ts: d.update(repr((x[0], x[1], str(x[2]), x[3])).encode())
+    d.update(repr((len(tso), sorted(blkstores))).encode())
+    d.update(repr((strs, fd, str(fdshape), sorted(calE), sorted(calY))).encode())
+    d.update(repr(sv).encode())
+    d.update(repr(caps).encode())
+    d.update(repr(chain).encode())
     print("DIGEST %s" % d.hexdigest()[:16])
-    print("SKELETON: gates pending (probe phase)")
+    print("== M325: %d/%d ==" % (sum(G), len(G)))
+    return 0 if all(G) else 1
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
