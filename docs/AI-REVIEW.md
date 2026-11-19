@@ -11,6 +11,8 @@ Setup: the PRE-FIX heads of #309 (`pr309^`) and #311 (`pr311^`) were diffed agai
 handed to two candidate reviewers with a generic adversarial prompt + the repo conventions (as
 Greptile had AGENTS.md). The known-finding list was NOT in the prompt. Script + raw outputs:
 `evidence/ai_review_replay/replay.py`, `run.log`, `{strata,qwen36}_m31{7,8}.{md,json}`.
+(replay.py endpoints scrubbed to `$STRATA_URL`/`$QWEN36_URL` post-review per the no-committed-endpoints
+law; the original run used the fleet LAN endpoints — model names in run.log record what served.)
 
 Scoreboard (✅ caught, ❌ missed, ⚠️ output truncated at the 8192-token cap):
 
@@ -44,16 +46,20 @@ What the data says:
 ## The pipeline
 
 1. **Mechanical layer — `scripts/review_lint.py --id <id>`** at close, BEFORE submit. Model-independent:
-   L1 every VERIFIED claim row names a mutant (ACCEPT/REVIEW meta-rows exempt); L2 cited mutants exist
-   in the harness; L3 every quoted digest is printed in a cited evidence file; L4 evidence citations
-   carry :line. Fixtures: `scripts/test_review_lint.py` (7/7, each check bites). Pre-law blocks
+   L1 every VERIFIED claim row names a mutant (meta exemption TIGHT: ACCEPT/REVIEW prefix AND a
+   harness/digest marker); L2 cited mutants exist; L2b cited CODE mutants' patch addresses appear in the
+   instrument source; L3 every `digest <hex>` is printed in an evidence file cited IN THE SAME ROW; L4
+   citations carry :line (file-suffix regex, isfile-guarded). SCOPE: naming/existence/address-contact/
+   digest-presence — the row->gate SEMANTIC relationship stays with the reviewer (#315 P1). Fixtures:
+   `scripts/test_review_lint.py` (12/12, each check bites). Pre-law blocks
    (M317/M318) are NOT retroactively rewritten; the law binds from s291 milestones.
 2. **Semantic layer — `scripts/ai_review.py <pr>`** after submit. Raw API call to the primary local
    endpoint (Strata, served alias `qwen3.8-flash-next-iq3_xxs`, thinking xhigh, 16384 output cap) —
    fresh context, no session history. Endpoint resolves from `$STRATA_URL` or
    `providers.qwen125b.base_url` in `~/.hermes/config.yaml` (no endpoint committed — gate law).
    Posts findings as a PR comment, saves raw review under `evidence/ai_review/`. `--dry-run` prints
-   without posting.
+   without posting. Detects output-cap truncation (finish_reason / completion_tokens) and flags the
+   posted review + exits 2 — the replay's own truncation failure mode, gated.
 3. **Triage rule unchanged**: read EVERY finding body, fix or dismiss each in ONE reply comment,
    re-measure at head (acceptance twice + harness), merge only on a real PASS. The human owns the
    merge decision.

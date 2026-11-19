@@ -443,6 +443,8 @@ the driver but leaves the game half-loaded, which is exactly how you lose ptrace
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **A gdb census >90 s goes through tracked background + wait loops: the foreground caps at 420 s and killing a
   census mid-run leaves Wine hung** (round frozen after detach too — recover via `m54a_load --relaunch`). Pair
   store-readback probes by EVENT ORDER (RB follows ST) — a {addr: last-mem} dict mis-pairs an address rewritten

@@ -282,6 +282,8 @@ Unlike watchpoints it survives the compaction; unlike a position diff it catches
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - `scripts/smac_play.py`: no `--mode stop`; ordering is ON in the loop (each turn pokes the selection slot,
   fires one hotkey, services the pane, verifies `unit+17` moved into the byte set that key produces — an
   order counts as that memory DELTA, never a screenshot). `--no-escape N` = press no Escape for N seconds: set

@@ -1089,6 +1089,8 @@ purely the instrument's:
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **Three #294 (M313) decoration classes - all reviewer-found, all silent:** (1) an inline `#` comment placed
   after the FIRST term of a multi-line parenthesized boolean swallows the rest of that physical line - the
   push-opcode check vanished with zero trace; never trail-comment inside a condition, split into its own gate.
@@ -1148,3 +1150,12 @@ purely the instrument's:
   with the call as a WALL (refuse to expand it) and count the `ret`s still reachable: if any, early exits skip the
   call and a rival claiming "the only gate is the enclosing loop's `jl`" must FAIL. Closing a guard question on
   `preds == 0` alone is the vacuous-gate class and has now cost two review rounds (M305 A14, M306 RIVAL4).
+
+- **Three more decoration classes, reviewer-found on #299:** (1) a disassembly cache that stores MNEMONIC and
+  OPERAND in separate fields makes a regex like `^push 0x..$` applied to the operand match NOTHING, so
+  `all(cond for ...)` passes over an empty set - match the bare operand (`^0x[0-9a-f]+$`) and print the size of
+  the scanned census so an empty population is visible. (2) A count claim ("exactly N sites") that compares
+  DE-DUPLICATED OWNERS stays green when an (N+1)-th site lands inside an already-listed owner - pin the site
+  ADDRESSES. (3) A digest is evidence only if it hashes name+verdict+detail; hashing the check NAMES, or
+  keying a `detail` dict by short ids while the digest loop iterates full check names, lets two different
+  measurement sets share one digest - and only mutations can catch that, so mutate the numbers, not the labels.

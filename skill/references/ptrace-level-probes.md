@@ -94,6 +94,8 @@ kernel `copy_to_user` write (Linux installs the user DR breakpoint with the excl
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **A hardware watchpoint cannot see a KERNEL write** (user DR breaks carry the exclude-kernel bit; bytes
   landing via `copy_to_user` inside a `read()` change with zero events — that is what a "silent census" means
   when a file read's destination IS the watched region). The fix is a different LAYER: strace `-e raw=` (prints

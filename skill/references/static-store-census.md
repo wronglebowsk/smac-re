@@ -511,6 +511,8 @@ other mode, and the run then reads like an instrument failure when it is already
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **To name who writes a field: hw watchpoint on the address PLUS a control watchpoint on an address you know
   changes** — a mnemonic grep misses stores through pointer-form `lea`; and **classify each store by how its
   SOURCE register was computed** (scan back for `or`/`and`/`lea`): 23 of 27 memory-form stores to one field

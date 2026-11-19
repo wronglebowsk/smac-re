@@ -80,9 +80,17 @@ def main():
     print("reviewing PR #%d (%d diff bytes) on %s ..." % (args.pr, len(diff), MODEL), flush=True)
     with urllib.request.urlopen(req, timeout=900) as r:
         resp = json.loads(r.read().decode())
-    content = resp["choices"][0]["message"].get("content") or ""
+    choice = resp["choices"][0]
+    content = choice["message"].get("content") or ""
     if not content.strip():
         sys.exit("empty review content")
+    usage = resp.get("usage", {})
+    truncated = choice.get("finish_reason") == "length" or usage.get("completion_tokens", 0) >= 16384
+    if truncated:
+        content = ("**WARNING: TRUNCATED at the output cap - findings may be incomplete; re-run with a larger "
+                   "cap before triaging.**\n\n") + content
+        print("WARNING: review truncated (finish_reason=%s, completion_tokens=%s)"
+              % (choice.get("finish_reason"), usage.get("completion_tokens")), flush=True)
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     outdir = os.path.join(ROOT, "evidence/ai_review")
     os.makedirs(outdir, exist_ok=True)
@@ -103,7 +111,7 @@ def main():
         subprocess.run(["gh", "pr", "comment", str(args.pr), "--body-file", cfile],
                        cwd=ROOT, check=True)
         print("[posted to PR #%d]" % args.pr)
-    return 0
+    return 2 if truncated else 0
 
 
 if __name__ == "__main__":

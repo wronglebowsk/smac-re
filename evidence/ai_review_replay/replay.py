@@ -14,6 +14,12 @@ from concurrent.futures import ThreadPoolExecutor
 
 ROOT = "/home/paul/reverse/smac"
 OUT = os.path.join(ROOT, "scratch/review_replay")
+os.makedirs(OUT, exist_ok=True)
+
+
+def _url(env):
+    u = os.environ[env].rstrip("/")
+    return u + ("/chat/completions" if u.endswith("/v1") else "/v1/chat/completions")
 
 PROMPT = """You are an adversarial code reviewer for a reverse-engineering repository (Sid Meier's Alpha Centauri: static analysis of terran.exe via an objdump disassembly cache + Ghidra batch exports).
 
@@ -35,12 +41,12 @@ For each finding give: severity (P1 blocker / P2 should-fix), file:line, what is
 
 MODELS = {
     "strata": {
-        "url": "http://192.168.1.12:8080/v1/chat/completions",
+        "url": _url("STRATA_URL"),
         "body": {"model": "qwen3.8-flash-next-iq3_xxs", "max_tokens": 8192,
                  "chat_template_kwargs": {"enable_thinking": True, "reasoning_effort": "xhigh"}},
     },
     "qwen36": {
-        "url": "http://192.168.1.213:8010/v1/chat/completions",
+        "url": _url("QWEN36_URL"),
         "body": {"model": "Qwen3.6-35B-A3B-int4-ov", "max_tokens": 8192},
     },
 }

@@ -1,0 +1,36 @@
+s291 audit of the s290 split (post review-round fixes)
+$ diff -rq skill/ ~/.hermes/skills/smac-cvr-format/
+Files /home/paul/reverse/smac/skill/SKILL.md and /home/paul/.hermes/skills/smac-cvr-format/SKILL.md differ
+Files /home/paul/reverse/smac/skill/references/code-atlas.md and /home/paul/.hermes/skills/smac-cvr-format/references/code-atlas.md differ
+Files /home/paul/reverse/smac/skill/references/data-formats.md and /home/paul/.hermes/skills/smac-cvr-format/references/data-formats.md differ
+Files /home/paul/reverse/smac/skill/references/gdb-command-list.md and /home/paul/.hermes/skills/smac-cvr-format/references/gdb-command-list.md differ
+Files /home/paul/reverse/smac/skill/references/instrument-laws.md and /home/paul/.hermes/skills/smac-cvr-format/references/instrument-laws.md differ
+Files /home/paul/reverse/smac/skill/references/production-queue.md and /home/paul/.hermes/skills/smac-cvr-format/references/production-queue.md differ
+Files /home/paul/reverse/smac/skill/references/ptrace-level-probes.md and /home/paul/.hermes/skills/smac-cvr-format/references/ptrace-level-probes.md differ
+Files /home/paul/reverse/smac/skill/references/screen-read.md and /home/paul/.hermes/skills/smac-cvr-format/references/screen-read.md differ
+Files /home/paul/reverse/smac/skill/references/session-discipline.md and /home/paul/.hermes/skills/smac-cvr-format/references/session-discipline.md differ
+Files /home/paul/reverse/smac/skill/references/static-store-census.md and /home/paul/.hermes/skills/smac-cvr-format/references/static-store-census.md differ
+Files /home/paul/reverse/smac/skill/references/verify-outcome.md and /home/paul/.hermes/skills/smac-cvr-format/references/verify-outcome.md differ
+Files /home/paul/reverse/smac/skill/references/wine-headless-harness.md and /home/paul/.hermes/skills/smac-cvr-format/references/wine-headless-harness.md differ
+Files /home/paul/reverse/smac/skill/references/wine-operations.md and /home/paul/.hermes/skills/smac-cvr-format/references/wine-operations.md differ
+Files /home/paul/reverse/smac/skill/references/wine-pitfalls.md and /home/paul/.hermes/skills/smac-cvr-format/references/wine-pitfalls.md differ
+Files /home/paul/reverse/smac/skill/templates/cron-milestone-loop.md and /home/paul/.hermes/skills/smac-cvr-format/templates/cron-milestone-loop.md differ
+
+$ python3 scripts/evidence.py budget
+context: 262,144 tokens ≈ 1.05M chars
+
+artifact                   bytes   ~tokens   % ctx  status
+NEXT_PROMPT.md            11,881     2,970    1.1%  ok   (always)
+SESSION_NOTES.md          60,667    15,167    5.8%  ok   (lookup)
+NAMED.md                 222,500    55,625   21.2%  warn (lookup)
+skill/SKILL.md            44,019    11,005    4.2%  ok   (always)
+AGENTS.md                  3,591       898    0.3%  ok   (always)
+always loaded             59,491    14,873    5.7%   ← paid every session
+lookups (never whole)    283,167    70,792   27.0%   ← grep / tail only
+ritual target             60,000    15,000    5.7%   (skill + prompt + 2 sessions + ~10 evidence windows)
+
+evidence/: 20.2 MB in 1121 files (1 images, 164 KB; +37 fixtures in evidence/fixtures/, 6.2 MB, uncounted by design)  budget 20/30 MB  [warn]
+  largest: evidence/m294_gate_rows_raw.txt 2.2 MB, evidence/trace_m56_build_20261026_160325.jsonl 722 KB, evidence/trace_m56_build_20261026_181701.jsonl 717 KB
+  → digest or prune these; read them with `evidence.py show`
+
+evidence is append-only; pruning never deletes history (git keeps it).

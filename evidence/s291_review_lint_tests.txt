@@ -1,0 +1,14 @@
+compliant block                  OK  clean
+L1 missing mutant                OK  ['L1 no mutant cited: FACT ONE: something measured']
+L2 unknown mutant                OK  ['L2 mutant MU9 not in harness: FACT ONE: something measured']
+L2 range expansion               OK  ['L2 mutant MU5 not in harness: FACT TWO: another measured thing, MU2-MU5', 'L2b MU4 patch addr 0xdeadbe not read by instrument: FACT TWO: another measured thing, MU2-MU']
+L1 prefix bypass blocked         OK  ['L1 no mutant cited: ACCEPTANCE OF FOO: a factual claim']
+L2b addr not in instrument       OK  ['L2b MU4 patch addr 0xdeadbe not read by instrument: FACT TWO: another measured thing, MU3-MU']
+L3 row-scoped digest             OK  ["L3 digest 0123456789abcdef not printed in the row's cited evidence"]
+L3 prose last-file fallback      OK  clean
+L3 unprinted digest              OK  ["L3 digest aaaaaaaaaaaaaaaa not printed in the row's cited evidence"]
+L4 cite without line             OK  ['L4 citation without :line — evidence/m999_x.txt']
+L4 directory not a citation      OK  clean
+block extraction                 OK
+
+== test_review_lint: 12/12 ==
