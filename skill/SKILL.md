@@ -153,7 +153,8 @@ re-summarise.
 - Close order, every time: cursor -> gate GREEN -> notes entry (`patch`) -> **checkpoint commit** ->
   `NEXT_PROMPT.md` -> submit/PR. Never leave the commit until after the handoff docs. **Every VERIFIED NAMED
   row names the mutation that reddens it** (s290 law; no mutant = INFERRED/OPEN; tracers also get an ALGORITHM
-  mutant - depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law).
+  mutant - depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law). Review pipeline:
+  `review_lint.py` at close + `ai_review.py` at submit (`docs/AI-REVIEW.md`).
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (the budget warn; the gate FAILs at 16,000, and closing past the
   warn hands the NEXT fire a docs-only split). `test_loop.py` appends bytes in CI: keep >100 B of headroom
   under whatever number you quote. `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.

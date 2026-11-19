@@ -296,6 +296,12 @@ milestone per merge and three acceptance invocations, not one question per step.
   proves they COVER. A row with no mutant is INFERRED/OPEN until pinned + mutated. Tracers/classifiers also get
   an ALGORITHM mutant (a between-push reload for a def-walk tracer): instruction/data mutants cannot catch a
   wrong trace position. Depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law.
+- Review pipeline (s291, Greptile credits exhausted): `scripts/review_lint.py --id <id>` at close (mechanical
+  claim->mutant / digest-printed / citation-line checks; fixtures `test_review_lint.py` 7/7), then
+  `scripts/ai_review.py <n>` after submit — a FRESH-CONTEXT Strata review (replay-validated on the #309/#311
+  findings: caught the algorithmic + coverage classes incl. the deepest bug; the definition-mismatch class is
+  checklist-targeted in the prompt). Triage rule unchanged; the human owns the merge. Evidence + constraints:
+  `docs/AI-REVIEW.md`.
 - `NEXT_PROMPT.md` <= 15,300 BYTES AT CLOSE — the unattended kickoff's cap-triage trigger. `evidence.py budget`
   prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
   used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate

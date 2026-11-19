@@ -1,6 +1,7 @@
-HYGIENE SPLIT DONE (s290, desktop qwen4-max:free, loop paused). SKILL.md
-58,206 -> 44,493 B; always-loaded 59,936 < 60k ritual target. 21 blocks
-moved VERBATIM to 12 references (s290 retirement), rules + pointers stay;
-live <-> skill/ copies identical. Process law (#313) already merged. NEXT:
-gate -> submit -> review -> merge this split; then pick (v) the 8 unguarded
-memo sites. B25 spine unauthored. #180 documented-FAIL stands.
+PIPELINE LANDED (s291, desktop qwen4-max:free, loop paused). Greptile credits
+out; replay experiment validated Strata as reviewer (3/8+2-trunc recall,
+caught the algorithmic class; qwen36 0/8 excluded). review_lint.py (7/7
+fixtures) at close + ai_review.py at submit; docs/AI-REVIEW.md governs.
+NEXT: gate -> submit -> dogfood ai_review on this PR -> triage -> merge.
+Then pick (v) the 8 unguarded memo sites under the new pipeline. B25 spine
+unauthored. #180 documented-FAIL stands. Strata: Qwen-Flash-Next only.
