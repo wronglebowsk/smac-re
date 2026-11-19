@@ -166,6 +166,8 @@ for a in ADDRS:
         SIBS.append((a, int(m.group(1), 16)) + tuple(push_args(a)))
 
 # ---- T4c: image-wide immediate-dest READ legs covering ROUND (exclusivity) -----
+# SCOPE (P1-1): immediate-dest direct legs + static-dest converting siblings only;
+# heap/reg-dest legs are NOT traced to their copy targets (DECLARED resolver limit).
 IMG_ROUND = []
 for a in ADDRS:
     mn, ops = INS[a]
@@ -175,6 +177,9 @@ for a in ADDRS:
     n = cnt if cnt is not None else 1
     if dest <= ROUND and ROUND + 4 <= dest + size * n:
         IMG_ROUND.append(a)
+SIB_ROUND = [s[0] for s in SIBS
+             if s[2] is not None and s[3] is not None
+             and s[2] <= ROUND and ROUND + 4 <= s[2] + s[3]]
 
 # ---- T5: g999fa4 census + feed fold pins ----------------------------------------
 G999RE = re.compile(r"ds:0x999fa4(?![0-9a-f])")
@@ -203,6 +208,12 @@ W2 = {  # second writer: g999fa4 = thunk(0x99a01c)
     0x626fd7: ("mov", "ds:0x999fa4,eax"),
     0x64c467: ("call", "0x64c360"),
 }
+# MAX-shape (P2-6): the jle skips EXACTLY the 6-byte store, landing on the
+# read-back of g999fa4 -> store iff block value > current (signed), i.e. MAX.
+MAXSHAPE = {0x442648: ("mov", "eax,ds:0x999fa4")}  # a1 moffs32 form: no DWORD PTR
+# MEASURED from the pinned jle operand, not authored: target - store addr must be
+# exactly the 6-byte store length (MU14's retarget reddens this too).
+MAX_SKIP = int(INS[0x44262b][1].strip(), 16) - 0x442642
 
 # ---- T6: loader call closure (direct imm32 calls only; DECLARED limit) ----------
 def call_targets(a):
@@ -233,16 +244,25 @@ YR_CALLERS = sorted(a for a in ADDRS if INS[a][0] == "call"
 
 # ---- T7: ordering + mode pins ----------------------------------------------------
 FIRST_WRAP = min(l[0] for l in LEGS)
+# P2-3: execution order, not just address-min: the codec entry window up to the
+# mode-je is branch/call-FREE, so the header leg is unconditionally entry-reachable.
+ENTRY_FREE = [a for a in ADDRS if CODEC <= a < 0x596881
+              and (INS[a][0].startswith("j") or INS[a][0] == "call")]
 OPINS = {
     0x597efb: ("xor", "ebx,ebx"),
     0x597f05: ("jne", "0x597f12"),
     0x597f49: ("push", "0x4"),
     0x597f53: ("call", "0x64cc00"),
     0x597f63: ("cmp", "DWORD PTR [ebp-0x10],0x56"),
+    0x597f98: ("push", "ebx"),   # P2-5: mode arg pushed (param_2)
+    0x597f99: ("push", "edi"),   # handle (param_1)
     0x597fad: ("call", "0x596850"),
 }
 CPINS = {
-    0x596881: ("je", "0x59688a"),
+    0x596856: ("mov", "eax,DWORD PTR [ebp+0xc]"),  # P2-5: param_2 -> eax
+    0x59685f: ("xor", "ebx,ebx"),                  # codec's zero
+    0x596864: ("cmp", "eax,ebx"),                  # mode == 0 ?
+    0x596881: ("je", "0x59688a"),                  # -> READ leg
     0x59689a: ("cmp", "DWORD PTR ds:0x985dbc,0x4"),
 }
 # no ebx definition on the path body [0x597f12, 0x597f98) -> mode stays 0
@@ -264,6 +284,12 @@ M272_OPENER = M272.get(OPENER, [])
 M272_FAC = [e for e in M272.get(RD, []) if e[0] == 0x596edb]
 M272_WFAM = [pc for pc in M272 if pc in
              (0x57ecf0, 0x5a0fa0, 0x59ce10, 0x51f320, 0x4e0350, 0x5b2970)]
+# P2-8: the FULL event inventory is pinned (9 events), not just the absence of
+# writer PCs: 7 boot CTRL + opener (round -39) + faction fread (round 50).
+M272_INV = sorted((pc, ret, rnd, cp) for pc, evs in M272.items()
+                  for (ret, rnd, cp) in evs)
+M272_INV_EXPECT = [(0x5791c0, 0x579eaf, 0, 0)] * 7 + [
+    (OPENER, 0x5992f2, -39, 0), (RD, 0x596edb, 50, 3)]
 
 def parse_m302():
     p = os.path.join(EV, "evidence/m302_livepins.txt")
@@ -295,6 +321,8 @@ def gate(name, ok, detail):
 PUSH_PINS = {
     0x596866: ("push", "0x31c"),
     0x59687c: ("push", "0x985ab8"),
+    0x5968c6: ("push", "0x31c"),      # header converting-sibling size
+    0x5968cb: ("push", "0x985ab8"),   # header converting-sibling dest
     0x596a7e: ("push", "0x105e0"),
     0x596a83: ("push", "0x94d430"),
     0x596ec3: ("push", "0x2ce0"),
@@ -318,12 +346,13 @@ gate("G1", g1, "header R/W=59688a/596883 dst=985ab8 sz=31c; blockA R/W=596a91/59
          pin_ok(PUSH_PINS),
          sum(1 for l in LEGS if l[1] == "R"), sum(1 for l in LEGS if l[1] == "W"), len(SIBS)))
 # G2: ROUND+YEAR carried by the header leg, and by NO OTHER immediate-dest read leg
+# (direct legs image-wide + static-dest converting siblings; heap paths DECLARED out)
 g2 = (COV["ROUND"] == [0x59688a] and COV["YEAR"] == [0x59688a]
-      and IMG_ROUND == [0x59688a]
+      and IMG_ROUND == [0x59688a] and SIB_ROUND == [0x5968d2, 0x5968d9]
       and ROUND - HDRBASE == 0x44 and YEAR - HDRBASE == 0x48)
-gate("G2", g2, "COV ROUND=%s YEAR=%s img-wide=%s blob+44/+48" % (
+gate("G2", g2, "COV ROUND=%s YEAR=%s img-wide=%s sibs=%s blob+44/+48 (imm-dest scope)" % (
     ["%#x" % x for x in COV["ROUND"]], ["%#x" % x for x in COV["YEAR"]],
-    ["%#x" % x for x in IMG_ROUND]))
+    ["%#x" % x for x in IMG_ROUND], ["%#x" % x for x in SIB_ROUND]))
 # G3: all 8 block+0x220 fields + the 1436-array carried; size algebra
 g3 = (all(COV["BLK%d+220" % k] == [0x596a91] for k in range(NBLK))
       and FAC_COV == [0x596ed6] and 0x105e0 == NBLK * STRIDE and 0x2ce0 == 8 * 1436)
@@ -332,12 +361,13 @@ gate("G3", g3, "8/8 block+220 legs=%s fac1436=%s 105e0=8*20bc 2ce0=8*1436" % (
     ["%#x" % x for x in FAC_COV]))
 # G4: g999fa4 writer set + feed fold + NOT carried by any static leg
 g4 = (sorted(G999_W) == [0x442642, 0x626fd7] and len(G999_HITS) == 11
-      and pin_ok(FOLD) and pin_ok(W2) and 0x94d650 - BLKBASE == 0x220
+      and pin_ok(FOLD) and pin_ok(W2) and pin_ok(MAXSHAPE) and MAX_SKIP == 6
+      and 0x94d650 - BLKBASE == 0x220
       and COV["G999"] == [] and FEED_CALLERS == [] and FEED_AT == [])
-gate("G4", g4, "writers=%s refs=%d fold8pins=%s w2pins=%s 94d650-94d430=220 "
-     "COV=[] feedcallers=%d feedAT=%d" % (
+gate("G4", g4, "writers=%s refs=%d fold8pins=%s w2pins=%s MAXshape(jle skips %dB store "
+     "to read-back)=%s 94d650-94d430=220 COV=[] feedcallers=%d feedAT=%d" % (
          ["%#x" % x for x in sorted(G999_W)], len(G999_HITS), pin_ok(FOLD),
-         pin_ok(W2), len(FEED_CALLERS), len(FEED_AT)))
+         pin_ok(W2), MAX_SKIP, pin_ok(MAXSHAPE), len(FEED_CALLERS), len(FEED_AT)))
 # G5: file bytes == the live pins of the SAME save (sha-identified)
 g5 = (FILE_FACTS["magic"] == b"TERRAN\x00" and FILE_FACTS["marker"] == 0x1a
       and FILE_FACTS["version"] == 86 and FILE_FACTS["size"] == 242539
@@ -357,21 +387,26 @@ g6 = (WR_IN_CLOSURE == [] and YR_CALLERS == [0x514ecf, 0x517e3a]
       and 0x512b40 not in CLOSURE and 0x516b80 not in CLOSURE)
 gate("G6", g6, "closure=%d fns writers-in=%s 4e0350callers=%s feed/pumps absent" % (
     len(CLOSURE), ["%#x" % x for x in WR_IN_CLOSURE], ["%#x" % x for x in YR_CALLERS]))
-# G7: header leg FIRST, mode=0 pinned, version read by opener, M272 live order
-g7 = (FIRST_WRAP == 0x596883 and pin_ok(OPINS) and pin_ok(CPINS)
+# G7: header leg entry-reachable FIRST, mode=0 arg chain pinned, version read by
+# opener, M272 FULL live inventory (9 events)
+g7 = (FIRST_WRAP == 0x596883 and ENTRY_FREE == [] and pin_ok(OPINS) and pin_ok(CPINS)
       and EBX_DEFS_BODY == []
       and M272_OPENER == [(0x5992f2, -39, 0)] and M272_FAC == [(0x596edb, 50, 3)]
-      and M272_WFAM == [])
-gate("G7", g7, "firstwrap=%#x mode:xor@597efb+jne@597f05+noebxdef=%s verleg@597f53 "
-     "m272 opener=%s fac=%s writerfam=%s" % (
-         FIRST_WRAP, EBX_DEFS_BODY == [], M272_OPENER, M272_FAC, M272_WFAM))
+      and M272_INV == M272_INV_EXPECT and M272_WFAM == [])
+gate("G7", g7, "firstwrap=%#x entryfree=%s mode chain:xor@597efb+jne@597f05+pushes+"
+     "codec cmp/je+noebxdef=%s verleg@597f53 m272 inv=%d events opener=%s fac=%s wfam=%s" % (
+         FIRST_WRAP, ENTRY_FREE == [], EBX_DEFS_BODY == [], len(M272_INV),
+         M272_OPENER, M272_FAC, M272_WFAM))
 # G8: the RIVALS die on the printed numbers
 r1_dead = (WR_IN_CLOSURE == [] and FILE_FACTS["round@50"] == 50
-           and FIRST_WRAP == 0x596883 and COV["ROUND"] == [0x59688a])
+           and FIRST_WRAP == 0x596883 and ENTRY_FREE == []
+           and COV["ROUND"] == [0x59688a])
 r2_dead = (0x5a0fa0 not in CLOSURE
            and INS.get(0x5a108b) == ("mov", "DWORD PTR ds:0x985afc,esi")
-           and M272_WFAM == [] and FILE_FACTS["round@50"] == 50)
-gate("G8", r1_dead and r2_dead, "R1 RE-DERIVE dead=%s R2 REBUILD dead=%s" % (r1_dead, r2_dead))
+           and INS.get(0x5a0fd3) == ("xor", "esi,esi")  # P2-4: const-0 SOURCE pinned
+           and M272_INV == M272_INV_EXPECT and FILE_FACTS["round@50"] == 50)
+gate("G8", r1_dead and r2_dead, "R1 RE-DERIVE dead=%s R2 REBUILD dead=%s (esi0 src "
+     "xor@5a0fd3 pinned)" % (r1_dead, r2_dead))
 
 def main():
     print("M324 SAVE-CARRY - static census (codec FUN_00596850, opener FUN_00597ee0)")
@@ -386,7 +421,8 @@ def main():
          "%#x" % s[3] if s[3] is not None else "?") for s in SIBS])
     print("T2 coverage:", {k: ["%#x" % x for x in v] for k, v in COV.items()})
     print("T2b img-wide immediate-dest read legs covering ROUND:",
-          ["%#x" % x for x in IMG_ROUND])
+          ["%#x" % x for x in IMG_ROUND],
+          "static-dest converting siblings:", ["%#x" % x for x in SIB_ROUND])
     print("T3 file:", {k: (v.hex() if isinstance(v, bytes) else v)
                        for k, v in FILE_FACTS.items()}, "sha16=%s" % SB_SHA)
     print("T4 g999fa4 refs=%d writers=%s feedcallers=%s feedAT=%s" % (
@@ -397,11 +433,23 @@ def main():
     print("T5 closure: %d fns from seeds %s; writers-in=%s; 4e0350 callers=%s" % (
         len(CLOSURE), sorted("%#x" % s for s in SEEDS),
         ["%#x" % x for x in WR_IN_CLOSURE], ["%#x" % x for x in YR_CALLERS]))
-    print("T6 order: firstwrap=%#x ebxdefs-body=%s m272 opener=%s fac=%s wfam=%s" % (
-        FIRST_WRAP, ["%#x" % x for x in EBX_DEFS_BODY], M272_OPENER, M272_FAC, M272_WFAM))
+    print("T6 order: firstwrap=%#x entryfree=%s ebxdefs-body=%s m272 inv=%d opener=%s "
+          "fac=%s wfam=%s" % (
+              FIRST_WRAP, ENTRY_FREE == [], ["%#x" % x for x in EBX_DEFS_BODY],
+              len(M272_INV), M272_OPENER, M272_FAC, M272_WFAM))
     print("T7 m302 cross: sha=%s size=%s yearround=%s" % (M302_SHA, M302_SIZE, M302_YR))
     for name, ok, detail in GATES:
         print("%s %s %s" % (name, "PASS" if ok else "FAIL", detail))
+    # P2-9: the digest input is printed VERBATIM: reconstruct = the G1..G8 lines
+    # above + the D-lines below with the "D " prefix stripped, joined by "\n".
+    print("D legs=%s" % LEGS)
+    print("D cov=%s" % COV)
+    print("D img=%s" % IMG_ROUND)
+    print("D file=%s" % FILE_FACTS)
+    print("D sha=%s" % SB_SHA)
+    print("D g999w=%s" % sorted(G999_W))
+    print("D closure=%d" % len(CLOSURE))
+    print("D m272=%s" % M272)
     print("R1 RE-DERIVE-FROM-YEAR (load calls FUN_004e0350): %s - 4e0350 callers are "
           "the 2 tour pumps, closure writers=%s, file round@0x50=%d, header leg first" % (
               "DEAD" if r1_dead else "ALIVE", WR_IN_CLOSURE, FILE_FACTS["round@50"]))

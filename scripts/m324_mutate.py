@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 # M324 mutation harness: every VERIFIED claim row names the mutant that reddens it.
-# 14 code mutants rewrite the DISASSEMBLY via M324_PATCH (leg args, diamond glue,
-# feed fold, opener mode chain, the M323 const-0 store shape); 3 algorithm mutants
-# via M324_ALGO (1: push-order reversal, 2: read/write direction swap, 3: closure
-# seeded from the codec only); 1 save-data mutant via M324_SAVE (round dword 50->51
-# in a temp copy); 1 evidence-data mutant via M324_EVIDENCE_ROOT (m302 live pin
-# round 50->51); 1 declared NO-OP. A crash is NOT a red gate (m319 MU6 law): output
-# without the 8-denominator summary scores CRASH and fails the harness.
+# 21 code mutants rewrite the DISASSEMBLY via M324_PATCH (leg args + push positions,
+# diamond glue, entry window, mode arg chain, feed fold + MAX shape, opener esi-0
+# source, the M323 const-0 store shape); 3 algorithm mutants via M324_ALGO
+# (1: push-order reversal, 2: read/write direction swap, 3: closure seeded from the
+# codec only); 1 save-data mutant via M324_SAVE (round dword 50->51 in a temp copy);
+# 2 evidence-data mutants via M324_EVIDENCE_ROOT (m302 live pin round 50->51; m272
+# log + a fake writer event); 1 declared NO-OP. A crash is NOT a red gate (m319 MU6
+# law): output without the 8-denominator summary scores CRASH and fails the harness.
+# DIGEST (review #326 P1-2): hashes each mutant's MEASURED payload - the patch/data
+# literal AND the acceptance digest of that mutant's run (itself a hash of the rich
+# measured detail) - not just gate labels.
 # --selftest: 3 synthetic scorer checks + 1 live NO-OP run.
 import os, re, sys, shutil, struct, subprocess, hashlib, tempfile
 
@@ -37,6 +41,21 @@ MUTANTS = [
     ("MU15", "algo", "3", {"G6"}),
     ("MU16", "code", "0x626fd7|mov ds:0x999fa8,eax", {"G4"}),
     ("MU17", "code", "0x5a108b|mov DWORD PTR ds:0x985afc,edx", {"G8"}),
+    # review #326 fixes: esi-0 source (P2-4), mode arg chain (P2-5), MAX shape
+    # (P2-6), M272 full inventory (P2-8), entry window (P2-3), sibling dest (P1-1)
+    ("MU19", "code", "0x5a0fd3|mov esi,0x1", {"G8"}),
+    ("MU20", "code", "0x597f98|push eax", {"G7"}),
+    ("MU21", "code", "0x442648|mov eax,ds:0x999fa8", {"G4"}),
+    ("MU22", "evdata", ("evidence/m272w9.gdblog",
+                        "[Inferior 1 (process 3780205) detached]",
+                        "[Inferior 1 (process 3780205) detached]\n"
+                        "M272C CTRL pc=0x5a0fa0 ret=0x5a1090 round=0 cp=0"),
+     {"G7", "G8"}),
+    ("MU23", "code", "0x596864|cmp eax,ecx", {"G7"}),
+    ("MU24", "code", "0x5968cb|push 0x985bb8", {"G1", "G2"}),
+    ("MU25", "code", "0x59685f|je 0x59688a", {"G7", "G8"}),   # branch in the entry window
+    ("MU26", "code", "0x5968c6|push 0x44", {"G1", "G2"}),  # sibling size push
+    ("MU27", "code", "0x596856|mov eax,DWORD PTR [ebp+0x8]", {"G7"}),  # param_2 load
     ("MU18", "noop", "0x597f9a|mov DWORD PTR ds:0x91b5cc,ebx", set()),
 ]
 
@@ -50,12 +69,12 @@ def run_script(env_extra):
     return p.returncode, p.stdout + p.stderr
 
 def score(out):
-    """(observed_red_set, crashed); denominator must be the shipped 8"""
-    m = re.search(r"^== M324: (\d+)/(\d+) == digest [0-9a-f]{16}$", out, re.M)
+    """(observed_red_set, crashed, run_digest); denominator must be the shipped 8"""
+    m = re.search(r"^== M324: (\d+)/(\d+) == digest ([0-9a-f]{16})$", out, re.M)
     if not m or m.group(2) != "8":
-        return set(), True
+        return set(), True, None
     red = set(re.findall(r"^(G\d) FAIL", out, re.M))
-    return red, False
+    return red, False, m.group(3)
 
 def verdict(declared, observed, crashed):
     if crashed: return "CRASH"
@@ -68,7 +87,7 @@ def selftest():
     res.append(("S2 scorer mismatch", verdict({"G4"}, {"G5"}, False) == "MISMATCH"))
     res.append(("S3 scorer crash", verdict({"G4"}, set(), True) == "CRASH"))
     rc, out = run_script({"M324_PATCH": "0x597f9a|mov DWORD PTR ds:0x91b5cc,ebx"})
-    obs, crashed = score(out)
+    obs, crashed, _dig = score(out)
     res.append(("S4 live NO-OP", (not crashed) and obs == set() and rc == 0
                 and "== M324: 8/8 ==" in out))
     for nm, ok in res:
@@ -110,18 +129,20 @@ def main():
                 rc, out = run_script({"M324_EVIDENCE_ROOT": evtmp})
             else:  # noop
                 rc, out = run_script({"M324_PATCH": payload})
-            obs, crashed = score(out)
+            obs, crashed, rdig = score(out)
             v = verdict(declared, obs, crashed)
-            rows.append((mid, kind, declared, obs, v))
-            print("%-6s %-8s declared=%-28s observed=%-28s %s" %
-                  (mid, kind, sorted(declared), sorted(obs), v))
+            rows.append((mid, kind, payload, declared, obs, v, rdig))
+            print("%-6s %-8s declared=%-28s observed=%-28s %-8s run=%s" %
+                  (mid, kind, sorted(declared), sorted(obs), v, rdig))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     h = hashlib.sha256()
-    for (mid, kind, declared, obs, v) in rows:
-        h.update(("%s:%s:%s:%s:%s|" % (mid, kind, sorted(declared), sorted(obs), v)).encode())
-    nscore = sum(1 for r in rows if r[4] in ("OK", "NO-OP"))
-    nnoop = sum(1 for r in rows if r[4] == "NO-OP")
+    for (mid, kind, payload, declared, obs, v, rdig) in rows:
+        # MEASURED payload: the mutant literal + the run's acceptance digest
+        h.update(("%s:%s:%s:%s:%s:%s:%s|" % (
+            mid, kind, payload, sorted(declared), sorted(obs), v, rdig)).encode())
+    nscore = sum(1 for r in rows if r[5] in ("OK", "NO-OP"))
+    nnoop = sum(1 for r in rows if r[5] == "NO-OP")
     print("digest %s" % h.hexdigest()[:16])
     print("== M324 MUTATE: %d/%d scored + %d NO-OP ==" % (nscore, len(rows), nnoop))
     sys.exit(0 if nscore == len(rows) else 1)
