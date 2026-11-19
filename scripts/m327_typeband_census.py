@@ -20,18 +20,28 @@
 #    rule" is RETRACTED: the .exe has no coord rule there at all - the tile writer
 #    stores +0/+2 on the unique entry path with no branch before them;
 #  * the exemption's only empirical justification ("m113map.SAV has 3076/56832 in
-#    one") is OUR OWN poke: m113map.SAV == m54b_clean.SAV except 21 dword markers
-#    0xc0de0001..0xc0de0015 on a 128-B stride from 222000, 14 of them inside the
-#    unit array; the out-of-grid record is unit 12, hit at +1 by marker 0xc0de000c.
+#    one") is OUR OWN poke: m113map.SAV == m54b_clean.SAV except 20 dword markers
+#    0xc0de0001..0xc0de0014 on a 128-B stride from 222000 (file-aligned, so a marker
+#    can straddle a record boundary), 13 of them inside the unit array; the
+#    out-of-grid records are unit 12 (marker 0xc0de000c at +1 -> x=3076, y=56832)
+#    and unit 17 (the 0xc0de000e marker straddling unit 16+49..17+0 -> x=192).
 # LIMITS (declared): linear scan windows (8/10 instrs) for the chain; text-dump
 # mutants patch the DISASSEMBLY CACHE (scratch/m574/text.txt copy), never the exe;
 # no claim about what the game validates when it LOADS a save (the loader is not in
 # scope); type-record fields other than +0 (name) / +0x24 / +0x30 bit 2 unnamed.
 # Rivals R1-R4 are computed and must come out False on the printed numbers.
-# Mutants: M327_PATCH addr|mnem ops (text cache), M327_SAVE_POKES off=byte,... (a
-# temp copy of a save), M327_ALGO 1=chain window whole-function 2=band//32 3=poke
-# marker test off 4=straight-line window widened 5=name test drops the NUL 6=rival
-# R3 from the parser's declared number instead of the measured counts.
+# Mutants: M327_PATCH addr|mnem ops (text cache), M327_SAVE / M327_POKED =<file> (a
+# temp copy of a save), M327_ALGO 1=chain window whole-file 2=band//32 3=poke window
+# alignment 3 4=every branch counts as a store guard 5=every slot counts as named
+# 6=variant B becomes the shipped rule 7=type +0x2d law declared true 8=owner from
+# +15 9=type-array offset -4, M327_PIN overrides the G10 anchor.
+# Harness PLANT sites (documented for review_lint L2b - the code mutants rewrite
+# disassembly lines the instrument reads): MU1 0x4bded1 (the x52 fold after the
+# pinned movsx at 0x4bdeca), MU2 0x5ab3a2 (unit_set_position's own +10 read), MU3
+# 0x4bdeca (the read itself, moved to +4), MU4 0x5ab369 (the FIRST branch after the
+# +0/+2 stores, retargeted into the store range), MU5 0x5ab355 (the +0 store, retyped
+# to +4), MU21 0x5ab345 (an out-of-scope test -> the declared NO-OP: reddens
+# NOTHING, which proves no gate is decoration on prose).
 import bisect, csv, hashlib, os, re, struct, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,18 +49,23 @@ TEXT = os.environ.get("M327_TEXT", os.path.join(ROOT, "scratch/m574/text.txt"))
 IDX = os.path.join(ROOT, "ghidra_out/index.csv")
 EV = os.environ.get("M327_EVIDENCE_ROOT", ROOT)
 ALGO = os.environ.get("M327_ALGO", "0")
-POKES = os.environ.get("M327_SAVE_POKES")
-PRIMARY = os.path.join(ROOT, "programs/saves/m54b_clean.SAV")
-POKED = os.path.join(ROOT, "programs/saves/m113map.SAV")
+PRIMARY = os.environ.get("M327_SAVE", os.path.join(ROOT, "programs/saves/m54b_clean.SAV"))
+POKED = os.environ.get("M327_POKED", os.path.join(ROOT, "programs/saves/m113map.SAV"))
 SAVES = [PRIMARY, os.path.join(ROOT, "programs/saves/m112poke.SAV"),
          os.path.join(ROOT, "programs/saves/m112auto1.SAV"), POKED]
-M325_ANCHOR_SITE = 0x4bdec4          # pinned, measured (Table T2)
-MOVEX_SITE = 0x5ab3a2                # pinned, inside unit_set_position
+ANCHOR_READ = 0x4bdeca               # movsx of unit+10 in FUN_004bdce0 (Table T2)
+MOVEX_SITE = 0x5ab3a2                # movsx of unit+10 inside unit_set_position
 ENTRY, STORE_X, STORE_Y = 0x5ab320, 0x5ab355, 0x5ab35c
 UNIT_LEN, TYPE_STRIDE, TYPE_SLOTS, BAND = 52, 52, 512, 64
 M80_LIVE_BANDS = {0: list(range(0, 14)), 1: [64], 2: [128, 129, 130, 131],
                   3: [192, 193, 194], 4: [256], 5: [320, 321, 322, 323, 324, 325],
                   6: [384, 385, 386], 7: [448, 449]}
+# G10 anchor: sha256-prefix of the MEASURED table rows (every T line). Re-measured at
+# every acceptance run. MU1-MU4 / MU7-MU8 / MU10 / MU12-MU14 all move it; MU21 (a
+# comments-only edit that changes no number) must NOT move it.
+PIN = "ee77ddb39e8ec202"
+N_CHAIN = 659            # measured chain sites in the .text cache (G2 pin)
+N_READ = 774             # measured unit+10 word refs (G2 pin)
 
 sys.path.insert(0, ROOT)
 from sim import save as SV                                   # noqa: E402
@@ -84,12 +99,9 @@ def load_text(fs):
         if not m:
             continue
         txt = m.group(3).strip()
-        p = txt.split(None, 1)
-        if not p:
+        if not txt:
             continue
-        mn = p[0].split()[0]
-        ops = p[1].split(None, 1)[1] if len(p) > 1 and " " in p[1] else (
-            p[1].split(None, 1)[1] if p[1].split(" ", 1)[0] != p[1] else "")
+        mn = txt.split()[0]
         a = int(m.group(1), 16)
         addrs.append(a)
         ins.append((a, mn, txt))
@@ -119,7 +131,8 @@ def patch_cache(ins, addrs):
 
 def chain_sites(ins, addrs):
     """unit+10 (0x933282 = DAT_00933278 + 10 in the u16 view) -> *52 -> 0x98ad88."""
-    rd = re.compile(r"mov\s+([a-z]{2,3})\s*,\s*WORD PTR \[([a-z0-9*+ ]*\+0x933282)\]")
+    rd = re.compile(r"(?:movsx|movzx|mov)\s+([a-z]{2,3})\s*,\s*WORD PTR "
+                    r"\[([a-z0-9*+ ]*\+0x933282)\]")
     hit = [i for i, (a, mn, t) in enumerate(ins) if "0x933282" in t and "WORD" in t]
     sites = []
     for i in hit:
@@ -128,42 +141,51 @@ def chain_sites(ins, addrs):
             continue
         r0 = dst.group(1)
         lim = len(ins) if ALGO == "1" else min(len(ins), i + 12)
-        mode = None
+        mode, end = None, None
         for j in range(i + 1, lim):
             t = ins[j][2]
             if re.search(r"\bimul\s+%s,%s,0x34\b" % (r0, r0), t):
-                k = min(len(ins), j + 9)
-                for x in range(j + 1, k):
+                for x in range(j + 1, min(len(ins), j + 9)):
                     if "0x98ad" in ins[x][2]:
-                        mode = "imul52+%s" % ins[x][2].split()[0]
+                        mode, end = "imul52+" + ins[x][2].split()[0], x
                         break
             elif re.search(r"\blea\s+\w+,\[%s\+%s\*2\]" % (r0, r0), t):
-                k = min(len(ins), j + 6)
-                for x in range(j + 1, k):
-                    if re.search(r"\b(mov|add|cmp)\s+\w+,\s*(\w+,)?\[.*0x98ad", ins[x][2]) \
-                            or "0x98ad" in ins[x][2]:
-                        mode = "x13fold+%s" % ins[x][2].split()[0]
+                for x in range(j + 1, min(len(ins), j + 6)):
+                    if "0x98ad" in ins[x][2]:
+                        mode, end = "x13fold+" + ins[x][2].split()[0], x
                         break
             if mode:
                 break
         if mode:
-            base = re.search(r"0x98ad([0-9a-f]{2})", ins[[k for k in range(i, lim)
-                                                          if "0x98ad" in ins[k][2]][0]][2])
-            sites.append((ins[i][0], mode, "0x98ad" + base.group(1)))
+            base = re.search(r"0x98ad([0-9a-f]{2})", ins[end][2])
+            sites.append((ins[i][0], mode, "0x98ad" + (base.group(1) if base else "??")))
     return sites, len(hit)
+
+
+def band_of(t):
+    """ALGO=2 mutant: derive the band with the WRONG stride (32 instead of 64)."""
+    return t // (32 if ALGO == "2" else BAND)
+
+
+def owner_of(u, d):
+    """ALGO=8 mutant: read the owner from the neighbouring byte (+15)."""
+    return d[u["off"] + (15 if ALGO == "8" else 14)]
 
 
 def type_section(path):
     """locate + read the 512x52 type array and the unit records of one save"""
     s = SV.parse(path)
     d = s.data
-    off = s.count_off + 4 + s.count_len + 3584
+    off = s.count_off + 4 + s.count_len + (3580 if ALGO == "9" else 3584)
     rows = []
     for t in range(TYPE_SLOTS):
         rec = d[off + TYPE_STRIDE * t: off + TYPE_STRIDE * t + TYPE_STRIDE]
-        m = re.match(rb"([ -~]{2,35})\x00", rec) if ALGO != "5" else \
-            re.match(rb"([ -~]{2,35})", rec)
-        rows.append((t, m.group(1).decode("latin-1") if m else None, rec))
+        if ALGO == "5":                 # mutant: treat EVERY slot as named
+            nm = "TRIVIAL"
+        else:
+            mm = re.match(rb"([ -~]{2,35})\x00", rec)
+            nm = mm.group(1).decode("latin-1") if mm else None
+        rows.append((t, nm, rec))
     units = []
     for i in range(s.n_units):
         o = s.units_off + UNIT_LEN * i
@@ -183,6 +205,11 @@ def found_units_variants(s, d):
         if d[o + 14] >= 24:
             return False
         t = struct.unpack_from("<H", d, o + 10)[0]
+        if mode == "B" and ALGO == "6":            # mutant: B becomes the shipped rule
+            if t < SV.UNIT_TYPE_BAND:
+                x, y = struct.unpack_from("<HH", d, o)
+                return x < s.width and y < s.height
+            return True
         if mode == "B" or (mode == "C"):
             x, y = struct.unpack_from("<HH", d, o)
             inb = x < s.width and y < s.height
@@ -199,7 +226,7 @@ def found_units_variants(s, d):
 
     def scan(mode):
         n = 0
-        while ok(d, mode) if False else ok(s.bases_off - UNIT_LEN * (n + 1), mode):
+        while ok(s.bases_off - UNIT_LEN * (n + 1), mode):
             n += 1
         return n
     return scan("A"), scan("B"), scan("C")
@@ -210,26 +237,27 @@ def type_off_of(s):
 
 
 def poke_runs(a, b, uoff):
+    """the poke law: the two files differ ONLY inside 4-byte windows whose value in b
+    is 0xc0de00NN, the windows are 128 B apart, and every changed byte is covered.
+    Record attribution is PER CHANGED BYTE: the marker grid is file-aligned, so a
+    dword can straddle a 52-B record boundary."""
     diff = [i for i in range(min(len(a), len(b))) if a[i] != b[i]]
-    runs, st, prev = [], None, None
-    for i in diff:
-        if st is None:
-            st = prev = i
-            continue
-        if i == prev + 1:
-            prev = i
-            continue
-        runs.append((st, prev))
-        st = prev = i
-    if st is not None:
-        runs.append((st, prev))
+    align = 3 if ALGO == "3" else 4
+    wins = sorted({(i // align) * align for i in diff})
+    wset = set(wins)
     out = []
-    for (lo, hi) in runs:
-        v = struct.unpack_from("<I", b, lo)[0] if hi - lo == 3 else None
-        out.append({"lo": lo, "hi": hi, "val": v,
-                    "inarr": uoff <= lo < uoff + UNIT_LEN * 67,
-                    "rec": (lo - uoff) // UNIT_LEN if uoff <= lo else None,
-                    "field": (lo - uoff) % UNIT_LEN if uoff <= lo else None})
+    for w in wins:
+        v = struct.unpack_from("<I", b, w)[0]
+        o = struct.unpack_from("<I", a, w)[0]
+        bytes_ = []
+        for i in range(w, w + align):
+            if a[i] != b[i] and uoff <= i < uoff + UNIT_LEN * 67:
+                bytes_.append((i, (i - uoff) // UNIT_LEN, (i - uoff) % UNIT_LEN))
+        out.append({"lo": w, "hi": w + align - 1, "val": v, "oval": o,
+                    "covered": all((i // align) * align in wset for i in range(w, w + align)),
+                    "ndiff": sum(1 for i in range(w, w + align) if a[i] != b[i]),
+                    "inarr": bool(bytes_), "bytes": bytes_,
+                    "recs": sorted({r for (_i, r, _f) in bytes_})})
     return len(diff), out
 
 
@@ -253,6 +281,7 @@ def main():
           % (os.path.basename(p), off, TYPE_STRIDE * TYPE_SLOTS, gap, s.closes,
              s.n_units, fa, fb, fc))
     prim, poff, pgap, pfa, pfb, pfc = layout[PRIMARY]
+    dprim = prim.data
     prows, punits = type_section(PRIMARY)[2], type_section(PRIMARY)[3]
 
     # ---- T1 the named-slot census + the +0x30 bit-2 law ----
@@ -260,17 +289,24 @@ def main():
     bands = {}
     for (t, n) in named:
         bands.setdefault(t // BAND, []).append(t)
-    bit2 = {}
-    for (t, n, r) in prows:
-        if n:
-            bit2.setdefault((r[0x30] >> 2) & 1, []).append(t)
     W("T1 named-slots=%d/%d density=%.4f per-band=%s" %
       (len(named), TYPE_SLOTS, len(named) / float(TYPE_SLOTS),
        {b: sorted(v) for b, v in sorted(bands.items())}))
-    W("T1b type+0x30 bit2 groups: set=%d clear=%d (band0 n=%d, band>0 n=%d)" %
+    bit2 = {}
+    ff2c = {}
+    for (t, n, r) in prows:
+        if n:
+            bit2.setdefault((r[0x30] >> 2) & 1, []).append(t)
+            ff2c.setdefault(True if ALGO == "7" else (r[0x2d] == 0xFF), []).append(t)
+    W("T1b type+0x30 bit2: set=%d clear=%d (band0 clear=%d band>0 set=%d) -> NOT a "
+      "band marker; type BYTE +0x2d==0xff groups: true=%d false=%d band0-true=%d "
+      "band>0-true=%d" %
       (len(bit2.get(1, [])), len(bit2.get(0, [])),
        len([t for t in bit2.get(0, []) if t < BAND]),
-       len([t for t in bit2.get(1, []) if t >= BAND])))
+       len([t for t in bit2.get(1, []) if t >= BAND]),
+       len(ff2c.get(True, [])), len(ff2c.get(False, [])),
+       len([t for t in ff2c.get(True, []) if t < BAND]),
+       len([t for t in ff2c.get(True, []) if t >= BAND])))
     W("T1c M80 live census diff: save-minus-live=%s live-minus-save=%s" %
       ({b: sorted(set(bands.get(b, [])) - set(M80_LIVE_BANDS[b])) for b in bands
         if set(bands.get(b, [])) - set(M80_LIVE_BANDS[b])},
@@ -284,23 +320,40 @@ def main():
     for (a, m, b) in sites:
         W("T2  0x%x %s -> %s owner=%s" % (a, m, b, fn_of(fs, a)))
 
+    # ---- T2b the two pinned chains, as disassembled ----
+    def win(a, back, fwd):
+        i = [k for k, (ad, _m, _t) in enumerate(ins) if ad == a]
+        return [t for (ad, m, t) in ins[max(0, i[0] - back):i[0] + fwd]] if i else []
+    w1 = win(ANCHOR_READ, 3, 8)
+    w2 = win(MOVEX_SITE, 1, 10)
+    W("T2b 0x4bdec4 chain: %s" % " | ".join(w1))
+    W("T2b 0x5ab3a2 chain: %s" % " | ".join(w2))
+    a1 = (any("WORD PTR" in l and "0x933282" in l and l.startswith("movsx") for l in w1)
+          and any(re.search(r"imul\s+\w+,\w+,0x34", l) for l in w1)
+          and any("add    ecx,0x98ad88" in l or "0x98ad88" in l for l in w1))
+    a2 = (any("WORD PTR" in l and "0x933282" in l and l.startswith("movsx") for l in w2)
+          and any("0x98adac" in l for l in w2))
+    W("T2b pinned-chain shapes: 0x4bdec4=%s 0x5ab3a2=%s (type rec field +0x24 read)"
+      % (a1, a2))
+
     # ---- T3 the 67-record census ----
     nband = [u for u in punits if u["t"] >= SV.UNIT_TYPE_BAND]
     nong = [u for u in punits if u["t"] < SV.UNIT_TYPE_BAND]
     nmap = {t: n for (t, n) in named}
     for u in punits:
         W("T3 %2d off=%d x=%5d y=%5d +10=%4d band=%d name=%-22s own=%2d band==own=%s "
-          "in-grid=%s" % (u["i"], u["off"], u["x"], u["y"], u["t"], u["t"] // BAND,
-                          nmap.get(u["t"], "?"), u["own"], u["t"] // BAND == u["own"],
+          "in-grid=%s" % (u["i"], u["off"], u["x"], u["y"], u["t"], band_of(u["t"]),
+                          nmap.get(u["t"], "?"), owner_of(u, dprim),
+                          band_of(u["t"]) == owner_of(u, dprim),
                           u["x"] < prim.width and u["y"] < prim.height))
     hits_named = sum(1 for u in punits if u["t"] in nmap)
-    agree = [u for u in nband if u["t"] // BAND == u["own"]]
+    agree = [u for u in nband if band_of(u["t"]) == owner_of(u, dprim)]
     oob = [u for u in punits if not (u["x"] < prim.width and u["y"] < prim.height)]
     W("T3b n=%d band=%d non-band=%d band==owner=%d/%d named-hit=%d/%d out-of-grid=%d "
       "band0-only-for-non-band=%s distinct-owners(nongroup)=%d" %
       (len(punits), len(nband), len(nong), len(agree), len(nband), hits_named,
        len(punits), len(oob), all(u["t"] < BAND for u in nong),
-       len({u["own"] for u in nong})))
+       len({owner_of(u, dprim) for u in nong})))
     W("T3c band-value histogram %s" % ({v: sum(1 for u in punits if u["t"] == v)
                                         for v in sorted({u["t"] for u in nband})}))
 
@@ -310,18 +363,20 @@ def main():
     nd, runs = poke_runs(a, b, prim.units_off)
     inarr = [r for r in runs if r["inarr"]]
     marks = [r["val"] for r in runs]
-    marker_ok = all(v is not None and (v >> 8) == 0xC0DE00 for v in marks)
-    seq = [v & 0xFF for v in marks if v is not None]
+    marker_ok = all((v >> 8) == 0xC0DE00 for v in marks)
+    seq = [v & 0xFF for v in marks]
+    stride_ok = all(runs[i + 1]["lo"] - runs[i]["lo"] == 128 for i in range(len(runs) - 1))
+    cover_ok = all(r["covered"] for r in runs)
     sm, srows = layout[POKED][0], type_section(POKED)[3]
     soob = [u for u in srows if not (u["x"] < sm.width and u["y"] < sm.height)]
-    poked_recs = sorted({r["rec"] for r in inarr})
-    W("T4 m54b->m113map differing bytes=%d runs=%d all-marker(0xc0de00NN)=%s seq=%s "
-      "inside-unit-array=%d recs=%s" % (nd, len(runs), marker_ok, seq, len(inarr),
-                                        poked_recs))
+    poked_recs = sorted({r for w in runs for r in w["recs"]})
+    W("T4 m54b->m113map differing bytes=%d windows=%d all-marker(0xc0de00NN)=%s "
+      "seq=%s stride128=%s covered=%s windows-in-unit-array=%d records-touched=%s" %
+      (nd, len(runs), marker_ok, seq, stride_ok, cover_ok, len(inarr), poked_recs))
     for r in inarr:
-        W("T4  foff=%d rec=%d field=+%d val=0x%08x m54b=%s m113=%s" %
-          (r["lo"], r["rec"], r["field"], r["val"],
-           a[r["lo"]:r["hi"] + 1].hex(), b[r["lo"]:r["hi"] + 1].hex()))
+        W("T4  foff=%d recs=%s m54b=0x%08x m113=0x%08x ndiff=%d fields=%s" %
+          (r["lo"], r["recs"], r["oval"], r["val"], r["ndiff"],
+           ["%d+%d" % (rec, f) for (_i, rec, f) in r["bytes"]]))
     W("T4b m113map out-of-grid records=%s subset-of-poked=%s" %
       (sorted(u["i"] for u in soob),
        set(u["i"] for u in soob) <= set(poked_recs)))
@@ -333,8 +388,8 @@ def main():
     def isjump(mn):
         return mn.startswith("j") and mn not in ("jmp",) or mn == "jmp"
     jumps = [(ad, mn, t) for (ad, mn, t) in body if isjump(mn)]
-    win_lo = ENTRY if ALGO == "4" else ENTRY
-    pre = [j for j in jumps if j[0] < STORE_X]
+    # ALGO=4 mutant: treat EVERY branch in the function as a guard on the store
+    pre = jumps if ALGO == "4" else [j for j in jumps if j[0] < STORE_X]
     tgt_in = []
     for (ad, mn, t) in jumps:
         m = re.search(r"0x([0-9a-f]+)", t)
@@ -387,50 +442,63 @@ def main():
                    + 3584 for p in SAVES),
          "type array at count+4+len+3584 on 4/4 saves, 4096-B gap, closes=%s" %
          [layout[p][0].closes for p in SAVES])
-    gate("G2", len(sites) >= 2 and any(a == 0x4bdec4 for (a, m, b) in sites)
-         and any(a == 0x4bded1 or fn_of(fs, a) == "FUN_004bdce0" for (a, m, b) in sites)
-         and sum(1 for (a, m, b) in sites if fn_of(fs, a) == "FUN_005ab320") >= 1,
-         "chain sites=%d (pinned 0x4bdec4 unit->type, 0x%x in unit_set_position); "
-         "+10 refs=%d" % (len(sites), MOVEX_SITE, n_read))
+    gate("G2", len(sites) == N_CHAIN and n_read == N_READ and a1 and a2
+         and any(a == ANCHOR_READ for (a, m, b) in sites)
+         and any(a == MOVEX_SITE for (a, m, b) in sites)
+         and all(b.startswith("0x98ad") for (a, m, b) in sites),
+         "chain sites=%d (pinned %d), +10 word refs=%d (pinned %d), pinned at 0x%x "
+         "(unit idx->type rec) and 0x%x (unit_set_position -> type+0x24); shapes=%s/%s" %
+         (len(sites), N_CHAIN, n_read, N_READ, ANCHOR_READ, MOVEX_SITE, a1, a2))
     gate("G3", len(punits) == 67 and len(nband) == 25 and len(nong) == 42
          and len(agree) == 25 and hits_named == 67 and len(oob) == 0
          and all(u["t"] < BAND for u in nong),
          "67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all band0")
     gate("G4", len(named) == 32 and len(bands.get(0, [])) == 14
-         and len([t for t in bit2.get(1, []) if t >= BAND]) == 18
-         and len([t for t in bit2.get(0, []) if t < BAND]) == 14,
-         "32 named = 14 band0 (+0x30 bit2 clear) + 18 faction-band (bit2 set)")
+         and len([t for t in ff2c.get(True, []) if t < BAND]) == 14
+         and len([t for t in ff2c.get(True, []) if t >= BAND]) == 0
+         and len(bit2.get(1, [])) == 12 and len(bit2.get(0, [])) == 20,
+         "32 named = 14 band0 + 18 faction-band; type byte +0x2d==0xff exactly on the "
+         "14 band0 slots (0 of the 18); +0x30 bit2 NOT a band marker (12/20)")
     gate("G5", (pfa, pfb, pfc) == (67, 67, 67)
-         and layout[POKED][3] == 67 and layout[POKED][4] == 54
+         and layout[POKED][3] == 67 and layout[POKED][4] == 49
          and all(layout[p][3] == layout[p][4] for p in SAVES if p != POKED),
-         "exemption is load-bearing ONLY on m113map: 67 vs 54; 3/4 saves agree")
-    gate("G6", len(runs) == 21 and marker_ok and seq == list(range(1, 22))
-         and len(inarr) == 14 and 12 in poked_recs and 2 in poked_recs
-         and set(u["i"] for u in soob) <= set(poked_recs),
-         "21 markers 0xc0de0001..0xc0de0015 (14 in the unit array); m113's "
-         "out-of-grid set %s is a subset of poked %s" %
+         "exemption is load-bearing ONLY on m113map: 67 vs 49; 3/4 saves agree "
+         "(the type-sound predicate C matches B on 4/4)")
+    gate("G6", len(runs) == 20 and marker_ok and seq == list(range(1, 21))
+         and stride_ok and cover_ok and len(inarr) == 13 and 12 in poked_recs
+         and 17 in poked_recs and set(u["i"] for u in soob) <= set(poked_recs),
+         "20 markers 0xc0de0001..0xc0de0014, stride 128, all diffs covered, 13 "
+         "windows in the unit array touching 14 records; m113's out-of-grid set %s "
+         "is a subset of the poked records %s" %
          (sorted(u["i"] for u in soob), poked_recs))
-    gate("G7", len(pre) == 0 and not tgt_in and len(st_x) == 1 and len(st_y) == 1,
+    gate("G7", len(pre) == 0 and not tgt_in and len(st_x) == 1 and len(st_y) == 1
+         and "[esi+0x933278]" in st_x[0][1] and "[esi+0x93327a]" in st_y[0][1]
+         and st_x[0][0] == STORE_X and st_y[0][0] == STORE_Y,
          "no branch on the entry path before the +0/+2 stores of unit_set_position "
-         "(jumps in body=%d, none below %s; no jump targets inside)" %
-         (len(jumps), hex(STORE_X)))
+         "(jumps in body=%d, none below %s; no jump target inside; stores pinned at "
+         "%s/%s)" % (len(jumps), hex(STORE_X), hex(STORE_X), hex(STORE_Y)))
     gate("G8", all(set(bands.get(b, [])) <= set(M80_LIVE_BANDS[b]) for b in bands)
          and set(bands.get(5, [])) == set(M80_LIVE_BANDS[5]) - {324, 325},
          "save's named set == M80's LIVE census minus the 2 records M80 itself "
          "created (324/325)")
+    import math
+    p_named = (len(named) / float(TYPE_SLOTS)) ** len(punits)
+    logp = math.log10(p_named) if p_named > 0 else -999
+    gate("G11", hits_named == len(punits) and logp < -30,
+         "67/67 records hit a NAMED type slot out of density 32/512: chance of that "
+         "by coincidence = 10^%.1f (a flag-word or junk-field reading has no way to "
+         "pick the 6%% of the array that carries names)" % logp)
     gate("G9", (not R1) and (not R2) and (not R3) and (not R4),
          "4 rivals all False (R2 AND of band values=%d; R3 differing saves=%s)" %
          (common_bit, sorted(poked_set)))
-    detail = "\n".join(l for l in out if l.startswith(("T0", "T1", "T2", "T3", "T4",
-                                                       "T5", "T6", "T7"))
-                       and not l.startswith("T3 2") and not l.startswith("T3 1"))
+    detail = "\n".join(l for l in out if l.startswith("T"))
     dig = hashlib.sha256(detail.encode()).hexdigest()[:16]
     W("DIGEST %s" % dig)
-    pin = os.environ.get("M327_PIN")
-    if pin:
-        ok = (dig == pin)
-        W("G10 %s digest==M327_PIN %s measured=%s" % ("PASS" if ok else "FAIL", pin, dig))
-        G.append(("G10", ok, "pin"))
+    pin = os.environ.get("M327_PIN", PIN)
+    ok = (dig == pin)
+    G.append(("G10", ok, "digest==PIN"))
+    W("G10 %s digest==PIN %s measured=%s (any drift in the measured rows reddens this)"
+      % ("PASS" if ok else "FAIL", pin, dig))
     n = sum(1 for _x, c, _d in G if c)
     W("== M327: %d/%d ==" % (n, len(G)))
     txt = "\n".join(out) + "\n"
