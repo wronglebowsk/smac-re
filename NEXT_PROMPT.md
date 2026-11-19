@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M318 done; track ANALYSE (since B24) - pick (v) next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M319 done; track ANALYSE (since B24) - pick (vi) next; the next BUILD is B25, whose spine text is NOT authored yet; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -62,18 +62,23 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
 collision-check + worktree FIRST).
-- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M318 + B1-B24 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M319 + B1-B24 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
-  `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
+  `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  CLOSED (s278): pick (i') NAME THE EVENTS - the one interaction band `[0x50bb20,0x5175b4)` + its two pumps;
-  detail VERBATIM at `docs/pick-archive.md:963` §trim-s292 (a), full law `NAMED ## M313`.
-  CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass. NAMED ## M317.
-  CLOSED (s289): pick (iv) pair = 4e8d60 unit-support census + 4e78e0 pane refresh. NAMED ## M318.
-  OPEN PICK after M318: (v) the 8 memo sites with NO local dedup guard - census their callers and
-  ask whether the guard is hoisted there (M315 pinned 4/12 guarded, 8/12 unguarded).
-  Lists live in NAMED ## M310 / ## M313 / ## M314 / ## M315 / ## M316, not here.**
+  CLOSED (s293): pick (v) = M319 - the guard is NOT hoisted. Memo has 6 read/test instrs
+  image-wide in 5 funcs, readers(5) subset writers(15); the 8 unguarded sites have 4 nameable
+  owners + 8 direct callers, 0/9 CFG arrivals memo-tested, and the only memo-reading caller
+  (FUN_004f5a70) is itself an owner, so its read is its OWN guard; G7 is the classifier's
+  positive control. NAMED ## M319 (7/7, digest 459f47e3178f439d, 12/12+1 NO-OP, selftest 4/4).
+  OPEN PICK after M319: (vi) NAME the two still-unnamed memo-site owners FUN_004ee410 (sites
+  0x4ee6c9/0x4ee883, caller FUN_004f5a70) and FUN_004f41f0 (sites 0x4f44a8/0x4f455d, callers
+  FUN_00416ef0/FUN_00416f60/FUN_0041a8f0/FUN_004f5a70): what each DOES, and what the shared
+  arrival test `BYTE PTR [eax+0x38],0x40` (3 of the 9) gates. Sites/owners/callers/arrivals
+  are printed at `evidence/m319_guard_hoist.txt:24-52`; the 3rd owner FUN_004e47d0 is already
+  the FOUNDER (NAMED ## M282). No box time.
+  Lists live in NAMED ## M310-M319, not here.**
     READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
   `instrument-laws.md` + §CHAIN-PICKS.
 ## LIVE FACTS / KIT

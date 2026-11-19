@@ -1045,6 +1045,16 @@ purely the instrument's:
   the fold's read-side seed copy - harmless, because the driver's per-turn write already re-composed the record
   from the container's bytes; the write-side anchor is the one that bites). (4) CRASH -> BAD by default, since
   a dead mutant cannot score gates; the ONLY legal crash is a DECLARED one, matched on message text.
+- A CRASH raised by your OWN census plumbing is a defect in the instrument, not a mutant: guard the container
+  lookup so the regression COUNTS, PRINTS and reddens a GATE. M319's MU6 (drop the owner containment bound) died
+  with a KeyError on pass 1; with `if c not in a2b: count, print the span, skip` it reddens G4 alone and prints
+  `store 0x4f3f7f ... SPAN MISMATCH` - the number survives the defect. (M319)
+- THE HARNESS IS A CLAIM TOO, so it gets its own `--selftest`: factor scoring into ONE `verdict(want, rc, fails)`
+  shared by the sweep and the selftest, then perturb only the DECLARATION and require every perturbation to be
+  REJECTED - declare-EMPTY (the unfilled-set pass-1 state), declare-SUPERSET (an extra gate nobody reddens), and
+  gate-DECLARE a measured NO-OP (claim a bite the image does not produce). For CODE mutants the instrument must
+  PRINT `M319_PATCH: k/n patches applied`; a patch aimed at an address no parsed instruction owns reports 0/n and
+  is vacuous - assert k == n == len(specs), and probe it with a never-parsed address. (M319, 4/4)
 - Declared-crash lesson (B24 MU8): `pos=False` looked like "address my record by tile" but the engine fell back
   to a DIFFERENT rung's locator and died on a tile absent from the save - a crash that says nothing about the
   claim. Find the code path that actually implements the rival law (here `mode="locate"` ->
@@ -1072,7 +1082,8 @@ purely the instrument's:
   a VERIFIED claim no gate read (source-only region pin, constant-compare caller check, unpinned filter/clamp
   conditions, reach measured to the wrong call, a digest the instrument never computed). LAW: every VERIFIED row
   in the NAMED block names the mutation that reddens it; a claim with no mutant is INFERRED/OPEN, or gets a pin
-  + mutant BEFORE submit. Check it mechanically at close: grep the new block's V rows against the harness ids.
+  + mutant BEFORE submit. Check it mechanically at close: `scripts/review_lint.py --id <id>` (V rows name existing mutants
+  that touch instrument bytes; digests printed in the row's cited evidence; cites lined).
 - Mutate the ALGORITHM, not just the bytes. Instruction/data mutants cannot catch a tracer that walks from the
   wrong position: M317's call-site def-walk borrowed post-push reloads and INVENTED a decode (p2's source and a
   computed prio), and every byte-mutant stayed green because the bytes were fine. The fix's gate is a mutant

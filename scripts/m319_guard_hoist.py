@@ -61,12 +61,19 @@ def main():
     # M319_PATCH="addr|mn ops;addr|mn ops" rewrites PARSED INSTRUCTIONS before any measurement,
     # so the mutation harness can falsify a guard, a memo read or an arrival test by changing the
     # CODE, never by changing an expected count (the M315 #301 review law).
-    for spec in [s for s in os.environ.get("M319_PATCH", "").split(";") if s.strip()]:
+    specs = [s for s in os.environ.get("M319_PATCH", "").split(";") if s.strip()]
+    applied = []
+    for spec in specs:
         aa, text = spec.split("|", 1)
         a = int(aa, 16)
         if a in ins:
             mn, _, ops = text.strip().partition(" ")
             ins[a] = (mn, ops)
+            applied.append(aa)
+    if specs:
+        # PRINT the contact proof: a patch aimed at an address the parse never produced
+        # applies to NOTHING, and a vacuous code mutant is not a mutant (TRAP 24).
+        print("-- M319_PATCH: %d/%d patches applied %s --" % (len(applied), len(specs), applied))
     E._SPANS = E.load_spans()
     funcs = []
     with open(IDX) as f:

@@ -1,4 +1,5 @@
 OK   declare-EMPTY for MU9_classifier_blind_to_copy: real=['G7'] perturbed=[] measured_gates=['G7'] accepted=False
 OK   declare-SUPERSET for MU1_pair_reach_16: real=['G1', 'G7'] perturbed=['G1', 'G2', 'G7'] measured_gates=['G1', 'G7'] accepted=False
 OK   gate-DECLARE the NO-OP for MU8_thunk_resolve_off: real=NO-OP(thunk-following is inert on THIS image: all 9 call arrivals of the unguarded owners resolve directly, so no gate's printed number moves) perturbed=['G1'] measured_gates=[] accepted=False
-== m319-mutate selftest: 3/3 declared-set perturbations reddened the harness ==
+OK   P4 declare-CONTACT for a code mutant at a never-parsed address: report=M319_PATCH: 0/1 patches applied accepted=False
+== m319-mutate selftest: 4/4 perturbations (3 declared-set + 1 contact) reddened the harness ==
