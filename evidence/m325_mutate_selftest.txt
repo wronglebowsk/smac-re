@@ -1,0 +1,6 @@
+== M325 mutate selftest ==
+  PASS S1 bad-addr rejected
+  PASS S2 equal-patch rejected
+  PASS S3 empty-patch rejected
+  PASS S4 pe-patch live
+== selftest: 4/4 ==

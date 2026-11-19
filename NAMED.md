@@ -1294,6 +1294,18 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | OPEN: game nouns; 47 whole-dword field stores untraced to sources | - | lead |
 
 22/22 mutants `evidence/m321_mutate.txt:24`; digest `f304cf871a971a3d` `m321_memo_owners.txt:84`.
+## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
+
+| claim | evidence | conf |
+|---|---|---|
+| 234 disp hits (54W/180R; 0 ABS/+220/sub) +30seeds->20regW/7regR; 74sites/34owners; 45P/29U | G1-G3 `evidence/m325_block220_census.txt:289-291` | V MU2-4/14-17/20/22/29/30 |
+| 51f320: 16 st/0 str/0 blk; ROUND@51f53c YEAR@51f54f | G4 `:292` | V MU1/20/21 |
+| ENERGY: EDITORENERGY@68c938: field<-g999fa4@4e0336; caps 9999999/999999999/99999, -1000@5085c0, reset0@59eef3 | G3/G5 `:291,293` | V MU5-8/23/26/27 |
+| MIN derived (jle-skip@44262b); g999fa4=cheat-chain value (parse INFERRED); EDITORYEAR 4e0350 round=max(1,·-2100) | G6 `:294` | V MU9-13/18/22/25/28 |
+| save blkA@32c [10,28,112,69,229,60,102,37] <2100; R1-3 DEAD | G7/G8 `:295-296` | V MU18/19/20/25 |
+| ACCEPT 8/8 digest a623181d7fb68263 x2 (`:297`); 30/30 (1 NO-OP) digest 97c193e12593c95e (`evidence/m325_mutate.txt:34`); ST 4/4 | cite | V |
+| OPEN: +224/+300; MIN consumers; 920774; 519b00; 673b60; T9 | - | lead |
+
 ## M324 (s296-chain2, STATIC 8/8) - ROUND RAW-carry; re-derive DEAD
 
 | claim | evidence | conf |
@@ -1301,11 +1313,11 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | hdr RW 59688a/596883->985ab8 sz31c; ROUND=blob+44 YEAR+48; sole imm carrier (heap decl) | G1/G2 `evidence/m324_save_carry.txt:82-83,63` | V MU1/MU2/MU3/MU24 |
 | blk+220 8/8: 596a91->94d430 sz105e0=8*20bc; fac1436 596ed6->927590 sz2ce0 | G1/G3 `:82,84` | V MU4/MU4b/MU5 |
 | pfx12; @50=50 @54=2150 @44=67 @48=18 @310=9; sha=M302 | G5 `:86` | V MU8/MU9 |
-| g999fa4 W={442642,626fd7}; fold [this+a24]*20bc+[94d650] MAX (jle skips store); uncarried; 0call/0AT | G4 `:85,70-78` | V MU6/MU14/MU16/MU21 |
+| g999fa4 W={442642,626fd7}; fold [this+a24]*20bc+[94d650] ~~MAX~~ **MIN** (jle skips store; direction RETRACTED by M325 G6); uncarried; 0call/0AT; =cheat-parsed number (M325) | G4 `:85,70-78`; M325 `:294` | V MU6/MU14/MU16/MU21; M325 MU9-13 |
 | direct closure 440, 0 writers; 4e0350 callers {514ecf,517e3a} out; mode0; entry-first; M272 inv9 | G6/G7 `:87-88,79` | V MU7/MU20/MU22 |
 | R1/R2 DEAD; esi0@5a0fd3 | G8 `:89` | V MU7/MU8/MU17/MU19 |
 | ACCEPT 8/8 digest 700b4133f62bd714 x2 (`:100`,`_rerun.txt:100`); 28/28+1 5c3fa2bceb490009 (`m324_mutate.txt:29-30`) | cite | V |
-| OPEN: g999fa4/64c360; block+220 noun; feed arrival; byte-swap/heap | - | lead |
+| OPEN: ~~block+220 noun~~ ANSWERED M325 (ENERGY); ~~g999fa4 noun~~ cheat number M325 (64c360 thunk body open); feed arrival (.rdata 0x673b60 entry, M325); byte-swap/heap | - | lead |
 
 ## M323 (s295-chain2, STATIC, 13/13, 31/31+1) - ds:0x985afc=ROUND counter; year=round+2100
 
@@ -1317,7 +1329,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | M320 ==0@59f1a0; M305 &3==bl(1)@51f711 def-set pinned; M317 >75@55840d; M177 age<16 | G5/G8 `:527,530,438,502` | V MU5/MU14/MU15/MU16/MU21/MU22/MU25/MU29 |
 | live round=50/year=2150; rivals dead | G7/R1-R3 `:529,533-535` | V MU7/MU24; R1 MU10/MU17, R2 MU13/MU18/MU23, R3 MU12/MU13/MU23 |
 | ACCEPT 13/13 digest 136841406b5bee5b x2 (`evidence/m323_round_census.txt:536`); harness 31/31+1 a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32`) | as cited | V |
-| OPEN: rand-start noun; g999fa4 (writers pinned M324); ~~save-carry~~ ANSWERED M324 (raw header blob); resolver linear-static | - | lead |
+| OPEN: rand-start noun; ~~g999fa4~~ cheat-parsed number (M325; writers M324); ~~save-carry~~ ANSWERED M324 (raw header blob); 4e0350 = EDITORYEAR cheat path (M325); resolver linear-static | - | lead |
 
 ## M320 (s294-chain2, STATIC, 12/12, 26/26+1) - siblings: 128-region ladder, 512 arrays, reset/rebuild
 
