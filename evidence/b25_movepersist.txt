@@ -35,7 +35,7 @@ wrapskip          0                 268               27                37      
 budget3           0                 268               0                 0                 67                67                268               63                2154            
 lift              0                 268               0                 0                 67                67                0                 62                2150            
 -- table F: B7's own slice on the same inputs, and where ITS modulus put them --
-B7 accepted per round [134, 134, 134, 134] / refused [67, 67, 67, 67] (turns=4, presses=3, map-file width 80); container grid 64x64; B7 final tiles OUTSIDE that grid: 10 of 67 units [9, 16, 44, 46, 51, 56, 58, 60, 61, 62]
+B7 accepted per round [134, 134, 134, 134] / refused [67, 67, 67, 67] (turns=4, presses=3, map-file width 80); container grid 64x64; B7 final tiles OUTSIDE that grid: 10 of 67 units [9, 16, 44, 46, 51, 56, 58, 60, 61, 62] (at B7's OWN accepted setting, --turns 5: accepted [134, 134, 134, 134, 134], 4 of 67 units outside: [9, 16, 28, 56])
 -- table G: determinism --
 container digest 6a8ed220f489b12c | rerun digest 6a8ed220f489b12c | equal=True | final sha 5b352bbba6b636ed / 5b352bbba6b636ed | images equal=True
 digest(B25 measured rows) 901a286332960a10

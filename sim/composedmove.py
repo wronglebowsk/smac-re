@@ -320,11 +320,13 @@ def render(m):
         L.append("  ".join("%-16s" % s[k2] for k2 in SIGKEYS))
     L.append("-- table F: B7's own slice on the same inputs, and where ITS modulus put them --")
     L.append("B7 accepted per round %s / refused %s (turns=%d, presses=%d, map-file width %d); "
-             "container grid %dx%d; B7 final tiles OUTSIDE that grid: %d of %d units %s"
+             "container grid %dx%d; B7 final tiles OUTSIDE that grid: %d of %d units %s "
+             "(at B7's OWN accepted setting, --turns 5: accepted %s, %d of %d units outside: %s)"
              % ([m["b7"][r] for r in sorted(m["b7"])],
                 [m["b7_ref"][r] for r in sorted(m["b7"])], m["b7_turns"], m["presses"],
                 c["mp_width"], m["W_cont"], m["H_cont"], len(m["b7_out"]), c["n"],
-                m["b7_out"][:12]))
+                m["b7_out"][:12], [m["b7_5"][r] for r in sorted(m["b7_5"])],
+                len(m["b7_5_out"]), c["n"], m["b7_5_out"][:12]))
     L.append("-- table G: determinism --")
     L.append("container digest %s | rerun digest %s | equal=%s | final sha %s / %s | "
              "images equal=%s" % (c["digest"], runs["rerun"]["digest"],

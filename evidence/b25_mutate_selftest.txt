@@ -1,4 +1,4 @@
--- harness 2026-11-19 16:26:45 UTC --
+-- harness 2026-11-19 16:34:42 UTC --
 == B25 harness self-test: 4 PERTURBED declarations, every one must be REJECTED ==
 MU1    the falsifier never fires (no  [SELFTEST: a dropped  declared=G6                         measured=G6,G8                  BAD  (2/9 gates red)
 MU1    the falsifier never fires (no  [SELFTEST: an added g declared=G1,G6,G8                   measured=G6,G8                  BAD  (2/9 gates red)

@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B24 MERGED 9/9+8/8; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B24 + M54A-M319 done; track ANALYSE (since B24) - pick (vi) next; the next BUILD is B25, spine text NOT authored; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B25 BUILT 9/9+11/11; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M319 done; next BUILD is B26, spine text NOT authored; analysis pick (vi) open; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -24,17 +24,18 @@ Note (M319): `scripts/s292_cap_check.py` C1/C2 are ONE-SHOT for #316's split - t
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED**
-(per-rung cmds: `NAMED.md` §CHAIN-BUILDS). Next build **B25, queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at
-B24, so B25's rung text must be written BEFORE probing (one milestone = spine section + instrument).
-B24 MERGED as #307 (main af38858; `NAMED ## B24` governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness
-**9/9 scored + 1 declared NO-OP** (MU9 labels-only = decoration). Its spine text (the compaction RETRACT, the
-LEDGER-POSITION addressing law, the s287 harness laws, the two retired degenerate rivals) is VERBATIM at
-`docs/pick-archive.md:963` §trim-s292 (a) — that copy is the ONLY place the sentence "declared gate-sets are
-MEASURED, not authored" survives; the sibling laws are independently in the skill at `skill/SKILL.md:319-320`,
-`skill/references/instrument-laws.md:1031` (§four outcomes, s287/B24), `skill/references/verify-outcome.md:237`.
-`pos=False` in `composedturn.fold` is NOT tile-addressing. M316 (#305) + M315 (#301) summaries: same archive
-section; `NAMED ## M316` / `## M315` govern.
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED, B25
+in review this fire** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). Next build **B26,
+queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at B25, so B26's rung text must be written BEFORE probing (one
+milestone = spine section + instrument). B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, digest
+901a286332960a10, `evidence/b25_selftest.txt:41`) + harness **11/11 scored + 2 declared NO-OP** (`:16`), `--selftest`
+4/4. Its law, paid in a RETRACTION: **the CONTAINER owns the coordinate space** - `m54b_clean.SAV` is 64x64 by its own
+header, `planet.MP` is 80x80, and B7 wrapped x by the FILE (corrected in place at `NAMED ## B7`); MU8/MU12/MU13 redden
+G5 if either grid is judged against the wrong one. B24's spine detail (the compaction RETRACT, the LEDGER-POSITION
+addressing law, the two retired degenerate rivals) is VERBATIM at `docs/pick-archive.md:963` §trim-s292 (a) - the ONLY
+place "declared gate-sets are MEASURED, not authored" survives; sibling laws: `skill/SKILL.md:319-320`,
+`references/instrument-laws.md:1031` (§four outcomes), `verify-outcome.md:237`. `pos=False` in `composedturn.fold` is
+NOT tile-addressing. M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
 
 ## THE LEDGER
 

@@ -82,6 +82,15 @@ MUTANTS = [
      """            if wt[i][0] >= mp.width or wt[i][1] >= mp.height:
                 out_written.append((r, i))""",
      {"G5", "G8"}),
+    ("MU13", "B7's cross-check counts tiles outside the MAP FILE's grid, not the container's", CM,
+     """    b7_out = sorted(int(i) for i, v in b7_final.items()
+                    if v[0] >= sv0.width or v[1] >= sv0.height)""",
+     """    b7_out = sorted(int(i) for i, v in b7_final.items()
+                    if v[0] >= 80 or v[1] >= 80)""",
+     # MEASURED {G5}: B7 wrapped x by the map file's own width, so judged against THAT grid it
+     # leaves nothing outside - the "B7 ended outside the container" finding is carried by the
+     # container's grid, and this is the mutant that says so.
+     {"G5"}),
     ("MU10", "G4's read-back compares against the model instead of the container head", CM,
      """            readback.append(1 if start[i] == head[i] else 0)""",
      """            readback.append(1 if start[i] == model[i] else 0)""",

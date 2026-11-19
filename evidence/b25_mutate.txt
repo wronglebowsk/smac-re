@@ -1,5 +1,5 @@
-== B25 mutation harness: 12 mutants (each must match its declared effect: an EXACT gate set, a declared message-matched CRASH, or a declared NO-OP) ==
--- harness 2026-11-19 16:25:45 UTC --
+== B25 mutation harness: 13 mutants (each must match its declared effect: an EXACT gate set, a declared message-matched CRASH, or a declared NO-OP) ==
+-- harness 2026-11-19 16:30:47 UTC --
 MU1    the falsifier never fires (no image-only poison)     declared=G6,G8                      measured=G6,G8                  OK  (2/9 gates red)
 MU2    the rung reads its start tiles from the MODEL (B7's  declared=G4,G6,G8                   measured=G4,G6,G8               OK  (3/9 gates red)
 MU3    the container is never refreshed between rounds (com declared=G2,G6,G8                   measured=G2,G6,G8               OK  (3/9 gates red)
@@ -9,7 +9,8 @@ MU6    the MP budget is 3, not 6 (one accepted press per ro declared=G1,G4,G8   
 MU7    the falsifier poisons the MODEL instead of the CONTA declared=G6,G8                      measured=G6,G8                  OK  (2/9 gates red)
 MU8    the READ side's out-of-grid test uses the map file's declared=G5,G8                      measured=G5,G8                  OK  (2/9 gates red)
 MU12   the WRITE side's out-of-grid test uses the map file' declared=G5,G8                      measured=G5,G8                  OK  (2/9 gates red)
+MU13   B7's cross-check counts tiles outside the MAP FILE's declared=G5                         measured=G5                     OK  (1/9 gates red)
 MU10   G4's read-back compares against the model instead of declared=G4,G8                      measured=G4,G8                  OK  (2/9 gates red)
 MU11   the write-side out-of-grid arm counts each (round,un declared=NOOP                       measured=nothing                OK  (0/9 gates red [declared NO-OP: this half is decoration])
 MU9    labels only: the read source's name changes, no meas declared=NOOP                       measured=nothing                OK  (0/9 gates red [declared NO-OP: this half is decoration])
-== harness: 10/10 scored mutants matched their declared gate sets (+2 declared NO-OP: MU11,MU9) ==
+== harness: 11/11 scored mutants matched their declared gate sets (+2 declared NO-OP: MU11,MU9) ==

@@ -195,3 +195,43 @@ Older sessions: `docs/sessions/sessions-275-275.md` (1 sessions). Read it only w
 
 - #317 MERGED -> main `147e66a` (gate GREEN, `review_lint --id m319` PASS 7 V rows, review 1 P1 + 9 P2 triaged in one reply). Cursor rewritten for the next fire; `NAMED ## M319` gains a `lead` governance row saying the squash title's 459f47e3178f439d / 12-12+1 are the PRE-REVIEW harness and the ACCEPT row governs (same defect as M314's "20/20" note).
 - LAW RE-LEARNED: a meta/governance sentence in NAMED belongs at conf `lead`, not `V` - #318's own review returned 4 P1s on exactly that, because a `V` row must name a mutant that reddens it, and a process note has none.
+
+## Session 294 (2026-11-19, B25 BUILD - the MOVE leg made persistent; zero box)
+
+- Track said BUILD (last_build=B24) and `BUILD_SPINE.md` ENDED at B24, so the rung text was AUTHORED
+  FIRST (one milestone = spine section + instrument), then built. `sim/composedmove.py`, `--b25` relays.
+- ACCEPT `python3 -u -m sim.selftest --b25` -> **PASS B25: 9/9 gates**, digest **901a286332960a10**
+  (`evidence/b25_selftest.txt:41`, banner `:51`), second run byte-identical; `python3 -u -m
+  sim.composedmove` prints the SAME 9 gate lines (`evidence/b25_movepersist.txt`). HARNESS
+  `python3 -u scripts/b25_mutate.py` -> **11/11 scored mutants matched their declared gate sets + 2
+  declared NO-OP** (MU9 labels-only, MU11 multiset-only) (`evidence/b25_mutate.txt:16`); `--selftest`
+  -> **4/4 perturbed declarations REJECTED** (`evidence/b25_mutate_selftest.txt:9`).
+- ANSWER 1, the rung: the mover's start tile IS the container's. **268/268** (round,unit) reads equal
+  the container at the round head, **0** divergences, and the container still holds the SAVE's tile for
+  67 records in round 0 and **0** in every later round, so the read cannot be vacuous (G4 `:45`).
+  Rewriting unit 0's tile IN THE IMAGE ONLY at round 1 shifts its whole later trajectory by **39 mod
+  64** and it reaches the final container ([19,42] vs clean [44,42]); **0 of 67** other units move;
+  the model-fed and read-after-write movers rebuild the CLEAN image byte-for-byte - blindness proved,
+  not asserted (G6 `:47`, sightings `:21-23`). Footprint: **67** unit-array bytes == **67** tiles
+  written per round, all at record offset **+0** (x only), plus the **1-B** year step 2151->2154; the
+  final image is **68 B** from the save, **0 B** outside a modeled span (G2 `:43`, G7 `:48`).
+- ANSWER 2, a correction (§B7 patched in place): **`m54b_clean.SAV` is 64x64 by its own header** -
+  `scripts/decode_save.py --sections` prints "map header struct (64x64)" and grid 90,112 = 64*64*22 -
+  while `planet.MP` is 80x80 and no repo map is 64. B7 wrapped x by the MAP FILE's width. Run here as
+  a rival: **37** records land outside the container at the write and **27** come back as a later
+  read, and the parser's own `found_units` drops **67 -> 4** (G5 `:46`, rows `:33-34`). B7's own
+  4-round slice ends with **10 of 67** units outside the container grid (**4 of 67** at its accepted
+  --turns 5; the end-state count is sampling-dependent - the written/read-back counts are the
+  load-bearing ones, and MU13 reddens G5 if the cross-check is judged against the wrong grid).
+- MUTATION TAUGHT THIS ONE TOO (sets MEASURED, first declares wrong): MU3 (container never refreshed -
+  the defect this instrument HAD, caught by G2's byte-vs-tiles equality) {G2,G6,G8} not {G4,G6}; MU4
+  (tiles never reach the writer) {G2,G3,G4,G5,G6,G8} - G7 stays green honestly, the one unit byte left
+  is the FALSIFIER's own write and G7 counts modeled spans, not authors; MU8 was a NO-OP until the
+  read/write out-of-grid arms were SPLIT into separate counters (as one union the write arm subsumed
+  the read arm = decoration). G8 gained a `not_rival` clause so the rung cannot pass by quietly
+  becoming one of its rivals.
+- UNMODELED (declared in the spine text): MP/spent is model state, never persisted (B7's ASSUMED line
+  about the 0x51f730 per-round refresh unchanged); per-terrain cost and the second move's source (B5);
+  blocking/zone-of-control and every refusal cause but exhausted MP; y is never moved (dir=1, dy=0) so
+  the y-bound law is NOT exercised; WHICH unit the game moves is not claimed (the gesture hits every
+  unit, exactly as B7 declared). NEXT: B26, spine text NOT authored. #180 still stands (2/5).
