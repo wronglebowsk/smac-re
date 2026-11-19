@@ -1,29 +1,29 @@
 == M325 mutation harness ==
-BASELINE (8, 8) digest=12e8c53d2b88b5e3 rc=0
-  MU1   code     red=G4               declared=G4               OK digest=19e9890f99cf56c4
-  MU2   code     red=G1,G2,G3         declared=G1,G2,G3         OK digest=0c890eb3b3bb6b28
-  MU3   code     red=G3               declared=G3               OK digest=995e6c43f55032b3
-  MU4   code     red=G3               declared=G3               OK digest=995e6c43f55032b3
-  MU5   code     red=G5               declared=G5               OK digest=4614e98923c0ab48
-  MU6   code     red=G5               declared=G5               OK digest=13c79fea511deca6
-  MU7   code     red=G5               declared=G5               OK digest=a22ad8043e8d747c
-  MU8   code     red=G5               declared=G5               OK digest=2c288f4c5e6698f0
-  MU9   code     red=G6               declared=G6               OK digest=2268cf701113b8be
-  MU10  code     red=G1,G6            declared=G1,G6            OK digest=2577b972ca16915e
-  MU11  code     red=G6               declared=G6               OK digest=f3b414d089e95743
-  MU12  code     red=G6               declared=G6               OK digest=58e3146020da123e
-  MU13  code     red=G6               declared=G6               OK digest=f195bcd2fb0a919b
-  MU14  algo     red=G2,G3            declared=G2,G3            OK digest=a5b6013df2bf07d0
-  MU15  algo     red=G1,G2,G3         declared=G1,G2,G3         OK digest=1f988313453f4bf4
-  MU16  algo     red=G3               declared=G3               OK digest=382eae5b290d29fc
-  MU17  algo     red=G2,G3            declared=G2,G3            OK digest=e896383ff80df600
-  MU18  algo     red=G6,G8            declared=G6,G8            OK digest=68ba1fe6384b720d
-  MU19  savedata red=G7               declared=G7               OK digest=d805a97a40d19776
-  MU20  code     red=G1,G2,G3,G4,G8   declared=G1,G2,G3,G4,G8   OK digest=5c6126c4ca654b69
-  MU21  code     red=G4               declared=G4               OK digest=c4b34541532524e5
-  MU22  code     red=G1               declared=G1               OK digest=67997c665b7e7314
-  MU23  pe       red=G5               declared=G5               OK digest=58bf754811a1faee
-  MU24  pe       red=NO-OP            declared=NO-OP            OK digest=12e8c53d2b88b5e3
+BASELINE (8, 8) digest=7b1f0a2b3e031c22 rc=0
+  MU1   code     red=G4               declared=G4               OK digest=f8711cce047057f0
+  MU2   code     red=G1,G2,G3         declared=G1,G2,G3         OK digest=59f4377fb656aa38
+  MU3   code     red=G3               declared=G3               OK digest=e93f7090074f6908
+  MU4   code     red=G3               declared=G3               OK digest=e93f7090074f6908
+  MU5   code     red=G5               declared=G5               OK digest=cf8a3fbafd701639
+  MU6   code     red=G5               declared=G5               OK digest=23c6a97c0b0be8a2
+  MU7   code     red=G5               declared=G5               OK digest=614749fee3f57bd3
+  MU8   code     red=G5               declared=G5               OK digest=dc0767e6d071c882
+  MU9   code     red=G6               declared=G6               OK digest=308935d777151d8e
+  MU10  code     red=G1,G6            declared=G1,G6            OK digest=d608714dda6f4e07
+  MU11  code     red=G6               declared=G6               OK digest=2d50f332e2f8c9cd
+  MU12  code     red=G6               declared=G6               OK digest=6d7c900ffe86d2a4
+  MU13  code     red=G6               declared=G6               OK digest=6d14ffa7b51e1fab
+  MU14  algo     red=G2,G3            declared=G2,G3            OK digest=bb9b830c3cf916b7
+  MU15  algo     red=G1,G2,G3         declared=G1,G2,G3         OK digest=a2d1a07af2882a2d
+  MU16  algo     red=G3               declared=G3               OK digest=2e37116c400dfc3e
+  MU17  algo     red=G2,G3            declared=G2,G3            OK digest=7fa35f51e10af1c6
+  MU18  algo     red=G6,G8            declared=G6,G8            OK digest=ad5015ec5b30aa5c
+  MU19  savedata red=G7               declared=G7               OK digest=98e74d988ab45687
+  MU20  code     red=G1,G2,G3,G4,G8   declared=G1,G2,G3,G4,G8   OK digest=d4cce405848991aa
+  MU21  code     red=G4               declared=G4               OK digest=8d3aa58f82331403
+  MU22  code     red=G1,G6            declared=G1,G6            OK digest=b94712ad9e629ac1
+  MU23  pe       red=G5               declared=G5               OK digest=b810569e34458df0
+  MU24  pe       red=NO-OP            declared=NO-OP            OK digest=7b1f0a2b3e031c22
 HARNESS 23/23 scored OK, 1 NO-OP, 0 MISMATCH/CRASH
-DIGEST c0ecc0f9f5fd8da9
+DIGEST a8b2c42d9d3ee7f0
 == M325 mutate: 24/24 ==

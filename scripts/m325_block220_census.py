@@ -649,10 +649,21 @@ def main():
                   0x53801c, 0x53b794, 0x53b7a1, 0x53c65a, 0x53de13, 0x53de20,
                   0x53eab3, 0x540d20, 0x544410, 0x54441d, 0x547af3, 0x567080,
                   0x5936d3, 0x5a0144]
+    exp_wrsites = [
+        0x41a55d, 0x4295fe, 0x429628, 0x4d29f3, 0x4d2f71, 0x4e21fc, 0x4eec75,
+        0x4f4952, 0x4f497f, 0x4f4999, 0x4f4a0b, 0x4f5c8c, 0x506d2b, 0x5085c0,
+        0x5086e2, 0x50878c, 0x5087be, 0x51adf3, 0x51ae62, 0x520605, 0x520743,
+        0x520770, 0x5207d9, 0x5207ff, 0x520a09, 0x520b1c, 0x520b30, 0x536c45,
+        0x536c52, 0x53778b, 0x537798, 0x53800f, 0x53801c, 0x53b794, 0x53b7a1,
+        0x53c64d, 0x53c65a, 0x53de13, 0x53de20, 0x53eaa9, 0x53eab3, 0x540d20,
+        0x544410, 0x54441d, 0x546150, 0x547af3, 0x567080, 0x5936d3, 0x593f11,
+        0x59d0d8, 0x59eef3, 0x59f0b9, 0x5a0144, 0x5a28fa]
     gate("G2", sorted(x["a"] for x in wr_unprov) == exp_unprov
+         and wrsites == exp_wrsites
          and len(wowners) == 27 and len(writers) - len(wr_unprov) == 28,
-         "wr_unproven=%d (pinned list) proven=%d owners=%d" % (
-             len(wr_unprov), len(writers) - len(wr_unprov), len(wowners)))
+         "wr_unproven=%d (pinned list) proven=%d owners=%d sites-pinned=%d" % (
+             len(wr_unprov), len(writers) - len(wr_unprov), len(wowners),
+             len(exp_wrsites)))
     exp_regwr = [
         (0x40dd01, "eax", 0x40dd0a, 4, "ecx", "STRIDE"),
         (0x40dd60, "eax", 0x40dd70, 4, "ecx", "BLKCONST"),
@@ -681,11 +692,15 @@ def main():
              len(regwr), len(regrd), len(writers) + len(regwr), len(allwr_owners)))
     round_site = INS.get(0x51f53c)
     year_site = INS.get(0x51f54f)
+    exp_ts_sites = [0x51f324, 0x51f433, 0x51f4bf, 0x51f526, 0x51f53c, 0x51f54f,
+                    0x51f57e, 0x51f58e, 0x51f5a3, 0x51f5bf, 0x51f5c4, 0x51f68f,
+                    0x51f696, 0x51f6b5, 0x51f6ca, 0x51f6ec]
     gate("G4", len(ts) == 16 and len(tso) == 0 and len(blkstores) == 0
+         and sorted(a for a, _, _, _ in ts) == exp_ts_sites
          and round_site == ("mov", "ds:0x985afc,eax")
          and year_site == ("mov", "ds:0x985b00,eax"),
-         "stores=%d stringops=%d blkstores=%d round=%s year=%s" % (
-             len(ts), len(tso), len(blkstores), round_site, year_site))
+         "stores=%d stringops=%d blkstores=%d sites-pinned=%d round=%s year=%s" % (
+             len(ts), len(tso), len(blkstores), len(exp_ts_sites), round_site, year_site))
     caps = {"cap9999999": INS.get(0x5087ae), "cap999999999": INS.get(0x5a28e9),
             "cap99999": INS.get(0x56706b), "minus1000": INS.get(0x5085c0),
             "reset0": INS.get(0x59eef3), "reset0src": INS.get(0x59ee73),
@@ -706,6 +721,7 @@ def main():
     chain = {"parse_call": INS.get(0x626f67), "parse_je": INS.get(0x626f6e),
              "staging_push": INS.get(0x626fca), "thunk_call": INS.get(0x626fcf),
              "g999_store": INS.get(0x626fd7),
+             "feed_read2": INS.get(0x44263c),
              "year_sub": INS.get(0x4e0382), "year_cmp": INS.get(0x4e0384),
              "year_store": INS.get(0x4e0387), "year_floor": INS.get(0x4e038e)}
     gate("G6", fd == "MIN"
@@ -714,6 +730,7 @@ def main():
          and chain["staging_push"] == ("push", "0x99a01c")
          and chain["thunk_call"] == ("call", "0x64c460")
          and chain["g999_store"] == ("mov", "ds:0x999fa4,eax")
+         and chain["feed_read2"] == ("mov", "edx,DWORD PTR [ecx+0x94d650]")
          and chain["year_sub"] == ("sub", "eax,edx")
          and chain["year_cmp"] == ("cmp", "eax,0x1")
          and chain["year_store"] == ("mov", "ds:0x985afc,eax")

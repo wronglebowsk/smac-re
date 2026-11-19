@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # M325 mutation harness: every VERIFIED claim row names the mutant that reddens it.
-# 17 code mutants rewrite the DISASSEMBLY via M325_PATCH (turnfn ROUND/YEAR sites +
+# 16 code mutants rewrite the DISASSEMBLY via M325_PATCH (turnfn ROUND/YEAR sites +
 # a planted block store, writer disp, editor lea/store/push, clamp caps, -1000 imm,
 # reset-0 source, feed cmp/jle, cheat chain, pump caller, reader disp); 5 algorithm
 # mutants via M325_ALGO (1 provenance off, 2 disp-match widened, 3 forward-scan off,
@@ -44,7 +44,7 @@ MUTANTS = [
     ("MU19", "savedata", ("blk0+220", 0x32c + 0x220, 11), {"G7"}),
     ("MU20", "code", "0x51f324|mov DWORD PTR [ebx+0x94d650],eax", {"G1", "G2", "G3", "G4", "G8"}),
     ("MU21", "code", "0x51f54f|mov ds:0x985afc,eax", {"G4"}),
-    ("MU22", "code", "0x44263c|mov edx,DWORD PTR [ecx+0x94d654]", {"G1"}),
+    ("MU22", "code", "0x44263c|mov edx,DWORD PTR [ecx+0x94d654]", {"G1", "G6"}),
     ("MU23", "pe", "0x68c938|58", {"G5"}),
     ("MU24", "pe", "0x999fa8|00", set()),  # declared NO-OP: unrelated .data byte
 ]

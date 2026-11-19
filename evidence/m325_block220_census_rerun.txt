@@ -286,12 +286,12 @@ T6 feed direction=MIN shape=(('cmp', 'edx,DWORD PTR [ecx+0x94d650]'), ('jle', '0
 T7 callers 4e0260=['0x514ebf', '0x517e2c'] 4e0350=['0x514ecf', '0x517e3a'] owners=['FUN_00512b40', 'FUN_00516b80']
 T8 save: {'off': 812, 'vals': [10, 28, 112, 69, 229, 60, 102, 37], 'sha': '74d0f44ab9b9290b', 'size': 242539, 'notes': [], 'year': 2150, 'round': 50}
 G1 PASS hits=234 writers=54 readers=180 abs=0 disp220=0 sub=0 dw=234/234
-G2 PASS wr_unproven=26 (pinned list) proven=28 owners=27
+G2 PASS wr_unproven=26 (pinned list) proven=28 owners=27 sites-pinned=54
 G3 PASS regwr=20 (pinned) regrd=7 total-writer-sites=74 total-owners=34
-G4 PASS stores=16 stringops=0 blkstores=0 round=('mov', 'ds:0x985afc,eax') year=('mov', 'ds:0x985b00,eax')
+G4 PASS stores=16 stringops=0 blkstores=0 sites-pinned=16 round=('mov', 'ds:0x985afc,eax') year=('mov', 'ds:0x985b00,eax')
 G5 PASS strings={'0x68c938': b'EDITORENERGY', '0x68c948': b'EDITORYEAR', '0x672e38': b'VOTEFORME'} caps={'cap9999999': ('cmp', 'eax,0x98967f'), 'cap999999999': ('cmp', 'ecx,0x3b9ac9ff'), 'cap99999': ('push', '0x1869f'), 'minus1000': ('add', 'DWORD PTR [eax+0x94d650],0xfffffc18'), 'reset0': ('mov', 'DWORD PTR [esi+0x94d650],ebx'), 'reset0src': ('xor', 'ebx,ebx'), 'editorE_push': ('push', '0x68c938'), 'editorY_push': ('push', '0x68c948'), 'votefor_me_push': ('push', '0x672e38')}
-G6 PASS feed=MIN chain={'parse_call': ('call', '0x5f0583'), 'parse_je': ('je', '0x626f75'), 'staging_push': ('push', '0x99a01c'), 'thunk_call': ('call', '0x64c460'), 'g999_store': ('mov', 'ds:0x999fa4,eax'), 'year_sub': ('sub', 'eax,edx'), 'year_cmp': ('cmp', 'eax,0x1'), 'year_store': ('mov', 'ds:0x985afc,eax'), 'year_floor': ('mov', 'DWORD PTR ds:0x985afc,0x1')} callersE=['0x514ebf', '0x517e2c'] callersY=['0x514ecf', '0x517e3a']
+G6 PASS feed=MIN chain={'parse_call': ('call', '0x5f0583'), 'parse_je': ('je', '0x626f75'), 'staging_push': ('push', '0x99a01c'), 'thunk_call': ('call', '0x64c460'), 'g999_store': ('mov', 'ds:0x999fa4,eax'), 'feed_read2': ('mov', 'edx,DWORD PTR [ecx+0x94d650]'), 'year_sub': ('sub', 'eax,edx'), 'year_cmp': ('cmp', 'eax,0x1'), 'year_store': ('mov', 'ds:0x985afc,eax'), 'year_floor': ('mov', 'DWORD PTR ds:0x985afc,0x1')} callersE=['0x514ebf', '0x517e2c'] callersY=['0x514ecf', '0x517e3a']
 G7 PASS save={'off': 812, 'vals': [10, 28, 112, 69, 229, 60, 102, 37], 'sha': '74d0f44ab9b9290b', 'size': 242539, 'notes': [], 'year': 2150, 'round': 50}
 G8 PASS R1 turn-sets-field=False R2 year-copy=False R3 MAX-feed=False (all must be False)
-DIGEST 12e8c53d2b88b5e3
+DIGEST 7b1f0a2b3e031c22
 == M325: 8/8 ==
