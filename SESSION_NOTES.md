@@ -303,3 +303,40 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
 - OPEN: 47 whole-dword field stores (record view) untraced to sources; the game nouns; 14/21 extraction
   lanes lack the `or al` arm; back_def's clobber rule reddens NOTHING here -> MU4 declared NO-OP (an empty
   set IS the asserted tripwire).
+## Session 295-chain2 (2026-11-19, M323 CLOSED, chain 2 second fire, STATIC: ds:0x985afc = ROUND counter)
+
+- Chain 2 in wt-chain2 @ milestone/m323 (from main 53a2553); chain 1 owns main/sim/picks(vi)/(vii).
+- ANSWER: ds:0x985afc = global ROUND counter. 336 refs W5/T59/R272/A0; dw333+word1 (mov ax @59c18a)+byte2. WRITERS: FUN_005a0fa0 round=0 @5a108b (new-game, counts 985af0/af4 zeroed); FUN_0051f320 round+1 @51f53c (advance); FUN_004e0350 max(1,g999fa4-g92bf68) @4e0387/8e (callers = M314 pumps); FUN_0059ce10 rand()%3 {30,60,80} @59e2b1 gated 985ac4.7. YEAR: sole 985b00 writer @51f54f = FUN_005b2c00(round+1) = arg+g92bf68; g92bf68=2100 -> year=round+2100.
+- GATES re-derived: M320 ==0 (59f1a0/59f19c/jne 59f1d4); M305 &3==bl(1) @51f711-71e; M317 >75 @55840d->setg; M177 stamps 533eec/53420e/534522 + age<16 @569401/8. Rivals YEAR/MODE-ENUM/LOAD-CONST dead.
+- ACCEPT `python3 -u scripts/m323_round_census.py` -> **13/13** digest **136841406b5bee5b** (`evidence/m323_round_census.txt:536-537`), x2 identical post-review (`_rerun.txt:537`; pre-review e112a4260e3c1722 x3). HARNESS `python3 -u scripts/m323_mutate.py` -> **31/31+1 NO-OP** digest a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32-33`); selftest 4/4 (`_selftest.txt:5`). MU23 crash fixed (unary-imul guard); sets re-measured.
+- REVIEW #323 (3 P1+7 P2): 9 accepted, 1 dismissed (P2-5 ACCEPT meta row: review_lint.py:85-86 + M320 precedent). RETRACTED "no word": 66-prefix mov ax @59c18a (FUN_0059c150) is a WORD read (G1/G9 re-pinned, MU31). Added: max-flow cmp/jge pins (MU27/28); bl full ebx def-set+push/pop pair+no-jump-in (MU29); year arg chain in G10 (MU13/30); year scan all memory-first forms; score() /13 + S4 13/13. MU13/19/30 sets re-measured.
+- OPEN: rand-start noun; g999fa4 (fed block+0x220 @442642); save-carry (no loader writer; re-derive-from-year unproven); gaps 4f3a91/51da30; resolver linear-static (declared).
+- TRAP: worktree info/exclude lives in the COMMON git dir - used trap-15 stash/start/pop.
+- MERGED 2026-11-19: #323 squash **9c716f8** on main. Review 3 P1+7 P2 triaged in ONE reply (9 accepted incl. the word-width RETRACTION, 1 dismissed per review_lint.py:85-86 meta-row rule); post-review acceptance 13/13 digest 136841406b5bee5b x2 + at-head re-measure byte-identical; harness 31/31+1 digest a25f4b5f2af8bb8a; CI gate pass 15 s, mergeState CLEAN. Main moved under review (chain 1 #320 -> a2e226b): rebased keeping BOTH chains' doc sections; force-push/reset blocked in cron mode, so landed via a `-s ours` absorption merge 25ad19a (tree == rebased state, verified empty diff, fast-forward push). The squash title's "26/26+1" is the PRE-review harness - the NAMED ## M323 ACCEPT row governs (31/31+1). NEXT_PROMPT sits at 12,188 B with the M323 line (chain 1's trim-s296 rotation pattern applies next fire). This note: docs/m323-merged.
+
+## Session 298 (2026-11-19, M321 review #324 hardening, STATIC, zero box; 7/7 + 22/22)
+
+- Review #324 (10 findings, 5 P1) accepted 1-10. The P1s were decoration defects: G2 accepted the
+  refresh pair by SET-ITERATION order and never measured its own 25 B; "zeroes +0x78/7c/80" was a
+  shape match - the writes are `mov [eax+0x78],esi`, a REGISTER, so the zero was unproved; G2's site
+  list iterated `ownersites.values()`, which after adding the image-wide census held 8 stores in 6
+  fns, not the 2+2 owner rows -> gate reddened 1/7 at that head; fixed to `ownrows`.
+- Hardening: order pinned by the PAIR tuple (`hits[0][0]==PAIR[0] and hits[1][0]==PAIR[1]`); pair
+  completion MEASURED as byte distances 10-11 (`m321_memo_owners.txt:20`); encodings split per owner
+  (`:21`); `je` pinned exactly (targets + call on fall-through); a real `is_zero()` proof (xor-self /
+  sub-self / `mov r,0x0`) + base identity resolved FROM EACH WRITE's own address (`:34-36`);
+  `back_def`'s vestigial `limit` removed, def locality printed (8 B back 3/3); G1's rival now derived
+  from the printed histogram (top non-304 multiplier == 52, 646 vs 565, `:2`); G3 pins 7 emitter
+  sites + exact label sets + `EMITTER==0x48f100`; G6 pins `0x4f43a0`/`cl,0x40`/chain text.
+- RETRACTED in `NAMED ## M321` row 2: "2 are the a3 form" -> measured **1** (0x4f44a8; the 2nd owner
+  store 0x4f455d is DWORD). NEW CROSS-CHECK: image-wide 8 index-fed memo stores in 6 functions, 4
+  held by these owners (`:22`) - agrees with M319's 4.
+- ACCEPT `python3 -u scripts/m321_memo_owners.py` -> `PASS m321: 7/7 gates` digest
+  **f304cf871a971a3d** (`evidence/m321_memo_owners.txt:84,:92`), x2 byte-identical (supersedes
+  s297's 562dcbbd12c27c8a, whose G2 was the unscoped version). HARNESS `python3 -u
+  scripts/m321_mutate.py` -> **PASS 22/22** (`evidence/m321_mutate.txt:24`), x2 identical; MU4 NO-OP
+  at `:5` (the cursor's `:15` cite was stale). MU14-MU22 added, sets MEASURED then declared:
+  MU14/15/21->G2, MU16/17/22->G4, MU18->G6 (the F7 tripwire: the old "callee tests cl,0x40
+  somewhere" gate stays GREEN on it, the pinned one reddens), MU19->G3, MU20->G1.
+- Reconciled with main (M323 9c716f8): merge kept BOTH chains' sections; evidence/ at 20.8 MB [warn]
+  - prune candidates next fire. NEXT: merge #324 on CI PASS; picks (vii)/(viii), B26 queued.

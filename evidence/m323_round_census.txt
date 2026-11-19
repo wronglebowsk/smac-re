@@ -1,0 +1,537 @@
+== M323 census of ds:0x985afc (STATIC, scratch/m574/text.txt + ghidra_out/index.csv) ==
+T1 all references: 336  kinds={'W': 5, 'RW': 0, 'T': 59, 'R': 272, 'A': 0, 'W?': 0} widths={'dword': 333, 'byte': 2, 'word': 1}
+  0x425db9 R  dword add    edx,DWORD PTR ds:0x985afc                  FUN_00425be0
+  0x425ed8 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00425be0
+  0x429485 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004282d0
+  0x4294c6 R  dword mov    eax,ds:0x985afc                            FUN_004282d0
+  0x4299b8 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00429950
+  0x4299c7 R  dword mov    eax,ds:0x985afc                            FUN_00429950
+  0x44afdd R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0044aeb0
+  0x45c70f R  dword mov    eax,ds:0x985afc                            FUN_0045a920
+  0x45c7b5 T  dword cmp    edx,DWORD PTR ds:0x985afc                  FUN_0045a920
+  0x45dd2c T  dword cmp    DWORD PTR ds:0x985afc,0x0                  FUN_0045dd10
+  0x45dd66 T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0045dd10
+  0x45dd76 T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_0045dd10
+  0x45ddb8 T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0045dd10
+  0x45de37 T  dword cmp    DWORD PTR ds:0x985afc,0x14                 FUN_0045dd10
+  0x47f494 R  dword mov    eax,ds:0x985afc                            FUN_0047f490
+  0x47f594 R  dword mov    eax,ds:0x985afc                            FUN_0047f590
+  0x47f684 R  dword mov    eax,ds:0x985afc                            FUN_0047f680
+  0x47f7b4 R  dword mov    eax,ds:0x985afc                            FUN_0047f7b0
+  0x47f8a4 R  dword mov    eax,ds:0x985afc                            FUN_0047f8a0
+  0x47f9a4 R  dword mov    eax,ds:0x985afc                            FUN_0047f9a0
+  0x47fa94 R  dword mov    eax,ds:0x985afc                            FUN_0047fa90
+  0x47fb94 R  dword mov    eax,ds:0x985afc                            FUN_0047fb90
+  0x47fc94 R  dword mov    eax,ds:0x985afc                            FUN_0047fc90
+  0x47fd84 R  dword mov    eax,ds:0x985afc                            FUN_0047fd80
+  0x47fe74 R  dword mov    eax,ds:0x985afc                            FUN_0047fe70
+  0x47ff64 R  dword mov    eax,ds:0x985afc                            FUN_0047ff60
+  0x480054 R  dword mov    eax,ds:0x985afc                            FUN_00480050
+  0x480143 R  dword mov    eax,ds:0x985afc                            FUN_00480140
+  0x4801c3 R  dword mov    eax,ds:0x985afc                            FUN_004801c0
+  0x480244 R  dword mov    eax,ds:0x985afc                            FUN_00480240
+  0x48ba64 T  dword cmp    DWORD PTR ds:0x985afc,0xb                  FUN_0048b9a0
+  0x48bab8 T  dword cmp    DWORD PTR ds:0x985afc,esi                  FUN_0048b9a0
+  0x49cc79 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0049c070
+  0x4bdbfc T  dword cmp    DWORD PTR ds:0x985afc,0x0                  FUN_004bdb60
+  0x4bf34f T  dword cmp    DWORD PTR ds:0x985afc,0x0                  FUN_004bf1e0
+  0x4bf3a4 T  dword cmp    DWORD PTR ds:0x985afc,0x0                  FUN_004bf1e0
+  0x4c0a1f T  dword cmp    DWORD PTR ds:0x985afc,0x0                  FUN_004bf1e0
+  0x4c58b2 T  dword cmp    DWORD PTR ds:0x985afc,0x1                  FUN_004c40e0
+  0x4cca90 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004cca50
+  0x4ccc57 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004cca50
+  0x4e0355 R  dword mov    eax,ds:0x985afc                            FUN_004e0350
+  0x4e0387 W  dword mov    ds:0x985afc,eax                            FUN_004e0350
+  0x4e038e W  dword mov    DWORD PTR ds:0x985afc,0x1                  FUN_004e0350
+  0x4e2119 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004e2050
+  0x4e2131 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_004e2050
+  0x4e21e8 R  dword mov    eax,ds:0x985afc                            FUN_004e2050
+  0x4e4991 R  dword mov    eax,ds:0x985afc                            FUN_004e47d0
+  0x4e4b93 R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_004e47d0
+  0x4e4be3 R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_004e47d0
+  0x4e4c0d R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_004e47d0
+  0x4e4e8a R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_004e4e10
+  0x4e833b T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_004e78e0
+  0x4edd83 T  dword cmp    DWORD PTR ds:0x985afc,0xc8                 FUN_004ebef0
+  0x4edeac T  dword cmp    DWORD PTR ds:0x985afc,0xc8                 FUN_004ebef0
+  0x4edfd4 T  dword cmp    DWORD PTR ds:0x985afc,ebx                  FUN_004ebef0
+  0x4f1ad3 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_004ef6d0
+  0x4f1aea R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004ef6d0
+  0x4f28e8 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_004f26e0
+  0x4f353d R  dword mov    eax,ds:0x985afc                            FUN_004f34b0
+  0x4f3a91 R  dword mov    ecx,DWORD PTR ds:0x985afc                  ?
+  0x4f5b14 R  dword mov    eax,ds:0x985afc                            FUN_004f5a70
+  0x4f5bcf R  dword mov    eax,ds:0x985afc                            FUN_004f5a70
+  0x4f5c13 T  dword cmp    DWORD PTR ds:0x985afc,0x5                  FUN_004f5a70
+  0x4f5cc6 T  dword cmp    DWORD PTR ds:0x985afc,0x1                  FUN_004f5a70
+  0x4f5f76 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004f5a70
+  0x4f85cc R  dword mov    eax,ds:0x985afc                            FUN_004f6030
+  0x4f871f R  dword mov    eax,ds:0x985afc                            FUN_004f6030
+  0x4f88cd R  dword mov    eax,ds:0x985afc                            FUN_004f6030
+  0x4f899b R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_004f6030
+  0x4f9043 T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_004f6030
+  0x4f92a9 R  dword mov    eax,ds:0x985afc                            FUN_004f6030
+  0x4f9440 T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_004f6030
+  0x4f96ce R  dword imul   ecx,DWORD PTR ds:0x985afc                  FUN_004f6030
+  0x4f989b R  dword mov    eax,ds:0x985afc                            FUN_004f6030
+  0x4fa532 R  dword mov    eax,ds:0x985afc                            FUN_004f6030
+  0x4fc1d7 T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_004f6030
+  0x4fccaa R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004f6030
+  0x4fd191 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_004f6030
+  0x4fe5b3 R  dword mov    eax,ds:0x985afc                            FUN_004fe5b0
+  0x5037dc R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00502cd0
+  0x503c5d T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_00502cd0
+  0x503cc5 T  dword cmp    DWORD PTR ds:0x985afc,0xf                  FUN_00502cd0
+  0x507630 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00507460
+  0x507cb7 R  dword mov    eax,ds:0x985afc                            FUN_005076d0
+  0x5086a9 R  dword mov    eax,ds:0x985afc                            FUN_00507ef0
+  0x508899 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00507ef0
+  0x50cdc5 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0050cd90
+  0x50ce9e R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0050cd90
+  0x50cf9e R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0050cd90
+  0x50cfaf R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0050cd90
+  0x50d04a R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0050cd90
+  0x50d208 T  dword cmp    DWORD PTR ds:0x985afc,0x19                 FUN_0050d140
+  0x50d2d4 T  dword cmp    DWORD PTR ds:0x985afc,0x28                 FUN_0050d140
+  0x50de98 T  dword cmp    DWORD PTR ds:0x985afc,0x14                 FUN_0050d140
+  0x50e040 R  dword mov    eax,ds:0x985afc                            FUN_0050d140
+  0x50f94c R  dword mov    eax,ds:0x985afc                            FUN_0050f420
+  0x511e4e R  dword mov    eax,ds:0x985afc                            FUN_00511c90
+  0x518fd4 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00518f80
+  0x518fec R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00518f80
+  0x519004 R  dword mov    eax,ds:0x985afc                            FUN_00518f80
+  0x51901b R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00518f80
+  0x519033 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00518f80
+  0x519c4c R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x519c99 R  dword mov    eax,ds:0x985afc                            FUN_00519b00
+  0x519cf1 R  dword mov    eax,ds:0x985afc                            FUN_00519b00
+  0x519edc R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51a039 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51a196 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51a320 R  dword mov    ebx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51a946 T  dword cmp    DWORD PTR ds:0x985afc,0x4b                 FUN_00519b00
+  0x51ad3f R  dword mov    eax,ds:0x985afc                            FUN_00519b00
+  0x51aea0 R  dword mov    esi,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51b148 T  dword cmp    DWORD PTR ds:0x985afc,0x4b                 FUN_00519b00
+  0x51b5cf T  dword cmp    DWORD PTR ds:0x985afc,0x4b                 FUN_00519b00
+  0x51b93b R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51bc3f R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51bfa6 R  dword mov    eax,ds:0x985afc                            FUN_00519b00
+  0x51c116 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51c196 R  dword mov    esi,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51c44f R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00519b00
+  0x51c75f R  dword mov    eax,ds:0x985afc                            FUN_0051c750
+  0x51cb5b R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0051c750
+  0x51cb8a R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0051c750
+  0x51cd10 R  dword imul   eax,DWORD PTR ds:0x985afc                  FUN_0051c750
+  0x51d642 R  dword mov    esi,DWORD PTR ds:0x985afc                  FUN_0051d3f0
+  0x51da30 T  dword cmp    DWORD PTR ds:0x985afc,0x4b                 ?
+  0x51db98 R  dword mov    eax,ds:0x985afc                            FUN_0051db40
+  0x51dc7a R  dword mov    eax,ds:0x985afc                            FUN_0051db40
+  0x51e7a1 T  dword cmp    ecx,DWORD PTR ds:0x985afc                  FUN_0051e700
+  0x51f535 R  dword mov    eax,ds:0x985afc                            FUN_0051f320
+  0x51f53c W  dword mov    ds:0x985afc,eax                            FUN_0051f320
+  0x51f615 R  dword mov    eax,ds:0x985afc                            FUN_0051f320
+  0x51f711 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0051f320
+  0x51f7c3 R  dword mov    eax,ds:0x985afc                            FUN_0051f730
+  0x51ff7a R  dword mov    eax,ds:0x985afc                            FUN_0051fe90
+  0x520120 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0051fe90
+  0x520847 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00520540
+  0x5209d9 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005208f0
+  0x520c14 R  dword mov    eax,ds:0x985afc                            FUN_00520c10
+  0x520ea6 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00520e70
+  0x520ebc R  dword mov    eax,ds:0x985afc                            FUN_00520e70
+  0x520fea R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00520e70
+  0x521141 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00521070
+  0x52165a R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00521070
+  0x5221e4 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00521ee0
+  0x5223c3 T  dword cmp    DWORD PTR ds:0x985afc,esi                  FUN_00522240
+  0x523219 R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_00522b70
+  0x523315 T  dword cmp    DWORD PTR ds:0x985afc,0xc8                 FUN_00522b70
+  0x523afd R  dword mov    eax,ds:0x985afc                            FUN_00523a20
+  0x523b39 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00523b20
+  0x524564 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00524340
+  0x524d27 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00524340
+  0x526227 R  dword mov    eax,ds:0x985afc                            FUN_00525e10
+  0x5265bc R  dword mov    eax,ds:0x985afc                            FUN_005262e0
+  0x52aa34 R  dword mov    esi,DWORD PTR ds:0x985afc                  FUN_0052a720
+  0x52c73b R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x52c7b0 R  dword mov    eax,ds:0x985afc                            FUN_0052bce0
+  0x52d5ab R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x52d606 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x52d6ab R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x52d715 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x52d7f5 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x52d90c R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x52f50d R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0052bce0
+  0x53101f R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00531000
+  0x5310b2 R  dword mov    ebx,DWORD PTR ds:0x985afc                  FUN_00531090
+  0x5312d7 R  dword mov    esi,DWORD PTR ds:0x985afc                  FUN_005312d0
+  0x5313e2 R  dword mov    esi,DWORD PTR ds:0x985afc                  FUN_00531380
+  0x531ecd T  dword cmp    DWORD PTR ds:0x985afc,0xc8                 FUN_00531df0
+  0x531fff R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_00531df0
+  0x532985 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00531df0
+  0x533ecc R  dword mov    eax,ds:0x985afc                            FUN_00533e70
+  0x5341ee R  dword mov    eax,ds:0x985afc                            FUN_00534180
+  0x534509 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_005344c0
+  0x5363a8 R  dword mov    eax,ds:0x985afc                            FUN_00535c60
+  0x5363ef R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00535c60
+  0x536424 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00535c60
+  0x536459 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00535c60
+  0x53720f R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00537180
+  0x5376ad R  dword mov    eax,ds:0x985afc                            FUN_005375e0
+  0x5378c6 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_005375e0
+  0x53ab17 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0053a9c0
+  0x53acc6 T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0053a9c0
+  0x53b325 R  dword mov    eax,ds:0x985afc                            FUN_0053a9c0
+  0x53c180 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053bb90
+  0x53cdb2 R  dword imul   DWORD PTR ds:0x985afc                      FUN_0053cb20
+  0x53cf29 T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0053cb20
+  0x53d6cd R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053cb20
+  0x53d6fc R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053cb20
+  0x53d72d R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053cb20
+  0x53d760 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053cb20
+  0x53e9f9 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053e7d0
+  0x53ea47 R  dword mov    eax,ds:0x985afc                            FUN_0053e7d0
+  0x53eec5 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053e7d0
+  0x53fdad R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0053fce0
+  0x53fff0 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0053fce0
+  0x540436 R  dword mov    eax,ds:0x985afc                            FUN_00540390
+  0x5406af R  dword mov    eax,ds:0x985afc                            FUN_00540390
+  0x541560 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00540390
+  0x544185 R  dword mov    eax,ds:0x985afc                            FUN_00543c50
+  0x5472ab R  dword mov    eax,ds:0x985afc                            FUN_00546800
+  0x5492b7 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x549394 R  dword mov    eax,ds:0x985afc                            FUN_00546800
+  0x5495f4 R  dword imul   DWORD PTR ds:0x985afc                      FUN_00546800
+  0x54965e R  dword imul   DWORD PTR ds:0x985afc                      FUN_00546800
+  0x5496d0 T  dword cmp    DWORD PTR ds:0x985afc,0x19                 FUN_00546800
+  0x549a3a R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x549b39 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54a7fb R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54ad94 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54b010 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54babf T  dword cmp    DWORD PTR ds:0x985afc,0xc8                 FUN_00546800
+  0x54bc59 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54bc85 R  dword mov    eax,ds:0x985afc                            FUN_00546800
+  0x54bd49 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54be7c R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54bf9c R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54c0cf R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x54d11c R  dword mov    eax,ds:0x985afc                            FUN_00546800
+  0x54d27c R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00546800
+  0x551fbc T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_00551e50
+  0x55262e R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005525d0
+  0x553451 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00553350
+  0x55436c R  dword mov    eax,ds:0x985afc                            FUN_00554350
+  0x55447f R  dword mov    eax,ds:0x985afc                            FUN_00554350
+  0x554eab R  dword mov    eax,ds:0x985afc                            FUN_00554d10
+  0x5552d9 T  byte  test   BYTE PTR ds:0x985afc,0x1                   FUN_005551e0
+  0x5553c2 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x555413 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x55554c R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x55556c R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x5555a5 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x555611 R  dword mov    eax,ds:0x985afc                            FUN_005551e0
+  0x555715 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x55595b R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x555a91 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x555b2e R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x555bc1 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005551e0
+  0x555ce4 T  dword cmp    DWORD PTR ds:0x985afc,0xc8                 FUN_005551e0
+  0x555da0 R  byte  mov    dl,BYTE PTR ds:0x985afc                    FUN_005551e0
+  0x555e52 T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_005551e0
+  0x555f20 T  dword cmp    DWORD PTR ds:0x985afc,0xc8                 FUN_005551e0
+  0x5566ae R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00556690
+  0x556925 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00556690
+  0x556b98 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00556690
+  0x556f77 R  dword mov    eax,ds:0x985afc                            FUN_00556690
+  0x557293 R  dword mov    eax,ds:0x985afc                            FUN_00556690
+  0x55812d R  dword mov    eax,ds:0x985afc                            FUN_00556690
+  0x55840d T  dword cmp    DWORD PTR ds:0x985afc,0x4b                 FUN_00556690
+  0x55904a R  dword mov    eax,ds:0x985afc                            FUN_00556690
+  0x55a2bc R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0055a1a0
+  0x55b3ed T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0055a940
+  0x55c31a R  dword mov    eax,ds:0x985afc                            FUN_0055bd90
+  0x55c35f T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0055bd90
+  0x55f149 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0055ec10
+  0x564323 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x564400 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x5650d3 T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_0055f650
+  0x565157 R  dword mov    eax,ds:0x985afc                            FUN_0055f650
+  0x567b00 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x567f97 R  dword mov    ebx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x56843f T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_0055f650
+  0x568d22 T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0055f650
+  0x569153 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x5693f4 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x569458 R  dword mov    eax,ds:0x985afc                            FUN_0055f650
+  0x56956e R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x569e2f R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x569ebc R  dword mov    eax,ds:0x985afc                            FUN_0055f650
+  0x56a0b8 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x56a663 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x56a9a3 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0055f650
+  0x56dd51 T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_0056d960
+  0x56e009 R  dword mov    eax,ds:0x985afc                            FUN_0056df40
+  0x56e156 T  dword cmp    DWORD PTR ds:0x985afc,0x28                 FUN_0056df40
+  0x56e29c T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0056df40
+  0x56e316 R  dword mov    eax,ds:0x985afc                            FUN_0056df40
+  0x56e839 R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_0056df40
+  0x56f441 T  dword cmp    DWORD PTR ds:0x985afc,0x32                 FUN_0056df40
+  0x56fd5c R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0056df40
+  0x56fece T  dword cmp    DWORD PTR ds:0x985afc,0xf                  FUN_0056df40
+  0x57bc42 R  dword mov    eax,ds:0x985afc                            FUN_0057bb90
+  0x580170 R  dword mov    eax,ds:0x985afc                            FUN_005800a0
+  0x5823c6 R  dword mov    eax,ds:0x985afc                            FUN_005823c0
+  0x582486 R  dword mov    eax,ds:0x985afc                            FUN_005823c0
+  0x586bbe R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_00585720
+  0x5892da R  dword mov    eax,ds:0x985afc                            FUN_00585720
+  0x5907ca R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0058fa40
+  0x591019 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0058fa40
+  0x594f73 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0058fa40
+  0x59524c R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0058fa40
+  0x59532a R  dword mov    eax,ds:0x985afc                            FUN_0058fa40
+  0x598587 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005984e0
+  0x59a128 R  dword mov    eax,ds:0x985afc                            FUN_0059a0c0
+  0x59abfe R  dword mov    eax,ds:0x985afc                            FUN_0059aa00
+  0x59b1ce R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059af40
+  0x59b2b3 R  dword mov    edi,DWORD PTR ds:0x985afc                  FUN_0059af40
+  0x59b3d8 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059af40
+  0x59b402 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059af40
+  0x59b465 R  dword sub    eax,DWORD PTR ds:0x985afc                  FUN_0059af40
+  0x59b4a1 R  dword sub    eax,DWORD PTR ds:0x985afc                  FUN_0059af40
+  0x59bcb9 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059bcb0
+  0x59c177 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0059c150
+  0x59c18a R  word  mov    ax,ds:0x985afc                             FUN_0059c150
+  0x59e2b1 W  dword mov    DWORD PTR ds:0x985afc,edx                  FUN_0059ce10
+  0x59ed41 R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x59f0b1 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059ec90
+  0x59f0da R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x59f1a0 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059ec90
+  0x59f5ed R  dword mov    ebx,DWORD PTR ds:0x985afc                  FUN_0059ec90
+  0x59f6e1 R  dword mov    ebx,DWORD PTR ds:0x985afc                  FUN_0059ec90
+  0x59f88e R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x59f996 R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x59f9d4 R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x59fa7e R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059ec90
+  0x59fd81 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059ec90
+  0x5a006e R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x5a018d R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x5a0421 R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x5a04ef R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x5a0654 R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x5a067a R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
+  0x5a069d T  dword cmp    DWORD PTR ds:0x985afc,0x3c                 FUN_0059ec90
+  0x5a06bc T  dword cmp    DWORD PTR ds:0x985afc,0x50                 FUN_0059ec90
+  0x5a06db T  dword cmp    DWORD PTR ds:0x985afc,0x64                 FUN_0059ec90
+  0x5a108b W  dword mov    DWORD PTR ds:0x985afc,esi                  FUN_005a0fa0
+  0x5a584e R  dword mov    eax,ds:0x985afc                            FUN_005a3470
+  0x5a7df2 R  dword mov    eax,ds:0x985afc                            FUN_005a7970
+  0x5a86fe R  dword mov    eax,ds:0x985afc                            FUN_005a7970
+  0x5a89ee R  dword mov    eax,ds:0x985afc                            FUN_005a7970
+  0x5a9c68 T  dword cmp    DWORD PTR ds:0x985afc,0xfa                 FUN_005a90a0
+  0x5aaaf9 R  dword mov    eax,ds:0x985afc                            FUN_005aaa20
+  0x5aac9a R  dword mov    eax,ds:0x985afc                            FUN_005aab70
+  0x5afd8a R  dword mov    eax,ds:0x985afc                            FUN_005af440
+  0x5b0454 R  dword mov    eax,ds:0x985afc                            FUN_005aff90
+  0x5b2c16 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_005b2c10
+T2 writers (function: sites with value expr):
+  FUN_004e0350 0x4e0387 W  g(0x999fa4)-g(0x92bf68)  ds:0x985afc,eax
+  FUN_004e0350 0x4e038e W  const(0x1)               DWORD PTR ds:0x985afc,0x1
+    callers(2): ['0x514ecf@FUN_00512b40', '0x517e3a@FUN_00516b80']
+  FUN_0051f320 0x51f53c W  round+1                  ds:0x985afc,eax
+    callers(2): ['0x520ca3@FUN_00520c10', '0x522371@FUN_00522240']
+  FUN_0059ce10 0x59e2b1 W  local(ebp-0x48){0x50,0x3c,0x1e} DWORD PTR ds:0x985afc,edx
+    callers(1): ['0x5a1579@FUN_005a0fa0']
+  FUN_005a0fa0 0x5a108b W  const(0)                 DWORD PTR ds:0x985afc,esi
+    callers(5): ['0x522963@FUN_00522850', '0x57d2ae@FUN_0057c550', '0x57f20f@FUN_0057ecf0', '0x57fae4@FUN_0057f740', '0x57fd52@FUN_0057f740']
+T3 direct tests:
+  0x45c7b5 cmp  imm=None  dword FUN_0045a920
+  0x45dd2c cmp  imm=0     dword FUN_0045dd10
+  0x45dd66 cmp  imm=50    dword FUN_0045dd10
+  0x45dd76 cmp  imm=100   dword FUN_0045dd10
+  0x45ddb8 cmp  imm=50    dword FUN_0045dd10
+  0x45de37 cmp  imm=20    dword FUN_0045dd10
+  0x48ba64 cmp  imm=11    dword FUN_0048b9a0
+  0x48bab8 cmp  imm=None  dword FUN_0048b9a0
+  0x4bdbfc cmp  imm=0     dword FUN_004bdb60
+  0x4bf34f cmp  imm=0     dword FUN_004bf1e0
+  0x4bf3a4 cmp  imm=0     dword FUN_004bf1e0
+  0x4c0a1f cmp  imm=0     dword FUN_004bf1e0
+  0x4c58b2 cmp  imm=1     dword FUN_004c40e0
+  0x4e833b cmp  imm=100   dword FUN_004e78e0
+  0x4edd83 cmp  imm=200   dword FUN_004ebef0
+  0x4edeac cmp  imm=200   dword FUN_004ebef0
+  0x4edfd4 cmp  imm=None  dword FUN_004ebef0
+  0x4f5c13 cmp  imm=5     dword FUN_004f5a70
+  0x4f5cc6 cmp  imm=1     dword FUN_004f5a70
+  0x4f9043 cmp  imm=100   dword FUN_004f6030
+  0x4f9440 cmp  imm=100   dword FUN_004f6030
+  0x4fc1d7 cmp  imm=100   dword FUN_004f6030
+  0x503c5d cmp  imm=50    dword FUN_00502cd0
+  0x503cc5 cmp  imm=15    dword FUN_00502cd0
+  0x50d208 cmp  imm=25    dword FUN_0050d140
+  0x50d2d4 cmp  imm=40    dword FUN_0050d140
+  0x50de98 cmp  imm=20    dword FUN_0050d140
+  0x51a946 cmp  imm=75    dword FUN_00519b00
+  0x51b148 cmp  imm=75    dword FUN_00519b00
+  0x51b5cf cmp  imm=75    dword FUN_00519b00
+  0x51da30 cmp  imm=75    dword ?
+  0x51e7a1 cmp  imm=None  dword FUN_0051e700
+  0x5223c3 cmp  imm=None  dword FUN_00522240
+  0x523315 cmp  imm=200   dword FUN_00522b70
+  0x531ecd cmp  imm=200   dword FUN_00531df0
+  0x53acc6 cmp  imm=50    dword FUN_0053a9c0
+  0x53cf29 cmp  imm=50    dword FUN_0053cb20
+  0x5496d0 cmp  imm=25    dword FUN_00546800
+  0x54babf cmp  imm=200   dword FUN_00546800
+  0x551fbc cmp  imm=100   dword FUN_00551e50
+  0x5552d9 test imm=1     byte  FUN_005551e0
+  0x555ce4 cmp  imm=200   dword FUN_005551e0
+  0x555e52 cmp  imm=100   dword FUN_005551e0
+  0x555f20 cmp  imm=200   dword FUN_005551e0
+  0x55840d cmp  imm=75    dword FUN_00556690
+  0x55b3ed cmp  imm=50    dword FUN_0055a940
+  0x55c35f cmp  imm=50    dword FUN_0055bd90
+  0x5650d3 cmp  imm=100   dword FUN_0055f650
+  0x56843f cmp  imm=100   dword FUN_0055f650
+  0x568d22 cmp  imm=50    dword FUN_0055f650
+  0x56dd51 cmp  imm=100   dword FUN_0056d960
+  0x56e156 cmp  imm=40    dword FUN_0056df40
+  0x56e29c cmp  imm=50    dword FUN_0056df40
+  0x56f441 cmp  imm=50    dword FUN_0056df40
+  0x56fece cmp  imm=15    dword FUN_0056df40
+  0x5a069d cmp  imm=60    dword FUN_0059ec90
+  0x5a06bc cmp  imm=80    dword FUN_0059ec90
+  0x5a06db cmp  imm=100   dword FUN_0059ec90
+  0x5a9c68 cmp  imm=250   dword FUN_005a90a0
+T4 register-copy gates (read site, dst, mask, cmp, imm, cmpval, jcc, call):
+  0x4e4991 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x4e499b:jne call=None FUN_004e47d0
+  0x4e4be3 edi mask=None cmp=edi,0x64           imm=100   val=None         jcc=0x4e4bf6:jl call=None FUN_004e47d0
+  0x4e4c0d edi mask=None cmp=edi,0x96           imm=150   val=None         jcc=0x4e4c23:jl call=None FUN_004e47d0
+  0x4f353d eax mask=None cmp=eax,edx            imm=None  val=shl(edx,0x2)-src([ecx+0x94d6a4]) jcc=0x4f3544:jge call=None FUN_004f34b0
+  0x4f5b14 eax mask=None cmp=eax,esi            imm=None  val=const(0x1)   jcc=0x4f5b20:jle call=None FUN_004f5a70
+  0x4f5bcf eax mask=None cmp=eax,0x1            imm=1     val=None         jcc=0x4f5be7:jle call=None FUN_004f5a70
+  0x4f85cc eax mask=None cmp=eax,0x32           imm=50    val=None         jcc=0x4f85d4:jge call=None FUN_004f6030
+  0x4f871f eax mask=None cmp=eax,0x32           imm=50    val=None         jcc=0x4f8727:jle call=None FUN_004f6030
+  0x4f88cd eax mask=None cmp=eax,0x19           imm=25    val=None         jcc=0x4f88d5:jle call=None FUN_004f6030
+  0x4fa532 eax mask=None cmp=eax,0x32           imm=50    val=None         jcc=0x4fa53a:jge call=None FUN_004f6030
+  0x4fe5b3 eax mask=None cmp=eax,0x2d           imm=45    val=None         jcc=0x4fe5bb:jge call=None FUN_004fe5b0
+  0x50cdc5 ecx mask=None cmp=ecx,0x1            imm=1     val=None         jcc=0x50cdd4:jne call=None FUN_0050cd90
+  0x50ce9e ecx mask=None cmp=ecx,0x14           imm=20    val=None         jcc=0x50cea7:jl call=None FUN_0050cd90
+  0x519c99 eax mask=None cmp=eax,0x32           imm=50    val=None         jcc=0x519ca1:jle call=None FUN_00519b00
+  0x519edc edx mask=None cmp=edx,0x96           imm=150   val=None         jcc=None call=None FUN_00519b00
+  0x51a039 edx mask=None cmp=edx,0x96           imm=150   val=None         jcc=None call=None FUN_00519b00
+  0x51a196 edx mask=None cmp=edx,0x96           imm=150   val=None         jcc=None call=None FUN_00519b00
+  0x51a320 ebx mask=None cmp=ebx,0x96           imm=150   val=None         jcc=0x51a33b:jl call=None FUN_00519b00
+  0x51ad3f eax mask=None cmp=eax,0x32           imm=50    val=None         jcc=0x51ad47:jl call=None FUN_00519b00
+  0x51aea0 esi mask=None cmp=esi,0x4b           imm=75    val=None         jcc=0x51aea9:jl call=None FUN_00519b00
+  0x51b93b edx mask=None cmp=edx,0x96           imm=150   val=None         jcc=None call=None FUN_00519b00
+  0x51bc3f ecx mask=None cmp=ecx,0x96           imm=150   val=None         jcc=None call=None FUN_00519b00
+  0x51bfa6 eax mask=None cmp=eax,0x96           imm=150   val=None         jcc=None call=None FUN_00519b00
+  0x51c116 edx mask=None cmp=edx,0x96           imm=150   val=None         jcc=None call=None FUN_00519b00
+  0x51c196 esi mask=None cmp=esi,0x4b           imm=75    val=None         jcc=0x51c19f:jl call=None FUN_00519b00
+  0x51c44f ecx mask=None cmp=ecx,0x4b           imm=75    val=None         jcc=0x51c458:jl call=None FUN_00519b00
+  0x51dc7a eax mask=None cmp=eax,0x5            imm=5     val=None         jcc=0x51dc85:jg call=None FUN_0051db40
+  0x51f615 eax mask=None cmp=eax,0x4b           imm=75    val=None         jcc=0x51f620:jne call=None FUN_0051f320
+  0x51f711 ecx mask=0x3  cmp=cl,bl              imm=None  val=const(0x1)   jcc=0x51f71c:jne call=None FUN_0051f320
+  0x51f7c3 eax mask=None cmp=al,0x3             imm=3     val=None         jcc=0x51f7d6:jne call=None FUN_0051f730
+  0x520120 edx mask=None cmp=edx,ecx            imm=None  val=lea(ecx,[ecx+ecx*4]) jcc=0x520131:jge call=None FUN_0051fe90
+  0x520847 ecx mask=None cmp=ecx,eax            imm=None  val=const(0x1)   jcc=0x52084f:jne call=None FUN_00520540
+  0x520c14 eax mask=None cmp=eax,edi            imm=None  val=const(0)     jcc=0x520c20:jne call=None FUN_00520c10
+  0x5265bc eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5265c3:je call=None FUN_005262e0
+  0x53101f edx mask=None cmp=edx,0x4            imm=4     val=None         jcc=None call=None FUN_00531000
+  0x5363ef edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_00535c60
+  0x536424 edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_00535c60
+  0x536459 edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_00535c60
+  0x5378c6 edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_005375e0
+  0x53ab17 ecx mask=None cmp=ecx,eax            imm=None  val=and(al,0xce)+0x64 jcc=None call=None FUN_0053a9c0
+  0x53c180 edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_0053bb90
+  0x53d6cd edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_0053cb20
+  0x53d6fc edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_0053cb20
+  0x53d72d edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_0053cb20
+  0x53d760 edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_0053cb20
+  0x544185 eax mask=None cmp=eax,ecx            imm=None  val=src([ebp+0x8]) jcc=None call=None FUN_00543c50
+  0x5492b7 ecx mask=None cmp=ecx,0x32           imm=50    val=None         jcc=None call=None FUN_00546800
+  0x549394 eax mask=None cmp=eax,0x32           imm=50    val=None         jcc=None call=None FUN_00546800
+  0x54a7fb edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_00546800
+  0x54ad94 edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_00546800
+  0x54b010 edx mask=0x7  cmp=None               imm=None  val=None         jcc=None call=None FUN_00546800
+  0x55262e ecx mask=None cmp=ecx,0x10           imm=16    val=None         jcc=0x552639:jl call=None FUN_005525d0
+  0x55436c eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x554373:je call=None FUN_00554350
+  0x55447f eax mask=None cmp=al,0x3             imm=3     val=None         jcc=0x55448a:je call=None FUN_00554350
+  0x555413 edx mask=0xf  cmp=edx,eax            imm=None  val=lea(eax,[ecx+ecx*1])+1 jcc=0x555425:jne call=None FUN_005551e0
+  0x55554c ecx mask=None cmp=ecx,0x20           imm=32    val=None         jcc=0x555563:jg call=None FUN_005551e0
+  0x55556c ecx mask=None cmp=ecx,edx            imm=None  val=lea(edx,[ebx+0x8]) jcc=0x555577:je call=None FUN_005551e0
+  0x5555a5 ecx mask=None cmp=ecx,eax            imm=None  val=lea(eax,[ebx+0x8]) jcc=0x5555b0:jne call=None FUN_005551e0
+  0x555715 edx mask=None cmp=dl,0x7             imm=7     val=None         jcc=0x555725:je call=None FUN_005551e0
+  0x55595b edx mask=None cmp=edx,0x4            imm=4     val=None         jcc=None call=None FUN_005551e0
+  0x555a91 edx mask=None cmp=dl,0x3             imm=3     val=None         jcc=0x555a9c:jne call=None FUN_005551e0
+  0x555b2e ecx mask=None cmp=cl,0x3             imm=3     val=None         jcc=0x555b39:jne call=None FUN_005551e0
+  0x555bc1 ecx mask=0x1  cmp=None               imm=None  val=None         jcc=None call=None FUN_005551e0
+  0x555da0 dl  mask=None cmp=dl,0x1             imm=1     val=None         jcc=0x555da9:je call=None FUN_005551e0
+  0x556b98 edx mask=None cmp=dl,0x3             imm=3     val=None         jcc=0x556ba6:jne call=None FUN_00556690
+  0x55812d eax mask=None cmp=eax,0x1            imm=1     val=None         jcc=0x558135:jle call=None FUN_00556690
+  0x55904a eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x559051:je call=None FUN_00556690
+  0x55c31a eax mask=None cmp=al,0x7             imm=7     val=None         jcc=0x55c323:jne call=None FUN_0055bd90
+  0x564323 ecx mask=None cmp=ecx,eax            imm=None  val=and(eax,0xc)+0x3 jcc=0x56433a:je call=None FUN_0055f650
+  0x564400 edx mask=None cmp=dl,0xf             imm=15    val=None         jcc=0x56440e:jne call=None FUN_0055f650
+  0x565157 eax mask=None cmp=eax,ecx            imm=None  val=and(ecx,0xfffffed4)+0x190 jcc=0x565171:jl call=None FUN_0055f650
+  0x567f97 ebx mask=None cmp=ebx,0x32           imm=50    val=None         jcc=0x567fad:jg call=None FUN_0055f650
+  0x569153 edx mask=None cmp=dl,0x7             imm=7     val=None         jcc=0x569166:jne call=None FUN_0055f650
+  0x5693f4 edx mask=None cmp=edx,0x10           imm=16    val=None         jcc=0x56940b:jl call=None FUN_0055f650
+  0x569458 eax mask=None cmp=eax,0x10           imm=16    val=None         jcc=0x56946e:jl call=None FUN_0055f650
+  0x56956e ecx mask=None cmp=ecx,0x10           imm=16    val=None         jcc=0x569579:jle call=None FUN_0055f650
+  0x569e2f edx mask=None cmp=dl,0x3             imm=3     val=None         jcc=0x569e3a:jne call=None FUN_0055f650
+  0x569ebc eax mask=None cmp=eax,0x10           imm=16    val=None         jcc=0x569ecb:jl call=None FUN_0055f650
+  0x56a663 ecx mask=None cmp=cl,0x3             imm=3     val=None         jcc=0x56a66e:jne call=None FUN_0055f650
+  0x56a9a3 edx mask=None cmp=dl,0x3             imm=3     val=None         jcc=0x56a9b1:jne call=None FUN_0055f650
+  0x56e009 eax mask=None cmp=eax,ecx            imm=None  val=shl(ecx,0x2)-src([ebx+0x94d6a4]) jcc=0x56e010:jl call=None FUN_0056df40
+  0x56e316 eax mask=None cmp=eax,0x19           imm=25    val=None         jcc=0x56e31e:jl call=None FUN_0056df40
+  0x56e839 edi mask=None cmp=edi,eax            imm=None  val=and(eax,0x32)+0x32 jcc=None call=None FUN_0056df40
+  0x57bc42 eax mask=None cmp=eax,ebx            imm=None  val=const(0)     jcc=0x57bc4c:je call=None FUN_0057bb90
+  0x580170 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=None call=None FUN_005800a0
+  0x5823c6 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5823d0:je call=None FUN_005823c0
+  0x582486 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x58248d:je call=None FUN_005823c0
+  0x586bbe ecx mask=None cmp=ecx,ecx            imm=self  val=None         jcc=None call=None FUN_00585720
+  0x5892da eax mask=None cmp=eax,0xa            imm=10    val=None         jcc=0x5892e5:jl call=None FUN_00585720
+  0x59abfe eax mask=None cmp=eax,0x3e8          imm=1000  val=None         jcc=0x59ac08:jge call=None FUN_0059aa00
+  0x59ed41 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x59ed48:jne call=None FUN_0059ec90
+  0x59f0da eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x59f0e1:jne call=None FUN_0059ec90
+  0x59f1a0 ecx mask=None cmp=ecx,edx            imm=None  val=const(0)     jcc=0x59f1b8:jne call=None FUN_0059ec90
+  0x59f5ed ebx mask=None cmp=ebx,ebx            imm=self  val=None         jcc=0x59f5f5:jne call=None FUN_0059ec90
+  0x59f996 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x59f99d:jne call=None FUN_0059ec90
+  0x59f9d4 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x59f9db:je call=None FUN_0059ec90
+  0x59fa7e ecx mask=None cmp=ecx,edx            imm=None  val=const(0)     jcc=0x59fa86:jne call=None FUN_0059ec90
+  0x59fd81 ecx mask=None cmp=ecx,ecx            imm=self  val=None         jcc=0x59fd89:je call=None FUN_0059ec90
+  0x5a006e eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a007c:jne call=None FUN_0059ec90
+  0x5a018d eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a0194:je call=None FUN_0059ec90
+  0x5a0421 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a0428:jne call=None FUN_0059ec90
+  0x5a04ef eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a04f6:je call=None FUN_0059ec90
+  0x5a0654 eax mask=None cmp=eax,0x14           imm=20    val=None         jcc=0x5a065f:jle call=None FUN_0059ec90
+  0x5a067a eax mask=None cmp=eax,0x28           imm=40    val=None         jcc=0x5a0685:jle call=None FUN_0059ec90
+  0x5a584e eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a5855:je call=None FUN_005a3470
+  0x5a7df2 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a7e00:je call=None FUN_005a7970
+  0x5a86fe eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a8705:je call=None FUN_005a7970
+  0x5a89ee eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5a89f5:je call=None FUN_005a7970
+  0x5aaaf9 eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5aab03:je call=None FUN_005aaa20
+  0x5afd8a eax mask=None cmp=eax,eax            imm=self  val=None         jcc=0x5afd91:je call=None FUN_005af440
+  0x5b0454 eax mask=None cmp=eax,0x96           imm=150   val=None         jcc=0x5b0460:jle call=None FUN_005aff90
+T5 address-taken:
+T6 prior pins: LIVE={'year_addr': 9984768, 'round_addr': 9984764, 'year': 2150, 'round': 50} primes={5455596: (True, 5455564), 5456398: (True, 5456366), 5457186: (True, 5457161)} age@0x569401=('sub', 'edx,DWORD PTR [eax*4+0x94d4a8]')
+OK   G1   total=336 kinds={'W': 5, 'RW': 0, 'T': 59, 'R': 272, 'A': 0, 'W?': 0} widths={'dword': 333, 'byte': 2, 'word': 1}
+OK   G2   writers={'FUN_004e0350': [(5112711, 'W', 'g(0x999fa4)-g(0x92bf68)'), (5112718, 'W', 'const(0x1)')], 'FUN_0051f320': [(5371196, 'W', 'round+1')], 'FUN_0059ce10': [(5890737, 'W', 'local(ebp-0x48){0x50,0x3c,0x1e}')], 'FUN_005a0fa0': [(5902475, 'W', 'const(0)')]} maxflow=True
+OK   G3   callers={'FUN_004e0350': [5328591, 5340730], 'FUN_0051f320': [5377187, 5383025], 'FUN_0059ce10': [5903737], 'FUN_005a0fa0': [5384547, 5755566, 5763599, 5765860, 5766482]}
+OK   G4   direct n=59 prior4=True
+OK   G5   ok51=True ok59=True ok55=True prior5=True bl=const(0x1) nreg=111
+OK   G6   addr=0 W?=0 unk=['0x4f3a91', '0x51da30'] gaps={5192337: (5191130, 5193824), 5364272: (5364261, 5364544)}
+OK   G7   LIVE={'year_addr': 9984768, 'round_addr': 9984764, 'year': 2150, 'round': 50}
+OK   G8   primes={5455596: (True, 5455564), 5456398: (True, 5456366), 5457186: (True, 5457161)} age_cmp=0x569408 src=True
+OK   G9   byte=['0x5552d9', '0x555da0'] word=['0x59c18a']
+OK   G10  year=True callee=True syw=True cluster=True gate=True rand=True sites=[('0x59ce42', '0x50'), ('0x59ce5b', '0x3c'), ('0x59ce74', '0x1e')]
+OK   R1   YEAR rival dead: round=50@0x985afc vs year=2150@0x985b00, year=round+2100 derived
+OK   R2   MODE-ENUM rival dead: writers=4 plus1=[('FUN_0051f320', 5371196)] others=['g(0x999fa4)-g(0x92bf68)', 'const(0x1)', 'local(ebp-0x48){0x50,0x3c,0x1e}', 'const(0)'] stamps=True
+OK   R3   LOAD-CONSTANT rival dead: FUN_0051f320 +1 writer, 2 callers, year re-derived
+digest 136841406b5bee5b
+== M323: 13/13 ==

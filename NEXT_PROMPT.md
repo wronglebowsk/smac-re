@@ -27,18 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B25 MERGED**
 (B25 = #319, main 1556ce9) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). Next build **B26, NOT YET
 AUTHORED**: `BUILD_SPINE.md` ends at B25, so B26's rung text must be written BEFORE probing (one
-milestone = spine section + instrument). B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, ACCEPT
-anchor 901a286332960a10 `evidence/b25_selftest.txt:59`, banner `:69`; the same 69 lines from `-m sim.composedmove`) +
-harness **13/13 scored + 3 declared NO-OP** (`b25_mutate.txt:20`), `--selftest` **5/5** (`b25_mutate_selftest.txt:11`);
-G9 now PINS the anchor to a literal (MU9 names it alone) and G4's law is now **byte-level carry** (table H; MU14
-names it, MU15 = the old self-comparison, declared decoration). Its law, paid in a RETRACTION: **the CONTAINER owns
-the coordinate space** - `m54b_clean.SAV` is 64x64 by its own header, `planet.MP` is 80x80, and B7 wrapped x by the
-FILE (corrected in place at `NAMED ## B7`); MU8/MU12/MU13 redden G5 if either grid is judged against the wrong one.
-NEW AT TRIAGE: the tile test is NOT the decoder (8/44 probes disagree raw - pick (vii) below). B24's spine detail
-(the compaction RETRACT, the LEDGER-POSITION addressing law, the two retired degenerate rivals) is VERBATIM at
-`docs/pick-archive.md:963` §trim-s292 (a) - the ONLY place "declared gate-sets are MEASURED, not authored" survives
-(sibling laws: TRAP 24 below + `skill/SKILL.md:319-320`). `pos=False` in `composedturn.fold` is NOT tile-addressing.
-M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
+milestone = spine section + instrument). B25 (MERGED #319, main 1556ce9) ACCEPT anchors/digest, harness 13/13 + 3 declared NO-OP, the CONTAINER-owns-the-coordinate-space law, the tile-test-is-NOT-the-decoder lead (pick (vii)) and the M316/M315 summaries are VERBATIM at `docs/pick-archive.md` §trim-s298 (a); `NAMED ## B25` / `## M316` / `## M315` govern.
 
 ## THE LEDGER
 
@@ -74,10 +63,11 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   CLOSED + MERGED (pick (vi) = M321): FUN_004ee410 = the base FOOD/POPULATION status emitter,
   FUN_004f41f0 = the base TALENT/PSYCH-REQUEST emitter (both push PE-read labels into `call
   0x48f100`; 7 vs 1, disjoint); the shared `test BYTE PTR [rec+0x38],0x40` gates base_array
-  field 56 bit 6. Text VERBATIM at §trim-s297 of `docs/pick-archive.md`; `NAMED ## M321` governs.
+  field 56 bit 6. Text VERBATIM at §trim-s297 of `docs/pick-archive.md`; `NAMED ## M321` governs
+  (#324 hardened at review: 7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2).
   OPEN PICK (viii) (NEW at the M321 triage, zero box): NAME FUN_0041a8f0 - it round-trips that
   field through the scratch dword `ds:0x99aa38` behind a 20-store tree (0x41a9d2-0x41ab6d), and
-  47 whole-dword stores to the field are untraced. Start `evidence/m321_memo_owners.txt:35-67`.
+  47 whole-dword stores to the field are untraced. Start `evidence/m321_memo_owners.txt:47-81`.
   OPEN PICK (vii) (NEW at the #319 triage, zero box): **25 of the 67 records** of this save's
   unit array carry +10 in 128/130/131/256/320/321/322/323 - what `sim/save.py:52` calls queue-band
   and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such
@@ -133,3 +123,4 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
+M323 RESULT (s295-chain2, STATIC, post-review): ds:0x985afc = ROUND counter - 336 refs (W5/T59/R272; dword 333/word 1/byte 2); writers init0 FUN_005a0fa0 / +1 FUN_0051f320 / year-sync FUN_004e0350 / rand{30,60,80} FUN_0059ce10; year=round+2100 (FUN_005b2c00, start-year 2100 @0x92bf68). 13/13 digest 136841406b5bee5b (evidence/m323_round_census.txt:536); harness 31/31+1. FULL: NAMED.md ## M323 + SESSION_NOTES s295-chain2.

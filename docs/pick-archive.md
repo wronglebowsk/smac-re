@@ -1081,4 +1081,22 @@ M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +
 
   (moved out of NEXT_PROMPT.md when M321 closed it: the hot doc sat at 11,764 B, 236 B under the 12,000
    warn, and the CLOSED line plus the new pick (viii) had to fit there. The answer itself is `NAMED ## M321`,
-   measured by `scripts/m321_memo_owners.py` (7/7) and `scripts/m321_mutate.py` (13/13))
+   measured by `scripts/m321_memo_owners.py` (7/7) and `scripts/m321_mutate.py` (13/13).
+   ERRATUM at review #324: the harness grew to 22/22 and the census digest is f304cf871a971a3d
+   (the 13/13 + 562dcbbd12c27c8a state predates the G2-scoping fix and the a3-form RETRACTION
+   '2 are the a3 form' -> measured 1; `NAMED ## M321` governs))
+
+## §trim-s298 (a) the B25 build-track detail, VERBATIM from NEXT_PROMPT.md §BUILD TRACK at the #324 post-review cap trim (moved out when NEXT_PROMPT hit 12,300 B after the M323 merge; 1330 B, sha1 455d6163f555e539)
+
+B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, ACCEPT
+anchor 901a286332960a10 `evidence/b25_selftest.txt:59`, banner `:69`; the same 69 lines from `-m sim.composedmove`) +
+harness **13/13 scored + 3 declared NO-OP** (`b25_mutate.txt:20`), `--selftest` **5/5** (`b25_mutate_selftest.txt:11`);
+G9 now PINS the anchor to a literal (MU9 names it alone) and G4's law is now **byte-level carry** (table H; MU14
+names it, MU15 = the old self-comparison, declared decoration). Its law, paid in a RETRACTION: **the CONTAINER owns
+the coordinate space** - `m54b_clean.SAV` is 64x64 by its own header, `planet.MP` is 80x80, and B7 wrapped x by the
+FILE (corrected in place at `NAMED ## B7`); MU8/MU12/MU13 redden G5 if either grid is judged against the wrong one.
+NEW AT TRIAGE: the tile test is NOT the decoder (8/44 probes disagree raw - pick (vii) below). B24's spine detail
+(the compaction RETRACT, the LEDGER-POSITION addressing law, the two retired degenerate rivals) is VERBATIM at
+`docs/pick-archive.md:963` §trim-s292 (a) - the ONLY place "declared gate-sets are MEASURED, not authored" survives
+(sibling laws: TRAP 24 below + `skill/SKILL.md:319-320`). `pos=False` in `composedturn.fold` is NOT tile-addressing.
+M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.

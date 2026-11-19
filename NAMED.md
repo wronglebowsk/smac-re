@@ -1283,15 +1283,29 @@ Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de
 Acceptance `python3 -u scripts/m314_tour_family.py` -> **18/18**, digest cf54a7ca907344c6, x2 identical; `scripts/m314_mutate.py` -> **27/27** (MERGED as #299, main e638772; the squash title's "20/20" is the pre-review harness - this line governs).
 REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k=full check name vs detail=short keys -> every lookup empty) -> now hashes name+verdict+detail; A4b pump check was decorative (`parse_text` keeps mnemonic separate, so the `^push 0x..$` regex on ops matched nothing -> `all([])` true) -> bare-operand push census + pumpA x3 / pumpB x1 call-site counts pinned; A3 claimed a `je` it never read -> now entry-relative pins (cmp +0x9/+0x9/+0x29, je +0xD/+0xD/+0x2D, je-target = add-10, mov = add-3); A3b inferred abs() from neg/sub COUNTS -> 11-instruction sequence pinned with jl/jmp targets; A6b de-duplicated owners so a 6th call in a listed fn stayed green -> 5 call-site addresses pinned; token row said 26 quoted where evidence said 24 quoted + 2 named + 5 forwarded -> A1b now pins the exact 24+2+5 breakdown (the 2 unexplained entries were `param_1`/`param_2` forwards). New mutants MU2b/MU5/MU5b/MU5c/MU5d/MU7j/MU9*/MU15b/MU18* cover each repaired fact.
 
-## M321 (s297) - pick (vi) CLOSED: the 2 unnamed memo owners are base STATUS-ICON emitters; the arrival test gates base_array field 56 bit 6
+## M321 (s297, hardened at review #324) - pick (vi) CLOSED: the 2 unnamed memo owners are base STATUS-ICON emitters; the arrival test gates base_array field 56 bit 6
 
 | claim | evidence | conf / mutant |
 |---|---|---|
-| FUN_004ee410 = base FOOD/POPULATION status emitter (7 `0x48f100` calls; PE labels STARVE/POPULATIONLIMIT/LOWNUTRIENT*) vs FUN_004f41f0 = TALENT/PSYCH-REQUEST emitter; disjoint | `m321_memo_owners.txt:21-28` | V; MU13 |
-| 4 memo sites per M319, fed by `mov R,ds:0x68cbb0`, pair IN ORDER <=25 B after; 2 are the a3 form | `:18-19`, `:9-16` | V; MU1,MU2,MU7,MU8 |
-| ONE arrival predicate at 3 sites: r from `ds:0x8f0d60` 3/3, je skips `call 0x4f41f0`, +0x78/7c/80 zeroed; callee re-gates @0x4f43a0 | `:30-34`, `:69` | V; MU3,MU9,MU10,MU12 |
-| field = base_array +56 (fold = 304*idx+0x95da10; the 52-chain rival dies on the histogram); bit 6's only OR-setter = 0x41ac34 (FUN_0041a8f0's `ds:0x99aa38` round trip) | `:2-7`, `:61` | V; MU5,MU6,MU11,MU4 NO-OP |
-| OPEN: game nouns; 47 whole-dword field stores untraced | - | lead |
+| FUN_004ee410 = base FOOD/POPULATION status emitter (7 `0x48f100` calls, sites pinned vs labels) vs FUN_004f41f0 = TALENT/PSYCH-REQUEST emitter; disjoint | `m321_memo_owners.txt:24-31` | V; MU13,MU19 |
+| 4 memo sites per M319, fed by `mov R,ds:0x68cbb0`, whole refresh PAIR in pinned order 10-11 B after the store (claim <=25); **1** (not 2) is the a3 form; image-wide census: 8 index-fed memo stores in 6 fns, these owners hold 4 (agrees M319) | `:18-22` | V; MU1,MU2,MU7,MU8,MU14,MU15,MU21 |
+| ONE arrival predicate at 3 sites: per-write base identity `ds:0x8f0d60`, `je` pinned (targets + call on fall-through), +0x78/7c/80 zeroing PROVED (xor esi,esi @0x416f01); callee re-gates @0x4f43a0 `cl,0x40`, chain pinned | `:33-36`, `:81` | V; MU3,MU9,MU10,MU16,MU17,MU18,MU22 |
+| field = base_array +56 (fold = 304*idx+0x95da10; 52-chain rival dies on the printed histogram 646 vs 565); bit 6's only OR-setter = 0x41ac34 (FUN_0041a8f0's `ds:0x99aa38` round trip) | `:2-3`, `:73` | V; MU5,MU6,MU11,MU20,MU4 NO-OP |
+| OPEN: game nouns; 47 whole-dword field stores untraced to sources | - | lead |
+
+22/22 mutants `evidence/m321_mutate.txt:24`; digest `f304cf871a971a3d` `m321_memo_owners.txt:84`.
+
+## M323 (s295-chain2, STATIC, 13/13, 31/31+1) - ds:0x985afc=ROUND counter; year=round+2100
+
+| claim | evidence | conf |
+|---|---|---|
+| 336 refs W5/T59/R272/A0; dw333/w1 (mov ax @59c18a)/b2; gaps 4f3a91/51da30 | G1/G6/G9 `evidence/m323_round_census.txt:523,528,531` | V MU1/MU18/MU19/MU23/MU31 |
+| writers: 5a0fa0=0; 51f320=+1; 4e0350=max(1,g999fa4-g92bf68)+flow; 59ce10=rand{30,60,80} gated 985ac4.7 | G2/G3/G10 `:524-525,532,340-348` | V MU2/MU3/MU13/MU18/MU20/MU27/MU28/MU30 |
+| year sole writer 51f54f=5b2c00(round+1)=arg+g92bf68(2100); chain pinned | G10/R1 `:532-533` | V MU10/MU13/MU17/MU30 |
+| M320 ==0@59f1a0; M305 &3==bl(1)@51f711 def-set pinned; M317 >75@55840d; M177 age<16 | G5/G8 `:527,530,438,502` | V MU5/MU14/MU15/MU16/MU21/MU22/MU25/MU29 |
+| live round=50/year=2150; rivals dead | G7/R1-R3 `:529,533-535` | V MU7/MU24; R1 MU10/MU17, R2 MU13/MU18/MU23, R3 MU12/MU13/MU23 |
+| ACCEPT 13/13 digest 136841406b5bee5b x2 (`evidence/m323_round_census.txt:536`); harness 31/31+1 a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32`) | as cited | V |
+| OPEN: rand-start noun; g999fa4; save-carry; resolver linear-static | - | lead |
 
 ## M320 (s294-chain2, STATIC, 12/12, 26/26+1) - siblings: 128-region ladder, 512 arrays, reset/rebuild
 
