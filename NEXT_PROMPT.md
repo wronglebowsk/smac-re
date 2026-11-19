@@ -26,20 +26,12 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED**
 (per-rung cmds: `NAMED.md` §CHAIN-BUILDS). Next build **B25, queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at
 B24, so B25's rung text must be written BEFORE probing (one milestone = spine section + instrument).
-B24 MERGED as #307 (main af38858; NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **9/9 scored + 1
-declared NO-OP** (MU9 labels-only = decoration). RETRACTED at the spine: the turn-29 compaction does NOT move the
-addressed slot (stable at 22 for all 8 visits). NEW LAW: the run addresses its record BY LEDGER POSITION;
-tile-addressing cannot RUN once the container tile is poisoned (`tile (27, 29) not located`). HARNESS LAWS (s287):
-declared gate-sets are MEASURED, not authored; a mutant reddening NOTHING is a NO-OP and fails; dropping a conjunct
-can't redden - mutate DATA; a rival that fails by crashing or returning nothing is NOT evidence until the crash is
-message-matched AND the construction succeeds without the cause (B24 had two degenerate rivals:
-frontinsert, locate - retired, G8 gates the retirement). `pos=False` in `composedturn.fold` is NOT tile-addressing.
-
-M316 MERGED #305: 18/18+32/32 dcc6ce82fc98aec4, 5 P2 accepted; SITE-TWIN law (0x94f2d8; REMOVER
-0056d780, INITIALIZER 0056d710). NAMED ## M316.
-M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29, digest 3976ca97eedc1e19; 6 P2 at head 754b4fa6;
-caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/s285_reverify_*`
-(#304). NAMED ## M315.
+B24 MERGED as #307 (main af38858; `NAMED ## B24` governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness
+**9/9 scored + 1 declared NO-OP** (MU9 labels-only = decoration). Its spine text (the compaction RETRACT, the
+LEDGER-POSITION addressing law, the s287 harness laws, the two retired degenerate rivals) is VERBATIM at
+`docs/pick-archive.md` §trim-s292 (a) and the laws are ALREADY in the skill (SKILL.md 319-320,
+`references/instrument-laws.md` §mutation-harness STATE / §s290 retirement). `pos=False` in `composedturn.fold` is
+NOT tile-addressing. M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
 
 ## THE LEDGER
 
@@ -73,11 +65,8 @@ collision-check + worktree FIRST).
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  **CLOSED (s278): pick (i') NAME THE EVENTS - ONE interaction band
-  [0x50bb20,0x5175b4) carries 20 of 28 hub owners + 9 thunk owners; pumps 00512b40 (menu-ID + nav-VK two-stage switches; its door FUN_0041bda0
-  is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
-  startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
-  Full law NAMED ## M313.
+  CLOSED (s278): pick (i') NAME THE EVENTS - the one interaction band `[0x50bb20,0x5175b4)` + its two pumps;
+  detail VERBATIM at `docs/pick-archive.md` §trim-s292 (a), full law `NAMED ## M313`.
   CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass. NAMED ## M317.
   CLOSED (s289): pick (iv) pair = 4e8d60 unit-support census + 4e78e0 pane refresh. NAMED ## M318.
   OPEN PICK after M318: (v) the 8 memo sites with NO local dedup guard - census their callers and
@@ -116,15 +105,12 @@ collision-check + worktree FIRST).
 16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245: objdump prints UPPERCASE; ARM BEFORE ANY
    SCREEN; the SIGUSR1/SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT
    a STORE CENSUS.)
-24. **A PASSING ASSERTION IS NOT A GATE (s269, Greptile #281 on M308).** All 4 P2s were one defect -
-   an assert that can pass on an UNMEASURED state (a classifier blind to `mov eax,ds:G`; bounds
-   pre-filtered by the expected constants; a rule tested by mnemonic presence; attribution by instruction
-   proximity) - and **3 of the sub-conditions I wrote to FIX them were THEMSELVES decorative**. Law: after
-   repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`: copy the instrument, re-create each
-   defect by anchor->replacement, exit non-zero unless EVERY mutation reddens its named gate). Mutate a
-   MEASURED FACT so it is false on the real bytes (a branch target off-by-one), never a dict ENTRY the assert
-   reads as a whole. Keep mutation ids out of the A-number namespace (M1..M8 vs A1..A36). Reference:
-   `scripts/m308_mutate.py` -> `8/8 mutations reddened their target checks`.
+24. **A PASSING ASSERTION IS NOT A GATE (s269, #281 on M308; all 4 P2s were one defect: an assert that can pass
+   on an UNMEASURED state — and 3 of the sub-conditions written to FIX them were THEMSELVES decorative).** Law: after
+   repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`), exit non-zero unless EVERY mutation reddens its
+   named gate; mutate a MEASURED FACT, never a dict ENTRY the assert reads as a whole; keep mutation ids out of the
+   A-number namespace. Worked defect list + the `m308_mutate.py` 8/8 reference VERBATIM:
+   `docs/pick-archive.md` §trim-s292 (b); mechanics: skill `instrument-laws.md`.
 ## CLOSING ORDER (exactly — the kickoff carries the same list, and the full 7-step text lives
 VERBATIM at `docs/pick-archive.md` §trim-s269). Order: 1 `SESSION_CURSOR.md` (<=600 B) BEFORE the
 rest, in case of compression. 2 `## Session <N+1>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers

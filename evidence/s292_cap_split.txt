@@ -1,0 +1,10 @@
+NEXT_PROMPT.md            10,768     2,692    1.0%  ok   (always)
+always loaded             58,378    14,594    5.6%   ← paid every session
+--- pre-split NEXT_PROMPT.md was 11,881 B against the 12,000 warn (see Session 292-cap) ---
+320:- A WEAKENING is not a mutation (a dropped conjunct can only pass); mutate DATA so only the digest catches it; an over-broad mutant reads as a NO-OP - re-measure the declared set after EVERY review round. Full text: `references/instrument-laws.md` §s290 retirement.
+319:- A rival that fails by crashing or producing nothing is NOT evidence until the crash is message-matched against the DECLARED law AND the same construction succeeds with the cause removed; retire degenerate rivals and GATE the retirement. Full text + B24's two degenerates: `references/verify-outcome.md` §s290 retirement.
+963:## §trim-s292 (a) settled merge summaries + the pick (i') detail, VERBATIM from NEXT_PROMPT.md at the s292 cap split
+--- verbatim check (heredoc python: main:NEXT_PROMPT.md vs the fenced blocks under docs/pick-archive.md §trim-s292) ---
+blocks: 4
+VERBATIM 4/4 blocks found byte-exact in main:NEXT_PROMPT.md
+trap24 verbatim: True
