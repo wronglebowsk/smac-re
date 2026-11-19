@@ -510,7 +510,7 @@ P_R3 = ("FUN_0051f320", 2)
 o, nmin = P_R3
 cs = callers_of(o)
 ck("R3", o in WRITERS and any(e == "round+1" for _, _, e, _ in WRITERS[o])
-   and len(cs) >= nmin and ok10a,
+   and len(cs) >= nmin and ok10a and INS.get(0x51f53a) == ("inc", "eax"),
    "LOAD-CONSTANT rival dead: %s +1 writer, %d callers, year re-derived" % (o, len(cs)))
 
 # ---- digest over MEASURED detail ---------------------------------------------------
