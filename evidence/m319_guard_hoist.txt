@@ -1,0 +1,59 @@
+-- T1 the memo-site partition, RE-DERIVED here (not imported) --
+   0x4e4ddc FUN_004e47d0     pair=(6, 11) guard=-
+   0x4eb6c7 FUN_004eb6b0     pair=(5, 10) guard=direct jcc 0x4eb6c5->0x4eb6e5 cmp 0x4eb6bf
+   0x4ee6c9 FUN_004ee410     pair=(6, 11) guard=-
+   0x4ee883 FUN_004ee410     pair=(6, 11) guard=-
+   0x4efeaa FUN_004ef6d0     pair=(6, 11) guard=via-copy jcc 0x4efea8->0x4efed8 cmp 0x4efea0
+   0x4f2201 FUN_004ef6d0     pair=(6, 11) guard=via-copy jcc 0x4f21ff->0x4f2220 cmp 0x4f21f7
+   0x4f3f7f UNRANGED:FUN_004f34b0 pair=(6, 11) guard=-
+   0x4f44a8 FUN_004f41f0     pair=(5, 10) guard=-
+   0x4f455d FUN_004f41f0     pair=(6, 11) guard=-
+   0x4f5ab7 FUN_004f5a70     pair=(12, 17) guard=-
+   0x4f5b32 FUN_004f5a70     pair=(5, 10) guard=-
+   0x4f5c4a FUN_004f5a70     pair=(6, 11) guard=via-copy jcc 0x4f5c48->0x4f5c69 cmp 0x4f5c46
+   stores=22 memo=12 clears=10  guarded=['0x4eb6c7', '0x4efeaa', '0x4f2201', '0x4f5c4a']  unguarded=['0x4e4ddc', '0x4ee6c9', '0x4ee883', '0x4f3f7f', '0x4f44a8', '0x4f455d', '0x4f5ab7', '0x4f5b32']
+OK   G1 M315's inputs re-measure identically: 22 stores, the 12 pair-fed memo sites, and an INDEPENDENT guard rule reproduces exactly the 4-guarded / 8-unguarded split: stores=22 memo=12 guarded=4 unguarded=8
+-- T2 every instruction that READS/TESTS the memo (image-wide): 6 --
+   0x4e5155 FUN_004e4e10     mov eax,ds:0x68cbb4
+   0x4eb6bf FUN_004eb6b0     cmp DWORD PTR ds:0x68cbb4,eax
+   0x4efe83 FUN_004ef6d0     mov eax,ds:0x68cbb4
+   0x4f21e9 FUN_004ef6d0     mov eax,ds:0x68cbb4
+   0x4f5c41 FUN_004f5a70     mov eax,ds:0x68cbb4
+   0x5ab74d FUN_005ab650     mov ecx,DWORD PTR ds:0x68cbb4
+   by owner: {'FUN_004e4e10': 1, 'FUN_004eb6b0': 1, 'FUN_004ef6d0': 2, 'FUN_004f5a70': 1, 'FUN_005ab650': 1}
+-- T3 direct call sites of each memo-site OWNER (thunk-resolved) --
+   site 0x4e4ddc owner FUN_004e47d0     entry=0x4e47d0 direct_calls=3 callers={'FUN_004cca50': 1, 'FUN_0059ce10': 1, 'FUN_0059ec90': 1}
+   site 0x4eb6c7 owner FUN_004eb6b0     entry=0x4eb6b0 direct_calls=66 callers={'FUN_0040a990': 2, 'FUN_0040b960': 3, 'FUN_0040c010': 2, 'FUN_0040c8d0': 1, 'FUN_0040d7a0': 2, 'FUN_00416dd0': 1, 'FUN_00416e50': 1, 'FUN_00416ef0': 1, 'FUN_00416f60': 1, 'FUN_004170e0': 1, 'FUN_004175b0': 1, 'FUN_00417cd0': 1, 'FUN_00417ee0': 6, 'FUN_00419c30': 2, 'FUN_0041a8f0': 2, 'FUN_0041b110': 1, 'FUN_0041b600': 1, 'FUN_0041b640': 1, 'FUN_0041b710': 1, 'FUN_0041b780': 1, 'FUN_0041bca0': 1, 'FUN_0041c040': 1, 'FUN_0041c2f0': 1, 'FUN_0041d480': 3, 'FUN_0041e160': 1, 'FUN_0041eb40': 3, 'FUN_0041ef60': 1, 'FUN_00445900': 1, 'FUN_00499e70': 2, 'FUN_0049b400': 1, 'FUN_004a13c0': 1, 'FUN_004ac6d0': 8, 'FUN_004f6030': 1, 'FUN_00507ef0': 1, 'FUN_00519b00': 1, 'FUN_0051fe90': 1, 'FUN_005437d0': 1, 'FUN_0058fa40': 1, 'FUN_0059af40': 1, 'FUN_0059ce10': 1, 'FUN_005a1950': 1, 'FUN_005aaa20': 1}
+   site 0x4ee6c9 owner FUN_004ee410     entry=0x4ee410 direct_calls=1 callers={'FUN_004f5a70': 1}
+   site 0x4ee883 owner FUN_004ee410     entry=0x4ee410 direct_calls=1 callers={'FUN_004f5a70': 1}
+   site 0x4efeaa owner FUN_004ef6d0     entry=0x4ef6d0 direct_calls=1 callers={'FUN_004f5a70': 1}
+   site 0x4f2201 owner FUN_004ef6d0     entry=0x4ef6d0 direct_calls=1 callers={'FUN_004f5a70': 1}
+   site 0x4f3f7f owner UNRANGED:FUN_004f34b0 -> NO FUNCTION RANGE (M315 A10): callers not nameable
+   site 0x4f44a8 owner FUN_004f41f0     entry=0x4f41f0 direct_calls=4 callers={'FUN_00416ef0': 1, 'FUN_00416f60': 1, 'FUN_0041a8f0': 1, 'FUN_004f5a70': 1}
+   site 0x4f455d owner FUN_004f41f0     entry=0x4f41f0 direct_calls=4 callers={'FUN_00416ef0': 1, 'FUN_00416f60': 1, 'FUN_0041a8f0': 1, 'FUN_004f5a70': 1}
+   site 0x4f5ab7 owner FUN_004f5a70     entry=0x4f5a70 direct_calls=1 callers={'FUN_00520540': 1}
+   site 0x4f5b32 owner FUN_004f5a70     entry=0x4f5a70 direct_calls=1 callers={'FUN_00520540': 1}
+   site 0x4f5c4a owner FUN_004f5a70     entry=0x4f5a70 direct_calls=1 callers={'FUN_00520540': 1}
+-- T3b the caller population of the 8 UNGUARDED sites --
+   unguarded sites=8 nameable owners=4 ['FUN_004e47d0', 'FUN_004ee410', 'FUN_004f41f0', 'FUN_004f5a70'] | owner-less sites (M315 A10 gap)=['0x4f3f7f']
+   distinct direct callers=8; of them 1 READ the memo somewhere: ['FUN_004f5a70']
+   are those readers themselves memo-site owners? {'FUN_004f5a70': True} -> their read is a LOCAL guard, not a hoist onto a caller
+   call count by caller: {'FUN_004cca50': 1, 'FUN_0059ce10': 1, 'FUN_0059ec90': 1, 'FUN_004f5a70': 2, 'FUN_00416ef0': 1, 'FUN_00416f60': 1, 'FUN_0041a8f0': 1, 'FUN_00520540': 1}
+-- T4 CFG arrival of each call to an UNGUARDED owner (pred edge -> flag setter -> what it reads) --
+   call 0x4ccbdd -> FUN_004e47d0     in FUN_004cca50     arrival=other-test       preds=[('jcc', '0x4ccb5f|edx,edx'), ('jcc', '0x4ccb63|eax,eax'), ('jcc', '0x4ccb67|eax,esi'), ('jcc', '0x4ccb83|cl,0x11'), ('jcc', '0x4ccbb6|ecx,edx'), ('add', '-|-')]
+   call 0x59d894 -> FUN_004e47d0     in FUN_0059ce10     arrival=other-test       preds=[('jcc', '0x59d880|eax,eax')]
+   call 0x5a01f8 -> FUN_004e47d0     in FUN_0059ec90     arrival=other-test       preds=[('jcc', '0x5a01d2|al,0x10'), ('jcc', '0x5a01d6|al,0x80')]
+   call 0x4f5aff -> FUN_004ee410     in FUN_004f5a70     arrival=fallthrough-only preds=NONE(entry)
+   call 0x416f59 -> FUN_004f41f0     in FUN_00416ef0     arrival=other-test       preds=[('jcc', '0x416f32|BYTE PTR [eax+0x38],0x40')]
+   call 0x41707e -> FUN_004f41f0     in FUN_00416f60     arrival=other-test       preds=[('jcc', '0x417057|BYTE PTR [eax+0x38],0x40')]
+   call 0x41ae0d -> FUN_004f41f0     in FUN_0041a8f0     arrival=other-test       preds=[('jcc', '0x41ade4|BYTE PTR [eax+0x38],0x40')]
+   call 0x4f5bee -> FUN_004f41f0     in FUN_004f5a70     arrival=other-test       preds=[('jcc', '0x4f5bd4|eax,0x1')]
+   call 0x5206d3 -> FUN_004f5a70     in FUN_00520540     arrival=other-test       preds=[('jcc', '0x5206ce|ecx,eax')]
+   arrival totals: {'other-test': 8, 'fallthrough-only': 1}
+OK   G2 the memo has EXACTLY 6 read/test instructions IMAGE-WIDE, at these pinned addresses in 5 functions - so any hoisted guard would have to live in one of those 5: refs=6 ['0x4e5155', '0x4eb6bf', '0x4efe83', '0x4f21e9', '0x4f5c41', '0x5ab74d']
+OK   G5 the memo is PRIVATE to the refresh chain: every function that reads it also writes it (no read-only consumer exists to have hoisted a guard): readers=5 writers=15 readers_not_writers=[]
+OK   G3 RIVAL 'the dedup guard is HOISTED into the callers' FAILS: of the 8 distinct direct callers of the unguarded owners, exactly 1 reads the memo (FUN_004f5a70) and it is itself a memo-site owner - its read is the LOCAL guard of its own site, not a hoist. Callers that are not memo-site owners and read the memo: 0: unguarded=8 owners=4 callers=8 callers_reading_memo=1 readers_that_are_owners=1 non-owner memo-readers=[]
+OK   G4 RIVAL 'the 8 unguarded sites are dead code' FAILS: every nameable unguarded owner has at least one direct call site (min=1, total calls=9); the 8th site 0x4f3f7f has no function range at all (M315 A10) so its callers are not nameable - stated, not counted: min_calls_per_owner=1 calls=9 unranged=['0x4f3f7f']
+OK   G6 no call to an unguarded owner arrives under a MEMO test (the PRECISE form of G3: the CFG pred edge's flag-setter is never a memo compare): calls=9 arrivals={'other-test': 8, 'fallthrough-only': 1}
+-- measurement digest b70fcae540bf6a02 (T2+T3+T4 rows + the pinned ref list + per-site callers) --
+== M319: 6/6 ==
