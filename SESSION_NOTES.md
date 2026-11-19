@@ -299,3 +299,13 @@ Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only w
   3fee30fcd74735ad']`. The archive line now states both digests with anchors: a superseded digest must
   share its line with its replacement or the row fails.
   NEXT: B26 (spine text NOT authored) or picks (vi)/(vii).
+
+## Session 295-chain2 (2026-11-19, M323 CLOSED, chain 2 second fire, STATIC: ds:0x985afc = ROUND counter)
+
+- Chain 2 in wt-chain2 @ milestone/m323 (from main 53a2553); chain 1 owns main/sim/picks(vi)/(vii).
+- ANSWER: ds:0x985afc = global ROUND counter. 336 refs W5/T59/R272/A0; dw333+word1 (mov ax @59c18a)+byte2. WRITERS: FUN_005a0fa0 round=0 @5a108b (new-game, counts 985af0/af4 zeroed); FUN_0051f320 round+1 @51f53c (advance); FUN_004e0350 max(1,g999fa4-g92bf68) @4e0387/8e (callers = M314 pumps); FUN_0059ce10 rand()%3 {30,60,80} @59e2b1 gated 985ac4.7. YEAR: sole 985b00 writer @51f54f = FUN_005b2c00(round+1) = arg+g92bf68; g92bf68=2100 -> year=round+2100.
+- GATES re-derived: M320 ==0 (59f1a0/59f19c/jne 59f1d4); M305 &3==bl(1) @51f711-71e; M317 >75 @55840d->setg; M177 stamps 533eec/53420e/534522 + age<16 @569401/8. Rivals YEAR/MODE-ENUM/LOAD-CONST dead.
+- ACCEPT `python3 -u scripts/m323_round_census.py` -> **13/13** digest **136841406b5bee5b** (`evidence/m323_round_census.txt:536-537`), x2 identical post-review (`_rerun.txt:537`; pre-review e112a4260e3c1722 x3). HARNESS `python3 -u scripts/m323_mutate.py` -> **31/31+1 NO-OP** digest a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32-33`); selftest 4/4 (`_selftest.txt:5`). MU23 crash fixed (unary-imul guard); sets re-measured.
+- REVIEW #323 (3 P1+7 P2): 9 accepted, 1 dismissed (P2-5 ACCEPT meta row: review_lint.py:85-86 + M320 precedent). RETRACTED "no word": 66-prefix mov ax @59c18a (FUN_0059c150) is a WORD read (G1/G9 re-pinned, MU31). Added: max-flow cmp/jge pins (MU27/28); bl full ebx def-set+push/pop pair+no-jump-in (MU29); year arg chain in G10 (MU13/30); year scan all memory-first forms; score() /13 + S4 13/13. MU13/19/30 sets re-measured.
+- OPEN: rand-start noun; g999fa4 (fed block+0x220 @442642); save-carry (no loader writer; re-derive-from-year unproven); gaps 4f3a91/51da30; resolver linear-static (declared).
+- TRAP: worktree info/exclude lives in the COMMON git dir - used trap-15 stash/start/pop.

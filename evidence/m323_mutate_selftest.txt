@@ -1,0 +1,5 @@
+OK   S1 scorer match
+OK   S2 scorer mismatch
+OK   S3 scorer crash
+OK   S4 live NO-OP
+selftest 4/4

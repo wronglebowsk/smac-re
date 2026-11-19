@@ -1,0 +1,33 @@
+MU1    data   declared=['G1']                   observed=['G1']                   OK
+MU2    data   declared=['G2']                   observed=['G2']                   OK
+MU3    data   declared=['G3']                   observed=['G3']                   OK
+MU4    data   declared=['G4']                   observed=['G4']                   OK
+MU5    data   declared=['G5']                   observed=['G5']                   OK
+MU6    data   declared=['G6']                   observed=['G6']                   OK
+MU7    data   declared=['G7']                   observed=['G7']                   OK
+MU8    data   declared=['G8']                   observed=['G8']                   OK
+MU9    data   declared=['G9']                   observed=['G9']                   OK
+MU10   data   declared=['G10', 'R1']            observed=['G10', 'R1']            OK
+MU11   data   declared=['G5']                   observed=['G5']                   OK
+MU12   data   declared=['R3']                   observed=['R3']                   OK
+MU13   code   declared=['G10', 'G2', 'R1', 'R2', 'R3'] observed=['G10', 'G2', 'R1', 'R2', 'R3'] OK
+MU14   code   declared=['G5']                   observed=['G5']                   OK
+MU15   code   declared=['G4', 'G5']             observed=['G4', 'G5']             OK
+MU16   code   declared=['G8', 'R2']             observed=['G8', 'R2']             OK
+MU17   code   declared=['G10', 'R1']            observed=['G10', 'R1']            OK
+MU18   code   declared=['G1', 'G2', 'G3', 'R2'] observed=['G1', 'G2', 'G3', 'R2'] OK
+MU19   code   declared=['G1', 'G10', 'G4', 'G9', 'R1', 'R3'] observed=['G1', 'G10', 'G4', 'G9', 'R1', 'R3'] OK
+MU20   code   declared=['G10', 'G2']            observed=['G10', 'G2']            OK
+MU21   code   declared=['G5']                   observed=['G5']                   OK
+MU22   algo   declared=['G5']                   observed=['G5']                   OK
+MU23   algo   declared=['G1', 'G2', 'G3', 'G5', 'R2', 'R3'] observed=['G1', 'G2', 'G3', 'G5', 'R2', 'R3'] OK
+MU24   evdata declared=['G7']                   observed=['G7']                   OK
+MU25   evdata declared=['G8']                   observed=['G8']                   OK
+MU26   noop   declared=[]                       observed=[]                       NO-OP
+MU27   code   declared=['G2']                   observed=['G2']                   OK
+MU28   code   declared=['G2']                   observed=['G2']                   OK
+MU29   code   declared=['G5']                   observed=['G5']                   OK
+MU30   code   declared=['G1', 'G10', 'G2', 'R1', 'R2', 'R3'] observed=['G1', 'G10', 'G2', 'R1', 'R2', 'R3'] OK
+MU31   code   declared=['G1', 'G9']             observed=['G1', 'G9']             OK
+digest a25f4b5f2af8bb8a
+== M323 MUTATE: 31/31 scored + 1 NO-OP ==
