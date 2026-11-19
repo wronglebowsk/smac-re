@@ -749,6 +749,8 @@ other STORES as readers mislabels dead slots as live.
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **Vtable targets: check for a live INSTANCE first** — scan writable `/proc/<pid>/mem` regions for the class's
   vptr; a class with no live instance logs zero hits at every method, whatever the window (recipes:
   `references/code-atlas.md`).

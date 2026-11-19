@@ -1,6 +1,7 @@
-HYGIENE SPLIT DONE (s290, desktop qwen4-max:free, loop paused). SKILL.md
-58,206 -> 44,493 B; always-loaded 59,936 < 60k ritual target. 21 blocks
-moved VERBATIM to 12 references (s290 retirement), rules + pointers stay;
-live <-> skill/ copies identical. Process law (#313) already merged. NEXT:
-gate -> submit -> review -> merge this split; then pick (v) the 8 unguarded
-memo sites. B25 spine unauthored. #180 documented-FAIL stands.
+PIPELINE REVIEW ROUND DONE (s291, desktop qwen4-max:free, loop paused).
+Dogfood review on #315: 10 findings ALL fixed (lint hardened: tight meta
+exemption, L2b address-contact, row-scoped digests, truncation detection in
+ai_review, replay endpoint scrub, caps reconciled 12k/16k). Smoke on #314:
+#299 block actually moved, pointer overclaims corrected, counts 27/13.
+Fixtures 12/12. NEXT: re-run tests -> gate -> push -> triage reply -> merge.
+Then pick (v) under the new pipeline. B25 spine unauthored. #180 stands.

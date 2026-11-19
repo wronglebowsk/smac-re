@@ -296,11 +296,17 @@ milestone per merge and three acceptance invocations, not one question per step.
   proves they COVER. A row with no mutant is INFERRED/OPEN until pinned + mutated. Tracers/classifiers also get
   an ALGORITHM mutant (a between-push reload for a def-walk tracer): instruction/data mutants cannot catch a
   wrong trace position. Depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law.
-- `NEXT_PROMPT.md` <= 15,300 BYTES AT CLOSE — the unattended kickoff's cap-triage trigger. `evidence.py budget`
+- Review pipeline (s291, Greptile credits exhausted): `scripts/review_lint.py --id <id>` at close (mechanical
+  claim->mutant / digest-printed / citation-line checks; fixtures `test_review_lint.py` 7/7), then
+  `scripts/ai_review.py <n>` after submit — a FRESH-CONTEXT Strata review (replay-validated on the #309/#311
+  findings: caught the algorithmic + coverage classes incl. the deepest bug; the definition-mismatch class is
+  checklist-targeted in the prompt). Triage rule unchanged; the human owns the merge. Evidence + constraints:
+  `docs/AI-REVIEW.md`.
+- `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (warn; gate FAILs 16,000) — the unattended kickoff's cap-triage trigger. `evidence.py budget`
   prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
   used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate
-  only FAILs at 16,000, so a fire that closes at 15,4xx hands the NEXT fire a docs-only split: s175 and s179 were
-  both such splits. `test_loop.py` appends bytes in CI, so keep >100 B of headroom under whatever number you quote.
+  only FAILs at 16,000, so a fire that closes past the warn hands the NEXT fire a docs-only split: s175 and s179 were
+  both such splits (under the old 15,300 cap). `test_loop.py` appends bytes in CI, so keep >100 B of headroom under whatever number you quote.
   `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
 - Docs > 10 KB: `patch` anchored sections, never `read_file`-then-`write_file` — one whole-doc call must fit the
   model's OUTPUT cap, so an oversized one truncates mid-JSON, the sanitizer drops it (`Unrepairable tool_call
@@ -388,6 +394,8 @@ attribution, which is where decodes drift. Write the audit to its own short note
 
 
 ## s290 retirement from SKILL.md (VERBATIM)
+
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
 
 - **A memory sampler is the fastest way to blow the evidence budget, and pruning cannot save it.** A
   `/proc/<pid>/mem` poll loop with no sleep runs tens of thousands of samples/s — a 150 s run wrote a

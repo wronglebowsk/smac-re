@@ -35,8 +35,8 @@ can't redden - mutate DATA; a rival that fails by crashing or returning nothing 
 message-matched AND the construction succeeds without the cause (B24 had two degenerate rivals:
 frontinsert, locate - retired, G8 gates the retirement). `pos=False` in `composedturn.fold` is NOT tile-addressing.
 
-M316 MERGED as #305: 18/18 + 32/32, digest dcc6ce82fc98aec4; 5 P2 accepted; its window-scope P2 BROKE THE
-SITE-TWIN LAW (0x94f2d8 same 5-field/16 B shape; REMOVER 0056d780; INITIALIZER 0056d710). NAMED ## M316.
+M316 MERGED #305: 18/18+32/32 dcc6ce82fc98aec4, 5 P2 accepted; SITE-TWIN law (0x94f2d8; REMOVER
+0056d780, INITIALIZER 0056d710). NAMED ## M316.
 M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29, digest 3976ca97eedc1e19; 6 P2 at head 754b4fa6;
 caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/s285_reverify_*`
 (#304). NAMED ## M315.
@@ -133,6 +133,6 @@ earlier block this round qualifies; every VERIFIED row names the mutation that r
 (no mutant = INFERRED/OPEN, or pin it + mutate it before submit). 4 `NEXT_PROMPT.md` patched BY SECTION to <=12,000 B (budget's
 warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`diff -rq skill/
 ~/.hermes/skills/smac-cvr-format/` then `rsync`). 6 `git add <explicit paths>` + commit, then
-`python3 scripts/gate.py --base main` GREEN. 7 submit/merge ONLY on a real PASS with the Greptile
-review on the head commit finished and every P2 triaged in the PR body (fix or one-sentence
-dismissal).
+`python3 scripts/gate.py --base main` GREEN + `python3 scripts/review_lint.py --id <id>` PASS.
+7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
+triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).

@@ -122,6 +122,8 @@ A `gdb -batch` script has two failure modes that both leave the harness looking 
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **The gdb command-list killer class (all of it aborts the sourced script at the FIRST hit and detaches — the
   log reads as a clean zero-event run while the turn driver exits 0):** a printf ERROR in a commands block (so:
   no inferior strings — `%.20s` of an inferior pointer errors; expressions go in printf ARGUMENTS, specs must

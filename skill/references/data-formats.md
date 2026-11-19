@@ -222,6 +222,8 @@ Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 **The last 156 B of every save is a
 fixed TRAILER, not game data** — the final 152 B are identical across nine saves, only the trailing dword
 varies and its offset moves with file size, so no hard-coded leg can index it; its reader is the 6-site

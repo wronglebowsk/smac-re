@@ -236,6 +236,8 @@ failure class as a stale-gdb "success".
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - A gate that counts the harness's own work passes a run that LOST the game. Compute candidate predictions from
   the baseline first; refuse a shape where your model and the null agree on every candidate; read the effect
   back from memory/state.

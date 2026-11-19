@@ -1,0 +1,5 @@
+strata/m317: OK 165s, 6034 chars content, 17539 chars reasoning, usage={"prompt_tokens": 27243, "completion_tokens": 8192, "total_tokens": 35435, "prompt_tokens_details": {"cached_tokens": 0}}
+strata/m318: OK 80s, 6395 chars content, 18772 chars reasoning, usage={"prompt_tokens": 14339, "completion_tokens": 8155, "total_tokens": 22494, "prompt_tokens_details": {"cached_tokens": 0}}
+qwen36/m317: OK 293s, 19945 chars content, 0 chars reasoning, usage={"prompt_tokens": 27203, "completion_tokens": 8192, "total_tokens": 35395, "prompt_tokens_details": {"cached_tokens": 0}}
+qwen36/m318: OK 66s, 8145 chars content, 0 chars reasoning, usage={"prompt_tokens": 14299, "completion_tokens": 2214, "total_tokens": 16513, "prompt_tokens_details": {"cached_tokens": 0}}
+REPLAY DONE

@@ -233,6 +233,8 @@ Depth: `references/wine-operations.md`, `references/wine-headless-harness.md`
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **Watchpoints:** x86 gives 4 hw slots (an 8-byte window needs 8-alignment = 2 slots); they fire on VALUE
   CHANGE, so a same-value rewrite is invisible — count stores with silent bps AT the store and keep the
   watchpoint as the "any other writer" check. **Never watch a field the display reads constantly**

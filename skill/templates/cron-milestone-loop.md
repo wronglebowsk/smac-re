@@ -20,8 +20,8 @@ Meier's Alpha Centauri under Wine). Work in that directory. Do ONE batch of at m
 properly, then STOP and report. Never take a milestone id from memory: NEXT_PROMPT.md decides.
 
 FIRST, in this order:
-1. `python3 scripts/evidence.py budget` — the gate's own accounting. If NEXT_PROMPT.md is over 15,300 chars,
-   skill/SKILL.md over 69,000 bytes, or evidence/ over 28.5 MB, do the CAP TRIAGE FIRST as its own commit/PR (the
+1. `python3 scripts/evidence.py budget` — the gate's own accounting. If NEXT_PROMPT.md is over 11,900 bytes,
+   skill/SKILL.md over 54,000 bytes, or evidence/ over 28.5 MB, do the CAP TRIAGE FIRST as its own commit/PR (the
    skill's rule: split, do not shave), then continue. Never start a milestone with a doc 30 chars from a red gate.
 2. Read NEXT_PROMPT.md in full (footing: ledger, THE PICK, traps, closing order) and `tail -60 SESSION_NOTES.md`.
    Take the pick from the `- Pick from:` bullets. If nothing is open, STOP and report that instead of inventing work.
@@ -56,13 +56,15 @@ CLOSE (exact order, then stop)
 3. One <=1 KB NAMED.md block per milestone id, and patch IN PLACE any earlier block you just qualified.
    Every VERIFIED row names the mutation that reddens it - a claim no mutant can redden is INFERRED/OPEN,
    or gets a pin + mutant before submit (the harness proves gates bite; only this audit proves they COVER).
-4. NEXT_PROMPT.md patched BY SECTION (<=15,500 chars): retire the picks you answered, add ONE result line, and
+4. NEXT_PROMPT.md patched BY SECTION (<=12,000 B warn, 16,000 fail): retire the picks you answered, add ONE result line, and
    pair every addition with a deletion.
 5. Sync the skill by content (`diff -rq` the live dir and skill/, then re-apply only your new bullets).
-6. `git add -A && git commit -m '<ID>: checkpoint'`; `python3 scripts/gate.py --base main` must be GREEN.
-7. `python3 scripts/milestone.py submit --title "..."`, poll `gh pr checks <n>` (~200 s), then `python3
-   scripts/milestone.py merge <n>` — merge ONLY on a real acceptance PASS; on a FAIL leave the PR unmerged and say
-   why.
+6. `git add -A && git commit -m '<ID>: checkpoint'`; `python3 scripts/gate.py --base main` GREEN +
+   `python3 scripts/review_lint.py --id <id>` PASS (every V row names its mutant; digests printed; cites lined).
+7. `python3 scripts/milestone.py submit --title "..."`, then `python3 scripts/ai_review.py <n>` (local Strata
+   review — Greptile credits exhausted; docs/AI-REVIEW.md). Read EVERY finding, fix or dismiss each in ONE reply
+   comment, re-measure at head, poll `gh pr checks <n>` (~200 s), then `python3 scripts/milestone.py merge <n>` —
+   merge ONLY on a real acceptance PASS; on a FAIL leave the PR unmerged and say why.
 8. AFTER the merge, re-run `python3 scripts/track_mode.py`. If a build just landed it flips to
    `MODE=ANALYSE`, so the cursor's "author B<n+1> next" line from step 1 is now WRONG: rewrite just that line
    (`SESSION_CURSOR.md`, still <=600 B: the ANALYSE pick + `next_rung=B<n+1> QUEUED`), then land it as a

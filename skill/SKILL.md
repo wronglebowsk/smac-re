@@ -153,7 +153,8 @@ re-summarise.
 - Close order, every time: cursor -> gate GREEN -> notes entry (`patch`) -> **checkpoint commit** ->
   `NEXT_PROMPT.md` -> submit/PR. Never leave the commit until after the handoff docs. **Every VERIFIED NAMED
   row names the mutation that reddens it** (s290 law; no mutant = INFERRED/OPEN; tracers also get an ALGORITHM
-  mutant - depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law).
+  mutant - depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law). Review pipeline:
+  `review_lint.py` at close + `ai_review.py` at submit (`docs/AI-REVIEW.md`).
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (the budget warn; the gate FAILs at 16,000, and closing past the
   warn hands the NEXT fire a docs-only split). `test_loop.py` appends bytes in CI: keep >100 B of headroom
   under whatever number you quote. `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
@@ -182,7 +183,7 @@ re-summarise.
   still owe the harness/evidence/notes/PR. Full text: `references/session-discipline.md` §taking over a cut-off fire.
 
 ### Verify the OUTCOME, not the mechanism — full text: `references/verify-outcome.md`
-- Verify the OUTCOME, not the mechanism: compute rival predictions from the baseline, read the effect back from memory/state, encode the four exit states (0 measured / 4 never reached / 5 wedged / 8 dirty), and re-verify delegated scripts via a TEMP capture (never process-substitution diff against the script's own output file). Full bullet set VERBATIM: `references/verify-outcome.md` §s290 retirement.
+- Verify the OUTCOME, not the mechanism: compute rival predictions from the baseline, REFUSE a shape where model and null agree on every candidate, read the effect back from memory/state, encode the four exit states (0 measured / 4 never reached / 5 wedged / 8 dirty), and re-verify delegated scripts via a TEMP capture (never process-substitution diff against the script's own output file). Full bullet set VERBATIM: `references/verify-outcome.md` §s290 retirement.
 
 ### Evidence lifecycle — the rules live in `docs/EVIDENCE.md`
 `python3 scripts/evidence.py budget` — `evidence/` warns at 20 MB, FAILs the gate at 30 MB. Text is never
@@ -246,7 +247,7 @@ an RVA/VA mix-up.
 
 ## Map + save container formats — canonical: `MAP_FORMAT.md`, `SAVE_FORMAT.md`; depth `references/data-formats.md`
 The `.MP` size formula, the `.SAV` section list (strides 52 B / 304 B), the byte-exact anchors, the
-read-wrapper caller trace and the zeros-fraction pitfall are all there. The save TRAILER law (last 156 B fixed, 152 identical across saves, the 6-site per-entity restore loop at stride 0x224B8 proved by POKING markers), the PER-REGION save_diff mapping law, and the .SAV chain's two read paths: VERBATIM in `references/data-formats.md` §s290 retirement. **Any file-vs-memory diff goes through `scripts/save_diff.py`, never an ad-hoc window** (it refuses ranges crossing a known boundary). Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
+read-wrapper caller trace and the zeros-fraction pitfall are all there. The save TRAILER law (last 156 B fixed, 152 identical across saves, the 6-site per-entity restore loop at stride 0x224B8 proved by POKING markers), and the PER-REGION save_diff mapping law: VERBATIM in `references/data-formats.md` §s290 retirement (the .SAV chain's two read paths stay in `references/ptrace-level-probes.md`). **Any file-vs-memory diff goes through `scripts/save_diff.py`, never an ad-hoc window** (it refuses ranges crossing a known boundary). Parsers: `scripts/decode_map.py`, `scripts/decode_save.py --sections --anchors`.
 `FUN_00597a70` is the save/scenario block loader (NOT the map loader — the grid is read raw by `FUN_00582260`);
 the .SAV chain's two read paths (kernel in-place vs ring-3 scratch): `references/ptrace-level-probes.md`.
 
@@ -340,14 +341,7 @@ driving/dialog state machines: `references/wine-operations.md`)
   must CLASSIFY its four outcomes) and
   §Static text-cache parse traps.
 - Decoration classes #294/#299 (inline-comment swallow, target fullmatch + case, multi-table vptr runs; mnemonic/operand split, de-duplicated owners, labels-only digests): VERBATIM in `references/instrument-laws.md` §s290 retirement. A gate that passes on an UNMEASURED state is the project's dominant defect.
-- **Three more decoration classes, reviewer-found on #299:** (1) a disassembly cache that stores MNEMONIC and
-  OPERAND in separate fields makes a regex like `^push 0x..$` applied to the operand match NOTHING, so
-  `all(cond for ...)` passes over an empty set - match the bare operand (`^0x[0-9a-f]+$`) and print the size of
-  the scanned census so an empty population is visible. (2) A count claim ("exactly N sites") that compares
-  DE-DUPLICATED OWNERS stays green when an (N+1)-th site lands inside an already-listed owner - pin the site
-  ADDRESSES. (3) A digest is evidence only if it hashes name+verdict+detail; hashing the check NAMES, or
-  keying a `detail` dict by short ids while the digest loop iterates full check names, lets two different
-  measurement sets share one digest - and only mutations can catch that, so mutate the numbers, not the labels.
+- Decoration classes #299 (mnemonic/operand-split regexes matching nothing, de-duplicated owner counts, labels-only digests): VERBATIM in `references/instrument-laws.md` §s290 retirement.
 - Answer "what is this field" by a STRUCTURAL partition (store/read/cmp census + def-walk + exact-complement classes), not by counting writers; carry the rival it kills. Full text + the measured 5..17 B pair-reach correction: `references/instrument-laws.md` §s290 retirement.
 - **Concurrent fires can takeover mid-flight (s285):** isolation is verified at fire START, but a fixer fire can
   finish, post the review reply, merge the PR and merge its close-out while a verifier fire is still re-running

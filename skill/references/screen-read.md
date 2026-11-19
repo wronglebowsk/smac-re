@@ -107,6 +107,8 @@ state questions and keep OCR for named panes with known text bands.
 
 ## s290 retirement from SKILL.md (VERBATIM)
 
+*(Historical text moved verbatim at s290; internal "full text" pointers reflect the pre-split layout and may be self-referential — this file is the canonical location now.)*
+
 - **A turn that never advances can be a CLASSIFIER miss with no modal visible.** OCR is unreliable both ways:
   a clean HUD reads `unknown` when the TURN COMPLETE row garbles (measured: `complete` in the button row 3/8
   passes while the bottom status bar read 8/8) — which is why `accept_ready.py` re-freezes up to 4 times and
