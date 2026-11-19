@@ -1643,6 +1643,32 @@ def run_b25(sav_path, map_path, results):
     return 0
 
 
+def run_b26(sav_path, map_path, log_path, trace_path, results):
+    """Rung B26: the composed run across a SAVE/LOAD BOUNDARY - the model is rebuilt
+    from the written bytes, the founder/arrival/move legs keep running on what the
+    container carries, confluence is byte-equality with the uninterrupted run, and the
+    mid-gesture non-carry is counted. All claims are the module's -
+    sim/composedsave.py authors them and this hook only relays them, so --b26 and
+    `python3 -m sim.composedsave` can never print different text."""
+    import os as _os
+    from . import composedsave as scs
+    for pth in (sav_path, map_path, log_path, trace_path):
+        if not _os.path.exists(pth):
+            return fail("B26: missing input: %s" % pth)
+    m = scs.measure(sav_path, map_path, log_path, trace_path)
+    for line in scs.render(m):
+        print(line)
+    scs.acceptance(m, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B26: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B26: %d/%d gates" % (len(results), len(results)))
+    return 0
+
+
 def run_b24(sav_path, results):
     """Rung B24: the queue leg visiting a base FOUNDED BY THE FOUNDER LEG in the
     written container - op stream applied to the image's base array, fold
@@ -1794,6 +1820,8 @@ def main(argv=None):
                     help="rung B20: the byte-twin visit counter executed "
                          "(M303 byte law + M302 pinned state) vs the recorded "
                          "m302/b18 numbers and the m294 rows")
+    ap.add_argument("--b26", nargs="*", metavar="ARG",
+                    help="rung B26 (save/load boundary); optional SAV MAP LOG TRACE")
     ap.add_argument("--b25", nargs="*", metavar="ARG",
                     help="rung B25: the MOVE leg made PERSISTENT - the press reads its "
                          "start tile out of the container and the moved tiles go back "
@@ -1869,6 +1897,16 @@ def main(argv=None):
     if args.b20 is not None:
         sav = args.b20[0] if args.b20 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b20(sav, results)
+    if args.b26 is not None:
+        d = os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        e = os.path.join(REPO, "evidence")
+        sav = args.b26[0] if args.b26 else d
+        mp = args.b26[1] if len(args.b26) > 1 else os.path.join(
+            REPO, "programs", "maps", "planet.MP")
+        lg = args.b26[2] if len(args.b26) > 2 else os.path.join(e, "m289_gdb_raw.log")
+        tr = args.b26[3] if len(args.b26) > 3 else os.path.join(
+            e, "trace_m289_20261110_071759.jsonl")
+        return run_b26(sav, mp, lg, tr, results)
     if args.b25 is not None:
         sav = args.b25[0] if args.b25 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         mp = args.b25[1] if len(args.b25) > 1 else os.path.join(

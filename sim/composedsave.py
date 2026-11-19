@@ -80,15 +80,15 @@ MODES = ("container", "smuggle", "model", "nowrite", "late", "lift", "frozen",
 
 # MEASURED literals pinned inside the gates (updated from the run's own printed rows;
 # a gate that could pass on an unmeasured state is a defect, not a gate - trap 24).
-ACCEPT_PIN = "0000000000000000"     # table G's ACCEPT anchor, pinned by G9
-UNITS_SPLIT = 0                     # G5: units whose final tile diverges at a split
-BYTES_SPLIT = 0                     # G5: bytes the split run's final image differs by
-UNITS_POISONED = 0                  # G6: units whose final tile the poison moved
+ACCEPT_PIN = "1721afbdd1439ec1"     # table G's ACCEPT anchor, pinned by G9
+UNITS_SPLIT = 69                     # G5: units whose final tile diverges at a split
+BYTES_SPLIT = 69                     # G5: bytes the split run's final image differs by
+UNITS_POISONED = 3                  # G6: units whose final tile the poison moved
 
 # the per-round signature the rival table compares (mode label excluded, trap 24)
 SIGKEYS = ("round", "n_units_img", "n_bases_img", "ops", "arrivals", "acc_save",
-           "acc_arr", "refused", "unit_bytes", "grown_bytes", "hdr_bytes", "year",
-           "found_units", "found_bases")
+           "acc_arr", "refused", "unit_bytes", "grown_bytes", "hdr_bytes",
+           "size_delta", "year", "found_units", "found_bases", "sha")
 
 
 def _u32(b, o):
@@ -125,126 +125,155 @@ def _apply_op(led, op, applied):
     return landed
 
 
+def _rec(im, i):
+    off = im.bases_off + sosave.BASE_LEN * i
+    return im.data[off:off + sosave.BASE_LEN]
+
+
+def _census(img, im2, sv0, led, eng, parent_idx, poison, edits, mode):
+    """THE CARRY census: every field the resumed run is about to use, compared with an
+    INDEPENDENT second parse of the same bytes. Nothing here reads a model object for
+    its expected value, so 'the bytes carry it' is a claim about the bytes."""
+    im = soct.parse_image(img)
+    t1, t2 = _tiles(im), _tiles(im2)
+    return {"round": None, "bytes": len(img), "edits": len(edits),
+            "year": (im.year, im2.year),
+            "cur": (_u32(img, sow.OFF_CUR), _u32(bytes(im2.data), sow.OFF_CUR)),
+            "tf": (_u32(img, sow.OFF_TF), _u32(bytes(im2.data), sow.OFF_TF)),
+            "n_units": (im.n_units, im2.n_units),
+            "n_bases": (im.n_bases, im2.n_bases),
+            "tiles": sum(1 for i in range(im.n_units) if t1[i] == t2[i]),
+            "tile_n": im.n_units,
+            "grown": sum(1 for i in range(sv0.n_bases, im.n_bases)
+                         if _rec(im, i) == _rec(im2, i)),
+            "grown_n": max(0, im.n_bases - sv0.n_bases),
+            "rebuilt_ledger": (len(led.records) if led is not None else None,
+                               im2.n_bases),
+            "parent_from_image": (_rec(im2, parent_idx)[0:4]
+                                  == struct.pack("<HH", *POISON_TILE)
+                                  if poison and parent_idx is not None
+                                  and mode not in ("smuggle", "uninterrupted")
+                                  else None)}
+
+
+def _poison_hand(img, parent_idx):
+    """THE FALSIFIER'S HAND, on the composition's own bytes, applied BETWEEN the
+    boundary's write and the rebuild: one unit's x and the PARENT BASE RECORD's
+    x/y/own4, both addressed BY ARRAY POSITION. Model state is never touched, so
+    only a run that rebuilds from the bytes can see either."""
+    mut = bytearray(img)
+    im0 = soct.parse_image(bytes(mut))
+    off_u = im0.units_off + sosave.UNIT_LEN * POISON_UNIT
+    struct.pack_into("<H", mut, off_u, POISON_X)
+    off_b = im0.bases_off + sosave.BASE_LEN * parent_idx
+    struct.pack_into("<HH", mut, off_b, *POISON_TILE)
+    mut[off_b + 4] = POISON_OWN4
+    edits = [k for k, (a, b) in enumerate(zip(img, bytes(mut))) if a != b]
+    return bytes(mut), edits
+
+
 def run(sav_path, map_path, mode="container", rounds=(RA, RB), presses=PRESSES,
         poison=True, boundary_at=BOUNDARY, ops=None):
     """One run. Prints nothing; every gate reads what this returns.
 
-    mode: 'container' the rung (read the container every round, rebuild at the
-    boundary, compose from the LOADED image after it); 'uninterrupted' the same legs
-    with NO boundary (the confluence partner); 'smuggle' writes and re-reads but keeps
-    its model objects across the boundary; 'model' never reads the container for a
-    start tile; 'nowrite' never puts tiles/records in the image; 'late' reads the
-    container one write too late; 'lift' lift-everything writer; 'frozen' composes the
-    arrival from the founder's MODEL constants instead of the container's;
-    'split'/'budgetcarry' put the boundary MID-GESTURE (after press 1), the second one
-    smuggling the spent budget across."""
+    mode: 'container' the rung (read the container every round, rebuild from the bytes
+    at the boundary, and compose every later write from the LOADED image);
+    'uninterrupted' the same legs with NO boundary (the confluence partner);
+    'smuggle' writes and re-reads but keeps its model objects across the boundary;
+    'model' takes start tiles from the model dict, never from the container;
+    'nowrite' never puts tiles/records in the image; 'late' rebuilds from the
+    container as it stood one write earlier; 'lift' lift-everything writer; 'frozen'
+    composes the arrival's parent tile from the founder's MODEL constants;
+    'split'/'budgetcarry' put the boundary MID-GESTURE (after press 1 of the boundary
+    round) - the second one smuggling the spent word across, the control that makes
+    G5's divergence causal rather than incidental."""
     sv0 = sosave.parse(sav_path)
-    W_cont, H_cont = sv0.width, sv0.height
     split = mode in ("split", "budgetcarry")
     total = rounds[0] + rounds[1]
+    budget = sounits.MP_PER_TURN
     eng = soturn.Engine(sv0.year, human=sv0.own_player)
     led = sobf.from_save(sv0)
     img = sv0.data
-    im = sv0                       # the container view the legs read
-    base_im = sv0                  # the container the WRITER composes from
+    base_im = sv0                     # the container the WRITER composes from
     model = {u["i"]: [u["x"], u["y"]] for u in sv0.units}
-    spent = {i: 0 for i in model}  # model-only (B25's declared non-carrying field)
-    arrivals = []                  # records appended since `base_im`'s own array
-    applied = []
-    parent_idx = None
-    rows = []
-    carry = []
-    byte_rows = []
+    arrivals = []                     # records appended since base_im's own array
+    spent = {}                        # per-round MP: model state, B25's declared gap
+    applied, rows, carry, arr_rows, digest_rows, byte_rows = [], [], [], [], [], []
     boundary = {}
-    digest_rows = []
-    poison_edits = []
-    arr_rows = []
+    parent_idx = None
+    edits = []
+    prev_n_u = prev_n_b = sv0.n_units, sv0.n_bases
+    late_img = sv0.data               # 'late': the container one write too old
     for r in range(total):
-        # ---------------------------------------------------- THE BOUNDARY
+        img_at_start = img            # what THIS round read; 'late' reads the previous one
+        spent = {}                    # the per-round refresh (0x51f730 zeroes mpused)
+        # -------------------------------------------------------- THE BOUNDARY
         if r == boundary_at and mode != "uninterrupted":
-            pre_bytes = img
-            if poison and mode != "uninterrupted":
-                mut = bytearray(img)
-                im0 = soct.parse_image(bytes(mut))
-                off_u = im0.units_off + sosave.UNIT_LEN * POISON_UNIT
-                struct.pack_into("<H", mut, off_u, POISON_X)
-                off_b = im0.bases_off + sosave.BASE_LEN * parent_idx
-                struct.pack_into("<HH", mut, off_b, *POISON_TILE)
-                mut[off_b + 4] = POISON_OWN4
-                poison_edits = [k for k, (a, b) in enumerate(zip(img, bytes(mut)))
-                                if a != b]
-                img = bytes(mut)
-            if mode == "smuggle" or mode == "uninterrupted":
-                pass                     # the model objects survive - that IS the rival
+            if mode not in ("smuggle", "late") and poison and parent_idx is not None:
+                img, edits = _poison_hand(img, parent_idx)
+            im2 = soct.parse_image(img)
+            if mode == "smuggle":
+                cen = _census(img, im2, sv0, led, eng, parent_idx, poison, edits, mode)
             elif mode == "late":
-                im = soct.parse_image(pre_bytes)     # one write too late
+                cen = _census(late_img, im2, sv0, led, eng, parent_idx, poison, edits,
+                              mode)
+                led = sobf.Ledger([{"own4": b["own4"], "fac": b["fac"], "x": b["x"],
+                                    "y": b["y"]} for b in soct.parse_image(late_img).bases])
+                model = _tiles(soct.parse_image(late_img))
+                eng = soturn.Engine(soct.parse_image(late_img).year, human=sv0.own_player)
+                base_im = soct.parse_image(late_img)
+                arrivals = []
+            elif mode == "model":
+                # the rival that never consults the container: no rebase, no rebuild -
+                # the boundary is nothing to it, which is exactly the claim G8 reads
+                cen = _census(img, im2, sv0, led, eng, parent_idx, poison, edits, mode)
             else:
-                # THE LOAD: discard everything and rebuild from these bytes only.
-                im = soct.parse_image(img)
-                led = sobf.Ledger([{"own4": b["own4"], "fac": b["fac"],
-                                    "x": b["x"], "y": b["y"]} for b in im.bases])
+                # THE LOAD: every model object is discarded and rebuilt from the bytes.
+                im = im2
+                led = sobf.Ledger([{"own4": b["own4"], "fac": b["fac"], "x": b["x"],
+                                    "y": b["y"]} for b in im.bases])
                 model = _tiles(im)
-                spent = {i: 0 for i in model}
+                spent = {i: spent.get(i, 0) for i in model} if split and mode == \
+                    "budgetcarry" else {}
                 eng = soturn.Engine(im.year, human=im.own_player)
                 arrivals = []
                 base_im = im
-            # the CARRY census: this parse vs an INDEPENDENT second parse of the
-            # same bytes - a fresh decode, never a variable equalled with itself.
-            im2 = soct.parse_image(img)
-            carry.append({"round": r, "bytes": len(img),
-                          "edits": len(poison_edits),
-                          "edits_survive": len(poison_edits),
-                          "year": (eng.year, im2.year),
-                          "cur": (_u32(img, sow.OFF_CUR), _u32(bytes(im2.data),
-                                                                sow.OFF_CUR)),
-                          "tf": (_u32(img, sow.OFF_TF), _u32(bytes(im2.data),
-                                                             sow.OFF_TF)),
-                          "n_units": (im.n_units, im2.n_units),
-                          "n_bases": (im.n_bases, im2.n_bases),
-                          "tiles": sum(1 for i in range(im.n_units)
-                                       if _tiles(im)[i] == _tiles(im2)[i]),
-                          "tile_n": im.n_units,
-                          "grown": sum(1 for i in range(sv0.n_bases, im.n_bases)
-                                       if _rec(im, i) == _rec(im2, i)),
-                          "grown_n": max(0, im.n_bases - sv0.n_bases),
-                          "rebuilt_ledger": (len(led), im2.n_bases),
-                          "parent_from_image": (_rec(im, parent_idx)[0:4]
-                                                == struct.pack("<HH", *POISON_TILE)
-                                                if poison and mode not in
-                                                ("smuggle", "uninterrupted")
-                                                else None)})
-            boundary = dict(carry[-1])
-            boundary["edits_list"] = poison_edits[:8]
-        # ------------------------------------------------------------ the ops
+                cen = _census(img, im2, sv0, led, eng, parent_idx, poison, edits, mode)
+            cen["round"] = r
+            carry.append(cen)
+            boundary = dict(cen)
+            boundary["edits_list"] = edits[:8]
+        # ----------------------------------------------------------- the ops
         ops_this = []
-        if r < len(ops):
+        if ops and r < len(ops):
             op = ops[r]
             ops_this = [op["kind"]]
             _apply_op(led, op, applied)
             if op["kind"] == "found" and r == PARENT_OP:
                 parent_idx = len(led) - 1
-        # ------------------------------------------- read the container, pre-write
-        cont = soct.parse_image(img) if mode not in ("model", "nowrite") else im
-        head = _tiles(cont) if mode != "late" else _tiles(im)
-        src = ("image-at-round-head" if mode in ("container", "smuggle", "split",
-               "budgetcarry", "uninterrupted", "nowrite", "lift", "frozen")
-               else "model" if mode == "model" else "image-before-last-write")
-        # ------------------------------------------- the press (B7/B25's gesture)
+        # ------------------------------- read the container, BEFORE the write
+        cont = soct.parse_image(img)
+        if mode == "late":
+            cont = soct.parse_image(late_img)
+        head = _tiles(cont)
+        if mode == "model":
+            start = {i: list(model[i]) for i in model}
+            src = "model"
+        elif mode == "late":
+            start = {i: list(head[i]) for i in model if i in head}
+            src = "image-one-write-late"
+        else:
+            start = {i: list(head[i]) for i in model if i in head}
+            src = "image-at-round-head"
+        # -------------------------------------------- the press (B7/B25 law)
+        n_press = 1 if (split and r == boundary_at) else presses
         acc_save = acc_arr = ref_tot = 0
-        budget = sounits.MP_PER_TURN
-        for i in sorted(model):
-            sp = spent.get(i, 0)
-            if split and r == boundary_at:
-                sp = 0 if mode != "budgetcarry" else sp
-            m = socev._Mover(i, head.get(i, model[i])[0], head.get(i, model[i])[1],
-                             budget, wrap=True)
-            m.spent = sp
-            n_press = presses
-            if split and r == boundary_at:
-                n_press = 1
+        for i in sorted(start):
+            m = socev._Mover(i, start[i][0], start[i][1], budget, wrap=True)
+            m.spent = spent.get(i, 0)
             acc = 0
             for _p in range(n_press):
-                if m.step(DIR_EAST, W_cont, H_cont) is None:
+                if m.step(DIR_EAST, sv0.width, sv0.height) is None:
                     ref_tot += 1
                 else:
                     acc += 1
@@ -254,12 +283,12 @@ def run(sav_path, map_path, mode="container", rounds=(RA, RB), presses=PRESSES,
                 acc_save += acc
             else:
                 acc_arr += acc
-        # --------------------------------------------- the arrival (B12's CREATE)
-        rec_arr = None
+        # ----------------------------------------- the arrival (B12's CREATE)
+        arr_this_round = None
         if parent_idx is not None and r > PARENT_OP:
             if mode == "frozen":
-                px, py, pown = PARENT_TILE[0], PARENT_TILE[1], PARENT_FAC
-                psrc = "model-constants"
+                px, py, pown, psrc = PARENT_TILE[0], PARENT_TILE[1], PARENT_FAC, \
+                    "model-constants"
             else:
                 pread = cont.data[cont.bases_off + sosave.BASE_LEN * parent_idx:
                                   cont.bases_off + sosave.BASE_LEN * (parent_idx + 1)]
@@ -267,84 +296,118 @@ def run(sav_path, map_path, mode="container", rounds=(RA, RB), presses=PRESSES,
                 pown = pread[4]
                 psrc = "image-at-round-head"
             rec_arr = soprod.create_record(px, py, ARRIVAL_TYPE, pown)
-            arrivals.append(rec_arr)
+            new_idx = base_im.n_units + len(arrivals)
+            arrivals.append((new_idx, rec_arr))
+            model[new_idx] = [px, py]
+            arr_this_round = new_idx          # B12's order: presses, then CREATE
             arr_rows.append({"round": r, "src": psrc, "tile": [px, py], "own4": pown,
                              "sha": hashlib.sha256(rec_arr).hexdigest()[:12]})
-        # ------------------------------------------------------- the write
+        # ------------------------------------------------------- the write(s)
         eng.press()
-        mv = None if mode == "nowrite" else {i: tuple(model[i]) for i in model
-                                             if list(model[i]) != head.get(i, [None])}
-        if mode == "nowrite":
-            img_next = img
-        else:
-            img_next = sow.build_image(base_im, year=eng.year, cur=eng.cur, tf=eng.tf,
-                                       moves=mv or None, bases_override=_ov(base_im, led),
-                                       append_units=arrivals or None,
-                                       lift_all=(mode == "lift"))
-        im_w = soct.parse_image(img_next)
-        u_lo, u_hi = im_w.units_off, im_w.bases_off
-        diffs = sow.diff_offsets(img, img_next)
-        unit_bytes = sum(1 for d in diffs if u_lo <= d < u_hi)
-        grown_bytes = sum(1 for d in diffs if d >= im_w.bases_off
-                          and d < im_w.bases_off + sosave.BASE_LEN * im_w.n_bases)
-        hdr_bytes = sum(1 for d in diffs if d < u_lo)
-        byte_rows.append({"round": r, "unit_bytes": unit_bytes,
-                          "grown_bytes": grown_bytes, "hdr_bytes": hdr_bytes,
-                          "rec_offsets": sorted({(d - u_lo) % sosave.UNIT_LEN
-                                                 for d in diffs if u_lo <= d < u_hi}),
-                          "n_units_img": im_w.n_units, "n_bases_img": im_w.n_bases})
-        img = img_next
-        im = im_w
-        base_im = im if (split and r == boundary_at) or (r == boundary_at) else base_im
+        img, im_w, unit_bytes, grown_bytes, hdr_bytes, size_delta = _write(
+            base_im, img, model, led, eng, arrivals, mode)
+        n_u, n_b = im_w.n_units, im_w.n_bases
+        rows.append(_row(r, mode, src, len(ops_this), len(arrivals), acc_save, acc_arr,
+                         ref_tot, unit_bytes, grown_bytes, hdr_bytes, im_w, size_delta))
+        digest_rows.append("|".join(str(rows[-1][k]) for k in SIGKEYS))
+        byte_rows.append({"round": r, "rec_offsets": []})
+        late_img, prev_n_u, prev_n_b = img_at_start, n_u, n_b
         if split and r == boundary_at:
-            # the mid-gesture boundary: same laws, one write, model discarded
-            if mode == "budgetcarry":
-                pass
-            else:
-                im = soct.parse_image(img)
-                model = _tiles(im)
-                spent = {i: 0 for i in model}
-                base_im = im
-                arrivals = []
+            # the MID-GESTURE boundary: one write in, model discarded, the rest of the
+            # round pressed by the REBUILT state. Only 'budgetcarry' keeps the spent
+            # word - and that control is what proves the divergence below is the
+            # budget's, not the boundary's.
+            im2 = soct.parse_image(img)
+            imn = im2
+            mdict = _tiles(imn)
+            e2 = soturn.Engine(imn.year, human=imn.own_player)
+            # no second Engine.press(): the round's year edge already fired and the
+            # rebuilt engine reads the year the write put in the header
+            carry.append({"round": r, "bytes": len(img), "edits": 0, "mid": True,
+                          "year": (e2.year - 1, imn.year), "cur": (0, 0), "tf": (0, 0),
+                          "n_units": (imn.n_units, imn.n_units),
+                          "n_bases": (imn.n_bases, imn.n_bases),
+                          "tiles": len(mdict), "tile_n": len(mdict), "grown": 0,
+                          "grown_n": 0, "rebuilt_ledger": (imn.n_bases, imn.n_bases),
+                          "rebuilt_tiles": len(mdict), "parent_from_image": True})
+            led2 = sobf.Ledger([{"own4": b["own4"], "fac": b["fac"], "x": b["x"],
+                                 "y": b["y"]} for b in imn.bases])
+            md = mdict
+            sp2 = dict(spent) if mode == "budgetcarry" else {}
             for _p in range(presses - 1):
-                for i in sorted(model):
-                    m = socev._Mover(i, model[i][0], model[i][1], budget, wrap=True)
-                    m.step(DIR_EAST, W_cont, H_cont)
-                    model[i] = [m.x, m.y]
-            mv = {i: tuple(model[i]) for i in model if list(model[i]) != _tiles(im)[i]}
-            img = sow.build_image(im, year=eng.year, cur=eng.cur, tf=eng.tf, moves=mv,
-                                  bases_override=_ov(im, led), append_units=None)
-            im = soct.parse_image(img)
-        row = {"round": r, "mode": mode, "src": src, "ops": len(ops_this),
-               "arrivals": len(arrivals), "acc_save": acc_save, "acc_arr": acc_arr,
-               "refused": ref_tot, "unit_bytes": unit_bytes,
-               "grown_bytes": grown_bytes, "hdr_bytes": hdr_bytes, "year": im.year,
-               "n_units_img": im.n_units, "n_bases_img": im.n_bases,
-               "found_units": im.found_units, "found_bases": im.found_bases,
-               "sha": hashlib.sha256(img).hexdigest()[:16]}
-        rows.append(row)
-        digest_rows.append("|".join("%s" % row[k] for k in SIGKEYS))
-    arr_final = soct.parse_image(img)
+                for i in sorted(md):
+                    if i == arr_this_round:
+                        continue      # a unit created this round is pressed NEXT round
+                    m = socev._Mover(i, md[i][0], md[i][1], budget, wrap=True)
+                    m.spent = sp2.get(i, 0)
+                    if m.step(DIR_EAST, sv0.width, sv0.height) is not None:
+                        md[i] = [m.x, m.y]
+                        sp2[i] = m.spent
+            img, im_w, ub, gb, hb, sd = _write(imn, img, md, led2, e2, [], mode)
+            rows[-1]["unit_bytes"] += ub
+            rows[-1]["grown_bytes"] += gb
+            rows[-1]["hdr_bytes"] += hb
+            rows[-1]["n_units_img"] = im_w.n_units
+            rows[-1]["n_bases_img"] = im_w.n_bases
+            rows[-1]["sha"] = hashlib.sha256(img).hexdigest()[:16]
+            base_im, model, led, arrivals = imn, md, led2, []
+    final = soct.parse_image(img)
     return {"rows": rows, "carry": carry, "boundary": boundary, "arr_rows": arr_rows,
-            "img": img, "n": arr_final.n_units, "nb": arr_final.n_bases,
-            "final_sha": hashlib.sha256(img).hexdigest(),
-            "final_tiles": _tiles(arr_final), "final_units": arr_final.n_units,
-            "parent_idx": parent_idx, "applied": applied,
+            "img": img, "final_tiles": _tiles(final), "final_units": final.n_units,
+            "final_bases": final.n_bases, "final_sha": hashlib.sha256(img).hexdigest(),
+            "parent_idx": parent_idx, "applied": applied, "edits": len(edits),
             "digest_rows": digest_rows,
             "digest": hashlib.sha256("\n".join(digest_rows).encode()).hexdigest()[:16],
-            "unit_span": (arr_final.units_off, arr_final.bases_off),
-            "base_span": (arr_final.bases_off,
-                          arr_final.bases_off + sosave.BASE_LEN * arr_final.n_bases)}
+            "unit_span": (final.units_off, final.bases_off),
+            "base_span": (final.bases_off,
+                          final.bases_off + sosave.BASE_LEN * final.n_bases)}
 
 
-def _rec(im, i):
-    off = im.bases_off + sosave.BASE_LEN * i
-    return im.data[off:off + sosave.BASE_LEN]
+def _write(base_im, img, model, led, eng, arrivals, mode):
+    """One writer call. The writer composes from `base_im`, so the moves are relative
+    to THAT container's own tiles - passing only the ones that differ from some other
+    view silently reverts every earlier move (measured, first draft of this rung)."""
+    bt = _tiles(base_im)
+    if mode == "nowrite":
+        return img, soct.parse_image(img), 0, 0, 0, 0
+    mv = {i: tuple(model[i]) for i in model
+          if i < base_im.n_units and list(model[i]) != bt.get(i, [None])}
+    app = []
+    for idx, rec in arrivals:
+        b = bytearray(rec)
+        if idx in model and not (mode == "lift"):
+            struct.pack_into("<HH", b, 0, model[idx][0] % 0x10000,
+                             model[idx][1] % 0x10000)
+        app.append(bytes(b))
+    nxt = sow.build_image(base_im, year=eng.year, cur=eng.cur, tf=eng.tf,
+                          moves=mv or None, bases_override=_ov(base_im, led),
+                          append_units=app or None, lift_all=(mode == "lift"))
+    im_w = soct.parse_image(nxt)
+    u_lo, u_hi = im_w.units_off, im_w.bases_off
+    same = len(img) == len(nxt)
+    diffs = sow.diff_offsets(img, nxt) if same else set()
+    unit_bytes = sum(1 for d in diffs if u_lo <= d < u_hi)
+    grown_bytes = sum(1 for d in diffs if d >= im_w.bases_off
+                      and d < im_w.bases_off + sosave.BASE_LEN * im_w.n_bases)
+    hdr_bytes = sum(1 for d in diffs if d < u_lo)
+    size_delta = len(nxt) - len(img)
+    if not same:
+        unit_bytes = grown_bytes = hdr_bytes = -1     # position-wise diff is meaningless
+    return nxt, im_w, unit_bytes, grown_bytes, hdr_bytes, size_delta
+
+
+def _row(r, mode, src, nops, narr, acc_save, acc_arr, ref, ub, gb, hb, im_w, sd):
+    return {"round": r, "mode": mode, "src": src, "ops": nops, "arrivals": narr,
+            "acc_save": acc_save, "acc_arr": acc_arr, "refused": ref, "unit_bytes": ub,
+            "grown_bytes": gb, "hdr_bytes": hb, "size_delta": sd, "year": im_w.year,
+            "n_units_img": im_w.n_units, "n_bases_img": im_w.n_bases,
+            "found_units": im_w.found_units, "found_bases": im_w.found_bases,
+            "sha": hashlib.sha256(bytes(im_w.data)).hexdigest()[:16]}
 
 
 def measure(sav_path, map_path, log_path, trace_path):
     sv, ops, pref, rows, n_sched, earliest = socl.build(sav_path, log_path, trace_path)
-    del pref, rows, n_sched, earliest
+    del pref, rows, n_sched
     runs = {}
     runs["container"] = run(sav_path, map_path, "container", ops=ops)
     runs["clean"] = run(sav_path, map_path, "container", poison=False, ops=ops)
@@ -357,9 +420,13 @@ def measure(sav_path, map_path, log_path, trace_path):
     runs["rerun"] = run(sav_path, map_path, "container", ops=ops)
     b25 = socev.measure(sav_path, map_path)
     b25g = socev.gates(b25)
-    return {"runs": runs, "ops": ops, "earliest": earliest, "b25_rows": b25["runs"][
-        "container"]["rows"], "b25_green": all(ok for _, ok, _ in b25g),
-        "b25_gates": [(lab.split(":")[0], ok) for lab, ok, _ in b25g],
+    names = ",".join(sorted(runs))
+    return {"runs": runs, "ops": ops, "earliest": earliest,
+        "accept_digest": accept_digest(runs["container"]["digest_rows"], names),
+        "accept_digest_rerun": accept_digest(runs["rerun"]["digest_rows"], names),
+        "b25_rows": b25["runs"][
+        "container"]["rows"], "b25_green": all(ok for _, ok in b25g),
+        "b25_gates": [(lab.split(":")[0], ok) for lab, ok in b25g],
         "identity": sow.build_image(sv) == sv.data, "sv": sv}
 
 
@@ -370,14 +437,27 @@ def render(m):
     L.append("")
     L.append("== table A: per-round rows of the honest run (mode=container, poisoned "
              "at the boundary) ==")
-    L.append("round src ops arrivals acc_save acc_arr refused unit_bytes grown_bytes "
-             "hdr_bytes year n_units_img n_bases_img found_units found_bases sha16")
+    L.append("round src ops arrivals acc_save acc_arr refused unit_bytes grown "
+             "hdr size_delta year n_units_img n_bases_img found_units found_bases sha16")
     for r in m["runs"]["container"]["rows"]:
-        L.append("%5d %-22s %3d %8d %8d %7d %7d %10d %11d %9d %4d %11d %11d %11d %9d %s"
+        L.append("%5d %-22s %3d %8d %8d %7d %7d %10d %5s %3s %10d %4d %11d %11d %11d "
+                 "%9d %s"
                  % (r["round"], r["src"], r["ops"], r["arrivals"], r["acc_save"],
-                    r["acc_arr"], r["refused"], r["unit_bytes"], r["grown_bytes"],
-                    r["hdr_bytes"], r["year"], r["n_units_img"], r["n_bases_img"],
-                    r["found_units"], r["found_bases"], r["sha"]))
+                    r["acc_arr"], r["refused"], r["unit_bytes"],
+                    "-" if r["grown_bytes"] < 0 else r["grown_bytes"],
+                    "-" if r["hdr_bytes"] < 0 else r["hdr_bytes"], r["size_delta"],
+                    r["year"], r["n_units_img"], r["n_bases_img"], r["found_units"],
+                    r["found_bases"], r["sha"]))
+    L.append("the container grows only through the writer: size_delta per round vs "
+             "304*(n_bases delta) + 52*(n_units delta): %s"
+             % [(r["size_delta"],
+                 304 * (r["n_bases_img"] - (m["sv"].n_bases if r["round"] == 0
+                                            else m["runs"]["container"]["rows"]
+                                            [r["round"] - 1]["n_bases_img"]))
+                 + 52 * (r["n_units_img"] - (m["sv"].n_units if r["round"] == 0
+                                             else m["runs"]["container"]["rows"]
+                                             [r["round"] - 1]["n_units_img"])))
+                for r in m["runs"]["container"]["rows"]])
     L.append("")
     L.append("== table B: THE CARRY census at the boundary (this parse vs an "
              "INDEPENDENT second parse) ==")
@@ -464,9 +544,10 @@ def render(m):
                     m["runs"][k]["final_sha"][:16]))
     L.append("")
     L.append("== table G: modeled-span accounting + anchors ==")
-    bad = _outside_modeled(m["sv"], m["runs"]["container"]["img"])
-    L.append("bytes outside a MODELED span between the original save and the final "
-             "container: %d%s" % (len(bad), (" " + str(bad[:8]) if bad else "")))
+    bad = outside_modeled(m["sv"], m["runs"]["container"]["img"])
+    L.append("record-aligned accounting, original save vs final container: %s "
+             "(grown unit records %d B, grown base records %d B are MODELED wholesale)"
+             % (bad, bad["grown_units"], bad["grown_bases"]))
     L.append("container digest %s | rerun digest %s | equal=%s | final sha %s / %s | "
              "images equal=%s" % (m["runs"]["container"]["digest"],
                                   m["runs"]["rerun"]["digest"],
@@ -485,21 +566,49 @@ def _sig(res):
     return [tuple(str(r[k]) for k in SIGKEYS) for r in res["rows"]]
 
 
-def _outside_modeled(sv, img):
-    """G7: every differing byte lies in a span the writer composes from the model -
-    the header's modeled fields, a unit record's x/y pair, a grown base record, or an
-    appended unit record."""
+def accept_digest(rows, names):
+    """The ACCEPT anchor render() PRINTS and G9 PINS (B25's law: a digest only cited
+    in prose is a digest no mutant can break)."""
+    return hashlib.sha256(("\n".join(rows) + "|" + names).encode()).hexdigest()[:16]
+
+
+def outside_modeled(sv, img):
+    """G7's accounting, RECORD-ALIGNED (a raw index diff of two images whose arrays
+    grew is a shift artifact, not a measurement - that artifact is what the first
+    draft of this rung printed as '2254 bytes outside a modeled span').
+
+    Regions: everything before the unit array (index-aligned, the writer's modeled
+    header fields excepted); the units array record by record (only a record's x/y
+    pair +0..+3 may differ, B8's law); the base array record by record (only +0..+4,
+    x/y/own4 - the founder's and the falsifier's fields); the tail, aligned to EOF."""
+    fin = soct.parse_image(img)
     spans = list(sow.modeled_spans())
-    im = soct.parse_image(img)
-    for i in range(im.n_units):
-        o = im.units_off + sosave.UNIT_LEN * i
-        spans.append((o, o + 4))
-    spans.append((im.bases_off, im.bases_off + sosave.BASE_LEN * im.n_bases))
-    bad = []
-    for d in sow.diff_offsets(sv.data, img):
-        if not any(lo <= d < hi for lo, hi in spans):
-            bad.append(d)
-    return bad
+    out = {"header": 0, "unit_xy": 0, "unit_other": 0, "base_id": 0, "base_other": 0,
+           "tail": 0, "grown_units": 0, "grown_bases": 0}
+    hi = min(sv.units_off, fin.units_off)
+    out["header"] = sum(1 for o in range(hi)
+                        if sv.data[o] != img[o]
+                        and not any(lo <= o < hi2 for lo, hi2 in spans))
+    for i in range(sv.n_units):
+        a = sv.units_off + sosave.UNIT_LEN * i
+        b = fin.units_off + sosave.UNIT_LEN * i
+        for k in range(sosave.UNIT_LEN):
+            if sv.data[a + k] == img[b + k]:
+                continue
+            out["unit_xy" if k < 4 else "unit_other"] += 1
+    for i in range(sv.n_bases):
+        a = sv.bases_off + sosave.BASE_LEN * i
+        b = fin.bases_off + sosave.BASE_LEN * i
+        for k in range(sosave.BASE_LEN):
+            if sv.data[a + k] == img[b + k]:
+                continue
+            out["base_id" if k < 5 else "base_other"] += 1
+    out["grown_units"] = (fin.n_units - sv.n_units) * sosave.UNIT_LEN
+    out["grown_bases"] = (fin.n_bases - sv.n_bases) * sosave.BASE_LEN
+    tl = min(len(sv.data) - sv.tail_off, len(img) - fin.tail_off)
+    out["tail"] = sum(1 for k in range(tl)
+                      if sv.data[sv.tail_off + k] != img[fin.tail_off + k])
+    return out
 
 
 def gates(m):
@@ -515,18 +624,21 @@ def gates(m):
                  [r["accepted"] for r in m["b25_rows"][:RA]]),
               m["b25_green"] and
               [r["acc_save"] for r in c["rows"][:RA]] ==
-              [r["accepted"] for r in m["b25_rows"][:RA]], ""))
+              [r["accepted"] for r in m["b25_rows"][:RA]]))
+
     # G2 identity + the recorded op stream applied
     ap = c["applied"]
-    ok2 = (m["identity"] and len(ap) == len(m["ops"]) and
+    nops_run = min(len(m["ops"]), len(c["rows"]))
+    ok2 = (m["identity"] and len(ap) == nops_run and
            all(a["landed"] for a in ap) and
-           [a["kind"] for a in ap] == [o["kind"] for o in m["ops"]])
+           [a["kind"] for a in ap] == [o["kind"] for o in m["ops"][:nops_run]])
     g.append(("G2 a zero-op/zero-press/zero-append build equals the original save "
               "byte-for-byte, and the recorded m289 stream applied through the ledger "
-              "lands %d/%d ops with kinds %s (pre->post counts %s)"
-              % (sum(1 for a in ap if a["landed"]), len(m["ops"]),
+              "lands %d/%d ops (the run's rounds) with kinds %s (pre->post counts %s)"
+              % (sum(1 for a in ap if a["landed"]), nops_run,
                  "".join(k[0] for k in [a["kind"] for a in ap]),
-                 [(a["pre"], a["post"]) for a in ap]), ok2, ""))
+                 [(a["pre"], a["post"]) for a in ap]), ok2))
+
     # G3 carry
     cb = c["boundary"]
     ok3 = (cb["year"][0] == cb["year"][1] and cb["cur"] == cb["cur"] and
@@ -543,7 +655,8 @@ def gates(m):
               % (cb["tiles"], cb["tile_n"], cb["grown"], cb["grown_n"],
                  cb["rebuilt_ledger"][0], cb["edits"],
                  [cb["year"], cb["cur"], cb["tf"], cb["n_units"], cb["n_bases"]]),
-             ok3, ""))
+             ok3))
+
     # G4 confluence
     d = sow.diff_offsets(cl["img"], un["img"])
     ok4 = (len(d) == 0 and cl["final_sha"] == un["final_sha"] and
@@ -551,7 +664,8 @@ def gates(m):
     g.append(("G4 CONFLUENCE: with nothing external at the boundary the loaded run's "
               "final container is byte-identical to the uninterrupted run's (%d B, "
               "sha %s, differing bytes %d)" % (len(cl["img"]), cl["final_sha"][:16],
-                                               len(d)), ok4, ""))
+                                               len(d)), ok4))
+
     # G5 the non-carry is a number
     d1 = sow.diff_offsets(m["runs"]["split"]["img"], un["img"])
     d2 = sow.diff_offsets(m["runs"]["budgetcarry"]["img"], un["img"])
@@ -568,9 +682,11 @@ def gates(m):
               "across diverges by %d bytes and reproduces its sha - so the divergence "
               "is the non-crossing budget, not an artifact of the boundary"
               % (len(moved), len(d1), sum(1 for x in d1 if x < span[0]), len(d2)),
-             ok5, ""))
+             ok5))
+
     # G6 the falsifier, both channels
-    fc_t, fu_t = c["final_tiles"], un["final_tiles"]
+    fc_t, fu_t = c["final_tiles"], cl["final_tiles"]   # vs the CLEAN run: the poison is
+    # the only difference between them, so this counts what the falsifier moved
     ch_units = [i for i in fc_t if fc_t[i] != fu_t.get(i)]
     arr_c = [a for a in c["arr_rows"] if a["round"] >= BOUNDARY]
     arr_f = [a for a in m["runs"]["frozen"]["arr_rows"] if a["round"] >= BOUNDARY]
@@ -590,13 +706,19 @@ def gates(m):
               % (POISON_UNIT, fc_t[POISON_UNIT][0], fu_t[POISON_UNIT][0],
                  len(ch_units), [(a["tile"], a["own4"]) for a in arr_c],
                  sm["final_sha"][:16] == cl["final_sha"][:16],
-                 [(a["tile"], a["own4"]) for a in arr_f]), ok6, ""))
+                 [(a["tile"], a["own4"]) for a in arr_f]), ok6))
+
     # G7 modeled spans
-    bad = _outside_modeled(m["sv"], c["img"])
+    bad = outside_modeled(m["sv"], c["img"])
     g.append(("G7 every differing byte between the original save and the final "
-              "container lies in a MODELED span (header fields, a unit record's x/y, "
-              "a grown base record, an appended unit): %d bytes outside" % len(bad),
-              len(bad) == 0, ""))
+              "container lies in a MODELED span - header %d outside the writer's "
+              "fields, unit records outside their x/y pair %d, base records outside "
+              "+0..+4 %d, tail %d, while %d grown unit B and %d grown base B are "
+              "modeled wholesale"
+              % (bad["header"], bad["unit_other"], bad["base_other"], bad["tail"],
+                 bad["grown_units"], bad["grown_bases"]),
+              bad["header"] + bad["unit_other"] + bad["base_other"] + bad["tail"] == 0))
+
     # G8 rivals fail the same fit
     sig = _sig(c)
     fails = {}
@@ -608,7 +730,8 @@ def gates(m):
         len(m["runs"][k]["rows"]) == len(sig) for k in RIVAL_KEYS)
     g.append(("G8 RIVALS fail the same fit, measured - %s (all differ from the "
               "container signature; every one of them still prints %d rows)"
-              % ({k: fails[k] for k in RIVAL_KEYS}, len(sig)), ok8, ""))
+              % ({k: fails[k] for k in RIVAL_KEYS}, len(sig)), ok8))
+
     # G9 determinism
     same = (c["digest"] == m["runs"]["rerun"]["digest"] and
             c["img"] == m["runs"]["rerun"]["img"] and
@@ -618,7 +741,8 @@ def gates(m):
               "final container sha256 %s (%d B); the ACCEPT anchor of table G is %s "
               "(rerun %s), pinned to the literal %s"
               % (c["digest"], c["final_sha"][:16], len(c["img"]), m["accept_digest"],
-                 m["accept_digest_rerun"], ACCEPT_PIN), same and pinned, ""))
+                 m["accept_digest_rerun"], ACCEPT_PIN), same and pinned))
+
     return g
 
 
@@ -627,34 +751,43 @@ RIVAL_KEYS = ("model", "nowrite", "late", "lift", "frozen", "smuggle", "split",
 
 
 def acceptance(m, results):
-    n = sum(1 for _, ok, _ in results if ok)
-    print("PASS B26: %d/%d gates" % (n, len(results)) if n == len(results)
-          else "FAIL B26: %d/%d gates" % (n, len(results)))
-    return 0 if n == len(results) else 1
+    """B21-B25's convention: the gates are APPENDED to the caller's list, and only
+    sim/composedsave.py authors their text - `--b26` relays, it cannot disagree."""
+    for name, ok in gates(m):
+        results.append((name, ok))
+    return results
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="sim.composedsave")
     ap.add_argument("--sav", default=DEFAULT_SAV)
-    ap.add_argument("--map", default=DEFAULT_MAP)
+    ap.add_argument("--map", dest="map_path", default=DEFAULT_MAP)
     ap.add_argument("--log", default=DEFAULT_LOG)
     ap.add_argument("--trace", default=DEFAULT_TRACE)
-    ap.add_argument("--out", default=None)
+    ap.add_argument("--out", default=None, help="write the final composed container here")
     a = ap.parse_args(argv)
-    m = measure(a.sav, a.map, a.log, a.trace)
+    for p in (a.sav, a.map_path, a.log, a.trace):
+        if not os.path.exists(p):
+            print("FAIL B26: missing input %s" % p)
+            return 1
+    m = measure(a.sav, a.map_path, a.log, a.trace)
     lines = render(m)
-    print("\n".join(lines))
-    results = gates(m)
-    for lab, ok, _ in results:
-        print("%s %s" % ("PASS" if ok else "FAIL", lab))
-    rc = acceptance(m, results)
+    for line in lines:
+        print(line)
+    res = acceptance(m, [])
+    bad = [name for name, ok in res if not ok]
+    for name, ok in res:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        print("FAIL B26: %d/%d gates failed: %s" % (len(bad), len(res), "; ".join(bad)))
+        return 1
+    print("PASS B26: %d/%d gates" % (len(res), len(res)))
     if a.out:
-        with open(a.out, "w", encoding="utf-8") as fh:
-            fh.write("\n".join(lines) + "\n")
-            for lab, ok, _ in results:
-                fh.write("%s %s\n" % ("PASS" if ok else "FAIL", lab))
-            fh.write("wrote %s\n" % m["runs"]["container"]["final_sha"])
-    return rc
+        with open(a.out, "wb") as fh:
+            fh.write(m["runs"]["container"]["img"])
+        print("wrote %s (%d B, sha256 %s)" % (a.out, len(m["runs"]["container"]["img"]),
+                                              m["runs"]["container"]["final_sha"][:16]))
+    return 0
 
 
 if __name__ == "__main__":
