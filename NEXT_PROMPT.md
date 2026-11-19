@@ -114,4 +114,5 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-chain1 (a); `NAMED` governs.
 M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
-|M326 (s301-chain2): +224=deferred HURRY-payment debt (419c30 defers iff 920434/91c62c set; upkeep: ENERGY-=224,224:=0,floor0; readers=220-224; MIN cap@41a4e0). Subreg fix; M325 29 labels->STRIDE (G10 8/8). 10/10 f0f31c3daa26b601; 27/27. MERGED #332->7cd4732; sidecar #334. NAMED ## M326.
+M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
+|M328 (s304-chain2): 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag (noun INFERRED, lifecycle V). HURRY story closed. 14/14 79deb5e6c5c501ff x2; 27/27 (26+1 NO-OP) 50f6aa12d28d4b2f; ST 5/5. NAMED ## M328.

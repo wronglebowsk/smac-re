@@ -1,0 +1,8 @@
+== M328 mutate selftest ==
+PASS S1 no-op patch rejected
+PASS S2 unknown address rejected
+PASS S3 identity digest
+PASS S4 sole-def fallback measured (ALGO4 leaves the 512b40 pair as arg-leaves)
+PASS S5 seed plant measured (seeds=1 on B)
+== selftest: 5/5 ==
+rc=0

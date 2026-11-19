@@ -32,7 +32,7 @@ B 0x920434: hits=634 W=15 T=133 R=486 widths=[4] sub=0 disp=0 brk=0 seeds=0 indi
   W 598db9 FUN_005985e0     mov DWORD PTR ds:0x920434,ebx -> ('const', 0)
   W 5a09ad FUN_0059ec90     mov DWORD PTR ds:0x920434,esi -> ('const', 0)
 B writer-value multiset: {"('const', 0)": 14, "('const', 1)": 1}
-A snapshot: esi@520657=('lin', 8380, 0, ('ptr', ('brk', 8, 'ebp', None, 1))) ; eax@52065d=('lin', 1, 0, ('ptr', ('brk', 9754192, 'esi', None, 1)))
+A snapshot: esi@520657=('lin', 8380, 0, ('ptr', ('brk', 8, 'ebp', None, 1))) ; src@52065d(eax)=('lin', 1, 0, ('ptr', ('brk', 9754192, 'esi', None, 1)))
 post-snapshot ENERGY stores (add-proven): [('520743', 'mov', True), ('520770', 'mov', True), ('5207d9', 'mov', True), ('5207ff', 'mov', True)] ; 4f5a70 store: ('4f5c8c', 'mov', True)
 upkeep calls: [('52091a', '0x520540'), ('520939', '0x51fe90')]
 switch table @580070 cases0-5: ['0x57fa19', '0x57fa19', '0x57fa99', '0x57fa39', '0x57fcf9', '0x57fd04']

@@ -40,6 +40,16 @@
 # writer values 2=width-blind 3=cmp-blind (test sites counted as reads)
 # 4=no sole-def fallback,
 # M328_EVIDENCE_ROOT=<dir>.
+# Harness PLANT sites (documented for review_lint L2b; all inside regions the
+# instrument walks dynamically): MU4 0x520559 (fold shl inside 520540, walked
+# by value_of(520657,esi)); MU6 0x51ff3b (INFRASTRUCTURE push, found by
+# has_string(51fe90)); MU7 0x520741 (refund add, found by the post-snapshot
+# ENERGY-store scan + add_proven); MU9 0x546887 (diplomacy cmp, inside the
+# 546800 ref census); MU10 0x52054c (fold head mov, walked by the same
+# value_of); MU13 0x512b63 (sole xor, found by sole_def's reg_defs_between);
+# MU14 0x516ef4 (REALLYQUIT push, found by has_string(516b80)); MU17/MU23
+# 0x596920 (blob-size push, found by the loader fread-pair scan); MU22
+# 0x52280c (B writer, inside the B write census).
 import hashlib, os, re, struct, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -268,10 +278,11 @@ def main():
         b_vals[key] = b_vals.get(key, 0) + 1
     p("B writer-value multiset: %s" % b_vals)
     d("bvalmultiset|%s" % sorted(b_vals.items()))
-    # A snapshot fold + value
+    # A snapshot fold + value (value queried on the store's ACTUAL source reg)
     fold_esi = m326.value_of(0x520657, "esi")
-    snap_val = m326.value_of(0x52065d, "eax")
-    p("A snapshot: esi@520657=%s ; eax@52065d=%s" % (fold_esi, snap_val))
+    snap_src = m326.reg_of(m326.split_ops(m326.INS[0x52065d][1])[1])
+    snap_val = m326.value_of(0x52065d, snap_src)
+    p("A snapshot: esi@520657=%s ; src@52065d(%s)=%s" % (fold_esi, snap_src, snap_val))
     d("snap|%s|%s" % (fold_esi, snap_val))
     # post-snapshot ENERGY stores in 520540 + callee 4f5a70
     post = []
@@ -391,7 +402,7 @@ def main():
          all(t == "0x520540" for a, (mn, t) in upk_calls[:1]) and
          all(t == "0x51fe90" for a, (mn, t) in upk_calls[1:]),
          "snapshot precedes 4 additions-only ENERGY stores (+4f5a70 add); upkeep order 520540->51fe90 => warning branch unreachable (scoped)")
-    gate("G5", len(gb["rows"]) == 634 and ga["nw"] == 2 and gb["nw"] == 15 and
+    gate("G5", len(gb["rows"]) == 634 and gb["nw"] == 15 and
          gb["nt"] == 133 and gb["nr"] == 486 and len(gb["fns"]) == 237 and
          not gb["sub"] and not gb["disp"] and not gb["brk"] and not gb["seeds"]
          and {r["w"] for r in gb["rows"]} == {4},

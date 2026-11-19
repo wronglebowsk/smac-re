@@ -1,59 +1,32 @@
-## B10 (s226, BUILD, base-founder/destroyer leg - R2's new-game leg) 18/18
+## B10 (s226, BUILD, base-founder/destroyer leg - R2's new-game leg) 18/18 — FULL rows moved VERBATIM to `docs/named-archive-b10-rows.md` (s304-chain2 headroom rotation, sha1 d298981e8ece0d6e, byte-exact asserted); this stub governs.
 
-- sim/basefound.py: Ledger = M282 founder FUN_004e47d0(faction,x,y) + destroyer
-  FUN_004e4e10, plus the golden-curve pairing (presses the B3 engine the trace's own 40
-  turns, applies the trace's own 8 per-turn deltas: t8 +1 t9 +1 t17 +1 t22 +2 t23 -1
-  t27 +1 t32 +2 t34 +1 through found/destroy between presses).
-- FOUNDER: guard count < 0x200 (512); new 304-B record appended at array start +
-  old_count*0x130 (x u16 +0, y u16 +2, faction bytes +4/+5); count +1. DESTROYER: count-1
-  with COMPACTION (LAST record moves into the freed slot; record equality).
-- CURVE: recorded n_bases 18 -> 26 recovered on all 40 turn snapshots (the B9 declared
-  frontier is now modeled - before: model const 18). The t23 -1 is a real base
-  DESTRUCTION in the recorded run, through the destroyer.
-- WRITE: savewriter's new bases_override/orig_n_bases path composes grown ledgers; the
-  only prefix byte that changes is the bases-count dword; the tail stays byte-identical;
-  the written image re-parses (n_bases 19) and the founded record (zero name) is
-  shape-invisible to sim.save's name scan (found 18, declared: the real game names bases
-  later).
-- RIVALS: no-leg (B9) shape keeps 18 (32 divergences); all-events-on-turn-0 diverges at t0.
-- BOUNDED BY B21 (s267): deriving the event schedule from per-turn DELTAS - this rung's method -
-  is provably LOSSY about the op stream. On the m289 run the curve admits a 7-op schedule while
-  the op log carries 9 (one turn hides a net-zero +1/-1 pair) and a curve-derived schedule hits
-  only 7/9 recorded (kind, pre-cnt) rows (`evidence/b21_composedrun.txt:52-53,74`). The curve
-  remains the right parity target for the COUNT; for OPS use the log (B13/B21).
-- Command: `python3 -m sim.selftest --b10 programs/saves/m54b_clean.SAV` ->
-  `PASS B10: 18/18 gates` (evidence/b10_basefound.txt); `python3 -m sim.basefound` CLI
-  exit 0. B8/B9 regressions green. Box untouched.
+- Ledger = M282 founder FUN_004e47d0(faction,x,y) + destroyer FUN_004e4e10 + golden-curve pairing (B3 engine pressed through the trace's 40 turns, 8 per-turn deltas t8..t34).
+- FOUNDER: count<0x200 guard; 304-B record appended at start+count*0x130 (x u16+0, y u16+2, faction +4/+5); count+1. DESTROYER: count-1 with LAST-record compaction.
+- CURVE: n_bases 18->26 on all 40 snapshots; t23 -1 = real destruction. WRITE: only the bases-count prefix dword changes, tail byte-identical, re-parse n_bases 19, founded record shape-invisible to the name scan.
+- RIVALS: no-leg keeps 18 (32 divergences); all-events-on-turn-0 diverges at t0. BOUNDED BY B21: delta-derived schedules are LOSSY about ops (7-op curve vs 9-op log, 7/9 rows) - for OPS use the log.
+- Command: `python3 -m sim.selftest --b10 programs/saves/m54b_clean.SAV` -> `PASS B10: 18/18 gates` (evidence/b10_basefound.txt); CLI exit 0; B8/B9 green; box untouched.
 
-# NAMED — functions we can name from evidence
+# NAMED — founding function table: moved VERBATIM to `docs/named-archive-founding-table.md` (s304-chain2, sha1 5e1635282e3cf2c9, byte-exact asserted); grep there for the evidence. One line per name kept:
 
-Running list. Append-only; one row per function, evidence in the notes column. Names are
-labelled with confidence (`H` = high, `M` = medium) and the *reason* — never a vibe.
-
-Read code with `scripts/fn.py <addr> [--max N]`; metadata with `scripts/fn.py <addr> --index`.
-
-| addr | proposed name | conf | evidence |
-|---|---|---|---|
-| `0x5c9fc5` | `ui_layout_three_parts(rect, obj)` | M | 383 callers (near the dialog count). Takes a rect (`*p`, `p[1]`, `p[2]`, `p[3]`) and an object with three parts `obj[0..2]`; for each part computes `pos - *(part+0x18/0x1c)` (size fields), then calls `0x5dd09c(x, y, w, h, …)`; if `obj[8]` is set also calls `0x5c1187` with both old and new coords plus `*(part+0x18/0x1c)` and `obj[9]` — i.e. "move/draw each part inside the rect, plus a second draw pass when a flag is set". |
-| `0x5dd09c` | `draw_rect_stateful(x, y, w, h, a, b)` | M | Saves `DAT_00698bec` / `DAT_00698bf0` (a two-word graphics state: most likely clip origin), calls `0x5dd0fc(x, y, w, h)`, then restores them — a with-temporary-state wrapper around the actual primitive. |
-| `0x598340` | `file_open_and_dispatch(file)` — magic sniffing | H | 413 B. Reads a 9-char magic (`FUN_005705f0`) then `_strcmp` against `s_TERRAN_00692fd8` and `s_TERRANMAP_00692fe0`; on match demands a 4-byte version `>= 5` (`FUN_0064cc00(&v,4,1,f)`, `-(mode!=0) & 0x51 + 5`), clears per-map globals (`DAT_0091b5c4`, `DAT_00985af0/af4`, `DAT_0091b5b8/bc`), then calls the loader `FUN_00597a70(f, 0, is_map)`. |
-| `0x597a70` | `load_map_or_scenario(file, mode, is_map)` | H | 621 B but **~80 KB of stack**: `auStack_13600[67040]`, `local_3020[11488]`, `local_340[772]`; reads **0x31C (796) bytes** into the header buffer, then a 4-byte field, then a **0xE5E0 (58 848)-byte** block via `FUN_0064cc00` / `FUN_0064c9a0` (mode picks the reader). |
-| `0x596540` | `read_decode_block(dest, nbytes, count=1, file)` | H | 214 B. Signature read off the call site (`0x597bc3`): `push file; push 1; push 0xE5E0; push dest; call` — cdecl, so (dest, nbytes, count, file). Note the decompiler prints `param_2 * param_3` as `w*h`; that is **size × count, not width × height**. It allocates `nbytes` (rounded to even, `FUN_005be090`), reads that many bytes into a temp, then walks 2 bytes at a time writing to `dest`: b0 ^= counter_a (starts `0x80`, ++), b1 ^= counter_b (starts `0x80`, --), and **a zero byte is copied without XOR** (escape). Frees the temp, returns 1. `0x596470` is the sibling used when `DAT_00926a0c != 0`. |
-| `0x596850` | `load_save_state(file, mode)` | M | 4,637 B. Reads 796 bytes into the **global** `DAT_00985ab8` (a header/flags block — it is tested all over the code as a bitmask: `& 0x400`, `& 0x800`, `& 0x8000`), then 4 bytes into `DAT_0091b5b4` (the verified "own player" global). Do **not** conflate with the map loader: `FUN_00597a70` reads the same 796-byte size into a *local* buffer that it never parses. |
-| `0x64b9e0` | compiler helper (security cookie / `_ftol2` class) | H | 1,968 callers, 224 B, no strings. Topped the raw in-degree ranking; excluded from hub rankings by `scripts/coverage.py`. |
-| `0x4d3770` | `unit_order_hold(unit_index, u16 mode)` — writes the order byte | **H** | Live hardware watchpoint on `unit+17` hit at `0x4d3888` (`mov %bl,0x933289(%ecx)`, `ecx = 3*52`, `ebx = 2`) when `h` was pressed on a selected unit; Ghidra body (`shard_012.c:3927`) matches instruction-for-instruction: guard `FUN_00528930(&idx,0,0xffffffff,0xffffffff,0)`, then `(&DAT_00933294)[i*0x1a] = param_2` (unit+28) and `(&DAT_00933289)[i*0x34] = 2` (unit+17), then `FUN_00584350(idx)`. Reached from the WNDPROC chain `0x5d0ee6 ← … ← 0x512644`. Callers pass 10 / 0 (`shard_013.c:4349/4417/7024`). |
-| `0x5ab240` | `unit_remove_from_map(unit_index)` — unlink + sentinel | **H** | Watchpoint on a unit's x hit `Old 67 → New 65535` at `0x5ab2f8`, inside this function (`shard_015.c:22729`): unlinks via `+48`/`+50` (prev/next record indices), writes 0xffff to +0/+2/+48/+50, stashes old x→`DAT_00991798`, index→`DAT_009917a0`, old y→`DAT_009917a4`. Explains the "packed array" observation: in-place sentinel, then a compaction pass. |
-| `0x584350` | `unit_broadcast(idx)` — event `0x2101` | M | 34-byte thunk `FUN_0052a720(0x11, idx, 0, 0, 0, 1, 0x2101)`; the instruction at the watchpoint hit *is* the `call 0x584350` right after the order byte is written, so every order announcement goes through it. |
-
-| `0x5ab320` | `unit_set_position(unit_index, x, y)` — **the move-exec primitive** | **H** | 251 B, 24 callers, the only writer of a unit's tile reached by breakpoints: body writes `(&DAT_00933278)[i*0x1a]=x`, `+2=y`, `+50=0xffff`, `+48=FUN_005ab130(x,y)` (the destination tile's list head) and, when the tile is empty, `FUN_00582c80(x,y,unit+10)` on the tile record at `DAT_0092ae14+(DAT_00692184*y+x/2)*0x2c`. Live: 739 hits in `evidence/m19c_writesites2.log` at the store `0x5ab355`, 274 of them with real coordinates. |
-| `0x5a58e0` | `unit_move_stack(unit_index, x, y)` — move every unit stacked on this one's tile | **H** | 109 B, 9 callers. Walks the +48/+50 chain from the list tail and calls `FUN_005ab320` per record with the passed (x,y). Live: return site `0x5a593f` appears as frame #1 above 274 real-coordinate writes, always under `FUN_00585720` (return `0x5893a8`). |
-| `0x5a5a80` | `unit_restack(unit_index)` — clear the tile to scratch (-3,-3), then move the stack back | **H** | 378 B, 2 callers (`FUN_004bf1e0` at `0x4c0e0a`, `FUN_0055f650`). Body: reads `+0/+2`, walks the chain, parks records whose faction byte is `\b` / `< 2` via `FUN_005ab240(i,-3,-3)`+setter, then walks the destination list and moves it to the saved (x,y). Live: 24 hits fired the moment a unit was activated (`v`, and the activate dialog's OK) — `x=-3` then `x=41` on records 117/119/122/124. |
-| `0x5a5cd0` | `unit_park(unit_index, mode)` — push a unit off the map to scratch | M | 1,518 B, 18 callers; called as `FUN_005a5cd0(iVar5,2)` / `(param_1,1)` from `FUN_00502cd0`'s can't-move branch. Live: return site `0x5a629a` above 274 writes of `x = -2`. |
-| `0x502c40` | `unit_step(unit_index, dir, parity, …)` — one tile in one of 8 directions | **H** | 139 B. Reads x-delta from `(&DAT_006784a0)[dir]` (parity≠0) or `(&DAT_0067850c)[dir]` (parity=0) and y-delta from `0x6784c4`/`0x678990`, wraps x by `DAT_0092a378`, then calls `FUN_00502cd0(unit, ?, x+dx, y+dy, …)`. Tables read out of `.rdata` (see `turn_driver.md` §M19–M23) and cross-checked against a live cursor step of Δ(+2,0) at odd x. Called from dispatcher `FUN_0052bce0` **case 0x4402**. |
-| `0x502cd0` | `unit_move_to(unit_index, ?, dest_x, dest_y, …)` — the move executor | **H** | 18,238 B, 4 callers. Its body calls the mover wrapper `FUN_004c1260(param_1, x0, y0, ?, flag)` then `FUN_005a58e0(param_1, x1, y1)` and marks both tiles dirty via `FUN_004737e0`. Callers: `FUN_00502c40` (step), `FUN_0055c920` (AI scoring — passes candidate destinations read straight out of the unit array), `FUN_0055f650`. |
-| `0x4bf1e0` | `unit_commit_move(unit_index, from_x, from_y, to_x, to_y)` — mover + effects + message | M | 8,212 B, 4 callers, reached only through the 5-line wrapper `FUN_004c1260` (which then formats & sends a message: `FUN_00408180` ×2 + `FUN_005e4a32`). Live: return `0x4c0e0a` above the re-stack writes on activation. |
-| `0x585720` | `unit_action_resolve(unit, param, mode)` — per-unit action executor (AI + end of turn) | M | 22,283 B, 6,347 insns, 108 callees, 6 callers, called as `FUN_00585720(unit, x, 3)` / `(unit, x, 1)`; it is the frame above 548 of the 739 live x-writes (via `0x5893a8` and `0x588e0b`). Also reached from dispatcher case `0x4401`. |
-| `0x5abb40` | `unit_array_compact()` — slides records down with `rep movsd` | **H** | The 6 watchpoint hits in `evidence/m19_watch.log` all stopped at `0x64bfa3` (`rep movsl %ds:(%esi),%es:(%edi)`, `esi`/`edi` inside `0x9332xx`) with return `0x5abc4b` in this function — that is the compaction pass that made session 21 see "108/119 units moved". |
+- `0x5c9fc5` `ui_layout_three_parts(rect, obj)` (M)
+- `0x5dd09c` `draw_rect_stateful(x, y, w, h, a, b)` (M)
+- `0x598340` `file_open_and_dispatch(file)` — magic sniffing (H)
+- `0x597a70` `load_map_or_scenario(file, mode, is_map)` (H)
+- `0x596540` `read_decode_block(dest, nbytes, count=1, file)` (H)
+- `0x596850` `load_save_state(file, mode)` (M)
+- `0x64b9e0` compiler helper (security cookie / `_ftol2` class) (H)
+- `0x4d3770` `unit_order_hold(unit_index, u16 mode)` — writes the order byte (H)
+- `0x5ab240` `unit_remove_from_map(unit_index)` — unlink + sentinel (H)
+- `0x584350` `unit_broadcast(idx)` — event `0x2101` (M)
+- `0x5ab320` `unit_set_position(unit_index, x, y)` — **the move-exec primitive** (H)
+- `0x5a58e0` `unit_move_stack(unit_index, x, y)` — move every unit stacked on this one's tile (H)
+- `0x5a5a80` `unit_restack(unit_index)` — clear the tile to scratch (-3,-3), then move the stack back (H)
+- `0x5a5cd0` `unit_park(unit_index, mode)` — push a unit off the map to scratch (M)
+- `0x502c40` `unit_step(unit_index, dir, parity, …)` — one tile in one of 8 directions (H)
+- `0x502cd0` `unit_move_to(unit_index, ?, dest_x, dest_y, …)` — the move executor (H)
+- `0x4bf1e0` `unit_commit_move(unit_index, from_x, from_y, to_x, to_y)` — mover + effects + message (M)
+- `0x585720` `unit_action_resolve(unit, param, mode)` — per-unit action executor (AI + end of turn) (M)
+- `0x5abb40` `unit_array_compact()` — slides records down with `rep movsd` (H)
 
 ## Not yet named (candidates, ranked by `COVERAGE.md`)
 - `0x5f6de9` — 305 callers, 550 B, 118 insns, no string literals
@@ -1306,6 +1279,19 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | OPEN: game nouns; 47 whole-dword field stores untraced to sources | - | lead |
 
 22/22 mutants `evidence/m321_mutate.txt:24`; digest `f304cf871a971a3d` `m321_memo_owners.txt:84`.
+
+## M328 (s304-chain2, STATIC 14/14) - 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag; HURRY story closed
+
+| claim | evidence | conf |
+|---|---|---|
+| A: 4 hits 2W/2R dw abs 0 seeds; 52065d (520540) := ENERGY[8380*arg] post-debt-pay; HURRY mirror 41a551/41a563 | G1/G2 `evidence/m328_hurry_globals.txt:2,35` | V MU1-4,MU10,MU21,MU24 |
+| A reader=INFRASTRUCTURE warn 11E-10A∧E<100; unreachable at sole site: post-snapshot stores 520743/770/7d9/7ff+4f5c8c all add; upkeep 520540→51fe90 | G3/G4 `evidence/m328_hurry_globals.txt:36-37` | V MU5-8 (deeper callees OPEN) |
+| B: 634 hits 15W/133T/486R 237 owners 0 seeds; {0×14,1×1} all mov; sole 1=57ed04 first stmt 57ecf0; 512b40 pair 0 via sole-def xor@512b63 | G5/G6 `evidence/m328_hurry_globals.txt:7,34` | V MU9,MU11-13,MU22,MU25,MU27 |
+| B entry=menu case4@580070 or auto-start 5229b7; SP 57c550+load never set; clear=Retire/REALLYQUIT/YOULOSE2/MULTIDEBUG/opening/SAVEFAILED/RESET | G7/G8 `evidence/m328_hurry_globals.txt:38-39,43` | V MU14-16 |
+| B uncarried: blob [91f750,+ce0) ends B-4; opener 'multi'∧B==0→opts 0x10c0; B!=0→diplo-send 584010 (546800:40 refs); HURRY gate re-pin | G9/G10 `evidence/m328_hurry_globals.txt:40,42,44` | V MU17-20,MU23 |
+| ACCEPT 14/14 digest 79deb5e6c5c501ff ×2 (`evidence/m328_hurry_globals.txt:59-60`,`_rerun.txt:59-60`); harness 27/27 (26+1 NO-OP) digest 50f6aa12d28d4b2f (`evidence/m328_mutate.txt:30-32`); ST 5/5 (`evidence/m328_mutate_selftest.txt:7`) | as cited | V |
+| OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); 92bdf8 mode global; +300 upkeep refund 1/3 (diff4) 2/3 (diff5+) = M325 lead; facprofile+4ec interest | - | lead |
+
 ## M326 (s301-chain2, STATIC 10/10, review #332 hardened) - block+224 = per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt); settled at upkeep
 
 | claim | evidence | conf |
@@ -1317,7 +1303,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | reset 59f0bf/c1; turnfn 16st/0blk; save [0]*8, foffs=550+k*20bc formula pinned, raw block carry (596a91 105e0/94d430); gap@328=own-player 3; no DEBT str; LOAN owners disjoint | G7-G9 `:41-43` | V MU8,MU9,MU10,MU11 |
 | M325 QUALIFIED: 29 labels BLKCONST->STRIDE +4 UNPROVEN det; totals/seeds/pins unchanged; M325 own 8 gates RE-RUN under fix = 8/8 | G10 `:44`; `evidence/m326_m325_seedcheck.txt:4,9` | V MU24 (MU17 mechanism) |
 | ACCEPT 10/10 digest f0f31c3daa26b601 x2 (`evidence/m326_block224_census.txt:45-46`,`_rerun.txt:45-46`); harness 27/27 (25+2 NO-OP) digest 07326ba5d23a2dbe (`evidence/m326_mutate.txt:30-32`); ST 5/5 (`_selftest.txt:7`) | as cited | V |
-| OPEN: 920434/91c64c nouns; 419c30 callers; branch caveat 419de9/419e1f | - | lead |
+| OPEN: ~~920434/91c64c nouns~~ ANSWERED M328 (A=turn-start ENERGY snapshot V; B='multi' session flag, noun INFERRED); 419c30 callers; branch caveat 419de9/419e1f | - | lead |
 
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
