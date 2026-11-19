@@ -1294,15 +1294,15 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | OPEN: game nouns; 47 whole-dword field stores untraced to sources | - | lead |
 
 22/22 mutants `evidence/m321_mutate.txt:24`; digest `f304cf871a971a3d` `m321_memo_owners.txt:84`.
-## M325 (s299-chain2) - block+220=per-faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
+## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
 | claim | evidence | conf |
 |---|---|---|
-| 234 disp hits (54W/180R; 0 ABS/+220/sub) +30 seeds->20regW/7regR; 74sites/34owners; 45P/29U | G1-G3 `evidence/m325_block220_census.txt:289-291` | V MU2-4/14-17/20/22/29/30 |
-| turnfn 51f320: 16 st/0 str/0 blk; ROUND@51f53c YEAR@51f54f | G4 `:292` | V MU1/20/21 |
+| 234 disp hits (54W/180R; 0 ABS/+220/sub) +30seeds->20regW/7regR; 74sites/34owners; 45P/29U | G1-G3 `evidence/m325_block220_census.txt:289-291` | V MU2-4/14-17/20/22/29/30 |
+| 51f320: 16 st/0 str/0 blk; ROUND@51f53c YEAR@51f54f | G4 `:292` | V MU1/20/21 |
 | ENERGY: EDITORENERGY@68c938: field<-g999fa4@4e0336; caps 9999999/999999999/99999, -1000@5085c0, reset0@59eef3 | G3/G5 `:291,293` | V MU5-8/23/26/27 |
 | MIN derived (jle-skip@44262b); g999fa4=cheat-chain value (parse INFERRED); EDITORYEAR 4e0350 round=max(1,·-2100) | G6 `:294` | V MU9-13/18/22/25/28 |
-| save blkA@32c vals [10,28,112,69,229,60,102,37] <2100; R1-3 DEAD | G7/G8 `:295-296` | V MU18/19/20/25 |
+| save blkA@32c [10,28,112,69,229,60,102,37] <2100; R1-3 DEAD | G7/G8 `:295-296` | V MU18/19/20/25 |
 | ACCEPT 8/8 digest a623181d7fb68263 x2 (`:297`); 30/30 (1 NO-OP) digest 97c193e12593c95e (`evidence/m325_mutate.txt:34`); ST 4/4 | cite | V |
 | OPEN: +224/+300; MIN consumers; 920774; 519b00; 673b60; T9 | - | lead |
 
