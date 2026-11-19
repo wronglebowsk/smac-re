@@ -464,3 +464,13 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - Squash title carried the PRE-review numbers (9/9, 23/23); PATCHed via `gh api -X PATCH repos/.../pulls/332` to post-review (gh pr edit fails on Projects-classic GraphQL). NAMED ## M326 ACCEPT governs (10/10, 27/27).
 - NAMED headroom DEBT: 248,242 B vs the 250,000 B FAIL line (1,758 B left) - rotate VERBATIM into docs/named-archive-* BEFORE adding (chain 1's B26 note).
 - `gh pr merge` local cleanup fails ('main' checked out in chain 1's worktree) - remote merge unaffected; this worktree cannot checkout main while chain 1 holds it.
+
+## Session 303-chain2 (2026-11-19, sidecar-fold remediation; docs-only, zero box)
+
+- #334 (pr332 review sidecar .md/.json fold, squash **81e1e02**) was merged with a RED checkpoint
+  gate: my batched poll+merge command did not condition on PASS, and the sidecar-only PR diff
+  lacked the SESSION_NOTES+NEXT_PROMPT updates the mechanical gate requires. MY ERROR - recorded,
+  not hidden. All content checks (blobs/endpoints/citations/skill) passed; only the checkpoint failed.
+- This PR is the remediation: this note + the M326 line update (harness digest 07326ba5d23a2dbe
+  stays in NAMED ## M326 / s301-chain2; the line keeps 27/27). Gate verified GREEN BEFORE merge.
+- Worktree rests detached at origin/main afterwards (chain 1 holds the main checkout).
