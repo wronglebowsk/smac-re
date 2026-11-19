@@ -107,7 +107,10 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
     byte_rows = []
     poison_sightings = []
     digest_rows = []
+    carry_rows = []        # per round: did the bytes this round READ carry the previous WRITE
+    poison_edits = {}      # round -> the byte offsets the falsifier's own hand changed
     im_head = sv0
+    img_written = None     # the bytes this run's writer left last round (None before round 0)
     prev_written = {i: list(model[i]) for i in model}   # round 0 "read" sees the save itself
     for r in range(turns):
         # ---- THE FALSIFIER'S HAND, between rounds, on the container's own bytes. Addressed
@@ -118,10 +121,18 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
             off = im0.units_off + sosave.UNIT_LEN * POISON_UNIT
             mut = bytearray(img)
             struct.pack_into("<H", mut, off, POISON_X)
+            # The falsifier's OWN byte footprint, recorded so the carry law below can tell a
+            # container that carried the previous write from a container this hand touched.
+            poison_edits[r] = [k for k, (a, b) in enumerate(zip(img, bytes(mut))) if a != b]
             img = bytes(mut)
             im_head = soct.parse_image(img)   # the bytes the round's read is about to consume
         # ---- the round's START tiles, per the mode's law
+        head_bytes = img                      # the exact bytes a reader at this moment consumes
         head = _tiles(im_head)
+        # A FRESH DECODE of those bytes, not the cached im_head object: the read-back below is
+        # compared against THIS, so "the round's start tile is the container's tile" is a claim
+        # about the bytes being read, never a variable equalled with itself (#319 review, f.4).
+        recheck = _tiles(soct.parse_image(head_bytes))
         if mode == "model":
             start = {i: list(model[i]) for i in model}
             src = "model"
@@ -132,7 +143,19 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
             start = {i: list(head[i]) for i in model}
             src = "image-at-round-head"
         for i in model:
-            readback.append(1 if start[i] == head[i] else 0)
+            readback.append(1 if start[i] == recheck[i] else 0)
+        # ---- THE BYTE-LEVEL CARRY LAW (#319 review, f.10): the container this round READS is
+        # the container this run's writer last WROTE, byte for byte -- and at the falsifier's
+        # round the ONLY difference is exactly the bytes that hand changed. This is a measurement
+        # over two independent byte strings; the save-tile count G4 also prints is a consequence
+        # of it, not the law.
+        prev_bytes = sv0.data if img_written is None else img_written
+        changed = [k for k in range(len(prev_bytes)) if head_bytes[k] != prev_bytes[k]]
+        expect = poison_edits.get(r, [])
+        carry_rows.append({"round": r, "changed": len(changed), "expect": len(expect),
+                           "exact": changed == expect, "read_ok": sum(readback[-n:]),
+                           "at_save_tile": sum(1 for i in model
+                                               if recheck[i] == orig_t[i])})
         # ---- the B7 gesture, on every unit of the save's own record array
         acc_tot = ref_tot = 0
         for i in sorted(model):
@@ -165,15 +188,40 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
         udiffs = sorted(d for d in diffs if d in unit_offs)
         hdiffs = sorted(d for d in diffs if d not in unit_offs)
         img = img_next
+        img_written = img       # what the NEXT round's read must carry (carry law, other half)
         # ---- read the WRITTEN container back through the same parser the decoder uses
         im_w = soct.parse_image(img)
         wt = _tiles(im_w)
+        out_idx = []
         for i in model:
             if wt[i][0] >= W_cont or wt[i][1] >= H_cont:
                 out_written.append((r, i))
+                out_idx.append(i)
+        # ---- THE DECODER'S OWN VERDICT on those bytes, computed from sim/save._unit_ok and NOT
+        # from this instrument's tile test: which records it rejects, and how many shape-valid
+        # records it counts walking back from the base array (the parser's own found_units). The
+        # tile-based counts and these two must agree round by round, or "the CONTAINER owns the
+        # coordinate space" is only this harness re-implementing its own bound (#319 review f.5).
+        rej_idx = [i for i in range(n) if not sosave._unit_ok(
+            img, im_w.units_off + sosave.UNIT_LEN * i, W_cont, H_cont)]
+        # ... and WHICH records the decoder even coord-checks: sim/save._unit_ok declines to
+        # treat +0/+2 as a tile when +10 >= UNIT_TYPE_BAND (a production-queue band record). So
+        # a bare "tile >= width" test is this harness's bound, not the decoder's; the two are
+        # only comparable record by record once that rule is measured on the same bytes.
+        band_idx = [i for i in range(n) if sosave._u16(
+            img, im_w.units_off + sosave.UNIT_LEN * i + 10) >= sosave.UNIT_TYPE_BAND]
+        band_types = sorted({sosave._u16(img, im_w.units_off + sosave.UNIT_LEN * i + 10)
+                             for i in band_idx})
+        found_pred = 0
+        while sosave._unit_ok(img, im_w.bases_off - sosave.UNIT_LEN * (found_pred + 1),
+                              W_cont, H_cont):
+            found_pred += 1
         byte_rows.append({"round": r, "written": len(mv) if mv is not None else 0,
                           "unit_bytes": len(udiffs), "hdr_bytes": len(hdiffs),
                           "hdr_offsets": hdiffs,
+                          "out_idx": sorted(out_idx), "rej_idx": rej_idx,
+                          "band_idx": band_idx, "band_types": band_types,
+                          "found_pred": found_pred,
                           "rec_offsets": sorted({(d - im_head.units_off) % sosave.UNIT_LEN
                                                  for d in udiffs}),
                           "year_img": im_w.year, "n_units_img": im_w.n_units,
@@ -206,11 +254,14 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
     final = soct.parse_image(img)
     ft = _tiles(final)
     ot = _tiles(sv0)
+    orig_out = sorted(i for i in range(n) if ot[i][0] >= W_cont or ot[i][1] >= H_cont)
     diff_records = [i for i in range(n) if ft[i] != ot[i]]
     return {"mode": mode, "poison": poison, "rows": rows, "traj": traj, "img": img,
             "readback": readback, "out_head": sorted(set(out_head)),
             "out_written": sorted(set(out_written)),
             "out_of_grid": sorted(set(out_head) | set(out_written)),
+            "orig_out": orig_out,
+            "carry_rows": carry_rows, "poison_edits": poison_edits,
             "byte_rows": byte_rows, "final_tiles": _tiles(final),
             "final_found_units": final.found_units, "final_year_img": final.year,
             "final_n_units": final.n_units, "final_n_bases": final.n_bases,
@@ -241,6 +292,44 @@ SIGKEYS = ("mode", "readback_bad", "readback_n", "out_head", "out_written",
 ORDER = ["container", "container:clean", "model", "model:clean", "late", "late:clean",
          "nowrite", "mpwidth", "wrapskip", "budget3", "lift"]
 
+# The five modes with a DIFFERENT law are the rivals. The `:clean` twins (same modes, falsifier
+# disarmed) and the model/late rows are CONTROLS: table E's ten keys carry no per-unit delta, so a
+# clean twin coincides with its own rung row by design and G6, not G8, is what reads that.
+RIVAL_KEYS = ("nowrite", "mpwidth", "wrapskip", "budget3", "lift")
+
+# The reproducibility anchor of this rung, RE-MEASURED at the shipped head and read by G9.
+# It is not a decoration: MU9 (a labels-only edit that changes no tile and no count) reddens
+# exactly this pin and nothing else, which is what proves the number is load-bearing.
+ACCEPT_PIN = "901a286332960a10"
+
+
+def _names(runs):
+    """The rival set that produced the rows: part of the anchor, so a rival swapped out of the
+    table changes the number a gate reads."""
+    return "|".join(_sig(runs[k])["mode"] for k in ORDER)
+
+
+def accept_digest(rows, names):
+    """The ACCEPT anchor render() PRINTS and G9 PINS. A digest only cited in prose is a digest
+    no gate reads (#319 review, f.1)."""
+    return hashlib.sha256(("\n".join(rows) + "|" + names).encode()).hexdigest()[:16]
+
+
+def _probe_agreement(runs):
+    """Cross-check of the two INDEPENDENT acceptance signals, round by round, over every run:
+    this instrument's `tile >= container width` test (`out_idx`) vs the decoder's own verdict
+    computed from sim/save._unit_ok (`rej_idx`), plus the parser's reported found_units vs the
+    number recomputed from that predicate. Reported 4 ways: (probes, agreeing on the raw tile
+    test, agreeing once the decoder's OWN band rule is applied, agreeing on found_units)."""
+    raw = rule = fnd = probes = 0
+    for k in ORDER:
+        for b in runs[k]["byte_rows"]:
+            probes += 1
+            raw += 1 if b["out_idx"] == b["rej_idx"] else 0
+            rule += 1 if b["rej_idx"] == sorted(set(b["out_idx"]) - set(b["band_idx"])) else 0
+            fnd += 1 if b["found_pred"] == b["found_units"] else 0
+    return probes, raw, rule, fnd
+
 
 def measure(sav_path, map_path, turns=TURNS, presses=PRESSES):
     """All runs the gates read. Print-free, so selftest and __main__ share one source."""
@@ -251,6 +340,7 @@ def measure(sav_path, map_path, turns=TURNS, presses=PRESSES):
         runs[mode + ":clean"] = run(sav_path, map_path, mode=mode, turns=turns,
                                     presses=presses, poison=False)
     runs["rerun"] = run(sav_path, map_path, mode="container", turns=turns, presses=presses)
+    names = _names(runs)          # the rival set is part of the anchor G9 pins
     # B7's own slice, in-process, on the same inputs (G1: reuse, not fork)
     _, _, _, _, st7, _ = somv.simulate(sav_path, map_path, DEFAULT_RULES, turns, presses)
     b7 = {h["round"]: sum(1 for mm in h["moves"] if mm["accepted"]) for h in st7["history"]}
@@ -270,7 +360,10 @@ def measure(sav_path, map_path, turns=TURNS, presses=PRESSES):
     b7_5 = {h["round"]: sum(1 for mm in h["moves"] if mm["accepted"]) for h in st5["history"]}
     b7_5_out = sorted(int(i) for i, v in st5["final"]["units"].items()
                       if v[0] >= sv0.width or v[1] >= sv0.height)
-    return {"runs": runs, "b7": b7, "b7_ref": b7_ref, "b7_cells": b7_cells,
+    return {"runs": runs, "accept_digest": accept_digest(runs["container"]["digest_rows"],
+                                                          names),
+            "accept_digest_rerun": accept_digest(runs["rerun"]["digest_rows"], names),
+            "b7": b7, "b7_ref": b7_ref, "b7_cells": b7_cells,
             "b7_out": b7_out, "b7_final": b7_final, "b7_turns": turns, "presses": presses,
             "b7_5": b7_5, "b7_5_out": b7_5_out,
             "W_cont": sv0.width, "H_cont": sv0.height, "sav_path": sav_path,
@@ -327,15 +420,43 @@ def render(m):
                 c["mp_width"], m["W_cont"], m["H_cont"], len(m["b7_out"]), c["n"],
                 m["b7_out"][:12], [m["b7_5"][r] for r in sorted(m["b7_5"])],
                 len(m["b7_5_out"]), c["n"], m["b7_5_out"][:12]))
+    L.append("-- table H: the BYTE-LEVEL CARRY LAW of the container run. 'bytes' is how many "
+             "bytes this round's READ container differs from the previous round's WRITE container "
+             "(the save's own bytes before round 0); 'expect' is how many the FALSIFIER'S HAND "
+             "changed there; 'decoded' counts start tiles equal to a fresh decode of the head "
+             "bytes; 'at_save' is the consequence the old vacuity proxy measured --")
+    for b in c["carry_rows"]:
+        L.append("rnd %2d: head-vs-previous-write byte diffs %d, expected %d, exact=%s | "
+                 "start tiles == fresh decode of head %d/%d | container tiles still at the "
+                 "save's own tile %d" % (b["round"], b["changed"], b["expect"], b["exact"],
+                                         b["read_ok"], c["n"], b["at_save_tile"]))
+    L.append("-- table I: this instrument's TILE bounds test vs the DECODER'S OWN verdict "
+             "(sim/save._unit_ok on the same bytes), every run, every round. 'band' = records the "
+             "decoder refuses to coord-check because +10 >= %d (a queue-band record, not a tile) "
+             "--" % sosave.UNIT_TYPE_BAND)
+    for k in ORDER:
+        rr = runs[k]
+        ok_raw = sum(1 for b in rr["byte_rows"] if b["out_idx"] == b["rej_idx"])
+        ok_rule = sum(1 for b in rr["byte_rows"]
+                      if b["rej_idx"] == sorted(set(b["out_idx"]) - set(b["band_idx"])))
+        ok_fnd = sum(1 for b in rr["byte_rows"] if b["found_pred"] == b["found_units"])
+        L.append("%-16s rounds %d/%d raw-tile-test | %d/%d once the band rule is applied | "
+                 "%d/%d found_units recomputed | band records %s (types %s)"
+                 % (rr["mode"], ok_raw, len(rr["byte_rows"]), ok_rule, len(rr["byte_rows"]),
+                    ok_fnd, len(rr["byte_rows"]), rr["byte_rows"][0]["band_idx"],
+                    rr["byte_rows"][0]["band_types"]))
+    probes, ok_raw, ok_rule, ok_fnd = _probe_agreement(runs)
+    L.append("TOTAL: %d probes (%d runs x %d rounds): raw tile test == decoder set in %d, "
+             "decoder set == tile test minus band records in %d, found_units recomputed == "
+             "parser's in %d" % (probes, len(ORDER), c["turns"], ok_raw, ok_rule, ok_fnd))
     L.append("-- table G: determinism --")
     L.append("container digest %s | rerun digest %s | equal=%s | final sha %s / %s | "
              "images equal=%s" % (c["digest"], runs["rerun"]["digest"],
                                   c["digest"] == runs["rerun"]["digest"], c["final_sha"][:16],
                                   runs["rerun"]["final_sha"][:16],
                                   c["img"] == runs["rerun"]["img"]))
-    L.append("digest(B25 measured rows) %s" % hashlib.sha256(
-        ("\n".join(c["digest_rows"]) + "|" + "|".join(_sig(runs[k])["mode"]
-                                                      for k in ORDER)).encode()).hexdigest()[:16])
+    L.append("digest(B25 measured rows) %s | rerun %s | G9 pins ACCEPT_PIN %s"
+             % (m["accept_digest"], m["accept_digest_rerun"], ACCEPT_PIN))
     return L
 
 
@@ -400,36 +521,73 @@ def gates(m):
     budget_ok = all(s["accepted"] == per and s["spent"] == s["accepted"] * sounits.STEP_MP
                     and s["accepted"] < m["presses"] for i in range(n) for s in c["traj"][i])
     moved = [row["head_at_save_tile"] for row in c["rows"]]
-    g.append(("G4 the reload law: %d/%d (round,unit) start tiles equal the container's tile at "
-              "the round head (%d divergences); every accepted press moved (+%d,0) mod %d from "
-              "the RELOADED tile; every unit accepted exactly %d of %d presses each round with "
-              "spent == 3*accepted; and the read is NOT vacuous - the container at the round "
-              "head still holds the save's own tile for %d records in round 0 and %s in the "
-              "later rounds, so the tiles it reports are this run's writes, not the input"
-              % (len(c["readback"]) - bad, len(c["readback"]), bad, sounits.DIR_DX[DIR_EAST],
-                 c["W_cont"], per, m["presses"], moved[0], moved[1:]),
-              bad == 0 and len(c["readback"]) == n * T and deltas_ok and budget_ok
-              and moved[0] == n and all(v == 0 for v in moved[1:])))
+    carry = c["carry_rows"]
+    carry_ok = sum(1 for b in carry if b["exact"])
+    decode_ok = sum(b["read_ok"] for b in carry)
+    at_save = [b["at_save_tile"] for b in carry]
+    g.append(("G4 the reload law. THE LAW IS BYTE-LEVEL CARRY: in %d/%d rounds the container this "
+              "round READS differs from the container this run's writer last WROTE by exactly the "
+              "bytes the falsifier's own hand changed (%s diffs vs %s expected; table H), so what "
+              "is read IS what was written. Independently of the cached parser object, %d/%d "
+              "(round,unit) start tiles equal a FRESH DECODE of the head bytes actually consumed "
+              "(%d divergences). Every accepted press moved (+%d,0) mod %d from the RELOADED "
+              "tile; every unit accepted exactly %d of %d presses each round with spent == "
+              "3*accepted. The read is NOT vacuous -- and that is a CONSEQUENCE of the carry, not "
+              "the law: the container at the round head still holds the save's own tile for %d "
+              "records in round 0 and %s in the later rounds, so the tiles read back are this "
+              "run's writes, not the input"
+              % (carry_ok, len(carry), [b["changed"] for b in carry],
+                 [b["expect"] for b in carry], decode_ok, len(c["readback"]), bad,
+                 sounits.DIR_DX[DIR_EAST], c["W_cont"], per, m["presses"], at_save[0],
+                 at_save[1:]),
+              carry_ok == len(carry) == T and decode_ok == n * T
+              and bad == 0 and len(c["readback"]) == n * T and deltas_ok and budget_ok
+              and at_save[0] == n and all(v == 0 for v in at_save[1:])
+              and moved == at_save))
 
     # G5 - the coordinate space, arbitrated by the decoder's OWN shape scan, on BOTH sides of
     # the loop: the rival's write puts records outside the container (out_written) AND they come
     # back as the next round's read (out_head), so the container really is the coordinate space.
+    # And the instrument's own tile bounds test is CROSS-CHECKED against the decoder's predicate
+    # sim/save._unit_ok on the same bytes (table I): if those two ever tell different stories,
+    # "the container owns the coordinate space" is only this harness quoting its own bound back
+    # at itself (#319 review, f.5). The exact numbers the row prints are PINNED, not sign-tested
+    # (#319 review, f.6).
     mp_r, ws_r = runs["mpwidth"], runs["wrapskip"]
     mp_out, mp_min = _sig(mp_r)["out_written"], _sig(mp_r)["min_found_units"]
     ws_out, ws_min = _sig(ws_r)["out_written"], _sig(ws_r)["min_found_units"]
     mp_head, ws_head = _sig(mp_r)["out_head"], _sig(ws_r)["out_head"]
+    probes, ok_raw, ok_rule, ok_fnd = _probe_agreement(runs)
+    cb = c["byte_rows"][-1]
+    n_band = len(cb["band_idx"])
+    pin = (mp_out == 37 and mp_head == 27 and mp_min == 4
+           and ws_out == 37 and ws_head == 27 and ws_min == 4
+           and n_band == 25 and len(c["orig_out"]) == 0
+           and cb["band_types"] == [128, 130, 131, 256, 320, 321, 322, 323])
     g.append(("G5 coordinate space: the container's own width %d keeps %d out-of-grid at the "
               "read and %d at the write, found_units %d/%d; the MAP FILE's width %d puts %d "
               "records outside the container AT THE WRITE and %d come back as a later READ, and "
               "its parser's own found_units drops to %d; the no-wrap rival: %d written, %d read "
-              "back, found_units drops to %d. B7 - which wrapped by the map file - left %d of "
-              "%d units' final tiles outside this container's %dx%d grid"
+              "back, found_units drops to %d. These nine facts are PINNED by this gate (%s), not "
+              "sign-tested. The tile test is NOT the decoder: raw, the two record sets differ in "
+              "%d/%d probes, and the difference is exactly the records sim/save._unit_ok exempts "
+              "-- it declines to coord-check the %d of %d records whose +10 type is %s (>= %d; "
+              "the rule its own source marks OPEN, sim/save.py:52), so its acceptance test "
+              "inspects the coordinates of only %d records. That exemption is INVISIBLE to "
+              "coordinates on this save: in the pristine file every one of the %d records has "
+              "+0/+2 inside the container grid (%d out of grid), so it splits the array by field, "
+              "not by tile sanity. With the decoder's rule applied the two signals agree in %d/%d "
+              "probes, and the parser's found_units is reproduced from _unit_ok in %d/%d (table "
+              "I). B7 - which wrapped by the map file - left %d of %d records' final tiles "
+              "outside this container's %dx%d grid"
               % (c["W_cont"], _sig(c)["out_head"], _sig(c)["out_written"],
                  c["byte_rows"][-1]["found_units"], n, c["mp_width"], mp_out, mp_head, mp_min,
-                 ws_out, ws_head, ws_min, len(m["b7_out"]), n, m["W_cont"], m["H_cont"]),
+                 ws_out, ws_head, ws_min, pin, probes - ok_raw, probes, n_band, n,
+                 cb["band_types"], sosave.UNIT_TYPE_BAND, n - n_band, n, len(c["orig_out"]),
+                 ok_rule, probes, ok_fnd, probes, len(m["b7_out"]), n, m["W_cont"], m["H_cont"]),
               _sig(c)["out_head"] == 0 and _sig(c)["out_written"] == 0
-              and mp_out > 0 and mp_head > 0 and mp_min < n
-              and ws_out > 0 and ws_head > 0 and ws_min < n and len(m["b7_out"]) > 0))
+              and pin and mp_min < n and ws_min < n and len(c["orig_out"]) == 0
+              and ok_rule == probes and ok_fnd == probes and len(m["b7_out"]) > 0))
 
     # G6 - the falsifier bites; the two blindness controls prove it is the container that moved
     pu = POISON_UNIT
@@ -439,15 +597,22 @@ def gates(m):
     others = sum(1 for i in range(n) if i != pu and c["traj"][i] != cc["traj"][i])
     mdl_same = runs["model"]["img"] == cc["img"]
     late_same = runs["late"]["img"] == cc["img"]
+    mdl_w = _sig(runs["model"])["unit_bytes_run"]
+    late_w = _sig(runs["late"])["unit_bytes_run"]
     g.append(("G6 falsifier: rewriting unit %d's tile in the IMAGE ONLY at round %d shifts its "
               "start-tile trajectory by %s mod %d for every later round (clean %s -> poisoned "
               "%s), the shift is in the FINAL container (%s vs clean %s), and no other unit's "
-              "trajectory moves (%d of %d); the model-fed and read-after-write movers are BLIND: "
-              "their final images equal the clean run's byte-for-byte (model %s, late %s)"
+              "trajectory moves (%d of %d). The model-fed and read-after-write movers are BLIND "
+              "TO THE FALSIFIER, not to writing: they still write %d and %d unit-array bytes, and "
+              "their own writes rebuild an image byte-equal to THEIR OWN clean run (model %s, "
+              "late %s) -- i.e. what they cannot see is the poison delta, which the container run "
+              "does carry into its final tile"
               % (pu, POISON_ROUND, sorted(set(shift)), c["W_cont"], clean_x, pois_x,
-                 c["final_tiles"][pu], cc["final_tiles"][pu], others, n, mdl_same, late_same),
+                 c["final_tiles"][pu], cc["final_tiles"][pu], others, n, mdl_w, late_w,
+                 mdl_same, late_same),
               shift[0] == 0 and len(set(shift[1:])) == 1 and shift[1] != 0 and others == 0
-              and mdl_same and late_same and c["final_tiles"][pu] != cc["final_tiles"][pu]))
+              and mdl_same and late_same and mdl_w > 0 and late_w > 0
+              and c["final_tiles"][pu] != cc["final_tiles"][pu]))
 
     # G7 - the writer's span accounting over the whole run
     spans = list(sow.modeled_spans())
@@ -493,8 +658,16 @@ def gates(m):
                   and s["mpwidth"]["max_x"] == s["wrapskip"]["max_x"]
                   and s["wrapskip"]["max_x"] < c["mp_width"])
     # the rung must not quietly coincide with one of its own rivals (trap 24: a gate that
-    # passes because the rung became the rival is no gate at all)
-    not_rival = (c["rows"][0]["accepted"] != runs["budget3"]["rows"][0]["accepted"]
+    # passes because the rung became the rival is no gate at all). #319 review f.8: the claim is
+    # "matches NONE of them", so the check is the FULL table-E signature (SIGKEYS minus `mode`,
+    # which is the label itself) against EVERY rival row -- not the hand-picked subset the first
+    # pass actually compared.
+    def _tup(sig_row):
+        return tuple(sig_row[k2] for k2 in SIGKEYS if k2 != "mode")
+    rival_keys = [k for k in ORDER if k in RIVAL_KEYS]
+    coincide = [k for k in rival_keys if _tup(s["container"]) == _tup(s[k])]
+    not_rival = (not coincide
+                 and c["rows"][0]["accepted"] != runs["budget3"]["rows"][0]["accepted"]
                  and s["container"]["unit_bytes_run"] > 0
                  and s["container"]["out_written"] == 0 and s["container"]["out_head"] == 0
                  and s["container"]["min_found_units"] == n
@@ -507,9 +680,13 @@ def gates(m):
               "file's own width %d, so 80 never bites in %d rounds; budget3 accepts 1 press per "
               "round not 2 (%s); the lift-everything re-emitter writes %d unit bytes and never "
               "advances the container's year past %d; the two blindness controls diverge at "
-              "exactly 1 read-back each, still write %d/%d unit bytes, and rebuild the CLEAN "
-              "final image. The rung's own row: 0 read-back divergences, and it coincides with "
-              "none of its rivals (%s)"
+              "exactly 1 read-back each, still write %d/%d unit bytes, and rebuild an image "
+              "byte-equal to THEIR OWN clean run -- blind to the falsifier, not to writing. The "
+              "rung's own row: 0 read-back divergences, and its FULL table-E signature (SIGKEYS "
+              "minus the mode label) differs from %d/%d RIVAL rows; rows it coincides with: %s. "
+              "(The three :clean twins are the same modes with the falsifier disarmed: table E "
+              "carries no per-unit delta, so they coincide by design and G6 is what reads that.) "
+              "not_rival=%s"
               % (s["nowrite"]["unit_bytes_run"], POISON_UNIT,
                  rw["final_tiles"][POISON_UNIT], s["mpwidth"]["out_written"],
                  s["wrapskip"]["out_written"], s["mpwidth"]["out_head"],
@@ -518,15 +695,23 @@ def gates(m):
                  sorted({t["accepted"] for i in range(n)
                          for t in runs["budget3"]["traj"][i]}),
                  s["lift"]["unit_bytes_run"], runs["lift"]["final_year_img"],
-                 s["model"]["unit_bytes_run"], s["late"]["unit_bytes_run"], not_rival),
+                 s["model"]["unit_bytes_run"], s["late"]["unit_bytes_run"],
+                 len(rival_keys) - len(coincide), len(rival_keys), coincide or "none",
+                 not_rival),
               all(riv.values()) and control and coincident and not_rival
               and s["container"]["readback_bad"] == 0))
 
-    # G9 - determinism, over the measured rows AND the container
+    # G9 - determinism over the measured rows AND the container, plus the ACCEPT anchor the table
+    # prints: pinned to a LITERAL, so a change in any printed row reddens a shipped gate instead
+    # of only moving a number prose cites (#319 review, f.1; MU9 is the mutant that names it).
     same = (c["digest"] == runs["rerun"]["digest"] and c["img"] == runs["rerun"]["img"])
+    pinned = (m["accept_digest"] == m["accept_digest_rerun"] == ACCEPT_PIN)
     g.append(("G9 determinism: the rerun reproduces the measured-row digest %s and the final "
-              "container sha256 %s (%d B)" % (c["digest"], c["final_sha"][:16], len(c["img"])),
-              same))
+              "container sha256 %s (%d B); the ACCEPT anchor of table G is %s (rerun %s), pinned "
+              "by this gate to the literal ACCEPT_PIN %s (%s)"
+              % (c["digest"], c["final_sha"][:16], len(c["img"]), m["accept_digest"],
+                 m["accept_digest_rerun"], ACCEPT_PIN, pinned),
+              same and pinned))
     return g
 
 
