@@ -269,3 +269,12 @@ Older sessions: `docs/sessions/sessions-276-277.md` (2 sessions). Read it only w
 - STILL OPEN: what the .exe does with a +10 >= 64 record's +0/+2; whether the wrap or the
   `_unit_ok` rejection fires first in the engine; which grid the shipped game gives a mover when
   the container and `planet.MP` disagree. #180 still stands (2/5).
+## Session 296 (2026-11-19, post-merge hygiene for #319; zero box)
+
+- B25 MERGED: #319 squashed to **main 1556ce9**, CI `gate` = SUCCESS on head 5ed5d93 (13 s). The
+  squash title carries the POST-review numbers (9/9, anchor 901a286332960a10 pinned by G9, harness
+  13/13 + 3 NO-OP, selftest 5/5) - the #317 wart, where a squash title kept the pre-review counts and
+  needed a NAMED note to correct it, does NOT repeat here.
+- Cursor re-pointed at the merged state (618 B) and `NAMED ## B25`'s header records the merge commit.
+- Cap: two NEXT_PROMPT blocks moved VERBATIM to `docs/pick-archive.md` §trim-s295 (a)/(b); the doc
+  lands at 11,978 B (warn 12,000). NEXT: B26 (spine text NOT authored) or picks (vi)/(vii).
