@@ -1,0 +1,30 @@
+shipped gates(): 10 rows G1,G2,G3,G4,G5,G6,G7,G8,G9,G10
+== B26 mutation harness: 20 mutants (each must match its declared effect: an EXACT gate set, a declared message-matched CRASH, or a declared NO-OP) ==
+-- harness 2026-11-19 21:18:18 UTC --
+MU1    the falsifier's hand never fires (no image-only poison declared=G3,G6,G8,G9            measured=G3,G6,G8,G9          OK  (4/10 gates red)
+MU2    the resumed run keeps the MODEL's tiles through the lo declared=G6,G9                  measured=G6,G9                OK  (2/10 gates red)
+MU3    the writer is never rebased onto the loaded container  declared=G10,G4,G5,G6,G9        measured=G10,G4,G5,G6,G9      OK  (5/10 gates red)
+MU4    the mover's tiles never reach the writer (positions st declared=G4,G5,G6,G9            measured=G4,G5,G6,G9          OK  (4/10 gates red)
+MU5    the 'model' rival is fed the container at the boundary declared=G8                     measured=G8                   OK  (1/10 gates red)
+MU6    the arrival's parent tile is read from the ORIGINAL sa declared=G6,G9                  measured=G6,G9                OK  (2/10 gates red)
+MU7    the recorded stream's DESTROY never runs (op fidelity  declared=G10,G2,G3,G9           measured=G10,G2,G3,G9         OK  (4/10 gates red)
+MU8    the mid-gesture split refreshes the budget for BOTH br declared=G5                     measured=G5                   OK  (1/10 gates red)
+MU9    the mid-gesture reload leaves the writer based on the  declared=G5                     measured=G5                   OK  (1/10 gates red)
+MU10   a write clobbers an UNMODELED byte (a unit's flag word declared=G7,G9                  measured=G7,G9                OK  (2/10 gates red)
+MU11   the resumed engine is not read from the header (year i declared=G4,G5,G6,G9            measured=G4,G5,G6,G9          OK  (4/10 gates red)
+MU12   the ACCEPT anchor stops covering the printed rows (the declared=G9                     measured=G9                   OK  (1/10 gates red)
+MU13   the identity round-trip is asserted instead of compute declared=G2                     measured=G2                   OK  (1/10 gates red)
+MU14   the smuggler is put back behind the glass: never hande declared=G6                     measured=G6                   OK  (1/10 gates red)
+MU15   the size law is decoration: the prediction uses a reco declared=G10                    measured=G10                  OK  (1/10 gates red)
+MU16   the owner census reads the FLAG word (+4), not the own declared=G6                     measured=G6                   OK  (1/10 gates red)
+MU17   the rebuilt ledger keeps the image's COUNT but not its declared=G3                     measured=G3                   OK  (1/10 gates red)
+MU18   the mid-gesture reload's engine is built from an inven declared=G5                     measured=G5                   OK  (1/10 gates red)
+MU19   the mid-gesture reload does NOT install the rebuilt en declared=NOOP                   measured=nothing              OK  (0/10 gates red [declared NO-OP: this half is decoration])
+MU20   the SAVE-only refusal half counts every unit, so B25's declared=G1                     measured=G1                   OK  (1/10 gates red)
+== harness: 19/19 scored mutants matched their declared gate sets (+1 declared NO-OP: MU19) ==
+python3 -u -m sim.composedsave     rc=0   63 lines sha256(stdout) a1a5f1e0f310977b
+python3 -u -m sim.selftest --b26   rc=0   63 lines sha256(stdout) a1a5f1e0f310977b
+  [relay patched in a temp tree]   rc=0   64 lines sha256(stdout) 7022dc8a44cb1c8f relay-marker 1x
+stdout identical across the two entry points: True | the check BITES (a patched relay prints different text): True
+MU21   the --b26 relay prints text the module does not (F9) declared=IDENTITY       measured=IDENTITY       OK
+PASS B26 ENTRY-POINT IDENTITY: 2/2 checks (MU21 scored)

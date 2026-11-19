@@ -1,39 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only when a question reaches back before session ## Session 283.
-
-## Session 283 (2026-11-18, close-out: M314 MERGED as #299, docs cursor)
-- `milestone.py merge 299` verdict GREEN on the review head (`gate` pass 13 s), main = `e638772`. No re-review arrived after the fixes were pushed (Greptile reviews once, on OPEN) - recorded honestly as "none", not as a second pass. Full P2 accounting: single PR comment https://github.com/wronglebowsk/smac-re/pull/299#issuecomment-6978365896.
-- KNOWN STALE TEXT on main: the squash title reads "20/20 mutations load-bearing" - that was the PRE-review harness; the merged head is 27/27 (`evidence/m314_mutate.txt:29`) with digest cf54a7ca907344c6. Titles are immutable after merge; NAMED ## M314 + this note govern.
-- FIRE DISCIPLINE (user switch 2026-11-18): the `smac-re-loop` cron (789931d4b621) is PAUSED with reason; its one auto-fire was CANCELLED before it branched (left only an empty `milestone/m314`; M314 collision-checked clean in log/NAMED/scripts). HONEST FLAG: the in-chat fire was cut off by the iteration cap MID-review-round with a red intermediate tree (17/18 - a CMP_OFF I had just mis-written); no commit was made from that state and nothing green was overwritten, but the cursor was left "SUBMITTED" rather than "RED" - a cut-off fire must flag RED in the cursor, not only in the chat summary.
-- Skill: 3 new decoration classes in skill/SKILL.md, rsynced to the live copy (operand-vs-mnemonic regex making an `all()` vacuously true; count claims compared on DEDUPLICATED OWNERS; digests that hash LABELS - mutate the numbers, never the labels).
-- `track_mode.py` after merge: MODE=ANALYSE analyse_since_build=1 last_build=B23 next_rung=B24 -> NEXT FIRE ANALYSES pick (ii) (ds:0x68cbb4 writers). Budgets: NEXT_PROMPT at cap (see its header) - a later fire may need a docs split; SESSION_NOTES ~66 KB; skill 50.9 KB.
-
-## Session 284 (2026-11-18, M315 fire - pick (ii): what is ds:0x68cbb4?)
-- Manual fire (cron paused). `milestone.py start M315` from clean main `fc16cb5`; id collision-checked (log/NAMED/scripts all 0). ZERO box, ZERO /proc, no gdb - static census of the shared parse engine + the image bytes.
-- `python3 -u scripts/m315_bb4_census.py` -> **== M315: 9/9 ==**, digest **c2b025b32280d82b**, two runs byte-identical (`evidence/m315_bb4_census.txt`); `python3 -u scripts/m315_bb4_mutate.py` -> **19/19** (`evidence/m315_bb4_mutate.txt`).
-- VERIFIED (all numbers printed before being asserted): census A1 = EXACTLY 22 stores / 5 reads / 1 cmp (28 refs, every address pinned). A2: the ONLY immediate ever stored is `0xffffffff` (8 direct) and 2 more reach it via the `or r,0xffffffff` idiom (`0x41b7a7`, `0x5984b4`) -> 10 sentinel-valued. A3 THE LAW: the 22 partition EXACTLY into 12 stores followed within 16 B by `call 0x4e8d60`+`call 0x4e78e0` and 10 clears, the two sets being exact complements. A2b/A9: def-walk of every register store's source inside its own function = 8 x `mov r,ds:0x68cbb0` (the current index) + 4 x a caller stack slot (`[ebp+0x8]`/`[ebp-0x18]`); zero arithmetic, zero other globals -> "second cursor fed from elsewhere" dies on the def-walk (a store fed from a NEIGHBOURING index would have survived A3, so A2b is the refuter, and A9 pins that census: 0 stores read `ds:0x68cbac`/`ds:0x68cbb8`). A4: a LOCAL dedup guard (cmp of bb4 or of its loaded copy + `je` PAST the store) exists at only 4 of the 12 memo sites {`0x4eb6c7`,`0x4efeaa`,`0x4f2201`,`0x4f5c4a`}; the other 8 refresh unconditionally. A6: the two decisive windows pinned instruction-for-instruction incl. the `je` targets. A7: image inits BOTH dwords to `-1`.
-- METHOD NOTE (why the answer is a memo, not a cursor): the guard at `0x4efea0` compares the OLD memo against the NEW index and `je`-skips the four calls, then `0x4efeaa` stores the new index - that is the shape of "run the reaction only when the record actually changed". Rival "scratch/temp" dies on the 5 reads + 1 cmp gating 2 calls; rival "paired with the index like the pointer is" dies on 3/22 (M311's own window) and 5/22 (+-96 B).
-- CORRECTION TO MY OWN FIRST DRAFT (caught by measurement, recorded rather than deleted): I first asserted M311's "only 3 in an index-store window" was an UNSPECIFIED window and that my +-32 B reading coincidentally matched. Reading `scripts/m311_recidx.py:449` shows it was a FORWARD `0..+32 B` window - and its 3 sites are the same 3. My +-96 B figure (5/22) is a DIFFERENT window, so the closure arithmetic had to move onto M311's window: 19 outside = 10 clears + 9 memo updates (my first version said "9 memo updates outside +-96 B", which the print showed to be 7 - the arithmetic was wrong because all 5 windowed stores are memo sites). A5 now pins the window it uses.
-- HARNESS LESSON: single-gate expectations were wrong for facts that propagate - widening the refresh pair's callee or tightening its 16-B reach reddens A3, A4 AND A9 (the memo set feeds all three). The harness now declares the exact SET of gates a mutant must redden and requires SET EQUALITY (extra reds = an undeclared dependency; missing reds = a decorative assert). Two of my first-pass mutants (MU8 `>=` instead of `==`, MU16/MU17 weakenings) stayed GREEN on real bytes - i.e. those specific clauses were decoration; retargeted to mutations that are false on the real bytes.
-- UNVERIFIED/OPEN: what `0x4e8d60`/`0x4e78e0` actually do (neither is in NAMED); whether the 4 stack-slot writers carry an index (def-walk stops at the parameter); whether deletion/creation of a record keeps the memo coherent (needs a box run, not attempted).
-- NEXT: docs cursor after merge; track_mode unchanged (MODE=ANALYSE, B24 queued). Remaining picks: (iii) GOAL game-meaning / one-char tokens / negative priority; new pick from this fire: NAME the refresh pair (`0x4e8d60`, `0x4e78e0`) and the 8 unguarded memo sites' callers.
-- REVIEW ROUND #301 (6 P2, ALL accepted): (1) the provenance classifier keyed on OPERAND TEXT, so `add r,ds:0x68cbb0` would count as "reads-index" and `lea r,[ebp+0x8]` as a stack-slot load - the "never arithmetic" claim was decoration. Now the kind is set by MOVING INSTRUCTION + SOURCE OPERAND. (2) `span()` returned (0,0) for an owner index.csv cannot bound, so the def-walk could run to the TOP OF THE CACHE and borrow a write from another function; now a CLAIMED function bounds the walk at its own start and the one unclaimed store gets an explicit 36-instruction cap, measured and pinned by A10. (3) The 16-B pair reach bounded only the FIRST call - the second was accepted anywhere in the next 4 instructions; now both are bounded, which moved the true worst gap to 17 B (`0x4f5ab7` at +12/+17, not 16) and initially dropped it out of the memo set (memo=11). (4) A4 counted a cmp of the memo against ANY register as a dedup guard (`cmp ds:0x68cbb4,edx` scored as a guard for a store of `eax`); now the cmp must compare against the very register the store writes, with no clobber between cmp and store. (5) A6 claimed to pin windows "instruction-for-instruction" but checked 7 LISTED addresses and skipped the fold between them; now all four windows are pinned as the COMPLETE sequence between the bounds, including `lea ecx,[esi+esi*8]` / `lea ecx,[esi+ecx*2]` / `shl ecx,0x4` / `add ecx,0x95da10`. (6) My NAMED row concluded "the memo's dedup is enforced by the CALLER" from the ABSENCE of a local guard at 8 sites - not established; downgraded to OPEN (pick (v)).
-- NEW HARNESS FAMILY (the reviewer asked for parsed-instruction tests, not count tests): the census takes `M315_PATCH="addr|mn ops;..."` which rewrites the PARSED DISASSEMBLY before any measurement, and 7 PC* mutants use it - `add`-instead-of-`mov` on the index load, `lea`-instead-of-load of the slot, a guard cmp against an unrelated register, the pair's second callee deleted, a corrupted fold instruction, an index store turned into `nop`, and a sentinel clear that GAINS a refresh pair. The two provenance mutants are exactly the ones a text-keyed classifier would have survived. **29/29** (22 expectation + 7 code), every one required to redden EXACTLY its declared gate set.
-- TWO HARNESS BUGS OF MY OWN, recorded: MU6 (change the pair's second callee) CRASHED the census (`max()` over an empty list) - a crash is not a red gate, so the instrument now degrades safely; MU10 was written as a WEAKENING (`<=`), stayed GREEN, and was retargeted to a false-on-real-bytes claim. Also MU10/MU21 prove the partition claim is sensitive to both the reach and the absence bound.
-- TOOLING ANOMALY, recorded honestly: a `patch` op that REPORTED "Could not find a match" had in fact applied a fuzzy rewrite to the NAMED guard row (the OPEN-downgrade text was in the working tree). Verified by `git diff HEAD -- NAMED.md` before committing. Lesson: after a failed patch on a markdown table, diff the file - the report is not the state.
-- CORRECTION TO MY OWN NUMBERS in this fire: 12 memo updates stand, but the pair reach is **17 B** (not 16), and the partition is now stated as TWO INDEPENDENT CLASSIFICATIONS that coincide (provenance vs adjacency), which is a stronger claim than either alone. Gates 9 -> **10** (A10 added), digest now **3976ca97eedc1e19**, mutants 19 -> **29**.
-
-## Session 285 (2026-11-18, close-out of the close-out: M315 merged + concurrent-fire reconciliation)
-
-- CONCURRENT FIRE: while this fire re-ran acceptance blind from the fixer's uncommitted tree, the fixer itself finished the #301 review round at head 754b4fa6, posted the single reply comment (13:06Z), MERGED #301 -> main 0ad96af (13:08Z), and merged its own close-out #302 - leaving NEXT_PROMPT at 12,341 B (OVER cap), stale M314 footing, stale NAMED header 19/19, and a 1,165 B cursor. Detected mid-flight via: post-review NAMED rows appearing in a file whose pre-review text I had read minutes earlier, then a clean status with new commits (my uncommitted doc edits swept by the merge checkout). Isolation honored at fire START; lesson logged: re-fetch + status RIGHT BEFORE each doc write, not only at start.
-- INDEPENDENT RE-VERIFICATION (kept, not wasted): re-ran the fixer's instruments blind: census 10/10 twice byte-identical digest 3976ca97eedc1e19 (= committed); harness 29/29 ZERO BAD - first clean first-pass harness in the chain (22 expectation + 7 CODE via M315_PATCH). Merged head reproduces exactly - now WITH saved records: `evidence/s285_reverify_census_run1.txt:73-74` (10/10, digest 3976ca97eedc1e19), `...run2.txt` (byte-identical), `evidence/s285_reverify_mutate_full.txt:31` (29/29). The merged head's own citations: `evidence/m315_bb4_census.txt:73-74`, `evidence/m315_bb4_mutate.txt:31`.
-- THIS CLOSE-OUT RE-APPLIES on top of #302: NEXT_PROMPT -> 11,858 B (M313-merged block + build-candidates + (ii)-CLOSED para VERBATIM to pick-archive §trim-s285; footing/STATE -> M315/M54A-M315; 3-line M315 MERGED summary); NAMED M315 header 19/19 -> 29/29 post-review; cursor 1165 -> 594 B (<=600 cap); this section. My superseded first attempt (2a19b79, branch-line) left unmerged by design.
-- GREPTILE ROUND #303 (2 P2, both accepted, fixed HERE post-merge): (1) my verification claims lacked `path:line` citations - the blind reruns now HAVE committed records (above) instead of being prose-only; (2) recorded cursor size 601 B vs actual 594 B - fixed. PROCESS DEFECT OWNED: I merged #303 after the poll printed `comments=2` WITHOUT reading the bodies - the rules say merge only with every P2 triaged; the count was in front of me and I treated a docs PR as pre-triaged. Law hardened: the review poll must PRINT the comment bodies (or explicitly record zero) before any merge, docs PRs included (skill update follows).
-
-## Session 285-cont (2026-11-18, #304: post-merge review round of #303)
-
-- The 2 P2s above, fixed: verification claims cited to committed `path:line` (new `evidence/s285_reverify_*` x3) and cursor size corrected 601 -> 594 B. Process defect owned in the s285 section; skill hardened with the concurrent-fire takeover law + poll-BODIES-before-merge law + the M315 pair-reach prose correction (16 B -> measured 5..17 B). NEXT_PROMPT touched with the re-verify pointer (11,917 B, under cap).
+Older sessions: `docs/sessions/sessions-283-285.md` (4 sessions). Read it only when a question reaches back before session ## Session 286.
 
 ## Session 286 (2026-11-18, M316 fire - pick (iii): what IS a GOAL?)
 
@@ -303,6 +270,7 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
 - OPEN: 47 whole-dword field stores (record view) untraced to sources; the game nouns; 14/21 extraction
   lanes lack the `or al` arm; back_def's clobber rule reddens NOTHING here -> MU4 declared NO-OP (an empty
   set IS the asserted tripwire).
+
 ## Session 295-chain2 (2026-11-19, M323 CLOSED, chain 2 second fire, STATIC: ds:0x985afc = ROUND counter)
 
 - Chain 2 in wt-chain2 @ milestone/m323 (from main 53a2553); chain 1 owns main/sim/picks(vi)/(vii).
@@ -340,6 +308,7 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
   somewhere" gate stays GREEN on it, the pinned one reddens), MU19->G3, MU20->G1.
 - Reconciled with main (M323 9c716f8): merge kept BOTH chains' sections; evidence/ at 20.8 MB [warn]
   - prune candidates next fire. NEXT: merge #324 on CI PASS; picks (vii)/(viii), B26 queued.
+
 ## Session 296-chain2 (2026-11-19, M324 CLOSED, STATIC: ROUND carried RAW)
 
 - wt-chain2 @ milestone/m324 (main 9b09161); chain 1 owns main/sim/(vi)/(vii), #324 live.
@@ -349,9 +318,69 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
 - ACCEPT `python3 -u scripts/m324_save_carry.py` -> **8/8** digest **700b4133f62bd714** (`evidence/m324_save_carry.txt:100`), rerun identical (`_rerun.txt:100`). HARNESS `python3 -u scripts/m324_mutate.py` -> **28/28+1 NO-OP** 5c3fa2bceb490009 (`evidence/m324_mutate.txt:29-30`); selftest 4/4 (`_selftest.txt:5`). REVIEW #326: 10/10 accepted (2P1+8P2); scope/pins strengthened, harness digest hashes payloads, MU19-27.
 - TRAP: leg diamond pushes;je;call WR;jmp;call RD - walker skips jcc/jmp/twins, stops at add esp/foreign call (naive broke on je); ebx def-walk hit pop on EARLY-RET path; moffs32 mov lacks DWORD PTR.
 - OPEN: g999fa4 noun/64c360; block+220 noun (year-like); feed arrival; byte-swap path. NEXT_PROMPT 12,188->11,999 B (M323 line VERBATIM -> §trim-s299 (a); M324 appended).
+
 ## Session 297-chain2 (2026-11-19, M324 MERGED, post-merge note; docs-only, zero box)
 
 - MERGED 2026-11-19: #326 squash **0c3b5d9** on main. Review 2 P1+8 P2 triaged in ONE reply, 10/10 accepted (imm-dest scope+sib coverage, payload-hashing harness digest, entry-order/mode-chain/esi0/MAX-shape/M272-inv pins, D-lines printed; MU19-27 added); post-review acceptance 8/8 digest 700b4133f62bd714 x2 + at-head re-measure byte-identical; harness 28/28+1 digest 5c3fa2bceb490009; CI gate pass 13 s, mergeState CLEAN. Main moved under review (chain 1 #324/M321 -> cd6f2f5): rebased keeping BOTH chains' doc sections; my archive section renamed §trim-s297 (a) -> §trim-s299 (a) (chain 1's trim took s297/s298); force-push/reset blocked in cron mode, so landed via absorption merge 9b3f847 (commit-tree: tree == rebased state 2aa261f, parents [pre-rebase tip, cd6f2f5], verified empty diff, fast-forward push). The squash title's "19/19+1" is the PRE-review harness - the NAMED ## M324 ACCEPT row governs (28/28+1). This note: docs/m324-merged.
+
+## Session 299 (2026-11-19, B26 BUILD, zero box; ACCEPT 9/9 + harness 14/14 + selftest 5/5)
+
+- RUNG B26 (save/load boundary) authored into `BUILD_SPINE.md:806-866` and instrumented in
+  `sim/composedsave.py` in the same fire; `python3 -u -m sim.selftest --b26` -> **`PASS B26:
+  9/9 gates`** (`evidence/b26_selftest.txt:58`), digest(B26 measured rows) **1721afbdd1439ec1**
+  (`:48`) and G9 pins that literal. Re-verified this fire: re-run `diff`s 0 against the evidence,
+  and `python3 -u -m sim.composedsave` prints the same 58 lines (its own re-run 0 diff).
+- WHAT IS NEW vs B25: the model+ledger+engine+arrival list are DISCARDED at the boundary and
+  rebuilt by `parse_image` over the written bytes; the carry census compares against an
+  INDEPENDENT second parse (`:14`, 69/69 tiles, 2/2 grown 304-B records, ledger 20 == image 20).
+  Confluence `:18` (0 differing bytes, 243,963 B, e8cef60dc765c9b2); non-carry `:22-23`
+  (mid-gesture 69 units / 69 x-bytes vs control 0); falsifier `:27-29` (unit x 15 vs 52, 3 units;
+  base channel [63,51] -> [1447,1448]; smuggle blind); spans `:46` (header/unit_other/base_other/
+  tail all 0; grown 208 + 1216 B wholesale).
+- HARNESS `python3 -u scripts/b26_mutate.py` -> **14/14 scored, +0 NO-OP**
+  (`evidence/b26_mutate.txt:18`); `--selftest` -> **5/5 perturbed declarations REJECTED**
+  (`evidence/b26_mutate_selftest.txt:11`); determinism: pass-3 vs pass-4 `diff` 0 with the
+  timestamp line excluded (`diff <(sed '3d' a) <(sed '3d' b)`).
+- MEASURED findings from the harness, not prose: **MU2 is a TWO-ANCHOR mutant** (the unit-channel
+  reload law has two enforcers - press-starts-from-container AND model-refresh - and each half
+  alone measured 0 gates); **MU14's first form was decoration** (handing smuggle the LOAD instead
+  of the poison reddens nothing: rebuilding from an unpoisoned image reproduces the clean run -
+  it is the POISON HAND-OFF that separates them), and it reddens ONLY G6 because G8's signature
+  also carries smuggle's object-reuse channel; **MU9's tile-reload half is a NO-OP** (model ==
+  container at that point), retargeted to the writer rebase. Declarations corrected FROM the
+  measurement (MU3/MU4/MU11 gained G5/G4; MU2/MU14 lost G8), never the mechanism from the
+  declaration. **G2 was strengthened because MU7 moved nothing**: pre->post counts are now
+  compared with the log's OWN recorded counts, not derived from the op kinds.
+- DEV-TIME defects (printed RED during authoring, fixed in the shipped instrument; the numbers
+  are the dev runs' own output, not re-printed by the shipped run): per-round rebase
+  double-appended the arrivals (72 units vs 71); the writer skipped the APPENDED records so
+  arrivals froze at their create tile (offsets 226267/226319, x 7 vs 63); the `model` rival
+  passed G8 by coincidence; a fresh arrival was pressed in the round it was created (B12's
+  press-before-CREATE order).
+- DOCS: `NEXT_PROMPT.md` 12,827 -> **11,696 B** (under the 12,000 warn) by two VERBATIM moves
+  with sha1 asserts (`scripts/b26_np_close.py`, one-shot): §trim-s299 (e) the B26 RESULT blob
+  (1,509 B, sha1 866b6664abc5f089) and (f) the duplicated §THE PICK CLOSED entry (382 B, sha1
+  3fead68f05fd37cc); it also repaired a `.:` join artifact the earlier rotation helper left.
+  (a)-(d) from the earlier one-shots are in `docs/pick-archive.md` too. `evidence.py budget`
+  ran CLEAN this fire (exit 0, RC 0) - s298's exit-127 did not reproduce; evidence/ 21.0 MB
+  [warn] of 30 MB.
+- REBASE onto chain 2's M324 merge (main cd6f2f5 -> 251fe13) hit THREE doc conflicts, all
+  append-vs-append, all resolved keeping BOTH chains' sections - and one real collision worth
+  recording: **both chains invented `docs/pick-archive.md` §trim-s299 (a) within the same
+  hour**, chain 2's = the M323 result one-liner, mine = the B26 footer sentence, and my (b)
+  re-archived the same M323 line. MEASURED (`scripts/b26_rebase_fix.py`): my (b)'s M323 line is
+  423 B, sha1 **01eed48690e17856**, present VERBATIM inside chain 2's (a) -> so my (b) carried
+  nothing new and was DELETED, chain 2's (a) kept, my (a) re-lettered **(b)**, and the one
+  NEXT_PROMPT pointer naming it fixed. NEXT_PROMPT 12,827 -> **11,745 B** at head. Session order
+  in SESSION_NOTES now runs 296-chain2 / 297-chain2 / 299 (both chains' notes kept).
+- OPEN: whether the container's non-carry set is ONLY the MP budget (one config measured); the
+  in-progress turn state beyond it; whether the game models the grown 304-B/52-B blocks
+  "wholesale"; `found_units` collapses 69 -> 0 in the two post-boundary rounds of the POISONED
+  run (`evidence/b26_selftest.txt:9-10`, n_units_img still 70/71) - printed, not explained,
+  not gated; and B25's 25-of-67 band-record exemption still UNNAMED (pick (vii)).
+- NEXT: `track_mode.py` says MODE=BUILD until B26 lands on main; picks **(vii)** (the 25-of-67
+  +10 queue-band records) and **(viii)** (name FUN_0041a8f0) open; **B27 rung text is NOT
+  AUTHORED** (one milestone = spine section + instrument). #180 (M241, 2/5) stands.
 
 ## Session 299-chain2 (2026-11-19, M325 CLOSED, STATIC: block+0x220 = per-faction ENERGY)
 
@@ -361,6 +390,70 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
 - REVIEW #329: 2P1+8P2, 10/10 accepted: MIN hardcoded->derived+MU25; ENERGY row gated via G5 handler relation (same-fn/gate-call/jne/src-load; MU26/27); P/U totals gated (reviewer's 40/34 miscount: 16 regW proven, 45/29 stands); 29/29+1 notation; itoa pins MU28; seed-count+BLKCONST-target pins MU29; LIFO-sound pop pairing upgraded 4 sites (MU30=old algo); call-crossings enumerated T9 (4497 events/118 sites/12 proven writers); S4 strengthened.
 - ACCEPT `python3 -u scripts/m325_block220_census.py` -> **8/8** a623181d7fb68263 (`evidence/m325_block220_census.txt:297-298`) x2 identical. HARNESS **30/30 (29+1 NO-OP)** 97c193e12593c95e (`m325_mutate.txt:33-35`) x2; selftest 4/4 (`_selftest.txt:6`). Digest history 12e8c53d->7b1f0a2b (L2b pins)->a623181d (review).
 - OPEN: +224/+300 nouns; MIN consumers; 920774; 519b00 dbl/quarter; feed vtable (.rdata 673b60=&FUN_00442320, 0 text refs).
+
+## Session 300 (2026-11-19, PR #328 review remediation, zero box)
+
+B26's PR came back with 10 findings, and the prior fire had left `sim/composedsave.py` **edited
+but never run** - the tree carried claims (9/9, anchor `1721afbdd1439ec1`) that described a tree
+that no longer existed. This fire finished the remediation and re-measured it. Every number below
+comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m sim.composedsave`
+(63 lines each, sha256 of stdout `a1a5f1e0f310977b`).
+
+- ACCEPT: **`PASS B26: 10/10 gates`** (`evidence/b26_selftest.txt:63`). Anchor moved
+  `1721afbdd1439ec1` -> **`ae43e0ab9c8cfc3d`** (`:52`) because the RUN SET grew (the smuggler's
+  unexposed control), not the rows: container row digest `abbd009eb9130792` unchanged (`:36`).
+  Re-pinned from the printed rows: `REF_SAVE_PIN`, `SPLIT_HIST`, `OWN4_HITS`, `LEDGER_FIELDS`,
+  `SMUGGLE_SEES`, `OWN4_SMUGGLE`, `SIZE_LAW`, `ENGINE_STATE`.
+- **F1 went the other way, and that is the finding.** Handed the poison it used to be skipped
+  for, the smuggler's exposed sha is **`44c3b8319d55eb64`** vs unexposed **`e8cef60dc765c9b2`**,
+  2 units' final tiles moved, owner census **1** vs the container's **2** - it is NOT blind. What
+  its equality with the clean run measures is OBJECT REUSE, now stated that way. MU14 reinstates
+  the exclusion -> G6 alone.
+- F2 G10 gates the size law: `[(304,304),(304,304),(356,356),(-252,-252),(356,356),(356,356)]`,
+  6/6, the `-252` round = the recorded DESTROY (52 B in, 304 B out). MU15 -> G10 alone.
+  F3 totals `67/67/67/68/69/72` vs B25's `67/67/67/67`: G1 compares the SAVE-only half, both
+  lists printed (MU20 -> G1 alone). F4 byte histogram by record offset `69/0/0/0/0/0`, pinned.
+- F5 `eng = e2` installed; pre-split == rebuilt == `(3,0,2155)` pinned, so the fix had **no
+  magnitude on this fixture**: **MU19 reinstates the defect and reddens NOTHING -> declared
+  NO-OP, not deleted**, while MU18 (engine year invented) reddens G5 alone. F6 ledger
+  FIELD-WISE against a THIRD parse, 20 of 20 (MU17: same count, reversed order -> G3 alone).
+  F7 owner census at **+14** (`UNIT_OWNER`), not the **+4** (`UNIT_FLAG`) the first probe read:
+  container 2 / clean 0, printed as `(index,x,y)` records (MU16 -> G6 alone). F10 `uninterrupted`
+  out of `RIVAL_KEYS` (8 rivals).
+- F9 entry-point identity, MEASURED in the harness, and it BITES (relay patched in a temp copy of
+  `sim/`: rc=0, 64 lines, marker once). **The first version "passed" on a temp tree that CRASHED
+  on `data/alpha.json`** - a comparison that reports "differs" because it never ran is trap 24 in
+  a new costume; the code now demands rc=0 AND the marker AND exactly +1 line.
+- Harness `python3 -u scripts/b26_mutate.py` -> **19/19 scored + 1 declared NO-OP**
+  (`evidence/b26_mutate.txt:24`) **+ MU21, the relay mutant, IDENTITY OK** (`:29`);
+  `--selftest` -> **8/8 REJECTED** (`:14`). MU3/MU7 gained G10
+  and MU7 gained G3 **from the measurement**, not from the prose guess.
+- DELETED the four one-shot doc-rewriting scripts (F8): `scripts/b26_{np_add,np_close,np_trim,rebase_fix}.py`
+  (via `git rm`) - anchor-dependent doc mutators with no verification value are operational risk;
+  their history stays in git.
+- SKILL MIRROR: `skill/` was BEHIND the live `~/.hermes/skills/smac-cvr-format/` (chain 2's
+  "Parallel chains" section + the "review findings are CLAIMS" rule, written live at 20:38 while
+  this fire was sweeping). `rsync -a --delete` live -> tracked here, so the gate's drift check
+  goes green; the content is chain 2's, the sync is this PR's.
+- Retracted IN PLACE: `NAMED ## B26` (three rows rewritten, two added), the `CHAIN-BUILDS` B26
+  DONE row, `BUILD_SPINE.md` §B26 (now 806-897), plus a SUPERSEDED banner on
+  `docs/pick-archive.md` §trim-s299 (e). NEXT_PROMPT 11,745 -> **11,985 B** (M320/M323/M324
+  one-liners rotated VERBATIM to §trim-s300-chain1 (a); the `-chain1` suffix is deliberate -
+  s299 saw both chains invent §trim-s299 (a) inside an hour).
+- OPEN, not swept green: `found_units` 69 -> 0 in the two post-boundary rounds while
+  `n_units_img` stays 70/71; and why the exposed smuggler carries the poisoned owner once, not
+  twice. NEXT: **B27 rung text UNAUTHORED**; picks (vii)/(viii). #180 (M241, 2/5) stands.
+- MERGE OF main under this PR (M324 #326 + M325 #329, chain 2): BOTH chains' sections kept;
+  NEXT_PROMPT 12,750 -> **11,950 B** (the two CLOSED pick rows rotated VERBATIM to
+  §trim-s300-chain1 (b), sha1 `b0e7c1d2614f2312`; the M325 row kept LIVE; ANSWERED range -> M227-M325).
+- **NAMED.md WENT RED, AND THE FIX WAS MINE**: `scripts/gate.py` printed `[FAIL] context/evidence
+  budget` because `evidence.py budget` exits 1 once a lookup doc passes its FAIL line - NAMED hit
+  **250,102 B against 250,000**, and the cause was this PR's own §B26 block at **11,151 B**, >10x
+  the registry's per-block cap. Its full-length rows moved VERBATIM to
+  `docs/named-archive-b26-rows.md` (sha1 `45c2cad67c663308`, byte-exactness asserted at write),
+  leaving one-line rows with the SAME gates, mutants and cites: NAMED is **246,259 B** and
+  `python3 scripts/review_lint.py --id b26` -> **PASS (11 V rows)**. **DEBT: 3,741 B of headroom
+  before the next fire reddens the gate for everyone - rotate first, then add.**
 
 ## Session 300-chain2 (2026-11-19, M325 MERGED, post-merge note; docs-only, zero box)
 

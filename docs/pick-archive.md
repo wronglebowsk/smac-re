@@ -1109,3 +1109,57 @@ M323 RESULT (s295-chain2, STATIC, post-review): ds:0x985afc = ROUND counter - 33
   (chain 2's M323 footing line, moved not deleted at the M324 fire: the hot doc sat at 12,188 B over the
    12,000 warn; the line's numbers live on here, and `NAMED ## M323` + `SESSION_NOTES ## Session 295-chain2`
    still govern)
+## §trim-s299 (b) the B26 build-track footer sentence, VERBATIM from NEXT_PROMPT.md §BUILD TRACK at the B26 close (retired so the file stays under the 12,000 B warn cap)
+
+B25 (MERGED #319, main 1556ce9) ACCEPT anchors/digest, harness 13/13 + 3 declared NO-OP, the CONTAINER-owns-the-coordinate-space law, the tile-test-is-NOT-the-decoder lead (pick (vii)) and the M316/M315 summaries are VERBATIM at §trim-s298 (a); `NAMED ## B25` / `## M316` / `## M315` govern.
+
+## §trim-s299 (c) the M321 pick-(vi) closure block, VERBATIM from NEXT_PROMPT.md §THE PICK
+
+  CLOSED + MERGED (pick (vi) = M321): FUN_004ee410 = the base FOOD/POPULATION status emitter,
+  FUN_004f41f0 = the base TALENT/PSYCH-REQUEST emitter (both push PE-read labels into `call
+  0x48f100`; 7 vs 1, disjoint); the shared `test BYTE PTR [rec+0x38],0x40` gates base_array
+  field 56 bit 6. Text VERBATIM at §trim-s297 of `docs/pick-archive.md`; `NAMED ## M321` governs
+  (#324 hardened at review: 7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2).
+
+
+## §trim-s299 (d) the B25/B26 build-track detail sentence, VERBATIM from NEXT_PROMPT.md §BUILD TRACK
+
+B25/B26 (MERGED) ACCEPT anchors + digests, harness sets, the LOADED-container law B26 adds to B25's CONTAINER-owns-the-coordinate-space one, the tile-test-is-NOT-the-decoder lead (pick (vii)) and the M316/M315 summaries are VERBATIM at `docs/pick-archive.md` §trim-s298 (a) + §trim-s299 (a); `NAMED ## B25` / `## B26` / `## M316` / `## M315` govern.
+
+
+
+## §trim-s299 (e) the B26 RESULT blob, VERBATIM from NEXT_PROMPT.md §BUILD TRACK at the B26 close (retired so the file stays under the 12,000 B warn cap; `NAMED ## B26` + the two evidence files are the record)
+
+> **SUPERSEDED IN PART by the PR #328 review triage (s300), and kept verbatim because this
+> section is a record of what NEXT_PROMPT said, not of what the repo now claims.** Three
+> sentences below are dead: the ACCEPT line is `PASS B26: 10/10 gates` on the triaged tree
+> (anchor `ae43e0ab9c8cfc3d`, not `1721afbdd1439ec1` — the rows never moved, the run SET did);
+> "the smuggler is blind to the boundary-image poison" measured object reuse, not blindness
+> (F1); and the owner census was reading `+4` = `UNIT_FLAG` where the owner is `+14` =
+> `UNIT_OWNER` (F7). `NAMED ## B26` governs, and it carries the retractions in place.
+
+**B26 RESULT (s299, BUILD)**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 9/9 gates`, digest(B26 measured rows) `1721afbdd1439ec1` (`evidence/b26_selftest.txt:48`, gate line `:58`), byte-identical to `python3 -u -m sim.composedsave` and to a re-run; harness `python3 -u scripts/b26_mutate.py` -> **14/14 scored** (`evidence/b26_mutate.txt`), `--selftest` **5/5 perturbed declarations REJECTED** (`evidence/b26_mutate_selftest.txt`). Three laws, each falsified-and-repaired: (i) THE CONTAINER IS *LOADED*, NOT JUST WRITTEN - the resumed run rebuilds model + ledger + engine from the re-parsed image and reads no pre-boundary object (MU2/MU3 name it); (ii) a ROUND-ALIGNED load is CONFLUENT - byte-equal final image AND per-unit tiles vs the uninterrupted run (MU3/MU6); (iii) what does NOT carry is MEASURED: the only thing the container cannot carry is the in-progress MP budget - **69 units / 69 x-bytes** diverge at a mid-gesture boundary while the control (same split, budget re-granted) diverges by **0** (MU8/MU9 name the half that does carry). Four real defects the gates caught, all in `NAMED ## B26`: per-round rebase double-appended the arrivals (72 units vs 71); the writer skipped the APPENDED records so arrivals froze at their create tile (diff `226267`/`226319`, x 7 vs 63); the `model` rival passed G8 by coincidence; and the split's arrival never moved the round it was created (B12 press-before-CREATE order).: the rung text AND the instrument were authored the same fire, as B14-B25 did
+
+
+## §trim-s299 (f) the B26 CLOSED entry from NEXT_PROMPT.md §THE PICK, VERBATIM (the §BUILD TRACK line of the same close carries the result and names B27, so this block was pure duplication)
+
+  CLOSED (B26, this PR) the BUILD-track rung track_mode asked for (`MODE=BUILD`, next_rung B26):
+  the SAVE/LOAD boundary, rung text authored into `BUILD_SPINE.md` in the same fire, instrument
+  `sim/composedsave.py` + harness `scripts/b26_mutate.py`; `NAMED ## B26` governs. **Next build
+  rung B27 is UNAUTHORED** - `BUILD_SPINE.md` ends at B26 (B25's own rule: rung text FIRST).
+
+
+## §trim-s300-chain1 (a) the three trailing result one-liners (M320 / M323 / M324), VERBATIM from the last lines of NEXT_PROMPT.md at the PR #328 triage (retired so the file stays under the 12,000 B warn cap; `NAMED ## M320` / `## M323` / `## M324` govern). Named `-chain1` deliberately: the two chains both append here and s299 saw both invent §trim-s299 (a) inside an hour (`SESSION_NOTES.md` Session 299).
+
+M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
+M323: NAMED ## M323; VERBATIM §trim-s299 (a).
+M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; rederive DEAD (closure 440, writers 0). 8/8 700b4133f62bd714 (m324_save_carry.txt:100); 28/28+1. MERGED #326->0c3b5d9. NAMED ## M324.
+
+
+## §trim-s300-chain1 (b) the two CLOSED + MERGED pick rows of §THE PICK (pick (v) = M319 / #317, pick (vi) = M321 / #324), VERBATIM from NEXT_PROMPT.md at the PR #328 merge of main (rotated so the file stays under the 12,000 B warn cap; sha1 b0e7c1d2614f2312 of the block below, byte-exact). `NAMED ## M319` / `## M321` govern.
+
+  CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted; its 5-line
+  closure block moved VERBATIM to `docs/pick-archive.md` §trim-s295 (a). `NAMED ## M319` governs.
+  CLOSED + MERGED (pick (vi) = M321): `NAMED ## M321` governs (#324 hardened at review:
+  7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2); its OPEN-pick text sits
+  at §trim-s297 and its CLOSED block moved VERBATIM to §trim-s299 (c).
