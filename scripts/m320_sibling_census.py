@@ -258,7 +258,7 @@ for a in ADDRS:
             neg_nonstack += 1
             break
 print()
-print("-- blind spots (MEASURED): immediate block-pointer loads=%d, non-stack negative disp<=%d =%d --" %
+print("-- blind spots (MEASURED): immediate block-pointer loads=%d, non-stack negative disp |d|<=0x%x =%d --" %
       (len(imm_loads), STRIDE, neg_nonstack))
 for (a, blk, off, ops) in imm_loads:
     print("imm 0x%06x: blk%d +0x%04x  mov %s" % (a, blk, off, ops))
@@ -450,7 +450,7 @@ g9ok = (len(imm_loads) == 61 and neg_nonstack == 3293
         and all(pin(a) == (a, m, o) for a, (m, o) in G9PINS.items())
         and 0x94d630 - 0x20 - BASE == 0x1e0 and 0x94d4c8 - 0x80 - BASE == 0x18)
 ck("G9", g9ok,
-   "blind spots: imm block-pointer loads=%d (want 61; incl 6x 0x94f4ec=blk1+0, measured=%d), non-stack neg-disp=%d (want 3293, out of scope); lea-pairs: [eax-0x20]@59efda=+1e0 (8-pair dword loop, ecx=8), [esi-0x80]@59f0ec=+18 pair-array clear; pins=%d/%d" %
+   "blind spots: imm block-pointer loads=%d (want 61; incl 6x 0x94f4ec=blk1+0, measured=%d), non-stack neg-disp |d|<=0x20bc =%d (want 3293, out of scope); lea-pairs: [eax-0x20]@59efda=+1e0 (8-pair dword loop, ecx=8), [esi-0x80]@59f0ec=+18 pair-array clear; pins=%d/%d" %
    (len(imm_loads), sum(1 for (a, b, o, ops) in imm_loads if b == 1 and o == 0), neg_nonstack,
     sum(1 for a, (m, o) in G9PINS.items() if pin(a) == (a, m, o)), len(G9PINS)))
 

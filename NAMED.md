@@ -1287,13 +1287,13 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 
 | claim | evidence | conf |
 |---|---|---|
-| LADDER 9x128 arrays +1078..+1878: reset 59efeb-59f01d, init 51dcb8-51dd03  | G4/G5 `evidence/m320_sibling_census.txt:409-410` | V MU3/MU4/MU14/MU16 |
+| LADDER 9x128 +1078..+1878: reset 59efeb-59f01d, init 51dcb8-51dd03  | G4/G5 `evidence/m320_sibling_census.txt:409-410` | V MU3/MU4/MU12/MU14/MU16 |
 | 512: byte 854/a54, word c54; cmp 0x200, 8380*blk+2*i, gated 985afc==0 | G6 `:411` | V MU5/MU20/MU24 |
 | COUNTERS +1478/+1678/+1778 @51df3d+; +1578 faction-count, blks 1..7 | G7 `:412` | V MU6/MU17/MU19/MU24 |
 | RESET FUN_0059ec90: 114 W/RW, 92 offs; callers x3; magic 0xdfbe41 +1d0 | G8 `:413` | V MU7/MU15/MU18 |
 | TAIL +2038..20bc: 31 dw, 0x84%16=4; rival DEAD | R1 `:416` | V MU10 |
 | FLAGWORD +0; CROSS GOAL 65/SITE 17; BLIND 61/3293 | G10/G3/G9 `:415,408,414` | V MU2/MU8/MU9/MU22 |
-| ACCEPT 12/12 digest 02bec13209a79dc0 (`evidence/m320_sibling_census.txt:418`); mutate 26/26 digest 0d18a3d23b3e94b4 (`evidence/m320_mutate.txt:27`) | - | V |
+| ACCEPT 12/12 digest 12e247bdbc0f77ef (`evidence/m320_sibling_census.txt:418`); mutate 26/26 digest 0d18a3d23b3e94b4 (`evidence/m320_mutate.txt:27`) | as cited | V |
 | OPEN: game nouns; 985afc; dfbe41; tail; save-carry | - | lead |
 
 ## M319 (s293, STATIC, zero box; 7/7 + 14/14 scored + 1 NO-OP + selftest 4/4) - pick (v) CLOSED: the 8 unguarded memo sites are NOT guarded by their callers

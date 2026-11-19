@@ -341,7 +341,7 @@ off     abs0      refs   R   W  RW lea  sizes        scales  top funcs
 +0x1378 blk6 0x4f96fa: R    test BYTE PTR [ecx*2+0x95ac10],0x1  [FUN_004f6030]
 +0x1578 blk1 0x51dd5a: lea  lea ebx,[ecx*2+0x950a64]  [FUN_0051dcb0]
 
--- blind spots (MEASURED): immediate block-pointer loads=61, non-stack negative disp<=8380 =3293 --
+-- blind spots (MEASURED): immediate block-pointer loads=61, non-stack negative disp |d|<=0x20bc =3293 --
 imm 0x4dbf60: blk1 +0x0324  mov esi,0x94f810
 imm 0x4dc03a: blk1 +0x035c  mov eax,0x94f848
 imm 0x4ddcf6: blk0 +0x0008  mov ecx,0x94d438
@@ -411,9 +411,9 @@ OK   G5  rebuild init 51dcb8-51dd03: word {1478,1578,1678,1778} + MAX/CNT {1878,
 OK   G6  512-init 59f19c-59f1da: byte {854,a54} + word c54 x512 (cmp eax,0x200, jl 59f1a0); fold esi={'$': 0, 'eax': 1, 'edi': 4190}, store scale *2 -> addr coeff {'$': 0, 'eax': 2, 'edi': 8380} (want edi*8380+eax*2); word store gated cmp ecx,edx w/ ecx=ds:0x985afc, edx untouched in loop (0 writes); pins=11/11
 OK   G7  counters: inc WORD +1478 @51df3d (unconditional), +1678 @51df61 (test cl,0x18 + (BYTE[tile+5]&0xc0)<0x80 + ~bit 0x20[tile+8]), +1778 @51df70 (+bit12 [tile+8]); fold eax={'$': 0, 'site': 2, 'ebx': 8380} (want ebx*8380+site*2, site=BYTE[tile+3] per M303); +1578 walk: start 0x94f4ec=blk1, esi=1, bound 0x95da10 -> 7 blocks, inc WORD [ebx] @51dd89; pins=16/16
 OK   G8  reset FUN_0059ec90: W/RW=114 (want 114), offsets=92 (want 92), all blk0=True; flagword clear @59ed62, magic 0xdfbe41/0xc0dfbe41 @+1d0, -999 @+3fc, tail +2050=1, +328=5/+324=0; callers=['0x5a0b39', '0x5a123e', '0x5a1277']
-OK   G9  blind spots: imm block-pointer loads=61 (want 61; incl 6x 0x94f4ec=blk1+0, measured=6), non-stack neg-disp=3293 (want 3293, out of scope); lea-pairs: [eax-0x20]@59efda=+1e0 (8-pair dword loop, ecx=8), [esi-0x80]@59f0ec=+18 pair-array clear; pins=7/7
+OK   G9  blind spots: imm block-pointer loads=61 (want 61; incl 6x 0x94f4ec=blk1+0, measured=6), non-stack neg-disp |d|<=0x20bc =3293 (want 3293, out of scope); lea-pairs: [eax-0x20]@59efda=+1e0 (8-pair dword loop, ecx=8), [esi-0x80]@59f0ec=+18 pair-array clear; pins=7/7
 OK   G10  flagword +0x0: tests {400000:7, 20000000:6, 1000000:5, 200:4, 80000:4(bit19, M317 prio), 40000000:3, 200000:3, 10000000:1}; OR bits 24-28 @59ff21-59ffc7; bit8 via or ch,1 RMW triple 5a04d1/d7/da; measured={'0x400000': 7, '0x20000000': 6, '0x1000000': 5, '0x200': 4, '0x80000': 4}
 OK   R1  RIVAL tail=16B-record-array FAILS: 31 offsets span 0x84 (%16=4, not tileable), deltas={4: 28, 8: 2}, word-refs=0, stride-0x10 adds in tail owners=0
 OK   R2  RIVAL +1478=512-entry FAILS: its init bound is cmp ecx,0x80 @51dcef (128) vs cmp eax,0x200 @59f1d5 (512) for +c54; span 0x100/2=128 entries
-digest 02bec13209a79dc0
+digest 12e247bdbc0f77ef
 == M320: 12/12 ==
