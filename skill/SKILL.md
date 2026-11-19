@@ -51,7 +51,8 @@ cites), `screen-read.md` (why ONE OCR pass is not a screen read), `verify-outcom
 core, retired to depth s242), `netcode.md` (the "jackal" netcode map), `ui-assets.md` (Script.txt,
 alpha.txt, PCX/FLIC, glsmac), `ghidra-batch-export.md`, `terraforming-order-path.md`,
 `session-discipline.md` (budget, closing order, handoff, shadow-running the cron loop, and the full
-s242-retired discipline/evidence text). `grep -n '^## \|^### ' SKILL.md` and the references, then
+s242-retired discipline/evidence text), `review-pipeline.md` (local review pipeline: lint design
+classes, reviewer validation). `grep -n '^## \|^### ' SKILL.md` and the references, then
 `sed -n 'A,Bp'` the section you need. When adding depth, append to the right reference; only new
 cross-cutting pitfalls belong here.
 **Before statically deriving a field or mechanism a kickoff prompt names, grep the skill's `references/` and the repo docs for that offset/mechanism** — much of the UI plumbing (chooser bars, its cancel sentinel, the handler case map) is already settled in `references/wine-operations.md`; a from-scratch objdump derivation spends ~15 tool calls re-deriving a settled answer, and instruction bytes are the arbiter only for a CONFLICT, not the first move. The same grep extends to the LIVE half: before re-instrumenting a site address, `grep -rn <hex-addr> scripts/ evidence/` — a prior census script often already encodes the derivation (and its evidence file already states the reading the new gate would otherwise guess wrong).
@@ -91,7 +92,7 @@ Cycle: `milestone.py start <ID>` → work → `gate.py --base main` GREEN → `s
 and the whole command (including the push) fails as 422 `head invalid`. **Merging several PRs in one session is
 queue-bound:** `gh pr checks` sits `pending` 2-4 min merely queued — poll with ~200 s sleeps;
 `milestone.py merge` refuses while pending; a force-merge is never the answer.
-**Triage every Greptile finding; a re-push does NOT buy another review** (one review per PR, on OPEN). Read the
+**Triage every review finding (local `ai_review.py` since Greptile's credits ran out); a re-push does NOT buy another review** (one review per PR, on OPEN). Read the
 inline findings with `gh api repos/<owner>/<repo>/pulls/<n>/comments --jq '.[] | "\(.path):\(.line) \(.body)"'`,
 fix or dismiss each, and answer all of them in ONE `gh pr comment --body-file` (apostrophes: use the file, never
 inline `-b`). The recurring P1 on this repo is a gate that passes on an UNMEASURED state — check every
@@ -154,7 +155,8 @@ re-summarise.
   `NEXT_PROMPT.md` -> submit/PR. Never leave the commit until after the handoff docs. **Every VERIFIED NAMED
   row names the mutation that reddens it** (s290 law; no mutant = INFERRED/OPEN; tracers also get an ALGORITHM
   mutant - depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law). Review pipeline:
-  `review_lint.py` at close + `ai_review.py` at submit (`docs/AI-REVIEW.md`).
+  `review_lint.py` at close + `ai_review.py` at submit (`docs/AI-REVIEW.md`; design laws:
+  `references/review-pipeline.md`).
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (the budget warn; the gate FAILs at 16,000, and closing past the
   warn hands the NEXT fire a docs-only split). `test_loop.py` appends bytes in CI: keep >100 B of headroom
   under whatever number you quote. `SESSION_CURSOR.md` <= 600 B before any step that can exceed ~2 min.
@@ -340,8 +342,8 @@ driving/dialog state machines: `references/wine-operations.md`)
   `references/instrument-laws.md` (mutation-harness scoring, §A mutation harness is STATE, §A mutation harness
   must CLASSIFY its four outcomes) and
   §Static text-cache parse traps.
+- A mutation harness needs its OWN `--selftest`: one shared `verdict()`, then perturb only the DECLARED set (empty / superset / gate-declared NO-OP) and require rejection; code mutants need the instrument's printed `k/n patches applied` as contact proof (M319 4/4, `references/instrument-laws.md` §four outcomes).
 - Decoration classes #294/#299 (inline-comment swallow, target fullmatch + case, multi-table vptr runs; mnemonic/operand split, de-duplicated owners, labels-only digests): VERBATIM in `references/instrument-laws.md` §s290 retirement. A gate that passes on an UNMEASURED state is the project's dominant defect.
-- Decoration classes #299 (mnemonic/operand-split regexes matching nothing, de-duplicated owner counts, labels-only digests): VERBATIM in `references/instrument-laws.md` §s290 retirement.
 - Answer "what is this field" by a STRUCTURAL partition (store/read/cmp census + def-walk + exact-complement classes), not by counting writers; carry the rival it kills. Full text + the measured 5..17 B pair-reach correction: `references/instrument-laws.md` §s290 retirement.
 - **Concurrent fires can takeover mid-flight (s285):** isolation is verified at fire START, but a fixer fire can
   finish, post the review reply, merge the PR and merge its close-out while a verifier fire is still re-running

@@ -1,52 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-274-274.md` (1 sessions). Read it only when a question reaches back before session ## Session 275.
-
-## Session 275 (2026-11-18, STATIC close-out of s274's M311, zero box) - PR #289 review round, clause audit, merge
-
-Same working chain as Session 274 (the fire hit its iteration cap mid-M311, so the review round and the
-merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash `17e3e2e` on `main`.
-
-- FINAL ROUND (same session): instrument now **8/8 gates** (gate **A8** added: the matcher's per-site output is
-  pinned as exact triplets, so a mis-transcribed address reddens it - MU4), digest `625cd5877271cd85`, and the
-  harness scores **11/11 load-bearing** with the baseline-green precondition (`python3 -u scripts/m311_mutate.py`).
-- NEW FINDING from A8: **5 of the 6 selection sites recompute `REC_BASE + 304n`; `0x4f5c36` does not** - it
-  re-stores a SAVED pointer read from `[ebp-0x8]` at `0x4f5c33`. One selection path caches the record pointer.
-- RETRACTED IN GATE A8 (my prose again, this time caught by a mutant that could not fail): the matcher's
-  register-discipline and 24-B proximity clauses are **NOT load-bearing on this binary** - a register-blind
-  matcher returns byte-identical results at all 6 sites across windows -24/+32, -24/+90, -24/+144 B. The
-  "proximity" effect is purely the analysis window (at -24/+144 B the 0x4e3476 window also contains the next
-  function's fold at 0x4e34cc). Claiming a mechanism is load-bearing without a mutant that can see it is the
-  same decoration this repo has now punished four times.
-- HARNESS HYGIENE, two more failure modes fixed: a mutant whose anchor drifts after a refactor silently
-  becomes a NO-OP or a KeyError crash (`MATCH_TRUTH` looked up a deleted store site) - so gates must degrade
-  with `.get(st, 0)` and report a wrong COUNT, never crash; and every anchor must be re-read from the current
-  source, never quoted from memory.
-- PR #289 GREPTILE, 3 P2s, ALL ACCEPTED, and one of them exposed that my *previous* fix was fake:
-  1. **`fold_chain` accepted chains that do not compute 304n** - a chained `a != b != c` is not
-     pairwise-disequality, and the first step never required its two operands to be the same register.
-  2. My skill/notes said `sorted(xs) == sorted(set(xs))` "can never fail" - WRONG: it rejects duplicates.
-     Corrected everywhere to "proves uniqueness only, never completeness or agreement with a source".
-  3. **My A8 retraction had never been written.** The `str.replace` anchor spanned a `%`-format break in the
-     middle of the literal, so it silently no-opped and the shipped evidence still printed the false claim
-     ("both load-bearing"). Anchor edits on a contiguous literal, then VERIFY by grepping the artifact for the
-     new words - a retraction that didn't land is worse than none, because it makes the doc look cleaned.
-- THEN THE AUDIT ITSELF REDDENED, TWICE, ON MY OWN NEW CLAIMS. With the operand clause and the proximity cap
-  switched OFF, `fold_chain` returns byte-identical results at all 6 sites over four window sizes: both clauses
-  are INERT. And my first response to P2#1 - demanding the second `lea`'s base register equal the register that
-  stored to the index - is FALSE at the setter and broke all six sites (the shape is `lea d,[n+n*8]`: OPERANDS
-  equal, DESTINATION free). A8 now asserts the audit's actual content: only the window's right-hand reach is
-  load-bearing (0x4e4dd0: 0 folds at -24/+32 B, 1 at -24/+90 B), the two inert clauses are declared inert with no
-  mutants aimed at them, and the index operand's VALUE is declared UNPROVEN (register names are only a proxy for
-  value identity without intervening-write tracking - which I declined to write).
-- FINAL: **8/8 gates, 15/15 mutations load-bearing**, digest 625cd5877271cd85 (unchanged through every rewrite -
-  the claims moved, the binary did not).
-- **MERGED**: PR #289 -> `17e3e2e`. Gate 11 s. Greptile posted 3 P2s on the first head (`2fe6f4a` carries all
-  three fixes); no re-review arrived on the second head, and `milestone.py merge` gated on its own rollup
-  verdict (GREEN) - recorded honestly, NOT described as a second review pass.
-- NEXT_PROMPT trimmed to 11,989 bytes and the retired s272 pick-list paragraph deleted (it duplicated the new
-  OPEN PICKS block); SESSION_CURSOR rewritten for the next ANALYSE fire. `track_mode.py` after the merge reads
-  `MODE=ANALYSE analyse_since_build=1 last_build=B22 next_rung=B23`, so the next fire ANALYSES; B23 stays QUEUED.
+Older sessions: `docs/sessions/sessions-275-275.md` (1 sessions). Read it only when a question reaches back before session ## Session 276.
 
 ## Session 276 (2026-11-18, STATIC, zero box) - M312: the selection check has TWO trunks; every forwarder is unreachable; the pair is the CURSOR TILE sweep
 - #105 (badge) verified live (page+svg 200) and squash-merged; #180 stands as documented-FAIL. `track_mode`: MODE=ANALYSE analyse_since_build=1 next_rung=B23 - ANALYSE fire, pick (i) taken.
@@ -229,3 +183,10 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 - Skill law-presence verified BEFORE each move — `SKILL.md:319` (rival crash must be message-matched), `SKILL.md:320` (a dropped conjunct can only pass; mutate DATA), `instrument-laws.md:1031` (§four outcomes, s287/B24), `verify-outcome.md:237` (the greps: `evidence/s292_cap_split.txt:190-197`). ONE sentence lives ONLY in the archive copy: "declared gate-sets are MEASURED, not authored" — NEXT_PROMPT now says so explicitly.
 - SIZES: `wc -c NEXT_PROMPT.md` **11,881 -> 11,007 B** (12,000 warn, 993 B of headroom) and `budget` always-loaded **58,617** < 60,000 ritual (`evidence/s292_cap_split.txt:181-182`); `wc -c docs/pick-archive.md` 84,933 -> **88,186 B** (uncapped lookup doc). The review round's path:line pins cost 239 B of the 874 B saved.
 - RETRACTION: this section's first draft said "Nothing deleted". Wrong — `scripts/session_rotate.py`'s rotation DID delete the hot file's `Older sessions:` pointer, and every earlier rotation had done the same: the pre-fix chain is `archives=148 reachable=1 orphans=147` at `main` (`evidence/s292_cap_split.txt:4`, `--ref main` is the INFO-only mode that keeps this measurable), 148 orphans once this PR's own rotation landed. Fixed here: the rotator now writes the onward pointer into each new archive (same (lo,hi) total order as the repair script — the archives OVERLAP, e.g. 82-82/82-83, 144-148/147-151, 173-174/174-174, so a "nearest strictly older" rule skips one) and `scripts/s292_chain_fix.py --apply` repaired the 148 in place (idempotent; refuses a dirty tree without `--force`). C3 gates the result: 149/149 reachable, 0 orphans (`:167`).
+
+## Session 293 (2026-11-19, M319 CLOSED, PR #317 - pick (v): who guards the 8 unguarded memo sites)
+
+- ANSWER: the guard is **NOT hoisted**. The memo has 6 read/test instrs image-wide in 5 funcs, readers(5) subset writers(15) (G2/G5); the 8 unguarded sites have 4 nameable owners + 8 distinct direct callers, exactly 1 of which reads the memo (FUN_004f5a70) - and it OWNS a guarded site (0x4f5c4a), so that read is its own local guard (G3); 0/9 CFG arrivals carry a memo test, histogram {other-test:8, fallthrough-only:1} pinned (G4/G6); G7 pins memo-direct at 0x4eb6c7 + memo-copy at 0x4efeaa/0x4f2201/0x4f5c4a and no memo edge at the 7 unguarded stores, so 0/9 is measured, not blind. ACCEPT `python3 -u scripts/m319_guard_hoist.py` -> **7/7**, digest **fb4e802dac1995a2** (`evidence/m319_guard_hoist.txt:73`); 3 runs byte-identical (`sha256 5ea00d859bf4503f`, +`_rerun2.txt:73`, `_rerun3.txt:73`).
+- HARNESS `python3 -u scripts/m319_mutate.py` -> **14/14 scored + 1/1 NO-OP** (`evidence/m319_mutate.txt:17`), 2 runs identical. PASS 1 (sets EMPTY, to MEASURE: `..._pass1.txt`) caught MU6 CRASHING (KeyError) - a crash is not a red gate: span guards went into the instrument and MU6 now reddens G4+G6 cleanly; PASS 3 (`..._pass3.txt`) re-measured every set post-review. `--selftest` **4/4** (`evidence/m319_mutate_selftest.txt:5`); one shared `verdict()`.
+- REVIEW #317 (1 P1 + 9 P2, all actioned; text in the PR reply): G6 pins the WHOLE arrival histogram (MU14 bites it alone); the flag-setter walk covers EVERY flag-writing class - 0/9 holds unchanged; `pair_at` requires the pair ORDERED; G7 pins the memo KIND per address (MU15); G3's own-guard clause became DATA; the digest now hashes T1-T5; 3 identical run artifacts committed; `guarded()`'s via-copy liveness at the JCC kept as an over-approximation CAVEAT.
+- IN PLACE: M315's OPEN + NOT-CLAIMED rows now carry M319's answer (REFUTED). UNKNOWN: what gates the 8 (their arrival tests' operands are unnamed - see NAMED ## M319); 0x4f3f7f's callers; any live firing (ZERO box).

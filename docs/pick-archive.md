@@ -1008,3 +1008,14 @@ caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/
    reads as a whole. Keep mutation ids out of the A-number namespace (M1..M8 vs A1..A36). Reference:
    `scripts/m308_mutate.py` -> `8/8 mutations reddened their target checks`.
 ```
+
+## §trim-s293 settled pick one-liners, VERBATIM from NEXT_PROMPT.md at the M319 close
+
+```
+  CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass. NAMED ## M317.
+  CLOSED (s289): pick (iv) pair = 4e8d60 unit-support census + 4e78e0 pane refresh. NAMED ## M318.
+```
+
+  CLOSED (s278): pick (i') NAME THE EVENTS - the one interaction band `[0x50bb20,0x5175b4)` + its two pumps;
+  detail VERBATIM at `docs/pick-archive.md:963` §trim-s292 (a), full law `NAMED ## M313`.
+  (both moved VERBATIM from NEXT_PROMPT.md §THE PICK at the M319 close)
