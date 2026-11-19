@@ -18,6 +18,7 @@ Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout -
 **Batch: 5 static milestones per census script, 1 box per batch — doc headroom is the cap.** Caps (BYTES, what `budget` prints): NEXT_PROMPT warn 12,000/fail 16,000 — CLOSE at <= 12,000; SKILL.md
 warn 55,000 (keep near 44 k, always-loaded under the 60 k ritual); SESSION_NOTES warn 110 k. Split rule: settled text
 VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budget`.
+Note (M319): `scripts/s292_cap_check.py` C1/C2 are ONE-SHOT for #316's split - they fail by design once that split is in main; only C3 (the archive pointer chain) is standing.
 
 ## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
