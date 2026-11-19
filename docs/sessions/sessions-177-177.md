@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-176-176.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 177 (2026-10-31) — M194-M196, all PASS (three static milestones, one instrument + one tracerless live read)
 
 Acceptance: `sudo -n python3 scripts/m194_m196_channels.py > evidence/m194_m196_channels.txt` (12,080 B, rc 0)

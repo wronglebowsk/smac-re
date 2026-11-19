@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-75-75.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 76 (2026-10-24) — M53t: **THE FOLD IS IMPLEMENTED AND 10 OF THE 11 RESIDUALS CLOSE EXACTLY (74/76)** — `evidence/m53t_fold.md`, `scripts/m53p_recon_a.py` (`alliance_fold`, `census`, `--mem-dir`)
 - **What the share actually is (VERIFIED, full decode 0x4eab02-0x4eac8a):** per allied OTHER
   faction, `n = (E[ally k-th] + E[me] + 7) >> 3` on `base+0xb4`, `s = ((faction[owner].+0 + 1)*n

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-97-97.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 98 (2026-10-26) — M59: **THE QUEUE TRUTH IS THE HEAD SLOT, NOT PENDING.** `pending` gates only the POP; the pay block dominates the create, and a base with an EMPTY queue still buys the head's type every round it can pay. The acceptance printed **PASS** on one real invocation.
 
 **Static, from the instruction bytes (scratch/m59/queue_census.py + scratch/m59/dom.py over

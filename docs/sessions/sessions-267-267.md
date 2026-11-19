@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-265-266.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 267 (2026-11-16, BUILD B21, zero box) - the recorded m289 run executes as ONE state object (B3 presses + the 9-op founder ledger), is written with BOTH year and the bases count modeled, reloads, and RESUMES byte-identically; the per-turn curve is MEASURED strictly coarser than the op log
 - MODE=BUILD (track_mode: analyse_since_build=3, last B20) -> took the queued rung B21, UNAUTHORED: authored it into BUILD_SPINE.md from B3+B8+B10+B13 (as B14-B20 did). The two NEXT_PROMPT candidates were NOT taken: the FUN_005aff90 value body has exactly 1 recorded lazy row to grade (no discriminating parity), and the B15+B16+B17 end-to-end would trade recorded inputs for the declared live-drift class with no new witness.
 - ACCEPTANCE `python3 -u -m sim.selftest --b21 programs/saves/m54b_clean.SAV` -> **PASS B21: 12/12**, exit 0; evidence/b21_composedrun.txt 9,142 B; rerun stdout-vs-evidence diff 0 lines (re-run identical after the review fixes too). Zero box / /proc / gdb. CLI `python3 -m sim.composedrun --sav <sav> --out <f>` exit 0.

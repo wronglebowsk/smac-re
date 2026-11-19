@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-65-65.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 66 (2026-10-24) — M53n: **THE ROUND SCHEDULE IS PINNED — `FUN_004f5a70(base_idx)` runs exactly once per base per round (76/76 live), grouped by owner faction in faction-turn order with OUR faction LAST; the economy block executes 2x per visit unconditionally (pass1 d64=0, pass2 d64=1) plus event/UI extras (247 block executions per round, every 4e92c0 entry reaching the ungated bc-add); `DAT_0068cbb4` is a freshness marker that makes `4ef6d0`'s two nested recomputes structurally unreachable (0 hits); AND bc/c0 are REBUILT inside the block by `FUN_004e78e0` (seed store 0x4e79a5, add-loop 0x4e7be3-0x4e7c28) before 4e92c0/4e93f0 add the crawler values — which resolves M53m's "+1 bc per 10 sweep-fires"** — write-up `evidence/m53n_findings.md`
 - **Census method (VERIFIED live, one full round 2380→2381).** `scripts/m53n_drive.py` (arm/stop,
   pidfile, `stdbuf -o0` gdb, literal addresses, printing `continue` blocks, cap): int3 at

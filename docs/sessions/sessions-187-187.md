@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-186-186.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 187 (2026-11-01, M227-M230, static; box re-verified, no box milestone)
 
 `python3 scripts/m227_m230_mirrors.py > evidence/m227_m230_mirrors.txt` -> `SUMMARY M227=PASS M228=PASS M229=PASS M230=PASS (12/12 gates)`, rc 0, 10,083 B (`evidence/m227_m230_mirrors.txt:41`). Invocation #1 11/12: the FUN_0041f450 store census filtered `startswith("mov dword ptr [") and endswith("+0xb24]")`, which misses every store whose VALUE is the last token (`mov dword ptr [ebx+0xb24],0x774c0c`); fixed to `^mov dword ptr \[[a-z]+\+0xb24\],`. No threshold or claim changed. Box RE-VERIFIED (read, not poked): `sudo -n python3 scripts/smac_preflight.py` -> PASS on all 14 invariants (terran.exe 319926 TracerPid 0, year 2153, cur_player 3, mask 0xff08, 18 bases / 72 units, University Base (28,42) pend 0 head 2, 6 ours 0 actionable): the s174e "unverified" flag is CLOSED. M181 got no trigger this fire - still a LEAD, box time owed.

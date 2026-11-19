@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-90-90.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 91 (2026-10-25) — M55: **THE SOLO ROUND BOUNDARY IS READ END TO END FROM MEMORY AND EVERY DIFF IS ACCOUNTED — `scripts/m55_boundary.py` prints PASS on a real invocation (2217->2218, 10/10 floors); a hand-typed fixture FAILs (5 floors) and the no-poke dry probe FAILs (no flip in 4 s)** — changed `scripts/m55_boundary.py` (NEW: reads one boundary from /proc/<pid>/mem, samples cur_player/year/round/stage/turn_flags at 2 ms, accounts every unit/base/faction diff), `scratch/m55_fixture_bad.json` (hand-typed negative), `NEXT_PROMPT.md`, this file, skill `references/wine-operations.md`
 
 **Acceptance — the exact commands and what they printed:**

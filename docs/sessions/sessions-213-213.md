@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-212-212.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 213 (2026-11-05, ANALYSE box pick, M273 PASS 7/7) - the row stride 188 is a fixed 94-slot capacity; no spill on the live map
 - Pick: "what the row stride 188 means" (M256 G5's OPEN row). `scripts/m273_rowstride_watch.py`
   (silent bps at BOTH 0x94eaa8 read sites + YEAR control 0x51f554 + live region-count reads).

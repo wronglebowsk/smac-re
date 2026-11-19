@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-263-263.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 264 (2026-11-15, ANALYSE, zero box) - M306: the export hole at 0x4f35e0 is a REAL complete function — bounds, identity, one fold-edge entry, and WHY the export never modelled it
 
 - (a) BOUNDS from CODE, not from the next index entry: entry 0x4f35e0 `push ebp; mov ebp,esp; sub esp,0x34` after 6 aligner nops at 0x4f35da (end of FUN_004f34b0); CFG from the entry = 846 reachable insns, contiguous (no >16B hole), 3 rets each ending a pop ebx/esi/edi + mov esp,ebp epilogue, last ret 0x4f4050, then 15 nops to 0x4f405f. Function = [0x4f35e0, 0x4f4051), 2673 B (evidence/m306_owner.txt:9-13, A1-A7).

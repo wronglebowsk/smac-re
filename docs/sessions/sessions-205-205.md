@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-204-204.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 205 (2026-11-02, M262-M264 ANALYSE, static) — the view-table entries 1..7 ARE allocated (7 × 0x22480 at startup, through a cursor store); the LOAD path never re-derives the per-faction band; FUN_005be090 is operator-new and ds:0x9965b8 is a linear record cursor
 
 `python3 scripts/m262_m264_census.py` -> `SUMMARY M262/M263/M264: 11/11 gates PASS`, rc=0, 3.66 s, one green invocation -> `evidence/m262_m264_census.txt` (24 lines). Same instrument as M259-M261 (whole-image corpus 790,695 insns / 10,268 indexed functions + image-derived vtable map + index.csv containment, from `scripts/m235_m237_records.py`). Invocation 1 = 10/11: M262 G1 asserted 38 indexed mentions / 11 functions, copied from a TRUNCATED probe print; the census measured 39/12, so I regenerated `objdump -d -M intel --section=.text programs/terran.exe` (40.9 MB, scratch, deleted) and grepped it: 39 `*4+0x7cdecc` mentions, 0 indexed stores, exactly one `mov DWORD PTR ds:0x7cdeXX` store inside the band (0x5803e1) — only then moved the expected number. No threshold/floor/check weakened.

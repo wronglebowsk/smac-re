@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-180-180.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 181 (2026-11-02) — M205-M208 all PASS: who writes the dialog RESULT field; [this+0x285] is a child-dialog link slot; FUN_00546800's three switches; ds:0x997528 is a write-only staging buffer drained by FUN_005f0583
 
 Acceptance: `python3 scripts/m205_m208_fields.py` -> `SUMMARY M205=PASS M206=PASS M207=PASS M208=PASS (14/14 gates)`, rc 0, `evidence/m205_m208_fields.txt` (14,015 B) — GREEN ON THE FIRST ACCEPTANCE INVOCATION. Two `--probe` runs first fixed five gate expectations that were INSTRUMENT/typo errors, not thresholds: `[ebp-0x30]` has 3 stores in the pump (0x5f13d8 inits it to 0), the +0xa40 census spans 30 functions not 31, the pump's +0xa14 sites are 10 loads + 1 store once the classifier is DIRECTION-aware (`mov ecx,[edx+0xa14]` is a LOAD), the second +0xe0 dispatch is 0x5f5893 not 0x5f5890, and `ds:0x9939c4,edx` is at 0x5ce60e not 0x5ce60b. No threshold, floor or check was weakened.

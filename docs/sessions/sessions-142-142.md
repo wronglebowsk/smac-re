@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-141-141.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 142 (2026-10-28) — M91: scorer BASE = SUM (demand*m+1)*cost, predicted 12/12 EXACT; the pick is max-of-random-DRAWS, not max score (m91score1 FAIL 6/7 on G3)
 
 Prompt said M74 (merged #75); repo pick M91. Branch milestone/m91, commit f078138 -> acceptance -> docs.

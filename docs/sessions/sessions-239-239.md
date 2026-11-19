@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-237-238.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 239 (2026-11-10, ANALYSE, M292 5/5, BOX census) - pod MOVEMENT settled: the hub vector runs per-unit (arg1 = unit index) and dispatches on the m291 RING ENTRY INDEX esi - 0 = found (MSG 0x2408 if human-owned), 1-8 = continue w/o order, >=9 = issue order b (0x62) at the wrapped ring tile (the WALK); 9 FOUNDs / 26 turns, 2 walked pods
 - track_mode ANALYSE -> the s238 pick. scripts/m292_pod_movement.py (static
   G1-G3 byte gates + live gdb census + parse + verdict). ACCEPTANCE:

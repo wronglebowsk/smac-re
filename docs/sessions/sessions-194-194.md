@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-193-193.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 194 (2026-11-01, M243 — the 7 dead write legs of the save codec and their gates; static, zero box time)
 
 - **Acceptance:** `sudo -n python3 scripts/m243_leg_gates.py` → `PASS M243: 4/4 gates` (one

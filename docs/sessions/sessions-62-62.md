@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-61-61.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 62 (2026-10-23) — M53j: **THE CLAIM ARRAY IS 33 DWORDS AT 0x985b3c INDEXED BY (project_idx − 0x27) — projects 39..71 ONLY — AND ITS COMPLETION WRITER IS 0x4f0d83 INSIDE THE PRODUCTION PROCESSOR: pay (base+0x40 −= price) → flags → claim → announce → THE POP** — write-up `evidence/m53j_findings.md` (+ `evidence/m53j_complet.md` for the ordered side-effect list)
 
 - **Geometry (VERIFIED, three ways).** M53i's "claim table DAT_00985aa0[72]" is superseded: only projects

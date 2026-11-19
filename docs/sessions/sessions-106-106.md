@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-105-105.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 106 (2026-10-26) — M66: WHICH QUEUE SLOT THE BUILD UI'S INSERT WRITES. ACCEPTANCE PASS on ONE real invocation — and the answer is not a slot index, it is a SORT.
 
 ### The acceptance (one invocation, exit 0)

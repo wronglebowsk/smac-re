@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-205-205.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 206 (2026-11-02, M265-M266 ANALYSE, static) — the 7 view-table blocks are objects of the class whose descriptor is 0x675964 (201 × 608-B elements + a 2,580-B virtual subobject, size proven to the byte); FUN_00583c70 is statically unreachable, one of an 8-function dead cluster
 
 `python3 scripts/m265_m266_census.py` -> `SUMMARY M265/M266: 12/12 gates PASS`, rc=0, 2.68 s, green on inv 3 (inv 1 died on a TypeError in my own push-order helper; inv 2 = 6/12) -> `evidence/m265_m266_census.txt` (13 lines). Instrument = the .text corpus `scratch/m574/text.txt` + the RAW PE image with the `objdump -h` section map + index.csv containment, ONE corpus pass. All six inv-2 failures were mine and every one was corrected against the corpus's own print, never by relaxing a check: hex arithmetic (0xc+200*0x260 = 0x1db0c, not 0x1da8c; 0x21a6c+0xa14 = 0x22480, not +0xa24), a "4 functions" glanced from a 5-line grep (it is 5), a helper that kept only the LAST of two offsets, objdump's destination-first `mov ebp,esp`, and a nested comprehension that returned an empty callee set.

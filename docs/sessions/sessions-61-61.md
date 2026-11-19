@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-60-60.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 61 (2026-10-23) — M53i: **THE SECRET-PROJECT TABLE IS THE ALPHA `#FACILITIES` SECTION VERBATIM AT 0x984d38 (LIVE IDX = ALPHA ROW + 1); `FUN_005a6e70` GATES ON RECORD+0x14 TECH + THE 0x985aa0 CLAIM TABLE; THE NEGATIVE-QUEUE COST ACCESSOR IS `record[−q].+0x0c × 0x4e40a0`** — write-up `evidence/m53i_findings.md`
 
 - **Table identity + layout (VERIFIED).** 72×48 B @ 0x984d38 = alpha `#FACILITIES` (`alpha.txt:590-665`) loaded verbatim; **live index = alpha row + 1** (row 0 null placeholder d0=0; row 1 'Headquarters'; row 26 'Pressure Dome' = alpha:616; row 71 'The Ascent to Transcendence' = alpha:661). Record: +0 name str ptr, +4 effect str ptr (arena ~0x2100000, `FUN_0061482f` resolves), +8 always 0 (72/72), **+0xc cost factor** (= alpha col 2; price = `FUN_004e40a0(faction,1,−1)` × it, multiplier 10 = masked faction, `m53i_fn4e40a0.txt:14-19`), +0x10 = alpha col 3, **+0x14 prereq tech (−1 = None)**, +0x18 = −2 constant in all 71 real rows (alpha "Disable" col), +0x1c..+0x2c = 5 trailing alpha cols permuted (+0x1c=c7, +0x20=c10, +0x24=c9, +0x28=c11, +0x2c=c8 — verified rows 39+71; semantics open). **0x984d44 = DAT_00984d38 + 0xc = dword 3 of the same record, not a second table.** Corpus has ZERO stores to the table (all 70 refs loads; Ghidra hides 7 as `&DAT_00984d4c` — a 984d38-only grep misses them); writer pointer-based (open). Dump `evidence/m53i_project_table.tsv`.

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-250-251.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 252 (2026-11-11, STATIC, zero box) - B18 BUILD: the site-gate value source executable
 
 `python3 scripts/track_mode.py` -> MODE=BUILD next_rung=B18 (UNAUTHORED) - the rung was

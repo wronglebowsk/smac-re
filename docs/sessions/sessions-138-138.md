@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-137-137.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 138 (2026-10-28) — M86: the boundary's leg in FUN_005a7970 is the TABLE MISS; both bit-set tails are gated out upstream (m86cens1 FAIL, m86cens2 FAIL)
 
 Prompt said M74 (merged #75); the repo pick was M86. Branch milestone/m86, commits edc6371 -> 0d78e3e.

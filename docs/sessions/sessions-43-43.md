@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-28-42.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 43 (2026-10-22) — M46: ECONOMY DECOMPOSED — the upkeep pipeline is named end to end (`0x521070` → `0x5208f0` → `0x520540` → `0x4f5a70`, `energy += base+0x7e`; facility upkeep charged directly by `0x4f47f0`); HUD Gross/Costs/NET = `FUN_00445900` scratch globals, live-verified net 0 ⇔ energy flat; `faction+4` = within-round spending ledger; real blocker found: the OPERATIONS DIRECTOR end-turn pane
 
 - **Milestone (H, static + live):** the per-round economy. Driver `0x521070` → per-player

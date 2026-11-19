@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-132-132.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 133 (2026-10-28) — M84e: 0x4d00 IS A QUEUE POST, NOT A CALL; ITS HANDLER IS 0x52ed7d (acceptance m84edisp1/2/3 FAIL, merge nothing)
 
 Prompt said M74 (merged #75); the repo pick was M84e. Branch milestone/m84e from main 7a69b20, carrying the s128-s132 footing (`git checkout milestone/m84d -- NAMED.md NEXT_PROMPT.md SESSION_NOTES.md scripts/m84_cancel_sentinel.py scripts/m84c_item_pump.py scripts/m84d_faction_key.py skill/`).

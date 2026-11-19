@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-252-252.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 253 (2026-11-11, STATIC, zero box) - B18 #264 CLOSED: the review round (10 P1 + 2 P2) fixed IN-BRANCH, MERGED #264
 - s252 died mid-close-out; its kickoff claimed no outstanding P1s - WRONG: 10 P1 +
   2 P2 inline comments sat on head 522cdc8. Every finding run to ground against the

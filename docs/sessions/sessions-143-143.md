@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-142-142.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 143 (2026-10-28) — M91 CLOSED: m91score5 PASS 7/7 (one invocation, fresh box, 4 AI windows, 27 candidates, 0 base mismatches)
 
 Same milestone as s142 (branch milestone/m91, commits 95fa804 + fe55c33 + this docs commit). Two gates were MY instrument defects, both fixed in place, each fix justified by instruction bytes or event order, never by weakening a floor:

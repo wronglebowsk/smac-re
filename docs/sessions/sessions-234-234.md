@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-231-233.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 234 (2026-11-10, BUILD, B12 CREATE leg 12/12, no box time) - the completion's produced unit RECORD: gate(8+1>=9) -> pay to 0 -> one new 52-B record (29,42,type2,owner3,order 0) appended at the array END -> pop, replayed against the game's OWN recorded m56 boundaries byte-for-byte; MERGED #240
 - track_mode BUILD -> rung B12 written into BUILD_SPINE.md FIRST (per chapter R),
   then built.  sim/production.py: the M56/M59/M61 completion law - GATE (storage

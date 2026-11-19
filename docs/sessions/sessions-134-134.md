@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-133-133.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 134 (2026-10-28) — M84e follow-up (bytes only): the 0x4d00 POST is GATED on ds:0x920434, the OPENING-MENU flag — s133's POST 0 is THE GAME, not the instrument
 
 Prompt said M74 (merged #75); the repo pick was M84e, and a sibling cron session had already run it while I was briefing (milestone/m84e 592e177 + dae5049, acceptance m84edisp1/2/3 FAIL, PR #88 gate pass, merge nothing). One box: I did NOT arm a second gdb (s125/s126 collision rule) and instead verified its zero from instruction bytes.

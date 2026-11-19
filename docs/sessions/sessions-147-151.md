@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-144-148.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans). (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 147 (2026-10-29) — M93 ACCEPTED: m93post3 PASS 9/9. The POST-tail ladder predicts every traced final
 
 Branch milestone/m93 (s147 continued after s148 closed; the runs interleave — s147 owned post1+post3,

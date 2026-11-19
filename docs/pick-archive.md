@@ -959,3 +959,52 @@ end-to-end (B15+B16+B17 with save-only inputs).
 
 s288 trim (moved VERBATIM from NEXT_PROMPT): OLD picks (a)(b) = M311 (#289, digest 625cd5877271cd85); (c) retracted by M312's A4.
 s288: the engine FUN_00556690 decisions question is ANSWERED (NAMED ## M317); tokens' game words stay OPEN.
+
+## §trim-s292 (a) settled merge summaries + the pick (i') detail, VERBATIM from NEXT_PROMPT.md at the s292 cap split
+
+(The B24 block below is HISTORY + already-restated law: SKILL.md 319-320 carries the rival-degeneracy and
+mutate-DATA laws, `references/instrument-laws.md` the harness-scoring and STATE laws, `NAMED ## B24` the finding.
+It is kept here so the retraction and the two retired rivals stay quotable.)
+
+```
+B24 MERGED as #307 (main af38858; NAMED ## B24 governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness **9/9 scored + 1
+declared NO-OP** (MU9 labels-only = decoration). RETRACTED at the spine: the turn-29 compaction does NOT move the
+addressed slot (stable at 22 for all 8 visits). NEW LAW: the run addresses its record BY LEDGER POSITION;
+tile-addressing cannot RUN once the container tile is poisoned (`tile (27, 29) not located`). HARNESS LAWS (s287):
+declared gate-sets are MEASURED, not authored; a mutant reddening NOTHING is a NO-OP and fails; dropping a conjunct
+can't redden - mutate DATA; a rival that fails by crashing or returning nothing is NOT evidence until the crash is
+message-matched AND the construction succeeds without the cause (B24 had two degenerate rivals:
+frontinsert, locate - retired, G8 gates the retirement). `pos=False` in `composedturn.fold` is NOT tile-addressing.
+```
+
+```
+M316 MERGED #305: 18/18+32/32 dcc6ce82fc98aec4, 5 P2 accepted; SITE-TWIN law (0x94f2d8; REMOVER
+0056d780, INITIALIZER 0056d710). NAMED ## M316.
+M315 MERGED as #301 (main 0ad96af): 10/10 + 29/29, digest 3976ca97eedc1e19; 6 P2 at head 754b4fa6;
+caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/s285_reverify_*`
+(#304). NAMED ## M315.
+```
+
+```
+  **CLOSED (s278): pick (i') NAME THE EVENTS - ONE interaction band
+  [0x50bb20,0x5175b4) carries 20 of 28 hub owners + 9 thunk owners; pumps 00512b40 (menu-ID + nav-VK two-stage switches; its door FUN_0041bda0
+  is a data pointer at 0x6724a8 in the multi-table run @0x672290) and 00516b80 (Q-Z order keys,
+  startup callback push@0x51892d) call INTO it; map_click_handler (M28) reaches it directly.
+  Full law NAMED ## M313.
+```
+
+## §trim-s292 (b) TRAP 24, VERBATIM from NEXT_PROMPT.md at the s292 cap split
+
+(The RULE stays inline in NEXT_PROMPT §TRAPS 24; the worked defect list and the m308 reference live here.)
+
+```
+24. **A PASSING ASSERTION IS NOT A GATE (s269, Greptile #281 on M308).** All 4 P2s were one defect -
+   an assert that can pass on an UNMEASURED state (a classifier blind to `mov eax,ds:G`; bounds
+   pre-filtered by the expected constants; a rule tested by mnemonic presence; attribution by instruction
+   proximity) - and **3 of the sub-conditions I wrote to FIX them were THEMSELVES decorative**. Law: after
+   repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`: copy the instrument, re-create each
+   defect by anchor->replacement, exit non-zero unless EVERY mutation reddens its named gate). Mutate a
+   MEASURED FACT so it is false on the real bytes (a branch target off-by-one), never a dict ENTRY the assert
+   reads as a whole. Keep mutation ids out of the A-number namespace (M1..M8 vs A1..A36). Reference:
+   `scripts/m308_mutate.py` -> `8/8 mutations reddened their target checks`.
+```

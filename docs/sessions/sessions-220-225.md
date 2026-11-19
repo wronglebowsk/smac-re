@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-219-219.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 220 (2026-11-10, BUILD fire, B8 PASS 10/10) - the save-WRITE leg: a .SAV recomposed byte-exact from the state model
 - track_mode printed BUILD -> rung B8 written into `BUILD_SPINE.md` FIRST (R2's save-WRITE leg
   chosen over the new-game leg: no recorded initial-state trace exists to parity-check against,

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-99-99.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 100 (2026-10-26) — M61: **THE CREATE IS IN THE SAME VISIT AS THE PAY, THE ROUND ORDER IS MEASURED, AND `base+0x10` IS THE BASE NAME. ACCEPTANCE PASS on one real invocation.**
 
 **THE ROUND ORDER, read out of one ordered stream.** `python3 scripts/m60_guard.py --stage watch

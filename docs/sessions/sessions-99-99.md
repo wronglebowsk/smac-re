@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-98-98.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 99 (2026-10-26) — M60: **THE CREATE GUARD IS A PROCESS GLOBAL, NOT A BASE FIELD — and a nonzero guard really does make a paid window produce no unit. The chooser is named. The "snapshot GAP" was an EARLY READ, not a slow create. ACCEPTANCE PASS on one real invocation.**
 
 changed `scripts/m60_guard.py` (NEW: read / poke / hw-watchpoint on `0x8f0d70`, plus our bases'

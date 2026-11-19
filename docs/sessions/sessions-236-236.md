@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-235-235.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 236 (2026-11-10, ANALYSE, M290 9/9, no box time) - the hub's FOUNDING DECISION fitted to the m289 record: the dispatch is OWN-TILE-GATED (a distant target takes the 0x2408 auto-build message and can NEVER found); founder args are the POD RECORD's owner@+14/y@+10/x@+8, so the tile choice is entirely the pod's walk; B10's first-unoccupied rule REFUTED (recorded ranks 542-1691 of 2146)
 - track_mode ANALYSE -> the s235 frontier pick: fit the hub founder decision
   to the m289 record, static+model, no box.  scripts/m290_hub_decision.py,

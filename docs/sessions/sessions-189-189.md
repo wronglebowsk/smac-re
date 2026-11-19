@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-188-188.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 189 (2026-11-01, M235-M237 all PASS, static + read-only /proc; box untouched, M181 still a LEAD)
 
 - **Acceptance:** `sudo -n python3 scripts/m235_m237_records.py > evidence/m235_m237_records.txt` ->

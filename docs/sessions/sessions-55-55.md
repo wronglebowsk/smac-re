@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-54-54.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 55 (2026-10-23) — M53d: THE PENDING-QUEUE WRITER IS `FUN_00417d20` — 0x417e04 `mov [base + slot·4 + 0x50], item` (hw-watchpoint: `pc=0x417e08`, +0x54 3→2, +0x4c 0→1); `FUN_00417ee0` itself rewrites ALL TEN slots on chooser-cancel at 0x418636; every writer is REGISTER-indexed, which is exactly why the literal-offset census found nothing
 
 - **The census blind spot (M53d's premise was an artifact, not a fact).** `DAT_0095da64`: 0 hits and

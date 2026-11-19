@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-47-47.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 48 (2026-10-22) — M50a: 0x4f26e0 IS NOT A COST STEP — it is the per-base mineral↔energy conversion/income step and a THIRD storage writer (0x4f2d7d); deltas live-observed 0…+12 (storage GAINS); our base early-returns via the base+0x38 flag gate; sweep truncated again at 28 visits (ours unvisited)
 
 `scripts/m50a_drive.py` (copy of m49a_drive.py + 3 bps: F26E0 entry 0x4f26e0, **CONVST 0x4f2d7d**

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-262-262.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 263 (2026-11-15, ANALYSE, zero box) - M305: FUN_0051dcb0 IDENTIFIED as the zero-rebuild owner; 11 single-site callers (1 loop-enclosed), a round-mod-4 gate
 
 - RESUMED a mid-flight branch, not a new pick: `milestone/m305` held a skeleton commit (e8c8e5f) + an UNCOMMITTED 330-line script whose S2 walk hung forever (`while x < W:` never advanced x) - every run died on its own timeout with 0 B of buffered output, which reads exactly like a crash and is not one. Fixed at `scripts/m305_identity.py:285`, plus a `JCC_RX.match` group-1/group-2 bug at the loop-membership scan. Lesson: a 0-byte evidence file + exit -15 = an infinite loop, not a missing instrument.

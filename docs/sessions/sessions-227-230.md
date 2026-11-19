@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-226-226.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 227 (2026-11-10, ANALYSE, M283 PASS 17/17) - decode_save --sections walks 64x64 saves: the coarse-region-map length is ((W+4)/5+1)/2 * (H+4)/5 (91 B for 64x64, not 128)
 - track_mode printed ANALYSE -> picked the s226 OPEN lead (decode_save's hardcoded 80x80
   map-trailer count offset fails rc=1 on every 64x64 save). Box untouched (zero box time).

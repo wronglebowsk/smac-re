@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-55-55.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 56 (2026-10-24) — M53b: THE TYPE-RECORD `+41` BYTE IS A COST FACTOR — one writer (`shard_015.c:9358` = `FUN_00595820(chassis, weapon, armor, ability, reactor)`), the price the game prints and debits is `FUN_004e40a0(owner,1,−1) × +41` with that multiplier = 10 = 100 % ⇒ **1 unit of `+41` = 10 minerals**; `+43` is the auto-calculated AI role byte (Scout Patrol `+41 = 1` vs `+43 = 10`)
 
 - **Verdict: cost, not weight, not turns.** `+41` (`0x98ad88 + type·52 + 0x29` = `0x98adb1`) has exactly

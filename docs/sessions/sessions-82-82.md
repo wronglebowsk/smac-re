@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-81-81.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 82 (2026-10-25) — M54e: **THE ORDERED WALK LANDS INSIDE THE UNATTENDED RUN — 5 WALKS EXECUTED IN A 40/40 RUN, THE BYTE CAUGHT AT THE CHOOSER, THE RECORD LEFT ON THE TILE ITS OWN LEG NAMED** — `scripts/m54e_prep.py`, `scripts/m54e_probe.py`, `scripts/smac_play.py` (`order_byte_watcher`, in-phase walk poll), `evidence/m54e/census_pre_run.txt`, `ORDERS.md §7` (PR #44, merged)
 
 - **THE PUMP IS THE CHOOSER'S OK, NOT EXEC (measured).** `scripts/m54e_probe.py chooser 2`

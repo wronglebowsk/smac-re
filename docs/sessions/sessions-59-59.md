@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-57-58.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 59 (2026-10-24) — M53g: **`[chooser_sub+0xa774]` IS THE SELECTION CELL INDEX — AND REPLACE FIRES LIVE AT (365,343) VIA BAR PARAM 7 (UNGATED)**; the drawn REPLACE bar body (x 381-421) is phantom grid cell 17, whose clicks take the setter path and never reach the bar handler
 - **Guard semantics (VERIFIED live, `m53g_watch.log:68-74,101-107`):** chooser open → paint clears
   guard to −1 (pc 0x495541) then sets it to the enumeration index of the item in the selected queue

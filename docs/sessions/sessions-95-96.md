@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-93-94.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 95 (2026-10-25) — M57-3: the gate ran on a GAME-filled queue and got 1/2 — the model premise is falsified, nothing merges
 
 **What changed.** `scripts/smac_preflight.py` (NEW, read-only orientation: authoritative address

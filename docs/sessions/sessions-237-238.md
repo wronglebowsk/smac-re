@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-236-236.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 237 (2026-11-10, BUILD, B13 12/12) - M290's founder dispatch is EXECUTABLE: sim/hubfound.py - own-tile-gated (distant target = msg 0x2408, never founds), founder args = the POD's record fields, capacity-only guard; 7/7 recorded founding tuples replay exact, strict ledger 18+7-2=23 peak 24 vs the m289 curve, both rivals fail the same fit
 - track_mode BUILD (3 ANALYSE fires since B12) -> the rung went into
   BUILD_SPINE.md FIRST (pod-driven founding-dispatch leg, replacing B10's

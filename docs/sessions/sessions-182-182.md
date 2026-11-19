@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-181-181.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 182 (2026-11-02) — M209-M212 all PASS: who dispatches dialog slot +0xa8; the dialog stack = two parallel arrays (arg3 write-only); +0xe4 is a bool; FUN_00542ea0 wraps the pump; -9999 is FUN_00496ad0's sentinel
 
 Instrument `scripts/m209_m212_dispatch.py`: whole-image disasm + image bytes + a vtable model (bases = the imm32

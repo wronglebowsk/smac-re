@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-91-92.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 93 (2026-10-25) — M57: **THE GAME'S OWN BUILD UI WROTE THE QUEUE (proven, 0 memory writes) AND THE QUEUED UNIT WAS PAID FOR BY INCOME — BUT THE EXACT-ROUND PREDICTION FAILED 1/2, SO NOTHING MERGES** — changed `scripts/m56_build.py` (`--ui-queued N` mode: no poke of any kind, `writes` counter, queue-provenance floor, "storage below price at run start" precondition/floor, `predict(..., income_first=)`), `scripts/test_m56_predict.py` (8 -> 11 cases), this file, `NEXT_PROMPT.md`
 
 **ACCEPTANCE: NOT MET.** `python3 scripts/m56_build.py --ui-queued 18 --boundaries 5 --timeout 120` -> exit 1, `FAIL production prediction accounting`; trace `evidence/trace_m56_build_20261025_212402.jsonl`. Floors that PASSED: 5/5 boundaries flipped +1 (2152->2157, walk [0,2,3,5,6,7]), `queue provenance: GAME-filled, zero memory writes by this script` (pending 2 head 2 base 18 Korolev Center, `memory writes: 0`), `completion NOT armed: storage below price at run start` (minerals 4 < price 10), and 1 of 2 positive predictions verified. Floors that FAILED: `r2 prediction ... observed net 0` and `at least 1 POSITIVE prediction verified — 1/2`. Nothing was weakened to hide it.

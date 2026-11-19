@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-64-64.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 65 (2026-10-23) — M53m: **c6c/c70 ARE FED ONLY BY SUPPLY CRAWLERS (plan 10 = type 5) EXECUTING CONVOY ORDERS (3) — three-branch filter pinned to machine addresses and proven live (c6c[0] 0→1 via 0x4e8f35, c70 0→1 via 0x4e8e82, ×10 each over 4 rounds, 2 sweeps/base/round); ERA WRITER = 0x4ddcf1 COLD CHOOSER PATH (sole direct store)** — write-up `evidence/m53m_findings.md`
 - **Filter (VERIFIED machine + live).** 4e8d60 accumulates economy slots only for units with
   unit+14==base owner ∧ plan(type+42)==10 == alpha PLANS[10] "Convoy/Resource Convoy" ∧

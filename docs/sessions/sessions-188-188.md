@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-187-187.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 188 (2026-11-01, M231-M234, static + read-only /proc; box untouched, M181 still a lead)
 
 `sudo -n python3 scripts/m231_m234_staging.py > evidence/m231_m234_staging.txt` -> rc 0, **17/17 gates PASS on one invocation**, 8,862 B. Invocations 1-4 gave no verdict (instrument bugs; no threshold, floor or check changed): a format string missing its `%`; `p_["dests"]` indexing a list with a string; a read-back that assumed 0x99aa9c+4i and 0x99aac0+4i were adjacent (they are 0x24 apart) and compared the wrong dword; a push list not truncated to the callee's own cleaned arg count, so FUN_00455c70's prologue pushes read as arguments; `pend` reset only at the tracked call, so the first trampoline call inherited 2 pushes from an earlier one.

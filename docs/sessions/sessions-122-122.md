@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-121-121.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 122 (2026-10-28) — M80: THE RECORD ARRAY IS 8 FACTION BANDS OF 64; FUN_00573a90'S ARG 1 IS A FACTION; indices >= 256 ARE LIVE DESIGN SLOTS
 
 The prompt opened with "M74", but M74 is already merged (#75, NAMED M74-RESOLVED, tag `m74flag3`,

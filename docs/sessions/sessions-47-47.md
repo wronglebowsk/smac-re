@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-45-45.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 47 (2026-10-22) — M49a: THE GROWTH-COST QUESTION DISSOLVES — edi at COMPLET is the base's SWEEP-ENTRY INDEX, not a cost; esi=8 is the event-mask bit-test result; M48d's "Scout Patrol cost 10" RETRACTED
 
 `scripts/m49a_drive.py` (copy of m48d_drive.py: COMPLET print extended with pop/fc/cap/d0/cc/3c/

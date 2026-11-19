@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-191-191.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 193 (2026-11-01, M242 — the save WRITE function; static first, then ONE box lifecycle; S192/M241's notes live on the open PR #180)
 
 - **Static, zero box time** (`scripts/fn.py`, `scripts/name_global.py`, `scratch/m71/dis.py` windows on

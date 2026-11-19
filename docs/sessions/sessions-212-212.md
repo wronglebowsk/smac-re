@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-211-211.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 212 (2026-11-05, BUILD fire, B6 PASS 6/6) - the headless run: R1 is DONE
 - `track_mode.py` said MODE=BUILD next_rung=B6; built it per `BUILD_SPINE.md` (no box time, no /proc, no gdb).
 - NEW `sim/headless.py`: loads a .SAV (sim/save) + .MP (sim/map) + alpha rules (sim/rules), presses the B3

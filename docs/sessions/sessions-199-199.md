@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-198-198.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 199 (2026-11-01, BUILD fire) — **B3: the C1 turn engine is executable and replays M30's trace 67/67**
 
 **Acceptance.** `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3:

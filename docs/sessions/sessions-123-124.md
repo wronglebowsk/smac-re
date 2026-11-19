@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-122-122.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 123 (2026-10-28) — M81: THE SWEEP'S CREATE PATH RAN WITH +0x30 ALREADY WRITTEN; ACCEPTANCE FAILED, NOTHING MERGED
 
 The prompt opened with "M74" again; M74 is merged (#75, NAMED M74-RESOLVED, m74flag3, s116) — the cursor's pick M81 ran.

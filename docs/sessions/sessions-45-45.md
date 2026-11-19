@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-44-44.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 45-46 (2026-10-22) — M48d: MINERAL ECONOMY FULLY TRACED (first queue/growth completion in 26 years)
 
 `scripts/m48d_drive.py` (driver-generated gdb: 16 int3 sites + 4 hw WPs, literal baked addrs,

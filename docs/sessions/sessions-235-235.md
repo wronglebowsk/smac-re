@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-234-234.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 235 (2026-11-10, ANALYSE, M289 LIVE 7/7, box time) - which founder vector the recorded AI used: the AI HUB FUN_0055f650 -> FUN_004cca50 -> founder FUN_004e47d0; 7/7 live foundings on a 30-turn m54b_clean window, the 0x4408 action-dispatch leg 0, the 5a0aa0 chain entered 3x but completed 0; count 18->23 exact with 2 destroys; MERGED #241
 - track_mode ANALYSE -> the M282 G5 frontier (NEXT_PROMPT pick): which founder
   vector the recorded AI used - 0x4408 vs 0x5f650 vs the 5a0aa0 chain.  Live-box

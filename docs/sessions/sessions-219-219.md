@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-218-218.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 219 (2026-11-10, ANALYSE static, M278 PASS 7/7) - block 0 = the player-index-0 real row + the unowned fallback; neither neutral nor player slot
 - s218 pick (a) (static, ZERO box time): the two 0x94eaa8 writers' block-index source.
   `python3 scripts/m278_block0_semantics.py` -> **SUMMARY M278: 7/7 gates PASS** (`evidence/m278_block0.txt`).
