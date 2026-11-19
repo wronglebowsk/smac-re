@@ -39,6 +39,8 @@ REFRESH = (0x4E8D60, 0x4E78E0)
 PAIR_REACH = 17   # M315's review round (#301) moved the bound 16->17 B: the SECOND callee
                   # sits 17 B after the store at 0x4f5ab7; a 16-B reach loses that site.
 MEMO_SRC = ("ds:0x68cbb4", "DWORD PTR ds:0x68cbb4")
+FLAG_OPS = ("cmp", "test", "add", "adc", "sub", "sbb", "or", "and", "xor", "inc",
+            "dec", "neg", "shl", "shr", "sar", "rol", "ror")
 JCC = {"je", "jne", "jz", "jnz", "jb", "jnb", "ja", "jae", "jbe", "jae", "jge",
        "jg", "jl", "jle", "js", "jns", "jo", "jno", "jc", "jnc"}
 HEXOP = re.compile(r"^0x([0-9a-f]+)$")
@@ -123,12 +125,14 @@ def main():
 
     def pair_at(a):
         js = bisect.bisect_right(order, a)
-        w = order[js:js + 6]
-        d1 = next((b - a for b in w if b - a <= PAIR_REACH and tgt_of(b) == REFRESH[0]), None)
-        if d1 is None:
+        w = [b for b in order[js:js + 6] if b - a <= PAIR_REACH]
+        first = next((b for b in w if tgt_of(b) == REFRESH[0]), None)
+        if first is None:
             return None
-        d2 = next((b - a for b in w if b - a <= PAIR_REACH and tgt_of(b) == REFRESH[1]), None)
-        return None if d2 is None else (d1, d2)
+        # THE PAIR IS ORDERED (review #317 P2): the law is `call 0x4e8d60` THEN `call 0x4e78e0`.
+        # Two independent presences would also accept a reversed or interleaved sequence.
+        second = next((b for b in w if b > first and tgt_of(b) == REFRESH[1]), None)
+        return None if second is None else (first - a, second - a)
 
     memo = [a for a in stores if pair_at(a)]
     clears = [a for a in stores if not pair_at(a)]
@@ -221,8 +225,11 @@ def main():
     print("-- T2 every instruction that READS/TESTS the memo (image-wide): %d --" % len(refs))
     for a in refs:
         print("   %s %-16s %s %s" % (hex(a), owner(a), ins[a][0], ins[a][1].strip()))
-    print("   by owner: %s" % dict(ref_owner))
-    measured["T2"] = "refs=%d owners=%d" % (len(refs), len(ref_owner))
+    ref_mn = collections.Counter(ins[a][0] for a in refs)
+    print("   by owner: %s  by mnemonic: %s" % (dict(ref_owner), dict(ref_mn)))
+    print("   (an OPERAND-SUBSTRING census under the shipped text parser: any instruction whose"
+          " operand text carries 0x68cbb4 and that is not a `ds:0x68cbb4,`-shaped store)")
+    measured["T2"] = "refs=%d owners=%d mnemonics=%s" % (len(refs), len(ref_owner), dict(ref_mn))
 
     # ---- T3 the callers of each memo-site owner
     own_of = {a: owner(a) for a in memo}
@@ -337,7 +344,10 @@ def main():
         i1 = bisect.bisect_right(order, e)
         fs = None
         for a in order[i0:i1]:
-            if ins[a][0] in ("cmp", "test"):
+            # ZF is written by ALU ops too (review #317 P2): a jcc can be armed by an
+            # `add/or/sub/xor/inc...` that consumes the memo or a live copy of it, and a
+            # cmp/test-only walker would be BLIND to exactly the case the claim denies.
+            if ins[a][0] in FLAG_OPS:
                 fs = a
             if a == at:
                 break
@@ -412,7 +422,8 @@ def main():
     REF_PIN = [0x4E5155, 0x4EB6BF, 0x4EFE83, 0x4F21E9, 0x4F5C41, 0x5AB74D]
     ck("G2 the memo has EXACTLY 6 read/test instructions IMAGE-WIDE, at these pinned addresses in "
        "5 functions - so any hoisted guard would have to live in one of those 5",
-       refs == REF_PIN, "refs=%d %s" % (len(refs), [hex(x) for x in refs]))
+       refs == REF_PIN and dict(ref_mn) == {"mov": 5, "cmp": 1},
+       "refs=%d %s mnemonics=%s" % (len(refs), [hex(x) for x in refs], dict(ref_mn)))
     readers = set(ref_owner)
     memo_writers = set(owner(a) for a in stores)
     ck("G5 the memo is PRIVATE to the refresh chain: every function that reads it also writes it "
@@ -421,12 +432,17 @@ def main():
        "readers=%d writers=%d readers_not_writers=%s" % (len(readers), len(memo_writers),
                                                          sorted(readers - memo_writers)))
     outside = [c for c in hoisted if c not in own_set]
+    # "its read is its OWN guard" is DATA, not interpretation (review #317 P2): the reader
+    # must own at least one of the 4 GUARDED sites, i.e. the site its read guards.
+    readers_own_guarded = sorted(set(hoisted) & set(own_of[a] for a in G))
     ck("G3 RIVAL 'the dedup guard is HOISTED into the callers' FAILS: of the 8 distinct direct "
        "callers of the unguarded owners, exactly 1 reads the memo (FUN_004f5a70) and it is itself a "
        "memo-site owner - its read is the LOCAL guard of its own site, not a hoist. Callers that are "
        "not memo-site owners and read the memo: %d" % len(outside),
-       len(all_callers) == 8 and len(hoisted) == 1 and not outside,
-       measured["T3"] + " non-owner memo-readers=%s" % outside)
+       len(all_callers) == 8 and len(hoisted) == 1 and not outside
+       and readers_own_guarded == sorted(hoisted),
+       measured["T3"] + " non-owner memo-readers=%s reader owns guarded sites=%s"
+       % (outside, readers_own_guarded))
     min_calls = min([len(rows[ss[0]][2]) for ss in by_owner.values()] or [0])
     ck("G4 RIVAL 'the 8 unguarded sites are dead code' FAILS: every nameable unguarded owner has at "
        "least one direct call site (min=%d, total calls=%d); the 8th site 0x4f3f7f has no function "
@@ -436,23 +452,36 @@ def main():
        "min_calls_per_owner=%d calls=%d unranged=%s" % (min_calls, len(ARR),
                                                         [hex(x) for x in unranged_sites]))
     ck("G6 no call to an unguarded owner arrives under a MEMO test (the PRECISE form of G3: the CFG "
-       "pred edge's flag-setter is never a memo compare)",
-       all(a[3] != "memo-test" for a in ARR),
-       "calls=%d arrivals=%s" % (len(ARR), dict(arrival)))
+       "pred edge's flag-setter - searched over EVERY flag-writing op class, not only cmp/test - is "
+       "never a memo compare or a memo-copy compare), and the printed histogram is pinned exactly",
+       all(a[3] != "memo-test" for a in ARR)
+       and dict(arrival) == {"other-test": 8, "fallthrough-only": 1},
+       "calls=%d arrivals=%s (the FULL printed histogram is pinned, not just its memo count)"
+       % (len(ARR), dict(arrival)))
     # G7 is the classifier's non-decorativeness proof: the SAME edge_class must call the 4 known
     # guards memo and must NOT call any of the 7 nameable unguarded stores memo. If the classifier
     # were blind, G6's 0/9 would be a vacuity, not a finding.
     ck("G7 POSITIVE CONTROL: the same classifier names the memo-guard on exactly the 4 GUARDED "
        "stores' arrival edges and on NONE of the 7 nameable UNGUARDED stores' edges - so G6's 0/9 "
        "is a measurement, not a blind classifier",
-       sorted(yes) == sorted(G) and len(no) == 7 and len(skipped) == 1,
-       "guarded-with-memo-edge=%s unguarded-without=%d skipped=%s"
-       % ([hex(x) for x in yes], len(no), [hex(x) for x in skipped]))
+       sorted(yes) == sorted(G) and len(no) == 7 and len(skipped) == 1
+       and {a: sorted({l.split("|")[0] for l in store_edge[a] if l.startswith("memo")}) for a in G}
+       == {0x4EB6C7: ["memo-direct"], 0x4EFEAA: ["memo-copy"], 0x4F2201: ["memo-copy"],
+           0x4F5C4A: ["memo-copy"]},
+       "guarded kinds=%s unguarded-without=%d skipped=%s"
+       % ({hex(k): sorted({l.split("|")[0] for l in v if l.startswith("memo")})
+          for k, v in store_edge.items() if k in G}, len(no), [hex(x) for x in skipped]))
     rows_txt = "|".join("%s|%s|%s" % (k, v, "") for k, v in sorted(measured.items()))
     dig = hashlib.sha256((rows_txt + "|" + ",".join(hex(a) for a in refs)
                           + "|" + ",".join("%s:%s" % (hex(a), r[3]) for a, r in sorted(rows.items()) if r)
+                          + "|" + ",".join("%s:%s" % (hex(c), arr) for c, _n, _o, arr, _k in ARR)
+                          + "|" + ",".join("%s:%s" % (hex(a), sorted(store_edge[a] or []))
+                                           for a in sorted(store_edge))
+                          + "|" + ",".join("%s:%s" % (hex(a), "guarded" if guards[a] else "free")
+                                           for a in sorted(memo))
                           ).encode()).hexdigest()[:16]
-    print("-- measurement digest %s (T2+T3+T4 rows + the pinned ref list + per-site callers) --" % dig)
+    print("-- measurement digest %s (T1 partition+guard kinds, T2 ref list+mnemonics, T3 per-site "
+          "callers, T4 arrival per call, T5 store-edge labels) --" % dig)
     n_ok = sum(checks)
     print("== M319: %d/%d ==" % (n_ok, len(checks)))
     return 0 if n_ok == len(checks) else 1

@@ -63,22 +63,26 @@ SRC_MUT = [
     # can resolve a claim row to a mutant that really exists.
     ("MU1", "pair_reach_16", "PAIR_REACH = 17", "PAIR_REACH = 16", {"G1", "G7"}),
     ("MU2", "wrong_second_callee", "REFRESH = (0x4E8D60, 0x4E78E0)",
-     "REFRESH = (0x4E8D60, 0x4E78E1)", {"G1", "G3", "G4", "G7"}),
+     "REFRESH = (0x4E8D60, 0x4E78E1)", {"G1", "G3", "G4", "G6", "G7"}),
     ("MU3", "store_regex_narrow", 'r"(DWORD PTR )?ds:0x68cbb4,"', 'r"ds:0x68cbb4,"',
-     {"G1", "G2", "G3", "G4", "G5", "G7"}),
+     {"G1", "G2", "G3", "G4", "G5", "G6", "G7"}),
     ("MU4", "ref_ignores_cmp", 'return "0x68cbb4" in ops.strip() and not is_store(mn, ops)',
      'return "0x68cbb4" in ops.strip() and mn == "mov" and not is_store(mn, ops)',
      {"G2", "G5"}),
-    ("MU5", "copy_walk_bug", DECIDED, "", {"G1", "G4", "G7"}),
+    ("MU5", "copy_walk_bug", DECIDED, "", {"G1", "G3", "G4", "G6", "G7"}),
     # pass 1 CRASHED here (KeyError); with the instrument's span guards it is a red GATE.
     ("MU6", "owner_unbounded", 'return n if s <= a < s + sz else "UNRANGED:%s" % n',
-     "return n", {"G4"}),
+     "return n", {"G4", "G6"}),
     ("MU7", "pair_window_tight", "order[js:js + 6]", "order[js:js + 2]", {"G1", "G7"}),
     ("MU8", "thunk_resolve_off", "for _ in range(3):\n            j = ins.get(t)",
      "for _ in range(0):\n            j = ins.get(t)", NOOP_THUNK),
     ("MU9", "classifier_blind_to_copy",
      '        if any(E.reg_norm(p) in live_copy(fs, BB4) for p in parts):\n'
      '            return "memo-copy|%s" % o[:34]\n', "", {"G7"}),
+    # collapse the classifier's KINDS (every memo edge becomes memo-copy): the coarse
+    # "has some memo edge" survives, only G7's per-address direct/copy pin can see it.
+    ("MU15", "kind_direct_collapses_to_copy", '            return "memo-direct|%s" % o[:34]',
+     '            return "memo-copy|%s" % o[:34]', {"G7"}),
 ]
 CODE_MUT = [
     # (id, label, M319_PATCH spec, declared gates). The instrument PRINTS "k/n patches
@@ -88,15 +92,20 @@ CODE_MUT = [
      {"G2", "G3", "G5", "G6"}),
     # a guard that no longer consults the memo: the direct cmp at 0x4eb6bf compares edx/eax.
     ("MU11", "direct_guard_blinded", "0x4eb6bf|cmp edx,eax",
-     {"G1", "G2", "G3", "G4", "G5", "G7"}),
+     {"G1", "G2", "G3", "G4", "G5", "G6", "G7"}),
     # the only direct call to FUN_004f5a70 is erased: the caller census and the dead-code rival move.
-    ("MU12", "call_erased", "0x5206d3|nop", {"G3", "G4"}),
+    ("MU12", "call_erased", "0x5206d3|nop", {"G3", "G4", "G6"}),
     # the guard's je stops skipping the store: it jumps ONTO it.
-    ("MU13", "guard_je_no_skip", "0x4f5c48|je 0x4f5c4a", {"G1"}),
+    ("MU13", "guard_je_no_skip", "0x4f5c48|je 0x4f5c4a", {"G1", "G3", "G7"}),
+    # the ARRIVAL HISTOGRAM pin (G6) must bite on its own: turn one arrival's flag-setter into
+    # an INDEX compare (0x68cbb0, not the memo) - the memo count stays 0, the classes move.
+    ("MU14", "arrival_index_test", "0x5206ce|cmp ecx,DWORD PTR ds:0x68cbb0", {"G6"}),
 ]
 
 
 def run(text, patch=None, tag=""):
+    # dir MUST be scripts/: a mutant copy derives REPO from its OWN path, so a copy in
+    # scratch dies on "terran.exe: No such file" - which reads exactly like a missing tool.
     fd, path = tempfile.mkstemp(suffix="_m319mut%s.py" % tag, dir=os.path.join(REPO, "scripts"))
     os.write(fd, text.encode())
     os.close(fd)

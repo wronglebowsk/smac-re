@@ -1,15 +1,17 @@
 baseline green: == M319: 7/7 ==
 OK   MU1_pair_reach_16 measured_gates=['G1', 'G7'] declared=['G1', 'G7']
-OK   MU2_wrong_second_callee measured_gates=['G1', 'G3', 'G4', 'G7'] declared=['G1', 'G3', 'G4', 'G7']
-OK   MU3_store_regex_narrow measured_gates=['G1', 'G2', 'G3', 'G4', 'G5', 'G7'] declared=['G1', 'G2', 'G3', 'G4', 'G5', 'G7']
+OK   MU2_wrong_second_callee measured_gates=['G1', 'G3', 'G4', 'G6', 'G7'] declared=['G1', 'G3', 'G4', 'G6', 'G7']
+OK   MU3_store_regex_narrow measured_gates=['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7'] declared=['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7']
 OK   MU4_ref_ignores_cmp measured_gates=['G2', 'G5'] declared=['G2', 'G5']
-OK   MU5_copy_walk_bug measured_gates=['G1', 'G4', 'G7'] declared=['G1', 'G4', 'G7']
-OK   MU6_owner_unbounded measured_gates=['G4'] declared=['G4']
+OK   MU5_copy_walk_bug measured_gates=['G1', 'G3', 'G4', 'G6', 'G7'] declared=['G1', 'G3', 'G4', 'G6', 'G7']
+OK   MU6_owner_unbounded measured_gates=['G4', 'G6'] declared=['G4', 'G6']
 OK   MU7_pair_window_tight measured_gates=['G1', 'G7'] declared=['G1', 'G7']
 OK   MU8_thunk_resolve_off measured_gates=[] declared=NO-OP(thunk-following is inert on THIS image: all 9 call arrivals of the unguarded owners resolve directly, so no gate's printed number moves)
 OK   MU9_classifier_blind_to_copy measured_gates=['G7'] declared=['G7']
+OK   MU15_kind_direct_collapses_to_copy measured_gates=['G7'] declared=['G7']
 OK   MU10_hoisted_guard_built [0x5206ce|cmp ecx,DWORD PTR ds:0x68cbb4] M319_PATCH: 1/1 patches applied measured_gates=['G2', 'G3', 'G5', 'G6'] declared=['G2', 'G3', 'G5', 'G6']
-OK   MU11_direct_guard_blinded [0x4eb6bf|cmp edx,eax] M319_PATCH: 1/1 patches applied measured_gates=['G1', 'G2', 'G3', 'G4', 'G5', 'G7'] declared=['G1', 'G2', 'G3', 'G4', 'G5', 'G7']
-OK   MU12_call_erased [0x5206d3|nop] M319_PATCH: 1/1 patches applied measured_gates=['G3', 'G4'] declared=['G3', 'G4']
-OK   MU13_guard_je_no_skip [0x4f5c48|je 0x4f5c4a] M319_PATCH: 1/1 patches applied measured_gates=['G1'] declared=['G1']
-== m319-mutate: 12/12 scored mutants reddened EXACTLY their declared gate sets + 1/1 declared NO-OP held green (9 source + 4 code total) ==
+OK   MU11_direct_guard_blinded [0x4eb6bf|cmp edx,eax] M319_PATCH: 1/1 patches applied measured_gates=['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7'] declared=['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7']
+OK   MU12_call_erased [0x5206d3|nop] M319_PATCH: 1/1 patches applied measured_gates=['G3', 'G4', 'G6'] declared=['G3', 'G4', 'G6']
+OK   MU13_guard_je_no_skip [0x4f5c48|je 0x4f5c4a] M319_PATCH: 1/1 patches applied measured_gates=['G1', 'G3', 'G7'] declared=['G1', 'G3', 'G7']
+OK   MU14_arrival_index_test [0x5206ce|cmp ecx,DWORD PTR ds:0x68cbb0] M319_PATCH: 1/1 patches applied measured_gates=['G6'] declared=['G6']
+== m319-mutate: 14/14 scored mutants reddened EXACTLY their declared gate sets + 1/1 declared NO-OP held green (10 source + 5 code total) ==

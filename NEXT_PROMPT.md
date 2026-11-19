@@ -72,7 +72,7 @@ collision-check + worktree FIRST).
   image-wide in 5 funcs, readers(5) subset writers(15); the 8 unguarded sites have 4 nameable
   owners + 8 direct callers, 0/9 CFG arrivals memo-tested, and the only memo-reading caller
   (FUN_004f5a70) is itself an owner, so its read is its OWN guard; G7 is the classifier's
-  positive control. NAMED ## M319 (7/7, digest 459f47e3178f439d, 12/12+1 NO-OP, selftest 4/4).
+  positive control. NAMED ## M319 (7/7, digest fb4e802dac1995a2, 14/14+1 NO-OP, selftest 4/4).
   OPEN PICK after M319: (vi) NAME the two still-unnamed memo-site owners FUN_004ee410 (sites
   0x4ee6c9/0x4ee883, caller FUN_004f5a70) and FUN_004f41f0 (sites 0x4f44a8/0x4f455d, callers
   FUN_00416ef0/FUN_00416f60/FUN_0041a8f0/FUN_004f5a70): what each DOES, and what the shared
