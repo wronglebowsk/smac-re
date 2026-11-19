@@ -34,15 +34,35 @@ def sha_of_pr_merge(pr):
 
 
 def fenced_blocks(path, heading_rx):
-    """The fenced block that follows each heading matching heading_rx."""
+    """The fenced block that follows each heading matching heading_rx (None if the section has no
+    complete fence pair - that becomes a FAILING row, never a skipped one)."""
     txt = open(path, encoding="utf-8").read().split("\n")
     out = []
     for i, ln in enumerate(txt):
         if re.match(heading_rx, ln):
-            j = next(k for k in range(i, len(txt)) if txt[k].startswith("```"))
-            k = next(m for m in range(j + 1, len(txt)) if txt[m].startswith("```"))
-            out.append((i + 1, "\n".join(txt[j + 1:k])))
+            try:
+                j = next(k for k in range(i, len(txt)) if txt[k].startswith("```"))
+                k = next(m for m in range(j + 1, len(txt)) if txt[m].startswith("```"))
+                out.append((i + 1, "\n".join(txt[j + 1:k])))
+            except StopIteration:
+                out.append((i + 1, None))
     return out
+
+
+def revs(path, n=140):
+    """Newest-first list of commits on origin/main that touched `path`."""
+    return [h for h in git("log", "--format=%H", "-%d" % n, "origin/main", "--", path).split("\n") if h]
+
+
+def newest_blob_with(path, needle, n=140):
+    """The newest origin/main blob of `path` that still CONTAINS needle -> (sha, text) or (None, None).
+    A rotated-out section's pre-rotation state is not `origin/main`'s tip (main moved on), so history
+    is the only honest reference: this asks 'what did the file look like before the move?'."""
+    for h in revs(path, n):
+        t = git("show", h + ":" + path)
+        if needle in t:
+            return h, t
+    return None, None
 
 
 def resolve_cites(path):
@@ -91,8 +111,9 @@ def main():
                  squash or "NONE", squash is not None))
     short = squash[:7] if squash else "-"
     base = git("rev-parse", squash + "^").strip() if squash else None
-    rows.append(("...and its PARENT is the doc state the blocks moved OUT of", base[:7] if base
-                 else "-", base is not None))
+    rows.append(("...and its PARENT (%s) is a readable NEXT_PROMPT state, so a VERBATIM move can be "
+                 "diffed against a real pre-move blob" % (base[:7] if base else "-"),
+                 base[:7] if base else "-", base is not None))
 
     # 2. what the docs CLAIM about the merge must equal the git fact
     named = open("NAMED.md", encoding="utf-8").read()
@@ -110,18 +131,24 @@ def main():
                  np_bytes < CAP and ("%d" % np_bytes in notes
                                      or "{:,}".format(np_bytes) in notes)))
 
-    # 4. the two blocks moved VERBATIM: present in the parent's hot doc, ABSENT now
-    blocks = fenced_blocks("docs/pick-archive.md", r"^## §trim-s295 \(")
-    old_np = git("show", base + ":NEXT_PROMPT.md") if base else ""
+    # 4. every VERBATIM block the archive claims since s292 (the generation this instrument covers):
+    # present, byte-for-byte, in the NEWEST NEXT_PROMPT blob that still carries it - history, because
+    # main moves on and a block's pre-move state is not main's tip - AND absent from the hot doc.
+    blocks = fenced_blocks("docs/pick-archive.md", r"^## §trim-s(?:29[2-9]|[3-9][0-9])\b")
     now_np = open("NEXT_PROMPT.md", encoding="utf-8").read()
     for ln, body in blocks:
+        if body is None:
+            rows.append(("pick-archive:%d claims a VERBATIM move but its section has NO fenced block "
+                         "(a heading that measures nothing)" % ln, "no fence", False))
+            continue
         lines = [l for l in body.split("\n") if l.strip()]
         first, last = lines[0][:44], lines[-1][:44]
-        moved = body in old_np
+        src, _ = newest_blob_with("NEXT_PROMPT.md", body)
+        moved = src is not None
         dup = any(l in now_np for l in lines)
         rows.append(("pick-archive:%d block (%r .. %r) VERBATIM in %s:NEXT_PROMPT.md, and NOT "
                      "still in the hot doc (the COPIED-not-MOVED rival)"
-                     % (ln, first, last, base[:7]), "%s / dup=%s" % (moved, dup),
+                     % (ln, first, last, src[:7] if src else "NO BLOB"), "%s / dup=%s" % (moved, dup),
                      moved and not dup))
 
     # 5. the rotation: the 3 NEWEST rotated archives (numeric, not lexicographic - the old sort
@@ -138,13 +165,12 @@ def main():
     rows.append(("the 3 numerically-newest rotated files %s resolve %d/%d evidence cites "
                  "(the rotation-mangled-cites rival); %s" % (rot, res, tot, broken[:2] or "no breaks"),
                  "%d/%d" % (res, tot), res == tot and tot > 0))
-    # 6. the rotation was FAITHFUL: every line of the pre-rotation sections (still sitting in
-    # origin/main:SESSION_NOTES.md) survives in the archive - either byte-identical, or ADDITIVELY
-    # annotated (every original word still present, in order, so a cite can gain a :line anchor but a
-    # finding can never be silently dropped or rewritten). Plus the copy-not-move rival: the sections
-    # must be GONE from the hot file.
-    main_notes = git("show", "origin/main:SESSION_NOTES.md")
-
+    # 6. the rotation was FAITHFUL: every line of the pre-rotation sections survives in the archive -
+    # either byte-identical, or ADDITIVELY annotated (every original word still present, in order, so a
+    # cite can grow a :line anchor but a finding can never be silently dropped or rewritten). The
+    # pre-rotation state is found in HISTORY (the newest SESSION_NOTES blob on origin/main that still
+    # holds the section) - main's tip no longer has it, which is exactly what a rotation means. Plus the
+    # copy-not-move rival: the sections must be GONE from the hot file.
     def words(s):
         return [w.strip("`'\"()[]{}.,;:!?'\"") for w in s.split()]
 
@@ -158,16 +184,20 @@ def main():
     import difflib
     arch_txt = open("docs/sessions/" + rot[-1], encoding="utf-8").read()
     same = annotated = mangled = 0
+    refs = set()
     for sm in re.finditer(r"^## Session .*$", arch_txt, re.M):
         lbl = sm.group(0)
         j = arch_txt.find("\n## Session ", sm.end())
         a_sec = arch_txt[sm.start():len(arch_txt) if j < 0 else j].split("\n")
-        k = main_notes.find(lbl)
-        if k < 0:
+        # the newest origin/main blob that STILL held this section = the state it was rotated out of
+        src, pre_notes = newest_blob_with("SESSION_NOTES.md", lbl + "\n")
+        if src is None or pre_notes is None:
             mangled += 1
             continue
-        n = main_notes.find("\n## Session ", k)
-        o_sec = main_notes[k:len(main_notes) if n < 0 else n].rstrip().split("\n")
+        refs.add(src[:7])
+        k = pre_notes.find(lbl)
+        n = pre_notes.find("\n## Session ", k)
+        o_sec = pre_notes[k:len(pre_notes) if n < 0 else n].rstrip().split("\n")
         for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, o_sec, a_sec).get_opcodes():
             if op == "equal":
                 same += i2 - i1
@@ -180,10 +210,10 @@ def main():
                 mangled += 1
     still_hot = any(("## Session " + m.group(1)) in notes for m in
                     re.finditer(r"^## Session (\d+)", arch_txt, re.M))
-    rows.append(("rotation: %s -> %d lines byte-identical to origin/main:SESSION_NOTES.md, %d "
-                 "additively annotated, %d lost/mangled; sections absent from the hot file=%s "
-                 "(the hand-move / copy-not-move / silent-rewrite rivals)"
-                 % (rot[-1], same, annotated, mangled, not still_hot),
+    rows.append(("rotation: %s -> %d lines byte-identical to the pre-rotation blob(s) %s of "
+                 "SESSION_NOTES.md, %d additively annotated, %d lost/mangled; sections absent from the "
+                 "hot file=%s (the hand-move / copy-not-move / silent-rewrite rivals)"
+                 % (rot[-1], same, sorted(refs) or ["NONE"], annotated, mangled, not still_hot),
                  "%s / same=%d / annotated=%d / mangled=%d"
                  % (os.path.exists("scripts/session_rotate.py"), same, annotated, mangled),
                  os.path.exists("scripts/session_rotate.py") and same > 0 and mangled == 0
@@ -221,8 +251,10 @@ def main():
         print("FAIL b25_merge_state: %d/%d checks failed: %s" % (len(bad), len(rows), bad))
         return 1
     print("PASS b25_merge_state: %d/%d checks (merge %s on main, NEXT_PROMPT %d B < %d, "
-          "2 blocks moved VERBATIM, %d/%d rotated cites resolve)"
-          % (len(rows), len(rows), short, np_bytes, CAP, res, tot))
+          "%d VERBATIM trim blocks located in history and gone from the hot doc, %d/%d rotated cites "
+          "resolve)"
+          % (len(rows), len(rows), short, np_bytes, CAP, sum(1 for r in rows
+                                                              if "VERBATIM in" in r[0]), res, tot))
     return 0
 
 

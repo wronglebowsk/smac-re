@@ -4,7 +4,7 @@ Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. The `evidence/<file>:<line>` cites inside are
 BACKTICK-or-bare TEXT resolved from the REPO ROOT, not markdown links, so the move changes
 nothing; `python3 -u scripts/b25_merge_state.py` resolves every cite in the three
-numerically-newest archives (`5/5`, `evidence/b25_merge_state.txt:9`) and rejects a digest
+numerically-newest archives (`5/5`, `evidence/b25_merge_state.txt:14`) and rejects a digest
 quoted on a cite line that reconciles with neither the cited file nor its replacement on
 the same line (that rule reddened here once - `## Session 296` in `SESSION_NOTES.md`).
 

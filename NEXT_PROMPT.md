@@ -116,13 +116,10 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245: objdump prints UPPERCASE; ARM BEFORE ANY
    SCREEN; the SIGUSR1/SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT
    a STORE CENSUS.)
-24. **A PASSING ASSERTION IS NOT A GATE (s269, #281 on M308; all 4 P2s were one defect: an assert that can pass
-   on an UNMEASURED state — and 3 of the sub-conditions written to FIX them were THEMSELVES decorative).** Law: after
-   repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`), exit non-zero unless EVERY mutation reddens its
-   named gate; mutate a MEASURED FACT, never a dict ENTRY the assert reads as a whole; keep mutation ids out of the
-   A-number namespace. Worked defect list + the `m308_mutate.py` 8/8 reference VERBATIM:
-   `docs/pick-archive.md:996` §trim-s292 (b); mechanics: skill `references/instrument-laws.md:975`
-   (§harness is STATE) and `:1031` (§four outcomes).
+24. **A PASSING ASSERTION IS NOT A GATE** — an assert that can pass on an UNMEASURED state is a defect, not a
+   gate; every gate needs a NAMED mutant that reddens it, and the fixes get mutated too. FULL text + the
+   `m308_mutate.py` 8/8 reference: `docs/pick-archive.md` §trim-s296 (a); worked defect list, skill mechanics:
+   §trim-s292 (b) at `docs/pick-archive.md:996`.
 ## CLOSING ORDER (exactly — the kickoff carries the same list, and the full 7-step text lives
 VERBATIM at `docs/pick-archive.md` §trim-s269). Order: 1 `SESSION_CURSOR.md` (<=600 B) BEFORE the
 rest, in case of compression. 2 `## Session <N+1>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers
@@ -134,4 +131,4 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 `python3 scripts/gate.py --base main` GREEN + `python3 scripts/review_lint.py --id <id>` PASS.
 7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
-M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +0x1078..0x1878, 3x512 arrays (+0x854/+0xa54 byte, +0xc54 word), scalar tail +0x2038..0x20bc; reset FUN_0059ec90 / rebuild FUN_0051dcb0. 12/12 digest 12e247bdbc0f77ef (evidence/m320_sibling_census.txt:418); harness 26/26+1. FULL: NAMED.md ## M320 + SESSION_NOTES s294-chain2.
+M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
