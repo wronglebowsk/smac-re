@@ -474,3 +474,12 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - This PR is the remediation: this note + the M326 line update (harness digest 07326ba5d23a2dbe
   stays in NAMED ## M326 / s301-chain2; the line keeps 27/27). Gate verified GREEN BEFORE merge.
 - Worktree rests detached at origin/main afterwards (chain 1 holds the main checkout).
+
+## Session 304-chain2 (2026-11-19, M328 CLOSED, STATIC: the two HURRY globals named)
+
+- milestone/m328 (main b362948). A=0x91c64c = TURN-START ENERGY SNAPSHOT of the upkeep faction: 520540@52065d A:=ENERGY[8380*arg] after debt pay, before interest; HURRY mirrors cost (41a551/41a563); INFRASTRUCTURE warn 51fe90 (11E<10A && E<100) DEAD at sole site: post-snapshot stores 520743/770/7d9/7ff+4f5c8c all additions (deeper callees OPEN). B=0x920434 = 'MULTI' SESSION FLAG (noun INFERRED, lifecycle V): 634 refs 15W/133T/486R, {0x14,1x1} all mov; sole 1=57ed04 first stmt 57ecf0 via menu case4@580070/auto-start 5229b7; SP 57c550+load never set; blob [91f750,+ce0) ends B-4 (A/B uncarried); opener opts 0x10c0 iff filename!='multi' && B==0; B!=0 -> diplo sync 584010 (546800:40); clear=Retire/REALLYQUIT/YOULOSE2/MULTIDEBUG/opening/SAVEFAILED/RESET. M326 deferral = multi-only.
+- `python3 -u scripts/m328_hurry_globals_census.py` -> **14/14** **79deb5e6c5c501ff** x2 identical (`evidence/m328_hurry_globals.txt:59-60`,`_rerun.txt:59-60`). Resolver=M326 import + sole-def fallback (512b40 pair 0: sole xor@512b63) + seed scan (0 indirect).
+- Sweep found 2 REAL gate defects, fixed: G2 hardcoded eax (MU3 invisible) -> actual src; G5 stray A-count (MU24) -> removed. `python3 -u scripts/m328_mutate.py` -> **27/27 (26+MU26 NO-OP)** **50f6aa12d28d4b2f** (`evidence/m328_mutate.txt:30-32`); `--selftest` **5/5** (`_selftest.txt:7`).
+- NAMED rotation VERBATIM sha1-asserted: B10 rows 1,988 B d298981e8ece0d6e -> docs/named-archive-b10-rows.md; founding table 8,112 B 5e1635282e3cf2c9 (19 names kept) -> docs/named-archive-founding-table.md; 248,242 -> 242,777 B. M326 one-liner -> pick-archive §trim-s304-chain2 (a) f6691830bcd4c739.
+- Env: git 2.53 ignores worktree info/exclude -> extensions.worktreeConfig + worktree core.excludesFile (symlinks ignored; start unblocked).
+- OPEN: B menu label (script-driven; MULTIMENU 692018 no push); 92bdf8 mode; +300 upkeep refund 1/3 (diff4) 2/3 (diff5+) 520714-78f (M325 lead); facprofile+4ec interest.

@@ -13,9 +13,18 @@
 # gate (m319 MU6 law): output without the 14-denominator summary scores CRASH
 # and fails the harness. DIGEST (M324 review law): hashes each mutant's
 # MEASURED payload AND the acceptance digest of that mutant's run. Sets were
-# MEASURED by a sweep (M328_MUT_MEASURE=1) then declared.
+# MEASURED by a sweep (M328_MUT_MEASURE=1) then declared. Sweep corrections:
+# MU3 exposed a REAL gate gap - G2 queried the hardcoded 'eax' instead of the
+# store's actual source register, so a source swap was invisible; G2 now reads
+# the source from the instruction (fixed, MU3 reddens G2). MU24's stray A-count
+# clause was removed from G5 (G5 is purely B's census; the A pin lives in G1).
+# MU9's new writer value lands in {0,1} so R2 survives (its kills: MU12/MU22);
+# MU11/MU25 opaque values also redden R2's set clause; MU17's ce4 blob
+# [91f750,+ce4) ends EXACTLY at B (half-open), so R3 survives - R3's kill is
+# MU23's dest change. MU26 NO-OP measured (identical digest).
 # --selftest: 2 patch-mechanism rejection checks + identity digest + sole-def
-# fallback measurement (ALGO4 opaques) + seed-plant measurement (MU10 seeds=1).
+# fallback measurement (ALGO4 arg-leaves + G6 FAIL) + seed-plant measurement
+# (MU10 seeds=1).
 import os, re, sys, subprocess, hashlib
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,15 +43,15 @@ MUTANTS = [
     ("MU6",  "code", "0x51ff3b|push 0x68e98d", {"G3"}),
     ("MU7",  "code", "0x520741|sub eax,edx", {"G4"}),
     ("MU8",  "code", "0x52091a|call 0x51fe90", {"G4"}),
-    ("MU9",  "code", "0x546887|mov DWORD PTR ds:0x920434,ebx", {"G5", "G6", "R2"}),
+    ("MU9",  "code", "0x546887|mov DWORD PTR ds:0x920434,ebx", {"G5", "G6"}),
     ("MU10", "code", "0x52054c|mov eax,0x920434", {"G2", "G5"}),
-    ("MU11", "algo", "4", {"G6"}),
+    ("MU11", "algo", "4", {"G6", "R2"}),
     ("MU12", "code", "0x57ed04|mov DWORD PTR ds:0x920434,esi", {"G6", "R2"}),
     ("MU13", "code", "0x512b63|mov ebx,0x1", {"G6"}),
     ("MU14", "code", "0x516ef4|push 0x692044", {"G7"}),
     ("MU15", "pe",   "0x580080|19fa5700", {"G8"}),
     ("MU16", "code", "0x57fcfa|call 0x57c550", {"G8"}),
-    ("MU17", "code", "0x596920|push 0xce4", {"G9", "R3"}),
+    ("MU17", "code", "0x596920|push 0xce4", {"G9"}),
     ("MU18", "code", "0x5981c1|push 0x692fb9", {"G9"}),
     ("MU19", "code", "0x546c5a|jne 0x546c90", {"G10"}),
     ("MU20", "code", "0x41a530|mov eax,0x1", {"G5", "G10"}),
@@ -50,7 +59,7 @@ MUTANTS = [
     ("MU22", "code", "0x52280c|add DWORD PTR ds:0x920434,ebx", {"G6", "R2"}),
     ("MU23", "code", "0x596920|push 0x920434", {"G9", "R3"}),
     ("MU24", "code", "0x51ff00|mov DWORD PTR ds:0x91c64c,ecx", {"G1", "R4"}),
-    ("MU25", "algo", "1", {"G2", "G6"}),
+    ("MU25", "algo", "1", {"G6", "R2"}),
     ("MU26", "algo", "2", set()),  # declared NO-OP: all-dw census, width-blind unobservable
     ("MU27", "algo", "3", {"G5"}),
 ]
@@ -130,8 +139,8 @@ def selftest():
     rc, out = run({})
     checks.append(("S3 identity digest", rc == 0 and digest_of(out) == BASE_DIGEST))
     rc, out = run({"M328_ALGO": "4"})
-    checks.append(("S4 sole-def fallback measured (ALGO4 opaques the 512b40 pair)",
-                   out.count("('opaque', 'ebx')") >= 2))
+    checks.append(("S4 sole-def fallback measured (ALGO4 leaves the 512b40 pair as arg-leaves)",
+                   out.count("('arg', 'ebx')") >= 2 and "G6 FAIL" in out))
     rc, out = run({"M328_PATCH": "0x52054c|mov eax,0x920434"})
     checks.append(("S5 seed plant measured (seeds=1 on B)",
                    bool(re.search(r"B 0x920434:.*seeds=1", out))))
