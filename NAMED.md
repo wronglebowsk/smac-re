@@ -1292,7 +1292,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | year sole writer 51f54f = FUN_005b2c00(round+1) = arg+g92bf68(=2100 @5a0f88/5a1042) | G10/R1 `:532-533` | V MU10/MU17 |
 | gates: M320 ==0 @59f1a0/59f19c; M305 &3==bl(1) @51f711; M317 >75 @55840d; M177 stamps+age<16 | G5/G8 `:527,530,438,502` | V MU5/MU14/MU15/MU16/MU21/MU22/MU25 |
 | live round=50/year=2150 (m302); YEAR/MODE-ENUM/LOAD-CONST rivals dead | G7/R1-R3 `:529,533-535` | V MU7/MU24 |
-| ACCEPT 13/13 e112a4260e3c1722 x2 (`:536`); harness 26/26+1 5aac883b874f1248 (`evidence/m323_mutate.txt:28`); selftest 4/4 | as cited | V |
+| ACCEPT 13/13 digest e112a4260e3c1722 x2 (`:536`); harness 26/26+1 digest 5aac883b874f1248 (`evidence/m323_mutate.txt:28`); selftest 4/4 | as cited | V |
 | OPEN: rand-start noun; g999fa4; save-carry (no loader writer); bl pop-path caveat | - | lead |
 
 ## M320 (s294-chain2, STATIC, 12/12, 26/26+1) - siblings: 128-region ladder, 512 arrays, reset/rebuild
