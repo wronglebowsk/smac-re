@@ -361,3 +361,7 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
 - REVIEW #329: 2P1+8P2, 10/10 accepted: MIN hardcoded->derived+MU25; ENERGY row gated via G5 handler relation (same-fn/gate-call/jne/src-load; MU26/27); P/U totals gated (reviewer's 40/34 miscount: 16 regW proven, 45/29 stands); 29/29+1 notation; itoa pins MU28; seed-count+BLKCONST-target pins MU29; LIFO-sound pop pairing upgraded 4 sites (MU30=old algo); call-crossings enumerated T9 (4497 events/118 sites/12 proven writers); S4 strengthened.
 - ACCEPT `python3 -u scripts/m325_block220_census.py` -> **8/8** a623181d7fb68263 (`evidence/m325_block220_census.txt:297-298`) x2 identical. HARNESS **30/30 (29+1 NO-OP)** 97c193e12593c95e (`m325_mutate.txt:33-35`) x2; selftest 4/4 (`_selftest.txt:6`). Digest history 12e8c53d->7b1f0a2b (L2b pins)->a623181d (review).
 - OPEN: +224/+300 nouns; MIN consumers; 920774; 519b00 dbl/quarter; feed vtable (.rdata 673b60=&FUN_00442320, 0 text refs).
+
+## Session 300-chain2 (2026-11-19, M325 MERGED, post-merge note; docs-only, zero box)
+
+- MERGED #329 squash **fb6e6c4**. Review 2P1+8P2 10/10 accepted in one reply; post-review 8/8 a623181d7fb68263 x2 + at-head identical; harness 30/30 (29+1) 97c193e12593c95e; CI 13 s CLEAN; main did not move (no rebase). Squash title "24/24+1" = PRE-review harness; NAMED ## M325 ACCEPT governs. Note: docs/m325-merged; pr329 .json sidecar folded in.
