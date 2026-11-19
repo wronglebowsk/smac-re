@@ -195,8 +195,10 @@ def resolve_reg(a, reg, depth=0):
     return base + "".join(reversed(pieces))
 
 def value_expr(a, mn, ops):
+    parts = ops.split(",")
+    if len(parts) < 2:
+        return "unary(%s)" % mn  # e.g. one-operand imul (a READ, not a store)
     if mn in RMW:  # inc/dec/add... ds:0x985afc[, imm]
-        parts = ops.split(",")
         d = {"inc": 1, "dec": -1}.get(mn)
         if d is not None: return "round%+d" % d
         if len(parts) > 1 and re.fullmatch(r"0x[0-9a-f]+|\d+", parts[1].strip()):
