@@ -1,4 +1,4 @@
-== M327 mutation harness: 22 mutants, TMP=/home/paul/.hermes/cache/scratch/m327mut-7im6y_sq ==
+== M327 mutation harness: 23 mutants, TMP=<mkdtemp m327mut-XXXXXX under $TMPDIR, see stderr> ==
 base: reddened=[] summary=('11', '11')
 MU1   code  0x4bded1|imul   ecx,ecx,0x33               reddened=G10,G2                                   declared=G10,G2                                   OK
 MU2   code  0x5ab3a2|movsx  eax,WORD PTR [esi+0x933280] reddened=G10,G2                                   declared=G10,G2                                   OK
@@ -13,6 +13,7 @@ MU8   save  222793/2=196                               reddened=G10,G11,G3,G5,G6
 MU11  save  222783/2=300                               reddened=G10,G3,G5,G6                             declared=G10,G3,G5,G6                             OK
 MU16  algo  8                                          reddened=G10,G3,G9                                declared=G10,G3,G9                                OK
 MU18  algo  2                                          reddened=G10,G3,G9                                declared=G10,G3,G9                                OK
+MU23  algo  10                                         reddened=G10,G3                                   declared=G10,G3                                   OK
 MU9   save  192108/1=0                                 reddened=G10,G4,G6                                declared=G10,G4,G6                                OK
 MU12  save  198764/1=255                               reddened=G10,G4,G6                                declared=G10,G4,G6                                OK
 MU22  algo  7                                          reddened=G10,G4                                   declared=G10,G4                                   OK
@@ -24,4 +25,4 @@ MU20  algo  9                                          reddened=G1,G10,G11,G3,G4
 MU21  code  0x5ab345|test   eax,0x40                   reddened=-                                        declared=                                         OK
 gate coverage: every gate reddened by >=1 mutant: True
 declared NO-OPs: ['MU21']
-HARNESS PASS 22/22 mutants redden exactly their declared gate set
+HARNESS PASS 23/23 mutants redden exactly their declared gate set

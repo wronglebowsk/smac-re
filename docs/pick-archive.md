@@ -1180,3 +1180,14 @@ file stays under the 12,000 B warn cap; sha1 a4b626a09832 of the block below, by
   and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such
   a record's +0/+2 (B7's and B25's model does, at +0 every round); does the exemption hold on other
   saves? Start: `evidence/b25_selftest.txt:45-56`, `sim/save.py:73`, a one-pass +10 census.
+
+## §trim-s305-chain1 (a) the ANSWERED PICK (vii) -> M327 paragraph, VERBATIM from §THE PICK of
+NEXT_PROMPT.md at the M327 landing (s305) (retired so the file stays under the 12,000 B warn cap;
+sha1 cfa455cbefd4 of the block below, byte-exact). `NAMED ## M327` governs; the harness count moved to 23/23
+at s305 when the `+12` census became a G3 clause (MU23) — `NAMED ## M327` carries the current number.
+
+  ANSWERED PICK (vii) -> **M327** (s304, zero box): +10 is a SIGNED TYPE INDEX into the save's OWN
+  512x52 B type array (26,624 B at count_off+4+count_len+3584, 4,096 B before the unit array;
+  +10//64 == owner on 25/25) — the 25 exempt records ARE units; the coord exemption is OURS and bites
+  only on the self-poked m113map.SAV. RETRACTS `sim/save.py:52` + ## B25's trap-14 in place. 11/11
+  ee77ddb39e8ec202 (`m327_typeband_census.txt:769`), harness 22/22; `NAMED ## M327` governs.

@@ -34,7 +34,9 @@
 # temp copy of a save), M327_ALGO 1=chain window whole-file 2=band//32 3=poke window
 # alignment 3 4=every branch counts as a store guard 5=every slot counts as named
 # 6=variant B becomes the shipped rule 7=type +0x2d law declared true 8=owner from
-# +15 9=type-array offset -4, M327_PIN overrides the G10 anchor.
+# +15 9=type-array offset -4 10=the "+12 is zero on all 67" census read at +10
+# instead (that is what a flag-word reading would look at), M327_PIN overrides the
+# G10 anchor.
 # Harness PLANT sites (documented for review_lint L2b - the code mutants rewrite
 # disassembly lines the instrument reads): MU1 0x4bded1 (the x52 fold after the
 # pinned movsx at 0x4bdeca), MU2 0x5ab3a2 (unit_set_position's own +10 read), MU3
@@ -406,12 +408,16 @@ def main():
        [t for (_a, t) in st_x], [t for (_a, t) in st_y], [hex(x) for x in r10]))
 
     # ---- T6 M26's "+10 bits" under the index reading ----
-    both = sum(1 for u in punits if (u["t"] & 0x40) and (u["t"] & 0x400))
+    # W12_OFF: the census word. Under M327_ALGO=10 the same census is read at +10,
+    # i.e. at the index word itself - which is exactly what M26's retracted
+    # "unit_can_act = +10 bits 0x40&0x400" would have been reading.
     bit40 = sum(1 for u in punits if u["t"] & 0x40)
-    w12 = [(u["i"], struct.unpack_from("<H", u["raw"], 12)[0]) for u in punits]
-    W("T6 records with +10(word)&0x40=%d &0x400=%d both=%d; word@+12 nonzero=%d" %
-      (bit40, sum(1 for u in punits if u["t"] & 0x400), both,
-       sum(1 for _i, v in w12 if v)))
+    both = sum(1 for u in punits if (u["t"] & 0x40) and (u["t"] & 0x400))
+    W12_OFF = 10 if ALGO == "10" else 12
+    w12 = [(u["i"], struct.unpack_from("<H", u["raw"], W12_OFF)[0]) for u in punits]
+    n12 = sum(1 for _i, v in w12 if v)
+    W("T6 records with +10(word)&0x40=%d &0x400=%d both=%d; word@+%d nonzero=%d" %
+      (bit40, sum(1 for u in punits if u["t"] & 0x400), both, W12_OFF, n12))
 
     # ---- T7 rivals: each must be FALSE ----
     common_bit = 0
@@ -451,8 +457,10 @@ def main():
          (len(sites), N_CHAIN, n_read, N_READ, ANCHOR_READ, MOVEX_SITE, a1, a2))
     gate("G3", len(punits) == 67 and len(nband) == 25 and len(nong) == 42
          and len(agree) == 25 and hits_named == 67 and len(oob) == 0
-         and all(u["t"] < BAND for u in nong),
-         "67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all band0")
+         and all(u["t"] < BAND for u in nong) and n12 == 0,
+         "67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all "
+         "band0; the word at +12 is zero on 67/67 (so M26's +10 bits 0x40&0x400 "
+         "cannot be a flag pair living in +12)")
     gate("G4", len(named) == 32 and len(bands.get(0, [])) == 14
          and len([t for t in ff2c.get(True, []) if t < BAND]) == 14
          and len([t for t in ff2c.get(True, []) if t >= BAND]) == 0

@@ -758,7 +758,7 @@ T6 records with +10(word)&0x40=6 &0x400=0 both=0; word@+12 nonzero=0
 T7 R1(band-records-are-not-units)=False R2(+10-is-a-flag-word:0)=False R3(exemption-bites-on-an-unpoked-save:['m113map.SAV'])=False R4(tile-store-is-guarded)=False
 G1 PASS type array at count+4+len+3584 on 4/4 saves, 4096-B gap, closes=[True, True, True, True]
 G2 PASS chain sites=659 (pinned 659), +10 word refs=774 (pinned 774), pinned at 0x4bdeca (unit idx->type rec) and 0x5ab3a2 (unit_set_position -> type+0x24); shapes=True/True
-G3 PASS 67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all band0
+G3 PASS 67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all band0; the word at +12 is zero on 67/67 (so M26's +10 bits 0x40&0x400 cannot be a flag pair living in +12)
 G4 PASS 32 named = 14 band0 + 18 faction-band; type byte +0x2d==0xff exactly on the 14 band0 slots (0 of the 18); +0x30 bit2 NOT a band marker (12/20)
 G5 PASS exemption is load-bearing ONLY on m113map: 67 vs 49; 3/4 saves agree (the type-sound predicate C matches B on 4/4)
 G6 PASS 20 markers 0xc0de0001..0xc0de0014, stride 128, all diffs covered, 13 windows in the unit array touching 14 records; m113's out-of-grid set [12, 17] is a subset of the poked records [2, 4, 7, 9, 12, 14, 16, 17, 19, 21, 24, 26, 29, 31]

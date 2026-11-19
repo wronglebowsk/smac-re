@@ -12,7 +12,8 @@
 #           (1=chain window whole-file, 2=band//32, 3=poke alignment 16,
 #            4=every branch counts as a store guard, 5=every slot counts as named,
 #            6=variant B becomes the shipped rule, 8=owner read from +15,
-#            9=type-array offset -4).
+#            9=type-array offset -4, 10=the "word@+12 is zero on 67/67" census read
+#            at +10 instead (what a flag-word reading would look at).
 # A crash is NOT a red gate: a run without the summary line scores ERROR.
 # The declared sets below were MEASURED by this file with M327_MUT_MEASURE=1.
 import os, re, shutil, subprocess, sys, tempfile
@@ -45,6 +46,10 @@ MUTANTS = [
     ("MU11", "save", "%d/2=300" % UNIT0, {"G3", "G5", "G6", "G10"}),
     ("MU16", "algo", "8", {"G3", "G9", "G10"}),
     ("MU18", "algo", "2", {"G3", "G9", "G10"}),
+    # M26's retracted "+10 bits 0x40 & 0x400" reading: the word that could carry the
+    # pair is +12, and G3 now asserts it is zero on 67/67. MU23 re-reads that same
+    # census at +10 (the index word, nonzero on 64/67) - it reddens exactly G3+G10.
+    ("MU23", "algo", "10", {"G3", "G10"}),
     # ---- the named-slot / type +0x2d law (G4) ----
     ("MU9", "save", "%d/1=0" % (TYPE0 + 0x2D), {"G4", "G6", "G10"}),
     ("MU12", "save", "%d/1=255" % (TYPE0 + 128 * 52 + 0x2D), {"G4", "G6", "G10"}),
@@ -108,7 +113,12 @@ def main():
         OUT.append(line)
         print(line)
     base_red, base_sum, _ = run({})
-    P("== M327 mutation harness: %d mutants, TMP=%s ==" % (len(MUTANTS), TMP))
+    # The run directory is a random mkdtemp under scratch; printing it in the header
+    # would make the evidence file un-diffable against a re-run, so the real path
+    # goes to stderr and the header stays byte-stable.
+    sys.stderr.write("harness run dir: %s\n" % TMP)
+    P("== M327 mutation harness: %d mutants, TMP=<mkdtemp m327mut-XXXXXX under "
+      "$TMPDIR, see stderr> ==" % len(MUTANTS))
     P("base: reddened=%s summary=%s" % (sorted(base_red or []), base_sum))
     if base_red is None:
         P("HARNESS FAIL: the unmutated census run does not report gates")
