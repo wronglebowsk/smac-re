@@ -1305,11 +1305,24 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | OPEN: game nouns; 47 whole-dword field stores untraced to sources | - | lead |
 
 22/22 mutants `evidence/m321_mutate.txt:24`; digest `f304cf871a971a3d` `m321_memo_owners.txt:84`.
+## M326 (s301-chain2, STATIC 9/9) - block+224 = per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt); settled at upkeep
+
+| claim | evidence | conf |
+|---|---|---|
+| 13 hits 3W/10R all dw (0 ABS/DISP224/sub); W={41a543 add,520b22 zero,59f0c1 reset}; 0 seeds; 13/13 STRIDE under subreg-fix (ALGO7=old blindness) | G1-G3 `evidence/m326_block224_census.txt:34-36` | V MU4/9/12-17/19/20/23 |
+| HURRY noun: 419c30 alone pushes HURRY/HURRYOPTIONS/HURRYPAYMENT (689990/a4/c0); defer cost iff 920434&91c62c !=0 (phase flags set around turnfn/upkeep calls) else pay ENERGY+91c64c now | G5 `:38` | V MU5/6/22 |
+| settle 520b0e-30: ENERGY-=224; 224:=0 (esi=0 xor@520ada, 0 defs); floor0; x8380 fold derived | G4 `:37` | V MU1/2/3/19 |
+| all 10 readers = 220-224 AVAILABLE (itoa 64f980); cheat-cap MIN(g999fa4,avail)@41a4e0-f9 (M325 OPEN consumer) | G6 `:39` | V MU7/18 |
+| reset 59f0bf/c1; turnfn 16st/0blk; save [0]*8 @550+k*20bc raw block carry (596a91 105e0/94d430); gap@328=own-player 3; no DEBT str; LOAN owners disjoint | G7-G9 `:40-42` | V MU8/9/10/11/21 |
+| M325 QUALIFIED: 29 prov labels BLKCONST->STRIDE +4 UNPROVEN det under fix; all pins/totals unchanged | T10 `:32`; `m326_m325_seedcheck.txt:4,9` | V |
+| ACCEPT 9/9 66595e09a651a94d x2 (`:43-44`,`_rerun.txt:43-44`); 23/23 (21+2 NO-OP) eac78259c24384bc (`m326_mutate.txt:26-28`); ST 4/4 | cite | V |
+| OPEN: 920434/91c64c nouns; rec+4 faction-byte INFERRED; 419c30 callers; branch caveat 419de9/419e1f | - | lead |
+
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
 | claim | evidence | conf |
 |---|---|---|
-| 234 disp hits (54W/180R; 0 ABS/+220/sub) +30seeds->20regW/7regR; 74sites/34owners; 45P/29U | G1-G3 `evidence/m325_block220_census.txt:289-291` | V MU2-4/14-17/20/22/29/30 |
+| 234 disp hits (54W/180R; 0 ABS/+220/sub) +30seeds->20regW/7regR; 74sites/34owners; 45P/29U | G1-G3 `evidence/m325_block220_census.txt:289-291` | V MU2-4/14-17/20/22/29/30; M326 subreg-fix: 29 labels BLKCONST->STRIDE, pins/totals unchanged (`m326_block224_census.txt:32`, `m326_m325_seedcheck.txt:4`) |
 | 51f320: 16 st/0 str/0 blk; ROUND@51f53c YEAR@51f54f | G4 `:292` | V MU1/20/21 |
 | ENERGY: EDITORENERGY@68c938: field<-g999fa4@4e0336; caps 9999999/999999999/99999, -1000@5085c0, reset0@59eef3 | G3/G5 `:291,293` | V MU5-8/23/26/27 |
 | MIN derived (jle-skip@44262b); g999fa4=cheat-chain value (parse INFERRED); EDITORYEAR 4e0350 round=max(1,·-2100) | G6 `:294` | V MU9-13/18/22/25/28 |

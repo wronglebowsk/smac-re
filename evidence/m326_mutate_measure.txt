@@ -1,0 +1,52 @@
+== M326 mutation harness ==
+BASELINE (9, 9) digest=66595e09a651a94d rc=0
+  MU1   code     red=G4,G6,G9             declared=G4,G6,G9             OK digest=c93daf4b00aba213
+    MEASURED MU1: ['G4', 'G6', 'G9']
+  MU2   code     red=G4                   declared=G4                   OK digest=30cbaa1a8fe44e5d
+    MEASURED MU2: ['G4']
+  MU3   code     red=G4                   declared=G4                   OK digest=1be0e25da503b0d2
+    MEASURED MU3: ['G4']
+  MU4   code     red=G5                   declared=G5                   OK digest=f9bfba3e323af4b7
+    MEASURED MU4: ['G5']
+  MU5   code     red=G5,G9                declared=G5,G9                OK digest=b73689bd33ef9d6b
+    MEASURED MU5: ['G5', 'G9']
+  MU6   pe       red=G5                   declared=G5                   OK digest=2000860cba4e9900
+    MEASURED MU6: ['G5']
+  MU7   code     red=G6                   declared=G6                   OK digest=b42b90e07b0c11b7
+    MEASURED MU7: ['G6']
+  MU8   code     red=G7                   declared=G7                   OK digest=aa84c058fe05d519
+    MEASURED MU8: ['G7']
+  MU9   code     red=G1,G2,G7,G9          declared=G1,G2,G7,G9          OK digest=cd84b349a53a33ce
+    MEASURED MU9: ['G1', 'G2', 'G7', 'G9']
+  MU10  savedata red=G8                   declared=G8                   OK digest=19a8e3ef07621a17
+    MEASURED MU10: ['G8']
+  MU11  savefile red=G8                   declared=G8                   OK digest=336e4c34b8d2e1a9
+    MEASURED MU11: ['G8']
+  MU12  algo     red=G2                   declared=G2                   OK digest=704a4e14ad0d9d39
+    MEASURED MU12: ['G2']
+  MU13  algo     red=G1,G2,G6,G9          declared=G1,G2                MISMATCH digest=4bd770449ce97b29
+    MEASURED MU13: ['G1', 'G2', 'G6', 'G9']
+  MU14  algo     red=G3                   declared=G3                   OK digest=45b22dfefb05745a
+    MEASURED MU14: ['G3']
+  MU15  algo     red=G2,G4                declared=G2,G4                OK digest=4a5d8fa017c06f09
+    MEASURED MU15: ['G2', 'G4']
+  MU16  algo     red=NO-OP                declared=NO-OP                OK digest=0f98c240a56919a7
+    MEASURED MU16: []
+  MU17  algo     red=G2                   declared=G2                   OK digest=e963825cd6dd99b6
+    MEASURED MU17: ['G2']
+  MU18  code     red=G6                   declared=G6                   OK digest=6c37b05e4463c4cc
+    MEASURED MU18: ['G6']
+  MU19  code     red=G2,G4                declared=G2,G4                OK digest=249ebe409ce751eb
+    MEASURED MU19: ['G2', 'G4']
+  MU20  code     red=G2                   declared=G2                   OK digest=54164bd60d525087
+    MEASURED MU20: ['G2']
+  MU21  pe       red=NO-OP                declared=NO-OP                OK digest=66595e09a651a94d
+    MEASURED MU21: []
+  MU22  code     red=G5                   declared=G5                   OK digest=614b00199bd9e9f6
+    MEASURED MU22: ['G5']
+  MU23  code     red=G3                   declared=G1,G2,G3             MISMATCH digest=7c1f8df028cf8508
+    MEASURED MU23: ['G3']
+HARNESS 19/21 scored OK, 2 NO-OP, 2 MISMATCH/CRASH
+DIGEST eac78259c24384bc
+== M326 mutate: 21/23 ==
+sweep rc=1
