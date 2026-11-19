@@ -112,6 +112,15 @@ a merged PR with `NEXT_PROMPT.md` under 15,300 B.
 cron?" is answered by `jobs.json` (`state`, `enabled`, `next_run_at`) plus the newest `executions` row — a job resumed
 an hour ago is still running, and offering to resume it reads as not having looked.
 
+**Estimate progress from the repo's ledgers, never from a recalled prior estimate.** Read the BUILD_SPINE rung
+ladder (what each rung proved, where it stops), the `sim/` module inventory (what is actually built), `git log`
+velocity (merged PRs/day over the last few days), and grep NAMED.md for each candidate subsystem (combat, tech,
+victory, AI execution…) — a ZERO-hit grep names the untouched territory that dominates the range. Give
+rounds-left ranges per significant milestone and convert at TWO paces (operator-driven continuous chain vs the
+autonomous cadence alone); name the unexplored-subsystem risk explicitly. The ladder past the last authored rung
+is unwritten by design — estimates are subsystem-gap based, not rung counts. "Runnable" means headless per the
+spine's own scope; a human-playable UI is a separate project, not an estimate target.
+
 **Answer meta-questions about the transcript itself by querying the message store, not by searching its text.**
 "How many times was context compressed?", "how many calls did this session run?" are exact rows in
 `~/.hermes/state.db`: table `messages` (`id, session_id, role, content, tool_name, timestamp`) and table `sessions`
@@ -296,12 +305,19 @@ milestone per merge and three acceptance invocations, not one question per step.
   proves they COVER. A row with no mutant is INFERRED/OPEN until pinned + mutated. Tracers/classifiers also get
   an ALGORITHM mutant (a between-push reload for a def-walk tracer): instruction/data mutants cannot catch a
   wrong trace position. Depth: `references/instrument-laws.md` §Algorithm mutants + the coverage law.
-- Review pipeline (s291, Greptile credits exhausted): `scripts/review_lint.py --id <id>` at close (mechanical
-  claim->mutant / digest-printed / citation-line checks; fixtures `test_review_lint.py` 7/7), then
-  `scripts/ai_review.py <n>` after submit — a FRESH-CONTEXT Strata review (replay-validated on the #309/#311
-  findings: caught the algorithmic + coverage classes incl. the deepest bug; the definition-mismatch class is
-  checklist-targeted in the prompt). Triage rule unchanged; the human owns the merge. Evidence + constraints:
-  `docs/AI-REVIEW.md`.
+- Review pipeline (external review credits exhausted): `scripts/review_lint.py --id <id>` at close — mechanical
+  checks: every V row names a mutant (meta-row exemption needs the ACCEPT/REVIEW prefix AND a harness/digest
+  marker in the row), cited mutants exist, cited CODE mutants' patch addresses appear in the instrument source,
+  each `digest <hex>` is printed in the SAME ROW's cited evidence, citations carry :line. SCOPE: naming /
+  existence / address-contact / digest-presence — the row->gate SEMANTIC relationship stays with the reviewer;
+  state that limit, don't oversell the lint. Fixtures `test_review_lint.py` 12/12: every check bites on a bad
+  fixture AND passes on a good one. A failing fixture is as likely a FIXTURE bug (mutant-id collision with
+  another test, a bypass row that still cites a mutant, the unrelated file cited in the same row) as a checker
+  bug — debug the fixture before the checker. Then `scripts/ai_review.py <n>` after submit — a FRESH-CONTEXT
+  Strata review, replay-validated against known pre-fix findings (caught the algorithmic + coverage classes;
+  the definition-mismatch class is checklist-targeted in the prompt). It flags output-cap truncation (warning
+  banner + exit 2) — re-run with a larger cap before triaging a truncated review. Triage rule unchanged; the
+  human owns the merge. Evidence + constraints: `docs/AI-REVIEW.md`.
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (warn; gate FAILs 16,000) — the unattended kickoff's cap-triage trigger. `evidence.py budget`
   prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
   used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate
