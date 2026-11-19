@@ -1067,3 +1067,13 @@ M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +
 
   (chain 2's footing line, moved not deleted: `#321` put it in the hot doc, the hot doc hit the warn, so it
    sits here with its numbers intact and `NAMED ## M320` + `SESSION_NOTES ## Session 294-chain2` still govern)
+
+## §trim-s297 (a) the M323 result one-liner, VERBATIM from the last line of NEXT_PROMPT.md
+
+```
+M323 RESULT (s295-chain2, STATIC, post-review): ds:0x985afc = ROUND counter - 336 refs (W5/T59/R272; dword 333/word 1/byte 2); writers init0 FUN_005a0fa0 / +1 FUN_0051f320 / year-sync FUN_004e0350 / rand{30,60,80} FUN_0059ce10; year=round+2100 (FUN_005b2c00, start-year 2100 @0x92bf68). 13/13 digest 136841406b5bee5b (evidence/m323_round_census.txt:536); harness 31/31+1. FULL: NAMED.md ## M323 + SESSION_NOTES s295-chain2.
+```
+
+  (chain 2's M323 footing line, moved not deleted at the M324 fire: the hot doc sat at 12,188 B over the
+   12,000 warn; the line's numbers live on here, and `NAMED ## M323` + `SESSION_NOTES ## Session 295-chain2`
+   still govern)

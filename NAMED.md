@@ -1283,6 +1283,19 @@ Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de
 Acceptance `python3 -u scripts/m314_tour_family.py` -> **18/18**, digest cf54a7ca907344c6, x2 identical; `scripts/m314_mutate.py` -> **27/27** (MERGED as #299, main e638772; the squash title's "20/20" is the pre-review harness - this line governs).
 REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k=full check name vs detail=short keys -> every lookup empty) -> now hashes name+verdict+detail; A4b pump check was decorative (`parse_text` keeps mnemonic separate, so the `^push 0x..$` regex on ops matched nothing -> `all([])` true) -> bare-operand push census + pumpA x3 / pumpB x1 call-site counts pinned; A3 claimed a `je` it never read -> now entry-relative pins (cmp +0x9/+0x9/+0x29, je +0xD/+0xD/+0x2D, je-target = add-10, mov = add-3); A3b inferred abs() from neg/sub COUNTS -> 11-instruction sequence pinned with jl/jmp targets; A6b de-duplicated owners so a 6th call in a listed fn stayed green -> 5 call-site addresses pinned; token row said 26 quoted where evidence said 24 quoted + 2 named + 5 forwarded -> A1b now pins the exact 24+2+5 breakdown (the 2 unexplained entries were `param_1`/`param_2` forwards). New mutants MU2b/MU5/MU5b/MU5c/MU5d/MU7j/MU9*/MU15b/MU18* cover each repaired fact.
 
+## M324 (s296-chain2, STATIC, 8/8) - ROUND carried RAW, re-derive DEAD
+
+| claim | evidence | conf |
+|---|---|---|
+| hdr R/W 59688a/596883 dst 985ab8 sz 31c; ROUND=blob+44 YEAR=+48; sole imm carrier | G1/G2 `evidence/m324_save_carry.txt:82-83,63` | V MU1/MU2/MU3/MU10/MU11 |
+| block+220 8/8: 596a91->94d430 sz 105e0=8*20bc; fac1436 596ed6->927590 sz 2ce0 | G1/G3 `:82,84` | V MU4/MU4b/MU5 |
+| prefix12; @50=50 @54=2150 @44=67 @48=18 @310=9; sha==M302 save | G5 `:86` | V MU8/MU9 |
+| g999fa4 W={442642,626fd7}; fold [this+a24]*20bc+[94d650] MAX-gated; not carried; 0 callers/0 AT | G4 `:85,70-78` | V MU6/MU14/MU16 |
+| closure 440, 0 writers; 4e0350 callers {514ecf,517e3a} absent; mode=0; header first; M272 -39->50 | G6/G7 `:87-88,79` | V MU7/MU12/MU13/MU15/MU17 |
+| R1/R2 DEAD | G8 `:89-91` | V MU1/MU2/MU3/MU7/MU8/MU17 |
+| ACCEPT 8/8 b21bf8413f94e43b x2 (`:92`,`_rerun.txt:92`); 19/19+1 f8e16fde85c1ea18 (`m324_mutate.txt:21`) | cited | V |
+| OPEN: g999fa4/64c360; block+220 noun; feed arrival; byte-swap | - | lead |
+
 ## M323 (s295-chain2, STATIC, 13/13, 31/31+1) - ds:0x985afc=ROUND counter; year=round+2100
 
 | claim | evidence | conf |
@@ -1293,7 +1306,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | M320 ==0@59f1a0; M305 &3==bl(1)@51f711 def-set pinned; M317 >75@55840d; M177 age<16 | G5/G8 `:527,530,438,502` | V MU5/MU14/MU15/MU16/MU21/MU22/MU25/MU29 |
 | live round=50/year=2150; rivals dead | G7/R1-R3 `:529,533-535` | V MU7/MU24; R1 MU10/MU17, R2 MU13/MU18/MU23, R3 MU12/MU13/MU23 |
 | ACCEPT 13/13 digest 136841406b5bee5b x2 (`evidence/m323_round_census.txt:536`); harness 31/31+1 a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32`) | as cited | V |
-| OPEN: rand-start noun; g999fa4; save-carry; resolver linear-static | - | lead |
+| OPEN: rand-start noun; g999fa4 (writers pinned M324); ~~save-carry~~ ANSWERED M324 (raw header blob); resolver linear-static | - | lead |
 
 ## M320 (s294-chain2, STATIC, 12/12, 26/26+1) - siblings: 128-region ladder, 512 arrays, reset/rebuild
 

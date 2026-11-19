@@ -1,0 +1,21 @@
+MU1    code     declared=['G1', 'G2', 'G8']           observed=['G1', 'G2', 'G8']           OK
+MU2    code     declared=['G1', 'G2', 'G8']           observed=['G1', 'G2', 'G8']           OK
+MU3    code     declared=['G1', 'G2', 'G8']           observed=['G1', 'G2', 'G8']           OK
+MU4    code     declared=['G1', 'G3']                 observed=['G1', 'G3']                 OK
+MU4b   code     declared=['G1']                       observed=['G1']                       OK
+MU5    code     declared=['G1', 'G3']                 observed=['G1', 'G3']                 OK
+MU6    code     declared=['G4']                       observed=['G4']                       OK
+MU7    code     declared=['G6', 'G7', 'G8']           observed=['G6', 'G7', 'G8']           OK
+MU8    savedata declared=['G5', 'G8']                 observed=['G5', 'G8']                 OK
+MU9    evdata   declared=['G5']                       observed=['G5']                       OK
+MU10   algo     declared=['G1', 'G2', 'G3', 'G8']     observed=['G1', 'G2', 'G3', 'G8']     OK
+MU11   algo     declared=['G1', 'G2', 'G3', 'G8']     observed=['G1', 'G2', 'G3', 'G8']     OK
+MU12   code     declared=['G7']                       observed=['G7']                       OK
+MU13   code     declared=['G7']                       observed=['G7']                       OK
+MU14   code     declared=['G4']                       observed=['G4']                       OK
+MU15   algo     declared=['G6']                       observed=['G6']                       OK
+MU16   code     declared=['G4']                       observed=['G4']                       OK
+MU17   code     declared=['G8']                       observed=['G8']                       OK
+MU18   noop     declared=[]                           observed=[]                           NO-OP
+digest f8e16fde85c1ea18
+== M324 MUTATE: 19/19 scored + 1 NO-OP ==

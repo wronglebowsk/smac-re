@@ -132,4 +132,5 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
-M323 RESULT (s295-chain2, STATIC, post-review): ds:0x985afc = ROUND counter - 336 refs (W5/T59/R272; dword 333/word 1/byte 2); writers init0 FUN_005a0fa0 / +1 FUN_0051f320 / year-sync FUN_004e0350 / rand{30,60,80} FUN_0059ce10; year=round+2100 (FUN_005b2c00, start-year 2100 @0x92bf68). 13/13 digest 136841406b5bee5b (evidence/m323_round_census.txt:536); harness 31/31+1. FULL: NAMED.md ## M323 + SESSION_NOTES s295-chain2.
+M323: NAMED ## M323; VERBATIM §trim-s297 (a).
+M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; rederive DEAD (closure 440, writers 0). 8/8 b21bf8413f94e43b (m324_save_carry.txt:92); 19/19+1. NAMED ## M324.
