@@ -35,7 +35,7 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.environ.get("M321_TEXT", os.path.join(REPO, "scratch", "m574", "text.txt"))
 EXE = os.environ.get("M321_EXE", os.path.join(REPO, "programs", "terran.exe"))
-IDX = os.path.join(REPO, "ghidra_out", "index.csv")
+IDX = os.environ.get("M321_INDEX", os.path.join(REPO, "ghidra_out", "index.csv"))
 
 MEMO = 0x68CBB4
 IDXG = 0x68CBB0
@@ -138,7 +138,7 @@ def read_va(va, n):
     optsz = int.from_bytes(blob[pe + 20:pe + 22], "little")
     opt = pe + 24
     magic = int.from_bytes(blob[opt:opt + 2], "little")
-    imagebase = int.from_bytes(blob[opt + 34:opt + 38], "little") if magic == 0x10B \
+    imagebase = int.from_bytes(blob[opt + 28:opt + 32], "little") if magic == 0x10B \
         else int.from_bytes(blob[opt + 24:opt + 32], "little")
     sec = opt + optsz
     for i in range(nsec):
@@ -150,7 +150,7 @@ def read_va(va, n):
         if va0 <= va < va0 + max(vsz, rsz):
             off = raw + (va - va0)
             return blob[off:off + n]
-    raise SystemExit("VA 0x%x outside every section" % va)
+    raise ValueError("VA %#x outside every section" % va)
 
 
 def cstr(va, cap=64):
@@ -168,6 +168,17 @@ def disp_of(op):
     return (m.group(1), int(m.group(2), 0)) if m else (None, None)
 
 
+def stores_to(op, target):
+    """True if this operand list WRITES the dword global `target`. objdump emits the same
+    instruction in two encodings - `mov DWORD PTR ds:X,reg` and `mov ds:X,reg` (the a3/89
+    forms) - and a detector that only reads the DWORD-shaped face silently misses every
+    short-form site (M311's six index stores are 5 + 1 here)."""
+    first = op.split(",")[0].strip()
+    if first.startswith("ds:"):
+        return ds_of(first) == target
+    return first.startswith(("DWORD PTR ", "DWORD ")) and ds_of(first) == target
+
+
 def is_store(mn, op):
     """objdump `dst,src`: a write to the first operand."""
     first = op.split(",")[0].strip()
@@ -176,25 +187,35 @@ def is_store(mn, op):
                       ("BYTE", "WORD", "DWORD", "QWORD")) or first.startswith("["))
 
 
+CLOBBER = ("eax", "ecx", "edx")
+NONWRITE = ("cmp", "test", "push", "pusha", "popf")
+ALIAS = {"al": "eax", "ah": "eax", "ax": "eax", "cl": "ecx", "ch": "ecx", "cx": "ecx",
+         "dl": "edx", "dh": "edx", "dx": "edx", "bl": "ebx", "bx": "ebx", "si": "esi",
+         "di": "edi", "bp": "ebp"}
+
+
 def back_def(a, reg, limit=40):
-    """nearest address <= a that WRITES reg (coarse: any insn whose first operand is reg),
-    stopping at the function entry. Returns (addr, mnemonic, op) or None."""
+    """Nearest preceding instruction that WRITES `reg`, scanning straight back to the
+    function entry. Two hazards are honoured (both bite this census when ignored): a CALL
+    kills a CALLER-SAVED register, so a `mov eax,ds:0x8f0d60` several blocks up is NOT a
+    def; and cmp/test/push name a register without writing it. Straight-line only - a
+    control-flow join is still an over-approximation, declared OPEN in the NAMED block."""
+    reg = ALIAS.get(reg, reg)
     e, end, _ = span(a)
     for x in reversed(neighbours(e, 0, a - e)):
-        if x > a:
+        if x >= a:
             continue
         m = at(x)
         if m is None:
             continue
         mn, op = m
-        first = op.split(",")[0].strip()
-        if x == a:
+        if mn == "call":
+            if reg in CLOBBER:
+                return None
             continue
-        if first == reg or (mn.startswith(("mov", "lea", "add", "sub", "xor", "or", "and"))
-                            and first == reg):
-            if mn in ("mov", "lea", "xor", "add", "sub", "or", "and", "sete", "setne",
-                      "movzx", "movsx", "cmovne", "cmove", "not", "neg", "inc", "dec"):
-                return x, mn, op
+        if mn in NONWRITE:
+            continue
+        if op.split(",")[0].strip() == reg:
             return x, mn, op
     return None
 
@@ -232,65 +253,81 @@ def main():
 
     # ---------------------------------------------------------------- T1 the 304 chain
     P("-- T1 the 304 multiply-chain (lea a,[i+i*8]; lea b,[i+a*2]; shl b,4) and its uses --")
-    chains = []
+    chains = []   # (lea1, lea2, shl, i, r1, r2, s1, s2, sh)
     for a in ADDRS:
         m = at(a)
         if not m or m[0] != "lea":
             continue
-        if not re.match(r"^\[([a-z0-9]+)\+\1\*8\]$", m[1].split(",", 1)[-1].strip()):
+        mm = re.fullmatch(r"\[([a-z0-9]+)\+\1\*(\d+)\]", m[1].split(",", 1)[-1].strip())
+        if not mm:
             continue
+        bi, s1 = mm.group(1), int(mm.group(2))
         r1 = m[1].split(",")[0].strip()
-        base_i = m[1].split("[")[1].split("+")[0].strip()
-        n = neighbours(a, 0, 24)
-        for x in n[1:]:
+        for x in neighbours(a, 0, 24):
+            if x <= a:
+                continue
             mx = at(x)
             if not mx or mx[0] != "lea":
                 continue
-            ops = mx[1].split(",")[-1].strip().strip("[]")
-            if ops != "%s+%s*2" % (base_i, r1):
+            mmx = re.fullmatch(r"\[([a-z0-9]+)\+([a-z0-9]+)\*(\d+)\]",
+                               mx[1].split(",", 1)[-1].strip())
+            if not mmx or mmx.group(1) != bi or mmx.group(2) != r1:
                 continue
-            r2 = mx[1].split(",")[0].strip()
+            s2, r2 = int(mmx.group(3)), mx[1].split(",")[0].strip()
             for y in neighbours(x, 0, 16):
+                if y <= x:
+                    continue
                 my = at(y)
-                if not my or my[0] != "shl" or y <= x:
+                if not my or my[0] != "shl" or my[1].split(",")[0].strip() != r2:
                     continue
-                if my[1].split(",")[0].strip() != r2:
-                    continue
-                sh = int(my[1].split(",")[1].strip(), 0)
-                if sh == 4:
-                    chains.append((a, x, y, base_i, r1, r2))
-                    break
-            if chains and chains[-1][2] == y if False else False:
-                pass
+                cnt = my[1].split(",")[-1].strip()
+                if not re.fullmatch(r"0x[0-9a-f]+|\d+", cnt):
+                    continue        # a CL-counted shift is not a constant fold
+                sh = int(cnt, 0)
+                chains.append((a, x, y, bi, r1, r2, s1, s2, sh))
+                break
             break
-    mults = set()
+
+    def mult(c):
+        """(i + i*s1) -> r1 ; (i + r1*s2) -> r2 ; r2 << sh  == the multiplier, PARSED."""
+        return (1 + (1 + c[6]) * c[7]) << c[8]
+
+    hist = {}
     for c in chains:
-        mults.add(19 << 4)
+        hist[mult(c)] = hist.get(mult(c), 0) + 1
+    P("   chains=%d  multiplier histogram (parsed from the scale+shift fields): %s"
+      % (len(chains), sorted(hist.items(), key=lambda kv: (-kv[1], kv[0]))[:6]))
+    c304 = [c for c in chains if mult(c) == 304]
     uses = {}
-    for a, x, y, bi, r1, r2 in chains:
+    for c in c304:
+        y = c[2]
         for z in neighbours(y, 0, 32):
             if z <= y:
                 continue
             mz = at(z)
             if not mz:
                 continue
-            for mm in re.finditer(r"\+(-?0x[0-9a-f]{6,8})\]", mz[1]):
-                k = int(mm.group(1), 0)
+            for mmk in re.finditer(r"\+(-?0x[0-9a-f]{6,8})\]", mz[1]):
+                k = int(mmk.group(1), 0)
                 if 0x900000 <= k < 0x9A0000:
                     uses[k] = uses.get(k, 0) + 1
-    P("   chains=%d  evaluated multiplier (9x*2+x)<<4 = %d  stride of base_array = 0x130 = %d"
-      % (len(chains), 19 * 16, 304))
-    P("   global displacements the chain result feeds (0x9xxxxx only): %s"
-      % sorted(uses.items(), key=lambda kv: (-kv[1], kv[0]))[:12])
-    p348a = at(0x4E347B), at(0x4E347E), at(0x4E3481), at(0x4E3484), at(0x4E348A)
-    P("   the fold that FEEDS ds:0x8f0d60 (0x4e347b..0x4e348a): %s"
-      % " | ".join("%s %s" % m for m in p348a))
+    P("   304-chains=%d; global displacements they feed: %s"
+      % (len(c304), [("%#x" % k, v) for k, v in
+                     sorted(uses.items(), key=lambda kv: (-kv[1], kv[0]))[:8]]))
+    # the one chain that actually feeds ds:0x8f0d60: its shl result must be the register
+    # the add-of-0x95da10 modifies, and that add must sit right before the store.
+    feed = [c for c in c304 if c[2] < 0x4E3484 and 0x4E3484 - c[2] <= 16
+            and at(0x4E3484)[1].split(",")[0].strip() == c[5]
+            and at(0x4E3484)[0] == "add" and at(0x4E3484)[1].endswith("0x95da10")]
+    P("   chain that feeds ds:0x8f0d60 (shl at %s, then `add %s,0x95da10` @0x4e3484): %d"
+      % ([hex(c[2]) for c in feed], "edx", len(feed)))
+    P("   the store itself 0x4e348a: %s %s" % at(0x4E348A))
     P("   idiom identity: 0x%x - 0x%x = %d = 0x%x (the field the arrival test reads)"
       % (FIELD38, BASE, FIELD38 - BASE, FIELD38 - BASE))
-    unit_stride, base_stride = 0x34, 0x130
-    P("   RIVAL (the record pointer is a unit row): unit stride 0x%x=%d vs measured fold %d "
-      "-> %s" % (unit_stride, unit_stride, 19 * 16,
-                 "REJECTED" if 19 * 16 != unit_stride else "NOT REJECTED"))
+    unit_stride = 0x34
+    P("   RIVAL (the record pointer is a unit row): unit stride 0x%x=%d vs the measured "
+      "fold %d -> %s" % (unit_stride, unit_stride, 304,
+                         "REJECTED" if 304 != unit_stride else "NOT REJECTED"))
 
     # ------------------------------------------------------------- T2 store lockstep
     P("-- T2 stores to the index ds:0x68cbb0 and the pointer ds:0x8f0d60 (image-wide) --")
@@ -299,10 +336,10 @@ def main():
         m = at(a)
         if not m or m[0] != "mov":
             continue
-        d = ds_of(m[1])
-        if d == IDXG and m[1].split(",")[0].strip().startswith("DWORD"):
+        d = None
+        if m[0] == "mov" and stores_to(m[1], IDXG):
             idxst.append(a)
-        if d == REC and m[1].split(",")[0].strip().startswith("DWORD"):
+        if m[0] == "mov" and stores_to(m[1], REC):
             recst.append(a)
     P("   index stores=%d %s" % (len(idxst), [hex(x) for x in idxst]))
     P("   pointer stores=%d %s" % (len(recst), [hex(x) for x in recst]))
@@ -320,9 +357,9 @@ def main():
         m = at(a)
         if not m or m[0] != "mov":
             continue
-        if ds_of(m[1]) != MEMO or not m[1].split(",")[0].strip().startswith("DWORD"):
+        if not stores_to(m[1], MEMO):
             continue
-        reg = m[1].split(",")[1].strip()
+        reg = m[1].split(",")[-1].strip()
         bd = back_def(a, reg, limit=40)
         fed = bd and ds_of(bd[2]) == IDXG
         e, end, name = span(a)
@@ -390,142 +427,197 @@ def main():
     arrrows = []
     for a, r in sites:
         bd = back_def(a, r, limit=40)
+        defstr = "NONE" if not bd else "%s %s" % (bd[1], bd[2])
         e, end, name = span(a)
-        # the jcc right after the test, and the call it skips over
+        # the jcc right after the test, and the call its je skips over
         nxt = [x for x in neighbours(a, 0, 8) if x > a]
         j = at(nxt[0]) if nxt else None
-        tgt = int(j[1].split()[-1], 16) if j and j[1].split() else None
+        isje = bool(j) and j[0].startswith("j")
+        tgt = int(j[1].split()[-1], 16) if isje and j[1].split() else None
         gated, seq = calls_after(a, {OWNER["FUN_004f41f0"]}, window=48)
         gc = gated[0][1]
-        clears = [x for x in neighbours(a, 0, 48) if x > a and (tgt is None or x < tgt)
-                  and at(x) and at(x)[0] == "mov" and DISP_RE.search(at(x)[1])
+        clears = [(disp_of(at(x)[1])[1], at(x)[1].split(",")[-1].strip())
+                  for x in neighbours(a, 0, 64)
+                  if x > a and tgt is not None and x < tgt and at(x)
+                  and at(x)[0] == "mov" and disp_of(at(x)[1])[0]
                   and disp_of(at(x)[1])[1] in (0x78, 0x7C, 0x80)]
-        arrrows.append((a, name, bd[1:] if bd else None, tgt is not None and gc is not None
-                        and gc < tgt, sorted(disp_of(at(x))[1] for x in clears),
-                        (tgt is not None) and (tgt > (gc or 0))))
-        P("   0x%x in %-14s r=%s def=%s | je->0x%x gated call of FUN_004f41f0 at %s "
-          "(skipped by the je: %s) | record stores cleared first: %s"
-          % (a, name, r, ("%s %s" % bd[1:3]) if bd else "NONE", tgt or 0,
-             hex(gc) if gc else "none", gc is not None and tgt is not None and gc < tgt,
-             [hex(d) for d in sorted(disp_of(at(x))[1] for x in clears)]))
+        zeroed = sorted({d for d, v in clears})
+        arrrows.append((a, name, defstr, bool(isje and gc is not None and tgt is not None
+                                             and gc < tgt), zeroed, tgt, gc))
+        P("   0x%x in %-13s r=%-3s nearest def of r: %-28s | %s -> je 0x%x | the call of "
+          "FUN_004f41f0 at %s lies ON THE FALL-THROUGH (je skips it: %s) | before the je it "
+          "zeroes record fields %s"
+          % (a, name, r, defstr, (j[0] + " " + j[1]) if j else "no jcc", tgt or 0,
+             hex(gc) if gc else "none", arrrows[-1][3], [hex(d) for d in zeroed]))
 
-    # --------------------------------------------------------- T5 provenance of bit 0x40
-    P("-- T5 every write to the record field +0x38 (both idioms), effect on bit 6 --")
-    def bit6(mn, mask, fullword=False):
+    trip = {(re.search(r"ds:(0x[0-9a-f]+)", x[2]).group(1) if re.search(r"ds:(0x[0-9a-f]+)", x[2]) else None,
+             0x38, 0x40) for x in arrrows}
+    P("   RIVAL (three look-alike tests on three different fields): distinct "
+      "(def-global, disp, mask) triples = %d -> %s"
+      % (len(trip), "REJECTED: one field, one pointer, three callers" if len(trip) == 1
+         else "NOT REJECTED"))
+    P("-- T5 writes to base_array field +0x38 (dword): both address idioms --")
+
+    def eff(mn, mask):
+        if mask is None:
+            return "FULLWORD-untraced"
         if mn == "or":
-            return "SETS" if mask & 0x40 else "keeps"
+            return "SETS bit6" if mask & 0x40 else "preserves bit6"
         if mn == "and":
-            return "CLEARS" if not (mask & 0x40) else "keeps"
+            return "CLEARS bit6" if not (mask & 0x40) else "preserves bit6"
         if mn == "mov":
-            return "FULLWORD" if fullword else "SETS?"
+            return "OVERWRITES bit6=%d" % bool(mask & 0x40)
         return "other"
 
-    writes = []
+    WRMN = ("mov", "or", "and", "xor", "not", "neg", "add", "sub", "inc", "dec")
+    recw, foldw = [], []
     for a in ADDRS:
         m = at(a)
-        if not m:
+        if not m or m[0] not in WRMN:
             continue
         mn, op = m
+        if not op.split(",")[0].strip().startswith("DWORD"):
+            continue
         r, d = disp_of(op)
-        if mn == "mov" and ds_of(op) is None and (d == 0x38 and op.split(",")[0].strip()
-                                                  .startswith("DWORD")):
-            imm = op.split(",")[-1].strip()
-            if re.fullmatch(r"0x[0-9a-f]+", imm):
-                writes.append((a, "rec", r, mn, int(imm, 0), "FULLWORD-imm"))
-                continue
-            if "ds:" in op:
-                continue
-            writes.append((a, "rec", r, mn, None, "FULLWORD-reg"))
-            continue
-        k = re.search(r"\+(-?0x[0-9a-f]{6,8})\]", op)
-        if k and int(k.group(1), 0) == FIELD38 and mn in ("mov", "or", "and", "not"):
-            first = op.split(",")[0].strip()
-            if not first.startswith("DWORD"):
-                continue
-            imm = op.split(",")[-1].strip()
-            mask = int(imm, 0) if re.fullmatch(r"0x[0-9a-f]+", imm) else None
-            writes.append((a, "folded", r, mn, mask, bit6(mn, mask or 0, mask is None)))
-    # the record-view writes are only the ones whose register is the record pointer
-    recview = []
-    for a, kind, r, mn, mask, note in writes:
-        if kind != "rec":
-            continue
-        bd = back_def(a, r, limit=40)
-        ok = bool(bd) and ds_of(bd[2]) == REC
-        recview.append((a, r, mn, mask, note, ok))
-        P("   0x%x rec-view [%s+0x38] %-4s %-12s bit6=%-11s reg from ds:0x8f0d60=%s"
-          % (a, r, mn, hex(mask) if mask is not None else "-", note, ok))
-    folded_w = [(a, mn, mask, note) for a, kind, r, mn, mask, note in writes if kind == "folded"]
-    for a, mn, mask, note in folded_w:
-        P("   0x%x folded [..+0x95da48] %-4s %-12s bit6=%s" % (a, mn,
-          hex(mask) if mask is not None else "-", note))
-    setter40 = [a for a, kind, r, mn, mask, note in writes if kind == "rec" and mn == "or"
-                and mask and mask & 0x40] + \
-               [a for a, mn, mask, note in folded_w if mn == "or" and mask and mask & 0x40]
-    P("   sites that OR bit 0x40 into the field: %s" % [hex(x) for x in setter40])
+        imm = op.rsplit(",", 1)[-1].strip()
+        mask = int(imm, 0) if re.fullmatch(r"0x[0-9a-f]+", imm) else None
+        if d == 0x38:
+            bd = back_def(a, r)
+            recw.append((a, r, mn, mask, eff(mn, mask),
+                         bool(bd) and ds_of(bd[2]) == REC, bd[0] if bd else None))
+        else:
+            k = re.search(r"\+(-?0x[0-9a-f]{6,8})\]", op)
+            if k and int(k.group(1), 0) == FIELD38:
+                foldw.append((a, r, mn, mask, eff(mn, mask)))
+    recok = [x for x in recw if x[5]]
+    tally = {}
+    for x in [(x[4]) for x in recok] + [x[4] for x in foldw]:
+        tally[x] = tally.get(x, 0) + 1
+    P("   [reg+0x38] dword writes image-wide=%d; accepted as THIS field (nearest def of the "
+      "base register is ds:0x8f0d60)=%d; rejected (some other object's +0x38)=%d"
+      % (len(recw), len(recok), len(recw) - len(recok)))
+    P("   folded-view writes [reg+0x95da48]=%d" % len(foldw))
+    P("   effect on bit 6 (accepted views): %s" % sorted(tally.items()))
+    for x in recok:
+        if x[3] is not None:
+            P("   0x%x rec-view %-4s %-10s -> %s" % (x[0], x[2], hex(x[3]), x[4]))
+    for x in foldw:
+        P("   0x%x folded  %-4s %-10s -> %s" % (x[0], x[2],
+          hex(x[3]) if x[3] is not None else "-", x[4]))
+    fw = [hex(x[0]) for x in recok if x[3] is None]
+    P("   untraced FULLWORD stores through the record view (a whole-dword mov can set or "
+      "clear bit 6; their SOURCES are not traced this round - OPEN): %d %s"
+      % (len(fw), fw[:14] + (["..."] if len(fw) > 14 else [])))
+    setter40 = [x[0] for x in recok if x[2] == "or" and x[3] and x[3] & 0x40] + \
+               [x[0] for x in foldw if x[2] == "or" and x[3] and x[3] & 0x40]
+    P("   the only sites that OR 0x40 into the field: %s" % [hex(x) for x in setter40])
 
-    P("-- T5b FUN_0041a8f0's round trip: record bits -> scratch ds:0x99aa38 -> record bits --")
+    P("-- T5b FUN_0041a8f0's round trip: field bits -> scratch ds:0x99aa38 -> field bits --")
     e, end, name = span(0x41A8F0)
     extract, writeback = [], []
+
+    def field_src(a, operand):
+        """Where does the tested operand come from? Either it IS [reg+0x38], or the register
+        was loaded from there by the nearest def. Returns (load_site, ptr_reg, how)."""
+        first = operand.split(",")[0].strip()
+        r, d = disp_of(operand)
+        if d == 0x38:
+            return a, r, "inline"
+        bd = back_def(a, ALIAS.get(first, first))
+        if bd:
+            r2, d2 = disp_of(bd[2])
+            if d2 == 0x38:
+                return bd[0], r2, "via-def %#x" % bd[0]
+        return None
+
     for a in neighbours(e, 0, end - e):
         m = at(a)
-        if not m:
+        if not m or m[0] != "test":
             continue
-        mn, op = m
-        if mn == "test":
-            r, d = disp_of(op)
-            k = op.rstrip().rsplit(",", 1)
-            mask = int(k[-1].strip(), 0) if re.fullmatch(r" 0x[0-9a-f]+", k[-1]) else None
-            if d == 0x38 and mask:
-                nxt = [x for x in neighbours(a, 0, 12) if x > a][:3]
-                bit = None
-                for x in nxt:
-                    mx = at(x)
-                    if mx and mx[0] == "or" and mx[1].split(",")[0].strip() == "al":
-                        bit = int(mx[1].split(",")[1].strip(), 0)
-                        break
-                extract.append((a, mask, bit))
-            if ds_of(op) == SEL and mask:
-                nxt = [x for x in neighbours(a, 0, 12) if x > a][:3]
-                for x in nxt:
-                    mx = at(x)
-                    if mx and mx[0] in ("or", "and") and DISP_RE.search(mx[1]) \
-                            and disp_of(mx[1])[1] == 0x38:
-                        mm = mx[1].rstrip().rsplit(",", 1)
-                        writeback.append((a, mask, mx[0],
-                                          int(mm[-1].strip(), 0) if re.fullmatch(
-                                              r" 0x[0-9a-f]+", mm[-1]) else None))
-                        break
-    P("   extraction tests of [..+0x38] (mask -> scratch bit): %s"
-      % [(hex(m), hex(b) if b else None) for _, m, b in extract])
-    P("   write-backs gated on the scratch (scratch bit -> op on [..+0x38]): %s"
-      % [(hex(m), o, hex(v) if v else None) for _, m, o, v in writeback])
+        v = m[1].rsplit(",", 1)[-1].strip()
+        if not re.fullmatch(r"0x[0-9a-f]+", v):
+            continue
+        mask = int(v, 0)
+        fs = field_src(a, m[1])
+        if fs:
+            bit = None
+            for x in neighbours(a, 0, 12):
+                if x <= a:
+                    continue
+                mx = at(x)
+                if not mx:
+                    continue
+                if mx[0] in ("or", "and") and mx[1].split(",")[0].strip() == "al":
+                    bit = (mx[0], int(mx[1].rsplit(",", 1)[-1].strip(), 0))
+                    break
+                if mx[0] == "test":
+                    break
+            pdef = back_def(fs[0], fs[1]) if fs[1] else None
+            extract.append((a, mask, bit, fs[2],
+                            ds_of(pdef[2]) if pdef else None))
+            continue
+        if ds_of(m[1]) == SEL:
+            wb = None
+            for x in neighbours(a, 0, 24):
+                if x <= a:
+                    continue
+                mx = at(x)
+                if not mx:
+                    continue
+                if mx[0] in ("or", "and") and disp_of(mx[1])[1] == 0x38:
+                    wb = (mx[0], int(mx[1].rsplit(",", 1)[-1].strip(), 0), x)
+                    break
+                if mx[0] in ("test", "call"):
+                    break
+            writeback.append((a, mask, wb))
+    P("   extraction: test <field+0x38>,mask -> al op (mask, scratch bit, how the tested "
+      "operand was loaded, ptr-global of that load): %s"
+      % [(hex(x), hex(mk), b, how, ("%#x" % g) if g else None)
+         for x, mk, b, how, g in extract])
+    P("   write-back: test ds:0x99aa38,bit -> op on [rec+0x38]: %s"
+      % [(hex(x), hex(mk), (wb[0], hex(wb[1]), hex(wb[2])) if wb else None)
+         for x, mk, wb in writeback])
+    pairs = {(mk, b[1]) for _, mk, b, _h, _g in extract if b and b[0] == "or"}
+    back = {(mk, wb[1]) for _, mk, wb in writeback if wb and wb[0] == "or"}
+    P("   record bit -> scratch bit: %s" % sorted((hex(a), hex(b)) for a, b in pairs))
+    P("   scratch bit -> record bit: %s" % sorted((hex(a), hex(b)) for a, b in back))
+    P("   inverse on bit 0x40: extraction %s / write-back %s"
+      % ((0x40, 0x8) in pairs, (0x8, 0x40) in back))
 
     # ----------------------------------------------------------------- T6 callee gate
     P("-- T6 the callee re-tests the same bit on the same pointer --")
     e, end, name = span(OWNER["FUN_004f41f0"])
-    selfgate = []
+    selfgate, other40 = [], []
     for a in neighbours(e, 0, end - e):
         m = at(a)
-        if m and m[0] == "test" and "0x40" in m[1] and ("cl" in m[1].split(",")[0] or
-                                                        "BYTE" in m[1]):
-            bd = back_def(a, "ecx", limit=40)
-            ld = None
-            if bd:
-                r, d = disp_of(bd[2])
-                ld = (r, d, ds_of(at(back_def(bd[0], r, limit=40)[2]) if
-                                 back_def(bd[0], r, limit=40) else None))
-            selfgate.append((a, m[1], bd[0] if bd else None, bd[1:] if bd else None, ld))
-    for a, txt, ba, bm, ld in selfgate:
-        P("   0x%x %-22s fed by 0x%x %s" % (a, txt, ba or 0, bm))
+        if not m or m[0] != "test" or m[1].rsplit(",", 1)[-1].strip() != "0x40":
+            continue
+        r, d = disp_of(m[1])
+        reg = r if r else m[1].split(",")[0].strip()
+        chain = []
+        bd = back_def(a, reg)
+        if bd:
+            chain.append("%s %s" % (bd[1], bd[2]))
+            r2, d2 = disp_of(bd[2])
+            if d2 == 0x38 and r2:
+                b2 = back_def(bd[0], r2)
+                if b2:
+                    chain.append("%s %s" % (b2[1], b2[2]))
+                    if ds_of(b2[2]) == REC:
+                        selfgate.append((a, m[1], " <- ".join(chain)))
+        if not chain or "ds:0x8f0d60" not in chain[-1]:
+            other40.append((a, m[1]))
+    for a, txt, ch in selfgate:
+        P("   0x%x test %-18s <- %s" % (a, txt, ch))
+    P("   other `test ...,0x40` inside FUN_004f41f0 NOT traced to this field: %s"
+      % [(hex(a), t) for a, t in other40])
     digest_src = "\n".join(OUT).encode()
 
     # --------------------------------------------------------------------- gates
     G = {}
-    G["G1"] = (len(chains) >= 1 and 19 * 16 == 304 and FIELD38 - BASE == 56
-               and at(0x4E3484)[1].endswith("0x95da10") and at(0x4E348A)[1].startswith(
-                   "DWORD PTR ds:0x8f0d60") and unit_stride != 304
-               and uses.get(BASE, 0) + uses.get(BASE + 4, 0) > 0)
+    G["G1"] = (len(c304) > 100 and len(feed) == 1 and mult(feed[0]) == 304
+               and stores_to(at(0x4E348A)[1], REC) and uses.get(BASE, 0) > 0
+               and FIELD38 - BASE == 56 and unit_stride != 304)
     G["G2"] = (len(ownersites.get("FUN_004ee410", [])) == 2
                and len(ownersites.get("FUN_004f41f0", [])) == 2
                and all(s[2] for v in ownersites.values() for s in v))
@@ -536,10 +628,12 @@ def main():
     G["G4"] = (len(sites) == 3 and all(x[2] and "ds:0x8f0d60" in str(x[2]) for x in arrrows)
                and all(x[3] for x in arrrows) and all(x[4] == [0x78, 0x7C, 0x80]
                                                       for x in arrrows))
-    G["G5"] = (len(setter40) == 1 and hex(0x41AC34) in [hex(x) for x in setter40]
-               and any(m == 0x40 and v == 0x40 for _, m, o, v in writeback))
-    G["G6"] = len(selfgate) >= 1 and all(
-        "0x38" in str(x[4]) or "0x8f0d60" in str(x[3]) for x in selfgate)
+    G["G5"] = (setter40 == [0x41AC34] and (0x40, 0x8) in pairs and (0x8, 0x40) in back
+               and all(g in (REC, None) for _x, _mk, _b, _h, g in extract)
+               and (len(recw), len(recok), len(foldw)) == (108, 59, 9))
+    G["G6"] = len(selfgate) == 1
+    G["G7"] = (len(idxst) == 6 and len(recst) == 6
+               and all(len(d[1]) == 1 for d in dist) and len(sites) == 3)
     P("")
     P("== digest %s" % hashlib.sha256(digest_src).hexdigest()[:16])
     for k in sorted(G):

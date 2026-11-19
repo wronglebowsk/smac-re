@@ -1,0 +1,80 @@
+-- T1 the 304 multiply-chain (lea a,[i+i*8]; lea b,[i+a*2]; shl b,4) and its uses --
+   chains=1379  multiplier histogram (parsed from the scale+shift fields): [(304, 646), (52, 565), (44, 49), (84, 40), (3328, 19), (42, 14)]
+   304-chains=646; global displacements they feed: [('0x95da14', 253), ('0x95da12', 128), ('0x95da10', 122), ('0x95da9c', 94), ('0x95da40', 59), ('0x95da88', 55), ('0x95da16', 29), ('0x95da1a', 22)]
+   chain that feeds ds:0x8f0d60 (shl at ['0x4e3481'], then `add edx,0x95da10` @0x4e3484): 1
+   the store itself 0x4e348a: mov DWORD PTR ds:0x8f0d60,edx
+   idiom identity: 0x95da48 - 0x95da10 = 56 = 0x38 (the field the arrival test reads)
+   RIVAL (the record pointer is a unit row): unit stride 0x34=52 vs the measured fold 304 -> REJECTED
+-- T2 stores to the index ds:0x68cbb0 and the pointer ds:0x8f0d60 (image-wide) --
+   index stores=6 ['0x4e3476', '0x4e4dd0', '0x4efe8e', '0x4f21e0', '0x4f5a7c', '0x4f5c36']
+   pointer stores=6 ['0x4e348a', '0x4e4dd6', '0x4efea2', '0x4f21f9', '0x4f5a93', '0x4f5c3c']
+   0x4e348a paired index store(s) within +-64 B: ['0x4e3476']
+   0x4e4dd6 paired index store(s) within +-64 B: ['0x4e4dd0']
+   0x4efea2 paired index store(s) within +-64 B: ['0x4efe8e']
+   0x4f21f9 paired index store(s) within +-64 B: ['0x4f21e0']
+   0x4f5a93 paired index store(s) within +-64 B: ['0x4f5a7c']
+   0x4f5c3c paired index store(s) within +-64 B: ['0x4f5c36']
+-- T3 the memo law inside the two unnamed owners --
+   FUN_004ee410 memo stores fed by `mov R,ds:0x68cbb0` = 2 ['0x4ee6c9', '0x4ee883'] (refresh pair in order: [True, True])
+   FUN_004f41f0 memo stores fed by `mov R,ds:0x68cbb0` = 2 ['0x4f44a8', '0x4f455d'] (refresh pair in order: [True, True])
+-- T3b the status-icon emitters they call, msg/icon BYTES read from the PE --
+   FUN_004ee410 @0x4ee501 emitter pushes ['STARVE', 'starv_sm.pcx']
+   FUN_004ee410 @0x4ee859 emitter pushes ['POPULATIONLIMIT', 'pop_sm.pcx']
+   FUN_004ee410 @0x4eeb77 emitter pushes ['LOWNUTRIENTFARMS', 'starv_sm.pcx']
+   FUN_004ee410 @0x4eeb96 emitter pushes ['LOWNUTRIENTFORMERS', 'starv_sm.pcx']
+   FUN_004ee410 @0x4eebd2 emitter pushes ['LOWNUTRIENT', 'starv_sm.pcx']
+   FUN_004ee410 @0x4eebfc emitter pushes ['LOWNUTRIENTSPEC1', 'starv_sm.pcx']
+   FUN_004ee410 @0x4eec1b emitter pushes ['LOWNUTRIENTSPEC2', 'starv_sm.pcx']
+   FUN_004f41f0 @0x4f46a9 emitter pushes ['PSYCHREQUEST', 'talent_sm.pcx']
+-- T4 image-wide `test BYTE PTR [r+0x38],0x40` and what it gates --
+   sites=3 ['0x416f32', '0x417057', '0x41ade4']
+   0x416f32 in FUN_00416ef0  r=eax nearest def of r: mov eax,ds:0x8f0d60          | je 0x416f5e -> je 0x416f5e | the call of FUN_004f41f0 at 0x416f59 lies ON THE FALL-THROUGH (je skips it: True) | before the je it zeroes record fields ['0x78', '0x7c', '0x80']
+   0x417057 in FUN_00416f60  r=eax nearest def of r: mov eax,ds:0x8f0d60          | je 0x417083 -> je 0x417083 | the call of FUN_004f41f0 at 0x41707e lies ON THE FALL-THROUGH (je skips it: True) | before the je it zeroes record fields ['0x78', '0x7c', '0x80']
+   0x41ade4 in FUN_0041a8f0  r=eax nearest def of r: mov eax,ds:0x8f0d60          | je 0x41ae17 -> je 0x41ae17 | the call of FUN_004f41f0 at 0x41ae0d lies ON THE FALL-THROUGH (je skips it: True) | before the je it zeroes record fields ['0x78', '0x7c', '0x80']
+   RIVAL (three look-alike tests on three different fields): distinct (def-global, disp, mask) triples = 1 -> REJECTED: one field, one pointer, three callers
+-- T5 writes to base_array field +0x38 (dword): both address idioms --
+   [reg+0x38] dword writes image-wide=108; accepted as THIS field (nearest def of the base register is ds:0x8f0d60)=59; rejected (some other object's +0x38)=49
+   folded-view writes [reg+0x95da48]=9
+   effect on bit 6 (accepted views): [('FULLWORD-untraced', 56), ('SETS bit6', 1), ('preserves bit6', 11)]
+   0x416fdd rec-view or   0x80000000 -> preserves bit6
+   0x41abf3 rec-view or   0x80000000 -> preserves bit6
+   0x41ac08 rec-view or   0x200000   -> preserves bit6
+   0x41ac34 rec-view or   0x40       -> SETS bit6
+   0x41ac46 rec-view or   0x1        -> preserves bit6
+   0x41ac58 rec-view or   0x400000   -> preserves bit6
+   0x41ace4 rec-view or   0x80000    -> preserves bit6
+   0x41acfa rec-view or   0x800000   -> preserves bit6
+   0x41ad10 rec-view or   0x100000   -> preserves bit6
+   0x41ad36 rec-view or   0x20000    -> preserves bit6
+   0x41ad5e rec-view or   0x40000    -> preserves bit6
+   0x41ad76 rec-view or   0x20       -> preserves bit6
+   0x4a9f47 folded  mov  -          -> FULLWORD-untraced
+   0x4ccc23 folded  mov  -          -> FULLWORD-untraced
+   0x4e4960 folded  mov  -          -> FULLWORD-untraced
+   0x4e5b96 folded  mov  -          -> FULLWORD-untraced
+   0x4e5bc2 folded  mov  -          -> FULLWORD-untraced
+   0x4e5c07 folded  mov  -          -> FULLWORD-untraced
+   0x4e5c56 folded  mov  -          -> FULLWORD-untraced
+   0x4e5c96 folded  mov  -          -> FULLWORD-untraced
+   0x5089cd folded  mov  -          -> FULLWORD-untraced
+   untraced FULLWORD stores through the record view (a whole-dword mov can set or clear bit 6; their SOURCES are not traced this round - OPEN): 47 ['0x40baba', '0x40c5b3', '0x416f9f', '0x416fa9', '0x416fb1', '0x416fc9', '0x416fd3', '0x417004', '0x417015', '0x418811', '0x41abe2', '0x41ac23', '0x41ac73', '0x41ac8a', '...']
+   the only sites that OR 0x40 into the field: ['0x41ac34']
+-- T5b FUN_0041a8f0's round trip: field bits -> scratch ds:0x99aa38 -> field bits --
+   extraction: test <field+0x38>,mask -> al op (mask, scratch bit, how the tested operand was loaded, ptr-global of that load): [('0x41a9da', '0x200000', ('or', 2), 'via-def 0x41a9d7', '0x8f0d60'), ('0x41a9f0', '0x80', ('or', 4), 'via-def 0x41a9d7', '0x8f0d60'), ('0x41aa03', '0x40', ('or', 8), 'via-def 0x41a9d7', '0x8f0d60'), ('0x41aa16', '0x1', ('or', 16), 'via-def 0x41a9d7', '0x8f0d60'), ('0x41aa29', '0x400000', ('or', 32), 'via-def 0x41aa26', '0x8f0d60'), ('0x41aa3f', '0x2', ('or', 64), 'via-def 0x41aa3c', '0x8f0d60'), ('0x41aa52', '0x4', ('or', 128), 'via-def 0x41aa4f', '0x8f0d60'), ('0x41aa65', '0x8', None, 'via-def 0x41aa62', '0x8f0d60'), ('0x41aa7a', '0x10', None, 'via-def 0x41aa77', '0x8f0d60'), ('0x41aa8f', '0x20', None, 'via-def 0x41aa8c', '0x8f0d60'), ('0x41aaa4', '0x80000', None, 'via-def 0x41aaa1', '0x8f0d60'), ('0x41aabc', '0x800000', None, 'via-def 0x41aab9', '0x8f0d60'), ('0x41aad4', '0x100000', None, 'via-def 0x41aad1', '0x8f0d60'), ('0x41ab05', '0x20000', None, 'via-def 0x41ab02', '0x8f0d60'), ('0x41ab36', '0x40000', None, 'via-def 0x41ab33', '0x8f0d60'), ('0x41ab52', '0x20', None, 'via-def 0x41ab33', '0x8f0d60'), ('0x41ada9', '0x80000000', None, 'via-def 0x41ada6', '0x8f0d60'), ('0x41adb1', '0x1', None, 'via-def 0x41ada6', '0x8f0d60'), ('0x41ade4', '0x40', None, 'inline', '0x8f0d60'), ('0x41ae1a', '0x80000000', None, 'via-def 0x41ae17', '0x8f0d60'), ('0x41ae22', '0x1', None, 'via-def 0x41ae17', '0x8f0d60')]
+   write-back: test ds:0x99aa38,bit -> op on [rec+0x38]: [('0x41abfa', '0x2', ('or', '0x200000', '0x41ac08')), ('0x41ac0f', '0x4', None), ('0x41ac26', '0x8', ('or', '0x40', '0x41ac34')), ('0x41ac38', '0x10', ('or', '0x1', '0x41ac46')), ('0x41ac4a', '0x20', ('or', '0x400000', '0x41ac58')), ('0x41ac5f', '0x40', None), ('0x41ac76', '0x80', None), ('0x41ad4d', '0x20000', ('or', '0x40000', '0x41ad5e')), ('0x41ad65', '0x40000', ('or', '0x20', '0x41ad76'))]
+   record bit -> scratch bit: [('0x1', '0x10'), ('0x2', '0x40'), ('0x200000', '0x2'), ('0x4', '0x80'), ('0x40', '0x8'), ('0x400000', '0x20'), ('0x80', '0x4')]
+   scratch bit -> record bit: [('0x10', '0x1'), ('0x2', '0x200000'), ('0x20', '0x400000'), ('0x20000', '0x40000'), ('0x40000', '0x20'), ('0x8', '0x40')]
+   inverse on bit 0x40: extraction True / write-back True
+-- T6 the callee re-tests the same bit on the same pointer --
+   0x4f43a0 test cl,0x40            <- mov ecx,DWORD PTR [eax+0x38] <- mov eax,ds:0x8f0d60
+   other `test ...,0x40` inside FUN_004f41f0 NOT traced to this field: []
+
+== digest 562dcbbd12c27c8a
+PASS G1
+PASS G2
+PASS G3
+PASS G4
+PASS G5
+PASS G6
+PASS G7
+PASS m321: 7/7 gates (2 owners named: FUN_004ee410 nutrient/population status, FUN_004f41f0 talent/psych-request status; the +0x38/0x40 test gates the FUN_004f41f0 leg on base_array field 56 bit 6)

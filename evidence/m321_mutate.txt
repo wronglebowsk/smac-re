@@ -1,0 +1,15 @@
+baseline: PASS (7/7 gates) - every mutant below must redden exactly its set
+MU1 redden ['G2', 'G7'] OK :: store detector reads only the long `mov DWORD PTR ds:X,reg` face -> misses every a3-encoded store (the pre-fix defect)
+MU2 redden ['G2'] OK :: the refresh pair is accepted in EITHER order (M318's order law is decoration)
+MU3 redden ['G4', 'G7'] OK :: the arrival matcher accepts any test on [reg+0x38], not the 0x40 mask (the 'shared arrival test' claim becomes a shape match)
+MU4 redden NOTHING OK :: back_def ignores that a CALL kills eax/ecx/edx (caller-saved clobber)
+MU5 redden ['G1'] OK :: ds:0x8f0d60 is fed by the UNIT array base, not base_array
+MU6 redden ['G1'] OK :: the fold multiplies by 608, not 304 (shl 0x4 -> 0x5)
+MU7 redden ['G2', 'G7'] OK :: FUN_004f41f0's second memo store is really an index store (a3 form)
+MU8 redden ['G2'] OK :: the refresh pair at 0x4ee6c9 runs in the wrong order
+MU9 redden ['G4', 'G7'] OK :: one arrival test is on the NEIGHBOURING field +0x30 (a look-alike rival)
+MU10 redden ['G4'] OK :: the arrival test's register is loaded from an unrelated global
+MU11 redden ['G5'] OK :: bit 0x40 has no setter (the OR writes 0x41 instead)
+MU12 redden ['G6'] OK :: the callee's own gate is on a different bit
+MU13 redden ['G3'] OK :: FUN_004ee410's STARVE label is really the talent label (the families would be the same routine's)
+PASS M321_MUTATE: 13/13 mutants each redden exactly their declared gate set
