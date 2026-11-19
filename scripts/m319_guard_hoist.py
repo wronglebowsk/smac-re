@@ -131,19 +131,20 @@ def main():
         parts = [x.strip() for x in ops.split(",")]
         return None if parts[-1].startswith("0x") else parts[-1]
 
-    def memo_copy(addr):
-        """registers holding a copy of the memo, loaded within 14 insns before `addr`
-        and not overwritten since (a hoisted or local guard must compare against one).
-        Scanning BACKWARDS, the NEAREST event for a register decides it: a second,
-        earlier write to the same register must NOT re-open a decided copy (the first
-        version of this walk discarded `eax` on `lea eax,[edi+edi*8]` that ran BEFORE
-        the memo load - it lost 2 of the 4 real guards)."""
+    def live_copy(addr, glob):
+        """registers holding a copy of `glob` (a global address), loaded within 16 insns
+        before `addr` and not overwritten since. Scanning BACKWARDS, the NEAREST event for
+        a register decides it: a second, earlier write to the same register must NOT
+        re-open a decided copy (the first version of this walk discarded `eax` on
+        `lea eax,[edi+edi*8]`, which ran BEFORE the memo load - it lost 2 of the 4 guards)."""
+        src = "ds:0x%x" % glob
+        src2 = "DWORD PTR ds:0x%x" % glob
         i0 = bisect.bisect_left(order, addr)
         copies, decided = set(), set()
-        for b in reversed(order[max(0, i0 - 14):i0]):
+        for b in reversed(order[max(0, i0 - 16):i0]):
             mn, ops = ins[b]
             parts = [x.strip() for x in ops.split(",")]
-            if mn == "mov" and parts[-1] in MEMO_SRC:
+            if mn == "mov" and parts[-1] in (src, src2):
                 r = E.reg_norm(parts[0])
                 if r not in decided:
                     copies.add(r)
@@ -153,9 +154,7 @@ def main():
             if d:
                 r = E.reg_norm(d)
                 if r in decided:
-                    continue        # nearest event already decided it: an EARLIER write
-                                    # (seen later in this backwards walk) must not discard
-                                    # the copy - that was the bug that lost 2 of 4 guards
+                    continue        # nearest event already decided it
                 decided.add(r)
                 copies.discard(r)
         return copies
@@ -182,7 +181,7 @@ def main():
                 parts = [x.strip() for x in cops.split(",")]
                 if any(p in MEMO_SRC for p in parts):
                     return (b, t, "direct", c)
-                cp = memo_copy(b)
+                cp = live_copy(b, BB4)
                 if cp and any(E.reg_norm(p) in cp for p in parts):
                     return (b, t, "via-copy", c)
         return None
@@ -305,6 +304,26 @@ def main():
                 preds[i + 1].add(i)
         return win, blocks, a2b, preds
 
+    def edge_class(fs):
+        """CLASSIFY the test that gates an arrival: a DIRECT global read, a read via an
+        UNCLOBBERED COPY (the M315 law: never classify on operand text alone), or neither.
+        ONE classifier serves both populations - the caller arrivals (T4) and the memo-store
+        edges (T5) - so a blind spot cannot flatter only one side."""
+        if fs is None:
+            return "none|-"
+        mn, ops = ins[fs]
+        o = ops.strip()
+        parts = [x.strip() for x in o.split(",")]
+        if "0x68cbb4" in o:
+            return "memo-direct|%s" % o[:34]
+        if "0x68cbb0" in o:
+            return "index-direct|%s" % o[:34]
+        if any(E.reg_norm(p) in live_copy(fs, BB4) for p in parts):
+            return "memo-copy|%s" % o[:34]
+        if any(E.reg_norm(p) in live_copy(fs, BB0) for p in parts):
+            return "index-copy|%s" % o[:34]
+        return "other|%s" % o[:38]
+
     def flag_setter(blocks, b, at):
         s, e = blocks[b]
         i0 = bisect.bisect_left(order, s)
@@ -332,19 +351,10 @@ def main():
                 term = blocks[p][1]
                 mn = ins[term][0]
                 fs = flag_setter(blocks, p, term)
-                src = "-"
-                if fs is not None:
-                    ops = ins[fs][1]
-                    if "0x68cbb4" in ops:
-                        src = "MEMO"
-                    elif "0x68cbb0" in ops:
-                        src = "INDEX"
-                    else:
-                        src = ops.strip()[:38]
                 kinds.append(("jcc" if mn in JCC else mn,
-                              "%s|%s" % (hex(fs) if fs is not None else "-", src)))
-            arr = ("memo-test" if any(k[1].endswith("|MEMO") for k in kinds)
-                   else "index-test" if any(k[1].endswith("|INDEX") for k in kinds)
+                              "%s|%s" % (hex(fs) if fs is not None else "-", edge_class(fs))))
+            arr = ("memo-test" if any("|memo-" in k[1] for k in kinds)
+                   else "index-test" if any("|index-" in k[1] for k in kinds)
                    else "fallthrough-only" if not pe else "other-test")
             arrival[arr] += 1
             ARR.append((c, nm, owner(c), arr, kinds))
@@ -353,6 +363,31 @@ def main():
               % (hex(c), nm, cn, arr, [(k, s) for k, s in kinds] or "NONE(entry)"))
     print("   arrival totals: %s" % dict(arrival))
     measured["T4"] = "calls=%d arrivals=%s" % (len(ARR), dict(arrival))
+
+    # ---- T5 THE SAME CLASSIFIER on the other population: the 12 memo STORES' arrival edges.
+    # A classifier that cannot see the 4 real guards is blind, and a claim of "0 memo-tests"
+    # over a blind classifier is decoration (TRAP 24). One classifier, two populations.
+    print("-- T5 the same edge classifier applied to the 12 memo-store blocks --")
+    store_edge = {}
+    for a in sorted(memo):
+        nm = own_of[a]
+        if nm.startswith("UNRANGED"):
+            store_edge[a] = None
+            print("   store %s owner %s -> SKIPPED (no function range, M315 A10)" % (hex(a), nm))
+            continue
+        lo, hi = span(nm)
+        win, blocks, a2b, preds = cfg(lo, hi)
+        b = a2b[a]
+        labs = [edge_class(flag_setter(blocks, p, blocks[p][1])) for p in sorted(preds[b])]
+        store_edge[a] = labs
+        print("   store %s %-16s preds=%s" % (hex(a), nm, [x.split("|")[0] for x in labs]
+                                              or ["ENTRY-ONLY(no pred)"]))
+    yes = [a for a in G if any(x.startswith("memo") for x in store_edge[a] or [])]
+    no = [a for a in U if store_edge[a] is not None
+          and not any(x.startswith("memo") for x in store_edge[a])]
+    skipped = [a for a in U if store_edge[a] is None]
+    measured["T5"] = "guarded_stores_with_memo_edge=%d/4 unguarded_stores_without=%d/7 skipped=%s" % (
+        len(yes), len(no), [hex(x) for x in skipped])
 
     # ---- gates on the printed numbers (all pins are MEASURED here, then Bitten by
     # scripts/m319_mutate.py - a declared gate-set is never authored) ----------------
@@ -386,6 +421,15 @@ def main():
        "pred edge's flag-setter is never a memo compare)",
        all(a[3] != "memo-test" for a in ARR),
        "calls=%d arrivals=%s" % (len(ARR), dict(arrival)))
+    # G7 is the classifier's non-decorativeness proof: the SAME edge_class must call the 4 known
+    # guards memo and must NOT call any of the 7 nameable unguarded stores memo. If the classifier
+    # were blind, G6's 0/9 would be a vacuity, not a finding.
+    ck("G7 POSITIVE CONTROL: the same classifier names the memo-guard on exactly the 4 GUARDED "
+       "stores' arrival edges and on NONE of the 7 nameable UNGUARDED stores' edges - so G6's 0/9 "
+       "is a measurement, not a blind classifier",
+       sorted(yes) == sorted(G) and len(no) == 7 and len(skipped) == 1,
+       "guarded-with-memo-edge=%s unguarded-without=%d skipped=%s"
+       % ([hex(x) for x in yes], len(no), [hex(x) for x in skipped]))
     rows_txt = "|".join("%s|%s|%s" % (k, v, "") for k, v in sorted(measured.items()))
     dig = hashlib.sha256((rows_txt + "|" + ",".join(hex(a) for a in refs)
                           + "|" + ",".join("%s:%s" % (hex(a), r[3]) for a, r in sorted(rows.items()) if r)
