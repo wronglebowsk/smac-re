@@ -1,0 +1,771 @@
+== M327: unit-record +10 = the TYPE INDEX into the save's own 8-band type array ==
+T0 m54b_clean.SAV type_off=192063 span=26624 gap_to_units=4096 closes=True n_units=67 found A(exempt)=67 B(all-coord)=67 C(type-sound)=67
+T0 m112poke.SAV type_off=192063 span=26624 gap_to_units=4096 closes=True n_units=67 found A(exempt)=67 B(all-coord)=67 C(type-sound)=67
+T0 m112auto1.SAV type_off=192095 span=26624 gap_to_units=4096 closes=True n_units=68 found A(exempt)=68 B(all-coord)=68 C(type-sound)=68
+T0 m113map.SAV type_off=192063 span=26624 gap_to_units=4096 closes=True n_units=67 found A(exempt)=67 B(all-coord)=49 C(type-sound)=49
+T1 named-slots=32/512 density=0.0625 per-band={0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 1: [64], 2: [128, 129, 130, 131], 3: [192, 193, 194], 4: [256], 5: [320, 321, 322, 323], 6: [384, 385, 386], 7: [448, 449]}
+T1b type+0x30 bit2: set=12 clear=20 (band0 clear=14 band>0 set=12) -> NOT a band marker; type BYTE +0x2d==0xff groups: true=14 false=18 band0-true=14 band>0-true=0
+T1c M80 live census diff: save-minus-live={} live-minus-save={5: [324, 325]}
+T2 unit+10 word refs in .text=774 chain sites=659 funcs=116
+T2  0x40cfbe x13fold+mov -> 0x98adac owner=FUN_0040c8d0
+T2  0x40ea79 x13fold+lea -> 0x98ad88 owner=FUN_0040e720
+T2  0x40eba5 x13fold+test -> 0x98ada8 owner=FUN_0040e720
+T2  0x40ebc1 x13fold+test -> 0x98ada8 owner=FUN_0040e720
+T2  0x40ec74 x13fold+cmp -> 0x98adb2 owner=FUN_0040e720
+T2  0x40ec8b x13fold+cmp -> 0x98adb2 owner=FUN_0040e720
+T2  0x40ef89 x13fold+mov -> 0x98adac owner=FUN_0040e720
+T2  0x40f05b x13fold+mov -> 0x98adac owner=FUN_0040e720
+T2  0x40f0df x13fold+mov -> 0x98adac owner=FUN_0040e720
+T2  0x40f151 x13fold+mov -> 0x98adac owner=FUN_0040e720
+T2  0x40f190 x13fold+mov -> 0x98adac owner=FUN_0040e720
+T2  0x40f3fe x13fold+cmp -> 0x98adb2 owner=FUN_0040e720
+T2  0x40f472 x13fold+cmp -> 0x98adb2 owner=FUN_0040e720
+T2  0x40f4e9 x13fold+mov -> 0x98adb2 owner=FUN_0040e720
+T2  0x418be6 x13fold+mov -> 0x98adb2 owner=FUN_00417ee0
+T2  0x422893 imul52+mov -> 0x98adb2 owner=FUN_00422730
+T2  0x4228b0 imul52+mov -> 0x98adb2 owner=FUN_00422730
+T2  0x4228f8 imul52+mov -> 0x98adad owner=FUN_00422730
+T2  0x42291e imul52+mov -> 0x98adae owner=FUN_00422730
+T2  0x422e31 imul52+mov -> 0x98adb2 owner=FUN_00422730
+T2  0x422f45 imul52+add -> 0x98ad88 owner=FUN_00422730
+T2  0x4231a3 imul52+mov -> 0x98adac owner=FUN_00422730
+T2  0x4231ce imul52+mov -> 0x98adae owner=FUN_00422730
+T2  0x4231fa imul52+mov -> 0x98adad owner=FUN_00422730
+T2  0x423253 imul52+mov -> 0x98adac owner=FUN_00422730
+T2  0x423284 imul52+mov -> 0x98adac owner=FUN_00422730
+T2  0x4232e7 imul52+mov -> 0x98adac owner=FUN_00422730
+T2  0x423b3f imul52+mov -> 0x98adb2 owner=FUN_00423b30
+T2  0x423b63 imul52+mov -> 0x98adaf owner=FUN_00423b30
+T2  0x43e85a imul52+add -> 0x98ad88 owner=FUN_0043e4e0
+T2  0x43e982 imul52+mov -> 0x98ada8 owner=FUN_0043e4e0
+T2  0x4478f2 imul52+mov -> 0x98adb2 owner=FUN_004478b0
+T2  0x44791e imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447949 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447975 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x4479a1 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x4479cd imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x4479f9 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447a25 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447a51 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447a7d imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447aca imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447b04 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447b3e imul52+mov -> 0x98adb2 owner=FUN_004478b0
+T2  0x447b6a imul52+mov -> 0x98adad owner=FUN_004478b0
+T2  0x447b90 imul52+mov -> 0x98adac owner=FUN_004478b0
+T2  0x447bb6 imul52+mov -> 0x98adad owner=FUN_004478b0
+T2  0x447be8 imul52+mov -> 0x98adad owner=FUN_004478b0
+T2  0x467ef5 imul52+mov -> 0x98ada8 owner=FUN_00467a00
+T2  0x468046 imul52+mov -> 0x98ada8 owner=FUN_00467a00
+T2  0x468085 imul52+mov -> 0x98adac owner=FUN_00467a00
+T2  0x4680b0 imul52+mov -> 0x98adad owner=FUN_00467a00
+T2  0x468150 imul52+mov -> 0x98adb2 owner=FUN_00467a00
+T2  0x4681ab imul52+mov -> 0x98adb2 owner=FUN_00467a00
+T2  0x4682ac imul52+mov -> 0x98adad owner=FUN_00467a00
+T2  0x46830c imul52+mov -> 0x98adac owner=FUN_00467a00
+T2  0x468381 imul52+mov -> 0x98adad owner=FUN_00467a00
+T2  0x4683e5 imul52+mov -> 0x98adb2 owner=FUN_00467a00
+T2  0x468422 imul52+mov -> 0x98adac owner=FUN_00467a00
+T2  0x46844d imul52+mov -> 0x98adac owner=FUN_00467a00
+T2  0x468649 imul52+mov -> 0x98adac owner=FUN_00467a00
+T2  0x468674 imul52+mov -> 0x98adac owner=FUN_00467a00
+T2  0x468988 imul52+mov -> 0x98adac owner=FUN_00467a00
+T2  0x46abe1 imul52+mov -> 0x98ada8 owner=FUN_0046a610
+T2  0x46ac01 imul52+mov -> 0x98adac owner=FUN_0046a610
+T2  0x46ac2f imul52+mov -> 0x98adac owner=FUN_0046a610
+T2  0x46ad10 imul52+mov -> 0x98ada8 owner=FUN_0046a610
+T2  0x46ad32 imul52+mov -> 0x98adac owner=FUN_0046a610
+T2  0x46ad60 imul52+mov -> 0x98adac owner=FUN_0046a610
+T2  0x46ed35 imul52+mov -> 0x98adac owner=FUN_0046ebd0
+T2  0x46fc5a imul52+mov -> 0x98adac owner=FUN_0046fa10
+T2  0x474df4 imul52+mov -> 0x98adac owner=FUN_004748b0
+T2  0x47530e imul52+mov -> 0x98adac owner=FUN_004748b0
+T2  0x47533c imul52+mov -> 0x98adad owner=FUN_004748b0
+T2  0x47538a imul52+mov -> 0x98ada8 owner=FUN_004748b0
+T2  0x47546d imul52+mov -> 0x98adb2 owner=FUN_004748b0
+T2  0x477a6a imul52+mov -> 0x98adac owner=FUN_004777f0
+T2  0x48f99a imul52+add -> 0x98ad88 owner=FUN_0048f8b0
+T2  0x4bd117 imul52+mov -> 0x98adad owner=FUN_004bd0d0
+T2  0x4bd16d imul52+mov -> 0x98adb2 owner=FUN_004bd0d0
+T2  0x4bd532 imul52+mov -> 0x98adb2 owner=FUN_004bd3d0
+T2  0x4bdc87 imul52+add -> 0x98ad88 owner=FUN_004bdb60
+T2  0x4bdeca imul52+add -> 0x98ad88 owner=FUN_004bdce0
+T2  0x4be08c imul52+mov -> 0x98ada8 owner=FUN_004bdce0
+T2  0x4be134 imul52+mov -> 0x98adb2 owner=FUN_004bdce0
+T2  0x4be151 imul52+mov -> 0x98adb2 owner=FUN_004bdce0
+T2  0x4be3c6 imul52+mov -> 0x98adac owner=FUN_004bdce0
+T2  0x4be42a imul52+mov -> 0x98adac owner=FUN_004bdce0
+T2  0x4be4bd imul52+mov -> 0x98adac owner=FUN_004bdce0
+T2  0x4be53d imul52+mov -> 0x98adac owner=FUN_004bdce0
+T2  0x4be581 imul52+mov -> 0x98adac owner=FUN_004bdce0
+T2  0x4c4361 imul52+add -> 0x98ad88 owner=FUN_004c40e0
+T2  0x4c4397 imul52+add -> 0x98ad88 owner=FUN_004c40e0
+T2  0x4c741d imul52+mov -> 0x98adac owner=FUN_004c7350
+T2  0x4c7439 imul52+mov -> 0x98adad owner=FUN_004c7350
+T2  0x4c78fb imul52+mov -> 0x98adae owner=FUN_004c7840
+T2  0x4c792d imul52+mov -> 0x98adae owner=FUN_004c7840
+T2  0x4c7946 imul52+mov -> 0x98adad owner=FUN_004c7840
+T2  0x4c795f imul52+mov -> 0x98adac owner=FUN_004c7840
+T2  0x4c7b61 imul52+mov -> 0x98adac owner=FUN_004c79f0
+T2  0x4c7b7d imul52+mov -> 0x98adad owner=FUN_004c79f0
+T2  0x4c7dd8 imul52+mov -> 0x98adac owner=FUN_004c79f0
+T2  0x4c7df4 imul52+mov -> 0x98adad owner=FUN_004c79f0
+T2  0x4c803f imul52+mov -> 0x98adac owner=FUN_004c79f0
+T2  0x4c805b imul52+mov -> 0x98adad owner=FUN_004c79f0
+T2  0x4c948d imul52+mov -> 0x98adae owner=FUN_004c9200
+T2  0x4c94bf imul52+mov -> 0x98adae owner=FUN_004c9200
+T2  0x4c94d8 imul52+mov -> 0x98adad owner=FUN_004c9200
+T2  0x4c94f1 imul52+mov -> 0x98adac owner=FUN_004c9200
+T2  0x4c9640 imul52+mov -> 0x98adac owner=FUN_004c9540
+T2  0x4c965c imul52+mov -> 0x98adad owner=FUN_004c9540
+T2  0x4c99ee imul52+mov -> 0x98adae owner=FUN_004c9540
+T2  0x4c9a20 imul52+mov -> 0x98adae owner=FUN_004c9540
+T2  0x4c9a39 imul52+mov -> 0x98adad owner=FUN_004c9540
+T2  0x4c9a52 imul52+mov -> 0x98adac owner=FUN_004c9540
+T2  0x4c9df7 imul52+mov -> 0x98adac owner=FUN_004c9de0
+T2  0x4c9e13 imul52+mov -> 0x98adad owner=FUN_004c9de0
+T2  0x4c9e30 imul52+mov -> 0x98adad owner=FUN_004c9de0
+T2  0x4c9e91 imul52+mov -> 0x98adac owner=FUN_004c9de0
+T2  0x4c9eae imul52+mov -> 0x98adad owner=FUN_004c9de0
+T2  0x4ca078 imul52+mov -> 0x98ada8 owner=FUN_004c9de0
+T2  0x4ca08f imul52+mov -> 0x98adaf owner=FUN_004c9de0
+T2  0x4ca0a8 imul52+mov -> 0x98adae owner=FUN_004c9de0
+T2  0x4ca0c1 imul52+mov -> 0x98adad owner=FUN_004c9de0
+T2  0x4ca0da imul52+mov -> 0x98adac owner=FUN_004c9de0
+T2  0x4ccdbd x13fold+test -> 0x98ada8 owner=FUN_004ccda0
+T2  0x4ccfc5 x13fold+mov -> 0x98ada8 owner=FUN_004cce50
+T2  0x4cd0b1 x13fold+test -> 0x98ada8 owner=FUN_004cce50
+T2  0x4cd1b2 x13fold+test -> 0x98ada8 owner=FUN_004cce50
+T2  0x4cdf39 x13fold+mov -> 0x98adac owner=FUN_004cdc70
+T2  0x4ce00a x13fold+mov -> 0x98ada8 owner=FUN_004cdc70
+T2  0x4ce112 x13fold+mov -> 0x98adac owner=FUN_004cdc70
+T2  0x4ce194 x13fold+mov -> 0x98adac owner=FUN_004cdc70
+T2  0x4ce430 x13fold+lea -> 0x98ad88 owner=FUN_004cdc70
+T2  0x4ce65f x13fold+mov -> 0x98adac owner=FUN_004ce4a0
+T2  0x4ceca0 x13fold+mov -> 0x98adac owner=FUN_004cec00
+T2  0x4ced5e x13fold+mov -> 0x98adaf owner=FUN_004cec00
+T2  0x4cedd2 x13fold+mov -> 0x98adac owner=FUN_004cec00
+T2  0x4cef22 x13fold+mov -> 0x98adac owner=FUN_004cec00
+T2  0x4cf379 x13fold+mov -> 0x98adac owner=FUN_004cec00
+T2  0x4cf44c x13fold+mov -> 0x98adac owner=FUN_004cec00
+T2  0x4cf65e x13fold+mov -> 0x98adad owner=FUN_004cf4c0
+T2  0x4cf72c x13fold+mov -> 0x98adad owner=FUN_004cf4c0
+T2  0x4cfc98 x13fold+mov -> 0x98adad owner=FUN_004cf4c0
+T2  0x4cfe46 x13fold+mov -> 0x98adaf owner=FUN_004cf4c0
+T2  0x4cfe6a x13fold+cmp -> 0x98adb2 owner=FUN_004cf4c0
+T2  0x4d01e5 x13fold+mov -> 0x98adaf owner=FUN_004d0180
+T2  0x4d02ce x13fold+cmp -> 0x98adb2 owner=FUN_004d0180
+T2  0x4d057b x13fold+mov -> 0x98adac owner=FUN_004d0520
+T2  0x4d07d8 x13fold+mov -> 0x98adac owner=FUN_004d0520
+T2  0x4d0b13 x13fold+cmp -> 0x98adb2 owner=FUN_004d0970
+T2  0x4d0b4b x13fold+mov -> 0x98adac owner=FUN_004d0970
+T2  0x4d0c49 x13fold+lea -> 0x98ad88 owner=FUN_004d0970
+T2  0x4d0d96 x13fold+cmp -> 0x98adb2 owner=FUN_004d0970
+T2  0x4d12b4 x13fold+cmp -> 0x98adb2 owner=FUN_004d1280
+T2  0x4d1ac5 x13fold+cmp -> 0x98adb2 owner=FUN_004d1280
+T2  0x4d1f5e x13fold+test -> 0x98ada8 owner=FUN_004d1f20
+T2  0x4d1f90 x13fold+mov -> 0x98ada8 owner=FUN_004d1f20
+T2  0x4d200a x13fold+mov -> 0x98adac owner=FUN_004d1f20
+T2  0x4d233e x13fold+lea -> 0x98ad88 owner=FUN_004d20f0
+T2  0x4d238b x13fold+mov -> 0x98ada8 owner=FUN_004d20f0
+T2  0x4d23aa x13fold+mov -> 0x98ada8 owner=FUN_004d20f0
+T2  0x4d23ea x13fold+test -> 0x98ada8 owner=FUN_004d20f0
+T2  0x4d247a x13fold+mov -> 0x98adac owner=FUN_004d20f0
+T2  0x4d24d4 x13fold+mov -> 0x98adac owner=FUN_004d20f0
+T2  0x4d25bf x13fold+cmp -> 0x98adb3 owner=FUN_004d20f0
+T2  0x4d2cd4 x13fold+lea -> 0x98ad88 owner=FUN_004d20f0
+T2  0x4d2d1b x13fold+mov -> 0x98ada8 owner=FUN_004d20f0
+T2  0x4d2d3a x13fold+mov -> 0x98ada8 owner=FUN_004d20f0
+T2  0x4d2d7a x13fold+test -> 0x98ada8 owner=FUN_004d20f0
+T2  0x4d3527 x13fold+mov -> 0x98adac owner=FUN_004d3510
+T2  0x4d35bb x13fold+mov -> 0x98adac owner=FUN_004d3510
+T2  0x4d366e x13fold+mov -> 0x98adac owner=FUN_004d3510
+T2  0x4d37dd x13fold+mov -> 0x98adac owner=FUN_004d3770
+T2  0x4d381a x13fold+mov -> 0x98adac owner=FUN_004d3770
+T2  0x4d38d3 x13fold+cmp -> 0x98adb2 owner=FUN_004d3770
+T2  0x4d3a12 x13fold+mov -> 0x98adac owner=FUN_004d3950
+T2  0x4d3ae3 x13fold+lea -> 0x98ad88 owner=FUN_004d3950
+T2  0x4d3b0c x13fold+mov -> 0x98adac owner=FUN_004d3950
+T2  0x4d3cc1 x13fold+lea -> 0x98ad88 owner=FUN_004d3bf0
+T2  0x4d3d16 x13fold+mov -> 0x98adac owner=FUN_004d3bf0
+T2  0x4d3def x13fold+mov -> 0x98adb1 owner=FUN_004d3bf0
+T2  0x4d41cc x13fold+lea -> 0x98ad88 owner=FUN_004d3f70
+T2  0x4d4516 x13fold+cmp -> 0x98adb2 owner=FUN_004d44d0
+T2  0x4d4850 x13fold+mov -> 0x98ada8 owner=FUN_004d44d0
+T2  0x4d63bd x13fold+mov -> 0x98adad owner=FUN_004d6100
+T2  0x4d7332 x13fold+mov -> 0x98adac owner=FUN_004d6fb0
+T2  0x4d737d x13fold+cmp -> 0x98adb2 owner=FUN_004d6fb0
+T2  0x4d7979 x13fold+mov -> 0x98adac owner=FUN_004d6fb0
+T2  0x4d8075 x13fold+mov -> 0x98adac owner=FUN_004d6fb0
+T2  0x4d813a x13fold+mov -> 0x98adac owner=FUN_004d6fb0
+T2  0x4d8934 x13fold+cmp -> 0x98adb2 owner=FUN_004d8920
+T2  0x4d8a3c x13fold+mov -> 0x98adad owner=FUN_004d8a30
+T2  0x4d8ab6 x13fold+lea -> 0x98ad88 owner=FUN_004d8a30
+T2  0x4d8cff x13fold+mov -> 0x98ada8 owner=FUN_004d8ca0
+T2  0x4d9135 x13fold+cmp -> 0x98adb2 owner=FUN_004d9120
+T2  0x4d922a x13fold+mov -> 0x98adac owner=FUN_004d9120
+T2  0x4d973e x13fold+mov -> 0x98adac owner=FUN_004d9690
+T2  0x4ddfba x13fold+lea -> 0x98ad88 owner=FUN_004dde00
+T2  0x4de408 x13fold+mov -> 0x98adac owner=FUN_004dde00
+T2  0x4de46c x13fold+mov -> 0x98adac owner=FUN_004dde00
+T2  0x4de574 x13fold+mov -> 0x98adac owner=FUN_004dde00
+T2  0x4decee x13fold+lea -> 0x98ad88 owner=FUN_004dec90
+T2  0x4df393 x13fold+mov -> 0x98ada8 owner=FUN_004df030
+T2  0x4ea4a3 x13fold+cmp -> 0x98adb2 owner=FUN_004e9be0
+T2  0x4ea4ed x13fold+test -> 0x98ada8 owner=FUN_004e9be0
+T2  0x4f0efe x13fold+cmp -> 0x98adb2 owner=FUN_004ef6d0
+T2  0x4f3048 x13fold+mov -> 0x98adb2 owner=FUN_004f2ea0
+T2  0x4f30c7 x13fold+test -> 0x98ada8 owner=FUN_004f2ea0
+T2  0x4f3146 x13fold+test -> 0x98ada8 owner=FUN_004f2ea0
+T2  0x4fb12f x13fold+mov -> 0x98adac owner=FUN_004f6030
+T2  0x4fdabc x13fold+cmp -> 0x98adb2 owner=FUN_004fdab0
+T2  0x4fddfa x13fold+cmp -> 0x98adb2 owner=FUN_004fddc0
+T2  0x4fe47e x13fold+mov -> 0x98adad owner=FUN_004fe310
+T2  0x4fe55a x13fold+mov -> 0x98adac owner=FUN_004fe310
+T2  0x4fea79 x13fold+mov -> 0x98adb2 owner=FUN_004fe930
+T2  0x4feac2 x13fold+cmp -> 0x98adb2 owner=FUN_004fe930
+T2  0x4fec1b x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4fec6f x13fold+mov -> 0x98adad owner=FUN_004febe0
+T2  0x4feca4 x13fold+mov -> 0x98adae owner=FUN_004febe0
+T2  0x4fefb6 x13fold+mov -> 0x98adad owner=FUN_004febe0
+T2  0x4ff03d x13fold+mov -> 0x98ada8 owner=FUN_004febe0
+T2  0x4ff0f1 x13fold+test -> 0x98ada8 owner=FUN_004febe0
+T2  0x4ff3bd x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4ff3f0 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4ff4a1 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4ff6c8 x13fold+cmp -> 0x98adb2 owner=FUN_004febe0
+T2  0x4ff723 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4ff782 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4ff7c8 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4ffb83 x13fold+mov -> 0x98ada8 owner=FUN_004febe0
+T2  0x4ffc70 x13fold+mov -> 0x98ada8 owner=FUN_004febe0
+T2  0x4ffe05 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x4ffe6b x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x500012 x13fold+test -> 0x98ada8 owner=FUN_004febe0
+T2  0x5000b5 x13fold+test -> 0x98ada8 owner=FUN_004febe0
+T2  0x500520 x13fold+test -> 0x98ada8 owner=FUN_004febe0
+T2  0x5005bb x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x500601 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x500727 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x500757 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x50083f x13fold+mov -> 0x98adad owner=FUN_004febe0
+T2  0x50090b x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x500937 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x5009de x13fold+mov -> 0x98ada8 owner=FUN_004febe0
+T2  0x5009fb x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x500aa8 x13fold+mov -> 0x98ada8 owner=FUN_004febe0
+T2  0x500ac5 x13fold+mov -> 0x98adac owner=FUN_004febe0
+T2  0x500c6f x13fold+mov -> 0x98adac owner=FUN_00500b90
+T2  0x500cb5 x13fold+cmp -> 0x98adb2 owner=FUN_00500b90
+T2  0x500d1a x13fold+mov -> 0x98adac owner=FUN_00500b90
+T2  0x500d46 x13fold+test -> 0x98ada8 owner=FUN_00500b90
+T2  0x500df4 x13fold+mov -> 0x98adb2 owner=FUN_00500b90
+T2  0x500ed0 x13fold+mov -> 0x98adac owner=FUN_00500b90
+T2  0x500fb0 x13fold+mov -> 0x98adac owner=FUN_00500b90
+T2  0x500fd9 x13fold+mov -> 0x98adac owner=FUN_00500b90
+T2  0x5012a8 x13fold+cmp -> 0x98adac owner=FUN_005010d0
+T2  0x5012eb x13fold+cmp -> 0x98adad owner=FUN_005010d0
+T2  0x50137c x13fold+mov -> 0x98adad owner=FUN_005010d0
+T2  0x501c53 x13fold+cmp -> 0x98adaf owner=FUN_005010d0
+T2  0x502033 x13fold+mov -> 0x98adac owner=FUN_00501fc0
+T2  0x5023ee x13fold+cmp -> 0x98adb2 owner=FUN_005023a0
+T2  0x5024b2 x13fold+mov -> 0x98adac owner=FUN_005024a0
+T2  0x5025a6 x13fold+lea -> 0x98ad88 owner=FUN_005024a0
+T2  0x502d14 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x502d90 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x502dfb x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x502eda x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x502f43 x13fold+test -> 0x98ada8 owner=FUN_00502cd0
+T2  0x502f5c x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x503023 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x503088 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5030da x13fold+mov -> 0x98adad owner=FUN_00502cd0
+T2  0x503108 x13fold+mov -> 0x98adae owner=FUN_00502cd0
+T2  0x503137 x13fold+mov -> 0x98adaf owner=FUN_00502cd0
+T2  0x5032a8 x13fold+test -> 0x98ada8 owner=FUN_00502cd0
+T2  0x5032eb x13fold+mov -> 0x98adae owner=FUN_00502cd0
+T2  0x50335e x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x503699 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5036b7 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x503b99 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x503d01 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x503d87 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x503dfa x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50413d x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50419a x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5044cf x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x5044f7 x13fold+test -> 0x98ada8 owner=FUN_00502cd0
+T2  0x5045ec x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x504619 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50466e x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5047e9 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50492f x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x504bac x13fold+mov -> 0x98adad owner=FUN_00502cd0
+T2  0x504be5 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x504c91 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x504d0c x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x504d8e x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x504e0d x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x504e41 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x504e75 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x504edc x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x504ffa x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50508d x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50539b x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505487 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5055b2 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505642 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5056c1 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50572a x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5057c4 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505840 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x5058c6 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505946 x13fold+mov -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505a2e x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505a95 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505b6c x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x505cbe x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505d37 x13fold+mov -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505df5 x13fold+mov -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505e55 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x505f85 x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x505fed x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x5060eb x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x506151 x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x50622e x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x506255 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x5062d4 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x50630b x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x506326 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x506414 x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x506523 x13fold+mov -> 0x98adad owner=FUN_00502cd0
+T2  0x506547 x13fold+mov -> 0x98adaf owner=FUN_00502cd0
+T2  0x5065e2 x13fold+cmp -> 0x98adb2 owner=FUN_00502cd0
+T2  0x506894 x13fold+mov -> 0x98adad owner=FUN_00502cd0
+T2  0x506ae9 x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x506b51 x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x5070cf x13fold+lea -> 0x98ad88 owner=FUN_00502cd0
+T2  0x5072ef x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x50735f x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x5073bf x13fold+mov -> 0x98adac owner=FUN_00502cd0
+T2  0x509bef x13fold+mov -> 0x98adac owner=FUN_00509bc0
+T2  0x50c849 x13fold+mov -> 0x98adac owner=FUN_0050c550
+T2  0x50c941 x13fold+mov -> 0x98adac owner=FUN_0050c550
+T2  0x50ce43 x13fold+lea -> 0x98ad88 owner=FUN_0050cd90
+T2  0x50d1cd x13fold+cmp -> 0x98adb2 owner=FUN_0050d140
+T2  0x50d25b x13fold+lea -> 0x98ad88 owner=FUN_0050d140
+T2  0x50d2ae x13fold+cmp -> 0x98adb2 owner=FUN_0050d140
+T2  0x50d310 x13fold+cmp -> 0x98adb2 owner=FUN_0050d140
+T2  0x50d370 x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50d3e0 x13fold+lea -> 0x98ad88 owner=FUN_0050d140
+T2  0x50d437 x13fold+cmp -> 0x98adb2 owner=FUN_0050d140
+T2  0x50d7a7 x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50d825 x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50d910 x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50d9be x13fold+lea -> 0x98ad88 owner=FUN_0050d140
+T2  0x50da3b x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50dafb x13fold+lea -> 0x98ad88 owner=FUN_0050d140
+T2  0x50db54 x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50dbb6 x13fold+lea -> 0x98ad88 owner=FUN_0050d140
+T2  0x50dc0f x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50dc8b x13fold+mov -> 0x98adac owner=FUN_0050d140
+T2  0x50ddfc x13fold+lea -> 0x98ad88 owner=FUN_0050d140
+T2  0x50de28 x13fold+cmp -> 0x98adb2 owner=FUN_0050d140
+T2  0x50dec1 x13fold+mov -> 0x98adad owner=FUN_0050d140
+T2  0x50e128 x13fold+cmp -> 0x98adb2 owner=FUN_0050d140
+T2  0x50e42b x13fold+mov -> 0x98adb2 owner=FUN_0050d140
+T2  0x5124f9 x13fold+mov -> 0x98adac owner=FUN_00512450
+T2  0x51269b x13fold+cmp -> 0x98adb2 owner=FUN_00512450
+T2  0x5128d6 x13fold+mov -> 0x98adac owner=FUN_00512450
+T2  0x5176be x13fold+mov -> 0x98adac owner=FUN_00516b80
+T2  0x51f867 x13fold+mov -> 0x98adac owner=FUN_0051f730
+T2  0x51f957 x13fold+mov -> 0x98adac owner=FUN_0051f730
+T2  0x51fb00 x13fold+mov -> 0x98adac owner=FUN_0051f730
+T2  0x51fbab x13fold+test -> 0x98ada8 owner=FUN_0051f730
+T2  0x51fc23 x13fold+mov -> 0x98adaf owner=FUN_0051f730
+T2  0x51fd77 x13fold+mov -> 0x98adac owner=FUN_0051f730
+T2  0x52941d x13fold+cmp -> 0x98adb2 owner=FUN_00529090
+T2  0x52b2a5 x13fold+lea -> 0x98ad88 owner=FUN_0052a720
+T2  0x54377d x13fold+mov -> 0x98adb1 owner=FUN_00543450
+T2  0x54f728 x13fold+mov -> 0x98adac owner=FUN_0054f680
+T2  0x54f9ae x13fold+mov -> 0x98adac owner=FUN_0054f790
+T2  0x54fe2d x13fold+cmp -> 0x98adb2 owner=FUN_0054f790
+T2  0x54fe92 x13fold+mov -> 0x98adb2 owner=FUN_0054f790
+T2  0x550799 x13fold+mov -> 0x98adac owner=FUN_00550350
+T2  0x556125 x13fold+cmp -> 0x98adb2 owner=FUN_005560f0
+T2  0x556cdb x13fold+mov -> 0x98adb2 owner=FUN_00556690
+T2  0x556d53 x13fold+mov -> 0x98adac owner=FUN_00556690
+T2  0x556d8f x13fold+cmp -> 0x98adb2 owner=FUN_00556690
+T2  0x556f47 x13fold+test -> 0x98adb4 owner=FUN_00556690
+T2  0x556fb2 x13fold+mov -> 0x98adb2 owner=FUN_00556690
+T2  0x5570b8 x13fold+mov -> 0x98adb2 owner=FUN_00556690
+T2  0x557107 x13fold+cmp -> 0x98adb2 owner=FUN_00556690
+T2  0x5571d1 x13fold+cmp -> 0x98adb2 owner=FUN_00556690
+T2  0x557976 x13fold+mov -> 0x98adad owner=FUN_00556690
+T2  0x557998 x13fold+mov -> 0x98adae owner=FUN_00556690
+T2  0x559143 x13fold+mov -> 0x98adb2 owner=FUN_00556690
+T2  0x5591e2 x13fold+cmp -> 0x98adb2 owner=FUN_00556690
+T2  0x559390 x13fold+mov -> 0x98adac owner=FUN_00556690
+T2  0x55951c x13fold+cmp -> 0x98adb2 owner=FUN_00556690
+T2  0x559737 x13fold+mov -> 0x98adac owner=FUN_00556690
+T2  0x5599f1 x13fold+mov -> 0x98adac owner=FUN_00556690
+T2  0x559d31 x13fold+mov -> 0x98ada8 owner=FUN_00556690
+T2  0x559de2 x13fold+cmp -> 0x98adb2 owner=FUN_00556690
+T2  0x559f72 x13fold+cmp -> 0x98adb2 owner=FUN_00559ea0
+T2  0x55a15b x13fold+cmp -> 0x98adb2 owner=FUN_00559ea0
+T2  0x55b54b x13fold+mov -> 0x98adac owner=FUN_0055b510
+T2  0x55b5e0 x13fold+mov -> 0x98adb1 owner=FUN_0055b510
+T2  0x55b646 x13fold+mov -> 0x98adb1 owner=FUN_0055b510
+T2  0x55b665 x13fold+mov -> 0x98adb1 owner=FUN_0055b510
+T2  0x55b687 x13fold+cmp -> 0x98adb2 owner=FUN_0055b510
+T2  0x55b7a0 x13fold+mov -> 0x98adac owner=FUN_0055b510
+T2  0x55b815 x13fold+mov -> 0x98adac owner=FUN_0055b510
+T2  0x55ba15 x13fold+mov -> 0x98adac owner=FUN_0055b510
+T2  0x55bb3f x13fold+mov -> 0x98adac owner=FUN_0055b510
+T2  0x55c2dd x13fold+mov -> 0x98adac owner=FUN_0055bd90
+T2  0x55c467 x13fold+mov -> 0x98adac owner=FUN_0055bd90
+T2  0x55c59b x13fold+mov -> 0x98adac owner=FUN_0055bd90
+T2  0x55c74e x13fold+mov -> 0x98adac owner=FUN_0055bd90
+T2  0x55c968 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55c9b9 x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55ca82 x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55cad3 x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55cd76 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55ceac x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55ceef x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55d522 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55d57d x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55d8b0 x13fold+mov -> 0x98adb2 owner=FUN_0055c920
+T2  0x55d91d x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55db35 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55dbd6 x13fold+mov -> 0x98adb2 owner=FUN_0055c920
+T2  0x55dc42 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55df11 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55df7b x13fold+mov -> 0x98adb2 owner=FUN_0055c920
+T2  0x55e08e x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55e0df x13fold+mov -> 0x98adb2 owner=FUN_0055c920
+T2  0x55e24a x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55e276 x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55e35b x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55e371 x13fold+mov -> 0x98adac owner=FUN_0055c920
+T2  0x55e44a x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55e4f3 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55e52c x13fold+mov -> 0x98adb2 owner=FUN_0055c920
+T2  0x55ea97 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55eb92 x13fold+cmp -> 0x98adb2 owner=FUN_0055c920
+T2  0x55f29a x13fold+mov -> 0x98adb1 owner=FUN_0055ec10
+T2  0x55f3d3 x13fold+mov -> 0x98adac owner=FUN_0055f3c0
+T2  0x55f86c x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x55f8c6 x13fold+mov -> 0x98adaf owner=FUN_0055f650
+T2  0x55ff13 x13fold+mov -> 0x98ada8 owner=FUN_0055f650
+T2  0x55ffe0 x13fold+mov -> 0x98ada8 owner=FUN_0055f650
+T2  0x5602b0 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x560a10 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x560c13 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x560df7 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x561058 x13fold+mov -> 0x98adb1 owner=FUN_0055f650
+T2  0x5619fe x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x561b2d x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x561cef x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x561db3 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x561e71 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x562481 x13fold+test -> 0x98ada8 owner=FUN_0055f650
+T2  0x562bdc x13fold+test -> 0x98ada8 owner=FUN_0055f650
+T2  0x562bfd x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x562fb8 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x563042 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x563216 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x564bd1 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x564d38 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x564ea9 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x5656e4 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x5659e3 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x565a0a x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x565da2 x13fold+mov -> 0x98adb2 owner=FUN_0055f650
+T2  0x565f4e x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x566015 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x566171 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x566634 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x5666af x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x5667fe x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x566f64 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x5673d2 x13fold+mov -> 0x98ada8 owner=FUN_0055f650
+T2  0x56893b x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x568a35 x13fold+mov -> 0x98adb2 owner=FUN_0055f650
+T2  0x568a66 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x568a7d x13fold+mov -> 0x98adb2 owner=FUN_0055f650
+T2  0x568b2f x13fold+mov -> 0x98adb2 owner=FUN_0055f650
+T2  0x568b74 x13fold+mov -> 0x98adb2 owner=FUN_0055f650
+T2  0x568bd8 x13fold+mov -> 0x98adb2 owner=FUN_0055f650
+T2  0x568c4e x13fold+mov -> 0x98adb2 owner=FUN_0055f650
+T2  0x569654 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x5698fb x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x56a4b4 x13fold+cmp -> 0x98adb3 owner=FUN_0055f650
+T2  0x56a504 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x56ad43 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x56aeb7 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x56b19d x13fold+test -> 0x98ada8 owner=FUN_0055f650
+T2  0x56b1db x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x56b2fc x13fold+test -> 0x98ada8 owner=FUN_0055f650
+T2  0x56b35f x13fold+mov -> 0x98adaf owner=FUN_0055f650
+T2  0x56b433 x13fold+test -> 0x98ada8 owner=FUN_0055f650
+T2  0x56b621 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x56b7e9 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x56bcc2 x13fold+mov -> 0x98adac owner=FUN_0055f650
+T2  0x56bd6e x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x56bd89 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x56bf44 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x56bff1 x13fold+test -> 0x98ada8 owner=FUN_0055f650
+T2  0x56c026 x13fold+test -> 0x98ada8 owner=FUN_0055f650
+T2  0x56c129 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x56c244 x13fold+cmp -> 0x98adb2 owner=FUN_0055f650
+T2  0x56c380 x13fold+mov -> 0x98adad owner=FUN_0055f650
+T2  0x56cd57 x13fold+mov -> 0x98adad owner=None
+T2  0x56cece x13fold+cmp -> 0x98adb2 owner=FUN_0056cdf0
+T2  0x56d8c6 x13fold+mov -> 0x98adad owner=FUN_0056d890
+T2  0x56d9d6 x13fold+mov -> 0x98adad owner=FUN_0056d960
+T2  0x56dc42 x13fold+mov -> 0x98adad owner=FUN_0056d960
+T2  0x56e139 x13fold+mov -> 0x98adb2 owner=FUN_0056df40
+T2  0x56e201 x13fold+cmp -> 0x98adb2 owner=FUN_0056df40
+T2  0x56e2e6 x13fold+cmp -> 0x98adb2 owner=FUN_0056df40
+T2  0x56ed61 x13fold+mov -> 0x98adac owner=FUN_0056df40
+T2  0x56f012 x13fold+mov -> 0x98ada8 owner=FUN_0056df40
+T2  0x56f1b4 x13fold+cmp -> 0x98adb2 owner=FUN_0056df40
+T2  0x56f471 x13fold+mov -> 0x98adac owner=FUN_0056df40
+T2  0x582705 x13fold+mov -> 0x98adac owner=FUN_005823c0
+T2  0x584dcb x13fold+lea -> 0x98ad88 owner=FUN_00584b30
+T2  0x585376 x13fold+mov -> 0x98adb1 owner=FUN_00584b30
+T2  0x585939 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x5859bf x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x585d71 x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x58601d x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x586089 x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x5860cb x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x58612f x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x58619e x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x586213 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x5864e5 x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x5865b4 x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x586600 x13fold+mov -> 0x98adad owner=FUN_00585720
+T2  0x586614 x13fold+mov -> 0x98adad owner=FUN_00585720
+T2  0x586645 x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x58666e x13fold+mov -> 0x98adad owner=FUN_00585720
+T2  0x5866ac x13fold+mov -> 0x98adad owner=FUN_00585720
+T2  0x5866d3 x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x586792 x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x58685a x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x586a3e x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x586d4b x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x586e1a x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x586ee6 x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x586fd8 x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x58709a x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x587189 x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x5871f8 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x58757d x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x5879f7 x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x587ab5 x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x587b60 x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x588124 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x5881f4 x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x588250 x13fold+mov -> 0x98adad owner=FUN_00585720
+T2  0x588350 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x58873d x13fold+mov -> 0x98adb2 owner=FUN_00585720
+T2  0x588fb4 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x58911d x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x589422 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x5894ea x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589719 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589888 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589936 x13fold+mov -> 0x98adad owner=FUN_00585720
+T2  0x589a21 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589ad2 x13fold+test -> 0x98ada8 owner=FUN_00585720
+T2  0x589ba0 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589bef x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589cb0 x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589d1a x13fold+mov -> 0x98adac owner=FUN_00585720
+T2  0x589df7 x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x589f9d x13fold+mov -> 0x98adad owner=FUN_00585720
+T2  0x58a00b x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x58a240 x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x58a2c5 x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x58a370 x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x58a49e x13fold+cmp -> 0x98adb2 owner=FUN_00585720
+T2  0x58a6ba x13fold+lea -> 0x98ad88 owner=FUN_00585720
+T2  0x58c9f3 x13fold+mov -> 0x98adad owner=FUN_0058c890
+T2  0x58cc5e x13fold+mov -> 0x98adac owner=FUN_0058c890
+T2  0x58cd84 x13fold+mov -> 0x98adac owner=FUN_0058c890
+T2  0x58fb6a x13fold+mov -> 0x98adac owner=FUN_0058fa40
+T2  0x58fd7a x13fold+test -> 0x98ada8 owner=FUN_0058fa40
+T2  0x591f74 x13fold+test -> 0x98ada8 owner=FUN_0058fa40
+T2  0x592418 x13fold+mov -> 0x98adad owner=FUN_0058fa40
+T2  0x592439 x13fold+mov -> 0x98adae owner=FUN_0058fa40
+T2  0x59245b x13fold+mov -> 0x98adac owner=FUN_0058fa40
+T2  0x59283f x13fold+mov -> 0x98adb2 owner=FUN_0058fa40
+T2  0x593caf x13fold+cmp -> 0x98adb2 owner=FUN_0058fa40
+T2  0x593cff x13fold+lea -> 0x98ad88 owner=FUN_0058fa40
+T2  0x593d4a x13fold+lea -> 0x98ad88 owner=FUN_0058fa40
+T2  0x594483 x13fold+mov -> 0x98adaf owner=FUN_0058fa40
+T2  0x59469b x13fold+mov -> 0x98adac owner=FUN_0058fa40
+T2  0x5949cf x13fold+lea -> 0x98ad88 owner=FUN_0058fa40
+T2  0x5a0ecd x13fold+cmp -> 0x98adb2 owner=FUN_005a0aa0
+T2  0x5a321e x13fold+mov -> 0x98adac owner=FUN_005a3190
+T2  0x5a3241 x13fold+mov -> 0x98adac owner=FUN_005a3190
+T2  0x5a32f4 x13fold+mov -> 0x98adac owner=FUN_005a3290
+T2  0x5a335a x13fold+mov -> 0x98adac owner=FUN_005a3290
+T2  0x5a33df x13fold+mov -> 0x98ada8 owner=FUN_005a33d0
+T2  0x5a38ff x13fold+test -> 0x98ada8 owner=FUN_005a3470
+T2  0x5a4176 x13fold+mov -> 0x98adac owner=FUN_005a3470
+T2  0x5a4469 x13fold+test -> 0x98ada8 owner=FUN_005a3470
+T2  0x5a44cc x13fold+test -> 0x98ada8 owner=FUN_005a3470
+T2  0x5a473d x13fold+test -> 0x98ada8 owner=FUN_005a3470
+T2  0x5a4974 x13fold+mov -> 0x98ada8 owner=FUN_005a3470
+T2  0x5a49cf x13fold+cmp -> 0x98adb2 owner=FUN_005a3470
+T2  0x5a4a0a x13fold+cmp -> 0x98adb2 owner=FUN_005a3470
+T2  0x5a4a60 x13fold+mov -> 0x98adac owner=FUN_005a3470
+T2  0x5a4a86 x13fold+mov -> 0x98adac owner=FUN_005a3470
+T2  0x5a5035 x13fold+test -> 0x98ada8 owner=FUN_005a3470
+T2  0x5a528d x13fold+test -> 0x98ada8 owner=FUN_005a3470
+T2  0x5a5704 x13fold+mov -> 0x98adac owner=FUN_005a3470
+T2  0x5a57d9 x13fold+cmp -> 0x98adb2 owner=FUN_005a3470
+T2  0x5a59d5 x13fold+test -> 0x98ada8 owner=FUN_005a5950
+T2  0x5a5aef x13fold+cmp -> 0x98adb2 owner=FUN_005a5a80
+T2  0x5a5b55 x13fold+cmp -> 0x98adb2 owner=FUN_005a5a80
+T2  0x5a5d05 x13fold+test -> 0x98ada8 owner=FUN_005a5cd0
+T2  0x5a5eae x13fold+test -> 0x98ada8 owner=FUN_005a5cd0
+T2  0x5a5fa1 x13fold+mov -> 0x98adac owner=FUN_005a5cd0
+T2  0x5a5fe1 x13fold+mov -> 0x98adac owner=FUN_005a5cd0
+T2  0x5a613a x13fold+mov -> 0x98adb2 owner=FUN_005a5cd0
+T2  0x5a640f x13fold+mov -> 0x98adb2 owner=FUN_005a6330
+T2  0x5a6457 x13fold+mov -> 0x98adac owner=FUN_005a6330
+T2  0x5a64ac x13fold+mov -> 0x98adad owner=FUN_005a6330
+T2  0x5a64f8 x13fold+mov -> 0x98adae owner=FUN_005a6330
+T2  0x5a6547 x13fold+test -> 0x98ada8 owner=FUN_005a6330
+T2  0x5a6588 x13fold+mov -> 0x98adb1 owner=FUN_005a6330
+T2  0x5a65cd x13fold+mov -> 0x98adac owner=FUN_005a6330
+T2  0x5a66de x13fold+mov -> 0x98adae owner=FUN_005a6330
+T2  0x5a66fe x13fold+mov -> 0x98adad owner=FUN_005a6330
+T2  0x5a6758 x13fold+mov -> 0x98adb2 owner=FUN_005a6330
+T2  0x5a67ab x13fold+mov -> 0x98adac owner=FUN_005a6330
+T2  0x5a67fc x13fold+mov -> 0x98adb2 owner=FUN_005a6330
+T2  0x5a688b x13fold+mov -> 0x98adb3 owner=FUN_005a6330
+T2  0x5a68cc x13fold+mov -> 0x98adac owner=FUN_005a6330
+T2  0x5a691a x13fold+mov -> 0x98adad owner=FUN_005a6330
+T2  0x5ab3a2 x13fold+mov -> 0x98adac owner=FUN_005ab320
+T2  0x5ab7cb x13fold+mov -> 0x98adb2 owner=FUN_005ab650
+T2  0x5ab996 x13fold+mov -> 0x98adad owner=FUN_005ab650
+T2  0x5ab9b6 x13fold+mov -> 0x98adae owner=FUN_005ab650
+T2  0x5ab9d7 x13fold+mov -> 0x98adac owner=FUN_005ab650
+T2  0x5abbb1 x13fold+cmp -> 0x98adb2 owner=FUN_005abb40
+T2  0x5ac346 x13fold+cmp -> 0x98adb2 owner=FUN_005ac310
+T2  0x5ac388 x13fold+mov -> 0x98adae owner=FUN_005ac310
+T2  0x5ac3c1 x13fold+mov -> 0x98adac owner=FUN_005ac310
+T2  0x5ac475 x13fold+cmp -> 0x98adb2 owner=FUN_005ac440
+T2  0x5ac4bd x13fold+mov -> 0x98adad owner=FUN_005ac440
+T2  0x5ac673 x13fold+mov -> 0x98adac owner=FUN_005ac650
+T2  0x5ac736 x13fold+mov -> 0x98adac owner=FUN_005ac650
+T2  0x5accdf x13fold+mov -> 0x98adac owner=FUN_005accd0
+T2  0x5acd33 x13fold+mov -> 0x98adac owner=FUN_005accd0
+T2b 0x4bdec4 chain: call   0x407520 | mov    eax,DWORD PTR [ebp+0x8] | imul   eax,eax,0x34 | movsx  ecx,WORD PTR [eax+0x933282] | imul   ecx,ecx,0x34 | add    ecx,0x98ad88 | push   ecx | call   0x405220 | add    esp,0x4 | mov    edx,DWORD PTR ds:0x985ae8 | and    edx,0x40
+T2b 0x5ab3a2 chain: je     0x5ab3ce | movsx  eax,WORD PTR [esi+0x933282] | lea    ecx,[eax+eax*2] | lea    edx,[eax+ecx*4] | xor    eax,eax | mov    al,BYTE PTR [edx*4+0x98adac] | lea    eax,[eax+eax*8] | shl    eax,0x4 | cmp    BYTE PTR [eax+0x92ae81],0x2 | je     0x5ab3ce | mov    eax,0x100000
+T2b pinned-chain shapes: 0x4bdec4=True 0x5ab3a2=True (type rec field +0x24 read)
+T3  0 off=222783 x=   28 y=   42 +10=   2 band=0 name=Scout Patrol           own= 3 band==own=False in-grid=True
+T3  1 off=222835 x=   12 y=    6 +10=  11 band=0 name=Unity Rover            own= 5 band==own=False in-grid=True
+T3  2 off=222887 x=   31 y=   37 +10=   8 band=0 name=Mind Worms             own= 0 band==own=True in-grid=True
+T3  3 off=222939 x=   28 y=   42 +10=   2 band=0 name=Scout Patrol           own= 3 band==own=False in-grid=True
+T3  4 off=222991 x=    7 y=   27 +10= 256 band=4 name=Synthmetal Sentinels   own= 4 band==own=True in-grid=True
+T3  5 off=223043 x=    7 y=   27 +10=   7 band=0 name=Alien Artifact         own= 4 band==own=False in-grid=True
+T3  6 off=223095 x=    5 y=   11 +10=  11 band=0 name=Unity Rover            own= 2 band==own=False in-grid=True
+T3  7 off=223147 x=   28 y=   42 +10=   2 band=0 name=Scout Patrol           own= 3 band==own=False in-grid=True
+T3  8 off=223199 x=   15 y=   11 +10=   7 band=0 name=Alien Artifact         own= 1 band==own=False in-grid=True
+T3  9 off=223251 x=   58 y=   12 +10=   1 band=0 name=Formers                own= 7 band==own=False in-grid=True
+T3 10 off=223303 x=   17 y=   11 +10=   1 band=0 name=Formers                own= 1 band==own=False in-grid=True
+T3 11 off=223355 x=   28 y=   42 +10=   2 band=0 name=Scout Patrol           own= 3 band==own=False in-grid=True
+T3 12 off=223407 x=    4 y=    4 +10= 320 band=5 name=Scout Rover            own= 5 band==own=True in-grid=True
+T3 13 off=223459 x=   12 y=   14 +10=   2 band=0 name=Scout Patrol           own= 2 band==own=False in-grid=True
+T3 14 off=223511 x=    4 y=    4 +10= 320 band=5 name=Scout Rover            own= 5 band==own=True in-grid=True
+T3 15 off=223563 x=   28 y=   42 +10=   2 band=0 name=Scout Patrol           own= 3 band==own=False in-grid=True
+T3 16 off=223615 x=   57 y=   13 +10=   2 band=0 name=Scout Patrol           own= 7 band==own=False in-grid=True
+T3 17 off=223667 x=   12 y=   28 +10= 256 band=4 name=Synthmetal Sentinels   own= 4 band==own=True in-grid=True
+T3 18 off=223719 x=    5 y=   11 +10= 128 band=2 name=Synthmetal Sentinels   own= 2 band==own=True in-grid=True
+T3 19 off=223771 x=   30 y=   54 +10=   8 band=0 name=Mind Worms             own= 0 band==own=True in-grid=True
+T3 20 off=223823 x=    7 y=   17 +10= 256 band=4 name=Synthmetal Sentinels   own= 4 band==own=True in-grid=True
+T3 21 off=223875 x=   28 y=   42 +10=   2 band=0 name=Scout Patrol           own= 3 band==own=False in-grid=True
+T3 22 off=223927 x=    6 y=   10 +10=   1 band=0 name=Formers                own= 2 band==own=False in-grid=True
+T3 23 off=223979 x=    2 y=   18 +10= 128 band=2 name=Synthmetal Sentinels   own= 2 band==own=True in-grid=True
+T3 24 off=224031 x=   15 y=    5 +10=   1 band=0 name=Formers                own= 5 band==own=False in-grid=True
+T3 25 off=224083 x=    3 y=   11 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 26 off=224135 x=   12 y=   52 +10=   2 band=0 name=Scout Patrol           own= 6 band==own=False in-grid=True
+T3 27 off=224187 x=    2 y=   48 +10=   2 band=0 name=Scout Patrol           own= 6 band==own=False in-grid=True
+T3 28 off=224239 x=   45 y=   39 +10=   8 band=0 name=Mind Worms             own= 0 band==own=True in-grid=True
+T3 29 off=224291 x=   36 y=   38 +10=   8 band=0 name=Mind Worms             own= 0 band==own=True in-grid=True
+T3 30 off=224343 x=    3 y=   11 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 31 off=224395 x=    3 y=   11 +10= 131 band=2 name=Recon Rover            own= 2 band==own=True in-grid=True
+T3 32 off=224447 x=    8 y=   16 +10=   1 band=0 name=Formers                own= 4 band==own=False in-grid=True
+T3 33 off=224499 x=    8 y=   16 +10=   1 band=0 name=Formers                own= 4 band==own=False in-grid=True
+T3 34 off=224551 x=    1 y=   61 +10=   2 band=0 name=Scout Patrol           own= 6 band==own=False in-grid=True
+T3 35 off=224603 x=   10 y=   26 +10=   1 band=0 name=Formers                own= 4 band==own=False in-grid=True
+T3 36 off=224655 x=    8 y=    4 +10=   1 band=0 name=Formers                own= 5 band==own=False in-grid=True
+T3 37 off=224707 x=   15 y=   51 +10=   2 band=0 name=Scout Patrol           own= 6 band==own=False in-grid=True
+T3 38 off=224759 x=    3 y=   11 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 39 off=224811 x=    5 y=   11 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 40 off=224863 x=   25 y=   55 +10=   2 band=0 name=Scout Patrol           own= 6 band==own=False in-grid=True
+T3 41 off=224915 x=   10 y=   56 +10=   2 band=0 name=Scout Patrol           own= 6 band==own=False in-grid=True
+T3 42 off=224967 x=   13 y=    9 +10= 323 band=5 name=Recon Rover            own= 5 band==own=True in-grid=True
+T3 43 off=225019 x=   16 y=    4 +10=   2 band=0 name=Scout Patrol           own= 5 band==own=False in-grid=True
+T3 44 off=225071 x=   63 y=   11 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 45 off=225123 x=   20 y=   10 +10=   2 band=0 name=Scout Patrol           own= 1 band==own=False in-grid=True
+T3 46 off=225175 x=   61 y=   11 +10= 131 band=2 name=Recon Rover            own= 2 band==own=True in-grid=True
+T3 47 off=225227 x=    9 y=   53 +10=   0 band=0 name=Colony Pod             own= 6 band==own=False in-grid=True
+T3 48 off=225279 x=    2 y=   18 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 49 off=225331 x=   12 y=    6 +10= 321 band=5 name=Synthmetal Garrison    own= 5 band==own=True in-grid=True
+T3 50 off=225383 x=   12 y=    6 +10= 322 band=5 name=Laser Squad            own= 5 band==own=True in-grid=True
+T3 51 off=225435 x=   61 y=   11 +10= 131 band=2 name=Recon Rover            own= 2 band==own=True in-grid=True
+T3 52 off=225487 x=   15 y=   13 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 53 off=225539 x=    3 y=   11 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 54 off=225591 x=   21 y=   47 +10=   8 band=0 name=Mind Worms             own= 0 band==own=True in-grid=True
+T3 55 off=225643 x=   11 y=   55 +10=   0 band=0 name=Colony Pod             own= 6 band==own=False in-grid=True
+T3 56 off=225695 x=   57 y=   13 +10=   2 band=0 name=Scout Patrol           own= 7 band==own=False in-grid=True
+T3 57 off=225747 x=   12 y=    6 +10= 323 band=5 name=Recon Rover            own= 5 band==own=True in-grid=True
+T3 58 off=225799 x=   61 y=   11 +10= 131 band=2 name=Recon Rover            own= 2 band==own=True in-grid=True
+T3 59 off=225851 x=   15 y=   55 +10=   0 band=0 name=Colony Pod             own= 6 band==own=False in-grid=True
+T3 60 off=225903 x=   60 y=   30 +10=   9 band=0 name=Isle of the Deep       own= 0 band==own=True in-grid=True
+T3 61 off=225955 x=   60 y=   30 +10=   8 band=0 name=Mind Worms             own= 0 band==own=True in-grid=True
+T3 62 off=226007 x=   60 y=   30 +10=   8 band=0 name=Mind Worms             own= 0 band==own=True in-grid=True
+T3 63 off=226059 x=    2 y=   16 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3 64 off=226111 x=   16 y=   56 +10=   2 band=0 name=Scout Patrol           own= 6 band==own=False in-grid=True
+T3 65 off=226163 x=   15 y=   11 +10=   2 band=0 name=Scout Patrol           own= 1 band==own=False in-grid=True
+T3 66 off=226215 x=   11 y=   15 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
+T3b n=67 band=25 non-band=42 band==owner=25/25 named-hit=67/67 out-of-grid=0 band0-only-for-non-band=True distinct-owners(nongroup)=8
+T3c band-value histogram {128: 2, 130: 10, 131: 4, 256: 3, 320: 2, 321: 1, 322: 1, 323: 2}
+T4 m54b->m113map differing bytes=74 windows=20 all-marker(0xc0de00NN)=True seq=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] stride128=True covered=True windows-in-unit-array=13 records-touched=[2, 4, 7, 9, 12, 14, 16, 17, 19, 21, 24, 26, 29, 31]
+T4  foff=222896 recs=[2] m54b=0x00000800 m113=0xc0de0008 ndiff=4 fields=['2+9', '2+10', '2+11', '2+12']
+T4  foff=223024 recs=[4] m54b=0x03ffffff m113=0xc0de0009 ndiff=4 fields=['4+33', '4+34', '4+35', '4+36']
+T4  foff=223152 recs=[7] m54b=0x00000000 m113=0xc0de000a ndiff=3 fields=['7+5', '7+7', '7+8']
+T4  foff=223280 recs=[9] m54b=0xffffff00 m113=0xc0de000b ndiff=4 fields=['9+29', '9+30', '9+31', '9+32']
+T4  foff=223408 recs=[12] m54b=0x00000400 m113=0xc0de000c ndiff=4 fields=['12+1', '12+2', '12+3', '12+4']
+T4  foff=223536 recs=[14] m54b=0x08ffffff m113=0xc0de000d ndiff=4 fields=['14+25', '14+26', '14+27', '14+28']
+T4  foff=223664 recs=[16, 17] m54b=0x0c0038ff m113=0xc0de000e ndiff=4 fields=['16+49', '16+50', '16+51', '17+0']
+T4  foff=223792 recs=[19] m54b=0xffffff00 m113=0xc0de000f ndiff=4 fields=['19+21', '19+22', '19+23', '19+24']
+T4  foff=223920 recs=[21] m54b=0x0f000000 m113=0xc0de0010 ndiff=3 fields=['21+45', '21+47', '21+48']
+T4  foff=224048 recs=[24] m54b=0x0f000006 m113=0xc0de0011 ndiff=3 fields=['24+17', '24+19', '24+20']
+T4  foff=224176 recs=[26] m54b=0x002f0006 m113=0xc0de0012 ndiff=3 fields=['26+41', '26+43', '26+44']
+T4  foff=224304 recs=[29] m54b=0x00000000 m113=0xc0de0013 ndiff=3 fields=['29+13', '29+15', '29+16']
+T4  foff=224432 recs=[31] m54b=0x06000000 m113=0xc0de0014 ndiff=3 fields=['31+37', '31+39', '31+40']
+T4b m113map out-of-grid records=[12, 17] subset-of-poked=True
+T5 unit_set_position 0x5ab320 body=90 insns jumps=9 jumps-before-+0-store=0 branch-targets-inside-(entry,0x5ab35c]=[] store+0=['mov    WORD PTR [esi+0x933278],bx'] store+2=['mov    WORD PTR [esi+0x93327a],di'] reads-of-+10=['0x5ab3a2']
+T6 records with +10(word)&0x40=6 &0x400=0 both=0; word@+12 nonzero=0
+T7 R1(band-records-are-not-units)=False R2(+10-is-a-flag-word:0)=False R3(exemption-bites-on-an-unpoked-save:['m113map.SAV'])=False R4(tile-store-is-guarded)=False
+G1 PASS type array at count+4+len+3584 on 4/4 saves, 4096-B gap, closes=[True, True, True, True]
+G2 PASS chain sites=659 (pinned 659), +10 word refs=774 (pinned 774), pinned at 0x4bdeca (unit idx->type rec) and 0x5ab3a2 (unit_set_position -> type+0x24); shapes=True/True
+G3 PASS 67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all band0
+G4 PASS 32 named = 14 band0 + 18 faction-band; type byte +0x2d==0xff exactly on the 14 band0 slots (0 of the 18); +0x30 bit2 NOT a band marker (12/20)
+G5 PASS exemption is load-bearing ONLY on m113map: 67 vs 49; 3/4 saves agree (the type-sound predicate C matches B on 4/4)
+G6 PASS 20 markers 0xc0de0001..0xc0de0014, stride 128, all diffs covered, 13 windows in the unit array touching 14 records; m113's out-of-grid set [12, 17] is a subset of the poked records [2, 4, 7, 9, 12, 14, 16, 17, 19, 21, 24, 26, 29, 31]
+G7 PASS no branch on the entry path before the +0/+2 stores of unit_set_position (jumps in body=9, none below 0x5ab355; no jump target inside; stores pinned at 0x5ab355/0x5ab35c)
+G8 PASS save's named set == M80's LIVE census minus the 2 records M80 itself created (324/325)
+G11 PASS 67/67 records hit a NAMED type slot out of density 32/512: chance of that by coincidence = 10^-80.7 (a flag-word or junk-field reading has no way to pick the 6% of the array that carries names)
+G9 PASS 4 rivals all False (R2 AND of band values=0; R3 differing saves=['m113map.SAV'])
+DIGEST ee77ddb39e8ec202
+G10 PASS digest==PIN ee77ddb39e8ec202 measured=ee77ddb39e8ec202 (any drift in the measured rows reddens this)
+== M327: 11/11 ==

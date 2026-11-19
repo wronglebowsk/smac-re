@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B26 TRIAGED 10/10 + harness 19/19+1 NO-OP, #328; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B26 + M54A-M324 done; next BUILD is B27, spine text NOT authored; analysis picks (vii) + (viii) open; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B26 TRIAGED 10/10 + harness 19/19+1 NO-OP, #328; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `pick-archive.md`. STATE: B1-B26 + M54A-M327 done; next BUILD is B27, spine text NOT authored; (viii) open; (vii) answered by M327; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -53,20 +53,20 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
-- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M325 + B1-B26 (M241 FAIL 2/5 #180).
+- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M327 + B1-B26 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
-  NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  The two CLOSED pick rows (v = M319, vi = M321) moved VERBATIM to `docs/pick-archive.md` §trim-s300-chain1 (b) (sha1 b0e7c1d2614f2312, byte-exact asserted at write); `NAMED ## M319` / `## M321` govern.
+  NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b). NAMED 246,504/250k FAIL — rotate first (`scripts/m327_named_rotate.py`).
+  CLOSED pick rows (v = M319, vi = M321) VERBATIM at §trim-s300-chain1 (b) (sha1 b0e7c1d2614f2312); `NAMED ## M319` / `## M321` govern.
   OPEN PICK (viii) (NEW at the M321 triage, zero box): NAME FUN_0041a8f0 - it round-trips that
   field through the scratch dword `ds:0x99aa38` behind a 20-store tree (0x41a9d2-0x41ab6d), and
   47 whole-dword stores to the field are untraced. Start `evidence/m321_memo_owners.txt:47-81`.
-  OPEN PICK (vii) (NEW at the #319 triage, zero box): **25 of the 67 records** of this save's
-  unit array carry +10 in 128/130/131/256/320/321/322/323 - what `sim/save.py:52` calls queue-band
-  and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such
-  a record's +0/+2 (B7's and B25's model does, at +0 every round); does the exemption hold on other
-  saves? Start: `evidence/b25_selftest.txt:45-56`, `sim/save.py:73`, a one-pass +10 census.
+  ANSWERED PICK (vii) -> **M327** (s304, zero box): +10 is a SIGNED TYPE INDEX into the save's OWN
+  512x52 B type array (26,624 B at count_off+4+count_len+3584, 4,096 B before the unit array;
+  +10//64 == owner on 25/25) — the 25 exempt records ARE units; the coord exemption is OURS and bites
+  only on the self-poked m113map.SAV. RETRACTS `sim/save.py:52` + ## B25's trap-14 in place. 11/11
+  ee77ddb39e8ec202 (`m327_typeband_census.txt:769`), harness 22/22; `NAMED ## M327` governs.
   Lists live in NAMED ## M310-M325 + the `## B<n>` blocks. READER LAWS still BIND:
   every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 

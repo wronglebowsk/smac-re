@@ -1169,3 +1169,14 @@ NEXT_PROMPT.md at the M326 rebase onto main 4a03182 (rotated so the file stays u
 12,000 B warn cap; sha1 a5d8e0a402bc of the line below, byte-exact). `NAMED ## M325` governs.
 
 M325 (s299-chain2): block+220 = per-faction ENERGY ("EDITORENERGY" handler: field<-g999fa4 @4e0336); turn advance 0 block stores; feed=MIN derived (M324 MAX retracted); g999fa4=cheat-chain value; EDITORYEAR explains 4e0350. 8/8 a623181d7fb68263 (m325_block220_census.txt:297); 30/30 97c193e12593c95e. MERGED #329->fb6e6c4. NAMED ## M325.
+
+## §trim-s304-chain1 (a) the OPEN PICK (vii) block, VERBATIM from §THE PICK of NEXT_PROMPT.md
+at the M327 merge (answered: unit `+10` is a signed TYPE INDEX into the save's own 512x52 B
+type array; `NAMED ## M327` governs and `NAMED ## B25` carries the retraction; rotated so the
+file stays under the 12,000 B warn cap; sha1 a4b626a09832 of the block below, byte-exact).
+
+  OPEN PICK (vii) (NEW at the #319 triage, zero box): **25 of the 67 records** of this save's
+  unit array carry +10 in 128/130/131/256/320/321/322/323 - what `sim/save.py:52` calls queue-band
+  and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such
+  a record's +0/+2 (B7's and B25's model does, at +0 every round); does the exemption hold on other
+  saves? Start: `evidence/b25_selftest.txt:45-56`, `sim/save.py:73`, a one-pass +10 census.
