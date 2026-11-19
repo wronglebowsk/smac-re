@@ -1283,17 +1283,17 @@ Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de
 Acceptance `python3 -u scripts/m314_tour_family.py` -> **18/18**, digest cf54a7ca907344c6, x2 identical; `scripts/m314_mutate.py` -> **27/27** (MERGED as #299, main e638772; the squash title's "20/20" is the pre-review harness - this line governs).
 REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k=full check name vs detail=short keys -> every lookup empty) -> now hashes name+verdict+detail; A4b pump check was decorative (`parse_text` keeps mnemonic separate, so the `^push 0x..$` regex on ops matched nothing -> `all([])` true) -> bare-operand push census + pumpA x3 / pumpB x1 call-site counts pinned; A3 claimed a `je` it never read -> now entry-relative pins (cmp +0x9/+0x9/+0x29, je +0xD/+0xD/+0x2D, je-target = add-10, mov = add-3); A3b inferred abs() from neg/sub COUNTS -> 11-instruction sequence pinned with jl/jmp targets; A6b de-duplicated owners so a 6th call in a listed fn stayed green -> 5 call-site addresses pinned; token row said 26 quoted where evidence said 24 quoted + 2 named + 5 forwarded -> A1b now pins the exact 24+2+5 breakdown (the 2 unexplained entries were `param_1`/`param_2` forwards). New mutants MU2b/MU5/MU5b/MU5c/MU5d/MU7j/MU9*/MU15b/MU18* cover each repaired fact.
 
-## M323 (s295-chain2, STATIC, 13/13, 31/31+1 post-review) - ds:0x985afc = ROUND counter; year = round + 2100
+## M323 (s295-chain2, STATIC, 13/13, 31/31+1) - ds:0x985afc = ROUND counter; year = round + 2100
 
 | claim | evidence | conf |
 |---|---|---|
-| 336 refs W5/T59/R272/A0; dword 333 + word 1 (mov ax @59c18a) + byte 2; gaps 4f3a91/51da30 | G1/G6/G9 `evidence/m323_round_census.txt:523,528,531` | V MU1/MU18/MU19/MU23/MU31 |
-| writers: 5a0fa0=0 (new-game, counts zeroed); 51f320=round+1; 4e0350=max(1,g999fa4-g92bf68), cmp/jge flow pinned; 59ce10=rand{30,60,80} gated 985ac4.7 | G2/G3/G10 `:524-525,532,340-348` | V MU2/MU3/MU13/MU18/MU20/MU27/MU28/MU30 |
-| year sole writer 51f54f = 5b2c00(round+1) = arg+g92bf68(=2100); read/inc/push/call arg chain pinned | G10/R1 `:532-533` | V MU10/MU13/MU17/MU30 |
-| gates: M320 ==0 @59f1a0/59f19c; M305 &3==bl(1) @51f711, ebx def-set+pair+no-jump-in pinned; M317 >75 @55840d; M177 stamps+age<16 | G5/G8 `:527,530,438,502` | V MU5/MU14/MU15/MU16/MU21/MU22/MU25/MU29 |
-| live round=50/year=2150 (m302); rivals dead: R1 MU10/MU17, R2 MU13/MU18/MU23, R3 MU12/MU13/MU23 | G7/R1-R3 `:529,533-535` | V MU7/MU24 + named |
-| ACCEPT 13/13 digest 136841406b5bee5b x2 (`evidence/m323_round_census.txt:536`); harness 31/31+1 digest a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32`); selftest 4/4 (`evidence/m323_mutate_selftest.txt:5`) | as cited | V |
-| OPEN: rand-start noun; g999fa4; save-carry (no loader writer); resolver linear-static (declared) | - | lead |
+| 336 refs W5/T59/R272/A0; dw333+word1 (mov ax @59c18a)+byte2; gaps 4f3a91/51da30 | G1/G6/G9 `evidence/m323_round_census.txt:523,528,531` | V MU1/MU18/MU19/MU23/MU31 |
+| writers: 5a0fa0=0 (new-game); 51f320=+1; 4e0350=max(1,g999fa4-g92bf68), flow pinned; 59ce10=rand{30,60,80} gated 985ac4.7 | G2/G3/G10 `:524-525,532,340-348` | V MU2/MU3/MU13/MU18/MU20/MU27/MU28/MU30 |
+| year sole writer 51f54f=5b2c00(round+1)=arg+g92bf68(2100); arg chain pinned | G10/R1 `:532-533` | V MU10/MU13/MU17/MU30 |
+| gates: M320 ==0 @59f1a0; M305 &3==bl(1) @51f711, def-set+pair pinned; M317 >75 @55840d; M177 stamps age<16 | G5/G8 `:527,530,438,502` | V MU5/MU14/MU15/MU16/MU21/MU22/MU25/MU29 |
+| live round=50/year=2150; rivals dead | G7/R1-R3 `:529,533-535` | V MU7/MU24; R1 MU10/MU17, R2 MU13/MU18/MU23, R3 MU12/MU13/MU23 |
+| ACCEPT 13/13 digest 136841406b5bee5b x2 (`evidence/m323_round_census.txt:536`); harness 31/31+1 a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32`); selftest 4/4 (`evidence/m323_mutate_selftest.txt:5`) | as cited | V |
+| OPEN: rand-start noun; g999fa4; save-carry; resolver linear-static | - | lead |
 
 ## M320 (s294-chain2, STATIC, 12/12, 26/26+1) - siblings: 128-region ladder, 512 arrays, reset/rebuild
 
