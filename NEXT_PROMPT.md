@@ -117,4 +117,5 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-chain1 (a); `NAMED` governs.
-M325 (s299-chain2): block+220 = per-faction ENERGY ("EDITORENERGY" handler: field<-g999fa4 @4e0336); turn advance 0 block stores; feed=MIN derived (M324 MAX retracted); g999fa4=cheat-chain value; EDITORYEAR explains 4e0350. 8/8 a623181d7fb68263 (m325_block220_census.txt:297); 30/30 97c193e12593c95e. MERGED #329->fb6e6c4. NAMED ## M325.
+M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
+|M326 (s301-chain2): block+224=deferred HURRY-payment debt (419c30 defers iff 920434/91c62c set; upkeep settles ENERGY-=224,224:=0,floor0; readers=220-224; MIN cap@41a4e0). Subreg fix; M325 29 labels->STRIDE, 8/8 re-run (G10). 10/10 f0f31c3daa26b601 (:45); 27/27 07326ba5d23a2dbe. NAMED ## M326.

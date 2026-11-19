@@ -1,0 +1,11 @@
+orig blkconst_seeds: [('0x40dd60', '0x94f70c'), ('0x4e02ae', '0x94f70c'), ('0x520589', '0x94f70c'), ('0x523b57', '0x94f70c')]
+fixed blkconst_seeds: [('0x40dd60', '0x94f70c'), ('0x4e02ae', '0x94f70c'), ('0x520589', '0x94f70c'), ('0x523b57', '0x94f70c')]
+M325 G3 pin: [('0x40dd60', '0x94f70c'), ('0x4e02ae', '0x94f70c'), ('0x520589', '0x94f70c'), ('0x523b57', '0x94f70c')]
+SEEDCHECK PASS
+non-gate seed-tag diffs (lea seeds whose prov label moves; NONE enters a
+M325 gate pin: G3 pins only len(seeds)=30, the BLKCONST-seed targets above,
+and the regwr/regrd tuples - T10 measured those identical):
+   ('0x4f2c1c', ('eax', 'UNPROVEN', "(-4, 9754192, ('arg', 'esi'))"), ('eax', 'UNPROVEN', "(4, 9754192, ('arg', 'edx'))"))
+all-seed-tags equal: False (diffs=1, all non-BLKCONST lea prov labels)
+m112poke parse: year=2150 blockA=[(812, 67040, 'block A', '0x94d430')]
+m112poke +224 vals: [0, 0, 0, 0, 0, 0, 0, 0]

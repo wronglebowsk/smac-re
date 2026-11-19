@@ -447,3 +447,12 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
   into a `docs/named-archive-*.md` BEFORE adding (§B26's 11,151 B rows -> `docs/named-archive-b26-rows.md`).
   Note: `evidence/` is 21.2 MB/20 MB warn - `evidence.py prune` finds NO victims, so the prune
   lever is not what the warn line wants; only the FAIL lines gate.
+
+## Session 301-chain2 (2026-11-19, M326 CLOSED+REVIEWED, STATIC: block+0x224 = deferred HURRY payment)
+
+- milestone/m326 (main 6ee41a8), PR #332. ANSWER: per-faction DEFERRED HURRY-PRODUCTION PAYMENT ("energy debt"). `python3 -u scripts/m326_block224_census.py`: 13 hits (3W/10R dw, 0 seeds224, 27 accesses/0 sibling-into-224). Sole add-writer 41a543 in FUN_00419c30 = HURRY dialog (HURRY/HURRYOPTIONS/HURRYPAYMENT pushed ONLY there): defer cost iff 920434&91c62c!=0 (phase: 91c62c:=1 around turnfn/upkeep calls 520c99/520cf8), else pay ENERGY+91c64c now. All 10 readers = 220-224 AVAILABLE (structural; itoa 1 site); cheat-cap MIN(g999fa4,avail)@41a4e0-f9 (M325 OPEN consumer). Upkeep 5208f0: ENERGY-=224, 224:=0 (esi=0 proven), floor0; x8380 fold DERIVED. RESET 59ec90 zeroes. turnfn 16st/0blk.
+- RESOLVER FIX (self-found): partial-reg writes skipped by def-walk -> over-proved const-0 (xor eax,eax; mov al,[rec+4]); both skeleton BLKCONST tags artifacts. Fix BOTH directions (review: full write opaque for queried partial; seed scan breaks on partial redef; ALGO7=old, S5). 13/13 STRIDE; leaf=byte[rec+4] via sole slot stores 419d94/41690d (noun INFERRED). M325 crosscheck now GATE G10: 29 labels BLKCONST->STRIDE +4 det; pins/totals unchanged; M325 own 8 gates RE-RUN under fix = 8/8 -> NAMED M325 row qualified in place.
+- Save [0]*8, foffs=550+k*20bc pinned, raw block carry (596a91); gap@328=own-player 3. No DEBT str; LOAN pushes in 6 non-writer owners. R1-R6 DEAD.
+- REVIEW #332 (4P1+6P2) 10/10 accepted: mutant-map corrected (MU4->G5 row; NO-OPs uncited), roles->G1, G6 structural (MU25/26), G3 count pin (MU27), G10 gate (MU24 algo8), ACCEPT path:line, foffs pin, 10/10 regex fix.
+- ACCEPT 10/10 **f0f31c3daa26b601** (`evidence/m326_block224_census.txt:45-46`) x2 (`_rerun.txt`; pre-review 9/9 66595e09a651a94d). HARNESS **27/27 (25+2 NO-OP)** **07326ba5d23a2dbe** (`m326_mutate.txt:30-32`); sweeps corrected MU13/23/26 sets; ST 5/5 (`_selftest.txt:7`).
+- OPEN: 920434/91c64c nouns; 419c30 callers; branch caveat 419de9/419e1f.
