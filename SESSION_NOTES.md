@@ -443,6 +443,18 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - OPEN, not swept green: `found_units` 69 -> 0 in the two post-boundary rounds while
   `n_units_img` stays 70/71; and why the exposed smuggler carries the poisoned owner once, not
   twice. NEXT: **B27 rung text UNAUTHORED**; picks (vii)/(viii). #180 (M241, 2/5) stands.
+- MERGE OF main under this PR (M324 #326 + M325 #329, chain 2): BOTH chains' sections kept;
+  NEXT_PROMPT 12,750 -> **11,950 B** (the two CLOSED pick rows rotated VERBATIM to
+  §trim-s300-chain1 (b), sha1 `b0e7c1d2614f2312`; the M325 row kept LIVE; ANSWERED range -> M227-M325).
+- **NAMED.md WENT RED, AND THE FIX WAS MINE**: `scripts/gate.py` printed `[FAIL] context/evidence
+  budget` because `evidence.py budget` exits 1 once a lookup doc passes its FAIL line - NAMED hit
+  **250,102 B against 250,000**, and the cause was this PR's own §B26 block at **11,151 B**, >10x
+  the registry's per-block cap. Its full-length rows moved VERBATIM to
+  `docs/named-archive-b26-rows.md` (sha1 `45c2cad67c663308`, byte-exactness asserted at write),
+  leaving one-line rows with the SAME gates, mutants and cites: NAMED is **246,259 B** and
+  `python3 scripts/review_lint.py --id b26` -> **PASS (11 V rows)**. **DEBT: 3,741 B of headroom
+  before the next fire reddens the gate for everyone - rotate first, then add.**
+
 ## Session 300-chain2 (2026-11-19, M325 MERGED, post-merge note; docs-only, zero box)
 
 - MERGED #329 squash **fb6e6c4**. Review 2P1+8P2 10/10 accepted in one reply; post-review 8/8 a623181d7fb68263 x2 + at-head identical; harness 30/30 (29+1) 97c193e12593c95e; CI 13 s CLEAN; main did not move (no rebase). Squash title "24/24+1" = PRE-review harness; NAMED ## M325 ACCEPT governs. Note: docs/m325-merged; pr329 .json sidecar folded in.

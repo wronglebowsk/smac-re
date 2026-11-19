@@ -25,7 +25,9 @@ C1/C2 of `scripts/s292_cap_check.py` fail BY DESIGN (its STATUS note); only C3 s
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
-(B25 = #319 main 1556ce9; B26 = this PR) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). **B26 (s299 BUILD + PR #328 TRIAGE) ACCEPT at this head**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 10/10 gates`, anchor `ae43e0ab9c8cfc3d` (`evidence/b26_selftest.txt:52`, gate line `:63`); harness `python3 -u scripts/b26_mutate.py` -> **19/19 scored + 1 declared NO-OP (MU19)** (`evidence/b26_mutate.txt:24`), `--selftest` **8/8 REJECTED**, **ENTRY-POINT IDENTITY 2/2** + **MU21** (both entry points print byte-identical 63-line stdout, sha256 `a1a5f1e0f310977b`; the check bites on a relay patched in a temp tree). THE LAW: the container is LOADED, not just written - the three laws and the four defects the gates caught are VERBATIM at §trim-s299 (e) **(SUPERSEDED IN PART - banner there)**; `NAMED ## B26` governs and carries the THREE retractions IN PLACE (F1 the smuggler is **NOT blind** — what holds is OBJECT REUSE; F3 only the SAVE-only refusal half is comparable to B25; F7 the owner byte is `UNIT_OWNER` +14, not `UNIT_FLAG` +4); the measured numbers for all three are in that block. **OPEN, ungated-as-explanation: the parser's `found_units` 69 -> 0 in the two post-boundary rounds; why the exposed smuggler carries the poisoned owner once, not the container's twice.** Next build **B27, NOT YET AUTHORED** - `BUILD_SPINE.md` ends at B26, so B27's rung text must be written BEFORE probing (one milestone = spine section + instrument). B25/B26 build-track detail (incl. the tile-test lead = pick (vii)) VERBATIM at `docs/pick-archive.md` §trim-s298 (a) + §trim-s299 (b) + §trim-s299 (d); `NAMED ## B25` / `## B26` / `## M316` / `## M315` govern.
+(B25 = #319 main 1556ce9; B26 = #328) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). **B26 (s299 BUILD + PR #328 TRIAGE) ACCEPT at this head**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 10/10 gates`, anchor `ae43e0ab9c8cfc3d` (`evidence/b26_selftest.txt:52`, gate line `:63`); harness `python3 -u scripts/b26_mutate.py` -> **19/19 scored + 1 declared NO-OP (MU19)** (`evidence/b26_mutate.txt:24`), `--selftest` **8/8 REJECTED**, **ENTRY-POINT IDENTITY 2/2** scored by **MU21** (both entry points print byte-identical 63-line stdout; the check bites on a relay patched in a temp tree). THE LAW: the container is LOADED, not just written - the three laws and the four defects are VERBATIM at §trim-s299 (e) **(SUPERSEDED IN PART)**; `NAMED ## B26` governs and carries the THREE retractions IN PLACE (F1 the smuggler is **NOT blind** — what holds is OBJECT REUSE; F3 only the SAVE-only refusal half is comparable to B25; F7 the owner byte is `UNIT_OWNER` +14, not `UNIT_FLAG` +4); numbers in that block. **OPEN, ungated-as-explanation: `found_units` 69 -> 0 in the two post-boundary rounds; why the exposed smuggler carries the poisoned owner once, not twice.** Next build **B27, NOT YET AUTHORED** (`BUILD_SPINE.md` ends at B26): write its rung text BEFORE probing (one milestone = spine section + instrument). B25/B26 build-track detail (incl. the tile-test lead = pick (vii)) VERBATIM at `docs/pick-archive.md` §trim-s298 (a) + §trim-s299 (b) + §trim-s299 (d); `NAMED ## B25` / `## B26` govern.
+
+ **DOC CAP DEBT: `NAMED.md` 246,259 B vs the 250,000 B FAIL line (budget exits 1 = gate RED) - rotate VERBATIM to a `docs/named-archive-*.md` BEFORE adding (s300: §B26's 11,151 B rows -> `docs/named-archive-b26-rows.md`).**
 
 ## THE LEDGER
 
@@ -51,7 +53,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
-- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M325 + B1-B26 (M241 FAIL 2/5 #180).
+- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M325 + B1-B26 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
@@ -65,7 +67,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such
   a record's +0/+2 (B7's and B25's model does, at +0 every round); does the exemption hold on other
   saves? Start: `evidence/b25_selftest.txt:45-56`, `sim/save.py:73`, a one-pass +10 census.
-  Lists live in NAMED ## M310-M319 + the `## B<n>` blocks, not here. READER LAWS still BIND:
+  Lists live in NAMED ## M310-M325 + the `## B<n>` blocks. READER LAWS still BIND:
   every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 
 ## LIVE FACTS / KIT
