@@ -109,7 +109,52 @@ def gates(out):
     return sorted(set(GATE_RX.findall(out)))
 
 
+def verdict(want, rc, fails):
+    """The ONE scoring rule, shared by the sweep and the selftest, so the selftest
+    perturbs the REAL verdict and not a paraphrase of it."""
+    if isinstance(want, NoOp):
+        return rc == 0 and not fails
+    return bool(want) and rc != 0 and set(fails) == set(want)
+
+
+def find(table, mid):
+    for t in table:
+        if t[0] == mid:
+            return t
+    raise KeyError(mid)
+
+
+def selftest():
+    """THE HARNESS ITSELF MUST BE ABLE TO FAIL (TRAP 24 applies to the harness too).
+    Three PERTURBATIONS of an already-measured declared set must each be REJECTED by
+    `verdict` - if any is accepted, the scoring rule is decorative:
+      P1 declare an EMPTY set for a mutant that reddens G7  (the pass-1 state);
+      P2 declare a SUPERSET for a mutant whose real set is {G1,G7};
+      P3 declare a GATE for the measured NO-OP (thunk-following), i.e. claim a bite
+         this image does not produce.
+    Only the DECLARATION is perturbed - the mutants and the bytes are untouched."""
+    caught = 0
+    for mid, perturbed, note in (
+            ("MU9_classifier_blind_to_copy", set(), "declare-EMPTY"),
+            ("MU1_pair_reach_16", {"G1", "G7", "G2"}, "declare-SUPERSET"),
+            ("MU8_thunk_resolve_off", {"G1"}, "gate-DECLARE the NO-OP")):
+        t = find(SRC_MUT, mid)
+        rc, out = run(src.replace(t[1], t[2]))
+        f = gates(out)
+        accepted = verdict(perturbed, rc, f)
+        print("%s %s for %s: real=%s perturbed=%s measured_gates=%s accepted=%s"
+              % ("OK  " if not accepted else "BAD ", note, mid,
+                 repr(t[3]) if isinstance(t[3], NoOp) else sorted(t[3]),
+                 sorted(perturbed), f, accepted))
+        caught += 0 if accepted else 1
+    print("== m319-mutate selftest: %d/3 declared-set perturbations reddened the harness =="
+          % caught)
+    return 0 if caught == 3 else 1
+
+
 def main():
+    if "--selftest" in sys.argv:
+        return selftest()
     only = []
     if "--only" in sys.argv:
         only = sys.argv[sys.argv.index("--only") + 1].split(",")
@@ -119,7 +164,7 @@ def main():
         print("BASELINE NOT GREEN - refusing:\n" + out[-1200:])
         return 2
     print("baseline green:", out.strip().splitlines()[-1])
-    bad = 0
+    bad = bad_noop = 0
     for mid, old, new, want in SRC_MUT:
         if only and not any(o in mid for o in only):
             continue
@@ -136,11 +181,12 @@ def main():
             bad += 1
             continue
         want_txt = repr(want) if isinstance(want, NoOp) else (sorted(want) or "(unset)")
-        hit = (rc == 0 and not fails) if isinstance(want, NoOp) \
-            else (rc != 0 and set(fails) == set(want))
+        hit = verdict(want, rc, fails)
         print("%s %s measured_gates=%s declared=%s"
               % ("OK  " if hit else "BAD ", mid, fails, want_txt))
-        if not hit:
+        if isinstance(want, NoOp):
+            bad_noop += 0 if hit else 1
+        elif not hit:
             bad += 1
     for mid, patch, want in CODE_MUT:
         if only and not any(o in mid for o in only):
@@ -156,17 +202,20 @@ def main():
             bad += 1
             continue
         want_txt = repr(want) if isinstance(want, NoOp) else (sorted(want) or "(unset)")
-        hit = (rc == 0 and not fails) if isinstance(want, NoOp) \
-            else (rc != 0 and set(fails) == set(want))
+        hit = verdict(want, rc, fails)
         print("%s %s [%s] measured_gates=%s declared=%s"
               % ("OK  " if hit else "BAD ", mid, patch, fails, want_txt))
-        bad += 0 if hit else 1
-    print("== m319-mutate: %d/%d mutants reddened EXACTLY their declared gate sets "
-          "(%d source + %d code; %d declared measured NO-OP) =="
-          % (len(SRC_MUT) + len(CODE_MUT) - bad, len(SRC_MUT) + len(CODE_MUT),
-             len(SRC_MUT), len(CODE_MUT),
-             sum(1 for m in SRC_MUT + CODE_MUT if isinstance(m[-1], NoOp))))
-    return 0 if bad == 0 else 1
+        if isinstance(want, NoOp):
+            bad_noop += 0 if hit else 1
+        else:
+            bad += 0 if hit else 1
+    noop_total = sum(1 for m in SRC_MUT + CODE_MUT if isinstance(m[-1], NoOp))
+    print("== m319-mutate: %d/%d scored mutants reddened EXACTLY their declared gate sets "
+          "+ %d/%d declared NO-OP held green (%d source + %d code total) =="
+          % (len(SRC_MUT) + len(CODE_MUT) - noop_total - bad,
+             len(SRC_MUT) + len(CODE_MUT) - noop_total,
+             noop_total - bad_noop, noop_total, len(SRC_MUT), len(CODE_MUT)))
+    return 0 if bad + bad_noop == 0 else 1
 
 
 if __name__ == "__main__":
