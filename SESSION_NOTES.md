@@ -1,36 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-273-273.md` (1 sessions). Read it only when a question reaches back before session ## Session 274.
-
-## Session 274 (2026-11-17, STATIC, zero box) - M311: ds:0x68cbb0 is the CURRENT-RECORD INDEX; ds:0x8f0d60 its derived 304-B record pointer
-- THE PICK from the s273 handoff, list item (a) `ds:0x68cbb0` (340 xrefs, exactly 6 stores). **It swallowed
-  list item (b)**: the "304-B table at `0x95da40`" is `0x95da10 + 48` - the same array, one field in.
-- `python3 -u scripts/m311_recidx.py` -> **PASS M311: 8/8 gates**, rc 0, two runs byte-identical,
-  `census digest 625cd5877271cd85`; evidence `evidence/m311_recidx.txt`. (The FIRST green run this
-  session was 7/7 at digest `dd0ddccb5a1bcad4`; gate **A8** and the matcher's operand clause came after
-  the PR #289 review, so those numbers are superseded, not additional.)
-- FINDINGS: 6 stores / 16 tests / 318 reads = 340 refs (the field IS compared, so no read-only-cursor story);
-  the pointer `ds:0x8f0d60` has exactly 6 stores and pairs 1:1 with the index stores at +6..+25 B; the stride
-  is the encoding's own `lea [n+n*8]` ; `lea [n+d*2]` ; `shl 0x4` = 304n over the base `0x95da10`; the setter
-  `FUN_004e3470` is 34 B / 11 insns / 57 callers and does store-fold-store; `ds:0x68cbb4` (22 stores, only 3
-  in-window) is a SEPARATE field and the pairing invariant is explicitly refused for it.
-- FIVE DEFECTS OF MY OWN, all found before submission and all now skill law:
-  1. mis-counted the pointer's stores as 5 (the census print scrolled past one) - transcription lists are CLAIMS;
-     A2 now requires `sorted(transcribed) == sorted(cache-derived)`, and MU2 (delete one) reddens it;
-  2. bad arithmetic - I first wrote the fold as n*9*16 = 144n; it is (n+(n+n*8)*2)<<4 = 304n;
-  3. a fold matcher that required adjacency the compiler does not provide (pushes interleave at `0x4f5a85`);
-  4. a gate sub-condition of the form `sorted(xs) == sorted(set(xs))` - I called that a tautology that can
-     never fail; **review P2 on PR #289 corrected me** - it does reject duplicates, but it proves only
-     uniqueness, never completeness or agreement with an independent source, so it guarded nothing here;
-     replaced with claim-vs-containment; and MU11 proved the sibling defect: "57 callers" sat in the prose while
-     the gate never read `n_callers`, so asserting 58 was inert until the gate read `index.csv`;
-  5. a splice of mine deleted its own definition block and a `%`-format argument list drifted out of order -
-     nested `%` inside a join is the failure mode; gate messages now build pre-computed strings.
-- MUTATION HARNESS `scripts/m311_mutate.py`: baseline-green precondition, traceback mutants rejected, FAIL
-  summary searched in stdout+stderr. First score **9/11** - MU2 was a dead anchor (a comment I had added moved
-  the literal) and MU4 (relaxing the matcher's scan order) was genuinely WEAK. Fixed by adding a distance-cap
-  mutant and a shift-width mutant and by PINNING the three fold triplets in A3 so attribution is falsifiable.
-- M311 **MERGED**: PR #289, squash `17e3e2e` on `main` (gate 11 s; 3 Greptile P2s read and all three applied in-commit `2fe6f4a`; no re-review arrived on the second head, so merge.py's rollup verdict GREEN was the precondition - recorded honestly, not claimed as a review pass).
+Older sessions: `docs/sessions/sessions-274-274.md` (1 sessions). Read it only when a question reaches back before session ## Session 275.
 
 ## Session 275 (2026-11-18, STATIC close-out of s274's M311, zero box) - PR #289 review round, clause audit, merge
 
@@ -230,17 +200,20 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 ## Session 289-merged (2026-11-18, #311 merged - post-merge cursor correction)
 
 - MERGED #311 -> main 241b9d6. M318 acceptance at the merge head: census twice byte-identical with PRINTED digest 2e81643277e3a23b (`evidence/m318_refresh_pair.txt:100`), harness 17/17 scored + 1 declared NO-OP digest 39e6ce9f2334fe87 (`evidence/m318_mutate.txt:21`); all 3 review P2s fixed pre-merge (condition pins incl. the PE jump-table bytes, store->SECOND-call reach, instrument-printed digest). Track: MODE=ANALYSE, analyse_since_build=2; the 4th fire builds B25, whose spine text is NOT authored. Cursor corrected from the pre-merge "push review fixes" state; NEXT_PROMPT already named pick (v).
+
 ## Session 290 (2026-11-18, process law - every VERIFIED row names its mutant)
 
 - Assessment of the M317/M311 review rounds: 8 findings, 6 of one class - a VERIFIED claim no gate read (the repo's named dominant defect, TRAP 24). The mutation harness proves gates BITE, not that they COVER; Greptile reads the prose<->code axis. One algorithmic finding (M317's call-site trace invented a decode) shows byte-mutants cannot catch a wrong trace position.
 - LAW LANDED: every VERIFIED row in a NAMED block names the mutation that reddens it; no mutant = INFERRED/OPEN or pin+mutate before submit. Copies: NEXT_PROMPT closing step 3 (paid for by compressing the s288/s289 CLOSED lines), pick-archive §trim-s269 addendum (snapshot untouched), kickoff template CLOSE step 3 + THE WORK algorithm-mutant line, skill session-discipline + instrument-laws (§Algorithm mutants + the coverage law) + SKILL.md close-order bullet.
 - Also documented (hermes-agent skill, local): cron `run` refuses a paused job (resume->run->re-pause), continuity can inject pre-merge output (transient override + repo-wins), the fire's recorded pid is the serve process (cancel via the execution handle), completion notifications lag the ledger.
 - Standing debt named: skill/SKILL.md 58.2 kB > 55k warn; always-loaded 73.7 kB > 60k ritual target -> the s290 split PR moves settled depth verbatim to references.
+
 ## Session 290-split (2026-11-18, hygiene - SKILL.md size split)
 
 - Split per the skill's own rule (settled depth VERBATIM to topical references, RULES + pointer stay): SKILL.md 58,206 -> 44,493 B; always-loaded 73,701 -> 59,936 B, under the 60k ritual target. 27 blocks moved verbatim into 13 references under `## s290 retirement from SKILL.md (VERBATIM)` (count corrected at s291 — the draft said 21/12; the #314 local review caught it; audit: `evidence/s290_split_audit.txt:1`): decoration classes #294/#299/#301, structural partition, weakening/leg-census/zero-event/vacuous-gate laws -> instrument-laws; verify-outcome bullet set + rival degeneracy -> verify-outcome; evidence lifecycle depth -> session-discipline; watchpoints, register labeling, HOLD/produced-unit, classifier miss, quit dialog, proposal vote, focus, gdb-census backgrounding, clean reload -> wine-pitfalls / wine-operations / screen-read / wine-headless-harness; gdb command-list killers + %-format law -> gdb-command-list; kernel-write watchpoint -> ptrace-level-probes; writer naming -> static-store-census; vtable live-instance -> code-atlas; readiness credit -> production-queue; save trailer + save_diff law -> data-formats.
 - Every pointer keeps the RULE inline; no depth lost (verbatim appends). Live skill and skill/ rsynced content-identical (diff -rq clean).
 - Acceptance: `python3 scripts/evidence.py budget` -> skill/SKILL.md 44,493 ok, always loaded 59,936, ritual target 60,000 met; `python3 scripts/gate.py --base main` GREEN.
+
 ## Session 291 (2026-11-18, local review pipeline - replay experiment + lint + Strata reviewer)
 
 - Greptile credits exhausted at #314. Before adopting a replacement, ran the REPLAY EXPERIMENT: the 8 known findings of #309/#311 vs their PRE-FIX diffs (pr309^/pr311^), two candidate models, generic adversarial prompt + conventions, no answer leakage. Strata: 3/8 confirmed (F1 trace bug, F3 constant-compare, F6 conditions) + 2 unknown (8192-cap truncation), missed the definition-mismatch class (F2/F7/F8), and found ~10 genuine defects Greptile missed. Qwen3.6-35B: 0/8 + repetition collapse on the larger diff -> excluded (258v = light backup only, owner decision). Evidence: `evidence/ai_review_replay/` (script, raw outputs, run.log); methodology `docs/AI-REVIEW.md`.
@@ -248,6 +221,7 @@ merge land here rather than back-dating 274). M311 is now MERGED: `#289`, squash
 - Constraints (owner): Strata hosts ONLY Qwen-Flash-Next (no model swaps); a different OpenVINO model on the 258v is a future diversity option, not now. Pre-law NAMED blocks (M317/M318) not retroactively rewritten; lint binds from s291.
 - Acceptance: `python3 scripts/test_review_lint.py` -> 7/7; `python3 scripts/review_lint.py --id m318` correctly FAILs the 4 pre-law claim rows (L1) with digests/cites passing; ai_review smoke test on #314 recorded in `evidence/ai_review/`.
 - REVIEW ROUND s291 (local pipeline dogfooded on its own PR #315 + smoke on #314; ALL findings accepted): review_lint hardened (tight meta-exemption, L2b code-mutant address-contact, row-scoped digests anchored on the word 'digest', file-suffix citation regex + isfile guard, honest scope docstring — the row->gate semantic stays with the reviewer); ai_review detects output-cap truncation (finish_reason/completion_tokens -> warning banner + exit 2); replay.py endpoints scrubbed to $STRATA_URL/$QWEN36_URL + makedirs; template/reference NEXT_PROMPT caps reconciled to 12,000/16,000; the s290 split's #299 block ACTUALLY moved (the pointer had claimed it falsely), data-formats pointer corrected, verify-outcome null-agreement rule restored inline, retirement headers carry a historical-note line, s290-split counts corrected 21/12 -> 27/13. Fixtures now 12/12 (`evidence/s291_review_lint_tests.txt:14`); smoke + dogfood raw reviews committed under `evidence/ai_review/`.
+
 ## Session 292-cap (2026-11-19, hygiene - NEXT_PROMPT cap split BEFORE the milestone)
 
 - `python3 scripts/evidence.py budget` read NEXT_PROMPT.md **11,881 B against the 12,000 warn** (119 B of headroom), so the split ran as its own PR before any milestone work, per the cap rule.
