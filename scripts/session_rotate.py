@@ -67,6 +67,17 @@ def main():
     os.makedirs(ARCHIVE, exist_ok=True)
     dest = os.path.join(ARCHIVE, f"sessions-{span}.md")
 
+    # The hot file cites only the NEWEST archive, so every rotation would orphan the previous
+    # one unless the new archive carries the onward pointer (found by the s292 review of #316).
+    prev, lo = None, int(first.group(1)) if first else 0
+    try:
+        cands = [(int(m.group(2)), nm) for nm in os.listdir(ARCHIVE)
+                 if (m := re.fullmatch(r"sessions-(\d+)-(\d+)\.md", nm)) and int(m.group(2)) < lo]
+        prev = max(cands)[1] if cands else None
+    except OSError:
+        pass
+    print(f"       onward pointer for the archive: {prev or '(none — oldest)'}")
+
     print(f"keep : {len(keep)} sessions ({label(keep[0])} …)")
     print(f"move : {len(old)} sessions ({label(old[0])} … {label(old[-1])})")
     print(f"       {sum(len(s) for s in old):,} chars → {os.path.relpath(dest, ROOT)}")
@@ -76,7 +87,11 @@ def main():
 
     body = (f"# Session notes archive — sessions {span}\n\n"
             f"Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot\n"
-            f"file readable in one context window. Same evidence file paths apply.\n\n"
+            f"file readable in one context window. Same evidence file paths apply.\n"
+            + (f"\nOlder sessions: `docs/sessions/{prev}` — the hot file cites only THIS archive, so\n"
+               f"the chain onward lives here; without this line the older archives are orphans (s292).\n"
+               if prev else "")
+            + "\n"
             + "\n".join(old))
     open(dest, "w", encoding="utf-8").write(body.rstrip() + "\n")
 
