@@ -801,3 +801,66 @@ blocking, zone of control and every refusal cause other than exhausted MP; the y
 is never moved by this gesture (dir=1 has dy=0) so the y-wrap/bounds law is NOT exercised
 here; WHICH unit the game would really move is not claimed - the gesture is applied to every
 unit of the save exactly as B7 declared. No box time, no /proc, no gdb, no game-binary load.
+
+
+**B26 - the composed run crosses a SAVE/LOAD BOUNDARY: the model is REBUILT FROM THE
+WRITTEN BYTES and the founder/arrival/move legs keep running on exactly what the container
+carries - and what does NOT carry is MEASURED, not waved at (sim/composedsave.py; s299
+authored this rung from main cd6f2f5, as B14-B25 did).** B21 wrote the log-driven run and
+resumed it; B24 made the founder leg and the queue leg share one container; B25 made the MOVE
+leg read its own start tile out of the container. What none of them did is the operation a
+game actually depends on: **throw the model away.** Every rung so far keeps its model objects
+alive across the whole run and merely *adds* writes; a value that survives only because the
+Python object survived is indistinguishable from a value the container carries. `sim/composedsave.py`
+runs phase A (founder ops through the writer, the B12 arrival appended at the array end with its
+tile READ FROM THE IMAGE, the B7/B25 gesture pressed on every unit present, the B3 engine
+pressed per round), then at the round-aligned BOUNDARY writes the image, **discards every model
+object** - ledger, unit list, turn engine, arrival list - and rebuilds them from `parse_image`
+over the written bytes alone, then runs phase B with the same laws. Three laws are at stake:
+(1) **carry** - every field the resumed run uses equals a FRESH DECODE of the boundary bytes,
+never a retained variable; (2) **confluence** - when nothing external intervenes, a run that
+crosses a boundary is byte-identical to the uninterrupted run (the boundary is invisible to the
+legs, so the legs own no state the container does not); (3) **the non-carry is a number** - at a
+MID-GESTURE boundary the per-round MP budget (B25's declared model-only field) cannot cross, so
+the resumed run MUST diverge, and the divergence is counted per unit and per byte instead of
+being declared away. The falsifier poisons IN THE BOUNDARY IMAGE ONLY, between the write and the
+rebuild: a unit's tile, and the founded record's tile/owner bytes that phase B's arrival is
+composed from.
+`python3 -u -m sim.selftest --b26` must print `PASS B26: 9/9 gates` (authored once in
+`sim/composedsave.py`; `--b26` only relays, so the two entry points cannot print different text)
+with: **G1** engine reuse, not forking - B25's own composed-move run is GREEN in-process on the
+same save, and this run's per-round accepted/refused press counts equal its per-round numbers for
+the rounds the two share (the press law is imported, never re-typed); **G2** identity through
+THIS call path - a zero-op, zero-press, zero-append phase-A build equals the original file
+byte-for-byte, so every byte the gates attribute to the boundary machinery is attributable;
+**G3** CARRY: at the boundary, each of year, cur_player, n_units, n_bases, every unit record's
+x/y, every GROWN base record's full 304 B and the arrival's 52 B equals the same value read out
+of a SECOND, independent `parse_image` of the same bytes (counted, divergences pinned at 0), and
+the rebuilt ledger is constructed by walking the IMAGE's base array, not by re-seeding from the
+model's; **G4** CONFLUENCE: the honest boundary run's FINAL container is byte-identical to the
+uninterrupted run's (differing bytes pinned, 0), so the legs hold no state the container lacks;
+**G5** THE NON-CARRY MEASURED: the mid-gesture boundary diverges from the uninterrupted run in
+exactly N units and M unit-bytes (both measured), the divergence is entirely in the tiles the
+budget re-allows, and no header byte differs - the declared gap becomes a number; **G6** THE
+FALSIFIER, both channels: (a) a unit's tile poisoned in the boundary image only shifts that
+unit's whole phase-B trajectory INTO the final container (0 of the others move), and (b) the
+founded record's tile/owner poisoned in the boundary image only makes PHASE B's arrival carry the
+corrupted tile (its own record bytes in the final image agree); the smuggler - model objects kept
+across the boundary - is BLIND: its final container equals the clean run's byte-for-byte; **G7**
+every differing byte between the final image and the original lies inside a MODELED span (the
+writer's own accounting, B8's law extended to the grown base records and the appended unit);
+**G8** the rivals fail the same fit, MEASURED - smuggle, model-fed, nowrite, late-read, no-rebuild
+(model objects survive), lift-everything, arrival-frozen-at-founding-constants - and a rival that
+passes, or crashes without a matched message, is retired as decoration (trap 24); **G9**
+determinism: two runs -> identical printed tables AND identical final-container sha256, with the
+ACCEPT anchor pinned to a literal inside G9 (a labels-only edit must redden G9 and nothing else).
+`scripts/b26_mutate.py` re-creates the defects by anchor->replacement in a fresh subprocess and
+exits non-zero unless each reddens EXACTLY its declared (MEASURED) gate set.
+DECLARED UNMODELED: the per-round MP/spent budget and the queue fold's in-widget bookkeeping never
+cross the container (B25's line, unchanged - G5 measures its consequence, it does not claim the
+game behaves the same); WHICH base the game would really found and WHEN is the recorded log's
+schedule plus a declared fixture placement, not a model of the AI; the arrival record's bytes
+beyond x/y/type/owner/order are unmodeled (B12's declaration); the queue span itself is NOT
+folded in this rung (B23/B24 own that channel and this rung's G1/G3 keep it out of scope rather
+than re-proving it); whether the SHIPPED game carries MP in a .SAV is chain 2's open census
+(M324) and is NOT claimed here either way. No box time, no /proc, no gdb, no game-binary load.
