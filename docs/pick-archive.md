@@ -1100,3 +1100,12 @@ NEW AT TRIAGE: the tile test is NOT the decoder (8/44 probes disagree raw - pick
 `docs/pick-archive.md:963` §trim-s292 (a) - the ONLY place "declared gate-sets are MEASURED, not authored" survives
 (sibling laws: TRAP 24 below + `skill/SKILL.md:319-320`). `pos=False` in `composedturn.fold` is NOT tile-addressing.
 M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
+## §trim-s299 (a) the M323 result one-liner, VERBATIM from the last line of NEXT_PROMPT.md
+
+```
+M323 RESULT (s295-chain2, STATIC, post-review): ds:0x985afc = ROUND counter - 336 refs (W5/T59/R272; dword 333/word 1/byte 2); writers init0 FUN_005a0fa0 / +1 FUN_0051f320 / year-sync FUN_004e0350 / rand{30,60,80} FUN_0059ce10; year=round+2100 (FUN_005b2c00, start-year 2100 @0x92bf68). 13/13 digest 136841406b5bee5b (evidence/m323_round_census.txt:536); harness 31/31+1. FULL: NAMED.md ## M323 + SESSION_NOTES s295-chain2.
+```
+
+  (chain 2's M323 footing line, moved not deleted at the M324 fire: the hot doc sat at 12,188 B over the
+   12,000 warn; the line's numbers live on here, and `NAMED ## M323` + `SESSION_NOTES ## Session 295-chain2`
+   still govern)

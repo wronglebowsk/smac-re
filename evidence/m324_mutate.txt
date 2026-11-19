@@ -1,0 +1,30 @@
+MU1    code     declared=['G1', 'G2', 'G8']           observed=['G1', 'G2', 'G8']           OK       run=b54e7429aa5f4d07
+MU2    code     declared=['G1', 'G2', 'G8']           observed=['G1', 'G2', 'G8']           OK       run=41ff09fcf423087e
+MU3    code     declared=['G1', 'G2', 'G8']           observed=['G1', 'G2', 'G8']           OK       run=e53e786f44a966d0
+MU4    code     declared=['G1', 'G3']                 observed=['G1', 'G3']                 OK       run=1930536dfcc2e061
+MU4b   code     declared=['G1']                       observed=['G1']                       OK       run=6fc9b53cd3e30331
+MU5    code     declared=['G1', 'G3']                 observed=['G1', 'G3']                 OK       run=b25586b918cddc50
+MU6    code     declared=['G4']                       observed=['G4']                       OK       run=1ac90ed90b0a34c7
+MU7    code     declared=['G6', 'G7', 'G8']           observed=['G6', 'G7', 'G8']           OK       run=e561cd47e58bbfcb
+MU8    savedata declared=['G5', 'G8']                 observed=['G5', 'G8']                 OK       run=0c546816ea70b185
+MU9    evdata   declared=['G5']                       observed=['G5']                       OK       run=3e35744269a14233
+MU10   algo     declared=['G1', 'G2', 'G3', 'G8']     observed=['G1', 'G2', 'G3', 'G8']     OK       run=473795fa9ef2e232
+MU11   algo     declared=['G1', 'G2', 'G3', 'G8']     observed=['G1', 'G2', 'G3', 'G8']     OK       run=028be12ac34ac54c
+MU12   code     declared=['G7']                       observed=['G7']                       OK       run=2aabdf41902e0b19
+MU13   code     declared=['G7']                       observed=['G7']                       OK       run=2aabdf41902e0b19
+MU14   code     declared=['G4']                       observed=['G4']                       OK       run=548ba26c41b83f57
+MU15   algo     declared=['G6']                       observed=['G6']                       OK       run=41c6ec933f7002f6
+MU16   code     declared=['G4']                       observed=['G4']                       OK       run=cda1877091152a73
+MU17   code     declared=['G8']                       observed=['G8']                       OK       run=51ce2483324ed8c5
+MU19   code     declared=['G8']                       observed=['G8']                       OK       run=51ce2483324ed8c5
+MU20   code     declared=['G7']                       observed=['G7']                       OK       run=2aabdf41902e0b19
+MU21   code     declared=['G4']                       observed=['G4']                       OK       run=81db7758bc93b49f
+MU22   evdata   declared=['G7', 'G8']                 observed=['G7', 'G8']                 OK       run=85527a6ab33db064
+MU23   code     declared=['G7']                       observed=['G7']                       OK       run=2aabdf41902e0b19
+MU24   code     declared=['G1', 'G2']                 observed=['G1', 'G2']                 OK       run=4666f19dc46de937
+MU25   code     declared=['G7', 'G8']                 observed=['G7', 'G8']                 OK       run=d54b1d496c6a63d8
+MU26   code     declared=['G1', 'G2']                 observed=['G1', 'G2']                 OK       run=4666f19dc46de937
+MU27   code     declared=['G7']                       observed=['G7']                       OK       run=2aabdf41902e0b19
+MU18   noop     declared=[]                           observed=[]                           NO-OP    run=700b4133f62bd714
+digest 5c3fa2bceb490009
+== M324 MUTATE: 28/28 scored + 1 NO-OP ==

@@ -340,3 +340,12 @@ Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only w
   somewhere" gate stays GREEN on it, the pinned one reddens), MU19->G3, MU20->G1.
 - Reconciled with main (M323 9c716f8): merge kept BOTH chains' sections; evidence/ at 20.8 MB [warn]
   - prune candidates next fire. NEXT: merge #324 on CI PASS; picks (vii)/(viii), B26 queued.
+## Session 296-chain2 (2026-11-19, M324 CLOSED, STATIC: ROUND carried RAW)
+
+- wt-chain2 @ milestone/m324 (main 9b09161); chain 1 owns main/sim/(vi)/(vii), #324 live.
+- ANSWER: ROUND (0x985afc) carried RAW, NOT re-derived from YEAR. Codec FUN_00596850 header leg (R 59688a/W 596883) freads 0x31c=796B into 0x985ab8; blob+44=ROUND,+48=YEAR. m54b_clean.SAV: 12-B prefix (TERRAN\0+1a+ver86); @50=50 @54=2150 @44=67 @48=18 @310=9 (=live[985dbc] M108; M107 off-772 -> 784). sha16 74d0f44ab9b9290b==M302 live save; M106 kernel-copy law = M323's missing loader writer.
+- block+220 carried: leg 596a91 dst 94d430 sz 105e0=8*20bc 8/8 (+sibs 596a6b/72); M320's whole block raw-carried too (rebuild untested). fac1436 leg 596ed6 dst 927590 sz 2ce0. g999fa4 NOT carried; W={442642,626fd7}: feed FUN_00442320 MAX-updates g999fa4=block[[this+0xa24]]+0x220 (imul 20bc, [ecx+94d650], cmp/jle 442625/2b); 2nd=64c460(0x99a01c)->64c360; feed 0 callers/0 AT (data-ptr OPEN).
+- FALSIFIED re-derive: direct closure (opener+codec) 440, 0 writers; 4e0350 callers={514ecf@512b40,517e3a@516b80} pumps, outside; header entry-first (window branch-free); mode0 chain (xor 597efb->push 597f98->cmp/je); M272 inv9: -39 opener -> 50 faction fread. R1 RE-DERIVE/R2 REBUILD DEAD.
+- ACCEPT `python3 -u scripts/m324_save_carry.py` -> **8/8** digest **700b4133f62bd714** (`evidence/m324_save_carry.txt:100`), rerun identical (`_rerun.txt:100`). HARNESS `python3 -u scripts/m324_mutate.py` -> **28/28+1 NO-OP** 5c3fa2bceb490009 (`evidence/m324_mutate.txt:29-30`); selftest 4/4 (`_selftest.txt:5`). REVIEW #326: 10/10 accepted (2P1+8P2); scope/pins strengthened, harness digest hashes payloads, MU19-27.
+- TRAP: leg diamond pushes;je;call WR;jmp;call RD - walker skips jcc/jmp/twins, stops at add esp/foreign call (naive broke on je); ebx def-walk hit pop on EARLY-RET path; moffs32 mov lacks DWORD PTR.
+- OPEN: g999fa4 noun/64c360; block+220 noun (year-like); feed arrival; byte-swap path. NEXT_PROMPT 12,188->11,999 B (M323 line VERBATIM -> §trim-s299 (a); M324 appended).
