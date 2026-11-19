@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-52-52.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 53 (2026-10-23) — M53a: the base+0x50 queue record end to end — it is a 10-slot ITEM ARRAY (+0x4c = last index, +0x44 = mirror), unit/facility completion is PAYMENT-DRIVEN with NO progress counter, negative values are secret projects −(39+idx) registered in the 33-dword table 0x985b3c
 
 **Run:** `scripts/m51a_drive.py --tag m53a --rounds 3 --budget 1100` — 3 rounds 2363→2366, **0 OCR

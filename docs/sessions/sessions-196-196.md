@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-195-195.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 196 (2026-11-01, M244 ANALYSE — save tail: the region-map formula, the count-prefixed
 block is the base-site event log, the tail's real legs)
 

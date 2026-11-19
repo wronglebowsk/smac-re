@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-49-49.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 50 (2026-10-22) — M51a: FUN_004ee410 IS THE WRITER — our base hits the 0x4f271e flag test and never reaches PASTFLAG, so 0x4f26e0 is not its income source; the +0x3c field is set to 40 and then decremented by cc (−3/round) elsewhere
 
 Instrument: `scripts/m51a_drive.py`, 26 breakpoints — gate `0x4f2705`, flag test `0x4f271e`, PASTFLAG,

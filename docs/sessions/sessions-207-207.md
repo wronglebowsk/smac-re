@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-206-206.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 207 (2026-11-02, B5 BUILD track, PASS 9/9) — `sim/units.py`: one arrow press = one lattice step of the 0x6784a0 ring at 3 MP, 6 MP per round, x wrapped, y bounded
 
 **Footing.** `scripts/track_mode.py` -> `MODE=BUILD analyse_since_build=3 next_rung=B5`; rung B5 is `BUILD_SPINE.md`'s units/movement step, acceptance `python3 -m sim.selftest --replay-m27`. No box time, no `/proc`, no gdb.

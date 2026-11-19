@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-140-140.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 141 (2026-10-28) — M90: the slot value is a TECHNOLOGY INDEX into the 89-entry table at 0x92fdd4, chosen by FUN_005aa030(faction) (m90tech1 FAIL on my own slice bug, m90tech2 PASS 8/8)
 
 Prompt said M74; the repo pick was M90. Branch milestone/m90, commit df1acd7 -> acceptance.

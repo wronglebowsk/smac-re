@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-171-171.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 172 (cont. 26) — M172-M174 (all PASS): the "bit-decoder" is a SAVE-SECTION WRITER, and the aggregator's counters have three consumers
 
 `python3 scripts/m172_m174_savewriter.py` — SUMMARY M172=PASS M173=PASS M174=PASS (evidence/m172_m174.log).

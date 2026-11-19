@@ -1,10 +1,200 @@
-NEXT_PROMPT.md            10,768     2,692    1.0%  ok   (always)
-always loaded             58,378    14,594    5.6%   ← paid every session
---- pre-split NEXT_PROMPT.md was 11,881 B against the 12,000 warn (see Session 292-cap) ---
+s292 cap-split + session-chain evidence (2026-11-19). Every number below is printed by the command echoed on the line above it; the checker reads NEXT_PROMPT.md's size from the working tree, so C1's head= is this state's byte count.
+
+$ python3 -u scripts/s292_cap_check.py --ref main   (INFO-only, the DEFECT this PR fixes: the chain before it)
+INFO chain at main: archives=148 reachable=1 orphans=147 (first 3: ['sessions-100-100.md', 'sessions-101-101.md', 'sessions-102-104.md'])
+
+$ python3 -u scripts/s292_cap_check.py
+-- the measurements --
+NEXT_PROMPT.md main=11881 B head=11007 B | pick-archive §trim-s292 blocks=4 | archives on disk=149
+-- C1 sizes --
+OK   C1 NEXT_PROMPT under cap AND shrank vs main: main=11881 B  head=11007 B  cap=12000 B  delta=-874 B
+-- C2 verbatim moves --
+     block sha256=bd4194587f94f02a len=913   first=B24 MERGED as #307 (main af38858; NAMED ## B24 gover  byte-exact-in-main-NEXT_PROMPT=True
+     block sha256=d5698560f9ce06a2 len=362   first=M316 MERGED #305: 18/18+32/32 dcc6ce82fc98aec4, 5 P2  byte-exact-in-main-NEXT_PROMPT=True
+     block sha256=58b51d48c5bc00e3 len=425   first=  **CLOSED (s278): pick (i') NAME THE EVENTS - ONE i  byte-exact-in-main-NEXT_PROMPT=True
+     block sha256=cce0f61ee8be8e87 len=907   first=24. **A PASSING ASSERTION IS NOT A GATE (s269, Grept  byte-exact-in-main-NEXT_PROMPT=True
+OK   C2 all moved blocks BYTE-EXACT vs main:NEXT_PROMPT.md: blocks=4 byte-exact=4
+-- C3 session pointer chain --
+     reachable: sessions-100-100.md
+     reachable: sessions-101-101.md
+     reachable: sessions-102-104.md
+     reachable: sessions-105-105.md
+     reachable: sessions-106-106.md
+     reachable: sessions-107-107.md
+     reachable: sessions-108-108.md
+     reachable: sessions-109-110.md
+     reachable: sessions-117-117.md
+     reachable: sessions-118-119.md
+     reachable: sessions-120-120.md
+     reachable: sessions-121-121.md
+     reachable: sessions-122-122.md
+     reachable: sessions-123-124.md
+     reachable: sessions-125-125.md
+     reachable: sessions-127-127.md
+     reachable: sessions-129-130.md
+     reachable: sessions-131-131.md
+     reachable: sessions-132-132.md
+     reachable: sessions-133-133.md
+     reachable: sessions-134-134.md
+     reachable: sessions-135-136.md
+     reachable: sessions-137-137.md
+     reachable: sessions-138-138.md
+     reachable: sessions-139-139.md
+     reachable: sessions-140-140.md
+     reachable: sessions-141-141.md
+     reachable: sessions-142-142.md
+     reachable: sessions-143-143.md
+     reachable: sessions-144-148.md
+     reachable: sessions-147-151.md
+     reachable: sessions-152-168.md
+     reachable: sessions-171-171.md
+     reachable: sessions-172-172.md
+     reachable: sessions-173-174.md
+     reachable: sessions-174-174.md
+     reachable: sessions-175-175.md
+     reachable: sessions-176-176.md
+     reachable: sessions-177-177.md
+     reachable: sessions-178-178.md
+     reachable: sessions-179-179.md
+     reachable: sessions-180-180.md
+     reachable: sessions-181-181.md
+     reachable: sessions-182-182.md
+     reachable: sessions-183-183.md
+     reachable: sessions-184-184.md
+     reachable: sessions-186-186.md
+     reachable: sessions-187-187.md
+     reachable: sessions-188-188.md
+     reachable: sessions-189-189.md
+     reachable: sessions-190-190.md
+     reachable: sessions-191-191.md
+     reachable: sessions-193-193.md
+     reachable: sessions-194-194.md
+     reachable: sessions-195-195.md
+     reachable: sessions-196-196.md
+     reachable: sessions-197-197.md
+     reachable: sessions-198-198.md
+     reachable: sessions-199-199.md
+     reachable: sessions-200-200.md
+     reachable: sessions-201-201.md
+     reachable: sessions-202-202.md
+     reachable: sessions-203-203.md
+     reachable: sessions-204-204.md
+     reachable: sessions-205-205.md
+     reachable: sessions-206-206.md
+     reachable: sessions-207-207.md
+     reachable: sessions-208-210.md
+     reachable: sessions-211-211.md
+     reachable: sessions-212-212.md
+     reachable: sessions-213-213.md
+     reachable: sessions-214-215.md
+     reachable: sessions-216-217.md
+     reachable: sessions-218-218.md
+     reachable: sessions-219-219.md
+     reachable: sessions-220-225.md
+     reachable: sessions-226-226.md
+     reachable: sessions-227-230.md
+     reachable: sessions-231-233.md
+     reachable: sessions-234-234.md
+     reachable: sessions-235-235.md
+     reachable: sessions-236-236.md
+     reachable: sessions-237-238.md
+     reachable: sessions-239-239.md
+     reachable: sessions-240-240.md
+     reachable: sessions-241-242.md
+     reachable: sessions-243-243.md
+     reachable: sessions-244-244.md
+     reachable: sessions-245-245.md
+     reachable: sessions-246-246.md
+     reachable: sessions-247-249.md
+     reachable: sessions-250-251.md
+     reachable: sessions-252-252.md
+     reachable: sessions-253-254.md
+     reachable: sessions-255-255.md
+     reachable: sessions-256-257.md
+     reachable: sessions-258-259.md
+     reachable: sessions-260-260.md
+     reachable: sessions-261-261.md
+     reachable: sessions-262-262.md
+     reachable: sessions-263-263.md
+     reachable: sessions-264-264.md
+     reachable: sessions-265-266.md
+     reachable: sessions-267-267.md
+     reachable: sessions-268-268.md
+     reachable: sessions-269-269.md
+     reachable: sessions-270-271.md
+     reachable: sessions-272-272.md
+     reachable: sessions-273-273.md
+     reachable: sessions-274-274.md
+     reachable: sessions-28-42.md
+     reachable: sessions-43-43.md
+     reachable: sessions-44-44.md
+     reachable: sessions-45-45.md
+     reachable: sessions-47-47.md
+     reachable: sessions-48-48.md
+     reachable: sessions-49-49.md
+     reachable: sessions-50-51.md
+     reachable: sessions-52-52.md
+     reachable: sessions-53-53.md
+     reachable: sessions-54-54.md
+     reachable: sessions-55-55.md
+     reachable: sessions-56-56.md
+     reachable: sessions-57-58.md
+     reachable: sessions-59-59.md
+     reachable: sessions-60-60.md
+     reachable: sessions-61-61.md
+     reachable: sessions-62-62.md
+     reachable: sessions-63-63.md
+     reachable: sessions-64-64.md
+     reachable: sessions-65-65.md
+     reachable: sessions-66-66.md
+     reachable: sessions-72-72.md
+     reachable: sessions-73-74.md
+     reachable: sessions-75-75.md
+     reachable: sessions-76-77.md
+     reachable: sessions-78-78.md
+     reachable: sessions-79-80.md
+     reachable: sessions-81-81.md
+     reachable: sessions-82-82.md
+     reachable: sessions-82-83.md
+     reachable: sessions-84-89.md
+     reachable: sessions-90-90.md
+     reachable: sessions-91-92.md
+     reachable: sessions-93-94.md
+     reachable: sessions-95-96.md
+     reachable: sessions-97-97.md
+     reachable: sessions-98-98.md
+     reachable: sessions-99-99.md
+OK   C3 every archive reachable from SESSION_NOTES.md by pointer: archives=149 reachable=149 orphans=0
+== s292 cap check: 3/3 checks green ==
+CHECK_EXIT=0
+
+$ python3 -u scripts/s292_cap_check.py --selftest | tail -3   (all three checks must be reddened by perturbed MEASURED inputs)
+FAIL C1 NEXT_PROMPT under cap AND shrank vs main: main=11881 B  head=11007 B  cap=11006 B  delta=-874 B
+OK   SELFTEST S1/S2/S3 reddened cap / verbatim / chain: cap_fail=True verbatim_fail=True chain_fail=True (orphans=149)
+== s292 cap check: 4/4 checks green ==
+
+$ python3 -u scripts/s292_chain_fix.py --apply --force | tail -2   (idempotent: 0 written the second time)
+     sessions-274-274.md          already chained -> sessions-273-273.md OK
+== chain fix: 0 archive(s) written ==
+
+$ python3 scripts/evidence.py budget | grep -E 'NEXT_PROMPT|always loaded'
+NEXT_PROMPT.md            11,007     2,752    1.0%  ok   (always)
+always loaded             58,617    14,654    5.6%   ← paid every session
+
+$ wc -c NEXT_PROMPT.md docs/pick-archive.md
+11007 NEXT_PROMPT.md
+88186 docs/pick-archive.md
+99193 total
+
+$ grep -n 'A WEAKENING is not a mutation' skill/SKILL.md ; grep -n 'A rival that fails by crashing' skill/SKILL.md
 320:- A WEAKENING is not a mutation (a dropped conjunct can only pass); mutate DATA so only the digest catches it; an over-broad mutant reads as a NO-OP - re-measure the declared set after EVERY review round. Full text: `references/instrument-laws.md` §s290 retirement.
 319:- A rival that fails by crashing or producing nothing is NOT evidence until the crash is message-matched against the DECLARED law AND the same construction succeeds with the cause removed; retire degenerate rivals and GATE the retirement. Full text + B24's two degenerates: `references/verify-outcome.md` §s290 retirement.
-963:## §trim-s292 (a) settled merge summaries + the pick (i') detail, VERBATIM from NEXT_PROMPT.md at the s292 cap split
---- verbatim check (heredoc python: main:NEXT_PROMPT.md vs the fenced blocks under docs/pick-archive.md §trim-s292) ---
-blocks: 4
-VERBATIM 4/4 blocks found byte-exact in main:NEXT_PROMPT.md
-trap24 verbatim: True
+$ grep -n '^## ' skill/references/instrument-laws.md | tail -4 ; grep -n '^## s290 retirement' skill/references/verify-outcome.md
+1031:## A mutation harness must CLASSIFY its four outcomes (s287, B24)
+1055:## Argument-push decode law (M317, #309 review)
+1069:## Algorithm mutants + the coverage law (s290, #309/#311 reviews)
+1090:## s290 retirement from SKILL.md (VERBATIM)
+237:## s290 retirement from SKILL.md (VERBATIM)
+
+$ python3 scripts/session_rotate.py --target 1 | grep onward   (dry-run of the FIXED rotator: the next rotation must chain)
+       onward pointer for the archive: sessions-274-274.md

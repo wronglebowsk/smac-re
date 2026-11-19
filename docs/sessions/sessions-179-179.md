@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-178-178.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 179 (2026-11-01) — CAP TRIAGE ONLY: NEXT_PROMPT.md 15,496 -> 14,052 BYTES (split, never shave)
 
 **No milestone this fire.** `python3 scripts/evidence.py budget` opened the fire with NEXT_PROMPT.md at 15,496

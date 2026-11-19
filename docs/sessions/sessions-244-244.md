@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-243-243.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 244 (M294, box fire) - pod-walk gate-row census RE-ARMED; B15 law predicts every dispatch from printed rows
 - Instrument scripts/m294_gate_row_census.py: m292 static gates re-run (never reused blind) + 27 NEW byte-pins
   (S1/S2 PASS) for GDEEP@0x563c3d/GACC@0x563ca7/GROW@0x563cb3 + prologue/fold pins; blk fold identity 8380*o re-derived.

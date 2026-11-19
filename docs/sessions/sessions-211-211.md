@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-208-210.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 211 (2026-11-05, ANALYSE, M272 PASS) - FUN_0057ecf0 does NOT run on a LOAD; the .SAV restore chain is live-proven; the box-debt is paid
 - Pick was the first BOX pick (box DOWN at open). Cold relaunch was FAST this time (~6 s to title,
   not >9 min) - the >9 min figure is stale.

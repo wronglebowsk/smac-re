@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-108-108.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 109 (2026-10-27) — M69: THE ENQUEUE WRITES AT THE QUEUE WIDGET'S CURSOR. ACCEPTANCE PASS on one real invocation.
 
 **What changed / what is now known.** The BUILD-pane INSERT is not a sort and it does not read a

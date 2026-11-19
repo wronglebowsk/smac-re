@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-173-174.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans). (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 174e (2026-10-31) — M185-M187, all PASS (second static batch of three, one instrument)
 
 `python3 scripts/m185_m187_visits.py` -> `evidence/m185_m187_visits.txt`, `SUMMARY M185=PASS M186=PASS M187=PASS`.

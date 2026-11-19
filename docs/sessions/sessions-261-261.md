@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-260-260.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 261 (2026-11-15, BUILD B20 10/10, zero box) - the BYTE-twin visit counter made EXECUTABLE (sim/bytecounter.py); the rung was UNAUTHORED, this fire wrote it (as B14/B16/B17/B18/B19)
 - `python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV` -> **PASS B20: 10/10** (G1-G10; two selftest runs byte-identical, module report sha 156aaa4cac5a916b, module CLI twice sha eea4a6406ffa272c; zero box/proc/gdb) -> `evidence/b20_bytecounter.txt` (verdict :39, parity :35, pinned census :32, B18 funnel match :34).
 - The M303 byte law is now EXECUTED: index = site + 8380*block + 0x94ed28, {MAX@+0,CNT@+128}, width 1 B, 128 entries/field, 8 blocks - every constant DECODED from the instruction windows embedded in evidence/m303_downstream.txt (fold 65->131->2095, *4 placement == init add edx,0x20bc, stride derived twice; init cmp ecx,0x80; (0x95f288-0x94eca8)/8380 = 8 rem 0; dword twin 0x989ce8 stride 0x1c slots 128). The byte `++` rides the SAME gated fall-through as B19's dword `++`: ZERO jumps inside [0x51e007,0x51e03e), je 0x51e007 rel32 decodes from its pinned hex to 0x51e11d (past the store), and je 0x51e040 tests the flags of `test ebx,ebx` 0x51e03c, not the byte.

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-241-242.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 243 (2026-11-10, BUILD B15, PASS 7/7, zero box contact) - gate tables 0x94e5a8/0x94eca8 NAMED; pod-scan price gate EXECUTABLE (sim/gatetables.py)
 
 - ACCEPTANCE: `python3 -m sim.selftest --b15 programs/saves/m54b_clean.SAV` -> **PASS B15: 7/7**

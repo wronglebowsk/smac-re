@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-190-190.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 191 (2026-11-01, M240 static — the `.MP` grid IS the live terrain-record array)
 
 - **Footing.** Cursor said S190 B1 merged, no harness running (`ps`: no milestone.py/gdb/smac_play), tree

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-56-56.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 57 (2026-10-23) — M53e: **MODE 5 IS THE INSERT BAR AND IT FIRES LIVE** (insert-shift 0x417dd8 caught, `+0x4c 0→1`); the dispatch field "pane+0xb194" is really the **chooser sub-object's +0xa778** — the image's only mode stores are `[sub+0xa778]` inside `FUN_00496ad0` (0x496993→1, 9a5→2, 9b7→3, 9da→7, 9e9→4, **9f3/0x496a09→5**, 9a18→6, 9a27+9a36→0, 9a52→7)
 
 - **Why the corpus had no `b194` store.** A byte scan of `.text` for disp32 `94 b1 00 00` finds exactly

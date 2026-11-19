@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-62-62.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 63 (2026-10-26) — M53k: **base+0xd0 HAS EXACTLY ONE WRITER — `FUN_004e93f0` (d0 = c0 − f0 − e0, called per base from inside the turn processor 0x4ef6d0) — THE ONLY PER-TURN base+0x40 WRITER IS INSIDE `FUN_004ef6d0` (income add 0x4ef7f6 / unit spend / project spend 0x4f0ca6 / drain 0x4f1e3f) — AND THE ARM IS: STOCK minerals ≥ FULL price gates completion (no accumulation); the race scan runs ONLY for OUT-of-mask bases and defers them while a funded in-mask rival races the same head; clamp B resets in-mask payers to max(0,min(10,d0))** — write-up `evidence/m53k_findings.md`
 - **+0xd0 (net income):** machine stores 0x4e9557/0x4e957f in FUN_004e93f0 (`eax=ds:0x8f0d60`;
   d0 = [eax+0xc0] − [eax+0xf0], [eax+0xe0] zeroed first; mirror +0x94; f0 = DAT_008f0c38+

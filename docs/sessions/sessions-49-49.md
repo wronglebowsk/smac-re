@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-48-48.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 49 (2026-10-22) — M50b: THE TRUNCATION WAS NEVER REAL — every pass scans all n_bases and visits each base exactly once; the year store fires BETWEEN passes, never inside one; and our base IS visited every round
 
 `scripts/m50b_drive.py` = m50a driver with the mineral-pipeline bps replaced by the sweep instrument:

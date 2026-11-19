@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-182-182.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 183 (2026-11-02) — M213-M216 all PASS: point-in-rect hotspots; the dialog's +0x4c is a CLICK DISPATCHER over the list at this+0x3098; the 0xb4c row class and its label buffer; 0x6738e4 and the modal handle's readers
 
 Acceptance `python3 scripts/m213_m216_hotspot.py` -> `SUMMARY M213=PASS M214=PASS M215=PASS M216=PASS (17/17 gates)`, rc 0, `evidence/m213_m216_hotspot.txt` (8,352 B). Invocation #1 was 15/17 on two EXPECTATION errors of mine, not data: my store census demanded `[` in the destination operand, so it missed the BARE no-`ptr` forms `mov ds:0x9977f0,eax` / `mov ds:0x9978ac,eax` (a3) — ds:0x9977f0 has 2 stores not 1, and each layout triple has 1 writer not 0 — and I asserted one writer function where index.csv resolves 9 distinct one-store functions. 3 `--probe` runs fixed 5 earlier ones (half-open window = 53 insns; read publish offsets off the SOURCE operand; FUN_00403a80's stores are mov/add/mov triples and FUN_00478080 calls it 4x not 3x; a `call dword ptr ds:imm` target and a pc outside any indexed function both crash an `int()`/`IDXMAP[]` census; a scaled `[X+idx*4+0xb40]` store's last field is disp+8, not disp+4). No threshold weakened. Zero box time.

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-267-267.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 268 (2026-11-16, ANALYSE M308, zero box) - FUN_0056d480/0056d630 ARE the 25-entry SITE list of the 8380-B block record at 0x94f2d8 (inserter-with-eviction + pure probe); ds:0x985aec is a dword ENUM mirroring ds:0x92bde8; ds:0x985b10 is ONE byte bit-mask that one writer rebuilds as OR(1<<BYTE[rec]) over 412-B records
 - MODE=ANALYSE (track_mode: analyse_since_build=0, last_build=B21, next_rung=B22) -> took the NEXT_PROMPT pick verbatim ("FUN_0056d480/0056d630 + ds:0x985b10/0x985aec identities", the OPEN row of M303/S9). Branch milestone/m308.
 - ACCEPTANCE `python3 -u scripts/m308_site_list.py` -> **32/32 checks OK**, exit 0, `RESULT: PASS M308 site-list identities`; evidence/m308_site_list.txt 15,291 B (`:301-303`); rerun stdout-vs-evidence diff = **0 lines**. Zero box/proc/gdb.

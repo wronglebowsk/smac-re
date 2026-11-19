@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-50-51.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 52 (2026-10-23) — M52b: edi at the SPENDA store is `0x4e40a0(owner,1,−1) × 0x5ac950(queue_type, idx, 0)` = 10 × 1 — M49a's "sweep-entry index" is FALSE at its first link (0x4f5aa9 loads the OWNER BYTE), and 0x4eaa10 preserves edi
 
 **The provenance chain, measured end to end in one run** (3 rounds, 2360→2363, 0 OCR passes,

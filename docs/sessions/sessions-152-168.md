@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-147-151.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 152 (2026-10-29) — M97 ACCEPTED: m97credit3 PASS 11/11. base+0xd0 (credit) is RECOMPUTED EVERY ROUND by FUN_004e93f0; the "written only at record init" trap is RETRACTED
 
 Branch milestone/m97. ACCEPTANCE `python3 scripts/m97_credit_watch.py --tag m97credit3 --boundaries 2` (ONE invocation, m54b_clean, University Base row 0x95da10, rounds 54->56): **PASS 11/11** — G1 4 HARDWARE watchpoints armed (CREDIT +0xd0 0x95dae0, GROSS +0xc0, UPKEEP +0xf0, DISPCOPY +0x94); G2 rounds 54->56, both boundaries rc=0; G3 **12 store executions (6 x S1 0x4e9557 + 6 x S2 0x4e957f)**; G4 every writer and every `*(int*)($ebp+4)` return pc mapped by containment; G5 **12/12 stored values == the prediction computed from the live record AT the hit** (S1 = [+0xc0]-[+0xf0], S2 = old credit - [+0xe0]); G6 read-back credit == last store, +0x94 == credit == c0-f0-e0; G7 no gaps; G8 the +0xd0 watchpoint saw ONLY the two static store pcs; G9 tracer 0; G10 0 unparsed; G11 stores in 3 distinct rounds. m97credit1 FAIL 9/10 (2 `[New LWP]` banners not whitelisted) and m97credit2 FAIL (0 CREDIT events) — INSTRUMENT fixes both times, floors never edited.

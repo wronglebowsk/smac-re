@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-63-63.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 64 (2026-10-23) — M53l: **+0xc0 HAS EXACTLY 3 WRITERS, ALL INSIDE `FUN_004e93f0` (doubling gate + `+= DAT_008f0c70` + ×(2+bonus)/2 scale); +0xcc IS WRITTEN ONLY AT 0x4e937b IN `FUN_004e92c0` AS `cc = bc − (pop×0x92a27c + 0x8f0c34)`; THE GLOBE-FEEDER IS `FUN_004e8d60` (per-base unit/tile sweep recomputing c6c/c70/c34/c38/c4c); bc/c0/cc ARE PERSISTENT (per-turn recompute is idempotent, 75/75 stable live); MASK = player-byte + alien-byte faction set (4 writers pinned); ERA TABLE 0x68cbb8 = DIRECT dwords {13,12,11,10,8,7}** — write-up `evidence/m53l_findings.md`
 - **cc writer (VERIFIED machine+live):** 0x4e937b in FUN_004e92c0 (eax = ds:0x8f0d60 raw byte offsets):
   bc += DAT_008f0c6c (0x4e9344); ec = pop(base+6) × DAT_0092a27c(=2, rules-loader store 0x5784f2) +

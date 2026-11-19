@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-197-197.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 198 (2026-11-01, M248/M249 ANALYSE — the region map's byte VALUES, and terrain record +3)
 
 `python3 scripts/m248_region_values_census.py` -> `PASS M248: 5/5 gates` (2nd invocation, rc=0;

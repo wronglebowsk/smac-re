@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-102-104.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 105 (2026-10-26) — M65: THE SCREEN READ IS A LOOK LOOP, NOT AN OCR COIN-FLIP. The HUD has two rows and only the bottom one is stable.
 
 ### What changed (harness only — no threshold, floor or prediction term moved; `classify()` itself is UNTOUCHED, so the driver classifies exactly as before)

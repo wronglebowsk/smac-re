@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-261-261.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 262 (2026-11-15, HYGIENE H262, zero box) - NEXT_PROMPT.md docs-only split: the settled count/byte-counter era relocated
 
 - WHY: NEXT_PROMPT.md sat at 11,999 B (1 B under the 12,000 warn; CLOSING ORDER step 3 - "past it the next fire starts as a docs split"). Doctrine: a cap that binds a SECOND session gets a docs-only split as its own PR.

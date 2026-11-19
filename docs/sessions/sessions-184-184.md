@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-183-183.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 184 (2026-11-02) — M217-M221 all PASS: the hotspot list is a 3-dword CONTAINER {array@+0, capacity@+4, count@+8} of 24-B items with an 8-member API; the dialog's list is a MEMBER allocated 10 items; the 9 row triples have THREE-store setters (M215's "one-store" RETRACTED); the +0x15c method installs the modal callback into three WRITE-ONLY fields; the 0x671d94 panel is 0x214c and its +0xa8 is a DETACH
 
 `python3 scripts/m217_m221_panel.py` -> `SUMMARY M217=PASS M218=PASS M219=PASS M220=PASS M221=PASS (31/31 gates)`, rc 0; `evidence/m217_m221_panel.txt` 11,571 B; zero box time. Invocations #1 22/31 + crash, #2 28/31, #3 29/31, #4 green: every failure was an INSTRUMENT-definition bug, no threshold or claim was changed — (a) the store census counted `[ebp-0xNN]` frame spills as field writes (FUN_005e75e5 read 4 stores, disps [-4,0,4,8]); (b) `txt.index()` took the FIRST textual match and `mov [ecx+0x8],eax` occurs twice in the adder (count++ and item+8); (c) `census()`'s store half tests whether the DEST carries the token — for a stored VALUE (`mov [eax+0x2210],0x5f5a11`) the token is the SOURCE, so 3 refs reported 0 stores; (d) index.csv DOES name the SEH unwind stubs (`Unwind@00661ef2`), so "in the index" does not exclude them (+0x3098 has 4 clear sites, 2 of them stubs); (e) x87 `fsub qword ptr [reg+edx*1+0x10]` reuses the 24-B index form and inflated the item-field reader set.

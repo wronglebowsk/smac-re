@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-43-43.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 44 (2026-10-22) — M47: WRITE PROVENANCE — the exact stores that move faction energy; `base+0x7e` retracted as a Ghidra short*-artifact (the addend is `base+0xfc`); ledger writers are action-time; six input-blocking panes that `classify()` calls `hud`
 
 - **Positive control first (H):** `hw watch` on the mission year fired once, `eip=0x51f554

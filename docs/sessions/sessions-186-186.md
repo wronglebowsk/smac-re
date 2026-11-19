@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-184-184.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 186 (2026-11-01, M222-M226, static, zero box time)
 
 `python3 scripts/m222_m226_rows.py` -> `SUMMARY M222=PASS M223=PASS M224=PASS M225=PASS M226=PASS (26/26 gates)`, rc 0; `evidence/m222_m226_rows.txt` 10,130 B. Invocations #1 crash (a gate unpacked a tuple), #2 10/14 + crash, #3 22/26, #4 25/26, #5 green — every failure an INSTRUMENT-definition bug: provenance resolved at the CALL pc instead of each push's own pc; `\[ebp(0x..)\]` missing the `\+`; a str-vs-int set comparison; a `0x774c|0x774d` filter that missed 0x774a80 and, widened, over-matched 39 region refs; expected counts read off the wrong probe window. No threshold, floor or claim direction was changed to get green.

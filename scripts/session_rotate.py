@@ -71,9 +71,15 @@ def main():
     # one unless the new archive carries the onward pointer (found by the s292 review of #316).
     prev, lo = None, int(first.group(1)) if first else 0
     try:
-        cands = [(int(m.group(2)), nm) for nm in os.listdir(ARCHIVE)
-                 if (m := re.fullmatch(r"sessions-(\d+)-(\d+)\.md", nm)) and int(m.group(2)) < lo]
-        prev = max(cands)[1] if cands else None
+        # Same (lo, hi) total order as scripts/s292_chain_fix.py: the archives on disk OVERLAP,
+        # and "nearest strictly older" would skip the overlapping one and orphan it.
+        spans = {}
+        for nm in os.listdir(ARCHIVE):
+            m = re.fullmatch(r"sessions-(\d+)-(\d+)\.md", nm)
+            if m:
+                spans[nm] = (int(m.group(1)), int(m.group(2)))
+        older = [o for o, (olo, ohi) in spans.items() if (olo, ohi) < (lo, int(last.group(1) if last else lo))]
+        prev = max(older, key=lambda o: spans[o]) if older else None
     except OSError:
         pass
     print(f"       onward pointer for the archive: {prev or '(none — oldest)'}")

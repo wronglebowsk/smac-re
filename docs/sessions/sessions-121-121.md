@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-120-120.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 121 (2026-10-28) — M79: NAME the two production-gate globals; what turns the 0x4f05bd MARKSET else-branch on. ACCEPTANCE PASS (tag `m79net5`).
 
 `python3 scripts/m79_netgame_poke.py --tag m79net5 --boundaries 3` (reload `m54b_clean.SAV`, enqueue at University Base idx 0, storage poked 200 read back 200, 11 silent breakpoints incl. POKE 0x4f05a5 (`set var *(int *)0x920434 = 1`) and RESTORE 0x4f0637, census APPENDED into the gdb log): baseline 192=0x001 193=0x041 194=0x041 carriers []; **end census 192=0x105 193=0x145 194=0x145 carriers [192,193,194] — exactly the NETGAME-ON prediction**; census replay exact 3/3; SWEEPIN/CLEAR/UPKCLR **0 events**; MARKSET tid=194 pre=0x45 once; POKE pre=0 post=1 once (owner 3, rec=10088=194*52); end globals 0x920434=0 0x985b10=0x08 0x985b11=0xff. g1-g9 True -> PASS.

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-244-244.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 245 (2026-11-10, BUILD B16, PASS 7/7, zero box contact) - pod-scan loop HEAD PRE-CHECK CHAIN named + executable (sim/precheck.py); the m294 x/y transposition law
 - `python3 scripts/track_mode.py` said `MODE=BUILD next_rung=B16`, so this fire BUILT B16
   (the rung was not yet in BUILD_SPINE.md, so it is authored on the branch) instead of

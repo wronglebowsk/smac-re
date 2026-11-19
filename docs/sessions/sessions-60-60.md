@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-59-59.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 60 (2026-10-23) — M53h: **THE CHOOSER ENUMERATION HAS A NAMED PRODUCER — `FUN_00596000` + a lockstep Plan-major sort — AND THE SIX BAR BUTTONS ARE AN EMBEDDED CONTROL TABLE AT `chooser+0xb74 + i·0xb4c`** (params −2/7/5/4/−1/0, rects at control+0x13c/0x140/0x144); a queued secret project = **−(index in the 0x984d38 table)**, so guard 12 → −26 = project 26 *Pressure Dome* — write-up `evidence/m53h_findings.md`
 
 - **Producer + order (VERIFIED).** `FUN_00596000(faction)` (shard_015.c:9459-9518, called by the paint at

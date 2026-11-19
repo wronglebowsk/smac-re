@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-106-106.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 107 (2026-10-26) — M67: THE QUEUE'S SORT KEY IS THE PLAN BYTE `+42`, NOT COST. ACCEPTANCE PASS on ONE real invocation.
 
 ### The acceptance (one real invocation, exit 0)

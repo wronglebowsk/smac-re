@@ -76,9 +76,12 @@ def c2_verbatim(main_text, blocks):
     return exact
 
 
-def walk_chain(texts):
+def walk_chain(texts, on_disk=None):
     """Follow 'Older sessions:' pointers from SESSION_NOTES.md; return (visited, orphans)."""
-    on_disk = set(n for n in os.listdir(ARCH) if re.fullmatch(r"sessions-\d+-\d+\.md", n))
+    if on_disk is None:
+        on_disk = set(n for n in os.listdir(ARCH) if re.fullmatch(r"sessions-\d+-\d+\.md", n))
+    else:
+        on_disk = set(on_disk)
     start = POINTER_RX.search(texts["SESSION_NOTES.md"] or "")
     visited, queue = set(), [start.group(1)] if start else []
     while queue:
@@ -103,31 +106,46 @@ def c3_chain(texts):
     return orphans
 
 
-def load_texts():
-    texts = {"SESSION_NOTES.md": open(NOTES, encoding="utf-8").read()}
-    for nm in os.listdir(ARCH):
+def load_texts(ref=None):
+    """ref=REV reads the hot file + archives from a commit, so the PRE-FIX orphan count stays
+    measurable after the repair (the s292 review asked that the defect's size be checkable)."""
+    if not ref:
+        texts = {"SESSION_NOTES.md": open(NOTES, encoding="utf-8").read()}
+        for nm in os.listdir(ARCH):
+            if re.fullmatch(r"sessions-\d+-\d+\.md", nm):
+                texts[nm] = open(os.path.join(ARCH, nm), encoding="utf-8").read()
+        return texts
+    names = [l.split()[-1] for l in subprocess.run(
+        ["git", "-C", REPO, "ls-tree", "-r", "--name-only", ref, "--", "docs/sessions"],
+        capture_output=True, text=True).stdout.splitlines() if l.strip()]
+    texts = {"SESSION_NOTES.md": git_show(ref, "SESSION_NOTES.md")}
+    for path in names:
+        nm = os.path.basename(path)
         if re.fullmatch(r"sessions-\d+-\d+\.md", nm):
-            texts[nm] = open(os.path.join(ARCH, nm), encoding="utf-8").read()
+            texts[nm] = git_show(ref, path)
     return texts
 
 
 def selftest(main_text, head_text, blocks, texts, measured_bytes):
     print("-- SELFTEST: perturb MEASURED INPUTS, each must redden its check --")
     bad = list(blocks)
-    bad[0] = bad[0].replace("0x51892d", "0x51892c", 1)
-    v = len(verdicts)
+    mid = len(bad[0]) // 2   # perturb a byte that MUST exist: flip the middle character
+    midc = "X" if bad[0][mid] != "X" else "Y"
+    bad[0] = bad[0][:mid] + midc + bad[0][mid + 1:]
+    assert bad[0] != blocks[0], "selftest perturbation did nothing"
+    start = len(verdicts)
     c2_verbatim(main_text, bad)
-    s2 = verdicts[v] is False
+    s2 = verdicts[start] is False
     t2 = dict(texts)
     t2["SESSION_NOTES.md"] = POINTER_RX.sub("Older sessions: (dropped)", texts["SESSION_NOTES.md"], count=1)
-    v = len(verdicts)
+    p = len(verdicts)
     orph = c3_chain(t2)
-    s3 = verdicts[v] is False and len(orph) > 0
-    v = len(verdicts)
+    s3 = verdicts[p] is False and len(orph) > 0
+    q = len(verdicts)
     c1_size(main_text, head_text, cap=measured_bytes - 1)
-    s1 = verdicts[v] is False
-    # drop verdicts added by the selftest so they cannot pollute the real exit code
-    del verdicts[v - 3:]
+    s1 = verdicts[q] is False
+    # drop the verdicts the selftest added so they cannot pollute the real exit code
+    del verdicts[start:]
     rows.clear()
     ck("SELFTEST S1/S2/S3 reddened cap / verbatim / chain",
        s1 and s2 and s3, f"cap_fail={s1} verbatim_fail={s2} chain_fail={s3} (orphans={len(orph)})")
@@ -137,7 +155,17 @@ def selftest(main_text, head_text, blocks, texts, measured_bytes):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--ref", metavar="REV", default=None,
+                    help="INFO-only, never a gate: measure the session-chain reachability at REV "
+                         "(so the pre-fix orphan count stays checkable after the repair)")
     args = ap.parse_args()
+    if args.ref:
+        t = load_texts(args.ref)
+        on_disk = [n for n in t if n != "SESSION_NOTES.md"]
+        visited, orphans = walk_chain(t, on_disk)
+        print("INFO chain at %s: archives=%d reachable=%d orphans=%d (first 3: %s)"
+              % (args.ref, len(on_disk), len(visited), len(orphans), orphans[:3]))
+        return 0
     main_text = git_show("main", "NEXT_PROMPT.md")
     head_text = open(PROMPT, encoding="utf-8").read()
     arch = open(PICKARCH, encoding="utf-8").read()

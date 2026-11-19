@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-109-110.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 117 (2026-10-28) — M75: the production sweep's MATCH SEMANTICS. ACCEPTANCE PASS (tag `m75sweep1`): the sweep marks EVERY valid UNMARKED designed record — the three bytes do NOT gate designed marking.
 
 **Instrument.** `scripts/m75_sweep_replay.py`: implements FUN_00572800's loop from the

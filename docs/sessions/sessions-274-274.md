@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-273-273.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 274 (2026-11-17, STATIC, zero box) - M311: ds:0x68cbb0 is the CURRENT-RECORD INDEX; ds:0x8f0d60 its derived 304-B record pointer
 - THE PICK from the s273 handoff, list item (a) `ds:0x68cbb0` (340 xrefs, exactly 6 stores). **It swallowed
   list item (b)**: the "304-B table at `0x95da40`" is `0x95da10 + 48` - the same array, one field in.

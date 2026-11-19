@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-264-264.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 265 (2026-11-16, HYGIENE H264, zero box)
 - docs-only: the correction line above. No findings changed, no script touched.
 - STATE: M306 #277 MERGED (main f9fca53); B1-B20 + M54A-M306 MERGED; #180/#105 pre-existing and untouched.

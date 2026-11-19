@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-189-189.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 190 (2026-11-01, B1 build rung — `sim/` exists; static, zero box time)
 
 - `python3 scripts/track_mode.py` -> `MODE=BUILD analyse_since_build=3 last_build=B0 next_rung=B1`, so this fire

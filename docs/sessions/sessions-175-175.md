@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-174-174.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans). (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 175 (2026-10-31) — cap triage (#153, merged), then M188-M190 all PASS (static batch of three, one instrument)
 
 - **CAP TRIAGE first, as its own PR (#153):** `NEXT_PROMPT.md` measured 15,466 chars (> the 15,300 triage

@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-179-179.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 180 (2026-11-01) — M201-M204 all PASS: FUN_005f1394 IS the OK/CANCEL DIALOG RUNNER; its return is a result code; $-tags resolve by FIRST DIGIT; the key pool is an emitter list
 
 One static instrument: `scripts/m201_m204_dialog.py` -> `evidence/m201_m204_dialog.txt`. Acceptance

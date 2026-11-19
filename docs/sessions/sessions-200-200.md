@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-199-199.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 200 (2026-11-01, M250/M251/M252 ANALYSE — who assigns the region labels, in what order, and who reads them)
 
 `python3 scripts/m250_region_generation.py` → `SUMMARY PASS: 7/7 gates on terran.exe (static image,

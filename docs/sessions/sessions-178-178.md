@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-177-177.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 178 (2026-11-01) — M197-M200: the proposal composer, the diplomacy key pool, the tag engine, the row writers
 
 Static-only fire, NO box time: one census script, one evidence file.

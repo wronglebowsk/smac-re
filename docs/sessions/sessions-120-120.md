@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-118-119.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 120 (2026-10-28) — M78: SAME-VISIT marks vs clears, and who else calls FUN_00572800/FUN_004ef380. ACCEPTANCE PASS (tag `m78order3`).
 
 `python3 scripts/m78_mark_clear.py --tag m78order3 --boundaries 4 --no-reload` (state from

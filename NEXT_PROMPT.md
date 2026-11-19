@@ -29,9 +29,11 @@ B24, so B25's rung text must be written BEFORE probing (one milestone = spine se
 B24 MERGED as #307 (main af38858; `NAMED ## B24` governs): instrument 9/9 (`python3 -u -m sim.selftest --b24`) + harness
 **9/9 scored + 1 declared NO-OP** (MU9 labels-only = decoration). Its spine text (the compaction RETRACT, the
 LEDGER-POSITION addressing law, the s287 harness laws, the two retired degenerate rivals) is VERBATIM at
-`docs/pick-archive.md` §trim-s292 (a) and the laws are ALREADY in the skill (SKILL.md 319-320,
-`references/instrument-laws.md` §mutation-harness STATE / §s290 retirement). `pos=False` in `composedturn.fold` is
-NOT tile-addressing. M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
+`docs/pick-archive.md:963` §trim-s292 (a) — that copy is the ONLY place the sentence "declared gate-sets are
+MEASURED, not authored" survives; the sibling laws are independently in the skill at `skill/SKILL.md:319-320`,
+`skill/references/instrument-laws.md:1031` (§four outcomes, s287/B24), `skill/references/verify-outcome.md:237`.
+`pos=False` in `composedturn.fold` is NOT tile-addressing. M316 (#305) + M315 (#301) summaries: same archive
+section; `NAMED ## M316` / `## M315` govern.
 
 ## THE LEDGER
 
@@ -66,7 +68,7 @@ collision-check + worktree FIRST).
   `docs/pick-archive.md` §trim-s270; era text: `docs/nextprompt-archive-m299-b20.md` §closed-era.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
   CLOSED (s278): pick (i') NAME THE EVENTS - the one interaction band `[0x50bb20,0x5175b4)` + its two pumps;
-  detail VERBATIM at `docs/pick-archive.md` §trim-s292 (a), full law `NAMED ## M313`.
+  detail VERBATIM at `docs/pick-archive.md:963` §trim-s292 (a), full law `NAMED ## M313`.
   CLOSED (s288): pick (iii') FUN_00556690 = per-faction AI strategy pass. NAMED ## M317.
   CLOSED (s289): pick (iv) pair = 4e8d60 unit-support census + 4e78e0 pane refresh. NAMED ## M318.
   OPEN PICK after M318: (v) the 8 memo sites with NO local dedup guard - census their callers and
@@ -110,7 +112,8 @@ collision-check + worktree FIRST).
    repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`), exit non-zero unless EVERY mutation reddens its
    named gate; mutate a MEASURED FACT, never a dict ENTRY the assert reads as a whole; keep mutation ids out of the
    A-number namespace. Worked defect list + the `m308_mutate.py` 8/8 reference VERBATIM:
-   `docs/pick-archive.md` §trim-s292 (b); mechanics: skill `instrument-laws.md`.
+   `docs/pick-archive.md:996` §trim-s292 (b); mechanics: skill `references/instrument-laws.md:975`
+   (§harness is STATE) and `:1031` (§four outcomes).
 ## CLOSING ORDER (exactly — the kickoff carries the same list, and the full 7-step text lives
 VERBATIM at `docs/pick-archive.md` §trim-s269). Order: 1 `SESSION_CURSOR.md` (<=600 B) BEFORE the
 rest, in case of compression. 2 `## Session <N+1>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers

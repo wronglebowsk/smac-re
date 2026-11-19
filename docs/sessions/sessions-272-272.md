@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-270-271.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 272 (2026-11-17, ANALYSE M310, zero box)
 
 - `track_mode.py` -> `MODE=ANALYSE analyse_since_build=2 next_rung=B22`; took the s271 pick (b):

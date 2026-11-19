@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-53-53.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 54 (2026-10-23) — M53c: the dequeue IS A CALL, NOT A STORE — FUN_004ef5d0 pops the head; the pipeline calls it at 0x4f037b whenever the base's owner is in the event mask (otherwise it re-picks via 0x4e5ae0); +0x4c is the PENDING-entry count (entries = +0x4c + 1), and with +0x4c == 0 NOTHING consumes the head — a payable head re-completes every round
 
 **Runs:** `scripts/m53c_drive.py --tag m53c --rounds 3 --budget 1100` — 3 rounds 2366→2369, **0 OCR

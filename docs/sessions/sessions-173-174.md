@@ -3,6 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
+Older sessions: `docs/sessions/sessions-172-172.md` (inserted at s292: the hot file cites only the newest archive, so without this line the older archives were orphans).
+
 ## Session 173 (cont. 27) — M175-M177 (all PASS): the aggregator's 17 demand sites, its calling convention, and the stamp callers prime
 
 `python3 scripts/m175_m177_aggcallers.py` — SUMMARY M175=PASS M176=PASS M177=PASS (evidence/m175_m177.log, full census in evidence/m175_m177_full.txt).
