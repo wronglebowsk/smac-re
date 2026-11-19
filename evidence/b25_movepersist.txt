@@ -1,0 +1,51 @@
+== B25 tables (T=4 rounds x 3 presses, units 67, container 64x64, map file width 80) ==
+-- table A: the composed run (mode=container, falsifier ARMED) --
+rnd src                    acc ref writ unitB hdrB found/n  yr(mdl/img) outHdr outWrt atSave sha
+  0 image-at-round-head      134  67   67    67    1    67/67  2151/2151     0      0    67  0e2b0c0c58fd6331
+  1 image-at-round-head      134  67   67    67    1    67/67  2152/2152     0      0     0  66c063d8198b7ef0
+  2 image-at-round-head      134  67   67    67    1    67/67  2153/2153     0      0     0  376e343ddaedec98
+  3 image-at-round-head      134  67   67    67    1    67/67  2154/2154     0      0     0  5b352bbba6b636ed
+-- table B: per-round footprint (container): unit-array record offsets touched, header offsets touched, array accounting --
+rnd 0: rec offsets [0] | header bytes at [84] | written 67 | found_units 67/67 | found_bases 18/18
+rnd 1: rec offsets [0] | header bytes at [84] | written 67 | found_units 67/67 | found_bases 18/18
+rnd 2: rec offsets [0] | header bytes at [84] | written 67 | found_units 67/67 | found_bases 18/18
+rnd 3: rec offsets [0] | header bytes at [84] | written 67 | found_units 67/67 | found_bases 18/18
+-- table C: trajectory witnesses, round: start_x -> end_x / accepted --
+unit 0   clean     0:28->32/2 1:32->36/2 2:36->40/2 3:40->44/2
+unit 0   poisoned  0:28->32/2 1:7->11/2 2:11->15/2 3:15->19/2
+unit 1   clean     0:12->16/2 1:16->20/2 2:20->24/2 3:24->28/2
+unit 1   poisoned  0:12->16/2 1:16->20/2 2:20->24/2 3:24->28/2
+unit 66  clean     0:11->15/2 1:15->19/2 2:19->23/2 3:23->27/2
+unit 66  poisoned  0:11->15/2 1:15->19/2 2:19->23/2 3:23->27/2
+-- table D: falsifier sightings for unit 0 (image-only poison x=7 between rounds): container tile at the round head -> mover's end tile --
+rnd  1: image at head [7, 42] -> mover ends [11, 42]
+rnd  2: image at head [11, 42] -> mover ends [15, 42]
+rnd  3: image at head [15, 42] -> mover ends [19, 42]
+-- table E: rival and control signatures --
+mode              readback_bad      readback_n        out_head          out_written       min_found_units   final_found       unit_bytes_run    max_x             year_img        
+container         0                 268               0                 0                 67                67                268               62                2154            
+container:clean   0                 268               0                 0                 67                67                268               62                2154            
+model             1                 268               0                 0                 67                67                268               62                2154            
+model:clean       0                 268               0                 0                 67                67                268               62                2154            
+late              1                 268               0                 0                 67                67                268               62                2154            
+late:clean        0                 268               0                 0                 67                67                268               62                2154            
+nowrite           0                 268               0                 0                 67                67                0                 62                2154            
+mpwidth           0                 268               27                37                4                 4                 268               79                2154            
+wrapskip          0                 268               27                37                4                 4                 268               79                2154            
+budget3           0                 268               0                 0                 67                67                268               63                2154            
+lift              0                 268               0                 0                 67                67                0                 62                2150            
+-- table F: B7's own slice on the same inputs, and where ITS modulus put them --
+B7 accepted per round [134, 134, 134, 134] / refused [67, 67, 67, 67] (turns=4, presses=3, map-file width 80); container grid 64x64; B7 final tiles OUTSIDE that grid: 10 of 67 units [9, 16, 44, 46, 51, 56, 58, 60, 61, 62]
+-- table G: determinism --
+container digest 6a8ed220f489b12c | rerun digest 6a8ed220f489b12c | equal=True | final sha 5b352bbba6b636ed / 5b352bbba6b636ed | images equal=True
+digest(B25 measured rows) 901a286332960a10
+  ok   G1 B7's own slice re-derives on the same inputs (4 rounds, accepted [134, 134, 134, 134] / refused [67, 67, 67, 67]) and this composed run equals its per-unit accept pattern in 268/268 cells - the gesture law is imported, not forked
+  ok   G2 identity round-trip through this call path True (242539 B), and every round's write touches exactly the moved tiles: unit-array bytes [67, 67, 67, 67] == tiles written [67, 67, 67, 67], record offsets touched [0] (x only), header bytes per round [1, 1, 1, 1], all 1 header diffs inside the writer's modeled spans: True (the container's year does move: [2151, 2152, 2153, 2154])
+  ok   G3 write-back fidelity: the re-parsed final container's tile equals the model's for 67/67 units; every round re-parsed with found_units == n_units == 67 (4/4 rounds); 0 unit-rounds outside the container grid
+  ok   G4 the reload law: 268/268 (round,unit) start tiles equal the container's tile at the round head (0 divergences); every accepted press moved (+2,0) mod 64 from the RELOADED tile; every unit accepted exactly 2 of 3 presses each round with spent == 3*accepted; and the read is NOT vacuous - the container at the round head still holds the save's own tile for 67 records in round 0 and [0, 0, 0] in the later rounds, so the tiles it reports are this run's writes, not the input
+  ok   G5 coordinate space: the container's own width 64 keeps 0 out-of-grid at the read and 0 at the write, found_units 67/67; the MAP FILE's width 80 puts 37 records outside the container AT THE WRITE and 27 come back as a later READ, and its parser's own found_units drops to 4; the no-wrap rival: 37 written, 27 read back, found_units drops to 4. B7 - which wrapped by the map file - left 10 of 67 units' final tiles outside this container's 64x64 grid
+  ok   G6 falsifier: rewriting unit 0's tile in the IMAGE ONLY at round 1 shifts its start-tile trajectory by [0, 39] mod 64 for every later round (clean [28, 32, 36, 40] -> poisoned [28, 7, 11, 15]), the shift is in the FINAL container ([19, 42] vs clean [44, 42]), and no other unit's trajectory moves (0 of 67); the model-fed and read-after-write movers are BLIND: their final images equal the clean run's byte-for-byte (model True, late True)
+  ok   G7 span accounting over the whole run: the final container differs from the original in 68 bytes (67 inside the unit array, 1 in the modeled header), and 0 bytes lie outside a modeled span; the writer's own (header-only) span check would flag exactly the 67 unit-array bytes as unmodeled, which is why this gate adds the record x/y spans B8's writer patches
+  ok   G8 rivals and controls (table E): nowrite never touches the container (0 unit bytes; the ONLY tile differing from the save is the falsifier's own record 0 at [7, 42], y untouched); map-file modulus and no-wrap put 37 / 37 records out of grid at the write and 27 / 27 come back at the read (found_units min 4 / 4) and are COINCIDENT on this window, not claimed apart: both reach max_x 79 < the map file's own width 80, so 80 never bites in 4 rounds; budget3 accepts 1 press per round not 2 ([1]); the lift-everything re-emitter writes 0 unit bytes and never advances the container's year past 2150; the two blindness controls diverge at exactly 1 read-back each, still write 268/268 unit bytes, and rebuild the CLEAN final image. The rung's own row: 0 read-back divergences, and it coincides with none of its rivals (True)
+  ok   G9 determinism: the rerun reproduces the measured-row digest 6a8ed220f489b12c and the final container sha256 5b352bbba6b636ed (242539 B)
+PASS B25: 9/9 gates

@@ -97,11 +97,13 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
     eng = soturn.Engine(sv0.year, human=sv0.own_player)
     img = sv0.data
     model = {u["i"]: [u["x"], u["y"]] for u in sv0.units}
+    orig_t = {i: list(v) for i, v in model.items()}   # the SAVE's own tiles (vacuity control)
     n = sv0.n_units
     rows = []
     traj = {}
     readback = []          # per (round, unit): 1 when the round's start tile == the container's
-    out_of_grid = []       # per (round, unit): tile outside the CONTAINER's grid
+    out_head = []          # (round, unit) outside the container grid AT THE ROUND HEAD (read side)
+    out_written = []       # (round, unit) outside it AFTER the write (write side)
     byte_rows = []
     poison_sightings = []
     digest_rows = []
@@ -147,7 +149,7 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
                                            "accepted": acc, "spent": m.spent,
                                            "end": [m.x, m.y]})
             if start[i][0] >= W_cont or start[i][1] >= H_cont:
-                out_of_grid.append((r, i))
+                out_head.append((r, i))
         # ---- the B3 turn engine (the year law, rung B3)
         eng.press()
         # ---- the WRITE: through B8's writer, composing from the container's current bytes.
@@ -168,7 +170,7 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
         wt = _tiles(im_w)
         for i in model:
             if wt[i][0] >= W_cont or wt[i][1] >= H_cont:
-                out_of_grid.append((r, i))
+                out_written.append((r, i))
         byte_rows.append({"round": r, "written": len(mv) if mv is not None else 0,
                           "unit_bytes": len(udiffs), "hdr_bytes": len(hdiffs),
                           "hdr_offsets": hdiffs,
@@ -183,7 +185,9 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
                "written": len(mv) if mv is not None else 0,
                "unit_bytes": len(udiffs), "hdr_bytes": len(hdiffs),
                "found_units": im_w.found_units, "n_units": n,
-               "out_of_grid": sum(1 for e in out_of_grid if e[0] == r),
+               "head_at_save_tile": sum(1 for i in model if head[i] == orig_t[i]),
+               "out_head": sum(1 for e in out_head if e[0] == r),
+               "out_written": sum(1 for e in out_written if e[0] == r),
                "sha": hashlib.sha256(img).hexdigest()[:16]}
         rows.append(row)
         digest_rows.append("R%d|%s|%d|%d|%d|%d|%d|%d|%s" % (
@@ -200,8 +204,13 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
         digest_rows.append("T|%d|%s" % (i, ",".join(
             "%d:%d:%d" % (s["start"][0], s["end"][0], s["accepted"]) for s in traj[i])))
     final = soct.parse_image(img)
+    ft = _tiles(final)
+    ot = _tiles(sv0)
+    diff_records = [i for i in range(n) if ft[i] != ot[i]]
     return {"mode": mode, "poison": poison, "rows": rows, "traj": traj, "img": img,
-            "readback": readback, "out_of_grid": sorted(set(out_of_grid)),
+            "readback": readback, "out_head": sorted(set(out_head)),
+            "out_written": sorted(set(out_written)),
+            "out_of_grid": sorted(set(out_head) | set(out_written)),
             "byte_rows": byte_rows, "final_tiles": _tiles(final),
             "final_found_units": final.found_units, "final_year_img": final.year,
             "final_n_units": final.n_units, "final_n_bases": final.n_bases,
@@ -210,6 +219,8 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
             "orig_tiles": _tiles(sv0), "W_cont": W_cont, "H_cont": H_cont, "W_used": W,
             "mp_width": mp.width, "budget": budget, "n": n, "turns": turns,
             "poison_sightings": poison_sightings, "digest_rows": digest_rows,
+            "diff_records": diff_records,
+            "max_x": max(max(s["end"][0] for s in traj[i]) for i in traj),
             "digest": hashlib.sha256("\n".join(digest_rows).encode()).hexdigest()[:16]}
 
 
@@ -217,15 +228,16 @@ def _sig(res):
     """The signature table G8 prints: one row per run, carrying the numbers that discriminate."""
     return {"mode": res["mode"] + ("" if res["poison"] else ":clean"),
             "readback_bad": res["readback"].count(0), "readback_n": len(res["readback"]),
-            "out_of_grid": len(res["out_of_grid"]),
+            "out_head": len(res["out_head"]), "out_written": len(res["out_written"]),
             "min_found_units": min(b["found_units"] for b in res["byte_rows"]),
             "final_found": res["final_found_units"],
             "unit_bytes_run": sum(b["unit_bytes"] for b in res["byte_rows"]),
+            "max_x": res["max_x"], "diff_records": res["diff_records"],
             "year_img": res["final_year_img"]}
 
 
-SIGKEYS = ("mode", "readback_bad", "readback_n", "out_of_grid", "min_found_units",
-           "final_found", "unit_bytes_run", "year_img")
+SIGKEYS = ("mode", "readback_bad", "readback_n", "out_head", "out_written",
+           "min_found_units", "final_found", "unit_bytes_run", "max_x", "year_img")
 ORDER = ["container", "container:clean", "model", "model:clean", "late", "late:clean",
          "nowrite", "mpwidth", "wrapskip", "budget3", "lift"]
 
@@ -244,8 +256,11 @@ def measure(sav_path, map_path, turns=TURNS, presses=PRESSES):
     b7 = {h["round"]: sum(1 for mm in h["moves"] if mm["accepted"]) for h in st7["history"]}
     b7_ref = {h["round"]: sum(1 for mm in h["moves"] if not mm["accepted"])
               for h in st7["history"]}
-    b7_cells = {(h["round"], mm["unit"]): int(mm["accepted"])
-                for h in st7["history"] for mm in h["moves"]}
+    b7_cells = {}
+    for h in st7["history"]:
+        for mm in h["moves"]:
+            b7_cells[(h["round"], mm["unit"])] = (b7_cells.get((h["round"], mm["unit"]), 0)
+                                                  + int(mm["accepted"]))
     sv0 = sosave.parse(sav_path)
     b7_final = st7["final"]["units"]
     b7_out = sorted(int(i) for i, v in b7_final.items()
@@ -273,12 +288,13 @@ def render(m):
                                c["mp_width"]))
     L.append("-- table A: the composed run (mode=container, falsifier ARMED) --")
     L.append("rnd src                    acc ref writ unitB hdrB found/n  yr(mdl/img) "
-             "outgr  sha")
+             "outHdr outWrt atSave sha")
     for row in c["rows"]:
-        L.append("%3d %-24s %3d %3d %4d %5d %4d %5d/%-3d %4d/%-4d %5d  %s"
+        L.append("%3d %-24s %3d %3d %4d %5d %4d %5d/%-3d %4d/%-4d %5d %6d %5d  %s"
                  % (row["round"], row["src"], row["accepted"], row["refused"], row["written"],
                     row["unit_bytes"], row["hdr_bytes"], row["found_units"], row["n_units"],
-                    row["year_model"], row["year_img"], row["out_of_grid"], row["sha"]))
+                    row["year_model"], row["year_img"], row["out_head"], row["out_written"],
+                    row["head_at_save_tile"], row["sha"]))
     L.append("-- table B: per-round footprint (container): unit-array record offsets touched, "
              "header offsets touched, array accounting --")
     for b in c["byte_rows"]:
@@ -353,10 +369,15 @@ def gates(m):
     g.append(("G2 identity round-trip through this call path %s (%d B), and every round's "
               "write touches exactly the moved tiles: unit-array bytes %s == tiles written %s, "
               "record offsets touched %s (x only), header bytes per round %s, all %d header "
-              "diffs inside the writer's modeled spans: %s"
+              "diffs inside the writer's modeled spans: %s (the container's year does move: "
+              "%s)"
               % (ident, len(c["img"]), ub, wb, offs,
-                 [len(b["hdr_offsets"]) for b in c["byte_rows"]], len(hdr), inside),
-              ident and ub == wb and offs == [0] and inside and len(offs) == 1))
+                 [len(b["hdr_offsets"]) for b in c["byte_rows"]], len(hdr), inside,
+                 [b["year_img"] for b in c["byte_rows"]]),
+              ident and ub == wb and offs == [0] and inside and len(offs) == 1
+              and len(hdr) > 0
+              and [b["year_img"] for b in c["byte_rows"]]
+              == list(range(c["orig_year"] + 1, c["orig_year"] + 1 + len(ub)))))
 
     # G3 - the written container reads back as the model said, and stays shape-valid
     final_eq = sum(1 for i in range(n) if c["final_tiles"][i] == c["traj"][i][-1]["end"])
@@ -376,28 +397,37 @@ def gates(m):
     per = sounits.MP_PER_TURN // sounits.STEP_MP
     budget_ok = all(s["accepted"] == per and s["spent"] == s["accepted"] * sounits.STEP_MP
                     and s["accepted"] < m["presses"] for i in range(n) for s in c["traj"][i])
+    moved = [row["head_at_save_tile"] for row in c["rows"]]
     g.append(("G4 the reload law: %d/%d (round,unit) start tiles equal the container's tile at "
               "the round head (%d divergences); every accepted press moved (+%d,0) mod %d from "
               "the RELOADED tile; every unit accepted exactly %d of %d presses each round with "
-              "spent == 3*accepted"
+              "spent == 3*accepted; and the read is NOT vacuous - the container at the round "
+              "head still holds the save's own tile for %d records in round 0 and %s in the "
+              "later rounds, so the tiles it reports are this run's writes, not the input"
               % (len(c["readback"]) - bad, len(c["readback"]), bad, sounits.DIR_DX[DIR_EAST],
-                 c["W_cont"], per, m["presses"]),
-              bad == 0 and len(c["readback"]) == n * T and deltas_ok and budget_ok))
+                 c["W_cont"], per, m["presses"], moved[0], moved[1:]),
+              bad == 0 and len(c["readback"]) == n * T and deltas_ok and budget_ok
+              and moved[0] == n and all(v == 0 for v in moved[1:])))
 
-    # G5 - the coordinate space, arbitrated by the decoder's OWN shape scan
+    # G5 - the coordinate space, arbitrated by the decoder's OWN shape scan, on BOTH sides of
+    # the loop: the rival's write puts records outside the container (out_written) AND they come
+    # back as the next round's read (out_head), so the container really is the coordinate space.
     mp_r, ws_r = runs["mpwidth"], runs["wrapskip"]
-    mp_out, mp_min = len(mp_r["out_of_grid"]), _sig(mp_r)["min_found_units"]
-    ws_out, ws_min = len(ws_r["out_of_grid"]), _sig(ws_r)["min_found_units"]
-    g.append(("G5 coordinate space: the container's own width %d keeps %d tiles out of grid "
-              "and found_units at %d/%d; the MAP FILE's width %d puts %d unit-rounds outside "
-              "the container and its parser's own found_units drops to %d; the no-wrap rival: "
-              "%d out-of-grid, found_units drops to %d. B7 - which wrapped by the map file - "
-              "left %d of %d units' final tiles outside this container's %dx%d grid"
-              % (c["W_cont"], len(c["out_of_grid"]), c["byte_rows"][-1]["found_units"], n,
-                 c["mp_width"], mp_out, mp_min, ws_out, ws_min, len(m["b7_out"]), n,
-                 m["W_cont"], m["H_cont"]),
-              len(c["out_of_grid"]) == 0 and mp_out > 0 and mp_min < n and ws_out > 0
-              and ws_min < n and len(m["b7_out"]) > 0))
+    mp_out, mp_min = _sig(mp_r)["out_written"], _sig(mp_r)["min_found_units"]
+    ws_out, ws_min = _sig(ws_r)["out_written"], _sig(ws_r)["min_found_units"]
+    mp_head, ws_head = _sig(mp_r)["out_head"], _sig(ws_r)["out_head"]
+    g.append(("G5 coordinate space: the container's own width %d keeps %d out-of-grid at the "
+              "read and %d at the write, found_units %d/%d; the MAP FILE's width %d puts %d "
+              "records outside the container AT THE WRITE and %d come back as a later READ, and "
+              "its parser's own found_units drops to %d; the no-wrap rival: %d written, %d read "
+              "back, found_units drops to %d. B7 - which wrapped by the map file - left %d of "
+              "%d units' final tiles outside this container's %dx%d grid"
+              % (c["W_cont"], _sig(c)["out_head"], _sig(c)["out_written"],
+                 c["byte_rows"][-1]["found_units"], n, c["mp_width"], mp_out, mp_head, mp_min,
+                 ws_out, ws_head, ws_min, len(m["b7_out"]), n, m["W_cont"], m["H_cont"]),
+              _sig(c)["out_head"] == 0 and _sig(c)["out_written"] == 0
+              and mp_out > 0 and mp_head > 0 and mp_min < n
+              and ws_out > 0 and ws_head > 0 and ws_min < n and len(m["b7_out"]) > 0))
 
     # G6 - the falsifier bites; the two blindness controls prove it is the container that moved
     pu = POISON_UNIT
@@ -437,9 +467,17 @@ def gates(m):
     s = {k: _sig(runs[k]) for k in runs}
     rw = runs["nowrite"]
     riv = {
-        "nowrite": s["nowrite"]["unit_bytes_run"] == 0 and rw["final_tiles"] == rw["orig_tiles"],
-        "mpwidth": s["mpwidth"]["out_of_grid"] > 0 and s["mpwidth"]["min_found_units"] < n,
-        "wrapskip": s["wrapskip"]["out_of_grid"] > 0 and s["wrapskip"]["min_found_units"] < n,
+        "nowrite": (s["nowrite"]["unit_bytes_run"] == 0
+                    and rw["diff_records"] == [POISON_UNIT]
+                    and rw["final_tiles"][POISON_UNIT][0] == POISON_X
+                    and rw["final_tiles"][POISON_UNIT][1]
+                    == rw["orig_tiles"][POISON_UNIT][1]),
+        "mpwidth": (_sig(runs["mpwidth"])["out_written"] > 0
+                    and _sig(runs["mpwidth"])["out_head"] > 0
+                    and s["mpwidth"]["min_found_units"] < n),
+        "wrapskip": (_sig(runs["wrapskip"])["out_written"] > 0
+                     and _sig(runs["wrapskip"])["out_head"] > 0
+                     and s["wrapskip"]["min_found_units"] < n),
         "budget3": all(t["accepted"] == 1 for i in range(n) for t in runs["budget3"]["traj"][i])
         and s["budget3"]["readback_bad"] == 0,
         "lift": s["lift"]["unit_bytes_run"] == 0 and runs["lift"]["final_year_img"]
@@ -448,21 +486,39 @@ def gates(m):
     control = (s["model"]["readback_bad"] == 1 and s["late"]["readback_bad"] == 1
                and runs["model"]["img"] == cc["img"] and runs["late"]["img"] == cc["img"]
                and s["model"]["unit_bytes_run"] > 0 and s["late"]["unit_bytes_run"] > 0)
+    coincident = (s["mpwidth"]["out_written"] == s["wrapskip"]["out_written"]
+                  and s["mpwidth"]["out_head"] == s["wrapskip"]["out_head"]
+                  and s["mpwidth"]["max_x"] == s["wrapskip"]["max_x"]
+                  and s["wrapskip"]["max_x"] < c["mp_width"])
+    # the rung must not quietly coincide with one of its own rivals (trap 24: a gate that
+    # passes because the rung became the rival is no gate at all)
+    not_rival = (c["rows"][0]["accepted"] != runs["budget3"]["rows"][0]["accepted"]
+                 and s["container"]["unit_bytes_run"] > 0
+                 and s["container"]["out_written"] == 0 and s["container"]["out_head"] == 0
+                 and s["container"]["min_found_units"] == n
+                 and s["container"]["year_img"] != runs["lift"]["final_year_img"])
     g.append(("G8 rivals and controls (table E): nowrite never touches the container (%d unit "
-              "bytes, its tiles stay the save's %s); map-file modulus and no-wrap put %d / %d "
-              "unit-rounds out of grid (found_units min %d / %d); budget3 accepts 1 press per "
+              "bytes; the ONLY tile differing from the save is the falsifier's own record %d at "
+              "%s, y untouched); map-file modulus and no-wrap put %d / %d records out of grid "
+              "at the write and %d / %d come back at the read (found_units min %d / %d) and are "
+              "COINCIDENT on this window, not claimed apart: both reach max_x %d < the map "
+              "file's own width %d, so 80 never bites in %d rounds; budget3 accepts 1 press per "
               "round not 2 (%s); the lift-everything re-emitter writes %d unit bytes and never "
               "advances the container's year past %d; the two blindness controls diverge at "
               "exactly 1 read-back each, still write %d/%d unit bytes, and rebuild the CLEAN "
-              "final image. The rung's own row: 0 read-back divergences"
-              % (s["nowrite"]["unit_bytes_run"], rw["final_tiles"] == rw["orig_tiles"],
-                 s["mpwidth"]["out_of_grid"], s["wrapskip"]["out_of_grid"],
-                 s["mpwidth"]["min_found_units"], s["wrapskip"]["min_found_units"],
+              "final image. The rung's own row: 0 read-back divergences, and it coincides with "
+              "none of its rivals (%s)"
+              % (s["nowrite"]["unit_bytes_run"], POISON_UNIT,
+                 rw["final_tiles"][POISON_UNIT], s["mpwidth"]["out_written"],
+                 s["wrapskip"]["out_written"], s["mpwidth"]["out_head"],
+                 s["wrapskip"]["out_head"], s["mpwidth"]["min_found_units"],
+                 s["wrapskip"]["min_found_units"], s["wrapskip"]["max_x"], c["mp_width"], T,
                  sorted({t["accepted"] for i in range(n)
                          for t in runs["budget3"]["traj"][i]}),
                  s["lift"]["unit_bytes_run"], runs["lift"]["final_year_img"],
-                 s["model"]["unit_bytes_run"], s["late"]["unit_bytes_run"]),
-              all(riv.values()) and control and s["container"]["readback_bad"] == 0))
+                 s["model"]["unit_bytes_run"], s["late"]["unit_bytes_run"], not_rival),
+              all(riv.values()) and control and coincident and not_rival
+              and s["container"]["readback_bad"] == 0))
 
     # G9 - determinism, over the measured rows AND the container
     same = (c["digest"] == runs["rerun"]["digest"] and c["img"] == runs["rerun"]["img"])

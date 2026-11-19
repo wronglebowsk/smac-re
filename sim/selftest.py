@@ -1618,6 +1618,31 @@ def run_b20(sav_path, results):
     return 0
 
 
+def run_b25(sav_path, map_path, results):
+    """Rung B25: the MOVE leg made persistent - the press starts from the tile the
+    CONTAINER holds and the moved tiles go back through the writer, with the container's
+    own width as the modulus and an image-only falsifier. All claims are the module's -
+    sim/composedmove.py authors them and this hook only relays them, so --b25 and
+    `python3 -m sim.composedmove` can never print different text."""
+    import os as _os
+    from . import composedmove as socm
+    for p in (sav_path, map_path):
+        if not _os.path.exists(p):
+            return fail("B25: missing input: %s" % p)
+    m = socm.measure(sav_path, map_path)
+    for line in socm.render(m):
+        print(line)
+    socm.acceptance(m, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B25: %d/%d gates failed: %s" % (len(bad), len(results),
+                                                     "; ".join(bad)))
+    print("PASS B25: %d/%d gates" % (len(results), len(results)))
+    return 0
+
+
 def run_b24(sav_path, results):
     """Rung B24: the queue leg visiting a base FOUNDED BY THE FOUNDER LEG in the
     written container - op stream applied to the image's base array, fold
@@ -1769,6 +1794,10 @@ def main(argv=None):
                     help="rung B20: the byte-twin visit counter executed "
                          "(M303 byte law + M302 pinned state) vs the recorded "
                          "m302/b18 numbers and the m294 rows")
+    ap.add_argument("--b25", nargs="*", metavar="ARG",
+                    help="rung B25: the MOVE leg made PERSISTENT - the press reads its "
+                         "start tile out of the container and the moved tiles go back "
+                         "through the writer (defaults: <SAV> <MAP>)")
     ap.add_argument("--b24", nargs="*", metavar="SAV",
                     help="rung B24: the queue leg visiting a base the founder "
                          "leg wrote into the container during the run "
@@ -1840,6 +1869,11 @@ def main(argv=None):
     if args.b20 is not None:
         sav = args.b20[0] if args.b20 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b20(sav, results)
+    if args.b25 is not None:
+        sav = args.b25[0] if args.b25 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        mp = args.b25[1] if len(args.b25) > 1 else os.path.join(
+            REPO, "programs", "maps", "planet.MP")
+        return run_b25(sav, mp, results)
     if args.b24 is not None:
         sav = args.b24[0] if args.b24 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b24(sav, results)
