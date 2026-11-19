@@ -259,3 +259,13 @@ Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only w
 - HARNESS `python3 -u scripts/m320_mutate.py` -> **26/26 + 1 NO-OP**, digest 0d18a3d23b3e94b4 (`evidence/m320_mutate.txt:27-28`); selftest 4/4 (`evidence/m320_mutate_selftest.txt:5`). 12 data + 11 code + 2 algo + NO-OP. MU21 retarget: 0x2034 = last SITE owner -> {G2,G3}. 1 crashed debug run (fold eval) fixed; 2+2 clean invocations (pre/post review).
 - BLIND: 61 imm loads (6x blk1+0), 3293 neg-disp<=20bc (lea-pairs +1e0/+18/+1478 pinned). OPEN: game nouns; ds:0x985afc; 0xdfbe41; tail semantics; save-carry. Skill session-discipline.md rsynced from live (chain 1 edit). Review #321 triaged in PR reply; digest re-measured.
 - MERGED 2026-11-19: #321 squash **93c25fe** on main. Land commit b8f71af = append-only NEXT_PROMPT result line (parallel-protocol fix) + tracked ai_review JSON; gate GREEN 0 warn, CI gate pass 14 s, review_lint PASS (7 V rows); acceptance 3rd invocation byte-identical pre-merge. Strata review 4 P1+4 P2 triaged in one reply (3 P1 dismissals independently re-verified by orchestrator). This note: docs/m320-merged.
+
+## Session 296 (2026-11-19, post-merge hygiene for #319; zero box)
+
+- B25 MERGED: #319 squashed to **main 1556ce9**, CI `gate` = SUCCESS on head 5ed5d93 (13 s). The
+  squash title carries the POST-review numbers (9/9, anchor 901a286332960a10 pinned by G9, harness
+  13/13 + 3 NO-OP, selftest 5/5) - the #317 wart, where a squash title kept the pre-review counts and
+  needed a NAMED note to correct it, does NOT repeat here.
+- Cursor re-pointed at the merged state (618 B) and `NAMED ## B25`'s header records the merge commit.
+- Cap: two NEXT_PROMPT blocks moved VERBATIM to `docs/pick-archive.md` §trim-s295 (a)/(b); the doc
+  lands at 11,978 B (warn 12,000). NEXT: B26 (spine text NOT authored) or picks (vi)/(vii).
