@@ -751,3 +751,53 @@ byte-identical to the model's chain, so a falsifier cannot bite there), while th
 record's IDENTITY bytes are the channel that carries - they reach a new unit record
 only if the fold reads them from the container. No box time, no /proc, no gdb, no
 game-binary load.
+
+**B25 - the MOVE leg made PERSISTENT: a moved unit's tile travels through the WRITER and
+comes back out of the CONTAINER, and the container - not the map file - owns the coordinate
+space the press law runs in (sim/composedmove.py; s294 authored this rung from main, as
+B14-B24 did).** B7 pressed the recorded M27 gesture (dir=1 east, +2 x, 3 MP per tile, 6 MP per
+round, third press refused per FUN_005acc00) on model objects and DECLARED the gap this rung
+closes: "save-restore of unit positions is NOT simulated (no writer modeled)". B8 modeled
+unit x/y inside the record and proved the identity round-trip; B12/B22 proved a created record
+lands at the array end and that the CREATE leg reads its arguments out of the reloaded image.
+No rung ever made the MOVER read its own next press's start tile out of the container.
+`sim/composedmove.py` composes them: parse the save, press the B3 engine and the B7 gesture
+every round on the save's OWN unit array, write the image through `savewriter.build_image`
+with the moved tiles, and RE-PARSE the written image for the next round's start tiles. The
+wrap modulus is read FROM THE CONTAINER (`sv.width`), and the .MP's width is run as a rival,
+not assumed. The falsifier rewrites one unit's tile IN THE IMAGE ONLY, between rounds, never
+touching model state.
+`python3 -u -m sim.selftest --b25` must print `PASS B25: 9/9 gates` (authored once in
+`sim/composedmove.py`; `--b25` only relays, so the two entry points cannot print different
+text) with: **G1** B7's own slice re-derives green in-process on the same inputs and its
+per-unit accept/refuse pattern equals this run's (the composition reuses the gesture law, it
+does not fork it); **G2** identity through THIS call path - a zero-move, zero-append build
+equals the original file byte-for-byte, and a round's build differs from its predecessor in
+exactly the bytes the move law touched (counted, not described); **G3** write-back fidelity:
+after every round the re-parsed image's tile for EVERY unit equals the model's tile, and the
+only unit-array bytes that ever differ across the whole run are those units' x-lo bytes
+(collateral 0, measured); **G4** the reload law, the rung's core: every round's start tile
+equals the tile parsed out of the image the PREVIOUS round wrote (pinned count), and from
+that reloaded tile the recorded (+2,0) delta and the 2-accept/1-refuse budget still hold;
+**G5** the coordinate space, arbitrated BY THE DECODER: under the container's own width every
+record stays shape-valid at every round (`found_units == n_units`), while under the rival
+width N units land outside the container's grid and the parser's own `found_units` drops to
+K - both numbers measured by RUNNING the rival, neither quoted from prose; **G6** THE
+FALSIFIER: poisoning one unit's tile in the image only shifts that unit's whole later
+trajectory (the shift reaches the final written bytes and its deltas stay (+2,0)), and the
+model-fed mover is blind - its final image equals the clean run's byte-for-byte; **G7** every
+differing byte between the final image and the original lies inside a MODELED span (the
+writer's own accounting, B8's law); **G8** the rivals fail the same fit, measured - never
+written, read-after-write ordering, model-fed, UNIT_LEN+4 stride, lift-everything re-emitter,
+a 3-MP budget, the .MP modulus - and a rival that passes, or crashes without a matched
+message, is retired as decoration (trap 24); **G9** determinism: two runs -> identical printed
+tables AND identical final-image sha256, with a measured digest of the result rows printed.
+`scripts/b25_mutate.py` re-creates the defects by anchor->replacement in a fresh subprocess
+and exits non-zero unless each reddens EXACTLY its declared (MEASURED) gate set.
+DECLARED UNMODELED: the MP/spent word is MODEL state - no rung claims the container carries
+it (the per-round refresh at 0x51f730 is B7's declared ASSUMED line, unchanged here);
+per-terrain cost and the second move's source (sim/units ASSUMED, queued census picks);
+blocking, zone of control and every refusal cause other than exhausted MP; the y coordinate
+is never moved by this gesture (dir=1 has dy=0) so the y-wrap/bounds law is NOT exercised
+here; WHICH unit the game would really move is not claimed - the gesture is applied to every
+unit of the save exactly as B7 declared. No box time, no /proc, no gdb, no game-binary load.
