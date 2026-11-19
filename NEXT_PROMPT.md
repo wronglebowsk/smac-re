@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B25 MERGED 9/9 + harness 13/13; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M319 done; next BUILD is B26, spine text NOT authored; analysis picks (vi) + (vii) open; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B25 MERGED 9/9 + harness 13/13; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M321 done; next BUILD is B26, spine text NOT authored; analysis picks (vii) + (viii) open; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -18,7 +18,7 @@ Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout -
 **Batch: 5 static milestones per census script, 1 box per batch — doc headroom is the cap.** Caps (BYTES, what `budget` prints): NEXT_PROMPT warn 12,000/fail 16,000 — CLOSE at <= 12,000; SKILL.md
 warn 55,000 (keep near 44 k, always-loaded under the 60 k ritual); SESSION_NOTES warn 110 k. Split rule: settled text
 VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budget`.
-Note: `scripts/s292_cap_check.py` C1/C2 fail BY DESIGN now that #316's split is in main; only C3 (the archive pointer chain) stands.
+C1/C2 of `scripts/s292_cap_check.py` fail BY DESIGN (its STATUS note); only C3 stands.
 
 ## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
@@ -27,18 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B25 MERGED**
 (B25 = #319, main 1556ce9) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). Next build **B26, NOT YET
 AUTHORED**: `BUILD_SPINE.md` ends at B25, so B26's rung text must be written BEFORE probing (one
-milestone = spine section + instrument). B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, ACCEPT
-anchor 901a286332960a10 `evidence/b25_selftest.txt:59`, banner `:69`; the same 69 lines from `-m sim.composedmove`) +
-harness **13/13 scored + 3 declared NO-OP** (`b25_mutate.txt:20`), `--selftest` **5/5** (`b25_mutate_selftest.txt:11`);
-G9 now PINS the anchor to a literal (MU9 names it alone) and G4's law is now **byte-level carry** (table H; MU14
-names it, MU15 = the old self-comparison, declared decoration). Its law, paid in a RETRACTION: **the CONTAINER owns
-the coordinate space** - `m54b_clean.SAV` is 64x64 by its own header, `planet.MP` is 80x80, and B7 wrapped x by the
-FILE (corrected in place at `NAMED ## B7`); MU8/MU12/MU13 redden G5 if either grid is judged against the wrong one.
-NEW AT TRIAGE: the tile test is NOT the decoder (8/44 probes disagree raw - pick (vii) below). B24's spine detail
-(the compaction RETRACT, the LEDGER-POSITION addressing law, the two retired degenerate rivals) is VERBATIM at
-`docs/pick-archive.md:963` §trim-s292 (a) - the ONLY place "declared gate-sets are MEASURED, not authored" survives
-(sibling laws: TRAP 24 below + `skill/SKILL.md:319-320`). `pos=False` in `composedturn.fold` is NOT tile-addressing.
-M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
+milestone = spine section + instrument). B25 (MERGED #319, main 1556ce9) ACCEPT anchors/digest, harness 13/13 + 3 declared NO-OP, the CONTAINER-owns-the-coordinate-space law, the tile-test-is-NOT-the-decoder lead (pick (vii)) and the M316/M315 summaries are VERBATIM at `docs/pick-archive.md` §trim-s298 (a); `NAMED ## B25` / `## M316` / `## M315` govern.
 
 ## THE LEDGER
 
@@ -64,19 +53,21 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
-- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M319 + B1-B24 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M321 + B1-B25 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
   CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted; its 5-line
   closure block moved VERBATIM to `docs/pick-archive.md` §trim-s295 (a). `NAMED ## M319` governs.
-  OPEN PICK after M319: (vi) NAME the two still-unnamed memo-site owners FUN_004ee410 (sites
-  0x4ee6c9/0x4ee883, caller FUN_004f5a70) and FUN_004f41f0 (sites 0x4f44a8/0x4f455d, callers
-  FUN_00416ef0/FUN_00416f60/FUN_0041a8f0/FUN_004f5a70): what each DOES, and what the shared
-  arrival test `BYTE PTR [eax+0x38],0x40` (3 of the 9) gates. Sites/owners/callers/arrivals
-  are printed at `evidence/m319_guard_hoist.txt:24-52`; the 3rd owner FUN_004e47d0 is already
-  the FOUNDER (NAMED ## M282). No box time.
+  CLOSED + MERGED (pick (vi) = M321): FUN_004ee410 = the base FOOD/POPULATION status emitter,
+  FUN_004f41f0 = the base TALENT/PSYCH-REQUEST emitter (both push PE-read labels into `call
+  0x48f100`; 7 vs 1, disjoint); the shared `test BYTE PTR [rec+0x38],0x40` gates base_array
+  field 56 bit 6. Text VERBATIM at §trim-s297 of `docs/pick-archive.md`; `NAMED ## M321` governs
+  (#324 hardened at review: 7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2).
+  OPEN PICK (viii) (NEW at the M321 triage, zero box): NAME FUN_0041a8f0 - it round-trips that
+  field through the scratch dword `ds:0x99aa38` behind a 20-store tree (0x41a9d2-0x41ab6d), and
+  47 whole-dword stores to the field are untraced. Start `evidence/m321_memo_owners.txt:47-81`.
   OPEN PICK (vii) (NEW at the #319 triage, zero box): **25 of the 67 records** of this save's
   unit array carry +10 in 128/130/131/256/320/321/322/323 - what `sim/save.py:52` calls queue-band
   and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such

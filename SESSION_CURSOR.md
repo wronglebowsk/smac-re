@@ -1,9 +1,10 @@
 # SESSION_CURSOR
 
-B25 MERGED (#319 -> main 1556ce9; 10 review findings, all accepted - record `## Session 295` +
-`evidence/ai_review/pr319_20261119_163826.md`). Acceptance `python3 -u -m sim.selftest --b25` ->
-`PASS B25: 9/9 gates`, anchor 901a286332960a10 pinned by G9 (`b25_selftest.txt:59`); harness 13/13
-+ 3 NO-OP. Law: **byte-level carry**; the CONTAINER (64x64) owns the mover's modulus, not
-`planet.MP` (80x80); decoder coord-checks 42/67 -> pick (vii). HYGIENE #320 MERGED
-(`b25_merge_state.py` PASS 15/15); M320 merged by chain 2 (#321). NEXT: B26 (spine NOT authored)
-or pick (vi)/(vii). #180 stands.
+M321 (pick (vi)) hardened at review #324, PR #324 landing. Accept
+`python3 -u scripts/m321_memo_owners.py` -> `PASS m321: 7/7 gates`
+(`evidence/m321_memo_owners.txt:92`, digest f304cf871a971a3d); harness
+`python3 -u scripts/m321_mutate.py` -> `PASS M321_MUTATE: 22/22`
+(`evidence/m321_mutate.txt:24`, MU4 NO-OP `:5`). Named: FUN_004ee410 = base
+NUTRIENT/STARVE/POPLIMIT emitter; FUN_004f41f0 = TALENT/PSYCHREQUEST emitter.
+`test BYTE PTR [r+0x38],0x40` (3 sites, r = ds:0x8f0d60) gates base_array field 56
+bit 6. NEXT: pick (vii)/(viii) or B26 (spine NOT authored). #180 stands.
