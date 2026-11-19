@@ -1130,6 +1130,14 @@ B25/B26 (MERGED) ACCEPT anchors + digests, harness sets, the LOADED-container la
 
 ## §trim-s299 (e) the B26 RESULT blob, VERBATIM from NEXT_PROMPT.md §BUILD TRACK at the B26 close (retired so the file stays under the 12,000 B warn cap; `NAMED ## B26` + the two evidence files are the record)
 
+> **SUPERSEDED IN PART by the PR #328 review triage (s300), and kept verbatim because this
+> section is a record of what NEXT_PROMPT said, not of what the repo now claims.** Three
+> sentences below are dead: the ACCEPT line is `PASS B26: 10/10 gates` on the triaged tree
+> (anchor `ae43e0ab9c8cfc3d`, not `1721afbdd1439ec1` — the rows never moved, the run SET did);
+> "the smuggler is blind to the boundary-image poison" measured object reuse, not blindness
+> (F1); and the owner census was reading `+4` = `UNIT_FLAG` where the owner is `+14` =
+> `UNIT_OWNER` (F7). `NAMED ## B26` governs, and it carries the retractions in place.
+
 **B26 RESULT (s299, BUILD)**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 9/9 gates`, digest(B26 measured rows) `1721afbdd1439ec1` (`evidence/b26_selftest.txt:48`, gate line `:58`), byte-identical to `python3 -u -m sim.composedsave` and to a re-run; harness `python3 -u scripts/b26_mutate.py` -> **14/14 scored** (`evidence/b26_mutate.txt`), `--selftest` **5/5 perturbed declarations REJECTED** (`evidence/b26_mutate_selftest.txt`). Three laws, each falsified-and-repaired: (i) THE CONTAINER IS *LOADED*, NOT JUST WRITTEN - the resumed run rebuilds model + ledger + engine from the re-parsed image and reads no pre-boundary object (MU2/MU3 name it); (ii) a ROUND-ALIGNED load is CONFLUENT - byte-equal final image AND per-unit tiles vs the uninterrupted run (MU3/MU6); (iii) what does NOT carry is MEASURED: the only thing the container cannot carry is the in-progress MP budget - **69 units / 69 x-bytes** diverge at a mid-gesture boundary while the control (same split, budget re-granted) diverges by **0** (MU8/MU9 name the half that does carry). Four real defects the gates caught, all in `NAMED ## B26`: per-round rebase double-appended the arrivals (72 units vs 71); the writer skipped the APPENDED records so arrivals froze at their create tile (diff `226267`/`226319`, x 7 vs 63); the `model` rival passed G8 by coincidence; and the split's arrival never moved the round it was created (B12 press-before-CREATE order).: the rung text AND the instrument were authored the same fire, as B14-B25 did
 
 
@@ -1139,3 +1147,10 @@ B25/B26 (MERGED) ACCEPT anchors + digests, harness sets, the LOADED-container la
   the SAVE/LOAD boundary, rung text authored into `BUILD_SPINE.md` in the same fire, instrument
   `sim/composedsave.py` + harness `scripts/b26_mutate.py`; `NAMED ## B26` governs. **Next build
   rung B27 is UNAUTHORED** - `BUILD_SPINE.md` ends at B26 (B25's own rule: rung text FIRST).
+
+
+## §trim-s300-chain1 (a) the three trailing result one-liners (M320 / M323 / M324), VERBATIM from the last lines of NEXT_PROMPT.md at the PR #328 triage (retired so the file stays under the 12,000 B warn cap; `NAMED ## M320` / `## M323` / `## M324` govern). Named `-chain1` deliberately: the two chains both append here and s299 saw both invent §trim-s299 (a) inside an hour (`SESSION_NOTES.md` Session 299).
+
+M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
+M323: NAMED ## M323; VERBATIM §trim-s299 (a).
+M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; rederive DEAD (closure 440, writers 0). 8/8 700b4133f62bd714 (m324_save_carry.txt:100); 28/28+1. MERGED #326->0c3b5d9. NAMED ## M324.

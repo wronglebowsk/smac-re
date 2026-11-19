@@ -316,7 +316,10 @@ milestone per merge and three acceptance invocations, not one question per step.
   bug — debug the fixture before the checker. Then `scripts/ai_review.py <n>` after submit — a FRESH-CONTEXT
   Strata review, replay-validated against known pre-fix findings (caught the algorithmic + coverage classes;
   the definition-mismatch class is checklist-targeted in the prompt). It flags output-cap truncation (warning
-  banner + exit 2) — re-run with a larger cap before triaging a truncated review. Triage rule unchanged; the
+  banner + exit 2) — re-run with a larger cap before triaging a truncated review. Review findings are CLAIMS, not verdicts: a reviewer can miscalculate or miss an existing pin, so
+  verify disputed findings with tools (print the arithmetic, grep the pin in the instrument) before
+  accepting them OR relaying severity counts as a model-quality verdict; an author's dismissal is
+  valid only with measured numbers. Triage rule unchanged; the
   human owns the merge. Evidence + constraints: `docs/AI-REVIEW.md`.
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (warn; gate FAILs 16,000) — the unattended kickoff's cap-triage trigger. `evidence.py budget`
   prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
@@ -395,6 +398,39 @@ attribution, which is where decodes drift. Write the audit to its own short note
 - A duplicate-definition check belongs in the same breath as `ast.parse`: `names=[n.name for n in
   ast.parse(src).body if isinstance(n,ast.FunctionDef)]; assert names.count(f)==1`.
 
+### Parallel chains (two model endpoints, one repo)
+
+A second chain on a different endpoint farms independent ANALYSE picks while the primary drives the
+build track. Protocol, validated end to end:
+
+- **One cron job per endpoint**, each in its own worktree: `git worktree add ~/reverse/wt-<chain> -b
+  milestone/<id> origin/main`, then symlink the untracked dirs the instruments read (`ghidra_out`,
+  `scratch`, `programs`). Pinning quirk (`pinned=true` captures the config default, not the chat
+  model) and the jobs.json fix: hermes-agent `references/background-systems.md` §Cron.
+- **Name the ownership in BOTH prompts**: which picks each chain owns, and that neither touches the
+  other's worktree or `sim/` (the build track). Disjoint picks prevent collisions; the ownership
+  check is the backstop.
+- **Shared-doc protocol**: one chain owns NEXT_PROMPT/cursor; the other APPENDS exactly one result
+  line to NEXT_PROMPT plus its own NAMED block and session section. The append is not optional
+  politeness — the gate's checkpoint check requires NEXT_PROMPT updated on every milestone branch,
+  so forbidding the second chain from touching it guarantees a RED gate.
+- **Worktree `.git` is a FILE**: `milestone.py submit`'s `.git/PR_BODY.md` path fails there — write
+  the body to scratch and `gh pr create --body-file` (the merge path is unaffected).
+- **Collision rules**: session-rotation archives cut from the same base share one canonical filename
+  (no conflict); different content under the same name → rename the incoming one with a chain suffix
+  and fix its pointer. Archive-section numbers (`§trim-s<N>`) are a shared namespace — check which
+  the other chain took before naming yours; a duplicate block is measured (size + sha1) and deleted,
+  never guessed away.
+- **Landing**: rebase onto origin/main before merge; force-push is blocked in cron → absorption
+  merge (hermes-agent background-systems.md §Cron-mode git constraints). Keep BOTH chains' doc
+  sections through every conflict.
+- **Cross-model review is a feature**: `ai_review.py` resolves the Strata endpoint regardless of the
+  author's model, so a second-endpoint author gets genuine reviewer diversity for free.
+- **Pace**: a free-tier/shared endpoint runs ~2–3× slower per fire (queueing + long generations) but
+  completes full milestones including review rounds inside one fire when the unit is bounded. Keep
+  it off the critical path; measure the gap with the tok/s recipe in the same hermes-agent reference
+  rather than guessing from per-call latency.
+
 ## Taking over a cut-off fire (s287, B24)
 
 - **A cron fire's `ok` status is a SESSION status, not a CLOSE-OUT status.** A fire can exit ok with the
@@ -407,6 +443,13 @@ attribution, which is where decodes drift. Write the audit to its own short note
   fire 2 committed the harness, then discovered its declared gate sets were authored rather than measured - and
   the re-run of the fire-1 acceptance, byte-identical to the committed evidence, is what made that distinction
   safe to publish.
+- **A fire that dies mid-REVIEW-REMEDIATION leaves edits uncommitted and UNRUN.** The acceptance
+  numbers in its report describe the pre-edit head only. The finishing fire re-runs the instrument
+  FIRST and re-pins every digest/acceptance pin from the PRINTED rows before touching docs; a digest
+  scope (SIGKEYS-style) stays unchanged unless the run itself changed, so a print-format edit does
+  not move a pinned digest. The dead fire's harness subprocess died with it — check `ps` and the
+  evidence file's existence before assuming a pass is still running, and re-run from the corrected
+  working-tree state. Pass the dead fire's owed list verbatim into the continuation override.
 
 
 ## s290 retirement from SKILL.md (VERBATIM)

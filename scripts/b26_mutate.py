@@ -62,9 +62,12 @@ MUTANTS = [
                 base_im = im""",
      """                arrivals = []
                 base_im = sv0""",
-     # MEASURED {G4,G5,G6,G9}: G5 too, because the split branch composes from the same
-     # base_im and its pinned divergence counts move with it.
-     {"G4", "G5", "G6", "G9"}),
+     # MEASURED {G10,G4,G5,G6,G9}: G5 too, because the split branch composes from the same
+     # base_im and its pinned divergence counts move with it - and G10 (added for PR #328 F2)
+     # because the writer's own record arithmetic moves with the rebase: not rebasing grows
+     # the arrays from the SAVE's counts, so size_delta and the predicted growth part ways.
+     # This set was CORRECTED FROM THE MEASUREMENT (sweep 1: G10 was not in the prose guess).
+     {"G10", "G4", "G5", "G6", "G9"}),
     ("MU4", "the mover's tiles never reach the writer (positions stay model-only)", CM,
      """    mv = {i: tuple(model[i]) for i in model
           if i < base_im.n_units and list(model[i]) != bt.get(i, [None])}""",
@@ -91,7 +94,13 @@ MUTANTS = [
     ("MU7", "the recorded stream's DESTROY never runs (op fidelity is decoration)", CM,
      "        landed = led.destroy(len(led) - 1) is not None   # B13's last-slot law",
      "        landed = True   # the destroy is skipped",
-     {"G2", "G9"}),
+     # MEASURED {G10,G2,G3,G9}, and the two extras are findings, not noise. G2: the
+     # pre->post counts are now the LOG's own, so a skipped DESTROY moves them. G3 (NEW
+     # since the field-wise ledger check, PR #328 F6): a ledger that never lost a base no
+     # longer matches the image's base array record-for-record, so the carry census sees it
+     # - the length-only check this replaced could not. G10: the arrays grow by a different
+     # number of records than the round's size_delta says.
+     {"G10", "G2", "G3", "G9"}),
     ("MU8", "the mid-gesture split refreshes the budget for BOTH branches (control collapses)",
      CM,
      '            sp2 = dict(spent) if mode == "budgetcarry" else {}',
@@ -130,19 +139,148 @@ MUTANTS = [
      '        "identity": sow.build_image(sv) == sv.data, "sv": sv}',
      '        "identity": sow.build_image(sv, year=sv.year + 1) == sv.data, "sv": sv}',
      {"G2"}),
-    ("MU14", "the smuggle rival is handed the edited container (blindness not enforced)", CM,
-     '            if mode not in ("smuggle", "late") and poison and parent_idx is not None:',
-     '            if mode not in ("late",) and poison and parent_idx is not None:',
-     # MEASURED {G6} ONLY, and the reason is a finding: handing smuggle the edited
-     # container does collapse its TRAJECTORY onto the honest run's (which is what G6
-     # detects - smuggle must still reproduce the CLEAN run), but G8 stays green because
-     # smuggle's signature also carries the object-reuse channel (its ledger/engine are the
-     # pre-boundary ones), so it remains a distinct rival. The first version of this mutant
-     # gave the smuggle branch the LOAD instead and measured 0 red: rebuilding from an
-     # UNPOISONED image reproduces the clean run exactly, so that half was decoration. It
-     # is the poison hand-off, not the rebuild, that keeps the two runs apart.
+    ("MU14", "the smuggler is put back behind the glass: never handed the poison "
+     "(PR #328 F1's defect, reinstated)", CM,
+     '            if mode != "late" and poison and parent_idx is not None:',
+     '            if mode not in ("smuggle", "late") and poison and parent_idx is '
+     'not None:',
+     # Why this mutant exists: with the smuggler excluded from the falsifier's hand, the
+     # old G6 "the smuggler is blind" was a tautology and no gate could see it. Re-adding
+     # the exclusion must now redden the blindness half of G6 (SMUGGLE_SEES, the exposed
+     # vs unexposed sha pair), which is exactly what the fix made measurable.
      {"G6"}),
+    ("MU15", "the size law is decoration: the prediction uses a record size that is not "
+     "sim/save.py's (PR #328 F2)", CM,
+     '                    sosave.BASE_LEN * (r["n_bases_img"] - pb)',
+     '                    (sosave.BASE_LEN + 1) * (r["n_bases_img"] - pb)',
+     {"G10"}),
+    ("MU16", "the owner census reads the FLAG word (+4), not the owner byte (+14) - the "
+     "offset the first probe used (PR #328 F7)", CM,
+     """        if (off + soprod.UNIT_OWNER < len(im.data)
+                and im.data[off + soprod.UNIT_OWNER] == POISON_OWN4):""",
+     """        if (off + 4 < len(im.data)
+                and im.data[off + 4] == POISON_OWN4):""",
+     {"G6"}),
+    ("MU17", "the rebuilt ledger keeps the image's COUNT but not its ORDER - only the "
+     "field-wise check pays (PR #328 F6)", CM,
+     """                led = sobf.Ledger([{"own4": b["own4"], "fac": b["fac"], "x": b["x"],
+                                    "y": b["y"]} for b in im.bases])""",
+     """                led = sobf.Ledger([{"own4": b["own4"], "fac": b["fac"], "x": b["x"],
+                                    "y": b["y"]} for b in im.bases][::-1])""",
+     {"G3"}),
+    ("MU18", "the mid-gesture reload's engine is built from an invented year, not the "
+     "header's", CM,
+     "            e2 = soturn.Engine(imn.year, human=imn.own_player)",
+     "            e2 = soturn.Engine(imn.year + 1, human=imn.own_player)",
+     {"G5"}),
+    ("MU19", "the mid-gesture reload does NOT install the rebuilt engine (PR #328 F5's "
+     "defect, reinstated)", CM,
+     "            eng = e2               # the mid-gesture reload installs the rebuilt "
+     "engine",
+     "            pass                   # F5 reinstated: the pre-split engine stays in "
+     "charge",
+     # MEASURED 0 GATES - DECLARED NO-OP, and the number behind it is in the report: the
+     # pre-split engine's state at the split is (3, 0, 2155) and the rebuilt one's is
+     # (3, 0, 2155) too (table D, G5's engine clause). So the defect F5 reported was REAL
+     # in the code and had NO magnitude on this fixture: the two engines coincide at that
+     # point and advance identically afterwards. What is NOT decoration is the MEASUREMENT
+     # - ENGINE_STATE pins both states and MU18 (rebuild the engine from an invented year)
+     # reddens G5 alone - and the honest claim is "the install is verified to be a no-op
+     # here", not "the install was fixed and therefore mattered".
+     "NOOP"),
+    ("MU20", "the SAVE-only refusal half counts every unit, so B25's equality is the "
+     "arrival leak again (PR #328 F3)", CM,
+     """                    if i < sv0.n_units:
+                        ref_save += 1      # the SAVE-only half, for the B25 comparison""",
+     "                    ref_save += 1    # every refusal, arrivals included",
+     {"G1"}),
 ]
+
+
+# ---------------------------------------------- PR #328 F9: the two entry points
+ENTRY_CMDS = (("python3 -u -m sim.composedsave",
+               [sys.executable, "-u", "-m", "sim.composedsave"]),
+              ("python3 -u -m sim.selftest --b26",
+               [sys.executable, "-u", "-m", "sim.selftest", "--b26"]))
+
+# the relay is patched in a COPY of sim/ in a temp tree: --b26 prints one line the
+# module does not, which is exactly the bug the identity check must not sleep through
+# It is a MUTANT in every sense the claim-law asks of the word: a real defect re-created
+# by anchor->replacement, with a declared effect, measured on every harness run. It is
+# MU21, and it reddens the harness's own ENTRY-POINT IDENTITY check rather than an
+# instrument gate, because the claim it protects is about the relay, not about the run.
+RELAY_MU = "MU21"
+RELAY_ANCHOR = "    m = scs.measure(sav_path, map_path, log_path, trace_path)\n"
+RELAY_REPL = (RELAY_ANCHOR +
+              '    print("THE RELAY IS NO LONGER ONLY A RELAY")\n')
+
+
+def entrypoints():
+    """F9 (PR #328): 'so --b26 and `python3 -m sim.composedsave` can never print
+    different text' is cited as an ACCEPT fact, so the harness re-enters BOTH entry
+    points and compares their stdout - and then PROVES THE COMPARISON BITES by running
+    the second entry point again with its relay patched (in a throwaway copy of sim/,
+    never in the shipped tree) and requiring the outputs to differ."""
+    import hashlib
+    import shutil
+    import tempfile
+    outs = []
+    for label, cmd in ENTRY_CMDS:
+        p = subprocess.run(cmd, cwd=REPO, capture_output=True, text=True, timeout=900)
+        dig = hashlib.sha256(p.stdout.encode()).hexdigest()[:16]
+        print("%-34s rc=%d %4d lines sha256(stdout) %s"
+              % (label, p.returncode, len(p.stdout.splitlines()), dig))
+        outs.append(p.stdout)
+    same = outs[0] == outs[1]
+    tmp = tempfile.mkdtemp(prefix="b26_relay_")
+    try:
+        shutil.copytree(SIM, os.path.join(tmp, "sim"),
+                        ignore=shutil.ignore_patterns("__pycache__"))
+        # symlink every top-level directory the shipped tree has except the sim/ we just
+        # copied: sim/rules.py reads data/alpha.json, the run reads programs/ and evidence/,
+        # and selftest imports scripts/decode_map - a temp tree that cannot run the entry
+        # point is not a test, it is a crash dressed up as one
+        for entry in sorted(os.listdir(REPO)):
+            src = os.path.join(REPO, entry)
+            dst = os.path.join(tmp, entry)
+            if (entry == "sim" or entry.startswith(".") or not os.path.isdir(src)
+                    or os.path.exists(dst)):
+                continue
+            os.symlink(src, dst)
+        stp = os.path.join(tmp, "sim", "selftest.py")
+        src = open(stp, encoding="utf-8").read()
+        if src.count(RELAY_ANCHOR) != 1:
+            print("BAD entry-point check: relay anchor matches %d times"
+                  % src.count(RELAY_ANCHOR))
+            return 1
+        open(stp, "w", encoding="utf-8").write(src.replace(RELAY_ANCHOR, RELAY_REPL, 1))
+        p = subprocess.run(ENTRY_CMDS[1][1], cwd=tmp, capture_output=True,
+                           text=True, timeout=900)
+        dig = hashlib.sha256(p.stdout.encode()).hexdigest()[:16]
+        marker = p.stdout.count("THE RELAY IS NO LONGER ONLY A RELAY")
+        print("%-34s rc=%d %4d lines sha256(stdout) %s relay-marker %dx"
+              % ("  [relay patched in a temp tree]", p.returncode,
+                 len(p.stdout.splitlines()), dig, marker))
+        if p.returncode != 0:
+            print("   stderr tail: %s"
+                  % ((p.stderr.strip().splitlines() or ["(none)"])[-1][:120],))
+        # A CRASH IS NOT A BITE: the patched relay has to finish, print the marker, and
+        # still differ - otherwise the check would pass on a broken temp tree
+        bites = (p.returncode == 0 and marker == 1 and p.stdout != outs[1]
+                 and len(p.stdout.splitlines()) == len(outs[1].splitlines()) + 1)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    print("stdout identical across the two entry points: %s | the check BITES (a patched "
+          "relay prints different text): %s" % (same, bites))
+    print("%-6s %-52s declared=%-14s measured=%-14s %s"
+          % (RELAY_MU, "the --b26 relay prints text the module does not (F9)",
+             "IDENTITY", "IDENTITY" if bites else "nothing",
+             "OK" if bites else "BAD"))
+    if same and bites:
+        print("PASS B26 ENTRY-POINT IDENTITY: 2/2 checks (%s scored)" % RELAY_MU)
+        return 0
+    print("FAIL B26 ENTRY-POINT IDENTITY")
+    return 1
 
 
 def shipped_gate_ids():
@@ -251,6 +389,10 @@ SELFTEST = [
     ("MU3", {"G6", "G9"}, "a subset: MU3 also breaks confluence and the harness must say so"),
     ("MU12", {"G6"}, "a gate MU12 does not red: it moves only the printed anchor"),
     ("MU8", {"G5", "G9"}, "an added gate: the container rows never move for MU8"),
+    ("MU15", {"G6"}, "a gate MU15 never touches: the size law is read by G10 alone"),
+    ("MU20", {"G1", "G9"}, "an added gate: ref_save is deliberately OUT of SIGKEYS, so "
+                           "the row digest cannot move for MU20"),
+    ("MU16", {"G3"}, "the wrong gate entirely: the owner census is G6's, not the carry"),
 ]
 
 
@@ -286,6 +428,11 @@ def main():
             print("%s\t%s\t%s" % (mid, ",".join(sorted(declared)) if isinstance(declared, set)
                                    else declared, desc))
         return 0
+    if args and args[0] == "--entrypoints":
+        # the F9 check on its own, for re-checking the temp-tree kit without paying for a
+        # full 20-mutant sweep. The SHIPPED acceptance command is still the plain run,
+        # which executes this same function after the mutants.
+        return entrypoints()
     want = {m[0] for m in MUTANTS}
     todo = MUTANTS
     if args and args[0] == "--only":
@@ -305,7 +452,9 @@ def main():
           % len(todo))
     print("-- harness %s --" % time.strftime("%Y-%m-%d %H:%M:%S %Z"))
     fails = evaluate(todo, tag, "harness")
-    return 1 if fails else 0
+    rc = 1 if fails else 0
+    rc |= entrypoints()
+    return rc
 
 
 if __name__ == "__main__":
