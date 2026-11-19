@@ -456,3 +456,11 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - REVIEW #332 (4P1+6P2) 10/10 accepted: mutant-map corrected (MU4->G5 row; NO-OPs uncited), roles->G1, G6 structural (MU25/26), G3 count pin (MU27), G10 gate (MU24 algo8), ACCEPT path:line, foffs pin, 10/10 regex fix.
 - ACCEPT 10/10 **f0f31c3daa26b601** (`evidence/m326_block224_census.txt:45-46`) x2 (`_rerun.txt`; pre-review 9/9 66595e09a651a94d). HARNESS **27/27 (25+2 NO-OP)** **07326ba5d23a2dbe** (`m326_mutate.txt:30-32`); sweeps corrected MU13/23/26 sets; ST 5/5 (`_selftest.txt:7`).
 - OPEN: 920434/91c64c nouns; 419c30 callers; branch caveat 419de9/419e1f.
+
+## Session 302-chain2 (2026-11-19, M326 MERGED, post-merge note; docs-only, zero box)
+
+- MERGED #332 squash **7cd4732**. Review 4P1+6P2 10/10 accepted in ONE reply; post-review 10/10 f0f31c3daa26b601 x2 + at-head + post-rebase byte-identical; harness 27/27 (25+2 NO-OP) 07326ba5d23a2dbe; ST 5/5; CI gate 14 s CLEAN, mergeState CLEAN.
+- Main moved under review (chain 1 B26 #331 -> 4a03182): rebased keeping BOTH chains' sections; force-push blocked in cron -> absorption merge 0a3aff1 (`git merge -s ours` of pre-rebase tip 6581627; tree == rebased bb5ad0a, empty diff verified, ff push). NEXT_PROMPT 12,420 -> 11,997 B (M325 one-liner VERBATIM -> pick-archive §trim-s301-chain2 (a), sha1 a5d8e0a402bc; M326 line compressed).
+- Squash title carried the PRE-review numbers (9/9, 23/23); PATCHed via `gh api -X PATCH repos/.../pulls/332` to post-review (gh pr edit fails on Projects-classic GraphQL). NAMED ## M326 ACCEPT governs (10/10, 27/27).
+- NAMED headroom DEBT: 248,242 B vs the 250,000 B FAIL line (1,758 B left) - rotate VERBATIM into docs/named-archive-* BEFORE adding (chain 1's B26 note).
+- `gh pr merge` local cleanup fails ('main' checked out in chain 1's worktree) - remote merge unaffected; this worktree cannot checkout main while chain 1 holds it.
