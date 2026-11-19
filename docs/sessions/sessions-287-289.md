@@ -1,0 +1,41 @@
+# Session notes archive — sessions 287-289
+
+Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
+file readable in one context window. Same evidence file paths apply.
+
+Older sessions: `docs/sessions/sessions-286-287.md` — the hot file cites only THIS archive, so
+the chain onward lives here; without this line the older archives are orphans (s292).
+
+## Session 287-merged (2026-11-18, #307 merged - post-merge docs correction)
+
+- MERGED #307 -> main af38858 (s287 parent close-out). Track flipped MODE=ANALYSE (analyse_since_build=0, last_build=B24); BUILD_SPINE ends at B24, so B25's rung text must be AUTHORED before any build fire. Merge-head acceptance unchanged from the branch: instrument 9/9, harness 9/9 scored + 1 declared NO-OP. Cursor + NEXT_PROMPT corrected from the pre-merge "ready to merge" state in the same PR.
+
+## Session 288 (2026-11-18, M317 - desktop-session takeover, model qwen4-max:free; cron fire 9139a9ad cancelled pre-skeleton, loop job left paused)
+
+- Pick (iii') ANSWERED: `FUN_00556690(faction)` = the per-faction AI STRATEGY PASS. Issues 7 AddGoals (kinds a/d/s at base coords, n at a UNIT's coords with prio 2+2*bit19 of [94d430+blk*8380], ^ at the base's terraform tile +0x2c/+0x2e behind cost gate FUN_004cc7b0), flips region states (eda8 {0,2,7,8}, M250 five-site pin intact), orders units INLINE (unit+0x11=0x18 + target words +0x14/+0x1c = the issue_order(0x18) footprint, NAMED.md:104), cancels kind-8 goals by (p1,p2) read back from the band + a faction-wide knockout. Callers: upkeep chain 0x52094f (FUN_005208f0, between 005551e0 and 005a1ad0) + walker loop 0x59dd43 (jl 0x59e2a6->0x59ce92).
+- Numbers (all gated): 4235 insns / 605 jcc (18 global-fed: 0x692184 x5, 0x92a37c x4, 0x92a378 x2, 0x985af0 x2, five x1) / 44 back-edges / 112 call sites / 41 callees / 358 stores (239 stack, 2 direct ds:0x8f0d34, 104 global-disp across 40 arrays, 13 struct). Walks: base 0x130 x5, block 0x20bc x2, goal 0x10 x1, region bound 128 @0x558b1c. abs() x20 in 5 clusters of 4 = distance scoring.
+- Acceptance (post-review head): `python3 -u scripts/m317_engine_decides.py` -> G1-G3 + C1-C6 + PIN, twice byte-identical, digest 5263767ee3bf4bba (`evidence/m317_engine_decides.txt:223`); `python3 -u scripts/m317_mutate.py` -> 22/22 scored + 1 declared NO-OP (MU16 prologue reg), digest a0729996723078a4 (`evidence/m317_mutate.txt:26`).
+- REVIEW ROUND #309 (5 P2, ALL accepted): (1) arg sources now traced from EACH push's own position with clobber-stop - the old call-site trace mis-decoded 0x556e79 (p2's ecx is the PRE-load value = unit y; prio is the computed fold, not the stored dword); (2) M250 pin now FULL instruction (mn+dst+src); (3) C5 caller facts measured from bytes (upkeep order, edi=param unclobbered, 985ae8 bits 1/8 gate, walker back-edge) - the constant-compare loop assert is gone; (4) harness mutation copy per-pid + finally cleanup; (5) all citations now path:line. New mutants MU17-MU23 gate each fix (`evidence/m317_mutate.txt:17-25`).
+- Takeover mechanics: fire cancelled via cronjob_manage (execution row 'cancelled', pid verified gone); the milestone/m317 branch it created was reused (at main tip, zero commits); #180 documented-FAIL left standing per the ledger.
+- LESSONS: objdump prints immediates hex (0x8 not 8) - pin the parser's format, not the registry's prose (first C2 run died on it); a forward-rewritten back-edge reddens the COUNT gate before the named pin - declare the FIRST red, not the intended one (MU15 CRASH->RED fix).
+- OPEN: game-word of kinds a/d/s/n/c (consumer-side census, M310 lead); the 0x30/0x31 mission bytes; ds:0x692184 identity; the multi-base pick fold.
+
+## Session 288-merged (2026-11-18, #309 merged - post-merge skill sync)
+
+- MERGED #309 -> main 3a2da59. M317 acceptance at the merge head: census twice byte-identical digest 5263767ee3bf4bba (`evidence/m317_engine_decides.txt:223`), harness 22/22 scored + 1 declared NO-OP digest a0729996723078a4 (`evidence/m317_mutate.txt:26`); all 5 review P2s fixed pre-merge (per-push arg trace + clobber-stop, M250 full-insn pin, measured C5 caller gates, per-pid harness copy, path:line cites). Track: MODE=ANALYSE, analyse_since_build=1.
+- Skill sync: `references/instrument-laws.md` gains the argument-push decode law (per-push trace, clobber-stop, measured caller gates) in BOTH copies (live + `skill/`); SKILL.md unchanged. The squash title's "goals-at-bases a/d/s/n/^" is pre-review phrasing - n is at UNIT coords; NAMED ## M317 governs.
+
+## Session 289 (2026-11-18, M318 - desktop session, qwen4-max:free, loop paused)
+
+- Pick (iv) ANSWERED: the selection-refresh pair = `FUN_004e8d60` = selected-base UNIT-SUPPORT CENSUS, then `FUN_004e78e0` = selected-base PANE REFRESH. Both `void(void)` (shard_012.c signatures, C5): they read the CURRENT selection (ds:0x68cbb0 index + ds:0x8f0d60 derived pointer, M311), no passed index. 12 back-to-back call pairs (gap 5) in 7 owners = exactly M315's 12 memo sites, each within 17 B of a ds:0x68cbb4 store (G2/G3).
+- A: walks the unit array (count ds:0x985af0, stride 0x34 = 52 B), filters units by faction (pane+2) + home base (unit+0x2e == selected index), sums per-kind tile-yield contributions (triad 4e6960/4e6d40/4e7070, inline switch on unit+0x26), flags over-capacity units (unit+4 bit 0x10, limit from faction dword 94d684 clamped 0..7) and foreign-tile units (bits 0x400000/0x200000 via owner_of_tile_visible 4e3b50, keyed on faction 94d690 == -3 / < -3), writes the 6-store summary bank 8f0c2c..8f0cc8 (C2).
+- B: FIRST call = FUN_004e63b0 (M53q scan-pool rebuild) @0x4e78e9, then rebuilds pane display rows from faction array 94dc34, queries the kind dispatcher 4e75f0 x7 + region bits 507410 x5 (first query 0x1d), halves rows for bases lacking the +0x95da9c improvement flag (5 reads), 15 selection-index reads, 8f0c68 row countdown (C1/C3).
+- Shared kind law: dispatcher 4e75f0's switch (bound cmp 3) calls the SAME triad and case-3 zeroes ds:0x8f0cc8 - identical to A's inline switch (C4).
+- Acceptance (post-review head): `python3 -u scripts/m318_refresh_pair.py` -> G1-G3 + C1-C5 + PIN, twice byte-identical, PRINTED digest 2e81643277e3a23b (`evidence/m318_refresh_pair.txt:100`, green banner `:102`); `python3 -u scripts/m318_mutate.py` -> 17/17 scored + 1 declared NO-OP (MU13 prologue), digest 39e6ce9f2334fe87 (`evidence/m318_mutate.txt:21`).
+- REVIEW ROUND #311 (3 P2, ALL accepted): (1) condition pins added - the home-base cmp eax,edi + je, the 94d684 support-limit clamp chain (cmp 7 / mov 7 / count-vs-table cmp), and the dispatcher's ja-default + jump table read from the PE .text bytes (0x4e7664 -> 4e7602/4e761e/4e763a/4e7656); (2) G3 reach now measures store->SECOND call (M315's 17 B was to the second callee; the old first-call check accepted 22) - worst measured = 17, boundary mutant MU14 (reach 16) reddens; (3) the digest is now computed and PRINTED by the instrument over name+verdict+detail rows (the old citation was an external sha256 of the file, not a measured-results digest). MU14-MU18 gate the fixes (`evidence/m318_mutate.txt:15-20`).
+- LESSONS: the pick's "call 0x4e8d60" notation names the CALLEE (M315's REFRESH tuple holds targets) - probing the address as a call site reads the prologue and dies on int('ebp'). Unit stride here is 52 B (0x34); the skill's unit_set_position i*0x1a is WORD units (the pointer-scale trap).
+- OPEN: the three kinds' game words (resource-triad candidate, INFERRED); unit+0x26 semantics; the 52-B array at 98ada8 indexed by unit+0xa; the pane+3 clamp byte.
+
+## Session 289-merged (2026-11-18, #311 merged - post-merge cursor correction)
+
+- MERGED #311 -> main 241b9d6. M318 acceptance at the merge head: census twice byte-identical with PRINTED digest 2e81643277e3a23b (`evidence/m318_refresh_pair.txt:100`), harness 17/17 scored + 1 declared NO-OP digest 39e6ce9f2334fe87 (`evidence/m318_mutate.txt:21`); all 3 review P2s fixed pre-merge (condition pins incl. the PE jump-table bytes, store->SECOND-call reach, instrument-printed digest). Track: MODE=ANALYSE, analyse_since_build=2; the 4th fire builds B25, whose spine text is NOT authored. Cursor corrected from the pre-merge "push review fixes" state; NEXT_PROMPT already named pick (v).
