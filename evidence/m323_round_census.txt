@@ -1,5 +1,5 @@
 == M323 census of ds:0x985afc (STATIC, scratch/m574/text.txt + ghidra_out/index.csv) ==
-T1 all references: 336  kinds={'W': 5, 'RW': 0, 'T': 59, 'R': 272, 'A': 0, 'W?': 0} widths={'dword': 334, 'byte': 2}
+T1 all references: 336  kinds={'W': 5, 'RW': 0, 'T': 59, 'R': 272, 'A': 0, 'W?': 0} widths={'dword': 333, 'byte': 2, 'word': 1}
   0x425db9 R  dword add    edx,DWORD PTR ds:0x985afc                  FUN_00425be0
   0x425ed8 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_00425be0
   0x429485 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_004282d0
@@ -303,7 +303,7 @@ T1 all references: 336  kinds={'W': 5, 'RW': 0, 'T': 59, 'R': 272, 'A': 0, 'W?':
   0x59b4a1 R  dword sub    eax,DWORD PTR ds:0x985afc                  FUN_0059af40
   0x59bcb9 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059bcb0
   0x59c177 R  dword mov    edx,DWORD PTR ds:0x985afc                  FUN_0059c150
-  0x59c18a R  dword mov    ax,ds:0x985afc                             FUN_0059c150
+  0x59c18a R  word  mov    ax,ds:0x985afc                             FUN_0059c150
   0x59e2b1 W  dword mov    DWORD PTR ds:0x985afc,edx                  FUN_0059ce10
   0x59ed41 R  dword mov    eax,ds:0x985afc                            FUN_0059ec90
   0x59f0b1 R  dword mov    ecx,DWORD PTR ds:0x985afc                  FUN_0059ec90
@@ -520,18 +520,18 @@ T4 register-copy gates (read site, dst, mask, cmp, imm, cmpval, jcc, call):
   0x5b0454 eax mask=None cmp=eax,0x96           imm=150   val=None         jcc=0x5b0460:jle call=None FUN_005aff90
 T5 address-taken:
 T6 prior pins: LIVE={'year_addr': 9984768, 'round_addr': 9984764, 'year': 2150, 'round': 50} primes={5455596: (True, 5455564), 5456398: (True, 5456366), 5457186: (True, 5457161)} age@0x569401=('sub', 'edx,DWORD PTR [eax*4+0x94d4a8]')
-OK   G1   total=336 kinds={'W': 5, 'RW': 0, 'T': 59, 'R': 272, 'A': 0, 'W?': 0} widths={'dword': 334, 'byte': 2}
-OK   G2   writers={'FUN_004e0350': [(5112711, 'W', 'g(0x999fa4)-g(0x92bf68)'), (5112718, 'W', 'const(0x1)')], 'FUN_0051f320': [(5371196, 'W', 'round+1')], 'FUN_0059ce10': [(5890737, 'W', 'local(ebp-0x48){0x50,0x3c,0x1e}')], 'FUN_005a0fa0': [(5902475, 'W', 'const(0)')]}
+OK   G1   total=336 kinds={'W': 5, 'RW': 0, 'T': 59, 'R': 272, 'A': 0, 'W?': 0} widths={'dword': 333, 'byte': 2, 'word': 1}
+OK   G2   writers={'FUN_004e0350': [(5112711, 'W', 'g(0x999fa4)-g(0x92bf68)'), (5112718, 'W', 'const(0x1)')], 'FUN_0051f320': [(5371196, 'W', 'round+1')], 'FUN_0059ce10': [(5890737, 'W', 'local(ebp-0x48){0x50,0x3c,0x1e}')], 'FUN_005a0fa0': [(5902475, 'W', 'const(0)')]} maxflow=True
 OK   G3   callers={'FUN_004e0350': [5328591, 5340730], 'FUN_0051f320': [5377187, 5383025], 'FUN_0059ce10': [5903737], 'FUN_005a0fa0': [5384547, 5755566, 5763599, 5765860, 5766482]}
 OK   G4   direct n=59 prior4=True
 OK   G5   ok51=True ok59=True ok55=True prior5=True bl=const(0x1) nreg=111
 OK   G6   addr=0 W?=0 unk=['0x4f3a91', '0x51da30'] gaps={5192337: (5191130, 5193824), 5364272: (5364261, 5364544)}
 OK   G7   LIVE={'year_addr': 9984768, 'round_addr': 9984764, 'year': 2150, 'round': 50}
 OK   G8   primes={5455596: (True, 5455564), 5456398: (True, 5456366), 5457186: (True, 5457161)} age_cmp=0x569408 src=True
-OK   G9   byte=['0x5552d9', '0x555da0'] word=0
+OK   G9   byte=['0x5552d9', '0x555da0'] word=['0x59c18a']
 OK   G10  year=True callee=True syw=True cluster=True gate=True rand=True sites=[('0x59ce42', '0x50'), ('0x59ce5b', '0x3c'), ('0x59ce74', '0x1e')]
 OK   R1   YEAR rival dead: round=50@0x985afc vs year=2150@0x985b00, year=round+2100 derived
 OK   R2   MODE-ENUM rival dead: writers=4 plus1=[('FUN_0051f320', 5371196)] others=['g(0x999fa4)-g(0x92bf68)', 'const(0x1)', 'local(ebp-0x48){0x50,0x3c,0x1e}', 'const(0)'] stamps=True
 OK   R3   LOAD-CONSTANT rival dead: FUN_0051f320 +1 writer, 2 callers, year re-derived
-digest e112a4260e3c1722
+digest 136841406b5bee5b
 == M323: 13/13 ==

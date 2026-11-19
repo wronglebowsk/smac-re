@@ -29,13 +29,13 @@ MUTANTS = [
     ("MU10", "data", ('("add", "eax,ecx")', '("sub", "eax,ecx")'), {"G10", "R1"}),
     ("MU11", "data", ("P_NREG = 111", "P_NREG = 112"), {"G5"}),
     ("MU12", "data", ('P_R3 = ("FUN_0051f320", 2)', 'P_R3 = ("FUN_0051f320", 3)'), {"R3"}),
-    ("MU13", "code", "0x51f53a|dec eax", {"G2", "R2", "R3"}),
+    ("MU13", "code", "0x51f53a|dec eax", {"G2", "G10", "R1", "R2", "R3"}),
     ("MU14", "code", "0x59f19c|mov edx,0x1", {"G5"}),
     ("MU15", "code", "0x55840d|cmp DWORD PTR ds:0x985afc,0x4c", {"G4", "G5"}),
     ("MU16", "code", "0x533eec|mov DWORD PTR [edx*4+0x94d4a9],eax", {"G8", "R2"}),
     ("MU17", "code", "0x5b2c0c|sub eax,ecx", {"G10", "R1"}),
     ("MU18", "code", "0x5a108b|mov DWORD PTR ds:0x985af0,esi", {"G1", "G2", "G3", "R2"}),
-    ("MU19", "code", "0x5552d9|test BYTE PTR ds:0x985b00,0x1", {"G1", "G4", "G9"}),
+    ("MU19", "code", "0x5552d9|test BYTE PTR ds:0x985b00,0x1", {"G1", "G4", "G9", "G10", "R1", "R3"}),
     ("MU20", "code", "0x59ce42|mov DWORD PTR [ebp-0x48],0x51", {"G2", "G10"}),
     ("MU21", "code", "0x51f32b|mov ebx,0x2", {"G5"}),
     ("MU22", "algo", "1", {"G5"}),
@@ -43,6 +43,13 @@ MUTANTS = [
     ("MU24", "evdata", ("evidence/m302_livepins.txt", "round 50", "round 51"), {"G7"}),
     ("MU25", "evdata", ("evidence/m175_m177_full.txt", "0x533eec", "0x533eed"), {"G8"}),
     ("MU26", "noop", "0x40100c|mov DWORD PTR [ebp-0x8],0x1", set()),
+    # review #323 fixes: max-flow (P1-2), bl def-set/pair (P1-3/P2-6), year arg chain
+    # (P2-7), word width (P2-4)
+    ("MU27", "code", "0x4e038c|jmp 0x4e0398", {"G2"}),
+    ("MU28", "code", "0x4e0384|cmp eax,0x2", {"G2"}),
+    ("MU29", "code", "0x51f525|push ecx", {"G5"}),
+    ("MU30", "code", "0x51f535|mov eax,0x0", {"G1", "G2", "G10", "R1", "R2", "R3"}),
+    ("MU31", "code", "0x59c18a|mov eax,ds:0x985afc", {"G1", "G9"}),
 ]
 
 def run_script(path, env_extra):
@@ -55,8 +62,9 @@ def run_script(path, env_extra):
     return p.returncode, p.stdout + p.stderr
 
 def score(out):
-    """returns (observed_red_set, crashed_bool)"""
-    if not re.search(r"^== M323: \d+/\d+ ==$", out, re.M):
+    """returns (observed_red_set, crashed_bool); denominator must be the shipped 13"""
+    m = re.search(r"^== M323: (\d+)/(\d+) ==$", out, re.M)
+    if not m or m.group(2) != "13":
         return set(), True
     red = set(re.findall(r"^BADGATE (\S+)", out, re.M))
     return red, False
@@ -74,7 +82,8 @@ def selftest():
     res += [("S1 scorer match", ok1), ("S2 scorer mismatch", ok2), ("S3 scorer crash", ok3)]
     rc, out = run_script(SCRIPT, {"M323_PATCH": "40100c|mov DWORD PTR [ebp-0x8],0x1"})
     obs, crashed = score(out)
-    res.append(("S4 live NO-OP", (not crashed) and obs == set() and rc == 0))
+    res.append(("S4 live NO-OP", (not crashed) and obs == set() and rc == 0
+                and "== M323: 13/13 ==" in out))
     for nm, ok in res:
         print(("OK  " if ok else "FAIL") + " " + nm)
     n = sum(1 for _, ok in res if ok)

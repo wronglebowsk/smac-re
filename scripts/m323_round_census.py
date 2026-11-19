@@ -10,6 +10,10 @@
 # evidence/m320_sibling_census.txt:411 (word-init gate), evidence/m305_identity.txt:125.
 # Mutation: M323_PATCH rewrites disassembly; M323_ALGO 1=direct-test-only gate tracer,
 # 2=W/R classifier swap; M323_EVIDENCE_ROOT redirects prior-evidence reads (data mutants).
+# Resolver limit (DECLARED): reg_defs_back is a LINEAR static walk (<=40 defs, owning
+# function only), not a CFG dataflow proof; where a pinned value depends on it (bl at
+# the cadence gate), G5 ALSO pins the complete register-def set + push/pop pair of the
+# function, so any def mutation reddens; M305's live bl==1 corroborates the path.
 import bisect, csv, hashlib, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -68,9 +72,19 @@ def fstart(name):
         if n == name: return a
     return None
 
+REG16 = {"ax", "cx", "dx", "bx", "sp", "bp", "si", "di"}
+REG8 = {"al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"}
+
 def classify(mn, ops):
     w = WIDTH.search(ops)
-    width = w.group(1).lower() if w else "dword"
+    if w:
+        width = w.group(1).lower()
+    else:
+        # unqualified forms: operand-size comes from the register (66-prefix mov ax,ds:...)
+        parts = [p.strip() for p in ops.split(",")]
+        if any(p in REG16 for p in parts): width = "word"
+        elif any(p in REG8 for p in parts): width = "byte"
+        else: width = "dword"
     first = ops.split(",")[0]
     mem_first = bool(ABS.search(first))
     if mn == "lea": kind = "A"
@@ -350,7 +364,7 @@ year_writers = []
 for a in ADDRS:
     mn, ops = INS[a]
     first = ops.split(",")[0]
-    if YABS.search(first) and (mn == "mov" or mn in RMW):
+    if YABS.search(first):  # ANY memory-first form (mov/RMW/xchg/...), not a filtered subset
         year_writers.append((a, mn, owner(a)))
 year_expr = value_expr(0x51f54f, *INS[0x51f54f]) if 0x51f54f in INS else None
 SYW = [(a, owner(a)) for a in ADDRS
@@ -363,6 +377,13 @@ GAPS = {}
 for u in UNK:
     i = bisect.bisect_right(FSTARTS, u) - 1
     GAPS[u] = (funcs[i][0] + funcs[i][2], FSTARTS[i + 1] if i + 1 < len(FSTARTS) else None)
+# bl reaching-def census: EVERY ebx/bl def in FUN_0051f320 before the cadence gate,
+# plus the push/pop pair and any jump INTO the cadence call site (review #323 P1-3/P2-6)
+EBXDEFS = [(a, INS[a][0], INS[a][1]) for a in ADDRS
+           if 0x51f320 <= a < 0x51f71a and owner(a) == "FUN_0051f320"
+           and INS[a][0] not in NONDEF and not INS[a][0].startswith("j")
+           and INS[a][1].split(",")[0].strip() in ("ebx", "bl")]
+JTGT = [a for a in ADDRS if INS[a][0].startswith("j") and INS[a][1].strip() == "0x51f71e"]
 
 # ---- gates ------------------------------------------------------------------------
 BAD = []
@@ -377,7 +398,7 @@ def unpinned(name, detail):
 # G1 census shape
 P_TOTAL = 336
 P_KINDS = {"W": 5, "RW": 0, "T": 59, "R": 272, "A": 0, "W?": 0}
-P_WIDTHS = {"dword": 334, "byte": 2}
+P_WIDTHS = {"dword": 333, "byte": 2, "word": 1}  # word = 66-prefix mov ax @59c18a (review #323 P2-4)
 ck("G1", len(hits) == P_TOTAL and KINDS == P_KINDS and WIDTHS == P_WIDTHS,
    "total=%d kinds=%s widths=%s" % (len(hits), KINDS, WIDTHS))
 
@@ -389,7 +410,9 @@ P_WRITERS = {
     "FUN_005a0fa0": [(0x5a108b, "W", "const(0)")],
 }
 got = {o: [(a, k, e) for a, k, e, _ in sorted(v)] for o, v in WRITERS.items()}
-ck("G2", got == P_WRITERS, "writers=%s" % got)
+# max(1, diff) flow: cmp eax,1 -> diff store -> jge over the const-1 fallback store
+ok2flow = (INS.get(0x4e0384) == ("cmp", "eax,0x1") and INS.get(0x4e038c) == ("jge", "0x4e0398"))
+ck("G2", got == P_WRITERS and ok2flow, "writers=%s maxflow=%s" % (got, ok2flow))
 
 # G3 writer callers (direct call sites image-wide)
 P_CALLERS = {
@@ -426,7 +449,9 @@ g51 = [g for g in REGGATES if g[0] == 0x51f711]
 g59 = [g for g in REGGATES if g[0] == 0x59f1a0]
 ok51 = (bool(g51) and g51[0][2] == "0x3" and g51[0][3] == "cl,bl"
         and g51[0][6] == (0x51f71c, "jne", "0x51f723")
-        and INS.get(0x51f71e) == ("call", "0x51dcb0"))
+        and INS.get(0x51f71e) == ("call", "0x51dcb0")
+        and EBXDEFS == [(0x51f32b, "mov", "ebx,0x1"), (0x51f5a2, "pop", "ebx")]
+        and INS.get(0x51f525) == ("push", "ebx") and JTGT == [])
 ok59 = (bool(g59) and g59[0][3] == "ecx,edx" and g59[0][5] == "const(0)"
         and g59[0][6] == (0x59f1b8, "jne", "0x59f1d4"))
 ok55 = (dmap.get(0x55840d) == 75 and INS.get(0x558414) == ("setg", "cl"))
@@ -465,14 +490,18 @@ else:
        and {p: prime_ok[p][1] for p in PRIMES} == P_PRIME_READS and age_cmp == P_AGECMP,
        "primes=%s age_cmp=%s src=%s" % (prime_ok, age_cmp and hex(age_cmp), m177_src_ok))
 
-# G9 widths/blind spots: exactly 2 byte accesses, no word; byte sites pinned
+# G9 widths/blind spots: 2 byte + 1 word (66-prefix mov ax, unqualified - register-sized);
+# byte sites and the word site pinned
 byte_sites = sorted(h[0] for h in hits if h[2] == "byte")
-ck("G9", byte_sites == [0x5552d9, 0x555da0] and WIDTHS.get("word", 0) == 0,
-   "byte=%s word=%d" % ([hex(a) for a in byte_sites], WIDTHS.get("word", 0)))
+word_sites = sorted(h[0] for h in hits if h[2] == "word")
+ck("G9", byte_sites == [0x5552d9, 0x555da0] and word_sites == [0x59c18a],
+   "byte=%s word=%s" % ([hex(a) for a in byte_sites], [hex(a) for a in word_sites]))
 
 # G10 lifecycle: year = FUN_005b2c00(round+1) = round + start_year(2100); new-game
 # cluster zeroes round+unit/base counts; rand-start {30,60,80} gated on 0x985ac4 bit 7
 ok10a = (year_writers == [(0x51f54f, "mov", "FUN_0051f320")] and year_expr == "ret(0x5b2c00)"
+         and INS.get(0x51f535) == ("mov", "eax,ds:0x985afc")
+         and INS.get(0x51f53a) == ("inc", "eax")
          and INS.get(0x51f53b) == ("push", "eax") and INS.get(0x51f541) == ("call", "0x5b2c00"))
 ok10b = (INS.get(0x5b2c03) == ("mov", "eax,DWORD PTR [ebp+0x8]")
          and INS.get(0x5b2c06) == ("mov", "ecx,DWORD PTR ds:0x92bf68")
@@ -520,7 +549,8 @@ det = repr((KINDS, WIDTHS,
             tuple(sorted((o, tuple(sorted(a for a, _ in callers_of(o)))) for o in WRITERS)),
             tuple((a, mn, imm) for a, mn, imm, w, o, ops in DIRECT),
             tuple(REGGATES), tuple(ADDRUSE), LIVE, prime_ok, age_ok, age_cmp,
-            tuple(year_writers), year_expr, tuple(SYW), tuple(RANDS), UNK, GAPS))
+            tuple(year_writers), year_expr, tuple(SYW), tuple(RANDS), UNK, GAPS,
+            tuple(EBXDEFS), tuple(JTGT)))
 h = hashlib.sha256(det.encode()).hexdigest()[:16]
 print("digest %s" % h)
 print("== M323: %d/%d ==" % (13 - len(BAD), 13))
