@@ -1283,6 +1283,16 @@ Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de
 Acceptance `python3 -u scripts/m314_tour_family.py` -> **18/18**, digest cf54a7ca907344c6, x2 identical; `scripts/m314_mutate.py` -> **27/27** (MERGED as #299, main e638772; the squash title's "20/20" is the pre-review harness - this line governs).
 REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k=full check name vs detail=short keys -> every lookup empty) -> now hashes name+verdict+detail; A4b pump check was decorative (`parse_text` keeps mnemonic separate, so the `^push 0x..$` regex on ops matched nothing -> `all([])` true) -> bare-operand push census + pumpA x3 / pumpB x1 call-site counts pinned; A3 claimed a `je` it never read -> now entry-relative pins (cmp +0x9/+0x9/+0x29, je +0xD/+0xD/+0x2D, je-target = add-10, mov = add-3); A3b inferred abs() from neg/sub COUNTS -> 11-instruction sequence pinned with jl/jmp targets; A6b de-duplicated owners so a 6th call in a listed fn stayed green -> 5 call-site addresses pinned; token row said 26 quoted where evidence said 24 quoted + 2 named + 5 forwarded -> A1b now pins the exact 24+2+5 breakdown (the 2 unexplained entries were `param_1`/`param_2` forwards). New mutants MU2b/MU5/MU5b/MU5c/MU5d/MU7j/MU9*/MU15b/MU18* cover each repaired fact.
 
+## M321 (s297) - pick (vi) CLOSED: the 2 unnamed memo owners are base STATUS-ICON emitters; the arrival test gates base_array field 56 bit 6
+
+| claim | evidence | conf / mutant |
+|---|---|---|
+| FUN_004ee410 = base FOOD/POPULATION status emitter (7 `0x48f100` calls; PE labels STARVE/POPULATIONLIMIT/LOWNUTRIENT*) vs FUN_004f41f0 = TALENT/PSYCH-REQUEST emitter; disjoint | `m321_memo_owners.txt:21-28` | V; MU13 |
+| 4 memo sites per M319, fed by `mov R,ds:0x68cbb0`, pair IN ORDER <=25 B after; 2 are the a3 form | `:18-19`, `:9-16` | V; MU1,MU2,MU7,MU8 |
+| ONE arrival predicate at 3 sites: r from `ds:0x8f0d60` 3/3, je skips `call 0x4f41f0`, +0x78/7c/80 zeroed; callee re-gates @0x4f43a0 | `:30-34`, `:69` | V; MU3,MU9,MU10,MU12 |
+| field = base_array +56 (fold = 304*idx+0x95da10; the 52-chain rival dies on the histogram); bit 6's only OR-setter = 0x41ac34 (FUN_0041a8f0's `ds:0x99aa38` round trip) | `:2-7`, `:61` | V; MU5,MU6,MU11,MU4 NO-OP |
+| OPEN: game nouns; 47 whole-dword field stores untraced | - | lead |
+
 ## M320 (s294-chain2, STATIC, 12/12, 26/26+1) - siblings: 128-region ladder, 512 arrays, reset/rebuild
 
 | claim | evidence | conf |
@@ -1308,7 +1318,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | THUNK-FOLLOWING MEASURED INERT HERE: turning it off moves NO printed number (a harness NO-OP, not a bite - the census does not depend on it) | MU8 `evidence/m319_mutate.txt:9` | V (harness measurement) |
 | ACCEPT 7/7 digest fb4e802dac1995a2 (hashes T1 partition+guard kinds, T2 refs+mnemonics, T3 callers, T4 per-call arrival, T5 edge labels); 3 accepted runs byte-identical, sha256 5ea00d859bf4503f (`evidence/m319_guard_hoist.txt:73`, `evidence/m319_guard_hoist_rerun2.txt:73`, `evidence/m319_guard_hoist_rerun3.txt:73`; re-derive by re-running the acceptance 3x and `diff`ing each stdout against the committed file); sweep 14/14 scored + 1/1 NO-OP (`evidence/m319_mutate.txt:17`); selftest 4/4 (`evidence/m319_mutate_selftest.txt:5`) | as cited | V |
 | REVIEW ROUND #317 + the squash title: the title's 459f47e3178f439d / 12-12+1 are the PRE-REVIEW harness; the ACCEPT row is what held at merge head (same defect as M314's "20/20"). Governance note - adds no byte claim | - | lead |
-| OPEN: what gates the 8 (arrival tests al,0x10; BYTE[eax+0x38],0x40 x3; eax,0x1; ecx,eax - unnamed); 0x4f3f7f callers; never live. Caveat: `guarded()` accepts via-copy on copy-liveness AT THE JCC (over-approximation) - the 4/8 split stands on agreement with M315 + the pinned kinds | - | lead |
+| OPEN (one lane CLOSED by M321): what gates the 8 - `BYTE PTR [eax+0x38],0x40` x3 is now NAMED (base_array field 56 bit 6, gating the FUN_004f41f0 talent-request leg: `NAMED ## M321`, `evidence/m321_memo_owners.txt:30-34`); still unnamed: al,0x10; eax,0x1; ecx,eax. Also open: 0x4f3f7f callers; never live. Caveat: `guarded()` accepts via-copy on copy-liveness AT THE JCC (over-approximation) - the 4/8 split stands on agreement with M315 + the pinned kinds | - | lead |
 
 ## M318 (s289, STATIC, zero box; 12/12+1 NO-OP) - pick (iv) ANSWERED: the selection-REFRESH PAIR = FUN_004e8d60 (selected-base UNIT-SUPPORT CENSUS) then FUN_004e78e0 (selected-base PANE REFRESH); both void(void), driven by the CURRENT selection
 

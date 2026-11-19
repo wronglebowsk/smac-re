@@ -299,3 +299,27 @@ Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only w
   3fee30fcd74735ad']`. The archive line now states both digests with anchors: a superseded digest must
   share its line with its replacement or the row fails.
   NEXT: B26 (spine text NOT authored) or picks (vi)/(vii).
+
+## Session 297 (2026-11-19, M321 = pick (vi), STATIC, zero box; 7/7 gates + 13/13 mutants)
+
+- Both still-unnamed memo-site owners are BASE-PANEL STATUS-ICON emitters, named from the labels at their
+  `call 0x48f100` sites (strings read as BYTES from `programs/terran.exe` via the PE section table; zero
+  box): FUN_004ee410 7x STARVE, POPULATIONLIMIT, LOWNUTRIENT{FARMS,FORMERS,SPEC1,SPEC2} +
+  starv_sm/pop_sm.pcx @0x4ee501-0x4eec1b (`evidence/m321_memo_owners.txt:21-27`) = FOOD/POPULATION status;
+  FUN_004f41f0 1x PSYCHREQUEST + talent_sm.pcx @0x4f46a9 (`:28`) = TALENT/PSYCH-REQUEST; DISJOINT (G3;
+  MU13 -> red).
+- 4 memo sites as M319 listed, each fed by `mov R,ds:0x68cbb0` + the refresh pair IN ORDER within 25 B
+  (`:18-19`; MU2/MU7/MU8 -> G2). DEFECT FOUND WHILE WRITING: 0x4f44a8 (and M311's 0x4e3476, 0x4f5c3c) are
+  the SHORT a3 form `mov ds:X,reg`; a `mov DWORD PTR ds:X,reg`-only detector sees 3 memo sites and 5/6
+  stores. MU1 mutates the fix back -> G2+G7 red; `:9-16` prints 6+6 stores, 1:1 +-64 B.
+- THE ARRIVAL TEST: EXACTLY 3 `test BYTE PTR [r+0x38],0x40` image-wide (0x416f32/0x417057/0x41ade4); r's
+  nearest def is `mov r,ds:0x8f0d60` 3/3, the `je` target lies PAST `call 0x4f41f0` (so it gates the call),
+  and the caller zeroes +0x78/+0x7c/+0x80 between (`:30-33`; MU3/MU9/MU10 -> G4/G7).
+- THE FIELD: fold PARSED (lea 9x, lea 19x, shl 4 = 304*idx + 0x95da10 = base_array); 646 304-chains vs 565
+  52-chains (unit array) kills the unit rival on the printed histogram (G1; MU5/MU6); 0x95da48-0x95da10=56.
+  Bit 6's only OR-setter image-wide is 0x41ac34 (`:61`, MU11), inside FUN_0041a8f0's round trip via the
+  scratch ds:0x99aa38 (field 0x40 <-> scratch 0x08 both ways: extract @0x41aa03, write-back @0x41ac26,
+  `:63-67`); the callee re-tests it @0x4f43a0 (`:69`, G6, MU12).
+- OPEN: 47 whole-dword field stores (record view) untraced to sources; the game nouns; 14/21 extraction
+  lanes lack the `or al` arm; back_def's clobber rule reddens NOTHING here -> MU4 declared NO-OP (an empty
+  set IS the asserted tripwire).

@@ -14,6 +14,9 @@ checker instead of an ad-hoc heredoc):
 cap set one below the measured size) and requires each perturbation to REDDEN its check:
 a gate that cannot fail is a defect, not a gate.
 
+STATUS (moved out of NEXT_PROMPT.md at s297 to buy the hot doc its headroom back): C1/C2
+fail BY DESIGN now that #316's split is in main; only C3 (the archive pointer chain) stands.
+
   python3 -u scripts/s292_cap_check.py
   python3 -u scripts/s292_cap_check.py --selftest
 """

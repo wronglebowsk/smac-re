@@ -1067,3 +1067,18 @@ M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +
 
   (chain 2's footing line, moved not deleted: `#321` put it in the hot doc, the hot doc hit the warn, so it
    sits here with its numbers intact and `NAMED ## M320` + `SESSION_NOTES ## Session 294-chain2` still govern)
+
+## §trim-s297 pick (vi), VERBATIM from NEXT_PROMPT.md §THE PICK (retired when M321 answered it)
+
+```
+  OPEN PICK after M319: (vi) NAME the two still-unnamed memo-site owners FUN_004ee410 (sites
+  0x4ee6c9/0x4ee883, caller FUN_004f5a70) and FUN_004f41f0 (sites 0x4f44a8/0x4f455d, callers
+  FUN_00416ef0/FUN_00416f60/FUN_0041a8f0/FUN_004f5a70): what each DOES, and what the shared
+  arrival test `BYTE PTR [eax+0x38],0x40` (3 of the 9) gates. Sites/owners/callers/arrivals
+  are printed at `evidence/m319_guard_hoist.txt:24-52`; the 3rd owner FUN_004e47d0 is already
+  the FOUNDER (NAMED ## M282). No box time.
+```
+
+  (moved out of NEXT_PROMPT.md when M321 closed it: the hot doc sat at 11,764 B, 236 B under the 12,000
+   warn, and the CLOSED line plus the new pick (viii) had to fit there. The answer itself is `NAMED ## M321`,
+   measured by `scripts/m321_memo_owners.py` (7/7) and `scripts/m321_mutate.py` (13/13))
