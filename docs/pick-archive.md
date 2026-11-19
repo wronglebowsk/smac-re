@@ -1068,7 +1068,39 @@ M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +
   (chain 2's footing line, moved not deleted: `#321` put it in the hot doc, the hot doc hit the warn, so it
    sits here with its numbers intact and `NAMED ## M320` + `SESSION_NOTES ## Session 294-chain2` still govern)
 
-## §trim-s297 (a) the M323 result one-liner, VERBATIM from the last line of NEXT_PROMPT.md
+## §trim-s297 pick (vi), VERBATIM from NEXT_PROMPT.md §THE PICK (retired when M321 answered it)
+
+```
+  OPEN PICK after M319: (vi) NAME the two still-unnamed memo-site owners FUN_004ee410 (sites
+  0x4ee6c9/0x4ee883, caller FUN_004f5a70) and FUN_004f41f0 (sites 0x4f44a8/0x4f455d, callers
+  FUN_00416ef0/FUN_00416f60/FUN_0041a8f0/FUN_004f5a70): what each DOES, and what the shared
+  arrival test `BYTE PTR [eax+0x38],0x40` (3 of the 9) gates. Sites/owners/callers/arrivals
+  are printed at `evidence/m319_guard_hoist.txt:24-52`; the 3rd owner FUN_004e47d0 is already
+  the FOUNDER (NAMED ## M282). No box time.
+```
+
+  (moved out of NEXT_PROMPT.md when M321 closed it: the hot doc sat at 11,764 B, 236 B under the 12,000
+   warn, and the CLOSED line plus the new pick (viii) had to fit there. The answer itself is `NAMED ## M321`,
+   measured by `scripts/m321_memo_owners.py` (7/7) and `scripts/m321_mutate.py` (13/13).
+   ERRATUM at review #324: the harness grew to 22/22 and the census digest is f304cf871a971a3d
+   (the 13/13 + 562dcbbd12c27c8a state predates the G2-scoping fix and the a3-form RETRACTION
+   '2 are the a3 form' -> measured 1; `NAMED ## M321` governs))
+
+## §trim-s298 (a) the B25 build-track detail, VERBATIM from NEXT_PROMPT.md §BUILD TRACK at the #324 post-review cap trim (moved out when NEXT_PROMPT hit 12,300 B after the M323 merge; 1330 B, sha1 455d6163f555e539)
+
+B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, ACCEPT
+anchor 901a286332960a10 `evidence/b25_selftest.txt:59`, banner `:69`; the same 69 lines from `-m sim.composedmove`) +
+harness **13/13 scored + 3 declared NO-OP** (`b25_mutate.txt:20`), `--selftest` **5/5** (`b25_mutate_selftest.txt:11`);
+G9 now PINS the anchor to a literal (MU9 names it alone) and G4's law is now **byte-level carry** (table H; MU14
+names it, MU15 = the old self-comparison, declared decoration). Its law, paid in a RETRACTION: **the CONTAINER owns
+the coordinate space** - `m54b_clean.SAV` is 64x64 by its own header, `planet.MP` is 80x80, and B7 wrapped x by the
+FILE (corrected in place at `NAMED ## B7`); MU8/MU12/MU13 redden G5 if either grid is judged against the wrong one.
+NEW AT TRIAGE: the tile test is NOT the decoder (8/44 probes disagree raw - pick (vii) below). B24's spine detail
+(the compaction RETRACT, the LEDGER-POSITION addressing law, the two retired degenerate rivals) is VERBATIM at
+`docs/pick-archive.md:963` §trim-s292 (a) - the ONLY place "declared gate-sets are MEASURED, not authored" survives
+(sibling laws: TRAP 24 below + `skill/SKILL.md:319-320`). `pos=False` in `composedturn.fold` is NOT tile-addressing.
+M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
+## §trim-s299 (a) the M323 result one-liner, VERBATIM from the last line of NEXT_PROMPT.md
 
 ```
 M323 RESULT (s295-chain2, STATIC, post-review): ds:0x985afc = ROUND counter - 336 refs (W5/T59/R272; dword 333/word 1/byte 2); writers init0 FUN_005a0fa0 / +1 FUN_0051f320 / year-sync FUN_004e0350 / rand{30,60,80} FUN_0059ce10; year=round+2100 (FUN_005b2c00, start-year 2100 @0x92bf68). 13/13 digest 136841406b5bee5b (evidence/m323_round_census.txt:536); harness 31/31+1. FULL: NAMED.md ## M323 + SESSION_NOTES s295-chain2.

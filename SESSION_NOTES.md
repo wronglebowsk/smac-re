@@ -1,26 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only when a question reaches back before session ## Session 280.
-
-## Session 280 (2026-11-18, B23 BUILD, zero box) - the queue's per-turn progress composed through the writer
-- track_mode MODE=BUILD (since_build=3); `milestone.py start B23` from main; this fire AUTHORED the rung into BUILD_SPINE.md (as B14-B22 did).
-- `sim/composedturn.py`: the 10-boundary Korolev run of `evidence/trace_m56_build_20261026_145157.jsonl` folds through the WRITER - each boundary re-parses the image (st+0x40, mirror+0x98, pen+0x4c, slots+0x50, tile/owner), runs the B12 visit law, writes the span back; r0 arrival grows the unit array by the same call. `sim/savewriter.py` gained identity/raw/queue override keys (backward-compat).
-- Acceptance `python3 -u -m sim.composedturn --sav programs/saves/m54b_clean.SAV` -> `== B23: PASS ==` 12/12 (evidence/b23_composedturn.txt); relay `python3 -m sim.selftest --b23 programs/saves/m54b_clean.SAV` -> `PASS B23: 12/12 gates`, run twice -> byte-identical (`12` ok rows). Shared-writer regression: `--b8` 10/10, `--b12`/`--b21`/`--b22` 12/12 after the savewriter edit.
-- Rivals G9 5/5 (noadd/price10 lose the recorded arrival; nopop holds pending 1 vs recorded 0; zerotail drops stale ids; nomirror keeps 8 vs recorded 0). Falsifier G10: st:=20 poisoned in IMAGE bytes at r1 only -> container fold pays r1+r2 (3 arrivals; poison persists via the written image), model-fed fold blind (1 arrival) - both halves asserted.
-- REVIEW ROUND #297 (3 P2, ALL accepted; single PR comment): (1) G7's creation source was untested - expected record built from FROZEN constants, so an image-fed producer swapped for seed values stayed green; now G11 poisons tile+owner in the container seed and demands the created record CARRY them, with a frozen-args rival failing the same fit (locate BY POSITION when the tile itself is poisoned - a coord lookup would hide the record). (2) the new `queue` override wrote any slot-list length - an 11th dword lands at +0x78, past the queue; refusal (len != 10) + 9/11 probes now in G8. (3) G11's determinism compared label+verdict only, dropping the DETAIL column that carries measured values; now full-row compare (falsifier detail normalized to '' so the guarded rerun is byte-equal) and renumbered G12.
-- Docs: NAMED ## B23; cursor rewritten. NEXT: after merge track_mode flips to ANALYSE (B24 queued, not next); open picks (i'') FUN_004d3f70/FUN_004c5d60 thunks, (ii) ds:0x68cbb4 writers, (iii) GOAL meaning.
-
-## Session 281 (2026-11-18, close-out: B23 MERGED as #297, docs cursor)
-- `milestone.py merge 297` verdict GREEN on the review head (gate pass 15 s; no re-review after the fixes - recorded as "none", not a pass). main = `77a170d`. The squash title carries the corrected count (12/12) - patched via REST BEFORE merge, no stale-title note needed.
-- `track_mode.py`: MODE=ANALYSE analyse_since_build=0 last_build=B23 next_rung=B24 -> next fire ANALYSES. OPEN PICKS (NEXT_PROMPT, post-M313 order): (i'') what ARE FUN_004d3f70 (15 band-member calls) and the FUN_004c5d60 dialog-family thunks; (ii) ds:0x68cbb4's 19 writers outside an index-store window; (iii) GOAL game-meaning / the one-char tokens / negative priority.
-
-## Session 282 (2026-11-18, STATIC, zero box) — M314 pick (i''): the tour/dialog dispatcher family; the pumpB-direct correction; the lead's "15 band members" refuted
-- Opened `milestone/m314` from main e0e95e1. One collision note: the manual-fire protocol was started by a cron fire that I cancelled (user switched the loop to MANUAL fires; job `smac-re-loop` paused with reason) — it had only created the empty branch; M314 collision-checked clean first (log/NAMED/scripts all 0).
-- `python3 -u scripts/m314_tour_family.py` -> **== M314: 18/18 ==**, digest 4c9aa4eb4279b70b, two runs byte-identical (`evidence/m314_tour_family.txt`); `python3 -u scripts/m314_mutate.py` -> **20/20** (`evidence/m314_mutate.txt`). Zero box, zero /proc.
-- VERIFIED (byte census; instruments print-then-assert, rivals included): FUN_004c5d60 = token-keyed dialog/tour dispatcher, EXACTLY 31 instr call sites all imm32-pinned (A1), 28 distinct tokens / 26 quoted + exactly 2 named s_ strings (A1b). 4 wrappers 0x4c2e90/f00/f70/fe0: one pinned producer {0x4c3f90/3f20/4000/4070} + one dispatcher call each (A2), `this` = DAT_007cdecc + [0][+4] in all 4 (A2b). 3 result handlers 0x4c5c40/ca0/cf0 (the "thunks"): cmp [ebp+0xc],0 / je / add eax,0x444 -> tail {0x4c1220, 0x54f790, 0x5510f0} (A3), 0x4c5cf0 = abs(c+2) on the bytes (A3b), 0x444 delta once per handler (A3c, M269 mechanism — a mid-run misread of 0x444 as a menu id was recorded and rejected, NAMED ## M314 row 4). All 6 registration pushes INSIDE the dispatcher, 2/thunk, two legs same order (A4); no push-immediate of pumpA image-wide (A4b).
-- CORRECTIONS: (1) pumpB FUN_00516b80 calls FUN_004d3f70 (activate_at_tile) DIRECTLY at 0x517858 — M313's "off-band = 5" was thunk/hub-sites only; all 5 cited re-verified, 4d3f70 is the 6th; pumpA does NOT (A5/A5b/A5c). (2) The (i'') lead "FUN_004d3f70 calls 15 band members" is REFUTED: exactly ONE band member (FUN_0050cab0 x2 sites), 22 distinct callees off-band (A6); its callers = exactly 5 sites in {4748b0, 476580, 511960, 512450, 516b80} (A6b); 4 debug tokens real at .data: Console ACTIVATE / VEH ORDERS / Activate AWAKEN / Activate AWAKENING (A6c). INFERRED: tour-driver loop semantics (result!=0 continues, 0 ends); 0x95da12 reg = rec*0x130-2 (M311 stride); pane roles of 0x54f790/0x5510f0.
-- REVIEW ROUND #299 (5 P2, ALL accepted; single PR comment): (1) the digest hashed LABELS, not measurements (`detail` keyed by short names, loop keyed by full check names -> every lookup empty; two different runs of changed numbers shared one digest) - now name+verdict+detail. (2) A4b pump check was DECORATIVE: `parse_text` keeps the mnemonic in a separate field, so the `^push 0x..$` regex matched no ops and `all([])` passed - a push of pumpA would have stayed green; now a bare-operand push census + pinned pumpA x3 / pumpB x1 call sites. (3) A3 claimed to read a `je` it never examined and A3b inferred abs() from neg/sub COUNTS; both now pinned entry-relative (cmp +0x9/+0x9/+0x29, je +0xD/+0xD/+0x2D, target = add-10, mov = add-3; 11-instruction abs sequence with jl/jmp targets). (4) A6b compared de-duplicated OWNERS while claiming "exactly 5 sites" - a 6th call inside a listed function stayed green; the 5 call-site addresses are now pinned (+ duplicate-owner mutant). (5) My NAMED row said 26 quoted tokens where my own evidence said 24 quoted + 2 named + 5 forwarded: the 2 unexplained entries were `param_1`/`param_2` forwards - the token law is now the exact 24+2+5 breakdown. Harness grew 20 -> 27 mutants, one per repaired fact; final `python3 -u scripts/m314_tour_family.py` -> **18/18**, digest **cf54a7ca907344c6** (x2 identical), `scripts/m314_mutate.py` -> **27/27**. Lesson for the skill (decoration class #4): a census that keeps mnemonic and operand apart must match the OPERAND alone, and any count-style claim ("exactly N sites") must pin the sites, not their deduplicated owners.
-- NEXT: manual fires only (cron paused). track_mode unchanged (MODE=ANALYSE, B24 queued). Open picks: (ii) ds:0x68cbb4's 19 writers outside the index-store window; (iii) GOAL game-meaning / one-char tokens / negative priority.
+Older sessions: `docs/sessions/sessions-280-282.md` (3 sessions). Read it only when a question reaches back before session ## Session 283.
 
 ## Session 283 (2026-11-18, close-out: M314 MERGED as #299, docs cursor)
 - `milestone.py merge 299` verdict GREEN on the review head (`gate` pass 13 s), main = `e638772`. No re-review arrived after the fixes were pushed (Greptile reviews once, on OPEN) - recorded honestly as "none", not as a second pass. Full P2 accounting: single PR comment https://github.com/wronglebowsk/smac-re/pull/299#issuecomment-6978365896.
@@ -300,6 +280,29 @@ Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only w
   share its line with its replacement or the row fails.
   NEXT: B26 (spine text NOT authored) or picks (vi)/(vii).
 
+## Session 297 (2026-11-19, M321 = pick (vi), STATIC, zero box; 7/7 gates + 13/13 mutants)
+
+- Both still-unnamed memo-site owners are BASE-PANEL STATUS-ICON emitters, named from the labels at their
+  `call 0x48f100` sites (strings read as BYTES from `programs/terran.exe` via the PE section table; zero
+  box): FUN_004ee410 7x STARVE, POPULATIONLIMIT, LOWNUTRIENT{FARMS,FORMERS,SPEC1,SPEC2} +
+  starv_sm/pop_sm.pcx @0x4ee501-0x4eec1b (`evidence/m321_memo_owners.txt:21-27`) = FOOD/POPULATION status;
+  FUN_004f41f0 1x PSYCHREQUEST + talent_sm.pcx @0x4f46a9 (`:28`) = TALENT/PSYCH-REQUEST; DISJOINT (G3;
+  MU13 -> red).
+- 4 memo sites as M319 listed, each fed by `mov R,ds:0x68cbb0` + the refresh pair IN ORDER within 25 B
+  (`:18-19`; MU2/MU7/MU8 -> G2). DEFECT FOUND WHILE WRITING: 0x4f44a8 (and M311's 0x4e3476, 0x4f5c3c) are
+  the SHORT a3 form `mov ds:X,reg`; a `mov DWORD PTR ds:X,reg`-only detector sees 3 memo sites and 5/6
+  stores. MU1 mutates the fix back -> G2+G7 red; `:9-16` prints 6+6 stores, 1:1 +-64 B.
+- THE ARRIVAL TEST: EXACTLY 3 `test BYTE PTR [r+0x38],0x40` image-wide (0x416f32/0x417057/0x41ade4); r's
+  nearest def is `mov r,ds:0x8f0d60` 3/3, the `je` target lies PAST `call 0x4f41f0` (so it gates the call),
+  and the caller zeroes +0x78/+0x7c/+0x80 between (`:30-33`; MU3/MU9/MU10 -> G4/G7).
+- THE FIELD: fold PARSED (lea 9x, lea 19x, shl 4 = 304*idx + 0x95da10 = base_array); 646 304-chains vs 565
+  52-chains (unit array) kills the unit rival on the printed histogram (G1; MU5/MU6); 0x95da48-0x95da10=56.
+  Bit 6's only OR-setter image-wide is 0x41ac34 (`:61`, MU11), inside FUN_0041a8f0's round trip via the
+  scratch ds:0x99aa38 (field 0x40 <-> scratch 0x08 both ways: extract @0x41aa03, write-back @0x41ac26,
+  `:63-67`); the callee re-tests it @0x4f43a0 (`:69`, G6, MU12).
+- OPEN: 47 whole-dword field stores (record view) untraced to sources; the game nouns; 14/21 extraction
+  lanes lack the `or al` arm; back_def's clobber rule reddens NOTHING here -> MU4 declared NO-OP (an empty
+  set IS the asserted tripwire).
 ## Session 295-chain2 (2026-11-19, M323 CLOSED, chain 2 second fire, STATIC: ds:0x985afc = ROUND counter)
 
 - Chain 2 in wt-chain2 @ milestone/m323 (from main 53a2553); chain 1 owns main/sim/picks(vi)/(vii).
@@ -311,6 +314,32 @@ Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only w
 - TRAP: worktree info/exclude lives in the COMMON git dir - used trap-15 stash/start/pop.
 - MERGED 2026-11-19: #323 squash **9c716f8** on main. Review 3 P1+7 P2 triaged in ONE reply (9 accepted incl. the word-width RETRACTION, 1 dismissed per review_lint.py:85-86 meta-row rule); post-review acceptance 13/13 digest 136841406b5bee5b x2 + at-head re-measure byte-identical; harness 31/31+1 digest a25f4b5f2af8bb8a; CI gate pass 15 s, mergeState CLEAN. Main moved under review (chain 1 #320 -> a2e226b): rebased keeping BOTH chains' doc sections; force-push/reset blocked in cron mode, so landed via a `-s ours` absorption merge 25ad19a (tree == rebased state, verified empty diff, fast-forward push). The squash title's "26/26+1" is the PRE-review harness - the NAMED ## M323 ACCEPT row governs (31/31+1). NEXT_PROMPT sits at 12,188 B with the M323 line (chain 1's trim-s296 rotation pattern applies next fire). This note: docs/m323-merged.
 
+## Session 298 (2026-11-19, M321 review #324 hardening, STATIC, zero box; 7/7 + 22/22)
+
+- Review #324 (10 findings, 5 P1) accepted 1-10. The P1s were decoration defects: G2 accepted the
+  refresh pair by SET-ITERATION order and never measured its own 25 B; "zeroes +0x78/7c/80" was a
+  shape match - the writes are `mov [eax+0x78],esi`, a REGISTER, so the zero was unproved; G2's site
+  list iterated `ownersites.values()`, which after adding the image-wide census held 8 stores in 6
+  fns, not the 2+2 owner rows -> gate reddened 1/7 at that head; fixed to `ownrows`.
+- Hardening: order pinned by the PAIR tuple (`hits[0][0]==PAIR[0] and hits[1][0]==PAIR[1]`); pair
+  completion MEASURED as byte distances 10-11 (`m321_memo_owners.txt:20`); encodings split per owner
+  (`:21`); `je` pinned exactly (targets + call on fall-through); a real `is_zero()` proof (xor-self /
+  sub-self / `mov r,0x0`) + base identity resolved FROM EACH WRITE's own address (`:34-36`);
+  `back_def`'s vestigial `limit` removed, def locality printed (8 B back 3/3); G1's rival now derived
+  from the printed histogram (top non-304 multiplier == 52, 646 vs 565, `:2`); G3 pins 7 emitter
+  sites + exact label sets + `EMITTER==0x48f100`; G6 pins `0x4f43a0`/`cl,0x40`/chain text.
+- RETRACTED in `NAMED ## M321` row 2: "2 are the a3 form" -> measured **1** (0x4f44a8; the 2nd owner
+  store 0x4f455d is DWORD). NEW CROSS-CHECK: image-wide 8 index-fed memo stores in 6 functions, 4
+  held by these owners (`:22`) - agrees with M319's 4.
+- ACCEPT `python3 -u scripts/m321_memo_owners.py` -> `PASS m321: 7/7 gates` digest
+  **f304cf871a971a3d** (`evidence/m321_memo_owners.txt:84,:92`), x2 byte-identical (supersedes
+  s297's 562dcbbd12c27c8a, whose G2 was the unscoped version). HARNESS `python3 -u
+  scripts/m321_mutate.py` -> **PASS 22/22** (`evidence/m321_mutate.txt:24`), x2 identical; MU4 NO-OP
+  at `:5` (the cursor's `:15` cite was stale). MU14-MU22 added, sets MEASURED then declared:
+  MU14/15/21->G2, MU16/17/22->G4, MU18->G6 (the F7 tripwire: the old "callee tests cl,0x40
+  somewhere" gate stays GREEN on it, the pinned one reddens), MU19->G3, MU20->G1.
+- Reconciled with main (M323 9c716f8): merge kept BOTH chains' sections; evidence/ at 20.8 MB [warn]
+  - prune candidates next fire. NEXT: merge #324 on CI PASS; picks (vii)/(viii), B26 queued.
 ## Session 296-chain2 (2026-11-19, M324 CLOSED, STATIC: ROUND carried RAW)
 
 - wt-chain2 @ milestone/m324 (main 9b09161); chain 1 owns main/sim/(vi)/(vii), #324 live.
@@ -319,4 +348,4 @@ Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only w
 - FALSIFIED re-derive: direct closure (opener+codec) 440, 0 writers; 4e0350 callers={514ecf@512b40,517e3a@516b80} pumps, outside; header entry-first (window branch-free); mode0 chain (xor 597efb->push 597f98->cmp/je); M272 inv9: -39 opener -> 50 faction fread. R1 RE-DERIVE/R2 REBUILD DEAD.
 - ACCEPT `python3 -u scripts/m324_save_carry.py` -> **8/8** digest **700b4133f62bd714** (`evidence/m324_save_carry.txt:100`), rerun identical (`_rerun.txt:100`). HARNESS `python3 -u scripts/m324_mutate.py` -> **28/28+1 NO-OP** 5c3fa2bceb490009 (`evidence/m324_mutate.txt:29-30`); selftest 4/4 (`_selftest.txt:5`). REVIEW #326: 10/10 accepted (2P1+8P2); scope/pins strengthened, harness digest hashes payloads, MU19-27.
 - TRAP: leg diamond pushes;je;call WR;jmp;call RD - walker skips jcc/jmp/twins, stops at add esp/foreign call (naive broke on je); ebx def-walk hit pop on EARLY-RET path; moffs32 mov lacks DWORD PTR.
-- OPEN: g999fa4 noun/64c360; block+220 noun (year-like); feed arrival; byte-swap path. NEXT_PROMPT 12,188->11,999 B (M323 line VERBATIM -> §trim-s297 (a); M324 appended).
+- OPEN: g999fa4 noun/64c360; block+220 noun (year-like); feed arrival; byte-swap path. NEXT_PROMPT 12,188->11,999 B (M323 line VERBATIM -> §trim-s299 (a); M324 appended).
