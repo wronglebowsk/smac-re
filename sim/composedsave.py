@@ -629,15 +629,19 @@ def gates(m):
     # G2 identity + the recorded op stream applied
     ap = c["applied"]
     nops_run = min(len(m["ops"]), len(c["rows"]))
+    rec_pre = [(o["pre"], o["pre"] + (1 if o["kind"] == "found" else -1))
+               for o in m["ops"][:nops_run]]      # the LOG's own counts, never a guess
     ok2 = (m["identity"] and len(ap) == nops_run and
            all(a["landed"] for a in ap) and
-           [a["kind"] for a in ap] == [o["kind"] for o in m["ops"][:nops_run]])
+           [a["kind"] for a in ap] == [o["kind"] for o in m["ops"][:nops_run]] and
+           [(a["pre"], a["post"]) for a in ap] == rec_pre)
     g.append(("G2 a zero-op/zero-press/zero-append build equals the original save "
               "byte-for-byte, and the recorded m289 stream applied through the ledger "
-              "lands %d/%d ops (the run's rounds) with kinds %s (pre->post counts %s)"
+              "lands %d/%d ops (the run's rounds) with kinds %s and the log's OWN "
+              "pre->post counts %s == recorded %s"
               % (sum(1 for a in ap if a["landed"]), nops_run,
-                 "".join(k[0] for k in [a["kind"] for a in ap]),
-                 [(a["pre"], a["post"]) for a in ap]), ok2))
+                 "".join(a["kind"][0] for a in ap),
+                 [(a["pre"], a["post"]) for a in ap], rec_pre), ok2))
 
     # G3 carry
     cb = c["boundary"]

@@ -1,0 +1,58 @@
+B26 THE COMPOSED RUN ACROS A SAVE/LOAD BOUNDARY (sim/composedsave.py; zero box)
+
+== table A: per-round rows of the honest run (mode=container, poisoned at the boundary) ==
+round src ops arrivals acc_save acc_arr refused unit_bytes grown hdr size_delta year n_units_img n_bases_img found_units found_bases sha16
+    0 image-at-round-head      1        0      134       0      67         -1     -   -        304 2151          67          19          67        18 1273315a0b248242
+    1 image-at-round-head      1        0      134       0      67         -1     -   -        304 2152          67          20          67        18 ba251311940700c7
+    2 image-at-round-head      1        1      134       0      67         -1     -   -        356 2153          68          21          68        18 b394831e9ed1c915
+    3 image-at-round-head      1        2      134       2      68         -1     -   -       -252 2154          69          20          69        18 3ce96a06c5cb76c6
+    4 image-at-round-head      1        1      134       4      69         -1     -   -        356 2155          70          21           0        18 b157a71fae13c458
+    5 image-at-round-head      1        2      134       4      72         -1     -   -        356 2156          71          22           0        18 6afaa99d68819e4f
+the container grows only through the writer: size_delta per round vs 304*(n_bases delta) + 52*(n_units delta): [(304, 304), (304, 304), (356, 356), (-252, -252), (356, 356), (356, 356)]
+
+== table B: THE CARRY census at the boundary (this parse vs an INDEPENDENT second parse) ==
+round 4: bytes 243251; edits applied by the falsifier's own hand 6; year (2154, 2154) cur (3, 3) tf (0, 0); n_units (69, 69) n_bases (20, 20); tiles equal 69/69; grown 304-B records equal 2/2; rebuilt ledger 20 vs image 20; parent tile read FROM THE IMAGE == poison: True
+boundary edit offsets (first 8): [222783, 232147, 232148, 232149, 232150, 232151]
+
+== table C: CONFLUENCE (round-aligned boundary, nothing external) ==
+clean-with-boundary final e8cef60dc765c9b2 (243963 B) | uninterrupted final e8cef60dc765c9b2 (243963 B) | differing bytes 0
+size: 243963 vs 243963 (the save is 242539 B)
+
+== table D: THE NON-CARRY, measured (mid-gesture boundary) ==
+split-vs-uninterrupted: units whose FINAL tile differs 69 of 71; differing bytes 69 (unit-array 69, header 0); split sha 6e621ffd60b13476
+CONTROL budgetcarry (the spent word smuggled across the same split): differing bytes 0, sha e8cef60dc765c9b2 == uninterrupted e8cef60dc765c9b2: True
+first diverging units [0, 1, 2]: split [[54, 42], [38, 6], [57, 37]] vs uninterrupted [[52, 42], [36, 6], [55, 37]]
+
+== table E: THE FALSIFIER, both channels (poison in the boundary image only) ==
+unit channel: final x of unit 0 container 15 | smuggle 52 | clean 52 (poison value 7); units whose final tile differs container-vs-clean 3, smuggle-vs-clean 0
+smuggle final sha e8cef60dc765c9b2 == clean final sha e8cef60dc765c9b2: True (blind to the poison, not to writing)
+base channel (arrival composed AFTER the rebuild): [(2, 'image-at-round-head', [63, 51], 6), (3, 'image-at-round-head', [63, 51], 6), (4, 'image-at-round-head', [1447, 1448], 90), (5, 'image-at-round-head', [1447, 1448], 90)]
+frozen rival's post-boundary arrivals: [(4, 'model-constants', [63, 51], 6), (5, 'model-constants', [63, 51], 6)]
+
+== table F: rival signatures (SIGKEYS minus the mode label) ==
+container rows=6 digest abbd009eb9130792
+budgetcarry    differs=True  n_rows=6/6 digest 22e2668a038dbcd6 final_sha e8cef60dc765c9b2
+clean          differs=True  n_rows=6/6 digest 8bfb7bb3006ace12 final_sha e8cef60dc765c9b2
+frozen         differs=True  n_rows=6/6 digest c77406cb1e897498 final_sha 94da143e95fdd27d
+late           differs=True  n_rows=6/6 digest 6d232f45fcdad2fe final_sha 4dd15bf90981dc23
+lift           differs=True  n_rows=6/6 digest 49c6e07461df5244 final_sha 6419db934302c20d
+model          differs=True  n_rows=6/6 digest 238439930f714373 final_sha 993ad093aad54a09
+nowrite        differs=True  n_rows=6/6 digest 2a3ab04c24c79eb7 final_sha 20f0533194c0ebd4
+smuggle        differs=True  n_rows=6/6 digest d95e33102b572324 final_sha e8cef60dc765c9b2
+split          differs=True  n_rows=6/6 digest f2fe301979547c28 final_sha 6e621ffd60b13476
+uninterrupted  differs=True  n_rows=6/6 digest d95e33102b572324 final_sha e8cef60dc765c9b2
+
+== table G: modeled-span accounting + anchors ==
+record-aligned accounting, original save vs final container: {'header': 0, 'unit_xy': 67, 'unit_other': 0, 'base_id': 0, 'base_other': 0, 'tail': 0, 'grown_units': 208, 'grown_bases': 1216} (grown unit records 208 B, grown base records 1216 B are MODELED wholesale)
+container digest abbd009eb9130792 | rerun digest abbd009eb9130792 | equal=True | final sha 6afaa99d68819e4f / 6afaa99d68819e4f | images equal=True
+digest(B26 measured rows) 1721afbdd1439ec1 | rerun 1721afbdd1439ec1 | G9 pins ACCEPT_PIN 1721afbdd1439ec1
+  ok   G1 B25's own composed-move run is GREEN in-process ([("G1 B7's own slice re-derives on the same inputs (4 rounds, accepted [134, 134, 134, 134] / refused [67, 67, 67, 67]) and this composed run equals its per-unit accept pattern in 268/268 cells - the gesture law is imported, not forked", True), ("G2 identity round-trip through this call path True (242539 B), and every round's write touches exactly the moved tiles", True), ('G3 write-back fidelity', True), ('G4 the reload law. THE LAW IS BYTE-LEVEL CARRY', True), ('G5 coordinate space', True), ('G6 falsifier', True), ('G7 span accounting over the whole run', True), ('G8 rivals and controls (table E)', True), ('G9 determinism', True)]) and this run's per-round SAVE-unit accepted counts equal its rows [134, 134, 134, 134] vs [134, 134, 134, 134]
+  ok   G2 a zero-op/zero-press/zero-append build equals the original save byte-for-byte, and the recorded m289 stream applied through the ledger lands 6/6 ops (the run's rounds) with kinds fffdff and the log's OWN pre->post counts [(18, 19), (19, 20), (20, 21), (21, 20), (20, 21), (21, 22)] == recorded [(18, 19), (19, 20), (20, 21), (21, 20), (20, 21), (21, 22)]
+  ok   G3 CARRY: at the boundary year/cur/tf/n_units/n_bases agree with an independent second parse, 69/69 unit tiles and 2/2 grown 304-B records equal it, the rebuilt ledger length equals the image's count (20), and the parent base's tile read FROM THE IMAGE is the poison (6 edits landed): [(2154, 2154), (3, 3), (0, 0), (69, 69), (20, 20)]
+  ok   G4 CONFLUENCE: with nothing external at the boundary the loaded run's final container is byte-identical to the uninterrupted run's (243963 B, sha e8cef60dc765c9b2, differing bytes 0)
+  ok   G5 NON-CARRY MEASURED: a MID-GESTURE boundary diverges from the uninterrupted run in 69 units and 69 bytes (all of them unit-array x-bytes, header 0), while the control that smuggles the spent word across diverges by 0 bytes and reproduces its sha - so the divergence is the non-crossing budget, not an artifact of the boundary
+  ok   G6 FALSIFIER: the unit poison reaches the final container (unit 0 x: poisoned 15 vs clean 52) and shifts 3 units; the base poison reaches phase B's arrival through the container ([([1447, 1448], 90), ([1447, 1448], 90)] own4 True); the smuggler is BLIND (final sha == clean run's), the model-constants rival never sees it ([([63, 51], 6), ([63, 51], 6)])
+  ok   G7 every differing byte between the original save and the final container lies in a MODELED span - header 0 outside the writer's fields, unit records outside their x/y pair 0, base records outside +0..+4 0, tail 0, while 208 grown unit B and 1216 grown base B are modeled wholesale
+  ok   G8 RIVALS fail the same fit, measured - {'model': True, 'nowrite': True, 'late': True, 'lift': True, 'frozen': True, 'smuggle': True, 'split': True, 'budgetcarry': True, 'uninterrupted': True} (all differ from the container signature; every one of them still prints 6 rows)
+  ok   G9 determinism: the rerun reproduces the measured-row digest abbd009eb9130792 and the final container sha256 6afaa99d68819e4f (243963 B); the ACCEPT anchor of table G is 1721afbdd1439ec1 (rerun 1721afbdd1439ec1), pinned to the literal 1721afbdd1439ec1
+PASS B26: 9/9 gates

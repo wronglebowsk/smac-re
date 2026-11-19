@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B25 MERGED 9/9 + harness 13/13; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M321 done; next BUILD is B26, spine text NOT authored; analysis picks (vii) + (viii) open; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B25 MERGED 9/9 + harness 13/13; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B26 + M54A-M324 done; next BUILD is B27, spine text NOT authored; analysis picks (vii) + (viii) open; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -24,14 +24,12 @@ C1/C2 of `scripts/s292_cap_check.py` fail BY DESIGN (its STATUS note); only C3 s
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B25 MERGED**
-(B25 = #319, main 1556ce9) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). Next build **B26, NOT YET
-AUTHORED**: `BUILD_SPINE.md` ends at B25, so B26's rung text must be written BEFORE probing (one
-milestone = spine section + instrument). B25 (MERGED #319, main 1556ce9) ACCEPT anchors/digest, harness 13/13 + 3 declared NO-OP, the CONTAINER-owns-the-coordinate-space law, the tile-test-is-NOT-the-decoder lead (pick (vii)) and the M316/M315 summaries are VERBATIM at `docs/pick-archive.md` §trim-s298 (a); `NAMED ## B25` / `## M316` / `## M315` govern.
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
+(B25 = #319 main 1556ce9; B26 = this PR) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). **B26 MERGED** (this PR, `NAMED ## B26` governs). **B26 (s299, BUILD) ACCEPT**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 9/9 gates`, anchor `1721afbdd1439ec1` (`evidence/b26_selftest.txt:48`, gate line `:58`), stdout byte-identical to `python3 -u -m sim.composedsave` and to a re-run; harness `python3 -u scripts/b26_mutate.py` -> **14/14 scored, 0 NO-OP** (`evidence/b26_mutate.txt:18`), `--selftest` -> **5/5 perturbed declarations REJECTED** (`evidence/b26_mutate_selftest.txt:11`). THE LAW: the container is LOADED, not just written - the three laws and the four defects the gates caught are VERBATIM at §trim-s299 (e); `NAMED ## B26` governs. The rung text AND the instrument were authored the same fire, as B14-B25 did - `BUILD_SPINE.md` now ends at B26. Next build **B27, NOT YET AUTHORED** - `BUILD_SPINE.md` ends at B26, so B27's rung text must be written BEFORE probing (one milestone = spine section + instrument). B25/B26 build-track detail (ACCEPT anchors, digests, harness sets, the laws, the tile-test lead = pick (vii), the M316/M315 summaries) VERBATIM at `docs/pick-archive.md` §trim-s298 (a) + §trim-s299 (b) + §trim-s299 (d); `NAMED ## B25` / `## B26` / `## M316` / `## M315` govern.
 
 ## THE LEDGER
 
-Merged M54A-M309 + B0-B21 + hygiene #254-#280. UNMERGED: the six ids in `§trim-s202`, of which **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)** is live.
+Merged M54A-M324 + B0-B26 + hygiene #254-#280. UNMERGED: the six ids in `§trim-s202`, of which **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)** is live.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -53,18 +51,16 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
-- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M321 + B1-B25 (M241 FAIL 2/5 #180).
+- **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M324 + B1-B26 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
   CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted; its 5-line
   closure block moved VERBATIM to `docs/pick-archive.md` §trim-s295 (a). `NAMED ## M319` governs.
-  CLOSED + MERGED (pick (vi) = M321): FUN_004ee410 = the base FOOD/POPULATION status emitter,
-  FUN_004f41f0 = the base TALENT/PSYCH-REQUEST emitter (both push PE-read labels into `call
-  0x48f100`; 7 vs 1, disjoint); the shared `test BYTE PTR [rec+0x38],0x40` gates base_array
-  field 56 bit 6. Text VERBATIM at §trim-s297 of `docs/pick-archive.md`; `NAMED ## M321` governs
-  (#324 hardened at review: 7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2).
+  CLOSED + MERGED (pick (vi) = M321): `NAMED ## M321` governs (#324 hardened at review:
+  7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2); its OPEN-pick text sits
+  at §trim-s297 and its CLOSED block moved VERBATIM to §trim-s299 (c).
   OPEN PICK (viii) (NEW at the M321 triage, zero box): NAME FUN_0041a8f0 - it round-trips that
   field through the scratch dword `ds:0x99aa38` behind a 20-store tree (0x41a9d2-0x41ab6d), and
   47 whole-dword stores to the field are untraced. Start `evidence/m321_memo_owners.txt:47-81`.

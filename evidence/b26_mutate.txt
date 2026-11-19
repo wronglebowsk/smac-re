@@ -1,0 +1,18 @@
+shipped gates(): 9 rows G1,G2,G3,G4,G5,G6,G7,G8,G9
+== B26 mutation harness: 14 mutants (each must match its declared effect: an EXACT gate set, a declared message-matched CRASH, or a declared NO-OP) ==
+-- harness 2026-11-19 19:42:01 UTC --
+MU1    the falsifier's hand never fires (no image-only poison declared=G3,G6,G8,G9            measured=G3,G6,G8,G9          OK  (4/9 gates red)
+MU2    the resumed run keeps the MODEL's tiles through the lo declared=G6,G9                  measured=G6,G9                OK  (2/9 gates red)
+MU3    the writer is never rebased onto the loaded container  declared=G4,G5,G6,G9            measured=G4,G5,G6,G9          OK  (4/9 gates red)
+MU4    the mover's tiles never reach the writer (positions st declared=G4,G5,G6,G9            measured=G4,G5,G6,G9          OK  (4/9 gates red)
+MU5    the 'model' rival is fed the container at the boundary declared=G8                     measured=G8                   OK  (1/9 gates red)
+MU6    the arrival's parent tile is read from the ORIGINAL sa declared=G6,G9                  measured=G6,G9                OK  (2/9 gates red)
+MU7    the recorded stream's DESTROY never runs (op fidelity  declared=G2,G9                  measured=G2,G9                OK  (2/9 gates red)
+MU8    the mid-gesture split refreshes the budget for BOTH br declared=G5                     measured=G5                   OK  (1/9 gates red)
+MU9    the mid-gesture reload leaves the writer based on the  declared=G5                     measured=G5                   OK  (1/9 gates red)
+MU10   a write clobbers an UNMODELED byte (a unit's flag word declared=G7,G9                  measured=G7,G9                OK  (2/9 gates red)
+MU11   the resumed engine is not read from the header (year i declared=G4,G5,G6,G9            measured=G4,G5,G6,G9          OK  (4/9 gates red)
+MU12   the ACCEPT anchor stops covering the printed rows (the declared=G9                     measured=G9                   OK  (1/9 gates red)
+MU13   the identity round-trip is asserted instead of compute declared=G2                     measured=G2                   OK  (1/9 gates red)
+MU14   the smuggle rival is handed the edited container (blin declared=G6                     measured=G6                   OK  (1/9 gates red)
+== harness: 14/14 scored mutants matched their declared gate sets (+0 declared NO-OP: -) ==
