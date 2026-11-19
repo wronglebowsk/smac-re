@@ -344,6 +344,12 @@ def main():
         for c in sites:
             lo, hi = span(owner(c))
             win, blocks, a2b, preds = cfg(lo, hi)
+            if c not in a2b:      # an OWNER whose range does not contain its own call site
+                # is a census regression (e.g. a dropped containment bound). Fail a GATE,
+                # never crash: a crash is not a red gate, and a KeyError hides the number.
+                arrival["owner-span-mismatch"] += 1
+                ARR.append((c, nm, owner(c), "owner-span-mismatch", [("mismatch", hex(lo))]))
+                continue
             b = a2b[c]
             pe = sorted(preds[b])
             kinds = []
@@ -377,6 +383,11 @@ def main():
             continue
         lo, hi = span(nm)
         win, blocks, a2b, preds = cfg(lo, hi)
+        if a not in a2b:              # same law as T4: fail a gate, do not crash
+            store_edge[a] = None
+            print("   store %s %-16s SPAN MISMATCH (%s,%s) - counted as a skip"
+                  % (hex(a), nm, hex(lo), hex(hi)))
+            continue
         b = a2b[a]
         labs = [edge_class(flag_setter(blocks, p, blocks[p][1])) for p in sorted(preds[b])]
         store_edge[a] = labs
