@@ -1,0 +1,346 @@
+== M320 sibling census: block base 0x94d430 stride 0x20bc x8, window [0x94d430,0x95da10) ==
+hits total=4111  distinct offsets=208  sibling offsets=196  excluded offsets=12
+kind partition: R=3029 W=579 RW=195 lea=308
+
+-- SIBLING offsets (outside GOAL/SITE/REGION/VISIT) --
+off     abs0      refs   R   W  RW lea  sizes        scales  top funcs
++0x0000 0x94d430   168 122  18  17  11  dword:167,byte:1 *4:62   FUN_0055f650:12,FUN_004dc390:10,FUN_00519b00:10
++0x0001 0x94d431     3   3   0   0   0  byte:3       *4:3    FUN_005103b0:1,FUN_005a2be0:1,FUN_005a3470:1
++0x0004 0x94d434   196 188   2   5   1  dword:196    *4:62   FUN_00546800:33,FUN_00531df0:15,FUN_0053a9c0:15
++0x0008 0x94d438    72  69   2   1   0  dword:71,byte:1 *4:26   FUN_00531df0:5,FUN_004f6030:3,FUN_00502cd0:3
++0x000c 0x94d43c     3   1   1   0   1  dword:3      *4:2    FUN_004e3cf0:2,FUN_0059ec90:1
++0x0010 0x94d440     3   1   1   0   1  dword:3      *4:2    FUN_004e3cf0:2,FUN_0059ec90:1
++0x0014 0x94d444    15   7   6   1   1  dword:10,byte:5 *4:8    FUN_0055f650:8,FUN_0050cd90:3,FUN_004cca50:1
++0x0018 0x94d448   671 597  27   0  47  byte:339,dword:332 *4:486  FUN_0055f650:68,FUN_005551e0:52,FUN_00531df0:26
++0x0019 0x94d449     5   5   0   0   0  byte:5       *4:5    FUN_00552f10:2,FUN_005537d0:2,FUN_0053bb90:1
++0x001c 0x94d44c    22   0   0   0  22  dword:22     *4:5    FUN_005551e0:7,FUN_00531df0:6,FUN_00544530:2
++0x0034 0x94d464     1   0   0   0   1  dword:1      -       FUN_00522b70:1
++0x0038 0x94d468    78  57   8   0  13  dword:68,byte:10 *4:35   FUN_00531df0:10,FUN_00551c40:8,FUN_00552970:8
++0x0039 0x94d469     1   1   0   0   0  byte:1       -       FUN_00540390:1
++0x003c 0x94d46c     1   0   0   0   1  dword:1      -       FUN_005551e0:1
++0x0058 0x94d488    49  22  22   2   3  dword:49     *4:16   FUN_00546800:9,FUN_0053e7d0:6,FUN_004da2c0:5
++0x0078 0x94d4a8    39   5  26   6   2  dword:39     *4:19   FUN_00546800:8,FUN_005551e0:5,FUN_0052a720:4
++0x0098 0x94d4c8    11   3   7   0   1  dword:11     -       FUN_0052a720:4,FUN_005551e0:4,FUN_00551cf0:1
++0x00b8 0x94d4e8    40  16  17   1   6  byte:34,dword:6 *1:26,*4:14 FUN_00546800:9,FUN_0053e7d0:6,FUN_0052a720:4
++0x00c0 0x94d4f0    17  12   3   0   2  dword:17     *4:3    FUN_0049fee0:4,FUN_00411d00:2,FUN_00445900:2
++0x00c4 0x94d4f4    34  24  10   0   0  dword:34     *4:14   FUN_0049fee0:9,FUN_00520540:6,FUN_00546800:5
++0x00e4 0x94d514    15   7   4   4   0  dword:15     *4:7    FUN_00445900:4,FUN_00520540:3,FUN_0049fee0:2
++0x0124 0x94d554    57  42   6   5   4  dword:57     *4:23   FUN_00546800:9,FUN_005076d0:6,FUN_0053e7d0:6
++0x0128 0x94d558    23  12   7   0   4  dword:23     *4:8    FUN_005076d0:4,FUN_0052a720:4,FUN_00533e70:4
++0x012c 0x94d55c    33  15   9   2   7  dword:33     *4:14   FUN_00546800:12,FUN_0053e7d0:9,FUN_0052a720:4
++0x014c 0x94d57c    13   6   6   1   0  dword:13     *4:3    FUN_0052a720:4,FUN_005076d0:3,FUN_00546800:3
++0x0150 0x94d580     1   0   0   0   1  dword:1      -       FUN_00546800:1
++0x016c 0x94d59c    10   4   5   1   0  dword:10     *4:2    FUN_005076d0:7,FUN_004da2c0:2,FUN_0055f650:1
++0x018c 0x94d5bc    14   8   6   0   0  dword:14     *4:2    FUN_00502cd0:6,FUN_004da2c0:2,FUN_00507ef0:2
++0x01ac 0x94d5dc    24  15   8   0   1  dword:24     *4:5    FUN_00502cd0:8,FUN_00546800:6,FUN_004da2c0:2
++0x01cc 0x94d5fc    11   7   1   0   3  dword:11     *4:7    FUN_00546800:4,FUN_00538040:2,FUN_0053a820:2
++0x01d0 0x94d600     8   4   3   0   1  dword:8      *4:4    FUN_004e5ae0:2,FUN_0059ec90:2,FUN_0041a8f0:1
++0x01d4 0x94d604    18  11   5   2   0  dword:18     *4:3    FUN_00554850:7,FUN_00546800:6,FUN_004da2c0:2
++0x01d8 0x94d608    21  18   2   0   1  dword:21     *4:9    FUN_004da2c0:2,FUN_00531df0:2,FUN_00542810:2
++0x01dc 0x94d60c     6   3   3   0   0  dword:6      -       FUN_0058fa40:4,FUN_0058f4f0:1,FUN_0059ec90:1
++0x01e0 0x94d610     5   3   0   0   2  dword:5      *4:4    FUN_0058fa40:4,FUN_004f6030:1
++0x0200 0x94d630     4   2   0   0   2  dword:4      *4:2    FUN_0058fa40:2,FUN_004f6030:1,FUN_0059ec90:1
++0x0220 0x94d650   261 179  34  21  27  dword:261    *4:65   FUN_00546800:26,FUN_0058fa40:17,FUN_005375e0:16
++0x0224 0x94d654    13   8   2   3   0  dword:13     -       FUN_00419c30:7,FUN_005208f0:2,FUN_00416730:1
++0x0228 0x94d658    17  10   1   0   6  dword:17     *4:13   FUN_00546800:5,FUN_00522b70:2,FUN_005a1ad0:2
++0x022c 0x94d65c     3   3   0   0   0  dword:3      -       FUN_004e9be0:2,FUN_004eaa10:1
++0x0238 0x94d668     4   0   0   0   4  dword:4      -       FUN_005a1ad0:2,FUN_005a1830:1,FUN_005a18b0:1
++0x0248 0x94d678     8   2   4   2   0  dword:8      -       FUN_004b2570:3,FUN_005a1ad0:2,FUN_004b33c0:1
++0x024c 0x94d67c    16  13   0   0   3  dword:16     *4:8    FUN_004b3af0:3,FUN_005a77f0:3,FUN_004b4dd0:2
++0x0250 0x94d680     6   6   0   0   0  dword:6      *4:2    FUN_004f6030:2,FUN_004e9880:1,FUN_004e9b40:1
++0x0254 0x94d684     6   6   0   0   0  dword:6      *4:4    FUN_004f2ea0:2,FUN_0040ddd0:1,FUN_004e8d60:1
++0x0258 0x94d688     2   2   0   0   0  dword:2      -       FUN_004e9be0:1,FUN_004f6030:1
++0x025c 0x94d68c    22  21   0   1   0  dword:22     *4:3    FUN_004f6030:8,FUN_00574370:5,FUN_004bd0d0:2
++0x0260 0x94d690    16  15   0   0   1  dword:16     *4:5    FUN_0051fe90:3,FUN_0040ddd0:2,?:2
++0x0264 0x94d694     2   2   0   0   0  dword:2      *4:1    FUN_004e40a0:1,FUN_004e92c0:1
++0x0268 0x94d698     6   5   0   1   0  dword:6      -       FUN_004e6960:1,FUN_004e6d40:1,FUN_004e7070:1
++0x026c 0x94d69c     1   1   0   0   0  dword:1      -       FUN_004f6030:1
++0x0270 0x94d6a0     2   2   0   0   0  dword:2      *4:1    FUN_004e40a0:1,FUN_00574370:1
++0x0274 0x94d6a4     5   5   0   0   0  dword:5      -       FUN_004f34b0:2,FUN_00445900:1,FUN_004aa7b0:1
++0x0278 0x94d6a8     1   0   0   0   1  dword:1      -       FUN_005a1830:1
++0x0280 0x94d6b0     1   1   0   0   0  dword:1      -       FUN_004e47d0:1
++0x0288 0x94d6b8     4   4   0   0   0  dword:4      *4:3    FUN_004bd0d0:1,FUN_004fe720:1,FUN_004fe930:1
++0x028c 0x94d6bc     1   1   0   0   0  dword:1      *4:1    FUN_0041c2f0:1
++0x0294 0x94d6c4     9   8   0   0   1  dword:9      *4:4    FUN_00585720:3,FUN_004febe0:2,FUN_0055bbb0:1
++0x0298 0x94d6c8     6   6   0   0   0  dword:6      *4:2    FUN_0058fa40:5,FUN_005ac0a0:1
++0x02a4 0x94d6d4     1   0   0   0   1  dword:1      -       FUN_005a1830:1
++0x02a8 0x94d6d8     1   1   0   0   0  dword:1      -       FUN_0051fe90:1
++0x02d0 0x94d700    17  10   0   2   5  dword:17     *4:14   FUN_004b3050:4,FUN_004b47f0:4,FUN_0059ec00:3
++0x02e0 0x94d710     2   2   0   0   0  dword:2      -       FUN_0059ce10:1,FUN_0059ec90:1
++0x02ec 0x94d71c     6   6   0   0   0  dword:6      -       FUN_00585720:3,FUN_004e47d0:1,FUN_005a1ad0:1
++0x02f8 0x94d728     3   3   0   0   0  dword:3      -       FUN_0059ce10:1,FUN_0059ec90:1,FUN_005aab70:1
++0x02fc 0x94d72c    15  11   3   0   1  dword:15     *4:2    FUN_00520540:5,FUN_004eaa10:2,FUN_00531df0:2
++0x0300 0x94d730    13   8   4   1   0  dword:13     -       FUN_00520540:6,FUN_004f47f0:2,FUN_00535c60:2
++0x0304 0x94d734    57  47   4   6   0  dword:57     *4:3    FUN_00546800:16,FUN_00531df0:8,FUN_0053bb90:8
++0x0308 0x94d738     5   2   2   1   0  dword:5      -       FUN_00520540:2,FUN_0045a920:1,FUN_004f5a70:1
++0x030c 0x94d73c     2   0   2   0   0  dword:2      -       FUN_00520540:1,FUN_0059ec90:1
++0x0310 0x94d740     2   0   2   0   0  dword:2      -       FUN_00520540:1,FUN_0059ec90:1
++0x0314 0x94d744     9   4   1   2   2  dword:9      *4:1    FUN_005a77f0:4,FUN_004e6960:1,FUN_004ebef0:1
++0x0318 0x94d748     6   3   1   2   0  dword:6      -       FUN_005a77f0:2,FUN_004e6d40:1,FUN_004ebef0:1
++0x031c 0x94d74c     6   3   1   2   0  dword:6      -       FUN_005a77f0:2,FUN_004e7070:1,FUN_004ebef0:1
++0x0320 0x94d750     1   0   1   0   0  dword:1      -       FUN_0059ec90:1
++0x0324 0x94d754    44  27   8   8   1  dword:44     *4:2    FUN_0051fe90:22,FUN_004b33c0:5,FUN_004eaa10:4
++0x0328 0x94d758    51  26  12  13   0  dword:51     -       FUN_0051fe90:25,FUN_004b33c0:10,FUN_004eaa10:3
++0x032c 0x94d75c     5   2   2   0   1  dword:5      *4:4    FUN_00546800:4,FUN_0059ec90:1
++0x035c 0x94d78c    72  62   6   0   4  dword:72     *4:24   FUN_00538040:8,FUN_0058fa40:6,FUN_004f6030:5
++0x0360 0x94d790     7   3   4   0   0  dword:7      -       FUN_005a7970:4,FUN_0059ec90:2,FUN_005aab70:1
++0x0364 0x94d794    15   7   3   4   1  dword:15     *4:3    FUN_004fdaf0:3,FUN_004a4560:2,FUN_004a4700:2
++0x0368 0x94d798    10   7   1   2   0  dword:10     *4:3    FUN_004aa7b0:2,FUN_00488e80:1,FUN_0048a170:1
++0x036c 0x94d79c     5   3   1   0   1  byte:4,dword:1 *4:3,*1:1 FUN_005534c0:3,FUN_0059ec90:1,FUN_005a7970:1
++0x03c8 0x94d7f8    25  14   8   2   1  dword:25     *4:1    FUN_005aadf0:6,FUN_005102f0:4,FUN_0058fa40:4
++0x03cc 0x94d7fc    47  35   8   0   4  dword:47     *4:6    FUN_0049c070:13,FUN_005aaa20:5,FUN_00546800:4
++0x03d0 0x94d800     5   2   3   0   0  dword:5      -       FUN_005aadf0:2,FUN_0058fa40:1,FUN_0059ec90:1
++0x03d4 0x94d804     4   2   2   0   0  dword:4      -       FUN_005aaa20:2,FUN_0059ec90:1,FUN_005aab70:1
++0x03d8 0x94d808     5   1   4   0   0  dword:5      -       FUN_004f34b0:3,FUN_00519b00:1,FUN_0059ec90:1
++0x03dc 0x94d80c    78  64   6   7   1  dword:78     *4:8    FUN_00574370:16,FUN_0059ec90:7,FUN_00522b70:6
++0x03e0 0x94d810    36  30   6   0   0  dword:36     *4:1    FUN_0059ce10:5,FUN_00574370:4,FUN_00522b70:3
++0x03e4 0x94d814    42  36   6   0   0  dword:42     *4:1    FUN_00574370:5,FUN_0051fe90:4,FUN_00522b70:3
++0x03e8 0x94d818    46  39   6   1   0  dword:46     *4:1    FUN_0051fe90:6,FUN_00574370:4,FUN_004f26e0:3
++0x03ec 0x94d81c    62  54   6   2   0  dword:62     *4:1    FUN_00574370:15,FUN_0051fe90:5,FUN_00522b70:5
++0x03f0 0x94d820    30  23   7   0   0  dword:30     -       FUN_00556690:9,FUN_0055f650:5,FUN_005416d0:3
++0x03f4 0x94d824    24  18   6   0   0  dword:24     -       FUN_00556690:8,FUN_0055f650:4,FUN_005416d0:2
++0x03f8 0x94d828    11   8   3   0   0  dword:11     -       FUN_004f6030:7,FUN_004ef6d0:2,FUN_00520540:1
++0x03fc 0x94d82c     4   1   2   1   0  dword:4      *4:2    FUN_00524340:2,FUN_00429950:1,FUN_0059ec90:1
++0x0400 0x94d830     8   5   3   0   0  dword:8      *4:5    FUN_00535c60:3,FUN_00523a20:2,FUN_00425be0:1
++0x042c 0x94d85c     9   5   3   0   1  dword:9      *4:4    FUN_00535c60:4,FUN_00425be0:1,FUN_004266c0:1
++0x0458 0x94d888     6   2   1   1   2  byte:3,dword:3 *4:3,*1:2 FUN_004e45b0:2,FUN_004ef6d0:2,FUN_004e4550:1
++0x045c 0x94d88c     1   0   1   0   0  byte:1       -       FUN_0059ec90:1
++0x0460 0x94d890    22  17   4   0   1  dword:22     *4:1    FUN_004f4a50:12,FUN_004f6030:3,FUN_004ef6d0:2
++0x0464 0x94d894    12   9   3   0   0  dword:12     -       FUN_00556690:3,FUN_0055f650:3,FUN_00541bb0:2
++0x0468 0x94d898     2   0   1   0   1  dword:2      *4:1    FUN_0052a720:1,FUN_0059ec90:1
++0x046c 0x94d89c     4   0   0   0   4  dword:4      *8:1    FUN_0040a990:3,FUN_0059ec90:1
++0x052c 0x94d95c     3   1   1   0   1  dword:3      *4:2    FUN_0040a990:2,FUN_0059ec90:1
++0x054c 0x94d97c     2   0   0   0   2  dword:2      *8:2    FUN_0040a990:2
++0x0684 0x94dab4     2   1   0   0   1  dword:2      *4:2    FUN_004e9be0:2
++0x068c 0x94dabc     2   1   0   0   1  dword:2      *4:1    FUN_00520540:1,FUN_005a1ad0:1
++0x069c 0x94dacc     2   1   0   0   1  dword:2      *4:2    FUN_004e8d60:2
++0x06ac 0x94dadc     2   1   0   0   1  dword:2      *4:1    FUN_00520540:1,FUN_005a1ad0:1
++0x077c 0x94dbac     4   3   0   0   1  dword:4      *4:4    FUN_004ef6d0:2,FUN_004ae000:1,FUN_004f6030:1
++0x07cc 0x94dbfc     6   3   0   0   3  dword:6      *4:5    FUN_004e9880:4,FUN_00520540:1,FUN_005a1ad0:1
++0x07f0 0x94dc20     4   2   2   0   0  dword:4      *4:1    FUN_004f5a70:2,FUN_00520540:1,FUN_005a1ad0:1
++0x07f4 0x94dc24     4   2   1   0   1  dword:4      *4:2    FUN_004e8d60:2,FUN_00520540:1,FUN_005a1ad0:1
++0x07f8 0x94dc28     5   3   2   0   0  dword:5      -       FUN_004f4a50:2,FUN_00520540:1,FUN_005a1ad0:1
++0x07fc 0x94dc2c     5   2   2   1   0  dword:5      -       FUN_004e92c0:3,FUN_00520540:1,FUN_005a1ad0:1
++0x0800 0x94dc30     4   2   2   0   0  dword:4      -       FUN_004f34b0:2,FUN_00520540:1,FUN_005a1ad0:1
++0x0804 0x94dc34    20  15   3   1   1  dword:20     *4:17   FUN_004a4700:7,FUN_004a3080:4,FUN_004a4560:2
++0x0808 0x94dc38     4   1   1   2   0  dword:4      -       FUN_004a7d40:1,FUN_004ae000:1,FUN_004e93f0:1
++0x080c 0x94dc3c     3   0   1   2   0  dword:3      -       FUN_004a7d40:1,FUN_004ae000:1,FUN_0059ec90:1
++0x0810 0x94dc40    16  11   1   2   2  dword:16     *4:3    FUN_004a4560:4,FUN_004f6030:3,FUN_004d0f60:2
++0x0814 0x94dc44    10   7   3   0   0  dword:10     -       FUN_005563f0:3,FUN_0058fa40:2,FUN_00531df0:1
++0x0818 0x94dc48     5   2   3   0   0  dword:5      -       FUN_005563f0:3,FUN_0059ec90:1,FUN_005a1ad0:1
++0x081c 0x94dc4c     4   1   3   0   0  dword:4      -       FUN_005563f0:3,FUN_0059ec90:1
++0x0820 0x94dc50    16  13   3   0   0  dword:16     -       FUN_004f6030:6,FUN_005563f0:3,FUN_00574370:2
++0x0824 0x94dc54     5   2   3   0   0  dword:5      -       FUN_005563f0:3,FUN_0058fa40:1,FUN_0059ec90:1
++0x0828 0x94dc58    19  16   3   0   0  dword:19     *4:11   FUN_00572800:6,FUN_005563f0:4,FUN_00573a90:2
++0x082c 0x94dc5c     9   6   3   0   0  dword:9      *4:4    FUN_005563f0:3,FUN_00573a90:2,FUN_00556690:1
++0x0830 0x94dc60     5   2   3   0   0  dword:5      -       FUN_005563f0:3,FUN_00574370:1,FUN_0059ec90:1
++0x0834 0x94dc64     5   2   3   0   0  dword:5      -       FUN_005563f0:3,FUN_00574370:1,FUN_0059ec90:1
++0x0838 0x94dc68     5   2   3   0   0  dword:5      -       FUN_005563f0:3,FUN_00574370:1,FUN_0059ec90:1
++0x083c 0x94dc6c     5   2   2   1   0  dword:5      -       FUN_00556690:4,FUN_004f6030:1
++0x0840 0x94dc70     4   2   1   1   0  dword:4      -       FUN_004f6030:2,FUN_00556690:2
++0x0844 0x94dc74    11   9   1   1   0  dword:11     -       FUN_004f6030:5,FUN_00574370:4,FUN_00556690:2
++0x0848 0x94dc78     2   2   0   0   0  dword:2      -       FUN_004f6030:1,FUN_0055c920:1
++0x084c 0x94dc7c     5   3   1   1   0  dword:5      -       FUN_004f6030:2,FUN_00556690:2,FUN_00574370:1
++0x0854 0x94dc84    89  63   8   8  10  byte:79,dword:10 *1:69,*4:16 FUN_0058fa40:7,FUN_00438ad0:6,FUN_004d20f0:6
++0x0855 0x94dc85     1   1   0   0   0  byte:1       *4:1    FUN_004ee410:1
++0x0856 0x94dc86     2   1   1   0   0  byte:2       -       FUN_00572520:2
++0x085b 0x94dc8b     1   1   0   0   0  byte:1       -       FUN_0056df40:1
++0x085f 0x94dc8f     1   1   0   0   0  byte:1       -       FUN_0056df40:1
++0x0860 0x94dc90     2   2   0   0   0  byte:2       *4:1    FUN_0056df40:2
++0x0861 0x94dc91     3   3   0   0   0  byte:3       -       FUN_0056df40:2,FUN_004f6030:1
++0x0a54 0x94de84    35  17   2   7   9  byte:26,dword:9 *1:22,*4:12 FUN_00417ee0:6,FUN_004a47f0:3,FUN_004e5560:3
++0x0c54 0x94e084     6   4   1   1   0  word:6       *2:6    FUN_004a47f0:3,FUN_004aeea0:1,FUN_00501fc0:1
++0x1054 0x94e484    12   5   3   2   2  dword:12     *4:4    FUN_00556690:3,FUN_005ab650:2,FUN_005abb40:2
++0x1058 0x94e488    99  86  10   2   1  dword:99     *4:15   FUN_004f6030:16,?:5,FUN_0056df40:5
++0x105c 0x94e48c    70  67   3   0   0  dword:70     *4:19   FUN_00546800:20,FUN_00531df0:14,FUN_0053bb90:5
++0x1060 0x94e490     7   4   3   0   0  dword:7      -       FUN_00556690:3,FUN_00522b70:2,FUN_00546800:1
++0x1064 0x94e494    18  15   3   0   0  dword:18     *4:1    FUN_00522b70:7,FUN_00556690:3,FUN_0045a920:2
++0x1068 0x94e498    10   6   3   1   0  dword:10     -       FUN_00556690:6,FUN_004f6030:2,FUN_0059ec90:1
++0x106c 0x94e49c    16  12   1   1   2  dword:16     *4:4    FUN_004f6030:4,FUN_005346b0:3,FUN_00522b70:2
++0x1070 0x94e4a0    15   7   8   0   0  dword:15     -       FUN_00556690:8,FUN_005ab650:5,FUN_004f6030:1
++0x1074 0x94e4a4    19  10   9   0   0  dword:16,byte:3 -       FUN_00556690:11,FUN_005ab650:7,FUN_00541bb0:1
++0x1078 0x94e4a8    24  21   0   2   1  word:23,dword:1 *2:11   FUN_0055f650:5,FUN_004f6030:4,FUN_00546800:4
++0x1178 0x94e5a8   118  92   5   0  21  byte:97,dword:21 *1:87,*4:12 FUN_0055f650:25,FUN_004f6030:19,FUN_00556690:16
++0x11f8 0x94e628    10   6   4   0   0  byte:10      *1:10   FUN_00556690:5,FUN_004f6030:4,FUN_0059ec90:1
++0x1278 0x94e6a8    24  21   0   1   2  word:22,dword:2 *2:13   FUN_00546800:7,FUN_00551e50:6,FUN_00556690:3
++0x1378 0x94e7a8    29  19   3   6   1  byte:15,word:13,dword:1 *2:17   FUN_00556690:11,FUN_0055f650:10,FUN_004f6030:7
++0x1379 0x94e7a9    28  21   0   7   0  byte:28      *2:20   FUN_004f6030:13,FUN_00556690:9,FUN_0055f650:4
++0x1478 0x94e8a8     2   1   0   1   0  word:2       *2:1    FUN_0045a920:1,FUN_0051dcb0:1
++0x1578 0x94e9a8     3   2   0   0   1  word:2,dword:1 *2:3    FUN_0051dcb0:1,FUN_0055f650:1,FUN_005a90a0:1
++0x1678 0x94eaa8     4   2   0   2   0  word:4       *2:1    FUN_00556690:2,FUN_0051dcb0:1,FUN_0055f650:1
++0x1778 0x94eba8     5   4   0   1   0  word:5       -       FUN_0055f650:3,FUN_0051dcb0:1,FUN_00556690:1
++0x2038 0x94f468     1   0   1   0   0  dword:1      -       FUN_0059ec90:1
++0x203c 0x94f46c     3   1   2   0   0  dword:3      -       FUN_0056df40:2,FUN_0059ec90:1
++0x2040 0x94f470     4   2   1   0   1  dword:4      *4:3    FUN_0056df40:3,FUN_0059ec90:1
++0x2044 0x94f474     4   2   2   0   0  dword:4      -       FUN_0056df40:3,FUN_0059ec90:1
++0x2048 0x94f478     4   2   1   0   1  dword:4      *4:2    FUN_0056df40:3,FUN_0059ec90:1
++0x204c 0x94f47c     4   2   2   0   0  dword:4      -       FUN_005a7970:2,FUN_0059ce10:1,FUN_0059ec90:1
++0x2050 0x94f480     5   3   1   0   1  dword:5      *4:3    FUN_0052bce0:2,FUN_00481df0:1,FUN_005122e0:1
++0x2058 0x94f488     9   4   3   1   1  dword:9      *4:8    FUN_004e5560:6,FUN_00507ef0:2,FUN_0059ec90:1
++0x205c 0x94f48c     1   0   1   0   0  dword:1      -       FUN_0059ec90:1
++0x2060 0x94f490     1   0   1   0   0  dword:1      -       FUN_0059ec90:1
++0x2064 0x94f494     1   0   1   0   0  dword:1      -       FUN_0059ec90:1
++0x2068 0x94f498     1   0   1   0   0  dword:1      -       FUN_0059ec90:1
++0x206c 0x94f49c    14   9   4   0   1  dword:14     *4:3    FUN_004e2050:4,FUN_004e4e10:2,FUN_00507ef0:2
++0x2070 0x94f4a0     9   5   4   0   0  dword:9      -       FUN_00507ef0:3,FUN_004e2050:2,FUN_004e4e10:2
++0x2074 0x94f4a4     3   2   0   0   1  dword:3      *4:2    FUN_00501fc0:2,FUN_0059a490:1
++0x2078 0x94f4a8     2   0   2   0   0  dword:2      -       FUN_0059ec90:2
++0x207c 0x94f4ac     2   1   0   0   1  dword:2      *4:2    FUN_005713b0:2
++0x2080 0x94f4b0    34  20   9   5   0  dword:26,byte:8 -       FUN_0059ec90:11,FUN_004dc390:9,FUN_004f6030:7
++0x2084 0x94f4b4     8   6   1   1   0  dword:8      -       FUN_00574370:3,FUN_00556690:2,FUN_0055c920:2
++0x2088 0x94f4b8     6   4   1   1   0  dword:6      -       FUN_00574370:3,FUN_00556690:2,FUN_004f6030:1
++0x208c 0x94f4bc     7   4   3   0   0  dword:7      *4:4    FUN_0059af40:3,FUN_0044aeb0:1,FUN_00497d80:1
++0x2090 0x94f4c0     2   1   0   0   1  dword:2      *4:2    FUN_005a0aa0:2
++0x2094 0x94f4c4     3   2   0   0   1  dword:3      *4:1    FUN_004a5060:2,FUN_0059af40:1
++0x2098 0x94f4c8     8   6   1   0   1  dword:8      *4:8    FUN_004a5060:5,FUN_0059af40:2,FUN_0044aeb0:1
++0x20a0 0x94f4d0     1   1   0   0   0  dword:1      -       FUN_0044aeb0:1
++0x20a4 0x94f4d4     1   1   0   0   0  dword:1      -       FUN_0044aeb0:1
++0x20a8 0x94f4d8     1   1   0   0   0  dword:1      *4:1    FUN_0044aeb0:1
++0x20ac 0x94f4dc     2   2   0   0   0  dword:2      *4:1    FUN_0044aeb0:1,FUN_004a5060:1
++0x20b0 0x94f4e0     1   1   0   0   0  dword:1      *4:1    FUN_0044aeb0:1
++0x20b4 0x94f4e4     4   4   0   0   0  dword:4      -       FUN_004a5060:2,FUN_0059af40:2
++0x20b8 0x94f4e8     1   1   0   0   0  dword:1      -       FUN_004a5060:1
+
+-- sibling consts written / tested-against (naming material) --
++0x0000  W-consts {'0x1000000': 2, '0x2000000': 2, '0x4000000': 2, '0x8000000': 2, '0x10000000': 2, '0x800000': 1, '0x400000': 1, '0x80000000': 1} | cmp/test {'0x400000': 7, '0x20000000': 6, '0x1000000': 5, '0x200': 4, '0x80000': 4, '0x40000000': 3, '0x200000': 3, '0x10000000': 1}
++0x0001  W-consts {} | cmp/test {'0x2': 3}
++0x0004  W-consts {} | cmp/test {'0x6': 25, '0x5': 14, '0x4': 10, '0x7': 8, '0x2': 1}
++0x0008  W-consts {} | cmp/test {'0x1': 17, '0x2': 5, '0x4': 3, '0x0': 2, '0x3': 1}
++0x0014  W-consts {} | cmp/test {'0x10': 3, '0x7': 2}
++0x0018  W-consts {} | cmp/test {'0x1': 150, '0x10': 62, '0x20': 34, '0x7': 18, '0x2': 16, '0x8': 10, '0x3': 8, '0x2000000': 5}
++0x0019  W-consts {} | cmp/test {'0x10': 4, '0x80': 1}
++0x0038  W-consts {} | cmp/test {'0x8': 4, '0x20': 3, '0x2000': 1, '0x80': 1, '0x2408': 1, '0x2': 1}
++0x0039  W-consts {} | cmp/test {'0x10': 1}
++0x0058  W-consts {} | cmp/test {'0xa': 1}
++0x0098  W-consts {'0x32': 4} | cmp/test {}
++0x00b8  W-consts {'0x0': 4} | cmp/test {'0x2': 1, '0x1': 1}
++0x00c0  W-consts {} | cmp/test {'0x0': 5}
++0x00c4  W-consts {'0x0': 1} | cmp/test {'0x0': 9}
++0x0124  W-consts {} | cmp/test {'0x2': 2, '0x5': 2, '0x3': 1, '0x4': 1}
++0x014c  W-consts {'0x0': 1} | cmp/test {}
++0x01ac  W-consts {'0x0': 2} | cmp/test {}
++0x01d0  W-consts {'0xdfbe41': 1, '0xc0dfbe41': 1} | cmp/test {}
++0x01d4  W-consts {} | cmp/test {'0x5': 1}
++0x01d8  W-consts {} | cmp/test {'0x0': 2}
++0x0220  W-consts {'0xfffffc18': 1} | cmp/test {'0x3e8': 1, '0xa': 1, '0x7d': 1}
++0x022c  W-consts {} | cmp/test {'0x1': 2, '0x2': 1}
++0x0248  W-consts {'0x0': 1} | cmp/test {}
++0x024c  W-consts {} | cmp/test {'0x2': 1, '0x4': 1}
++0x0250  W-consts {} | cmp/test {'0xfffffffc': 2}
++0x0254  W-consts {} | cmp/test {'0xfffffffc': 1}
++0x025c  W-consts {} | cmp/test {'0x2': 1, '0x3': 1}
++0x0260  W-consts {} | cmp/test {'0xfffffffe': 2, '0xfffffffd': 2, '0x0': 1, '0xffffffff': 1}
++0x0294  W-consts {} | cmp/test {'0x2': 1}
++0x0298  W-consts {} | cmp/test {'0x3': 1}
++0x02d0  W-consts {} | cmp/test {'0x0': 2}
++0x0314  W-consts {} | cmp/test {'0x1': 1}
++0x0324  W-consts {'0x0': 2} | cmp/test {'0x2': 1}
++0x0328  W-consts {'0x5': 1} | cmp/test {'0x0': 1}
++0x035c  W-consts {'0x1': 1} | cmp/test {}
++0x0368  W-consts {} | cmp/test {'0x0': 1}
++0x03c8  W-consts {'0x0': 1} | cmp/test {}
++0x03cc  W-consts {'0xffffffff': 4} | cmp/test {'0x0': 2, '0x58': 2}
++0x03d0  W-consts {'0xffffffff': 2} | cmp/test {}
++0x03dc  W-consts {'0x1': 2, '0xffffffff': 1, '0x0': 1} | cmp/test {'0x1': 4, '0x0': 2}
++0x03e0  W-consts {} | cmp/test {'0x0': 1}
++0x03e4  W-consts {} | cmp/test {'0x0': 1}
++0x03e8  W-consts {} | cmp/test {'0x0': 1}
++0x03ec  W-consts {} | cmp/test {'0x0': 2}
++0x03f0  W-consts {'0xffffffff': 1} | cmp/test {'0x0': 1}
++0x03fc  W-consts {'0xfffffc19': 1} | cmp/test {}
++0x0400  W-consts {'0x0': 1} | cmp/test {'0x0': 1}
++0x042c  W-consts {'0x0': 1} | cmp/test {}
++0x0460  W-consts {} | cmp/test {'0x4': 5, '0x2': 2, '0x7': 1}
++0x077c  W-consts {} | cmp/test {'0x0': 1}
++0x0804  W-consts {} | cmp/test {'0x0': 5}
++0x0810  W-consts {} | cmp/test {'0x0': 2}
++0x0814  W-consts {'0x1': 1} | cmp/test {}
++0x0820  W-consts {'0x1': 1} | cmp/test {'0x2': 3, '0x1': 2}
++0x0824  W-consts {'0x1': 1} | cmp/test {}
++0x0830  W-consts {} | cmp/test {'0x1': 1}
++0x0854  W-consts {'0x0': 2} | cmp/test {'0x1': 3, '0x0': 2, '0x2': 1}
++0x0a54  W-consts {'0x0': 2} | cmp/test {}
++0x1054  W-consts {} | cmp/test {'0x200': 1, '0x3': 1}
++0x1058  W-consts {'0x0': 1} | cmp/test {'0x1': 10, '0x8': 4, '0x4': 4, '0x2': 4, '0x3': 1}
++0x1064  W-consts {} | cmp/test {'0x2': 1}
++0x1074  W-consts {} | cmp/test {'0x1': 2, '0x2': 1}
++0x1078  W-consts {} | cmp/test {'0x2': 1, '0x0': 1}
++0x1178  W-consts {'0x0': 2} | cmp/test {'0x0': 7, '0x1': 5, '0x3': 2, '0x4': 1}
++0x11f8  W-consts {'0x0': 2} | cmp/test {}
++0x1378  W-consts {'0x80': 1, '0x4': 1, '0x1': 1, '0x9': 1, '0x2': 1} | cmp/test {'0x20': 3, '0x80': 3, '0x6': 2, '0x401': 1, '0x1': 1}
++0x1379  W-consts {'0x20': 2, '0x10': 1, '0x2': 1, '0x40': 1, '0x4': 1, '0x1': 1} | cmp/test {'0x40': 8, '0x4': 7, '0x8': 2, '0x20': 2, '0x6': 1, '0x42': 1}
++0x1678  W-consts {'0xfff6': 1} | cmp/test {}
++0x2050  W-consts {'0x1': 1} | cmp/test {}
++0x2078  W-consts {'0x0': 1} | cmp/test {}
++0x2080  W-consts {'0x1': 1, '0x2': 1, '0x4': 1, '0x8': 1} | cmp/test {'0x20': 2, '0x10': 2, '0x8': 2, '0x4': 1, '0x2': 1}
++0x2094  W-consts {} | cmp/test {'0x0': 1}
++0x2098  W-consts {} | cmp/test {'0x0': 3}
++0x20ac  W-consts {} | cmp/test {'0x0': 1}
++0x20b4  W-consts {} | cmp/test {'0x0': 2}
++0x20b8  W-consts {} | cmp/test {'0x0': 1}
+
+-- excluded-zone offsets (sanity: named structures only) --
++0x1878 VISIT  refs=7
++0x18f8 VISIT  refs=3
++0x1978 REGION refs=79
++0x19f8 GOAL   refs=17
++0x19fa GOAL   refs=12
++0x19fc GOAL   refs=17
++0x1a00 GOAL   refs=17
++0x1a04 GOAL   refs=2
++0x1ea8 SITE   refs=4
++0x1eaa SITE   refs=5
++0x1eac SITE   refs=3
++0x1eb0 SITE   refs=5
+
+-- literal block-k witnesses (blk>0, same field at 0x94d430+k*0x20bc) --
++0x0018 blk1 0x4eaae9: lea  lea edx,[ebx*4+0x94f504]  [FUN_004eaa10]
++0x0018 blk1 0x4f1a16: lea  lea edi,[ebx*4+0x94f504]  [FUN_004ef6d0]
++0x0018 blk1 0x4f79ef: lea  lea ebx,[ebx*4+0x94f504]  [FUN_004f6030]
++0x0018 blk1 0x5038b0: lea  lea ebx,[ebx*4+0x94f504]  [FUN_00502cd0]
++0x0018 blk1 0x507473: lea  lea eax,[ebx*4+0x94f504]  [FUN_00507460]
++0x0018 blk1 0x50747a: lea  lea edx,[esi*4+0x94f504]  [FUN_00507460]
++0x0018 blk1 0x50800f: lea  lea eax,[ebx*4+0x94f504]  [FUN_00507ef0]
++0x0018 blk1 0x531210: lea  lea eax,[esi*4+0x94f504]  [FUN_005311d0]
++0x0018 blk1 0x5320cf: lea  lea eax,[ecx*4+0x94f504]  [FUN_00531df0]
++0x0018 blk1 0x532bda: lea  lea edx,[edx*4+0x94f504]  [FUN_00531df0]
++0x0018 blk1 0x533056: lea  lea eax,[eax*4+0x94f504]  [FUN_00531df0]
++0x0018 blk1 0x551f3f: lea  lea eax,[ebx*4+0x94f504]  [FUN_00551e50]
++0x0018 blk1 0x5548e9: lea  lea ebx,[esi*4+0x94f504]  [FUN_00554850]
++0x0018 blk1 0x554e13: lea  lea eax,[ebx*4+0x94f504]  [FUN_00554d10]
++0x0018 blk1 0x59adc7: lea  lea ecx,[ebx*4+0x94f504]  [FUN_0059aa00]
++0x0018 blk1 0x59b248: lea  lea eax,[eax*4+0x94f504]  [FUN_0059af40]
++0x0018 blk1 0x5a07fd: lea  lea esi,[eax*4+0x94f504]  [FUN_0059ec90]
++0x0018 blk1 0x5a0804: lea  lea edx,[edx*4+0x94f504]  [FUN_0059ec90]
++0x0038 blk1 0x523cec: lea  lea eax,[edi*4+0x94f524]  [FUN_00523b20]
++0x0038 blk1 0x523e30: lea  lea eax,[edi*4+0x94f524]  [FUN_00523b20]
++0x0038 blk1 0x5551f6: lea  lea esi,[ecx*4+0x94f524]  [FUN_005551e0]
++0x0078 blk1 0x569540: lea  lea edx,[ebx*4+0x94f564]  [FUN_0055f650]
++0x01ac blk1 0x57437c: lea  lea eax,[ebx*4+0x94f698]  [FUN_00574370]
++0x1078 blk1 0x4f7a0a: lea  lea esi,[esi*2+0x950564]  [FUN_004f6030]
++0x1178 blk1 0x4f6433: lea  lea eax,[eax+0x950664]  [FUN_004f6030]
++0x1178 blk1 0x4f79f9: lea  lea edx,[esi+0x950664]  [FUN_004f6030]
++0x1178 blk1 0x4f9bce: lea  lea eax,[eax+0x950664]  [FUN_004f6030]
++0x1178 blk1 0x4fb8a5: lea  lea eax,[edx+0x950664]  [FUN_004f6030]
++0x1178 blk1 0x51e083: lea  lea ecx,[ecx+0x950664]  [FUN_0051dcb0]
++0x1178 blk1 0x53222e: lea  lea ecx,[ebx+0x950664]  [FUN_00531df0]
++0x1178 blk1 0x5325aa: lea  lea ebx,[edx+0x950664]  [FUN_00531df0]
++0x1178 blk1 0x55210a: lea  lea ecx,[ecx+0x950664]  [FUN_00551e50]
++0x1178 blk1 0x5545a6: lea  lea edi,[edi+0x950664]  [FUN_005544f0]
++0x1178 blk1 0x558060: lea  lea eax,[ecx+0x950664]  [FUN_00556690]
++0x1178 blk1 0x558b7b: lea  lea edi,[edi+0x950664]  [FUN_00556690]
++0x1178 blk1 0x55a200: lea  lea edx,[eax+0x950664]  [FUN_0055a1a0]
++0x1178 blk1 0x56953a: lea  lea esi,[edi+0x950664]  [FUN_0055f650]
++0x1178 blk1 0x569ae9: lea  lea edi,[edx+0x950664]  [FUN_0055f650]
++0x1178 blk1 0x56a87d: lea  lea edx,[eax+0x950664]  [FUN_0055f650]
++0x1178 blk1 0x58b2aa: lea  lea esi,[esi+0x950664]  [FUN_0058b1b0]
++0x1178 blk1 0x59f5a3: lea  lea eax,[eax+0x950664]  [FUN_0059ec90]
++0x1178 blk1 0x5a95fd: lea  lea ecx,[esi+0x950664]  [FUN_005a90a0]
++0x1178 blk1 0x5a9fa2: lea  lea ecx,[edx+0x950664]  [FUN_005a90a0]
++0x1278 blk1 0x558069: lea  lea eax,[ecx*2+0x950764]  [FUN_00556690]
++0x1378 blk6 0x4f96fa: R    test BYTE PTR [ecx*2+0x95ac10],0x1  [FUN_004f6030]
++0x1578 blk1 0x51dd5a: lea  lea ebx,[ecx*2+0x950a64]  [FUN_0051dcb0]
+OK   G1  bands: GOAL 75x16 @+0x19f8, SITE 25x16 @+0x1ea8, tail=0x84 B, array end 0x95da10
+OK   G2  kinds sum 4111 == hits 4111; zones 196+12 == offsets 208
+digest 51184ac6d13201d2
+== M320: 2/2 ==
