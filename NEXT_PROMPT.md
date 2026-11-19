@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B25 BUILT 9/9+11/11; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M319 done; next BUILD is B26, spine text NOT authored; analysis pick (vi) open; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B25 BUILT 9/9 + harness 13/13; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M319 done; next BUILD is B26, spine text NOT authored; analysis picks (vi) + (vii) open; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -18,7 +18,7 @@ Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout -
 **Batch: 5 static milestones per census script, 1 box per batch — doc headroom is the cap.** Caps (BYTES, what `budget` prints): NEXT_PROMPT warn 12,000/fail 16,000 — CLOSE at <= 12,000; SKILL.md
 warn 55,000 (keep near 44 k, always-loaded under the 60 k ritual); SESSION_NOTES warn 110 k. Split rule: settled text
 VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budget`.
-Note (M319): `scripts/s292_cap_check.py` C1/C2 are ONE-SHOT for #316's split - they fail by design once that split is in main; only C3 (the archive pointer chain) is standing.
+Note: `scripts/s292_cap_check.py` C1/C2 fail BY DESIGN now that #316's split is in main; only C3 (the archive pointer chain) stands.
 
 ## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
@@ -27,28 +27,30 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED, B25
 in review this fire** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). Next build **B26,
 queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at B25, so B26's rung text must be written BEFORE probing (one
-milestone = spine section + instrument). B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, digest
-901a286332960a10, `evidence/b25_selftest.txt:41`) + harness **11/11 scored + 2 declared NO-OP** (`:16`), `--selftest`
-4/4. Its law, paid in a RETRACTION: **the CONTAINER owns the coordinate space** - `m54b_clean.SAV` is 64x64 by its own
-header, `planet.MP` is 80x80, and B7 wrapped x by the FILE (corrected in place at `NAMED ## B7`); MU8/MU12/MU13 redden
-G5 if either grid is judged against the wrong one. B24's spine detail (the compaction RETRACT, the LEDGER-POSITION
-addressing law, the two retired degenerate rivals) is VERBATIM at `docs/pick-archive.md:963` §trim-s292 (a) - the ONLY
-place "declared gate-sets are MEASURED, not authored" survives; sibling laws: `skill/SKILL.md:319-320`,
-`references/instrument-laws.md:1031` (§four outcomes), `verify-outcome.md:237`. `pos=False` in `composedturn.fold` is
-NOT tile-addressing. M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
+milestone = spine section + instrument). B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, ACCEPT
+anchor 901a286332960a10 `evidence/b25_selftest.txt:59`, banner `:69`; the same 69 lines from `-m sim.composedmove`) +
+harness **13/13 scored + 3 declared NO-OP** (`b25_mutate.txt:20`), `--selftest` **5/5** (`b25_mutate_selftest.txt:11`);
+G9 now PINS the anchor to a literal (MU9 names it alone) and G4's law is now **byte-level carry** (table H; MU14
+names it, MU15 = the old self-comparison, declared decoration). Its law, paid in a RETRACTION: **the CONTAINER owns
+the coordinate space** - `m54b_clean.SAV` is 64x64 by its own header, `planet.MP` is 80x80, and B7 wrapped x by the
+FILE (corrected in place at `NAMED ## B7`); MU8/MU12/MU13 redden G5 if either grid is judged against the wrong one.
+NEW AT TRIAGE: the tile test is NOT the decoder (8/44 probes disagree raw - pick (vii) below). B24's spine detail
+(the compaction RETRACT, the LEDGER-POSITION addressing law, the two retired degenerate rivals) is VERBATIM at
+`docs/pick-archive.md:963` §trim-s292 (a) - the ONLY place "declared gate-sets are MEASURED, not authored" survives
+(sibling laws: TRAP 24 below + `skill/SKILL.md:319-320`). `pos=False` in `composedturn.fold` is NOT tile-addressing.
+M316 (#305) + M315 (#301) summaries: same archive section; `NAMED ## M316` / `## M315` govern.
 
 ## THE LEDGER
 
-Merged M54A-M309 + B0-B21 (through s271) + hygiene #254-#280. UNMERGED M83/M84, M86, M101, M103, M109, and **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)**.
+Merged M54A-M309 + B0-B21 + hygiene #254-#280. UNMERGED: the six ids in `§trim-s202`, of which **M241 (#180, 2/5, PR open - documented-FAIL re-confirmed, gates stand)** is live.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED.md` + `docs/named-archive-*.md`.
 
 ## THE INSTRUMENTS (run FIRST)
 
 1. **accept_ready.py** = readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
    base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm** (screen fixes in TRAPS).
-2. Writer/flag chain - silent bps or hw watchpoints + a live-memory prediction + a read-back: the
-   m94/m97/m100/m102/m103 + m92/m95/m98/m117 family (full text: pick-archive §s244-trim; writer
-   named by containment in ghidra_out/index.csv; `--predict` = model table, no touch).
+2. Writer/flag chain (BOX ONLY, the chain is zero-box now) - VERBATIM at `docs/pick-archive.md`
+   §trim-s295 (b): the m94/m97/m100/m102/m103 + m92/m95/m98/m117 family, `--predict` = model table.
 3. Static-first kit (zero box time): `field_census.py` (a global's shape from its addressing form + index math),
    `name_global.py` (every reader/writer + containment), `m118_flag_never_set.py` (gate satisfiability: test sites, OR
    immediates, register bit ops, save-carry), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]` (objdump window;
@@ -56,33 +58,33 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 
 ## THE PICK — index (detail: `docs/pick-archive.md`, `NAMED.md` §CHAIN-PICKS)
 
-- **Where things live:** map/terrain = `MAP_FORMAT.md` + FOOTING terrain line; faction fields =
-  `docs/field-atlas-faction.md` (M143-M162; atlas line: read §M297 first - the
-  0x94d104 phrasing is WRONG).
+- **Where things live:** map/terrain = `MAP_FORMAT.md`; faction fields =
+  `docs/field-atlas-faction.md` (read §M297 first - the 0x94d104 phrasing is WRONG).
 - **ISOLATION (s254)**: successor ALWAYS "in 12m"; at fire start check `ps`
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
-  there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths (s254 collision lesson:
-collision-check + worktree FIRST).
+  there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
 - **THE PICK (post-M309, s271): pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M319 + B1-B24 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b).
-  CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted. 6 read/test
-  image-wide in 5 funcs, readers(5) subset writers(15); the 8 unguarded sites have 4 nameable
-  owners + 8 direct callers, 0/9 CFG arrivals memo-tested, and the only memo-reading caller
-  (FUN_004f5a70) is itself an owner, so its read is its OWN guard; G7 is the classifier's
-  positive control. NAMED ## M319 (7/7, digest fb4e802dac1995a2, 14/14+1 NO-OP, selftest 4/4).
+  CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted; its 5-line
+  closure block moved VERBATIM to `docs/pick-archive.md` §trim-s295 (a). `NAMED ## M319` governs.
   OPEN PICK after M319: (vi) NAME the two still-unnamed memo-site owners FUN_004ee410 (sites
   0x4ee6c9/0x4ee883, caller FUN_004f5a70) and FUN_004f41f0 (sites 0x4f44a8/0x4f455d, callers
   FUN_00416ef0/FUN_00416f60/FUN_0041a8f0/FUN_004f5a70): what each DOES, and what the shared
   arrival test `BYTE PTR [eax+0x38],0x40` (3 of the 9) gates. Sites/owners/callers/arrivals
   are printed at `evidence/m319_guard_hoist.txt:24-52`; the 3rd owner FUN_004e47d0 is already
   the FOUNDER (NAMED ## M282). No box time.
-  Lists live in NAMED ## M310-M319, not here.**
-    READER LAWS still BIND (incl. B18/B19/B20/M299/M302/M303/M304): every kickoff + skill
-  `instrument-laws.md` + §CHAIN-PICKS.
+  OPEN PICK (vii) (NEW at the #319 triage, zero box): **25 of the 67 records** of this save's
+  unit array carry +10 in 128/130/131/256/320/321/322/323 - what `sim/save.py:52` calls queue-band
+  and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such
+  a record's +0/+2 (B7's and B25's model does, at +0 every round); does the exemption hold on other
+  saves? Start: `evidence/b25_selftest.txt:45-56`, `sim/save.py:73`, a one-pass +10 census.
+  Lists live in NAMED ## M310-M319 + the `## B<n>` blocks, not here. READER LAWS still BIND:
+  every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
+
 ## LIVE FACTS / KIT
 
 - **BOX**: state UP, last touch MEASURED s258 (one read-only /proc pass;

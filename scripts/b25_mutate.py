@@ -12,12 +12,23 @@ measured); (3) reddens NOTHING -> BAD, a NO-OP mutant, unless declared NOOP (a d
 NO-OP is not scored and says "this half is decoration"); (4) CRASH -> BAD unless declared and
 message-matched.
 
+GATE IDS ARE STRUCTURAL, NOT SCRAPED (#319 review, f.7). The child prints one `BADGATE <id>`
+line per failed row, taken from the row's own name field as gates() emitted it; the parent
+scores the SET of those ids and refuses the run if their count ever disagrees with the child's
+own BADCOUNT, with NGATES, or with the gate ids of the UNMUTATED shipped module (imported
+here, measured once). No regex reads a failure message.
+
 Each mutant is written as a sibling module inside sim/ and relayed through the module's own
 acceptance() exactly as `python3 -u -m sim.selftest --b25` does, so the harness measures the
 same text the acceptance command prints.
+
+WHY G9 APPEARS IN MOST SETS (re-measured at harness 1.1, and the answer to #319 review f.1):
+G9 now PINS the printed ACCEPT anchor to a literal, so any mutation that moves a single measured
+row reddens it too - that is the pin doing its job, not padding. The set that proves the pin is
+load-bearing on its own is MU9: a labels-only edit that changes no tile, no count and no rival,
+and reddens G9 and nothing else.
 """
 import os
-import re
 import subprocess
 import sys
 import time
@@ -25,49 +36,51 @@ import time
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SIM = os.path.join(REPO, "sim")
 CM = os.path.join(SIM, "composedmove.py")
+sys.path.insert(0, REPO)
+from sim import composedmove as somv  # noqa: E402  (the shipped, unmutated instrument)
 
 # (id, description, target, anchor, replacement, declared red gates | "NOOP")
 MUTANTS = [
     ("MU1", "the falsifier never fires (no image-only poison)", CM,
      """        if poison and r == POISON_ROUND:""",
      """        if False and r == POISON_ROUND:""",
-     {"G6", "G8"}),
+     {"G6", "G8", "G9"}),
     ("MU2", "the rung reads its start tiles from the MODEL (B7's shape)", CM,
      """            start = {i: list(head[i]) for i in model}
             src = "image-at-round-head\"""",
      """            start = {i: list(model[i]) for i in model}
             src = "image-at-round-head\"""",
-     {"G4", "G6", "G8"}),
+     {"G4", "G6", "G8", "G9"}),
     ("MU3", "the container is never refreshed between rounds (composes from the save)", CM,
      """        im_head = im_w""",
      """        im_head = im_head""",
-     # MEASURED {G2,G6,G8}: G2 reddens first (the write's footprint stops matching the tiles it
-     # claims to write, because the base image is the save again), G6's shift degenerates, G8's
-     # "rung != its rivals" clause sees the rung collapse into nowrite's footprint.
-     {"G2", "G6", "G8"}),
+     # MEASURED {G2,G4,G5,G6,G8,G9} at harness 1.1: G2 (the write's footprint stops matching the
+     # tiles it claims to write, because the base image is the save again), G4 (now that the
+     # read-back is compared against a FRESH DECODE of the bytes actually consumed, a stale cache
+     # is visible - this is the mutant that gives #319 review f.4's fix its teeth), G5/G6/G8 (the
+     # pinned coordinate numbers and the falsifier's bite), G9 (the rows themselves moved).
+     {"G2", "G4", "G5", "G6", "G8", "G9"}),
     ("MU4", "the mover's tiles never reach the writer (positions stay model-only)", CM,
      """        mv = None if mode == "nowrite" else {i: tuple(model[i]) for i in model""",
      """        mv = None if True else {i: tuple(model[i]) for i in model""",
-     # MEASURED {G2,G3,G4,G5,G6,G8} - and G7 stays GREEN, honestly: the one unit-array byte that
-     # still differs from the save is the FALSIFIER's own write, and G7 counts modeled spans,
-     # not who wrote them.
-     {"G2", "G3", "G4", "G5", "G6", "G8"}),
+     # MEASURED {G2,G3,G4,G5,G6,G8,G9} - and G7 stays GREEN, honestly: the one unit-array byte
+     # that still differs from the save is the FALSIFIER's own write, and G7 counts modeled
+     # spans, not who wrote them.
+     {"G2", "G3", "G4", "G5", "G6", "G8", "G9"}),
     ("MU5", "the writer no longer models the container's turn fields (year frozen)", CM,
      """        img_next = sow.build_image(im_head, year=eng.year, cur=eng.cur, tf=eng.tf, moves=mv,""",
      """        img_next = sow.build_image(im_head, moves=mv,""",
-     {"G2", "G8"}),
+     {"G2", "G8", "G9"}),
     ("MU6", "the MP budget is 3, not 6 (one accepted press per round)", CM,
      """    budget = sounits.STEP_MP if mode == "budget3" else sounits.MP_PER_TURN""",
      """    budget = sounits.STEP_MP""",
-     {"G1", "G4", "G8"}),
+     {"G1", "G4", "G5", "G8", "G9"}),
     ("MU7", "the falsifier poisons the MODEL instead of the CONTAINER", CM,
      """            mut = bytearray(img)
-            struct.pack_into("<H", mut, off, POISON_X)
-            img = bytes(mut)""",
+            struct.pack_into("<H", mut, off, POISON_X)""",
      """            mut = bytearray(img)
-            model[POISON_UNIT] = [POISON_X, model[POISON_UNIT][1]]
-            img = bytes(mut)""",
-     {"G6", "G8"}),
+            model[POISON_UNIT] = [POISON_X, model[POISON_UNIT][1]]""",
+     {"G6", "G8", "G9"}),
     ("MU8", "the READ side's out-of-grid test uses the map file's grid, not the container's", CM,
      """            if start[i][0] >= W_cont or start[i][1] >= H_cont:
                 out_head.append((r, i))""",
@@ -81,6 +94,9 @@ MUTANTS = [
                 out_written.append((r, i))""",
      """            if wt[i][0] >= mp.width or wt[i][1] >= mp.height:
                 out_written.append((r, i))""",
+     # ... and this is the mutant that proves the DECODER CROSS-CHECK is read (#319 review f.5):
+     # with the tile test moved onto the map file's grid it no longer reproduces the sets
+     # sim/save._unit_ok rejects, so the round-by-round agreement clause in G5 goes red.
      {"G5", "G8"}),
     ("MU13", "B7's cross-check counts tiles outside the MAP FILE's grid, not the container's", CM,
      """    b7_out = sorted(int(i) for i, v in b7_final.items()
@@ -91,12 +107,21 @@ MUTANTS = [
      # leaves nothing outside - the "B7 ended outside the container" finding is carried by the
      # container's grid, and this is the mutant that says so.
      {"G5"}),
-    ("MU10", "G4's read-back compares against the model instead of the container head", CM,
-     """            readback.append(1 if start[i] == head[i] else 0)""",
+    ("MU10", "G4's read-back compares against the model instead of the fresh decode", CM,
+     """            readback.append(1 if start[i] == recheck[i] else 0)""",
      """            readback.append(1 if start[i] == model[i] else 0)""",
      # MEASURED {G4, G8}: the falsifier's bite disappears from G4 too, so the rung's own row is
      # no longer distinguishable from a model-fed one - G8's control clause catches it as well.
      {"G4", "G8"}),
+    ("MU14", "the previous round's WRITE is forgotten: every read carries the SAVE again", CM,
+     """        img_written = img""",
+     """        img_written = sv0.data""",
+     # THE CARRY LAW'S OWN MUTANT (#319 review f.10): the round's start tiles still match a
+     # fresh decode of what is being read, so every tile-level claim stays green - only the
+     # byte-level law (table H: the head differs from the previous write by exactly the
+     # falsifier's own bytes) sees that the run stopped carrying its own writes.
+     {"G4"}),
+    # ---- declared NO-OPs: measured decoration, stated as such -------------------------------
     ("MU11", "the write-side out-of-grid arm counts each (round,unit) twice (multiset)", CM,
      """            if wt[i][0] >= W_cont or wt[i][1] >= H_cont:
                 out_written.append((r, i))""",
@@ -104,11 +129,39 @@ MUTANTS = [
                 out_written.append((r, i))
                 out_written.append((r, i))""",
      "NOOP"),
-    ("MU9", "labels only: the read source's name changes, no measured value does", CM,
+    ("MU9", "labels only: the read source's NAME changes, no tile and no count does", CM,
      """            src = "image-at-round-head\"""",
      """            src = "container-at-head\"""",
+     # NOT a NO-OP any more, and that is the point of #319 review f.1: the label feeds the
+     # measured rows, so the printed ACCEPT anchor moves and the PINNED anchor in G9 reddens.
+     # Before this round's fix, this same edit changed a number the docs cite and NO gate read.
+     {"G9"}),
+    ("MU15", "the read-back compares the cached parser object with itself (the old shape)", CM,
+     """        recheck = _tiles(soct.parse_image(head_bytes))""",
+     """        recheck = head""",
+     # DECLARED DECORATION, stated in the law's own vocabulary: with the container refreshed
+     # every round (the shipped shape) a self-comparison measures nothing, and no gate notices
+     # it. What makes f.4's fix load-bearing is MU3 - a stale cache is the state a fresh decode
+     # can see and a self-comparison cannot.
+     "NOOP"),
+    ("MU16", "found_units is COPIED from the parser instead of recomputed from _unit_ok", CM,
+     """        found_pred = 0
+        while sosave._unit_ok(img, im_w.bases_off - sosave.UNIT_LEN * (found_pred + 1),
+                              W_cont, H_cont):
+            found_pred += 1""",
+     """        found_pred = im_w.found_units""",
+     # DECLARED DECORATION ON THIS SAVE: the recomputation reproduces the parser's number in
+     # 44/44 probes, so replacing it with a copy changes nothing printed. The independent signal
+     # that carries G5 is the record-SET comparison, and MU12/MU13 are the mutants that name it.
      "NOOP"),
 ]
+
+
+def shipped_gate_ids():
+    """The gate ids of the UNMUTATED shipped module, read from gates() itself. Every mutant's
+    measured set is scored against these; a name that is not one of them is a harness defect."""
+    mm = somv.measure(somv.DEFAULT_SAV, somv.DEFAULT_MAP)
+    return [name.split()[0] for name, _ in somv.gates(mm)]
 
 
 def run_mutant(mid, path, anchor, repl, tag):
@@ -126,7 +179,9 @@ def run_mutant(mid, path, anchor, repl, tag):
         "m.acceptance(mm, res)\n"
         "print('BADCOUNT', sum(1 for r in res if not r[1]))\n"
         "print('NGATES', len(res))\n"
-        "print('BAD:', ' | '.join(sorted({r[0].split()[0] for r in res if not r[1]})))\n"
+        "for _nm, _ok in res:\n"
+        "    if not _ok:\n"
+        "        print('BADGATE', _nm.split()[0])\n"
         % (REPO, name[:-3]))
     try:
         p = subprocess.run([sys.executable, "-u", "-c", code], cwd=REPO,
@@ -140,11 +195,24 @@ def run_mutant(mid, path, anchor, repl, tag):
     if "BADCOUNT" not in p.stdout:
         last = (p.stderr.strip().splitlines() or ["(no stderr)"])[-1]
         return None, "CRASH: %s" % last[:110]
-    nbad = int(re.search(r"BADCOUNT (\d+)", p.stdout).group(1))
-    ng = int(re.search(r"NGATES (\d+)", p.stdout).group(1))
-    bad = re.search(r"BAD: (.*)", p.stdout, re.S).group(1).strip()
-    gates = set(re.findall(r"G\d+", bad)) - {""}
-    return gates, "%d/%d gates red" % (nbad, ng)
+    nbad = int([ln for ln in p.stdout.splitlines()
+                if ln.startswith("BADCOUNT ")][0].split()[1])
+    ng = int([ln for ln in p.stdout.splitlines()
+              if ln.startswith("NGATES ")][0].split()[1])
+    # STRUCTURAL: one line per failed row, id taken from the row's own name field. No regex
+    # reads a message; the sets are only accepted if they agree with the child's own counts.
+    ids = [ln.split()[1] for ln in p.stdout.splitlines() if ln.startswith("BADGATE ")]
+    if len(ids) != nbad:
+        return None, "STRUCTURAL: %d BADGATE lines but BADCOUNT %d" % (len(ids), nbad)
+    if len(set(ids)) != len(ids):
+        return None, "STRUCTURAL: duplicate gate ids in %s" % ids
+    if ng != NGATES_EXPECT:
+        return None, "STRUCTURAL: %d gates reported, shipped module has %d" % (ng,
+                                                                                NGATES_EXPECT)
+    unknown = [i for i in ids if i not in VALID_IDS]
+    if unknown:
+        return None, "STRUCTURAL: gate ids not in the shipped gates(): %s" % unknown
+    return set(ids), "%d/%d gates red" % (nbad, ng)
 
 
 def evaluate(todo, tag, label):
@@ -184,7 +252,8 @@ SELFTEST = [
     ("MU1", {"G6"}, "a dropped gate: the declared set must be EXACT, not a subset"),
     ("MU1", {"G1", "G6", "G8"}, "an added gate the mutant does not actually red"),
     ("MU4", {"G2"}, "a subset: MU4 reddens six gates and the harness must say so"),
-    ("MU9", {"G6"}, "a REAL set on a decoration mutant: labels cannot redden anything"),
+    ("MU14", {"G4", "G8"}, "an added gate: only the byte-level carry law sees MU14"),
+    ("MU9", {"G6"}, "a gate MU9 does not red: it moves the ACCEPT anchor, so only G9"),
 ]
 
 
@@ -210,7 +279,11 @@ def selftest(tag):
 
 
 def main():
+    global VALID_IDS, NGATES_EXPECT
     args = sys.argv[1:]
+    VALID_IDS = shipped_gate_ids()
+    NGATES_EXPECT = len(VALID_IDS)
+    print("shipped gates(): %d rows %s" % (NGATES_EXPECT, ",".join(VALID_IDS)))
     if args and args[0] == "--list":
         for mid, desc, _p, _a, _r, declared in MUTANTS:
             print("%s\t%s\t%s" % (mid, ",".join(sorted(declared)) if isinstance(declared, set)

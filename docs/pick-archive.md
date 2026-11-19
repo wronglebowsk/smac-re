@@ -1019,3 +1019,26 @@ caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/
   CLOSED (s278): pick (i') NAME THE EVENTS - the one interaction band `[0x50bb20,0x5175b4)` + its two pumps;
   detail VERBATIM at `docs/pick-archive.md:963` §trim-s292 (a), full law `NAMED ## M313`.
   (both moved VERBATIM from NEXT_PROMPT.md §THE PICK at the M319 close)
+
+## §trim-s295 (a) pick (v)/M319 closure block, VERBATIM from NEXT_PROMPT.md at the #319 triage
+
+```
+  CLOSED + MERGED #317 (main 147e66a): pick (v) = M319 - the guard is NOT hoisted. 6 read/test
+  image-wide in 5 funcs, readers(5) subset writers(15); the 8 unguarded sites have 4 nameable
+  owners + 8 direct callers, 0/9 CFG arrivals memo-tested, and the only memo-reading caller
+  (FUN_004f5a70) is itself an owner, so its read is its OWN guard; G7 is the classifier's
+  positive control. NAMED ## M319 (7/7, digest fb4e802dac1995a2, 14/14+1 NO-OP, selftest 4/4).
+```
+
+  (moved VERBATIM out of NEXT_PROMPT.md §THE PICK at the B25 #319 review triage, s295)
+
+## §trim-s295 (b) the BOX writer/flag chain one-liner, VERBATIM from NEXT_PROMPT.md §THE INSTRUMENTS
+
+```
+2. Writer/flag chain - silent bps or hw watchpoints + a live-memory prediction + a read-back: the
+   m94/m97/m100/m102/m103 + m92/m95/m98/m117 family (full text: pick-archive §s244-trim; writer
+   named by containment in ghidra_out/index.csv; `--predict` = model table, no touch).
+```
+
+  (moved out of NEXT_PROMPT.md at the B25 #319 review triage, s295: the chain is doing zero-box
+   work, and this kit line is only needed on a BOX round)

@@ -1,16 +1,20 @@
-== B25 mutation harness: 13 mutants (each must match its declared effect: an EXACT gate set, a declared message-matched CRASH, or a declared NO-OP) ==
--- harness 2026-11-19 16:30:47 UTC --
-MU1    the falsifier never fires (no image-only poison)     declared=G6,G8                      measured=G6,G8                  OK  (2/9 gates red)
-MU2    the rung reads its start tiles from the MODEL (B7's  declared=G4,G6,G8                   measured=G4,G6,G8               OK  (3/9 gates red)
-MU3    the container is never refreshed between rounds (com declared=G2,G6,G8                   measured=G2,G6,G8               OK  (3/9 gates red)
-MU4    the mover's tiles never reach the writer (positions  declared=G2,G3,G4,G5,G6,G8          measured=G2,G3,G4,G5,G6,G8      OK  (6/9 gates red)
-MU5    the writer no longer models the container's turn fie declared=G2,G8                      measured=G2,G8                  OK  (2/9 gates red)
-MU6    the MP budget is 3, not 6 (one accepted press per ro declared=G1,G4,G8                   measured=G1,G4,G8               OK  (3/9 gates red)
-MU7    the falsifier poisons the MODEL instead of the CONTA declared=G6,G8                      measured=G6,G8                  OK  (2/9 gates red)
+shipped gates(): 9 rows G1,G2,G3,G4,G5,G6,G7,G8,G9
+== B25 mutation harness: 16 mutants (each must match its declared effect: an EXACT gate set, a declared message-matched CRASH, or a declared NO-OP) ==
+-- harness 2026-11-19 17:03:57 UTC --
+MU1    the falsifier never fires (no image-only poison)     declared=G6,G8,G9                   measured=G6,G8,G9               OK  (3/9 gates red)
+MU2    the rung reads its start tiles from the MODEL (B7's  declared=G4,G6,G8,G9                measured=G4,G6,G8,G9            OK  (4/9 gates red)
+MU3    the container is never refreshed between rounds (com declared=G2,G4,G5,G6,G8,G9          measured=G2,G4,G5,G6,G8,G9      OK  (6/9 gates red)
+MU4    the mover's tiles never reach the writer (positions  declared=G2,G3,G4,G5,G6,G8,G9       measured=G2,G3,G4,G5,G6,G8,G9   OK  (7/9 gates red)
+MU5    the writer no longer models the container's turn fie declared=G2,G8,G9                   measured=G2,G8,G9               OK  (3/9 gates red)
+MU6    the MP budget is 3, not 6 (one accepted press per ro declared=G1,G4,G5,G8,G9             measured=G1,G4,G5,G8,G9         OK  (5/9 gates red)
+MU7    the falsifier poisons the MODEL instead of the CONTA declared=G6,G8,G9                   measured=G6,G8,G9               OK  (3/9 gates red)
 MU8    the READ side's out-of-grid test uses the map file's declared=G5,G8                      measured=G5,G8                  OK  (2/9 gates red)
 MU12   the WRITE side's out-of-grid test uses the map file' declared=G5,G8                      measured=G5,G8                  OK  (2/9 gates red)
 MU13   B7's cross-check counts tiles outside the MAP FILE's declared=G5                         measured=G5                     OK  (1/9 gates red)
 MU10   G4's read-back compares against the model instead of declared=G4,G8                      measured=G4,G8                  OK  (2/9 gates red)
+MU14   the previous round's WRITE is forgotten: every read  declared=G4                         measured=G4                     OK  (1/9 gates red)
 MU11   the write-side out-of-grid arm counts each (round,un declared=NOOP                       measured=nothing                OK  (0/9 gates red [declared NO-OP: this half is decoration])
-MU9    labels only: the read source's name changes, no meas declared=NOOP                       measured=nothing                OK  (0/9 gates red [declared NO-OP: this half is decoration])
-== harness: 11/11 scored mutants matched their declared gate sets (+2 declared NO-OP: MU11,MU9) ==
+MU9    labels only: the read source's NAME changes, no tile declared=G9                         measured=G9                     OK  (1/9 gates red)
+MU15   the read-back compares the cached parser object with declared=NOOP                       measured=nothing                OK  (0/9 gates red [declared NO-OP: this half is decoration])
+MU16   found_units is COPIED from the parser instead of rec declared=NOOP                       measured=nothing                OK  (0/9 gates red [declared NO-OP: this half is decoration])
+== harness: 13/13 scored mutants matched their declared gate sets (+3 declared NO-OP: MU11,MU15,MU16) ==

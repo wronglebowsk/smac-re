@@ -184,6 +184,11 @@ Older sessions: `docs/sessions/sessions-276-277.md` (2 sessions). Read it only w
 
 ## Session 294 (2026-11-19, B25 BUILD - the MOVE leg made persistent; zero box)
 
+> SUPERSEDED IN PART by Session 295 (same day, #319 review triage): every `evidence/b25_*.txt`
+> here was REGENERATED, so the line cites point one or more lines off (the anchor is now `:59`,
+> the banner `:69`); the harness count is 13/13 + 3 declared NO-OP (was 11/11 + 2) and the
+> selftest 5/5 (was 4/4). The numbers themselves (9/9, 268/268, 37/27/4, 39 mod 64) stand.
+
 - Track said BUILD (last_build=B24) and `BUILD_SPINE.md` ENDED at B24, so the rung text was AUTHORED
   FIRST (one milestone = spine section + instrument), then built. `sim/composedmove.py`, `--b25` relays.
 - ACCEPT `python3 -u -m sim.selftest --b25` -> **PASS B25: 9/9 gates**, digest **901a286332960a10**
@@ -221,3 +226,46 @@ Older sessions: `docs/sessions/sessions-276-277.md` (2 sessions). Read it only w
   blocking/zone-of-control and every refusal cause but exhausted MP; y is never moved (dir=1, dy=0) so
   the y-bound law is NOT exercised; WHICH unit the game moves is not claimed (the gesture hits every
   unit, exactly as B7 declared). NEXT: B26, spine text NOT authored. #180 still stands (2/5).
+
+## Session 295 (2026-11-19, B25 #319 review triage - 10 findings, all accepted; zero box)
+
+- Clean start, not a repair: `git checkout -- sim/composedmove.py scripts/b25_mutate.py` back to the
+  green head (the WIP is saved at `~/reverse/wip/b25_wip_20261119.patch`), then the findings
+  re-implemented as a minimal delta. ACCEPT anchor UNCHANGED at **901a286332960a10** (digest_rows
+  untouched), so every prior doc cite of it still holds; only evidence LINE NUMBERS moved.
+- f.1 (P1): `render()` now prints the anchor `measure()` computed and **G9 pins it to a literal**
+  `ACCEPT_PIN` (`evidence/b25_selftest.txt:59`). The mutant that names it alone: **MU9**
+  (labels-only edit, no tile/count moves) -> measured `{G9}`.
+- f.4/f.10: G4's law is now **byte-level carry** (table H `:40-43`): head bytes vs the previous
+  round's WRITE bytes, difference == exactly the falsifier's own edits ([0,1,0,0] vs [0,1,0,0]);
+  the read-back compares against a **FRESH DECODE** of the consumed bytes, 268/268 (`:63`). Re-
+  measured sets: MU3 grew to {G2,G4,G5,G6,G8,G9} (a stale cache is what the fresh decode sees);
+  new **MU14** (forget the previous write) = {G4} alone; new **MU15** (compare cache to itself,
+  the old shape) = DECLARED NO-OP - it measures nothing when the cache is refreshed.
+- f.5/f.6 (the round's real find): G5 now PINS 37/27/4 for both rivals and cross-checks the
+  instrument's `tile >= width` set against `sim/save._unit_ok` on the same bytes over **44 probes**
+  (11 runs x 4 rounds, table I `:45-56`). **They disagree raw: 36/44.** The 8 differers are exactly
+  the records the decoder itself exempts - **25 of the 67** records of m54b_clean.SAV carry +10 in
+  128/130/131/256/320/321/322/323 (>= 64), so its acceptance test coord-checks only **42**. With
+  the decoder's own rule applied: 44/44, and `found_units` recomputed from `_unit_ok` == the
+  parser's 44/44. On this save the exemption is INVISIBLE to coordinates (all 67 pristine +0/+2
+  in-grid), so it splits the array by FIELD, not by tile sanity - which qualifies B7's and B25's
+  "67 units": the model presses 25 records the decoder never coord-checks. **MU16** (copy the
+  parser's number instead of recomputing) = declared NO-OP, i.e. that half is decoration HERE.
+- f.8: G8's "matches none of its rivals" is now the FULL table-E signature vs all **5 RIVAL** rows
+  (`:67`); the 3 `:clean` twins coincide by construction - table E carries no per-unit delta, G6
+  reads the falsifier - and that is now stated instead of hidden by a hand-picked subset.
+- f.9: the controls are blind **to the falsifier, not to writing** (still 268 unit bytes each; G6
+  reads mdl_w/late_w > 0 itself). f.2: §B7 row split into (a) B7's own in-memory tiles and (b) the
+  mpwidth rival's parse - a parser result had been claimed for a run that was never parsed.
+  f.3: cursor said 10/10 at `:15`; measured 13/13 at `b25_mutate.txt:20`.
+- f.7: the harness prints one `BADGATE <id>` line per failed row (id from gates()'s own name
+  field), scored against the SHIPPED `gates()` with BADCOUNT/NGATES/dup cross-checks; no regex
+  reads a message. Sets re-measured from scratch: **13/13 + 3 declared NO-OP**
+  (`b25_mutate.txt:20`), `--selftest` **5/5 rejected** (`b25_mutate_selftest.txt:11`).
+- TRAP LEARNED: a pinned global anchor reddens on nearly every mutant (7 of 13 gained G9). That is
+  the pin working, but the discriminating information moves into the other gates - say so in the
+  harness docstring or a reader scores the pin as padding.
+- STILL OPEN: what the .exe does with a +10 >= 64 record's +0/+2; whether the wrap or the
+  `_unit_ok` rejection fires first in the engine; which grid the shipped game gives a mover when
+  the container and `planet.MP` disagree. #180 still stands (2/5).
