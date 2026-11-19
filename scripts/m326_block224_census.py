@@ -16,7 +16,10 @@
 # partial-register writes (mov al/ax/ah, ...) are OPAQUE definitions of the
 # full register (the old walk skipped them and over-proved const-0 through
 # `xor eax,eax; mov al,[rec+4]` - both BLKCONST tags of the skeleton run were
-# that artifact; ALGO=7 restores the old blindness as a mutant). Other limits
+# that artifact; ALGO=7 restores the old blindness as a mutant). Review #332
+# hardened BOTH directions: a FULL-register write is also an opaque definition
+# of a queried PARTIAL (value_of(...,'al') stops at mov eax,...), and the seed
+# forward scan breaks on partial redefinition of the seed register. Other limits
 # unchanged (DECLARED): linear backward def-walk <=300 instrs depth<=4, affine
 # over opaque runtime leaves, linear stack-slot forwarding (most recent store
 # wins; call crossings enumerated; a callee holding a pointer to the slot could
@@ -25,8 +28,12 @@
 # re-assign a base register are not distinguished (the 419c30 fold also has
 # 419de9/419e1f mov esi,[ebx+0x40] paths; the linear model takes 419e5a).
 # Mutants: M326_PATCH addr|mn ops, M326_PE_PATCH addr|hex, M326_ALGO 1=prov off
-# 2=disp widened 3=seed-scan off 4=shl-blind 6=old-pop-pairing 7=subreg-blind,
-# M326_SAVE=<file>, M326_EVIDENCE_ROOT=<dir>.
+# 2=disp widened 3=seed-scan off 4=shl-blind 6=old-pop-pairing 7=subreg-blind
+# 8=crosscheck-fix-disabled, M326_SAVE=<file>, M326_EVIDENCE_ROOT=<dir>.
+# Harness PLANT sites (documented for review_lint L2b): MU9 0x51f53c (turnfn
+# ROUND store -> planted block store), MU23 0x4e0336 (EDITORENERGY handler
+# store -> [esi+4] sibling-offset access), MU27 0x4e032c (inside seed 0x4e0311's
+# forward window -> mov si,0 partial redefinition of the seed register).
 import bisect, csv, hashlib, os, re, struct, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -306,7 +313,10 @@ def value_of(a, reg, depth=0, budget=None):
             # M326 FIX: a partial-register write is an OPAQUE definition of the
             # full register - the old walk skipped it and over-proved constants
             # (xor eax,eax; mov al,[rec+4] read as eax=0). ALGO=7 = old blindness.
-            if ALGO != "7" and dest in PARTIALS.get(reg, ()):
+            # Review #332 P2: the INVERSE direction too - a full-register write
+            # is an opaque definition of a queried partial (al/ax/si/...).
+            if ALGO != "7" and (dest in PARTIALS.get(reg, ())
+                                or (dest is not None and reg in PARTIALS.get(dest, ()))):
                 return ("lin", 1, 0, ("arg", reg))
             continue
         if mn in ("inc", "dec") and len(parts) == 1:
@@ -503,7 +513,9 @@ def seed_scan():
                         elif mi[2] == 0 and sv in addrs2: hit_off = off2
                 accesses.append((a, dest, b, w, width, mi[2], ea, hit_off, src, stag))
             d2 = reg_of(parts2[0])
-            if d2 == dest and mn2 not in ("cmp", "test"):
+            # review #332 P2: a PARTIAL redefinition of the seed register also
+            # invalidates the pinned address (mov al,... after lea eax,[...]).
+            if (d2 == dest or d2 in PARTIALS.get(dest, ())) and mn2 not in ("cmp", "test"):
                 break
             if mn2 == "pop" and parts2[0] == dest:
                 break
@@ -668,8 +680,12 @@ def save_values():
 def m325_crosscheck():
     """Re-run M325's census pipeline with the subreg fix applied to ITS resolver
     (source transform, same two lines) and diff against the unmodified module.
-    Measures whether M325's published +0x220 numbers move under the fix."""
-    import importlib.util
+    Measures whether M325's published +0x220 numbers move under the fix.
+    Review #332 P1/P2 hardened: also compares seed (addr,reg,TAG) tuples and
+    BLKCONST-seed targets, and RE-RUNS M325's own main() under the fix to
+    assert its 8 gates still pass (not just related counts). ALGO=8 = the fix
+    is NOT applied to the 'fixed' side (mutant: diffs must then be empty)."""
+    import importlib.util, io, contextlib
     src_path = os.path.join(ROOT, "scripts", "m325_block220_census.py")
     src = open(src_path).read()
     old = "        dest = reg_of(parts[0])\n        if dest != reg: continue\n"
@@ -679,9 +695,8 @@ def m325_crosscheck():
            "            continue\n")
     if src.count(old) != 1:
         return {"error": "anchor count %d" % src.count(old)}
-    fixed_src = src.replace(old, new)
-    fixed_src = fixed_src.replace("PARTIALS = {", "PARTIALS = {")  # no-op guard
-    # inject PARTIALS (M325 source lacks it)
+    fixed_src = src if ALGO == "8" else src.replace(old, new)
+    # inject PARTIALS (M325 source lacks it; unused on the ALGO=8 path)
     fixed_src = fixed_src.replace(
         "CALLER_SAVED = {\"eax\", \"ecx\", \"edx\"}",
         "CALLER_SAVED = {\"eax\", \"ecx\", \"edx\"}\n"
@@ -717,8 +732,26 @@ def m325_crosscheck():
     if sorted(rf) != sorted(xf): diffs.append(("regrd", len(rf), len(xf)))
     if len(orig.addr_seeds()) != len(fx.addr_seeds()):
         diffs.append(("seeds", len(orig.addr_seeds()), len(fx.addr_seeds())))
+    sto = sorted((sa, reg, tag) for sa, reg, (tag, det) in orig.addr_seeds())
+    stf = sorted((sa, reg, tag) for sa, reg, (tag, det) in fx.addr_seeds())
+    bco = sorted((sa, det) for sa, _, (tag, det) in orig.addr_seeds() if tag == "BLKCONST")
+    bcf = sorted((sa, det) for sa, _, (tag, det) in fx.addr_seeds() if tag == "BLKCONST")
+    # review #332 P2: re-run M325's OWN gates under the fix (captured stdout)
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        frc = fx.main()
+    fout = buf.getvalue()
+    fgates = {}
+    for g in ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"):
+        mg = re.search(r"^%s (PASS|FAIL)" % g, fout, re.M)
+        fgates[g] = mg.group(1) if mg else None
+    ms = re.search(r"^== M325: (\d)/(\d) ==", fout, re.M)
+    fsumm = (int(ms.group(1)), int(ms.group(2))) if ms else None
     return {"diffs": diffs, "hits": len(hf), "regwr": len(xo), "regrd": len(xf),
-            "seeds": len(fx.addr_seeds())}
+            "seeds": len(fx.addr_seeds()), "seed_tags_equal": sto == stf,
+            "blkconst_seeds": [(hex(a), hex(d)) for a, d in bcf],
+            "blkconst_seeds_orig": [(hex(a), hex(d)) for a, d in bco],
+            "fixed_gates": fgates, "fixed_summary": fsumm, "fixed_rc": frc}
 
 def main():
     print("== M326: block+0x224 census (STATIC) ==")
@@ -813,7 +846,7 @@ def main():
     print("T6c bytechain=%s slot20stores=%s" % (bytechain, [hex(a) for a in slot20]))
     print("T6d bytechain2=%s slotcstores=%s" % (bytechain2, [hex(a) for a in slotc]))
     print("T6e phase=%s refs920434=%d refs91c62c=%d" % (phase, g920, g62c))
-    # ---- reader law: every reader computes 220-224 ----
+    # ---- reader law: every reader computes 220-224 (STRUCTURAL, review #332) ----
     triples = [(0x4169a6, 0x4169ac, 0x4169b2), (0x419f7d, 0x419f83, 0x419f89),
                (0x419ffa, 0x41a000, 0x41a006), (0x41a100, 0x41a106, 0x41a10c),
                (0x41a3cc, 0x41a3d2, 0x41a3d8), (0x41a3e8, 0x41a3ee, 0x41a3f4),
@@ -822,6 +855,33 @@ def main():
     tl = []
     for l220, l224, sub in triples:
         tl.append((hex(l220), INS.get(l220), hex(l224), INS.get(l224), hex(sub), INS.get(sub)))
+
+    def triple_struct_ok(l220, l224, sub):
+        """Same-base loads of 220/224 feeding a DIRECTED sub (220 minus 224).
+        Fused form: sub d220,[base2+224] with base2 == base1 by value_of."""
+        i220, i224, isub = INS.get(l220), INS.get(l224), INS.get(sub)
+        if not (i220 and i224 and isub): return False
+        if l224 == sub:
+            if i220[0] != "mov" or isub[0] != "sub": return False
+            p220, psub = split_ops(i220[1]), split_ops(isub[1])
+            m220, msub = memref(p220[1]), memref(psub[1])
+            if not (m220 and msub): return False
+            if m220[2] != EADDRS[0] or msub[2] != FADDRS[0]: return False
+            if reg_of(p220[0]) != reg_of(psub[0]): return False
+            if m220[3] is None or msub[3] is None: return False
+            return value_of(sub, m220[3]) == value_of(sub, msub[3])
+        if i220[0] != "mov" or i224[0] != "mov" or isub[0] != "sub": return False
+        p220, p224, psub = split_ops(i220[1]), split_ops(i224[1]), split_ops(isub[1])
+        m220, m224 = memref(p220[1]), memref(p224[1])
+        if not (m220 and m224): return False
+        if m220[2] != EADDRS[0] or m224[2] != FADDRS[0]: return False
+        if m220[3] != m224[3] or m220[4] is not None or m224[4] is not None: return False
+        return psub == [reg_of(p220[0]), reg_of(p224[0])]
+
+    triples_struct = [triple_struct_ok(*t) for t in triples]
+    triples_ok = all(triples_struct)
+    print("T7 reader-triples=%s" % tl)
+    print("T7a triple-structural (same-base, directed 220-224)=%s" % triples_struct)
     itoa = {"base": INS.get(0x416987), "call": INS.get(0x4169b5)}
     cap = {"g999_load": INS.get(0x41a4e0), "guard1": INS.get(0x41a4e8),
            "guard1_jcc": INS.get(0x41a4ea), "guard2": INS.get(0x41a4ec),
@@ -835,7 +895,6 @@ def main():
         if cap["cmp"][0] == "cmp" and cap["cmp"][1] == "ecx,eax" and tgt == 0x41a4f9:
             capdir = {"jle": "MIN", "jg": "MAX", "jl": "MAX", "jge": "MIN"}.get(
                 cap["jcc"][0], "SHAPE-CHANGED")
-    print("T7 reader-triples=%s" % tl)
     print("T7b itoa=%s cheatcap=%s dir=%s" % (itoa, cap, capdir))
     # ---- reset + save ----
     reset = {"xor": INS.get(0x59f0bf), "store": INS.get(0x59f0c1),
@@ -871,13 +930,21 @@ def main():
     exp_wrsites = [0x41a543, 0x520b22, 0x59f0c1]
     exp_rdsites = [0x4169ac, 0x419f83, 0x41a000, 0x41a106, 0x41a3d2, 0x41a3ee,
                    0x41a4da, 0x440b95, 0x46236e, 0x520b0e]
+    # review #332 P1: the writer ROLES (add/zero/reset) are pinned HERE, at the
+    # census gate the NAMED row cites, not only in the downstream law gates.
+    wrshapes = {0x41a543: ("add", "DWORD PTR [esi+0x94d654],edi"),
+                0x520b22: ("mov", "DWORD PTR [eax+0x94d654],esi"),
+                0x59f0c1: ("mov", "DWORD PTR [ebx+0x94d654],eax")}
+    wrshapes_meas = {a: INS.get(a) for a in wrshapes}
     gate("G1", len(hits) == 13 and len(writers) == 3 and len(readers) == 10
          and n_abs == 0 and n_224 == 0 and n_sub == 0 and n_dw == len(rows)
          and sorted(x["a"] for x in writers) == exp_wrsites
-         and sorted(x["a"] for x in readers) == exp_rdsites,
-         "hits=%d W=%d R=%d abs=%d disp224=%d sub=%d dw=%d/%d wrsites=%s rdsites-pinned=%d" % (
+         and sorted(x["a"] for x in readers) == exp_rdsites
+         and wrshapes_meas == wrshapes,
+         "hits=%d W=%d R=%d abs=%d disp224=%d sub=%d dw=%d/%d wrsites=%s roles=%s rdsites-pinned=%d" % (
              len(hits), len(writers), len(readers), n_abs, n_224, n_sub, n_dw,
-             len(rows), [hex(a) for a in sorted(x["a"] for x in writers)], len(exp_rdsites)))
+             len(rows), [hex(a) for a in sorted(x["a"] for x in writers)],
+             wrshapes_meas == wrshapes, len(exp_rdsites)))
     # G2: provenance under the FIXED resolver + the byte-load chains
     exp_prov = {
         0x4169ac: ("STRIDE", (8380, 0x94d654, ("arg", "eax"))),
@@ -912,8 +979,8 @@ def main():
          "prov-pinned=%s (13 STRIDE, 0 BLKCONST/UNPROVEN) bytechains=%s slot20=%s slotc=%s" % (
              prov_ok, bc_ok, [hex(a) for a in slot20], [hex(a) for a in slotc]))
     gate("G3", len(s224) == 0 and len(regwr) == 0 and len(regrd) == 0
-         and len(s220) == 30 and len(sib224) == 0,
-         "seeds220=%d (M325 cross-check=30) seeds224=%d regwr=%d regrd=%d sibling-offset-into-224=%d accesses=%d" % (
+         and len(s220) == 30 and len(sib224) == 0 and len(accesses) == 27,
+         "seeds220=%d (M325 cross-check=30) seeds224=%d regwr=%d regrd=%d sibling-offset-into-224=%d accesses=%d (pinned=27)" % (
              len(s220), len(s224), len(regwr), len(regrd), len(sib224), len(accesses)))
     fold_ok = (fold == {"0x520afc": ("mov", "eax,edi"), "0x520afe": ("shl", "eax,0x6"),
                         "0x520b01": ("add", "eax,edi"), "0x520b03": ("lea", "eax,[edi+eax*2]"),
@@ -966,17 +1033,8 @@ def main():
     gate("G5", rel_ok and addleg_ok and phase_ok,
          "HURRY-relation=%s addleg=%s phase=%s (defer iff 920434!=0 AND 91c62c!=0; refs=%d/%d)" % (
              rel_ok, addleg_ok, phase_ok, g920, g62c))
-    triples_ok = True
-    for l220, l224, sub in triples:
-        i220, i224, isub = INS.get(l220), INS.get(l224), INS.get(sub)
-        if l224 == sub:  # fused sub eax,[edx+224]
-            ok = (i220 and i220[0] == "mov" and "0x94d650" in i220[1]
-                  and isub and isub[0] == "sub" and "0x94d654" in isub[1])
-        else:
-            ok = (i220 and i220[0] == "mov" and "0x94d650" in i220[1]
-                  and i224 and i224[0] == "mov" and "0x94d654" in i224[1]
-                  and isub and isub[0] == "sub")
-        triples_ok = triples_ok and ok
+    # triples_ok computed STRUCTURALLY at T7a (review #332 P2: same-base loads,
+    # directed sub, fused bases equal by value_of - not substring matching)
     cap_ok = (cap["g999_load"] == ("mov", "ecx,DWORD PTR ds:0x999fa4")
               and cap["guard1"] == ("test", "ecx,ecx") and cap["guard1_jcc"] == ("jl", "0x41a4fe")
               and cap["guard2"] == ("test", "eax,eax") and cap["guard2_jcc"] == ("jl", "0x41a4fe")
@@ -987,14 +1045,15 @@ def main():
               and capdir == "MIN"
               and itoa["base"] == ("push", "0xa") and itoa["call"] == ("call", "0x64f980"))
     gate("G6", triples_ok and len(triples) == len(readers) and cap_ok,
-         "all %d readers compute 220-224=%s itoa=%s cheatcap-MIN=%s (g999fa4 consumer @41a4e0)" % (
-             len(readers), triples_ok, itoa, capdir))
+         "all %d readers compute 220-224 structural=%s itoa(1 site)=%s cheatcap-MIN(1 consumer)=%s" % (
+             len(readers), triples_struct, itoa, capdir))
     gate("G7", reset["xor"] == ("xor", "eax,eax")
          and reset["store"] == ("mov", "DWORD PTR [ebx+0x94d654],eax")
          and reset["owner"] == "FUN_0059ec90"
          and len(ts) == 16 and len(tso) == 0 and len(blkstores) == 0,
          "reset=%s turnfn stores=%d stringops=%d blkstores=%d (M325 G4 cross-check)" % (
              reset, len(ts), len(tso), len(blkstores)))
+    foffs = [sv["off"] + k * STRIDE + OFF for k in range(NBLK)] if sv else None
     gate("G8", sv is not None and sv["off"] == 0x32c
          and sv["vals"] == [0] * 8
          and sv["energy"] == [10, 28, 112, 69, 229, 60, 102, 37]
@@ -1006,8 +1065,10 @@ def main():
          and leg["read_branch"] == ("je", "0x596a91")
          and leg["read_call"] == ("call", "0x64cc00")
          and leg["write_call"] == ("call", "0x64c9a0")
-         and 0x105e0 == NBLK * STRIDE and OFF < STRIDE,
-         "save=%s leg=%s (raw block carry; gap=own-player idx; file@550+k*20bc)" % (sv, leg))
+         and 0x105e0 == NBLK * STRIDE and OFF < STRIDE
+         and foffs == [0x550 + k * STRIDE for k in range(NBLK)],
+         "save=%s leg=%s foffs=%s (raw block carry; gap=own-player idx; formula pinned)" % (
+             sv, leg, [hex(x) for x in foffs] if foffs else None))
     r1 = sv is not None and all(sv["vals"][k] == sv["energy"][k] for k in range(NBLK))
     r2 = len(blkstores) > 0
     r3 = settle["sub"] is not None and settle["sub"][0] == "add"
@@ -1018,6 +1079,33 @@ def main():
          "R1 energy-copy=%s R2 turnfn-writes=%s R3 settle-adds=%s R4 unconditional-defer=%s "
          "R5 LOAN-noun-in-writers=%s R6 DEBT-string-exists=%s (all must be False; loan_owners=%s)" % (
              r1, r2, r3, r4, r5, r6, loan_owners))
+    # G10 (review #332 P1/P2): the M325 crosscheck is a GATE, not a diagnostic.
+    # Pins: no transform error; M325's published totals; EVERY diff is a
+    # prov-label change of the allowed classes (29 BLKCONST->STRIDE flips +
+    # 4 UNPROVEN detail changes, nothing else); seed tags + BLKCONST targets
+    # unchanged; and M325's OWN 8 gates re-run under the fix all PASS.
+    xd = xc.get("diffs", [])
+    xprov = [t for t in xd if t[0] == "prov"]
+    xother = [t for t in xd if t[0] != "prov"]
+    xflips = [t for t in xprov if t[2].startswith("('BLKCONST'") and t[3].startswith("('STRIDE'")]
+    xundet = [t for t in xprov if t[2].startswith("('UNPROVEN'") and t[3].startswith("('UNPROVEN'")]
+    xfg = xc.get("fixed_gates")
+    gate("G10", "error" not in xc
+         and xc.get("hits") == 234 and xc.get("regwr") == 20
+         and xc.get("regrd") == 7 and xc.get("seeds") == 30
+         and not xother and len(xflips) == 29 and len(xundet) == 4
+         and len(xprov) == 33
+         and xc.get("seed_tags_equal") is True
+         and xc.get("blkconst_seeds") == [("0x40dd60", "0x94f70c"), ("0x4e02ae", "0x94f70c"),
+                                          ("0x520589", "0x94f70c"), ("0x523b57", "0x94f70c")]
+         and xc.get("blkconst_seeds") == xc.get("blkconst_seeds_orig")
+         and xc.get("fixed_summary") == (8, 8)
+         and isinstance(xfg, dict) and len(xfg) == 8
+         and all(v == "PASS" for v in xfg.values()),
+         "xc-error=%s totals=%s/%s/%s/%s flips=%d undet=%d other=%s seedtags=%s blkconst=%s M325-gates-under-fix=%s" % (
+             xc.get("error"), xc.get("hits"), xc.get("regwr"), xc.get("regrd"),
+             xc.get("seeds"), len(xflips), len(xundet), xother,
+             xc.get("seed_tags_equal"), xc.get("blkconst_seeds"), xc.get("fixed_summary")))
     # digest over measured detail
     d = hashlib.sha256()
     for x in rows:
@@ -1028,9 +1116,10 @@ def main():
     d.update(repr((fold, str(fold_val), settle, esidefs)).encode())
     d.update(repr((strs, hurry_pushes, addleg, bytechain, slot20, bytechain2,
                    slotc, phase, g920, g62c)).encode())
-    d.update(repr((tl, itoa, cap, capdir)).encode())
+    d.update(repr((tl, triples_struct, itoa, cap, capdir)).encode())
     d.update(repr((reset, len(ts), len(tso), sorted(blkstores))).encode())
-    d.update(repr((sv, leg)).encode())
+    d.update(repr((sv, leg, foffs)).encode())
+    d.update(repr(wrshapes_meas).encode())
     d.update(repr((loan_strs, loan_owners, len(debt_strs))).encode())
     d.update(repr(xc).encode())
     d.update(repr((len(STACK_CALL_CROSSINGS), cross_sites)).encode())

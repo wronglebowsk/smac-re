@@ -3,4 +3,5 @@
   PASS S2 equal-patch rejected
   PASS S3 empty-patch rejected
   PASS S4 pe-patch live
-== selftest: 4/4 ==
+  PASS S5 reverse-partial opaque
+== selftest: 5/5 ==

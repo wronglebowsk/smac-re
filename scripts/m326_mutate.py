@@ -1,29 +1,36 @@
 #!/usr/bin/env python3
 # M326 mutation harness: every VERIFIED claim row names the mutant that reddens it.
-# 16 code mutants rewrite the DISASSEMBLY via M326_PATCH (settle sub/clamp/zero,
-# fold shl, add-leg shape/gate/pay-store, HURRY reader sub, cheat-cap jle, reset
-# xor, byte-chain offset, turnfn planted block store, planted SIBLING-offset
-# store through a 220-seed); 6 algorithm mutants via M326_ALGO (1 prov off,
-# 2 disp widened, 3 seed-scan off, 4 shl-blind, 6 old pop pairing, 7 subreg-blind
-# = the OLD resolver this round fixed); 2 save-data mutants (blk0+224 byte flip;
-# a REAL second save m112poke.SAV); 2 PE-data mutants (HURRY first byte;
-# unrelated .data byte NO-OP). A crash is NOT a red gate (m319 MU6 law): output
-# without the 9-denominator summary scores CRASH and fails the harness. DIGEST
-# (M324 review law): hashes each mutant's MEASURED payload - the patch/data
-# literal AND the acceptance digest of that mutant's run. Sets were MEASURED by
-# a sweep (M326_MUT_MEASURE=1) then declared. Sweep corrections: MU13's widened
-# census also reddens G6 (reader-count pin) and G9 (writer-owner set intersects
-# LOAN owners); MU23's planted [esi+4] store is INVISIBLE to the disp census
-# (disp=4 matches no field form) - only the sibling seed scan catches it (G3
-# alone), which is exactly the gap it exists to close.
-# --selftest: 3 patch-mechanism rejection checks + 1 live PE-patch mechanism run.
+# 19 code mutants rewrite the DISASSEMBLY via M326_PATCH (settle sub/clamp/zero,
+# fold shl, add-leg shape/gate/pay-store, HURRY reader sub + REVERSED sub,
+# fused wrong-sibling load, cheat-cap jle, reset xor, byte-chain offset, turnfn
+# planted block store, planted SIBLING-offset store through a 220-seed, planted
+# PARTIAL redefinition inside a seed window); 7 algorithm mutants via M326_ALGO
+# (1 prov off, 2 disp widened, 3 seed-scan off, 4 shl-blind, 6 old pop pairing,
+# 7 subreg-blind = the OLD resolver this round fixed, 8 crosscheck-fix-disabled);
+# 2 save-data mutants (blk0+224 byte flip; a REAL second save m112poke.SAV);
+# 2 PE-data mutants (HURRY first byte; unrelated .data byte NO-OP). A crash is
+# NOT a red gate (m319 MU6 law): output without the 10-denominator summary
+# scores CRASH and fails the harness. DIGEST (M324 review law): hashes each
+# mutant's MEASURED payload - the patch/data literal AND the acceptance digest
+# of that mutant's run. Sets were MEASURED by a sweep (M326_MUT_MEASURE=1) then
+# declared. Sweep corrections: MU13's widened census also reddens G6 (reader-
+# count pin) and G9 (writer-owner set intersects LOAN owners); MU23's planted
+# [esi+4] store is INVISIBLE to the disp census (disp=4 matches no field form) -
+# only the sibling seed scan catches it (G3 alone), which is exactly the gap it
+# exists to close. Review #332 round: G1 gained writer-role pins (MU3/MU4 sets
+# widened), G6 became structural (MU25/26), G3 pins the access count (MU27),
+# G10 gates the M325 crosscheck (MU24); sets re-measured. Re-sweep correction:
+# MU26's wrong-sibling load also reddens G2 (the 13-row provenance pin sees a
+# 14th census row).
+# --selftest: 3 patch-mechanism rejection checks + 1 live PE-patch mechanism run
+# + 1 in-process reverse-partial resolver check (S5).
 import os, re, sys, shutil, subprocess, hashlib, tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPT = os.path.join(REPO, "scripts", "m326_block224_census.py")
 SAVE = os.path.join(REPO, "programs/saves/m54b_clean.SAV")
 SAVE2 = os.path.join(REPO, "programs/saves/m112poke.SAV")
-GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"]
+GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10"]
 TMPBASE = os.environ.get("TMPDIR") or os.path.join(REPO, "evidence")
 MEASURE = os.environ.get("M326_MUT_MEASURE") == "1"
 TMPDIRS = []
@@ -32,8 +39,8 @@ TMPDIRS = []
 MUTANTS = [
     ("MU1",  "code", "0x520b1a|add edx,ecx", {"G4", "G6", "G9"}),
     ("MU2",  "code", "0x520b2e|jl 0x520b36", {"G4"}),
-    ("MU3",  "code", "0x520b22|mov DWORD PTR [eax+0x94d654],edi", {"G4"}),
-    ("MU4",  "code", "0x41a543|sub DWORD PTR [esi+0x94d654],edi", {"G5"}),
+    ("MU3",  "code", "0x520b22|mov DWORD PTR [eax+0x94d654],edi", {"G1", "G4"}),
+    ("MU4",  "code", "0x41a543|sub DWORD PTR [esi+0x94d654],edi", {"G1", "G5"}),
     ("MU5",  "code", "0x41a537|jne 0x41a54b", {"G5", "G9"}),
     ("MU6",  "pe", "0x689990|58", {"G5"}),
     ("MU7",  "code", "0x4169b2|add edx,ecx", {"G6"}),
@@ -53,6 +60,12 @@ MUTANTS = [
     ("MU21", "pe", "0x999fa8|00", set()),  # declared NO-OP: unrelated .data byte
     ("MU22", "code", "0x41a55d|mov DWORD PTR [esi+0x94d650],edx", {"G5"}),
     ("MU23", "code", "0x4e0336|mov DWORD PTR [esi+0x4],eax", {"G3"}),
+    # review #332 fixes: G10 crosscheck gate (MU24), structural G6 (MU25/26),
+    # seed-scan partial-redefinition break (MU27)
+    ("MU24", "algo", "8", {"G10"}),
+    ("MU25", "code", "0x4169b2|sub ecx,edx", {"G6"}),
+    ("MU26", "code", "0x440b8f|mov eax,DWORD PTR [ecx+0x94d654]", {"G1", "G2", "G6"}),
+    ("MU27", "code", "0x4e032c|mov si,0x0", {"G3"}),
 ]
 
 def run(env_extra):
@@ -68,7 +81,7 @@ def run(env_extra):
     for g in GATES:
         m = re.search(r"^%s (PASS|FAIL)" % g, out, re.M)
         gates[g] = m.group(1) if m else None
-    m = re.search(r"^== M326: (\d)/(\d) ==", out, re.M)
+    m = re.search(r"^== M326: (\d+)/(\d+) ==", out, re.M)
     summ = (int(m.group(1)), int(m.group(2))) if m else None
     m = re.search(r"^DIGEST ([0-9a-f]{16})", out, re.M)
     dig = m.group(1) if m else None
@@ -101,8 +114,8 @@ def main():
     try:
         g0, s0, d0, _, rc0 = run({})
         print("BASELINE %s digest=%s rc=%d" % (s0, d0, rc0))
-        if s0 != (9, 9):
-            print("BASELINE NOT 9/9 - harness aborts (fix the instrument first)")
+        if s0 != (10, 10):
+            print("BASELINE NOT 10/10 - harness aborts (fix the instrument first)")
             return 1
         rows, bad = [], 0
         d = hashlib.sha256()
@@ -110,7 +123,7 @@ def main():
         for mid, kind, payload, declared in MUTANTS:
             env = env_for(kind, payload)
             gates, summ, dig, out, rc = run(env)
-            if summ is None or summ[1] != 9:
+            if summ is None or summ[1] != 10:
                 red = "CRASH"
                 ok = False
             else:
@@ -154,9 +167,16 @@ def selftest():
     # must show the mutated string WITH the intact addleg/phase pins (the failure
     # is caused by the string mutation, not collateral damage)
     gates, summ, dig, out, rc = run({"M326_PE_PATCH": "0x689990|58"})
-    checks.append(("S4 pe-patch live", summ == (8, 9) and gates["G5"] == "FAIL"
+    checks.append(("S4 pe-patch live", summ == (9, 10) and gates["G5"] == "FAIL"
                    and "b'XURRY'" in out and "addleg=True phase=True" in out
                    and all(gates[g] == "PASS" for g in GATES if g != "G5")))
+    # S5 (review #332 P2): the INVERSE partial-register direction - querying
+    # 'al' across a full 'eax' write must stop OPAQUE at that write, not walk
+    # through it to the older byte load. 0x419d97 = mov eax,[edx+0x50].
+    sys.path.insert(0, os.path.join(REPO, "scripts"))
+    import m326_block224_census as m
+    v = m.value_of(0x419d9f, "al")
+    checks.append(("S5 reverse-partial opaque", v == ("lin", 1, 0, ("arg", "al"))))
     for name, ok in checks:
         print("  %s %s" % ("PASS" if ok else "FAIL", name))
     print("== selftest: %d/%d ==" % (sum(ok for _, ok in checks), len(checks)))
