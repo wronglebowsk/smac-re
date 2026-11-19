@@ -1,0 +1,11 @@
+shipped gates(): 9 rows G1,G2,G3,G4,G5,G6,G7,G8,G9
+-- harness 2026-11-19 17:05:53 UTC --
+== B25 harness self-test: 5 PERTURBED declarations, every one must be REJECTED ==
+MU1    the falsifier never fires (no  [SELFTEST: a dropped  declared=G6                         measured=G6,G8,G9               BAD  (3/9 gates red)
+MU1    the falsifier never fires (no  [SELFTEST: an added g declared=G1,G6,G8                   measured=G6,G8,G9               BAD  (3/9 gates red)
+MU4    the mover's tiles never reach  [SELFTEST: a subset:  declared=G2                         measured=G2,G3,G4,G5,G6,G8,G9   BAD  (7/9 gates red)
+MU14   the previous round's WRITE is  [SELFTEST: an added g declared=G4,G8                      measured=G4                     BAD  (1/9 gates red)
+MU9    labels only: the read source's [SELFTEST: a gate MU9 declared=G6                         measured=G9                     BAD  (1/9 gates red)
+== selftest: 0/5 scored mutants matched their declared gate sets (+0 declared NO-OP: -) ==
+BAD mutants (did NOT match their declared effect): MU1, MU1, MU4, MU14, MU9
+selftest 5/5 perturbed declarations REJECTED

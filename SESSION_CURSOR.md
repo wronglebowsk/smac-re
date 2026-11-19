@@ -1,7 +1,11 @@
-M319 MERGED: #317 -> main 147e66a. Head numbers: `m319_guard_hoist.py` 7/7 digest
-fb4e802dac1995a2 at evidence/m319_guard_hoist.txt:73 (+_rerun2.txt:73, +_rerun3.txt:73,
-sha 5ea00d859bf4503f on all three); `m319_mutate.py` 14/14 scored + 1/1 NO-OP (:17);
-`--selftest` 4/4 (mutate_selftest.txt:5). The squash title's 459f.../12-12+1 is the
-PRE-REVIEW harness - NAMED ## M319 governs (as M314's "20/20"). Pick (v) CLOSED: the
-dedup guard is NOT hoisted into the callers of the 8 unguarded memo sites.
-NEXT: pick (vi) NAME FUN_004ee410 + FUN_004f41f0 (NEXT_PROMPT §THE PICK). #180 stands.
+# SESSION_CURSOR
+
+B25 IN REVIEW (milestone/b25, #319 triaged): `python3 -u -m sim.selftest --b25` ->
+`PASS B25: 9/9 gates`, ACCEPT anchor 901a286332960a10 now PINNED by G9
+(`evidence/b25_selftest.txt:59`, banner `:69`, 2 runs byte-identical, == `-m sim.composedmove`);
+harness `python3 -u scripts/b25_mutate.py` -> **13/13 scored + 3 declared NO-OP**
+(`evidence/b25_mutate.txt:20`); `--selftest` **5/5** (`..._selftest.txt:11`).
+ANSWERED: the move leg IS persistent through the writer - the LAW is byte-level carry (table H);
+the CONTAINER (m54b_clean is 64x64), not `planet.MP` (80x80), owns the mover's modulus - NAMED §B7
+corrected in place; the decoder coord-checks only 42 of the 67 records (25 carry +10 >= 64).
+NEXT: merge #319 on a green CI, then B26, spine text NOT authored. #180 stands.

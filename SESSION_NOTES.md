@@ -1,20 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-275-275.md` (1 sessions). Read it only when a question reaches back before session ## Session 276.
-
-## Session 276 (2026-11-18, STATIC, zero box) - M312: the selection check has TWO trunks; every forwarder is unreachable; the pair is the CURSOR TILE sweep
-- #105 (badge) verified live (page+svg 200) and squash-merged; #180 stands as documented-FAIL. `track_mode`: MODE=ANALYSE analyse_since_build=1 next_rung=B23 - ANALYSE fire, pick (i) taken.
-- Acceptance `python3 -u scripts/m312_goal_callers.py` -> **== M312: 27/27 ==**, exit 0, two runs byte-identical, `digest 8751c5af18c5a8f8` (`evidence/m312_goal_callers.txt`); `python3 -u scripts/m312_mutate.py` -> **23/23 mutations reddened their target checks** (`evidence/m312_mutate.txt`). REVIEW ROUND (same branch): the first head (26/26, digest e25f77bb08585dfe, 17/17) drew 3 Greptile P2s on #292, all fixed at the second head - A9a was decorative (now 16 pinned instructions x 5 arms), the fan-out prose said 0..8 where the encoding visits **0..7** (bound 8 EXCLUSIVE), and A8b's "single store" is ENTRY ZERO only (entries 1..7 are the M262 pointer-arithmetic allocations, invisible to any address grep); new laws A5f (every x store = a 469010 result) + A5b extended to both y-laws.
-- THE RETRACTION (A4): FUN_00470fe0 gates its invalidator tail on arg4 != 0 (`cmp [ebp+0x14] / je 0x47108b`) and ALL FOUR forwarder sites (0x47169A/6D6/802 inside 004715d0, 0x472151 inside 00471fd0) push literal `0x0` - so M310's "site 1" (0x471086) is UNREACHABLE from every caller in the binary; only the 4 direct sites fire FUN_00470b90 (all internally gated on `this+0x1dd70 & 0x2000`; 004715d0's three also pre-gated, `je 0x4719d3` at 0x47183e skips all three).
-- TRUNK A (cursor): FUN_004736a0 (64 B, single callee, 15 dump call sites) pushes exactly `cursor_x_list[cursor], cursor_y_list[cursor], 2` (globals 0x91b5f0/0x91b670/0x91b5e8, NAMED ledger) -> FUN_004727c0 (valid-tile gate FUN_00469060) -> FUN_004725a0 (computes block `(ds:0x985ae8&0x80)?-1:ds:0x91b5b4` - M310's filter, same encoding) -> sweep FUN_004715d0: y = arg_y-3 (0x47166F/0x47185F), x in {arg_x-1, arg_x+1} clamped through FUN_00469010, every candidate gated FUN_00469060 != 0, the loop site additionally FUN_00422060 != 0 (0x4719b8). Fan-in also from FUN_00473760 (the M262 view table ds:0x7cdecc[0..7] - 8 entries, bound exclusive: element IS this, i != 0 requires element+0x1dd74 == 0; entry zero = the static main view 0x8f79e0 (the band's only direct store, 0x5803e1; entries 1..7 per M262)) and view-move FUN_00473d00 (kind=2, gated view+0x1dd8c bit 4).
-- TRUNK B: the 5 hub arms (FUN_00472810, 53 sites / 28 owner functions) pass (block, param<0) into FUN_00471fd0 - NOT a coordinate pair; 00471fd0's invalidator call consumes the view-unpacker outputs (M310 site 5, unchanged).
-- KICKOFF-CORRECTION: 0x4725e9 sits in FUN_004725a0 (544 B), not in FUN_00471fd0.
-
-## Session 277 (2026-11-18, STATIC close-out of s276's M312, zero box) - PR #292 merged; the review round stands as the correction record
-- `milestone.py merge 292` -> verdict GREEN, `merged #292; main is up to date` (main ec63d7a). CI `gate` pass 16 s on the review head (1b79181); no re-review arrived on the second head (one review per PR, on OPEN) - recorded honestly, NOT a second review pass.
-- All 3 Greptile P2s were accepted and fixed at head 1b79181 BEFORE merging (full accounting in the single PR comment https://github.com/wronglebowsk/smac-re/pull/292#issuecomment-6966204794): the A9a arm check was decorative (now 16 literal-pinned instructions x 5 arms, MU16/24/25), my fan-out prose claimed 0..8 where the encoding visits 0..7 (bound exclusive - MU14), and A8b overstated scope (entry-zero census only; entries 1..7 belong to ## M262-M264 pointer-arithmetic - MU15/23). New laws: A5f, extended A5b.
-- Final numbers: `python3 -u scripts/m312_goal_callers.py` -> == M312: 27/27 ==, digest 8751c5af18c5a8f8, two runs byte-identical; `python3 -u scripts/m312_mutate.py` -> 23/23.
-- `track_mode.py` after the merge: MODE=ANALYSE analyse_since_build=2 last_build=B22 next_rung=B23 - the next fire ANALYSES. Pick (i') NAME THE EVENTS: which UI handlers reach FUN_004736a0's 15 call sites and FUN_00472810's 53 sites / 28 owners. The ds:0x7cdecc question is CLOSED by M262 - do not re-derive.
+Older sessions: `docs/sessions/sessions-276-277.md` (2 sessions). Read it only when a question reaches back before session ## Session 278.
 
 ## Session 278 (2026-11-17/18, M313 - NAME THE EVENTS: pick (i') - the 15 thunk callers and 53 hub sites collapse onto ONE interaction band wired to TWO command pumps; pumpA's door is a data pointer at 0x6724a8 in a multi-table .text run from 0x672290 (post-review narrowing); pumpB's entry installed at startup as a callback)
 
@@ -195,3 +181,91 @@ Older sessions: `docs/sessions/sessions-275-275.md` (1 sessions). Read it only w
 
 - #317 MERGED -> main `147e66a` (gate GREEN, `review_lint --id m319` PASS 7 V rows, review 1 P1 + 9 P2 triaged in one reply). Cursor rewritten for the next fire; `NAMED ## M319` gains a `lead` governance row saying the squash title's 459f47e3178f439d / 12-12+1 are the PRE-REVIEW harness and the ACCEPT row governs (same defect as M314's "20/20" note).
 - LAW RE-LEARNED: a meta/governance sentence in NAMED belongs at conf `lead`, not `V` - #318's own review returned 4 P1s on exactly that, because a `V` row must name a mutant that reddens it, and a process note has none.
+
+## Session 294 (2026-11-19, B25 BUILD - the MOVE leg made persistent; zero box)
+
+> SUPERSEDED IN PART by Session 295 (same day, #319 review triage): every `evidence/b25_*.txt`
+> here was REGENERATED, so the line cites point one or more lines off (the anchor is now `:59`,
+> the banner `:69`); the harness count is 13/13 + 3 declared NO-OP (was 11/11 + 2) and the
+> selftest 5/5 (was 4/4). The numbers themselves (9/9, 268/268, 37/27/4, 39 mod 64) stand.
+
+- Track said BUILD (last_build=B24) and `BUILD_SPINE.md` ENDED at B24, so the rung text was AUTHORED
+  FIRST (one milestone = spine section + instrument), then built. `sim/composedmove.py`, `--b25` relays.
+- ACCEPT `python3 -u -m sim.selftest --b25` -> **PASS B25: 9/9 gates**, digest **901a286332960a10**
+  (`evidence/b25_selftest.txt:41`, banner `:51`), second run byte-identical; `python3 -u -m
+  sim.composedmove` prints the SAME 9 gate lines (`evidence/b25_movepersist.txt`). HARNESS
+  `python3 -u scripts/b25_mutate.py` -> **11/11 scored mutants matched their declared gate sets + 2
+  declared NO-OP** (MU9 labels-only, MU11 multiset-only) (`evidence/b25_mutate.txt:16`); `--selftest`
+  -> **4/4 perturbed declarations REJECTED** (`evidence/b25_mutate_selftest.txt:9`).
+- ANSWER 1, the rung: the mover's start tile IS the container's. **268/268** (round,unit) reads equal
+  the container at the round head, **0** divergences, and the container still holds the SAVE's tile for
+  67 records in round 0 and **0** in every later round, so the read cannot be vacuous (G4 `:45`).
+  Rewriting unit 0's tile IN THE IMAGE ONLY at round 1 shifts its whole later trajectory by **39 mod
+  64** and it reaches the final container ([19,42] vs clean [44,42]); **0 of 67** other units move;
+  the model-fed and read-after-write movers rebuild the CLEAN image byte-for-byte - blindness proved,
+  not asserted (G6 `:47`, sightings `:21-23`). Footprint: **67** unit-array bytes == **67** tiles
+  written per round, all at record offset **+0** (x only), plus the **1-B** year step 2151->2154; the
+  final image is **68 B** from the save, **0 B** outside a modeled span (G2 `:43`, G7 `:48`).
+- ANSWER 2, a correction (§B7 patched in place): **`m54b_clean.SAV` is 64x64 by its own header** -
+  `scripts/decode_save.py --sections` prints "map header struct (64x64)" and grid 90,112 = 64*64*22 -
+  while `planet.MP` is 80x80 and no repo map is 64. B7 wrapped x by the MAP FILE's width. Run here as
+  a rival: **37** records land outside the container at the write and **27** come back as a later
+  read, and the parser's own `found_units` drops **67 -> 4** (G5 `:46`, rows `:33-34`). B7's own
+  4-round slice ends with **10 of 67** units outside the container grid (**4 of 67** at its accepted
+  --turns 5; the end-state count is sampling-dependent - the written/read-back counts are the
+  load-bearing ones, and MU13 reddens G5 if the cross-check is judged against the wrong grid).
+- MUTATION TAUGHT THIS ONE TOO (sets MEASURED, first declares wrong): MU3 (container never refreshed -
+  the defect this instrument HAD, caught by G2's byte-vs-tiles equality) {G2,G6,G8} not {G4,G6}; MU4
+  (tiles never reach the writer) {G2,G3,G4,G5,G6,G8} - G7 stays green honestly, the one unit byte left
+  is the FALSIFIER's own write and G7 counts modeled spans, not authors; MU8 was a NO-OP until the
+  read/write out-of-grid arms were SPLIT into separate counters (as one union the write arm subsumed
+  the read arm = decoration). G8 gained a `not_rival` clause so the rung cannot pass by quietly
+  becoming one of its rivals.
+- UNMODELED (declared in the spine text): MP/spent is model state, never persisted (B7's ASSUMED line
+  about the 0x51f730 per-round refresh unchanged); per-terrain cost and the second move's source (B5);
+  blocking/zone-of-control and every refusal cause but exhausted MP; y is never moved (dir=1, dy=0) so
+  the y-bound law is NOT exercised; WHICH unit the game moves is not claimed (the gesture hits every
+  unit, exactly as B7 declared). NEXT: B26, spine text NOT authored. #180 still stands (2/5).
+
+## Session 295 (2026-11-19, B25 #319 review triage - 10 findings, all accepted; zero box)
+
+- Clean start, not a repair: `git checkout -- sim/composedmove.py scripts/b25_mutate.py` back to the
+  green head (the WIP is saved at `~/reverse/wip/b25_wip_20261119.patch`), then the findings
+  re-implemented as a minimal delta. ACCEPT anchor UNCHANGED at **901a286332960a10** (digest_rows
+  untouched), so every prior doc cite of it still holds; only evidence LINE NUMBERS moved.
+- f.1 (P1): `render()` now prints the anchor `measure()` computed and **G9 pins it to a literal**
+  `ACCEPT_PIN` (`evidence/b25_selftest.txt:59`). The mutant that names it alone: **MU9**
+  (labels-only edit, no tile/count moves) -> measured `{G9}`.
+- f.4/f.10: G4's law is now **byte-level carry** (table H `:40-43`): head bytes vs the previous
+  round's WRITE bytes, difference == exactly the falsifier's own edits ([0,1,0,0] vs [0,1,0,0]);
+  the read-back compares against a **FRESH DECODE** of the consumed bytes, 268/268 (`:63`). Re-
+  measured sets: MU3 grew to {G2,G4,G5,G6,G8,G9} (a stale cache is what the fresh decode sees);
+  new **MU14** (forget the previous write) = {G4} alone; new **MU15** (compare cache to itself,
+  the old shape) = DECLARED NO-OP - it measures nothing when the cache is refreshed.
+- f.5/f.6 (the round's real find): G5 now PINS 37/27/4 for both rivals and cross-checks the
+  instrument's `tile >= width` set against `sim/save._unit_ok` on the same bytes over **44 probes**
+  (11 runs x 4 rounds, table I `:45-56`). **They disagree raw: 36/44.** The 8 differers are exactly
+  the records the decoder itself exempts - **25 of the 67** records of m54b_clean.SAV carry +10 in
+  128/130/131/256/320/321/322/323 (>= 64), so its acceptance test coord-checks only **42**. With
+  the decoder's own rule applied: 44/44, and `found_units` recomputed from `_unit_ok` == the
+  parser's 44/44. On this save the exemption is INVISIBLE to coordinates (all 67 pristine +0/+2
+  in-grid), so it splits the array by FIELD, not by tile sanity - which qualifies B7's and B25's
+  "67 units": the model presses 25 records the decoder never coord-checks. **MU16** (copy the
+  parser's number instead of recomputing) = declared NO-OP, i.e. that half is decoration HERE.
+- f.8: G8's "matches none of its rivals" is now the FULL table-E signature vs all **5 RIVAL** rows
+  (`:67`); the 3 `:clean` twins coincide by construction - table E carries no per-unit delta, G6
+  reads the falsifier - and that is now stated instead of hidden by a hand-picked subset.
+- f.9: the controls are blind **to the falsifier, not to writing** (still 268 unit bytes each; G6
+  reads mdl_w/late_w > 0 itself). f.2: §B7 row split into (a) B7's own in-memory tiles and (b) the
+  mpwidth rival's parse - a parser result had been claimed for a run that was never parsed.
+  f.3: cursor said 10/10 at `:15`; measured 13/13 at `b25_mutate.txt:20`.
+- f.7: the harness prints one `BADGATE <id>` line per failed row (id from gates()'s own name
+  field), scored against the SHIPPED `gates()` with BADCOUNT/NGATES/dup cross-checks; no regex
+  reads a message. Sets re-measured from scratch: **13/13 + 3 declared NO-OP**
+  (`b25_mutate.txt:20`), `--selftest` **5/5 rejected** (`b25_mutate_selftest.txt:11`).
+- TRAP LEARNED: a pinned global anchor reddens on nearly every mutant (7 of 13 gained G9). That is
+  the pin working, but the discriminating information moves into the other gates - say so in the
+  harness docstring or a reader scores the pin as padding.
+- STILL OPEN: what the .exe does with a +10 >= 64 record's +0/+2; whether the wrap or the
+  `_unit_ok` rejection fires first in the engine; which grid the shipped game gives a mover when
+  the container and `planet.MP` disagree. #180 still stands (2/5).
