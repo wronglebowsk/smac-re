@@ -134,3 +134,4 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 `python3 scripts/gate.py --base main` GREEN + `python3 scripts/review_lint.py --id <id>` PASS.
 7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
+M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +0x1078..0x1878, 3x512 arrays (+0x854/+0xa54 byte, +0xc54 word), scalar tail +0x2038..0x20bc; reset FUN_0059ec90 / rebuild FUN_0051dcb0. 12/12 digest 12e247bdbc0f77ef (evidence/m320_sibling_census.txt:418); harness 26/26+1. FULL: NAMED.md ## M320 + SESSION_NOTES s294-chain2.
