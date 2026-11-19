@@ -45,6 +45,8 @@ FIELD38 = 0x95DA48          # BASE + 0x38, the folded idiom of the same field
 SEL = 0x99AA38              # the scratch dword FUN_0041a8f0 round-trips the bits through
 EMITTER = 0x48F100
 PAIR = (0x4E8D60, 0x4E78E0)
+PAIR_MAX = 25               # the claimed bound: the WHOLE pair completes within this many B
+FIELDS = (0x78, 0x7C, 0x80)  # record fields the caller clears before the leg the je gates
 OWNER = {"FUN_004ee410": 0x4EE410, "FUN_004f41f0": 0x4F41F0}
 ARRIVER = {"FUN_00416ef0": 0x416EF0, "FUN_00416f60": 0x416F60, "FUN_0041a8f0": 0x41A8F0}
 
@@ -194,12 +196,16 @@ ALIAS = {"al": "eax", "ah": "eax", "ax": "eax", "cl": "ecx", "ch": "ecx", "cx": 
          "di": "edi", "bp": "ebp"}
 
 
-def back_def(a, reg, limit=40):
+def back_def(a, reg):
     """Nearest preceding instruction that WRITES `reg`, scanning straight back to the
-    function entry. Two hazards are honoured (both bite this census when ignored): a CALL
-    kills a CALLER-SAVED register, so a `mov eax,ds:0x8f0d60` several blocks up is NOT a
-    def; and cmp/test/push name a register without writing it. Straight-line only - a
-    control-flow join is still an over-approximation, declared OPEN in the NAMED block."""
+    function entry (there is deliberately NO byte limit: a bounded scan would silently
+    return None on a long live range and make "nearest def" claims unverifiable - the
+    locality of every def this census quotes is instead MEASURED and printed as a byte
+    distance, and the gates pin that distance). Two hazards are honoured (both bite this
+    census when ignored): a CALL kills a CALLER-SAVED register, so a `mov eax,ds:0x8f0d60`
+    several blocks up is NOT a def; and cmp/test/push name a register without writing it.
+    Straight-line only - a control-flow join is still an over-approximation, declared OPEN
+    in the NAMED block."""
     reg = ALIAS.get(reg, reg)
     e, end, _ = span(a)
     for x in reversed(neighbours(e, 0, a - e)):
@@ -218,6 +224,30 @@ def back_def(a, reg, limit=40):
         if op.split(",")[0].strip() == reg:
             return x, mn, op
     return None
+
+
+def is_zero(a, v):
+    """Does operand `v` provably hold 0 at address `a`? objdump's own zero-forms only: an
+    immediate 0, or the nearest straight-line def being xor/sub of the register with
+    itself, or a mov of immediate 0. Returns (proven, how) - `how` is always the def text,
+    so a claim of "zeroed" that rests on an unrelated value prints the line that refutes it.
+    """
+    if v in ("0x0", "0"):
+        return True, "immediate 0"
+    if not re.fullmatch(r"[a-z][a-z0-9]*", v):
+        return False, "operand %s" % v
+    reg = ALIAS.get(v, v)
+    bd = back_def(a, v)
+    if not bd:
+        return False, "%s: no straight-line def" % v
+    mn, op = bd[1], bd[2]
+    parts = [p.strip() for p in op.split(",")]
+    how = "%s %s @0x%x" % (mn, op, bd[0])
+    if mn in ("xor", "sub") and len(parts) == 2 and parts[0] == parts[1] == reg:
+        return True, how
+    if mn == "mov" and len(parts) == 2 and parts[1] in ("0x0", "0"):
+        return True, how
+    return False, how
 
 
 def calls_after(a, want, window=48):
@@ -360,19 +390,42 @@ def main():
         if not stores_to(m[1], MEMO):
             continue
         reg = m[1].split(",")[-1].strip()
-        bd = back_def(a, reg, limit=40)
+        bd = back_def(a, reg)
         fed = bd and ds_of(bd[2]) == IDXG
         e, end, name = span(a)
         if not fed:
             continue
-        hits, seq = calls_after(a, set(PAIR), window=48)
+        # The order is PINNED by the PAIR tuple, never by set iteration (review #324 P1-2):
+        # hits[0] must be PAIR[0] and hits[1] must be PAIR[1], at increasing addresses.
+        hits, seq = calls_after(a, PAIR, window=48)
         order_ok = (hits[0][1] is not None and hits[1][1] is not None
+                    and hits[0][0] == PAIR[0] and hits[1][0] == PAIR[1]
                     and hits[0][1] < hits[1][1])
-        ownersites.setdefault(name, []).append((a, reg, order_ok))
+        # and the law is a DISTANCE, not an existence (review #324 P1-1): measure how far
+        # the SECOND refresh call sits from its memo store.
+        d1 = None if hits[0][1] is None else hits[0][1] - a
+        d2 = None if hits[1][1] is None else hits[1][1] - a
+        form = "a3" if m[1].strip().startswith("ds:") else "DWORD"
+        ownersites.setdefault(name, []).append((a, reg, order_ok, d1, d2, form))
+    a3memo = 0
     for name in OWNER:
         sites = ownersites.get(name, [])
-        P("   %s memo stores fed by `mov R,ds:0x68cbb0` = %d %s (refresh pair in order: %s)"
-          % (name, len(sites), [hex(s[0]) for s in sites], [bool(s[2]) for s in sites]))
+        P("   %s memo stores fed by `mov R,ds:0x68cbb0` = %d %s (pair in PINNED order: %s; "
+          "B to 1st/2nd refresh call: %s; encoding: %s)"
+          % (name, len(sites), [hex(s[0]) for s in sites], [bool(s[2]) for s in sites],
+             [(s[3], s[4]) for s in sites], [s[5] for s in sites]))
+    ownrows = [s for k in OWNER for s in ownersites.get(k, [])]
+    a3memo = sum(1 for s in ownrows if s[5] == "a3")
+    allpair = [s[4] for s in ownrows if s[4] is not None]
+    maxpair = max(allpair) if allpair else None
+    P("   the WHOLE pair completes within %s B of its memo store (measured set %s) - the "
+      "claim is <=%d" % (maxpair, sorted(set(allpair)), PAIR_MAX))
+    P("   the two owners' memo-store encodings: a3 short form=%d, DWORD form=%d (the a3 "
+      "site(s): %s)" % (a3memo, len(ownrows) - a3memo,
+                        [hex(s[0]) for s in ownrows if s[5] == "a3"]))
+    P("   image-wide with the same filter (informational, not claimed): memo stores fed by the "
+      "index = %d in %d functions, of which these two owners hold %d"
+      % (sum(len(v) for v in ownersites.values()), len(ownersites), len(ownrows)))
 
     P("-- T3b the status-icon emitters they call, msg/icon BYTES read from the PE --")
     fam = {}
@@ -426,29 +479,57 @@ def main():
     P("   sites=%d %s" % (len(sites), [hex(a) for a, _ in sites]))
     arrrows = []
     for a, r in sites:
-        bd = back_def(a, r, limit=40)
+        bd = back_def(a, r)
         defstr = "NONE" if not bd else "%s %s" % (bd[1], bd[2])
+        defdist = None if not bd else a - bd[0]
         e, end, name = span(a)
-        # the jcc right after the test, and the call its je skips over
+        # the jcc right after the test, and the call its JE skips over. The MNEMONIC is part
+        # of the claim (review #324 P1-3): a `jne` there would gate the opposite branch.
         nxt = [x for x in neighbours(a, 0, 8) if x > a]
         j = at(nxt[0]) if nxt else None
-        isje = bool(j) and j[0].startswith("j")
+        jmn = j[0] if j else "no-jcc"
+        isje = jmn == "je"
         tgt = int(j[1].split()[-1], 16) if isje and j[1].split() else None
-        gated, seq = calls_after(a, {OWNER["FUN_004f41f0"]}, window=48)
+        gated, seq = calls_after(a, (OWNER["FUN_004f41f0"],), window=48)
         gc = gated[0][1]
-        clears = [(disp_of(at(x)[1])[1], at(x)[1].split(",")[-1].strip())
-                  for x in neighbours(a, 0, 64)
-                  if x > a and tgt is not None and x < tgt and at(x)
-                  and at(x)[0] == "mov" and disp_of(at(x)[1])[0]
-                  and disp_of(at(x)[1])[1] in (0x78, 0x7C, 0x80)]
-        zeroed = sorted({d for d, v in clears})
+        # What the caller writes to the record's +0x78/+0x7c/+0x80 between the test and its
+        # je. A field counts as ZEROED only if (i) the base register is the test's own
+        # register or resolves to ds:0x8f0d60 by its nearest def, and (ii) the value's
+        # nearest def is a provable zero-form (review #324 P1-4). Everything else is
+        # collected in notzero and printed - a write the claim does not cover.
+        clears, notzero = [], []
+        for x in neighbours(a, 0, 128):
+            if tgt is None or not (a < x < tgt):
+                continue
+            mx = at(x)
+            if not mx or mx[0] != "mov" or not mx[1].startswith("DWORD"):
+                continue
+            rb, db = disp_of(mx[1])
+            if rb is None or db not in FIELDS:
+                continue
+            v = mx[1].rsplit(",", 1)[-1].strip()
+            # the base must be THIS record at the moment of the write - proved from the
+            # write's own address, not from the test's (edx is loaded after the test)
+            bdef = back_def(x, rb)
+            bok = bool(bdef and ds_of(bdef[2]) == REC)
+            ok0, how = is_zero(x, v)
+            (clears if (bok and ok0) else notzero).append((db, x, rb, v, bok, how))
+        zeroed = sorted({d for d, _x, _rb, _v, _b, _h in clears})
         arrrows.append((a, name, defstr, bool(isje and gc is not None and tgt is not None
-                                             and gc < tgt), zeroed, tgt, gc))
-        P("   0x%x in %-13s r=%-3s nearest def of r: %-28s | %s -> je 0x%x | the call of "
-          "FUN_004f41f0 at %s lies ON THE FALL-THROUGH (je skips it: %s) | before the je it "
-          "zeroes record fields %s"
-          % (a, name, r, defstr, (j[0] + " " + j[1]) if j else "no jcc", tgt or 0,
+                                             and gc < tgt), zeroed, tgt, gc, jmn, defdist,
+                        [(x, d, rb, v, bok, how) for d, x, rb, v, bok, how in notzero]))
+        P("   0x%x in %-13s r=%-3s nearest def of r: %-28s (%s B back) | %s -> je 0x%x | the "
+          "call of FUN_004f41f0 at %s lies ON THE FALL-THROUGH (je skips it: %s) | before "
+          "the je it ZEROES record fields %s"
+          % (a, name, r, defstr, defdist, (j[0] + " " + j[1]) if j else "no jcc", tgt or 0,
              hex(gc) if gc else "none", arrrows[-1][3], [hex(d) for d in zeroed]))
+        for d, x, rb, v, _b, how in sorted(clears):
+            P("      0x%x mov DWORD PTR [%s+0x%x],%s - base proven = this record at the write, "
+              "value proven 0 by %s" % (x, rb, d, v, how))
+        for x, d, rb, v, bok, how in arrrows[-1][9]:
+            P("      NOT a proven zero on this record: 0x%x mov DWORD PTR [%s+0x%x],%s "
+              "(base resolves to the record: %s) - value's nearest def: %s"
+              % (x, rb, d, v, bok, how))
 
     trip = {(re.search(r"ds:(0x[0-9a-f]+)", x[2]).group(1) if re.search(r"ds:(0x[0-9a-f]+)", x[2]) else None,
              0x38, 0x40) for x in arrrows}
@@ -616,22 +697,50 @@ def main():
     # --------------------------------------------------------------------- gates
     G = {}
     G["G1"] = (len(c304) > 100 and len(feed) == 1 and mult(feed[0]) == 304
-               and stores_to(at(0x4E348A)[1], REC) and uses.get(BASE, 0) > 0
-               and FIELD38 - BASE == 56 and unit_stride != 304)
+               and stores_to(at(0x4E348A)[1], REC) and uses.get(BASE, 0) == 122
+               and FIELD38 - BASE == 56 and unit_stride != 304
+               # the rival is not hand-written: the MOST COMMON non-304 multiplier in the
+               # printed histogram has to BE the unit stride, at its printed chain count
+               and hist.get(304) == 646 and hist.get(unit_stride) == 565
+               and max(((v, k) for k, v in hist.items() if k != 304))[1] == unit_stride)
+    # the gate is scoped to the TWO OWNERS (ownrows), never to ownersites.values(), which
+    # after the image-wide census holds every index-fed memo store in the image (review #324:
+    # a gate over the census would pass on a wrong owner set).
     G["G2"] = (len(ownersites.get("FUN_004ee410", [])) == 2
                and len(ownersites.get("FUN_004f41f0", [])) == 2
-               and all(s[2] for v in ownersites.values() for s in v))
+               and [hex(s[0]) for s in ownrows]
+               == ["0x4ee6c9", "0x4ee883", "0x4f44a8", "0x4f455d"]
+               and all(s[2] for s in ownrows)
+               and maxpair == 11 and maxpair <= PAIR_MAX and a3memo == 1)
     n1 = sorted({s for _, rows in fam["FUN_004ee410"] for _, s in rows})
     n2 = sorted({s for _, rows in fam["FUN_004f41f0"] for _, s in rows})
-    G["G3"] = (any("STARVE" in s or "NUTRIENT" in s or "POPULATION" in s for s in n1)
-               and any("PSYCH" in s for s in n2) and not (set(n1) & set(n2)))
-    G["G4"] = (len(sites) == 3 and all(x[2] and "ds:0x8f0d60" in str(x[2]) for x in arrrows)
-               and all(x[3] for x in arrrows) and all(x[4] == [0x78, 0x7C, 0x80]
-                                                      for x in arrrows))
+    NUTR = {"STARVE", "starv_sm.pcx", "POPULATIONLIMIT", "pop_sm.pcx", "LOWNUTRIENT",
+            "LOWNUTRIENTFARMS", "LOWNUTRIENTFORMERS", "LOWNUTRIENTSPEC1", "LOWNUTRIENTSPEC2"}
+    TALENT = {"PSYCHREQUEST", "talent_sm.pcx"}
+    NUTRSITES = ["0x4ee501", "0x4ee859", "0x4eeb77", "0x4eeb96", "0x4eebd2", "0x4eebfc",
+                 "0x4eec1b"]
+    G["G3"] = (len(fam["FUN_004ee410"]) == 7 and len(fam["FUN_004f41f0"]) == 1
+               and set(n1) == NUTR and set(n2) == TALENT and not (set(n1) & set(n2))
+               and [hex(x) for x, _ in fam["FUN_004ee410"]] == NUTRSITES
+               and [hex(x) for x, _ in fam["FUN_004f41f0"]] == ["0x4f46a9"]
+               and EMITTER == 0x48F100)
+    G["G4"] = (len(sites) == 3
+               and [x[0] for x in arrrows] == [0x416F32, 0x417057, 0x41ADE4]
+               and all(x[7] == "je" for x in arrrows)
+               and [x[5] for x in arrrows] == [0x416F5E, 0x417083, 0x41AE17]
+               and [x[6] for x in arrrows] == [0x416F59, 0x41707E, 0x41AE0D]
+               and [x[8] for x in arrrows] == [8, 8, 8]
+               and all(x[2] and "ds:0x8f0d60" in str(x[2]) for x in arrrows)
+               and all(x[3] for x in arrrows)
+               and all(x[4] == [0x78, 0x7C, 0x80] for x in arrrows)
+               and all(x[9] == [] for x in arrrows))
     G["G5"] = (setter40 == [0x41AC34] and (0x40, 0x8) in pairs and (0x8, 0x40) in back
                and all(g in (REC, None) for _x, _mk, _b, _h, g in extract)
                and (len(recw), len(recok), len(foldw)) == (108, 59, 9))
-    G["G6"] = len(selfgate) == 1
+    G["G6"] = (len(selfgate) == 1 and selfgate[0][0] == 0x4F43A0
+               and selfgate[0][1] == "cl,0x40"
+               and "mov ecx,DWORD PTR [eax+0x38]" in selfgate[0][2]
+               and "ds:0x8f0d60" in selfgate[0][2] and other40 == [])
     G["G7"] = (len(idxst) == 6 and len(recst) == 6
                and all(len(d[1]) == 1 for d in dist) and len(sites) == 3)
     P("")

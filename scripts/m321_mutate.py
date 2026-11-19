@@ -75,6 +75,31 @@ MUT = [
      "4f43a0|test cl,0x20", ("G6",)),
     ("MU13", "FUN_004ee410's STARVE label is really the talent label (the families would "
              "be the same routine's)", "code", None, None, "4ee4fc|push 0x68d228", ("G3",)),
+    # ---- MU14-MU22: the round-2 hardening pins (review #324) each get a mutant ----
+    ("MU14", "the pair order is pinned lexicographically (sorted(set(PAIR))) instead of by "
+             "the PAIR tuple as called - the pinned order itself is the claim", "src",
+     "hits[0][0] == PAIR[0] and hits[1][0] == PAIR[1]",
+     "hits[0][0] == sorted(set(PAIR))[0] and hits[1][0] == sorted(set(PAIR))[1]", "", ("G2",)),
+    ("MU15", "maxpair is measured to the FIRST refresh call, not the second - the printed "
+             "'25 B' bound would then never bound the pair", "src",
+     "allpair = [s[4] for s in ownrows if s[4] is not None]",
+     "allpair = [s[3] for s in ownrows if s[3] is not None]", "", ("G2",)),
+    ("MU16", "one arrival branch is a `jne` skipping the OTHER way (the 'je gates the "
+             "writes' reading flips)", "code", None, None, "416f36|jne 0x416f5e", ("G4",)),
+    ("MU17", "the register stored to +0x78 is loaded from a live global, not proved zero",
+     "code", None, None, "416f01|mov esi,ds:0x985b10", ("G4",)),
+    ("MU18", "the callee's own bit-0x40 gate moves to a different instruction 15 B later - "
+             "the F7 tripwire: a 'callee tests cl,0x40 somewhere' gate stays GREEN here",
+     "code", None, None, "4f43a0|nop;4f43af|test cl,0x40", ("G6",)),
+    ("MU19", "one of the 7 pinned emitter call-sites calls a different routine", "code",
+     None, None, "4eebd2|call 0x4eb6b0", ("G3",)),
+    ("MU20", "the chain scan window shrinks 24 B -> 4 B (the 304-chain census silently "
+             "misses its own lea/shl legs)", "src", "for x in neighbours(a, 0, 24):",
+     "for x in neighbours(a, 0, 4):", "", ("G1",)),
+    ("MU21", "one owner memo store writes the NEIGHBOURING memo word 0x68cbb4", "code",
+     None, None, "4f44a8|mov DWORD PTR ds:0x68cbb4,eax", ("G2",)),
+    ("MU22", "the per-write base load for arrival site 1 is nopped (base identity for "
+             "those writes becomes unresolvable)", "code", None, None, "416f2a|nop", ("G4",)),
 ]
 
 

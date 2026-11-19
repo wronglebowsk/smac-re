@@ -15,8 +15,11 @@
    0x4f5a93 paired index store(s) within +-64 B: ['0x4f5a7c']
    0x4f5c3c paired index store(s) within +-64 B: ['0x4f5c36']
 -- T3 the memo law inside the two unnamed owners --
-   FUN_004ee410 memo stores fed by `mov R,ds:0x68cbb0` = 2 ['0x4ee6c9', '0x4ee883'] (refresh pair in order: [True, True])
-   FUN_004f41f0 memo stores fed by `mov R,ds:0x68cbb0` = 2 ['0x4f44a8', '0x4f455d'] (refresh pair in order: [True, True])
+   FUN_004ee410 memo stores fed by `mov R,ds:0x68cbb0` = 2 ['0x4ee6c9', '0x4ee883'] (pair in PINNED order: [True, True]; B to 1st/2nd refresh call: [(6, 11), (6, 11)]; encoding: ['DWORD', 'DWORD'])
+   FUN_004f41f0 memo stores fed by `mov R,ds:0x68cbb0` = 2 ['0x4f44a8', '0x4f455d'] (pair in PINNED order: [True, True]; B to 1st/2nd refresh call: [(5, 10), (6, 11)]; encoding: ['a3', 'DWORD'])
+   the WHOLE pair completes within 11 B of its memo store (measured set [10, 11]) - the claim is <=25
+   the two owners' memo-store encodings: a3 short form=1, DWORD form=3 (the a3 site(s): ['0x4f44a8'])
+   image-wide with the same filter (informational, not claimed): memo stores fed by the index = 8 in 6 functions, of which these two owners hold 4
 -- T3b the status-icon emitters they call, msg/icon BYTES read from the PE --
    FUN_004ee410 @0x4ee501 emitter pushes ['STARVE', 'starv_sm.pcx']
    FUN_004ee410 @0x4ee859 emitter pushes ['POPULATIONLIMIT', 'pop_sm.pcx']
@@ -28,9 +31,18 @@
    FUN_004f41f0 @0x4f46a9 emitter pushes ['PSYCHREQUEST', 'talent_sm.pcx']
 -- T4 image-wide `test BYTE PTR [r+0x38],0x40` and what it gates --
    sites=3 ['0x416f32', '0x417057', '0x41ade4']
-   0x416f32 in FUN_00416ef0  r=eax nearest def of r: mov eax,ds:0x8f0d60          | je 0x416f5e -> je 0x416f5e | the call of FUN_004f41f0 at 0x416f59 lies ON THE FALL-THROUGH (je skips it: True) | before the je it zeroes record fields ['0x78', '0x7c', '0x80']
-   0x417057 in FUN_00416f60  r=eax nearest def of r: mov eax,ds:0x8f0d60          | je 0x417083 -> je 0x417083 | the call of FUN_004f41f0 at 0x41707e lies ON THE FALL-THROUGH (je skips it: True) | before the je it zeroes record fields ['0x78', '0x7c', '0x80']
-   0x41ade4 in FUN_0041a8f0  r=eax nearest def of r: mov eax,ds:0x8f0d60          | je 0x41ae17 -> je 0x41ae17 | the call of FUN_004f41f0 at 0x41ae0d lies ON THE FALL-THROUGH (je skips it: True) | before the je it zeroes record fields ['0x78', '0x7c', '0x80']
+   0x416f32 in FUN_00416ef0  r=eax nearest def of r: mov eax,ds:0x8f0d60          (8 B back) | je 0x416f5e -> je 0x416f5e | the call of FUN_004f41f0 at 0x416f59 lies ON THE FALL-THROUGH (je skips it: True) | before the je it ZEROES record fields ['0x78', '0x7c', '0x80']
+      0x416f38 mov DWORD PTR [eax+0x78],esi - base proven = this record at the write, value proven 0 by xor esi,esi @0x416f01
+      0x416f43 mov DWORD PTR [edx+0x7c],esi - base proven = this record at the write, value proven 0 by xor esi,esi @0x416f01
+      0x416f4b mov DWORD PTR [eax+0x80],esi - base proven = this record at the write, value proven 0 by xor esi,esi @0x416f01
+   0x417057 in FUN_00416f60  r=eax nearest def of r: mov eax,ds:0x8f0d60          (8 B back) | je 0x417083 -> je 0x417083 | the call of FUN_004f41f0 at 0x41707e lies ON THE FALL-THROUGH (je skips it: True) | before the je it ZEROES record fields ['0x78', '0x7c', '0x80']
+      0x41705d mov DWORD PTR [eax+0x78],edi - base proven = this record at the write, value proven 0 by xor edi,edi @0x416f6c
+      0x417068 mov DWORD PTR [edx+0x7c],edi - base proven = this record at the write, value proven 0 by xor edi,edi @0x416f6c
+      0x417070 mov DWORD PTR [eax+0x80],edi - base proven = this record at the write, value proven 0 by xor edi,edi @0x416f6c
+   0x41ade4 in FUN_0041a8f0  r=eax nearest def of r: mov eax,ds:0x8f0d60          (8 B back) | je 0x41ae17 -> je 0x41ae17 | the call of FUN_004f41f0 at 0x41ae0d lies ON THE FALL-THROUGH (je skips it: True) | before the je it ZEROES record fields ['0x78', '0x7c', '0x80']
+      0x41adee mov DWORD PTR [eax+0x78],ecx - base proven = this record at the write, value proven 0 by xor ecx,ecx @0x41adea
+      0x41adf7 mov DWORD PTR [edx+0x7c],ecx - base proven = this record at the write, value proven 0 by xor ecx,ecx @0x41adea
+      0x41adff mov DWORD PTR [eax+0x80],ecx - base proven = this record at the write, value proven 0 by xor ecx,ecx @0x41adea
    RIVAL (three look-alike tests on three different fields): distinct (def-global, disp, mask) triples = 1 -> REJECTED: one field, one pointer, three callers
 -- T5 writes to base_array field +0x38 (dword): both address idioms --
    [reg+0x38] dword writes image-wide=108; accepted as THIS field (nearest def of the base register is ds:0x8f0d60)=59; rejected (some other object's +0x38)=49
@@ -69,7 +81,7 @@
    0x4f43a0 test cl,0x40            <- mov ecx,DWORD PTR [eax+0x38] <- mov eax,ds:0x8f0d60
    other `test ...,0x40` inside FUN_004f41f0 NOT traced to this field: []
 
-== digest 562dcbbd12c27c8a
+== digest f304cf871a971a3d
 PASS G1
 PASS G2
 PASS G3
