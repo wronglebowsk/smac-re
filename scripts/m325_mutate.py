@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 # M325 mutation harness: every VERIFIED claim row names the mutant that reddens it.
-# 16 code mutants rewrite the DISASSEMBLY via M325_PATCH (turnfn ROUND/YEAR sites +
-# a planted block store, writer disp, editor lea/store/push, clamp caps, -1000 imm,
-# reset-0 source, feed cmp/jle, cheat chain, pump caller, reader disp); 5 algorithm
-# mutants via M325_ALGO (1 provenance off, 2 disp-match widened, 3 forward-scan off,
-# 4 shl-blind affine, 5 feed-direction flipped); 1 save-data mutant via M325_SAVE
-# (block0+0x220 value 10->11 in a temp copy); 1 PE-data mutant via M325_PE_PATCH
-# (EDITORENERGY first byte); 1 declared NO-OP (unrelated .data byte). A crash is NOT
-# a red gate (m319 MU6 law): output without the 8-denominator summary scores CRASH
-# and fails the harness. DIGEST (M324 review #326 law): hashes each mutant's MEASURED
-# payload - the patch/data literal AND the acceptance digest of that mutant's run.
-# Sets were MEASURED by a sweep (M325_MUT_MEASURE=1) then declared below.
+# 21 code mutants rewrite the DISASSEMBLY via M325_PATCH (turnfn ROUND/YEAR sites +
+# a planted block store, writer disp, editor lea/store/push/handler-relation, clamp
+# caps, -1000 imm, reset-0 source, feed cmp/jle/GEOMETRY, cheat chain + itoa, pump
+# caller, reader disp, BLKCONST seed target); 6 algorithm mutants via M325_ALGO
+# (1 provenance off, 2 disp-match widened, 3 forward-scan off, 4 shl-blind affine,
+# 5 feed-direction flipped, 6 unsound LIFO pop pairing); 1 save-data mutant via
+# M325_SAVE (block0+0x220 value 10->11 in a temp copy); 2 PE-data mutants via
+# M325_PE_PATCH (EDITORENERGY first byte; unrelated .data byte NO-OP). A crash is
+# NOT a red gate (m319 MU6 law): output without the 8-denominator summary scores
+# CRASH and fails the harness. DIGEST (M324 review #326 law): hashes each mutant's
+# MEASURED payload - the patch/data literal AND the acceptance digest of that
+# mutant's run. Sets were MEASURED by a sweep (M325_MUT_MEASURE=1) then declared.
 # --selftest: 3 patch-mechanism rejection checks + 1 live PE-patch mechanism run.
 import os, re, sys, shutil, struct, subprocess, hashlib, tempfile
 
@@ -31,7 +32,7 @@ MUTANTS = [
     ("MU6",  "code", "0x5087ae|cmp eax,0x989680", {"G5"}),
     ("MU7",  "code", "0x5085c0|add DWORD PTR [eax+0x94d650],0xfffffc19", {"G5"}),
     ("MU8",  "code", "0x59ee73|xor ecx,ecx", {"G5"}),
-    ("MU9",  "code", "0x44262b|jg 0x442648", {"G6"}),
+    ("MU9",  "code", "0x44262b|jg 0x442648", {"G6", "G8"}),
     ("MU10", "code", "0x442625|cmp edx,DWORD PTR [ecx+0x94d654]", {"G1", "G6"}),
     ("MU11", "code", "0x626fd7|mov ds:0x999fa8,eax", {"G6"}),
     ("MU12", "code", "0x626fca|push 0x99a020", {"G6"}),
@@ -47,6 +48,14 @@ MUTANTS = [
     ("MU22", "code", "0x44263c|mov edx,DWORD PTR [ecx+0x94d654]", {"G1", "G6"}),
     ("MU23", "pe", "0x68c938|58", {"G5"}),
     ("MU24", "pe", "0x999fa8|00", set()),  # declared NO-OP: unrelated .data byte
+    # review #329 fixes: MIN geometry (P1-1), editor-handler relation (P1-2),
+    # seed-count/BLKCONST-target pins (P2-4/P2-1), itoa pins (P2-3), LIFO pop (P2-5)
+    ("MU25", "code", "0x44262b|jle 0x442642", {"G6"}),
+    ("MU26", "code", "0x4e032c|mov eax,ds:0x999fa8", {"G5"}),
+    ("MU27", "code", "0x4e031e|call 0x626efd", {"G5"}),
+    ("MU28", "code", "0x626f26|push 0x10", {"G6"}),
+    ("MU29", "code", "0x520589|mov ebx,0x9517c8", {"G3"}),
+    ("MU30", "algo", "6", {"G2", "G3"}),
 ]
 
 def run(env_extra):
@@ -137,10 +146,14 @@ def selftest():
     # S3: empty patch rejected
     _, _, _, out, rc = run({"M325_PATCH": " ; "})
     checks.append(("S3 empty-patch rejected", rc != 0 and "applied to nothing" in out))
-    # S4: live PE-patch mechanism: EDITORENERGY -> XDITORENERGY reddens G5 only
+    # S4: live PE-patch mechanism: EDITORENERGY -> XDITORENERGY reddens G5 ONLY,
+    # and the G5 detail must show the mutated string WITH intact caps (the failure
+    # is caused by the string mutation, not collateral damage) - review #329 P2-8
     gates, summ, dig, out, rc = run({"M325_PE_PATCH": "0x68c938|58"})
     checks.append(("S4 pe-patch live", summ == (7, 8) and gates["G5"] == "FAIL"
-                   and b"XDITORENERGY" in out.encode()))
+                   and "'0x68c938': b'XDITORENERGY'" in out
+                   and "cap9999999': ('cmp', 'eax,0x98967f')" in out
+                   and all(gates[g] == "PASS" for g in GATES if g != "G5")))
     for name, ok in checks:
         print("  %s %s" % ("PASS" if ok else "FAIL", name))
     print("== selftest: %d/%d ==" % (sum(ok for _, ok in checks), len(checks)))

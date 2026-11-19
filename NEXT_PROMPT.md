@@ -125,4 +125,4 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).
 M323: NAMED ## M323; VERBATIM §trim-s299 (a).
 M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; rederive DEAD (closure 440, writers 0). 8/8 700b4133f62bd714 (m324_save_carry.txt:100); 28/28+1. MERGED #326->0c3b5d9. NAMED ## M324.
-M325 (s299-chain2): block+220 = per-faction ENERGY ("EDITORENERGY" handler writes own field @4e0336); turn advance 0 block stores; feed=MIN (M324 MAX retracted); g999fa4=cheat number; EDITORYEAR explains 4e0350. 8/8 7b1f0a2b3e031c22 (m325_block220_census.txt:296); 24/24 a8b2c42d9d3ee7f0. NAMED ## M325.
+M325 (s299-chain2): block+220 = per-faction ENERGY ("EDITORENERGY" handler: field<-g999fa4 @4e0336); turn advance 0 block stores; feed=MIN derived (M324 MAX retracted); g999fa4=cheat-chain value; EDITORYEAR explains 4e0350. 8/8 a623181d7fb68263 (m325_block220_census.txt:297); 30/30 97c193e12593c95e. NAMED ## M325.

@@ -1,6 +1,6 @@
 == M325: block+0x220 writer census (STATIC) ==
 T0 field=0x94d650,0x94f70c,0x9517c8,0x953884,0x955940,0x9579fc,0x959ab8,0x95bb74 stride=0x20bc nblk=8 turnfn=0x51f320 size=0x40c
-T1 hits=234 writers=54 readers=180 wr_unproven=26
+T1 hits=234 writers=54 readers=180 wr_unproven=25
   0x40dcfa -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', -20, 'ebp', None, 1)) src=None owner=FUN_0040d7a0
   0x40dd67 -R w=4 DISP94D650 prov=BLKCONST det=0x94f70c src=None owner=FUN_0040d7a0
   0x4169a6 -R w=4 DISP94D650 prov=BLKCONST det=0x94d650 src=None owner=FUN_00416730
@@ -54,8 +54,8 @@ T1 hits=234 writers=54 readers=180 wr_unproven=26
   0x4eec75 W- w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=ecx owner=FUN_004eec30
   0x4eef72 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=None owner=FUN_004eeea0
   0x4eef8f -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('abs', 9984824)) src=None owner=FUN_004eeea0
-  0x4ef1d6 -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('arg', 'esi') src=None owner=FUN_004eeea0
-  0x4ef1fe -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('arg', 'esi') src=None owner=FUN_004eeea0
+  0x4ef1d6 -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=None owner=FUN_004eeea0
+  0x4ef1fe -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=None owner=FUN_004eeea0
   0x4f285d -R w=4 DISP94D650 prov=BLKCONST det=0x94d650 src=None owner=FUN_004f26e0
   0x4f28b8 -R w=4 DISP94D650 prov=BLKCONST det=0x94d650 src=None owner=FUN_004f26e0
   0x4f28ff -R w=4 DISP94D650 prov=BLKCONST det=0x94d650 src=None owner=FUN_004f26e0
@@ -95,7 +95,7 @@ T1 hits=234 writers=54 readers=180 wr_unproven=26
   0x51ae62 W- w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('arg', 'edi') src=eax owner=FUN_00519b00
   0x51be5c -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'ecx') src=None owner=FUN_00519b00
   0x51fee9 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=None owner=FUN_0051fe90
-  0x520162 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=None owner=FUN_0051fe90
+  0x520162 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('abs', 6896488)) src=None owner=FUN_0051fe90
   0x5205dd -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=None owner=FUN_00520540
   0x5205fd -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=None owner=FUN_00520540
   0x520605 W- w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=edx owner=FUN_00520540
@@ -125,7 +125,7 @@ T1 hits=234 writers=54 readers=180 wr_unproven=26
   0x532de9 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=None owner=FUN_00531df0
   0x532f46 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=None owner=FUN_00531df0
   0x532f6d -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=None owner=FUN_00531df0
-  0x536309 -R w=4 DISP94D650 prov=BLKCONST det=0x94d650 src=None owner=FUN_00535c60
+  0x536309 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 6856584, None, 'edi', 4)) src=None owner=FUN_00535c60
   0x5368d8 -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -24, 'ebp', None, 1)) src=None owner=FUN_00535c60
   0x536c45 WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -24, 'ebp', None, 1)) src=esi owner=FUN_00535c60
   0x536c52 WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -20, 'ebp', None, 1)) src=ecx owner=FUN_00535c60
@@ -136,12 +136,12 @@ T1 hits=234 writers=54 readers=180 wr_unproven=26
   0x5376ed -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=None owner=FUN_005375e0
   0x53778b W- w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=ecx owner=FUN_005375e0
   0x537798 WR w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=eax owner=FUN_005375e0
-  0x537c77 -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'edx') src=None owner=FUN_005375e0
+  0x537c77 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 6856584, None, 'edi', 4)) src=None owner=FUN_005375e0
   0x537d15 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'edi') src=None owner=FUN_005375e0
   0x537d28 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'edi') src=None owner=FUN_005375e0
   0x537d41 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'edi') src=None owner=FUN_005375e0
   0x537d52 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'edi') src=None owner=FUN_005375e0
-  0x537d58 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=None owner=FUN_005375e0
+  0x537d58 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 6856584, None, 'edi', 4)) src=None owner=FUN_005375e0
   0x53800f WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -16, 'ebp', None, 1)) src=esi owner=FUN_005375e0
   0x53801c WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', 8, 'ebp', None, 1)) src=ecx owner=FUN_005375e0
   0x53b124 -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -8, 'ebp', None, 1)) src=None owner=FUN_0053a9c0
@@ -150,10 +150,10 @@ T1 hits=234 writers=54 readers=180 wr_unproven=26
   0x53b660 -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -8, 'ebp', None, 1)) src=None owner=FUN_0053a9c0
   0x53b794 WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -8, 'ebp', None, 1)) src=eax owner=FUN_0053a9c0
   0x53b7a1 WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=ebx owner=FUN_0053a9c0
-  0x53c0b1 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=None owner=FUN_0053bb90
-  0x53c171 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=None owner=FUN_0053bb90
-  0x53c50f -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=None owner=FUN_0053bb90
-  0x53c64d WR w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=eax owner=FUN_0053bb90
+  0x53c0b1 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 6856584, None, 'esi', 4)) src=None owner=FUN_0053bb90
+  0x53c171 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 6856584, None, 'esi', 4)) src=None owner=FUN_0053bb90
+  0x53c50f -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 6856584, None, 'esi', 4)) src=None owner=FUN_0053bb90
+  0x53c64d WR w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 6856584, None, 'esi', 4)) src=eax owner=FUN_0053bb90
   0x53c65a WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -8, 'ebp', None, 1)) src=edi owner=FUN_0053bb90
   0x53d85b -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=None owner=FUN_0053cb20
   0x53d864 -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', -24, 'ebp', None, 1)) src=None owner=FUN_0053cb20
@@ -170,7 +170,7 @@ T1 hits=234 writers=54 readers=180 wr_unproven=26
   0x53ee8e -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'eax') src=None owner=FUN_0053e7d0
   0x53eeac -R w=4 DISP94D650 prov=BLKCONST det=0x94d650 src=None owner=FUN_0053e7d0
   0x5406c2 -R w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=None owner=FUN_00540390
-  0x540d0e -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'ecx') src=None owner=FUN_00540390
+  0x540d0e -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'esi') src=None owner=FUN_00540390
   0x540d20 WR w=4 DISP94D650 prov=UNPROVEN det=1*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=ebx owner=FUN_00540390
   0x543603 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', 12, 'ebp', None, 1)) src=None owner=FUN_00543450
   0x54409a -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'edi') src=None owner=FUN_00543c50
@@ -219,12 +219,12 @@ T1 hits=234 writers=54 readers=180 wr_unproven=26
   0x592d6f -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'edx') src=None owner=FUN_0058fa40
   0x593033 -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'ecx') src=None owner=FUN_0058fa40
   0x593109 -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'esi') src=None owner=FUN_0058fa40
-  0x5936cb -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'eax') src=None owner=FUN_0058fa40
-  0x5936d3 W- w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'eax') src=edx owner=FUN_0058fa40
+  0x5936cb -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=None owner=FUN_0058fa40
+  0x5936d3 W- w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=edx owner=FUN_0058fa40
   0x593ee2 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', -24, 'ebp', None, 1)) src=None owner=FUN_0058fa40
   0x593f09 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', -24, 'ebp', None, 1)) src=None owner=FUN_0058fa40
   0x593f11 W- w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('ptr', ('brk', -24, 'ebp', None, 1)) src=edx owner=FUN_0058fa40
-  0x593f2d -R w=4 DISP94D650 prov=UNPROVEN det=4*leaf+0x94d650 leaf=('arg', 'edx') src=None owner=FUN_0058fa40
+  0x593f2d -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=None owner=FUN_0058fa40
   0x59a743 -R w=4 DISP94D650 prov=STRIDE det=8380*leaf+0x94d650 leaf=('arg', 'ebx') src=None owner=FUN_0059a490
   0x59d0ce -R w=4 DISP94D650 prov=BLKCONST det=0x94f70c src=None owner=FUN_0059ce10
   0x59d0d8 W- w=4 DISP94D650 prov=BLKCONST det=0x94f70c src=eax owner=FUN_0059ce10
@@ -250,13 +250,13 @@ T3 addr-seeds=30 register-addr writers=20 readers=7
   seed 0x53094f (eax, STRIDE) -> W 0x53095f w=4 src=edx owner=FUN_005308e0
   seed 0x53097a (eax, STRIDE) -> W 0x53098a w=4 src=ecx owner=FUN_005308e0
   seed 0x53753b (eax, STRIDE) -> W 0x537544 w=4 src=edx owner=FUN_00537180
-  seed 0x537c70 (eax, UNPROVEN) -> W 0x537c80 w=4 src=edx owner=FUN_005375e0
-  seed 0x540d07 (eax, UNPROVEN) -> W 0x540d17 w=4 src=ecx owner=FUN_00540390
+  seed 0x537c70 (eax, STRIDE) -> W 0x537c80 w=4 src=edx owner=FUN_005375e0
+  seed 0x540d07 (eax, STRIDE) -> W 0x540d17 w=4 src=ecx owner=FUN_00540390
   seed 0x546171 (eax, STRIDE) -> W 0x546181 w=4 src=edx owner=FUN_00545c50
   seed 0x547b13 (eax, UNPROVEN) -> W 0x547b1c w=4 src=ecx owner=FUN_00546800
   seed 0x56e86d (eax, UNPROVEN) -> W 0x56e87d w=4 src=edx owner=FUN_0056df40
   seed 0x592d68 (eax, UNPROVEN) -> W 0x592d78 w=4 src=edx owner=FUN_0058fa40
-  seed 0x593f26 (eax, UNPROVEN) -> W 0x593f36 w=4 src=edx owner=FUN_0058fa40
+  seed 0x593f26 (eax, STRIDE) -> W 0x593f36 w=4 src=edx owner=FUN_0058fa40
   seed 0x4e02ae (ebx, BLKCONST) -> R 0x4e02d5 w=4 src=None owner=FUN_004e0260
   seed 0x520589 (ebx, BLKCONST) -> R 0x5205e9 w=4 src=None owner=FUN_00520540
   seed 0x523b57 (eax, BLKCONST) -> R 0x523b5c w=4 src=None owner=FUN_00523b20
@@ -282,16 +282,17 @@ T4 turnfn stores=16 stringops=0 block-region stores=0
   0x51f6ca w=4 abs disp=0x99aa20 base=None src=edi
   0x51f6ec w=4 abs disp=0x99aa1c base=None src=ecx
 T5 strings: {'0x68c938': b'EDITORENERGY', '0x68c948': b'EDITORYEAR', '0x672e38': b'VOTEFORME'}
-T6 feed direction=MIN shape=(('cmp', 'edx,DWORD PTR [ecx+0x94d650]'), ('jle', '0x442648'), ('mov', 'DWORD PTR ds:0x999fa4,edx'))
+T6 feed direction=MIN shape=(('mov', 'edx,DWORD PTR ds:0x999fa4'), ('cmp', 'edx,DWORD PTR [ecx+0x94d650]'), ('jle', '0x442648'), ('mov', 'edx,DWORD PTR [ecx+0x94d650]'), ('mov', 'DWORD PTR ds:0x999fa4,edx'))
 T7 callers 4e0260=['0x514ebf', '0x517e2c'] 4e0350=['0x514ecf', '0x517e3a'] owners=['FUN_00512b40', 'FUN_00516b80']
 T8 save: {'off': 812, 'vals': [10, 28, 112, 69, 229, 60, 102, 37], 'sha': '74d0f44ab9b9290b', 'size': 242539, 'notes': [], 'year': 2150, 'round': 50}
+T9 stack-forward call-crossings (DECLARED linear limit): events=4497 sites=118 proven-writer-sites-crossing=0x41a55d,0x4295fe,0x429628,0x4d2f71,0x537798,0x53c64d,0x53eaa9,0x546150,0x593f11,0x59d0d8,0x59eef3,0x59f0b9
 G1 PASS hits=234 writers=54 readers=180 abs=0 disp220=0 sub=0 dw=234/234
-G2 PASS wr_unproven=26 (pinned list) proven=28 owners=27 sites-pinned=54
-G3 PASS regwr=20 (pinned) regrd=7 total-writer-sites=74 total-owners=34
+G2 PASS wr_unproven=25 (pinned list) proven=29 owners=27 sites-pinned=54
+G3 PASS regwr=20 (pinned) regrd=7 seeds=30 sites=74 owners=34 P=45 U=29 blkconst=[('0x40dd60', '0x94f70c'), ('0x4e02ae', '0x94f70c'), ('0x520589', '0x94f70c'), ('0x523b57', '0x94f70c')]
 G4 PASS stores=16 stringops=0 blkstores=0 sites-pinned=16 round=('mov', 'ds:0x985afc,eax') year=('mov', 'ds:0x985b00,eax')
-G5 PASS strings={'0x68c938': b'EDITORENERGY', '0x68c948': b'EDITORYEAR', '0x672e38': b'VOTEFORME'} caps={'cap9999999': ('cmp', 'eax,0x98967f'), 'cap999999999': ('cmp', 'ecx,0x3b9ac9ff'), 'cap99999': ('push', '0x1869f'), 'minus1000': ('add', 'DWORD PTR [eax+0x94d650],0xfffffc18'), 'reset0': ('mov', 'DWORD PTR [esi+0x94d650],ebx'), 'reset0src': ('xor', 'ebx,ebx'), 'editorE_push': ('push', '0x68c938'), 'editorY_push': ('push', '0x68c948'), 'votefor_me_push': ('push', '0x672e38')}
-G6 PASS feed=MIN chain={'parse_call': ('call', '0x5f0583'), 'parse_je': ('je', '0x626f75'), 'staging_push': ('push', '0x99a01c'), 'thunk_call': ('call', '0x64c460'), 'g999_store': ('mov', 'ds:0x999fa4,eax'), 'feed_read2': ('mov', 'edx,DWORD PTR [ecx+0x94d650]'), 'year_sub': ('sub', 'eax,edx'), 'year_cmp': ('cmp', 'eax,0x1'), 'year_store': ('mov', 'ds:0x985afc,eax'), 'year_floor': ('mov', 'DWORD PTR ds:0x985afc,0x1')} callersE=['0x514ebf', '0x517e2c'] callersY=['0x514ecf', '0x517e3a']
+G5 PASS strings={'0x68c938': b'EDITORENERGY', '0x68c948': b'EDITORYEAR', '0x672e38': b'VOTEFORME'} caps={'cap9999999': ('cmp', 'eax,0x98967f'), 'cap999999999': ('cmp', 'ecx,0x3b9ac9ff'), 'cap99999': ('push', '0x1869f'), 'minus1000': ('add', 'DWORD PTR [eax+0x94d650],0xfffffc18'), 'reset0': ('mov', 'DWORD PTR [esi+0x94d650],ebx'), 'reset0src': ('xor', 'ebx,ebx'), 'editorE_push': ('push', '0x68c938'), 'editorY_push': ('push', '0x68c948'), 'votefor_me_push': ('push', '0x672e38')} editor-handler={'owner_push': 'FUN_004e0260', 'owner_store': 'FUN_004e0260', 'gate_call': ('call', '0x626ec4'), 'gate_jne': ('jne', '0x4e0349'), 'src_load': ('mov', 'eax,ds:0x999fa4')}
+G6 PASS feed=MIN chain={'parse_call': ('call', '0x5f0583'), 'parse_je': ('je', '0x626f75'), 'staging_push': ('push', '0x99a01c'), 'thunk_call': ('call', '0x64c460'), 'g999_store': ('mov', 'ds:0x999fa4,eax'), 'feed_read2': ('mov', 'edx,DWORD PTR [ecx+0x94d650]'), 'itoa_base': ('push', '0xa'), 'itoa_call': ('call', '0x64f980'), 'year_sub': ('sub', 'eax,edx'), 'year_cmp': ('cmp', 'eax,0x1'), 'year_store': ('mov', 'ds:0x985afc,eax'), 'year_floor': ('mov', 'DWORD PTR ds:0x985afc,0x1')} callersE=['0x514ebf', '0x517e2c'] callersY=['0x514ecf', '0x517e3a']
 G7 PASS save={'off': 812, 'vals': [10, 28, 112, 69, 229, 60, 102, 37], 'sha': '74d0f44ab9b9290b', 'size': 242539, 'notes': [], 'year': 2150, 'round': 50}
 G8 PASS R1 turn-sets-field=False R2 year-copy=False R3 MAX-feed=False (all must be False)
-DIGEST 7b1f0a2b3e031c22
+DIGEST a623181d7fb68263
 == M325: 8/8 ==

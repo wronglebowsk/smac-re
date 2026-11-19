@@ -44,6 +44,8 @@ REGW = {"eax": 4, "ebx": 4, "ecx": 4, "edx": 4, "esi": 4, "edi": 4, "ebp": 4, "e
         "ax": 2, "bx": 2, "cx": 2, "dx": 2, "si": 2, "di": 2, "bp": 2, "sp": 2,
         "al": 1, "bl": 1, "cl": 1, "dl": 1, "ah": 1, "bh": 1, "ch": 1, "dh": 1}
 CALLER_SAVED = {"eax", "ecx", "edx"}
+STACK_CALL_CROSSINGS = []
+CUR_SITE = None
 
 def load_ins():
     ins = {}
@@ -207,7 +209,10 @@ def aff_mul(x, k):
     return ("lin", x[1] * k, x[2] * k, x[3])
 
 def stack_source(a, disp, budget):
-    """Most recent store to [ebp+disp] before a, linear within the function."""
+    """Most recent store to [ebp+disp] before a, linear within the function.
+    DECLARED limit: calls are crossed (a callee holding a pointer to the slot
+    could rewrite it); every crossing is recorded in STACK_CALL_CROSSINGS and
+    printed, so call-dependent provenance is enumerated, not hidden."""
     o = owner(a)
     i = AIDX[a]
     while i > 0 and budget[0] > 0:
@@ -217,6 +222,7 @@ def stack_source(a, disp, budget):
         mn, ops = INS[b]
         parts = split_ops(ops)
         if mn == "call" and "esp" not in ops:
+            STACK_CALL_CROSSINGS.append((CUR_SITE, disp, b))
             continue
         if not parts:
             if mn == "leave": return None
@@ -232,18 +238,36 @@ def stack_source(a, disp, budget):
     return None
 
 def pop_source(a, reg, budget):
-    """Matching push reg before a pop reg (linear, most recent push wins)."""
+    """LIFO-sound push matching for a pop reg: walk backward with a slot balance.
+    The matching push is the one that created the slot this pop consumes - it may
+    be a push of a DIFFERENT register (push eax; push ebx; pop eax takes ebx's
+    value). Returns (push_addr, pushed_reg) or None."""
     o = owner(a)
     i = AIDX[a]
+    balance = 1  # our pop consumes one slot
+    if ALGO == "6":
+        # mutant: the OLD unsound pairing (most recent push of the SAME reg)
+        while i > 0 and budget[0] > 0:
+            i -= 1; budget[0] -= 1
+            b = ADDRS[i]
+            if owner(b) != o: return None
+            mn, ops = INS[b]
+            if mn == "push" and ops.strip() == reg:
+                return (b, reg)
+            if mn == "pop" and ops.strip() == reg:
+                return None
+        return None
     while i > 0 and budget[0] > 0:
         i -= 1; budget[0] -= 1
         b = ADDRS[i]
         if owner(b) != o: return None
         mn, ops = INS[b]
-        if mn == "push" and ops.strip() == reg:
-            return b
-        if mn == "pop" and ops.strip() == reg:
-            return None  # an earlier pop consumed the push we would find
+        if mn == "push":
+            balance -= 1
+            if balance == 0:
+                return (b, ops.strip())
+        elif mn == "pop":
+            balance += 1
     return None
 
 def value_of(a, reg, depth=0, budget=None):
@@ -370,7 +394,9 @@ def value_of(a, reg, depth=0, budget=None):
         if mn == "pop":
             ps = pop_source(b, reg, budget)
             if ps is not None:
-                return value_of(ps, reg, depth + 1, budget)
+                pb, preg = ps
+                if reg_of(preg):
+                    return value_of(pb, preg, depth + 1, budget)
             return ("lin", 1, 0, ("arg", reg))
         return ("lin", 1, 0, ("arg", reg))
     return ("lin", 1, 0, ("arg", reg))
@@ -379,6 +405,8 @@ def base_tag(a, mi):
     """Classify a disp-form hit's effective address = m*leaf + c.
     Field family <=> m == STRIDE and c in FADDRS (runtime faction index),
     or a constant in FADDRS. The disp is PART OF c (no double count)."""
+    global CUR_SITE
+    CUR_SITE = a
     if ALGO == "1":
         return ("OFF", None)
     kind, ab, disp, base, index, scale, width = mi
@@ -528,17 +556,43 @@ def callers_of(target):
     return out
 
 def feed_direction():
-    """MIN or MAX from the measured cmp/jle/store shapes at the feed."""
+    """MIN/MAX DERIVED from measured bytes, not hardcoded:
+    (1) edx <- g999fa4 @44261f; (2) cmp edx,[field] @442625; (3) jcc @44262b must
+    SKIP OVER the store @442642 (jcc_addr < store_addr < jump target); (4) the store
+    writes g999fa4 <- edx, and edx was reloaded FROM THE FIELD @44263c.
+    jle skips when edx <= field, so the store runs when field < edx: the global
+    takes the SMALLER value => MIN. Any geometry break => SHAPE-CHANGED."""
+    l = INS.get(0x44261f)
     c = INS.get(0x442625)
     j = INS.get(0x44262b)
+    r2 = INS.get(0x44263c)
     s = INS.get(0x442642)
-    if not (c and j and s): return ("MISSING", None)
-    # cmp edx,[field] ; jle skip ; store g999fa4 <- field  => store when g999fa4 > field
-    ok = (c[0] == "cmp" and c[1].startswith("edx,") and "0x94d650" in c[1]
-          and j[0] == "jle" and s[0] == "mov" and "ds:0x999fa4" in s[1])
-    if not ok: return ("SHAPE-CHANGED", (c, j, s))
-    d = "MIN" if ALGO != "5" else "MAX"
-    return (d, (c, j, s))
+    shape = (l, c, j, r2, s)
+    if not (l and c and j and r2 and s):
+        return ("SHAPE-CHANGED", shape)
+    ok = (l == ("mov", "edx,DWORD PTR ds:0x999fa4")
+          and c[0] == "cmp" and c[1].startswith("edx,") and "0x94d650" in c[1]
+          and j[0] in ("jle", "jg", "jl", "jge")
+          and r2 == ("mov", "edx,DWORD PTR [ecx+0x94d650]")
+          and s == ("mov", "DWORD PTR ds:0x999fa4,edx"))
+    if not ok:
+        return ("SHAPE-CHANGED", shape)
+    tgt = int(j[1], 16)
+    if not (0x44262b < 0x442642 < tgt):
+        return ("SHAPE-CHANGED", shape)  # jcc no longer skips over the store
+    # store executes when the jcc condition is FALSE
+    cond = j[0]
+    if cond == "jle":    # skip when edx <= field -> store when field < edx -> MIN
+        d = "MIN"
+    elif cond == "jg":   # skip when edx > field -> store when field >= edx -> MAX
+        d = "MAX"
+    elif cond == "jl":
+        d = "MAX"
+    else:                # jge: skip when edx >= field -> store when field < edx
+        d = "MIN"
+    if ALGO == "5":
+        d = "MAX" if d == "MIN" else "MIN"
+    return (d, shape)
 
 def save_values():
     m = ds.parse(SAVE)
@@ -630,6 +684,13 @@ def main():
         sorted(set(owner(a) for a in calE + calY))))
     sv = save_values()
     print("T8 save: %s" % sv)
+    cross_sites = sorted(set(s for s, _, _ in STACK_CALL_CROSSINGS if s is not None))
+    prov_cross = sorted(set(x["a"] for x in writers
+                            if x["prov"] in ("STRIDE", "BLKCONST")
+                            and x["a"] in cross_sites))
+    print("T9 stack-forward call-crossings (DECLARED linear limit): events=%d sites=%d proven-writer-sites-crossing=%s" % (
+        len(STACK_CALL_CROSSINGS), len(cross_sites),
+        ",".join(hex(a) for a in prov_cross)))
     # ---- gates ----
     G = []
     def gate(name, ok, detail):
@@ -648,7 +709,7 @@ def main():
                   0x50878c, 0x5087be, 0x51ae62, 0x536c45, 0x536c52, 0x53800f,
                   0x53801c, 0x53b794, 0x53b7a1, 0x53c65a, 0x53de13, 0x53de20,
                   0x53eab3, 0x540d20, 0x544410, 0x54441d, 0x547af3, 0x567080,
-                  0x5936d3, 0x5a0144]
+                  0x5a0144]
     exp_wrsites = [
         0x41a55d, 0x4295fe, 0x429628, 0x4d29f3, 0x4d2f71, 0x4e21fc, 0x4eec75,
         0x4f4952, 0x4f497f, 0x4f4999, 0x4f4a0b, 0x4f5c8c, 0x506d2b, 0x5085c0,
@@ -660,7 +721,7 @@ def main():
         0x59d0d8, 0x59eef3, 0x59f0b9, 0x5a0144, 0x5a28fa]
     gate("G2", sorted(x["a"] for x in wr_unprov) == exp_unprov
          and wrsites == exp_wrsites
-         and len(wowners) == 27 and len(writers) - len(wr_unprov) == 28,
+         and len(wowners) == 27 and len(writers) - len(wr_unprov) == 29,
          "wr_unproven=%d (pinned list) proven=%d owners=%d sites-pinned=%d" % (
              len(wr_unprov), len(writers) - len(wr_unprov), len(wowners),
              len(exp_wrsites)))
@@ -678,18 +739,31 @@ def main():
         (0x53094f, "eax", 0x53095f, 4, "edx", "STRIDE"),
         (0x53097a, "eax", 0x53098a, 4, "ecx", "STRIDE"),
         (0x53753b, "eax", 0x537544, 4, "edx", "STRIDE"),
-        (0x537c70, "eax", 0x537c80, 4, "edx", "UNPROVEN"),
-        (0x540d07, "eax", 0x540d17, 4, "ecx", "UNPROVEN"),
+        (0x537c70, "eax", 0x537c80, 4, "edx", "STRIDE"),
+        (0x540d07, "eax", 0x540d17, 4, "ecx", "STRIDE"),
         (0x546171, "eax", 0x546181, 4, "edx", "STRIDE"),
         (0x547b13, "eax", 0x547b1c, 4, "ecx", "UNPROVEN"),
         (0x56e86d, "eax", 0x56e87d, 4, "edx", "UNPROVEN"),
         (0x592d68, "eax", 0x592d78, 4, "edx", "UNPROVEN"),
-        (0x593f26, "eax", 0x593f36, 4, "edx", "UNPROVEN")]
+        (0x593f26, "eax", 0x593f36, 4, "edx", "STRIDE")]
     allwr_owners = sorted(set(wowners) | set(owner(b) for _, _, b, _, _, _ in regwr))
+    nprov_reg = sum(1 for t in regwr if t[5] in ("STRIDE", "BLKCONST"))
+    nunprov_reg = len(regwr) - nprov_reg
+    prov_tot = (len(writers) - len(wr_unprov)) + nprov_reg
+    unprov_tot = len(wr_unprov) + nunprov_reg
+    blkconst_seeds = sorted((sa, det) for sa, _, (tag, det) in seeds
+                            if tag == "BLKCONST")
     gate("G3", sorted(regwr) == sorted(exp_regwr) and len(regrd) == 7
-         and len(writers) + len(regwr) == 74 and len(allwr_owners) == 34,
-         "regwr=%d (pinned) regrd=%d total-writer-sites=%d total-owners=%d" % (
-             len(regwr), len(regrd), len(writers) + len(regwr), len(allwr_owners)))
+         and len(seeds) == 30
+         and len(writers) + len(regwr) == 74 and len(allwr_owners) == 34
+         and nprov_reg == 16 and nunprov_reg == 4
+         and prov_tot == 45 and unprov_tot == 29
+         and blkconst_seeds == [(0x40dd60, 0x94f70c), (0x4e02ae, 0x94f70c),
+                                (0x520589, 0x94f70c), (0x523b57, 0x94f70c)],
+         "regwr=%d (pinned) regrd=%d seeds=%d sites=%d owners=%d P=%d U=%d blkconst=%s" % (
+             len(regwr), len(regrd), len(seeds), len(writers) + len(regwr),
+             len(allwr_owners), prov_tot, unprov_tot,
+             [(hex(a), hex(d)) for a, d in blkconst_seeds]))
     round_site = INS.get(0x51f53c)
     year_site = INS.get(0x51f54f)
     exp_ts_sites = [0x51f324, 0x51f433, 0x51f4bf, 0x51f526, 0x51f53c, 0x51f54f,
@@ -706,6 +780,9 @@ def main():
             "reset0": INS.get(0x59eef3), "reset0src": INS.get(0x59ee73),
             "editorE_push": INS.get(0x4e0319), "editorY_push": INS.get(0x4e0366),
             "votefor_me_push": INS.get(0x4295c4)}
+    ed = {"owner_push": owner(0x4e0319), "owner_store": owner(0x4e0336),
+          "gate_call": INS.get(0x4e031e), "gate_jne": INS.get(0x4e032a),
+          "src_load": INS.get(0x4e032c)}
     gate("G5", strs == {"0x68c938": b"EDITORENERGY", "0x68c948": b"EDITORYEAR",
                         "0x672e38": b"VOTEFORME"}
          and caps["cap9999999"] == ("cmp", "eax,0x98967f")
@@ -716,12 +793,18 @@ def main():
          and caps["reset0src"] == ("xor", "ebx,ebx")
          and caps["editorE_push"] == ("push", "0x68c938")
          and caps["editorY_push"] == ("push", "0x68c948")
-         and caps["votefor_me_push"] == ("push", "0x672e38"),
-         "strings=%s caps=%s" % (strs, caps))
+         and caps["votefor_me_push"] == ("push", "0x672e38")
+         and ed["owner_push"] == ed["owner_store"] == "FUN_004e0260"
+         and ed["gate_call"] == ("call", "0x626ec4")
+         and ed["gate_jne"] == ("jne", "0x4e0349")
+         and ed["src_load"] == ("mov", "eax,ds:0x999fa4")
+         and 0x4e0311 < 0x4e031e < 0x4e0336,
+         "strings=%s caps=%s editor-handler=%s" % (strs, caps, ed))
     chain = {"parse_call": INS.get(0x626f67), "parse_je": INS.get(0x626f6e),
              "staging_push": INS.get(0x626fca), "thunk_call": INS.get(0x626fcf),
              "g999_store": INS.get(0x626fd7),
              "feed_read2": INS.get(0x44263c),
+             "itoa_base": INS.get(0x626f26), "itoa_call": INS.get(0x626f30),
              "year_sub": INS.get(0x4e0382), "year_cmp": INS.get(0x4e0384),
              "year_store": INS.get(0x4e0387), "year_floor": INS.get(0x4e038e)}
     gate("G6", fd == "MIN"
@@ -731,6 +814,8 @@ def main():
          and chain["thunk_call"] == ("call", "0x64c460")
          and chain["g999_store"] == ("mov", "ds:0x999fa4,eax")
          and chain["feed_read2"] == ("mov", "edx,DWORD PTR [ecx+0x94d650]")
+         and chain["itoa_base"] == ("push", "0xa")
+         and chain["itoa_call"] == ("call", "0x64f980")
          and chain["year_sub"] == ("sub", "eax,edx")
          and chain["year_cmp"] == ("cmp", "eax,0x1")
          and chain["year_store"] == ("mov", "ds:0x985afc,eax")
@@ -764,7 +849,10 @@ def main():
     d.update(repr((strs, fd, str(fdshape), sorted(calE), sorted(calY))).encode())
     d.update(repr(sv).encode())
     d.update(repr(caps).encode())
+    d.update(repr(ed).encode())
     d.update(repr(chain).encode())
+    d.update(repr(blkconst_seeds).encode())
+    d.update(repr((len(STACK_CALL_CROSSINGS), cross_sites, prov_cross)).encode())
     print("DIGEST %s" % d.hexdigest()[:16])
     print("== M325: %d/%d ==" % (sum(G), len(G)))
     return 0 if all(G) else 1
