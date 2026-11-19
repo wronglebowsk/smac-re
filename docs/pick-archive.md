@@ -1042,3 +1042,28 @@ caller-guard DOWNGRADED to OPEN; pair reach 16->17 B; blind re-verify `evidence/
 
   (moved out of NEXT_PROMPT.md at the B25 #319 review triage, s295: the chain is doing zero-box
    work, and this kit line is only needed on a BOX round)
+
+## §trim-s296 (a) TRAP 24 in full, VERBATIM from NEXT_PROMPT.md §TRAPS at the #320 post-merge cap trim
+
+```
+24. **A PASSING ASSERTION IS NOT A GATE (s269, #281 on M308; all 4 P2s were one defect: an assert that can pass
+   on an UNMEASURED state — and 3 of the sub-conditions written to FIX them were THEMSELVES decorative).** Law: after
+   repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`), exit non-zero unless EVERY mutation reddens its
+   named gate; mutate a MEASURED FACT, never a dict ENTRY the assert reads as a whole; keep mutation ids out of the
+   A-number namespace. Worked defect list + the `m308_mutate.py` 8/8 reference VERBATIM:
+   `docs/pick-archive.md:996` §trim-s292 (b); mechanics: skill `references/instrument-laws.md:975`
+   (§harness is STATE) and `:1031` (§four outcomes).
+```
+
+  (moved out of NEXT_PROMPT.md at the #320 post-merge hygiene: #322's append-only M320 line put the hot
+   doc at 12,333 B, over the 12,000 warn; TRAP 24's law is quoted in one line there and its full text lives
+   here, measured by the `VERBATIM in <sha>:NEXT_PROMPT.md` rows of `scripts/b25_merge_state.py`)
+
+## §trim-s296 (b) the M320 result one-liner, VERBATIM from the last line of NEXT_PROMPT.md
+
+```
+M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +0x1078..0x1878, 3x512 arrays (+0x854/+0xa54 byte, +0xc54 word), scalar tail +0x2038..0x20bc; reset FUN_0059ec90 / rebuild FUN_0051dcb0. 12/12 digest 12e247bdbc0f77ef (evidence/m320_sibling_census.txt:418); harness 26/26+1. FULL: NAMED.md ## M320 + SESSION_NOTES s294-chain2.
+```
+
+  (chain 2's footing line, moved not deleted: `#321` put it in the hot doc, the hot doc hit the warn, so it
+   sits here with its numbers intact and `NAMED ## M320` + `SESSION_NOTES ## Session 294-chain2` still govern)

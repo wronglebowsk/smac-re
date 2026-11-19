@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B25 BUILT 9/9 + harness 13/13; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M319 done; next BUILD is B26, spine text NOT authored; analysis picks (vi) + (vii) open; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B25 MERGED 9/9 + harness 13/13; M316 #305; M315 #301; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B25 + M54A-M319 done; next BUILD is B26, spine text NOT authored; analysis picks (vi) + (vii) open; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -24,9 +24,9 @@ Note: `scripts/s292_cap_check.py` C1/C2 fail BY DESIGN now that #316's split is 
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B24 MERGED, B25
-in review this fire** (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). Next build **B26,
-queued and NOT YET AUTHORED**: `BUILD_SPINE.md` ends at B25, so B26's rung text must be written BEFORE probing (one
+box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B25 MERGED**
+(B25 = #319, main 1556ce9) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). Next build **B26, NOT YET
+AUTHORED**: `BUILD_SPINE.md` ends at B25, so B26's rung text must be written BEFORE probing (one
 milestone = spine section + instrument). B25 (`NAMED ## B25` governs): 9/9 (`python3 -u -m sim.selftest --b25`, ACCEPT
 anchor 901a286332960a10 `evidence/b25_selftest.txt:59`, banner `:69`; the same 69 lines from `-m sim.composedmove`) +
 harness **13/13 scored + 3 declared NO-OP** (`b25_mutate.txt:20`), `--selftest` **5/5** (`b25_mutate_selftest.txt:11`);
@@ -116,13 +116,10 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245: objdump prints UPPERCASE; ARM BEFORE ANY
    SCREEN; the SIGUSR1/SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT
    a STORE CENSUS.)
-24. **A PASSING ASSERTION IS NOT A GATE (s269, #281 on M308; all 4 P2s were one defect: an assert that can pass
-   on an UNMEASURED state — and 3 of the sub-conditions written to FIX them were THEMSELVES decorative).** Law: after
-   repairing a gate run a MUTATION harness (`scripts/<id>_mutate.py`), exit non-zero unless EVERY mutation reddens its
-   named gate; mutate a MEASURED FACT, never a dict ENTRY the assert reads as a whole; keep mutation ids out of the
-   A-number namespace. Worked defect list + the `m308_mutate.py` 8/8 reference VERBATIM:
-   `docs/pick-archive.md:996` §trim-s292 (b); mechanics: skill `references/instrument-laws.md:975`
-   (§harness is STATE) and `:1031` (§four outcomes).
+24. **A PASSING ASSERTION IS NOT A GATE** — an assert that can pass on an UNMEASURED state is a defect, not a
+   gate; every gate needs a NAMED mutant that reddens it, and the fixes get mutated too. FULL text + the
+   `m308_mutate.py` 8/8 reference: `docs/pick-archive.md` §trim-s296 (a); worked defect list, skill mechanics:
+   §trim-s292 (b) at `docs/pick-archive.md:996`.
 ## CLOSING ORDER (exactly — the kickoff carries the same list, and the full 7-step text lives
 VERBATIM at `docs/pick-archive.md` §trim-s269). Order: 1 `SESSION_CURSOR.md` (<=600 B) BEFORE the
 rest, in case of compression. 2 `## Session <N+1>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers
@@ -134,4 +131,4 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 `python3 scripts/gate.py --base main` GREEN + `python3 scripts/review_lint.py --id <id>` PASS.
 7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
-M320 RESULT (s294-chain2, #321, STATIC): 8380-B siblings = 9x128 region ladder +0x1078..0x1878, 3x512 arrays (+0x854/+0xa54 byte, +0xc54 word), scalar tail +0x2038..0x20bc; reset FUN_0059ec90 / rebuild FUN_0051dcb0. 12/12 digest 12e247bdbc0f77ef (evidence/m320_sibling_census.txt:418); harness 26/26+1. FULL: NAMED.md ## M320 + SESSION_NOTES s294-chain2.
+M320 (#321, s294-chain2) FULL: `NAMED ## M320`; its footing line VERBATIM at `docs/pick-archive.md` §trim-s296 (b).

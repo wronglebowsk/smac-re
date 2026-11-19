@@ -259,3 +259,43 @@ Older sessions: `docs/sessions/sessions-278-279.md` (2 sessions). Read it only w
 - HARNESS `python3 -u scripts/m320_mutate.py` -> **26/26 + 1 NO-OP**, digest 0d18a3d23b3e94b4 (`evidence/m320_mutate.txt:27-28`); selftest 4/4 (`evidence/m320_mutate_selftest.txt:5`). 12 data + 11 code + 2 algo + NO-OP. MU21 retarget: 0x2034 = last SITE owner -> {G2,G3}. 1 crashed debug run (fold eval) fixed; 2+2 clean invocations (pre/post review).
 - BLIND: 61 imm loads (6x blk1+0), 3293 neg-disp<=20bc (lea-pairs +1e0/+18/+1478 pinned). OPEN: game nouns; ds:0x985afc; 0xdfbe41; tail semantics; save-carry. Skill session-discipline.md rsynced from live (chain 1 edit). Review #321 triaged in PR reply; digest re-measured.
 - MERGED 2026-11-19: #321 squash **93c25fe** on main. Land commit b8f71af = append-only NEXT_PROMPT result line (parallel-protocol fix) + tracked ai_review JSON; gate GREEN 0 warn, CI gate pass 14 s, review_lint PASS (7 V rows); acceptance 3rd invocation byte-identical pre-merge. Strata review 4 P1+4 P2 triaged in one reply (3 P1 dismissals independently re-verified by orchestrator). This note: docs/m320-merged.
+
+## Session 296 (2026-11-19, post-merge hygiene for #319; zero box)
+
+- B25 MERGED: #319 squashed to **main 1556ce9** (the sha is found by SUBJECT on `origin/main`, not asserted:
+  `evidence/b25_merge_state.txt:2`), CI `gate` = SUCCESS on head 5ed5d93 (13 s). The
+  squash title carries the POST-review numbers (9/9, anchor 901a286332960a10 pinned by G9, harness
+  13/13 + 3 NO-OP, selftest 5/5) - the #317 wart, where a squash title kept the pre-review counts and
+  needed a NAMED note to correct it, does NOT repeat here.
+- The closeout claims are now MEASURED, not narrated: `python3 -u scripts/b25_merge_state.py` ->
+  **`PASS b25_merge_state: 15/15 checks`** (`evidence/b25_merge_state.txt:17`, re-run byte-identical).
+  It finds the merge by SUBJECT on `origin/main` (`(#319)` -> 1556ce9), requires that sha to be the one
+  both `NAMED ## B25` and these notes quote, requires NEXT_PROMPT's own measured size (11764 B) to be
+  under the 12,000 warn AND to be the number written here, and audits EVERY `§trim-sNNN` VERBATIM block
+  from s292 on (7 of them): each must be byte-for-byte in the NEWEST `origin/main` history blob of
+  NEXT_PROMPT.md that still carries it - so the pre-move state is found in history, not asserted, and
+  each row PRINTS the sha it matched (`6394107` = the #319 merge's PARENT for the two s295 blocks,
+  `93c25fe` = chain 2's #321 for §trim-s296 (b)) - AND must be ABSENT from the hot doc, which is the
+  COPIED-not-MOVED rival, and it fails. §trim-s295 (a) at `docs/pick-archive.md:1023`, (b) at `:1035`.
+  Rotation faithfulness: 17 lines byte-identical to the pre-rotation blob `1556ce9:SESSION_NOTES.md`,
+  1 additively annotated, 0 lost/mangled, sections gone from the hot file (`evidence/b25_merge_state.txt:15`).
+- CAP, again: chain 2's #322 append-only M320 line put NEXT_PROMPT at **12,333 B, 333 B OVER the
+  12,000 warn** - the instrument's size row went RED on the rebase, honestly, before any doc was
+  touched. Fixed by MOVING, not deleting: TRAP 24's 7-line text -> `docs/pick-archive.md` §trim-s296 (a)
+  at `:1046`, and chain 2's M320 footing line VERBATIM -> §trim-s296 (b) at `:1062`, each replaced in the
+  hot doc by a short pointer. Measured after: **11,764 B** (236 B of headroom; the next fire must pair
+  its additions with deletions). Chain 2's session text is untouched in `SESSION_NOTES`
+  (`## Session 294-chain2`) and its `NAMED ## M320` block stands.
+- TWO DEFECTS THE INSTRUMENT FOUND IN ITS OWN FIRST DRAFT, both real, both fixed here: (1) it picked the
+  rotated archives by a LEXICOGRAPHIC sort, so it measured sessions-97/98/99 and never the file this
+  branch had just rotated - a gate passing on an unmeasured state; now numeric (275 / 276-277 / 278-279),
+  and the cite pattern accepts BARE text as well as backticks (276-277 cites backticked, 278-279 bare, so the
+  old pattern left the bare line - the one with the stale digest - unmeasured) - 5/5 resolve
+  (`evidence/b25_merge_state.txt:14`).
+  (2) The new digest rule REDDENED on first run: `docs/sessions/sessions-278-279.md:18` cited
+  `evidence/m313_event_map.txt` with digest 3fee30fcd74735ad, which the tracked blob does NOT carry (that
+  file is the post-#294-review run: `== M313: 21/21 ==` at `:23`, digest 5e14170de426d127 at `:22`); the
+  FAIL read `b25_merge_state: 1/10 checks failed: ... unexplained: ['sessions-278-279.md:18
+  3fee30fcd74735ad']`. The archive line now states both digests with anchors: a superseded digest must
+  share its line with its replacement or the row fails.
+  NEXT: B26 (spine text NOT authored) or picks (vi)/(vii).
