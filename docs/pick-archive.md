@@ -1163,3 +1163,9 @@ M324 (s296-chain2): ROUND carried RAW: leg 59688a->985ab8 sz31c, file@50=50; red
   CLOSED + MERGED (pick (vi) = M321): `NAMED ## M321` governs (#324 hardened at review:
   7/7 + 22/22, digest f304cf871a971a3d; a3-form owners = 1, not 2); its OPEN-pick text sits
   at §trim-s297 and its CLOSED block moved VERBATIM to §trim-s299 (c).
+
+## §trim-s301-chain2 (a) the M325 result one-liner, VERBATIM from the trailing lines of
+NEXT_PROMPT.md at the M326 rebase onto main 4a03182 (rotated so the file stays under the
+12,000 B warn cap; sha1 a5d8e0a402bc of the line below, byte-exact). `NAMED ## M325` governs.
+
+M325 (s299-chain2): block+220 = per-faction ENERGY ("EDITORENERGY" handler: field<-g999fa4 @4e0336); turn advance 0 block stores; feed=MIN derived (M324 MAX retracted); g999fa4=cheat-chain value; EDITORYEAR explains 4e0350. 8/8 a623181d7fb68263 (m325_block220_census.txt:297); 30/30 97c193e12593c95e. MERGED #329->fb6e6c4. NAMED ## M325.
