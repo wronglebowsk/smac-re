@@ -1,0 +1,12 @@
+== B25/#319 closeout facts (measured; each row can FAIL) ==
+ok   origin/main carries a commit whose subject ends `(#319)`                                                 1556ce9a7e63cc559063c9bb70c9bc63346ac297
+ok   ...and its PARENT is the doc state the blocks moved OUT of                                               6394107
+ok   NAMED ## B25 header names main 1556ce9 (claims found: ['1556ce9'])                                       ['1556ce9']
+ok   SESSION_NOTES names the same sha in the s296 section                                                     1
+ok   NEXT_PROMPT.md measures 11978 B (cap warn 12000); the notes must state THAT number                       11978
+ok   pick-archive:1023 block ('  CLOSED + MERGED #317 (main 147e66a): pick ' .. '  positive control. NAMED ## True / dup=False
+ok   pick-archive:1035 block ('2. Writer/flag chain - silent bps or hw watc' .. '   named by containment in g True / dup=False
+ok   the 3 numerically-newest rotated files ['sessions-275-275.md', 'sessions-276-277.md', 'sessions-278-279. 5/5
+ok   rotation: sessions-278-279.md -> 17 lines byte-identical to origin/main:SESSION_NOTES.md, 1 additively a True / same=17 / annotated=1 / mangled=0
+ok   all 5 hex digests on cite-bearing lines of the 3 newest archives reconcile with the cited blob (or share 5/5
+PASS b25_merge_state: 10/10 checks (merge 1556ce9 on main, NEXT_PROMPT 11978 B < 12000, 2 blocks moved VERBATIM, 5/5 rotated cites resolve)
