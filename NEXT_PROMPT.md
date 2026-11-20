@@ -113,3 +113,4 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-chain1 (a); `NAMED` governs.
 M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
 M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
+M330 MERGED #340 -> 1b9cb38 (s309-chain2); pr340 JSON sidecar folded #342 (red-gate docs fold, fix-forwarded in s309 — check CI before ANY merge).

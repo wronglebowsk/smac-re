@@ -379,6 +379,12 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - PITFALLS: disp 0x300 hits profile/ladder/loader/stack siblings (provenance filter!); 546800 overwrites [ebp+8] 13x; 535c60 fold lacks final shl2 on one path.
 - OPEN: 34-slot noun (984d48/48); 985aec; +2fc/+308; arg3=4*faction; profile+300.
 
+## Session 309-chain2 (2026-11-19, M330 MERGED + pr340 sidecar fold; docs-only, zero box)
+
+- **#340 merged -> `1b9cb38` on main** (squash; verdict GREEN, CI gate pass 14s on absorbed head 240240d; mergeState CLEAN). Title PATCHed pre-merge with the post-review numbers (470d844054b1b101 x2 / 31/31+1 cf85092dea6baa93). Merged tree == absorbed tree (diff 0).
+- Chain 1's M329 (#339) + docs #341 landed mid-fire -> rebase kept BOTH chains' sections; force-push cron-blocked -> absorption **240240d** via commit-tree (tree byte-identical to rebased head). NAMED 240,158 B post-rebase (chain 1 rotated at s308; headroom 9,842). Census re-measured byte-identical at the rebased head.
+- **PROCEDURAL DEFECT (own)**: the pr340 JSON sidecar fold #342 (bbdd89a) was merged while its CI gate was FAIL — `milestone checkpoint: SESSION_NOTES/NEXT_PROMPT not updated`; docs-only PRs are NOT exempt (s306's #338 passed because it carried a session section). Content harmless (1 evidence JSON, 18 siblings tracked); this section + the NEXT_PROMPT line are the fix-forward. LESSON: read `gh pr checks` BEFORE `gh pr merge`, even for docs folds.
+- Review count for the record: local Strata on #340 = **2 P1 + 8 P2, 10/10 accepted, 0 dismissed** (`evidence/ai_review/pr340_20261120_011440.md`; JSON folded via #342). STATE: (viii) ANSWERED by chain 1's M329; B27 spine still chain 1's next build.
 ## Session 309 (2026-11-19, BUILD rung B27 CLOSED, zero box) — the ENERGY round executable + carried; two gate defects the mutants caught
 
 - Ownership: the only running row for job 789931d4b621 is this fire (`python3`/sqlite3 over `~/.hermes/cron/executions.db`; the `pid` column is the gateway pid for every row); chain 2's `9a0b613bb1ac` row is the known parallel lane. main was 1 behind (M330 #340) -> ff-pull, then `milestone.py start b27`.
