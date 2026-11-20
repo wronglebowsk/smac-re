@@ -1,0 +1,79 @@
+B27 the ENERGY round, executable and carried (sim/energy.py + sim/composedenergy.py)
+save m54b_clean.SAV  round dword 50  difficulty dword 2 (noun INFERRED, M308/M330)
+TABLE A the eight faction blocks, read out of the container (block A = 8 x 8380 B):
+  fac energy  +224   +300   +2fc   +308   +30c   +310
+    0      10      0      0      0      0      0      0
+    1      28      0      1      7      0      6      7
+    2     112      0      1     14      0     13     14
+    3      69      0      0      4      0      4      4
+    4     229      0      1     32      3     34     32
+    5      60      0      0      9      0      9      9
+    6     102      0      1      9      0      8      9
+    7      37      0      1      2      0      1      2
+TABLE B parity with the censuses' OWN printed rows
+  energy octet      mine=[10, 28, 112, 69, 229, 60, 102, 37] m330=[10, 28, 112, 69, 229, 60, 102, 37] m326=[10, 28, 112, 69, 229, 60, 102, 37] m325=[10, 28, 112, 69, 229, 60, 102, 37]
+  spend(+300) octet mine=[0, 1, 1, 0, 1, 0, 1, 1] m330=[0, 1, 1, 0, 1, 0, 1, 1]
+  debt(+224)  octet mine=[0, 0, 0, 0, 0, 0, 0, 0] m326=[0, 0, 0, 0, 0, 0, 0, 0]
+  +300 file offsets mine=[1580, 9960, 18340, 26720, 35100, 43480, 51860, 60240] m330=[1580, 9960, 18340, 26720, 35100, 43480, 51860, 60240]
+  +224 file offsets mine=[1360, 9740, 18120, 26500, 34880, 43260, 51640, 60020] m326=[1360, 9740, 18120, 26500, 34880, 43260, 51640, 60020]
+TABLE C the ledger law on the save's own bytes (+310=+2fc ; +30c=+308-+300++2fc)
+  law +310==+2fc 8/8   law +30c==+308-+300++2fc 8/8
+  rival +310==+308 1/8   rival +30c=+308++300++2fc 3/8   rival -+2fc 1/8
+TABLE D the refund law vs M330 G4's printed samples (x, k1, k2, res1, res2)
+  samples reproduced 7/7   sweep 40002 cases, residue-identity violations 0
+  switch thresholds parsed from the evidence: skip<= 3 , k=1 at 4
+  k-table [(0, 0), (1, 0), (2, 0), (3, 0), (4, 1), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2)]  rival(thr2) differs at 1 difficulties  rival(k1-at-all) at 1
+TABLE E the ordering, on declared fixtures (energy, debt -> snapshot | rival-snap-first, post-settle)
+  e=10   debt=3    snapshot=7    rival-first=10   post-settle=7    delta=-3
+  e=5    debt=8    snapshot=0    rival-first=5    post-settle=0    delta=-5
+  e=0    debt=4    snapshot=0    rival-first=0    post-settle=0    delta=0
+  e=120  debt=200  snapshot=0    rival-first=120  post-settle=0    delta=-120
+  e=7    debt=0    snapshot=7    rival-first=7    post-settle=7    delta=0
+  rows where the rival differs 3/5; the save's own 8 factions diverge 0 (debt octet all zero, measured)
+TABLE F B4's recorded economy through THIS pipeline
+  B4's own replay gates, re-run in-process: ["trace-wellformed rounds=12 years 2304..2315 consecutive=True cur==3 on all=True point-set=['start-of-our-turn'] our_energy=[15] our_bases_per_round=[0] harness deltas.energy3=0.0", 'idle-replay matched=12/12 states (initial 1 + transitions 11/11) nets=[0] nonzero_net=0 sim_sequence=[15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]', 'hud-triple-idle engine=(gross 0, upkeep 0, net 0) == (SUM base+0xfc, SUM upkeep, difference) on 0 bases; recorded economy-pane OCR legible on 3/12 rounds, all three rows read 0/turn on 3 of them (evidence/m44d_idle.json:150)']
+  legs-zero CONSISTENCY (all legs 0 => energy unchanged; NOT a parity, s309 F6): 12/12 (energy set [15])
+  this save measures BOTH ledger legs inert, and says WHY: debt nonzero 0/8 (settle inert); refund nonzero 0/8 at difficulty 2 (k=0) and 0/8 driven at the k=1/k=2 difficulties 4/5, because max(+300)=1; refund(3, k=1)=1 refund(3, k=2)=1 probe 2/2 -> the leg is not a stub, the save is small
+  post-found recorded energy 19 (gross 2 upkeep 2): predicted by difficulty [(0, 19), (1, 19), (2, 19), (3, 19), (4, 19), (5, 20), (6, 20), (7, 20), (8, 20), (9, 20)]; matches 5/10; full-refund rival 21
+  recorded factions this pipeline does NOT model (first,last,distinct): [('1', 175, 160, 11), ('2', 95, 81, 10), ('4', 507, 627, 12), ('5', 71, 65, 10), ('6', 20, 78, 11), ('7', 187, 177, 11)]
+TABLE G the composed 6-round energy run on the save's own eight blocks
+  round fac energy_in gross feed debt snapshot refund spend_out energy_out
+      0   0        10     0    0    0       10      0         0         10
+      0   1        28     3    1    0       30      0         1         30
+      0   2       112     6    1    0      117      0         1        117
+      0   3        69     2    1    0       70      0         1         70
+      0   4       229    10    1    0      238      0         1        238
+      0   5        60     4    0    0       64      0         0         64
+      0   6       102     4    1    0      105      0         1        105
+      0   7        37     1    1    0       37      0         1         37
+      1   0        10     0    0    0       10      0         0         10
+      2   0        10     0    0    0       10      0         0         10
+      3   0        10     0    0    0       10      0         0         10
+      4   0        10     0    0    0       10      0         0         10
+      5   0        10     0    0    0       10      0         0         10
+  rows printed 13 of 48 (round 0 carries all eight factions, later rounds print faction 0); every gate and the digest read ALL rows
+  carry violations per round [0, 0, 0, 0, 0, 0]; bytes outside modeled spans per round [0, 0, 0, 0, 0, 0]
+  final container sha 626fec9a35deddba; rows digest b65e8129b67ba67d; printed-table digest 3c134ea70638c12b (of the tables as printed before this line)
+TABLE H the writer
+  identity (unmutated build == original bytes) True; modeled block-A spans 40 (160 B); differing bytes this round 9, outside modeled spans 0
+  modeled_spans() with no argument == the pre-B27 list: True
+TABLE I the falsifier (poison +77 on faction 4's ENERGY, IN THE IMAGE ONLY)
+ honest final sha 9d4774e6d417ce83 (factions whose ENERGY bytes differ: [4]; poisoned carried 1); smuggler sha 626fec9a35deddba (== clean True, carried 0)
+TABLE J rivals, measured (0 = bites nowhere = retired as decoration)
+  fullrefund                                    round rows the mis-settled residue moves             36
+  thr2                                          k-table rows over difficulties 0..9                  1
+  noclamp                                       ordering fixtures landing below zero                 3
+  nowrite                                       round rows the container does not carry              30
+  smuggle                                       poisoned factions CARRIED: honest 1 minus blind smuggler 0 1
+  nofork: reuse B4's fold instead of this pipeline printed fits it breaks                               0
+  ok   G1 leg pins BOUND to their field token on one census line (22 pins, min line hits 1; control bogus-control hits 0)
+  ok   G2 octets + file offsets == the M325/M326/M330 censuses' own printed rows
+  ok   G3 ledger law on the save's own bytes 8/8 + 8/8, rivals 1/3/1 of 8
+  ok   G4 B4 in-process green (3 gates, 0 failed) + post-found 5 matches, full-refund 21 != recorded 19; legs-zero consistency 12/12 (NOT a parity, s309 review F6)
+  ok   G5 refund law = M330's printed samples 7/7 + sweep 40002, violations 0
+  ok   G6 k-table walked from the pinned switch tuples (skip<=3, k1=4): [0, 0, 0, 0, 1, 2, 2, 2, 2, 2]
+  ok   G7 ordering is a number: rival-first differs on 3/3 discriminating fixtures; on THIS save both legs measure inert (debt 0/8 nonzero, refund 0/8 at difficulty 2 and 0/8 at the k=1/k=2 difficulties, max +300 = 1) while the leg itself fires (probe 2/2), difficulty 2 <= skip 3 and the switch reads the same global
+  ok   G8 writer: identity True, carry violations [0, 0, 0, 0, 0, 0], bytes outside modeled spans PER ROUND [0, 0, 0, 0, 0, 0] (final image 0), legacy spans untouched True
+  ok   G9 falsifier reaches the container (factions [4]; carried 1), smuggler blind (carried 0, sha==clean True)
+  ok   G10 rival bites [('fullrefund', 36), ('thr2', 1), ('noclamp', 3), ('nowrite', 30), ('smuggle', 1)]; retired-as-decoration [("nofork: reuse B4's fold instead of this pipeline", 0)]; determinism rows True printed True container True; anchors rows b65e8129b67ba67d / printed 3c134ea70638c12b / container 626fec9a35deddba
+PASS B27: 10/10 gates
