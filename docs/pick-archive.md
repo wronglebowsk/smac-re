@@ -1195,3 +1195,66 @@ at s305 when the `+12` census became a G3 clause (MU23) — `NAMED ## M327` carr
 ## §trim-s304-chain2 (a) — M326 result one-liner (moved VERBATIM from NEXT_PROMPT.md at s304-chain2, M328 close; sha1[:16] f6691830bcd4c739, byte-exact asserted; NAMED ## M326 governs)
 
 |M326 (s301-chain2): +224=deferred HURRY-payment debt (419c30 defers iff 920434/91c62c set; upkeep: ENERGY-=224,224:=0,floor0; readers=220-224; MIN cap@41a4e0). Subreg fix; M325 29 labels->STRIDE (G10 8/8). 10/10 f0f31c3daa26b601; 27/27. MERGED #332->7cd4732; sidecar #334. NAMED ## M326.
+
+## §trim-s307-chain1 — pick (viii) retired (M329), M255-M258 + `## Method that worked` rotated out
+
+(a) THE (viii) ROW AS OPENED AT THE M321 TRIAGE, VERBATIM: "OPEN PICK (viii) (NEW at the M321 triage,
+zero box): NAME FUN_0041a8f0 - it round-trips that field through the scratch dword `ds:0x99aa38` behind a
+20-store tree (0x41a9d2-0x41ab6d), and 47 whole-dword stores to the field are untraced. Start
+`evidence/m321_memo_owners.txt:47-81`."  ->  **CLOSED at s307 as M329** (`NAMED ## M329` governs): the
+frame is a thiscall member of the widget singleton `0x6a9480`, the tree is the 19-bit pack staging, the
+publish is 4 bits wide and disjoint from both faction-create defaults. The "20-store tree" figure was the
+Grep count of the `0x41a9d2`-`0x41ab6d` window; the census counts **19** read/test legs + 19 write-back
+legs + the 1 clear (`evidence/m329_scratchtree.txt:40-84`), and the "47 untraced whole-dword stores" are
+M321's OPEN row about the FIELD's other writers - M329's writer census names 3 writers of `[rec+0x38]`
+(1 dynamic + 2 faction-create defaults), it does not trace the 47.
+
+(b) MOVED VERBATIM OUT OF `NAMED.md` for the M329 block's headroom (both byte-substring asserted):
+`## M255-M258` (s201-s202, 36 lines, 6,734 B, sha1 `9111d3b24758`) -> `docs/named-archive-m255-m258.md`
+by `scripts/m329_named_rotate.py`; `## Method that worked` (the B10-era method + the s32-s60 M24-M28
+naming rows, 56 lines, 12,564 B, sha1 `16cd10eb5fc0`) -> `docs/named-archive-method-b10-era.md` by
+`scripts/m329_named_rotate2.py`. `NAMED.md` 247,028 -> 240,534 B.
+
+## §trim-s308-chain1 — NEXT_PROMPT cap trim at s308 (M329 landing fire): B26 build-track paragraph + the (viii)/M329 summary retired VERBATIM
+
+(a) THE B26 BUILD-TRACK PARAGRAPH, VERBATIM from `NEXT_PROMPT.md` line 28 (sha1 `bb2b39f698a6`, byte-substring asserted by `scripts/m329_trim_s308.py`):
+
+(B25 = #319 main 1556ce9; B26 = #328 main dd704d0) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). **B26 (s299 BUILD + PR #328 TRIAGE) ACCEPT at this head**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 10/10 gates`, anchor `ae43e0ab9c8cfc3d` (`evidence/b26_selftest.txt:52`, gate line `:63`); harness `python3 -u scripts/b26_mutate.py` -> **19/19 scored + 1 declared NO-OP (MU19)** (`evidence/b26_mutate.txt:24`), `--selftest` **8/8 REJECTED**, **ENTRY-POINT IDENTITY 2/2** scored by **MU21** (both entry points print byte-identical 63-line stdout; the check bites on a relay patched in a temp tree). THE LAW: the container is LOADED, not just written - the three laws and the four defects are VERBATIM at §trim-s299 (e) **(SUPERSEDED IN PART)**; `NAMED ## B26` governs and carries the THREE retractions IN PLACE (F1 the smuggler is **NOT blind** — what holds is OBJECT REUSE; F3 only the SAVE-only refusal half is comparable to B25; F7 the owner byte is `UNIT_OWNER` +14, not `UNIT_FLAG` +4); numbers in that block. **OPEN, ungated-as-explanation: `found_units` 69 -> 0 in the two post-boundary rounds; why the exposed smuggler carries the poisoned owner once, not twice.** Next build **B27, NOT YET AUTHORED** (`BUILD_SPINE.md` ends at B26): write its rung text BEFORE probing (one milestone = spine section + instrument). B25/B26 build-track detail (incl. the tile-test lead = pick (vii)) VERBATIM at `docs/pick-archive.md` §trim-s298 (a) + §trim-s299 (b) + §trim-s299 (d); `NAMED ## B25` / `## B26` govern.
+
+(b) THE (viii)=M329 PICK-SUMMARY BLOCK, VERBATIM from `NEXT_PROMPT.md` lines 63-75 (sha1 `dfae97811347`, byte-substring asserted by the same script; `NAMED ## M329` governs):
+
+  CLOSED pick row (viii = **M329**, s307) VERBATIM at §trim-s307-chain1 (a) (the row as opened + the two
+  numbers it mis-stated); `NAMED ## M329` governs — `FUN_0041a8f0` = **`ui_governor_options_pane(widget,
+  page)`**, a thiscall member of the widget singleton `0x6a9480`; `ds:0x99aa38` = the 19-bit pack staging
+  (19 legs / 19 distinct masks / bits 0..18 / exactly 1 identity leg ⇒ a PERMUTATION); the publish is
+  `and ecx,0xf000000` at `0x41abdc` -> store `0x41ad94` = ONLY bits `0x1c-0x1f` of `[fac*8380+0x94d600]+0x38`,
+  **bit-disjoint** from both faction-create defaults ⇒ REFINES `## M321` in place; the pane's 3 chains walk
+  the own-faction BASE array `0x95da10` (NOT the unit array). ACCEPT `python3 -u scripts/m329_scratchtree.py`
+  -> `== M329: 13/13 ==` (`evidence/m329_scratchtree.txt:127`, digest `757e40a7ed04abda` `:125`, 2 runs
+  identical); harness `python3 -u scripts/m329_mutate.py` -> `HARNESS PASS 26/26`, coverage `True`, 1 NO-OP
+  (`evidence/m329_mutate.txt:31,:29,:30`). The M241 boundary held: nothing about the tagged record's save role
+  was re-litigated. **NO PICKS LEFT except (ix)** (the live-box round) which is GATED on the operator's
+  authorization — so the next fire is the **BUILD rung B27**: author its `BUILD_SPINE.md` section FIRST, then
+  instrument it; if the tracker reads ANALYSE instead, report the gate and stop, invent nothing.
+
+NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **239,090 B / 10,910 B headroom** (`wc -c NAMED.md`, after the row fixes).
+CORRECTION at s308 to the block above and to §trim-s307-chain1 (a): **"5 call sites / 4 owners" is FALSE —
+the census's own G1/T1 print exactly 4 `e8` call sites** (`0x41e3bd`, `0x49b306`, `0x4a9e0e`, `0x5120d0`;
+`evidence/m329_scratchtree.txt:5-12,33`, 48,874 rel32-calls decoded image-wide, and 0 `jmp`s to the frame).
+The s307 row had imported `0x4a9e63`/`0x512232` from G9's READER list — they are `mov eax,[edx*4+0x94d600]`
+field reads followed by `mov [reg+0x38],eax` copies (the adjacent stores `0x4a9e69`/`0x512239`), not calls.
+The same row's `5 ret 0x4` is also wrong: T1 `:13` prints `ret 0x4` sites=**4**, and the "3 `push 0x6899ec`
++ `0x511b3e`/`0x512307` + vtable slots +0xec/0xf0/0xf4 call it" naming-basis claims were never measured —
+the dump contains exactly ONE `push 0x6899ec` (`0x41aba5`) and no occurrence of those two addresses.
+`NAMED ## M329` rows 1-3 carry the retraction IN PLACE.
+ALSO CORRECTED at s308 (the #339 Strata review caught a second class): `NAMED ## M321`'s refined clause and
+`## M329`'s writer row named the second faction-create default **`0xdfbe01` @`0x5a0510`** — no such
+constant/site exists; the census prints `0xdfbe41`@`0x59ed6c` and `0xc0dfbe41`@`0x59ed7a`
+(`evidence/m329_scratchtree.txt:96-97`, the same `mov [ebx+0x94d600],imm32` twice). Also retracted in place:
+the `0x59ed40` "copying reader" (the census's reader is `0x4e494c` `:91`), the "1 clear
+(`0x41ad55`/`and al,0xffdf`)" write-back leg (nowhere in the census: 19 legs, 11 resolved `or`s,
+8 `-> no direct op`, `:62-81`), the chains row's `+3584`/`count 1..37`/`rank 1..3`/sort/cap payload (absent
+from the printed output), and the arrival row's "19 reads" of `[widget+0x3ff3c]` (T2 prints 3).
+The retraction facts themselves are now MEASURED, not grepped: `scripts/m329_verify_s308.py` ->
+`== M329 s308 verify: PASS (4 e8-sites, 0 direct jmps, 0 absolute FN-encodings, 1 tag push; 3919 indirect
+calls / 362 indirect jumps printed as UNKNOWN) ==` (`evidence/m329_verify_s308.txt:13`, 2 runs diff-identical).
