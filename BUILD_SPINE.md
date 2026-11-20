@@ -896,3 +896,62 @@ beyond x/y/type/owner/order are unmodeled (B12's declaration); the queue span it
 folded in this rung (B23/B24 own that channel and this rung's G1/G3 keep it out of scope rather
 than re-proving it); whether the SHIPPED game carries MP in a .SAV is chain 2's open census
 (M324) and is NOT claimed here either way. No box time, no /proc, no gdb, no game-binary load.
+
+**B27 - the ENERGY ledger made EXECUTABLE and CARRIED: one round's energy flow (entry-zero →
+upkeep feeder → income → debt settle → SNAPSHOT → hurry refund → ledger stores) runs on the
+save's OWN eight faction blocks, the block-A fields the round mutates become the writer's first
+MODELED spans inside block A, and the recorded ledger arithmetic is verified against the
+container's own bytes (`sim/energy.py` = the law, `sim/composedenergy.py` = the run; s309
+authored this rung from main 1b9cb38, as B14-B26 did).** B4 made gross/upkeep/net executable and
+B21-B26 made the turn, queue, founder, move and save/load legs composed and persistent. None of
+them ever moved ENERGY: `savewriter.build_image` LIFTS block A verbatim (its span list is
+header + own-player + map dims + unit x/y), so a round that spends energy could not be written,
+and the three chain-2 censuses (M325 +220 = ENERGY, M326 +224 = deferred HURRY debt, M330 +300 =
+upkeep spend accumulator) had never been composed into ONE round or checked against the bytes the
+game writes back. The laws are the recorded ones, pinned by address in the committed censuses:
+entry-zero 52056d (+2fc/+300/+308/+3f8); feeder FUN_004f47f0 `ENERGY -= v` 4f4950-52 /
+`+300 += v` 4f495e-62, ROUND>1 only; income add 4f5c8c (B4's Σ base+0xfc); debt settle called
+520605, body 520b0e-30 `ENERGY -= +224; +224 = 0`, floor 0; SNAPSHOT 52065d `A := ENERGY`, pinned
+AFTER the settle and BEFORE the adds (M328 G1/G2); refund 520714-78f (difficulty>3, field!=0,
+mask bit — the mask is VACUOUS, cl=8) `r = trunc(k*x/3)`, k=1 at difficulty 4 / k=2 at ≥5,
+`ENERGY += r`, `+300 -= r` with the RESIDUE KEPT (unlike +224, which is zeroed); ledger 52081a-841
+`+310 = +2fc`, `+30c = +308 - +300 + +2fc`.
+`python3 -u -m sim.selftest --b27` must print `PASS B27: 10/10 gates` (authored once in
+`sim/composedenergy.py`; `--b27` only relays, so the two entry points cannot print different text)
+with: **G1** transcription integrity — every leg pin (address + operand tuple) this module uses
+occurs VERBATIM in the committed census evidence it cites, counted, and a deliberately-bogus pin
+in the same list reddens the gate (trap 24); **G2** octet parity with the decoders — the eight
+ENERGY, eight +224 and eight +300 dwords read out of block A, and the three file-offset tables,
+equal the lists the M325/M326/M330 censuses PRINT (parsed out of those evidence lines, never
+retyped here); **G3** the ledger laws on the save's own bytes: `+310 == +2fc` and
+`+30c == +308 - +300 + +2fc` per faction, 8/8 each, with the sign-flipped and term-swapped rivals
+failing at counted factions; **G4** reuse, not forking — `sim.economy` runs in-process and the
+recorded idle 12-round sequence and the post-found (2,2,0) pair of `evidence/m44d_idle.json`
+reproduce through THIS pipeline (energy flat, net 0), the recorded numbers parsed from the trace;
+**G5** the refund arithmetic against the game's own printed samples — M330 G4's (x, k=1, k=2,
+residue) rows are reproduced exactly and the residue identity `r + residue == x` holds over a
+swept x-range, counted; **G6** the k-table derived by walking the pinned branch tuples (cmp 0x3 /
+jle, cmp 0x4 / jne) for difficulties 0..9, printed, rivals (k=1 everywhere, threshold >2) failing
+at counted difficulties; **G7** THE ORDERING AS A NUMBER: with a declared debt fixture the SNAPSHOT
+holds the post-settle clamped value, and the "snapshot first" rival differs by exactly the clamped
+amount — plus the MEASURED inertness of both legs on this save (+224 is 0 for all eight, and the
+difficulty dword read out of the container is ≤3, so the refund never fires: printed, not waved);
+**G8** THE WRITER: the round's mutated fields are written into block A through `savewriter` and an
+unmutated build is still the identity; every round's re-parse equals the model, every differing
+byte lies in a MODELED span, and `sim.savewriter.modeled_spans()` called WITHOUT block overrides
+still returns exactly the pre-B27 list (the older rungs' strictness must not be loosened by this
+rung); **G9** THE FALSIFIER: poisoning one faction's ENERGY in the written image only shifts that
+faction's later leg arithmetic INTO the final container (the other seven untouched, counted), while
+the model-fed smuggler that keeps its own ledger stays byte-identical to the clean run; **G10**
+the rivals fail the same fit, MEASURED, and determinism: two runs → identical printed tables and
+identical final-container sha256, with the ACCEPT anchor pinned to a literal inside G10.
+`scripts/b27_mutate.py` re-creates the defects by anchor->replacement in a fresh subprocess and
+exits non-zero unless each reddens EXACTLY its declared (MEASURED) gate set.
+DECLARED UNMODELED: the feeder's per-slot `v` (the 34-slot item table's runtime row order is only
+pinned for 5 facilities — B4's "table-later" OPEN row — so per-faction upkeep on the AI factions is
+alpha-table ASSUMED, exactly as B4 declared it); the relative order of the income add and the
+upkeep feeder (only settle < snapshot < refund is pinned by address order, and the two adds are
+commutative on this fixture); the nouns of +2fc/+308/+310/+3f8 and of the difficulty dword
+(M330/M308 INFERRED); which factions the game would really charge (the eight blocks are run
+uniformly, as B25 applies the gesture to every unit); whether the refund leg ever runs in this
+save at all (measured inert here). No box time, no /proc, no gdb, no game-binary load.

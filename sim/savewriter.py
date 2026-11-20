@@ -44,16 +44,21 @@ def _u32(b, o):
     return struct.unpack_from("<I", b, o)[0]
 
 
-def modeled_spans():
-    """Byte ranges the writer composes from the model (inside the header/own word)."""
-    return [(OFF_TF, OFF_TF + 4), (OFF_COUNTS, OFF_COUNTS + 8), (OFF_YEAR, OFF_YEAR + 2),
-            (OFF_CUR, OFF_CUR + 4), (OWN_OFF, OWN_OFF + 4),
-            (so.MAP_HDR_OFF, so.MAP_HDR_OFF + 8)]
+def modeled_spans(extra=None):
+    """Byte ranges the writer composes from the model (inside the header/own word).
+
+    `extra` (rung B27) extends the list for a call that ALSO models block-A fields; called
+    with no argument it returns exactly the pre-B27 list, so the older rungs' "every differing
+    byte is modeled" gates keep their original strictness."""
+    spans = [(OFF_TF, OFF_TF + 4), (OFF_COUNTS, OFF_COUNTS + 8), (OFF_YEAR, OFF_YEAR + 2),
+             (OFF_CUR, OFF_CUR + 4), (OWN_OFF, OWN_OFF + 4),
+             (so.MAP_HDR_OFF, so.MAP_HDR_OFF + 8)]
+    return spans + list(extra or ())
 
 
 def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
                 lift_all=False, bases_override=None, orig_n_bases=None,
-                append_units=None):
+                append_units=None, block_writes=None):
     """Recompose the container. Defaults are the model values read from the loaded image,
     so an unmutated build is the identity map iff every layout constant is right.
     lift_all=True builds the rival 'pure re-emitter' (composes regions, lifts every byte);
@@ -87,8 +92,21 @@ def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
     # own player
     out += (struct.pack("<I", sv.own_player) if not lift_all
             else d[OWN_OFF:OWN_OFF + 4])
-    # block A / block B / small table / map-header struct (dims modeled)
-    out += d[so.BLOCK_A_OFF:so.BLOCK_A_OFF + so.BLOCK_A_LEN]
+    # block A / block B / small table / map-header struct (dims modeled).
+    # Block A stays a pass-through lift for every rung up to B27; `block_writes`
+    # (rung B27) is the ledger's way of MODELING the fields it owns: a list of
+    # (block-A-relative offset, signed dword). A write that would fall outside the
+    # block is refused, never silently shifted.
+    blk_a = bytearray(d[so.BLOCK_A_OFF:so.BLOCK_A_OFF + so.BLOCK_A_LEN])
+    if block_writes and not lift_all:
+        for off, val in block_writes:
+            if not (0 <= off and off + 4 <= so.BLOCK_A_LEN):
+                raise ValueError("block-A write at %d+4 escapes the %d B block"
+                                 % (off, so.BLOCK_A_LEN))
+            if not -0x80000000 <= int(val) < 0x80000000:
+                raise ValueError("block-A write at %d is not a signed dword: %d" % (off, val))
+            struct.pack_into("<i", blk_a, off, int(val))
+    out += bytes(blk_a)
     out += d[so.BLOCK_B_OFF:so.BLOCK_B_OFF + so.BLOCK_B_LEN]
     out += d[so.SMALL_OFF:so.SMALL_OFF + so.SMALL_LEN]
     mh = bytearray(d[so.MAP_HDR_OFF:so.MAP_HDR_OFF + so.MAP_HDR_LEN])
@@ -175,9 +193,10 @@ def diff_offsets(a, b):
             if (a[i] if i < len(a) else None) != (b[i] if i < len(b) else None)}
 
 
-def modeled_diff_check(orig, mutated):
-    """Every differing byte sits in a modeled span (header fields or a unit record's x/y)."""
-    sv_spans = modeled_spans()
+def modeled_diff_check(orig, mutated, extra=None):
+    """Every differing byte sits in a modeled span (header fields or a unit record's x/y;
+    `extra` = a rung's own modeled spans, B27's block-A ledger fields)."""
+    sv_spans = modeled_spans(extra)
     bad = []
     for i in diff_offsets(orig, mutated):
         if not any(lo <= i < hi for lo, hi in sv_spans):

@@ -1669,7 +1669,30 @@ def run_b26(sav_path, map_path, log_path, trace_path, results):
     return 0
 
 
-def run_b24(sav_path, results):
+def run_b27(sav_path, results):
+    """Rung B27: one round's ENERGY flow, executable and CARRIED - the block-A ledger fields
+    go through the writer and the next round reads them back out of the container; the ledger
+    arithmetic is checked against the container's own bytes. All claims are the module's -
+    sim/composedenergy.py authors them and this hook only relays them, so --b27 and
+    `python3 -m sim.composedenergy` can never print different text."""
+    import os as _os
+    from . import composedenergy as sce
+    if not _os.path.exists(sav_path):
+        return fail("B27: missing input: %s" % sav_path)
+    m = sce.measure_full(sav_path)
+    for line in sce.render(m):
+        print(line)
+    sce.acceptance(m, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B27: %d/%d gates failed: %s" % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B27: %d/%d gates" % (len(results), len(results)))
+    return 0
+
+
+
     """Rung B24: the queue leg visiting a base FOUNDED BY THE FOUNDER LEG in the
     written container - op stream applied to the image's base array, fold
     reading the visited record at its POST-COMPACTION position BY TILE.
@@ -1822,6 +1845,8 @@ def main(argv=None):
                          "m302/b18 numbers and the m294 rows")
     ap.add_argument("--b26", nargs="*", metavar="ARG",
                     help="rung B26 (save/load boundary); optional SAV MAP LOG TRACE")
+    ap.add_argument("--b27", nargs="*", metavar="ARG",
+                    help="rung B27: the ENERGY round, executable and carried (defaults: <SAV>)")
     ap.add_argument("--b25", nargs="*", metavar="ARG",
                     help="rung B25: the MOVE leg made PERSISTENT - the press reads its "
                          "start tile out of the container and the moved tiles go back "
@@ -1907,6 +1932,9 @@ def main(argv=None):
         tr = args.b26[3] if len(args.b26) > 3 else os.path.join(
             e, "trace_m289_20261110_071759.jsonl")
         return run_b26(sav, mp, lg, tr, results)
+    if args.b27 is not None:
+        sav = args.b27[0] if args.b27 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b27(sav, results)
     if args.b25 is not None:
         sav = args.b25[0] if args.b25 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         mp = args.b25[1] if len(args.b25) > 1 else os.path.join(
