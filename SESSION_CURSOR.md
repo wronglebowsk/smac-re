@@ -1,8 +1,8 @@
 # SESSION_CURSOR
 
-M329 `milestone/m329` -> PR #339: submitted, Strata review triaged, merge is this fire's last step.
-ACCEPT `python3 -u scripts/m329_scratchtree.py` -> `== M329: 13/13 ==` `evidence/m329_scratchtree.txt:127`
-(digest `757e40a7ed04abda` :125); harness `scripts/m329_mutate.py` -> `HARNESS PASS 26/26` `:31`;
-verify `scripts/m329_verify_s308.py` -> PASS `evidence/m329_verify_s308.txt:13`.
-NAMED 239,090/250k (10,910 B headroom) — ROTATE BEFORE ADDING. NEXT FIRE: BUILD rung B27, write
-the `BUILD_SPINE.md` section FIRST. `m294_gate_rows_raw.txt` = sim parity target, do NOT rm.
+B27 `milestone/b27` -> PR (this fire): 10/10 gates, harness 16/16; review triage, then merge.
+ACCEPT `python3 -u -m sim.selftest --b27` -> `PASS B27: 10/10 gates` `evidence/b27_selftest.txt:77`
+(anchor `b65e8129b67ba67d` `:54`, 2 runs identical); harness `python3 -u scripts/b27_mutate.py`
+-> `HARNESS PASS 16/16` digest `81d2d9491ec3320d` `evidence/b27_mutate.txt:18-20`; `--selftest`
+3/3 `b27_mutate_selftest.txt:1-3`.
+NEXT FIRE: pick from the (x) OPEN-LEADS list in `NEXT_PROMPT.md` §THE PICK. `m294_gate_rows_raw.txt` = sim parity target, do NOT rm.
