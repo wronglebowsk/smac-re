@@ -98,6 +98,7 @@ def g1_census():
         elif ALGO == "1":
             prov = ("STRIDE", None)     # mutant: trust every disp hit
         else:
+            # ALGO=0 and ALGO=2 share this path (2 = declared inert NO-OP alias)
             prov = m326.base_tag(a, mi)
         if prov[0] in ("BLKCONST", "STRIDE", "ABS"):
             field.append((h, prov))

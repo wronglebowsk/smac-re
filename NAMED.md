@@ -1300,7 +1300,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | W={4f4962,52056d zero,52078f resid,59f26a reset}; refund 520714-78f: 985aec>3,x!=0: r=trunc(kx/3) k=1(==4)/2(>=5); E+=r,x-=r; magic 55555556x4; mask VACUOUS cl=8 | G2/G4-6 `:43,45-51` | V MU1-8 |
 | feeder 4f47f0 ROUND>1: v=[984d48+48*slot] (bits 95da9c); CONDITIONAL halving (owner-match +bit5 parity /2 else FULL); E-=v,+300+=v | G10 `:58-59` | V MU9,10 |
 | entry zeroes +2fc/300/308/3f8; +310:=+2fc; +30c:=+308-300+2fc; turnfn 0blk; carry raw (M324) vals=[0,1,1,0,1,0,1,1] | G7-9/11 `:53-57,61` | V MU8,11,15,16,21 |
-| ACCEPT 13/13 63def04aadb07bcf x3 (`:66-67`,`_rerun.txt:66-67`); 20/20+1 NO-OP 730127f586346fa6 (`evidence/m330_mutate.txt:25-27`); ST 5/5 (`_selftest.txt:6`) | cite | V |
+| ACCEPT 13/13 digest 63def04aadb07bcf x3 (`:66-67`,`_rerun.txt:66-67`); 20/20+1 NO-OP digest 730127f586346fa6 (`evidence/m330_mutate.txt:25-27`); ST 5/5 | cite | V |
 | OPEN: slot/985aec/+2fc/+308 nouns; arg3=4*fac; profile+300 | - | lead |
 
 ## M326 (s301-chain2, STATIC 10/10, review #332 hardened) - block+224 = per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt); settled at upkeep

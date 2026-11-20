@@ -14,33 +14,41 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CENSUS = [sys.executable, "-u", os.path.join(ROOT, "scripts", "m330_block300_census.py")]
 GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12", "R"]
 
-# (id, env, declared reddened set)
+# (id, kind, payload, declared reddened set) — standard format (review_lint L2b
+# parses "code" entries and checks each patch addr is literal-read by the instrument)
 MUTANTS = [
-    ("MU1",  {"M330_PATCH": "52072d|mov eax,0x66666667"}, {"G4", "R"}),
-    ("MU2",  {"M330_PATCH": "520732|mov edx,ecx"}, {"G4", "R"}),
-    ("MU3",  {"M330_PATCH": "520758|mov ecx,ecx"}, {"G4", "R"}),
-    ("MU4",  {"M330_PATCH": "52078d|xor ecx,ecx"}, {"G4", "R"}),
-    ("MU5",  {"M330_PATCH": "520719|cmp eax,0x4"}, {"G5"}),
-    ("MU6",  {"M330_PATCH": "52071c|jle 0x520758"}, {"G5"}),
-    ("MU7",  {"M330_PATCH": "52062f|cmp ebx,0x95bc30"}, {"G6", "R"}),
-    ("MU8",  {"M330_PATCH": "52056d|mov DWORD PTR [esi+0x94d730],ecx"}, {"G2", "G7", "R"}),
-    ("MU9",  {"M330_PATCH": "4f495e|sub edx,eax"}, {"G10"}),
-    ("MU10", {"M330_PATCH": "4f4936|sar eax,0x2"}, {"G10"}),
-    ("MU11", {"M330_PATCH": "520838|add ecx,edi"}, {"G11"}),
-    ("MU12", {"M330_PATCH": "54b1e5|mov DWORD PTR [ebp+0x8],eax"}, {"G12"}),
-    ("MU13", {"M330_PATCH": "535cc3|mov DWORD PTR [ebp-0x14],ebx"}, {"G12"}),
-    ("MU14", {"M330_PATCH": "5791a6|lea ecx,[eax*4+0x94d430]"}, {"G12"}),
-    ("MU15", {"M330_PATCH": "596a91|call 0x64cc01"}, {"G8"}),
-    ("MU16", {"M330_PATCH": "51f53c|mov DWORD PTR [esi+0x94d730],eax"}, {"G1", "G9"}),
-    ("MU17", {"M330_PATCH": "5233fe|sub ebx,DWORD PTR [ecx+0x4]"}, {"G1"}),
-    ("MU18", {"M330_PATCH": "5233d0|mov ecx,0x94f7e8"}, {"G1"}),
-    ("MU19", {"M330_ALGO": "1"}, {"G1", "G2", "G3"}),
-    ("MU20", {"M330_PATCH": "5206e6|call 0x5e9e0e"}, set()),          # NO-OP
-    ("MU21", {"M326_SAVE": os.path.join(ROOT, "programs/saves/m112auto1.SAV")}, {"G8"}),
+    ("MU1",  "code", "0x52072d|mov eax,0x66666667", {"G4", "R"}),
+    ("MU2",  "code", "0x520732|mov edx,ecx", {"G4", "R"}),
+    ("MU3",  "code", "0x520758|mov ecx,ecx", {"G4", "R"}),
+    ("MU4",  "code", "0x52078d|xor ecx,ecx", {"G4", "R"}),
+    ("MU5",  "code", "0x520719|cmp eax,0x4", {"G5"}),
+    ("MU6",  "code", "0x52071c|jle 0x520758", {"G5"}),
+    ("MU7",  "code", "0x52062f|cmp ebx,0x95bc30", {"G6", "R"}),
+    ("MU8",  "code", "0x52056d|mov DWORD PTR [esi+0x94d730],ecx", {"G2", "G7", "R"}),
+    ("MU9",  "code", "0x4f495e|sub edx,eax", {"G10"}),
+    ("MU10", "code", "0x4f4936|sar eax,0x2", {"G10"}),
+    ("MU11", "code", "0x520838|add ecx,edi", {"G11"}),
+    ("MU12", "code", "0x54b1e5|mov DWORD PTR [ebp+0x8],eax", {"G12"}),
+    ("MU13", "code", "0x535cc3|mov DWORD PTR [ebp-0x14],ebx", {"G12"}),
+    ("MU14", "code", "0x5791a6|lea ecx,[eax*4+0x94d430]", {"G12"}),
+    ("MU15", "code", "0x596a91|call 0x64cc01", {"G8"}),
+    ("MU16", "code", "0x51f53c|mov DWORD PTR [esi+0x94d730],eax", {"G1", "G9"}),
+    ("MU17", "code", "0x5233fe|sub ebx,DWORD PTR [ecx+0x4]", {"G1"}),
+    ("MU18", "code", "0x5233d0|mov ecx,0x94f7e8", {"G1"}),
+    ("MU19", "algo", "1", {"G1", "G2", "G3"}),
+    ("MU20", "algo", "2", set()),          # declared NO-OP: ALGO=2 = inert alias of 0
+    ("MU21", "save", "programs/saves/m112auto1.SAV", {"G8"}),
 ]
+
+def env_for(kind, payload):
+    if kind == "code": return {"M330_PATCH": payload}
+    if kind == "save": return {"M326_SAVE": os.path.join(ROOT, payload)}
+    return {"M330_ALGO": payload}
 
 def run(env_extra):
     env = dict(os.environ)
+    for k in ("M330_PATCH", "M330_ALGO", "M326_SAVE", "M326_PATCH", "M326_ALGO"):
+        env.pop(k, None)
     env.update(env_extra)
     p = subprocess.run(CENSUS, env=env, capture_output=True, text=True, timeout=600)
     gates = {}
@@ -59,10 +67,10 @@ def selftest():
     rc, g, out, err = run({"M330_PATCH": "52072d|mov eax,0x55555556"})
     st2 = rc != 0 and "already equal" in err
     rows.append(("ST2 equal-patch rejected", st2)); ok &= st2
-    union = set().union(*[d for _, _, d in MUTANTS])
+    union = set().union(*[d for _, _, _, d in MUTANTS])
     st3 = union >= set(GATES)
     rows.append(("ST3 coverage: every gate has a mutant", st3)); ok &= st3
-    noops = [i for i, _, d in MUTANTS if not d]
+    noops = [i for i, _, _, d in MUTANTS if not d]
     st4 = noops == ["MU20"]
     rows.append(("ST4 exactly one declared NO-OP (MU20)", st4)); ok &= st4
     rc, g, out, err = run({})
@@ -81,8 +89,8 @@ def main():
     base_ok = rc == 0 and len(g) == len(GATES) and all(g.values())
     rows.append(("BASE", "-", "-", "all 13 PASS" if base_ok else "BASE BROKEN", base_ok))
     scored = noop = mismatch = crash = 0
-    for mid, env, declared in MUTANTS:
-        rc, g, out, err = run(env)
+    for mid, kind, payload, declared in MUTANTS:
+        rc, g, out, err = run(env_for(kind, payload))
         if len(g) != len(GATES):
             measured = None
             verdict = "CRASH"
@@ -105,7 +113,7 @@ def main():
     print("mutant | declared | measured | verdict")
     for mid, d, m, v, good in rows:
         print("%s %s | %s | %s | %s" % ("PASS" if good else "FAIL", mid, d, m, v))
-    union = set().union(*[d for _, _, d in MUTANTS])
+    union = set().union(*[d for _, _, _, d in MUTANTS])
     cov = union >= set(GATES)
     print("coverage %s (union=%s)" % (cov, sorted(union)))
     h = hashlib.sha256("\n".join(str(r) for r in rows).encode()).hexdigest()[:16]
