@@ -245,9 +245,14 @@ def measure(sav_path):
     # G3 ledger law on the container's own bytes, plus the rivals
     def law_counts(fn):
         return sum(1 for b in m["blocks"] if fn(b))
-    m["law_310"] = law_counts(lambda b: b[sen.OFF_F310] == b[sen.OFF_F2FC])
-    m["law_30c"] = law_counts(lambda b: b[sen.OFF_F30C]
-                              == b[sen.OFF_F308] - b[sen.OFF_SPEND] + b[sen.OFF_F2FC])
+    # THE LAW IS THE MODULE'S: the prediction comes from sim.energy.ledger, so a mutant of the
+    # ledger law reddens G3 (an inline re-typed formula here would have measured nothing)
+    m["law_310"] = law_counts(lambda b: sen.ledger(b[sen.OFF_F2FC], b[sen.OFF_F308],
+                                                    b[sen.OFF_SPEND])[sen.OFF_F310]
+                              == b[sen.OFF_F310])
+    m["law_30c"] = law_counts(lambda b: sen.ledger(b[sen.OFF_F2FC], b[sen.OFF_F308],
+                                                    b[sen.OFF_SPEND])[sen.OFF_F30C]
+                              == b[sen.OFF_F30C])
     m["rlaw_310"] = law_counts(lambda b: b[sen.OFF_F310] == b[sen.OFF_F308])
     m["rlaw_30c"] = law_counts(lambda b: b[sen.OFF_F30C]
                                == b[sen.OFF_F308] + b[sen.OFF_SPEND] + b[sen.OFF_F2FC])

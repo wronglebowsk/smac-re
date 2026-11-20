@@ -156,24 +156,28 @@ def ledger(f2fc, f308, spend):
     return {OFF_F310: f2fc, OFF_F30C: f308 - spend + f2fc}
 
 
-def round_legs(blk, gross, feed, difficulty, rnd, b8, clamp=True):
+def round_legs(blk, gross, feed, difficulty, rnd, b8, clamp=None):
     """One faction's round, in the pinned order. `feed` is the feeder's charge for the round
     (FUN_004f47f0, ROUND>1 only); `gross` is B4's income add; `b8` is the block's +8 dword,
     which gates the feeder's floor-0.  Returns the leg table and the field writes."""
     out: dict = {"faction": blk.get("faction", -1), "legs": []}
+    # clamp=None means "whatever sim.energy.settle's own default is", so a mutant of the
+    # settle law reaches every caller instead of being shadowed by an explicit True
+    clamp_ok = True if clamp is None else clamp
     e = blk[OFF_ENERGY]
     spend = 0                                   # entry-zero 52056d zeroes +300
     out["legs"].append(("entry-zero", 0, e, 0, blk[OFF_DEBT]))
     if rnd > 1:                                 # the feeder runs only past round 1
         e1 = e - feed
-        if e1 < 0 and b8 <= 1 and clamp:
+        if e1 < 0 and b8 <= 1 and clamp_ok:
             e1 = 0
         spend += feed
         e = e1
     out["legs"].append(("feeder", feed, e, spend, blk[OFF_DEBT]))
     e += gross
     out["legs"].append(("income", gross, e, spend, blk[OFF_DEBT]))
-    e, debt = settle(e, blk[OFF_DEBT], clamp=clamp)
+    e, debt = settle(e, blk[OFF_DEBT]) if clamp is None else \
+        settle(e, blk[OFF_DEBT], clamp=clamp)
     out["legs"].append(("settle", blk[OFF_DEBT], e, spend, debt))
     snap = e                                    # SNAPSHOT 52065d reads the post-settle pool
     out["legs"].append(("snapshot", snap, e, spend, debt))

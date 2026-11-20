@@ -1,0 +1,3 @@
+ST1 redden set ['G7'] rc=1 PASS
+ST2 void anchor rejected: anchor for sim/energy.py occurs 0 times in sim/energy.py
+ST3 no-op tree reddens nothing: PASS (0 BAD, rc=0)
