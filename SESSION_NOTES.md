@@ -1,109 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-291-293.md` (3 sessions). Read it only when a question reaches back before session ## Session 293-merged.
-
-## Session 293-merged (2026-11-19, hygiene after #317)
-
-- #317 MERGED -> main `147e66a` (gate GREEN, `review_lint --id m319` PASS 7 V rows, review 1 P1 + 9 P2 triaged in one reply). Cursor rewritten for the next fire; `NAMED ## M319` gains a `lead` governance row saying the squash title's 459f47e3178f439d / 12-12+1 are the PRE-REVIEW harness and the ACCEPT row governs (same defect as M314's "20/20" note).
-- LAW RE-LEARNED: a meta/governance sentence in NAMED belongs at conf `lead`, not `V` - #318's own review returned 4 P1s on exactly that, because a `V` row must name a mutant that reddens it, and a process note has none.
-
-## Session 294 (2026-11-19, B25 BUILD - the MOVE leg made persistent; zero box)
-
-> SUPERSEDED IN PART by Session 295 (same day, #319 review triage): every `evidence/b25_*.txt`
-> here was REGENERATED, so the line cites point one or more lines off (the anchor is now `:59`,
-> the banner `:69`); the harness count is 13/13 + 3 declared NO-OP (was 11/11 + 2) and the
-> selftest 5/5 (was 4/4). The numbers themselves (9/9, 268/268, 37/27/4, 39 mod 64) stand.
-
-- Track said BUILD (last_build=B24) and `BUILD_SPINE.md` ENDED at B24, so the rung text was AUTHORED
-  FIRST (one milestone = spine section + instrument), then built. `sim/composedmove.py`, `--b25` relays.
-- ACCEPT `python3 -u -m sim.selftest --b25` -> **PASS B25: 9/9 gates**, digest **901a286332960a10**
-  (`evidence/b25_selftest.txt:41`, banner `:51`), second run byte-identical; `python3 -u -m
-  sim.composedmove` prints the SAME 9 gate lines (`evidence/b25_movepersist.txt`). HARNESS
-  `python3 -u scripts/b25_mutate.py` -> **11/11 scored mutants matched their declared gate sets + 2
-  declared NO-OP** (MU9 labels-only, MU11 multiset-only) (`evidence/b25_mutate.txt:16`); `--selftest`
-  -> **4/4 perturbed declarations REJECTED** (`evidence/b25_mutate_selftest.txt:9`).
-- ANSWER 1, the rung: the mover's start tile IS the container's. **268/268** (round,unit) reads equal
-  the container at the round head, **0** divergences, and the container still holds the SAVE's tile for
-  67 records in round 0 and **0** in every later round, so the read cannot be vacuous (G4 `:45`).
-  Rewriting unit 0's tile IN THE IMAGE ONLY at round 1 shifts its whole later trajectory by **39 mod
-  64** and it reaches the final container ([19,42] vs clean [44,42]); **0 of 67** other units move;
-  the model-fed and read-after-write movers rebuild the CLEAN image byte-for-byte - blindness proved,
-  not asserted (G6 `:47`, sightings `:21-23`). Footprint: **67** unit-array bytes == **67** tiles
-  written per round, all at record offset **+0** (x only), plus the **1-B** year step 2151->2154; the
-  final image is **68 B** from the save, **0 B** outside a modeled span (G2 `:43`, G7 `:48`).
-- ANSWER 2, a correction (§B7 patched in place): **`m54b_clean.SAV` is 64x64 by its own header** -
-  `scripts/decode_save.py --sections` prints "map header struct (64x64)" and grid 90,112 = 64*64*22 -
-  while `planet.MP` is 80x80 and no repo map is 64. B7 wrapped x by the MAP FILE's width. Run here as
-  a rival: **37** records land outside the container at the write and **27** come back as a later
-  read, and the parser's own `found_units` drops **67 -> 4** (G5 `:46`, rows `:33-34`). B7's own
-  4-round slice ends with **10 of 67** units outside the container grid (**4 of 67** at its accepted
-  --turns 5; the end-state count is sampling-dependent - the written/read-back counts are the
-  load-bearing ones, and MU13 reddens G5 if the cross-check is judged against the wrong grid).
-- MUTATION TAUGHT THIS ONE TOO (sets MEASURED, first declares wrong): MU3 (container never refreshed -
-  the defect this instrument HAD, caught by G2's byte-vs-tiles equality) {G2,G6,G8} not {G4,G6}; MU4
-  (tiles never reach the writer) {G2,G3,G4,G5,G6,G8} - G7 stays green honestly, the one unit byte left
-  is the FALSIFIER's own write and G7 counts modeled spans, not authors; MU8 was a NO-OP until the
-  read/write out-of-grid arms were SPLIT into separate counters (as one union the write arm subsumed
-  the read arm = decoration). G8 gained a `not_rival` clause so the rung cannot pass by quietly
-  becoming one of its rivals.
-- UNMODELED (declared in the spine text): MP/spent is model state, never persisted (B7's ASSUMED line
-  about the 0x51f730 per-round refresh unchanged); per-terrain cost and the second move's source (B5);
-  blocking/zone-of-control and every refusal cause but exhausted MP; y is never moved (dir=1, dy=0) so
-  the y-bound law is NOT exercised; WHICH unit the game moves is not claimed (the gesture hits every
-  unit, exactly as B7 declared). NEXT: B26, spine text NOT authored. #180 still stands (2/5).
-
-## Session 295 (2026-11-19, B25 #319 review triage - 10 findings, all accepted; zero box)
-
-- Clean start, not a repair: `git checkout -- sim/composedmove.py scripts/b25_mutate.py` back to the
-  green head (the WIP is saved at `~/reverse/wip/b25_wip_20261119.patch`), then the findings
-  re-implemented as a minimal delta. ACCEPT anchor UNCHANGED at **901a286332960a10** (digest_rows
-  untouched), so every prior doc cite of it still holds; only evidence LINE NUMBERS moved.
-- f.1 (P1): `render()` now prints the anchor `measure()` computed and **G9 pins it to a literal**
-  `ACCEPT_PIN` (`evidence/b25_selftest.txt:59`). The mutant that names it alone: **MU9**
-  (labels-only edit, no tile/count moves) -> measured `{G9}`.
-- f.4/f.10: G4's law is now **byte-level carry** (table H `:40-43`): head bytes vs the previous
-  round's WRITE bytes, difference == exactly the falsifier's own edits ([0,1,0,0] vs [0,1,0,0]);
-  the read-back compares against a **FRESH DECODE** of the consumed bytes, 268/268 (`:63`). Re-
-  measured sets: MU3 grew to {G2,G4,G5,G6,G8,G9} (a stale cache is what the fresh decode sees);
-  new **MU14** (forget the previous write) = {G4} alone; new **MU15** (compare cache to itself,
-  the old shape) = DECLARED NO-OP - it measures nothing when the cache is refreshed.
-- f.5/f.6 (the round's real find): G5 now PINS 37/27/4 for both rivals and cross-checks the
-  instrument's `tile >= width` set against `sim/save._unit_ok` on the same bytes over **44 probes**
-  (11 runs x 4 rounds, table I `:45-56`). **They disagree raw: 36/44.** The 8 differers are exactly
-  the records the decoder itself exempts - **25 of the 67** records of m54b_clean.SAV carry +10 in
-  128/130/131/256/320/321/322/323 (>= 64), so its acceptance test coord-checks only **42**. With
-  the decoder's own rule applied: 44/44, and `found_units` recomputed from `_unit_ok` == the
-  parser's 44/44. On this save the exemption is INVISIBLE to coordinates (all 67 pristine +0/+2
-  in-grid), so it splits the array by FIELD, not by tile sanity - which qualifies B7's and B25's
-  "67 units": the model presses 25 records the decoder never coord-checks. **MU16** (copy the
-  parser's number instead of recomputing) = declared NO-OP, i.e. that half is decoration HERE.
-- f.8: G8's "matches none of its rivals" is now the FULL table-E signature vs all **5 RIVAL** rows
-  (`:67`); the 3 `:clean` twins coincide by construction - table E carries no per-unit delta, G6
-  reads the falsifier - and that is now stated instead of hidden by a hand-picked subset.
-- f.9: the controls are blind **to the falsifier, not to writing** (still 268 unit bytes each; G6
-  reads mdl_w/late_w > 0 itself). f.2: §B7 row split into (a) B7's own in-memory tiles and (b) the
-  mpwidth rival's parse - a parser result had been claimed for a run that was never parsed.
-  f.3: cursor said 10/10 at `:15`; measured 13/13 at `b25_mutate.txt:20`.
-- f.7: the harness prints one `BADGATE <id>` line per failed row (id from gates()'s own name
-  field), scored against the SHIPPED `gates()` with BADCOUNT/NGATES/dup cross-checks; no regex
-  reads a message. Sets re-measured from scratch: **13/13 + 3 declared NO-OP**
-  (`b25_mutate.txt:20`), `--selftest` **5/5 rejected** (`b25_mutate_selftest.txt:11`).
-- TRAP LEARNED: a pinned global anchor reddens on nearly every mutant (7 of 13 gained G9). That is
-  the pin working, but the discriminating information moves into the other gates - say so in the
-  harness docstring or a reader scores the pin as padding.
-- STILL OPEN: what the .exe does with a +10 >= 64 record's +0/+2; whether the wrap or the
-  `_unit_ok` rejection fires first in the engine; which grid the shipped game gives a mover when
-  the container and `planet.MP` disagree. #180 still stands (2/5).
-
-## Session 294-chain2 (2026-11-19, M320 CLOSED, chain 2 first fire, STATIC: 8380-B block siblings)
-
-- Chain 2 in wt-chain2 @ milestone/m320; chain 1 owns main/sim/NEXT_PROMPT/pick(vi).
-- ANSWER: outside GOAL/SITE/REGION/VISIT: (a) LADDER of nine 128-entry per-region arrays +1078..+1878 (word x6, byte 1178/11f8, pair 1378) + CNT 18f8; (b) three 512-entry arrays (byte +854/+a54, word +c54); (c) SCALAR tail +2038..20bc (31 dwords, span 0x84, %16=4 - rival "third record array" DEAD); (d) flagword +0, enum +4 {2,4,5,6,7}, pair-flags +18 (M295).
-- OWNERS: FUN_0059ec90 = block RESET: 114 W/RW, 92 offsets, blk0 only; callers 5a0b39/5a123e/5a1277; ladder loop 59efeb-59f01d (cmp 0x80), 512 loop 59f19c-59f1da (cmp 0x200; word store gated ds:0x985afc==0); magic 0xdfbe41/0xc0dfbe41 +1d0, -999 +3fc, defaults +328=5/+2050=1. FUN_0051dcb0 (M305 rebuild): init 51dcb8-51dd03 zeroes word {1478,1578,1678,1778}+MAX/CNT x128 x8 blocks (end 0x95f288); incs +1478 all-tile/+1678 class-filtered/+1778 +bit12 @51df3d/61/70; +1578 = per-region faction count, blocks 1..7 (0x94f4ec->0x95da10).
-- ACCEPT `python3 -u scripts/m320_sibling_census.py` -> **12/12**, digest **12e247bdbc0f77ef** (`evidence/m320_sibling_census.txt:418-419`), 2 runs byte-identical (sha256 9b4c9ee106c1f3d6, +`_rerun.txt:418`). 4111 hits/208 offsets/196 sibling; reproduces M316 GOAL 65/M308 SITE 17; M303's 11th mention = end cmp @51dcfd.
-- HARNESS `python3 -u scripts/m320_mutate.py` -> **26/26 + 1 NO-OP**, digest 0d18a3d23b3e94b4 (`evidence/m320_mutate.txt:27-28`); selftest 4/4 (`evidence/m320_mutate_selftest.txt:5`). 12 data + 11 code + 2 algo + NO-OP. MU21 retarget: 0x2034 = last SITE owner -> {G2,G3}. 1 crashed debug run (fold eval) fixed; 2+2 clean invocations (pre/post review).
-- BLIND: 61 imm loads (6x blk1+0), 3293 neg-disp<=20bc (lea-pairs +1e0/+18/+1478 pinned). OPEN: game nouns; ds:0x985afc; 0xdfbe41; tail semantics; save-carry. Skill session-discipline.md rsynced from live (chain 1 edit). Review #321 triaged in PR reply; digest re-measured.
-- MERGED 2026-11-19: #321 squash **93c25fe** on main. Land commit b8f71af = append-only NEXT_PROMPT result line (parallel-protocol fix) + tracked ai_review JSON; gate GREEN 0 warn, CI gate pass 14 s, review_lint PASS (7 V rows); acceptance 3rd invocation byte-identical pre-merge. Strata review 4 P1+4 P2 triaged in one reply (3 P1 dismissals independently re-verified by orchestrator). This note: docs/m320-merged.
+Older sessions: `docs/sessions/sessions-293-294.md` (4 sessions). Read it only when a question reaches back before session ## Session 296.
 
 ## Session 296 (2026-11-19, post-merge hygiene for #319; zero box)
 
@@ -488,3 +385,46 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - Chain 1's M329 (#339) + docs #341 landed mid-fire -> rebase kept BOTH chains' sections; force-push cron-blocked -> absorption **240240d** via commit-tree (tree byte-identical to rebased head). NAMED 240,158 B post-rebase (chain 1 rotated at s308; headroom 9,842). Census re-measured byte-identical at the rebased head.
 - **PROCEDURAL DEFECT (own)**: the pr340 JSON sidecar fold #342 (bbdd89a) was merged while its CI gate was FAIL — `milestone checkpoint: SESSION_NOTES/NEXT_PROMPT not updated`; docs-only PRs are NOT exempt (s306's #338 passed because it carried a session section). Content harmless (1 evidence JSON, 18 siblings tracked); this section + the NEXT_PROMPT line are the fix-forward. LESSON: read `gh pr checks` BEFORE `gh pr merge`, even for docs folds.
 - Review count for the record: local Strata on #340 = **2 P1 + 8 P2, 10/10 accepted, 0 dismissed** (`evidence/ai_review/pr340_20261120_011440.md`; JSON folded via #342). STATE: (viii) ANSWERED by chain 1's M329; B27 spine still chain 1's next build.
+## Session 309 (2026-11-19, BUILD rung B27 CLOSED, zero box) — the ENERGY round executable + carried; two gate defects the mutants caught
+
+- Ownership: the only running row for job 789931d4b621 is this fire (`python3`/sqlite3 over `~/.hermes/cron/executions.db`; the `pid` column is the gateway pid for every row); chain 2's `9a0b613bb1ac` row is the known parallel lane. main was 1 behind (M330 #340) -> ff-pull, then `milestone.py start b27`.
+- track_mode said `MODE=BUILD next_rung=B27`: authored `BUILD_SPINE.md` §B27 (file 72,750 -> 78,225 B) BEFORE the instrument, per the B14-B26 pattern. `python3 -u -m sim.selftest --b27` -> **PASS B27: 10/10 gates** `evidence/b27_selftest.txt:77`, anchor/digest **b65e8129b67ba67d** `:54`, 2 runs diff-identical. Harness `python3 -u scripts/b27_mutate.py` -> **HARNESS PASS 16/16** digest **81d2d9491ec3320d** `evidence/b27_mutate.txt:18-20`, NO-OP reddens `[]`; `--selftest` -> **3/3** `evidence/b27_mutate_selftest.txt:1-3`.
+- Printed (same run): ENERGY `[10,28,112,69,229,60,102,37]` + `+300 [0,1,1,0,1,0,1,1]` + `+224 0*8` + both offset tables == the M325/M326/M330 census lines PARSED from evidence (`:14-19`); ledger laws **8/8 + 8/8** on the save's own bytes, rivals 1/3/1 (`:20`); refund == M330 G4's 7 samples, sweep 40,002 cases 0 violations (`:23`); k-table `[0,0,0,0,1,2,2,2,2,2]` derived from the switch tuples parsed from the census (`:24-25`); ordering 3/3 discriminating fixtures, save 0/8 (`:32`); B4 in-process 3/3, idle 12/12 flat 15, post-found 19 vs k=2->20 / full-refund->21 (`:34-36`); writer identity True, 40 spans, 9 bytes differ, 0 outside, carry `[0,0,0,0,0,0]` (`:56`); falsifier `[4]`, smuggler blind (`:59`).
+- **WRITER EXTENSION**: `savewriter.build_image(..., block_writes=)` + `modeled_spans(extra=)` — block A was a pure lift through B26. `modeled_spans()` called with NO argument is pinned == the pre-B27 span list, so B8-B26's "every differing byte is modeled" gates are NOT loosened by this rung (MU11 reddens exactly that).
+- **TWO GATE DEFECTS FOUND BY THE MUTANTS (mine, both fixed by strengthening, not weakening)**: (1) G3 re-typed the ledger formula inline instead of calling `sim.energy.ledger`, so MU1/MU2 reddened NOTHING — an instrument that re-types the law it tests measures the copy; (2) `round_legs` passed `clamp=True` explicitly, shadowing `settle`'s own default, so MU7 (floor-0 dropped) reddened NOTHING — `clamp=None` now means "the module default" (selftest ST1). Then G6 got the defaults-vs-parsed-thresholds cross-check and G5 got the counted sweep width (`sweep_n` is now counted, not a literal `2 * 20001`, which MU16 proves).
+- Declared limits, printed not hidden: 48 rows computed / 13 printed (`:53`); `+2fc/+308/+3f8` entry-zeroed but their mid-round writer is OPEN (M330) so they stay pass-through and the ledger law takes them as DECLARED inputs; income-vs-feeder order unpinned (only settle < snapshot < refund is); difficulty dword = 2 read out of the container, noun INFERRED (M308).
+- Caps: NAMED 240,158 -> 241,+this block; NEXT_PROMPT 11,348 -> patched by section (retire the B27 pick, add the (x) OPEN-LEADS list); evidence 21.9 MB `[warn]` stands (prune 0 victims, `m294_gate_rows_raw.txt` load-bearing). `skill/` untouched (`diff -rq` clean).
+
+**Review round, PR #344 (Strata, 10 findings: 3 P1 + 7 P2 — ALL accepted, 0 dismissed).** The
+local review caught that several B27 gates measured less than their prose claimed. Commands +
+numbers, all re-measured after the fixes:
+- **F1 (P1)** `scripts/b27_mutate.py` did NOT implement its advertised law: it only required each
+  mutant to redden >=1 gate. Fixed: `DECLARED` sets frozen from a `--measure` run, then every run
+  compares measured vs declared IN BOTH DIRECTIONS (`decl_complaints`) and requires all 10 gates
+  covered. `python3 -u scripts/b27_mutate.py` -> `exact-set check: 17 mutant(s), 0 complaint(s),
+  gates reddened 10/10` + `HARNESS PASS 17/17` digest `181d99d9ac000044`
+  (`evidence/b27_mutate.txt:20,:22`; 2 runs diff-identical). `--selftest` now 4/4 — **ST4** rejects
+  a wrong declaration (`evidence/b27_mutate_selftest.txt:3`).
+- **F3 (P1)** G1 was substring presence. Pins are now `(label, address, FIELD TOKEN, file)` and one
+  evidence line must carry both; the bogus control ships INSIDE `LEG_PINS` and must hit nothing.
+  G1 prints `22 pins, min line hits 1; control bogus-control hits 0` (`:69`). New mutants MU14
+  (a pin on the wrong field) and MU17 (control counted as honest) both redden G1 alone.
+- **F2 (P1)** G7 asserted the refund leg was inert without measuring it. It now measures on the
+  save's own 8 blocks: `debt 0/8, refund 0/8 at difficulty 2 AND 0/8 at the k=1/k=2 difficulties
+  (max +300 = 1) while refund(3,k)=1 at both k (probe 2/2)` — the leg is not a stub, the save is
+  small; plus `k_reads_gdiff` binds the switch to the same global (`:36`, `:75`).
+- **F4 (P2)** the k-table's branch SHAPE is now gated (mov of `0x985aec`, cmp 0x3/jle-skip,
+  cmp 0x4/jne-DIFFERENT, so the k=1 fall-through exists) and BOTH rivals are gated, not just
+  printed (`:74`). **F6 (P2)** RETRACTED in the registry: the flat 12-round idle parity is a
+  legs-ZERO CONSISTENCY print (cannot fail) — labelled as such, gates nothing; the parity is B4's
+  3 in-process gates + the post-found row. **F7** smuggle rival = two counted numbers (honest 1,
+  smuggler 0), no cancelling abs(). **F9** G10 now pins the printed-table digest
+  `3c134ea70638c12b` and the container `626fec9a35deddba`, not only the row digest (`:56`, `:78`).
+  **F10** the outside-span containment is measured per round (`[0,0,0,0,0,0]`, `:55`, `:76`).
+  **F8** the spine claimed THREE file-offset tables; only two exist to gate (M325 prints none for
+  +220) — spine narrowed. **F5** cites `:20`->`:20-21`, `:53-56`->`:55-59` etc.
+- Re-accept after all fixes: `python3 -u -m sim.selftest --b27` -> `PASS B27: 10/10 gates`
+  (rows anchor unchanged `b65e8129b67ba67d`), 2 runs diff-identical. NAMED 244,581 B
+  (5,419 headroom); NEXT_PROMPT 11,832 B. Lesson for the chain: a gate whose expectation is
+  hand-written next to the value it checks, or a rival that is printed but not gated, is the same
+  defect the #339 review named at doc level — it lives at gate level too.
