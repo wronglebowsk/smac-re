@@ -30,13 +30,13 @@ import os, re, sys, subprocess, hashlib
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPT = os.path.join(REPO, "scripts", "m328_hurry_globals_census.py")
 GATES = ["G%d" % i for i in range(1, 11)] + ["R1", "R2", "R3", "R4"]
-BASE_DIGEST = "79deb5e6c5c501ff"
+BASE_DIGEST = "030a6fc12e4a7cd7"
 MEASURE = os.environ.get("M328_MUT_MEASURE") == "1"
 
 # (id, kind, payload, declared gate set) - sets MEASURED by the sweep
 MUTANTS = [
     ("MU1",  "code", "0x41a551|mov edx,DWORD PTR ds:0x91c650", {"G1"}),
-    ("MU2",  "code", "0x51ff00|mov ecx,BYTE PTR ds:0x91c64c", {"G1"}),
+    ("MU2",  "code", "0x51ff00|mov ecx,BYTE PTR ds:0x91c64c", {"G1", "G3"}),
     ("MU3",  "code", "0x52065d|mov ds:0x91c64c,ecx", {"G2"}),
     ("MU4",  "code", "0x520559|shl esi,0x3", {"G2"}),
     ("MU5",  "code", "0x51ff09|shl ecx,0x2", {"G3"}),
@@ -58,10 +58,22 @@ MUTANTS = [
     ("MU21", "code", "0x41a551|mov edx,DWORD PTR [eax+0x91c64c]", {"G1", "R1"}),
     ("MU22", "code", "0x52280c|add DWORD PTR ds:0x920434,ebx", {"G6", "R2"}),
     ("MU23", "code", "0x596920|push 0x920434", {"G9", "R3"}),
-    ("MU24", "code", "0x51ff00|mov DWORD PTR ds:0x91c64c,ecx", {"G1", "R4"}),
-    ("MU25", "algo", "1", {"G6", "R2"}),
+    ("MU24", "code", "0x51ff00|mov DWORD PTR ds:0x91c64c,ecx", {"G1", "G3", "R4"}),
+    ("MU25", "algo", "1", {"G6", "G7", "R2"}),
     ("MU26", "algo", "2", set()),  # declared NO-OP: all-dw census, width-blind unobservable
     ("MU27", "algo", "3", {"G5"}),
+    # review #336 round mutants (the hardened pins):
+    ("MU28", "code", "0x520603|add edx,ecx", {"G2"}),
+    ("MU29", "code", "0x57ecf3|mov DWORD PTR ds:0x920434,esi", {"G5", "G6", "R2"}),
+    ("MU30", "code", "0x51fefb|lea ecx,[ecx+edx*4]", {"G3"}),
+    ("MU31", "code", "0x52076e|call 0x5e9e0d", {"G4"}),
+    ("MU32", "code", "0x596af2|push 0x920430", {"G9", "R3"}),
+    ("MU33", "code", "0x52054c|mov eax,0x920435", {"G2", "G5"}),
+    ("MU34", "code", "0x5a09ad|mov DWORD PTR ds:0x920434,0x1", {"G6", "G7"}),
+    ("MU35", "code", "0x51feef|cmp ecx,0x65", {"G3"}),
+    ("MU36", "code", "0x512b63|mov ebx,0x0", {"G6"}),
+    ("MU37", "code", "0x51f267|mov DWORD PTR ds:0x920434,0x1", {"G6", "G7"}),
+    ("MU38", "code", "0x5981e2|jmp 0x598221", {"G9"}),
 ]
 
 def run(env_extra):
@@ -118,15 +130,20 @@ def main():
         print("%-5s %-5s %-22s %-22s %s" %
               (mid, kind, ",".join(sorted(red)) if isinstance(red, set) else red,
                ",".join(sorted(declared)) or "NO-OP", verdict))
-    scored = sum(1 for _, _, red, _ in rows if red != "NO-OP" and isinstance(red, set))
-    noop = sum(1 for _, _, red, _ in rows if red == set())
-    bad = len(rows) - ok
-    print("HARNESS %d/%d scored OK, %d NO-OP, %d MISMATCH/CRASH" % (ok, len(rows), noop, bad))
+    scored_total = sum(1 for _, _, _, declared in rows if declared)
+    scored_ok = sum(1 for _, _, red, declared in rows
+                    if declared and isinstance(red, set) and red == declared)
+    noop_total = sum(1 for _, _, _, declared in rows if not declared)
+    noop_ok = sum(1 for _, _, red, declared in rows
+                  if not declared and red == set())
+    bad = len(rows) - scored_ok - noop_ok
+    print("HARNESS %d/%d scored OK + %d/%d NO-OP, %d MISMATCH/CRASH" %
+          (scored_ok, scored_total, noop_ok, noop_total, bad))
     dig = hashlib.sha256(("\n".join(det) + "\nbase|" + str(d0)).encode()).hexdigest()[:16]
     print("digest %s" % dig)
     assert rc0 == 0 and d0 == BASE_DIGEST, "baseline drifted"
     assert bad == 0, "mutant set mismatch"
-    print("== M328 mutate: %d/%d ==" % (ok, len(rows)))
+    print("== M328 mutate: %d/%d ==" % (scored_ok + noop_ok, len(rows)))
     return 0
 
 def selftest():

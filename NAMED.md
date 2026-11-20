@@ -1280,17 +1280,17 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 
 22/22 mutants `evidence/m321_mutate.txt:24`; digest `f304cf871a971a3d` `m321_memo_owners.txt:84`.
 
-## M328 (s304-chain2, STATIC 14/14) - 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag; HURRY story closed
+## M328 (s304-chain2, STATIC 14/14, review #336 hardened) - 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag; HURRY story closed
 
 | claim | evidence | conf |
 |---|---|---|
-| A: 4 hits 2W/2R dw abs 0 seeds; 52065d (520540) := ENERGY[8380*arg] post-debt-pay; HURRY mirror 41a551/41a563 | G1/G2 `evidence/m328_hurry_globals.txt:2,35` | V MU1-4,MU10,MU21,MU24 |
-| A reader=INFRASTRUCTURE warn 11E-10A∧E<100; unreachable at sole site: post-snapshot stores 520743/770/7d9/7ff+4f5c8c all add; upkeep 520540→51fe90 | G3/G4 `evidence/m328_hurry_globals.txt:36-37` | V MU5-8 (deeper callees OPEN) |
-| B: 634 hits 15W/133T/486R 237 owners 0 seeds; {0×14,1×1} all mov; sole 1=57ed04 first stmt 57ecf0; 512b40 pair 0 via sole-def xor@512b63 | G5/G6 `evidence/m328_hurry_globals.txt:7,34` | V MU9,MU11-13,MU22,MU25,MU27 |
-| B entry=menu case4@580070 or auto-start 5229b7; SP 57c550+load never set; clear=Retire/REALLYQUIT/YOULOSE2/MULTIDEBUG/opening/SAVEFAILED/RESET | G7/G8 `evidence/m328_hurry_globals.txt:38-39,43` | V MU14-16 |
-| B uncarried: blob [91f750,+ce0) ends B-4; opener 'multi'∧B==0→opts 0x10c0; B!=0→diplo-send 584010 (546800:40 refs); HURRY gate re-pin | G9/G10 `evidence/m328_hurry_globals.txt:40,42,44` | V MU17-20,MU23 |
-| ACCEPT 14/14 digest 79deb5e6c5c501ff ×2 (`evidence/m328_hurry_globals.txt:59-60`,`_rerun.txt:59-60`); harness 27/27 (26+1 NO-OP) digest 50f6aa12d28d4b2f (`evidence/m328_mutate.txt:30-32`); ST 5/5 (`evidence/m328_mutate_selftest.txt:7`) | as cited | V |
-| OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); 92bdf8 mode global; +300 upkeep refund 1/3 (diff4) 2/3 (diff5+) = M325 lead; facprofile+4ec interest | - | lead |
+| A: 4 hits 2W/2R dw abs, 0 exact/lane/lea seeds; 52065d (520540) := ENERGY[8380*arg]; debt-pay(520605) < snapshot < interest(520743) pinned (linear order); HURRY mirror 41a551/41a563 | G1/G2 `evidence/m328_hurry_globals.txt:2,35,39` | V MU1-4,MU10,MU21,MU24,MU28,MU33 |
+| A reader=INFRASTRUCTURE warn: E<100 pinned (cmp 0x64/jge); formula DERIVED 11E-10A (forward eval); no sub in post-snapshot window (clobber-aware) + 0 stores between upkeep calls; deadness INFERRED (deeper callees OPEN) | G3/G4 `evidence/m328_hurry_globals.txt:36-38,44-45` | V MU5-8,MU30,MU31,MU35 |
+| B: 634 hits 15W/133T/486R 237 owners 0 seeds; {0x14,1x1} all mov; sole 1=57ed04 FIRST STORE of 57ecf0 (prologue pinned); 512b40 pair 0 via sole-def xor@512b63 (provenance pinned) | G5/G6 `evidence/m328_hurry_globals.txt:7,34,40-41` | V MU9,MU11-13,MU22,MU25,MU27,MU29,MU36 |
+| B entry=menu case4@580070/auto-start 5229b7; no DIRECT B writer in SP 57c550/load fns (helper reachability OPEN); every lifecycle B-write measures 0 incl RESET 5a09ad; strings pinned | G7/G8 `evidence/m328_hurry_globals.txt:42,46-47,69` | V MU14-16,MU34,MU37 |
+| B uncarried: blob [91f750,+ce0) ends B-4; 17 reg-dest freads resolved (runtime/stack/imm-above-B, none cover); opener 'multi' && B==0 fallthrough pinned -> opts 0x10c0; B!=0 -> diplo-send 584010 (546800:40); HURRY gate re-pin | G9/G10 `evidence/m328_hurry_globals.txt:43,48-67,68,70` | V MU17-20,MU23,MU32,MU38 |
+| ACCEPT 14/14 digest 030a6fc12e4a7cd7 x2 (`evidence/m328_hurry_globals.txt:85-86`,`_rerun.txt:85-86`); harness 38 mutants (37 scored + 1 NO-OP) digest 36259eee0736d9c1 (`evidence/m328_mutate.txt:41-43`); ST 5/5 (`evidence/m328_mutate_selftest.txt:7`) | as cited | V |
+| OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); SP-path noun INFERRED (DIFFICULTY/USERULES strings); 92bdf8 mode global; +300 upkeep refund 1/3 (diff4) 2/3 (diff5+) = M325 lead; facprofile+4ec interest | - | lead |
 
 ## M326 (s301-chain2, STATIC 10/10, review #332 hardened) - block+224 = per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt); settled at upkeep
 
