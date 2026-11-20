@@ -1,0 +1,31 @@
+== M329 mutation harness: 26 mutants, TMP=<mkdtemp m329mut-XXXXXX under $TMPDIR, see stderr> ==
+base: reddened=[] summary=('13', '13') rc=0
+MU1   0x49b301|mov ecx,0x6a9480|mov ecx,0x6a9484                 reddened=G1,G13                             declared=G1,G13                             OK
+MU2   0x41a8fa|mov dword ptr [ebp-0x8],edi|mov dword ptr [ebp-0x reddened=G1,G12,G13                         declared=G1,G12,G13                         OK
+MU3   0x4a9e13|test eax,eax|test ebx,ebx                         reddened=G1,G13                             declared=G1,G13                             OK
+MU4   0x41a8fd|mov eax,dword ptr [edi+0x3ff3c]|mov eax,dword ptr reddened=G12,G13,G2                         declared=G12,G13,G2                         OK
+MU5   0x41a976|mov eax,dword ptr [edi+0x3ff3c]|mov eax,dword ptr reddened=G13,G2                             declared=G13,G2                             OK
+MU6   0x41a90a|shl edx,0x4|shl edx,0x3                           reddened=G12,G13,G3                         declared=G12,G13,G3                         OK
+MU7   0x41a90d|mov esi,dword ptr [edx+0x95da88]|mov esi,dword pt reddened=G13,G3                             declared=G13,G3                             OK
+MU8   0x41a98d|mov eax,ds:0x91b5b4|mov eax,ds:0x91b5b8           reddened=G13,G4                             declared=G13,G4                             OK
+MU9   0x41a996|test byte ptr ds:0x985ae8,0x80|test byte ptr ds:0 reddened=G13,G4                             declared=G13,G4                             OK
+MU10  0x41a9a0|mov eax,0x1|mov eax,0x2                           reddened=G13,G4                             declared=G13,G4                             OK
+MU11  0x41a9d2|mov ds:0x99aa38,eax|mov ds:0x99aa3c,eax           reddened=G13,G5,G6                          declared=G13,G5,G6                          OK
+MU12  0x41a9da|test edx,0x200000|test edx,0x100000               reddened=G13,G6                             declared=G13,G6                             OK
+MU13  0x41a9e2|or al,0x2|or al,0x4                               reddened=G13,G6                             declared=G13,G6                             OK
+MU14  0x41aaec|mov edi,0x8000|mov edi,0x9000                     reddened=G13,G6                             declared=G13,G6                             OK
+MU15  0x41ad4d|test dword ptr ds:0x99aa38,0x20000|nop            reddened=G13,G6                             declared=G13,G6                             OK
+MU16  0x41abdc|and ecx,0xf000000|and ecx,0x80000000              reddened=G12,G13,G7,G9                      declared=G12,G13,G7,G9                      OK
+MU17  0x59ed6c|mov dword ptr [ebx+0x94d600],0xdfbe41|mov dword p reddened=G12,G13,G9                         declared=G12,G13,G9                         OK
+MU18  0x41ad8c|shl edx,0x4|shl edx,0x3                           reddened=G13,G8                             declared=G13,G8                             OK
+MU19  0x4e494c|mov ecx,dword ptr [edi+0x94d600]|mov ecx,dword pt reddened=G13,G9                             declared=G13,G9                             OK
+MU20  0x41ade4|test byte ptr [eax+0x38],0x40|test byte ptr [eax+ reddened=G10,G13                            declared=G10,G13                            OK
+MU21  0x41adf7|mov dword ptr [edx+0x7c],ecx|mov dword ptr [edx+0 reddened=G10,G13                            declared=G10,G13                            OK
+MU22  0x41aba5|push 0x6899ec|push 0x6899f0                       reddened=G11,G13                            declared=G11,G13                            OK
+MU23  0x41aba3|push 0x41|push 0x42                               reddened=G11,G13                            declared=G11,G13                            OK
+MU24  0x41abaa|call 0x6267a5|call 0x626634                       reddened=G11,G12,G13                        declared=G11,G12,G13                        OK
+MU25  0x41ae51|call dword ptr [edx+0xf0]|call 0x5e4afc           reddened=G10,G13                            declared=G10,G13                            OK
+MU26  0x41a903|push eax|nop                                      reddened=NO-OP                              declared=NO-OP                              OK
+gate coverage: every gate reddened by >=1 mutant: True (uncovered=-)
+declared NO-OP (out-of-scope) mutants: MU26
+HARNESS PASS 26/26

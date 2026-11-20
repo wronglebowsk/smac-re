@@ -1,0 +1,127 @@
+== M329: NAME of FUN_0041a8f0 and its ds:0x99aa38 scratch tree ==
+source: scratch/m574/text.txt (781429 insns decoded) | frame FUN_0041a8f0 [0x41a8f0,0x41ae6b) size=1403 insns=407
+index: ghidra_out/index.csv | exe(read-only data): programs/terran.exe
+
+T1 every call of FUN_0041a8f0 in .text, found by DECODING the rel32 encoding (not by grepping the printed target):
+  e8-call insns decoded image-wide=48874; sites targeting 0x41a8f0=4
+  site 0x41e3bd decoded==printed=True owner=FUN_0041e160   ecx<-esi        (@0x41e3bb)  pushes=ebx  return tested@-
+  site 0x49b306 decoded==printed=True owner=FUN_0049af50   ecx<-0x6a9480   (@0x49b301)  pushes=0x0  return tested@-
+  site 0x4a9e0e decoded==printed=True owner=FUN_004a99e0   ecx<-0x6a9480   (@0x4a9e09)  pushes=0x1  return tested@0x4a9e13
+  site 0x5120d0 decoded==printed=True owner=FUN_00512020   ecx<-0x6a9480   (@0x5120c9)  pushes=0x1  return tested@0x5120d5
+  owners=4 distinct; this=const 0x6a9480 at 3 sites; this=register at 1; return value tested at 2
+  entry: push ebp | this spilled to [ebp-0x8] at 0x41a8fa, reloaded into ecx at 0x41ae4c | `ret 0x4` sites=4
+
+T2 the widget fields this function touches, read out of the ENCODINGS (disp32 little-endian in the raw bytes):
+  reads of [this+0x3ff3c] (the pane's SHOWN index): 3  0x41a8fd,0x41a934,0x41a976
+  reads of [this+0x3ff5c] (the CURSOR row):        0  
+  displacements whose disp32 bytes match the printed operand: 3/3
+
+T3 the multiply chains that turn the shown index into an array offset, SIMULATED:
+  chain @0x41a904 lea ecx,[eax+eax*8] ; lea edx,[eax+ecx*2] ; shl edx,0x4 | evaluates to 304 * i | feeds: mov esi,dword ptr [edx+0x95da88]
+  chain @0x41a93a lea ecx,[eax+eax*8] ; lea edx,[eax+ecx*2] ; shl edx,0x4 | evaluates to 304 * i | feeds: cmp esi,dword ptr [edx+0x95da88]
+  chain @0x41a97e lea edx,[eax+eax*8] ; lea eax,[eax+edx*2] ; shl eax,0x4 | evaluates to 304 * i | feeds: mov cl,byte ptr [eax+0x95da14]
+  chains in the frame=3 image-wide=201
+  absolute globals addressed by those chains: 0x95da14, 0x95da88
+  as displacements into the 304-B record at 0x95da10: 0x4, 0x78 | record % unit-stride(52) = 44
+G3 PASS 3 chains in the frame all fold to 304 (the base_array stride of NAMED ## M321); the addressed globals resolve to record fields ['0x4', '0x78']; 304 % 52 = 44 != 0 so it is NOT the unit array of M327
+
+T3b the ownership gate (whose base is selected?):
+  @0x41a992 lea eax,[eax+edx*2] | shl eax,0x4 | mov cl,byte ptr [eax+0x95da14] | mov eax,ds:0x91b5b4 | cmp ecx,eax | je 0x41a9ac | test byte ptr ds:0x985ae8,0x80
+  `mov eax,1` + ret (refused) at 0x41a9a0, 0x41ab95, 0x41abc8 | success return: 0x41ae62
+  compare vs ds:0x91b5b4 at 0x41a98d | escape test on ds:0x985ae8 bit 7 at 0x41a996
+  the same two globals in caller FUN_0041e160: 16 insns 0x41e340 mov edx,dword ptr ds:0x91b5b4 ; 0x41e34f test byte ptr ds:0x985ae8,0x80 ; 0x41e3a3 mov ecx,dword ptr ds:0x91b5b4 ; 0x41e3ad test byte ptr ds:0x985ae8,0x80
+G1 PASS exactly 4 call sites ['0x41e3bd', '0x49b306', '0x4a9e0e', '0x5120d0'] found by rel32 decode (decoded target == printed target on every one), 4 distinct owners, this=0x6a9480 at 3 sites and a register this at 1, the return value is tested at 2, the frame is thiscall (ecx->edi at 0x41a8f8, edi spilled to [ebp-0x8] at 0x41a8fa and reloaded into ecx at 0x41ae4c for the vtable call; 4 `ret 0x4` = 3 refusals + 1 success)
+G2 PASS the widget field read 3 times in the frame is [this+0x3ff3c] = the index the pane SHOWS (skill production-queue.md:305/613), never the cursor [this+0x3ff5c] = 0 reads; all 3 displacements verified from the disp32 encoding bytes
+G4 PASS the gate compares the record's owner byte with ds:0x91b5b4 (current faction, M222) and escapes on ds:0x985ae8 bit 7; 3 refusal returns (0x41a9a0,0x41ab95,0x41abc8) and the tail returns 0; the caller FUN_0041e160 repeats the same two-global test at 16 insns before it calls in
+
+T4 the tree that writes ds:0x99aa38 inside the frame (stores, with the leg that built the value):
+  stores=20 first=0x41a9b7 last=0x41ab6d
+  publish insn @0x41ad94
+  leg store@0x41a9d2  record bit=0x80000000 via sbb-dance -> scratch bit=0x1         or/and agree=True
+  leg store@0x41a9e8  record bit=0x200000 via dword-mask -> scratch bit=0x2         or/and agree=True
+  leg store@0x41a9fb  record bit=0x80 via byte-mask -> scratch bit=0x4         or/and agree=True
+  leg store@0x41aa0e  record bit=0x40 via byte-mask -> scratch bit=0x8         or/and agree=True
+  leg store@0x41aa21  record bit=0x1 via byte-mask -> scratch bit=0x10        or/and agree=True
+  leg store@0x41aa37  record bit=0x400000 via dword-mask -> scratch bit=0x20        or/and agree=True
+  leg store@0x41aa4a  record bit=0x200 via dh-mask   -> scratch bit=0x40        or/and agree=True
+  leg store@0x41aa5d  record bit=0x400 via dh-mask   -> scratch bit=0x80        or/and agree=True
+  leg store@0x41aa72  record bit=0x800 via dh-mask   -> scratch bit=0x100       or/and agree=True
+  leg store@0x41aa87  record bit=0x1000 via dh-mask   -> scratch bit=0x200       or/and agree=True
+  leg store@0x41aa9c  record bit=0x2000 via dh-mask   -> scratch bit=0x400       or/and agree=True
+  leg store@0x41aab4  record bit=0x80000 via dword-mask -> scratch bit=0x800       or/and agree=True
+  leg store@0x41aacc  record bit=0x800000 via dword-mask -> scratch bit=0x1000      or/and agree=True
+  leg store@0x41aae4  record bit=0x100000 via dword-mask -> scratch bit=0x2000      or/and agree=True
+  leg store@0x41aafd  record bit=0x8000 via hoisted edi@0x41aaec -> scratch bit=0x4000      or/and agree=True
+  leg store@0x41ab14  record bit=0x20000 via dword-mask -> scratch bit=0x8000      or/and agree=True
+  leg store@0x41ab2e  record bit=0x10000 via hoisted esi@0x41ab1c -> scratch bit=0x10000     or/and agree=True
+  leg store@0x41ab4a  record bit=0x40000 via dword-mask -> scratch bit=0x20000     or/and agree=True
+  leg store@0x41ab6d  record bit=0x20 via byte-mask -> scratch bit=0x40000     or/and agree=True
+  legs=19 | distinct record masks=19 | distinct scratch bits=19 | all masks+bits known=True
+  legs that are the identity permutation: 1/19 (a straight bit-copy would be 19/19)
+  reads of ds:0x99aa38 between the last pack store (0x41ab6d) and the publish (0x41ad94): 19
+  write-back legs (`test ds:0x99aa38,bit` / read of the scratch, then an op on [rec+0x38]): 19
+    @0x41abe5 mov al,ds:0x99aa38                         scratch bit in-leg     -> or 0x80000000 @0x41abf3
+    @0x41abfa test byte ptr ds:0x99aa38,0x2              scratch bit 0x2        -> or 0x200000 @0x41ac08
+    @0x41ac0f test byte ptr ds:0x99aa38,0x4              scratch bit 0x4        -> no direct op
+    @0x41ac26 test byte ptr ds:0x99aa38,0x8              scratch bit 0x8        -> or 0x40 @0x41ac34
+    @0x41ac38 test byte ptr ds:0x99aa38,0x10             scratch bit 0x10       -> or 0x1 @0x41ac46
+    @0x41ac4a test byte ptr ds:0x99aa38,0x20             scratch bit 0x20       -> or 0x400000 @0x41ac58
+    @0x41ac5f test byte ptr ds:0x99aa38,0x40             scratch bit 0x40       -> no direct op
+    @0x41ac76 test byte ptr ds:0x99aa38,0x80             scratch bit 0x80       -> no direct op
+    @0x41ac8d mov eax,ds:0x99aa38                        scratch bit in-leg     -> no direct op
+    @0x41aca5 mov eax,ds:0x99aa38                        scratch bit in-leg     -> no direct op
+    @0x41acbd mov eax,ds:0x99aa38                        scratch bit in-leg     -> no direct op
+    @0x41acd5 mov eax,ds:0x99aa38                        scratch bit in-leg     -> or 0x80000 @0x41ace4
+    @0x41aceb mov eax,ds:0x99aa38                        scratch bit in-leg     -> or 0x800000 @0x41acfa
+    @0x41ad01 mov eax,ds:0x99aa38                        scratch bit in-leg     -> or 0x100000 @0x41ad10
+    @0x41ad17 mov eax,ds:0x99aa38                        scratch bit in-leg     -> no direct op
+    @0x41ad29 test dword ptr ds:0x99aa38,edi             scratch bit in-leg     -> or 0x20000 @0x41ad36
+    @0x41ad3d test dword ptr ds:0x99aa38,esi             scratch bit in-leg     -> no direct op
+    @0x41ad4d test dword ptr ds:0x99aa38,0x20000         scratch bit 0x20000    -> or 0x40000 @0x41ad5e
+    @0x41ad65 test dword ptr ds:0x99aa38,0x40000         scratch bit 0x40000    -> or 0x20 @0x41ad76
+  record bits restored by a resolved write-back=11; those outside the 19 read masks=-
+  the publish mask at 0x41abdc: 0xf000000 = bits 24,25,26,27
+G5 PASS 20 stores to ds:0x99aa38 in the frame: the zero-init at 0x41a9b7 then one after each leg, the last before the publish at 0x41ad94 (0x41ad94)
+G6 PASS 19 legs each contribute one distinct record mask and one distinct scratch bit (19/19 distinct on both sides, the scratch band spanning bits 0..18); every leg's or-op agrees bit-for-bit with its and-op; only 1/19 legs are the identity, so the tree is a PERMUTATION not a bit-copy; 19 reads of the scratch between the last pack store and the publish match the 19 pack legs leg-for-leg, and every record bit a write-back restores is one of the 19 the tree read
+G7 PASS the publish mask is 0xf000000 (4 bits: 24,25,26,27) read straight off the `and ecx,mask` at 0x41abdc, and NO write-back op touches a bit inside it: the packed policy bits this tree round-trips and the 4-bit window the faction block keeps are DISJOINT halves of [rec+0x38]
+
+T5 image-wide census of the field 0x94d600 (block+0x4fc):
+  W @0x41ad94 mov dword ptr [edx*4+0x94d600],ecx
+  R @0x4a9e63 mov eax,dword ptr [ecx+0x94d600]
+  R @0x4e494c mov ecx,dword ptr [edi+0x94d600]
+  R @0x4e5de6 lea eax,[ecx*4+0x94d600]
+  R @0x4e5ded mov ecx,dword ptr [ecx*4+0x94d600]
+  R @0x512232 mov eax,dword ptr [edx*4+0x94d600]
+  W @0x59ed6c mov dword ptr [ebx+0x94d600],0xdfbe41
+  W @0x59ed7a mov dword ptr [ebx+0x94d600],0xc0dfbe41
+  writers=3 (dynamic, inside FUN_0041a8f0=1; constants outside=2: 0xdfbe41@0x59ed6c, 0xc0dfbe41@0x59ed7a) readers=5
+  readers live in: FUN_004a99e0, FUN_004e47d0, FUN_004e5ae0, FUN_00512020
+  publish address fold, simulated on faction index f in {3,7}: f=3:6285, f=7:14665 -> edx(f) is 2095 dwords = 8380 bytes per faction (the atlas says the block is 8380 B)
+  chain: je 0x41ad7a ; mov eax,ds:0x8f0d60 ; or dword ptr [eax+0x38],0x20 ; mov ecx,dword ptr [ebp-0x4] ; mov eax,ds:0x8f0d60 ; mov edx,ecx ; shl edx,0x6 ; add edx,ecx ; lea edx,[ecx+edx*2] ; shl edx,0x4 ; sub edx,ecx ; mov ecx,dword ptr [eax+0x38]
+G8 PASS the publish form [edx*4+0x94d600] folds to 2095 dwords = 8380 bytes per faction, which is the atlas block size 8380; the field sits at block+0x4fc
+G9 PASS exactly 8 refs to the field: 3 writers (ONE dynamic writer - this function - and the two faction-create defaults ['0xc0dfbe41', '0xdfbe41']) and 5 readers; NEITHER default has a bit inside the 0xf000000 publish window, so the two writers occupy disjoint halves of this dword; 0x4e494c is a reader (the base creator of M282 copies the field into a NEW base's +0x38 per docs/sessions/sessions-98-98.md)
+
+T6 the arg branch and the two phases:
+  `mov ecx,[ebp+0x8]` @0x41ad9b ; `jne 0x41ae3c` @0x41ada0
+  M321's arrival test `test BYTE PTR [eax+0x38],0x40` in this frame at 0x41ade4 (after the publish at 0x41ad94: True)
+  the trio stores fed by one `xor ecx,ecx` (at 0x41adea): 0x41adee:0x78, 0x41adf7:0x7c, 0x41adff:0x80
+  virtual call [edx+0xf0] (the widget's own vtable) at 0x41ae51 -> in the arg!=0 phase: True
+  callees: 15 0x41a913>0x4e3470, 0x41a91a>0x4eb6b0, 0x41a95c>0x528660, 0x41a971>0x528760, 0x41ab72>0x626634, 0x41ab8b>0x528660, 0x41abaa>0x6267a5, 0x41abc2>0x528760, 0x41add7>0x4e5ae0, 0x41ae05>0x4eb6b0, 0x41ae0d>0x4f41f0, 0x41ae34>0x473760, 0x41ae47>0x528760, 0x41ae51>dword ptr [edx+0xf0], 0x41ae5c>0x5e4afc
+G10 PASS the function splits on its single arg ([ebp+0x8]); the bit-0x40 arrival test of NAMED ## M321 sits inside it at 0x41ade4, AFTER the publish, in the arg==0 phase together with the trio stores to +0x78/+0x7c/+0x80; the arg!=0 phase ends with a call through the widget's own vtable slot +0xf0 (a pane refresh)
+
+T7 what the tree is FOR: the tagged save record it writes.
+  @0x41abaa call 0x6267a5 with pushed immediates 0x6899ec, 0x41, 0x0
+  bytes at 0x6899ec in terran.exe (PE section walk, read-only): 'GOVOPTIONS'
+  the staging dword sits at +0x1c of the 0x41-B record at 0x99aa1c (fits: True)
+  save-band context call 0x626634 at 0x41ab72
+  RIVAL 1 'a free function, no thiscall object': False (ecx->edi at 0x41a8f8, edi spilled to [ebp-0x8] at 0x41a8fa, used as a base at [edi+0x3ff3c] and reloaded into ecx at 0x41ae4c for the vtable call)
+  RIVAL 2 'driven by the CURSOR row': False (0 cursor reads vs 3 shown-index reads)
+  RIVAL 3 'the array it indexes is the unit array (stride 52)': False (the chain measures 304 bytes per record)
+  RIVAL 4 'the block keeps the whole dword, defaults and packer in one field': False (0 of the faction-create defaults ['0xc0dfbe41', '0xdfbe41'] have a bit inside the 0xf000000 publish window)
+  RIVAL 5 'the packer is the field's only writer': False (3 writers = 1 dynamic + 2 faction-create constants)
+  RIVAL 6 'the record is emitted some other way': False (1 calls of the tagged writer 0x6267a5 in the frame)
+G11 PASS the tree ends in ONE tagged-writer call 0x6267a5 with pushed (0x6899ec='GOVOPTIONS', 0x41=65 B, 0), i.e. the scratch dword this tree builds IS field +0x1c of the 65-B GOVOPTIONS record at 0x99aa1c, opened by 0x626634 one insn earlier
+G12 PASS 6 rivals all False on the printed numbers (no-thiscall False; cursor-driven False; unit-array False; defaults-and-packer-share-the-window False; sole-writer False; no-tagged-writer False)
+DIGEST 757e40a7ed04abda
+G13 PASS digest==PIN 757e40a7ed04abda measured=757e40a7ed04abda (any drift in the measured rows reddens this)
+== M329: 13/13 ==
