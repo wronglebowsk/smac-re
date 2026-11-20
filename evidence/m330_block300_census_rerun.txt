@@ -1,0 +1,67 @@
+== M330 block+300 census (resolver: M326 import, OFF=0x300) patches=0 ==
+G1 census: rawhits=25 FIELD=11 (W=4 R=7 T=0) nonfield=14 seeds=31 seedacc=29 prov=[('STRIDE', 11)]
+  hit 4f4958 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_004f47f0
+  hit 4f4962 W- w=4 tag=DISP94D654 prov=STRIDE src=edx owner=FUN_004f47f0
+  hit 52056d W- w=4 tag=DISP94D654 prov=STRIDE src=eax owner=FUN_00520540
+  hit 52071e -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 520749 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 520776 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 52078f W- w=4 tag=DISP94D654 prov=STRIDE src=ecx owner=FUN_00520540
+  hit 52082c -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 5233f3 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00522b70
+  hit 5362db -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00535c60
+  hit 59f26a W- w=4 tag=DISP94D654 prov=STRIDE src=edx owner=FUN_0059ec90
+  NONFIELD 449371 -R tag=DISP224 prov=('OUT', 9600556) owner=FUN_00448c60
+  NONFIELD 51dcd8 W- tag=DISP224 prov=('OUT', 9759656) owner=FUN_0051dcb0
+  NONFIELD 523db3 -R tag=DISP224 prov=('OUT', 9600556) owner=FUN_00523b20
+  NONFIELD 5362f5 -R tag=DISP94D654 prov=('UNPROVEN', (1, 9754416, ('ptr', ('brk', -20, 'ebp', None, 1)))) owner=FUN_00535c60
+  NONFIELD 54296c -R tag=DISP224 prov=('OUT', 9600556) owner=FUN_00542810
+  NONFIELD 544ba8 -R tag=DISP224 prov=('OUT', 9600556) owner=FUN_00544530
+  NONFIELD 544ea6 -R tag=DISP224 prov=('OUT', 9600556) owner=FUN_00544530
+  NONFIELD 54b367 -R tag=DISP94D654 prov=('UNPROVEN', (4, 9754416, ('arg', 'ecx'))) owner=FUN_00546800
+  NONFIELD 554eec -R tag=DISP224 prov=('OUT', 9600556) owner=FUN_00554d10
+  NONFIELD 579329 W- tag=DISP224 prov=('OUT', 768) owner=FUN_005791c0
+  NONFIELD 596bee -R tag=DISP224 prov=('UNPROVEN', (1, 3156, ('arg', 'eax'))) owner=FUN_00596850
+  NONFIELD 596cb5 -R tag=DISP224 prov=('UNPROVEN', (1, 4472, ('arg', 'eax'))) owner=FUN_00596850
+  NONFIELD 596cbc W- tag=DISP224 prov=('OUT', 9759144) owner=FUN_00596850
+  NONFIELD 5bad16 -R tag=DISP224 prov=('UNPROVEN', (1, 768, ('arg', 'esp'))) owner=FUN_005ba902
+  seed300 5233d0 ->ecx tgt=(768, 9762796, 'BLKCONST')
+  seedacc300 5233d0 ecx[+0]=94f7ec w=0
+  seedacc300 insn 5233fe: ('sub', 'ebx,DWORD PTR [ecx]')
+PASS G1: rawhits=25 FIELD=11 (4W/7R, 11/11 STRIDE) nonfield=14; 1 seed300 (5233d0 BLKCONST block1) + 1 seedacc read @5233fe; exact sets pinned
+G2 writer 4f4962: mov DWORD PTR [edi+0x94d730],edx
+G2 writer 52056d: mov DWORD PTR [esi+0x94d730],eax
+G2 writer 52078f: mov DWORD PTR [esi+0x94d730],ecx
+G2 writer 59f26a: mov DWORD PTR [ebx+0x94d730],edx
+G3 reader 4f4958: mov edx,DWORD PTR [edi+0x94d730]
+G3 reader 52071e: mov ecx,DWORD PTR [esi+0x94d730]
+G3 reader 520749: mov ecx,DWORD PTR [esi+0x94d730]
+G3 reader 520776: mov ecx,DWORD PTR [esi+0x94d730]
+G3 reader 52082c: mov edi,DWORD PTR [esi+0x94d730]
+G3 reader 5233f3: mov ebx,DWORD PTR [edx+0x94d730]
+G3 reader 5362db: mov edx,DWORD PTR [eax+0x94d730]
+PASS G2: 4 writers: feeder 4f4962 (edx), entry-zero 52056d (eax=0), residue 52078f (ecx), reset 59f26a (edx, FUN_0059ec90=M320 RESET)
+PASS G3: 7 STRIDE readers: feeder-load 4f4958, refund loads 52071e/749/776, ledger 52082c, 5233f3 (522b70), 5362db (535c60); +2 arg-fed in G12
+G4 law: magics=['55555556', '55555556', '55555556', '55555556'] imul=True signfix=True k5=True E-load/add/store=True/True/True resid=True fload=True model=True
+G4 samples x: r4=trunc(x/3) r5=trunc(2x/3) residue=x-r: [(1, 0, 0, 1, 1), (2, 0, 1, 2, 1), (3, 1, 2, 2, 1), (4, 1, 2, 3, 2), (5, 1, 3, 4, 2), (7, 2, 4, 5, 3), (10, 3, 6, 7, 4)]
+PASS G4: refund=trunc(k*x/3) k=1(diff4)/2(diff5+); ENERGY+=r; field-=r; magic 55555556, sign-fix, residue SUB (not zero)
+G5 switch: ('mov', 'eax,ds:0x985aec') | ('cmp', 'eax,0x3') | ('jle', '0x520795') | ('cmp', 'eax,0x4') | ('jne', '0x520758') | ('cmp', 'ecx,ebx') | ('je', '0x520795')
+PASS G5: ds:0x985aec>3 gate; ==4 -> 1/3 path else (>=5) -> 2/3 path; field==0 skip; noun 'difficulty' INFERRED (M308 enum)
+G6 mask: ('mov', 'al,ds:0x985b10') | ('mov', 'edx,0x1') | ('shl', 'edx,cl') | ('test', 'dl,al') | ('jne', '0x520795') | ('mov', 'ecx,DWORD PTR [ebp-0x4]') | loop=True iters=7 cl_final=8 (1<<cl)&0xff=0
+PASS G6: mask gate VACUOUS: [ebp-4]=1+7=8 at refund (loop bound pinned); 1<<8 has dl=0 -> test dl,al always 0 -> jne never taken; refund NOT faction-masked
+G7 entry-zero: ('xor', 'eax,eax') | 520561:+3f8=0 520567:+2fc=0 52056d:+300=0 520573:+308=0
+PASS G7: upkeep entry 520540 zeroes +3f8/+2fc/+300/+308 (eax=0 xor@520557); +300 accumulates WITHIN the upkeep pass before the refund
+G8 carry: blockA@32c vals=[0, 1, 1, 0, 1, 0, 1, 1] foffs=[1580, 9960, 18340, 26720, 35100, 43480, 51860, 60240] energy=[10, 28, 112, 69, 229, 60, 102, 37] sha=74d0f44ab9b9290b round=50 fread@596a91=('call', '0x64cc00')
+PASS G8: +300 inside raw block carry (M324: 596a91 105e0/94d430); m54b_clean vals=[0,1,1,0,1,0,1,1] (residues), energy==M325 blkA, foffs pinned
+G9 turnfn: stores=16 blkstores=0 pin@51f53c=('mov', 'ds:0x985afc,eax')
+PASS G9: turnfn 51f320: 16 stores, 0 block stores (as +220/+224); ROUND store 51f53c pinned
+G10 feeder: pins=True skip-halve=('jl', '0x4f4938')/('je', '0x4f4938') round-gate=('jle', '0x4f5cd4') halve-model=True samples=[(1, 0), (3, 1), (5, 2), (10, 5)]
+PASS G10: FUN_004f47f0 (ROUND>1 only): per-slot v from 0x984d48+48*slot; CONDITIONAL halving (owner-match path: +bit5, parity, trunc/2; else FULL v); ENERGY-=v @4f4950-52; +300+=v @4f495e-62; ENERGY<0 floor-0 if block+8<=1; slot noun OPEN
+G11 ledger: pins=True
+PASS G11: post-refund: +310 := +2fc; +30c := +308 - +300 + +2fc (residue feeds a derived balance; nouns INFERRED)
+G12 argfed: pins546=True pins535=True pins535b=True pinsexcl=True m546=8380 m535=2095 m535b=8380 overwrite(54b1e5,54b35c)=[] stores535=[5463235, 5463852] edi@535f1a=('lin', 1, 0, ('ptr', ('brk', 12, 'ebp', None, 1)))
+PASS G12: 54b367=block(esi)+300 (8380-fold, last-overwrite law); 5362f5: [ebp-0x14] has 2 defs (2095*arg3 @535cc3 / 8380*edi @535f2c), both block-offset folds; arg3=4*faction INFERRED; caller 546551 const 0; EXCLUDED: 579329 facprofile+300 (0x927590 callers), 51dcd8 ladder+1778, 596bee/cb5/cbc loader rearrange, 5bad16 stack
+R rivals hold: R1(half)=False R2(diff-independent)=False R3(zeroed)=False R4(mask-gated)=False R5(persistent-base)=False
+PASS R: R1 DEAD (magic 55555556 div3 x4 + imul x4); R2 DEAD (k5 doubling @520758/520781); R3 DEAD (sub ecx,edx residue kept); R4 DEAD (cl=8 -> dl=0); R5 DEAD (entry-zero 52056d + per-upkeep feeder)
+digest 63def04aadb07bcf
+== M330: 13/13 ==

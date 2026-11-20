@@ -31,12 +31,12 @@ MUTANTS = [
     ("MU13", {"M330_PATCH": "535cc3|mov DWORD PTR [ebp-0x14],ebx"}, {"G12"}),
     ("MU14", {"M330_PATCH": "5791a6|lea ecx,[eax*4+0x94d430]"}, {"G12"}),
     ("MU15", {"M330_PATCH": "596a91|call 0x64cc01"}, {"G8"}),
-    ("MU16", {"M330_PATCH": "51f53c|mov DWORD PTR [esi+0x94d730],eax"}, {"G9"}),
+    ("MU16", {"M330_PATCH": "51f53c|mov DWORD PTR [esi+0x94d730],eax"}, {"G1", "G9"}),
     ("MU17", {"M330_PATCH": "5233fe|sub ebx,DWORD PTR [ecx+0x4]"}, {"G1"}),
     ("MU18", {"M330_PATCH": "5233d0|mov ecx,0x94f7e8"}, {"G1"}),
     ("MU19", {"M330_ALGO": "1"}, {"G1", "G2", "G3"}),
     ("MU20", {"M330_PATCH": "5206e6|call 0x5e9e0e"}, set()),          # NO-OP
-    ("MU21", {"M326_SAVE": os.path.join(ROOT, "programs/saves/m113map.SAV")}, {"G8"}),
+    ("MU21", {"M326_SAVE": os.path.join(ROOT, "programs/saves/m112auto1.SAV")}, {"G8"}),
 ]
 
 def run(env_extra):

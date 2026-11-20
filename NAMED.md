@@ -1290,7 +1290,18 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | B entry=menu case4@580070/auto-start 5229b7; no DIRECT B writer in SP 57c550/load fns (helper reachability OPEN); every lifecycle B-write measures 0 incl RESET 5a09ad; strings pinned | G7/G8 `evidence/m328_hurry_globals.txt:42,46-47,69` | V MU14-16,MU34,MU37 |
 | B uncarried: blob [91f750,+ce0) ends B-4; 17 reg-dest freads resolved (runtime/stack/imm-above-B, none cover); opener 'multi' && B==0 fallthrough pinned -> opts 0x10c0; B!=0 -> diplo-send 584010 (546800:40); HURRY gate re-pin | G9/G10 `evidence/m328_hurry_globals.txt:43,48-67,68,70` | V MU17-20,MU23,MU32,MU38 |
 | ACCEPT 14/14 digest 030a6fc12e4a7cd7 x2 (`evidence/m328_hurry_globals.txt:85-86`,`_rerun.txt:85-86`); harness 38 mutants (37 scored + 1 NO-OP) digest 36259eee0736d9c1 (`evidence/m328_mutate.txt:41-43`); ST 5/5 (`evidence/m328_mutate_selftest.txt:7`) | as cited | V |
-| OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); SP-path noun INFERRED (DIFFICULTY/USERULES strings); 92bdf8 mode global; +300 upkeep refund 1/3 (diff4) 2/3 (diff5+) = M325 lead; facprofile+4ec interest | - | lead |
+| OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); SP-path noun INFERRED (DIFFICULTY/USERULES strings); 92bdf8 mode global; ~~+300 upkeep refund~~ ANSWERED M330 (spend accumulator, k=1/2 law V); facprofile+4ec interest | - | lead |
+
+## M330 (s307-chain2, STATIC 13/13) - block+300 = UPKEEP SPEND ACCUMULATOR
+
+| claim | evidence | conf |
+|---|---|---|
+| 25 raw->11 FIELD (4W/7R STRIDE)+2 arg-fed R; 14 nonfield; seed 5233d0 | G1/G12 `evidence/m330_block300_census.txt:2,31,63` | V MU12-14,17-19 |
+| W={4f4962,52056d zero,52078f resid,59f26a reset}; refund 520714-78f: 985aec>3,x!=0: r=trunc(kx/3) k=1(==4)/2(>=5); E+=r,x-=r; magic 55555556x4; mask VACUOUS cl=8 | G2/G4-6 `:43,45-51` | V MU1-8 |
+| feeder 4f47f0 ROUND>1: v=[984d48+48*slot] (bits 95da9c); CONDITIONAL halving (owner-match +bit5 parity /2 else FULL); E-=v,+300+=v | G10 `:58-59` | V MU9,10 |
+| entry zeroes +2fc/300/308/3f8; +310:=+2fc; +30c:=+308-300+2fc; turnfn 0blk; carry raw (M324) vals=[0,1,1,0,1,0,1,1] | G7-9/11 `:53-57,61` | V MU8,11,15,16,21 |
+| ACCEPT 13/13 63def04aadb07bcf x3 (`:66-67`,`_rerun.txt:66-67`); 20/20+1 NO-OP 730127f586346fa6 (`evidence/m330_mutate.txt:25-27`); ST 5/5 (`_selftest.txt:6`) | cite | V |
+| OPEN: slot/985aec/+2fc/+308 nouns; arg3=4*faction; profile+300 | - | lead |
 
 ## M326 (s301-chain2, STATIC 10/10, review #332 hardened) - block+224 = per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt); settled at upkeep
 
@@ -1315,7 +1326,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | MIN derived (jle-skip@44262b); g999fa4=cheat-chain value (parse INFERRED); EDITORYEAR 4e0350 round=max(1,·-2100) | G6 `:294` | V MU9-13/18/22/25/28 |
 | save blkA@32c [10,28,112,69,229,60,102,37] <2100; R1-3 DEAD | G7/G8 `:295-296` | V MU18/19/20/25 |
 | ACCEPT 8/8 digest a623181d7fb68263 x2 (`:297`); 30/30 (1 NO-OP) digest 97c193e12593c95e (`evidence/m325_mutate.txt:34`); ST 4/4 | cite | V |
-| OPEN: +224/+300; MIN consumers; 920774; 519b00; 673b60; T9 | - | lead |
+| OPEN: ~~+224~~ ANSWERED M326; ~~+300~~ ANSWERED M330; MIN consumers; 920774; 519b00; 673b60; T9 | - | lead |
 
 ## M324 (s296-chain2, STATIC 8/8) - ROUND RAW-carry; re-derive DEAD
 

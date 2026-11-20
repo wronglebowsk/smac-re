@@ -266,8 +266,10 @@ def g6_mask():
                 and jne[0] == "jne" and "0x520795" in jne[1]
                 and clsrc == ("mov", "ecx,DWORD PTR [ebp-0x4]"))
     loop_ok = all(ins(a) == t for a, t in P_LOOP.items())
-    iters = (0x95dc30 - 0x94f70c) // STRIDE      # 7 (blocks 1..7)
-    cl_final = 1 + iters                          # 8 = NBLK
+    # bound DERIVED from the pinned cmp bytes (tracks mutants), not authored
+    bound = int(ins(0x52062f)[1].split(",")[1], 16)
+    iters = (bound - 0x94f70c) // STRIDE
+    cl_final = 1 + iters
     bitbyte = (1 << cl_final) & 0xff              # 0 -> test dl,al always 0
     row("G6 mask: %s | %s | %s | %s | %s | %s | loop=%s iters=%d cl_final=%d (1<<cl)&0xff=%d"
         % (ld, one, shl, test, jne, clsrc, loop_ok, iters, cl_final, bitbyte))
@@ -482,7 +484,9 @@ def rivals():
     # R3: field zeroed after refund (the +224 law) — would need a 0-store
     r3_holds = ins(0x52078d)[0] in ("xor", "sub") and ins(0x52078d)[1] == "ecx,ecx"
     # R4: the 985b10 mask gate restricts the refund to a faction subset
-    r4_holds = ((1 << (1 + (0x95dc30 - 0x94f70c) // STRIDE)) & 0xff) != 0
+    # (bound derived from the same pinned cmp bytes as G6 — mutant-trackable)
+    bound = int(ins(0x52062f)[1].split(",")[1], 16)
+    r4_holds = ((1 << (1 + (bound - 0x94f70c) // STRIDE)) & 0xff) != 0
     # R5: a persistent maintenance BASE (would survive upkeep entry)
     r5_holds = not (ins(0x52056d) == ("mov", "DWORD PTR [esi+0x94d730],eax")
                     and ins(0x520557) == ("xor", "eax,eax"))
