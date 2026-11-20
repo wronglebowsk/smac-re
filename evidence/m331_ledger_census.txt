@@ -1,0 +1,87 @@
+== M331 ledger-siblings census (resolver: M326 import) patches=0 ==
+G1 census 2fc: rawhits=23 FIELD=10 (W=3 R=7) nonfield=13 seeds=31 seedacc=28 prov=[('STRIDE', 10)]
+  hit 4eacc9 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_004eaa10
+  hit 520567 W- w=4 tag=DISP94D654 prov=STRIDE src=eax owner=FUN_00520540
+  hit 520805 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 52080c W- w=4 tag=DISP94D654 prov=STRIDE src=edx owner=FUN_00520540
+  hit 52081a -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 520832 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 5233ed -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00522b70
+  hit 532876 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00531df0
+  hit 5362d5 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00535c60
+  hit 59f264 W- w=4 tag=DISP94D654 prov=STRIDE src=edx owner=FUN_0059ec90
+  NONFIELD 449377 -R tag=DISP224 prov=('OUT', 9600552) owner=FUN_00448c60
+  NONFIELD 523dad -R tag=DISP224 prov=('OUT', 9600552) owner=FUN_00523b20
+  NONFIELD 5328c5 -R tag=DISP94D654 prov=('UNPROVEN', (1, 9754412, ('arg', 'edx'))) owner=FUN_00531df0
+  NONFIELD 5362ef -R tag=DISP94D654 prov=('UNPROVEN', (1, 9754412, ('ptr', ('brk', -20, 'ebp', None, 1)))) owner=FUN_00535c60
+  NONFIELD 542972 -R tag=DISP224 prov=('OUT', 9600552) owner=FUN_00542810
+  NONFIELD 544bae -R tag=DISP224 prov=('OUT', 9600552) owner=FUN_00544530
+  NONFIELD 544eac -R tag=DISP224 prov=('OUT', 9600552) owner=FUN_00544530
+  NONFIELD 54b361 -R tag=DISP94D654 prov=('UNPROVEN', (4, 9754412, ('arg', 'ecx'))) owner=FUN_00546800
+  NONFIELD 54d43b -R tag=DISP94D654 prov=('UNPROVEN', (4, 9754412, ('arg', 'ebx'))) owner=FUN_00546800
+  NONFIELD 554ee6 -R tag=DISP224 prov=('OUT', 9600552) owner=FUN_00554d10
+  NONFIELD 5792d9 W- tag=DISP224 prov=('OUT', 764) owner=FUN_005791c0
+  NONFIELD 5792ef W- tag=DISP224 prov=('OUT', 764) owner=FUN_005791c0
+  NONFIELD 579309 W- tag=DISP224 prov=('OUT', 764) owner=FUN_005791c0
+  seed 4eacd0 ->ecx tgt=(764, 9754412, 'STRIDE')
+  seedacc 4eacd0 ecx[+0]=94d72c w=1 insn=('mov', 'DWORD PTR [ecx],esi')
+G2 census 308: rawhits=7 FIELD=4 (W=2 R=2) nonfield=3 seeds=30 seedacc=27 prov=[('STRIDE', 4)]
+  hit 45b23f -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_0045a920
+  hit 520573 W- w=4 tag=DISP94D654 prov=STRIDE src=eax owner=FUN_00520540
+  hit 520826 -R w=4 tag=DISP94D654 prov=STRIDE src=None owner=FUN_00520540
+  hit 59f29e W- w=4 tag=DISP94D654 prov=STRIDE src=edx owner=FUN_0059ec90
+  NONFIELD 40ed72 -R tag=DISP224 prov=('UNPROVEN', (1, 776, ('ptr', ('abs', 10058528)))) owner=FUN_0040e720
+  NONFIELD 4f5cb0 WR tag=DISP94D654 prov=('UNPROVEN', (1, 9754424, ('arg', 'esi'))) owner=FUN_004f5a70
+  NONFIELD 596c06 -R tag=DISP224 prov=('UNPROVEN', (1, 3164, ('arg', 'eax'))) owner=FUN_00596850
+PASS G1: +2fc: rawhits=23 FIELD=10 (3W/7R, 10/10 STRIDE) nonfield=13; 1 lea-seed 4eacd0 (STRIDE) + 1 seedacc WRITE @4eacd9 (the feeder)
+PASS G2: +308: rawhits=7 FIELD=4 (2W/2R, 4/4 STRIDE) nonfield=3; 0 seeds/seedacc; feeder 4f5cb0 is arg-fed (resolved in G6)
+G3 role 45b23f: mov ecx,DWORD PTR [eax+0x94d738] OK
+G3 role 4eacc9: mov esi,DWORD PTR [ecx*4+0x94d72c] OK
+G3 role 4eacd9: mov DWORD PTR [ecx],esi OK
+G3 role 4f5cb0: add DWORD PTR [esi+0x94d738],ecx OK
+G3 role 520567: mov DWORD PTR [esi+0x94d72c],eax OK
+G3 role 520573: mov DWORD PTR [esi+0x94d738],eax OK
+G3 role 520805: mov edx,DWORD PTR [esi+0x94d72c] OK
+G3 role 52080c: mov DWORD PTR [esi+0x94d72c],edx OK
+G3 role 52081a: mov eax,DWORD PTR [esi+0x94d72c] OK
+G3 role 520826: mov ecx,DWORD PTR [esi+0x94d738] OK
+G3 role 520832: mov edx,DWORD PTR [esi+0x94d72c] OK
+G3 role 5233ed: mov edi,DWORD PTR [edx+0x94d72c] OK
+G3 role 532876: mov eax,DWORD PTR [edi+0x94d72c] OK
+G3 role 5362d5: mov ecx,DWORD PTR [eax+0x94d72c] OK
+G3 role 59f264: mov DWORD PTR [ebx+0x94d72c],edx OK
+G3 role 59f29e: mov DWORD PTR [ebx+0x94d738],edx OK
+PASS G3: 16 exact role pins: +2fc W={entry-zero 520567, tail-inc 52080c, reset 59f264} + feeder 4eacd9; +308 W={entry-zero 520573, reset 59f29e} + feeder 4f5cb0; all readers literal
+G4 entry-zero: ('xor', 'eax,eax') | 520561:+3f8=0 520567:+2fc=0 52056d:+300=0 520573:+308=0 | gap=True eaxdefs=[] mid-branch-targets=[]
+PASS G4: upkeep entry 520540 zeroes +3f8/+2fc/+300/+308 (eax=0 xor@520557, liveness + no mid-branch measured): BOTH siblings are per-upkeep accumulators
+G5 feeder2fc: pins=True jne=('jne', '0x4eacdb') fold=2095 stride=8380 clamp_hi=99999 phase-stores=['0x4f5b2c', '0x4f5bdd', '0x4f5f11'] 8f0c3c-stores=['0x4e8d97'] 8f0c74-stores=['0x4e8d86']
+PASS G5: +2fc feeder 4eacd9 (FUN_004eaa10): gate ds:8f0d64==1 (phase 1, set @4f5b2c only); += clamp(base_rec+0xd4,0,99999); +0xd4 = +0xc4-+0xf4-4e9880(+0xc4-+0xf4); +0xc4 += 8f0c74, +0xf4 := 8f0c3c (both sole stores in 4e8d60); owner = base_rec+4 (M311 base_array); 8380-fold derived
+G6 feeder308: pins=True recstride=304 init=94f5ac bound=95dad0 iters=7 fold=8380 esi-defs=['0x4f5c03'] edi-defs=['0x4f5c02'] edi(load,fold)=['0x4f5b08'] exitpins=True
+PASS G6: +308 feeder 4f5cb0: FUN_004f5a70(base_idx) called per OWNED base (5206d3, owner-byte loop over base_array 95da14/985af4); esi=8380*owner (owner=base_rec+4); loop k=1..7 skips self, gates block+0xc0==0 (self AND k), += 8f0d40[k-1]; ENERGY += base_rec+0xfc @4f5c85-8c; exit-pop liveness
+G7 tail: pins=True profstride=1436 rate_off=4ec gate_off=508 model100=True stores=[('0x5207d9', '0x220'), ('0x5207ff', '0x220'), ('0x52080c', '0x2fc')] samples=[(99, 0), (100, 1), (101, 1), (9999, 99)]
+PASS G7: upkeep tail: facprofile(1436-fold)+0x508 bit14 gate; rate=+0x4ec: ENERGY += trunc(ENERGY*rate/100) (magic 51eb851f sar5+signfix); rate==0 fallback: per OWNED base (95da14/985af4 walk) ENERGY+=1 AND +2fc+=1; tail writes ONLY +220/+2fc (no +308)
+G8 ledger: pins=True v2fc=[0, 7, 14, 4, 32, 9, 9, 2] v308=[0, 0, 0, 0, 3, 0, 0, 0] v300=[0, 1, 1, 0, 1, 0, 1, 1] v30c=[0, 6, 13, 4, 34, 9, 8, 1] v310=[0, 7, 14, 4, 32, 9, 9, 2] law=[0, 6, 13, 4, 34, 9, 8, 1] minus=[0, -8, -15, -4, -30, -9, -10, -3]
+PASS G8: +310 := +2fc; +30c := +308-+300++2fc (byte pins) AND the law holds NUMERICALLY on all 8 m54b_clean blocks (v310==v2fc, v30c==ledger); minus-variant printed for R5
+G9 cap546: pins=True scale=100 thr=50 overwrite(54b1e5,54b35c)=[] edi-defs(54684a,54d3ab)=[] fold=8380
+PASS G9: 546800: net=+2fc-+300 (54b361/367, [ebp+8]=8380*esi last-overwrite law); cap=MIN(trunc(ENERGY/2), 100*net) (fold DERIVED=100); gate cap>=50 else exit 54b91b; second reader 54d43b = block(arg1)+2fc (edi sole def 54684a, 8380-fold, zero redefs across 34 KB)
+G10 cap535: pins=True capoff=1058 stores535[-0x14]=['0x535cc3', '0x535f2c'] model5=True samples=[(4, 0), (5, 1), (6, 1), (10, 2)]
+PASS G10: 535c60: per faction fold, net=+2fc-+300 capped by block+0x1058 (MIN, both folds); sum*arg3 + trunc(ENERGY/5) (magic 66666667 sar1+signfix); 5362ef +2fc read rides the M330 two-def [ebp-0x14] law (2095*arg3 / 8380*edi)
+G11 readers: pins=True 531df0[-0x4]=['0x531e75'] [-0xc]=['0x531e78'] clamp=99 braces=b'{'/b'}' 997b20-stores=['0x614669', '0x6146c7']
+PASS G11: 522b70: per-faction ENERGY + net(+2fc-+300) comparison score (both siblings read as a pair); 531df0: 920754 -= (block(arg1)+2fc/esi)*clamp(diff,0,99), arg2 +2fc via sole-def [ebp-0xc] fold; 45a920: formats block+308 into '{...}' template (423820); 40e720: +308 via 997b20 = HEAP alloc (5be090), NOT the raw block -> NONFIELD
+G12 carry: sha=74d0f44ab9b9290b round=50 energy=[10, 28, 112, 69, 229, 60, 102, 37] foffs2fc=['0x628', '0x26e4', '0x47a0', '0x685c', '0x8918', '0xa9d4', '0xca90', '0xeb4c'] foffs308=['0x634', '0x26f0', '0x47ac', '0x6868', '0x8924', '0xa9e0', '0xca9c', '0xeb58'] fread=('call', '0x64cc00') turnfn=16/0 pin=('mov', 'ds:0x985afc,eax') reset=('mov', 'DWORD PTR [ebx+0x94d72c],edx')/('mov', 'DWORD PTR [ebx+0x94d738],edx') owners=FUN_0059ec90/FUN_0059ec90
+PASS G12: both siblings inside the M324 raw block carry (596a91 105e0/94d430), foffs pinned, energy==M325 blkA; turnfn 16st/0blk; reset writers in FUN_0059ec90 (M320 RESET)
+G13 class 4f5cb0: +308 FEEDER (G6: esi=8380*owner)
+G13 class 54b361: +2fc cap load (G9: [ebp+8] last-overwrite)
+G13 class 54d43b: +2fc reader (G9: edi=arg1 sole-def fold)
+G13 class 5362ef: +2fc cap load (G10: two-def [ebp-0x14])
+G13 class 5328c5: +2fc reader (G11: [ebp-0xc] sole-def fold)
+G13 class 5792d9/ef/309: facprofile+2fc (callers pass 0x927590)
+G13 class 40ed72: HEAP UI buffer via 997b20 (G11), not raw block
+G13 class 596c06: loader struct-rearrange (M330 family)
+G13 class 449377/523dad/542972/544bae/544eac/554ee6: DISP224 OUT-family (profile/ladder/stack siblings, M330)
+G13 excl pins=True
+PASS G13: 3 facprofile+2fc writes excluded (0x927590 caller law, as M330's 579329); 5 arg-fed NONFIELD hits RESOLVED to block reads (G6/G9/G10/G11); 40ed72 heap; 596c06 loader; 6 DISP224 OUT-family
+R rivals hold: R1(persistent)=False R2(4f47f0-fed)=False R3(scale!=100)=False R4(tail-writes-308)=False R5(minus-ledger)=False scan4f47f0=[]
+PASS R: R1 DEAD (entry-zero both); R2 DEAD (4f47f0 body has 0 sibling stores, its only store is +300 @4f4962); R3 DEAD (fold derives 100); R4 DEAD (tail store set = +220/+220/+2fc); R5 DEAD (add ecx,edx + save law matches plus-variant on all 8 blocks)
+digest a9983cddad88fade
+== M331: 14/14 ==

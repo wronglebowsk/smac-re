@@ -1,0 +1,40 @@
+mutant | declared | measured | verdict
+PASS BASE - | - | all 14 PASS
+PASS MU1 ['G3', 'G4', 'R'] | ['G3', 'G4', 'R'] | OK
+PASS MU2 ['G3'] | ['G3'] | OK
+PASS MU3 ['G5'] | ['G5'] | OK
+PASS MU4 ['G5'] | ['G5'] | OK
+PASS MU5 ['G1', 'G3'] | ['G1', 'G3'] | OK
+PASS MU6 ['G2', 'G3', 'G6'] | ['G2', 'G3', 'G6'] | OK
+PASS MU7 ['G6'] | ['G6'] | OK
+PASS MU8 ['G6'] | ['G6'] | OK
+PASS MU9 ['G5'] | ['G5'] | OK
+PASS MU10 ['G1', 'G3', 'G7'] | ['G1', 'G3', 'G7'] | OK
+PASS MU11 ['G7'] | ['G7'] | OK
+PASS MU12 ['G8', 'R'] | ['G8', 'R'] | OK
+PASS MU13 ['G9', 'R'] | ['G9', 'R'] | OK
+PASS MU14 ['G9'] | ['G9'] | OK
+PASS MU15 ['G10'] | ['G10'] | OK
+PASS MU16 ['G10'] | ['G10'] | OK
+PASS MU17 ['G11'] | ['G11'] | OK
+PASS MU18 ['G1', 'G11', 'G3'] | ['G1', 'G11', 'G3'] | OK
+PASS MU19 ['G11', 'G2', 'G3'] | ['G11', 'G2', 'G3'] | OK
+PASS MU20 ['G12'] | ['G12'] | OK
+PASS MU21 ['G1', 'G12'] | ['G1', 'G12'] | OK
+PASS MU22 ['G1', 'G12', 'G3'] | ['G1', 'G12', 'G3'] | OK
+PASS MU23 ['G13'] | ['G13'] | OK
+PASS MU24 ['G9'] | ['G9'] | OK
+PASS MU25 ['G10'] | ['G10'] | OK
+PASS MU26 ['G5'] | ['G5'] | OK
+PASS MU27 ['G6'] | ['G6'] | OK
+PASS MU28 ['G11'] | ['G11'] | OK
+PASS MU29 ['G9'] | ['G9'] | OK
+PASS MU30 ['G1', 'G2'] | ['G1', 'G2'] | OK
+PASS MU31 [] | [] | NO-OP-OK
+PASS MU32 ['G12', 'G8'] | ['G12', 'G8'] | OK
+PASS MU33 ['G1', 'R'] | ['G1', 'R'] | OK
+PASS MU34 ['G2', 'G7', 'R'] | ['G2', 'G7', 'R'] | OK
+coverage True (union=['G1', 'G10', 'G11', 'G12', 'G13', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'R'])
+digest 75a8749314a13287
+HARNESS 33/33 scored OK + 1/1 NO-OP, 0 MISMATCH/0 CRASH
+== M331 mutate: 36/36 ==
