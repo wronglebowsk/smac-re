@@ -1,0 +1,29 @@
+== M327 mutation harness: 24 mutants, TMP=<mkdtemp m327mut-XXXXXX under $TMPDIR, see stderr> ==
+base: reddened=[] summary=('11', '11')
+MU1   code  0x4bded1|imul   ecx,ecx,0x33               reddened=G10,G2                                   declared=G10,G2                                   OK
+MU2   code  0x5ab3a2|movsx  eax,WORD PTR [esi+0x933280] reddened=G10,G2                                   declared=G10,G2                                   OK
+MU3   code  0x4bdeca|movsx  ecx,WORD PTR [eax+0x933284] reddened=G10,G2                                   declared=G10,G2                                   OK
+MU17  algo  1                                          reddened=G10,G2                                   declared=G10,G2                                   OK
+MU4   code  0x5ab369|jl     0x5ab356                   reddened=G10,G7,G9                                declared=G10,G7,G9                                OK
+MU5   code  0x5ab355|mov    WORD PTR [esi+0x93327c],bx reddened=G10,G7                                   declared=G10,G7                                   OK
+MU19  algo  4                                          reddened=G10,G7,G9                                declared=G10,G7,G9                                OK
+MU6   save  223005/1=3                                 reddened=G10,G3,G6,G9                             declared=G10,G3,G6,G9                             OK
+MU7   save  223001/2=497                               reddened=G10,G11,G3,G5,G6,G9                      declared=G10,G11,G3,G5,G6,G9                      OK
+MU8   save  222793/2=196                               reddened=G10,G11,G3,G5,G6,G9                      declared=G10,G11,G3,G5,G6,G9                      OK
+MU11  save  222783/2=300                               reddened=G10,G3,G5,G6                             declared=G10,G3,G5,G6                             OK
+MU16  algo  8                                          reddened=G10,G3,G9                                declared=G10,G3,G9                                OK
+MU18  algo  2                                          reddened=G10,G3,G9                                declared=G10,G3,G9                                OK
+MU23  algo  10                                         reddened=G10,G3                                   declared=G10,G3                                   OK
+MU24  save  222783/2=1024                              reddened=G10,G3,G5,G6                             declared=G10,G3,G5,G6                             OK
+MU9   save  192108/1=0                                 reddened=G10,G4,G6                                declared=G10,G4,G6                                OK
+MU12  save  198764/1=255                               reddened=G10,G4,G6                                declared=G10,G4,G6                                OK
+MU22  algo  7                                          reddened=G10,G4                                   declared=G10,G4                                   OK
+MU13  algo  6                                          reddened=G10,G5                                   declared=G10,G5                                   OK
+MU10  poked 223408=-                                   reddened=G10,G6                                   declared=G10,G6                                   OK
+MU14  algo  3                                          reddened=G10,G6                                   declared=G10,G6                                   OK
+MU15  algo  5                                          reddened=G10,G11,G4,G8                            declared=G10,G11,G4,G8                            OK
+MU20  algo  9                                          reddened=G1,G10,G11,G3,G4,G5,G8,G9                declared=G1,G10,G11,G3,G4,G5,G8,G9                OK
+MU21  code  0x5ab345|test   eax,0x40                   reddened=-                                        declared=                                         OK
+gate coverage: every gate reddened by >=1 mutant: True
+declared NO-OPs: ['MU21']
+HARNESS PASS 24/24 mutants redden exactly their declared gate set

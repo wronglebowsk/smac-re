@@ -50,8 +50,8 @@ cites), `screen-read.md` (why ONE OCR pass is not a screen read), `verify-outcom
 `data-formats.md` (map/save containers + the CVR sibling), `cvr-format.md` (the .cvr TLV/voxel format
 core, retired to depth s242), `netcode.md` (the "jackal" netcode map), `ui-assets.md` (Script.txt,
 alpha.txt, PCX/FLIC, glsmac), `ghidra-batch-export.md`, `terraforming-order-path.md`,
-`session-discipline.md` (budget, closing order, handoff, shadow-running the cron loop, and the full
-s242-retired discipline/evidence text), `review-pipeline.md` (local review pipeline: lint design
+`session-discipline.md` (budget, closing order, handoff, shadow-running the cron loop, parallel
+two-endpoint chains, and the full s242-retired discipline/evidence text), `review-pipeline.md` (local review pipeline: lint design
 classes, reviewer validation). `grep -n '^## \|^### ' SKILL.md` and the references, then
 `sed -n 'A,Bp'` the section you need. When adding depth, append to the right reference; only new
 cross-cutting pitfalls belong here.
