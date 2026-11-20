@@ -1,0 +1,44 @@
+baseline rc=0 digest=030a6fc12e4a7cd7 (committed 030a6fc12e4a7cd7)
+id    kind  measured-red           declared               verdict
+MU1   code  G1                     G1                     OK
+MU2   code  G1,G3                  G1,G3                  OK
+MU3   code  G2                     G2                     OK
+MU4   code  G2                     G2                     OK
+MU5   code  G3                     G3                     OK
+MU6   code  G3                     G3                     OK
+MU7   code  G4                     G4                     OK
+MU8   code  G4                     G4                     OK
+MU9   code  G5,G6                  G5,G6                  OK
+MU10  code  G2,G5                  G2,G5                  OK
+MU11  algo  G6,R2                  G6,R2                  OK
+MU12  code  G6,R2                  G6,R2                  OK
+MU13  code  G6                     G6                     OK
+MU14  code  G7                     G7                     OK
+MU15  pe    G8                     G8                     OK
+MU16  code  G8                     G8                     OK
+MU17  code  G9                     G9                     OK
+MU18  code  G9                     G9                     OK
+MU19  code  G10                    G10                    OK
+MU20  code  G10,G5                 G10,G5                 OK
+MU21  code  G1,R1                  G1,R1                  OK
+MU22  code  G6,R2                  G6,R2                  OK
+MU23  code  G9,R3                  G9,R3                  OK
+MU24  code  G1,G3,R4               G1,G3,R4               OK
+MU25  algo  G6,G7,R2               G6,G7,R2               OK
+MU26  algo                         NO-OP                  OK
+MU27  algo  G5                     G5                     OK
+MU28  code  G2                     G2                     OK
+MU29  code  G5,G6,R2               G5,G6,R2               OK
+MU30  code  G3                     G3                     OK
+MU31  code  G4                     G4                     OK
+MU32  code  G9,R3                  G9,R3                  OK
+MU33  code  G2,G5                  G2,G5                  OK
+MU34  code  G6,G7                  G6,G7                  OK
+MU35  code  G3                     G3                     OK
+MU36  code  G6                     G6                     OK
+MU37  code  G6,G7                  G6,G7                  OK
+MU38  code  G9                     G9                     OK
+HARNESS 37/37 scored OK + 1/1 NO-OP, 0 MISMATCH/CRASH
+digest 36259eee0736d9c1
+== M328 mutate: 38/38 ==
+harness rc=0
