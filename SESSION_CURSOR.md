@@ -3,6 +3,6 @@
 M329 `milestone/m329` -> PR #339: submitted, Strata review triaged, merge is this fire's last step.
 ACCEPT `python3 -u scripts/m329_scratchtree.py` -> `== M329: 13/13 ==` `evidence/m329_scratchtree.txt:127`
 (digest `757e40a7ed04abda` :125); harness `scripts/m329_mutate.py` -> `HARNESS PASS 26/26` `:31`;
-retraction verify `scripts/m329_verify_s308.py` -> PASS `evidence/m329_verify_s308.txt:13`.
+verify `scripts/m329_verify_s308.py` -> PASS `evidence/m329_verify_s308.txt:13`.
 NAMED 244,104/250k (5,896 B headroom) — ROTATE BEFORE ADDING. NEXT FIRE: BUILD rung B27, write
 the `BUILD_SPINE.md` section FIRST. `m294_gate_rows_raw.txt` = sim parity target, do NOT rm.
