@@ -49,7 +49,12 @@ def region_len(w, h):
 SEC16000_LEN = 16000
 MIDDLE_SECTIONS = 3584 + 26624 + 4096
 UNIT_LEN, BASE_LEN = 52, 304
-UNIT_TYPE_BAND = 64         # +10 >= 64: production-queue band record, not a unit (OPEN)
+UNIT_TYPE_BAND = 64         # +10 is the unit's TYPE INDEX (M327). < 64 = band 0 (the
+                            # shared design list); >= 64 = band = faction (M80's live
+                            # 8x64 array at DAT_0098ad88). NOT a "queue record": the
+                            # 25 such records in m54b_clean.SAV ARE units (25/25 have
+                            # owner(+14) == value//64, 67/67 name a type slot). The
+                            # coord-test exemption below is a shape heuristic only.
 BASE_NAME_OFF = 19
 TAIL_LEN = 256 + 152 + 10144 + 28 + 220   # 10,800, measured constant on 14 saves
 
@@ -72,9 +77,14 @@ def _u16(b, off):
 
 def _unit_ok(d, o, w, h):
     """A 52-B record is shape-valid if its owner byte is a faction id and - for a record whose
-    +10 type is < 64, i.e. a unit rather than one of the production-queue bands (trap 14 names
-    128/194/322/323) - its +0/+2 pair is inside the map. Band records' +0/+2 are not tile
-    coords (m113map.SAV has 3076/56832 in one), so they are not coord-checked."""
+    +10 type index is < 64, i.e. one of the shared (band-0) designs - its +0/+2 pair is inside
+    the map. M327 RETRACTS the old reading ("band records are not units"): +10 is the unit's
+    signed index into the save's own 512x52 B type array (8 faction bands x 64, the game reads
+    it exactly that way at 0x4bdeca and 0x5ab3a2), so a >= 64 value marks a FACTION-BAND DESIGN
+    and the record is still a unit with a tile. This exemption is a shape heuristic that skips
+    the coord test for those records; on m54b_clean.SAV it changes nothing (all 67 +0/+2 are
+    in-grid), and the out-of-grid band records in m113map.SAV are our own 0xc0de00NN poke
+    markers, not a game state (evidence/m327_typeband_census.txt:741-755)."""
     if o < 0 or o + UNIT_LEN > len(d):
         return False
     if d[o + 14] >= 24:

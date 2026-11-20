@@ -205,7 +205,10 @@ def run(sav_path, map_path, mode="container", turns=TURNS, presses=PRESSES, pois
         rej_idx = [i for i in range(n) if not sosave._unit_ok(
             img, im_w.units_off + sosave.UNIT_LEN * i, W_cont, H_cont)]
         # ... and WHICH records the decoder even coord-checks: sim/save._unit_ok declines to
-        # treat +0/+2 as a tile when +10 >= UNIT_TYPE_BAND (a production-queue band record). So
+        # M327: +10 is the unit's TYPE INDEX, so +10 >= UNIT_TYPE_BAND marks a
+        # FACTION-BAND design (band = owner faction), NOT a non-unit record. The
+        # decoder still exempts those records from the coord test (sim/save.py
+        # _unit_ok), so this instrument reports them as "band" rows separately.
         # a bare "tile >= width" test is this harness's bound, not the decoder's; the two are
         # only comparable record by record once that rule is measured on the same bytes.
         band_idx = [i for i in range(n) if sosave._u16(

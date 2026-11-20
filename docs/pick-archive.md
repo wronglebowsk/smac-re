@@ -1170,6 +1170,28 @@ NEXT_PROMPT.md at the M326 rebase onto main 4a03182 (rotated so the file stays u
 
 M325 (s299-chain2): block+220 = per-faction ENERGY ("EDITORENERGY" handler: field<-g999fa4 @4e0336); turn advance 0 block stores; feed=MIN derived (M324 MAX retracted); g999fa4=cheat-chain value; EDITORYEAR explains 4e0350. 8/8 a623181d7fb68263 (m325_block220_census.txt:297); 30/30 97c193e12593c95e. MERGED #329->fb6e6c4. NAMED ## M325.
 
+## §trim-s304-chain1 (a) the OPEN PICK (vii) block, VERBATIM from §THE PICK of NEXT_PROMPT.md
+at the M327 merge (answered: unit `+10` is a signed TYPE INDEX into the save's own 512x52 B
+type array; `NAMED ## M327` governs and `NAMED ## B25` carries the retraction; rotated so the
+file stays under the 12,000 B warn cap; sha1 a4b626a09832 of the block below, byte-exact).
+
+  OPEN PICK (vii) (NEW at the #319 triage, zero box): **25 of the 67 records** of this save's
+  unit array carry +10 in 128/130/131/256/320/321/322/323 - what `sim/save.py:52` calls queue-band
+  and exempts from its coord test (marked OPEN there). What ARE they; does the game ever write such
+  a record's +0/+2 (B7's and B25's model does, at +0 every round); does the exemption hold on other
+  saves? Start: `evidence/b25_selftest.txt:45-56`, `sim/save.py:73`, a one-pass +10 census.
+
+## §trim-s305-chain1 (a) the ANSWERED PICK (vii) -> M327 paragraph, VERBATIM from §THE PICK of
+NEXT_PROMPT.md at the M327 landing (s305) (retired so the file stays under the 12,000 B warn cap;
+sha1 cfa455cbefd4 of the block below, byte-exact). `NAMED ## M327` governs; the harness count moved to 23/23
+at s305 when the `+12` census became a G3 clause (MU23) — `NAMED ## M327` carries the current number.
+
+  ANSWERED PICK (vii) -> **M327** (s304, zero box): +10 is a SIGNED TYPE INDEX into the save's OWN
+  512x52 B type array (26,624 B at count_off+4+count_len+3584, 4,096 B before the unit array;
+  +10//64 == owner on 25/25) — the 25 exempt records ARE units; the coord exemption is OURS and bites
+  only on the self-poked m113map.SAV. RETRACTS `sim/save.py:52` + ## B25's trap-14 in place. 11/11
+  ee77ddb39e8ec202 (`m327_typeband_census.txt:769`), harness 22/22; `NAMED ## M327` governs.
+
 ## §trim-s304-chain2 (a) — M326 result one-liner (moved VERBATIM from NEXT_PROMPT.md at s304-chain2, M328 close; sha1[:16] f6691830bcd4c739, byte-exact asserted; NAMED ## M326 governs)
 
 |M326 (s301-chain2): +224=deferred HURRY-payment debt (419c30 defers iff 920434/91c62c set; upkeep: ENERGY-=224,224:=0,floor0; readers=220-224; MIN cap@41a4e0). Subreg fix; M325 29 labels->STRIDE (G10 8/8). 10/10 f0f31c3daa26b601; 27/27. MERGED #332->7cd4732; sidecar #334. NAMED ## M326.

@@ -1,9 +1,9 @@
 # SESSION_CURSOR
 
-B26 PR #328 MERGED. Accept `python3 -u -m sim.selftest --b26` -> `PASS B26: 10/10 gates`
-(`b26_selftest.txt:63`; anchor ae43e0ab9c8cfc3d `:52`). Harness `python3 -u
-scripts/b26_mutate.py` -> **19/19 + 1 declared NO-OP** `b26_mutate.txt:24` + ENTRY-POINT
-IDENTITY 2/2 scored by MU21 (`:25-30`); `--selftest` 8/8 (`:14`).
-MERGED: #328 squash dd704d0 (CI 15 s). Note: docs/b26-merged.md. DOC DEBT: NAMED 246,259 B
-vs the 250,000 FAIL line — rotate before adding (§B26 rows -> `docs/named-archive-b26-rows.md`).
-Then picks (vii)/(viii); B27 UNAUTHORED. #180 stands.
+M327 (pick vii) **MERGED** — #337 -> `ae64526` on main (gate GREEN at CI, 14s).
+PIN `91f58f3de03090c1` `evidence/m327_typeband_census.txt:769`; `== M327: 11/11 ==` `:771`;
+`HARNESS PASS 24/24` `evidence/m327_mutate.txt:29` (MU23={G3,G10}, MU24={G3,G5,G6,G10}).
+s305 fixed s304's 2 lint blockers + #337's review (3 P1, 5 P2, all accepted).
+NEXT FIRE: `track_mode.py`, then **(viii) `FUN_0041a8f0`** (zero box) or the **B27 spine**
+if the mode says BUILD. CAUTION: NAMED 247,028/250k — ROTATE BEFORE ADDING A BLOCK.
+`milestone.py submit` PREPENDS `<id>:` to `--title`.
