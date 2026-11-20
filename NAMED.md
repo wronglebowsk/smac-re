@@ -1230,16 +1230,16 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | ACCEPT 14/14 digest 030a6fc12e4a7cd7 x2 (`evidence/m328_hurry_globals.txt:85-86`,`_rerun.txt:85-86`); harness 38 mutants (37 scored + 1 NO-OP) digest 36259eee0736d9c1 (`evidence/m328_mutate.txt:41-43`); ST 5/5 (`evidence/m328_mutate_selftest.txt:7`) | as cited | V |
 | OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); SP-path noun INFERRED (DIFFICULTY/USERULES strings); 92bdf8 mode global; ~~+300 upkeep refund~~ ANSWERED M330 (spend accumulator, k=1/2 law V); ~~facprofile+4ec interest~~ ANSWERED M331 (rate%/100 on ENERGY, +508 bit14 gate) | - | lead |
 
-## M331 (s310-chain2, STATIC 14/14) - block+2fc/+308 = upkeep INCOME siblings; +30c ledger verified 8/8
+## M331 (s310-chain2, STATIC 14/14, review #345 hardened) - block+2fc/+308 = upkeep INCOME siblings
 
 | claim | evidence | conf |
 |---|---|---|
-| census 23→10 (3W/7R) / 7→4 (2W/2R) all STRIDE; feeders 4eacd9 (seedacc W) / 4f5cb0 (arg-fed); excl facprofile+2fc ×3, 997b20 heap, loader, OUT×6 | G1-G3/G13 `evidence/m331_ledger_census.txt:2,28,36-37,54,83` | V MU1,2,5,6,10,18,19,21-23,30,33,34 |
-| +2fc: phase-1 (8f0d64==1) += clamp(base_rec+0xd4,0,99999); +0xd4=+c4−f4−4e9880; tail +1/owned base; interest=facprofile+4ec %/100, bit14-gated | G5/G7 `:58,62` | V MU3,4,9,11,26,34 |
-| +308: per owned base (call 5206d3) Σ 8f0d40[k−1], k≠owner, block+0xc0==0 both; E+=base_rec+0xfc | G6 `:60` | V MU6,7,8,27 |
-| +310:=+2fc; +30c:=+308−300+2fc NUMERIC 8/8 save blocks; caps 546800 MIN(E/2,100·net)≥50 / 535c60 MIN(net,+1058)·arg3+E/5 | G8-G10 `:63-68` | V MU12-16,24,25,29,32 |
-| readers 522b70 ENERGY+net score / 531df0 920754 / 45a920 '{n}' / 40e720 heap; carry raw block; turnfn 16st/0blk; reset 59ec90 | G11/G12 `:70,72` | V MU17-20,28,32 |
-| ACCEPT 14/14 digest a9983cddad88fade x2 (`:86-87`,`_rerun.txt:86-87`); 33/33+1 digest 75a8749314a13287 (`evidence/m331_mutate.txt:38-40`); ST 5/5 (`evidence/m331_mutate_selftest.txt:6`) | cite | V |
+| census 23→10(3W/7R)/7→4(2W/2R) STRIDE; feeders 4eacd9/4f5cb0; excl facprof+2fc×3, 997b20 heap, loader, OUT×6 | `evidence/m331_ledger_census.txt:36-37,54,87` | V MU1,2,5,6,10,18,19,21-23,30,33,34,36,43 |
+| +2fc: phase-1 clamp(base_rec+0xd4,0,99999); owner spill-chain measured; interest +4ec %/100 bit14, facprofile id byte-tied | `evidence/m331_ledger_census.txt:59,65` | V MU3,4,9,11,26,34-36,40,44 |
+| +308: per owned base Σ 8f0d40[k−1], k≠owner, +c0-gated; caller loop-index law; E+=base_rec+fc | `evidence/m331_ledger_census.txt:62` | V MU6,7,8,27,38,39 |
+| +310:=+2fc; +30c:=+308−300+2fc: liveness+no-mid-branch V, save 8/8 corroborates; caps MIN(E/2,100net)≥50 / MIN(net,+1058) | `evidence/m331_ledger_census.txt:68,70,72` | V MU12-16,24,25,29,32,37,41,42 |
+| readers 522b70/531df0/45a920/40e720-heap; carry; turnfn 0blk; reset 59ec90; scanners ALL-mnemonic+implicit-write aware | `evidence/m331_ledger_census.txt:74,76` | V MU17-20,28,32,41-43 |
+| ACCEPT 14/14 digest 442270fd57be2b62 x2 (`evidence/m331_ledger_census.txt:90-91`, `evidence/m331_ledger_census_rerun.txt:90-91`); 43/43+1 digest 29061c567f9132fb (`evidence/m331_mutate.txt:48-50`); ST 5/5 (`evidence/m331_mutate_selftest.txt:6`) | cite | V |
 | OPEN: income nouns; 4e9880; 8f0d40 law; +c0/+304; cap action; 920754 | - | lead |
 
 ## M330 (s307-chain2, STATIC 13/13) - block+300 = UPKEEP SPEND ACCUMULATOR

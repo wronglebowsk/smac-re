@@ -21,7 +21,10 @@ lines = s.splitlines(keepends=True)
 idx = [i for i, l in enumerate(lines) if l.startswith("M330 (s307-chain2):")]
 assert len(idx) == 1, "expected exactly one M330 one-liner, got %d" % len(idx)
 retired = lines[idx[0]]
-sha = hashlib.sha256(retired.encode()).hexdigest()[:12]
+# review #345 P2-3: the label says sha1 — compute SHA-1 (the first firing
+# mislabeled a sha256 as sha1; fix-forwarded in the archive, true sha1
+# 429295c00401, and this script now matches its label).
+sha = hashlib.sha1(retired.encode()).hexdigest()[:12]
 
 arch = open(PA).read()
 assert "§trim-s310-chain2" not in arch, "section already exists"

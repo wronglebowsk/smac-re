@@ -101,39 +101,71 @@ def census_at(off):
             nonfield.append((h, prov))
     return field, nonfield, seeds, accesses
 
-WRITE_MN = m326.STORE_MN | {"lea", "movsx", "movzx"}
+WRITE_MN = m326.STORE_MN | {"lea", "movsx", "movzx", "shl", "shr", "sar",
+                            "rol", "ror", "rcl", "rcr", "imul", "mul", "div",
+                            "idiv", "cdq", "cqo", "stos", "stosd", "lods",
+                            "lodsb", "lodsw", "lodsd", "movs", "movsb",
+                            "movsw", "movsd"}
+# review #345 P1-5: implicit destination writes (mul/imul/div/idiv/cdq hit
+# edx:eax; stos/movs advance edi; movs also esi; lods writes al/ax/eax;
+# xchg/xadd write BOTH operands; cmpxchg also writes eax on failure).
+IMPLICIT_AX_DX = {"mul", "imul", "div", "idiv", "cdq", "cqo"}
 def reg_defs(lo, hi, regs):
     out = []
     for a in m326.ADDRS:
         if a < lo: continue
         if a >= hi: break
         mn, o = ins(a)
-        if mn in WRITE_MN:
-            parts = m326.split_ops(o)
-            if parts and m326.reg_of(parts[0]) in regs:
-                out.append(a)
+        if mn not in WRITE_MN: continue
+        parts = m326.split_ops(o)
+        hit = False
+        if parts and m326.reg_of(parts[0]) in regs:
+            hit = True
+        if mn in ("xchg", "xadd") and len(parts) > 1 \
+                and m326.reg_of(parts[1]) in regs:
+            hit = True
+        if mn == "cmpxchg" and "eax" in regs:
+            hit = True
+        if mn in IMPLICIT_AX_DX and regs & {"eax", "ax", "al", "ah",
+                                            "edx", "dx", "dl", "dh"}:
+            hit = True
+        if mn in ("stos", "stosd", "movs", "movsb", "movsw", "movsd") \
+                and regs & {"edi", "di"}:
+            hit = True
+        if mn in ("movs", "movsb", "movsw", "movsd") and regs & {"esi", "si"}:
+            hit = True
+        if mn in ("lods", "lodsb", "lodsw", "lodsd") \
+                and regs & {"eax", "ax", "al"}:
+            hit = True
+        if hit:
+            out.append(a)
     return out
 
 def stores_to_ebp_slot(lo, hi, slot):
+    # review #345 P1-3: ALL store mnemonics, not just mov (add/sub/xor/... to
+    # the slot would invalidate a sole-def/last-overwrite law)
     out = []
+    pat = re.compile(r"(BYTE|WORD|DWORD) PTR \[ebp%s\]" % re.escape(slot))
     for a in m326.ADDRS:
         if a < lo: continue
         if a >= hi: break
         mn, o = ins(a)
-        if mn == "mov" and o.startswith("DWORD PTR [ebp%s]" % slot):
+        if mn in m326.STORE_MN and pat.match(o):
             out.append(a)
     return out
 
 def block_stores(lo, hi):
-    """mov [esi+0x94dXXX],reg stores in [lo,hi): (addr, disp)."""
+    """ANY store-mnemonic write to [esi+0x94dXXX] in [lo,hi): (addr, disp).
+    review #345 P2-4: add/sub/or/... count too, not just mov."""
     out = []
+    pat = re.compile(r"(BYTE|WORD|DWORD) PTR \[esi\+0x(94d[0-9a-f]+)\]")
     for a in m326.ADDRS:
         if a < lo: continue
         if a >= hi: break
         mn, o = ins(a)
-        if mn == "mov":
-            m = re.match(r"DWORD PTR \[esi\+0x(94d[0-9a-f]+)\],", o)
-            if m: out.append((a, int(m.group(1), 16)))
+        if mn in m326.STORE_MN:
+            m = pat.match(o)
+            if m: out.append((a, int(m.group(2), 16)))
     return out
 
 # ---------------- G1/G2: census shape + provenance ----------------
@@ -259,6 +291,12 @@ def g4_zero():
 # ---------------- G5: +2fc feeder law (FUN_004eaa10) ----------------
 P_F2 = {0x4eaa16: ("mov", "eax,ds:0x8f0d60"),
         0x4eaa2b: ("mov", "bl,BYTE PTR [eax+0x4]"),
+        0x4eaa4d: ("mov", "DWORD PTR [ebp-0x4],ebx"),
+        0x4eac54: ("mov", "ebx,DWORD PTR [ebp-0x4]"),
+        0x4f5a99: ("mov", "DWORD PTR [ebp-0x8],ecx"),
+        0x4f5c33: ("mov", "eax,DWORD PTR [ebp-0x8]"),
+        0x4f5c3c: ("mov", "ds:0x8f0d60,eax"),
+        0x4f5b4b: ("call", "0x4eaa10"),
         0x4eaa23: ("mov", "esi,DWORD PTR [eax+0xc4]"),
         0x4eaa2e: ("add", "esi,ecx"),
         0x4eaa30: ("mov", "DWORD PTR [eax+0xc4],esi"),
@@ -324,10 +362,37 @@ def g5_feeder2fc():
     ok = (ok and stride == STRIDE and clamp_hi == 99999
           and ph == [0x4f5b2c, 0x4f5bdd, 0x4f5f11]
           and s3c == [0x4e8d97] and s74 == [0x4e8d86])
+    # review #345 P1-1: the OWNER chain is measured end-to-end:
+    # bl:=[8f0d60+4] @4eaa2b -> spill [ebp-0x4] @4eaa4d (SOLE store in 4eaa10)
+    # -> reload ebx @4eac54 -> fold @4eacba (no ebx redef in between).
+    # 8f0d60 inside the caller 4f5a70 is stored ONLY at 4f5a93 (= the G6
+    # base_array fold 0x95da10+0x130*arg) and 4f5c3c (restore of the SAME
+    # value via the sole-def [ebp-0x8] spill @4f5a99). The phase-1 call 4f5b4b
+    # sits between the =1 store (4f5b2c) and the =2 store (4f5bdd).
+    # base_rec+4 = owner player index is the M43/M311 identity (NAMED.md:384).
+    fn4e = next(f for f in m326.funcs if f[0] == 0x4eaa10)
+    s4 = stores_to_ebp_slot(fn4e[0], fn4e[0] + max(fn4e[2], 1), "-0x4")
+    ebxlive = reg_defs(0x4eac55, 0x4eacba, {"ebx", "bx", "bl", "bh"})
+    fn4f = next(f for f in m326.funcs if f[0] == 0x4f5a70)
+    p60 = sorted(a for a in m326.ADDRS
+                 if fn4f[0] <= a < fn4f[0] + max(fn4f[2], 1)
+                 and ins(a)[0] == "mov"
+                 and re.match(r"(DWORD PTR )?ds:0x8f0d60,", ins(a)[1]))
+    s8 = stores_to_ebp_slot(fn4f[0], fn4f[0] + max(fn4f[2], 1), "-0x8")
+    phwin = (0x4f5b2c < 0x4f5b4b < 0x4f5bdd
+             and not [a for a in ph if 0x4f5b2c < a < 0x4f5bdd])
+    row("G5 owner-chain: [-0x4]stores4e=%s ebx(4eac54,4eacba)=%s "
+        "8f0d60-stores4f=%s [-0x8]stores4f=%s phase1-call-window=%s"
+        % ([hex(a) for a in s4], [hex(a) for a in ebxlive],
+           [hex(a) for a in p60], [hex(a) for a in s8], phwin))
+    ok = (ok and s4 == [0x4eaa4d] and ebxlive == []
+          and p60 == [0x4f5a93, 0x4f5c3c] and s8 == [0x4f5a99] and phwin)
     gate("G5", ok, "+2fc feeder 4eacd9 (FUN_004eaa10): gate ds:8f0d64==1 (phase 1, "
-         "set @4f5b2c only); += clamp(base_rec+0xd4,0,99999); +0xd4 = +0xc4-+0xf4-"
-         "4e9880(+0xc4-+0xf4); +0xc4 += 8f0c74, +0xf4 := 8f0c3c (both sole stores "
-         "in 4e8d60); owner = base_rec+4 (M311 base_array); 8380-fold derived")
+         "set @4f5b2c only, call 4f5b4b inside the =1/=2 window); += clamp(base_rec"
+         "+0xd4,0,99999); +0xd4 = +0xc4-+0xf4-4e9880(+0xc4-+0xf4); +0xc4 += 8f0c74, "
+         "+0xf4 := 8f0c3c (sole stores in 4e8d60); OWNER chain measured: bl:="
+         "[8f0d60+4] -> sole-def spill -> reload -> 8380-fold; 8f0d60 in the caller "
+         "= base_array fold only (M311; +4=owner per M43, NAMED.md:384)")
     return ok
 
 # ---------------- G6: +308 feeder law (FUN_004f5a70, per owned base) ----------------
@@ -366,11 +431,17 @@ P_F3 = {0x4f5a77: ("mov", "ebx,DWORD PTR [ebp+0x8]"),
         0x4f5cbc: ("add", "ebx,0x4"),
         0x4f5cbf: ("cmp", "eax,0x95dad0"),
         0x520699: ("mov", "eax,ds:0x985af4"),
+        0x52069e: ("xor", "ebx,ebx"),
         0x5206c2: ("mov", "edi,0x95da14"),
+        0x5206c7: ("mov", "eax,DWORD PTR [ebp+0x8]"),
         0x5206cc: ("mov", "cl,BYTE PTR [edi]"),
         0x5206ce: ("cmp", "ecx,eax"),
         0x5206d2: ("push", "ebx"),
         0x5206d3: ("call", "0x4f5a70"),
+        0x5206db: ("test", "eax,eax"),
+        0x5206dd: ("je", "0x5206e6"),
+        0x5206df: ("dec", "ebx"),
+        0x5206e0: ("sub", "edi,0x130"),
         0x5206f0: ("inc", "ebx"),
         0x5206f1: ("add", "edi,0x130"),
         0x5206f7: ("cmp", "ebx,eax")}
@@ -407,8 +478,21 @@ def g6_feeder308():
           and bound == BLKBASE + NBLK * STRIDE + 0xc0 and iters == NBLK - 1
           and fold == STRIDE and esid == [0x4f5c03] and edid == [0x4f5c02]
           and edid2 == [0x4f5b08] and exitpins)
+    # review #345 P1-4: the CALLER loop is measured end-to-end: cursor edi walks
+    # base_array+4 (0x95da14, stride 0x130 — the M311/M43 base_array identity,
+    # NAMED.md:46,491), bound = ds:0x985af4 (the base count), owner compare vs
+    # the faction arg [ebp+8] loaded @5206c7; push ebx IS the loop index: ebx
+    # starts 0 (xor @52069e) and its ONLY defs in the loop body are the retry
+    # dec @5206df (paired with sub edi,0x130 @5206e0 -> same index re-processed)
+    # and the tail inc @5206f0. esi/edi inside 4f5a70 are callee-saved across
+    # the calls; their only redefs in the windows are the exit-path pops above.
+    ebxloop = reg_defs(0x52069f, 0x5206fa, {"ebx", "bx", "bl", "bh"})
+    row("G6 caller-loop: ebx-defs(52069e,5206f9)=%s retry=%s/%s"
+        % ([hex(a) for a in ebxloop], ins(0x5206df), ins(0x5206e0)))
+    ok = ok and ebxloop == [0x5206df, 0x5206f0]
     gate("G6", ok, "+308 feeder 4f5cb0: FUN_004f5a70(base_idx) called per OWNED base "
-         "(5206d3, owner-byte loop over base_array 95da14/985af4); esi=8380*owner "
+         "(5206d3; cursor=base_array+4/0x130, bound=985af4, owner==[ebp+8] @5206c7; "
+         "push ebx = loop index, sole defs retry-dec/tail-inc); esi=8380*owner "
          "(owner=base_rec+4); loop k=1..7 skips self, gates block+0xc0==0 (self AND "
          "k), += 8f0d40[k-1]; ENERGY += base_rec+0xfc @4f5c85-8c; exit-pop liveness")
     return ok
@@ -436,7 +520,11 @@ P_TAIL = {0x520795: ("mov", "ecx,DWORD PTR [ebp+0x8]"),
           0x5207d9: ("mov", "DWORD PTR [esi+0x94d650],edx"),
           0x5207e1: ("mov", "edi,DWORD PTR ds:0x985af4"),
           0x5207e7: ("test", "edi,edi"),
+          0x5207e9: ("jle", "0x52081a"),
           0x5207eb: ("mov", "eax,0x95da14"),
+          0x596ec3: ("push", "0x2ce0"),
+          0x596ec8: ("push", "0x927590"),
+          0x596ed6: ("call", "0x64cc00"),
           0x5207f0: ("xor", "edx,edx"),
           0x5207f2: ("mov", "dl,BYTE PTR [eax]"),
           0x5207f4: ("cmp", "edx,ecx"),
@@ -474,10 +562,20 @@ def g7_tail():
     ok = (ok and profstride == 1436 and rate_off == 0x4ec and gate_off == 0x508
           and model_ok
           and st == [(0x5207d9, 0x94d650), (0x5207ff, 0x94d650), (0x52080c, 0x94d72c)])
-    gate("G7", ok, "upkeep tail: facprofile(1436-fold)+0x508 bit14 gate; rate=+0x4ec: "
+    # review #345 P2-5: the facprofile IDENTITY is byte-tied to the M324 save
+    # carry: fread @596ed6 loads 0x2ce0 bytes into 0x927590 (push pins above);
+    # 0x2ce0/8 = 1436 = the SAME stride the tail fold derives, so [ebx+0x927a7c]
+    # with ebx=1436*faction is facprofile(faction)+0x4ec, not an unrelated array.
+    ldsz = int(ins(0x596ec3)[1], 16)
+    ldbs = int(ins(0x596ec8)[1], 16)
+    row("G7 facprofile-id: load=%x size=%x size/8=%d == profstride=%s"
+        % (ldbs, ldsz, ldsz // NBLK, ldsz // NBLK == profstride))
+    ok = ok and ldbs == 0x927590 and ldsz == 0x2ce0 and ldsz // NBLK == profstride
+    gate("G7", ok, "upkeep tail: facprofile(1436-fold, byte-tied to M324 save carry "
+         "596ec3/ec8/ed6: 0x2ce0=8*1436 @0x927590)+0x508 bit14 gate; rate=+0x4ec: "
          "ENERGY += trunc(ENERGY*rate/100) (magic 51eb851f sar5+signfix); rate==0 "
          "fallback: per OWNED base (95da14/985af4 walk) ENERGY+=1 AND +2fc+=1; "
-         "tail writes ONLY +220/+2fc (no +308)")
+         "tail writes ONLY +220/+2fc (ALL store mnemonics scanned, no +308)")
     return ok
 
 # ---------------- G8: ledger pins + SAVE numeric law ----------------
@@ -503,14 +601,40 @@ def g8_ledger():
     minus = [v308[k] - v300[k] - v2fc[k] for k in range(NBLK)]
     row("G8 ledger: pins=%s v2fc=%s v308=%s v300=%s v30c=%s v310=%s law=%s minus=%s"
         % (ok, v2fc, v308, v300, v30c, v310, ledger, minus))
+    # review #345 P1-2: the INSTRUCTION law needs register liveness between the
+    # loads (G3 pins 52081a/520826/52082c/520832) and the stores/arithmetic, plus
+    # no branch into the middle of the ledger sequence, plus esi (the block base,
+    # folded at entry per G4 P_ZGAP) unredefined from entry to the ledger.
+    eaxl = reg_defs(0x52081b, 0x520820, {"eax", "ax", "al", "ah"})
+    ecxl1 = reg_defs(0x520827, 0x520838, {"ecx", "cx", "cl", "ch"})
+    edil = reg_defs(0x52082d, 0x520838, {"edi", "di"})
+    edxl = reg_defs(0x520833, 0x52083f, {"edx", "dx", "dl", "dh"})
+    ecxl2 = reg_defs(0x520840, 0x520841, {"ecx", "cx", "cl", "ch"})
+    esil = reg_defs(0x52055f, 0x520842, {"esi", "si"})
+    tgts = set()
+    for a in m326.ADDRS:
+        if a < 0x520540: continue
+        if a >= 0x520900: break
+        mn, o = ins(a)
+        if mn.startswith("j"):
+            t = o.split()[-1]
+            if t.startswith("0x"): tgts.add(int(t, 16))
+    midt = sorted(t for t in tgts if 0x52081b <= t <= 0x520841)
+    row("G8 liveness: eax=%s ecx1=%s edi=%s edx=%s ecx2=%s esi(entry,ledger)=%s "
+        "mid-branch=%s" % ([hex(a) for a in eaxl], [hex(a) for a in ecxl1],
+        [hex(a) for a in edil], [hex(a) for a in edxl], [hex(a) for a in ecxl2],
+        [hex(a) for a in esil], [hex(t) for t in midt]))
+    ok = (ok and eaxl == [] and ecxl1 == [] and edil == [] and edxl == []
+          and ecxl2 == [] and esil == [] and midt == [])
     ok = (ok and v2fc == [0, 7, 14, 4, 32, 9, 9, 2]
           and v308 == [0, 0, 0, 0, 3, 0, 0, 0]
           and v300 == [0, 1, 1, 0, 1, 0, 1, 1]          # M330 carry
           and v310 == v2fc and v30c == ledger
           and sv[0x2fc]["off"] == 0x32c and sv[0x2fc]["round"] == 50)
-    gate("G8", ok, "+310 := +2fc; +30c := +308-+300++2fc (byte pins) AND the law "
-         "holds NUMERICALLY on all 8 m54b_clean blocks (v310==v2fc, v30c==ledger); "
-         "minus-variant printed for R5")
+    gate("G8", ok, "+310 := +2fc; +30c := +308-+300++2fc: byte pins + load->store "
+         "register liveness (eax/ecx/edi/edx) + esi unredefined entry->ledger + no "
+         "mid-branch; the save law CORROBORATES numerically on all 8 m54b_clean "
+         "blocks (v310==v2fc, v30c==ledger); minus-variant printed for R5")
     return ok
 
 # ---------------- G9: 546800 cap — MIN(ENERGY/2, 100*net) >= 50 ----------------
@@ -551,12 +675,18 @@ def g9_cap546():
     ow = stores_to_ebp_slot(0x54b1e6, 0x54b35c, "+0x8")
     edilive = reg_defs(0x54684b, 0x54d3ab, {"edi", "di"})
     fold = ((((1 << 6) + 1) * 2 + 1) * 16 - 1) * 4
+    # review #345 round: liveness-window WITNESS pins — the two insns inside the
+    # measured windows that the scanner mutants patch (MU41 shift-write to edi,
+    # MU42 non-mov write to [ebp+8]); literal-read here for L2b.
+    P_LIVEW = {0x54b350: ("mov", "eax,DWORD PTR [ebp-0x14]"),
+               0x54b348: ("test", "eax,eax")}
+    wok = all(ins(a) == t for a, t in P_LIVEW.items())
     row("G9 cap546: pins=%s scale=%d thr=%d overwrite(54b1e5,54b35c)=%s "
-        "edi-defs(54684a,54d3ab)=%s fold=%d"
+        "edi-defs(54684a,54d3ab)=%s fold=%d witnesses=%s"
         % (all(ins(a) == t for a, t in P_546.items()), scale, thr, ow,
-           [hex(a) for a in edilive], fold))
+           [hex(a) for a in edilive], fold, wok))
     ok = (ok and scale == 100 and thr == 50 and ow == [] and edilive == []
-          and fold == STRIDE)
+          and fold == STRIDE and wok)
     gate("G9", ok, "546800: net=+2fc-+300 (54b361/367, [ebp+8]=8380*esi last-overwrite "
          "law); cap=MIN(trunc(ENERGY/2), 100*net) (fold DERIVED=100); gate cap>=50 "
          "else exit 54b91b; second reader 54d43b = block(arg1)+2fc (edi sole def "

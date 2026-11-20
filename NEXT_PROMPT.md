@@ -115,4 +115,4 @@ M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
 M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
 M328 (s304-chain2): 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag (noun INFERRED, lifecycle V). HURRY story closed. 14/14 030a6fc12e4a7cd7 x2; 38/38 (37+1 NO-OP) 36259eee0736d9c1; ST 5/5. NAMED ## M328.
 M330 MERGED #340 -> 1b9cb38 (s309-chain2); pr340 JSON sidecar folded #342 (red-gate docs fold, fix-forwarded in s309 — check CI before ANY merge).
-M331 (s310-chain2): +2fc/+308=upkeep INCOME siblings (per-base clamp(net,0,99999) phase-1 / 8f0d40 sums +c0-gated); +30c ledger verified 8/8 save; interest=facprofile+4ec %/100 bit14; cap 546800 MIN(E/2,100*net)>=50. 14/14 a9983cddad88fade x2; 33/33+1 75a8749314a13287. NAMED ## M331.
+M331 (s310-chain2): +2fc/+308=upkeep INCOME siblings (per-base clamp(net,0,99999) phase-1 / 8f0d40 sums +c0-gated); +30c ledger verified 8/8 save; interest=facprofile+4ec %/100 bit14; cap 546800 MIN(E/2,100*net)>=50. 14/14 442270fd57be2b62 x2; 43/43+1 29061c567f9132fb. NAMED ## M331.

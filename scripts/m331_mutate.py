@@ -52,6 +52,19 @@ MUTANTS = [
     ("MU32", "save", "programs/saves/m112auto1.SAV", {"G8", "G12"}),
     ("MU33", "code", "0x4f4962|mov DWORD PTR [edi+0x94d72c],edx", {"G1", "R"}),
     ("MU34", "code", "0x5207d9|mov DWORD PTR [esi+0x94d738],edx", {"G2", "G7", "R"}),
+    # review #345 round: owner-chain, caller-loop, ledger-liveness, loader-id
+    # pins + the three scanner-upgrade mutants (shift write / non-mov slot
+    # write / non-mov block store inside the measured windows)
+    ("MU35", "code", "0x4eaa4d|mov DWORD PTR [ebp-0x4],eax", {"G5"}),
+    ("MU36", "code", "0x4eac54|mov ebx,DWORD PTR [ebp-0x8]", {"G1", "G5"}),
+    ("MU37", "code", "0x520820|mov DWORD PTR [esi+0x94d740],edx", {"G8"}),
+    ("MU38", "code", "0x5206c7|mov eax,DWORD PTR [ebp+0xc]", {"G6"}),
+    ("MU39", "code", "0x5206df|dec ecx", {"G6"}),
+    ("MU40", "code", "0x4f5a99|mov DWORD PTR [ebp-0x8],edx", {"G5"}),
+    ("MU41", "code", "0x54b350|shr edi,1", {"G9"}),
+    ("MU42", "code", "0x54b348|add DWORD PTR [ebp+0x8],eax", {"G9"}),
+    ("MU43", "code", "0x5207e9|add DWORD PTR [esi+0x94d738],eax", {"G2", "G7", "R"}),
+    ("MU44", "code", "0x596ec8|push 0x927594", {"G7"}),
 ]
 
 def env_for(kind, payload):
