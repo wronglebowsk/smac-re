@@ -1,3 +1,4 @@
-ST1 redden set ['G7'] rc=1 PASS
+ST1 redden set ['G10', 'G7'] rc=1 PASS
 ST2 void anchor rejected: anchor for sim/energy.py occurs 0 times in sim/energy.py
+ST4 exact-set comparison rejects a wrong declaration (1 complaints) and accepts the true one (0): PASS
 ST3 no-op tree reddens nothing: PASS (0 BAD, rc=0)

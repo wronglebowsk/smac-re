@@ -918,33 +918,45 @@ mask bit — the mask is VACUOUS, cl=8) `r = trunc(k*x/3)`, k=1 at difficulty 4 
 `+310 = +2fc`, `+30c = +308 - +300 + +2fc`.
 `python3 -u -m sim.selftest --b27` must print `PASS B27: 10/10 gates` (authored once in
 `sim/composedenergy.py`; `--b27` only relays, so the two entry points cannot print different text)
-with: **G1** transcription integrity — every leg pin (address + operand tuple) this module uses
-occurs VERBATIM in the committed census evidence it cites, counted, and a deliberately-bogus pin
-in the same list reddens the gate (trap 24); **G2** octet parity with the decoders — the eight
-ENERGY, eight +224 and eight +300 dwords read out of block A, and the three file-offset tables,
+with: **G1** transcription integrity — every leg pin is a (label, address, FIELD TOKEN, file) triple and
+ONE evidence line must carry BOTH the address and the token it is claimed for (an address that
+merely occurs somewhere proves nothing; s309 review F3), counted, and the deliberately-bogus control
+pin ships INSIDE the same list so it is measured in the same pass and must hit nothing; **G2** octet parity with the decoders — the eight
+ENERGY, eight +224 and eight +300 dwords read out of block A, and the two file-offset tables the censuses print (+300 and +224 - M325 prints no offset table for +220, so there is no third table to gate),
 equal the lists the M325/M326/M330 censuses PRINT (parsed out of those evidence lines, never
 retyped here); **G3** the ledger laws on the save's own bytes: `+310 == +2fc` and
 `+30c == +308 - +300 + +2fc` per faction, 8/8 each, with the sign-flipped and term-swapped rivals
-failing at counted factions; **G4** reuse, not forking — `sim.economy` runs in-process and the
-recorded idle 12-round sequence and the post-found (2,2,0) pair of `evidence/m44d_idle.json`
-reproduce through THIS pipeline (energy flat, net 0), the recorded numbers parsed from the trace;
+failing at counted factions; **G4** reuse, not forking — `sim.economy` runs in-process and B4's OWN replay
+gates are re-run here (counted, all green), and the post-found (2,2,0) row of
+`evidence/m44d_idle.json` reproduces through THIS pipeline (net 19 at this save's difficulty, while
+the k=2 and full-refund readings predict 20 and 21), the recorded numbers parsed from the trace. The
+flat 12-round idle sequence is printed as a LEGS-ZERO CONSISTENCY check only: with every input 0 a
+round cannot move energy, so it is not a parity and gates nothing (s309 review F6);
 **G5** the refund arithmetic against the game's own printed samples — M330 G4's (x, k=1, k=2,
 residue) rows are reproduced exactly and the residue identity `r + residue == x` holds over a
-swept x-range, counted; **G6** the k-table derived by walking the pinned branch tuples (cmp 0x3 /
-jle, cmp 0x4 / jne) for difficulties 0..9, printed, rivals (k=1 everywhere, threshold >2) failing
-at counted difficulties; **G7** THE ORDERING AS A NUMBER: with a declared debt fixture the SNAPSHOT
+swept x-range, counted; **G6** the k-table derived by walking the pinned branch tuples for difficulties 0..9,
+printed, with the branch SHAPE gated too (mov of the same difficulty global, cmp 0x3 / jle skip,
+cmp 0x4 / jne to a DIFFERENT target — if both jumps went to one address the k=1 fall-through could
+not exist), and BOTH rivals measured (no-thresholding, threshold-2) at counted difficulties; **G7** THE ORDERING AS A NUMBER: with a declared debt fixture the SNAPSHOT
 holds the post-settle clamped value, and the "snapshot first" rival differs by exactly the clamped
 amount — plus the MEASURED inertness of both legs on this save (+224 is 0 for all eight, and the
-difficulty dword read out of the container is ≤3, so the refund never fires: printed, not waved);
+difficulty dword read out of the container is ≤3, so the refund never fires: printed, not waved).
+The inertness is measured on the save's OWN eight blocks AND shown not to be a stub: the same
+blocks stay inert at the k=1/k=2 difficulties too (every nonzero +300 is 1, under the k=1 quantum),
+while `refund(3, k)` returns 1 at both k — the leg fires, the save is small (s309 review F2);
 **G8** THE WRITER: the round's mutated fields are written into block A through `savewriter` and an
-unmutated build is still the identity; every round's re-parse equals the model, every differing
-byte lies in a MODELED span, and `sim.savewriter.modeled_spans()` called WITHOUT block overrides
+unmutated build is still the identity; every round's re-parse equals the model and every differing
+byte lies in a MODELED span — measured PER ROUND against each round's written image, the whole list
+printed, not only on the final image (s309 review F10), and `sim.savewriter.modeled_spans()` called WITHOUT block overrides
 still returns exactly the pre-B27 list (the older rungs' strictness must not be loosened by this
 rung); **G9** THE FALSIFIER: poisoning one faction's ENERGY in the written image only shifts that
 faction's later leg arithmetic INTO the final container (the other seven untouched, counted), while
 the model-fed smuggler that keeps its own ledger stays byte-identical to the clean run; **G10**
-the rivals fail the same fit, MEASURED, and determinism: two runs → identical printed tables and
-identical final-container sha256, with the ACCEPT anchor pinned to a literal inside G10.
+the rivals fail the same fit, MEASURED (the smuggler row is two counted numbers — poisoned
+factions carried by the honest run minus those carried by the blind smuggler — not a difference of
+counts that can cancel; s309 review F7), and determinism: two runs → identical rows digest,
+identical PRINTED-TABLE digest and identical final-container sha256, all three pinned to literals
+inside G10 (the rows digest alone would let table text drift unnoticed; s309 review F9).
 `scripts/b27_mutate.py` re-creates the defects by anchor->replacement in a fresh subprocess and
 exits non-zero unless each reddens EXACTLY its declared (MEASURED) gate set.
 DECLARED UNMODELED: the feeder's per-slot `v` (the 34-slot item table's runtime row order is only

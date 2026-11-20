@@ -46,7 +46,11 @@ TRACE_IDLE = "evidence/m44d_idle.json"
 # The pre-B27 writer span list, pinned so this rung cannot loosen the older rungs' gates.
 LEGACY_SPANS = [(60, 64), (68, 76), (84, 86), (800, 804), (808, 812), (79372, 79380)]
 # Filled from the first real run's printed digest; G10 asserts the result table hashes to it.
-ANCHOR = "b65e8129b67ba67d"
+# s309 re-pinned after the review remediation (F2/F3/F4/F6/F7/F9/F10): rows digest b65e8129...
+# still holds; the printed-table digest and the unmutated final container are now pinned too.
+ANCHOR = "b65e8129b67ba67d"        # digest of the 136 composed (round, fac, ...) rows
+PRINT_ANCHOR = "3c134ea70638c12b"  # sha16 of render(m), the printed tables
+CONTAINER_ANCHOR = "626fec9a35deddba"   # sha16 of the unmutated m54b_clean image bytes
 
 
 def _txt(rel):
@@ -139,7 +143,7 @@ def compose(sv, up_tbl, rounds=ROUNDS, poison=None, smuggle=False, rival=None, t
     model's own ledger and refuses to re-read the image (the blindness rival).  `rival`
     mutates one leg law.  Returns the per-round rows and the final image.
     """
-    rows_all, imgs, carries = [], [], []
+    rows_all, imgs, carries, round_outside = [], [], [], []
     model_energy = {f: None for f in range(sen.NFACTION)}
     img = sv.data
     for rnd in range(rounds):
@@ -184,6 +188,10 @@ def compose(sv, up_tbl, rounds=ROUNDS, poison=None, smuggle=False, rival=None, t
             o = sen.field_file_off(so.BLOCK_A_OFF, sen.OFF_ENERGY, f)
             struct.pack_into("<i", mut, o, struct.unpack_from("<i", mut, o)[0] + delta)
             nxt = bytes(mut)
+        # F10 (s309 review): the writer law is measured EVERY round, not only on the final image
+        if rival != "nowrite":
+            spans_r = [(so.BLOCK_A_OFF + o, so.BLOCK_A_OFF + o + 4) for (o, _v) in wr]
+            round_outside.append(sow.modeled_diff_check(im.data, nxt, extra=spans_r))
         # carry check: what the NEXT round will read out of the bytes just written
         chk = sen.read_blocks(nxt, so.BLOCK_A_OFF)
         bad = 0
@@ -197,6 +205,7 @@ def compose(sv, up_tbl, rounds=ROUNDS, poison=None, smuggle=False, rival=None, t
         imgs.append(hashlib.sha256(nxt).hexdigest()[:16])
         img = nxt
     return {"rows": rows_all, "final": img, "shas": imgs, "carry_bad": carries,
+            "round_outside": [len(x) for x in round_outside],
             "difficulty": sen.read_difficulty(sv.data, so.mem2file),
             "round_dword": struct.unpack_from("<I", sv.data, RND_RECORDED)[0], "tag": tag}
 
@@ -279,6 +288,16 @@ def measure(sav_path):
     sw = cen["switch"]
     cmps = [int(o.split(",")[1], 16) for (op, o) in sw if op == "cmp" and o.split(",")[1].startswith("0x")]
     m["skip_max"], m["k1"] = cmps[0], cmps[1]
+    # F4 (s309 review): the k-table is WALKED, so the branch shape that makes the first threshold
+    # a skip and the second the k=1 case is part of the measurement, not an assumption.
+    m["k_struct"] = (len(sw) >= 5 and sw[1][0] == "cmp" and sw[2][0] == "jle"
+                     and sw[3][0] == "cmp" and sw[4][0] == "jne")
+    m["k_reads_gdiff"] = sw[0][0] == "mov" and sw[0][1].endswith("0x985aec")
+    m["k_skip_target"] = sw[2][1]
+    m["k_other_target"] = sw[4][1]
+    # the jle skips to the k=0 leg, the jne jumps the k=2 leg, and the k=1 value is the
+    # FALL-THROUGH: if the two targets were the same address the k=1 case could not exist.
+    m["k_reach"] = sw[2][1] != sw[4][1]
     m["ktable"] = [(d, sen.k_of(d, m["skip_max"], m["k1"])) for d in range(10)]
     m["switch_pins"] = [(t, t in sw) for t in sen.REFUND_SWITCH]
     m["k_rival_thr"] = sum(1 for d in range(10)
@@ -287,6 +306,23 @@ def measure(sav_path):
                           and sen.trunc_div3(d * 0) != sen.trunc_div3(d * 0))
     m["k_rival_all2"] = sum(1 for d in range(10)
                             if sen.k_of(d, m["skip_max"], 3) != sen.k_of(d, m["skip_max"], m["k1"]))
+
+    # F2 (s309 review): the save's OWN blocks measure both legs inert, and the measurement is
+    # shown to be non-vacuous -- the same blocks with one difficulty above the skip threshold DO
+    # fire.  The difficulty read itself is pinned by the diff-gvar pin (G1) and re-read here.
+    b0 = sen.read_blocks(data, so.BLOCK_A_OFF)
+    m["debt_nonzero"] = sum(1 for b in b0 if b[sen.OFF_DEBT])
+    m["spend_nonzero"] = sum(1 for b in b0 if b[sen.OFF_SPEND])
+    m["refund_inert"] = sum(1 for b in b0 if sen.refund(b[sen.OFF_SPEND], m["difficulty"])[0])
+    # the same eight blocks, driven at the difficulties whose k is 1 and 2 (k1 and k1+1): still
+    # inert, because every nonzero +300 field on this save is smaller than the k=1 quantum
+    m["refund_k12"] = sum(1 for b in b0 for d in (m["k1"], m["k1"] + 1)
+                          if sen.refund(b[sen.OFF_SPEND], d)[0])
+    m["spend_max"] = max(m["spend_oct"])
+    # ...and the leg demonstrably FIRES on a spend of 3 at both k (probe 2/2), so the two inert
+    # measurements above are a property of this save, not of a stubbed refund()
+    m["refund_probe"] = sum(1 for d in (m["k1"], m["k1"] + 1) if sen.refund(3, d)[0] > 0)
+    m["diff_recheck"] = sen.read_difficulty(data, so.mem2file) == m["difficulty"]
 
     # G7 the ordering, on declared fixtures (the save's own debt octet is 0, measured)
     FIXTURES = [(10, 3), (5, 8), (0, 4), (120, 200), (7, 0)]
@@ -346,8 +382,9 @@ def measure(sav_path):
               for (e, d) in [(10, 3), (5, 8), (0, 4), (120, 200), (7, 0)]]
     sm_rows = sen.read_energy_octet(m["smug"]["final"], so.BLOCK_A_OFF)
     ho_rows = sen.read_energy_octet(m["run"]["final"], so.BLOCK_A_OFF)
-    n_poc_carried = sum(1 for f in range(sen.NFACTION)
-                        if sm_rows[f] != ho_rows[f])
+    cz_rows = sen.read_energy_octet(m["poc"]["final"], so.BLOCK_A_OFF)
+    m["pz_carried_honest"] = sum(1 for f in range(sen.NFACTION) if cz_rows[f] != ho_rows[f])
+    m["pz_carried_smug"] = sum(1 for f in range(sen.NFACTION) if sm_rows[f] != ho_rows[f])
     m["rivals"] = [
         ("fullrefund", "round rows the mis-settled residue moves",
          sum(1 for a, b in zip(legs_table_rows(rr_full), m["rows"]) if a != b)),
@@ -356,8 +393,9 @@ def measure(sav_path):
          sum(1 for x in ord_nc if x["energy_next"] < 0)),
         ("nowrite", "round rows the container does not carry",
          sum(1 for a, b in zip(legs_table_rows(rr_nowrite), m["rows"]) if a != b)),
-        ("smuggle", "poisoned factions the falsifier reaches (the honest run reaches 1)",
-         abs(n_poc_carried - len(m["pz_facs"]))),
+        ("smuggle", "poisoned factions CARRIED: honest %d minus blind smuggler %d"
+         % (m["pz_carried_honest"], m["pz_carried_smug"]),
+         m["pz_carried_honest"] - m["pz_carried_smug"]),
         ("nofork: reuse B4's fold instead of this pipeline", "printed fits it breaks", 0),
     ]
     # the post-found parity + its rivals (G4's discriminating half)
@@ -429,8 +467,15 @@ def render(m):
       "(debt octet all zero, measured)" % (m["ord_div"], len(m["ord_rows"]), m["ord_save"]))
     p("TABLE F B4's recorded economy through THIS pipeline")
     p("  B4's own replay gates, re-run in-process: %s" % (m["b4_names"],))
-    p("  idle rounds reproduced %d/%d (energy set %s)"
+    p("  legs-zero CONSISTENCY (all legs 0 => energy unchanged; NOT a parity, s309 F6): %d/%d "
+      "(energy set %s)"
       % (m["idle_ok"], len(m["b4"]["idle_ours"]), sorted(set(m["b4"]["idle_ours"]))))
+    p("  this save measures BOTH ledger legs inert, and says WHY: debt nonzero %d/8 (settle "
+      "inert); refund nonzero %d/8 at difficulty %d (k=0) and %d/8 driven at the k=1/k=2 "
+      "difficulties %d/%d, because max(+300)=%d; refund(3, k=1)=1 refund(3, k=2)=1 probe %d/2 "
+      "-> the leg is not a stub, the save is small"
+      % (m["debt_nonzero"], m["refund_inert"], m["difficulty"], m["refund_k12"], m["k1"],
+         m["k1"] + 1, m["spend_max"], m["refund_probe"]))
     p("  post-found recorded energy %d (gross %d upkeep %d): predicted by difficulty %s; "
       "matches %d/10; full-refund rival %d"
       % (m["pf"][0], m["pf"][1], m["pf"][2], m["pf_pred"], m["pf_match"], m["pf_full"]))
@@ -444,8 +489,11 @@ def render(m):
     p("  rows printed %d of %d (round 0 carries all eight factions, later rounds print "
       "faction 0); every gate and the digest read ALL rows"
       % (sum(1 for t in m["rows"] if t[0] == 0 or t[1] == 0), len(m["rows"])))
-    p("  carry violations per round %s; final container sha %s; result digest %s"
-      % (m["run"]["carry_bad"], m["final_sha"], m["digest"]))
+    p("  carry violations per round %s; bytes outside modeled spans per round %s"
+      % (m["run"]["carry_bad"], m["run"]["round_outside"]))
+    p("  final container sha %s; rows digest %s; printed-table digest %s (of the tables as "
+      "printed before this line)"
+      % (m["final_sha"], m["digest"], m.get("print_digest", "(pending)")))
     p("TABLE H the writer")
     p("  identity (unmutated build == original bytes) %s; modeled block-A spans %d "
       "(%d B); differing bytes this round %d, outside modeled spans %d"
@@ -454,9 +502,10 @@ def render(m):
     p("  modeled_spans() with no argument == the pre-B27 list: %s" % m["legacy_spans_ok"])
     p("TABLE I the falsifier (poison +77 on faction %d's ENERGY, IN THE IMAGE ONLY)"
       % m["pz"][0])
-    p("  honest final sha %s (factions whose ENERGY bytes differ: %s); smuggler sha %s "
-      "(== clean %s)" % (m["poc_sha"], m["pz_facs"], m["smug_sha"],
-                         m["smug_sha"] == m["final_sha"]))
+    p(" honest final sha %s (factions whose ENERGY bytes differ: %s; poisoned carried %d); "
+      "smuggler sha %s (== clean %s, carried %d)"
+      % (m["poc_sha"], m["pz_facs"], m["pz_carried_honest"], m["smug_sha"],
+         m["smug_sha"] == m["final_sha"], m["pz_carried_smug"]))
     p("TABLE J rivals, measured (0 = bites nowhere = retired as decoration)")
     for name, what, bite in m["rivals"]:
         p("  %-45s %-52s %s" % (name, what, bite))
@@ -467,9 +516,12 @@ def render(m):
 def acceptance(m, results):
     cen, b4 = m["cen"], m["b4"]
     add = results.append
-    g1 = all(hit for (_l, _a, hit) in m["pin_hits"]) and m["pin_bogus"] == 0
-    add(("G1 leg pins occur in the committed census evidence (%d pins, bogus pin hits %d)"
-         % (len(m["pin_hits"]), m["pin_bogus"]), g1))
+    honest = [h for h in m["pin_hits"] if h[0] != m["pin_control"]]
+    g1 = all(n > 0 for (_l, _a, n) in honest) and m["pin_bogus"] == 0
+    add(("G1 leg pins BOUND to their field token on one census line (%d pins, min line hits %d; "
+         "control %s hits %d)"
+         % (len(honest), min(n for (_l, _a, n) in honest), m["pin_control"], m["pin_bogus"]),
+         g1 and len(honest) == len(sen.LEG_PINS) - 1))
     ok2 = (m["energy_oct"] == cen["m330_energy"] == cen["m326_energy"] == cen["m325_energy"]
            and m["spend_oct"] == cen["m330_spend"] and m["debt_oct"] == cen["m326_debt"]
            and m["spend_offs"] == cen["m330_foffs"] and m["debt_offs"] == cen["m326_foffs"])
@@ -479,12 +531,11 @@ def acceptance(m, results):
          % (m["law_310"], m["law_30c"], m["rlaw_310"], m["rlaw_30c"], m["rlaw_30c2"]),
          m["law_310"] == 8 and m["law_30c"] == 8
          and m["rlaw_310"] < 8 and m["rlaw_30c"] < 8 and m["rlaw_30c2"] < 8))
-    add(("G4 B4 in-process green (%d gates, %d failed) + idle %d/%d + post-found %d matches, "
-         "full-refund %d != recorded %d"
-         % (m["b4_gates"], m["b4_bad"], m["idle_ok"], len(b4["idle_ours"]),
-            m["pf_match"], m["pf_full"], b4["post_recorded"]),
+    add(("G4 B4 in-process green (%d gates, %d failed) + post-found %d matches, full-refund "
+         "%d != recorded %d; legs-zero consistency %d/%d (NOT a parity, s309 review F6)"
+         % (m["b4_gates"], m["b4_bad"], m["pf_match"], m["pf_full"], b4["post_recorded"],
+            m["idle_ok"], len(b4["idle_ours"])),
          m["b4_bad"] == 0 and m["b4_gates"] >= 3
-         and m["idle_ok"] == len(b4["idle_ours"])
          and b4["post_recorded"] in [v for _d, v in m["pf_pred"]]
          and m["pf_full"] != b4["post_recorded"]
          and all(v == b4["post_recorded"] for d, v in m["pf_pred"] if d <= m["k1"])))
@@ -498,29 +549,45 @@ def acceptance(m, results):
          all(tuple(x) in [tuple(y) for y in cen["switch"]] for x in sen.REFUND_SWITCH)
          and [k for _d, k in m["ktable"]] == [0, 0, 0, 0, 1, 2, 2, 2, 2, 2]
          and [k for _d, k in m["ktable"]] == [sen.k_of(d) for d in range(10)]
-         and m["k_rival_thr"] > 0))
-    add(("G7 ordering is a number: rival-first differs on %d/%d discriminating fixtures, "
-         "the save diverges %d"
-         % (m["ord_div"], m["ord_expected"], m["ord_save"]),
+         and m["k_struct"] and m["k_reach"] and m["k_reads_gdiff"]
+         and m["k_rival_thr"] > 0 and m["k_rival_all2"] > 0))
+    add(("G7 ordering is a number: rival-first differs on %d/%d discriminating fixtures; on "
+         "THIS save both legs measure inert (debt %d/8 nonzero, refund %d/8 at difficulty %d "
+         "and %d/8 at the k=1/k=2 difficulties, max +300 = %d) while the leg itself fires "
+         "(probe %d/2), difficulty %d <= skip %d and the switch reads the same global"
+         % (m["ord_div"], m["ord_expected"], m["debt_nonzero"], m["refund_inert"],
+            m["difficulty"], m["refund_k12"], m["spend_max"], m["refund_probe"],
+            m["difficulty"], m["skip_max"]),
          m["ord_div"] == m["ord_expected"] and m["ord_save"] == 0
-         and all(r[2] == r[4] for r in m["ord_rows"])))
-    add(("G8 writer: identity %s, carry violations %s, bytes outside modeled spans %d, "
-         "legacy spans untouched %s"
-         % (m["identity"], m["run"]["carry_bad"], len(m["outside"]), m["legacy_spans_ok"]),
+         and all(r[2] == r[4] for r in m["ord_rows"])
+         and m["debt_nonzero"] == 0 and m["refund_inert"] == 0 and m["refund_k12"] == 0
+         and m["refund_probe"] == 2 and m["difficulty"] <= m["skip_max"]
+         and m["k_reads_gdiff"] and m["diff_recheck"]))
+    add(("G8 writer: identity %s, carry violations %s, bytes outside modeled spans PER ROUND "
+         "%s (final image %d), legacy spans untouched %s"
+         % (m["identity"], m["run"]["carry_bad"], m["run"]["round_outside"],
+            len(m["outside"]), m["legacy_spans_ok"]),
          m["identity"] and all(v == 0 for v in m["run"]["carry_bad"])
+         and all(v == 0 for v in m["run"]["round_outside"])
          and m["outside"] == [] and m["legacy_spans_ok"] and len(m["block_spans"]) == 40))
-    add(("G9 falsifier reaches the container (factions %s), smuggler blind %s"
-         % (m["pz_facs"], m["smug_sha"] == m["final_sha"]),
-         m["pz_facs"] == [m["pz"][0]] and m["smug_sha"] == m["final_sha"]))
+    add(("G9 falsifier reaches the container (factions %s; carried %d), smuggler blind "
+         "(carried %d, sha==clean %s)"
+         % (m["pz_facs"], m["pz_carried_honest"], m["pz_carried_smug"],
+            m["smug_sha"] == m["final_sha"]),
+         m["pz_facs"] == [m["pz"][0]] and m["pz_carried_honest"] > 0
+         and m["pz_carried_smug"] == 0 and m["smug_sha"] == m["final_sha"]))
     active = [r for r in m["rivals"] if not r[0].startswith("nofork")]
     retired = [r for r in m["rivals"] if r[0].startswith("nofork")]
     ok_riv = all(r[2] > 0 for r in active) and all(r[2] == 0 for r in retired)
-    add(("G10 rival bites %s; retired-as-decoration %s; determinism %s; anchor %s"
+    add(("G10 rival bites %s; retired-as-decoration %s; determinism rows %s printed %s "
+         "container %s; anchors rows %s / printed %s / container %s"
          % ([(r[0], r[2]) for r in active], [(r[0], r[2]) for r in retired],
-            (m["digest"] == digest_rows(m["rows2"]) and m["final_sha"] == m["final_sha2"]),
-            m["digest"]),
+            m["digest"] == digest_rows(m["rows2"]), m["print_digest"] == PRINT_ANCHOR,
+            m["final_sha"] == m["final_sha2"] == CONTAINER_ANCHOR,
+            m["digest"], m["print_digest"], m["final_sha"]),
          ok_riv and m["digest"] == digest_rows(m["rows2"])
-         and m["final_sha"] == m["final_sha2"] and m["digest"] == ANCHOR))
+         and m["final_sha"] == m["final_sha2"] == CONTAINER_ANCHOR
+         and m["digest"] == ANCHOR and m["print_digest"] == PRINT_ANCHOR))
 
 
 def _pin_check(m):
@@ -528,12 +595,14 @@ def _pin_check(m):
     bogus pin must NOT occur anywhere (that is what makes the check bite)."""
     cache = {}
     hits = []
-    for label, addr, rel in sen.LEG_PINS:
+    for label, addr, tok, rel in sen.LEG_PINS:
         text = cache.setdefault(rel, _txt(rel))
-        hits.append((label, addr, addr in text))
+        # BOUND: one evidence line must carry the address AND the field token it is claimed for
+        hits.append((label, addr, sum(1 for l in text.split("\n")
+                                      if addr in l and tok in l)))
     m["pin_hits"] = hits
-    m["pin_bogus"] = sum(1 for rel in set(r for _l, _a, r in sen.LEG_PINS)
-                         if "0x5a1234" in cache.setdefault(rel, _txt(rel)))
+    m["pin_control"] = sen.CONTROL_PIN
+    m["pin_bogus"] = dict((h[0], h[2]) for h in hits)[sen.CONTROL_PIN]
     m["switch_hits"] = [(t, t in m["cen"]["switch"]) for t in sen.REFUND_SWITCH]
 
 
@@ -556,6 +625,10 @@ def measure_full(sav_path):
     m = measure(sav_path)
     _pin_check(m)
     _b4_inprocess(m)
+    # F9 (s309 review): pin the PRINTED tables and the final container, not only the row digest.
+    # The digest is taken over the tables as render() prints them BEFORE the digest line (which
+    # then carries "(pending)"), so the hash never has to contain itself.
+    m["print_digest"] = hashlib.sha256("\n".join(render(m)).encode()).hexdigest()[:16]
     return m
 
 

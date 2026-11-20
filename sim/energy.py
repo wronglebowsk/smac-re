@@ -42,30 +42,34 @@ G_DIFF = 0x985AEC
 
 # leg pins: (label, address-or-operand literal, committed evidence file). G1 greps each one.
 LEG_PINS = (
-    ("entry-zero", "52056d", "evidence/m330_block300_census.txt"),
-    ("feeder-E-sub", "4f4950", "evidence/m330_block300_census.txt"),
-    ("feeder-load", "4f4958", "evidence/m330_block300_census.txt"),
-    ("feeder-acc", "4f495e", "evidence/m330_block300_census.txt"),
-    ("feeder-store", "4f4962", "evidence/m330_block300_census.txt"),
-    ("upkeep-charge", "4f4952", "evidence/m326_block224_census.txt"),
-    ("income-add", "4f5c8c", "evidence/m325_block220_census.txt"),
-    ("settle-call", "520605", "evidence/m328_hurry_globals.txt"),
-    ("settle-body", "520b0e", "evidence/m326_block224_census.txt"),
-    ("settle-zero", "520b22", "evidence/m326_block224_census.txt"),
-    ("energy-field", "0x94d650", "evidence/m325_block220_census.txt"),
-    ("debt-field", "0x94d654", "evidence/m326_block224_census.txt"),
-    ("spend-field", "0x94d730", "evidence/m330_block300_census.txt"),
-    ("snapshot", "52065d", "evidence/m328_hurry_globals.txt"),
-    ("refund-load", "52071e", "evidence/m330_block300_census.txt"),
-    ("refund-add", "520743", "evidence/m328_hurry_globals.txt"),
-    ("refund-add2", "520749", "evidence/m330_block300_census.txt"),
-    ("refund-magic", "55555556", "evidence/m330_block300_census.txt"),
-    ("refund-residue", "52078f", "evidence/m330_block300_census.txt"),
-    ("refund-diff", "0x985aec", "evidence/m330_block300_census.txt"),
-    ("refund-mask", "0x985b10", "evidence/m330_block300_census.txt"),
-    ("ledger-read", "52082c", "evidence/m330_block300_census.txt"),
-    ("block-base", "0x94d430", "evidence/m328_hurry_globals.txt"),
+    # (label, address-as-printed, field token, evidence file).  G1 requires ONE evidence line to
+    # carry BOTH the address and the field token -- a pin transcribed onto the wrong field fails.
+    ("entry-zero", "52056d", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("feeder-read", "4f4958", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("feeder-acc", "4f495e", "+300+=v", "evidence/m330_block300_census.txt"),
+    ("feeder-store", "4f4962", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("upkeep-charge", "4f4952", "DISP94D650", "evidence/m325_block220_census.txt"),
+    ("income-add", "4f5c8c", "DISP94D650", "evidence/m325_block220_census.txt"),
+    ("settle-call", "520605", "debt-pay", "evidence/m328_hurry_globals.txt"),
+    ("settle-body", "520b0e", "DISP94D654", "evidence/m326_block224_census.txt"),
+    ("settle-zero", "520b22", "DISP94D654", "evidence/m326_block224_census.txt"),
+    ("energy-field", "0x94d650", "DISP94D650", "evidence/m325_block220_census.txt"),
+    ("debt-field", "0x94d654", "DISP94D654", "evidence/m326_block224_census.txt"),
+    ("spend-field", "0x94d730", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("snapshot", "52065d", "0x91c64c", "evidence/m328_hurry_globals.txt"),
+    ("refund-load", "52071e", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("refund-add", "520743", "add eax,edx", "evidence/m328_hurry_globals.txt"),
+    ("refund-resid", "520749", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("refund-store", "52078f", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("ledger-read", "52082c", "0x94d730", "evidence/m330_block300_census.txt"),
+    ("refund-magic", "55555556", "magics", "evidence/m330_block300_census.txt"),
+    ("diff-gvar", "0x985aec", "G5 switch", "evidence/m330_block300_census.txt"),
+    ("diff-mask", "0x985b10", "G6 mask", "evidence/m330_block300_census.txt"),
+    ("block-base", "0x94d430", "dst_push", "evidence/m326_block224_census.txt"),
+    # the deliberately-fake pin lives IN the same list, measured in the same pass (s309 review F3)
+    ("bogus-control", "0x5a1234", "0xdeadbeef", "evidence/m330_block300_census.txt"),
 )
+CONTROL_PIN = "bogus-control"
 
 # The pinned branch tuples of the refund switch, transcribed from
 # evidence/m330_block300_census.txt G5 (the "G5 switch:" line). G6 parses that line and

@@ -1,20 +1,22 @@
-MU1   ledger law swapped (+310=+308, +30c=+308++300++2fc)        reddens G3
-MU2   ledger +30c loses the +2fc sign                            reddens G3
-MU3   refund rounds to nearest instead of trunc                  reddens G4,G5
-MU4   residue zeroed (M326's +224 law misapplied to +300)        reddens G4,G5
+MU1   ledger law swapped (+310=+308, +30c=+308++300++2fc)        reddens G10,G3
+MU2   ledger +30c loses the +2fc sign                            reddens G10,G3
+MU3   refund rounds to nearest instead of trunc                  reddens G10,G4,G5,G7
+MU4   residue zeroed (M326's +224 law misapplied to +300)        reddens G10,G4,G5
 MU5   the module's default skip threshold re-typed               reddens G6
-MU6   the snapshot taken before the debt settle (M328's pinned order broken) reddens G7
-MU7   the settle floor-0 dropped                                 reddens G7
-MU8   the faction-block stride perturbed by 4                    reddens G10,G2,G3
+MU6   the snapshot taken before the debt settle (M328's pinned order broken) reddens G10,G7
+MU7   the settle floor-0 dropped                                 reddens G10,G7
+MU8   the faction-block stride perturbed by 4                    reddens G10,G2,G3,G7
 MU9   field_file_off ignores the field offset                    reddens G10,G2,G3,G7,G8,G9
-MU10  only ENERGY is handed to the writer (the other four modeled fields never travel) reddens G8
-MU11  modeled_spans() without argument gets extra spans (the older rungs loosen) reddens G8
+MU10  only ENERGY is handed to the writer (the other four modeled fields never travel) reddens G10,G8
+MU11  modeled_spans() without argument gets extra spans (the older rungs loosen) reddens G10,G8
 MU12  the falsifier never reaches the honest run's image         reddens G10,G9
 MU13  the smuggler actually re-reads the container (blindness removed) reddens G10,G9
-MU14  the bogus pin replaced by a real one (G1 stops biting)     reddens G1
+MU14  a leg pin transcribed onto the WRONG field (the address alone would still hit) reddens G1
+MU17  the in-list bogus control counted as an honest pin         reddens G1
 MU15  the entry-zero leg of 52056d dropped                       reddens G10
-MU16  the refund sweep shrunk to 42 cases (an unmeasured state passes) reddens G5
+MU16  the refund sweep shrunk to 42 cases (an unmeasured state passes) reddens G10,G5
 NO-OP base run: reddens [] rc=0 (must be empty/0)
-mutant table digest 81d2d9491ec3320d
-16/16 mutants redden at least one gate; dead mutants []
-HARNESS PASS 16/16
+mutant table digest 181d99d9ac000044
+exact-set check: 17 mutant(s), 0 complaint(s), gates reddened 10/10
+17/17 mutants redden at least one gate; dead mutants []
+HARNESS PASS 17/17

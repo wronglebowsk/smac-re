@@ -77,10 +77,16 @@ MUTANTS = [
      "            if smuggle and model_energy[f] is not None:",
      "            if False:",
      "the smuggler actually re-reads the container (blindness removed)"),
-    ("MU14", "sim/composedenergy.py",
-     'if "0x5a1234" in cache.setdefault(rel, _txt(rel))',
-     'if "0x94d430" in cache.setdefault(rel, _txt(rel))',
-     "the bogus pin replaced by a real one (G1 stops biting)"),
+    # s309 review F3 rewrote _pin_check: MU14 now attacks the BINDING (a pin whose field token
+    # is the wrong field must fail), and MU17 attacks the in-list control's exclusion.
+    ("MU14", "sim/energy.py",
+     '    ("snapshot", "52065d", "0x91c64c", "evidence/m328_hurry_globals.txt"),',
+     '    ("snapshot", "52065d", "0x94d730", "evidence/m328_hurry_globals.txt"),',
+     "a leg pin transcribed onto the WRONG field (the address alone would still hit)"),
+    ("MU17", "sim/composedenergy.py",
+     '    honest = [h for h in m["pin_hits"] if h[0] != m["pin_control"]]',
+     '    honest = [h for h in m["pin_hits"]]',
+     "the in-list bogus control counted as an honest pin"),
     ("MU15", "sim/energy.py",
      "    spend = 0                                   # entry-zero 52056d zeroes +300",
      "    spend = blk[OFF_SPEND]                      # entry-zero skipped",
@@ -90,6 +96,41 @@ MUTANTS = [
      "    for x in range(0, 21):",
      "the refund sweep shrunk to 42 cases (an unmeasured state passes)"),
 ]
+
+
+# The declared gate set per mutant: MEASURED by this harness (scripts/b27_mutate.py --measure),
+# then frozen here. main() re-measures every run and FAILS if a measured set differs from this
+# declaration in either direction -- which is what makes "every V row names the mutant that
+# reddens it" checkable rather than aspirational (s309 review F1).
+DECLARED = {
+    "MU1": {"G3", "G10"},
+    "MU2": {"G3", "G10"},
+    "MU3": {"G4", "G5", "G7", "G10"},
+    "MU4": {"G4", "G5", "G10"},
+    "MU5": {"G6"},
+    "MU6": {"G7", "G10"},
+    "MU7": {"G7", "G10"},
+    "MU8": {"G2", "G3", "G7", "G10"},
+    "MU9": {"G2", "G3", "G7", "G8", "G9", "G10"},
+    "MU10": {"G8", "G10"},
+    "MU11": {"G8", "G10"},
+    "MU12": {"G9", "G10"},
+    "MU13": {"G9", "G10"},
+    "MU14": {"G1"},
+    "MU15": {"G10"},
+    "MU16": {"G5", "G10"},
+    "MU17": {"G1"},
+}
+
+
+def decl_complaints(mid, measured, declared):
+    """Pure comparison: every declared-but-unmeasured and measured-but-undeclared gate."""
+    out = []
+    for g in sorted(declared - measured):
+        out.append("%s declares %s but it did not redden it" % (mid, g))
+    for g in sorted(measured - declared):
+        out.append("%s reddened %s, which it does not declare" % (mid, g))
+    return out
 
 
 def build_tree(dst, target, old, new):
@@ -132,6 +173,12 @@ def selftest():
         except AssertionError as e:
             st2 = True
             print("ST2 void anchor rejected: %s" % e)
+        wrong = decl_complaints("MU6", {"G7"}, {"G7", "G9"})
+        right = decl_complaints("MU6", {"G7"}, {"G7"})
+        print("ST4 exact-set comparison rejects a wrong declaration (%d complaints) and "
+              "accepts the true one (%d): %s"
+              % (len(wrong), len(right), "PASS" if wrong and not right else "FAIL"))
+        st4 = bool(wrong) and not right
         print("ST3 no-op tree reddens nothing:", end=" ")
         os.makedirs(os.path.join(tmp, "tree3"))
         for name in ("evidence", "data", "programs", "scripts"):
@@ -140,7 +187,7 @@ def selftest():
         b3, _o3, rc3, _e3 = run_tree(os.path.join(tmp, "tree3"))
         st3 = (not b3) and rc3 == 0
         print("%s (%d BAD, rc=%d)" % ("PASS" if st3 else "FAIL", len(b3), rc3))
-        return 0 if (st1 and st2 and st3) else 1
+        return 0 if (st1 and st2 and st3 and st4) else 1
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -149,6 +196,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="scripts/b27_mutate.py")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--only", default=None, help="run a subset by id (MU3,MU7)")
+    ap.add_argument("--measure", action="store_true",
+                    help="print the MEASURED sets as a DECLARED literal and exit 0 (no asserts)")
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
@@ -182,6 +231,32 @@ def main(argv=None):
             return 1
         dig = hashlib.sha256("\n".join(digests).encode()).hexdigest()[:16]
         print("mutant table digest %s" % dig)
+        if a.measure:
+            print("DECLARED = {")
+            for (mid, _w, b) in results:
+                print("    %r: {%s}," % (mid, ", ".join(repr(x) for x in b)))
+            print("}")
+            print("gate coverage %s / 10"
+                  % sorted({g for (_m, _w, b) in results for g in b}))
+            print("--measure: nothing asserted, declarations not checked")
+            return 0
+        complaints = []
+        for (mid, _w, measured) in results:
+            if mid not in DECLARED:
+                complaints.append("%s has NO declared gate set" % mid)
+                continue
+            complaints += decl_complaints(mid, set(measured), set(DECLARED[mid]))
+        covered = {g for (_m, _w, b) in results for g in b}
+        for g in ["G%d" % i for i in range(1, 11)]:
+            if g not in covered:
+                complaints.append("gate %s is reddened by NO mutant (unmeasured law)" % g)
+        for c in complaints:
+            print("MISMATCH: %s" % c)
+        print("exact-set check: %d mutant(s), %d complaint(s), gates reddened %d/10"
+              % (len(results), len(complaints), len(covered & set("G%d" % i for i in range(1, 11)))))
+        if complaints:
+            print("HARNESS FAIL: a measured gate set does not equal its declaration")
+            return 1
         dead = [m for (m, _w, b) in results if not b]
         print("%d/%d mutants redden at least one gate; dead mutants %s"
               % (len(results) - len(dead), len(results), dead))

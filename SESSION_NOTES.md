@@ -394,3 +394,37 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - **TWO GATE DEFECTS FOUND BY THE MUTANTS (mine, both fixed by strengthening, not weakening)**: (1) G3 re-typed the ledger formula inline instead of calling `sim.energy.ledger`, so MU1/MU2 reddened NOTHING — an instrument that re-types the law it tests measures the copy; (2) `round_legs` passed `clamp=True` explicitly, shadowing `settle`'s own default, so MU7 (floor-0 dropped) reddened NOTHING — `clamp=None` now means "the module default" (selftest ST1). Then G6 got the defaults-vs-parsed-thresholds cross-check and G5 got the counted sweep width (`sweep_n` is now counted, not a literal `2 * 20001`, which MU16 proves).
 - Declared limits, printed not hidden: 48 rows computed / 13 printed (`:53`); `+2fc/+308/+3f8` entry-zeroed but their mid-round writer is OPEN (M330) so they stay pass-through and the ledger law takes them as DECLARED inputs; income-vs-feeder order unpinned (only settle < snapshot < refund is); difficulty dword = 2 read out of the container, noun INFERRED (M308).
 - Caps: NAMED 240,158 -> 241,+this block; NEXT_PROMPT 11,348 -> patched by section (retire the B27 pick, add the (x) OPEN-LEADS list); evidence 21.9 MB `[warn]` stands (prune 0 victims, `m294_gate_rows_raw.txt` load-bearing). `skill/` untouched (`diff -rq` clean).
+
+**Review round, PR #344 (Strata, 10 findings: 3 P1 + 7 P2 — ALL accepted, 0 dismissed).** The
+local review caught that several B27 gates measured less than their prose claimed. Commands +
+numbers, all re-measured after the fixes:
+- **F1 (P1)** `scripts/b27_mutate.py` did NOT implement its advertised law: it only required each
+  mutant to redden >=1 gate. Fixed: `DECLARED` sets frozen from a `--measure` run, then every run
+  compares measured vs declared IN BOTH DIRECTIONS (`decl_complaints`) and requires all 10 gates
+  covered. `python3 -u scripts/b27_mutate.py` -> `exact-set check: 17 mutant(s), 0 complaint(s),
+  gates reddened 10/10` + `HARNESS PASS 17/17` digest `181d99d9ac000044`
+  (`evidence/b27_mutate.txt:20,:22`; 2 runs diff-identical). `--selftest` now 4/4 — **ST4** rejects
+  a wrong declaration (`evidence/b27_mutate_selftest.txt:3`).
+- **F3 (P1)** G1 was substring presence. Pins are now `(label, address, FIELD TOKEN, file)` and one
+  evidence line must carry both; the bogus control ships INSIDE `LEG_PINS` and must hit nothing.
+  G1 prints `22 pins, min line hits 1; control bogus-control hits 0` (`:69`). New mutants MU14
+  (a pin on the wrong field) and MU17 (control counted as honest) both redden G1 alone.
+- **F2 (P1)** G7 asserted the refund leg was inert without measuring it. It now measures on the
+  save's own 8 blocks: `debt 0/8, refund 0/8 at difficulty 2 AND 0/8 at the k=1/k=2 difficulties
+  (max +300 = 1) while refund(3,k)=1 at both k (probe 2/2)` — the leg is not a stub, the save is
+  small; plus `k_reads_gdiff` binds the switch to the same global (`:36`, `:75`).
+- **F4 (P2)** the k-table's branch SHAPE is now gated (mov of `0x985aec`, cmp 0x3/jle-skip,
+  cmp 0x4/jne-DIFFERENT, so the k=1 fall-through exists) and BOTH rivals are gated, not just
+  printed (`:74`). **F6 (P2)** RETRACTED in the registry: the flat 12-round idle parity is a
+  legs-ZERO CONSISTENCY print (cannot fail) — labelled as such, gates nothing; the parity is B4's
+  3 in-process gates + the post-found row. **F7** smuggle rival = two counted numbers (honest 1,
+  smuggler 0), no cancelling abs(). **F9** G10 now pins the printed-table digest
+  `3c134ea70638c12b` and the container `626fec9a35deddba`, not only the row digest (`:56`, `:78`).
+  **F10** the outside-span containment is measured per round (`[0,0,0,0,0,0]`, `:55`, `:76`).
+  **F8** the spine claimed THREE file-offset tables; only two exist to gate (M325 prints none for
+  +220) — spine narrowed. **F5** cites `:20`->`:20-21`, `:53-56`->`:55-59` etc.
+- Re-accept after all fixes: `python3 -u -m sim.selftest --b27` -> `PASS B27: 10/10 gates`
+  (rows anchor unchanged `b65e8129b67ba67d`), 2 runs diff-identical. NAMED 244,581 B
+  (5,419 headroom); NEXT_PROMPT 11,832 B. Lesson for the chain: a gate whose expectation is
+  hand-written next to the value it checks, or a rival that is printed but not gated, is the same
+  defect the #339 review named at doc level — it lives at gate level too.

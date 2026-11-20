@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319 main 1556ce9; B26 = #328 main dd704d0; B26's full ACCEPT + THE LAW + the three retractions + the `found_units` 69->0 open question VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a) with its sha1, and its per-rung cmds at `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks; `NAMED ## B25`/`## B26` govern; earlier build-track detail §trim-s298 (a), §trim-s299 (b)/(d)). **B27 MERGED-BY-THIS-FIRE (s309)**. **Next build B28**: the spine ends at B27 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B27 did.
 
- **DOC CAP: `NAMED.md` 243,350 B / 250,000 FAIL (6,650 B headroom, `wc -c` s309 - ONE chain-2-sized block from the trigger). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE crossing 250,000 (s307 crossed it mid-fire and dug itself back); the rotate scripts assert the sha1s.**
+ **DOC CAP: `NAMED.md` 244,581 B / 250,000 FAIL (5,419 B headroom, `wc -c` s309 - ONE chain-2-sized block from the trigger). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE crossing 250,000 (s307 crossed it mid-fire and dug itself back); the rotate scripts assert the sha1s.**
 
 ## THE LEDGER
 
