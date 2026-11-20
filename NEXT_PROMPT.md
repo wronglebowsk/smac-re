@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319 main 1556ce9; B26 = #328 main dd704d0; B26's full ACCEPT + THE LAW + the three retractions + the `found_units` 69->0 open question VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a) with its sha1, and its per-rung cmds at `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks; `NAMED ## B25`/`## B26` govern; earlier build-track detail §trim-s298 (a), §trim-s299 (b)/(d)). **Next build B27, NOT YET AUTHORED** (`BUILD_SPINE.md` ends at B26): write its rung text BEFORE probing (one milestone = spine section + instrument).
 
- **DOC CAP: `NAMED.md` 244,104 B / 250,000 B FAIL (5,896 B headroom; `wc -c`; the s307 rotation note's 240,534 predates the M321 in-place refinement). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE writing your block — M329's block pushed it to 250,214 and two rotations (M255-M258, Method-that-worked) had to dig it back. Archive sha1s asserted by the rotate scripts.**
+ **DOC CAP: `NAMED.md` 239,090 B / 250,000 B FAIL (10,910 B headroom; `wc -c`; the s307 rotation note's 240,534 predates the M321 in-place refinement). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE writing your block — M329's block pushed it to 250,214 and two rotations (M255-M258, Method-that-worked) had to dig it back. Archive sha1s asserted by the rotate scripts.**
 
 ## THE LEDGER
 
@@ -112,4 +112,5 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-chain1 (a); `NAMED` governs.
 M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
-|M326 (s301-chain2): +224=deferred HURRY-payment debt (419c30 defers iff 920434/91c62c set; upkeep: ENERGY-=224,224:=0,floor0; readers=220-224; MIN cap@41a4e0). Subreg fix; M325 29 labels->STRIDE (G10 8/8). 10/10 f0f31c3daa26b601; 27/27. MERGED #332->7cd4732; sidecar #334. NAMED ## M326.
+M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
+M328 (s304-chain2): 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag (noun INFERRED, lifecycle V). HURRY story closed. 14/14 030a6fc12e4a7cd7 x2; 38/38 (37+1 NO-OP) 36259eee0736d9c1; ST 5/5. NAMED ## M328.

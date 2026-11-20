@@ -1192,6 +1192,10 @@ at s305 when the `+12` census became a G3 clause (MU23) — `NAMED ## M327` carr
   only on the self-poked m113map.SAV. RETRACTS `sim/save.py:52` + ## B25's trap-14 in place. 11/11
   ee77ddb39e8ec202 (`m327_typeband_census.txt:769`), harness 22/22; `NAMED ## M327` governs.
 
+## §trim-s304-chain2 (a) — M326 result one-liner (moved VERBATIM from NEXT_PROMPT.md at s304-chain2, M328 close; sha1[:16] f6691830bcd4c739, byte-exact asserted; NAMED ## M326 governs)
+
+|M326 (s301-chain2): +224=deferred HURRY-payment debt (419c30 defers iff 920434/91c62c set; upkeep: ENERGY-=224,224:=0,floor0; readers=220-224; MIN cap@41a4e0). Subreg fix; M325 29 labels->STRIDE (G10 8/8). 10/10 f0f31c3daa26b601; 27/27. MERGED #332->7cd4732; sidecar #334. NAMED ## M326.
+
 ## §trim-s307-chain1 — pick (viii) retired (M329), M255-M258 + `## Method that worked` rotated out
 
 (a) THE (viii) ROW AS OPENED AT THE M321 TRIAGE, VERBATIM: "OPEN PICK (viii) (NEW at the M321 triage,
@@ -1233,7 +1237,7 @@ naming rows, 56 lines, 12,564 B, sha1 `16cd10eb5fc0`) -> `docs/named-archive-met
   authorization — so the next fire is the **BUILD rung B27**: author its `BUILD_SPINE.md` section FIRST, then
   instrument it; if the tracker reads ANALYSE instead, report the gate and stop, invent nothing.
 
-NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **244,104 B / 5,896 B headroom** (`wc -c NAMED.md`, after the row fixes).
+NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **239,090 B / 10,910 B headroom** (`wc -c NAMED.md`, after the row fixes).
 CORRECTION at s308 to the block above and to §trim-s307-chain1 (a): **"5 call sites / 4 owners" is FALSE —
 the census's own G1/T1 print exactly 4 `e8` call sites** (`0x41e3bd`, `0x49b306`, `0x4a9e0e`, `0x5120d0`;
 `evidence/m329_scratchtree.txt:5-12,33`, 48,874 rel32-calls decoded image-wide, and 0 `jmp`s to the frame).
