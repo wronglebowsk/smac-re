@@ -1233,4 +1233,13 @@ naming rows, 56 lines, 12,564 B, sha1 `16cd10eb5fc0`) -> `docs/named-archive-met
   authorization — so the next fire is the **BUILD rung B27**: author its `BUILD_SPINE.md` section FIRST, then
   instrument it; if the tracker reads ANALYSE instead, report the gate and stop, invent nothing.
 
-NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **240,773 B / 9,227 B headroom** (`wc -c NAMED.md`, after the row fixes).
+NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **241,830 B / 8,170 B headroom** (`wc -c NAMED.md`, after the row fixes).
+CORRECTION at s308 to the block above and to §trim-s307-chain1 (a): **"5 call sites / 4 owners" is FALSE —
+the census's own G1/T1 print exactly 4 `e8` call sites** (`0x41e3bd`, `0x49b306`, `0x4a9e0e`, `0x5120d0`;
+`evidence/m329_scratchtree.txt:5-12,33`, 48,874 rel32-calls decoded image-wide, and 0 `jmp`s to the frame).
+The s307 row had imported `0x4a9e63`/`0x512232` from G9's READER list — they are `mov eax,[edx*4+0x94d600]`
+field reads followed by `mov [reg+0x38],eax` copies (the adjacent stores `0x4a9e69`/`0x512239`), not calls.
+The same row's `5 ret 0x4` is also wrong: T1 `:13` prints `ret 0x4` sites=**4**, and the "3 `push 0x6899ec`
++ `0x511b3e`/`0x512307` + vtable slots +0xec/0xf0/0xf4 call it" naming-basis claims were never measured —
+the dump contains exactly ONE `push 0x6899ec` (`0x41aba5`) and no occurrence of those two addresses.
+`NAMED ## M329` rows 1-3 carry the retraction IN PLACE.
