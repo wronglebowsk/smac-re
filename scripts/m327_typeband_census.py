@@ -65,7 +65,7 @@ M80_LIVE_BANDS = {0: list(range(0, 14)), 1: [64], 2: [128, 129, 130, 131],
 # G10 anchor: sha256-prefix of the MEASURED table rows (every T line). Re-measured at
 # every acceptance run. MU1-MU4 / MU7-MU8 / MU10 / MU12-MU14 all move it; MU21 (a
 # comments-only edit that changes no number) must NOT move it.
-PIN = "ee77ddb39e8ec202"
+PIN = "91f58f3de03090c1"
 N_CHAIN = 659            # measured chain sites in the .text cache (G2 pin)
 N_READ = 774             # measured unit+10 word refs (G2 pin)
 
@@ -178,7 +178,7 @@ def type_section(path):
     """locate + read the 512x52 type array and the unit records of one save"""
     s = SV.parse(path)
     d = s.data
-    off = s.count_off + 4 + s.count_len + (3580 if ALGO == "9" else 3584)
+    off = type_off_of(s)          # ONE offset law (s305 review P1)
     rows = []
     for t in range(TYPE_SLOTS):
         rec = d[off + TYPE_STRIDE * t: off + TYPE_STRIDE * t + TYPE_STRIDE]
@@ -198,9 +198,12 @@ def type_section(path):
     return s, off, rows, units
 
 
-def found_units_variants(s, d):
+def found_units_variants(s, d, toff):
     """A: as shipped (band exemption ON). B: coord-check EVERY record.
-       C: type-sound: named type slot AND coord in grid AND owner<24."""
+       C: type-sound: named type slot AND coord in grid AND owner<24.
+       `toff` is THE array offset from type_section - s305 review P1: this used to
+       recompute it through type_off_of, which did not honour the ALGO=9 shift, so
+       MU20 measured the census and predicate C at two different offsets."""
     def ok(o, mode):
         if o < 0 or o + UNIT_LEN > len(d):
             return False
@@ -217,8 +220,7 @@ def found_units_variants(s, d):
             inb = x < s.width and y < s.height
             if mode == "C":
                 named = bool(re.match(rb"([ -~]{2,35})\x00",
-                                      d[type_off_of(s) + 52 * t: type_off_of(s)
-                                        + 52 * t + 36]))
+                                      d[toff + 52 * t: toff + 52 * t + 36]))
                 return inb and named and t < TYPE_SLOTS
             return inb
         if t < SV.UNIT_TYPE_BAND:
@@ -235,18 +237,26 @@ def found_units_variants(s, d):
 
 
 def type_off_of(s):
-    return s.count_off + 4 + s.count_len + 3584
+    """ONE offset law for the type array (s305 review P1: the predicate-C path used to
+    hardcode +3584 while type_section honoured the ALGO=9 shift, so MU20 measured two
+    different arrays in the same run)."""
+    return s.count_off + 4 + s.count_len + (3580 if ALGO == "9" else 3584)
 
 
 def poke_runs(a, b, uoff):
     """the poke law: the two files differ ONLY inside 4-byte windows whose value in b
-    is 0xc0de00NN, the windows are 128 B apart, and every changed byte is covered.
+    is 0xc0de00NN, the windows are 128 B apart, and the diff-derived window set is
+    EXACTLY the set of marker dwords found by an independent value scan of b (s305
+    review P1: the old per-window `covered` was `w in wins` where wins is derived from
+    w - an identity that could never fail).
     Record attribution is PER CHANGED BYTE: the marker grid is file-aligned, so a
     dword can straddle a 52-B record boundary."""
     diff = [i for i in range(min(len(a), len(b))) if a[i] != b[i]]
     align = 3 if ALGO == "3" else 4
     wins = sorted({(i // align) * align for i in diff})
-    wset = set(wins)
+    # independent of the diff: every 4-B-aligned dword in b that IS a marker value
+    markers = sorted(o for o in range(0, len(b) - 3, 4)
+                     if 0xc0de0001 <= struct.unpack_from("<I", b, o)[0] <= 0xc0de00ff)
     out = []
     for w in wins:
         v = struct.unpack_from("<I", b, w)[0]
@@ -256,11 +266,10 @@ def poke_runs(a, b, uoff):
             if a[i] != b[i] and uoff <= i < uoff + UNIT_LEN * 67:
                 bytes_.append((i, (i - uoff) // UNIT_LEN, (i - uoff) % UNIT_LEN))
         out.append({"lo": w, "hi": w + align - 1, "val": v, "oval": o,
-                    "covered": all((i // align) * align in wset for i in range(w, w + align)),
                     "ndiff": sum(1 for i in range(w, w + align) if a[i] != b[i]),
                     "inarr": bool(bytes_), "bytes": bytes_,
                     "recs": sorted({r for (_i, r, _f) in bytes_})})
-    return len(diff), out
+    return len(diff), out, markers
 
 
 def main():
@@ -273,18 +282,20 @@ def main():
 
     # ---- T0 layout on four saves ----
     layout = {}
+    parsed = {}
     for p in SAVES:
         s, off, rows, units = type_section(p)
         gap = s.units_off - (off + TYPE_STRIDE * TYPE_SLOTS)
-        fa, fb, fc = found_units_variants(s, s.data)
+        fa, fb, fc = found_units_variants(s, s.data, off)
         layout[p] = (s, off, gap, fa, fb, fc)
+        parsed[p] = (rows, units)
         W("T0 %s type_off=%d span=%d gap_to_units=%d closes=%s n_units=%d "
           "found A(exempt)=%d B(all-coord)=%d C(type-sound)=%d"
           % (os.path.basename(p), off, TYPE_STRIDE * TYPE_SLOTS, gap, s.closes,
              s.n_units, fa, fb, fc))
     prim, poff, pgap, pfa, pfb, pfc = layout[PRIMARY]
     dprim = prim.data
-    prows, punits = type_section(PRIMARY)[2], type_section(PRIMARY)[3]
+    prows, punits = parsed[PRIMARY]      # s305 review P2: no second parse
 
     # ---- T1 the named-slot census + the +0x30 bit-2 law ----
     named = [(t, n) for (t, n, r) in prows if n]
@@ -362,19 +373,25 @@ def main():
     # ---- T4 the poke that justified the exemption ----
     a = open(PRIMARY, "rb").read()
     b = open(POKED, "rb").read()
-    nd, runs = poke_runs(a, b, prim.units_off)
+    nd, runs, markers = poke_runs(a, b, prim.units_off)
     inarr = [r for r in runs if r["inarr"]]
     marks = [r["val"] for r in runs]
     marker_ok = all((v >> 8) == 0xC0DE00 for v in marks)
     seq = [v & 0xFF for v in marks]
     stride_ok = all(runs[i + 1]["lo"] - runs[i]["lo"] == 128 for i in range(len(runs) - 1))
-    cover_ok = all(r["covered"] for r in runs)
+    # s305 review P1: this used to be `all(r["covered"])` where `covered` re-tested the
+    # window list against itself (an identity). It is now the real law: the window set
+    # the DIFF produces is exactly the set of marker dwords an INDEPENDENT value scan
+    # of m113map produces, in the same order.
+    cover_ok = [r["lo"] for r in runs] == markers
     sm, srows = layout[POKED][0], type_section(POKED)[3]
     soob = [u for u in srows if not (u["x"] < sm.width and u["y"] < sm.height)]
     poked_recs = sorted({r for w in runs for r in w["recs"]})
-    W("T4 m54b->m113map differing bytes=%d windows=%d all-marker(0xc0de00NN)=%s "
-      "seq=%s stride128=%s covered=%s windows-in-unit-array=%d records-touched=%s" %
-      (nd, len(runs), marker_ok, seq, stride_ok, cover_ok, len(inarr), poked_recs))
+    W("T4 m54b->m113map differing bytes=%d windows=%d marker-scan=%d "
+      "all-marker(0xc0de00NN)=%s "
+      "seq=%s stride128=%s windows==markers=%s windows-in-unit-array=%d records-touched=%s" %
+      (nd, len(runs), len(markers), marker_ok, seq, stride_ok, cover_ok, len(inarr),
+       poked_recs))
     for r in inarr:
         W("T4  foff=%d recs=%s m54b=0x%08x m113=0x%08x ndiff=%d fields=%s" %
           (r["lo"], r["recs"], r["oval"], r["val"], r["ndiff"],
@@ -412,12 +429,13 @@ def main():
     # i.e. at the index word itself - which is exactly what M26's retracted
     # "unit_can_act = +10 bits 0x40&0x400" would have been reading.
     bit40 = sum(1 for u in punits if u["t"] & 0x40)
+    bit400 = sum(1 for u in punits if u["t"] & 0x400)
     both = sum(1 for u in punits if (u["t"] & 0x40) and (u["t"] & 0x400))
     W12_OFF = 10 if ALGO == "10" else 12
     w12 = [(u["i"], struct.unpack_from("<H", u["raw"], W12_OFF)[0]) for u in punits]
     n12 = sum(1 for _i, v in w12 if v)
     W("T6 records with +10(word)&0x40=%d &0x400=%d both=%d; word@+%d nonzero=%d" %
-      (bit40, sum(1 for u in punits if u["t"] & 0x400), both, W12_OFF, n12))
+      (bit40, bit400, both, W12_OFF, n12))
 
     # ---- T7 rivals: each must be FALSE ----
     common_bit = 0
@@ -444,9 +462,13 @@ def main():
         W("%s %s %s" % (name, "PASS" if cond else "FAIL", detail))
 
     gate("G1", all(layout[p][2] == 4096 and layout[p][0].closes and
-                   layout[p][1] == layout[p][0].count_off + 4 + layout[p][0].count_len
-                   + 3584 for p in SAVES),
-         "type array at count+4+len+3584 on 4/4 saves, 4096-B gap, closes=%s" %
+                   layout[p][1] + TYPE_STRIDE * TYPE_SLOTS + 4096
+                   == layout[p][0].units_pred for p in SAVES),
+         "type array END + 4,096 == the SHIPPED parser's own units_pred "
+         "(sim/save.py MIDDLE_SECTIONS = 3584+26624+4096) on 4/4 saves, 4096-B "
+         "gap, closes=%s (s305 review P2: the old clause re-ran this file's own "
+         "offset formula - an X==X tautology; this one cross-checks the "
+         "instrument against save.py's constant)" %
          [layout[p][0].closes for p in SAVES])
     gate("G2", len(sites) == N_CHAIN and n_read == N_READ and a1 and a2
          and any(a == ANCHOR_READ for (a, m, b) in sites)
@@ -457,10 +479,14 @@ def main():
          (len(sites), N_CHAIN, n_read, N_READ, ANCHOR_READ, MOVEX_SITE, a1, a2))
     gate("G3", len(punits) == 67 and len(nband) == 25 and len(nong) == 42
          and len(agree) == 25 and hits_named == 67 and len(oob) == 0
-         and all(u["t"] < BAND for u in nong) and n12 == 0,
+         and all(u["t"] < BAND for u in nong) and n12 == 0
+         # s305 review P2: the three T6 bit-counts used to be print-only; they are
+         # the numbers the M26 retraction rests on, so they are gated now.
+         and bit40 == 6 and bit400 == 0 and both == 0,
          "67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all "
-         "band0; the word at +12 is zero on 67/67 (so M26's +10 bits 0x40&0x400 "
-         "cannot be a flag pair living in +12)")
+         "band0; the word at +12 is zero on 67/67 AND +10's own bit 6 is set on "
+         "6/67 while bit 10 is set on 0/67 (so M26's \"+10 bits 0x40&0x400\" is "
+         "index-bit-6 + a bit that never occurs in this field)")
     gate("G4", len(named) == 32 and len(bands.get(0, [])) == 14
          and len([t for t in ff2c.get(True, []) if t < BAND]) == 14
          and len([t for t in ff2c.get(True, []) if t >= BAND]) == 0
@@ -469,9 +495,11 @@ def main():
          "14 band0 slots (0 of the 18); +0x30 bit2 NOT a band marker (12/20)")
     gate("G5", (pfa, pfb, pfc) == (67, 67, 67)
          and layout[POKED][3] == 67 and layout[POKED][4] == 49
-         and all(layout[p][3] == layout[p][4] for p in SAVES if p != POKED),
-         "exemption is load-bearing ONLY on m113map: 67 vs 49; 3/4 saves agree "
-         "(the type-sound predicate C matches B on 4/4)")
+         and all(layout[p][3] == layout[p][4] for p in SAVES if p != POKED)
+         and all(layout[p][5] == layout[p][4] for p in SAVES),
+         "exemption is load-bearing ONLY on m113map: 67 vs 49; A==B on 3 unpoked "
+         "saves; the type-sound predicate C == B on 4/4 (s305 review P1: that "
+         "4/4 was prose in the detail, now it is the condition)")
     gate("G6", len(runs) == 20 and marker_ok and seq == list(range(1, 21))
          and stride_ok and cover_ok and len(inarr) == 13 and 12 in poked_recs
          and 17 in poked_recs and set(u["i"] for u in soob) <= set(poked_recs),

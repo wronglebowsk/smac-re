@@ -738,7 +738,7 @@ T3 65 off=226163 x=   15 y=   11 +10=   2 band=0 name=Scout Patrol           own
 T3 66 off=226215 x=   11 y=   15 +10= 130 band=2 name=Laser Infantry         own= 2 band==own=True in-grid=True
 T3b n=67 band=25 non-band=42 band==owner=25/25 named-hit=67/67 out-of-grid=0 band0-only-for-non-band=True distinct-owners(nongroup)=8
 T3c band-value histogram {128: 2, 130: 10, 131: 4, 256: 3, 320: 2, 321: 1, 322: 1, 323: 2}
-T4 m54b->m113map differing bytes=74 windows=20 all-marker(0xc0de00NN)=True seq=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] stride128=True covered=True windows-in-unit-array=13 records-touched=[2, 4, 7, 9, 12, 14, 16, 17, 19, 21, 24, 26, 29, 31]
+T4 m54b->m113map differing bytes=74 windows=20 marker-scan=20 all-marker(0xc0de00NN)=True seq=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] stride128=True windows==markers=True windows-in-unit-array=13 records-touched=[2, 4, 7, 9, 12, 14, 16, 17, 19, 21, 24, 26, 29, 31]
 T4  foff=222896 recs=[2] m54b=0x00000800 m113=0xc0de0008 ndiff=4 fields=['2+9', '2+10', '2+11', '2+12']
 T4  foff=223024 recs=[4] m54b=0x03ffffff m113=0xc0de0009 ndiff=4 fields=['4+33', '4+34', '4+35', '4+36']
 T4  foff=223152 recs=[7] m54b=0x00000000 m113=0xc0de000a ndiff=3 fields=['7+5', '7+7', '7+8']
@@ -756,16 +756,16 @@ T4b m113map out-of-grid records=[12, 17] subset-of-poked=True
 T5 unit_set_position 0x5ab320 body=90 insns jumps=9 jumps-before-+0-store=0 branch-targets-inside-(entry,0x5ab35c]=[] store+0=['mov    WORD PTR [esi+0x933278],bx'] store+2=['mov    WORD PTR [esi+0x93327a],di'] reads-of-+10=['0x5ab3a2']
 T6 records with +10(word)&0x40=6 &0x400=0 both=0; word@+12 nonzero=0
 T7 R1(band-records-are-not-units)=False R2(+10-is-a-flag-word:0)=False R3(exemption-bites-on-an-unpoked-save:['m113map.SAV'])=False R4(tile-store-is-guarded)=False
-G1 PASS type array at count+4+len+3584 on 4/4 saves, 4096-B gap, closes=[True, True, True, True]
+G1 PASS type array END + 4,096 == the SHIPPED parser's own units_pred (sim/save.py MIDDLE_SECTIONS = 3584+26624+4096) on 4/4 saves, 4096-B gap, closes=[True, True, True, True] (s305 review P2: the old clause re-ran this file's own offset formula - an X==X tautology; this one cross-checks the instrument against save.py's constant)
 G2 PASS chain sites=659 (pinned 659), +10 word refs=774 (pinned 774), pinned at 0x4bdeca (unit idx->type rec) and 0x5ab3a2 (unit_set_position -> type+0x24); shapes=True/True
-G3 PASS 67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all band0; the word at +12 is zero on 67/67 (so M26's +10 bits 0x40&0x400 cannot be a flag pair living in +12)
+G3 PASS 67=42+25; band==owner 25/25; 67/67 named; 0 out-of-grid; non-band all band0; the word at +12 is zero on 67/67 AND +10's own bit 6 is set on 6/67 while bit 10 is set on 0/67 (so M26's "+10 bits 0x40&0x400" is index-bit-6 + a bit that never occurs in this field)
 G4 PASS 32 named = 14 band0 + 18 faction-band; type byte +0x2d==0xff exactly on the 14 band0 slots (0 of the 18); +0x30 bit2 NOT a band marker (12/20)
-G5 PASS exemption is load-bearing ONLY on m113map: 67 vs 49; 3/4 saves agree (the type-sound predicate C matches B on 4/4)
+G5 PASS exemption is load-bearing ONLY on m113map: 67 vs 49; A==B on 3 unpoked saves; the type-sound predicate C == B on 4/4 (s305 review P1: that 4/4 was prose in the detail, now it is the condition)
 G6 PASS 20 markers 0xc0de0001..0xc0de0014, stride 128, all diffs covered, 13 windows in the unit array touching 14 records; m113's out-of-grid set [12, 17] is a subset of the poked records [2, 4, 7, 9, 12, 14, 16, 17, 19, 21, 24, 26, 29, 31]
 G7 PASS no branch on the entry path before the +0/+2 stores of unit_set_position (jumps in body=9, none below 0x5ab355; no jump target inside; stores pinned at 0x5ab355/0x5ab35c)
 G8 PASS save's named set == M80's LIVE census minus the 2 records M80 itself created (324/325)
 G11 PASS 67/67 records hit a NAMED type slot out of density 32/512: chance of that by coincidence = 10^-80.7 (a flag-word or junk-field reading has no way to pick the 6% of the array that carries names)
 G9 PASS 4 rivals all False (R2 AND of band values=0; R3 differing saves=['m113map.SAV'])
-DIGEST ee77ddb39e8ec202
-G10 PASS digest==PIN ee77ddb39e8ec202 measured=ee77ddb39e8ec202 (any drift in the measured rows reddens this)
+DIGEST 91f58f3de03090c1
+G10 PASS digest==PIN 91f58f3de03090c1 measured=91f58f3de03090c1 (any drift in the measured rows reddens this)
 == M327: 11/11 ==

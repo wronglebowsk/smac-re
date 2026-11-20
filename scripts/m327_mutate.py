@@ -50,6 +50,11 @@ MUTANTS = [
     # pair is +12, and G3 now asserts it is zero on 67/67. MU23 re-reads that same
     # census at +10 (the index word, nonzero on 64/67) - it reddens exactly G3+G10.
     ("MU23", "algo", "10", {"G3", "G10"}),
+    # s305 review P2: the T6 bit-counts are now G3 clauses, so a poke that sets bit 10
+    # of a +10 word has to redden G3. Set from measurement (the same poke also moves
+    # the band census, so it is not an isolated clause-falsifier - declared as such).
+    ("MU24", "save", "%d/2=1024" % UNIT0,
+     {"G3", "G5", "G6", "G10"}),
     # ---- the named-slot / type +0x2d law (G4) ----
     ("MU9", "save", "%d/1=0" % (TYPE0 + 0x2D), {"G4", "G6", "G10"}),
     ("MU12", "save", "%d/1=255" % (TYPE0 + 128 * 52 + 0x2D), {"G4", "G6", "G10"}),
@@ -60,7 +65,10 @@ MUTANTS = [
     ("MU14", "algo", "3", {"G6", "G10"}),
     # ---- the M80 cross-check (G8), rivals (G9), layout (G1), density (G11) ----
     ("MU15", "algo", "5", {"G4", "G8", "G11", "G10"}),
-    ("MU20", "algo", "9", {"G1", "G3", "G4", "G8", "G9", "G11", "G10"}),
+    # G5 joins at s305: with ONE offset law (review P1) the ALGO=9 shift now moves
+    # predicate C too, which it silently did not before - the mutant got stronger,
+    # not the gate weaker.
+    ("MU20", "algo", "9", {"G1", "G3", "G4", "G5", "G8", "G9", "G11", "G10"}),
     # ---- declared NO-OP: an out-of-scope .text byte change reddens NOTHING, which
     #      proves G1-G9 read measured bytes and not prose.
     ("MU21", "code", "0x5ab345|test   eax,0x40", set()),

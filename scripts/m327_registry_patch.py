@@ -2,9 +2,11 @@
 # M327 in-place registry patches: three earlier NAMED.md rows assert a weaker or now
 # FALSE reading of the word at unit+10. Retract/qualify them in place (a retraction
 # that lives only in SESSION_NOTES leaves the registry asserting the older claim).
+import os
 import sys
 
-P = "/home/paul/reverse/smac/NAMED.md"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+P = os.path.join(ROOT, "NAMED.md")     # s305 review P2: no hardcoded machine path
 
 ROW_OLD = ("| `0x933278` | `unit_array` (119 × 52 B) | live read: no ASCII anywhere, "
            "x at +0, y at +2, owner faction at +14, flags at +10;")
