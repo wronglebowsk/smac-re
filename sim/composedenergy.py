@@ -46,7 +46,7 @@ TRACE_IDLE = "evidence/m44d_idle.json"
 # The pre-B27 writer span list, pinned so this rung cannot loosen the older rungs' gates.
 LEGACY_SPANS = [(60, 64), (68, 76), (84, 86), (800, 804), (808, 812), (79372, 79380)]
 # Filled from the first real run's printed digest; G10 asserts the result table hashes to it.
-ANCHOR = "806d5e3a35877855"
+ANCHOR = "b65e8129b67ba67d"
 
 
 def _txt(rel):
@@ -208,7 +208,8 @@ def legs_table_rows(run):
         for x in rows:
             e_in = x["legs"][0][2]
             out.append((r, x["faction"], e_in, x["gross"], x["feed"],
-                        x["legs"][0][4], x["snapshot"], x["refund_amount"], x["energy_next"]))
+                        x["legs"][0][4], x["snapshot"], x["refund_amount"],
+                        x["spend_next"], x["energy_next"]))
     return out
 
 
@@ -259,13 +260,15 @@ def measure(sav_path):
         a, ra = sen.refund(x, 4)
         b, rb = sen.refund(x, 5)
         m["sample_ok"].append((x, (a, b, ra, rb) == (r4, r5, res4, res5)))
+    # the sweep width is COUNTED, never declared: G5 floors on it so a shrunk loop reddens it
     m["sweep_bad"] = 0
+    m["sweep_n"] = 0
     for x in range(0, 20001):
         for d in (4, 5):
+            m["sweep_n"] += 1
             r, resid = sen.refund(x, d)
             if r + resid != x or r < 0 or r > x:
                 m["sweep_bad"] += 1
-    m["sweep_n"] = 2 * 20001
 
     # G6 the k-table, thresholds DERIVED from the parsed switch tuples
     sw = cen["switch"]
@@ -429,10 +432,10 @@ def render(m):
     p("  recorded factions this pipeline does NOT model (first,last,distinct): %s"
       % (m["frontier"],))
     p("TABLE G the composed %d-round energy run on the save's own eight blocks" % ROUNDS)
-    p("  round fac energy_in gross feed debt snapshot refund energy_out")
+    p("  round fac energy_in gross feed debt snapshot refund spend_out energy_out")
     for t in m["rows"]:
         if t[1] == 0 or t[0] == 0 and t[1] < 8:
-            p("  %5d %3d %9d %5d %4d %4d %8d %6d %10d" % t)
+            p("  %5d %3d %9d %5d %4d %4d %8d %6d %9d %10d" % t)
     p("  rows printed %d of %d (round 0 carries all eight factions, later rounds print "
       "faction 0); every gate and the digest read ALL rows"
       % (sum(1 for t in m["rows"] if t[0] == 0 or t[1] == 0), len(m["rows"])))
@@ -484,7 +487,7 @@ def acceptance(m, results):
          % (sum(1 for _x, ok in m["sample_ok"] if ok), len(m["sample_ok"]),
             m["sweep_n"], m["sweep_bad"]),
          all(ok for _x, ok in m["sample_ok"]) and m["sweep_bad"] == 0
-         and len(m["sample_ok"]) >= 5))
+         and len(m["sample_ok"]) >= 5 and m["sweep_n"] >= 40000))
     add(("G6 k-table walked from the pinned switch tuples (skip<=%d, k1=%d): %s"
          % (m["skip_max"], m["k1"], [k for _d, k in m["ktable"]]),
          all(tuple(x) in [tuple(y) for y in cen["switch"]] for x in sen.REFUND_SWITCH)
