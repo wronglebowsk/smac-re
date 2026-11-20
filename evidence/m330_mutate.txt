@@ -21,8 +21,19 @@ PASS MU18 | ['G1'] | ['G1'] | OK
 PASS MU19 | ['G1', 'G2', 'G3'] | ['G1', 'G2', 'G3'] | OK
 PASS MU20 | [] | [] | NO-OP-OK
 PASS MU21 | ['G8'] | ['G8'] | OK
+PASS MU22 | ['G10'] | ['G10'] | OK
+PASS MU23 | ['G10'] | ['G10'] | OK
+PASS MU24 | ['G10'] | ['G10'] | OK
+PASS MU25 | ['G6'] | ['G6'] | OK
+PASS MU26 | ['G6'] | ['G6'] | OK
+PASS MU27 | ['G1', 'G2', 'G3', 'G7'] | ['G1', 'G2', 'G3', 'G7'] | OK
+PASS MU28 | ['G12'] | ['G12'] | OK
+PASS MU29 | ['G12'] | ['G12'] | OK
+PASS MU30 | ['G12'] | ['G12'] | OK
+PASS MU31 | ['G1', 'G3'] | ['G1', 'G3'] | OK
+PASS MU32 | ['G4'] | ['G4'] | OK
 coverage True (union=['G1', 'G10', 'G11', 'G12', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'R'])
-digest 730127f586346fa6
-HARNESS 20/20 scored OK + 1/1 NO-OP, 0 MISMATCH/0 CRASH
-== M330 mutate: 23/23 ==
+digest cf85092dea6baa93
+HARNESS 31/31 scored OK + 1/1 NO-OP, 0 MISMATCH/0 CRASH
+== M330 mutate: 34/34 ==
 harness rc=0

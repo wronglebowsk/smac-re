@@ -146,6 +146,13 @@ def g1_census():
 
 # ---------------- G2/G3: writer / reader roles (exact pins) ----------------
 # Every census hit address is literal-read here via ins(a) — L2b-safe.
+P_READERS = {0x4f4958: ("mov", "edx,DWORD PTR [edi+0x94d730]"),
+             0x52071e: ("mov", "ecx,DWORD PTR [esi+0x94d730]"),
+             0x520749: ("mov", "ecx,DWORD PTR [esi+0x94d730]"),
+             0x520776: ("mov", "ecx,DWORD PTR [esi+0x94d730]"),
+             0x52082c: ("mov", "edi,DWORD PTR [esi+0x94d730]"),
+             0x5233f3: ("mov", "ebx,DWORD PTR [edx+0x94d730]"),
+             0x5362db: ("mov", "edx,DWORD PTR [eax+0x94d730]")}
 def g23_roles(field):
     waddrs = sorted(h[0][0] for h in field if h[0][1])
     raddrs = sorted(h[0][0] for h in field if h[0][2] and not h[0][1])
@@ -165,7 +172,7 @@ def g23_roles(field):
     gate("G2", okW, "4 writers: feeder 4f4962 (edx), entry-zero 52056d (eax=0), "
          "residue 52078f (ecx), reset 59f26a (edx, FUN_0059ec90=M320 RESET)")
     okR = (raddrs == [0x4f4958, 0x52071e, 0x520749, 0x520776, 0x52082c, 0x5233f3, 0x5362db]
-           and all(ins(a)[0] in ("mov", "sub") for a in raddrs))
+           and all(ins(a) == t for a, t in P_READERS.items()))
     gate("G3", okR, "7 STRIDE readers: feeder-load 4f4958, refund loads 52071e/749/776, "
          "ledger 52082c, 5233f3 (522b70), 5362db (535c60); +2 arg-fed in G12")
     return wroles, raddrs
@@ -175,9 +182,12 @@ MAGIC = 0x55555556
 # exact-address pins (all literal-read; mutants patch these)
 P_MAGIC = [0x52072d, 0x52074f, 0x52075a, 0x52077c]      # mov eax,0x55555556
 P_IMUL = {0x520732: "ecx", 0x520754: "ecx", 0x52075f: "ecx", 0x520784: "edx"}
-P_SIGNFIX = [(0x520734, 0x520736, 0x520739),            # mov eax,edx/shr 1f/add edx,eax
-             (0x520767, 0x520769, 0x52076c),            # mov ecx,edx/shr 1f/add edx,ecx
-             (0x520786, 0x520788, 0x52078b)]
+P_SIGNFIX = {0x520734: ("mov", "eax,edx"), 0x520736: ("shr", "eax,0x1f"),
+             0x520739: ("add", "edx,eax"),
+             0x520767: ("mov", "ecx,edx"), 0x520769: ("shr", "ecx,0x1f"),
+             0x52076c: ("add", "edx,ecx"),
+             0x520786: ("mov", "eax,edx"), 0x520788: ("shr", "eax,0x1f"),
+             0x52078b: ("add", "edx,eax")}
 P_K5 = [0x520758, 0x520781]                             # add ecx,ecx / lea edx,[ecx+ecx*1]
 P_ELOAD = [0x52073b, 0x520761]                          # mov eax,[esi+0x94d650]
 P_EADD = [0x520741, 0x52076e]                           # add eax,edx
@@ -194,11 +204,7 @@ def magic_div3(x):
 def g4_law():
     magics = [imm(a) for a in P_MAGIC]
     imul_ok = all(ins(a) == ("imul", r) for a, r in P_IMUL.items())
-    sf_ok = True
-    for m1, s1, a1 in P_SIGNFIX:
-        mn1, o1 = ins(m1); mn2, o2 = ins(s1); mn3, o3 = ins(a1)
-        ok = (mn1 == "mov" and mn2 == "shr" and o2.endswith("0x1f") and mn3 == "add")
-        sf_ok = sf_ok and ok
+    sf_ok = all(ins(a) == t for a, t in P_SIGNFIX.items())
     k5 = [ins(a) for a in P_K5]
     k5_ok = (k5[0] == ("add", "ecx,ecx")
              and k5[1][0] == "lea" and "ecx+ecx" in k5[1][1])
@@ -272,15 +278,25 @@ def g6_mask():
     iters = (bound - 0x94f70c) // STRIDE
     cl_final = 1 + iters
     bitbyte = (1 << cl_final) & 0xff              # 0 -> test dl,al always 0
-    row("G6 mask: %s | %s | %s | %s | %s | %s | loop=%s iters=%d cl_final=%d (1<<cl)&0xff=%d"
-        % (ld, one, shl, test, jne, clsrc, loop_ok, iters, cl_final, bitbyte))
-    ok = shape_ok and loop_ok and iters == NBLK - 1 and cl_final == NBLK and bitbyte == 0
+    # review #340 P1-2: [ebp-4] liveness from loop exit to the refund cl-load,
+    # the loop back-edge, and the M328 snapshot store that sits in the gap
+    gap4 = stores_to_ebp_slot(0x520639, 0x5206fd, "-0x4")
+    backedge = ins(0x520638) == ("jl", "0x52058e")
+    snap = ins(0x52065d) == ("mov", "ds:0x91c64c,eax")
+    row("G6 mask: %s | %s | %s | %s | %s | %s | loop=%s iters=%d cl_final=%d "
+        "(1<<cl)&0xff=%d gap[ebp-4]=%s backedge=%s snap@52065d=%s"
+        % (ld, one, shl, test, jne, clsrc, loop_ok, iters, cl_final, bitbyte,
+           gap4, backedge, snap))
+    ok = (shape_ok and loop_ok and iters == NBLK - 1 and cl_final == NBLK
+          and bitbyte == 0 and gap4 == [] and backedge and snap)
     gate("G6", ok, "mask gate VACUOUS: [ebp-4]=1+7=8 at refund (loop bound pinned); "
          "1<<8 has dl=0 -> test dl,al always 0 -> jne never taken; refund NOT faction-masked")
     return ok
 
 # ---------------- G7: entry zeroing ----------------
 P_ZERO = {0x520561: 0x94d828, 0x520567: 0x94d72c, 0x52056d: 0x94d730, 0x520573: 0x94d738}
+P_ZGAP = {0x520559: ("shl", "esi,0x4"), 0x52055c: ("sub", "esi,edi"),
+          0x52055e: ("shl", "esi,0x2")}
 def g7_zero():
     x = ins(0x520557)                      # xor eax,eax
     ok = x == ("xor", "eax,eax")
@@ -290,9 +306,23 @@ def g7_zero():
         good = mn == "mov" and o == "DWORD PTR [esi+0x%x],eax" % disp
         ok = ok and good
         det.append("%06x:+%x=%s" % (a, disp - BLKBASE, "0" if good else "?"))
-    row("G7 entry-zero: %s | %s" % (x, " ".join(det)))
-    gate("G7", ok, "upkeep entry 520540 zeroes +3f8/+2fc/+300/+308 (eax=0 xor@520557); "
-         "+300 accumulates WITHIN the upkeep pass before the refund")
+    # review #340 P2-3: eax liveness across xor->stores + no branch into the sequence
+    gapok = all(ins(a) == t for a, t in P_ZGAP.items())
+    eaxdefs = reg_defs(0x520558, 0x520574, {"eax", "ax", "al", "ah"})
+    tgts = set()
+    for a in m326.ADDRS:
+        if a < 0x520540: continue
+        if a >= 0x520579: break
+        mn, o = ins(a)
+        if mn.startswith("j"):
+            t = o.split()[-1]
+            if t.startswith("0x"): tgts.add(int(t, 16))
+    midtgts = sorted(t for t in tgts if 0x520559 <= t <= 0x520573)
+    row("G7 entry-zero: %s | %s | gap=%s eaxdefs=%s mid-branch-targets=%s"
+        % (x, " ".join(det), gapok, eaxdefs, midtgts))
+    ok = ok and gapok and eaxdefs == [] and midtgts == []
+    gate("G7", ok, "upkeep entry 520540 zeroes +3f8/+2fc/+300/+308 (eax=0 xor@520557, "
+         "liveness + no mid-branch measured); +300 accumulates WITHIN the upkeep pass")
     return ok
 
 # ---------------- G8: save carry ----------------
@@ -359,8 +389,25 @@ P_FEED = {0x4f48ce: ("mov", "eax,DWORD PTR [eax+0x984d48]"),
           0x4f497f: ("mov", "DWORD PTR [edi+0x94d650],eax"),
           0x4f5cc6: ("cmp", "DWORD PTR ds:0x985afc,0x1"),
           0x4f5ccf: ("call", "0x4f47f0")}
+# review #340 P1-1: the feeder INPUT law (slot range, stride, flag-bit source, loop)
+P_FEED2 = {0x4f4802: ("mov", "esi,0x1"), 0x4f4808: ("mov", "DWORD PTR [ebp-0x4],esi"),
+           0x4f4811: ("cmp", "esi,0x22"), 0x4f4814: ("jg", "0x4f4a34"),
+           0x4f4823: ("call", "0x507410"),
+           0x4f482b: ("lea", "eax,[edi+edi*8]"), 0x4f4831: ("lea", "ecx,[edi+eax*2]"),
+           0x4f4834: ("shl", "ecx,0x4"),
+           0x4f4837: ("mov", "al,BYTE PTR [ecx+edx*1+0x95da9c]"),
+           0x4f4841: ("and", "al,cl"), 0x4f484c: ("je", "0x4f4a34"),
+           0x4f48c8: ("lea", "eax,[esi+esi*2]"), 0x4f48cb: ("shl", "eax,0x4"),
+           0x4f4a34: ("inc", "esi"), 0x4f4a35: ("cmp", "esi,0x27"),
+           0x4f4a3b: ("jl", "0x4f480b")}
 def g10_feeder():
     ok = all(ins(a) == t for a, t in P_FEED.items())
+    ok = ok and all(ins(a) == t for a, t in P_FEED2.items())
+    # stride and slot range DERIVED from the pinned bytes
+    stride = 3 * (1 << 4)                       # lea [esi+esi*2] then shl 4 = 48
+    slot_max = int(ins(0x4f4811)[1].split(",")[1], 16)
+    basefold = (1 + 2 * 9) * 16                 # lea 9x / lea +2x / shl 4 = 304
+    ok = ok and stride == 48 and slot_max == 34 and basefold == 0x130
     jge = ins(0x4f4970); jg = ins(0x4f497d)
     jl1 = ins(0x4f48dc); je1 = ins(0x4f48f8); jle = ins(0x4f5ccd)
     ok = (ok and jge[0] == "jge" and "0x4f4a34" in jge[1]
@@ -372,8 +419,10 @@ def g10_feeder():
     xs = [-7, -1, 0, 1, 2, 3, 5, 10, 99]
     halve = {x: x // 2 if x >= 0 else -((-x) // 2) for x in xs}
     model_ok = all(halve[x] == int(x / 2) for x in xs)
-    row("G10 feeder: pins=%s skip-halve=%s/%s round-gate=%s halve-model=%s samples=%s"
-        % (ok, jl1, je1, jle, model_ok, [(x, halve[x]) for x in (1, 3, 5, 10)]))
+    row("G10 feeder: pins=%s skip-halve=%s/%s round-gate=%s halve-model=%s "
+        "stride=%d slot_max=%d basefold=%x samples=%s"
+        % (ok, jl1, je1, jle, model_ok, stride, slot_max, basefold,
+           [(x, halve[x]) for x in (1, 3, 5, 10)]))
     gate("G10", ok and model_ok, "FUN_004f47f0 (ROUND>1 only): per-slot v from "
          "0x984d48+48*slot; CONDITIONAL halving (owner-match path: +bit5, parity, "
          "trunc/2; else FULL v); ENERGY-=v @4f4950-52; +300+=v @4f495e-62; "
@@ -434,6 +483,10 @@ P_EXCL = {0x5791a6: ("lea", "ecx,[eax*4+0x927590]"), 0x5791ae: ("call", "0x5791c
           0x426bae: ("mov", "eax,DWORD PTR [edx+0xa1c]"), 0x426bb4: ("push", "eax"),
           0x426c8e: ("mov", "eax,DWORD PTR [edx+0xa1c]"), 0x426c94: ("push", "eax"),
           0x54654d: ("push", "0x0"), 0x546551: ("call", "0x535c60")}
+# review #340 P2-4/5: liveness boundary insns (literal-read; mutants patch these)
+P_BOUND = {0x5362b4: ("mov", "eax,DWORD PTR [ebp+0x8]"),
+           0x535c93: ("mov", "ebx,DWORD PTR [ebp+0x8]"),
+           0x54b35f: ("sar", "eax,1")}
 def stores_to_ebp_slot(lo, hi, slot):
     out = []
     for a in m326.ADDRS:
@@ -442,6 +495,20 @@ def stores_to_ebp_slot(lo, hi, slot):
         mn, o = ins(a)
         if mn == "mov" and o.startswith("DWORD PTR [ebp%s]" % slot):
             out.append(a)
+    return out
+
+WRITE_MN = m326.STORE_MN | {"lea", "movsx", "movzx"}
+def reg_defs(lo, hi, regs):
+    """addresses in [lo,hi) whose dest is one of regs (write shapes)."""
+    out = []
+    for a in m326.ADDRS:
+        if a < lo: continue
+        if a >= hi: break
+        mn, o = ins(a)
+        if mn in WRITE_MN:
+            parts = m326.split_ops(o)
+            if parts and m326.reg_of(parts[0]) in regs:
+                out.append(a)
     return out
 def g12_argfed():
     ok = all(ins(a) == t for a, t in P_546.items())
@@ -467,6 +534,18 @@ def g12_argfed():
            m326.value_of(0x535f1a, "edi")))
     ok = (ok and m546 == STRIDE and m535 == STRIDE // 4 and m535b == STRIDE
           and ow == [] and ss == [0x535cc3, 0x535f2c])
+    # review #340 P2-4/5: register liveness windows (callee-saved regs survive
+    # the calls inside them; the 536295 back-edge re-passes the 5362b1 load)
+    bok = all(ins(a) == t for a, t in P_BOUND.items())
+    esilive = reg_defs(0x5362b2, 0x5362f5, {"esi", "si"})
+    edilive = reg_defs(0x535c91, 0x535cc3, {"edi", "di"})
+    edxlive = reg_defs(0x54b35d, 0x54b367, {"edx", "dx", "dl", "dh"})
+    jccwin = [a for a in m326.ADDRS if 0x54b35d <= a < 0x54b367
+              and ins(a)[0].startswith("j")]
+    row("G12 liveness: bound=%s esi(5362b1,5362f5)=%s edi(535c90,535cc3)=%s "
+        "edx(54b35c,54b367)=%s jcc-in-edx-window=%s"
+        % (bok, esilive, edilive, edxlive, jccwin))
+    ok = ok and bok and esilive == [] and edilive == [] and edxlive == [] and jccwin == []
     gate("G12", ok, "54b367=block(esi)+300 (8380-fold, last-overwrite law); "
          "5362f5: [ebp-0x14] has 2 defs (2095*arg3 @535cc3 / 8380*edi @535f2c), "
          "both block-offset folds; arg3=4*faction INFERRED; caller 546551 const 0; "

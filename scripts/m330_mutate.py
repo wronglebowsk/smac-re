@@ -38,6 +38,18 @@ MUTANTS = [
     ("MU19", "algo", "1", {"G1", "G2", "G3"}),
     ("MU20", "algo", "2", set()),          # declared NO-OP: ALGO=2 = inert alias of 0
     ("MU21", "save", "programs/saves/m112auto1.SAV", {"G8"}),
+    # review #340 round: input-law, liveness and operand pins
+    ("MU22", "code", "0x4f48cb|shl eax,0x5", {"G10"}),
+    ("MU23", "code", "0x4f4811|cmp esi,0x23", {"G10"}),
+    ("MU24", "code", "0x4f4837|mov al,BYTE PTR [ecx+edx*1+0x95da9d]", {"G10"}),
+    ("MU25", "code", "0x520635|mov DWORD PTR [ebp-0x4],ebx", {"G6"}),
+    ("MU26", "code", "0x52065d|mov DWORD PTR [ebp-0x4],eax", {"G6"}),
+    ("MU27", "code", "0x52055e|mov eax,esi", {"G1", "G2", "G3", "G7"}),
+    ("MU28", "code", "0x5362b4|mov esi,DWORD PTR [ebp+0x8]", {"G12"}),
+    ("MU29", "code", "0x535c93|mov edi,DWORD PTR [ebp+0x8]", {"G12"}),
+    ("MU30", "code", "0x54b35f|mov edx,eax", {"G12"}),
+    ("MU31", "code", "0x5233f3|mov ebx,DWORD PTR [edx+0x94d734]", {"G1", "G3"}),
+    ("MU32", "code", "0x520769|shr ecx,0x1e", {"G4"}),
 ]
 
 def env_for(kind, payload):

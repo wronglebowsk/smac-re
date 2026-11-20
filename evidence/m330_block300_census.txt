@@ -47,21 +47,22 @@ G4 samples x: r4=trunc(x/3) r5=trunc(2x/3) residue=x-r: [(1, 0, 0, 1, 1), (2, 0,
 PASS G4: refund=trunc(k*x/3) k=1(diff4)/2(diff5+); ENERGY+=r; field-=r; magic 55555556, sign-fix, residue SUB (not zero)
 G5 switch: ('mov', 'eax,ds:0x985aec') | ('cmp', 'eax,0x3') | ('jle', '0x520795') | ('cmp', 'eax,0x4') | ('jne', '0x520758') | ('cmp', 'ecx,ebx') | ('je', '0x520795')
 PASS G5: ds:0x985aec>3 gate; ==4 -> 1/3 path else (>=5) -> 2/3 path; field==0 skip; noun 'difficulty' INFERRED (M308 enum)
-G6 mask: ('mov', 'al,ds:0x985b10') | ('mov', 'edx,0x1') | ('shl', 'edx,cl') | ('test', 'dl,al') | ('jne', '0x520795') | ('mov', 'ecx,DWORD PTR [ebp-0x4]') | loop=True iters=7 cl_final=8 (1<<cl)&0xff=0
+G6 mask: ('mov', 'al,ds:0x985b10') | ('mov', 'edx,0x1') | ('shl', 'edx,cl') | ('test', 'dl,al') | ('jne', '0x520795') | ('mov', 'ecx,DWORD PTR [ebp-0x4]') | loop=True iters=7 cl_final=8 (1<<cl)&0xff=0 gap[ebp-4]=[] backedge=True snap@52065d=True
 PASS G6: mask gate VACUOUS: [ebp-4]=1+7=8 at refund (loop bound pinned); 1<<8 has dl=0 -> test dl,al always 0 -> jne never taken; refund NOT faction-masked
-G7 entry-zero: ('xor', 'eax,eax') | 520561:+3f8=0 520567:+2fc=0 52056d:+300=0 520573:+308=0
-PASS G7: upkeep entry 520540 zeroes +3f8/+2fc/+300/+308 (eax=0 xor@520557); +300 accumulates WITHIN the upkeep pass before the refund
+G7 entry-zero: ('xor', 'eax,eax') | 520561:+3f8=0 520567:+2fc=0 52056d:+300=0 520573:+308=0 | gap=True eaxdefs=[] mid-branch-targets=[]
+PASS G7: upkeep entry 520540 zeroes +3f8/+2fc/+300/+308 (eax=0 xor@520557, liveness + no mid-branch measured); +300 accumulates WITHIN the upkeep pass
 G8 carry: blockA@32c vals=[0, 1, 1, 0, 1, 0, 1, 1] foffs=[1580, 9960, 18340, 26720, 35100, 43480, 51860, 60240] energy=[10, 28, 112, 69, 229, 60, 102, 37] sha=74d0f44ab9b9290b round=50 fread@596a91=('call', '0x64cc00')
 PASS G8: +300 inside raw block carry (M324: 596a91 105e0/94d430); m54b_clean vals=[0,1,1,0,1,0,1,1] (residues), energy==M325 blkA, foffs pinned
 G9 turnfn: stores=16 blkstores=0 pin@51f53c=('mov', 'ds:0x985afc,eax')
 PASS G9: turnfn 51f320: 16 stores, 0 block stores (as +220/+224); ROUND store 51f53c pinned
-G10 feeder: pins=True skip-halve=('jl', '0x4f4938')/('je', '0x4f4938') round-gate=('jle', '0x4f5cd4') halve-model=True samples=[(1, 0), (3, 1), (5, 2), (10, 5)]
+G10 feeder: pins=True skip-halve=('jl', '0x4f4938')/('je', '0x4f4938') round-gate=('jle', '0x4f5cd4') halve-model=True stride=48 slot_max=34 basefold=130 samples=[(1, 0), (3, 1), (5, 2), (10, 5)]
 PASS G10: FUN_004f47f0 (ROUND>1 only): per-slot v from 0x984d48+48*slot; CONDITIONAL halving (owner-match path: +bit5, parity, trunc/2; else FULL v); ENERGY-=v @4f4950-52; +300+=v @4f495e-62; ENERGY<0 floor-0 if block+8<=1; slot noun OPEN
 G11 ledger: pins=True
 PASS G11: post-refund: +310 := +2fc; +30c := +308 - +300 + +2fc (residue feeds a derived balance; nouns INFERRED)
 G12 argfed: pins546=True pins535=True pins535b=True pinsexcl=True m546=8380 m535=2095 m535b=8380 overwrite(54b1e5,54b35c)=[] stores535=[5463235, 5463852] edi@535f1a=('lin', 1, 0, ('ptr', ('brk', 12, 'ebp', None, 1)))
+G12 liveness: bound=True esi(5362b1,5362f5)=[] edi(535c90,535cc3)=[] edx(54b35c,54b367)=[] jcc-in-edx-window=[]
 PASS G12: 54b367=block(esi)+300 (8380-fold, last-overwrite law); 5362f5: [ebp-0x14] has 2 defs (2095*arg3 @535cc3 / 8380*edi @535f2c), both block-offset folds; arg3=4*faction INFERRED; caller 546551 const 0; EXCLUDED: 579329 facprofile+300 (0x927590 callers), 51dcd8 ladder+1778, 596bee/cb5/cbc loader rearrange, 5bad16 stack
 R rivals hold: R1(half)=False R2(diff-independent)=False R3(zeroed)=False R4(mask-gated)=False R5(persistent-base)=False
 PASS R: R1 DEAD (magic 55555556 div3 x4 + imul x4); R2 DEAD (k5 doubling @520758/520781); R3 DEAD (sub ecx,edx residue kept); R4 DEAD (cl=8 -> dl=0); R5 DEAD (entry-zero 52056d + per-upkeep feeder)
-digest 63def04aadb07bcf
+digest 470d844054b1b101
 == M330: 13/13 ==
