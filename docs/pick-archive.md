@@ -1258,3 +1258,9 @@ from the printed output), and the arrival row's "19 reads" of `[widget+0x3ff3c]`
 The retraction facts themselves are now MEASURED, not grepped: `scripts/m329_verify_s308.py` ->
 `== M329 s308 verify: PASS (4 e8-sites, 0 direct jmps, 0 absolute FN-encodings, 1 tag push; 3919 indirect
 calls / 362 indirect jumps printed as UNKNOWN) ==` (`evidence/m329_verify_s308.txt:13`, 2 runs diff-identical).
+
+## §trim-s310-chain2 — NEXT_PROMPT cap trim at s310 (M331 fire): the M330 one-liner retired VERBATIM
+
+(a) THE M330 RESULT ONE-LINER, VERBATIM from `NEXT_PROMPT.md` (sha1 `c02f9e90ec27`, byte-substring asserted by `scripts/m331_trim_s310.py`; `NAMED ## M330` governs; the M330 MERGED landing line stays in NEXT_PROMPT):
+
+M330 (s307-chain2): block+300=UPKEEP SPEND ACCUMULATOR — entry-zeroed, feeder 4f47f0 (ROUND>1, conditional halving), refund trunc(kx/3) k=1 diff4/2 diff>=5, mask gate VACUOUS (cl=8). 13/13 470d844054b1b101 x2; 31/31+1 NO-OP cf85092dea6baa93. NAMED ## M330.
