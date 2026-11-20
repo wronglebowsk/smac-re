@@ -115,3 +115,4 @@ M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
 M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
 M328 (s304-chain2): 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag (noun INFERRED, lifecycle V). HURRY story closed. 14/14 030a6fc12e4a7cd7 x2; 38/38 (37+1 NO-OP) 36259eee0736d9c1; ST 5/5. NAMED ## M328.
 M330 (s307-chain2): block+300=UPKEEP SPEND ACCUMULATOR — entry-zeroed, feeder 4f47f0 (ROUND>1, conditional halving), refund trunc(kx/3) k=1 diff4/2 diff>=5, mask gate VACUOUS (cl=8). 13/13 470d844054b1b101 x2; 31/31+1 NO-OP cf85092dea6baa93. NAMED ## M330.
+M330 MERGED #340 -> 1b9cb38 (s309-chain2); pr340 JSON sidecar folded #342 (red-gate docs fold, fix-forwarded in s309 — check CI before ANY merge).
