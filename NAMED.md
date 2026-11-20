@@ -1239,7 +1239,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | +308: per owned base (call 5206d3) Σ 8f0d40[k−1], k≠owner, block+0xc0==0 both; E+=base_rec+0xfc | G6 `:60` | V MU6,7,8,27 |
 | +310:=+2fc; +30c:=+308−300+2fc NUMERIC 8/8 save blocks; caps 546800 MIN(E/2,100·net)≥50 / 535c60 MIN(net,+1058)·arg3+E/5 | G8-G10 `:63-68` | V MU12-16,24,25,29,32 |
 | readers 522b70 ENERGY+net score / 531df0 920754 / 45a920 '{n}' / 40e720 heap; carry raw block; turnfn 16st/0blk; reset 59ec90 | G11/G12 `:70,72` | V MU17-20,28,32 |
-| ACCEPT 14/14 a9983cddad88fade x2 (`:86-87`,`_rerun.txt:86-87`); 33/33+1 75a8749314a13287 (`evidence/m331_mutate.txt:38-40`); ST 5/5 (`evidence/m331_mutate_selftest.txt:6`) | cite | V |
+| ACCEPT 14/14 digest a9983cddad88fade x2 (`:86-87`,`_rerun.txt:86-87`); 33/33+1 digest 75a8749314a13287 (`evidence/m331_mutate.txt:38-40`); ST 5/5 (`evidence/m331_mutate_selftest.txt:6`) | cite | V |
 | OPEN: income nouns; 4e9880; 8f0d40 law; +c0/+304; cap action; 920754 | - | lead |
 
 ## M330 (s307-chain2, STATIC 13/13) - block+300 = UPKEEP SPEND ACCUMULATOR
