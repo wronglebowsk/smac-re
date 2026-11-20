@@ -1,0 +1,6 @@
+PASS ST1 bad-address rejected
+PASS ST2 equal-patch rejected
+PASS ST3 coverage: every gate has a mutant
+PASS ST4 exactly one declared NO-OP (MU31)
+PASS ST5 base run 14/14 PASS
+== selftest: 5/5 ==

@@ -114,3 +114,4 @@ M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-
 M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
 M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
 M330 MERGED #340 -> 1b9cb38 (s309-chain2); pr340 JSON sidecar folded #342 (red-gate docs fold, fix-forwarded in s309 — check CI before ANY merge).
+M331 (s310-chain2): +2fc/+308=INCOME siblings; ledger 8/8; rate +4ec%/100; cap MIN(E/2,100net)>=50. 14/14 442270fd57be2b62 x2; 43/43+1 29061c567f9132fb. NAMED ## M331.

@@ -1263,3 +1263,8 @@ calls / 362 indirect jumps printed as UNKNOWN) ==` (`evidence/m329_verify_s308.t
 
 - M328 (s304-chain2): 91c64c=turn-start ENERGY snapshot; 920434='multi' session flag (noun INFERRED, lifecycle V). HURRY story closed. 14/14 030a6fc12e4a7cd7 x2; 38/38 (37+1 NO-OP) 36259eee0736d9c1; ST 5/5. NAMED ## M328.
 - M330 (s307-chain2): block+300=UPKEEP SPEND ACCUMULATOR — entry-zeroed, feeder 4f47f0 (ROUND>1, conditional halving), refund trunc(kx/3) k=1 diff4/2 diff>=5, mask gate VACUOUS (cl=8). 13/13 470d844054b1b101 x2; 31/31+1 NO-OP cf85092dea6baa93. NAMED ## M330.
+## §trim-s310-chain2 — NEXT_PROMPT cap trim at s310 (M331 fire): the M330 one-liner retired VERBATIM
+
+(a) THE M330 RESULT ONE-LINER, VERBATIM from `NEXT_PROMPT.md` (sha1 `429295c00401`, byte-substring asserted by `scripts/m331_trim_s310.py`; `NAMED ## M330` governs; the M330 MERGED landing line stays in NEXT_PROMPT):
+
+M330 (s307-chain2): block+300=UPKEEP SPEND ACCUMULATOR — entry-zeroed, feeder 4f47f0 (ROUND>1, conditional halving), refund trunc(kx/3) k=1 diff4/2 diff>=5, mask gate VACUOUS (cl=8). 13/13 470d844054b1b101 x2; 31/31+1 NO-OP cf85092dea6baa93. NAMED ## M330.
