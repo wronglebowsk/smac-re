@@ -1,8 +1,8 @@
 # SESSION_CURSOR
 
-M329 (pick viii) **READY TO LAND** on `milestone/m329` — not merged yet (submit/review pending
-this fire). ACCEPT `python3 -u scripts/m329_scratchtree.py` -> `== M329: 13/13 ==`
-`evidence/m329_scratchtree.txt:127`, PIN `757e40a7ed04abda` `:125`, 2 runs byte-identical;
-harness `python3 -u scripts/m329_mutate.py` -> `HARNESS PASS 26/26` `evidence/m329_mutate.txt:31`.
-NEXT FIRE: `track_mode.py` first (B27 spine is the next BUILD rung after one more analysis);
-NAMED 240,534/250k after the two s307 rotations. `submit` PREPENDS `<id>:` to `--title`.
+M329 (pick viii) LANDING this fire on `milestone/m329`. ACCEPT `python3 -u scripts/m329_scratchtree.py`
+-> `== M329: 13/13 ==` `evidence/m329_scratchtree.txt:127` (PIN `757e40a7ed04abda` :125); harness
+`python3 -u scripts/m329_mutate.py` -> `HARNESS PASS 26/26` `evidence/m329_mutate.txt:31`.
+s308: NEXT_PROMPT 11,362 B + NAMED 240,773/250k (`wc -c`) via `scripts/m329_trim_s308.py`
+(§trim-s308-chain1). Evidence 21.5 MB WARN stands — `m294_gate_rows_raw.txt` is LOAD-BEARING
+(sim parity target), do NOT rm. `submit` PREPENDS `M329:`. NEXT FIRE: B27 spine (BUILD).

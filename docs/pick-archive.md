@@ -1210,3 +1210,27 @@ M321's OPEN row about the FIELD's other writers - M329's writer census names 3 w
 by `scripts/m329_named_rotate.py`; `## Method that worked` (the B10-era method + the s32-s60 M24-M28
 naming rows, 56 lines, 12,564 B, sha1 `16cd10eb5fc0`) -> `docs/named-archive-method-b10-era.md` by
 `scripts/m329_named_rotate2.py`. `NAMED.md` 247,028 -> 240,534 B.
+
+## §trim-s308-chain1 — NEXT_PROMPT cap trim at s308 (M329 landing fire): B26 build-track paragraph + the (viii)/M329 summary retired VERBATIM
+
+(a) THE B26 BUILD-TRACK PARAGRAPH, VERBATIM from `NEXT_PROMPT.md` line 28 (sha1 `bb2b39f698a6`, byte-substring asserted by `scripts/m329_trim_s308.py`):
+
+(B25 = #319 main 1556ce9; B26 = #328 main dd704d0) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). **B26 (s299 BUILD + PR #328 TRIAGE) ACCEPT at this head**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 10/10 gates`, anchor `ae43e0ab9c8cfc3d` (`evidence/b26_selftest.txt:52`, gate line `:63`); harness `python3 -u scripts/b26_mutate.py` -> **19/19 scored + 1 declared NO-OP (MU19)** (`evidence/b26_mutate.txt:24`), `--selftest` **8/8 REJECTED**, **ENTRY-POINT IDENTITY 2/2** scored by **MU21** (both entry points print byte-identical 63-line stdout; the check bites on a relay patched in a temp tree). THE LAW: the container is LOADED, not just written - the three laws and the four defects are VERBATIM at §trim-s299 (e) **(SUPERSEDED IN PART)**; `NAMED ## B26` governs and carries the THREE retractions IN PLACE (F1 the smuggler is **NOT blind** — what holds is OBJECT REUSE; F3 only the SAVE-only refusal half is comparable to B25; F7 the owner byte is `UNIT_OWNER` +14, not `UNIT_FLAG` +4); numbers in that block. **OPEN, ungated-as-explanation: `found_units` 69 -> 0 in the two post-boundary rounds; why the exposed smuggler carries the poisoned owner once, not twice.** Next build **B27, NOT YET AUTHORED** (`BUILD_SPINE.md` ends at B26): write its rung text BEFORE probing (one milestone = spine section + instrument). B25/B26 build-track detail (incl. the tile-test lead = pick (vii)) VERBATIM at `docs/pick-archive.md` §trim-s298 (a) + §trim-s299 (b) + §trim-s299 (d); `NAMED ## B25` / `## B26` govern.
+
+(b) THE (viii)=M329 PICK-SUMMARY BLOCK, VERBATIM from `NEXT_PROMPT.md` lines 63-75 (sha1 `dfae97811347`, byte-substring asserted by the same script; `NAMED ## M329` governs):
+
+  CLOSED pick row (viii = **M329**, s307) VERBATIM at §trim-s307-chain1 (a) (the row as opened + the two
+  numbers it mis-stated); `NAMED ## M329` governs — `FUN_0041a8f0` = **`ui_governor_options_pane(widget,
+  page)`**, a thiscall member of the widget singleton `0x6a9480`; `ds:0x99aa38` = the 19-bit pack staging
+  (19 legs / 19 distinct masks / bits 0..18 / exactly 1 identity leg ⇒ a PERMUTATION); the publish is
+  `and ecx,0xf000000` at `0x41abdc` -> store `0x41ad94` = ONLY bits `0x1c-0x1f` of `[fac*8380+0x94d600]+0x38`,
+  **bit-disjoint** from both faction-create defaults ⇒ REFINES `## M321` in place; the pane's 3 chains walk
+  the own-faction BASE array `0x95da10` (NOT the unit array). ACCEPT `python3 -u scripts/m329_scratchtree.py`
+  -> `== M329: 13/13 ==` (`evidence/m329_scratchtree.txt:127`, digest `757e40a7ed04abda` `:125`, 2 runs
+  identical); harness `python3 -u scripts/m329_mutate.py` -> `HARNESS PASS 26/26`, coverage `True`, 1 NO-OP
+  (`evidence/m329_mutate.txt:31,:29,:30`). The M241 boundary held: nothing about the tagged record's save role
+  was re-litigated. **NO PICKS LEFT except (ix)** (the live-box round) which is GATED on the operator's
+  authorization — so the next fire is the **BUILD rung B27**: author its `BUILD_SPINE.md` section FIRST, then
+  instrument it; if the tracker reads ANALYSE instead, report the gate and stop, invent nothing.
+
+NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **240,773 B / 9,227 B headroom** (`wc -c NAMED.md`, after the row fixes).
