@@ -1233,7 +1233,7 @@ naming rows, 56 lines, 12,564 B, sha1 `16cd10eb5fc0`) -> `docs/named-archive-met
   authorization — so the next fire is the **BUILD rung B27**: author its `BUILD_SPINE.md` section FIRST, then
   instrument it; if the tracker reads ANALYSE instead, report the gate and stop, invent nothing.
 
-NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **241,830 B / 8,170 B headroom** (`wc -c NAMED.md`, after the row fixes).
+NOTE on §trim-s307-chain1 (b)'s last line: the 240,534 B reading of `NAMED.md` there and in `NAMED ## M329`'s headroom row was superseded inside the same session by the in-place M321 refinement + row fixes — the measured head at s308 close is **244,104 B / 5,896 B headroom** (`wc -c NAMED.md`, after the row fixes).
 CORRECTION at s308 to the block above and to §trim-s307-chain1 (a): **"5 call sites / 4 owners" is FALSE —
 the census's own G1/T1 print exactly 4 `e8` call sites** (`0x41e3bd`, `0x49b306`, `0x4a9e0e`, `0x5120d0`;
 `evidence/m329_scratchtree.txt:5-12,33`, 48,874 rel32-calls decoded image-wide, and 0 `jmp`s to the frame).
@@ -1243,3 +1243,14 @@ The same row's `5 ret 0x4` is also wrong: T1 `:13` prints `ret 0x4` sites=**4**,
 + `0x511b3e`/`0x512307` + vtable slots +0xec/0xf0/0xf4 call it" naming-basis claims were never measured —
 the dump contains exactly ONE `push 0x6899ec` (`0x41aba5`) and no occurrence of those two addresses.
 `NAMED ## M329` rows 1-3 carry the retraction IN PLACE.
+ALSO CORRECTED at s308 (the #339 Strata review caught a second class): `NAMED ## M321`'s refined clause and
+`## M329`'s writer row named the second faction-create default **`0xdfbe01` @`0x5a0510`** — no such
+constant/site exists; the census prints `0xdfbe41`@`0x59ed6c` and `0xc0dfbe41`@`0x59ed7a`
+(`evidence/m329_scratchtree.txt:96-97`, the same `mov [ebx+0x94d600],imm32` twice). Also retracted in place:
+the `0x59ed40` "copying reader" (the census's reader is `0x4e494c` `:91`), the "1 clear
+(`0x41ad55`/`and al,0xffdf`)" write-back leg (nowhere in the census: 19 legs, 11 resolved `or`s,
+8 `-> no direct op`, `:62-81`), the chains row's `+3584`/`count 1..37`/`rank 1..3`/sort/cap payload (absent
+from the printed output), and the arrival row's "19 reads" of `[widget+0x3ff3c]` (T2 prints 3).
+The retraction facts themselves are now MEASURED, not grepped: `scripts/m329_verify_s308.py` ->
+`== M329 s308 verify: PASS (4 e8-sites, 0 direct jmps, 0 absolute FN-encodings, 1 tag push; 3919 indirect
+calls / 362 indirect jumps printed as UNKNOWN) ==` (`evidence/m329_verify_s308.txt:13`, 2 runs diff-identical).

@@ -1,0 +1,16 @@
+== M329 s308 retraction facts, re-derived from scratch/m574/text.txt ==
+sanity 0x41e3bd e8-decodes-to-frame=True (the parser must find a known site)
+e8 rel32 call insns decoded=48874; targeting 0x41a8f0: 4 ['0x41e3bd', '0x49b306', '0x4a9e0e', '0x5120d0']
+jmp insns=23632; jmp-to-frame (eb/e9 decoded)=0 []
+lines whose encoding bytes carry 0x41a8f0 little-endian=0 []
+push 0x6899ec (GOVOPTIONS tag) sites=1 ['0x41aba5']
+UNKNOWN (out of scope): indirect calls=3919 indirect jumps=362; jump tables unscanned
+in-frame `push imm32>=0x400000` distinct immediates=1 {'0x6899ec': 1}
+in-frame e8 callees=14 ['0x473760', '0x4e3470', '0x4e5ae0', '0x4eb6b0', '0x4f41f0', '0x528660', '0x528760', '0x5e4afc', '0x626634', '0x6267a5']
+ASSERT sanity-known-site got=[4318141] expected=[4318141] -> OK
+ASSERT e8-sites         got=[4318141, 4829958, 4890126, 5316816] expected=[4318141, 4829958, 4890126, 5316816] -> OK
+ASSERT jmp-to-frame     got=[] expected=[] -> OK
+ASSERT FN-absolute-encodings got=[] expected=[] -> OK
+ASSERT push-6899ec      got=[4303781] expected=[4303781] -> OK
+ASSERT frame-string-pushes got=[6855148] expected=[6855148] -> OK
+== M329 s308 verify: PASS (4 e8-sites, 0 direct jmps, 0 absolute FN-encodings, 1 tag push; 3919 indirect calls / 362 indirect jumps printed as UNKNOWN) ==

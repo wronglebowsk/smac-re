@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319 main 1556ce9; B26 = #328 main dd704d0; B26's full ACCEPT + THE LAW + the three retractions + the `found_units` 69->0 open question VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a) with its sha1, and its per-rung cmds at `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks; `NAMED ## B25`/`## B26` govern; earlier build-track detail §trim-s298 (a), §trim-s299 (b)/(d)). **Next build B27, NOT YET AUTHORED** (`BUILD_SPINE.md` ends at B26): write its rung text BEFORE probing (one milestone = spine section + instrument).
 
- **DOC CAP: `NAMED.md` 241,830 B / 250,000 B FAIL (8,170 B headroom; `wc -c`; the s307 rotation note's 240,534 predates the M321 in-place refinement). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE writing your block — M329's block pushed it to 250,214 and two rotations (M255-M258, Method-that-worked) had to dig it back. Archive sha1s asserted by the rotate scripts.**
+ **DOC CAP: `NAMED.md` 244,104 B / 250,000 B FAIL (5,896 B headroom; `wc -c`; the s307 rotation note's 240,534 predates the M321 in-place refinement). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE writing your block — M329's block pushed it to 250,214 and two rotations (M255-M258, Method-that-worked) had to dig it back. Archive sha1s asserted by the rotate scripts.**
 
 ## THE LEDGER
 
