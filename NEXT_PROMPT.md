@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B26 TRIAGED 10/10 + harness 19/19+1 NO-OP, #328; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B26 + M54A-M327 done; next BUILD is B27, spine text NOT authored; (viii) open; (vii) answered by M327; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B26 TRIAGED 10/10 + harness 19/19+1 NO-OP, #328; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B26 + M54A-M329 done; (v)-(viii) ANSWERED (M328 chain2 / M321 / M327 / **M329 s307**); only (ix) left, box-GATED; next BUILD rung **B27, spine text NOT authored** (track_mode s307: MODE=BUILD, analyse_since_build=3); #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319 main 1556ce9; B26 = #328 main dd704d0) (per-rung cmds: `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks). **B26 (s299 BUILD + PR #328 TRIAGE) ACCEPT at this head**: `python3 -u -m sim.selftest --b26` -> `PASS B26: 10/10 gates`, anchor `ae43e0ab9c8cfc3d` (`evidence/b26_selftest.txt:52`, gate line `:63`); harness `python3 -u scripts/b26_mutate.py` -> **19/19 scored + 1 declared NO-OP (MU19)** (`evidence/b26_mutate.txt:24`), `--selftest` **8/8 REJECTED**, **ENTRY-POINT IDENTITY 2/2** scored by **MU21** (both entry points print byte-identical 63-line stdout; the check bites on a relay patched in a temp tree). THE LAW: the container is LOADED, not just written - the three laws and the four defects are VERBATIM at §trim-s299 (e) **(SUPERSEDED IN PART)**; `NAMED ## B26` governs and carries the THREE retractions IN PLACE (F1 the smuggler is **NOT blind** — what holds is OBJECT REUSE; F3 only the SAVE-only refusal half is comparable to B25; F7 the owner byte is `UNIT_OWNER` +14, not `UNIT_FLAG` +4); numbers in that block. **OPEN, ungated-as-explanation: `found_units` 69 -> 0 in the two post-boundary rounds; why the exposed smuggler carries the poisoned owner once, not twice.** Next build **B27, NOT YET AUTHORED** (`BUILD_SPINE.md` ends at B26): write its rung text BEFORE probing (one milestone = spine section + instrument). B25/B26 build-track detail (incl. the tile-test lead = pick (vii)) VERBATIM at `docs/pick-archive.md` §trim-s298 (a) + §trim-s299 (b) + §trim-s299 (d); `NAMED ## B25` / `## B26` govern.
 
- **DOC CAP DEBT: `NAMED.md` 246,259 B vs the 250,000 B FAIL line (budget exits 1 = gate RED) - rotate VERBATIM to a `docs/named-archive-*.md` BEFORE adding (s300: §B26's 11,151 B rows -> `docs/named-archive-b26-rows.md`).**
+ **DOC CAP: `NAMED.md` 240,534 B / 250,000 B FAIL (budget exits 1 = gate RED). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE writing your block — M329's block pushed it to 250,214 and two rotations (M255-M258, Method-that-worked) had to dig it back. Archive sha1s asserted by the rotate scripts.**
 
 ## THE LEDGER
 
@@ -57,12 +57,22 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
-  NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b). NAMED 247,028/250k FAIL — ROTATE BEFORE ADDING A BLOCK (`scripts/m327_named_rotate.py`).
+  NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b). NAMED **240,534**/250k FAIL (9.4 KB headroom) — ROTATE BEFORE ADDING A BLOCK (`scripts/m329_named_rotate.py`/`..._rotate2.py` did two at s307; s307 crossed 250,214 mid-fire and had to dig itself back).
   CLOSED pick rows (v = M319, vi = M321) VERBATIM at §trim-s300-chain1 (b) (sha1 b0e7c1d2614f2312); `NAMED ## M319` / `## M321` govern.
-  OPEN PICK (viii) (NEW at the M321 triage, zero box): NAME FUN_0041a8f0 - it round-trips that
-  field through the scratch dword `ds:0x99aa38` behind a 20-store tree (0x41a9d2-0x41ab6d), and
-  47 whole-dword stores to the field are untraced. Start `evidence/m321_memo_owners.txt:47-81`.
   CLOSED pick row (vii = M327) VERBATIM at §trim-s305-chain1 (a) (sha1 cfa455cbefd4); `NAMED ## M327` governs (harness 24/24, digest 91f58f3de03090c1, since the s305 review round).
+  CLOSED pick row (viii = **M329**, s307) VERBATIM at §trim-s307-chain1 (a) (the row as opened + the two
+  numbers it mis-stated); `NAMED ## M329` governs — `FUN_0041a8f0` = **`ui_governor_options_pane(widget,
+  page)`**, a thiscall member of the widget singleton `0x6a9480`; `ds:0x99aa38` = the 19-bit pack staging
+  (19 legs / 19 distinct masks / bits 0..18 / exactly 1 identity leg ⇒ a PERMUTATION); the publish is
+  `and ecx,0xf000000` at `0x41abdc` -> store `0x41ad94` = ONLY bits `0x1c-0x1f` of `[fac*8380+0x94d600]+0x38`,
+  **bit-disjoint** from both faction-create defaults ⇒ REFINES `## M321` in place; the pane's 3 chains walk
+  the own-faction BASE array `0x95da10` (NOT the unit array). ACCEPT `python3 -u scripts/m329_scratchtree.py`
+  -> `== M329: 13/13 ==` (`evidence/m329_scratchtree.txt:127`, digest `757e40a7ed04abda` `:125`, 2 runs
+  identical); harness `python3 -u scripts/m329_mutate.py` -> `HARNESS PASS 26/26`, coverage `True`, 1 NO-OP
+  (`evidence/m329_mutate.txt:31,:29,:30`). The M241 boundary held: nothing about the tagged record's save role
+  was re-litigated. **NO PICKS LEFT except (ix)** (the live-box round) which is GATED on the operator's
+  authorization — so the next fire is the **BUILD rung B27**: author its `BUILD_SPINE.md` section FIRST, then
+  instrument it; if the tracker reads ANALYSE instead, report the gate and stop, invent nothing.
   Lists live in NAMED ## M310-M325 + the `## B<n>` blocks. READER LAWS still BIND:
   every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 

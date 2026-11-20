@@ -1,9 +1,8 @@
 # SESSION_CURSOR
 
-M327 (pick vii) **MERGED** — #337 -> `ae64526` on main (gate GREEN at CI, 14s).
-PIN `91f58f3de03090c1` `evidence/m327_typeband_census.txt:769`; `== M327: 11/11 ==` `:771`;
-`HARNESS PASS 24/24` `evidence/m327_mutate.txt:29` (MU23={G3,G10}, MU24={G3,G5,G6,G10}).
-s305 fixed s304's 2 lint blockers + #337's review (3 P1, 5 P2, all accepted).
-NEXT FIRE: `track_mode.py`, then **(viii) `FUN_0041a8f0`** (zero box) or the **B27 spine**
-if the mode says BUILD. CAUTION: NAMED 247,028/250k — ROTATE BEFORE ADDING A BLOCK.
-`milestone.py submit` PREPENDS `<id>:` to `--title`.
+M329 (pick viii) **READY TO LAND** on `milestone/m329` — not merged yet (submit/review pending
+this fire). ACCEPT `python3 -u scripts/m329_scratchtree.py` -> `== M329: 13/13 ==`
+`evidence/m329_scratchtree.txt:127`, PIN `757e40a7ed04abda` `:125`, 2 runs byte-identical;
+harness `python3 -u scripts/m329_mutate.py` -> `HARNESS PASS 26/26` `evidence/m329_mutate.txt:31`.
+NEXT FIRE: `track_mode.py` first (B27 spine is the next BUILD rung after one more analysis);
+NAMED 240,534/250k after the two s307 rotations. `submit` PREPENDS `<id>:` to `--title`.

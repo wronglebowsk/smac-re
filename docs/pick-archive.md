@@ -1191,3 +1191,22 @@ at s305 when the `+12` census became a G3 clause (MU23) — `NAMED ## M327` carr
   +10//64 == owner on 25/25) — the 25 exempt records ARE units; the coord exemption is OURS and bites
   only on the self-poked m113map.SAV. RETRACTS `sim/save.py:52` + ## B25's trap-14 in place. 11/11
   ee77ddb39e8ec202 (`m327_typeband_census.txt:769`), harness 22/22; `NAMED ## M327` governs.
+
+## §trim-s307-chain1 — pick (viii) retired (M329), M255-M258 + `## Method that worked` rotated out
+
+(a) THE (viii) ROW AS OPENED AT THE M321 TRIAGE, VERBATIM: "OPEN PICK (viii) (NEW at the M321 triage,
+zero box): NAME FUN_0041a8f0 - it round-trips that field through the scratch dword `ds:0x99aa38` behind a
+20-store tree (0x41a9d2-0x41ab6d), and 47 whole-dword stores to the field are untraced. Start
+`evidence/m321_memo_owners.txt:47-81`."  ->  **CLOSED at s307 as M329** (`NAMED ## M329` governs): the
+frame is a thiscall member of the widget singleton `0x6a9480`, the tree is the 19-bit pack staging, the
+publish is 4 bits wide and disjoint from both faction-create defaults. The "20-store tree" figure was the
+Grep count of the `0x41a9d2`-`0x41ab6d` window; the census counts **19** read/test legs + 19 write-back
+legs + the 1 clear (`evidence/m329_scratchtree.txt:40-84`), and the "47 untraced whole-dword stores" are
+M321's OPEN row about the FIELD's other writers - M329's writer census names 3 writers of `[rec+0x38]`
+(1 dynamic + 2 faction-create defaults), it does not trace the 47.
+
+(b) MOVED VERBATIM OUT OF `NAMED.md` for the M329 block's headroom (both byte-substring asserted):
+`## M255-M258` (s201-s202, 36 lines, 6,734 B, sha1 `9111d3b24758`) -> `docs/named-archive-m255-m258.md`
+by `scripts/m329_named_rotate.py`; `## Method that worked` (the B10-era method + the s32-s60 M24-M28
+naming rows, 56 lines, 12,564 B, sha1 `16cd10eb5fc0`) -> `docs/named-archive-method-b10-era.md` by
+`scripts/m329_named_rotate2.py`. `NAMED.md` 247,028 -> 240,534 B.
