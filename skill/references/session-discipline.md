@@ -200,7 +200,11 @@ dirty branch — `git log main..HEAD` empty, `milestone.py` never closed, the wh
   registry blocks) and leave the live file holding the RULES plus a pointer to it. A split turns 195 B of headroom
   into ~2.5 kB and 238 B into ~180 kB. Rules that keep a move honest: verify it LINE BY LINE against the archive
   (count of moved lines missing must be 0), make both files name each other so a reader grepping one is told the
-  other exists, and land the move as one commit so git records it as a rename rather than a deletion.
+  other exists, and land the move as one commit so git records it as a rename rather than a deletion. When the moved
+  block is a REGISTRY block the lint still reads, keep a one-line-per-claim stub in NAMED.md carrying the
+  SAME gates, mutants and evidence cites (the full rows stay greppable in the archive), and assert sha1
+  byte-exactness of the moved text at write time — `review_lint` passes on the stub, and the headroom is
+  real instead of a deletion the next fire greps in vain.
 - For docs >10 KB `patch` anchored sections instead of `read_file`-then-`write_file`: the write guard
   forces a full read and the rewrite emits the whole file back into context, twice the cost at the exact
   moment the window is tightest. In a HARD-WRAPPED doc, exact multi-line strings miss on the line breaks:
@@ -410,6 +414,12 @@ build track. Protocol, validated end to end:
 - **Name the ownership in BOTH prompts**: which picks each chain owns, and that neither touches the
   other's worktree or `sim/` (the build track). Disjoint picks prevent collisions; the ownership
   check is the backstop.
+- **Exempt the parallel job in the ownership check.** A single-chain prompt's collision rule treats ANY
+  running execution row as a competitor, so a scheduled tick stands down while the OTHER chain is live —
+  an idle hour with a clean `completed` row and no error anywhere. The STORED prompt must name the
+  parallel job id and say its running row is NOT a collision; stand down only for own-job live rows or
+  live instrument processes in the MAIN checkout. Patch the stored prompt (`cronjob_manage update`), not
+  just the transient run override — the scheduled tick reads the stored one.
 - **Shared-doc protocol**: one chain owns NEXT_PROMPT/cursor; the other APPENDS exactly one result
   line to NEXT_PROMPT plus its own NAMED block and session section. The append is not optional
   politeness — the gate's checkpoint check requires NEXT_PROMPT updated on every milestone branch,

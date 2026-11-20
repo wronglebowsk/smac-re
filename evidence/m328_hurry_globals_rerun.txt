@@ -33,28 +33,54 @@ B 0x920434: hits=634 W=15 T=133 R=486 widths=[4] sub=0 disp=0 brk=0 seeds=0 indi
   W 5a09ad FUN_0059ec90     mov DWORD PTR ds:0x920434,esi -> ('const', 0)
 B writer-value multiset: {"('const', 0)": 14, "('const', 1)": 1}
 A snapshot: esi@520657=('lin', 8380, 0, ('ptr', ('brk', 8, 'ebp', None, 1))) ; src@52065d(eax)=('lin', 1, 0, ('ptr', ('brk', 9754192, 'esi', None, 1)))
-post-snapshot ENERGY stores (add-proven): [('520743', 'mov', True), ('520770', 'mov', True), ('5207d9', 'mov', True), ('5207ff', 'mov', True)] ; 4f5a70 store: ('4f5c8c', 'mov', True)
+post-snapshot ENERGY stores (add-proven, clobber-aware): [('520743', 'mov', True, '520741', 'add eax,edx'), ('520770', 'mov', True, '52076e', 'add eax,edx'), ('5207d9', 'mov', True, '5207d7', 'add edx,ecx'), ('5207ff', 'mov', True, '5207fe', 'inc edx')]
+4f5a70 store: ('4f5c8c', 'mov', True, '4f5c85', 'add eax,edx')
+warning formula derived (edx,ecx)@51ff0b: ((11, -10, 0), (0, 10, 0))
+snapshot ordering (linear code order): {'debt_sub': ('sub', 'edx,ecx'), 'debt_store': ('mov', 'DWORD PTR [esi+0x94d650],edx'), 'loop_add': ('add', 'ebx,0x20bc'), 'loop_cmp': ('cmp', 'ebx,0x95dc30')} ok=True
+57ecf0 prologue: [(5762288, 'push', 'ebp'), (5762289, 'mov', 'ebp,esp'), (5762291, 'sub', 'esp,0x2c4'), (5762297, 'push', 'ebx'), (5762298, 'push', 'esi'), (5762299, 'xor', 'esi,esi'), (5762301, 'push', 'edi'), (5762302, 'mov', 'ebx,0x1'), (5762307, 'push', 'esi')] ; first store 57ed04 (==57ed04: True)
+512b40 sole-def provenance: {'515ad8': (5319523, 'xor', 'ebx,ebx'), '515fb1': (5319523, 'xor', 'ebx,ebx')}
+lifecycle writes (site,fn,value): [(5308405, 'FUN_0050fea0', "('const', 0)"), (5336880, 'FUN_00516b80', "('const', 0)"), (5337044, 'FUN_00516b80', "('const', 0)"), (5370471, 'FUN_0051e700', "('const', 0)"), (5384204, 'FUN_00522240', "('const', 0)"), (5384349, 'FUN_00522850', "('const', 0)"), (5384595, 'FUN_00522850', "('const', 0)"), (5868985, 'FUN_005985e0', "('const', 0)"), (5900717, 'FUN_0059ec90', "('const', 0)")] ; all-zero+RESET=True
+opener fallthrough gap: [(5865948, 'mov', 'edx,DWORD PTR ds:0x985ae8'), (5865954, 'mov', 'DWORD PTR ds:0x91b5b8,0x0'), (5865964, 'or', 'edx,0x10c0')] ok=True
+stores between upkeep calls (52091a,520939): []
 upkeep calls: [('52091a', '0x520540'), ('520939', '0x51fe90')]
 switch table @580070 cases0-5: ['0x57fa19', '0x57fa19', '0x57fa99', '0x57fa39', '0x57fcf9', '0x57fd04']
 57ecf0 callers: ['5229b7(FUN_00522850)', '57fcfa(FUN_0057f740)']
 loader immediate fread (dest,size): [('0x985ab8', '0x31c', '596883'), ('0x91f750', '0xce0', '596927'), ('0x92046c', '0x4', '596976'), ('0x92fc50', '0xc0', '5969cb'), ('0x91b5b4', '0x4', '596a03'), ('0x94d430', '0x105e0', '596a8a'), ('0x927590', '0x2ce0', '596ecf'), ('0x926a78', '0x20', '596f1e'), ('0x985e5c', '0x3e80', '597026'), ('0x927538', '0x4', '59707d'), ('0x989ce0', '0xe00', '59713a'), ('0x98ad88', '0x6800', '5971a5'), ('0x92bff0', '0x1000', '59728d'), ('0x991698', '0x100', '59762f'), ('0x991598', '0x100', '597697'), ('0x92bf58', '0x98', '59770f'), ('0x92d4a0', '0x27a0', '59777a'), ('0x91b5b8', '0x4', '5977d6'), ('0x91b5bc', '0x4', '59782d'), ('0x91b700', '0x4', '597948'), ('0x91c18c', '0x4', '5979ba'), ('0x91c188', '0x4', '5979dc')]
-loader register-dest freads (opaque): 17
+  reg-dest fread 596af5: edi -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 596afc: edi -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 5970dd: 0x930d7c -> imm-dest/runtime-size
+  reg-dest fread 5970e4: 0x930d7c -> imm-dest/runtime-size
+  reg-dest fread 597203: edi -> ('const', 10005896)
+  reg-dest fread 59720a: edi -> ('const', 10005896)
+  reg-dest fread 597312: 0x933278 -> imm-dest/runtime-size
+  reg-dest fread 597319: 0x933278 -> imm-dest/runtime-size
+  reg-dest fread 597384: edi -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 59738b: edi -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 597518: 0x95da10 -> imm-dest/runtime-size
+  reg-dest fread 59751f: 0x95da10 -> imm-dest/runtime-size
+  reg-dest fread 59788b: eax -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 597892: eax -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 5978e8: eax -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 5978ef: eax -> ('lin', 1, 0, ('arg', 'eax'))
+  reg-dest fread 597a19: eax -> ('lin', 1, -44, ('arg', 'ebp'))
+loader register-dest freads: 17 (const-cover=[])
+fread branch pair 596af5/596afc (size/dest pushes + je + targets): ok=True
 opener: 'multi' push=5981c1 B-reads=['59800a', '5981d3']
 lifecycle strings: {'FUN_0050fea0': '51004b', 'FUN_00516b80': '516ef4', 'FUN_0051e700': '51eab4', 'FUN_00522240': '5222e1', 'FUN_00522850': '5228d3', 'FUN_005985e0': '598c91'}
 diplomacy 546800 refs=40 ; 546c77=('call', '0x584010') ; hurry-gate window=[('mov', 'eax,ds:0x920434'), ('test', 'eax,eax'), ('je', '0x41a54b')]
 G1 PASS A census 4 hits 2W/0T/2R dw abs, sites pinned, 0 sub/disp/brk/seeds
-G2 PASS A snapshot := ENERGY[faction] (esi=8380*arg fold); writers 520540/419c30
-G3 PASS A reader = INFRASTRUCTURE warning 11E-10A jns; strings pinned
-G4 PASS snapshot precedes 4 additions-only ENERGY stores (+4f5a70 add); upkeep order 520540->51fe90 => warning branch unreachable (scoped)
+G2 PASS A snapshot := ENERGY[faction] (esi=8380*arg fold); writers 520540/419c30; debt-pay(520605) < snapshot < interest(520743) pinned (linear code order)
+G3 PASS A reader = INFRASTRUCTURE warning; E<100 gate pinned (cmp 0x64/jge); formula DERIVED edx=11E-10A ecx=10A @51ff0b; strings pinned
+G4 PASS no subtraction in measured post-snapshot window (4 stores + 4f5a70, add-proven clobber-aware, def sites 520741/52076e/5207d7/5207fe+4f5c85 pinned; linear, scoped); upkeep 520540->51fe90; warning deadness INFERRED
 G5 PASS B census 634 hits 15W/133T/486R dw abs 237 owners, 0 sub/disp/brk/seeds
-G6 PASS B values {0x14,1x1}; sole 1 = 57ecf0 first statement; 512b40 pair pinned 0 via sole-def
-G7 PASS lifecycle strings pinned in writer fns (Retire/REALLYQUIT/YOULOSE2/MULTIDEBUG/opening/SAVEFAILED)
+G6 PASS B values {0x14,1x1}; sole 1 = 57ed04 = FIRST STORE of 57ecf0 (prologue pinned); 512b40 pair 0 via sole-def xor@512b63 (provenance pinned)
+G7 PASS lifecycle strings pinned in writer fns; every lifecycle B-write measures 0 at the 9 pinned sites; RESET site 5a09ad (59ec90) pinned
 G8 PASS B entry: menu switch case4 -> 57ecf0 (callers {5229b7,57fcfa}); SP path 57c550 writes no B
-G9 PASS B uncarried: session blob ends B-4; opener 'multi' gate B==0 -> option-init 0x10c0
+G9 PASS B uncarried: blob ends B-4; 17 reg-dest freads resolved (runtime/stack, none const-cover); opener 'multi' gate B==0 fallthrough pinned -> option-init 0x10c0
 G10 PASS B reader shape: diplomacy 40 refs, B!=0 -> send 584010; HURRY gate load/test/je re-pinned
 R1 PASS RIVAL 'A=per-faction block field' FAILS: 0 bracket/fold accesses, pure absolute
 R2 PASS RIVAL 'B=counter' FAILS: 0 arithmetic writers, value set {0,1} only
 R3 PASS RIVAL 'B set on LOAD (game-active)' FAILS: no loader writer, blob excludes B (M272: 57ecf0 not on load)
 R4 PASS RIVAL 'warning fn writes A' FAILS: 51fe90 is read-only on A
 == M328: 14/14 ==
-digest 79deb5e6c5c501ff
+digest 030a6fc12e4a7cd7
