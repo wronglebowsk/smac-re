@@ -1,19 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-287-289.md` (5 sessions). Read it only when a question reaches back before session ## Session 290.
-
-## Session 290 (2026-11-18, process law - every VERIFIED row names its mutant)
-
-- Assessment of the M317/M311 review rounds: 8 findings, 6 of one class - a VERIFIED claim no gate read (the repo's named dominant defect, TRAP 24). The mutation harness proves gates BITE, not that they COVER; Greptile reads the prose<->code axis. One algorithmic finding (M317's call-site trace invented a decode) shows byte-mutants cannot catch a wrong trace position.
-- LAW LANDED: every VERIFIED row in a NAMED block names the mutation that reddens it; no mutant = INFERRED/OPEN or pin+mutate before submit. Copies: NEXT_PROMPT closing step 3 (paid for by compressing the s288/s289 CLOSED lines), pick-archive §trim-s269 addendum (snapshot untouched), kickoff template CLOSE step 3 + THE WORK algorithm-mutant line, skill session-discipline + instrument-laws (§Algorithm mutants + the coverage law) + SKILL.md close-order bullet.
-- Also documented (hermes-agent skill, local): cron `run` refuses a paused job (resume->run->re-pause), continuity can inject pre-merge output (transient override + repo-wins), the fire's recorded pid is the serve process (cancel via the execution handle), completion notifications lag the ledger.
-- Standing debt named: skill/SKILL.md 58.2 kB > 55k warn; always-loaded 73.7 kB > 60k ritual target -> the s290 split PR moves settled depth verbatim to references.
-
-## Session 290-split (2026-11-18, hygiene - SKILL.md size split)
-
-- Split per the skill's own rule (settled depth VERBATIM to topical references, RULES + pointer stay): SKILL.md 58,206 -> 44,493 B; always-loaded 73,701 -> 59,936 B, under the 60k ritual target. 27 blocks moved verbatim into 13 references under `## s290 retirement from SKILL.md (VERBATIM)` (count corrected at s291 — the draft said 21/12; the #314 local review caught it; audit: `evidence/s290_split_audit.txt:1`): decoration classes #294/#299/#301, structural partition, weakening/leg-census/zero-event/vacuous-gate laws -> instrument-laws; verify-outcome bullet set + rival degeneracy -> verify-outcome; evidence lifecycle depth -> session-discipline; watchpoints, register labeling, HOLD/produced-unit, classifier miss, quit dialog, proposal vote, focus, gdb-census backgrounding, clean reload -> wine-pitfalls / wine-operations / screen-read / wine-headless-harness; gdb command-list killers + %-format law -> gdb-command-list; kernel-write watchpoint -> ptrace-level-probes; writer naming -> static-store-census; vtable live-instance -> code-atlas; readiness credit -> production-queue; save trailer + save_diff law -> data-formats.
-- Every pointer keeps the RULE inline; no depth lost (verbatim appends). Live skill and skill/ rsynced content-identical (diff -rq clean).
-- Acceptance: `python3 scripts/evidence.py budget` -> skill/SKILL.md 44,493 ok, always loaded 59,936, ritual target 60,000 met; `python3 scripts/gate.py --base main` GREEN.
+Older sessions: `docs/sessions/sessions-290-290.md` (2 sessions). Read it only when a question reaches back before session ## Session 291.
 
 ## Session 291 (2026-11-18, local review pipeline - replay experiment + lint + Strata reviewer)
 
@@ -460,3 +447,11 @@ comes from `python3 -u -m sim.selftest --b26`, byte-identical to `python3 -u -m 
 - **Skill drift, not mine**: `skill sync` failed because the LIVE skill was 2 additions ahead of the tracked copy (chain 2's registry-stub rule + the parallel-job ownership exemption); `rsync -a --delete` live→`skill/`.
 - PITFALLS: a parameterised format string must print byte-identically at the unmutated value or the digest pin moves (`word@+%d` with 12 == `word@+12`); `milestone.py submit` PREPENDS `<id>:` to `--title`; `gh pr edit` dies on the projects-classic GraphQL error — use `gh api -X PATCH repos/.../pulls/<n>`.
 - NAMED 246,504 → **247,028 B** (headroom 2,972 — the NEXT fire rotates BEFORE adding a block).
+
+## Session 306 (2026-11-19, M327 MERGED + pr337 sidecar fold; docs-only, zero box)
+
+- **#337 merged -> `ae64526` on main** (squash; `milestone.py merge 337` verdict GREEN, CI `gate pass 14s`). Verified the merged head == the reviewed head: `gh pr view --json headRefOid` = `1b58c7a` == local `HEAD`.
+- **Title governance, 3rd occurrence**: the squash message reads `digest ee77ddb39e8ec202; harness 23/23` because `milestone.py submit` snapshots `--title` at submit time, while the merged tree carries **`91f58f3de03090c1` / 24/24** (re-measured in the review round). PR title corrected post-merge via `gh api -X PATCH` (`gh pr edit` dies on the projects-classic GraphQL error); the commit message cannot be fixed without rewriting main, which cron does not do. **`NAMED ## M327` carries the current numbers.**
+- **`submit` auto-rotates SESSION_NOTES** and commits it (`M327: checkpoint` `d9330af`, 67,122 -> 59,265 chars, Sessions 287-289 -> `docs/sessions/sessions-287-289.md`) — a section a fire wrote can leave the head file under it.
+- Review count for the record: local Strata on #337 = **3 P1 + 5 P2, 8/8 accepted, 0 dismissed** (`evidence/ai_review/pr337_20261119_235407.md`, sidecar folded here as with pr328/pr329/pr332). All three P1s were **gates that could not fail**: G1 re-ran the instrument's own offset formula (X==X), `cover_ok` re-tested the window list against itself, and a printed "C matches B on 4/4" was only checked as A==B. `review_lint` cannot see this class by design (it checks naming/existence), and the mutation harness did not see P1-1 either — MU20 still reddened 7 gates, just not the one it should have. Worth carrying into B27's instrument review.
+- STATE: (v)/(vi)/(vii) answered; **(viii) `FUN_0041a8f0` OPEN**; **B27 spine text still NOT authored** (track_mode: next BUILD rung). NAMED 247,028/250,000 B — **rotate BEFORE adding a block**.
