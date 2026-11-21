@@ -36,6 +36,51 @@ def label(section):
     return section.splitlines()[0].removeprefix("## ").strip()
 
 
+def index_line(fname, labels, first_kept):
+    """The hot file's pointer to the warm set. The boundary is a FILE POSITION, not a session
+    number: chain1 and chain2 number their sessions independently, so a moved section can carry
+    a HIGHER number than the first kept one — the #347 review caught the old wording calling
+    sessions-298-296 (which holds Session 298) "before Session 297"."""
+    return (f"Older sessions: `{fname}` ({len(labels)} sessions: "
+            f"{', '.join(labels)}). The split is by FILE POSITION, not by number — a moved id can "
+            f"be numerically newer than the first kept one, so grep the archive for an id before "
+            f"deciding it is still hot. The hot file starts at {first_kept}.\n")
+
+
+def fix_index():
+    """Re-emit the hot pointer from the archives ON DISK (F7: a pointer written by the old
+    generator mis-states which sessions moved; this re-derives it instead of hand-editing)."""
+    text = open(NOTES, encoding="utf-8").read()
+    preamble, sections = split(text)
+    assert sections, "no sessions in the hot file"
+    spans = {}
+    for nm in os.listdir(ARCHIVE):
+        m = re.fullmatch(r"sessions-(\d+)-(\d+)\.md", nm)
+        if m:
+            spans[nm] = (int(m.group(1)), int(m.group(2)))
+    assert spans, "no archives to point at"
+    # Retarget the archive the hot file ALREADY cites (never silently move a pointer to a
+    # different warm file); only a hot file with no pointer falls back to the newest span.
+    old_line = INDEX_RE.search(text)
+    cited = re.search(r"`docs/sessions/([^`]+)`", old_line.group(0)) if old_line else None
+    if cited:
+        nm = cited.group(1)
+        assert nm in spans, "the hot pointer cites an archive that is not on disk: " + nm
+    else:
+        nm = max(spans, key=lambda o: spans[o])
+    labels = [ln.removeprefix("## ").split("(")[0].strip()
+              for ln in open(os.path.join(ARCHIVE, nm), encoding="utf-8").read().splitlines()
+              if ln.startswith("## Session")]
+    assert labels, f"no sessions found inside {nm}"
+    line = index_line(f"docs/sessions/{nm}", labels, label(sections[0]).split("(")[0].strip())
+    body = re.sub(INDEX_RE, "", preamble).rstrip() + "\n\n" + line + "\n" + "\n".join(sections)
+    if not body.endswith("\n"):
+        body += "\n"
+    open(NOTES, "w", encoding="utf-8").write(body)
+    print("index line rewritten from %d archive headers: %s" % (len(labels), line.strip()[:180] + " …"))
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     # Rotate by SIZE, not by section count: sessions vary from 2 k to 12 k chars, so "keep N"
@@ -44,7 +89,11 @@ def main():
     ap.add_argument("--min-keep", type=int, default=3)
     ap.add_argument("--max-keep", type=int, default=25)
     ap.add_argument("--apply", action="store_true")
+    ap.add_argument("--fix-index", action="store_true",
+                    help="re-derive the hot file's Older-sessions pointer from the archives on disk")
     args = ap.parse_args()
+    if args.fix_index:
+        return fix_index()
 
     text = open(NOTES, encoding="utf-8").read()
     preamble, sections = split(text)
@@ -101,9 +150,10 @@ def main():
             + "\n".join(old))
     open(dest, "w", encoding="utf-8").write(body.rstrip() + "\n")
 
-    index = (f"Older sessions: `docs/sessions/sessions-{span}.md` "
-             f"({len(old)} sessions). Read it only when a question reaches back before "
-             f"session {keep[0].split('(')[0].strip()}.\n\n")
+    # One code path for the pointer wording, so --fix-index and a real rotation can never drift.
+    labels = [label(s).split("(")[0].strip() for s in old]
+    index = index_line(f"docs/sessions/sessions-{span}.md", labels,
+                       label(keep[0]).split("(")[0].strip()) + "\n"
     new_text = re.sub(INDEX_RE, "", preamble).rstrip() + "\n\n" + index + "\n".join(keep)
     if not new_text.endswith("\n"):
         new_text += "\n"

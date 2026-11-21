@@ -1,43 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-296-295.md` (3 sessions). Read it only when a question reaches back before session ## Session 298.
-
-## Session 298 (2026-11-19, M321 review #324 hardening, STATIC, zero box; 7/7 + 22/22)
-
-- Review #324 (10 findings, 5 P1) accepted 1-10. The P1s were decoration defects: G2 accepted the
-  refresh pair by SET-ITERATION order and never measured its own 25 B; "zeroes +0x78/7c/80" was a
-  shape match - the writes are `mov [eax+0x78],esi`, a REGISTER, so the zero was unproved; G2's site
-  list iterated `ownersites.values()`, which after adding the image-wide census held 8 stores in 6
-  fns, not the 2+2 owner rows -> gate reddened 1/7 at that head; fixed to `ownrows`.
-- Hardening: order pinned by the PAIR tuple (`hits[0][0]==PAIR[0] and hits[1][0]==PAIR[1]`); pair
-  completion MEASURED as byte distances 10-11 (`m321_memo_owners.txt:20`); encodings split per owner
-  (`:21`); `je` pinned exactly (targets + call on fall-through); a real `is_zero()` proof (xor-self /
-  sub-self / `mov r,0x0`) + base identity resolved FROM EACH WRITE's own address (`:34-36`);
-  `back_def`'s vestigial `limit` removed, def locality printed (8 B back 3/3); G1's rival now derived
-  from the printed histogram (top non-304 multiplier == 52, 646 vs 565, `:2`); G3 pins 7 emitter
-  sites + exact label sets + `EMITTER==0x48f100`; G6 pins `0x4f43a0`/`cl,0x40`/chain text.
-- RETRACTED in `NAMED ## M321` row 2: "2 are the a3 form" -> measured **1** (0x4f44a8; the 2nd owner
-  store 0x4f455d is DWORD). NEW CROSS-CHECK: image-wide 8 index-fed memo stores in 6 functions, 4
-  held by these owners (`:22`) - agrees with M319's 4.
-- ACCEPT `python3 -u scripts/m321_memo_owners.py` -> `PASS m321: 7/7 gates` digest
-  **f304cf871a971a3d** (`evidence/m321_memo_owners.txt:84,:92`), x2 byte-identical (supersedes
-  s297's 562dcbbd12c27c8a, whose G2 was the unscoped version). HARNESS `python3 -u
-  scripts/m321_mutate.py` -> **PASS 22/22** (`evidence/m321_mutate.txt:24`), x2 identical; MU4 NO-OP
-  at `:5` (the cursor's `:15` cite was stale). MU14-MU22 added, sets MEASURED then declared:
-  MU14/15/21->G2, MU16/17/22->G4, MU18->G6 (the F7 tripwire: the old "callee tests cl,0x40
-  somewhere" gate stays GREEN on it, the pinned one reddens), MU19->G3, MU20->G1.
-- Reconciled with main (M323 9c716f8): merge kept BOTH chains' sections; evidence/ at 20.8 MB [warn]
-  - prune candidates next fire. NEXT: merge #324 on CI PASS; picks (vii)/(viii), B26 queued.
-
-## Session 296-chain2 (2026-11-19, M324 CLOSED, STATIC: ROUND carried RAW)
-
-- wt-chain2 @ milestone/m324 (main 9b09161); chain 1 owns main/sim/(vi)/(vii), #324 live.
-- ANSWER: ROUND (0x985afc) carried RAW, NOT re-derived from YEAR. Codec FUN_00596850 header leg (R 59688a/W 596883) freads 0x31c=796B into 0x985ab8; blob+44=ROUND,+48=YEAR. m54b_clean.SAV: 12-B prefix (TERRAN\0+1a+ver86); @50=50 @54=2150 @44=67 @48=18 @310=9 (=live[985dbc] M108; M107 off-772 -> 784). sha16 74d0f44ab9b9290b==M302 live save; M106 kernel-copy law = M323's missing loader writer.
-- block+220 carried: leg 596a91 dst 94d430 sz 105e0=8*20bc 8/8 (+sibs 596a6b/72); M320's whole block raw-carried too (rebuild untested). fac1436 leg 596ed6 dst 927590 sz 2ce0. g999fa4 NOT carried; W={442642,626fd7}: feed FUN_00442320 MAX-updates g999fa4=block[[this+0xa24]]+0x220 (imul 20bc, [ecx+94d650], cmp/jle 442625/2b); 2nd=64c460(0x99a01c)->64c360; feed 0 callers/0 AT (data-ptr OPEN).
-- FALSIFIED re-derive: direct closure (opener+codec) 440, 0 writers; 4e0350 callers={514ecf@512b40,517e3a@516b80} pumps, outside; header entry-first (window branch-free); mode0 chain (xor 597efb->push 597f98->cmp/je); M272 inv9: -39 opener -> 50 faction fread. R1 RE-DERIVE/R2 REBUILD DEAD.
-- ACCEPT `python3 -u scripts/m324_save_carry.py` -> **8/8** digest **700b4133f62bd714** (`evidence/m324_save_carry.txt:100`), rerun identical (`_rerun.txt:100`). HARNESS `python3 -u scripts/m324_mutate.py` -> **28/28+1 NO-OP** 5c3fa2bceb490009 (`evidence/m324_mutate.txt:29-30`); selftest 4/4 (`_selftest.txt:5`). REVIEW #326: 10/10 accepted (2P1+8P2); scope/pins strengthened, harness digest hashes payloads, MU19-27.
-- TRAP: leg diamond pushes;je;call WR;jmp;call RD - walker skips jcc/jmp/twins, stops at add esp/foreign call (naive broke on je); ebx def-walk hit pop on EARLY-RET path; moffs32 mov lacks DWORD PTR.
-- OPEN: g999fa4 noun/64c360; block+220 noun (year-like); feed arrival; byte-swap path. NEXT_PROMPT 12,188->11,999 B (M323 line VERBATIM -> §trim-s299 (a); M324 appended).
+Older sessions: `docs/sessions/sessions-298-296.md` (2 sessions: Session 298, Session 296-chain2). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 297-chain2.
 
 ## Session 297-chain2 (2026-11-19, M324 MERGED, post-merge note; docs-only, zero box)
 
@@ -381,3 +344,22 @@ The local Strata review posted 10 findings (3 P1, 7 P2), `evidence/ai_review/pr3
 - **MEASURED, previously assumed**: API identity — argc-6 call count in FUN_0058e7f0 = **18** = Ghidra's 18 `GetPrivateProfileStringA` there, all through the one indirect callee `edi`; argc-4 through `edi` = **8** = Ghidra's 8 `WritePrivateProfileStringA` (G9.5). The 0x4ddcf1 edge = `call 0x5f1394`@0x4ddb53 + `test eax,eax`, 0 eax-writes before `jge 0x4ddcf1` (G9.2). cmp arms exactly {1,2,3,4} immediate + exactly {ebx}, ebx unique @0x4f9b5a (G9.1). All 6 copy windows: 0 register redefs AND 0 writes to the source cell (G9.4). Both array-end cmps sit in a loop with one `add reg,0xd4` above and one backward `jl` below (G9.6).
 - **NARROWED (P1)**: "no undisguised writer exists" -> no writer that *names* 0x985aec; a store through a runtime-computed register pointer is invisible to both scans (said in the G1 detail and the row).
 - **PITFALL**: adding a gate moves every pre-existing mutant that touches the same fact — MU1/2/3/7/8/13 all redden G9 too (each reason is a comment; declared sets updated, not the gates weakened). And `scripts/m332_named_rotate.py --verify` (new) exposed that the archive's recorded sha1 `4dc92495311e` was NOT reproducible once rotate2 appended to the same file: the hashed region has to stop at the `§rotation-2` marker.
+
+## Session 313 (s313-chain1, DOCS CAP SPLIT, zero box, zero measurement)
+
+- Ran FIRST because both docs were at the line: `NAMED.md` 246,504/250,000 (3,496 B headroom, UNDER the 5 KB trigger) and `NEXT_PROMPT.md` 11,986/12,000 (14 B — a milestone may not start on the doc it has to write into). Both moves are scripted + hash-asserted, not hand-edited.
+- Rotation: `python3 -u scripts/m333_named_rotate.py` moved `## M259-M261` (3,972 B, the oldest still-full pre-mutation-law block) VERBATIM to the NEW `docs/named-archive-m333-rows.md` and left a one-line-per-claim stub; `--verify` -> `PASS rotate-verify: NAMED stub cites sha1 f78e7ef04359, cites the archive, and the region re-hashes byte-exact` (region 3,972 B, re-read BOUNDED BY A TERMINATOR LINE, not to EOF — the s312 defect). NAMED 246,504 -> **244,756 B** (headroom 5,244, still thin: rotate again before the next block).
+- NEXT_PROMPT trim: `python3 -u scripts/m333_nextprompt_trim.py` moved region-A (the closed pick rows v/vi/vii/viii/x2/x3/x4 + the B27 row, 1,733 B, sha1 `8332dd50ba16`) and region-B (the result one-liner pointers, 508 B, sha1 `6f2ddbe32478`) VERBATIM into `docs/pick-archive.md` §trim-s313-chain1; `--verify` -> `PASS trim-verify: both regions re-hash byte-exact against the pointers in NEXT_PROMPT.md`. NEXT_PROMPT 11,986 -> **10,789 B**. The OPEN leads ((x1)/(x5)/(x6)) and (ix) were kept ON PURPOSE and the script asserts the tokens `0x984d48 / bit5 halves / 92bdf8 / 0x8f0090 / 0x5f1394 / (ix)` survive the trim — a cap split that hides the next pick is worse than the cap.
+- PITFALL: `%`-format arity — two of the appends raised `TypeError: not all arguments converted` (7 args / 6 specifiers). The rotate script died BEFORE writing, so no partial archive; the guard is the `assert` + the append-after-hash ordering.
+- Registry kept honest: `## M259-M261`'s retraction of M240's "two 22-byte map columns" AND M262's retraction of M260's "the ~140 KB views are not allocated" stay IN the stub, not only in the archive (AGENTS.md invariant).
+- **REVIEW ROUND #347** (local Strata, `evidence/ai_review/pr347_20261121_220218.md`, 10 findings, 15,042/16,384 tok, NOT truncated): **all 10 accepted, none dismissed — 9 were defects in the instruments, 1 in a shipped tool.** `--restub` + `--relabel` were added so the fix is PRODUCED by the scripts, not hand-typed. Re-measured after the last edit: rotate `PASS rotate-verify: stub cites :6 + sha1 f78e7ef04359, the region re-hashes byte-exact, the stub equals the STUB constant and no copy came back`; trim `PASS trim-verify: both regions re-hash byte-exact against the pointers in NEXT_PROMPT.md, both tags unique, every open-lead phrase still in the hot file`. NAMED 245,072 B (headroom 4,928 — STILL under the 5 KB trigger: rotate before the NEXT block), NEXT_PROMPT 11,355/12,000.
+  - F1 P1 ACCEPT: the `(ix)` survival assert read the WHOLE hot file while the sentence that explains (ix) had just been archived — a passing assert proving nothing. The hot text now carries `**NO STATIC PICKS LEFT** except **(ix)** (live-box, operator-GATED)` and the asserts name exact phrases (`MUST_KEEP`), so the trim can no longer pass on a file that lost the pick's meaning.
+  - F2 P1 ACCEPT: region-B was marker→EOF — exactly the hash-to-EOF class the PR claims to fix; now paragraph-bounded and it REFUSES to run if any non-whitespace follows the marker.
+  - F3/F10 ACCEPT: the stub cites the shipped byte-read (`evidence/m259_m261_census.txt:16-17` prints `immediates naming 0x224b8: 0; 4-byte LE pattern ... offset -1`; `:20-21` the 0x23bec-vs-stride compare; `:30` SUMMARY 14/14) instead of pointing at a bare filename.
+  - F4 ACCEPT: verify now pins `docs/named-archive-m333-rows.md:6` as a LINE the stub must cite and re-derives it, prints the FULL sha1, and asserts the stub is byte-identical to the STUB constant — re-wrapping the archive above the marker reddens verify.
+  - F5 ACCEPT: the M260 correction cites M262's own rows (`docs/named-archive-m332-rows.md` G2, `evidence/m262_m264_census.txt:24`).
+  - F6 ACCEPT: region-A holds the closed rows AND the superseded open-lead census; the tags and the hot pointer now say so, and the pointer states the archived census is superseded.
+  - F7 ACCEPT — a defect in SHIPPED tooling: `session_rotate.py`'s pointer said "read the archive only for questions before Session 297-chain2" while the archive holds Session 298 (numbers are per-chain; rotation cuts by file position). The wording now comes from one `index_line()` used by both the rotation and the new `--fix-index`, which re-derived the live pointer from the archive headers on disk: `(2 sessions: Session 298, Session 296-chain2) ... The split is by FILE POSITION, not by number`.
+  - F8 ACCEPT: `--restub` located the stub by a bare `## M259-M261` prefix (any table row could match); it now anchors on the unique line that is BOTH that header AND carries `§rotation-1`.
+  - F9 ACCEPT: rotate refused to append to an archive that already carried `§rotation-1` — a reverted NAMED edit plus a live archive used to double-archive a region that verify then blessed; now asserted on both sides, and verify counts copies.
+- PITFALL worth keeping: `%`-format arity. Two appends raised `TypeError: not all arguments converted` (7 args / 6 specifiers). Both died BEFORE the write, so no partial archive — the guard is ordering (hash in memory, then append, then re-read and compare), not luck.
