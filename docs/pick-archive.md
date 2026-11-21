@@ -1279,3 +1279,21 @@ M330 (s307-chain2): block+300=UPKEEP SPEND ACCUMULATOR — entry-zeroed, feeder 
 
 M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
 M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
+
+
+## §trim-s313-chain1 (M333 headroom) region-A: the closed pick rows (v/vi/vii/viii/x2/x3/x4) + the B27 row, moved VERBATIM out of `NEXT_PROMPT.md`
+
+  CLOSED pick rows (v = M319, vi = M321) VERBATIM at §trim-s300-chain1 (b) (sha1 b0e7c1d2614f2312); `NAMED ## M319` / `## M321` govern.
+  CLOSED pick row (vii = M327) VERBATIM at §trim-s305-chain1 (a) (sha1 cfa455cbefd4); `NAMED ## M327` governs (harness 24/24, digest 91f58f3de03090c1, since the s305 review round).
+  CLOSED pick row (viii = **M329**, s307) VERBATIM at §trim-s308-chain1 (b) with its sha1; `NAMED ## M329` governs (`ui_governor_options_pane(widget, page)`; the `ds:0x99aa38` 19-bit pack staging; publish `0x1c-0x1f` only, bit-disjoint from both faction-create defaults => REFINES `## M321`); ACCEPT 13/13 + harness 26/26 numbers are IN that block. **B27 ANSWERED s309** (`sim/energy.py` law + `sim/composedenergy.py` run: the eight blocks' energy round; the ledger law holds on the container's OWN bytes 8/8+8/8; block A modeled by the writer for the first time; `NAMED ## B27` carries ACCEPT 10/10 anchor `b65e8129b67ba67d` + harness 16/16 `81d2d9491ec3320d`). **NO STATIC PICKS LEFT** except (ix) (live-box, operator-GATED), so the analysis-only option is the **(x) OPEN-LEADS** census list, each with a NAMED question: (x1) the 34 feeder slots `0x984d48 + 48*slot` - the slot noun and why bit5 halves (M330 G10); (x2) ANSWERED M332 (`ds:0x985aec` = the runtime mirror of the win-INI pref `"Difficulty"`; master `ds:0x92bde8`; pref map `0x92bde8..0x92bf14` - `## M332`); (x3)/(x4) ANSWERED M331; (x5) the 'multi' label only (`92bdf8` = the pref `Top Menu`); (x6) NEW (M332): the difficulty INDEX->label order (cmps top out at 4, M330's k-table needs k=2 at >=5); the pref block's other writers; `0x8f0090`'s consumer; callee `0x5f1394`. Generate a combat/tech/victory pick before taking one: no footing exists.
+
+(§trim-s313-chain1 ends; anything below belongs to a later trim.)
+
+## §trim-s313-chain1 (M333 headroom) region-B: the merged result one-liner pointers, moved VERBATIM out of `NEXT_PROMPT.md`
+
+M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-chain1 (a); `NAMED` governs.
+Pointers: M325 §trim-s301-chain2 (a); M326 §trim-s304-chain2 (a); NAMED governs.
+M330 MERGED #340 -> 1b9cb38 (s309-chain2); pr340 JSON sidecar folded #342 (red-gate docs fold, fix-forwarded in s309 — check CI before ANY merge).
+M331 (s310-chain2): +2fc/+308=INCOME siblings; ledger 8/8; rate +4ec%/100; cap MIN(E/2,100net)>=50. 14/14 442270fd57be2b62 x2; 43/43+1 29061c567f9132fb. NAMED ## M331.
+
+(§trim-s313-chain1 ends; anything below belongs to a later trim.)
