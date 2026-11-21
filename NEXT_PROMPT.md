@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319 main 1556ce9; B26 = #328 main dd704d0; B26's full ACCEPT + THE LAW + the three retractions + the `found_units` 69->0 open question VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a) with its sha1, and its per-rung cmds at `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks; `NAMED ## B25`/`## B26` govern; earlier build-track detail §trim-s298 (a), §trim-s299 (b)/(d)). **B27 MERGED-BY-THIS-FIRE (s309)**. **Next build B28**: the spine ends at B27 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B27 did.
 
- **DOC CAP (`wc -c` at s313-chain1, this docs cap-split): `NAMED.md` 244,756 / 250,000 FAIL = 5,244 B headroom — only barely OVER the 5 KB trigger, so ROTATE AGAIN before the next block goes in. The M259-M261 rows now sit VERBATIM in `docs/named-archive-m333-rows.md` §rotation-1 (sha1 `f78e7ef04359`, asserted by `scripts/m333_named_rotate.py --verify`); NEXT_PROMPT.md 10,789/12,000 (regions A+B moved to `docs/pick-archive.md` §trim-s313-chain1, `scripts/m333_nextprompt_trim.py --verify`). s312 = #346 review round: 9/9 `d2691dc5abb39240`, harness 22/22 `a9a944201849d026`.**
+ **DOC CAP (`wc -c` s313, after the #347 review round): `NAMED.md` 245,072/250,000 FAIL = 4,928 B headroom — UNDER the 5 KB trigger, so ROTATE before the next block lands (M333's ≤1 KB cannot cross the fail line, but the trigger still binds). Rotated so far: M259-M261 → `docs/named-archive-m333-rows.md:6` §rotation-1 (sha1 `f78e7ef04359`; `scripts/m333_named_rotate.py --verify` re-hashes the region AND re-pins that line number); NEXT_PROMPT ~11.3 k/12,000 (regions A+B → `docs/pick-archive.md` §trim-s313-chain1, `scripts/m333_nextprompt_trim.py --verify`). s312 = #346: 9/9 `d2691dc5abb39240`, harness 22/22 `a9a944201849d026`.**
 
 ## THE LEDGER
 
@@ -58,15 +58,17 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b). NAMED cap: see §BUDGET's DOC CAP line (s311).
-  CLOSED pick rows (v = M319, vi = M321, vii = M327, viii = M329, x2 = M332, x3/x4 = M331, B27)
-  VERBATIM at `docs/pick-archive.md` §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, byte-exact asserted
-  by `scripts/m333_nextprompt_trim.py --verify`); the per-id `NAMED ## <id>` blocks GOVERN and carry
-  every ACCEPT/harness digest. OPEN analysis-only leads, each with a NAMED question: **(x1) the 34
-  feeder slots `0x984d48 + 48*slot` — the slot noun and why bit5 halves (M330 G10)**; (x5) the
-  'multi' label only (`92bdf8` = the pref `Top Menu`); (x6) NEW (M332): the difficulty INDEX->label
-  order (cmps top out at 4, M330's k-table needs k=2 at >=5); other writers of the
-  0x92bde8..0x92bf14 pref block; `0x8f0090`'s consumer; callee `0x5f1394`. Generate a
-  combat/tech/victory pick before taking one: no footing exists.
+  CLOSED pick rows + the superseded open-lead census they sat in (v = M319, vi = M321, vii = M327,
+  viii = M329, x2 = M332, x3/x4 = M331, B27) VERBATIM at `docs/pick-archive.md` §trim-s313-chain1
+  region-A (sha1 `8332dd50ba16`, byte-exact asserted by `scripts/m333_nextprompt_trim.py --verify`); the
+  per-id `NAMED ## <id>` blocks GOVERN and carry every ACCEPT/harness digest.
+  **NO STATIC PICKS LEFT** except **(ix)** (live-box, operator-GATED), so the analysis-only
+  option is this OPEN-LEADS
+  list, each with a NAMED question: **(x1) the 34 feeder slots `0x984d48 + 48*slot` — the slot noun
+  and why bit5 halves (M330 G10)**; (x5) the 'multi' label only (`92bdf8` = the pref `Top Menu`);
+  (x6) NEW (M332): the difficulty INDEX->label order (cmps top out at 4, M330's k-table needs k=2
+  at >=5); other writers of the 0x92bde8..0x92bf14 pref block; `0x8f0090`'s consumer; callee
+  `0x5f1394`. Generate a combat/tech/victory pick before taking one: no footing exists.
   Lists live in NAMED ## M310-M325 + the `## B<n>` blocks. READER LAWS still BIND:
   every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 

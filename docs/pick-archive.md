@@ -1281,7 +1281,7 @@ M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
 M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
 
 
-## §trim-s313-chain1 (M333 headroom) region-A: the closed pick rows (v/vi/vii/viii/x2/x3/x4) + the B27 row, moved VERBATIM out of `NEXT_PROMPT.md`
+## §trim-s313-chain1 (M333 headroom) region-A: the closed pick rows (v/vi/vii/viii/x2/x3/x4) + the B27 row + the SUPERSEDED open-lead census they sat in, moved VERBATIM out of `NEXT_PROMPT.md`
 
   CLOSED pick rows (v = M319, vi = M321) VERBATIM at §trim-s300-chain1 (b) (sha1 b0e7c1d2614f2312); `NAMED ## M319` / `## M321` govern.
   CLOSED pick row (vii = M327) VERBATIM at §trim-s305-chain1 (a) (sha1 cfa455cbefd4); `NAMED ## M327` governs (harness 24/24, digest 91f58f3de03090c1, since the s305 review round).
@@ -1289,7 +1289,7 @@ M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
 
 (§trim-s313-chain1 ends; anything below belongs to a later trim.)
 
-## §trim-s313-chain1 (M333 headroom) region-B: the merged result one-liner pointers, moved VERBATIM out of `NEXT_PROMPT.md`
+## §trim-s313-chain1 (M333 headroom) region-B: the merged result one-liner pointers (M320/M323/M324/M325/M326/M330/M331 + the #340 sidecar note), moved VERBATIM out of `NEXT_PROMPT.md`
 
 M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-chain1 (a); `NAMED` governs.
 Pointers: M325 §trim-s301-chain2 (a); M326 §trim-s304-chain2 (a); NAMED governs.
