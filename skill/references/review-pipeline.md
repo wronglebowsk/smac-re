@@ -51,6 +51,34 @@ each fixture's failure list and confirm the INTENDED check fired.
 
 Read EVERY finding body; fix or dismiss each in ONE reply comment; re-measure at head (acceptance
 twice + harness); merge only on a real PASS. One review per PR — a re-push buys no second review.
-A finding about the checker itself (a false-green path) is fixed by hardening the checker AND adding
-the biting fixture, never by rewording the claim. A post-hoc review of an already-merged PR still
-gets its findings fixed — in the next PR, with the correction named in the triage comment.
+A TRUNCATED review re-run at a higher cap is a COMPLETION of the same review, not a second opinion:
+cover both runs' findings in the one reply and say so. A finding about the checker itself (a
+false-green path) is fixed by hardening the checker AND adding the biting fixture, never by rewording
+the claim. A post-hoc review of an already-merged PR still gets its findings fixed — in the next PR,
+with the correction named in the triage comment.
+
+## Arbitrating author-vs-reviewer disputes (the orchestrator's job)
+
+A reviewer is an instrument too, and it errs in both directions: it miscalculates address arithmetic
+and it misses pins that exist a few lines away from the one it cited. When an author fire DISMISSES
+a P1 with "measured arithmetic" or "the reviewer missed a pin", do not take either side at face value
+— re-run the arithmetic yourself and grep the instrument source for the claimed pin before judging.
+A dismissal backed by a correct recomputation and an existing pin is legitimate; a quality verdict
+built on the review's raw P1 count is wrong when half those P1s are reviewer errors. Report model
+quality on the VERIFIED facts, and correct an earlier assessment plainly when the rebuttals check out.
+The reverse holds as well: a reviewer P1 the author waves away without numbers is a real defect until
+the bytes say otherwise.
+
+## The two layers catch each other's misses
+
+The mechanical lint and the semantic reviewer are complementary, not redundant — each catches a
+class the other structurally cannot, observed in both directions on production PRs:
+- The semantic reviewer catches CIRCULAR / self-derived gates (a check whose expected set is computed
+  from its own input; a hardcoded offset a shift-mutant bypasses so two predicates measure different
+  arrays; a "matches" claim that only compares one pair). The lint and the byte-mutant harness pass
+  these because the mutants inherit the same wrong constants.
+- The mechanical L2b address-contact check catches review-round mutants that patch sites the
+  instrument reads only via computed walks — coverage the semantic reviewer missed. Fix by adding
+  exact-address pins, then re-measure.
+So a green lint is not full coverage and a clean review is not full coverage; the pair is the floor,
+and the mutation harness (measured==declared, both directions) is what binds them to the bytes.

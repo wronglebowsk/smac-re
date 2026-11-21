@@ -100,7 +100,10 @@ assertion for "can this FAIL on a real input?" before submitting, and prefer ret
 re-wording it when the reviewer is right. A docs-only follow-up PR coming back with zero findings is the
 cheapest proof the fix actually landed.
 **`gh pr edit` is unusable on this repo** (it dies on a GraphQL `projectCards`/Projects-classic deprecation):
-patch the title through REST instead — `gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -f title="..."`.
+patch the title through REST instead — `gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -f title="..."` —
+and VERIFY via read-back (`gh pr view <n> --json title`), not exit status (the PATCH can fail silently).
+Do it BEFORE merge: the squash commit message is snapshotted from the title at merge, so a post-merge
+fix leaves the permanent history carrying pre-review numbers.
 **A GREEN gate is not permission to merge.** The gate audits docs/evidence/harness, not the acceptance. If the
 acceptance printed FAIL, keep the checkpoint commits on the branch, submit nothing (or leave the PR unmerged),
 and report the FAIL with numbers — weakening a threshold to go green is the one thing never allowed.

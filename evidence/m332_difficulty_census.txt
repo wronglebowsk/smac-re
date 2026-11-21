@@ -1,0 +1,111 @@
+== G1 reference census ds:0x985aec ==
+  text-form refs 68  byte-enc refs 68  set-identical True
+  address-materialization forms (mov/lea/push of the immediate): 0 []
+  partition: store=4 load=40 cmp=24 rmw=0 other=0
+  cmp operands: ['0x1', '0x2', '0x3', '0x4', 'ebx']
+== G2 store set ==
+  0x4ddcf1  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_004ddaa0 @0x4ddaa0+0x35e
+  0x57c5af  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_0057c550 @0x57c550+0x12fc
+  0x57c7b5  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_0057c550 @0x57c550+0x12fc
+  0x57f006  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_0057ecf0 @0x57ecf0+0xa4f
+== G3 per-site fall-in ==
+  0x4ddcf1  prev=0x4ddcf0(ret)  no-fall-in(ret)  branch-targets=1 ['0x4ddb5a']
+  0x57c5af  prev=0x57c5a9(mov    esi,DWORD PTR ds:0x92bdec)  FALL-IN  branch-targets=0 []
+  0x57c7b5  prev=0x57c7b0(mov    ds:0x92bde8,eax)  FALL-IN  branch-targets=0 []
+  0x57f006  prev=0x57f000(mov    ecx,DWORD PTR ds:0x8f0c1c)  FALL-IN  branch-targets=0 []
+== G4 clean-copy map among ['0x8f0090', '0x8f0c11', '0x92bde8', '0x985aec'] ==
+  0x92bde8 -> 0x8f0c11   (load 0x484ef8, store 0x484efe, reg)
+  0x985aec -> 0x8f0c11   (load 0x485028, store 0x48502e, reg)
+  0x92bde8 -> 0x8f0c11   (load 0x488822, store 0x488828, reg)
+  0x8f0c11 -> 0x8f0090   (load 0x488847, store 0x48884d, reg)
+  0x92bde8 -> 0x985aec   (load 0x57c59e, store 0x57c5af, reg)
+  0x8f0c11 -> 0x985aec   (load 0x57eff3, store 0x57f006, reg)
+== pref-name push sites: 41 pushes, 22 READ(6-arg), 8 WRITE(4-arg), 11 other ==
+-- READ side: name -> fields stored in its window -> exclusive --
+   00000000           cand=[] excl=[]
+   Announce           cand=['0x92bf04', '0x996be8', '0x997120'] excl=['0x92bf04']
+   Custom World       cand=['0x92bf10', '0x996be8', '0x997120'] excl=['0x92bf10']
+   Customize          cand=['0x92bf14', '0x996be8', '0x997120'] excl=['0x92bf14']
+   Difficulty         cand=['0x92bde8', '0x996be8', '0x997120'] excl=['0x92bde8']
+   Faction            cand=['0x92bdec', '0x996be8', '0x997120'] excl=['0x92bdec']
+   Language           cand=['0x996be8', '0x997120'] excl=[]
+   Laptop             cand=['0x996be8', '0x997120'] excl=[]
+   Map Type           cand=['0x92bdf4', '0x996be8', '0x997120'] excl=['0x92bdf4']
+   More Preferences   cand=['0x92bf00', '0x996be8'] excl=['0x92bf00']
+   Preferences        cand=['0x92befc', '0x996be8', '0x997120'] excl=['0x92befc']
+   Prefs Format       cand=[] excl=[]
+   Rules              cand=['0x92bf08', '0x996be8', '0x997120'] excl=['0x92bf08']
+   Semaphore          cand=['0x92bf0c', '0x996be8', '0x997120'] excl=['0x92bf0c']
+   Top Menu           cand=['0x92bdf8', '0x996be8', '0x997120'] excl=['0x92bdf8']
+-- WRITE side: name -> fields loaded before its call -> exclusive --
+   Custom World       cand=['0x92bf04', '0x92bf08', '0x92bf0c', '0x92bf14'] excl=['0x92bf04', '0x92bf08', '0x92bf0c', '0x92bf14']
+   Difficulty         cand=['0x92bde8'] excl=['0x92bde8']
+   Faction            cand=['0x92bdec'] excl=['0x92bdec']
+   Map Type           cand=['0x92bdf4'] excl=['0x92bdf4']
+   More Preferences   cand=['0x92bf00'] excl=['0x92bf00']
+   Preferences        cand=['0x92befc'] excl=['0x92befc']
+   Prefs Format       cand=['0x6710fc', '0x996a94', '0x996bf0'] excl=['0x6710fc', '0x996a94', '0x996bf0']
+   Top Menu           cand=['0x92bdf8'] excl=['0x92bdf8']
+-- both-sides names=8  agreeing on at least one field=6  ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']
+   Difficulty read-excl=['0x92bde8'] write-excl=['0x92bde8']
+== decompiler map, body FUN_0058e7f0: 13 names, GetPrivateProfileStringA=18, WritePrivateProfileStringA=0 ==
+== decompiler map, body FUN_0058f0d0: 7 names, GetPrivateProfileStringA=0, WritePrivateProfileStringA=8 ==
+   the WRITER body alone contributes 0 exclusive name->field pairs {} (so the third view is the reader's own body, not a merge of both)
+-- DECOMPILER side: name -> DAT assigned after its call -> exclusive --
+   00000000           cand=['0x92bf0c', '0x997120'] excl=['0x92bf0c']
+   Announce           cand=['0x92bf04', '0x997120'] excl=['0x92bf04']
+   Customize          cand=['0x92bf14', '0x997120'] excl=['0x92bf14']
+   Difficulty         cand=['0x92bde8', '0x997120'] excl=['0x92bde8']
+   Faction            cand=['0x92bdec', '0x997120'] excl=['0x92bdec']
+   Language           cand=['0x997120'] excl=[]
+   Laptop             cand=['0x997120'] excl=[]
+   Map Type           cand=['0x92bdf4', '0x997120'] excl=['0x92bdf4']
+   More Preferences   cand=['0x92bf00'] excl=['0x92bf00']
+   Preferences        cand=['0x92befc'] excl=['0x92befc']
+   Rules              cand=['0x92bf08', '0x997120'] excl=['0x92bf08']
+   Time Controls      cand=['0x92bf10'] excl=['0x92bf10']
+   Top Menu           cand=['0x92bdf8', '0x997120'] excl=['0x92bdf8']
+-- three-way names=6 fully agreeing=6 ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']
+== G3b per-site reachability triple ==
+  0x4ddcf1  prev=0x4ddcf0(ret) branch-targets=1 table-entries=0
+  0x57c5af  prev=0x57c5a9(mov    esi,DWORD PTR ds:0x92bdec) branch-targets=0 table-entries=0
+  0x57c7b5  prev=0x57c7b0(mov    ds:0x92bde8,eax) branch-targets=0 table-entries=0
+  0x57f006  prev=0x57f000(mov    ecx,DWORD PTR ds:0x8f0c1c) branch-targets=0 table-entries=0
+  0x57c7b0  prev=0x57c7ab(jmp    0x57c8df) branch-targets=1 table-entries=0
+== G8 the array-end rival ==
+  MASTER used as a cmp IMMEDIATE (loop bound) at: ['0x579bc6', '0x57ab57']
+    site 0x579bc6 reg=edi base=0x92ba98(0x579b6c) stride=0xd4(0x579bbf) count=4 integral=True
+    site 0x57ab57 reg=esi base=0x92ba98(0x57ab45) stride=0xd4(0x57ab51) count=4 integral=True
+  MASTER scalar loads=6 ['0x484ef8', '0x488822', '0x57c59e', '0x57c6d4', '0x58ea06', '0x58f11d']  scalar stores=2 ['0x57c7b0', '0x58e8c6']
+== G9.1 the cmp arms (the ebx half of the '1,2,3,4 + ebx' claim) ==
+   immediate arm ['0x1', '0x2', '0x3', '0x4']   register arm ['ebx']   the ebx cmp sits at ['0x4f9b5a'] and nowhere else
+== G9.2 whose eax does 0x4ddcf1 store (the callee-attribution claim) ==
+   0x4ddb53 'call 0x5f1394' -> window ['test'] ['eax,eax'] -> 0x4ddb5a 'jge 0x4ddcf1' -> 0x4ddcf1 stores eax; writes-to-eax inside the window=[]
+== G9.3 the 0x57c7b0/0x57c7b5 co-store (M308: 'same eax, no intervening write') ==
+   adjacent=True both-store-plain-eax=True (ds:0x92bde8,eax | ds:0x985aec,eax) nearest-preceding-call=0x57c7a2 writes-to-eax-since=0 stores-to-0x92bde8-inside-the-pair=['0x57c7b0']
+   -> M308's wording is CORRECTED: the master cell IS written inside the pair, by 0x57c7b0 itself from the same eax. 'No intervening write' is a law about the REGISTER, not about 0x92bde8.
+== G9.4 the pinned copy windows (stored register never redefined, source cell never written between load and store) ==
+   0x8f0c11->0x8f0090  load 0x488847  store 0x48884d (mov: BYTE PTR ds:0x8f0090,dl)  redefs-of-edx=0  writes-to-source=0  ok
+   0x8f0c11->0x985aec  load 0x57eff3  store 0x57f006 (mov: ds:0x985aec,eax)  redefs-of-eax=0  writes-to-source=0  ok
+   0x92bde8->0x8f0c11  load 0x484ef8  store 0x484efe (mov: BYTE PTR ds:0x8f0c11,cl)  redefs-of-ecx=0  writes-to-source=0  ok
+   0x92bde8->0x8f0c11  load 0x488822  store 0x488828 (mov: BYTE PTR ds:0x8f0c11,dl)  redefs-of-edx=0  writes-to-source=0  ok
+   0x92bde8->0x985aec  load 0x57c59e  store 0x57c5af (mov: ds:0x985aec,eax)  redefs-of-eax=0  writes-to-source=0  ok
+   0x985aec->0x8f0c11  load 0x485028  store 0x48502e (mov: BYTE PTR ds:0x8f0c11,cl)  redefs-of-ecx=0  writes-to-source=0  ok
+== G9.5 the API identity: my push-run arity vs Ghidra's resolved calls ==
+   .text FUN_0058e7f0[0x58e7f0,0x58f002) argc==6 callees {'edi': 18} | Ghidra in that body Get=18 Write=0
+   .text FUN_0058f0d0[0x58f0d0,0x58f3c6) argc==4 callees {'edi': 8} | Ghidra in that body Get=0 Write=8
+   -> the 11 keyed READ windows sit inside these 18 argc-6 calls, ALL through the one indirect callee 'edi'; the 8 keyed WRITE windows are 8 of the argc-4 calls through 'edi' (the 9th argc-4 call goes to 0x5a6330 and is NOT keyed). Arity parse and Ghidra's import-resolved names agree on both counts.
+== G9.6 the two array-end uses are real loop bounds (stride add + back edge) ==
+   cmp 0x579bc6 (edi,0x92bde8): stride-add ['0x579bbf']  back-edge ['0x579bcf']  -> loop
+   cmp 0x57ab57 (esi,0x92bde8): stride-add ['0x57ab51']  back-edge ['0x57ab5d']  -> loop
+PASS G1: 68 refs, enc-scan identical, 0 address materializations, 4 store/40 load/24 cmp/0 rmw, cmp immediates exactly {1,2,3,4}. SCOPE (s312 #346 P1): the two scans agree on every reference objdump can print and on every immediate-byte materialization, so NO writer that names 0x985aec in the image exists; a store through a REGISTER POINTER whose value was computed at runtime is invisible to both scans and is NOT excluded by this gate (G9.1 pins the cmp arms)
+PASS G2: store set exact ['0x4ddcf1', '0x57c5af', '0x57c7b5', '0x57f006'], all moffs form 'a3 ec 5a 98 00', funcs FUN_004ddaa0 / FUN_0057c550 x2 / FUN_0057ecf0
+PASS G3: 0x4ddcf1: no fall-in (prev=ret) but branch-entered by 'jge' at 0x4ddb5a => its eax is the callee-0x5f1394 return on that edge (M308's UNATTRIBUTED CLOSED); 0x57c7b0 branch-entered from ['0x57c6f8']; 0 jump-table entries anywhere in the image for any of the 5 sites
+PASS G4: clean-copy map among the 4 cells = ['0x8f0c11->0x8f0090', '0x8f0c11->0x985aec', '0x92bde8->0x8f0c11', '0x92bde8->0x985aec', '0x985aec->0x8f0c11'] (6 sites); NO direct 0x985aec->0x92bde8 copy exists, so the mirror direction is master->runtime
+PASS G5: READ side (FUN_0058e7f0): 11 names carry EXACTLY ONE exclusive field, the map is injective (no field shared by two names), Difficulty->0x92bde8: ['Announce=0x92bf04', 'Custom World=0x92bf10', 'Customize=0x92bf14', 'Difficulty=0x92bde8', 'Faction=0x92bdec', 'Map Type=0x92bdf4', 'More Preferences=0x92bf00', 'Preferences=0x92befc', 'Rules=0x92bf08', 'Semaphore=0x92bf0c', 'Top Menu=0x92bdf8']
+PASS G6: WRITE side (FUN_0058f0d0): 8 4-arg key pushes == the 8 WritePrivateProfileStringA calls Ghidra resolves in that function; Difficulty's exclusive field is 0x92bde8 there too (['0x92bde8']); read/write agree on 6 names ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']
+PASS G7: NOUN: the third view is the READER body's own pseudocode map. s312 correction: the s311 map merged the reader's and the writer's bodies and printed 7 three-way names; the writer body contributes 0 exclusive pairs, so the 7th key was an artifact of the merge — the honest count is 6 three-way names and all 6 agree fully ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']. All three views give 'Difficulty' -> ds:0x92bde8. The pairing slips exactly twice, both pinned here: the pseudocode's proximity pairing keys 0x92bf10 as 'Time Controls' and 0x92bf0c as '00000000' (a later name mention moves the pend), where the raw READ-window scan keys them 'Custom World' and 'Semaphore' — same single field either way, so this is a naming artifact of the third view, not a contradiction of it; no store to 0x985aec sits in the prefs reader, so 0x985aec is the RUNTIME MIRROR of the preference the game itself calls Difficulty (siblings: Top Menu=0x92bdf8, Map Type=0x92bdf4, Faction=0x92bdec)
+PASS G8: RIVAL KILLED: 0x92bde8 is BOTH the exact end of the 4x0xd4 record array at 0x92ba98 (2 loop-bound uses, count=4 integral) AND a scalar pref cell with 2 stores ['0x57c7b0', '0x58e8c6'] + 6 loads; 'it is only an array-end sentinel, so the mirror is an offset coincidence' fails on 0 stores
+PASS G9: s312 review tightening, six claims now read by a gate: (1) the cmp arms are exactly {0x1,0x2,0x3,0x4} + register arm exactly {ebx}, the ebx cmp unique at 0x4f9b5a; (2) 0x4ddb53 'call 0x5f1394' then 'test eax,eax' with ZERO writes to eax before 'jge 0x4ddcf1', which stores eax => the stored value IS that callee's return; (3) 0x57c7b0/0x57c7b5 are ADJACENT plain-eax stores to 0x92bde8 then 0x985aec, zero eax-writes since the call at 0x57c7a2, and the only master store in the pair is 0x57c7b0 itself (so M308's 'no intervening write' is narrowed to the register); (4) all 6 pinned copy windows have 0 redefinitions of the stored register AND 0 writes to the source cell between load and store; (5) argc==6 call count in FUN_0058e7f0 is 18, all through the single indirect 'edi', == Ghidra's 18 GetPrivateProfileStringA there, and argc==4 through 'edi' is 8 == Ghidra's 8 WritePrivateProfileStringA in FUN_0058f0d0 (0 of the other API in either body); (6) both array-end cmps sit in a loop with 'add reg,0xd4' and a backward jl, so the 4x0xd4 array-end reading is a loop, not an immediate walk
+digest(table)=d2691dc5abb39240  (the sha256/16 of every printed measurement line above, gates excluded)
+PASS M332: 9/9 gates

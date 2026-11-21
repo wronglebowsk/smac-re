@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+"""M332 headroom rotation #2 (s311-chain1).
+
+The first rotation (M262-M266) left NAMED.md with only 2,593 B of headroom to the
+250,000 B FAIL cap, because the stub I left behind kept almost as much prose as it
+moved.  This one moves the settled M267-M268 + M269-M271 cluster (the class-0x675964
+vtable family, closed at s208/s210) VERBATIM into the SAME archive and leaves a
+genuinely short stub.  The M270 RETRACTION of part of M267 stays named IN PLACE —
+a retraction that lives only in the archive would let the registry keep asserting
+the older, stronger claim.
+"""
+import hashlib, io, os, sys
+
+ROOT = os.path.expanduser("~/reverse/smac")
+NAMED = os.path.join(ROOT, "NAMED.md")
+ARC = os.path.join(ROOT, "docs", "named-archive-m332-rows.md")
+START = "## M267-M268 (s208, PASS 14/14)"
+END = "## M272 (s211, PASS 5/5)"
+
+STUB = """## M267-M271 (s208/s210, PASS 14/14 + 10/10) — FULL rows VERBATIM at `docs/named-archive-m332-rows.md` §rotation-2 (s311-chain1 headroom rotation #2, sha1 `SHA2`, byte-exact asserted by `scripts/m332_named_rotate2.py`); this stub governs. Pre-mutation-law registry (no MU ids); G-ids are the archive rows' own. `evidence/m267_m268_census.txt:17` (SUMMARY 14/14), `evidence/m269_m271_census.txt:120` (SUMMARY 10/10).
+
+- M267 the `0x6725ac`/`0x6725a4` pair is ONE vtable (291 slots, entry points 8 B apart, code run ending `0x672a38`) shared by 1 ctor (FUN_00469650) + 4 destructors (FUN_00421950, FUN_00518980, FUN_0059bec0, FUN_0059c1e0) of 4 variants of the virtual base at `[desc+4]`; 5 pair stores each side; 0 address-taken dwords for any installer -> direct call, not a vmethod; the pair is the vptr pair of a VIRTUAL BASE: `[vptr-4] = [desc+4] - 0x21a6c`, recomputed by all 5 installers within 14 insns.
+- M268 element ctor `0x62514b` / dtor `0x62516c` write the same 2 POD stores {dword0 = 3, dword1 = 0}, no vptr, no callee; 4 at `+0xc` + 196 at `+0x98c` + 1 at `+0x1db0c` = 201 x 608 = **122,208 B** ending `+0x1dd6c` (corrects the 200 x 608 figure); all 21 `0x260` immediates in .text are iterator args or their EH unwind records, ZERO arithmetic uses 0x260; the 94 folded displacements with `(d-0xc) % 608 == 0` occur in NO function that loads a view pointer from `DAT_007cdecc`; the per-view save routine FUN_00596620 touches only `+0x1dd70..+0x1dda0` (the block is never saved).
+- M269 the `[vptr-4] = [desc+4] - K` delta is an IMAGE-WIDE mechanism: a 3-level symbolic shadow accepts a store only at `field + [desc+4] - 4` -> 41 delta stores / 31 functions / 8 K; the 5 K=`0x21a6c` functions are EXACTLY M267's 5 installers (two independent detectors agree, G1/G2); plus 177 vptr installs through a vbptr of 33 rdata tables and 9 primary/secondary pairs 8 B apart with identical install counts — M267's pair is the rule (G4-G6).
+- M271 32 of the 247 distinct rdata immediates stored through a register are vbtable descriptors (`dword[0]` and `dword[+4]` both |v| < 0x40000, neither a code pointer); their `[+4]` values are 21 virtual-base offsets and every K the delta census found is one of them; `[0x675964]=0,[+4]=0x21a6c` is installed only by FUN_00469650 and `[0x678458+4]=0x23d94` only by FUN_0050aa60, both carrying a delta store at their own K (G3/G9/G10).
+- M270 the `0x678e40` class has ONE 152,856-B stack instance: `0x678e40` and its secondary `0x678e38` (+0x2444) are each stored EXACTLY once image-wide (`0x59bf1c`, `0x59bf26`, both inside FUN_0059bec0) — never heap-allocated; slot 0 of each is its deleting-dtor wrapper (`0x59c380`/`0x59c3b0`); layout `+0` the `0x5e3b80/0x5e3ced` class, `+0x2320` the `0x675964` class, `+0x247a0` M215's `0xb4c` row, virtual base at `+0x23d8c = 0x2320+0x21a6c`, size `0x25318` = the only such immediate in the image (the `_alloca_probe` at `0x59bed1`). **RETRACTS part of M267 (kept here on purpose):** FUN_0059bec0 is NOT a destructor (4 ctors run before it installs `0x678e40`; the same objects die at its tail) and its `0x67194c/0x671944` are the ROW subobject at `+0x247a0`/`+0x247a0+0x444`, never `[this+0]` — the installer of `0x67194c` at `[this+0]` is FUN_005faec0 (M215).
+
+"""
+
+
+def main():
+    src = io.open(NAMED, encoding="utf-8").read()
+    a = src.index(START)
+    b = src.index(END)
+    block = src[a:b].rstrip("\n")
+    sha = hashlib.sha1(block.encode("utf-8")).hexdigest()
+    io.open(ARC, "a", encoding="utf-8").write(
+        "\n\n§rotation-2 (%s): the M267-M268 + M269-M271 rows, moved VERBATIM out of "
+        "`NAMED.md` at s311-chain1. sha1 of the moved block: %s (byte-exact, asserted by "
+        "`scripts/m332_named_rotate2.py`).\n\n%s\n" % ("M332 headroom", sha, block))
+    back = io.open(ARC, encoding="utf-8").read()
+    got = back[back.index(START):].rstrip("\n")
+    assert got == block, "archive block is not byte-identical"
+    assert hashlib.sha1(got.encode("utf-8")).hexdigest() == sha
+
+    new = src[:a] + STUB.replace("SHA2", sha[:12]) + src[b:]
+    io.open(NAMED, "w", encoding="utf-8").write(new)
+    print("moved %d B of rows; sha1=%s" % (len(block.encode()), sha))
+    print("NAMED.md %d -> %d B (headroom to 250,000: %d B)" %
+          (len(src.encode()), len(new.encode()), 250000 - len(new.encode())))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

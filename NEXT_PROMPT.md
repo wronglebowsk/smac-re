@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B26 TRIAGED 10/10 + harness 19/19+1 NO-OP, #328; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B26 + M54A-M329 done; (v)-(viii) ANSWERED + **B27 s309** (energy round executable + carried, `NAMED ## B27`); only (ix) left, box-GATED, and the **(x) OPEN-LEADS** list below is the analysis-only option; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B26 TRIAGED 10/10 + harness 19/19+1 NO-OP, #328; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B26 + M54A-M329 done; (v)-(viii) ANSWERED + **B27 s309** (energy round executable + carried, `NAMED ## B27`); only (ix) left, box-GATED, and the **(x) OPEN-LEADS** list below is the analysis-only option (x2/x3/x4 answered); #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319 main 1556ce9; B26 = #328 main dd704d0; B26's full ACCEPT + THE LAW + the three retractions + the `found_units` 69->0 open question VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a) with its sha1, and its per-rung cmds at `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks; `NAMED ## B25`/`## B26` govern; earlier build-track detail §trim-s298 (a), §trim-s299 (b)/(d)). **B27 MERGED-BY-THIS-FIRE (s309)**. **Next build B28**: the spine ends at B27 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B27 did.
 
- **DOC CAP: `NAMED.md` 244,581 B / 250,000 FAIL (5,419 B headroom, `wc -c` s309 - ONE chain-2-sized block from the trigger). LAW (s307): rotate VERBATIM to a `docs/named-archive-*.md` BEFORE crossing 250,000 (s307 crossed it mid-fire and dug itself back); the rotate scripts assert the sha1s.**
+ **DOC CAP: `NAMED.md` 246504 B / 250,000 FAIL (3496 B headroom, `wc -c` s312) - UNDER the 5 KB trigger: ROTATE FIRST. s312 = #346 review round: G9 + MU18-21 + ST6, 9/9 `d2691dc5abb39240`, harness 22/22 `a9a944201849d026`.**
 
 ## THE LEDGER
 
@@ -57,10 +57,10 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   CLOSED enumeration (M220 .. M308, each with the NAMED § to read BEFORE re-opening and what it
   settled - incl. the M308 SITE-list shapes) + the OPEN shortlist one-liner are VERBATIM at
   `docs/pick-archive.md` §trim-s270.
-  NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b). NAMED cap: see §BUDGET's DOC CAP line (s309 measurement).
+  NEVER bp mid-instruction (s213). OPEN shortlist detail: `docs/pick-archive.md` §trim-s269 (b). NAMED cap: see §BUDGET's DOC CAP line (s311).
   CLOSED pick rows (v = M319, vi = M321) VERBATIM at §trim-s300-chain1 (b) (sha1 b0e7c1d2614f2312); `NAMED ## M319` / `## M321` govern.
   CLOSED pick row (vii = M327) VERBATIM at §trim-s305-chain1 (a) (sha1 cfa455cbefd4); `NAMED ## M327` governs (harness 24/24, digest 91f58f3de03090c1, since the s305 review round).
-  CLOSED pick row (viii = **M329**, s307) VERBATIM at §trim-s308-chain1 (b) with its sha1; `NAMED ## M329` governs (`ui_governor_options_pane(widget, page)`; the `ds:0x99aa38` 19-bit pack staging; publish `0x1c-0x1f` only, bit-disjoint from both faction-create defaults => REFINES `## M321`); ACCEPT 13/13 + harness 26/26 numbers are IN that block. **B27 ANSWERED s309** (`sim/energy.py` law + `sim/composedenergy.py` run: the eight blocks' energy round; the ledger law holds on the container's OWN bytes 8/8+8/8; block A modeled by the writer for the first time; `NAMED ## B27` carries ACCEPT 10/10 anchor `b65e8129b67ba67d` + harness 16/16 `81d2d9491ec3320d`). **NO STATIC PICKS LEFT** except (ix) (live-box, operator-GATED), so the analysis-only option is the **(x) OPEN-LEADS** census list, each with a NAMED question: (x1) the 34 feeder slots `0x984d48 + 48*slot` - the slot noun and why bit5 halves (M330 G10); (x2) `ds:0x985aec` - difficulty noun + its store sites (B27 measured 2 out of the container); (x3) `+2fc/+308/+3f8` - entry-zero 52056d clears them and the ledger law consumes them: who writes them mid-round (B27's biggest declared gap); (x4) `facprofile+4ec` interest / `profile+300` (M326/M330); (x5) `92bdf8` mode + the 'multi' menu label (M328). Generate a combat/tech/victory pick before taking one: no footing exists.
+  CLOSED pick row (viii = **M329**, s307) VERBATIM at §trim-s308-chain1 (b) with its sha1; `NAMED ## M329` governs (`ui_governor_options_pane(widget, page)`; the `ds:0x99aa38` 19-bit pack staging; publish `0x1c-0x1f` only, bit-disjoint from both faction-create defaults => REFINES `## M321`); ACCEPT 13/13 + harness 26/26 numbers are IN that block. **B27 ANSWERED s309** (`sim/energy.py` law + `sim/composedenergy.py` run: the eight blocks' energy round; the ledger law holds on the container's OWN bytes 8/8+8/8; block A modeled by the writer for the first time; `NAMED ## B27` carries ACCEPT 10/10 anchor `b65e8129b67ba67d` + harness 16/16 `81d2d9491ec3320d`). **NO STATIC PICKS LEFT** except (ix) (live-box, operator-GATED), so the analysis-only option is the **(x) OPEN-LEADS** census list, each with a NAMED question: (x1) the 34 feeder slots `0x984d48 + 48*slot` - the slot noun and why bit5 halves (M330 G10); (x2) ANSWERED M332 (`ds:0x985aec` = the runtime mirror of the win-INI pref `"Difficulty"`; master `ds:0x92bde8`; pref map `0x92bde8..0x92bf14` - `## M332`); (x3)/(x4) ANSWERED M331; (x5) the 'multi' label only (`92bdf8` = the pref `Top Menu`); (x6) NEW (M332): the difficulty INDEX->label order (cmps top out at 4, M330's k-table needs k=2 at >=5); the pref block's other writers; `0x8f0090`'s consumer; callee `0x5f1394`. Generate a combat/tech/victory pick before taking one: no footing exists.
   Lists live in NAMED ## M310-M325 + the `## B<n>` blocks. READER LAWS still BIND:
   every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 
@@ -111,7 +111,6 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 M320/M323/M324 result one-liners VERBATIM at `docs/pick-archive.md` §trim-s300-chain1 (a); `NAMED` governs.
-M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
-M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.
+Pointers: M325 §trim-s301-chain2 (a); M326 §trim-s304-chain2 (a); NAMED governs.
 M330 MERGED #340 -> 1b9cb38 (s309-chain2); pr340 JSON sidecar folded #342 (red-gate docs fold, fix-forwarded in s309 — check CI before ANY merge).
 M331 (s310-chain2): +2fc/+308=INCOME siblings; ledger 8/8; rate +4ec%/100; cap MIN(E/2,100net)>=50. 14/14 442270fd57be2b62 x2; 43/43+1 29061c567f9132fb. NAMED ## M331.

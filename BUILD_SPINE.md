@@ -963,7 +963,8 @@ DECLARED UNMODELED: the feeder's per-slot `v` (the 34-slot item table's runtime 
 pinned for 5 facilities — B4's "table-later" OPEN row — so per-faction upkeep on the AI factions is
 alpha-table ASSUMED, exactly as B4 declared it); the relative order of the income add and the
 upkeep feeder (only settle < snapshot < refund is pinned by address order, and the two adds are
-commutative on this fixture); the nouns of +2fc/+308/+310/+3f8 and of the difficulty dword
-(M330/M308 INFERRED); which factions the game would really charge (the eight blocks are run
+commutative on this fixture); the nouns of +2fc/+308/+310/+3f8 (M330/M331) and of the difficulty dword
+(**ANSWERED by M332**: 0x985aec is the runtime mirror of the win-INI pref "Difficulty",
+master 0x92bde8; the index->label order stays open); which factions the game would really charge (the eight blocks are run
 uniformly, as B25 applies the gesture to every unit); whether the refund leg ever runs in this
 save at all (measured inert here). No box time, no /proc, no gdb, no game-binary load.

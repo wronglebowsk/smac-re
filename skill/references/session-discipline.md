@@ -323,8 +323,19 @@ milestone per merge and three acceptance invocations, not one question per step.
   banner + exit 2) — re-run with a larger cap before triaging a truncated review. Review findings are CLAIMS, not verdicts: a reviewer can miscalculate or miss an existing pin, so
   verify disputed findings with tools (print the arithmetic, grep the pin in the instrument) before
   accepting them OR relaying severity counts as a model-quality verdict; an author's dismissal is
-  valid only with measured numbers. Triage rule unchanged; the
-  human owns the merge. Evidence + constraints: `docs/AI-REVIEW.md`.
+  valid only with measured numbers. The semantic layer's proven unique catches — author gates accordingly:
+  CIRCULAR checks whose expected set derives from the check's own input (`w in wins` where `wins` is built
+  from `w` — derive expected values from an INDEPENDENT scan), hardcoded offsets a shift mutant bypasses
+  while the section parser honors the shift, prose claiming a comparison the code never makes, and
+  DOC-level decoration: NAMED rows asserting counts/constants the instrument does not print (retract in
+  place and give the retraction facts their own instrument). The mechanical layer reciprocates: L2b
+  address-contact flags mutants patching sites the instrument reads only via computed walks — strengthen
+  with exact-address pins and re-measure. A truncated review re-run at a larger cap is a COMPLETION of the
+  one review (one triage reply covers both runs), not a second opinion. Triage rule unchanged; the human
+  owns the merge. Before merge, PATCH the PR title to the post-review numbers (`gh api -X PATCH
+  repos/<owner>/<repo>/pulls/<n> -f title=…` — `gh pr edit` can fail on Projects-classic GraphQL errors);
+  the squash title snapshots at submit and otherwise ships stale pre-review counts. Evidence +
+  constraints: `docs/AI-REVIEW.md`.
 - `NEXT_PROMPT.md` <= 12,000 BYTES AT CLOSE (warn; gate FAILs 16,000) — the unattended kickoff's cap-triage trigger. `evidence.py budget`
   prints `os.path.getsize`, i.e. exactly `wc -c` (its column has been labelled `bytes` since s179; the code comment
   used to claim characters while the code compared bytes — the instrument was right, the prose was wrong). The gate
