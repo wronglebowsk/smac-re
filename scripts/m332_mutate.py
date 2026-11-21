@@ -20,35 +20,53 @@ import hashlib, os, re, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CENSUS = [sys.executable, "-u", os.path.join(ROOT, "scripts", "m332_difficulty_census.py"),
           "--no-evidence"]
-GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"]
+GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"]
 
 MUTANTS = [
     # ---- the store set and the reference census (a removed writer must move
     # G1's counts, G2's set and G3's per-site triple; the KeyError path is a
-    # CRASH, and a CRASH is scored as a failure, so the gate must fail first)
-    ("MU1",  "code", "0x4ddcf1|nop", {"G1", "G2", "G3"}),
-    ("MU2",  "code", "0x57c5af|nop", {"G1", "G2", "G3", "G4"}),
-    ("MU3",  "code", "0x57f006|nop", {"G1", "G2", "G3", "G4"}),
+    # CRASH, and a CRASH is scored as a failure, so the gate must fail first).
+    # s312/#346: each of these ALSO reddens G9 now, and it is not incidental —
+    # G9.2 re-reads the 0x4ddcf1 store, G9.4 re-reads the pinned copy windows
+    # (0x57c5af, 0x57f006, 0x48502e) and G9.2 re-reads the jge edge.
+    ("MU1",  "code", "0x4ddcf1|nop", {"G1", "G2", "G3", "G9"}),
+    ("MU2",  "code", "0x57c5af|nop", {"G1", "G2", "G3", "G4", "G9"}),
+    ("MU3",  "code", "0x57f006|nop", {"G1", "G2", "G3", "G4", "G9"}),
     # ---- value origins: retarget a load and the mirror copy changes identity;
     # a MASTER load also feeds G8's scalar-load count, so G8 moves with it.
     ("MU4",  "code", "0x57c59e|mov eax,DWORD PTR ds:0x92bdf4", {"G4", "G8"}),
     ("MU5",  "code", "0x57eff3|movsx eax,BYTE PTR ds:0x8f0c1c", {"G4"}),
     ("MU6",  "code", "0x484ef8|mov cl,BYTE PTR ds:0x92bdf4", {"G4", "G8"}),
     # 0x48502e stores the BYTE cell, not TARGET: G1's census must NOT move.
-    ("MU7",  "code", "0x48502e|nop", {"G4"}),
-    # ---- reachability: the jge edge that attributes the 4th writer
-    ("MU8",  "code", "0x4ddb5a|jmp 0x4ddef1", {"G3"}),
-    # ---- the pref pairing: name side, field side, both functions
+    # G9 does move, because G9.4 pins that store as the (TARGET,BYTECELL) copy.
+    ("MU7",  "code", "0x48502e|nop", {"G4", "G9"}),
+    # ---- reachability: the jge edge that attributes the 4th writer (G9.2
+    # reads the same edge, so it dies with it)
+    ("MU8",  "code", "0x4ddb5a|jmp 0x4ddef1", {"G3", "G9"}),
+    # ---- the pref pairing: name side, field side, both functions.
+    # MU13 nops a KEY push, which turns a 6-arg call window into a 5-arg one,
+    # so G9.5's argc==6 count moves from 18 to 17 — exactly the arity law it pins.
     ("MU9",  "code", "0x58e8a1|push 0x692724", {"G5", "G6", "G7"}),
     ("MU10", "code", "0x58e8c6|nop", {"G5", "G6", "G7", "G8"}),
     ("MU11", "code", "0x58f159|push 0x692808", {"G6", "G7"}),
     ("MU12", "code", "0x58f11d|mov edx,DWORD PTR ds:0x92bdf4", {"G6", "G7", "G8"}),
-    ("MU13", "code", "0x58e905|nop", {"G5", "G6", "G7"}),
+    ("MU13", "code", "0x58e905|nop", {"G5", "G6", "G7", "G9"}),
     # ---- scanner-law mutants (the algorithms, not the image)
     ("MU14", "algo", "2", {"G4"}),      # provenance survives redefinition
     ("MU15", "algo", "1", {"G6", "G7"}),  # the direction law is off
     ("MU16", "code", "0x4ddb5a|jge 0x4ddcf1", set()),   # declared NO-OP
     ("MU17", "algo", "3", {"G1"}),      # enc key truncated to 2 bytes
+    # ---- s312 review round (#346): the four levers aimed at G9, the gate the
+    # reviewer's findings produced.  Each one breaks ONLY the fact it names.
+    # the edge whose eax G9.2 attributes to callee 0x5f1394
+    ("MU18", "code", "0x4ddb53|call 0x5f1395", {"G9"}),
+    # the co-store pair: a different source register keeps every address, the
+    # moffs bytes and the store set, so only the register-identity law dies
+    ("MU19", "code", "0x57c7b5|mov    ds:0x985aec,ecx", {"G9"}),
+    # the array-end use: forward jmp instead of the back edge = not a loop bound
+    ("MU20", "code", "0x579bcf|jmp 0x579bd3", {"G9"}),
+    # the cmp arms: a 5th immediate moves G1's arm set and G9.1 together
+    ("MU21", "code", "0x4f9b5a|cmp DWORD PTR ds:0x985aec,0x5", {"G1", "G9"}),
 ]
 
 
@@ -90,6 +108,14 @@ def selftest():
     rc, g, fin, out, err = run({})
     s5 = rc == 0 and len(g) == len(GATES) and all(g.values())
     rows.append(("ST5 base run %s" % (fin or "no final line"), s5)); ok &= s5
+    # #346 P2: "1 NO-OP inert" must mean FORMATTING-inert, never "a site no gate
+    # reads".  The declared NO-OP's address is therefore required to be an
+    # address a scored mutant also patches and reddens (MU16/MU8 share 0x4ddb5a).
+    noop_site = {p.split("|")[0] for _, k, p, d in MUTANTS if k == "code" and not d}
+    scored_site = {p.split("|")[0] for _, k, p, d in MUTANTS if k == "code" and d}
+    s6 = bool(noop_site) and noop_site <= scored_site
+    rows.append(("ST6 the NO-OP's site is a site a scored mutant reddens %s"
+                 % sorted(noop_site), s6)); ok &= s6
     for name, good in rows:
         print("%s %s" % ("PASS" if good else "FAIL", name))
     print("== selftest: %d/%d ==" % (sum(1 for _, x in rows if x), len(rows)))

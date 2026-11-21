@@ -477,8 +477,18 @@ def main():
           ([hex(x) for x in rex.get("Difficulty", [])],
            [hex(x) for x in wex.get("Difficulty", [])]))
 
-    # ---------- decompiler (independent) view ----------
-    de = {}
+    # ---------- decompiler view (s312 review: PER FUNCTION, `==`-safe) ----------
+    # #346 P2: the s311 map merged the two function bodies, so "the pseudocode
+    # pairs it a third way" could have been the writer polluting the reader.  The
+    # map is now keyed per function; the THIRD VIEW is the reader's OWN body, and
+    # the writer's body is printed separately so "it adds no exclusive field" is
+    # a measurement, not a merge.  `(?<![=!<>])...=(?!=)` excludes `==`/`!=` so a
+    # comparison can no longer masquerade as an assignment.  GH counts Ghidra's
+    # own RESOLVED API calls per body — G9.5 cross-checks them against the
+    # push-run arity counts, which is the only thing that makes the API names in
+    # the prose measured rather than assumed.
+    de_per = {}
+    GH = {}
     for shard in sorted(os.listdir(SHARDS)):
         if not shard.endswith(".c"):
             continue
@@ -488,17 +498,31 @@ def main():
             if not m:
                 continue
             body = m.group(1)
+            gh = GH.setdefault(fname, {"Get": 0, "Write": 0})
+            gh["Get"] += len(re.findall(r"GetPrivateProfileStringA\s*\(", body))
+            gh["Write"] += len(re.findall(r"WritePrivateProfileStringA\s*\(", body))
+            per = de_per.setdefault(fname, {})
             pend = None
             for line in body.splitlines():
                 nm = re.search(r"\bs_([A-Za-z0-9_ ]+?)_(00[0-9a-f]{6})\b", line)
-                if nm and int(nm.group(2), 16) in {v: t for v, t in
-                                                   [(k, names[k]) for k in names]}:
+                if nm and int(nm.group(2), 16) in names:
                     pend = names[int(nm.group(2), 16)]
-                asg = re.search(r"(?<!_)DAT_(00[0-9a-f]{6})\s*=", line)
+                asg = re.search(r"(?<!_)(?<![=!<>])DAT_(00[0-9a-f]{6})\s*=(?!=)", line)
                 if asg and pend is not None:
-                    de.setdefault(pend, set()).add(int(asg.group(1), 16) & 0xFFFFFF + 0x400000
-                                                   if False else int(asg.group(1), 16))
+                    per.setdefault(pend, set()).add(int(asg.group(1), 16))
+    for fname in sorted(de_per):
+        print("== decompiler map, body %s: %d names, GetPrivateProfileStringA=%d, "
+              "WritePrivateProfileStringA=%d ==" % (fname, len(de_per[fname]),
+                                                    GH[fname]["Get"], GH[fname]["Write"]))
+    de = de_per["FUN_0058e7f0"]
+    dwr = de_per.get("FUN_0058f0d0", {})
     from collections import Counter as _C
+    wr_cnt = _C(f for v in dwr.values() for f in v)
+    wr_ex = {k: sorted(x for x in v if wr_cnt[x] == 1) for k, v in dwr.items()}
+    print("   the WRITER body alone contributes %d exclusive name->field pairs %s "
+          "(so the third view is the reader's own body, not a merge of both)" %
+          (sum(1 for v in wr_ex.values() if v),
+           {k: [hex(x) for x in v] for k, v in sorted(wr_ex.items()) if v}))
     decnt = _C(f for v in de.values() for f in v)
     deex = {k: sorted(f for f in v if decnt[f] == 1) for k, v in de.items()}
     print("-- DECOMPILER side: name -> DAT assigned after its call -> exclusive --")
@@ -586,8 +610,12 @@ def main():
          and {split_ops(by_addr[a][3])[1] for a in part["cmp"]
               if IMM.match(split_ops(by_addr[a][3])[1] or "")} ==
              {"0x1", "0x2", "0x3", "0x4"},
-         "68 refs, enc-scan identical (0 undisguised), 0 address materializations, "
-         "4 store/40 load/24 cmp/0 rmw, cmp immediatives exactly {1,2,3,4}")
+         "68 refs, enc-scan identical, 0 address materializations, 4 store/40 load/24 cmp/"
+         "0 rmw, cmp immediates exactly {1,2,3,4}. SCOPE (s312 #346 P1): the two scans agree "
+         "on every reference objdump can print and on every immediate-byte materialization, "
+         "so NO writer that names 0x985aec in the image exists; a store through a REGISTER "
+         "POINTER whose value was computed at runtime is invisible to both scans and is NOT "
+         "excluded by this gate (G9.1 pins the cmp arms)")
 
     forms = {a: " ".join(by_addr[a][0]) for a in part["store"]}
     want = " ".join(["a3"] + le)
@@ -656,15 +684,25 @@ def main():
 
     de1 = {k: v for k, v in deex.items() if len(v) == 1}
     gate("G7", deex.get("Difficulty") == [MASTER] and set(agree3) == AGREE6
-         and "Difficulty" in agree3 and tri and len(tri) == 7
+         and "Difficulty" in agree3 and len(tri) == len(agree3) == 6
          and de1.get("Top Menu") == [0x92BDF8] and de1.get("Map Type") == [0x92BDF4]
          and de1.get("Faction") == [0x92BDEC]
+         and de1.get("Time Controls") == [0x92BF10] and de1.get("00000000") == [0x92BF0C]
+         and "Custom World" not in deex and "Semaphore" not in deex
          and not any(fnrange(a)[0] == 0x58E7F0 for a in part["store"]),
-         "NOUN: three independent views (raw READ window, raw WRITE window, the Ghidra "
-         "pseudocode) all give 'Difficulty' -> ds:0x92bde8, 6 names agree three ways %s; "
-         "no store to 0x985aec sits in the prefs reader, so 0x985aec is the RUNTIME "
-         "MIRROR of the preference the game itself calls Difficulty (siblings: Top "
-         "Menu=0x92bdf8, Map Type=0x92bdf4, Faction=0x92bdec)" % sorted(agree3))
+         "NOUN: the third view is the READER body's own pseudocode map. s312 correction: "
+         "the s311 map merged the reader's and the writer's bodies and printed 7 three-way "
+         "names; the writer body contributes 0 exclusive pairs, so the 7th key was an "
+         "artifact of the merge — the honest count is 6 three-way names and all 6 agree "
+         "fully %s. All three views give 'Difficulty' -> ds:0x92bde8. The pairing slips "
+         "exactly twice, both pinned here: the pseudocode's proximity pairing keys "
+         "0x92bf10 as 'Time Controls' and 0x92bf0c as '00000000' (a later name mention "
+         "moves the pend), where the raw READ-window scan keys them 'Custom World' and "
+         "'Semaphore' — same single field either way, so this is a naming artifact of the "
+         "third view, not a contradiction of it; no store to 0x985aec sits in the prefs "
+         "reader, so 0x985aec is the RUNTIME MIRROR of the preference the game itself calls "
+         "Difficulty (siblings: Top Menu=0x92bdf8, Map Type=0x92bdf4, Faction=0x92bdec)"
+         % sorted(agree3))
 
     endbase = []
     for a in enduses:
@@ -693,6 +731,165 @@ def main():
          "0x92ba98 (2 loop-bound uses, count=4 integral) AND a scalar pref cell with 2 "
          "stores %s + 6 loads; 'it is only an array-end sentinel, so the mirror is an "
          "offset coincidence' fails on 0 stores" % [hex(x) for x in mstores])
+
+    # ---------- G9: the s312 review round (#346).  The reviewer listed six facts
+    # that `## M332`/`## M308` assert and that G1..G8 print around without ever
+    # READING.  Each is measured here on the same parse, and each can go red:
+    # MU18 (the edge call's target), MU19 (the co-store's register), MU20 (the
+    # array loop's back edge), MU21 (the ebx cmp arm) are aimed at exactly these.
+    DEFMN = {"mov", "movsx", "movzx", "movbe", "lea", "add", "sub", "and", "or",
+             "xor", "sbb", "adc", "shl", "shr", "sar", "inc", "dec", "neg",
+             "not", "xchg", "pop", "bswap"}
+
+    def imm_of(op):
+        m = IMM.match((op or "").strip())
+        return m.group(1) if m else None
+
+    def callee_of(a):
+        return (by_addr[a][3] or "").strip()
+
+    def defs_of(reg, lo, hi):
+        """(lo,hi) EXCLUSIVE: instructions that write `reg`, plus every `call`
+        (a call writes the caller-saved set, so it breaks register provenance)."""
+        out = []
+        for a in order[bisect.bisect_left(order, lo) + 1:bisect.bisect_left(order, hi)]:
+            mn, ops = by_addr[a][2], by_addr[a][3]
+            if mn == "call":
+                out.append((a, mn))
+            elif mn in DEFMN and reg_of(split_ops(ops)[0]) == reg:
+                out.append((a, mn))
+        return out
+
+    print("== G9.1 the cmp arms (the ebx half of the '1,2,3,4 + ebx' claim) ==")
+    arms = [split_ops(by_addr[a][3])[1] for a in part["cmp"]]
+    imm_arm = sorted({x for x in arms if x and IMM.match(x)})
+    reg_arm = sorted({x for x in arms if x and not IMM.match(x)})
+    ebx_sites = [a for a in part["cmp"] if split_ops(by_addr[a][3])[1] == "ebx"]
+    print("   immediate arm %s   register arm %s   the ebx cmp sits at %s and nowhere else"
+          % (imm_arm, reg_arm, [hex(x) for x in ebx_sites]))
+    g91 = (imm_arm == ["0x1", "0x2", "0x3", "0x4"] and reg_arm == ["ebx"]
+           and ebx_sites == [0x4F9B5A])
+
+    print("== G9.2 whose eax does 0x4ddcf1 store (the callee-attribution claim) ==")
+    CE, CJ, CS = 0x4DDB53, 0x4DDB5A, 0x4DDCF1
+    win_mn = [by_addr[a][2] for a in order[idx[CE] + 1:idx[CJ]]]
+    win_ops = [by_addr[a][3] for a in order[idx[CE] + 1:idx[CJ]]]
+    eax_defs = defs_of("eax", CE, CJ)
+    print("   %s '%s %s' -> window %s %s -> %s '%s %s' -> %s stores eax; "
+          "writes-to-eax inside the window=%s"
+          % (hex(CE), by_addr[CE][2], callee_of(CE), win_mn, win_ops, hex(CJ),
+             by_addr[CJ][2], by_addr[CJ][3], hex(CS), eax_defs))
+    g92 = (by_addr[CE][2] == "call" and callee_of(CE) == "0x5f1394"
+           and win_mn == ["test"] and win_ops == ["eax,eax"] and not eax_defs
+           and by_addr[CJ][2] == "jge" and callee_of(CJ) == "0x4ddcf1"
+           and by_addr[CS][2] == "mov"
+           and mem_of(split_ops(by_addr[CS][3])[0]) == TARGET
+           and reg_of(split_ops(by_addr[CS][3])[1]) == "eax")
+
+    print("== G9.3 the 0x57c7b0/0x57c7b5 co-store (M308: 'same eax, no intervening write') ==")
+    A, B = 0x57C7B0, 0x57C7B5
+    adj = order[idx[A] + 1] == B
+    dA, sA = split_ops(by_addr[A][3])
+    dB, sB = split_ops(by_addr[B][3])
+    same_reg = (by_addr[A][2] == by_addr[B][2] == "mov" and sA == sB and reg_of(sA) == "eax"
+                and mem_of(dA) == MASTER and mem_of(dB) == TARGET)
+    pcall = max([a for a in order[:idx[A]] if by_addr[a][2] == "call"])
+    ndef = defs_of("eax", pcall, B)
+    mstores_in = [a for a in order[idx[A]:idx[B] + 1]
+                  if mem_of(split_ops(by_addr[a][3])[0]) == MASTER]
+    print("   adjacent=%s both-store-plain-eax=%s (%s | %s) nearest-preceding-call=%s "
+          "writes-to-eax-since=%d stores-to-0x92bde8-inside-the-pair=%s"
+          % (adj, same_reg, by_addr[A][3], by_addr[B][3], hex(pcall), len(ndef),
+             [hex(x) for x in mstores_in]))
+    print("   -> M308's wording is CORRECTED: the master cell IS written inside the "
+          "pair, by 0x57c7b0 itself from the same eax. 'No intervening write' is a law "
+          "about the REGISTER, not about 0x92bde8.")
+    g93 = adj and same_reg and pcall == 0x57C7A2 and not ndef and mstores_in == [A]
+
+    print("== G9.4 the pinned copy windows (stored register never redefined, source cell "
+          "never written between load and store) ==")
+    g94 = True
+    for (s_, d_), plist in sorted(COPY_SITES.items()):
+        for (ssite, dsite) in plist:
+            mn = by_addr[dsite][2]
+            reg = reg_of(split_ops(by_addr[dsite][3])[1])
+            nd = defs_of(reg, ssite, dsite) if reg else [("non-register store", 0)]
+            srcw = [a for a in order[bisect.bisect_left(order, ssite) + 1:
+                                      bisect.bisect_left(order, dsite) + 1]
+                    if mem_of(split_ops(by_addr[a][3])[0]) == s_]
+            ok = mn in ("mov", "movsx", "movzx") and reg is not None and not nd and not srcw
+            g94 = g94 and ok
+            print("   %s->%s  load %s  store %s (%s: %s)  redefs-of-%s=%d  "
+                  "writes-to-source=%d  %s"
+                  % (hex(s_), hex(d_), hex(ssite), hex(dsite), mn, by_addr[dsite][3],
+                     reg, len(nd), len(srcw), "ok" if ok else "FAIL"))
+
+    print("== G9.5 the API identity: my push-run arity vs Ghidra's resolved calls ==")
+    def argc_callees(lo, hi, want):
+        from collections import Counter
+        c = Counter()
+        for a in order[bisect.bisect_left(order, lo):bisect.bisect_left(order, hi)]:
+            if by_addr[a][2] != "call":
+                continue
+            j = idx[a]
+            k = j - 1
+            argc = 0
+            while k >= 0 and by_addr[order[k]][2] == "push":
+                argc += 1
+                k -= 1
+            if any(by_addr[x][2] == "call" for x in order[k + 1:j]):
+                continue
+            if argc == want:
+                c[callee_of(a)] += 1
+        return c
+    rlo, rhi = fnrange(0x58E7F0)
+    wlo, whi = fnrange(0x58F0D0)
+    c6, c4 = argc_callees(rlo, rhi, 6), argc_callees(wlo, whi, 4)
+    print("   .text FUN_0058e7f0[0x%x,0x%x) argc==6 callees %s | Ghidra in that body "
+          "Get=%d Write=%d" % (rlo, rhi, dict(c6), GH["FUN_0058e7f0"]["Get"],
+                                GH["FUN_0058e7f0"]["Write"]))
+    print("   .text FUN_0058f0d0[0x%x,0x%x) argc==4 callees %s | Ghidra in that body "
+          "Get=%d Write=%d" % (wlo, whi, dict(c4), GH["FUN_0058f0d0"]["Get"],
+                                GH["FUN_0058f0d0"]["Write"]))
+    g95 = (c6.get("edi") == 18 == GH["FUN_0058e7f0"]["Get"] and len(c6) == 1
+           and c4.get("edi") == 8 == GH["FUN_0058f0d0"]["Write"]
+           and GH["FUN_0058e7f0"]["Write"] == 0 and GH["FUN_0058f0d0"]["Get"] == 0)
+    print("   -> the 11 keyed READ windows sit inside these 18 argc-6 calls, ALL through "
+          "the one indirect callee 'edi'; the 8 keyed WRITE windows are 8 of the argc-4 "
+          "calls through 'edi' (the 9th argc-4 call goes to 0x5a6330 and is NOT keyed). "
+          "Arity parse and Ghidra's import-resolved names agree on both counts.")
+
+    print("== G9.6 the two array-end uses are real loop bounds (stride add + back edge) ==")
+    g96 = True
+    for a in sorted(enduses):
+        reg = split_ops(by_addr[a][3])[0]
+        i = idx[a]
+        up = [aa for aa in order[max(0, i - 12):i]
+              if by_addr[aa][2] == "add" and split_ops(by_addr[aa][3])[0] == reg
+              and imm_of(split_ops(by_addr[aa][3])[1]) == "d4"]
+        back = [aa for aa in order[i + 1:i + 8]
+                if by_addr[aa][2].startswith("j") and imm_of(by_addr[aa][3])
+                and int(imm_of(by_addr[aa][3]), 16) < a]
+        ok = len(up) == 1 and len(back) == 1 and (MASTER - 0x92BA98) % 0xD4 == 0
+        g96 = g96 and ok
+        print("   cmp %s (%s): stride-add %s  back-edge %s  -> %s"
+              % (hex(a), by_addr[a][3], [hex(x) for x in up], [hex(x) for x in back],
+                 "loop" if ok else "NOT A LOOP"))
+    gate("G9", g91 and g92 and g93 and g94 and g95 and g96,
+         "s312 review tightening, six claims now read by a gate: (1) the cmp arms are "
+         "exactly {0x1,0x2,0x3,0x4} + register arm exactly {ebx}, the ebx cmp unique at "
+         "0x4f9b5a; (2) 0x4ddb53 'call 0x5f1394' then 'test eax,eax' with ZERO writes to "
+         "eax before 'jge 0x4ddcf1', which stores eax => the stored value IS that callee's "
+         "return; (3) 0x57c7b0/0x57c7b5 are ADJACENT plain-eax stores to 0x92bde8 then "
+         "0x985aec, zero eax-writes since the call at 0x57c7a2, and the only master store "
+         "in the pair is 0x57c7b0 itself (so M308's 'no intervening write' is narrowed to "
+         "the register); (4) all 6 pinned copy windows have 0 redefinitions of the stored "
+         "register AND 0 writes to the source cell between load and store; (5) argc==6 "
+         "call count in FUN_0058e7f0 is 18, all through the single indirect 'edi', == "
+         "Ghidra's 18 GetPrivateProfileStringA there, and argc==4 through 'edi' is 8 == "
+         "Ghidra's 8 WritePrivateProfileStringA in FUN_0058f0d0 (0 of the other API in "
+         "either body); (6) both array-end cmps sit in a loop with 'add reg,0xd4' and a "
+         "backward jl, so the 4x0xd4 array-end reading is a loop, not an immediate walk")
 
     sys.stdout = sys.__stdout__
     tbl = "\n".join(_T)

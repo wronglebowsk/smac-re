@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319 main 1556ce9; B26 = #328 main dd704d0; B26's full ACCEPT + THE LAW + the three retractions + the `found_units` 69->0 open question VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a) with its sha1, and its per-rung cmds at `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks; `NAMED ## B25`/`## B26` govern; earlier build-track detail §trim-s298 (a), §trim-s299 (b)/(d)). **B27 MERGED-BY-THIS-FIRE (s309)**. **Next build B28**: the spine ends at B27 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B27 did.
 
- **DOC CAP: `NAMED.md` 244782 B / 250,000 FAIL (5218 B headroom, `wc -c` s311) - AT the 5 KB rotation trigger; `scripts/m332_named_rotate{,2}.py` did two sha1-asserted rotations this fire. ROTATE FIRST before adding a block.**
+ **DOC CAP: `NAMED.md` 246504 B / 250,000 FAIL (3496 B headroom, `wc -c` s312) - UNDER the 5 KB trigger: ROTATE FIRST. s312 = #346 review round: G9 + MU18-21 + ST6, 9/9 `d2691dc5abb39240`, harness 22/22 `a9a944201849d026`.**
 
 ## THE LEDGER
 

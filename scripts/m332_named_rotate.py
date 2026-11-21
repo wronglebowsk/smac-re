@@ -32,6 +32,36 @@ Evidence (the rows above are the gate conclusions of these two runs): `evidence/
 
 
 def main():
+    if "--verify" in sys.argv:
+        # #346 P2: the tool is a ONE-SHOT migration; after the archive exists a
+        # replay is refused.  --verify is the replay-safe mode, and it states
+        # exactly what is byte-exact here: the ARCHIVED BLOCK is (sha1 over the
+        # bytes re-read from disk).  The hot-file stub is NOT byte-compared
+        # against STUB below — the stub shipped at s311 was shortened by hand
+        # afterwards to buy headroom, so STUB is the ORIGINAL long form and the
+        # live stub is only required to name the archive and carry its sha1.
+        if not os.path.exists(ARC):
+            sys.stderr.write("VERIFY FAIL: archive missing\n")
+            return 1
+        back = open(ARC, "rb").read().decode("utf-8")
+        # rotate2 (M267-M271) APPENDED to this same archive afterwards, so the
+        # region rotate.py hashed is bounded by rotate2's first heading — without
+        # that bound the sha1 is not reproducible, which is itself a defect this
+        # mode exists to catch.
+        body = back[back.index(START):]
+        cut = body.find("\n§rotation-2 (M332 headroom)", 1)
+        assert cut > 0, "rotation-2's section marker not found in the archive"
+        got = body[:cut].rstrip("\n")
+        sha = hashlib.sha1((got + "\n").encode()).hexdigest()
+        named = open(NAMED, "rb").read().decode("utf-8")
+        moved = not any(l.startswith(h) for l in named.split("\n")
+                        for h in (START, "## M265-M266"))
+        stub = ("## M262-M266" in named) and (sha[:12] in named) and (ARC.split("/")[-1] in named)
+        print("VERIFY archive block sha1=%s  moved-out-of-NAMED=%s  stub-names-archive+sha1=%s"
+              % (sha[:12], moved, stub))
+        print("STUB constant is the ORIGINAL long form; the live stub was shortened "
+              "by hand at s311 — byte-exactness law applies to the archive only.")
+        return 0 if (moved and stub) else 1
     src = open(NAMED, "rb").read().decode("utf-8")
     lines = src.split("\n")
     i0 = [i for i, l in enumerate(lines) if l.startswith(START)]

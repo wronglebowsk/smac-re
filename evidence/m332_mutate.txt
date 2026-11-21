@@ -1,21 +1,25 @@
-PASS BASE - - PASS M332: 8/8 gates
-PASS MU1 code 0x4ddcf1|nop reddens ['G1', 'G2', 'G3']
-PASS MU2 code 0x57c5af|nop reddens ['G1', 'G2', 'G3', 'G4']
-PASS MU3 code 0x57f006|nop reddens ['G1', 'G2', 'G3', 'G4']
+PASS BASE - - PASS M332: 9/9 gates
+PASS MU1 code 0x4ddcf1|nop reddens ['G1', 'G2', 'G3', 'G9']
+PASS MU2 code 0x57c5af|nop reddens ['G1', 'G2', 'G3', 'G4', 'G9']
+PASS MU3 code 0x57f006|nop reddens ['G1', 'G2', 'G3', 'G4', 'G9']
 PASS MU4 code 0x57c59e|mov eax,DWORD PTR ds:0x92bdf4 reddens ['G4', 'G8']
 PASS MU5 code 0x57eff3|movsx eax,BYTE PTR ds:0x8f0c1c reddens ['G4']
 PASS MU6 code 0x484ef8|mov cl,BYTE PTR ds:0x92bdf4 reddens ['G4', 'G8']
-PASS MU7 code 0x48502e|nop reddens ['G4']
-PASS MU8 code 0x4ddb5a|jmp 0x4ddef1 reddens ['G3']
+PASS MU7 code 0x48502e|nop reddens ['G4', 'G9']
+PASS MU8 code 0x4ddb5a|jmp 0x4ddef1 reddens ['G3', 'G9']
 PASS MU9 code 0x58e8a1|push 0x692724 reddens ['G5', 'G6', 'G7']
 PASS MU10 code 0x58e8c6|nop reddens ['G5', 'G6', 'G7', 'G8']
 PASS MU11 code 0x58f159|push 0x692808 reddens ['G6', 'G7']
 PASS MU12 code 0x58f11d|mov edx,DWORD PTR ds:0x92bdf4 reddens ['G6', 'G7', 'G8']
-PASS MU13 code 0x58e905|nop reddens ['G5', 'G6', 'G7']
+PASS MU13 code 0x58e905|nop reddens ['G5', 'G6', 'G7', 'G9']
 PASS MU14 algo 2 reddens ['G4']
 PASS MU15 algo 1 reddens ['G6', 'G7']
 PASS MU16 code 0x4ddb5a|jge 0x4ddcf1 reddens []
 PASS MU17 algo 3 reddens ['G1']
-measured: 16 mutants scored, 1 NO-OP inert, 0 MISMATCH, 0 CRASH
-digest(rows)=f101d888d93c5272
-PASS HARNESS 18/18
+PASS MU18 code 0x4ddb53|call 0x5f1395 reddens ['G9']
+PASS MU19 code 0x57c7b5|mov    ds:0x985aec,ecx reddens ['G9']
+PASS MU20 code 0x579bcf|jmp 0x579bd3 reddens ['G9']
+PASS MU21 code 0x4f9b5a|cmp DWORD PTR ds:0x985aec,0x5 reddens ['G1', 'G9']
+measured: 20 mutants scored, 1 NO-OP inert, 0 MISMATCH, 0 CRASH
+digest(rows)=a9a944201849d026
+PASS HARNESS 22/22
