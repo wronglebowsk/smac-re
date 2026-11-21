@@ -1,0 +1,87 @@
+== G1 reference census ds:0x985aec ==
+  text-form refs 68  byte-enc refs 68  set-identical True
+  address-materialization forms (mov/lea/push of the immediate): 0 []
+  partition: store=4 load=40 cmp=24 rmw=0 other=0
+  cmp operands: ['0x1', '0x2', '0x3', '0x4', 'ebx']
+== G2 store set ==
+  0x4ddcf1  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_004ddaa0 @0x4ddaa0+0x35e
+  0x57c5af  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_0057c550 @0x57c550+0x12fc
+  0x57c7b5  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_0057c550 @0x57c550+0x12fc
+  0x57f006  mov    ds:0x985aec,eax         bytes=a3 ec 5a 98 00   fn=FUN_0057ecf0 @0x57ecf0+0xa4f
+== G3 per-site fall-in ==
+  0x4ddcf1  prev=0x4ddcf0(ret)  no-fall-in(ret)  branch-targets=1 ['0x4ddb5a']
+  0x57c5af  prev=0x57c5a9(mov    esi,DWORD PTR ds:0x92bdec)  FALL-IN  branch-targets=0 []
+  0x57c7b5  prev=0x57c7b0(mov    ds:0x92bde8,eax)  FALL-IN  branch-targets=0 []
+  0x57f006  prev=0x57f000(mov    ecx,DWORD PTR ds:0x8f0c1c)  FALL-IN  branch-targets=0 []
+== G4 clean-copy map among ['0x8f0090', '0x8f0c11', '0x92bde8', '0x985aec'] ==
+  0x92bde8 -> 0x8f0c11   (load 0x484ef8, store 0x484efe, reg)
+  0x985aec -> 0x8f0c11   (load 0x485028, store 0x48502e, reg)
+  0x92bde8 -> 0x8f0c11   (load 0x488822, store 0x488828, reg)
+  0x8f0c11 -> 0x8f0090   (load 0x488847, store 0x48884d, reg)
+  0x92bde8 -> 0x985aec   (load 0x57c59e, store 0x57c5af, reg)
+  0x8f0c11 -> 0x985aec   (load 0x57eff3, store 0x57f006, reg)
+== pref-name push sites: 41 pushes, 22 READ(6-arg), 8 WRITE(4-arg), 11 other ==
+-- READ side: name -> fields stored in its window -> exclusive --
+   00000000           cand=[] excl=[]
+   Announce           cand=['0x92bf04', '0x996be8', '0x997120'] excl=['0x92bf04']
+   Custom World       cand=['0x92bf10', '0x996be8', '0x997120'] excl=['0x92bf10']
+   Customize          cand=['0x92bf14', '0x996be8', '0x997120'] excl=['0x92bf14']
+   Difficulty         cand=['0x92bde8', '0x996be8', '0x997120'] excl=['0x92bde8']
+   Faction            cand=['0x92bdec', '0x996be8', '0x997120'] excl=['0x92bdec']
+   Language           cand=['0x996be8', '0x997120'] excl=[]
+   Laptop             cand=['0x996be8', '0x997120'] excl=[]
+   Map Type           cand=['0x92bdf4', '0x996be8', '0x997120'] excl=['0x92bdf4']
+   More Preferences   cand=['0x92bf00', '0x996be8'] excl=['0x92bf00']
+   Preferences        cand=['0x92befc', '0x996be8', '0x997120'] excl=['0x92befc']
+   Prefs Format       cand=[] excl=[]
+   Rules              cand=['0x92bf08', '0x996be8', '0x997120'] excl=['0x92bf08']
+   Semaphore          cand=['0x92bf0c', '0x996be8', '0x997120'] excl=['0x92bf0c']
+   Top Menu           cand=['0x92bdf8', '0x996be8', '0x997120'] excl=['0x92bdf8']
+-- WRITE side: name -> fields loaded before its call -> exclusive --
+   Custom World       cand=['0x92bf04', '0x92bf08', '0x92bf0c', '0x92bf14'] excl=['0x92bf04', '0x92bf08', '0x92bf0c', '0x92bf14']
+   Difficulty         cand=['0x92bde8'] excl=['0x92bde8']
+   Faction            cand=['0x92bdec'] excl=['0x92bdec']
+   Map Type           cand=['0x92bdf4'] excl=['0x92bdf4']
+   More Preferences   cand=['0x92bf00'] excl=['0x92bf00']
+   Preferences        cand=['0x92befc'] excl=['0x92befc']
+   Prefs Format       cand=['0x6710fc', '0x996a94', '0x996bf0'] excl=['0x6710fc', '0x996a94', '0x996bf0']
+   Top Menu           cand=['0x92bdf8'] excl=['0x92bdf8']
+-- both-sides names=8  agreeing on at least one field=6  ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']
+   Difficulty read-excl=['0x92bde8'] write-excl=['0x92bde8']
+-- DECOMPILER side: name -> DAT assigned after its call -> exclusive --
+   00000000           cand=['0x92bf0c', '0x997120'] excl=['0x92bf0c']
+   Announce           cand=['0x92bf04', '0x997120'] excl=['0x92bf04']
+   Customize          cand=['0x92bf14', '0x997120'] excl=['0x92bf14']
+   Difficulty         cand=['0x92bde8', '0x997120'] excl=['0x92bde8']
+   Faction            cand=['0x92bdec', '0x997120'] excl=['0x92bdec']
+   Language           cand=['0x997120'] excl=[]
+   Laptop             cand=['0x997120'] excl=[]
+   Map Type           cand=['0x92bdf4', '0x997120'] excl=['0x92bdf4']
+   More Preferences   cand=['0x92bf00'] excl=['0x92bf00']
+   Preferences        cand=['0x92befc', '0x997120'] excl=['0x92befc']
+   Prefs Format       cand=['0x997120'] excl=[]
+   Rules              cand=['0x92bf08', '0x997120'] excl=['0x92bf08']
+   Time Controls      cand=['0x92bf10'] excl=['0x92bf10']
+   Top Menu           cand=['0x92bdf8', '0x997120'] excl=['0x92bdf8']
+-- three-way names=7 fully agreeing=6 ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']
+== G3b per-site reachability triple ==
+  0x4ddcf1  prev=0x4ddcf0(ret) branch-targets=1 table-entries=0
+  0x57c5af  prev=0x57c5a9(mov    esi,DWORD PTR ds:0x92bdec) branch-targets=0 table-entries=0
+  0x57c7b5  prev=0x57c7b0(mov    ds:0x92bde8,eax) branch-targets=0 table-entries=0
+  0x57f006  prev=0x57f000(mov    ecx,DWORD PTR ds:0x8f0c1c) branch-targets=0 table-entries=0
+  0x57c7b0  prev=0x57c7ab(jmp    0x57c8df) branch-targets=1 table-entries=0
+== G8 the array-end rival ==
+  MASTER used as a cmp IMMEDIATE (loop bound) at: ['0x579bc6', '0x57ab57']
+    site 0x579bc6 reg=edi base=0x92ba98(0x579b6c) stride=0xd4(0x579bbf) count=4 integral=True
+    site 0x57ab57 reg=esi base=0x92ba98(0x57ab45) stride=0xd4(0x57ab51) count=4 integral=True
+  MASTER scalar loads=6 ['0x484ef8', '0x488822', '0x57c59e', '0x57c6d4', '0x58ea06', '0x58f11d']  scalar stores=2 ['0x57c7b0', '0x58e8c6']
+PASS G1: 68 refs, enc-scan identical (0 undisguised), 0 address materializations, 4 store/40 load/24 cmp/0 rmw, cmp immediatives exactly {1,2,3,4}
+PASS G2: store set exact ['0x4ddcf1', '0x57c5af', '0x57c7b5', '0x57f006'], all moffs form 'a3 ec 5a 98 00', funcs FUN_004ddaa0 / FUN_0057c550 x2 / FUN_0057ecf0
+PASS G3: 0x4ddcf1: no fall-in (prev=ret) but branch-entered by 'jge' at 0x4ddb5a => its eax is the callee-0x5f1394 return on that edge (M308's UNATTRIBUTED CLOSED); 0x57c7b0 branch-entered from ['0x57c6f8']; 0 jump-table entries anywhere in the image for any of the 5 sites
+PASS G4: clean-copy map among the 4 cells = ['0x8f0c11->0x8f0090', '0x8f0c11->0x985aec', '0x92bde8->0x8f0c11', '0x92bde8->0x985aec', '0x985aec->0x8f0c11'] (6 sites); NO direct 0x985aec->0x92bde8 copy exists, so the mirror direction is master->runtime
+PASS G5: READ side (FUN_0058e7f0): 11 names carry EXACTLY ONE exclusive field, the map is injective (no field shared by two names), Difficulty->0x92bde8: ['Announce=0x92bf04', 'Custom World=0x92bf10', 'Customize=0x92bf14', 'Difficulty=0x92bde8', 'Faction=0x92bdec', 'Map Type=0x92bdf4', 'More Preferences=0x92bf00', 'Preferences=0x92befc', 'Rules=0x92bf08', 'Semaphore=0x92bf0c', 'Top Menu=0x92bdf8']
+PASS G6: WRITE side (FUN_0058f0d0): 8 4-arg key pushes == the 8 WritePrivateProfileStringA calls Ghidra resolves in that function; Difficulty's exclusive field is 0x92bde8 there too (['0x92bde8']); read/write agree on 6 names ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']
+PASS G7: NOUN: three independent views (raw READ window, raw WRITE window, the Ghidra pseudocode) all give 'Difficulty' -> ds:0x92bde8, 6 names agree three ways ['Difficulty', 'Faction', 'Map Type', 'More Preferences', 'Preferences', 'Top Menu']; no store to 0x985aec sits in the prefs reader, so 0x985aec is the RUNTIME MIRROR of the preference the game itself calls Difficulty (siblings: Top Menu=0x92bdf8, Map Type=0x92bdf4, Faction=0x92bdec)
+PASS G8: RIVAL KILLED: 0x92bde8 is BOTH the exact end of the 4x0xd4 record array at 0x92ba98 (2 loop-bound uses, count=4 integral) AND a scalar pref cell with 2 stores ['0x57c7b0', '0x58e8c6'] + 6 loads; 'it is only an array-end sentinel, so the mirror is an offset coincidence' fails on 0 stores
+digest(table)=c722bc1eca0b6405  (the sha256/16 of every printed measurement line above, gates excluded)
+PASS M332: 8/8 gates
