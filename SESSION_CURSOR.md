@@ -1,10 +1,5 @@
 # SESSION_CURSOR
 
-M332 `milestone/m332` IN PROGRESS (s311-chain1): pick (x2) `ds:0x985aec` = difficulty
-dword NOUN + full STORE set.  Skeleton `scripts/m332_difficulty_census.py` committed,
-gates G1-G6 in its docstring.  ACCEPT (planned) `python3 -u scripts/m332_difficulty_census.py`
--> `PASS M332: n/n gates` -> `evidence/m332_difficulty_census.txt`; harness `m332_mutate.py`.
-NAMED.md 246,133/250,000 = 3,867 headroom: ROTATE a settled block VERBATIM to
-`docs/named-archive-m332-rows.md` BEFORE adding mine (<5 KB rule).
-NEXT FIRE if this dies: this cursor + the (x) list in NEXT_PROMPT.md.
+M332 `milestone/m332` PR PRNUM: `python3 -u scripts/m332_difficulty_census.py` -> `PASS M332: 8/8 gates` digest `c722bc1eca0b6405` (`evidence/m332_difficulty_census.txt:86-87`); `python3 -u scripts/m332_mutate.py` -> `PASS HARNESS 18/18` digest `f101d888d93c5272`, 0 MISMATCH (`evidence/m332_mutate.txt:19-21`); `--selftest` 5/5. 0x985aec = runtime mirror of the INI pref "Difficulty" (master 0x92bde8).
+NAMED 244,782/250,000 (5,218 headroom): ROTATE FIRST. NEXT: (x) list — x1 feeder slots 0x984d48; x6 = M332's leads.
 `m294_gate_rows_raw.txt` = sim parity target, do NOT rm.

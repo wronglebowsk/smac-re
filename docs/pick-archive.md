@@ -1268,3 +1268,14 @@ calls / 362 indirect jumps printed as UNKNOWN) ==` (`evidence/m329_verify_s308.t
 (a) THE M330 RESULT ONE-LINER, VERBATIM from `NEXT_PROMPT.md` (sha1 `429295c00401`, byte-substring asserted by `scripts/m331_trim_s310.py`; `NAMED ## M330` governs; the M330 MERGED landing line stays in NEXT_PROMPT):
 
 M330 (s307-chain2): block+300=UPKEEP SPEND ACCUMULATOR — entry-zeroed, feeder 4f47f0 (ROUND>1, conditional halving), refund trunc(kx/3) k=1 diff4/2 diff>=5, mask gate VACUOUS (cl=8). 13/13 470d844054b1b101 x2; 31/31+1 NO-OP cf85092dea6baa93. NAMED ## M330.
+
+
+## §trim-s311-chain1 (M332 headroom): the (x2)-(x5) OPEN-LEADS one-liners, moved VERBATIM out of `NEXT_PROMPT.md` (sha1 de1cdf8f7efae25b5bdcca852621bb106b84daf2, byte-exact asserted by `scripts/m332_trim_s311.py`; (x2) and half of (x5) ANSWERED by M332, (x3)/(x4) by M331)
+
+(x2) `ds:0x985aec` - difficulty noun + its store sites (B27 measured 2 out of the container); (x3) `+2fc/+308/+3f8` - entry-zero 52056d clears them and the ledger law consumes them: who writes them mid-round (B27's biggest declared gap); (x4) `facprofile+4ec` interest / `profile+300` (M326/M330); (x5) `92bdf8` mode + the 'multi' menu label (M328).
+
+
+## §trim-s311-chain1 (M332 headroom): the M325/M326 tail pointer lines, moved VERBATIM out of `NEXT_PROMPT.md` (sha1 9d6395cdd18d0fad75419b9b5f5168b13bf7b70b, byte-exact asserted by `scripts/m332_trim_s311.py`; (x2) and half of (x5) ANSWERED by M332, (x3)/(x4) by M331)
+
+M325 VERBATIM: §trim-s301-chain2 (a); NAMED ## M325.
+M326 VERBATIM: §trim-s304-chain2 (a); NAMED ## M326.

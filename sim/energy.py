@@ -37,7 +37,11 @@ MODELED_FIELDS = (OFF_ENERGY, OFF_DEBT, OFF_SPEND, OFF_F30C, OFF_F310)
 PASSTHROUGH_FIELDS = (OFF_F2FC, OFF_F308, OFF_F3F8)
 ALL_FIELDS = MODELED_FIELDS + PASSTHROUGH_FIELDS
 
-# Difficulty dword (M308/M330: ds:0x985aec, noun INFERRED) - inside the carried state header.
+# Difficulty dword (M308/M330: ds:0x985aec) - inside the carried state header.
+# NOUN VERIFIED by M332: 0x985aec is the runtime mirror of the win-INI pref named
+# "Difficulty", master 0x92bde8 (evidence/m332_difficulty_census.txt:82-84).
+# The PRINTED legacy wording in composedenergy.py is frozen by B27's digest anchors;
+# it is corrected when B28 authors its spine text (declared in NAMED ## M332).
 G_DIFF = 0x985AEC
 
 # leg pins: (label, address-or-operand literal, committed evidence file). G1 greps each one.
