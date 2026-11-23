@@ -1,0 +1,59 @@
+G1 loop top=4f480b bottom=4f4a34 body insns=180 (exit = fall-through past the jl)
+G1 counter: init=['4f4802: mov esi,0x1'] charge-bound=['4f4811: cmp esi,0x22'] skip-to-bottom=['4f4814: jg 0x4f4a34'] incs=['4f4a34: inc esi'] range-bound=['4f4a35: cmp esi,0x27'] back-edge=['4f4a3b: jl 0x4f480b']
+G1 item-table reads=['4f48ce DWORD PTR [eax+0x984d48]'] fold=['4f48ce -> esi'] leaves=['esi']
+G1   fold step 4f48c8: lea eax,[esi+esi*2]
+G1   fold step 4f48cb: shl eax,0x4
+G1 the SAME counter is compared against the per-faction disabled-item list: ['4f48bc: cmp DWORD PTR [eax],esi']
+G2 read48      loop=['4f48ce'] cost=['4f47e2']
+G2 item27      loop=['4f4852'] cost=['4f4767']
+G2 disa_count  loop=['4f48a6'] cost=['4f47ba']
+G2 disa_ents   loop=['4f48b0'] cost=['4f47c4']
+G2 disa_type2  loop=['4f48b6'] cost=['4f47ca']
+G2 disa_item   loop=['4f48bc'] cost=['4f47d0']
+G2 half27sar   loop=['4f4874'] cost=['4f478c']
+G2 cost-body fold48-leaf=esi; disabled-list record folds value_of=[('loop', ('lin', 1436, 0, ('arg', 'ebx'))), ('cost', ('lin', 1436, 0, ('ptr', ('brk', 12, 'ebp', None, 1))))] (1436 = 0x59c B)
+G3 charge-path window=[4f480b,4f4938): mapper-call=['4f4823: call 0x507410'] counter-push-before-it=['4f4822: push esi'] bitmap-byte-read=['4f4837 BYTE PTR [ecx+edx*1+0x95da9c]'] owner-byte-read=['4f48e9 BYTE PTR [ecx+0x95da14]'] mask-and=['4f4841: and al,cl'] not-having-skip=['4f484c: je 0x4f4a34']
+G3 folds value_of: bitmap [(5195831, ('lin', 304, 0, ('ptr', ('abs', 6867888))))] | owner-byte [(5196009, ('lin', 304, 0, ('ptr', ('abs', 9984928))))]
+G3 record base derived two ways: 0x95da9c-0x8c=0x95da10 and 0x95da14-4=0x95da10; item bitmap at base+0x8c, owner byte at base+0x4, stride 304
+G4 own_src    4f47f6: mov eax,ds:0x8f0d60
+G4 own_byte   4f47ff: mov bl,BYTE PTR [eax+0x4]
+G4 shr5       4f4919: shr edi,0x5
+G4 and1       4f491c: and edi,0x1
+G4 addcarry   4f491f: add eax,edi
+G4 parity     4f4921: test al,0x1
+G4 bitset     4f4925: or ecx,0x20
+G4 bitclr     4f492e: and ecx,0xffffffdf
+G4 store      4f4931: mov DWORD PTR [edx],ecx
+G4 quot       4f4936: sar eax,1
+G4 load_blk0  4f4909: mov ecx,DWORD PTR [edx*4+0x94d430]   value_of(edx)=('lin', 2095, 0, ('arg', 'ebx'))
+G4 lea_blk0   4f4910: lea edx,[edx*4+0x94d430]   value_of(edx)=('lin', 2095, 0, ('arg', 'ebx'))
+G4 ecx writes between the bit-5 read and the store=['4f4925 or ecx,0x20', '4f492e and ecx,0xffffffdf'] (only the parity pair may touch ecx)
+G4 sequence monotonic=True ['4f4919', '4f491c', '4f491f', '4f4921', '4f4925', '4f492e', '4f4931', '4f4936']
+G5 block+0 sites image-wide that NAME the address: 168 (of them 35 store the dword) in 53 functions
+G5   bit5 READ  4f4919: shr edi,0x5 + 4f491c: and edi,0x1
+G5   bit5 WRITE 4f4925: or ecx,0x20 -> stored back to block+0
+G5 readfns=['FUN_004f47f0'] writefns=['FUN_004f47f0']
+G5 near-miss (0x20/0xffffffdf ops NOT on a block+0 value - e.g. FUN_004dc390 mirrors block+0 bits 30/29/20 into bits 4/5/6 of a DERIVED dword): ['?', 'FUN_0046a610', 'FUN_004dc100', 'FUN_004dc390', 'FUN_004e63b0', 'FUN_004ef6d0', 'FUN_0050d140', 'FUN_0051c750', 'FUN_0051f320', 'FUN_00531df0', 'FUN_005544f0', 'FUN_00556690', 'FUN_0055f650', 'FUN_00585720', 'FUN_0059ec90']
+G6 0x985ba0 image-wide: stores=0 loads=['4ea40d: mov eax,ds:0x985ba0', '4f48d4: mov ecx,DWORD PTR ds:0x985ba0'] owners=['FUN_004e9be0', 'FUN_004f47f0']
+G6 sel_load         ['4f48d4: mov ecx,DWORD PTR ds:0x985ba0']
+G6 ownerbyte_of_sel ['4f48e9: mov dl,BYTE PTR [ecx+0x95da14]']
+G6 cmp_owner        ['4f48f1: cmp edx,ebx']
+G6 sete             ['4f48f3: sete cl']
+G6 skip_owner       ['4f48f8: je 0x4f4938']
+G6 skip_sign        ['4f48dc: jl 0x4f4938']
+G6 selected-base record fold value_of=[('lin', 304, 0, ('ptr', ('abs', 9984928)))] -> 304 * [ds:0x985ba0] is the SAME 304-B base record type
+G7 0x750 (=1872) occurs 19 times in .text (first ['4678f9@FUN_00466640', '4e309c@FUN_004e3020', '517bba@FUN_00516b80', '5301b9@FUN_005300d0']); 1872//48=39 1872%48=0; loop VISITS ids 1..38 (bottom bound 0x27), CHARGES ids 1..34 (top bound 0x22 skips 35..38); never charged [0, 35, 36, 37, 38]; upkeep dword at row+0x10
+NF removal path inside the same loop (OPEN LEAD, not gated): {'mapper2': ['4f49b6: call 0x507410'], 'bitclear': ['4f49e1: mov BYTE PTR [eax],cl'], 'store_block220': ['4f497f: mov DWORD PTR [edi+0x94d650],eax', '4f4999: mov DWORD PTR [edi+0x94d650],eax', '4f4a0b: mov DWORD PTR [edi+0x94d650],eax']}
+R rivals hold: R1(0-based-whole-table)=False R2(bit5-shared-flag)=False R3(unconditional-halving)=False R4(per-item-carry)=False R5(cost-not-from-item-table)=False
+R support: skips-to-full-price=['4f48f8 je 0x4f4938', '4f48dc jl 0x4f4938'] carry-leaf=['ebx'] charged=1..34 rows=39 bit5-fns=1 table-reads=1
+
+PASS G1 the loop counter (esi: init 1, charge bound 0x22 skips 35..38, one inc, range bound 0x27 back to the top) is the ITEM id - it folds x48 into the item table AND is the value compared against the disabled-item list
+PASS G2 FUN_004f47f0's loop body and FUN_004f4760 are the SAME law: 6 features present in both, the same 48-fold on esi, and both fold the faction record to 1436 B
+PASS G3 a slot is charged only when its BIT is set in the current base's 304-B record (304*[ds:0x68cbb0] + 0x8c) - the slot is a facility the base HAS, not a queue position
+PASS G4 the carry address folds 2095*ebx (x4 = 8380*ebx) onto block[owner]+0 with the OWNER from BYTE[[ds:0x8f0d60]+4] (prologue, once) - never the item id - and the order is read-bit5, add, test-parity, set/clear-bit5, store, quotient
+PASS G5 of the 168 image-wide sites that name block+0, the ONLY function that reads bit5 of a block+0 value AND the only one that writes it is FUN_004f47f0 - block+0 bit5 is a DEDICATED carry, not a shared flag
+PASS G6 ds:0x985ba0 is READ-ONLY in .text (2 loads, 0 stores image-wide; writer outside .text) and the halving is gated on that base's owner byte == the charged base's owner (cmp/sete/je) plus a sign test (jl) - 2 distinct skips out of the halving
+PASS G7 the table is 39 rows (1872 = 39*48 read out of .text); the loop visits ids 1..38 but ids 35..38 skip the charge body at the top bound and id 0 is never visited: only ids 1..34 are charged
+PASS RIVAL all five rivals FAIL on the printed numbers
+digest(rows)=b1ca12715e833cc7 patch='' patches_applied=0
+PASS M333: 8/8 gates
