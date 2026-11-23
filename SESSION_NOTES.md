@@ -276,3 +276,14 @@ declared sets corrected to the MEASURED truth, not weakened: MU25 GREW to {G6,RI
 full memo arg list made it a G6 mutant too) and ME3 to {G4,G7,RIVAL2}. PITFALL: a mutant that
 empties a list crashed the printer (`load_fold[0]` on None) — a CRASH is a harness failure, so
 printers of measured values need the same None-guard as the gate.
+
+## Session 316-chain2 sidecar (2026-11-23) — M334 merged + evidence completion
+
+- **M334 MERGED as `fc2569d`** (PR #350, squash; CI `gate pass 15s` verified on the post-review head
+  BEFORE merge; review triaged 10/10 accepted, 0 dismissed, one reply comment
+  `#issuecomment-7102934036`; title REST-patched to the post-review numbers and read back). Merged
+  tree == the reviewed head (`git diff --stat HEAD origin/main` empty).
+- Evidence completion: `evidence/ai_review/pr350_20261123_131041.json` (the raw review payload) was
+  left untracked when #350 merged — the repo convention is both `.md` and `.json` per review
+  (24 json / 25 md before this). Added here; no claim changes, no re-measure needed (the instrument
+  and its digests `5b5ece39af02baba` / `a5a5091e533f7883` are untouched).
