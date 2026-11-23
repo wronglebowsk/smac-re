@@ -248,3 +248,31 @@ The local Strata review posted 10 findings (3 P1, 7 P2), `evidence/ai_review/pr3
 - PITFALL: an adjacency check ("immediately before") is too strict when the compiler interleaves (`shl ecx,0x4` sits between `xor edx,edx` and `mov dl,...`) — assert "no write to the register in between" instead.
 - PITFALL: a restub placeholder mapping inverted ARC_LINE/MARKLINE — verify's `cite == marker+2` assertion caught it on the first run. A verifier that pins the cite earns its keep; one that pins only the marker does not (F10).
 - rotate2 gained `--restub`; the pre-existing hardcoded ROOT in rotation-1 got the same derive-from-`__file__` fix (F8); both verifiers re-run green.
+
+## Session 316-chain2 (2026-11-23, M334 CLOSED, STATIC zero box) — the upkeep-FAILURE branch is a difficulty-gated AUTO-SELL
+
+- milestone/m334 (main 497d766). Pick (x7) = the REMOVAL path M333 printed but did not gate. `python3 -u scripts/m334_powershort_census.py` → **`PASS M334: 7/7 gates`** digest **5b5ece39af02baba**, 2 runs byte-identical (`evidence/m334_powershort_census.txt:56-57`, `_rerun.txt:56-57`); harness `python3 -u scripts/m334_mutate.py` → **`PASS HARNESS 45/45`** digest **a5a5091e533f7883** + coverage 10/10 items (`evidence/m334_mutate.txt:47-49`, `_rerun.txt` identical); `--selftest` **6/6** (`_selftest.txt:8`).
+- LAW: after `ENERGY -= cost` (0x4f4952) / `+300 += cost` (0x4f4962) through one derived 8380*owner fold, FUN_004f47f0 RE-READS ENERGY and tests vs 0 (`xor eax,eax`@0x4f4960 = the zero source, `jge`→next item). Negative side = 3-way dispatch: A `cmp [block+0x8],1` → `ENERGY:=0`@0x4f497f; B `cmp [base_rec+0x50], neg(item)` → `ENERGY:=0`@0x4f4999; C = the SELL: clear the item's bit in the CURRENT base's facility map (0x4f49e1), `ENERGY := FUN_004e40a0(owner,1,-1) × row[item]+12` @0x4f4a0b, `FUN_006265a2(1,row+0,-1,-1)`, `FUN_0048f100('POWERSHORT',0x10000,0xe,'genwarning_sm.pcx',0)`; loop CONTINUES (back-edge 0x4f4a3b→0x4f480b) ⇒ several facilities can go in one round.
+- **RETRACTION**: the s-era row `docs/named-archive-m32-m84e.md:268` said "refund = 0x4e40a0 × refund table 0x984d44" — the multiplication is right, the WORD is wrong: the store is a MOV with **0 reads of block+0x220** on that path (`:28-29`, `:40`) — an ASSIGNMENT, not a refund. Row patched in place; RIVAL1 + MU16 (turning it into `add` reddens G5+RIVAL1).
+- **NEW NOUN**: `block+0x8` = the faction's EFFECTIVE DIFFICULTY — 2 destination-named writers + **0** folded-pointer stores (60-step def walk, MU26 proves the scan): create 0x59eed6 stores `ds:0x985aec` for a human / imm 3 for the AI (gated `test dl,ds:0x985b10`), save-load 0x57ef57 stores a movsx byte through 2095*4=8380 ⇒ **difficulty < 2 never sells** (M332's difficulty mirror finally has a per-faction consumer).
+- PITFALL: an operand-text grep for an absolute VA misses stores through a FOLDED block pointer (`lea R,[k*4+0x94d430]` then `mov [R+8]`) — the census now runs both scans; PITFALL: the affine tracker's coefficient is `a` in `a*seed+b` (printed 0 once when `[1]` was read instead of `[0]`), and `shl` scales by `1<<imm`, not by the immediate.
+- OPEN: `row[item]+12` runtime value (the 39×48 table is .bss — no .text store names it) ⇒ the numeric ENERGY outcome; `base_rec+0x50` = queue head is INFERRED (archived live H :312; 51 .text sites read [R+0x50] with R:=ds:0x8f0d60 incl. 0x4f4994); FUN_004e40a0 = ECONOMIC FACTOR (archived H); why the price is assigned rather than added.
+
+**Review round, PR #350 (Strata, 10 findings: 4 P1 + 6 P2 — ALL accepted, 0 dismissed).** The same
+class as #345: prose that claimed more than the gate read. Every fix ADDS a measurement + a mutant:
+F1 mapper-item identity (`push esi` / `push ecx`←`[ebp-0x4]`, the slot the loop bottom writes from
+esi) → MU27/MU28; F2 the factor's args + owner-byte source → MU29/MU30; F3 the full cdecl arg lists
+of both announcement calls + the row+0 edx tie → MU31/MU32; F4 the human/AI gate
+(`mov al,ds:0x985b10` + `test dl,al` + `jne 0x59eed6`) is now measured and printed (`:17`) → MU33;
+F5 the "0 reads" window is now stated exactly (sell path AND from the negative test, both 0, `:29`);
+F6 a FOLDED-pointer read census (`folded_refs_to`, dest-normalized def walk) — 0 folded refs to
+block+0x220 in-fn and image-wide, with a **non-zero control**: 10 folded refs to block+0, so the
+scan is not vacuous (`:38`) → MU34; F7 the clamp stores' source register + 0 intervening eax writes
+(`:10`) → MU35; F8 fold→imul-base→dest→store-source dataflow (`:25-28`) → MU36/MU37; F9 the save/load
+fold is tied to the actual `[ecx*4+0x94d438]` store and its edx source (`:18`) → MU38; F10 the
+address-register write scan now normalizes partial regs and `xchg` (`:37`) → MU39. Re-measured at
+head: **7/7 digest `5b5ece39af02baba`** x2, **harness 45/45 `a5a5091e533f7883`**, ST 6/6. Two
+declared sets corrected to the MEASURED truth, not weakened: MU25 GREW to {G6,RIVAL3} (pinning the
+full memo arg list made it a G6 mutant too) and ME3 to {G4,G7,RIVAL2}. PITFALL: a mutant that
+empties a list crashed the printer (`load_fold[0]` on None) — a CRASH is a harness failure, so
+printers of measured values need the same None-guard as the gate.

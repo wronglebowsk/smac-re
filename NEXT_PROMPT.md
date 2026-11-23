@@ -124,4 +124,5 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar note:
 `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`, `--verify`); the per-id
 `NAMED ## <id>` blocks GOVERN.
+M334 (s316-chain2): 0x4f47f0 upkeep-FAILURE = difficulty-gated AUTO-SELL; ENERGY := 0x4e40a0(owner,1,-1)*row+12 (ASSIGNED, not refunded); block+0x8 = effective difficulty (AI=3). 7/7 5b5ece39af02baba x2; harness 45/45 a5a5091e533f7883; ST 6/6. NAMED ## M334.
 
