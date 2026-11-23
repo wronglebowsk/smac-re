@@ -37,12 +37,17 @@ MUTANTS = [
     ("MU2", "code", "4f48c8|lea eax,[eax+eax*2]", {"G1"}),           # loop fold leaf != esi
     ("MU3", "code", "4f491c|nop ", {"G4", "G5"}),                    # drop and 1 -> no bit5 extract
     ("MU4", "code", "4f4931|mov DWORD PTR [edx],eax", {"G4", "G5"}), # store wrong reg -> no RMW back
-    ("MU5", "code", "4f4a35|cmp esi,0x22", {"G1"}),                  # range bound moved
+    ("MU5", "code", "4f4a35|cmp esi,0x22", {"G1", "G7"}),              # range bound moved (G7 parses it from the bytes since F2 - measured, s315)
     ("MU6", "code", "4f4a3b|jl 0x4f4a41", {"G1"}),                   # back-edge target moved
     ("MU7", "code", "4f48f3|sete dl", {"G6"}),                       # owner-match sete retargeted
     ("MU8", "code", "4f4823|call 0x407410", {"G3"}),                 # mapper call retargeted
     ("MU9", "code", "4f47dc|lea eax,[eax+eax*2]", {"G2"}),           # cost-body fold leaf != esi
     ("MU10", "code", "4f47f6|mov eax,ds:0x8f0d61", {"G4"}),          # owner source retargeted
+    # ---- s314 review round: mutants for the NEW tie checks (F3/F4/F5/F7)
+    ("MU11", "code", "4f48e4|xor eax,eax", {"G6"}),                   # edx no longer zeroed before the owner-byte load
+    ("MU12", "code", "4f4828|mov edx,DWORD PTR [ebp-0x18]", {"G3"}),  # bitmap index from the wrong mapper slot
+    ("MU13", "code", "4f47fd|xor ecx,ecx", {"G4"}),                   # ebx not zeroed before mov bl
+    ("MU14", "code", "4f48ce|mov eax,DWORD PTR [ebx+0x984d48]", {"G1"}),  # read base != the fold's shl dest
     # ---- EXPECT family: rewrite ONE literal in the instrument
     ("ME1", "expect", ("ITEM_UPKEEP, ITEM_ROW0, ROW = 0x984D48,", "ITEM_UPKEEP, ITEM_ROW0, ROW = 0x984D4C,"),
      {"G1", "G2", "G7", "RIVAL"}),                                     # wrong table address (G7's rowdiff reads it too - measured, s314)

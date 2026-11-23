@@ -1,17 +1,21 @@
-baseline: PASS, digest=b1ca12715e833cc7
+baseline: PASS, digest=70376694feec5815
 PASS MU1 declared=['G1', 'RIVAL'] observed=['G1', 'RIVAL'] (ok)
 PASS MU2 declared=['G1'] observed=['G1'] (ok)
 PASS MU3 declared=['G4', 'G5'] observed=['G4', 'G5'] (ok)
 PASS MU4 declared=['G4', 'G5'] observed=['G4', 'G5'] (ok)
-PASS MU5 declared=['G1'] observed=['G1'] (ok)
+PASS MU5 declared=['G1', 'G7'] observed=['G1', 'G7'] (ok)
 PASS MU6 declared=['G1'] observed=['G1'] (ok)
 PASS MU7 declared=['G6'] observed=['G6'] (ok)
 PASS MU8 declared=['G3'] observed=['G3'] (ok)
 PASS MU9 declared=['G2'] observed=['G2'] (ok)
 PASS MU10 declared=['G4'] observed=['G4'] (ok)
+PASS MU11 declared=['G6'] observed=['G6'] (ok)
+PASS MU12 declared=['G3'] observed=['G3'] (ok)
+PASS MU13 declared=['G4'] observed=['G4'] (ok)
+PASS MU14 declared=['G1'] observed=['G1'] (ok)
 PASS ME1 declared=['G1', 'G2', 'G7', 'RIVAL'] observed=['G1', 'G2', 'G7', 'RIVAL'] (ok)
 PASS ME2 declared=['G4'] observed=['G4'] (ok)
 PASS ME3 declared=['G4'] observed=['G4'] (ok)
 PASS ME4 declared=['G4', 'G5'] observed=['G4', 'G5'] (ok)
-digest(harness)=1d36c4eefd86391e
-PASS HARNESS 14/14
+digest(harness)=dee04978a5b5dd09
+PASS HARNESS 18/18
