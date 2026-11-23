@@ -23,7 +23,7 @@ import os
 import re
 import sys
 
-ROOT = os.path.expanduser("~/reverse/smac")
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # s314 review F8: derive, never hardcode
 NAMED = os.path.join(ROOT, "NAMED.md")
 ARC = os.path.join(ROOT, "docs", "named-archive-m333-rows.md")
 
@@ -32,7 +32,7 @@ END = "## B25 (s294 BUILD"
 MARK = "§rotation-2 (M315, s314 headroom rotation)"
 TERMINATOR = "(§rotation-2 ends; anything below belongs to a later rotation.)"
 
-STUB = """## M315 (s284, STATIC, zero box; mutation-tested 29/29 post-review) - pick (ii) CLOSED: `ds:0x68cbb4` is the REFRESH MEMO of the record-selection chain - "the index the refresh pair has already run for" - not a second cursor, and M311's 19 unexplained writers all close. FULL-LENGTH ROWS VERBATIM at `docs/named-archive-m333-rows.md:ARC_LINE` (§rotation-2, s314 headroom rotation, sha1 `SHA12` — the region is bounded by its own terminator line, its line number AND full digest re-asserted by `scripts/m333_named_rotate2.py --verify`); this stub governs.
+STUB = """## M315 (s284, STATIC, zero box; mutation-tested 29/29 post-review) - pick (ii) CLOSED: `ds:0x68cbb4` is the REFRESH MEMO of the record-selection chain - "the index the refresh pair has already run for" - not a second cursor, and M311's 19 unexplained writers all close. FULL-LENGTH ROWS VERBATIM at `docs/named-archive-m333-rows.md:ARC_LINE` (§rotation-2 marker at `:MARKLINE`, s314 headroom rotation, sha1 `SHA12` — the region is bounded by its own terminator line, its line number AND full digest re-asserted by `scripts/m333_named_rotate2.py --verify`); this stub governs.
 - THE FIELD + PARTITION LAW: the 22 stores split 12 fed by the index or a caller slot (each followed by the refresh pair `call 0x4e8d60` + `call 0x4e78e0`) vs 10 `-1` sentinel clears with ZERO calls to either callee in the next 60 instructions (A2+A3, exact 12-element distance list); NO independent value ever enters — 8x `mov r,ds:0x68cbb0` + 4x caller slot, totals sum to exactly 22 (A2b+A9; proven CODE mutants PC1/PC2 rewrite those instructions).
 - DEDUP GUARD PARTIAL, NOT UNIVERSAL: only 4 of the 12 memo sites carry a local guard (`0x4eb6c7`, `0x4efeaa`, `0x4f2201`, `0x4f5c4a`); the other 8 refresh unconditionally. ~~the 8 are guarded by their callers (pick (v))~~ **REFUTED by M319** — no hoisted guard exists; the single memo-reading caller is itself a memo-site owner (NAMED ## M319, `evidence/m319_guard_hoist.txt:69-71`). Still UNVERIFIED: that the 4 stack-slot stores carry an index; coherence across record deletion (A9 tail).
 - M311's "19 writers unexplained" closes as 10 sentinel clears + 9 memo updates — its window was FORWARD `0..+32 B` (`m311_recidx.py:449`), not symmetric (A5); the image initialises BOTH `ds:0x68cbb0` and `ds:0x68cbb4` to `0xffffffff` (A7); `0x4e8d60`/`0x4e78e0` ANSWERED by M318 (NAMED ## M318).
@@ -49,16 +49,33 @@ def region_bounds(text):
 
 
 def stub_for(sha, arc_line):
-    return STUB.replace("SHA12", sha[:12]).replace("ARC_LINE", str(arc_line))
+    # arc_line is the MARKER line; the cite must land on the moved block's header (F10)
+    return (STUB.replace("SHA12", sha[:12]).replace("ARC_LINE", str(arc_line + 2))
+            .replace("MARKLINE", str(arc_line)))
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify", action="store_true")
+    ap.add_argument("--restub", action="store_true",
+                    help="rewrite the in-registry stub from the STUB constant (s314 review F10)")
     args = ap.parse_args()
 
     src = io.open(NAMED, encoding="utf-8").read()
     arc = io.open(ARC, encoding="utf-8").read()
+
+    if args.restub:
+        arc_line, body = region_bounds(arc)
+        sha = hashlib.sha1(body.encode("utf-8")).hexdigest()
+        old = [ln for ln in src.splitlines() if "§rotation-2" in ln and "named-archive-m333-rows.md" in ln]
+        assert len(old) == 1, "expected exactly one rotation-2 stub line, got %d" % len(old)
+        new_stub_first = stub_for(sha, arc_line).splitlines()[0]
+        new = src.replace(old[0], new_stub_first)
+        assert new_stub_first in new and old[0] not in new
+        io.open(NAMED, "w", encoding="utf-8").write(new)
+        print("restubbed: cite now :%d (marker :%d) | NAMED.md %d -> %d B"
+              % (arc_line + 2, arc_line, len(src.encode()), len(new.encode())))
+        return 0
 
     if args.verify:
         arc_line, body = region_bounds(arc)
@@ -72,8 +89,10 @@ def main():
         assert sha.startswith(want), "sha1 %s does not match the recorded %s" % (sha[:12], want)
         cited = re.search(r"named-archive-m333-rows\.md:(\d+)", stub)
         assert cited, "the stub does not cite the archive with a :line"
-        assert int(cited.group(1)) == arc_line, \
-            "the stub cites :%s but §rotation-2 now sits at :%d" % (cited.group(1), arc_line)
+        # s314 review F10: the cite must land on the FIRST ROW of the moved block (marker +2:
+        # marker line, blank line, block header), not on the section marker itself.
+        assert int(cited.group(1)) == arc_line + 2, \
+            "the stub cites :%s but the moved block's header sits at :%d" % (cited.group(1), arc_line + 2)
         assert "| THE PARTITION LAW (the load-bearing claim)" not in src, "the moved block came back into NAMED.md"
         assert arc.count(MARK) == 1, "the archive carries %d copies of §rotation-2" % arc.count(MARK)
         print("archived region %d B | §rotation-2 at docs/named-archive-m333-rows.md:%d | full sha1=%s"

@@ -30,12 +30,15 @@ MEASURED LAW (every number is computed here, printed, then asserted):
   quotient is the charge), and the sum's PARITY is written back into that SAME bit5 — the
   odd remainder survives to next round instead of being truncated away. It fires only when
   the base indexed by ds:0x985ba0 has the same owner byte; otherwise the FULL cost is
-  charged and bit5 is untouched. ds:0x985ba0 has NO writer in .text (2 loads, 0 stores
-  image-wide) — its writer is outside .text (BSS bulk copy / save restore); noun INFERRED.
-  G5 census: FUN_004f47f0 is the ONLY function image-wide that READS bit5 of a block+0
-  value and the ONLY one that WRITES it (def-use scan, path-insensitive, stops at calls and
-  function boundaries). FUN_004dc390 is the near-miss: it mirrors block+0 bits 30/29/20 into
-  bits 4/5/6 of a DERIVED dword — its `or ecx,0x20` is not block+0's bit5.
+  charged and bit5 is untouched. ds:0x985ba0 has NO writer in .text — ALL its operand-text
+  mentions are 2 loads (0 stores, no lea-absolute); a computed-address writer is beyond
+  static .text reach, so its noun is INFERRED. ebx is the CURRENT-RECORD owner byte
+  (BYTE[[ds:0x8f0d60]+4]); its identity with the charged base's owner is INFERRED.
+  G5 census: FUN_004f47f0 is the ONLY function in .text that READS bit5 of a block+0
+  value and the ONLY one that WRITES it (def-use scan, path-insensitive, stops at calls,
+  function boundaries, and address discontinuities; the 2 block+0 sites in UNCLAIMED gap
+  regions are measured and printed). FUN_004dc390 is the near-miss: it mirrors block+0 bits
+  30/29/20 into bits 4/5/6 of a DERIVED dword — its `or ecx,0x20` is not block+0's bit5.
   NEW FINDING (row-printed, not gated): the same loop body also carries a REMOVAL path
   (second mapper call 0x4f49b6, bitmap bit CLEAR 0x4f49e1, store to block+0x220 0x4f4a0b,
   calls 0x4e40a0/0x6265a2/0x48f100) — open lead for the next fire.
@@ -120,10 +123,16 @@ def txt(a):
     return "%06x: %s %s" % (a, INS[a][0], INS[a][1])
 
 
-def fold48(a):
+def fold48(a, read_op=None):
     """The item-index fold above an item-table read: `lea r,[i+i*2]` then `shl r,0x4`.
     Returns (leaf_reg, [(addr, text)...]) or (None, why-not). Shape-checked on purpose,
-    not value-walked: the value-walker over-proves this one through the loop back-edge."""
+    not value-walked: the value-walker over-proves this one through the loop back-edge.
+    If `read_op` is given, the shl DEST must be the read's own base register (s314 review F3:
+    a fold computing esi->eax while the read used another register must NOT pass)."""
+    readbase = None
+    if read_op:
+        mb = re.search(r"\[(\w+)[+\]]", read_op)
+        readbase = mb.group(1) if mb else "?"
     i = AIDX[a]
     for _ in range(6):
         i -= 1
@@ -137,6 +146,8 @@ def fold48(a):
         if mn == "call":
             return (None, "call before the fold: %s" % txt(b))
         if mn == "shl" and len(parts) == 2 and parts[1].strip() == "0x4":
+            if readbase is not None and parts[0].strip() != readbase:
+                return (None, "shl dest %s is not the read base %s" % (parts[0].strip(), readbase))
             for j in range(i - 1, max(-1, i - 4), -1):
                 c = ADDRS[j]
                 cmn, cops = INS[c]
@@ -177,6 +188,8 @@ def holds_blk0(a, reg, depth=0):
         b = ADDRS[i]
         if owner(b) != owner(a):
             return False
+        if ADDRS[i + 1] - b > 16:
+            return False  # address discontinuity: a gap run, not a real straight line (s314 review F6)
         mn = INS[b][0]
         ops = split_ops(INS[b][1])
         if not ops:
@@ -276,7 +289,7 @@ def main():
     rng = find(p1, "cmp", r"\besi,0x27\b")
     back = find(p1, "jl", r"0x4f480b\b")
     reads = reads_at(p1, ITEM_UPKEEP)
-    fold = [(a, fold48(a)) for a, op in reads]
+    fold = [(a, fold48(a, op)) for a, op in reads]
     leaves = sorted({lf for a, (lf, det) in fold if lf})
     disa_cmp = find(p1, "cmp", r"\[eax\],esi\b")
     rows.append("G1 loop top=%x bottom=%x body insns=%d (exit = fall-through past the jl)" %
@@ -312,7 +325,8 @@ def main():
     for k in FEAT:
         rows.append("G2 %-11s loop=%s cost=%s" % (k, [("%x" % a) for a in feat["loop"][k]],
                                                   [("%x" % a) for a in feat["cost"][k]]))
-    f2 = fold48(feat["cost"]["read48"][0]) if feat["cost"]["read48"] else (None, "no read")
+    cr = reads_at(cb, ITEM_UPKEEP)
+    f2 = fold48(cr[0][0], cr[0][1]) if cr else (None, "no read")
     aff1436 = [(tag, aff(feat[tag]["disa_count"][0], "eax")) for tag in ("loop", "cost") if feat[tag]["disa_count"]]
     rows.append("G2 cost-body fold48-leaf=%s; disabled-list record folds value_of=%s (%d = 0x%x B)" %
                 (f2[0] if f2[0] else f2[1], [(t, v) for t, v in aff1436], DISA_STRIDE, DISA_STRIDE))
@@ -330,6 +344,19 @@ def main():
     exitnomap = find(p1c, "je", r"0x4f4a34\b")
     f_bitmap = [(a, aff(a, (memref(op) or (0, 0, 0, "ecx"))[3] or (memref(op) or (0, 0, 0, "ecx"))[4])) for a, op in bmap]
     f_owner = [(a, aff(a, (memref(op) or (0, 0, 0, "ecx"))[3] or (memref(op) or (0, 0, 0, "ecx"))[4])) for a, op in ownb]
+    # s314 review F4: tie the TESTED BIT to the mapper's outputs for THIS item -
+    # the bitmap read's index register must be loaded from the byte-index slot [ebp-0x8]
+    # AFTER the call, and the `and`'s source from the bit-mask slot [ebp-0xc].
+    slot_byte, slot_mask = r"DWORD PTR \[ebp-0x8\]", r"BYTE PTR \[ebp-0xc\]"
+    tie_idx = find(p1c, "mov", slot_byte) if bmap else []
+    tie_idx = [a for a in tie_idx if mapcall and mapcall[0] < a < bmap[0][0]] if (mapcall and bmap) else tie_idx
+    and_src = INS[andm[0]][1].split(",")[1].strip() if andm else None
+    tie_mask = find(p1c, "mov", r"\b%s,%s" % (re.escape(and_src), slot_mask)) if and_src else []
+    tie_mask = [a for a in tie_mask if bmap and bmap[0][0] < a < andm[0]] if (bmap and andm) else tie_mask
+    lea_slots = find(p1c, "lea", r"\[ebp-0x8\]") + find(p1c, "lea", r"\[ebp-0xc\]")
+    lea_before = [a for a in lea_slots if mapcall and a < mapcall[0]]
+    rows.append("G3 bit-tie: byte-index-slot load after call=%s | mask-slot load into '%s'=%s | both slots' leas pushed-path before call=%s" %
+                ([txt(a) for a in tie_idx], and_src, [txt(a) for a in tie_mask], [txt(a) for a in sorted(set(lea_before))]))
     rows.append("G3 charge-path window=[%x,%x): mapper-call=%s counter-push-before-it=%s bitmap-byte-read=%s owner-byte-read=%s mask-and=%s not-having-skip=%s" %
                 (LOOP_TOP, CHARGE_END, [txt(a) for a in mapcall], [txt(a) for a in pushitem],
                  [("%x %s" % (a, op)) for a, op in bmap],
@@ -340,8 +367,9 @@ def main():
     g3 = (len(mapcall) == 1 and len(pushitem) == 1 and len(bmap) == 1 and len(ownb) == 1
           and len(andm) == 1 and len(exitnomap) == 1
           and f_bitmap and f_bitmap[0][1][1] == 304 and f_owner and f_owner[0][1][1] == 304
+          and len(tie_idx) == 1 and len(tie_mask) == 1 and len(set(lea_before)) == 2
           and BASE_ITEMMAP - BASE_ARRAY == 0x8C and BASE_OWNER_BYTE - BASE_ARRAY == 4)
-    gates.append(("G3 a slot is charged only when its BIT is set in the current base's 304-B record (304*[ds:0x68cbb0] + 0x8c) - the slot is a facility the base HAS, not a queue position", g3))
+    gates.append(("G3 a slot is charged only when its BIT is set in the current base's 304-B record (304*[ds:0x68cbb0] + 0x8c) - the tested bit is the mapper's bit-mask output for THIS item (slot loads tied) - the slot is a facility the base HAS, not a queue position", g3))
 
     # ------------------------------------------- G4 bit5 of the owner block's dword 0 = carry
     seq = {
@@ -377,7 +405,17 @@ def main():
     foldleaf = sorted({v[3][1] for v in foldvals.values() if v[0] == "lin" and v[3][0] == "arg"})
     order = [seq[k][0] for k in ("shr5", "and1", "addcarry", "parity", "bitset", "bitclr", "store", "quot") if seq[k]]
     rows.append("G4 sequence monotonic=%s %s" % (order == sorted(order), [("%x" % a) for a in order]))
+    # s314 review F5: connect the owner source to the fold leaf - own_src's dest must be
+    # own_byte's base, ebx must be ZEROED immediately before the byte load, so ebx == the
+    # zero-extended owner byte, and the block fold's leaf is that same ebx.
+    own_src_reg = INS[seq["own_src"][0]][1].split(",")[0].strip() if seq["own_src"] else None
+    own_base_ok = bool(own_src_reg) and seq["own_byte"] and ("[%s+0x4]" % own_src_reg) in INS[seq["own_byte"][0]][1]
+    zeroing = [a for a in find(fnbody, "xor", r"\bebx,ebx\b")
+               if seq["own_byte"] and ADDRS[AIDX[seq["own_byte"][0]] - 1] == a] if seq["own_byte"] else []
+    rows.append("G4 owner-tie: own_src dest=%s own_byte base ok=%s xor ebx,ebx immediately before own_byte=%s" %
+                (own_src_reg, bool(own_base_ok), [txt(a) for a in zeroing]))
     g4 = (len(seq["own_src"]) == 1 and len(seq["own_byte"]) == 1
+          and own_base_ok and len(zeroing) == 1
           and all(len(seq[k]) == 1 for k in ("shr5", "and1", "addcarry", "parity", "bitset", "bitclr", "store", "quot"))
           and len(seq["load_blk0"]) == 1 and len(seq["lea_blk0"]) == 1
           and order == sorted(order) and all(x[1] in ("or", "and") for x in between)
@@ -410,53 +448,64 @@ def main():
             and any(INS[a][0] in ("or", "and") and (re.search(r",0x20\b", INS[a][1]) or re.search(r",0xffffffdf\b", INS[a][1]))
                     for a in ADDRS if owner(a) == fn)]
     rows.append("G5 near-miss (0x20/0xffffffdf ops NOT on a block+0 value - e.g. FUN_004dc390 mirrors block+0 bits 30/29/20 into bits 4/5/6 of a DERIVED dword): %s" % near)
+    gap_sites = [a for a in blk if owner(a) == "?"]
+    rows.append("G5 coverage gap MEASURED (M315 law): %d of the %d block+0 sites sit in UNCLAIMED regions (no index.csv function): %s - the def-walk there is bounded by the address-discontinuity guard, not by a function start" %
+                (len(gap_sites), len(blk), [txt(a) for a in gap_sites]))
     g5 = (len(blk) > 20 and len(stores) >= 1 and readfns == ["FUN_004f47f0"] and writefns == ["FUN_004f47f0"])
-    gates.append(("G5 of the %d image-wide sites that name block+0, the ONLY function that reads bit5 of a block+0 value AND the only one that writes it is FUN_004f47f0 - block+0 bit5 is a DEDICATED carry, not a shared flag" % len(blk), g5))
+    gates.append(("G5 of the %d .text-wide sites that name block+0 (gap sites measured and printed), the ONLY function that reads bit5 of a block+0 value AND the only one that writes it is FUN_004f47f0 - block+0 bit5 is a DEDICATED carry, not a shared flag" % len(blk), g5))
 
     # ------------------------------------------------ G6 whose base decides (ds:0x985ba0)
-    wsel, rsel = [], []
-    for a in ADDRS:
-        parts = split_ops(INS[a][1])
-        if not parts:
-            continue
-        d = memref(parts[0])
-        dd = (d[1] if d[0] == "abs" else d[2]) if d else None
-        if dd == SEL_BASE and INS[a][0] in m326.STORE_MN:
-            wsel.append(a)
-            continue
-        for op in parts:
-            e = memref(op)
-            ee = (e[1] if e[0] == "abs" else e[2]) if e else None
-            if ee == SEL_BASE:
-                rsel.append(a)
-                break
+    # s314 review F1: the census is EVERY operand-text mention of the address in .text
+    # (direct disp, lea-absolute, immediate - a computed-address writer is beyond static
+    # .text reach and the claim says so); F7: the cmp's edx must be the zero-extended
+    # owner byte (xor edx,edx immediately before the byte load).
+    mentions = [a for a in ADDRS if "985ba0" in INS[a][1]]
+    wsel = [a for a in mentions if INS[a][0] in m326.STORE_MN and disp_of(split_ops(INS[a][1])[0]) == SEL_BASE]
+    rsel = [a for a in mentions if a not in wsel]
     cond = {"sel_load": [a for a, op in reads_at(p1c, SEL_BASE)],
             "ownerbyte_of_sel": [a for a, op in reads_at(p1c, BASE_OWNER_BYTE)],
             "cmp_owner": find(p1c, "cmp", r"\bedx,ebx\b"),
             "sete": find(p1c, "sete", r"\bcl\b"),
             "skip_owner": find(p1c, "je", r"0x4f4938\b"),
             "skip_sign": find(p1c, "jl", r"0x4f4938\b")}
-    rows.append("G6 0x%x image-wide: stores=%d loads=%s owners=%s" %
-                (SEL_BASE, len(wsel), [txt(a) for a in rsel], sorted({owner(a) for a in rsel})))
+    zero_edx = []
+    if cond["ownerbyte_of_sel"]:
+        ob = cond["ownerbyte_of_sel"][0]
+        for a in find(p1c, "xor", r"\bedx,edx\b"):
+            if a >= ob:
+                continue
+            if not any(INS[c][0] != "nop" and split_ops(INS[c][1])
+                       and re.match(r"edx?$", split_ops(INS[c][1])[0].strip())
+                       for c in ADDRS if a < c < ob):
+                zero_edx.append(a)
+    rows.append("G6 0x%x .text-wide: total mentions=%d stores=%d loads=%s owners=%s" %
+                (SEL_BASE, len(mentions), len(wsel), [txt(a) for a in rsel], sorted({owner(a) for a in rsel})))
     for k, v in cond.items():
         rows.append("G6 %-16s %s" % (k, [txt(a) for a in v]))
+    rows.append("G6 edx-tie: xor edx,edx immediately before the owner-byte load=%s (so cmp edx,ebx compares zero-extended owner bytes; ebx is the CURRENT-RECORD owner per G4 - its identity with the charged base's owner is INFERRED, not measured)" %
+                [txt(a) for a in zero_edx])
     selaff = [aff(a, "ecx") for a in cond["ownerbyte_of_sel"]]
     rows.append("G6 selected-base record fold value_of=%s -> 304 * [ds:0x%x] is the SAME 304-B base record type" % (selaff, SEL_BASE))
-    g6 = (len(wsel) == 0 and len(rsel) == 2 and all(len(cond[k]) == 1 for k in cond)
+    g6 = (len(mentions) == 2 and len(wsel) == 0 and len(rsel) == 2
+          and all(len(cond[k]) == 1 for k in cond) and len(zero_edx) == 1
           and selaff and selaff[0][1] == 304)
-    gates.append(("G6 ds:0x%x is READ-ONLY in .text (2 loads, 0 stores image-wide; writer outside .text) and the halving is gated on that base's owner byte == the charged base's owner (cmp/sete/je) plus a sign test (jl) - 2 distinct skips out of the halving" % SEL_BASE, g6))
+    gates.append(("G6 ds:0x%x has NO writer in .text (all %d operand-text mentions measured: 2 loads, 0 stores, no lea-absolute; a computed-address writer is beyond static .text reach - noun INFERRED) and the halving is gated on that base's zero-extended owner byte == ebx, the current record's owner byte (xor edx,edx + cmp/sete/je) plus a sign test (jl) - 2 distinct skips out of the halving" % (SEL_BASE, len(mentions)), g6))
 
     # -------------------------------------------------- G7 the loop range vs the table rows
+    # s314 review F2: the row counts come from the MEASURED immediates of the two bound
+    # instructions, not from Python constants; the 0x750 literal is printed but NOT load-bearing.
     row1872 = [a for a in ADDRS if re.search(r"\b0x750\b", INS[a][1])]
-    visited = list(range(1, TABLE_ROWS))
-    charged = list(range(1, 0x22 + 1))
-    never = [i for i in range(TABLE_ROWS) if i not in charged]
+    bound_imm = int(INS[bound[0]][1].rsplit(",", 1)[1].strip(), 16) if bound else -1
+    rng_imm = int(INS[rng[0]][1].rsplit(",", 1)[1].strip(), 16) if rng else -1
+    charged = list(range(1, bound_imm + 1))
+    never = [i for i in range(rng_imm) if i not in charged]
     rowdiff = ITEM_UPKEEP - ITEM_ROW0
-    rows.append("G7 0x750 (=1872) occurs %d times in .text (first %s); 1872//%d=%d 1872%%%d=%d; loop VISITS ids 1..38 (bottom bound 0x27), CHARGES ids 1..34 (top bound 0x22 skips 35..38); never charged %s; upkeep dword at row+0x%x" %
-                (len(row1872), ["%06x@%s" % (a, owner(a)) for a in row1872[:4]], ROW, 1872 // ROW, ROW, 1872 % ROW, never, rowdiff))
-    g7 = (len(row1872) >= 1 and 1872 // ROW == TABLE_ROWS and 1872 % ROW == 0
-          and 0x27 == TABLE_ROWS and never == [0] + list(range(35, TABLE_ROWS)) and rowdiff == 0x10)
-    gates.append(("G7 the table is %d rows (1872 = 39*48 read out of .text); the loop visits ids 1..38 but ids 35..38 skip the charge body at the top bound and id 0 is never visited: only ids 1..34 are charged" % TABLE_ROWS, g7))
+    rows.append("G7 measured immediates: charge-bound=%s(%d) range-bound=%s(%d) -> VISITS ids 1..%d, CHARGES 1..%d, never charged %s; upkeep dword at row+0x%x; the literal 0x750 occurs %d times in .text but NONE is tied to this table (printed for context only, s314 review F2)" %
+                (INS[bound[0]][1] if bound else "?", bound_imm, INS[rng[0]][1] if rng else "?", rng_imm,
+                 rng_imm - 1, bound_imm, never, rowdiff, len(row1872)))
+    g7 = (bound_imm == 0x22 and rng_imm == 0x27 and rng_imm - bound_imm == 5
+          and never == [0] + list(range(bound_imm + 1, rng_imm)) and rowdiff == 0x10)
+    gates.append(("G7 the loop's MEASURED bounds (charge-bound 0x22, range-bound 0x27 read from the two cmp immediates) give VISITS 1..38 / CHARGES 1..34: ids 35..38 skip the charge body at the top bound and id 0 is never visited; the stride-48 table's upkeep dword sits at row+0x10", g7))
 
     # ------------------------------------------------ NEW FINDING (printed, not gated)
     rem = {"mapper2": find(wbody(LOOP, lo=CHARGE_END), "call", r"0x507410\b"),
