@@ -1366,12 +1366,12 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 
 ## B28 (s316 BUILD, zero box) — the UPKEEP FEEDER made EXECUTABLE on the save's OWN base records; the CARRIED HALF-UNIT becomes a modeled block-A field (`sim/feeder.py` law, `sim/composedfeeder.py` run, spine §B28). ACCEPT `python3 -u -m sim.selftest --b28` -> **`PASS B28: 8/8 gates`** digest(rows) `705a4520c08c4062` / print `8c87e05ffa2b80cc` / container `38bba29ab857654b`, 2 runs byte-identical (`evidence/b28_feeder_exec.txt:18-19`); harness `python3 -u scripts/b28_mutate.py` -> **`HARNESS PASS 16/16`** digest `a2ba49fb9dd1056b`, 8/8 gates covered, NO-OP `[]` (`evidence/b28_mutate.txt:19-21`).
 
-| claim | evidence | conf | mutant |
-|---|---|---|---|
-| `ds:0x985ba0` is CARRIED in the save's state header (file offset 244) and reads **-1** in m54b_clean: the 4f48dc sign skip fires, the halving runs 0 times here | `evidence/b28_feeder_exec.txt:5` | V | MU6 |
-| the container's own `+300` octet `[0,1,1,0,1,0,1,1]` IS the executable feeder's full-price total, 8/8 with the own faction's recorded disabled id (8, parsed `docs/named-archive-m32-m84e.md:272`); 7/8 without it (miss = faction 3 = own_player) | `:8` | V | MU5 MU9 MU10 ME3 |
-| bounds are the PARSED immediates 1 / 0x22 / 0x27: VISITS 1..38, CHARGES 1..34, upkeep dword at row+0x10 | `:3` | V | MU4 ME2 |
-| charged only when the bit is set in the base's own `+0x8c` bitmap (18/18); ids 32..38 inert here (`+0x90..+0x93` nonzero in 0 of 18 records) | `:4` | V; bitmap WIDTH past `+0x8f` OPEN | MU5 MU9 |
-| charge = `trunc((cost+carry)/2)` (the `cdq/sub/sar` shape, not a shift), the sum's parity written back into the SAME bit5; full-price leaves the carry | `:6` | V | MU1 MU2 MU3 MU8 |
-| the carry persists through the writer: gate dword at a base of the charged faction -> bit5 survives round 1 at 5 of 7 fixtures and moves round 2 by exactly 1 at those only, 0 wrong halvings elsewhere; `modeled_spans()` no-arg still the pre-B27 list; unmutated build = identity | `:7` | V | MU3 MU7 MU8 MU11 MU12 ME4 |
-| the NOUN of `ds:0x985ba0`; `ebx` == the charged base's owner | M333 G6 (no .text writer) | INFERRED | — |
+| claim | evidence | conf |
+|---|---|---|
+| `ds:0x985ba0` is CARRIED in the save's state header (file offset 244) and reads **-1** in m54b_clean: the 4f48dc sign skip fires, the halving runs 0 times here (MU6 drops the sign skip and reddens G4+G7) | `evidence/b28_feeder_exec.txt:5` | V |
+| the container's own `+300` octet `[0,1,1,0,1,0,1,1]` IS the executable feeder's full-price total, 8/8 with the own faction's recorded disabled id (8, parsed `docs/named-archive-m32-m84e.md:272`); 7/8 without it (miss = faction 3 = own_player) — MU5/MU9/MU10/ME3 redden G3/G7 | `:8` | V |
+| bounds are the PARSED immediates 1 / 0x22 / 0x27: VISITS 1..38, CHARGES 1..34, upkeep dword at row+0x10 — MU4/ME2 redden G2 | `:3` | V |
+| charged only when the bit is set in the base's own `+0x8c` bitmap (18/18); ids 32..38 inert here (`+0x90..+0x93` nonzero in 0 of 18 records) — MU5/MU9 redden G3 | `:4` | V (inert here); the bitmap WIDTH past `+0x8f` OPEN |
+| charge = `trunc((cost+carry)/2)` (the `cdq/sub/sar` shape, not a shift), the sum's parity written back into the SAME bit5; full-price leaves the carry — MU1/MU2/MU3/MU8 redden G5 | `:6` | V |
+| the carry persists through the writer: gate dword at a base of the charged faction -> bit5 survives round 1 at 5 of 7 fixtures and moves round 2 by exactly 1 at those only, 0 wrong halvings elsewhere; `modeled_spans()` no-arg still the pre-B27 list; unmutated build = identity — MU3/MU7/MU8/MU11/MU12/ME4 redden G6 | `:7` | V |
+| the NOUN of `ds:0x985ba0`; `ebx` == the charged base's owner | M333 G6 (no .text writer); no mutant can name a noun | INFERRED |
