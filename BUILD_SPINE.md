@@ -967,7 +967,7 @@ commutative on this fixture); the nouns of +2fc/+308/+310/+3f8 (M330/M331) and o
 (**ANSWERED by M332**: 0x985aec is the runtime mirror of the win-INI pref "Difficulty",
 master 0x92bde8; the index->label order stays open); which factions the game would really charge (the eight blocks are run
 uniformly, as B25 applies the gesture to every unit); whether the refund leg ever runs in this
-whether the refund leg ever runs in this save at all (measured inert here). No box time, no /proc, no gdb, no game-binary load.
+save at all (measured inert here). No box time, no /proc, no gdb, no game-binary load.
 
 ---
 
