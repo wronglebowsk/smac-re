@@ -1,0 +1,22 @@
+MU1   the cdq/sub/sar trunc-toward-zero halving replaced by a plain shift reddens G5,G8
+MU2   the full-price path clears the carry (4f4938 never touches block+0) reddens G5,G8
+MU3   the carried half-unit dropped at the write-back            reddens G5,G6,G8
+MU4   the charge bound 0x22 ignored (ids 35..38 charged too)     reddens G2,G8
+MU5   the base-has-facility gate dropped (every row charged)     reddens G3,G7,G8
+MU6   the sign skip at 4f48dc dropped (halving unconditional on the sign leg) reddens G4,G7,G8
+MU7   the owner-byte skip at 4f48f8 dropped (any selected base halves) reddens G4,G6,G8
+MU8   the bit5 set/clear pair made a no-op                       reddens G6,G8
+MU9   the mapper's byte/bit split swapped                        reddens G3,G7,G8
+MU10  the faction's disabled list never consulted in the run     reddens G6,G7,G8
+MU11  the carry not handed to the writer (block+0 pass-through)  reddens G6,G8
+MU12  the zero-carry RIVAL stops being a rival (it persists the carry too) reddens G6,G8
+ME1   the pin grep made unfalsifiable (a hit for every pin, bogus included) reddens G1,G8
+ME2   the range bound parsed off the WRONG census field          reddens G2,G8
+ME3   the recorded accumulator read from ENERGY instead of +300  reddens G7,G8
+ME4   bit5 read back from the FINAL image, not the round that wrote it (the s316 defect) reddens G6,G8
+NO-OP base run: reddens [] rc=0 (must be empty/0)
+mutant table digest a2ba49fb9dd1056b
+exact-set check: 16 mutant(s), 0 complaint(s), gates reddened 8/8
+16/16 mutants redden at least one gate; dead mutants []
+HARNESS PASS 16/16
+rc=0

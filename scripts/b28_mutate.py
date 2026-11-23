@@ -101,8 +101,26 @@ MUTANTS = [
      "bit5 read back from the FINAL image, not the round that wrote it (the s316 defect)"),
 ]
 
-# Filled from `--measure`: the sets this harness MEASURED, not the ones hoped for.
-DECLARED = {}
+# Filled from `--measure` (s316): the sets this harness MEASURED, not the ones hoped for.
+# Every gate G1..G8 is reddened by at least one mutant; no mutant reddens nothing.
+DECLARED = {
+    "MU1": {"G5", "G8"},
+    "MU2": {"G5", "G8"},
+    "MU3": {"G5", "G6", "G8"},
+    "MU4": {"G2", "G8"},
+    "MU5": {"G3", "G7", "G8"},
+    "MU6": {"G4", "G7", "G8"},
+    "MU7": {"G4", "G6", "G8"},
+    "MU8": {"G6", "G8"},
+    "MU9": {"G3", "G7", "G8"},
+    "MU10": {"G6", "G7", "G8"},
+    "MU11": {"G6", "G8"},
+    "MU12": {"G6", "G8"},
+    "ME1": {"G1", "G8"},
+    "ME2": {"G2", "G8"},
+    "ME3": {"G7", "G8"},
+    "ME4": {"G6", "G8"},
+}
 
 
 def decl_complaints(mid, measured, declared):
@@ -117,7 +135,7 @@ def decl_complaints(mid, measured, declared):
 
 def build_tree(dst, target, old, new):
     os.makedirs(dst)
-    for name in ("evidence", "data", "programs", "scripts"):
+    for name in ("evidence", "data", "programs", "scripts", "docs"):
         os.symlink(os.path.join(ROOT, name), os.path.join(dst, name))
     shutil.copytree(os.path.join(ROOT, "sim"), os.path.join(dst, "sim"))
     p = os.path.join(dst, target)
@@ -163,7 +181,7 @@ def selftest():
         st4 = bool(wrong) and not right
         print("ST3 no-op tree reddens nothing:", end=" ")
         os.makedirs(os.path.join(tmp, "tree3"))
-        for name in ("evidence", "data", "programs", "scripts"):
+        for name in ("evidence", "data", "programs", "scripts", "docs"):
             os.symlink(os.path.join(ROOT, name), os.path.join(tmp, "tree3", name))
         shutil.copytree(os.path.join(ROOT, "sim"), os.path.join(tmp, "tree3", "sim"))
         b3, _o3, rc3, _e3 = run_tree(os.path.join(tmp, "tree3"))
@@ -202,7 +220,7 @@ def main(argv=None):
             shutil.rmtree(dst, ignore_errors=True)
         noop = os.path.join(tmp, "NOOP")
         os.makedirs(noop)
-        for name in ("evidence", "data", "programs", "scripts"):
+        for name in ("evidence", "data", "programs", "scripts", "docs"):
             os.symlink(os.path.join(ROOT, name), os.path.join(noop, name))
         shutil.copytree(os.path.join(ROOT, "sim"), os.path.join(noop, "sim"))
         nbad, _nok, nrc, _nerr = run_tree(noop)

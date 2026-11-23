@@ -30,7 +30,7 @@ RULES = os.path.join(ROOT, "data", "alpha.json")
 
 # Filled from the first real run's printed digest; G8 asserts the result table hashes to it.
 ANCHOR = "705a4520c08c4062"        # digest of the composed (faction, round, ...) rows
-PRINT_ANCHOR = "61ca4afc50adba97"  # digest of the printed table, G8 line excluded
+PRINT_ANCHOR = "8c87e05ffa2b80cc"  # digest of the printed table, G8 line excluded
 
 NFACTION = 8
 ROUNDS = 2
@@ -235,22 +235,28 @@ def measure_full(sav_path):
     # G4 the price-path gate read out of the container ------------------------------
     sel, sel_off = sf.read_sel(sv.data, so.mem2file)
     m["sel"], m["sel_off"] = sel, sel_off
-    m["path"] = "full-price" if sel < 0 else (
-        "halved" if owners[sel] == sv.own_player else "full-price(owner mismatch)")
-    m["halve_runs"] = sum(1 for f in range(NFACTION)
-                          if sel >= 0 and owners[sel] == f)
-    m["sweep_halved"] = sum(1 for s in range(0, sv.n_bases) if owners[s] == sv.own_player)
+    # every number below comes out of feeder.price_path - the law module - not out of an
+    # inline re-typing of its condition (a gate that re-derives the law measures nothing).
+    m["halve_runs"] = sum(1 for f in range(NFACTION) if sf.price_path(sel, owners, f)[0])
+    m["path"] = ("halved" if sf.price_path(sel, owners, sv.own_player)[0]
+                 else "full-price(%s)" % (sf.price_path(sel, owners, sv.own_player)[1] or "ok"))
+    m["sweep_halved"] = sum(1 for s in range(-1, sv.n_bases)
+                            if sf.price_path(s, owners, sv.own_player)[0])
     m["sweep_n"] = sv.n_bases + 1                       # sel swept over -1..n_bases-1
+    m["sweep_expected"] = sum(1 for o in owners if o == sv.own_player)
     m["owner_of_sel_if_valid"] = (owners[sel] if 0 <= sel < sv.n_bases else None)
 
-    # per-faction totals, full price, no disabled list (the raw law)
-    def totals(halve, disabled):
+    # per-faction totals.  halve_mode None = the gate AS THE LAW READS IT out of the
+    # container; True/False = a forced rival.
+    def totals(halve_mode, disabled):
         out = []
         for f in range(NFACTION):
             carry, tot = 0, 0
             for i in range(sv.n_bases):
                 if owners[i] != f:
                     continue
+                halve = (sf.price_path(sel, owners, f)[0] if halve_mode is None
+                         else halve_mode)
                 t, carry, _ch = sf.charge_base(table, bitmaps[i], carry, halve,
                                                disabled.get(f, ()), *m["bounds"])
                 tot += t
@@ -263,14 +269,16 @@ def measure_full(sav_path):
     disabled = {sv.own_player: tuple(m["disabled_parsed"])}
     m["disabled"] = {f: list(v) for f, v in disabled.items()}
 
-    m["tot_raw"] = totals(False, {})
-    m["tot_disabled"] = totals(False, disabled)
+    m["tot_honest"] = totals(None, disabled)
+    m["tot_raw"] = totals(None, {})
     m["tot_halved"] = totals(True, disabled)
+    m["tot_full"] = totals(False, disabled)
+    m["honest_eq_full"] = (m["tot_honest"] == m["tot_full"])
     m["spend_oct"] = [struct.unpack_from("<i", sv.data, so.BLOCK_A_OFF + sf.BLK_STRIDE * f
                                          + sf.OFF_SPEND)[0] for f in range(NFACTION)]
     m["bit5_oct"] = sf.read_bit5_octet(sv.data, so.BLOCK_A_OFF)
-    m["match_disabled"] = sum(1 for f in range(NFACTION)
-                              if m["tot_disabled"][f] == m["spend_oct"][f])
+    m["match_honest"] = sum(1 for f in range(NFACTION)
+                            if m["tot_honest"][f] == m["spend_oct"][f])
     m["match_raw"] = sum(1 for f in range(NFACTION) if m["tot_raw"][f] == m["spend_oct"][f])
     m["match_halved"] = sum(1 for f in range(NFACTION)
                             if m["tot_halved"][f] == m["spend_oct"][f])
@@ -303,6 +311,7 @@ def measure_full(sav_path):
     # at a base that faction owns (the container's own value keeps the path inert - G4).
     rows_h, img_h, imgs_h, shas_h = compose(sv, table, sel, disabled, m["bounds"])
     fix, fix_imgs = {}, []
+    m["fix_other_halved"] = []
     for f in range(NFACTION):
         idx = next((i for i in range(sv.n_bases) if owners[i] == f), None)
         if idx is None:
@@ -319,6 +328,11 @@ def measure_full(sav_path):
                   "bit5_rival": sf.bit5(struct.unpack_from(
                       "<i", imgs_z[0], so.BLOCK_A_OFF + sf.BLK_STRIDE * f)[0])}
         fix_imgs.append((f, imgf))
+        # the gate selects ONE base, so in this fixture every OTHER faction must still be
+        # charged at full price: that is the owner leg of the gate, measured, not assumed.
+        for g in range(NFACTION):
+            if g != f and rf[0][g][1] != m["tot_full"][g]:
+                m["fix_other_halved"].append((f, g))
     m["fix"] = fix
     m["fix_factions"] = sorted(fix)
     m["carry_live"] = [f for f in sorted(fix) if fix[f]["carry_out"] == 1]
@@ -352,6 +366,10 @@ def measure_full(sav_path):
                                                         (so.MAP_HDR_OFF, so.MAP_HDR_OFF + 8)])
 
     # G7 parity with the game's own recorded rows -----------------------------------
+    # the RUN and the LAW must agree before either is compared with the game: the composed
+    # round-1 totals are the law's totals (this is what MU10's defect used to hide behind).
+    m["run_vs_law"] = sum(1 for f in range(NFACTION)
+                          if rows_h[0][f][1] == m["tot_honest"][f])
     bl = _line(EVID_B4, "ok   upkeep-table")
     m["b4_fac"] = [int(x) for x in _re1(r"facilities \[([0-9, ]+)\]", bl,
                                         "recorded facility ids").split(",")]
@@ -405,11 +423,12 @@ def render(m):
       "rival 'charge every row' differs at %d bases"
       % (m["base_match"], len(m["per_base"]), m["width_nonzero"], m["n_bases"],
          m["hi_bits"] or "none", m["rival_nobitmap"]))
-    p("G4 ds:0x985ba0 read at file offset %d = %d -> path=%s; the halving runs for %d of %d "
-      "factions on this container; sweeping sel over %d values (-1..%d) flips %d to the halved "
-      "path (owner_of_sel=%s)"
-      % (m["sel_off"], m["sel"], m["path"], m["halve_runs"], NFACTION, m["sweep_n"],
-         m["n_bases"], m["sweep_halved"], m["owner_of_sel_if_valid"]))
+    p("G4 ds:0x985ba0 read at file offset %d = %d -> path=%s for own_player=%d; the halving runs "
+      "for %d of %d factions on this container; sweeping sel over %d values (-1..%d) flips %d to "
+      "the halved path, and the plain owner count of own's bases is %d (owner_of_sel=%s)"
+      % (m["sel_off"], m["sel"], m["path"], m["own_player"], m["halve_runs"], NFACTION,
+         m["sweep_n"], m["n_bases"], m["sweep_halved"], m["sweep_expected"],
+         m["owner_of_sel_if_valid"]))
     p("G5 carry grid n=%d: mismatches vs the instruction semantics=%d; rivals fail at "
       "floor-halving=%d zero-the-carry=%d round-half-up=%d cells; full-price keeps the carry=%s"
       % (m["grid_n"], m["grid_bad"], m["grid_floor"], m["grid_zc"], m["grid_rhu"],
@@ -417,20 +436,25 @@ def render(m):
     p("G6 fixture sweep (gate dword pointed at a base owned by the charged faction): %d factions "
       "tested %s; the half-unit survives round 1 at %s; round-2 totals differ from the zero-carry "
       "rival at %s (every live one by exactly 1: %s); bit5 in the written image == carry_out at "
-      "%s and the rival clears it at %s; unmutated build identity=%s; differing bytes outside "
-      "modeled spans: honest=%d fixtures=%d; modeled_spans() no-arg == the pre-B27 list: %s"
+      "%s and the rival clears it at %s; the factions that should stay at full price in a "
+      "fixture: %d pairs halved when they should not; unmutated build identity=%s; differing "
+      "bytes outside modeled spans: honest=%d fixtures=%d; modeled_spans() no-arg == the pre-B27 "
+      "list: %s"
       % (len(m["fix_factions"]), m["fix_factions"], m["carry_live"], m["carry_diff"],
-         m["carry_diff_exact1"], m["bit5_written_ok"], m["bit5_rival_cleared"], m["identity"],
+         m["carry_diff_exact1"], m["bit5_written_ok"], m["bit5_rival_cleared"],
+         len(m["fix_other_halved"]), m["identity"],
          len(m["outside_h"]), len(m["outside_f"]), m["spans_noarg_pre_b27"]))
     p("G7 recorded: 'Climactic Research' facilities %s, live-pinned rows %s, raw %d, disabled %d, "
       "HUD 0x744f28 %d; the executable feeder reproduces raw=%d adj=%d; alpha table mismatches at "
-      "ids %s; spend +300 octet %s vs computed %s with the parsed disabled list %s -> match %d/8; "
-      "rivals: without the list %d/8 (mismatches %s), halved %d/8 (mismatches %s); bit5 octet in "
-      "the container %s"
+      "ids %s; the composed run agrees with the law at %d/8 factions; spend +300 octet %s vs the "
+      "gate-derived totals %s (parsed disabled list %s) -> match %d/8; rivals: without the list "
+      "%d/8 (mismatches %s), forced-halved %d/8 (mismatches %s), honest==forced-full-price %s; "
+      "bit5 octet in the container %s"
       % (m["b4_fac"], sorted(m["b4_rows"].items()), m["b4_raw"], m["b4_adj"], m["b4_hud"],
-         m["feeder_raw"], m["feeder_adj"], m["table_mismatch"] or "none", m["spend_oct"],
-         m["tot_disabled"], m["disabled"], m["match_disabled"], m["match_raw"],
-         m["mismatch_raw"], m["match_halved"], m["mismatch_halved"], m["bit5_oct"]))
+         m["feeder_raw"], m["feeder_adj"], m["table_mismatch"] or "none", m["run_vs_law"],
+         m["spend_oct"], m["tot_honest"], m["disabled"], m["match_honest"], m["match_raw"],
+         m["mismatch_raw"], m["match_halved"], m["mismatch_halved"], m["honest_eq_full"],
+         m["bit5_oct"]))
     p("G8 rows digest %s (second run %s); print digest %s; final container sha %s (second run "
       "%s); ANCHOR %s; PRINT_ANCHOR %s"
       % (m["digest"], m["digest2"], m.get("print_digest", "(pending)"), m["final_sha"],
@@ -467,9 +491,12 @@ def acceptance(m, results):
 
     add(("G4 the price-path gate read out of the container (ds:0x985ba0=%d at file offset %d) "
          "gives path=%s with the halving running %d times; the sweep over %d sel values flips "
-         "%d to halved, so the inertness is measured and the leg is not a stub"
-         % (m["sel"], m["sel_off"], m["path"], m["halve_runs"], m["sweep_n"], m["sweep_halved"]),
+         "%d to halved and the plain owner count says %d, so the inertness is measured and the "
+         "leg is not a stub"
+         % (m["sel"], m["sel_off"], m["path"], m["halve_runs"], m["sweep_n"], m["sweep_halved"],
+            m["sweep_expected"]),
          m["sweep_n"] == m["n_bases"] + 1 and m["sweep_halved"] >= 1
+         and m["sweep_halved"] == m["sweep_expected"]
          and (m["halve_runs"] == 0) == (m["sel"] < 0)))
 
     add(("G5 the carry law matches the instruction semantics on all %d grid cells and the three "
@@ -481,26 +508,30 @@ def acceptance(m, results):
 
     add(("G6 the carry persists through the writer: %d factions swept, the half-unit survives at "
          "%s and those (and only those, %s) change round 2 by exactly 1 (%s); bit5 in the written "
-         "image == carry_out at %s of %d; unmutated build identity=%s; %d+%d differing bytes "
-         "outside modeled spans; no-arg modeled_spans() still the pre-B27 list=%s"
+         "image == carry_out at %s of %d; %d fixture pairs halved a faction that must stay at "
+         "full price; unmutated build identity=%s; %d+%d differing bytes outside modeled spans; "
+         "no-arg modeled_spans() still the pre-B27 list=%s"
          % (len(m["fix_factions"]), m["carry_live"], m["carry_diff"], m["carry_diff_exact1"],
-            m["bit5_written_ok"], len(m["fix_factions"]), m["identity"],
-            len(m["outside_h"]), len(m["outside_f"]), m["spans_noarg_pre_b27"]),
+            m["bit5_written_ok"], len(m["fix_factions"]), len(m["fix_other_halved"]),
+            m["identity"], len(m["outside_h"]), len(m["outside_f"]), m["spans_noarg_pre_b27"]),
          m["identity"] and not m["outside_h"] and not m["outside_f"]
          and m["spans_noarg_pre_b27"] and len(m["carry_live"]) >= 1
          and m["carry_live"] == m["carry_diff"] and m["carry_diff_exact1"]
-         and len(m["bit5_written_ok"]) == len(m["fix_factions"])))
+         and len(m["bit5_written_ok"]) == len(m["fix_factions"])
+         and not m["fix_other_halved"]))
 
     add(("G7 the executable feeder reproduces the recorded HUD rows (raw %d==%d, disabled %d==%d "
-         "== 0x744f28 %d) from the live-pinned costs, the alpha table mismatches at %s, and the "
-         "container's own +300 octet matches %d/8 with the parsed disabled list %s (rivals: "
-         "no-list %d/8, halved %d/8)"
+         "== 0x744f28 %d) from the live-pinned costs, the alpha table mismatches at %s, the run "
+         "agrees with the law at %d/8, and the container's own +300 octet matches %d/8 on the "
+         "gate-derived totals with the parsed disabled list %s (rivals: no-list %d/8, forced-halved "
+         "%d/8, honest==forced-full-price %s)"
          % (m["feeder_raw"], m["b4_raw"], m["feeder_adj"], m["b4_adj"], m["b4_hud"],
-            m["table_mismatch"] or "none", m["match_disabled"], m["disabled"],
-            m["match_raw"], m["match_halved"]),
+            m["table_mismatch"] or "none", m["run_vs_law"], m["match_honest"], m["disabled"],
+            m["match_raw"], m["match_halved"], m["honest_eq_full"]),
          m["feeder_raw"] == m["b4_raw"] and m["feeder_adj"] == m["b4_adj"]
          and m["feeder_adj"] == m["b4_hud"] and not m["table_mismatch"]
-         and m["match_disabled"] == NFACTION and m["match_raw"] < NFACTION
+         and m["run_vs_law"] == NFACTION and m["honest_eq_full"]
+         and m["match_honest"] == NFACTION and m["match_raw"] < NFACTION
          and m["match_halved"] < NFACTION))
 
     add(("G8 determinism: rows digest %s == second run %s; print digest %s; final container %s "
