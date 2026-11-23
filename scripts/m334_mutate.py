@@ -58,8 +58,23 @@ MUTANTS = [
     ("MU22", "code", "4f49e1|mov BYTE PTR [ebx],cl", {"G4", "G7"}),     # clear stores through another reg
     ("MU23", "code", "4f49da|mov cl,BYTE PTR [ebx]", {"G4"}),           # clear reads another reg
     ("MU24", "code", "4f4837|mov al,BYTE PTR [ecx+edx*1+0x95da98]", {"G4", "G7"}),  # charge tests another table
-    ("MU25", "code", "4f4a16|push 0x984d38", {"RIVAL3"}),               # memo gains a facility operand
+    ("MU25", "code", "4f4a16|push 0x984d38", {"G6", "RIVAL3"}),          # memo gains a facility operand (G6 reddens too:
+                                                                        # the full arg list is pinned since F3 - measured)
     ("MU26", "code", "4f4931|mov DWORD PTR [edx+0x8],ecx", {"G3"}),     # a FOLDED block-pointer store to +0x8 appears
+    # ---- s316 review round (#350): mutants for the NEW tie checks (F1-F10)
+    ("MU27", "code", "4f4822|push 0x1", {"G4"}),                        # charge mapper no longer takes the loop item
+    ("MU28", "code", "4f49a4|mov ecx,ds:0x68cbb0", {"G4"}),             # removal mapper takes another value
+    ("MU29", "code", "4f49c3|push 0x2", {"G5"}),                        # factor arg2 != 1
+    ("MU30", "code", "4f49eb|mov al,BYTE PTR [ecx+0x8]", {"G5"}),       # owner byte from another field
+    ("MU31", "code", "4f4a1d|push 0xf", {"G6"}),                        # memo arg3 changed
+    ("MU32", "code", "4f4a06|push 0x0", {"G6"}),                        # slotter arg4 no longer -1
+    ("MU33", "code", "59eec3|mov al,ds:0x985b11", {"G3"}),              # human/AI gate reads another mask
+    ("MU34", "code", "4f4931|mov DWORD PTR [edx+0x220],ecx", {"G7"}),   # a folded block+0x220 ref appears in the fn
+    ("MU35", "code", "4f497f|mov DWORD PTR [edi+0x94d650],edx", {"G2"}),  # clamp stores something else
+    ("MU36", "code", "4f49f7|imul ecx,DWORD PTR [esi+0x984d44]", {"G5"}),  # product lands in another reg
+    ("MU37", "code", "4f49f7|imul eax,DWORD PTR [ebx+0x984d44]", {"G5"}),  # price read through another base
+    ("MU38", "code", "57ef39|movsx eax,BYTE PTR [ebx]", {"G3"}),        # the movsx no longer feeds the store
+    ("MU39", "code", "4f49d8|xor eax,eax", {"G4", "G7"}),               # the address reg is clobbered before the store
     # ---- EXPECT family: rewrite ONE literal in the instrument
     ("ME1", "expect", ("BLKBASE, BLKSTRIDE = 0x94D430, 0x20BC", "BLKBASE, BLKSTRIDE = 0x94D430, 0x20B0"),
      {"G1", "G3"}),                                                     # wrong block stride

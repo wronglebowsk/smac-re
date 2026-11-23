@@ -1,4 +1,4 @@
-baseline: PASS, digest=21e70618fecd49aa
+baseline: PASS, digest=5b5ece39af02baba
 PASS MU1 declared=['G1'] observed=['G1'] (ok)
 PASS MU2 declared=['G1'] observed=['G1'] (ok)
 PASS MU3 declared=['G1'] observed=['G1'] (ok)
@@ -23,8 +23,21 @@ PASS MU21 declared=['G7'] observed=['G7'] (ok)
 PASS MU22 declared=['G4', 'G7'] observed=['G4', 'G7'] (ok)
 PASS MU23 declared=['G4'] observed=['G4'] (ok)
 PASS MU24 declared=['G4', 'G7'] observed=['G4', 'G7'] (ok)
-PASS MU25 declared=['RIVAL3'] observed=['RIVAL3'] (ok)
+PASS MU25 declared=['G6', 'RIVAL3'] observed=['G6', 'RIVAL3'] (ok)
 PASS MU26 declared=['G3'] observed=['G3'] (ok)
+PASS MU27 declared=['G4'] observed=['G4'] (ok)
+PASS MU28 declared=['G4'] observed=['G4'] (ok)
+PASS MU29 declared=['G5'] observed=['G5'] (ok)
+PASS MU30 declared=['G5'] observed=['G5'] (ok)
+PASS MU31 declared=['G6'] observed=['G6'] (ok)
+PASS MU32 declared=['G6'] observed=['G6'] (ok)
+PASS MU33 declared=['G3'] observed=['G3'] (ok)
+PASS MU34 declared=['G7'] observed=['G7'] (ok)
+PASS MU35 declared=['G2'] observed=['G2'] (ok)
+PASS MU36 declared=['G5'] observed=['G5'] (ok)
+PASS MU37 declared=['G5'] observed=['G5'] (ok)
+PASS MU38 declared=['G3'] observed=['G3'] (ok)
+PASS MU39 declared=['G4', 'G7'] observed=['G4', 'G7'] (ok)
 PASS ME1 declared=['G1', 'G3'] observed=['G1', 'G3'] (ok)
 PASS ME2 declared=['G1', 'G2'] observed=['G1', 'G2'] (ok)
 PASS ME3 declared=['G4', 'G7', 'RIVAL2'] observed=['G4', 'G7', 'RIVAL2'] (ok)
@@ -32,5 +45,5 @@ PASS ME4 declared=['G2', 'G7'] observed=['G2', 'G7'] (ok)
 PASS ME5 declared=['G3'] observed=['G3'] (ok)
 PASS ME6 declared=['G6'] observed=['G6'] (ok)
 coverage: every gate and rival reddened by >=1 mutant (10 items)
-digest(harness)=47c45f3fa4da5cc2
-PASS HARNESS 32/32
+digest(harness)=a5a5091e533f7883
+PASS HARNESS 45/45

@@ -253,24 +253,29 @@ def stores_naming(va):
     return w, r
 
 
-def folded_stores_to(off):
-    """stores to [R+off] where R's nearest def in the same function is a fold naming BLKBASE
+def folded_refs_to(off, lo=None, hi=None, stores_only=True):
+    """refs to [R+off] where R's nearest def in the same function is a fold naming BLKBASE
     (the hole an operand-text grep for the absolute VA cannot see: `lea R,[k*4+0x94d430]`
-    then `mov [R+8],v`). Path-insensitive, 60-instruction def walk, stops at any other write."""
+    then `mov [R+off],v` / `mov v,[R+off]`). Path-insensitive, 60-instruction def walk that
+    stops at any other write to R (destinations normalized, so al/ax/ah count as eax)."""
     hits = []
     for a in ADDRS:
+        if lo is not None and not (lo <= a <= hi):
+            continue
         mn, ops = INS[a]
-        if mn not in STORE_MN or mn in ("cmp", "test"):
+        if stores_only and (mn not in STORE_MN or mn in ("cmp", "test")):
             continue
-        parts = split_ops(ops)
-        mp = mem_parts(parts[0]) if parts else None
-        if not mp:
-            continue
-        regs, disp = mp
-        if disp != off or len(regs) != 1:
-            continue
-        r = list(regs)[0]
-        if r not in ("eax", "ebx", "ecx", "edx", "esi", "edi"):
+        cand = None
+        for p in split_ops(ops):
+            mp = mem_parts(p)
+            if not mp:
+                continue
+            regs, disp = mp
+            if disp == off and len(regs) == 1 and list(regs)[0] in (
+                    "eax", "ebx", "ecx", "edx", "esi", "edi"):
+                cand = list(regs)[0]
+                break
+        if not cand:
             continue
         fa = owner(a)
         i = AIDX[a]
@@ -283,9 +288,33 @@ def folded_stores_to(off):
                 break
             bm, bo = INS[b]
             d = strip_ptr(split_ops(bo)[0]) if split_ops(bo) else ""
-            if d == r:
+            dn = BASE_REG.get(d.split()[0] if d else "", d)
+            if dn == cand:
                 if f"0x{BLKBASE:x}" in bo:
                     hits.append((a, mn, ops, b, bm, bo))
+                break
+    return hits
+
+
+def writes_reg(lo, hi, reg):
+    """instructions in [lo,hi] that WRITE `reg` — destination normalized (al/ah/ax -> eax),
+    memory destinations skipped, `xchg` counts both operands (the one form where the written
+    register is not the first operand)."""
+    hits = []
+    for a in range(lo, hi + 1):
+        if a not in INS:
+            continue
+        mn, ops = INS[a]
+        parts = split_ops(ops)
+        if not parts:
+            continue
+        dests = [parts[0]] + ([parts[1]] if mn == "xchg" and len(parts) > 1 else [])
+        for d in dests:
+            d = strip_ptr(d).strip()
+            if not d or "[" in d or ":" in d:
+                continue
+            if BASE_REG.get(d.split()[0], d) == reg:
+                hits.append((a, mn, ops))
                 break
     return hits
 
@@ -353,6 +382,10 @@ def main():
     P(f"G2 branch B @{CLAMP_B:#x} {INS[0x4F4990][0]} {INS[0x4F4990][1]} / "
       f"{INS[0x4F4992][0]} {INS[0x4F4992][1]} / {cmpB[0]} {cmpB[1]} (rec+{offB:#x}); "
       f"clamp store @{E_STORE[1]:#x} {INS[E_STORE[1]][0]} {INS[E_STORE[1]][1]}")
+    clamp_src = [split_ops(INS[s][1])[1].strip() for s in E_STORE[:2]]
+    clamp_aw = [len(writes_reg(0x4F4961, s - 1, "eax")) for s in E_STORE[:2]]
+    P(f"G2 clamp-store source registers {clamp_src}; writes to eax between the zeroing "
+      f"@0x4f4960 and each store: {clamp_aw} (both must be 0 for 'ENERGY := 0')")
 
     # ---- G3 machinery: block+0x8's writers
     w8, lea8 = stores_naming(DIFF_VA)
@@ -371,13 +404,22 @@ def main():
     st = affine(0x57EF37, 0x57EF50, {"eax": (1, 0)})
     load_fold = st.get("ecx")
     P(f"G3 save/load-path def of edx: " + "; ".join(f"{a:#x} {m} {o}" for a, m, o in load_def)
-      + f"; index fold ecx = {load_fold[0]}*eax, store scale 4 "
-      f"-> {load_fold[0] * 4 if load_fold else '?'}")
-    folded8 = folded_stores_to(DIFF_OFF)
+      + f"; index fold ecx = {load_fold[0] if load_fold else 'UNPROVEN'}*eax, store scale 4 "
+      f"-> {load_fold[0] * 4 if load_fold else 'UNPROVEN'}")
+    folded8 = folded_refs_to(DIFF_OFF, stores_only=True)
     P(f"G3 folded-pointer stores to block+{DIFF_OFF:#x} (a def of the base register naming "
       f"{BLKBASE:#x} within 60 instructions): {len(folded8)} -> "
       + "; ".join(f"{a:#x} {m} {o} <- {b:#x} {bm} {bo}" for a, m, o, b, bm, bo in folded8[:8]))
-
+    human_gate = [(a, INS[a][0], INS[a][1]) for a in range(0x59EEB0, 0x59EED6)
+                  if a in INS and (f"0x{HUMAN_MASK:x}" in INS[a][1]
+                                   or INS[a][0] in ("test", "jne"))]
+    P("G3 human/AI gate on the path to the create store: "
+      + "; ".join(f"{a:#x} {m} {o}" for a, m, o in human_gate))
+    sv57 = split_ops(INS[0x57EF57][1])
+    mp57 = mem_parts(sv57[0])
+    P(f"G3 save/load store tie: dest '{sv57[0]}' -> regs {mp57[0] if mp57 else None} "
+      f"disp {hex(mp57[1]) if mp57 else None}; source '{sv57[1]}' vs the movsx destination "
+      f"'{load_def[0][2].split(',')[0] if load_def else None}'")
     # ---- G4 machinery: the two mapper calls + the bit test vs the bit clear
     chg_fold = affine(0x4F482B, 0x4F4834, {"edi": (1, 0)}).get("ecx")
     rem_fold = affine(0x4F49BE, 0x4F49CB, {"esi": (1, 0)}).get("eax")
@@ -387,10 +429,16 @@ def main():
     rem_store = INS[0x4F49E1]
     chg_and = [(a, INS[a][0], INS[a][1]) for a in range(0x4F4838, 0x4F4860)
                if a in INS and INS[a][0] == "and"]
+    chg_args = push_args(0x4F4823, 3)
+    rem_args = push_args(0x4F49B6, 3)
     P(f"G4 charge mapper call @{0x4F4823:#x} args(nearest-first) "
-      + " ".join(f"{a:#x}:{o}" for a, o in push_args(0x4F4823, 3)))
+      + " ".join(f"{a:#x}:{o}" for a, o in chg_args))
     P(f"G4 removal mapper call @{0x4F49B6:#x} args(nearest-first) "
-      + " ".join(f"{a:#x}:{o}" for a, o in push_args(0x4F49B6, 3)))
+      + " ".join(f"{a:#x}:{o}" for a, o in rem_args))
+    P(f"G4 item identity: charge pushes {chg_args[0][1] if chg_args else '?'} (the loop "
+      f"counter); removal pushes {rem_args[0][1] if rem_args else '?'} whose def is "
+      f"{INS[0x4F49A4][0]} {INS[0x4F49A4][1]}, and the loop bottom writes that slot from esi: "
+      f"{INS[0x4F4A38][0]} {INS[0x4F4A38][1]}")
     P(f"G4 base-map fold: charge {chg_fold[0] if chg_fold else '?'}*base @0x4f4834; "
       f"removal {rem_fold[0] if rem_fold else '?'}*base @0x4f49cb; both + byte_index + {BASEMAP:#x}")
     P(f"G4 charge TEST {chg_read[0]} {chg_read[1]} then "
@@ -402,21 +450,37 @@ def main():
     item_fold = affine(0x4F49DC, 0x4F49EF, {"esi": (1, 0)}).get("esi")
     mp44 = mem_parts(INS[0x4F49F7][1])
     off44 = mp44[1] - ITEM_ROW0 if mp44 else None
+    fac_args = push_args(0x4F49F2, 3)
+    imul_parts = split_ops(INS[0x4F49F7][1])
+    imul_mp = mem_parts(imul_parts[1]) if len(imul_parts) > 1 else None
+    imul_base = list(imul_mp[0])[0] if imul_mp and imul_mp[0] else None
+    store_src = split_ops(INS[E_STORE[2]][1])[1].strip()
+    eax_after_imul = writes_reg(0x4F49F8, E_STORE[2] - 1, "eax")
     e_reads = reads_of(REMOVAL, 0x4F4A0A, ENERGY_VA)
+    e_reads_test = reads_of(NEG_TEST, 0x4F4A0A, ENERGY_VA)
     P(f"G5 item fold for the price read: {item_fold[0] if item_fold else '?'}*item @0x4f49ef; "
-      f"imul @{0x4F49F7:#x} {INS[0x4F49F7][0]} {INS[0x4F49F7][1]} -> row+{off44}")
+      f"imul @{0x4F49F7:#x} {INS[0x4F49F7][0]} {INS[0x4F49F7][1]} -> row+{off44}; "
+      f"imul dest '{imul_parts[0] if imul_parts else None}', memory base '{imul_base}'")
     P(f"G5 factor call @{0x4F49F2:#x} call {INS[0x4F49F2][1]} args(nearest-first) "
-      + " ".join(f"{a:#x}:{o}" for a, o in push_args(0x4F49F2, 3)))
+      + " ".join(f"{a:#x}:{o}" for a, o in fac_args))
     P(f"G5 owner-byte source: {INS[0x4F49E3][0]} {INS[0x4F49E3][1]} / {INS[0x4F49E9][0]} "
       f"{INS[0x4F49E9][1]} / {INS[0x4F49EB][0]} {INS[0x4F49EB][1]}")
-    P(f"G5 ENERGY store @{E_STORE[2]:#x} {INS[E_STORE[2]][0]} {INS[E_STORE[2]][1]}; "
-      f"reads of block+{ENERGY_OFF:#x} in [{REMOVAL:#x},{0x4F4A0B:#x}) = {len(e_reads)}")
+    P(f"G5 ENERGY store @{E_STORE[2]:#x} {INS[E_STORE[2]][0]} {INS[E_STORE[2]][1]}; source "
+      f"'{store_src}'; writes to eax between the imul and the store: {len(eax_after_imul)}")
+    P(f"G5 reads of block+{ENERGY_OFF:#x}: in [REMOVAL {REMOVAL:#x},store) = {len(e_reads)}; "
+      f"in [NEG_TEST {NEG_TEST:#x},store) = {len(e_reads_test)}")
 
     # ---- G6 machinery: the announcement
+    memo_a = [o for _, o in push_args(0x4F4A29, 5)]
+    slot_a = [o for _, o in push_args(0x4F4A11, 4)]
+    edx_after_row0 = writes_reg(0x4F49FF, 0x4F4A07, "edx")
     P(f"G6 slot-setter @{0x4F4A11:#x} call {INS[0x4F4A11][1]} args(nearest-first) "
       + " ".join(f"{a:#x}:{o}" for a, o in push_args(0x4F4A11, 4)))
     P(f"G6 memo @{0x4F4A29:#x} call {INS[0x4F4A29][1]} args(nearest-first) "
       + " ".join(f"{a:#x}:{o}" for a, o in push_args(0x4F4A29, 5)))
+    P(f"G6 cdecl arg lists: memo={memo_a} slotter={slot_a}; row+0 load @{0x4F49FE:#x} "
+      f"{INS[0x4F49FE][0]} {INS[0x4F49FE][1]} -> pushed edx, writes to edx before the push: "
+      f"{len(edx_after_row0)}")
     P(f"G6 row+0 read @{0x4F49FE:#x} {INS[0x4F49FE][0]} {INS[0x4F49FE][1]}")
     P(f"G6 PE strings: {STR_LABEL:#x}={pe_cstr(STR_LABEL)!r}  {STR_ICON:#x}={pe_cstr(STR_ICON)!r}")
 
@@ -429,10 +493,16 @@ def main():
             if a in INS and f"0x{BASEMAP:x}" in INS[a][1]]
     P(f"G7 sites inside FUN_004f47f0 materializing the {BASEMAP:#x} map address: {len(mats)} -> "
       + "; ".join(f"{a:#x} {m} {o}" for a, m, o in mats))
-    eax_writes = [(a, INS[a][0], INS[a][1]) for a in range(0x4F49D2, 0x4F49E1)
-                  if a in INS and re.match(r"^(e?ax|al|ah)\b", strip_ptr(split_ops(INS[a][1])[0]))]
+    eax_writes = writes_reg(0x4F49D2, 0x4F49E0, "eax")
     P(f"G7 writes to eax between the fold @{0x4F49D1:#x} and the store @{0x4F49E1:#x}: "
       f"{len(eax_writes)} -> " + "; ".join(f"{a:#x} {m} {o}" for a, m, o in eax_writes))
+    fold_e_fn = folded_refs_to(ENERGY_OFF, FN, LOOP_END, stores_only=False)
+    fold_e_all = folded_refs_to(ENERGY_OFF, stores_only=False)
+    fold_ctl = folded_refs_to(0, stores_only=False)
+    P(f"G7 folded refs to block+{ENERGY_OFF:#x}: inside FUN_004f47f0 = {len(fold_e_fn)}, "
+      f"image-wide = {len(fold_e_all)}; CONTROL block+0 image-wide = {len(fold_ctl)} "
+      f"(non-zero => the folded scan is not vacuous; the compiler folds the block base only "
+      f"for offset 0 and uses absolute displacements for every other field)")
     qh = []
     for a in ADDRS:
         mn, ops = INS[a]
@@ -467,8 +537,9 @@ def main():
       + "; ".join(f"{a:#x}" for a, _, _, _ in qh[:12]))
 
     # ---- RIVAL machinery
-    P(f"RIVAL reads of block+{ENERGY_OFF:#x} between the negative test and the price store: "
-      f"{len(e_reads)} (a refund would need >=1); store mnemonic = {INS[E_STORE[2]][0]!r}")
+    P(f"RIVAL reads of block+{ENERGY_OFF:#x} in the SELL path [REMOVAL {REMOVAL:#x},"
+      f"store 0x4f4a0b) = {len(e_reads)} and from the negative test [{NEG_TEST:#x},store) = "
+      f"{len(e_reads_test)} (a refund needs >=1); store mnemonic = {INS[E_STORE[2]][0]!r}")
     dis_hits = [(a, INS[a][0], INS[a][1]) for a in range(REMOVAL, LOOP_BOTTOM)
                 if a in INS and "0x927a" in INS[a][1]]
     P(f"RIVAL mentions of the disabled-item family (0x927a..) inside the removal path: {len(dis_hits)}")
@@ -497,58 +568,89 @@ def main():
       and offA == DIFF_OFF and immA == "0x1" and jgA[0] == "jg"
       and jgA[1].endswith(f"{CLAMP_B:x}")
       and INS[0x4F4992][0] == "neg" and offB == QUEUE_HEAD_OFF
-      and all(INS[s][0] == "mov" and f"0x{ENERGY_VA:x}" in INS[s][1] for s in E_STORE[:2]),
+      and all(INS[s][0] == "mov" and f"0x{ENERGY_VA:x}" in INS[s][1] for s in E_STORE[:2])
+      and clamp_src == ["eax", "eax"] and clamp_aw == [0, 0],
       f"jge->{LOOP_BOTTOM:#x}; A gates block+{offA:#x} vs {immA}; B gates rec+{offB:#x} "
-      f"against neg(item); 2 clamp stores of the zeroed eax")
+      f"against neg(item); 2 clamp stores of eax (the zeroed reg: sources {clamp_src}, "
+      f"intervening eax writes {clamp_aw})")
 
     G("G3", len(w8) == 2 and {a for a, _, _, _ in w8} == {0x57EF57, 0x59EED6}
       and len(folded8) == 0
+      and any(mm == "mov" and f"ds:0x{HUMAN_MASK:x}" in o for _, mm, o in human_gate)
+      and any(mm == "test" for _, mm, _ in human_gate)
+      and any(mm == "jne" and o.endswith("59eed6") for _, mm, o in human_gate)
+      and mp57 == ({"ecx": 4}, DIFF_VA) and len(sv57) > 1 and sv57[1] == "edx"
+      and bool(load_def) and load_def[0][1] == "movsx" and load_def[0][2].startswith("edx")
       and any("ds:" in o and f"0x{DIFF_GLOB:x}" in o for _, _, o in create_defs)
       and any(o.replace("eax,", "") == f"0x{AI_DIFF:x}" for _, _, o in create_defs)
       and load_fold and load_fold[0] * 4 == BLKSTRIDE
       and any(m == "movsx" for _, m, _ in load_def),
       f"{len(w8)} destination-named writers + {len(folded8)} folded-pointer ones; create stores "
-      f"ds:{DIFF_GLOB:#x} or {AI_DIFF}; save/load stores a movsx byte "
-      f"through {load_fold[0] if load_fold else '?'}*4={BLKSTRIDE if load_fold else '?'}")
+      f"ds:{DIFF_GLOB:#x} or {AI_DIFF} behind the human gate ({len(human_gate)} gate instrs); "
+      f"save/load stores the movsx of edx through [ecx*4+{DIFF_VA:#x}] = {load_fold[0] if load_fold else '?'}*4")
 
     G("G4", chg_fold and chg_fold[0] == BASE_STRIDE and rem_fold and rem_fold[0] == BASE_STRIDE
       and f"0x{BASEMAP:x}" in chg_read[1] and f"0x{BASEMAP:x}" in rem_mat[1]
       and "[eax]" in rem_read[1].lower() and "[eax]" in rem_store[1].lower()
       and INS[0x4F49D8][0] == "not" and INS[0x4F49DF][0] == "and"
       and rem_store[0] == "mov" and "byte" in rem_store[1].lower()
-      and len(chg_and) >= 1,
+      and len(chg_and) >= 1
+      and bool(chg_args) and bool(rem_args)
+      and chg_args[0] == (0x4F4822, "esi") and rem_args[0] == (0x4F49B5, "ecx")
+      and INS[0x4F49A4] == ("mov", "ecx,DWORD PTR [ebp-0x4]")
+      and INS[0x4F4A38] == ("mov", "DWORD PTR [ebp-0x4],esi"),
       f"both folds {chg_fold[0] if chg_fold else '?'}/{rem_fold[0] if rem_fold else '?'} "
-      f"vs {BASE_STRIDE}; same base {BASEMAP:#x}; clear = not/and/mov-byte through [eax]")
+      f"vs {BASE_STRIDE}; same base {BASEMAP:#x}; both mapper calls take the loop item "
+      f"(push {chg_args[0][1] if chg_args else '?'} / push {rem_args[0][1] if rem_args else '?'} "
+      f"from [ebp-0x4]); clear = not/and/mov-byte through [eax]")
 
     G("G5", item_fold and item_fold[0] == ROW and off44 == 12
       and INS[0x4F49F7][0] == "imul" and INS[0x4F49F2][1].endswith(f"{FACTOR:x}")
-      and INS[E_STORE[2]][0] == "mov" and len(e_reads) == 0,
-      f"price = FACTOR({FACTOR:#x}) x row+{off44} via {item_fold[0] if item_fold else '?'}*item; "
-      f"store is {INS[E_STORE[2]][0]!r} with {len(e_reads)} ENERGY reads on the path")
+      and INS[E_STORE[2]][0] == "mov" and len(e_reads) == 0 and len(e_reads_test) == 0
+      and fac_args == [(0x4F49EE, "eax"), (0x4F49C3, "0x1"), (0x4F49C1, "0xffffffff")]
+      and INS[0x4F49E3] == ("mov", "ecx,DWORD PTR ds:0x8f0d60")
+      and INS[0x4F49E9] == ("xor", "eax,eax")
+      and INS[0x4F49EB] == ("mov", "al,BYTE PTR [ecx+0x4]")
+      and bool(imul_parts) and imul_parts[0] == "eax" and imul_base == "esi"
+      and store_src == "eax" and len(eax_after_imul) == 0,
+      f"price = FACTOR({FACTOR:#x}) x row+{off44}: fold {item_fold[0] if item_fold else '?'}*item "
+      f"into {imul_base or '?'}, imul dest {imul_parts[0] if imul_parts else '?'} = the call "
+      f"result, store source {store_src!r} with {len(eax_after_imul)} eax writes between; args "
+      f"{[o for _, o in fac_args]} (owner byte from [rec+4]); {len(e_reads)} ENERGY reads on the path")
 
     G("G6", INS[0x4F4A11][1].endswith(f"{SLOTTER:x}") and INS[0x4F4A29][1].endswith(f"{MEMO:x}")
       and pe_cstr(STR_LABEL) == b"POWERSHORT" and pe_cstr(STR_ICON) == b"genwarning_sm.pcx"
       and any(f"0x{STR_LABEL:x}" in o for _, o in memo_args)
       and any(f"0x{STR_ICON:x}" in o for _, o in memo_args)
-      and any(o == "0x1" for _, o in push_args(0x4F4A11, 4)),
-      f"memo args carry {STR_LABEL:#x}/{STR_ICON:#x} = "
-      f"{pe_cstr(STR_LABEL)!r}/{pe_cstr(STR_ICON)!r}; slot-setter param_1 = 1")
+      and any(o == "0x1" for _, o in push_args(0x4F4A11, 4))
+      and memo_a == ["0x68d24c", "0x10000", "0xe", "0x68d238", "0x0"]
+      and slot_a == ["0x1", "edx", "0xffffffff", "0xffffffff"]
+      and INS[0x4F49FE] == ("mov", "edx,DWORD PTR [esi+0x984d38]")
+      and len(edx_after_row0) == 0,
+      f"memo args {memo_a} carry {STR_LABEL:#x}/{STR_ICON:#x} = "
+      f"{pe_cstr(STR_LABEL)!r}/{pe_cstr(STR_ICON)!r}; slotter args {slot_a} (param_1=1, param_2="
+      f"row+0 via edx, {len(edx_after_row0)} writes between load and push)")
 
     G("G7", any(m == "inc" and "esi" in o for _, m, o in tail)
       and any(m == "jl" and o.endswith(f"{LOOP_TOP:x}") for _, m, o in tail)
       and len(mats) == 2 and [a for a, _, _ in mats] == [0x4F4837, 0x4F49D1]
       and len(eax_writes) == 0 and INS[0x4F49E1][0] == "mov"
       and "byte ptr [eax]" in INS[0x4F49E1][1].lower()
-      and any(a == 0x4F4994 for a, _, _, _ in qh),
+      and any(a == 0x4F4994 for a, _, _, _ in qh)
+      and len(fold_e_fn) == 0 and len(fold_e_all) == 0 and len(fold_ctl) > 0,
       f"back-edge to {LOOP_TOP:#x} after the removal; {len(mats)} map-address sites "
-      f"(test@0x4f4837 / clear-read@0x4f49da), {len(eax_writes)} eax writes before the store; "
-      f"{len(qh)} rec+0x50 readers incl. 0x4f4994")
+      f"(test@0x4f4837 / fold@0x4f49d1), {len(eax_writes)} eax writes before the store; "
+      f"{len(qh)} rec+0x50 readers incl. 0x4f4994; folded block+{ENERGY_OFF:#x} refs "
+      f"in-fn {len(fold_e_fn)} / image-wide {len(fold_e_all)} vs control block+0 "
+      f"{len(fold_ctl)}")
 
     r1_dead = len(e_reads) == 0 and INS[E_STORE[2]][0] == "mov"
     r2_dead = len(dis_hits) == 0 and f"0x{BASEMAP:x}" in rem_mat[1]
     r3_dead = len(tbl_in_memo) == 0
     print(f"{'PASS' if r1_dead else 'FAIL'} RIVAL1 — 'the shortfall REFUNDS ENERGY (+=)': "
-          f"dies on {len(e_reads)} reads + store {INS[E_STORE[2]][0]!r}")
+          f"dies on {len(e_reads)} reads of block+{ENERGY_OFF:#x} in [REMOVAL {REMOVAL:#x},"
+          f"store) / {len(e_reads_test)} in [NEG_TEST {NEG_TEST:#x},store) + store "
+          f"{INS[E_STORE[2]][0]!r} (a refund needs >=1 read and an add)")
     print(f"{'PASS' if r2_dead else 'FAIL'} RIVAL2 — 'the removal clears a DISABLED-LIST bit "
           f"(0x927a.. family)': dies on {len(dis_hits)} mentions; the clear names {BASEMAP:#x}")
     print(f"{'PASS' if r3_dead else 'FAIL'} RIVAL3 — 'the POWERSHORT memo names the facility': "

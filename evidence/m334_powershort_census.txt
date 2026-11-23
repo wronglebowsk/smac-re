@@ -7,44 +7,51 @@ G1 SPEND RMW read@0x4f4958 mov edx,DWORD PTR [edi+0x94d730] -> block+0x300; op@0
 G2 negative test @0x4f4968 mov ecx,DWORD PTR [edi+0x94d650] / cmp ecx,eax / jge 0x4f4a34 -> 0x4f4a34; zero-source xor eax,eax @0x4f4960
 G2 branch A @0x4f4976 cmp DWORD PTR [edi+0x94d438],0x1 (block+0x8, imm 0x1) -> jg 0x4f498a; clamp store @0x4f497f mov DWORD PTR [edi+0x94d650],eax
 G2 branch B @0x4f498a mov edx,esi / neg edx / cmp DWORD PTR [ecx+0x50],edx (rec+0x50); clamp store @0x4f4999 mov DWORD PTR [edi+0x94d650],eax
+G2 clamp-store source registers ['eax', 'eax']; writes to eax between the zeroing @0x4f4960 and each store: [0, 0] (both must be 0 for 'ENERGY := 0')
 G3 block+0x8 (0x94d438) destination-named STORES in .text: 2; lea-absolute copies: 0
 G3   W 0x57ef57 mov DWORD PTR [ecx*4+0x94d438],edx  [FUN_0057ecf0]
 G3   W 0x59eed6 mov DWORD PTR [esi+0x94d438],eax  [FUN_0059ec90]
 G3 create-path defs of eax reaching 0x59eed6: 0x59eeca mov eax,ds:0x985aec; 0x59eed1 mov eax,0x3
 G3 save/load-path def of edx: 0x57ef39 movsx edx,BYTE PTR [ebx]; index fold ecx = 2095*eax, store scale 4 -> 8380
 G3 folded-pointer stores to block+0x8 (a def of the base register naming 0x94d430 within 60 instructions): 0 -> 
+G3 human/AI gate on the path to the create store: 0x59eec3 mov al,ds:0x985b10; 0x59eec8 test dl,al; 0x59eecf jne 0x59eed6
+G3 save/load store tie: dest 'DWORD PTR [ecx*4+0x94d438]' -> regs {'ecx': 4} disp 0x94d438; source 'edx' vs the movsx destination 'edx'
 G4 charge mapper call @0x4f4823 args(nearest-first) 0x4f4822:esi 0x4f4821:edx 0x4f4820:ecx
 G4 removal mapper call @0x4f49b6 args(nearest-first) 0x4f49b5:ecx 0x4f49b4:eax 0x4f49b3:edx
+G4 item identity: charge pushes esi (the loop counter); removal pushes ecx whose def is mov ecx,DWORD PTR [ebp-0x4], and the loop bottom writes that slot from esi: mov DWORD PTR [ebp-0x4],esi
 G4 base-map fold: charge 304*base @0x4f4834; removal 304*base @0x4f49cb; both + byte_index + 0x95da9c
 G4 charge TEST mov al,BYTE PTR [ecx+edx*1+0x95da9c] then 0x4f4841 and al,cl
 G4 removal CLEAR: not dl / mov cl,BYTE PTR [eax] / and cl,dl / mov BYTE PTR [eax],cl
-G5 item fold for the price read: 48*item @0x4f49ef; imul @0x4f49f7 imul eax,DWORD PTR [esi+0x984d44] -> row+12
+G5 item fold for the price read: 48*item @0x4f49ef; imul @0x4f49f7 imul eax,DWORD PTR [esi+0x984d44] -> row+12; imul dest 'eax', memory base 'esi'
 G5 factor call @0x4f49f2 call 0x4e40a0 args(nearest-first) 0x4f49ee:eax 0x4f49c3:0x1 0x4f49c1:0xffffffff
 G5 owner-byte source: mov ecx,DWORD PTR ds:0x8f0d60 / xor eax,eax / mov al,BYTE PTR [ecx+0x4]
-G5 ENERGY store @0x4f4a0b mov DWORD PTR [edi+0x94d650],eax; reads of block+0x220 in [0x4f49a4,0x4f4a0b) = 0
+G5 ENERGY store @0x4f4a0b mov DWORD PTR [edi+0x94d650],eax; source 'eax'; writes to eax between the imul and the store: 0
+G5 reads of block+0x220: in [REMOVAL 0x4f49a4,store) = 0; in [NEG_TEST 0x4f4970,store) = 0
 G6 slot-setter @0x4f4a11 call 0x6265a2 args(nearest-first) 0x4f4a09:0x1 0x4f4a08:edx 0x4f4a06:0xffffffff 0x4f4a04:0xffffffff
 G6 memo @0x4f4a29 call 0x48f100 args(nearest-first) 0x4f4a24:0x68d24c 0x4f4a1f:0x10000 0x4f4a1d:0xe 0x4f4a18:0x68d238 0x4f4a16:0x0
+G6 cdecl arg lists: memo=['0x68d24c', '0x10000', '0xe', '0x68d238', '0x0'] slotter=['0x1', 'edx', '0xffffffff', '0xffffffff']; row+0 load @0x4f49fe mov edx,DWORD PTR [esi+0x984d38] -> pushed edx, writes to edx before the push: 0
 G6 row+0 read @0x4f49fe mov edx,DWORD PTR [esi+0x984d38]
 G6 PE strings: 0x68d24c=b'POWERSHORT'  0x68d238=b'genwarning_sm.pcx'
 G7 tail after the memo call: 0x4f4a2e mov esi,DWORD PTR [ebp-0x4]; 0x4f4a31 add esp,0x3c; 0x4f4a34 inc esi; 0x4f4a35 cmp esi,0x27; 0x4f4a38 mov DWORD PTR [ebp-0x4],esi; 0x4f4a3b jl 0x4f480b
 G7 sites inside FUN_004f47f0 materializing the 0x95da9c map address: 2 -> 0x4f4837 mov al,BYTE PTR [ecx+edx*1+0x95da9c]; 0x4f49d1 lea eax,[eax+ecx*1+0x95da9c]
 G7 writes to eax between the fold @0x4f49d1 and the store @0x4f49e1: 0 -> 
+G7 folded refs to block+0x220: inside FUN_004f47f0 = 0, image-wide = 0; CONTROL block+0 image-wide = 10 (non-zero => the folded scan is not vacuous; the compiler folds the block base only for offset 0 and uses absolute displacements for every other field)
 G7 [R+0x50] with R loaded from ds:0x8f0d60 in .text: 51 sites -> 0x40b323; 0x40b656; 0x40fb1d; 0x413264; 0x414f48; 0x4150eb; 0x418217; 0x4184a0; 0x4187ea; 0x4188b9; 0x4188ec; 0x418b57
-RIVAL reads of block+0x220 between the negative test and the price store: 0 (a refund would need >=1); store mnemonic = 'mov'
+RIVAL reads of block+0x220 in the SELL path [REMOVAL 0x4f49a4,store 0x4f4a0b) = 0 and from the negative test [0x4f4970,store) = 0 (a refund needs >=1); store mnemonic = 'mov'
 RIVAL mentions of the disabled-item family (0x927a..) inside the removal path: 0
 RIVAL item-table operands among the memo's 5 args: 0
 
 == GATES ==
 PASS G1 — folds 48/8380 vs 48/8380; ENERGY off 0x220 sub, SPEND off 0x300 add
-PASS G2 — jge->0x4f4a34; A gates block+0x8 vs 0x1; B gates rec+0x50 against neg(item); 2 clamp stores of the zeroed eax
-PASS G3 — 2 destination-named writers + 0 folded-pointer ones; create stores ds:0x985aec or 3; save/load stores a movsx byte through 2095*4=8380
-PASS G4 — both folds 304/304 vs 304; same base 0x95da9c; clear = not/and/mov-byte through [eax]
-PASS G5 — price = FACTOR(0x4e40a0) x row+12 via 48*item; store is 'mov' with 0 ENERGY reads on the path
-PASS G6 — memo args carry 0x68d24c/0x68d238 = b'POWERSHORT'/b'genwarning_sm.pcx'; slot-setter param_1 = 1
-PASS G7 — back-edge to 0x4f480b after the removal; 2 map-address sites (test@0x4f4837 / clear-read@0x4f49da), 0 eax writes before the store; 51 rec+0x50 readers incl. 0x4f4994
-PASS RIVAL1 — 'the shortfall REFUNDS ENERGY (+=)': dies on 0 reads + store 'mov'
+PASS G2 — jge->0x4f4a34; A gates block+0x8 vs 0x1; B gates rec+0x50 against neg(item); 2 clamp stores of eax (the zeroed reg: sources ['eax', 'eax'], intervening eax writes [0, 0])
+PASS G3 — 2 destination-named writers + 0 folded-pointer ones; create stores ds:0x985aec or 3 behind the human gate (3 gate instrs); save/load stores the movsx of edx through [ecx*4+0x94d438] = 2095*4
+PASS G4 — both folds 304/304 vs 304; same base 0x95da9c; both mapper calls take the loop item (push esi / push ecx from [ebp-0x4]); clear = not/and/mov-byte through [eax]
+PASS G5 — price = FACTOR(0x4e40a0) x row+12: fold 48*item into esi, imul dest eax = the call result, store source 'eax' with 0 eax writes between; args ['eax', '0x1', '0xffffffff'] (owner byte from [rec+4]); 0 ENERGY reads on the path
+PASS G6 — memo args ['0x68d24c', '0x10000', '0xe', '0x68d238', '0x0'] carry 0x68d24c/0x68d238 = b'POWERSHORT'/b'genwarning_sm.pcx'; slotter args ['0x1', 'edx', '0xffffffff', '0xffffffff'] (param_1=1, param_2=row+0 via edx, 0 writes between load and push)
+PASS G7 — back-edge to 0x4f480b after the removal; 2 map-address sites (test@0x4f4837 / fold@0x4f49d1), 0 eax writes before the store; 51 rec+0x50 readers incl. 0x4f4994; folded block+0x220 refs in-fn 0 / image-wide 0 vs control block+0 10
+PASS RIVAL1 — 'the shortfall REFUNDS ENERGY (+=)': dies on 0 reads of block+0x220 in [REMOVAL 0x4f49a4,store) / 0 in [NEG_TEST 0x4f4970,store) + store 'mov' (a refund needs >=1 read and an add)
 PASS RIVAL2 — 'the removal clears a DISABLED-LIST bit (0x927a.. family)': dies on 0 mentions; the clear names 0x95da9c
 PASS RIVAL3 — 'the POWERSHORT memo names the facility': dies on 0 table operands in its 5 args
 
-table rows: 35  gates: 7/7  digest 21e70618fecd49aa
+table rows: 42  gates: 7/7  digest 5b5ece39af02baba
 PASS M334: 7/7 gates
