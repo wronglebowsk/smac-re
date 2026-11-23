@@ -1,0 +1,8 @@
+baseline: PASS, digest=70376694feec5815
+PASS ST1 empty declared (UNDECLARED RED ['G1', 'RIVAL'])
+PASS ST2 superset declared (WEAK (missing ['G7']))
+PASS ST3 partial declared (UNDECLARED RED ['RIVAL'])
+PASS ST4 crash class (CRASH (traceback in output))
+PASS ST5 no-contact class (NO CONTACT (patch not applied / copy not used))
+PASS ST6 real NO-OP mutant (NO-OP (reddened nothing))
+PASS selftest: 6/6

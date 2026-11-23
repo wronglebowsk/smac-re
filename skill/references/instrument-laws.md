@@ -1170,3 +1170,31 @@ purely the instrument's:
   ADDRESSES. (3) A digest is evidence only if it hashes name+verdict+detail; hashing the check NAMES, or
   keying a `detail` dict by short ids while the digest loop iterates full check names, lets two different
   measurement sets share one digest - and only mutations can catch that, so mutate the numbers, not the labels.
+
+## Loop-carried counters: the value-walker OVER-PROVES; pin the fold by SHAPE (s314, M333)
+The linear backward value-walker (`value_of`) answers `('const', 48)` for a table read indexed
+by a loop counter: it finds the loop-top `mov esi,0x1` and never sees the loop-bottom `inc esi`,
+so it "proves" the fold for iteration 1 only — a PASS on an unmeasured state. For a
+loop-carried index pin the fold by SHAPE instead: the exact sequence above the read
+(`lea r,[i+i*2]` + `shl r,0x4`, dest==shl-dest, base==index), the leaf cross-checked against
+the loop bound test and every other consumer of the same register. And a `jg <bottom>` at the
+loop top is a SKIP, not the exit — find the real back-edge (`inc/cmp/jl`) before naming the
+range (measured here: VISITS 1..38, CHARGES 1..34).
+
+## Bit claims need def-use provenance, not text search (s314, M333 G5)
+"function names block+0 AND contains `0x20`/`shr ,0x5`" inflated a dedicated-field claim 1->18:
+the immediate 0x20 is also the value 32 and a stride step, usually in an unrelated register.
+The load-bearing census: (a) registers whose LAST writer (path-insensitive def-walk, stops at
+calls and function bounds, one mov-copy level) is a load of the field's address; (b) READ =
+test/bt 0x20|5 or shr,5+and,1 on those; WRITE = or/and/xor 0x20|0xffffffdf on them AND a later
+store back — direct disp OR via a lea'd pointer (`mov [edx],ecx`, edx from `lea` — strip the
+brackets before the `\w+` test). PRINT the near-miss functions and why they miss (FUN_004dc390
+mirrors block+0 bits 30/29/20 into a DERIVED dword's bits 4/5/6 — its `or ecx,0x20` is not the
+field): the near-miss row is what kills the shared-flag rival.
+
+## An expect mutant must be able to redden SOMETHING (s314, M333 ME3)
+`BLKSTRIDE 0x20BC->0x20BD` reddened NOTHING: `0x20BD//4 == 0x20BC//4 == 2095` (integer
+division) and offset 0 satisfies `(d-base)%stride==0` for ANY stride. Before freezing a
+declared set, compute that the rewritten literal DIFFERS where the gate reads it (0x20B0 ->
+2092 does). The harness NO-OP class caught it — that is what the class is for; a NO-OP found
+by review, not by the harness, is a green lie.

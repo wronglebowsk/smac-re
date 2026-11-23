@@ -38,7 +38,7 @@ import os
 import re
 import sys
 
-ROOT = os.path.expanduser("~/reverse/smac")
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # s314 review F8 class: derive, never hardcode
 NAMED = os.path.join(ROOT, "NAMED.md")
 ARC = os.path.join(ROOT, "docs", "named-archive-m333-rows.md")
 
