@@ -1,5 +1,4 @@
 # SESSION_CURSOR
 
-M332 `milestone/m332` PR #346 (s312 review round landed): `python3 -u scripts/m332_difficulty_census.py` -> `PASS M332: 9/9 gates` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); `python3 -u scripts/m332_mutate.py` -> `PASS HARNESS 22/22` digest(rows) `a9a944201849d026`, 0 MISMATCH (`evidence/m332_mutate.txt:23-25`); `--selftest` 6/6.
-NAMED UNDER the 5 KB trigger: ROTATE FIRST. NEXT: (x) list — x1 feeder slots 0x984d48; x6 = M332's leads.
+M333 branch `milestone/m333` (s314): ACCEPT `python3 -u scripts/m333_feeder_slot_census.py` -> `PASS M333: 8/8 gates` digest `b1ca12715e833cc7` (`evidence/m333_feeder_slot_census.txt`); harness `python3 -u scripts/m333_mutate.py` -> `evidence/m333_mutate.txt` (14 mutants exact declared sets, `--selftest` 6/6). NEXT: fill harness digest into NAMED+notes, gate, submit PR, review round. NAMED 245,404 B — UNDER the 5 KB trigger again after the M333 block: ROTATE FIRST next fire (rotations 1+2 verify byte-exact); NEXT_PROMPT 11,648 B. Picks: (x5)/(x6)/(x7 NEW: removal path 0x4f49b6/0x4f49e1/block+0x220 + ds:0x985ba0's writer outside .text); (ix) box-GATED.
 `m294_gate_rows_raw.txt` = sim parity target, do NOT rm.
