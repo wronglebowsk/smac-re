@@ -709,3 +709,29 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   record[1]+0x58c. Do not read those literals as record bases.
 - Rotated `## M286`/`## M287` VERBATIM -> `docs/named-archive-m376-rows{,2}.md` (sha1
   `25eb67cd987ee782`/`723e6eebf7c77ff8`) for the NAMED cap; both `--verify` PASS.
+
+## Session 340-chain3 — M380: 0x94e48c is the MIGHTY/MEEK strength scalar; 2 of 27 rel rewrites DO drop a stamp
+
+- **ACCEPT** `python3 -u scripts/m380_diplo_power.py` -> **`PASS M380: 7/7`** `5dfd436fe4093015`
+  (`evidence/m380_diplo_power.txt:125`; re-run same, `evidence/m380_twice.txt` sha1
+  `8f4b440918a40c97`); `scripts/m380_mutate.py` **14/14 killed** (`evidence/m380_mutate.txt:18`).
+  All 3 M377 OPENs answered.
+- **NOUN (OPEN #1)**: per-faction dword at block+0x105c (70 operands, 67R/3W; stride 0x82f dwords,
+  base 0x94d430). Its one two-faction compare picks a string: `cmp
+  field[a],field[b]`@0x54dcf0, `jle` -> 'MEEK' 0x690f20, else 'MIGHTY' 0x690f18 — a strength
+  rating; composition OPEN. WRONGED/ENEMY next door gate on 0x426d60(rel,0x10).
+- **BRANCH (OPEN #2)**: FUN_00545c50 is the hub on ds:0x920700; mode 2 -> 0x53a9c0
+  (REJPACTMEEK), 3 -> 0x53bb90 (REJTREATYMEEK) = PACT/TREATY validators. Mode-3 arm @0x545d43:
+  `call validator / test eax / jne tail / test edi / je tail / call 0x540390`, edi set once at
+  0x545ce9 as `sete(ds:0x92077c==3)` — a refusal reaches 0x540390 only when status is 3;
+  otherwise NO action, straight to the SEH tail.
+- **ERASURE (OPEN #3) + RETRACTION**: M377's "0 provable clearer" was shape algebra over the
+  store (opaque source register), not lineage. Def-use behind the 27 finds **2 provable
+  droppers**: 0x551b1d `and edx,0xfaeef378` clears **0x10000** on the war mask (load @0x551b0b);
+  0x555430 `and ah,0x7f` clears **0x8000** under `(0x985afc&0xf)==2p+1` (load @0x555427). Both
+  RMW one pair dword, so the stamps are erasable. Other 25: 12 PRESERVE, 11 unknown.
+- **PITFALLS**: (1) `[reg*4+0x94e48c]` is NOT a 4-byte array — all 19 carry the ×2095 scaler
+  across several registers; a per-register marker match fails 10/19.
+  (2) only `and` clears bit 15 and `or` never does — an `ah` blind spot invents 3 droppers.
+  (3) a linear backward walk crosses blocks; stop at a `jmp`.
+- Rotated `## M283` VERBATIM -> `docs/named-archive-m380-m283-rows.md` (sha1 `884865b3`).
